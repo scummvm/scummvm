@@ -116,7 +116,6 @@ int32 CloseAppWindow(void)
 	DestroyWindow(hwnd);
 */
 	// just quit for now
-	g_engine->_timer->releaseProcedure(sword2_sound_handler);
 	g_system->quit();
 	return(RD_OK);
 

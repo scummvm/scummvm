@@ -34,7 +34,9 @@
 #ifndef D_SOUND_H
 #define D_SOUND_H
 
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/rate.h"
 #include "common/file.h"
 
 extern void sword2_sound_handler(void *refCon);
@@ -48,26 +50,38 @@ typedef struct {
 	uint16 *_buf;
 	int32 _bufSize;
 	PlayingSoundHandle _handle;
-} fxHandle;
+} FxHandle;
 
-typedef struct {
+class MusicHandle : public MusicStream {
+public:
 	uint32 _id;
 	char _fileName[256];
 	bool _streaming;
 	bool _paused;
 	bool _looping;
-	int16 _fading;
+	int32 _fading;
 	int32 _filePos;
 	int32 _fileEnd;
 	int16 _lastSample;
-	PlayingSoundHandle _handle;
-} musicHandle;
+
+	bool isStereo()	const	{ return false; }
+	int getRate() const	{ return 22050; }
+
+	int16 read();
+	bool eos() const;
+
+	MusicHandle() : MusicStream(), _streaming(false), _paused(false),
+			_looping(false), _fading(0), _filePos(0), _fileEnd(0),
+			_lastSample(0) {
+		_fileName[0] = 0;
+	}
+};
 
 class Sword2Sound {
 	public:
 		Sword2Sound(SoundMixer *mixer);
 		~Sword2Sound();
-		void FxServer(void);
+		void FxServer(int16 *data, uint len);
 		int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
 		int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
 		uint32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf);
@@ -104,7 +118,7 @@ class Sword2Sound {
 		int32 IsFxOpen(int32 id);
 		int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan);
 		int32 SetFxIdVolume(int32 id, uint8 vol);
-		void UpdateCompSampleStreaming(void);
+		void UpdateCompSampleStreaming(int16 *data, uint len);
 		SoundMixer *_mixer;
 	private:
 		int32 StreamCompMusicFromLock(const char *filename, uint32 musicId, bool looping);
@@ -112,9 +126,10 @@ class Sword2Sound {
 		int32 DipMusic();
 
 		OSystem::MutexRef _mutex;
+		RateConverter *_converter;
 
-		fxHandle fx[MAXFX];
-		musicHandle music[MAXMUS];
+		FxHandle fx[MAXFX];
+		MusicHandle music[MAXMUS];
 
 		// We used to have two music volumes - one for each channel -
 		// but they were always set to the same value.
@@ -132,8 +147,6 @@ class Sword2Sound {
 		uint8 compressedMusic;
 
 		PlayingSoundHandle soundHandleSpeech;
-		File fpMus;
-		int bufferSizeMusic;
 		uint8 musicMuted;
 };
 

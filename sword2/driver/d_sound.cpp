@@ -155,10 +155,14 @@
 #include "driver96.h"
 #include "d_sound.h"
 #include "../sword2.h"
-#include "common/timer.h"
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/rate.h"
 
-// FIXME: Remove code duplication
+// Fade-out takes half a second. This may need some tuning.
+#define FADE_SAMPLES 11025
+
+static File fpMus;
 
 // Decompression macros
 #define GetCompressedShift(byte)      ((byte) >> 4)
@@ -175,17 +179,48 @@ int32 musicVolTable[17] = {
 	0, 15, 31, 47, 63, 79, 95, 111, 127, 143, 159, 175, 191, 207, 223, 239, 255
 };
 
-// FIXME: Is this really a good way? The music occasionally pops, and I have
-// a feeling it could be that the stream is emptied faster than we are filling
-// it. Maybe we should set up a premix function instead, but then we'd have to
-// do rate conversion and mixing here.
-//
-// Maybe it'd be useful if audio streams could have their own callbacks to fill
-// them with data?
+int16 MusicHandle::read() {
+	uint8 in;
+	uint16 delta, value;
+	int16 out;
 
-void sword2_sound_handler(void *refCon) {
-	Sword2Sound *sound = (Sword2Sound *) refCon;
-	sound->FxServer();
+	if (!_streaming)
+		return 0;
+
+	// Assume the file handle has been correctly positioned already.
+
+	in = fpMus.readByte();
+	delta = GetCompressedAmplitude(in) << GetCompressedShift(in);
+
+	if (GetCompressedSign(in))
+		value = _lastSample - delta;
+	else
+		value = _lastSample + delta;
+
+	_filePos++;
+	_lastSample = value;
+
+	out = (int16) (value ^ 0x8000);
+
+	if (_fading > 0) {
+		if (--_fading == 0) {
+			_streaming = false;
+			_looping = false;
+		}
+		out = (out * _fading) / FADE_SAMPLES;
+	}
+
+	return out;
+}
+
+bool MusicHandle::eos() const {
+	if (!_streaming || _filePos >= _fileEnd)
+		return true;
+	return false;
+}
+
+static void premix_proc(void *param, int16 *data, uint len) {
+	((Sword2Sound *) param)->FxServer(data, len);
 }
 
 Sword2Sound::Sword2Sound(SoundMixer *mixer) {
@@ -204,20 +239,20 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	musicVol = 16;
 
 	musicMuted = 0;
-	bufferSizeMusic = 4410;
 	_mixer = mixer;
 
 	memset(fx, 0, sizeof(fx));
-	memset(music, 0, sizeof(music));
 
 	soundHandleSpeech = 0;
 
 	soundOn = 1;
-	g_engine->_timer->installProcedure(sword2_sound_handler, 100000, this);
+
+	_converter = makeRateConverter(music[0].getRate(), _mixer->getOutputRate(), music[0].isStereo(), false);
+
+	_mixer->setupPremix(premix_proc, this);
 }
 
 Sword2Sound::~Sword2Sound() {
-	g_engine->_timer->releaseProcedure(sword2_sound_handler);
 	if (_mutex)
 		g_system->delete_mutex(_mutex);
 }
@@ -266,7 +301,7 @@ int32 Sword2Sound::IsFxOpen(int32 id) {
 // a separate thread.
 // --------------------------------------------------------------------------
 
-void Sword2Sound::FxServer(void) {
+void Sword2Sound::FxServer(int16 *data, uint len) {
 	StackLock lock(_mutex);
 
 	if (!soundOn)
@@ -274,7 +309,7 @@ void Sword2Sound::FxServer(void) {
 
 	if (!music[0]._paused && !music[1]._paused) {
 		if (compressedMusic == 1)
-			UpdateCompSampleStreaming();
+			UpdateCompSampleStreaming(data, len);
 	}
 
 	if (!music[0]._streaming && !music[1]._streaming && fpMus.isOpen())
@@ -846,9 +881,6 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, bool lo
 int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId, bool looping) {
 	int32 primaryStream = -1;
 	int32 secondaryStream = -1;
-	int32 i;
-	uint16 *data16;
-	uint8 *data8;
 
 	compressedMusic = 1;
 
@@ -861,8 +893,7 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 		else
 			primaryStream = 1;
 
-		music[primaryStream]._fading = false;
-		g_engine->_mixer->stopHandle(music[primaryStream]._handle);
+		music[primaryStream]._fading = 0;
 		music[primaryStream]._streaming = false;
 	}
 
@@ -900,7 +931,7 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 
 	// Start other music stream fading out
 	if (secondaryStream != -1 && !music[secondaryStream]._fading)
-		music[secondaryStream]._fading = -16;
+		music[secondaryStream]._fading = FADE_SAMPLES;
 
 	fpMus.seek((musicId + 1) * 8, SEEK_SET);
 	music[primaryStream]._filePos = fpMus.readUint32LE();
@@ -912,180 +943,31 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	// Calculate the file position of the end of the music
 	music[primaryStream]._fileEnd += music[primaryStream]._filePos;
 
-	// Create a temporary buffer
-	data8 = (uint8 *) malloc(bufferSizeMusic / 2);
-	if (!data8)
-		return RDERR_OUTOFMEMORY;
-
-	// Seek to start of the compressed music
-	fpMus.seek(music[primaryStream]._filePos, SEEK_SET);
-
-	// Read the compressed data in to the buffer
-	if ((int32) fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
-		free(data8);
-		return RDERR_INVALIDID;
-	}
-
-	// Store the current position in the file for future streaming
-	music[primaryStream]._filePos = fpMus.pos();
-
-	// decompress the music into the music buffer.
-	data16 = (uint16 *) malloc(bufferSizeMusic);
-	if (!data16)
-		return RDERR_OUTOFMEMORY;
-
-	data16[0] = READ_LE_UINT16(data8);	// First sample value
-
-	for (i = 1; i < (bufferSizeMusic / 2) - 1; i++) {
-		if (GetCompressedSign(data8[i + 1]))
-			data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-		else
-			data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-	}
-
-	// Store the value of the last sample ready for next batch of
-	// decompression
-	music[primaryStream]._lastSample = data16[i - 1];
-
-	// Free the compressed sound buffer
-	free(data8);
-
-	// Modify the volume according to the master volume and music mute
-	// state
-
-	byte volume = musicMuted ? 0 : musicVolTable[musicVol];
-
-#ifndef SCUMM_BIG_ENDIAN
-	// FIXME: Until the mixer supports LE samples natively, we need to
-	// convert our LE ones to BE
-	for (i = 0; i < bufferSizeMusic / 2; i++)
-		data16[i] = SWAP_BYTES_16(data16[i]);
-#endif
-
-	g_engine->_mixer->newStream(&music[primaryStream]._handle, data16,
-		bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000, volume, 0);
-		
-	free(data16);
-
-	// Recorder some last variables
+	music[primaryStream]._lastSample = fpMus.readByte();
+	music[primaryStream]._filePos++;
 	music[primaryStream]._streaming = true;
+
 	return RD_OK;
 }
 
-void Sword2Sound::UpdateCompSampleStreaming(void) {
-	uint32 i,j;
-	int32 len;
-	uint16 *data16;
-	uint8 *data8;
-	int fade;
+void Sword2Sound::UpdateCompSampleStreaming(int16 *data, uint len) {
+	uint32 i;
 
 	for (i = 0; i < MAXMUS; i++) {
 		if (!music[i]._streaming)
 			continue;
 
-		// If the music is fading, adjust the volume for it.
+		// Modify the volume according to the master volume and music
+		// mute state
 
-		if (music[i]._fading < 0) {
-			if (++music[i]._fading == 0) {
-				g_engine->_mixer->stopHandle(music[i]._handle);
-				music[i]._streaming = false;
-				music[i]._looping = false;
-				continue;
-			}
+		byte volume = musicMuted ? 0 : musicVolTable[musicVol];
 
-    			// Modify the volume according to the master volume
-			// and music mute state
+		fpMus.seek(music[i]._filePos, SEEK_SET);
+		_converter->flow(music[i], data, len, volume, volume);
 
-			byte volume = musicMuted ? 0 : musicVolTable[musicVol * (0 - music[i]._fading ) / 16];
-
-			g_engine->_mixer->setChannelVolume(music[i]._handle, volume);
-		}
-
-		// Re-fill the audio buffer.
-
-		len = bufferSizeMusic;
-
-		// Reduce length if it requires reading past the end of the
-		// music
-
-		if (music[i]._filePos + len >= music[i]._fileEnd) {
-			// End of music reached so we'll need to fade and
-			// repeat
-			len = music[i]._fileEnd - music[i]._filePos;
-			fade = 1;
-		} else
-			fade = 0;
-
-		if (len > 0) {
-			data8 = (uint8 *) malloc(len / 2);
-			// Allocate a compressed data buffer
-			if (data8 == NULL) {
-				g_engine->_mixer->stopHandle(music[i]._handle);
-				music[i]._streaming = false;
-				music[i]._looping = false;
-				continue;
-			}
-
-			// Seek to update position of compressed music when
-			// neccassary (probably never occurs)
-			if ((int32) fpMus.pos() != music[i]._filePos)
-				fpMus.seek(music[i]._filePos, SEEK_SET);
-
-			// Read the compressed data in to the buffer
-			if ((int32) fpMus.read(data8, len / 2) != len / 2) {
-				g_engine->_mixer->stopHandle(music[i]._handle);
-				free(data8);
-				music[i]._streaming = false;
-				music[i]._looping = false;
-				continue;
-			}
-
-			// Update the current position in the file for future
-			// streaming
-
-			music[i]._filePos = fpMus.pos();
-
-			// decompress the music into the music buffer.
-			data16 = (uint16 *) malloc(len);
-
-			// Decompress the first byte using the last
-			// decompressed sample
-			if (GetCompressedSign(data8[0]))
-				data16[0] = music[i]._lastSample - (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
-			else
-				data16[0] = music[i]._lastSample + (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
-
-			for (j = 1; j < (uint32) len / 2; j++) {
-				if (GetCompressedSign(data8[j]))
-					data16[j] = data16[j - 1] - (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
-				else
-					data16[j] = data16[j - 1] + (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
-			}
-
-			music[i]._lastSample = data16[j - 1];
-
-#ifndef SCUMM_BIG_ENDIAN
-			// Until the mixer supports LE samples natively, we
-			// need to convert our LE ones to BE
-			for (int32 y = 0; y < len / 2; y++)
-				data16[y] = SWAP_BYTES_16(data16[y]);
-#endif
-
-			// Paranoid check that seems to be necessary.
-			if (len & 1)
-				len--;
-
-			g_engine->_mixer->appendStream(music[i]._handle, data16, len);
-					
-			free(data16);
-			free(data8);
-		}
-
-		// End of the music so we need to start fading and start the
-		// music again
-
-		if (fade) {
-			g_engine->_mixer->stopHandle(music[i]._handle);
+		if (music[i].eos()) {
+			// End of the music so we need to start fading and
+			// start the music again
 
 			// FIXME: The original code faded the music here, but
 			// to do that we need to start before we reach the end
@@ -1098,8 +980,10 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 			// musFading[i] = -16;
 
 			// Loop if neccassary
-			if (music[i]._looping)
+			if (music[i]._looping) {
+				music[i]._streaming = false;
 				StreamCompMusicFromLock(music[i]._fileName, music[i]._id, music[i]._looping);
+			}
 		}
 	}
 
@@ -1202,7 +1086,7 @@ void Sword2Sound::StopMusic(void) {
 
 	for (int i = 0; i < MAXMUS; i++) {
 		if (music[i]._streaming)
-			music[i]._fading = -16;
+			music[i]._fading = FADE_SAMPLES;
 		else
 			music[i]._looping = false;
 	}
@@ -1215,7 +1099,6 @@ int32 Sword2Sound::PauseMusic(void) {
 		for (int i = 0; i < MAXMUS; i++) {
 			if (music[i]._streaming) {
 				music[i]._paused = true;
-				g_engine->_mixer->pauseHandle(music[i]._handle, true);
 			} else {
 				music[i]._paused = false;
 			}
@@ -1228,25 +1111,14 @@ int32 Sword2Sound::UnpauseMusic(void) {
 	StackLock lock(_mutex);
 
 	if (soundOn) {
-		for (int i = 0; i < MAXMUS; i++) {
-			if (music[i]._paused) {
-				g_engine->_mixer->pauseHandle(music[i]._handle, false);
-				music[i]._paused = false;
-			}
-		}
+		for (int i = 0; i < MAXMUS; i++)
+			music[i]._paused = false;
 	}
 	return RD_OK;
 }
 
 void Sword2Sound::SetMusicVolume(uint8 volume) {
-	StackLock lock(_mutex);
-
 	musicVol = volume;
-
-	for (int i = 0; i < MAXMUS; i++) {
-		if (music[i]._streaming && !music[i]._fading && !musicMuted)
-			g_engine->_mixer->setChannelVolume(music[i]._handle, musicVolTable[volume]);
-	}
 }
 
 uint8 Sword2Sound::GetMusicVolume() {
@@ -1254,22 +1126,7 @@ uint8 Sword2Sound::GetMusicVolume() {
 }
 
 void Sword2Sound::MuteMusic(uint8 mute) {
-	StackLock lock(_mutex);
-
 	musicMuted = mute;
-
-	for (int i = 0; i < MAXMUS; i++) {
-		if (!mute) {
-			if (!music[i]._streaming && music[i]._looping)
-				StreamCompMusicFromLock(music[i]._fileName, music[i]._id, music[i]._looping);
-		}
-
-		if (music[i]._streaming && !music[i]._fading) {
-			byte volume = mute ? 0 : musicVolTable[musicVol];
-
-			g_engine->_mixer->setChannelVolume(music[i]._handle, volume);
-		}
-	}
 }
 
 uint8 Sword2Sound::IsMusicMute(void) {
