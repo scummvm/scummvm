@@ -23,9 +23,10 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-void SoundMixer::uninsert(Channel *chan) {
+void SoundMixer::uninsert(Channel * chan)
+{
 
-	for(int i=0; i!=NUM_CHANNELS; i++) {	
+	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == chan) {
 			if (_handles[i]) {
 				*_handles[i] = 0;
@@ -38,7 +39,8 @@ void SoundMixer::uninsert(Channel *chan) {
 	error("SoundMixer::channel_deleted chan not found");
 }
 
-int SoundMixer::append(int index, void *sound, uint32 size, uint rate, byte flags) {
+int SoundMixer::append(int index, void *sound, uint32 size, uint rate, byte flags)
+{
 	_syst->lock_mutex(_mutex);
 
 	Channel *chan = _channels[index];
@@ -54,7 +56,8 @@ int SoundMixer::append(int index, void *sound, uint32 size, uint rate, byte flag
 	return 1;
 }
 
-int SoundMixer::insert_at(PlayingSoundHandle *handle, int index, Channel *chan) {
+int SoundMixer::insert_at(PlayingSoundHandle *handle, int index, Channel * chan)
+{
 	if (_channels[index] != NULL) {
 		error("Trying to put a mixer where it cannot go ");
 	}
@@ -65,13 +68,14 @@ int SoundMixer::insert_at(PlayingSoundHandle *handle, int index, Channel *chan) 
 	return index;
 }
 
-int SoundMixer::insert(PlayingSoundHandle *handle, Channel *chan) {
-	for(int i=0; i!=NUM_CHANNELS; i++) {
+int SoundMixer::insert(PlayingSoundHandle *handle, Channel * chan)
+{
+	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insert_at(handle, i, chan);
 		}
 	}
-	
+
 	warning("SoundMixer::insert out of mixer slots");
 	chan->real_destroy();
 
@@ -79,28 +83,35 @@ int SoundMixer::insert(PlayingSoundHandle *handle, Channel *chan) {
 }
 
 
-int SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags) {
+int SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate,
+												 byte flags)
+{
 	return insert(handle, new Channel_RAW(this, sound, size, rate, flags));
 }
 
-int SoundMixer::play_stream(PlayingSoundHandle *handle, int idx, void *sound, uint32 size, uint rate, byte flags) {
+int SoundMixer::play_stream(PlayingSoundHandle *handle, int idx, void *sound, uint32 size,
+														uint rate, byte flags)
+{
 	return insert_at(handle, idx, new Channel_STREAM(this, sound, size, rate, flags));
 }
 
 #ifdef COMPRESSED_SOUND_FILE
-int SoundMixer::play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
+int SoundMixer::play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags)
+{
 	return insert(handle, new Channel_MP3(this, sound, size, flags));
 }
-int SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, mad_timer_t duration) {
+int SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, FILE * file, mad_timer_t duration)
+{
 	/* Stop the previously playing CD track (if any) */
 	return insert(handle, new Channel_MP3_CDMUSIC(this, file, duration));
 }
 #endif
 
-void SoundMixer::mix(int16 *buf, uint len) {
+void SoundMixer::mix(int16 *buf, uint len)
+{
 
 	if (_paused) {
-		memset(buf, 0, 2 * len * sizeof(int16));	
+		memset(buf, 0, 2 * len * sizeof(int16));
 		return;
 	}
 
@@ -117,23 +128,25 @@ void SoundMixer::mix(int16 *buf, uint len) {
 
 	_syst->lock_mutex(_mutex);
 	/* now mix all channels */
-	for(int i=0; i!=NUM_CHANNELS; i++)
+	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			_channels[i]->mix(buf, len);
 	_syst->unlock_mutex(_mutex);
 }
 
-void SoundMixer::on_generate_samples(void *s, byte *samples, int len) {
-	((SoundMixer*)s)->mix((int16*)samples, len>>2);
+void SoundMixer::on_generate_samples(void *s, byte *samples, int len)
+{
+	((SoundMixer *)s)->mix((int16 *)samples, len >> 2);
 }
 
-bool SoundMixer::bind_to_system(OSystem *syst) {	
-	_volume_table = (int16*)calloc(256*sizeof(int16),1);
-		
-	uint rate = (uint)syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
+bool SoundMixer::bind_to_system(OSystem *syst)
+{
+	_volume_table = (int16 *)calloc(256 * sizeof(int16), 1);
+
+	uint rate = (uint) syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
 
 	_output_rate = rate;
-	
+
 	_syst = syst;
 	_mutex = _syst->create_mutex();
 
@@ -143,56 +156,67 @@ bool SoundMixer::bind_to_system(OSystem *syst) {
 	return syst->set_sound_proc(this, on_generate_samples, OSystem::SOUND_16BIT);
 }
 
-void SoundMixer::stop_all() {
-	for(int i=0; i!=NUM_CHANNELS; i++)
+void SoundMixer::stop_all()
+{
+	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			_channels[i]->destroy();
 }
 
-void SoundMixer::stop(PlayingSoundHandle psh) {
-	if (psh && _channels[psh-1])
-		_channels[psh-1]->destroy();
+void SoundMixer::stop(PlayingSoundHandle psh)
+{
+	if (psh && _channels[psh - 1])
+		_channels[psh - 1]->destroy();
 }
 
-void SoundMixer::stop(int index) {
+void SoundMixer::stop(int index)
+{
 	if (_channels[index])
 		_channels[index]->destroy();
 }
 
-void SoundMixer::pause(bool paused) {
-        _paused = paused;
+void SoundMixer::pause(bool paused)
+{
+	_paused = paused;
 }
 
-bool SoundMixer::has_active_channel() {
-	for(int i=0; i!=NUM_CHANNELS; i++)
+bool SoundMixer::has_active_channel()
+{
+	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			return true;
 	return false;
 }
 
-void SoundMixer::setup_premix(void *param, PremixProc *proc) {
+void SoundMixer::setup_premix(void *param, PremixProc *proc)
+{
 	_premix_param = param;
 	_premix_proc = proc;
 }
 
-void SoundMixer::set_volume(int volume) {
-	for(int i=0; i!=256; i++)
-		_volume_table[i] =((int8)i) * volume;
+void SoundMixer::set_volume(int volume)
+{
+	for (int i = 0; i != 256; i++)
+		_volume_table[i] = ((int8)i) * volume;
 }
 
 #ifdef COMPRESSED_SOUND_FILE
-bool SoundMixer::Channel::sound_finished() {
+bool SoundMixer::Channel::sound_finished()
+{
 	warning("sound_finished should never be called on a non-MP3 mixer ");
 	return false;
 }
 #endif
 
-void SoundMixer::Channel::append(void *sound, uint32 size) {
+void SoundMixer::Channel::append(void *sound, uint32 size)
+{
 	error("append method should never be called on something else than a _STREAM mixer ");
 }
 
 /* RAW mixer */
-SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags) {
+SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate,
+																		 byte flags)
+{
 	_mixer = mixer;
 	_flags = flags;
 	_ptr = sound;
@@ -204,15 +228,19 @@ SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size
 
 	/* adjust the magnitute to prevent division error */
 	while (size & 0xFFFF0000)
-		size >>= 1, rate = (rate>>1) + 1;
+		size >>= 1, rate = (rate >> 1) + 1;
 
 	_rate = rate;
 	_size = size * mixer->_output_rate / rate;
-	if (_flags & FLAG_16BITS) _size = _size >> 1;
-	if (_flags & FLAG_STEREO) _size = _size >> 1;
+	if (_flags & FLAG_16BITS)
+		_size = _size >> 1;
+	if (_flags & FLAG_STEREO)
+		_size = _size >> 1;
 }
 
-static int16 *mix_signed_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) {
+static int16 *mix_signed_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+																int fp_speed, const int16 *vol_tab, byte *s_end)
+{
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -230,7 +258,9 @@ static int16 *mix_signed_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32
 
 	return data;
 }
-static int16 *mix_unsigned_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) {
+static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+																	int fp_speed, const int16 *vol_tab, byte *s_end)
+{
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -248,12 +278,16 @@ static int16 *mix_unsigned_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint
 
 	return data;
 }
-static int16 *mix_signed_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) {
+static int16 *mix_signed_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+																	int fp_speed, const int16 *vol_tab, byte *s_end)
+{
 	warning("Mixing stereo signed 8 bit is not supported yet ");
 
 	return data;
 }
-static int16 *mix_unsigned_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) {
+static int16 *mix_unsigned_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+																		int fp_speed, const int16 *vol_tab, byte *s_end)
+{
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -271,9 +305,11 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, ui
 
 	return data;
 }
-static int16 *mix_signed_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) {
+static int16 *mix_signed_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+																 int fp_speed, const int16 *vol_tab, byte *s_end)
+{
 	uint32 fp_pos = *fp_pos_ptr;
-	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
+	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
 	do {
@@ -291,19 +327,23 @@ static int16 *mix_signed_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint3
 
 	return data;
 }
-static int16 *mix_unsigned_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) {
+static int16 *mix_unsigned_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+																	 int fp_speed, const int16 *vol_tab, byte *s_end)
+{
 	warning("Mixing mono unsigned 16 bit is not supported yet ");
 
 	return data;
 }
-static int16 *mix_signed_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) {
+static int16 *mix_signed_stereo_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+																	 int fp_speed, const int16 *vol_tab, byte *s_end)
+{
 	uint32 fp_pos = *fp_pos_ptr;
-	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
+	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
 	do {
 		fp_pos += fp_speed;
-		*data++ += (((int16)(*(s    ) << 8) | *(s + 1)) * volume) / 32;
+		*data++ += (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32;
 		*data++ += (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32;
 		s += (fp_pos >> 16) << 2;
 		fp_pos &= 0x0000FFFF;
@@ -315,24 +355,22 @@ static int16 *mix_signed_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uin
 
 	return data;
 }
-static int16 *mix_unsigned_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) {
+static int16 *mix_unsigned_stereo_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+																		 int fp_speed, const int16 *vol_tab, byte *s_end)
+{
 	warning("Mixing stereo unsigned 16 bit is not supported yet ");
 
 	return data;
 }
 
-static int16 *(*mixer_helper_table[16])(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab, byte *s_end) = {
-	mix_signed_mono_8,
-	mix_unsigned_mono_8,
-	mix_signed_stereo_8,
-	mix_unsigned_stereo_8,
-	mix_signed_mono_16,
-	mix_unsigned_mono_16,
-	mix_signed_stereo_16,
-	mix_unsigned_stereo_16
-};
+static int16 *(*mixer_helper_table[16]) (int16 *data, uint * len_ptr, byte **s_ptr,
+																				 uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab,
+																				 byte *s_end) = {
+mix_signed_mono_8, mix_unsigned_mono_8, mix_signed_stereo_8, mix_unsigned_stereo_8,
+		mix_signed_mono_16, mix_unsigned_mono_16, mix_signed_stereo_16, mix_unsigned_stereo_16};
 
-void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
+void SoundMixer::Channel_RAW::mix(int16 *data, uint len)
+{
 	byte *s, *s_org = NULL;
 	uint32 fp_pos;
 	byte *end;
@@ -353,29 +391,29 @@ void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 		/* determine how many samples to read from the file */
 		uint num = len * _fp_speed >> 16;
 
-		s_org = (byte*)malloc(num);
+		s_org = (byte *)malloc(num);
 		if (s_org == NULL)
 			error("Channel_RAW::mix out of memory");
-		
-		uint num_read = fread(s_org, 1, num, (FILE*)_ptr);
+
+		uint num_read = fread(s_org, 1, num, (FILE *) _ptr);
 		if (num - num_read != 0)
 			memset(s_org + num_read, 0x80, num - num_read);
-				
+
 		s = s_org;
 		fp_pos = 0;
 		end = s_org + num;
 	} else {
-		s = (byte*)_ptr + _pos;
+		s = (byte *)_ptr + _pos;
 		fp_pos = _fp_pos;
-		end = (byte *) _ptr + _realsize;
+		end = (byte *)_ptr + _realsize;
 	}
 
 	const uint32 fp_speed = _fp_speed;
 	const int16 *vol_tab = _mixer->_volume_table;
 
-	mixer_helper_table[_flags & 0x07](data, &len, &s, &fp_pos, fp_speed, vol_tab, end);
+	mixer_helper_table[_flags & 0x07] (data, &len, &s, &fp_pos, fp_speed, vol_tab, end);
 
-	_pos = s - (byte*) _ptr;
+	_pos = s - (byte *)_ptr;
 	_fp_pos = fp_pos;
 
 	if (_flags & FLAG_FILE) {
@@ -387,7 +425,8 @@ void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 
 }
 
-void SoundMixer::Channel_RAW::real_destroy() {
+void SoundMixer::Channel_RAW::real_destroy()
+{
 	if (_flags & FLAG_AUTOFREE)
 		free(_ptr);
 	_mixer->uninsert(this);
@@ -395,11 +434,13 @@ void SoundMixer::Channel_RAW::real_destroy() {
 }
 
 /* STREAM mixer */
-SoundMixer::Channel_STREAM::Channel_STREAM(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags) {
+SoundMixer::Channel_STREAM::Channel_STREAM(SoundMixer *mixer, void *sound, uint32 size, uint rate,
+																					 byte flags)
+{
 	_mixer = mixer;
 	_flags = flags;
 	_buffer_size = 1024 * size;
-	_ptr = (byte *) malloc(_buffer_size);
+	_ptr = (byte *)malloc(_buffer_size);
 	memcpy(_ptr, sound, size);
 	_end_of_data = _ptr + size;
 	if (_flags & FLAG_AUTOFREE)
@@ -411,36 +452,37 @@ SoundMixer::Channel_STREAM::Channel_STREAM(SoundMixer *mixer, void *sound, uint3
 
 	/* adjust the magnitute to prevent division error */
 	while (size & 0xFFFF0000)
-		size >>= 1, rate = (rate>>1) + 1;
+		size >>= 1, rate = (rate >> 1) + 1;
 
 
 	_rate = rate;
 }
 
-void SoundMixer::Channel_STREAM::append(void *data, uint32 len) {   
+void SoundMixer::Channel_STREAM::append(void *data, uint32 len)
+{
 	byte *new_end = _end_of_data + len;
-	byte *cur_pos = _pos; /* This is just to prevent the variable to move during the tests :-) */
+	byte *cur_pos = _pos;					/* This is just to prevent the variable to move during the tests :-) */
 	if (new_end > (_ptr + _buffer_size)) {
 		/* Wrap-around case */
-		if ((_end_of_data < cur_pos) ||
-		    (new_end >= cur_pos)) {
+		if ((_end_of_data < cur_pos) || (new_end >= cur_pos)) {
 			warning("Mixer full... Trying to not break too much ");
-			return;	
+			return;
 		}
 		memcpy(_end_of_data, data, (_ptr + _buffer_size) - _end_of_data);
-		memcpy(_ptr, (byte *) data + ((_ptr + _buffer_size) - _end_of_data), len - ((_ptr + _buffer_size) - _end_of_data));
+		memcpy(_ptr, (byte *)data + ((_ptr + _buffer_size) - _end_of_data),
+					 len - ((_ptr + _buffer_size) - _end_of_data));
 	} else {
-		if ((_end_of_data < cur_pos) &&
-		    (new_end >= cur_pos)) {
+		if ((_end_of_data < cur_pos) && (new_end >= cur_pos)) {
 			warning("Mixer full... Trying to not break too much ");
-			return;		
+			return;
 		}
 		memcpy(_end_of_data, data, len);
 	}
 	_end_of_data = new_end;
 }
 
-void SoundMixer::Channel_STREAM::mix(int16 *data, uint len) {
+void SoundMixer::Channel_STREAM::mix(int16 *data, uint len)
+{
 	uint32 fp_pos;
 	const uint32 fp_speed = _fp_speed;
 	const int16 *vol_tab = _mixer->_volume_table;
@@ -454,16 +496,18 @@ void SoundMixer::Channel_STREAM::mix(int16 *data, uint len) {
 	fp_pos = _fp_pos;
 
 	if (_pos < end_of_data) {
-		mixer_helper_table[_flags & 0x07](data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
+		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
 	} else {
-		mixer_helper_table[_flags & 0x07](data, &len, &_pos, &fp_pos, fp_speed, vol_tab, _ptr + _buffer_size);
+		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab,
+																			 _ptr + _buffer_size);
 		if (len != 0) {
 			_pos = _ptr;
-			mixer_helper_table[_flags & 0x07](data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);			
+			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab,
+																				 end_of_data);
 		} else
 			_to_be_destroyed = true;
-	}	
-	if (len != 0) {		
+	}
+	if (len != 0) {
 		// FIXME: BBrox, what does this mean? :)
 		//        Commented by Ender to remove non-existant
 		//        streamer bug in Dig smush movies.
@@ -474,7 +518,8 @@ void SoundMixer::Channel_STREAM::mix(int16 *data, uint len) {
 	_fp_pos = fp_pos;
 }
 
-void SoundMixer::Channel_STREAM::real_destroy() {
+void SoundMixer::Channel_STREAM::real_destroy()
+{
 	free(_ptr);
 	_mixer->uninsert(this);
 	delete this;
@@ -484,7 +529,8 @@ void SoundMixer::Channel_STREAM::real_destroy() {
 
 /* MP3 mixer goes here */
 #ifdef COMPRESSED_SOUND_FILE
-SoundMixer::Channel_MP3::Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags) {
+SoundMixer::Channel_MP3::Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags)
+{
 	_mixer = mixer;
 	_flags = flags;
 	_pos_in_frame = 0xFFFFFFFF;
@@ -492,7 +538,7 @@ SoundMixer::Channel_MP3::Channel_MP3(SoundMixer *mixer, void *sound, uint size, 
 	_size = size;
 	_ptr = sound;
 	_to_be_destroyed = false;
-	
+
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
 	// 11 kHz on WinCE
@@ -530,10 +576,11 @@ static inline int scale_sample(mad_fixed_t sample)
 	return sample >> (MAD_F_FRACBITS + 2 - 16);
 }
 
-void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
+void SoundMixer::Channel_MP3::mix(int16 *data, uint len)
+{
 	mad_fixed_t const *ch;
 	const int16 *vol_tab = _mixer->_volume_table;
-	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
+	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
 
 	if (_to_be_destroyed) {
 		real_destroy();
@@ -546,7 +593,7 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 			if (_silence_cut > 0) {
 				_silence_cut--;
 			} else {
-				int16 sample = (int16) ((scale_sample(*ch++) * volume) / 32);
+				int16 sample = (int16)((scale_sample(*ch++) * volume) / 32);
 				*data++ += sample;
 				*data++ += sample;
 				len--;
@@ -555,13 +602,14 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 		}
 		if (len == 0)
 			return;
-		
+
 		if (_position >= _size) {
 			real_destroy();
 			return;
 		}
 
-		mad_stream_buffer(&_stream, ((unsigned char *)_ptr) + _position, _size + MAD_BUFFER_GUARD - _position);
+		mad_stream_buffer(&_stream, ((unsigned char *)_ptr) + _position,
+											_size + MAD_BUFFER_GUARD - _position);
 
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
 			/* End of audio... */
@@ -578,7 +626,8 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 	}
 }
 
-void SoundMixer::Channel_MP3::real_destroy() {
+void SoundMixer::Channel_MP3::real_destroy()
+{
 	if (_flags & FLAG_AUTOFREE)
 		free(_ptr);
 	_mixer->uninsert(this);
@@ -592,7 +641,9 @@ void SoundMixer::Channel_MP3::real_destroy() {
 /* MP3 CD music */
 #define MP3CD_BUFFERING_SIZE 131072
 
-SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, mad_timer_t duration) {
+SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE * file,
+																										 mad_timer_t duration)
+{
 	_mixer = mixer;
 	_file = file;
 	_duration = duration;
@@ -610,11 +661,12 @@ SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* fi
 	mad_synth_init(&_synth);
 }
 
-void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
+void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len)
+{
 	mad_fixed_t const *ch;
 	mad_timer_t frame_duration;
 	const int16 *vol_tab = _mixer->_volume_table;
-	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
+	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
 
 	if (_to_be_destroyed) {
 		real_destroy();
@@ -624,17 +676,17 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 	if (!_initialized) {
 		int skip_loop;
 		// just skipped
-		memset(_ptr, 0,_buffer_size);
+		memset(_ptr, 0, _buffer_size);
 		_size = fread(_ptr, 1, _buffer_size, _file);
 		if (!_size) {
-				real_destroy();
-				return;
+			real_destroy();
+			return;
 		}
 		// Resync
-		mad_stream_buffer(&_stream,(unsigned char *)_ptr,_size);
+		mad_stream_buffer(&_stream, (unsigned char *)_ptr, _size);
 		skip_loop = 2;
 		while (skip_loop != 0) {
-			if (mad_frame_decode(&_frame,&_stream) == 0) {
+			if (mad_frame_decode(&_frame, &_stream) == 0) {
 				/* Do not decrease duration - see if it's a problem */
 				skip_loop--;
 				if (skip_loop == 0) {
@@ -652,7 +704,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		mad_frame_mute(&_frame);
 		mad_synth_mute(&_synth);
 		// Resume decoding
-		if (mad_frame_decode(&_frame,&_stream) == 0) {
+		if (mad_frame_decode(&_frame, &_stream) == 0) {
 			_pos_in_frame = 0;
 			_initialized = true;
 		} else {
@@ -662,11 +714,11 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		}
 	}
 
-	while(1) {
+	while (1) {
 		// Get samples, play samples ... 
 		ch = _synth.pcm.samples[0] + _pos_in_frame;
 		while ((_pos_in_frame < _synth.pcm.length) && (len > 0)) {
-			int16 sample = (int16) ((scale_sample(*ch++) * volume) / 32);
+			int16 sample = (int16)((scale_sample(*ch++) * volume) / 32);
 			*data++ += sample;
 			*data++ += sample;
 			len--;
@@ -687,12 +739,12 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 
 				if (!_stream.next_frame) {
 					memset(_ptr, 0, _buffer_size + MAD_BUFFER_GUARD);
-					_size =	fread(_ptr, 1, _buffer_size, _file);
+					_size = fread(_ptr, 1, _buffer_size, _file);
 					not_decoded = 0;
 				} else {
 					not_decoded = _stream.bufend - _stream.next_frame;
 					memcpy(_ptr, _stream.next_frame, not_decoded);
-					_size =	fread((unsigned char *)_ptr + not_decoded, 1, _buffer_size - not_decoded, _file);
+					_size = fread((unsigned char *)_ptr + not_decoded, 1, _buffer_size - not_decoded, _file);
 				}
 				_stream.error = (enum mad_error)0;
 				// Restream
@@ -709,11 +761,13 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 	}
 }
 
-bool SoundMixer::Channel_MP3_CDMUSIC::sound_finished() {
+bool SoundMixer::Channel_MP3_CDMUSIC::sound_finished()
+{
 	return mad_timer_compare(_duration, mad_timer_zero) <= 0;
 }
 
-void SoundMixer::Channel_MP3_CDMUSIC::real_destroy() {
+void SoundMixer::Channel_MP3_CDMUSIC::real_destroy()
+{
 	free(_ptr);
 	_mixer->uninsert(this);
 	mad_synth_finish(&_synth);
@@ -725,5 +779,3 @@ void SoundMixer::Channel_MP3_CDMUSIC::real_destroy() {
 
 
 #endif
-
-

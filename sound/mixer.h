@@ -29,20 +29,21 @@
 
 typedef uint32 PlayingSoundHandle;
 class SoundMixer {
-private:	
+private:
 	class Channel {
 	public:
 		bool _to_be_destroyed;
 		virtual void mix(int16 *data, uint len) = 0;
-		void destroy() { _to_be_destroyed = true; }
-		virtual void real_destroy() = 0;
+		void destroy() {
+			_to_be_destroyed = true;
+		} virtual void real_destroy() = 0;
 		virtual void append(void *sound, uint32 size);
 #ifdef COMPRESSED_SOUND_FILE
 		virtual bool sound_finished();
 #endif
 	};
 
-	class Channel_RAW : public Channel {
+	class Channel_RAW:public Channel {
 		SoundMixer *_mixer;
 		void *_ptr;
 		uint32 _pos;
@@ -51,15 +52,15 @@ private:
 		uint32 _fp_pos;
 		uint32 _realsize, _rate;
 		byte _flags;
-		
+
 
 	public:
 		void mix(int16 *data, uint len);
-		Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
+		  Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
 		void real_destroy();
 	};
 
-	class Channel_STREAM : public Channel {
+	class Channel_STREAM:public Channel {
 		SoundMixer *_mixer;
 		byte *_ptr;
 		byte *_end_of_data;
@@ -71,15 +72,15 @@ private:
 		byte _flags;
 
 	public:
-		void append(void *sound, uint32 size);		
+		void append(void *sound, uint32 size);
 		void mix(int16 *data, uint len);
-		Channel_STREAM(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
+		  Channel_STREAM(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
 		void real_destroy();
 	};
 
 #ifdef COMPRESSED_SOUND_FILE
 
-	class Channel_MP3 : public Channel {
+	class Channel_MP3:public Channel {
 		SoundMixer *_mixer;
 		void *_ptr;
 		struct mad_stream _stream;
@@ -93,12 +94,12 @@ private:
 
 	public:
 		void mix(int16 *data, uint len);
-		Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags);
+		  Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags);
 		void real_destroy();
 
 	};
 
-	class Channel_MP3_CDMUSIC : public Channel {
+	class Channel_MP3_CDMUSIC:public Channel {
 		SoundMixer *_mixer;
 		void *_ptr;
 		struct mad_stream _stream;
@@ -108,12 +109,12 @@ private:
 		uint32 _size;
 		uint32 _buffer_size;
 		mad_timer_t _duration;
-		FILE   *_file;
+		FILE *_file;
 		bool _initialized;
 	public:
 		void mix(int16 *data, uint len);
-		Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, mad_timer_t duration);
-		void real_destroy();		
+		  Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE * file, mad_timer_t duration);
+		void real_destroy();
 		bool sound_finished();
 	};
 
@@ -122,11 +123,11 @@ private:
 	static void on_generate_samples(void *s, byte *samples, int len);
 
 public:
-	typedef void PremixProc(void *param, int16 *data, uint len);
+	typedef void PremixProc (void *param, int16 *data, uint len);
 
 	OSystem *_syst;
 	void *_mutex;
-	
+
 	uint _output_rate;
 
 	int16 *_volume_table;
@@ -143,25 +144,26 @@ public:
 	Channel *_channels[NUM_CHANNELS];
 	PlayingSoundHandle *_handles[NUM_CHANNELS];
 
-	int insert(PlayingSoundHandle *handle, Channel *chan);
-	int insert_at(PlayingSoundHandle *handle, int index, Channel *chan);
+	int insert(PlayingSoundHandle *handle, Channel * chan);
+	int insert_at(PlayingSoundHandle *handle, int index, Channel * chan);
 	void append(void *data, uint32 len);
-	void uninsert(Channel *chan);
+	void uninsert(Channel * chan);
 
 	/* start playing a raw sound */
 	enum {
 		/* Do *NOT* change any of these flags without looking at the code in mixer.cpp */
-		FLAG_UNSIGNED   =  1, /* unsigned samples */
-		FLAG_STEREO     =  2, /* sound is in stereo */
-		FLAG_16BITS     =  4, /* sound is 16 bits wide */
-		FLAG_AUTOFREE   =  8, /* sound buffer is freed automagically at the end of playing */
-		FLAG_FILE       = 16, /* sound is a FILE * that's read from */
+		FLAG_UNSIGNED = 1,					/* unsigned samples */
+		FLAG_STEREO = 2,						/* sound is in stereo */
+		FLAG_16BITS = 4,						/* sound is 16 bits wide */
+		FLAG_AUTOFREE = 8,					/* sound buffer is freed automagically at the end of playing */
+		FLAG_FILE = 16,							/* sound is a FILE * that's read from */
 	};
 	int play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
-	int play_stream(PlayingSoundHandle *handle, int index, void *sound, uint32 size, uint rate, byte flags);
+	int play_stream(PlayingSoundHandle *handle, int index, void *sound, uint32 size, uint rate,
+									byte flags);
 #ifdef COMPRESSED_SOUND_FILE
 	int play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
-	int play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, mad_timer_t duration);
+	int play_mp3_cdtrack(PlayingSoundHandle *handle, FILE * file, mad_timer_t duration);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */
@@ -196,16 +198,16 @@ public:
 
 };
 
-struct MP3OffsetTable {	/* Compressed Sound (.SO3) */
+struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 	int org_offset;
 	int new_offset;
 	int num_tags;
 	int compressed_size;
 };
 
-struct BundleAudioTable { /* Dig/CMI .bun audio */
- char filename[13];
- int size;
- int offset;
+struct BundleAudioTable {				/* Dig/CMI .bun audio */
+	char filename[13];
+	int size;
+	int offset;
 };
 #endif /* _mixer_h_included */

@@ -44,14 +44,14 @@
 /* Roland to General Midi patch table. Still needs some work. */
 static const byte mt32_to_gmidi[128] = {
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
-	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
-	  6,   6,   6,   7,   7,   7,   8, 112,  62,  62,  63,  63,  38,  38,  39,  39, // 1x
-	 88,  54,  52,  98,  97,  99,  14,  54, 102,  96,  53, 102,  81, 100,  14,  80, // 2x
-	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
-	 32,  32,  34,  33,  36,  37,  35,  35,  79,  73,  72,  72,  74,  75,  64,  65, // 4x
-	 66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,  57,  60,  60,  58,  61, // 5x
-	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
-	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
+	0, 1, 0, 2, 4, 4, 5, 3, 16, 17, 18, 16, 16, 19, 20, 21,	// 0x
+	6, 6, 6, 7, 7, 7, 8, 112, 62, 62, 63, 63, 38, 38, 39, 39,	// 1x
+	88, 54, 52, 98, 97, 99, 14, 54, 102, 96, 53, 102, 81, 100, 14, 80,	// 2x
+	48, 48, 49, 45, 41, 40, 42, 42, 43, 46, 45, 24, 25, 28, 27, 104,	// 3x
+	32, 32, 34, 33, 36, 37, 35, 35, 79, 73, 72, 72, 74, 75, 64, 65,	// 4x
+	66, 67, 71, 71, 68, 69, 70, 22, 56, 59, 57, 57, 60, 60, 58, 61,	// 5x
+	61, 11, 11, 98, 14, 9, 14, 13, 12, 107, 107, 77, 78, 78, 76, 76,	// 6x
+	47, 117, 127, 118, 118, 116, 115, 119, 115, 112, 55, 124, 123, 0, 14, 117	// 7x
 };
 
 
@@ -69,7 +69,7 @@ struct Instrument;
 
 
 struct HookDatas {
-	byte _jump,_transpose;
+	byte _jump, _transpose;
 	byte _part_onoff[16];
 	byte _part_volume[16];
 	byte _part_program[16];
@@ -94,7 +94,7 @@ struct Player {
 	int8 _detune;
 	uint _vol_chan;
 	byte _vol_eff;
-	
+
 	uint _song_index;
 	uint _track_index;
 	uint _timer_counter;
@@ -104,15 +104,15 @@ struct Player {
 	uint _loop_to_tick;
 	uint _loop_from_tick;
 	uint32 _tempo;
-	uint32 _tempo_eff; /* NoSave */
+	uint32 _tempo_eff;						/* NoSave */
 	uint32 _cur_pos;
 	uint32 _next_pos;
 	uint32 _song_offset;
-	uint32 _timer_speed; /* NoSave */
+	uint32 _timer_speed;					/* NoSave */
 	uint _tick_index;
 	uint _beat_index;
 	uint _ticks_per_beat;
-	byte _speed; /* NoSave */
+	byte _speed;									/* NoSave */
 	bool _abort;
 
 	HookDatas _hook;
@@ -175,21 +175,22 @@ struct VolumeFader {
 	Player *player;
 	bool active;
 	byte curvol;
-	uint16 speed_lo_max,num_steps;
+	uint16 speed_lo_max, num_steps;
 	int8 speed_hi;
 	int8 direction;
 	int8 speed_lo;
 	uint16 speed_lo_counter;
-	
-	void initialize() { active = false; }
-	void on_timer();
+
+	void initialize() {
+		active = false;
+	} void on_timer();
 };
 
 struct SustainingNotes {
 	SustainingNotes *next;
 	SustainingNotes *prev;
 	Player *player;
-	byte note,chan;
+	byte note, chan;
 	uint32 off_pos;
 	uint32 pos;
 	uint16 counter;
@@ -210,12 +211,15 @@ struct IsNoteCmdData {
 
 struct MidiChannel {
 	Part *_part;
-	MidiChannelAdl *adl() { return (MidiChannelAdl*)this; }
-	MidiChannelGM *gm() { return (MidiChannelGM*)this; }
+	MidiChannelAdl *adl() {
+		return (MidiChannelAdl *)this;
+	} MidiChannelGM *gm() {
+		return (MidiChannelGM *) this;
+	}
 };
 
 
-struct MidiChannelGM : MidiChannel {
+struct MidiChannelGM:MidiChannel {
 	byte _chan;
 	uint16 _actives[8];
 };
@@ -229,10 +233,10 @@ struct Part {
 	Player *_player;
 	int16 _pitchbend;
 	byte _pitchbend_factor;
-	int8 _transpose,_transpose_eff;
-	byte _vol,_vol_eff;
-	int8 _detune,_detune_eff;
-	int8 _pan,_pan_eff;
+	int8 _transpose, _transpose_eff;
+	byte _vol, _vol_eff;
+	int8 _detune, _detune_eff;
+	int8 _pan, _pan_eff;
 	bool _on;
 	byte _modwheel;
 	bool _pedal;
@@ -248,13 +252,13 @@ struct Part {
 	void key_on(byte note, byte velocity);
 	void key_off(byte note);
 	void set_param(byte param, int value);
-	void init(IMuseDriver *_driver);
+	void init(IMuseDriver * _driver);
 	void setup(Player *player);
 	void uninit();
 	void off();
 	void silence();
 	void set_instrument(uint b);
-	void set_instrument(Instrument *data);
+	void set_instrument(Instrument * data);
 
 	void set_transpose(int8 transpose);
 	void set_vol(uint8 volume);
@@ -268,7 +272,7 @@ struct Part {
 	void set_program(byte program);
 	void set_chorus(uint chorus);
 	void set_effect_level(uint level);
-	
+
 	int update_actives(uint16 *active);
 	void set_pitchbend_factor(uint8 value);
 	void set_onoff(bool on);
@@ -300,13 +304,13 @@ public:
 	virtual void init(IMuseInternal *eng, OSystem *syst) = 0;
 	virtual void update_pris() = 0;
 	virtual void set_instrument(uint slot, byte *instr) = 0;
-	virtual void part_set_instrument(Part *part, Instrument *instr) = 0;
+	virtual void part_set_instrument(Part *part, Instrument * instr) = 0;
 	virtual void part_key_on(Part *part, byte note, byte velocity) = 0;
 	virtual void part_key_off(Part *part, byte note) = 0;
 	virtual void part_off(Part *part) = 0;
-	virtual void part_changed(Part *part,byte what) = 0;
+	virtual void part_changed(Part *part, byte what) = 0;
 	virtual void part_set_param(Part *part, byte param, int value) = 0;
-	virtual int part_update_active(Part *part,uint16 *active) = 0;
+	virtual int part_update_active(Part *part, uint16 *active) = 0;
 };
 
 
@@ -314,9 +318,9 @@ public:
 // imuse.h contains a public version of the same class.
 // the public version, only contains a set of methods.
 class IMuseInternal {
-friend struct Player;
+	friend struct Player;
 private:
-	IMuseDriver *_driver;
+	  IMuseDriver * _driver;
 
 	byte **_base_sounds;
 
@@ -324,11 +328,11 @@ private:
 	byte _hardware_type;
 
 private:
-	
 
-	bool _paused;
+
+	  bool _paused;
 	bool _active_volume_faders;
-	bool _initialized;	
+	bool _initialized;
 	byte _volume_fader_counter;
 
 	int _game_tempo;
@@ -343,19 +347,19 @@ private:
 	byte _queue_marker;
 	byte _queue_cleared;
 	byte _master_volume;
-	byte _music_volume;	/* Global music volume. Percantage */
+	byte _music_volume;						/* Global music volume. Percantage */
 
 	uint16 _trigger_count;
-	
+
 	uint16 _channel_volume[8];
-	uint16 _channel_volume_eff[8]; /* NoSave */
+	uint16 _channel_volume_eff[8];	/* NoSave */
 	uint16 _volchan_table[8];
-	
+
 	Player _players[8];
 	SustainingNotes _sustaining_notes[24];
 	VolumeFader _volume_fader[8];
 	Part _parts[32];
-	
+
 	uint16 _active_notes[128];
 	CommandQueue _cmd_queue[64];
 
@@ -381,7 +385,7 @@ private:
 	int enqueue_trigger(int sound, int marker);
 	int query_queue(int param);
 	Player *get_player_byid(int id);
-	
+
 	int get_volchan_entry(uint a);
 	int set_volchan_entry(uint a, uint b);
 	int set_channel_volume(uint chan, uint vol);
@@ -401,13 +405,17 @@ private:
 	void unlock();
 
 public:
-	Part *parts_ptr() { return _parts; }
-	IMuseDriver *driver() { return _driver; }
+	Part *parts_ptr() {
+		return _parts;
+	}
+	IMuseDriver *driver() {
+		return _driver;
+	}
 
 	int initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
 
 	/* Public interface */
-	
+
 	void on_timer();
 	void pause(bool paused);
 	int terminate();
@@ -425,7 +433,7 @@ public:
 	void setBase(byte **base);
 
 	uint32 property(int prop, uint32 value);
-	
+
 	static IMuseInternal *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
 };
 
@@ -454,12 +462,12 @@ struct Struct10 {
 
 struct Struct11 {
 	int16 modify_val;
-	byte param,flag0x40,flag0x10;
+	byte param, flag0x40, flag0x10;
 	Struct10 *s10;
 };
 
 struct InstrumentExtra {
-	byte a,b,c,d,e,f,g,h;
+	byte a, b, c, d, e, f, g, h;
 };
 
 struct Instrument {
@@ -481,13 +489,13 @@ struct Instrument {
 	byte duration;
 };
 
-struct MidiChannelAdl : MidiChannel {
-	MidiChannelAdl *_next,*_prev;
+struct MidiChannelAdl:MidiChannel {
+	MidiChannelAdl *_next, *_prev;
 	byte _waitforpedal;
 	byte _note;
 	byte _channel;
 	byte _twochan;
-	byte _vol_1,_vol_2;
+	byte _vol_1, _vol_2;
 	int16 _duration;
 
 	Struct10 _s10a;
@@ -496,7 +504,7 @@ struct MidiChannelAdl : MidiChannel {
 	Struct11 _s11b;
 };
 
-class IMuseAdlib : public IMuseDriver {
+class IMuseAdlib:public IMuseDriver {
 private:
 	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
@@ -518,8 +526,10 @@ private:
 	void adlib_note_on(int chan, byte note, int mod);
 	void adlib_note_on_ex(int chan, byte note, int mod);
 	int adlib_read_param(int chan, byte data);
-	void adlib_setup_channel(int chan, Instrument *instr, byte vol_1, byte vol_2);
-	byte adlib_read(byte port) { return _adlib_reg_cache[port]; }	
+	void adlib_setup_channel(int chan, Instrument * instr, byte vol_1, byte vol_2);
+	byte adlib_read(byte port) {
+		return _adlib_reg_cache[port];
+	}
 	void adlib_set_param(int channel, byte param, int value);
 	void adlib_key_onoff(int channel);
 	void adlib_write(byte port, byte value);
@@ -528,51 +538,58 @@ private:
 	MidiChannelAdl *allocate_midichan(byte pri);
 
 	void reset_tick();
-	void mc_off(MidiChannel *mc);	
+	void mc_off(MidiChannel * mc);
 
 	static void link_mc(Part *part, MidiChannelAdl *mc);
-	static void mc_inc_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 *s11);
-	static void mc_init_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 *s11, byte flags, InstrumentExtra *ie);
-	static void struct10_init(Struct10 *s10, InstrumentExtra *ie);
-	static byte struct10_ontimer(Struct10 *s10, Struct11 *s11);
-	static void struct10_setup(Struct10 *s10);
+	static void mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11);
+	static void mc_init_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11, byte flags,
+														InstrumentExtra * ie);
+	static void struct10_init(Struct10 * s10, InstrumentExtra * ie);
+	static byte struct10_ontimer(Struct10 * s10, Struct11 * s11);
+	static void struct10_setup(Struct10 * s10);
 	static int random_nr(int a);
-	void mc_key_on(MidiChannel *mc, byte note, byte velocity);
+	void mc_key_on(MidiChannel * mc, byte note, byte velocity);
 
 	static void premix_proc(void *param, int16 *buf, uint len);
 
 public:
-	IMuseAdlib(SoundMixer *mixer) { _mixer = mixer; }
+	IMuseAdlib(SoundMixer *mixer) {
+		_mixer = mixer;
+	}
 	void uninit();
 	void init(IMuseInternal *eng, OSystem *syst);
-	void update_pris() { }
-	void generate_samples(int16 *buf, int len);	
-	void on_timer();	
+	void update_pris() {
+	}
+	void generate_samples(int16 *buf, int len);
+	void on_timer();
 	void set_instrument(uint slot, byte *instr);
-	void part_set_instrument(Part *part, Instrument *instr);
+	void part_set_instrument(Part *part, Instrument * instr);
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
 	void part_set_param(Part *part, byte param, int value);
-	void part_changed(Part *part,byte what);
+	void part_changed(Part *part, byte what);
 	void part_off(Part *part);
-	int part_update_active(Part *part,uint16 *active);
-	void adjust_priorities() {}
+	int part_update_active(Part *part, uint16 *active);
+	void adjust_priorities() {
+	}
 
-	uint32 get_base_tempo() { 
+	uint32 get_base_tempo() {
 #ifdef _WIN32_WCE
-		return 0x1F0000 * 2;	// Sampled down to 11 kHz
-#else //_WIN32_WCE
-		return 0x1F0000;			// Was: 0x1924E0;
+		return 0x1F0000 * 2;				// Sampled down to 11 kHz
+#else	//_WIN32_WCE
+		return 0x1F0000;						// Was: 0x1924E0;
 #endif //_WIN32_WCE
 	}
 
-	byte get_hardware_type() { return 1; }
+	byte get_hardware_type() {
+		return 1;
+	}
 };
 
 
 /* IMuseGM classes */
 
-class IMuseGM : public IMuseDriver {	
+class IMuseGM:public IMuseDriver {
 	IMuseInternal *_se;
 	OSystem *_system;
 	MidiDriver *_md;
@@ -602,26 +619,34 @@ class IMuseGM : public IMuseDriver {
 	void midiInit();
 
 public:
-	IMuseGM(MidiDriver *midi) { _md = midi; }
-
-	void uninit();
+	  IMuseGM(MidiDriver *midi) {
+		_md = midi;
+	} void uninit();
 	void init(IMuseInternal *eng, OSystem *os);
 	void update_pris();
 	void part_off(Part *part);
-	int part_update_active(Part *part,uint16 *active);
+	int part_update_active(Part *part, uint16 *active);
 
-	void on_timer() {}
-	void set_instrument(uint slot, byte *instr) {}
-	void part_set_instrument(Part *part, Instrument *instr) {}
-	void part_set_param(Part *part, byte param, int value) {}
+	void on_timer() {
+	}
+	void set_instrument(uint slot, byte *instr) {
+	}
+	void part_set_instrument(Part *part, Instrument * instr) {
+	}
+	void part_set_param(Part *part, byte param, int value) {
+	}
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
-	void part_changed(Part *part,byte what);
+	void part_changed(Part *part, byte what);
 
 	static int midi_driver_thread(void *param);
 
-	uint32 get_base_tempo() { return 0x460000; }
-	byte get_hardware_type() { return 5; }
+	uint32 get_base_tempo() {
+		return 0x460000;
+	}
+	byte get_hardware_type() {
+		return 5;
+	}
 };
 
 
@@ -756,8 +781,8 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index)
 		ptr = _base_sounds[sound];
 
 	if (ptr == NULL) {
-	//	debug(1, "IMuseInternal::findTag completely failed finding sound %d",
-	//				sound);
+		//  debug(1, "IMuseInternal::findTag completely failed finding sound %d",
+		//        sound);
 		return NULL;
 
 	}
@@ -767,13 +792,13 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index)
 	ptr += 4;
 
 	pos = 0;
-	
+
 	while (pos < size) {
 		if (!memcmp(ptr + pos, tag, 4) && !index--)
 			return ptr + pos + 8;
 		pos += READ_BE_UINT32_UNALIGNED(ptr + pos + 4) + 8;
 	}
-	
+
 	debug(1, "IMuseInternal::findTag failed finding sound %d", sound);
 	return NULL;
 }
@@ -789,7 +814,7 @@ bool IMuseInternal::isMT32(int sound)
 	if (ptr == NULL)
 		return false;
 
-	tag = *(((uint32 *)ptr)+1);
+	tag = *(((uint32 *)ptr) + 1);
 	switch (tag) {
 	case MKID('ADL '):
 		return false;
@@ -802,7 +827,7 @@ bool IMuseInternal::isMT32(int sound)
 	case MKID('SPK '):
 		return false;
 	}
-	
+
 	return false;
 }
 
@@ -1139,8 +1164,7 @@ int IMuseInternal::set_volchan(int sound, int volchan)
 
 	if (r >= 8) {
 		for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-			if (player->_active && player->_id == (uint16)sound
-					&& player->_vol_chan != (uint16)volchan) {
+			if (player->_active && player->_id == (uint16)sound && player->_vol_chan != (uint16)volchan) {
 				player->_vol_chan = volchan;
 				player->set_vol(player->_volume);
 				return 0;
@@ -1182,8 +1206,7 @@ int IMuseInternal::clear_queue()
 	return 0;
 }
 
-int IMuseInternal::enqueue_command(int a, int b, int c, int d, int e, int f,
-																 int g)
+int IMuseInternal::enqueue_command(int a, int b, int c, int d, int e, int f, int g)
 {
 	uint16 *p;
 	uint i;
@@ -1265,7 +1288,7 @@ int IMuseInternal::set_master_volume(uint vol)
 		vol = vol / (100 / _music_volume);
 
 	_master_volume = vol;
-//	_s->_sound_volume_master = vol;
+//  _s->_sound_volume_master = vol;
 	for (i = 0; i != 8; i++)
 		_channel_volume_eff[i] = (_channel_volume[i] + 1) * vol >> 7;
 	update_volumes();
@@ -1309,8 +1332,7 @@ int IMuseInternal::enqueue_trigger(int sound, int marker)
 	return 0;
 }
 
-int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
-															int h)
+int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g, int h)
 {
 	byte cmd = a & 0xFF;
 	byte param = a >> 8;
@@ -1330,32 +1352,32 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 9:
 			return stop_sound(b);
 		case 10:
-			return stop_all_sounds(); //FIXME: Sam and Max unknown
+			return stop_all_sounds();	//FIXME: Sam and Max unknown
 		case 11:
 			return stop_all_sounds();
 		case 13:
-			return get_sound_status(b);		
-		case 14: {  // FIXME: Sam and Max command - Total guess
-			int i;	//		  Seems to work as a volume fader
-			Player *player;
+			return get_sound_status(b);
+		case 14:{									// FIXME: Sam and Max command - Total guess
+				int i;									//      Seems to work as a volume fader
+				Player *player;
 
-			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-				if (player->_active && player->_id == (uint16)b) {
-					player->fade_vol(e, f);
-					return 0;
+				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+					if (player->_active && player->_id == (uint16)b) {
+						player->fade_vol(e, f);
+						return 0;
+					}
 				}
-			}			
-		}
-		case 15: {	// FIXME: Sam and Max command - Total guess
-			int i;	//		  Something to do with position?
-			Player *player;			
-			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-				if (player->_active && player->_id == (uint16)b) {								
-					player->jump(player->_track_index+1, 0, 0);
-					return 0;
+			}
+		case 15:{									// FIXME: Sam and Max command - Total guess
+				int i;									//      Something to do with position?
+				Player *player;
+				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+					if (player->_active && player->_id == (uint16)b) {
+						player->jump(player->_track_index + 1, 0, 0);
+						return 0;
+					}
 				}
-			}			
-		}
+			}
 
 		case 16:
 			return set_volchan(b, c);
@@ -1364,9 +1386,9 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 18:
 			return set_volchan_entry(b, c);
 		case 19:
-			return stop_sound(b); //FIXME: Sam and Max unknown
+			return stop_sound(b);			//FIXME: Sam and Max unknown
 		case 20:
-			return stop_sound(b); //FIXME: Sam and Max unknown
+			return stop_sound(b);			//FIXME: Sam and Max unknown
 		case 2:
 		case 3:
 			return 0;
@@ -1579,8 +1601,9 @@ int IMuseInternal::get_volchan_entry(uint a)
 	return -1;
 }
 
-uint32 IMuseInternal::property(int prop, uint32 value) {
-	switch(prop) {
+uint32 IMuseInternal::property(int prop, uint32 value)
+{
+	switch (prop) {
 	case IMuse::PROP_TEMPO_BASE:
 		_game_tempo = value;
 		break;
@@ -1588,12 +1611,14 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	return 0;
 }
 
-void IMuseInternal::setBase(byte **base) {
+void IMuseInternal::setBase(byte **base)
+{
 	_base_sounds = base;
 }
 
 
-IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
+IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
+{
 	IMuseInternal *i = new IMuseInternal;
 	i->initialize(syst, midi, mixer);
 	return i;
@@ -1603,7 +1628,7 @@ IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *midi, SoundMixer
 int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 {
 	int i;
-	
+
 	IMuseDriver *driv;
 
 	if (midi == NULL) {
@@ -1615,8 +1640,8 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer
 	_driver = driv;
 	_hardware_type = driv->get_hardware_type();
 	_game_tempo = driv->get_base_tempo();
-	
-	driv->init(this,syst);
+
+	driv->init(this, syst);
 
 	_master_volume = 127;
 	if (_music_volume < 1)
@@ -1788,7 +1813,7 @@ void Player::set_tempo(uint32 b)
 	uint32 i, j;
 
 	i = _se->_game_tempo;
-	
+
 	j = _tempo = b;
 
 	while (i & 0xFFFF0000 || j & 0xFFFF0000) {
@@ -2056,8 +2081,7 @@ void Player::parse_sysex(byte *p, uint len)
 	case 80:											/* loop */
 		decode_sysex_bytes(p + 1, buf, len - 2);
 		set_loop(read_word(buf),
-						 read_word(buf + 2),
-						 read_word(buf + 4), read_word(buf + 6), read_word(buf + 8)
+						 read_word(buf + 2), read_word(buf + 4), read_word(buf + 6), read_word(buf + 8)
 			);
 		break;
 
@@ -2067,9 +2091,7 @@ void Player::parse_sysex(byte *p, uint len)
 
 	case 96:											/* set instrument */
 		part = get_part(p[0] & 0x0F);
-		b =
-			(p[1] & 0x0F) << 12 | (p[2] & 0x0F) << 8 | (p[4] & 0x0F) << 4 | (p[4] &
-																																			 0x0F);
+		b = (p[1] & 0x0F) << 12 | (p[2] & 0x0F) << 8 | (p[4] & 0x0F) << 4 | (p[4] & 0x0F);
 		if (part)
 			part->set_instrument(b);
 		break;
@@ -2119,7 +2141,7 @@ void Player::maybe_set_transpose(byte *data)
 	if (cmd != 0 && cmd < 0x80)
 		_hook._transpose = 0;
 
-	set_transpose(data[1], (int8) data[2]);
+	set_transpose(data[1], (int8)data[2]);
 }
 
 void Player::maybe_part_onoff(byte *data)
@@ -2213,7 +2235,7 @@ void Player::maybe_set_transpose_part(byte *data)
 	if (cmd != 0 && cmd < 0x80)
 		*p = 0;
 
-	part_set_transpose(chan, data[2], (int8) data[3]);
+	part_set_transpose(chan, data[2], (int8)data[3]);
 }
 
 int Player::set_transpose(byte relative, int b)
@@ -2329,8 +2351,7 @@ bool Player::jump(uint track, uint beat, uint tick)
 
 	turn_off_pedals();
 
-	find_sustaining_notes(cur_mtrk + _song_offset, mtrk + track_offs,
-												curpos - topos);
+	find_sustaining_notes(cur_mtrk + _song_offset, mtrk + track_offs, curpos - topos);
 
 	_beat_index = beat;
 	_tick_index = tick;
@@ -2347,8 +2368,7 @@ bool Player::jump(uint track, uint beat, uint tick)
 	return true;
 }
 
-bool Player::set_loop(uint count, uint tobeat, uint totick, uint frombeat,
-											uint fromtick)
+bool Player::set_loop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick)
 {
 	if (tobeat + 1 >= frombeat)
 		return false;
@@ -2396,7 +2416,7 @@ void Player::find_sustaining_notes(byte *a, byte *b, uint32 l)
 
 	/* pos contains number of ticks since current position */
 	pos = _next_pos - _cur_pos;
-	if ((int32) pos < 0)
+	if ((int32)pos < 0)
 		pos = 0;
 
 	/* locate the positions where the notes are turned off.
@@ -2459,8 +2479,7 @@ void Player::find_sustaining_notes(byte *a, byte *b, uint32 l)
 				sn = _se->_sustain_notes_used;
 				while (sn) {
 					next = sn->next;
-					if (sn->note == isnote.note && sn->chan == isnote.chan
-							&& pos < sn->off_pos) {
+					if (sn->note == isnote.note && sn->chan == isnote.chan && pos < sn->off_pos) {
 						*bitlist_ptr &= ~mask;
 						/* Unlink from the sustain list */
 						if (next)
@@ -2747,8 +2766,7 @@ void Player::sequencer_timer()
 		_beat_index += _tick_index / _ticks_per_beat;
 		_tick_index %= _ticks_per_beat;
 	}
-	if (_loop_counter && _beat_index >= _loop_from_beat
-			&& _tick_index >= _loop_from_tick) {
+	if (_loop_counter && _beat_index >= _loop_from_beat && _tick_index >= _loop_from_tick) {
 		_loop_counter--;
 		jump(_track_index, _loop_to_beat, _loop_to_tick);
 	}
@@ -2811,7 +2829,7 @@ void *IMuseInternal::loadReference(IMuseInternal *me, byte type, int ref)
 	}
 }
 
-int IMuseInternal::save_or_load(Serializer * ser, Scumm *scumm)
+int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 {
 	const SaveLoadEntry mainEntries[] = {
 		MKLINE(IMuseInternal, _queue_end, sleUint8),
@@ -2908,14 +2926,11 @@ int IMuseInternal::save_or_load(Serializer * ser, Scumm *scumm)
 #endif
 
 	ser->_ref_me = this;
-	ser->_saveload_ref =
-		ser->isSaving()? ((void *)&saveReference) : ((void *)&loadReference);
+	ser->_saveload_ref = ser->isSaving()? ((void *)&saveReference) : ((void *)&loadReference);
 
 	ser->saveLoadEntries(this, mainEntries);
-	ser->saveLoadArrayOf(_players, ARRAYSIZE(_players), sizeof(_players[0]),
-											 playerEntries);
-	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]),
-											 partEntries);
+	ser->saveLoadArrayOf(_players, ARRAYSIZE(_players), sizeof(_players[0]), playerEntries);
+	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]), partEntries);
 	ser->saveLoadArrayOf(_volume_fader, ARRAYSIZE(_volume_fader),
 											 sizeof(_volume_fader[0]), volumeFaderEntries);
 
@@ -2992,8 +3007,7 @@ void Part::set_pan(int8 pan)
 
 void Part::set_transpose(int8 transpose)
 {
-	_transpose_eff = transpose_clamp((_transpose = transpose) +
-																	 _player->_transpose, -12, 12);
+	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->_transpose, -12, 12);
 	changed(IMuseDriver::pcMod);
 }
 
@@ -3259,8 +3273,9 @@ MidiChannelAdl *IMuseAdlib::allocate_midichan(byte pri)
 	return best;
 }
 
-void IMuseAdlib::premix_proc(void *param, int16 *buf, uint len) {
-	((IMuseAdlib*)param)->generate_samples(buf, len);
+void IMuseAdlib::premix_proc(void *param, int16 *buf, uint len)
+{
+	((IMuseAdlib *) param)->generate_samples(buf, len);
 }
 
 void IMuseAdlib::init(IMuseInternal *eng, OSystem *syst)
@@ -3278,7 +3293,7 @@ void IMuseAdlib::init(IMuseInternal *eng, OSystem *syst)
 
 	_adlib_reg_cache = (byte *)calloc(256, 1);
 
-	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, syst->property(OSystem::PROP_GET_SAMPLE_RATE,0));
+	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0));
 
 	adlib_write(1, 0x20);
 	adlib_write(8, 0x40);
@@ -3493,8 +3508,7 @@ void IMuseAdlib::adlib_key_onoff(int channel)
 	adlib_write(port, val | 0x20);
 }
 
-void IMuseAdlib::adlib_setup_channel(int chan, Instrument * instr,
-																					 byte vol_1, byte vol_2)
+void IMuseAdlib::adlib_setup_channel(int chan, Instrument * instr, byte vol_1, byte vol_2)
 {
 	byte port;
 
@@ -3551,7 +3565,7 @@ int IMuseAdlib::adlib_read_param(int chan, byte param)
 	return val;
 }
 
-void IMuseAdlib::generate_samples(int16 * data, int len)
+void IMuseAdlib::generate_samples(int16 *data, int len)
 {
 	int step;
 
@@ -3759,8 +3773,7 @@ void IMuseAdlib::struct10_init(Struct10 * s10, InstrumentExtra * ie)
 }
 
 void IMuseAdlib::mc_init_stuff(MidiChannelAdl *mc, Struct10 * s10,
-																		 Struct11 * s11, byte flags,
-																		 InstrumentExtra * ie)
+															 Struct11 * s11, byte flags, InstrumentExtra * ie)
 {
 	Part *part = mc->_part;
 
@@ -3793,14 +3806,13 @@ void IMuseAdlib::mc_init_stuff(MidiChannelAdl *mc, Struct10 * s10,
 		s11->s10->unk3 = 0;
 		break;
 	default:
-		s10->start_value = ((IMuseAdlib*)part->_drv)->adlib_read_param(mc->_channel, s11->param);
+		s10->start_value = ((IMuseAdlib *) part->_drv)->adlib_read_param(mc->_channel, s11->param);
 	}
 
 	struct10_init(s10, ie);
 }
 
-void IMuseAdlib::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10,
-																		Struct11 * s11)
+void IMuseAdlib::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11)
 {
 	byte code;
 	Part *part = mc->_part;
@@ -3811,18 +3823,18 @@ void IMuseAdlib::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10,
 		switch (s11->param) {
 		case 0:
 			mc->_vol_2 = s10->start_value + s11->modify_val;
-			((IMuseAdlib*)part->_drv)->adlib_set_param(mc->_channel, 0,
-																	volume_table[lookup_table[mc->_vol_2]
-																							 [part->_vol_eff >> 2]]);
+			((IMuseAdlib *) part->_drv)->adlib_set_param(mc->_channel, 0,
+																									 volume_table[lookup_table[mc->_vol_2]
+																																[part->_vol_eff >> 2]]);
 			break;
 		case 13:
 			mc->_vol_1 = s10->start_value + s11->modify_val;
 			if (mc->_twochan) {
-				((IMuseAdlib*)part->_drv)->adlib_set_param(mc->_channel, 13,
-																		volume_table[lookup_table[mc->_vol_1]
-																								 [part->_vol_eff >> 2]]);
+				((IMuseAdlib *) part->_drv)->adlib_set_param(mc->_channel, 13,
+																										 volume_table[lookup_table[mc->_vol_1]
+																																	[part->_vol_eff >> 2]]);
 			} else {
-				((IMuseAdlib*)part->_drv)->adlib_set_param(mc->_channel, 13, mc->_vol_1);
+				((IMuseAdlib *) part->_drv)->adlib_set_param(mc->_channel, 13, mc->_vol_1);
 			}
 			break;
 		case 30:
@@ -3832,14 +3844,14 @@ void IMuseAdlib::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10,
 			s11->s10->unk3 = (char)s11->modify_val;
 			break;
 		default:
-			((IMuseAdlib*)part->_drv)->adlib_set_param(mc->_channel, s11->param,
-																	s10->start_value + s11->modify_val);
+			((IMuseAdlib *) part->_drv)->adlib_set_param(mc->_channel, s11->param,
+																									 s10->start_value + s11->modify_val);
 			break;
 		}
 	}
 
 	if (code & 2 && s11->flag0x10)
-		((IMuseAdlib*)part->_drv)->adlib_key_onoff(mc->_channel);
+		((IMuseAdlib *) part->_drv)->adlib_key_onoff(mc->_channel);
 }
 
 void IMuseAdlib::part_changed(Part *part, byte what)
@@ -3864,9 +3876,8 @@ void IMuseAdlib::part_changed(Part *part, byte what)
 			adlib_set_param(mc->_channel, 0, volume_table[lookup_table[mc->_vol_2]
 																										[part->_vol_eff >> 2]]);
 			if (mc->_twochan) {
-				adlib_set_param(mc->_channel, 13,
-												volume_table[lookup_table[mc->_vol_1]
-																		 [part->_vol_eff >> 2]]);
+				adlib_set_param(mc->_channel, 13, volume_table[lookup_table[mc->_vol_1]
+																											 [part->_vol_eff >> 2]]);
 			}
 		}
 	}
@@ -3905,16 +3916,12 @@ void IMuseAdlib::mc_key_on(MidiChannel * mc2, byte note, byte velocity)
 	if (mc->_duration != 0)
 		mc->_duration *= 63;
 
-	vol_1 =
-		(instr->oplvl_1 & 0x3F) +
-		lookup_table[velocity >> 1][instr->waveform_1 >> 2];
+	vol_1 = (instr->oplvl_1 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_1 >> 2];
 	if (vol_1 > 0x3F)
 		vol_1 = 0x3F;
 	mc->_vol_1 = vol_1;
 
-	vol_2 =
-		(instr->oplvl_2 & 0x3F) +
-		lookup_table[velocity >> 1][instr->waveform_2 >> 2];
+	vol_2 = (instr->oplvl_2 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_2 >> 2];
 	if (vol_2 > 0x3F)
 		vol_2 = 0x3F;
 	mc->_vol_2 = vol_2;
@@ -3926,19 +3933,16 @@ void IMuseAdlib::mc_key_on(MidiChannel * mc2, byte note, byte velocity)
 		vol_1 = volume_table[lookup_table[vol_1][c]];
 
 	adlib_setup_channel(mc->_channel, instr, vol_1, vol_2);
-	adlib_note_on_ex(mc->_channel, part->_transpose_eff + note,
-									 part->_detune_eff + part->_pitchbend);
+	adlib_note_on_ex(mc->_channel, part->_transpose_eff + note, part->_detune_eff + part->_pitchbend);
 
 	if (instr->flags_a & 0x80) {
-		mc_init_stuff(mc, &mc->_s10a, &mc->_s11a, instr->flags_a,
-									&instr->extra_a);
+		mc_init_stuff(mc, &mc->_s10a, &mc->_s11a, instr->flags_a, &instr->extra_a);
 	} else {
 		mc->_s10a.active = 0;
 	}
 
 	if (instr->flags_b & 0x80) {
-		mc_init_stuff(mc, &mc->_s10b, &mc->_s11b, instr->flags_b,
-									&instr->extra_b);
+		mc_init_stuff(mc, &mc->_s10b, &mc->_s11b, instr->flags_b, &instr->extra_b);
 	} else {
 		mc->_s10b.active = 0;
 	}
@@ -4200,12 +4204,12 @@ void IMuseGM::midiControl0(byte chan, byte value)
 
 void IMuseGM::midiProgram(byte chan, byte program, bool mt32emulate)
 {
-//	if ((chan + 1) != 10) {				/* Ignore percussion prededed by patch change */
-		if (mt32emulate)
-			program = mt32_to_gmidi[program];
+//  if ((chan + 1) != 10) {       /* Ignore percussion prededed by patch change */
+	if (mt32emulate)
+		program = mt32_to_gmidi[program];
 
-		_md->send(program << 8 | 0xC0 | chan);
-//	}
+	_md->send(program << 8 | 0xC0 | chan);
+//  }
 }
 
 void IMuseGM::midiPan(byte chan, int8 pan)
@@ -4260,15 +4264,16 @@ void IMuseGM::part_key_off(Part *part, byte note)
 }
 
 #if !defined(__MORPHOS__)
-int IMuseGM::midi_driver_thread(void *param) {
-	IMuseGM *mid = (IMuseGM*) param;
+int IMuseGM::midi_driver_thread(void *param)
+{
+	IMuseGM *mid = (IMuseGM *) param;
 	int old_time, cur_time;
 
 	old_time = mid->_system->get_msecs();
 
-	for(;;) {
+	for (;;) {
 		mid->_system->delay_msecs(10);
-		
+
 		cur_time = mid->_system->get_msecs();
 		while (old_time < cur_time) {
 			old_time += 10;
@@ -4281,35 +4286,32 @@ int IMuseGM::midi_driver_thread(void *param) {
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include "../morphos/morphos.h"
-int IMuseGM::midi_driver_thread( void *param )
+int IMuseGM::midi_driver_thread(void *param)
 {
-	IMuseGM *mid = (IMuseGM*) param;
+	IMuseGM *mid = (IMuseGM *) param;
 	int old_time, cur_time;
 	bool initialized;
 
-	ObtainSemaphore( &ScummMusicThreadRunning );
+	ObtainSemaphore(&ScummMusicThreadRunning);
 
-	initialized = init_morphos_music( 0 );
+	initialized = init_morphos_music(0);
 
 	old_time = mid->_system->get_msecs();
 
-	if( !initialized )
-		Wait( SIGBREAKF_CTRL_C );
-	else
-	{
-		for(;;)
-		{
+	if (!initialized)
+		Wait(SIGBREAKF_CTRL_C);
+	else {
+		for (;;) {
 			MusicTimerIORequest->tr_time.tv_micro = 10000;
-			MusicTimerIORequest->tr_node.io_Command  = TR_ADDREQUEST;
-			MusicTimerIORequest->tr_time.tv_secs  = 0;
-			DoIO( (struct IORequest *)MusicTimerIORequest );
+			MusicTimerIORequest->tr_node.io_Command = TR_ADDREQUEST;
+			MusicTimerIORequest->tr_time.tv_secs = 0;
+			DoIO((struct IORequest *)MusicTimerIORequest);
 
-			if( CheckSignal( SIGBREAKF_CTRL_C ) )
+			if (CheckSignal(SIGBREAKF_CTRL_C))
 				break;
 
 			cur_time = mid->_system->get_msecs();
-			while (old_time < cur_time)
-			{
+			while (old_time < cur_time) {
 				old_time += 10;
 				mid->_se->on_timer();
 			}
@@ -4318,8 +4320,8 @@ int IMuseGM::midi_driver_thread( void *param )
 
 	exit_morphos_music();
 
-	ReleaseSemaphore( &ScummMusicThreadRunning );
-	RemTask( NULL );
+	ReleaseSemaphore(&ScummMusicThreadRunning);
+	RemTask(NULL);
 	return 0;
 }
 #endif
@@ -4355,8 +4357,7 @@ void IMuseGM::update_pris()
 		hipri = 0;
 		hipart = NULL;
 		for (i = 32, part = _se->parts_ptr(); i; i--, part++) {
-			if (part->_player && !part->_percussion && part->_on && !part->_mc
-					&& part->_pri_eff >= hipri) {
+			if (part->_player && !part->_percussion && part->_on && !part->_mc && part->_pri_eff >= hipri) {
 				hipri = part->_pri_eff;
 				hipart = part;
 			}
@@ -4490,7 +4491,7 @@ void IMuseGM::part_off(Part *part)
  * our real IMuseInternal class. This way we reduce the compile time
  * and inter source dependencies.
  */
-IMuse::IMuse() : _imuse(NULL)
+IMuse::IMuse():_imuse(NULL)
 {
 }
 
@@ -4575,7 +4576,8 @@ uint32 IMuse::property(int prop, uint32 value)
 	return _imuse->property(prop, value);
 }
 
-IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
+IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
+{
 	IMuse *i = new IMuse;
 	i->_imuse = IMuseInternal::create(syst, midi, mixer);
 	return i;

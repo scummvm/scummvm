@@ -27,14 +27,14 @@ struct MidiEvent {
 
 /* Lowlevel Abstract Midi Driver Class */
 class MidiDriver {
-	
+
 public:
 	/* called whenever the midi driver is in streaming mode,
 	 * and more midi commands need to be generated
 	 * return 0 to tell the mididriver that the end of stream was reached
 	 */
-	typedef int StreamCallback(void *param, MidiEvent *ev, int num);
-	
+	typedef int StreamCallback (void *param, MidiEvent * ev, int num);
+
 
 	/* open modes, pass one of those to open() */
 	enum {
@@ -46,7 +46,7 @@ public:
 	 * event = (ME_xxx<<24) | <24-bit data associated with event>
 	 */
 	enum {
-		ME_NONE  = 0,
+		ME_NONE = 0,
 		ME_TEMPO = 1,
 	};
 
@@ -64,7 +64,7 @@ public:
 		PROP_TIMEDIV = 1,
 	};
 
-	
+
 	/* open the midi driver.
 	 * returns 0 if successful.
 	 * otherwise an error code. */
@@ -88,7 +88,7 @@ public:
 
 
 	/* Get or set a property */
-	virtual uint32 property(int prop, uint32 param) ;
+	virtual uint32 property(int prop, uint32 param);
 
 	/* retrieve a string representation of an error code */
 	static const char *get_error_name(int error_code);

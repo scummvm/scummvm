@@ -28,10 +28,10 @@ public:
 		PROP_TEMPO_BASE = 1,
 	};
 
-	IMuse();
-	~IMuse();
+	  IMuse();
+	 ~IMuse();
 
-	void on_timer();	// For the MacOS 9 port only
+	void on_timer();							// For the MacOS 9 port only
 	void pause(bool paused);
 	int save_or_load(Serializer *ser, Scumm *scumm);
 	int set_music_volume(uint vol);
@@ -49,9 +49,13 @@ public:
 
 	static IMuse *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
 
-	static IMuse *create_adlib(OSystem *syst, SoundMixer *mixer) { return create(syst, NULL, mixer); }
-	static IMuse *create_midi(OSystem *syst, MidiDriver *midi) { return create(syst, midi, NULL); }
+	static IMuse *create_adlib(OSystem *syst, SoundMixer *mixer) {
+		return create(syst, NULL, mixer);
+	}
+	static IMuse *create_midi(OSystem *syst, MidiDriver *midi) {
+		return create(syst, midi, NULL);
+	}
 
 private:
-	IMuseInternal	*_imuse;	// Pointer to the real imuse object
+	IMuseInternal *_imuse;				// Pointer to the real imuse object
 };
