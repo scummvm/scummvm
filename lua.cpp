@@ -705,7 +705,7 @@ static void SayLine() {
 				char *str = lua_getstring(param2);
 				msg = parseMsgText(str, msgId);
 			} else if (lua_isnumber(param2)) {
-				pan = 0;
+				pan = 64;
 			} else if (lua_istable(param2)) {
 			} else {
 				error("SayLine() unknown type of param");
@@ -1006,23 +1006,49 @@ static void ImSetSequence() {
 }
 
 static void SaveIMuse() {
-	warning("SaveIMuse() is not yet supported");
+	error("SaveIMuse() is not yet supported");
 }
 
 static void RestoreIMuse() {
-	warning("RestoreIMuse() is not yet supported");
+	error("RestoreIMuse() is not yet supported");
 }
 
 static void SetSoundPosition() {
-	warning("SetSoundPosition() is not yet supported");
+	Vector3d pos;
+	int minVolume = 10;
+	int maxVolume = 127;
+
+	if (g_engine->currScene()) {
+		g_engine->currScene()->getSoundParameters(&minVolume, &maxVolume);
+	}
+
+	char *soundName = lua_getstring(lua_getresult(1));
+
+	if (isActor(lua_getparam(2))) {
+		Actor *act = check_actor(2);
+		if (act) {
+			pos = act->pos();
+		} else {
+			return;
+		}
+		minVolume = check_int(3);
+		maxVolume = check_int(4);
+	} else {
+		error("SetSoundPosition() Position sound params not supported.");
+	}
+
+	if (g_engine->currScene()) {
+		g_engine->currScene()->setSoundParameters(minVolume, maxVolume);
+		g_engine->currScene()->setSoundPosition(soundName, pos);
+	}
 }
 
 static void IsSoundPlaying() {
-	error("IsSoundPlaying() is not supported");
+	// dummy
 }
 
 static void PlaySoundAt() {
-	error("PlaySoundAt() is not supported");
+	// dummy
 }
 
 void setFrameTime(float frameTime) {

@@ -39,6 +39,9 @@ public:
 	Scene(const char *name, const char *buf, int len);
 	~Scene();
 
+	int _minVolume;
+	int _maxVolume;
+
 	void drawBackground() const {
 		if (_currSetup->_bkgndZBm != NULL) // Some screens have no zbuffer mask (eg, Alley)
 			_currSetup->_bkgndZBm->draw();
@@ -53,6 +56,10 @@ public:
 	void setupCamera() {
 		_currSetup->setupCamera();
 	}
+
+	void setSoundPosition(const char *soundName, Vector3d pos);
+	void setSoundParameters(int minVolume, int maxVolume);
+	void getSoundParameters(int *minVolume, int *maxVolume);
 
 	const char *name() const { return _name.c_str(); }
 

@@ -231,6 +231,10 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
 	_talkSoundName = soundName;
 	g_imuse->startVoice(_talkSoundName.c_str());
+	if (g_engine->currScene()) {
+		g_engine->currScene()->setSoundPosition(_talkSoundName.c_str(), pos());
+	}
+
 	_talkAnim = -1;
 }
 

@@ -26,6 +26,8 @@
 #include "screen.h"
 #include "driver_gl.h"
 
+#include "imuse/imuse.h"
+
 #include <SDL.h>
 #include <cmath>
 
@@ -54,6 +56,10 @@ Scene::Scene(const char *name, const char *buf, int len) :
 	_numLights = -1;
 	_lights = NULL;
 	_sectors = NULL;
+
+	_minVolume = 0;
+	_maxVolume = 0;
+
 	// Lights are optional
 	if (ts.eof())
 		return;
@@ -219,4 +225,29 @@ ObjectState *Scene::findState(const char *filename) {
 			return *i;
 	}
 	return NULL;
+}
+
+void Scene::setSoundPosition(const char *soundName, Vector3d pos) {
+	Vector3d cameraPos = _currSetup->_pos;
+	Vector3d vector;
+	vector.set(fabs(cameraPos.x() - pos.x()), fabs(cameraPos.y() - pos.y()), fabs(cameraPos.z() - pos.z()));
+	float distance = vector.magnitude();
+	float maxDistance = 8.0f;
+	int diffVolume = _maxVolume - _minVolume;
+	int newVolume = (diffVolume * distance) / maxDistance;
+	newVolume += _minVolume;
+	g_imuse->setVolume(soundName, newVolume);
+
+	// TODO: pan
+	// roll, fov
+}
+
+void Scene::setSoundParameters(int minVolume, int maxVolume) {
+	_minVolume = minVolume;
+	_maxVolume = maxVolume;
+}
+
+void Scene::getSoundParameters(int *minVolume, int *maxVolume) {
+	*minVolume = _minVolume;
+	*maxVolume = _maxVolume;
 }

@@ -346,5 +346,6 @@ void Engine::setScene(const char *name) {
 		warning("Could not find scene file %s\n", name);
 	delete _currScene;
 	_currScene = new Scene(name, b->data(), b->len());
+	_currScene->setSoundParameters(20, 127);
 	delete b;
 }

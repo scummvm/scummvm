@@ -370,6 +370,8 @@ void KeyframeComponent::update() {
 			case 2: // Hold at end
 				_currTime = animLength;
 				break;
+			default:
+				warning("Unknown repeat mode %d for keyframe %s\n", _repeatMode, _keyf->filename());
 		}
 	}
 	_keyf->animate(_hier, _currTime / 1000.0, _priority1, _priority2);
@@ -502,6 +504,11 @@ void SoundComponent::setKey(int val) {
 //			g_imuse->stopSound(_soundName.c_str());
 //		} else {
 			g_imuse->startSfx(_soundName.c_str());
+			if (g_engine->currScene()) {
+				Vector3d pos;
+				// TODO: how to get position of actor using that costume component
+//				g_engine->currScene()->setSoundPosition(_soundName.c_str(), pos);
+			}
 		}
 		break;
 	case 1: // "Stop"
