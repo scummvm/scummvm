@@ -39,7 +39,9 @@ typedef uint8 uint8_t;
 typedef uint16 uint16_t;
 typedef uint32 uint32_t; 
 #else
+#ifndef __PALM_OS__
 #include <inttypes.h>
+#endif
 #endif
 
 #ifdef USE_MPEG2
