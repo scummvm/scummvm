@@ -132,31 +132,31 @@ int Input::checkKeys() {
 
 	switch (_inKey) {
 		case KEY_SPACE:
-			_keyVerb = Verb(VERB_SKIP_TEXT);
+			_keyVerb = VERB_SKIP_TEXT;
 			break;
 
 		case KEY_COMMA:
-			_keyVerb = Verb(VERB_SCROLL_UP);
+			_keyVerb = VERB_SCROLL_UP;
 			break;
 
 		case KEY_DOT:
-			_keyVerb = Verb(VERB_SCROLL_DOWN);
+			_keyVerb = VERB_SCROLL_DOWN;
 			break;
 
 		case KEY_DIGIT_1:
-			_keyVerb = Verb(VERB_DIGIT_1);
+			_keyVerb = VERB_DIGIT_1;
 			break;
 
 		case KEY_DIGIT_2:
-			_keyVerb = Verb(VERB_DIGIT_2);
+			_keyVerb = VERB_DIGIT_2;
 			break;
 
 		case KEY_DIGIT_3:
-			_keyVerb = Verb(VERB_DIGIT_3);
+			_keyVerb = VERB_DIGIT_3;
 			break;
 
 		case KEY_DIGIT_4:
-			_keyVerb = Verb(VERB_DIGIT_4);
+			_keyVerb = VERB_DIGIT_4;
 			break;
 
 		case KEY_ESCAPE:
@@ -174,12 +174,12 @@ int Input::checkKeys() {
 		case KEY_F1:	// Use Journal
 			if (_cutawayRunning) {
 				if (_canQuit) {
-					_keyVerb = Verb(VERB_USE_JOURNAL);
+					_keyVerb = VERB_USE_JOURNAL;
 					_cutawayQuit = _talkQuit = true;
 				}
 			}
 			else {
-				_keyVerb = Verb(VERB_USE_JOURNAL);
+				_keyVerb = VERB_USE_JOURNAL;
 				if (_canQuit)
 					_talkQuit = true;
 			}
@@ -195,21 +195,21 @@ int Input::checkKeys() {
 
 		default:
 			if(_inKey == _currentCommandKeys[0])
-				_keyVerb = Verb(VERB_OPEN);
+				_keyVerb = VERB_OPEN;
 			else if(_inKey == _currentCommandKeys[1])
-				_keyVerb = Verb(VERB_CLOSE);
+				_keyVerb = VERB_CLOSE;
 			else if(_inKey == _currentCommandKeys[2])
-				_keyVerb = Verb(VERB_MOVE);
+				_keyVerb = VERB_MOVE;
 			else if(_inKey == _currentCommandKeys[3])
-				_keyVerb = Verb(VERB_GIVE);
+				_keyVerb = VERB_GIVE;
 			else if(_inKey == _currentCommandKeys[4])
-				_keyVerb = Verb(VERB_LOOK_AT);
+				_keyVerb = VERB_LOOK_AT;
 			else if(_inKey == _currentCommandKeys[5])
-				_keyVerb = Verb(VERB_PICK_UP);
+				_keyVerb = VERB_PICK_UP;
 			else if(_inKey == _currentCommandKeys[6])
-				_keyVerb = Verb(VERB_TALK_TO);
+				_keyVerb = VERB_TALK_TO;
 			else if(_inKey == _currentCommandKeys[7])
-				_keyVerb = Verb(VERB_USE);
+				_keyVerb = VERB_USE;
 			break;
 	}
 	

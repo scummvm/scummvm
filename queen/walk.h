@@ -75,6 +75,7 @@ public:
 
 	void stopJoe();
 
+
 	enum {
 		MAX_WALK_DATA = 16
 	};
@@ -122,12 +123,14 @@ private:
 	uint16 _areaList[MAX_WALK_DATA];
 	uint16 _areaListCount;
 
+	//! set if stopJoe() is called
 	bool _joeInterrupted;
 
-	//! set if customMoveJoe() is called in joeAnimate()
+	//! set if customMoveJoe() is called
 	bool _joeMoveBlock;
 
 	QueenEngine *_vm;
+
 
 	static const MovePersonData _moveData[];
 };

@@ -41,25 +41,6 @@
 
 namespace Queen {
 
-const Verb Logic::PANEL_VERBS[] = {
-	VERB_NONE,
-	VERB_OPEN,
-	VERB_CLOSE,
-	VERB_MOVE,
-	VERB_GIVE,
-	VERB_LOOK_AT,
-	VERB_PICK_UP,
-	VERB_TALK_TO,
-	VERB_USE,
-	VERB_SCROLL_UP,
-	VERB_SCROLL_DOWN,
-	VERB_DIGIT_1, // inventory item 1
-	VERB_DIGIT_2, // inventory item 2
-	VERB_DIGIT_3, // inventory item 3
-	VERB_DIGIT_4, // inventory item 4
-};
-
-
 Logic::Logic(QueenEngine *vm)
 	: _vm(vm) {
 	_joe.x = _joe.y = 0;
@@ -1789,8 +1770,24 @@ void Logic::joeSpeak(uint16 descNum, bool objectType) {
 
 
 Verb Logic::findVerbUnderCursor(int16 cursorx, int16 cursory) const {
-
-	return Verb(PANEL_VERBS[zoneIn(ZONE_PANEL, cursorx, cursory)]);
+	static const Verb pv[] = {
+		VERB_NONE,
+		VERB_OPEN,
+		VERB_CLOSE,
+		VERB_MOVE,
+		VERB_GIVE,
+		VERB_LOOK_AT,
+		VERB_PICK_UP,
+		VERB_TALK_TO,
+		VERB_USE,
+		VERB_SCROLL_UP,
+		VERB_SCROLL_DOWN,
+		VERB_INV_1,
+		VERB_INV_2,
+		VERB_INV_3,
+		VERB_INV_4,
+	};
+	return pv[zoneIn(ZONE_PANEL, cursorx, cursory)];
 }
 
 

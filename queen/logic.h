@@ -427,9 +427,6 @@ protected:
 
 	Debug *_dbg;
 	QueenEngine *_vm;
-
-	//! Verbs (in order) available in panel
-	static const Verb PANEL_VERBS[];
 };
 
 

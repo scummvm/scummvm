@@ -847,7 +847,7 @@ bool Command::handleDefaultCommand(bool walk) {
 		if (_selCmd.action == VERB_NONE) {
 			_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		}
-		_vm->walk()->moveJoe(0, _selPosX, _selPosY, false); // XXX inCutaway parameter
+		_vm->walk()->moveJoe(0, _selPosX, _selPosY, false);
 		return true;
 	}
 	// check to see if one of the objects is hidden
@@ -1501,7 +1501,7 @@ void Command::lookCurrentRoom() {
 	if (i <= 0) {
 		_curCmd.oldNoun = _curCmd.noun;
 		_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
-		if (_selCmd.defaultVerb  != VERB_NONE) {
+		if (_selCmd.defaultVerb != VERB_NONE) {
 			_cmdText.displayTemp(INK_CMD_LOCK, true, _selCmd.defaultVerb);
 		}
 		else if (_curCmd.action != VERB_NONE) {

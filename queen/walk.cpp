@@ -298,11 +298,10 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 
 int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 
+	_joeInterrupted = false;
 	_joeMoveBlock = false;
 	int16 can = 0;
 	initWalkData();
-
-	_joeInterrupted = false;
 
 	uint16 oldx = _vm->graphics()->bob(0)->x;
 	uint16 oldy = _vm->graphics()->bob(0)->y;
