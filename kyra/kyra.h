@@ -45,12 +45,12 @@ enum {
 };
 
 namespace Kyra {
-	class Resourcemanager;
-	class CPSImage;
-	class Font;
-	class Palette;
-	class VMContext;
-	class MusicPlayer;
+class Resourcemanager;
+class CPSImage;
+class Font;
+class Palette;
+class VMContext;
+class MusicPlayer;
 
 class KyraEngine : public Engine {
 public:

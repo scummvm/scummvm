@@ -32,167 +32,165 @@
 
 namespace Kyra {
 
-	// standard Package format for Kyrandia games
-	class PAKFile {
-		struct PakChunk {
-			const char* _name;
-			const uint8* _data;
-			uint32 _size;
-		};
-
-	public:
-
-		PAKFile(const Common::String& file);
-		~PAKFile();
-
-		const uint8* getFile(const char* file);
-		uint32 getFileSize(const char* file);
-
-		bool isValid(void) {return (_buffer != 0);}
-		bool isOpen(void) {return _open;}
-	private:
-		bool _open;
-		uint8* _buffer; // the whole file
-		Common::List<PakChunk*> _files; // the entries
-
+// standard Package format for Kyrandia games
+class PAKFile {
+	struct PakChunk {
+		const char* _name;
+		const uint8* _data;
+		uint32 _size;
 	};
 
-	// some resource types
-	class Palette;
-	class CPSImage;
-	class Font;
-	class Movie;
-	class VMContext;
+public:
 
-	// out resource manager
-	class Resourcemanager {
-		typedef Common::String string;
+	PAKFile(const Common::String& file);
+	~PAKFile();
 
-	public:
+	const uint8* getFile(const char* file);
+	uint32 getFileSize(const char* file);
 
-		Resourcemanager(KyraEngine* engine);
-		virtual ~Resourcemanager();
+	bool isValid(void) {return (_buffer != 0);}
+	bool isOpen(void) {return _open;}
+private:
+	bool _open;
+	uint8* _buffer; // the whole file
+	Common::List<PakChunk*> _files; // the entries
+};
 
-		uint8* fileData(const char* file, uint32* size);
+// some resource types
+class Palette;
+class CPSImage;
+class Font;
+class Movie;
+class VMContext;
 
-		Palette* loadPalette(const char* file);
-		CPSImage* loadImage(const char* file);
-		Font* loadFont(const char* file);
-		Movie* loadMovie(const char* file);
-		VMContext* loadScript(const char* file);
+// out resource manager
+class Resourcemanager {
+	typedef Common::String string;
 
-	protected:
-		KyraEngine* _engine;
+public:
 
-		Common::List<PAKFile*> _pakfiles;
+	Resourcemanager(KyraEngine* engine);
+	virtual ~Resourcemanager();
 
-	};
+	uint8* fileData(const char* file, uint32* size);
 
-	class Palette {
+	Palette* loadPalette(const char* file);
+	CPSImage* loadImage(const char* file);
+	Font* loadFont(const char* file);
+	Movie* loadMovie(const char* file);
+	VMContext* loadScript(const char* file);
 
-	public:
+protected:
+	KyraEngine* _engine;
 
-		Palette(uint8* data, uint32 size);
-		~Palette() { delete [] _palette; }
+	Common::List<PAKFile*> _pakfiles;
 
-		uint8* getData(void) { return _palette; }
+};
 
-	protected:
+class Palette {
 
-		uint8* _palette;
-
-	};
-
-	class CPSImage {
-
-	public:
-
-		CPSImage(uint8* buffer, uint32 size);
-		~CPSImage();
-
-		Palette* palette(void) { return _ownPalette; }
-		bool hasPalette(void) { return (_ownPalette != 0); }
-
-		// if col == -1 then no transparany
-		void transparency(int16 col) { _transparency = col; }
-
-		void drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, uint16 x, uint16 y);
-		void drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, uint16 x, uint16 y,
-						uint16 srcx, uint16 srcy, uint16 srcwidth, uint16 srcheight);
-
-		// only for testing :)
-		uint8 getColor(uint16 x, uint16 y) { return _image[y * _width + x]; }
+public:
 		
-		uint8& operator[](uint16 index) { if(index > _width * _height) return _image[0]; return _image[index]; }
+	Palette(uint8* data, uint32 size);
+	~Palette() { delete [] _palette; }
 
-	protected:
+	uint8* getData(void) { return _palette; }
 
-		struct CPSHeader {
-			uint16 _filesize;
-			uint16 _format;
-			uint16 _imagesize;
-			uint32 _pal;
-		} _cpsHeader;
+protected:
 
-		Palette* _ownPalette;
-		uint8* _image;
+	uint8* _palette;
 
-		uint16 _width, _height;
-		int16 _transparency;
+};
+
+class CPSImage {
+
+public:
+
+	CPSImage(uint8* buffer, uint32 size);
+	~CPSImage();
+
+	Palette* palette(void) { return _ownPalette; }
+	bool hasPalette(void) { return (_ownPalette != 0); }
+
+	// if col == -1 then no transparany
+	void transparency(int16 col) { _transparency = col; }
+
+	void drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, uint16 x, uint16 y);
+	void drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, uint16 x, uint16 y,
+			uint16 srcx, uint16 srcy, uint16 srcwidth, uint16 srcheight);
+
+	// only for testing :)
+	uint8 getColor(uint16 x, uint16 y) { return _image[y * _width + x]; }
+		
+	uint8& operator[](uint16 index) { if(index > _width * _height) return _image[0]; return _image[index]; }
+
+protected:
+
+	struct CPSHeader {
+		uint16 _filesize;
+		uint16 _format;
+		uint16 _imagesize;
+		uint32 _pal;
+	} _cpsHeader;
+
+	Palette* _ownPalette;
+	uint8* _image;
+
+	uint16 _width, _height;
+	int16 _transparency;
+};
+
+class Font {
+
+public:
+
+	Font(uint8* buffer, uint32 size);
+	~Font();
+
+	uint32 getStringWidth(const char* string, char terminator = '\0');
+	void drawStringToPlane(const char* string,
+				uint8* plane, uint16 planewidth, uint16 planeheight,
+				uint16 x, uint16 y, uint8 color);
+
+protected:
+
+	void drawCharToPlane(const uint8* c, uint8 color, uint8 width, uint8 height,
+				uint8* plane, uint16 planewidth, uint16 planeheight, uint16 x, uint16 y);
+	const uint8* getChar(char c, uint8* width, uint8* height, uint8* heightadd);
+	const char* getNextWord(const char* string, uint32* size);
+
+	void preRenderAllChars(uint16 offsetTableOffset);
+
+	uint8* _buffer;
+	uint16* _offsetTable;
+	uint8* _charWidth;
+	uint16* _charHeight;
+	uint8* _charBits;
+
+	// the chars I call 'prerendered' aren't really prerendered
+	// they are only 'decoded'
+	struct PreRenderedChar {
+		uint8* c;
+		uint8 width, height, heightadd;
 	};
 
-	class Font {
+	Common::Map<uint8, PreRenderedChar> _preRenderedChars; // our prerendered chars :)
 
-	public:
-
-		Font(uint8* buffer, uint32 size);
-		~Font();
-
-		uint32 getStringWidth(const char* string, char terminator = '\0');
-		void drawStringToPlane(const char* string,
-								uint8* plane, uint16 planewidth, uint16 planeheight,
-								uint16 x, uint16 y, uint8 color);
-
-	protected:
-
-		void drawCharToPlane(const uint8* c, uint8 color, uint8 width, uint8 height,
-							uint8* plane, uint16 planewidth, uint16 planeheight, uint16 x, uint16 y);
-		const uint8* getChar(char c, uint8* width, uint8* height, uint8* heightadd);
-		const char* getNextWord(const char* string, uint32* size);
-
-		void preRenderAllChars(uint16 offsetTableOffset);
-
-		uint8* _buffer;
-
-		uint16* _offsetTable;
-		uint8* _charWidth;
-		uint16* _charHeight;
-		uint8* _charBits;
-
-		// the chars I call 'prerendered' aren't really prerendered
-		// they are only 'decoded'
-		struct PreRenderedChar {
-			uint8* c;
-			uint8 width, height, heightadd;
-		};
-
-		Common::Map<uint8, PreRenderedChar> _preRenderedChars; // our prerendered chars :)
-
-		// INFO:
-		// _magic1 = 0x0500
-		// _magic2 = 0x000e
-		// _magic3 = 0x0014
+	// INFO:
+	// _magic1 = 0x0500
+	// _magic2 = 0x000e
+	// _magic3 = 0x0014
 #pragma START_PACK_STRUCTS
-		struct FontHeader {
-			uint16 _size;
-			uint16 _magic1, _magic2, _magic3;
-			uint16 _charWidthOffset, _charBitsOffset, _charHeightOffset;
-			uint16 _version;
-			uint16 _countChars;
-			uint8 _width, _height;
-		} GCC_PACK _fontHeader;
+	struct FontHeader {
+		uint16 _size;
+		uint16 _magic1, _magic2, _magic3;
+		uint16 _charWidthOffset, _charBitsOffset, _charHeightOffset;
+		uint16 _version;
+		uint16 _countChars;
+		uint8 _width, _height;
+	} GCC_PACK _fontHeader;
 #pragma END_PACK_STRUCTS
-	};
+};
 } // end of namespace Kyra
 
 #endif

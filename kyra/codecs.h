@@ -29,14 +29,14 @@
 #include "common/scummsys.h"
 
 namespace Kyra {
-	class Compression 
-	{
-	public:
-		static int decode80(const uint8* image_in, uint8* image_out);
-		static int decode40(const uint8* image_in, uint8* image_out);
-		static int decode3(const uint8* image_in, uint8* image_out, int s);
-		static int decode2(const uint8* s, uint8* d, int cb_s);
-	};
+class Compression 
+{
+public:
+	static int decode80(const uint8* image_in, uint8* image_out);
+	static int decode40(const uint8* image_in, uint8* image_out);
+	static int decode3(const uint8* image_in, uint8* image_out, int s);
+	static int decode2(const uint8* s, uint8* d, int cb_s);
+};
 } // end of namespace Kyra
 
 #endif

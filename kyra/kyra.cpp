@@ -52,7 +52,7 @@ static const KyraGameSettings kyra_settings[] = {
 	{"kyra1cd", "Legend of Kyrandia (CD)",  GF_TALKIE | GF_KYRA1,  "CHAPTER1.VRM"},
 	{"kyra2", "Hand of Fate (Floppy)", GF_FLOPPY | GF_KYRA2, 0 },
 	{"kyra2cd", "Hand of Fate (CD)", GF_TALKIE | GF_KYRA2, "AUDIO.PAK"},
-	{"kyra3", "Malcom's Revenge", GF_TALKIE | GF_KYRA3, "K3INTRO0.VQA"},
+	{"kyra3", "Malcolm's Revenge", GF_TALKIE | GF_KYRA3, "K3INTRO0.VQA"},
 	{0, 0, 0, 0}
 };
 
@@ -188,7 +188,7 @@ void KyraEngine::errorString(const char *buf1, char *buf2) {
 void KyraEngine::go() {
 	warning("Kyrandia Engine ::go()");
 	// starts the init script
-	/*if (!_currentScript->startScript(kSetupScene)) {
+/*	if (!_currentScript->startScript(kSetupScene)) {
 		error("couldn't init '_STARTUP.EMC' script");
 	}
 
