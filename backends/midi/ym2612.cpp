@@ -204,8 +204,8 @@ _lastOutput (0),
 _feedbackLevel (0),
 _detune (0),
 _multiple (1),
-_specifiedTotalLevel (127),
 _keyScale (0),
+_specifiedTotalLevel (127),
 _specifiedAttackRate (0),
 _specifiedDecayRate (0),
 _specifiedSustainRate (0),
@@ -756,9 +756,6 @@ void MidiDriver_YM2612::premix_proc(void *param, int16 *buf, uint len) {
 
 void MidiDriver_YM2612::generate_samples(int16 *data, int len) {
 	int step;
-
-	int16 *origData = data;
-	uint origLen = len;
 
 	do {
 		step = len;
