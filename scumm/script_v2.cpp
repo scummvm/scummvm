@@ -40,7 +40,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 04 */
 		OPCODE(o2_isGreaterEqual),
 		OPCODE(o2_drawObject),
-		OPCODE(o2_getActorElevation),
+		OPCODE(o5_getActorElevation),
 		OPCODE(o2_setState08),
 		/* 08 */
 		OPCODE(o2_isNotEqual),
@@ -109,7 +109,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_waitForActor),
 		/* 3C */
 		OPCODE(o5_stopSound),
-		OPCODE(o2_getActorElevation),
+		OPCODE(o2_setActorElevation),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState01),
 		/* 40 */
@@ -189,7 +189,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_getActorWalkBox),
 		/* 7C */
 		OPCODE(o5_isSoundRunning),
-		OPCODE(o2_getActorElevation),
+		OPCODE(o2_setActorElevation),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState01),
 		/* 80 */
@@ -200,7 +200,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 84 */
 		OPCODE(o2_isGreaterEqual),
 		OPCODE(o2_drawObject),
-		OPCODE(o2_getActorElevation),
+		OPCODE(o5_getActorElevation),
 		OPCODE(o2_setState08),
 		/* 88 */
 		OPCODE(o2_isNotEqual),
@@ -269,7 +269,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_waitForActor),
 		/* BC */
 		OPCODE(o5_stopSound),
-		OPCODE(o2_getActorElevation),
+		OPCODE(o2_setActorElevation),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState01),
 		/* C0 */
@@ -349,7 +349,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_getActorWalkBox),
 		/* FC */
 		OPCODE(o5_isSoundRunning),
-		OPCODE(o2_getActorElevation),
+		OPCODE(o2_setActorElevation),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState01)
 	};
@@ -853,7 +853,9 @@ void Scumm_v2::o2_ifClassOfIs() {
 	byte cls = *(getResourceAddress(rtRoom, _currentRoom) + od->OBCDoffset + 10);
 	if ((cls & clsop) != clsop) {
 		o5_jumpRelative();
+		return;
 	}
+	ignoreScriptWord();
 }
 
 void Scumm_v2::o2_walkActorTo() {
@@ -887,21 +889,6 @@ void Scumm_v2::o2_panCameraTo() {
 	panCameraTo(getVarOrDirectByte(0x80), 0);
 }
 
-void Scumm_v2::o2_getActorElevation() {
-	int act;
-	Actor *a;
-	getResultPos();
-	act = getVarOrDirectByte(0x80);
-
-	a = derefActorSafe(act, "o2_getActorElevation");
-	if (!a) {
-		warning("Invalid actor %d in o2_getActorElevation", act);
-		return;
-	}
-
-	_vars[_resultVarNumber] = a->elevation;
-}
-
 void Scumm_v2::o2_walkActorToObject() {
 	int obj;
 	Actor *a;
@@ -928,6 +915,17 @@ void Scumm_v2::o2_putActorAtObject() {
 		y = 120;
 	}
 	a->putActor(x, y, a->room);
+}
+
+void Scumm_v2::o2_setActorElevation() {
+	int act = getVarOrDirectByte(0x80);
+	int elevation = getVarOrDirectByte(0x40);
+
+	Actor *a = derefActorSafe(act, "o2_setActorElevation");
+	if (!a)
+		return;
+
+	a->elevation = elevation;
 }
 
 void Scumm_v2::o2_animateActor() {
@@ -1063,11 +1061,11 @@ void Scumm_v2::o2_findObject() {
 }
 
 void Scumm_v2::o2_cutscene() {
-	// TODO
+	warning("TODO o2_cutscene()");
 }
 
 void Scumm_v2::o2_endCutscene() {
-	// TODO
+	warning("TODO o2_endCutscene()");
 }
 
 void Scumm_v2::o2_chainScript() {
@@ -1141,7 +1139,7 @@ void Scumm_v2::o2_setObjectName() {
 
 void Scumm_v2::o2_cursorCommand() {
 	getVarOrDirectWord(0x80);
-	// TODO
+	warning("TODO: o2_cursorCommand()");
 }
 
 void Scumm_v2::o2_getClosestObjActor() {
@@ -1153,7 +1151,7 @@ void Scumm_v2::o2_getClosestObjActor() {
 	getResultPos();
 
 	act = getVarOrDirectWord(0x80);
-	obj = _vars[VAR_V5_OBJECT_HI];
+	obj = _vars[VAR_ACTOR_RANGE_MAX];
 
 	do {
 		dist = getObjActToObjActDist(act, obj);
@@ -1161,7 +1159,7 @@ void Scumm_v2::o2_getClosestObjActor() {
 			closest_dist = dist;
 			closest_obj = obj;
 		}
-	} while (--obj >= _vars[VAR_V5_OBJECT_LO]);
+	} while (--obj >= _vars[VAR_ACTOR_RANGE_MIN]);
 
 	_vars[_resultVarNumber] = closest_dist;
 }
@@ -1177,5 +1175,5 @@ void Scumm_v2::o2_getActorWalkBox() {
 }
 
 void Scumm_v2::o2_drawSentence() {
-	error("TODO o2_drawSentence()");
+	warning("TODO o2_drawSentence()");
 }

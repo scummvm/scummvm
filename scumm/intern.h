@@ -246,7 +246,7 @@ protected:
 	void o2_notEqualZero();
 	void o2_startScript();
 	void o2_panCameraTo();
-	void o2_getActorElevation();
+	void o2_setActorElevation();
 	void o2_walkActorToObject();
 	void o2_putActorAtObject();
 	void o2_animateActor();
