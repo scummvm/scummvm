@@ -625,7 +625,6 @@ int ScummEngine_v72he::findObject(int x, int y, int *args) {
 }
 
 const byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, const byte *ptr, int state, bool errorFlag) {
-	printf("findWrappedBlock: tag %x\n", tag);
 	if (READ_UINT32(ptr) == MKID('MULT')) {
 		const byte *offs, *wrap;
 		uint32 size;
