@@ -234,7 +234,7 @@ public:
 
 public:
 	MidiParser();
-	virtual ~MidiParser() { }
+	virtual ~MidiParser() { allNotesOff(); }
 
 	virtual bool loadMusic (byte *data, uint32 size) = 0;
 	virtual void unloadMusic();
