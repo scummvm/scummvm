@@ -102,8 +102,8 @@ MidiParser_SMF::~MidiParser_SMF() {
 		free (_buffer);
 }
 
-void MidiParser_SMF::property (int property, int value) {
-	switch (property) {
+void MidiParser_SMF::property (int prop, int value) {
+	switch (prop) {
 	case mpMalformedPitchBends:
 		_malformedPitchBends = (value > 0);
 	}
@@ -533,7 +533,6 @@ void MidiParser_SMF::jumpToTick (uint32 tick) {
 		} while (_malformedPitchBends && (event & 0xF0) == 0xE0 && _play_pos++);
 		_running_status = event;
 
-		byte bytes_to_skip = 0;
 		if (command_lengths[(event >> 4) - 8] > 0) {
 			_play_pos += command_lengths[(event >> 4) - 8];
 		} else if (special_lengths[event & 0xF] > 0) {
