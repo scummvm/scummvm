@@ -269,7 +269,8 @@ void SimonState::vc_2()
 	_vc_ptr = _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->script_offs);
 
 
-//  dump_vga_script(_vc_ptr, res, num);
+	if (_vgascript_toggle) 
+		dump_vga_script(_vc_ptr, res, num);
 	run_vga_script();
 
 	_cur_vga_file_1 = old_file_1;
@@ -358,7 +359,8 @@ void SimonState::vc_3()
 	}
 #endif
 
-//  dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), res, b);
+	if (_vgascript_toggle) 
+		dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), res, b);
 
 	add_vga_timer(gss->VGA_DELAY_BASE,
 								_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs),
@@ -1789,7 +1791,7 @@ void SimonState::vc_62()
 
 	vc_29_stop_all_sounds();
 
-	if (((_game & GAME_SIMON2)) && (!_video_var_3)) {
+	if ((_game & GAME_SIMON2) && (!_video_var_3)) {
 		warning("vc_62: music stuff?");
 	}
 
