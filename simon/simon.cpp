@@ -4684,8 +4684,6 @@ void SimonState::initSound()
 					return;
 			}
 #ifdef USE_MAD
-			else
-				return;
 		}
 #endif
 
