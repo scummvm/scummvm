@@ -1257,9 +1257,9 @@ void ScummEngine_v6he::o6_stringLen() {
 	if (_gameId == GID_FREDDEMO) {
 		len = strlen((char *)getStringAddress(a));
 	} else {
-		
+		len = 0; // TODO: implement
 	}
-	push()
+	push(len);
 }
 
 void ScummEngine_v6he::o6_readINI() {
