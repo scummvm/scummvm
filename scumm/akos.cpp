@@ -1293,6 +1293,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 
 		switch (active) {
 		case 6:
+		case 8:
 			switch (code) {
 			case AKC_JumpIfSet:
 			case AKC_AddVar:
@@ -1378,6 +1379,10 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			case AKC_C048:
 				needRedraw = 1;
 				curpos += aksq[curpos + 2];
+				break;
+			case AKC_C08E:
+				//akos_queCommand(7, a, GB(2), 0);
+				curpos += 4;
 				break;
 			default:
 				if ((code & 0xC000) == 0xC000)
