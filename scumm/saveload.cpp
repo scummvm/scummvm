@@ -575,6 +575,14 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
+	if (!s->isSaving() && savegameVersion < VER_V13) {
+		// Since roughly v13 of the save games, the objs storage has changed a bit
+		for (i = _numObjectsInRoom; i < _numLocalObjects; i++) {
+			if (_objs[i].fl_object_index == 0)
+				_objs[i].obj_nr = 0;
+		}
+
+	}
 	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);
 	s->saveLoadArrayOf(vm.nest, 16, sizeof(vm.nest[0]), nestedScriptEntries);
 	s->saveLoadArrayOf(_sentence, 6, sizeof(_sentence[0]), sentenceTabEntries);
