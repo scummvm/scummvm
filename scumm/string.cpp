@@ -304,8 +304,7 @@ void ScummEngine::CHARSET_1() {
 				warning("CHARSET_1: invalid code %d", c);
 			}
 		} else if (c == 0xFE || c == 0xFF) {
-			//WORKAROUND
-			//to avoid korean code 0xfe treated as charset message code.
+			// WORKAROUND to avoid korean code 0xfe treated as charset message code.
 			if(c == 0xFE && checkKSCode(*(buffer + 1), c) && _useCJKMode) {
 				goto loc_avoid_ks_fe;
 			}
@@ -974,6 +973,35 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	
 	trans_buff[0] = 0;
 	_lastStringTag[0] = 0;
+
+	// WORKAROUND for bug #1172655.
+	if (_gameId == GID_DIG && text[0] != '/') {
+		if (!strcmp((const char *)text, "faint light"))
+			text = (const byte *)"/NEW.007/faint light";
+		else if (!strcmp((const char *)text, "glowing crystal"))
+			text = (const byte *)"/NEW.008/glowing crystal";
+		else if (!strcmp((const char *)text, "glowing crystals"))
+			text = (const byte *)"/NEW.009/glowing crystals";
+		else if (!strcmp((const char *)text, "pit"))
+			text = (const byte *)"/NEW.010/pit";
+		else if (!strcmp((const char *)text, "You wish."))
+			text = (const byte *)"/NEW.011/You wish.";
+		else if (!strcmp((const char *)text, "In your dreams."))
+			text = (const byte *)"/NEW.012/In your dreams";
+		else if (!strcmp((const char *)text, "left"))
+			text = (const byte *)"/CATHPLAT.068/left";
+		else if (!strcmp((const char *)text, "right"))
+			text = (const byte *)"/CATHPLAT.070/right";
+		else if (!strcmp((const char *)text, "right"))
+			text = (const byte *)"/CATHPLAT.067/top";
+		else if (!strcmp((const char *)text, "exit"))
+			text = (const byte *)"/SKY.008/exit";
+		else if (!strcmp((const char *)text, "unattached lens"))
+			text = (const byte *)"/NEW.013/unattached lens";
+		else if (!strcmp((const char *)text, "lens slot"))
+			text = (const byte *)"/NEW.014/lens slot";
+	}
+
 	
 	if (_version >= 7 && text[0] == '/') {
 		// Extract the string tag from the text: /..../
@@ -985,14 +1013,14 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 		// If a language file was loaded, try to find a translated version
 		// by doing a lookup on the string tag.
 		if (_existLanguageFile) {
-			// HACK: These are used for the object line when
+			// HACK: These are used for the object line in COMI when
 			// using one object on another. I don't know if the
 			// text in the language file is a placeholder or if
 			// we're supposed to use it, but at least in the
 			// English version things will work so much better if
 			// we can't find translations for these.
-	
-			if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
+			
+			if (*text && strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
 				found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 		}
 	}
