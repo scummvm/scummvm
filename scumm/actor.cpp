@@ -1307,7 +1307,7 @@ void Actor::walkActor() {
 	int new_dir, box;
 	int16 foundPathX, foundPathY;
 
-	if (_vm->_features & GF_AFTER_V7 && !(_vm->_features & GF_AFTER_V8)) {
+	if (_vm->_features & GF_AFTER_V7) {
 		// FIXME - this is kind of a hack right now but it fixes the
 		// walk scripts in The Dig.
 		if (moving & MF_FROZEN) {
@@ -1316,13 +1316,14 @@ void Actor::walkActor() {
 				if (facing != new_dir)
 					setDirection(new_dir);
 				else
-					moving = 0;
+					moving &= ~MF_TURN;
 			}
 			return;
 		}
-	} else if (moving == 0) {
-		return;
 	}
+
+	if (moving == 0)
+		return;
 
 	if (!(moving & MF_NEW_LEG)) {
 		if (moving & MF_IN_LEG && actorWalkStep())
