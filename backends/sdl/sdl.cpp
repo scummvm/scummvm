@@ -454,11 +454,17 @@ uint32 OSystem_SDL_Normal::property(int param, Property *value) {
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		assert(_hwscreen != 0);
 		_full_screen ^= true;
-
+#ifdef MACOSX
+		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
+		// it still always returns -1. So we simply don't call it at all and
+		// use hotswap_gfx_mode() directly to switch to fullscreen mode.
+		hotswap_gfx_mode();
+#else
 		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
 			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
 			hotswap_gfx_mode();
 		}
+#endif
 		return 1;
 	} else if (param == PROP_OVERLAY_IS_565) {
 		assert(_tmpscreen != 0);
