@@ -132,6 +132,10 @@ void NewGui::runLoop() {
 		uint32 time = _system->getMillis();
 
 		while (_system->pollEvent(event)) {
+			Common::Point mouse(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor));
+			mouse.x /= _scaleFactor;
+			mouse.y /= _scaleFactor;
+			
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 #if !defined(__PALM_OS__)
@@ -151,7 +155,7 @@ void NewGui::runLoop() {
 					_currentKeyDown.keycode = 0;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
-				activeDialog->handleMouseMoved(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), 0);
+				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
 			case OSystem::EVENT_LBUTTONDOWN:
@@ -167,18 +171,18 @@ void NewGui::runLoop() {
 					_lastClick.count = 1;
 				}
 				_lastClick.time = time;
-				activeDialog->handleMouseDown(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), button, _lastClick.count);
+				activeDialog->handleMouseDown(mouse.x, mouse.y, button, _lastClick.count);
 				break;
 			case OSystem::EVENT_LBUTTONUP:
 			case OSystem::EVENT_RBUTTONUP:
 				button = (event.type == OSystem::EVENT_LBUTTONUP ? 1 : 2);
-				activeDialog->handleMouseUp(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), button, _lastClick.count);
+				activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
 				break;
 			case OSystem::EVENT_WHEELUP:
-				activeDialog->handleMouseWheel(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), -1);
+				activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
 				break;
 			case OSystem::EVENT_WHEELDOWN:
-				activeDialog->handleMouseWheel(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), 1);
+				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
 				break;
 			case OSystem::EVENT_QUIT:
 				_system->quit();

@@ -187,7 +187,7 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		return (y-2) / kLineHeight;
+		return (y - 2) / kLineHeight;
 	}
 	return -1;
 }

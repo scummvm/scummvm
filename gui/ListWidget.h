@@ -90,6 +90,7 @@ public:
 protected:
 	void drawWidget(bool hilite);
 
+	int findItem(int x, int y) const;
 	void scrollBarRecalc();
 
 	void endEditMode();

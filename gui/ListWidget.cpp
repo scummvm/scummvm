@@ -112,7 +112,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	// First check whether the selection changed
 	int newSelectedItem;
-	newSelectedItem = (y - 1) / kLineHeight + _currentPos;
+	newSelectedItem = findItem(x, y);
 	if (newSelectedItem > (int)_list.size() - 1)
 		newSelectedItem = -1;
 
@@ -132,7 +132,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	// If this was a double click and the mouse is still over the selected item,
 	// send the double click command
-	if (clickCount == 2 && (_selectedItem == (y - 1) / kLineHeight + _currentPos)) {
+	if (clickCount == 2 && (_selectedItem == findItem(x, y))) {
 		sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 	}
 }
@@ -141,6 +141,10 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
+
+int ListWidget::findItem(int x, int y) const {
+	return (y - 1) / kLineHeight + _currentPos;
+}
 
 static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
 	int match = 0;

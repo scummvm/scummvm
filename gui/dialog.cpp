@@ -119,8 +119,6 @@ void Dialog::drawDialog() {
 }
 
 void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
-	x /= g_gui.getScaleFactor(); y /= g_gui.getScaleFactor();
-
 	Widget *w;
 
 	w = findWidget(x, y);
@@ -146,8 +144,6 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
-	x /= g_gui.getScaleFactor(); y /= g_gui.getScaleFactor();
-
 	Widget *w;
 
 	if (_focusedWidget) {
@@ -168,8 +164,6 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void Dialog::handleMouseWheel(int x, int y, int direction) {
-	x /= g_gui.getScaleFactor(); y /= g_gui.getScaleFactor();
-
 	Widget *w;
 
 	// This may look a bit backwards, but I think it makes more sense for
