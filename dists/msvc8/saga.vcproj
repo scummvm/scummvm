@@ -199,31 +199,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\saga\cvar.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\cvar.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\cvar_mod.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\saga\events.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\saga\events.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\expr.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\expr.h"
 			>
 		</File>
 		<File
@@ -324,10 +304,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\palanim.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\reinherit.h"
 			>
 		</File>
 		<File

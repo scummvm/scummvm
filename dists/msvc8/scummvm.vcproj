@@ -886,6 +886,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\surface.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\surface.h"
 				>
 			</File>
