@@ -1717,6 +1717,7 @@ void SimonEngine::vc_62_palette_thing() {
 		for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
 			palette_fadeout((uint32 *)_video_buf_1, _video_num_pal_colors);
 			_system->set_palette(_video_buf_1, 0, _video_num_pal_colors);
+			_system->update_screen();
 			delay(5);
 		}
 

@@ -2428,6 +2428,7 @@ void SimonEngine::o_fade_to_black() {
 		palette_fadeout((uint32 *)_video_buf_1 + 32 + 16 + 144 + 16, 48);
 
 		_system->set_palette(_video_buf_1, 0, 256);
+		_system->update_screen();
 		delay(5);
 	} while (--i);
 
