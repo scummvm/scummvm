@@ -128,7 +128,7 @@ void Scumm::setDirtyRange(int slot, int top, int bottom)
 {
 	int i;
 	VirtScreen *vs = &virtscr[slot];
-	for (i = 0; i < NUM_STRIPS; i++) {
+	for (i = 0; i < gdi._numStrips; i++) {
 		vs->tdirty[i] = top;
 		vs->bdirty[i] = bottom;
 	}
@@ -160,7 +160,7 @@ void Scumm::drawDirtyScreenParts()
 		src = vs->screenPtr + _screenStartStrip * 8 + _screenTop * _realWidth;
 		_system->copy_rect(src, _realWidth, 0, vs->topline, _realWidth, vs->height);
 
-		for (i = 0; i < NUM_STRIPS; i++) {
+		for (i = 0; i < gdi._numStrips; i++) {
 			vs->tdirty[i] = (byte)vs->height;
 			vs->bdirty[i] = 0;
 		}
@@ -191,7 +191,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 		_readOffs = vs->xstart;
 
 	if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y))
-		drawStripToScreen(vs, 0, NUM_STRIPS << 3, 0, vs->height);
+		drawStripToScreen(vs, 0, _numStrips << 3, 0, vs->height);
 	else {
 		int i;
 		int start, w, top, bottom;
@@ -199,14 +199,14 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 		w = 8;
 		start = 0;
 
-		for (i = 0; i < NUM_STRIPS; i++) {
+		for (i = 0; i < _numStrips; i++) {
 			bottom = vs->bdirty[i];
 	
 			if (bottom) {
 				top = vs->tdirty[i];
 				vs->tdirty[i] = (byte)vs->height;
 				vs->bdirty[i] = 0;
-				if (i != (NUM_STRIPS-1) && vs->bdirty[i + 1] == (byte)bottom && vs->tdirty[i + 1] == (byte)top) {
+				if (i != (_numStrips - 1) && vs->bdirty[i + 1] == (byte)bottom && vs->tdirty[i + 1] == (byte)top) {
 					w += 8;
 					continue;
 				}
@@ -246,7 +246,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 	else
 		scrollY = _vm->_screenTop;
 
-	ptr = vs->screenPtr + (t * NUM_STRIPS + x) * 8 + _readOffs + scrollY * _vm->_realWidth;
+	ptr = vs->screenPtr + (t * _numStrips + x) * 8 + _readOffs + scrollY * _vm->_realWidth;
 	_vm->_system->copy_rect(ptr, _vm->_realWidth, x * 8, vs->topline + t, w, height);
 }
 
@@ -415,9 +415,9 @@ void Scumm::initBGBuffers(int height)
 	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 5);
 
 	if (_features & GF_AFTER_V7)
-		itemsize = (virtscr[0].height + 4) * NUM_STRIPS;
+		itemsize = (virtscr[0].height + 4) * gdi._numStrips;
 	else
-		itemsize = (_scrHeight + 4) * NUM_STRIPS;
+		itemsize = (_scrHeight + 4) * gdi._numStrips;
 
 
 	size = itemsize * gdi._numZBuffer;
@@ -640,8 +640,8 @@ void Scumm::drawFlashlight()
 	// Clip the flashlight at the borders
 	if (flashX < 0)
 		flashX = 0;
-	else if (flashX > NUM_STRIPS - flashW)
-		flashX = NUM_STRIPS - flashW;
+	else if (flashX > gdi._numStrips - flashW)
+		flashX = gdi._numStrips - flashW;
 	if (flashY < 0)
 		flashY = 0;
 	else if (flashY > virtscr[0].height - flashH)
@@ -774,7 +774,7 @@ void Scumm::redrawBGAreas()
 	val = 0;
 
 	if (!_fullRedraw && _BgNeedsRedraw) {
-		for (i = 0; i != NUM_STRIPS; i++) {
+		for (i = 0; i != gdi._numStrips; i++) {
 			if (gfxUsageBits[_screenStartStrip + i] & 0x80000000) {
 				redrawBGStrip(i, 1);
 			}
@@ -785,26 +785,26 @@ void Scumm::redrawBGAreas()
 		diff = (camera._cur.x >> 3) - (camera._last.x >> 3);
 		if (_fullRedraw == 0 && diff == 1) {
 			val = 2;
-			redrawBGStrip(NUM_STRIPS-1, 1);
+			redrawBGStrip(gdi._numStrips - 1, 1);
 		} else if (_fullRedraw == 0 && diff == -1) {
 			val = 1;
 			redrawBGStrip(0, 1);
 		} else if (_fullRedraw != 0 || diff != 0) {
 			_BgNeedsRedraw = false;
 			_fullRedraw = false;
-			redrawBGStrip(0, NUM_STRIPS);
+			redrawBGStrip(0, gdi._numStrips);
 		}
 	} else {
 		if (_fullRedraw == 0 && camera._cur.x - camera._last.x == 8) {
 			val = 2;
-			redrawBGStrip(NUM_STRIPS-1, 1);
+			redrawBGStrip(gdi._numStrips - 1, 1);
 		} else if (_fullRedraw == 0 && camera._cur.x - camera._last.x == -8) {
 			val = 1;
 			redrawBGStrip(0, 1);
 		} else if (_fullRedraw != 0 || camera._cur.x != camera._last.x) {
 			_BgNeedsRedraw = false;
 			_flashlightIsDrawn = false;
-			redrawBGStrip(0, NUM_STRIPS);
+			redrawBGStrip(0, gdi._numStrips);
 		}
 	}
 
@@ -895,7 +895,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 		if (vs->scrollable)
 			sx -= vs->xstart >> 3;
 
-		if ((uint) sx >= NUM_STRIPS)
+		if (sx >= _numStrips)
 			return;
 
 		if (y < vs->tdirty[sx])
@@ -904,13 +904,13 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 		if (bottom > vs->bdirty[sx])
 			vs->bdirty[sx] = bottom;
 
-		_backbuff_ptr = vs->screenPtr + (y * NUM_STRIPS + x) * 8;
+		_backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
 		if (twobufs)
-			_bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * NUM_STRIPS + x) * 8;
+			_bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
 		else
 			_bgbak_ptr = _backbuff_ptr;
 
-		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * NUM_STRIPS + x);
+		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
 		where_draw_ptr = _bgbak_ptr;
 		decompressBitmap();
@@ -952,7 +952,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 		if (flag & dbDrawMaskOnAll) {
 			_z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			for (i = 0; i < numzbuf; i++) {
-				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * NUM_STRIPS + x + _imgBufOffs[i];
+				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 				if (_useOrDecompress && flag & dbAllowMaskOr)
 					decompressMaskImgOr();
 				else
@@ -973,7 +973,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 				} else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
-				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * NUM_STRIPS + x + _imgBufOffs[i];
+				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 
 				if (offs) {
 					_z_plane_ptr = zplane_list[i] + offs;
@@ -985,7 +985,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 				} else {
 					if (!(_useOrDecompress && flag & dbAllowMaskOr))
 						for (int height = 0; height < _numLinesToProcess; height++)
-							_mask_ptr_dest[height * NUM_STRIPS] = 0;
+							_mask_ptr_dest[height * _numStrips] = 0;
 					/* needs better abstraction, FIXME */
 				}
 			}
@@ -1166,7 +1166,7 @@ void Gdi::draw8ColWithMasking()
 		}
 		src += _vm->_realWidth;
 		dst += _vm->_realWidth;
-		mask += NUM_STRIPS;
+		mask += _numStrips;
 	} while (--height);
 }
 
@@ -1201,7 +1201,7 @@ void Gdi::clear8ColWithMasking()
 			((uint32 *)dst)[1] = 0;
 		}
 		dst += _vm->_realWidth;
-		mask += NUM_STRIPS;
+		mask += _numStrips;
 	} while (--height);
 }
 
@@ -1236,14 +1236,14 @@ void Gdi::decompressMaskImg()
 
 			do {
 				*dst = c;
-				dst += NUM_STRIPS;
+				dst += _numStrips;
 				if (!--height)
 					return;
 			} while (--b);
 		} else {
 			do {
 				*dst = *src++;
-				dst += NUM_STRIPS;
+				dst += _numStrips;
 				if (!--height)
 					return;
 			} while (--b);
@@ -1266,14 +1266,14 @@ void Gdi::decompressMaskImgOr()
 
 			do {
 				*dst |= c;
-				dst += NUM_STRIPS;
+				dst += _numStrips;
 				if (!--height)
 					return;
 			} while (--b);
 		} else {
 			do {
 				*dst |= *src++;
-				dst += NUM_STRIPS;
+				dst += _numStrips;
 				if (!--height)
 					return;
 			} while (--b);
@@ -1798,7 +1798,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 
 	backbuff = vs->screenPtr + height;
 	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + height;
-	mask = getResourceAddress(rtBuffer, 9) + top * NUM_STRIPS + (left >> 3) + _screenStartStrip;
+	mask = getResourceAddress(rtBuffer, 9) + top * gdi._numStrips + (left >> 3) + _screenStartStrip;
 	if (vs->number == 0) {
 		mask += vs->topline * 216;
 	}
@@ -1812,7 +1812,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 		if (vs->number == 0 && charset._hasMask && height) {
 			do {
 				memset(mask, 0, widthmod);
-				mask += NUM_STRIPS;
+				mask += gdi._numStrips;
 			} while (--height);
 		}
 	} else {
@@ -1868,12 +1868,12 @@ void Scumm::setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int
 	int lp = left >> 3;
 	int rp = right >> 3;
 
-	if (lp >= NUM_STRIPS || rp < 0)
+	if ((lp >= gdi._numStrips) || (rp < 0))
 		return;
 	if (lp < 0)
 		lp = 0;
-	if (rp >= NUM_STRIPS)
-		rp = NUM_STRIPS - 1;
+	if (rp >= gdi._numStrips)
+		rp = gdi._numStrips - 1;
 
 	while (lp <= rp) {
 		if (top < vs->tdirty[lp])
@@ -1984,14 +1984,14 @@ void Scumm::transitionEffect(int a)
 			b = tab_2[i * 4 + 3];
 			if (t == b) {
 				while (l <= r) {
-					if (l >= 0 && l < NUM_STRIPS && (uint) t < (uint) bottom) {
+					if (l >= 0 && l < gdi._numStrips && (uint) t < (uint) bottom) {
 						virtscr[0].tdirty[l] = t << 3;
 						virtscr[0].bdirty[l] = (t + 1) << 3;
 					}
 					l++;
 				}
 			} else {
-				if (l < 0 || l >= NUM_STRIPS || b <= t)
+				if (l < 0 || l >= gdi._numStrips || b <= t)
 					continue;
 				if (b > bottom)
 					b = bottom;
@@ -2423,7 +2423,7 @@ void Scumm::cameraMoved()
 		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
 
 		_screenStartStrip = (camera._cur.x - (_realWidth / 2)) >> 3;
-		_screenEndStrip = _screenStartStrip + NUM_STRIPS - 1;
+		_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
 		virtscr[0].xstart = _screenStartStrip << 3;
 
 		_screenLeft = camera._cur.x - (_realWidth / 2);
@@ -2437,7 +2437,7 @@ void Scumm::cameraMoved()
 		}
 
 		_screenStartStrip = (camera._cur.x >> 3) - 20;
-		_screenEndStrip = _screenStartStrip + NUM_STRIPS - 1;
+		_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
 		virtscr[0].xstart = _screenStartStrip << 3;
 	}
 }
@@ -2695,7 +2695,7 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	offs = (top * NUM_STRIPS + _vm->_screenStartStrip + strip);
+	offs = (top * _numStrips + _vm->_screenStartStrip + strip);
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + offs;
 	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + (offs << 3);
 	_backbuff_ptr = vs->screenPtr + (offs << 3);
@@ -2738,10 +2738,10 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 		t = 0;
 
 	r >>= 3;
-	if (r > NUM_STRIPS-1)
-		r = NUM_STRIPS-1;
+	if (r > gdi._numStrips - 1)
+		r = gdi._numStrips - 1;
 
-	mem += l + t * NUM_STRIPS;
+	mem += l + t * gdi._numStrips;
 
 	w = r - l;
 	h = b - t + 1;
@@ -2751,7 +2751,7 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 			if (mem[i]) {
 				return true;
 			}
-		mem += NUM_STRIPS;
+		mem += gdi._numStrips;
 	} while (--h);
 
 	return false;

@@ -23,10 +23,6 @@
 #ifndef GFX_H
 #define GFX_H
 
-enum {
-	NUM_STRIPS = 40
-};
-
 enum VideoMode {		/* Video scalers */
 	VIDEO_SCALE = 0,
 	VIDEO_2XSAI = 1,
@@ -60,8 +56,8 @@ struct VirtScreen {		/* Virtual screen areas */
 	byte alloctwobuffers;
 	bool scrollable;
 	uint16 xstart;
-	uint16 tdirty[40];
-	uint16 bdirty[40];
+	uint16 tdirty[80];
+	uint16 bdirty[80];
 	byte *screenPtr;
 	byte *backBuf;
 };
@@ -121,6 +117,7 @@ struct Gdi {
 	int _numZBuffer;
 	int _imgBufOffs[4];
 	byte _disable_zbuffer;
+	int32 _numStrips;
 
 	bool _useOrDecompress;
 	int _numLinesToProcess;

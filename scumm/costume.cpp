@@ -301,7 +301,7 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame)
 			                    _vm->_screenStartStrip);
 
 	if (masking || charsetmask) {
-		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos * 40 + _vm->_screenStartStrip;
+		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos * _numStrips + _vm->_screenStartStrip;
 		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && _zbuf != 0)
 			_mask_ptr += _imgbufoffs;
@@ -445,7 +445,7 @@ void CostumeRenderer::proc5()
 			}
 			dst += _vm->_realWidth;
 			y++;
-			mask += 40;
+			mask += _numStrips;
 			if (!--height) {
 				if (!--_width2)
 					return;
@@ -508,7 +508,7 @@ void CostumeRenderer::proc4()
 			}
 			dst += _vm->_realWidth;
 			y++;
-			mask += 40;
+			mask += _numStrips;
 			if (!--height) {
 				if (!--_width2)
 					return;
@@ -571,7 +571,7 @@ void CostumeRenderer::proc3()
 					*dst = pcolor;
 				}
 				dst += _vm->_realWidth;
-				mask += 40;
+				mask += _numStrips;
 				y++;
 			}
 			if (!--height) {
@@ -633,7 +633,7 @@ void CostumeRenderer::proc2()
 					*dst = pcolor;
 				}
 				dst += _vm->_realWidth;
-				mask += 40;
+				mask += _numStrips;
 				y++;
 			}
 			if (!--height) {
@@ -825,7 +825,7 @@ void CostumeRenderer::proc5_ami()
 				x = _xpos;
 				y++;
 				dst += _vm->_realWidth - step * _width;
-				_mask_ptr+=40;
+				_mask_ptr += _numStrips;
 				mask = _mask_ptr;
 				maskbit = revBitMask[_xpos & 7];
 				if (y >= scrheight)
@@ -889,7 +889,7 @@ void CostumeRenderer::proc4_ami()
 				y++;
 				x = _xpos;
 				dst += _vm->_realWidth - step * _width;
-				_mask_ptr+= 40;
+				_mask_ptr += _numStrips;
 				mask = _mask_ptr;
 				maskbit = revBitMask[_xpos & 7];
 				if (y >= scrheight)
@@ -950,7 +950,7 @@ void CostumeRenderer::proc3_ami()
 
 				if (_xpos != oldXpos) {
 					dst += _vm->_realWidth - (_xpos - oldXpos);
-					_mask_ptr += 40;
+					_mask_ptr += _numStrips;
 					mask = _mask_ptr;
 					y++;
 				}
@@ -1015,7 +1015,7 @@ void CostumeRenderer::proc2_ami()
 
 				if (_xpos != oldXpos) {
 					dst += _vm->_realWidth - (_xpos - oldXpos);
-					_mask_ptr += 40;
+					_mask_ptr += _numStrips;
 					mask = _mask_ptr;
 					y++;
 				}
@@ -1167,7 +1167,7 @@ void CostumeRenderer::proc_special(Actor *a, byte mask2)
 					}
 				}
 				dst += _vm->_realWidth;
-				mask += 40;
+				mask += _numStrips;
 				y++;
 			}
 			if (!--height) {

@@ -1038,7 +1038,7 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg)
 				a->needBgReset = true;
 		}
 	} else {
-		for (i = 0; i < 40; i++) {
+		for (i = 0; i < gdi._numStrips; i++) {
 			bits = gfxUsageBits[_screenStartStrip + i];
 			if (bits & 0x3FFFFFFF) {
 				for (j = 0; j < NUM_ACTORS; j++) {
@@ -1463,7 +1463,7 @@ void Scumm::resetActorBgs()
 	int i;
 	uint32 onlyActorFlags, bitpos;
 
-	for (i = 0; i < 40; i++) {
+	for (i = 0; i < gdi._numStrips; i++) {
 		onlyActorFlags = (gfxUsageBits[_screenStartStrip + i] &= 0x3FFFFFFF);
 		a = getFirstActor();
 		bitpos = 1;

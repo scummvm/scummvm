@@ -829,7 +829,7 @@ public:
 	void updateDirtyScreen(int slot);
 
 	VirtScreen *findVirtScreen(int y);
-	static void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
+	void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
 
 	void drawFlashlight();
 	

@@ -99,6 +99,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_realHeight = 200;
 	}
 
+	gdi._numStrips = _realWidth / 8;
+
 	_newgui = g_gui;
 	_bundle = new Bundle();
 	_sound = new Sound(this);

@@ -296,7 +296,7 @@ void AkosRenderer::codec1_genericDecode()
 						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
 					*dst = palette[color];
 				}
-				mask += 40;
+				mask += _numStrips;
 				dst += outwidth;
 				y++;
 			}
@@ -364,7 +364,7 @@ void AkosRenderer::codec1_spec1()
 						pcolor = shadow_table[*dst];
 					*dst = pcolor;
 				}
-				mask += 40;
+				mask += _numStrips;
 				dst += outwidth;
 				y++;
 			}
@@ -440,7 +440,7 @@ void AkosRenderer::codec1_spec3()
 						*dst = pcolor;
 					}
 				}
-				mask += 40;
+				mask += _numStrips;
 				dst += outwidth;
 				y++;
 			}
@@ -789,7 +789,7 @@ void AkosRenderer::codec1()
 	v1.mask_ptr = NULL;
 
 	if (masking || charsetmask || shadow_mode) {
-		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + cur_y * 40 + _vm->_screenStartStrip;
+		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + cur_y * _numStrips + _vm->_screenStartStrip;
 		v1.imgbufoffs = _vm->gdi._imgBufOffs[clipping];
 		if (!charsetmask && masking) {
 			v1.mask_ptr += v1.imgbufoffs;
@@ -947,7 +947,7 @@ void AkosRenderer::codec5()
 					if (dst_x >= 0 && dst_x < _vm->_realWidth) {
 						if (color != 255) {
 							if (v1.mask_ptr)
-								mask = v1.mask_ptr + 40 * dst_y + (dst_x >> 3);
+								mask = v1.mask_ptr + _numStrips * dst_y + (dst_x >> 3);
 							maskbit = revBitMask[dst_x & 7];
 							if (shadow_mode && color == 13)
 								color = shadow_table[*d];
@@ -965,7 +965,7 @@ void AkosRenderer::codec5()
 					if (dst_x >= 0 && dst_x < _vm->_realWidth) {
 						if (color != 255) {
 							if (v1.mask_ptr)
-								mask = v1.mask_ptr + 40 * dst_y + (dst_x >> 3);
+								mask = v1.mask_ptr + _numStrips * dst_y + (dst_x >> 3);
 							maskbit = revBitMask[dst_x & 7];
 							if (shadow_mode && color == 13)
 								color = shadow_table[*d];
@@ -1201,7 +1201,7 @@ void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, in
 		akos16SkipData(numskip_before);
 	}
 
-	maskpitch = ((uint)_vm->_realWidth / 8) + 1;
+	maskpitch = _numStrips + 1;
 
 	while (t_height != 0) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
@@ -1337,7 +1337,7 @@ void AkosRenderer::codec16() {
 	}
 
 	byte * ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[clipping];
-	ptr += ((_vm->_realWidth / 8) + 1) * clip_top + (clip_left / 8);
+	ptr += (_numStrips + 1) * clip_top + (clip_left / 8);
 	akos16DecompressMask(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255, ptr, clip_left / 8);
 }
 

@@ -44,6 +44,7 @@ protected:
 class CostumeRenderer {
 protected:
 	Scumm *_vm;
+	int32 _numStrips;
 	
 	LoadedCostume _loaded;
 	
@@ -106,7 +107,7 @@ public:
 	void setCostume(int costume);
 
 public:
-	CostumeRenderer(Scumm *vm) : _vm(vm), _loaded(vm) {}
+	CostumeRenderer(Scumm *vm) : _vm(vm), _loaded(vm), _numStrips(vm->gdi._numStrips) {}
 };
 
 #endif

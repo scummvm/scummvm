@@ -235,7 +235,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y)
 	}
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
-		if ((uint) tmp < 40)
+		if (tmp < gdi._numStrips)
 			gdi.drawBitmap(imptr, vs, tmp, ydiff, imgh << 3, i, 1, true);
 	}
 

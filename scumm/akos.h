@@ -65,6 +65,7 @@ struct AkosRenderer {
 	byte dirty_id;
 	byte *outptr;
 	uint outwidth, outheight;
+	int32 _numStrips;
 
 	/* pointer to various parts of the costume resource */
 	byte *akos;
@@ -126,6 +127,7 @@ public:
 	AkosRenderer(Scumm *scumm) {
 		memset(this, 0, sizeof(AkosRenderer));
 		_vm = scumm;
+		_numStrips = _vm->gdi._numStrips;
 	}
 	bool drawCostume();
 	void setPalette(byte *palette);
