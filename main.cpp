@@ -21,22 +21,16 @@
  */
 
 #include "stdafx.h"
+#include "engine.h"
 #include "scumm.h"
 #include "sound/mididrv.h"
 #include "gameDetector.h"
-#include "gui.h"
 #include "simon/simon.h"
 #include "config-file.h"
 
 GameDetector detector;
-Gui gui;
 
-Scumm *g_scumm;
-/* FIXME */
-OSystem *g_system;
-SoundMixer *g_mixer;
-
-Config * scummcfg;
+Config *scummcfg = 0;
 
 
 #if defined(QTOPIA)
@@ -104,46 +98,6 @@ static void do_memory_test(void) {
 
 int main(int argc, char *argv[])
 {
-/*
-Disabled this for now. What good does it do, anyway, we now have real config
-files, and a proper port to MacOS classic should offer a dialog or so for any
-game settings!
-
-#if defined(MACOS_SDL)
-	// support for config file for macos SDL port
-
-	char *argitem;
-	char *argstr;
-	FILE *argf;
-
-	if ((argf = fopen("configuration.macos", "r")) == NULL) {
-		error("Can't open configuration file.\n");
-		exit(1);
-	}
-
-	argc = 0;
-	argstr = (char *)malloc(64);
-	argstr = fgets(argstr, 64, argf);
-	if ((argitem = strchr(argstr, '\n')) != NULL)
-		*argitem = '\0';
-
-	argitem = strtok(argstr, " ");
-
-	while (argitem != NULL) {
-		argv = (char **)realloc(argv, (argc + 1) * 8);
-		argv[argc] = (char *)malloc(64);
-		strcpy(argv[argc], argitem);
-		argc++;
-
-		argitem = strtok(NULL, " ");
-	}
-
-	free(argstr);
-	fclose(argf);
-
-#endif
-*/
-
 #ifdef __DC__
 	extern void dc_init_hardware();
 	dc_init_hardware();
@@ -174,6 +128,7 @@ game settings!
 		return (-1);
 
 	OSystem *system = detector.createSystem();
+	Engine *engine;
 
 	{
 		char *s = detector.getGameName();
@@ -186,32 +141,15 @@ game settings!
 
 	/* Simon the Sorcerer? */
 	if (detector._gameId >= GID_SIMON_FIRST && detector._gameId <= GID_SIMON_LAST) {
-		/* Simon the Sorcerer. Completely different initialization */
-		MidiDriver *midi = detector.createMidi();
-		
-		SimonState *simon = SimonState::create(system, midi);
-		g_system = simon->_system;
-		g_mixer = &simon->_mixer[0];
-		simon->_game = detector._gameId - GID_SIMON_FIRST;
-		simon->set_volume(detector._sfx_volume);
-		simon->_game_path = detector._gameDataPath;
-		simon->go();
+		/* Simon the Sorcerer initialization */
+		detector._gameId -= GID_SIMON_FIRST;
+		engine = SimonState::createFromDetector(&detector, system);
 
 	} else {
-		Scumm *scumm = Scumm::createFromDetector(&detector, system);
-		g_scumm = scumm;
-		g_system = scumm->_system;
-		g_mixer = &scumm->_mixer[0];
-		scumm->_sound->_sound_volume_master = 0;
-		scumm->_sound->_sound_volume_music = detector._music_volume;
-		scumm->_sound->_sound_volume_sfx = detector._sfx_volume;
-
-		/* bind to Gui */
-		scumm->_gui = &gui;
-		gui.init(scumm);							/* Reinit GUI after loading a game */
-
-		scumm->go();
+		engine = Scumm::createFromDetector(&detector, system);
 	}
+
+	engine->go();
 	
 	delete scummcfg;
 	

@@ -22,7 +22,9 @@
 #include "stdafx.h"
 #include "simon.h"
 #include "simonintern.h"
+#include "gameDetector.h"
 #include <errno.h>
+#include <time.h>
 
 #ifdef _WIN32_WCE
 
@@ -109,13 +111,23 @@ static const GameSpecificSettings simon2dos_settings = {
 };
 
 
-SimonState::SimonState()
+SimonState::SimonState(GameDetector *detector, OSystem *syst)
+	: Engine(detector, syst)
 {
+	MidiDriver *driver = detector->createMidi();
+
 	_dummy_item_1 = new Item();
 	_dummy_item_2 = new Item();
 	_dummy_item_3 = new Item();
 	
 	_fcs_list = new FillOrCopyStruct[16];
+
+	/* Setup midi driver */
+	midi.set_driver(driver);
+
+	_game = detector->_gameId;
+	set_volume(detector->_sfx_volume);
+	_game_path = detector->_gameDataPath;
 }
 
 SimonState::~SimonState()
@@ -127,14 +139,9 @@ SimonState::~SimonState()
 	delete [] _fcs_list;
 }
 
-SimonState *SimonState::create(OSystem *syst, MidiDriver *driver)
+SimonState *SimonState::createFromDetector(GameDetector *detector, OSystem *syst)
 {
-	SimonState *s = new SimonState;
-
-	s->_system = syst;
-
-	/* Setup midi driver */
-	s->midi.set_driver(driver);
+	SimonState *s = new SimonState(detector, syst);
 
 	/* Setup mixer */
 	if (!s->_mixer->bind_to_system(syst))

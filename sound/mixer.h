@@ -23,6 +23,7 @@
 #ifndef MIXER_H
 #define MIXER_H
 
+#include <stdio.h>
 #ifdef COMPRESSED_SOUND_FILE
 #include <mad.h>
 #endif

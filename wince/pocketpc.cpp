@@ -57,11 +57,7 @@ typedef int (*tTimeCallback)(int);
 typedef void SoundProc(void *param, byte *buf, int len);
 
 GameDetector detector;
-Gui gui;
-Scumm *g_scumm;
 SimonState *g_simon;
-OSystem *g_system;
-SoundMixer *g_mixer;
 Config *scummcfg;
 tTimeCallback timer_callback;
 int timer_interval;
@@ -443,46 +439,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		return (-1);
 
 	OSystem *system = detector.createSystem();
+	Engine *engine;
 	
 	/* Simon the Sorcerer? */
 	if (detector._gameId >= GID_SIMON_FIRST && detector._gameId <= GID_SIMON_LAST) {
 		/* Simon the Sorcerer. Completely different initialization */
-		MidiDriver *midi = detector.createMidi();
-
-		keypad_init();
-		load_key_mapping();
-		hide_cursor = TRUE;
-		
-		g_simon = SimonState::create(system, midi);
-		g_system = g_simon->_system;
-		g_mixer = &g_simon->_mixer[0];
-		g_simon->_game = detector._gameId - GID_SIMON_FIRST;
-		g_simon->set_volume(detector._sfx_volume);
-		g_simon->_game_path = detector._gameDataPath;
-		g_simon->go();
+		detector._gameId -= GID_SIMON_FIRST;
+		engine = SimonState::createFromDetector(&detector, system);
 
 	} else {
-		Scumm *scumm = Scumm::createFromDetector(&detector, system);
-		g_scumm = scumm;
-		g_system = scumm->_system;
-		g_mixer = &scumm->_mixer[0];
+		engine = Scumm::createFromDetector(&detector, system);
 
-		scumm->_sound_volume_master = 0;
-		scumm->_sound_volume_music = detector._music_volume;
-		scumm->_sound_volume_sfx = detector._sfx_volume;
-
-		keypad_init();
-		load_key_mapping();
-		
-		hide_cursor = TRUE;
-		if (scumm->_gameId == GID_SAMNMAX || scumm->_gameId == GID_FT || scumm->_gameId == GID_DIG)
-			hide_cursor = FALSE;
-
-		/* bind to Gui */
-		scumm->_gui = &gui;
-		gui.init(scumm);	/* Reinit GUI after loading a game */
-		scumm->go();
 	}
+
+	keypad_init();
+	load_key_mapping();
+	
+	hide_cursor = TRUE;
+	if (detector._gameId == GID_SAMNMAX || detector._gameId == GID_FT || detector._gameId == GID_DIG)
+		hide_cursor = FALSE;
+
+
+	engine->go();
 	
 	return 0;
 }

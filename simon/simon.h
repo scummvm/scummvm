@@ -22,10 +22,10 @@
 #ifndef SIMON_H
 #define SIMON_H
 
-#include <time.h>
-#include <sys/stat.h>
+#include <stdio.h>
 #include "engine.h"
 #include "simon/midi.h"
+#include "sound/mixer.h"
 
 /* Various other settings */
 //#define DUMP_CONTINOUS_MAINSCRIPT
@@ -356,7 +356,7 @@ public:
 	byte *_sdl_buf;
 	byte *_sdl_buf_attached;
 
-	SimonState();
+	SimonState(GameDetector *detector, OSystem *syst);
 	virtual ~SimonState();
 
 	int allocGamePcVars(FILE *in);
@@ -795,7 +795,7 @@ public:
 
 	void vc_kill_thread(uint file, uint sprite);
 
-	static SimonState *create(OSystem *syst, MidiDriver *driver);
+	static SimonState *createFromDetector(GameDetector *detector, OSystem *syst);
 
 	void set_dummy_cursor();
 
@@ -820,13 +820,6 @@ public:
 void NORETURN CDECL error(const char *errmsg, ...);
 void CDECL warning(const char *errmsg, ...);
 
-void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch,
-						int width, int height);
-int Init_2xSaI(uint32 BitFormat);
-void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
-								uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void initializeHardware();
-void dx_set_palette(uint32 *colors, uint num);
 void palette_fadeout(uint32 *pal_values, uint num);
 
 #endif

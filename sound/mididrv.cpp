@@ -1118,7 +1118,7 @@ void MidiDriver_MIDIEMU::send(uint32 b)
 			unsigned char note = (unsigned char)((b >> 8) & 0x7F);
 			unsigned char vel = (unsigned char)((b >> 16) & 0x7F);
 			int i, j;
-			int onl, on, nv;
+			int onl, on, nv = 0;
 			unsigned char ins[11];
 			on = -1;
 			if (ch[channel].on != 0) {
@@ -1306,7 +1306,7 @@ int MidiDriver_MIDIEMU::midiemu_callback_thread(void *param)
 	bool need_midi_data = true;
 
 	for (;;) {
-		int number;
+		int number = 0;
 		int i;
 
 		if (need_midi_data) {

@@ -14,14 +14,15 @@ INCS	= scumm.h scummsys.h stdafx.h
 
 GUIOBJS = widget.o dialog.o newgui.o ListWidget.o ScrollBarWidget.o
 
+SCUMMOBJS = actor.o akos.o boxes.o bundle.o costume.o debug.o debugrl.o gfx.o \
+	object.o saveload.o script.o scummvm.o sound.o string.o sys.o vars.o verbs.o \
+	script_v1.o script_v2.o gui.o imuse.o insane.o resource.o resource_v3.o resource_v4.o
+
 SIMONOBJS =	midi.o simon.o simondebug.o simonitems.o simonres.o simonsys.o simonverb.o simonvga.o
 
-OBJS	= actor.o akos.o boxes.o config-file.o costume.o gfx.o object.o resource.o \
-	saveload.o script.o scummvm.o sound.o string.o sys.o verbs.o \
+OBJS	= config-file.o engine.o gameDetector.o fmopl.o mixer.o mididrv.o util.o main.o \
 	morphos.o morphos_scaler.o morphos_sound.o morphos_start.o morphos_timer.o \
-	script_v1.o script_v2.o debug.o gui.o imuse.o fmopl.o mixer.o mididrv.o \
-	debugrl.o vars.o insane.o gameDetector.o resource_v3.o resource_v4.o \
-	util.o main.o bundle.o $(GUIOBJS) $(SIMONOBJS)
+	$(GUIOBJS) $(SCUMMOBJS) $(SIMONOBJS)
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \

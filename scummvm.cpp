@@ -38,6 +38,10 @@
 extern void GraphicsOff(void);
 #endif
 
+// Use g_scumm from error() ONLY
+Scumm *g_scumm = 0;
+
+
 void autosave(Scumm * scumm)
 {
 	scumm->_doAutosave = true;
@@ -63,15 +67,50 @@ uint Scumm::getRandomNumberRng(uint min, uint max)
 }
 
 
-Scumm::Scumm (void) {
+Scumm::Scumm (GameDetector *detector, OSystem *syst) 
+	: Engine(detector, syst)
+{
+	// Use g_scumm from error() ONLY
+	g_scumm = this;
+
+	_debugMode = detector->_debugMode;
+	_bootParam = detector->_bootParam;
+	_gameDataPath = detector->_gameDataPath;
+	_exe_name = detector->_exe_name;
+	_gameId = detector->_gameId;
+	_gameText = detector->_gameText;
+	_features = detector->_features;
+	_soundCardType = detector->_soundCardType;
+	_noSubtitles = detector->_noSubtitles;
+	_cdrom = detector->_cdrom;
+	_defaultTalkDelay = detector->_talkSpeed;
+	_use_adlib = detector->_use_adlib;
+	
+	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
+		_realWidth = 320;
+		_realHeight = 240;
+	} else {
+		_realWidth = 320;
+		_realHeight = 200;
+	}
+
+	_gui = new Gui();
+	_gui->init(this);
+	
 	_newgui = new NewGui(this);
 	_bundle = new Bundle(this);
 	_timer = new Timer(this);
 	_sound = new Sound(this);
+
+	_sound->_sound_volume_master = 0;
+	_sound->_sound_volume_sfx = detector->_sfx_volume;	
+	_sound->_sound_volume_music = detector->_music_volume;	
 }
 
-Scumm::~Scumm (void) {
+Scumm::~Scumm ()
+{
 	delete [] _actors;
+	delete _gui;
 	delete _newgui;
 	delete _bundle;
 	delete _timer;
@@ -1513,26 +1552,15 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	OSystem::Property prop;
 
 	if (detector->_features & GF_OLD256)
-		scumm = new Scumm_v3;
+		scumm = new Scumm_v3(detector, syst);
 	else if (detector->_features & GF_SMALL_HEADER)	// this force loomCD as v4
-		scumm = new Scumm_v4;
+		scumm = new Scumm_v4(detector, syst);
 	else if (detector->_features & GF_AFTER_V7)
-		scumm = new Scumm_v7;
+		scumm = new Scumm_v7(detector, syst);
 	else if (detector->_features & GF_AFTER_V6)	// this force SamnmaxCD as v6
-		scumm = new Scumm_v6;
+		scumm = new Scumm_v6(detector, syst);
 	else
-		scumm = new Scumm_v5;
-
-	scumm->_system = syst;
-
-	
-	if (detector->_gameId == GID_ZAK256) {	// FmTowns is 320x240
-		scumm->_realWidth = 320;
-		scumm->_realHeight = 240;
-	} else {
-		scumm->_realWidth = 320;
-		scumm->_realHeight = 200;
-	}
+		scumm = new Scumm_v5(detector, syst);
 
 	/* This initializes SDL */
 	syst->init_size(scumm->_realWidth, scumm->_realHeight);
@@ -1543,7 +1571,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	 * automatically when samples need to be generated */	
 	if (!scumm->_mixer->bind_to_system(syst)) {         
 		warning("Sound initialization failed");   
-		if (detector->_use_adlib) {   
+		if (detector->_use_adlib) {
+			scumm->_use_adlib = false;   
 			detector->_use_adlib = false;   
 			detector->_midi_driver = MD_NULL;   
 			warning("Adlib music was selected, switching to midi null driver");   
@@ -1552,29 +1581,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	scumm->_mixer->set_volume(kDefaultSFXVolume);
 	scumm->_mixer->set_music_volume(kDefaultMusicVolume);
 
-	/* HACK !!! */
-	g_scumm = scumm;
-	g_system = scumm->_system;
-	g_mixer = &scumm->_mixer[0];
-	/* END HACK */
-
-	scumm->_debugMode = detector->_debugMode;
-	scumm->_bootParam = detector->_bootParam;
-	scumm->_gameDataPath = detector->_gameDataPath;
-	scumm->_exe_name = detector->_exe_name;
-	scumm->_gameId = detector->_gameId;
-	scumm->_gameText = detector->_gameText;
-	scumm->_features = detector->_features;
-	scumm->_soundCardType = detector->_soundCardType;
-	scumm->_noSubtitles = detector->_noSubtitles;
-	scumm->_cdrom = detector->_cdrom;
-	scumm->_defaultTalkDelay = detector->_talkSpeed;
-	scumm->_sound->_sound_volume_sfx = detector->_sfx_volume;	
-	scumm->_sound->_sound_volume_music = detector->_music_volume;	
 	{
 		IMuse *imuse;
-
-		scumm->_use_adlib = detector->_use_adlib;
 
 		if (detector->_use_adlib) {
 			imuse = IMuse::create_adlib(syst, scumm->_mixer);

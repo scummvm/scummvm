@@ -46,11 +46,8 @@ struct FindObjectInRoom;
 
 typedef void (Scumm::*OpcodeProc)();
 
-/* Use this one from error() ONLY */
+// Use g_scumm from error() ONLY
 extern Scumm *g_scumm;
-/* BIG HACK for MidiEmu - FIXME */
-extern OSystem *g_system;
-extern SoundMixer *g_mixer;
 
 /* System Wide Constants */
 enum {
@@ -370,8 +367,6 @@ public:
 	/* Init functions, etc */
 	byte _fastMode;
 	char *getGameName();
-	Scumm(); // constructor
-	virtual ~Scumm();
 
 	/* video buffer */
 	byte *_videoBuffer;
@@ -1337,6 +1332,9 @@ public:
 
 	void launch();
 
+	Scumm(GameDetector *detector, OSystem *syst);
+	virtual ~Scumm();
+
 	static Scumm *createFromDetector(GameDetector *detector, OSystem *syst);
 	void go();
 
@@ -1352,25 +1350,36 @@ public:
 class Scumm_v3 : public Scumm
 {
 public:
+	Scumm_v3(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+
 	void readIndexFile();
 	virtual void loadCharset(int no);
 };
 
 class Scumm_v4 : public Scumm_v3
 {
+public:
+	Scumm_v4(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
+
 	void loadCharset(int no);
 };
 
 class Scumm_v5 : public Scumm
 {
+public:
+	Scumm_v5(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
 };
 
 class Scumm_v6 : public Scumm
 {
+public:
+	Scumm_v6(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
 };
 
 class Scumm_v7 : public Scumm
 {
+public:
+	Scumm_v7(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
 };
 
 extern uint16 _debugLevel;

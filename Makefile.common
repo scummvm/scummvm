@@ -9,7 +9,7 @@ INCS	= scumm.h scummsys.h stdafx.h
 OBJS	+= util.o newgui.o gui/widget.o gui/dialog.o \
 	gui/ListWidget.o gui/ScrollBarWidget.o \
 	actor.o akos.o boxes.o bundle.o config-file.o costume.o debug.o \
-	debugrl.o gameDetector.o gfx.o gui.o insane.o main.o object.o \
+	debugrl.o engine.o gameDetector.o gfx.o gui.o insane.o main.o object.o \
 	resource.o saveload.o scaler.o script.o script_v1.o script_v2.o \
 	scummvm.o sound.o string.o sys.o timer.o vars.o verbs.o  \
 	sound/imuse.o sound/fmopl.o sound/mixer.o \
@@ -18,9 +18,12 @@ OBJS	+= util.o newgui.o gui/widget.o gui/dialog.o \
 	simon/simondebug.o simon/simonres.o simon/simonitems.o simon/simonverb.o \
 	sound/mididrv.o
 
-DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
-	debugrl.h whatsnew.txt readme.txt copying.txt \
-	scummvm.dsp scummvm.dsw sound/fmopl.h gui.h sound.h
+DISTFILES=$(OBJS:.o=.cpp) Makefile scummvm.dsp scummvm.dsw stdafx.cpp \
+	whatsnew.txt readme.txt copying.txt \
+	actor.h akos.h boxes.h bundle.h cmdline.h config-file.h costume.h debug.h \
+	debugrl.h engine.h fb2opengl.h gameDetector.h gapi_keys.h gfx.h gui.h guimaps.h \
+	newgui.h object.h resource.h saveload.h scaler.h scumm.h scummsys.h smush.h \
+	sound.h stdafx.h system.h timer.h util.h sound/fmopl.h
 
 all: scummvm$(EXEEXT)
 

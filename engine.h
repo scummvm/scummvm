@@ -23,7 +23,13 @@
 
 #include "scummsys.h"
 #include "system.h"
-#include "sound/mixer.h"
+
+class SoundMixer;
+class GameDetector;
+
+/* FIXME - BIG HACK for MidiEmu */
+extern OSystem *g_system;
+extern SoundMixer *g_mixer;
 
 class Engine {
 public:
@@ -31,15 +37,10 @@ public:
 
 	SoundMixer *_mixer;
 
-	Engine()
-	{
-		_mixer = new SoundMixer();
-	}
-	
-	~Engine()
-	{
-		delete _mixer;
-	}
+	Engine(GameDetector *detector, OSystem *syst);
+	virtual ~Engine();
+
+	virtual void go() = 0;
 };
 
 

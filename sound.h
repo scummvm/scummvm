@@ -22,6 +22,7 @@
 #define SOUND_H
 
 #include "scummsys.h"
+#include "sound/mixer.h"
 
 class Scumm;
 

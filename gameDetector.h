@@ -20,6 +20,12 @@
  *
  */
 
+#ifndef GAMEDETECTOR_H
+#define GAMEDETECTOR_H
+
+class OSystem;
+class MidiDriver;
+
 class GameDetector {
 public:
 	int detectMain(int argc, char **argv);
@@ -69,3 +75,5 @@ public:
 	OSystem *createSystem();
 	MidiDriver *createMidi();
 };
+
+#endif
