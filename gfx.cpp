@@ -581,6 +581,10 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction)
 	}
 }
 
+void Scumm::drawFlashlight()
+{
+}
+
 void Scumm::fadeIn(int effect)
 {
 	switch (effect) {
@@ -2602,11 +2606,11 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 		if (ar == r && ag == g && ab == b)
 			return i;
 
-		j = abs(ar - r);
+		j = ar - r;
 		sum = j * j * 3;
-		j = abs(ag - g);
+		j = ag - g;
 		sum += j * j * 6;
-		j = abs(ab - b);
+		j = ab - b;
 		sum += j * j * 2;
 
 		if (sum < bestsum) {

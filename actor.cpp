@@ -1308,7 +1308,7 @@ byte *Actor::getActorName()
 	return ptr;
 }
 
-void Actor::remapActor(int r_fact, int g_fact, int b_fact, int threshold)
+void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 {
 	byte *akos, *rgbs, *akpl;
 	int akpl_size, i;

@@ -754,6 +754,8 @@ public:
 
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
 	bool _doEffect;
+	
+	uint16 _lightDx, _lightDy;
 
 	void getGraphicsPerformance();
 	void initScreens(int a, int b, int w, int h);
@@ -818,10 +820,13 @@ public:
 	void updateDirtyScreen(int slot);
 
 	VirtScreen *findVirtScreen(int y);
-	void fadeOut(int a);
 	static void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
 
+	void drawFlashlight();
+	
 	void fadeIn(int effect);
+	void fadeOut(int effect);
+
 	void unkScreenEffect1();
 	void unkScreenEffect2();
 	void unkScreenEffect3();

@@ -151,7 +151,7 @@ public:
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
 
-	void remapActor(int b, int c, int d, int e);
+	void remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold);
 	void walkActorOld();
 
 	void animateActor(int anim);

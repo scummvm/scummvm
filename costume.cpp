@@ -1349,9 +1349,13 @@ void CostumeRenderer::setPalette(byte *palette)
 	byte color;
 
 	for (i = 0; i < _loaded._numColors; i++) {
-		color = palette[i];
-		if (color == 255)
-			color = _loaded._ptr[8 + i];
+		if (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color) {
+			color = palette[i];
+			if (color == 255)
+				color = _loaded._ptr[8 + i];
+		} else {
+			color = (i == 12) ? 0 : 8;
+		}
 		_palette[i] = color;
 	}
 }

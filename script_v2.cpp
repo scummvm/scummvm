@@ -2726,10 +2726,10 @@ void Scumm::o6_miscOps()
 			setCursorImg(args[1], (uint) - 1, args[2]);
 			break;
 		case 13:
-			derefActorSafe(args[1], "o6_miscOps:14")->remapActor(args[2], args[3], args[4], -1);
+			derefActorSafe(args[1], "o6_miscOps:14")->remapActorPalette(args[2], args[3], args[4], -1);
 			break;
 		case 14:
-			derefActorSafe(args[1], "o6_miscOps:14")->remapActor(args[2], args[3], args[4], args[5]);
+			derefActorSafe(args[1], "o6_miscOps:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
 			break;
 		case 15:
 			_insaneFlag = args[1];

@@ -1547,11 +1547,11 @@ void Scumm::o5_lights()
 
 	warning("o5_lights(%d,%d,%d): lights not implemented", a, b, c);
 
-	if (c==0)
+	if (c == 0)
 		_vars[VAR_CURRENT_LIGHTS] = a;
-	else if (c==1) {
-		//LightDx = a;
-		//LightDy = b;
+	else if (c == 1) {
+		_lightDx = a;
+		_lightDy = b;
 	}
 	_fullRedraw = 1;
 }
