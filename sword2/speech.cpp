@@ -1373,7 +1373,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 		// New fudge to wait for smacker samples to finish (James31july97)
 		// since they can over-run into the game
 
-		if (GetSpeechStatus()!=RDSE_SAMPLEFINISHED)	// has it finished?
+		if (g_bs2->_sound->GetSpeechStatus()!=RDSE_SAMPLEFINISHED)	// has it finished?
 			return (IR_REPEAT);
 		
 	 	//-------------------------
@@ -1584,11 +1584,11 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
  			//------------------------------
 
 
-			rv = PlayCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);	// Load speech but don't start playing yet
+			rv = g_bs2->_sound->PlayCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);	// Load speech but don't start playing yet
 			if (rv == RD_OK)
 			{
 				speechRunning=1;	// ok, we've got something to play	(2 means not playing yet - see below)
-				UnpauseSpeech();	// set it playing now (we might want to do this next cycle, don't know yet)
+				g_bs2->_sound->UnpauseSpeech();	// set it playing now (we might want to do this next cycle, don't know yet)
 			}
 			#ifdef _BS2_DEBUG
 			else
@@ -1628,7 +1628,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 			else if (speechRunning)											// if playing a sample
 			{
 				if	(!unpause_zone)
-				{	if (AmISpeaking()==RDSE_QUIET)								// if we're at a quiet bit
+				{	if (g_bs2->_sound->AmISpeaking()==RDSE_QUIET)								// if we're at a quiet bit
 						ob_graphic->anim_pc=0;									// restart from frame 0 ('closed mouth' frame)
 				}
 			}
@@ -1655,7 +1655,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 	if (speechRunning==1)	// if playing a sample (note that value of '2' means about to play!)
 	{
 		if	(!unpause_zone)
-		{	if (GetSpeechStatus()==RDSE_SAMPLEFINISHED)	// has it finished?
+		{	if (g_bs2->_sound->GetSpeechStatus()==RDSE_SAMPLEFINISHED)	// has it finished?
 				speechFinished=1;						// James25feb97
 		}
 		else	unpause_zone--;
@@ -1704,7 +1704,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 
 			if (speechRunning)							// if speech sample playing
 			{
-				StopSpeechBS2();							// halt the sample prematurely
+				g_bs2->_sound->StopSpeechBS2();							// halt the sample prematurely
 			}
 		}
 	}

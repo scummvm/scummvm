@@ -165,7 +165,9 @@ int32 BS2State::InitialiseGame(void)
 	Zdebug("CALLING: Init_event_system");
 	Init_event_system();
 	Zdebug("RETURNED.");
-
+	
+	_sound = new BS2Sound;
+	
 	Zdebug("CALLING: Init_fx_queue");
 	Init_fx_queue();			// initialise the sound fx queue
 	Zdebug("RETURNED.");
@@ -284,7 +286,7 @@ void BS2State::go()
   	Zdebug("RETURNED.");
 
 	Zdebug("CALLING: InitialiseSound");
-	rv = InitialiseSound(22050, 2, 16);
+	rv = _sound->InitialiseSound(22050, 2, 16);
  	Zdebug("RETURNED with rv = %.8x", rv);
 	// don't care if this fails, because it should still work without sound cards
 	// but it should set a global system flag so that we can avoid loading sound fx & streaming music

@@ -412,7 +412,6 @@ int32	FN_reset_globals(int32	*params)	//Tony29May97
 // This function just quits the game if this is the playable demo, ie. credits are NOT played in the demo any more!
 
 extern uint8 quitGame;			// From sword2.cpp
-extern void UpdateCompSampleStreaming(void);	// From d_sound.c
 
 int32 FN_play_credits(int32 *params)
 {
@@ -431,7 +430,7 @@ int32 FN_play_credits(int32 *params)
 		StopMusic();	// Stop any streaming music
 		
 		for (int i = 0; i<16; i++)
-			UpdateCompSampleStreaming();	// And wait for it to die
+			g_bs2->_sound->UpdateCompSampleStreaming();	// And wait for it to die
 
 		GetDrawStatus (&ds);
 		GetSoundStatus(&ss);

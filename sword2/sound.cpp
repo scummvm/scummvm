@@ -111,7 +111,7 @@ void Process_fx_queue(void)
 			}
 			else if (fxq[j].type == FX_SPOT2)
 			{
-				if (IsFxOpen(j+1))
+				if (g_bs2->_sound->IsFxOpen(j+1))
 					fxq[j].resource = 0;		// Once the Fx has finished remove it from the queue.
 			}
 		}
@@ -131,7 +131,7 @@ void Trigger_fx(uint8 j)	// called from Process_fx_queue only
 	{
 		data = res_man.Res_open(fxq[j].resource);						// load in the sample
 		data += sizeof(_standardHeader);
-		rv = PlayFx( id, data, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT );		// wav data gets copied to sound memory
+		rv = g_bs2->_sound->PlayFx( id, data, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT );		// wav data gets copied to sound memory
 		res_man.Res_close(fxq[j].resource);								// release the sample
 //		fxq[j].resource = 0;											// clear spot fx from queue
 	}
@@ -139,9 +139,9 @@ void Trigger_fx(uint8 j)	// called from Process_fx_queue only
 	{		// - to be referenced by 'j', so pass NULL data
 
 		if (fxq[j].type == FX_RANDOM)
-			rv = PlayFx( id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT );	// not looped
+			rv = g_bs2->_sound->PlayFx( id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT );	// not looped
 		else			// FX_LOOP
-			rv = PlayFx( id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXLOOP );	// looped
+			rv = g_bs2->_sound->PlayFx( id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXLOOP );	// looped
 	}
 
 	#ifdef _BS2_DEBUG
@@ -251,7 +251,7 @@ int32 FN_play_fx(int32 *params)		// called from script only
 			#endif
 
 			data += sizeof(_standardHeader);
-			rv = OpenFx(id,data);							// copy it to sound memory, using position in queue as 'id'
+			rv = g_bs2->_sound->OpenFx(id,data);							// copy it to sound memory, using position in queue as 'id'
 
 			#ifdef _BS2_DEBUG
 			if (rv)
@@ -289,7 +289,7 @@ int32 FN_set_fx_vol_and_pan(int32 *params)
 //			2	new pan (-16..16)
 
 //	SetFxVolumePan(int32 id, uint8 vol, uint8 pan);
-	SetFxVolumePan(1+params[0], params[1], params[2]);	// driver fx_id is 1+<pos in queue>
+	g_bs2->_sound->SetFxVolumePan(1+params[0], params[1], params[2]);	// driver fx_id is 1+<pos in queue>
 //	Zdebug("%d",params[2]);
 
 	return (IR_CONT);
@@ -302,7 +302,7 @@ int32 FN_set_fx_vol(int32 *params)
 //			1	new volume (0..16)
 
 //	SetFxIdVolume(int32 id, uint8 vol);
-	SetFxIdVolume(1+params[0], params[1]);
+	g_bs2->_sound->SetFxIdVolume(1+params[0], params[1]);
 
 	return (IR_CONT);
 }
@@ -321,7 +321,7 @@ int32 FN_stop_fx(int32 *params)		// called from script only
 	if ((fxq[j].type == FX_RANDOM) || (fxq[j].type == FX_LOOP))
 	{
 		id = (uint32)j+1;	// because 0 is not a valid id
-		rv = CloseFx(id);		// stop fx & remove sample from sound memory
+		rv = g_bs2->_sound->CloseFx(id);		// stop fx & remove sample from sound memory
 
 		#ifdef _BS2_DEBUG
 		if (rv)
@@ -350,7 +350,7 @@ int32 FN_stop_all_fx(int32 *params)		// called from script only
 
 void Clear_fx_queue(void)
 {
-	ClearAllFx();			// stop all fx & remove the samples from sound memory
+	g_bs2->_sound->ClearAllFx();			// stop all fx & remove the samples from sound memory
 	Init_fx_queue();		// clean out the queue
 }
 
@@ -415,7 +415,7 @@ int32 FN_play_music(int32 *params)		// updated by James on 10apr97
 	else
 		sprintf(filename,"%sCLUSTERS\\MUSIC.CLU", res_man.GetCdPath());
 
-	rv = StreamCompMusic(filename, params[0], loopFlag);
+	rv = g_bs2->_sound->StreamCompMusic(filename, params[0], loopFlag);
 
 	#ifdef _BS2_DEBUG
 		if (rv)
@@ -435,25 +435,24 @@ int32 FN_stop_music(int32 *params)		// called from script only
 
 	looping_music_id=0;		// clear the 'looping' flag
 
-	StopMusic();
+	g_bs2->_sound->StopMusic();
 
 	if (params);
 
 	return(IR_CONT);	//	continue script
 }
 //--------------------------------------------------------------------------------------
-extern void UpdateCompSampleStreaming(void);	// used in Kill_music()
 //--------------------------------------------------------------------------------------
 void Kill_music(void)	// James22aug97
 {
 	uint8 count;
 
 	looping_music_id=0;		// clear the 'looping' flag
-	StopMusic();
+	g_bs2->_sound->StopMusic();
 
 	// THIS BIT CAUSES THE MUSIC TO STOP INSTANTLY!
 	for(count=0; count<16; count++)
-		UpdateCompSampleStreaming();
+		g_bs2->_sound->UpdateCompSampleStreaming();
 }
 //--------------------------------------------------------------------------------------
 int32 FN_check_music_playing(int32 *params)		// James (30july97)
@@ -463,7 +462,7 @@ int32 FN_check_music_playing(int32 *params)		// James (30july97)
 	// sets result to no. of seconds of current tune remaining
 	// or 0 if no music playing
 
-	RESULT = MusicTimeRemaining();	// in seconds, rounded up to the nearest second
+	RESULT = g_bs2->_sound->MusicTimeRemaining();	// in seconds, rounded up to the nearest second
 
 	return(IR_CONT);	//	continue script
 }
@@ -472,15 +471,15 @@ void PauseAllSound(void)	// James25july97
 {
 	uint32	rv;	// for drivers return value
 
-	rv = PauseMusic();
+	rv = g_bs2->_sound->PauseMusic();
 	if (rv != RD_OK)
 		Zdebug("ERROR: PauseMusic() returned %.8x in PauseAllSound()", rv);
 
-	rv = PauseSpeech();
+	rv = g_bs2->_sound->PauseSpeech();
 	if (rv != RD_OK)
 		Zdebug("ERROR: PauseSpeech() returned %.8x in PauseAllSound()", rv);
 
-	rv = PauseFx();
+	rv = g_bs2->_sound->PauseFx();
 	if (rv != RD_OK)
 		Zdebug("ERROR: PauseFx() returned %.8x in PauseAllSound()", rv);
 }
@@ -489,15 +488,15 @@ void UnpauseAllSound(void)	// James25july97
 {
 	uint32	rv;	// for drivers return value
 
-	rv = UnpauseMusic();
+	rv = g_bs2->_sound->UnpauseMusic();
 	if (rv != RD_OK)
 		Zdebug("ERROR: UnpauseMusic() returned %.8x in UnpauseAllSound()", rv);
 
-	rv = UnpauseSpeech();
+	rv = g_bs2->_sound->UnpauseSpeech();
 	if (rv != RD_OK)
 		Zdebug("ERROR: UnpauseSpeech() returned %.8x in UnpauseAllSound()", rv);
 
-	rv = UnpauseFx();
+	rv = g_bs2->_sound->UnpauseFx();
  	if (rv != RD_OK)
 		Zdebug("ERROR: UnpauseFx() returned %.8x in UnpauseAllSound()", rv);
 }

@@ -38,6 +38,97 @@
 #ifndef D_SOUND_H
 #define D_SOUND_H
 
-extern void FxServer(void);
+#include "sound/mixer.h"
+
+class BS2Sound {
+	public:
+		BS2Sound(void);
+		void FxServer(void);
+		int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth);
+		int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
+		int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
+		int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem);
+		int32 GetCompSpeechSize(const char *filename, uint32 speechid);
+		int32 AmISpeaking();
+		int32 StopSpeechBS2(void);
+		int32 GetSpeechStatus(void);
+		int32 PauseSpeech(void);
+		int32 UnpauseSpeech(void);
+		int32 OpenFx(int32 id, uint8 *data);
+		int32 PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type);
+		int32 CloseFx(int32 id);
+		int32 ClearAllFx(void);
+		int32 PauseFx(void);
+		int32 PauseFxForSequence(void);
+		int32 UnpauseFx(void);
+		int32 PauseMusic(void);
+		int32 UnpauseMusic(void);
+		int32 StreamMusic(uint8 *filename, int32 looping);
+		int32 StreamCompMusic(const char *filename,uint32 musicId, int32 looping);
+		int32 MusicTimeRemaining();
+		int32 ReverseStereo(void);
+		uint8 GetFxVolume(void);
+		uint8 GetSpeechVolume(void);
+		uint8 GetMusicVolume(void);
+		uint8 IsMusicMute(void);
+		uint8 IsFxMute(void);
+		uint8 IsSpeechMute(void);
+		void  StopMusic(void);
+		void  GetSoundStatus(_drvSoundStatus *s);
+		void  SetSoundStatus(_drvSoundStatus *s);
+		void  SetFxVolume(uint8 vol);
+		void  SetSpeechVolume(uint8 vol);
+		void  SetMusicVolume(uint8 vol);
+		void  MuteMusic(uint8 mute);
+		void  MuteFx(uint8 mute);
+		void  MuteSpeech(uint8 mute);
+		int32 IsFxOpen(int32 id);
+		int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan);
+		int32 SetFxIdVolume(int32 id, uint8 vol);
+		void UpdateCompSampleStreaming(void);
+		SoundMixer *_mixer;
+	private:
+		int32 GetFxIndex(int32 id);
+		void StartMusicFadeDown(int i);
+		int32 DipMusic();
+		void UpdateSampleStreaming(void);
+
+		int32 fxId[MAXFX];
+		uint8 fxCached[MAXFX];
+		uint8 fxiPaused[MAXFX];
+		uint8 fxLooped[MAXFX];
+		uint8 fxVolume[MAXFX];
+		
+		uint8 soundOn;
+		uint8 speechStatus;
+		uint8 fxPaused;
+		uint8 speechPaused;
+		uint8 speechVol;
+		uint8 fxVol;
+		uint8 speechMuted;
+		uint8 fxMuted;
+		uint8 compressedMusic;
+
+		int16 musStreaming[MAXMUS];
+		int16 musicPaused[MAXMUS];
+		int16 musCounter[MAXMUS];
+		int16 musFading[MAXMUS];
+		int16 musLooping[MAXMUS];
+
+		//DSBUFFERDESC dsbdMus[MAXMUS];
+		//LPDIRECTSOUNDBUFFER lpDsbMus[MAXMUS];
+		FILE *fpMus[MAXMUS];
+		//PCMWAVEFORMAT wfMus[MAXMUS];
+		int32 streamCursor[MAXMUS];
+		char musFilename[MAXMUS][256];
+		int32 musFilePos[MAXMUS];
+		int32 musEnd[MAXMUS];
+		int16 musLastSample[MAXMUS];
+		uint32 musId[MAXMUS];
+		uint32 volMusic[2];
+		uint8 musicMuted;
+		
+};
+
 
 #endif

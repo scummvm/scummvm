@@ -358,6 +358,7 @@
 #include "stdafx.h"
 #include "driver96.h"
 #include "rdwin.h"			// for hwnd.
+#include "d_sound.h"
 
 // Decompression macros
 #define MakeCompressedByte(shift,sign,amplitude) (((shift)<<4) + ((sign)<<3) + (amplitude))
@@ -365,6 +366,13 @@
 #define GetCompressedSign(byte)                  (((byte)>>3) & 1)
 #define GetCompressedAmplitude(byte)             ((byte) & 7)
 #define GetdAPower(dA,power)                     for (power = 15;power>0 && !((dA) & (1<<power)); power--)
+
+/*
+LPDIRECTSOUND				lpDS;
+LPDIRECTSOUNDBUFFER			dsbPrimary;
+LPDIRECTSOUNDBUFFER			dsbSpeech;
+LPDIRECTSOUNDBUFFER			dsbFx[MAXFX];
+*/
 
 int32 panTable[33] = {
 	-10000,
@@ -387,46 +395,6 @@ int32 volTable[241] = {
 
 };	
 
-/*
-LPDIRECTSOUND				lpDS;
-LPDIRECTSOUNDBUFFER			dsbPrimary;
-LPDIRECTSOUNDBUFFER			dsbSpeech;
-LPDIRECTSOUNDBUFFER			dsbFx[MAXFX];
-*/
-
-int32						fxId[MAXFX];
-uint8						fxCached[MAXFX];
-uint8						fxiPaused[MAXFX];
-uint8						fxLooped[MAXFX];
-uint8						fxVolume[MAXFX];
-
-uint8						soundOn			= 0;
-uint8						speechStatus	= 0;
-uint8						fxPaused		= 0;
-uint8						speechPaused	= 0;
-uint8						speechVol		= 14;
-uint8						fxVol			= 14;
-uint8                       speechMuted     = 0;
-uint8                       fxMuted			= 0;
-uint8						compressedMusic = 0;
-
-int16 									musStreaming[MAXMUS];
-int16									musicPaused[MAXMUS];
-int16 									musCounter[MAXMUS];
-int16									musFading[MAXMUS];
-int16									musLooping[MAXMUS];
-//DSBUFFERDESC 							dsbdMus[MAXMUS];
-//LPDIRECTSOUNDBUFFER 					lpDsbMus[MAXMUS];
-FILE									*fpMus[MAXMUS];
-//PCMWAVEFORMAT       					wfMus[MAXMUS];
-int32									streamCursor[MAXMUS];
-char									musFilename[MAXMUS][256];
-int32									musFilePos[MAXMUS];
-int32									musEnd[MAXMUS];
-int16									musLastSample[MAXMUS];
-uint32									musId[MAXMUS];
-uint32									volMusic[2] = {16, 16};
-uint8									musicMuted = 0;
 int32 musicVolTable[17] = {
   -10000, 
   -5000, -3000, -2500, -2250, 
@@ -437,10 +405,25 @@ int32 musicVolTable[17] = {
 
 
 
-void  UpdateSampleStreaming(void);
-void  UpdateCompSampleStreaming(void);
-int32 DipMusic(void);
+BS2Sound::BS2Sound(void) {
 
+	soundOn = 0;
+	speechStatus = 0;
+	fxPaused = 0;
+	speechPaused = 0;
+	speechVol = 14;
+	fxVol = 14;
+	speechMuted = 0;
+	fxMuted = 0;
+	compressedMusic = 0;
+
+	volMusic[0] = 16;
+	volMusic[1] = 16;
+	musicMuted = 0;
+
+}
+
+/*  not used seemingly - khalek
 
 #define SPEECH_EXPANSION
 
@@ -473,12 +456,12 @@ int16 ExpandSpeech(int16 sample)
 
 }
 #endif
-
+*/
 
 //	--------------------------------------------------------------------------
 //	This function reverse the pan table, thus reversing the stereo.
 //	--------------------------------------------------------------------------
-int32 ReverseStereo(void)
+int32 BS2Sound::ReverseStereo(void)
 {
 	int32 i,j;
 
@@ -497,7 +480,7 @@ int32 ReverseStereo(void)
 //	--------------------------------------------------------------------------
 //	This function returns the index of the sound effect with the ID passed in.
 //	--------------------------------------------------------------------------
-int32 GetFxIndex(int32 id)
+int32 BS2Sound::GetFxIndex(int32 id)
 
 {
 
@@ -515,7 +498,7 @@ int32 GetFxIndex(int32 id)
 }
 
 
-int32 IsFxOpen(int32 id)
+int32 BS2Sound::IsFxOpen(int32 id)
 {
 
 	int32 i = 0;
@@ -540,7 +523,7 @@ int32 IsFxOpen(int32 id)
 //	out the ones which are no longer required in a buffer.  It is called on
 //	a slow timer from rdwin.c
 //	--------------------------------------------------------------------------
-void FxServer(void)
+void BS2Sound::FxServer(void)
 
 {
 	warning("stub FxServer");
@@ -603,7 +586,7 @@ void FxServer(void)
 
 
 
-int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth)
+int32 BS2Sound::InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth)
 
 {
 	warning("stub InitaliseSound( %d, %d, %d )", freq, channels, bitDepth);
@@ -689,7 +672,7 @@ int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth)
 }
 
 
-int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan)
+int32 BS2Sound::PlaySpeech(uint8 *data, uint8 vol, int8 pan)
 
 {
 	warning("stub PlaySpeech");
@@ -793,7 +776,7 @@ int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan)
 }
 
 
-int32 AmISpeaking()
+int32 BS2Sound::AmISpeaking()
 {
 	warning("stub AmISpeaking");
 /*
@@ -837,7 +820,7 @@ int32 AmISpeaking()
 }
 
 
-int32 GetCompSpeechSize(const char *filename, uint32 speechid)
+int32 BS2Sound::GetCompSpeechSize(const char *filename, uint32 speechid)
 {
   	int32 			i;
 	uint32			speechIndex[2];
@@ -874,7 +857,7 @@ int32 GetCompSpeechSize(const char *filename, uint32 speechid)
 }
 
 
-int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem)
+int32 BS2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem)
 {
   	uint32 			i;
 	uint16			*data16;
@@ -968,7 +951,7 @@ int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem)
 }
 
 
-int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan)
+int32 BS2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan)
 {
 	warning("stub PlayCompSpeech( %s, %d, %d, %d )", filename, speechid, vol, pan);
 /*
@@ -1131,7 +1114,7 @@ int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan)
 }
 
 
-int32 StopSpeechBS2(void)
+int32 BS2Sound::StopSpeechBS2(void)
 
 {
 	warning("stub StopSpeechBS2");
@@ -1163,7 +1146,7 @@ int32 StopSpeechBS2(void)
 
 
 
-int32 GetSpeechStatus(void)
+int32 BS2Sound::GetSpeechStatus(void)
 {
 	warning("stub GetSpeechStatus");
 /*
@@ -1192,7 +1175,7 @@ int32 GetSpeechStatus(void)
 }
 
 
-void SetSpeechVolume(uint8 volume)
+void BS2Sound::SetSpeechVolume(uint8 volume)
 {
 	warning("stub SetSpeechVolume");
 /*
@@ -1203,13 +1186,13 @@ void SetSpeechVolume(uint8 volume)
 }
 
 
-uint8 GetSpeechVolume()
+uint8 BS2Sound::GetSpeechVolume()
 {
 	return speechVol;
 }
 
 
-void MuteSpeech(uint8 mute)
+void BS2Sound::MuteSpeech(uint8 mute)
 {
 	warning("stub MuteSpeech( %d )", mute);
 /*
@@ -1226,13 +1209,13 @@ void MuteSpeech(uint8 mute)
 }
 
 
-uint8 IsSpeechMute(void)
+uint8 BS2Sound::IsSpeechMute(void)
 {
 	return (speechMuted);
 }
 
 
-int32 PauseSpeech(void)
+int32 BS2Sound::PauseSpeech(void)
 {
 	warning("PauseSpeech");
 /*
@@ -1245,7 +1228,7 @@ int32 PauseSpeech(void)
 	return(RD_OK);
 }
 
-int32 UnpauseSpeech(void)
+int32 BS2Sound::UnpauseSpeech(void)
 {
 	warning("UnpauseSpeech");
 /*
@@ -1259,7 +1242,7 @@ int32 UnpauseSpeech(void)
 }
 
 
-int32 OpenFx(int32 id, uint8 *data)
+int32 BS2Sound::OpenFx(int32 id, uint8 *data)
 
 {
 	warning("stub OpenFx( %d )", id);
@@ -1374,7 +1357,7 @@ int32 OpenFx(int32 id, uint8 *data)
 }
 
 
-int32 PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type)
+int32 BS2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type)
 
 {
 	warning("stub PlayFx( %d, %d, %d, %d )", id, vol, pan, type);
@@ -1480,7 +1463,7 @@ int32 PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type)
 }
 
 
-int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan)
+int32 BS2Sound::SetFxVolumePan(int32 id, uint8 vol, int8 pan)
 {
 	warning("stub SetFxVolumePan( %d, %d, %d )", id, vol, pan);
 /*
@@ -1496,7 +1479,7 @@ int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan)
 	return RD_OK;
 }
 
-int32 SetFxIdVolume(int32 id, uint8 vol)
+int32 BS2Sound::SetFxIdVolume(int32 id, uint8 vol)
 {
 	warning("stub SetFxIdVolume( %d, %d )", id, vol);
 /*
@@ -1513,7 +1496,7 @@ int32 SetFxIdVolume(int32 id, uint8 vol)
 
 
 
-int32 ClearAllFx(void)
+int32 BS2Sound::ClearAllFx(void)
 
 {
 	warning("stub ClearAllFx");
@@ -1548,7 +1531,7 @@ int32 ClearAllFx(void)
 }
 
 
-int32 CloseFx(int32 id)
+int32 BS2Sound::CloseFx(int32 id)
 
 {
 	warning("stub CloseFx( %d )", id);
@@ -1579,7 +1562,7 @@ int32 CloseFx(int32 id)
 }
 
 
-int32 PauseFx(void)
+int32 BS2Sound::PauseFx(void)
 
 {
 	warning("stub PauseFx");
@@ -1614,7 +1597,7 @@ int32 PauseFx(void)
 }
 
 
-int32 PauseFxForSequence(void)
+int32 BS2Sound::PauseFxForSequence(void)
 
 {
 	warning("stub PauseFxForSequence");
@@ -1649,7 +1632,7 @@ int32 PauseFxForSequence(void)
 
 
 
-int32 UnpauseFx(void)
+int32 BS2Sound::UnpauseFx(void)
 
 {
 	warning("stub UnpauseFx");
@@ -1674,13 +1657,13 @@ int32 UnpauseFx(void)
 
 
 
-uint8 GetFxVolume()
+uint8 BS2Sound::GetFxVolume()
 {
 	return fxVol;
 }
 
 
-void SetFxVolume(uint8 volume)
+void BS2Sound::SetFxVolume(uint8 volume)
 {
 	warning("stub SetFxVolume( %d )", volume);
 /*
@@ -1697,7 +1680,7 @@ void SetFxVolume(uint8 volume)
 }
 
 
-void MuteFx(uint8 mute)
+void BS2Sound::MuteFx(uint8 mute)
 {
 	warning("stub MuteFx( %d )");
 /*
@@ -1719,7 +1702,7 @@ void MuteFx(uint8 mute)
 */
 }
 
-uint8 IsFxMute(void)
+uint8 BS2Sound::IsFxMute(void)
 {
 	return (fxMuted);
 }
@@ -1727,7 +1710,7 @@ uint8 IsFxMute(void)
 
 
 
-static void StartMusicFadeDown(int i)
+void BS2Sound::StartMusicFadeDown(int i)
 
 {
 
@@ -1740,7 +1723,7 @@ static void StartMusicFadeDown(int i)
 }
 
 
-int32 StreamMusic(uint8 *filename, int32 looping)
+int32 BS2Sound::StreamMusic(uint8 *filename, int32 looping)
 
 {
 	warning("stub StreamMusic( %s, %d )", filename, looping);
@@ -1983,7 +1966,7 @@ int32 StreamMusic(uint8 *filename, int32 looping)
 }
 
 
-void UpdateSampleStreaming(void)
+void BS2Sound::UpdateSampleStreaming(void)
 
 {
 	warning("stub UpdateSampleStreaming");
@@ -2139,7 +2122,7 @@ void UpdateSampleStreaming(void)
 
 
 
-int32 StreamCompMusic(const char *filename, uint32 musicId, int32 looping)
+int32 BS2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping)
 {
 	warning("stub StreamCompMusic( %s, %d, %d )", filename, musicId, looping);
 /*
@@ -2550,7 +2533,7 @@ int32 StreamCompMusic(const char *filename, uint32 musicId, int32 looping)
 }
 
 
-void UpdateCompSampleStreaming(void)
+void BS2Sound::UpdateCompSampleStreaming(void)
 {
 	warning("stub UpdateCompSampleStreaming");
 /*
@@ -2760,7 +2743,7 @@ void UpdateCompSampleStreaming(void)
 */
 }
 
-int32 DipMusic()
+int32 BS2Sound::DipMusic()
 {
 	warning("stub DipMusic");
 /*
@@ -2835,7 +2818,7 @@ int32 DipMusic()
 	return RD_OK;
 }
 
-int32 MusicTimeRemaining()
+int32 BS2Sound::MusicTimeRemaining()
 {
 	warning("stub MusicTimeRemaaining");
 /*
@@ -2862,7 +2845,7 @@ int32 MusicTimeRemaining()
 
 
 
-void StopMusic(void)
+void BS2Sound::StopMusic(void)
 {
 	int32 i;
 
@@ -2897,7 +2880,7 @@ void StopMusic(void)
 }
 
 
-int32 PauseMusic(void)
+int32 BS2Sound::PauseMusic(void)
 {
 	warning("stub PauseMusic");
 /*	
@@ -2924,7 +2907,7 @@ int32 PauseMusic(void)
 	return(RD_OK);
 }
 
-int32 UnpauseMusic(void)
+int32 BS2Sound::UnpauseMusic(void)
 {
 	warning("stub UnpauseMusic");
 /*
@@ -2949,7 +2932,7 @@ int32 UnpauseMusic(void)
 }
 
 
-void SetMusicVolume(uint8 volume)
+void BS2Sound::SetMusicVolume(uint8 volume)
 {
 	warning("stub SetMusicVolume( %d )", volume);
 /*
@@ -2964,13 +2947,13 @@ void SetMusicVolume(uint8 volume)
 }
 
 
-uint8 GetMusicVolume()
+uint8 BS2Sound::GetMusicVolume()
 {
 		return (uint8) volMusic[0];
 }
 
 
-void MuteMusic(uint8 mute)
+void BS2Sound::MuteMusic(uint8 mute)
 {
 	warning("stub MuteMusic( %d )", mute);
 /*
@@ -2998,14 +2981,14 @@ void MuteMusic(uint8 mute)
 }
 
 
-uint8 IsMusicMute(void)
+uint8 BS2Sound::IsMusicMute(void)
 {
 	return (musicMuted);
 }
 
 
 
-void GetSoundStatus(_drvSoundStatus *s)
+void BS2Sound::GetSoundStatus(_drvSoundStatus *s)
 {
 	int i;
 
@@ -3050,7 +3033,7 @@ void GetSoundStatus(_drvSoundStatus *s)
 }
 
 
-void SetSoundStatus(_drvSoundStatus *s)
+void BS2Sound::SetSoundStatus(_drvSoundStatus *s)
 {
 	int i;
 

@@ -21,6 +21,7 @@
 #define	_SWORD2
 
 //#include "src\driver96.h"
+#include "driver/d_sound.h"
 
 
 #ifdef _PCF76	// Bodge for PCF76 version so that their demo CD can be labelled "PCF76" rather than "RBSII1"
@@ -60,6 +61,7 @@ class BS2State : public Engine {
 		GameDetector *_detector;
 		uint32 _features;
 		byte _gameId;
+		BS2Sound *_sound;
 	private:
 		bool _quit;
 };

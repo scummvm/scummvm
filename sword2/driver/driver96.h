@@ -1558,51 +1558,6 @@ extern int32 CloseMenuImmediately(void);
 
 
 //-----------------------------------------------------------------------------
-//	Sound driver functions - from d_sound.c
-//-----------------------------------------------------------------------------
-extern int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth);
-extern int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
-extern int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
-extern int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem);
-extern int32 GetCompSpeechSize(const char *filename, uint32 speechid);
-extern int32 AmISpeaking();
-extern int32 StopSpeechBS2(void);
-extern int32 GetSpeechStatus(void);
-extern int32 PauseSpeech(void);
-extern int32 UnpauseSpeech(void);
-extern int32 OpenFx(int32 id, uint8 *data);
-extern int32 PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type);
-extern int32 CloseFx(int32 id);
-extern int32 ClearAllFx(void);
-extern int32 PauseFx(void);
-extern int32 PauseFxForSequence(void);
-extern int32 UnpauseFx(void);
-extern int32 PauseMusic(void);
-extern int32 UnpauseMusic(void);
-extern int32 StreamMusic(uint8 *filename, int32 looping);
-extern int32 StreamCompMusic(const char *filename,uint32 musicId, int32 looping);
-extern int32 MusicTimeRemaining();
-extern int32 ReverseStereo(void);
-extern uint8 GetFxVolume(void);
-extern uint8 GetSpeechVolume(void);
-extern uint8 GetMusicVolume(void);
-extern uint8 IsMusicMute(void);
-extern uint8 IsFxMute(void);
-extern uint8 IsSpeechMute(void);
-extern void  StopMusic(void);
-extern void  GetSoundStatus(_drvSoundStatus *s);
-extern void  SetSoundStatus(_drvSoundStatus *s);
-extern void  SetFxVolume(uint8 vol);
-extern void  SetSpeechVolume(uint8 vol);
-extern void  SetMusicVolume(uint8 vol);
-extern void  MuteMusic(uint8 mute);
-extern void  MuteFx(uint8 mute);
-extern void  MuteSpeech(uint8 mute);
-extern int32 IsFxOpen(int32 id);
-extern int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan);
-extern int32 SetFxIdVolume(int32 id, uint8 vol);
-
-//-----------------------------------------------------------------------------
 //	Misc functions - from misc.cpp
 //-----------------------------------------------------------------------------
 extern uint32 SVM_timeGetTime(void);
