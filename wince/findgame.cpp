@@ -29,6 +29,13 @@ struct InstalledScummGame {
 };
 
 static const ScummGame GameList[] = {
+	{	
+		 "Simon The Sorcerer 1 (dos)",
+		 "Completable",
+		 "", "1631.VGA", "GAMEPC",
+		 "simon1dos",
+		 0
+	},
 	{	 
 		 "Simon The Sorcerer 1 (win)",
 		 "Completable",
