@@ -23,83 +23,94 @@
 #include "header.h"
 #include "resman.h"
 
-//--------------------------------------------------------------------------------------
-#define	SIZE	0x10000	//65536 items per section
-#define	NuSIZE	0xffff	//& with this
+#define	SIZE	0x10000			// 65536 items per section
+#define	NuSIZE	0xffff			// & with this
 
-//--------------------------------------------------------------------------------------
-//global variable references
-
+// global variable references
 // NB. 4 * <number from linc's Global Variables list>
 
-#define	ID						*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader))
-#define	RESULT					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1)	// 4 * <number from linc's Global Variables list>
-#define	PLAYER_ACTION			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 2)
-//#define	CUR_PLAYER_ID			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 3)
-#define	CUR_PLAYER_ID			8	// always 8 (George object used for Nico player character as well)
-#define	PLAYER_ID				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 305)
-#define	TALK_FLAG				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 13)
+#define VAR(n)				(*(uint32 *) (res_man.resList[1]->ad + sizeof(_standardHeader) + 4 * (n)))
 
-#define	MOUSE_X					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 4)
-#define	MOUSE_Y					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 5)
-#define	LEFT_BUTTON				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 109)
-#define	RIGHT_BUTTON			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 110)
-#define	CLICKED_ID				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 178)
+#define ID				VAR(0)
+#define RESULT				VAR(1)
+#define PLAYER_ACTION			VAR(2)
+// #define CUR_PLAYER_ID		VAR(3)
+// always 8 (George object used for Nico player character as well)
+#define	CUR_PLAYER_ID			8
+#define PLAYER_ID			VAR(305)
+#define TALK_FLAG			VAR(13)
 
-#define	IN_SUBJECT				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 6)
-#define	COMBINE_BASE			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 7)
-#define	OBJECT_HELD				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 14)
+#define MOUSE_X				VAR(4)
+#define MOUSE_Y				VAR(5)
+#define LEFT_BUTTON			VAR(109)
+#define RIGHT_BUTTON			VAR(110)
+#define CLICKED_ID			VAR(178)
 
-#define	SPEECH_ID				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 9)
-#define	INS1					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 10)
-#define	INS2					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 11)
-#define	INS3					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 12)
-#define	INS4					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 60)
-#define	INS5					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 61)
-#define	INS_COMMAND				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 59)
+#define IN_SUBJECT			VAR(6)
+#define COMBINE_BASE			VAR(7)
+#define OBJECT_HELD			VAR(14)
 
-#define	PLAYER_FEET_X			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 141)
-#define	PLAYER_FEET_Y			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 142)
-#define	PLAYER_CUR_DIR			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 937)
+#define SPEECH_ID			VAR(9)
+#define INS1				VAR(10)
+#define INS2				VAR(11)
+#define INS3				VAR(12)
+#define INS4				VAR(60)
+#define INS5				VAR(61)
+#define INS_COMMAND			VAR(59)
 
-#define	LOCATION				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 62)	// for debug.cpp
+#define PLAYER_FEET_X			VAR(141)
+#define PLAYER_FEET_Y			VAR(142)
+#define PLAYER_CUR_DIR			VAR(937)
 
-#define	SCROLL_X				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 345)	// so scripts can force scroll offsets
-#define	SCROLL_Y				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 346)	// so scripts can force scroll offsets
+// for debug.cpp
+#define LOCATION			VAR(62)
 
-#define	EXIT_CLICK_ID			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 710)
-#define	EXIT_FADING				*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 713)
+// so scripts can force scroll offsets
+#define SCROLL_X			VAR(345)
+#define SCROLL_Y			VAR(346)
 
-#define	SYSTEM_TESTING_ANIMS	*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 912)
-#define	SYSTEM_TESTING_TEXT		*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1230)
-#define	SYSTEM_WANT_PREVIOUS_LINE	*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1245)
+#define EXIT_CLICK_ID			VAR(710)
+#define EXIT_FADING			VAR(713)
 
-#define	MOUSE_AVAILABLE			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 686)	// 1=on 0=off (set in FN_add_human & FN_no_human)
+#define SYSTEM_TESTING_ANIMS		VAR(912)
+#define SYSTEM_TESTING_TEXT		VAR(1230)
+#define SYSTEM_WANT_PREVIOUS_LINE	VAR(1245)
 
-#define	AUTO_SELECTED			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1115)	// used in FN_choose
+// 1=on 0=off (set in FN_add_human & FN_no_human)
+#define MOUSE_AVAILABLE			VAR(686)
 
-#define	CHOOSER_COUNT_FLAG		*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 15)	// see FN_start_conversation & FN_chooser
+// used in FN_choose
+#define AUTO_SELECTED			VAR(1115)
 
-#define	DEMO					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1153)	//signifies a demo mode
+// see FN_start_conversation & FN_chooser
+#define CHOOSER_COUNT_FLAG		VAR(15)
 
-#define PSXFLAG					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1173) // Indicates to script whether this is the Playstation version.
+// signifies a demo mode
+#define DEMO				VAR(1153)
 
-#define	DEAD					*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1256)	//=1 =dead
-#define SPEECHANIMFLAG			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1278) // If set indicates that the speech anim is to run through only once.
+// Indicates to script whether this is the Playstation version.
+// #define PSXFLAG			VAR(1173)
 
-#define SCROLL_OFFSET_X			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 1314) //for the engine
+// 1 = dead
+#define DEAD				VAR(1256)
 
-#define GAME_LANGUAGE			*(uint32 *)(res_man.resList[1]->ad+sizeof(_standardHeader)+4* 111)  //for the poor PSX so it knows what language is running.
-//--------------------------------------------------------------------------------------
+ // If set indicates that the speech anim is to run through only once.
+#define SPEECHANIMFLAG			VAR(1278)
+
+// for the engine
+#define SCROLL_OFFSET_X			VAR(1314)
+
+// for the poor PSX so it knows what language is running.
+// #define GAME_LANGUAGE		VAR(111)
+
 //resource id's of pouse mointers. It's pretty much safe to do it like this
 
-#define	NORMAL_MOUSE_ID				17
-#define	SCROLL_LEFT_MOUSE_ID		1440
-#define	SCROLL_RIGHT_MOUSE_ID		1441
+#define NORMAL_MOUSE_ID			17
+#define SCROLL_LEFT_MOUSE_ID		1440
+#define SCROLL_RIGHT_MOUSE_ID		1441
 
-//--------------------------------------------------------------------------------------
 // Console Font - does not use game text - only English required
-#define	CONSOLE_FONT_ID				340		// ConsFont
+#define CONSOLE_FONT_ID			340		// ConsFont
 
 // Speech Font
 #define ENGLISH_SPEECH_FONT_ID		341		// SpchFont
@@ -107,33 +118,27 @@
 #define POLISH_SPEECH_FONT_ID		955		// PolSpcFn
 
 // Control Panel Font (and un-selected savegame descriptions)
-#define ENGLISH_CONTROLS_FONT_ID	2005	// Sfont
+#define ENGLISH_CONTROLS_FONT_ID	2005		// Sfont
 #define FINNISH_CONTROLS_FONT_ID	959		// FinSavFn
-#define POLISH_CONTROLS_FONT_ID		3686	// PolSavFn
+#define POLISH_CONTROLS_FONT_ID		3686		// PolSavFn
 
 // Red Font (for selected savegame descriptions)
-#define ENGLISH_RED_FONT_ID	2005	//		1998	// Redfont
-#define FINNISH_RED_FONT_ID	959	//		960		// FinRedFn
-#define POLISH_RED_FONT_ID		3686	//	3688	// PolRedFn
+#define ENGLISH_RED_FONT_ID		2005		// 1998	// Redfont
+#define FINNISH_RED_FONT_ID		959		// 960	// FinRedFn
+#define POLISH_RED_FONT_ID		3686		// 3688	// PolRedFn
 
-//--------------------------------------------------------------------------------------
 // Control panel palette resource id
 
-#define CONTROL_PANEL_PALETTE	261
+#define CONTROL_PANEL_PALETTE		261
 
-//--------------------------------------------------------------------------------------
 // res id's of the system menu icons
-#define	OPTIONS_ICON	344
-#define	QUIT_ICON		335
-#define	SAVE_ICON		366
-#define	RESTORE_ICON	364
-#define	RESTART_ICON	342
+#define OPTIONS_ICON			344
+#define QUIT_ICON			335
+#define SAVE_ICON			366
+#define RESTORE_ICON			364
+#define RESTART_ICON			342
 
-//--------------------------------------------------------------------------------------
-// res id of conversation exit icon
-
-#define	EXIT_ICON	65		// 'EXIT' menu icon (used in FN_choose)
-
-//--------------------------------------------------------------------------------------
+// res id of conversation exit icon, 'EXIT' menu icon (used in FN_choose)
+#define EXIT_ICON			65
 
 #endif
