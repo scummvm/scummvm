@@ -349,13 +349,16 @@ void ConsoleDialog::killLine() {
 void ConsoleDialog::killLastWord() {
 	int pos;
 	int cnt = 0;
+	bool space = true;
 	while (_currentPos > _promptStartPos) {
-		_currentPos--;
 		pos = getBufferPos();
-		if (_buffer[pos] != ' ')
-			cnt++;
-		else
-			break;
+		if (_buffer[pos-1] == ' ') {
+			if (!space)
+				break;
+		} else
+			space = false;
+		_currentPos--;
+		cnt++;
 	}
 
 	for (int i = _currentPos; i < _promptEndPos; i++)
