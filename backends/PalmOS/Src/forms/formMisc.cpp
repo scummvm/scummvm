@@ -1,6 +1,7 @@
 #include <PalmOS.h>
 
 #include "start.h"
+#include "formTabs.h"
 #include "forms.h"
 
 /***********************************************************************
@@ -16,11 +17,8 @@
  *
  ***********************************************************************/
 static Boolean stackChanged = false;
-static UInt8 tabNum;
-
-#define TAB_START	MiscOptionsTabPalmPushButton
-#define TAB_COUNT	2
-
+static TabType *myTabP;
+static UInt16 lastTab = 0;
 
 static UInt32 StackSize(UInt32 newSize) {
 	MemHandle pref = DmGetResource('pref',0);
@@ -44,139 +42,73 @@ static UInt32 StackSize(UInt32 newSize) {
 	return size;
 }
 
-static void MiscOptionsFormSave() {
-
+static Boolean ScummVMTabSave() {
 	FieldType *fld1P;
-	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P, *cck6P, *cck7P, *cck8P, *cck9P, *cck10P;	
+	ControlType *cckP[11];
 	FormPtr frmP;
 
-	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
+	fld1P = (FieldType *)GetObjectPtr(TabScummVMDebugLevelField);
 	
-	cck1P = (ControlType *)GetObjectPtr(MiscOptionsVibratorCheckbox);
-	cck2P = (ControlType *)GetObjectPtr(MiscOptionsNoAutoOffCheckbox);
-	cck3P = (ControlType *)GetObjectPtr(MiscOptionsStdPaletteCheckbox);
-	cck4P = (ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox);
-	cck5P = (ControlType *)GetObjectPtr(MiscOptionsLargerStackCheckbox);
-	cck6P = (ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox);
-	cck7P = (ControlType *)GetObjectPtr(MiscOptionsDemoCheckbox);
-	cck8P = (ControlType *)GetObjectPtr(MiscOptionsFullscreenCheckbox);
-	cck9P = (ControlType *)GetObjectPtr(MiscOptionsAspectRatioCheckbox);
-	cck10P= (ControlType *)GetObjectPtr(MiscOptionsCopyProtectionCheckbox);
+	cckP[3] = (ControlType *)GetObjectPtr(TabScummVMDebugCheckbox);
+	cckP[6] = (ControlType *)GetObjectPtr(TabScummVMDemoCheckbox);
+	cckP[7] = (ControlType *)GetObjectPtr(TabScummVMFullscreenCheckbox);
+	cckP[8] = (ControlType *)GetObjectPtr(TabScummVMAspectRatioCheckbox);
+	cckP[9] = (ControlType *)GetObjectPtr(TabScummVMCopyProtectionCheckbox);
 
 	frmP = FrmGetActiveForm();
-
-	if (FldGetTextLength(fld1P) == 0 && CtlGetValue(cck4P) == 1) {
+	if (FldGetTextLength(fld1P) == 0 && CtlGetValue(cckP[3]) == 1) {
+		TabSetActive(frmP, myTabP, 1);
+		FrmSetFocus(frmP, FrmGetObjectIndex(frmP, TabScummVMDebugLevelField));
 		FrmCustomAlert(FrmWarnAlert,"You must specified a debug level.",0,0);
-		FrmSetFocus(frmP, FrmGetObjectIndex(frmP, MiscOptionsDebugLevelField));
-		return;
+		return false;
 	}
 
-	gPrefs->vibrator = CtlGetValue(cck1P);
-	gPrefs->autoOff = !CtlGetValue(cck2P);
-	gPrefs->stdPalette = CtlGetValue(cck3P);
-	gPrefs->debug = CtlGetValue(cck4P);
-	gPrefs->autoReset = CtlGetValue(cck6P);
-	gPrefs->demoMode = CtlGetValue(cck7P);
-	gPrefs->fullscreen = CtlGetValue(cck8P);
-	gPrefs->aspectRatio = CtlGetValue(cck9P);
-	gPrefs->copyProtection = CtlGetValue(cck10P);
+	gPrefs->debug = CtlGetValue(cckP[3]);
+	gPrefs->demoMode = CtlGetValue(cckP[6]);
+	gPrefs->fullscreen = CtlGetValue(cckP[7]);
+	gPrefs->aspectRatio = CtlGetValue(cckP[8]);
+	gPrefs->copyProtection = CtlGetValue(cckP[9]);
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
+	
+	return true;
+}
+
+static void PalmOSTabSave() {
+	ControlType *cckP[11];
+
+	cckP[0] = (ControlType *)GetObjectPtr(TabPalmOSVibratorCheckbox);
+	cckP[1] = (ControlType *)GetObjectPtr(TabPalmOSNoAutoOffCheckbox);
+	cckP[2] = (ControlType *)GetObjectPtr(TabPalmOSStdPaletteCheckbox);
+	cckP[4] = (ControlType *)GetObjectPtr(TabPalmOSLargerStackCheckbox);
+	cckP[5] = (ControlType *)GetObjectPtr(TabPalmOSAutoResetCheckbox);
+	cckP[10]= (ControlType *)GetObjectPtr(TabPalmOSARMCheckbox);
+
+	gPrefs->vibrator = CtlGetValue(cckP[0]);
+	gPrefs->autoOff = !CtlGetValue(cckP[1]);
+	gPrefs->stdPalette = CtlGetValue(cckP[2]);
+	gPrefs->autoReset = CtlGetValue(cckP[5]);
+	gPrefs->arm = CtlGetValue(cckP[10]);
 
 	// Larger stack is a global data init at start up
-	StackSize(CtlGetValue(cck5P) ? STACK_LARGER : STACK_DEFAULT);
+	StackSize(CtlGetValue(cckP[4]) ? STACK_LARGER : STACK_DEFAULT);
 	if (stackChanged)
 		FrmCustomAlert(FrmInfoAlert,"You need to restart ScummVM in order for changes to take effect.",0,0);
-	
-	FrmReturnToMain();
 }
 
-static void FrmSetTabSize(const FormPtr frmP, UInt16 objID, Coord newY, Coord newH) {
-	RectangleType r;
-	UInt16 index;
-	
-	index = FrmGetObjectIndex (frmP, objID);
-	FrmGetObjectBounds(frmP, index, &r);
-	r.topLeft.y	= newY;
-	r.extent.y	= newH;
-	FrmSetObjectBounds(frmP, index, &r);
-}
-
-static Boolean FrmSelectTab(const FormPtr frmP, UInt16 objID) {
-	FrmSetControlValue(frmP, FrmGetObjectIndex(frmP, objID), 0);
-
-	if (tabNum != (objID - TAB_START)) {
-		UInt8 color;
-		
-		FrmSetTabSize(frmP, (TAB_START + tabNum), 18, 10);
-		FrmSetTabSize(frmP, objID, 16, 12);
-
-		tabNum = objID - TAB_START;
-		WinScreenLock(winLockDontCare);
-		FrmDrawForm(frmP);
-		color = UIColorGetTableEntryIndex(UIObjectFrame);
-		WinSetForeColor(color);
-		WinDrawLine(1, 28, 154,28);
-		WinScreenUnlock();
-
-		return true;
-	}
-		
-	return false;
-}
-
-static void FrmShowHide(const FormPtr frmP, UInt16 idStart, UInt16 idEnd, Boolean show) {
-	UInt16 item, index;
-	Coord y = 35;
-	
-	for (item = idStart; item <= idEnd;	item++) {
-		index = FrmGetObjectIndex (frmP, item);
-		FrmSetObjectPosition(frmP, index, 4, y);
-		y += 12;
-
-		if (show)
-			FrmShowObject(frmP, index);
-		else
-			FrmHideObject(frmP, index);
-	}
-}
-
-static void MiscOptionsShowPalmOS(const FormPtr frmP, Boolean show) {
-	FrmShowHide(frmP, MiscOptionsTabTitlePalmLabel, MiscOptionsLargerStackCheckbox, show);
-}
-
-static void MiscOptionsShowScummVM(const FormPtr frmP, Boolean show) {
-	FrmShowHide(frmP, MiscOptionsTabTitleScummLabel, MiscOptionsCopyProtectionCheckbox, show);
-
-	if (show)
-		FrmShowObject(frmP, FrmGetObjectIndex (frmP, MiscOptionsDebugLevelField));
-	else
-		FrmHideObject(frmP, FrmGetObjectIndex (frmP, MiscOptionsDebugLevelField));
-}
-
-static void MiscOptionsFormInit() {
-
+static void ScummVMTabInit() {
 	FieldType *fld1P;
-	FormPtr frmP;
-	UInt16 item;
-	UInt8 color;
-
 	Char *levelP;
 	MemHandle levelH;
 
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsLargerStackCheckbox), (StackSize(STACK_GET) == STACK_LARGER));
 
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsVibratorCheckbox), gPrefs->vibrator);
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsNoAutoOffCheckbox), !gPrefs->autoOff);
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsStdPaletteCheckbox), gPrefs->stdPalette);
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox), gPrefs->autoReset);
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox), gPrefs->debug);
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDemoCheckbox), gPrefs->demoMode);
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsFullscreenCheckbox), gPrefs->fullscreen);
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsAspectRatioCheckbox), gPrefs->aspectRatio);
-	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsCopyProtectionCheckbox), gPrefs->copyProtection);
-	
-	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
+	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMDebugCheckbox), gPrefs->debug);
+	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMDemoCheckbox), gPrefs->demoMode);
+	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMFullscreenCheckbox), gPrefs->fullscreen);
+	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMAspectRatioCheckbox), gPrefs->aspectRatio);
+	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMCopyProtectionCheckbox), gPrefs->copyProtection);
+
+	fld1P = (FieldType *)GetObjectPtr(TabScummVMDebugLevelField);
 
 	levelH = MemHandleNew(FldGetMaxChars(fld1P)+1);
 	levelP = (Char *)MemHandleLock(levelH);
@@ -184,59 +116,72 @@ static void MiscOptionsFormInit() {
 	MemHandleUnlock(levelH);
 
 	FldSetTextHandle(fld1P, levelH);
-
-	frmP = FrmGetActiveForm();
-	// set tab size
-	for (item = TAB_START; item < (TAB_START + TAB_COUNT); item++)
-		FrmSetTabSize(frmP, item, 18, 10);
-
-	tabNum = 0;
-	FrmSetTabSize(frmP, (TAB_START + tabNum), 16, 12);
-	MiscOptionsShowScummVM(frmP, false);
-	MiscOptionsShowPalmOS(frmP, true);
-	FrmSetObjectPosition(frmP, FrmGetObjectIndex (frmP, MiscOptionsDebugLevelField), 103, 35 + 12 * 3);
-
-	FrmDrawForm(frmP);
-
-	color = UIColorGetTableEntryIndex(UIObjectFrame);
-	WinSetForeColor(color);
-	WinDrawLine(1, 28, 154,28);
 }
 
-Boolean MiscOptionsFormHandleEvent(EventPtr eventP) {
+static void PalmOSTabInit() {
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSLargerStackCheckbox), (StackSize(STACK_GET) == STACK_LARGER));
+
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSVibratorCheckbox), gPrefs->vibrator);
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSNoAutoOffCheckbox), !gPrefs->autoOff);
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSStdPaletteCheckbox), gPrefs->stdPalette);
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSAutoResetCheckbox), gPrefs->autoReset);
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSARMCheckbox), gPrefs->arm);
+}
+
+static void MiscFormSave() {
+	PalmOSTabSave();
+	if (!ScummVMTabSave()) return;
+	
+	TabDeleteTabs(myTabP);
+	FrmReturnToMain();
+}
+
+static void MiscFormInit() {
+	TabType *tabP;
+	FormType *frmP = FrmGetActiveForm();
+
+	tabP = TabNewTabs(2);
+	TabAddContent(&frmP, tabP, "PalmOS", TabPalmOSForm);
+	TabAddContent(&frmP, tabP, "ScummVM", TabScummVMForm);
+
+	PalmOSTabInit();
+	ScummVMTabInit();
+
+	FrmDrawForm(frmP);
+	TabSetActive(frmP, tabP, lastTab);
+
+	myTabP = tabP;
+}
+
+Boolean MiscFormHandleEvent(EventPtr eventP) {
 	FormPtr frmP = FrmGetActiveForm();
 	Boolean handled = false;
 
 	switch (eventP->eType) {
 		case frmOpenEvent:
-			MiscOptionsFormInit();
+			MiscFormInit();
 			handled = true;
 			break;
 
 		case ctlSelectEvent:
 			switch (eventP->data.ctlSelect.controlID)
 			{
-				case MiscOptionsTabPalmPushButton:
-					if (FrmSelectTab(frmP, MiscOptionsTabPalmPushButton))
-						MiscOptionsShowScummVM(frmP, false);
-						MiscOptionsShowPalmOS(frmP, true);
+				case (MiscForm + 1) :
+				case (MiscForm + 2) :
+					lastTab = (eventP->data.ctlSelect.controlID - MiscForm - 1);
+					TabSetActive(frmP, myTabP, lastTab);
 					break;
 
-				case MiscOptionsTabScummPushButton:
-					if (FrmSelectTab(frmP, MiscOptionsTabScummPushButton))
-						MiscOptionsShowPalmOS(frmP, false);
-						MiscOptionsShowScummVM(frmP, true);
-					break;
-				
-				case MiscOptionsLargerStackCheckbox:
+				case TabPalmOSLargerStackCheckbox:
 					stackChanged = !stackChanged;
 					break;
 
-				case MiscOptionsOKButton:
-					MiscOptionsFormSave();
+				case MiscOKButton:
+					MiscFormSave();
 					break;
 
-				case MiscOptionsCancelButton:
+				case MiscCancelButton:
+					TabDeleteTabs(myTabP);
 					FrmReturnToMain();
 					break;
 			}
