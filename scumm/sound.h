@@ -93,7 +93,6 @@ protected:
 	File *openSfxFile();
 	void startSfxSound(File *file, int file_size, PlayingSoundHandle *handle);
 	bool isSfxFinished() const;
-	void playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, PlayingSoundHandle *handle);
 };
 
 } // End of namespace Scumm

@@ -887,7 +887,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 		error("startSfxSound: cannot read %d bytes", size);
 	}
 
-	playSfxSound(data, size, rate, true, handle);
+	_scumm->_mixer->playRaw(handle, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
 }
 
 File *Sound::openSfxFile() {
@@ -966,13 +966,6 @@ File *Sound::openSfxFile() {
 
 bool Sound::isSfxFinished() const {
 	return !_scumm->_mixer->hasActiveSFXChannel();
-}
-
-void Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, PlayingSoundHandle *handle) {
-	byte flags = SoundMixer::FLAG_AUTOFREE;
-	if (isUnsigned)
-		flags |= SoundMixer::FLAG_UNSIGNED;
-	_scumm->_mixer->playRaw(handle, sound, size, rate, flags);
 }
 
 // We use a real timer in an attempt to get better sync with CD tracks. This is
