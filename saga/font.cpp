@@ -98,7 +98,6 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	// Load font resource
 	if (RSC_LoadResource(_fontContext, font_rn, &fontres_p, &fontres_len) != SUCCESS) {
 		error("Font::loadFont(): Couldn't load font resource.");
-		return FAILURE;
 	}
 
 	if (fontres_len < FONT_DESCSIZE) {
@@ -112,7 +111,6 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	font = (FONT *)malloc(sizeof(*font));
 	if (font == NULL) {
 		error("Font:loadFont(): Memory allocation error.");
-		return MEM;
 	}
 
 	// Read font header
@@ -130,8 +128,6 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	normal_font = (FONT_STYLE *)malloc(sizeof(*normal_font));
 	if (normal_font == NULL) {
 		error("Font::loadFont(): Memory allocation error.");
-		free(font);
-		return MEM;
 	}
 
 	normal_font->font_free_p = fontres_p;
@@ -185,7 +181,6 @@ int Font::getHeight(int font_id) {
 
 	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::getHeight(): Invalid font id.");
-		return FAILURE;
 	}
 
 	font = _fonts[font_id];
@@ -219,7 +214,6 @@ FONT_STYLE *Font::createOutline(FONT_STYLE *src_font) {
 
 	if (new_font == NULL) {
 		error("Font::createOutline(): Memory allocation error.");
-		return NULL;
 	}
 
 	memset(new_font, 0, sizeof(*new_font));
@@ -263,7 +257,6 @@ FONT_STYLE *Font::createOutline(FONT_STYLE *src_font) {
 
 	if (new_font_data == NULL) {
 		error("Font::createOutline(): Memory allocation error.");
-		return NULL;
 	}
 
 	memset(new_font_data, 0, new_font_data_len);
@@ -351,7 +344,6 @@ int Font::getStringWidth(int font_id, const char *test_str, size_t test_str_ct, 
 
 	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::getStringWidth(): Invalid font id.");
-		return FAILURE;
 	}
 
 	font = _fonts[font_id];
@@ -380,13 +372,10 @@ int Font::draw(int font_id, SURFACE *ds, const char *draw_str, size_t draw_str_c
 
 	if (!_initialized) {
 		error("Font::draw(): Font Module not initialized.");
-
-		return FAILURE;
 	}
 
 	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::draw(): Invalid font id.");
-		return FAILURE;
 	}
 
 	font = _fonts[font_id];

@@ -162,7 +162,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	
 
 	_pathRect.left = 0;
-	_pathRect.right = _vm->getDisplayWidth() - 1;
+	_pathRect.right = _vm->getDisplayWidth();
 	_pathRect.top = _vm->getPathYOffset();
 	_pathRect.bottom = _vm->getStatusYOffset();
 
@@ -1217,23 +1217,22 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 
 					anotherActorScreenPosition = anotherActor->screenPosition;
 					testBox.left = anotherActorScreenPosition.x - collision.x;
-					testBox.right = anotherActorScreenPosition.x + collision.x;
+					testBox.right = anotherActorScreenPosition.x + collision.x + 1;
 					testBox.top = anotherActorScreenPosition.y - collision.y;
-					testBox.bottom = anotherActorScreenPosition.y + collision.y;
+					testBox.bottom = anotherActorScreenPosition.y + collision.y + 1;
 					testBox2 = testBox;
-					testBox2.right += 2;
+					testBox2.right += 1;
 					testBox2.left -= 1;
-					testBox2.bottom += 1;
 
 					if (testBox2.contains(pointFrom)) {
 						if (pointFrom.x > anotherActorScreenPosition.x + 4) {
-							testBox.right = pointFrom.x - 2;
+							testBox.right = pointFrom.x - 1;
 						} else {
 							if (pointFrom.x < anotherActorScreenPosition.x - 4) {
 								testBox.left = pointFrom.x + 2;
 							} else {
 								if (pointFrom.y > anotherActorScreenPosition.y) {
-									testBox.bottom = pointFrom.y - 1; 
+									testBox.bottom = pointFrom.y; 
 								} else {
 									testBox.top = pointFrom.y + 1 ;
 								}
@@ -1241,7 +1240,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 						}
 					}
 
-					if ((testBox.left <= testBox.right) && (testBox.top <= testBox.bottom)) {
+					if ((testBox.width() > 0) && (testBox.height() > 0)) {
 						_barrierList[_barrierCount++] = testBox;
 					}
 				}
@@ -1416,8 +1415,8 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		intersect.bottom = MIN(_pathRect.bottom, _barrierList[i].bottom);
 		
 
-		for (iteratorPoint.y = intersect.top; iteratorPoint.y <= intersect.bottom; iteratorPoint.y++) {
-			for (iteratorPoint.x = intersect.left; iteratorPoint.x <= intersect.right; iteratorPoint.x++) {
+		for (iteratorPoint.y = intersect.top; iteratorPoint.y < intersect.bottom; iteratorPoint.y++) {
+			for (iteratorPoint.x = intersect.left; iteratorPoint.x < intersect.right; iteratorPoint.x++) {
 				setPathCell(iteratorPoint, kPathCellBarrier);
 			}
 		}

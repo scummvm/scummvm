@@ -258,7 +258,7 @@ int SagaEngine::go() {
 		_system->delayMillis(10);
 	}
 	
-	return 0;
+	//return 0;
 }
 
 void SagaEngine::shutdown() {
