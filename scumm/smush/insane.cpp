@@ -2595,7 +2595,7 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	turnBen(_battleScene);
+	turnBen(_battleScene != 0);
 	turnEnemy(true);
 	
 	if (!curFrame)

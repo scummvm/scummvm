@@ -492,7 +492,7 @@ class Insane {
 	int32 processKeyboard(void);
 	int32 func75(void);
 	void setEnemyAnimation(int32 actornum, int anim);
-	void chooseEnemyWeaponAnim(int buttons);
+	void chooseEnemyWeaponAnim(int32 buttons);
 	void switchEnemyWeapon(void);
 	void setEnemyState(void);
 	int32 calcEnemyDamage(bool arg_0, bool arg_4);
