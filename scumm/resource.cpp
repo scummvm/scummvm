@@ -2317,7 +2317,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numNewNames = 10;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-		_numRoomVariables = 64;
+		_numRoomVariables = 256;
 		_numGlobalScripts = 2048;
 
 	} else if (_heversion >= 70 && (blockSize == 38 + 8)) { // Scummsys.9x
@@ -2343,7 +2343,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numNewNames = 10;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-		_numRoomVariables = 64;
+		_numRoomVariables = 256;
 		if (_gameId == GID_FREDDI4)
 			_numGlobalScripts = 2048;
 		else
