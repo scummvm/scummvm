@@ -343,8 +343,11 @@ void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
 	free(old_tmpscreen->pixels);
 	SDL_FreeSurface(old_tmpscreen);
 
-	// Finally, blit everything to the screen
+	// Blit everything to the screen
 	update_screen();
+	
+	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+	_modeChanged = true;
 }
 
 void OSystem_SDL_OpenGL::update_screen() {

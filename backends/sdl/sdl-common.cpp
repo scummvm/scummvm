@@ -91,7 +91,7 @@ void OSystem_SDL_Common::set_timer(int timer, int (*callback)(int)) {
 OSystem_SDL_Common::OSystem_SDL_Common()
 	: _screen(0), _screenWidth(0), _screenHeight(0),
 	_tmpscreen(0), _tmpScreenWidth(0), _overlayVisible(false),
-	_cdrom(0), _dirty_checksums(0),
+	_cdrom(0), _modeChanged(false), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
 	_currentShakePos(0), _newShakePos(0),
@@ -536,6 +536,13 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 	byte b = 0;
 	
 	kbd_mouse();
+	
+	// If the screen mode changed, send an EVENT_SCREEN_CHANGED
+	if (_modeChanged) {
+		_modeChanged = false;
+		event->event_code = EVENT_SCREEN_CHANGED;
+		return true;
+	}
 
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {

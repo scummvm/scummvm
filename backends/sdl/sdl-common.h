@@ -160,6 +160,7 @@ protected:
 	int _mode;
 	bool _full_screen;
 	uint32 _mode_flags;
+	bool _modeChanged;
 
 	enum {
 		NUM_DIRTY_RECT = 100,

@@ -59,7 +59,8 @@ public:
 		EVENT_WHEELUP = 8,
 		EVENT_WHEELDOWN = 9,
 
-		EVENT_QUIT = 10
+		EVENT_QUIT = 10,
+		EVENT_SCREEN_CHANGED = 11
 	};
 
 	enum {

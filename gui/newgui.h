@@ -113,6 +113,7 @@ protected:
 	void loop();
 
 	void animateCursor();
+	void updateColors();
 
 public:
 	// Theme colors

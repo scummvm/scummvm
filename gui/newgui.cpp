@@ -91,6 +91,15 @@ NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false
 	_currentKeyDown.keycode = 0;
 }
 
+void NewGui::updateColors() {
+	// Setup some default GUI colors.
+	_bgcolor = _system->RGBToColor(0, 0, 0);
+	_color = _system->RGBToColor(96, 96, 96);
+	_shadowcolor = _system->RGBToColor(64, 64, 64);
+	_textcolor = _system->RGBToColor(32, 160, 32);
+	_textcolorhi = _system->RGBToColor(0, 255, 0);
+}
+
 void NewGui::runLoop() {
 	Dialog *activeDialog = _dialogStack.top();
 	bool didSaveState = false;
@@ -98,20 +107,11 @@ void NewGui::runLoop() {
 	if (activeDialog == 0)
 		return;
 	
-	// Setup some default GUI colors. This has to be done here to ensure the
-	// overlay has been created already. Even then, one can get wrong colors, namely
-	// if the GUI is up and then the user toggles to full screen mode - on some system
-	// different color modes (555 vs 565) might be used depending on the resolution
-	// (e.g. that's the case on my system), so we still end up with wrong colors in those
-	// sitauations. At least now the user can fix it by closing and reopening the GUI.
-	
-	// TODO: Let's add a new even type which is sent whenever the backend GFX device
-	// changes (e.g. resized, full screen toggle, etc.).
-	_bgcolor = _system->RGBToColor(0, 0, 0);
-	_color = _system->RGBToColor(96, 96, 96);
-	_shadowcolor = _system->RGBToColor(64, 64, 64);
-	_textcolor = _system->RGBToColor(32, 160, 32);
-	_textcolorhi = _system->RGBToColor(0, 255, 0);
+	// Setup some default GUI colors. Normally this will be done whenever an
+	// EVENT_SCREEN_CHANGED is received. However, not all backends support
+	// that even at this time, so we also do it "manually" whenever a run loop
+	// is entered.
+	updateColors();
 
 	if (!_stateIsSaved) {
 		saveState();
@@ -197,6 +197,9 @@ void NewGui::runLoop() {
 					break;
 				case OSystem::EVENT_QUIT:
 					_system->quit();
+					return;
+				case OSystem::EVENT_SCREEN_CHANGED:
+					updateColors();
 					break;
 			}
 		}
