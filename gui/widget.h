@@ -159,27 +159,20 @@ protected:
 	void drawWidget(bool hilite);
 };
 
-/* PushButtonWidget */
-class PushButtonWidget : public ButtonWidget {
+/* CheckboxWidget */
+class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
-public:
-	PushButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
-
-	void setState(bool state);
-	void toggleState()			{ setState(!_state); }
-	bool getState() const		{ return _state; }
-};
-
-/* CheckboxWidget */
-class CheckboxWidget : public PushButtonWidget {
-protected:
 public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{}
 	virtual void handleMouseLeft(int button)	{}
+
+	void setState(bool state);
+	void toggleState()			{ setState(!_state); }
+	bool getState() const		{ return _state; }
 
 protected:
 	void drawWidget(bool hilite);

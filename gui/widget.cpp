@@ -135,24 +135,8 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 void ButtonWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
 	gui->drawString(_label, _x, _y, _w,
-									!isEnabled() ? gui->_color :
-									hilite ? gui->_textcolorhi : gui->_textcolor, _align);
-}
-
-#pragma mark -
-
-PushButtonWidget::PushButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false) {
-	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG;
-	_type = kButtonWidget;
-}
-
-void PushButtonWidget::setState(bool state) {
-	if (_state != state) {
-		_state = state;
-		_flags ^= WIDGET_INV_BORDER;
-		draw();
-	}
+	                !isEnabled() ? gui->_color :
+	                hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
 
 #pragma mark -
@@ -170,7 +154,7 @@ static uint32 checked_img[8] = {
 };
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
-	: PushButtonWidget(boss, x, y, w, h, label, cmd, hotkey) {
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false) {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
 }
@@ -179,6 +163,14 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 		sendCommand(_cmd, 0);
+	}
+}
+
+void CheckboxWidget::setState(bool state) {
+	if (_state != state) {
+		_state = state;
+		_flags ^= WIDGET_INV_BORDER;
+		draw();
 	}
 }
 

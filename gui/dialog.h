@@ -28,7 +28,6 @@
 
 class NewGui;
 class ButtonWidget;
-class PushButtonWidget;
 
 // Some "common" commands sent to handleCommand()
 enum {
@@ -77,7 +76,6 @@ protected:
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 
 	ButtonWidget *addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey);
-	PushButtonWidget *addPushButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey);
 
 	void setResult(int result) { _result = result; }
 };
