@@ -38,7 +38,7 @@
 
 #define ABS(x)	((x) < 0 ? -(x) : (x))
 
-NewGui::NewGui(Scumm *s) : _s(s), _use_alpha_blending(true),
+NewGui::NewGui(Scumm *s) : _s(s), _use_alpha_blending(false),
 	_need_redraw(false),_prepare_for_gui(true),
 	_pauseDialog(0), _saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0),
 	_currentKeyDown(0)
@@ -83,13 +83,14 @@ void NewGui::soundDialog()
 void NewGui::loop()
 {
 	Dialog *activeDialog = _dialogStack.top();
+	int i;
 	
 	if (_prepare_for_gui) {
 		ClearBlendCache(_s->_currentPalette, 128);
 		saveState();
 		if (_use_alpha_blending)
 			activeDialog->setupScreenBuf();
-#if 0
+#if 1
 		// FIXME - hack to encode our own custom GUI colors. Since we have to live
 		// with a given 8 bit palette, the result is not always as nice as one
 		// would wish, but this is just an experiment after all.
@@ -115,7 +116,8 @@ void NewGui::loop()
 	activeDialog->handleTickle();
 
 	if (_need_redraw) {
-		activeDialog->draw();
+		for (i = 0; i < _dialogStack.size(); i++)
+			_dialogStack[i]->draw();
 		_need_redraw = false;
 	}
 	
@@ -125,7 +127,7 @@ void NewGui::loop()
 	{
 		OSystem::Event t;
 		
-		for (int i = 0; i < _eventList.size(); i++)
+		for (i = 0; i < _eventList.size(); i++)
 		{
 			t = _eventList[i];
 		

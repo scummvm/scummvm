@@ -32,10 +32,14 @@
 
 /*
  * TODO list
- * - if save or load fails (e.g. due to disk full/directory write protected),
+ * - If saving or loading fails (e.g. due to disk full/directory write protected),
  *   display an error dialog?
  * - The user can edit the name of the autosave game. Of course this will not
  *   do anything, but we should still prevent this.
+ * - add some sense of the window being "active" (i.e. in front) or not. If it 
+ *   was inactive and just became active, reset certain vars (like who is focused).
+ *   Maybe we should just add lostFocus and receivedFocus methods to Dialog, just
+ *   like we have for class Widget?
  * ...
  */
 
@@ -195,21 +199,22 @@ void Dialog::handleMouseMoved(int x, int y, int button)
 			_mouseWidget = 0;
 			w->handleMouseLeft(button);
 		}
-			
-	} else {
-		w = findWidget(x, y);
 
-		if (_mouseWidget != w) {
-			if (_mouseWidget)
-				_mouseWidget->handleMouseLeft(button);
-			if (w)
-				w->handleMouseEntered(button);
-			_mouseWidget = w;
-		} 
+		w->handleMouseMoved(x - w->_x, y - w->_y, button);
+	}
 
-		if (!w || !(w->getFlags() & WIDGET_TRACK_MOUSE)) {
-			return;
-		}
+	w = findWidget(x, y);
+
+	if (_mouseWidget != w) {
+		if (_mouseWidget)
+			_mouseWidget->handleMouseLeft(button);
+		if (w)
+			w->handleMouseEntered(button);
+		_mouseWidget = w;
+	} 
+
+	if (!w || !(w->getFlags() & WIDGET_TRACK_MOUSE)) {
+		return;
 	}
 	
 	w->handleMouseMoved(x - w->_x, y - w->_y, button);
