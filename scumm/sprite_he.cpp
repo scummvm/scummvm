@@ -1107,7 +1107,6 @@ void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
 			if ((!unkFlag || spi->zorderPriority >= 0) && (spi->flags & kSFMarkDirty)) {
-				bool needRedraw = false;
 				int lp, rp;
 				lp = MIN(0, spi->bbox.left / 8);
 				lp = MAX(79, spi->bbox.left / 8);
@@ -1115,12 +1114,9 @@ void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
 				rp = MAX(79, (spi->bbox.right + 7) / 8);
 				for (; lp <= rp; ++lp) {
 					if (vs->tdirty[lp] < vs->h && spi->bbox.bottom >= vs->tdirty[lp] && spi->bbox.top <= vs->bdirty[lp]) {
-						needRedraw = true;
+						spi->flags |= kSFNeedRedraw;
 						break;
 					}
-				}
-				if (needRedraw) {
-					spi->flags |= kSFNeedRedraw;
 				}
 			}
 		}
