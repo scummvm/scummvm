@@ -1298,12 +1298,15 @@ void CharsetRendererNut::printChar(int chr) {
 	_current->drawShadowChar(chr, _left, _top - _vm->_screenTop, _color, !_ignoreCharsetMask);
 	_vm->markRectAsDirty(kMainVirtScreen, shadow_left, shadow_right, shadow_top, shadow_bottom, 0);
 
+	if (_str.left > _left)
+		_str.left = _left;
+
 	_left += width;
 
-	if (shadow_right > _str.right)
+	if (_str.right < shadow_right )
 		_str.right = shadow_right;
 
-	if (shadow_bottom > _str.bottom)
+	if (_str.bottom < shadow_bottom)
 		_str.bottom = shadow_bottom;
 }
 
