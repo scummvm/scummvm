@@ -41,41 +41,61 @@ namespace Sword2 {
 
 #define BUFFER_SIZE 4096
 
-
 class AnimationState {
 public:
-  int palnum;
+	int palnum;
 
-  byte lookup[2][BITDEPTH * BITDEPTH * BITDEPTH];
-  byte *lut;
-  byte *lut2;
-  int lutcalcnum;
+	byte lookup[2][BITDEPTH * BITDEPTH * BITDEPTH];
+	byte *lut;
+	byte *lut2;
+	int lutcalcnum;
 
-  int framenum;
+	int framenum;
 
-  #ifdef USE_MPEG2
-  mpeg2dec_t *decoder;
-  const mpeg2_info_t *info;
-  #endif
-  File *mpgfile;
+#ifdef USE_MPEG2
+	mpeg2dec_t *decoder;
+	const mpeg2_info_t *info;
+#endif
 
-  int curpal;
-  int cr;
-  int pos;
+	File *mpgfile;
 
-  struct {
-    int cnt;
-    int end;
-    byte pal[4 * 256];
-  } palettes[50];
+	int curpal;
+	int cr;
+	int pos;
 
-  byte buffer[BUFFER_SIZE];
+	struct {
+		int cnt;
+		int end;
+		byte pal[4 * 256];
+	} palettes[50];
 
-  PlayingSoundHandle bgSound;
+	byte buffer[BUFFER_SIZE];
+
+	PlayingSoundHandle bgSound;
 
 public:
 	void buildLookup(int p, int lines);
+};
 
+class MoviePlayer {
+private:
+	Sword2Engine *_vm;
+	uint8 *_textSurface;
+
+	void openTextObject(MovieTextObject *obj);
+	void closeTextObject(MovieTextObject *obj);
+	void drawTextObject(MovieTextObject *obj);
+
+	void checkPaletteSwitch(AnimationState * st);
+
+	AnimationState * initAnimation(const char *name);
+	void doneAnimation(AnimationState * st);
+	bool decodeFrame(AnimationState * st);
+
+public:
+	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
+	int32 play(const char *filename, MovieTextObject *text[], uint8 *musicOut);
+	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
 };
 
 } // End of namespace Sword2

@@ -65,27 +65,6 @@ struct MouseAnim {
 	#pragma END_PACK_STRUCTS
 #endif
 
-class MoviePlayer {
-private:
-	Sword2Engine *_vm;
-	uint8 *_textSurface;
-
-	void openTextObject(MovieTextObject *obj);
-	void closeTextObject(MovieTextObject *obj);
-	void drawTextObject(MovieTextObject *obj);
-
-	void checkPaletteSwitch(AnimationState * st);
-
-	AnimationState * initAnimation(const char *name);
-	void doneAnimation(AnimationState * st);
-	bool decodeFrame(AnimationState * st);
-
-public:
-	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
-	int32 play(const char *filename, MovieTextObject *text[], uint8 *musicOut);
-	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
-};
-
 struct BlockSurface {
 	byte data[BLOCKWIDTH * BLOCKHEIGHT];
 	bool transparent;
