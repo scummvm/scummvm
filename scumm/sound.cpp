@@ -29,13 +29,15 @@
 #include "player_v3a.h"
 #include "scumm.h"
 #include "sound.h"
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
+
 #include "common/config-file.h"
 #include "common/timer.h"
 #include "common/util.h"
 
+#include "sound/mididrv.h"
 #include "sound/midiparser.h"
+#include "sound/mixer.h"
+#include "sound/voc.h"
 
 
 enum {
@@ -185,12 +187,10 @@ void Sound::playSound(int soundID) {
 	if (READ_UINT32(ptr) == MKID('iMUS')){
 		assert(_scumm->_musicEngine);
 		_scumm->_musicEngine->startSound(soundID);
-		return;
 	}
 	else if (READ_UINT32(ptr) == MKID('Crea')) {
 		assert(_scumm->_musicEngine);
 		_scumm->_musicEngine->startSound(soundID);
-		return;
 	}
 /*
 	// XMIDI 
@@ -211,7 +211,6 @@ void Sound::playSound(int soundID) {
 		playCDTrack(track, loops == 0xff ? -1 : loops, start, 0);
 
 		_currentCDSound = soundID;
-		return;
 	}
 	// Support for SFX in Monkey Island 1, Mac version
 	// This is rather hackish right now, but works OK. SFX are not sounding
@@ -220,7 +219,7 @@ void Sound::playSound(int soundID) {
 
 		// Read info from the header
 		size = READ_BE_UINT32(ptr+0x60);
-		rate = READ_BE_UINT32(ptr+0x64) >> 16;
+		rate = READ_BE_UINT16(ptr+0x64);
 
 		// Skip over the header (fixed size)
 		ptr += 0x72;
@@ -229,7 +228,6 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-		return;
 	}
 	// Support for Putt-Putt sounds - very hackish, too 8-)
 	else if (READ_UINT32(ptr) == MKID('DIGI')) {
@@ -247,7 +245,6 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 8, size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-		return;
 	}
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
 		// pcm music in 3DO humongous games
@@ -264,15 +261,21 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 8, size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-		
-		return;
 	}	
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
 		debug(2, "Using SBL sound effect");
-
-		// TODO - Figuring out how the SBL chunk works. Here's
-		// an example:
+		
+		// SBL resources essentially contain VOC sound data.
+		// There are at least two main variants: in one,
+		// there are two subchunks AUhd and AUdt, in the other
+		// the chunks are called WVhd and WVdt. Besides that,
+		// the two variants seem pretty similiar.
+		
+		// The first subchunk (AUhd resp. WVhd) seems to always
+		// contain three bytes (00 00 80) of unknown meaning.
+		// After that, a second subchunk contains VOC data.
+		// Two real examples:
 		//
 		// 53 42 4c 20 00 00 11 ae  |SBL ....|
 		// 41 55 68 64 00 00 00 03  |AUhd....|
@@ -283,16 +286,7 @@ void Sound::playSound(int soundID) {
 		// 7f 80 80 7f 7e 7d 7d 7e  |....~}}~|
 		// 7e 7e 7e 7e 7e 7e 7e 7f  |~~~~~~~.|
 		//
-		// The length of the AUhd chunk always seems to be 3
-		// bytes. Let's skip that for now.
-		//
-		// The starting offset, length and sample rate is all
-		// pure guesswork. The result sounds reasonable to me,
-		// but I've never heard the original.
-		//
-		// I've since discovered that the non-interactive
-		// Sam & Max demo also uses SBL sound effects, but
-		// with different sub-chunks. Example:
+		// And from the non-interactive Sam & Max demo:
 		//
 		// 53 42 4c 20 00 01 15 6e  |SBL ...n|
 		// 57 56 68 64 00 00 00 03  |WVhd....|
@@ -302,9 +296,6 @@ void Sound::playSound(int soundID) {
 		// 80 80 80 80 80 80 80 80  |........|
 		// 80 80 80 80 80 80 80 80  |........|
 		// 80 80 80 80 80 80 80 80  |........|
-		//
-		// I'm going to assume that the sample frequency is
-		// the only important difference between the two.
 
 		// FIXME: SBL resources are apparently horribly
 		// distorted on segacd even though it shares the same
@@ -324,7 +315,6 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 33, size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-		return;
 	}
 	else if (_scumm->_features & GF_FMTOWNS) {
 		size = READ_LE_UINT32(ptr);
@@ -404,7 +394,6 @@ void Sound::playSound(int soundID) {
 				break;
 			}			
 		}
-		return;
 	}
 	else if ((_scumm->_gameId == GID_LOOM) && (_scumm->_features & GF_MACINTOSH))  {
 		// Mac version of Loom uses yet another sound format
@@ -428,7 +417,6 @@ void Sound::playSound(int soundID) {
 		000060: 4e 00 10 00  01 18 53 00  10 00 01 18  56 00 10 00   |N.....S.....V...|
 		000070: 01 18 5a 00  10 00 02 28  5f 00 01 00  00 00 00 00   |..Z....(_.......|
 		*/
-		return;
 	}
 	else if ((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3) && (ptr[26] == 0)) {
 		size = READ_BE_UINT16(ptr + 12);
@@ -437,7 +425,6 @@ void Sound::playSound(int soundID) {
 		int vol = ptr[24] * 4;
 		memcpy(sound,ptr + READ_BE_UINT16(ptr + 8), size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
-		return;
 	}
 	else if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 2) && READ_BE_UINT16(ptr + 14) == 0x0880) {
 		size = READ_BE_UINT16(ptr + 6);
@@ -460,26 +447,27 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
-		return;
 	}
+	else {
+		
+		if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
+			// Sound is currently not supported at all in the amiga versions of these games
+			if (_scumm->_features & GF_AMIGA)
+				return;
 	
-	if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
-		// Sound is currently not supported at all in the amiga versions of these games
-		if (_scumm->_features & GF_AMIGA)
-			return;
-
-		// Works around the fact that in some places in MonkeyEGA/VGA,
-		// the music is never explicitly stopped.
-		// Rather it seems that starting a new music is supposed to
-		// automatically stop the old song.
-		if (_scumm->_imuse) {
-			if (READ_UINT32(ptr) != MKID('ASFX'))
-				_scumm->_imuse->stopAllSounds();
+			// Works around the fact that in some places in MonkeyEGA/VGA,
+			// the music is never explicitly stopped.
+			// Rather it seems that starting a new music is supposed to
+			// automatically stop the old song.
+			if (_scumm->_imuse) {
+				if (READ_UINT32(ptr) != MKID('ASFX'))
+					_scumm->_imuse->stopAllSounds();
+			}
 		}
-	}
-
-	if (_scumm->_musicEngine) {
-		_scumm->_musicEngine->startSound(soundID);
+	
+		if (_scumm->_musicEngine) {
+			_scumm->_musicEngine->startSound(soundID);
+		}
 	}
 }
 
@@ -872,8 +860,6 @@ void Sound::pauseSounds(bool pause) {
 
 void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle) {
 	char ident[8];
-	int block_type;
-	byte work[8];
 	uint size = 0;
 	int rate, comp;
 	byte *data;
@@ -912,17 +898,17 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 		return;
 	}
 
-	block_type = file->readByte();
-	if (block_type != 1) {
-		warning("startSfxSound: Expecting block_type == 1, got %d", block_type);
+	VocBlockHeader voc_block_hdr;
+
+	file->read(&voc_block_hdr, sizeof(voc_block_hdr));
+	if (voc_block_hdr.blocktype != 1) {
+		warning("startSfxSound: Expecting block_type == 1, got %d", voc_block_hdr.blocktype);
 		return;
 	}
 
-	file->read(work, 3);
-
-	size = (work[0] | (work[1] << 8) | (work[2] << 16)) - 2;
-	rate = file->readByte();
-	comp = file->readByte();
+	size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
+	rate = getSampleRateFromVOCRate(voc_block_hdr.sr);
+	comp = voc_block_hdr.pack;
 
 	if (comp != 0) {
 		warning("startSfxSound: Unsupported compression type %d", comp);
@@ -939,7 +925,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 		error("startSfxSound: cannot read %d bytes", size);
 	}
 
-	playSfxSound(data, size, 1000000 / (256 - rate), true, handle);
+	playSfxSound(data, size, rate, true, handle);
 }
 
 File *Sound::openSfxFile() {

@@ -18,9 +18,10 @@
  */
 
 #include "stdafx.h"
-#include "simon/sound.h"
 #include "common/file.h"
 #include "common/engine.h"
+#include "simon/sound.h"
+#include "sound/voc.h"
 
 #define SOUND_BIG_ENDIAN true
 
@@ -125,20 +126,6 @@ struct WaveHeader {
 	uint16 bits_per_sample;
 } GCC_PACK;
 
-struct VocHeader {
-	uint8 desc[20];
-	uint16 datablock_offset;
-	uint16 version;
-	uint16 id;
-} GCC_PACK;
-
-struct VocBlockHeader {
-	uint8 blocktype;
-	uint8 size[3];
-	uint8 sr;
-	uint8 pack;
-} GCC_PACK;
-
 #if !defined(__GNUC__)
 #pragma END_PACK_STRUCTS
 #endif
@@ -200,14 +187,7 @@ int VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	uint32 samples_per_sec;
 
 	/* workaround for voc weakness */
-	if (voc_block_hdr.sr == 0xa6) {
-		samples_per_sec = 11025;
-	} else if (voc_block_hdr.sr == 0xd2) {
-		samples_per_sec = 22050;
-	} else {
-		samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.sr);
-		warning("inexact sample rate used: %i", samples_per_sec);
-	}
+	samples_per_sec = getSampleRateFromVOCRate(voc_block_hdr.sr);
 
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);

@@ -19,11 +19,12 @@
  */
 
 #include "stdafx.h"
+#include "common/timer.h"
 #include "imuse_digi.h"
 #include "scumm.h"
 #include "sound.h"
 #include "sound/mixer.h"
-#include "common/timer.h"
+#include "sound/voc.h"
 
 ////////////////////////////////////////
 //
@@ -657,7 +658,7 @@ static byte *readCreativeVocFile(byte *ptr, int32 &size, int &rate) {
 				int time_constant = ptr[offset++];
 				int packing = ptr[offset++];
 				len -= 2;
-				rate = 1000000L / (256L - time_constant);
+				rate = getSampleRateFromVOCRate(time_constant);
 				debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
 				if (packing == 0) {
 					if (size) {
@@ -834,11 +835,6 @@ void IMuseDigital::startSound(int sound) {
 				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
 				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l]._freq);
 				
-				if (_channel[l]._freq == 22222) {
-					_channel[l]._freq = 22050;
-				} else if (_channel[l]._freq == 10989) {
-					_channel[l]._freq = 11025;
-				}
 				_channel[l]._mixerSize = (_channel[l]._freq / 5) * 2;
 
 				size *= 2;
