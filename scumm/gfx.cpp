@@ -805,6 +805,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	assert(smap_ptr);
 
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
+	assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
 
 	if (_vm->_features & GF_SMALL_HEADER) {
 		/* this is really ugly, FIXME */
@@ -3128,7 +3129,7 @@ void Scumm::makeCursorColorTransparent(int a)
 #pragma mark --- Bomp ---
 #pragma mark -
 
-int32 Scumm::bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size) {
+int32 Scumm::bompDecodeLineMode0(byte *src, byte *line_buffer, int32 size) {
 	if (size <= 0)
 		return size;
 
@@ -3138,7 +3139,7 @@ int32 Scumm::bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size) {
 	return size;
 }
 
-int32 Scumm::bompDecodeLineMode1(byte * src, byte * line_buffer, int32 size) {
+int32 Scumm::bompDecodeLineMode1(byte *src, byte *line_buffer, int32 size) {
 	int32 t_size = READ_LE_UINT16(src) + 2;
 	if (size <= 0)
 		return t_size;
@@ -3165,7 +3166,7 @@ int32 Scumm::bompDecodeLineMode1(byte * src, byte * line_buffer, int32 size) {
 	return t_size;
 }
 
-int32 Scumm::bompDecodeLineMode3(byte * src, byte * line_buffer, int32 size) {
+int32 Scumm::bompDecodeLineMode3(byte *src, byte *line_buffer, int32 size) {
 	int32 t_size = READ_LE_UINT16(src) + 2;
 	line_buffer += size;
 	if (size <= 0)
@@ -3193,7 +3194,7 @@ int32 Scumm::bompDecodeLineMode3(byte * src, byte * line_buffer, int32 size) {
 	return t_size;
 }
 
-void Scumm::bompApplyMask(byte * line_buffer, byte * mask_src, byte bits, int32 size) {
+void Scumm::bompApplyMask(byte *line_buffer, byte *mask_src, byte bits, int32 size) {
 	while(1) {
 		byte tmp = *(mask_src++);
 		do {
@@ -3209,7 +3210,7 @@ void Scumm::bompApplyMask(byte * line_buffer, byte * mask_src, byte bits, int32 
 	}
 }
 
-void Scumm::bompApplyShadow0(byte * line_buffer, byte * dst, int32 size) {
+void Scumm::bompApplyShadow0(byte *line_buffer, byte *dst, int32 size) {
 	while(1) {
 		if (size-- == 0)
 			return;
@@ -3221,7 +3222,7 @@ void Scumm::bompApplyShadow0(byte * line_buffer, byte * dst, int32 size) {
 	}
 }
 
-void Scumm::bompApplyShadow1(byte * line_buffer, byte * dst, int32 size) {
+void Scumm::bompApplyShadow1(byte *line_buffer, byte *dst, int32 size) {
 	while(1) {
 		if (size-- == 0)
 			return;
@@ -3236,7 +3237,7 @@ void Scumm::bompApplyShadow1(byte * line_buffer, byte * dst, int32 size) {
 	}
 }
 
-void Scumm::bompApplyShadow3(byte * line_buffer, byte * dst, int32 size) {
+void Scumm::bompApplyShadow3(byte *line_buffer, byte *dst, int32 size) {
 	while(1) {
 		if (size-- == 0)
 			return;
@@ -3251,18 +3252,19 @@ void Scumm::bompApplyShadow3(byte * line_buffer, byte * dst, int32 size) {
 	}
 }
 
-void Scumm::bompApplyActorPalette(byte * line_buffer, int32 size) {
+void Scumm::bompApplyActorPalette(byte *line_buffer, int32 size) {
 	if (_bompActorPalletePtr != 0) {
 		*(_bompActorPalletePtr + 255) = 255;
 		while(1) {
 			if (size-- == 0)
 				break;
-			*(line_buffer++) = *(_bompActorPalletePtr + *(line_buffer));
+			*line_buffer = *(_bompActorPalletePtr + *line_buffer);
+			line_buffer++;
 		}
 	}
 }
 
-void Scumm::bompScaleFuncX(byte * line_buffer, byte * scalling_x_ptr, byte skip, int32 size) {
+void Scumm::bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, int32 size) {
 	byte * line_ptr1 = line_buffer;
 	byte * line_ptr2 = line_buffer;
 
