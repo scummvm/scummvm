@@ -26,6 +26,7 @@ SCUMM_OBJS = \
 	scumm/string.o \
 	scumm/vars.o \
 	scumm/verbs.o \
+	scumm/nut_renderer.o
 
 SMUSH_OBJS = \
 	scumm/smush/blitter.o \

@@ -26,32 +26,13 @@
 #include "sound.h"
 #include "verbs.h"
 
-#include "smush/player.h"
-#include "smush/frenderer.h"
+#include "nut_renderer.h"
 
 /*
  * NO, we do NOT support CMI yet :-) This file is mostly a placeholder and a place
  * to grow real support in. For now, only a few opcodes are implemented, and they
  * might even be wrong... so don't hold your breath.
  */
-
-
-// #define FONT_HACK
-
-#ifdef FONT_HACK
-// FIXME: Copied from smush/player.cpp - this should probably go somewhere sensible :)
-static FontRenderer *loadFont(const char * file, const char * directory, bool original = false) {
-#ifdef DEBUG
-        debug(5, "loading font from \"%s\"", file);
-#endif
-        FontRenderer * fr = new FontRenderer(original);
-        SmushPlayer p(fr, false, false);
-        p.play(file, directory);
-        return fr;
-}
-#endif
-
-
 
 #define OPCODE(x)	{ &Scumm_v8::x, #x }
 
@@ -512,9 +493,23 @@ void Scumm_v8::decodeParseString(int m, int n)
 		_string[m].center = true;
 		_string[m].overhead = false;
 		break;
-	case 0xCD:		// SO_PRINT_CHARSET Set print character set
+	case 0xCD: {		// SO_PRINT_CHARSET Set print character set
 		// FIXME - TODO
-		_string[m].charset = pop();
+		int charset = pop();
+		if (_fr[charset] == NULL) {
+			char fontname[255];
+			sprintf(fontname, "resource/font%d.nut", charset);
+			_fr[charset] = new NutRenderer;
+			_fr[charset]->loadFont(fontname, (char*)getGameDataPath());
+			_fr[charset]->bindDisplay((byte*)virtscr[0].screenPtr, (int32)_realWidth, (int32)_realHeight, (int32)_realWidth);
+			if (!_fr[charset])
+				warning("Failed to load font %d from %s%s\n", charset, getGameDataPath(), fontname);
+			else
+				warning("Loaded font %d from %s%s\n", charset, getGameDataPath(), fontname);
+
+		}
+		_string[m].charset = charset;
+	}
 		break;
 	case 0xCE:
 		_string[m].center = false;
@@ -531,17 +526,16 @@ void Scumm_v8::decodeParseString(int m, int n)
 		// TODO - FIXME
 		_messagePtr = _scriptPointer;
 
-		Point screenSize(_realHeight, _realWidth);
 		byte buffer[1024];
 		_msgPtrToAdd = buffer;
 		_scriptPointer = _messagePtr = addMessageToStack(_messagePtr);
 
 		if (_fr[_string[m].charset] != NULL) {
-			_fr[_string[m].charset]->drawStringAbsolute((const char*)buffer, (char*)virtscr[0].screenPtr, screenSize, (int16)_string[m].xpos, (int16)_string[m].ypos);
-			printf("Drawn message(%d)\n", m);
+			_fr[_string[m].charset]->drawString((char *)buffer, (int)_string[m].xpos, (int)_string[m].ypos, (unsigned char)_string[m].color, 0);
+		} else {
+			warning("No font loaded in slot %d\n", m);
 		}
 
-//		printf("Message(%d): '%s'\n", m, buffer);
 		break;
 	}
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
@@ -759,18 +753,18 @@ void Scumm_v8::o8_cursorCommand()
 		makeCursorColorTransparent(pop());
 		break;
 	case 0xE7: {		// SO_CHARSET_SET
-		// FIXME - TODO
 		int charset = pop();
 		if (_fr[charset] == NULL) {
 			char fontname[255];
 			sprintf(fontname, "resource/font%d.nut", charset);
-
-#ifdef FONT_HACK
-			_fr[charset] = loadFont(fontname, getGameDataPath(), true);
-#endif
-
+			_fr[charset] = new NutRenderer;
+			_fr[charset]->loadFont(fontname, (char*)getGameDataPath());
+			_fr[charset]->bindDisplay((byte*)virtscr[0].screenPtr, (int32)_realWidth, (int32)_realHeight, (int32)_realWidth);
 			if (!_fr[charset])
 				warning("Failed to load font %d from %s%s\n", charset, getGameDataPath(), fontname);
+			else
+				warning("Loaded font %d from %s%s\n", charset, getGameDataPath(), fontname);
+
 		}
 		break;
 	}
