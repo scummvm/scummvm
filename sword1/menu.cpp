@@ -299,17 +299,13 @@ void SwordMenu::fnStartMenu(void) {
 	SwordLogic::_scriptVars[OBJECT_HELD]  = 0; // icon no longer selected
 	SwordLogic::_scriptVars[SECOND_ITEM]  = 0; // second icon no longer selected (after using one on another)
 	SwordLogic::_scriptVars[MENU_LOOKING] = 0; // no longer 'looking at' an icon
-	_mouse->setLuggage(0, 0);
 	buildMenu();
-	_mouse->controlPanel(true); // so that the arrow cursor will be shown.
 	showMenu(MENU_TOP);
 }
 
 void SwordMenu::fnEndMenu(void) {
-	if (_objectBarStatus != MENU_CLOSED) {
+	if (_objectBarStatus != MENU_CLOSED)
 		_objectBarStatus = MENU_CLOSING;
-		_mouse->controlPanel(false);
-	}
 }
 
 void SwordMenu::fnChooser(BsObject *compact) {

@@ -102,8 +102,10 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 
 	if (!SwordLogic::_scriptVars[TOP_MENU_DISABLED]) {
 		if (y < 40) { // okay, we are in the top menu.
-			if (!_inTopMenu) // are we just entering it?
+			if (!_inTopMenu) { // are we just entering it?
 				_menu->fnStartMenu();
+				setPointer(MSE_POINTER, 0);
+			}
 			_menu->checkTopMenu();
 			_inTopMenu = true;
 		} else if (_inTopMenu) { // we're not in the menu. did we just leave it?
