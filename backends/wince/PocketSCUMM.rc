@@ -7,7 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "newres.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -28,7 +28,7 @@ LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON    DISCARDABLE     "scumm_icon.ico"
+IDI_POCKETSCUMM         ICON    DISCARDABLE     "scumm_icon.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ END
 
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "#include ""afxres.h""\r\n"
+    "#include ""newres.h""\r\n"
     "\0"
 END
 
@@ -54,6 +54,69 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menubar
+//
+
+IDR_SMARTFON_MENUBAR_GAMES MENU DISCARDABLE 
+BEGIN
+    POPUP "Games"
+    BEGIN
+        POPUP "Play"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Scan",                        IDM_SMARTFON_SCAN
+        MENUITEM SEPARATOR
+        MENUITEM "Quit",                        IDM_SMARTFON_QUIT
+    END
+    POPUP "Options"
+    BEGIN
+        POPUP "Keys Mapping"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM "Music",                       IDM_SMARTFON_MUSIC
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Data
+//
+
+IDR_SMARTFON_MENUBAR_GAMES SHMENUBAR DISCARDABLE 
+BEGIN
+    IDR_SMARTFON_MENUBAR_GAMES, 2,
+    I_IMAGENONE, ID_MENU_GAMES, TBSTATE_ENABLED, 
+    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE, IDS_CAP_MENUITEM40002, 0, 0,
+    I_IMAGENONE, ID_MENU_OPTIONS, TBSTATE_ENABLED, 
+    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE, IDS_CAP_OPTIONS, 0, 1,
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_LOGO                BITMAP  DISCARDABLE     "logo.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CAP_MENUITEM40002   "Games"
+    IDS_CAP_OPTIONS         "Options"
+END
 
 #endif    // French (France) resources
 /////////////////////////////////////////////////////////////////////////////

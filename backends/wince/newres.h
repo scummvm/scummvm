@@ -1,5 +1,17 @@
+///////////////////////////////////////////////////////////////////////////////
+//  THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+//  ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+//  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+//  PARTICULAR PURPOSE.
+//
+//  This is "Sample Code" and is distributable subject to the terms of the 
+//  end user license agreement.
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef __NEWRES_H__
 #define __NEWRES_H__
+
+#include "windows.h"
 
 #if !defined(UNDER_CE)
 #define UNDER_CE _WIN32_WCE
@@ -11,7 +23,7 @@
 	#endif
 	#include <commctrl.h>
 	#define  SHMENUBAR RCDATA
-	#if defined(WIN32_PLATFORM_PSPC) && (_WIN32_WCE >= 300)
+	#if defined(WIN32_PLATFORM_WFSP) && (_WIN32_WCE >= 300)
 		#include <aygshell.h>
 		#define AFXCE_IDR_SCRATCH_SHMENU  28700
 	#else
