@@ -235,9 +235,6 @@
 			RelativePath="..\..\sword2\protocol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword2\protocol.h">
-		</File>
-		<File
 			RelativePath="..\..\sword2\resman.cpp">
 		</File>
 		<File
@@ -284,9 +281,6 @@
 		</File>
 		<File
 			RelativePath="..\..\sword2\sync.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword2\tony_gsdk.cpp">
 		</File>
 		<File
 			RelativePath="..\..\sword2\walker.cpp">
