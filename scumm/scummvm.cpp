@@ -354,6 +354,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_switchRoomEffect = 0;
 	_doEffect = false;
 	memset(&_flashlight,0,sizeof(_flashlight));
+	_roomStrips = 0;
 	_bompActorPalettePtr = NULL;
 	_shakeEnabled= false;
 	_shakeFrame = 0;
@@ -1390,6 +1391,7 @@ void Scumm::initRoomSubBlocks() {
 	//
 	if (_features & GF_OLD_BUNDLE) {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
+		_roomStrips = gdi.generateStripTable(roomptr + _IM00_offs, _roomWidth, _roomHeight, _roomStrips);
 	} else if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
 	else if (_features & GF_AFTER_V8) {

@@ -715,7 +715,7 @@ protected:
 	void setVerbObject(uint room, uint object, uint verb);
 
 
-	// TODO: This should be moved into Scumm_v2 if posisble
+	// TODO: This should be moved into Scumm_v2 if possible
 	ScummVM::Rect v2_mouseover_boxes[7];
 	int8 v2_mouseover_box;
 
@@ -804,6 +804,8 @@ protected:
 		uint16 xStrips, yStrips;
 		bool isDrawn;
 	} _flashlight;
+	
+	StripTable *_roomStrips;
 
 	void getGraphicsPerformance();
 	void initScreens(int a, int b, int w, int h);

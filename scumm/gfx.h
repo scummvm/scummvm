@@ -96,6 +96,12 @@ struct BompDrawData {
 	BompDrawData() { memset(this, 0, sizeof(*this)); }
 };
 
+struct StripTable {
+	int offsets[160];
+	int zoffsets[120];	// FIXME: Why only 120 here?
+	int zrun[120];		// FIXME: Why only 120 here?
+};
+
 class Gdi {
 	friend class Scumm;	// Mostly for the code in saveload.cpp ...
 public:
@@ -142,7 +148,8 @@ protected:
 
 public:
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
-	                int stripnr, int numstrip, byte flag);
+	                int stripnr, int numstrip, byte flag, StripTable *table = 0);
+	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table);
 	void clearCharsetMask();
 
 	void disableZBuffer() { _zbufferDisabled = true; }

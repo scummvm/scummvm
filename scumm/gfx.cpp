@@ -761,7 +761,7 @@ void Scumm::redrawBGStrip(int start, int num) {
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
-								&virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0);
+	               &virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0, _roomStrips);
 }
 
 void Scumm::restoreCharsetBg() {
@@ -869,7 +869,7 @@ byte *Scumm::getMaskBuffer(int x, int y, int z) {
  * and objects, used throughout all SCUMM versions.
  */
 void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
-                     int stripnr, int numstrip, byte flag) {
+                     int stripnr, int numstrip, byte flag, StripTable *table) {
 	assert(ptr);
 	assert(height > 0);
 	byte *backbuff_ptr, *bgbak_ptr;
@@ -988,7 +988,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		const int left = (stripnr << 3);
 		const int right = left + (numstrip << 3);
 		byte *dst = bgbak_ptr;
-		const byte *src = smap_ptr;
+		const byte *src;
 		byte color = 0, data = 0;
 		int run = 1;
 		bool dither = false;
@@ -997,10 +997,18 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		memset(dither_table, 0, sizeof(dither_table));
 		int theX, theY;
 		
+		if (table) {
+			src = smap_ptr + table->offsets[stripnr];
+			theX = left;
+		} else {
+			src = smap_ptr;
+			theX = 0;
+		}
+		
 		// Draw image data. To do this, we decode the full RLE graphics data,
 		// but only draw those parts we actually want to display.
 		assert(height <= 128);
-		for (theX = 0; theX < width; theX++) {
+		for (; theX < width; theX++) {
 			ptr_dither_table = dither_table;
 			for (theY = 0; theY < height; theY++) {
 				if (--run == 0) {
@@ -1030,11 +1038,19 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		}
 
+
 		// Draw mask (zplane) data
 		theY = 0;
-		theX = 0;
-		while (theX < width) {
+
+		if (table) {
+			src = smap_ptr + table->zoffsets[stripnr];
+			run = table->zrun[stripnr];
+			theX = left;
+		} else {
 			run = *src++;
+			theX = 0;
+		}
+		while (theX < width) {
 			if (run & 0x80) {
 				run &= 0x7f;
 				data = *src++;
@@ -1074,6 +1090,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 					}
 				} while (--run);
 			}
+			run = *src++;
 		}
 	}
 
@@ -1221,6 +1238,95 @@ next_iter:
 		stripnr++;
 	}
 }
+
+/**
+ * Create and fill a table with offsets to the graphic and mask strips in the
+ * given V2 EGA bitmap.
+ * @param src		the V2 EGA bitmap
+ * @param width		the width of the bitmap
+ * @param height	the height of the bitmap
+ * @param table		the strip table to fill
+ * @return filled strip table
+ */
+StripTable *Gdi::generateStripTable(const byte *src, int width, int height, StripTable *table) {
+
+	// If no strip table was given to use, allocate a new one
+	if (table == 0)
+		table = (StripTable *)calloc(1, sizeof(StripTable));
+
+	const byte *bitmapStart = src;
+	byte color = 0, data = 0;
+	int x, y, length = 0;
+	byte run = 1;
+
+	for (x = 0 ; x < width; x++) {
+
+		if ((x % 8) == 0) {
+			assert(x < 160 * 8);
+			assert(run == 1);
+			table->offsets[x >> 3] = src - bitmapStart;
+		}
+
+		for (y = 0; y < height; y++) {
+			if (--run == 0) {
+				data = *src++;
+				if (data & 0x80) {
+					run = data & 0x7f;
+				} else {
+					run = data >> 4;
+				}
+				if (run == 0) {
+					run = *src++;
+				}
+				color = data & 0x0f;
+			}
+		}
+	}
+
+	// Directly after the graphics data, the mask follows
+	x = 0;
+	y = height;
+	width /= 8;
+	
+	for (;;) {
+		length = *src++;
+		if (length & 0x80) {
+			length &= 0x7f;
+			data = *src++;
+			do {
+				if (y == height) {
+					assert(x < 120);
+					table->zoffsets[x] = src - bitmapStart - 1;
+					table->zrun[x] = length | 0x80;
+				}
+				if (--y == 0) {
+					if (--width == 0)
+						return table;
+					x++;
+					y = height;
+				}
+			} while (--length);
+		} else {
+			do {
+				data = *src++;
+				if (y == height) {
+					assert(x < 120);
+					table->zoffsets[x] = src - bitmapStart - 1;
+					table->zrun[x] = length;
+				}
+				if (--y == 0) {
+					if (--width == 0)
+						return table;
+					x++;
+					y = height;
+				}
+			} while (--length);
+		}
+	}
+
+	return table;
+}
+
 
 void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 	byte color = 0;
