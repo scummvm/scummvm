@@ -577,8 +577,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	boxm = getBoxMatrixBaseAddr();
 
 	if (_features & GF_AFTER_V2) {
-		i = boxm[from];
-		boxm += numOfBoxes;
+		boxm += numOfBoxes + boxm[from];
 		return boxm[to];
 	}
 
