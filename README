@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2002-10-23
+Last updated:    2002-10-31
 Release version: 0.2.7 [CVS]
 ------------------------------------------------------------------------
 
@@ -546,6 +546,7 @@ Credits:
         Ralph Brorsen      - Helped write the new GUI
         Torbjorn Andersson - Many different contributions
         Jamieson Christian - Lots of work on iMuse/MIDI
+        Oliver Kiehl       - Simon The Sorcerer debugging
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
