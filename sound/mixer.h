@@ -154,6 +154,9 @@ public:
 	/** set the channel balance for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
 	void setChannelBalance(PlayingSoundHandle handle, int8 balance);
 
+	/** get approximation of for how long the channel has been playing */
+	uint32 getChannelElapsedTime(PlayingSoundHandle handle);
+
 	/** Check whether any SFX channel is active.*/
 	bool hasActiveSFXChannel();
 

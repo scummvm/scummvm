@@ -49,6 +49,9 @@ private:
 	int8 _balance;
 	bool _paused;
 	int _id;
+	uint32 _samplesConsumed;
+	uint32 _samplesDecoded;
+	uint32 _mixerTimeStamp;
 
 protected:
 	RateConverter *_converter;
@@ -83,6 +86,7 @@ public:
 	int getId() const {
 		return _id;
 	}
+	uint32 getElapsedTime();
 };
 
 class ChannelStream : public Channel {
@@ -393,6 +397,26 @@ void SoundMixer::setChannelBalance(PlayingSoundHandle handle, int8 balance) {
 		_channels[index]->setBalance(balance);
 }
 
+uint32 SoundMixer::getChannelElapsedTime(PlayingSoundHandle handle) {
+	Common::StackLock lock(_mutex);
+
+	if (!handle.isActive())
+		return 0;
+
+	int index = handle.getIndex();
+
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::getChannelElapsedTime has invalid index %d", index);
+		return 0;
+	}
+
+	if (_channels[index])
+		return _channels[index]->getElapsedTime();
+
+	warning("soundMixer::getChannelElapsedTime has no channel object for index %d", index);
+	return 0;
+}
+
 void SoundMixer::pauseAll(bool paused) {
 	_paused = paused;
 }
@@ -465,14 +489,16 @@ void SoundMixer::setMusicVolume(int volume) {
 
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, int id)
 	: _mixer(mixer), _handle(handle), _autofreeStream(true), _isMusic(isMusic),
-	  _volume(255), _balance(0), _paused(false), _id(id), _converter(0), _input(0) {
+	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
+	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(0) {
 	assert(mixer);
 }
 
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input,
 				bool autofreeStream, bool isMusic, bool reverseStereo, int id)
 	: _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream), _isMusic(isMusic),
-	  _volume(255), _balance(0), _paused(false), _id(id), _converter(0), _input(input) {
+	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
+	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input) {
 	assert(mixer);
 	assert(input);
 
@@ -522,8 +548,37 @@ void Channel::mix(int16 *data, uint len) {
 			vol_r = vol / 255;
 		}
 
+		_samplesConsumed = _samplesDecoded;
+		_mixerTimeStamp = g_system->get_msecs();
+
 		_converter->flow(*_input, data, len, vol_l, vol_r);
+
+		_samplesDecoded += len;
 	}
+}
+
+uint32 Channel::getElapsedTime() {
+	if (_mixerTimeStamp == 0)
+		return 0;
+
+	// Convert the number of samples into a time duration. To avoid
+	// overflow, this has to be done in a somewhat non-obvious way.
+
+	uint rate = _mixer->getOutputRate();
+
+	uint32 seconds = _samplesConsumed / rate;
+	uint32 milliseconds = (1000 * (_samplesConsumed % rate)) / rate;
+
+	uint32 delta = g_system->get_msecs() - _mixerTimeStamp;
+
+	// In theory it would seem like a good idea to limit the approximation
+	// so that it never exceeds the theoretical upper bound set by
+	// _samplesDecoded. Meanwhile, back in the real world, doing so makes
+	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
+	// isn't invoked at the regular intervals that I first imagined.
+
+	// FIXME: This won't work very well if the sound is paused.
+	return 1000 * seconds + milliseconds + delta;
 }
 
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
