@@ -220,6 +220,7 @@ public:
 	int setLeftPortrait(int portrait);
 	int setRightPortrait(int portrait);
 	int draw();
+	int drawStatusBar(SURFACE *ds);
 	int update(const Point& imousePt, int update_flag);
 
 	void addToInventory(int sprite);
@@ -229,7 +230,6 @@ public:
 
 private:
 	int hitTest(const Point& imousePt, int *ibutton);
-	int drawStatusBar(SURFACE *ds);
 	int handleCommandUpdate(SURFACE *ds, const Point& imousePt);
 	int handleCommandClick(SURFACE *ds, const Point& imousePt);
 	int handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt);

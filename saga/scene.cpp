@@ -644,7 +644,7 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 		if (_desc.startScriptNum > 0) {
 			event.type = ONESHOT_EVENT;
 			event.code = SCRIPT_EVENT;
-			event.op = EVENT_BLOCKING;
+			event.op = EVENT_EXEC_BLOCKING;
 			event.time = 0;
 			event.param = _desc.startScriptNum;
 			event.param2 = 0;		// Action
@@ -1106,7 +1106,7 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 		if (_desc.sceneScriptNum > 0) {
 			event.type = ONESHOT_EVENT;
 			event.code = SCRIPT_EVENT;
-			event.op = EVENT_NONBLOCKING;
+			event.op = EVENT_EXEC_NONBLOCKING;
 			event.time = 0;
 			event.param = _desc.sceneScriptNum;
 			event.param2 = 0;		// Action

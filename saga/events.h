@@ -31,10 +31,10 @@
 namespace Saga {
 
 enum EVENT_TYPES {
-	ONESHOT_EVENT,
-	CONTINUOUS_EVENT,
-	INTERVAL_EVENT,
-	IMMEDIATE_EVENT
+	ONESHOT_EVENT,    // Event takes no time
+	CONTINUOUS_EVENT, // Event takes time; next event starts immediately
+	INTERVAL_EVENT,   // Not yet implemented
+	IMMEDIATE_EVENT   // Event takes time; next event starts when event is done
 };
 
 enum EVENT_FLAGS {
@@ -56,7 +56,8 @@ enum EVENT_CODES {
 	INTERFACE_EVENT,
 	ACTOR_EVENT,
 	SCRIPT_EVENT,
-	CURSOR_EVENT
+	CURSOR_EVENT,
+	GRAPHICS_EVENT
 };
 
 enum EVENT_OPS {
@@ -82,15 +83,22 @@ enum EVENT_OPS {
 	EVENT_CYCLESTEP = 2,
 	// INTERFACE events
 	EVENT_ACTIVATE = 1,
-	EVENT_DEACTIVATE,
+	EVENT_DEACTIVATE = 2,
+	EVENT_SET_STATUS = 3,
+	EVENT_CLEAR_STATUS = 4,
 	// ACTOR events
 	EVENT_MOVE = 1,
 	// SCRIPT events
-	EVENT_BLOCKING = 1,
-	EVENT_NONBLOCKING = 2,
+	EVENT_EXEC_BLOCKING = 1,
+	EVENT_EXEC_NONBLOCKING = 2,
+	EVENT_THREAD_WAKE = 3,
 	// CURSOR events
 	EVENT_SHOW = 1,
 	// EVENT_HIDE = 2, // reused
+	// GRAPHICS events
+	EVENT_FILL_RECT = 1,
+	// EVENT_SETFLAG = 4, // reused
+	// EVENT_CLEARFLAG = 5, // reused
 
 	// CONTINUOUS events
 	// PALETTE events

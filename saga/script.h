@@ -95,7 +95,8 @@ enum ThreadWaitTypes {
 	kWaitTypeDialogBegin = 4,	// waiting for other dialog to finish
 	kWaitTypeWalk = 5,			// waiting to finish walking
 	kWaitTypeRequest = 6,		// a request is up
-	kWaitTypePause = 7
+	kWaitTypePause = 7,
+	kWaitTypePlacard = 8
 };
 
 enum OpCodes {

@@ -259,6 +259,7 @@ int Events::handleImmediate(EVENT *event) {
 int Events::handleOneShot(EVENT *event) {
 	SURFACE *back_buf;
 	SCRIPT_THREAD *sthread;
+	Rect rect;
 
 	static SCENE_BGINFO bginfo;
 
@@ -372,29 +373,48 @@ int Events::handleOneShot(EVENT *event) {
 		case EVENT_ACTIVATE:
 			_vm->_interface->activate();
 			break;
+		case EVENT_DEACTIVATE:
+			_vm->_interface->deactivate();
+			break;
+		case EVENT_SET_STATUS:
+			_vm->_interface->setStatusText((const char*)event->data);
+			_vm->_interface->drawStatusBar(_vm->_gfx->getBackBuffer());
+			break;
+		case EVENT_CLEAR_STATUS:
+			_vm->_interface->setStatusText("");
+			_vm->_interface->drawStatusBar(_vm->_gfx->getBackBuffer());
+			break;
 		default:
 			break;
 		}
 		break;
 	case SCRIPT_EVENT:
-		debug(0, "Starting start script #%d", event->param);
+		switch (event->op) {
+		case EVENT_EXEC_BLOCKING:
+		case EVENT_EXEC_NONBLOCKING:
+			debug(0, "Starting start script #%d", event->param);
 		
-		sthread = _vm->_script->SThreadCreate();
-		if (sthread == NULL) {
-			_vm->_console->DebugPrintf("Thread creation failed.\n");
+			sthread = _vm->_script->SThreadCreate();
+			if (sthread == NULL) {
+				_vm->_console->DebugPrintf("Thread creation failed.\n");
+				break;
+			}
+
+			sthread->threadVars[kVarAction] = TO_LE_16(event->param2);
+			sthread->threadVars[kVarObject] = TO_LE_16(event->param3);
+			sthread->threadVars[kVarWithObject] = TO_LE_16(event->param4);
+			sthread->threadVars[kVarActor] = TO_LE_16(event->param5);
+
+			_vm->_script->SThreadExecute(sthread, event->param);
+
+			if (event->op == EVENT_EXEC_BLOCKING)
+				_vm->_script->SThreadCompleteThread();
+
+			break;
+		case EVENT_THREAD_WAKE:
+			_vm->_script->wakeUpThreads(event->param);
 			break;
 		}
-
-		sthread->threadVars[kVarAction] = TO_LE_16(event->param2);
-		sthread->threadVars[kVarObject] = TO_LE_16(event->param3);
-		sthread->threadVars[kVarWithObject] = TO_LE_16(event->param4);
-		sthread->threadVars[kVarActor] = TO_LE_16(event->param5);
-
-		_vm->_script->SThreadExecute(sthread, event->param);
-
-		if (event->op == EVENT_BLOCKING)
-			_vm->_script->SThreadCompleteThread();
-
 		break;
 	case CURSOR_EVENT:
 		switch (event->op) {
@@ -403,6 +423,25 @@ int Events::handleOneShot(EVENT *event) {
 			break;
 		case EVENT_HIDE:
 			_vm->_gfx->showCursor(false);
+			break;
+		default:
+			break;
+		}
+		break;
+	case GRAPHICS_EVENT:
+		switch (event->op) {
+		case EVENT_FILL_RECT:
+			rect.top = event->param2;
+			rect.bottom = event->param3;
+			rect.left = event->param4;
+			rect.right = event->param5;
+			drawRect((SURFACE *)event->data, &rect, event->param);
+			break;
+		case EVENT_SETFLAG:
+			_vm->_render->setFlag(event->param);
+			break;
+		case EVENT_CLEARFLAG:
+			_vm->_render->clearFlag(event->param);
 			break;
 		default:
 			break;

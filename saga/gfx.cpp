@@ -986,34 +986,6 @@ int Gfx::blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent) {
 	return SUCCESS;
 }
 
-void Gfx::palToBlackWait(SURFACE *surface, PALENTRY *src_pal, int duration) {
-	uint32 start_time = _vm->_system->getMillis();
-	uint32 cur_time;
-
-	do {
-		cur_time = _vm->_system->getMillis();
-
-		palToBlack(surface, src_pal, (double) (cur_time - start_time) / duration);
-		_vm->processInput();
-		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(50);
-	} while (cur_time < start_time + duration);
-}
-
-void Gfx::blackToPalWait(SURFACE *surface, PALENTRY *src_pal, int duration) {
-	uint32 start_time = _vm->_system->getMillis();
-	uint32 cur_time;
-
-	do {
-		cur_time = _vm->_system->getMillis();
-
-		blackToPal(surface, src_pal, (double) (cur_time - start_time) / duration);
-		_vm->processInput();
-		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(50);
-	} while (cur_time < start_time + duration);
-}
-
 void Gfx::showCursor(bool state) {
 	updateCursor();
 	g_system->showMouse(state);

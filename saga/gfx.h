@@ -107,8 +107,6 @@ public:
 	int getCurrentPal(PALENTRY *src_pal);
 	int palToBlack(SURFACE *surface, PALENTRY *src_pal, double percent);
 	int blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent);
-	void palToBlackWait(SURFACE *surface, PALENTRY *src_pal, int duration);
-	void blackToPalWait(SURFACE *surface, PALENTRY *src_pal, int duration);
 	void updateCursor() { setCursor(getWhite()); }
 	void showCursor(bool state);
 

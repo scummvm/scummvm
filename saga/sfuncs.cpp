@@ -29,6 +29,7 @@
 #include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console.h"
+#include "saga/events.h"
 #include "saga/font.h"
 #include "saga/interface.h"
 #include "saga/music.h"
@@ -932,29 +933,69 @@ int Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+static TEXTLIST_ENTRY *placardTextEntry;
+
 // Script function #48 (0x30)
 // Param1: string rid
 int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	int stringId;
-	const char *string;
 	GAME_DISPLAYINFO disp;
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
-	PALENTRY cur_pal[PAL_ENTRIES];
+	static PALENTRY cur_pal[PAL_ENTRIES];
 	PALENTRY *pal;
-	
-	stringId = thread->pop();
-	string = getString(stringId);
+	EVENT event;
+	EVENT *q_event;
+
+	thread->wait(kWaitTypePlacard);
+
+	_vm->_interface->rememberMode();
+	_vm->_interface->setMode(kPanelPlacard);
 
 	_vm->getDisplayInfo(&disp);
 
-	_vm->_gfx->showCursor(false);
+	stringId = thread->pop();
+
+	event.type = ONESHOT_EVENT;
+	event.code = CURSOR_EVENT;
+	event.op = EVENT_HIDE;
+
+	q_event = _vm->_events->queue(&event);
+
 	_vm->_gfx->getCurrentPal(cur_pal);
-	_vm->_gfx->palToBlackWait(back_buf, cur_pal, kNormalFadeDuration);
 
-	_vm->_interface->setStatusText("");
+	event.type = IMMEDIATE_EVENT;
+	event.code = PAL_EVENT;
+	event.op = EVENT_PALTOBLACK;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = cur_pal;
 
-	Rect rect(disp.logical_w, disp.scene_h);
-	drawRect(back_buf, &rect, 138);
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = ONESHOT_EVENT;
+	event.code = INTERFACE_EVENT;
+	event.op = EVENT_CLEAR_STATUS;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = ONESHOT_EVENT;
+	event.code = GRAPHICS_EVENT;
+	event.op = EVENT_SETFLAG;
+	event.param = RF_PLACARD;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = ONESHOT_EVENT;
+	event.code = GRAPHICS_EVENT;
+	event.op = EVENT_FILL_RECT;
+	event.data = back_buf;
+	event.param = 138;
+	event.param2 = 0;
+	event.param3 = disp.scene_h;
+	event.param4 = 0;
+	event.param5 = disp.logical_w;
+
+	q_event = _vm->_events->chain(q_event, &event);
 
 	// Put the text in the center of the viewport, assuming it will fit on
 	// one line. If we cannot make that assumption we'll need to extend
@@ -962,44 +1003,108 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	// It doesn't end up in exactly the same spot as the original did it,
 	// but it's close enough for now at least.
 
-	_vm->textDraw(MEDIUM_FONT_ID, back_buf, string,
-		disp.logical_w / 2,
-		(disp.scene_h - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2,
-		_vm->_gfx->getWhite(), _vm->_gfx->getBlack(),
-		FONT_OUTLINE | FONT_CENTERED);
+	TEXTLIST_ENTRY text_entry;
+	SCENE_INFO scene_info;
 
-	_vm->_render->setFlag(RF_PLACARD);
-	_vm->_render->drawScene();
+	_vm->_scene->getInfo(&scene_info);
+
+	text_entry.color = _vm->_gfx->getWhite();
+	text_entry.effect_color = _vm->_gfx->getBlack();
+	text_entry.text_x = disp.logical_w / 2;
+	text_entry.text_y = (disp.scene_h - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
+	text_entry.font_id = MEDIUM_FONT_ID;
+	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
+	text_entry.string = getString(stringId);
+
+	placardTextEntry = _vm->textAddEntry(scene_info.text_list, &text_entry);
+
+	event.type = ONESHOT_EVENT;
+	event.code = TEXT_EVENT;
+	event.op = EVENT_DISPLAY;
+	event.data = placardTextEntry;
+
+	q_event = _vm->_events->chain(q_event, &event);
 
 	_vm->_scene->getBGPal(&pal);
-	_vm->_gfx->blackToPalWait(back_buf, pal, kNormalFadeDuration);
 
-	_vm->_interface->rememberMode();
-	_vm->_interface->setMode(kPanelPlacard);
+	event.type = IMMEDIATE_EVENT;
+	event.code = PAL_EVENT;
+	event.op = EVENT_BLACKTOPAL;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = ONESHOT_EVENT;
+	event.code = SCRIPT_EVENT;
+	event.op = EVENT_THREAD_WAKE;
+	event.param = kWaitTypePlacard;
+
+	q_event = _vm->_events->chain(q_event, &event);
 
 	return SUCCESS;
 }
 
 // Script function #49 (0x31)
 int Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
-	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
-	PALENTRY cur_pal[PAL_ENTRIES];
+	static PALENTRY cur_pal[PAL_ENTRIES];
 	PALENTRY *pal;
+	EVENT event;
+	EVENT *q_event;
 
-	// Fade down
-	_vm->_gfx->getCurrentPal(cur_pal);
-	_vm->_gfx->palToBlackWait(back_buf, cur_pal, kNormalFadeDuration);
-
-	_vm->_render->clearFlag(RF_PLACARD);
-	_vm->_render->drawScene();
-
-	// Fade up
-	_vm->_scene->getBGPal(&pal);
-
-	_vm->_gfx->showCursor(true);
-	_vm->_gfx->blackToPalWait(back_buf, pal, kNormalFadeDuration);
+	thread->wait(kWaitTypePlacard);
 
 	_vm->_interface->restoreMode();
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	event.type = IMMEDIATE_EVENT;
+	event.code = PAL_EVENT;
+	event.op = EVENT_PALTOBLACK;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = cur_pal;
+
+	q_event = _vm->_events->queue(&event);
+
+	event.type = ONESHOT_EVENT;
+	event.code = GRAPHICS_EVENT;
+	event.op = EVENT_CLEARFLAG;
+	event.param = RF_PLACARD;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = ONESHOT_EVENT;
+	event.code = TEXT_EVENT;
+	event.op = EVENT_REMOVE;
+	event.data = placardTextEntry;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	_vm->_scene->getBGPal(&pal);
+
+	event.type = IMMEDIATE_EVENT;
+	event.code = PAL_EVENT;
+	event.op = EVENT_BLACKTOPAL;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = ONESHOT_EVENT;
+	event.code = CURSOR_EVENT;
+	event.op = EVENT_SHOW;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = ONESHOT_EVENT;
+	event.code = SCRIPT_EVENT;
+	event.op = EVENT_THREAD_WAKE;
+	event.param = kWaitTypePlacard;
+
+	q_event = _vm->_events->chain(q_event, &event);
 
 	return SUCCESS;
 }
