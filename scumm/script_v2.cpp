@@ -2379,6 +2379,15 @@ void Scumm::o6_wait()
 	case 226:{										/* wait until actor drawn */
 			Actor *a = derefActorSafe(pop(), "o6_wait:226");
 			int offs = (int16)fetchScriptWord();
+			
+			return; // FIXME
+			// This wait command doesn't return at the 
+			// correct times, which causes several script freezes
+			// in The Dig. Eg, planetarium lightbridge,
+			// and taking the rod in the museum AFTER looking at
+			// all the displays. Why? Is our code too optimised
+			// vs. the original?
+
 			if (a && a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
 				o6_breakHere();
