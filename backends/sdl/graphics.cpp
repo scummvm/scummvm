@@ -221,7 +221,7 @@ void OSystem_SDL::load_gfx_mode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor, 16, 
+	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, effectiveScreenHeight(), 16, 
 		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
 	if (_hwscreen == NULL) {
@@ -269,7 +269,7 @@ void OSystem_SDL::load_gfx_mode() {
 
 	// keyboard cursor control, some other better place for it?
 	km.x_max = _screenWidth * _scaleFactor - 1;
-	km.y_max = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor - 1;
+	km.y_max = effectiveScreenHeight() - 1;
 	km.delay_time = 25;
 	km.last_time = 0;
 }
@@ -450,7 +450,7 @@ void OSystem_SDL::internUpdateScreen() {
 		// This is necessary if shaking is active.
 		if (_forceFull) {
 			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor;
+			_dirty_rect_list[0].h = effectiveScreenHeight();
 		}
 
 		// Finally, blit all our changes to the screen
@@ -470,12 +470,13 @@ bool OSystem_SDL::save_screenshot(const char *filename) {
 }
 
 void OSystem_SDL::setFullscreenMode(bool enable) {
+	Common::StackLock lock(_graphicsMutex, this);
+
 	if (_full_screen != enable) {
 		assert(_hwscreen != 0);
 		_full_screen ^= true;
 
-		if (_mouseDrawn)
-			undraw_mouse();
+		undraw_mouse();
 	
 #if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
@@ -537,8 +538,7 @@ void OSystem_SDL::copy_rect(const byte *src, int pitch, int x, int y, int w, int
 	}
 
 	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	if (_mouseDrawn)
-		undraw_mouse();
+	undraw_mouse();
 
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
@@ -728,8 +728,7 @@ void OSystem_SDL::move_screen(int dx, int dy, int height) {
 	_forceFull = true;
 
 	// Hide the mouse
-	if (_mouseDrawn)
-		undraw_mouse();
+	undraw_mouse();
 
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
@@ -935,9 +934,9 @@ bool OSystem_SDL::show_mouse(bool visible) {
 
 void OSystem_SDL::set_mouse_pos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
+		undraw_mouse();
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
-		undraw_mouse();
 		updateScreen();
 	}
 }
@@ -958,6 +957,9 @@ void OSystem_SDL::warp_mouse(int x, int y) {
 }
 	
 void OSystem_SDL::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+
+	undraw_mouse();
+
 	assert(w <= MAX_MOUSE_W);
 	assert(h <= MAX_MOUSE_H);
 	_mouseCurState.w = w;
@@ -967,8 +969,6 @@ void OSystem_SDL::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_
 	_mouseHotspotY = hotspot_y;
 
 	_mouseData = buf;
-
-	undraw_mouse();
 }
 
 void OSystem_SDL::toggleMouseGrab() {
@@ -1009,13 +1009,6 @@ void OSystem_SDL::draw_mouse() {
 	// Quick check to see if anything has to be drawn at all
 	if (w <= 0 || h <= 0)
 		return;
-
-	// Store the bounding box so that undraw mouse can restore the area the
-	// mouse currently covers to its original content.
-	_mouseOldState.x = x;
-	_mouseOldState.y = y;
-	_mouseOldState.w = w;
-	_mouseOldState.h = h;
 
 	// Draw the mouse cursor; backup the covered area in "bak"
 	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
@@ -1081,10 +1074,10 @@ void OSystem_SDL::undraw_mouse() {
 	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	const int old_mouse_x = _mouseOldState.x;
-	const int old_mouse_y = _mouseOldState.y;
-	const int old_mouse_w = _mouseOldState.w;
-	const int old_mouse_h = _mouseOldState.h;
+	const int old_mouse_x = _mouseCurState.x;
+	const int old_mouse_y = _mouseCurState.y;
+	const int old_mouse_w = _mouseCurState.w;
+	const int old_mouse_h = _mouseCurState.h;
 	int x, y;
 
 	if (!_overlayVisible) {
@@ -1115,4 +1108,3 @@ void OSystem_SDL::undraw_mouse() {
 
 	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
 }
-

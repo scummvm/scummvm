@@ -201,7 +201,6 @@ protected:
 	const byte *_mouseData;
 	byte *_mouseBackup;
 	MousePos _mouseCurState;
-	MousePos _mouseOldState;
 	int16 _mouseHotspotX;
 	int16 _mouseHotspotY;
 

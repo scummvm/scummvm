@@ -132,14 +132,14 @@ bool OSystem_SDL::hasFeature(Feature f) {
 }
 
 void OSystem_SDL::setFeatureState(Feature f, bool enable) {
-	Common::StackLock lock(_graphicsMutex, this);
-
 	switch (f) {
 	case kFeatureFullscreenMode:
 		setFullscreenMode(enable);
 		break;
 	case kFeatureAspectRatioCorrection:
 		if (_screenHeight == 200 && _adjustAspectRatio != enable) {
+			Common::StackLock lock(_graphicsMutex, this);
+
 			//assert(_hwscreen != 0);
 			_adjustAspectRatio ^= true;
 			hotswap_gfx_mode();
