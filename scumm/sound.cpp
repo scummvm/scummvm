@@ -167,7 +167,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
-		debug(0, "playSound #%d", soundID);
+		debug(1, "playSound #%d", soundID);
 
 		int music_offs, total_size;
 		uint tracks, skip = 0;

@@ -244,7 +244,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o90_atan2),
 		OPCODE(o90_getSegmentAngle),
 		OPCODE(o90_getActorAnimProgress),
-		OPCODE(o6_invalid),
+		OPCODE(o90_getDistanceBetweenPoints),
 		/* A4 */
 		OPCODE(o6_ifClassOfIs),
 		OPCODE(o6_invalid),

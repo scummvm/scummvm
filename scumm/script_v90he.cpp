@@ -664,6 +664,7 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 	int x1, y1, z1, x2, y2, z2, dx, dy, dz, d;
 
 	switch (subOp) {
+	case 23: // HE100
 	case 28:
 		y2 = pop();
 		x2 = pop();
@@ -678,6 +679,7 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 			push((int)sqrt((double)(d + 1)));
 		}
 		break;
+	case 24: // HE100
 	case 29:
 		z2 = pop();
 		y2 = pop();
@@ -708,7 +710,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
-	debug(1,"o90_getSpriteInfo (%d)", subOp);
+	debug(0,"o90_getSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		spriteId = pop();
@@ -967,7 +969,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
 
-	debug(1,"o90_setSpriteInfo (%d)", subOp);
+	debug(0,"o90_setSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		args[0] = pop();
@@ -1300,7 +1302,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o90_getSpriteGroupInfo (%d)", subOp);
+	debug(0,"o90_getSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 8: // HE 99+
 		spriteGroupId = pop();
@@ -1382,7 +1384,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 37;
 
-	debug(1,"o90_setSpriteGroupInfo (%d)", subOp);
+	debug(0,"o90_setSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		type = pop() - 1;
