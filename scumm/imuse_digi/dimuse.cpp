@@ -72,8 +72,6 @@ void IMuseDigital::resetState() {
 	_curSeqAtribPos = 0;
 }
 
-static const Common::String &kTransientDomain = Common::ConfigManager::kTransientDomain;
-
 void IMuseDigital::setGroupVoiceVolume(int volume) {
 	_volVoice = volume;
 }
