@@ -1160,13 +1160,10 @@ void GetControlState() {
 	}
 }
 
-static void MakeTextObject() {
-	char *line = lua_getstring(lua_getparam(1)), *key_text = NULL;
-	lua_Object table_obj = lua_getparam(2), key;
-	int x = 0, y = 0, height = 0, width = 0;
-	Color *fgColor = NULL;
-	Font *font = NULL;
-	TextObject *textObject;
+void getTextObjectParams(lua_Object table_obj, Font **font, int &x, int &y, int &width,
+						 int &height, Color **fgColor, bool &center, bool &ljustify) {
+	char *key_text = NULL;
+	lua_Object key;
 
 	for (;;) {
 		lua_pushobject(table_obj);
@@ -1176,36 +1173,47 @@ static void MakeTextObject() {
 			lua_pushnil();
 
 		lua_call("next");
-		key=lua_getresult(1);
+		key = lua_getresult(1);
 		if (lua_isnil(key)) 
 			break;
 
-		key_text=lua_getstring(key);
-		//val_text=lua_getstring(lua_getresult(2));
+		key_text = lua_getstring(key);
 		if (strstr(key_text, "x"))
 			x = atoi(lua_getstring(lua_getresult(2)));
 		else if (strstr(key_text, "y"))
 			y = atoi(lua_getstring(lua_getresult(2)));
-		else if (strstr(key_text, "fgcolor"))
-			fgColor = check_color(2);
-		else if (strstr(key_text, "height"))
-			height = atoi(lua_getstring(lua_getresult(2)));
 		else if (strstr(key_text, "width"))
 			width = atoi(lua_getstring(lua_getresult(2)));
-		else if (strstr(key_text, "center"))
-			warning("MakeTextObject key center not implemented");
-		else if (strstr(key_text, "ljustify"))
-			warning("MakeTextObject key ljustify not implemented");
+		else if (strstr(key_text, "height"))
+			height = atoi(lua_getstring(lua_getresult(2)));
 		else if (strstr(key_text, "font"))
-			font = check_font(2);
+			*font = check_font(2);
+		else if (strstr(key_text, "fgcolor"))
+			*fgColor = check_color(2);
+		else if (strstr(key_text, "center"))
+			center = !lua_isnil(lua_getresult(2));
+		else if (strstr(key_text, "ljustify"))
+			ljustify = !lua_isnil(lua_getresult(2));
 		else
-			error("Unknown MakeTextObject key %s\n", key_text);
+			error("Unknown getTextObjectParams key %s\n", key_text);
 	}
+}
+
+static void MakeTextObject() {
+	int x = 0, y = 0, height = 0, width = 0, duration = 0;
+	bool center = false, ljustify = false, rjustify = false;
+	Color *fgColor = NULL, *bgColor = NULL, *fxColor = NULL;
+	Font *font = NULL;
+
+	char *line = lua_getstring(lua_getparam(1));
+	lua_Object table_obj = lua_getparam(2);
+	if (lua_istable(table_obj))
+		getTextObjectParams(table_obj, &font, x, y, width, height, &fgColor, center, ljustify);
 
 	// Note: The debug func display_setup_name in _sets.LUA creates an empty TextObject,
 	// and fills it with ChangeTextObject
 
-	textObject = new TextObject((const char *)line, x, y, font, *fgColor);
+	TextObject *textObject = new TextObject((const char *)line, x, y, font, *fgColor);
 	lua_pushusertag(textObject, MKID('TEXT'));
 }
 
