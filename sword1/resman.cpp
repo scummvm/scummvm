@@ -270,28 +270,14 @@ void ResMan::openCptResourceBigEndian(uint32 id) {
 	resOpen(id);
 	BsMemHandle *handle = resHandle(id);
 	uint32 totSize = handle->size;
-	uint8 *data = ((uint8*)handle->data) + sizeof(Header);
+	uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
 	totSize -= sizeof(Header);
-
-	uint32 numCpts = *(uint32*)data = READ_LE_UINT32(data);
-	data += 4;
-	uint32 *dataIdx = (uint32*)data;
-
-	for (uint32 cnt = 0; cnt < numCpts; cnt++) {
-		uint32 cptSize;
-		//uint32 cptPos = READ_LE_UINT32(data + cnt * 4);
-		uint32 cptPos = dataIdx[cnt] = READ_LE_UINT32(dataIdx + cnt);
-		if (cnt == numCpts-1)
-			cptSize = totSize - cptPos - 4;
-		else
-			cptSize = READ_LE_UINT32(data + (cnt + 1) * 4) - cptPos;
-		if (cptSize & 3)
-			error("Odd compact size during endian conversion. Resource ID = %d, Cpt = %d of %d, Size %d\n", id, cnt, numCpts, cptSize);
-		
-		cptSize >>= 2;
-		uint32 *cptData = (uint32*)(data + cptPos);
-		for (uint32 elemCnt = 0; elemCnt < cptSize; elemCnt++)
-			cptData[elemCnt] = READ_LE_UINT32(cptData + elemCnt);
+	if (totSize & 3)
+		error("Illegal compact size for id %d: %d", id, totSize);
+	totSize /= 4;
+	for (uint32 cnt = 0; cnt < totSize; cnt++) {
+		*data = READ_LE_UINT32(data);
+		data++;
 	}
 }
 
