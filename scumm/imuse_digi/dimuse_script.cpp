@@ -155,7 +155,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 //		setGroupMusicVolume(b);
 		break;
 	default:
-		warning("IMuseDigital::doCommand DEFAULT command %d", cmd);
+		error("IMuseDigital::doCommand DEFAULT command %d", cmd);
 	}
 }
 
