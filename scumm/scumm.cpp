@@ -2618,7 +2618,7 @@ void ScummEngine::initRoomSubBlocks() {
 	}
 
 	if (_features & GF_OLD_BUNDLE)
-		ptr = 0; // TODO ? do 16 bit games use a palette?!?
+		ptr = 0;
 	else if (_features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(MKID('CLUT'), roomptr);
 	else
