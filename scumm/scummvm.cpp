@@ -717,7 +717,10 @@ void Scumm::initRoomSubBlocks()
 	if (ptr) {
 		_EXCD_offs = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
-		dumpResource("exit-", _roomResource, ptr - 8);
+		if (_features & GF_SMALL_HEADER)
+			dumpResource("exit-", _roomResource, ptr - 6);
+		else
+			dumpResource("exit-", _roomResource, ptr - 8);
 #endif
 	}
 
@@ -725,7 +728,10 @@ void Scumm::initRoomSubBlocks()
 	if (ptr) {
 		_ENCD_offs = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
-		dumpResource("entry-", _roomResource, ptr - 8);
+		if (_features & GF_SMALL_HEADER)
+			dumpResource("entry-", _roomResource, ptr - 6);
+		else
+			dumpResource("entry-", _roomResource, ptr - 8);
 #endif
 	}
 
