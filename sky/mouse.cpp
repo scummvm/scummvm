@@ -81,22 +81,14 @@ SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 
 	_skyDisk = skyDisk;
 	_system = system;
-	_mouseWidth = 6;
-	_mouseHeight = 6;
-	_maskWidth = 6;
-	_maskHeight = 6;
 	_mouseB = 0;
 	
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
 	fixMouseTransparency(_miceData, _skyDisk->_lastLoadedFileSize);
-	_mouseData2 = _miceData;
 
 	//load in the object mouse file
 	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1, NULL);
 	fixMouseTransparency(_objectMouseData, _skyDisk->_lastLoadedFileSize);
-	_mouseWidth = 1;
-	_mouseHeight = 1;
-	//_systemFlags |= SF_MOUSE;;
 }
 
 SkyMouse::~SkyMouse( ){
@@ -115,13 +107,11 @@ bool SkyMouse::fnAddHuman(void) {
 
 	if (!SkyLogic::_scriptVariables[MOUSE_STOP]) {
 		SkyLogic::_scriptVariables[MOUSE_STATUS] |= 6;	//cursor & mouse
-		_tMouseX = _newSafeX;
-		_tMouseY = _newSafeY;
 
-		if (_aMouseY < 2) {	//stop mouse activating top line
-			_aMouseY = 2;
-			_system->warp_mouse(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
-		}
+		if (_mouseY < 2) //stop mouse activating top line
+			_mouseY = 2;
+		
+		_system->warp_mouse(_mouseX, _mouseY);
 	
 		//force the pointer engine into running a get-off
 		//even if it's over nothing
@@ -141,18 +131,16 @@ bool SkyMouse::fnAddHuman(void) {
 }
 
 void SkyMouse::fnSaveCoods(void) { 
-	SkyLogic::_scriptVariables[SAFEX] = _tMouseX; 
-	SkyLogic::_scriptVariables[SAFEY] = _tMouseY; 
+	SkyLogic::_scriptVariables[SAFEX] = _mouseX + TOP_LEFT_X;
+	SkyLogic::_scriptVariables[SAFEY] = _mouseY + TOP_LEFT_Y;
 }
 
 void SkyMouse::lockMouse(void) {
-	_lockMouseX = _aMouseX;
-	_lockMouseY = _aMouseY;
+	SkyState::_systemVars.systemFlags |= SF_MOUSE_LOCKED;
 }
 
 void SkyMouse::unlockMouse(void) {
-	_aMouseX = _lockMouseX;
-	_aMouseY = _lockMouseY;
+	SkyState::_systemVars.systemFlags &= ~SF_MOUSE_LOCKED;
 }
 
 void SkyMouse::restoreMouseData(uint16 frameNum) {
@@ -178,7 +166,6 @@ void SkyMouse::waitMouseNotPressed(void) {
 				mousePressed = false;
 		}
 	}
-	_bMouseB = 0;
 }
 
 //original sky uses different colors for transparency than our backends do,
@@ -201,46 +188,38 @@ void SkyMouse::fixMouseTransparency(byte *mouseData, uint32 size) {
 }
 
 void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
-	SkyState::_systemVars.mouseFlag |= MF_IN_INT;
-	_mouseType2 = frameNum;
+	
+	_currentCursor = frameNum;
 
-	byte *mouseData = _miceData;
-	uint32 pos = ((struct dataFileHeader *)mouseData)->s_sp_size * frameNum;
-	pos += sizeof(struct dataFileHeader);
-	_mouseData2 = mouseData + pos;	
+	byte *newCursor = _miceData;
+	newCursor += ((struct dataFileHeader *)_miceData)->s_sp_size * frameNum;
+	newCursor += sizeof(struct dataFileHeader);
 
-	_mouseWidth = ((struct dataFileHeader *)mouseData)->s_width;
-	_mouseHeight = ((struct dataFileHeader *)mouseData)->s_height;
+	uint16 mouseWidth = ((struct dataFileHeader *)_miceData)->s_width;
+	uint16 mouseHeight = ((struct dataFileHeader *)_miceData)->s_height;
 
-	//_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
-	// there's something wrong about the mouse's hotspot. using 4/4 seems to work fine. 
-	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
+	_system->set_mouse_cursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY);
 	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
 	else _system->show_mouse(true);
-
-	SkyState::_systemVars.mouseFlag &= ~MF_IN_INT;
 }
 
 void SkyMouse::mouseEngine(uint16 mouseX, uint16 mouseY) {
-	_aMouseX = mouseX;
-	_aMouseY = mouseY;
-	_tMouseX = _aMouseX + TOP_LEFT_X;
-	_tMouseY = _aMouseY + TOP_LEFT_Y;
+	_mouseX = mouseX;
+	_mouseY = mouseY;
 
-	_eMouseB = _bMouseB;
-	_bMouseB = 0;
-	
+	_logicClick = (_mouseB > 0); // click signal is available for SkyLogic for one gamecycle
+
 	if (!SkyLogic::_scriptVariables[MOUSE_STOP]) {
 		if (SkyLogic::_scriptVariables[MOUSE_STATUS] & (1 << 1)) {
-			pointerEngine();
+			pointerEngine(mouseX + TOP_LEFT_X, mouseY + TOP_LEFT_Y);
 			if (SkyLogic::_scriptVariables[MOUSE_STATUS] & (1 << 2)) //buttons enabled?
 				buttonEngine1();
 		}
 	}	
-	_eMouseB = 0;	//don't save up buttons
+	_mouseB = 0;	//don't save up buttons
 }
 
-void SkyMouse::pointerEngine(void) {
+void SkyMouse::pointerEngine(uint16 xPos, uint16 yPos) {
 	uint32 currentListNum = SkyLogic::_scriptVariables[MOUSE_LIST_NO];
 	uint16 *currentList;
 	do {
@@ -250,10 +229,10 @@ void SkyMouse::pointerEngine(void) {
 			Compact *itemData = SkyState::fetchCompact(itemNum);
 			currentList++;
 			if ((itemData->screen == SkyLogic::_scriptVariables[SCREEN]) &&	(itemData->status & 16)) {
-				if (itemData->xcood + ((int16)itemData->mouseRelX) > _tMouseX) continue;
-				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < _tMouseX) continue;
-				if (itemData->ycood + ((int16)itemData->mouseRelY) > _tMouseY) continue;
-				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < _tMouseY) continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < xPos) continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos) continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < yPos) continue;
 				// we've hit the item
 				if (SkyLogic::_scriptVariables[SPECIAL_ITEM] == itemNum)
 					return;
@@ -279,22 +258,16 @@ void SkyMouse::pointerEngine(void) {
 }
 
 void SkyMouse::buttonPressed(uint8 button) {
-	if (_bMouseB == button)
-		_mouseB = 1;
-	else
-		_mouseB = 0;
 	
-	_bMouseB = button;
-	
+	_mouseB = button;
 }
 
 void SkyMouse::buttonEngine1(void) {
 	//checks for clicking on special item
 	//"compare the size of this routine to S1 mouse_button"
 
-	if (_eMouseB) {	//anything pressed?
-		SkyLogic::_scriptVariables[BUTTON] = _eMouseB;
-		_eMouseB = 0;
+	if (_mouseB) {	//anything pressed?
+		SkyLogic::_scriptVariables[BUTTON] = _mouseB;
 		if (SkyLogic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
 			Compact *item = SkyState::fetchCompact(SkyLogic::_scriptVariables[SPECIAL_ITEM]);
 			if (item->mouseClick)

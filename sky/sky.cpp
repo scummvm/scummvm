@@ -359,9 +359,11 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 					break;
 
 				case OSystem::EVENT_MOUSEMOVE:
-					_sdl_mouse_x = event.mouse.x;
-					_sdl_mouse_y = event.mouse.y;
-					_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
+					if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
+						_sdl_mouse_x = event.mouse.x;
+						_sdl_mouse_y = event.mouse.y;
+						_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
+					}
 					break;
 
 				case OSystem::EVENT_LBUTTONDOWN:

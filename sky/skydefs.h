@@ -4269,7 +4269,7 @@
 #define SF_ALLOW_TEXT	(1 << 24)	// text allowed on cd sblaster version
 #define SF_ALLOW_QUICK	(1 << 25)	// when set allow speed playing
 #define SF_TEST_DISK	(1 << 26)	// set when loading files
-#define SF_MOUSE_STOPPED	(1 << 27)	// set if mouse handler skipped to prevent stack overflow
+#define SF_MOUSE_LOCKED	(1 << 27)	// set if coordinates are locked
 
 // Mouse flags
 #define MF_NO_UPDATE	(1 << 0)	// set to disable mouse updating

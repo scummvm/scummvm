@@ -63,6 +63,7 @@ public:
 	void fnPauseFx(void) { _mixer->pause(true); };
 	void fnUnPauseFx(void) { _mixer->pause(false); };
 	void fnStopFx(void);
+	void stopSpeech(void);
 	void checkFxQueue(void);
 	void restoreSfx(void);
 	uint8 _soundsTotal;

@@ -1215,6 +1215,10 @@ void SkySound::fnStopFx(void) {
 	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 }
 
+void SkySound::stopSpeech(void) {
+	_mixer->stopID(SOUND_SPEECH);
+}
+
 bool SkySound::startSpeech(uint16 textNum) {
     
 	if (!(SkyState::_systemVars.systemFlags & SF_ALLOW_SPEECH))
@@ -1234,6 +1238,6 @@ bool SkySound::startSpeech(uint16 textNum) {
 	free(speechData);
 
 	_mixer->stopID(SOUND_SPEECH);
-	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, SOUND_SPEECH);
 	return true;
 }

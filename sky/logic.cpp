@@ -416,8 +416,7 @@ void SkyLogic::cursor() {
 	_skyText->logicCursor(_compact, _skyMouse->giveMouseX(), _skyMouse->giveMouseY());
 }
 
-/*
-static uint16 clickTable[] = {
+static uint16 clickTable[46] = {
 	ID_FOSTER,
 	ID_JOEY,
 	ID_JOBS,
@@ -471,7 +470,6 @@ static uint16 clickTable[] = {
 	ID_HOLOGRAM_B,
 	12289
 };
-*/
 
 void SkyLogic::talk() {
 	// first count through the frames
@@ -484,32 +482,26 @@ void SkyLogic::talk() {
 
 	// Are we allowed to click
 	
-#if 0
-	for (int i = 0; i < ARRAYSIZE(clickTable); i++) {
-		if (clickTable[i] == (uint16)_scriptVariables[CUR_ID]) {
-			if (_compact->extCompact->spTextId == 0xffff) { // is this a voc file?
-				warning("fnStopVoc not implemented");
-				//TODO: fnStopVoc
+	if (_skyMouse->wasClicked())
+		for (int i = 0; i < ARRAYSIZE(clickTable); i++)
+			if (clickTable[i] == (uint16)_scriptVariables[CUR_ID]) {
+				if ((SkyState::_systemVars.systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
+					_skySound->stopSpeech();
+				if ((SkyState::_systemVars.systemFlags & SF_ALLOW_TEXT) &&
+					(_compact->extCompact->spTextId > 0) &&
+					(_compact->extCompact->spTextId < 0xFFFF)) {
+					
+					SkyState::fetchCompact(_compact->extCompact->spTextId)->status = 0;
+				}
 				if (_compact->grafixProg) {
 					_compact->frame = _compact->getToFlag; // set character to stand
-					_compact->grafixProg = 0;
+					_compact->grafixProg = NULL;
 				}
-			} else {
-				if (_compact->grafixProg) // if anim flag stop it
-					_compact->frame = _compact->getToFlag;
 
-				if (_compact->extCompact->spTextId) {
-					Compact *cpt = SkyState::fetchCompact(_compact->extCompact->spTextId); // get text id to kill
-					cpt->status = 0; // kill the text
-				}
+				_compact->logic = L_SCRIPT;
+				logicScript();
+				return;
 			}
-
-			_compact->logic = L_SCRIPT;
-			logicScript();
-			return;
-		}
-	}
-#endif
 
 	// If speech is allowed then check for it to finish before finishing animations
 

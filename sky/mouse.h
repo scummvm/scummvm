@@ -50,50 +50,27 @@ public:
 	void useLogicInstance(SkyLogic *skyLogic) { _skyLogic = skyLogic; };
 	void buttonPressed(uint8 button);
 	void waitMouseNotPressed(void);
-	uint16 giveMouseX(void) { return _aMouseX; };
-	uint16 giveMouseY(void) { return _aMouseY; };
-	uint16 giveCurrentMouseType(void) { return _mouseType2; };
+	uint16 giveMouseX(void) { return _mouseX; };
+	uint16 giveMouseY(void) { return _mouseY; };
+	uint16 giveCurrentMouseType(void) { return _currentCursor; };
+	bool wasClicked(void) { return _logicClick; };
 
 protected:
 
-	void pointerEngine(void);
+	void pointerEngine(uint16 xPos, uint16 yPos);
 	void buttonEngine1(void);
 	void fixMouseTransparency(byte *mouseData, uint32 size);
+
+	bool _logicClick;
 	
-	uint16 _mouseB;		//used to check for repeat presses
-	uint16 _eMouseB;
-	uint16 _bMouseB;
-	
-	uint16 _aMouseX;	//actual mouse coordinates
-	uint16 _aMouseY;	
+	uint16 _mouseB;	//mouse button
+	uint16 _mouseX;	//actual mouse coordinates
+	uint16 _mouseY;	
 
-	uint16	_tMouseX;
-	uint16	_tMouseY;
-
-	uint16 _newSafeX;
-	uint16 _newSafeY;
-
-	uint16 _lockMouseX;
-	uint16 _lockMouseY;
-
-	uint16	_mouseType2;	//number of current mouse
-	byte *_mouseData2;	//pointer to mouse data
-
-	uint16 _mouseWidth;	//mouse width and height
-	uint16 _mouseHeight;
-
-	byte *_mousePosition;	//current screen address of mouse
-	uint16 _maskWidth;	//width on screen
-	uint16 _maskHeight;	//height on screen
-
-	uint32 _mouseFlag;	//bit 0 set when in handler
-				//bit 1 set when screen data has been saved
-				//bit 2 set when we don't want to show mouse
+	uint16 _currentCursor;
 
 	byte *_miceData;	//address of mouse sprites
 	byte *_objectMouseData;	//address of object mouse sprites
-
-	uint16	_mouseXOff;
 
 	static uint32 _mouseMainObjects[24];
 	static uint32 _mouseLincObjects[21];
