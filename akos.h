@@ -26,6 +26,7 @@
 	#pragma START_PACK_STRUCTS
 #endif	
 
+struct CostumeData;
 
 struct AkosHeader {
 	byte x_1[2];

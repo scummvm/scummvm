@@ -22,7 +22,13 @@
 
 #include"stdafx.h"
 #include"scumm.h"
+#include "actor.h"
 
 Scumm::Scumm (void) {
 	/* No need to put anything here yet :) */
+	actor = new Actor[MAX_ACTORS](this);
+}
+
+Scumm::~Scumm (void) {
+	delete [] actor;
 }

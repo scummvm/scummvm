@@ -24,6 +24,10 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
+#include "scummsys.h"
+
+class Scumm;
+
 struct ActorWalkData {
 	int16 destx,desty;			// Final destination
 	byte destbox;
@@ -47,7 +51,10 @@ struct CostumeData {
 	uint16 frame[16];
 };
 
-struct Actor {
+class Actor {
+
+//protected:
+public:
 	int x, y, top, bottom;
 	int elevation;
 	uint width;
@@ -81,6 +88,15 @@ struct Actor {
 	CostumeData cost;
 	byte palette[64];
 
+protected:
+	Scumm	*_scumm;
+
+public:
+
+	// Constructor
+	Actor(Scumm *scumm) : _scumm(scumm) {}
+
+//protected:
 	void hideActor();
 	void showActor();
 

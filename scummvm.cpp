@@ -27,6 +27,7 @@
 #include "gui.h"
 #include "string.h"
 #include "gameDetector.h"
+#include "actor.h"
 
 int autosave(int interval)	/* Not in class to prevent being bound */
 {
@@ -958,6 +959,11 @@ void Scumm::convertKeysToClicks()
 			return;
 		_lastKeyHit = 0;
 	}
+}
+
+Actor *Scumm::derefActor(int id)
+{
+	return &actor[id];
 }
 
 Actor *Scumm::derefActorSafe(int id, const char *errmsg)

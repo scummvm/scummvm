@@ -27,7 +27,6 @@
 #include "system.h"
 #include "sound/mixer.h"
 #include "config-file.h"
-#include "actor.h"
 
 #define SCUMMVM_VERSION "0.2.0 Release"
 #define SCUMMVM_CVS "051302"
@@ -39,7 +38,7 @@ class GameDetector;
 class Gui;
 class Scumm;
 class IMuse;
-struct Actor;
+class Actor;
 struct ScummDebugger;
 struct Serializer;
 
@@ -547,6 +546,7 @@ public:
 	byte _fastMode;
 	char *getGameName();
 	Scumm(); // constructor
+	virtual ~Scumm();
 
 	/* video buffer */
 	byte *_videoBuffer;
@@ -597,7 +597,7 @@ public:
 	/* Core class/array definitions */
 	Gdi gdi;
 
-	Actor actor[MAX_ACTORS];
+	Actor *actor;	// Has MAX_ACTORS elements, see init.cpp
 	
 	uint16 *_inventory;
 	byte *_arrays;
@@ -979,7 +979,7 @@ public:
 
 
 	/* Should be in Actor class */
-	Actor *derefActor(int id) {return &actor[id];}
+	Actor *derefActor(int id);
 	Actor *derefActorSafe(int id, const char *errmsg);
 	Actor *getFirstActor() {return actor;} 
 	void putActor(Actor *a, int x, int y, byte room);
