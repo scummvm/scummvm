@@ -1160,8 +1160,6 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 	if (VAR_WALKTO_OBJ != 0xFF)
 		VAR(VAR_WALKTO_OBJ) = 0;
 
-	/* startScene maybe modifies VAR_EGO, i hope not */
-
 	if (_version == 6) {
 		setCameraAt(a->x, a->y);
 		setCameraFollows(a);
@@ -1782,7 +1780,6 @@ void Scumm_v6::o6_actorOps() {
 		break;
 	case 229:										/* stand */
 		a->stopActorMoving();
-		a->startAnimActor(a->standFrame);
 		break;
 	case 230:										/* set direction */
 		a->moving &= ~MF_TURN;

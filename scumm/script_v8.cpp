@@ -1039,7 +1039,6 @@ void Scumm_v8::o8_actorOps() {
 		break;
 	case 0x80:		// SO_ACTOR_STOP
 		a->stopActorMoving();
-		a->startAnimActor(a->standFrame);
 		break;
 	case 0x81:		// SO_ACTOR_FACE Make actor face angle
 		a->moving &= ~MF_TURN;

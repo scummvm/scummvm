@@ -86,7 +86,8 @@ void Actor::initActor(int mode) {
 	memset(sound, 0, sizeof(sound));
 	targetFacing = facing;
 
-	stopActorMoving();
+	_vm->stopScript(walkScript);
+	moving = 0;
 
 	shadow_mode = 0;
 	layer = 0;
@@ -122,8 +123,10 @@ void Actor::initActor(int mode) {
 }
 
 void Actor::stopActorMoving() {
-	_vm->stopScript(walkScript);
+	if (walkScript)
+		_vm->stopScript(walkScript);
 	moving = 0;
+	startAnimActor(standFrame);
 }
 
 void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
@@ -505,7 +508,6 @@ void Actor::animateActor(int anim) {
 	switch (cmd) {
 	case 2:				// stop walking
 		stopActorMoving();
-		startAnimActor(standFrame);
 		break;
 	case 3:				// change direction immediatly
 		moving &= ~MF_TURN;
@@ -696,7 +698,7 @@ void Actor::adjustActorPos() {
 	cost.soundCounter = 0;
 
 	if (_vm->_features & GF_NEW_COSTUMES) {
-		stopActorMoving();
+		_vm->stopScript(walkScript);
 	}
 
 	if (walkbox != kInvalidBox) {
@@ -1320,7 +1322,7 @@ void Actor::startWalkAnim(int cmd, int angle) {
 }
 
 void Actor::walkActor() {
-	int new_dir, box;
+	int new_dir, next_box;
 	int16 foundPathX, foundPathY;
 
 	if (_vm->_version >= 7) {
@@ -1377,16 +1379,16 @@ void Actor::walkActor() {
 		if (walkbox == walkdata.destbox)
 			break;
 
-		box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
-		if (box < 0) {
+		next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
+		if (next_box < 0) {
 			walkdata.destbox = walkbox;
 			moving |= MF_LAST_LEG;
 			return;
 		}
 
-		walkdata.curbox = box;
+		walkdata.curbox = next_box;
 		
-		if (findPathTowards(walkbox, box, walkdata.destbox, foundPathX, foundPathY))
+		if (findPathTowards(walkbox, next_box, walkdata.destbox, foundPathX, foundPathY))
 			break;
 
 		if (calcMovementFactor(foundPathX, foundPathY))
@@ -1400,7 +1402,7 @@ void Actor::walkActor() {
 }
 
 void Actor::walkActorOld() {
-	ScummVM::Point gateLoc[5];	// Gate locations
+	ScummVM::Point p2, p3;	// Gate locations
 	int new_dir, next_box;
 
 	if (!moving)
@@ -1433,7 +1435,7 @@ void Actor::walkActorOld() {
 			walkdata.point3x = 32000;
 		}
 	
-		walkbox = walkdata.curbox;
+		setBox(walkdata.curbox);
 		moving &= MF_IN_LEG;
 	}
 
@@ -1441,7 +1443,7 @@ void Actor::walkActorOld() {
 		moving &= ~MF_NEW_LEG;
 
 		if (walkbox == kInvalidBox) {
-			walkbox = walkdata.destbox;
+			setBox(walkdata.destbox);
 			walkdata.curbox = walkdata.destbox;
 			break;
 		}
@@ -1461,23 +1463,30 @@ void Actor::walkActorOld() {
 			break;
 		}
 
-
 		walkdata.curbox = next_box;
-
-		findPathTowardsOld(walkbox, next_box, walkdata.destbox, gateLoc);
-		if (gateLoc[2].x == 32000 && gateLoc[3].x == 32000) {
+		
+/*
+		if (_vm->_version <= 2) {
+			_vm->getClosestPtOnBox(walkdata.curbox, x, y, p2.x, p2.y);
+			_vm->getClosestPtOnBox(walkbox, p2.x, p2.y, p3.x, p3.y);
+		} else {
+*/
+		findPathTowardsOld(walkbox, next_box, walkdata.destbox, p2, p3);
+		if (p2.x == 32000 && p3.x == 32000) {
 			break;
 		}
 
-		if (gateLoc[2].x != 32000) {
-			if (calcMovementFactor(gateLoc[2].x, gateLoc[2].y)) {
-				walkdata.point3x = gateLoc[3].x; 
-				walkdata.point3y = gateLoc[3].y;
+		if (p2.x != 32000) {
+			if (calcMovementFactor(p2.x, p2.y)) {
+				walkdata.point3x = p3.x; 
+				walkdata.point3y = p3.y;
 				return;
 			}
 		}
-
-		if (calcMovementFactor(gateLoc[3].x, gateLoc[3].y))
+/*
+		}
+*/
+		if (calcMovementFactor(p3.x, p3.y))
 			return;
 
 		walkbox = walkdata.destbox;

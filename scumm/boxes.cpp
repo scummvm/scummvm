@@ -264,7 +264,7 @@ void Scumm::convertScaleTableToScaleSlot(int slot) {
 	 * 
 	 * Some typical graphs look like these:
 	 *       ---         ---     ---
-	 *       /         ---           \ 
+	 *      /         ---           \ 
 	 *  ___/       ---               \___
 	 * 
 	 * The method used here is to compute the slope of secants fixed at the
@@ -1142,47 +1142,47 @@ bool Scumm::areBoxesNeighbours(int box1nr, int box2nr) {
 	return result;
 }
 
-void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, ScummVM::Point gateLoc[5]) {
+void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, ScummVM::Point &p2, ScummVM::Point &p3) {
 	ScummVM::Point pt;
 	ScummVM::Point gateA[2];
 	ScummVM::Point gateB[2];
 
 	_vm->getGates(trap1, trap2, gateA, gateB);
 
-	gateLoc[1].x = x;
-	gateLoc[1].y = y;
-	gateLoc[2].x = 32000;
-	gateLoc[3].x = 32000;
-	gateLoc[4].x = 32000;
+	p2.x = 32000;
+	p3.x = 32000;
 
-	if (trap2 == final_trap) {		/* next = final box? */
-		gateLoc[4].x = walkdata.destx;
-		gateLoc[4].y = walkdata.desty;
-
-		if (_vm->getMaskFromBox(trap1) == _vm->getMaskFromBox(trap2) || 1) {
-			if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateA[0].x, gateA[0].y) !=
-					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateB[0].x, gateB[0].y) &&
-					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateA[1].x, gateA[1].y) !=
-					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateB[1].x, gateB[1].y)) {
-				return;								/* same zplane and between both gates? */
-			}
+	// next box (trap2) = final box?
+	if (trap2 == final_trap) {
+		// Is the actor (x,y) between both gates?
+		if (compareSlope(x, y, walkdata.destx, walkdata.desty, gateA[0].x, gateA[0].y) !=
+				compareSlope(x, y, walkdata.destx, walkdata.desty, gateB[0].x, gateB[0].y) &&
+				compareSlope(x, y, walkdata.destx, walkdata.desty, gateA[1].x, gateA[1].y) !=
+				compareSlope(x, y, walkdata.destx, walkdata.desty, gateB[1].x, gateB[1].y)) {
+			return;
 		}
 	}
 
-	pt = closestPtOnLine(gateA[1].x, gateA[1].y, gateB[1].x, gateB[1].y, gateLoc[1].x, gateLoc[1].y);
-	gateLoc[3].x = pt.x;
-	gateLoc[3].y = pt.y;
+	pt = closestPtOnLine(gateA[1].x, gateA[1].y, gateB[1].x, gateB[1].y, x, y);
+	p3.x = pt.x;
+	p3.y = pt.y;
 
-	if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gateA[0].x, gateA[0].y) ==
-			compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gateB[0].x, gateB[0].y)) {
-		closestPtOnLine(gateA[0].x, gateA[0].y, gateB[0].x, gateB[0].y, gateLoc[1].x, gateLoc[1].y);
-		gateLoc[2].x = pt.x;				/* if point 2 between gates, ignore! */
-		gateLoc[2].y = pt.y;
+	if (compareSlope(x, y, p3.x, p3.y, gateA[0].x, gateA[0].y) ==
+			compareSlope(x, y, p3.x, p3.y, gateB[0].x, gateB[0].y)) {
+		closestPtOnLine(gateA[0].x, gateA[0].y, gateB[0].x, gateB[0].y, x, y);
+		p2.x = pt.x;				/* if point 2 between gates, ignore! */
+		p2.y = pt.y;
 	}
-
-	return;
 }
 
+/**
+ * Compute the "gate" between two boxes. The gate is a pair of two lines which
+ * both start on box 'trap1' and end on 'trap2'. For both lines, one of its
+ * end points is the corner point of one of the two boxes. The other end point
+ * is a point on the other point closest to first end point.
+ * This way the lines bound a 'corridor' between the two boxes, through which
+ * the actor has to walk to get from trap1 to trap2.
+ */
 void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Point gateB[2]) {
 	int i, j;
 	int dist[8];
@@ -1190,29 +1190,29 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	int closest[3];
 	int box[3];
 	BoxCoords coords;
-	ScummVM::Point Clo[8];
-	ScummVM::Point poly[8];
+	ScummVM::Point closestPoint[8];
+	ScummVM::Point boxCorner[8];
 	int line1, line2;
 
 	// For all corner coordinates of the first box, compute the point closest 
 	// to them on the second box (and also compute the distance of these points).
 	getBoxCoordinates(trap1, &coords);
-	poly[0] = coords.ul;
-	poly[1] = coords.ur;
-	poly[2] = coords.lr;
-	poly[3] = coords.ll;
+	boxCorner[0] = coords.ul;
+	boxCorner[1] = coords.ur;
+	boxCorner[2] = coords.lr;
+	boxCorner[3] = coords.ll;
 	for (i = 0; i < 4; i++) {
-		dist[i] = getClosestPtOnBox(trap2, poly[i].x, poly[i].y, Clo[i].x, Clo[i].y);
+		dist[i] = getClosestPtOnBox(trap2, boxCorner[i].x, boxCorner[i].y, closestPoint[i].x, closestPoint[i].y);
 	}
 
 	// Now do the same but with the roles of the first and second box swapped.
 	getBoxCoordinates(trap2, &coords);
-	poly[4] = coords.ul;
-	poly[5] = coords.ur;
-	poly[6] = coords.lr;
-	poly[7] = coords.ll;
+	boxCorner[4] = coords.ul;
+	boxCorner[5] = coords.ur;
+	boxCorner[6] = coords.lr;
+	boxCorner[7] = coords.ll;
 	for (i = 4; i < 8; i++) {
-		dist[i] = getClosestPtOnBox(trap1, poly[i].x, poly[i].y, Clo[i].x, Clo[i].y);
+		dist[i] = getClosestPtOnBox(trap1, boxCorner[i].x, boxCorner[i].y, closestPoint[i].x, closestPoint[i].y);
 	}
 
 	// Find the three closest "close" points between the two boxes.
@@ -1230,28 +1230,26 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	}
 
 
-	// Finally, compute the "gate". That's a pair of two points that are
-	// in the same box (actually, on the border of that box), which both have
-	// "minimal" distance to the other box in a certain sense.
+	// Finally, compute the actual "gate".
 
 	if (box[0] == box[1] && abs(minDist[0] - minDist[1]) < 4) {
 		line1 = closest[0];
 		line2 = closest[1];
 
-	} else if (box[0] == box[1] && minDist[0] == minDist[1]) {	/* parallel */
+	} else if (box[0] == box[1] && minDist[0] == minDist[1]) {	// parallel
 		line1 = closest[0];
 		line2 = closest[1];
-	} else if (box[0] == box[2] && minDist[0] == minDist[2]) {	/* parallel */
+	} else if (box[0] == box[2] && minDist[0] == minDist[2]) {	// parallel
 		line1 = closest[0];
 		line2 = closest[2];
-	} else if (box[1] == box[2] && minDist[1] == minDist[2]) {	/* parallel */
+	} else if (box[1] == box[2] && minDist[1] == minDist[2]) {	// parallel
 		line1 = closest[1];
 		line2 = closest[2];
 
 	} else if (box[0] == box[2] && abs(minDist[0] - minDist[2]) < 4) {
 		line1 = closest[0];
 		line2 = closest[2];
-	} else if (abs(minDist[0] - minDist[2]) < 4) {	/* if 1 close to 3 then use 2-3 */
+	} else if (abs(minDist[0] - minDist[2]) < 4) {
 		line1 = closest[1];
 		line2 = closest[2];
 	} else if (abs(minDist[0] - minDist[1]) < 4) {
@@ -1263,20 +1261,20 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	}
 
 	// Set the gate
-	if (line1 < 4) {							/* from box 1 to box 2 */
-		gateA[0] = poly[line1];
-		gateA[1] = Clo[line1];
+	if (line1 < 4) {
+		gateA[0] = boxCorner[line1];
+		gateA[1] = closestPoint[line1];
 	} else {
-		gateA[1] = poly[line1];
-		gateA[0] = Clo[line1];
+		gateA[1] = boxCorner[line1];
+		gateA[0] = closestPoint[line1];
 	}
 
-	if (line2 < 4) {							/* from box */
-		gateB[0] = poly[line2];
-		gateB[1] = Clo[line2];
+	if (line2 < 4) {
+		gateB[0] = boxCorner[line2];
+		gateB[1] = closestPoint[line2];
 	} else {
-		gateB[1] = poly[line2];
-		gateB[0] = Clo[line2];
+		gateB[1] = boxCorner[line2];
+		gateB[0] = closestPoint[line2];
 	}
 }
 
