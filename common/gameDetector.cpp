@@ -25,6 +25,7 @@
 #include "common/config-file.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
+#include "common/plugins.h"
 #include "common/scaler.h"	// Only for gfx_modes
 #include "sound/mididrv.h"
 
@@ -99,8 +100,6 @@ static const char USAGE_STRING[] =
 	"e.g. \"--no-aspect-ratio\".\n"
 ;
 #endif
-// This contains a pointer to a list of all supported games.
-const TargetSettings *version_settings = NULL;
 
 static const struct GraphicsMode gfx_modes[] = {
 	{"normal", "Normal (no scaling)", GFX_NORMAL},
@@ -159,12 +158,13 @@ static const struct MusicDriver music_drivers[] = {
 	{0, 0, 0}
 };
 
-static int countVersions(const TargetSettings *v) {
-	int count;
-	for (count = 0; v->targetName; v++, count++)
-		;
-	return count;
-}
+
+// This contains a pointer to a list of all supported games.
+// FIXME: Get rid of version_settings. The only reaons we still have it is
+// that launcher.cpp uses it. So let's convert launcher.cpp to use the new
+// Plugin API instead!
+const TargetSettings *version_settings = NULL;
+
 
 GameDetector::GameDetector() {
 	_fullScreen = false;
@@ -213,70 +213,37 @@ GameDetector::GameDetector() {
 	_gfx_mode = GFX_NORMAL;
 #endif
 	_default_gfx_mode = true;
-
+	
 	if (version_settings == NULL) {
-		int totalCount = 0;
+		assert(g_pluginManager);
+		const PluginList &_plugins = g_pluginManager->getPlugins();
+		int i;
+		int count = 0;
 		
 		// Gather & combine the target lists from the modules
+		for (i = 0; i < _plugins.size(); i++) {
+			count += _plugins[i]->countTargets();
+		}
 
-#ifndef DISABLE_SCUMM
-		const TargetSettings *scummVersions = Engine_SCUMM_targetList();
-		int scummCount = countVersions(scummVersions);
-		totalCount += scummCount;
-#endif
-
-#ifndef DISABLE_SIMON
-		const TargetSettings *simonVersions = Engine_SIMON_targetList();
-		int simonCount = countVersions(simonVersions);
-		totalCount += simonCount;
-#endif
-
-#ifndef DISABLE_SKY
-		const TargetSettings *skyVersions = Engine_SKY_targetList();
-		int skyCount = countVersions(skyVersions);
-		totalCount += skyCount;
-#endif
-
-#ifndef DISABLE_SWORD2
-		const TargetSettings *sword2Versions = Engine_SWORD2_targetList();
-		int sword2Count = countVersions(sword2Versions);
-		totalCount += sword2Count;
-#endif
-		
-		TargetSettings *v = (TargetSettings *)calloc(totalCount + 1, sizeof(TargetSettings));
+		TargetSettings *v = (TargetSettings *)calloc(count + 1, sizeof(TargetSettings));
 		version_settings = v;
 
-#ifndef DISABLE_SCUMM
-		memcpy(v, scummVersions, scummCount * sizeof(TargetSettings));
-		v += scummCount;
-#endif
-
-#ifndef DISABLE_SIMON
-		memcpy(v, simonVersions, simonCount * sizeof(TargetSettings));
-		v += simonCount;
-#endif
-
-#ifndef DISABLE_SKY
-		memcpy(v, skyVersions, skyCount * sizeof(TargetSettings));
-		v += skyCount;
-#endif
-
-#ifndef DISABLE_SWORD2
-		memcpy(v, sword2Versions, sword2Count * sizeof(TargetSettings));
-		v += sword2Count;
-#endif
-
+		for (i = 0; i < _plugins.size(); i++) {
+			count = _plugins[i]->countTargets();
+			memcpy(v, _plugins[i]->getTargets(), count * sizeof(TargetSettings));
+			v += count;
+		}
 	}
 }
 
-#ifdef __PALM_OS__
 GameDetector::~GameDetector() {
+#ifdef __PALM_OS__
 	// This is a previously allocated chunck (line 224)
 	// so we need to free it to prevent memory leak
 	TargetSettings *v = (TargetSettings *)version_settings;
 	free(v);
-}
 #endif
+}
 
 void GameDetector::updateconfig() {
 	const char *val;
@@ -349,29 +316,33 @@ void GameDetector::updateconfig() {
 }
 
 void GameDetector::list_games() {
-	const TargetSettings *v = version_settings;
+	const PluginList &_plugins = g_pluginManager->getPlugins();
+	const TargetSettings *v;
 	const char *config;
 
 	printf("Game             Full Title                                             Config\n"
 	       "---------------- ------------------------------------------------------ -------\n");
 
-	while (v->targetName && v->description) {
-		config = (g_config->has_domain(v->targetName)) ? "Yes" : "";
-		printf("%-17s%-56s%s\n", v->targetName, v->description, config);
-		v++;
+	for (int i = 0; i < _plugins.size(); i++) {
+		v = _plugins[i]->getTargets();
+		while (v->targetName && v->description) {
+			config = (g_config->has_domain(v->targetName)) ? "Yes" : "";
+			printf("%-17s%-56s%s\n", v->targetName, v->description, config);
+			v++;
+		}
 	}
-		
 }
 
 const TargetSettings *GameDetector::findTarget(const char *targetName) const {
 	// Find the TargetSettings for this target
-	const TargetSettings *target = version_settings;
 	assert(targetName);
-	while (target->targetName) {
-		if (!scumm_stricmp(target->targetName, targetName)) {
+	const TargetSettings *target;
+	const PluginList &_plugins = g_pluginManager->getPlugins();
+	
+	for (int i = 0; i < _plugins.size(); i++) {
+		target = _plugins[i]->findTarget(targetName);
+		if (target)
 			return target;
-		}
-		target++;
 	}
 	return 0;
 }
@@ -800,6 +771,47 @@ OSystem *GameDetector::createSystem() {
 	/* SDL is the default driver for now */
 	return OSystem_SDL_create(_gfx_mode, _fullScreen, _aspectRatio);
 #endif
+}
+
+Engine *GameDetector::createEngine(OSystem *system) {
+	Engine *engine = NULL;
+
+	// FIXME: These checks are evil, as they require us to hard code GIDs.
+	// Much better would be to e.g. put a pointer to the instance creation
+	// method into the TargetSettings or so. That way, in addition to
+	// simplifying this code, GIDs wouldn't have to be unique globally
+	// anymore - only locally for each plugin. And it would be trivial
+	// to add new plugins, without touching the code here.
+
+#ifndef DISABLE_SCUMM
+	if (_game.id >= GID_SCUMM_FIRST && _game.id <= GID_SCUMM_LAST) {
+		// Some kind of Scumm game
+		engine = Engine_SCUMM_create(this, system);
+	}
+#endif
+
+#ifndef DISABLE_SIMON
+	if (_game.id >= GID_SIMON_FIRST && _game.id <= GID_SIMON_LAST) {
+		// Simon the Sorcerer
+		engine = Engine_SIMON_create(this, system);
+	}
+#endif
+
+#ifndef DISABLE_SKY
+	if (_game.id >= GID_SKY_FIRST && _game.id <= GID_SKY_LAST) {
+		// Beneath a Steel Sky
+		engine = Engine_SKY_create(this, system);
+	}
+#endif
+
+#ifndef DISABLE_SWORD2
+	if (_game.id >= GID_SWORD2_FIRST && _game.id <= GID_SWORD2_LAST) {
+		// Broken Sword 2
+		engine = Engine_SWORD2_create(this, system);
+	}
+#endif
+	
+	return engine;
 }
 
 int GameDetector::getMidiDriverType() {

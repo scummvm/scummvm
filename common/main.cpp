@@ -32,13 +32,14 @@
 #include "common/config-file.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
+#include "common/plugins.h"
 #include "common/scaler.h"	// For GFX_NORMAL
 #include "gui/newgui.h"
 #include "gui/launcher.h"
 #include "gui/message.h"
 
-Config *g_config = 0;
-NewGui *g_gui = 0;
+Config	*g_config = 0;
+NewGui	*g_gui = 0;
 
 #if defined(QTOPIA)
 // FIXME - why exactly is this needed?
@@ -151,7 +152,6 @@ static void launcherDialog(GameDetector &detector, OSystem *system) {
 }
 
 int main(int argc, char *argv[]) {
-	GameDetector detector;
 	OSystem::Property prop;
 
 #if defined(UNIX)
@@ -179,8 +179,13 @@ int main(int argc, char *argv[]) {
 	// Read the config file
 	g_config = new Config(scummhome, "scummvm");
 	g_config->set("versioninfo", gScummVMVersion);
+	
+	// Load the plugins
+	g_pluginManager = new PluginManager();
+	g_pluginManager->loadPlugins();
 
 	// Parse the command line information
+	GameDetector detector;
 	detector._saveconfig = false;
 	detector.updateconfig();
 	detector.parseCommandLine(argc, argv);	
@@ -215,7 +220,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		// Create the game engine
-		Engine *engine = Engine::createFromDetector(&detector, system);
+		Engine *engine = detector.createEngine(system);
 
 		// print a message if gameid is invalid
 		if (engine == NULL)

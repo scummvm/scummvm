@@ -91,7 +91,7 @@ int Timer::handler(int t) {
 			_timerSlots[l].counter -= interval;
 			if (_timerSlots[l].counter <= 0) {
 				_timerSlots[l].counter += _timerSlots[l].interval;
-				_timerSlots[l].procedure (_engine);
+				_timerSlots[l].procedure(_engine);
 			}
 		}
 	}

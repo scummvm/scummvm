@@ -121,40 +121,6 @@ const char *Engine::getSavePath() const {
 	return dir;
 }
 
-Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst) {
-	Engine *engine = NULL;
-
-#ifndef DISABLE_SCUMM
-	if (detector->_game.id >= GID_SCUMM_FIRST && detector->_game.id <= GID_SCUMM_LAST) {
-		// Some kind of Scumm game
-		engine = Engine_SCUMM_create(detector, syst);
-	}
-#endif
-
-#ifndef DISABLE_SIMON
-	if (detector->_game.id >= GID_SIMON_FIRST && detector->_game.id <= GID_SIMON_LAST) {
-		// Simon the Sorcerer
-		engine = Engine_SIMON_create(detector, syst);
-	}
-#endif
-
-#ifndef DISABLE_SKY
-	if (detector->_game.id >= GID_SKY_FIRST && detector->_game.id <= GID_SKY_LAST) {
-		// Beneath a Steel Sky
-		engine = Engine_SKY_create(detector, syst);
-	}
-#endif
-
-#ifndef DISABLE_SWORD2
-	if (detector->_game.id >= GID_SWORD2_FIRST && detector->_game.id <= GID_SWORD2_LAST) {
-		// Broken Sword 2
-		engine = Engine_SWORD2_create(detector, syst);
-	}
-#endif
-	
-	return engine;
-}
-
 void NORETURN CDECL error(const char *s, ...) {
 #ifdef __PALM_OS__
 	char buf_input[256]; // 1024 is too big overflow the stack
@@ -274,3 +240,16 @@ void checkHeap() {
 	}
 #endif
 }
+
+//
+// HACK: The following is done to pull in symbols from all the engine modules here.
+// If we don't do this, all sorts of linker problems may occur.
+//
+EngineFactory _factories[] =
+	{
+		Engine_SKY_create,
+		Engine_SCUMM_create,
+		Engine_SIMON_create,
+		Engine_SWORD2_create
+	};
+

@@ -74,10 +74,6 @@ public:
 	const char *getSavePath() const;
 
 	virtual const char *getGameDataPath() const { return _gameDataPath; }
-
-	// Create a new engine object based on the detector - either 
-	// a Scumm or a SimonEngine object currently.
-	static Engine *createFromDetector(GameDetector *detector, OSystem *syst);
 	
 	// Specific for each engine preparare of erroe string
 	virtual void errorString(const char *buf_input, char *buf_output) = 0;
@@ -95,30 +91,6 @@ void CDECL warning(const char *s, ...);
 
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
-
-// Factory functions => no need to include the specific classes
-// in this header. This serves two purposes:
-// 1) Clean seperation from the game modules (scumm, simon) and the generic code
-// 2) Faster (compiler doesn't have to parse lengthy header files)
-#ifndef DISABLE_SCUMM
-extern const TargetSettings *Engine_SCUMM_targetList();
-extern Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst);
-#endif
-
-#ifndef DISABLE_SIMON
-extern Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst);
-extern const TargetSettings *Engine_SIMON_targetList();
-#endif
-
-#ifndef DISABLE_SKY
-extern const TargetSettings *Engine_SKY_targetList();
-extern Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst);
-#endif
-
-#ifndef DISABLE_SWORD2
-extern const TargetSettings *Engine_SWORD2_targetList();
-extern Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst);
-#endif
 
 #endif
 

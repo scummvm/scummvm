@@ -25,6 +25,8 @@
 
 #include "common/str.h"
 
+class Engine;
+class GameDetector;
 class OSystem;
 class MidiDriver;
 
@@ -96,6 +98,33 @@ struct Language {
 	int id;
 };
 
+typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
+
+// Factory functions => no need to include the specific classes
+// in this header. This serves two purposes:
+// 1) Clean seperation from the game modules (scumm, simon) and the generic code
+// 2) Faster (compiler doesn't have to parse lengthy header files)
+#ifndef DISABLE_SCUMM
+extern const TargetSettings *Engine_SCUMM_targetList();
+extern Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst);
+#endif
+
+#ifndef DISABLE_SIMON
+extern Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst);
+extern const TargetSettings *Engine_SIMON_targetList();
+#endif
+
+#ifndef DISABLE_SKY
+extern const TargetSettings *Engine_SKY_targetList();
+extern Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst);
+#endif
+
+#ifndef DISABLE_SWORD2
+extern const TargetSettings *Engine_SWORD2_targetList();
+extern Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst);
+#endif
+
+
 class GameDetector {
 	typedef ScummVM::String String;
 
@@ -105,14 +134,15 @@ public:
 
 public:
 	GameDetector();
-#ifdef __PALM_OS__
 	~GameDetector();
-#endif
 
 	void parseCommandLine(int argc, char **argv);
 	int detectMain();
 	void setGame(const String &name);
 	const String& getGameName(void);
+
+	String _gameFileName;
+	TargetSettings _game;
 	
 	bool _fullScreen;
 	bool _aspectRatio;
@@ -138,9 +168,6 @@ public:
 	int _gameTempo;
 	int _midi_driver;
 
-	String _gameFileName;
-	TargetSettings _game;
-
 	int _gfx_mode;
 	bool _default_gfx_mode;
 
@@ -155,6 +182,8 @@ public:
 
 public:
 	OSystem *createSystem();
+	Engine *createEngine(OSystem *system);
+
 	MidiDriver *createMidi();
 	int getMidiDriverType();
 

@@ -43,9 +43,17 @@ public:
 	virtual const char *getName() const = 0;
 	virtual int getVersion() const = 0;
 	
+	virtual int countTargets() const;
 	virtual const TargetSettings *getTargets() const = 0;
+	virtual const TargetSettings *findTarget(const char *targetName) const;
+
 	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
 };
+
+
+/** List of plugins. */
+typedef ScummVM::List<Plugin *> PluginList;
+
 
 /**
  * Instances of this class manage all plugins, including loading them,
@@ -55,8 +63,6 @@ public:
  */
 class PluginManager {
 protected:
-	typedef ScummVM::List<Plugin *> PluginList;
-
 	PluginList _plugins;
 	
 public:
@@ -69,5 +75,9 @@ public:
 	const PluginList &getPlugins()	{ return _plugins; }
 };
 
+/**
+ * Global, shared plugin manager.
+ */
+extern PluginManager	*g_pluginManager;
 
 #endif
