@@ -368,7 +368,7 @@ bool ScummDebugger::Cmd_ImuseMultiMidi (int argc, const char **argv) {
 		_s->_imuse->property (IMuse::PROP_MULTI_MIDI, !strcmp (argv[1], "1") || !strcmp (argv[1], "on") || !strcmp (argv[1], "true"));
 		return false;
 	} else {
-		Debug_Printf("Use 'imuse_multimidi <on/true/1 | off/false/0>' to switch\n");
+		Debug_Printf("Use 'imuse_multimidi on|off' to switch\n");
 		return true;
 	}
 }
@@ -528,11 +528,11 @@ bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 	int i;
 	ScriptSlot *ss = _s->vm.slot;
 	Debug_Printf("+--------------------------------------+\n");
-	Debug_Printf("|# | num | offset|sta|typ|fr|rec|fc|cut|\n");
-	Debug_Printf("+--+-----+-------+---+---+--+--+---+---+\n");
+	Debug_Printf("|# | num|offst|sta|typ|fr|rec|fc|cut|\n");
+	Debug_Printf("+--+----+-----+---+---+--+---+--+---+\n");
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->number) {
-			Debug_Printf("|%2d|%5d|0x%05x|%3d|%3d|%2d|%3d|%2d|%3d|\n",
+			Debug_Printf("|%2d|%4d|%05x|%3d|%3d|%2d|%3d|%2d|%3d|\n",
 					i, ss->number, ss->offs, ss->status, ss->where,
 					ss->freezeResistant, ss->recursive,
 					ss->freezeCount, ss->cutsceneOverride);
