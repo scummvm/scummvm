@@ -450,14 +450,15 @@ int32 Bundle::compDecode(byte *src, byte *dst)
 
 int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size, int32 index, int32 & channels)
 {
-	int32 output_size = input_size;
+	int32 output_size;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
 	byte *src, *t_table, *p, *ptr;
 	byte t_tmp1, t_tmp2;
 
 	switch (codec) {
 	case 0:
-		memcpy(comp_output, comp_input, output_size);
+		memcpy(comp_output, comp_input, input_size);
+		output_size = input_size;
 		break;
 
 	case 1:
@@ -782,12 +783,12 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			byte sByte[4];
 			int32 sDWord[4];
 			int32 channel;
-			int32 left;
+			int32 left, origLeft;
 			int32 tableEntrySum;
 			int32 curTablePos;
 			int32 outputWord;
 			int32 imcTableEntry;
-			int32 destPos;
+			int32 destPos = 0;
 			int32 curTableEntry;
 			byte decompTable;
 			uint16 readWord;
@@ -796,7 +797,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			int32 esiReg;
 			byte var3b;
 			int32 adder;
-
+			
 			src = comp_input;
 			memset (comp_output, 0, 0x2000);
 			firstWord = READ_BE_UINT16(src);
@@ -816,7 +817,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					channels = READ_BE_UINT32(ptr + 20);
 				}
 				src += firstWord;
-				left = 0x2000 - firstWord;
+				origLeft = 0x2000 - firstWord;
 				// At this point we are at the start of the content of the 'DATA' chunk.
 			} else {
 				sByte[0] = *src++;
@@ -832,7 +833,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					src += 4;
 				}
 				startPos = 0;
-				left = 0x2000;
+				origLeft = 0x2000;
 			}
 
 			tableEntrySum = 0;
@@ -846,7 +847,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					outputWord = 0;
 					imcTableEntry = 7;
 				}
-				left = ((left / 2) + 1) / channels;
+				left = origLeft / (2 * channels);
 				destPos = startPos + 2 * channel;
 				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
@@ -893,11 +894,13 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					imcTableEntry = imcTable1[curTablePos];
 				}
 			}
+
 			if (index == 0) {
 				output_size = 0x2000 - firstWord;
 			} else {
 				output_size = 0x2000;
 			}
+
 		}
 		break;
 	default:
