@@ -53,11 +53,6 @@ static int actorCompare(const ActorDataPointer& actor1, const ActorDataPointer& 
 	}
 }
 
-ACTIONTIMES ActionTDeltas[] = {
-	{ ACTION_IDLE, 80 },
-	{ ACTION_WALK, 80 },
-	{ ACTION_SPEAK, 200 }
-};
 
 // Lookup table to convert 8 cardinal directions to 4
 int ActorDirectectionsLUT[8] = {
@@ -495,74 +490,6 @@ void Actor::handleActions(int msec, bool setup) {
 }
 
 int Actor::direct(int msec) {
-/*	int i;
-	ActorData *actor;
-
-	ActorIntentList::iterator actorIntentIterator;
-	ACTORINTENT *a_intent;
-
-	int o_idx;
-	int action_tdelta;
-
-	// Walk down the actor list and direct each actor
-	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];
-		if (actor->disabled) continue;
-
-		// Process the actor intent list
-		actorIntentIterator = actor->a_intentlist.begin();
-		if (actorIntentIterator != actor->a_intentlist.end()) {
-			a_intent = actorIntentIterator.operator->();
-			switch (a_intent->a_itype) {
-			case INTENT_NONE:
-				// Actor doesn't really feel like doing anything at all
-				break;
-			case INTENT_PATH:
-				// Actor intends to go somewhere. Well good for him
-				{
-					handleWalkIntent(actor, &a_intent->walkIntent, &a_intent->a_idone, msec);
-				}
-				break;
-			default:
-				break;
-			}
-
-			// If this actor intent was flagged as completed, remove it.
-			if (a_intent->a_idone) {
-				actor->a_intentlist.erase(actorIntentIterator);
-				actor->action = actor->def_action;
-				actor->action_flags = actor->def_action_flags;
-				actor->action_frame = 0;
-				actor->action_time = 0;
-			}
-		} else {
-			// Actor has no intent, idle?
-		}
-
-		// Process actor actions
-		actor->action_time += msec;
-
-		if (actor->action >= ACTION_COUNT) {
-			action_tdelta = ACTOR_ACTIONTIME;
-		} else {
-			action_tdelta = ActionTDeltas[actor->action].time;
-		}
-
-		if (actor->action_time >= action_tdelta) {
-			actor->action_time -= action_tdelta;
-			actor->action_frame++;
-
-			o_idx = ActorOrientationLUT[actor->orient];
-			if (actor->frames[actor->action].dir[o_idx].frameCount <= actor->action_frame) {
-				if (actor->action_flags & ACTION_LOOP) {
-					actor->action_frame = 0;
-				} else {
-					actor->action_frame--;
-				}
-			}
-		}
-	}
-*/	
 
 	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
@@ -591,26 +518,31 @@ void Actor::createDrawOrderList() {
 
 		_drawOrderList.pushBack(actor, actorCompare);
 
-		middle = ITE_STATUS_Y - actor->location.y / ACTOR_LMULT,
-
-		_vm->_scene->getSlopes(beginSlope, endSlope);
-
-		actor->screenDepth = (14 * middle) / endSlope + 1;
-
-		if (middle <= beginSlope) {
-			actor->screenScale = 256;
-		} else {
-			if (middle >= endSlope) {
-				actor->screenScale = 1;
-			} else {
-				middle -= beginSlope;
-				endSlope -= beginSlope;
-				actor->screenScale = 256 - (middle * 256) / endSlope;
-			}
+		// tiled stuff
+		{
 		}
+		{
+			middle = ITE_STATUS_Y - actor->location.y / ACTOR_LMULT,
 
-		actor->screenPosition.x = (actor->location.x / ACTOR_LMULT);
-		actor->screenPosition.y = (actor->location.y / ACTOR_LMULT) - actor->location.z;
+				_vm->_scene->getSlopes(beginSlope, endSlope);
+
+			actor->screenDepth = (14 * middle) / endSlope + 1;
+
+			if (middle <= beginSlope) {
+				actor->screenScale = 256;
+			} else {
+				if (middle >= endSlope) {
+					actor->screenScale = 1;
+				} else {
+					middle -= beginSlope;
+					endSlope -= beginSlope;
+					actor->screenScale = 256 - (middle * 256) / endSlope;
+				}
+			}
+
+			actor->screenPosition.x = (actor->location.x / ACTOR_LMULT);
+			actor->screenPosition.y = (actor->location.y / ACTOR_LMULT) - actor->location.z;
+		}
 	}
 }
 
@@ -645,7 +577,10 @@ int Actor::drawActors() {
 			warning("Actor::drawActors frameNumber invalid for actorId 0x%X", actor->actorId);
 			continue;
 		}
-
+		
+		// tiled stuff
+		{
+		}
 		_vm->_sprite->drawOccluded(back_buf, spriteList, frameNumber, actor->screenPosition, actor->screenScale, actor->screenDepth);
 	}
 
@@ -694,262 +629,36 @@ int Actor::drawActors() {
 
 	return SUCCESS;
 }
-/*
-void Actor::setOrientation(uint16 actorId, int orient) {
-	ActorData *actor;
-	
-	actor = getActor(actorId);
 
-	if ((orient < 0) || (orient > 7)) {
-		error("Actor::setOrientation wrong orientation 0x%X", orient);
-	}
-
-	actor->orient = orient;
-}
-
-void Actor::setAction(uint16 actorId, int action_n, uint16 action_flags) {
-	ActorData *actor;
-
-	actor = getActor(actorId);
-
-	if ((action_n < 0) || (action_n >= actor->framesCount)) {
-		error("Actor::setAction wrong action_n 0x%X", action_n);
-	}
-
-	actor->action = action_n;
-	actor->action_flags = action_flags;
-	actor->action_frame = 0;
-	actor->action_time = 0;
-
-}
-
-void Actor::setDefaultAction(uint16 actorId, int action_n, uint16 action_flags) {
-	ActorData *actor;
-
-	actor = getActor(actorId);
-
-	if ((action_n < 0) || (action_n >= actor->framesCount)) {
-		error("Actor::setDefaultAction wrong action_n 0x%X", action_n);
-	}
-
-	actor->def_action = action_n;
-	actor->def_action_flags = action_flags;
-}
-
-void Actor::walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {
-	ACTORINTENT actor_intent;
-	ActorData *actor;
-
-	assert(walk_pt != NULL);
-	
-	actor = getActor(actorId);
-	
-	actor_intent.a_itype = INTENT_PATH;
-	actor_intent.a_iflags = 0;
-		
-
-	actor_intent.walkIntent.wi_flags = flags;
-	actor_intent.walkIntent.sem_held = 1;
-	actor_intent.walkIntent.sem = sem;
-
-	// handleWalkIntent() will create path on initialization
-	actor_intent.walkIntent.wi_init = 0;
-	actor_intent.walkIntent.dst_pt = *walk_pt;
-
-	actor->a_intentlist.push_back(actor_intent);
-	int is = actor->a_intentlist.size();
-	debug(9, "actor->a_intentlist.size() %i", is);
-
-	if (sem != NULL) {
-		_vm->_script->SThreadHoldSem(sem);
-	}
-}
-*/
-int Actor::setPathNode(WALKINTENT *walk_int, const Point &src_pt, Point *dst_pt, SEMAPHORE *sem) {
-	WALKNODE new_node;
-
-	walk_int->wi_active = 1;
-	walk_int->org = src_pt;
-
-	assert((walk_int != NULL) && (dst_pt != NULL));
-
-	new_node.node_pt = *dst_pt;
-	new_node.calc_flag = 0;
-	
-	walk_int->nodelist.push_back(new_node);
-	
-	return SUCCESS;
-}
-/*
-int Actor::handleWalkIntent(ActorData *actor, WALKINTENT *a_walkint, int *complete_p, int delta_time) {
-	WalkNodeList::iterator walkNodeIterator;
-	WalkNodeList::iterator nextWalkNodeIterator;
-
-	WALKNODE *node_p;
-	int dx;
-	int dy;
-
-	double path_a;
-	double path_b;
-	double path_slope;
-
-	double path_x;
-	double path_y;
-	int path_time;
-
-	double new_a_x;
-	double new_a_y;
-
-	int actor_x;
-	int actor_y;
-
-	char buf[100];
-
-	// Initialize walk intent 
-	if (!a_walkint->wi_init) {
-		setPathNode(a_walkint, Point(actor->actorX,actor->actorY), &a_walkint->dst_pt, a_walkint->sem);
-		setDefaultAction(actor->actorId, ACTION_IDLE, ACTION_NONE);
-		a_walkint->wi_init = 1;
-	}
-
-	assert(a_walkint->wi_active);
-
-	walkNodeIterator = a_walkint->nodelist.begin();
-	nextWalkNodeIterator = walkNodeIterator;
-
-	node_p = walkNodeIterator.operator->();
-
-	if (node_p->calc_flag == 0) {
-
-		debug(2, "Calculating new path vector to point (%d, %d)", node_p->node_pt.x, node_p->node_pt.y);
-
-		dx = a_walkint->org.x - node_p->node_pt.x;
-		dy = a_walkint->org.y - node_p->node_pt.y;
-
-		if (dx == 0) {
-
-			debug(0, "Vertical paths not implemented.");
-
-			a_walkint->nodelist.erase(walkNodeIterator);
-			a_walkint->wi_active = 0;
-
-			// Release path semaphore
-			if ((a_walkint->sem != NULL) && a_walkint->sem_held) {
-				_vm->_script->SThreadReleaseSem(a_walkint->sem);
-			}
-
-			*complete_p = 1;
-			return FAILURE;
-		}
-
-		a_walkint->slope = (float)dy / dx;
-
-		if (dx > 0) {
-			a_walkint->x_dir = -1;
-			if (!(a_walkint->wi_flags & WALK_NOREORIENT)) {
-				if (a_walkint->slope > 1.0) {
-					actor->orient = ORIENT_N;
-				} else if (a_walkint->slope < -1.0) {
-					actor->orient = ORIENT_S;
-				} else {
-					actor->orient = ORIENT_W;
-				}
-			}
-		} else {
-			a_walkint->x_dir = 1;
-			if (!(a_walkint->wi_flags & WALK_NOREORIENT)) {
-				if (a_walkint->slope > 1.0) {
-					actor->orient = ORIENT_S;
-				} else if (a_walkint->slope < -1.0) {
-					actor->orient = ORIENT_N;
-				} else {
-					actor->orient = ORIENT_E;
-				}
-			}
-		}
-
-		sprintf(buf, "%f", a_walkint->slope);
-
-		debug(2, "Path slope: %s.", buf);
-
-		actor->action = ACTION_WALK;
-		actor->action_flags = ACTION_LOOP;
-		a_walkint->time = 0;
-		node_p->calc_flag = 1;
-	}
-
-	a_walkint->time += delta_time;
-	path_time = a_walkint->time;
-
-	path_a = ACTOR_BASE_SPEED * path_time;
-	path_b = ACTOR_BASE_SPEED * path_time * ACTOR_BASE_ZMOD;
-	path_slope = a_walkint->slope * a_walkint->x_dir;
-
-	path_x = (path_a * path_b) / sqrt((path_a * path_a) * (path_slope * path_slope) + (path_b * path_b));
-
-	path_y = path_slope * path_x;
-	path_x = path_x * a_walkint->x_dir;
-
-	new_a_x = path_x + a_walkint->org.x;
-	new_a_y = path_y + a_walkint->org.y;
-
-	if (((a_walkint->x_dir == 1) && new_a_x >= node_p->node_pt.x) ||
-		((a_walkint->x_dir != 1) && (new_a_x <= node_p->node_pt.x))) {
-		Point endpoint;
-		int exitNum;
-
-		debug(2, "Path complete.");
-		a_walkint->nodelist.erase(walkNodeIterator);
-		a_walkint->wi_active = 0;
-
-		// Release path semaphore
-		if (a_walkint->sem != NULL) {
-			_vm->_script->SThreadReleaseSem(a_walkint->sem);
-		}
-
-		actor->action_frame = 0;
-		actor->action = ACTION_IDLE;
-
-		endpoint.x = (int)new_a_x / ACTOR_LMULT;
-		endpoint.y = (int)new_a_y / ACTOR_LMULT;
-		if ((exitNum = _vm->_scene->_actionMap->hitTest(endpoint)) != -1) {
-			if (actor->flags & kProtagonist)
-				_vm->_scene->changeScene(_vm->_scene->_actionMap->getExitScene(exitNum));
-		}
-		*complete_p = 1;
-		return FAILURE;
-	}
-
-	actor_x = (int)new_a_x;
-	actor_y = (int)new_a_y;
-
-	actor->actorX = (int)new_a_x;
-	actor->actorY = (int)new_a_y;
-
-	return SUCCESS;
-}
-
-void Actor::move(uint16 actorId, const Point &movePoint) {
-	ActorData *actor;
-
-	actor = getActor(actorId);
-
-	actor->actorX = movePoint.x;
-	actor->actorY = movePoint.y;
-}
-
-void Actor::moveRelative(uint16 actorId, const Point &movePoint) {
-	ActorData *actor;
-
-	actor = getActor(actorId);
-
-	actor->actorX += movePoint.x; 
-	actor->actorY += movePoint.y;
-}
-*/
 void Actor::StoA(Point &actorPoint, const Point &screenPoint) {
 	actorPoint.x = (screenPoint.x * ACTOR_LMULT);
 	actorPoint.y = (screenPoint.y * ACTOR_LMULT);
+}
+
+bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &actorLocation) {
+	BOOL				result = TRUE;
+	ActorData *actor;
+
+	actor = getActor(actorId);
+
+/*	if (a == protag)
+	{
+		sceneDoors[ 2 ] = 0xff;				// closed
+		sceneDoors[ 3 ] = 0;				// open
+	}
+	else
+	{
+		sceneDoors[ 2 ] = 0;				// open
+		sceneDoors[ 3 ] = 0xff;				// closed
+	}*/
+
+	// tiled stuff
+	{
+	}
+	{
+	}
+	return false;
+
 }
 
 void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags) {

@@ -214,8 +214,12 @@ class Scene {
 	Scene(SagaEngine *vm);
 	~Scene();
 
-	void CF_actioninfo();
-	void CF_objectinfo();
+// Console functions
+	void cmdSceneInfo();
+	void cmdActionMapInfo();
+	void cmdObjectMapInfo();
+
+	void cmdSceneChange(int argc, const char **argv);
 
 	int startScene();
 	int nextScene();
@@ -236,8 +240,6 @@ class Scene {
 
 	bool initialized() { return _initialized; }
 
-	void sceneInfoCmd();
-	void sceneChangeCmd(int argc, const char **argv);
 
 	int getSceneLUT(int num);
 	int currentSceneNumber() { return _sceneNumber; }

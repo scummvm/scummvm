@@ -83,17 +83,6 @@ enum SpeechFlags {
 	kSpeakSlow = 4
 };
 
-enum ActorDirections {
-	kDirUp = 0,
-	kDirUpRight = 1,
-	kDirRight = 2,
-	kDirDownRight = 3,
-	kDirDown = 4,
-	kDirDownLeft = 5,
-	kDirLeft = 6,
-	kDirUpLeft = 7
-};
-
 enum ActorFrameTypes {
 	kFrameStand = 0,
 	kFrameWalk = 1,
@@ -121,38 +110,6 @@ enum ActorFlagsEx {
 	kActorRandom = (1 << 10)
 };
 
-enum ACTOR_INTENTS {
-	INTENT_NONE = 0,
-	INTENT_PATH = 1
-};
-
-enum ACTOR_WALKFLAGS {
-	WALK_NONE = 0x00,
-	WALK_NOREORIENT = 0x01
-};
-
-enum ACTOR_ORIENTATIONS {
-	ORIENT_N = 0,
-	ORIENT_NE = 1,
-	ORIENT_E = 2,
-	ORIENT_SE = 3,
-	ORIENT_S = 4,
-	ORIENT_SW = 5,
-	ORIENT_W = 6,
-	ORIENT_NW = 7
-};
-
-enum ACTOR_ACTIONS {
-	ACTION_IDLE = 0,
-	ACTION_WALK = 1,
-	ACTION_SPEAK = 2,
-	ACTION_COUNT
-};
-
-enum ACTOR_ACTIONFLAGS {
-	ACTION_NONE = 0x00,
-	ACTION_LOOP = 0x01
-};
 
 struct ActorFrameRange {
 	int frameIndex;
@@ -162,63 +119,6 @@ struct ActorFrameRange {
 struct ActorFrameSequence {
 	ActorFrameRange directions[ACTOR_DIRECTIONS_COUNT];
 };
-
-struct WALKNODE {
-	int calc_flag;
-	Point node_pt;
-	WALKNODE() {
-		calc_flag = 0;
-	}
-};
-
-typedef Common::List<WALKNODE> WalkNodeList;
-
-struct WALKINTENT {
-	int wi_active;
-	uint16 wi_flags;
-	int wi_init;
-
-	int time;
-	float slope;
-	int x_dir;
-	Point org;
-	Point cur;
-
-	Point dst_pt;
-	WalkNodeList nodelist;
-
-	int sem_held;
-	SEMAPHORE *sem;
-
-	WALKINTENT() { 
-		wi_active = 0;
-		wi_flags = 0;
-		wi_init = 0;
-
-		time = 0;
-		slope = 0;
-		x_dir = 0;
-
-		sem_held = 0;
-		sem = NULL;
-	}
-};
-
-struct ACTORINTENT {
-	int a_itype;
-	uint16 a_iflags;
-	int a_idone;
-
-	WALKINTENT walkIntent;
-
-	ACTORINTENT() {
-		a_itype = 0;
-		a_iflags = 0;
-		a_idone = 0;
-	}
-};
-
-typedef Common::List<ACTORINTENT> ActorIntentList;
 
 struct ActorLocation {
 	int x;					// Actor's logical coordinates
@@ -261,20 +161,6 @@ struct ActorData {
 	int framesCount;			// Actor's frames count
 	int frameListResourceId;	// Actor's frame list resource id
 
-
-
-///old stuff
-	int idle_time;
-	int orient;
-	int speaking;
-	ActorIntentList a_intentlist;
-	int def_action;
-	uint16 def_action_flags;
-	int action;
-	uint16 action_flags;
-	int action_frame;
-	int action_time;
-/// end old stuff 
 	
 	void cycleWrap(int cycleLimit) {
 		if (actionCycle >= cycleLimit)
@@ -315,26 +201,11 @@ struct ActorData {
 		cycleTimeCount = 0;
 		cycleFlags = 0;
 
-		idle_time = 0;
-		orient = 0;
-		speaking = 0;
-		def_action = 0;
-		def_action_flags = 0;
-		action = 0;
-		action_flags = 0;
-		action_frame = 0;
-		action_time = 0;
 	}
 };
 
 typedef ActorData* ActorDataPointer;
 typedef SortedList<ActorDataPointer> ActorOrderList;
-
-
-struct ACTIONTIMES {
-	int action;
-	int time;
-};
 
 struct SpeechData {
 	int speechColor;
@@ -373,13 +244,9 @@ public:
 
 	void StoA(Point &actorPoint, const Point &screenPoint);
 
-	void move(uint16 actorId, const Point &movePoint){}
-	void moveRelative(uint16 actorId, const Point &movePoint){}
-
-	void walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {}
-			
+	
+	bool actorWalkTo(uint16 actorId, const ActorLocation &actorLocation);
 	ActorData *getActor(uint16 actorId);
-//  action
 	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
 
 //	speech 
@@ -397,9 +264,6 @@ public:
 	}
 	
 private:
-	int handleWalkIntent(ActorData *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
-	int setPathNode(WALKINTENT *walk_int, const Point &src_pt, Point *dst_pt, SEMAPHORE *sem);
-
 	bool loadActorResources(ActorData * actor);
 	
 	void createDrawOrderList();

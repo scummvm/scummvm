@@ -206,28 +206,7 @@ size_t Script::SThreadGetReadLen(SCRIPT_THREAD *thread) {
 }
 
 
-int Script::SThreadHoldSem(SEMAPHORE *sem) {
-	if (sem == NULL) {
-		return FAILURE;
-	}
 
-	sem->hold_count++;
-
-	return SUCCESS;
-}
-
-int Script::SThreadReleaseSem(SEMAPHORE *sem) {
-	if (sem == NULL) {
-		return FAILURE;
-	}
-
-	sem->hold_count--;
-	if (sem->hold_count < 0) {
-		sem->hold_count = 0;
-	}
-
-	return SUCCESS;
-}
 
 int Script::SThreadDebugStep() {
 	if (_dbg_singlestep) {
@@ -278,13 +257,10 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 		if (thread->flags & kTFlagWaiting)
 			break;
 
-		if (thread->sem.hold_count)  //TODO: remove it
-			break;                                                  
-
 		saved_offset = thread->i_offset;
 		operandChar = scriptS.readByte();
 
-		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, operandChar, thread->stackSize());
+//		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, operandChar, thread->stackSize());
 		switch (operandChar) {
 		case 0x01: // nextblock
 			// Some sort of "jump to the start of the next memory

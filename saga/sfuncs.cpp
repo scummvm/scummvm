@@ -51,7 +51,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_objectIsCarried),
 		OPCODE(SF_setStatusText),
 		OPCODE(SF_commandMode),
-		OPCODE(SF_actorWalkTo),
+		OPCODE(sfScriptWalkTo),
 		OPCODE(SF_doAction),
 		OPCODE(sfSetActorFacing),
 		OPCODE(SF_startBgdAnim),
@@ -143,8 +143,7 @@ int Script::sfWait(SCRIPTFUNC_PARAMS) {
 	time = getUWord(thread->pop());
 
 	if (!_skipSpeeches) {
-		thread->wait(kWaitTypeDelay); // put thread to sleep
-		thread->sleepTime = ticksToMSec(time);
+		thread->waitDelay(ticksToMSec(time)); // put thread to sleep
 	}
 	return SUCCESS;
 }
@@ -198,26 +197,25 @@ int Script::SF_commandMode(SCRIPTFUNC_PARAMS) {
 // Script function #6 (0x06) blocking
 // Commands the specified actor to walk to the given position
 // Param1: actor id
-// Param2: actor destination x
-// Param3: actor destination y
-int Script::SF_actorWalkTo(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord actor_parm;
-	ScriptDataWord x_parm;
-	ScriptDataWord y_parm;
+// Param2: actor x
+// Param3: actor y
+int Script::sfScriptWalkTo(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	Point pt;
+	ActorLocation actorLocation;
+	ActorData *actor;
 
-	actor_parm = thread->pop();
-	x_parm = thread->pop();
-	y_parm = thread->pop();
+	actorId = getSWord(thread->pop());
+	actorLocation.x = getSWord(thread->pop());
+	actorLocation.y = getSWord(thread->pop());
+	
+	actor = _vm->_actor->getActor(actorId);
+	actorLocation.z = actor->location.z;
+	
+	actor->flags &= ~kFollower;
 
-	actorId = getSWord(actor_parm);
-
-	pt.x = getSWord(x_parm);
-	pt.y = getSWord(y_parm);
-
-	_vm->_actor->walkTo(actorId, &pt, 0, &thread->sem);
-
+	if (_vm->_actor->actorWalkTo(actorId, actorLocation)) {
+		thread->waitWalk(actor);
+	}
 	return SUCCESS;
 }
 
@@ -493,7 +491,7 @@ int Script::SF_actorWalkToAsync(SCRIPTFUNC_PARAMS) {
 
 	pt.x = getSWord(x_parm);
 	pt.y = getSWord(y_parm);
-	_vm->_actor->walkTo(actorId, &pt, 0, NULL);
+//	error("!");
 
 	return SUCCESS;
 }
@@ -683,11 +681,7 @@ int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 	pt.x = getSWord(x_parm);
 	pt.y = getSWord(y_parm);
 
-#if 1
-	_vm->_actor->walkTo(actorId, &pt, 0, NULL);
-#else
-	_vm->_actor->walkTo(actorId, &pt, 0, &thread->sem);
-#endif
+//	error("!");
 
 	return SUCCESS;
 }

@@ -119,7 +119,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_animEntries = 0;
 	_sceneProc = NULL;
 	_objectMap = NULL;
-	_actionMap = NULL;
+	_actionMap = new ActionMap(_vm);
 	memset(&_bg, 0, sizeof(_bg));
 	memset(&_bgMask, 0, sizeof(_bgMask));
 
@@ -129,6 +129,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 Scene::~Scene() {
 	if (_initialized) {
 		endScene();
+		delete _actionMap;
 		free(_sceneLUT);
 	}
 }
@@ -684,7 +685,7 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_ACTION_MAP:
 			debug(0, "Loading exit map resource...");
-			_actionMap = new ActionMap(_vm, res_data, res_data_len);
+			_actionMap->load(res_data, res_data_len);
 			break;
 		case SAGA_ISO_TILESET:
 			if (_sceneMode == SCENE_MODE_NORMAL) {
@@ -850,10 +851,9 @@ int Scene::endScene() {
 
 	_vm->_palanim->freePalAnim();
 	delete _objectMap;
-	delete _actionMap;
 
 	_objectMap = NULL;
-	_actionMap = NULL;
+	_actionMap->freeMem();
 
 	_animList.clear();
 
@@ -867,7 +867,7 @@ int Scene::endScene() {
 	return SUCCESS;
 }
 
-void Scene::sceneChangeCmd(int argc, const char **argv) {
+void Scene::cmdSceneChange(int argc, const char **argv) {
 	int scene_num = 0;
 
 	scene_num = atoi(argv[1]);
@@ -886,7 +886,7 @@ void Scene::sceneChangeCmd(int argc, const char **argv) {
 	}
 }
 
-void Scene::sceneInfoCmd() {
+void Scene::cmdSceneInfo() {
 	const char *fmt = "%-20s %d\n";
 
 	_vm->_console->DebugPrintf(fmt, "Scene number:", _sceneNumber);
@@ -906,12 +906,12 @@ int Scene::SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->defaultScene(param, scene_info);
 }
 
-void Scene::CF_actioninfo() {
-	_actionMap->info();
+void Scene::cmdActionMapInfo() {
+	_actionMap->cmdInfo();
 }
 
-void Scene::CF_objectinfo() {
-	_objectMap->info();
+void Scene::cmdObjectMapInfo() {
+	_objectMap->cmdInfo();
 }
 
 int Scene::defaultScene(int param, SCENE_INFO *scene_info) {

@@ -26,21 +26,42 @@
 #ifndef SAGA_OBJECTMAP_H_
 #define SAGA_OBJECTMAP_H_
 
+#include "saga/stream.h"
+
 namespace Saga {
 
-enum OBJECT_FLAGS {
-	OBJECT_ENABLED = (1<<0),   // Object is enabled
-	OBJECT_EXIT = (1<<1),      // Causes char to exit
 
-	// Causes the character not to walk to the object (but they will 
-	// look at it).
-	OBJECT_NOWALK = (1<<2),
+class HitZone {
+private:
+	struct ClickArea {
+		int pointsCount;
+		Point *points;
+	};
+public:
+	
+	HitZone(MemoryReadStreamEndian *readStream);
+	~HitZone();
 
-	//	When the object is clicked on it projects the
-	//	click point downwards from the middle of the object until it
-	//	reaches the lowest point in the zone.
-	OBJECT_PROJECT = (1<<3)
+	int getSceneNumber() const {
+		return _nameNumber;
+	}
+
+	int getEntranceNumber() const {
+		return _scriptNumber;
+	}
+
+	void draw(SURFACE *ds, int color);	
+	bool hitTest(const Point &testPoint);
+private:
+	int _flags;				// HitZoneFlags
+	int _clickAreasCount;
+	int _defaultVerb;
+	int _nameNumber;
+	int _scriptNumber;
+
+	ClickArea *_clickAreas;
 };
+
 
 struct OBJECTMAP_ENTRY {
 	byte flags;
@@ -55,7 +76,6 @@ struct OBJECTMAP_ENTRY {
 
 class ObjectMap{
 public:
-	int reg(void);
 	ObjectMap(SagaEngine *vm);
 	~ObjectMap(void);
 	int load(const byte *om_res, size_t om_res_len);
@@ -67,7 +87,7 @@ public:
 	const int getEPNum(int object);
 	int draw(SURFACE *draw_surface, const Point& imousePt, int color, int color2);
 	int hitTest(const Point& imousePt);
-	void info(void);
+	void cmdInfo(void);
 
 private:
 

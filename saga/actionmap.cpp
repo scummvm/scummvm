@@ -32,125 +32,60 @@
 
 namespace Saga {
 
-ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_len) : _vm(vm) {
-	// Loads exit map data from specified exit map resource
-	ACTIONMAP_ENTRY *exmap_entry;
-	CLICKAREA *clickarea;
-	Point *point;
 
-	assert(exmap_res != NULL);
-
-	MemoryReadStreamEndian readS(exmap_res, exmap_res_len, IS_BIG_ENDIAN);
-
-	// Load exits
-	_nExits = readS.readSint16();
-	if (_nExits < 0) {
-		return;
-	}
-
-	_exitsTbl = (ACTIONMAP_ENTRY *)malloc(_nExits * sizeof *_exitsTbl);
-	if (_exitsTbl == NULL) {
-		warning("Memory allocation failure");
-		return;
-	}
-
-	for (int i = 0; i < _nExits; i++) {
-		exmap_entry = &_exitsTbl[i];
-		exmap_entry->flags = readS.readByte();
-		exmap_entry->nClickareas = readS.readByte();
-		exmap_entry->defaultVerb = readS.readByte();
-		readS.readByte();
-		exmap_entry->exitScene = readS.readUint16();
-		exmap_entry->entranceNum = readS.readUint16();
-
-		exmap_entry->clickareas = (CLICKAREA *)malloc(exmap_entry->nClickareas * sizeof *(exmap_entry->clickareas));
-
-		if (exmap_entry->clickareas == NULL) {
-			warning("Error: Memory allocation failed");
-			return;
-		}
-
-		// Load all clickareas for this object
-		for (int k = 0; k < exmap_entry->nClickareas; k++) {
-			clickarea = &exmap_entry->clickareas[k];
-			clickarea->n_points = readS.readUint16();
-			assert(clickarea->n_points != 0);
-
-			clickarea->points = (Point *)malloc(clickarea->n_points * sizeof *(clickarea->points));
-			if (clickarea->points == NULL) {
-				warning("Error: Memory allocation failed");
-				return;
-			}
-
-			// Load all points for this clickarea
-			for (int m = 0; m < clickarea->n_points; m++) {
-				point = &clickarea->points[m];
-				point->x = readS.readSint16();
-				point->y = readS.readSint16();
-			}
-		}
-	}
-}
-
-ActionMap::~ActionMap(void) {
-	// Frees the currently loaded exit map data
-	ACTIONMAP_ENTRY *exmap_entry;
-	CLICKAREA *clickarea;
+void ActionMap::load(const byte *resourcePointer, size_t resourceLength) {
 	int i;
 
-	if (_exitsTbl) {
-		for (i = 0; i < _nExits; i++) {
-			exmap_entry = &_exitsTbl[i];
+	if (resourceLength < 4) {
+		error("ActionMap::load wrong resourceLength");
+	}
 
-			for (int k = 0; k < exmap_entry->nClickareas; k++) {
-				clickarea = &exmap_entry->clickareas[k];
-				free(clickarea->points);
-			}
-			free(exmap_entry->clickareas);
-		}
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
 
-		free(_exitsTbl);
+	_stepZoneListCount = readS.readSint16();
+	if (_stepZoneListCount < 0) {
+		error("ActionMap::load _stepZoneListCount < 0");
+	}
+
+	if (_stepZoneList)
+		error("ActionMap::load _stepZoneList != NULL");
+
+	_stepZoneList = (HitZone **) malloc(_stepZoneListCount * sizeof (HitZone *));
+	if (_stepZoneList == NULL) {
+		error("ActionMap::load Memory allocation failure");
+	}
+
+	for (i = 0; i < _stepZoneListCount; i++) {
+		 _stepZoneList[i] = new HitZone(&readS);
 	}
 }
 
-const int ActionMap::getExitScene(int exitNum) {
-	assert(exitNum < _nExits);
+void ActionMap::freeMem() {
+	int i;
 
-	return _exitsTbl[exitNum].exitScene;
+	if (_stepZoneList) {
+		for (i = 0; i < _stepZoneListCount; i++) {
+			delete _stepZoneList[i];
+		}
+
+		free(_stepZoneList);
+	}
 }
 
+int ActionMap::getExitSceneNumber(int index) const {
+	if (index >= _stepZoneListCount)
+		error("ActionMap::getExitSceneNumber wrong index");
 
-int ActionMap::hitTest(const Point& imouse) {
-	ACTIONMAP_ENTRY *exmap_entry;
-	CLICKAREA *clickarea;
-	Point *points;
-	int n_points;
+	return _stepZoneList[index]->getSceneNumber();
+}
 
-	int i, k;
+int ActionMap::hitTest(const Point &testPoint) {
+	int i;
 
 	// Loop through all scene objects
-	for (i = 0; i < _nExits; i++) {
-		exmap_entry = &_exitsTbl[i];
-
-		// Hit-test all clickareas for this object
-		for (k = 0; k < exmap_entry->nClickareas; k++) {
-			clickarea = &exmap_entry->clickareas[k];
-			n_points = clickarea->n_points;
-			points = clickarea->points;
-
-			if (n_points == 2) {
-				// Hit-test a box region
-				if ((imouse.x > points[0].x) && (imouse.x <= points[1].x) &&
-					(imouse.y > points[0].y) &&
-					(imouse.y <= points[1].y)) {
-						return i;
-				}
-			} else if (n_points > 2) {
-				// Hit-test a polygon
-				if (hitTestPoly(points, n_points, imouse)) {
-					return i;
-				}
-			}
+	for (i = 0; i < _stepZoneListCount; i++) {
+		if (_stepZoneList[i]->hitTest(testPoint)) {
+			return i;
 		}
 	}
 
@@ -158,34 +93,20 @@ int ActionMap::hitTest(const Point& imouse) {
 }
 
 int ActionMap::draw(SURFACE *ds, int color) {
-	ACTIONMAP_ENTRY *exmap_entry;
-	CLICKAREA *clickarea;
+	int i;
 
-	int i, k;
-
-	for (i = 0; i < _nExits; i++) {
-		exmap_entry = &_exitsTbl[i];
-
-		for (k = 0; k < exmap_entry->nClickareas; k++) {
-			clickarea = &exmap_entry->clickareas[k];
-			if (clickarea->n_points == 2) {
-				// 2 points represent a box
-				drawFrame(ds, &clickarea->points[0], &clickarea->points[1], color);
-			} else if (clickarea->n_points > 2) {
-				// Otherwise draw a polyline
-				drawPolyLine(ds, clickarea->points, clickarea->n_points, color);
-			}
-		}
+	for (i = 0; i < _stepZoneListCount; i++) {
+		_stepZoneList[i]->draw(ds, color);
 	}
 
 	return SUCCESS;
 }
 
-void ActionMap::info(void) {
-	_vm->_console->DebugPrintf("%d exits loaded.\n\n", _nExits);
+void ActionMap::cmdInfo() {
+	_vm->_console->DebugPrintf("%d step zone(s) loaded.\n\n", _stepZoneListCount);
 
-	for (int i = 0; i < _nExits; i++) {
-		_vm->_console->DebugPrintf("Action %d: Exit to: %d\n", i, _exitsTbl[i].exitScene);
+	for (int i = 0; i < _stepZoneListCount; i++) {
+		_vm->_console->DebugPrintf("StepZone %d: Exit to Scene number: %d\n", i, _stepZoneList[i]->getSceneNumber());
 	}
 }
 

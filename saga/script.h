@@ -64,10 +64,6 @@ enum SCRIPT_VERBS {
 
 #define STHREAD_TIMESLICE 8
 
-struct SEMAPHORE {
-	int hold_count;
-};
-
 enum {
 	kVarObject = 0,
 	kVarWithObject,
@@ -109,6 +105,7 @@ enum CycleFlags {
 	kCycleRandom = (1 << 2),
 	kCycleReverse = (1 << 3)
 };
+
 struct SCRIPT_THREAD {
 	int flags;				// ThreadFlags
 	int waitType;			// ThreadWaitTypes
@@ -118,8 +115,6 @@ struct SCRIPT_THREAD {
 	int ep_num; // Entrypoint number
 	unsigned long ep_offset; // Entrypoint offset
 	unsigned long i_offset; // Instruction offset
-
-	SEMAPHORE sem; // FIXME: no equivalent. should be replaced with flags
 
 	// The scripts are allowed to access the stack like any other memory
 	// area. It's therefore probably quite important that our stacks work
@@ -155,6 +150,16 @@ struct SCRIPT_THREAD {
 	void wait(int aWaitType) {
 		waitType = aWaitType;
 		flags |= kTFlagWaiting;
+	}
+
+	void waitWalk(void *aThreadObj) {
+		wait(kWaitTypeWalk);
+		threadObj = aThreadObj;
+	}
+
+	void waitDelay(int aSleepTime) {
+		wait(kWaitTypeDelay);
+		sleepTime = aSleepTime;
 	}
 
 	SCRIPT_THREAD() { memset(this, 0, sizeof(*this)); }
@@ -257,8 +262,6 @@ public:
 	SCRIPT_THREAD *SThreadCreate();
 	int SThreadExecute(SCRIPT_THREAD *thread, int ep_num);
 	int executeThreads(uint msec);
-	int SThreadHoldSem(SEMAPHORE *sem);
-	int SThreadReleaseSem(SEMAPHORE *sem);
 	int SThreadDebugStep();
 	void SThreadCompleteThread(void);
 	int SThreadDestroy(SCRIPT_THREAD *thread);
@@ -293,7 +296,7 @@ private:
 	int SF_objectIsCarried(SCRIPTFUNC_PARAMS);
 	int SF_setStatusText(SCRIPTFUNC_PARAMS);
 	int SF_commandMode(SCRIPTFUNC_PARAMS);
-	int SF_actorWalkTo(SCRIPTFUNC_PARAMS);
+	int sfScriptWalkTo(SCRIPTFUNC_PARAMS);
 	int SF_doAction(SCRIPTFUNC_PARAMS);
 	int sfSetActorFacing(SCRIPTFUNC_PARAMS);
 	int SF_startBgdAnim(SCRIPTFUNC_PARAMS);

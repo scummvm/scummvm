@@ -64,7 +64,6 @@ class PalAnim;
 #define MAXPATH 512
 
 struct RSCFILE_CONTEXT;
-struct SEMAPHORE;
 struct SPRITELIST;
 
 enum ERRORCODE {
@@ -80,6 +79,31 @@ enum SAGAGameType {
 
 enum scriptTimings {
 	kScriptTimeTicksPerSecond = (728L/10L)
+};
+
+enum Directions {
+	kDirUp = 0,
+	kDirUpRight = 1,
+	kDirRight = 2,
+	kDirDownRight = 3,
+	kDirDown = 4,
+	kDirDownLeft = 5,
+	kDirLeft = 6,
+	kDirUpLeft = 7
+};
+
+enum HitZoneFlags {
+	kHitZoneEnabled = (1 << 0),   // Zone is enabled
+	kHitZoneExit = (1 << 1),      // Causes char to exit
+
+	//	The following flag causes the zone to act differently.
+	//	When the actor hits the zone, it will immediately begin walking
+	//	in the specified direction, and the actual specified effect of
+	//	the zone will be delayed until the actor leaves the zone.
+	kHitZoneAutoWalk = (1 << 2),
+
+	//	zone activates only when character stops walking
+	kHitZoneTerminus = (1 << 3)
 };
 
 struct CLICKAREA {

@@ -26,49 +26,35 @@
 #ifndef SAGA_ACTIONMAP_H_
 #define SAGA_ACTIONMAP_H_
 
+#include "saga/objectmap.h"
+
 namespace Saga {
 
-enum ACTION_FLAGS {
-	ACTION_ENABLED = (1<<0),   // Zone is enabled
-	ACTION_EXIT = (1<<1),      // Causes char to exit
-
-	//	The following flag causes the zone to act differently.
-	//	When the actor hits the zone, it will immediately begin walking
-	//	in the specified direction, and the actual specified effect of
-	//	the zone will be delayed until the actor leaves the zone.
-	ACTION_AUTOWALK = (1<<2),
-
-	//	zone activates only when character stops walking
-	ACTION_TERMINUS = (1<<3)
-};
-
-struct ACTIONMAP_ENTRY {
-	int flags;
-	int nClickareas;
-	int defaultVerb;
-	int exitScene;
-	int entranceNum;
-
-	CLICKAREA *clickareas;
-};
 
 class ActionMap {
  public:
-	int reg(void);
-	ActionMap(SagaEngine *vm, const byte *exmap_res, size_t exmap_res_len);
-	~ActionMap(void);
+	 ActionMap(SagaEngine *vm): _vm(vm) {
+		 _stepZoneList = NULL;
+		 _stepZoneListCount = 0;
+	 }
+	 ~ActionMap(void) {
+		 freeMem();
+	 }
+	
+	void load(const byte *resourcePointer, size_t resourceLength);
+	void freeMem();
 
-	const int getExitScene(int exitNum);
-	int hitTest(const Point& imousePt);
+	int getExitSceneNumber(int index) const;
+	int hitTest(const Point &testPoint);
 	int draw(SURFACE *ds, int color);
 
-	void info(void);
+	void cmdInfo();
 
 private:
 	SagaEngine *_vm;
 
-	int _nExits;
-	ACTIONMAP_ENTRY *_exitsTbl;
+	int _stepZoneListCount;
+	HitZone **_stepZoneList;
 };
 
 } // End of namespace Saga

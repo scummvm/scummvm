@@ -36,6 +36,103 @@
 
 namespace Saga {
 
+HitZone::HitZone(MemoryReadStreamEndian *readStream) {
+	int i, j;
+	HitZone::ClickArea *clickArea;
+	Point *point;
+
+	_flags = readStream->readByte();
+	_clickAreasCount = readStream->readByte();
+	_defaultVerb = readStream->readByte();
+	readStream->readByte(); // pad
+	_nameNumber = readStream->readUint16();
+	_scriptNumber = readStream->readUint16();
+
+	_clickAreas = (HitZone::ClickArea *)malloc(_clickAreasCount * sizeof *_clickAreas);
+
+	if (_clickAreas == NULL) {
+		error("HitZone::HitZone Memory allocation failed");
+	}
+
+	for (i = 0; i < _clickAreasCount; i++) {
+		clickArea = &_clickAreas[i];
+		clickArea->pointsCount = readStream->readUint16();
+		
+		assert(clickArea->pointsCount);
+
+		clickArea->points = (Point *)malloc(clickArea->pointsCount * sizeof *(clickArea->points));
+		if (clickArea->points == NULL) {
+			error("HitZone::HitZone Memory allocation failed");
+		}
+
+		for (j = 0; j < clickArea->pointsCount; j++) {
+			point = &clickArea->points[j];
+			point->x = readStream->readSint16();
+			point->y = readStream->readSint16();
+		}
+	}
+}
+
+HitZone::~HitZone() {
+	for (int i = 0; i < _clickAreasCount; i++) {
+		free(_clickAreas[i].points);
+	}
+	free(_clickAreas);
+}
+
+bool HitZone::hitTest(const Point &testPoint) {
+	int i, pointsCount;
+	HitZone::ClickArea *clickArea;
+	Point *points;
+
+	if (_flags & kHitZoneEnabled) {
+		for (i = 0; i < _clickAreasCount; i++) {
+			clickArea = &_clickAreas[i];
+			pointsCount = clickArea->pointsCount;
+			points = clickArea->points;
+
+			if (pointsCount == 2) {
+				// Hit-test a box region
+				if ((testPoint.x >= points[0].x) && 
+					(testPoint.x <= points[1].x) &&
+					(testPoint.y >= points[0].y) &&
+					(testPoint.y <= points[1].y)) {
+						return true;
+					}
+			} else {
+				if (pointsCount > 2) {
+					// Hit-test a polygon
+					if (hitTestPoly(points, pointsCount, testPoint)) {
+						return true;
+					}				
+				}
+			}
+		}
+	}
+	return false;
+}
+
+void HitZone::draw(SURFACE *ds, int color) {
+	int i, pointsCount;
+	HitZone::ClickArea *clickArea;
+	Point *points;
+	for (i = 0; i < _clickAreasCount; i++) {
+		clickArea = &_clickAreas[i];
+		pointsCount = clickArea->pointsCount;
+		points = clickArea->points;
+		if (pointsCount == 2) {
+			// 2 points represent a box
+			drawFrame(ds, &points[0], &points[1], color);
+		} else {
+			if (pointsCount > 2) {
+				// Otherwise draw a polyline
+				drawPolyLine(ds, points, pointsCount, color);
+			}
+		}
+	}
+}
+
+
 // Initializes the object map module, creates module allocation context
 ObjectMap::ObjectMap(SagaEngine *vm) : _vm(vm) {
 	_objectsLoaded = false;
@@ -225,6 +322,7 @@ const uint16 ObjectMap::getFlags(int object) {
 	return 0;
 }
 
+
 // If 'object' is a valid object number in the currently loaded object 
 // name list resource, the funciton sets '*ep_num' to the entrypoint number
 // corresponding to 'object' and returns SUCCESS. Otherwise, it returns
@@ -342,7 +440,7 @@ int ObjectMap::hitTest(const Point& imousePt) {
 	return -1;
 }
 
-void ObjectMap::info(void) {
+void ObjectMap::cmdInfo(void) {
 	int i;
 
 	_vm->_console->DebugPrintf("%d objects loaded.\n", _nObjects);

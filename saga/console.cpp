@@ -68,10 +68,10 @@ Console::Console(SagaEngine *vm) : Common::Debugger<Console>() {
 #endif
 
 	// Scene commands
-	DCmd_Register("scene_change", &Console::Cmd_SceneChange);
-	DCmd_Register("scene_info", &Console::Cmd_SceneInfo);
-	DCmd_Register("action_info", &Console::Cmd_ActionInfo);
-	DCmd_Register("object_info", &Console::Cmd_ObjectInfo);
+	DCmd_Register("scene_change", &Console::cmdSceneChange);
+	DCmd_Register("scene_info", &Console::cmdSceneInfo);
+	DCmd_Register("action_map_info", &Console::cmdActionMapInfo);
+	DCmd_Register("object_map_info", &Console::cmdObjectMapInfo);
 	// CVAR_Register_I(&_sceneNumber, "scene", NULL, CVAR_READONLY, 0, 0);
 
 	// Script commands
@@ -187,26 +187,26 @@ bool Console::Cmd_AnimInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_SceneChange(int argc, const char **argv) {
+bool Console::cmdSceneChange(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s <Scene number>\n", argv[0]);
 	else
-		_vm->_scene->sceneChangeCmd(argc, argv);
+		_vm->_scene->cmdSceneChange(argc, argv);
 	return true;
 }
 
-bool Console::Cmd_SceneInfo(int argc, const char **argv) {
-	_vm->_scene->sceneInfoCmd();
+bool Console::cmdSceneInfo(int argc, const char **argv) {
+	_vm->_scene->cmdSceneInfo();
 	return true;
 }
 
-bool Console::Cmd_ActionInfo(int argc, const char **argv) {
-	_vm->_scene->CF_actioninfo();
+bool Console::cmdActionMapInfo(int argc, const char **argv) {
+	_vm->_scene->cmdActionMapInfo();
 	return true;
 }
 
-bool Console::Cmd_ObjectInfo(int argc, const char **argv) {
-	_vm->_scene->CF_objectinfo();
+bool Console::cmdObjectMapInfo(int argc, const char **argv) {
+	_vm->_scene->cmdObjectMapInfo();
 	return true;
 }
 
