@@ -79,6 +79,8 @@ private:
 	bool _skipPalette;
 #ifdef _WIN32_WCE
 	bool _inTimer;
+	int16 _inTimerCount;
+	int16 _inTimerCountRedraw;
 #endif
 
 public:

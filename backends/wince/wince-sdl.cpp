@@ -728,6 +728,12 @@ void OSystem_WINCE3::update_game_settings() {
 
 		if (_isSmartphone)
 			panel->setVisible(false);
+
+		// Set Smush Force Redraw rate for Full Throttle
+		if (!ConfMan.hasKey("Smush_force_redraw")) {
+			ConfMan.set("Smush_force_redraw", 30);
+			ConfMan.flushToDisk();
+		}
 	}
  
 	get_sample_rate();

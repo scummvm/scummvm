@@ -218,6 +218,7 @@ void SmushPlayer::timerCallback(void *refCon) {
 	((SmushPlayer *)refCon)->parseNextFrame();
 #ifdef _WIN32_WCE
 	((SmushPlayer *)refCon)->_inTimer = true;
+	((SmushPlayer *)refCon)->_inTimerCount++;
 #endif
 }
 
@@ -252,6 +253,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_skipPalette = false;
 #ifdef _WIN32_WCE
 	_inTimer = false;
+	_inTimerCount = 0;
+	_inTimerCountRedraw = ConfMan.getInt("Smush_force_redraw");
 #endif
 }
 
@@ -938,8 +941,10 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	end_time = _vm->_system->getMillis();
 
 #ifdef _WIN32_WCE
-	if (!_inTimer)
+	if (!_inTimer || _inTimerCount == _inTimerCountRedraw) {
 		updateScreen();
+		_inTimerCount = 0;
+	}
 #else
 	updateScreen();
 #endif
@@ -1222,6 +1227,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			_updateNeeded = false;
 #ifdef _WIN32_WCE
 			_inTimer = false;
+			_inTimerCount = 0;
 #endif
 
 			end_time = _vm->_system->getMillis();
