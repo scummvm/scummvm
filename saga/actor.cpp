@@ -141,14 +141,19 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_debugPoints = NULL;
 	_debugPointsAlloced = _debugPointsCount = 0;
 
+	_pathNodeList = _newPathNodeList = NULL;
+	_pathList = NULL;
+	_pathListAlloced = _pathNodeListAlloced = 0;
+	_pathListIndex = _pathNodeListIndex = -1;
+		
+
 	_centerActor = _protagonist = NULL;
 	_lastTickMsec = 0;
 
 	_yCellCount = _vm->getStatusYOffset() + 1;
 	_xCellCount = _vm->getDisplayWidth();
 
-	_pathCellCount = _yCellCount * _xCellCount;
-	_pathCell = (int*)malloc(_pathCellCount * sizeof(*_pathCell));
+	_pathCell = (int*) malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
 	
 
 	_pathRect.left = 0;
@@ -197,6 +202,9 @@ Actor::~Actor() {
 
 	debug(9, "Actor::~Actor()");
 	free(_debugPoints);
+	free(_pathNodeList);
+	free(_newPathNodeList);
+	free(_pathList);
 	free(_pathCell);
 	//release resources
 	for (i = 0; i < ACTORCOUNT; i++) {
@@ -1427,8 +1435,11 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		return;
 	}
 
-	if (i != 0)
-		setActorPath(actor, fromPoint, bestPoint);
+	if (i == 0) {
+		error("fillPathArray returns zero");
+	}
+
+	setActorPath(actor, fromPoint, bestPoint);
 }
 
 bool Actor::scanPathLine(const Point &point1, const Point &point2) {
@@ -1512,7 +1523,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	if (validPathCellPoint(fromPoint)) {
 		setPathCell(fromPoint, 0);
 		
-		addDebugPoint(fromPoint, 0x8a);
+		addDebugPoint(fromPoint, 24+36);
 	}	
 	
 	pathDirectionIterator = pathDirectionList.begin();
@@ -1554,31 +1565,24 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 }
 
 void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
-	Point *point;
 	Point nextPoint;
 	int direction;
-	PathNode *node;
-	int i, last;
+	int i;
 
-	_pathList[0] = toPoint;
+	_pathListIndex = -1;
+	addPathListPoint(toPoint);
 	nextPoint = toPoint;
-	_pathListIndex = 0;
 
-	point = _pathList;
 	while ( !(nextPoint == fromPoint)) {
-		_pathListIndex++;
-		if (_pathListIndex >= PATH_LIST_MAX) {
-			error("Actor::setActorPath PATH_LIST_MAX");
-		}
-		point++;
 		direction = getPathCell(nextPoint);
 		if ((direction < 0) || (direction > 8)) {
 			error("Actor::setActorPath error direction 0x%X", direction);
 		}
 		nextPoint.x -= pathDirectionLUT2[direction][0];
 		nextPoint.y -= pathDirectionLUT2[direction][1];
-		point->x = nextPoint.x;
-		point->y = nextPoint.y;
+		addPathListPoint(nextPoint);
+
+		addDebugPoint(nextPoint, 0x8a);
 	}
 
 	pathToNode();
@@ -1589,14 +1593,10 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 
 	removePathPoints();
 
-	_pathNodeIndex++;
-	last = MIN(_pathNodeIndex, PATH_NODE_MAX);
-	for (i = 0, node = _pathNodeList; i < last; i++, node++) {
-		nextPoint.x = node->x;
-		nextPoint.y = node->y;
-		actor->addWalkStepPoint(nextPoint);
+	
+	for (i = 0; i <= _pathNodeListIndex; i++) {
+		actor->addWalkStepPoint(_pathNodeList[i].point);
 	}
-
 }
 
 void Actor::pathToNode() {
@@ -1604,15 +1604,12 @@ void Actor::pathToNode() {
 	int direction;
 	int i;
 	Point *point;
-	PathNode *nodeList;
 
-	_pathNodeIndex = 0;
 	point= &_pathList[_pathListIndex];	
 	direction = 0;
 
-	_pathNodeList->x = point->x;
-	_pathNodeList->y = point->y;
-	nodeList = _pathNodeList;
+	_pathNodeListIndex = -1;
+	addPathNodeListPoint(*point);
 
 	for (i = _pathListIndex; i > 0; i--) {
 		point1 = *point;
@@ -1624,19 +1621,13 @@ void Actor::pathToNode() {
 			direction++;
 		}
 		if ((point1.x + delta.x != point2.x) || (point1.y + delta.y != point2.y)) {
-			++nodeList;
-			++_pathNodeIndex;
-			nodeList->x = point1.x;
-			nodeList->y = point2.x;
+			addPathNodeListPoint(point1);			
 			direction--;
 			i++;
 			point++;
 		}
 	}
-	++nodeList;
-	++_pathNodeIndex;
-	nodeList->x = _pathList->x;
-	nodeList->y = _pathList->y;
+	addPathNodeListPoint(*_pathList);			
 }
 
 int pathLine(Point *pointList, const Point &point1, const Point &point2) {
@@ -1692,100 +1683,77 @@ void Actor::nodeToPath() {
 	PathNode *node;
 	Point *point;
 
-	for (i = 0, point = _pathList; i < PATH_LIST_MAX; i++, point++) {
+	for (i = 0, point = _pathList; i < _pathListAlloced; i++, point++) {
 		point->x = point->y = PATH_NODE_EMPTY;
 	}
 
 	_pathListIndex = 1;
-	_pathList[0].x = _pathNodeList[0].x;
-	_pathList[0].y = _pathNodeList[0].y;
+	_pathList[0] = _pathNodeList[0].point;
 	_pathNodeList[0].link = 0;
-	for (i = 0, node = _pathNodeList; i < _pathNodeIndex; i++) {
-		point1.x = node->x;
-		point1.y = node->y;
+	for (i = 0, node = _pathNodeList; i < _pathNodeListIndex; i++) {
+		point1 = node->point;
 		node++;
-		point2.x = node->x;
-		point2.y = node->y;
+		point2 = node->point;
 		_pathListIndex += pathLine(&_pathList[_pathListIndex], point1, point2);
 		node->link = _pathListIndex - 1;
 	}
 	_pathListIndex--;
-	_pathNodeList[_pathNodeIndex].link = _pathListIndex;
+	_pathNodeList[_pathNodeListIndex].link = _pathListIndex;
 
 }
 
 void Actor::removeNodes() {
 	int i, j, k;
 	PathNode *iNode, *jNode, *kNode, *fNode;
-	Point point1, point2;
-	fNode = &_pathNodeList[_pathNodeIndex];
+	fNode = &_pathNodeList[_pathNodeListIndex];
 	
-	point1.x = _pathNodeList[0].x;
-	point1.y = _pathNodeList[0].y;
-	point2.x = fNode->x;
-	point2.y = fNode->y;
-
-	if (scanPathLine(point1, point2)) {
+	if (scanPathLine(_pathNodeList[0].point, fNode->point)) {
 		_pathNodeList[1] = *fNode;
-		_pathNodeIndex = 1;
+		_pathNodeListIndex = 1;
 	}
 
-	if (_pathNodeIndex < 4) {
+	if (_pathNodeListIndex < 4) {
 		return;
 	}
 
-	for (i = _pathNodeIndex - 1, iNode = fNode-1; i > 1 ; i--, iNode--) {
-		if (iNode->x == PATH_NODE_EMPTY) {
+	for (i = _pathNodeListIndex - 1, iNode = fNode-1; i > 1 ; i--, iNode--) {
+		if (iNode->point.x == PATH_NODE_EMPTY) {
 			continue;
 		}
 
-		point1.x = _pathNodeList[0].x;
-		point1.y = _pathNodeList[0].y;
-		point2.x = iNode->x;
-		point2.y = iNode->y;
-
-		if (scanPathLine(point1, point2)) {
+		if (scanPathLine(_pathNodeList[0].point, iNode->point)) {
 			for (j = 1, jNode = _pathNodeList + 1; j < i; j++, jNode++) {
-				jNode->x = PATH_NODE_EMPTY;
+				jNode->point.x = PATH_NODE_EMPTY;
 			}
 		}
 	}
 
-	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeIndex - 1; i++, iNode++) {
-		if (iNode->x == PATH_NODE_EMPTY) {
+	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeListIndex - 1; i++, iNode++) {
+		if (iNode->point.x == PATH_NODE_EMPTY) {
 			continue;
 		}
-		point1.x = fNode->x;
-		point1.y = fNode->y;
-		point2.x = iNode->x;
-		point2.y = iNode->y;
 
-		if (scanPathLine(point1, point2)) {
-			for (j = i + 1, jNode = iNode + 1; j < _pathNodeIndex; j++, jNode++) {
-				jNode->x = PATH_NODE_EMPTY;
+		if (scanPathLine(fNode->point, iNode->point)) {
+			for (j = i + 1, jNode = iNode + 1; j < _pathNodeListIndex; j++, jNode++) {
+				jNode->point.x = PATH_NODE_EMPTY;
 			}
 		}
 	}
 	condenseNodeList();
 
-	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeIndex - 1; i++, iNode++) {
-		if (iNode->x == PATH_NODE_EMPTY) {
+	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeListIndex - 1; i++, iNode++) {
+		if (iNode->point.x == PATH_NODE_EMPTY) {
 			continue;
 		}
-		for (j = i + 2, jNode = iNode + 2; j < _pathNodeIndex; j++, jNode++)
+		for (j = i + 2, jNode = iNode + 2; j < _pathNodeListIndex; j++, jNode++)
 		{
-			if (jNode->x == PATH_NODE_EMPTY) {
+			if (jNode->point.x == PATH_NODE_EMPTY) {
 				continue;
 			}
 
-			point1.x = iNode->x;
-			point1.y = iNode->y;
-			point2.x = jNode->x;
-			point2.y = jNode->y;
-
-			if (scanPathLine(point1, point2)) {
+			if (scanPathLine(iNode->point, jNode->point)) {
 				for (k = i + 1,kNode = iNode + 1; k < j; k++, kNode++) {
-					kNode->x = PATH_NODE_EMPTY;
+					kNode->point.x = PATH_NODE_EMPTY;
 				}
 			}
 		}
@@ -1797,25 +1765,25 @@ void Actor::condenseNodeList() {
 	int i, j, count;
 	PathNode *iNode, *jNode;
 	
-	count = _pathNodeIndex;
+	count = _pathNodeListIndex;
 
-	for (i = 1, iNode = _pathNodeList+1; i < _pathNodeIndex; i++, iNode++) {
-		if (iNode->x == PATH_NODE_EMPTY) {
+	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeListIndex; i++, iNode++) {
+		if (iNode->point.x == PATH_NODE_EMPTY) {
 			j = i + 1;
 			jNode = iNode + 1;
-			while ( jNode->x == PATH_NODE_EMPTY ) {
+			while ( jNode->point.x == PATH_NODE_EMPTY ) {
 				j++;
 				jNode++;
 			}
 			*iNode = *jNode;
 			count = i;
-			jNode->x = PATH_NODE_EMPTY;
-			if (j == _pathNodeIndex) {
+			jNode->point.x = PATH_NODE_EMPTY;
+			if (j == _pathNodeListIndex) {
 				break;
 			}
 		}
 	}
-	_pathNodeIndex = count;
+	_pathNodeListIndex = count;
 }
 
 void Actor::removePathPoints() {
@@ -1827,14 +1795,14 @@ void Actor::removePathPoints() {
 	Point point1, point2, point3, point4;
 
 
-	if (_pathNodeIndex < 2)
+	if (_pathNodeListIndex < 2)
 		return;
 
-
+	_newPathNodeList = (PathNode*)realloc(_newPathNodeList, _pathNodeListAlloced);
 	_newPathNodeList[0] = _pathNodeList[0];
 	newPathNodeIndex = 0;
 
-	for (i = 1, node = _pathNodeList + 1; i < _pathNodeIndex; i++, node++) {
+	for (i = 1, node = _pathNodeList + 1; i < _pathNodeListIndex; i++, node++) {
 		newPathNodeIndex++;
 		_newPathNodeList[newPathNodeIndex] = *node;
 
@@ -1866,15 +1834,13 @@ void Actor::removePathPoints() {
 				for (l = 1; l <= newPathNodeIndex; l++) {
 					if (start <= _newPathNodeList[l].link) {
 						newPathNodeIndex = l;
-						_newPathNodeList[newPathNodeIndex].x = point1.x;
-						_newPathNodeList[newPathNodeIndex].y = point1.y;
+						_newPathNodeList[newPathNodeIndex].point = point1;
 						_newPathNodeList[newPathNodeIndex].link = start;
 						newPathNodeIndex++;
 						break;
 					}
 				}
-				_newPathNodeList[newPathNodeIndex].x = point2.x;
-				_newPathNodeList[newPathNodeIndex].y = point2.y;
+				_newPathNodeList[newPathNodeIndex].point = point2;
 				_newPathNodeList[newPathNodeIndex].link = end;
 
 				for (k = start + 1; k < end; k++) {
@@ -1886,14 +1852,14 @@ void Actor::removePathPoints() {
 	}
 
 	newPathNodeIndex++;
-	_newPathNodeList[newPathNodeIndex] = _pathNodeList[_pathNodeIndex];
+	_newPathNodeList[newPathNodeIndex] = _pathNodeList[_pathNodeListIndex];
 
 	for (i = 0, j = 0; i <= newPathNodeIndex; i++) {
-		if (newPathNodeIndex == i || (_newPathNodeList[i].y != _newPathNodeList[i+1].y
-			|| _newPathNodeList[i].x != _newPathNodeList[i+1].x) )
+		if (newPathNodeIndex == i || (_newPathNodeList[i].point != _newPathNodeList[i+1].point)) {
 			_pathNodeList[j++] = _newPathNodeList[i];
+		}
 	}
-	_pathNodeIndex = j - 1;
+	_pathNodeListIndex = j - 1;
 }
 
 void Actor::drawPathTest() {

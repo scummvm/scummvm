@@ -52,9 +52,6 @@ namespace Saga {
 #define ACTOR_SPEECH_STRING_MAX 16	// speech const
 #define ACTOR_SPEECH_ACTORS_MAX 8
 
-#define PATH_NODE_MAX 100
-#define PATH_LIST_MAX 500
-
 #define PATH_NODE_EMPTY -1
 
 
@@ -130,8 +127,7 @@ struct PathDirectionData {
 typedef SortedList<PathDirectionData> PathDirectionList;
 
 struct PathNode {
-	int x;
-	int y;
+	Point point;
 	int link;
 };
 
@@ -356,16 +352,37 @@ private:
 	Rect _barrierList[ACTOR_BARRIERS_MAX];
 	int _barrierCount;
 	int *_pathCell;
-	int _pathCellCount;
+
 	int _xCellCount;
 	int _yCellCount;
 	Rect _pathRect;
-	Point _pathList[PATH_LIST_MAX];
-	int _pathListIndex;
-	PathNode _pathNodeList[PATH_NODE_MAX];
-	PathNode _newPathNodeList[PATH_NODE_MAX];
-	int _pathNodeIndex;
 
+	Point *_pathList;
+	int _pathListIndex;
+	int _pathListAlloced;
+	void addPathListPoint(const Point &point) {
+		++_pathListIndex;
+		if (_pathListIndex >= _pathListAlloced) {
+			_pathListAlloced += 100;
+			_pathList = (Point*) realloc(_pathList, _pathListAlloced * sizeof(*_pathList));
+			
+		}
+		_pathList[_pathListIndex] = point;
+	}
+
+	int _pathNodeListIndex;
+	int _pathNodeListAlloced;
+	PathNode *_pathNodeList;
+	PathNode *_newPathNodeList;
+	void addPathNodeListPoint(const Point &point) {
+		++_pathNodeListIndex;
+		if (_pathNodeListIndex >= _pathNodeListAlloced) {
+			_pathNodeListAlloced += 100;
+			_pathNodeList = (PathNode*) realloc(_pathNodeList, _pathNodeListAlloced * sizeof(*_pathNodeList));
+
+		}
+		_pathNodeList[_pathNodeListIndex].point = point;
+	}
 public:
 //path debug - use with care
 	struct DebugPoint {
