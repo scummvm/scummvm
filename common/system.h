@@ -38,7 +38,7 @@
  */
 class OSystem {
 public:
-	typedef void *MutexRef;
+	typedef struct Mutex *MutexRef;
 	typedef int ThreadProc(void *param);
 	typedef void SoundProc(void *param, byte *buf, int len);
 	//typedef int TimerProc(int interval);
