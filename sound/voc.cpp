@@ -26,7 +26,7 @@
 #include "sound/voc.h"
 
 
-byte *readVOCFromMemory(byte *ptr, int32 &size, int &rate, int32 &loops) {
+byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 	
 	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
 	int32 offset = READ_LE_UINT16(ptr + 20);
@@ -92,7 +92,7 @@ enum {
 // readCreativeVoc(). Obviously this is bad, it should rather use that function
 // (after some tweaks to readCreativeVoc, to deal with the alternate VTLK
 // header).
-byte *loadVOCFile(File *file, int32 &size, int &rate) {
+byte *loadVOCFile(File *file, int &size, int &rate) {
 	char ident[8];
 
 	if (file->read(ident, 8) != 8)

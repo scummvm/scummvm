@@ -808,7 +808,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 		return;
 	}
 
-	int32 size;
+	int size;
 	int rate;
 	byte *data = loadVOCFile(_sfxFile, size, rate);
 
