@@ -902,25 +902,6 @@ void Logic::roomSetupObjects() {
 				curBob = 5 + _numFurnitureAnimated;
 				animSetup(pgd, curImage + 1, curBob + numObjectAnimated, pod->name > 0);
 				curImage += pgd->lastFrame;
-/*				AnimFrame *paf = NULL;
-				if (pod->name > 0) {
-					paf = _newAnim[curBob + numObjectAnimated];
-				}
-				BobSlot *pbs = _graphics->bob(curBob + numObjectAnimated);
-				int16 f = animFindAll(pgd, curImage + 1, paf);
-				curImage += pgd->lastFrame;
-				if (paf != NULL) {
-					if (f < 0) {
-						pbs->xflip = true;
-					}
-					pbs->active = true;
-					pbs->x = pgd->x;
-					pbs->y = pgd->y;
-					_graphics->bobAnimString(curBob + numObjectAnimated, paf);
-				}
-				else {
-					pbs->animating = false;
-				}*/
 				++numObjectAnimated;
 			}
 			else if (lastFrame != 0) {
@@ -1066,24 +1047,6 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 	if (pgd->firstFrame < 0) {
 		animSetup(pgd, curImage, curBob, pod->name != 0);
 		curImage += pgd->lastFrame - 1;
-/*		AnimFrame *paf = NULL;
-		if (pod->name != 0) {
-			paf = _newAnim[curBob];
-		}
-		int16 f = animFindAll(pgd, curImage, paf);
-		curImage += pgd->lastFrame - 1;
-		if (f < 0) {
-			pbs->xflip = true;
-		}
-		if (paf != NULL) {
-			pbs->active = true;
-			pbs->x = pgd->x;
-			pbs->y = pgd->y;
-			_graphics->bobAnimString(curBob, _newAnim[curBob]);
-		}
-		else {
-			pbs->animating = false;
-		}*/
 	}
 	else if (lastFrame != 0) {
 		// turn on an animated bob
