@@ -48,11 +48,11 @@ public:
 	// Overloaded from SDL_Common (toolbar handling)
 	bool pollEvent(Event &event);
 	// Overloaded from SDL_Common (toolbar handling)
-	void draw_mouse();
+	void drawMouse();
 	// Overloaded from SDL_Common (mouse and new scaler handling)
 	void fillMouseEvent(Event &event, int x, int y);
 	// Overloaded from SDL_Common (new scaler handling)
-	void add_dirty_rect(int x, int y, int w, int h);
+	void addDirtyRect(int x, int y, int w, int h);
 	// Overloaded from SDL_Common (new scaler handling)
 	void warpMouse(int x, int y);
 	// Overloaded from SDL_Commmon
@@ -86,10 +86,10 @@ public:
 	static bool isOzone();
 
 protected:
-	void load_gfx_mode();
-	void unload_gfx_mode();
-	void hotswap_gfx_mode();
-	bool save_screenshot(const char *filename);
+	void loadGFXMode();
+	void unloadGFXMode();
+	void hotswapGFXMode();
+	bool saveScreenshot(const char *filename);
 
 	
 	const GraphicsMode *getSupportedGraphicsModes() const;	

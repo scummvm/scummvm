@@ -209,9 +209,9 @@ void OSystem_WINCE3::swap_panel_visibility() {
 		_panelVisible = !_panelVisible;
 		_toolbarHandler.setVisible(_panelVisible);
 		if (_screenHeight > 240)
-			add_dirty_rect(0, 400, 640, 80);
+			addDirtyRect(0, 400, 640, 80);
 		else
-			add_dirty_rect(0, 200, 320, 40);
+			addDirtyRect(0, 200, 320, 40);
 			
 		internUpdateScreen();
 	}
@@ -242,7 +242,7 @@ void OSystem_WINCE3::add_right_click() {
 void OSystem_WINCE3::swap_mouse_visibility() {
 	_forceHideMouse = !_forceHideMouse;
 	if (_forceHideMouse)
-		undraw_mouse();
+		undrawMouse();
 }
 
 void OSystem_WINCE3::swap_freeLook() {
@@ -255,20 +255,20 @@ void OSystem_WINCE3::swap_zoom_up() {
 		_toolbarHandler.setVisible(_saveToolbarZoom);
 		// restore scaler
 		_scaleFactorYd = 2;
-		_scaler_proc = PocketPCHalf;
+		_scalerProc = PocketPCHalf;
 		_zoomUp = false;
 	}
 	else
 	{
 		// only active if running on a PocketPC
-		if (_scaler_proc != PocketPCHalf && _scaler_proc != PocketPCHalfZoom)
+		if (_scalerProc != PocketPCHalf && _scalerProc != PocketPCHalfZoom)
 			return;
-		if (_scaler_proc == PocketPCHalf) {
+		if (_scalerProc == PocketPCHalf) {
 			_saveToolbarZoom = _toolbarHandler.visible();
 			_toolbarHandler.setVisible(false);
 			// set zoom scaler
 			_scaleFactorYd = 1;
-			_scaler_proc = PocketPCHalfZoom;
+			_scalerProc = PocketPCHalfZoom;
 		}
 		else
 			_zoomDown = false;
@@ -276,7 +276,7 @@ void OSystem_WINCE3::swap_zoom_up() {
 		_zoomUp = true;
 	}
 	// redraw whole screen
-	add_dirty_rect(0, 0, 640, 480);
+	addDirtyRect(0, 0, 640, 480);
 	internUpdateScreen();
 }
 
@@ -286,20 +286,20 @@ void OSystem_WINCE3::swap_zoom_down() {
 		_toolbarHandler.setVisible(_saveToolbarZoom);
 		// restore scaler
 		_scaleFactorYd = 2;
-		_scaler_proc = PocketPCHalf;
+		_scalerProc = PocketPCHalf;
 		_zoomDown = false;
 	}
 	else
 	{
 		// only active if running on a PocketPC
-		if (_scaler_proc != PocketPCHalf && _scaler_proc != PocketPCHalfZoom)
+		if (_scalerProc != PocketPCHalf && _scalerProc != PocketPCHalfZoom)
 			return;
-		if (_scaler_proc == PocketPCHalf) {
+		if (_scalerProc == PocketPCHalf) {
 			_saveToolbarZoom = _toolbarHandler.visible();
 			_toolbarHandler.setVisible(false);
 			// set zoom scaler
 			_scaleFactorYd = 1;
-			_scaler_proc = PocketPCHalfZoom;
+			_scalerProc = PocketPCHalfZoom;
 		}
 		else
 			_zoomUp = false;
@@ -307,7 +307,7 @@ void OSystem_WINCE3::swap_zoom_down() {
 		_zoomDown = true;
 	}
 	// redraw whole screen
-	add_dirty_rect(0, 0, 640, 480);
+	addDirtyRect(0, 0, 640, 480);
 	internUpdateScreen();
 }
 
@@ -581,7 +581,7 @@ void OSystem_WINCE3::update_game_settings() {
 
 		if (_mode == GFX_NORMAL && ConfMan.hasKey("landscape") && ConfMan.getBool("landscape")) {
 			setGraphicsMode(GFX_NORMAL);
-			hotswap_gfx_mode();
+			hotswapGFXMode();
 		}
 	}
  
@@ -603,8 +603,8 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 	OSystem_SDL::initSize(w, h);
 	
 	if (_scalersChanged) {
-		unload_gfx_mode();
-		load_gfx_mode();
+		unloadGFXMode();
+		loadGFXMode();
 		_scalersChanged = false;
 	}
 
@@ -617,30 +617,33 @@ int OSystem_WINCE3::getDefaultGraphicsMode() const {
 
 bool OSystem_WINCE3::update_scalers() {
 
+	if (_mode != GFX_NORMAL)
+		return false;
+
 	if (CEDevice::hasPocketPCResolution()) {
 		if (!_orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
 			_scaleFactorXm = 3;
 			_scaleFactorXd = 4;
 			_scaleFactorYm = 1; 
 			_scaleFactorYd = 1;
-			_scaler_proc = PocketPCPortrait;
-			_mode_flags = 0;
+			_scalerProc = PocketPCPortrait;
+			_modeFlags = 0;
 		}
 		if (_screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 2;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 2;
-			_scaler_proc = PocketPCHalf;
-			_mode_flags = 0;
+			_scalerProc = PocketPCHalf;
+			_modeFlags = 0;
 		}
 		if (_screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 1;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 1;
-			_scaler_proc = Normal1x;
-			_mode_flags = 0;
+			_scalerProc = Normal1x;
+			_modeFlags = 0;
 		}
 
 		return true;
@@ -654,8 +657,8 @@ bool OSystem_WINCE3::update_scalers() {
 		_scaleFactorXd = 3;
 		_scaleFactorYm = 7;
 		_scaleFactorYd = 8;
-		_scaler_proc = SmartphoneLandscape;
-		_mode_flags = 0;
+		_scalerProc = SmartphoneLandscape;
+		_modeFlags = 0;
 		return true;
 	}
 #endif
@@ -678,6 +681,10 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	_newOrientation = _orientationLandscape = (ConfMan.hasKey("landscape") ? ConfMan.getBool("landscape") : false);
 	
 	update_scalers();
+
+	// FIXME
+	if (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640) && mode)
+		_scaleFactorXm = -1;
 	
 	if (CEDevice::hasPocketPCResolution() && !CEDevice::hasWideResolution() && _orientationLandscape)
 		_mode = GFX_NORMAL;
@@ -689,51 +696,51 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 		switch(_mode) {    
 		case GFX_NORMAL:     
 			_scaleFactor = 1; 
-			_scaler_proc = Normal1x;
+			_scalerProc = Normal1x;
 			break;
 		case GFX_DOUBLESIZE:  
 			_scaleFactor = 2;
-			_scaler_proc = Normal2x;
+			_scalerProc = Normal2x;
 			break;
 		case GFX_TRIPLESIZE:
 			_scaleFactor = 3;
-			_scaler_proc = Normal3x;
+			_scalerProc = Normal3x;
 			break;
 		case GFX_2XSAI:
 			_scaleFactor = 2;
-			_scaler_proc = _2xSaI;
+			_scalerProc = _2xSaI;
 			break;
 		case GFX_SUPER2XSAI:
 			_scaleFactor = 2;
-			_scaler_proc = Super2xSaI;
+			_scalerProc = Super2xSaI;
 			break;
 		case GFX_SUPEREAGLE:
 			_scaleFactor = 2;
-			_scaler_proc = SuperEagle;
+			_scalerProc = SuperEagle;
 			break;
 		case GFX_ADVMAME2X:
 			_scaleFactor = 2;
-			_scaler_proc = AdvMame2x;
+			_scalerProc = AdvMame2x;
 			break;
 		case GFX_ADVMAME3X:
 			_scaleFactor = 3;
-			_scaler_proc = AdvMame3x;
+			_scalerProc = AdvMame3x;
 			break;
 		case GFX_HQ2X:
 			_scaleFactor = 2;
-			_scaler_proc = HQ2x;
+			_scalerProc = HQ2x;
 			break;
 		case GFX_HQ3X:
 			_scaleFactor = 3;
-			_scaler_proc = HQ3x;
+			_scalerProc = HQ3x;
 			break;
 		case GFX_TV2X:
 			_scaleFactor = 2;
-			_scaler_proc = TV2x;
+			_scalerProc = TV2x;
 			break;
 		case GFX_DOTMATRIX:
 			_scaleFactor = 2;
-			_scaler_proc = DotMatrix;
+			_scalerProc = DotMatrix;
 			break;
 
 		default:
@@ -747,7 +754,7 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 					 || (_scaleFactor * _screenHeight > getScreenWidth() &&
 						_scaleFactor * _screenHeight > getScreenHeight()))) {
 				_scaleFactor = 1;
-				_scaler_proc = Normal1x;
+				_scalerProc = Normal1x;
 	}
 
 	// Common scaler system was used
@@ -773,13 +780,13 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 
 }
 
-void OSystem_WINCE3::load_gfx_mode() {
+void OSystem_WINCE3::loadGFXMode() {
 	int displayWidth;
 	int displayHeight;
 
-	_full_screen = true; // forced  
+	_fullscreen = true; // forced  
 	_forceFull = true;
-	_mode_flags |= DF_UPDATE_EXPAND_1_PIXEL;
+	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
    
 	_tmpscreen = NULL;
 
@@ -881,13 +888,13 @@ void OSystem_WINCE3::load_gfx_mode() {
 
 
 	// keyboard cursor control, some other better place for it?
-	km.x_max = _screenWidth * _scaleFactorXm / _scaleFactorXd - 1;
-	km.y_max = _screenHeight * _scaleFactorXm / _scaleFactorXd - 1;
-	km.delay_time = 25;
-	km.last_time = 0; 
+	_km.x_max = _screenWidth * _scaleFactorXm / _scaleFactorXd - 1;
+	_km.y_max = _screenHeight * _scaleFactorXm / _scaleFactorXd - 1;
+	_km.delay_time = 25;
+	_km.last_time = 0; 
 }
 
-void OSystem_WINCE3::unload_gfx_mode() {
+void OSystem_WINCE3::unloadGFXMode() {
 	if (_screen) {
 		SDL_FreeSurface(_screen);
 		_screen = NULL; 
@@ -904,7 +911,7 @@ void OSystem_WINCE3::unload_gfx_mode() {
 	}
 }
 
-void OSystem_WINCE3::hotswap_gfx_mode() {
+void OSystem_WINCE3::hotswapGFXMode() {
 	if (!_screen)
 		return;
 
@@ -925,7 +932,7 @@ void OSystem_WINCE3::hotswap_gfx_mode() {
 	}
 
 	// Setup the new GFX mode
-	load_gfx_mode();
+	loadGFXMode();
 
 	// reset palette
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
@@ -976,7 +983,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 	}
 
 	// Make sure the mouse is drawn, if it should be drawn.
-	draw_mouse();
+	drawMouse();
 	
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
@@ -992,35 +999,35 @@ void OSystem_WINCE3::internUpdateScreen() {
 
 	// Force a full redraw if requested
 	if (_forceFull) {
-		_num_dirty_rects = 1;
+		_numDirtyRects = 1;
 
-		_dirty_rect_list[0].x = 0;
+		_dirtyRectList[0].x = 0;
 		if (!_zoomDown)
-			_dirty_rect_list[0].y = 0;
+			_dirtyRectList[0].y = 0;
 		else
-			_dirty_rect_list[0].y = _screenHeight / 2;
-		_dirty_rect_list[0].w = _screenWidth;
+			_dirtyRectList[0].y = _screenHeight / 2;
+		_dirtyRectList[0].w = _screenWidth;
 		if (!_zoomUp && !_zoomDown)
-			_dirty_rect_list[0].h = _screenHeight;
+			_dirtyRectList[0].h = _screenHeight;
 		else
-			_dirty_rect_list[0].h = _screenHeight / 2;
+			_dirtyRectList[0].h = _screenHeight / 2;
 
 		_toolbarHandler.forceRedraw();
 	}
 
 	// Only draw anything if necessary
-	if (_num_dirty_rects > 0) {
+	if (_numDirtyRects > 0) {
 
 		SDL_Rect *r; 
 		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
-		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
+		SDL_Rect *last_rect = _dirtyRectList + _numDirtyRects;
 		bool toolbarVisible = _toolbarHandler.visible();
 		int toolbarOffset = _toolbarHandler.getOffset();
 
-		if (_scaler_proc == Normal1x && !_adjustAspectRatio) {
+		if (_scalerProc == Normal1x && !_adjustAspectRatio) {
 			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
-			for (r = _dirty_rect_list; r != last_rect; ++r) {
+			for (r = _dirtyRectList; r != last_rect; ++r) {
 				dst = *r;
 
 				// Check if the toolbar is overwritten
@@ -1039,7 +1046,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 			}
 		} else {
 			if (!_overlayVisible) {
-				for (r = _dirty_rect_list; r != last_rect; ++r) {
+				for (r = _dirtyRectList; r != last_rect; ++r) {
 					dst = *r;
 					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
 					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
@@ -1054,7 +1061,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 			srcPitch = _tmpscreen->pitch;
 			dstPitch = _hwscreen->pitch;
 
-			for (r = _dirty_rect_list; r != last_rect; ++r) {
+			for (r = _dirtyRectList; r != last_rect; ++r) {
 				register int dst_y = r->y + _currentShakePos;
 				register int dst_h = 0;
 				register int orig_dst_y = 0;
@@ -1078,10 +1085,10 @@ void OSystem_WINCE3::internUpdateScreen() {
 					}
 				
 					if (!_zoomDown)
-						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+						_scalerProc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
 					else {
-						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+						_scalerProc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + (dst_y - 240) * dstPitch, dstPitch, r->w, dst_h);
 					}
 				}
@@ -1105,8 +1112,8 @@ void OSystem_WINCE3::internUpdateScreen() {
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
 		if (_forceFull) {
-			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : (_zoomUp || _zoomDown ? _screenHeight / 2 : _screenHeight)) * _scaleFactorYm / _scaleFactorYd;
+			_dirtyRectList[0].y = 0;
+			_dirtyRectList[0].h = (_adjustAspectRatio ? 240 : (_zoomUp || _zoomDown ? _screenHeight / 2 : _screenHeight)) * _scaleFactorYm / _scaleFactorYd;
 		}
 	}
 	// Add the toolbar if needed
@@ -1140,7 +1147,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 		SDL_LockSurface(_hwscreen);
 		srcPitch = toolbarSurface->pitch;
 		dstPitch = _hwscreen->pitch;		
-		_scaler_proc((byte *)toolbarSurface->pixels, srcPitch, (byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch), dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
+		_scalerProc((byte *)toolbarSurface->pixels, srcPitch, (byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch), dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
 		SDL_UnlockSurface(toolbarSurface);
 		SDL_UnlockSurface(_hwscreen);
 
@@ -1155,14 +1162,14 @@ void OSystem_WINCE3::internUpdateScreen() {
 	}
 
 	// Finally, blit all our changes to the screen
-	if (_num_dirty_rects > 0)
-		SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
+	if (_numDirtyRects > 0)
+		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 
-	_num_dirty_rects = 0;
+	_numDirtyRects = 0;
 	_forceFull = false;
 }
   
-bool OSystem_WINCE3::save_screenshot(const char *filename) {
+bool OSystem_WINCE3::saveScreenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
@@ -1195,10 +1202,10 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
 }
 
 
-void OSystem_WINCE3::draw_mouse() {
+void OSystem_WINCE3::drawMouse() {
 	// FIXME
 	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset()) && !_forceHideMouse)
-		OSystem_SDL::draw_mouse();
+		OSystem_SDL::drawMouse();
 }
 
 void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
@@ -1206,8 +1213,8 @@ void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
 	event.mouse.y = y;
 	
 	// Update the "keyboard mouse" coords
-	km.x = event.mouse.x;
-	km.y = event.mouse.y;
+	_km.x = event.mouse.x;
+	_km.y = event.mouse.y;
 
 	// Adjust for the screen scaling
 	if (_zoomDown) 
@@ -1239,11 +1246,11 @@ void OSystem_WINCE3::warpMouse(int x, int y) {
 		// immediately the second call is ignored, causing the cannon
 		// to change its aim.
 
-		set_mouse_pos(x, y);
+		setMousePos(x, y);
 	}
 }
 
-void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
+void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h) {
 	// Align on boundaries
 	if (_scaleFactorXd > 1) {
 		while (x % _scaleFactorXd) {
@@ -1261,7 +1268,7 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 		while (h % _scaleFactorYd) h++;
 	}
 
-	if (_scaler_proc == PocketPCHalfZoom) {
+	if (_scalerProc == PocketPCHalfZoom) {
 		// Restrict rect if we're zooming
 		if (_zoomUp) {
 			if (y + h >= 240) {
@@ -1284,7 +1291,7 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 		}
 	}
 
-	OSystem_SDL::add_dirty_rect(x, y, w, h);
+	OSystem_SDL::addDirtyRect(x, y, w, h);
 }
 
 // FIXME
@@ -1296,14 +1303,14 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 	Event temp_event;
 
 	memset(&temp_event, 0, sizeof(Event));
-	memset(event, 0, sizeof(Event));
+	//memset(event, 0, sizeof(Event));
 
-	kbd_mouse();
+	handleKbdMouse();
 	
 	// If the screen mode changed, send an EVENT_SCREEN_CHANGED
 	if (_modeChanged) {
 		_modeChanged = false;
-		event->type = EVENT_SCREEN_CHANGED;
+		event.type = EVENT_SCREEN_CHANGED;
 		return true;
 	}
 
@@ -1313,12 +1320,12 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
 				return true;
 
-			event->type = EVENT_KEYDOWN;
-			event->kbd.keycode = ev.key.keysym.sym;
-			event->kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+			event.type = EVENT_KEYDOWN;
+			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 			if (CEActions::Instance()->mappingActive())
-				event->kbd.flags = 0xFF;
+				event.kbd.flags = 0xFF;
 			
 			return true;
 	
@@ -1326,19 +1333,19 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
 				return true;
 			
-			event->type = EVENT_KEYUP;
-			event->kbd.keycode = ev.key.keysym.sym;
-			event->kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+			event.type = EVENT_KEYUP;
+			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			
 			if (CEActions::Instance()->mappingActive())
-				event->kbd.flags = 0xFF;
+				event.kbd.flags = 0xFF;
 
 			return true;
 
 		case SDL_MOUSEMOTION:
-			event->type = EVENT_MOUSEMOVE;
-			fillMouseEvent(*event, ev.motion.x, ev.motion.y);
-			set_mouse_pos(event->mouse.x, event->mouse.y);
+			event.type = EVENT_MOUSEMOVE;
+			fillMouseEvent(event, ev.motion.x, ev.motion.y);
+			setMousePos(event.mouse.x, event.mouse.y);
 			return true;
 
 		case SDL_MOUSEBUTTONDOWN:
@@ -1359,12 +1366,12 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					ConfMan.set("landscape", _orientationLandscape);
 					ConfMan.flushToDisk();
 					setGraphicsMode(GFX_NORMAL);
-					hotswap_gfx_mode();
+					hotswapGFXMode();
 				}
 			}
 			else {
 				if (!_freeLook)
-					memcpy(event, &temp_event, sizeof(Event));
+					memcpy(&event, &temp_event, sizeof(Event));
 			}
 
 			return true;
@@ -1385,7 +1392,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			}
 			else {
 				if (!_freeLook)
-					memcpy(event, &temp_event, sizeof(Event));
+					memcpy(&event, &temp_event, sizeof(Event));
 			}
 
 			return true;
@@ -1395,7 +1402,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			break;
 
 		case SDL_QUIT:
-			event->type = EVENT_QUIT;
+			event.type = EVENT_QUIT;
 			return true;
 		}
 	}
