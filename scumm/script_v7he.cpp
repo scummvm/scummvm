@@ -419,6 +419,12 @@ void ScummEngine_v7he::o7_cursorCommand() {
 	int subOp = fetchScriptByte();
 
 	switch (subOp) {
+	case 0x13:		// HE 7.2 (Not all games)
+	case 0x14:
+		// Maybe load cursor image
+		a = pop();
+		warning("o7_cursorCommand: case %d (%d)", subOp, a);
+		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
 		verbMouseOver(0);
