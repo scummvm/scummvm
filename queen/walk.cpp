@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "queen/walk.h"
 #include "queen/logic.h"
 #include "queen/graphics.h"
@@ -58,15 +59,22 @@ Walk::Walk(Logic *logic, Graphics *graphics)
 }
 
 
-void Walk::joeMoveBlock(int facing) {
+void Walk::joeMoveBlock(int facing, uint16 areaNum, uint16 walkDataNum) {
+
 	warning("Walk::moveJoeBlock() partially implemented");
 	_graphics->bob(0)->animating = false;
-//    CAN=-2;
+
+	// XXX  CAN=-2;
+
     // Make Joe face the right direction
+	_joeMoveBlock = true;
 	_logic->joeFacing(facing);
 	_logic->joeFace();
 
-	// TODO: cutaway calls
+	_logic->newRoom(0);
+	_logic->entryObj(0);
+
+	// XXX cutaway calls
 }
 
 
@@ -125,8 +133,9 @@ void Walk::animateJoe() {
 
 		WalkData *pwd = &_walkData[i];
 
+		// area has been turned off, see if we should execute a cutaway
 		if (pwd->area->mapNeighbours < 0) {
-			joeMoveBlock(pwd->anim.facing);
+			joeMoveBlock(pwd->anim.facing, pwd->areaNum, i);
 			return;
 		}
 		if (lastDirection != pwd->anim.facing) {
@@ -158,10 +167,7 @@ void Walk::animateJoe() {
 		}
 		lastDirection = pwd->anim.facing;
 	}
-//	if (!cutQuit) {
-	pbs->animating = false;
 	_logic->joeFacing(lastDirection);
-//	}
 }
 
 
@@ -313,7 +319,7 @@ void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 	uint16 oldPos = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
 	uint16 newPos = _logic->zoneInArea(ZONE_ROOM, endx, endy);
 
-	debug(9, "Walk::joeMove(%d, %d, %d, %d, %d), old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
+	debug(9, "Walk::joeMove(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
 	// if in cutaway, allow Joe to walk anywhere
 	if(newPos == 0 && inCutaway) {
@@ -324,15 +330,17 @@ void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 	}
 
 	if (_walkDataCount > 0) {
-//MOVE_JOE2:
 		animateJoePrepare();
 		animateJoe();
 	}
 	else {
 //		SPEAK(JOE_RESPstr[4],"JOE",find_cd_desc(4));
 	}
-//MOVE_JOE_EXIT:
-	if (direction > 0) {
+
+	_graphics->bob(0)->animating = false;
+	// XXX if ((CAN==-1) && (walkgameload==0)) NEW_ROOM=0;
+	// XXX walkgameload=0;
+	if (!_joeMoveBlock && direction > 0) {
 		_logic->joeFacing(direction);
 	}
 	_logic->joePrevFacing(_logic->joeFacing());
@@ -361,7 +369,7 @@ void Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImag
 	uint16 oldPos = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
 	uint16 newPos = _logic->zoneInArea(ZONE_ROOM, endx, endy);
 
-	debug(9, "Walk::personMove(%d, %d, %d, %d, %d), old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
+	debug(9, "Walk::personMove(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
 	calc(oldPos, newPos, oldx, oldy, endx, endy);
 
@@ -586,19 +594,21 @@ void Walk::initWalkData() {
 	memset(_areaStrike, 0, sizeof(_areaStrike));
 	_areaListCount = 0;
 	memset(_areaList, 0, sizeof(_areaList));
+	_joeMoveBlock = false;
 }
 
 
-void Walk::incWalkData(uint16 px, uint16 py, uint16 x, uint16 y, uint16 area) {
+void Walk::incWalkData(uint16 px, uint16 py, uint16 x, uint16 y, uint16 areaNum) {
 
-	debug(9, "Walk::incWalkData(%d, %d, %d)", (int16)(x - px), (int16)(y - py), area);
+	debug(9, "Walk::incWalkData(%d, %d, %d)", (int16)(x - px), (int16)(y - py), areaNum);
 
 	if (px != x || py != y) {
 		++_walkDataCount;
 		WalkData *pwd = &_walkData[_walkDataCount];
 		pwd->dx = x - px;
 		pwd->dy = y - py;
-		pwd->area = _logic->currentRoomArea(area); //area;
+		pwd->area = _logic->currentRoomArea(areaNum);
+		pwd->areaNum = areaNum;
 //		pwd->sign = ((pwd->dx < 0) ? -1 : ((pwd->dx > 0) ? 1 : 0)) ;
 	}
 }

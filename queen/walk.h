@@ -48,6 +48,7 @@ struct WalkData {
 //	int16 sign; // never used
 	int16 dx, dy;
 	const Area *area;
+	uint16 areaNum; // extra stuff for joeMoveBlock
 	MovePersonAnim anim;
 };
 
@@ -82,7 +83,7 @@ public:
 
 private:
 
-	void joeMoveBlock(int facing);
+	void joeMoveBlock(int facing, uint16 areaNum, uint16 walkDataNum);
 
 	void animateJoePrepare();
 	void animateJoe();
@@ -123,6 +124,9 @@ private:
 	uint16 _areaStrike[MAX_AREAS + 1];
 	uint16 _areaListCount;
 	uint16 _areaList[MAX_AREAS + 1];
+
+	//! set if joeMoveBlock() is called in joeAnimate()
+	bool _joeMoveBlock;
 
 	Logic *_logic;
 	Graphics *_graphics;
