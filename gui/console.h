@@ -29,7 +29,9 @@
 enum {
 	kBufferSize	= 32768,
 	kLineBufferSize = 256,
-	kCharWidth = 8
+	kCharWidth = 8,
+
+	kHistorySize = 20,
 };
 
 class ScrollBarWidget;
@@ -60,6 +62,11 @@ protected:
 	// 
 	InputCallbackProc _callbackProc;
 	void	*_callbackRefCon;
+
+	char _history[kHistorySize][kLineBufferSize];
+	int _historySize;
+	int _historyIndex;
+	int _historyLine;
 
 public:
 	ConsoleDialog(NewGui *gui);
@@ -97,6 +104,10 @@ protected:
 	void killChar();
 	void killLine();
 	void killLastWord();
+
+	// History
+	void addToHistory(const char *str);
+	void historyScroll(int direction);
 };
 
 #endif

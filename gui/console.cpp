@@ -72,8 +72,16 @@ ConsoleDialog::ConsoleDialog(NewGui *gui)
 	
 	_promptStartPos = _promptEndPos = -1;
 	
+	// Init callback
 	_callbackProc = 0;
 	_callbackRefCon = 0;
+ 
+ 	// Init History
+ 	_historyIndex = 0;
+ 	_historyLine = 0;
+ 	_historySize = 0;
+ 	for (int i = 0; i < kHistorySize; i++)
+ 		_history[i][0] = '\0';
 }
 
 void ConsoleDialog::open()
@@ -148,8 +156,10 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			char str[len + 1];
 			for (i = 0; i < len; i++)
 				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
-			str[len] = 0;
+			str[len] = '\0';
 			
+ 			addToHistory(str);
+
 			bool keepRunning = true;
 			if (_callbackProc)
 				keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
@@ -202,6 +212,12 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			_scrollLine = _currentPos / _lineWidth;
 			updateScrollBar();
 			draw();
+			break;
+		case 273:	// cursor up
+			historyScroll(+1);
+			break;
+		case 274:	// cursor down
+			historyScroll(-1);
 			break;
 		case 275:	// cursor right
 			if (_currentPos < _promptEndPos)
@@ -301,6 +317,54 @@ void ConsoleDialog::killLastWord()
 	_buffer[_promptEndPos % kBufferSize] = ' ';
 	_promptEndPos -= cnt + 1;
 }
+
+void ConsoleDialog::addToHistory(const char *str)
+{
+	strcpy(_history[_historyIndex], str);
+	_historyIndex = (_historyIndex + 1) % kHistorySize;
+	_historyLine = 0;
+	if (_historySize < kHistorySize)
+		_historySize++;
+}
+
+void ConsoleDialog::historyScroll(int direction)
+{
+	if (_historySize == 0)
+		return;
+	
+	// Advance to the next line in the history
+	int line = _historyLine + direction;
+	if ((direction < 0 && line < 0) || (direction > 0 && line > _historySize))
+		return;
+	_historyLine = line;
+
+	// Hide caret if visible
+	if (_caretVisible)
+		drawCaret(true);
+
+	// Remove the current user text
+	_currentPos = _promptStartPos;
+	killLine();
+
+	// ... and ensure the prompt is visible
+	scrollToCurrent();
+
+	// Print the text from the history
+	if (_historyLine > 0) {
+		int idx = (_historyIndex - _historyLine + _historySize) % _historySize;
+		for (int i = 0; i < kLineBufferSize && _history[idx][i] != '\0'; i++)
+			putcharIntern(_history[idx][i]);
+		_promptEndPos = _currentPos;
+	
+		// Ensure once more the caret is visible (in case of very long history entries)
+		scrollToCurrent();
+	} else {
+		// TODO print the text which the user had typed before using the history
+	}
+	
+	draw();
+}
+
 
 void ConsoleDialog::nextLine()
 {
