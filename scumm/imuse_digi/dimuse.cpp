@@ -211,9 +211,17 @@ void IMuseDigital::switchToNextRegion(int track) {
 	if (jumpId != -1) {
 		int region = _sound->getRegionIdByJumpId(_track[track].soundHandle, jumpId);
 		if (region != -1) {
-			_track[track].curRegion = region;
-			debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", _track[track].soundId, _track[track].curRegion, _track[track].curHookId);
-			_track[track].curHookId = 0;
+			int sampleHookId = _sound->getJumpHookId(_track[track].soundHandle, jumpId);
+			if (sampleHookId != 0) {
+				if (_track[track].curHookId == sampleHookId) {
+					_track[track].curRegion = region;
+					debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", _track[track].soundId, _track[track].curRegion, _track[track].curHookId);
+					_track[track].curHookId = 0;
+				}
+			} else {
+				_track[track].curRegion = region;
+				debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", _track[track].soundId, _track[track].curRegion, _track[track].curHookId);
+			}
 		}
 	}
 
