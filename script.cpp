@@ -380,7 +380,7 @@ void Scumm::setResult(int value) {
 void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 	int top,bottom,count;
 	VirtScreen *vs;
-	byte *backbuff;
+	byte *backbuff, *bgbuff;
 
 	if ((vs=findVirtScreen(y)) == NULL)
 		return;
@@ -407,11 +407,18 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 
 	backbuff = getResourceAddress(rtBuffer, vs->number+1) + vs->xstart + (y-top)*320 + x;
 
-	count = y2 - y;
-	while (count) {
-		memset(backbuff, color, x2 - x);
-		backbuff += 320;
-		count--;
+	if (color==-1) {
+		if(vs->number!=0)
+			error("can only copy bg to main window");
+		bgbuff = getResourceAddress(rtBuffer, vs->number+5) + vs->xstart + (y-top)*320 + x;
+		blit(backbuff, bgbuff, x2 - x, y2 - y);
+	} else {
+		count = y2 - y;
+		while (count) {
+			memset(backbuff, color, x2 - x);
+			backbuff += 320;
+			count--;
+		}
 	}
 }
 

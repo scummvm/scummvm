@@ -472,7 +472,7 @@ int Scumm::readSoundResource(int type, int index) {
 #if defined(SAMNMAX) || defined(FULL_THROTTLE)
 	if (basetag == MKID('MIDI')) {
 		fileSeek(_fileHandle, -8, SEEK_CUR);
-		fileRead(_fileHandle,createResource(type, index, size+8), size+8);
+		fileRead(_fileHandle,createResource(type, index, total_size+8), total_size+8);
 		return 1;
 	}
 #else

@@ -570,7 +570,7 @@ struct CharsetRenderer {
 
 	byte *_backbuff_ptr, *_bgbak_ptr;
 	byte *_mask_ptr;
-	byte *_bg_ptr2;
+	byte *_dest_ptr;
 		
 	byte _colorMap[16];
 	byte _buffer[256];

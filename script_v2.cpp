@@ -1830,7 +1830,7 @@ void Scumm::o6_getActorAnimCounter1() {
 }
 
 void Scumm::o6_soundKludge() {
-	int16 list[8];
+	int16 list[16];
 	getStackList(list,sizeof(list)/sizeof(list[0]));
 	soundKludge(list);
 }

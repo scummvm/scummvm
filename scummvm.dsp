@@ -103,7 +103,7 @@ SOURCE=.\sound\gmidi.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\imuse.cpp
+SOURCE=.\sound\imuse.cpp
 # End Source File
 # End Group
 # Begin Source File

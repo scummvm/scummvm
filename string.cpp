@@ -723,7 +723,7 @@ void CharsetRenderer::printChar(int chr) {
 		_hasMask = true;
 #endif
 
-	_bg_ptr2 = _backbuff_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) 
+	_dest_ptr = _backbuff_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) 
 		+ vs->xstart + _drawTop * 320 + _left;
 
 #if !defined(OLD)
@@ -731,7 +731,7 @@ void CharsetRenderer::printChar(int chr) {
 #else
 	if (1) {
 #endif
-		_bg_ptr2 = _bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number+5)
+		_dest_ptr = _bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number+5)
 			+ vs->xstart + _drawTop * 320 + _left;
 	}
 
@@ -774,7 +774,7 @@ void CharsetRenderer::drawBits() {
 	bits = *_charPtr++;
 	numbits = 8;
 
-	dst = _bg_ptr2;
+	dst = _dest_ptr;
 	mask = _mask_ptr;
 	y = 0;
 
@@ -801,7 +801,7 @@ void CharsetRenderer::drawBits() {
 				maskpos++;
 			}
 		}
-		dst = (_bg_ptr2 += 320);
+		dst = (_dest_ptr += 320);
 		mask += 40;
 		y++;
 	}

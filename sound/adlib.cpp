@@ -117,8 +117,11 @@ void AdlibSoundDriver::init(SoundEngine *eng) {
 
 	_se = eng;
 
-	for(i=0,mc=_midi_channels; i!=ARRAYSIZE(_midi_channels);i++,mc++)
+	for(i=0,mc=_midi_channels; i!=ARRAYSIZE(_midi_channels);i++,mc++) {
 		mc->_channel = i;
+		mc->_s11a.s10 = &mc->_s10b;
+		mc->_s11b.s10 = &mc->_s10a;
+	}
 
 	_adlib_reg_cache = (byte*)calloc(256,1);
 	_opl = OPLCreate(OPL_TYPE_YM3812,3579545,22050);
