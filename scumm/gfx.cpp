@@ -989,8 +989,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		const int right = left + (numstrip << 3);
 		byte *dst = bgbak_ptr;
 		const byte *src;
-		byte color = 0, data = 0;
-		int run = 1;
+		byte color, data = 0;
+		int run;
 		bool dither = false;
 		byte dither_table[128];
 		byte *ptr_dither_table;
@@ -998,10 +998,14 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		int theX, theY, maxX;
 		
 		if (table) {
+			run = table->run[stripnr];
+			color = table->color[stripnr];
 			src = smap_ptr + table->offsets[stripnr];
 			theX = left;
 			maxX = right;
 		} else {
+			run = 1;
+			color = 0;
 			src = smap_ptr;
 			theX = 0;
 			maxX = width;
@@ -1022,10 +1026,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 						run = data >> 4;
 						dither = false;
 					}
+					color = data & 0x0f;
 					if (run == 0) {
 						run = *src++;
 					}
-					color = data & 0x0f;
 				}
 				if (!dither) {
 					*ptr_dither_table = color;
@@ -1264,9 +1268,10 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 	for (x = 0 ; x < width; x++) {
 
 		if ((x % 8) == 0) {
-			assert(x < 160 * 8);
-			assert(run == 1);
-			table->offsets[x >> 3] = src - bitmapStart;
+			assert(x/8 < 160);
+			table->run[x/8] = run;
+			table->color[x/8] = color;
+			table->offsets[x/8] = src - bitmapStart;
 		}
 
 		for (y = 0; y < height; y++) {

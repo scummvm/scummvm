@@ -98,6 +98,8 @@ struct BompDrawData {
 
 struct StripTable {
 	int offsets[160];
+	int run[160];
+	int color[160];
 	int zoffsets[120];	// FIXME: Why only 120 here?
 	int zrun[120];		// FIXME: Why only 120 here?
 };
