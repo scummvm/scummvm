@@ -1849,8 +1849,8 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		lp = (left >> 3) + _screenStartStrip;
 		if (lp < 0)
 			lp = 0;
-		if (rp >= 200)
-			rp = 200;
+		if (rp >= 240)
+			rp = 240;
 		if (lp <= rp) {
 			num = rp - lp + 1;
 			sp = &gfxUsageBits[lp];
