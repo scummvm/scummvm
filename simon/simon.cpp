@@ -2201,9 +2201,6 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id) {
 	uint16 c;
 	byte *vc_ptr_org;
 
-	if (_debugMode)
-		warning("Set video mode internal: %d, %d", mode, vga_res_id);
-
 	_video_palette_mode = mode;
 	_lock_word |= 0x20;
 
