@@ -126,7 +126,7 @@ public:
 	};
 	int play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
 #ifdef COMPRESSED_SOUND_FILE
-	void play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
+	int play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
 	void play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration);
 #endif
 

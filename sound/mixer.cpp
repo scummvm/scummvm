@@ -61,8 +61,8 @@ int SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 }
 
 #ifdef COMPRESSED_SOUND_FILE
-void SoundMixer::play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
-	insert(handle, new Channel_MP3(this, sound, size, flags));
+int SoundMixer::play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
+	return insert(handle, new Channel_MP3(this, sound, size, flags));
 }
 void SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration) {
 	if (*handle)

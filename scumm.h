@@ -1017,7 +1017,7 @@ public:
 	bool isSfxFinished();
 	void playBundleSound(char *sound);
 	int playSfxSound(void *sound, uint32 size, uint rate);
- 	void playSfxSound_MP3(void *sound, uint32 size);
+ 	int playSfxSound_MP3(void *sound, uint32 size);
 	void stopSfxSound();
 
 	int _talkChannel;	/* Mixer channel actor is talking on */

@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
+#include <sys/stat.h>
 
 #ifdef _WIN32_WCE
 extern void *bsearch(const void *, const void *, size_t,
@@ -209,7 +210,7 @@ int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 
 		if (result == NULL) {
 			warning("startTalkSound: did not find sound at offset %d !", offset);
-			return;
+			return -1;
 		}
 		if (2 * num != result->num_tags) {
 			warning("startTalkSound: number of tags do not match (%d - %d) !", b,
@@ -443,10 +444,9 @@ int Scumm::startSfxSound(void *file, int file_size)
 		if (fread(data, file_size, 1, (FILE *) file) != 1) {
 			/* no need to free the memory since error will shut down */
 			error("startSfxSound: cannot read %d bytes", size);
-			return;
+			return -1;
 		}
-		playSfxSound_MP3(data, file_size);
-		return;
+		return playSfxSound_MP3(data, file_size);
 	}
 #endif
 	if (fread(ident, 8, 1, (FILE *) file) != 1)
@@ -609,15 +609,14 @@ int Scumm::playSfxSound(void *sound, uint32 size, uint rate)
 	return _mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE);
 }
 
-void Scumm::playSfxSound_MP3(void *sound, uint32 size)
+int Scumm::playSfxSound_MP3(void *sound, uint32 size)
 {
-
 #ifdef COMPRESSED_SOUND_FILE
 	if (_soundsPaused)
-		return;
-	_mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
-
+		return -1;
+	return _mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
 #endif
+	return -1;
 }
 
 #ifdef COMPRESSED_SOUND_FILE
@@ -713,6 +712,7 @@ int Scumm::getCachedTrack(int track) {
 	return current_index;
 }
 		
+
 void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	int index;
 	long offset;
@@ -732,7 +732,7 @@ void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 		return;
 
 	// Calc offset
-	frame_size = 144 * _mad_header[index].bitrate / _mad_header[index].samplerate;
+	frame_size = (float)(144 * _mad_header[index].bitrate / _mad_header[index].samplerate);
 	offset = (long)( (float)start / (float)75 * ((float)_mad_header[index].bitrate/(float)8));
 	
 	// Calc delay
