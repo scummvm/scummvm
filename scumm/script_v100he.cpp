@@ -288,7 +288,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* C4 */
 		OPCODE(o90_getObjectData),
 		OPCODE(o72_openFile),
-		OPCODE(o6_invalid),
+		OPCODE(o90_getPolygonOverlap),
 		OPCODE(o6_getOwner),
 		/* C8 */
 		OPCODE(o100_getPaletteData),
