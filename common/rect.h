@@ -78,7 +78,7 @@ struct Rect {
 		@return true if the given point is inside this rectangle, false otherwise
 	*/
 	bool contains(const Point & p) const {
-		return (left <= p.x) && (p.x < right) && (top <= p.y) && (p.y < bottom);
+		return contains(p.x, p.y);
 	}
 
 	/*!	@brief check if given rectangle intersects with this rectangle
@@ -136,6 +136,17 @@ struct Rect {
 	
 	bool isValidRect() const {
 		return (left <= right && top <= bottom);
+	}
+	
+	void moveTo(int16 x, int16 y) {
+		bottom += y - top;
+		right += x - left;
+		top = y;
+		left = x;
+	}
+	
+	void moveTo(const Point & p) {
+		moveTo(p.x, p.y);
 	}
 };
 
