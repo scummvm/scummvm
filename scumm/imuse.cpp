@@ -86,9 +86,8 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 	}
 
 	// Check for old-style headers first, like 'RO'
-	if (ptr[4] == 'R' && ptr[5] == 'O'&& ptr[6] != 'L') {
+	if (ptr[4] == 'R' && ptr[5] == 'O'&& ptr[6] != 'L')
 		return ptr + 4;
-	}
 
 	ptr += 8;
 	size = READ_BE_UINT32(ptr);
