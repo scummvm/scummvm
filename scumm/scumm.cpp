@@ -1442,11 +1442,13 @@ void ScummEngine::scummInit() {
 		VAR(VAR_CAMERA_ACCEL_X) = 100;
 		VAR(VAR_CAMERA_ACCEL_Y) = 100;
 	} else if (!(_features & GF_NEW_CAMERA)) {
-		camera._leftTrigger = 10;
-		if (_heversion >= 71)
-			camera._rightTrigger = 70;
-		else
-			camera._rightTrigger = 30;
+		if (_features & GF_NES) {
+			camera._leftTrigger = 4;
+			camera._rightTrigger = 24;
+		} else {
+			camera._leftTrigger = 10;
+			camera._rightTrigger = (_heversion >= 71) ? 70 : 30;
+		}
 		camera._mode = 0;
 	}
 	camera._follows = 0;
