@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/10 11:24:21  strigeus
+ * fixed return value from adjustXYToBeInBox
+ *
  * Revision 1.2  2001/10/09 18:35:02  strigeus
  * fixed object parent bug
  * fixed some signed/unsigned comparisons
@@ -453,6 +456,10 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y) {
 	uint best;
 	int box;
 	byte flags, b;
+	
+	abr.x = x;
+	abr.y = y;
+	abr.dist = 0;
 
 	if (a && a->ignoreBoxes==0) {
 		threshold = 30;
@@ -499,10 +506,6 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y) {
 			}
 			threshold = (threshold==30) ? 80 : 0;
 		}
-	} else {
-		abr.x = x;
-		abr.y = y;
-		abr.dist = 0;
 	}
 	return abr;
 }
