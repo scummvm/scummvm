@@ -97,13 +97,11 @@ bundle: scummvm-static
 # Special target to create a static linked binary for Mac OS X
 scummvm-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm-static $(OBJS) \
-		/sw/lib/libSDLmain.a /sw/lib/libSDL.a \
+		`sdl-config --static-libs` \
 		/sw/lib/libmad.a \
 		/sw/lib/libvorbisfile.a /sw/lib/libvorbis.a /sw/lib/libogg.a \
 		/sw/lib/libmpeg2.a \
-		-lz \
-		-framework Cocoa -framework Carbon -framework IOKit \
-		-framework OpenGL -framework AGL -framework QuickTime \
-		-framework AudioUnit -framework AudioToolbox
+		/sw/lib/libFLAC.a \
+		-lz
 
 .PHONY: deb bundle test
