@@ -554,7 +554,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	_vars[VAR_ROOM_RESOURCE] = _roomResource;
 
 	if (room != 0)
-		ensureResourceLoaded(1, room);
+		ensureResourceLoaded(rtRoom, room);
 
 	if (_currentRoom == 0) {
 		_ENCD_offs = _EXCD_offs = 0;
