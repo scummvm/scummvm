@@ -19,7 +19,7 @@
  */
 
 #include "stdafx.h"
-#include "console.h"
+#include "gui/console.h"
 #include "ScrollBarWidget.h"
 
 #include "base/engine.h"
