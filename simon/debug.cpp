@@ -44,7 +44,7 @@ byte *SimonState::dumpOpcode(byte *p)
 	st = s = simon1dos_opcode_name_table[opcode];
 	} else if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
 	st = s = simon1talkie_opcode_name_table[opcode];
-	} else if (_game == GAME_SIMON2WIN) {
+	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
 	st = s = simon2talkie_opcode_name_table[opcode];
 	} else {
 	st = s = simon2dos_opcode_name_table[opcode];
