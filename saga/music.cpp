@@ -31,6 +31,7 @@
 #include "sound/mididrv.h"                                                      
 #include "sound/midiparser.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 
 namespace Saga {
 
@@ -105,7 +106,7 @@ void MusicPlayer::send(uint32 b) {
 		_channelVolume[channel] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
+	} else if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | mt32_to_gm[(b >> 8) & 0xFF] << 8;
 	} 
 	else if ((b & 0xFFF0) == 0x007BB0) {
@@ -159,30 +160,178 @@ Music::~Music() {
 }
 
 int Music::play(ulong music_rn, uint flags) {
-    R_RSCFILE_CONTEXT *rsc_ctxt = NULL;
+	R_RSCFILE_CONTEXT *rsc_ctxt = NULL;
+	const char *midi_file = NULL;
 
-    uchar *resource_data;
-    size_t resource_size;
+	uchar *resource_data;
+	size_t resource_size;
 
 	if (!_musicInitialized) {
 		return R_FAILURE;
 	}
 
-    if (!_enabled) {
-        return R_SUCCESS;
-    }
+	if (!_enabled) {
+		return R_SUCCESS;
+	}
 
-    /* Load XMI resource data */
-    GAME_GetFileContext(&rsc_ctxt, R_GAME_RESOURCEFILE, 0);
+	// The Wyrmkeep release of Inherit The Earth uses external MIDI files
+
+	// FIXME: This mapping is incomplete
+
+	switch (music_rn) {
+#if 0
+	case XXX:
+		midi_file = "bcexpl";
+		break;
+	case XXX:
+		midi_file = "birdchrp";
+		break;
+	case XXX:
+		midi_file = "boargtnt";
+		break;
+	case XXX:
+		midi_file = "boarking";
+		break;
+	case XXX:
+		midi_file = "brutalmt";
+		break;
+	case XXX:
+		midi_file = "catfest";
+		break;
+#endif
+	case 9:
+		midi_file = "cave";
+		break;
+#if 0
+	case XXX:
+		midi_file = "damexplm";
+		break;
+	case XXX:
+		midi_file = "darkclaw";
+		break;
+	case XXX:
+		midi_file = "elkfanfare";
+		break;
+	case XXX:
+		midi_file = "elkhall";
+		break;
+	case XXX:
+		midi_file = "explorea";
+		break;
+	case XXX:
+		midi_file = "exploreb";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+	case XXX:
+		midi_file = "explorec";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+	case XXX:
+		midi_file = "fvillage";
+		break;
+	case XXX:
+		midi_file = "humruinm";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+#endif
+	case 10:
+		midi_file = "intro";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+#if 0
+	case XXX:
+		midi_file = "kitten";
+		break;
+	case XXX:
+		midi_file = "mouse";
+		break;
+	case XXX:
+		midi_file = "nitstrlm";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+	case XXX:
+		midi_file = "orbtempl";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+	case XXX:
+		midi_file = "reset";
+		// Unfortunately, our MIDI parser won't handle the above file,
+		// but I'm not sure we need it anyway
+		midi_file = NULL;
+		break;
+	case XXX:
+		midi_file = "shiala";
+		break;
+	case XXX:
+		midi_file = "spooky";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+	case XXX:
+		midi_file = "sunstatm";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+	case XXX:
+		midi_file = "sweet";
+		// Unfortunately, our MIDI parser won't handle the above file
+		midi_file = NULL;
+		break;
+	case XXX:
+		midi_file = "tychom";
+		// Unlike the other unhandled files, ScummVM won't crash on
+		// this one. But it won't play anything either.
+		midi_file = NULL;
+		break;
+#endif
+	default:
+		midi_file = NULL;
+		break;
+	}
+
+	File f_midi;
+	MidiParser *parser;
+
+	if (midi_file) {
+		char file_name[20];
+
+		sprintf(file_name, "music/%s.mid", midi_file);
+		if (!f_midi.open(file_name))
+			midi_file = NULL;
+	}
+
+	// FIXME: Is resource_data ever freed?
+
+	if (midi_file) {
+		debug(0, "Using external MIDI file: %s.mid", midi_file);
+		resource_size = f_midi.size();
+		resource_data = (uchar *) malloc(resource_size);
+		f_midi.read(resource_data, resource_size);
+		f_midi.close();
+
+		_player->setGM(true);
+		parser = MidiParser::createParser_SMF();
+	} else {
+		/* Load XMI resource data */
+		GAME_GetFileContext(&rsc_ctxt, R_GAME_RESOURCEFILE, 0);
         
-    if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
-						 &resource_size) != R_SUCCESS ) {
-        R_printf(R_STDERR, "SYSMUSIC_Play(): Resource load failed: %ld",
-				 music_rn);
-        return R_FAILURE;
-    }
+		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
+				&resource_size) != R_SUCCESS ) {
+			R_printf(R_STDERR, "SYSMUSIC_Play(): Resource load failed: %ld",
+				music_rn);
+			return R_FAILURE;
+		}
 
-	MidiParser *parser = MidiParser::createParser_XMIDI();
+		_player->setGM(false);
+		parser = MidiParser::createParser_XMIDI();
+	}
+
 	if (!parser->loadMusic(resource_data, resource_size)) {
 		warning("Error reading track!");
 		delete parser;

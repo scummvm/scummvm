@@ -54,6 +54,8 @@ public:
 	void playMusic();
 	void stopMusic();
 	void setLoop(bool loop)		{ _looping = loop; }
+
+	void setGM(bool isGM)		{ _isGM = isGM; }
 	
 	//MidiDriver interface implementation
 	int open();
@@ -79,6 +81,7 @@ protected:
 	MidiDriver *_driver;
 	byte _channelVolume[16];
 	bool _nativeMT32;
+	bool _isGM;
 	
 	bool _isPlaying;
 	bool _looping;
