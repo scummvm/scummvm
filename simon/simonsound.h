@@ -67,6 +67,7 @@ public:
 	void playEffects(uint sound);
 	void playAmbient(uint sound);
 
+	bool hasVoice();
 	void stopAll();
 	void effectsPause(bool b);
 	void ambientPause(bool b);

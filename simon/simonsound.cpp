@@ -148,6 +148,11 @@ void SimonSound::playAmbient(uint sound)
 	_ambient_index = _effects->playSound(sound, &_ambient_handle, SoundMixer::FLAG_LOOP);
 }
 
+bool SimonSound::hasVoice()
+{
+	return _voice != NULL;
+}
+
 void SimonSound::stopAll()
 {
 	_mixer->stopAll();

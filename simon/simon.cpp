@@ -4485,10 +4485,10 @@ void SimonState::go()
 	_mainscript_toggle = false;
 	_vgascript_toggle = false;
 
-	if (!_voice) {
-		_vk_t_toggle = true;
-	} else {
+	if (_sound->hasVoice()) {
 		_vk_t_toggle = false;
+	} else {
+		_vk_t_toggle = true;
 	}
 
 	while (1) {
