@@ -27,19 +27,23 @@
 #include "common/system.h"
 #include "cdaudio.h"
 
+#include "PNOLoader.h"
+
+
 Err HwrDisplayPalette(UInt8 operation, Int16 startIndex, 
 			 	  			 UInt16 paletteEntries, RGBColorType *tableP)
 							SYS_TRAP(sysTrapHwrDisplayPalette);
 
 typedef struct {
-	bool active;	
 	OSystem::SoundProc proc;
 	void *param;
 	OSystem::SoundFormat format;
+
 	SndStreamRef sndRefNum;
+	bool active, useHandler;
+	void *dataP;
 } SoundDataType;
 
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
 class OSystem_PALMOS : public OSystem {
 public:
 	// Set colors of the palette
@@ -88,7 +92,7 @@ public:
 	// Returns true if an event was retrieved.	
 	bool poll_event(Event *event);
 	
-	void SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert);
+	void SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat = false);
 
 	/** @name Sound */
 	//@{
@@ -153,10 +157,11 @@ public:
 	// Savefile management
 	SaveFileManager *get_savefile_manager();
 
-	static OSystem *create(UInt16 gfx_mode, bool full_screen);
+	static OSystem *create(UInt16 gfx_mode);
 
-	UInt8 _sndHandle;
-	Boolean _isSndPlaying;
+//	UInt8 _sndHandle;
+//	Boolean _isSndPlaying;
+//	UInt8 *convP;
 
 protected:
 	byte *_tmpScreenP, *_tmpBackupP;
@@ -166,35 +171,35 @@ private:
 	typedef void (OSystem_PALMOS::*RendererProc)();
 	RendererProc _renderer_proc;
 
-	UInt8 *_sndDataP, *_sndTempP;
-
 	void update_screen__flipping();
-	void update_screen__dbuffer();
+	void update_screen__buffered();
 	void update_screen__direct();
-	void update_screen__wide();
+	void update_screen__wide_portrait();
+	void update_screen__wide_landscape();
+	void update_screen__wide_zodiac();
+
+	void *ptrP[5];	// various ptr
 
 	WinHandle _screenH;
 	WinHandle _offScreenH;
-	Boolean _fullscreen;
+	Boolean _fullscreen, _adjustAspectRatio;
 	struct {
 		Coord x;
 		Coord y;
 		UInt32 addr;
 	} _screenOffset;
 
-public:
 	byte *_screenP;
+	byte *_offScreenP;
 	int _offScreenPitch;
 	int _screenPitch;
-	
-private:
-	byte *_offScreenP;
+
 
 	bool _mouseVisible;
 	bool _mouseDrawn;
 
 	enum {
-		MAX_MOUSE_W = 40,	// must be 80x80 with 640x480 games
+		MAX_MOUSE_W = 40,	// must be 80x80 with 640x480 games ?
 		MAX_MOUSE_H = 40
 	};
 
@@ -229,17 +234,43 @@ private:
 	RGBColorType *_currentPalette;
 	uint _paletteDirtyStart, _paletteDirtyEnd;
 
-	void check_sound();
 
 	void draw_mouse();
 	void undraw_mouse();
+	
+	void sound_handler();
+	void timer_handler(UInt32 current_msecs);
+	
+	void getCoordinates(EventPtr event, Coord *x, Coord *y);
+	void draw1BitGfx(UInt16 id, UInt32 x, UInt32 y, Boolean clear);
 
 	void load_gfx_mode();
 	void unload_gfx_mode();
 	static void autosave();
 
+	// ARM
+	struct {
+		PnoDescriptor pnoDesc;
+		MemPtr pnoPtr;
+	} _arm;
+
 	CDAudio *_cdPlayer;
 	// PALM spec
+
+	enum {
+		kLastKeyNone			= 0,
+		kLastKeyMouseUp			= 1	<< 0,
+		kLastKeyMouseDown		= 1	<< 1,
+		kLastKeyMouseLeft		= 1	<< 2,
+		kLastKeyMouseRight		= 1	<< 3,
+		kLastKeyMouseButLeft	= 1 << 4,
+		kLastKeyMouseButRight	= 1 << 5,
+		
+		kLastKeyCalc			= 1 << 30,
+		kLastKeyAny				= 1 << 31
+	};
+
+	
 
 	Int32 _lastKeyPressed;
 	UInt32 _lastKeyRepeat;
@@ -251,7 +282,7 @@ private:
 	eventsEnum _lastEvent;
 
 	OSystem_PALMOS();
-
+	void init_intern(UInt16 gfx_mode);
 };
 
 #endif

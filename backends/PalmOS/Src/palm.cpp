@@ -19,21 +19,26 @@
  * $Header$
  *
  */
+#include "stdafx.h"
 
 #include "backends/intern.h"
 #include "scumm.h"
 #include "common/scaler.h"
+#include "common/config-manager.h"
 
+#include "shared.h"
+#include "ArmNative.h"
+
+#include <BmpGlue.h>
 #include "start.h"
 #include "palm.h"
 #include "vibrate.h"
+#include <PalmNavigator.h>
 
 #include "cd_msa.h"
-//#undef DISABLE_TAPWAVE
 
 #ifndef DISABLE_TAPWAVE
-#include "tapwave.h"
-//#include "cd_zodiac.h"
+// Tapwave code will come here
 #endif
 
 #define EXITDELAY			(500) // delay to exit : calc button : double tap 1/500 sec
@@ -42,16 +47,21 @@
 //#define	SND_BLOCK			(8192)
 #define	SND_BLOCK			(3072)
 
-OSystem *OSystem_PALMOS::create(UInt16 gfx_mode, bool full_screen) {
+OSystem *OSystem_PALMOS_create(int gfx_mode) {
+	return OSystem_PALMOS::create(gfx_mode);
+}
+
+OSystem *OSystem_PALMOS::create(UInt16 gfx_mode) {
 	OSystem_PALMOS *syst = new OSystem_PALMOS();
-	syst->_mode = gfx_mode;
-	syst->_vibrate = gVars->vibrator;
-	syst->_fullscreen = (full_screen && (gVars->options & optHasWideMode));
+	syst->init_intern(gfx_mode);
 	return syst;
 }
 
-OSystem *OSystem_PALMOS_create(int gfx_mode, bool full_screen) {
-	return OSystem_PALMOS::create(gfx_mode, full_screen);
+void OSystem_PALMOS::init_intern(UInt16 gfx_mode) {
+	_mode = gfx_mode;
+	_vibrate = gVars->vibrator;
+	_fullscreen = (ConfMan.getBool("fullscreen") && OPTIONS_TST(kOptModeWide));
+	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
 }
 
 void OSystem_PALMOS::set_palette(const byte *colors, uint start, uint num) {
@@ -73,6 +83,26 @@ void OSystem_PALMOS::set_palette(const byte *colors, uint start, uint num) {
 
 	if (start + num > _paletteDirtyEnd)
 		_paletteDirtyEnd = start + num;
+}
+
+static void ClearScreen() {
+	RGBColorType rgb	= {0, 0,0,0};
+	RectangleType r		= {0, 0, gVars->screenFullWidth, gVars->screenFullHeight};
+	WinSetForeColor(WinRGBToIndex(&rgb));
+	WinDrawRectangle(&r,0);
+}
+
+static void SwitchTo16bit() {
+	if (OPTIONS_TST(kOptMode16Bit)) {
+		UInt32 width = hrWidth;
+		UInt32 height= hrHeight;
+		UInt32 depth = 16;
+		Boolean color = true;
+		
+		WinScreenMode(winScreenModeSet, &width, &height, &depth, &color);
+		ClearScreen();
+		OPTIONS_SET(kOptDisableOnScrDisp);
+	}
 }
 
 void OSystem_PALMOS::load_gfx_mode() {
@@ -104,23 +134,34 @@ void OSystem_PALMOS::load_gfx_mode() {
 			_screenP	= _offScreenP;
 			_offScreenH	= WinGetDisplayWindow();
 			_screenH	= _offScreenH;	
-			_renderer_proc = &update_screen__flipping;
+			_renderer_proc = &OSystem_PALMOS::update_screen__flipping;
 			break;
 		case GFX_WIDE:
-		case GFX_DOUBLEBUFFER:
+		case GFX_BUFFERED:
 			_screenH	= WinGetDisplayWindow();
-			_offScreenH	= WinCreateOffscreenWindow(_screenWidth, _screenHeight,screenFormat, &e);
+			_offScreenH	= WinCreateOffscreenWindow(_screenWidth, _screenHeight, screenFormat, &e);
 			_offScreenP	= (byte *)(BmpGetBits(WinGetBitmap(_offScreenH)));
 
 			if (_mode == GFX_WIDE) {
-				gVars->screenLocked = true;
-				_screenP = WinScreenLock(winLockErase) + _screenOffset.addr;
-				_renderer_proc = &update_screen__wide;
+#ifndef DISABLE_TAPWAVE
+// Tapwave code will come here
+#endif			
+				{
+					if (OPTIONS_TST(kOptDeviceARM))
+						_arm.pnoPtr = PceNativeCallInit(ARMCODE_1, &_arm.pnoDesc);
+
+					gVars->screenLocked = true;
+					_screenP = WinScreenLock(winLockErase) + _screenOffset.addr;
+					_renderer_proc = (OPTIONS_TST(kOptModeLandscape)) ?
+						&OSystem_PALMOS::update_screen__wide_landscape :
+						&OSystem_PALMOS::update_screen__wide_portrait;
+				}
+
 			} else {
 				_screenP = (byte *)(BmpGetBits(WinGetBitmap(_screenH))) + _screenOffset.addr;
-				_renderer_proc = &update_screen__dbuffer;
-				_offScreenPitch = _screenWidth;
+				_renderer_proc =  &OSystem_PALMOS::update_screen__buffered;
 			}
+			_offScreenPitch = _screenWidth;
 			break;
 
 		case GFX_NORMAL:
@@ -129,9 +170,12 @@ void OSystem_PALMOS::load_gfx_mode() {
 			_screenH = _offScreenH;
 			_offScreenP	= (byte *)(BmpGetBits(WinGetBitmap(_offScreenH))) + _screenOffset.addr;
 			_screenP	= _offScreenP;
-			_renderer_proc = &update_screen__direct;
+			_renderer_proc =  &OSystem_PALMOS::update_screen__direct;
 			break;
 	}
+
+	if (OPTIONS_TST(kOptModeHiDensity))
+		WinSetCoordinateSystem(kCoordinatesNative);
 
 	// palette for preload dialog
 	set_palette(startupPalette,0,16);
@@ -145,17 +189,29 @@ void OSystem_PALMOS::load_gfx_mode() {
 }
 
 void OSystem_PALMOS::unload_gfx_mode() {
-	switch (_mode)
-	{
+
+	WinSetDrawWindow(WinGetDisplayWindow());
+
+	if (OPTIONS_TST(kOptModeHiDensity))
+		WinSetCoordinateSystem(kCoordinatesStandard);
+
+	switch (_mode) {
 		case GFX_FLIPPING:
 			WinScreenUnlock();
 			break;
 
 		case GFX_WIDE:
-			WinScreenUnlock();
-			// continue to GFX_DOUBLEBUFFER
+#ifndef DISABLE_TAPWAVE
+// Tapwave code will come here
+#endif
+			{
+				WinScreenUnlock();
+				if (OPTIONS_TST(kOptDeviceARM) && _arm.pnoPtr)
+					PceNativeCallRelease(&_arm.pnoDesc, _arm.pnoPtr);
+			}
+				// continue to GFX_BUFFERED
 
-		case GFX_DOUBLEBUFFER:
+		case GFX_BUFFERED:
 			WinDeleteWindow(_offScreenH,false);
 			break;
 	}
@@ -175,31 +231,50 @@ void OSystem_PALMOS::unload_gfx_mode() {
 }
 
 void OSystem_PALMOS::init_size(uint w, uint h) {
-
 	_screenWidth = w;
 	_screenHeight = h;
-	_offScreenPitch = gVars->screenPitch;	// direct screen / flipping use this, set later if double buffer
+	_offScreenPitch = gVars->screenPitch;	// direct screen / flipping use this, reset later if buffered
 	_screenPitch = gVars->screenPitch;
 
 	_overlayVisible = false;
 	_quitCount = 0;
 
-	if (OPTIONS(optIsCollapsible))
+	// 640x480 only on Zodiac and in GFX_WIDE mode
+	if (h == 480)
+		if (!(_mode == GFX_WIDE && OPTIONS_TST(kOptDeviceZodiac)))
+			error("640x480 game can only be run on Zodiac in wide mode.");
+
+	if (OPTIONS_TST(kOptCollapsible))
 		SysSetOrientationTriggerState(sysOrientationTriggerDisabled);
 
 	// check HiRes+
 	if (_mode == GFX_WIDE) {
-		if (gVars->slkRefNum != sysInvalidRefNum) {
-			if (!(w == 320 && h == 200 && gVars->slkVersion != vskVersionNum3)) {	// only for 320x200 games and not for UX50 at this time
-				warning("Wide display not avalaible for this game, switching to GFX_NORMAL mode.");
-				_mode = GFX_NORMAL;
+		if (OPTIONS_TST(kOptModeWide)) {
+			Boolean std = true;
+
+#ifndef DISABLE_TAPWAVE
+// Tapwave code will come here
+#endif
+			if (std) {
+				// only for 320x200 games
+				if (!(w == 320 && h == 200)) {
+/*					if (OPTIONS_TST(kOptModeLandscape)) {
+						// not for landscape display at this time, only for portrait
+						warning("Wide display not avalaible on this mode, switching to GFX_NORMAL mode.");
+						_mode = GFX_NORMAL;
+					}
+				} else {*/
+					warning("Wide display not avalaible for this game, switching to GFX_NORMAL mode.");
+					_mode = GFX_NORMAL;
+				}
 			}
+
 		} else {
 			warning("HiRes+ not avalaible on this device, switching to GFX_NORMAL mode.");
 			_mode = GFX_NORMAL;
 		}
 	}
-	
+
 	if (_fullscreen || _mode == GFX_WIDE) {
 		// Sony wide
 		if (gVars->slkRefNum != sysInvalidRefNum) {
@@ -214,24 +289,27 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 			}
 
 		// Tapwave Zodiac and other DIA compatible devices
-		} else if (OPTIONS(optHasWideMode)) {
-/*			UInt32 width = hrWidth;
-			UInt32 height= hrHeight;
-			UInt32 depth = 16;
-			Boolean color = true;
-			Err e;
-			e = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color );
-*/			//SysSetOrientation(sysOrientationLandscape);
+		} else if (OPTIONS_TST(kOptModeWide)) {
 			PINSetInputAreaState(pinInputAreaClosed);
 			StatHide();
-
 		}
 	}
 
 	if (_mode == GFX_WIDE) {
-		_screenOffset.x = 0;
-		_screenOffset.y = 10;
-		_screenOffset.addr = _screenOffset.y;
+		OPTIONS_SET(kOptDisableOnScrDisp);
+
+		if (OPTIONS_TST(kOptDeviceZodiac)) {
+			// landscape
+			_screenOffset.x = 0;
+			_screenOffset.y = (_adjustAspectRatio) ? 10 : 0;
+			_screenOffset.addr = _screenOffset.y * _screenPitch;
+
+		// others only for 320x200
+		} else {
+			_screenOffset.x = 0;
+			_screenOffset.y = 10;
+			_screenOffset.addr = (OPTIONS_TST(kOptModeLandscape) ? _screenOffset.y : _screenOffset.x) * _screenPitch;
+		}
 	} else {
 		_screenOffset.x = ((_fullscreen ? gVars->screenFullWidth : gVars->screenWidth) - w) >> 1;
 		_screenOffset.y = ((_fullscreen ? gVars->screenFullHeight : gVars->screenHeight) - h) >> 1;
@@ -260,72 +338,138 @@ void OSystem_PALMOS::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 		y = 0;
 	}
 
-	if (w > _screenWidth - x) {
+	if (w > _screenWidth - x)
 		w = _screenWidth - x;
-	}
 
-	if (h > _screenHeight - y) {
+	if (h > _screenHeight - y)
 		h = _screenHeight - y;
-	}
 
 	if (w <= 0 || h <= 0)
 		return;
 
 	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	if (_mouseDrawn)
-		undraw_mouse();
+	if (_mouseDrawn) {
+/*		RectangleType mouse = {_mouseCurState.x, _mouseCurState.y, _mouseCurState.w, _mouseCurState.h};
+		RectangleType copy	= {x, y, w, h};
+		RectangleType result;
+		
+		RctGetIntersection(&mouse, &copy, &result);
+		
+		if (result.extent.x !=0 && result.extent.y !=0)*/
+			undraw_mouse();
+	}
 
 	byte *dst = _offScreenP + y * _offScreenPitch + x;
+/*
+	if (OPTIONS_TST(kOptDeviceARM)) {
+		DataOSysCopyRectType userData = { kOSysCopyRect, dst, buf, pitch, _offScreenPitch, w, h };
+		PceNativeRsrcCall(ARMCODE_1, &userData);
+		
+#ifdef DEBUG_ARM
+	} else if (OPTIONS_TST(kOptDeviceProcX86)) {
+		DataOSysCopyRectType userData = { kOSysCopyRect, dst, buf, pitch, _offScreenPitch, w, h };
+		UInt32 result = PceNativeCall((NativeFuncType*)"ARMlet.dll\0ARMlet_Main", &userData);		
+#endif
 
-	if (_offScreenPitch == pitch && pitch == w) {
-		memcpy (dst, buf, h * w);
 	} else {
-		do {
-			memcpy(dst, buf, w);
-			dst += _offScreenPitch;
-			buf += pitch;
-		} while (--h);
-	}
+*/
+		if (_offScreenPitch == pitch && pitch == w) {
+			MemMove (dst, buf, h * w);
+		} else {
+			do {
+				MemMove(dst, buf, w);
+				dst += _offScreenPitch;
+				buf += pitch;
+			} while (--h);
+		}
+//	}
 }
 
-// only avalaible for 320x200 games, so use values instead of vars
-#define WIDE_PITCH			320
-#define WIDE_HALF_HEIGHT	100	// 200 / 2
+#ifndef DISABLE_TAPWAVE
+// Tapwave code will come here
+#endif
 
-void OSystem_PALMOS::update_screen__wide() {
-	Coord x, y;
-	UInt32 next = _screenOffset.y << 1;
-	UInt8 *dst = _screenP;
+void OSystem_PALMOS::update_screen__wide_portrait() {
+	UInt8 *dst = _screenP + _screenOffset.y;
 	UInt8 *src1 = _offScreenP + WIDE_PITCH - 1;
-	UInt8 *src2 = src1;
 
-	for (x = 0; x < _screenWidth >> 1; x++) 
-	{
-		for (y = 0; y < WIDE_HALF_HEIGHT; y++) 
-		{
-			*dst++ = *src1;
-			src1 += WIDE_PITCH;
-			*dst++ = *src1;
-			*dst++ = *src1;
-			src1 += WIDE_PITCH;
+	if (OPTIONS_TST(kOptDeviceARM)) {
+		DataOSysWideType userData = { kOSysWidePortrait, dst, src1 };
+		PceNativeRsrcCall(&_arm.pnoDesc, &userData);
+		
+#ifdef DEBUG_ARM
+	} else if (OPTIONS_TST(kOptDeviceProcX86)) {
+		DataOSysWideType userData = { kOSysWidePortrait, dst, src1 };
+		UInt32 result = PceNativeCall((NativeFuncType*)"ARMlet.dll\0ARMlet_Main", &userData);		
+#endif
+
+	} else {
+		Coord x, y;
+		UInt8 *src2 = src1;
+
+		for (x = 0; x < WIDE_HALF_WIDTH; x++) {
+			for (y = 0; y < WIDE_HALF_HEIGHT; y++) {
+				*dst++ = *src1;
+				src1 += WIDE_PITCH;
+				*dst++ = *src1;
+				*dst++ = *src1;
+				src1 += WIDE_PITCH;
+			}
+			src1 = --src2;
+			dst += 20; // we draw 200pix scaled to 1.5 = 300, screen width=320, so next is 20
+
+			for (y = 0; y < WIDE_HALF_HEIGHT; y++) {
+				*dst++ = *src1;
+				src1 += WIDE_PITCH;
+				*dst++ = *src1;
+				*dst++ = *src1;
+				src1 += WIDE_PITCH;
+			}
+			src1 = --src2;
+			dst += 20;
+
+			MemMove(dst, dst - WIDE_PITCH, 300);	// 300 = 200 x 1.5
+			dst += WIDE_PITCH;
 		}
-		src1 = --src2;
-		dst += next;
+	}
 
-		for (y = 0; y < WIDE_HALF_HEIGHT; y++) 
-		{
-			*dst++ = *src1;
-			src1 += WIDE_PITCH;
-			*dst++ = *src1;
-			*dst++ = *src1;
-			src1 += WIDE_PITCH;
+	WinScreenUnlock();
+	_screenP = WinScreenLock(winLockCopy) + _screenOffset.addr;
+}
+
+void OSystem_PALMOS::update_screen__wide_landscape() {
+	UInt8 *dst = _screenP;
+	UInt8 *src = _offScreenP;
+
+
+	if (OPTIONS_TST(kOptDeviceARM)) {
+		DataOSysWideType userData = { kOSysWideLandscape, dst, src };
+		PceNativeRsrcCall(&_arm.pnoDesc, &userData);
+
+#ifdef DEBUG_ARM
+	} else if (OPTIONS_TST(kOptDeviceProcX86)) {
+		DataOSysWideType userData = { kOSysWideLandscape, dst, src };
+		UInt32 result = PceNativeCall((NativeFuncType*)"ARMlet.dll\0ARMlet_Main", &userData);		
+#endif
+	} else {
+		Coord x, y;
+
+		for (y = 0; y < WIDE_HALF_HEIGHT; y++) {
+			for (x = 0; x < WIDE_HALF_WIDTH; x++) {
+				*dst++ = *src++;
+				*dst++ = *src;
+				*dst++ = *src++;
+			}
+			for (x = 0; x < WIDE_HALF_WIDTH; x++) {
+				*dst++ = *src++;
+				*dst++ = *src;
+				*dst++ = *src++;
+			}
+
+			MemMove(dst, dst - 480, 480);
+			dst += 480;
 		}
-		src1 = --src2;
-		dst += next;
-
-		MemMove(dst, dst - WIDE_PITCH, 300);	// 300 = 200 x 1.5
-		dst += WIDE_PITCH;
-	}	
+	}
 
 	WinScreenUnlock();
 	_screenP = WinScreenLock(winLockCopy) + _screenOffset.addr;
@@ -333,22 +477,16 @@ void OSystem_PALMOS::update_screen__wide() {
 
 void OSystem_PALMOS::update_screen__flipping() {
 	RectangleType r, dummy;
-	UInt8 *screen;
-	UInt32 size = _screenWidth * _screenHeight + 6400; // 10 pix top and bottom border, see TODO
 	Boolean shaked = false;
-	UInt32 move = 0;
 
 	// shake screen
 	if (_current_shake_pos != _new_shake_pos) {
-		if (_useHRmode) {
-			RctSetRectangle(&r, _screenOffset.x, _screenOffset.y - _new_shake_pos, _screenWidth, _screenHeight + (_new_shake_pos << 2));
+		RctSetRectangle(&r, _screenOffset.x, _screenOffset.y - _new_shake_pos, _screenWidth, _screenHeight + (_new_shake_pos << 2));
+
+		if (_useHRmode)
 			HRWinScrollRectangle(gVars->HRrefNum, &r, winDown, _new_shake_pos, &dummy);
-		} else {
-			// TODO : need to change this to line copy if palm give us an HiRes+ device and change 3200/6400 value to the good one depending on the screen pitch
-			move = (_new_shake_pos * _screenWidth);
-			screen = _offScreenP - 3200;
-			MemMove(screen + move, screen, size);
-		}
+		else
+			WinScrollRectangle(&r, winDown, _new_shake_pos, &dummy);
 
 		if (_vibrate) {
 			Boolean active = (_new_shake_pos >= 3);
@@ -363,19 +501,17 @@ void OSystem_PALMOS::update_screen__flipping() {
 	WinScreenUnlock();
 	_offScreenP = WinScreenLock(winLockCopy) + _screenOffset.addr;
 	_screenP = _offScreenP;
+
 	if (shaked) {
-		if (_useHRmode) {
+		if (_useHRmode)
 			HRWinScrollRectangle(gVars->HRrefNum, &r, winUp, _new_shake_pos, &dummy);
-		} else {
-			// TODO : need to change this to line copy if palm give us an HiRes+ device
-			screen = _offScreenP - 3200;
-			MemMove(screen, screen + move, size);
-		}
+		else
+			WinScrollRectangle(&r, winUp, _new_shake_pos, &dummy);
 	}
 
 }
 
-void OSystem_PALMOS::update_screen__dbuffer() {
+void OSystem_PALMOS::update_screen__buffered() {
 	UInt32 move = 0;
 	UInt32 size = _screenWidth * _screenHeight;
 
@@ -409,41 +545,6 @@ void OSystem_PALMOS::update_screen__dbuffer() {
 	if (_screenPitch == _screenWidth) {
 		MemMove(_screenP + move, _offScreenP, size - move);
 	} else {
-#ifndef DISABLE_TAPWAVE
-	Err e;
-	TwGfxSurfaceType *src;
-	TwGfxSurfaceType *dst;
-	TwGfxRectType d = {0,0,480,300}, s = {0,0,320,200};
-	TwGfxSurfaceInfoType t;
-	TwGfxPointType dd = {0,0};
-
-	t.size = sizeof(TwGfxSurfaceInfoType);
-	t.width = 320;
-	t.height = 200;
-	t.rowBytes = 640;
-	t.location = twGfxLocationAcceleratorMemory;
-	t.pixelFormat = twGfxPixelFormatRGB565_LE;
-/*	
-	ColorTableType table;
-	RGBColorType *rgb = ColorTableEntries (table);
-	table.numEntries = 256;
-	*rgb = _currentPalette;
-	*/
-	//BitmapType *newBmp = 
-	
-
-	
-	TwGfxType *gfx;
-	e = TwGfxOpen(&gfx, NULL);
-	e = TwGfxAllocSurface(gfx, &src, &t);
-	e = TwGfxDrawPalmBitmap(src, &dd, WinGetBitmap(_offScreenH));
-	
-	e = TwGfxGetPalmDisplaySurface(gfx, &dst);
-	e = TwGfxStretchBlt(dst, &d, src, &s); 
-	e = TwGfxFreeSurface(src);
-	e = TwGfxClose(gfx);
-#endif
-//#if 0
 		byte *src = _offScreenP;
 		byte *dst = _screenP + move;
 		UInt16 h = _screenHeight - _new_shake_pos;
@@ -452,7 +553,6 @@ void OSystem_PALMOS::update_screen__dbuffer() {
 			dst += _screenPitch;
 			src += _offScreenPitch;
 		} while (--h);
-//#endif
 	}
 
 }
@@ -467,79 +567,56 @@ void OSystem_PALMOS::update_screen__direct() {
 	}
 }
 
-#define MD_NONE 0
-#define MD_CTRL 1
-#define MD_ALT	2
+enum {
+	MD_NONE = 0,
+	MD_CMD,
+	MD_ALT,
+	MD_CTRL
+};
 
-static void drawKeyState(OSystem_PALMOS *sys, UInt8 state) {
-	UInt8 i,j;
-	UInt16 bmpID = 3000 + state - 1;
-	
-	MemHandle hTemp;
-	BitmapType *bmTemp;
-	UInt32 *bmData;
-	
-	UInt32 pitch = sys->_screenPitch;
-	UInt8 *scr = sys->_screenP + sys->_screenPitch * (sys->get_height() + 2) + 2;
+#define kDrawKeyState	3000
+#define kDrawNumPad		3010
 
-	hTemp	= DmGetResource(bitmapRsc,bmpID);
-	
-	if (hTemp) { // draw
-		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
-		bmData	= (UInt32 *)BmpGetBits(bmTemp);
+void OSystem_PALMOS::draw1BitGfx(UInt16 id, UInt32 x, UInt32 y, Boolean show) {
+	if (OPTIONS_TST(kOptDisableOnScrDisp))
+		return;
 
-		for (i = 0; i < 7; i++) {
-			for (j = 0; j < 32; j++) {
-				if (*bmData & (1 << (31-j)))
-					*scr++ = gVars->indicator.on;
-				else
-					*scr++ = gVars->indicator.off;
-			}
-			scr += pitch - 32;
-			bmData++;
-		}
-
-		MemPtrUnlock(bmTemp);
-		DmReleaseResource(hTemp);
-	} else {	// undraw
-		for (i = 0; i < 7; i++) {
-			for (j = 0; j < 32; j++) {
-				*scr++ = gVars->indicator.off;
-			}
-			scr += pitch - 32;
-		}
-	}
-}
-
-static void drawNumPad(OSystem_PALMOS *sys, UInt8 color) {
-	UInt8 i,j,k;
-	UInt16 bmpID = 3010;	// numPadBitmap 64x34
-
-	MemHandle hTemp;
-	BitmapType *bmTemp;
-	UInt32 *bmData;
-
-	UInt32 pitch = sys->_screenPitch;
-	UInt8 *scr = sys->_screenP + sys->_screenPitch * (sys->get_height() + 2);
-
-	scr += (sys->get_width() >> 1) - 32;
-	hTemp	= DmGetResource(bitmapRsc,bmpID);
+	MemHandle hTemp = DmGetResource(bitmapRsc, id);
 	
 	if (hTemp) {
+		BitmapType *bmTemp;
+		UInt32 *bmData;
+		UInt8 ih, iw, ib;
+		Coord w, h;
+		Int16 blocks, next;
+
+		UInt8 *scr = _screenP + x + _screenPitch * y;
+
 		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
 		bmData	= (UInt32 *)BmpGetBits(bmTemp);
+		BmpGlueGetDimensions(bmTemp, &w, &h, 0);
 
-		for (i = 0; i < 34; i++) {
-			for (k = 0; k < 2; k++) {
-				for (j = 0; j < 32; j++) {
-					if (*bmData & (1 << (31-j)))
-						*scr++ = color;
-					else
-						*scr++ = 0;
+		blocks = w >> 5;
+		next = w - (blocks << 5);
+
+		if (next)
+			blocks++;
+		
+		for (ih = 0; ih < h; ih++) {			// line
+			for (ib = 0; ib < blocks; ib++) {	// 32pix block
+				next = w - (ib << 5);
+				next = MIN(next, (Coord)32);
+		
+				for (iw = 0; iw < next; iw++) {	// row
+
+					*scr++ = ((*bmData & (1 << (31 - iw))) && show) ?
+						gVars->indicator.on :
+						gVars->indicator.off;
 				}
+
 				bmData++;
 			}
-			scr += pitch - 64;
+			scr += _screenPitch - w;
 		}
 
 		MemPtrUnlock(bmTemp);
@@ -572,10 +649,10 @@ void OSystem_PALMOS::update_screen() {
 		if (oldCol != gVars->indicator.on) {	
 			// redraw if needed
 			if (_lastKeyModifier)
-				drawKeyState(this, _lastKeyModifier);
+				draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, get_height() + 2, true);
 			
 			if(_useNumPad)
-				drawNumPad(this, gVars->indicator.on);
+				draw1BitGfx(kDrawNumPad, (get_width() >> 1) - 32, get_height() + 2, true);
 		}
 	}
 
@@ -612,7 +689,9 @@ bool OSystem_PALMOS::show_mouse(bool visible) {
 	return last;
 }
 
-void OSystem_PALMOS::warp_mouse(int x, int y) {}
+void OSystem_PALMOS::warp_mouse(int x, int y) {
+	set_mouse_pos(x, y);
+}
 
 void OSystem_PALMOS::set_mouse_pos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
@@ -637,8 +716,7 @@ void OSystem_PALMOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hotsp
 void OSystem_PALMOS::set_shake_pos(int shake_pos) {
 	_new_shake_pos = shake_pos;
 	
-	if (shake_pos == 0 && _vibrate)
-	{
+	if (shake_pos == 0 && _vibrate) {
 		Boolean active = false;
 		HwrVibrateAttributes(1, kHwrVibrateActive, &active);
 	}
@@ -652,10 +730,13 @@ uint32 OSystem_PALMOS::get_msecs() {
 }
 
 void OSystem_PALMOS::delay_msecs(uint msecs) {
-	UInt32 delay = (SysTicksPerSecond() * msecs) / 1000;
+	UInt32 current = get_msecs();
+	UInt32 last = current + msecs;
 
-	if (delay)
-		SysTaskDelay(delay);
+	do {
+		timer_handler(current);
+		current = get_msecs();
+	} while (current < last);
 }
 
 void OSystem_PALMOS::set_timer(TimerProc callback, int timer) {
@@ -675,27 +756,26 @@ void OSystem_PALMOS::lock_mutex(MutexRef mutex) {}
 void OSystem_PALMOS::unlock_mutex(MutexRef mutex) {}
 void OSystem_PALMOS::delete_mutex(MutexRef mutex) {}
 
-void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert) {
+void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat) {
 	Int16 x = _mouseCurState.x;
 	Int16 y = _mouseCurState.y;
 
-	if (_lastKeyPressed != -1) {
-		_lastKeyRepeat += 100;
+	if (_lastKeyPressed != kLastKeyNone || repeat) {
+		_lastKeyRepeat += 2;
 
-		if (_lastKeyRepeat > 3200)
-			_lastKeyRepeat = 3200;
+		if (_lastKeyRepeat > 32)
+			_lastKeyRepeat = 32;
 	}
 	else
-		_lastKeyRepeat = 100;
+		_lastKeyRepeat = 0;
 
-	x = x + iHoriz * (_lastKeyRepeat / 100);
-	y = y + iVert * (_lastKeyRepeat / 100);
+	x = x + iHoriz * (_lastKeyRepeat >> 1);
+	y = y + iVert * (_lastKeyRepeat >> 1);
 
 	x = (x < 0				) ? 0					: x;
 	x = (x >= _screenWidth	) ? _screenWidth - 1	: x;
 	y = (y < 0				) ? 0					: y;
 	y = (y >= _screenHeight	) ? _screenHeight - 1	: y;
-
 
 	event->event_code = EVENT_MOUSEMOVE;
 	event->mouse.x = x;
@@ -703,20 +783,52 @@ void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert) {
 	set_mouse_pos(x, y);
 }
 
-static void getCoordinates(EventPtr event, Boolean wide, Coord *x, Coord *y) {
-	if (wide) {
-		*y = (event->screenX << 2) / 3;
-		*x = 320 - (event->screenY << 2) / 3 - 1;	// wide only for 320x200, so ...
+void OSystem_PALMOS::getCoordinates(EventPtr event, Coord *x, Coord *y) {
+	if (OPTIONS_TST(kOptModeHiDensity)) {
+		Boolean dummy;
+		EvtGetPenNative(WinGetDisplayWindow(), &event->screenX, &event->screenY, &dummy);
 	} else {
-		*x = event->screenX << 1;
-		*y = event->screenY << 1;
+		event->screenX <<= 1;
+		event->screenY <<= 1;
+	}
+
+	if (_mode == GFX_WIDE) {
+		// wide landscape
+		if (OPTIONS_TST(kOptModeLandscape)) {
+
+			// zodiac have mutliple ratio 
+			if (OPTIONS_TST(kOptDeviceZodiac)) {
+				Int32 w,h;
+
+				h = (_adjustAspectRatio ? ((_screenHeight == 200) ? 300 : 360) : 320);
+				w = gVars->screenFullWidth;
+
+				*x = ((event->screenX - _screenOffset.x) << 8) / ((w << 8) / _screenWidth);
+				*y = ((event->screenY - _screenOffset.y) << 8) / ((h << 8) / _screenHeight);
+
+			// default (NR, NZ, NX, UX50, TT3, ...), wide only for 320x200
+			} else {
+				*x = ((event->screenX - _screenOffset.x) << 1) / 3;
+				*y = ((event->screenY - _screenOffset.y) << 1) / 3;
+			}
+
+		// wide portrait, only for 320x200
+		} else {
+			*y =       ((event->screenX - _screenOffset.y) << 1) / 3;
+			*x = 320 - ((event->screenY - _screenOffset.x) << 1) / 3 - 1;	
+		}
+
+	// normal coord
+	} else {
+		*x = (event->screenX - _screenOffset.x);
+		*y = (event->screenY - _screenOffset.y);
 	}
 }
 
 bool OSystem_PALMOS::poll_event(Event *event) {
 	EventType ev;
 	Boolean handled;
-	UInt32 current_msecs;
+	//UInt32 current_msecs;
 	UInt32 keyCurrentState;
 	Coord x, y;
 
@@ -731,50 +843,30 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 		return false;
 	}
 
-	current_msecs = get_msecs();
+	//current_msecs = get_msecs();
 
 	// sound handler
-	if(_sound.active)
-		check_sound();
+	sound_handler();
 
 	// timer handler
-//	if (_timer.active)
-//		 _timer.callback(_timer.duration);
-	if (_timer.active && (current_msecs >= _timer.nextExpiry)) {
-		_timer.duration = _timer.callback(_timer.duration);
-		_timer.nextExpiry = current_msecs + _timer.duration;
-	}
+	timer_handler(get_msecs());
 
-/*
-	if (_timer.active) {
-		if (current_msecs - _timer.next_expiry >= 10)
-			_timer.sleep = false;
-
-		if (!_timer.sleep) {
-			_timer.sleep = true;
-			while (_timer.next_expiry < current_msecs) {
-				_timer.next_expiry += 10;
-				_timer.duration = _timer.callback(_timer.duration);
-			}
-		}
-	}
-*/
 	if (_selfQuit)
 		quit();
 
 	for(;;) {
 		EvtGetEvent(&ev, evtNoWait);
 
-		// check for hardkey repeat
+		// check for hardkey repeat for mouse emulation (no 5way only)
 		keyCurrentState = KeyCurrentState();
-		if (_lastKeyPressed != -1 && _lastKeyPressed != vchrCalc &&
-			!(	(keyCurrentState & keyBitHard2) ||
-				(keyCurrentState & keyBitPageUp) ||
-				(keyCurrentState & keyBitPageDown) ||
-				(keyCurrentState & keyBitHard3)
+		if (_lastKeyPressed != kLastKeyNone && _lastKeyPressed != kLastKeyCalc &&
+			!(	(keyCurrentState & keyBitHard2) ||		// left
+				(keyCurrentState & keyBitPageUp) ||		// up
+				(keyCurrentState & keyBitPageDown) ||	// down
+				(keyCurrentState & keyBitHard3)			// right
 				)
 			) {
-					_lastKeyPressed = -1;
+					_lastKeyPressed = kLastKeyNone;
 		}
 
 		if (ev.eType == nilEvent)
@@ -782,38 +874,43 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 		if (ev.eType == keyDownEvent) {
 			switch (ev.data.keyDown.chr) {
+				// ESC key
 				case vchrLaunch:
-					_lastKeyPressed = -1;
+					_lastKeyPressed = kLastKeyNone;
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = 27;
 					event->kbd.ascii = 27;
 					event->kbd.flags = 0;
 					return true;
-
+				
+				// F5 = menu
 				case vchrJogPushRepeat:
 				case vchrMenu:
-					_lastKeyPressed = -1;
+					_lastKeyPressed = kLastKeyNone;
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = 319;
 					event->kbd.ascii = 319;
 					event->kbd.flags = 0;
 					return true;
 
+				case vchrFind:
+					// do nothing
+					return true;
+
 				case vchrBrightness:
 				case vchrContrast:
-				case vchrFind:
 					WinPalette(winPaletteSet, 0, 256, _currentPalette);
 					break;
 
 				case vchrCalc:
-					if (_lastKeyPressed == vchrCalc)
+					if (_lastKeyPressed & kLastKeyCalc)
 						if ((get_msecs() - _exit_delay) <= (EXITDELAY)) {
 							event->event_code = EVENT_QUIT;
 							_selfQuit = true;
 						}
 
 					_exit_delay = get_msecs();
-					_lastKeyPressed = vchrCalc;
+					_lastKeyPressed = kLastKeyCalc;
 					return true;
 
 				// wheel
@@ -829,48 +926,112 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				case vchrHardCradle:
 				case vchrHardCradle2:
 					_selfQuit = true;
+					break;
+
+				// mouse button
+				case vchrJogBack:
+				case vchrHard4: // right button
+					event->event_code = EVENT_RBUTTONDOWN;
+					event->mouse.x = _mouseCurState.x;
+					event->mouse.y = _mouseCurState.y;
+					_lastKeyPressed = kLastKeyNone;
+					return true;
+
+				case vchrJogPush:
+				case vchrHard1: // left button
+					event->event_code = EVENT_LBUTTONDOWN;
+					event->mouse.x = _mouseCurState.x;
+					event->mouse.y = _mouseCurState.y;
+					_lastKeyPressed = kLastKeyNone;
+					return true;
 			}
 			
-//			if (gVars->options & opt5WayNavigator)*/ {
-//			} else {
+			if (OPTIONS_TST(kOpt5WayNavigator)) {
+				// mouse emulation for device with 5-Way navigator
+				switch (ev.data.keyDown.chr) {
+					// ESC key
+					case vchrHard2:
+						_lastKeyPressed = kLastKeyNone;
+						event->event_code = EVENT_KEYDOWN;
+						event->kbd.keycode = 27;
+						event->kbd.ascii = 27;
+						event->kbd.flags = 0;
+						return true;
+					
+					// F5 = menu
+					case vchrHard3:
+						_lastKeyPressed = kLastKeyNone;
+						event->event_code = EVENT_KEYDOWN;
+						event->kbd.keycode = 319;
+						event->kbd.ascii = 319;
+						event->kbd.flags = 0;
+						return true;
+					
+					case vchrPageUp:
+					case vchrPageDown:
+					case vchrNavChange:
+						// left mouse button
+						if (ev.data.keyDown.keyCode & (navBitSelect|navChangeSelect)) {
+							event->event_code = EVENT_LBUTTONDOWN;
+							event->mouse.x = _mouseCurState.x;
+							event->mouse.y = _mouseCurState.y;
+							_lastKeyPressed = kLastKeyNone;
+							return true;						
+
+						// mouse move
+						} else {
+							Boolean kUp		= (ev.data.keyDown.keyCode & navBitUp);
+							Boolean kDown	= (ev.data.keyDown.keyCode & navBitDown);
+							Boolean kLeft	= (ev.data.keyDown.keyCode & navBitLeft);
+							Boolean kRight	= (ev.data.keyDown.keyCode & navBitRight);
+							Boolean kRepeat	= (ev.data.keyDown.modifiers & autoRepeatKeyMask);
+							Boolean process	= (kUp || kDown || kLeft || kRight);
+							
+							if (process) {
+								Int8 stepX = 0;
+								Int8 stepY = 0;
+
+								if (kLeft)
+									stepX = -1;
+								else if (kRight)
+									stepX = +1;
+									
+								if (kUp)
+									stepY = -1;
+								else if (kDown)
+									stepY = +1;
+								
+								SimulateArrowKeys(event, stepX, stepY, kRepeat);
+								_lastKeyPressed = kLastKeyNone;	// use only repeat flag
+								return true;
+							}
+						}
+						break;
+				}
+
+			} else {
 				// mouse emulation for device without 5-Way navigator
 				switch (ev.data.keyDown.chr) {
-					case vchrJogBack:
-					case vchrHard4: // right button
-						event->event_code = EVENT_RBUTTONDOWN;
-						event->mouse.x = _mouseCurState.x;
-						event->mouse.y = _mouseCurState.y;
-						_lastKeyPressed = -1;
-						return true;
-
-					case vchrJogPush:
-					case vchrHard1: // left button
-						event->event_code = EVENT_LBUTTONDOWN;
-						event->mouse.x = _mouseCurState.x;
-						event->mouse.y = _mouseCurState.y;
-						_lastKeyPressed = -1;
-						return true;
-
 					case vchrHard2:	// move left
 						SimulateArrowKeys(event, -1, 0);
-						_lastKeyPressed = vchrHard2;
+						_lastKeyPressed = kLastKeyMouseLeft;
 						return true;
 						
 					case vchrPageUp: // move up
 						SimulateArrowKeys(event, 0, -1);
-						_lastKeyPressed = vchrPageUp;
+						_lastKeyPressed = kLastKeyMouseUp;
 						return true;
 
 					case vchrPageDown: // move down
 						SimulateArrowKeys(event, 0, 1);
-						_lastKeyPressed = vchrPageDown;
+						_lastKeyPressed = kLastKeyMouseDown;
 						return true;
 
 					case vchrHard3: // move right
 						SimulateArrowKeys(event, 1, 0);
-						_lastKeyPressed = vchrHard3;
+						_lastKeyPressed = kLastKeyMouseRight;
 						return true;
-//				}
+				}
 			}
 		}
 
@@ -890,18 +1051,22 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 		case keyDownEvent: {
 				_lastEvent = keyDownEvent;
-				_lastKeyPressed = -1;
-				//if (ev.data.keyDown.modifiers & shiftKeyMask) b |= KBD_SHIFT;
+				_lastKeyPressed = kLastKeyNone;
 
 				if (ev.data.keyDown.chr == vchrCommand && (ev.data.keyDown.modifiers & commandKeyMask)) {
 					_lastKeyModifier++;
-					_lastKeyModifier %= 3;
-					drawKeyState(this, _lastKeyModifier);			
+					_lastKeyModifier %= 4;
+					
+					if (_lastKeyModifier)
+						draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, get_height() + 2, true);
+					else
+						draw1BitGfx(kDrawKeyState, 2, get_height() + 2, false);
 
 				} else {
 					byte b = 0;
-					if (_lastKeyModifier == MD_CTRL) b = KBD_CTRL;
+					if (_lastKeyModifier == MD_CMD) b = KBD_CTRL|KBD_ALT;
 					if (_lastKeyModifier == MD_ALT) b = KBD_ALT;
+					if (_lastKeyModifier == MD_CTRL) b = KBD_CTRL;
 					
 					if  ((ev.data.keyDown.chr == 'z' && b == KBD_CTRL) || (b == KBD_ALT && ev.data.keyDown.chr == 'x')) {
 						event->event_code = EVENT_QUIT;
@@ -910,23 +1075,30 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					} else if (ev.data.keyDown.chr == 'n' && b == KBD_CTRL) {
 						UInt8 *scr = _screenP + _screenWidth * (_screenHeight + 2);
 						_useNumPad = !_useNumPad;
-						drawNumPad(this, _useNumPad ? gVars->indicator.on : 0);
+						draw1BitGfx(kDrawNumPad, (get_width() >> 1) - 32, get_height() + 2, _useNumPad);
+
+					} else if (ev.data.keyDown.chr == 'a' && b == (KBD_CTRL|KBD_ALT)) {
+						property(PROP_TOGGLE_ASPECT_RATIO, NULL);
+						break;
 					}
 
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = ev.data.keyDown.chr;
 					event->kbd.ascii = (ev.data.keyDown.chr>='a' && ev.data.keyDown.chr<='z' && (event->kbd.flags & KBD_SHIFT) ? ev.data.keyDown.chr &~ 0x20 : ev.data.keyDown.chr);
 					event->kbd.flags = b;
-					_lastKeyModifier = MD_NONE;
-					drawKeyState(this, _lastKeyModifier);			
+					
+					if (_lastKeyModifier) {
+						_lastKeyModifier = MD_NONE;
+						draw1BitGfx(kDrawKeyState, 2, get_height() + 2, false);
+					}
 				}
 				return true;
 			}
 
 		case penMoveEvent:
-			getCoordinates(&ev, (_mode == GFX_WIDE), &x, &y);
+			getCoordinates(&ev, &x, &y);
 
-			if ((y - _screenOffset.y) > _screenHeight || (y - _screenOffset.y) < 0 || (x - _screenOffset.x) > _screenWidth || (x - _screenOffset.x) < 0)
+			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return true;
 
 			if (_lastEvent != penMoveEvent && (abs(y - event->mouse.y) <= 2 || abs(x - event->mouse.x) <= 2)) // move only if
@@ -934,24 +1106,24 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 			_lastEvent = penMoveEvent;
 			event->event_code = EVENT_MOUSEMOVE;
-			event->mouse.x = x - _screenOffset.x;
-			event->mouse.y = y - _screenOffset.y;
+			event->mouse.x = x;
+			event->mouse.y = y;
 			set_mouse_pos(event->mouse.x, event->mouse.y);
 			return true;
 
 		case penDownEvent:
-			getCoordinates(&ev, (_mode == GFX_WIDE), &x, &y);
+			getCoordinates(&ev, &x, &y);
 
 			if (_useNumPad) {
-				Coord x2 = _screenOffset.x + (_screenWidth >> 1) - 20; // - 64 / 2 + 12
-				Coord y2 = _screenOffset.y + _screenHeight + 2;
+				Coord x2 = (_screenWidth >> 1) - 20; // - 64 / 2 + 12
+				Coord y2 = _screenHeight + 2;
 
-				if (y >= y2 && y < (y2 + 34) && x >= x2 && x < (x2 + 64)) {	// numpad location
+				if (y >= y2 && y < (y2 + 34) && x >= x2 && x < (x2 + 40)) {	// numpad location
 					UInt8 key = '1';
 					key += 9 - ( (3 - ((x - x2) / 13)) + (3 * ((y - y2) / 11)) );
-
+					
 					_lastEvent = keyDownEvent;
-					_lastKeyPressed = -1;
+					_lastKeyPressed = kLastKeyNone;
 					
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = key;
@@ -962,24 +1134,24 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 			}
 
 			_lastEvent = penDownEvent;
-			if ((y - _screenOffset.y) > _screenHeight || (y - _screenOffset.y) < 0 || (x - _screenOffset.x) > _screenWidth || (x - _screenOffset.x) < 0)
+			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return true;
 
 			event->event_code = EVENT_LBUTTONDOWN;
-			event->mouse.x = x - _screenOffset.x;
-			event->mouse.y = y - _screenOffset.y;
+			event->mouse.x = x;
+			event->mouse.y = y;
 			set_mouse_pos(event->mouse.x, event->mouse.y);
 			return true;
 
 		case penUpEvent:
-			getCoordinates(&ev, (_mode == GFX_WIDE), &x, &y);
+			getCoordinates(&ev, &x, &y);
 			event->event_code = EVENT_LBUTTONUP;
 
-			if ((y - _screenOffset.y) > _screenHeight || (y - _screenOffset.y) < 0 || (x - _screenOffset.x) > _screenWidth || (x - _screenOffset.x) < 0)
+			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return true;
 
-			event->mouse.x = x - _screenOffset.x;
-			event->mouse.y = y - _screenOffset.y;
+			event->mouse.x = x;
+			event->mouse.y = y;
 			set_mouse_pos(event->mouse.x, event->mouse.y);
 			return true;
 
@@ -1049,8 +1221,18 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 	case PROP_OPEN_CD:
 		break;
 
+	case PROP_TOGGLE_ASPECT_RATIO:
+		if (_mode == GFX_WIDE && OPTIONS_TST(kOptDeviceZodiac)) {
+			_adjustAspectRatio ^= true;
+			ClearScreen();
+		}
+		break;
+
 	case PROP_GET_SAMPLE_RATE:
 		return 8000;
+	
+	case PROP_HAS_SCALER:
+		return 0;
 	}
 
 	return 0;
@@ -1071,8 +1253,6 @@ void OSystem_PALMOS::quit() {
 
 	free(_currentPalette);
 	free(_mouseBackupP);
-//	free(_sndDataP);
-	free(_sndTempP);
 
 	if (_cdPlayer) {
 		_cdPlayer->release();
@@ -1273,7 +1453,7 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	
 	_currentPalette = NULL;
 
-	_lastKeyPressed = -1;
+	_lastKeyPressed = kLastKeyNone;
 	_lastKeyRepeat = 100;
 	_lastKeyModifier = MD_NONE;
 	
@@ -1293,6 +1473,9 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	// HiRes
 	_useHRmode	= (gVars->HRrefNum != sysInvalidRefNum);
 	
+	// ARM
+	_arm.pnoPtr = NULL;
+	
 	// enable cdrom ?
 	// TODO : defaultTrackLength player
 	_cdPlayer = NULL;
@@ -1308,9 +1491,8 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	}
 	
 	// sound
-	_isSndPlaying = false;
-	_sndTempP = (UInt8 *)calloc(SND_BLOCK,1);
-	_sndDataP = NULL;
+//	_isSndPlaying = false;
+	memset(&_sound,0,sizeof(SoundDataType));
 }
 
 void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
@@ -1325,8 +1507,6 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 	RectangleType r, dummy;
 	WinSetDrawWindow(_offScreenH);
 	RctSetRectangle(&r, ((_offScreenH != _screenH) ? 0 : _screenOffset.x), ((_offScreenH != _screenH) ? 0 : _screenOffset.y), _screenWidth, _screenHeight);
-	// FIXME : use this only if the Hi-Density feature is present ?
-	if (!_useHRmode) WinSetCoordinateSystem(kCoordinatesNative);
 
 	// vertical movement
 	if (dy > 0) {
@@ -1368,81 +1548,106 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 		}
 	}
 
-	// FIXME : use this only if the Hi-Density feature is present ?
-	if (!_useHRmode) WinSetCoordinateSystem(kCoordinatesStandard);
+
 	WinSetDrawWindow(_screenH);
 	// Prevent crash on Clie device using successive [HR]WinScrollRectangle !
 	SysTaskDelay(1);
 }
-/*
-typedef struct {
-	bool played;
-	void *data;
-	UInt8 count;
-} CallbackDataType;
 
-CallbackDataType mycallback = {true, NULL, 0};
+static Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *bufferSizeP) {
+	SoundDataType *snd = (SoundDataType *)UserDataP;
+//	snd->proc(snd->param, (UInt8 *)bufferP, *bufferSizeP);
+	MemSet(bufferP, *bufferSizeP, 0);
 
-static Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 frameCount) {
-//	SoundDataType *snd = (SoundDataType *)UserDataP;
-//	snd->proc(snd->param, (UInt8 *)bufferP, frameCount);
 
-	CallbackDataType *ptr = (CallbackDataType *)UserDataP;
-	MemSet(bufferP,frameCount,0);
-
-	if (!ptr->played) {
-		MemMove(bufferP, ptr->data, SND_BLOCK * 3);
-		ptr->played = true;
-	} else {
-		MemSet(bufferP,SND_BLOCK,0);
+/*	if (snd->lock || !snd->started) {
+		MemSet(bufferP, *bufferSizeP, 0);
+		return errNone;
 	}
+	
+	if ((snd->lastSize + *bufferSizeP) <= MemPtrSize(snd->dataP)) {
+		snd->lock = true;
+		MemMove(bufferP, (UInt8 *)snd->dataP + snd->lastSize , *bufferSizeP);
+		snd->lastSize += *bufferSizeP;
+		snd->lock = false;
+	} else {
+		MemSet(bufferP, *bufferSizeP, 0);
+	}*/
+//	if (!snd->timerMode) {
+//		snd->proc(snd->param, (UInt8 *)bufferP, *bufferSizeP);
+/*	} else {
+		if (!snd->active) {
+			snd->dataP = MemPtrNew(*bufferSizeP);
+			MemSet(snd->dataP, *bufferSizeP, 0);
+			snd->active = true;
+		}
+		
+		if (snd->filled)
+			MemMove(bufferP, snd->dataP, *bufferSizeP);
+		else
+			MemSet(bufferP, *bufferSizeP, 0);
+
+		snd->filled = false;
+	}*/
+
 	return errNone;
 }
-*/
-//FILE *mf = NULL;
 
 bool OSystem_PALMOS::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
-	_sound.active = true;
-	_sound.proc = proc;
-	_sound.param = param;
-	_sound.format = format;
-/*
-	mycallback.data = _sndTempP;
+	Boolean success = false;
 
-	Err e;
-	//_sound.active = false;
-	e = SndStreamCreate(&_sound.sndRefNum, sndOutput, 8000, sndInt16Big, sndStereo, sndCallback, &mycallback, SND_BLOCK *3, false);
-	e = SndStreamStart(_sound.sndRefNum);
+	if (!_sound.active) {
+		_sound.proc = proc;
+		_sound.param = param;
+		_sound.format = format;
+		_sound.active = true;	// always true when we call this function
+		
+		// try to create sound stream
+		if (OPTIONS_TST(kOptPalmSoundAPI)) {
+			Err e = SndStreamCreateExtended(&_sound.sndRefNum, sndOutput,sndFormatPCM, 8000, sndInt16Big, sndStereo, &sndCallback, &_sound, 1024, false);
+			e = (e) ? e : SndStreamStart(_sound.sndRefNum);
+			//e = e ? e :	SndStreamSetVolume(_sound.sndRefNum, 32767 * gVars->soundVolume / 256);
 
-	//mf = fopen("/PALM/Programs/ScummVM/dump.wav","wb");
-	*/
-	return _sound.active;
+			_sound.dataP = NULL;		// sound buffer is set by the system
+			_sound.useHandler = true;	// don't execute sound_handler
+			success = (e == errNone);
+		}
+		// failed or not supported 
+		if (!success) {
+			_sound.useHandler = true;
+			_sound.dataP = calloc(1,SND_BLOCK);	// required by sound_handler
+			success = true;					// don't generate samples
+		}
+	}
+	return success;
 }
 
 void OSystem_PALMOS::clear_sound_proc() {
-/*	SndStreamStop(_sound.sndRefNum);
-	SndStreamDelete(_sound.sndRefNum);
-	*/
-	//fclose(mf);
-	
+	if (_sound.active) {
+		if (!_sound.useHandler) {
+			SndStreamStop(_sound.sndRefNum);
+			SndStreamDelete(_sound.sndRefNum);
+		}
+
+		free(_sound.dataP);
+	}
+
 	_sound.active = false;
+	_sound.useHandler = false;
+	_sound.dataP = NULL;
 }
 
-void OSystem_PALMOS::check_sound() {
-	// currently not supported
-	// but i need to use this function to prevent out of memory
-	// on games because the sound buffer growns and it's never
-	// freed.
-//	if (mycallback.played) {
-		_sound.proc(_sound.param, _sndTempP, SND_BLOCK);
-	/*	
-		if (mycallback.count == 3) {
-			mycallback.played = false;
-			mycallback.count = 0;
-		}
-		//if (mf)
-		//	fwrite(_sndTempP, SND_BLOCK, 1, mf);
-	}*/
+void OSystem_PALMOS::sound_handler() {
+	if (_sound.useHandler) {
+		_sound.proc(_sound.param, (byte *)_sound.dataP, SND_BLOCK);
+	}
+}
+
+void OSystem_PALMOS::timer_handler(UInt32 current_msecs) {
+	if (_timer.active && (current_msecs >= _timer.nextExpiry)) {
+		_timer.duration = _timer.callback(_timer.duration);
+		_timer.nextExpiry = current_msecs + _timer.duration;
+	}
 }
 
 void OSystem_PALMOS::show_overlay() {
@@ -1529,18 +1734,26 @@ void OSystem_PALMOS::copy_rect_overlay(const byte *buf, int pitch, int x, int y,
 		y = 0;
 	}
 
-	if (w > _screenWidth - x) {
+	if (w > _screenWidth - x)
 		w = _screenWidth - x;
-	}
 
-	if (h > _screenHeight - y) {
+	if (h > _screenHeight - y)
 		h = _screenHeight - y;
-	}
 
 	if (w <= 0 || h <= 0)
 		return;
 
-	undraw_mouse();
+	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
+	if (_mouseDrawn) {
+/*		RectangleType mouse = {_mouseCurState.x, _mouseCurState.y, _mouseCurState.w, _mouseCurState.h};
+		RectangleType copy	= {x, y, w, h};
+		RectangleType result;
+		
+		RctGetIntersection(&mouse, &copy, &result);
+		
+		if (result.extent.x !=0 && result.extent.y !=0)*/
+			undraw_mouse();
+	}
 
 	if (MemPtrDataStorage(_tmpScreenP)) {
 		byte *dst = _tmpScreenP;
