@@ -186,6 +186,7 @@ protected:
 	bool _in_callback;
 	bool _cepe_flag;
 	byte _copy_partial_mode;
+	bool _slow_mode;
 	bool _fast_mode;
 	bool _dx_use_3_or_4_for_lock;
 
