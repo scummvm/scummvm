@@ -27,7 +27,7 @@ namespace Common {
 
 void MemoryReadStream::seek(int32 offs, int whence) {
 	// Pre-Condition
-	assert(0 <= _pos && _pos <= _bufSize);
+	assert(_pos <= _bufSize);
 	switch (whence) {
 	case SEEK_END:
 		// SEEK_END works just like SEEK_SET, only 'reversed',
@@ -45,7 +45,7 @@ void MemoryReadStream::seek(int32 offs, int whence) {
 		break;
 	}
 	// Post-Condition
-	assert(0 <= _pos && _pos <= _bufSize);
+	assert(_pos <= _bufSize);
 }
 
 
