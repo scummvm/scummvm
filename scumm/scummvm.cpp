@@ -1290,10 +1290,8 @@ load_game:
 		_completeScreenRedraw = false;
 		gdi.clearCharsetMask();
 		_charset->_hasMask = false;
-		if (_version > 2) {
-			for (int i = 0; i < _maxVerbs; i++)
-				drawVerb(i, 0);
-		}
+		for (int i = 0; i < _maxVerbs; i++)
+			drawVerb(i, 0);
 		verbMouseOver(0);
 
 		if (_version <= 2) {
