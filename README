@@ -27,9 +27,9 @@ easier and quicker. If you cannot donate, help and contribute a patch!
 
 Contacting:
 -----------
-The easiest way to contact the ScummVM team is by subitting bug reports or
+The easiest way to contact the ScummVM team is by submitting bug reports or
 commenting in our forums. You can also join and e-mail the scummvm-devel
-mailing list, or chat with us on irc (#scummvm, irc.openprojects.net)
+mailing list, or chat with us on irc (#scummvm, irc.freenode.net)
 
 Supported Games:
 ----------------
@@ -39,8 +39,8 @@ be playable to the end:
 
         Loom (256 color CD version)               [Game: loomcd]
         Zak McKraken (256 color FM Towns version) [Game: zak256]
-        Monkey Island 1 (VGA verson)              [Game: monkeyvga]
-        Monkey Island 1 (CD version)              [Game: monkey1]
+        Monkey Island 1 (VGA version)             [Game: monkeyvga]
+        Monkey Island 1 (CD version)              [Game: monkey/monkey1]
         Monkey Island 2                           [Game: monkey2]
         Indiana Jones And The Fate Of Atlantis    [Game: atlantis]
         Day Of The Tentacle                       [Game: tentacle]
@@ -111,7 +111,7 @@ the section on Reporting Bugs.
        Sam and Max:
                 - Subgames are not all fully functional.
 
-                - Conroy singing in Bumpusville may work incorrectly. Eg,
+                - Conroy singing in Bumpusville may work incorrectly. E.g.
                   music will overlap and Conroy will get stuck singing. Just
                   hit escape to skip the cutscene. This is due to SNM using
                   a different iMUSE implementation to previous games.
@@ -253,7 +253,7 @@ Command Line Options:
         -a         - Enable amiga pal conversion, for playing Amiga versions
         -d[<num>]  - Set debug verbosity to <num>
         -w[<file>] - Write configuration file
-        -l<file>   - Load alternate configration file
+        -l<file>   - Load alternate configuration file
 
 In game Hot Keys:
 -----------------
@@ -275,7 +275,7 @@ In game Hot Keys:
         Keyboard Arrow Keys      - Mouse Movement
 
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
-being ran faster than their normal speed, as scripts will loose syncronisation
+being ran faster than their normal speed, as scripts will loose synchronisation
 
 Graphics filters:
 -----------------
@@ -354,15 +354,15 @@ Playing sound with Adlib emulation:
 -----------------------------------
 By default an Adlib card will be emulated and ScummVM will output the music
 as sampled waves. This is the default mode for most games, and offers the
-best compatability between machines and games. However, Sam and Max does not
+best compatibility between machines and games. However, Sam and Max does not
 include Adlib emulation.
 
 
 Playing sound with MIDI emulation:
 ----------------------------------
-Until recently, some games (particually Sam and Max) were only able to run
+Until recently, some games (particularly Sam and Max) were only able to run
 in MIDI mode. This prevented music for these games from working on platforms
-that do not support MIDI, or soundcards that do not provide MIDI drivers (eg,
+that do not support MIDI, or soundcards that do not provide MIDI drivers (e.g.,
 many soundcards will not play MIDI under Linux). We have recently added an
 'emulated MIDI' technology. It can be accessed using the 'midiemu' option,
 and is the default for Sam and Max on UNIX platforms. -HOWEVER-, it is still
@@ -381,7 +381,7 @@ Windows MIDI driver, use the -ewindows option.
 Playing sound with Sequencer MIDI:              [UNIX ONLY]
 ----------------------------------
 If your soundcard driver supports a sequencer, you may set the environment
-variable "SCUMMVM_MIDI" to your sequencer device - eg, /dev/sequencer
+variable "SCUMMVM_MIDI" to your sequencer device - e.g., /dev/sequencer
 
 If you have problems with not hearing audio in this configuration, it is
 possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2. This
@@ -395,7 +395,7 @@ either of those methods.
 Playing sound with ALSA sequencer:              [UNIX ONLY]
 ----------------------------------
 If you have installed the ALSA driver with the sequencer support, then
-set the environment variable "SCUMMVM_PORT" to your sequencer port - eg 65:0
+set the environment variable "SCUMMVM_PORT" to your sequencer port - e.g. 65:0
 
 Here is a little howto on how to use the ALSA sequencer with your soundcard.
 In all cases, to have a list of all the sequencer ports you have, try the
@@ -429,7 +429,7 @@ alsa sequencer output. Here is a quick way to do so:
   timidity -iAqqq -B2,8 -Os1S -s 44100 &
 
 Then the TiMidity port will be visible from the 'aconnect -o -l' list. You
-should launch it beeing as root, since it will try to set up some real time
+should launch it as root, since it will try to set up some real time
 priority.
 
 
@@ -454,7 +454,7 @@ MONSTER.SOU file to a temporary folder. Then run:
   extract monster.sou
 
 In about 30 minutes or so, you will have a much smaller monster.so3 file,
-copy this file to your game dir. You can safely remove the monter.sou file.
+copy this file to your game dir. You can safely remove the monster.sou file.
 
 
 Coding style:
