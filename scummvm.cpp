@@ -415,10 +415,11 @@ int Scumm::scummLoop(int delta) {
 						"\td       - enable debug output\n" \
 						"\tn       - no subtitles for speech\n" \
 						"\tb<num>  - start in room <num>\n" \
-						"\tt<num>  - Set music tempo. Suggested: 1F0000\n" \
-						"\ts<num>  - Set scale factor to <num> (1, 2, or 3 - 2 by default)\n" \
+						"\tt<num>  - set music tempo. Suggested: 1F0000\n" \
+						"\ts<num>  - set scale factor to <num> (1, 2, or 3 - 2 by default)\n" \
 						"\tp<path> - look for game in <path>\n" \
-						"\tm<num> - Set music volume to <num> (0-100)\n" \
+						"\tm<num>  - set music volume to <num> (0-100)\n" \
+						"\tr       - emulate roland mt32 instruments\n" \
 						"\tf       - fullscreen mode\n" \
 						"\tg       - graphics mode. 1 for 2xSai anti-aliasing\n"
 
@@ -491,6 +492,13 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 					if (se)						
 						se->set_music_volume(atoi(s+1));					
                     goto NextArg;
+				}
+                case 'r': {
+					SoundEngine *se = (SoundEngine*)_soundEngine;
+					
+					if (se)						
+						se->_mt32emulate = true;
+					break;
 				}
 				case 'g':
                 	if (*(s+1) == '\0')

@@ -20,147 +20,292 @@
 
 /*
  * Timidity support by Lionel Ulmer <lionel.ulmer@free.fr>
+ * QuickTime support by Florent Boudet <flobo@ifrance.com>
+ * Raw output support by Michael Pearce
  */
 
 
 #include "stdafx.h"
-
-#if !defined USE_ADLIB
-
 #include "scumm.h"
 #include "sound.h"
-
-#ifdef USE_TIMIDITY
-#include <sys/time.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-/* Copy-pasted from Timidity */
-#define SEQ_MIDIPUTC		5
-
-#endif /* USE_TIMIDITY */
-
-
-#define SPECIAL_CHANNEL 9
+#include "gmidi.h"
 
 #if defined(WIN32)
+	/* Windows sequencer support */
+	void MidiSoundDriver::midiInit() {
+		if (midiOutOpen((HMIDIOUT*)&_mo, MIDI_MAPPER, NULL, NULL, 0) != MMSYSERR_NOERROR)
+			error("midiOutOpen failed");
+	}
+	#define MIDI_OUT(a,b) midiOutShortMsg((HMIDIOUT)(a), (b))
 
-void MidiSoundDriver::midiInit() {
-	if (midiOutOpen((HMIDIOUT*)&_mo, MIDI_MAPPER, NULL, NULL, 0) != MMSYSERR_NOERROR)
-		error("midiOutOpen failed");
-}
+#elif defined(USE_RAWMIDI)
+	/* Raw midi support - dump to /dev/midi0 or something */
+	static int open_rawmidi_device() {
+		int device;
+		char *device_name = getenv("SCUMMVM_MIDI");
+		if (device_name != NULL) {
+			device = (open((device_name), O_RDWR, 0));
+		} else {
+			warning("You need to set-up the SCUMMVM_MIDI environment variable properly (see readme.txt) ");
+		}
+		if ((device_name == NULL) || (device < 0)) {
+			if (device_name == NULL)
+				warning("Opening /dev/null (no music will be heard) ");
+			else
+				warning("Cannot open rawmidi device %s - using /dev/null (no music will be heard) ", device_name);
+			device = (open(("/dev/null"), O_RDWR, 0));
+			if (device < 0)
+				error("Cannot open /dev/null to dump midi output");
+		}
+		return device;
+	}
 
-#define MIDI_OUT(a,b) midiOutShortMsg((HMIDIOUT)(a), (b))
+void SoundEngine::midiInit() {
+		int device;
+		device = open_rawmidi_device();
+		_mo = (void *) device;
+	}
+
+	static inline void MIDI_OUT(void *a, int b) {
+		int device = (int) a;
+		unsigned char buf[256];
+		int position = 0;
+		
+		switch (b & 0xF0) {
+			case 0x80:
+			case 0x90:
+			case 0xA0:
+			case 0xB0:
+			case 0xE0:
+				buf[position++] = b;
+				buf[position++] = (b >> 8) & 0x7F;
+				buf[position++] = (b >> 16) & 0x7F;
+			break;
+			case 0xC0:
+			case 0xD0:
+				buf[position++] = b;
+				buf[position++] = (b >> 8) & 0x7F;
+			break;
+			default:
+				fprintf(stderr, "Unknown : %08x\n", b);
+			break;
+		}
+		write(device, buf, position);
+	}
 
 #elif defined(USE_TIMIDITY)
-
-static int connect_to_timidity(int port)
-{
-	struct hostent *serverhost;
-	struct sockaddr_in sadd;
-	int s;
+	/* Timidity server support */
+	static int connect_to_timidity(int port) {
+		struct hostent *serverhost;
+		struct sockaddr_in sadd;
+		int s;
 	
-	serverhost = gethostbyname("localhost");
-	if (serverhost == NULL)
-		error("Could not resolve host");
-	sadd.sin_family = serverhost->h_addrtype;
-	sadd.sin_port = htons(port);
-	memcpy(&(sadd.sin_addr), serverhost->h_addr_list[0], serverhost->h_length);
+		serverhost = gethostbyname("localhost");
+		if (serverhost == NULL)
+			error("Could not resolve Timidity host ('localhost')");
+		
+		sadd.sin_family = serverhost->h_addrtype;
+		sadd.sin_port = htons(port);
+		memcpy(&(sadd.sin_addr), serverhost->h_addr_list[0], serverhost->h_length);
 	
-	s = socket(AF_INET,SOCK_STREAM,0);
-	if (s < 0)
-		error("Could not open socket");
-	if (connect(s, (struct sockaddr *) &sadd, sizeof(struct sockaddr_in)) < 0)
-		error("Could not connect to server");
+		s = socket(AF_INET,SOCK_STREAM,0);
+		if (s < 0)
+			error("Could not open Timidity socket");
 	
-	return s;
-}
-
-void MidiSoundDriver::midiInit() {
-	int s, s2;
-	int len;
-	int dummy, newport;
-	char buf[256];
-
-	s = connect_to_timidity(7777);
-	len = read(s, buf, 256);
-	buf[len] = '\0';
-	printf("%s", buf);
-
-	sprintf(buf, "SETBUF %f %f\n", 0.1, 0.15);
-	write(s, buf, strlen(buf));
-	len = read(s, buf, 256);
-	buf[len] = '\0';
-	printf("%s", buf);	
+		if (connect(s, (struct sockaddr *) &sadd, sizeof(struct sockaddr_in)) < 0)
+			error("Could not connect to Timidity server");
 	
-	sprintf(buf, "OPEN lsb\n");
-	write(s, buf, strlen(buf));
-	len = read(s, buf, 256);
-	buf[len] = '\0';
-	printf("%s", buf);	
-
-	sscanf(buf, "%d %d", &dummy, &newport);
-	printf("	 => port = %d\n", newport);
-	
-	s2 = connect_to_timidity(newport);
-	_mo = (void *) s2;
-}
-
-#define DEVICE_NUM 0
-
-static inline void MIDI_OUT(void *a, int b) {
-	int s = (int) a;
-	unsigned char buf[256];
-	int position = 0;
-	
-	switch (b & 0xF0) {
-	case 0x80:
-	case 0x90:
-	case 0xA0:
-	case 0xB0:
-	case 0xE0:
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = b;
-		buf[position++] = DEVICE_NUM;		
-		buf[position++] = 0;
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 8) & 0x7F;
-		buf[position++] = DEVICE_NUM;		
-		buf[position++] = 0;
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 16) & 0x7F;
-		buf[position++] = DEVICE_NUM;		
-		buf[position++] = 0;
-		break;
-	case 0xC0:
-	case 0xD0:
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = b;
-		buf[position++] = DEVICE_NUM;		
-		buf[position++] = 0;
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 8) & 0x7F;
-		buf[position++] = DEVICE_NUM;		
-		buf[position++] = 0;
-		break;
-	default:
-		fprintf(stderr, "Unknown : %08x\n", b);
-		break;
+		return s;
 	}
-	write(s, buf, position);
-}
 
-#else
-#define MIDI_OUT(a,b)
-void MidiSoundDriver::midiInit() { }
+	void MidiSoundDriver::midiInit() {
+		int s, s2;
+		int len;
+		int dummy, newport;
+		char buf[256];
+
+		s = connect_to_timidity(7777);
+		len = read(s, buf, 256);
+		buf[len] = '\0';
+		printf("%s", buf);
+
+		sprintf(buf, "SETBUF %f %f\n", 0.1, 0.15);
+		write(s, buf, strlen(buf));
+		len = read(s, buf, 256); // buf[len] = '\0'; printf("%s", buf);	
+	
+		sprintf(buf, "OPEN lsb\n");
+		write(s, buf, strlen(buf));
+		len = read(s, buf, 256); // buf[len] = '\0'; printf("%s", buf);	
+
+		sscanf(buf, "%d %d", &dummy, &newport);
+		printf("	 => port = %d\n", newport);
+	
+		s2 = connect_to_timidity(newport);
+		_mo = (void *) s2;
+	}
+
+	static inline void MIDI_OUT(void *a, int b) {
+		int s = (int) a;
+		unsigned char buf[256];
+		int position = 0;
+	
+		switch (b & 0xF0) {
+			case 0x80:
+			case 0x90:
+			case 0xA0:
+			case 0xB0:
+			case 0xE0:
+				buf[position++] = SEQ_MIDIPUTC;
+				buf[position++] = b;
+				buf[position++] = DEVICE_NUM;		
+				buf[position++] = 0;
+				buf[position++] = SEQ_MIDIPUTC;
+				buf[position++] = (b >> 8) & 0x7F;
+				buf[position++] = DEVICE_NUM;		
+				buf[position++] = 0;
+				buf[position++] = SEQ_MIDIPUTC;
+				buf[position++] = (b >> 16) & 0x7F;
+				buf[position++] = DEVICE_NUM;		
+				buf[position++] = 0;
+			break;
+			case 0xC0:
+			case 0xD0:
+				buf[position++] = SEQ_MIDIPUTC;
+				buf[position++] = b;
+				buf[position++] = DEVICE_NUM;		
+				buf[position++] = 0;
+				buf[position++] = SEQ_MIDIPUTC;
+				buf[position++] = (b >> 8) & 0x7F;
+				buf[position++] = DEVICE_NUM;		
+				buf[position++] = 0;
+			break;
+			default:
+				fprintf(stderr, "Unknown : %08x\n", b);
+			break;
+		}
+		write(s, buf, position);
+	}
+
+#elif defined(USE_QTMUSIC)
+	/* Quicktime music support */
+	void MidiSoundDriver::midiInit() {
+		ComponentResult qtErr = noErr;
+ 		qtNoteAllocator = NULL;
+
+		for (int i = 0 ; i < 15 ; i++)
+ 			qtNoteChannel[i] = NULL;
+
+ 		qtNoteAllocator = OpenDefaultComponent(kNoteAllocatorComponentType, 0);
+ 		if (qtNoteAllocator == NULL)
+ 			goto bail;
+ 		
+ 		simpleNoteRequest.info.flags = 0;
+ 		*(short *)(&simpleNoteRequest.info.polyphony) = EndianS16_NtoB(15);				// simultaneous tones
+ 		*(Fixed *)(&simpleNoteRequest.info.typicalPolyphony) = EndianU32_NtoB(0x00010000);
+ 	
+ 		qtErr = NAStuffToneDescription(qtNoteAllocator, 1, &simpleNoteRequest.tone);
+ 		if (qtErr != noErr)
+ 			goto bail;
+ 	
+ 		for (int i = 0 ; i < 15 ; i++) {
+ 			qtErr = NANewNoteChannel(qtNoteAllocator, &simpleNoteRequest, &(qtNoteChannel[i]));
+ 			if ((qtErr != noErr) || (qtNoteChannel == NULL))
+ 				goto bail;
+ 		}
+ 		return;
+ 	
+		bail:
+ 			fprintf(stderr, "Init QT failed %x %x %d\n", qtNoteAllocator, qtNoteChannel, qtErr);
+ 			for (int i = 0 ; i < 15 ; i++) {
+ 			if (qtNoteChannel[i] != NULL)
+ 				NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
+ 			}
+ 	
+ 			if (qtNoteAllocator != NULL)
+ 				CloseComponent(qtNoteAllocator);
+	}
+
+	static inline void MIDI_OUT(void *a, int b) {
+		MusicMIDIPacket midPacket;
+		unsigned char *midiCmd = midPacket.data;
+		midPacket.length = 3;
+		midiCmd[3] = (b & 0xFF000000)>>24;
+		midiCmd[2] = (b & 0x00FF0000)>>16;
+		midiCmd[1] = (b & 0x0000FF00)>>8;
+		midiCmd[0] = b;
+
+		unsigned char chanID =  midiCmd[0] & 0x0F;
+		switch (midiCmd[0] & 0xF0) {
+			case 0x80: // Note off
+				NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1], 0);
+			break;
+			
+			case 0x90: // Note on
+				NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1], midiCmd[2]);
+			break;
+			
+			case 0xB0: // Effect
+				switch (midiCmd[1]) {
+					case 0x01: // Modulation
+						NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerModulationWheel, midiCmd[2]<<8);
+					break;
+
+					case 0x07: // Volume
+						NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerVolume, midiCmd[2]*300);
+	 				break;
+
+		 			case 0x0A: // Pan
+		 				NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPan, (midiCmd[2]<<1)+0xFF);
+	 				break;
+
+		 			case 0x40: // Sustain on/off
+		 				NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerSustain, midiCmd[2]);
+ 					break;
+
+ 					case 0x5b: // ext effect depth
+ 						NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerReverb, midiCmd[2]<<8);
+ 					break;
+
+ 					case 0x5d: // chorus depth
+	 					NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerChorus, midiCmd[2]<<8);
+ 					break;
+
+ 					case 0x7b: // mode message all notes off
+ 						for (int i = 0 ; i < 128 ; i++)
+ 							NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], i, 0);
+ 					break;
+
+ 					default:
+ 						fprintf(stderr, "Unknown MIDI effect: %08x\n", b);
+ 					break;
+ 			}
+	 		break;
+ 			
+			case 0xC0: // Program change
+ 				NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1]); 
+  			break;
+ 			
+			case 0xE0: { // Pitch bend
+ 				long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 8)))-0x4000)/4;
+ 				NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPitchBend, theBend);
+ 			}
+ 			break;
+ 			
+			default:
+ 				fprintf(stderr, "Unknown Command: %08x\n", b);
+ 				NASendMIDI(qtNoteAllocator, qtNoteChannel[chanID], &midPacket);
+ 			break;
+ 		}
+	}
+#elif
+
+	/* Null output driver */
+	#define MIDI_OUT(a,b)
+	void MidiSoundDriver::midiInit() {warning("Music not enabled - MIDI support selected with no MIDI driver available. Try Adlib";}
 #endif
 
+
+/************************* Common midi code **********************/
 void MidiSoundDriver::midiPitchBend(byte chan, int16 pitchbend) {
 	uint16 tmp;
 
@@ -224,8 +369,9 @@ static const byte mt32_to_gmidi[128] = {
 
 
 void MidiSoundDriver::midiProgram(byte chan, byte program) {
-	if (_mt32emulate)
+	if (_se->_mt32emulate)
 		program=mt32_to_gmidi[program];
+
 	MIDI_OUT(_mo, program<<8 | 0xC0 | chan);
 }
 
@@ -410,5 +556,3 @@ void MidiSoundDriver::part_off(Part *part) {
 		midiSilence(mc->_chan);
 	}
 }
-
-#endif

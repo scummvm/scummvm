@@ -17,6 +17,12 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2002/03/14 06:06:49  ender
+ * Added some new midi drivers - QuickTime Music and RawMidi.
+ * -DUSE_RAWMIDI and -DUSE_QTMUSIC respectivly.
+ *
+ * I assume these will compile - if not file a bug/patch. Also added a "-r" commandline parameter to turn on MT32 emulation... the patch conversion set isn't quite right, still..
+ *
  * Revision 1.4  2002/03/05 23:37:31  ender
  * Adding music volume control.
  *
@@ -395,12 +401,11 @@ public:
 	int part_update_active(Part *part,uint16 *active);
 	void adjust_priorities() {}
 
-	bool wave_based() { return true; }
+	bool wave_based() { return true; }	
 };
 
 struct MidiSoundDriver : SoundDriver {
-	void *_mo;
-	bool _mt32emulate;
+	void *_mo;	
 	SoundEngine *_se;
 
 	MidiChannelGM _midi_channels[9];
@@ -459,7 +464,7 @@ private:
 
 	bool _paused;
 	bool _active_volume_faders;
-	bool _initialized;
+	bool _initialized;	
 	byte _volume_fader_counter;
 
 	uint _queue_end, _queue_pos, _queue_sound;
@@ -548,6 +553,7 @@ public:
 	void setBase(byte **base) { _base_sounds = base; }
 
 	SOUND_DRIVER_TYPE *driver() { return _driver; }
+	bool _mt32emulate;	
 };
 
 
