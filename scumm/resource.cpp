@@ -560,12 +560,16 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 
 	// FIXME - TODO: This check used to be "i==0". However, that causes
 	// problems when using this function to ensure charset 0 is loaded.
+	// This is done for many games, e.g. Zak256 or Indy3 (EGA and VGA).
+	// For now we restrict the check to anything which is not a charset.
 	// Question: Why was this check like that in the first place?
-	// Answer: costumes with an index of zero in the newer games at least
-	// TODO: determine after what version this behaviour changes...
-	if ((_gameId == GID_ZAK256) && (i < 0))
-		return;
-	else if (i == 0)
+	// Answer: costumes with an index of zero in the newer games at least.
+	// TODO: determine why the heck anything would try to load a costume
+	// with id 0. Is that "normal", or is it caused by yet another bug in
+	// our code base? After all we also have to add special cases for many
+	// of our script opcodes that check for the (invalid) actor 0... so 
+	// maybe both issues are related...
+	if (type != rtCharset && i == 0)
 		return;
 
 	if (i <= res.num[type])
