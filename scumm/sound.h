@@ -93,11 +93,11 @@ public:
 public:
 	Sound(ScummEngine *parent);
 	~Sound();
-	void addSoundToQueue(int sound, int offset = 0, int channel = 0, int heFlags = 0);
-	void addSoundToQueue2(int sound, int offset = 0, int channel = 0, int heFlags = 0);
+	void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
+	void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
 	void processSoundQues();
 	void setOverrideFreq(int freq);
-	void playSound(int sound, int offset = 0, int channel = 0, int heFlags = 0);
+	void playSound(int soundID, int heOffset, int heChannel, int heFlags);
 	void startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);

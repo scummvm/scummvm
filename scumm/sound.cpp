@@ -215,7 +215,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		size = musicFile.readUint32LE();
 
 		if (music_offs > total_size || (size + music_offs > total_size) || size < 0) {
-			warning("playSound: Bad music offsets");
+			warning("playSound: Invalid music offset (%d) in music %d", soundID);
 			musicFile.close();
 			return;
 		}
@@ -282,8 +282,8 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		size = READ_BE_UINT32(ptr+4) - 8;
-		if (heOffset > size) {
-			warning("playSound: Bad sound offset");
+		if (heOffset < 0 || heOffset > size) {
+			warning("playSound: Invalid sound offset (%d) in sound %d", heOffset, soundID);
 			heOffset = 0;
 		} 
 		size -= heOffset;
