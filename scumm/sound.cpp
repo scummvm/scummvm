@@ -70,6 +70,14 @@ void Sound::addSoundToQueue(int sound) {
 }
 
 void Sound::addSoundToQueue2(int sound) {
+	if ((_vm->_features & GF_HUMONGOUS) && _soundQue2Pos) {
+		int i = _soundQue2Pos;
+		while (i--) {
+			if (_soundQue2[i] == sound)
+				return;
+		}
+	}
+
 	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2));
 	_soundQue2[_soundQue2Pos++] = sound;
 }
