@@ -2,6 +2,9 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.11  2002/03/09 13:48:53  drigo
+ * Support for MacOS classic port
+ *
  * Revision 1.10  2002/03/08 17:05:09  mutle
  * Some changes, need to be done to get the Mac Port running. For example Point is now called ScummPoint, as the name Point is already in use by Apple.
  *
@@ -76,7 +79,7 @@
 #if defined(NEED_SDL_HEADERS)
 #include <SDL.h>
 #endif
-#if !defined(__APPLE__CW)
+#if !defined(__APPLE__CW) && !(defined(__MWERKS__) && defined(macintosh))
 #include <sys/types.h>
 #include <sys/uio.h>
 #endif
