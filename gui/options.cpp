@@ -49,6 +49,7 @@ enum {
 	kMasterVolumeChanged	= 'mavc',
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
+	kVoiceVolumeChanged		= 'vcvc',
 	kChooseSaveDirCmd		= 'chos'
 };
 
@@ -62,7 +63,8 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	_enableVolumeSettings(false),
 	_masterVolumeSlider(0), _masterVolumeLabel(0),
 	_musicVolumeSlider(0), _musicVolumeLabel(0),
-	_sfxVolumeSlider(0), _sfxVolumeLabel(0) {
+	_sfxVolumeSlider(0), _sfxVolumeLabel(0),
+	_voiceVolumeSlider(0), _voiceVolumeLabel(0) {
 
 }
 
@@ -137,6 +139,10 @@ void OptionsDialog::open() {
 		vol = ConfMan.getInt("sfx_volume", _domain);
 		_sfxVolumeSlider->setValue(vol);
 		_sfxVolumeLabel->setValue(vol);
+
+		vol = ConfMan.getInt("voice_volume", _domain);
+		_voiceVolumeSlider->setValue(vol);
+		_voiceVolumeLabel->setValue(vol);
 	}
 }
 
@@ -161,10 +167,12 @@ void OptionsDialog::close() {
 				ConfMan.set("master_volume", _masterVolumeSlider->getValue(), _domain);
 				ConfMan.set("music_volume", _musicVolumeSlider->getValue(), _domain);
 				ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
+				ConfMan.set("voice_volume", _voiceVolumeSlider->getValue(), _domain);
 			} else {
 				ConfMan.removeKey("master_volume", _domain);
 				ConfMan.removeKey("music_volume", _domain);
 				ConfMan.removeKey("sfx_volume", _domain);
+				ConfMan.removeKey("voice_volume", _domain);
 			}
 		}
 
@@ -209,6 +217,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_sfxVolumeLabel->setValue(_sfxVolumeSlider->getValue());
 		_sfxVolumeLabel->draw();
 		break;
+	case kVoiceVolumeChanged:
+		_voiceVolumeLabel->setValue(_voiceVolumeSlider->getValue());
+		_voiceVolumeLabel->draw();
+		break;
 	case kOKCmd:
 		setResult(1);
 		close();
@@ -246,6 +258,8 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_musicVolumeLabel->setEnabled(enabled);
 	_sfxVolumeSlider->setEnabled(enabled);
 	_sfxVolumeLabel->setEnabled(enabled);
+	_voiceVolumeSlider->setEnabled(enabled);
+	_voiceVolumeLabel->setEnabled(enabled);
 }
 
 int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
@@ -335,6 +349,12 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
+	_voiceVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12, "Voice volume: ", 100, kVoiceVolumeChanged);
+	_voiceVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
+	_voiceVolumeSlider->setMinValue(0); _voiceVolumeSlider->setMaxValue(255);
+	_voiceVolumeLabel->setFlags(WIDGET_CLEARBG);
+	yoffset += 16;
+
 	_enableVolumeSettings = true;
 
 	return yoffset;
@@ -344,13 +364,13 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 
 
 GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 20, 320 - 2 * 10, 200 - 2 * 20) {
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 20, 320 - 2 * 10, 200 - 1 * 20) {
 
-	const int vBorder = 5;
+	const int vBorder = 4;
 	int yoffset;
 
 	// The tab widget
-	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2*vBorder);
+	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2 * vBorder);
 
 	//
 	// 1) The graphics tab

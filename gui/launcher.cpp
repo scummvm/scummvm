@@ -225,7 +225,8 @@ void EditGameDialog::open() {
 
 	e = ConfMan.hasKey("master_volume", _domain) ||
 		ConfMan.hasKey("music_volume", _domain) ||
-		ConfMan.hasKey("sfx_volume", _domain);
+		ConfMan.hasKey("sfx_volume", _domain) ||
+		ConfMan.hasKey("voice_volume", _domain);
 	_globalVolumeOverride->setState(e);
 
 	// TODO: game path

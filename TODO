@@ -261,8 +261,6 @@ SCUMM
   - Change code to new mixer pool method procedure
   - Check if VAR_SYNC if it's set to nonzero value
   - Add pool method for FT voc samples from resource
-  - Add missing volume channels into sound mixer needed by imuse and add code
-    into imuse
   - Implement tuning volume level or something(not sure yet what is)
   - Implement stuff for fadeParam in JUMP opcode (maybe never implemented)
   - Recheck 'next region' code

@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "common/timer.h"
+#include "common/config-manager.h"
 
 #include "scumm/actor.h"
 #include "scumm/scumm.h"
@@ -46,6 +47,9 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	_mutex = g_system->createMutex();
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
+	_volVoice = 0;
+	_volSfx = 0;
+	_volMusic = 0;
 	resetState();
 	_vm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
 }
@@ -58,6 +62,28 @@ IMuseDigital::~IMuseDigital() {
 	}
 	delete _sound;
 	g_system->deleteMutex(_mutex);
+}
+
+void IMuseDigital::resetState() {
+	_curMusicState = 0;
+	_curMusicSeq = 0;
+	_curMusicCue = 0;
+	memset(_attributes, 0, sizeof(_attributes));
+	_curSeqAtribPos = 0;
+}
+
+static const Common::String &kTransientDomain = Common::ConfigManager::kTransientDomain;
+
+void IMuseDigital::setGroupVoiceVolume(int volume) {
+	_volVoice = volume;
+}
+
+void IMuseDigital::setGroupMusicVolume(int volume) {
+	_volMusic = volume;
+}
+
+void IMuseDigital::setGroupSfxVolume(int volume) {
+	_volSfx = volume;
 }
 
 void IMuseDigital::callback() {
@@ -113,14 +139,22 @@ void IMuseDigital::callback() {
 			}
 
 			int pan = (_track[l].pan != 64) ? 2 * _track[l].pan - 127 : 0;
+			int vol = _track[l].vol / 1000;
+
+			if (_track[l].soundGroup == 1)
+				vol = (vol * _volVoice) / 128;
+			if (_track[l].soundGroup == 2)
+				vol = (vol * _volSfx) / 128;
+			if (_track[l].soundGroup == 3)
+				vol = (vol * _volMusic) / 128;
 
 			if (_vm->_mixer->isReady()) {
 				if (_track[l].stream2) {
 					if (!_track[l].started) {
 						_track[l].started = true;
-						_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream2, true, _track[l].vol / 1000, _track[l].pan, -1, false);
+						_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream2, false, _track[l].vol / 1000, _track[l].pan, -1, false);
 					} else {
-						_vm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
+						_vm->_mixer->setChannelVolume(_track[l].handle, vol);
 						_vm->_mixer->setChannelBalance(_track[l].handle, pan);
 					}
 					continue;
@@ -174,7 +208,7 @@ void IMuseDigital::callback() {
 						result = mixer_size;
 
 					if (_vm->_mixer->isReady()) {
-						_vm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
+						_vm->_mixer->setChannelVolume(_track[l].handle, vol);
 						_vm->_mixer->setChannelBalance(_track[l].handle, pan);
 						_track[l].stream->append(data, result);
 						_track[l].regionOffset += result;
@@ -345,7 +379,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			} else {
 				_track[l].stream2 = NULL;
 				_track[l].stream = makeAppendableAudioStream(freq, mixerFlags, 100000);
-				_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
+				_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, false, _track[l].vol / 1000, _track[l].pan, -1);
 			}
 
 			_track[l].used = true;
@@ -373,7 +407,7 @@ void IMuseDigital::stopSound(int soundId) {
 
 void IMuseDigital::setPriority(int soundId, int priority) {
 	Common::StackLock lock(_mutex, "IMuseDigital::setPriority()");
-	debug(5, "IMuseDigital::setPrioritySound(%d, %d)", soundId, priority);
+	debug(5, "IMuseDigital::setPriority(%d, %d)", soundId, priority);
 
 	assert ((priority >= 0) && (priority <= 127));
 
@@ -386,7 +420,7 @@ void IMuseDigital::setPriority(int soundId, int priority) {
 
 void IMuseDigital::setVolume(int soundId, int volume) {
 	Common::StackLock lock(_mutex, "IMuseDigital::setVolume()");
-	debug(5, "IMuseDigital::setVolumeSound(%d, %d)", soundId, volume);
+	debug(5, "IMuseDigital::setVolume(%d, %d)", soundId, volume);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
 			_track[l].vol = volume * 1000;
@@ -396,10 +430,21 @@ void IMuseDigital::setVolume(int soundId, int volume) {
 
 void IMuseDigital::setPan(int soundId, int pan) {
 	Common::StackLock lock(_mutex, "IMuseDigital::setPan()");
-	debug(5, "IMuseDigital::setVolumeSound(%d, %d)", soundId, pan);
+	debug(5, "IMuseDigital::setPan(%d, %d)", soundId, pan);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
 			_track[l].pan = pan;
+		}
+	}
+}
+
+void IMuseDigital::selectGroupVolume(int soundId, int groupId) {
+	Common::StackLock lock(_mutex, "IMuseDigital::setGroupVolume()");
+	debug(5, "IMuseDigital::setGroupVolume(%d, %d)", soundId, groupId);
+	assert((groupId >= 1) && (groupId <= 3));
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		if ((_track[l].soundId == soundId) && _track[l].used) {
+			_track[l].soundGroup = groupId;
 		}
 	}
 }
@@ -497,8 +542,8 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		break;
 	case 12: // ImuseSetParam
 		switch (sub_cmd) {
-		case 0x400: // set group volume
-			debug(5, "set group volume (0x400), soundId(%d), group volume(%d)", soundId, d);
+		case 0x400: // select group volume
+			selectGroupVolume(soundId, d);
 			break;
 		case 0x500: // set priority
 			setPriority(soundId, d);
@@ -593,17 +638,17 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			_attributes[b] = c;
 		}
 		break;
-	case 0x2000: // ImuseSetMasterSFXVolume
-		debug(5, "ImuseSetMasterSFXVolume (%d)", b);
-		// TODO
+	case 0x2000: // ImuseSetGroupSfxVolume
+		debug(5, "ImuseSetGroupSFXVolume (%d)", b);
+//		setGroupSfxVolume(b);
 		break;
-	case 0x2001: // ImuseSetMasterVoiceVolume
-		debug(5, "ImuseSetMasterVoiceVolume (%d)", b);
-		// TODO
+	case 0x2001: // ImuseSetGroupVoiceVolume
+		debug(5, "ImuseSetGroupVoiceVolume (%d)", b);
+//		setGroupVoiceVolume(b);
 		break;
-	case 0x2002: // ImuseSetMasterMusicVolume
-		debug(5, "ImuseSetMasterMusicVolume (%d)", b);
-		// TODO
+	case 0x2002: // ImuseSetGroupMusicVolume
+		debug(5, "ImuseSetGroupMusicVolume (%d)", b);
+//		setGroupMusicVolume(b);
 		break;
 	default:
 		warning("IMuseDigital::doCommand DEFAULT command %d", cmd);

@@ -76,6 +76,11 @@ private:
 	OSystem::MutexRef _mutex;
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
+
+	int _volVoice;
+	int _volSfx;
+	int _volMusic;
+
 	bool _pause;
 
 	int _attributes[188];
@@ -125,18 +130,21 @@ public:
 		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL, 0, 127, priority); }
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
-	void resetState() {
-		_curMusicState = 0;
-		_curMusicSeq = 0;
-		_curMusicCue = 0;
-		memset(_attributes, 0, sizeof(_attributes));
-		_curSeqAtribPos = 0;
-	}
+
+	void resetState();
+
+	void setGroupVoiceVolume(int volume);
+	void setGroupSfxVolume(int volume);
+	void setGroupMusicVolume(int volume);
+	int getGroupVoiceVolume() { return _volVoice; }
+	int getGroupSfxVolume() { return _volSfx; }
+	int getGroupMusicVolume() { return _volMusic; }
 
 	void setPriority(int soundId, int priority);
 	void setVolume(int soundId, int volume);
 	void setPan(int soundId, int pan);
 	void setFade(int soundId, int destVolume, int delay60HzTicks);
+	void selectGroupVolume(int soundId, int groupId);
 	void setMasterVolume(int vol) {}
 	void stopSound(int soundId);
 	void stopAllSounds() { stopAllSounds(false); }

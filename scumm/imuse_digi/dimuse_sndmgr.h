@@ -41,6 +41,7 @@ public:
 
 #define IMUSE_RESOURCE 1
 #define IMUSE_BUNDLE 2
+
 #define IMUSE_VOICE 1
 #define IMUSE_SFX 2
 #define IMUSE_MUSIC 3
