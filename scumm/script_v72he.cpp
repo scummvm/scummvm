@@ -607,12 +607,12 @@ void ScummEngine_v72he::o72_compareStackList() {
 		for (i = 1; i < num; i++) {
 			if (args[i] == value) {
 				push(1);
-				break;
+				return;
 			}
 		}
-	} else {
-		push(0);
 	}
+
+	push(0);
 }
 
 void ScummEngine_v72he::o72_wordArrayWrite() {
