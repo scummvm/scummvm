@@ -42,7 +42,16 @@ Config * scummcfg;
 #undef main
 #endif
 
+#if defined(UNIX) || defined(UNIX_X11)
+#include <sys/param.h>
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 256
+#endif
+#define DEFAULT_CONFIG_FILE ".scummvmrc"
+#else
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
+#endif
+
 
 int main(int argc, char *argv[])
 {
@@ -79,7 +88,16 @@ int main(int argc, char *argv[])
 	fclose(argf);
 
 #endif
+
+#if defined(UNIX) || defined(UNIX_X11)
+	char scummhome[MAXPATHLEN];
+	if(getenv("HOME") != NULL)
+		sprintf(scummhome,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
+	else strcpy(scummhome,DEFAULT_CONFIG_FILE);
+	scummcfg = new Config(scummhome, "scummvm");
+#else
 	scummcfg = new Config(DEFAULT_CONFIG_FILE, "scummvm");
+#endif
 	scummcfg->set("versioninfo", SCUMMVM_VERSION);
 	if (detector.detectMain(argc, argv))
 		return (-1);
