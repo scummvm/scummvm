@@ -74,10 +74,10 @@ protected:
 			_node = _node->_prev;
 			return tmp;
 		}
-		T& operator*() const {
+		T2& operator*() const {
 			return static_cast<Node<T2>*>(_node)->_data;
 		}
-		T* operator->() const {
+		T2* operator->() const {
 			return &(operator*());
 		}
 		
@@ -94,7 +94,7 @@ protected:
 
 public:
 	typedef Iterator<T>        iterator;
-	typedef const Iterator<T>  const_iterator;
+	typedef Iterator<const T>  const_iterator;
 
 public:
 	List<T>() {
