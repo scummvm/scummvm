@@ -328,7 +328,7 @@ int Actor::updateActorDirection(bool is_walking) {
 	if ((_vm->_version == 6) && _ignoreTurns)
 		return _facing;
 
-	dirType = _vm->_costumeLoader->hasManyDirections(_costume);
+	dirType = (_vm->_version >= 7) ? _vm->_costumeLoader->hasManyDirections(_costume) : false;
 
 	from = toSimpleDir(dirType, _facing);
 	dir = remapDirection(_targetFacing, is_walking);
