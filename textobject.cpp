@@ -33,7 +33,12 @@ void TextObject::setColor(Color *newcolor) {fgColor_ = newcolor;}
 
 void TextObject::draw() {
 	const char *localString = Localizer::instance()->localize(textID_).c_str();
-
-	g_driver->drawEmergString(x_, y_, strrchr(localString, '/') + 1, fgColor_);
+	// This is also used for things like debugging in addition
+	// to dialogue so there aren't always translations
+	if (strrchr(localString, '/') != NULL) {
+		g_driver->drawEmergString(x_, y_, strrchr(localString, '/') + 1, fgColor_);
+	} else {
+		g_driver->drawEmergString(x_, y_, localString, fgColor_);
+	}
 }
 
