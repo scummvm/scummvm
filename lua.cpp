@@ -1161,6 +1161,14 @@ static void PauseMovie() {
 	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
 }
 
+
+static void GetTextCharPosition() {
+	warning("STUB GetTextCharPosition(\"%s\", %d)", 
+			lua_getstring(lua_getparam(1)), lua_getnumber(lua_getparam(2)));
+
+	lua_pushnumber(0);
+}
+
 // Objectstate functions
 static void NewObjectState() {
 	enum ObjectPosition {
@@ -1265,6 +1273,8 @@ static void BlastText() {
 		else if (strstr(key_text, "font"))
 			lua_getresult(2);
 		else if (strstr(key_text, "center")) // TRUE or FALSE
+			lua_getresult(2);
+		else if (strstr(key_text, "disabled")) // TRUE or FALSE
 			lua_getresult(2);
 		else
 			error("Unknown BlastText key %s\n", key_text);
@@ -1394,7 +1404,6 @@ static char *stubFuncs[] = {
 	"EngineDisplay",
 	"SetOffscreenTextPos",
 	"SetEmergencyFont",
-	"GetTextCharPosition",
 	"GetTranslationMode",
 	"SetTranslationMode",
 	"ExpireText",
@@ -1409,6 +1418,14 @@ static char *stubFuncs[] = {
 	"pause_scripts",
 	"unpause_scripts",
 	"print_stack",
+};
+
+// Entries in the system table
+static struct {
+	char *name;
+	int key;
+} system_defaults[] = {
+	{ "frameTime", 0 }
 };
 
 // Entries in the system.controls table
@@ -1663,6 +1680,7 @@ struct luaL_reg builtins[] = {
 	{ "FreeObjectState", FreeObjectState },
 	{ "GetSpeechMode", GetSpeechMode },
 	{ "SetSpeechMode", SetSpeechMode },
+	{ "GetTextCharPosition", GetTextCharPosition },
 	{ "Is3DHardwareEnabled", Is3DHardwareEnabled }
 };
 
@@ -1687,6 +1705,13 @@ void register_lua() {
 	lua_pushobject(system_table);
 	lua_setglobal("system");
 
+	for (unsigned i = 0; i < sizeof(system_defaults) / sizeof(system_defaults[0]); i++) {
+		lua_pushobject(system_table);
+		lua_pushstring(system_defaults[i].name);
+		lua_pushnumber(system_defaults[i].key);
+		lua_settable();
+	}
+	
 	// Create and populate system.controls table
 	lua_Object controls_table = lua_createtable();
 	lua_pushobject(system_table);
