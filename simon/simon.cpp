@@ -409,6 +409,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_fcs_list = new FillOrCopyStruct[16];
 
+	memset(_letters_to_print_buf, 0, sizeof(_letters_to_print_buf));
+
 	_num_screen_updates = 0;
 	_vga_tick_counter = 0;
 
@@ -422,6 +424,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_dump_file = 0;
 
+	_number_of_savegames = 0;
 	_saveload_row_curpos = 0;
 	_num_savegame_rows = 0;
 	_savedialog_flag = false;
