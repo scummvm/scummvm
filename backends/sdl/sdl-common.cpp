@@ -198,10 +198,9 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 
 	byte *dst = (byte *)_screen->pixels + y * _screenWidth + x;
 
-	if (_screenWidth==pitch && pitch==w)
+	if (_screenWidth==pitch && pitch==w) {
 		memcpy (dst, buf, h*w);
-	else
-	{
+	} else {
 		do {
 			memcpy(dst, buf, w);
 			dst += _screenWidth;
