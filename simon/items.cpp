@@ -1447,11 +1447,10 @@ void SimonState::o_unk_127() {
 
 			if (_vc72_var1 != 0xFFFF || _vc72_var1 != 999)  {
 				_vc70_var2 = c;
-				_vc70_var1 = 0xffff;
-				_vc72_var3 = 0xffff;
-				_next_music_to_play = 0xffff;
-				if (!(_music_paused))
-					midi_play(b);
+				_vc70_var1 = 0xFFFF;
+				_vc72_var3 = 0xFFFF;
+				_next_music_to_play = 0xFFFF;
+				midi_play(b);
 				_vc72_var1 = b;
 			} else {
 				_vc72_var3 = b;
