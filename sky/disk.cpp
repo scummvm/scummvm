@@ -203,3 +203,21 @@ uint16 *SkyState::getFileInfo(uint16 fileNr) {
 	return (uint16 *)NULL;
 }
 
+void SkyState::dumpFile(uint16 fileNr) {
+	char buf[128];
+	File out;
+	byte* filePtr;
+
+	filePtr = (byte *)loadFile(fileNr, NULL);
+	sprintf(buf, "dumps/file-%d.dmp", fileNr);
+	
+	out.open(buf, "", 1);
+	if (out.isOpen() == false) {
+		out.open(buf, "", 2);
+		if (out.isOpen() == false)
+			return;
+		out.write(filePtr, _lastLoadedFileSize);
+	}
+	out.close();
+	free(filePtr);
+}
