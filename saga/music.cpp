@@ -456,21 +456,36 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		if (GAME_GetGameType() == GID_ITE) {
 			rsc_ctxt = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
 		} else {
-			// TODO: I'm not sure if this is right, but the FM file
-			// sounds better with Adlib than the AM file does. On
-			// the other hand, it doesn't sound like quite the same
-			// music, which is strange.
+			// I've listened to music from both the FM and the GM
+			// file, and I've tentatively reached the conclusion
+			// that they are both General MIDI. My guess is that
+			// the FM file has been reorchestrated to sound better 
+			// on Adlib and other FM synths.
+			//
+			// Sev says the Adlib music does not sound like in the
+			// original, but I still think assuming General MIDI is
+			// the right thing to do. Some music, like the End
+			// Title (song 0) sound absolutely atrocious when piped
+			// through our MT-32 to GM mapping.
+			//
+			// It is, however, quite possible that the original
+			// used a different GM to FM mapping. If the original
+			// sounded markedly better, perhaps we should add some
+			// way of replacing our stock mapping in adlib.cpp?
+			//
+			// For the composer's own recording of the End Title,
+			// see http://www.johnottman.com/
+
+			// Oddly enough, the intro music (song 1) is very
+			// different in the two files. I have no idea why.
 
 			if (hasAdlib()) {
 				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_FM, 0);
-				// FIXME: This is weird, but this way Adlib
-				// sounds closer to original, though instrument
-				// mapping is not correct.
-				_player->setGM(false);
 			} else {
 				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_GM, 0);
-				_player->setGM(true);
 			}
+
+			_player->setGM(true);
 		}
 
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
