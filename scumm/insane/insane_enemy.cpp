@@ -1814,7 +1814,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorLayer(1, 2, 4);
 		_actor[1].weaponClass = 1;
 		if (_actor[1].act[2].frame >= 6) {
-			tmp = calcEnemyDamage(1, 1);
+			tmp = calcBenDamage(1, 1);
 			if (tmp == 1)
 				smlayer_startSfx(60);
 			if (tmp == 1000)
@@ -1878,14 +1878,14 @@ void Insane::actor12Reaction(int32 buttons) {
 			case INV_DUST:
 			case INV_WRENCH:
 			case INV_BOOT:
-				tmp = calcEnemyDamage(1, 1);
+				tmp = calcBenDamage(1, 1);
 				if (tmp == 1)
 					smlayer_startSfx(73);
 				if (tmp == 1000)
 					smlayer_startSfx(74);
 				break;
 			case INV_HAND:
-				if(calcEnemyDamage(1, 0))
+				if(calcBenDamage(1, 0))
 					smlayer_startSfx(73);
 				break;
 			}
@@ -1951,14 +1951,14 @@ void Insane::actor12Reaction(int32 buttons) {
 			case INV_MACE:
 			case INV_2X4:
 			case INV_DUST:
-				tmp = calcEnemyDamage(1, 1);
+				tmp = calcBenDamage(1, 1);
 				if (tmp == 1)
 					smlayer_startSfx(76);
 				if (tmp == 1000)
 					smlayer_startSfx(77);
 				break;
 			default:
-				calcEnemyDamage(1, 0);
+				calcBenDamage(1, 0);
 				break;
 			}
 			smlayer_setActorFacing(1, 2, 21,180);
@@ -2042,14 +2042,14 @@ void Insane::actor12Reaction(int32 buttons) {
 			case INV_MACE:
 			case INV_2X4:
 			case INV_BOOT:
-				tmp = calcEnemyDamage(1, 1);
+				tmp = calcBenDamage(1, 1);
 				if (tmp == 1)
 					smlayer_startSfx(67);
 				if (tmp == 1000)
 					smlayer_startSfx(68);
 				break;
 			default:
-				calcEnemyDamage(1, 0);
+				calcBenDamage(1, 0);
 				break;
 			}
 			smlayer_setActorFacing(1, 2, 21, 180);
@@ -2116,7 +2116,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].weaponClass = 0;
 		_actor[1].kicking = 1;
 		if (_actor[1].act[2].frame >= 1) {
-			tmp = calcEnemyDamage(1, 1);
+			tmp = calcBenDamage(1, 1);
 
 			if (tmp == 1)
 				smlayer_startSfx(79);
@@ -2171,7 +2171,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].weaponClass = 1;
 		_actor[1].kicking = 1;
 		if (_actor[1].act[2].frame >= 3) {
-			tmp = calcEnemyDamage(1, 1);
+			tmp = calcBenDamage(1, 1);
 			if (tmp == 1)
 				smlayer_startSfx(70);
 			if (tmp == 1000)
@@ -2568,19 +2568,19 @@ void Insane::actor12Reaction(int32 buttons) {
 }
 
 int32 Insane::calcEnemyDamage(bool arg_0, bool arg_4) {
-	if ((_actor[1].x - _actor[0].x > weaponMaxRange(1)) ||
-		(_actor[1].x - _actor[0].x < weaponMinRange(1)))
+	if ((_actor[1].x - _actor[0].x > weaponMaxRange(0)) ||
+		(_actor[1].x - _actor[0].x < weaponMinRange(0)))
 		return 0;
 
-	if (_actor[0].field_44 && arg_4)
+	if (_actor[1].field_44 && arg_4)
 		return 1000;
 
-	if (!actor1StateFlags(_actor[0].act[2].state))
+	if (!actor1StateFlags(_actor[1].act[2].state))
 		return 0;
 
 	if (arg_0) {
-		ouchSoundBen();
-		_actor[0].damage += weaponDamage(1); // PATCH
+		ouchSoundEnemy();
+		_actor[1].damage += weaponDamage(0);
 	}
 
 	return 1;

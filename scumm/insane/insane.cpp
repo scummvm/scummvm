@@ -1437,8 +1437,8 @@ void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
 	_smush_frameStep = step1;
 }
 
-	void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFrame) {
-	debug(0, "smush_setupSanFile(%s, %x)", filename, offset);
+void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFrame) {
+	debug(0, "smush_setupSanFile(%s, %x, %d)", filename, offset, contFrame);
 
 	_player->seekSan(filename, _vm->getGameDataPath(), offset, contFrame);
 

@@ -929,6 +929,9 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		case 22:
 			postCase10(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			break;
+		case 14:
+			postCase23(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
+			break;
 		case 13:
 			postCase12(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			needMore = true;
@@ -1394,13 +1397,14 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 void Insane::postCase23(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame) {
-		if (_currSceneId == 24)
+		if (_currSceneId == 24) {
 			queueSceneSwitch(21, 0, "rottfite.san", 64, 0, 0, 0);
-	
-		if (readArray(6) && readArray(4))
-			queueSceneSwitch(16, 0, "limocrsh.san", 64, 0, 0, 0);
-	
-		queueSceneSwitch(5, 0, "tovista2.san", 64, 0, 0, 290);
+		} else {
+			if (readArray(6) && readArray(4))
+				queueSceneSwitch(16, 0, "limocrsh.san", 64, 0, 0, 0);
+			else
+				queueSceneSwitch(5, 0, "tovista2.san", 64, 0, 0, 290);
+		}
 	}
 	_val119_ = false;
 	_val120_ = false;

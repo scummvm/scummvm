@@ -83,7 +83,7 @@ public:
 	short getShort();
 	uint16 getWord();
 	uint32 getDword();
-	void reinit();
+	void reinit(uint32 offset);
 };
 
 class MemoryChunk : public BaseChunk {

@@ -292,7 +292,7 @@ void SmushPlayer::deinit() {
 
 void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
 	if (type_expected != b.getType()) {
-		error("Chunk type is different from expected : %d != %d", b.getType(), type_expected);
+		error("Chunk type is different from expected : %x != %x", b.getType(), type_expected);
 	}
 	if (min_size > b.getSize()) {
 		error("Chunk size is inferior than minimum required size : %d < %d", b.getSize(), min_size);
@@ -867,7 +867,7 @@ void SmushPlayer::parseNextFrame() {
 		handleFrame(*sub);
 		break;
 	default:
-		error("Unknown Chunk found at %x: %d, %d", _base->tell(), sub->getType(), sub->getSize());
+		error("Unknown Chunk found at %x: %x, %d", _base->tell(), sub->getType(), sub->getSize());
 	}
 	delete sub;
 }
@@ -951,24 +951,26 @@ void SmushPlayer::insanity(bool flag) {
 
 void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, int32 contFrame) {
 	Chunk *sub;
-	
+
 	if (file) {
 		if (_base)
 			delete _base;
 
 		_base = new FileChunk(file, directory);
+		pos = 0;
 	} else {
-		_base->reinit();
+		_base->reinit(pos);
+		debug(0, "Yup");
 	}
 
-	sub = _base->subBlock();
-	checkBlock(*sub, TYPE_AHDR);
-	handleAnimHeader(*sub);
-
-	if (pos != 8) {
-		_base->reinit();
+	if (pos != 8 && pos) {
 		_base->seek(pos, FileChunk::seek_start);
 		_middleAudio = true;
+	} else {
+		_base->seek(pos, FileChunk::seek_start);
+		sub = _base->subBlock();
+		checkBlock(*sub, TYPE_AHDR);
+		handleAnimHeader(*sub);
 	}
 
 	_frame = contFrame;

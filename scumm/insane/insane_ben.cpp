@@ -287,6 +287,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 			_actor[0].field_8 = 112;
 			smlayer_setActorFacing(0, 2, 26, 180);
 			break;
+		case 4:
 		case 5:
 			_actor[0].tilt = tmp;
 
@@ -480,19 +481,19 @@ bool Insane::weaponBenIsEffective(void) {
 }
 
 int32 Insane::calcBenDamage(bool arg_0, bool arg_4) {
-	if ((_actor[1].x - _actor[0].x > weaponMaxRange(0)) ||
-		(_actor[1].x - _actor[0].x < weaponMinRange(0)))
+	if ((_actor[1].x - _actor[0].x > weaponMaxRange(1)) ||
+		(_actor[1].x - _actor[0].x < weaponMinRange(1)))
 		return 0;
 
-	if (_actor[1].field_44 && arg_4)
+	if (_actor[0].field_44 && arg_4)
 		return 1000;
 
-	if (!actor1StateFlags(_actor[1].act[2].state))
+	if (!actor1StateFlags(_actor[0].act[2].state))
 		return 0;
 
 	if (arg_0) {
-		ouchSoundEnemy();
-		_actor[1].damage += weaponDamage(0);
+		ouchSoundBen();
+		_actor[0].damage += weaponDamage(1); // PATCH
 	}
 
 	return 1;
@@ -710,7 +711,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].weaponClass = 1;
 		if (_actor[0].act[2].frame == 2) {
 			if (_currEnemy != EN_CAVEFISH) {
-				tmp = calcBenDamage(1, 1);
+				tmp = calcEnemyDamage(1, 1);
 				if (tmp == 1)
 					smlayer_startSfx(60);
 				if (tmp == 1000)
@@ -762,7 +763,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			if (_currEnemy == EN_VULTM2) {
 				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
 					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
-					calcBenDamage(0, 0)) {
+					calcEnemyDamage(0, 0)) {
 					smlayer_setActorFacing(0, 2, 20, 180);
 					_actor[0].act[2].state = 97;
 					_actor[0].act[2].room = 0;
@@ -814,7 +815,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_MACE:
 				case INV_2X4:
 				case INV_DUST:
-					tmp = calcBenDamage(1, 1);
+					tmp = calcEnemyDamage(1, 1);
 					if (tmp == 1)
 						smlayer_startSfx(73);
 					if (tmp == 1000)
@@ -823,7 +824,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_WRENCH:
 				case INV_BOOT:
 				case INV_HAND:
-					if(calcBenDamage(1, 0) == 1)
+					if(calcEnemyDamage(1, 0) == 1)
 						smlayer_startSfx(73);
 					break;
 				}
@@ -876,7 +877,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].weaponClass = 2;
 		_actor[0].field_34 = 1;
 		_actor[0].kicking = 0;
-		if ((_actor[0].act[2].frame == 3) && (calcBenDamage(0, 0) == 1)) {
+		if ((_actor[0].act[2].frame == 3) && (calcEnemyDamage(0, 0) == 1)) {
 			_actor[1].damage = weaponDamage(0);
 			smlayer_startSfx(64);
 			_actor[1].cursorX = 320;
@@ -947,14 +948,14 @@ void Insane::actor02Reaction(int32 buttons) {
 			switch (_actor[1].weapon) {
 			case INV_CHAIN:
 			case INV_CHAINSAW:
-				tmp = calcBenDamage(1, 1);
+				tmp = calcEnemyDamage(1, 1);
 				if (tmp == 1)
 					smlayer_startSfx(76);
 				if (tmp == 1000)
 					smlayer_startSfx(77);
 				break;
 			case INV_BOOT:
-				calcBenDamage(0, 1);
+				calcEnemyDamage(0, 1);
 				break;
 			case INV_DUST:
 				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
@@ -964,7 +965,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				}
 				break;
 			default:
-				if (calcBenDamage(1, 0))
+				if (calcEnemyDamage(1, 0))
 					smlayer_startSfx(76);
 				break;
 			}
@@ -1044,7 +1045,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_MACE:
 				case INV_2X4:
 				case INV_BOOT:
-					tmp = calcBenDamage(1, 1);
+					tmp = calcEnemyDamage(1, 1);
 					if (tmp == 1)
 						smlayer_startSfx(67);
 					if (tmp == 1000)
@@ -1143,7 +1144,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			case INV_2X4:
 			case INV_BOOT:
 			case INV_DUST:
-				tmp = calcBenDamage(1, 1);
+				tmp = calcEnemyDamage(1, 1);
 				if (tmp == 1) {
 					if (_currEnemy == EN_CAVEFISH) {
 						_actor[1].lost = 1;
@@ -1156,7 +1157,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					smlayer_startSfx(80);
 				break;
 			default:
-				if (!calcBenDamage(1, 0))
+				if (!calcEnemyDamage(1, 0))
 					smlayer_startSfx(79);
 				break;
 			}
@@ -1227,14 +1228,14 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_2X4:
 				case INV_BOOT:
 				case INV_DUST:
-					tmp = calcBenDamage(1, 1);
+					tmp = calcEnemyDamage(1, 1);
 					if (tmp == 1)
 						smlayer_startSfx(70);
 					if (tmp == 1000)
 						smlayer_startSfx(71);
 					break;
 				case 6:
-					if (!calcBenDamage(0, 1))
+					if (!calcEnemyDamage(0, 1))
 						smlayer_startSfx(70);
 					break;
 				default:
@@ -1285,15 +1286,15 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (_actor[0].act[2].frame >= 5) {
 			switch (_currEnemy) {
 			case EN_ROTT3:
-				if (calcBenDamage(0, 0))
+				if (calcEnemyDamage(0, 0))
 					_actor[1].act[2].state = 115;
 				break;
 			case EN_VULTF2:
-				if (calcBenDamage(0, 0))
+				if (calcEnemyDamage(0, 0))
 					_actor[1].act[2].state = 113;
 				break;
 			default:
-				tmp = calcBenDamage(1, 1);
+				tmp = calcEnemyDamage(1, 1);
 				if (tmp == 1)
 					smlayer_startSfx(82);
 				if (tmp == 1000)

@@ -75,7 +75,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	par4 = b.getWord(); // bx
 
 	switch (par1) {
-	case 2:
+	case 2: // PATCH
 		if (par3 != 1)
 			break;
 
@@ -121,12 +121,12 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (par13 > _actor[0].x || par11 < _actor[0].x) {
 			_tiresRustle = true;
 			_actor[0].x1 = -_actor[0].x1;
-			_actor[0].damage++;
+			_actor[0].damage++; // PATCH
 		}
 
 		if (par9 < _actor[0].x || par7 > _actor[0].x) {
 			_tiresRustle = true;
-			_actor[0].damage += 4;
+			_actor[0].damage += 4; // PATCH
 		}
 		break;
 	case 6:
@@ -167,7 +167,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			par5 = b.getWord(); // si
 			par6 = b.getWord(); // bx
 			smlayer_setFluPalette(_smush_roadrsh3Rip, 0);
-			if (par5 != par6 - 1)
+			if (par5 == par6 - 1)
 				smlayer_setFluPalette(_smush_roadrashRip, 0);
 		}
 		break;
