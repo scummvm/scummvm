@@ -140,23 +140,12 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 	return 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_classFlags(int spriteId, int classId) {
+int ScummEngine_v90he::spriteInfoGet_classFlags(int spriteId, int num, int *args) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-
-	if (classId == -1)
-		return _spriteTable[spriteId].class_flags; 
-
-	checkRange(32, 1, classId, "class %d out of range in statement");
-	return ((_spriteTable[spriteId].class_flags & (1 << classId)) != 0) ? 1 : 0;
-}
-
-int ScummEngine_v90he::spriteInfoGet_classFlagsAnd(int spriteId, int num, int *args) {
 	int code, classId;
 
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-
-	if (!num)
-		return 1;
+	if (num == 0)
+		return _spriteTable[spriteId].class_flags; 
 
 	for (int i = 0; i < num; i++) {
 		code = classId = args[i];
@@ -647,9 +636,9 @@ void ScummEngine_v90he::spriteInfoSet_setClassFlag(int spriteId, int classId, in
 	checkRange(32, 1, classId, "class %d out of range in statement");
 	
 	if (toggle) {
-		_spriteTable[spriteId].class_flags |= (1 << (classId));
+		_spriteTable[spriteId].class_flags |= (1 << classId);
 	} else {
-		_spriteTable[spriteId].class_flags &= ~(1 << (classId));
+		_spriteTable[spriteId].class_flags &= ~(1 << classId);
 	}
 }
 

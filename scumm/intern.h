@@ -912,8 +912,7 @@ protected:
 	void copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 srcColor);
 
 	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
-	int spriteInfoGet_classFlags(int spriteId, int num);
-	int spriteInfoGet_classFlagsAnd(int spriteId, int num, int *args);
+	int spriteInfoGet_classFlags(int spriteId, int num, int *args);
 	int spriteInfoGet_flags_13(int spriteId);
 	int spriteInfoGet_flagYFlipped(int spriteId);
 	int spriteInfoGet_flagXFlipped(int spriteId);

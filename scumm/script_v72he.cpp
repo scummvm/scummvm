@@ -683,7 +683,7 @@ int ScummEngine_v72he::findObject(int x, int y, int num, int *args) {
 
 			// Check object class
 			cls = args[0];
-			b = getClass(i, cls);
+			b = getClass(_objs[i].obj_nr, cls);
 			if ((cls & 0x80 && b) || (!(cls & 0x80) && !b))
 				return result;
 		}

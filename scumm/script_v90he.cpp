@@ -958,10 +958,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		flags = getStackList(args, ARRAYSIZE(args));
 		spriteId = pop();
 		if (spriteId) {
-			if (flags)
-				push(spriteInfoGet_classFlagsAnd(spriteId, flags, args));
-			else
-				push(spriteInfoGet_classFlags(spriteId, -1));
+			push(spriteInfoGet_classFlags(spriteId, flags, args));
 		} else {
 			push(0);
 		}
@@ -1715,7 +1712,7 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 		tmp = num;
 		while (--tmp >= 0) {
 			cls = args[tmp];
-			b = getClass(i, cls);
+			b = getClass(_objs[i].obj_nr, cls);
 			if ((cls & 0x80 && !b) || (!(cls & 0x80) && b))
 				cond = 0;
 		}
@@ -1723,6 +1720,7 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 		if (cond)
 			writeArray(0, 0, j++, _objs[i].obj_nr);
 	}
+
 	writeArray(0, 0, 0, j);
 	
 	push(readVar(0));
