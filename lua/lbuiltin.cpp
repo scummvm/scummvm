@@ -513,8 +513,10 @@ static struct luaL_reg int_funcs[] = {
   {"stop_script", stop_script},
   {"next_script", next_script},
   {"identify_script", identify_script},
+  {"pause_scripts", pause_scripts},
+  {"unpause_scripts", unpause_scripts},
   {"find_script", find_script},
-  {"break_here", break_here},
+  {"break_here", break_here}
 };
 
 

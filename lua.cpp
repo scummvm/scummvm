@@ -1432,8 +1432,96 @@ STUB_FUNC(ChangePrimitive)
 STUB_FUNC(DrawRectangle)
 STUB_FUNC(DrawPolygon)
 STUB_FUNC(DrawLine)
-STUB_FUNC(pause_scripts)
-STUB_FUNC(unpause_scripts)
+STUB_FUNC(WalkActorToAvoiding)
+STUB_FUNC(WalkActorToInterest)
+STUB_FUNC(IsActorLooking)
+STUB_FUNC(CanActorSee)
+STUB_FUNC(GetActorChores)
+STUB_FUNC(GetActorLoopingChores)
+STUB_FUNC(ScreenToWorld)
+STUB_FUNC(Exit)
+STUB_FUNC(UnLockFont)
+STUB_FUNC(LockSound)
+STUB_FUNC(UnlockSound)
+STUB_FUNC(LockCostume)
+STUB_FUNC(UnlockCostume)
+STUB_FUNC(PrintMessage)
+STUB_FUNC(PrintError)
+STUB_FUNC(PlaySoundAttached)
+STUB_FUNC(QueryDialog)
+STUB_FUNC(GetSectorVertices)
+STUB_FUNC(IsSectorActive)
+STUB_FUNC(SpewShutdown)
+STUB_FUNC(GetPhysicalBytes)
+STUB_FUNC(SetMemoryUsage)
+STUB_FUNC(SetCameraPosition)
+STUB_FUNC(GetCameraInterest)
+STUB_FUNC(GetCameraFOV)
+STUB_FUNC(SetCameraFOV)
+STUB_FUNC(GetCameraRoll)
+STUB_FUNC(SnapToPlane)
+STUB_FUNC(FindLight)
+STUB_FUNC(IsLightOn)
+STUB_FUNC(SetLightType)
+STUB_FUNC(GetLightType)
+STUB_FUNC(GetLightPosition)
+STUB_FUNC(SetLightRotation)
+STUB_FUNC(GetLightRotation)
+STUB_FUNC(SetLightAngles)
+STUB_FUNC(GetLightAngles)
+STUB_FUNC(GetLightIntensity)
+STUB_FUNC(PointLightAt)
+STUB_FUNC(ImStartRecording)
+STUB_FUNC(ImStopRecording)
+STUB_FUNC(Play)
+STUB_FUNC(Quiet)
+STUB_FUNC(ImGetMasterVol)
+STUB_FUNC(ImSetMasterVol)
+STUB_FUNC(ImStartVoice)
+STUB_FUNC(ImStopVoice)
+STUB_FUNC(ImSetAttribute)
+STUB_FUNC(ImSetCuePoint)
+STUB_FUNC(Vfx)
+STUB_FUNC(ImGetMemoryFootprint)
+STUB_FUNC(ImGetSoundCacheSize)
+STUB_FUNC(LoadBundle)
+STUB_FUNC(UnloadBundle)
+STUB_FUNC(ActorShadow)
+STUB_FUNC(ActorDistToShadowPlane)
+STUB_FUNC(MarkDirtyRect)
+STUB_FUNC(CacheRect)
+STUB_FUNC(RestoreCacheRect)
+STUB_FUNC(ResReport)
+STUB_FUNC(IrisComplete)
+STUB_FUNC(IrisClear)
+STUB_FUNC(SaveScreen)
+STUB_FUNC(FindFileOnAnyCD)
+STUB_FUNC(SetSoundParameters)
+STUB_FUNC(GetSoundParameters)
+STUB_FUNC(Test)
+STUB_FUNC(ActorPuckOrient)
+STUB_FUNC(ActorVoiceIs3D)
+STUB_FUNC(DumpMemoryLog)
+STUB_FUNC(BuildCache)
+STUB_FUNC(RestoreCache)
+STUB_FUNC(SetWalkSystemFadeTime)
+STUB_FUNC(GetMemoryUsage)
+STUB_FUNC(Concatfallback)
+STUB_FUNC(TypeOverride)
+STUB_FUNC(DfltCamera)
+STUB_FUNC(DfltControl)
+STUB_FUNC(GetFontDimensions)
+STUB_FUNC(PurgeText)
+STUB_FUNC(GetVideoDevices)
+STUB_FUNC(SetVideoDevices)
+STUB_FUNC(SetHardwareState)
+STUB_FUNC(Enumerate3DDevices)
+STUB_FUNC(EnumerateVideoDevices)
+STUB_FUNC(PlaySound)
+
+static void LuaGetTickCount() {
+	stubWarning("GetTickCount");
+}
 
 static void dummyHandler() {
 }
@@ -1609,232 +1697,337 @@ static struct {
 	{ "AXIS_MOUSE_Z", SDLK_AXIS_MOUSE_Z }
 };
 
-struct luaL_reg builtins[] = {
-	{ "dofile", new_dofile },
-	{ "PrintDebug", PrintDebug },
-	{ "PrintWarning", PrintWarning },
-	{ "BlastText", BlastText },
-	{ "FunctionName", FunctionName },
+struct luaL_reg mainOpcodes[] = {
+	{ "EnginePause", EnginePause },
+	{ "EngineResume", EngineResume },
+	{ "EngineDisplay", EngineDisplay },
+	{ "SearchForFileOrSwapCDs", SearchForFileOrSwapCDs },
 	{ "CheckForFile", CheckForFile },
-	{ "MakeColor", MakeColor },
-	{ "GetColorComponents", GetColorComponents },
-	{ "ReadRegistryValue", ReadRegistryValue },
-	{ "WriteRegistryValue", WriteRegistryValue },
-	{ "LocalizeString", LocalizeString },
-	{ "LoadActor", LoadActor },
-	{ "SetSelectedActor", SetSelectedActor },
-	{ "SetActorTalkColor", SetActorTalkColor },
-	{ "GetActorTalkColor", GetActorTalkColor },
-	{ "SetActorVisibility", SetActorVisibility },
-	{ "SetActorFollowBoxes", SetActorFollowBoxes },
-	{ "PutActorAt", PutActorAt },
-	{ "GetActorPos", GetActorPos },
-	{ "SetActorRot", SetActorRot },
-	{ "GetActorRot", GetActorRot },
-	{ "IsActorTurning", IsActorTurning },
-	{ "GetAngleBetweenActors", GetAngleBetweenActors },
-	{ "GetActorYawToPoint", GetActorYawToPoint },
-	{ "PutActorInSet", PutActorInSet },
+	{ "Load", Load },
+	{ "Save", Save },
+	{ "SetActorColormap", SetActorColormap },
+	{ "GetActorCostume", GetActorCostume },
+	{ "SetActorCostume", SetActorCostume },
+	{ "GetActorScale", GetActorScale },
+	{ "SetActorScale", SetActorScale },
+	{ "GetActorTimeScale", GetActorTimeScale },
+	{ "SetActorTimeScale", SetActorTimeScale },
+	{ "GetActorNodeLocation", GetActorNodeLocation },
+	{ "SetActorWalkChore", SetActorWalkChore },
+	{ "SetActorTurnChores", SetActorTurnChores },
+	{ "SetActorRestChore", SetActorRestChore },
+	{ "SetActorMumblechore", SetActorMumblechore },
+	{ "SetActorTalkChore", SetActorTalkChore },
 	{ "SetActorWalkRate", SetActorWalkRate },
 	{ "GetActorWalkRate", GetActorWalkRate },
 	{ "SetActorTurnRate", SetActorTurnRate },
-	{ "WalkActorForward", WalkActorForward },
+	{ "GetActorTurnRate", GetActorTurnRate },
+	{ "SetSelectedActor", SetSelectedActor },
+	{ "LoadActor", LoadActor },
+	{ "GetActorPos", GetActorPos },
+	{ "GetActorRect", GetActorRect },
 	{ "GetActorPuckVector", GetActorPuckVector },
+	{ "GetActorYawToPoint", GetActorYawToPoint },
+	{ "SetActorReflection", SetActorReflection },
+	{ "SetActorOffsetYaw", SetActorOffsetYaw },
+	{ "PutActorAtInterest", PutActorAtInterest },
+	{ "PutActorAtOrigin", PutActorAtOrigin },
+	{ "PutActorAt", PutActorAt },
+	{ "PutActorInSet", PutActorInSet },
+	{ "GetClippedPos", GetClippedPos },
+	{ "WalkActorVector", WalkActorVector },
+	{ "WalkActorForward", WalkActorForward },
+	{ "DriveActorTo", DriveActorTo },
 	{ "WalkActorTo", WalkActorTo },
-	{ "IsActorMoving", IsActorMoving },
-	{ "IsActorResting", IsActorResting },
+	{ "WalkActorToAvoiding", WalkActorToAvoiding },
+	{ "WalkActorToInterest", WalkActorToInterest },
+	{ "ActorLookAt", ActorLookAt },
+	{ "IsActorLooking", IsActorLooking },
+	{ "SetActorLookRate", SetActorLookRate },
+	{ "GetActorLookRate", GetActorLookRate },
+	{ "CanActorSee", CanActorSee },
+	{ "GetVisibleThings", GetVisibleThings },
+	{ "GetCameraActor", GetCameraActor },
+	{ "SetActorHead", SetActorHead },
+	{ "SetActorVisibility", SetActorVisibility },
+	{ "SetActorFollowBoxes", SetActorFollowBoxes },
+	{ "ShutUpActor", ShutUpActor },
+	{ "SetActorFrustrumCull", SetActorFrustrumCull },
+	{ "IsActorInSector", IsActorInSector },
+	{ "GetActorSector", GetActorSector },
+	{ "IsPointInSector", IsPointInSector },
+	{ "GetPointSector", GetPointSector },
 	{ "TurnActor", TurnActor },
-	{ "PushActorCostume", PushActorCostume },
-	{ "SetActorRestChore", SetActorRestChore },
-	{ "SetActorWalkChore", SetActorWalkChore },
-	{ "SetActorTurnChores", SetActorTurnChores },
-	{ "SetActorTalkChore", SetActorTalkChore },
-	{ "SetActorMumblechore", SetActorMumblechore },
-	{ "SetActorCostume", SetActorCostume },
-	{ "GetActorCostume", GetActorCostume },
-	{ "PopActorCostume", PopActorCostume },
-	{ "GetActorCostumeDepth", GetActorCostumeDepth },
+	{ "GetActorRot", GetActorRot },
+	{ "SetActorRot", SetActorRot },
+	{ "SetActorPitch", SetActorPitch },
+	{ "SetActorRoll", SetActorRoll },
+	{ "IsActorTurning", IsActorTurning },
 	{ "PlayActorChore", PlayActorChore },
 	{ "PlayActorChoreLooping", PlayActorChoreLooping },
-	{ "SetActorChoreLooping", SetActorChoreLooping },
 	{ "StopActorChore", StopActorChore },
+	{ "CompleteActorChore", CompleteActorChore },
+	{ "IsActorMoving", IsActorMoving },
 	{ "IsActorChoring", IsActorChoring },
-	{ "GetVisibleThings", GetVisibleThings },
-	{ "SayLine", SayLine },
-	{ "IsMessageGoing", IsMessageGoing },
-	{ "GetActorSector", GetActorSector },
-	{ "IsActorInSector", IsActorInSector },
-	{ "MakeSectorActive", MakeSectorActive },
-	{ "MakeCurrentSet", MakeCurrentSet },
-	{ "MakeCurrentSetup", MakeCurrentSetup },
-	{ "GetCurrentSetup", GetCurrentSetup },
-	{ "GetShrinkPos", GetShrinkPos },
-	{ "ImStartSound", ImStartSound },
-	{ "ImStopSound", ImStopSound },
-	{ "ImGetParam", ImGetParam },
-	{ "ImSetState", ImSetState },
-	{ "ImSetSequence", ImSetSequence },
-	{ "PerSecond", PerSecond },
+	{ "IsActorResting", IsActorResting },
+	{ "SetActorChoreLooping", SetActorChoreLooping },
+	{ "GetActorChores", GetActorChores },
+	{ "GetActorLoopingChores", GetActorLoopingChores },
+	{ "GetActorCostumeDepth", GetActorCostumeDepth },
+	{ "WorldToScreen", WorldToScreen },
+	{ "ScreenToWorld", ScreenToWorld },
+	{ "exit", Exit },
+	{ "FunctionName", FunctionName },
+	{ "EnableDebugKeys", EnableDebugKeys },
+	{ "LockFont", LockFont },
+	{ "UnLockFont", UnLockFont },
+	{ "LockSound", LockSound },
+	{ "UnlockSound", UnlockSound },
+	{ "LockCostume", LockCostume },
+	{ "UnlockCostume", UnlockCostume },
 	{ "EnableControl", EnableControl },
 	{ "DisableControl", DisableControl },
 	{ "GetControlState", GetControlState },
-	{ "InputDialog", InputDialog },
-	{ "ChangeTextObject", ChangeTextObject },
-	{ "GetTextObjectDimensions", GetTextObjectDimensions },
-	{ "MakeTextObject", MakeTextObject },
-	{ "KillTextObject", KillTextObject },
-	{ "ShutUpActor", ShutUpActor },
-	{ "HardwareAccelerated", HardwareAccelerated },
-	{ "ActorLookAt", ActorLookAt },
-	{ "SetActorLookRate", SetActorLookRate },
-	{ "GetActorLookRate", GetActorLookRate },
-	{ "SetActorHead", SetActorHead },
+	{ "GetControlState", GetControlState },
+	{ "PrintMessage", PrintMessage },
+	{ "PrintError", PrintError },
+	{ "PrintWarning", PrintWarning },
+	{ "PrintDebug", PrintDebug },
+	{ "MakeCurrentSet", MakeCurrentSet },
+	{ "LockSet", LockSet },
+	{ "UnLockSet", UnLockSet },
+	{ "MakeCurrentSetup", MakeCurrentSetup },
+	{ "GetCurrentSetup", GetCurrentSetup },
+	{ "NextSetup", NextSetup },
+	{ "PreviousSetup", PreviousSetup },
+	{ "StartFullscreenMovie", StartFullscreenMovie },
+	{ "IsFullscreenMoviePlaying", IsFullscreenMoviePlaying },
 	{ "StartMovie", StartMovie },
 	{ "StopMovie", StopMovie },
 	{ "PauseMovie", PauseMovie },
 	{ "IsMoviePlaying", IsMoviePlaying },
-	{ "StartFullscreenMovie", StartFullscreenMovie },
-	{ "IsFullscreenMoviePlaying", IsFullscreenMoviePlaying },
-	{ "NewObjectState", NewObjectState }, 
-	{ "FreeObjectState", FreeObjectState },
-	{ "GetSpeechMode", GetSpeechMode },
-	{ "SetSpeechMode", SetSpeechMode },
-	{ "GetTextCharPosition", GetTextCharPosition },
-	{ "GetDiskFreeSpace", GetDiskFreeSpace },
-	{ "Is3DHardwareEnabled", Is3DHardwareEnabled },
+	{ "PlaySound", PlaySound },
+	{ "PlaySoundAt", PlaySoundAt },
+	{ "PlaySoundAttached", PlaySoundAttached },
+	{ "IsSoundPlaying", IsSoundPlaying },
+	{ "SetSoundPosition", SetSoundPosition },
+	{ "FileFindFirst", FileFindFirst },
+	{ "FileFindNext", FileFindNext },
+	{ "FileFindDispose", FileFindDispose },
+	{ "InputDialog", InputDialog },
+	{ "QueryDialog", QueryDialog },
+	{ "WriteRegistryValue", WriteRegistryValue },
+	{ "ReadRegistryValue", ReadRegistryValue },
+	{ "GetSectorVertices", GetSectorVertices },
+	{ "GetSectorOppositeEdge", GetSectorOppositeEdge },
+	{ "IsSectorActive", IsSectorActive },
+	{ "MakeSectorActive", MakeSectorActive },
+	{ "PreRender", PreRender },
+	{ "SpewStartup", SpewStartup },
+	{ "SpewShutdown", SpewShutdown },
 	{ "GetCurrentScript", GetCurrentScript },
-	{ "Save", Save },
-	{ "Load", Load },
-	{ "RestoreIMuse", RestoreIMuse },
-	{ "SaveIMuse", SaveIMuse },
-	{ "SetActorInvClipNode", SetActorInvClipNode },
-	{ "NukeResources", NukeResources },
-	{ "UnShrinkBoxes", UnShrinkBoxes },
-	{ "ShrinkBoxes", ShrinkBoxes },
-	{ "ResetTextures", ResetTextures },
-	{ "JustLoaded", JustLoaded },
-	{ "AttachToResources", AttachToResources },
-	{ "DetachFromResources", DetachFromResources },
-	{ "GetTextSpeed", GetTextSpeed },
-	{ "SetTextSpeed", SetTextSpeed },
-	{ "GetSaveGameData", GetSaveGameData },
-	{ "SubmitSaveGameData", SubmitSaveGameData },
-	{ "BlastRect", BlastRect },
-	{ "BlastImage", BlastImage },
-	{ "FreeImage", FreeImage },
-	{ "GetImage", GetImage },
-	{ "GetSaveGameImage", GetSaveGameImage },
-	{ "ScreenShot", ScreenShot },
-	{ "TextFileGetLine", TextFileGetLine },
-	{ "TextFileGetLineCount", TextFileGetLineCount },
-	{ "IrisUp", IrisUp },
-	{ "IrisDown", IrisDown },
-	{ "FadeInChore", FadeInChore },
-	{ "FadeOutChore", FadeOutChore },
-	{ "SetActorClipPlane", SetActorClipPlane },
-	{ "SetActorClipActive", SetActorClipActive },
-	{ "SetActorCollisionScale", SetActorCollisionScale },
-	{ "SetActorCollisionMode", SetActorCollisionMode },
-	{ "FlushControls", FlushControls },
-	{ "ActorToClean", ActorToClean },
-	{ "SendObjectToFront", SendObjectToFront },
-	{ "SendObjectToBack", SendObjectToBack },
-	{ "SetObjectType", SetObjectType },
-	{ "SetActorShadowValid", SetActorShadowValid },
-	{ "AddShadowPlane", AddShadowPlane },
-	{ "KillActorShadows", KillActorShadows },
-	{ "SetActiveShadow", SetActiveShadow },
-	{ "SetActorShadowPoint", SetActorShadowPoint },
-	{ "SetActorShadowPlane", SetActorShadowPlane },
-	{ "ActivateActorShadow", ActivateActorShadow },
-	{ "SetShadowColor", SetShadowColor },
-	{ "Display", Display },
-	{ "CleanBuffer", CleanBuffer },
-	{ "DimRegion", DimRegion },
-	{ "DimScreen", DimScreen },
-	{ "ForceRefresh", ForceRefresh },
-	{ "RenderModeUser", RenderModeUser },
-	{ "SetGamma", SetGamma },
-	{ "ImSetVoiceEffect", ImSetVoiceEffect },
-	{ "ImResume", ImResume },
-	{ "ImPause", ImPause },
-	{ "ImSetMusicVol", ImSetMusicVol },
-	{ "ImGetMusicVol", ImGetMusicVol },
-	{ "ImSetVoiceVol", ImSetVoiceVol },
-	{ "ImGetVoiceVol", ImGetVoiceVol },
-	{ "ImSetSfxVol", ImSetSfxVol },
-	{ "ImGetSfxVol", ImGetSfxVol },
-	{ "ImFadeParam", ImFadeParam },
-	{ "ImSetParam", ImSetParam },
-	{ "ImStopAllSounds", ImStopAllSounds },
+	{ "PrintActorCostumes", PrintActorCostumes },
+	{ "PushActorCostume", PushActorCostume },
+	{ "PopActorCostume", PopActorCostume },
+	{ "LoadCostume", LoadCostume },
+	{ "GetPhysicalBytes", GetPhysicalBytes },
+	{ "SetMemoryUsage", SetMemoryUsage },
+	{ "RotateVector", RotateVector },
+	{ "GetCameraPosition", GetCameraPosition },
+	{ "SetCameraPosition", SetCameraPosition },
+	{ "GetCameraInterest", GetCameraInterest },
+	{ "SetCameraInterest", SetCameraInterest },
+	{ "GetCameraFOV", GetCameraFOV },
+	{ "SetCameraFOV", SetCameraFOV },
+	{ "GetCameraRoll", GetCameraRoll },
+	{ "SetCameraRoll", SetCameraRoll },
+	{ "GetCameraLookVector", GetCameraLookVector },
+	{ "PointActorAt", PointActorAt },
+	{ "TurnActorTo", TurnActorTo },
+	{ "PerSecond", PerSecond },
+	{ "SnapToPlane", SnapToPlane },
+	{ "GetAngleBetweenVectors", GetAngleBetweenVectors },
+	{ "GetAngleBetweenActors", GetAngleBetweenActors },
+	{ "SetAmbientLight", SetAmbientLight },
+	{ "FindLight", FindLight },
+	{ "TurnLightOn", TurnLightOn },
+	{ "IsLightOn", IsLightOn },
+	{ "SetLightType", SetLightType },
+	{ "GetLightType", GetLightType },
+	{ "SetLightPosition", SetLightPosition },
+	{ "GetLightPosition", GetLightPosition },
+	{ "SetLightRotation", SetLightRotation },
+	{ "GetLightRotation", GetLightRotation },
+	{ "SetLightAngles", SetLightAngles },
+	{ "GetLightAngles", GetLightAngles },
+	{ "SetLightIntensity", SetLightIntensity },
+	{ "GetLightIntensity", GetLightIntensity },
+	{ "PointLightAt", PointLightAt },
 	{ "LightMgrSetChange", LightMgrSetChange },
 	{ "LightMgrStartup", LightMgrStartup },
-	{ "SetLightIntensity", SetLightIntensity },
-	{ "SetLightPosition", SetLightPosition },
-	{ "TurnLightOn", TurnLightOn },
-	{ "SetAmbientLight", SetAmbientLight },
-	{ "GetAngleBetweenVectors", GetAngleBetweenVectors },
-	{ "TurnActorTo", TurnActorTo },
-	{ "PointActorAt", PointActorAt },
-	{ "GetCameraLookVector", GetCameraLookVector },
-	{ "SetCameraRoll", SetCameraRoll },
-	{ "SetCameraInterest", SetCameraInterest },
-	{ "GetCameraPosition", GetCameraPosition },
-	{ "RotateVector", RotateVector },
-	{ "LoadCostume", LoadCostume },
-	{ "PrintActorCostumes", PrintActorCostumes },
-	{ "SpewStartup", SpewStartup },
-	{ "PreRender", PreRender },
-	{ "GetSectorOppositeEdge", GetSectorOppositeEdge },
-	{ "FileFindDispose", FileFindDispose },
-	{ "FileFindNext", FileFindNext },
-	{ "FileFindFirst", FileFindFirst },
-	{ "SetSoundPosition", SetSoundPosition },
-	{ "IsSoundPlaying", IsSoundPlaying },
-	{ "PlaySoundAt", PlaySoundAt },
-	{ "PreviousSetup", PreviousSetup },
-	{ "NextSetup", NextSetup },
-	{ "UnLockSet", UnLockSet },
-	{ "LockSet", LockSet },
-	{ "LockFont", LockFont },
-	{ "EnableDebugKeys", EnableDebugKeys },
-	{ "WorldToScreen", WorldToScreen },
-	{ "CompleteActorChore", CompleteActorChore },
-	{ "SetActorRoll", SetActorRoll },
-	{ "SetActorPitch", SetActorPitch },
-	{ "GetPointSector", GetPointSector },
-	{ "IsPointInSector", IsPointInSector },
-	{ "SetActorFrustrumCull", SetActorFrustrumCull },
+	{ "ImStartRecording", ImStartRecording },
+	{ "ImStopRecording", ImStopRecording },
+	{ "ImStartSound", ImStartSound },
+	{ "Play", Play },
+	{ "ImStopSound", ImStopSound },
+	{ "ImStopAllSounds", ImStopAllSounds },
+	{ "Quiet", Quiet },
+	{ "ImGetParam", ImGetParam },
+	{ "ImSetParam", ImSetParam },
+	{ "ImFadeParam", ImFadeParam },
+	{ "ImGetMasterVol", ImGetMasterVol },
+	{ "ImSetMasterVol", ImSetMasterVol },
+	{ "ImGetSfxVol", ImGetSfxVol },
+	{ "ImSetSfxVol", ImSetSfxVol },
+	{ "ImGetVoiceVol", ImGetVoiceVol },
+	{ "ImSetVoiceVol", ImSetVoiceVol },
+	{ "ImGetMusicVol", ImGetMusicVol },
+	{ "ImSetMusicVol", ImSetMusicVol },
+	{ "ImStartVoice", ImStartVoice },
+	{ "ImStopVoice", ImStopVoice },
+	{ "ImSetState", ImSetState },
+	{ "ImSetSequence", ImSetSequence },
+	{ "ImSetAttribute", ImSetAttribute },
+	{ "ImSetCuePoint", ImSetCuePoint },
+	{ "ImPause", ImPause },
+	{ "ImResume", ImResume },
+	{ "Vfx", Vfx },
+	{ "ImSetVoiceEffect", ImSetVoiceEffect },
+	{ "ImGetMemoryFootprint", ImGetMemoryFootprint },
+	{ "ImGetSoundCacheSize", ImGetSoundCacheSize },
+	{ "LoadBundle", LoadBundle },
+	{ "UnloadBundle", UnloadBundle },
+	{ "SetGamma", SetGamma },
 	{ "SetActorWalkDominate", SetActorWalkDominate },
 	{ "SetActorConstrain", SetActorConstrain },
-	{ "GetCameraActor", GetCameraActor },
-	{ "DriveActorTo", DriveActorTo },
-	{ "WalkActorVector", WalkActorVector },
-	{ "PutActorAtInterest", PutActorAtInterest },
-	{ "SetActorReflection", SetActorReflection },
-	{ "GetActorRect", GetActorRect },
-	{ "GetActorNodeLocation", GetActorNodeLocation },
-	{ "SetActorTimeScale", SetActorTimeScale },
-	{ "GetActorTimeScale", GetActorTimeScale },
-	{ "SetActorScale", SetActorScale },
-	{ "SetActorColormap", SetActorColormap },
-	{ "SearchForFileOrSwapCDs", SearchForFileOrSwapCDs },
-	{ "EngineDisplay", EngineDisplay },
-	{ "SetOffscreenTextPos", SetOffscreenTextPos },
-	{ "SetEmergencyFont", SetEmergencyFont },
-	{ "GetTranslationMode", GetTranslationMode },
-	{ "SetTranslationMode", SetTranslationMode },
-	{ "ExpireText", ExpireText },
-	{ "PrintLine", PrintLine },
+	{ "RenderModeUser", RenderModeUser },
+	{ "ForceRefresh", ForceRefresh },
+	{ "DimScreen", DimScreen },
+	{ "DimRegion", DimRegion },
+	{ "CleanBuffer", CleanBuffer },
+	{ "Display", Display },
+	{ "SetSpeechMode", SetSpeechMode },
+	{ "GetSpeechMode", GetSpeechMode },
+	{ "SetShadowColor", SetShadowColor },
+	{ "ActivateActorShadow", ActivateActorShadow },
+	{ "ActorShadow", ActorShadow },
+	{ "SetActorShadowPlane", SetActorShadowPlane },
+	{ "SetActorShadowPoint", SetActorShadowPoint },
+	{ "SetActiveShadow", SetActiveShadow },
+	{ "ActorDistToShadowPlane", ActorDistToShadowPlane },
+	{ "KillActorShadows", KillActorShadows },
+	{ "AddShadowPlane", AddShadowPlane },
+	{ "SetActorShadowValid", SetActorShadowValid },
+	{ "FreeObjectState", FreeObjectState },
+	{ "NewObjectState", NewObjectState }, 
+	{ "SetObjectType", SetObjectType },
+	{ "SendObjectToBack", SendObjectToBack },
+	{ "SendObjectToFront", SendObjectToFront },
+	{ "ActorToClean", ActorToClean },
+	{ "FlushControls", FlushControls },
+	{ "SetActorCollisionMode", SetActorCollisionMode },
+	{ "SetActorCollisionScale", SetActorCollisionScale },
+	{ "MarkDirtyRect", MarkDirtyRect },
+	{ "CacheRect", CacheRect },
+	{ "RestoreCacheRect", RestoreCacheRect },
+	{ "ResReport", ResReport },
+	{ "HardwareAccelerated", HardwareAccelerated },
+	{ "SetActorClipActive", SetActorClipActive },
+	{ "SetActorClipPlane", SetActorClipPlane },
+	{ "FadeOutChore", FadeOutChore },
+	{ "FadeInChore", FadeInChore },
+	{ "IrisDown", IrisDown },
+	{ "IrisUp", IrisUp },
+	{ "IrisComplete", IrisComplete },
+	{ "IrisClear", IrisClear },
+	{ "TextFileGetLineCount", TextFileGetLineCount },
+	{ "TextFileGetLine", TextFileGetLine },
+	{ "ScreenShot", ScreenShot },
+	{ "SaveScreen", SaveScreen },
+	{ "GetSaveGameImage", GetSaveGameImage },
+	{ "GetImage", GetImage },
+	{ "FreeImage", FreeImage },
+	{ "BlastImage", BlastImage },
+	{ "BlastRect", BlastRect },
+	{ "SubmitSaveGameData", SubmitSaveGameData },
+	{ "GetSaveGameData", GetSaveGameData },
+	{ "SetTextSpeed", SetTextSpeed },
+	{ "GetTextSpeed", GetTextSpeed },
+	{ "FindFileOnAnyCD", FindFileOnAnyCD },
+	{ "DetachFromResources", DetachFromResources },
+	{ "AttachToResources", AttachToResources },
+	{ "SetSoundParameters", SetSoundParameters },
+	{ "GetSoundParameters", GetSoundParameters },
+	{ "Test", Test },
+	{ "ActorPuckOrient", ActorPuckOrient },
+	{ "GetTickCount", LuaGetTickCount },
+	{ "ActorVoiceIs3D", ActorVoiceIs3D },
+	{ "JustLoaded", JustLoaded },
+	{ "DumpMemoryLog", DumpMemoryLog },
+	{ "ResetTextures", ResetTextures },
+	{ "BuildCache", BuildCache },
+	{ "RestoreCache", RestoreCache },
+	{ "ShrinkBoxes", ShrinkBoxes },
+	{ "UnShrinkBoxes", UnShrinkBoxes },
+	{ "GetShrinkPos", GetShrinkPos },
+	{ "NukeResources", NukeResources },
+	{ "SetActorInvClipNode", SetActorInvClipNode },
+	{ "GetDiskFreeSpace", GetDiskFreeSpace },
+	{ "SetWalkSystemFadeTime", SetWalkSystemFadeTime },
+	{ "SaveIMuse", SaveIMuse },
+	{ "RestoreIMuse", RestoreIMuse },
+	{ "GetMemoryUsage", GetMemoryUsage },
+	{ "dofile", new_dofile }
+};
+
+struct luaL_reg additionalOpcodes[] = {
+	{ "  concatfallback", Concatfallback },
+	{ "  typeoverride", TypeOverride },
+	{ "  dfltcamera", DfltCamera },
+	{ "  dfltcontrol", DfltControl }
+};
+
+struct luaL_reg textOpcodes[] = {
+	{ "IsMessageGoing", IsMessageGoing },
 	{ "SetSayLineDefaults", SetSayLineDefaults },
-	{ "PurgePrimitiveQueue", PurgePrimitiveQueue },
-	{ "KillPrimitive", KillPrimitive },
-	{ "ChangePrimitive", ChangePrimitive },
-	{ "DrawRectangle", DrawRectangle },
-	{ "DrawPolygon", DrawPolygon },
+	{ "SetActorTalkColor", SetActorTalkColor },
+	{ "GetActorTalkColor", GetActorTalkColor },
+	{ "SayLine", SayLine },
+	{ "PrintLine", PrintLine },
+	{ "MakeTextObject", MakeTextObject },
+	{ "GetTextObjectDimensions", GetTextObjectDimensions },
+	{ "GetFontDimensions", GetFontDimensions },
+	{ "ChangeTextObject", ChangeTextObject },
+	{ "KillTextObject", KillTextObject },
+	{ "BlastText", BlastText },
+	{ "ExpireText", ExpireText },
+	{ "PurgeText", PurgeText },
+	{ "MakeColor", MakeColor },
+	{ "GetColorComponents", GetColorComponents },
+	{ "SetTranslationMode", SetTranslationMode },
+	{ "GetTranslationMode", GetTranslationMode },
+	{ "GetTextCharPosition", GetTextCharPosition },
+	{ "LocalizeString", LocalizeString },
+	{ "SetEmergencyFont", SetEmergencyFont },
+	{ "SetOffscreenTextPos", SetOffscreenTextPos }
+};
+
+struct luaL_reg primitivesOpcodes[] = {
 	{ "DrawLine", DrawLine },
-	{ "pause_scripts", pause_scripts },
-	{ "unpause_scripts", unpause_scripts }
+	{ "DrawPolygon", DrawPolygon },
+	{ "DrawRectangle", DrawRectangle },
+	{ "ChangePrimitive", ChangePrimitive },
+	{ "KillPrimitive", KillPrimitive },
+	{ "PurgePrimitiveQueue", PurgePrimitiveQueue }
+};
+
+struct luaL_reg hardwareOpcodes[] = {
+	{ "Is3DHardwareEnabled", Is3DHardwareEnabled },
+	{ "GetVideoDevices", GetVideoDevices },
+	{ "SetVideoDevices", SetVideoDevices },
+	{ "SetHardwareState", SetHardwareState },
+	{ "Enumerate3DDevices", Enumerate3DDevices },
+	{ "EnumerateVideoDevices", EnumerateVideoDevices }
 };
 
 void register_lua() {
@@ -1846,8 +2039,20 @@ void register_lua() {
 	vbuffer_tag = lua_newtag();
 	object_tag = lua_newtag();
 
-	// Register new version of dofile, and other builtin functions
-	luaL_openlib(builtins, sizeof(builtins) / sizeof(builtins[0]));
+	// Register main opcodes functions
+	luaL_openlib(mainOpcodes, sizeof(mainOpcodes) / sizeof(mainOpcodes[0]));
+
+	// Register additional opcodes functions
+	luaL_openlib(additionalOpcodes, sizeof(additionalOpcodes) / sizeof(additionalOpcodes[0]));
+
+	// Register text opcodes functions
+	luaL_openlib(textOpcodes, sizeof(textOpcodes) / sizeof(textOpcodes[0]));
+
+	// Register primitives opcodes functions
+	luaL_openlib(primitivesOpcodes, sizeof(primitivesOpcodes) / sizeof(primitivesOpcodes[0]));
+
+	// Register hardware opcodes functions
+	luaL_openlib(hardwareOpcodes, sizeof(hardwareOpcodes) / sizeof(hardwareOpcodes[0]));
 
 	// Register system table
 	lua_Object system_table = lua_createtable();

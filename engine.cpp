@@ -259,7 +259,7 @@ void Engine::savegameRestore() {
 	//  unlock resources
 	gzclose(_savegameFileHandle);
 
-	lua_dofile("patch05.bin");
+	//do_dofile("patch05.bin");
 }
 
 void Engine::savegameCallback(void (*func)(void *, int32)) {

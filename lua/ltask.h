@@ -10,6 +10,8 @@ void start_script (void);
 void stop_script (void);
 void next_script (void);
 void identify_script (void);
+void pause_scripts (void);
+void unpause_scripts (void);
 void find_script (void);
 void break_here (void);
 

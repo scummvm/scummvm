@@ -5,6 +5,12 @@
 
 int task_tag;
 
+void pause_scripts (void) {
+}
+
+void unpause_scripts (void) {
+}
+
 void start_script (void) {
   struct lua_Task *old_task = L->curr_task, *new_task;
   TObject *f;
