@@ -1,10 +1,15 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.6.? (????-??-??)
+0.6.2? (????-??-??)
+ General:
+   - Fixed int array access in the debugger
+
  SCUMM:
    - Initialize variables to avoid possible crash in Digital iMUSE
    - Corrected actor drawing glitches in V1 Maniac and Zak
+   - Fixed some crashes in Full Throttle
+   - Worked around bugs in the scripts of Indy 3, MI2, Sam, COMI
 
 0.6.1b (2004-08-03)
  General:
