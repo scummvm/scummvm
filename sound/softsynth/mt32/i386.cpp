@@ -1,4 +1,4 @@
-/* Copyright (c) 2003-2004 Various contributors
+/* Copyright (c) 2003-2005 Various contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -465,7 +465,7 @@ NO_3DNOW:
 #endif
 }
 
-float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel) {
+float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr) {
 	float output;
 
 	// 1st number of coefficients array is overall input scale factor, or filter gain
@@ -542,11 +542,10 @@ float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel
 #else
 	output = atti386_iir_filter_sse(&output, hist1_ptr, coef_ptr);
 #endif
-	output *= ResonInv[revLevel];
 	return output;
 }
 
-float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLevel) {
+float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr) {
 	float output;
 
 	// 1st number of coefficients array is overall input scale factor, or filter gain
@@ -624,7 +623,6 @@ float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLev
 #else
 	output = atti386_iir_filter_3DNow(output, hist1_ptr, coef_ptr);
 #endif
-	output *= ResonInv[revLevel];
 	return output;
 }
 

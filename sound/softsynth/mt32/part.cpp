@@ -1,4 +1,4 @@
-/* Copyright (c) 2003-2004 Various contributors
+/* Copyright (c) 2003-2005 Various contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -66,18 +66,18 @@ Part::Part(Synth *useSynth, unsigned int usePartNum) {
 	this->partNum = usePartNum;
 	patchCache[0].dirty = true;
 	holdpedal = false;
+	patchTemp = &synth->mt32ram.patchSettings[partNum];
 	if (usePartNum == 8) {
 		// Nasty hack for rhythm
-		patchTemp = NULL;
 		timbreTemp = NULL;
 	} else {
 		sprintf(name, "Part %d", partNum + 1);
-		patchTemp = &synth->mt32ram.patchSettings[partNum];
 		timbreTemp = &synth->mt32ram.timbreSettings[partNum];
 	}
 	currentInstr[0] = 0;
 	currentInstr[10] = 0;
-	volume = voltable[102]; //FIXME:KG: Original was just volume=102; I assume this is intended
+	expression = 127;
+	volumeMult = 0;
 	volumesetting.leftvol = 32767;
 	volumesetting.rightvol = 32767;
 	bend = 0.0f;
@@ -86,9 +86,12 @@ Part::Part(Synth *useSynth, unsigned int usePartNum) {
 }
 
 void Part::setHoldPedal(bool pedalval) {
-	if (holdpedal && !pedalval)
+	if (holdpedal && !pedalval) {
+		holdpedal = false;
 		stopPedalHold();
-	holdpedal = pedalval;
+	} else {
+		holdpedal = pedalval;
+	}
 }
 
 void RhythmPart::setBend(unsigned int midiBend) {
@@ -130,20 +133,20 @@ void Part::setModulation(unsigned int midiModulation) {
 }
 
 void RhythmPart::refresh() {
+	updateVolume();
 	// (Re-)cache all the mapped timbres ahead of time
-	for (unsigned int drumNum = 0; drumNum < 64; drumNum++) {
+	for (unsigned int drumNum = 0; drumNum < synth->controlROMMap->rhythmSettingsCount; drumNum++) {
 		int drumTimbreNum = rhythmTemp[drumNum].timbre;
-		if (drumTimbreNum >= 94)
+		if (drumTimbreNum >= 127) // 94 on MT-32
 			continue;
 		Bit16s pan = rhythmTemp[drumNum].panpot; // They use R-L 0-14...
 		// FIXME:KG: Panning cache should be backed up to partials using it, too
-		// FIXME:KG: If I don't have left/right mixed up here, it's pure luck
 		if (pan < 7) {
-			drumPan[drumNum].leftvol = 32767;
-			drumPan[drumNum].rightvol = pan * 4681;
-		} else {
+			drumPan[drumNum].leftvol = pan * 4681;
 			drumPan[drumNum].rightvol = 32767;
-			drumPan[drumNum].leftvol = (14 - pan) * 4681;
+		} else {
+			drumPan[drumNum].rightvol = (14 - pan) * 4681;
+			drumPan[drumNum].leftvol = 32767;
 		}
 		PatchCache *cache = drumCache[drumNum];
 		backupCacheToPartials(cache);
@@ -159,6 +162,7 @@ void RhythmPart::refresh() {
 }
 
 void Part::refresh() {
+	updateVolume();
 	backupCacheToPartials(patchCache);
 	for (int t = 0; t < 4; t++) {
 		// Common parameters, stored redundantly
@@ -171,8 +175,12 @@ void Part::refresh() {
 	memcpy(currentInstr, timbreTemp->common.name, 10);
 }
 
+const char *Part::getCurrentInstr() const {
+	return &currentInstr[0];
+}
+
 void RhythmPart::refreshTimbre(unsigned int absTimbreNum) {
-	for (int m = 0; m < 64; m++) {
+	for (int m = 0; m < 85; m++) {
 		if (rhythmTemp[m].timbre == absTimbreNum - 128)
 			drumCache[m][0].dirty = true;
 	}
@@ -225,12 +233,16 @@ void Part::setPatch(const PatchParam *patch) {
 	patchTemp->patch = *patch;
 }
 
+void RhythmPart::setTimbre(TimbreParam *timbre) {
+	synth->printDebug("%s: Attempted to call setTimbre() - doesn't make sense for rhythm", name);
+}
+
 void Part::setTimbre(TimbreParam *timbre) {
 	*timbreTemp = *timbre;
 }
 
 unsigned int RhythmPart::getAbsTimbreNum() const {
-	synth->printDebug("%s: Attempted to call getAbsTimbreNum() - doesn't make sense for rhythm");
+	synth->printDebug("%s: Attempted to call getAbsTimbreNum() - doesn't make sense for rhythm", name);
 	return 0;
 }
 
@@ -245,16 +257,10 @@ void RhythmPart::setProgram(unsigned int patchNum) {
 void Part::setProgram(unsigned int patchNum) {
 	setPatch(&synth->mt32ram.patches[patchNum]);
 	setTimbre(&synth->mt32ram.timbres[getAbsTimbreNum()].timbre);
-#if 0
-	// Immediately stop all partials on this part (this is apparently *not* the correct behaviour)
-	for (int m = 0; m < MT32EMU_MAX_POLY; m++) {
-		AbortPoly(poly);
-	}
-#endif
 
 	refresh();
 
-	allStop(); //FIXME:KG: Is this correct?
+	allSoundOff(); //FIXME:KG: Is this correct?
 }
 
 void Part::backupCacheToPartials(PatchCache cache[4]) {
@@ -336,29 +342,16 @@ void Part::cacheTimbre(PatchCache cache[4], const TimbreParam *timbre) {
 
 		// Calculate and cache TVA envelope stuff
 		cache[t].ampEnv = timbre->partial[t].tva;
-		for (int i = 0; i < 4; i++)
-			cache[t].ampEnv.envlevel[i] = (char)((float)cache[t].ampEnv.envlevel[i] * 1.27f);
 		cache[t].ampEnv.level = (char)((float)cache[t].ampEnv.level * 1.27f);
-		float tvelo = ((float)timbre->partial[t].tva.velosens / 100.0f);
-		float velo = fabs(tvelo-0.5f) * 2.0f;
-		velo *= 63.0f;
-		cache[t].ampEnv.velosens = (char)velo;
-		if (tvelo<0.5f)
-			cache[t].ampenvdir = 1;
-		else
-			cache[t].ampenvdir = 0;
 
 		cache[t].ampbias[0] = fixBiaslevel(cache[t].ampEnv.biaspoint1, &cache[t].ampdir[0]);
 		cache[t].ampblevel[0] = 12 - cache[t].ampEnv.biaslevel1;
 		cache[t].ampbias[1] = fixBiaslevel(cache[t].ampEnv.biaspoint2, &cache[t].ampdir[1]);
 		cache[t].ampblevel[1] = 12 - cache[t].ampEnv.biaslevel2;
 		cache[t].ampdepth = cache[t].ampEnv.envvkf * cache[t].ampEnv.envvkf;
-		cache[t].ampsustain = cache[t].ampEnv.envlevel[3];
-		cache[t].amplevel = cache[t].ampEnv.level;
 
 		// Calculate and cache filter stuff
 		cache[t].filtEnv = timbre->partial[t].tvf;
-		cache[t].tvfdepth = cache[t].filtEnv.envdkf;
 		cache[t].filtkeyfollow  = fixKeyfollow(cache[t].filtEnv.keyfollow);
 		cache[t].filtEnv.envdepth = (char)((float)cache[t].filtEnv.envdepth * 1.27);
 		cache[t].tvfbias = fixBiaslevel(cache[t].filtEnv.biaspoint, &cache[t].tvfdir);
@@ -367,7 +360,7 @@ void Part::cacheTimbre(PatchCache cache[4], const TimbreParam *timbre) {
 
 		// Calculate and cache LFO stuff
 		cache[t].lfodepth = timbre->partial[t].lfo.depth;
-		cache[t].lfoperiod = lfotable[(int)timbre->partial[t].lfo.rate];
+		cache[t].lfoperiod = synth->tables.lfoPeriod[(int)timbre->partial[t].lfo.rate];
 		cache[t].lforate = timbre->partial[t].lfo.rate;
 		cache[t].modsense = timbre->partial[t].lfo.modsense;
 	}
@@ -391,8 +384,25 @@ const char *Part::getName() const {
 	return name;
 }
 
-void Part::setVolume(int vol) {
-	volume = voltable[vol];
+void Part::updateVolume() {
+	volumeMult = synth->tables.volumeMult[patchTemp->outlevel * expression / 127];
+}
+
+int Part::getVolume() const {
+	// FIXME: Use the mappings for this in the control ROM
+	return patchTemp->outlevel * 127 / 100;
+}
+
+void Part::setVolume(int midiVolume) {
+	// FIXME: Use the mappings for this in the control ROM
+	patchTemp->outlevel = (Bit8u)(midiVolume * 100 / 127);
+	updateVolume();
+	synth->printDebug("%s (%s): Set volume to %d", name, currentInstr, midiVolume);
+}
+
+void Part::setExpression(int midiExpression) {
+	expression = midiExpression;
+	updateVolume();
 }
 
 void RhythmPart::setPan(unsigned int midiPan)
@@ -404,27 +414,30 @@ void RhythmPart::setPan(unsigned int midiPan)
 void Part::setPan(unsigned int midiPan) {
 	// FIXME:KG: Tweaked this a bit so that we have a left 100%, centre and right 100%
 	// (But this makes the range somewhat skewed)
+	// Check against the real thing
+	// NOTE: Panning is inverted compared to GM.
 	if (midiPan < 64) {
-		volumesetting.leftvol = 32767;
-		volumesetting.rightvol = (Bit16s)(midiPan * 512);
+		volumesetting.leftvol = (Bit16s)(midiPan * 512);
+		volumesetting.rightvol = 32767;
 	} else if (midiPan == 64) {
 		volumesetting.leftvol = 32767;
 		volumesetting.rightvol = 32767;
 	} else {
-		volumesetting.rightvol = 32767;
-		volumesetting.leftvol = (Bit16s)((127 - midiPan) * 520);
+		volumesetting.rightvol = (Bit16s)((127 - midiPan) * 520);
+		volumesetting.leftvol = 32767;
 	}
+	patchTemp->panpot = (Bit8u)(midiPan * 14 / 127);
 	//synth->printDebug("%s (%s): Set pan to %d", name, currentInstr, panpot);
 }
 
 void RhythmPart::playNote(unsigned int key, int vel) {
-	if (key < 24 || key > 87) {
+	if (key < 24 || key > 108)/*> 87 on MT-32)*/ {
 		synth->printDebug("%s: Attempted to play invalid key %d", name, key);
 		return;
 	}
 	int drumNum = key - 24;
 	int drumTimbreNum = rhythmTemp[drumNum].timbre;
-	if (drumTimbreNum >= 94) {
+	if (drumTimbreNum >= 127) { // 94 on MT-32
 		synth->printDebug("%s: Attempted to play unmapped key %d", name, key);
 		return;
 	}
@@ -432,7 +445,7 @@ void RhythmPart::playNote(unsigned int key, int vel) {
 	TimbreParam *timbre = &synth->mt32ram.timbres[absTimbreNum].timbre;
 	memcpy(currentInstr, timbre->common.name, 10);
 #if MT32EMU_MONITOR_INSTRUMENTS == 1
-	synth->printDebug("%s (%s): starting poly (drum %d, timbre %d) - Vel %d Key %d Vol %d", name, currentInstr, drumNum, absTimbreNum, vel, key, volume);
+	synth->printDebug("%s (%s): starting poly (drum %d, timbre %d) - Vel %d Key %d", name, currentInstr, drumNum, absTimbreNum, vel, key);
 #endif
 	if (drumCache[drumNum][0].dirty) {
 		cacheTimbre(drumCache[drumNum], timbre);
@@ -462,7 +475,7 @@ void Part::playNote(unsigned int key, int vel) {
 		}
 	}
 #if MT32EMU_MONITOR_INSTRUMENTS == 1
-	synth->printDebug("%s (%s): starting poly - Vel %d Key %d Vol %d", name, currentInstr, vel, key, volume);
+	synth->printDebug("%s (%s): starting poly - Vel %d Key %d", name, currentInstr, vel, key);
 #endif
 	if (patchCache[0].dirty) {
 		cacheTimbre(patchCache, timbreTemp);
@@ -515,7 +528,7 @@ void Part::playPoly(const PatchCache cache[4], unsigned int key, int freqNum, in
 		synth->printDebug("%s (%s): No partials to play for this instrument", name, this->currentInstr);
 
 	tpoly->sustain = cache[0].sustain;
-	tpoly->volumeptr = &volume;
+	tpoly->volumeptr = &volumeMult;
 
 	for (int x = 0; x < 4; x++) {
 		if (tpoly->partials[x] != NULL) {
@@ -540,7 +553,23 @@ static void startDecayPoly(dpoly *tpoly) {
 	tpoly->isPlaying = false;
 }
 
-void Part::allStop() {
+void Part::allNotesOff() {
+	// Note: Unchecked on real MT-32, but the MIDI specification states that all notes off (0x7B)
+	// should treat the hold pedal as usual.
+	// All *sound* off (0x78) should stop notes immediately regardless of the hold pedal.
+	// The latter controller is not implemented on the MT-32 (according to the docs).
+	for (int q = 0; q < MT32EMU_MAX_POLY; q++) {
+		dpoly *tpoly = &polyTable[q];
+		if (tpoly->isPlaying) {
+			if (holdpedal)
+				tpoly->pedalhold = true;
+			else if (tpoly->sustain)
+				startDecayPoly(tpoly);
+		}
+	}
+}
+
+void Part::allSoundOff() {
 	for (int q = 0; q < MT32EMU_MAX_POLY; q++) {
 		dpoly *tpoly = &polyTable[q];
 		if (tpoly->isPlaying) {

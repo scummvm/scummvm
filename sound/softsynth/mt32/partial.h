@@ -1,4 +1,4 @@
-/* Copyright (c) 2003-2004 Various contributors
+/* Copyright (c) 2003-2005 Various contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -60,8 +60,6 @@ private:
 
 	Bit16s myBuffer[MAX_SAMPLE_OUTPUT];
 
-	bool play;
-
 	// Keyfollowed note value
 #if MT32EMU_ACCURATENOTES == 1
 	NoteLookup noteLookupStorage;
@@ -71,12 +69,15 @@ private:
 	int fineShift;
 #endif
 	const NoteLookup *noteLookup; // LUTs for this noteVal
+	const KeyLookup *keyLookup; // LUTs for the clamped (12..108) key
 
 	// Keyfollowed filter values
 	int realVal;
 	int filtVal;
 
-	EnvelopeStatus envs[3];
+	// Only used for PCM partials
+	int pcmNum;
+	PCMWaveEntry *pcmWave;
 
 	int pulsewidth;
 
@@ -109,6 +110,9 @@ private:
 
 public:
 	const PatchCache *patchCache;
+	EnvelopeStatus envs[3];
+	bool play;
+
 	PatchCache cachebackup;
 
 	Partial *pair;
@@ -118,7 +122,9 @@ public:
 	Partial(Synth *synth);
 	~Partial();
 
-	int getOwnerPart();
+	int getOwnerPart() const;
+	int getKey() const;
+	const dpoly *getDpoly() const;
 	bool isActive();
 	void activate(int part);
 	void deactivate(void);

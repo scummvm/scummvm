@@ -1,4 +1,4 @@
-/* Copyright (c) 2003-2004 Various contributors
+/* Copyright (c) 2003-2005 Various contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -35,6 +35,7 @@ private:
 	Bit32s partialPart[9]; // The count of partials played per part
 
 public:
+
 	PartialManager(Synth *synth);
 	~PartialManager();
 	Partial *allocPartial(int partNum);
@@ -47,6 +48,7 @@ public:
 	bool shouldReverb(int i);
 	void clearAlreadyOutputed();
 	void getPerPartPartialUsage(int usage[9]);
+	const Partial *getPartial(unsigned int partialNum) const;
 };
 
 }

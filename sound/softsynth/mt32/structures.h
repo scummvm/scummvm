@@ -1,4 +1,4 @@
-/* Copyright (c) 2003-2004 Various contributors
+/* Copyright (c) 2003-2005 Various contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -25,6 +25,11 @@
 namespace MT32Emu {
 
 const unsigned int MAX_SAMPLE_OUTPUT = 4096;
+
+// MT32EMU_MEMADDR() converts from sysex-padded, MT32EMU_SYSEXMEMADDR converts to it
+// Roland provides documentation using the sysex-padded addresses, so we tend to use that in code and output
+#define MT32EMU_MEMADDR(x) ((((x) & 0x7f0000) >> 2) | (((x) & 0x7f00) >> 1) | ((x) & 0x7f))
+#define MT32EMU_SYSEXMEMADDR(x) ((((x) & 0x1FC000) << 2) | (((x) & 0x3F80) << 1) | ((x) & 0x7f))
 
 #ifdef _MSC_VER
 #define  MT32EMU_ALIGN_PACKED __declspec(align(1))
@@ -68,7 +73,7 @@ struct TimbreParam {
 			Bit8u fine;  // 0-100 (-50 to +50 (cents?))
 			Bit8u keyfollow;  // 0-16 (-1,-1/2,0,1,1/8,1/4,3/8,1/2,5/8,3/4,7/8,1,5/4,3/2,2.s1,s2)
 			Bit8u bender;  // 0,1 (ON/OFF)
-			Bit8u waveform; //  0-1 (SQU/SAW)
+			Bit8u waveform; // MT-32: 0-1 (SQU/SAW); LAPC-I: WG WAVEFORM/PCM BANK 0 - 3 (SQU/1, SAW/1, SQU/2, SAW/2)
 			Bit8u pcmwave; // 0-127 (1-128)
 			Bit8u pulsewid; // 0-100
 			Bit8u pwvelo; // 0-14 (-7 - +7)
@@ -129,28 +134,32 @@ struct PatchParam {
 } MT32EMU_ALIGN_PACKED;
 
 struct MemParams {
+	// NOTE: The MT-32 documentation only specifies PatchTemp areas for parts 1-8.
+	// The LAPC-I documentation specified an additional area for rhythm at the end,
+	// where all parameters but fine tune, assign mode and output level are ignored
 	struct PatchTemp {
 		PatchParam patch;
 		Bit8u outlevel; // OUTPUT LEVEL 0-100
 		Bit8u panpot; // PANPOT 0-14 (R-L)
 		Bit8u dummyv[6];
-	} MT32EMU_ALIGN_PACKED patchSettings[8];
+	} MT32EMU_ALIGN_PACKED patchSettings[9];
 
 	struct RhythmTemp {
 		Bit8u timbre; // TIMBRE  0-94 (M1-M64,R1-30,OFF)
 		Bit8u outlevel; // OUTPUT LEVEL 0-100
 		Bit8u panpot; // PANPOT 0-14 (R-L)
 		Bit8u reverbSwitch;  // REVERB SWITCH 0-1 (OFF,ON)
-	} MT32EMU_ALIGN_PACKED rhythmSettings[86]; // FIXME: Was 64, but let's support the next model...
+	} MT32EMU_ALIGN_PACKED rhythmSettings[85];
 
 	TimbreParam MT32EMU_ALIGN_PACKED timbreSettings[8];
 
 	PatchParam MT32EMU_ALIGN_PACKED patches[128];
 
+	// NOTE: There are only 30 timbres in the "rhythm" bank for MT-32; the additional 34 are for LAPC-I and above
 	struct PaddedTimbre {
 		TimbreParam timbre;
 		Bit8u padding[10];
-	} MT32EMU_ALIGN_PACKED timbres[64 + 64 + 64 + 30]; // Group A, Group B, Memory, Rhythm
+	} MT32EMU_ALIGN_PACKED timbres[64 + 64 + 64 + 64]; // Group A, Group B, Memory, Rhythm
 
 	struct SystemArea {
 		Bit8u masterTune; // MASTER TUNE 0-127 432.1-457.6Hz
@@ -161,18 +170,6 @@ struct MemParams {
 		Bit8u chanAssign[9]; // MIDI CHANNEL (PART1) 0-16 (1-16,OFF)
 		Bit8u masterVol; // MASTER VOLUME 0-100
 	} MT32EMU_ALIGN_PACKED system;
-};
-
-struct MemBanks {
-	Bit8u pTemp[8][sizeof(MemParams::PatchTemp)];
-	Bit8u rTemp[86][sizeof(MemParams::RhythmTemp)];
-	Bit8u tTemp[8][sizeof(TimbreParam)];
-	Bit8u patchBank[128][sizeof(PatchParam)];
-	Bit8u timbreBank[64 + 64 + 64 + 30][sizeof(MemParams::PaddedTimbre)];
-	Bit8u systemBank[sizeof(MemParams::SystemArea)];
-	// System memory 0x100000
-	// Display 0x200000
-	// Reset 0x7F0000
 };
 
 #if defined(_MSC_VER) || defined (__MINGW32__)
@@ -227,9 +224,7 @@ struct PatchCache {
 	int ampdir[2];
 
 	int ampdepth;
-	int ampenvdir;
 	int amplevel;
-	int tvfdepth;
 
 	bool useBender;
 	float benderRange; // 0.0, 1.0, .., 24.0 (semitones)
@@ -238,7 +233,6 @@ struct PatchCache {
 	TimbreParam::partialParam::tvaParam ampEnv;
 	TimbreParam::partialParam::tvfParam filtEnv;
 
-	Bit32s ampsustain;
 	Bit32s pitchsustain;
 	Bit32s filtsustain;
 

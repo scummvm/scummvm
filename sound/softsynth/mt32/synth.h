@@ -1,4 +1,4 @@
-/* Copyright (c) 2003-2004 Various contributors
+/* Copyright (c) 2003-2005 Various contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -27,10 +27,6 @@
 class revmodel;
 
 namespace MT32Emu {
-
-const int ROMSIZE = 512 * 1024;
-const int PCMSIZE = ROMSIZE / 2;
-const int GRAN = 512;
 
 class File;
 class TableInitialiser;
@@ -104,27 +100,117 @@ typedef void (*recalcStatusCallback)(int percDone);
 // callback routine, no status is reported.
 bool RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack);
 
-typedef float (*iir_filter_type)(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
+typedef float (*iir_filter_type)(float input,float *hist1_ptr, float *coef_ptr);
+
+const Bit8u SYSEX_MANUFACTURER_ROLAND = 0x41;
+
+const Bit8u SYSEX_MDL_MT32 = 0x16;
+const Bit8u SYSEX_MDL_D50 = 0x14;
+
+const Bit8u SYSEX_CMD_RQ1 = 0x11; // Request data #1
+const Bit8u SYSEX_CMD_DT1 = 0x12; // Data set 1
+const Bit8u SYSEX_CMD_WSD = 0x40; // Want to send data
+const Bit8u SYSEX_CMD_RQD = 0x41; // Request data
+const Bit8u SYSEX_CMD_DAT = 0x42; // Data set
+const Bit8u SYSEX_CMD_ACK = 0x43; // Acknowledge
+const Bit8u SYSEX_CMD_EOD = 0x45; // End of data
+const Bit8u SYSEX_CMD_ERR = 0x4E; // Communications error
+const Bit8u SYSEX_CMD_RJC = 0x4F; // Rejection
+
+const unsigned int CONTROL_ROM_SIZE = 64 * 1024;
+
+struct ControlROMPCMStruct
+{
+	Bit8u pos;
+	Bit8u len;
+	Bit8u pitchLSB;
+	Bit8u pitchMSB;
+};
+
+struct ControlROMMap {
+	Bit16u idPos;
+	Bit16u idLen;
+	const char *idBytes;
+	Bit16u pcmTable;
+	Bit16u pcmCount;
+	Bit16u timbreAMap;
+	Bit16u timbreAOffset;
+	Bit16u timbreBMap;
+	Bit16u timbreBOffset;
+	Bit16u timbreRMap;
+	Bit16u timbreRCount;
+	Bit16u rhythmSettings;
+	Bit16u rhythmSettingsCount;
+	Bit16u reserveSettings;
+	Bit16u panSettings;
+	Bit16u programSettings;
+};
+
+enum MemoryRegionType {
+	MR_PatchTemp, MR_RhythmTemp, MR_TimbreTemp, MR_Patches, MR_Timbres, MR_System, MR_Display, MR_Reset
+};
+
+class MemoryRegion {
+public:
+	MemoryRegionType type;
+	Bit32u startAddr, entrySize, entries;
+
+	int lastTouched(Bit32u addr, Bit32u len) const {
+		return (offset(addr) + len - 1) / entrySize;
+	}
+	int firstTouchedOffset(Bit32u addr) const {
+		return offset(addr) % entrySize;
+	}
+	int firstTouched(Bit32u addr) const {
+		return offset(addr) / entrySize;
+	}
+	Bit32u regionEnd() const {
+		return startAddr + entrySize * entries;
+	}
+	bool contains(Bit32u addr) const {
+		return addr >= startAddr && addr < regionEnd();
+	}
+	int offset(Bit32u addr) const {
+		return addr - startAddr;
+	}
+	Bit32u getClampedLen(Bit32u addr, Bit32u len) const {
+		if (addr + len > regionEnd())
+			return regionEnd() - addr;
+		return len;
+	}
+	Bit32u next(Bit32u addr, Bit32u len) const {
+		if (addr + len > regionEnd()) {
+			return regionEnd() - addr;
+		}
+		return 0;
+	}
+};
+
 
 class Synth {
 friend class Part;
 friend class RhythmPart;
 friend class Partial;
-friend class TableInitialiser;
+friend class Tables;
 private:
 	bool isEnabled;
 
 	iir_filter_type iirFilter;
 
-	PCMWaveEntry PCMList[128];
+	PCMWaveEntry *pcmWaves; // Array
 
-	Bit8u controlROMData[64 * 1024];
-	Bit16s romfile[PCMSIZE + GRAN];
+	const ControlROMMap *controlROMMap;
+	Bit8u controlROMData[CONTROL_ROM_SIZE];
+	Bit16s *pcmROMData;
+	int pcmROMSize; // This is in 16-bit samples, therefore half the number of bytes in the ROM
+
 	Bit8s chantable[32];
 
 	#if MT32EMU_MONITOR_PARTIALS == 1
 	static Bit32s samplepos = 0;
 	#endif
+
+	Tables tables;
 
 	MemParams mt32ram, mt32default;
 
@@ -149,19 +235,23 @@ private:
 	bool loadPreset(File *file);
 	void initReverb(Bit8u newRevMode, Bit8u newRevTime, Bit8u newRevLevel);
 	void doRender(Bit16s * stream, Bit32u len);
-	void playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity);
-	void playSysexWithoutHeader(unsigned char channel, const Bit8u *sysex, Bit32u len);
+
+	void playAddressedSysex(unsigned char channel, const Bit8u *sysex, Bit32u len);
+	void readSysex(unsigned char channel, const Bit8u *sysex, Bit32u len);
+	void writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u len, const Bit8u *data);
+	void readMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u len, Bit8u *data);
 
 	bool loadControlROM(const char *filename);
 	bool loadPCMROM(const char *filename);
 	bool dumpTimbre(File *file, const TimbreParam *timbre, Bit32u addr);
 	int dumpTimbres(const char *filename, int start, int len);
 
-	void initPCMList();
-	void initRhythmTimbres();
-	void initTimbres(Bit16u mapAddress, int startTimbre);
-	void initRhythmTimbre(int drumNum, const Bit8u *mem);
+	bool initPCMList(Bit16u mapAddress, Bit16u count);
+	bool initRhythmTimbres(Bit16u mapAddress, Bit16u count);
+	bool initTimbres(Bit16u mapAddress, Bit16u offset, int startTimbre);
+	bool initRhythmTimbre(int drumNum, const Bit8u *mem, unsigned int memLen);
 	bool refreshSystem();
+
 protected:
 	int report(ReportType type, const void *reportData);
 	File *openFile(const char *filename, File::OpenMode mode);
@@ -183,16 +273,26 @@ public:
 
 	// Sends a 4-byte MIDI message to the MT-32 for immediate playback
 	void playMsg(Bit32u msg);
+	void playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity);
 
 	// Sends a string of Sysex commands to the MT-32 for immediate interpretation
 	// The length is in bytes
 	void playSysex(const Bit8u *sysex, Bit32u len);
 	void playSysexWithoutFraming(const Bit8u *sysex, Bit32u len);
+	void playSysexWithoutHeader(unsigned char device, unsigned char command, const Bit8u *sysex, Bit32u len);
+	void writeSysex(unsigned char channel, const Bit8u *sysex, Bit32u len);
 
 	// This callback routine is used to have the MT-32 generate samples to the specified
 	// output stream.  The length is in whole samples, not bytes. (I.E. in 16-bit stereo,
 	// one sample is 4 bytes)
 	void render(Bit16s * stream, Bit32u len);
+
+	const Partial *getPartial(unsigned int partialNum) const;
+
+	void readMemory(Bit32u addr, Bit32u len, Bit8u *data);
+
+	// partNum should be 0..7 for Part 1..8, or 8 for Rhythm
+	const Part *getPart(unsigned int partNum) const;
 };
 
 }

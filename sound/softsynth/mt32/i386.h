@@ -1,4 +1,4 @@
-/* Copyright (c) 2003-2004 Various contributors
+/* Copyright (c) 2003-2005 Various contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -30,9 +30,9 @@ bool DetectSIMD();
 // Function that detects the availablity of 3DNow instructions
 bool Detect3DNow();
 
-float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
-float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
-float iir_filter_normal(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
+float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr);
+float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr);
+float iir_filter_normal(float input,float *hist1_ptr, float *coef_ptr);
 
 #if MT32EMU_USE_MMX > 0
 int i386_partialProductOutput(int len, Bit16s leftvol, Bit16s rightvol, Bit16s *partialBuf, Bit16s *mixedBuf);

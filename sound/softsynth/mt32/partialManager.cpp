@@ -1,4 +1,4 @@
-/* Copyright (c) 2003-2004 Various contributors
+/* Copyright (c) 2003-2005 Various contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -263,4 +263,10 @@ bool PartialManager::freePartials(unsigned int needed, int partNum) {
 		}
 	}
 	return needed == 0;
+}
+
+const Partial *PartialManager::getPartial(unsigned int partialNum) const {
+	if (partialNum > MT32EMU_MAX_PARTIALS - 1)
+		return NULL;
+	return partialTable[partialNum];
 }
