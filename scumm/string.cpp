@@ -171,14 +171,9 @@ void Scumm::unkMessage2()
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-//	if (_gameId == GID_MONKEY_VGA) {FIXME why was this game check added?
-
-		InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
-		runDialog (dialog);
-		delete dialog;
-//	} else {
-//		printf("unkMessage2: %s\n", buf);
-//	}
+	InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
+	runDialog (dialog);
+	delete dialog;
 
 	_messagePtr = tmp;
 }
@@ -891,7 +886,7 @@ void Scumm::initCharset(int charsetno)
 }
 
 void CharsetRenderer::printCharOld(int chr)
-{																// Loom3 / Zak256
+{																// Indy3 / Zak256
 	VirtScreen *vs;
 	byte *char_ptr, *dest_ptr;
 	unsigned int buffer = 0, mask = 0, x = 0, y = 0;
@@ -1130,6 +1125,10 @@ int CharsetRenderer::getSpacing(byte chr, byte *charset)
 			}
 		}
 	}
+	
+	// FIXME - this fixes the inventory icons in Zak256, see bug #613109
+	if (_vm->_gameId == GID_ZAK256 && (chr==3 || chr==4))
+		spacing = 6;
 	
 	return spacing;
 }
