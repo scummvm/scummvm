@@ -374,19 +374,19 @@ int32 FN_play_music(int32 *params) {		// updated by James on 10apr97
 	//		1 loop flag (0 or 1)
 
 	char filename[128];
-	uint32 loopFlag;
+	bool loopFlag;
 	uint32 rv;
 
 	// Zdebug("FN_play_music(%d)", params[0]);
 
 	if (params[1] == FX_LOOP) {
-		loopFlag = RDSE_FXLOOP;
+		loopFlag = true;
 
 		// keep a note of the id, for restarting after an
 		// interruption to gameplay
 		looping_music_id = params[0];
 	} else {
- 		loopFlag = RDSE_FXSPOT;
+ 		loopFlag = false;
 
 		// don't need to restart this tune after control panel or
 		// restore

@@ -153,11 +153,12 @@
 
 #include "stdafx.h"
 #include "driver96.h"
-#include "rdwin.h"			// for hwnd.
 #include "d_sound.h"
 #include "../sword2.h"
 #include "common/timer.h"
 #include "sound/mixer.h"
+
+// FIXME: Remove code duplication
 
 // Decompression macros
 #define GetCompressedShift(byte)      ((byte) >> 4)
@@ -169,41 +170,21 @@ int32 panTable[33] = {
 	0,
 	7, 15, 23, 31, 39, 47, 55, 63, 71, 79, 87, 95, 103, 111, 119, 127
 };
-/*
-int32 panTable[33] = {
-	-10000,
-	-1500, -1400, -1300, -1200,
-	-1100, -1000, -900, -800,
-	-700, -600, -500, -400,
-	-300, -200, -100, 0,
-	100, 200, 300, 400,
-	500, 600, 700, 800,
-	900, 1000, 1100, 1200,
-	1300, 1400, 1500, 10000
-};
 
-int32 volTable[241] = {
--10000,	-3925,	-3852,	-3781,	-3710,	-3642,	-3574,	-3508,	-3443,	-3379,	-3316,	-3255,	-3194,	-3135,	-3077,	-3020,	-2964,	-2909,	-2855,	-2802,	-2750,	-2699,	-2649,	-2600,	-2551,	-2504,	-2458,	-2412,	-2367,	-2323,	-2280,	-2238,	-2197,	-2156,	-2116,	-2077,	-2038,	-2000,	-1963,	-1927,	-1891,	-1856,	-1821,	-1788,	-1755,	-1722,	-1690,	-1659,	-1628,	-1598,	-1568,	-1539,	-1510,	-1482,	-1455,	-1428,	-1401,	-1375,	-1350,	-1325,	
--1300,	-1290,	-1279,	-1269,	-1259,	-1249,	-1239,	-1229,	-1219,	-1209,	-1199,	-1190,	-1180,	-1171,	-1161,	-1152,	-1142,	-1133,	-1124,	-1115,	-1106,	-1097,	-1088,	-1080,	-1071,	-1062,	-1054,	-1045,	-1037,	-1028,	-1020,	-1012,	-1004,	-996,	-988,	-980,	-972,	-964,	-956,	-949,	-941,	-933,	-926,	-918,	-911,	-904,	-896,	-889,	-882,	-875,	-868,	-861,	-854,	-847,	-840,	-833,	-827,	-820,	-813,	-807,	
--800,	-791,	-782,	-773,	-764,	-755,	-747,	-738,	-730,	-721,	-713,	-705,	-697,	-689,	-681,	-673,	-665,	-658,	-650,	-643,	-635,	-628,	-621,	-613,	-606,	-599,	-593,	-586,	-579,	-572,	-566,	-559,	-553,	-546,	-540,	-534,	-528,	-522,	-516,	-510,	-504,	-498,	-492,	-487,	-481,	-476,	-470,	-465,	-459,	-454,	-449,	-444,	-439,	-434,	-429,	-424,	-419,	-414,	-409,	-404,	
--400,	-362,	-328,	-297,	-269,	-244,	-221,	-200,	-181,	-164,	-148,	-134,	-122,	-110,	-100,	-90,	-82,	-74,	-67,	-61,	-55,	-50,	-45,	-41,	-37,	-33,	-30,	-27,	-25,	-22,	-20,	-18,	-16,	-15,	-13,	-12,	-11,	-10,	-9,	-8,	-7,	-6,	-6,	-5,	-5,	-4,	-4,	-3,	-3,	-3,	-2,	-2,	-2,	-2,	-1,	-1,	-1,	-1,	-1,	0	
-};	
-*/
 int32 musicVolTable[17] = {
 	0, 15, 31, 47, 63, 79, 95, 111, 127, 143, 159, 175, 191, 207, 223, 239, 255
 };
-/*
-int32 musicVolTable[17] = {
-  -10000, 
-  -5000, -3000, -2500, -2250, 
-  -2000, -1750, -1500, -1250, 
-  -1000, -750, -500, -350, 
-  -200, -100, -50, 0
-};
-*/
+
+// FIXME: Is this really a good way? The music occasionally pops, and I have
+// a feeling it could be that the stream is emptied faster than we are filling
+// it. Maybe we should set up a premix function instead, but then we'd have to
+// do rate conversion and mixing here.
+//
+// Maybe it'd be useful if audio streams could have their own callbacks to fill
+// them with data?
 
 void sword2_sound_handler(void *refCon) {
-	Sword2Sound *sound = (Sword2Sound *)refCon;
+	Sword2Sound *sound = (Sword2Sound *) refCon;
 	sound->FxServer();
 }
 
@@ -220,30 +201,16 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	fxMuted = 0;
 	compressedMusic = 0;
 
-	volMusic[0] = 16;
-	volMusic[1] = 16;
+	musicVol = 16;
+
 	musicMuted = 0;
 	bufferSizeMusic = 4410;
 	_mixer = mixer;
-	
-	memset(fxId,		0, sizeof(fxId));
-	memset(fxiPaused,	0, sizeof(fxiPaused));
-	memset(fxRate,		0, sizeof(fxRate));
 
- 	memset(musStreaming,	0, sizeof(musStreaming));
-	memset(musicPaused,	0, sizeof(musicPaused));
-	memset(musFading, 	0, sizeof(musFading));
-	memset(musLooping,	0, sizeof(musLooping));
-	memset(musFilePos,	0, sizeof(musFilePos));
-	memset(musEnd,		0, sizeof(musEnd));
-	memset(musLastSample,	0, sizeof(musLastSample));
-	memset(musId,		0, sizeof(musId));
-	memset(soundHandleMusic, 0, sizeof(soundHandleMusic));
-	memset(soundHandleFx, 0, sizeof(soundHandleFx));
+	memset(fx, 0, sizeof(fx));
+	memset(music, 0, sizeof(music));
+
 	soundHandleSpeech = 0;
-	memset(bufferFx, 0, sizeof(bufferFx));
-	memset(flagsFx, 0, sizeof(flagsFx));
-	memset(bufferSizeFx, 0, sizeof(bufferSizeFx));
 
 	soundOn = 1;
 	g_engine->_timer->installProcedure(sword2_sound_handler, 100000, this);
@@ -278,30 +245,19 @@ int32 Sword2Sound::ReverseStereo(void) {
 // --------------------------------------------------------------------------
 
 int32 Sword2Sound::GetFxIndex(int32 id) {
-	int32 i = 0;
+	int32 i;
 
-	while (i < MAXFX) {
-		if (fxId[i] == id)
+	for (i = 0; i < MAXFX; i++) {
+		if (fx[i]._id == id)
 			break;
-		i++;
 	}
 
 	return i;
 }
 
 int32 Sword2Sound::IsFxOpen(int32 id) {
-	int32 i = 0;
-
-	while (i < MAXFX) {
-		if (fxId[i] == id)
-			break;
-		i++;
-	}
-
-	if (i == MAXFX)
-		return 1;
-	else
-		return 0;
+	// FIXME: This seems backwards to me, but changing it breaks sound.
+	return GetFxIndex(id) == MAXFX;
 }
 
 // --------------------------------------------------------------------------
@@ -316,12 +272,12 @@ void Sword2Sound::FxServer(void) {
 	if (!soundOn)
 		return;
 
-	if (musicPaused[0] + musicPaused[1] == 0) {
+	if (!music[0]._paused && !music[1]._paused) {
 		if (compressedMusic == 1)
 			UpdateCompSampleStreaming();
 	}
 
-	if (!musStreaming[0] && !musStreaming[1] && fpMus.isOpen())
+	if (!music[0]._streaming && !music[1]._streaming && fpMus.isOpen())
 		fpMus.close();
 
 	// FIXME: Doing this sort of things from a separate thread seems like
@@ -336,15 +292,15 @@ void Sword2Sound::FxServer(void) {
 
 	if (fxPaused) {
 		for (i = 0; i < MAXFX; i++) {
-			if ((fxId[i] == (int32) 0xfffffffe) || (fxId[i] == (int32) 0xffffffff)) {
-				if (!soundHandleFx[i]) {
-					fxId[i] = 0;
-					if (bufferFx[i] != NULL) {
-						free(bufferFx[i]);
-						bufferFx[i] = NULL;
+			if ((fx[i]._id == (int32) 0xfffffffe) || (fx[i]._id == (int32) 0xffffffff)) {
+				if (!fx[i]._handle) {
+					fx[i]._id = 0;
+					if (fx[i]._buf != NULL) {
+						free(fx[i]._buf);
+						fx[i]._buf = NULL;
 					}
-					bufferSizeFx[i] = 0;
-					flagsFx[i] = 0;
+					fx[i]._bufSize = 0;
+					fx[i]._flags = 0;
 				}
 			}
 		}
@@ -352,15 +308,15 @@ void Sword2Sound::FxServer(void) {
 	}
 
 	for (i = 0; i < MAXFX; i++) {
-		if (fxId[i]) {
-			if (!soundHandleFx[i]) {
-				fxId[i] = 0;
-				if (bufferFx[i] != NULL) {
-					free(bufferFx[i]);
-					bufferFx[i] = NULL;
+		if (fx[i]._id) {
+			if (!fx[i]._handle) {
+				fx[i]._id = 0;
+				if (fx[i]._buf != NULL) {
+					free(fx[i]._buf);
+					fx[i]._buf = NULL;
 				}
-				bufferSizeFx[i] = 0;
-				flagsFx[i] = 0;
+				fx[i]._bufSize = 0;
+				fx[i]._flags = 0;
 			}
 		}
 	}
@@ -554,16 +510,12 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		free(data8);
 
 		// Modify the volume according to the master volume
-		byte volume;
-		int8 p;
-		if (speechMuted) {
-			volume = 0;
-		} else {
-			volume = vol * speechVol;
-		}
-		p = panTable[pan + 16];
+
+		byte volume = speechMuted ? 0 : vol * speechVol;
+		int8 p = panTable[pan + 16];
 
 		// Start the speech playing
+
 		speechPaused = 1;
 			
 		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
@@ -575,12 +527,14 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 			data16[j] = SWAP_BYTES_16(data16[j]);
 #endif
 
-		_mixer->playRaw(&soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, pan);
+		_mixer->playRaw(&soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, p);
 
 		speechStatus = 1;
 	}
 
-	DipMusic();
+	// FIXME: See comment in UpdateCompSampleStreaming()
+	// DipMusic();
+
 	return RD_OK;
 }
 
@@ -625,11 +579,9 @@ void Sword2Sound::MuteSpeech(uint8 mute) {
 	speechMuted = mute;
 
 	if (GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
-		if (mute) {
-			g_engine->_mixer->setChannelVolume(soundHandleSpeech, 0);
-		} else {
-			g_engine->_mixer->setChannelVolume(soundHandleSpeech, 16 * speechVol);
-		}
+		byte volume = mute ? 0 : 16 * speechVol;
+
+		g_engine->_mixer->setChannelVolume(soundHandleSpeech, volume);
 	}
 }
 
@@ -667,16 +619,14 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 
 		// Check that the fx is not already open
 		for (i = 0; i < MAXFX; i++) {
-			if (fxId[i] == id)
+			if (fx[i]._id == id)
 				return RDERR_FXALREADYOPEN;
 		}
 
 		// Now choose a free slot for the fx
-		fxi = 0;
-		while (fxi < MAXFX) {
-			if (fxId[fxi] == 0)
+		for (fxi = 0; fxi < MAXFX; fxi++) {
+			if (fx[fxi]._id == 0)
 				break;
-			fxi++;
 		}
 
 		if (fxi == MAXFX) {
@@ -689,53 +639,56 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 			//
 			// Anyway, it'd be nicer - in theory - to expire the
 			// least recently used slot.
+			//
+			// This used to be done by the "garbage collector" in
+			// FxServer().
 
-			fxi = 0;
-			while (fxi < MAXFX) {
-				if (!soundHandleFx[fxi])
+			for (fxi = 0; fxi < MAXFX; fxi++) {
+				if (!fx[fxi]._handle)
 					break;
-				fxi++;
 			}
 
 			// Still no dice? I give up!
 
-			if (fxi == MAXFX)
+			if (fxi == MAXFX) {
+				warning("OpenFx: No free sound slots");
 				return RDERR_NOFREEBUFFERS;
+			}
 		}
 
 		// Set the sample size - search for the size of the data.
 		i = 0;
 		while (i < 100) {
 			if (*data == 'd') {
-				data32 = (uint32*)data;
+				data32 = (uint32 *) data;
 				if (READ_UINT32(data32) == MKID('data'))
 					break;
 			}
-			i += 1;
+			i++;
 			data++;
 		}
 		if (!data32)
 			return RDERR_INVALIDWAV;
 
-		bufferSizeFx[fxi] = READ_LE_UINT32(data32 + 1);
+		fx[fxi]._bufSize = READ_LE_UINT32(data32 + 1);
 
 		// Fill the speech buffer with data
-		if (bufferFx[fxi] != NULL)
-			free(bufferFx[fxi]);
-		bufferFx[fxi] = (uint16 *) malloc(bufferSizeFx[fxi]);
-		memcpy(bufferFx[fxi], (uint8 *) (data32 + 2), bufferSizeFx[fxi]);
-		flagsFx[fxi] = SoundMixer::FLAG_16BITS;
+		if (fx[fxi]._buf != NULL)
+			free(fx[fxi]._buf);
+		fx[fxi]._buf = (uint16 *) malloc(fx[fxi]._bufSize);
+		memcpy(fx[fxi]._buf, (uint8 *) (data32 + 2), fx[fxi]._bufSize);
+		fx[fxi]._flags = SoundMixer::FLAG_16BITS;
 		if (FROM_LE_16(wav->channels) == 2)
-			flagsFx[fxi] |= SoundMixer::FLAG_STEREO;
+			fx[fxi]._flags |= SoundMixer::FLAG_STEREO;
 
-		fxRate[fxi] = FROM_LE_16(wav->samplesPerSec);
+		fx[fxi]._rate = FROM_LE_16(wav->samplesPerSec);
 
 		// Until the mixer supports LE samples natively, we need to
 		// convert our LE ones to BE
-		for (int32 j = 0; j < (bufferSizeFx[fxi] / 2); j++)
-			bufferFx[fxi][j] = SWAP_BYTES_16(bufferFx[fxi][j]);
+		for (int32 j = 0; j < fx[fxi]._bufSize / 2; j++)
+			fx[fxi]._buf[j] = SWAP_BYTES_16(fx[fxi]._buf[j]);
 
-		fxId[fxi] = id;
+		fx[fxi]._id = id;
 	}
 	return RD_OK;
 }
@@ -758,16 +711,13 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 					warning("PlayFx(%d, %d, %d, %d) - Not open", id, vol, pan, type);
 					return RDERR_FXNOTOPEN;
 				}
-				flagsFx[i] &= ~SoundMixer::FLAG_LOOP;
+				fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
 
-				byte volume;
 				// Start the sound effect playing
-				if (musicMuted) {
-					volume = 0;
-				} else {
-					volume = musicVolTable[volMusic[0]];
-				}
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], -1, volume, 0);
+
+				byte volume = musicMuted ? 0 : musicVolTable[musicVol];
+
+				g_engine->_mixer->playRaw(&fx[i]._handle, fx[i]._buf, fx[i]._bufSize, fx[i]._rate, fx[i]._flags, -1, volume, 0);
 			} else {
 				i = GetFxIndex(id);
 				if (i == MAXFX) {
@@ -775,23 +725,18 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 					return RDERR_FXNOTOPEN;
 				}
 				if (loop == 1)
-					flagsFx[i] |= SoundMixer::FLAG_LOOP;
+					fx[i]._flags |= SoundMixer::FLAG_LOOP;
 				else 
-					flagsFx[i] &= ~SoundMixer::FLAG_LOOP;
+					fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
 				 
-				fxVolume[i] = vol;
+				fx[i]._volume = vol;
 
-				byte volume;
-				int8 p;
 				// Start the sound effect playing
-				if (fxMuted) {
-					volume = 0;
-				} else {
-					volume = vol * fxVol;
-				}
-				p = panTable[pan + 16];
 
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], -1, volume, p);
+				byte volume = fxMuted ? 0 : vol * fxVol;
+				int8 p = panTable[pan + 16];
+
+				g_engine->_mixer->playRaw(&fx[i]._handle, fx[i]._buf, fx[i]._bufSize, fx[i]._rate, fx[i]._flags, -1, volume, p);
 			}
 		} else {
 			if (type == RDSE_FXLEADIN) {
@@ -805,15 +750,11 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 					warning("PlayFx(%d, %d, %d, %d) - Not found", id, vol, pan, type);
 					return RDERR_FXFUCKED;
 				}
-				flagsFx[i] &= ~SoundMixer::FLAG_LOOP;
+				fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
 				
-				byte volume;
-				if (musicMuted) {
-					volume = 0;
-				} else {
-					volume = musicVolTable[volMusic[0]];
-				}
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], -1, volume, 0);
+				byte volume = musicMuted ? 0 : musicVolTable[musicVol];
+
+				g_engine->_mixer->playRaw(&fx[i]._handle, fx[i]._buf, fx[i]._bufSize, fx[i]._rate, fx[i]._flags, -1, volume, 0);
 			} else {
 				hr = OpenFx(id, data);
 				if (hr != RD_OK) {
@@ -826,21 +767,17 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 					return RDERR_FXFUCKED;
 				}
 				if (loop == 1)
-					flagsFx[i] |= SoundMixer::FLAG_LOOP;
+					fx[i]._flags |= SoundMixer::FLAG_LOOP;
 				else 
-					flagsFx[i] &= ~SoundMixer::FLAG_LOOP;
-				fxVolume[i] = vol;
+					fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
+				fx[i]._volume = vol;
 
-				byte volume;
-				int8 p;
 				// Start the sound effect playing
-				if (fxMuted) {
-					volume = 0;
-				} else {
-					volume = vol * fxVol;
-				}
-				p = panTable[pan + 16];
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], -1, volume, p);
+
+				byte volume = fxMuted ? 0 : vol * fxVol;
+				int8 p = panTable[pan + 16];
+
+				g_engine->_mixer->playRaw(&fx[i]._handle, fx[i]._buf, fx[i]._bufSize, fx[i]._rate, fx[i]._flags, -1, volume, p);
 			}
 		}
 	}
@@ -852,47 +789,45 @@ int32 Sword2Sound::SetFxVolumePan(int32 id, uint8 vol, int8 pan) {
 	if (i == MAXFX)
 		return RDERR_FXNOTOPEN;
 
-	fxVolume[i] = vol;
+	fx[i]._volume = vol;
 	if (!fxMuted) {
-		g_engine->_mixer->setChannelVolume(soundHandleFx[i], vol * fxVol);
-		g_engine->_mixer->setChannelPan(soundHandleFx[i], panTable[pan + 16]);
+		g_engine->_mixer->setChannelVolume(fx[i]._handle, vol * fxVol);
+		g_engine->_mixer->setChannelPan(fx[i]._handle, panTable[pan + 16]);
 	}
 	return RD_OK;
 }
 
 int32 Sword2Sound::SetFxIdVolume(int32 id, uint8 vol) {
 	int32 i = GetFxIndex(id);
+
 	if (i == MAXFX)
 		return RDERR_FXNOTOPEN;
 
-	fxVolume[i] = vol;
-	if (!fxMuted) {
-		g_engine->_mixer->setChannelVolume(soundHandleFx[i], vol * fxVol);
-	}
+	fx[i]._volume = vol;
+	if (!fxMuted)
+		g_engine->_mixer->setChannelVolume(fx[i]._handle, vol * fxVol);
+
 	return RD_OK;
 }
 
 int32 Sword2Sound::ClearAllFx(void) {
-	int i;
-
 	if (!soundOn)
 		return(RD_OK);
 
-	i = 0;
-	while (i < MAXFX) {
-		if (fxId[i] && fxId[i] != (int32) 0xfffffffe && fxId[i] != (int32) 0xffffffff) {
-			g_engine->_mixer->stopHandle(soundHandleFx[i]);
-			fxId[i] = 0;
-			fxiPaused[i] = 0;
-			if (bufferFx[i] != NULL) {
-				free(bufferFx[i]);
-				bufferFx[i] = NULL;
+	for (int i = 0; i < MAXFX; i++) {
+		if (fx[i]._id && fx[i]._id != (int32) 0xfffffffe && fx[i]._id != (int32) 0xffffffff) {
+			g_engine->_mixer->stopHandle(fx[i]._handle);
+			fx[i]._id = 0;
+			fx[i]._paused = false;
+			if (fx[i]._buf != NULL) {
+				free(fx[i]._buf);
+				fx[i]._buf = NULL;
 			}
-			bufferSizeFx[i] = 0;
-			flagsFx[i] = 0;
+			fx[i]._bufSize = 0;
+			fx[i]._flags = 0;
 		}
-		i++;
 	}
+
 	return RD_OK;
 }
 
@@ -904,64 +839,61 @@ int32 Sword2Sound::CloseFx(int32 id) {
 
 	i = GetFxIndex(id);
 	if (i < MAXFX) {
-		g_engine->_mixer->stopHandle(soundHandleFx[i]);
-		fxId[i] = 0;
-		fxiPaused[i] = 0;
-		if (bufferFx[i] != NULL) {
-			free(bufferFx[i]);
-			bufferFx[i] = NULL;
+		g_engine->_mixer->stopHandle(fx[i]._handle);
+		fx[i]._id = 0;
+		fx[i]._paused = false;
+		if (fx[i]._buf != NULL) {
+			free(fx[i]._buf);
+			fx[i]._buf = NULL;
 		}
-		bufferSizeFx[i] = 0;
-		flagsFx[i] = 0;
+		fx[i]._bufSize = 0;
+		fx[i]._flags = 0;
 	}
+
 	return RD_OK;
 }
 
 int32 Sword2Sound::PauseFx(void) {
-	int i;
-
 	if (!fxPaused) {
-		for (i = 0; i < MAXFX; i++) {
-			if (fxId[i]) {
-				g_engine->_mixer->pauseHandle(soundHandleFx[i], true);
-				fxiPaused[i] = 1;
-			} else {
-				fxiPaused[i] = 0;
-			}
+		for (int i = 0; i < MAXFX; i++) {
+			if (fx[i]._id) {
+				g_engine->_mixer->pauseHandle(fx[i]._handle, true);
+				fx[i]._paused = true;
+			} else
+				fx[i]._paused = false;
 		}
 		fxPaused = 1;
 	}
+
 	return RD_OK;
 }
 
 int32 Sword2Sound::PauseFxForSequence(void) {
-	int i;
-
 	if (!fxPaused) {
-		for (i = 0; i<MAXFX; i++) {
-			if (fxId[i] && fxId[i] != (int32) 0xfffffffe) {
-				g_engine->_mixer->pauseHandle(soundHandleFx[i], true);
-				fxiPaused[i] = 1;
+		for (int i = 0; i < MAXFX; i++) {
+			if (fx[i]._id && fx[i]._id != (int32) 0xfffffffe) {
+				g_engine->_mixer->pauseHandle(fx[i]._handle, true);
+				fx[i]._paused = true;
 			} else {
-				fxiPaused[i] = 0;
+				fx[i]._paused = false;
 			}
 		}
 		fxPaused = 1;
 	}
+
 	return RD_OK;
 }
 
 int32 Sword2Sound::UnpauseFx(void) {
-	int i;
-
 	if (fxPaused) {
-		for (i = 0; i < MAXFX; i++) {
-			if (fxiPaused[i] && fxId[i]) {
-				g_engine->_mixer->pauseHandle(soundHandleFx[i], false);
+		for (int i = 0; i < MAXFX; i++) {
+			if (fx[i]._paused && fx[i]._id) {
+				g_engine->_mixer->pauseHandle(fx[i]._handle, false);
 			}
 		}
 		fxPaused = 0;
 	}
+
 	return RD_OK;
 }
 
@@ -970,30 +902,24 @@ uint8 Sword2Sound::GetFxVolume() {
 }
 
 void Sword2Sound::SetFxVolume(uint8 volume) {
-	int32 fxi;
 	fxVol = volume;
 
 	// Now update the volume of any fxs playing
-	for (fxi = 0; fxi < MAXFX; fxi++) {
-		if (fxId[fxi] && !fxMuted) {
-			g_engine->_mixer->setChannelVolume(soundHandleFx[fxi], fxVolume[fxi] * fxVol);
-		}
+	for (int i = 0; i < MAXFX; i++) {
+		if (fx[i]._id && !fxMuted)
+			g_engine->_mixer->setChannelVolume(fx[i]._handle, fx[i]._volume * fxVol);
 	}
 }
 
 void Sword2Sound::MuteFx(uint8 mute) {
-	int32 fxi;
-
 	fxMuted = mute;
 
 	// Now update the volume of any fxs playing
-	for (fxi = 0; fxi < MAXFX; fxi++) {
-		if (fxId[fxi]) {
-			if (mute) {
-				g_engine->_mixer->setChannelVolume(soundHandleFx[fxi], 0);
-			} else {
-				g_engine->_mixer->setChannelVolume(soundHandleFx[fxi], fxVolume[fxi] * fxVol);
-			}
+	for (int i = 0; i < MAXFX; i++) {
+		if (fx[i]._id) {
+			byte volume = mute ? 0 : fx[i]._volume * fxVol;
+
+			g_engine->_mixer->setChannelVolume(fx[i]._handle, volume);
 		}
 	}
 }
@@ -1002,16 +928,15 @@ uint8 Sword2Sound::IsFxMute(void) {
 	return fxMuted;
 }
 
-int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping) {
+int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, bool looping) {
 	StackLock lock(_mutex);
 	return StreamCompMusicFromLock(filename, musicId, looping);
 }
 
-int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId, int32 looping) {
+int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId, bool looping) {
 	int32 primaryStream = -1;
 	int32 secondaryStream = -1;
 	int32 i;
-	int32 v0, v1;
 	uint16 *data16;
 	uint8 *data8;
 
@@ -1020,22 +945,22 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	// If both music streams are playing, that should mean one of them is
 	// fading out. Pick that one.
 
-	if (musStreaming[0] && musStreaming[1]) {
-		if (musFading[0])
+	if (music[0]._streaming && music[1]._streaming) {
+		if (music[0]._fading)
 			primaryStream = 0;
 		else
 			primaryStream = 1;
 
-		musFading[primaryStream] = 0;
-		g_engine->_mixer->stopHandle(soundHandleMusic[primaryStream]);
-		musStreaming[primaryStream] = 0;
+		music[primaryStream]._fading = false;
+		g_engine->_mixer->stopHandle(music[primaryStream]._handle);
+		music[primaryStream]._streaming = false;
 	}
 
 	// Pick the available music stream. If no music is playing it doesn't
 	// matter which we use, so pick the first one.
 
-	if (musStreaming[0] || musStreaming[1]) {
-		if (musStreaming[0]) {
+	if (music[0]._streaming || music[1]._streaming) {
+		if (music[0]._streaming) {
 			primaryStream = 1;
 			secondaryStream = 0;
 		} else {
@@ -1045,11 +970,11 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	} else
 		primaryStream = 0;
 
-	strcpy(musFilename[primaryStream], filename);
+	strcpy(music[primaryStream]._fileName, filename);
 
 	// Save looping info and tune id
-	musLooping[primaryStream] = looping;
-	musId[primaryStream] = musicId;
+	music[primaryStream]._looping = looping;
+	music[primaryStream]._id = musicId;
 
 	// Don't start streaming if the volume is off.
 	if (IsMusicMute())
@@ -1064,28 +989,26 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 		return RDERR_INVALIDFILENAME;
 
 	// Start other music stream fading out
-	if (secondaryStream != -1 && !musFading[secondaryStream])
-		musFading[secondaryStream] = -16;
+	if (secondaryStream != -1 && !music[secondaryStream]._fading)
+		music[secondaryStream]._fading = -16;
 
 	fpMus.seek((musicId + 1) * 8, SEEK_SET);
-	musFilePos[primaryStream] = fpMus.readUint32LE();
-	musEnd[primaryStream] = fpMus.readUint32LE();
+	music[primaryStream]._filePos = fpMus.readUint32LE();
+	music[primaryStream]._fileEnd = fpMus.readUint32LE();
 
-	if (!musEnd[primaryStream] || !musFilePos[primaryStream]) {
+	if (!music[primaryStream]._filePos || !music[primaryStream]._fileEnd)
 		return RDERR_INVALIDID;
-	}
 
 	// Calculate the file position of the end of the music
-	musEnd[primaryStream] += musFilePos[primaryStream];
+	music[primaryStream]._fileEnd += music[primaryStream]._filePos;
 
 	// Create a temporary buffer
 	data8 = (uint8 *) malloc(bufferSizeMusic / 2);
-	if (!data8) {
+	if (!data8)
 		return RDERR_OUTOFMEMORY;
-	}
 
 	// Seek to start of the compressed music
-	fpMus.seek(musFilePos[primaryStream], SEEK_SET);
+	fpMus.seek(music[primaryStream]._filePos, SEEK_SET);
 
 	// Read the compressed data in to the buffer
 	if ((int32) fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
@@ -1094,10 +1017,7 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	}
 
 	// Store the current position in the file for future streaming
-	musFilePos[primaryStream] = fpMus.pos();
-
-	// FIXME: We used this decompression function in several places, so
-	// it really should be a separate function.
+	music[primaryStream]._filePos = fpMus.pos();
 
 	// decompress the music into the music buffer.
 	data16 = (uint16 *) malloc(bufferSizeMusic);
@@ -1115,99 +1035,60 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 
 	// Store the value of the last sample ready for next batch of
 	// decompression
-	musLastSample[primaryStream] = data16[i - 1];
+	music[primaryStream]._lastSample = data16[i - 1];
 
 	// Free the compressed sound buffer
 	free(data8);
 
 	// Modify the volume according to the master volume and music mute
 	// state
-	if (musicMuted)
-		v0 = v1 = 0;
-	else {
-		v0 = volMusic[0];
-		v1 = volMusic[1];
-	}
 
-	byte volume;
-	int8 pan;
-
-	if (v0 > v1) {
-		volume = musicVolTable[v0];
-		pan = (musicVolTable[v1 * 16 / v0] / 2) - 127;
-	} else if (v1 > v0) {
-		volume = musicVolTable[v1];
-		pan = (musicVolTable[v0 * 16 / v1] / 2) + 127;
-	} else {
-		volume = musicVolTable[v1];
-		pan = 0;
-	}
+	byte volume = musicMuted ? 0 : musicVolTable[musicVol];
 
 #ifndef SCUMM_BIG_ENDIAN
 	// FIXME: Until the mixer supports LE samples natively, we need to
 	// convert our LE ones to BE
-	for (i = 0; i < (bufferSizeMusic / 2); i++) {
+	for (i = 0; i < bufferSizeMusic / 2; i++)
 		data16[i] = SWAP_BYTES_16(data16[i]);
-	}
 #endif
 
-	g_engine->_mixer->newStream(&soundHandleMusic[primaryStream], data16,
-		bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000, volume, pan);
+	g_engine->_mixer->newStream(&music[primaryStream]._handle, data16,
+		bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000, volume, 0);
 		
 	free(data16);
 
 	// Recorder some last variables
-	musStreaming[primaryStream] = 1;
+	music[primaryStream]._streaming = true;
 	return RD_OK;
 }
 
 void Sword2Sound::UpdateCompSampleStreaming(void) {
-	uint32 	i,j;
-	int32 	v0, v1;
-	int32	len;
+	uint32 i,j;
+	int32 len;
 	uint16 *data16;
-	uint8  *data8;
-	int     fade;
+	uint8 *data8;
+	int fade;
 
 	for (i = 0; i < MAXMUS; i++) {
-		if (!musStreaming[i])
+		if (!music[i]._streaming)
 			continue;
 
 		// If the music is fading, adjust the volume for it.
 
-		if (musFading[i] < 0) {
-			if (++musFading[i] == 0) {
-				g_engine->_mixer->stopHandle(soundHandleMusic[i]);
-				musStreaming[i] = 0;
-				musLooping[i] = 0;
+		if (music[i]._fading < 0) {
+			if (++music[i]._fading == 0) {
+				g_engine->_mixer->stopHandle(music[i]._handle);
+				music[i]._streaming = false;
+				music[i]._looping = false;
 				continue;
 			}
 
     			// Modify the volume according to the master volume
 			// and music mute state
-			if (musicMuted)
-				v0 = v1 = 0;
-			else {
-				v0 = (volMusic[0] * (0 - musFading[i]) / 16);
-	    			v1 = (volMusic[1] * (0 - musFading[i]) / 16);
-			}
 
-			byte volume;
-			int8 pan;
+			byte volume = musicMuted ? 0 : musicVolTable[musicVol * (0 - music[i]._fading ) / 16];
 
-			if (v0 > v1) {
-				volume = musicVolTable[v0];
-				pan = (musicVolTable[v1 * 16 / v0] / 2) - 127;
-			}
-			if (v1 > v0) {
-				volume = musicVolTable[v1];
-				pan = (musicVolTable[v0 * 16 / v1] / 2) + 127;
-			} else {
-				volume = musicVolTable[v1];
-				pan = 0;
-			}
-			g_engine->_mixer->setChannelVolume(soundHandleMusic[i], volume);
-			g_engine->_mixer->setChannelPan(soundHandleMusic[i], pan);
+			g_engine->_mixer->setChannelVolume(music[i]._handle, volume);
 		}
 
 		// Re-fill the audio buffer.
@@ -1217,10 +1098,10 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 		// Reduce length if it requires reading past the end of the
 		// music
 
-		if (musFilePos[i] + len >= musEnd[i]) {
+		if (music[i]._filePos + len >= music[i]._fileEnd) {
 			// End of music reached so we'll need to fade and
 			// repeat
-			len = musEnd[i] - musFilePos[i];
+			len = music[i]._fileEnd - music[i]._filePos;
 			fade = 1;
 		} else
 			fade = 0;
@@ -1229,30 +1110,30 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 			data8 = (uint8 *) malloc(len / 2);
 			// Allocate a compressed data buffer
 			if (data8 == NULL) {
-				g_engine->_mixer->stopHandle(soundHandleMusic[i]);
-				musStreaming[i] = 0;
-				musLooping[i] = 0;
+				g_engine->_mixer->stopHandle(music[i]._handle);
+				music[i]._streaming = false;
+				music[i]._looping = false;
 				continue;
 			}
 
 			// Seek to update position of compressed music when
 			// neccassary (probably never occurs)
-			if ((int32) fpMus.pos() != musFilePos[i])
-				fpMus.seek(musFilePos[i], SEEK_SET);
+			if ((int32) fpMus.pos() != music[i]._filePos)
+				fpMus.seek(music[i]._filePos, SEEK_SET);
 
 			// Read the compressed data in to the buffer
 			if ((int32) fpMus.read(data8, len / 2) != len / 2) {
-				g_engine->_mixer->stopHandle(soundHandleMusic[i]);
+				g_engine->_mixer->stopHandle(music[i]._handle);
 				free(data8);
-				musStreaming[i] = 0;
-				musLooping[i] = 0;
+				music[i]._streaming = false;
+				music[i]._looping = false;
 				continue;
 			}
 
 			// Update the current position in the file for future
 			// streaming
 
-			musFilePos[i] = fpMus.pos();
+			music[i]._filePos = fpMus.pos();
 
 			// decompress the music into the music buffer.
 			data16 = (uint16 *) malloc(len);
@@ -1260,21 +1141,18 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 			// Decompress the first byte using the last
 			// decompressed sample
 			if (GetCompressedSign(data8[0]))
-				data16[0] = musLastSample[i] - (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
+				data16[0] = music[i]._lastSample - (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
 			else
-				data16[0] = musLastSample[i] + (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
+				data16[0] = music[i]._lastSample + (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
 
-			j = 1;
-
-			while (j < (uint32) len / 2) {
+			for (j = 1; j < (uint32) len / 2; j++) {
 				if (GetCompressedSign(data8[j]))
 					data16[j] = data16[j - 1] - (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
 				else
 					data16[j] = data16[j - 1] + (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
-				j++;
 			}
 
-			musLastSample[i] = data16[j - 1];
+			music[i]._lastSample = data16[j - 1];
 
 #ifndef SCUMM_BIG_ENDIAN
 			// Until the mixer supports LE samples natively, we
@@ -1287,7 +1165,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 			if (len & 1)
 				len--;
 
-			g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
+			g_engine->_mixer->appendStream(music[i]._handle, data16, len);
 					
 			free(data16);
 			free(data8);
@@ -1295,19 +1173,23 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 
 		// End of the music so we need to start fading and start the
 		// music again
+
 		if (fade) {
-			g_engine->_mixer->stopHandle(soundHandleMusic[i]);
+			g_engine->_mixer->stopHandle(music[i]._handle);
 
 			// FIXME: The original code faded the music here, but
 			// to do that we need to start before we reach the end
 			// of the file.
+			//
+			// On the other hand, do we want to fade out the end
+			// of the music?
 
 			// Fade the old music
 			// musFading[i] = -16;
 
 			// Loop if neccassary
-			if (musLooping[i])
-				StreamCompMusicFromLock(musFilename[i], musId[i], musLooping[i]);
+			if (music[i]._looping)
+				StreamCompMusicFromLock(music[i]._fileName, music[i]._id, music[i]._looping);
 		}
 	}
 
@@ -1397,43 +1279,35 @@ int32 Sword2Sound::DipMusic() {
 int32 Sword2Sound::MusicTimeRemaining() {
 	StackLock lock(_mutex);
 
-	int i;
-
-	for (i = 0; i < MAXMUS && !musStreaming[i]; i++) {
-		// this is meant to be empty! (James19aug97)
+	for (int i = 0; i < MAXMUS; i++) {
+		if (music[i]._streaming && !music[i]._fading)
+			return (music[i]._fileEnd - music[i]._filePos) / 22050;
 	}
 
-	if (i == MAXMUS)
-		return 0;
-
-	return (musEnd[i] - musFilePos[i]) / 22050;
+	return 0;
 }
 
 void Sword2Sound::StopMusic(void) {
 	StackLock lock(_mutex);
 
-	int i;
-
-	for (i = 0; i < MAXMUS; i++) {
-		if (musStreaming[i])
-			musFading[i] = -16;
+	for (int i = 0; i < MAXMUS; i++) {
+		if (music[i]._streaming)
+			music[i]._fading = -16;
 		else
-			musLooping[i] = 0;
+			music[i]._looping = false;
 	}
 }
 
 int32 Sword2Sound::PauseMusic(void) {
 	StackLock lock(_mutex);
 
-	int i;
-
 	if (soundOn) {
-		for (i = 0; i < 2; i++) {
-			if (musStreaming[i]) {
-				musicPaused[i] = TRUE;
-				g_engine->_mixer->pauseHandle(soundHandleMusic[i], true);
+		for (int i = 0; i < MAXMUS; i++) {
+			if (music[i]._streaming) {
+				music[i]._paused = true;
+				g_engine->_mixer->pauseHandle(music[i]._handle, true);
 			} else {
-				musicPaused[i] = FALSE;
+				music[i]._paused = false;
 			}
 		}
 	}
@@ -1443,13 +1317,11 @@ int32 Sword2Sound::PauseMusic(void) {
 int32 Sword2Sound::UnpauseMusic(void) {
 	StackLock lock(_mutex);
 
-	int i;
-
 	if (soundOn) {
-		for (i = 0; i < 2; i++) {
-			if (musicPaused[i]) {
-				g_engine->_mixer->pauseHandle(soundHandleMusic[i], false);
-				musicPaused[i] = FALSE;
+		for (int i = 0; i < MAXMUS; i++) {
+			if (music[i]._paused) {
+				g_engine->_mixer->pauseHandle(music[i]._handle, false);
+				music[i]._paused = false;
 			}
 		}
 	}
@@ -1459,39 +1331,33 @@ int32 Sword2Sound::UnpauseMusic(void) {
 void Sword2Sound::SetMusicVolume(uint8 volume) {
 	StackLock lock(_mutex);
 
-	int i;
+	musicVol = volume;
 
-	for (i = 0; i < MAXMUS; i++) {
-		volMusic[i] = volume;
-		if (musStreaming[i] && !musFading[i] && !musicMuted) {
-			g_engine->_mixer->setChannelVolume(soundHandleMusic[i], musicVolTable[volume]);
-		}
+	for (int i = 0; i < MAXMUS; i++) {
+		if (music[i]._streaming && !music[i]._fading && !musicMuted)
+			g_engine->_mixer->setChannelVolume(music[i]._handle, musicVolTable[volume]);
 	}
 }
 
 uint8 Sword2Sound::GetMusicVolume() {
-	return (uint8) volMusic[0];
+	return musicVol;
 }
 
 void Sword2Sound::MuteMusic(uint8 mute) {
 	StackLock lock(_mutex);
 
-	int i;
-
 	musicMuted = mute;
 
-	for (i = 0; i < MAXMUS; i++) {
+	for (int i = 0; i < MAXMUS; i++) {
 		if (!mute) {
-			if (!musStreaming[i] && musLooping[i])
-				StreamCompMusicFromLock(musFilename[i], musId[i], musLooping[i]);
+			if (!music[i]._streaming && music[i]._looping)
+				StreamCompMusicFromLock(music[i]._fileName, music[i]._id, music[i]._looping);
 		}
 
-		if (musStreaming[i] && !musFading[i]) {
-			if (mute) {
-				g_engine->_mixer->setChannelVolume(soundHandleMusic[i], musicVolTable[0]);
-			} else {
-				g_engine->_mixer->setChannelVolume(soundHandleMusic[i], musicVolTable[volMusic[i]]);
-			}
+		if (music[i]._streaming && !music[i]._fading) {
+			byte volume = mute ? 0 : musicVolTable[musicVol];
+
+			g_engine->_mixer->setChannelVolume(music[i]._handle, volume);
 		}
 	}
 }

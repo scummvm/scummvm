@@ -43,6 +43,30 @@
 
 extern void sword2_sound_handler(void *refCon);
 
+typedef struct {
+	int32 _id;
+	bool _paused;
+	int8 _volume;
+	uint16 _rate;
+	uint32 _flags;
+	uint16 *_buf;
+	int32 _bufSize;
+	PlayingSoundHandle _handle;
+} fxHandle;
+
+typedef struct {
+	uint32 _id;
+	char _fileName[256];
+	bool _streaming;
+	bool _paused;
+	bool _looping;
+	int16 _fading;
+	int32 _filePos;
+	int32 _fileEnd;
+	int16 _lastSample;
+	PlayingSoundHandle _handle;
+} musicHandle;
+
 class Sword2Sound {
 	public:
 		Sword2Sound(SoundMixer *mixer);
@@ -66,8 +90,7 @@ class Sword2Sound {
 		int32 UnpauseFx(void);
 		int32 PauseMusic(void);
 		int32 UnpauseMusic(void);
-		int32 StreamMusic(uint8 *filename, int32 looping);
-		int32 StreamCompMusic(const char *filename, uint32 musicId, int32 looping);
+		int32 StreamCompMusic(const char *filename, uint32 musicId, bool looping);
 		int32 MusicTimeRemaining();
 		int32 ReverseStereo(void);
 		uint8 GetFxVolume(void);
@@ -76,32 +99,32 @@ class Sword2Sound {
 		uint8 IsMusicMute(void);
 		uint8 IsFxMute(void);
 		uint8 IsSpeechMute(void);
-		void  StopMusic(void);
-		void  SetFxVolume(uint8 vol);
-		void  SetSpeechVolume(uint8 vol);
-		void  SetMusicVolume(uint8 vol);
-		void  MuteMusic(uint8 mute);
-		void  MuteFx(uint8 mute);
-		void  MuteSpeech(uint8 mute);
+		void StopMusic(void);
+		void SetFxVolume(uint8 vol);
+		void SetSpeechVolume(uint8 vol);
+		void SetMusicVolume(uint8 vol);
+		void MuteMusic(uint8 mute);
+		void MuteFx(uint8 mute);
+		void MuteSpeech(uint8 mute);
 		int32 IsFxOpen(int32 id);
 		int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan);
 		int32 SetFxIdVolume(int32 id, uint8 vol);
 		void UpdateCompSampleStreaming(void);
 		SoundMixer *_mixer;
 	private:
-		int32 StreamCompMusicFromLock(const char *filename, uint32 musicId, int32 looping);
+		int32 StreamCompMusicFromLock(const char *filename, uint32 musicId, bool looping);
 		int32 GetFxIndex(int32 id);
 		int32 DipMusic();
 
 		OSystem::MutexRef _mutex;
 
-		int32 fxId[MAXFX];
-		uint8 fxiPaused[MAXFX];
-		uint8 fxVolume[MAXFX];
-		uint16 fxRate[MAXFX];
-		uint32 flagsFx[MAXFX];
-		uint16 *bufferFx[MAXFX];
-		int32 bufferSizeFx[MAXFX];
+		fxHandle fx[MAXFX];
+		musicHandle music[MAXMUS];
+
+		// We used to have two music volumes - one for each channel -
+		// but they were always set to the same value.
+
+		uint8 musicVol;
 
 		uint8 soundOn;
 		uint8 speechStatus;
@@ -113,22 +136,9 @@ class Sword2Sound {
 		uint8 fxMuted;
 		uint8 compressedMusic;
 
-		int16 musStreaming[MAXMUS];
-		int16 musicPaused[MAXMUS];
-		int16 musFading[MAXMUS];
-		int16 musLooping[MAXMUS];
-
-		PlayingSoundHandle soundHandleFx[MAXFX];
-		PlayingSoundHandle soundHandleMusic[MAXMUS];
 		PlayingSoundHandle soundHandleSpeech;
 		File fpMus;
 		int bufferSizeMusic;
-		char musFilename[MAXMUS][256];
-		int32 musFilePos[MAXMUS];
-		int32 musEnd[MAXMUS];
-		int16 musLastSample[MAXMUS];
-		uint32 musId[MAXMUS];
-		uint32 volMusic[2];
 		uint8 musicMuted;
 };
 
