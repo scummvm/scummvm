@@ -70,9 +70,6 @@ Sound::~Sound() {
 }
 
 int Sound::play(int sound_rn, int channel) {
-	int resource_size;
-	char *resource_data;
-
 	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
