@@ -427,7 +427,7 @@ int32 RouteFinder(Object_mega *ob_mega, Object_walkdata *ob_walkdata, int32 x, i
 		// routeFlag = 0;
 	}
 
-   	FloatRouteMem();	// float the _walkData array again
+	FloatRouteMem();	// float the _walkData array again
 
 	return routeFlag;	// send back null route
 }
@@ -435,7 +435,7 @@ int32 RouteFinder(Object_mega *ob_mega, Object_walkdata *ob_walkdata, int32 x, i
 int32 GetRoute(void) {
 	/*********************************************************************
 	 * GetRoute.C				extract a path from walk grid
-	 *							12 october 94  
+	 *							12 october 94
 	 *
 	 * GetRoute currently works by scanning grid data and coming up with
 	 * a ROUTE as a series of way points(nodes).
@@ -522,7 +522,7 @@ int32 SmoothestPath() {
 	// This is because I was unable to derive a function to relate number
 	// of steps taken between two points to the shrunken step size   
 
-	int32 p;     
+	int32 p;
 	int32 dirS;
 	int32 dirD;
 	int32 dS;
@@ -544,8 +544,8 @@ int32 SmoothestPath() {
 	int32 lastDir;
 	int32 nextDirS;
 	int32 nextDirD;
-	int32 tempturns[4];     
-	int32 turns[4];     
+	int32 tempturns[4];
+	int32 turns[4];
 	int32 turntable[NO_DIRECTIONS] = { 0, 1, 3, 5, 7, 5, 3, 1 };
 
 	// route.X route.Y and route.Dir start at far end
@@ -560,7 +560,7 @@ int32 SmoothestPath() {
 
 	// for each section of the route
 
-	do {     
+	do {
 		dirS = route[p].dirS;
 		dirD = route[p].dirD;
 		nextDirS = route[p+1].dirS;
@@ -697,7 +697,7 @@ int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD) {
 	 * No longer checks the data it only creates the smoothPath array JPS
 	 *********************************************************************/
 
-	static int32 k;   
+	static int32 k;
 	int32 x;
 	int32 y;
 	int32 x2;
@@ -947,7 +947,7 @@ void EarlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata) {
 	debug(5, "firstSlowOutFrame = %d", firstSlowOutFrame);
 	debug(5, "********************************");
 
- 	walk_pc  = ob_mega->walk_pc;
+ 	walk_pc = ob_mega->walk_pc;
 
 	// lock the _walkData array (NB. AFTER loading walkgrid & walkdata!)
 	walkAnim = LockRouteMem();
@@ -1989,11 +1989,11 @@ int32 NewCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 	int32 dly;
 	int32 dirX;
 	int32 dirY;
-	int32 step1;   
-	int32 step2;   
-	int32 step3;   
-	int32 steps;   
-	int32 options;   
+	int32 step1;
+	int32 step2;
+	int32 step3;
+	int32 steps;
+	int32 options;
 
 	steps = 0;
 	options = 0;
@@ -2180,7 +2180,7 @@ int32 LineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 	int32 dirx;
 	int32 diry;
 	int32 co;
-	int32 slope;   
+	int32 slope;
 	int32 i;
 	int32 xc;
 	int32 yc;
@@ -2188,22 +2188,22 @@ int32 LineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 	int32 ymin;
 	int32 xmax;
 	int32 ymax;
-	int32 linesCrossed = 1;   
+	int32 linesCrossed = 1;
 
 	if (x1 > x2) {
-		xmin = x2;    
+		xmin = x2;
 		xmax = x1;
 	} else {
-		xmin = x1;    
-		xmax = x2;    
+		xmin = x1;
+		xmax = x2;
 	}
 
 	if (y1 > y2) {
-		ymin = y2;    
+		ymin = y2;
 		ymax = y1;
 	} else {
-		ymin = y1;    
-		ymax = y2;    
+		ymin = y1;
+		ymax = y2;
 	}
 
 	// line set to go one step in chosen direction
@@ -2214,7 +2214,7 @@ int32 LineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 
 	co = (y1 * dirx)- (x1 * diry);		// new line equation
 
-	i = 0;          
+	i = 0;
 
 	do {
 		// skip if not on module 
@@ -2234,7 +2234,7 @@ int32 LineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 					xc = ((bars[i].co * dirx) - (co * bars[i].dx)) / slope;
 
 					// skip if not on module
-					if (xc >= xmin - 1 &&  xc <= xmax + 1) {
+					if (xc >= xmin - 1 && xc <= xmax + 1) {
 						// skip if not on line 
 						if (xc >= bars[i].xmin - 1 && xc <= bars[i].xmax + 1) {
 							yc = ((bars[i].co * diry) - (co * bars[i].dy)) / slope;
@@ -2263,38 +2263,38 @@ int32 HorizCheck(int32 x1, int32 y, int32 x2) {
 	int32 xc;
 	int32 xmin;
 	int32 xmax;
-	int32 linesCrossed = 1;   
+	int32 linesCrossed = 1;
 
 	if (x1 > x2) {
-		xmin = x2;    
+		xmin = x2;
 		xmax = x1;
 	} else {
-		xmin = x1;    
-		xmax = x2;    
+		xmin = x1;
+		xmax = x2;
 	}
 
 	// line set to go one step in chosen direction
 	// so ignore if it hits anything
 
-	i = 0;          
+	i = 0;
 
 	do {
-		// skip if not on module 
+		// skip if not on module
 		if (xmax >= bars[i].xmin && xmin <= bars[i].xmax) {
-			// skip if not on module 
+			// skip if not on module
 			if (y >= bars[i].ymin && y <= bars[i].ymax) {
 				// okay its a valid line calculate an intercept
 				// wow but all this arithmatic we must have
 				// loads of time
 
 				if (bars[i].dy == 0)
-					linesCrossed = 0;          
+					linesCrossed = 0;
 				else {
 					ldy = y - bars[i].y1;
 					xc = bars[i].x1 + (bars[i].dx * ldy) / bars[i].dy;
 					// skip if not on module 
-				    	if (xc >= xmin - 1 && xc <= xmax + 1)
-						linesCrossed = 0;          
+					if (xc >= xmin - 1 && xc <= xmax + 1)
+						linesCrossed = 0;
 				}
 			}
 		}
@@ -2310,20 +2310,20 @@ int32 VertCheck(int32 x, int32 y1, int32 y2) {
 	int32 yc;
 	int32 ymin;
 	int32 ymax;
-	int32 linesCrossed = 1;   
+	int32 linesCrossed = 1;
 
 	if (y1 > y2) {
-		ymin = y2;    
+		ymin = y2;
 		ymax = y1;
 	} else {
-		ymin = y1;    
-		ymax = y2;    
+		ymin = y1;
+		ymax = y2;
 	}
 
 	// line set to go one step in chosen direction
 	// so ignore if it hits anything
 
-	i = 0;          
+	i = 0;
 
 	do {
 		if (x >= bars[i].xmin && x <= bars[i].xmax) {
@@ -2364,17 +2364,17 @@ int32 CheckTarget(int32 x, int32 y) {
 	int32 xmax;
 	int32 ymin;
 	int32 ymax;
-	int32 onLine = 0;   
+	int32 onLine = 0;
 
- 	xmin = x - 1;    
+ 	xmin = x - 1;
  	xmax = x + 1;
- 	ymin = y - 1;    
+ 	ymin = y - 1;
  	ymax = y + 1;
 
 	// check if point +- 1 is on the line
 	//so ignore if it hits anything
 
-	i = 0;          
+	i = 0;
 
 	do {
 		// overlapping line 
@@ -2428,7 +2428,7 @@ void LoadWalkData(Object_walkdata *ob_walkdata) {
 	uint16 firstFrameOfDirection;
 	uint16 walkFrameNo;
 	uint32 frameCounter = 0; // starts at frame 0 of mega set (16sep96 JEL)
-      
+
 	nWalkFrames = ob_walkdata->nWalkFrames;
 	usingStandingTurnFrames = ob_walkdata->usingStandingTurnFrames;
 	usingWalkingTurnFrames = ob_walkdata->usingWalkingTurnFrames;
@@ -2459,8 +2459,8 @@ void LoadWalkData(Object_walkdata *ob_walkdata) {
 		}
 	}
 
-	diagonalx =  modX[3];
-	diagonaly =  modY[3];
+	diagonalx = modX[3];
+	diagonaly = modY[3];
 
 	// interpret the walk data
 
@@ -2550,7 +2550,7 @@ void ExtractRoute() {
 	int32 prevy;
 	int32 last;
 	int32 point;
-	int32 p;     
+	int32 p;
 	int32 dirx;
 	int32 diry;
 	int32 dir;
@@ -2680,8 +2680,8 @@ void SetUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir) {
 
 	for (i = 1; i < nnodes; i++) {
 		node[i].level = 0;
-	  	node[i].prev = 0;
-	  	node[i].dist = 9999;
+		node[i].prev = 0;
+		node[i].dist = 9999;
 	}
 
 	// target position goes into final node
@@ -2694,7 +2694,7 @@ void SetUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir) {
 
 void PlotWalkGrid(void) {
 	int32 j;
-      
+
 	// get walk grid file + extra grid into 'bars' & 'node' arrays
 	LoadWalkGrid();
 
