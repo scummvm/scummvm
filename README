@@ -423,23 +423,26 @@ Simon the Sorcerer: 1 & 2
 ---- -----------------
 ScummVM offers several anti-aliasing filters to attempt to improve visual
 quality. These are the same filters used in many other emulators, such as
-MAME. 
-Note: the resolutions listed assume the game was originally 320x200
+MAME. These filters take the original game graphics, and scale it by a 
+certain fixed factor (usually 2x or 3x) before displaying them to you.
+So for example, if the game originally run at a resolution of 320x200
+(typical for most of the SCUMM games), then using a filter with scale
+factor 2x will effectively yield 640x400 graphics. Likewise with a 
+3x filter you'll get 960x600.
 
 They are:
-        normal     - No filtering, original 320x200 resolution. Fastest.
-        2x         - No filtering, double screen/window size to 640x400 
-                     (default)
-        3x         - No filtering, triple screen/window size to 960x600
-        2xsai      - 2xsai filtering, double screen/window size to 640x400
-        super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
-        supereagle - Less blurry than 2xsai, but slower. Also 640x400
-        advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
-        advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
-        hq2x       - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
-        hq3x       - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
-        tv2x       - 640x400 scaling. Horizontal scanlines.
-        dotmatrix  - 640x400 scaling. Dot matrix effect.
+        normal     - No filtering, no scaling. Fastest.
+        2x         - No filtering, factor 2x (default).
+        3x         - No filtering, factor 3x.
+        2xsai      - 2xsai filter, factor 2x.
+        super2xsai - Enhanced 2xsai filtering, factor 2x.
+        supereagle - Less blurry than 2xsai, but slower. Factor 2x.
+        advmame2x  - Doesn't rely on blurring like 2xSAI, fast. Factor 2x.
+        advmame3x  - Doesn't rely on blurring like 2xSAI, fast. Factor 3x.
+        hq2x       - Very nice high quality filter but slow. Factor 2x.
+        hq3x       - Very nice high quality filter but slow. Factor 3x.
+        tv2x       - Interlace filter, tries to emulate a TV. Factor 2x.
+        dotmatrix  - Dot matrix effect. Factor 2x.
         opengl     - OpenGL with bilinear filtering [Unsupported]
 
 To select a graphics filter, pass its name via the '-g' option to scummvm,
@@ -470,9 +473,9 @@ simon games.
     Common:
         Ctrl-z OR Alt-x        - Quit
         Keyboard Arrow Keys    - Simulate mouse movement
-        Ctrl-f                 - Runs in fast mode.
-        Ctrl-Alt 0-9           - Switch between graphics filters
-        Ctrl-Alt c-d           - Switch between other graphics filters
+        Ctrl-f                 - Toggle fast mode.
+        Ctrl-Alt 1-8           - Switch between graphics filters
+        Ctrl-Alt + and -       - Increase/Decrease the scale factor
         Ctrl-Alt b             - Switch between bilinear and non-linear
                                  filtering [OpenGL backend]
         Ctrl-Alt a             - Toggle aspect-ratio correction on/off.

@@ -629,13 +629,13 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 #ifdef MACOSX
 			// On Macintosh', Cmd-Q quits
-			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym=='q') {
+			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
 				event->event_code = EVENT_QUIT;
 				return true;
 			}
 #else
 			// Ctrl-z and Alt-X quit
-			if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
+			if ((b == KBD_CTRL && ev.key.keysym.sym == 'z') || (b == KBD_ALT && ev.key.keysym.sym == 'x')) {
 				event->event_code = EVENT_QUIT;
 				return true;
 			}
@@ -643,31 +643,76 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 			// Ctr-Alt-<key> will change the GFX mode
 			if (b == (KBD_CTRL|KBD_ALT)) {
-				const char keys[] = "1234567890cd";
-				char *ptr;
+				static const int gfxModes[][4] = {
+						{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
+						{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
+						{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
+						{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
+						{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
+						{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
+						{ GFX_NORMAL, GFX_TV2X, -1, -1 },
+						{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
+					};
 
-				ptr = strchr(keys, ev.key.keysym.sym);
-				if (ptr != NULL) {
-					Property prop;
+				// FIXME EVIL HACK: This shouldn't be a static int, rather it
+				// should be a member variable. Furthermore, it shouldn't be
+				// set in this code, rather it should be set by load_gfx_mode().
+				// But for now this quick&dirty hack works.
+				static int _scalerType = 0;
+				if (_mode != GFX_NORMAL) {
+					// Try to figure out which gfx mode "group" we are in
+					// This is just a temporary hack until the proper solution
+					// (i.e. code in load_gfx_mode()) is in effect.
+					for (int i = 0; i < ARRAYSIZE(gfxModes); i++) {
+						if (gfxModes[i][1] == _mode || gfxModes[i][2] == _mode) {
+							_scalerType = i;
+							break;
+						}
+					}
+				}
+				
 
-					prop.gfx_mode = ptr - keys;
+				Property prop;
+				int factor = _scaleFactor - 1;
+
+				// Ctr-Alt-a toggles aspect ratio correction
+				if (ev.key.keysym.sym == 'a') {
+					property(PROP_TOGGLE_ASPECT_RATIO, NULL);
+					break;
+				}
+
+				// Ctr-Alt-b changes to bilinear filtering in the OpenGL backend
+				if (ev.key.keysym.sym == 'b') {
+					prop.gfx_mode = GFX_BILINEAR;
 					property(PROP_SET_GFX_MODE, &prop);
 					break;
 				}
-			}
+				
 
-			// Ctr-Alt-a will change aspect ratio
-			if (b == (KBD_CTRL|KBD_ALT) && ev.key.keysym.sym=='a') {
-				property(PROP_TOGGLE_ASPECT_RATIO, NULL);
-				break;
-			}
-
-			// Ctr-Alt-b will change bilinear filtering in OpenGL backend
-			if (b == (KBD_CTRL|KBD_ALT) && ev.key.keysym.sym=='b') {
-				Property prop;
-				prop.gfx_mode = GFX_BILINEAR;
-				property(PROP_SET_GFX_MODE, &prop);
-				break;
+				// Increase/decrease the scale factor
+				// TODO: Shall we 'wrap around' here?
+				if (ev.key.keysym.sym == '+' || ev.key.keysym.sym == '-') {
+					factor += (ev.key.keysym.sym == '+' ? +1 : -1);
+					if (0 <= factor && factor < 4 && gfxModes[_scalerType][factor] >= 0) {
+						prop.gfx_mode = gfxModes[_scalerType][factor];
+						property(PROP_SET_GFX_MODE, &prop);
+					}
+					break;
+				}
+				
+				if ('1' <= ev.key.keysym.sym && ev.key.keysym.sym <= '9') {
+					_scalerType = ev.key.keysym.sym - '1';
+					if (_scalerType >= ARRAYSIZE(gfxModes))
+						break;
+					
+					while (gfxModes[_scalerType][factor] < 0) {
+						assert(factor > 0);
+						factor--;
+					}
+					prop.gfx_mode = gfxModes[_scalerType][factor];
+					property(PROP_SET_GFX_MODE, &prop);
+					break;
+				}
 			}
 
 #ifdef QTOPIA
