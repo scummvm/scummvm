@@ -178,6 +178,7 @@ public:
 public:
 	OSystem *createSystem();
 	MidiDriver *createMidi();
+	int getMidiDriverType();
 
 	int parseGraphicsMode(const char *s);
 	void updateconfig();

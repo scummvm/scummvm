@@ -656,32 +656,34 @@ OSystem *GameDetector::createSystem() {
 #endif
 }
 
-MidiDriver *GameDetector::createMidi() {
-	int drv = _midi_driver;
+int GameDetector::getMidiDriverType() {
 
+	if (_midi_driver != MD_AUTO) return _midi_driver;
 
-	if (drv == MD_AUTO) {
 #if defined (WIN32) && !defined(_WIN32_WCE)
-		drv = MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
+		return MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
 #elif defined(MACOSX)
-		drv = MD_COREAUDIO;
+		return MD_COREAUDIO;
 #elif defined(__PALM_OS__)	// must be before mac
-		drv = MD_YPA1;
+		return MD_YPA1;
 #elif defined(macintosh)
-		drv = MD_QTMUSIC;
+		return MD_QTMUSIC;
 #elif defined(__MORPHOS__)
-		drv = MD_ETUDE;
+		return MD_ETUDE;
 #elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
 	// Always use MIDI emulation via adlib driver on CE and UNIX device
 
 	// TODO: We should, for the Unix targets, attempt to detect
 	// whether a sequencer is available, and use it instead.
-	drv = MD_ADLIB;
+	return MD_ADLIB;
 #endif
-	}
+    return MD_NULL;
+}
+
+MidiDriver *GameDetector::createMidi() {
+	int drv = getMidiDriverType();
 
 	switch(drv) {
-	case MD_AUTO:
 	case MD_NULL:		return MidiDriver_NULL_create();
 #ifndef __PALM_OS__
 	case MD_ADLIB:		_use_adlib = true; return MidiDriver_ADLIB_create();
