@@ -439,7 +439,7 @@ public:
 	bool _hitarea_unk_3;
 	bool _mortal_flag;
 	bool _sync_flag_1;
-	bool _video_var_8;
+	byte _video_var_8;
 	bool _use_palette_delay;
 	bool _sync_flag_2;
 	bool _hitarea_unk_6;
