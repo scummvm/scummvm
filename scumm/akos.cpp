@@ -644,7 +644,7 @@ void AkosRenderer::codec1() {
 	v1.scaletable = default_scale_table;
 
 	// FIXME - which value for VAR_CUSTOMSCALETABLE in V8 ?
-	if (_vm->isGlobInMemory(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
+	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->isGlobInMemory(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
 
