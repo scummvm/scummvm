@@ -1105,15 +1105,12 @@ static inline byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int t
 
 void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 
-	byte *ptr;
-	byte ticks, play_once;
-	byte num_instr;
-	byte *channel, *instr, *track;
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
     const int ppqn = 480;
 	uint32 dw;
 	int i, ch;
+	byte *ptr;
 	int total_size = 8 + 16 + 14 + 8 + 7 + 8*sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 
@@ -1122,8 +1119,12 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 	src_ptr += 2;
 	size -= 2;
 
+	// 0x80 marks a music resource. Otherwise it's a SFX
 	if (*src_ptr == 0x80) {
-		// 0x80 marks a music resource. Otherwise it's a SFX
+		byte ticks, play_once;
+		byte num_instr;
+		byte *channel, *instr, *track;
+
 		ptr = writeMIDIHeader(ptr, "ADL ", ppqn, total_size);
 
 		// The "speed" of the song
@@ -1273,235 +1274,232 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 			*ptr++ = (byte)(jump_offset & 0x0F);
 			memcpy(ptr, "\x00\xf7", 2); ptr += 2;	// sysex end marker
 		}
-		// Finally we reinsert the end of song sysex, just in case
-		memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
-		
-		return;
-	}
+	} else {
 
-	/* This is a sfx resource.  First parse it quickly to find the parallel
-	 * tracks.
-	 */
-	ptr = writeMIDIHeader(ptr, "ASFX", ppqn, total_size);
-
-	byte current_instr[3][14];
-	int  current_note[3];
-	int track_time[3];
-	byte *tracks[3];
-
-	int track_ctr = 0;
-	byte chunk_type = 0;
-	int delay, delay2, olddelay;
-
-	// Write a tempo change Meta event
-	// 473 / 4 Hz, convert to micro seconds.
-	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
-	dw = 1000000 * ppqn * 4 / 473;
-	*ptr++ = (byte)((dw >> 16) & 0xFF);
-	*ptr++ = (byte)((dw >> 8) & 0xFF);
-	*ptr++ = (byte)(dw & 0xFF);
-
-	for (i = 0; i < 3; i++) {
-		track_time[i] = -1;
-		current_note[i] = -1;
-	}
-	while (size > 0) {
-		assert(track_ctr < 3);
-		tracks[track_ctr] = src_ptr;
-		track_time[track_ctr] = 0;
-		track_ctr++;
-		while (size > 0) {
-			chunk_type = *(src_ptr);
-			if (chunk_type == 1) {
-				src_ptr += 15;
-				size -= 15;
-			} else if (chunk_type == 2) {
-				src_ptr += 11;
-				size -= 11;
-			} else if (chunk_type == 0x80) {
-				src_ptr ++;
-				size --;
-			} else {
-				break;
-			}
-		}
-		if (chunk_type == 0xff)
-			break;
-		src_ptr++;
-	}
+		/* This is a sfx resource.  First parse it quickly to find the parallel
+		 * tracks.
+		 */
+		ptr = writeMIDIHeader(ptr, "ASFX", ppqn, total_size);
 	
-	int curtime = 0;
-	for (;;) {
-		int mintime = -1;
-		ch = -1;
+		byte current_instr[3][14];
+		int  current_note[3];
+		int track_time[3];
+		byte *tracks[3];
+	
+		int track_ctr = 0;
+		byte chunk_type = 0;
+		int delay, delay2, olddelay;
+	
+		// Write a tempo change Meta event
+		// 473 / 4 Hz, convert to micro seconds.
+		dw = 1000000 * ppqn * 4 / 473;
+		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
+		*ptr++ = (byte)((dw >> 16) & 0xFF);
+		*ptr++ = (byte)((dw >> 8) & 0xFF);
+		*ptr++ = (byte)(dw & 0xFF);
+	
 		for (i = 0; i < 3; i++) {
-			if (track_time[i] >= 0 && 
-				(mintime == -1 || mintime > track_time[i])) {
-				mintime = track_time[i];
-				ch = i;
-			}
+			track_time[i] = -1;
+			current_note[i] = -1;
 		}
-		if (mintime < 0)
-			break;
-
-		src_ptr = tracks[ch];
-		chunk_type = *src_ptr;
-
-
-		if (current_note[ch] >= 0) {
-			delay = mintime - curtime;
-			curtime = mintime;
-			if (delay > 0x7f) {
-				if (delay > 0x3fff) {
-					*ptr++ = (delay >> 14) | 0x80;
-					delay &= 0x3fff;
+		while (size > 0) {
+			assert(track_ctr < 3);
+			tracks[track_ctr] = src_ptr;
+			track_time[track_ctr] = 0;
+			track_ctr++;
+			while (size > 0) {
+				chunk_type = *(src_ptr);
+				if (chunk_type == 1) {
+					src_ptr += 15;
+					size -= 15;
+				} else if (chunk_type == 2) {
+					src_ptr += 11;
+					size -= 11;
+				} else if (chunk_type == 0x80) {
+					src_ptr ++;
+					size --;
+				} else {
+					break;
 				}
-				*ptr++ = (delay >> 7) | 0x80;
-				delay &= 0x7f;
 			}
-			*ptr++ = delay;
-			*ptr++ = 0x80 + ch; // key off channel;
-			*ptr++ = current_note[ch];
-			*ptr++ = 0;
-			current_note[ch] = -1;
+			if (chunk_type == 0xff)
+				break;
+			src_ptr++;
 		}
 		
-
-		switch (chunk_type) {
-		case 1:
-			/* Instrument definition */
-			memcpy(current_instr[ch], src_ptr+1, 14);
-			src_ptr += 15;
-			break;
-
-		case 2:
-			/* tone/parammodulation */
-			memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
-				   sizeof(ADLIB_INSTR_MIDI_HACK));
-			
-			ptr[5]  += ch;
-			ptr[28] += ch;
-			ptr[92] += ch;
-
-			/* flags_1 */
-			ptr[30 + 0] = (current_instr[ch][3] >> 4) & 0xf;
-			ptr[30 + 1] = current_instr[ch][3] & 0xf;
-			
-			/* oplvl_1 */
-			ptr[30 + 2] = (current_instr[ch][4] >> 4) & 0xf;
-			ptr[30 + 3] = current_instr[ch][4] & 0xf;
-			
-			/* atdec_1 */
-			ptr[30 + 4] = ((~current_instr[ch][5]) >> 4) & 0xf;
-			ptr[30 + 5] = (~current_instr[ch][5]) & 0xf;
-			
-			/* sustrel_1 */
-			ptr[30 + 6] = ((~current_instr[ch][6]) >> 4) & 0xf;
-			ptr[30 + 7] = (~current_instr[ch][6]) & 0xf;
-				
-			/* waveform_1 */
-			ptr[30 + 8] = (current_instr[ch][7] >> 4) & 0xf;
-			ptr[30 + 9] = current_instr[ch][7] & 0xf;
-				
-			/* flags_2 */
-			ptr[30 + 10] = (current_instr[ch][8] >> 4) & 0xf;
-			ptr[30 + 11] = current_instr[ch][8] & 0xf;
-			
-			/* oplvl_2 */
-			ptr[30 + 12] = ((current_instr[ch][9]) >> 4) & 0xf;
-			ptr[30 + 13] = (current_instr[ch][9]) & 0xf;
-			
-			/* atdec_2 */
-			ptr[30 + 14] = ((~current_instr[ch][10]) >> 4) & 0xf;
-			ptr[30 + 15] = (~current_instr[ch][10]) & 0xf;
-			
-			/* sustrel_2 */
-			ptr[30 + 16] = ((~current_instr[ch][11]) >> 4) & 0xf;
-			ptr[30 + 17] = (~current_instr[ch][11]) & 0xf;
-			
-			/* waveform_2 */
-			ptr[30 + 18] = (current_instr[ch][12] >> 4) & 0xf;
-			ptr[30 + 19] = current_instr[ch][12] & 0xf;
-			
-			/* feedback */
-			ptr[30 + 20] = (current_instr[ch][2] >> 4) & 0xf;
-			ptr[30 + 21] = current_instr[ch][2] & 0xf;
-
-			delay = mintime - curtime;
-			curtime = mintime;
-
-			
-			{
-				delay = convert_extraflags(ptr + 30 + 22, src_ptr + 1);
-				delay2 = convert_extraflags(ptr + 30 + 40, src_ptr + 6);
-				debug(4, "delays: %d / %d", delay, delay2);
-				if (delay2 >= 0 && delay2 < delay)
-					delay = delay2;
-				if (delay == -1)
-					delay = 0;
-			}
-							
-			/* duration */
-			ptr[30 + 58] = 0; // ((delay * 17 / 63) >> 4) & 0xf;
-			ptr[30 + 59] = 0; // (delay * 17 / 63) & 0xf;
-				
-			ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
-
-			olddelay = mintime - curtime;
-			curtime = mintime;
-			if (olddelay > 0x7f) {
-				if (olddelay > 0x3fff) {
-					*ptr++ = (olddelay >> 14) | 0x80;
-					olddelay &= 0x3fff;
+		int curtime = 0;
+		for (;;) {
+			int mintime = -1;
+			ch = -1;
+			for (i = 0; i < 3; i++) {
+				if (track_time[i] >= 0 && 
+					(mintime == -1 || mintime > track_time[i])) {
+					mintime = track_time[i];
+					ch = i;
 				}
-				*ptr++ = (olddelay >> 7) | 0x80;
-				olddelay &= 0x7f;
 			}
-			*ptr++ = olddelay;
-
-			{
-				int freq = ((current_instr[ch][1] & 3) << 8)
-					| current_instr[ch][0];
-				freq <<= ((current_instr[ch][1] >> 2) & 7) + 1;
-				int note = -11;
-				while (freq >= 0x100) {
-					note += 12;
-					freq >>= 1;
+			if (mintime < 0)
+				break;
+	
+			src_ptr = tracks[ch];
+			chunk_type = *src_ptr;
+	
+	
+			if (current_note[ch] >= 0) {
+				delay = mintime - curtime;
+				curtime = mintime;
+				if (delay > 0x7f) {
+					if (delay > 0x3fff) {
+						*ptr++ = (delay >> 14) | 0x80;
+						delay &= 0x3fff;
+					}
+					*ptr++ = (delay >> 7) | 0x80;
+					delay &= 0x7f;
 				}
-				debug(4, "Freq: %d (%x) Note: %d", freq, freq, note);
-				if (freq < 0x80)
-					note = 0;
-				else
-					note += freq2note[freq - 0x80];
-
-				debug(4, "Note: %d", note);
-				if (note <= 0)
-				    note = 1;
-				else if (note > 127)
-				    note = 127;
-				
-				// Insert a note on event 
-				*ptr++ = 0x90 + ch; // key on channel
-				*ptr++ = note;
-				*ptr++ = 63;
-				current_note[ch] = note;
-				track_time[ch] = curtime + delay;				
+				*ptr++ = delay;
+				*ptr++ = 0x80 + ch; // key off channel;
+				*ptr++ = current_note[ch];
+				*ptr++ = 0;
+				current_note[ch] = -1;
 			}
-			src_ptr += 11;
-			break;
 			
-		case 0x80:
-			track_time[ch] = -1;
-			src_ptr ++;
-			break;
-			
-		default:
-			track_time[ch] = -1;
+	
+			switch (chunk_type) {
+			case 1:
+				/* Instrument definition */
+				memcpy(current_instr[ch], src_ptr+1, 14);
+				src_ptr += 15;
+				break;
+	
+			case 2:
+				/* tone/parammodulation */
+				memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
+					   sizeof(ADLIB_INSTR_MIDI_HACK));
+				
+				ptr[5]  += ch;
+				ptr[28] += ch;
+				ptr[92] += ch;
+	
+				/* flags_1 */
+				ptr[30 + 0] = (current_instr[ch][3] >> 4) & 0xf;
+				ptr[30 + 1] = current_instr[ch][3] & 0xf;
+				
+				/* oplvl_1 */
+				ptr[30 + 2] = (current_instr[ch][4] >> 4) & 0xf;
+				ptr[30 + 3] = current_instr[ch][4] & 0xf;
+				
+				/* atdec_1 */
+				ptr[30 + 4] = ((~current_instr[ch][5]) >> 4) & 0xf;
+				ptr[30 + 5] = (~current_instr[ch][5]) & 0xf;
+				
+				/* sustrel_1 */
+				ptr[30 + 6] = ((~current_instr[ch][6]) >> 4) & 0xf;
+				ptr[30 + 7] = (~current_instr[ch][6]) & 0xf;
+					
+				/* waveform_1 */
+				ptr[30 + 8] = (current_instr[ch][7] >> 4) & 0xf;
+				ptr[30 + 9] = current_instr[ch][7] & 0xf;
+					
+				/* flags_2 */
+				ptr[30 + 10] = (current_instr[ch][8] >> 4) & 0xf;
+				ptr[30 + 11] = current_instr[ch][8] & 0xf;
+				
+				/* oplvl_2 */
+				ptr[30 + 12] = ((current_instr[ch][9]) >> 4) & 0xf;
+				ptr[30 + 13] = (current_instr[ch][9]) & 0xf;
+				
+				/* atdec_2 */
+				ptr[30 + 14] = ((~current_instr[ch][10]) >> 4) & 0xf;
+				ptr[30 + 15] = (~current_instr[ch][10]) & 0xf;
+				
+				/* sustrel_2 */
+				ptr[30 + 16] = ((~current_instr[ch][11]) >> 4) & 0xf;
+				ptr[30 + 17] = (~current_instr[ch][11]) & 0xf;
+				
+				/* waveform_2 */
+				ptr[30 + 18] = (current_instr[ch][12] >> 4) & 0xf;
+				ptr[30 + 19] = current_instr[ch][12] & 0xf;
+				
+				/* feedback */
+				ptr[30 + 20] = (current_instr[ch][2] >> 4) & 0xf;
+				ptr[30 + 21] = current_instr[ch][2] & 0xf;
+	
+				delay = mintime - curtime;
+				curtime = mintime;
+	
+				
+				{
+					delay = convert_extraflags(ptr + 30 + 22, src_ptr + 1);
+					delay2 = convert_extraflags(ptr + 30 + 40, src_ptr + 6);
+					debug(4, "delays: %d / %d", delay, delay2);
+					if (delay2 >= 0 && delay2 < delay)
+						delay = delay2;
+					if (delay == -1)
+						delay = 0;
+				}
+								
+				/* duration */
+				ptr[30 + 58] = 0; // ((delay * 17 / 63) >> 4) & 0xf;
+				ptr[30 + 59] = 0; // (delay * 17 / 63) & 0xf;
+					
+				ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
+	
+				olddelay = mintime - curtime;
+				curtime = mintime;
+				if (olddelay > 0x7f) {
+					if (olddelay > 0x3fff) {
+						*ptr++ = (olddelay >> 14) | 0x80;
+						olddelay &= 0x3fff;
+					}
+					*ptr++ = (olddelay >> 7) | 0x80;
+					olddelay &= 0x7f;
+				}
+				*ptr++ = olddelay;
+	
+				{
+					int freq = ((current_instr[ch][1] & 3) << 8)
+						| current_instr[ch][0];
+					freq <<= ((current_instr[ch][1] >> 2) & 7) + 1;
+					int note = -11;
+					while (freq >= 0x100) {
+						note += 12;
+						freq >>= 1;
+					}
+					debug(4, "Freq: %d (%x) Note: %d", freq, freq, note);
+					if (freq < 0x80)
+						note = 0;
+					else
+						note += freq2note[freq - 0x80];
+	
+					debug(4, "Note: %d", note);
+					if (note <= 0)
+						note = 1;
+					else if (note > 127)
+						note = 127;
+					
+					// Insert a note on event 
+					*ptr++ = 0x90 + ch; // key on channel
+					*ptr++ = note;
+					*ptr++ = 63;
+					current_note[ch] = note;
+					track_time[ch] = curtime + delay;				
+				}
+				src_ptr += 11;
+				break;
+				
+			case 0x80:
+				track_time[ch] = -1;
+				src_ptr ++;
+				break;
+				
+			default:
+				track_time[ch] = -1;
+			}
+			tracks[ch] = src_ptr;
 		}
-		tracks[ch] = src_ptr;
 	}
 
-	/* insert end of song sysex */
+	// Insert end of song sysex
 	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
 }
 
