@@ -25,7 +25,6 @@
 #include "scumm.h"
 #include "gui.h"
 #include "sound.h"
-
 #include "SDL_thread.h"
 
 #define SCALEUP_2x2
@@ -38,6 +37,8 @@ SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
 
 static SDL_Surface *screen;
+
+static int current_shake_pos;
 
 void updateScreen(Scumm *s);
 
@@ -96,22 +97,18 @@ void waitForTimer(Scumm *s, int msec_delay) {
 					} else if (event.key.keysym.mod&KMOD_CTRL)
 						s->_saveLoadFlag = 2;
 					s->_saveLoadCompatible = false;
-				}
-				if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
+				} else if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
 					exit(1);
-				} 
-				if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
+				} else if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
 					s->_fastMode ^= 1;
-				}
-				if (event.key.keysym.sym=='g' && event.key.keysym.mod&KMOD_CTRL) {
+				} else if (event.key.keysym.sym=='g' && event.key.keysym.mod&KMOD_CTRL) {
 					s->_fastMode ^= 2;
-				}
-
-				if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
+				} else if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
 					debugger.attach(s);
-				}
-				if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
+				} else if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
 					s->resourceStats();
+				} else if (event.key.keysym.sym==SDLK_RETURN && event.key.keysym.mod&KMOD_ALT) {
+					SDL_WM_ToggleFullScreen(screen);
 				}
 
 	#if defined(__APPLE__)
@@ -205,6 +202,60 @@ void addDirtyRectClipped(int x, int y, int w, int h) {
 		addDirtyRect(x,y,w,h);
 }
 
+#define MAX(a,b) (((a)<(b)) ? (b) : (a))
+#define MIN(a,b) (((a)>(b)) ? (b) : (a))
+
+void setShakePos(Scumm *s, int shake_pos) {
+	int old_shake_pos = current_shake_pos;
+	int dirty_height, dirty_blackheight;
+	int dirty_top, dirty_blacktop;
+
+	if (shake_pos != old_shake_pos) {
+		current_shake_pos = shake_pos;
+		fullRedraw = true;
+		
+		/* Old shake pos was current_shake_pos, new is shake_pos.
+		 * Move the screen up or down to account for the change.
+		 */
+#if defined(SCALEUP_2x2)
+		SDL_Rect dstr = {0,shake_pos*2,640,400}, srcr = {0,old_shake_pos*2,640,400};
+#else
+		SDL_Rect dstr = {0,shake_pos,320,200}, srcr = {0,old_shake_pos,320,200};
+#endif
+		SDL_BlitSurface(screen, &srcr, screen, &dstr);
+		
+		/* Also adjust the mouse pointer backup Y coordinate.
+		 * There is a minor mouse glitch when the mouse is moved
+		 * at the blackness of the shake area, but it's hardly noticable */
+		old_mouse_y += shake_pos - old_shake_pos;
+
+		/* Refresh either the upper part of the screen,
+		 * or the lower part */
+		if (shake_pos > old_shake_pos) {
+			dirty_height = MIN(shake_pos, 0) - MIN(old_shake_pos,0);
+			dirty_top = -MIN(shake_pos,0);
+			dirty_blackheight = MAX(shake_pos,0) - MAX(old_shake_pos,0);
+			dirty_blacktop = MAX(old_shake_pos,0);
+		} else {
+			dirty_height = MAX(old_shake_pos,0) - MAX(shake_pos, 0);
+			dirty_top = 200 - MAX(old_shake_pos,0);
+			dirty_blackheight = MIN(old_shake_pos,0) - MIN(shake_pos,0);
+			dirty_blacktop = 200 + MIN(shake_pos,0);
+		}
+
+		/* Fill the dirty area with blackness or the scumm image */
+		{
+#if defined(SCALEUP_2x2)
+			SDL_Rect blackrect = {0, dirty_blacktop*2, 640, dirty_blackheight*2};
+#else
+			SDL_Rect blackrect = {0, dirty_blacktop, 320, dirty_blackheight};
+#endif
+			SDL_FillRect(screen, &blackrect, 0);
+			s->redrawLines(dirty_top, dirty_top + dirty_height);
+		}
+	}
+}
+
 /* Copy part of bitmap */
 void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 	byte *dst;
@@ -214,6 +265,12 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 	if (has_mouse) {
 		s->drawMouse();
 	}
+
+	/* Account for the shaking and do Y clipping */
+	y += current_shake_pos;
+	if (y < 0 ) {	h += y; src -= y*320; y = 0; }
+	if (h > 200 - y) { h = 200 - y; }
+	if (h<=0)	return;
 
 	if (SDL_LockSurface(screen)==-1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
@@ -253,7 +310,7 @@ void updateScreen(Scumm *s) {
 		hide_mouse = false;
 		s->drawMouse();
 	}
-	
+
 	if(s->_palDirtyMax != -1) {
 		updatePalette(s);
 	}
@@ -309,6 +366,8 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 	}
 
 	if (visible) {
+		ydraw += current_shake_pos;
+		
 		dst = (byte*)screen->pixels + ydraw*640*2 + xdraw*2;
 		bak = old_backup;
 
@@ -345,6 +404,8 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 		}
 	}
 	if (visible) {
+		ydraw += current_shake_pos;
+		
 		dst = (byte*)screen->pixels + ydraw*320 + xdraw;
 		bak = old_backup;
 
@@ -410,6 +471,8 @@ int music_thread(Scumm *s) {
 void initGraphics(Scumm *s, bool fullScreen) {
 	SDL_AudioSpec desired;
 
+	putenv("SDL_VIDEODRIVER=windib");
+
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	    exit(1);
@@ -438,6 +501,8 @@ void initGraphics(Scumm *s, bool fullScreen) {
 		/* Create Music Thread */
 		SDL_CreateThread((int (*)(void *))&music_thread, &scumm);
 	}
+
+	
 
 #if !defined(SCALEUP_2x2)
 	screen = SDL_SetVideoMode(320, 200, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : SDL_SWSURFACE);

@@ -1054,7 +1054,9 @@ struct Scumm {
 	uint16 _lastXstart;
 		
 	int16 _talkDelay;
-	int16 _shakeMode;
+
+	bool _shakeEnabled;
+	uint _shakeFrame;
 
 	int16 _virtual_mouse_x, _virtual_mouse_y;
 
@@ -2065,6 +2067,8 @@ struct Scumm {
 	byte cost_increaseAnims(LoadedCostume *lc, Actor *a);
 	byte cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot);
 	void cost_decodeData(Actor *a, int frame, uint usemask);
+
+	void redrawLines(int from, int to);
 };
 
 enum AkosOpcodes{
@@ -2197,3 +2201,4 @@ byte *findResource(uint32 tag, byte *searchin);
 void playSfxSound(void *sound, uint32 size, uint rate);
 bool isSfxFinished();
 void waitForTimer(Scumm *s, int msec_delay);
+void setShakePos(Scumm *s, int shake_pos);

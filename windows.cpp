@@ -422,6 +422,8 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 
 }
 
+void setShakePos(Scumm *s, int shake_pos) {}
+
 
 int clock;
 

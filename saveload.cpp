@@ -397,7 +397,9 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,_randSeed1,sleUint32),
 		MKLINE(Scumm,_randSeed2,sleUint32),
 
-		MKLINE(Scumm,_shakeMode,sleInt16),
+		/* XXX: next time the save game format changes,
+		 * convert _shakeEnabled to boolean and add a _shakeFrame field */
+		MKLINE(Scumm,_shakeEnabled,sleInt16),
 
 		MKLINE(Scumm,_keepText,sleByte),
 

@@ -101,6 +101,13 @@ void Scumm::setDirtyRange(int slot, int top, int bottom) {
 	}
 }
 
+/* power of 2 */
+#define NUM_SHAKE_POSITIONS 8
+
+static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
+	0,1*2,2*2,1*2,0*2,2*2,3*2,1*2
+};
+
 void Scumm::drawDirtyScreenParts() {
 	int i;
 	VirtScreen *vs;
@@ -123,6 +130,34 @@ void Scumm::drawDirtyScreenParts() {
 		for (i = 0; i<40; i++) {
 			vs->tdirty[i] = (byte)vs->height;
 			vs->bdirty[i] = 0;
+		}
+	}
+
+	/* Handle shaking */
+	if (_shakeEnabled) {
+		_shakeFrame = (_shakeFrame + 1) & (NUM_SHAKE_POSITIONS-1);
+		setShakePos(this,shake_positions[_shakeFrame]);
+	}
+}
+
+void Scumm::redrawLines(int from, int to) {
+	VirtScreen *vs = virtscr;
+	int i,j;
+	
+	if (to<=from)
+		return;
+		
+	for(i=0; i!=ARRAYSIZE(virtscr); i++,vs++) {
+		if (to > vs->topline && from < vs->topline + vs->height) {
+			int min = from - vs->topline;
+			int max = to - vs->topline;
+			if (min < 0) min = 0;
+			if (max > vs->height) max = vs->height;
+			for (j=0; j!=40; j++) {
+				vs->tdirty[j] = min;
+				vs->bdirty[j] = max;
+			}
+			gdi.updateDirtyScreen(vs);
 		}
 	}
 }
@@ -493,8 +528,8 @@ void Scumm::unkVirtScreen4(int a) {
 		unkScreenEffect6();
 		break;
 	case 129:
-		setDirtyRange(0, 0, vs->height);
-		updateDirtyScreen(0);
+//		setDirtyRange(0, 0, vs->height);
+//		updateDirtyScreen(0);
 		/* XXX: EGA_proc4(0); */
 		break;
 	case 134:
@@ -1395,7 +1430,6 @@ void Scumm::unkScreenEffect7(int a) {
 					l++;
 				}
 			} else {
-				/* DE92 */
 				if (l<0 || l>=40 || b<=t)
 					continue;
 				if (b>bottom)
@@ -1425,12 +1459,9 @@ void Scumm::unkScreenEffect5(int a) {
 }
 
 void Scumm::setShake(int mode) {
-	if (mode!=-1)
-		_shakeMode = mode;
-	else
-		mode = 0;
-	/* XXX: not implemented */
-	warning("stub setShake(%d)",mode);
+	_shakeEnabled = mode != 0;
+	_shakeFrame = 0;
+	setShakePos(this,0);
 }
 
 void Gdi::clearUpperMask() {
