@@ -665,23 +665,17 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	uint8 md5Backup[16];
 
 	// MD5 Operations: Backup on load, compare, and reset.
-	if (s->isLoading()) {
-		for (i=0; i<17; i++) md5Backup[i] = _gameMD5[i];
-	}
+	if (s->isLoading())
+		memcpy(_gameMD5, md5Backup, 16);
 
 	s->saveLoadEntries(this, mainEntries);
 
 	// MD5 Operations: Backup on load, compare, and reset.
-	if (s->isLoading()) {
-        	for (j = 0; j < 16; j++) {
-			if (_gameMD5[j] != md5Backup[j]) {
-				warning("Game was saved with different gamedata - you may encounter problems.");
-				_gameMD5[j] = md5Backup[j];
-				break;
-			}
-			_gameMD5[j] = md5Backup[j];
+	if (s->isLoading())
+		if (memcmp(md5Backup, _gameMD5, 16) != 0) {
+			warning("Game was saved with different gamedata - you may encounter problems.");
+ 			memcpy(_gameMD5, md5Backup, 16);
 		}
-	}
 
 
 	if (s->isLoading() && savegameVersion < VER(14))
