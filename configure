@@ -186,6 +186,7 @@ Special configuration feature:
                          special targets: linupy for Yopy PDA
 
 Optional Features:
+  --disable-debug          disable building with debugging symbols
   --disable-scumm          don't build the SCUMM engine
   --disable-simon          don't build the simon engine
   --disable-sky            don't build the Beneath a Steel Sky engine
