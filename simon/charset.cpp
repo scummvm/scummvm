@@ -194,15 +194,6 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 				dst -= img_width - 1; // For Hebrew, move from right edge to left edge of image.
 			byte *cur_dst = dst;
 
-			if (_game == GAME_SIMON1AMIGA) {
-				// FIXME Really bad hack to allow simon1amiga to work for now
-				// simon1amiga needs to be decoded a different way
-				if (img_width < 1 || img_width > 49)
-					img_width = 7;
-				if (img_height < 1 || img_height > 49)
-					img_height = 9;
-			}
-
 			assert(img_width > 0 && img_width < 50 && img_height > 0 && img_height < 50);
 
 			do {
