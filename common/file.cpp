@@ -41,14 +41,14 @@ FILE *File::fopenNoCase(const char *filename, const char * directory, const char
 	if (file)
 		return file;
 
-	char dirs[7][10];
-	dirs[0][0] = 0;
-	strcpy(dirs[1], "video/");
-	strcpy(dirs[2], "VIDEO/");
-	strcpy(dirs[3], "data/");
-	strcpy(dirs[4], "DATA/");
-	strcpy(dirs[5], "resource/");
-	strcpy(dirs[6], "RESOURCE/");
+	struct t_dirs {
+		char dir[20];
+	} dirs[] = {
+		"",
+		"video/",			"VIDEO/",
+		"data/",			"DATA/",
+		"resource/",	"RESOURCE/"
+	};
 
 	for (uint8 l = 0; l < 7; l++) {
 		strcpy(buf, directory);
@@ -59,7 +59,7 @@ FILE *File::fopenNoCase(const char *filename, const char * directory, const char
 #endif
 			strcat(buf, "/");
 		}
-		strcat(buf, dirs[l]);
+		strcat(buf, dirs[l].dir);
 		int8 len = strlen(buf);
 		strcat(buf, filename);
 
