@@ -77,7 +77,7 @@ struct ColorCycle {		/* Palette cycles */
 };
 
 struct BlastObject {		/* BlastObjects to draw */
-	uint16 number, areaX, areaY, areaWidth, areaHeight;
+	uint16 number;
 	int16 posX, posY;
 	uint16 width, height;
 	uint16 scaleX, scaleY;
@@ -106,6 +106,7 @@ struct BompDrawData {		/* Bomp graphics data */
 	byte scale_x, scale_y;
 	byte *dataptr;
 	int srcwidth, srcheight;
+	uint16 shadowMode;
 };
 
 struct Gdi {

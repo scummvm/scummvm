@@ -3248,11 +3248,11 @@ void Scumm::bompScaleFuncX(byte * line_buffer, byte * scalling_x_ptr, byte skip,
 
 void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 	byte skip_y = 128;
-	byte skip_y_new = 0;	// FIXME - is this a sensible default value?
-	byte bits = 0;	// FIXME - is this a sensible default value?
+	byte skip_y_new = 0;
+	byte bits = 0;
+	byte *mask_out = 0;
 	byte tmp;
 	int32 clip_left, clip_right, clip_top, clip_bottom, tmp_x, tmp_y;
-	byte *mask_out = 0;	// FIXME - is this a sensible default value?
 
 	if (bd->x < 0) {
 		clip_left = -bd->x;
@@ -3351,7 +3351,7 @@ void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 
 		bompApplyActorPalette(line_ptr, clip_right);
 
-		switch(_bompShadowMode) {
+		switch(bd->shadowMode) {
 		case 0:
 			bompApplyShadow0(line_ptr, dst, clip_right);
 			break;
@@ -3362,7 +3362,7 @@ void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 			bompApplyShadow3(line_ptr, dst, clip_right);
 			break;
 		default:
-			error("Unknown _bompShadowMode %d", _bompShadowMode);
+			error("Unknown bomp shadowMode %d", bd->shadowMode);
 		}
 
 labelBompSkip:

@@ -854,8 +854,6 @@ void AkosRenderer::codec1_ignorePakCols(int num)
 void AkosRenderer::codec5() {
 	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh, tmp_x, tmp_y;
 
-	_vm->_bompShadowMode = shadow_mode;
-
 	if (!mirror) {
 		clip_left = (_x - move_x_cur - _width) + 1;
 	} else {
@@ -907,6 +905,7 @@ void AkosRenderer::codec5() {
 	bdd.dataptr = srcptr;
 	bdd.scale_x = 255;
 	bdd.scale_y = 255;
+	bdd.shadowMode = shadow_mode;
 
 	_vm->_bompScallingXPtr = NULL;
 	_vm->_bompScallingYPtr = NULL;
@@ -989,16 +988,16 @@ void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, byte transparency,
 	}
 }
 
-#define AKOS16_FILL_BITS()																				\
-				if (akos16.numbits <= 8) {																\
-					akos16.bits |= (*akos16.dataptr++) << akos16.numbits;		\
-					akos16.numbits += 8;																		\
-				}
+#define AKOS16_FILL_BITS()                                        \
+        if (akos16.numbits <= 8) {                                \
+          akos16.bits |= (*akos16.dataptr++) << akos16.numbits;   \
+          akos16.numbits += 8;                                    \
+        }
 
-#define AKOS16_EAT_BITS(n)																				\
-						akos16.numbits -= (n);																\
-						akos16.bits >>= (n);
-	
+#define AKOS16_EAT_BITS(n)                                        \
+		akos16.numbits -= (n);                                    \
+		akos16.bits >>= (n);
+
 
 void AkosRenderer::akos16SkipData(int32 numskip) {
 	uint16 bits, tmp_bits;

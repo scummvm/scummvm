@@ -851,34 +851,33 @@ public:
 
 	// bomp
 	void decompressBomp(byte *dst, byte *src, int w, int h);
-	void drawBomp(BompDrawData * bd, int decode_mode, int mask);
-	int32 setupBompScale(byte * scalling, int32 size, byte scale);
-	void bompScaleFuncX(byte * line_buffer, byte * scalling_x_ptr, byte skip, int32 size);
-	int32 bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size);
-	int32 bompDecodeLineMode1(byte * src, byte * line_buffer, int32 size);
-	int32 bompDecodeLineMode3(byte * src, byte * line_buffer, int32 size);
-	void bompApplyMask(byte * line_buffer, byte * mask_out, byte bits, int32 size);
-	void bompApplyShadow0(byte * line_buffer, byte * dst, int32 size);
-	void bompApplyShadow1(byte * line_buffer, byte * dst, int32 size);
-	void bompApplyShadow3(byte * line_buffer, byte * dst, int32 size);
-	void bompApplyActorPalette(byte * line_buffer, int32 size);
+	void drawBomp(BompDrawData *bd, int decode_mode, int mask);
+	int32 setupBompScale(byte *scalling, int32 size, byte scale);
+	void bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, int32 size);
+	int32 bompDecodeLineMode0(byte *src, byte *line_buffer, int32 size);
+	int32 bompDecodeLineMode1(byte *src, byte *line_buffer, int32 size);
+	int32 bompDecodeLineMode3(byte *src, byte *line_buffer, int32 size);
+	void bompApplyMask(byte *line_buffer, byte *mask_out, byte bits, int32 size);
+	void bompApplyShadow0(byte *line_buffer, byte *dst, int32 size);
+	void bompApplyShadow1(byte *line_buffer, byte *dst, int32 size);
+	void bompApplyShadow3(byte *line_buffer, byte *dst, int32 size);
+	void bompApplyActorPalette(byte *line_buffer, int32 size);
 
-	uint16 _bompShadowMode;
 	int32 _bompScaleRight, _bompScaleBottom;
-	byte * _bompScallingXPtr, * _bompScallingYPtr;
-	byte * _bompMaskPtr;
+	byte *_bompScallingXPtr, *_bompScallingYPtr;
+	byte *_bompMaskPtr;
 	int32 _bompMaskPitch;
-	byte * _bompActorPalletePtr;
+	byte *_bompActorPalletePtr;
 
 
 	uint _shakeFrame;
 	int _screenStartStrip, _screenEndStrip;
 	int _screenLeft, _screenTop;
-	uint16 _enqueue_b, _enqueue_c, _enqueue_d, _enqueue_e;
 	int _enqueuePos; 
 	BlastObject _enqueuedObjects[128];
 
-	void enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h, int mode);
+	void enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
+                       int objectHeight, int scaleX, int scaleY, int image, int mode);
 	void clearEnqueue() { _enqueuePos = 0; }
 	void drawBlastObjects();
 	void drawBlastObject(BlastObject *eo);
@@ -894,7 +893,7 @@ public:
 	uint32 gfxUsageBits[409];
 	byte *_shadowPalette;
 	int _shadowPaletteSize;
-	byte _currentPalette[0x300];
+	byte _currentPalette[3 * 256];
 
 	byte _proc_special_palette[256];
 	int _palDirtyMin, _palDirtyMax;

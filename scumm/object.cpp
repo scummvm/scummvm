@@ -1153,7 +1153,7 @@ void Scumm::nukeFlObjects(int min, int max)
 }
 
 void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
-													int objectHeight, int f, int g, int image, int mode)
+                          int objectHeight, int scaleX, int scaleY, int image, int mode)
 {
 	BlastObject *eo;
 	ObjectData *od;
@@ -1165,10 +1165,6 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 
 	eo = &_enqueuedObjects[_enqueuePos++];
 	eo->number = objectNumber;
-	eo->areaX = _enqueue_b;
-	eo->areaY = _enqueue_c;
-	eo->areaWidth = _enqueue_d;
-	eo->areaHeight = _enqueue_e;
 	eo->posX = objectX + (camera._cur.x & 7);
 	eo->posY = objectY + (camera._cur.y - (_realHeight / 2));
 	if (objectWidth == 0) {
@@ -1184,8 +1180,8 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 		eo->height = objectHeight;
 	}
 
-	eo->scaleX = f;
-	eo->scaleY = g;
+	eo->scaleX = scaleX;
+	eo->scaleY = scaleY;
 	eo->image = image;
 
 	eo->mode = mode;
@@ -1253,20 +1249,18 @@ void Scumm::drawBlastObject(BlastObject *eo)
 
 	byte bomp_scalling_x[64], bomp_scalling_y[64];
 
-	_bompShadowMode = 0;
-
 	if ((bdd.scale_x != 255) || (bdd.scale_y != 255)) {
 		_bompScallingXPtr = bomp_scalling_x;
 		_bompScallingYPtr = bomp_scalling_y;
 		_bompScaleRight = setupBompScale(_bompScallingXPtr, bdd.srcwidth, bdd.scale_x);
 		_bompScaleBottom = setupBompScale(_bompScallingYPtr, bdd.srcheight, bdd.scale_y);
+		bdd.shadowMode = 0;
 		drawBomp(&bdd, 1, 3);
 	}	else {
-		_bompShadowMode = eo->mode;
+		bdd.shadowMode = eo->mode;
 		drawBomp(&bdd, 1, 0);
 	}
 
-	_bompShadowMode = 0;
 	_bompScallingXPtr = NULL;
 	_bompScallingYPtr = NULL;
 	_bompScaleRight = 0;
