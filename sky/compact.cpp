@@ -50,6 +50,29 @@
 
 namespace SkyCompact {
 
+uint16 *getSub(Compact *cpt, uint16 mode) {
+	switch (mode) {
+	case 0:
+		return &(cpt->baseSub);
+	case 2:
+		return &(cpt->baseSub_off);
+	case 4:
+		return &(cpt->extCompact->actionSub);
+	case 6:
+		return &(cpt->extCompact->actionSub_off);
+	case 8:
+		return &(cpt->extCompact->getToSub);
+	case 10:
+		return &(cpt->extCompact->getToSub_off);
+	case 12:
+		return &(cpt->extCompact->extraSub);
+	case 14:
+		return &(cpt->extCompact->extraSub_off);
+	default:
+		error("Invalid Mode (%d)", mode);
+	}
+}
+
 static const uint32 compactOffsets[] = {
 	MK16(Compact, logic),
 	MK16(Compact, status),

@@ -27,6 +27,7 @@
 #include "sky/skydefs.h"
 
 namespace SkyCompact {
+	uint16 *getSub(Compact *cpt, uint16 mode);
 	void *getCompactElem(Compact *cpt, uint32 off);
 
 	extern uint16 slide2_seq[];

@@ -109,8 +109,8 @@ void SkyLogic::logicScript() {
 	for (;;) {
 		uint16 mode = _compact->mode; // get pointer to current script
 		printf("compact mode: %d\n", mode);
-		uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode);
-		uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode + 2);
+		uint16 *scriptNo = SkyCompact::getSub(_compact, mode);
+		uint16 *offset   = SkyCompact::getSub(_compact, mode + 2);
 
 		uint32 scr = script(*scriptNo, *offset);
 		*scriptNo = (uint16)(scr & 0xffff);
@@ -224,7 +224,7 @@ void SkyLogic::arAnim() {
 				// tell it it is waiting for us
 				cpt->extCompact->waitingFor = (uint16)(_scriptVariables[CUR_ID] & 0xffff);
 				// restart current script
-				*(uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2) = 0;
+				*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 				_compact->logic = L_SCRIPT;
 				logicScript();
 				return;
@@ -267,7 +267,7 @@ void SkyLogic::arAnim() {
 
 	// changed so restart the current script
 	// *not suitable for base initiated ARing
-	*(uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2) = 0;
+	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 
 	_compact->logic = L_SCRIPT;
 	logicScript();
@@ -340,13 +340,9 @@ void SkyLogic::arTurn() {
 
 void SkyLogic::alt() {
 	// change the current script
-
 	_compact->logic = L_SCRIPT;
-	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
-	*scriptNo = _compact->extCompact->alt;
-	*offset = 0;
-
+	*SkyCompact::getSub(_compact, _compact->mode) = _compact->extCompact->alt;
+	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 	logicScript();
 }
 
@@ -432,7 +428,7 @@ void SkyLogic::stopped() {
 	// we are free, continue processing the script
 
 	// restart script one level below
-	*(uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode - 2) = 0;
+	*SkyCompact::getSub(_compact, _compact->mode - 2) = 0;
 	_compact->extCompact->waitingFor = 0xffff;
 
 	_compact->logic = L_SCRIPT;
@@ -614,8 +610,8 @@ void SkyLogic::runGetOff() {
 void SkyLogic::stopAndWait() {
 	_compact->mode += 4;
 
-	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
+	uint16 *scriptNo = SkyCompact::getSub(_compact, _compact->mode);
+	uint16 *offset   = SkyCompact::getSub(_compact, _compact->mode + 2);
 
 	*scriptNo = (uint16)(_compact->extCompact->stopScript & 0xffff);
 	*offset   = (uint16)(_compact->extCompact->stopScript >> 16);
@@ -1152,31 +1148,24 @@ uint32 SkyLogic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
 	_compact->logic = L_SCRIPT;
 	Compact *cpt = SkyState::fetchCompact(targetId);
 
-	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
-
-	*scriptNo = cpt->actionScript;
-	*offset = 0;
+	*SkyCompact::getSub(_compact, _compact->mode) = cpt->actionScript;
+	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 
 	return 0;
 }
 
 uint32 SkyLogic::fnStartSub(uint32 scr, uint32 b, uint32 c) {
 	_compact->mode += 4;
-	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
-	*scriptNo = (uint16)(scr & 0xffff);
-	*offset   = (uint16)(scr >> 16);
+	*SkyCompact::getSub(_compact, _compact->mode) = (uint16)(scr & 0xffff);
+	*SkyCompact::getSub(_compact, _compact->mode + 2) = (uint16)(scr >> 16);
 	return 0;
 }
 
 uint32 SkyLogic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(mega);
 	cpt->mode += 4;
-	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(cpt, C_BASE_SUB + _compact->mode);
-	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(cpt, C_BASE_SUB + _compact->mode + 2);
-	*scriptNo = (uint16)(scr & 0xffff);
-	*offset   = (uint16)(scr >> 16);
+	*SkyCompact::getSub(cpt, _compact->mode) = (uint16)(scr & 0xffff);
+	*SkyCompact::getSub(cpt, _compact->mode + 2) = (uint16)(scr >> 16);
 	return 1;
 }
 
@@ -1235,10 +1224,9 @@ uint32 SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	while (*getToTable != targetPlaceId)
 		getToTable += 2;
 
-	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
-	*scriptNo = *(getToTable + 1); // get new script
-	*offset = 0;
+	// get new script
+	*SkyCompact::getSub(_compact, _compact->mode) = *(getToTable + 1);
+	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 
 	return 0; // drop out of script
 }
