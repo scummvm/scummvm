@@ -1109,7 +1109,7 @@ void ScummEngine::beginOverride() {
 	fetchScriptByte();
 	fetchScriptWord();
 	
-	// FIXME: why is this here? it doesn't seem to belong here?
+	// This is based on disassembly
 	VAR(VAR_OVERRIDE) = 0;
 }
 
