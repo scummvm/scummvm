@@ -858,18 +858,19 @@ void ScummEngine::playSpeech(const byte *ptr) {
 
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	LangIndexNode target;
+	LangIndexNode *found = NULL;
 	int i;
 	
 	if (_version >= 7 && text[0] == '/') {
-		// copy name from text /..../
+		// Extract the string tag from the text: /..../
 		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
 			_lastStringTag[i] = target.tag[i] = toupper(text[i + 1]);
 		_lastStringTag[i] = target.tag[i] = 0;
 		text += i + 2;
 
+		// If a language file was loaded, try to find a translated version
+		// by doing a lookup on the string tag.
 		if (_existLanguageFile) {
-			LangIndexNode *found = NULL;
-	
 			// HACK: These are used for the object line when
 			// using one object on another. I don't know if the
 			// text in the language file is a placeholder or if
@@ -879,39 +880,38 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	
 			if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
 				found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
-			if (found != NULL) {
-				strcpy((char *)trans_buff, _languageBuffer + found->offset);
-	
-				// FIXME / TODO: Maybe this should be enabled for Full Throttle, too?
-				if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
-					// Replace any '%___' by the corresponding special codes in the source text
-					const byte *src = text;
-					char *dst = (char *)trans_buff;
-	
-					while ((dst = strstr(dst, "%___"))) {
-						// Search for a special code in the message. They have
-						// the form:  255-byte OP-byte ARG-int16
-						while (*src && *src != 0xFF) {
-							src++;
-						}
-						
-						// Replace the %___ by the special code
-						if (*src == 0xFF) {
-							memcpy(dst, src, 4);
-							src += 4;
-							dst += 4;
-						} else
-							break;
-					}
-				}
-	
-				return;
-			}
 		}
 	}
 
-	// Default: just copy the string
-	memcpy(trans_buff, text, resStrLen(text) + 1);
+	if (found != NULL) {
+		strcpy((char *)trans_buff, _languageBuffer + found->offset);
+
+		// FIXME / TODO: Maybe this should be enabled for Full Throttle, too?
+		if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
+			// Replace any '%___' by the corresponding special codes in the source text
+			const byte *src = text;
+			char *dst = (char *)trans_buff;
+
+			while ((dst = strstr(dst, "%___"))) {
+				// Search for a special code in the message.
+				while (*src && *src != 0xFF) {
+					src++;
+				}
+				
+				// Replace the %___ by the special code. Luckily, we can do
+				// that in-place.
+				if (*src == 0xFF) {
+					memcpy(dst, src, 4);
+					src += 4;
+					dst += 4;
+				} else
+					break;
+			}
+		}
+	} else {
+		// Default: just copy the string
+		memcpy(trans_buff, text, resStrLen(text) + 1);
+	}
 }
 
 } // End of namespace Scumm
