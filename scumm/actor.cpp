@@ -631,7 +631,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			flags = _vm->getBoxFlags(box);
 
 			// Skip over invisible boxes
-			if (flags & kBoxInvisible && !(flags & kBoxPlayerOnly && !isInClass(kObjectClassPlayer)))
+			if (flags & kBoxInvisible && !(flags & kBoxPlayerOnly && !isPlayer()))
 				continue;
 			
 			// For increased performance, we perform a quick test if
@@ -1392,7 +1392,7 @@ void Actor::walkActorOld() {
 		// FIXME: not sure if this is needed in non-Zak games, but I think it shouldn't
 		// hurt there either.
 		int flags = _vm->getBoxFlags(next_box);
-		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isInClass(kObjectClassPlayer))) {
+		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
 			moving |= MF_LAST_LEG;
 			return;
 		}
@@ -1526,3 +1526,12 @@ void Actor::classChanged(int cls, bool value) {
 bool Actor::isInClass(int cls) {
 	return _vm->getClass(number, cls);
 }
+
+bool Actor::isPlayer() {
+	if (_vm->_features & GF_AFTER_V2)
+		return _vm->VAR(42) <= number && number <= _vm->VAR(43);
+	else
+		return isInClass(kObjectClassPlayer);
+}
+
+

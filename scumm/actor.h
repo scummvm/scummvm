@@ -193,6 +193,8 @@ public:
 	
 protected:
 	bool isInClass(int cls);
+	
+	bool isPlayer();
 };
 
 #endif

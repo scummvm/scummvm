@@ -1006,7 +1006,7 @@ void Scumm_v2::o2_walkActorToObject() {
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_walkActorToObject");
 	assert(a);
-	obj = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		int x, y, dir;
 		getObjectXYPos(obj, x, y, dir);
@@ -1191,6 +1191,9 @@ void Scumm_v2::o2_cutscene() {
 	VAR(VAR_CURSORSTATE) = 200;
 	
 	// TODO: some cursor command stuff (hide mouse etc maybe?)
+	freezeScripts(0);
+	_userPut = 0;
+	_cursor.state = 0;
 	
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
@@ -1211,6 +1214,9 @@ void Scumm_v2::o2_endCutscene() {
 	VAR(VAR_CURSORSTATE) = vm.cutSceneData[1];
 
 	// TODO: some cursor command stuff (probably to reset it to the pre-cutscene state)
+	unfreezeScripts();
+	_userPut = 1;
+	_cursor.state = 1;
 	
 	if (_gameId == GID_MANIAC) {
 		camera._mode = (byte) vm.cutSceneData[3];
