@@ -418,6 +418,18 @@ void BaseAnimationState::buildLookup() {
 			b_2_pix_alloc[i + 256] = i >> (8 - 5);
 			// b_2_pix_alloc[i + 256] <<= 0;
 		}
+	} else if (gBitFormat == 4444) {
+		for (i = 0; i < 256; i++) {
+			r_2_pix_alloc[i + 256] = i >> (8 - 4);
+			r_2_pix_alloc[i + 256] <<= 8;
+			g_2_pix_alloc[i + 256] = i >> (8 - 4);
+			g_2_pix_alloc[i + 256] <<= 4;
+			b_2_pix_alloc[i + 256] = i >> (8 - 4);
+			// b_2_pix_alloc[i + 256] <<= 0;
+			r_2_pix_alloc[i + 256] |= 0xf000;
+			g_2_pix_alloc[i + 256] |= 0xf000;
+			b_2_pix_alloc[i + 256] |= 0xf000;
+		}
 	} else {
 		error("Unknown bit format %d", gBitFormat);
 	}
