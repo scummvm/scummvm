@@ -1182,15 +1182,21 @@ void Scumm_v6::o6_getActorMoving() {
 
 void Scumm_v6::o6_getActorRoom() {
 	int act = pop();
-	Actor *a = derefActorSafe(act, "o6_getActorRoom");
-	if (!a) {
-		// FIXME: We got called with act = 0. This happens *a lot* in COMI.
-		// But why? Is that just normal, or due to a bug in ScummVM?
-		//warning("Invalid actor %d in o6_getActorRoom", act);
+
+	if (act == 0) {
+		// This case occurs at the very least in COMI. That's because in COMI's script 28,
+		// there is a check which looks as follows:
+		//   if (((VAR_TALK_ACTOR != 0) && (VAR_HAVE_MSG == 1)) &&
+		//        (getActorRoom(VAR_TALK_ACTOR) == VAR_ROOM))
+		// Due to the way this is represented in bytecode, the engine cannot
+		// short circuit. Hence, even thought this would be perfectly fine code
+		// in C/C++, here it can (and does) lead to getActorRoom(0) being
+		// invoked. We silently ignore this.
 		push(0);
 		return;
 	}
 
+	Actor *a = derefActor(act, "o6_getActorRoom");
 	push(a->room);
 }
 
@@ -2004,9 +2010,9 @@ void Scumm_v6::o6_drawBox() {
 void Scumm_v6::o6_wait() {
 	switch (fetchScriptByte()) {
 	case 168:{
-		Actor *a = derefActorSafe(pop(), "o6_wait");
+		Actor *a = derefActor(pop(), "o6_wait");
 		int offs = (int16)fetchScriptWord();
-		if (a && a->isInCurrentRoom() && a->moving) {
+		if (a->isInCurrentRoom() && a->moving) {
 			_scriptPointer += offs;
 			o6_breakHere();
 		}
@@ -2048,9 +2054,9 @@ void Scumm_v6::o6_wait() {
 		break;
 	case 226:{										/* wait until actor drawn */
 			int actnum = pop();
-			Actor *a = derefActorSafe(actnum, "o6_wait:226");
+			Actor *a = derefActor(actnum, "o6_wait:226");
 			int offs = fetchScriptWordSigned();
-			if (a && a->isInCurrentRoom() && a->needRedraw) {
+			if (a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
 				o6_breakHere();
 			}
@@ -2058,9 +2064,9 @@ void Scumm_v6::o6_wait() {
 		}
 	case 232:{										/* wait until actor stops turning */
 			int actnum = pop();
-			Actor *a = derefActorSafe(actnum, "o6_wait:232");
+			Actor *a = derefActor(actnum, "o6_wait:232");
 			int offs = fetchScriptWordSigned();
-			if (a && a->isInCurrentRoom() && a->moving & MF_TURN) {
+			if (a->isInCurrentRoom() && a->moving & MF_TURN) {
 				_scriptPointer += offs;
 				o6_breakHere();
 			}
