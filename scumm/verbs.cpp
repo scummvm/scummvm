@@ -21,9 +21,10 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
+#include "charset.h"
 #include "object.h"
 #include "resource.h"
+#include "scumm.h"
 #include "verbs.h"
 
 void Scumm::redrawVerbs()
@@ -156,18 +157,18 @@ void Scumm::drawVerb(int verb, int mode)
 			return;
 		assert(_messagePtr);
 
-		tmp = _charset._center;
-		_charset._center = 0;
+		tmp = _charset->_center;
+		_charset->_center = 0;
 		drawString(4);
-		_charset._center = tmp;
+		_charset->_center = tmp;
 
-		vs->right = _charset._strRight;
-		vs->bottom = _charset._strBottom;
-		vs->oldleft = _charset._strLeft;
-		vs->oldright = _charset._strRight;
-		vs->oldtop = _charset._strTop;
-		vs->oldbottom = _charset._strBottom;
-		_charset._strLeft = _charset._strRight;
+		vs->right = _charset->_strRight;
+		vs->bottom = _charset->_strBottom;
+		vs->oldleft = _charset->_strLeft;
+		vs->oldright = _charset->_strRight;
+		vs->oldtop = _charset->_strTop;
+		vs->oldbottom = _charset->_strBottom;
+		_charset->_strLeft = _charset->_strRight;
 	} else {
 		restoreVerbBG(verb);
 	}

@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "akos.h"
+#include "charset.h"
 #include "costume.h"
 #include "resource.h"
 #include "scumm/sound.h"
@@ -1095,9 +1096,9 @@ void Scumm::actorTalk()
 	int oldact;
 	Actor *a;
 
-	_msgPtrToAdd = _charset._buffer;
+	_msgPtrToAdd = _charset->_buffer;
 	_messagePtr = addMessageToStack(_messagePtr);
-	assert((int)(_msgPtrToAdd - _charset._buffer) < (int)(sizeof(_charset._buffer)));
+	assert((int)(_msgPtrToAdd - _charset->_buffer) < (int)(sizeof(_charset->_buffer)));
 
 	if (_actorToPrintStrFor == 0xFF) {
 		if (!_keepText)
@@ -1128,7 +1129,7 @@ void Scumm::actorTalk()
 		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "actorTalk(2)");
 		_charsetColor = a->talkColor;
 	}
-	_charset._bufPos = 0;
+	_charset->_bufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
 	_vars[VAR_HAVE_MSG] = 0xFF;

@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "charset.h"
 #include "intern.h"
 #include "sound.h"
 #include "verbs.h"
@@ -655,7 +656,7 @@ void Scumm_v5::o5_cursorCommand()
 	case 14:											/* unk */
 		getWordVararg(table);
 		for (i = 0; i < 16; i++)
-			_charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)table[i];
+			_charset->_colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)table[i];
 		break;
 	}
 

@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "bundle.h"
+#include "charset.h"
 #include "debugger.h"
 #include "dialogs.h"
 #include "imuse.h"
@@ -289,7 +290,7 @@ void Scumm::scummInit()
 	_numObjectsInRoom = 0;
 	_actorToPrintStrFor = 0;
 
-	_charset._bufPos = 0;
+	_charset->_bufPos = 0;
 	_haveMsg = 0;
 
 	_varwatch = -1;
@@ -487,7 +488,7 @@ int Scumm::scummLoop(int delta)
 	if (_completeScreenRedraw) {
 		_completeScreenRedraw = false;
 		gdi.clearUpperMask();
-		_charset._hasMask = false;
+		_charset->_hasMask = false;
 		redrawVerbs();
 		_fullRedraw = true;
 	}
@@ -1557,7 +1558,8 @@ void Scumm::mainRun()
 
 void Scumm::launch()
 {
-	_charset._vm = this;
+	_charset = new CharsetRenderer(this);
+
 	gdi._vm = this;
 
 	_maxHeapThreshold = 450000;

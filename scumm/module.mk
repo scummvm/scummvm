@@ -5,6 +5,7 @@ SCUMM_OBJS = \
 	scumm/akos.o \
 	scumm/boxes.o \
 	scumm/bundle.o \
+	scumm/charset.o \
 	scumm/costume.o \
 	scumm/debugger.o \
 	scumm/dialogs.o \

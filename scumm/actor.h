@@ -24,10 +24,9 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include <string.h>
-#include "scummsys.h"
+#include "common/scummsys.h"
 
-class Scumm;
+#include "scumm.h"
 
 enum MoveFlags {
 	MF_NEW_LEG = 1,
@@ -158,6 +157,7 @@ public:
 	bool isInCurrentRoom() {
 		return room == _vm->_currentRoom;
 	}
+	
 	int getRoom() {
 		return room;
 	}

@@ -31,6 +31,7 @@
 #include "common/timer.h"
 #include "common/util.h"
 
+class CharsetRenderer;
 class GameDetector;
 class NewGui;
 class Dialog;
@@ -174,56 +175,6 @@ enum {
 #define _baseArrays res.address[rtString]
 
 #define _roomFileOffsets res.roomoffs[rtRoom]
-
-class CharsetRenderer {
-protected:
-	byte _curId;
-	byte *_fontPtr;
-
-public:
-	Scumm *_vm;
-	int _strLeft, _strRight, _strTop, _strBottom;
-	int _nextLeft, _nextTop;
-
-	int _top;
-	int _left, _startLeft;
-	byte _center;
-	int _right;
-	byte _color;
-	bool _hasMask;
-	bool _blitAlso;
-	
-	int _bufPos;
-	bool _firstChar;
-	bool _disableOffsX;
-
-	bool _ignoreCharsetMask;
-
-protected:
-	byte _bpp;
-	uint32 _charOffs;
-	byte *_charPtr;
-	int _offsX, _offsY;
-	int _virtScreenHeight;
-
-	void drawBits(byte *dst, byte *mask, int drawTop, int width, int height, bool useMask);
-
-public:
-	byte _colorMap[16];
-	byte _buffer[512];
-
-	void printChar(int chr);
-	void printCharOld(int chr);
-	int getSpacing(byte chr, byte *charset);
-	int getStringWidth(int a, byte *str, int pos);
-	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
-	
-	void setCurID(byte id);
-	int getCurID() { return _curId; }
-	
-	byte *getFontPtr() { return _fontPtr; }
-	byte *getFontPtr(byte id);
-};
 
 #define ARRAY_HDR_SIZE 6
 struct ArrayHeader {
@@ -906,17 +857,17 @@ public:
 
 
 	/* String class */
-	CharsetRenderer _charset;
+	CharsetRenderer *_charset;
 	byte _charsetColor;
 	bool _noSubtitles;	// Skip all subtitles?
 	byte _charsetData[15][16];
+
 	void initCharset(int charset);
 	void restoreCharsetBg();
 	int hasCharsetMask(int x, int y, int x2, int y2);
 	void CHARSET_1();
 	void description();
 	void drawDescString(byte *msg);
-	byte *_msgPtrToAdd;
 	byte *addMessageToStack(byte *msg);
 	void addIntToStack(int var);
 	void addVerbToStack(int var);
@@ -925,7 +876,9 @@ public:
 	void unkMessage1();
 	void unkMessage2();
 	void clearMsgQueue();
+
 	int _numInMsgStack;
+	byte *_msgPtrToAdd;
 	byte *_messagePtr;
 	int16 _talkDelay;
 	bool _keepText;
