@@ -1371,7 +1371,6 @@ load_game:
 			int args = 2;
 			uint value = (_gameId == GID_LOOM256) ? 150 : 100;
 			byte restoreScript = (_features & GF_FMTOWNS) ? 17 : 18;
-			redrawVerbs();
 			// if verbs should be shown restore them
 			if (VAR(value) == 2)
 				runScript(restoreScript, 0, 0, &args);
