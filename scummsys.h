@@ -17,9 +17,16 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/11/06 10:34:48  cmatsuoka
+ * Added missing missing/sys files.
+ *
  * Revision 1.7  2001/11/05 19:21:49  strigeus
  * bug fixes,
  * speech in dott
+ *
+ * Revision 1.6  2001/11/03 06:33:29  cmatsuoka
+ * Protecting VC++-specific pragmas with ifdef _MSC_VER to allow
+ * a clean Cygwin build.
  *
  * Revision 1.5  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
@@ -43,8 +50,11 @@
 
 #if defined(WIN32)
 
+/* Pragmas are VC++-specific */
+#if defined(_MSC_VER)
 #pragma warning (disable: 4244)
 #pragma warning (disable: 4101)
+#endif
 
 #define scumm_stricmp stricmp
 
@@ -114,23 +124,36 @@ typedef signed long int32;
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 
-#if defined(SCUMM_NEED_ALIGNMENT)
-#error Little endian processors that need alignment is not implemented
-#endif
+//#if defined(SCUMM_NEED_ALIGNMENT)
+//#error Little endian processors that need alignment is not implemented
+//#endif
 
 #define MKID(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 
-int FORCEINLINE READ_LE_UINT16(void *ptr) {
-	return *(uint16*)(ptr);
-}
+#if defined(SCUMM_NEED_ALIGNMENT)
+	int FORCEINLINE READ_LE_UINT16(void *ptr) {
+		return (((byte*)ptr)[1]<<8)|((byte*)ptr)[0];
+	}
+#else
+	int FORCEINLINE READ_LE_UINT16(void *ptr) {
+		return *(uint16*)(ptr);
+	}
+#endif
 
 int FORCEINLINE READ_BE_UINT16(void *ptr) {
 	return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 }
 
-uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
-	return *(uint32*)(ptr);
-}
+#if defined(SCUMM_NEED_ALIGNMENT)
+	uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
+		byte *b = (byte*)ptr;
+		return (b[3]<<24)+(b[2]<<16)+(b[1]<<8)+(b[0]);
+	}
+#else
+	uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
+		return *(uint32*)(ptr);
+	}
+#endif
 
 uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
 	byte *b = (byte*)ptr;
@@ -140,7 +163,7 @@ uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
 #define READ_BE_UINT32_UNALIGNED READ_BE_UINT32
 #define READ_BE_UINT16_UNALIGNED READ_BE_UINT16
 
-#define READ_UINT32_UNALIGNED(a) (*((uint32*)a))
+#define READ_UINT32_UNALIGNED(a) READ_LE_UINT32(a)
 
 #define FROM_LE_32(__a__) __a__
 #define FROM_LE_16(__a__) __a__
