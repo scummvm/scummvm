@@ -471,6 +471,8 @@ void Actor::startAnimActor(int f) {
 			animProgress = 0;
 			cost.animCounter = 0;
 			needRedraw = true;
+			// V1 - V2 games don't seem to need a cost.reset() at this point.
+			// Causes Zak to lose his body in several scenes, see bug #770049
 			if (_vm->_version >= 3 && f == initFrame)
 				cost.reset();
 			_vm->cost_decodeData(this, f, (uint) - 1);
