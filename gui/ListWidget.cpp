@@ -27,6 +27,9 @@
 
 /*
  * TODO:
+ * - Fix the random key repeating bug
+ * - Allow escape to abort changes
+ * - Add key repeat (for backspace, etc)
  */
 
 
