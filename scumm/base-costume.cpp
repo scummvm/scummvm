@@ -20,6 +20,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "base-costume.h"
 
 
