@@ -505,10 +505,13 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle.readUint32LE();
 		}
-		// FIXME: these are related to globs
 
-		//_fileHandle.read(_globSize, num);
-		_fileHandle.seek(4 * num, SEEK_CUR);
+		if (_heversion >= 70) {
+			// FIXME: these are related to globs
+
+			//_fileHandle.read(_globSize, num);
+			_fileHandle.seek(4 * num, SEEK_CUR);
+		}
 	}
 }
 
