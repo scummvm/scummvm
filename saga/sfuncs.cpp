@@ -65,7 +65,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfKillActorThreads),
 		OPCODE(sfFaceTowards),
 		OPCODE(sfSetFollower),
-		OPCODE(SF_gotoScene),
+		OPCODE(sfScriptGotoScene),
 		OPCODE(SF_setObjImage),
 		OPCODE(SF_setObjName),
 		OPCODE(SF_getObjImage),
@@ -79,7 +79,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfScriptWalkToAsync),
 		OPCODE(SF_enableZone),
 		OPCODE(sfSetActorState),
-		OPCODE(scriptMoveTo),
+		OPCODE(sfScriptMoveTo),
 		OPCODE(SF_sceneEq),
 		OPCODE(SF_dropObject),
 		OPCODE(sfFinishBgdAnim),
@@ -102,7 +102,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_setProtagState),
 		OPCODE(sfResumeBgdAnim),
 		OPCODE(SF_throwActor),
-		OPCODE(SF_waitWalk),
+		OPCODE(sfWaitWalk),
 		OPCODE(SF_sceneID),
 		OPCODE(SF_changeActorScene),
 		OPCODE(SF_climb),
@@ -465,15 +465,27 @@ static struct SceneSubstitutes {
 };
 
 // Script function #16 (0x10)
-void Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
-	int16 sceneNum = thread->pop();
-	int16 entrance = thread->pop();
+void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
+	int16 sceneNumber;
+	int16 entrance;
 
-	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++)
+	sceneNumber = thread->pop();
+	entrance = thread->pop();
+	if (sceneNumber < 0) {
+		//TODO: quit from game at all
+	}
+	
+//	_vm->_scene->loadScene(sceneNumber, BY_SCENE, _vm->_scene->SC_defaultScene, NULL, (sceneNumber = RID_ITE_ENDCREDIT_SCENE_1) ? SCENE_FADE : SCENE_NOFADE, entrance);
+
+	//TODO: placard stuff
+	_pendingVerb = kVerbNone;
+	_currentObject[0] = _currentObject[1] = ID_NOTHING;
+	showVerb();
+/*	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++)
 		if (sceneSubstitutes[i].sceneId == sceneNum)
 			debug(0, "Scene %d substitute exists", sceneNum);
 
-	debug(1, "stub: SF_gotoScene(%d, %d)", sceneNum, entrance);
+	debug(1, "stub: SF_gotoScene(%d, %d)", sceneNum, entrance);*/
 }
 
 // Script function #17 (0x11)
@@ -653,7 +665,7 @@ void Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor pos x
 // Param3: actor pos y
-void Script::scriptMoveTo(SCRIPTFUNC_PARAMS) {
+void Script::sfScriptMoveTo(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	Location actorLocation;
 	ActorData *actor;
@@ -666,7 +678,6 @@ void Script::scriptMoveTo(SCRIPTFUNC_PARAMS) {
 
 	actor->location.x = actorLocation.x;
 	actor->location.y = actorLocation.y;
-
 }
 
 // Script function #31 (0x21)
@@ -1227,10 +1238,20 @@ void Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #53 (0x35)
-void Script::SF_waitWalk(SCRIPTFUNC_PARAMS) {
-	int16 param = thread->pop();
+// Param1: actor id
+// Param2: target object
+void Script::sfWaitWalk(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	ActorData *actor;
 
-	debug(1, "stub: SF_waitWalk(%d)", param);
+	actorId = thread->pop();
+	actor = _vm->_actor->getActor(actorId);
+
+	if ((actor->currentAction == kActionWalkToPoint) ||
+		(actor->currentAction == kActionWalkToLink) ||
+		(actor->currentAction == kActionFall)) {
+			thread->waitWalk(actor);
+	}
 }
 
 // Script function #54 (0x36)

@@ -97,6 +97,8 @@ namespace Saga {
 #define RID_ITE_INTRO_IMG_3 1561
 #define RID_ITE_INTRO_IMG_4 1565
 
+#define RID_ITE_ENDCREDIT_SCENE_1 1802
+
 // ITE_VOICES
 #define RID_CAVE_VOICE_0 0
 #define RID_CAVE_VOICE_1 1

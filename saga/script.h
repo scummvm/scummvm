@@ -469,10 +469,10 @@ private:
 	void sfLockUser(SCRIPTFUNC_PARAMS);
 	void sfPreDialog(SCRIPTFUNC_PARAMS);
 	void sfKillActorThreads(SCRIPTFUNC_PARAMS);
-
 	void sfFaceTowards(SCRIPTFUNC_PARAMS);
 	void sfSetFollower(SCRIPTFUNC_PARAMS);
-	void SF_gotoScene(SCRIPTFUNC_PARAMS);
+	void sfScriptGotoScene(SCRIPTFUNC_PARAMS);
+
 	void SF_setObjImage(SCRIPTFUNC_PARAMS);
 	void SF_setObjName(SCRIPTFUNC_PARAMS);
 	void SF_getObjImage(SCRIPTFUNC_PARAMS);
@@ -486,7 +486,7 @@ private:
 	void sfScriptWalkToAsync(SCRIPTFUNC_PARAMS);
 	void SF_enableZone(SCRIPTFUNC_PARAMS);
 	void sfSetActorState(SCRIPTFUNC_PARAMS);
-	void scriptMoveTo(SCRIPTFUNC_PARAMS);
+	void sfScriptMoveTo(SCRIPTFUNC_PARAMS);
 	void SF_sceneEq(SCRIPTFUNC_PARAMS);
 	void SF_dropObject(SCRIPTFUNC_PARAMS);
 	void sfFinishBgdAnim(SCRIPTFUNC_PARAMS);
@@ -509,7 +509,7 @@ private:
 	void SF_setProtagState(SCRIPTFUNC_PARAMS);
 	void sfResumeBgdAnim(SCRIPTFUNC_PARAMS);
 	void SF_throwActor(SCRIPTFUNC_PARAMS);
-	void SF_waitWalk(SCRIPTFUNC_PARAMS);
+	void sfWaitWalk(SCRIPTFUNC_PARAMS);
 	void SF_sceneID(SCRIPTFUNC_PARAMS);
 	void SF_changeActorScene(SCRIPTFUNC_PARAMS);
 	void SF_climb(SCRIPTFUNC_PARAMS);
