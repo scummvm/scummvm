@@ -772,7 +772,6 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		break;
 
 	case 13:
-	case 14:
 	case 15:
 		{
 			uint16 firstWord;
