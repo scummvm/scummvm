@@ -289,12 +289,15 @@ void ScummEngine_v8::setupScummVars() {
 
 	VAR_OVERRIDE = 30;
 	VAR_ROOM = 31;
+	VAR_NEW_ROOM = 32;
 
 	//VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_GAME_LOADED = 40;
 	VAR_LANGUAGE = 41;
 	
 	VAR_CURRENTDISK = 42;
+	//VAR_MUSIC_BUNDLE_LOADED = 45;
+	//VAR_VOICE_BUNDLE_LOADED = 46;
 
 	VAR_SCROLL_SCRIPT = 50;
 	VAR_ENTRY_SCRIPT = 51;
