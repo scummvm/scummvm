@@ -26,6 +26,9 @@
 
 #include "sword1/animation.h"
 
+#define MOVIE_WIDTH		640
+#define MOVIE_HEIGHT	400
+
 namespace Sword1 {
 
 AnimationState::AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys)
@@ -48,9 +51,8 @@ AnimationState::~AnimationState() {
 #endif
 }
 
-bool AnimationState::init(const char *basename) {
+bool AnimationState::init(const char *name) {
 #ifdef USE_MPEG2
-
 	char tempFile[512];
 
 	decoder = NULL;
@@ -64,11 +66,11 @@ bool AnimationState::init(const char *basename) {
 
 	// Load lookup palettes
 	// TODO: Binary format so we can use File class
-	sprintf(tempFile, "%s.pal", basename);
+	sprintf(tempFile, "%s.pal", name);
 	FILE *f = fopen(tempFile, "r");
 
 	if (!f) {
-		warning("Cutscene: %s.pal palette missing", basename);
+		warning("Cutscene: %s.pal palette missing", name);
 		return false;
 	}
 
@@ -113,13 +115,13 @@ bool AnimationState::init(const char *basename) {
 	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
 #else
 	buildLookup();
-	overlay = (NewGuiColor*)calloc(640 * 400, sizeof(NewGuiColor));
+	overlay = (NewGuiColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(NewGuiColor));
 	_sys->show_overlay();
 #endif
 
 	// Open MPEG2 stream
 	mpgfile = new File();
-	sprintf(tempFile, "%s.mp2", basename);
+	sprintf(tempFile, "%s.mp2", name);
 	if (!mpgfile->open(tempFile)) {
 		warning("Cutscene: Could not open %s", tempFile);
 		return false;
@@ -140,14 +142,14 @@ bool AnimationState::init(const char *basename) {
 	sndfile = new File;
 
 #ifdef USE_VORBIS
-	sprintf(tempFile, "%s.ogg", basename);
+	sprintf(tempFile, "%s.ogg", name);
 	if (sndfile->open(tempFile)) 
 		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());				
 #endif
 
 #ifdef USE_MAD
 	if (!sndfile->isOpen()) {
-		sprintf(tempFile, "%s.mp3", basename);
+		sprintf(tempFile, "%s.mp3", name);
 		if (sndfile->open(tempFile)) 
 			bgSoundStream = makeMP3Stream(sndfile, sndfile->size());
 	}
@@ -246,9 +248,9 @@ void AnimationState::buildLookup() {
 	for (cr = 0; cr < BITDEPTH; cr++) {
 		for (cb = 0; cb < BITDEPTH; cb++) {
 			for (y = 0; y < 256; y++) {
-				r = ((y-16) * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
-				g = ((y-16) * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
-				b = ((y-16) * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
+				r = ((y - 16) * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
+				g = ((y - 16) * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
+				b = ((y - 16) * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
 
 				if (r < 0) r = 0;
 				else if (r > 255) r = 255;
@@ -265,7 +267,7 @@ void AnimationState::buildLookup() {
 
 void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat) {
 
-	NewGuiColor *ptr = overlay + (400-height)/2 * 640 + (640-width)/2;
+	NewGuiColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
 
 	int x, y;
 
@@ -279,16 +281,16 @@ void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *cons
 			cpos++;
 
 			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
-			ptr[640 + linepos++] = lut[i + dat[0][width + ypos++]];
+			ptr[MOVIE_WIDTH + linepos++] = lut[i + dat[0][width + ypos++]];
 			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
-			ptr[640 + linepos++] = lut[i + dat[0][width + ypos++]];
+			ptr[MOVIE_WIDTH + linepos++] = lut[i + dat[0][width + ypos++]];
 
 		}
-		linepos += (2 * 640 - width);
+		linepos += (2 * MOVIE_WIDTH - width);
 		ypos += width;
 	}
 
-	_sys->copy_rect_overlay(overlay, 640, 0, 40, 640, 400);
+	_sys->copy_rect_overlay(overlay, MOVIE_WIDTH, 0, 40, MOVIE_WIDTH, MOVIE_HEIGHT);
 }
 
 #endif

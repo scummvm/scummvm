@@ -20,6 +20,10 @@
  */
 
 #include "common/stdafx.h"
+#include "common/file.h"
+#include "sound/vorbis.h"
+#include "sound/mp3.h"
+
 #include "sword2/sword2.h"
 #include "sword2/maketext.h"
 #include "sword2/driver/animation.h"
@@ -28,10 +32,8 @@
 #include "sword2/driver/menu.h"
 #include "sword2/driver/render.h"
 
-#include "common/file.h"
-
-#include "sound/vorbis.h"
-#include "sound/mp3.h"
+#define MOVIE_WIDTH		640
+#define MOVIE_HEIGHT	480
 
 namespace Sword2 {
 
@@ -119,7 +121,7 @@ bool AnimationState::init(const char *name) {
 	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
 #else
 	buildLookup();
-	overlay = (NewGuiColor*)calloc(640 * 480, sizeof(NewGuiColor));
+	overlay = (NewGuiColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(NewGuiColor));
 	_vm->_system->show_overlay();
 #endif
 
@@ -235,7 +237,6 @@ bool AnimationState::checkPaletteSwitch() {
 	return false;
 }
 
-
 #else
 
 NewGuiColor *AnimationState::lookup = 0;
@@ -273,7 +274,7 @@ void AnimationState::buildLookup() {
 
 void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat) {
 
-	NewGuiColor *ptr = overlay + (480 - height) / 2 * 640 + (640 - width) / 2;
+	NewGuiColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
 
 	int x, y;
 
@@ -292,7 +293,7 @@ void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *cons
 			ptr[RENDERWIDE + linepos++] = lut[i + dat[0][width + ypos++]];
 
 		}
-		linepos += (2 * 640 - width);
+		linepos += (2 * MOVIE_WIDTH - width);
 		ypos += width;
 	}
 }
@@ -326,12 +327,12 @@ void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
 void AnimationState::clearDisplay(void) {
 	NewGuiColor black = _vm->_system->RGBToColor(0, 0, 0);
 
-	for (int i = 0; i < 640 * 480; i++)
+	for (int i = 0; i < MOVIE_WIDTH * MOVIE_HEIGHT; i++)
 		overlay[i] = black;
 }
 
 void AnimationState::updateDisplay(void) {
-	_vm->_system->copy_rect_overlay(overlay, 640, 0, 0, 640, 480);
+	_vm->_system->copy_rect_overlay(overlay, MOVIE_WIDTH, 0, 0, MOVIE_WIDTH, MOVIE_HEIGHT);
 }
 
 #endif
@@ -651,7 +652,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
 		uint8 msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
-		Memory *data = _vm->_fontRenderer->makeTextSprite(msg, 640, 255, _vm->_speechFontId);
+		Memory *data = _vm->_fontRenderer->makeTextSprite(msg, MOVIE_WIDTH, 255, _vm->_speechFontId);
 		FrameHeader *frame = (FrameHeader *) data->ad;
 		SpriteInfo msgSprite;
 		uint8 *msgSurface;
