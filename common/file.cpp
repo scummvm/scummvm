@@ -60,6 +60,8 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	// FIXME this should probably be engine specific...
 	const char *dirs[] = {
 		"",
+		"rooms/",
+		"ROOMS/",
 		"video/",
 		"VIDEO/",
 		"data/",
