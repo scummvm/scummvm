@@ -108,7 +108,7 @@ class CharsetRendererNut : public CharsetRenderer {
 protected:
 	int getCharWidth(byte chr);
 
-	NutRenderer *_fr[4];
+	NutRenderer *_fr[5];
 	NutRenderer *_current;
 
 public:

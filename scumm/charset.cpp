@@ -395,7 +395,7 @@ CharsetRendererNut::CharsetRendererNut(Scumm *vm)
 {
 	_current = 0;
 	
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 5; i++) {
 		char fontname[256];
 		sprintf(fontname, "font%d.nut", i);
 		_fr[i] = new NutRenderer(_vm);
@@ -408,13 +408,13 @@ CharsetRendererNut::CharsetRendererNut(Scumm *vm)
 
 CharsetRendererNut::~CharsetRendererNut()
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 		delete _fr[i];
 }
 
 void CharsetRendererNut::setCurID(byte id)
 {
-	assert(id < 4);
+	assert(id < 5);
 	_curId = id;
 	_current = _fr[id];
 }
