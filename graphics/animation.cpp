@@ -28,7 +28,7 @@
 namespace Graphics {
 
 BaseAnimationState::BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height) 
-	: _snd(snd), _sys(sys), MOVIE_WIDTH(width), MOVIE_HEIGHT(height) {
+	: MOVIE_WIDTH(width), MOVIE_HEIGHT(height), _snd(snd), _sys(sys) {
 }
 
 BaseAnimationState::~BaseAnimationState() {
