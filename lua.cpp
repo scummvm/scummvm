@@ -1169,6 +1169,11 @@ static void GetTextCharPosition() {
 	lua_pushnumber(0);
 }
 
+static void GetDiskFreeSpace() {
+	// amount of free space in MB, used for creating saves
+	lua_pushnumber(50);
+}
+
 // Objectstate functions
 static void NewObjectState() {
 	enum ObjectPosition {
@@ -1417,7 +1422,7 @@ static char *stubFuncs[] = {
 	"DrawLine",
 	"pause_scripts",
 	"unpause_scripts",
-	"print_stack",
+	"print_stack"
 };
 
 // Entries in the system table
@@ -1681,6 +1686,7 @@ struct luaL_reg builtins[] = {
 	{ "GetSpeechMode", GetSpeechMode },
 	{ "SetSpeechMode", SetSpeechMode },
 	{ "GetTextCharPosition", GetTextCharPosition },
+	{ "GetDiskFreeSpace", GetDiskFreeSpace },
 	{ "Is3DHardwareEnabled", Is3DHardwareEnabled }
 };
 
