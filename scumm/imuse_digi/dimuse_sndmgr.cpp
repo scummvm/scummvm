@@ -352,18 +352,17 @@ int ImuseDigiSndMgr::getJumpIdByRegionId(soundStruct *soundHandle, int number) {
 	return -1;
 }
 
-int ImuseDigiSndMgr::getSyncSizeById(soundStruct *soundHandle, int number) {
+void ImuseDigiSndMgr::getSyncSizeAndPtrById(soundStruct *soundHandle, int number, int32 &sync_size, byte **sync_ptr) {
 	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
-	assert(number >= 0 && number < soundHandle->numSyncs);
-	return soundHandle->sync[number].size;
-}
-
-byte *ImuseDigiSndMgr::getSyncPtrById(soundStruct *soundHandle, int number) {
-	Common::StackLock tmpLock(_mutex);
-	assert(soundHandle && checkForProperHandle(soundHandle));
-	assert(number >= 0 && number < soundHandle->numSyncs);
-	return soundHandle->sync[number].ptr;
+	assert(number >= 0);
+	if (number < soundHandle->numSyncs) {
+		sync_size = soundHandle->sync[number].size;
+		*sync_ptr = soundHandle->sync[number].ptr;
+	} else {
+		sync_size = 0;
+		*sync_ptr = NULL;
+	}
 }
 
 int ImuseDigiSndMgr::getRegionIdByHookId(soundStruct *soundHandle, int number) {

@@ -585,8 +585,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 	if (msPos < 65536) {
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			if ((_track[l].idSound == soundId) && _track[l].used) {
-				sync_size = _sound->getSyncSizeById(_track[l].soundHandle, syncId);
-				sync_ptr = _sound->getSyncPtrById(_track[l].soundHandle, syncId);
+				_sound->getSyncSizeAndPtrById(_track[l].soundHandle, syncId, sync_size, &sync_ptr);
 				if ((sync_size != 0) && (sync_ptr != NULL)) {
 					sync_size /= 4;
 					while (sync_size--) {
