@@ -107,6 +107,7 @@ Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, int align)
 	: Widget(boss, x, y, w, h), _align(align) {
+	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	setLabel(text);
 }
@@ -166,7 +167,7 @@ CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, cons
 void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
-		sendCommand(_cmd, 0);
+		sendCommand(_cmd, _state);
 	}
 }
 
