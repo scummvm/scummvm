@@ -1,27 +1,22 @@
 (C) 2003- The ScummVM-Residual team
-http://www.scummvm.org/
-
-Readme - still needs writing.
+http://www.scummvm.org/                           Version 0.0-CVS
+------------------------------------------------------------------
+README: Still needs writing
 
 What is Residual:
  Residual is a ScummVM sub-project to create an engine to play the remaining 
  (residual) LucasArts adventures that ScummVM does not support. This means the
  3D titles Grim Fandango (and eventually, maybe, perhaps) Escape from 
  Monkey Island. It's a word pun, as 'grime' is a residue (as is scum). 
- Get over it.
 
-
-Running:
+How do I run Residual?
  Create ~/.residualrc (UNIX) or C:\residual.ini (Win32)
  Add:
   DataDir=[path to all the .lab files]
   good_times=TRUE
 
-Exit with 'q', and don't press f1 or the inventory... as things go a bit weird.
-
-Notes -
-  * Will run extremely slow on anything but fairly recent cards (due to use of
-    glDrawPixels). Requires OpenGL in all cases.
+Notes about Residual:
+  * Exit with 'q', and don't press f1, as things will go loopy.
   * Won't compile in MSVC (see TODO), but will on MingW32.
   * Windows you must put .exe in the DataDir and set it to '.' in residual.ini,
     Windows-style path slashing isn't parsed yet.
@@ -31,4 +26,5 @@ ScummVM-Residual Team Credits:
  Daniel Schepler         Initial engine codebase & LUA upgrades
  James Brown          	 ScummVM project leader, core engine developer
  Vincent Hamm            Core engine developer
+ Lionel Ulmer            OpenGL optimisations
  Pawel Kolodziejski      SMUSH/iMUSE implemention
