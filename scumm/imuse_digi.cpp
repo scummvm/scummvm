@@ -714,7 +714,7 @@ IMuseDigital::~IMuseDigital() {
 }
 
 void IMuseDigital::handler() {
-	int l = 0, i = 0;
+	int l = 0;
 
 	if (_pause)
 		return;
