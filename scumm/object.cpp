@@ -760,7 +760,8 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 	cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->OBCDoffset);
 	if (cdhd == NULL)
 		error("Room %d missing CDHD blocks(s)", _roomResource);
-	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
+	if (od->OBIMoffset)
+		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
 
 	od->flags = Gdi::dbAllowMaskOr;
 
@@ -806,7 +807,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->parent = cdhd->v6.parent;
 		od->actordir = cdhd->v6.actordir;
 
-		if (_features & GF_HUMONGOUS)
+		if (_features & GF_HUMONGOUS && imhd)
 			od->flags = ((imhd->old.flags & 1) != 0) ? Gdi::dbAllowMaskOr : 0;
 
 	} else {
