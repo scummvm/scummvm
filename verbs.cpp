@@ -257,16 +257,26 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 	byte  *obimptr;
 	uint32 size;
 	FindObjectInRoom foir;
+	int i;
 
 	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 
-	findObjectInRoom(&foir, foImageHeader, object, room);
-        if(_features & GF_SMALL_HEADER)
-                size = READ_LE_UINT32(foir.obim);
-        else
-                size = READ_BE_UINT32_UNALIGNED(foir.obim+4);
-	createResource(rtVerb, verb, size);
-	obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
-	memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
+	if(_features |= GF_SMALL_HEADER) {
+		for(i = _numObjectsInRoom; i>0; i--) {
+			if(_objs[i].obj_nr == object) {
+				findObjectInRoom(&foir, foImageHeader, object, room);
+				size = READ_LE_UINT32(foir.obim);
+				createResource(rtVerb, verb, size);
+				obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
+				memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
+			}
+		}
+	} else {
+		findObjectInRoom(&foir, foImageHeader, object, room);
+        	size = READ_BE_UINT32_UNALIGNED(foir.obim+4);
+		createResource(rtVerb, verb, size);
+		obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
+		memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
+	}
 }

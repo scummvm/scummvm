@@ -1770,6 +1770,7 @@ void Scumm::o5_verbOps() {
 	VerbSlot *vs;
 	int a,b;
 	byte *ptr;
+	int tempRoom;
 
 	verb = getVarOrDirectByte(0x80);
 
