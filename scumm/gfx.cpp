@@ -2601,6 +2601,11 @@ void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueS
 	}
 }
 
+static inline int colorWeight(int red, int green, int blue)
+{
+	return 3 * red * red + 6 * green * green + 2 * blue * blue;
+}
+
 void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor)
 {
 	byte *basepal = getPalettePtr();
@@ -2639,7 +2644,7 @@ void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int 
 		//    is not an issue in all other known case studies.)
 		int j;
 		int ar, ag, ab;
-		uint sum, diff, bestsum, bestitem = 0;
+		uint sum, bestsum, bestitem = 0;
 
 		if (r > 255)
 			r = 255;
@@ -2664,12 +2669,7 @@ void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int 
 				break;
 			}
 
-			diff = ar - r;
-			sum = diff * diff * 3;
-			diff = ag - g;
-			sum += diff * diff * 6;
-			diff = ab - b;
-			sum += diff * diff * 2;
+			sum = colorWeight(ar - r, ag - g, ab - b);
 
 			if (sum < bestsum) {
 				bestsum = sum;
@@ -2716,8 +2716,7 @@ void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 gre
 			int ag = (*searchPtr++);
 			int ab = (*searchPtr++);
 
-			// FIXME - shouldn't we use a better distance measure, like the one in remapPaletteColor ?
-			currentResult = abs(ar - r) + abs(ag - g) + abs(ab - b);
+			currentResult = colorWeight(ar - r, ag - g, ab - b);
 
 			if (currentResult < bestResult) {
 				_proc_special_palette[i] = currentIndex;
@@ -2759,6 +2758,56 @@ void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int start
 		}
 		setDirtyColors(startColor, endColor);
 	}
+}
+
+int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
+{
+	int i;
+	int ar, ag, ab;
+	uint sum, bestsum, bestitem = 0;
+	byte *pal = _currentPalette;
+
+	if (r > 255)
+		r = 255;
+	if (g > 255)
+		g = 255;
+	if (b > 255)
+		b = 255;
+
+	bestsum = (uint) - 1;
+
+	r &= ~3;
+	g &= ~3;
+	b &= ~3;
+
+	for (i = 0; i < 256; i++, pal += 3) {
+		ar = pal[0] & ~3;
+		ag = pal[1] & ~3;
+		ab = pal[2] & ~3;
+		if (ar == r && ag == g && ab == b)
+			return i;
+
+		sum = colorWeight(ar - r, ag - g, ab - b);
+
+		if (sum < bestsum) {
+			bestsum = sum;
+			bestitem = i;
+		}
+	}
+
+	if (threshold != (uint) - 1 && bestsum > colorWeight(threshold, threshold, threshold)) {
+		// Best match exceeded threshold. Try to find an unused palette entry and
+		// use it for our purpose.
+		pal = _currentPalette + (256 - 2) * 3;
+		for (i = 254; i > 48; i--, pal -= 3) {
+			if (pal[0] >= 252 && pal[1] >= 252 && pal[2] >= 252) {
+				setPalColor(i, r, g, b);
+				return i;
+			}
+		}
+	}
+
+	return bestitem;
 }
 
 void Scumm::swapPalColors(int a, int b)
@@ -3119,61 +3168,6 @@ void Scumm::makeCursorColorTransparent(int a)
 			_grabbedCursor[i] = 0xFF;
 
 	updateCursor();
-}
-
-int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
-{
-	int i;
-	int ar, ag, ab;
-	uint sum, diff, bestsum, bestitem = 0;
-	byte *pal = _currentPalette;
-
-	if (r > 255)
-		r = 255;
-	if (g > 255)
-		g = 255;
-	if (b > 255)
-		b = 255;
-
-	bestsum = (uint) - 1;
-
-	r &= ~3;
-	g &= ~3;
-	b &= ~3;
-
-	for (i = 0; i < 256; i++, pal += 3) {
-		ar = pal[0] & ~3;
-		ag = pal[1] & ~3;
-		ab = pal[2] & ~3;
-		if (ar == r && ag == g && ab == b)
-			return i;
-
-		diff = ar - r;
-		sum = diff * diff * 3;
-		diff = ag - g;
-		sum += diff * diff * 6;
-		diff = ab - b;
-		sum += diff * diff * 2;
-
-		if (sum < bestsum) {
-			bestsum = sum;
-			bestitem = i;
-		}
-	}
-
-	if (threshold != (uint) - 1 && bestsum > threshold * threshold * (2 + 3 + 6)) {
-		// Best match exceeded threshold. Try to find an unused palette entry and
-		// use it for our purpose.
-		pal = _currentPalette + (256 - 2) * 3;
-		for (i = 254; i > 48; i--, pal -= 3) {
-			if (pal[0] >= 252 && pal[1] >= 252 && pal[2] >= 252) {
-				setPalColor(i, r, g, b);
-				return i;
-			}
-		}
-	}
-
-	return bestitem;
 }
 
 int32 Scumm::bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size) {
