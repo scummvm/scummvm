@@ -1062,6 +1062,11 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 	uint16 curImage = _numFrames;
 
+	if (obj == 0 || obj > _numObjects) {
+		warning("Invalid object number %d", obj);
+		return curImage;
+	}
+
 	ObjectData *pod = &_objectData[obj];
 	if (pod->image == 0) {
 		return curImage;
@@ -1070,7 +1075,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 	// check the object is in the current room
 	if (pod->room != _currentRoom) {
 		warning("Logic::roomRefreshObject() - Trying to display an object (%i=%s) that is not in room (object room=%i, current room=%i)",
-				obj, _objName[_objectData[obj].name], pod->room, _currentRoom);
+			obj, _objName[ABS(pod->name)], pod->room, _currentRoom);
 		return curImage;
 	}
 

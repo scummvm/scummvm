@@ -105,6 +105,8 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 }
 
 QueenEngine::~QueenEngine() {
+
+	_timer->removeTimerProc(&timerHandler);
 	delete _resource;
 	delete _display;
 	delete _logic;
@@ -158,7 +160,7 @@ void QueenEngine::roomChanged() {
 			_logic->playCutaway("cred.cut");
 		}
 
-		_logic->currentRoom(ROOM_HOTEL_LOBBY); //ROOM_HOTEL_UPSTAIRS);
+		_logic->currentRoom(ROOM_HOTEL_LOBBY);
 		_logic->entryObj(584);
 
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 2, true);
