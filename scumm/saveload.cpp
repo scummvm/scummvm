@@ -92,6 +92,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	SaveFile *in;
 	int i, j;
 	SaveGameHeader hdr;
+	int sb, sh;
 	byte *roomptr;
 
 	makeSavegameName(filename, slot, compat);
@@ -272,13 +273,18 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		camera._last.x = camera._cur.x;
 	}
 
+	sb = _screenB;
+	sh = _screenH;
+
 	// Restore the virtual screens and force a fade to black.
-	initScreens(_screenB, _screenH);
+	initScreens(kMainVirtScreen, _screenHeight);
 	VirtScreen *vs = &virtscr[0];
 	memset(vs->screenPtr + vs->xstart, 0, vs->width * vs->height);
 	vs->setDirtyRange(0, vs->height);
 	updateDirtyScreen(kMainVirtScreen);
 	updatePalette();
+	initScreens(sb, sh);
+
 	_completeScreenRedraw = true;
 
 	// Reset charset mask
