@@ -210,7 +210,7 @@ In game Hot Keys:
 	Ctrl-s                   - shows memory consumption.
 	F5                       - displays a save/load box.
 	Space                    - pauses.
-	Alt-Enter                - toggles full screen (on *nix only)
+        Alt-Enter                - toggles full screen/windowed
 
 
 Graphics filters:
