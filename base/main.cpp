@@ -152,6 +152,8 @@ static void do_memory_test(void) {
 
 #endif
 
+#ifndef _WIN32_WCE
+
 static void launcherDialog(GameDetector &detector, OSystem *system) {
 	// FIXME - we need to call init_size() here so that we can display for example
 	// the launcher dialog. But the Engine object will also call it again (possibly
@@ -286,7 +288,9 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-#if !defined(__PALM_OS__) && !defined(MACOSX)
+#endif // WIN32_WCE
+
+#if !defined(__PALM_OS__) && !defined(MACOSX) && !defined(_WIN32_WCE)
 void *operator new(size_t size) {
 	return memset(malloc(size), 0xE7, size);
 }
