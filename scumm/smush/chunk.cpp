@@ -85,35 +85,24 @@ bool BaseChunk::seek(int32 delta, seek_type dir) {
 	return true;
 }
 
-FileChunk::FileChunk() : 
-	_data(0) {
-}
+FileChunk::FileChunk(const Common::String &name, int offset) 
+	: _name(name) {
+	if (!g_scumm->openFile(_data, name.c_str()))
+		error("FileChunk: Unable to open file %s", name.c_str());
 
-FileChunk::FileChunk(const char *fname) {
-	_data = new ScummFile();
-	if (!g_scumm->openFile(*_data, fname))
-		error("FileChunk: Unable to open file %s", fname);
-
-	_type = _data->readUint32BE();
-	_size = _data->readUint32BE();
-	_offset = sizeof(Chunk::type) + sizeof(uint32);
+	_data.seek(offset);
+	_type = _data.readUint32BE();
+	_size = _data.readUint32BE();
+	_offset = _data.pos();
 	_curPos = 0;
 }
 
 FileChunk::~FileChunk() {
-	if (_data)
-		_data->decRef();
 }
 
 Chunk *FileChunk::subBlock() {
-	FileChunk *ptr = new FileChunk();
-	ptr->_data = _data;
-	_data->incRef();
-	_data->seek(_offset + _curPos);
-	ptr->_type = _data->readUint32BE();
-	ptr->_size = _data->readUint32BE();
-	ptr->_offset = _offset + _curPos + sizeof(Chunk::type) + sizeof(uint32);
-	ptr->_curPos = 0;
+	FileChunk *ptr = new FileChunk(_name, _offset + _curPos);
+	_data.seek(_offset + _curPos + sizeof(Chunk::type) + sizeof(uint32));
 	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->getSize());
 	return ptr;
 }
@@ -122,8 +111,8 @@ bool FileChunk::read(void *buffer, uint32 size) {
 	if (size <= 0 || (_curPos + size) > _size)
 		error("invalid buffer read request");
 
-	_data->seek(_offset + _curPos);
-	_data->read(buffer, size);
+//	_data.seek(_offset + _curPos);
+	_data.read(buffer, size);
 	_curPos += size;
 	return true;
 }
@@ -133,13 +122,13 @@ int8 FileChunk::getChar() {
 }
 
 byte FileChunk::getByte() {
-	_data->seek(_offset + _curPos);
+//	_data.seek(_offset + _curPos);
 	_curPos++;
 
 	if (_curPos > _size)
 		error("invalid byte read request");
 
-	return _data->readByte();
+	return _data.readByte();
 }
 
 int16 FileChunk::getShort() {
@@ -147,30 +136,31 @@ int16 FileChunk::getShort() {
 }
 
 uint16 FileChunk::getWord() {
-	_data->seek(_offset + _curPos);
+//	_data.seek(_offset + _curPos);
 	_curPos += 2;
 
 	if (_curPos > _size)
 		error("invalid word read request");
 
-	return _data->readUint16LE();
+	return _data.readUint16LE();
 }
 
 uint32 FileChunk::getDword() {
-	_data->seek(_offset + _curPos);
+//	_data.seek(_offset + _curPos);
 	_curPos += 4;
 
 	if (_curPos > _size)
 		error("invalid dword read request");
 
-	return _data->readUint32LE();
+	return _data.readUint32LE();
 }
 
 void FileChunk::reinit(uint32 offset) {
-	_offset = 0;
-	_data->seek(0);
-	_type = _data->readUint32BE();
-	_size = _data->readUint32BE();
+	assert(offset == 0);	// FIXME: Fingolfin added this assert, because the old code used to ignore offset!!!
+	_data.seek(offset);
+	_type = _data.readUint32BE();
+	_size = _data.readUint32BE();
+	_offset = _data.pos();
 	_curPos = 0;
 }
 

@@ -23,6 +23,8 @@
 #define CHUNK_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 
@@ -67,14 +69,12 @@ public:
 
 class FileChunk : public BaseChunk {
 private:
-	ScummFile *_data;
+	Common::String _name;
+	ScummFile _data;
 	uint32 _offset;
 
-protected:
-	FileChunk();
-
 public:
-	FileChunk(const char *fname);
+	FileChunk(const Common::String &name, int offset = 0);
 	virtual ~FileChunk();
 	Chunk *subBlock();
 	bool read(void *buffer, uint32 size);
