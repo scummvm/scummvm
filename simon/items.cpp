@@ -990,7 +990,7 @@ int SimonState::runScript()
 
 				const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
 				ThreeValues *tv = getThreeValues(b);
-				if (_game == GAME_TALKIE) 
+				if (_game & GAME_TALKIE) 
 					d = _array_4[a];
 
 				if (d != 0 && !_vk_t_toggle) {
