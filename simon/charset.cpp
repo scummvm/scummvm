@@ -61,23 +61,23 @@ void SimonEngine::print_char_helper_6(uint i) {
 	}
 }
 
-void SimonEngine::render_string(uint vga_struct_id, uint color, uint width, uint height, const char *txt) {
+void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vga_buffer_pointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
 	uint count;
 
-	if (vga_struct_id >= 100) {
-		vga_struct_id -= 100;
+	if (vga_sprite_id >= 100) {
+		vga_sprite_id -= 100;
 		vpe++;
 	}
 
 	src = dst = vpe->vgaFile2;
 
 	count = 4000;
-	if (vga_struct_id == 1)
+	if (vga_sprite_id == 1)
 		count *= 2;
 
-	p = dst + vga_struct_id * 8;
+	p = dst + vga_sprite_id * 8;
 
 	*(uint16 *)(p + 4) = TO_BE_16(height);
 	*(uint16 *)(p + 6) = TO_BE_16(width);
