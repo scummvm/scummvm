@@ -122,7 +122,7 @@ int DecodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t o
 	byte mark_byte;
 	int test_byte;
 
-	uint16 runcount;
+	uint32 runcount;
 
 	byte bitfield;
 	byte bitfield_byte1;
