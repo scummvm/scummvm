@@ -112,6 +112,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("hide", &ScummDebugger::Cmd_Hide);
 
 		DCmd_Register("imuse_multimidi", &ScummDebugger::Cmd_ImuseMultiMidi);
+		DCmd_Register("imuse_panic", &ScummDebugger::Cmd_ImusePanic);
 	}
 }
 
@@ -365,12 +366,21 @@ bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 
 bool ScummDebugger::Cmd_ImuseMultiMidi (int argc, const char **argv) {
 	if (argc > 1) {
-		_s->_imuse->property (IMuse::PROP_MULTI_MIDI, !strcmp (argv[1], "1") || !strcmp (argv[1], "on") || !strcmp (argv[1], "true"));
+		if (_s->_imuse)
+			_s->_imuse->property (IMuse::PROP_MULTI_MIDI, !strcmp (argv[1], "1") || !strcmp (argv[1], "on") || !strcmp (argv[1], "true"));
 		return false;
 	} else {
 		Debug_Printf("Use 'imuse_multimidi on|off' to switch\n");
 		return true;
 	}
+}
+
+bool ScummDebugger::Cmd_ImusePanic (int argc, const char **argv) {
+	Debug_Printf ("AAAIIIEEEEEE!\n");
+	Debug_Printf ("Shutting down all music tracks\n");
+	if (_s->_imuse)
+		_s->_imuse->stop_all_sounds();
+	return true;
 }
 
 bool ScummDebugger::Cmd_Room(int argc, const char **argv) {

@@ -95,6 +95,7 @@ protected:
 	bool Cmd_Hide(int argc, const char **argv);
 
 	bool Cmd_ImuseMultiMidi (int argc, const char **argv);
+	bool Cmd_ImusePanic (int argc, const char **argv);
 	
 	void printBox(int box);
 	void drawBox(int box);
