@@ -527,7 +527,7 @@ void ScummEngine_v6he::o6_roomOps() {
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 		_saveLoadFlag = pop();
-		_saveLoadSlot = 99;
+		_saveLoadSlot = 1;
 		_saveTemporaryState = true;
 		break;
 	default:
