@@ -32,8 +32,7 @@
 #include "Key.h"
 
 enum ActionType {
-        ACTION_NONE = 0,
-        ACTION_PAUSE,
+        ACTION_PAUSE = 0,
         ACTION_SAVE,
         ACTION_QUIT,
         ACTION_SKIP,
@@ -49,7 +48,7 @@ enum ActionType {
 		ACTION_LAST
 };
 
-#define ACTIONS_VERSION 2
+#define ACTIONS_VERSION 3
 
 class OSystem_WINCE3;
 

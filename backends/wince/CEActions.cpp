@@ -31,7 +31,6 @@
 #include "common/config-manager.h"
 
 const String actionNames[] = { 
-	"none", 
 	"Pause", 
 	"Save", 
 	"Quit",
@@ -212,7 +211,7 @@ bool CEActions::performMapped(unsigned int keyCode, bool pushed) {
 	for (i=0; i<ACTION_LAST; i++) {
 		if (_action_mapping[i] == keyCode) {
 			if (pushed)
-				return perform((ActionType)(i + 1));
+				return perform((ActionType)i);
 			else
 				return true;
 		}
@@ -260,7 +259,7 @@ bool CEActions::saveMapping() {
 }
 
 unsigned int CEActions::getMapping(ActionType action) {
-	return _action_mapping[action - 1];
+	return _action_mapping[action];
 }
 
 
@@ -272,7 +271,7 @@ void CEActions::setMapping(ActionType action, unsigned int keyCode) {
 			_action_mapping[i] = 0;
 	}
 
-	_action_mapping[action - 1] = keyCode;
+	_action_mapping[action] = keyCode;
 }
 
 bool CEActions::needsRightClickMapping() {
