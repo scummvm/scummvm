@@ -324,12 +324,12 @@ int ImuseDigiSndMgr::getNumMarkers(soundStruct *soundHandle) {
 	return soundHandle->numMarkers;
 }
 
-int ImuseDigiSndMgr::getJumpIdByRegion(soundStruct *soundHandle, int number) {
+int ImuseDigiSndMgr::getJumpIdByRegionId(soundStruct *soundHandle, int number) {
 	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numRegions);
 	for (int l = 0; l < soundHandle->numJumps; l++) {
-		if (soundHandle->jump[number].offset == soundHandle->region[l].offset) {
+		if (soundHandle->jump[l].offset == soundHandle->region[number].offset) {
 			return l;
 		}
 	}
@@ -337,13 +337,16 @@ int ImuseDigiSndMgr::getJumpIdByRegion(soundStruct *soundHandle, int number) {
 	return -1;
 }
 
-int ImuseDigiSndMgr::getJumpDestRegionId(soundStruct *soundHandle, int number) {
+int ImuseDigiSndMgr::getRegionIdByHookId(soundStruct *soundHandle, int number) {
 	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
-	assert(number >= 0 && number < soundHandle->numJumps);
-	for (int l = 0; l < soundHandle->numRegions; l++) {
-		if (soundHandle->jump[number].dest == soundHandle->region[l].offset) {
-			return l;
+	for (int l = 0; l < soundHandle->numJumps; l++) {
+		if (soundHandle->jump[l].hookId == number) {
+			for (int r = 0; r < soundHandle->numRegions; r++) {
+				if (soundHandle->jump[l].dest == soundHandle->region[r].offset) {
+					return r;
+				}
+			}
 		}
 	}
 

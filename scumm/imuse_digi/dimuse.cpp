@@ -127,8 +127,12 @@ void IMuseDigital::callback() {
 				byte *data = NULL;
 				int32 result = 0;
 
-				if (_track[l].stream->endOfData())
+				if (_track[l].stream->endOfData()) {
 					mixer_size *= 2;
+				}
+
+				if (_track[l].curRegion == -1)
+					switchToNextRegion(l);
 
 				int bits = _sound->getBits(_track[l].soundHandle);
 				do {
@@ -182,14 +186,6 @@ void IMuseDigital::callback() {
 	}
 }
 
-int IMuseDigital::checkJumpByRegion(int track, int region) {
-	int num_jumps = _sound->getNumJumps(_track[track].soundHandle);
-	for (int l = 0; l < num_jumps; l++) {
-		return _sound->getJumpDestRegionId(_track[track].soundHandle, l);
-	}
-	return -1;
-}
-
 void IMuseDigital::switchToNextRegion(int track) {
 	int num_regions = _sound->getNumRegions(_track[track].soundHandle);
 	int num_jumps = _sound->getNumJumps(_track[track].soundHandle);
@@ -203,14 +199,17 @@ void IMuseDigital::switchToNextRegion(int track) {
 		return;
 	}
 
-	int hookid = _sound->getJumpIdByRegion(_track[track].soundHandle, _track[track].curRegion);
+	int hookid = _sound->getJumpIdByRegionId(_track[track].soundHandle, _track[track].curRegion);
 	if (hookid == _track[track].curHookId) {
-		int region = checkJumpByRegion(track, _track[track].curRegion);
-		if (region != -1)
+		int region = _sound->getRegionIdByHookId(_track[track].soundHandle, hookid);
+		if (region != -1) {
 			_track[track].curRegion = region;
-		_track[track].curHookId = 0;
+			_track[track].curHookId = 0;
+			debug(5, "switchToNextRegion-sound(%d) jump to %d region", _track[track].idSound, _track[track].curRegion);
+		}
 	}
 
+	debug(5, "switchToNextRegion-sound(%d) select %d region", _track[track].idSound, _track[track].curRegion);
 	_track[track].regionOffset = 0;
 }
 
@@ -230,7 +229,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			_track[l].started = false;
 			_track[l].soundGroup = soundGroup;
 			_track[l].curHookId = 0;
-			_track[l].curRegion = 0;
+			_track[l].curRegion = -1;
 			_track[l].regionOffset = 0;
 			_track[l].trackOffset = 0;
 			_track[l].mod = 0;

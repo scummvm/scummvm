@@ -76,7 +76,6 @@ private:
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
-	int checkJumpByRegion(int track, int region);
 	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input);
 
 public:
@@ -88,13 +87,13 @@ public:
 	void startVoice(int soundId)
 		{ debug(5, "startVoiceBundle(%d)", soundId); startSound(soundId, NULL, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
 	void startVoice(int soundId, const char *soundName)
-		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
+		{ return;}//debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
 	void startMusic(int soundId)
 		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL); }
 	void startMusic(const char *soundName, int soundId)
-		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL); }
+		{ debug(0, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL); }
 	void startSfx(int soundId)
-		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL); }
+		{ return;}//debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL); }
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
