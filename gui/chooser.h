@@ -21,9 +21,9 @@
 #ifndef CHOOSER_DIALOG_H
 #define CHOOSER_DIALOG_H
 
-#include "dialog.h"
 #include "common/str.h"
 #include "common/list.h"
+#include "gui/dialog.h"
 
 class ButtonWidget;
 class ListWidget;
@@ -35,14 +35,15 @@ class ListWidget;
 class ChooserDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
-public:
-	ChooserDialog(const String title, const StringList &list);
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-
 protected:
 	ListWidget		*_list;
 	ButtonWidget	*_chooseButton;
+
+public:
+	ChooserDialog(const String &title, const StringList &list, const String &buttonLabel = "Choose", int height = 140);
+
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	ListWidget *getListWidget() { return _list; }	// HACK
 };
 
 #endif

@@ -27,23 +27,20 @@ enum {
 	kChooseCmd = 'Chos'
 };
 
-ChooserDialog::ChooserDialog(const String title, const StringList& list)
-	: Dialog(8, 24, 320 -2 * 8, 141) {
+ChooserDialog::ChooserDialog(const String &title, const StringList& list, const String &buttonLabel, int height)
+	: Dialog(8, (200 - height) / 2, 320 -2 * 8, height) {
 	// Headline
-	new StaticTextWidget(this, 10, 8, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
+	new StaticTextWidget(this, 10, 6, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
 
 	// Add choice list
-	_list = new ListWidget(this, 10, 22, _w - 2 * 10, _h - 22 - 24 - 10);
+	_list = new ListWidget(this, 10, 18, _w - 2 * 10, _h - 14 - 24 - 10);
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setList(list);
 	
 	// Buttons
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	_chooseButton = addButton(_w-(kButtonWidth + 10), _h - 24, "Choose", kChooseCmd, 0);
+	_chooseButton = addButton(_w-(kButtonWidth + 10), _h - 24, buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
-
-	// Result = -1 -> no choice was made
-	setResult(-1);
 }
 
 void ChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -57,6 +54,10 @@ void ChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kListSelectionChangedCmd:
 		_chooseButton->setEnabled(item >= 0);
 		_chooseButton->draw();
+		break;
+	case kCloseCmd:
+		setResult(-1);
+		close();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
