@@ -381,7 +381,7 @@ void Scumm::initBGBuffers(int height)
 	byte *room;
 
 	if (_features & GF_AFTER_V7) {
-		initVirtScreen(0, 0, virtscr[0].topline, _realHeight, height, 1, 1);
+		initVirtScreen(0, 0, virtscr[0].topline, _realWidth, height, 1, 1);
 	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
