@@ -192,6 +192,33 @@ void CDECL debug(int level, const char *s, ...) {
 	fflush(stdout);
 }
 
+void CDECL debug(const char *s, ...) {
+#ifdef __PALM_OS__
+	char buf[256]; // 1024 is too big overflow the stack
+#else
+	char buf[1024];
+#endif
+	va_list va;
+
+	va_start(va, s);
+	vsprintf(buf, s, va);
+	va_end(va);
+	printf("%s\n", buf);
+
+#if defined( USE_WINDBG )
+	strcat(buf, "\n");
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+#else
+	OutputDebugString(buf);
+#endif
+#endif
+
+	fflush(stdout);
+}
+
 void checkHeap() {
 #if defined(_MSC_VER)
 	if (_heapchk() != _HEAPOK) {

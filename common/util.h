@@ -164,6 +164,7 @@ void CDECL NORETURN error(const char *s, ...);
 void CDECL warning(const char *s, ...);
 
 void CDECL debug(int level, const char *s, ...);
+void CDECL debug(const char *s, ...);
 void checkHeap();
 
 

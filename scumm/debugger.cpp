@@ -39,6 +39,24 @@ extern uint16 g_debugLevel;
 
 namespace Scumm {
 
+void CDECL debugC(int channel, const char *s, ...) {
+#ifdef __PALM_OS__
+        char buf[256]; // 1024 is too big overflow the stack
+#else
+        char buf[1024];
+#endif
+        va_list va;
+
+        if (!(g_scumm->_debugFlags & channel))
+                return;
+
+        va_start(va, s);
+        vsprintf(buf, s, va);
+        va_end(va);
+
+	debug(buf);
+};
+	
 ScummDebugger::ScummDebugger(ScummEngine *s)
 	: Common::Debugger<ScummDebugger>() {
 	_vm = s;
@@ -80,6 +98,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
 
 	DCmd_Register("level", &ScummDebugger::Cmd_DebugLevel);
+	DCmd_Register("debug", &ScummDebugger::Cmd_Debug);
 	DCmd_Register("help", &ScummDebugger::Cmd_Help);
 
 	DCmd_Register("show", &ScummDebugger::Cmd_Show);
@@ -518,6 +537,65 @@ bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 
 	return true;
 }
+
+bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
+	int numChannels = sizeof(debugChannels) / sizeof(dbgChannelDesc);
+
+	bool setFlag = false;	// Remove or add debug channel?
+
+	if ((argc == 1) && (_vm->_debugFlags == 0)) {
+		DebugPrintf("No debug flags are enabled\n");
+		DebugPrintf("Available Channels: ");
+		for (int i = 0; i < numChannels; i++) {
+			DebugPrintf("%s, ", debugChannels[i].channel);
+		}
+		DebugPrintf("\n");
+		return true;
+	}
+
+	if ((argc == 1) && (_vm->_debugFlags > 0)) {
+		for (int i = 0; i < numChannels; i++) {
+			if(_vm->_debugFlags & debugChannels[i].flag)
+				DebugPrintf("%s - %s\n", debugChannels[i].channel, 
+							 debugChannels[i].desc);
+		}
+		return true;
+	}
+
+	// Enable or disable channel?
+	if (argv[1][0] == '+') {
+		setFlag = true;
+	} else if (argv[1][0] == '-') {
+		setFlag = false;
+	} else {
+		DebugPrintf("Syntax: Debug +CHANNEL, or Debug -CHANNEL\n");
+		DebugPrintf("Available Channels: ");
+		for (int i = 0; i < numChannels; i++) {
+			DebugPrintf("%s, ", debugChannels[i].channel);
+			DebugPrintf("\n");
+		}
+	}
+
+	// Identify flag
+	const char *realFlag = argv[1] + 1;
+	for (int i = 0; i < numChannels; i++) {
+		if((scumm_stricmp(debugChannels[i].channel, realFlag)) == 0) {
+			if (setFlag) {
+				_vm->_debugFlags |= debugChannels[i].flag;
+				DebugPrintf("Enable ");
+			} else {
+				_vm->_debugFlags &= ~debugChannels[i].flag;
+				DebugPrintf("Disable ");
+			}
+
+			DebugPrintf("%s\n", debugChannels[i].desc);
+			return true;
+		}
+	}
+
+	DebugPrintf("Unknown flag. Type 'Debug ?' for syntax\n");
+	return true;
+};
 
 bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 	if (argc == 1) {

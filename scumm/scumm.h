@@ -38,6 +38,7 @@ namespace GUI {
 using GUI::Dialog;
 class GameDetector;
 
+
 namespace Scumm {
 
 class Actor;
@@ -109,6 +110,32 @@ enum ObjectClass {
 	kObjectClassXFlip = 30,
 	kObjectClassPlayer = 31,	// Actor is controlled by the player
 	kObjectClassUntouchable = 32
+};
+
+/* SCUMM Debug Channels */
+void CDECL debugC(int level, const char *s, ...);
+
+struct dbgChannelDesc {
+	const char *channel, *desc;
+	uint32 flag;
+};
+
+enum {
+	DEBUG_SCRIPTS	=	1 << 0,		// Track script execution (start/stop/pause)
+	DEBUG_OPCODES	=	1 << 1,		// Track opcode invocations
+	DEBUG_IMUSE	=	1 << 2,		// Track iMUSE events
+	DEBUG_RESOURCE	=	1 << 3,		// Track resource loading / allocation
+	DEBUG_VARS	=	1 << 4		// Track variable changes
+};
+
+
+// Debug channel lookup table for Debugger console
+static const dbgChannelDesc debugChannels[] = {
+	{"SCRIPTS", "Track script execution", DEBUG_SCRIPTS},
+	{"OPCODES", "Track opcode execution", DEBUG_OPCODES},
+	{"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
+	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
+	{"VARS", "Track variable changes", DEBUG_VARS}
 };
 
 struct MemBlkHeader {
@@ -313,6 +340,7 @@ public:
 	void clearClickedStatus();
 
 	// Misc utility functions
+	uint32 _debugFlags;
 	const char *getGameName() const { return _gameName.c_str(); }
 	const char *getGameDataPath() const;
 

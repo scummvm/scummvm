@@ -50,11 +50,17 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		scriptPtr = getResourceAddress(rtScript, script);
 		scriptOffs = _resourceHeaderSize;
 		scriptType = WIO_GLOBAL;
+
+		debugC(DEBUG_SCRIPTS, "runScript(Global-%d) from %d-%d", script, 
+				       vm.slot[_currentScript].number, _roomResource);
 	} else {
 		scriptOffs = _localScriptList[script - _numGlobalScripts];
 		if (scriptOffs == 0)
 			error("Local script %d is not in room %d", script, _roomResource);
 		scriptType = WIO_LOCAL;
+
+		debugC(DEBUG_SCRIPTS, "runScript(%d) from %d-%d", script, 
+				       vm.slot[_currentScript].number, _roomResource);
 	}
 
 	slot = getScriptSlot();

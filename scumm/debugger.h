@@ -57,6 +57,7 @@ protected:
 
 	bool Cmd_PrintDraft(int argc, const char **argv);
 
+	bool Cmd_Debug(int argc, const char **argv);
 	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
 
