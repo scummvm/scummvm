@@ -1936,7 +1936,6 @@ void Scumm::o5_soundKludge()
                         	return;
 		}
 
-                _scriptPointer--;
 		o5_breakHere();
 	}
 
