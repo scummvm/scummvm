@@ -4543,7 +4543,7 @@ void SimonEngine::delay(uint amount) {
  					break;
 
 				case OSystem::EVENT_QUIT:
-					_system->quit();
+					shutdown();
 					break;
 				
 				default:
