@@ -351,10 +351,10 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void MainMenuDialog::save() {
 	int idx;
-	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	_saveDialog->setList(generateSavegameList(_vm, true));
-	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	idx = _saveDialog->runModal();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	if (idx >= 0) {
 		const String &result = _saveDialog->getResultString();
 		char buffer[20];
