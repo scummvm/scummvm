@@ -274,27 +274,8 @@ int SimonState::runScript()
 		case 53:{									/* random */
 				uint var = getVarOrByte();
 				uint value = (uint16)getVarOrWord();
-				uint rand_value;
 
-				for (;;) {
-					uint value_2 = value;
-					rand_value = _rnd.getRandomNumber(0xffff) & 0x7FFF;
-
-					if (value == 0)
-						error("Invalid random range");
-
-					value = 0x8000 / value;
-
-					if (value == 0)
-						error("Invalid random range");
-
-					if (rand_value / value != value_2)
-						break;
-
-					value = value_2;
-				}
-
-				writeVariable(var, rand_value / value);
+				writeVariable(var, _rnd.getRandomNumber(value - 1));
 			}
 			break;
 
@@ -535,12 +516,12 @@ int SimonState::runScript()
 
 		case 98:{									/* start vga */
 				if (!(_game & GAME_SIMON2)) {
-					uint a = getVarOrWord();
-					uint b = getVarOrByte();
-					uint c = getVarOrWord();
+					uint b = getVarOrWord();
+					uint c = getVarOrByte();
 					uint d = getVarOrWord();
+					uint e = getVarOrWord();
 					uint f = getVarOrWord();
-					start_vga_code(b, a / 100, a, c, d, f);
+					start_vga_code(c, b / 100, b, d, e, f);
 				} else {
 					uint a = getVarOrWord();
 					uint b = getVarOrWord();
@@ -919,8 +900,7 @@ int SimonState::runScript()
 			break;
 
 		case 161:{									/* setup text */
-				uint value = getVarOrByte();
-				ThreeValues *tv = getThreeValues(value);
+				ThreeValues *tv = getThreeValues(getVarOrByte());
 
 				tv->a = getVarOrWord();
 				tv->b = getVarOrByte();
@@ -1000,41 +980,31 @@ int SimonState::runScript()
 			break;
 
 		case 179:{
+				uint b = getVarOrByte();
+				uint c = getVarOrByte();
+				uint a = getVarOrByte();
+
 				if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
-					uint b = getVarOrByte();
-					/*uint c = */ getVarOrByte();
-					uint a = getVarOrByte();
 					uint d = _array_4[a];
 					if (d != 0)
 						talk_with_speech(d, b);
 				} else if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
-					uint b = getVarOrByte();
-					uint c = getVarOrByte();
-					uint a = getVarOrByte();
 					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
 					ThreeValues *tv = getThreeValues(b);
 
 					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
 				} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
-					uint b = getVarOrByte();
-					uint c = getVarOrByte();
-					uint a = getVarOrByte();
-					uint d;
 					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
 					ThreeValues *tv = getThreeValues(b);
+					uint d = _array_4[a];
 
-					d = _array_4[a];
 					if (d != 0 && !_vk_t_toggle)
 						talk_with_speech(d, b);
 
 					if (s != NULL && _vk_t_toggle)
 						talk_with_text(b, c, s, tv->a, tv->b, tv->c);
 				} else if (_game == GAME_SIMON2DOS) {
-					uint b = getVarOrByte();
-					uint c = getVarOrByte();
-					uint a = getVarOrByte();
 					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
-
 					ThreeValues *tv = getThreeValues(b);
 
 					if (s != NULL)
@@ -1248,7 +1218,7 @@ bool SimonState::o_unk_23(uint a)
 		return 0;
 	}
 
-	if (((uint) (_rnd.getRandomNumber(100) >> 5)) % 100 < a) {
+	if ((uint)_rnd.getRandomNumber(99) < a) {
 		if (_script_unk_1 <= 0)
 			_script_unk_1 -= 5;
 		else
