@@ -151,21 +151,4 @@ public:
 	int size() const	{ return _size; }
 };
 
-
-/*
- * Finally, a piece of sample code that does print out the content of your root directory:
-
-void test_FS_stuff() {
-	FilesystemNode *root = FilesystemNode::getRoot();
-	FSList *filesInRoot = root->listDir();
-	
-	printf("Content of your root directory:\n");
-	for (int i = 0; i < filesInRoot->size(); i++) {
-		const FilesystemNode &node = (*filesInRoot)[i];
-		printf("File: '%s', path: '%s'\n", node.displayName().c_str(), node.path().c_str());
-	}
-}
-
- *
- */
 #endif
