@@ -534,7 +534,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
 	// from being interrupted.
 
-	int talkChannel = (_talkChannelHandle - 1);
+	int talkChannel = (_talkChannelHandle - 1);	// EVIL HACK!!!
 	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
 		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
 		for (i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
