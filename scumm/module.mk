@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	scumm/base-costume.o \
 	scumm/bomp.o \
 	scumm/boxes.o \
-	scumm/bundle.o \
 	scumm/camera.o \
 	scumm/charset.o \
 	scumm/costume.o \
@@ -15,7 +14,6 @@ MODULE_OBJS := \
 	scumm/dialogs.o \
 	scumm/gfx.o \
 	scumm/imuse.o \
-	scumm/imuse_digi.o \
 	scumm/imuse_player.o \
 	scumm/instrument.o \
 	scumm/help.o \
@@ -45,6 +43,11 @@ MODULE_OBJS := \
 	scumm/usage_bits.o \
 	scumm/vars.o \
 	scumm/verbs.o \
+	scumm/imuse_digi/dimuse.o \
+	scumm/imuse_digi/dimuse_bndmgr.o \
+	scumm/imuse_digi/dimuse_codecs.o \
+	scumm/imuse_digi/dimuse_sndmgr.o \
+	scumm/imuse_digi/dimuse_tables.o \
 	scumm/smush/chunk.o \
 	scumm/smush/codec1.o \
 	scumm/smush/codec37.o \
