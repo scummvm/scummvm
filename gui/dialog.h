@@ -66,8 +66,8 @@ public:
 	
 	NewGui	*getGui()	{ return _gui; }
 	
-	void	setupScreenBuf();
-	void	teardownScreenBuf();
+	virtual void	setupScreenBuf();
+	virtual void	teardownScreenBuf();
 
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any
@@ -117,6 +117,11 @@ public:
 			else
 				Dialog::handleKeyDown(key, modifiers);
 		}
+
+	// Enforce no transparency!
+	virtual void	setupScreenBuf() {}
+	virtual void	teardownScreenBuf() {}
+
 };
 
 #endif
