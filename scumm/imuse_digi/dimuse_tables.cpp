@@ -788,9 +788,9 @@ const imuse_ft_music_table _ftSeqMusicTable[] = {
 	{"",         0,  0,    ""				     },
 
 	{"bornbad",  2,  127,  "seqCredits"          },
-	{"hammvox",  0,  0,	   ""			         },
-	{"legavox",  0,  0,	   ""			         },
-	{"chances",  0,  0,	   ""			         },
+	{"hammvox",  2,  127,  ""			         },
+	{"legavox",  2,  127,  ""			         },
+	{"chances",  2,  90,   ""			         },
 };
 #endif
 
