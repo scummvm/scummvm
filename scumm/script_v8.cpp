@@ -544,13 +544,7 @@ void ScummEngine_v8::readArrayFromIndexFile() {
 		a = _fileHandle.readUint32LE();
 		b = _fileHandle.readUint32LE();
 		
-		// WORKAROUND: seems the COMI scripts have a bug related to array 436.
-		// and visible in script 2015, room 20. Basically, the dimensions
-		// are swapped in the definition of the array, but its obvious
-		// that this must be a script bug simply by looking at the defintions
-		// of other arrays and how they are used.
-		// Talk to fingolfin if you have questions about this :-)
-		if (num == 436)
+		if (b != 0)
 			defineArray(num, 5, b, a);
 		else
 			defineArray(num, 5, a, b);
