@@ -26,6 +26,10 @@
 #include "dialog.h"
 #include "scumm/dialogs.h"
 
+#ifdef _MSC_VER
+#	pragma warning( disable : 4068 ) // unknown pragma
+#endif
+
 /*
  * TODO list
  * - get a nicer font which contains diacrits (ŠšŸ§Žˆ etc.)
@@ -126,7 +130,7 @@ void NewGui::loop()
 		
 			switch(t.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-					activeDialog->handleKeyDown(t.kbd.ascii, t.kbd.flags);
+					activeDialog->handleKeyDown((byte)t.kbd.ascii, t.kbd.flags);
 
 					// init continuous event stream
 					_currentKeyDown = t.kbd.ascii;
@@ -135,7 +139,7 @@ void NewGui::loop()
 					_keyRepeatLoopCount = 0;
 					break;
 				case OSystem::EVENT_KEYUP:
-					activeDialog->handleKeyUp(t.kbd.ascii, t.kbd.flags);
+					activeDialog->handleKeyUp((byte)t.kbd.ascii, t.kbd.flags);
 					if (t.kbd.ascii == _currentKeyDown)
 						// only stop firing events if it's the current key
 						_currentKeyDown = 0;

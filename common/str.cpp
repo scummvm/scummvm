@@ -22,6 +22,10 @@
 #include "str.h"
 #include "util.h"
 
+#ifdef _MSC_VER
+#	pragma warning( disable : 4068 ) // unknown pragmas
+#endif
+
 namespace ScummVM {
 
 String::String(const char *str)

@@ -30,6 +30,11 @@
 #include "common/config-file.h"
 
 
+#ifdef _MSC_VER
+#	pragma warning( disable : 4068 )
+#endif
+
+
 struct ResString {
 	int num;
 	char string[80];

@@ -98,7 +98,7 @@ void GameDetector::updateconfig()
 
 	_music_volume = scummcfg->getInt("music_volume", _music_volume);
 
-	_noSubtitles = scummcfg->getBool("nosubtitles", _noSubtitles);
+	_noSubtitles = scummcfg->getBool("nosubtitles", _noSubtitles ? true : false);
 
 	if ((val = scummcfg->get("path")))
 		_gameDataPath = strdup(val);
@@ -193,7 +193,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'n':
 				CHECK_OPTION();
 				_noSubtitles = (c == 'n');
-				scummcfg->setBool("nosubtitles", _noSubtitles);
+				scummcfg->setBool("nosubtitles", _noSubtitles ? true : false);
 				break;
 			case 'p':
 				HANDLE_OPTION();

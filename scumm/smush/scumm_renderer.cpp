@@ -266,7 +266,8 @@ void ScummRenderer::save(int32 frame) {
 }
 
 bool ScummRenderer::prematureClose() { 
-	return _scumm->videoFinished; 
+	
+	return _scumm->videoFinished ? true : false;
 }
 
 bool ScummRenderer::update() {

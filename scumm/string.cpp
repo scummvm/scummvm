@@ -621,7 +621,7 @@ void Scumm::drawString(int a)
 byte *Scumm::addMessageToStack(byte *msg)
 {
 	int num, numorg;
-	byte *ptr, chr;
+	unsigned char *ptr, chr;
 
 	numorg = num = _numInMsgStack;
 	ptr = getResourceAddress(rtTemp, 6);
@@ -640,7 +640,6 @@ while ((ptr[num++] = chr = *msg++) != 0) {
 
 		if (chr == 0xff) {	// 0xff is an escape character			
 			ptr[num++] = chr = *msg++;	// followed by a "command" code 
-
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
 				ptr[num++] = *msg++;	// and some commands are followed by parameters to the functions below
 				ptr[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
@@ -687,9 +686,11 @@ while ((ptr[num++] = chr = *msg++) != 0) {
 				*_msgPtrToAdd++ = ptr[num++];
 				*_msgPtrToAdd++ = ptr[num++];
 				break;
-			default:
+			default: 
+				warning("addMessageToStack(): string escape sequence %d unknown", chr);
 				*_msgPtrToAdd++ = 0xFF;
 				*_msgPtrToAdd++ = chr;
+				break;
 			}
 		} else {
 			if (chr != '@') {

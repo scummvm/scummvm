@@ -23,6 +23,10 @@
 #include "dialog.h"
 #include "newgui.h"
 
+#ifdef _MSC_VER
+#	pragma warning( disable : 4068 ) // unknown pragma
+#endif
+
 
 Widget::Widget (Dialog *boss, int x, int y, int w, int h)
 	: _type(0), _boss(boss), _x(x), _y(y), _w(w), _h(h),
@@ -57,7 +61,7 @@ void Widget::draw()
 	}
 	
 	// Now perform the actual widget draw
-	drawWidget(_flags & WIDGET_HILITED);
+	drawWidget((_flags & WIDGET_HILITED) ? true : false);
 
 	// Restore x/y
 	if (_flags & WIDGET_BORDER) {

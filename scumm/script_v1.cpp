@@ -851,7 +851,7 @@ void Scumm::o5_setClass()
 		if (_gameId == GID_INDY3_256)
 			newClass--;
 
-		putClass(obj, newClass, (newClass & 0x80));
+		putClass(obj, newClass, (newClass & 0x80) ? true : false);
 	}
 }
 
@@ -1379,7 +1379,7 @@ void Scumm::o5_ifState()
 {
 	int a = getVarOrDirectWord(0x80);
 	int b = getVarOrDirectByte(0x40);
-	bool isNegated = _opcode & 0x20;
+	bool isNegated = (_opcode & 0x20) ? true : false;
 
 	if ((getState(a) != b) ^ isNegated)
 		o5_jumpRelative();

@@ -1084,9 +1084,9 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx)
 			dw = 500000;  // for sanity
 		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
 		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
-		*ptr++ = (dw >> 16) & 0xFF;
-		*ptr++ = (dw >> 8) & 0xFF;
-		*ptr++ = dw & 0xFF;
+		*ptr++ = (byte)((dw >> 16) & 0xFF);
+		*ptr++ = (byte)((dw >> 8) & 0xFF);
+		*ptr++ = (byte)(dw & 0xFF);
 		memcpy(ptr, OLD256_MIDI_HACK, sizeof(OLD256_MIDI_HACK) - 1);
 		ptr += sizeof(OLD256_MIDI_HACK) - 1;
 		memcpy(ptr, track, size);

@@ -256,7 +256,7 @@ int Actor::updateActorDirection(bool is_walking)
 
 	from = toSimpleDir(dirType, facing);
 	dir = remapDirection(newDirection, is_walking);
-	shouldInterpolate = (dir & 1024);
+	shouldInterpolate = (dir & 1024) ? true : false;
 	to = toSimpleDir(dirType, dir & 1023);
 	num = dirType ? 8 : 4;
 

@@ -142,7 +142,7 @@ bool Scumm::loadState(int slot, bool compat)
 	int old_screenEffectFlag = _screenEffectFlag;
 	_screenEffectFlag = true;
 	fadeOut(129);
-	_screenEffectFlag = old_screenEffectFlag;
+	_screenEffectFlag = old_screenEffectFlag ? true : false;
 
 	initScreens(0, sb, _realWidth, sh);
 
