@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	backends/midi/morphos.o \
 	backends/midi/null.o \
 	backends/midi/quicktime.o \
+	backends/midi/seq.o \
 	backends/midi/alsa.o \
 	backends/midi/windows.o
 
