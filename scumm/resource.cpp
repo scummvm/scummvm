@@ -632,7 +632,7 @@ int ScummEngine::loadResource(int type, int idx) {
 	if (type == rtRoom) {
 		if (_version == 8)
 			fileOffs = 8;
-		if (_heversion >= 70)
+		else if (_heversion >= 70)
 			fileOffs = _HEV7RoomIntOffsets[idx];
 		else
 			fileOffs = 0;
