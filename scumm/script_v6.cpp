@@ -2428,6 +2428,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			_smushFrameRate = args[1];
 			break;
 		case 16:
+		case 17:
 			if (_gameId == GID_DIG) {
 				byte buf_input[300], buf_output[300], buf_trans[300], *ptr = buf_input;
 				char *t_ptr = (char *)ptr;
@@ -2471,9 +2472,6 @@ void Scumm_v6::o6_kernelSetFunctions() {
 				_string[0].ypos = args[4];
 				drawDescString(getStringAddressVar(VAR_STRING2DRAW));
 			}
-			break;
-		case 17:
-			warning("o6_kernelSetFunctions: stub17(%d,%d,%d,%d)", args[1], args[2], args[3], args[4]);
 			break;
 		case 18:
 			warning("o6_kernelSetFunctions: stub18(%d,%d)", args[1], args[2]);
