@@ -22,6 +22,7 @@
 #define COMMON_LIST_H
 
 #include "scummsys.h"
+#include <assert.h>
 
 namespace ScummVM {
 
