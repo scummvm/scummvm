@@ -234,11 +234,16 @@ public:
 	int framesCount;			// Actor's frames count
 	int frameListResourceId;	// Actor's frame list resource id
 	
-//	int walkPath[ACTOR_STEPS_MAX]; //todo: will gone
-	int walkStepsCount;
+	//int walkPath[ACTOR_STEPS_MAX]; //todo: will gone
+
+	int tileDirectionsAlloced;
+	byte *tileDirections;
+
 	int walkStepsAlloced;
-	int walkStepIndex;
 	Point *walkStepsPoints;
+
+	int walkStepsCount;
+	int walkStepIndex;
 
 	Location finalTarget;
 	Location partialTarget;
@@ -260,11 +265,13 @@ public:
 	ActorData() {
 		memset(this, 0xFE, sizeof(*this)); 
 		walkStepsPoints = NULL;
-		walkStepsAlloced = walkStepsCount = walkStepIndex = 0;
+		tileDirectionsAlloced = walkStepsAlloced = walkStepsCount = walkStepIndex = 0;
+		tileDirections = NULL;
 		memset(&spriteList, 0, sizeof(spriteList));
 	}
 	~ActorData() {
 		free(frames);
+		free(tileDirections);
 		free(walkStepsPoints);
 		spriteList.freeMem();
 	}

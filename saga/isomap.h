@@ -66,6 +66,7 @@ namespace Saga {
 
 #define SAGA_STRAIGHT_HARD_COST				9
 #define SAGA_DIAG_HARD_COST					10
+#define SAGA_MAX_PATH_DIRECTIONS			256
 
 enum TerrainTypes {
 	kTerrNone	= 0,
@@ -161,7 +162,10 @@ public:
 		position.x = location.u() - location.v() + (128 * SAGA_TILEMAP_W) - _viewScroll.x + 16;
 		position.y = -((location.u() + location.v()) >> 1) + (128 * SAGA_TILEMAP_W) - _viewScroll.y - location.z;
 	}
+	void screenPointToTileCoords(const Point &position, Location &location);
 	void placeOnTileMap(const Location &start, Location &result, int16 distance, uint16 direction);
+	void findTilePath(ActorData* actor, const Location &start, const Location &end);
+	bool nextTileTarget(ActorData* actor);
 	
 private:
 	void drawTiles(SURFACE *ds, const Location *location);
@@ -242,6 +246,8 @@ private:
 	
 	int16 _queueCount;
 	SearchArray _searchArray;
+	byte _pathDirections[SAGA_MAX_PATH_DIRECTIONS];
+
 
 	int _viewDiff;
 	Point _viewScroll;

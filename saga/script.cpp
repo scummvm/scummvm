@@ -36,6 +36,7 @@
 #include "saga/events.h"
 #include "saga/actor.h"
 #include "saga/objectmap.h"
+#include "saga/isomap.h"
 
 namespace Saga {
 
@@ -607,7 +608,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 
 	// tiled stuff
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+		_vm->_isoMap->screenPointToTileCoords(mousePoint, pickLocation);
 	} else {
 		pickLocation.fromScreenPoint(mousePoint);
 	}
@@ -637,7 +638,9 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 			
 			// tiled stuff
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				//todo: it
+				pickLocation.u() = specialPoint.x;
+				pickLocation.v() = specialPoint.y;
+				pickLocation.z = _vm->_actor->_protagonist->location.z;
 			} else {
 				pickLocation.fromScreenPoint(specialPoint);
 			}
@@ -679,6 +682,7 @@ void Script::whichObject(const Point& mousePoint) {
 	Location pickLocation;
 	int hitZoneIndex;
 	const HitZone * hitZone;
+	Point tempPoint;
 
 	objectId = ID_NOTHING;
 	objectFlags = 0;
@@ -718,7 +722,9 @@ void Script::whichObject(const Point& mousePoint) {
 
 		if (newObjectId == ID_NOTHING) {		
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				//todo: it
+				tempPoint = mousePoint;
+				tempPoint.y -= _vm->_actor->_protagonist->location.z;
+				_vm->_isoMap->screenPointToTileCoords(tempPoint, pickLocation);
 			} else {
 				pickLocation.x = mousePoint.x;
 				pickLocation.y = mousePoint.y;

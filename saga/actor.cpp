@@ -768,6 +768,7 @@ void Actor::handleActions(int msec, bool setup) {
 	int hitZoneIndex;
 	const HitZone *hitZone;
 	Point hitPoint;
+	Location pickLocation;
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
@@ -823,7 +824,66 @@ void Actor::handleActions(int msec, bool setup) {
 			case kActionWalkToLink:
 				// tiled stuff
 				if (_vm->_scene->getFlags() & kSceneFlagISO) {
-					//todo: it
+					actor->partialTarget.delta(actor->location, delta);
+					
+					while ((delta.u() == 0) && (delta.v() == 0)) {
+
+						if ((actor == _protagonist) && (_vm->_interface->_playfieldClicked)) {
+							_vm->_isoMap->screenPointToTileCoords(_vm->getMousePos(), pickLocation);
+
+							if(!actorWalkTo(_protagonist->id, pickLocation)) {
+								break;
+							}
+						} else {
+								if (!_vm->_isoMap->nextTileTarget(actor)) {
+									if (!actorEndWalk(actor->id, true)) {
+										break;
+									}
+								}
+						}
+
+						actor->partialTarget.delta(actor->location, delta);						
+						actor->partialTarget.z = 0;						
+					}
+
+					speed = 4;
+					if (actor->flags & kFastest) {
+						speed = 8;
+					} else {
+						if (actor->flags & kFaster) {
+							speed = 6;
+						}
+					}
+
+					if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE) {
+						speed = 2;
+					}
+
+					if ((actor->actionDirection == 2) || (actor->actionDirection == 6)) {
+						speed = speed / 2;
+					}
+
+					if (ABS(delta.v()) > ABS(delta.u())) {
+						addDelta.v() = clamp( -speed, delta.v(), speed );
+						if (addDelta.v() == delta.v()) {
+							addDelta.u() = delta.u();
+						} else {
+							addDelta.u() = delta.u() * addDelta.v();
+							addDelta.u() += (addDelta.u() > 0) ? (delta.v() / 2) : (-delta.v() / 2);
+							addDelta.u() /= delta.v();
+						}
+					} else {  
+						addDelta.u() = clamp( -speed, delta.u(), speed );
+						if (addDelta.u() == delta.u()) {
+							addDelta.v() = delta.v();
+						} else {
+							addDelta.v() = delta.v() * addDelta.u();
+							addDelta.v() += (addDelta.v() > 0) ? (delta.u() / 2) : (-delta.u() / 2);
+							addDelta.v() /= delta.u();
+						}
+					}
+
+					actor->location.add(addDelta);
 				} else {
 					actor->partialTarget.delta(actor->location, delta);
 
@@ -902,7 +962,14 @@ void Actor::handleActions(int msec, bool setup) {
 			case kActionWalkDir:
 				// tiled stuff
 				if (_vm->_scene->getFlags() & kSceneFlagISO) {
-					//todo: it
+					actor->location.u() += tileDirectionLUT[actor->actionDirection][0];
+					actor->location.v() += tileDirectionLUT[actor->actionDirection][1];
+
+					frameRange = getActorFrameRange(actor->id, actor->walkFrameSequence);
+
+					actor->actionCycle++;
+					actor->cycleWrap(frameRange->frameCount);
+					actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
 				} else {
 					actor->location.x += directionLUT[actor->actionDirection][0] * 2;
 					actor->location.y += directionLUT[actor->actionDirection][1] * 2;
@@ -1008,13 +1075,14 @@ void Actor::handleActions(int msec, bool setup) {
 			hitZone = NULL;
 			// tiled stuff
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				//todo: it
+				hitPoint.x = actor->location.u();
+				hitPoint.y = actor->location.v();
 			} else {
 				actor->location.toScreenPointXY(hitPoint);
-				hitZoneIndex = _vm->_scene->_actionMap->hitTest(hitPoint);
-				if (hitZoneIndex != -1) {
-					hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
-				}
+			}
+			hitZoneIndex = _vm->_scene->_actionMap->hitTest(hitPoint);
+			if (hitZoneIndex != -1) {
+				hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
 			}
 
 			if (hitZone != actor->lastZone) {
@@ -1215,6 +1283,10 @@ bool Actor::followProtagonist(ActorData *actor) {
 	Point prefer1;
 	Point prefer2;
 	Point prefer3;
+	int16 prefU;
+	int16 prefV;
+	int16 newU;
+	int16 newV;
 	
 	assert(_protagonist);
 
@@ -1223,7 +1295,39 @@ bool Actor::followProtagonist(ActorData *actor) {
 	calcScreenPosition(_protagonist);
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+		prefU = 60;
+		prefV = 60;
+
+
+		actor->location.delta(protagonistLocation, delta);
+
+		if (actor->id == actorIndexToId(2)) {
+			prefU = prefV = 48;
+		}
+
+		if ((delta.u() > prefU) || (delta.u() < -prefU) || (delta.v() > prefV) || (delta.v() < -prefV)) {
+
+			if ((delta.u() > prefU * 2) || (delta.u() < -prefU * 2) || (delta.v() > prefV * 2) || (delta.v() < -prefV * 2)) {
+				actor->flags |= kFaster;
+
+				if ((delta.u() > prefU * 3) || (delta.u() < -prefU*3) || (delta.v() > prefV * 3) || (delta.v() < -prefV * 3)) {
+					actor->flags |= kFastest;
+				}
+			}
+
+			prefU /= 2;
+			prefV /= 2;
+
+			newU = clamp( -prefU, delta.u(), prefU ) + protagonistLocation.u();
+			newV = clamp( -prefV, delta.v(), prefV ) + protagonistLocation.v();
+
+			newLocation.u() = newU + (rand() % prefU) - prefU / 2;
+			newLocation.v() = newV + (rand() % prefV) - prefV / 2;
+			newLocation.z = 0;
+
+			return actorWalkTo(actor->id, newLocation);
+		}
+
 	} else {		
 		prefer1.x = (100 * _protagonist->screenScale) >> 8;
 		prefer1.y = (50 * _protagonist->screenScale) >> 8;
@@ -1253,8 +1357,6 @@ bool Actor::followProtagonist(ActorData *actor) {
 				protagonistBGMaskType = _vm->_scene->getBGMaskType(_protagonist->screenPosition);
 			}
 		}
-
-		
 
 		if ((rand() & 0x7) == 0)
 			actor->actorFlags &= ~kActorNoFollow;
@@ -1371,7 +1473,27 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 	}
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+
+		//todo: dragon stuff
+
+		actor->finalTarget = toLocation;
+		actor->walkStepsCount = 0;
+		_vm->_isoMap->findTilePath(actor, actor->location, toLocation);
+
+
+		if ((actor->walkStepsCount == 0) && (actor->flags & kProtagonist)) {
+			actor->actorFlags |= kActorNoCollide;
+			_vm->_isoMap->findTilePath(actor, actor->location, toLocation);
+		}
+
+		actor->walkStepIndex = 0;
+		if (_vm->_isoMap->nextTileTarget(actor)) {
+			actor->currentAction = kActionWalkToPoint;
+			actor->walkFrameSequence = kFrameWalk;
+		} else {
+			actorEndWalk( actorId, false);
+			return false;
+		}
 	} else {
 		
 		actor->location.toScreenPointXY(pointFrom);

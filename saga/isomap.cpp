@@ -99,6 +99,7 @@ IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_viewScroll.x = (128 - 8) * 16;
 	_viewScroll.x = (128 - 8) * 16 - 64;
 	_viewDiff = 1;
+
 }
 
 void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
@@ -1195,5 +1196,203 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 	result.v() = ((vBase + bestV) << 4) + 8;
 }
 
+void IsoMap::findTilePath(ActorData* actor, const Location &start, const Location &end) {
+	ActorData *other;
+	int i;
+	int16 u;
+	int16 v;
+	int16 bestDistance;
+	int16 bestU;
+	int16 bestV;
+
+	int16 uBase;
+	int16 vBase;
+	int16 uFinish;
+	int16 vFinish;
+
+	TilePoint tilePoint;
+	uint16 dir;
+	int16 dist;
+	uint16 terraComp[8];
+	const TilePoint *tdir;
+	uint16 terrainMask;
+	const PathCell *pcell;
+	byte *res;
+
+
+	bestDistance = SAGA_SEARCH_DIAMETER;
+	bestU = SAGA_SEARCH_CENTER,
+	bestV = SAGA_SEARCH_CENTER;
+
+	uBase = (start.u() >> 4) - SAGA_SEARCH_CENTER;
+	vBase = (start.v() >> 4) - SAGA_SEARCH_CENTER;
+	uFinish = (end.u() >> 4) - uBase;
+	vFinish = (end.v() >> 4) - vBase;
+
+	_platformHeight = _vm->_actor->_protagonist->location.z / 8;
+
+
+
+	memset( &_searchArray, 0, sizeof(_searchArray));
+
+	if (!(actor->actorFlags & kActorNoCollide) && 
+		(_vm->_scene->currentSceneNumber() != RID_ITE_OVERMAP_SCENE)) {
+			for (i = 0; i < _vm->_actor->_actorsCount; i++) {
+				other = _vm->_actor->_actors[i];
+				if (other->disabled) continue;
+				if (other->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
+				if (other==actor) continue;
+
+				u = (other->location.u() >> 4) - uBase;
+				v = (other->location.v() >> 4) - vBase;
+				if ((u >= 1) && (u < SAGA_SEARCH_DIAMETER) &&
+					(v >= 1) && (v < SAGA_SEARCH_DIAMETER) && 
+					((u != SAGA_SEARCH_CENTER) || (v != SAGA_SEARCH_CENTER))) {
+						_searchArray.getPathCell(u, v)->visited = 1;
+					}
+			}
+		}
+
+	_queueCount = 0;
+	pushPoint(SAGA_SEARCH_CENTER, SAGA_SEARCH_CENTER, 0, 0);
+
+
+	while (_queueCount > 0) {	
+
+		_queueCount--;
+		tilePoint = *_searchArray.getQueue(_queueCount);
+
+		if (tilePoint.cost > 100 && actor == _vm->_actor->_protagonist) continue;
+
+		dist = ABS(tilePoint.u - uFinish) + ABS(tilePoint.v - vFinish);
+
+		if (dist < bestDistance) {
+			bestU = tilePoint.u;
+			bestV = tilePoint.v;
+			bestDistance = dist;
+
+			if (dist == 0) {
+				break;
+			}
+		}
+
+		testPossibleDirections(uBase + tilePoint.u, vBase + tilePoint.v, terraComp, 
+			(tilePoint.u == SAGA_SEARCH_CENTER && tilePoint.v == SAGA_SEARCH_CENTER));
+
+		for (dir = 0; dir < 8; dir++) {
+			terrainMask = terraComp[dir];
+
+			if (terrainMask & SAGA_IMPASSABLE) {
+				continue;
+			} else {
+				if(terrainMask & (1 << kTerrRough)) {
+					tdir = &hardDirTable[ dir ];
+				} else {
+					if(terrainMask & (1 << kTerrNone)) {
+						tdir = &normalDirTable[ dir ];
+					} else {
+						tdir = &easyDirTable[ dir ];
+					}
+				}
+			}
+
+
+			pushPoint(tilePoint.u + tdir->u, tilePoint.v + tdir->v, tilePoint.cost + tdir->cost, dir);
+		}
+	}
+
+	res = &_pathDirections[SAGA_MAX_PATH_DIRECTIONS];
+	i = 0;
+	while ((bestU != SAGA_SEARCH_CENTER) || (bestV != SAGA_SEARCH_CENTER)) {
+		pcell = _searchArray.getPathCell(bestU, bestV);
+
+		*--res = pcell->direction;
+		i++;
+		if (i >= SAGA_MAX_PATH_DIRECTIONS) {
+			break;
+		}
+
+		dir = (pcell->direction + 4) & 0x07;
+
+		bestU += normalDirTable[dir].u;
+		bestV += normalDirTable[dir].v;
+	}
+
+	if (i > 64) {
+		i = 64;
+	}
+	actor->walkStepsCount = i;
+	if (i) {	
+		if (actor->tileDirectionsAlloced < i) {
+			actor->tileDirectionsAlloced = i;
+			actor->tileDirections = (byte*)realloc(actor->tileDirections, actor->tileDirectionsAlloced * sizeof(*actor->tileDirections));
+		}
+		memcpy(actor->tileDirections, res, i );
+	}
+}
+
+static const int16 directions[8][2] = {
+	{	16,		16},
+	{	16,		0},
+	{	16,		-16},
+	{	0,		-16},
+	{	-16,	-16},
+	{	-16,	0},
+	{	-16,	16},
+	{	0,		16}
+};
+
+
+bool IsoMap::nextTileTarget(ActorData* actor) {
+	uint16 dir;
+
+	if (actor->walkStepIndex >= actor->walkStepsCount) {
+		return false;
+	}
+
+
+	actor->actionDirection = dir = actor->tileDirections[actor->walkStepIndex++];
+
+	actor->partialTarget.u() =
+		(actor->location.u() & ~0x0f) + 8 + directions[dir][0];
+
+	actor->partialTarget.v() =
+		(actor->location.v() & ~0x0f) + 8 + directions[dir][1];
+
+
+	if (dir == 0) {
+		actor->facingDirection = kDirUp;
+	} else {
+		if (dir == 4) {
+			actor->facingDirection = kDirDown;
+		} else {
+			if (dir < 4) {
+				actor->facingDirection = kDirRight;
+			} else {
+				actor->facingDirection = kDirLeft;
+			}
+		}
+	}
+
+	return true;
+}
+
+void IsoMap::screenPointToTileCoords(const Point &position, Location &location) {
+	Point mPos(position);
+	int x,y;
+
+	if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE){
+		if (mPos.y < 16) {
+			mPos.y = 16;
+		}
+	}
+
+	x = mPos.x + _viewScroll.x - (128 * SAGA_TILEMAP_W) - 16;
+	y = mPos.y + _viewScroll.y - (128 * SAGA_TILEMAP_W) + _vm->_actor->_protagonist->location.z;
+
+	location.u() = (x - y * 2) >> 1;
+	location.v() = - (x + y * 2) >> 1;
+	location.z = _vm->_actor->_protagonist->location.z;
+}
 
 } // End of namespace Saga

@@ -66,6 +66,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	if (_initialized) {
 		return;
 	}
+	
+	_playfieldClicked = false;
 
 	// Load interface module resource file context
 	_interfaceContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
@@ -370,7 +372,7 @@ int Interface::draw() {
 
 int Interface::update(const Point& mousePoint, int updateFlag) {
 	SURFACE *backBuffer;
-
+	
 	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade)
 		return SUCCESS;
 
@@ -382,7 +384,6 @@ int Interface::update(const Point& mousePoint, int updateFlag) {
 		if (updateFlag & UPDATE_MOUSEMOVE) {
 	
 			if (mousePoint.y < _vm->getSceneHeight()) {
-				//handlePlayfieldUpdate(backBuffer, imousePointer);
 				_vm->_script->whichObject(mousePoint);
 			} else {
 				if (_lastMousePoint.y < _vm->getSceneHeight()) {
@@ -395,9 +396,9 @@ int Interface::update(const Point& mousePoint, int updateFlag) {
 
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				if (mousePoint.y < _vm->getSceneHeight()) {
-					//handlePlayfieldClick(backBuffer, mousePoint);
-					_vm->_script->playfieldClick(mousePoint, (updateFlag & UPDATE_LEFTBUTTONCLICK) != 0);
-										
+					_playfieldClicked = true;
+					_vm->_script->playfieldClick(mousePoint, (updateFlag & UPDATE_LEFTBUTTONCLICK) != 0);										
+					_playfieldClicked = false;
 				} else {
 					handleCommandClick(backBuffer, mousePoint);
 				}

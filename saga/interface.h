@@ -106,6 +106,8 @@ enum ITEColors {
 
 class Interface {
 public:
+	bool _playfieldClicked;
+
 	Interface(SagaEngine *vm);
 	~Interface(void);
 
