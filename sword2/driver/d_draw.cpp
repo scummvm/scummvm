@@ -561,6 +561,9 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		BS2_SetPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 		while (1) {
+			if (!text[textCounter])
+				break;
+
 			if (frameCounter == text[textCounter]->startFrame) {
 				EraseBackBuffer();
 				OpenTextObject(text[textCounter]);
@@ -571,9 +574,6 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 				CloseTextObject(text[textCounter]);
 				EraseBackBuffer();
 				textCounter++;
-
-				if (text[textCounter] == NULL)
-					break;
 			}
 
 			frameCounter++;
@@ -590,6 +590,9 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		}
 
 		BS2_SetPalette(0, 256, oldPal, RDPAL_INSTANT);
+
+		if (textSurface)
+			CloseTextObject(text[textCounter]);
 	}
 
 	return(RD_OK);
