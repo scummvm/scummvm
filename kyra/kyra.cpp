@@ -150,9 +150,6 @@ int KyraEngine::init(GameDetector &detector) {
 	_midiDriver->hasNativeMT32(native_mt32);
 	_midiDriver->setVolume(255);
 
-	if (midiDrv == MD_MT32)
-		_midiDriver->setPassThrough(true);
-
 	_resMgr = new Resourcemanager(this);
 	assert(_resMgr);
 
