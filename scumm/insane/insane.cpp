@@ -681,9 +681,20 @@ void Insane::readState(void) { // PATCH
 			error("Wrong INSANE parameters for EN_VULTF2 (%d %d). Please, report this", 
 				  _enemy[EN_VULTF2].isEmpty, _actor[0].inventory[INV_CHAINSAW]);
 
-		if (_enemy[EN_CAVEFISH].isEmpty != readArray(8))
-			error("Wrong INSANE parameters for EN_CAVEFISH (%d %d). Please, report this", 
-				  _enemy[EN_CAVEFISH].isEmpty, readArray(8));
+		// FIXME
+		// This used to be here but.
+		//  - bootparam 551 gives googles without cavefish met
+		//  - when you get the ramp, googles disappear, but you already won the cavefish
+		// Incorrect situation would be
+		//  you won cavefish, don't have googles, don't have ramp
+		//
+		// So if you find out what how to check ramp presense, feel free to add check here
+		// (beware of FT ver a and ver b. In version b var311 is inserted and all vars >311 
+		// are shifted),
+		// 
+		//if (_enemy[EN_CAVEFISH].isEmpty != readArray(8))
+		//	error("Wrong INSANE parameters for EN_CAVEFISH (%d %d). Please, report this", 
+		//		  _enemy[EN_CAVEFISH].isEmpty, readArray(8));
 	}
 }
 
