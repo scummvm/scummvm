@@ -623,8 +623,8 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 int32 IMuseDigital::getPosInMs(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		_track[l].locked = true;
-		if ((_track[l].soundId == soundId) && _track[l].used) {
-			int32 pos = 1000 * (_track[l].dataOffset + _track[l].regionOffset) / _track[l].iteration;
+		if ((_track[l].soundId == soundId) && (_track[l].used)) {
+			int32 pos = (5 * (_track[l].dataOffset + _track[l].regionOffset)) / (_track[l].iteration / 200);
 			_track[l].locked = false;
 			return pos;
 		}
@@ -645,8 +645,9 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 		_track[l].locked = false;
 	}
 
-	debug(5, "IMuseDigital::getCurMusicPosInMs(%d)", soundId);
-	return getPosInMs(soundId);
+	int32 msPos = getPosInMs(soundId);
+	debug(5, "IMuseDigital::getCurMusicPosInMs(%d) = %d", soundId, msPos);
+	return msPos;
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
@@ -681,7 +682,7 @@ int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
 	int32 msPos = getPosInMs(soundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d)", soundId);
+	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d, %d)", soundId, msPos);
 	getLipSync(soundId, syncId, msPos, width, height);
 	return width;
 }
@@ -700,7 +701,7 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 	int32 msPos = getPosInMs(soundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d)", soundId);
+	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d, %d)", soundId, msPos);
 	getLipSync(soundId, syncId, msPos, width, height);
 	return height;
 }
