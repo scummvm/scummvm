@@ -41,6 +41,10 @@ static SDL_CD      *cdrom;
 
 static int current_shake_pos;
 
+void resetCursor(void) {
+	SDL_ShowCursor(SDL_ENABLE);
+}
+
 void updateScreen(Scumm *s);
 
 void updatePalette(Scumm *s) {
@@ -113,7 +117,7 @@ void waitForTimer(Scumm *s, int msec_delay) {
 						warning("Full screen failed");
 				}
 
-	#if defined(__APPLE__)
+	#if defined(__APPLE__) || defined(MACOS)
 				if (event.key.keysym.sym=='q' && event.key.keysym.mod&KMOD_LMETA) {
 					exit(1);
 				} 
@@ -622,6 +626,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 
 	/* Clean up on exit */
  	atexit(SDL_Quit);
+	atexit(resetCursor);
 
 	char buf[512], *gameName;
 	
@@ -690,6 +695,40 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 int main(int argc, char* argv[]) {
 	int delta;
 	int last_time, new_time;
+	
+#if defined(MACOS) 
+	/* support for config file on macos */
+	
+	char *argitem;
+	char *argstr;
+	FILE *argf;
+	
+	if (( argf = fopen("configuration.macos", "r")) == NULL) {
+		error("Can't open configuration file.\n");
+		exit(1);
+	}
+	
+	argc=0;
+	argstr = (char *) malloc(64);
+	argstr = fgets(argstr, 64, argf);
+	if ((argitem = strchr(argstr, '\n'))!=NULL)
+		*argitem = '\0';
+	
+	argitem = strtok(argstr, " ");
+	
+	while (argitem!=NULL) {
+		argv = (char**) realloc(argv, (argc+1)*8);
+		argv[argc] = (char *) malloc(64);
+		strcpy(argv[argc], argitem);
+		argc++;	
+		
+		argitem = strtok(NULL, " ");
+	}
+	
+	free(argstr);
+	fclose(argf);
+	
+#endif
 
 	sound.initialize(&scumm, &snd_driv);
 
