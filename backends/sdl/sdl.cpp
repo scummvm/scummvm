@@ -204,6 +204,8 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	if (!_screen)
 		return;
 
+	StackLock lock(_mutex);	// Lock the mutex until this function ends
+
 	// Keep around the old _screen & _tmpscreen so we can restore the screen data
 	// after the mode switch.
 	SDL_Surface *old_screen = _screen;
