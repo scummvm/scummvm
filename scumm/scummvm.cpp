@@ -980,12 +980,13 @@ void Scumm::setScaleItem(int slot, int a, int b, int c, int d)
 
 void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2)
 {
-	_scaleSlots[slot].x2 = x2;
-	_scaleSlots[slot].y2 = y2;
-	_scaleSlots[slot].scale2 = scale2;
-	_scaleSlots[slot].x1 = x1;
-	_scaleSlots[slot].y1 = y1;
-	_scaleSlots[slot].scale1 = scale1;
+	assert(1 <= slot && slot <= 20);
+	_scaleSlots[slot-1].x2 = x2;
+	_scaleSlots[slot-1].y2 = y2;
+	_scaleSlots[slot-1].scale2 = scale2;
+	_scaleSlots[slot-1].x1 = x1;
+	_scaleSlots[slot-1].y1 = y1;
+	_scaleSlots[slot-1].scale1 = scale1;
 }
 
 void Scumm::dumpResource(char *tag, int idx, byte *ptr)

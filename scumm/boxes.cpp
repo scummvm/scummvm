@@ -136,9 +136,9 @@ int Scumm::getScale(int box, int x, int y)
 	if (_features & GF_AFTER_V8) {
 		int slot = FROM_LE_32(ptr->v8.scaleSlot);
 		if (slot) {
-			assert(0 <= slot && slot < 20);
+			assert(1 <= slot && slot <= 20);
 			int scaleX = 0, scaleY = 0;
-			ScaleSlot &s = _scaleSlots[slot];
+			ScaleSlot &s = _scaleSlots[slot-1];
 
 			if (s.y1 == s.y2 && s.x1 == s.x2)
 				error("Invalid scale slot %d", slot);
