@@ -256,14 +256,17 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 
 #ifdef USE_MAD
 	file->open(gss->mp3_filename, gameDataPath);
-	if (file->isOpen() == false) {
+	if (file->isOpen()) {
+		_voice_file = true;
+		_voice = new MP3Sound(_mixer, file);
+	}
 #endif
+	if (!file->isOpen()) {
 		// for simon2 mac/amiga, only read index file
 		if (_game == GAME_SIMON2MAC) {
 			file->open("voices.idx", gameDataPath);
 			if (file->isOpen() == false) {
 				warning("Can't open voice index file 'voices.idx'");
-				delete file;
 			} else {
 				file->seek(0, SEEK_END);
 				int end = file->pos();
@@ -277,11 +280,13 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 				}
 				_voice_file = true;
 			}
+			delete file;
 		} else if (_game & GF_WIN) {
 			s = gss->wav_filename;
 			file->open(s, gameDataPath);
 			if (file->isOpen() == false) {
 				warning("Can't open voice file %s", s);
+				delete file;
 			} else	{
 				_voice_file = true;
 				_voice = new WavSound(_mixer, file);
@@ -294,24 +299,23 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 			file->open(s, gameDataPath);
 			if (file->isOpen() == false) {
 				warning("Can't open voice file %s", s);
+				delete file;
 			} else {
 				_voice_file = true;
 				_voice = new VocSound(_mixer, file);
 			}
 		}
-#ifdef USE_MAD
-	} else {
-		_voice_file = true;
-		_voice = new MP3Sound(_mixer, file);
 	}
-#endif
 
 	if (_game == GAME_SIMON1ACORN || _game == GAME_SIMON1TALKIE) {
 		file = new File();
 #ifdef USE_MAD
 		file->open(gss->mp3_effects_filename, gameDataPath);
-		if (file->isOpen() == false) {
+		if (file->isOpen()) {
+			_effects = new MP3Sound(_mixer, file);
+		}
 #endif
+		if (!file->isOpen()) {
 			s = gss->voc_effects_filename;
 			file->open(s, gameDataPath);
 			if (file->isOpen() == false) {
@@ -319,11 +323,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 			} else {
 				_effects = new VocSound(_mixer, file);
 			}
-#ifdef USE_MAD
-		} else {
-			_effects = new MP3Sound(_mixer, file);
 		}
-#endif
 	}
 }
 
@@ -408,6 +408,7 @@ void SimonSound::playVoice(uint sound) {
 		} 
 		// FIXME freeing voice at this point causes frequent game crashes
 		// Maybe related to sound effects and speech using same sound format ?
+		// In any case, this means we currently leak.
 		// delete _voice;
 		_voice = new WavSound(_mixer, file, _offsets);
 	}
