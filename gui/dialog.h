@@ -64,6 +64,7 @@ protected:
 	virtual void close();
 
 	virtual void draw();
+	virtual void drawDialog();
 
 	virtual void handleTickle(); // Called periodically (in every guiloop() )
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);

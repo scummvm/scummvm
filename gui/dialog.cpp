@@ -97,6 +97,11 @@ void Dialog::close()
 
 void Dialog::draw()
 {
+	_gui->_needRedraw = true;
+}
+
+void Dialog::drawDialog()
+{
 	Widget *w = _firstWidget;
 	
 	if (!isVisible())

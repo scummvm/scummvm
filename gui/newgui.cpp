@@ -119,7 +119,7 @@ void NewGui::runLoop()
 			_system->clear_overlay();
 			_system->grab_overlay(_screen, _screenPitch);
 			for (int i = 0; i < _dialogStack.size(); i++)
-				_dialogStack[i]->draw();
+				_dialogStack[i]->drawDialog();
 			_needRedraw = false;
 		}
 		
