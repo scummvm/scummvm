@@ -403,7 +403,7 @@ Credits:
 
  Contributors:
         Claudio Matsuoka   - Daily builds (http://scummvm.sf.net/daily/)
-        Janne Huttunen     - Zak256/Indy256/LoomCD actor mask support
+        Janne Huttunen     - V3 actor mask support, Dig/FT SMUSH audio
         Jeroen Janssen     - Numerous readability and bugfix patches
         Gregory Montoir    - AdvanceMAME Scale-2X implementation
         Mikesch Nepomuk    - MI1 VGA Floppy patches.
