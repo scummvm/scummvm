@@ -456,18 +456,22 @@ const char *Logic::roomName(uint16 roomNum) const {
 }
 
 const char *Logic::objectName(uint16 objNum) const {
+	assert(objNum >= 1 && objNum <= _numNames);
 	return _objName[objNum].c_str();
 }
 
 const char *Logic::objectTextualDescription(uint16 objNum) const {
+	assert(objNum >= 1 && objNum <= _numDescriptions);
 	return _objDescription[objNum].c_str();
 }
 
 const char *Logic::joeResponse(int i) const {
+	assert(i >= 1 && i <= JOE_RESPONSE_MAX);
 	return _joeResponse[i].c_str();
 }
 	
 const char *Logic::verbName(Verb v) const {
+	assert(v >= 0 && v <= 12);
 	return _verbName[v].c_str();
 }
 
@@ -2034,6 +2038,7 @@ void Logic::startCredits(const char *filename) {
 
 void Logic::stopCredits() {
 	if (_credits) {
+		_vm->display()->clearTexts(0, 199);
 		delete _credits;
 		_credits = NULL;
 	}

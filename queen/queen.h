@@ -108,6 +108,7 @@ public:
 
 	void update(bool checkPlayerInput = false);
 
+	bool canLoadOrSave();
 	void saveGameState(uint16 slot, const char *desc);
 	void loadGameState(uint16 slot);
 	void makeGameStateName(uint16 slot, char *buf);

@@ -134,10 +134,8 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 	uint8 colMask = _dynalum.mskBuf[offset];
 	debug(9, "Display::dynalumUpdate(%d, %d) - colMask = %d", x, y, colMask);
 	if (colMask != _dynalum.prevColMask) {
-		uint8 i;
-		for (i = 144; i < 160; ++i) {
-			uint8 j;
-			for (j = 0; j < 3; ++j) {
+		for (int i = 144; i < 160; ++i) {
+			for (int j = 0; j < 3; ++j) {
 				int16 c = (int16)(_pal.room[i * 3 + j] + _dynalum.lumBuf[colMask * 3 + j] * 4);
 				if (c < 0) {
 					c = 0;
@@ -154,8 +152,7 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 }
 
 void Display::palConvert(uint8 *outPal, const uint8 *inPal, int start, int end) {
-	int i;
-	for (i = start; i <= end; i++) {
+	for (int i = start; i <= end; i++) {
 		outPal[4 * i + 0] = inPal[3 * i + 0];
 		outPal[4 * i + 1] = inPal[3 * i + 1];
 		outPal[4 * i + 2] = inPal[3 * i + 2];
@@ -233,13 +230,10 @@ void Display::palFadeOut(uint16 roomNum) {
 
 void Display::palGreyPanel() {
 	debug(9, "Display::palGreyPanel()");
-	int i;
 	uint8 tempPal[256 * 3];
-	for (i = 224 * 3; i < 256 * 3; i += 3) {
-		uint8 *p = tempPal + i;
-		*(p) = *(p + 1) = *(p + 2) = _pal.screen[i + 1] * 2 / 3;
+	for (int i = 224 * 3; i < 256 * 3; i += 3) {
+		tempPal[i] = tempPal[i + 1] = tempPal[i + 2] = _pal.screen[i + 1] * 2 / 3;
 	}
-
 	palSet(tempPal, 224, 255, true);
 }
 
@@ -505,19 +499,9 @@ void Display::palCustomScroll(uint16 roomNum) {
 
 void Display::palCustomFlash() {
 	uint8 tempPal[256 * 3];
-	int i = 0;
-	while (i < 17 * 3) {
-		tempPal[i] = 255;
-		++i;
-	}
-	while (i < 84 * 3) {
-		tempPal[i] = 0;
-		++i;
-	}
-	while (i < 256 * 3) {
-		tempPal[i] = 255;
-		++i;
-	}
+	memset(tempPal, 255, 17 * 3);
+	memset(tempPal + 17 * 3, 0, 67 * 3);
+	memset(tempPal + 67 * 3, 255, 172 * 3);
 	// set flash palette
 	palSet(tempPal, 0, 255, true);
 	// restore original palette
@@ -622,22 +606,21 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		uint16 count = 0;
 		uint8 *scrBuf = _screenBuf;
 		uint8 *dbBuf = _dirtyBlocks;
-		uint16 i, j, x;
-		for (j = 0; j < _dirtyBlocksHeight; ++j) {
+		for (int j = 0; j < _dirtyBlocksHeight; ++j) {
 			uint16 accW = 0;
-			for (i = 0; i < _dirtyBlocksWidth; ++i) {
+			for (int i = 0; i < _dirtyBlocksWidth; ++i) {
 				if (dbBuf[i] != 0) {
 					--dbBuf[i];
 					++accW;
 				} else if (accW != 0) {
-					x = (i - accW) * D_BLOCK_W;
+					int x = (i - accW) * D_BLOCK_W;
 					_system->copyRectToScreen(scrBuf + x, SCREEN_W, x, j * D_BLOCK_H, accW * D_BLOCK_W, D_BLOCK_H);
 					accW = 0;
 					++count;
 				}
 			}
 			if (accW != 0) {
-				x = (_dirtyBlocksWidth - accW) * D_BLOCK_W;
+				int x = (_dirtyBlocksWidth - accW) * D_BLOCK_W;
 				_system->copyRectToScreen(scrBuf + x, SCREEN_W, x, j * D_BLOCK_H, accW * D_BLOCK_W, D_BLOCK_H);
 				++count;
 			}
@@ -873,8 +856,7 @@ void Display::setTextCentered(uint16 y, const char *text, bool outlined) {
 }
 
 void Display::drawTexts() {
-	int y;
-	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
+	for (int y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
 		const TextSlot *pts = &_texts[y];
 		if (!pts->text.isEmpty()) {
 			drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
@@ -908,12 +890,11 @@ uint16 Display::textWidth(const char *text, uint16 len) const {
 
 void Display::drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr) {
 	uint8 *dstBuf = _screenBuf + SCREEN_W * y + x;
-	uint16 j, i;
-	for (j = 0; j < 8; ++j) {
+	for (int j = 0; j < 8; ++j) {
 		uint8 *p = dstBuf;
 		uint8 c = *chr++;
 		if (c != 0) {
-			for (i = 0; i < 8; ++i) {
+			for (int i = 0; i < 8; ++i) {
 				if (c & 0x80) {
 					*p = color;
 				}
@@ -945,7 +926,6 @@ void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool o
 	}
 	setDirtyBlock(xs - 1, y - 1, x - xs + 2, 8 + 2);
 }
-
 
 void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 	uint8 *p = _screenBuf;

@@ -904,7 +904,7 @@ void Cutaway::run(char *nextFilename) {
 		_comPanel = 0;
 	}
 
-	if (nextFilename[0] == '\0' && !_anotherCutaway) {
+	if (nextFilename[0] == '\0' && !_anotherCutaway && _vm->logic()->currentRoom() != ROOM_ENDING_CREDITS) {
 		_vm->display()->fullscreen(false);
 
 		// Lines 2138-2182 in cutaway.c

@@ -36,7 +36,6 @@ Credits::Credits(QueenEngine *vm, const char* filename) :
 }
 
 Credits::~Credits() {
-	_vm->display()->clearTexts(0, 199);
 	delete _credits;
 }
 

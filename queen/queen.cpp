@@ -48,12 +48,6 @@
 
 #include "sound/mididrv.h"
 
-#ifdef _WIN32_WCE
-
-extern bool toolbar_drawn;
-extern bool draw_keyboard;
-
-#endif
 
 /* Flight of the Amazon Queen */
 static const GameSettings queen_setting =
@@ -173,7 +167,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 		_input->debuggerReset();
 		_debugger->attach();
 	}
-	if (!_input->cutawayRunning()) {
+	if (canLoadOrSave()) {
 		if (_input->quickSave()) {
 			_input->quickSaveReset();
 			saveGameState(0, "Quicksave");
@@ -182,10 +176,12 @@ void QueenEngine::update(bool checkPlayerInput) {
 			_input->quickLoadReset();
 			loadGameState(0);
 		}
-		if (_system->getMillis() - _lastSaveTime > AUTOSAVE_INTERVAL) {
+		if (_system->getMillis() - _lastSaveTime >= AUTOSAVE_INTERVAL) {
 			saveGameState(AUTOSAVE_SLOT, "Autosave");
 			_lastSaveTime = _system->getMillis();
 		}
+	}
+	if (!_input->cutawayRunning()) {
 		if (checkPlayerInput) {
 			_command->updatePlayer();
 		}
@@ -193,6 +189,10 @@ void QueenEngine::update(bool checkPlayerInput) {
 			_display->blankScreen();
 		}
 	}
+}
+
+bool QueenEngine::canLoadOrSave() {
+	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview());
 }
 
 void QueenEngine::saveGameState(uint16 slot, const char *desc) {
@@ -245,7 +245,9 @@ void QueenEngine::loadGameState(uint16 slot) {
 			_grid->loadState(header.version, p);
 			_logic->loadState(header.version, p);
 			_sound->loadState(header.version, p);
-			assert(header.dataSize == (uint32)(p - saveData));
+			if (header.dataSize != (uint32)(p - saveData)) {
+				error("Corrupted savegame file");
+			}
 			_logic->setupRestoredGame();
 		}
 		delete[] saveData;
@@ -298,13 +300,12 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 
 int QueenEngine::go() {
 	_logic->start();
-	if (ConfMan.hasKey("save_slot") && !(_resource->isDemo() || _resource->isInterview())) {
+	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
 	_lastSaveTime = _system->getMillis();
 	_quit = false;
 	while (!_quit) {
-		// queen.c lines 4080-4104
 		if (_logic->newRoom() > 0) {
 			_logic->update();
 			_logic->oldRoom(_logic->currentRoom());

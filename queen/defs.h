@@ -246,6 +246,8 @@ enum {
 	AZURA_HEAD                = 106,
 	FRANK_HEAD                = 107,
 	
+	ROOM_ENDING_CREDITS       = 110,
+	
 	ROOM_JOURNAL              = 200 // dummy value to keep Display methods happy
 };
 
