@@ -926,8 +926,8 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		}
 		break;
 	case 109:
-		spriteId = pop();
 		flags = pop();
+		spriteId = pop();
 		if (spriteId)
 			push(spriteInfoGet_field_88(spriteId, flags));
 		else
