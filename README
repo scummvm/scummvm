@@ -290,6 +290,10 @@ In game Hot Keys:
 -----------------
         Ctrl 0-9 and Alt 0-9     - load and save games
         Ctrl-Alt 1-7             - cycles between graphics filters
+        Ctrl+Alt 1               - (OpenGL) Switch beetwen using Bilinear Filtering and non-linear filtering 
+        Ctrl+Alt 2               - (OpenGL) Don't fit the game in the whole screen (black borders) 
+        Ctrl+Alt 3               - (OpenGL) Fit the game in the whole screen (no black borders) 
+	Ctrl+Alt 4-7             - (OpenGL) Zoom
         Ctrl-z OR Alt-x          - quits
         Ctrl-f                   - runs in fast mode.
         Ctrl-g                   - runs in really REALLY fast mode.
