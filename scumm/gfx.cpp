@@ -235,7 +235,7 @@ void ScummEngine::getGraphicsPerformance() {
 		initScreens(16, _screenWidth, 144);
 }
 
-void ScummEngine::initScreens(int a, int b, int w, int h) {
+void ScummEngine::initScreens(int b, int w, int h) {
 	int i;
 
 	for (i = 0; i < 3; i++) {
@@ -244,6 +244,8 @@ void ScummEngine::initScreens(int a, int b, int w, int h) {
 	}
 
 	if (!getResourceAddress(rtBuffer, 4)) {
+		// Since the size of screen 3 is fixed, there is no need to reallocate it
+		// if its size changed.
 		if (_version >= 7) {
 			initVirtScreen(3, 0, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
 		} else {
