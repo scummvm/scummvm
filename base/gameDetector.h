@@ -23,7 +23,6 @@
 #ifndef GAMEDETECTOR_H
 #define GAMEDETECTOR_H
 
-#include "base/plugins.h"
 #include "common/str.h"
 
 class Engine;
@@ -50,7 +49,6 @@ enum MidiDriverType {
 struct GameSettings {
 	const char *gameName;
 	const char *description;
-	byte id, version;
 	int midi; // MidiDriverType values
 	uint32 features;
 	const char *detectname;

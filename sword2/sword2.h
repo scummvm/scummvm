@@ -29,9 +29,8 @@
 #include "bs2/driver/d_sound.h"
 #include "bs2/driver/d_draw.h"
 
-enum BSGameId {
-	GID_SWORD2 = GID_SWORD2_FIRST,
-	GID_SWORD2_DEMO
+enum {
+	GF_DEMO	= 1 << 0
 };
 
 class NewGui;
@@ -73,7 +72,6 @@ public:
 	int32 InitialiseGame(void);
 	GameDetector *_detector;
 	uint32 _features;
-	byte _gameId;
 	char *_targetName; // target name for saves
 
 	Sound *_sound;

@@ -1222,7 +1222,7 @@ void ResourceManager::getCd(int cd) {
 
 	// don't ask for CD's in the playable demo downloaded from our
 	// web-site!
-	if (g_sword2->_gameId == GID_SWORD2_DEMO)
+	if (g_sword2->_features & GF_DEMO)
 		return;
 
 #ifdef _PCGUIDE

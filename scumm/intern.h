@@ -41,7 +41,7 @@ protected:
 	const OpcodeEntryV5 *_opcodesV5;
 
 public:
-	ScummEngine_v5(GameDetector *detector, OSystem *syst) : ScummEngine(detector, syst) {}
+	ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine(detector, syst, gs) {}
 
 protected:
 	virtual void setupOpcodes();
@@ -171,7 +171,7 @@ protected:
 // of preserving the right readIndexFile / loadCharset !!!
 class ScummEngine_v3 : public ScummEngine_v5 {
 public:
-	ScummEngine_v3(GameDetector *detector, OSystem *syst) : ScummEngine_v5(detector, syst) {}
+	ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v5(detector, syst, gs) {}
 
 protected:
 	void readIndexFile();
@@ -198,7 +198,7 @@ protected:
 	const OpcodeEntryV2 *_opcodesV2;
 
 public:
-	ScummEngine_v2(GameDetector *detector, OSystem *syst) : ScummEngine_v3(detector, syst) {}
+	ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v3(detector, syst, gs) {}
 
 protected:
 	virtual void setupOpcodes();
@@ -306,7 +306,7 @@ protected:
 
 class ScummEngine_v4 : public ScummEngine_v3 {
 public:
-	ScummEngine_v4(GameDetector *detector, OSystem *syst) : ScummEngine_v3(detector, syst) {}
+	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v3(detector, syst, gs) {}
 
 protected:
 	void loadCharset(int no);
@@ -325,7 +325,7 @@ protected:
 	File _hFileTable[17];
 	
 public:
-	ScummEngine_v6(GameDetector *detector, OSystem *syst) : ScummEngine(detector, syst)
+	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine(detector, syst, gs)
 	{
 		VAR_VIDEONAME = 0xFF;
 
@@ -536,7 +536,7 @@ protected:
 
 class ScummEngine_v7 : public ScummEngine_v6 {
 public:
-	ScummEngine_v7(GameDetector *detector, OSystem *syst) : ScummEngine_v6(detector, syst) {}
+	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v6(detector, syst, gs) {}
 
 protected:
 	virtual void setupScummVars();
@@ -558,7 +558,7 @@ protected:
 	const OpcodeEntryV8 *_opcodesV8;
 	
 public:
-	ScummEngine_v8(GameDetector *detector, OSystem *syst) : ScummEngine_v7(detector, syst) {}
+	ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v7(detector, syst, gs) {}
 
 protected:
 	virtual void setupOpcodes();

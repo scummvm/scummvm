@@ -45,9 +45,9 @@ extern bool draw_keyboard;
 
 static const GameSettings queen_settings[] = {
 	/* Flight of the Amazon Queen */
-	{ "queen", "Flight of the Amazon Queen", GID_QUEEN_FIRST, 99, MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1" },
-	{ "queencomp", "Flight of the Amazon Queen", GID_QUEEN_FIRST, 99, MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1c" },
-	{ NULL, NULL, 0, 0, MDT_NONE, 0, NULL} 
+	{ "queen", "Flight of the Amazon Queen", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1" },
+	{ "queencomp", "Flight of the Amazon Queen", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1c" },
+	{ NULL, NULL, MDT_NONE, 0, NULL} 
 };
 
 GameList Engine_QUEEN_gameList() {
@@ -88,8 +88,6 @@ namespace Queen {
 
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
-
-	_game = detector->_game.id;
 
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialisation failed.");

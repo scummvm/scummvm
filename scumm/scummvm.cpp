@@ -77,7 +77,22 @@ enum MouseButtonStatus {
 // Use g_scumm from error() ONLY
 ScummEngine *g_scumm = 0;
 
-static const GameSettings scumm_settings[] = {
+struct ScummGameSettings {
+	const char *gameName;
+	const char *description;
+	byte id, version;
+	int midi; // MidiDriverType values
+	uint32 features;
+	const char *detectname;
+	
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { gameName, description, midi, features, detectname };
+		return dummy;
+	}
+};
+
+
+static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
@@ -269,11 +284,11 @@ static const GameSettings scumm_settings[] = {
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
-ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
+ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
 	: Engine(detector, syst),
-	  _gameId(detector->_game.id),
-	  _version(detector->_game.version),
-	  _features(detector->_game.features),
+	  _gameId(gs.id),
+	  _version(gs.version),
+	  _features(gs.features),
 	  gdi(this), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0),
 	  _targetName(detector->_targetName) {
 	OSystem::Property prop;
@@ -597,9 +612,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// Allow the user to override the game name with a custom string.
 	// This allows some game versions to work which use filenames
 	// differing from the regular version(s) of that game.
-	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : detector->_game.gameName;
+	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.gameName;
 
-	_midiDriver = GameDetector::detectMusicDriver(detector->_game.midi);
+	_midiDriver = GameDetector::detectMusicDriver(gs.midi);
 
 	_demoMode = ConfMan.getBool("demo_mode");
 	_noSubtitles = ConfMan.getBool("nosubtitles");
@@ -686,7 +701,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
 			_imuse->property(IMuse::PROP_MULTI_MIDI, ConfMan.getBool("multi_midi") &&
-			                 _midiDriver != MD_NULL && (detector->_game.midi & MDT_ADLIB));
+			                 _midiDriver != MD_NULL && (gs.midi & MDT_ADLIB));
 			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 			if (_features & GF_HUMONGOUS || _features & GF_FMTOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
@@ -2640,16 +2655,18 @@ const char *tag2str(uint32 tag) {
 using namespace Scumm;
 
 GameList Engine_SCUMM_gameList() {
-	const GameSettings *g = scumm_settings;
+	const ScummGameSettings *g = scumm_settings;
 	GameList games;
-	while (g->gameName)
-		games.push_back(*g++);
+	while (g->gameName) {
+		games.push_back(g->toGameSettings());
+		g++;
+	}
 	return games;
 }
 
 GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	GameList detectedGames;
-	const GameSettings *g;
+	const ScummGameSettings *g;
 	char detectName[128];
 	char detectName2[128];
 	char detectName3[128];
@@ -2683,7 +2700,7 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				(0 == scumm_stricmp(detectName2, gameName)) ||
 				(0 == scumm_stricmp(detectName3, gameName))) {
 				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(*g);
+				detectedGames.push_back(g->toGameSettings());
 				break;
 			}
 		}
@@ -2694,49 +2711,61 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
+	
+	const ScummGameSettings *g = scumm_settings;
+	while (g->gameName) {
+		if (!scumm_stricmp(detector->_game.gameName, g->gameName))
+			break;
+		g++;
+	}
+	if (!g->gameName)
+		error("Invalid game '%s'\n", detector->_game.gameName);
+
+	ScummGameSettings game = *g;
+
 	if (ConfMan.hasKey("amiga")) {
 		warning("Configuration key 'amiga' is deprecated. Use 'platform=amiga' instead");
 		if (ConfMan.getBool("amiga"))
-			detector->_game.features |= GF_AMIGA;
+			game.features |= GF_AMIGA;
 	}
 
 	switch (Common::parsePlatform(ConfMan.get("platform"))) {
 	case Common::kPlatformAmiga:
-		detector->_game.features |= GF_AMIGA;
+		game.features |= GF_AMIGA;
 		break;
 	case Common::kPlatformAtariST:
-		detector->_game.features |= GF_ATARI_ST;
+		game.features |= GF_ATARI_ST;
 		break;
 	case Common::kPlatformMacintosh:
-		detector->_game.features |= GF_MACINTOSH;
+		game.features |= GF_MACINTOSH;
 		break;
 	default:
 		break;
 	}
 
-	switch (detector->_game.version) {
+	switch (game.version) {
 	case 1:
 	case 2:
-		engine = new ScummEngine_v2(detector, syst);
+		engine = new ScummEngine_v2(detector, syst, game);
 		break;
 	case 3:
-		engine = new ScummEngine_v3(detector, syst);
+		engine = new ScummEngine_v3(detector, syst, game);
 		break;
 	case 4:
-		engine = new ScummEngine_v4(detector, syst);
+		engine = new ScummEngine_v4(detector, syst, game);
 		break;
 	case 5:
-		engine = new ScummEngine_v5(detector, syst);
+		engine = new ScummEngine_v5(detector, syst, game);
 		break;
 	case 6:
-		engine = new ScummEngine_v6(detector, syst);
+		engine = new ScummEngine_v6(detector, syst, game);
 		break;
 	case 7:
-		engine = new ScummEngine_v7(detector, syst);
+		engine = new ScummEngine_v7(detector, syst, game);
 		break;
 #ifndef __PALM_OS__
 	case 8:
-		engine = new ScummEngine_v8(detector, syst);
+		engine = new ScummEngine_v8(detector, syst, game);
 		break;
 #endif
 	default:

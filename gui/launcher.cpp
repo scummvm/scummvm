@@ -100,10 +100,6 @@ EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, GameSettings t
 		description = target.description;
 	}
 
-	// Determine whether this is a SCUMM game
-	// FIXME: This check is evil, as it requires us to hard code GIDs.
-	bool isScumm = (GID_SCUMM_FIRST <= target.id && target.id <= GID_SCUMM_LAST);
-
 	
 	// Label & edit widget for the game ID
 	new StaticTextWidget(this, 10, 10, 40, kLineHeight, "ID: ", kTextAlignRight);
@@ -124,6 +120,14 @@ EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, GameSettings t
 	_fullscreenCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
 	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
+/*
+	// FIXME: The amiga checkbox is outdated cruft. It should be replaced by a
+	// a "platform" popup.
+
+	// Determine whether this is a SCUMM game
+	// FIXME: This check is evil, as it requires us to hard code GIDs.
+	bool isScumm = (GID_SCUMM_FIRST <= target.id && target.id <= GID_SCUMM_LAST);
+
 	// Display 'Amiga' checkbox, but only for Scumm games.
 	if (isScumm) {
 		_amigaCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Amiga Version", 0, 'A');
@@ -131,7 +135,7 @@ EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, GameSettings t
 	} else {
 		_amigaCheckbox = 0;
 	}
-
+*/
 	// Add OK & Cancel buttons
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
 	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
@@ -307,7 +311,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// ...so let's determine a list of candidates, games that
 			// could be contained in the specified directory.
 			GameList candidates = detectGames(dir);
-			GameSettings result = {NULL, NULL, 0, 0, MDT_NONE, 0, NULL};
+			GameSettings result = {NULL, NULL, MDT_NONE, 0, NULL};
 
 			if (candidates.isEmpty()) {
 				// No game was found in the specified directory

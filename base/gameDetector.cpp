@@ -179,7 +179,7 @@ GameDetector::GameDetector() {
 
 	_dumpScripts = false;
 
-	_game.features = 0;
+	memset(&_game, 0, sizeof(_game));
 	_plugin = 0;
 }
 
@@ -225,7 +225,7 @@ void listTargets() {
 GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugin) {
 	// Find the GameSettings for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();
-	GameSettings result = {NULL, NULL, 0, 0, MDT_NONE, 0, NULL};
+	GameSettings result = {NULL, NULL, MDT_NONE, 0, NULL};
 	
 	PluginList::ConstIterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
@@ -290,7 +290,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	char shortCmdLower;
 	bool isLongCmd, cmdValue;
 
-	// Iterate over all comman line arguments, backwards.
+	// Iterate over all command line arguments, backwards.
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
 		

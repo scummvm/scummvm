@@ -51,7 +51,6 @@ class SkyIntro;
 class SkyEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
-	byte _game;
 	byte _key_pressed;
 	bool _quickLaunch; // set when starting with -x
 	bool _floppyIntro;

@@ -57,10 +57,10 @@ extern uint16 _debugLevel;
 
 static const GameSettings sword2_settings[] = {
 	/* Broken Sword 2 */
-	{"sword2", "Broken Sword II", GID_SWORD2, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
-	{"sword2alt", "Broken Sword II (alt)", GID_SWORD2, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
-	{"sword2demo", "Broken Sword II (Demo)", GID_SWORD2_DEMO, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
-	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
+	{"sword2", "Broken Sword II", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
+	{"sword2alt", "Broken Sword II (alt)", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
+	{"sword2demo", "Broken Sword II (Demo)", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER | GF_DEMO, "players.clu" },
+	{NULL, NULL, MDT_NONE, 0, NULL}
 };
 
 GameList Engine_SWORD2_gameList() {
@@ -123,7 +123,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_newgui = NULL;
 	_debugger = NULL;
 	_features = detector->_game.features;
-	_gameId = detector->_game.id;
 	_targetName = strdup(detector->_targetName.c_str());
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
@@ -221,7 +220,7 @@ int32 Sword2Engine::InitialiseGame(void) {
 	Init_fx_queue();
 
 	// all demos (not just web)
-	if (_gameId == GID_SWORD2_DEMO) {
+	if (_features & GF_DEMO) {
 		// set script variable
 		DEMO = 1;
 	}
@@ -374,7 +373,7 @@ void Sword2Engine::go() {
 			} else if (c == 'P') {
 				// 'P' while not paused = pause!
 				PauseGame();
-			} else if (c == 'C' && _gameId == GID_SWORD2) {
+			} else if (c == 'C' && !(_features & GF_DEMO)) {
 				g_logic.fnPlayCredits(NULL);
 			}
 #ifdef _SWORD2_DEBUG
@@ -426,7 +425,7 @@ void Sword2Engine::Start_game(void) {
 	debug(5, "Start_game() STARTING:");
 
 	// all demos not just web
-	if (_gameId == GID_SWORD2_DEMO)
+	if (_features & GF_DEMO)
 		screen_manager_id = 19;		// DOCKS SECTION START
 	else
 		screen_manager_id = 949;	// INTRO & PARIS START

@@ -49,19 +49,19 @@ extern bool draw_keyboard;
 
 static const GameSettings simon_settings[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
-	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON1ACORN, "DATA"},
-	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON1DOS, "GAMEPC"},
-	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GID_SIMON_FIRST, 99, MDT_NONE, GAME_SIMON1AMIGA, "gameamiga"},
-	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON2DOS, "GAME32"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie (DOS)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON1TALKIE, "SIMON.GME"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie (DOS)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON2TALKIE, "GSPTR30"},
-	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON1WIN, "SIMON.GME"},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GID_SIMON_FIRST, 99, MDT_NONE, GAME_SIMON1CD32, "gameamiga"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON2WIN, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON2MAC, "GSPTR30"},
-	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON1DEMO, "GDEMO"}, 
+	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1ACORN, "DATA"},
+	{"simon1dos", "Simon the Sorcerer 1 (DOS)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1DOS, "GAMEPC"},
+	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", MDT_NONE, GAME_SIMON1AMIGA, "gameamiga"},
+	{"simon2dos", "Simon the Sorcerer 2 (DOS)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON2DOS, "GAME32"},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie (DOS)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1TALKIE, "SIMON.GME"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie (DOS)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON2TALKIE, "GSPTR30"},
+	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1WIN, "SIMON.GME"},
+	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", MDT_NONE, GAME_SIMON1CD32, "gameamiga"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON2WIN, "GSPTR30"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON2MAC, "GSPTR30"},
+	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1DEMO, "GDEMO"}, 
 
-	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
+	{NULL, NULL, MDT_NONE, 0, NULL}
 };
 
 GameList Engine_SIMON_gameList() {

@@ -368,7 +368,7 @@ int32 Logic::fnPlayMusic(int32 *params) {
 
 	// add the appropriate file extension & play it
 
-	if (g_sword2->_gameId == GID_SWORD2_DEMO) {
+	if (g_sword2->_features & GF_DEMO) {
 		// The demo I found didn't come with any music file, but you
 		// could use the music from the first CD of the complete game,
 		// I suppose...

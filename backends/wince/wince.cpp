@@ -856,10 +856,10 @@ void runGame(char *game_name) {
 
 	/* Start the engine */
 
-	is_simon = (detector._game.id >= GID_SIMON_FIRST && detector._game.id <= GID_SIMON_LAST);
-	is_bass = (detector._game.id >= GID_SKY_FIRST && detector._game.id <= GID_SKY_LAST);
+	is_simon = (strcmp(detector._plugin.getName(), "simon") == 0);
+	is_bass = (strcmp(detector._plugin.getName(), "sky") == 0);
 
-	if (smartphone || detector._game.id == GID_SAMNMAX || detector._game.id == GID_FT || detector._game.id == GID_DIG || detector._game.id == GID_CMI)
+	if (smartphone || strcmp(game_name, "samnmax") == 0 || strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0)
 		hide_cursor = FALSE;
 	else
 		hide_cursor = TRUE;	

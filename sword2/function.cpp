@@ -455,7 +455,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	// FIXME: This probably isn't the correct way of shutting down ScummVM
 	// Anyway, I don't know if we ever call this from the demo.
 
-	if (g_sword2->_gameId == GID_SWORD2_DEMO) {
+	if (g_sword2->_features & GF_DEMO) {
 		Close_game();		// close engine systems down
 		exit(0);		// quit the game
 	}

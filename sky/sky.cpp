@@ -80,8 +80,8 @@ extern bool draw_keyboard;
 
 static const GameSettings sky_settings[] = {
 	/* Beneath a Steel Sky */
-	{"sky", "Beneath a Steel Sky", GID_SKY_FIRST, 99, MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "sky.dsk" },
-	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
+	{"sky", "Beneath a Steel Sky", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "sky.dsk" },
+	{NULL, NULL, MDT_NONE, 0, NULL}
 };
 
 GameList Engine_SKY_gameList() {
@@ -122,8 +122,6 @@ SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
 	
-	_game = detector->_game.id;
-
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialisation failed.");
 

@@ -754,7 +754,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	MoviePlayer player; 
 
-	if (sequenceTextLines && g_sword2->_gameId == GID_SWORD2)
+	if (sequenceTextLines && !(g_sword2->_features & GF_DEMO))
 		rv = player.play(filename, sequenceSpeechArray, leadOut);
 	else
 		rv = player.play(filename, NULL, leadOut);

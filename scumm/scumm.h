@@ -52,6 +52,7 @@ class Sound;
 struct Box;
 struct BoxCoords;
 struct FindObjectInRoom;
+struct ScummGameSettings;
 
 typedef Common::Map<Common::String, int> ObjectIDMap;
 
@@ -166,7 +167,7 @@ enum {
 };
 
 enum ScummGameId {
-	GID_TENTACLE = GID_SCUMM_FIRST,
+	GID_TENTACLE,
 	GID_MONKEY2,
 	GID_INDY4,
 	GID_MONKEY,
@@ -296,7 +297,7 @@ protected:
 
 public:
 	// Constructor / Destructor
-	ScummEngine(GameDetector *detector, OSystem *syst);
+	ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
 	virtual ~ScummEngine();
 
 	// Init functions

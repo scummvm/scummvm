@@ -41,7 +41,6 @@ class Sound;
 class QueenEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
-	byte _game;
 	bool _quickLaunch; // set when starting with -x
 
 	uint16 _debugMode;
