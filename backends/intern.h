@@ -35,7 +35,7 @@ extern OSystem *OSystem_WINCE3_create();
 extern OSystem *OSystem_X11_create();
 extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
 extern OSystem *OSystem_GP32_create(int gfx_mode, bool full_screen); //ph0x 
-extern OSystem *OSystem_PALMOS_create(int gfx_mode);
+extern OSystem *OSystem_PALMOS_create();
 
 
 #ifdef _WIN32_WCE

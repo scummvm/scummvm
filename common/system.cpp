@@ -49,7 +49,7 @@ static OSystem *createSystem() {
 #elif defined(__GP32__)	// ph0x
 	return OSystem_GP32_create(GFX_NORMAL, true);
 #elif defined(__PALM_OS__) //chrilith
-	return OSystem_PALMOS_create(gfx_mode);
+	return OSystem_PALMOS_create();
 #else
 	/* SDL is the default driver for now */
 	return OSystem_SDL_create();
