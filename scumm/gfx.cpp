@@ -2573,7 +2573,7 @@ void Scumm::setupEGAPalette() {
 	setPalColor(15, 252, 252, 252);
 }
 
-void Scumm::setupC64Palette() {
+void Scumm::setupV1ManiacPalette() {
 	setPalColor( 0,   0,   0,   0); 
 	setPalColor( 1, 252, 252, 252); 
 	setPalColor( 2, 168,   0,   0);
@@ -2590,6 +2590,25 @@ void Scumm::setupC64Palette() {
 	setPalColor(13,  84, 252,  84);
 	setPalColor(14,  84,  84, 252);
 	setPalColor(15,  84,  84,  84);
+}
+
+void Scumm::setupV1ZakPalette() {
+	setPalColor( 0,   0,   0,   0); 
+	setPalColor( 1, 252, 252, 252); 
+	setPalColor( 2, 168,   0,   0);
+	setPalColor( 3,   0, 168, 168); 
+	setPalColor( 4, 168,   0, 168); 
+	setPalColor( 5,   0, 168,   0);
+	setPalColor( 6,   0,   0, 168);
+	setPalColor( 7, 252, 252,  84);
+	setPalColor( 8, 252,  84,  84);
+	setPalColor( 9, 168,  84,   0);
+	setPalColor(10, 252,  84,  84); 
+	setPalColor(11,  84,  84,  84); 
+	setPalColor(12, 168, 168, 168);
+	setPalColor(13,  84, 252,  84);
+	setPalColor(14,  84,  84, 252);
+	setPalColor(15, 168, 168, 168);
 }
 
 /* Old palette used in Commodre 64 versions

@@ -791,7 +791,10 @@ void Scumm::scummInit() {
 	if (_version == 1) {
 		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;
-		setupC64Palette();
+		if (_gameId == GID_MANIAC)
+			setupV1ManiacPalette();
+		else
+			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;

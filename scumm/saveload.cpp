@@ -170,7 +170,10 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	// ever add options for using different 16-colour palettes.
 
 	if (_version == 1) {
-		setupC64Palette();
+		if (_gameId == GID_MANIAC)
+			setupV1ManiacPalette();
+		else
+			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
 		if (_features & GF_AMIGA)
 			setupAmigaPalette();
