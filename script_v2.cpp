@@ -2474,7 +2474,9 @@ void Scumm::o6_miscOps() {
 			grabCursor(args[1], args[2], args[3], args[4]);
 			break;
 		case 6:
-			warning("o6_miscOps: startVideo(%d,%s)", args[1], getStringAddress(_vars[0xf6/2]));
+			SmushPlayer localSp;
+			localSp.sm=this;
+			localSp.startVideo(args[1], getStringAddress(_vars[0xf6/2]));
 			break;
 		case 7:
 			warning("o6_miscOps: stub7()");

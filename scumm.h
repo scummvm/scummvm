@@ -21,7 +21,6 @@
 
 #include "scummsys.h"
 
-
 #define SCUMMVM_VERSION "0.1.0 devel"
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
@@ -29,6 +28,8 @@
 
 struct Scumm;
 struct Actor;
+
+#include "smush.h"
 
 typedef void (Scumm::*OpcodeProc)();
 
@@ -2069,6 +2070,8 @@ struct Scumm {
 	
 	byte VAR_DEFAULT_TALK_DELAY;
 	byte VAR_CHARSET_MASK;
+	
+	byte _videoPath[50];
 };
 
 enum AkosOpcodes{

@@ -222,6 +222,9 @@ void Scumm::scummMain(int argc, char **argv) {
 	else
 		setupScummVarsOld();
 
+	if(_gameId == GID_FT)
+		sprintf((char*)_videoPath,"VIDEO/");
+
 	if(_features & GF_AFTER_V7)
 		OF_OWNER_ROOM = 0xFF;
 	else
