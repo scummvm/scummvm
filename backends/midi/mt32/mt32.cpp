@@ -73,7 +73,7 @@ MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer, const char *path)
 	rom_path = path;
 	File::addDefaultDirectory(path);
 
-	_baseFreq = 100;
+	_baseFreq = 1000;
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
