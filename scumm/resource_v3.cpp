@@ -59,18 +59,7 @@ void Scumm_v3::readIndexFile() {
 		_palManipIntermediatePal = 0; // Will allocate when needed
 
 		_fileHandle.readUint16LE(); /* version magic number */
-		int num = _fileHandle.readUint16LE();
-		assert(num == _numGlobalObjects);
-		for (int i = 0; i != num; i++) {
-			uint32 bits = _fileHandle.readByte();
-			byte tmp;
-			bits |= _fileHandle.readByte() << 8;
-			bits |= _fileHandle.readByte() << 16;
-			_classData[i] = bits;
-			tmp = _fileHandle.readByte();
-			_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
-			_objectStateTable[i] = tmp >> OF_STATE_SHL;
-		}
+		readGlobalObjects();
 		readResTypeList(rtRoom, MKID('ROOM'), "room");
 		readResTypeList(rtCostume, MKID('COST'), "costume");
 		readResTypeList(rtScript, MKID('SCRP'), "script");
@@ -81,7 +70,6 @@ void Scumm_v3::readIndexFile() {
 		uint16 blocktype;
 		uint32 itemsize;
 		int numblock = 0;
-		int num, i;
 
 		debug(9, "readIndexFile()");
 
@@ -160,19 +148,7 @@ void Scumm_v3::readIndexFile() {
 				break;
 
 			case 0x4F30:	// 'O0'
-				num = _fileHandle.readUint16LE();
-				assert(num == _numGlobalObjects);
-				for (i = 0; i != num; i++) {
-					uint32 bits = _fileHandle.readByte();
-					byte tmp;
-					bits |= _fileHandle.readByte() << 8;
-					bits |= _fileHandle.readByte() << 16;
-					_classData[i] = bits;
-					tmp = _fileHandle.readByte();
-					_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
-					_objectStateTable[i] = tmp >> OF_STATE_SHL;
-				}
-
+				readGlobalObjects();
 				break;
 
 			default:
@@ -230,4 +206,19 @@ void Scumm_v3::readMAXS() {
 
 	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
 	allocateArrays();
+}
+
+void Scumm_v3::readGlobalObjects() {
+	int num = _fileHandle.readUint16LE();
+	assert(num == _numGlobalObjects);
+	for (int i = 0; i != num; i++) {
+		uint32 bits = _fileHandle.readByte();
+		byte tmp;
+		bits |= _fileHandle.readByte() << 8;
+		bits |= _fileHandle.readByte() << 16;
+		_classData[i] = bits;
+		tmp = _fileHandle.readByte();
+		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+		_objectStateTable[i] = tmp >> OF_STATE_SHL;
+	}
 }

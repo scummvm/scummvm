@@ -178,6 +178,8 @@ protected:
 	void readIndexFile();
 	void loadCharset(int no);
 	void readMAXS();
+	
+	void readGlobalObjects();
 };
 
 class Scumm_v4 : public Scumm_v3 {
