@@ -1840,7 +1840,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, charset, sleByte, VER(8)),
 
 		// Actor sound grew from 8 to 32 bytes
-		MKARRAY_OLD(Actor, sound[0], sleByte, 8, VER(35), VER(36)),
+		MKARRAY_OLD(Actor, sound[0], sleByte, 8, VER(8), VER(36)),
 		MKARRAY(Actor, sound[0], sleByte, 32, VER(37)),
 
 		MKARRAY(Actor, animVariable[0], sleUint16, 8, VER(8)),
