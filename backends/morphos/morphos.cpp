@@ -642,7 +642,7 @@ void OSystem_MorphOS::CreateScreen(CS_DSPTYPE dspType)
 	if (OvlBitMap)
 		FreeVec(OvlBitMap);
 
-	OvlBitMap = AllocVec(ScummScrWidth*ScummScrHeight*3, MEMF_PUBLIC | MEMF_CLEAR);
+	OvlBitMap = AllocVec(ScummBufferWidth*ScummBufferHeight*3, MEMF_PUBLIC | MEMF_CLEAR);
 	if (OvlBitMap == NULL)
 		error("Failed to allocated bitmap for overlay");
 
@@ -865,10 +865,7 @@ bool OSystem_MorphOS::poll_event(Event *event)
 void OSystem_MorphOS::set_shake_pos(int shake_pos)
 {
 	ScummShakePos = shake_pos;
-	// FIXME - why does this hard code size/height? While right now the only game that
-	// is not 320x200 is Zak256, and Zak doesn't use shaking AFAIK, this is still not
-	// a good thing.
-	AddUpdateRect(0, 0, 320, 200);
+	AddUpdateRect(0, 0, ScummBufferWidth, ScummBufferHeight);
 }
 
 #define MOUSE_INTERSECTS(x, y, w, h) \
@@ -1402,8 +1399,8 @@ void OSystem_MorphOS::init_size(uint w, uint h)
 void OSystem_MorphOS::show_overlay()
 {
 	UndrawMouse();
-	clear_overlay();
 	memcpy(OvlSavedBuffer, ScummBuffer, ScummBufferWidth*ScummBufferHeight);
+	clear_overlay();
 	for (int c = 0; c < 256; c++)
 	{
 		ULONG r, g, b;
@@ -1423,6 +1420,7 @@ void OSystem_MorphOS::clear_overlay()
 {
 	UBYTE *src = (UBYTE *) ScummBuffer;
 	UBYTE *dest = (UBYTE *) OvlBitMap;
+	copy_rect((byte *) OvlSavedBuffer, ScummBufferWidth, 0, 0, ScummBufferWidth, ScummBufferHeight);
 	for (int y = 0; y < ScummBufferHeight; y++)
 		for (int x = 0; x < ScummBufferWidth; x++)
 		{
@@ -1453,6 +1451,8 @@ void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int 
 	int x1, y1;
 	UBYTE *dest;
 	UBYTE	*bmap, *bmap_dest;
+	LONG last_col[2] = { -1, -1 };
+	LONG last_pen[2] = { -1, -1 };
 
 	bmap = (UBYTE*) AllocVec(w*h, MEMF_ANY);
 	if (bmap)
@@ -1464,13 +1464,27 @@ void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int 
 			for (x1 = 0; x1 < w; x1++)
 			{
 				ULONG r, g, b;
-				r = RED_FROM_16(*ovl);
-				g = GREEN_FROM_16(*ovl);
-				b = BLUE_FROM_16(*ovl++);
+				int16 col;
+
+				col = *ovl++;
+				r = RED_FROM_16(col);
+				g = GREEN_FROM_16(col);
+				b = BLUE_FROM_16(col);
 				*dest++ = r;
 				*dest++ = g;
 				*dest++ = b;
-				*bmap_dest++ = FindColor(OvlCMap, CVT8TO32(r), CVT8TO32(g), CVT8TO32(b), -1);
+				if (col == last_col[0])
+					*bmap_dest++ = last_pen[0];
+				else if (col == last_col[1])
+					*bmap_dest++ = last_pen[1];
+				else
+				{
+					last_col[1] = last_col[0];
+					last_pen[1] = last_pen[0];
+					last_col[0] = col;
+					last_pen[0]	= FindColor(OvlCMap, CVT8TO32(r), CVT8TO32(g), CVT8TO32(b), -1);
+					*bmap_dest++ = last_pen[0];
+				}
 			}
 			dest += ScummBufferWidth*3-w*3;
 			ovl += pitch-w;
