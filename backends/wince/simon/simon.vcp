@@ -262,6 +262,177 @@ BSC32=bscmake.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\..\simon\charset.cpp
+
+!IF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
+
+DEP_CPP_CHARS=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_CHARS=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_CHARS=\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_CHARS=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_CHARS=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_CHARS=\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
+
+DEP_CPP_CHARS=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_CHARS=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
+
+DEP_CPP_CHARS=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_CHARS=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Release"
+
+NODEP_CPP_CHARS=\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_CHARS=\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\simon\debug.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
@@ -349,14 +520,24 @@ DEP_CPP_DEBUG=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\simon\vga.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_DEBUG=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -494,14 +675,24 @@ DEP_CPP_ITEMS=\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_ITEMS=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -565,13 +756,13 @@ DEP_CPP_MIDI_=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midistreamer.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	
 NODEP_CPP_MIDI_=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\midistreamer.h"\
 	".\ad.h"\
 	".\DL_byteorder.h"\
 	
@@ -583,7 +774,6 @@ NODEP_CPP_MIDI_=\
 	"..\..\..\simon\common\system.h"\
 	"..\..\..\simon\scummsys.h"\
 	"..\..\..\simon\simon\simon.h"\
-	"..\..\..\simon\sound\midistreamer.h"\
 	"..\..\..\simon\sound\mixer.h"\
 	"..\..\..\simon\stdafx.h"\
 	
@@ -603,13 +793,13 @@ DEP_CPP_MIDI_=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midistreamer.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	
 NODEP_CPP_MIDI_=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\midistreamer.h"\
 	".\ad.h"\
 	".\DL_byteorder.h"\
 	
@@ -621,7 +811,6 @@ NODEP_CPP_MIDI_=\
 	"..\..\..\simon\common\system.h"\
 	"..\..\..\simon\scummsys.h"\
 	"..\..\..\simon\simon\simon.h"\
-	"..\..\..\simon\sound\midistreamer.h"\
 	"..\..\..\simon\sound\mixer.h"\
 	"..\..\..\simon\stdafx.h"\
 	
@@ -641,15 +830,23 @@ DEP_CPP_MIDI_=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midistreamer.h"\
+	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_MIDI_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -667,13 +864,13 @@ DEP_CPP_MIDI_=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midistreamer.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	
 NODEP_CPP_MIDI_=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\midistreamer.h"\
 	".\ad.h"\
 	".\DL_byteorder.h"\
 	
@@ -685,7 +882,6 @@ NODEP_CPP_MIDI_=\
 	"..\..\..\simon\common\system.h"\
 	"..\..\..\simon\scummsys.h"\
 	"..\..\..\simon\simon\simon.h"\
-	"..\..\..\simon\sound\midistreamer.h"\
 	"..\..\..\simon\sound\mixer.h"\
 	"..\..\..\simon\stdafx.h"\
 	
@@ -697,7 +893,6 @@ NODEP_CPP_MIDI_=\
 	"..\..\..\simon\common\system.h"\
 	"..\..\..\simon\scummsys.h"\
 	"..\..\..\simon\simon\simon.h"\
-	"..\..\..\simon\sound\midistreamer.h"\
 	"..\..\..\simon\sound\mixer.h"\
 	"..\..\..\simon\stdafx.h"\
 	
@@ -708,6 +903,113 @@ NODEP_CPP_MIDI_=\
 # Begin Source File
 
 SOURCE=..\..\..\simon\midi.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\simon\midiparser_s1d.cpp
+
+!IF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
+
+DEP_CPP_MIDIP=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_MIDIP=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_MIDIP=\
+	"..\..\..\simon\common\util.h"\
+	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midiparser.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_MIDIP=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_MIDIP=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_MIDIP=\
+	"..\..\..\simon\common\util.h"\
+	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midiparser.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
+
+DEP_CPP_MIDIP=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_MIDIP=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MIDIP=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_MIDIP=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Release"
+
+NODEP_CPP_MIDIP=\
+	"..\..\..\simon\common\util.h"\
+	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midiparser.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_MIDIP=\
+	"..\..\..\simon\common\util.h"\
+	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midiparser.h"\
+	
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -793,14 +1095,24 @@ DEP_CPP_RES_C=\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_RES_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -953,14 +1265,23 @@ DEP_CPP_SIMON=\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\simon\vga.h"\
 	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SIMON=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -1103,9 +1424,17 @@ DEP_CPP_SOUND=\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -1233,14 +1562,24 @@ DEP_CPP_VERB_=\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_VERB_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -1369,14 +1708,24 @@ DEP_CPP_VGA_C=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\simon\vga.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_VGA_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
