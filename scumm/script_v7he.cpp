@@ -672,7 +672,7 @@ void ScummEngine_v7he::o7_getActorRoom() {
 
 void ScummEngine_v7he::o7_dimArray() {
 	if (_heversion <= 71) {
-		ScummEngine_v6:o6_dimArray();
+		ScummEngine_v6::o6_dimArray();
 		return;
 	}
 
@@ -753,7 +753,7 @@ void ScummEngine_v7he::o7_arrayOps() {
 
 void ScummEngine_v7he::o7_startScript() {
 	if (_heversion <= 71) {
-		ScummEngine_v6:o6_startScript();
+		ScummEngine_v6::o6_startScript();
 		return;
 	}
 
