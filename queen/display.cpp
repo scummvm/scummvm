@@ -113,6 +113,7 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 			if (_vm->resource()->fileExists(filename)) {
 				_dynalum.lumBuf = (int8 *)_vm->resource()->loadFile(filename, 0, &_dynalum.lumSize);
 				_dynalum.valid = true;
+				_dynalum.prevColMask = 0xFF;
 			}
 		}
 	}
