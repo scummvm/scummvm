@@ -283,7 +283,7 @@ struct Part {
 
 	void update_pris();
 
-	void changed(byte what);
+	void changed(uint16 what);
 };
 
 /* Abstract IMuseInternal driver class */
@@ -298,7 +298,8 @@ public:
 		pcEffectLevel = 32,
 		pcProgram = 64,
 		pcChorus = 128,
-		pcAll = 255,
+		pcPitchBendFactor = 256,
+		pcAll = 511,
 	};
 
 	virtual void on_timer() = 0;
@@ -312,7 +313,7 @@ public:
 	virtual void part_key_on(Part *part, byte note, byte velocity) = 0;
 	virtual void part_key_off(Part *part, byte note) = 0;
 	virtual void part_off(Part *part) = 0;
-	virtual void part_changed(Part *part, byte what) = 0;
+	virtual void part_changed(Part *part, uint16 what) = 0;
 	virtual void part_set_param(Part *part, byte param, int value) = 0;
 	virtual int part_update_active(Part *part, uint16 *active) = 0;
 };
@@ -573,7 +574,7 @@ public:
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
 	void part_set_param(Part *part, byte param, int value);
-	void part_changed(Part *part, byte what);
+	void part_changed(Part *part, uint16 what);
 	void part_off(Part *part);
 	int part_update_active(Part *part, uint16 *active);
 	void adjust_priorities() {
@@ -602,6 +603,7 @@ class IMuseGM : public IMuseDriver {
 	MidiChannelGM _midi_channels[9];
 
 	int16 _midi_pitchbend_last[16];
+	byte _midi_pitchbend_factor_last[16];
 	uint8 _midi_volume_last[16];
 	bool _midi_pedal_last[16];
 	byte _midi_modwheel_last[16];
@@ -611,6 +613,7 @@ class IMuseGM : public IMuseDriver {
 
 
 	void midiPitchBend(byte chan, int16 pitchbend);
+	void midiPitchBendFactor (byte chan, byte factor);
 	void midiVolume(byte chan, byte volume);
 	void midiPedal(byte chan, bool pedal);
 	void midiModWheel(byte chan, byte modwheel);
@@ -638,7 +641,7 @@ public:
 	void part_set_param(Part *part, byte param, int value) {}
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
-	void part_changed(Part *part, byte what);
+	void part_changed(Part *part, uint16 what);
 
 	static int midi_driver_thread(void *param);
 
@@ -2070,7 +2073,8 @@ byte *Player::parse_midi(byte *s)
 	case 0xE:										/* pitch bend */
 		part = get_part(chan);
 		if (part)
-			part->set_pitchbend(((s[1] - 0x40) << 7) | s[0]);
+			// part->set_pitchbend(((s[1] - 0x40) << 7) | s[0]);
+			part->set_pitchbend(((s[1] << 7) | s[0]) - 0x2000);
 		s += 2;
 		break;
 
@@ -3206,6 +3210,7 @@ void Part::set_pitchbend_factor(uint8 value)
 		return;
 	set_pitchbend(0);
 	_pitchbend_factor = value;
+	changed (IMuseDriver::pcPitchBendFactor);
 }
 
 void Part::set_onoff(bool on)
@@ -3299,7 +3304,7 @@ void Part::off()
 	_drv->part_off(this);
 }
 
-void Part::changed(byte what)
+void Part::changed(uint16 what)
 {
 	_drv->part_changed(this, what);
 }
@@ -4148,7 +4153,7 @@ static byte map_gm_to_fm [128][30] = {
 };
 
 
-void IMuseAdlib::part_changed(Part *part, byte what)
+void IMuseAdlib::part_changed(Part *part, uint16 what)
 {
 	MidiChannelAdl *mc;
 
@@ -4455,6 +4460,16 @@ void IMuseGM::midiPitchBend(byte chan, int16 pitchbend)
 	}
 }
 
+void IMuseGM::midiPitchBendFactor (byte chan, byte factor) {
+	if (_midi_pitchbend_factor_last[chan] != factor) {
+		_midi_pitchbend_factor_last[chan] = factor;
+		_md->send((   0   << 16) | (101 << 8) | (0xB0 | chan));
+		_md->send((   0   << 16) | (100 << 8) | (0xB0 | chan));
+		_md->send((factor << 16) | (  6 << 8) | (0xB0 | chan));
+		_md->send((   0   << 16) | ( 38 << 8) | (0xB0 | chan));
+	}
+}
+
 void IMuseGM::midiVolume(byte chan, byte volume)
 {
 	if (_midi_volume_last[chan] != volume) {
@@ -4720,7 +4735,7 @@ int IMuseGM::part_update_active(Part *part, uint16 *active)
 	return count;
 }
 
-void IMuseGM::part_changed(Part *part, byte what)
+void IMuseGM::part_changed(Part *part, uint16 what)
 {
 	MidiChannelGM *mc;
 
@@ -4739,6 +4754,9 @@ void IMuseGM::part_changed(Part *part, byte what)
 		memset(mc->_actives, 0, sizeof(mc->_actives));
 		return;
 	}
+
+	if (what & pcPitchBendFactor)
+		midiPitchBendFactor (mc->_chan, part->_pitchbend_factor);
 
 	if (what & pcMod)
 		midiPitchBend(mc->_chan,
