@@ -244,8 +244,8 @@ void blit(byte *dst, byte *src, int w, int h)
 
 	do {
 		memcpy(dst, src, w);
-		dst += 320;
-		src += 320;
+		dst += _vm->_realWidth;
+		src += _vm->_realWidth;
 	} while (--h);
 }
 
