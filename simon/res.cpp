@@ -102,8 +102,14 @@ bool SimonState::loadGamePcFile(const char *filename)
 
 	/* read main gamepc file */
 	in->open(filename, _gameDataPath);
-	if (in->isOpen() == false)
-		return false;
+	if (in->isOpen() == false) {
+		char filename2[strlen(filename) + 1];
+		strcpy(filename2, filename);
+		strcat(filename2, ".");
+		in->open(filename2, _gameDataPath);
+		if (in->isOpen() == false)
+			return false;
+	}
 
 	num_inited_objects = allocGamePcVars(in);
 
@@ -121,8 +127,11 @@ bool SimonState::loadGamePcFile(const char *filename)
 
 	/* Read list of TABLE resources */
 	in->open("TBLLIST", _gameDataPath);
-	if (in->isOpen() == false)
-		return false;
+	if (in->isOpen() == false) {
+		in->open("TBLLIST.", _gameDataPath);
+		if (in->isOpen() == false)
+			return false;
+	}
 
 	file_size = in->size();
 

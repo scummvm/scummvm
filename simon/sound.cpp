@@ -94,9 +94,15 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath)
 	file->open(filename, gameDataPath);
 
 	if (file->isOpen() == false) {
-		if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
-		warning("readSfxFile: Cannot load sfx file %s", filename);
-		return;
+		char filename2[strlen(filename) + 1];
+		strcpy(filename2, filename);
+		strcat(filename2, ".");
+		file->open(filename2, gameDataPath);
+		if (file->isOpen() == false) {
+			if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
+			warning("readSfxFile: Cannot load sfx file %s", filename);
+			return;
+		}
 	}
 
 	_effects = new WavSound(_mixer, file);
