@@ -11,6 +11,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  SCUMM
    - Added support for Mac Humongous Entertainment titles
+   - Added support for multiple filenames/versions using a single target
 
  <PORT #1 NEWS>
    - ...
