@@ -254,6 +254,20 @@ void DriverTinyGL::setupLight(Scene::Light *light, int lightId) {
 //		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, 2.0f);
 //		tglLightf(TGL_LIGHT0 + lightId, TGL_LINEAR_ATTENUATION, light->_intensity);
 		tglEnable(TGL_LIGHT0 + lightId);
+	} else if (strcmp(light->_type.c_str(), "spot")) {
+		lightDir[0] = light->_dir.x();
+		lightDir[1] = light->_dir.y();
+		lightDir[2] = light->_dir.z();
+		lightDir[3] = 0.0f;
+//		tglLightfv(TGL_LIGHT0 + lightId, TGL_AMBIENT, ambientLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, diffuseLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPECULAR, specularLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
+//		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, 1.8f);
+//		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, 2.0f);
+//		tglLightf(TGL_LIGHT0 + lightId, TGL_LINEAR_ATTENUATION, light->_intensity);
+		tglEnable(TGL_LIGHT0 + lightId);
 	} else {
 		error("Scene::setupLights() Unknown type of light: %s", light->_type);
 	}

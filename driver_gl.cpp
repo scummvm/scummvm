@@ -179,6 +179,20 @@ void DriverGL::setupLight(Scene::Light *light, int lightId) {
 //		glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, 2.0f);
 //		glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, light->_intensity);
 		glEnable(GL_LIGHT0 + lightId);
+	} else if (strcmp(light->_type.c_str(), "spot")) {
+		lightDir[0] = light->_dir.x();
+		lightDir[1] = light->_dir.y();
+		lightDir[2] = light->_dir.z();
+		lightDir[3] = 0.0f;
+//		glLightfv(GL_LIGHT0 + lightId, GL_AMBIENT, ambientLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, diffuseLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_SPECULAR, specularLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
+		glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
+//		glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, 1.8f);
+//		glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, 2.0f);
+//		glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, light->_intensity);
+		glEnable(GL_LIGHT0 + lightId);
 	} else {
 		error("Scene::setupLights() Unknown type of light: %s", light->_type);
 	}
