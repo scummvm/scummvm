@@ -175,15 +175,15 @@ const ScummVM::String ScummDialog::queryResString(int stringno) {
 	if (stringno == 0)
 		return String();
 
-	if (_scumm->_features & GF_AFTER_V8	)
-		// TODO: Maybe grab the strings from the language file?
-		return string_map_table_v5[stringno - 1].string;
-	else if (_scumm->_features & GF_AFTER_V7)
+	if (_scumm->_features & GF_AFTER_V7)
 		result = _scumm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
 	else if (_scumm->_features & GF_AFTER_V6)
 		result = _scumm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
-	else
+	else if (_scumm->_features & GF_AFTER_V5)
 		result = _scumm->getStringAddress(string_map_table_v5[stringno - 1].num);
+	else
+		// TODO: For V8 games, maybe grab the strings from the language file?
+		return string_map_table_v5[stringno - 1].string;
 
 	if (result && *result == '/') {
 		byte tmp[256];
