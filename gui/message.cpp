@@ -53,12 +53,13 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
 	_w = maxlineWidth + 20;
 	lineCount = _lines.size();
-	_h = lineCount * kLineHeight + 34;
+	_h = lineCount * kLineHeight + 40;
 	if (_h > 180) {
 		lineCount = (180 - 34) / kLineHeight;
 		_h = lineCount * kLineHeight + 34;
 	}
 	_x = (320 - _w) / 2;
+	_y = (200 - _h) / 2;
 	
 	for (int i = 0; i < lineCount; i++) {
 		new StaticTextWidget(this, 10, 10+i*kLineHeight, maxlineWidth, kLineHeight,
@@ -73,36 +74,44 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 int MessageDialog::addLine(const char *line, int size)
 {
 	int width = 0, maxWidth = 0;
-	const char *start = line;
+	const char *start = line, *pos = line, *end = start + size;
 	String tmp;
 
-	for (int i = 0; i < size; ++i) {
-		int w = _gui->getCharWidth(*line);
+	while (pos < end) {
+		int w = _gui->getCharWidth(*pos);
 
-		// Check if we exceed the maximum line width, if so, split the line
-		// TODO - we could make this more clever by trying to split at
-		// non-letters, e.g. at space/slash/dot
+		// Check if we exceed the maximum line width, if so, split the line.
+		// If possible we split at whitespaces.
 		if (width + w > 280) {
+			// Scan backward till we find a space or we get back to the start
+			const char *newPos = pos;
+			while (newPos > start && !isspace(*newPos))
+				newPos--;
+			if (newPos > start)
+				pos = newPos;
+			
+			// Add the substring from intervall [start, i-1]
+			tmp = String(start, pos - start);
+			_lines.push_back(tmp);
+			
+			// Determine the width of the string, and adjust maxWidth accordingly
+			width = _gui->getStringWidth(tmp);
 			if (maxWidth < width)
 				maxWidth = width;
 			
-			// Add the substring from intervall [start, i-1]
-			tmp = String(start, line - start);
-			_lines.push_back(tmp);
-			
-			start = line;
-			width = w;
-		} else
+			start = pos;
+			width = 0;
+		} else {
 			width += w;
-		
-		line++;
+			pos++;
+		}
 	}
 
 	if (maxWidth < width)
 		maxWidth = width;
 
-	if (start < line) {
-		tmp = String(start, line - start);
+	if (start < pos) {
+		tmp = String(start, pos - start);
 		_lines.push_back(tmp);
 	}
 	return maxWidth;
