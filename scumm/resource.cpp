@@ -473,8 +473,8 @@ void Scumm::ensureResourceLoaded(int type, int i)
 
 	debug(9, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
-	if (type == rtRoom && i > 127 && !(_features & GF_AFTER_V7)) {
-		i = _resourceMapper[i & 127];
+	if (type == rtRoom && i > 0x7F && !(_features & GF_AFTER_V7)) {
+		i = _resourceMapper[i & 0x7F];
 	}
 
 	if (i == 0)
@@ -1405,7 +1405,7 @@ void Scumm::expireResources(uint32 size)
 			if (res.mode[i]) {
 				for (j = res.num[i]; --j >= 0;) {
 					flag = res.flags[i][j];
-					if (!(flag & 0x80) && flag >= best_counter && res.address[i][j] && !isResourceInUse(i, j)) {
+					if (!(flag & RF_LOCK) && flag >= best_counter && res.address[i][j] && !isResourceInUse(i, j)) {
 						best_counter = flag;
 						best_type = i;
 						best_res = j;
@@ -1478,7 +1478,7 @@ void Scumm::resourceStats()
 	for (i = rtFirst; i <= rtLast; i++)
 		for (j = res.num[i]; --j >= 0;) {
 			flag = res.flags[i][j];
-			if (flag & 0x80 && res.address[i][j]) {
+			if (flag & RF_LOCK && res.address[i][j]) {
 				lockedSize += ((MemBlkHeader *)res.address[i][j])->size;
 				lockedNum++;
 			}

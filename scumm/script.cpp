@@ -343,9 +343,10 @@ int Scumm::readVar(uint var)
 	if (var & 0x2000 && !(_features & GF_NEW_OPCODES)) {
 		a = fetchScriptWord();
 		if (a & 0x2000)
-			var = (var + readVar(a & ~0x2000)) & ~0x2000;
+			var += readVar(a & ~0x2000);
 		else
-			var = (var + (a & 0xFFF)) & ~0x2000;
+			var += a & 0xFFF;
+		var &= ~0x2000;
 	}
 
 	if (!(var & 0xF000))

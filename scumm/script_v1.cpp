@@ -1498,88 +1498,122 @@ void Scumm::o5_quitPauseRestart()
 
 void Scumm::o5_resourceRoutines()
 {
+	const ResTypes resType[4] = { rtScript, rtSound, rtCostume, rtRoom };
 	int resid = 0;
+	int foo, bar;
 
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
 		resid = getVarOrDirectByte(0x80);
-	if (_features & GF_OLD256)		/*FIXME: find a better way to implement this */
+	if (_features & GF_OLD256)
 		_opcode &= 0x3F;
-	switch (_opcode & 0x1F) {
-	case 1:											/* load script */
-		ensureResourceLoaded(rtScript, resid);
+	else
+		_opcode &= 0x1F;
+
+	switch (_opcode) {
+	case 1:											// load script
+	case 2:											// load sound
+	case 3:											// load costume
+		ensureResourceLoaded(resType[_opcode-1], resid);
 		break;
-	case 2:											/* load sound */
-		ensureResourceLoaded(rtSound, resid);
-		break;
-	case 3:											/* load costume */
-		ensureResourceLoaded(rtCostume, resid);
-		break;
-	case 4:											/* load room */
-		if (_features & GF_OLD256)
-			ensureResourceLoaded(rtScript, resid & 0x7F);	/*FIXME: missing stuff... */
-		else
+	case 4:											// load room 
+		if (_features & GF_OLD256) {
+			ensureResourceLoaded(rtRoom, resid);
+			if (resid > 0x7F)
+				resid = _resourceMapper[resid & 0x7F];
+
+			if (_currentRoom != resid) {
+				res.flags[rtRoom][resid] |= 1;
+			}
+		} else
 			ensureResourceLoaded(rtRoom, resid);
 		break;
-	case 5:											/* nuke script */
-		setResourceCounter(rtScript, resid, 0x7F);
+
+	case 5:											// nuke script
+	case 6:											// nuke sound
+	case 7:											// nuke costume
+	case 8:											// nuke room
+		if (_features & GF_OLD256)
+			warning("o5_resourceRoutines %d should not occure in GF_OLD256 games", _opcode);
+		else
+			setResourceCounter(resType[_opcode-5], resid, 0x7F);
 		break;
-	case 6:											/* nuke sound */
-		setResourceCounter(rtSound, resid, 0x7F);
-		break;
-	case 7:											/* nuke costume */
-		setResourceCounter(rtCostume, resid, 0x7F);
-		break;
-	case 8:											/* nuke room */
-		setResourceCounter(rtRoom, resid, 0x7F);
-		break;
-	case 9:											/* lock script */
+
+	case 9:											// lock script
 		if (resid >= _numGlobalScripts)
 			break;
 		lock(rtScript, resid);
 		break;
-	case 10:											/* lock sound */
+	case 10:											// lock sound
 		lock(rtSound, resid);
 		break;
-	case 11:											/* lock costume */
+	case 11:											// lock costume
 		lock(rtCostume, resid);
 		break;
-	case 12:											/* lock room */
+	case 12:											// lock room
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		lock(rtRoom, resid);
 		break;
-	case 13:											/* unlock script */
+
+	case 13:											// unlock script
 		if (resid >= _numGlobalScripts)
 			break;
 		unlock(rtScript, resid);
 		break;
-	case 14:											/* unlock sound */
+	case 14:											// unlock sound
 		unlock(rtSound, resid);
 		break;
-	case 15:											/* unlock costume */
+	case 15:											// unlock costume
 		unlock(rtCostume, resid);
 		break;
-	case 16:											/* unlock room */
+	case 16:											// unlock room
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		unlock(rtRoom, resid);
 		break;
-	case 17:											/* clear heap */
+
+	case 17:											// clear heap
 		heapClear(0);
 		unkHeapProc2(0, 0);
 		break;
-	case 18:											/* load charset */
+	case 18:											// load charset
 		loadCharset(resid);
 		break;
-	case 19:											/* nuke charset */
+	case 19:											// nuke charset
 		nukeCharset(resid);
 		break;
-	case 20:											/* load fl object */
+	case 20:											// load fl object
 		loadFlObject(getVarOrDirectWord(0x40), resid);
 		break;
+
+	case 0x1F + 1:
+		// TODO
+		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		break;
+	case 0x20 + 1:
+		// TODO
+		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		break;
+	case 0x22 + 1:
+		// TODO
+		foo = getVarOrDirectByte(0x40);
+		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		break;
+	case 0x23 + 1:
+		// TODO
+		foo = getVarOrDirectByte(0x40);
+		bar = fetchScriptByte();
+		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		break;
+	case 0x24 + 1:
+		// TODO
+		foo = getVarOrDirectByte(0x40);
+		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		break;
+
 	default:
-		warning("Unknown o5_resourcesroutine: %d", _opcode & 0x1F);
+		warning("Unknown o5_resourceRoutines: %d", _opcode);
 		break;
 	}
 }
@@ -2513,6 +2547,7 @@ void Scumm::o5_pickupObjectOld()
 	// FIXME: Zak256 (Zaire): Why does this happen at all?
 	if (obj < 1) {
 		warning("pickupObjectOld received negative index %d (0x%02x)", obj, obj);
+printf("_currentScript = %d / %d\n", _currentScript, vm.slot[_currentScript].number);
 		return;
 	}
 
