@@ -121,7 +121,7 @@ bool AnimationState::init(const char *name) {
 	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
 #else
 	buildLookup();
-	overlay = (NewGuiColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(NewGuiColor));
+	overlay = (OverlayColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(OverlayColor));
 	_vm->_system->show_overlay();
 #endif
 
@@ -229,13 +229,13 @@ bool AnimationState::checkPaletteSwitch() {
 
 #else
 
-NewGuiColor *AnimationState::lookup = 0;
+OverlayColor *AnimationState::lookup = 0;
 
 void AnimationState::buildLookup() {
 	if (lookup)
 		return;
 
-	lookup = (NewGuiColor *)calloc(BITDEPTH * BITDEPTH * 256, sizeof(NewGuiColor));
+	lookup = (OverlayColor *)calloc(BITDEPTH * BITDEPTH * 256, sizeof(OverlayColor));
 
 	int y, cb, cr;
 	int r, g, b;
@@ -262,9 +262,9 @@ void AnimationState::buildLookup() {
 }
 
 
-void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat) {
+void AnimationState::plotYUV(OverlayColor *lut, int width, int height, byte *const *dat) {
 
-	NewGuiColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
+	OverlayColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
 
 	int x, y;
 
@@ -289,12 +289,12 @@ void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *cons
 }
 
 void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
-	NewGuiColor *dst = overlay + RENDERWIDE * (s->y) + s->x;
+	OverlayColor *dst = overlay + RENDERWIDE * (s->y) + s->x;
 
 	// FIXME: These aren't the "right" colours, but look good to me.
 
-	NewGuiColor pen = _vm->_system->RGBToColor(255, 255, 255);
-	NewGuiColor border = _vm->_system->RGBToColor(0, 0, 0);
+	OverlayColor pen = _vm->_system->RGBToColor(255, 255, 255);
+	OverlayColor border = _vm->_system->RGBToColor(0, 0, 0);
 
 	for (int y = 0; y < s->h; y++) {
 		for (int x = 0; x < s->w; x++) {
@@ -315,7 +315,7 @@ void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
 }
 
 void AnimationState::clearDisplay(void) {
-	NewGuiColor black = _vm->_system->RGBToColor(0, 0, 0);
+	OverlayColor black = _vm->_system->RGBToColor(0, 0, 0);
 
 	for (int i = 0; i < MOVIE_WIDTH * MOVIE_HEIGHT; i++)
 		overlay[i] = black;

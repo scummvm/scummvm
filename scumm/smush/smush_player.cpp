@@ -902,7 +902,7 @@ void SmushPlayer::setPalette(const byte *palette) {
 		*p++ = 0;
 	}
 
-	_vm->_system->set_palette(palette_colors, 0, 256);
+	_vm->_system->setPalette(palette_colors, 0, 256);
 }
 
 void SmushPlayer::setPaletteValue(int n, byte r, byte g, byte b) {
@@ -910,7 +910,7 @@ void SmushPlayer::setPaletteValue(int n, byte r, byte g, byte b) {
 	_pal[n * 3 + 1] = g;
 	_pal[n * 3 + 2] = b;
 
-	_vm->_system->set_palette(_pal, n, 1);
+	_vm->_system->setPalette(_pal, n, 1);
 }
 
 void SmushPlayer::updateScreen() {
@@ -1046,7 +1046,7 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 			uint32 end_time, start_time;
 			
 			start_time = _vm->_system->get_msecs();
-			_vm->_system->update_screen();
+			_vm->_system->updateScreen();
 			_updateNeeded = false;
 
 			if (_insanity)

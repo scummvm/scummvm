@@ -327,7 +327,7 @@ void OSystem_MorphOS::set_timer(TimerProc callback, int timer)
 	warning("set_timer() unexpectedly called");
 }
 
-OSystem::MutexRef OSystem_MorphOS::create_mutex()
+OSystem::MutexRef OSystem_MorphOS::createMutex()
 {
 	SignalSemaphore *sem = (SignalSemaphore *) AllocVec(sizeof (SignalSemaphore), MEMF_PUBLIC);
 
@@ -337,17 +337,17 @@ OSystem::MutexRef OSystem_MorphOS::create_mutex()
 	return (MutexRef)sem;
 }
 
-void OSystem_MorphOS::lock_mutex(MutexRef mutex)
+void OSystem_MorphOS::lockMutex(MutexRef mutex)
 {
 	ObtainSemaphore((SignalSemaphore *) mutex);
 }
 
-void OSystem_MorphOS::unlock_mutex(MutexRef mutex)
+void OSystem_MorphOS::unlockMutex(MutexRef mutex)
 {
 	ReleaseSemaphore((SignalSemaphore *)mutex);
 }
 
-void OSystem_MorphOS::delete_mutex(MutexRef mutex)
+void OSystem_MorphOS::deleteMutex(MutexRef mutex)
 {
 	FreeVec(mutex);
 }
@@ -519,7 +519,7 @@ void OSystem_MorphOS::quit()
 
 #define CVT8TO32(col)   ((col<<24) | (col<<16) | (col<<8) | col)
 
-void OSystem_MorphOS::set_palette(const byte *colors, uint start, uint num)
+void OSystem_MorphOS::setPalette(const byte *colors, uint start, uint num)
 {
 	const byte *data = colors;
 	UWORD changed_colors[256];
@@ -1170,7 +1170,7 @@ bool OSystem_MorphOS::AddUpdateRect(WORD x, WORD y, WORD w, WORD h)
 	return true;
 }
 
-void OSystem_MorphOS::update_screen()
+void OSystem_MorphOS::updateScreen()
 {
 	AUTO_LOCK
 

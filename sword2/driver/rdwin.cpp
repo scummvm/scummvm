@@ -139,7 +139,7 @@ void Graphics::updateDisplay(bool redrawScene) {
 	}
 
 	// We always need to update because of fades, menu animations, etc.
-	_vm->_system->update_screen();
+	_vm->_system->updateScreen();
 }
 
 /**

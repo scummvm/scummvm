@@ -41,7 +41,7 @@ public:
 	OSystem_WINCE3();
 
 	// Update the dirty areas of the screen
-	void update_screen();
+	void updateScreen();
 
 	// Set a parameter
 	uint32 property(int param, Property *value);

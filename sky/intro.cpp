@@ -793,7 +793,7 @@ bool Intro::floppyScrollFlirt(void) {
 			} while (nrToDo == 255);
 		}
 		_system->copy_rect(scrollPos, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-		_system->update_screen();
+		_system->updateScreen();
 		if (!escDelay(40))
 			doContinue = false;
 	}

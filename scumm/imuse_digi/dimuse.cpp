@@ -43,7 +43,7 @@ void IMuseDigital::timer_handler(void *refCon) {
 
 IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	: _vm(scumm) {
-	_mutex = g_system->create_mutex();
+	_mutex = g_system->createMutex();
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
 	_vm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
@@ -61,7 +61,7 @@ IMuseDigital::~IMuseDigital() {
 	stopAllSounds(true);
 	_vm->_timer->removeTimerProc(timer_handler);
 	delete _sound;
-	g_system->delete_mutex(_mutex);
+	g_system->deleteMutex(_mutex);
 }
 
 void IMuseDigital::callback() {

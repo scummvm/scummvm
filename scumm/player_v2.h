@@ -127,8 +127,8 @@ private:
 	ChannelInfo _channels[5];
 
 protected:
-	void mutex_up() { _system->lock_mutex (_mutex); }
-	void mutex_down() { _system->unlock_mutex (_mutex); }
+	void mutex_up() { _system->lockMutex (_mutex); }
+	void mutex_down() { _system->unlockMutex (_mutex); }
 
 	virtual void nextTick();
 	virtual void clear_channel(int i);

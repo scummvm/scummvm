@@ -76,7 +76,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk) {
 	}
 
 	//set the palette
-	_system->set_palette(tmpPal, 0, VGA_COLOURS);
+	_system->setPalette(tmpPal, 0, VGA_COLOURS);
 	_currentPalette = 0;
 
 	_seqInfo.framesLeft = 0;
@@ -94,15 +94,15 @@ void Screen::clearScreen(void) {
 	 
 	memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copy_rect(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-	_system->update_screen();
+	_system->updateScreen();
 }
 
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
 	
 	convertPalette(pal, _palette);
-	_system->set_palette(_palette, 0, GAME_COLOURS);
-	_system->update_screen();
+	_system->setPalette(_palette, 0, GAME_COLOURS);
+	_system->updateScreen();
 }
 
 void Screen::setPaletteEndian(uint8 *pal) {
@@ -115,8 +115,8 @@ void Screen::setPaletteEndian(uint8 *pal) {
 #else
 	convertPalette(pal, _palette);
 #endif
-	_system->set_palette(_palette, 0, GAME_COLOURS);
-	_system->update_screen();
+	_system->setPalette(_palette, 0, GAME_COLOURS);
+	_system->updateScreen();
 }
 
 void Screen::halvePalette(void) {
@@ -128,7 +128,7 @@ void Screen::halvePalette(void) {
 		halfPalette[(cnt << 2) | 2] = _palette[(cnt << 2) | 2] >> 1;
 		halfPalette[(cnt << 2) | 3] = 0;
 	}
-	_system->set_palette(halfPalette, 0, GAME_COLOURS);
+	_system->setPalette(halfPalette, 0, GAME_COLOURS);
 }
 
 void Screen::setPalette(uint16 fileNum) {
@@ -152,7 +152,7 @@ void Screen::showScreen(uint16 fileNum) {
 void Screen::showScreen(uint8 *pScreen) {
 
 	_system->copy_rect(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-	_system->update_screen();
+	_system->updateScreen();
 }
 
 void Screen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
@@ -221,7 +221,7 @@ void Screen::flip(bool doUpdate) {
 		}
 	}
 	if (doUpdate)
-		_system->update_screen();
+		_system->updateScreen();
 }
 
 void Screen::fnDrawScreen(uint32 palette, uint32 scroll) {
@@ -247,8 +247,8 @@ void Screen::fnFadeDown(uint32 scroll) {
 	} else {
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
 			palette_fadedown_helper((uint32 *)_palette, GAME_COLOURS);
-			_system->set_palette(_palette, 0, GAME_COLOURS);
-			_system->update_screen();
+			_system->setPalette(_palette, 0, GAME_COLOURS);
+			_system->updateScreen();
 			_system->delay_msecs(20);
 		}
 	}
@@ -295,8 +295,8 @@ void Screen::paletteFadeUp(uint8 *pal) {
 			_palette[(colCnt << 2) | 1] = (tmpPal[(colCnt << 2) | 1] * cnt) >> 5;
 			_palette[(colCnt << 2) | 2] = (tmpPal[(colCnt << 2) | 2] * cnt) >> 5;
 		}
-		_system->set_palette(_palette, 0, GAME_COLOURS);
-		_system->update_screen();
+		_system->setPalette(_palette, 0, GAME_COLOURS);
+		_system->updateScreen();
 		_system->delay_msecs(20);
 	}	
 }
@@ -482,7 +482,7 @@ void Screen::processSequence(void) {
 			}
 			scrPtr += 15 * GAME_SCREEN_WIDTH;
 		}
-		_system->update_screen();
+		_system->updateScreen();
 		_seqInfo.framesLeft--;
 	}
 	if (_seqInfo.framesLeft == 0) {

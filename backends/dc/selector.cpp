@@ -426,7 +426,7 @@ int gameMenu(Game *games, int num_games)
 	draw_trans_quad(100.0, y, 590.0, y+32.0,
 			0x7000ff00, 0x7000ff00, 0x7000ff00, 0x7000ff00);
 
-      games[i].icon.set_palette(pal);
+      games[i].icon.setPalette(pal);
       drawGameLabel(games[i], pal, 50.0, y, (cnt == selector_pos?
 					     0xffff00 : 0xffffff));
       y += 40.0;

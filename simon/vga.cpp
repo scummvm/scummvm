@@ -1727,9 +1727,9 @@ void SimonEngine::vc_62_palette_thing() {
 		memcpy(_video_buf_1, _palette_backup, _video_num_pal_colors * sizeof(uint32));
 		for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
 			palette_fadeout((uint32 *)_video_buf_1, _video_num_pal_colors);
-			_system->set_palette(_video_buf_1, 0, _video_num_pal_colors);
+			_system->setPalette(_video_buf_1, 0, _video_num_pal_colors);
 			if (_fade)
-				_system->update_screen();
+				_system->updateScreen();
 			delay(5);
 		}
 

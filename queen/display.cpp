@@ -156,9 +156,9 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 	debug(9, "Display::palSet(%d, %d)", start, end);
 	uint8 tempPal[256 * 4];
 	palConvert(tempPal, pal, start, end);
-	_system->set_palette(tempPal + start * 4, start, end - start + 1);
+	_system->setPalette(tempPal + start * 4, start, end - start + 1);
 	if (updateScreen) {
-		_system->update_screen();
+		_system->updateScreen();
 		_vm->input()->delay(20);
 	}
 }
@@ -617,7 +617,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		}
 		debug(7, "Display::update() - Dirtyblocks blit (%d)", count);
 	}
-	_system->update_screen();
+	_system->updateScreen();
 }
 
 void Display::setupPanel() {
@@ -958,7 +958,7 @@ void Display::blankScreenEffect1() {
 				++y;
 			}
 			_system->copy_rect(buf, 32, x, y, 32, 32);
-			_system->update_screen();
+			_system->updateScreen();
 			_vm->input()->delay(10);
 		}
 	}
@@ -991,7 +991,7 @@ void Display::blankScreenEffect2() {
 			p += SCREEN_W;
 		}
 		_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
-		_system->update_screen();
+		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
@@ -1020,7 +1020,7 @@ void Display::blankScreenEffect3() {
 			++i;
 			_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
 		}
-		_system->update_screen();
+		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }

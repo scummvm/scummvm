@@ -36,7 +36,7 @@ char currsurface;
 FILE *fstderr, *fstdout, *fstdin;
 
 // Set colors of the palette
-void OSystem_GP32::set_palette(const byte *colors, uint start, uint num) { 
+void OSystem_GP32::setPalette(const byte *colors, uint start, uint num) { 
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _currentPalette + start;
@@ -692,7 +692,7 @@ char * SDL_GetError() {
 }
 
 // Update the dirty areas of the screen
-void OSystem_GP32::update_screen() { 
+void OSystem_GP32::updateScreen() { 
 	assert(sdl_hwscreen != NULL);
 
 	// If the shake position changed, fill the dirty area with blackness
@@ -1017,7 +1017,7 @@ void OSystem_GP32::hotswap_gfx_mode() {
 	copy_rect(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	free(bak_mem);
 
-	update_screen();
+	updateScreen();
 }
 	
 // Get or set a property
@@ -1072,12 +1072,12 @@ void OSystem_GP32::update_cdrom() { }
 void OSystem_GP32::set_timer(TimerProc callback, int timer) { }
 
 // Mutex handling
-OSystem::MutexRef OSystem_GP32::create_mutex() {
+OSystem::MutexRef OSystem_GP32::createMutex() {
 	return NULL;
 }
-void OSystem_GP32::lock_mutex(MutexRef mutex) { }
-void OSystem_GP32::unlock_mutex(MutexRef mutex) { }
-void OSystem_GP32::delete_mutex(MutexRef mutex) { }
+void OSystem_GP32::lockMutex(MutexRef mutex) { }
+void OSystem_GP32::unlockMutex(MutexRef mutex) { }
+void OSystem_GP32::deleteMutex(MutexRef mutex) { }
 
 // Quit
 void gphalt(int);

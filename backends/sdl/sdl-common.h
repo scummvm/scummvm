@@ -37,7 +37,7 @@ public:
 	void initSize(uint w, uint h);
 
 	// Set colors of the palette
-	void set_palette(const byte *colors, uint start, uint num);
+	void setPalette(const byte *colors, uint start, uint num);
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
@@ -46,7 +46,7 @@ public:
 	void move_screen(int dx, int dy, int height);
 
 	// Update the dirty areas of the screen
-	void update_screen();
+	void updateScreen();
 
 	// Either show or hide the mouse cursor
 	bool show_mouse(bool visible);
@@ -98,10 +98,10 @@ public:
 	void set_timer(TimerProc callback, int timer);
 
 	// Mutex handling
-	MutexRef create_mutex();
-	void lock_mutex(MutexRef mutex);
-	void unlock_mutex(MutexRef mutex);
-	void delete_mutex(MutexRef mutex);
+	MutexRef createMutex();
+	void lockMutex(MutexRef mutex);
+	void unlockMutex(MutexRef mutex);
+	void deleteMutex(MutexRef mutex);
 
 	// Overlay
 	virtual void show_overlay();
@@ -159,7 +159,7 @@ protected:
 		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1
 	};
 
-	bool _forceFull; // Force full redraw on next update_screen
+	bool _forceFull; // Force full redraw on next updateScreen
 	ScalerProc *_scaler_proc;
 	int _scaleFactor;
 	int _mode;
@@ -217,8 +217,10 @@ protected:
 	SDL_Color *_currentPalette;
 	uint _paletteDirtyStart, _paletteDirtyEnd;
 	
-	// Mutex that prevents multiple threads interferring with each other
-	// when accessing the screen.
+	/**
+	 * Mutex which prevents multiple threads from interfering with each other
+	 * when accessing the screen.
+	 */
 	MutexRef _graphicsMutex;
 
 
@@ -235,7 +237,7 @@ protected:
 	void toggleMouseGrab();
 
 
-	virtual void intern_update_screen() = 0;
+	virtual void internUpdateScreen() = 0;
 
 	virtual void load_gfx_mode() = 0;
 	virtual void unload_gfx_mode() = 0;

@@ -57,8 +57,8 @@ void Widget::draw() {
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
-		NewGuiColor colorA = gui->_color;
-		NewGuiColor colorB = gui->_shadowcolor;
+		OverlayColor colorA = gui->_color;
+		OverlayColor colorB = gui->_shadowcolor;
 		if ((_flags & WIDGET_INV_BORDER) == WIDGET_INV_BORDER)
 			SWAP(colorA, colorB);
 		gui->box(_x, _y, _w, _h, colorA, colorB);

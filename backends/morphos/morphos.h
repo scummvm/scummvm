@@ -43,7 +43,7 @@ class OSystem_MorphOS : public OSystem
 		bool Initialise();
 
 		// Set colors of the palette
-		virtual void set_palette(const byte *colors, uint start, uint num);
+		virtual void setPalette(const byte *colors, uint start, uint num);
 
 		// Set the size of the video bitmap.
 		// Typically, 320x200
@@ -55,7 +55,7 @@ class OSystem_MorphOS : public OSystem
 		void move_screen(int dx, int dy, int height);
 
 		// Update the dirty areas of the screen
-		virtual void update_screen();
+		virtual void updateScreen();
 
 		// Either show or hide the mouse cursor
 		virtual bool show_mouse(bool visible);
@@ -88,10 +88,10 @@ class OSystem_MorphOS : public OSystem
 		virtual void set_timer(TimerProc callback, int timer);
 
 		// Mutex handling
-		virtual MutexRef create_mutex();
-		virtual void lock_mutex(MutexRef mutex);
-		virtual void unlock_mutex(MutexRef mutex);
-		virtual void delete_mutex(MutexRef mutex);
+		virtual MutexRef createMutex();
+		virtual void lockMutex(MutexRef mutex);
+		virtual void unlockMutex(MutexRef mutex);
+		virtual void deleteMutex(MutexRef mutex);
 
 		// Get the next event.
 		// Returns true if an event was retrieved.

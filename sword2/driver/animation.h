@@ -105,8 +105,8 @@ private:
 		byte pal[4 * 256];
 	} palettes[50];
 #else
-	static NewGuiColor *lookup;
-	NewGuiColor *overlay;
+	static OverlayColor *lookup;
+	OverlayColor *overlay;
 #endif
 
 public:
@@ -130,7 +130,7 @@ private:
 	bool checkPaletteSwitch();
 #else
 	void buildLookup(void);
-	void plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat);
+	void plotYUV(OverlayColor *lut, int width, int height, byte *const *dat);
 #endif
 };
 

@@ -241,7 +241,7 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 					(hilite && _part == kSliderPart) ? gui->_textcolorhi : gui->_textcolor);
 		gui->frameRect(_x, _y + _sliderPos, _w, _sliderHeight, gui->_color);
 		int y = _y + _sliderPos + _sliderHeight / 2;
-		NewGuiColor color = (hilite && _part == kSliderPart) ? gui->_color : gui->_shadowcolor;
+		OverlayColor color = (hilite && _part == kSliderPart) ? gui->_color : gui->_shadowcolor;
 		gui->hLine(_x + 2, y - 2, _x + _w - 3, color);
 		gui->hLine(_x + 2, y, _x + _w - 3, color);
 		gui->hLine(_x + 2, y + 2, _x + _w-3, color);

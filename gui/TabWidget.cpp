@@ -127,7 +127,7 @@ void TabWidget::drawWidget(bool hilite) {
 	// Iterate over all tabs and draw them
 	int i, x = _x + kTabLeftOffset;
 	for (i = 0; i < (int)_tabs.size(); ++i) {
-		NewGuiColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
+		OverlayColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
 		int yOffset = (i == _activeTab) ? 0 : 2; 
 		gui->box(x, _y + yOffset, _tabWidth, kTabHeight - yOffset, color, color);
 		gui->drawString(_tabs[i].title, x + kTabPadding, _y + yOffset / 2 + (kTabHeight - kLineHeight - 1), _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);

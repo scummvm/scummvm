@@ -35,7 +35,7 @@
 class OSystem_GP32 : public OSystem {
 public:
 	// Set colors of the palette
-	void set_palette(const byte *colors, uint start, uint num);
+	void setPalette(const byte *colors, uint start, uint num);
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
@@ -52,7 +52,7 @@ public:
 	void move_screen(int dx, int dy, int height);
 
 	// Update the dirty areas of the screen
-	void update_screen();
+	void updateScreen();
 
 	// Either show or hide the mouse cursor
 	bool show_mouse(bool visible);
@@ -103,10 +103,10 @@ public:
 	void set_timer(TimerProc callback, int timer);
 
 	// Mutex handling
-	OSystem::MutexRef create_mutex();
-	void lock_mutex(MutexRef mutex);
-	void unlock_mutex(MutexRef mutex);
-	void delete_mutex(MutexRef mutex);
+	OSystem::MutexRef createMutex();
+	void lockMutex(MutexRef mutex);
+	void unlockMutex(MutexRef mutex);
+	void deleteMutex(MutexRef mutex);
 
 	// Quit
 	void quit();
@@ -149,7 +149,7 @@ private:
 		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 3
 	};
 
-	bool _forceFull; // Force full redraw on next update_screen
+	bool _forceFull; // Force full redraw on next updateScreen
 	int _scaleFactor;
 	int _mode;
 	bool _full_screen;

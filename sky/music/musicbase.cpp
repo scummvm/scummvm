@@ -34,7 +34,7 @@ MusicBase::MusicBase(Disk *pDisk, OSystem *system) {
 	_musicVolume = 127;
 	_system = system;
 	_numberOfChannels = _currentMusic = 0;
-	_mutex = _system->create_mutex();
+	_mutex = _system->createMutex();
 }
 
 MusicBase::~MusicBase(void) {
@@ -45,7 +45,7 @@ MusicBase::~MusicBase(void) {
 
 void MusicBase::loadSection(uint8 pSection) {
 
-	_system->lock_mutex(_mutex);
+	_system->lockMutex(_mutex);
 	if (_currentMusic)
 		stopMusic();
 	if (_musicData)
@@ -62,7 +62,7 @@ void MusicBase::loadSection(uint8 pSection) {
 	_numberOfChannels = _currentMusic = 0;
 	setupPointers();
 	startDriver();
-	_system->unlock_mutex(_mutex);
+	_system->unlockMutex(_mutex);
 }
 
 bool MusicBase::musicIsPlaying(void) {
@@ -165,7 +165,7 @@ void MusicBase::loadNewMusic(void) {
 
 void MusicBase::pollMusic(void) {
 
-	_system->lock_mutex(_mutex);
+	_system->lockMutex(_mutex);
 	uint8 newTempo;
 	if (_onNextPoll.doReInit) startDriver();
 	if (_onNextPoll.doStopMusic) stopMusic();
@@ -181,7 +181,7 @@ void MusicBase::pollMusic(void) {
 			updateTempo();
 		}
 	}
-	_system->unlock_mutex(_mutex);
+	_system->unlockMutex(_mutex);
 	_aktTime &= 0xFFFF;
 }
 

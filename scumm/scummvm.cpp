@@ -1223,7 +1223,7 @@ void ScummEngine::mainRun() {
 	while (!_quit) {
 
 		updatePalette();
-		_system->update_screen();
+		_system->updateScreen();
 
 		diff -= _system->get_msecs();
 		waitForTimer(delta * 15 + diff);

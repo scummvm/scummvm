@@ -119,7 +119,7 @@ void StackLock::lock() {
 	if (_mutexName != NULL)
 		debug(6, "Locking mutex %s", _mutexName);
 	
-	_syst->lock_mutex(_mutex);
+	_syst->lockMutex(_mutex);
 }
 
 void StackLock::unlock() {
@@ -127,7 +127,7 @@ void StackLock::unlock() {
 	if (_mutexName != NULL)
 		debug(6, "Unlocking mutex %s", _mutexName);
 
-	_syst->unlock_mutex(_mutex);
+	_syst->unlockMutex(_mutex);
 }
 
 

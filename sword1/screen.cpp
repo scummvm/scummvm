@@ -108,14 +108,14 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 		_fadingStep = 1;
 		_fadingDirection = FADE_UP;
 		memset(_currentPalette, 0, 256 * 4);
-		_system->set_palette(_currentPalette, 0, 256);
+		_system->setPalette(_currentPalette, 0, 256);
 	} else
-		_system->set_palette(_targetPalette + 4 * start, start, length);
+		_system->setPalette(_targetPalette + 4 * start, start, length);
 }
 
 void Screen::fullRefresh(void) {
 	_fullRefresh = true;
-	_system->set_palette(_targetPalette, 0, 256);
+	_system->setPalette(_targetPalette, 0, 256);
 }
 
 bool Screen::stillFading(void) {
@@ -133,7 +133,7 @@ bool Screen::showScrollFrame(void) {
 	uint16 avgScrlY = (uint16)(_oldScrollY + Logic::_scriptVars[SCROLL_OFFSET_Y]) / 2;
 
 	_system->copy_rect(_screenBuf + avgScrlY * _scrnSizeX + avgScrlX, _scrnSizeX, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
-	_system->update_screen();
+	_system->updateScreen();
 	return true;
 }
 
@@ -147,7 +147,7 @@ void Screen::updateScreen(void) {
 	}
 	if (_fadingStep) {
 		fadePalette();
-		_system->set_palette(_currentPalette, 0, 256);
+		_system->setPalette(_currentPalette, 0, 256);
 	}
 
 	uint16 scrlX = (uint16)Logic::_scriptVars[SCROLL_OFFSET_X];
@@ -241,7 +241,7 @@ void Screen::updateScreen(void) {
 			scrnBuf += _scrnSizeX * SCRNGRID_Y;
 		}
 	}
-	_system->update_screen();
+	_system->updateScreen();
 }
 
 void Screen::newScreen(uint32 screen) {
@@ -956,7 +956,7 @@ void Screen::plotYUV(byte *lut, int width, int height, byte *const *dat) {
 	}
 
 	_system->copy_rect(buf, width, (640-width)/2, (480-height)/2, width, height);
-	_system->update_screen();
+	_system->updateScreen();
 
 	free(buf);
 

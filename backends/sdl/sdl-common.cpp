@@ -95,11 +95,11 @@ void OSystem_SDL_Common::init_intern() {
 	if (joystick_num > -1)
 		sdlFlags |= SDL_INIT_JOYSTICK;
 
-	if (SDL_Init(sdlFlags) ==-1) {
-		error("Could not initialize SDL: %s.\n", SDL_GetError());
+	if (SDL_Init(sdlFlags) == -1) {
+		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
-	_graphicsMutex = create_mutex();
+	_graphicsMutex = createMutex();
 
 	SDL_ShowCursor(SDL_DISABLE);
 	
@@ -156,7 +156,7 @@ OSystem_SDL_Common::~OSystem_SDL_Common() {
 		free(_dirty_checksums);
 	free(_currentPalette);
 	free(_mouseBackup);
-	delete_mutex(_graphicsMutex);
+	deleteMutex(_graphicsMutex);
 
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_Quit();
@@ -229,7 +229,7 @@ void OSystem_SDL_Common::copy_rect(const byte *src, int pitch, int x, int y, int
 
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	byte *dst = (byte *)_screen->pixels + y * _screenWidth + x;
 
@@ -268,7 +268,7 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	// vertical movement
 	if (dy > 0) {
@@ -535,7 +535,7 @@ void OSystem_SDL_Common::set_mouse_pos(int x, int y) {
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
 		undraw_mouse();
-		update_screen();
+		updateScreen();
 	}
 }
 
@@ -1050,14 +1050,18 @@ void OSystem_SDL_Common::clearSoundCallback() {
 	SDL_CloseAudio();
 }
 
+int OSystem_SDL_Common::getOutputSampleRate() const {
+	return SAMPLES_PER_SEC;
+}
+
 const OSystem::GraphicsMode *OSystem_SDL_Common::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
-void OSystem_SDL_Common::update_screen() {
+void OSystem_SDL_Common::updateScreen() {
 	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 
-	intern_update_screen();
+	internUpdateScreen();
 }
 
 bool OSystem_SDL_Common::setGraphicsMode(int mode) {
@@ -1131,7 +1135,7 @@ bool OSystem_SDL_Common::setGraphicsMode(int mode) {
 		_forceFull = true;
 
 		// Blit everything to the screen
-		intern_update_screen();
+		internUpdateScreen();
 	
 		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 		_modeChanged = true;
@@ -1148,29 +1152,6 @@ int OSystem_SDL_Common::getGraphicsMode() const {
 void OSystem_SDL_Common::setWindowCaption(const char *caption) {
 	SDL_WM_SetCaption(caption, caption);
 }
-
-bool OSystem_SDL_Common::openCD(int drive) {
-	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
-		_cdrom = NULL;
-	else {
-		_cdrom = SDL_CDOpen(drive);
-		// Did it open? Check if _cdrom is NULL
-		if (!_cdrom) {
-			warning("Couldn't open drive: %s", SDL_GetError());
-		} else {
-			cd_num_loops = 0;
-			cd_stop_time = 0;
-			cd_end_time = 0;
-		}
-	}
-	
-	return (_cdrom != NULL);
-}
-
-int OSystem_SDL_Common::getOutputSampleRate() const {
-	return SAMPLES_PER_SEC;
-}
-
 
 bool OSystem_SDL_Common::hasFeature(Feature f) {
 	return
@@ -1278,7 +1259,7 @@ void OSystem_SDL_Common::draw_mouse() {
 
 	// Draw the mouse cursor; backup the covered area in "bak"
 	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	// Mark as dirty
 	add_dirty_rect(x, y, w, h);
@@ -1338,7 +1319,7 @@ void OSystem_SDL_Common::undraw_mouse() {
 	_mouseDrawn = false;
 
 	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	const int old_mouse_x = _mouseOldState.x;
 	const int old_mouse_y = _mouseOldState.y;
@@ -1373,6 +1354,24 @@ void OSystem_SDL_Common::undraw_mouse() {
 	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
 
 	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
+}
+
+bool OSystem_SDL_Common::openCD(int drive) {
+	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
+		_cdrom = NULL;
+	else {
+		_cdrom = SDL_CDOpen(drive);
+		// Did it open? Check if _cdrom is NULL
+		if (!_cdrom) {
+			warning("Couldn't open drive: %s", SDL_GetError());
+		} else {
+			cd_num_loops = 0;
+			cd_stop_time = 0;
+			cd_end_time = 0;
+		}
+	}
+	
+	return (_cdrom != NULL);
 }
 
 void OSystem_SDL_Common::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
@@ -1488,19 +1487,19 @@ void OSystem_SDL_Common::setup_icon() {
 	SDL_FreeSurface(sdl_surf);
 }
 
-OSystem::MutexRef OSystem_SDL_Common::create_mutex(void) {
+OSystem::MutexRef OSystem_SDL_Common::createMutex(void) {
 	return (MutexRef) SDL_CreateMutex();
 }
 
-void OSystem_SDL_Common::lock_mutex(MutexRef mutex) {
+void OSystem_SDL_Common::lockMutex(MutexRef mutex) {
 	SDL_mutexP((SDL_mutex *) mutex);
 }
 
-void OSystem_SDL_Common::unlock_mutex(MutexRef mutex) {
+void OSystem_SDL_Common::unlockMutex(MutexRef mutex) {
 	SDL_mutexV((SDL_mutex *) mutex);
 }
 
-void OSystem_SDL_Common::delete_mutex(MutexRef mutex) {
+void OSystem_SDL_Common::deleteMutex(MutexRef mutex) {
 	SDL_DestroyMutex((SDL_mutex *) mutex);
 }
 
@@ -1560,7 +1559,7 @@ void OSystem_SDL_Common::grab_overlay(int16 *buf, int pitch) {
 	undraw_mouse();
 
 	if (SDL_LockSurface(_tmpscreen) == -1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	int16 *src = (int16 *)_tmpscreen->pixels + _tmpScreenWidth + 1;
 	int h = _screenHeight;
@@ -1611,7 +1610,7 @@ void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	undraw_mouse();
 
 	if (SDL_LockSurface(_tmpscreen) == -1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	int16 *dst = (int16 *)_tmpscreen->pixels + (y + 1) * _tmpScreenWidth + (x + 1);
 	do {
@@ -1623,7 +1622,7 @@ void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	SDL_UnlockSurface(_tmpscreen);
 }
 
-void OSystem_SDL_Common::set_palette(const byte *colors, uint start, uint num) {
+void OSystem_SDL_Common::setPalette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _currentPalette + start;

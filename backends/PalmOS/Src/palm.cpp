@@ -64,7 +64,7 @@ void OSystem_PALMOS::init_intern(UInt16 gfx_mode) {
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
 }
 
-void OSystem_PALMOS::set_palette(const byte *colors, uint start, uint num) {
+void OSystem_PALMOS::setPalette(const byte *colors, uint start, uint num) {
 	if (_quitCount)
 		return;
 
@@ -134,7 +134,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 			_screenP	= _offScreenP;
 			_offScreenH	= WinGetDisplayWindow();
 			_screenH	= _offScreenH;	
-			_renderer_proc = &OSystem_PALMOS::update_screen__flipping;
+			_renderer_proc = &OSystem_PALMOS::updateScreen__flipping;
 			break;
 		case GFX_WIDE:
 		case GFX_BUFFERED:
@@ -153,13 +153,13 @@ void OSystem_PALMOS::load_gfx_mode() {
 					gVars->screenLocked = true;
 					_screenP = WinScreenLock(winLockErase) + _screenOffset.addr;
 					_renderer_proc = (OPTIONS_TST(kOptModeLandscape)) ?
-						&OSystem_PALMOS::update_screen__wide_landscape :
-						&OSystem_PALMOS::update_screen__wide_portrait;
+						&OSystem_PALMOS::updateScreen__wide_landscape :
+						&OSystem_PALMOS::updateScreen__wide_portrait;
 				}
 
 			} else {
 				_screenP = (byte *)(BmpGetBits(WinGetBitmap(_screenH))) + _screenOffset.addr;
-				_renderer_proc =  &OSystem_PALMOS::update_screen__buffered;
+				_renderer_proc =  &OSystem_PALMOS::updateScreen__buffered;
 			}
 			_offScreenPitch = _screenWidth;
 			break;
@@ -170,7 +170,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 			_screenH = _offScreenH;
 			_offScreenP	= (byte *)(BmpGetBits(WinGetBitmap(_offScreenH))) + _screenOffset.addr;
 			_screenP	= _offScreenP;
-			_renderer_proc =  &OSystem_PALMOS::update_screen__direct;
+			_renderer_proc =  &OSystem_PALMOS::updateScreen__direct;
 			break;
 	}
 
@@ -178,7 +178,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 		WinSetCoordinateSystem(kCoordinatesNative);
 
 	// palette for preload dialog
-	set_palette(startupPalette,0,16);
+	setPalette(startupPalette,0,16);
 
 	// try to allocate on storage heap
 	FtrPtrNew(appFileCreator, ftrOverlayPtr, _screenWidth * _screenHeight, (void **)&_tmpScreenP);
@@ -389,7 +389,7 @@ void OSystem_PALMOS::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 // Tapwave code will come here
 #endif
 
-void OSystem_PALMOS::update_screen__wide_portrait() {
+void OSystem_PALMOS::updateScreen__wide_portrait() {
 	UInt8 *dst = _screenP + _screenOffset.y;
 	UInt8 *src1 = _offScreenP + WIDE_PITCH - 1;
 
@@ -437,7 +437,7 @@ void OSystem_PALMOS::update_screen__wide_portrait() {
 	_screenP = WinScreenLock(winLockCopy) + _screenOffset.addr;
 }
 
-void OSystem_PALMOS::update_screen__wide_landscape() {
+void OSystem_PALMOS::updateScreen__wide_landscape() {
 	UInt8 *dst = _screenP;
 	UInt8 *src = _offScreenP;
 
@@ -475,7 +475,7 @@ void OSystem_PALMOS::update_screen__wide_landscape() {
 	_screenP = WinScreenLock(winLockCopy) + _screenOffset.addr;
 }
 
-void OSystem_PALMOS::update_screen__flipping() {
+void OSystem_PALMOS::updateScreen__flipping() {
 	RectangleType r, dummy;
 	Boolean shaked = false;
 
@@ -511,7 +511,7 @@ void OSystem_PALMOS::update_screen__flipping() {
 
 }
 
-void OSystem_PALMOS::update_screen__buffered() {
+void OSystem_PALMOS::updateScreen__buffered() {
 	UInt32 move = 0;
 	UInt32 size = _screenWidth * _screenHeight;
 
@@ -557,7 +557,7 @@ void OSystem_PALMOS::update_screen__buffered() {
 
 }
 
-void OSystem_PALMOS::update_screen__direct() {
+void OSystem_PALMOS::updateScreen__direct() {
 	if (_current_shake_pos != _new_shake_pos) {
 		if (_vibrate) {
 			Boolean active = (_new_shake_pos >= 3);
@@ -624,7 +624,7 @@ void OSystem_PALMOS::draw1BitGfx(UInt16 id, UInt32 x, UInt32 y, Boolean show) {
 	}
 }
 
-void OSystem_PALMOS::update_screen() {
+void OSystem_PALMOS::updateScreen() {
 	if(_quitCount)
 		return;
 
@@ -751,10 +751,10 @@ void OSystem_PALMOS::set_timer(TimerProc callback, int timer) {
 }
 
 /* Mutex handling */
-OSystem::MutexRef OSystem_PALMOS::create_mutex() {return NULL;}
-void OSystem_PALMOS::lock_mutex(MutexRef mutex) {}
-void OSystem_PALMOS::unlock_mutex(MutexRef mutex) {}
-void OSystem_PALMOS::delete_mutex(MutexRef mutex) {}
+OSystem::MutexRef OSystem_PALMOS::createMutex() {return NULL;}
+void OSystem_PALMOS::lockMutex(MutexRef mutex) {}
+void OSystem_PALMOS::unlockMutex(MutexRef mutex) {}
+void OSystem_PALMOS::deleteMutex(MutexRef mutex) {}
 
 void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat) {
 	Int16 x = _mouseCurState.x;

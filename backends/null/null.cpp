@@ -29,11 +29,11 @@
 /* NULL video driver */
 class OSystem_NULL : public OSystem {
 public:
-	void set_palette(const byte *colors, uint start, uint num) {}
+	void setPalette(const byte *colors, uint start, uint num) {}
 	void initSize(uint w, uint h);
 	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {}
 	void move_screen(int dx, int dy) {}
-	void update_screen() {}
+	void updateScreen() {}
 	bool show_mouse(bool visible) { return false; }
 	void set_mouse_pos(int x, int y) {}
 	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {}

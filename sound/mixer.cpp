@@ -105,7 +105,7 @@ public:
 
 SoundMixer::SoundMixer() {
 	_syst = OSystem::instance();
-	_mutex = _syst->create_mutex();
+	_mutex = _syst->createMutex();
 
 	_premixParam = 0;
 	_premixProc = 0;
@@ -130,7 +130,7 @@ SoundMixer::SoundMixer() {
 SoundMixer::~SoundMixer() {
 	_syst->clearSoundCallback();
 	stopAll();
-	_syst->delete_mutex(_mutex);
+	_syst->deleteMutex(_mutex);
 }
 
 void SoundMixer::setupPremix(PremixProc *proc, void *param) {

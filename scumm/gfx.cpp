@@ -2446,7 +2446,7 @@ void ScummEngine::transitionEffect(int a) {
 
 		// Draw the current state to the screen and wait half a sec so the user
 		// can watch the effect taking place.
-		_system->update_screen();
+		_system->updateScreen();
 		waitForTimer(30);
 	}
 }
@@ -2552,7 +2552,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 
 		if (++blits >= blits_before_refresh) {
 			blits = 0;
-			_system->update_screen();
+			_system->updateScreen();
 			waitForTimer(30);
 		}
 	}
@@ -2560,7 +2560,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	free(offsets);
 
 	if (blits != 0) {
-		_system->update_screen();
+		_system->updateScreen();
 		waitForTimer(30);
 	}
 }
@@ -2588,7 +2588,7 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->width,
 				0, vs->height - step,
 				vs->width, step);
-			_system->update_screen();
+			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
 			y += step;
@@ -2603,7 +2603,7 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->width,
 				0, 0,
 				vs->width, step);
-			_system->update_screen();
+			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
 			y += step;
@@ -2618,7 +2618,7 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->width,
 				vs->width - step, 0,
 				step, vs->height);
-			_system->update_screen();
+			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
 			x += step;
@@ -2633,7 +2633,7 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->width,
 				0, 0,
 				step, vs->height);
-			_system->update_screen();
+			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
 			x += step;

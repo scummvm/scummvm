@@ -46,7 +46,7 @@ typedef struct {
 class OSystem_PALMOS : public OSystem {
 public:
 	// Set colors of the palette
-	void set_palette(const byte *colors, uint start, uint num);
+	void setPalette(const byte *colors, uint start, uint num);
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
@@ -61,7 +61,7 @@ public:
 	void move_screen(int dx, int dy, int height);
 
 	// Update the dirty areas of the screen
-	void update_screen();
+	void updateScreen();
 
 	// Either show or hide the mouse cursor
 	bool show_mouse(bool visible);
@@ -129,10 +129,10 @@ public:
 	void set_timer(TimerProc callback, int timer);
 
 	// Mutex handling
-	MutexRef create_mutex();
-	void lock_mutex(MutexRef mutex);
-	void unlock_mutex(MutexRef mutex);
-	void delete_mutex(MutexRef mutex);
+	MutexRef createMutex();
+	void lockMutex(MutexRef mutex);
+	void unlockMutex(MutexRef mutex);
+	void deleteMutex(MutexRef mutex);
 
 	// Quit
 	void quit();
@@ -170,12 +170,12 @@ private:
 	typedef void (OSystem_PALMOS::*RendererProc)();
 	RendererProc _renderer_proc;
 
-	void update_screen__flipping();
-	void update_screen__buffered();
-	void update_screen__direct();
-	void update_screen__wide_portrait();
-	void update_screen__wide_landscape();
-	void update_screen__wide_zodiac();
+	void updateScreen__flipping();
+	void updateScreen__buffered();
+	void updateScreen__direct();
+	void updateScreen__wide_portrait();
+	void updateScreen__wide_landscape();
+	void updateScreen__wide_zodiac();
 
 	void *ptrP[5];	// various ptr
 

@@ -28,7 +28,7 @@ public:
 	OSystem_SDL();
 
 	// Update the dirty areas of the screen
-	void intern_update_screen();
+	void internUpdateScreen();
 
 protected:
 	SDL_Surface *_hwscreen;    // hardware screen
@@ -222,13 +222,13 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	SDL_FreeSurface(old_tmpscreen);
 
 	// Blit everything to the screen
-	intern_update_screen();
+	internUpdateScreen();
 	
 	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
 }
 
-void OSystem_SDL::intern_update_screen() {
+void OSystem_SDL::internUpdateScreen() {
 	assert(_hwscreen != NULL);
 
 	// If the shake position changed, fill the dirty area with blackness

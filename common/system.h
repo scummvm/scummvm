@@ -153,15 +153,18 @@ public:
 	virtual int16 get_width() = 0;
 
 	/** Set colors of the palette. */
-	virtual void set_palette(const byte *colors, uint start, uint num) = 0;
+	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 
 	/**
 	 * Draw a bitmap to screen.
 	 * The screen will not be updated to reflect the new bitmap, you have
-	 * to call update_screen to do that.
-	 * @see update_screen
+	 * to call updateScreen to do that.
+	 * @see updateScreen
 	 */
 	virtual void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+
+	/** Update the dirty areas of the screen. */
+	virtual void updateScreen() = 0;
 
 	/**
 	 * Moves the screen content by the offset specified via dx/dy.
@@ -169,11 +172,12 @@ public:
 	 * @param dx	the horizontal offset.
 	 * @param dy	the vertical offset.
 	 * @param height	the number of lines which in which the move will be done.
+	 *
+	 * @todo This is a rather special screen effect, only used by the SCUMM
+	 *       frontend - we should consider removing it from the backend API
+	 *       and instead implement the functionality in the frontend.
 	 */
 	virtual void move_screen(int dx, int dy, int height) = 0;
-
-	/** Update the dirty areas of the screen. */
-	virtual void update_screen() = 0;
 
 	/**
 	 * Set current shake position, a feature needed for some SCUMM screen effects.
@@ -183,30 +187,12 @@ public:
 	 * be lost - that is, to restore the original view, the game engine only has to
 	 * call this method again with a 0 offset. No calls to copy_rect are necessary.
 	 * @param shakeOffset	the shake offset
+	 *
+	 * @todo This is a rather special screen effect, only used by the SCUMM
+	 *       frontend - we should consider removing it from the backend API
+	 *       and instead implement the functionality in the frontend.
 	 */
 	virtual void set_shake_pos(int shakeOffset) = 0;
-
-	/** Convert the given RGB triplet into a NewGuiColor. A NewGuiColor can be
-	 * 8bit, 16bit or 32bit, depending on the target system. The default
-	 * implementation generates a 16 bit color value, in the 565 format
-	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @see colorToRGB
-	 */
-	virtual NewGuiColor RGBToColor(uint8 r, uint8 g, uint8 b) {
-		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
-	}
-
-	/** Convert the given NewGuiColor into a RGB triplet. A NewGuiColor can be
-	 * 8bit, 16bit or 32bit, depending on the target system. The default
-	 * implementation takes a 16 bit color value and assumes it to be in 565 format
-	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @see RGBToColor
-	 */
-	virtual void colorToRGB(NewGuiColor color, uint8 &r, uint8 &g, uint8 &b) {
-		r = (((color >> 11) & 0x1F) << 3);
-		g = (((color >> 5) & 0x3F) << 2);
-		b = ((color&0x1F) << 3);
-	}
 
 	//@}
 
@@ -361,7 +347,7 @@ public:
 	 */
 	virtual void update_cdrom() = 0;
 
-	//@} 
+	//@}
 
 
 
@@ -374,19 +360,19 @@ public:
 	 * Create a new mutex.
 	 * @return the newly created mutex, or 0 if an error occured.
 	 */
-	virtual MutexRef create_mutex(void) = 0;
+	virtual MutexRef createMutex(void) = 0;
 
 	/**
 	 * Lock the given mutex.
 	 * @param mutex	the mutex to lock.
 	 */
-	virtual void lock_mutex(MutexRef mutex) = 0;
+	virtual void lockMutex(MutexRef mutex) = 0;
 
 	/**
 	 * Unlock the given mutex.
 	 * @param mutex	the mutex to unlock.
 	 */
-	virtual void unlock_mutex(MutexRef mutex) = 0;
+	virtual void unlockMutex(MutexRef mutex) = 0;
 
 	/**
 	 * Delete the given mutex. Make sure the mutex is unlocked before you delete it.
@@ -394,8 +380,8 @@ public:
 	 * program may crash.
 	 * @param mutex	the mutex to delete.
 	 */
-	virtual void delete_mutex(MutexRef mutex) = 0;
-	//@} 
+	virtual void deleteMutex(MutexRef mutex) = 0;
+	//@}
 
 
 	
@@ -404,11 +390,33 @@ public:
 	virtual void show_overlay() = 0;
 	virtual void hide_overlay() = 0;
 	virtual void clear_overlay() = 0;
-	virtual void grab_overlay(NewGuiColor *buf, int pitch) = 0;
-	virtual void copy_rect_overlay(const NewGuiColor *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual void grab_overlay(OverlayColor *buf, int pitch) = 0;
+	virtual void copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual int16 get_overlay_height()	{ return get_height(); }
 	virtual int16 get_overlay_width()	{ return get_width(); }
-	//@} 
+
+	/** Convert the given RGB triplet into a OverlayColor. A OverlayColor can be
+	 * 8bit, 16bit or 32bit, depending on the target system. The default
+	 * implementation generates a 16 bit color value, in the 565 format
+	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @see colorToRGB
+	 */
+	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) {
+		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
+	}
+
+	/** Convert the given OverlayColor into a RGB triplet. A OverlayColor can be
+	 * 8bit, 16bit or 32bit, depending on the target system. The default
+	 * implementation takes a 16 bit color value and assumes it to be in 565 format
+	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @see RGBToColor
+	 */
+	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
+		r = (((color >> 11) & 0x1F) << 3);
+		g = (((color >> 5) & 0x3F) << 2);
+		b = ((color&0x1F) << 3);
+	}
+	//@}
 
 
 

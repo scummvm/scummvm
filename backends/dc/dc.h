@@ -31,7 +31,7 @@ class OSystem_Dreamcast : public OSystem {
   OSystem_Dreamcast();
 
   // Set colors of the palette
-  void set_palette(const byte *colors, uint start, uint num);
+  void setPalette(const byte *colors, uint start, uint num);
 
   // Set the size of the video bitmap.
   // Typically, 320x200
@@ -45,7 +45,7 @@ class OSystem_Dreamcast : public OSystem {
   void move_screen(int dx, int dy, int height);
 
   // Update the dirty areas of the screen
-  void update_screen();
+  void updateScreen();
 
   // Either show or hide the mouse cursor
   bool show_mouse(bool visible);
@@ -104,10 +104,10 @@ class OSystem_Dreamcast : public OSystem {
   virtual void set_timer(TimerProc callback, int timer);
 
   // Mutex handling
-  virtual MutexRef create_mutex();
-  virtual void lock_mutex(MutexRef mutex);
-  virtual void unlock_mutex(MutexRef mutex);
-  virtual void delete_mutex(MutexRef mutex);
+  virtual MutexRef createMutex();
+  virtual void lockMutex(MutexRef mutex);
+  virtual void unlockMutex(MutexRef mutex);
+  virtual void deleteMutex(MutexRef mutex);
 
   // Savefile handling
   virtual SaveFileManager *get_savefile_manager();

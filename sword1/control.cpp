@@ -179,7 +179,7 @@ void Control::askForCd(void) {
 	}
 	palOut[0] = palOut[1] = palOut[2] = palOut[3] = 0;
 	_resMan->resClose(SR_PALETTE);
-	_system->set_palette(palOut, 0, 256);
+	_system->setPalette(palOut, 0, 256);
 	free(palOut);
 
 	File test;
@@ -195,7 +195,7 @@ void Control::askForCd(void) {
 			renderText(textA, 320, 220, TEXT_CENTER);
 			renderText(_lStrings[STR_INSERT_CD_B], 320, 240, TEXT_CENTER);
 			_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
-			_system->update_screen();
+			_system->updateScreen();
 		}
 		delay(300);
 		if (_keyPressed) {
@@ -204,7 +204,7 @@ void Control::askForCd(void) {
 				memset(_screenBuf, 0, 640 * 480);
 				renderText(_lStrings[STR_INCORRECT_CD], 320, 230, TEXT_CENTER);
 				_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
-				_system->update_screen();
+				_system->updateScreen();
 				delay(2000);
 				refreshText = true;
 			} else {
@@ -240,7 +240,7 @@ uint8 Control::runPanel(void) {
 	}
 	palOut[0] = palOut[1] = palOut[2] = palOut[3] = 0;
 	_resMan->resClose(SR_PALETTE);
-	_system->set_palette(palOut, 0, 256);
+	_system->setPalette(palOut, 0, 256);
 	free(palOut);
 	uint8 mode = 0, newMode = BUTTON_MAIN_PANEL;
 	bool fullRefresh = false;
@@ -281,7 +281,7 @@ uint8 Control::runPanel(void) {
 			fullRefresh = false;
 			_system->copy_rect(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, 480);
 		}
-		_system->update_screen();
+		_system->updateScreen();
 		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != 1) && (retVal == 0));
@@ -568,7 +568,7 @@ bool Control::getConfirm(const uint8 *title) {
 	do {
 		buttons[0]->draw();
 		buttons[1]->draw();
-		_system->update_screen();
+		_system->updateScreen();
 		delay(1000 / 12);
 		if (_mouseState & BS1L_BUTTON_DOWN) {
 			if (buttons[0]->wasClicked(_mouseX, _mouseY))

@@ -113,11 +113,11 @@ void Graphics::setPalette(int16 startEntry, int16 noEntries, uint8 *colourTable,
 	if (noEntries) {
 		memcpy(&_palCopy[startEntry][0], colourTable, noEntries * 4);
 		if (fadeNow == RDPAL_INSTANT) {
-			_vm->_system->set_palette((const byte *) _palCopy, startEntry, noEntries);
+			_vm->_system->setPalette((const byte *) _palCopy, startEntry, noEntries);
 			setNeedFullRedraw();
 		}
 	} else {
-		_vm->_system->set_palette((const byte *) _palCopy, 0, 256);
+		_vm->_system->setPalette((const byte *) _palCopy, 0, 256);
 		setNeedFullRedraw();
 	}
 }
@@ -128,7 +128,7 @@ void Graphics::dimPalette(void) {
 	for (int i = 0; i < 256 * 4; i++)
 		p[i] /= 2;
 
-	_vm->_system->set_palette(p, 0, 256);
+	_vm->_system->setPalette(p, 0, 256);
 	setNeedFullRedraw();
 }
 
@@ -230,7 +230,7 @@ void Graphics::fadeServer(void) {
 		}
 	}
 
-	_vm->_system->set_palette(newPalette, 0, 256);
+	_vm->_system->setPalette(newPalette, 0, 256);
 	setNeedFullRedraw();
 }
 

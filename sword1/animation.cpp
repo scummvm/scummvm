@@ -104,7 +104,7 @@ bool AnimationState::init(const char *name) {
 
 	palnum = 0;
 	maxPalnum = p;
-	_sys->set_palette(palettes[palnum].pal, 0, 256);
+	_sys->setPalette(palettes[palnum].pal, 0, 256);
 	lut = lut2 = lookup[0];
 	curpal = -1;
 	cr = 0;
@@ -113,7 +113,7 @@ bool AnimationState::init(const char *name) {
 	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
 #else
 	buildLookup();
-	overlay = (NewGuiColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(NewGuiColor));
+	overlay = (OverlayColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(OverlayColor));
 	_sys->show_overlay();
 #endif
 
@@ -208,7 +208,7 @@ bool AnimationState::checkPaletteSwitch() {
 	if (framenum == palettes[palnum].end) {
 		unsigned char *l = lut2;
 		palnum++;
-		_sys->set_palette(palettes[palnum].pal, 0, 256);
+		_sys->setPalette(palettes[palnum].pal, 0, 256);
 		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
 		lut2 = lut;
 		lut = l;
@@ -220,13 +220,13 @@ bool AnimationState::checkPaletteSwitch() {
 
 #else
 
-NewGuiColor *AnimationState::lookup = 0;
+OverlayColor *AnimationState::lookup = 0;
 
 void AnimationState::buildLookup() {
 	if (lookup)
 		return;
 
-	lookup = (NewGuiColor *)calloc(BITDEPTH * BITDEPTH * 256, sizeof(NewGuiColor));
+	lookup = (OverlayColor *)calloc(BITDEPTH * BITDEPTH * 256, sizeof(OverlayColor));
 
 	int y, cb, cr;
 	int r, g, b;
@@ -252,9 +252,9 @@ void AnimationState::buildLookup() {
 	}
 }
 
-void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat) {
+void AnimationState::plotYUV(OverlayColor *lut, int width, int height, byte *const *dat) {
 
-	NewGuiColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
+	OverlayColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
 
 	int x, y;
 
@@ -377,7 +377,7 @@ void MoviePlayer::play(const char *filename) {
 	if (anim->init(filename)) {
 		while (anim->decodeFrame()) {
 #ifndef BACKEND_8BIT
-			_sys->update_screen();
+			_sys->updateScreen();
 #endif
 			// FIXME: check for ESC and abbort animation be just returning from the function
 			OSystem::Event event;

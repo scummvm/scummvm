@@ -211,7 +211,7 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 		255, 255, 255, 0, 
 	};
 
-	system->set_palette(dummy_palette, 0, 16);
+	system->setPalette(dummy_palette, 0, 16);
 
 #ifndef _WIN32_WCE
 	GUI::LauncherDialog dlg(detector);

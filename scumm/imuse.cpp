@@ -1760,10 +1760,10 @@ void IMuseInternal::copyGlobalAdlibInstrument(byte slot, Instrument *dest) {
 //
 ////////////////////////////////////////////////////////////
 
-IMuse::IMuse(OSystem *system, IMuseInternal *target) : _system(system), _target(target) { _mutex = system->create_mutex(); }
-IMuse::~IMuse() { if (_mutex) _system->delete_mutex(_mutex); if (_target) delete _target; }
-inline void IMuse::in() const { _system->lock_mutex(_mutex); }
-inline void IMuse::out() const { _system->unlock_mutex(_mutex); }
+IMuse::IMuse(OSystem *system, IMuseInternal *target) : _system(system), _target(target) { _mutex = system->createMutex(); }
+IMuse::~IMuse() { if (_mutex) _system->deleteMutex(_mutex); if (_target) delete _target; }
+inline void IMuse::in() const { _system->lockMutex(_mutex); }
+inline void IMuse::out() const { _system->unlockMutex(_mutex); }
 
 void IMuse::on_timer(MidiDriver *midi) { in(); _target->on_timer(midi); out(); }
 void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }

@@ -130,20 +130,20 @@ void OSystem_Dreamcast::quit() {
 }
 
 /* Mutex handling */
-OSystem::MutexRef OSystem_Dreamcast::create_mutex()
+OSystem::MutexRef OSystem_Dreamcast::createMutex()
 {
   return NULL;
 }
 
-void OSystem_Dreamcast::lock_mutex(MutexRef mutex)
+void OSystem_Dreamcast::lockMutex(MutexRef mutex)
 {
 }
  
-void OSystem_Dreamcast::unlock_mutex(MutexRef mutex)
+void OSystem_Dreamcast::unlockMutex(MutexRef mutex)
 {
 }
 
-void OSystem_Dreamcast::delete_mutex(MutexRef mutex)
+void OSystem_Dreamcast::deleteMutex(MutexRef mutex)
 {
 }
 

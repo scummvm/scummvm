@@ -2477,9 +2477,9 @@ void SimonEngine::o_fade_to_black() {
 		palette_fadeout((uint32 *)_video_buf_1 + 32 + 16, 144);
 		palette_fadeout((uint32 *)_video_buf_1 + 32 + 16 + 144 + 16, 48);
 
-		_system->set_palette(_video_buf_1, 0, 256);
+		_system->setPalette(_video_buf_1, 0, 256);
 		if (_fade)
-			_system->update_screen();
+			_system->updateScreen();
 		delay(5);
 	} while (--i);
 
@@ -4666,12 +4666,12 @@ void SimonEngine::dx_update_screen_and_palette() {
 		_video_var_9 = 0;
 		if (memcmp(_palette, _palette_backup, 256 * 4) != 0) {
 			memcpy(_palette_backup, _palette, 256 * 4);
-			_system->set_palette(_palette, 0, 256);
+			_system->setPalette(_palette, 0, 256);
 		}
 	}
 
 	_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
-	_system->update_screen();
+	_system->updateScreen();
 
 	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);
 
@@ -4691,7 +4691,7 @@ void SimonEngine::realizePalette() {
 	if (_palette_color_count & 0x8000) {
 		fadeUpPalette();
 	} else {
-		_system->set_palette(_palette, 0, _palette_color_count);
+		_system->setPalette(_palette, 0, _palette_color_count);
 	}
 
 	_palette_color_count = 0;
@@ -4750,7 +4750,7 @@ void SimonEngine::fadeUpPalette() {
 			src += 4;
 		}
 
-		_system->set_palette(_video_buf_1, 0, _video_num_pal_colors);
+		_system->setPalette(_video_buf_1, 0, _video_num_pal_colors);
 		delay(5);
  	} while (!done);
 }

@@ -786,7 +786,7 @@ void ScummDebugger::drawBox(int box) {
 	if (vs != NULL)
 		_vm->markRectAsDirty(vs->number, 0, vs->width, 0, vs->height);
 	_vm->drawDirtyScreenParts();
-	_vm->_system->update_screen();
+	_vm->_system->updateScreen();
 }
 
 bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {

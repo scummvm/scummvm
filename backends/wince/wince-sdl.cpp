@@ -126,7 +126,7 @@ void OSystem_WINCE3::swap_panel_visibility() {
 		else
 			add_dirty_rect(0, 200, 320, 40);
 			
-		update_screen();
+		updateScreen();
 	}
 }
 
@@ -606,7 +606,7 @@ void OSystem_WINCE3::hotswap_gfx_mode() {
 	SDL_FreeSurface(old_tmpscreen);
 
 	// Blit everything to the screen
-	update_screen();
+	updateScreen();
 	
 	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
@@ -623,7 +623,7 @@ void OSystem_WINCE3::update_keyboard() {
 	}
 }
 
-void OSystem_WINCE3::update_screen() {
+void OSystem_WINCE3::updateScreen() {
 	assert(_hwscreen != NULL);
 
 	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
@@ -1254,7 +1254,7 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, true)) {
 				if (!_toolbarHandler.drawn())
-					update_screen();
+					updateScreen();
 				if (_newOrientation != _orientationLandscape) {
 					_orientationLandscape = _newOrientation;
 					ConfMan.set("CE_landscape", _orientationLandscape);
@@ -1281,7 +1281,7 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, false)) {
 				if (!_toolbarHandler.drawn())
-					update_screen();
+					updateScreen();
 			}
 			else {
 				if (!_freeLook)

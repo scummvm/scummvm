@@ -54,7 +54,7 @@ static void premix_proc(void *param, int16 *data, uint len) {
 
 Sound::Sound(Sword2Engine *vm) {
 	_vm = vm;
-	_mutex = _vm->_system->create_mutex();
+	_mutex = _vm->_system->createMutex();
 
 	memset(_fx, 0, sizeof(_fx));
 
@@ -83,7 +83,7 @@ Sound::~Sound() {
 	for (int i = 0; i < MAXFX; i++)
 		stopFxHandle(i);
 	if (_mutex)
-		_vm->_system->delete_mutex(_mutex);
+		_vm->_system->deleteMutex(_mutex);
 }
 
 void Sound::fxServer(int16 *data, uint len) {

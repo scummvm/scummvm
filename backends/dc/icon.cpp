@@ -61,7 +61,7 @@ void Icon::create_texture()
   texture = tex;
 }
 
-void Icon::set_palette(int pal)
+void Icon::setPalette(int pal)
 {
   unsigned int (*hwpal)[64][16] = (unsigned int (*)[64][16])0xa05f9000;
   for(int n = 0; n<16; n++)

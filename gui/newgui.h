@@ -92,7 +92,7 @@ public:
 
 protected:
 	OSystem		*_system;
-	NewGuiColor	*_screen;
+	OverlayColor	*_screen;
 	int			_screenPitch;
 	
 	bool		_needRedraw;
@@ -134,28 +134,28 @@ protected:
 
 public:
 	// Theme colors
-	NewGuiColor _color, _shadowcolor;
-	NewGuiColor _bgcolor;
-	NewGuiColor _textcolor;
-	NewGuiColor _textcolorhi;
+	OverlayColor _color, _shadowcolor;
+	OverlayColor _bgcolor;
+	OverlayColor _textcolor;
+	OverlayColor _textcolorhi;
 
 	// Drawing primitives
-	NewGuiColor *getBasePtr(int x, int y);
-	void box(int x, int y, int width, int height, NewGuiColor colorA, NewGuiColor colorB);
-	void line(int x, int y, int x2, int y2, NewGuiColor color);
-	void blendRect(int x, int y, int w, int h, NewGuiColor color, int level = 3);
-	void fillRect(int x, int y, int w, int h, NewGuiColor color);
-	void checkerRect(int x, int y, int w, int h, NewGuiColor color);
-	void frameRect(int x, int y, int w, int h, NewGuiColor color);
-	void drawChar(byte c, int x, int y, NewGuiColor color);
+	OverlayColor *getBasePtr(int x, int y);
+	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
+	void line(int x, int y, int x2, int y2, OverlayColor color);
+	void blendRect(int x, int y, int w, int h, OverlayColor color, int level = 3);
+	void fillRect(int x, int y, int w, int h, OverlayColor color);
+	void checkerRect(int x, int y, int w, int h, OverlayColor color);
+	void frameRect(int x, int y, int w, int h, OverlayColor color);
+	void drawChar(byte c, int x, int y, OverlayColor color);
 	int getStringWidth(const String &str);
 	int getCharWidth(byte c);
-	void drawString(const String &str, int x, int y, int w, NewGuiColor color, int align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
+	void drawString(const String &str, int x, int y, int w, OverlayColor color, int align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
 
 	void blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch);
 	void blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch);
 
-	void drawBitmap(uint32 *bitmap, int x, int y, NewGuiColor color, int h = 8);
+	void drawBitmap(uint32 *bitmap, int x, int y, OverlayColor color, int h = 8);
 
 	void addDirtyRect(int x, int y, int w, int h);
 };

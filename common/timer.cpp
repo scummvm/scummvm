@@ -33,7 +33,7 @@ Timer::Timer(OSystem *system) :
 	_timerHandler(0),
 	_lastTime(0) {
 
-	_mutex = _system->create_mutex();
+	_mutex = _system->createMutex();
 
 	g_timer = this;
 
@@ -71,7 +71,7 @@ Timer::~Timer() {
 	// it is still waiting for the _mutex. So, again depending on the backend,
 	// we might end up unlocking the mutex then immediately deleting it, while
 	// the timer thread is about to lock it.
-	_system->delete_mutex(_mutex);
+	_system->deleteMutex(_mutex);
 }
 
 int Timer::timer_handler(int t) {

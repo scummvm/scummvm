@@ -114,7 +114,7 @@ Music::Music(OSystem *system, SoundMixer *pMixer) {
 	_system = system;
 	_mixer = pMixer;
 	_mixer->setupPremix(passMixerFunc, this);
-	_mutex = _system->create_mutex();
+	_mutex = _system->createMutex();
 	_converter[0] = NULL;
 	_converter[1] = NULL;
 	_volumeL = _volumeR = 192;
@@ -125,7 +125,7 @@ Music::~Music() {
 	delete _converter[0];
 	delete _converter[1];
 	if (_mutex)
-		_system->delete_mutex(_mutex);
+		_system->deleteMutex(_mutex);
 }
 
 void Music::passMixerFunc(void *param, int16 *buf, uint len) {

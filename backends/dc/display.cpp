@@ -128,7 +128,7 @@ void commit_dummy_transpoly()
 }
 
 
-void OSystem_Dreamcast::set_palette(const byte *colors, uint start, uint num)
+void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
 {
   unsigned short *dst = palette + start;
   if(num>0)
@@ -270,7 +270,7 @@ void OSystem_Dreamcast::set_shake_pos(int shake_pos)
   _current_shake_pos = shake_pos;
 }
 
-void OSystem_Dreamcast::update_screen(void)
+void OSystem_Dreamcast::updateScreen(void)
 {
   struct polygon_list mypoly;
   struct packed_colour_vertex_list myvertex;

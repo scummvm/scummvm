@@ -911,7 +911,7 @@ void ScummEngine::updatePalette() {
 		}
 	}
 	
-	_system->set_palette(palette_colors, first, num);
+	_system->setPalette(palette_colors, first, num);
 
 	_palDirtyMax = -1;
 	_palDirtyMin = 256;

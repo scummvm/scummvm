@@ -378,13 +378,13 @@ void Control::animClick(ConResource *pButton) {
 		_text->flushForRedraw();
 		pButton->drawToScreen(NO_MASK);
 		_text->drawToScreen(WITH_MASK);
-		_system->update_screen();
+		_system->updateScreen();
 		delay(150);
 		pButton->_curSprite--;
 		_text->flushForRedraw();
 		pButton->drawToScreen(NO_MASK);
 		_text->drawToScreen(WITH_MASK);
-		_system->update_screen();
+		_system->updateScreen();
 	}
 }
 
@@ -431,7 +431,7 @@ void Control::doLoadSavePanel(void) {
 
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_system->update_screen();
+	_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
 	removePanel();
@@ -468,7 +468,7 @@ void Control::doControlPanel(void) {
 
 	while (!quitPanel) {
 		_text->drawToScreen(WITH_MASK);
-		_system->update_screen();
+		_system->updateScreen();
 		_mouseClicked = false;
 		delay(50);
 		if (_keyPressed == 27) { // escape pressed
@@ -497,7 +497,7 @@ void Control::doControlPanel(void) {
 	}
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_system->update_screen();
+	_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
 	removePanel();
@@ -609,7 +609,7 @@ bool Control::getYesNo(char *text) {
 			mouseType = wantMouse;
 			_skyMouse->spriteMouse(mouseType, 0, 0);
 		}
-		_system->update_screen();
+		_system->updateScreen();
 		delay(50);
 		if ((_mouseY >= 83) && (_mouseY <= 110)) {
 			if ((_mouseX >= 77) && (_mouseX <= 114)) { // over 'yes'
@@ -657,7 +657,7 @@ uint16 Control::doMusicSlide(void) {
 		}
 		buttonControl(_slide2);
 		_text->drawToScreen(WITH_MASK);
-		_system->update_screen();
+		_system->updateScreen();
 	}
 	return 0;
 }
@@ -685,7 +685,7 @@ uint16 Control::doSpeedSlide(void) {
 		}
 		buttonControl(_slide);
 		_text->drawToScreen(WITH_MASK);
-		_system->update_screen();
+		_system->updateScreen();
 	}
 	SkyEngine::_systemVars.gameSpeed = speedDelay;
 	return SPEED_CHANGED;
@@ -705,7 +705,7 @@ uint16 Control::toggleFx(ConResource *pButton) {
 	}
 	pButton->drawToScreen(WITH_MASK);
 	buttonControl(pButton);
-	_system->update_screen();
+	_system->updateScreen();
 	return TOGGLED;
 }
 
@@ -729,7 +729,7 @@ uint16 Control::toggleText(void) {
 
 	drawTextCross(flags);
 
-	_system->update_screen();
+	_system->updateScreen();
 	return TOGGLED;
 }
 
@@ -848,7 +848,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		}
 
 		_text->drawToScreen(WITH_MASK);
-		_system->update_screen();
+		_system->updateScreen();
 		_mouseClicked = false;
 		delay(50);
 		if (_keyPressed == 27) { // escape pressed
@@ -1547,7 +1547,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 	_skyText->fnSetFont(0);
 
 	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_system->update_screen();
+	_system->updateScreen();
 
 	if (SkyEngine::_systemVars.gameVersion < 331)
 		_skyScreen->setPalette(60509);
@@ -1571,7 +1571,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 	} else {
 		memset(_screenBuf, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 		_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-		_system->update_screen();
+		_system->updateScreen();
 		_skyScreen->showScreen(_skyScreen->giveCurrent());
 		_skyScreen->setPalette(60111);
 	}

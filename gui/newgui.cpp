@@ -146,7 +146,7 @@ void NewGui::runLoop() {
 		}
 
 		animateCursor();
-		_system->update_screen();		
+		_system->updateScreen();		
 
 		OSystem::Event event;
 		uint32 time = _system->get_msecs();
@@ -239,7 +239,7 @@ void NewGui::saveState() {
 	// whatever is visible on the screen rught now.
 	int sys_height = _system->get_overlay_height();
 	int sys_width = _system->get_overlay_width();
-	_screen = (NewGuiColor*)calloc(sys_width * sys_height, sizeof(NewGuiColor));
+	_screen = (OverlayColor*)calloc(sys_width * sys_height, sizeof(OverlayColor));
 	_screenPitch = sys_width;
 	_system->grab_overlay(_screen, _screenPitch);
 
@@ -260,7 +260,7 @@ void NewGui::restoreState() {
 		_screen = 0;
 	}
 
-	_system->update_screen();
+	_system->updateScreen();
 	
 	_stateIsSaved = false;
 }
@@ -282,11 +282,11 @@ void NewGui::closeTopDialog() {
 
 #pragma mark -
 
-NewGuiColor *NewGui::getBasePtr(int x, int y) {
+OverlayColor *NewGui::getBasePtr(int x, int y) {
 	return _screen + x + y * _screenPitch;
 }
 
-void NewGui::box(int x, int y, int width, int height, NewGuiColor colorA, NewGuiColor colorB) {
+void NewGui::box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB) {
 	hLine(x + 1, y, x + width - 2, colorA);
 	hLine(x, y + 1, x + width - 1, colorA);
 	vLine(x, y + 1, y + height - 2, colorA);
@@ -298,8 +298,8 @@ void NewGui::box(int x, int y, int width, int height, NewGuiColor colorA, NewGui
 	vLine(x + width - 2, y + 1, y + height - 1, colorB);
 }
 
-void NewGui::line(int x, int y, int x2, int y2, NewGuiColor color) {
-	NewGuiColor *ptr;
+void NewGui::line(int x, int y, int x2, int y2, OverlayColor color) {
+	OverlayColor *ptr;
 
 	if (x2 < x)
 		SWAP(x2, x);
@@ -323,7 +323,7 @@ void NewGui::line(int x, int y, int x2, int y2, NewGuiColor color) {
 	}
 }
 
-void NewGui::blendRect(int x, int y, int w, int h, NewGuiColor color, int level) {
+void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level) {
 #ifdef NEWGUI_256
 	fillRect(x, y, w, h, color);
 #else
@@ -334,7 +334,7 @@ void NewGui::blendRect(int x, int y, int w, int h, NewGuiColor color, int level)
 	g = ag * level;
 	b = ab * level;
 
-	NewGuiColor *ptr = getBasePtr(x, y);
+	OverlayColor *ptr = getBasePtr(x, y);
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
@@ -348,9 +348,9 @@ void NewGui::blendRect(int x, int y, int w, int h, NewGuiColor color, int level)
 #endif
 }
 
-void NewGui::fillRect(int x, int y, int w, int h, NewGuiColor color) {
+void NewGui::fillRect(int x, int y, int w, int h, OverlayColor color) {
 	int i;
-	NewGuiColor *ptr = getBasePtr(x, y);
+	OverlayColor *ptr = getBasePtr(x, y);
 
 	while (h--) {
 		for (i = 0; i < w; i++) {
@@ -360,9 +360,9 @@ void NewGui::fillRect(int x, int y, int w, int h, NewGuiColor color) {
 	}
 }
 
-void NewGui::checkerRect(int x, int y, int w, int h, NewGuiColor color) {
+void NewGui::checkerRect(int x, int y, int w, int h, OverlayColor color) {
 	int i;
-	NewGuiColor *ptr = getBasePtr(x, y);
+	OverlayColor *ptr = getBasePtr(x, y);
 
 	while (h--) {
 		for (i = 0; i < w; i++) {
@@ -373,9 +373,9 @@ void NewGui::checkerRect(int x, int y, int w, int h, NewGuiColor color) {
 	}
 }
 
-void NewGui::frameRect(int x, int y, int w, int h, NewGuiColor color) {
+void NewGui::frameRect(int x, int y, int w, int h, OverlayColor color) {
 	int i;
-	NewGuiColor *ptr, *basePtr = getBasePtr(x, y);
+	OverlayColor *ptr, *basePtr = getBasePtr(x, y);
 	if (basePtr == NULL)
 		return;
 
@@ -397,12 +397,12 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 	// For now we don't keep yet another list of dirty rects but simply
 	// blit the affected area directly to the overlay. At least for our current
 	// GUI/widget/dialog code that is just fine.
-	NewGuiColor *buf = getBasePtr(x, y);
+	OverlayColor *buf = getBasePtr(x, y);
 	_system->copy_rect_overlay(buf, _screenPitch, x, y, w, h);
 }
 
-void NewGui::drawChar(byte chr, int xx, int yy, NewGuiColor color) {
-	NewGuiColor *ptr = getBasePtr(xx, yy);
+void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color) {
+	OverlayColor *ptr = getBasePtr(xx, yy);
 	uint x, y;
 
 #ifdef NEW_FONT_CODE
@@ -480,7 +480,7 @@ int NewGui::getCharWidth(byte c) {
 #endif
 }
 
-void NewGui::drawString(const String &s, int x, int y, int w, NewGuiColor color, int align, int deltax, bool useEllipsis) {
+void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, int align, int deltax, bool useEllipsis) {
 	const int leftX = x, rightX = x + w;
 	uint i;
 	int width = getStringWidth(s);
@@ -553,7 +553,7 @@ void NewGui::drawString(const String &s, int x, int y, int w, NewGuiColor color,
 // Blit from a buffer to the display
 //
 void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch) {
-	NewGuiColor *ptr = getBasePtr(x, y);
+	OverlayColor *ptr = getBasePtr(x, y);
 
 	assert(buf);
 	while (h--) {
@@ -567,7 +567,7 @@ void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pit
 // Blit from the display to a buffer
 //
 void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch) {
-	NewGuiColor *ptr = getBasePtr(x, y);
+	OverlayColor *ptr = getBasePtr(x, y);
 
 	assert(buf);
 	while (h--) {
@@ -580,8 +580,8 @@ void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch) {
 //
 // Draw an 8x8 bitmap at location (x,y)
 //
-void NewGui::drawBitmap(uint32 *bitmap, int x, int y, NewGuiColor color, int h) {
-	NewGuiColor *ptr = getBasePtr(x, y);
+void NewGui::drawBitmap(uint32 *bitmap, int x, int y, OverlayColor color, int h) {
+	OverlayColor *ptr = getBasePtr(x, y);
 
 	for (y = 0; y < h; y++) {
 		uint32 mask = 0xF0000000;

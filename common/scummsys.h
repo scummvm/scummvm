@@ -420,10 +420,10 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	
 #if defined(NEWGUI_256)
 	// 256 color only on PalmOS
-	typedef byte NewGuiColor;
+	typedef byte OverlayColor;
 #else
 	// 15/16 bit color mode everywhere else...
-	typedef int16 NewGuiColor;
+	typedef int16 OverlayColor;
 #endif
 
 /*

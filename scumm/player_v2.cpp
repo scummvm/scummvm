@@ -349,7 +349,7 @@ Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 	_system = scumm->_system;
 	_mixer = scumm->_mixer;
 	_sample_rate = _system->getOutputSampleRate();
-	_mutex = _system->create_mutex();
+	_mutex = _system->createMutex();
 
 	_header_len = (scumm->_features & GF_OLD_BUNDLE) ? 4 : 6;
 
@@ -384,7 +384,7 @@ Player_V2::~Player_V2() {
 	// Detach the premix callback handler
 	_mixer->setupPremix(0, 0);
 	mutex_down();
-	_system->delete_mutex (_mutex);
+	_system->deleteMutex (_mutex);
 }
 
 void Player_V2::set_pcjr(bool pcjr) {

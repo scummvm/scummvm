@@ -56,7 +56,7 @@
 class OSystem_X11:public OSystem {
 public:
 	// Set colors of the palette
-	void set_palette(const byte *colors, uint start, uint num);
+	void setPalette(const byte *colors, uint start, uint num);
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
@@ -69,7 +69,7 @@ public:
 	void move_screen(int dx, int dy, int height);
 
 	// Update the dirty areas of the screen
-	void update_screen();
+	void updateScreen();
 
 	// Either show or hide the mouse cursor
 	bool show_mouse(bool visible);
@@ -126,10 +126,10 @@ public:
 	void set_timer(TimerProc callback, int interval);
 
 	// Mutex handling
-	MutexRef create_mutex();
-	void lock_mutex(MutexRef mutex);
-	void unlock_mutex(MutexRef mutex);
-	void delete_mutex(MutexRef mutex);
+	MutexRef createMutex();
+	void lockMutex(MutexRef mutex);
+	void unlockMutex(MutexRef mutex);
+	void deleteMutex(MutexRef mutex);
 
         // Overlay handling for the new menu system
 	void show_overlay();
@@ -153,7 +153,7 @@ private:
 	void create_empty_cursor();
 	void draw_mouse(dirty_square *dout);
 	void undraw_mouse();
-	void update_screen_helper(const dirty_square * d, dirty_square * dout);
+	void updateScreen_helper(const dirty_square * d, dirty_square * dout);
 	void blit_convert(const dirty_square * d, uint16 *dst, int pitch);
 
 	uint8 *local_fb;
@@ -477,7 +477,7 @@ void OSystem_X11::clearSoundCallback() {
 }
 
 
-void OSystem_X11::set_palette(const byte *colors, uint start, uint num)
+void OSystem_X11::setPalette(const byte *colors, uint start, uint num)
 {
 	const byte *data = colors;
 	uint16 *pal = &(palette[start]);
@@ -578,7 +578,7 @@ void OSystem_X11::blit_convert(const dirty_square * d, uint16 *dst, int pitch)
 	}
 }
 
-void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout)
+void OSystem_X11::updateScreen_helper(const dirty_square * d, dirty_square * dout)
 {
 	if (_overlay_visible == false) {
 		blit_convert(d, (uint16 *) image->data, fb_width);
@@ -603,7 +603,7 @@ void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * do
 		dout->h = d->y + d->h;
 }
 
-void OSystem_X11::update_screen()
+void OSystem_X11::updateScreen()
 {
 	bool full_redraw = false;
 	bool need_redraw = false;
@@ -620,13 +620,13 @@ void OSystem_X11::update_screen()
 	}
 
 	if (full_redraw) {
-		update_screen_helper(&ds_full, &dout);
+		updateScreen_helper(&ds_full, &dout);
 		need_redraw = true;
 	} else if ((num_of_dirty_square > 0) || (_mouse_state_changed == true)) {
 		need_redraw = true;
 		while (num_of_dirty_square > 0) {
 			num_of_dirty_square--;
-			update_screen_helper(&(ds[num_of_dirty_square]), &dout);
+			updateScreen_helper(&(ds[num_of_dirty_square]), &dout);
 		}
 	}
 
@@ -1045,24 +1045,24 @@ void OSystem_X11::set_timer(TimerProc callback, int interval)
 	}
 }
 
-OSystem::MutexRef OSystem_X11::create_mutex(void)
+OSystem::MutexRef OSystem_X11::createMutex(void)
 {
 	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(mutex, NULL);
 	return (MutexRef)mutex;
 }
 
-void OSystem_X11::lock_mutex(MutexRef mutex)
+void OSystem_X11::lockMutex(MutexRef mutex)
 {
 	pthread_mutex_lock((pthread_mutex_t *) mutex);
 }
 
-void OSystem_X11::unlock_mutex(MutexRef mutex)
+void OSystem_X11::unlockMutex(MutexRef mutex)
 {
 	pthread_mutex_unlock((pthread_mutex_t *) mutex);
 }
 
-void OSystem_X11::delete_mutex(MutexRef mutex)
+void OSystem_X11::deleteMutex(MutexRef mutex)
 {
 	pthread_mutex_destroy((pthread_mutex_t *) mutex);
 	free(mutex);
