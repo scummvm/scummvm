@@ -591,7 +591,6 @@ protected:
 	void o6_dummy();
 	void o6_kernelSetFunctions();
 	void o6_kernelGetFunctions();
-	void o6_stampObject();
 	void o6_openFile();
 	void o6_closeFile();
 	void o6_deleteFile();

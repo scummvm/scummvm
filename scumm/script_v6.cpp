@@ -2850,7 +2850,7 @@ void ScummEngine_v6::o6_stampObject() {
 	int object, x, y, state;
 
 	// dummy opcode in tentacle
-	if (_version == 6)
+	if (_gameId == GID_TENTACLE)
 		return;
 
 	// V7 version
@@ -2858,10 +2858,10 @@ void ScummEngine_v6::o6_stampObject() {
 	y = pop();
 	x = pop();
 	object = pop();
-	if (object < 30) {
-		if (state == 0) {
+	if (_version >= 7 && object < 30) {
+		if (state == 0)
 			state = 255;
-		}
+
 		debug(6, "o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
 		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
@@ -2873,15 +2873,21 @@ void ScummEngine_v6::o6_stampObject() {
 		return;
 	}
 	
-	if (object == 0) {
+	if (state == 0)
 		state = 1;
-	}
+
+	int objnum = getObjectIndex(object);
+	if (objnum == 0)
+		return;
 
 	if (x != -1) {
-		setObjectState(object, state, x, y);
-		drawObject(getObjectIndex(object), 0);
-		warning("o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
+		_objs[objnum].x_pos = x * 8;
+		_objs[objnum].y_pos = y * 8;
 	}
+
+	putState(object, state);
+	drawObject(objnum, 0);
+	debug(6, "o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
 }
 
 void ScummEngine_v6::o6_stopTalking() {

@@ -1083,25 +1083,6 @@ void ScummEngine_v6he::virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int l
 	++ctx->size;	
 }
 
-void ScummEngine_v6he::o6_stampObject() {
-	int object, x, y, state;
-	
-	state = pop();
-	if (state == 0) {
-		state = 1;
-	}
-	y = pop();
-	x = pop();
-	object = pop();
-	int objnum = getObjectIndex(object);
-	if (objnum == -1)
-		return;
-	_objs[objnum].x_pos = x * 8;
-	_objs[objnum].y_pos = y * 8;
-	putState(object, state);
-	drawObject(objnum, 0);
-}
-
 void ScummEngine_v6he::o6_openFile() {
 	int mode, len, slot, l, r;
 	byte filename[100];

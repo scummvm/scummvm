@@ -299,6 +299,9 @@ void Player::send(uint32 b) {
 		case 93: // Chorus Level
 			part->chorusLevel(param2);
 			break;
+		case 116: // Unknown
+			// FIXME: Often used in puttmoon
+			break;
 		case 123: // All Notes Off
 			part->allNotesOff();
 			break;
