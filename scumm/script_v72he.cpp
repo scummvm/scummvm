@@ -2412,7 +2412,7 @@ void ScummEngine_v72he::o72_unknownF6() {
 }
 
 void ScummEngine_v72he::o72_getResourceSize() {
-	int size, type;
+	int size = 0, type;
 
 	int idx = pop();
 	byte subOp = fetchScriptByte();
@@ -2443,7 +2443,8 @@ void ScummEngine_v72he::o72_getResourceSize() {
 	}
 
 	const byte *ptr = getResourceAddress(type, idx);
-	size = READ_BE_UINT32(ptr + 4) - 8;	
+	if (ptr)
+		size = READ_BE_UINT32(ptr + 4) - 8;
 	push(size);
 }
 
