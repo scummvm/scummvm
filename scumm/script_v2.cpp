@@ -954,8 +954,12 @@ void Scumm_v2::o2_drawSentence() {
         	        byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1)) + 12;
 			VerbSlot *vs = &_verbs[slot];
 
-			if (ptr && (vs->prep == 0xFF))
-				VAR(VAR_SENTENCE_PREPOSITION) = (*ptr >> 5);
+			if (ptr) {
+				if (vs->prep == 0)
+					VAR(VAR_SENTENCE_PREPOSITION) = (*ptr >> 5);
+				else
+					VAR(VAR_SENTENCE_PREPOSITION) = vs->prep;
+			}
         	}
 	}
 
