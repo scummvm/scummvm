@@ -1733,10 +1733,7 @@ void Scumm::processKbd() {
 
 	if (!_lastKeyHit)
 		return;
-	if (_lastKeyHit == '4') {
-		runScript(4, 0,0,0);
-		return;
-	}
+
 	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
 		runScript(_keyScriptNo, 0, 0, 0);
 		return;
