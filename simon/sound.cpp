@@ -302,21 +302,21 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 #endif
 
 	if (_game == GAME_SIMON1TALKIE) {
-		File *file2 = new File();
+		file = new File();
 #ifdef USE_MAD
-		file2->open(gss->mp3_effects_filename, gameDataPath);
-		if (file2->isOpen() == false) {
+		file->open(gss->mp3_effects_filename, gameDataPath);
+		if (file->isOpen() == false) {
 #endif
 			s = gss->voc_effects_filename;
-			file2->open(s, gameDataPath);
-			if (file2->isOpen() == false) {
+			file->open(s, gameDataPath);
+			if (file->isOpen() == false) {
 				warning("Can't open effects file %s", s);
 			} else {
-				_effects = new VocSound(_mixer, file2);
+				_effects = new VocSound(_mixer, file);
 			}
 #ifdef USE_MAD
 		} else {
-			_effects = new MP3Sound(_mixer, file2);
+			_effects = new MP3Sound(_mixer, file);
 		}
 #endif
 	}
