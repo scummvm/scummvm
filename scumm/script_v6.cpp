@@ -1470,7 +1470,8 @@ void ScummEngine_v6::o6_resourceRoutines() {
 		resid = pop();
 		nukeCharset(resid);
 		break;
-	case 119:{		// SO_LOAD_OBJECT
+	case 119:		// SO_LOAD_OBJECT
+		{
 			int room, obj = popRoomAndObj(&room);
 			loadFlObject(obj, room);
 			break;

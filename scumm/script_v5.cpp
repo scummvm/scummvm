@@ -59,7 +59,7 @@ void ScummEngine_v5::setupOpcodes() {
 		OPCODE(o5_getObjectOwner),
 		OPCODE(o5_animateActor),
 		OPCODE(o5_panCameraTo),
-		OPCODE(o5_actorSet),
+		OPCODE(o5_actorOps),
 		/* 14 */
 		OPCODE(o5_print),
 		OPCODE(o5_actorFromPos),
@@ -139,7 +139,7 @@ void ScummEngine_v5::setupOpcodes() {
 		OPCODE(o5_pickupObjectOld),
 		OPCODE(o5_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o5_actorSet),
+		OPCODE(o5_actorOps),
 		/* 54 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o5_actorFromPos),
@@ -219,7 +219,7 @@ void ScummEngine_v5::setupOpcodes() {
 		OPCODE(o5_getObjectOwner),
 		OPCODE(o5_animateActor),
 		OPCODE(o5_panCameraTo),
-		OPCODE(o5_actorSet),
+		OPCODE(o5_actorOps),
 		/* 94 */
 		OPCODE(o5_print),
 		OPCODE(o5_actorFromPos),
@@ -299,7 +299,7 @@ void ScummEngine_v5::setupOpcodes() {
 		OPCODE(o5_pickupObjectOld),
 		OPCODE(o5_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o5_actorSet),
+		OPCODE(o5_actorOps),
 		/* D4 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o5_actorFromPos),
@@ -397,11 +397,11 @@ void ScummEngine_v5::o5_actorFromPos() {
 	setResult(getActorFromPos(x, y));
 }
 
-void ScummEngine_v5::o5_actorSet() {
+void ScummEngine_v5::o5_actorOps() {
 	static const byte convertTable[20] =
 		{ 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
 	int act = getVarOrDirectByte(0x80);
-	Actor *a = derefActor(act, "o5_actorSet");
+	Actor *a = derefActor(act, "o5_actorOps");
 	int i, j;
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
@@ -412,54 +412,54 @@ void ScummEngine_v5::o5_actorSet() {
 		case 0:										/* dummy case */
 			getVarOrDirectByte(0x80);
 			break;
-		case 1:										/* costume */
+		case 1:			// SO_COSTUME
 			a->setActorCostume(getVarOrDirectByte(0x80));
 			break;
-		case 2:										/* walkspeed */
+		case 2:			// SO_STEP_DIST
 			i = getVarOrDirectByte(0x80);
 			j = getVarOrDirectByte(0x40);
 			a->setActorWalkSpeed(i, j);
 			break;
-		case 3:										/* sound */
+		case 3:			// SO_SOUND
 			a->sound[0] = getVarOrDirectByte(0x80);
 			break;
-		case 4:										/* walkanim */
+		case 4:			// SO_WALK_ANIMATION
 			a->walkFrame = getVarOrDirectByte(0x80);
 			break;
-		case 5:										/* talkanim */
+		case 5:			// SO_TALK_ANIMATION
 			a->talkStartFrame = getVarOrDirectByte(0x80);
 			a->talkStopFrame = getVarOrDirectByte(0x40);
 			break;
-		case 6:										/* standanim */
+		case 6:			// SO_STAND_ANIMATION
 			a->standFrame = getVarOrDirectByte(0x80);
 			break;
-		case 7:										/* ignore */
+		case 7:			// SO_ANIMATION
 			getVarOrDirectByte(0x80);
 			getVarOrDirectByte(0x40);
 			getVarOrDirectByte(0x20);
 			break;
-		case 8:										/* init */
+		case 8:			// SO_DEFAULT
 			a->initActor(0);
 			break;
-		case 9:										/* elevation */
+		case 9:			// SO_ELEVATION
 			a->elevation = getVarOrDirectWord(0x80);
 			a->needRedraw = true;
 			break;
-		case 10:										/* defaultanims */
+		case 10:		// SO_ANIMATION_DEFAULT
 			a->initFrame = 1;
 			a->walkFrame = 2;
 			a->standFrame = 3;
 			a->talkStartFrame = 4;
 			a->talkStopFrame = 5;
 			break;
-		case 11:										/* palette */
+		case 11:		// SO_PALETTE
 			i = getVarOrDirectByte(0x80);
 			j = getVarOrDirectByte(0x40);
 			checkRange(31, 0, i, "Illegal palette slot %d");
 			a->palette[i] = j;
 			a->needRedraw = true;
 			break;
-		case 12:										/* talk color */
+		case 12:		// SO_TALK_COLOR
 
 			// Zak256 (and possibly other games) uses actor 0 to
 			// indicate that it's the default talk color that is
@@ -470,14 +470,14 @@ void ScummEngine_v5::o5_actorSet() {
 			else
 				a->talkColor = getVarOrDirectByte(0x80);
 			break;
-		case 13:										/* name */
+		case 13:		// SO_ACTOR_NAME
 			loadPtrToResource(rtActorName, a->number, NULL);
 			break;
-		case 14:										/* initanim */
+		case 14:		// SO_INIT_ANIMATION
 			a->initFrame = getVarOrDirectByte(0x80);
 			break;
-		case 15:										/* unk */
-			error("o5_actorset:unk not implemented");
+		case 15:		// SO_PALETTE_LIST
+			error("o5_actorOps:unk not implemented");
 #if 0
 			int args[16] =
 				{
@@ -490,10 +490,10 @@ void ScummEngine_v5::o5_actorSet() {
 					a->palette[i] = args[i];
 #endif
 			break;
-		case 16:										/* width */
+		case 16:		// SO_ACTOR_WIDTH
 			a->width = getVarOrDirectByte(0x80);
 			break;
-		case 17:										/* scale */
+		case 17:		// SO_ACTOR_SCALE
 			if (_version == 4) {
 				a->scalex = a->scaley = getVarOrDirectByte(0x80);
 			} else {
@@ -503,28 +503,28 @@ void ScummEngine_v5::o5_actorSet() {
 
 			a->needRedraw = true;
 			break;
-		case 18:										/* neverzclip */
+		case 18:		// SO_NEVER_ZCLIP
 			a->forceClip = 0;
 			break;
-		case 19:										/* setzclip */
+		case 19:		// SO_ALWAYS_ZCLIP
 			a->forceClip = getVarOrDirectByte(0x80);
 			break;
-		case 20:										/* ignoreboxes */
-		case 21:										/* followboxes */
+		case 20:		// SO_IGNORE_BOXES
+		case 21:		// SO_FOLLOW_BOXES
 			a->ignoreBoxes = !(_opcode & 1);
 			a->forceClip = 0;
 			if (a->isInCurrentRoom())
 				a->putActor(a->_pos.x, a->_pos.y, a->room);
 			break;
 
-		case 22:										/* animspeed */
+		case 22:		// SO_ANIMATION_SPEED
 			a->setAnimSpeed(getVarOrDirectByte(0x80));
 			break;
-		case 23:										/* shadow mode */
+		case 23:		// SO_SHADOW
 			a->shadow_mode = getVarOrDirectByte(0x80);
 			break;
 		default:
-			warning("o5_actorSet: default case");
+			warning("o5_actorOps: default case");
 		}
 	}
 }
@@ -643,35 +643,35 @@ void ScummEngine_v5::o5_cursorCommand() {
 	int i, j, k;
 	int table[16];
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
-	case 1:											/* cursor show */
+	case 1:			// SO_CURSOR_ON
 		_cursor.state = 1;
 		verbMouseOver(0);
 		break;
-	case 2:											/* cursor hide */
+	case 2:			// SO_CURSOR_OFF
 		_cursor.state = 0;
 		verbMouseOver(0);
 		break;
-	case 3:											/* userput on */
+	case 3:			// SO_USERPUT_ON
 		_userPut = 1;
 		break;
-	case 4:											/* userput off */
+	case 4:			// SO_USERPUT_OFF
 		_userPut = 0;
 		break;
-	case 5:											/* cursor soft on */
+	case 5:			// SO_CURSOR_SOFT_ON
 		_cursor.state++;
 		verbMouseOver(0);
 		break;
-	case 6:											/* cursor soft off */
+	case 6:			// SO_CURSOR_SOFT_OFF
 		_cursor.state--;
 		verbMouseOver(0);
 		break;
-	case 7:											/* userput soft on */
+	case 7:			// SO_USERPUT_SOFT_ON
 		_userPut++;
 		break;
-	case 8:											/* userput soft off */
+	case 8:			// SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
-	case 10:											/* set cursor img */
+	case 10:		// SO_CURSOR_IMAGE
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
 		// cursor image in both Looms is based on image from charset
@@ -683,16 +683,16 @@ void ScummEngine_v5::o5_cursorCommand() {
 			setCursorImg(i, j, 1);
 		}
 		break;
-	case 11:											/* set cursor hotspot */
+	case 11:		// SO_CURSOR_HOTSPOT
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
 		k = getVarOrDirectByte(0x20);
 		setCursorHotspot(j, k);
 		break;
-	case 12:											/* init cursor */
+	case 12:		// SO_CURSOR_SET
 		setCursor(getVarOrDirectByte(0x80));
 		break;
-	case 13:											/* init charset */
+	case 13:		// SO_CHARSET_SET
 		initCharset(getVarOrDirectByte(0x80));
 		break;
 	case 14:											/* unk */
@@ -1522,14 +1522,14 @@ void ScummEngine_v5::o5_matrixOps() {
 		return;
 	}
 
-	_opcode = fetchScriptByte();
-	switch (_opcode & 0x1F) {
+	int subOp = fetchScriptByte();
+	switch (subOp & 0x1F) {
 	case 1:
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		setBoxFlags(a, b);
 		break;
-	case 2:
+	case 2:		// SO_BOX_SCALE
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		setBoxScale(a, b);
@@ -1657,13 +1657,13 @@ void ScummEngine_v5::o5_putActorInRoom() {
 void ScummEngine_v5::o5_quitPauseRestart() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
-	case 1:		// Restart
+	case 1:		// SO_RESTART
 		restart();
 		break;
-	case 2:		// Pause
+	case 2:		// SO_PAUSE
 		pauseGame();
 		break;
-	case 3:		// Quit
+	case 3:		// SO_QUIT
 		shutDown();
 		break;
 	default:
@@ -1690,12 +1690,12 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	int op = _opcode & 0x3F;
 
 	switch (_opcode & 0x3F) {
-	case 1:											// load script
-	case 2:											// load sound
-	case 3:											// load costume
-		ensureResourceLoaded(resType[op-1], resid);
+	case 1:			// SO_LOAD_SCRIPT
+	case 2:			// SO_LOAD_SOUND
+	case 3:			// SO_LOAD_COSTUME
+		ensureResourceLoaded(resType[op - 1], resid);
 		break;
-	case 4:											// load room 
+	case 4:			// SO_LOAD_ROOM
 		if (_version == 3) {
 			ensureResourceLoaded(rtRoom, resid);
 			if (resid > 0x7F)
@@ -1708,60 +1708,60 @@ void ScummEngine_v5::o5_resourceRoutines() {
 			ensureResourceLoaded(rtRoom, resid);
 		break;
 
-	case 5:											// nuke script
-	case 6:											// nuke sound
-	case 7:											// nuke costume
-	case 8:											// nuke room
+	case 5:			// SO_NUKE_SCRIPT
+	case 6:			// SO_NUKE_SOUND
+	case 7:			// SO_NUKE_COSTUME
+	case 8:			// SO_NUKE_ROOM
 		if (_gameId == GID_ZAK256)
 			warning("o5_resourceRoutines %d should not occur in Zak256", op);
 		else
 			setResourceCounter(resType[op-5], resid, 0x7F);
 		break;
-	case 9:											// lock script
+	case 9:			// SO_LOCK_SCRIPT
 		if (resid >= _numGlobalScripts)
 			break;
 		lock(rtScript, resid);
 		break;
-	case 10:											// lock sound
+	case 10:		// SO_LOCK_SOUND
 		lock(rtSound, resid);
 		break;
-	case 11:											// lock costume
+	case 11:		// SO_LOCK_COSTUME
 		lock(rtCostume, resid);
 		break;
-	case 12:											// lock room
+	case 12:		// SO_LOCK_ROOM
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		lock(rtRoom, resid);
 		break;
 
-	case 13:											// unlock script
+	case 13:		// SO_UNLOCK_SCRIPT
 		if (resid >= _numGlobalScripts)
 			break;
 		unlock(rtScript, resid);
 		break;
-	case 14:											// unlock sound
+	case 14:		// SO_UNLOCK_SOUND
 		unlock(rtSound, resid);
 		break;
-	case 15:											// unlock costume
+	case 15:		// SO_UNLOCK_COSTUME
 		unlock(rtCostume, resid);
 		break;
-	case 16:											// unlock room
+	case 16:		// SO_UNLOCK_ROOM
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		unlock(rtRoom, resid);
 		break;
 
-	case 17:											// clear heap
+	case 17:		// SO_CLEAR_HEAP
 		//heapClear(0);
 		//unkHeapProc2(0, 0);
 		break;
-	case 18:											// load charset
+	case 18:		// SO_LOAD_CHARSET
 		loadCharset(resid);
 		break;
-	case 19:											// nuke charset
+	case 19:		// SO_NUKE_CHARSET
 		nukeCharset(resid);
 		break;
-	case 20:											// load fl object
+	case 20:		// SO_LOAD_OBJECT
 		loadFlObject(getVarOrDirectWord(0x40), resid);
 		break;
 
@@ -1808,7 +1808,7 @@ void ScummEngine_v5::o5_roomOps() {
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
-	case 1:											/* room scroll */
+	case 1:		// SO_ROOM_SCROLL
 		if (_version != 3) {
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
@@ -1824,7 +1824,7 @@ void ScummEngine_v5::o5_roomOps() {
 		VAR(VAR_CAMERA_MIN_X) = a;
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
-	case 2:											/* room color */
+	case 2:		// SO_ROOM_COLOR
 		if (_features & GF_SMALL_HEADER) {
 			if (_version != 3) {
 				a = getVarOrDirectWord(0x80);
@@ -1838,14 +1838,14 @@ void ScummEngine_v5::o5_roomOps() {
 		}
 		break;
 
-	case 3:											/* set screen */
+	case 3:		// SO_ROOM_SCREEN
 		if (_version != 3) {
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
 		}
 		initScreens(0, a, _screenWidth, b);
 		break;
-	case 4:											/* set palette color */
+	case 4:		// SO_ROOM_PALETTE
 		if (_features & GF_SMALL_HEADER) {
 			if (_version != 3) {
 				a = getVarOrDirectWord(0x80);
@@ -1863,13 +1863,13 @@ void ScummEngine_v5::o5_roomOps() {
 			setPalColor(d, a, b, c);	/* index, r, g, b */
 		}
 		break;
-	case 5:											/* shake on */
+	case 5:		// SO_ROOM_SHAKE_ON
 		setShake(1);
 		break;
-	case 6:											/* shake off */
+	case 6:		// SO_ROOM_SHAKE_OFF
 		setShake(0);
 		break;
-	case 7:											/* room scale for old games */
+	case 7:		// SO_ROOM_SCALE
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		_opcode = fetchScriptByte();
@@ -1879,7 +1879,7 @@ void ScummEngine_v5::o5_roomOps() {
 		e = getVarOrDirectByte(0x40);
 		setScaleSlot(e - 1, 0, b, a, 0, d, c);
 		break;
-	case 8:											/* room scale? */
+	case 8:		// SO_ROOM_INTENSITY
 		if (_features & GF_SMALL_HEADER) {
 			if (_version != 3) {
 				a = getVarOrDirectWord(0x80);
@@ -1893,13 +1893,13 @@ void ScummEngine_v5::o5_roomOps() {
 		}
 		darkenPalette(a, a, a, b, c);
 		break;
-	case 9:											/* ? */
+	case 9:		// SO_ROOM_SAVEGAME
 		_saveLoadFlag = getVarOrDirectByte(0x80);
 		_saveLoadSlot = getVarOrDirectByte(0x40);
 		_saveLoadSlot = 99;					/* use this slot */
 		_saveLoadCompatible = true;
 		break;
-	case 10:											/* ? */
+	case 10:	// SO_ROOM_FADE
 		a = getVarOrDirectWord(0x80);
 		if (a) {
 			_switchRoomEffect = (byte)(a&0xFF);
@@ -1908,7 +1908,7 @@ void ScummEngine_v5::o5_roomOps() {
 			fadeIn(_newEffect);
 		}
 		break;
-	case 11:											/* ? */
+	case 11:	// SO_RGB_ROOM_INTENSITY
 		a = getVarOrDirectWord(0x80);
 		b = getVarOrDirectWord(0x40);
 		c = getVarOrDirectWord(0x20);
@@ -1917,7 +1917,7 @@ void ScummEngine_v5::o5_roomOps() {
 		e = getVarOrDirectByte(0x40);
 		darkenPalette(a, b, c, d, e);
 		break;
-	case 12:											/* ? */
+	case 12:	// SO_ROOM_SHADOW
 		a = getVarOrDirectWord(0x80);
 		b = getVarOrDirectWord(0x40);
 		c = getVarOrDirectWord(0x20);
@@ -1927,7 +1927,8 @@ void ScummEngine_v5::o5_roomOps() {
 		setupShadowPalette(a, b, c, d, e);
 		break;
 
-	case 13:{										/* save-string */
+	case 13:	// SO_SAVE_STRING
+		{
 			SaveFile *file;
 			char filename[256], *s;
 
@@ -1947,7 +1948,8 @@ void ScummEngine_v5::o5_roomOps() {
 			delete mgr;
 			break;
 		}
-	case 14:{										/* load-string */
+	case 14:	// SO_SAVE_STRING
+		{
 			SaveFile *file;
 			char filename[256], *s;
 
@@ -1975,7 +1977,7 @@ void ScummEngine_v5::o5_roomOps() {
 			delete mgr;
 			break;
 		}
-	case 15:											/* palmanip */
+	case 15:	// SO_ROOM_TRANSFORM
 		a = getVarOrDirectByte(0x80);
 		_opcode = fetchScriptByte();
 		b = getVarOrDirectByte(0x80);
@@ -1985,7 +1987,7 @@ void ScummEngine_v5::o5_roomOps() {
 		palManipulateInit(b, c, a, d);
 		break;
 
-	case 16:
+	case 16:	// SO_CYCLE_SPEED
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		if (a < 1)
@@ -2008,7 +2010,7 @@ void ScummEngine_v5::o5_saveRestoreVerbs() {
 	c = getVarOrDirectByte(0x20);
 
 	switch (_opcode) {
-	case 1:											/* hide verbs */
+	case 1:		// SO_SAVE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, 0);
 			if (slot && _verbs[slot].saveid == 0) {
@@ -2019,7 +2021,7 @@ void ScummEngine_v5::o5_saveRestoreVerbs() {
 			a++;
 		}
 		break;
-	case 2:											/* show verbs */
+	case 2:		// SO_RESTORE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, c);
 			if (slot) {
@@ -2034,7 +2036,7 @@ void ScummEngine_v5::o5_saveRestoreVerbs() {
 			a++;
 		}
 		break;
-	case 3:											/* kill verbs */
+	case 3:		// SO_DELETE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, c);
 			if (slot)
@@ -2404,27 +2406,27 @@ void ScummEngine_v5::o5_verbOps() {
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0x1F) {
-		case 1:										/* load image */
+		case 1:		// SO_VERB_IMAGE
 			a = getVarOrDirectWord(0x80);
 			if (slot) {
 				setVerbObject(_roomResource, a, slot);
 				vs->type = kImageVerbType;
 			}
 			break;
-		case 2:										/* load from code */
+		case 2:		// SO_VERB_NAME
 			loadPtrToResource(rtVerb, slot, NULL);
 			if (slot == 0)
 				nukeResource(rtVerb, slot);
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
-		case 3:										/* color */
+		case 3:		// SO_VERB_COLOR
 			vs->color = getVarOrDirectByte(0x80);
 			break;
-		case 4:										/* set hi color */
+		case 4:		// SO_VERB_HICOLOR
 			vs->hicolor = getVarOrDirectByte(0x80);
 			break;
-		case 5:										/* set xy */
+		case 5:		// SO_VERB_AT
 			vs->x = getVarOrDirectWord(0x80);
 			vs->y = getVarOrDirectWord(0x40);
 			// Macintosh verison of indy3ega used different interface, so adjust values.
@@ -2480,16 +2482,16 @@ void ScummEngine_v5::o5_verbOps() {
 				}
 			}
 			break;
-		case 6:										/* set on */
+		case 6:		// SO_VERB_ON
 			vs->curmode = 1;
 			break;
-		case 7:										/* set off */
+		case 7:		// SO_VERB_OFF
 			vs->curmode = 0;
 			break;
-		case 8:										/* delete */
+		case 8:		// SO_VERB_DELETE
 			killVerb(slot);
 			break;
-		case 9:										/* new */
+		case 9:		// SO_VERB_NEW
 			slot = getVerbSlot(verb, 0);
 			if (slot == 0) {
 				for (slot = 1; slot < _maxVerbs; slot++) {
@@ -2513,19 +2515,19 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->imgindex = 0;
 			break;
 
-		case 16:										/* set dim color */
+		case 16:	// SO_VERB_DIMCOLOR
 			vs->dimcolor = getVarOrDirectByte(0x80);
 			break;
-		case 17:										/* dim */
+		case 17:	// SO_VERB_DIM
 			vs->curmode = 2;
 			break;
-		case 18:										/* set key */
+		case 18:	// SO_VERB_KEY
 			vs->key = getVarOrDirectByte(0x80);
 			break;
-		case 19:										/* set center */
+		case 19:	// SO_VERB_CENTER
 			vs->center = 1;
 			break;
-		case 20:										/* set to string */
+		case 20:	// SO_VERB_NAME_STR
 			ptr = getResourceAddress(rtString, getVarOrDirectWord(0x80));
 			if (!ptr)
 				nukeResource(rtVerb, slot);
@@ -2568,21 +2570,22 @@ void ScummEngine_v5::o5_wait() {
 		_opcode = fetchScriptByte();
 
 	switch (_opcode & 0x1F) {
-	case 1:	{										/* wait for actor */
+	case 1:		// SO_WAIT_FOR_ACTOR
+		{
 			Actor *a = derefActorSafe(getVarOrDirectByte(0x80), "o5_wait");
 			if (a && a->isInCurrentRoom() && a->moving)
 				break;
 			return;
 		}
-	case 2:											/* wait for message */
+	case 2:		// SO_WAIT_FOR_MESSAGE
 		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
-	case 3:											/* wait for camera */
+	case 3:		// SO_WAIT_FOR_CAMERA
 		if (camera._cur.x >> 3 != camera._dest.x >> 3)
 			break;
 		return;
-	case 4:											/* wait for sentence */
+	case 4:		// SO_WAIT_FOR_SENTENCE
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
@@ -2718,29 +2721,29 @@ void ScummEngine_v5::decodeParseString() {
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0xF) {
-		case 0:										/* set string xy */
+		case 0:		// SO_AT
 			_string[textSlot].xpos = getVarOrDirectWord(0x80);
 			_string[textSlot].ypos = getVarOrDirectWord(0x40);
 			_string[textSlot].overhead = false;
 			break;
-		case 1:										/* color */
+		case 1:		// SO_COLOR
 			_string[textSlot].color = getVarOrDirectByte(0x80);
 			break;
-		case 2:										/* clipping */
+		case 2:		// SO_CLIPPED
 			_string[textSlot].right = getVarOrDirectWord(0x80);
 			break;
-		case 3:										/* erase */
+		case 3:		// SO_ERASE
 			{
 			int a = getVarOrDirectWord(0x80);
 			int b = getVarOrDirectWord(0x40);
 			warning("ScummEngine_v5::decodeParseString: Unhandled case 3: %d, %d", a, b);
 			}
 			break;
-		case 4:										/* center */
+		case 4:		// SO_CENTER
 			_string[textSlot].center = true;
 			_string[textSlot].overhead = false;
 			break;
-		case 6:										/* left */
+		case 6:		// SO_LEFT
 			if (_version == 3) {
 				// FIXME: this value seems to be some kind of override
 				// for text spacing?!?
@@ -2751,10 +2754,10 @@ void ScummEngine_v5::decodeParseString() {
 				_string[textSlot].overhead = false;
 			}
 			break;
-		case 7:										/* overhead */
+		case 7:		// SO_OVERHEAD
 			_string[textSlot].overhead = true;
 			break;
-		case 8:{									/* play loom talkie sound - used in other games ? */
+		case 8:{	// SO_SAY_VOICE
 				int offset = (uint16)getVarOrDirectWord(0x80);
 				int delay = (uint16)getVarOrDirectWord(0x40);
 
@@ -2780,7 +2783,7 @@ void ScummEngine_v5::decodeParseString() {
 				}
 			}
 			break;
-		case 15:
+		case 15:	// SO_TEXTSTRING
 			_messagePtr = _scriptPointer;
 			switch (textSlot) {
 			case 0:

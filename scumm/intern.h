@@ -60,7 +60,7 @@ protected:
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
 	void o5_actorFromPos();
-	void o5_actorSet();
+	void o5_actorOps();
 	void o5_add();
 	void o5_and();
 	void o5_animateActor();
