@@ -12,14 +12,14 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="vc7_out/queen_Debug"
-			IntermediateDirectory="vc7_out/queen_Debug"
+			OutputDirectory="queen_Debug"
+			IntermediateDirectory="queen_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="."
+				AdditionalIncludeDirectories="../../;../../common"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;USE_ADLIB"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="FALSE"
@@ -53,17 +53,17 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="vc7_out/queen_Release"
-			IntermediateDirectory="vc7_out/queen_Release"
+			OutputDirectory="queen_Release"
+			IntermediateDirectory="queen_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="."
+				AdditionalIncludeDirectories="../../;../../common"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;USE_ADLIB"
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"
@@ -96,40 +96,40 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="queen\cutaway.cpp">
+			RelativePath="..\..\queen\cutaway.cpp">
 		</File>
 		<File
-			RelativePath="queen\cutaway.h">
+			RelativePath="..\..\queen\cutaway.h">
 		</File>
 		<File
-			RelativePath="queen\graphics.cpp">
+			RelativePath="..\..\queen\graphics.cpp">
 		</File>
 		<File
-			RelativePath="queen\graphics.h">
+			RelativePath="..\..\queen\graphics.h">
 		</File>
 		<File
-			RelativePath="queen\logic.cpp">
+			RelativePath="..\..\queen\logic.cpp">
 		</File>
 		<File
-			RelativePath="queen\logic.h">
+			RelativePath="..\..\queen\logic.h">
 		</File>
 		<File
-			RelativePath="queen\queen.cpp">
+			RelativePath="..\..\queen\queen.cpp">
 		</File>
 		<File
-			RelativePath="queen\queen.h">
+			RelativePath="..\..\queen\queen.h">
 		</File>
 		<File
-			RelativePath="queen\resource.cpp">
+			RelativePath="..\..\queen\resource.cpp">
 		</File>
 		<File
-			RelativePath="queen\resource.h">
+			RelativePath="..\..\queen\resource.h">
 		</File>
 		<File
-			RelativePath="queen\restables.cpp">
+			RelativePath="..\..\queen\restables.cpp">
 		</File>
 		<File
-			RelativePath="queen\version.cpp">
+			RelativePath="..\..\queen\version.cpp">
 		</File>
 	</Files>
 	<Globals>

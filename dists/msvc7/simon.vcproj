@@ -12,14 +12,14 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="vc7_out/simon_Debug"
-			IntermediateDirectory="vc7_out/simon_Debug"
+			OutputDirectory="simon_Debug"
+			IntermediateDirectory="simon_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="."
+				AdditionalIncludeDirectories="../../;../../common"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;USE_ADLIB"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="FALSE"
@@ -53,18 +53,18 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="vc7_out/simon_Release"
-			IntermediateDirectory="vc7_out/simon_Release"
+			OutputDirectory="simon_Release"
+			IntermediateDirectory="simon_Release"
 			ConfigurationType="4"
 			ATLMinimizesCRunTimeLibraryUsage="TRUE"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="."
+				AdditionalIncludeDirectories="../../;../../common"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;USE_ADLIB"
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"
@@ -97,52 +97,52 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="simon\charset.cpp">
+			RelativePath="..\..\simon\charset.cpp">
 		</File>
 		<File
-			RelativePath="simon\debug.cpp">
+			RelativePath="..\..\simon\debug.cpp">
 		</File>
 		<File
-			RelativePath="simon\debug.h">
+			RelativePath="..\..\simon\debug.h">
 		</File>
 		<File
-			RelativePath="simon\intern.h">
+			RelativePath="..\..\simon\intern.h">
 		</File>
 		<File
-			RelativePath="simon\items.cpp">
+			RelativePath="..\..\simon\items.cpp">
 		</File>
 		<File
-			RelativePath="simon\midi.cpp">
+			RelativePath="..\..\simon\midi.cpp">
 		</File>
 		<File
-			RelativePath="simon\midi.h">
+			RelativePath="..\..\simon\midi.h">
 		</File>
 		<File
-			RelativePath="simon\midiparser_s1d.cpp">
+			RelativePath="..\..\simon\midiparser_s1d.cpp">
 		</File>
 		<File
-			RelativePath="simon\res.cpp">
+			RelativePath="..\..\simon\res.cpp">
 		</File>
 		<File
-			RelativePath="simon\simon.cpp">
+			RelativePath="..\..\simon\simon.cpp">
 		</File>
 		<File
-			RelativePath="simon\simon.h">
+			RelativePath="..\..\simon\simon.h">
 		</File>
 		<File
-			RelativePath="simon\sound.cpp">
+			RelativePath="..\..\simon\sound.cpp">
 		</File>
 		<File
-			RelativePath="simon\sound.h">
+			RelativePath="..\..\simon\sound.h">
 		</File>
 		<File
-			RelativePath="simon\verb.cpp">
+			RelativePath="..\..\simon\verb.cpp">
 		</File>
 		<File
-			RelativePath="simon\vga.cpp">
+			RelativePath="..\..\simon\vga.cpp">
 		</File>
 		<File
-			RelativePath="simon\vga.h">
+			RelativePath="..\..\simon\vga.h">
 		</File>
 	</Files>
 	<Globals>

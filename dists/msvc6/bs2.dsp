@@ -43,7 +43,8 @@ RSC=rc.exe
 # PROP Intermediate_Dir "bs2___Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /YX /FD /c
+# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /I "." /I "common" /I "..\..\\" /I "..\..\common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /FD /c
+# SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x415 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -66,7 +67,8 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "bs2___Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "common" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "common" /I "..\..\\" /I "..\..\common" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /FD /GZ /c
+# SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x415 /d "_DEBUG"
 # ADD RSC /l 0x415 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -89,7 +91,8 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "bs2___mad_mp3_Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "common" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /WX /Gm /vmg /GX /ZI /Od /I "." /I "common" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /D "MSVC6_COMPAT" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /WX /Gm /vmg /GX /ZI /Od /I "." /I "common" /I "..\..\\" /I "..\..\common" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /D "MSVC6_COMPAT" /FD /GZ /c
+# SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x415 /d "_DEBUG"
 # ADD RSC /l 0x415 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -112,7 +115,8 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "bs2___mad_mp3_Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /YX /FD /c
-# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /YX /FD /c
+# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /I "..\..\\" /I "..\..\common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /FD /c
+# SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x415 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -138,332 +142,332 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\bs2\driver\_console.cpp
+SOURCE=..\..\bs2\driver\_console.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\_console.h
+SOURCE=..\..\bs2\driver\_console.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\_mouse.cpp
+SOURCE=..\..\bs2\driver\_mouse.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\_mouse.h
+SOURCE=..\..\bs2\driver\_mouse.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\d_draw.cpp
+SOURCE=..\..\bs2\driver\d_draw.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\d_draw.h
+SOURCE=..\..\bs2\driver\d_draw.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\d_sound.cpp
+SOURCE=..\..\bs2\driver\d_sound.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\d_sound.h
+SOURCE=..\..\bs2\driver\d_sound.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\ddutil.h
+SOURCE=..\..\bs2\driver\ddutil.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\driver96.h
+SOURCE=..\..\bs2\driver\driver96.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\keyboard.cpp
+SOURCE=..\..\bs2\driver\keyboard.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\keyboard.h
+SOURCE=..\..\bs2\driver\keyboard.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\language.cpp
+SOURCE=..\..\bs2\driver\language.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\menu.cpp
+SOURCE=..\..\bs2\driver\menu.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\menu.h
+SOURCE=..\..\bs2\driver\menu.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\misc.cpp
+SOURCE=..\..\bs2\driver\misc.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\mouse.h
+SOURCE=..\..\bs2\driver\mouse.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\palette.cpp
+SOURCE=..\..\bs2\driver\palette.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\palette.h
+SOURCE=..\..\bs2\driver\palette.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\rdwin.cpp
+SOURCE=..\..\bs2\driver\rdwin.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\rdwin.h
+SOURCE=..\..\bs2\driver\rdwin.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\render.cpp
+SOURCE=..\..\bs2\driver\render.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\render.h
+SOURCE=..\..\bs2\driver\render.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\driver\sprite.cpp
+SOURCE=..\..\bs2\driver\sprite.cpp
 # End Source File
 # End Group
 # Begin Source File
 
-SOURCE=.\bs2\anims.cpp
+SOURCE=..\..\bs2\anims.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\anims.h
+SOURCE=..\..\bs2\anims.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\build_display.cpp
+SOURCE=..\..\bs2\build_display.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\build_display.h
+SOURCE=..\..\bs2\build_display.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\console.cpp
+SOURCE=..\..\bs2\console.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\console.h
+SOURCE=..\..\bs2\console.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\controls.cpp
+SOURCE=..\..\bs2\controls.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\controls.h
+SOURCE=..\..\bs2\controls.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\credits.h
+SOURCE=..\..\bs2\credits.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\debug.cpp
+SOURCE=..\..\bs2\debug.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\debug.h
+SOURCE=..\..\bs2\debug.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\defs.h
+SOURCE=..\..\bs2\defs.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\events.cpp
+SOURCE=..\..\bs2\events.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\events.h
+SOURCE=..\..\bs2\events.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\function.cpp
+SOURCE=..\..\bs2\function.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\function.h
+SOURCE=..\..\bs2\function.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\header.h
+SOURCE=..\..\bs2\header.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\icons.cpp
+SOURCE=..\..\bs2\icons.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\icons.h
+SOURCE=..\..\bs2\icons.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\interpreter.cpp
+SOURCE=..\..\bs2\interpreter.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\interpreter.h
+SOURCE=..\..\bs2\interpreter.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\layers.cpp
+SOURCE=..\..\bs2\layers.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\layers.h
+SOURCE=..\..\bs2\layers.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\logic.cpp
+SOURCE=..\..\bs2\logic.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\logic.h
+SOURCE=..\..\bs2\logic.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\maketext.cpp
+SOURCE=..\..\bs2\maketext.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\maketext.h
+SOURCE=..\..\bs2\maketext.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\mem_view.cpp
+SOURCE=..\..\bs2\mem_view.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\mem_view.h
+SOURCE=..\..\bs2\mem_view.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\memory.cpp
+SOURCE=..\..\bs2\memory.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\memory.h
+SOURCE=..\..\bs2\memory.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\mouse.cpp
+SOURCE=..\..\bs2\mouse.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\mouse.h
+SOURCE=..\..\bs2\mouse.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\object.h
+SOURCE=..\..\bs2\object.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\protocol.cpp
+SOURCE=..\..\bs2\protocol.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\protocol.h
+SOURCE=..\..\bs2\protocol.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\resman.cpp
+SOURCE=..\..\bs2\resman.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\resman.h
+SOURCE=..\..\bs2\resman.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\router.cpp
+SOURCE=..\..\bs2\router.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\router.h
+SOURCE=..\..\bs2\router.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\save_rest.cpp
+SOURCE=..\..\bs2\save_rest.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\save_rest.h
+SOURCE=..\..\bs2\save_rest.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\scroll.cpp
+SOURCE=..\..\bs2\scroll.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\scroll.h
+SOURCE=..\..\bs2\scroll.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\sound.cpp
+SOURCE=..\..\bs2\sound.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\sound.h
+SOURCE=..\..\bs2\sound.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\speech.cpp
+SOURCE=..\..\bs2\speech.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\speech.h
+SOURCE=..\..\bs2\speech.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\startup.cpp
+SOURCE=..\..\bs2\startup.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\startup.h
+SOURCE=..\..\bs2\startup.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\sword2.cpp
+SOURCE=..\..\bs2\sword2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\sword2.h
+SOURCE=..\..\bs2\sword2.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\sync.cpp
+SOURCE=..\..\bs2\sync.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\sync.h
+SOURCE=..\..\bs2\sync.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\tony_gsdk.cpp
+SOURCE=..\..\bs2\tony_gsdk.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\tony_gsdk.h
+SOURCE=..\..\bs2\tony_gsdk.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\walker.cpp
+SOURCE=..\..\bs2\walker.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bs2\walker.h
+SOURCE=..\..\bs2\walker.h
 # End Source File
 # End Group
 # End Target
