@@ -34,7 +34,8 @@ typedef enum {
   IM_CONCAT,
   IM_GC,
   IM_FUNCTION
-} IMS;
+} eIMS;
+typedef int IMS;
 
 #define IM_N 18
 
