@@ -1938,16 +1938,16 @@ void Scumm::o5_setObjectName() {
 	int a;
 	int i;
 	byte *name;
-
+	
 	if (obj < NUM_ACTORS)
 		error("Can't set actor %d name with new-name-of", obj);
 
 	if (!getOBCDFromObject(obj))
 		error("Can't set name of object %d", obj);
 
-	name = getObjOrActorName(obj);
+	name = getObjOrActorName(obj);	
 	size = getResourceDataSize(name);
-	i = 0;
+	i = 0;	
 
 	while ((a = fetchScriptByte()) != 0) {
 		 name[i++] = a;

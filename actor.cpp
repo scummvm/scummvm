@@ -785,7 +785,7 @@ void Scumm::walkActor(Actor *a) {
 
 void Scumm::processActors() {
 	int i;
-	Actor *actors[NUM_ACTORS],*a,**ac,**ac2,*tmp;
+	Actor *actors[MAX_ACTORS], *a,**ac,**ac2,*tmp;
 	int numactors = 0, cnt,cnt2;
 
 	for (i=1; i<NUM_ACTORS; i++) {
@@ -938,7 +938,7 @@ void Scumm::actorAnimate(Actor *a) {
 }
 
 void Scumm::setActorRedrawFlags() {
-	uint i,j;
+	int i,j;
 	uint32 bits;
 
 	for (i=0; i<40; i++) {

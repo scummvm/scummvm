@@ -48,8 +48,9 @@ enum {
 	NUM_SCRIPT_SLOT = 25,
 	NUM_LOCALSCRIPT = 60,
 	NUM_SHADOW_PALETTE = 8,
-	NUM_ACTORS = 30
+	MAX_ACTORS = 30
 };
+
 
 const uint16 many_direction_tab[18] = {
 	4,
@@ -807,9 +808,9 @@ enum GameFeatures {
 	GF_DEFAULT = GF_USE_KEY,
 
 	GF_SMALL_HEADER = 32,
-        GF_EXTERNAL_CHARSET = GF_SMALL_HEADER,
-        GF_SMALL_NAMES = 64,
-        GF_OLD_BUNDLE = 128,
+    GF_EXTERNAL_CHARSET = GF_SMALL_HEADER,
+    GF_SMALL_NAMES = 64,
+    GF_OLD_BUNDLE = 128,
 	GF_16COLOR = 256,
 	GF_OLD256 = 512,
 	GF_AUDIOTRACKS = 1024,
@@ -861,9 +862,10 @@ struct Scumm {
 
 	byte OF_OWNER_ROOM;
 	
-        int _gameTempo, _saveSound;
+    int _gameTempo, _saveSound;
 	int _lastLoadedRoom;
 	int _roomResource;
+	
 	byte _encbyte;
 	void *_fileHandle;
 	void *_sfxFile;
@@ -1076,7 +1078,7 @@ struct Scumm {
 		int16 x,y;
 	} mouse;
 
-	Actor actor[NUM_ACTORS];
+	Actor actor[MAX_ACTORS];
 
 	uint32 gfxUsageBits[200];
 
@@ -2116,6 +2118,8 @@ struct Scumm {
 	byte VAR_DEFAULT_TALK_DELAY;
 	byte VAR_CHARSET_MASK;
 	
+	int NUM_ACTORS;
+
 	byte _videoPath[50];
 };
 
