@@ -416,11 +416,11 @@ void Scumm::readIndexFileSmall() {
                        num = fileReadWordLE();
                        assert(num == _numGlobalObjects);
                        for (i=0; i<num; i++) { /* not too sure about all that */
-                               _classData[i] = fileReadWordLE(); //+ fileReadByte();
-                               fileReadByte();
+                               _classData[i] = fileReadByte() + 256*fileReadByte()+ 256*256*fileReadByte();
+                     //          fileReadByte();
                                _objectOwnerTable[i] = fileReadByte();
-                               _objectStateTable[i] = _objectOwnerTable[i]>>OF_STATE_SHL;
-                               _objectOwnerTable[i] &= OF_OWNER_MASK;
+                     //          _objectStateTable[i] = _objectOwnerTable[i]>>OF_STATE_SHL;
+                     //          _objectOwnerTable[i] &= OF_OWNER_MASK;
                        }
                
 #if defined(SCUMM_BIG_ENDIAN)

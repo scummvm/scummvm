@@ -126,7 +126,7 @@ void Scumm::setupOpcodes() {
 	&Scumm::o5_putActorAtObject,
 	&Scumm::o5_badOpcode,
 	/* 50 */
-	&Scumm::o5_badOpcode,
+	&Scumm::o5_pickupObjectOld,
 	&Scumm::o5_animateActor,
 	&Scumm::o5_actorFollowCamera,
 	&Scumm::o5_actorSet,
@@ -286,7 +286,7 @@ void Scumm::setupOpcodes() {
 	&Scumm::o5_putActorAtObject,
 	&Scumm::o5_badOpcode,
 	/* D0 */
-	&Scumm::o5_badOpcode,
+	&Scumm::o5_pickupObjectOld,
 	&Scumm::o5_animateActor,
 	&Scumm::o5_actorFollowCamera,
 	&Scumm::o5_actorSet,
@@ -373,6 +373,9 @@ void Scumm::o5_actorSet() {
                        _opcode = (_opcode&0xE0) | convertTable[(_opcode&0x1F)-1];
 
 		switch(_opcode&0x1F) {
+		case 0: /* dummy case */
+			getVarOrDirectByte(0x80);
+			break;
 		case 1: /* costume */
 			setActorCostume(a, getVarOrDirectByte(0x80));
 			break;
@@ -439,6 +442,8 @@ void Scumm::o5_actorSet() {
 		case 17: /* scale */
 			a->scalex = getVarOrDirectByte(0x80);
 			a->scaley = getVarOrDirectByte(0x40);
+			if(a->scalex>255 || a->scaley>255)
+				error("Setting an bad actor scale!");
 			a->needRedraw = true;
 			a->needBgReset = true;
 			break;
@@ -475,18 +480,18 @@ FixRoom:
 
 void Scumm::o5_actorSetClass() {
 	int act = getVarOrDirectWord(0x80);
-	int i;
+	int newClass;
 
 	while ( (_opcode=fetchScriptByte()) != 0xFF) {
-		i = getVarOrDirectWord(0x80);
-		if (i==0) {
+		newClass = getVarOrDirectWord(0x80);
+		if (newClass==0) {
 			_classData[act] = 0;
 			continue;
 		}
-		if (i&0x80)
-			putClass(act, i, 1);
+		if (newClass&0x80)
+			putClass(act, newClass, 1);
 		else
-			putClass(act, i, 0);
+			putClass(act, newClass, 0);
 	}
 }
 
@@ -582,8 +587,8 @@ void Scumm::o5_cursorCommand() {
 	case 10: /* set cursor img */
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
-        if (!(_gameId==GID_LOOM256)) 
-           setCursorImg(i, j, 1);
+		if(_gameId != GID_LOOM256)
+	           	setCursorImg(i, j, 1);
 		break;
 	case 11: /* set cursor hotspot */
 		i = getVarOrDirectByte(0x80);
@@ -1403,9 +1408,8 @@ void Scumm::o5_roomOps() {
                         a = getVarOrDirectWord(0x80);
                         b = getVarOrDirectWord(0x40);
                        checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
-                       _currentPalette[a]=b;
+                       _currentPalette[a]=b; /*FIXME: should be shadow palette */
                         _fullRedraw = 1;
-                        setDirtyColors(a,a);
                } else {
                         a = getVarOrDirectWord(0x80);
                         b = getVarOrDirectWord(0x40);
@@ -1421,6 +1425,15 @@ void Scumm::o5_roomOps() {
 	case 6: /* shake off */
 		setShake(0);
 		break;
+	case 7: /* room scale for old games */
+		a = getVarOrDirectByte(0x80);
+		b = getVarOrDirectByte(0x40);
+		_opcode=fetchScriptByte();
+		c = getVarOrDirectByte(0x80);
+		d = getVarOrDirectByte(0x40);
+		_opcode=fetchScriptByte();
+		e = getVarOrDirectByte(0x40);
+		setScaleItem(e-1,b,a,d,c);
 	case 8: /* room scale? */
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
@@ -2075,4 +2088,19 @@ void Scumm::o5_oldRoomEffect() {
 		a = getVarOrDirectWord(0x80);
 	}
 	warning("Unsupported oldRoomEffect");
+}
+
+void Scumm::o5_pickupObjectOld() {
+
+	int obj;
+
+	obj = getVarOrDirectByte(0x80);
+
+	if(getObjectIndex(obj) != 1)
+		return;
+
+
+	
+	warning("Unsupported pickupObjectOld");
+
 }

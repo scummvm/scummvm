@@ -32,7 +32,7 @@ bool Scumm::getClass(int obj, int cls) {
 }
 
 void Scumm::putClass(int obj, int cls, bool set) {
-	checkRange(_numGlobalObjects-1, 0, obj, "Object %d out of range in getClass");
+	checkRange(_numGlobalObjects-1, 0, obj, "Object %d out of range in putClass");
 
 	cls &= 0x7F;
 	checkRange(32,1,cls,"Class %d out of range in getClass");

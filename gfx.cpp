@@ -1305,7 +1305,7 @@ void Gdi::unkDecode9() { /* FIXME: This one doesn't work.. */
                         for (i=0; i<((c&3)+1); i++) {
                                color = 0;
                                for (z=0; z < 4; z++) {READ_256BIT; color+=bits<<i;}
-                               *dst = (run * 16 + color);
+                               *dst = (run *16 + color);
                                NEXT_ROW // y++; if (y>=height) {y=0; x++;}}
                         }
               break;
@@ -1337,7 +1337,7 @@ void Gdi::unkDecode10() {
                 *dst = local_palette[color];
                 NEXT_ROW
         } else {
-                uint run = color - numcolors + 1;
+                uint run = color - numcolors +1;
                 color = *src++;
                do {
                         *dst = color;

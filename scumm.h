@@ -302,11 +302,17 @@ enum ScummVars {
 	VAR_HAVE_MSG = 3,
 	VAR_ROOM = 4,
 	VAR_OVERRIDE = 5,
+	VAR_MACHINE_SPEED = 6,
+	VAR_ME = 7,
 	VAR_NUM_ACTOR = 8,
+	VAR_CURRENT_LIGHTS = 9,
 	VAR_CURRENTDRIVE = 10,
 	VAR_TMR_1 = 11,
 	VAR_TMR_2 = 12,
 	VAR_TMR_3 = 13,
+	VAR_MUSIC_FLAG = 14,
+	VAR_ACTOR_RANGE_MIN = 15,
+	VAR_ACTOR_RANGE_MAX = 16,
 	VAR_CAMERA_MIN_X = 17,
 	VAR_CAMERA_MAX_X = 18,
 	VAR_TIMER_NEXT = 19,
@@ -1503,7 +1509,8 @@ struct Scumm {
 	void o5_walkActorToActor();
 	void o5_walkActorToObject();
         void o5_oldRoomEffect();
-
+	void o5_pickupObjectOld();
+	
 	void o6_pushByte();
 	void o6_pushWord();
 	void o6_pushByteVar();

@@ -185,6 +185,9 @@ void Scumm::CHARSET_1() {
 	Actor *a;
 	byte *buffer;
 
+	if(_gameId==GID_ZAK256)
+		return;
+
 #if !defined(FULL_THROTTLE)
 	if (!_haveMsg || (camera._dest.x>>3) != (camera._cur.x>>3) ||
 			camera._cur.x != camera._last.x 
