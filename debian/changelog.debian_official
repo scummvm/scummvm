@@ -1,0 +1,23 @@
+scummvm (0.2.0) unstable; urgency=low
+
+  * New upstream version (Closes: #143281)
+  * Killed the wrapper script, see upstream changelog
+
+ -- Bastien Nocera <hadess@hadess.net>  Wed, 15 May 2002 03:27:11 +0100
+
+scummvm (0.1.0b-2) unstable; urgency=low
+
+  * Moved the scummvm main bin under /usr/lib, the wrapper script under
+    /usr/games
+  * Fixed bug in the script that made it not work if the path was relative
+
+ -- Bastien Nocera <hadess@hadess.net>  Wed, 10 Apr 2002 19:27:05 +0100
+
+scummvm (0.1.0b-1) unstable; urgency=low
+
+  * Initial Release.
+  * Packaged made under the influence of beer at GUAD3C in Sevilla ! Arriba !
+    Ole !
+
+ -- Bastien Nocera <hadess@hadess.net>  Fri,  5 Apr 2002 16:37:09 +0100
+
