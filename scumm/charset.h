@@ -54,18 +54,15 @@ protected:
 	byte _curId;
 	byte *_fontPtr;
 
-	byte _bpp;
-	byte *_charPtr;
-
-	void drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height);
 	byte *getFontPtr(byte id);
+
+	virtual int getSpacing(byte chr, byte *charset) = 0;
 
 public:
 	CharsetRenderer(Scumm *vm) : _vm(vm) {}
 
-	void printChar(int chr);
-	void printCharOld(int chr);
-	int getSpacing(byte chr, byte *charset);
+	virtual void printChar(int chr) = 0;
+
 	int getStringWidth(int a, byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	
@@ -73,6 +70,32 @@ public:
 	int getCurID() { return _curId; }
 	
 	int getFontHeight() { return _fontPtr[1]; }
+};
+
+
+class CharsetRendererClassic : public CharsetRenderer {
+protected:
+	byte _bpp;
+	byte *_charPtr;
+
+	int getSpacing(byte chr, byte *charset);
+	void drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height);
+
+public:
+	CharsetRendererClassic(Scumm *vm) : CharsetRenderer(vm) {}
+	
+	void printChar(int chr);
+};
+
+
+class CharsetRendererOld256 : public CharsetRenderer {
+protected:
+	int getSpacing(byte chr, byte *charset);
+
+public:
+	CharsetRendererOld256(Scumm *vm) : CharsetRenderer(vm) {}
+	
+	void printChar(int chr);
 };
 
 

@@ -1552,7 +1552,10 @@ void Scumm::mainRun()
 
 void Scumm::launch()
 {
-	_charset = new CharsetRenderer(this);
+	if (_features & GF_OLD256)
+		_charset = new CharsetRendererOld256(this);
+	else
+		_charset = new CharsetRendererClassic(this);
 
 	gdi._vm = this;
 

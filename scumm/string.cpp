@@ -243,7 +243,7 @@ void Scumm::CHARSET_1()
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
 			if (_features & GF_OLD256) {
-				_charset->printCharOld(c);
+				_charset->printChar(c);
 			} else if (_features & GF_AFTER_V6) {
 				if (!_noSubtitles || (_haveMsg != 0xFE && _haveMsg != 0xFF))
 					_charset->printChar(c);
@@ -526,10 +526,7 @@ void Scumm::drawString(int a)
 				if (_string[a].no_talk_anim == 0)
 					_charset->_blitAlso = true;
 			}
-			if (_features & GF_OLD256)
-				_charset->printCharOld(chr);
-			else
-				_charset->printChar(chr);
+			_charset->printChar(chr);
 			_charset->_blitAlso = false;
 		}
 	}

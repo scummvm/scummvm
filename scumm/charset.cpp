@@ -39,23 +39,28 @@ byte *CharsetRenderer::getFontPtr(byte id)
 }
 
 // do spacing for variable width old-style font
-int CharsetRenderer::getSpacing(byte chr, byte *charset)
+int CharsetRendererClassic::getSpacing(byte chr, byte *charset)
+{
+	int spacing = 0;
+
+	int offs = READ_LE_UINT32(charset + chr * 4 + 4);
+	if (offs) {
+		spacing = charset[offs];
+		if (charset[offs + 2] >= 0x80) {
+			spacing += charset[offs + 2] - 0x100;
+		} else {
+			spacing += charset[offs + 2];
+		}
+	}
+	
+	return spacing;
+}
+
+int CharsetRendererOld256::getSpacing(byte chr, byte *charset)
 {
 	int spacing = 0;
 	
-	if (_vm->_features & GF_OLD256) {
-		spacing = *(charset - 11 + chr);
-	} else {
-		int offs = READ_LE_UINT32(charset + chr * 4 + 4);
-		if (offs) {
-			spacing = charset[offs];
-			if (charset[offs + 2] >= 0x80) {
-				spacing += charset[offs + 2] - 0x100;
-			} else {
-				spacing += charset[offs + 2];
-			}
-		}
-	}
+	spacing = *(charset - 11 + chr);
 
 	// FIXME - this fixes the inventory icons in Zak256/Indy3
 	//  see bug #613109.
@@ -173,7 +178,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 }
 
 
-void CharsetRenderer::printCharOld(int chr)
+void CharsetRendererOld256::printChar(int chr)
 {																// Indy3 / Zak256
 	VirtScreen *vs;
 	byte *char_ptr, *dest_ptr;
@@ -223,7 +228,7 @@ void CharsetRenderer::printCharOld(int chr)
 }
 
 
-void CharsetRenderer::printChar(int chr)
+void CharsetRendererClassic::printChar(int chr)
 {
 	int width, height;
 	int offsX, offsY;
@@ -339,7 +344,7 @@ void CharsetRenderer::printChar(int chr)
 	_top -= offsY;
 }
 
-void CharsetRenderer::drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height)
+void CharsetRendererClassic::drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height)
 {
 	byte maskmask;
 	int y, x;
