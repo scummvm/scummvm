@@ -35,6 +35,7 @@
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
+#include "sound/audiocd.h"
 #include "sound/mixer.h"
 
 
@@ -548,25 +549,34 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKEND()
 	};
 
+	const SaveLoadEntry audioCDEntries[] = {
+		MKLINE(AudioCDManager::Status, playing, sleUint32, VER(24)),
+		MKLINE(AudioCDManager::Status, track, sleInt32, VER(24)),
+		MKLINE(AudioCDManager::Status, start, sleUint32, VER(24)),
+		MKLINE(AudioCDManager::Status, duration, sleUint32, VER(24)),
+		MKLINE(AudioCDManager::Status, numLoops, sleInt32, VER(24)),
+		MKEND()
+	};
+
 	int i, j;
 	int var120Backup;
 	int var98Backup;
 
-	if (!s->isSaving() && (_saveSound || !_saveLoadCompatible)) {
+	if (s->isLoading() && (_saveSound || !_saveLoadCompatible)) {
 		_sound->stopAllSounds();
 	}
 
 	// Because old savegames won't fill the entire gfxUsageBits[] array,
 	// clear it here just to be sure it won't hold any unforseen garbage.
-	if (!s->isSaving())
+	if (s->isLoading())
 		memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
 	s->saveLoadEntries(this, mainEntries);
 
-	if (!s->isSaving() && savegameVersion < VER(14))
+	if (s->isLoading() && savegameVersion < VER(14))
 		upgradeGfxUsageBits();
 
-	if (!s->isSaving() && savegameVersion >= VER(20)) {
+	if (s->isLoading() && savegameVersion >= VER(20)) {
 		updateCursor();
 		_system->warp_mouse(_mouse.x, _mouse.y);
 	}
@@ -581,7 +591,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
-	if (!s->isSaving() && savegameVersion < VER(13)) {
+	if (s->isLoading() && savegameVersion < VER(13)) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit
 		for (i = _numObjectsInRoom; i < _numLocalObjects; i++) {
 			_objs[i].obj_nr = 0;
@@ -667,14 +677,26 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 	
 	// With version 22, we replace the scale items with scale slots
-	if (savegameVersion < VER(22) && !s->isSaving()) {
+	if (savegameVersion < VER(22) && s->isLoading()) {
 		// Convert all rtScaleTable resources to matching scale items
 		for (i = 1; i < res.num[rtScaleTable]; i++) {
 			convertScaleTableToScaleSlot(i);
 		}
 	}
 
-	
+	// Save/load Audio CD status
+	if (savegameVersion >= VER(24)) {
+		AudioCDManager::Status info;
+		if (s->isSaving())
+			info = AudioCD.getStatus();
+		s->saveLoadArrayOf(&info, 1, sizeof(info), audioCDEntries);
+		// If we are loading, and the music being loaded was supposed to loop
+		// forever, then resume playing it. This helps a lot of audio CD
+		// is used to provide ambient music (see bug #788195).
+		if (s->isLoading() && info.playing && info.numLoops < 0)
+			AudioCD.play(info.track, info.numLoops, info.start, info.duration);
+	}
+
 	if (_imuse && (_saveSound || !_saveLoadCompatible)) {
 		_imuse->save_or_load(s, this);
 		_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
