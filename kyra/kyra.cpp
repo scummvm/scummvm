@@ -103,7 +103,8 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 		warning("Sound initialization failed.");
 	}
 
-	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
+	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
+	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
 
 	// gets the game
 	if (detector->_game.features & GF_KYRA1) {

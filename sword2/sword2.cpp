@@ -254,6 +254,7 @@ int Sword2Engine::init(GameDetector &detector) {
 	// soften the sound in any way.
 
 	_mixer->setVolume(256);
+	_mixer->setMusicVolume(256);
 
 	// During normal gameplay, we care neither about mouse button releases
 	// nor the scroll wheel.
