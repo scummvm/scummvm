@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-04-27
-Release version: 0.2.0  [CVS build]
+Last updated:    2002-04-28
+Release version: 0.2.0 [CVS Build]
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -95,12 +95,27 @@ listed here, nor in the compatibility table on the web site, please see below.
                 - Keyboard fighting does not work. ScummVM now defaults to
                   using mouse fighting.
 
+
+
        Sam and Max:
                 - Subgames are not fully functional.
+
+                - The Wak-A-Rat game will appear to freeze at the end.
+                  However, it hasn't really. Just hit Escape and wait.
+
+                - The intro credits will not play correctly if you let the
+                  previous cutscene run (the Mad Doctor scene).
+
+                - The Mystery Vortex may hang the game if you hang around in
+                  the main room for too long. This is caused by a script race
+
+
 
        Loom (256 Talkie):
                 - If you are having random crashes, this is a Windows bug.
                   Try copying the data files from CD to your hard disk.
+
+                - Bobbin may rarely appear to walk backwards.
 
 
 Reporting Bugs:
