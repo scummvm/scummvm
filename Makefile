@@ -1,12 +1,12 @@
 CXX = g++
 CXXFLAGS = -g -W -Wall -Ilua/include `sdl-config --cflags` -DUNIX # -O2
 LDFLAGS = -g -W -Wall # -O2
-LIBS = -lGL -lGLU -Llua/lib -llua -llualib `sdl-config --libs` \
-	-Lmixer -lmixer
+LIBS =  -Llua/lib -llua -llualib `sdl-config --libs` \
+	-Lmixer -lmixer -lGL -lGLU
 OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \
 	sound.o timer.o keyframe.o costume.o walkplane.o textobject.o \
-	matrix3.o matrix4.o screen.o blocky16.o smush.o vima.o
+	matrix3.o matrix4.o screen.o blocky16.o smush.o vima.o driver_gl.o
 
 DEPS = $(OBJS:.o=.d)
 

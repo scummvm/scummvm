@@ -80,8 +80,6 @@ enum {
 
 class Engine {
 public:
-  GLuint font;	// FIXME: Temporary font drawing hack
-
   static Engine *instance() {
     if (instance_ == NULL)
       instance_ = new Engine;

@@ -23,10 +23,10 @@
 #include "actor.h"
 #include "textobject.h"
 #include <SDL.h>
-#include <SDL_opengl.h>
 #include <SDL_timer.h>
 #include <assert.h>
 #include "screen.h"
+#include "driver_gl.h"
 
 Engine *Engine::instance_ = NULL;
 
@@ -88,9 +88,9 @@ void Engine::mainLoop() {
 	screenBlocksReset();
 
     // Draw the screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    g_driver->clearScreen();
 
-    Bitmap::prepareGL();
+    Bitmap::prepareDraw();
     if (currScene_ != NULL)
       currScene_->drawBackground();
 
@@ -98,7 +98,7 @@ void Engine::mainLoop() {
     if (currScene_ != NULL)
     currScene_->setupCamera();
 
-	glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_MODELVIEW);
     // Update actor costumes
     for (actor_list_type::iterator i = actors_.begin();
 	 i != actors_.end(); i++) {
@@ -122,7 +122,7 @@ void Engine::mainLoop() {
     if (SCREENBLOCKS_GLOBAL == 1)
 	screenBlocksBlitDirtyBlocks();
 
-    Bitmap::prepareGL();
+    Bitmap::prepareDraw();
     if (currScene_ != NULL)
       currScene_->drawBackground();
 
@@ -149,7 +149,7 @@ void Engine::mainLoop() {
       (*i)->draw();
     }
 
-    SDL_GL_SwapBuffers();
+    g_driver->flipBuffer();
 
     // Update timing information
     unsigned newStart = SDL_GetTicks();

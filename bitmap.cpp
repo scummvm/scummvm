@@ -18,11 +18,11 @@
 #include "stdafx.h"
 #include <cstdlib>
 #include <cstring>
-#include <SDL.h>
-#include <SDL_opengl.h>
 #include "bitmap.h"
 #include "bits.h"
 #include "debug.h"
+
+#include "driver_gl.h"
 
 #define BITMAP_TEXTURE_SIZE 256
 
@@ -105,7 +105,7 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
   }
 }
 
-void Bitmap::prepareGL() {
+void Bitmap::prepareDraw() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0, 640, 480, 0, 0, 1);
@@ -156,23 +156,7 @@ void Bitmap::draw() const {
     if ((ZBUFFER_GLOBAL == 0) || (SCREENBLOCKS_GLOBAL == 1))
 	return;
 
-    if (curr_image_ != 0) {
-      warning("Animation not handled yet in GL texture path !\n");
-    }
-    glRasterPos2i(x_, y_);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_ALWAYS);
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
-    glDepthMask(GL_TRUE);
-    /* This loop here is to prevent using PixelZoom that may be unoptimized for the 1.0 / -1.0 case
-       in some drivers...
-    */
-    for (int row = 0; row < height_; row++) {
-      glRasterPos2i(x_, y_ + row + 1);
-    //  glDrawPixels(width_, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data_[curr_image_] + (2 * row * width_));
-    }
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
-    glDepthFunc(GL_LESS);
+    g_driver->drawDepthBitmap(curr_image_, x_, y_, width_, height_, data_);
   }
 }
 

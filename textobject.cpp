@@ -19,6 +19,7 @@
 #include "textobject.h"
 #include "engine.h"
 #include "localize.h"
+#include "driver_gl.h"
 
 TextObject::TextObject(const char *text, const int x, const int y, const Color& fgColor) :
                        fgColor_(fgColor), x_(x), y_(y) {
@@ -32,25 +33,8 @@ void TextObject::setColor(Color *newcolor) {fgColor_ = newcolor;}
 
 void TextObject::draw() {
   const char *localString = Localizer::instance()->localize(textID_).c_str();
+
   //warning("Drawing text object %s at (%d,%d): %s", textID_, x_, y_, localString);
-
-  glMatrixMode( GL_PROJECTION );
-  glPushMatrix();
-  glLoadIdentity();
-  glOrtho(0, 640, 480, 0, 0, 1);
-  glMatrixMode( GL_MODELVIEW );
-  glLoadIdentity();
-
-  glColor3f(fgColor_.red(), fgColor_.green(), fgColor_.blue());
-  glRasterPos2i(x_, y_);
-  glListBase(Engine::instance()->font);
-  glCallLists(
-    strlen(strrchr(localString, '/')) - 1, 
-    GL_UNSIGNED_BYTE,
-    strrchr(localString, '/') + 1
-  );
-
-  glMatrixMode( GL_PROJECTION );
-  glPopMatrix();
+  g_driver->drawHackFont(x_, y_, localString, fgColor_);
 }
 

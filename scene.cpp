@@ -24,9 +24,9 @@
 #include "colormap.h"
 #include "vector3d.h"
 #include <SDL.h>
-#include <SDL_opengl.h>
 #include <cmath>
 #include "screen.h"
+#include "driver_gl.h"
 
 Scene::Scene(const char *name, const char *buf, int len) :
   name_(name) {
@@ -144,26 +144,8 @@ void Scene::Light::load(TextSplitter &ts) {
 }
 
 void Scene::Setup::setupCamera() const {
-  // Set perspective transformation
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  //  gluPerspective(std::atan(std::tan(fov_ / 2 * (M_PI/180)) * 0.75) * 2 * (180/M_PI), 4.0f / 3, nclip_, fclip_);
-  float right = nclip_ * std::tan(fov_ / 2 * (M_PI/180));
-  glFrustum(-right, right, -right * 0.75, right * 0.75, nclip_, fclip_);
-  
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-  // Apply camera roll
-  glRotatef(roll_, 0, 0, -1);
-
-  // Set camera position and direction
-  Vector3d up_vec(0, 0, 1);
-  if (pos_.x() == interest_.x() && pos_.y() == interest_.y())
-    up_vec = Vector3d(0, 1, 0);
-  gluLookAt(pos_.x(), pos_.y(), pos_.z(),
-	    interest_.x(), interest_.y(), interest_.z(),
-	    up_vec.x(), up_vec.y(), up_vec.z());
+  g_driver->setupCamera(fov_, nclip_, fclip_);
+  g_driver->positionCamera(roll_, pos_, interest_);
 }
 
 void Scene::setSetup(int num)

@@ -22,8 +22,7 @@
 #include "sound.h"
 #include <cmath>
 #include <cstring>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include "driver_gl.h"
 
 Actor::Actor(const char *name) :
   name_(name), talkColor_(255, 255, 255), pos_(0, 0, 0),
@@ -239,13 +238,8 @@ void Actor::update() {
 
 void Actor::draw() {
   if (! costumeStack_.empty()) {
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glTranslatef(pos_.x(), pos_.y(), pos_.z());
-    glRotatef(yaw_, 0, 0, 1);
-    glRotatef(pitch_, 1, 0, 0);
-    glRotatef(roll_, 0, 1, 0);
+    g_driver->startActorDraw(pos_, yaw_, pitch_, roll_);
     costumeStack_.back()->draw();
-    glPopMatrix();
+    g_driver->finishActorDraw();
   }
 }

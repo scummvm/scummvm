@@ -18,7 +18,6 @@
 #include "stdafx.h"
 #include <SDL.h>
 #include <SDL_video.h>
-#include <SDL_opengl.h>
 #include "bitmap.h"
 #include "resource.h"
 #include "debug.h"
@@ -28,17 +27,10 @@
 #include "sound.h"
 #include "timer.h"
 #include "mixer/mixer.h"
+#include "driver_gl.h"
+
 #ifndef _MSC_VER
 #include <unistd.h>
-#endif
-
-// Hacky includes for temporary font rendering
-#ifndef WIN32
- #include <GL/glx.h>
- #include <X11/Xlib.h>
-#else
- #include <SDL_syswm.h>
- #include <windows.h>
 #endif
 
 // Hacky global toggles for experimental/debug code
@@ -58,7 +50,6 @@ extern SoundMixer *g_mixer;
 extern Timer *g_timer;
 
 int main(int argc, char *argv[]) {
-  char 	GLDriver[1024];
   int i;
 
   // Parse command line
@@ -81,29 +72,23 @@ int main(int argc, char *argv[]) {
 
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     return 1;
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  if (SDL_SetVideoMode(640, 480, 24, SDL_OPENGL) == 0)
-    error("Could not initialize video");
+  g_driver = new Driver(640, 480, 24);
 
   atexit(SDL_Quit);
   atexit(saveRegistry);
-  sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-  SDL_WM_SetCaption(GLDriver, "Residual");
   
   Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
 
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     if (event.type == SDL_VIDEOEXPOSE) {
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      Bitmap::prepareGL();
+      g_driver->clearScreen();
+
+      Bitmap::prepareDraw();
       splash_bm->draw();
-      SDL_GL_SwapBuffers();
+
+      g_driver->flipBuffer();
     }
   }
 
@@ -133,32 +118,6 @@ int main(int argc, char *argv[]) {
   lua_call("BOOT");
   lua_endblock();
 
-  // FIXME: Hacky temporary font renderer code
-  Engine::instance()->font = glGenLists(256);
-  #ifdef WIN32
-  {
-	HDC   hDC;
-	HFONT font;
-	SDL_SysWMinfo wmi;
-        SDL_VERSION(&wmi.version);
-	SDL_GetWMInfo(&wmi);
-
-	hDC = GetDC(wmi.window);
-	font = CreateFont(0, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET, 
-			  OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, 0	,
-			  FF_DONTCARE|DEFAULT_PITCH, "Courier New");
-	SelectObject(hDC, font);
-	wglUseFontBitmaps(hDC, 0, 256, Engine::instance()->font);
-  }
-  #else
-  {
-        Display *dpy = XOpenDisplay(NULL);
-        XFontStruct *XFont = XLoadQueryFont(dpy, "-misc-fixed-medium-r-*-*-20-*-*-*-*-*-*-*" );
-        glXUseXFont(XFont->fid, 0, 256, Engine::instance()->font);
-	XFreeFont(dpy, XFont);
-	XCloseDisplay(dpy);
-  }
-  #endif
   Engine::instance()->mainLoop();
 
   delete g_timer;

@@ -27,8 +27,8 @@ public:
   // Construct a bitmap from the given data.
   Bitmap(const char *filename, const char *data, int len);
 
-  // Set up GL for drawing bitmaps
-  static void prepareGL();
+  // Set up Driver for drawing bitmaps
+  static void prepareDraw();
   void draw() const;
 
   // Set which image in an animated bitmap to use
