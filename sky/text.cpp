@@ -50,18 +50,11 @@ SkyText::SkyText(SkyDisk *skyDisk) {
 		_controlCharacterSet.charHeight = 12;
 		_controlCharacterSet.charSpacing = 0;
 
-		// In version 0.0288, decrease the character width for the
-		// LINC terminal font by one for every character, except
-		// space which has to be one pixel wider instead.
-		if (SkyState::_systemVars.gameVersion == 288) {
-			for (int i = 1; i < CHAR_SET_HEADER; i++)
-				_controlCharacterSet.addr[i]--;
-			_controlCharacterSet.addr[0]++;
-		}
-		
 		_linkCharacterSet.addr = _skyDisk->loadFile(60521, NULL);
 		_linkCharacterSet.charHeight = 12;
 		_linkCharacterSet.charSpacing = 1;
+
+		patchLINCCharset();
 	} else {
 		_controlCharacterSet.addr = NULL;
 		_linkCharacterSet.addr = NULL;
@@ -77,6 +70,113 @@ SkyText::~SkyText(void) {
 	if (_controlCharacterSet.addr) free(_controlCharacterSet.addr);
 	if (_linkCharacterSet.addr) free(_linkCharacterSet.addr);
 	if (_preAfterTableArea) free(_preAfterTableArea);
+}
+
+void SkyText::patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data) {
+	byte *ptr = charSetPtr + (CHAR_SET_HEADER + (height << 2) * c);
+
+	charSetPtr[c] = width;
+
+	for (int i = 0; i < height; i++) {
+		ptr[i * 4 + 0] = ptr[i * 4 + 2] = (data[i] & 0xFF00) >> 8;
+		ptr[i * 4 + 1] = ptr[i * 4 + 3] = data[i] & 0x00FF;
+	}
+}
+
+void SkyText::patchLINCCharset() {
+	// The LINC terminal charset looks strange in some cases. This
+	// function attempts to patch up the worst blemishes.
+
+	byte *charSetPtr = _controlCharacterSet.addr;
+	int charHeight = _controlCharacterSet.charHeight;
+
+	// In v0.0288, decrease the character spacing is too wide. Decrease
+	// the width for every character by one, except for space which needs
+	// to be one pixel wider than before.
+
+	if (SkyState::_systemVars.gameVersion == 288) {
+		for (int i = 1; i < CHAR_SET_HEADER; i++)
+			charSetPtr[i]--;
+		charSetPtr[0]++;
+	}
+
+	// NOTE: I have only tested this part of the code with v0.0372
+
+	// Several characters are different in this charset than in the other
+	// two. This is particularly noticeable when using a non-English
+	// version.
+
+	const uint16 slash[] = {
+		0x0000, 0x0000, 0x0000, 0x0800, 0x1000, 0x1000,
+		0x2000,	0x2000, 0x4000, 0x0000, 0x0000, 0x0000
+	};
+
+	const uint16 lt[] = {
+		0x0000, 0x0000, 0x0800, 0x1000, 0x2000, 0x4000,
+		0x2000, 0x1000, 0x0800, 0x0000, 0x0000, 0x0000
+	};
+
+	const uint16 gt[] = {
+		0x0000, 0x0000, 0x4000, 0x2000, 0x1000, 0x0800,
+		0x1000, 0x2000, 0x4000, 0x0000, 0x0000, 0x0000
+	};
+
+	const uint16 a_umlaut[] = {
+        0x0000, 0x0000, 0x2800, 0x0000, 0x3000, 0x0800,
+		0x3800, 0x4800, 0x3800,	0x0000,	0x0000,	0x0000
+	};
+
+	const uint16 o_umlaut[] = {
+		0x0000,	0x0000,	0x4800,	0x0000,	0x3000,	0x4800,
+		0x4800,	0x4800,	0x3000,	0x0000,	0x0000,	0x0000
+	};
+
+	const uint16 u_umlaut[] = {
+		0x0000,	0x0000,	0x4800,	0x0000,	0x4800,	0x4800,
+		0x4800,	0x4800,	0x3000,	0x0000,	0x0000,	0x0000
+	};
+
+	const uint16 A_umlaut[] = {
+		0x0000, 0x4800, 0x0000, 0x3000, 0x4800, 0x4800,
+		0x7800, 0x4800, 0x4800, 0x0000, 0x0000, 0x0000
+	};
+
+	const uint16 O_umlaut[] = {
+		0x0000,	0x4800,	0x0000,	0x3000,	0x4800, 0x4800,
+		0x4800,	0x4800,	0x3000,	0x0000,	0x0000,	0x0000
+	};
+
+	const uint16 U_umlaut[] = {
+		0x0000, 0x4800, 0x0000, 0x4800, 0x4800, 0x4800,
+		0x4800, 0x4800, 0x3000, 0x0000,	0x0000,	0x0000
+	};
+
+	const uint16 normal_j[] = {
+		0x0000, 0x0000, 0x0000, 0x0800, 0x0000, 0x0800,
+		0x0800,	0x0800, 0x0800, 0x4800, 0x3000, 0x0000
+	};
+
+	const uint16 german_sz[] = {
+		0x0000, 0x0000, 0x2000, 0x5000, 0x5000, 0x4800,
+		0x4800, 0x4800, 0x5000, 0x0000, 0x0000, 0x0000
+	};
+
+	patchChar(charSetPtr, 5, charHeight,  3, u_umlaut);
+	patchChar(charSetPtr, 5, charHeight,  8, german_sz);
+	patchChar(charSetPtr, 5, charHeight,  9, o_umlaut);
+	patchChar(charSetPtr, 5, charHeight, 93, U_umlaut);
+	if (SkyState::_systemVars.gameVersion <= 303) {
+		patchChar(charSetPtr, 5, charHeight, 10, a_umlaut);
+		patchChar(charSetPtr, 5, charHeight, 74, normal_j);
+	} else {
+		patchChar(charSetPtr, 5, charHeight, 94, A_umlaut);
+		patchChar(charSetPtr, 5, charHeight, 95, O_umlaut);
+
+		// Used by, for instance, the BRIEFING.DOC file in all (?) languages
+		patchChar(charSetPtr, 5, charHeight, 96, lt);
+		patchChar(charSetPtr, 5, charHeight, 97, gt);
+		patchChar(charSetPtr, 5, charHeight, 98, slash);
+	}
 }
 
 void SkyText::fnSetFont(uint32 fontNr) { 

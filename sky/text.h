@@ -51,6 +51,8 @@ protected:
 	bool getTBit();
 	void initHuffTree();
 	char getTextChar();
+	void patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data);
+	void patchLINCCharset();
 
 	SkyDisk *_skyDisk;
 	uint8	_inputValue;
