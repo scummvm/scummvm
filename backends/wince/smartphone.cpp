@@ -30,8 +30,6 @@
 
 #define IDM_SMARTFON_MAP_BASE 99200
 
-#define SMARTFON_VERSION "Smartphone build 0.4.2cvs"
-
 #define SCAN_LOCATION "\\Storage Card"
 
 #define KEYS_VERSION 1
@@ -47,6 +45,8 @@ typedef struct zoneDesc {
 
 typedef BOOL (*tSHCreateMenuBar)(void*);
 typedef void (*tSmartfonAction)(OSystem_WINCE3 *wm, BOOL repeat);
+
+extern const char *getBuildDate();
 
 extern tSHCreateMenuBar dynamicSHCreateMenuBar;
 extern bool need_GAPI;
@@ -76,8 +76,19 @@ extern Config *g_config;
 int mouseX;
 int mouseY;
 int lastKeyPressed = 0;
+int lastKeyRepeat = 0;
 int mapping = -1;
 int mappingDone = -1;
+
+int repeatX;
+int stepX1;
+int stepX2;
+int stepX3;
+
+int repeatY;
+int stepY1;
+int stepY2;
+int stepY3;
 
 int mouseXZone[TOTAL_ZONES];
 int mouseYZone[TOTAL_ZONES];
@@ -139,18 +150,18 @@ const char* SMARTFON_KEYS_MAPPING[TOTAL_KEYS] = {
 
 #define HELP HELP1 HELP2
 
-void SmartfonUp(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonDown(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonLeft(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonRight(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonLeftClick(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonLeftUp(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonRightClick(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonRightUp(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonSave(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonBoss(OSystem_WINCE3 *wm, BOOL repeat);
-void SmartfonZone(OSystem_WINCE3 *wm, BOOL repeat);
+void SmartfonUp(OSystem_WINCE3 *wm, int repeat);
+void SmartfonDown(OSystem_WINCE3 *wm, int repeat);
+void SmartfonLeft(OSystem_WINCE3 *wm, int repeat);
+void SmartfonRight(OSystem_WINCE3 *wm, int repeat);
+void SmartfonLeftClick(OSystem_WINCE3 *wm, int repeat);
+void SmartfonLeftUp(OSystem_WINCE3 *wm, int repeat);
+void SmartfonRightClick(OSystem_WINCE3 *wm, int repeat);
+void SmartfonRightUp(OSystem_WINCE3 *wm, int repeat);
+void SmartfonSave(OSystem_WINCE3 *wm, int repeat);
+void SmartfonSkip(OSystem_WINCE3 *wm, int repeat);
+void SmartfonBoss(OSystem_WINCE3 *wm, int repeat);
+void SmartfonZone(OSystem_WINCE3 *wm, int repeat);
 
 
 const tSmartfonAction SMARTFON_ACTIONS[TOTAL_KEYS] = {
@@ -207,13 +218,16 @@ const int DEFAULT_MAPPING[TOTAL_KEYS] = {
 
 int current_mapping[TOTAL_KEYS];
 
-// Actions
+// Actions	
 
-void SmartfonUp(OSystem_WINCE3 *wm, BOOL repeat) {
-	if (repeat)
-		mouseY -= 10;
+void SmartfonUp(OSystem_WINCE3 *wm, int repeat) {
+	if (repeat > repeatY)
+		mouseY -= stepY3;
 	else
-		mouseY -= 2;
+	if (repeat)
+		mouseY -= stepY2;
+	else
+		mouseY -= stepY1;
 		
 	if (mouseY < 0)
 		mouseY = 0;
@@ -223,11 +237,14 @@ void SmartfonUp(OSystem_WINCE3 *wm, BOOL repeat) {
 	wm->_event.mouse.y = mouseY;
 }
 
-void SmartfonDown(OSystem_WINCE3 *wm, BOOL repeat) {
-	if (repeat)
-		mouseY += 10;
+void SmartfonDown(OSystem_WINCE3 *wm, int repeat) {
+	if (repeat > repeatY)
+		mouseY += stepY3;
 	else
-		mouseY += 2;
+	if (repeat)
+		mouseY += stepY2;
+	else
+		mouseY += stepY1;
 		
 	if (mouseY > 200)
 		mouseY = 200;
@@ -237,11 +254,14 @@ void SmartfonDown(OSystem_WINCE3 *wm, BOOL repeat) {
 	wm->_event.mouse.y = mouseY;
 }
 
-void SmartfonLeft(OSystem_WINCE3 *wm, BOOL repeat) {
-	if (repeat)
-		mouseX -= 10;
+void SmartfonLeft(OSystem_WINCE3 *wm, int repeat) {
+	if (repeat > repeatX)
+		mouseX -= stepX3;
 	else
-		mouseX -= 2;
+	if (repeat)
+		mouseX -= stepX2;
+	else
+		mouseX -= stepX1;
 		
 	if (mouseX < 0)
 		mouseX = 0;
@@ -251,11 +271,13 @@ void SmartfonLeft(OSystem_WINCE3 *wm, BOOL repeat) {
 	wm->_event.mouse.y = mouseY;
 }
 
-void SmartfonRight(OSystem_WINCE3 *wm, BOOL repeat) {
-	if (repeat)
-		mouseX += 10;
+void SmartfonRight(OSystem_WINCE3 *wm, int repeat) {
+	if (repeat > repeatX)
+		mouseX += stepX3;
+	else if (repeat)
+		mouseX += stepX2;
 	else
-		mouseX += 2;
+		mouseX += stepX1;
 		
 	if (mouseX > 320)
 		mouseX = 320;
@@ -265,14 +287,14 @@ void SmartfonRight(OSystem_WINCE3 *wm, BOOL repeat) {
 	wm->_event.mouse.y = mouseY;
 }
 
-void SmartfonLeftClick(OSystem_WINCE3 *wm, BOOL repeat) {
+void SmartfonLeftClick(OSystem_WINCE3 *wm, int repeat) {
 
 	wm->_event.event_code = OSystem::EVENT_LBUTTONDOWN;
 	wm->_event.mouse.x = mouseX;
 	wm->_event.mouse.y = mouseY;
 }
 
-void SmartfonLeftUp(OSystem_WINCE3 *wm, BOOL repeat) {
+void SmartfonLeftUp(OSystem_WINCE3 *wm, int repeat) {
 
 	wm->_event.event_code = OSystem::EVENT_LBUTTONUP;
 	wm->_event.mouse.x = mouseX;
@@ -280,14 +302,14 @@ void SmartfonLeftUp(OSystem_WINCE3 *wm, BOOL repeat) {
 }
 
 
-void SmartfonRightClick(OSystem_WINCE3 *wm, BOOL repeat) {
+void SmartfonRightClick(OSystem_WINCE3 *wm, int repeat) {
 
 	wm->_event.event_code = OSystem::EVENT_RBUTTONDOWN;
 	wm->_event.mouse.x = mouseX;
 	wm->_event.mouse.y = mouseY;
 }
 
-void SmartfonRightUp(OSystem_WINCE3 *wm, BOOL repeat) {
+void SmartfonRightUp(OSystem_WINCE3 *wm, int repeat) {
 
 	wm->_event.event_code = OSystem::EVENT_RBUTTONUP;
 	wm->_event.mouse.x = mouseX;
@@ -295,7 +317,7 @@ void SmartfonRightUp(OSystem_WINCE3 *wm, BOOL repeat) {
 }
 
 
-void SmartfonSave(OSystem_WINCE3 *wm, BOOL repeat) {
+void SmartfonSave(OSystem_WINCE3 *wm, int repeat) {
 		if (is_simon)
 			return;
 
@@ -312,7 +334,7 @@ void SmartfonSave(OSystem_WINCE3 *wm, BOOL repeat) {
 			wm->_event.kbd.ascii = g_scumm->VAR(g_scumm->VAR_SAVELOADDIALOG_KEY);
 }
 
-void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat) {
+void SmartfonSkip(OSystem_WINCE3 *wm, int repeat) {
 
 
 		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
@@ -332,7 +354,7 @@ void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat) {
 		wm->_event.kbd.ascii = KEY_ALL_SKIP;
 }
 
-void SmartfonBoss(OSystem_WINCE3 *wm, BOOL repeat) {
+void SmartfonBoss(OSystem_WINCE3 *wm, int repeat) {
 	SHELLEXECUTEINFO se;    
 
 	sound_activated = false;
@@ -456,6 +478,27 @@ BOOL saveKeyMapping() {
 	return TRUE;
 }
 
+void loadKeyRepeat() {
+	repeatY = g_config->getInt("repeatY", 4, "smartfon-keys");
+	g_config->setInt("repeatY", repeatY, "smartfon-keys");
+	stepY1 = g_config->getInt("stepY1", 2, "smartfon-keys");
+	g_config->setInt("stepY1", stepY1, "smartfon-keys");
+	stepY2 = g_config->getInt("stepY2", 10, "smartfon-keys");
+	g_config->setInt("stepY2", stepY2, "smartfon-keys");
+	stepY3 = g_config->getInt("stepY3", 20, "smartfon-keys");
+	g_config->setInt("stepY3", stepY3, "smartfon-keys");
+	repeatX = g_config->getInt("repeatX", 4, "smartfon-keys");
+	g_config->setInt("repeatX", repeatX, "smartfon-keys");
+	stepX1 = g_config->getInt("stepX1", 2, "smartfon-keys");
+	g_config->setInt("stepX1", stepX1, "smartfon-keys");
+	stepX2 = g_config->getInt("stepX2", 10, "smartfon-keys");
+	g_config->setInt("stepX2", stepX2, "smartfon-keys");
+	stepX3 = g_config->getInt("stepX3", 40, "smartfon-keys");
+	g_config->setInt("stepX3", stepX3, "smartfon-keys");
+	g_config->flush();
+
+}
+
 BOOL loadKeyMapping() {
 	int version;
 	const char *current;
@@ -544,6 +587,7 @@ int SmartphoneInitialMenu(HINSTANCE hInstance, HWND hWnd, char *game_name, TCHAR
 	loadKeyMapping();
 	buildKeysMappingMenu();
 	initZone();
+	loadKeyRepeat();
 
 	DrawMenuBar(hWnd);
 
@@ -590,6 +634,8 @@ void doPaint() {
 	HDC copyhDC;
 	PAINTSTRUCT ps;
 	HBITMAP bitmap;
+	char dateString[100];
+	TCHAR dateStringUnicode[100];
 
 	GetClientRect (_hWnd, &rcClient);
 	hDC = BeginPaint (_hWnd, &ps); 
@@ -600,7 +646,7 @@ void doPaint() {
 	SetBkColor (hDC, 0x00000000);
 	rcClient.left = 0;
 	rcClient.top = 40;
-	DrawText(hDC, TEXT("For Smartphone 2002"), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
+	DrawText(hDC, TEXT("For Microsoft Smartphone"), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
 	SetTextColor (hDC, 0x0000FF77);
 	rcClient.left = 0;
 	rcClient.top = 70;
@@ -613,7 +659,9 @@ void doPaint() {
 	DrawText(hDC, TEXT("http://arisme.free.fr"), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
 	rcClient.left = 0;
 	rcClient.top = 130;
-	DrawText(hDC, TEXT(SMARTFON_VERSION), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
+	sprintf(dateString, "Build %s", getBuildDate());
+	MultiByteToWideChar(CP_ACP, 0, dateString, strlen(dateString) + 1, dateStringUnicode, sizeof(dateStringUnicode));
+	DrawText(hDC, dateStringUnicode, -1, &rcClient, DT_CENTER | DT_SINGLELINE);
 
 	if (mapping != -1) {
 		char mappingInfo[100];
@@ -733,7 +781,10 @@ BOOL SmartphoneWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OS
 
 			for (i=0; i<TOTAL_KEYS; i++) 
 				if (current_mapping[i] == wParam) {
-					SMARTFON_ACTIONS[i](wm, lastKeyPressed == wParam);
+					if (lastKeyPressed != wParam)
+						lastKeyRepeat = 0;
+					SMARTFON_ACTIONS[i](wm, lastKeyRepeat);
+					lastKeyRepeat++;
 					lastKeyPressed = wParam;
 					return TRUE;
 				}
@@ -752,7 +803,7 @@ BOOL SmartphoneWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OS
 			for (i=0; i<TOTAL_KEYS; i++) 
 				if (current_mapping[i] == wParam) {
 					if (SMARTFON_DEACTIONS[i]) {
-						SMARTFON_DEACTIONS[i](wm, FALSE);
+						SMARTFON_DEACTIONS[i](wm, 0);
 						break;
 					}
 				}
