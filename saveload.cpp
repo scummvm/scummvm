@@ -146,7 +146,10 @@ bool Scumm::loadState(int slot, bool compat) {
 }
 
 void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
-	sprintf(out, "%s.%c%.2d", _exe_name, compatible ? 'c': 's', slot);
+	const char *dir = getenv("SCUMMVM_SAVEPATH");
+	if (dir==NULL) dir="";
+	/* snprintf should be used here, but it's not portable enough */
+	sprintf(out, "%s%s.%c%.2d", dir, _exe_name, compatible ? 'c': 's', slot);
 }
 
 bool Scumm::getSavegameName(int slot, char *desc) {

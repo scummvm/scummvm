@@ -1,4 +1,4 @@
-2002-01-13, version 0.1.0
+2002-02-03
 
 ScummVM is an implementation of the SCUMM engine used in various Lucas Arts games
 such as Monkey Island and Day of the Tentacle.
@@ -46,6 +46,11 @@ F5 displays a save/load box.
 Space pauses.
 Alt-Enter toggles full screen (on unix)
 
+Savegames:
+----------
+Savegames are by default put in the current directory. You can use the environment variable SCUMMVM_SAVEPATH to specify where to put save games. Don't forget the trailing directory separator.
+Bash Example:
+export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
 
 Playing sound with Timidity:
 ----------------------------
@@ -55,6 +60,8 @@ $ timidity -irv 7777
 
 Then just start ScummVM and you should have sound.
 In order to use timidity, you need to compile ScummVM with USE_TIMIDITY.
+
+If you compile ScummVM with the USE_ADLIB flag, an Adlib card will be emulated and ScummVM will output the music as sampled waves. (doesn't work with Sam&Max)
 
 Good Luck,
 The ScummVM team.
