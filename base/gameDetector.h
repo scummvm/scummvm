@@ -152,6 +152,7 @@ public:
 	bool _native_mt32;
 	
 	int _cdrom;
+	int _joystick_num;
 	int _save_slot;
 	
 	bool _saveconfig;

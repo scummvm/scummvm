@@ -85,6 +85,7 @@ Broken Sword 2
 * Enforce ScummVM code formatting guidelines.
 * Encapsulate the code into sensible objects.
 * Enable the CD swapping code.
+* Support cutscenes in some kind of open video format.
 
 SIMON
 =====
@@ -123,6 +124,3 @@ SDL backend
   algorithm, this should solve many of the problems with some luck
 * OpenGL code: either fix it (see open bug tracker items and various hacks in the code),
   or remove it. Does anybody really need this???
-* Joystick code: either fix it, or remove it, or make it possible to turn it on/off.
-  It causes crashs and/or odd behaviour for many people with joysticks (and apparently
-  also in a few odd cases to people without joystick?! Not confirmed)

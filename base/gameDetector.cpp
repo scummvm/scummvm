@@ -54,7 +54,7 @@ static const char USAGE_STRING[] =
 	"\tscummvm [OPTIONS] [game]\n"
 	"Options:\n"
 	"\t-p<path>       - Look for game in <path>\n"
-	"\t-x[<num>]      - Load this savegame (default: 0 - autosave)\n"
+	"\t-x[num]        - Load this savegame (default: 0 - autosave)\n"
 	"\t-f             - Full-screen mode (-F forces window mode.)\n"
 	"\t-g<mode>       - Graphics mode (normal,2x,3x,2xsai,super2xsai,\n"
 	"\t                 supereagle,advmame2x,advmame3x,hq2x,hq3x,\n"
@@ -64,6 +64,7 @@ static const char USAGE_STRING[] =
 	"\t                 gb,hb)\n"
 	"\n"
 	"\t-c<num>        - Use cdrom <num> for cd audio\n"
+	"\t-j[num]        - Enable input with joystick (default: 0 - 1st joystick)\n"
 	"\t-m<num>        - Set music volume to <num> (0-255)\n"
 	"\t-o<num>        - Set master volume to <num> (0-255)\n"
 	"\t-s<num>        - Set sfx volume to <num> (0-255)\n"
@@ -74,16 +75,16 @@ static const char USAGE_STRING[] =
 	"\n"
 	"\t-l<file>       - Load config file instead of default\n"
 #if defined(UNIX)
-	"\t-w[<file>]     - Write to config file [~/.scummvmrc]\n"
+	"\t-w[file]       - Write to config file [~/.scummvmrc]\n"
 #else
-	"\t-w[<file>]     - Write to config file [scummvm.ini]\n"
+	"\t-w[file]       - Write to config file [scummvm.ini]\n"
 #endif
 	"\t-v             - Show version info and exit\n"
 	"\t-h             - Display this text and exit\n"
 	"\t-z             - Display list of games\n"
 	"\n"
 	"\t-b<num>        - Pass number to the boot script (boot param)\n"
-	"\t-d[<num>]      - Enable debug output (debug level [1])\n"
+	"\t-d[num]        - Enable debug output (debug level [1])\n"
 	"\t-u             - Dump scripts\n"
 	"\n"
 	"\t--platform=    - Specify version of game (amiga,atari-st,macintosh)\n"
@@ -199,6 +200,7 @@ GameDetector::GameDetector() {
 	_native_mt32 = false;
 
 	_cdrom = 0;
+	_joystick_num = 0;
 	_save_slot = 0;
 	
 	_saveconfig = false;
@@ -220,6 +222,8 @@ void GameDetector::updateconfig() {
 	_platform = g_config->getInt("platform", _platform);
 
 	_save_slot = g_config->getInt("save_slot", _save_slot);
+
+	_joystick_num = g_config->getInt("joystick_num", _joystick_num);
 
 	_cdrom = g_config->getInt("cdrom", _cdrom);
 
@@ -325,6 +329,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	char c;
 	bool long_option_value;
 	_save_slot = -1;
+	_joystick_num = -1;
 
 	// Parse the arguments
 	// into a transient "_COMMAND_LINE" config comain.
@@ -375,7 +380,14 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				g_config->set("gfx_mode", option, "scummvm");
 				break;
 			// case 'h': reserved for help
-			// case 'j': reserved for joystick select
+			case 'j':
+				_joystick_num = 0;
+				HANDLE_OPT_OPTION();
+				if (option != NULL) {
+					_joystick_num = atoi(option);
+					g_config->setInt("joystick_num", _joystick_num);
+				}
+				break;
 			case 'l':
 				HANDLE_OPTION();
 				{
@@ -738,7 +750,7 @@ OSystem *GameDetector::createSystem() {
 	return OSystem_PALMOS_create(_gfx_mode, _fullScreen);
 #else
 	/* SDL is the default driver for now */
-	return OSystem_SDL_create(_gfx_mode, _fullScreen, _aspectRatio);
+	return OSystem_SDL_create(_gfx_mode, _fullScreen, _aspectRatio, _joystick_num);
 #endif
 }
 

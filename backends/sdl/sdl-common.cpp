@@ -41,26 +41,32 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
-OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen, bool aspect_ratio) {
-	return OSystem_SDL_Common::create(gfx_mode, full_screen, aspect_ratio);
+OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen, bool aspect_ratio, int joystick_num) {
+	return OSystem_SDL_Common::create(gfx_mode, full_screen, aspect_ratio, joystick_num);
 }
 
-OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen, bool aspect_ratio) {
+OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen, bool aspect_ratio, int joystick_num) {
 	OSystem_SDL_Common *syst = OSystem_SDL_Common::create_intern();
 
-	syst->init_intern(gfx_mode, full_screen, aspect_ratio);
+	syst->init_intern(gfx_mode, full_screen, aspect_ratio, joystick_num);
 
 	return syst;
 }
 
-void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect_ratio) {
+void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect_ratio, int joystick_num) {
 
 	_mode = gfx_mode;
 	_full_screen = full_screen;
 	_adjustAspectRatio = aspect_ratio;
 	_mode_flags = 0;
+	uint32 sdlFlags;
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) ==-1) {
+	sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
+
+	if (joystick_num > -1)
+		sdlFlags |= SDL_INIT_JOYSTICK;
+
+	if (SDL_Init(sdlFlags) ==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
 
@@ -77,9 +83,9 @@ void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect
 #endif
 
 	// enable joystick
-	if (SDL_NumJoysticks() > 0) {
+	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
-		init_joystick();
+		init_joystick(joystick_num);
 	}
 }
 
