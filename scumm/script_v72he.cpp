@@ -925,7 +925,7 @@ void ScummEngine_v72he::captureWizImage(int resType, int resNum, const Common::R
 
 		int w = rCapt.width();
 		int h = rCapt.height();
-		int tColor = VAR(VAR_WIZ_TCOLOR);
+		int tColor = (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
 
 		// compute compressed size
 		int dataSize = 0;
