@@ -3235,6 +3235,7 @@ void SimonState::processSpecialKeys()
 			if (_game & GAME_SIMON2)
 				_exit_cutscene = true;
 			break;
+
 		case 't':
 			_vk_t_toggle ^= 1;
 			if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN && _vk_t_toggle)
@@ -3720,7 +3721,7 @@ void SimonState::video_putchar_newline(FillOrCopyStruct *fcs)
 }
 
 static const byte hebrew_video_font[] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 	//4, 43, 0, 178, 0, 38, 0, 176,
+	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
 	0, 144, 0, 96, 144, 144, 104, 0,
