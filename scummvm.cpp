@@ -1048,6 +1048,10 @@ int Scumm::normalizeAngle(int angle)
 void NORETURN CDECL error(const char *s, ...)
 {
 	char buf[1024];
+#if defined( USE_WINDBG )
+	char buf2[1024];
+#endif
+
 	va_list va;
 
 	va_start(va, s);
@@ -1060,8 +1064,21 @@ void NORETURN CDECL error(const char *s, ...)
 						g_scumm->_roomResource,
 						ss->number,
 						g_scumm->_scriptPointer - g_scumm->_scriptOrgPointer, buf);
+#if defined( USE_WINDBG )
+		sprintf(buf2, "Error(%d:%d:0x%X): %s!\n",
+			g_scumm->_roomResource,
+			ss->number,
+			g_scumm->_scriptPointer - g_scumm->_scriptOrgPointer,
+			buf);
+		OutputDebugString(buf2);
+#endif
+
 	} else {
 		fprintf(stderr, "Error: %s!\n", buf);
+#if defined( USE_WINDBG )
+		sprintf(&buf[strlen(buf)], "\n");
+		OutputDebugString(buf);
+#endif
 	}
 	// Doesn't wait for any keypress!! Is it intended to?
 	exit(1);
@@ -1077,20 +1094,32 @@ void CDECL warning(const char *s, ...)
 	va_end(va);
 
 	fprintf(stderr, "WARNING: %s!\n", buf);
+#if defined( USE_WINDBG )
+	sprintf(&buf[strlen(buf)], "\n");
+	OutputDebugString(buf);
+#endif
 }
+
+uint16 _debugLevel = 1;
 
 void CDECL debug(int level, const char *s, ...)
 {
 	char buf[1024];
 	va_list va;
 
-	if (level > 5)
+	if (level > _debugLevel)
 		return;
 
 	va_start(va, s);
 	vsprintf(buf, s, va);
 	va_end(va);
 	printf("%s\n", buf);
+
+#if defined( USE_WINDBG )
+	sprintf(&buf[strlen(buf)], "\n");
+	OutputDebugString(buf);
+#endif
+
 	fflush(stdout);
 }
 

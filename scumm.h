@@ -812,6 +812,7 @@ public:
 	bool openResourceFile(const char *filename);
 	void loadPtrToResource(int type, int i, byte *ptr);
 	void readResTypeList(int id, uint32 tag, const char *name);
+	char *resTypeFromId(int id);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 	byte *createResource(int type, int index, uint32 size);
 	void nukeResource(int type, int i);	
@@ -1842,6 +1843,7 @@ struct Serializer {
 
 extern const uint32 IMxx_tags[];
 extern const byte default_scale_table[768];
+extern uint16 _debugLevel;
 
 void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];

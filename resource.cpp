@@ -357,7 +357,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 	int num;
 	int i;
 
-	debug(9, "readResTypeList(%d,%x,%s)", id, FROM_LE_32(tag), name);
+	debug(9, "readResTypeList(%s,%x,%s)", resTypeFromId(id), FROM_LE_32(tag), name);
 
 	num = fileReadWordLE();
 
@@ -392,8 +392,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name,
 														 int mode)
 {
-	debug(9, "allocResTypeData(%d,%x,%d,%s,%d)", id, FROM_LE_32(tag), num, name,
-				mode);
+	debug(9, "allocResTypeData(%s/%s,%x,%d,%d)", resTypeFromId(id), name, FROM_LE_32(tag), num, mode);
 	assert(id >= 0 && id < (int)(sizeof(res.mode) / sizeof(res.mode[0])));
 
 	if (num >= 2000) {
@@ -444,7 +443,7 @@ void Scumm::ensureResourceLoaded(int type, int i)
 {
 	void *addr;
 
-	debug(9, "ensureResourceLoaded(%d,%d)", type, i);
+	debug(9, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
 	if (type == rtRoom && i > 127) {
 		i = _resourceMapper[i & 127];
@@ -470,7 +469,7 @@ int Scumm::loadResource(int type, int idx)
 	uint32 fileOffs;
 	uint32 size, tag;
 
-//  debug(1, "loadResource(%d,%d)", type,idx);
+// debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
 
 	if (type == rtCharset && (_features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
@@ -545,7 +544,7 @@ int Scumm::readSoundResource(int type, int idx)
 	int pri, best_pri;
 	uint32 best_size = 0, best_offs = 0;
 
-	debug(9, "readSoundResource(%d,%d)", type, idx);
+	debug(9, "readSoundResource(%s,%d)", resTypeFromId(type), idx);
 
 	pos = 0;
 
@@ -621,23 +620,27 @@ int Scumm::getResourceRoomNr(int type, int idx)
 byte *Scumm::getResourceAddress(int type, int idx)
 {
 	byte *ptr;
-
-	debug(9, "getResourceAddress(%d,%d)", type, idx);
+	
 
 	CHECK_HEAP validateResource("getResourceAddress", type, idx);
-	if (!res.address[type])
+	if (!res.address[type]) {
+		debug(9, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
 		return NULL;
+	}
 
 	if (res.mode[type] && !res.address[type][idx]) {
 		ensureResourceLoaded(type, idx);
 	}
 
 
-	if (!(ptr = (byte *)res.address[type][idx]))
+	if (!(ptr = (byte *)res.address[type][idx])) {
+		debug(9, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
 		return NULL;
+	}
 
 	setResourceCounter(type, idx, 1);
 
+	debug(9, "getResourceAddress(%s,%d) == %ld", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
 	return ptr + sizeof(MemBlkHeader);
 }
 
@@ -680,7 +683,8 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 {
 	byte *ptr;
 
-	CHECK_HEAP debug(9, "createResource(%d,%d,%d)", type, idx, size);
+	CHECK_HEAP
+	debug(9, "createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
 	validateResource("allocating", type, idx);
 	nukeResource(type, idx);
@@ -703,7 +707,7 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 void Scumm::validateResource(const char *str, int type, int idx)
 {
 	if (type < rtFirst || type > rtLast || (uint) idx >= (uint) res.num[type]) {
-		warning("%s Illegal Glob type %d num %d", str, type, idx);
+		warning("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
 	}
 }
 
@@ -711,7 +715,7 @@ void Scumm::nukeResource(int type, int idx)
 {
 	byte *ptr;
 
-	debug(9, "nukeResource(%d,%d)", type, idx);
+	debug(9, "nukeResource(%s,%d)", resTypeFromId(type), idx);
 
 	CHECK_HEAP if (!res.address[type])
 		return;
@@ -974,7 +978,7 @@ void Scumm::expireResources(uint32 size)
 
 	increaseResourceCounter();
 
-	debug(1, "Expired resources, mem %d -> %d", oldAllocatedSize,
+	debug(5, "Expired resources, mem %d -> %d", oldAllocatedSize,
 				_allocatedSize);
 }
 
@@ -1225,3 +1229,28 @@ uint16 newTag2Old(uint32 oldTag)
 }
 
 
+char *Scumm::resTypeFromId(int id) {
+	static char buf[100];
+
+ 	switch(id) {
+		case rtRoom: 	  sprintf(buf, "Room"); break;
+		case rtScript: 	  sprintf(buf, "Script"); break;
+		case rtCostume:   sprintf(buf, "Costume"); break;
+		case rtSound: 	  sprintf(buf, "Sound"); break;
+		case rtInventory: sprintf(buf, "Inventory"); break;
+		case rtCharset:   sprintf(buf, "Charset"); break;
+		case rtString: 	  sprintf(buf, "String"); break;
+		case rtVerb:	  sprintf(buf, "Verb"); break;
+		case rtActorName: sprintf(buf, "ActorName"); break;
+		case rtBuffer: 	  sprintf(buf, "Buffer"); break;
+		case rtScaleTable:sprintf(buf, "ScaleTable"); break;
+		case rtTemp: 	  sprintf(buf, "Temp"); break;
+		case rtFlObject:  sprintf(buf, "FlObject"); break;
+		case rtMatrix: 	  sprintf(buf, "Matrix"); break;
+		case rtBox: 	  sprintf(buf, "Box"); break;
+		case rtLast: 	  sprintf(buf, "Last"); break;
+		case rtNumTypes:  sprintf(buf, "NumTypes"); break;
+		default: sprintf(buf,"%d", id);
+	}
+	return buf;
+}

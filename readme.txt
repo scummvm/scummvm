@@ -130,6 +130,9 @@ Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 COMPRESSED_SOUND_FILE. Tools for compressing .SOU files to .SO3 files can be
 found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
+On Win9x/NT/XP you can define WIN_DBG and attach WinDbg to browse the debug 
+messages (see www.sysinternals.com/ntw2k/freeware/debugview.shtml).
+
 	GCC:
 	* Type make (or gmake if that's what GNU make is called on your
 	  system) and hopefully ScummVM will compile for you.
@@ -199,6 +202,7 @@ Command Line Options:
         -n        - Disable subtitles. Use with games that have voice.
         -r        - Enable Roland conversion. Try if music sounds incorrect.
         -a        - Enable amiga pal conversion, for playing Amiga versions
+        -d[<num>] - Set debug verbosity to <num>
 
 In game Hot Keys:
 -----------------

@@ -32,11 +32,11 @@
 static const char USAGE_STRING[] = 
 	"ScummVM - Scumm Interpreter\n"
 	"Syntax:\n"
-  "\tscummvm [-v] [-d] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
+	"\tscummvm [-v] [-d[<num>]] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
 	"Flags:\n"
 	"\tv       - show version info and exit\n"
 	"\tc<num>  - use cdrom <num> for cd audio\n"
-	"\td       - enable debug output\n"
+	"\td[<num>]- enable debug output (level <num>)\n"
 	"\tn       - no subtitles for speech\n"
 	"\tb<num>  - start in room <num>\n"
 	"\tt<num>  - set music tempo. Suggested: 1F0000\n"
@@ -83,7 +83,10 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 					break;
 				case 'd':
 					_debugMode = true;
-					break;
+					if (*(s+1) != '\0')
+						_debugLevel = atoi(s+1);
+					debug(1,"Debugmode (level %d) on", _debugLevel);
+					goto NextArg;
 				case 'n':
 					_noSubtitles = true;
 					break;

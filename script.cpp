@@ -274,7 +274,7 @@ void Scumm::executeScript()
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-		//debug(1, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
+		debug(9, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
 		op = getOpcode(_opcode);
 		(this->*op) ();
 	}
@@ -358,9 +358,12 @@ void Scumm::writeVar(uint var, int value)
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 		_vars[var] = value;
 
-		if ((_varwatch == (int)var) || (_varwatch == 0))
-			printf("vars[%d] = %d (via script %d)\n", var, value,
-						 vm.slot[_currentScript].number);
+		if ((_varwatch == (int)var) || (_varwatch == 0)) {
+			if (vm.slot[_currentScript].number < 100)
+				debug(0, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
+			else
+				debug(0, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom, vm.slot[_currentScript].number);
+		}
 		return;
 	}
 
