@@ -63,10 +63,15 @@ private:
 	Scumm *_scumm;
 	bool _pause;
 
+	static void timer_handler(void *engine);
+	void musicTimer();
+
 public:
 	IMuseDigital(Scumm *scumm);
 	~IMuseDigital();
-	void handler();
+
+	void setMasterVolume(int vol) {}
+
 	void startSound(int sound);
 	void stopSound(int sound);
 	void stopAllSounds();

@@ -700,7 +700,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
 		_musicEngine = _playerV3A = new Player_V3A(this);
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
-		_playerV2 = NULL;
+		_musicEngine = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = _playerV2 = new Player_V2(this);
 	} else if (_version > 2) {
@@ -787,10 +787,7 @@ Scumm::~Scumm () {
 	delete _confirmExitDialog;
 
 	delete _sound;
-	delete _imuse;
-	delete _imuseDigital;
-	delete _playerV2;
-	delete _playerV3A;
+	delete _musicEngine;
 	free(_languageBuffer);
 	free(_audioNames);
 

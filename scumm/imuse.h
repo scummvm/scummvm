@@ -61,7 +61,7 @@ public:
 	int save_or_load(Serializer *ser, Scumm *scumm);
 	int set_music_volume(uint vol);
 	int get_music_volume();
-	int setMasterVolume(uint vol);
+	void setMasterVolume(int vol);
 	int get_master_volume();
 	void startSound(int sound);
 	void stopSound(int sound);

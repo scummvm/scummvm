@@ -689,11 +689,11 @@ static byte *readCreativeVocFile(byte *ptr, int32 &size, int &rate) {
 	return ret_sound;
 }
 
-static void imus_digital_handler(void *engine) {
+void IMuseDigital::timer_handler(void *engine) {
 	// Avoid race condition
 	Scumm *scumm = (Scumm *)engine;
 	if (scumm && scumm->_imuseDigital)
-		scumm->_imuseDigital->handler();
+		scumm->_imuseDigital->musicTimer();
 }
 
 IMuseDigital::IMuseDigital(Scumm *scumm)
@@ -702,19 +702,19 @@ IMuseDigital::IMuseDigital(Scumm *scumm)
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_channel[l]._mixerChannel = 0;
 	}
-	_scumm->_timer->installProcedure(imus_digital_handler, 200000);
+	_scumm->_timer->installProcedure(timer_handler, 200000);
 	_pause = false;
 }
 
 IMuseDigital::~IMuseDigital() {
-	_scumm->_timer->releaseProcedure(imus_digital_handler);
+	_scumm->_timer->releaseProcedure(timer_handler);
 
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_scumm->_mixer->stopChannel(_channel[l]._mixerChannel);
 	}
 }
 
-void IMuseDigital::handler() {
+void IMuseDigital::musicTimer() {
 	int l = 0;
 
 	if (_pause)

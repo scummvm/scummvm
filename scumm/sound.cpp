@@ -672,17 +672,8 @@ int Sound::isSoundRunning(int sound) const {
 	if (!_scumm->isResourceLoaded(rtSound, sound))
 		return 0;
 
-	if (_scumm->_imuseDigital)
-		return _scumm->_imuseDigital->getSoundStatus(sound);
-
-	if (_scumm->_imuse)
-		return _scumm->_imuse->getSoundStatus(sound);
-
-	if (_scumm->_playerV2)
-		return _scumm->_playerV2->getSoundStatus(sound);
-
-	if (_scumm->_playerV3A)
-		return _scumm->_playerV3A->getSoundStatus(sound);
+	if (_scumm->_musicEngine)
+		return _scumm->_musicEngine->getSoundStatus(sound);
 
 	return 0;
 }
@@ -770,23 +761,21 @@ void Sound::stopAllSounds() {
 		stopCD();
 	}
 
-	if (_scumm->_imuse) {
-		_scumm->_imuse->stopAllSounds();
-		_scumm->_imuse->clear_queue();
-	} else if (_scumm->_playerV2) {
-		_scumm->_playerV2->stopAllSounds();
-	} else 	if (_scumm->_playerV3A) {
-		_scumm->_playerV3A->stopAllSounds();
-	}
-
 	// Clear the (secondary) sound queue
 	_soundQue2Pos = 0;
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 
+	if (_scumm->_musicEngine) {
+		_scumm->_musicEngine->stopAllSounds();
+	}
+	if (_scumm->_imuse) {
+		// FIXME: Maybe we could merge this call to clear_queue()
+		// into IMuse::stopAllSounds() ?
+		_scumm->_imuse->clear_queue();
+	}
+
 	// Stop all SFX
-	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->stopAllSounds();
-	} else {
+	if (!_scumm->_imuseDigital) {
 		_scumm->_mixer->stopAll();
 	}
 }

@@ -1752,7 +1752,7 @@ void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }
 int IMuse::save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load(ser, scumm); out(); return ret; }
 int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume(vol); out(); return ret; }
 int IMuse::get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
-int IMuse::setMasterVolume(uint vol) { in(); int ret = _target->setMasterVolume(vol); out(); return ret; }
+void IMuse::setMasterVolume(int vol) { in(); _target->setMasterVolume(vol); out(); }
 int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
 void IMuse::startSound(int sound) { in(); _target->startSound(sound); out(); }
 void IMuse::stopSound(int sound) { in(); _target->stopSound(sound); out(); }

@@ -30,7 +30,7 @@ class MusicEngine {
 public:
 	virtual ~MusicEngine() {}
 
-//	virtual void setMasterVolume(int vol) = 0;
+	virtual void setMasterVolume(int vol) = 0;
 
 	virtual void startSound(int sound) = 0;
 	virtual void stopSound(int sound) = 0;
