@@ -1242,7 +1242,7 @@ void SimonState::o_177()
 			offs = getOffsetOfChild2Param(child, 0x100);
 			talk_with_speech(child->array[offs] + 3550, a);
 		}
-	} else if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS || _game == _game == GAME_SIMON2DOS) {
+	} else if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS || _game == GAME_SIMON2DOS) {
 		if (child != NULL && child->avail_props & 1) {
 			const char *s = (const char *)getStringPtrByID(child->array[0]);
 			char buf[256];
