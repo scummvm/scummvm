@@ -30,9 +30,9 @@ EXECUTABLE := scummvm$(EXEEXT)
 include config.mak
 
 # Uncomment this for stricter compile time code verification
-# CXXFLAGS+= -Wshadow -Werror
+# CXXFLAGS+= -Werror
 
-CXXFLAGS:= -O -Wall -Wuninitialized  $(CXXFLAGS)
+CXXFLAGS:= -O -Wall -Wuninitialized $(CXXFLAGS)
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 # Even more warnings...
 CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wconversion
@@ -79,6 +79,7 @@ scummvm-static: $(OBJS)
 		/sw/lib/libSDLmain.a /sw/lib/libSDL.a \
 		/sw/lib/libmad.a \
 		/sw/lib/libvorbisfile.a /sw/lib/libvorbis.a /sw/lib/libogg.a \
+		-lz \
 		-framework Cocoa -framework Carbon -framework IOKit \
 		-framework OpenGL -framework AGL -framework QuickTime \
 		-framework AudioUnit -framework AudioToolbox

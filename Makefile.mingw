@@ -39,8 +39,8 @@ EXEEXT	:=.exe
 #######################################################################
 
 # Uncomment this to activate the ZLIB lib for compressed save game files
-# DEFINES += -DUSE_ZLIB
-# LIBS    += -lz
+DEFINES += -DUSE_ZLIB
+LIBS    += -lz
 
 # Uncomment this to activate the MAD lib for compressed sound files
 DEFINES += -DUSE_MAD

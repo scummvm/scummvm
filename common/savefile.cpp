@@ -23,15 +23,6 @@
 #include "common/util.h"
 #include "common/savefile.h"
 
-
-// FIXME HACK
-// Enable this to activate transparent zlib compression of all savegames
-// Note that doing that makes ScummVM produce savegames which can't trivially
-// be read by non-zlib enabled versions. However, one can always decompress
-// such a savegame by using gzip, so this shouldn't be a bad problem.
-//#define USE_ZLIB
-
-
 #ifdef USE_ZLIB
 #include <zlib.h>
 #endif

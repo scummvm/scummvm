@@ -28,6 +28,7 @@ CXXFLAGS="$CXXFLAGS $CPPFLAGS"
 _vorbis=auto
 _mad=auto
 _alsa=auto
+_zlib=auto
 # default option behaviour yes/no
 _build_scumm=yes
 _build_simon=yes
@@ -41,19 +42,19 @@ _ranlib=ranlib
 _sdlconfig=sdl-config
 
 cc_check() {
-  echo >> "$TMPLOG"
-  cat "$TMPC" >> "$TMPLOG"
-  echo >> "$TMPLOG"
-  echo "$CXX $TMPC -o $TMPO $@" >> "$TMPLOG"
-  rm -f "$TMPO"
-  ( $CXX "$TMPC" -o "$TMPO" "$@" ) >> "$TMPLOG" 2>&1
-  TMP="$?"
-  echo >> "$TMPLOG"
-  return "$TMP"
+	echo >> "$TMPLOG"
+	cat "$TMPC" >> "$TMPLOG"
+	echo >> "$TMPLOG"
+	echo "$CXX $TMPC -o $TMPO $@" >> "$TMPLOG"
+	rm -f "$TMPO"
+	( $CXX "$TMPC" -o "$TMPO" "$@" ) >> "$TMPLOG" 2>&1
+	TMP="$?"
+	echo >> "$TMPLOG"
+	return "$TMP"
 }
 
 echocheck () {
-  echo -n "Checking for $@... "
+	echo -n "Checking for $@... "
 }
 
 #
@@ -81,29 +82,28 @@ eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_c
 # TODO: small bit of code to test sdl useability
 find_sdlconfig()
 {
-printf "Looking for sdl-config... "
-sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
-_sdlconfig=
-
-IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
-
-for path_dir in $PATH; do
-  for sdlconfig in $sdlconfigs; do
-    if test -e "$path_dir/$sdlconfig" ; then
-      _sdlconfig=$sdlconfig
-      echo $_sdlconfig
-      break
-    fi
-  done
-done
-
-IFS="$ac_save_ifs"
-
-if test -z "$_sdlconfig"; then
-  echo "none found!"
-  exit 1
-fi
-
+	printf "Looking for sdl-config... "
+	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
+	_sdlconfig=
+	
+	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+	
+	for path_dir in $PATH; do
+	  for sdlconfig in $sdlconfigs; do
+	    if test -e "$path_dir/$sdlconfig" ; then
+	      _sdlconfig=$sdlconfig
+	      echo $_sdlconfig
+	      break
+	    fi
+	  done
+	done
+	
+	IFS="$ac_save_ifs"
+	
+	if test -z "$_sdlconfig"; then
+	  echo "none found!"
+	  exit 1
+	fi
 }
 
 #
@@ -184,6 +184,8 @@ Optional Libraries:
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
   --with-mad-prefix=PFX    Prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
+  --with-zlib-prefix=PFX    Prefix where zlib is installed (optional)
+  --disable-zlib            disable zlib (compression) support [autodetect]
  
 EOF
     exit 0
@@ -198,32 +200,39 @@ for ac_option in $@; do
       --disable-simon)		_build_simon=no ;;
       --disable-sky)		_build_sky=no ;;
       --disable-bs2)		_build_bs2=no ;;
-      --disable-queen)          _build_queen=no ;;
+      --disable-queen)		_build_queen=no ;;
       --enable-alsa)		_alsa=yes	;;
       --disable-alsa)		_alsa=no	;;
       --enable-vorbis)		_vorbis=yes	;;
       --disable-vorbis)		_vorbis=no	;;
       --enable-mad)		_mad=yes	;;
       --disable-mad)		_mad=no		;;
+      --enable-zlib)		_zlib=yes	;;
+      --disable-zlib)		_zlib=no		;;
       --with-alsa-prefix=*)
-      	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	ALSA_CFLAGS="-I$_prefix/include"
 	ALSA_LIBS="-L$_prefix/libs"
 	;;
       --with-ogg-prefix=*)
-      	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	OGG_CFLAGS="-I$_prefix/include"
 	OGG_LIBS="-L$_prefix/lib"
 	;;
       --with-vorbis-prefix=*)
-      	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	VORBIS_CFLAGS="-I$_prefix/include"
 	VORBIS_LIBS="-L$_prefix/lib"
 	;;
       --with-mad-prefix=*)
-      	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	MAD_CFLAGS="-I$_prefix/include"
 	MAD_LIBS="-L$_prefix/lib"
+	;;
+      --with-zlib-prefix=*)
+	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	ZLIB_CFLAGS="-I$_prefix/include"
+	ZLIB_LIBS="-L$_prefix/lib"
 	;;
       --backend=*)
         _backend=`echo $ac_option | cut -d '=' -f 2`
@@ -521,6 +530,25 @@ else
 fi
 echo "$_alsa"
 
+echocheck "zlib"
+if test "$_zlib" = auto ; then
+  _zlib=no
+  cat > $TMPC << EOF
+#include <string.h>
+#include <zlib.h>
+int main(void) { return strcmp(ZLIB_VERSION, zlibVersion()); }
+EOF
+  cc_check $LDFLAGS $CXXFLAGS $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
+fi
+if test "$_zlib" = yes ; then
+  _def_zlib='#define USE_ZLIB'
+  LIBS="$LIBS $ZLIB_LIBS -lz"
+  INCLUDES="$INCLUDES $ZLIB_CFLAGS"
+else
+  _def_zlib='#undef USE_ZLIB'
+fi
+echo "$_zlib"
+
 rm -f $TMPC $TMPO
 
 
@@ -607,6 +635,7 @@ typedef signed $type_4_byte int32;
 $_def_vorbis
 $_def_mad
 $_def_alsa
+$_def_zlib
 
 #endif /* CONFIG_H */
 EOF
