@@ -95,7 +95,7 @@ void hexdump(const byte * data, int len)
 		printf(" |");
 		for (i = 0; i < 8; i++) {
 			c = data[i];
-			if (c < 32 || c > 127)
+			if (c < 32 || c >= 127)
 				c = '.';
 			printf("%c", c);
 		}
@@ -114,7 +114,7 @@ void hexdump(const byte * data, int len)
 	printf(" |");
 	for (i = 0; i < len; i++) {
 		c = data[i];
-		if (c < 32 || c > 127)
+		if (c < 32 || c >= 127)
 			c = '.';
 		printf("%c", c);
 	}
