@@ -608,12 +608,10 @@ void Scumm::CHARSET_1()
 			if (_features & GF_OLD256)
 				charset.printCharOld(c);
 			else if (!(_features & GF_AFTER_V6)) {
-//                                if (!_vars[VAR_V5_CHARFLAG]) { /* FIXME */
 				if (!(_haveMsg == 0xFE && _noSubtitles))
 					charset.printChar(c);
-//                                }
 			} else {
-				if (!(_haveMsg == 0xFE && _noSubtitles))
+				if (!((_haveMsg == 0xFE || _haveMsg == 0xFF) && _noSubtitles))
 					charset.printChar(c);
 			}
 
