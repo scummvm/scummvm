@@ -286,9 +286,7 @@ void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input,
 }
 
 void SoundMixer::mix(int16 *buf, uint len) {
-#ifndef __PALM_OS__
 	Common::StackLock lock(_mutex);
-#endif
 
 	//  zero the buf
 	memset(buf, 0, 2 * len * sizeof(int16));
