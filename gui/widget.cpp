@@ -197,10 +197,14 @@ SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char 
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) { 
 	if (_isDragging) {
-		int newvalue = x * 100 / _w;
+		int newValue = x * 100 / _w;
+		if (newValue < 0)
+			newValue = 0;
+		else if (newValue > 100)
+			newValue = 100;
 
-		if (newvalue != _value) {
-			_value = newvalue; 
+		if (newValue != _value) {
+			_value = newValue; 
 			draw();
 		}
 	}
@@ -226,14 +230,13 @@ void SliderWidget::drawWidget(bool hilite)
 void SliderWidget::handleMouseDown(int x, int y, int button) {
 	int barx;
 
-	barx=2 + ((_w - 5) * _old_value / 100);
+	barx = 2 + ((_w - 5) * _old_value / 100);
 	
 	// only start dragging if mouse is over bar
-	if (x > (barx-3) && x < (barx+3))
-		_isDragging=true;
+	if (x > (barx - 3) && x < (barx + 3))
+		_isDragging = true;
 }
 
 void SliderWidget::handleMouseUp(int x, int y, int button) {
-	if (_isDragging)
-		_isDragging=false;
+	_isDragging = false;
 }
