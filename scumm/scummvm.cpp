@@ -996,6 +996,9 @@ void Scumm::initRoomSubBlocks() {
 		}
 	}
 
+	//
+	// Load sccale data
+	//
 	if (_features & GF_OLD_BUNDLE)
 		ptr = 0;	// TODO ?
 	else
@@ -1025,7 +1028,7 @@ void Scumm::initRoomSubBlocks() {
 	}
 
 	//
-	// Setup local script
+	// Setup local scripts
 	//
 
 	// Determine the room script base address
@@ -1038,16 +1041,16 @@ void Scumm::initRoomSubBlocks() {
 		int num_objects = *(roomResPtr + 20);
 		int num_sounds = *(roomResPtr + 23);
 		int num_scripts = *(roomResPtr + 24);
-		int offset = 29 + num_objects * 4 + num_sounds + num_scripts;
+		ptr = roomptr + 29 + num_objects * 4 + num_sounds + num_scripts;
 
 		if ((_gameId != GID_MANIAC) && (_gameId != GID_ZAK)) {
-			for (;;) {
-				int id = *(roomResPtr + offset);
-				if (id == 0)
-					break;
+			while (*ptr) {
+				int id = *ptr;
 
-				_localScriptList[id - _numGlobalScripts] = offset + 1;
-				offset += 3;
+				_localScriptList[id - _numGlobalScripts] = READ_LE_UINT16(ptr + 1);
+				ptr += 3;
+				
+				// TODO: add script dumping, but how do we determine the script length?
 			}
 		}
 	} else if (_features & GF_SMALL_HEADER) {
