@@ -93,9 +93,10 @@ private:
 	
 	friend class Common::Singleton<PluginManager>;
 	PluginManager();
-	~PluginManager();
 
 public:
+	~PluginManager();
+
 	void loadPlugins();
 	void unloadPlugins();
 	
