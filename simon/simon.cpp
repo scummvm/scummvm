@@ -4788,6 +4788,11 @@ void SimonEngine::shutdown() {
 }
 
 void SimonEngine::quick_load_or_save() {
+	// simon1demo subroutines are missing too many segments
+	// original demo didn't allow load or save either.
+	if (_game == GAME_SIMON1DEMO)
+		return;
+
 	bool success;
 	char buf[256];
 
