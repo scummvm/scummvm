@@ -1124,8 +1124,8 @@ bool ScummEngine_v7he::polygonContains(WizPolygon &pol, int x, int y) {
 
 		if (curdir != diry) {
 			if (((pol.vert[pi].y - pol.vert[i].y) * (pol.vert[i].x - x) <=
-				 (pol.vert[pi].x - pol.vert[i].x) * (pol.vert[pi].y - y)) == diry)
-				r = r ? false : true;
+				 (pol.vert[pi].x - pol.vert[i].x) * (pol.vert[i].y - y)) == diry)
+				r = !r;
 		}
 
 		pi = i;
