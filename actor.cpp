@@ -478,6 +478,9 @@ void Actor::update() {
 		}
 	}
 
+	if (!talking())
+		shutUp();
+
 	if (!g_imuse->isVoicePlaying())
 		shutUp();
 
