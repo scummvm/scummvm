@@ -113,7 +113,7 @@ SkyState::~SkyState() {
 	delete _skyGrid;
 	delete _skySound;
 	delete _skyMusic;
-    showQuitMsg();	
+	showQuitMsg();	
 	delete _skyText;
 	delete _skyMouse;
 	delete _skyScreen;
@@ -170,7 +170,7 @@ void SkyState::initialise(void) {
 	}
 
 	_skyText = new SkyText(_skyDisk, _gameVersion, _language);
-	_skyMouse = new SkyMouse(_skyDisk);
+	_skyMouse = new SkyMouse(_system, _skyDisk);
 	_skyScreen = new SkyScreen(_system, _skyDisk);
 
 	initVirgin();
@@ -269,7 +269,7 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
 	_key_pressed = 0;	//reset
-	
+	_mouse_pos_changed = false;
 	_rnd.getRandomNumber(2);
 
 	do {
@@ -287,6 +287,7 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 					_sdl_mouse_x = event.mouse.x;
 					_sdl_mouse_y = event.mouse.y;
 					_mouse_pos_changed = true;
+					_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
 					break;
 
 					case OSystem::EVENT_LBUTTONDOWN:

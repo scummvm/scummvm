@@ -77,9 +77,10 @@ uint32 _mouseObjectList[] = {
 	24829
 };
 
-SkyMouse::SkyMouse(SkyDisk *skyDisk) {
+SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 
 	_skyDisk = skyDisk;
+	_system = system;
 	_mouseWidth = 6;
 	_mouseHeight = 6;
 	_maskWidth = 6;
@@ -113,12 +114,19 @@ void SkyMouse::replaceMouseCursors(uint16 fileNo) {
 	_skyDisk->loadFile(fileNo, _objectMouseData);
 }
 
-uint32 SkyMouse::fnBlankMouse(void) {
+bool SkyMouse::fnBlankMouse(void) {
 
 	_mouseXOff = 0;	//re-align mouse
 	spriteMouse(MOUSE_BLANK, 0, 0);
+	return true;
+}
 
-	return 1;
+bool SkyMouse::fnDiskMouse(void) {
+
+	//turn the mouse into a disk mouse
+	spriteMouse(MOUSE_DISK, 11, 11);
+	return true;	//don't quit from the interpreter
+	
 }
 
 void SkyMouse::lockMouse(void) {
@@ -153,7 +161,7 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
 	_mouseOffsetX = mouseX;
 	_mouseOffsetY = mouseY;
 
-	restoreMouseData(frameNum);
+	//restoreMouseData(frameNum);
 	byte *mouseData = _miceData;
 	uint32 pos = ((struct dataFileHeader *)mouseData)->s_sp_size * ((struct dataFileHeader *)mouseData)->s_sp_size;
 	pos += sizeof(struct dataFileHeader);
@@ -162,7 +170,8 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
 	_mouseWidth = ((struct dataFileHeader *)mouseData)->s_width;
 	_mouseHeight = ((struct dataFileHeader *)mouseData)->s_height;
 
-	drawNewMouse();
+	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
+	//drawNewMouse();
 
 	//_mouseFlag ^= (~_mouseFlag | MF_IN_INT);
 }

@@ -30,11 +30,12 @@ class SkyMouse {
 
 public:
 
-	SkyMouse(SkyDisk *skyDisk);
+	SkyMouse(OSystem *system, SkyDisk *skyDisk);
 	~SkyMouse(void);
 
 	void replaceMouseCursors(uint16 fileNo);
-	uint32 fnBlankMouse(void);
+	bool fnBlankMouse(void);
+	bool fnDiskMouse(void);
 	void lockMouse(void);
 	void unlockMouse(void);
 	void restoreMouseData(uint16 frameNum);
@@ -78,6 +79,7 @@ protected:
 
 	static uint32 _mouseObjectList[];
 
+	OSystem *_system;
 	SkyDisk *_skyDisk;
 };
 

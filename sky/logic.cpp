@@ -1187,8 +1187,7 @@ bool SkyLogic::fnAssignBase(uint32 id, uint32 scr, uint32 c) {
 }
 
 bool SkyLogic::fnDiskMouse(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnDiskMouse");
-	return true;
+	return _skyMouse->fnDiskMouse();
 }
 
 bool SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
@@ -1196,7 +1195,7 @@ bool SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnBlankMouse(uint32 a, uint32 b, uint32 c) {
-	return (_skyMouse->fnBlankMouse() != 0);
+	return _skyMouse->fnBlankMouse();
 }
 
 bool SkyLogic::fnCrossMouse(uint32 a, uint32 b, uint32 c) {
@@ -2060,12 +2059,11 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	if (SkyTalkAnims::animTalkTableIsPointer[offset]) //is it a pointer?
 		animPtr = (uint16 *)SkyTalkAnims::animTalkTablePtr[offset];
-	else { 	//then it must be a value
+	else  	//then it must be a value
 		animPtr = (uint16 *)SkyState::fetchCompact(SkyTalkAnims::animTalkTableVal[offset]);
-		target->offset = *animPtr++;
-		target->getToFlag = *animPtr++;
-	}
-
+	
+	target->offset = *animPtr++;
+	target->getToFlag = *animPtr++;
 	target->grafixProg = animPtr;
 
 	if (SkyState::isCDVersion(_gameVersion))
