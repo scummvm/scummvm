@@ -1116,7 +1116,7 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 	for (int i = 1; i < _varNumSprites; i++) {
 		SpriteInfo *spi = &_spriteTable[i];
 
-		if (spi->flags & kSF08) {
+		if (spi->flags & kSF16) {
 			if (!spi->flags & kSF23) {
 				if (!spi->flags & kSF30)
 					spi->flags |= kSFNeedRedraw;
