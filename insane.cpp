@@ -1347,7 +1347,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 
 			sm->_system->copy_rect(sm->_videoBuffer, 320, 0, 0, 320, 200);
 			sm->_system->update_screen();
-			sm->waitForTimer(18);
+			sm->waitForTimer(60);
 
 			//sm->delta = sm->_system->waitTick(sm->delta);
 		}
