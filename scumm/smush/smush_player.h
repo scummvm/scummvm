@@ -46,7 +46,6 @@ private:
 	FileChunk *_base;
 	byte *_frameBuffer;
 
-	bool _codec37Called;
 	bool _skipNext;
 	bool _subtitles;
 	bool _skips[37];

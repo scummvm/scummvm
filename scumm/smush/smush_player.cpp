@@ -203,27 +203,30 @@ void SmushPlayer::timerCallback(void *ptr) {
 
 SmushPlayer::SmushPlayer(Scumm *scumm, int speed, bool subtitles) {
 	player = this;
+
+	_scumm = scumm;
 	_version = -1;
 	_nbframes = 0;
 	_smixer = 0;
 	_strings = NULL;
-	_skipNext = false;
-	_dst = NULL;
-	_storeFrame = false;
-	_width = 0;
-	_height = 0;
-	_frameBuffer = NULL;
 	_sf[0] = NULL;
 	_sf[1] = NULL;
 	_sf[2] = NULL;
 	_sf[3] = NULL;
 	_sf[4] = NULL;
-	_scumm = scumm;
+	_base = NULL;
+	_frameBuffer = NULL;
+	
+	_skipNext = false;
+	_subtitles = subtitles;
+	_dst = NULL;
+	_storeFrame = false;
+	_width = 0;
+	_height = 0;
 	_IACTchannel = -1,
 	_IACTpos = 0;
 	_soundFrequency = 22050;
 	_speed = speed;
-	_subtitles = subtitles;
 	_smushProcessFrame = false;
 }
 
