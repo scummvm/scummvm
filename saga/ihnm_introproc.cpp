@@ -30,10 +30,8 @@
 #include "saga/animation.h"
 #include "saga/cvar_mod.h"
 #include "saga/events.h"
-#include "saga/font.h"
 #include "saga/rscfile_mod.h"
 #include "saga/sndres.h"
-#include "saga/text.h"
 #include "saga/music.h"
 
 #include "saga/scene.h"
