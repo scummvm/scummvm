@@ -65,7 +65,6 @@ Boolean StartScummVM() {
 
 	Boolean autoOff;
 	UInt16 autoOffDelay;
-	Boolean debug;
 	UInt16 musicDriver = sysInvalidRefNum; // for launch call
 
 	UInt16 index = GamGetSelected();
@@ -89,13 +88,13 @@ Boolean StartScummVM() {
 		else
 			StrCat(pathP,gameInfoP->pathP);
 		
-		// path exists ?
+/*		// path exists ?
 		if (!checkPath(pathP)) {
 			MemHandleUnlock(recordH);
 			FrmCustomAlert(FrmErrorAlert,"The specified path was not found !",0,0);
 			return false;
 		}
-
+*/
 		// ScummVM
 		AddArg(&argvP[argc], "-", NULL, &argc);
 
@@ -104,26 +103,38 @@ Boolean StartScummVM() {
 
 		// language
 		if (gameInfoP->language > 0) {
-			const Char *lang = "en\0de\0fr\0it\0p\0es\0jp\0z\0kr\0hb\0ru\0";
+			const Char *lang = "en\0de\0fr\0it\0p\0es\0jp\0z\0kr\0hb\0ru\0cz\0";
 			AddArg(&argvP[argc], "-q", (lang + (gameInfoP->language - 1) * 3), &argc);
 		}
 
 		// fullscreen ?
-		if (gPrefs->fullscreen) {
+		if (gPrefs->fullscreen)
 			AddArg(&argvP[argc], "-f", NULL, &argc);
-		}
+
+		// aspect-ratio ?
+		AddArg(&argvP[argc], (gPrefs->aspectRatio ? "--aspect-ratio" : "--no-aspect-ratio"), NULL, &argc);
+
+		// copy protection ?
+		if (gPrefs->copyProtection)
+			AddArg(&argvP[argc], "--copy-protection", NULL, &argc);
 
 		// gfx mode
-		switch (gameInfoP->gfxMode)
-		{
+		gVars->flipping.pageAddr1 = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
+		gVars->flipping.pageAddr2 = gVars->flipping.pageAddr1; // default if not flipping mode
+		
+		switch (gameInfoP->gfxMode)	{
 			case 1:
 				AddArg(&argvP[argc], "-g", "flipping", &argc);
+				gVars->flipping.pageAddr1 = (UInt8 *)WinScreenLock(winLockDontCare);
+				WinScreenUnlock();
 				break;
 			case 2:
-				AddArg(&argvP[argc], "-g", "dbuffer", &argc);
+				AddArg(&argvP[argc], "-g", "buffered", &argc);
 				break;
 			case 3:
 				AddArg(&argvP[argc], "-g", "wide", &argc);
+				gVars->flipping.pageAddr1 = (UInt8 *)WinScreenLock(winLockDontCare);
+				WinScreenUnlock();
 				break;
 			default:
 				AddArg(&argvP[argc], "-g", "normal", &argc);
@@ -168,7 +179,6 @@ Boolean StartScummVM() {
 			AddArg(&argvP[argc], "--talkspeed=", num, &argc);
 		}
 		// debug level
-		debug = gPrefs->debug;
 		if (gPrefs->debug) {
 			StrIToA(num, gPrefs->debugLevel);
 			AddArg(&argvP[argc], "-d", num, &argc);
@@ -191,6 +201,13 @@ Boolean StartScummVM() {
 				case 1:	// yamaha Pa1
 					AddArg(&argvP[argc], "-e", "ypa1", &argc);
 					break;
+				case 2: // PC Speaker
+					AddArg(&argvP[argc], "-e", "pcspk", &argc);
+					break;
+				case 3: // IBM PCjr
+					AddArg(&argvP[argc], "-e", "pcjr", &argc);
+				case 4: // FM Towns
+					AddArg(&argvP[argc], "-e", "towns", &argc);
 			}		
 		}
 		else	// NULL as default
@@ -214,6 +231,9 @@ Boolean StartScummVM() {
 		MemHandleUnlock(recordH);
 	}
 
+//	if (argc > MAX_ARG)
+//		FrmCustomAlert(FrmErrorAlert, "Too many parameters.",0,0);
+
 	gVars->skinSet = false;
 	gVars->pinUpdate = false;
 	GamCloseDatabase(false);
@@ -227,7 +247,7 @@ Boolean StartScummVM() {
 
 	// gVars values
 	//gVars->HRrefNum defined in checkHRmode on Clié OS4
-	//gVars->logFile defined bellow, must be defined only if debug option is checked
+	//gVars->logFile defined bellow
 	gVars->screenLocked = false;
 	gVars->volRefNum = gPrefs->card.volRefNum;
 	gVars->vibrator = gPrefs->vibrator;
@@ -257,11 +277,10 @@ Boolean StartScummVM() {
 		}
 	}
 	
-	if (debug) {
-		VFSFileDelete(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log");
-		VFSFileCreate(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log");
-		VFSFileOpen(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log",vfsModeWrite, &gVars->logFile);
-	}
+	// create file for printf, warnings, etc...
+	VFSFileDelete(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log");
+	VFSFileCreate(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log");
+	VFSFileOpen(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log",vfsModeWrite, &gVars->logFile);
 
 	void *sndStateOnFuncP = NULL,
 		 *sndStateOffFuncP = NULL;
@@ -298,8 +317,8 @@ Boolean StartScummVM() {
 		Pa1Lib_Close();
 	}
 
-	if (debug)
-		VFSFileClose(gVars->logFile);
+	// close log file
+	VFSFileClose(gVars->logFile);
 
 	for(count = 0; count < MAX_ARG; count++)
 		if (argvP[count])
