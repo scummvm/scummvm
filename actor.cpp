@@ -28,7 +28,7 @@
 Actor::Actor(const char *name) :
   name_(name), talkColor_(255, 255, 255), pos_(0, 0, 0),
   pitch_(0), yaw_(0), roll_(0), walkRate_(0), turnRate_(0),
-  visible_(false), talkSound_(NULL)
+  visible_(true), talkSound_(NULL)
 {
   Engine::instance()->registerActor(this);
 }
