@@ -40,7 +40,7 @@ namespace Saga {
 \*--------------------------------------------------------------------------*/
 
 Sound::Sound(SagaEngine *vm, SoundMixer *mixer, int enabled) : 
-		_vm(vm), _mixer(mixer) {
+	_vm(vm), _mixer(mixer), _enabled(enabled) {
 	int result;
 
 	/* Load sound module resource file contexts */

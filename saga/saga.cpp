@@ -55,6 +55,7 @@
 #include "text_mod.h"
 #include "objectmap_mod.h"
 #include "sound.h"
+#include "music.h"
 
 struct SAGAGameSettings {
 	const char *name;
@@ -176,6 +177,7 @@ void SagaEngine::go() {
 	SCENE_Register();
 
 	MainData.sound_enabled = 1;
+	MainData.music_enabled = 1;
 
 	CVAR_RegisterFunc(CF_testfunc,
 	    "testfunc", "foo [ optional foo ]", R_CVAR_NONE, 0, -1);
@@ -242,7 +244,13 @@ void SagaEngine::go() {
 	/* On some platforms, graphics initialization also initializes sound
 	 * ( Win32 DirectX )... Music must be initialized before sound for 
 	 * native midi support */
-	SYSMUSIC_Init(MainData.music_enabled);
+	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE));
+	if (!driver)
+		driver = MidiDriver_ADLIB_create(_mixer);
+	else if (ConfMan.getBool("native_mt32"))
+		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+	_music = new Music(driver, MainData.music_enabled);
 	if (!MainData.music_enabled) {
 		R_printf(R_STDOUT, "Music disabled.\n");
 	}
@@ -319,7 +327,7 @@ void SagaEngine::shutdown() {
 	delete _sndRes;
 
 	/* Shutdown system modules */
-	SYSMUSIC_Shutdown();
+	delete _music;
 	delete _sound;
 
 	_system->quit();

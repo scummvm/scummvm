@@ -142,22 +142,6 @@ int TRANSITION_Dissolve(uchar *dst_img,
 \*--------------------------------------------------------------------------*/
 
 /*
- * System : Music
-\*--------------------------------------------------------------------------*/
-enum SYSMUSIC_FLAGS {
-
-	R_MUSIC_LOOP = 0x01
-};
-
-int SYSMUSIC_Init(int enabled);
-int SYSMUSIC_Shutdown(void);
-
-int SYSMUSIC_Play(ulong music_rn, uint flags);
-int SYSMUSIC_Pause(void);
-int SYSMUSIC_Resume(void);
-int SYSMUSIC_Stop(void);
-
-/*
  * System : Graphics
 \*--------------------------------------------------------------------------*/
 #define R_PAL_ENTRIES 256

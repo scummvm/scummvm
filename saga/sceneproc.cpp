@@ -41,6 +41,7 @@
 #include "scene_mod.h"
 #include "palanim_mod.h"
 #include "sound.h"
+#include "music.h"
 
 /*
  * Begin module
@@ -66,7 +67,7 @@ int InitialSceneProc(int param, R_SCENE_INFO * scene_info)
 
 	case SCENE_BEGIN:
 
-		SYSMUSIC_Stop();
+		_vm->_music->stop();
 		_vm->_sound->stopVoice();
 
 		/* Fade palette to black from intro scene

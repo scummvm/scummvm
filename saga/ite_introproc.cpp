@@ -45,6 +45,7 @@
 #include "sndres.h"
 #include "text_mod.h"
 #include "palanim_mod.h"
+#include "music.h"
 
 /*
  * Begin module:
@@ -803,7 +804,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO * scene_info)
 
 		/* Begin ITE title theme music
 		 * \*----------------------------------------------------- */
-		SYSMUSIC_Stop();
+		_vm->_music->stop();
 
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_MUSIC_EVENT;

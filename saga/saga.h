@@ -36,6 +36,7 @@ namespace Saga {
 
 class SndRes;
 class Sound;
+class Music;
 
 #define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 
@@ -59,6 +60,7 @@ class SagaEngine:public Engine {
 
 	SndRes *_sndRes;
 	Sound  *_sound;
+	Music  *_music;
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects

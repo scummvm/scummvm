@@ -69,6 +69,7 @@ class Sound {
  private:
 
 	int _soundInitialized;
+	int _enabled;
 
     R_GAME_SOUNDINFO _snd_info;
 

@@ -47,6 +47,7 @@
 #include "render_mod.h"
 #include "game_mod.h"
 #include "sndres.h"
+#include "music.h"
 
 /*
  * Begin module
@@ -315,7 +316,7 @@ static int HandleOneShot(R_EVENT * event)
 
 	case R_MUSIC_EVENT:
 
-		SYSMUSIC_Play(event->param, event->param2);
+		_vm->_music->play(event->param, event->param2);
 		break;
 
 	case R_BG_EVENT:
