@@ -429,15 +429,13 @@ void ScummEngine_v90he::spriteInfoSet_field_80(int spriteId, int value) {
 	_spriteTable[spriteId].field_80 = value;
 }
 
-void ScummEngine_v90he::spriteInfoSet_resState(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_resState(int spriteId, int state) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	if (_spriteTable[spriteId].res_id) {
-		int state;
-
-		state = MAX(value, _spriteTable[spriteId].res_wiz_states - 1);
-		if (state < 0)
-			state = 0;
+		int res_wiz_states = _spriteTable[spriteId].res_wiz_states - 1;
+		if (state > res_wiz_states)
+			state = res_wiz_states;
 	
 		if (_spriteTable[spriteId].res_state != state) {
 			_spriteTable[spriteId].res_state = state;
