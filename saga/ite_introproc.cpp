@@ -648,6 +648,8 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 	R_TEXTLIST_ENTRY *entry_p;
 	R_EVENT event;
 	R_EVENT *q_event;
+	PALENTRY *pal;
+	static PALENTRY current_pal[R_PAL_ENTRIES];
 	int i;
 
 	const INTRO_CREDIT credits[] = {
@@ -666,19 +668,47 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 	};
 
 	int n_credits = sizeof credits / sizeof credits[0];
-	int event_delay = 0;
+	int event_delay = 3000;
 
 	switch (param) {
 	case SCENE_BEGIN:
+
+		// Fade to black out of the cave
+		_vm->_gfx->getCurrentPal(current_pal);
+		event.type = R_CONTINUOUS_EVENT;
+		event.code = R_PAL_EVENT;
+		event.op = EVENT_PALTOBLACK;
+		event.time = 0;
+		event.duration = PALETTE_FADE_DURATION;
+		event.data = current_pal;
+
+		q_event = _vm->_events->queue(&event);
 
 		// Display ITE title screen background
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_BG_EVENT;
 		event.op = EVENT_DISPLAY;
-		event.param = SET_PALETTE;
+		event.param = NO_SET_PALETTE;
 		event.time = 0;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
+
+		// Fade in from black to the scene background palette
+		_vm->_scene->getBGPal(&pal);
+		event.type = R_CONTINUOUS_EVENT;
+		event.code = R_PAL_EVENT;
+		event.op = EVENT_BLACKTOPAL;
+		event.time = 0;
+		event.duration = PALETTE_FADE_DURATION;
+		event.data = pal;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
+		debug(0, "Beginning animation playback.");
+
+		// Begin title screen background animation 
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, PALETTE_FADE_DURATION);
 
 		// Begin ITE title theme music
 		_vm->_music->stop();
@@ -708,16 +738,16 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 3000;
 		event.duration = LOGO_DISSOLVE_DURATION;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Remove logo
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
-		event.time = 6000;
+		event.time = 3000;
 		event.duration = LOGO_DISSOLVE_DURATION;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Unpause animation before logo
 		event.type = R_ONESHOT_EVENT;
@@ -725,23 +755,17 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_CLEARFLAG;
 		event.param = 0;
 		event.param2 = ANIM_PAUSE;
-		event.time = 6000 + LOGO_DISSOLVE_DURATION;
+		event.time = 3000 + LOGO_DISSOLVE_DURATION;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_ANIM_EVENT;
 		event.op = EVENT_FRAME;
 		event.param = 0;
-		event.time = 6000 + LOGO_DISSOLVE_DURATION;
+		event.time = 3000 + LOGO_DISSOLVE_DURATION;
 
-		q_event = _vm->_events->queue(&event);
-
-		debug(0, "Beginning animation playback.");
-
-		// Begin title screen background animation 
-		_vm->_anim->setFlag(0, ANIM_LOOP);
-		_vm->_anim->play(0, 0);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
 		text_entry.color = 255;
