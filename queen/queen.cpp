@@ -359,7 +359,7 @@ int QueenEngine::init(GameDetector &detector) {
 	}
 
 	if (!_mixer->isReady())
-		warning("Sound initialisation failed.");
+		warning("Sound initialisation failed");
 	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
 	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
 	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, SoundMixer::kMaxMixerVolume);
