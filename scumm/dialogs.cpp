@@ -40,10 +40,7 @@
 #endif
 
 #ifdef _WIN32_WCE
-#include "gapi_keys.h"
-extern bool _get_key_mapping;
-extern void save_key_mapping();
-extern void load_key_mapping();
+#include "backends/wince/CEKeysDialog.h"
 #endif
 
 using GUI::CommandSender;
@@ -444,7 +441,7 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	// Create the sub dialog(s)
 	//
 #ifdef _WIN32_WCE
-	_keysDialog = new KeysDialog(scumm);
+	_keysDialog = new CEKeysDialog();
 #endif
 }
 
@@ -624,108 +621,6 @@ void ConfirmDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	} else
 		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
 }
-
-#ifdef _WIN32_WCE
-
-#pragma mark -
-
-using GUI::ListWidget;
-using GUI::kListNumberingZero;
-using GUI::WIDGET_CLEARBG;
-using GUI::kListSelectionChangedCmd;
-
-enum {
-	kMapCmd					= 'map '
-};
-
-
-KeysDialog::KeysDialog(ScummEngine *scumm)
-	: ScummDialog(scumm, 30, 20, 260, 160) {
-	addButton(160, 20, "Map", kMapCmd, 'M');	// Map
-	addButton(160, 40, "OK", kOKCmd, 'O');						// OK
-	addButton(160, 60, "Cancel", kCloseCmd, 'C');				// Cancel
-
-	_actionsList = new ListWidget(this, 10, 20, 140, 90);
-	_actionsList->setNumberingMode(kListNumberingZero);
-
-	_actionTitle = new StaticTextWidget(this, 10, 120, 240, 16, "Choose an action to map", kTextAlignCenter);
-	_keyMapping = new StaticTextWidget(this, 10, 140, 240, 16, "", kTextAlignCenter);
-
-	_actionTitle->setFlags(WIDGET_CLEARBG);
-	_keyMapping->setFlags(WIDGET_CLEARBG);
-
-	// Get actions names
-	Common::StringList l;
-
-	for (int i = 1; i < TOTAL_ACTIONS; i++) 
-		l.push_back(getActionName(i));
-
-	_actionsList->setList(l);
-
-	_actionSelected = -1;
-	_get_key_mapping = false;
-}
-
-void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	switch(cmd) {
-
-	case kListSelectionChangedCmd:
-		if (_actionsList->getSelected() >= 0) {
-				char selection[100];
-
-				sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionsList->getSelected() + 1)->action_key));				
-				_keyMapping->setLabel(selection);
-				_keyMapping->draw();
-		}
-		break;
-	case kMapCmd:
-		if (_actionsList->getSelected() < 0) {
-				_actionTitle->setLabel("Please select an action");
-		}
-		else {
-				char selection[100];
-
-				_actionSelected = _actionsList->getSelected() + 1;
-				sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionSelected)->action_key));				
-				_actionTitle->setLabel("Press the key to associate");
-				_keyMapping->setLabel(selection);
-				_keyMapping->draw();
-				_get_key_mapping = true;
-				_actionsList->setEnabled(false);
-		}
-		_actionTitle->draw();
-		break;
-	case kOKCmd:
-		save_key_mapping();
-		close();
-		break;
-	case kCloseCmd:
-		load_key_mapping();
-		close();
-		break;
-	default:
-		ScummDialog::handleCommand(sender, cmd, data);
-	}
-}
-
-void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (modifiers == 0xff  && _get_key_mapping) {
-		// GAPI key was selected
-		char selection[100];
-
-		clearActionKey(ascii & 0xff);
-		getAction(_actionSelected)->action_key = (ascii & 0xff);
-		sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionSelected)->action_key));				
-		_actionTitle->setLabel("Choose an action to map");
-		_keyMapping->setLabel(selection);
-		_keyMapping->draw();
-		_actionSelected = -1;
-		_actionsList->setEnabled(true);
-		_get_key_mapping = false;
-	}
-}
-
-#endif
 
 } // End of namespace Scumm
 

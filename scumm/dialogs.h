@@ -151,25 +151,6 @@ public:
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 };
 
-#ifdef _WIN32_WCE
-
-class KeysDialog : public ScummDialog {
-public:
-	KeysDialog(ScummEngine *scumm);
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
-
-protected:
-
-	GUI::ListWidget		 *_actionsList;
-	GUI::StaticTextWidget *_actionTitle;
-	GUI::StaticTextWidget *_keyMapping;
-	int				 _actionSelected;
-};
-
-#endif
-
 } // End of namespace Scumm
 
 #endif
