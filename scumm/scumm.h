@@ -365,10 +365,6 @@ public:
 
 	/* Init functions, etc */
 	byte _fastMode;
-	const char *getGameName();
-
-	/* video buffer */
-	byte *_videoBuffer;
 
 	/* system call object */
 
@@ -423,7 +419,6 @@ public:
 
 	/* Core variable definitions */
 	byte _gameId;
-	const char *_gameText;
 
 	/* Core class/array definitions */
 	Gdi gdi;

@@ -82,7 +82,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_bootParam = detector->_bootParam;
 	_exe_name = (char*)detector->_gameFileName.c_str();
 	_gameId = detector->_gameId;
-	_gameText = detector->_gameText;
 	_features = detector->_features;
 	_soundCardType = detector->_soundCardType;
 	_noSubtitles = detector->_noSubtitles;
@@ -1483,9 +1482,6 @@ void Scumm::launch()
 
 	_verbRedraw = false;
 	
-	// Create a primary virtual screen
-	_videoBuffer = (byte *)calloc((_realWidth + 8) * _realHeight, 1);
-
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 	initVirtScreen(0, 0, 0, _realWidth, _realHeight, false, false);
 
