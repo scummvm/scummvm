@@ -249,7 +249,9 @@ void Sound::playSound(int soundID) {
 		// then a semi-sane VOC header is revealed, with
 		// a sampling rate of ~25000 Hz (does that make sense?).
 		// I'll add some code to test that theory for now.
-		if (_vm->_gameId == GID_MONKEY_SEGA)	{
+
+		// Check if the resource has already been demangled
+		if ((_vm->_gameId == GID_MONKEY_SEGA) && (ptr[0] != 1))	{
 			for (int i = 0; i < size; i++)   {
 				ptr[i] ^= 0x16;
 				if (ptr[i] >= 0x7F)   {
