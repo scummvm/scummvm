@@ -71,6 +71,6 @@ residual: $(OBJS)
 	$(CXX) $(CXXFLAGS) -MMD -c $(<) -o $*.o
 
 clean: 
-	-rm -f residual$(EXEEXT) *.o *~ mixer\*.o *.d mixer\*.d mixer\*~ lua\*.o *.d lua\*.d lua\*~
+	-rm -f residual$(EXEEXT) *.o *.d mixer/*.o mixer/*.d imuse/*.o imuse/*.d lua/*.o *.d lua/*.d
 
 -include $(DEPS)
