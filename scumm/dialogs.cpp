@@ -64,28 +64,27 @@ static const char* string_map_table_custom[] = {
 	"Sound",			//5
 	"Keys",				//6
 	"About",			//7
-	"Pocket ScummVM",	//8
-	"Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")",	//9
-	"ScummVM http://www.scummvm.org",		//10
-	"All games (c) LucasArts",						//11
-	"Quit",											//12
-	"Pause",										//13
-	"Save",											//14
-	"Skip",											//15
-	"Hide",											//16
-	"Options",									//17
-	"Misc",											//18
+	"Pocket ScummVM",		//8
+	"This space intentionally left blank",	//9		SPARE
+	"Do you have a monkey in your pocket?",	//10		SPARE
+	"",					//11		SPARE
+	"Quit",					//12
+	"Pause",				//13
+	"Save",					//14
+	"Skip",					//15
+	"Hide",					//16
+	"Options",				//17
+	"Misc",					//18
 	"Show speech subtitles",		//19
-	"Amiga palette conversion",	//20
-	"Except:",									//21
-	"Simon the Sorcerer (c) Adventuresoft", //22
-	"Close",										//23
-
-	"Map",												//24
-	"Choose an action to map",							//25
-	"Press the key to associate",						//26
-	"Please select an action",							//27
-	"Help"										//28
+	"Amiga palette conversion",		//20
+	"If you can read this,",		//21		SPARE
+	"you don't need glasses", 		//22		SPARE
+	"Close",				//23
+	"Map",					//24
+	"Choose an action to map",		//25
+	"Press the key to associate",		//26
+	"Please select an action",		//27
+	"Help"					//28
 };
 
 #ifdef __PALM_OS__
