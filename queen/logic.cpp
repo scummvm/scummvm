@@ -864,10 +864,10 @@ void Logic::roomSetupObjects() {
 
 	// static/animated Bobs
 	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
-		int16 obj = _objectData[i].image;
+		ObjectData *pod = &_objectData[i];
 		// setup blanks bobs for turned off objects (in case 
 		// you turn them on again)
-		if (obj == -1) {
+		if (pod->image == -1) {
 			// static OFF Bob
 			curBob = 20 + _numFurnitureStatic + numObjectStatic;
 			++numObjectStatic;
@@ -875,16 +875,66 @@ void Logic::roomSetupObjects() {
 			++_numFrames;
 			++curImage;
 		}
-		else if(obj == -2) {
+		else if(pod->image == -2) {
 			// animated OFF Bob
 			curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
 			++numObjectAnimated;
 		}
-		else if(obj > 0 && obj < 5000) {
-			// FIXME: need GRAPHIC_ANIM stuff
-			warning("Logic::roomSetupObjects() - Object number %d not handled", obj);
-		}
+		else if(pod->image > 0 && pod->image < 5000) {
+			GraphicData *pgd = &_graphicData[pod->image];
+			int16 lastFrame = pgd->lastFrame;
+			bool rebound = false;
+			if (lastFrame < 0) {
+				lastFrame = -lastFrame;
+				rebound = true;
+			}
+			if (pgd->firstFrame < 0) {
+				// FIXME: need GRAPHIC_ANIM stuff
+				// see queen.c l.1251-1296
+				warning("Logic::roomSetupObjects() - Object number %d not handled", pod->image);
+			}
+			else if (lastFrame != 0) {
+				// animated objects
+				uint16 j;
+				uint16 firstFrame = curImage + 1;
+				for (j = pgd->firstFrame; j <= lastFrame; ++j) {
+					++curImage;
+					_graphics->bankUnpack(j, curImage, 15);
+					++_numFrames;
+				}
+				curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
+				if (pod->name > 0) {
+					BobSlot *pbs = _graphics->bob(curBob);
+					pbs->active = true;
+					pbs->x = pgd->x;
+					pbs->y = pgd->y;
+					pbs->frameNum = firstFrame;
+					if (pgd->speed > 0) {
+						_graphics->bobAnimNormal(curBob, firstFrame, curImage, pgd->speed / 4, rebound, false);
+					}
+				}
+				++numObjectAnimated;
+			}
+			else {
+				// static objects
+				curBob = 20 + _numFurnitureStatic + numObjectStatic;
+				++curImage;
+				_graphics->bobClear(curBob);
 
+				// FIXME: if((COMPANEL==2) && (FULLSCREEN==1)) bobs[CURRBOB].y2=199;
+
+				_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+				++_numFrames;
+				if (pod->name > 0) {
+					BobSlot *pbs = _graphics->bob(curBob);
+					pbs->active = true;
+					pbs->x = pgd->x;
+					pbs->y = pgd->y;
+					pbs->frameNum = curImage;
+				}
+				++numObjectStatic;
+			}
+		}
 	}
 
 	// persons Bobs
@@ -914,6 +964,105 @@ void Logic::roomSetupObjects() {
 			_graphics->bobPaste(curImage, pgd->x, pgd->y);
 		}
 	}
+}
+
+
+uint16 Logic::roomRefreshObject(uint16 obj) {
+	warning("Logic::roomSetupObjects() not fully implemented");
+	uint16 curImage = _numFrames;
+
+	ObjectData *pod = &_objectData[obj];
+	if (pod->image == 0) {
+		return curImage;
+	}
+
+	// check the object is in the current room
+	if (pod->room != _currentRoom) {
+		warning("Logic::roomRefreshObject() - Trying to display an object that is not in room");
+		return curImage;
+	}
+
+	// find bob for the object
+	uint16 curBob = findBob(obj);
+	BobSlot *pbs = _graphics->bob(curBob);
+
+	if (pod->image == -3 || pod->image == -4) {
+		// a person object
+		if (pod->name < 0) {
+			_graphics->bobClear(curBob);
+		}
+		else {
+			// find person number
+			uint16 pNum = 1;
+			uint16 i = _roomData[_currentRoom] + 1;
+			while (i < obj) {
+				if (_objectData[i].image == -3 || _objectData[i].image == -4) {
+					++pNum;
+				}
+				++i;
+			}
+			curImage = _personFrames[pNum] - 1;
+			if (_personFrames[pNum] == 0) {
+				curImage = _numFrames;
+				_personFrames[pNum] = curImage;
+			}
+			curImage = personSetup(obj - _roomData[_currentRoom], curImage);
+		}
+		return curImage;
+	}
+
+	if (pod->name < 0 || pod->image < 0) {
+		// object is hidden or disabled
+		_graphics->bobClear(curBob);
+		return curImage;
+	}
+
+	// find frame used for object
+	curImage = findFrame(obj);
+
+	if (pod->image > 5000) {
+		GraphicData *pgd = &_graphicData[pod->image - 5000];
+		bool rebound = false;
+		int16 lastFrame = pgd->lastFrame;
+		if (lastFrame < 0) {
+			lastFrame = -lastFrame;
+			rebound = true;
+		}
+		if (pgd->firstFrame) {
+			// FIXME: need GRAPHIC_ANIM stuff
+			// see queen.c l.944-981
+			warning("Logic::roomRefreshObject() - Object number %d not handled", obj);
+		}
+		else if (lastFrame != 0) {
+			// turn on an animated bob
+			_graphics->bankUnpack(pgd->firstFrame, 2, 15);
+			pbs->animating = false;
+			uint16 firstFrame = curImage;
+			--curImage;
+			uint16 j;
+			for (j = pgd->firstFrame; j <= lastFrame; ++j) {
+				++curImage;
+				_graphics->bankUnpack(j, curImage, 15);
+			}
+			pbs->active = true;
+			pbs->x = pgd->x;
+			pbs->y = pgd->y;
+			pbs->frameNum = firstFrame;
+			if (pgd->speed > 0) {
+				_graphics->bobAnimNormal(curBob, firstFrame, curImage, pgd->speed / 4, rebound, false);
+			}
+		}
+		else {
+			// frame 2 is used as a buffer frame to prevent BOB flickering
+			_graphics->bankUnpack(pgd->firstFrame, 2, 15);
+			_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+			pbs->active = true;
+			pbs->x = pgd->x;
+			pbs->y = pgd->y;
+			pbs->frameNum = curImage;
+		}
+	}
+	return curImage;
 }
 
 
@@ -1202,6 +1351,11 @@ void Logic::animErase(uint16 bobNum) {
 
 
 StateDirection Logic::findStateDirection(uint16 state) {
+
+	// FIXME: may be we should return a DIR_* constant instead
+	// of a STATE_DIR_*. Some (all ?) calls to FIND_STATE(, "DIR")
+	// are often followed by a DIR_* constant.
+
 	// see queen.c l.4016-4023
 	StateDirection sd = STATE_DIR_BACK;
 	switch ((state >> 2) & 3) {
@@ -1369,7 +1523,6 @@ uint16 Logic::joeFace() {
 	_graphics->bankUnpack(frame, pbs->frameNum, 7);
 	return frame;
 }
-
 
 
 } // End of namespace Queen

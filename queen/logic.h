@@ -109,6 +109,7 @@ public:
 	void roomErase();
 	void roomSetupFurniture(); // SETUP_FURNITURE()
 	void roomSetupObjects(); // DISP_OBJECTS
+	uint16 roomRefreshObject(uint16 obj); // REDISP_OBJECT
 	void roomSetup(const char* room, int comPanel, bool inCutaway);
 	void roomDisplay(const char* room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
 

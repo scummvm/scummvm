@@ -120,7 +120,7 @@ struct GraphicData {
 
 
 struct ObjectData {
-	//! entry in OBJECT_NAME
+	//! entry in OBJECT_NAME (<0: object is hidden)
 	int16 name;
 	//! coordinates of object
 	uint16 x, y;
