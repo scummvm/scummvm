@@ -77,7 +77,7 @@ void SkyText::fnSetFont(uint32 fontNr) {
 
 	_curCharSet = fontNr;
 	_characterSet = newCharSet->addr;
-	_charHeight = newCharSet->charHeight;
+	_charHeight = (byte)newCharSet->charHeight;
 	_dtCharSpacing = newCharSet->charSpacing;
 }
 
@@ -198,7 +198,7 @@ void SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelW
 		}
 		
 		lineWidth += *(_characterSet+textChar);	//add character width
-		lineWidth += _dtCharSpacing;	//include character spacing
+		lineWidth += (int)_dtCharSpacing;	//include character spacing
 	
 		if (pixelWidth <= lineWidth) {
 	
@@ -238,8 +238,8 @@ void SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelW
 
 	//make the header
 	((struct dataFileHeader *)curDest)->s_width = TO_LE_16(_dtLineWidth);
-	((struct dataFileHeader *)curDest)->s_height = TO_LE_16(_charHeight * _dtLines);
-	((struct dataFileHeader *)curDest)->s_sp_size = TO_LE_16(_dtLineWidth * _charHeight * _dtLines);
+	((struct dataFileHeader *)curDest)->s_height = TO_LE_16((int)(_charHeight * _dtLines));
+	((struct dataFileHeader *)curDest)->s_sp_size = TO_LE_16((int)(_dtLineWidth * _charHeight * _dtLines));
 	((struct dataFileHeader *)curDest)->s_offset_x = TO_LE_16(0);
 	((struct dataFileHeader *)curDest)->s_offset_y = TO_LE_16(0);
 	
@@ -278,7 +278,7 @@ void SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelW
 void SkyText::makeGameCharacter(char textChar, uint8 *charSet, uint8 *&dest, uint8 color) {
 
 	bool maskBit, dataBit;	
-	uint8 charWidth = (*(charSet + textChar)) + 1 - _dtCharSpacing;
+	uint8 charWidth = (int)((*(charSet + textChar)) + 1 - _dtCharSpacing);
 	uint16 data, mask; 
 	byte *charSpritePtr = (charSet + CHAR_SET_HEADER + ((_charHeight << 2) * textChar));
 	byte *startPos = dest;
@@ -294,9 +294,9 @@ void SkyText::makeGameCharacter(char textChar, uint8 *charSet, uint8 *&dest, uin
 		
 		for (int j = 0; j < charWidth; j++) {
 	
-			maskBit = (bool)(mask & 0x8000); //check mask
+			maskBit = (mask & 0x8000) != 0; //check mask
 			mask <<= 1;
-			dataBit = (bool)(data & 0x8000); //check data
+			dataBit = (data & 0x8000) != 0; //check data
 			data <<= 1;
 
 			if (maskBit) 
