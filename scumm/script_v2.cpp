@@ -2973,7 +2973,7 @@ void Scumm::o6_kernelFunction()
 		push(a->frame);
 		break;
 	case 215:
-		if (_extraBoxFlags[args[1]] & 0x00FF == 0x00C0) {
+		if ((_extraBoxFlags[args[1]] & 0x00FF) == 0x00C0) {
 			push(_extraBoxFlags[args[1]]);
 		} else {
 			byte *temp = (byte *)getBoxBaseAddr(args[1]);

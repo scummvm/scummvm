@@ -548,8 +548,10 @@ int GameDetector::detectMain(int argc, char **argv)
 					&& _gameDataPath[strlen(_gameDataPath)-1] != '\\') {
 		char slashless[1024];	/* Append slash to path */
 		strcpy(slashless, _gameDataPath);
-		_gameDataPath = (char *)malloc((strlen(slashless) + 1) * sizeof(char));
-		sprintf(_gameDataPath, "%s/", slashless);
+		
+		// need to allocate 2 extra bytes, one for the "/" and one for the NULL terminator
+		_gameDataPath = (char *)malloc((strlen(slashless) + 2) * sizeof(char));
+		snprintf(_gameDataPath, strlen(_gameDataPath), "%s/", slashless);
 	}
 
 	if (_amiga)

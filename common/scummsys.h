@@ -34,6 +34,7 @@ const bool true(1), false(0);
 //#pragma warning (disable: 4101)
 
 #define scumm_stricmp stricmp
+#define snprintf _snprintf
 
 #if defined(CHECK_HEAP)
 #undef CHECK_HEAP
