@@ -83,6 +83,7 @@ extern UBYTE item_bomb_colors[];
 
 extern bool sound_activated;
 extern bool hide_toolbar;
+extern bool is_simon;
 bool toolbar_drawn;
 bool draw_keyboard;
 bool wide_screen;
@@ -772,7 +773,8 @@ void drawAllToolbar() {
 			pBlt_part(image_expand(item_toolbar), 0, 200, 320, 40, item_toolbar_colors, 0);
 			x = 10;
 			y = 204;
-			pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors, 0);
+			if (!is_simon)
+				pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors, 0);
 			x += 40;
 			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors, 0);
 			x += 40;
