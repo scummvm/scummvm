@@ -949,6 +949,9 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	f.close();
 
 	_updateNeeded = false;
+	
+	// Hide mouse
+	bool oldMouseState = _scumm->_system->show_mouse(false);
 
 	// Load the video
 	setupAnim(filename, directory);
@@ -975,4 +978,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	};
 
 	deinit();
+	
+	// Reset mouse state
+	_scumm->_system->show_mouse(oldMouseState);
 }
