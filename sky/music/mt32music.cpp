@@ -105,7 +105,7 @@ bool SkyMT32Music::processPatchSysEx(uint8 *sysExData) {
 	sysExBuf[13] = sysExData[3] >> 7;			// reverb switch
 	for (uint8 cnt = 4; cnt < 14; cnt++)
 		crc -= sysExBuf[cnt];
-	sysExBuf[14] = crc;							// crc
+	sysExBuf[14] = crc & 0x7F;					// crc
 	_midiDrv->sysEx(sysExBuf, 15);
 	return true;
 }
