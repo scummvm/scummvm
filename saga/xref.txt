@@ -35,8 +35,8 @@ Sceneres.h
  LOADREQ_FACES             SAGA_FACES
  LOADREQ_PALETTE
 
- hitZone                   ObjectMap
- stepZone                  ActionMap
+ hitZone                   _objectMap
+ stepZone                  _actionMap
 
  HZONEF_EXIT               OBJECT_EXIT (in Verb.c), ACTION_EXIT (in Actor.c)
  HZONEF_ENABLED            OBJECT_ENABLED (in Verb.c), ACTION_ENABLED (in Actor.c)

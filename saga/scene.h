@@ -34,7 +34,6 @@ namespace Saga {
 
 #define SCENE_DOORS_MAX 16
 
-class ActionMap;
 class ObjectMap;
 
 struct EVENT;

@@ -1,7 +1,6 @@
 MODULE := saga
 
 MODULE_OBJS := \
-	saga/actionmap.o \
 	saga/actor.o \
 	saga/actordata.o \
 	saga/animation.o \
