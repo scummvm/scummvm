@@ -191,6 +191,14 @@ void ScummEngine::CHARSET_1() {
 			_keepText = false;
 			break;
 		}
+		
+		// FIXME: This is a workaround for bug #864030: In COMI, some text
+		// contains ASCII character 11 = 0xB. It's not quite clear what it is
+		// good for; so for now we just ignore it, which seems to match the
+		// original engine (BTW, traditionally, this is a 'vertical tab').
+		if (c == 0x0B)
+			continue;
+
 		if (c == 13) {
 		newLine:;
 			_charset->_nextLeft = _string[0].xpos;

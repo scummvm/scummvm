@@ -146,9 +146,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	while ((chr = str[pos++]) != 0) {
 		if (chr == '@')
 			continue;
-		if (chr == 254)
-			chr = 255;
-		if (chr == 255) {
+		if (chr == 254 || chr == 255) {
 			chr = str[pos++];
 			if (chr == 3) // 'Wait'
 				break;
