@@ -40,7 +40,7 @@ private:
 	bool _ignoreNextPoll;
 	uint8 *_sysExSequence;
 	MidiDriver *_midiDrv;
-	static byte _mt32_to_gm[6*128];
+	static byte _mt32_to_gm[128];
 
 	virtual void setupPointers(void);
 	virtual void setupChannels(uint8 *channelData);
