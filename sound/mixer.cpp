@@ -295,8 +295,8 @@ SoundMixer::ChannelRaw::ChannelRaw(SoundMixer * mixer, void * sound, uint32 size
 		_size = _size >> 1;
 
 	if (flags & FLAG_LOOP) {
-		_loop_ptr = sound;
-		_loop_size = size;
+		_loop_ptr = _ptr;
+		_loop_size = _size;
 	}
 }
 
