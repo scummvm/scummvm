@@ -1792,7 +1792,7 @@ void Scumm::mainRun() {
 void Scumm::launch() {
 	gdi._vm = this;
 
-	_maxHeapThreshold = 450000;
+	_maxHeapThreshold = 900000;
 	_minHeapThreshold = 400000;
 
 	_verbRedraw = false;
