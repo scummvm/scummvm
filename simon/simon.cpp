@@ -4766,11 +4766,12 @@ void SimonEngine::quick_load_or_save() {
 	bool success;
 	char buf[256];
 
+	char *filename = gen_savename(_saveLoadSlot);
 	if (_saveLoadFlag == 2) {
 		Subroutine *sub;
 		success = load_game(_saveLoadSlot);
 		if (!success) {
-			sprintf(buf, "Failed to save game state to file:\n\n%s", _saveLoadName);
+			sprintf(buf, "Failed to load game state to file:\n\n%s", filename);
 		} else {
 			// Redraw Inventory
 			lock();
@@ -4784,7 +4785,7 @@ void SimonEngine::quick_load_or_save() {
 	} else {
 		success = save_game(_saveLoadSlot, _saveLoadName);
 		if (!success)
-			sprintf(buf, "Failed to load game state to file:\n\n%s", _saveLoadName);
+			sprintf(buf, "Failed to save game state to file:\n\n%s", filename);
 	}
 
 	if (!success) {
@@ -4792,7 +4793,7 @@ void SimonEngine::quick_load_or_save() {
 		dialog.runModal();
 
 	} else if (_saveLoadFlag == 1) {
-		sprintf(buf, "Successfully saved game state in file:\n\n%s", _saveLoadName);
+		sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
 		GUI::TimedMessageDialog dialog(buf, 1500);
 		dialog.runModal();
 
