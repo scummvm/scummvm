@@ -25,6 +25,11 @@
 
 namespace Scumm {
 
+#define DIG_STATE_OFFSET 11
+#define DIG_SEQ_OFFSET (DIG_STATE_OFFSET + 65)
+#define COMI_STATE_OFFSET 3
+#define COMI_SEQ_OFFSET (COMI_STATE_OFFSET + 94)
+
 void IMuseDigital::setDigMusicState(int stateId) {
 	int l, num = -1;
 
@@ -44,18 +49,15 @@ void IMuseDigital::setDigMusicState(int stateId) {
 		}
 		num = l;
 
-		assert(_digStateMusicMap[num].unk1 < 11);
-		int val2 = _attributesTable[_digStateMusicMap[num].unk1];
+		int val2 = _attributes[_digStateMusicMap[num].unk1];
 		if (val2 == 0) {
-			assert(_digStateMusicMap[num].unk3 < 11);
-			if (_attributesTable[_digStateMusicMap[num].unk3] != 0) {
+			if (_attributes[_digStateMusicMap[num].unk3] != 0) {
 				num = _digStateMusicMap[num].unk4;
 			} else {
 				num = _digStateMusicMap[num].musicTableIndex;
 			}
 		} else {
-			assert(_digStateMusicMap[num].unk2 < 11);
-			int val = _attributesTable[_digStateMusicMap[num].unk2];
+			int val = _digStateMusicMap[num].unk2;
 			if (val == 0) {
 				num = _digStateMusicMap[num].musicTableIndex + val2;
 			} else {
@@ -103,7 +105,7 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 		if (_curMusicSeq == 0) {
 			playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
 			_curSeqAtribPos = 0;
-			_attributesSeq[num] = 1;
+			_attributes[DIG_SEQ_OFFSET + num] = 1;
 		} else {
 			if ((_digSeqMusicTable[_curMusicSeq].opcode == 4) && (_digSeqMusicTable[_curMusicSeq].opcode == 6)) {
 				_curSeqAtribPos = num;
@@ -111,13 +113,13 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 			} else if (_digSeqMusicTable[_curMusicSeq].opcode == 6) {
 				playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
 				_curSeqAtribPos = 0;
-				_attributesSeq[num] = 1;
+				_attributes[DIG_SEQ_OFFSET + num] = 1;
 			}
 		}
 	} else {
 		if (_curSeqAtribPos != 0) {
 			playDigMusic(_digSeqMusicTable[_curSeqAtribPos].name, &_digSeqMusicTable[_curSeqAtribPos], 0, true);
-			_attributesSeq[_curSeqAtribPos] = 1;
+			_attributes[DIG_SEQ_OFFSET + _curSeqAtribPos] = 1;
 			num = _curSeqAtribPos;
 			_curSeqAtribPos = 0;
 		} else {
@@ -136,17 +138,17 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 	int hookId = 0;
 
 	if (songName != NULL) {
-		if ((_attributesSeq[38] != 0) && (_attributesSeq[41] == _attributesSeq[38])) {
+		if ((_attributes[DIG_SEQ_OFFSET + 38] != 0) && (_attributes[DIG_SEQ_OFFSET + 41] == _attributes[DIG_SEQ_OFFSET + 38])) {
 			if ((atribPos == 43) || (atribPos == 44))
 				hookId = 3;
 		}
 
-		if ((_attributesSeq[46] != 0) && (_attributesSeq[48] == 0)) {
+		if ((_attributes[DIG_SEQ_OFFSET + 46] != 0) && (_attributes[DIG_SEQ_OFFSET + 48] == 0)) {
 			if ((atribPos == 38) || (atribPos == 39))
 				hookId = 3;
 		}
 
-		if ((_attributesSeq[53] != 0)) {
+		if ((_attributes[DIG_SEQ_OFFSET + 53] != 0)) {
 			if ((atribPos == 50) || (atribPos == 51))
 				hookId = 3;
 		}
@@ -154,14 +156,14 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 		if ((atribPos != 0) && (hookId == 0)) {
 			if (table->param != 0)
 				atribPos = table->param;
-			hookId = _attributesState[atribPos];
+			hookId = _attributes[DIG_STATE_OFFSET + atribPos];
 			if (table->hookId != 0) {
 				if ((hookId != 0) && (table->hookId <= 1)) {
-					_attributesState[atribPos] = hookId + 1;
+					_attributes[DIG_STATE_OFFSET + atribPos] = hookId + 1;
 					if (table->hookId < hookId + 1)
-						_attributesState[atribPos] = 1;
+						_attributes[DIG_STATE_OFFSET + atribPos] = 1;
 				} else {
-					_attributesState[atribPos] = 2;
+					_attributes[DIG_STATE_OFFSET + atribPos] = 2;
 				}
 			}
 		}
@@ -244,7 +246,7 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 		if (_curMusicSeq == 0) {
 			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
 			_curSeqAtribPos = 0;
-			_attributesSeq[num] = 1;
+			_attributes[COMI_SEQ_OFFSET + num] = 1;
 		} else {
 			if ((_comiSeqMusicTable[_curMusicSeq].opcode == 4) && (_comiSeqMusicTable[_curMusicSeq].opcode == 6)) {
 				_curSeqAtribPos = num;
@@ -252,13 +254,13 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 			} else if (_comiSeqMusicTable[_curMusicSeq].opcode == 6) {
 				playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
 				_curSeqAtribPos = 0;
-				_attributesSeq[num] = 1;
+				_attributes[COMI_SEQ_OFFSET + num] = 1;
 			}
 		}
 	} else {
 		if (_curSeqAtribPos != 0) {
 			playComiMusic(_comiSeqMusicTable[_curSeqAtribPos].name, &_comiSeqMusicTable[_curSeqAtribPos], 0, true);
-			_attributesSeq[_curSeqAtribPos] = 1;
+			_attributes[COMI_SEQ_OFFSET + _curSeqAtribPos] = 1;
 			num = _curSeqAtribPos;
 			_curSeqAtribPos = 0;
 		} else {
@@ -277,14 +279,14 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 	int hookId = 0;
 
 	if ((songName != NULL) && (atribPos != 0)) {
-		hookId = _attributesState[atribPos];
+		hookId = _attributes[COMI_STATE_OFFSET + atribPos];
 		if (table->hookId != 0) {
 			if ((hookId != 0) && (table->hookId <= 1)) {
-				_attributesState[atribPos] = hookId + 1;
+				_attributes[COMI_STATE_OFFSET + atribPos] = hookId + 1;
 				if (table->hookId < hookId + 1)
-					_attributesState[atribPos] = 1;
+					_attributes[COMI_STATE_OFFSET + atribPos] = 1;
 			} else {
-				_attributesState[atribPos] = 2;
+				_attributes[COMI_STATE_OFFSET + atribPos] = 2;
 			}
 		}
 	}

@@ -77,9 +77,7 @@ private:
 	ImuseDigiSndMgr *_sound;
 	bool _pause;
 
-	int _attributesTable[12];
-	int _attributesState[97];
-	int _attributesSeq[91];
+	int _attributes[188];
 	int _curSeqAtribPos;
 
 	int _curMusicState;
@@ -130,9 +128,7 @@ public:
 		_curMusicState = 0;
 		_curMusicSeq = 0;
 		_curMusicCue = 0;
-		memset(_attributesSeq, 0, sizeof(_attributesSeq));
-		memset(_attributesState, 0, sizeof(_attributesState));
-		memset(_attributesTable, 0, sizeof(_attributesTable));
+		memset(_attributes, 0, sizeof(_attributes));
 		_curSeqAtribPos = 0;
 	}
 

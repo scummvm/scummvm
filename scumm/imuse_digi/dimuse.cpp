@@ -46,20 +46,16 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	_mutex = g_system->createMutex();
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
+	resetState();
 	_vm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
-
-	_curMusicState = 0;
-	_curMusicSeq = 0;
-	_curMusicCue = 0;
-	memset(_attributesSeq, 0, sizeof(_attributesSeq));
-	memset(_attributesState, 0, sizeof(_attributesState));
-	memset(_attributesTable, 0, sizeof(_attributesTable));
-	_curSeqAtribPos = 0;
 }
 
 IMuseDigital::~IMuseDigital() {
 	stopAllSounds(true);
-	_vm->_timer->removeTimerProc(timer_handler);
+	{
+		Common::StackLock lock(_mutex, g_system, "IMuseDigital::~IMuseDigital()");
+		_vm->_timer->removeTimerProc(timer_handler);
+	}
 	delete _sound;
 	g_system->deleteMutex(_mutex);
 }
@@ -545,8 +541,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		debug(5, "ImuseSetAttribute (%d, %d)", b, c);
 		assert((_vm->_gameId == GID_DIG) || (_vm->_gameId == GID_FT));
 		if (_vm->_gameId == GID_DIG) {
-			assert(b >= 0 && b < 11);
-			_attributesTable[b] = c;
+			_attributes[b] = c;
 		}
 		break;
 	case 0x2000: // ImuseSetMasterSFXVolume
