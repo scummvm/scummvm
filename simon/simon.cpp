@@ -121,6 +121,11 @@ static const GameSpecificSettings simon2dos_settings = {
 };
 
 
+Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst)
+{
+	return new SimonState(detector, syst);
+}
+
 SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst)
 {

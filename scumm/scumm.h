@@ -714,6 +714,10 @@ public:
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
 	bool _doEffect;
 	
+	struct {
+		int x, y, w, h;
+		byte *buffer;
+	} _flashlight;
 	uint16 _flashlightXStrips, _flashlightYStrips;
 	bool _flashlightIsDrawn;
 

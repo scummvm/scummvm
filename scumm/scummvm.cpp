@@ -51,6 +51,26 @@ void autosave(void * engine)
 	g_scumm->_doAutosave = true;
 }
 
+Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst)
+{
+	Engine *engine;
+
+	if (detector->_features & GF_OLD_BUNDLE)
+		engine = new Scumm_v2(detector, syst);
+	else if (detector->_features & GF_OLD256)
+		engine = new Scumm_v3(detector, syst);
+	else if (detector->_features & GF_SMALL_HEADER)	// this forces loomCD as v4
+		engine = new Scumm_v4(detector, syst);
+	else if (detector->_features & GF_AFTER_V7)
+		engine = new Scumm_v7(detector, syst);
+	else if (detector->_features & GF_AFTER_V6)	// this forces SamnmaxCD as v6
+		engine = new Scumm_v6(detector, syst);
+	else
+		engine = new Scumm_v5(detector, syst);
+
+	return engine;
+}
+
 void Scumm::initRandSeeds()
 {
 	_randSeed1 = 0xA943DE33;
@@ -265,6 +285,7 @@ void Scumm::scummInit()
 		_vars[VAR_CURRENT_LIGHTS] = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 		_flashlightXStrips = 7;
 		_flashlightYStrips = 7;
+		_flashlight.buffer = NULL;
 	}
 
 	mouse.x = 104;

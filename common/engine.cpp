@@ -20,10 +20,9 @@
 
 #include "stdafx.h"
 #include "engine.h"
-#include "gameDetector.h"
 #include "config-file.h"
-#include "scumm/scumm.h"
-#include "simon/simon.h"
+#include "gameDetector.h"
+#include "timer.h"
 #include "sound/mixer.h"
 
 /* FIXME - BIG HACK for MidiEmu */
@@ -85,21 +84,10 @@ Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst)
 	if (detector->_gameId >= GID_SIMON_FIRST && detector->_gameId <= GID_SIMON_LAST) {
 		// Simon the Sorcerer
 		detector->_gameId -= GID_SIMON_FIRST;
-		engine = new SimonState(detector, syst);
+		engine = Engine_SIMON_create(detector, syst);
 	} else {
 		// Some kind of Scumm game
-		if (detector->_features & GF_OLD_BUNDLE)
-			engine = new Scumm_v2(detector, syst);
-		else if (detector->_features & GF_OLD256)
-			engine = new Scumm_v3(detector, syst);
-		else if (detector->_features & GF_SMALL_HEADER)	// this force loomCD as v4
-			engine = new Scumm_v4(detector, syst);
-		else if (detector->_features & GF_AFTER_V7)
-			engine = new Scumm_v7(detector, syst);
-		else if (detector->_features & GF_AFTER_V6)	// this force SamnmaxCD as v6
-			engine = new Scumm_v6(detector, syst);
-		else
-			engine = new Scumm_v5(detector, syst);
+		engine = Engine_SCUMM_create(detector, syst);
 	}
 
 	return engine;

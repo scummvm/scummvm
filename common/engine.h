@@ -71,6 +71,10 @@ void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
 
+/* Factory functions => no need to include the specific classes
+ * in this header => faster compile */
+extern Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst);
+extern Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst);
 
 #endif
 
