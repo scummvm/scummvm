@@ -140,7 +140,10 @@ echo "Configure run on" `date` > $TMPLOG
 #
 # Check any parameters we received
 #
-# TOOD: allow for multi value params, e.g. --target=dreamcast or --backend=morphos
+# TODO:
+# * Change --disable-mad / --enable-mad to the way it's done in autoconf:
+#  That is, --without-mad / --with-mad=/prefix/to/mad. Useful for people
+#  who have Mad/Vorbis/ALSA installed in a non-standard locations.
 #
 
 for parm in "$@" ; do
