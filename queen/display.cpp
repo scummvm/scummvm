@@ -122,7 +122,6 @@ Display::Display(OSystem *system)
 	_pals.dirtyMin = 0;
 	_pals.dirtyMax = 255;
 	_pals.scrollable = true;
-	_pals.customScrollSeed = 0;
 	
 	_horizontalScroll = 0;
 }
@@ -147,15 +146,13 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 	// FIXME: are these tests really needed ?
 	if (roomNum < 90 || ((roomNum > 94) && (roomNum < 114))) {
 		char filename[20];
-		
-    sprintf(filename, "%s.msk", roomName);
-    if (resource->exists(filename))
-      resource->loadFile(filename, 0, (uint8*)_dynalum.msk);
-    
-    sprintf(filename, "%s.lum", roomName);
-    if (resource->exists(filename))
-      resource->loadFile(filename, 0, (uint8*)_dynalum.lum);
-  }
+		sprintf(filename, "%s.msk", roomName);
+		if (resource->exists(filename))
+			resource->loadFile(filename, 0, (uint8*)_dynalum.msk);
+		sprintf(filename, "%s.lum", roomName);
+		if (resource->exists(filename))
+			resource->loadFile(filename, 0, (uint8*)_dynalum.lum);
+	}
 }
 
 
@@ -361,6 +358,7 @@ void Display::palCustomColors(uint16 roomNum) {
 void Display::palCustomScroll(uint16 roomNum) {
 	
 	debug(9, "Display::palCustomScroll(%d)", roomNum);
+	static int16 scrollx = 0;
 
 	if (!_pals.scrollable) {
 		return;
@@ -370,7 +368,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 	int loPal = 255;
 	int i;
 
-	++_pals.customScrollSeed;
+	++scrollx;
 	switch (roomNum) {
 	case 123: {
 			static int16 j = 0,jdir = 2;
@@ -415,7 +413,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 95;
 		break;
 	case 100:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(128, 132);
 			palScroll(133, 137);
 			palScroll(138, 143);
@@ -424,14 +422,14 @@ void Display::palCustomScroll(uint16 roomNum) {
 		}
 		break;
 	case 102:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(112, 127);
 			loPal = 112;
 			hiPal = 127;
 		}
 		break;
 	case 62:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(0x6c, 0x77);
             loPal = 0x6c;
 			hiPal = 0x77;
@@ -443,7 +441,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 123;
 		break;
 	case 59:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(56, 63);
 			loPal = 56;
 			hiPal = 63;
@@ -459,27 +457,27 @@ void Display::palCustomScroll(uint16 roomNum) {
 		palScroll(88, 91);
 		palScroll(92, 95);
 		palScroll(128, 135);
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(136, 143);
 		}
 		loPal = 28;
 		hiPal = 143;
 		break;
 	case 40:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(96, 103);
 		}
-		if(_pals.customScrollSeed & 3) {
+		if(scrollx & 3) {
 			palScroll(104, 107);
 		}
 		loPal = 96;
 		hiPal = 107;
 		break;
 	case 97:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(96, 107);
 		}
-		if(_pals.customScrollSeed & 3) {
+		if(scrollx & 3) {
 			palScroll(108, 122);
 		}
 		loPal = 96;
@@ -492,7 +490,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 57:
 		palScroll(128, 143);
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(96, 103);
 		}
 		loPal = 96;
@@ -504,7 +502,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 95;
 		break;
 	case 2:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(120, 127);
 		}
 		loPal = 120;
@@ -512,7 +510,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 3:
 	case 5:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(128, 135);
 			palScroll(136, 143);
 			loPal = 128;
@@ -520,14 +518,14 @@ void Display::palCustomScroll(uint16 roomNum) {
 		}
 		break;
 	case 7:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(119, 127);
 			loPal = 119;
 			hiPal = 127;
 		}
 		break;
 	case 42:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(118, 127);
 			palScroll(136, 143);
 			loPal = 118;
@@ -535,7 +533,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		}
 		break;
 	case 4:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(32,47);
 		}
 		palScroll(64, 70);
@@ -544,7 +542,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 79;
 		break;
 	case 8:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(120, 127);
 		}
 		loPal = 120;
@@ -552,10 +550,10 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 12:
 	case 64:
-		if(_pals.customScrollSeed & 1) {
+		if(scrollx & 1) {
 			palScroll(112, 119);
 		}
-		if(_pals.customScrollSeed & 3) {
+		if(scrollx & 3) {
 			palScroll(120, 127);
 		}
 		loPal = 112;
@@ -592,7 +590,7 @@ void Display::palCustomFlash() {
 	// set flash palette
 	palSet(tempPal, 0, 255, true);
 	// restore original palette
-	// palSet(_pals.screen, 0, 255, true);
+	palSet(_pals.screen, 0, 255, true);
 }
 
 
@@ -796,6 +794,7 @@ void Display::waitForTimer() {
 
 	_gotTick = false;
 	while (!_gotTick) {
+		// FIXME: use _input->delay() instead
 		OSystem::Event event;
 
 		_system->delay_msecs(10);

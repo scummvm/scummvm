@@ -113,7 +113,7 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 	uint16 val;
 	switch (v) {
 	case VERB_OPEN:
-		val = 0;
+		val = 1;
 		break;
 	case VERB_CLOSE:
 		val = 3;
@@ -140,7 +140,7 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 		val = 0;
 		break;
 	}
-	*objState = (*objState & ~0xF0) | (v << 4);
+	*objState = (*objState & ~0xF0) | (val << 4);
 }
 
 
@@ -418,17 +418,6 @@ void Logic::initialise() {
 	_oldRoom = 0;
 }
 
-uint16 Logic::currentRoom() {
-	return _currentRoom;
-}
-
-void Logic::currentRoom(uint16 room) {
-	_currentRoom = room;
-}
-
-void Logic::oldRoom(uint16 room) {
-	_oldRoom = room;
-}
 
 ObjectData* Logic::objectData(int index) {
   return &_objectData[index];
@@ -1894,6 +1883,20 @@ void Logic::playCutaway(const char* cutFile) {
 
 	char next[20];
 	Cutaway::run(cutFile, next, _graphics, _input, this, _resource, _sound);
+}
+
+
+const char* Logic::objectOrItemName(int16 obj) const {
+
+	uint16 name;
+	if (obj < 0) {
+		name = _itemData[ABS(obj)].item;
+	}
+	else {
+		name = _objectData[obj].name;
+	}
+	return _objName[name];
+
 }
 
 

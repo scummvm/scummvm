@@ -311,7 +311,7 @@ struct ActorData {
 
 struct CmdListData {
 	//! action to perform
-	int16 verb;
+	Verb verb;
 	//! first object used in the action
 	int16 nounObj1;
 	//! second object used in the action
@@ -357,7 +357,7 @@ struct CmdListData {
 	int16 specialSection;
 
 	void readFrom(byte *&ptr) {
-		verb = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		verb = (Verb)READ_BE_UINT16(ptr); ptr += 2;
 		nounObj1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		nounObj2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		song = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -367,6 +367,10 @@ struct CmdListData {
 		setConditions = READ_BE_UINT16(ptr) != 0; ptr += 2;
 		image = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		specialSection = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	}
+
+	bool match(Verb v, int16 obj1, int16 obj2) const {
+		return verb == verb && nounObj1 == obj1 && nounObj2 == obj2;
 	}
 };
 
@@ -391,7 +395,7 @@ struct CmdObject {
 	//! identifier of the command
 	int16 id;
 	int16 dstObj; // >0: show, <0: hide
-	int16 srcObj; // >0: copy from srcObj, -1: delete dstObj
+	int16 srcObj; // >0: copy from srcObj, 0: nothing, -1: delete dstObj
 
 	void readFrom(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;

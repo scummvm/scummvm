@@ -87,14 +87,14 @@ public:
 	Logic(Resource *resource, Graphics *graphics, Display *display, Input *input, Sound *sound);
 	~Logic();
 
-	uint16 currentRoom();
-	void currentRoom(uint16 room);
+	uint16 currentRoom() const { return _currentRoom; }
+	void currentRoom(uint16 room) { _currentRoom = room; }
 	
-	uint16 oldRoom()              { return _oldRoom; }
-	void oldRoom(uint16 room);
-
-	uint16 newRoom()              { return _newRoom; }
-	void newRoom(uint16 room)     { _newRoom = room; }
+	uint16 oldRoom() const { return _oldRoom; }
+	void oldRoom(uint16 room) { _oldRoom = room; }
+	
+	uint16 newRoom() const { return _newRoom; }
+	void newRoom(uint16 room) { _newRoom = room; }
 
 	ObjectData* objectData(int index);
 	uint16 roomData(int room);
@@ -200,6 +200,8 @@ public:
 
 	void playCutaway(const char* cutFile);
 
+	const char* objectOrItemName(int16 obj) const;
+
 	Display *display() { return _display; }
 
 	void update();
@@ -282,7 +284,7 @@ protected:
 	uint16 _numFurnitureAnimated;
 
 	//! Number of static furniture in current room (FMAX)
-	uint16 _numFurnitureStatic; // FMAX
+	uint16 _numFurnitureStatic;
 
 	//! Total number of frames for the animated furniture (FMAXLEN)
 	uint16 _numFurnitureAnimatedLen;

@@ -126,7 +126,6 @@ private:
 		uint8 *screen;
 		int dirtyMin, dirtyMax;
 		bool scrollable;
-		uint16 customScrollSeed;
 	} _pals;
 
 	uint8 *_buffers[3];

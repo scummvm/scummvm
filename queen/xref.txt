@@ -16,7 +16,7 @@ COMMAND
 =======
 ALTER_DEFAULT()
 CLEAR_COMMAND()				Command::clear
-EXECUTE_ACTION()
+EXECUTE_ACTION()			Command::executeCurrentAction
 FIND_DEFAULT()				Command::findDefault
 OPEN_CLOSE_OTHER()			Command::openOrCloseAssociatedObject
 P1_SET_CONDITIONS()			Command::setConditions
@@ -28,21 +28,14 @@ SELECT_ITEM()
 SELECT_NOUN()
 SELECT_VERB()
 -
-ACTION,ACTION2
+ACTION,ACTION2				Command::_action*
 CLEVEL						Command::_commandLevel
-COM							*EXECUTE_ACTION local*
 COMMANDstr					Command::_command
-COMMAX						*EXECUTE_ACTION local*
-COND						*EXECUTE_ACTION local*
-CURRCOM						*EXECUTE_ACTION local*
 DEFCOMM
-GSET						*P1_SET_CONDITIONS local*
 OLDVERB,VERB
 OLDNOUN,NOUN,NOUN2
 PARSE						Command::_parse
 SUBJ1,SUBJ2,SUBJECT			Command::_subject*
-A2							*EXECUTE_ACTION local*
-TEMPI						*P1_SET_CONDITIONS local*
 TEMPstr
 WORDstr
 
@@ -134,16 +127,10 @@ sortbobs()					Graphics::bobSortAll
 stringanim()				Graphics::bobAnimString
 -
 bobs						Graphics::_bobs
-BDxres						Display::_bdWidth
-BDyres						display::_bdHeight
 cambob						Graphics::_cameraBob
 clothespal					Display::PAL_JOE_CLOTHES
 dresspal					Display::PAL_JOE_DRESS
-font						TextRenderer::FONT
-font_sizes					TextRenderer::charWidth
-OUTLINE						*not needed*
 sortedbobs					Graphics::_sortedBobs
-scrollx						Display::_horizontalScroll
 
 
 INPUT
@@ -183,11 +170,11 @@ SETUP_JOE()					Logic::joeSetup
 USE_UNDERWEAR()				Logic::joeUseUnderwear
 USE_CLOTHES()				Logic::joeUseClothes
 USE_DRESS()					Logic::joeUseDress
-WALK()						Logic::joeWalk
+WALK()						Logic::joeWalkTo
 -
 JOE_RESPstr 				Logic::_joeResponse
 JOEF,JX,JY,JDIR				Logic::_joe.*
-JOEWALK						Logic::_joe.walk // legal values = 0,1,2,3
+JOEWALK						Logic::_joe.walk (legal values = 0,1,2,3)
 
 
 JOURNAL
@@ -214,7 +201,7 @@ LOOK_ICON()
 LOOK_ITEM()
 LOOK_ROOM()
 P3_COPY_FROM()				Cutaway::objectCopy
-R_MAP()						// handle map 'm1' 
+R_MAP()						(handle map 'm1')
 REDISP_OBJECT()				Logic::roomRefreshObject
 restart_game()
 SETUP_BOBS()				Graphics::bobSetupControl
@@ -249,7 +236,6 @@ FMAX						Logic::_numFurnitureStatic
 FMAXA						Logic::_numFurnitureAnimated
 FMAXLEN						Logic::_numFurnitureAnimatedLen
 FRAMES						Logic::_numFrames
-FTOT						*queen.c/SETUP_FURNITURE local var*
 FURN_DATA_MAX				Logic::_numFurniture
 GAMESTATE					Logic::_gameState
 GRAPHIC_ANIM_MAX			Logic::_numGraphicAnim
@@ -266,7 +252,6 @@ OBJECT_DATA					Logic::_objectData
 OBJECT_DESCRstr				Logic::_objDescription
 OBJECT_NAMEstr				Logic::_objName
 OBJMAX						Logic::_objMax
-OBJMAXv						*== Logic::_objMax[Logic::_currentRoom]*
 OBJTOT						Logic::_numObjects
 OLDROOM,ROOM,NEW_ROOM  		Logic::_*oom
 ROOMTOT						Logic::_numRooms
@@ -323,11 +308,16 @@ palscroll()					Display::palScroll
 putcharacter()				TextRenderer::drawChar
 setpal()					Display::palSet
 -
+BDxres						Display::_bdWidth
+BDyres						Display::_bdHeight
 COMPANEL
+font						TextRenderer::FONT
+font_sizes					TextRenderer::charWidth
 FULLSCREEN					Graphics::_fullscreen
 nopalscroll					Display::_pals.scrollable
 palette						Graphics::_paletteRoom
 panelflag					Graphics::_panelFlag
+scrollx						Display::_horizontalScroll
 tpal						Graphics::_paletteScreen
 
 
@@ -351,8 +341,6 @@ STATE
 ALTER_STATE()				State::alterState*
 FIND_STATE()				State::findState*
 -
-Gstr						*no needed* // grab state
-Pstr						*no needed* // FIND_STATE result
 
 
 TALK
@@ -413,13 +401,9 @@ MOVE_OTHER()				Walk::personMove
 -
 AREALIST					Walk::_areaList
 AREASTRIKE					Walk::_areaStrike
-MAPC						*findFreeArea local var*
 movdata						Walk::_moveData
-NEWP,OLDP					*locals in joeMove && personMove*
-OLDX,X,OLDY,Y				*passed as arguments*
 WALK_DATA					Walk::_walkData
 WALKI						Walk::_walkDataCount
-X2,X1,XD,YD					*incWalkData && findFreeArea locals*
 
 
 ZONES
@@ -487,3 +471,19 @@ BS,DS // CALC_SCALE
 SX,SY,
 NEWA // FIND_FREE_AREA local
 IX,IY // Cutaway locals
+COM	// EXECUTE_ACTION local
+COMMAX // EXECUTE_ACTION local
+COND // EXECUTE_ACTION local
+CURRCOM	// EXECUTE_ACTION local
+GSET // P1_SET_CONDITIONS local
+A2 // EXECUTE_ACTION local
+TEMPI // P1_SET_CONDITIONS local
+MAPC // findFreeArea local var
+NEWP,OLDP // locals in joeMove && personMove
+OLDX,X,OLDY,Y // passed as arguments
+X2,X1,XD,YD	// incWalkData && findFreeArea locals
+Gstr // not needed, grab state
+Pstr // not needed, FIND_STATE result
+OUTLINE	// not needed, textSet() Graphics::parameter
+FTOT //	queen.c/SETUP_FURNITURE local var
+OBJMAXv	// == Logic::_objMax[Logic::_currentRoom]
