@@ -30,12 +30,14 @@ private:
 
 	public:
 		Sound(SoundMixer *mixer, File *file, uint32 base = 0);
+		Sound(SoundMixer *mixer, File *file, uint32 *offsets);
 		virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0) = 0;
 	};
 
 	class WavSound : public Sound {
 	public:
 		WavSound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+		WavSound(SoundMixer *mixer, File *file, uint32 *offsets) : Sound(mixer, file, offsets) {};
 		int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
 	};
 
@@ -52,6 +54,8 @@ private:
 	};
 
 	byte _game;
+	const char *_gameDataPath;
+
 	int _voice_index;
 	int _ambient_index;
 	SoundMixer *_mixer;
@@ -61,6 +65,9 @@ private:
 
 	bool _effects_paused;
 	bool _ambient_paused;
+
+	uint16 *_filenums;
+	uint32 *_offsets;
 
 public:
 	PlayingSoundHandle _voice_handle;

@@ -25,6 +25,7 @@
 SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer)
 {
 	_game = game;
+	_gameDataPath = gameDataPath;
 	_mixer = mixer;
 	
 	_effects_paused = false;
@@ -40,50 +41,65 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 	File *file2 = new File();
 	const char *s;
 
-#ifdef USE_MAD
-	file->open(gss->mp3_filename, gameDataPath);
-	if (file->isOpen() == false) {
-#endif
-		if (_game & GAME_WIN) {
-			s = gss->wav_filename;
-			file->open(s, gameDataPath);
-			if (file->isOpen() == false) {
-				warning("Cannot open voice file %s", s);
-			} else	{
-				_voice = new WavSound(_mixer, file);
-			}
-		} else if (_game & GAME_TALKIE) {
-			s = gss->voc_filename;
-			file->open(s, gameDataPath);
-			if (file->isOpen() == false) {
-				warning("Cannot open voice file %s", s);
-			} else {
-				_voice = new VocSound(_mixer, file);
-			}
-		}
-#ifdef USE_MAD
-	} else {
-		_voice = new MP3Sound(_mixer, file);
-	}
-#endif
+	// for simon2 mac/amiga, only read index file
+	if (_game == GAME_SIMON2MAC) {
+		file->open("voices.idx", gameDataPath);
+		file->seek(0, SEEK_END);
+		int end = file->pos();
+		file->seek(0, SEEK_SET);
+		_filenums = (uint16 *)malloc(end / 3 + 1);
+		_offsets = (uint32 *)malloc((end / 6) * 4 + 1);
 
-	if (_game == GAME_SIMON1TALKIE) {
+		for (int i = 1; i <= end / 6; i++) {
+			_filenums[i] = file->readUint16BE();
+			_offsets[i] = file->readUint32BE();
+		}
+	} else {
 #ifdef USE_MAD
-		file2->open(gss->mp3_effects_filename, gameDataPath);
-		if (file2->isOpen() == false) {
+		file->open(gss->mp3_filename, gameDataPath);
+		if (file->isOpen() == false) {
 #endif
-			s = gss->voc_effects_filename;
-			file2->open(s, gameDataPath);
-			if (file2->isOpen() == false) {
-				warning("Cannot open effects file %s", s);
-			} else {
-				_effects = new VocSound(_mixer, file2);
+			if (_game & GAME_WIN) {
+				s = gss->wav_filename;
+				file->open(s, gameDataPath);
+				if (file->isOpen() == false) {
+					warning("Cannot open voice file %s", s);
+				} else	{
+					_voice = new WavSound(_mixer, file);
+				}
+			} else if (_game & GAME_TALKIE) {
+				s = gss->voc_filename;
+				file->open(s, gameDataPath);
+				if (file->isOpen() == false) {
+					warning("Cannot open voice file %s", s);
+				} else {
+					_voice = new VocSound(_mixer, file);
+				}
 			}
 #ifdef USE_MAD
 		} else {
-			_effects = new MP3Sound(_mixer, file2);
+			_voice = new MP3Sound(_mixer, file);
 		}
 #endif
+
+		if (_game == GAME_SIMON1TALKIE) {
+#ifdef USE_MAD
+			file2->open(gss->mp3_effects_filename, gameDataPath);
+			if (file2->isOpen() == false) {
+#endif
+				s = gss->voc_effects_filename;
+				file2->open(s, gameDataPath);
+				if (file2->isOpen() == false) {
+					warning("Cannot open effects file %s", s);
+				} else {
+					_effects = new VocSound(_mixer, file2);
+				}
+#ifdef USE_MAD
+			} else {
+				_effects = new MP3Sound(_mixer, file2);
+			}
+#endif
+		}
 	}
 }
 
@@ -123,6 +139,14 @@ void SimonSound::loadSfxTable(File *gameFile, uint32 base)
 
 void SimonSound::playVoice(uint sound)
 {
+	if (_game == GAME_SIMON2MAC) {
+		char filename[16];
+		sprintf(filename, "voices%d.dat", _filenums[sound]);
+		File *file = new File();
+		file->open(filename, _gameDataPath);
+		_voice = new WavSound(_mixer, file, _offsets);
+	}
+
 	if (!_voice)
 		return;
 	
@@ -225,6 +249,13 @@ SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base)
 	/* only needed for mp3 */
 	_file->seek(0, SEEK_END);
 	_offsets[res] = _file->pos();
+}
+
+SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 *offsets)
+{
+	_mixer = mixer;
+	_file = file;
+	_offsets = offsets;
 }
 
 #if !defined(__GNUC__)
