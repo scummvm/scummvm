@@ -357,6 +357,8 @@ void Scumm_v2::setupOpcodes() {
 	_opcodesV2 = opcodes;
 }
 
+#define SENTENCE_SCRIPT 2
+
 void Scumm_v2::executeOpcode(byte i) {
 	OpcodeProcV2 op = _opcodesV2[i].proc;
 	(this->*op) ();
@@ -634,7 +636,7 @@ void Scumm_v2::o2_waitForMessage() {
 }
 
 void Scumm_v2::o2_waitForSentence() {
-	if (_sentenceNum && !isScriptInUse(2))
+	if (_sentenceNum && !isScriptInUse(SENTENCE_SCRIPT))
 		return;
 
 	_scriptPointer--;
@@ -828,7 +830,7 @@ void Scumm_v2::o2_doSentence() {
 	a = getVarOrDirectByte(0x80);
 	if (a == 0xFB) {
 		_sentenceNum = 0;
-		stopScriptNr(2);
+		stopScriptNr(SENTENCE_SCRIPT);
 		clearClickedStatus();
 		return;
 	}
@@ -848,14 +850,27 @@ void Scumm_v2::o2_doSentence() {
 	// TODO
 	switch(fetchScriptByte()) {
 	case 1:
-		// TODO - execute the sentence
+		// Execute the sentence
 		_sentenceNum--;
+		warning("TODO o2_doSentence(%d, %d, %d): execute", st->verb, st->unk4, st->unk3);
+
+		// FIXME / TODO: The following is hackish, and probably incomplete, but it works somewhat.
+		_scummVars[8] = st->verb;
+		_scummVars[9] = st->unk4;
+		_scummVars[10] = st->unk3;
+		runVerbCode(st->unk4, st->verb, 0, 0, NULL);
+
 		break;
 	case 2:
 		// TODO - print the sentence
 		_sentenceNum--;
+		warning("TODO o2_doSentence(%d, %d, %d): print", st->verb, st->unk4, st->unk3);
 		break;
 	}
+}
+
+void Scumm_v2::o2_drawSentence() {
+	warning("TODO o2_drawSentence()");
 }
 
 void Scumm_v2::o2_ifClassOfIs() {
@@ -1194,10 +1209,6 @@ void Scumm_v2::o2_getActorWalkBox() {
 		setResult(a->walkbox);
 	else
 		setResult(0);
-}
-
-void Scumm_v2::o2_drawSentence() {
-	warning("TODO o2_drawSentence()");
 }
 
 void Scumm_v2::o2_dummy() {
