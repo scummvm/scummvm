@@ -97,36 +97,6 @@
 		</Configuration>
 	</Configurations>
 	<Files>
-		<File
-			RelativePath="..\..\saga\binread.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\binread.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\gamedesc.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\gamedesc.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\gamedesc_priv.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\resfile.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\resfile.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\resnames.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\saga.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\saga.h">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
