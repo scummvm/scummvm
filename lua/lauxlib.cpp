@@ -16,7 +16,7 @@
 #include "lauxlib.h"
 #include "lua.h"
 #include "luadebug.h"
-
+#include "lmem.h"
 
 
 int luaL_findstring (char *name, char *list[]) {
@@ -90,12 +90,32 @@ lua_Object luaL_nonnullarg (int numArg)
   return o;
 }
 
+luaL_libList *list_of_libs = NULL;
+
+void luaL_addlibtolist(luaL_reg *l, int n) {
+  luaL_libList *list = (luaL_libList *)luaM_malloc(sizeof(luaL_libList));
+  list->list = l;
+  list->number = n;
+  list->next = list_of_libs;
+  list_of_libs = list;
+}
+
+void lua_removelibslists(void) {
+  luaL_libList *list = list_of_libs;
+  while (list) {
+    luaL_libList *nextList = list->next;
+    luaM_free(list);
+    list = nextList;
+  }
+}
+
 void luaL_openlib (struct luaL_reg *l, int n)
 {
   int i;
   lua_open();  /* make sure lua is already open */
   for (i=0; i<n; i++)
     lua_register(l[i].name, l[i].func);
+  luaL_addlibtolist(l, n);
 }
 
 

@@ -18,6 +18,7 @@
 #include "lopcodes.h"
 #include "lparser.h"
 #include "lstate.h"
+#include "ltask.h"
 #include "ltm.h"
 #include "lua.h"
 #include "luadebug.h"
@@ -41,7 +42,7 @@
 ** Error messages
 */
 
-static void stderrorim (void)
+void stderrorim (void)
 {
   fprintf(stderr, "lua error: %s\n", lua_getstring(lua_getparam(1)));
 }
@@ -65,6 +66,8 @@ void luaD_initthr (void)
   L->stack.top = L->stack.stack;
   L->stack.last = L->stack.stack+(STACK_UNIT-1);
   L->base_ci = luaM_newvector(BASIC_CI_SIZE, struct CallInfo);
+  memset(L->base_ci, 0, sizeof(CallInfo) * BASIC_CI_SIZE);
+  L->base_ci_size = sizeof(CallInfo) * BASIC_CI_SIZE; 
   L->ci = L->base_ci;
   L->ci->tf = NULL;
   L->end_ci = L->base_ci + BASIC_CI_SIZE;
@@ -214,8 +217,13 @@ void luaD_precall (TObject *f, StkId base, int nResults)
   if (L->ci+1 == L->end_ci) {
     int size_ci = L->end_ci - L->base_ci;
     int index_ci = L->ci - L->base_ci;
-    L->base_ci = luaM_reallocvector(L->base_ci, size_ci * 2,
-				    struct CallInfo);
+    int new_ci_size = size_ci * 2 * sizeof(CallInfo);
+    CallInfo *new_ci = (CallInfo *)luaM_malloc(new_ci_size);
+    memcpy(new_ci, L->base_ci, L->base_ci_size);
+    memset(new_ci + (L->base_ci_size / sizeof(CallInfo)), 0, (new_ci_size) - L->base_ci_size);
+    free(L->base_ci);
+    L->base_ci = new_ci;
+    L->base_ci_size = new_ci_size;
     L->ci = L->base_ci + index_ci;
     L->end_ci = L->base_ci + size_ci * 2;
   }

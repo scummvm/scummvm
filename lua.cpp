@@ -1210,6 +1210,14 @@ static void Save() {
 	Engine::instance()->_savegameSaveRequest = true;
 }
 
+static int SaveCallback(int tag, int value, SaveRestoreFunc saveFunc) {
+	return value;
+}
+
+static int RestoreCallback(int tag, int value, SaveRestoreFunc saveFunc) {
+	return value;
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning(char *funcName) {
@@ -2099,6 +2107,9 @@ void register_lua() {
 	lua_setglobal("SPECIAL");
 	lua_pushnumber(0x8000);
 	lua_setglobal("HOT");
+
+	saveCallback = SaveCallback;
+	restoreCallback	= RestoreCallback;
 }
 
 int bundle_dofile(const char *filename) {

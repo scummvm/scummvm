@@ -26,6 +26,16 @@ typedef unsigned int lua_Object;
 typedef struct lua_State lua_State;
 extern lua_State *lua_state;
 
+typedef int (*SaveRestoreCallback)(int, int, void (*)(void *, int));
+extern SaveRestoreCallback saveCallback;
+extern SaveRestoreCallback restoreCallback;
+
+typedef void (*SaveRestoreFunc)(void *, int);
+void lua_Save(SaveRestoreFunc);
+void lua_Restore(SaveRestoreFunc);
+
+void lua_removelibslists(void);
+
 void	       lua_open			(void);
 void           lua_close		(void);
 lua_State      *lua_setstate		(lua_State *st);

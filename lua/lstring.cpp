@@ -14,14 +14,13 @@
 #include "lua.h"
 
 
-#define NUM_HASHS  61
 
 
 #define gcsizestring(l)	(1+(l/64))  /* "weight" for a string with length 'l' */
 
 
 
-static TaggedString EMPTY = {{NULL, 2}, 0L, 0,
+TaggedString EMPTY = {{NULL, 2}, 0L, 0,
                             {{{LUA_T_NIL, {NULL}}, 0L}}, {0}};
 
 

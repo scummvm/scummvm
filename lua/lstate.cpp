@@ -7,6 +7,7 @@
 
 #include "lbuiltin.h"
 #include "ldo.h"
+#include "lauxlib.h"
 #include "lfunc.h"
 #include "lgc.h"
 #include "llex.h"
@@ -14,10 +15,27 @@
 #include "lstate.h"
 #include "lstring.h"
 #include "ltable.h"
+#include "ltask.h"
 #include "ltm.h"
 
 
 lua_State *lua_state = NULL;
+
+void errorFB (void);
+void nilFB (void);
+void typeFB (void);
+
+static luaL_reg fbFuncs[] = {
+  {"  typeFB", typeFB},
+  {"  errorFB", errorFB},
+  {"  nilFB", nilFB}
+};
+
+void stderrorim (void);
+
+static luaL_reg stdErrorRimFunc[] = {
+  {"stderrorim", stderrorim}
+};
 
 static void lua_openthr (void)
 {
@@ -33,10 +51,7 @@ static void lua_openthr (void)
   L->Tstate = RUN;
 }
 
-void lua_open (void)
-{
-  if (lua_state) return;
-  lua_state = luaM_new(lua_State);
+void lua_resetglobals(void) {
   lua_openthr();
   L->rootproto.next = NULL;
   L->rootproto.marked = 0;
@@ -58,10 +73,18 @@ void lua_open (void)
   luaD_initthr();
   luaS_init();
   luaX_init();
-  luaT_init();
-  luaB_predefine();
 }
 
+void lua_open (void)
+{
+  if (lua_state) return;
+  lua_state = luaM_new(lua_State);
+  lua_resetglobals();
+  luaT_init();
+  luaB_predefine();
+  luaL_addlibtolist(stdErrorRimFunc, (sizeof(stdErrorRimFunc) / sizeof(stdErrorRimFunc[0])));
+  luaL_addlibtolist(fbFuncs, (sizeof(fbFuncs) / sizeof(fbFuncs[0])));
+}
 
 void lua_close (void)
 {
@@ -101,12 +124,13 @@ static void savetask (struct lua_Task *t) {
   t->errorJmp = L->errorJmp;
   t->ci = L->ci;
   t->base_ci = L->base_ci;
+  t->base_ci_size = L->base_ci_size;
   t->end_ci = L->end_ci;
   t->Mbuffer = L->Mbuffer;
   t->Mbuffbase = L->Mbuffbase;
   t->Mbuffsize = L->Mbuffsize;
   t->Mbuffnext = L->Mbuffnext;
-  memcpy(t->Cblocks, L->Cblocks, sizeof(L->Cblocks));;
+  memcpy(t->Cblocks, L->Cblocks, sizeof(L->Cblocks));
   t->numCblocks = L->numCblocks;
   t->Tstate = L->Tstate;
 }
@@ -117,6 +141,7 @@ static void loadtask (struct lua_Task *t) {
   L->errorJmp = t->errorJmp;
   L->ci = t->ci;
   L->base_ci = t->base_ci;
+  L->base_ci_size = t->base_ci_size;
   L->end_ci = t->end_ci;
   L->Mbuffer = t->Mbuffer;
   L->Mbuffbase = t->Mbuffbase;

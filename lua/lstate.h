@@ -58,7 +58,7 @@ struct CallInfo {
 };
 
 
-enum TaskState {RUN, YIELD, DONE};
+enum TaskState {RUN, YIELD, PAUSE, DONE};
 
 struct lua_Task {
   struct Stack stack;
@@ -66,6 +66,7 @@ struct lua_Task {
   jmp_buf *errorJmp;
   struct CallInfo *ci;
   struct CallInfo *base_ci;
+  int base_ci_size;
   struct CallInfo *end_ci;
   char *Mbuffer;
   char *Mbuffbase;
@@ -85,6 +86,7 @@ struct lua_State {
   jmp_buf *errorJmp;  /* current error recover point */
   struct CallInfo *ci;  /* call info for current function */
   struct CallInfo *base_ci;  /* array of CallInfo's */
+  int base_ci_size;
   struct CallInfo *end_ci;  /* points after end of ci array */
   char *Mbuffer;  /* global buffer */
   char *Mbuffbase;  /* current first position of Mbuffer */
@@ -118,6 +120,7 @@ extern lua_State *lua_state;
 
 #define L	lua_state
 
+void lua_resetglobals(void);
 
 /* Switch to the given task */
 void luaI_switchtask(struct lua_Task *t);

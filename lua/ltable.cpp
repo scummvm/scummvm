@@ -56,7 +56,7 @@ static long int hashindex (TObject *ref)
 }
 
 
-static int present (Hash *t, TObject *key)
+int present (Hash *t, TObject *key)
 {
   int tsize = nhash(t);
   long int h = hashindex(key);
@@ -77,7 +77,7 @@ static int present (Hash *t, TObject *key)
 /*
 ** Alloc a vector node
 */
-static Node *hashnodecreate (int nhash)
+Node *hashnodecreate (int nhash)
 {
   Node *v = luaM_newvector(nhash, Node);
   int i;

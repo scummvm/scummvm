@@ -24,5 +24,7 @@ int luaS_globaldefined (char *name);
 TaggedString *luaS_collectudata (void);
 void luaS_freeall (void);
 
+extern TaggedString EMPTY;
+#define NUM_HASHS  61
 
 #endif

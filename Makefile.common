@@ -12,6 +12,8 @@ OBJS =\
 	lua/lmem.o \
 	lua/lobject.o \
 	lua/lparser.o \
+	lua/lrestore.o \
+	lua/lsave.o \
 	lua/lstate.o \
 	lua/lstring.o \
 	lua/lstrlib.o \

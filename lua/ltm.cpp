@@ -178,7 +178,7 @@ char *luaT_travtagmethods (int (*fn)(TObject *))
 
 #include "lapi.h"
 
-static void errorFB (void)
+void errorFB (void)
 {
   lua_Object o = lua_getparam(1);
   if (lua_isstring(o))
@@ -188,10 +188,10 @@ static void errorFB (void)
 }
 
 
-static void nilFB (void) { }
+void nilFB (void) { }
 
 
-static void typeFB (void)
+void typeFB (void)
 {
   lua_error("unexpected type");
 }

@@ -356,6 +356,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\lua\lrestore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lua\lsave.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\lua\lstate.cpp"
 				>
 			</File>
@@ -502,10 +510,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engine.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\font.h"
 			>
 		</File>
 		<File

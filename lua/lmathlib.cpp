@@ -198,12 +198,17 @@ static struct luaL_reg mathlib[] = {
 {"randomseed", math_randomseed}
 };
 
+static luaL_reg powFunc[] = {
+{"math_pow",   math_pow}
+};
+
 /*
 ** Open math library
 */
 void lua_mathlibopen (void)
 {
   luaL_openlib(mathlib, (sizeof(mathlib)/sizeof(mathlib[0])));
+  luaL_addlibtolist(powFunc, (sizeof(powFunc)/sizeof(powFunc[0])));
   lua_pushstring("deg"); lua_setglobal("_TRIGMODE");
   lua_pushcfunction(math_pow);
   lua_pushnumber(0);  /* to get its tag */

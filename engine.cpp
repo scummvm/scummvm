@@ -68,7 +68,7 @@ void Engine::mainLoop() {
 			}
 			if (event.type == SDL_KEYUP && _controlsEnabled[event.key.keysym.sym]) {
 				// temporary hack for save/load request until game menu will work
-				if (event.key.keysym.sym == SDLK_F5) {
+				if (event.key.keysym.sym == SDLK_F7) {
 					_savegameLoadRequest = true;
 					continue;
 				} else if (event.key.keysym.sym == SDLK_F8) {
@@ -220,11 +220,11 @@ void Engine::mainLoop() {
 	}
 }
 
-void Engine::savegameGzread(void *data, int32 size) {
+void Engine::savegameGzread(void *data, int size) {
 	gzread(Engine::instance()->_savegameFileHandle, data, size);
 }
 
-void Engine::savegameGzwrite(void *data, int32 size) {
+void Engine::savegameGzwrite(void *data, int size) {
 	gzwrite(Engine::instance()->_savegameFileHandle, data, size);
 }
 
@@ -254,19 +254,18 @@ void Engine::savegameRestore() {
 	//Render_Restore(savegameGzread);
 	//Primitive_Restore(savegameGzread);
 	//Smush_Restore(savegameGzread);
-	//lua_Restore(savegameGzread);
+	lua_Restore(savegameGzread);
 	//  unlock resources
 	gzclose(_savegameFileHandle);
 
-	//do_dofile("patch05.bin");
+	//bundle_dofile("patch05.bin");
 }
 
-void Engine::savegameCallback(void (*func)(void *, int32)) {
+void Engine::savegameCallback(SaveRestoreFunc func) {
 	lua_Object funcParam1;
 	lua_Object funcParam2;
 	bool unk1 = false;
 	bool unk2 = false;
-	//_savegameUnkFunc = func;
 
 	lua_beginblock();
 	lua_pushobject(lua_getglobal("system"));
@@ -322,7 +321,7 @@ void Engine::savegameSave() {
 	//Render_Save(savegameGzwrite);
 	//Primitive_Save(savegameGzwrite);
 	//Smush_Save(savegameGzwrite);
-	//lua_Save(savegameGzwrite);
+	lua_Save(savegameGzwrite);
 
 	gzclose(_savegameFileHandle);
 }

@@ -20,6 +20,7 @@
 
 #include "scene.h"
 #include "textobject.h"
+#include "lua.h"
 #include <cstdlib>
 #include <list>
 #include <SDL_keysym.h>
@@ -143,9 +144,9 @@ public:
 
 	void savegameSave();
 	void savegameRestore();
-	static void savegameGzread(void *data, int32 size);
-	static void savegameGzwrite(void *data, int32 size);
-	void savegameCallback(void (*func)(void *, int32));
+	static void savegameGzread(void *data, int size);
+	static void savegameGzwrite(void *data, int size);
+	void savegameCallback(SaveRestoreFunc func);
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;

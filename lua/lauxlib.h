@@ -17,11 +17,19 @@ struct luaL_reg {
   lua_CFunction func;
 };
 
+struct luaL_libList {
+  luaL_reg *list;
+  int number;
+  luaL_libList *next;
+};
+
+extern luaL_libList *list_of_libs;
 
 #define luaL_arg_check(cond,numarg,extramsg) if (!(cond)) \
                                                luaL_argerror(numarg,extramsg)
 
 void luaL_openlib (struct luaL_reg *l, int n);
+void luaL_addlibtolist(luaL_reg *l, int n);
 void luaL_argerror (int numarg, char *extramsg);
 #define luaL_check_string(n)  (luaL_check_lstr((n), NULL))
 char *luaL_check_lstr (int numArg, long *len);

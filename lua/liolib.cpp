@@ -442,6 +442,7 @@ static void openwithtags (void)
 void lua_iolibopen (void)
 {
   luaL_openlib(iolib, (sizeof(iolib)/sizeof(iolib[0])));
+  luaL_addlibtolist(iolibtag, (sizeof(iolib)/sizeof(iolib[0])));
   openwithtags();
   lua_pushcfunction(errorfb);
   lua_seterrormethod();
