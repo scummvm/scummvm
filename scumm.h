@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.12  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.11  2001/10/17 10:07:40  strigeus
  * fixed verbs not saved in non dott games,
  * implemented a screen effect
@@ -160,7 +164,6 @@ struct ResHeader {
 	uint32 size;
 };
 
-#if defined(DOTT)
 class ObjectData {
 public:
 	uint32 offs_obim_to_room;
@@ -178,25 +181,6 @@ public:
 	byte fl_object_index;
 	byte unk_3;
 };
-#else
-class ObjectData {
-public:
-	uint32 offs_obim_to_room;
-	uint32 offs_obcd_to_room;
-	uint16 cdhd_10, cdhd_12;
-	uint16 obj_nr;
-	byte x_pos;
-	byte y_pos;
-	uint16 numstrips;
-	uint16 height;
-	byte actordir;
-	byte parent;
-	byte parentstate;
-	byte ownerstate;
-	byte fl_object_index;
-	byte unk_3;
-};
-#endif
 
 struct RoomHeader {
 	uint32 tag, size;
@@ -204,31 +188,31 @@ struct RoomHeader {
 	uint16 numObjects;
 };
 
-#if !defined(DOTT)
-struct CodeHeader { /* file format */
+struct CodeHeader {
 	uint32 id;
 	uint32 size;
 	uint16 obj_id;
-	byte x,y,w,h;
-	byte flags;
-	byte parent;
-	uint16 unk2;
-	uint16 unk3;
-	byte actordir;
+
+	union {
+		struct {
+			byte x,y,w,h;
+			byte flags;
+			byte parent;
+			uint16 unk2;
+			uint16 unk3;
+			byte actordir;
+		} v5;
+
+		struct {
+			int16 x, y;
+			uint16 w,h;
+			byte flags, parent;
+			uint16 unk2;
+			uint16 unk3;
+			byte actordir;
+		} v6;
+	};
 };
-#else
-struct CodeHeader { /* file format */
-	uint32 id;
-	uint32 size;
-	uint16 obj_id;
-	int16 x, y;
-	uint16 w,h;
-	byte flags, parent;
-	uint16 unk2;
-	uint16 unk3;
-	byte actordir;
-};
-#endif
 
 struct ImageHeader { /* file format */
 	uint32 id;
@@ -344,9 +328,7 @@ enum ScummVars {
 	VAR_TALKSTOP_KEY = 57,
 	VAR_SAVELOADDIALOG_KEY = 50,
 
-#if defined(DOTT)
-	VAR_RANDOM_NR = 118,
-#endif
+	VAR_V6_RANDOM_NR = 118,
 };
 
 #define _maxRooms res.num[1]
@@ -534,7 +516,25 @@ struct StringTab {
 	int16 mask_top, mask_bottom, mask_right, mask_left;
 };
 
+enum GameId {
+	GID_TENTACLE = 1,
+	GID_MONKEY2 = 2,
+	GID_INDY4 = 3,
+	GID_MONKEY = 4,
+};
+
+struct ScummDebugger;
+
+
 struct Scumm {
+	const char *_gameText;
+	byte _gameId;
+	byte _majorScummVersion;
+	byte _middleScummVersion;
+	byte _minorScummVersion;
+
+	ScummDebugger *_debugger;
+	
 	int _lastLoadedRoom;
 	int _roomResource;
 	byte _encbyte;
@@ -889,7 +889,7 @@ struct Scumm {
 	void openRoom(int room);
 	void deleteRoomOffsets();
 	void readRoomsOffsets();
-	void askForDisk();
+	void askForDisk(const char *filename);
 
 	
 	bool openResourceFile(const char *filename);
@@ -917,7 +917,8 @@ struct Scumm {
 	void readResTypeList(int id, uint32 tag, const char *name);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 
-	void initThings();
+	void initThingsV5();
+	void initThingsV6();
 
 	void initRandSeeds();
 
@@ -1020,249 +1021,249 @@ struct Scumm {
 	
 	int getObjectIndex(int object);
 
-	void o_actorFollowCamera();
-	void o_actorFromPos();
-	void o_actorSet();
-	void o_actorSetClass();
-	void o_add();
-	void o_and();
-	void o_animateActor();
-	void o_badOpcode();
-	void o_breakHere();
-	void o_chainScript();
-	void o_cursorCommand();
-	void o_cutscene();
-	void o_debug();
-	void o_decrement();
-	void o_delay();
-	void o_delayVariable();
-	void o_divide();
-	void o_doSentence();
-	void o_drawBox();
-	void o_drawObject();
-	void o_dummy();
-	void o_endCutscene();
-	void o_equalZero();
-	void o_expression();
-	void o_faceActor();
-	void o_findInventory();
-	void o_findObject();
-	void o_freezeScripts();
-	void o_getActorCostume();
-	void o_getActorElevation();
-	void o_getActorFacing();
-	void o_getActorMoving();
-	void o_getActorRoom();
-	void o_getActorScale();
-	void o_getActorWalkBox();
-	void o_getActorWidth();
-	void o_getActorX();
-	void o_getActorY();
-	void o_getAnimCounter();
-	void o_getClosestObjActor();
-	void o_getDist();
-	void o_getInventoryCount();
-	void o_getObjectOwner();
-	void o_getObjectState();
-	void o_getRandomNr();
-	void o_getScriptRunning();
-	void o_getVerbEntrypoint();
-	void o_ifClassOfIs();
-	void o_increment();
-	void o_isActorInBox();
-	void o_isEqual();
-	void o_isGreater();
-	void o_isGreaterEqual();
-	void o_isLess();
-	void o_isNotEqual();
-	void o_isSoundRunning();
-	void o_jumpRelative();
-	void o_lessOrEqual();
-	void o_lights();
-	void o_loadRoom();
-	void o_loadRoomWithEgo();
-	void o_matrixOps();
-	void o_move();
-	void o_multiply();
-	void o_notEqualZero();
-	void o_or();
-	void o_overRide();
-	void o_panCameraTo();
-	void o_pickupObject();
-	void o_print();
-	void o_printEgo();
-	void o_pseudoRoom();
-	void o_putActor();
-	void o_putActorAtObject();
-	void o_putActorInRoom();
-	void o_quitPauseRestart();
-	void o_resourceRoutines();
-	void o_roomOps();
-	void o_saveRestoreVerbs();
-	void o_setCameraAt();
-	void o_setObjectName();
-	void o_setOwnerOf();
-	void o_setState();
-	void o_setVarRange();
-	void o_soundKludge();
-	void o_startMusic();
-	void o_startObject();
-	void o_startScript();
-	void o_startSound();
-	void o_stopMusic();
-	void o_stopObjectCode();
-	void o_stopObjectScript();
-	void o_stopScript();
-	void o_stopSound();
-	void o_stringOps();
-	void o_subtract();
-	void o_verbOps();
-	void o_wait();
-	void o_walkActorTo();
-	void o_walkActorToActor();
-	void o_walkActorToObject();
+	void o5_actorFollowCamera();
+	void o5_actorFromPos();
+	void o5_actorSet();
+	void o5_actorSetClass();
+	void o5_add();
+	void o5_and();
+	void o5_animateActor();
+	void o5_badOpcode();
+	void o5_breakHere();
+	void o5_chainScript();
+	void o5_cursorCommand();
+	void o5_cutscene();
+	void o5_debug();
+	void o5_decrement();
+	void o5_delay();
+	void o5_delayVariable();
+	void o5_divide();
+	void o5_doSentence();
+	void o5_drawBox();
+	void o5_drawObject();
+	void o5_dummy();
+	void o5_endCutscene();
+	void o5_equalZero();
+	void o5_expression();
+	void o5_faceActor();
+	void o5_findInventory();
+	void o5_findObject();
+	void o5_freezeScripts();
+	void o5_getActorCostume();
+	void o5_getActorElevation();
+	void o5_getActorFacing();
+	void o5_getActorMoving();
+	void o5_getActorRoom();
+	void o5_getActorScale();
+	void o5_getActorWalkBox();
+	void o5_getActorWidth();
+	void o5_getActorX();
+	void o5_getActorY();
+	void o5_getAnimCounter();
+	void o5_getClosestObjActor();
+	void o5_getDist();
+	void o5_getInventoryCount();
+	void o5_getObjectOwner();
+	void o5_getObjectState();
+	void o5_getRandomNr();
+	void o5_getScriptRunning();
+	void o5_getVerbEntrypoint();
+	void o5_ifClassOfIs();
+	void o5_increment();
+	void o5_isActorInBox();
+	void o5_isEqual();
+	void o5_isGreater();
+	void o5_isGreaterEqual();
+	void o5_isLess();
+	void o5_isNotEqual();
+	void o5_isSoundRunning();
+	void o5_jumpRelative();
+	void o5_lessOrEqual();
+	void o5_lights();
+	void o5_loadRoom();
+	void o5_loadRoomWithEgo();
+	void o5_matrixOps();
+	void o5_move();
+	void o5_multiply();
+	void o5_notEqualZero();
+	void o5_or();
+	void o5_overRide();
+	void o5_panCameraTo();
+	void o5_pickupObject();
+	void o5_print();
+	void o5_printEgo();
+	void o5_pseudoRoom();
+	void o5_putActor();
+	void o5_putActorAtObject();
+	void o5_putActorInRoom();
+	void o5_quitPauseRestart();
+	void o5_resourceRoutines();
+	void o5_roomOps();
+	void o5_saveRestoreVerbs();
+	void o5_setCameraAt();
+	void o5_setObjectName();
+	void o5_setOwnerOf();
+	void o5_setState();
+	void o5_setVarRange();
+	void o5_soundKludge();
+	void o5_startMusic();
+	void o5_startObject();
+	void o5_startScript();
+	void o5_startSound();
+	void o5_stopMusic();
+	void o5_stopObjectCode();
+	void o5_stopObjectScript();
+	void o5_stopScript();
+	void o5_stopSound();
+	void o5_stringOps();
+	void o5_subtract();
+	void o5_verbOps();
+	void o5_wait();
+	void o5_walkActorTo();
+	void o5_walkActorToActor();
+	void o5_walkActorToObject();
 
-	void o2_pushByte();
-	void o2_pushWord();
-	void o2_pushByteVar();
-	void o2_pushWordVar();
-	void o2_invalid();
-	void o2_byteArrayRead();
-	void o2_wordArrayRead();
-	void o2_byteArrayIndexedRead();
-	void o2_wordArrayIndexedRead();
-	void o2_dup();
-	void o2_zero();
-	void o2_eq();
-	void o2_neq();
-	void o2_gt();
-	void o2_lt();
-	void o2_le();
-	void o2_ge();
-	void o2_add();
-	void o2_sub();
-	void o2_mul();
-	void o2_div();
-	void o2_land();
-	void o2_lor();
-	void o2_kill();
-	void o2_writeByteVar();
-	void o2_writeWordVar();
-	void o2_byteArrayWrite();
-	void o2_wordArrayWrite();
-	void o2_byteArrayIndexedWrite();
-	void o2_wordArrayIndexedWrite();
-	void o2_byteVarInc();
-	void o2_wordVarInc();
-	void o2_byteArrayInc();
-	void o2_wordArrayInc();
-	void o2_byteVarDec();
-	void o2_wordVarDec();
-	void o2_byteArrayDec();
-	void o2_wordArrayDec();
-	void o2_jumpTrue();
-	void o2_jumpFalse();
-	void o2_jump();
-	void o2_startScriptEx();
-	void o2_startScript();
-	void o2_startObject();
-	void o2_setObjectState();
-	void o2_setObjectXY();
-	void o2_stopObjectCode();
-	void o2_endCutscene();
-	void o2_cutScene();
-	void o2_stopMusic();
-	void o2_freezeUnfreeze();
-	void o2_cursorCommand();
-	void o2_breakHere();
-	void o2_ifClassOfIs();
-	void o2_setClass();
-	void o2_getState();
-	void o2_setState();
-	void o2_setOwner();
-	void o2_getOwner();
-	void o2_startSound();
-	void o2_stopSound();
-	void o2_startMusic();
-	void o2_stopObjectScript();
-	void o2_panCameraTo();
-	void o2_actorFollowCamera();
-	void o2_setCameraAt();
-	void o2_loadRoom();
-	void o2_stopScript();
-	void o2_walkActorToObj();
-	void o2_walkActorTo();
-	void o2_putActorInRoom();
-	void o2_putActorAtObject();
-	void o2_faceActor();
-	void o2_animateActor();
-	void o2_doSentence();
-	void o2_pickupObject();
-	void o2_loadRoomWithEgo();
-	void o2_getRandomNumber();
-	void o2_getRandomNumberRange();
-	void o2_getActorMoving();
-	void o2_getScriptRunning();
-	void o2_getActorRoom();
-	void o2_getObjectX();
-	void o2_getObjectY();
-	void o2_getObjectDir();
-	void o2_getActorWalkBox();
-	void o2_getActorCostume();
-	void o2_findInventory();
-	void o2_getInventoryCount();
-	void o2_getVerbFromXY();
-	void o2_beginOverride();
-	void o2_endOverride();
-	void o2_setObjectName();
-	void o2_isSoundRunning();
-	void o2_setBoxFlags();
-	void o2_createBoxMatrix();
-	void o2_resourceRoutines();
-	void o2_roomOps();
-	void o2_actorSet();
-	void o2_verbOps();
-	void o2_getActorFromXY();
-	void o2_findObject();
-	void o2_pseudoRoom();
-	void o2_getActorElevation();
-	void o2_getVerbEntrypoint();
-	void o2_arrayOps();
-	void o2_saveRestoreVerbs();
-	void o2_drawBox();
-	void o2_getActorWidth();
-	void o2_wait();
-	void o2_getActorScaleX();
-	void o2_getActorAnimCounter1();
-	void o2_soundKludge();
-	void o2_isAnyOf();
-	void o2_quitPauseRestart();
-	void o2_isActorInBox();
-	void o2_delay();
-	void o2_delayLonger();
-	void o2_delayVeryLong();
-	void o2_stopSentence();
-	void o2_print_0();
-	void o2_print_1();
-	void o2_print_2();
-	void o2_print_3();
-	void o2_printActor();
-	void o2_printEgo();
-	void o2_talkActor();
-	void o2_talkEgo();
-	void o2_dim();
-	void o2_runVerbCodeQuick();
-	void o2_runScriptQuick();
-	void o2_dim2();
-	void o2_abs();
-	void o2_distObjectObject();
-	void o2_distObjectPt();
-	void o2_distPtPt();
-	void o2_dummy_stacklist();
-	void o2_miscOps();
-	void o2_breakMaybe();
-	void o2_pickOneOf();
-	void o2_pickOneOfDefault();
+	void o6_pushByte();
+	void o6_pushWord();
+	void o6_pushByteVar();
+	void o6_pushWordVar();
+	void o6_invalid();
+	void o6_byteArrayRead();
+	void o6_wordArrayRead();
+	void o6_byteArrayIndexedRead();
+	void o6_wordArrayIndexedRead();
+	void o6_dup();
+	void o6_zero();
+	void o6_eq();
+	void o6_neq();
+	void o6_gt();
+	void o6_lt();
+	void o6_le();
+	void o6_ge();
+	void o6_add();
+	void o6_sub();
+	void o6_mul();
+	void o6_div();
+	void o6_land();
+	void o6_lor();
+	void o6_kill();
+	void o6_writeByteVar();
+	void o6_writeWordVar();
+	void o6_byteArrayWrite();
+	void o6_wordArrayWrite();
+	void o6_byteArrayIndexedWrite();
+	void o6_wordArrayIndexedWrite();
+	void o6_byteVarInc();
+	void o6_wordVarInc();
+	void o6_byteArrayInc();
+	void o6_wordArrayInc();
+	void o6_byteVarDec();
+	void o6_wordVarDec();
+	void o6_byteArrayDec();
+	void o6_wordArrayDec();
+	void o6_jumpTrue();
+	void o6_jumpFalse();
+	void o6_jump();
+	void o6_startScriptEx();
+	void o6_startScript();
+	void o6_startObject();
+	void o6_setObjectState();
+	void o6_setObjectXY();
+	void o6_stopObjectCode();
+	void o6_endCutscene();
+	void o6_cutScene();
+	void o6_stopMusic();
+	void o6_freezeUnfreeze();
+	void o6_cursorCommand();
+	void o6_breakHere();
+	void o6_ifClassOfIs();
+	void o6_setClass();
+	void o6_getState();
+	void o6_setState();
+	void o6_setOwner();
+	void o6_getOwner();
+	void o6_startSound();
+	void o6_stopSound();
+	void o6_startMusic();
+	void o6_stopObjectScript();
+	void o6_panCameraTo();
+	void o6_actorFollowCamera();
+	void o6_setCameraAt();
+	void o6_loadRoom();
+	void o6_stopScript();
+	void o6_walkActorToObj();
+	void o6_walkActorTo();
+	void o6_putActorInRoom();
+	void o6_putActorAtObject();
+	void o6_faceActor();
+	void o6_animateActor();
+	void o6_doSentence();
+	void o6_pickupObject();
+	void o6_loadRoomWithEgo();
+	void o6_getRandomNumber();
+	void o6_getRandomNumberRange();
+	void o6_getActorMoving();
+	void o6_getScriptRunning();
+	void o6_getActorRoom();
+	void o6_getObjectX();
+	void o6_getObjectY();
+	void o6_getObjectDir();
+	void o6_getActorWalkBox();
+	void o6_getActorCostume();
+	void o6_findInventory();
+	void o6_getInventoryCount();
+	void o6_getVerbFromXY();
+	void o6_beginOverride();
+	void o6_endOverride();
+	void o6_setObjectName();
+	void o6_isSoundRunning();
+	void o6_setBoxFlags();
+	void o6_createBoxMatrix();
+	void o6_resourceRoutines();
+	void o6_roomOps();
+	void o6_actorSet();
+	void o6_verbOps();
+	void o6_getActorFromXY();
+	void o6_findObject();
+	void o6_pseudoRoom();
+	void o6_getActorElevation();
+	void o6_getVerbEntrypoint();
+	void o6_arrayOps();
+	void o6_saveRestoreVerbs();
+	void o6_drawBox();
+	void o6_getActorWidth();
+	void o6_wait();
+	void o6_getActorScaleX();
+	void o6_getActorAnimCounter1();
+	void o6_soundKludge();
+	void o6_isAnyOf();
+	void o6_quitPauseRestart();
+	void o6_isActorInBox();
+	void o6_delay();
+	void o6_delayLonger();
+	void o6_delayVeryLong();
+	void o6_stopSentence();
+	void o6_print_0();
+	void o6_print_1();
+	void o6_print_2();
+	void o6_print_3();
+	void o6_printActor();
+	void o6_printEgo();
+	void o6_talkActor();
+	void o6_talkEgo();
+	void o6_dim();
+	void o6_runVerbCodeQuick();
+	void o6_runScriptQuick();
+	void o6_dim2();
+	void o6_abs();
+	void o6_distObjectObject();
+	void o6_distObjectPt();
+	void o6_distPtPt();
+	void o6_dummy_stacklist();
+	void o6_miscOps();
+	void o6_breakMaybe();
+	void o6_pickOneOf();
+	void o6_pickOneOfDefault();
 
 	void soundKludge(int16 *list);
 
@@ -1522,6 +1523,7 @@ struct Scumm {
 	void showHelpAndExit();
 	
 	char *getGameName();
+	bool detectGame();
 
 	void setupOpcodes();
 	void setupOpcodes2();
@@ -1555,10 +1557,9 @@ struct Scumm {
 
 	int getStringLen(byte *ptr);
 
-#if defined(DOTT)
 	void readArrayFromIndexFile();
 	void readMAXS();
-	void readIndexFile();
+	void readIndexFileV6();
 
 	int readArray(int array, int index, int base);
 	void writeArray(int array, int index, int base, int value);
@@ -1580,10 +1581,30 @@ struct Scumm {
 	void unkMiscOp4(int a, int b, int c, int d);
 	void unkMiscOp9();
 	void startManiac();
-#else
-	void readIndexFile(int i);
-#endif
+
+	void readIndexFileV5(int i);
 };
+
+struct ScummDebugger {
+	Scumm *_s;
+	byte _command;
+	char *_parameters;
+
+	bool _welcome;
+
+	int _go_amount;
+	
+	char _cmd_buffer[256];
+	
+	void on_frame();
+	bool do_command();
+	void enter();
+	int get_command();
+	void attach(Scumm *s);
+	void detach();
+};
+
+
 
 void waitForTimer(Scumm *s);
 void outputdisplay2(Scumm *s, int disp);

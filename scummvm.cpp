@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.11  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.10  2001/10/17 10:07:40  strigeus
  * fixed verbs not saved in non dott games,
  * implemented a screen effect
@@ -57,9 +61,8 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-#if !defined(DOTT)
-void Scumm::initThings() {
-	readIndexFile(1);
+void Scumm::initThingsV5() {
+	readIndexFileV5(1);
 
 	_numVariables = 800;
 	_numBitVariables = 2048;
@@ -81,19 +84,16 @@ void Scumm::initThings() {
 	allocResTypeData(7, MKID('NONE'),0x32,"string", 0);
 	allocResTypeData(13, MKID('NONE'),0x32,"flobject", 0);
 	allocResTypeData(14, MKID('NONE'),10,"boxes", 0);
-	readIndexFile(2);
+	readIndexFileV5(2);
 	initRandSeeds();
 
 	setupOpcodes();
 }
-#else
 
-void Scumm::initThings() {
+void Scumm::initThingsV6() {
 	setupOpcodes2();
-	readIndexFile();
+	readIndexFileV6();
 }
-
-#endif
 
 void Scumm::initRandSeeds() {
 	_randSeed1 = 0xA943DE35;
@@ -242,18 +242,29 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	_fileHandle = NULL;
 	
-#if defined(INDY4)
-	_bootParam = -7873;
-#else
-	_bootParam = 0;
-#endif
 	_debugMode = 1;
-
-	parseCommandLine(argc, argv);
 	
+	parseCommandLine(argc, argv);
+
+	if (_exe_name==NULL)
+		error("Specify the name of the game to start on the command line");
+
+	if (!detectGame()) {
+		warning("Game detection failed. Using default settings");
+		_majorScummVersion = 5;
+	}
+
+	if (_gameId==GID_INDY4 && _bootParam==0) {
+		_bootParam = -7873;
+	}
+		
 	initGraphics(this);
 
- 	initThings();
+	if (_majorScummVersion==6)
+		initThingsV6();
+	else
+		initThingsV5();
+
 	scummInit();
 
 	_vars[VAR_VERSION] = 21; 
@@ -270,6 +281,9 @@ void Scumm::scummMain(int argc, char **argv) {
 		
 		CHECK_HEAP
 		updateScreen(this);
+
+		if (_debugger)
+			_debugger->on_frame();
 
 		_vars[VAR_TIMER] = _scummTimer >> 2;
 		do {
@@ -372,9 +386,9 @@ void Scumm::scummMain(int argc, char **argv) {
 
 		unkVirtScreen2();
 
-#if !defined(DOTT)
-		playActorSounds();
-#endif
+		if (_majorScummVersion==5)
+			playActorSounds();
+
 		unkSoundProc22();
 		camera._lastPos = camera._curPos;
 	} while (1);
@@ -396,47 +410,68 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 					_bootParam = atoi(s+1);
 					goto NextArg;
 				default:
-				  goto ShowHelpAndExit;
+ShowHelpAndExit:;
+					printf(
+						"ScummVM - Scumm Interpreter\n"
+						"Syntax:\n"
+						"\tscummvm [-b<num>] game\n"
+						"Flags:\n"
+						"\tb<num> - start in that room\n");
+					exit(1);
 				}
 				s++;
 			}
 NextArg:;
 		} else {
-ShowHelpAndExit:;
-			printf(
-				"ScummVM - Scumm Interpreter\n"
-				"Syntax:\n"
-				"\tscummvm [-b<num>]\n"
-				"Flags:\n"
-				"\tb<num> - start in that room\n");
-			exit(1);
+			if (_exe_name) goto ShowHelpAndExit;
+			_exe_name = s;
 		}
 	}
+
 }
 
-struct GameNameList {
+
+struct VersionSettings {
 	char *filename;
 	char *gamename;
+	byte id,major,minor,middle;
 };
 
-static const GameNameList game_list[] = {
-	{"monkey1", "Monkey Island 1"},
-	{"monkey2", "Monkey Island 2: LeChuck's revenge"},
-	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis"},
-	{"fate", "Indiana Jones 4 and the Fate of Atlantis (Demo)"},
-	{"tentacle", "Day Of The Tenctacle"},
+static const VersionSettings version_settings[] = {
+	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2},
+	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2},
+	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis", GID_INDY4, 5, 5, 0},
+	{"fate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0},
+	{"tentacle", "Day Of The Tenctacle", GID_TENTACLE, 6, 4, 2},
 	{NULL,NULL}
 };
 
-char *Scumm::getGameName() {
-	const GameNameList *gnl = game_list;
-	char buf[256];
+bool Scumm::detectGame() {
+	const VersionSettings *gnl = version_settings;
+	
+	_gameId = 0;
+	_gameText = NULL;
 	do {
-		if (!strcmp(_exe_name, gnl->filename))
-			return strdup(gnl->gamename);
+		if (!scumm_stricmp(_exe_name, gnl->filename)) {
+			_gameId = gnl->id;
+			_majorScummVersion = gnl->major;
+			_middleScummVersion = gnl->middle;
+			_minorScummVersion = gnl->minor;
+			_gameText = gnl->gamename;
+			return true;
+		}
 	} while ((++gnl)->filename);
-	sprintf(buf, "Unknown game: \"%s\"", _exe_name);
-	return strdup(buf);
+
+	return true;
+}
+
+char *Scumm::getGameName() {
+	if (_gameText==NULL) {
+		char buf[256];
+		sprintf(buf, "Unknown game: \"%s\"", _exe_name);
+		return strdup(buf);
+	}
+	return strdup(_gameText);
 }
 
 void Scumm::startScene(int room, Actor *a, int objectNr) {
@@ -645,13 +680,13 @@ void Scumm::initRoomSubBlocks() {
 		setPaletteFromRes();
 	}
 
-#if defined(DOTT)
-	ptr = findResource(MKID('PALS'), roomptr);
-	if (ptr) {
-		_PALS_offs = ptr - roomptr;
-		setPalette(0);
+	if (_majorScummVersion==6) {
+		ptr = findResource(MKID('PALS'), roomptr);
+		if (ptr) {
+			_PALS_offs = ptr - roomptr;
+			setPalette(0);
+		}
 	}
-#endif
 	
 	initCycl(findResource(MKID('CYCL'), roomptr) + 8);
 
@@ -884,7 +919,6 @@ Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
 	return derefActor(id);
 }
 
-#if defined(DOTT)
 void Scumm::new_unk_1(int a) {
 	error("stub new_unk_1(%d)", a);
 }
@@ -927,7 +961,6 @@ void Scumm::startManiac() {
 	warning("stub startManiac()");
 }
 
-#endif
 
 extern Scumm scumm;
 

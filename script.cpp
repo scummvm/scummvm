@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.3  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -314,32 +318,6 @@ void Scumm::ignoreScriptByte() {
 }
 
 
-#if defined(DOTT)
-int Scumm::readVar(uint var) {
-	int a;
-
-	if (!(var&0xF000)) {
-		checkRange(_numVariables-1, 0, var, "Variable %d out of range(r)");
-		return _vars[var];
-	}
-
-	if (var&0x8000) {
-		var &= 0x7FFF;
-		checkRange(_numBitVariables-1, 0, var, "Bit variable %d out of range(r)");
-		return (_bitVars[var>>3] & (1<<(var&7))) ? 1 : 0;
-	}
-
-	if (var&0x4000) {
-		var &= 0xFFF;
-		checkRange(0x10, 0, var, "Local variable %d out of range(r)");
-		return vm.localvar[_currentScript * 17 + var];
-	}
-
-	error("Illegal varbits (r)");
-}
-
-#else
-
 int Scumm::readVar(uint var) {
 	int a;
 #ifdef BYPASS_COPY_PROT
@@ -351,7 +329,7 @@ int Scumm::readVar(uint var) {
 		return _vars[var];
 	}
 
-	if (var&0x2000) {
+	if (var&0x2000 && _majorScummVersion==5) {
 		a = fetchScriptWord();
 		if (a&0x2000)
 			var = (var+readVar(a&~0x2000))&~0x2000;
@@ -373,7 +351,7 @@ int Scumm::readVar(uint var) {
 		checkRange(0x10, 0, var, "Local variable %d out of range(r)");
 
 #ifdef BYPASS_COPY_PROT
-		if (!copyprotbypassed && _currentScript==1) {
+		if (!copyprotbypassed && _currentScript==1 && _gameId==GID_MONKEY2) {
 			copyprotbypassed=1;
 			return 1;
 		}
@@ -383,8 +361,6 @@ int Scumm::readVar(uint var) {
 
 	error("Illegal varbits (r)");
 }
-
-#endif
 
 void Scumm::writeVar(uint var, int value) {
 	int a;
@@ -714,9 +690,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 	vm.slot[slot].unk1 = a;
 	vm.slot[slot].unk2 = b;
 	vm.slot[slot].freezeCount = 0;
-#if defined(DOTT)
 	vm.slot[slot].newfield = 0;
-#endif
 
 	if (!vars) {
 		for(i=0; i<16; i++)
@@ -906,7 +880,6 @@ void Scumm::endOverride() {
 }
 
 
-#if defined(DOTT)
 int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 	int id;
 	int size;
@@ -975,7 +948,6 @@ void Scumm::copyString(byte *dst, byte *src, int len) {
 			*dst++ = *src++;
 	}
 }
-#endif
 
 int Scumm::getStringLen(byte *ptr) {
 	int len;

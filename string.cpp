@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.2  2001/10/16 10:01:48  strigeus
  * preliminary DOTT support
  *
@@ -182,39 +186,38 @@ void Scumm::CHARSET_1() {
 	if (_vars[VAR_TALK_ACTOR] != 0xFF)
 		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "CHARSET_1");
 
-#if !defined(DOTT)
 	if (a && string[0].overhead!=0) {
-		string[0].xpos = a->x - camera._curPos + 160;
+		if (_majorScummVersion==5) {
+			string[0].xpos = a->x - camera._curPos + 160;
 
-		if (_vars[VAR_TALK_STRING_Y] < 0) {
-			s = (a->scaley * (int)_vars[VAR_TALK_STRING_Y]) / 0xFF;
-			string[0].ypos = ((_vars[VAR_TALK_STRING_Y]-s)>>1) + s - a->elevation + a->y;
+			if (_vars[VAR_TALK_STRING_Y] < 0) {
+				s = (a->scaley * (int)_vars[VAR_TALK_STRING_Y]) / 0xFF;
+				string[0].ypos = ((_vars[VAR_TALK_STRING_Y]-s)>>1) + s - a->elevation + a->y;
+			} else {
+				string[0].ypos = _vars[VAR_TALK_STRING_Y];
+			}
+			if (string[0].ypos < 1)
+				string[0].ypos = 1;
+
+			if (string[0].xpos < 80)
+				string[0].xpos = 80;
+			if (string[0].xpos > 240)
+				string[0].xpos = 240;
 		} else {
-			string[0].ypos = _vars[VAR_TALK_STRING_Y];
+			s = a->scaley * a->new_1 / 0xFF;
+			string[0].ypos = ((a->new_1 - s)>>1) + s - a->elevation + a->y;
+			if (string[0].ypos<1)
+				string[0].ypos = 1;
+			
+			s = a->scalex * a->new_2 / 0xFF;
+			string[0].xpos = ((a->new_2 - s)>>1) + s + a->x - camera._curPos + 160;
+			if (string[0].xpos < 80)
+				string[0].xpos = 80;
+			if (string[0].xpos > 240)
+				string[0].xpos = 240;
 		}
-		if (string[0].ypos < 1)
-			string[0].ypos = 1;
+	}
 
-		if (string[0].xpos < 80)
-			string[0].xpos = 80;
-		if (string[0].xpos > 240)
-			string[0].xpos = 240;
-	}
-#else
-	if (a && string[0].overhead!=0) {
-		s = a->scaley * a->new_1 / 0xFF;
-		string[0].ypos = ((a->new_1 - s)>>1) + s - a->elevation + a->y;
-		if (string[0].ypos<1)
-			string[0].ypos = 1;
-		
-		s = a->scalex * a->new_2 / 0xFF;
-		string[0].xpos = ((a->new_2 - s)>>1) + s + a->x - camera._curPos + 160;
-		if (string[0].xpos < 80)
-			string[0].xpos = 80;
-		if (string[0].xpos > 240)
-			string[0].xpos = 240;
-	}
-#endif
 	charset._top = string[0].ypos;
 	charset._left = string[0].xpos;
 	charset._left2 = string[0].xpos;
@@ -489,9 +492,9 @@ byte *Scumm::addMessageToStack(byte *msg) {
 				num+=2;
 				break;
 			case 9: 
-#if defined(DOTT)
+//#if defined(DOTT)
 			case 10: case 12: case 13: case 14:
-#endif
+//#endif
 				*_msgPtrToAdd++ = 0xFF;
 				*_msgPtrToAdd++ = chr;
 				*_msgPtrToAdd++ = ptr[num++];

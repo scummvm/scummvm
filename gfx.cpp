@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.7  2001/10/17 10:07:39  strigeus
  * fixed verbs not saved in non dott games,
  * implemented a screen effect
@@ -788,20 +792,20 @@ void Scumm::decompressBitmap() {
 		GDI_UnkDecode3();
 		break;
 
-#if defined(DOTT)
+	/* New since version 6 */
 	case 104: case 105: case 106: case 107: case 108:
 		gdi.decomp_shr = code - 100;
 		gdi.decomp_mask = decompress_table[code - 100];
 		GDI_UnkDecode1();
 		break;
-
+	
+	/* New since version 6 */
 	case 124: case 125: case 126: case 127: case 128:
 		dseg_4E3B = 1;
 		gdi.decomp_shr = code - 120;
 		gdi.decomp_mask = decompress_table[code - 120];
 		GDI_UnkDecode3();
 		break;
-#endif
 
 	default:
 		error("decompressBitmap: default case %d", code);
@@ -965,7 +969,6 @@ void Scumm::redrawBGStrip(int start, int num) {
 #define READ_BIT (cl--,bit = bits&1, bits>>=1,bit)
 #define FILL_BITS if (cl <= 8) { bits |= (*src++ << cl); cl += 8;}
 
-#if defined(DOTT)
 void Scumm::GDI_UnkDecode1() {
 	byte *src = gdi.smap_ptr;
 	byte *dst = gdi.where_to_draw_ptr;
@@ -1017,7 +1020,8 @@ againPos:;
 		dst += 312;
 	} while (--gdi.tempNumLines);
 }
-#else
+
+#if 0
 void Scumm::GDI_UnkDecode1() {
 	byte *src = gdi.smap_ptr;
 	byte *dst = gdi.where_to_draw_ptr;
@@ -1086,7 +1090,6 @@ void Scumm::GDI_UnkDecode2() {
 	} while (--gdi.tempNumLines);
 }
 
-#if defined(DOTT)
 void Scumm::GDI_UnkDecode3() {
 	byte *src = gdi.smap_ptr;
 	byte *dst = gdi.where_to_draw_ptr;
@@ -1153,7 +1156,7 @@ againPos:;
 	} while (--gdi.tempNumLines);
 }
 
-#else
+#if 0
 void Scumm::GDI_UnkDecode3() {
 	byte *src = gdi.smap_ptr;
 	byte *dst = gdi.where_to_draw_ptr;
@@ -1318,10 +1321,8 @@ void Scumm::restoreCharsetBg() {
 		restoreBG(string[0].mask_left, string[0].mask_top, string[0].mask_right, string[0].mask_bottom);
 		charset._hasMask = false;
 		string[0].mask_left = -1;
-#if defined(DOTT)
 		charset._strLeft = -1;
 		charset._left = -1;
-#endif
 	}
 	
 	string[0].xpos2 = string[0].xpos;

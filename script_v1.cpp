@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.2  2001/10/16 20:31:27  strigeus
  * misc fixes
  *
@@ -29,340 +33,338 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-#if !defined(DOTT)
-
 void Scumm::setupOpcodes() {
 	static const OpcodeProc opcode_list[] = {
 	/* 00 */
-	&Scumm::o_stopObjectCode,
-	&Scumm::o_putActor,
-	&Scumm::o_startMusic,
-	&Scumm::o_getActorRoom,
+	&Scumm::o5_stopObjectCode,
+	&Scumm::o5_putActor,
+	&Scumm::o5_startMusic,
+	&Scumm::o5_getActorRoom,
 	/* 04 */
-	&Scumm::o_isGreaterEqual,
-	&Scumm::o_drawObject,
-	&Scumm::o_getActorElevation,
-	&Scumm::o_setState,
+	&Scumm::o5_isGreaterEqual,
+	&Scumm::o5_drawObject,
+	&Scumm::o5_getActorElevation,
+	&Scumm::o5_setState,
 	/* 08 */
-	&Scumm::o_isNotEqual,
-	&Scumm::o_faceActor,
-	&Scumm::o_startScript,
-	&Scumm::o_getVerbEntrypoint,
+	&Scumm::o5_isNotEqual,
+	&Scumm::o5_faceActor,
+	&Scumm::o5_startScript,
+	&Scumm::o5_getVerbEntrypoint,
 	/* 0C */
-	&Scumm::o_resourceRoutines,
-	&Scumm::o_walkActorToActor,
-	&Scumm::o_putActorAtObject,
-	&Scumm::o_getObjectState,
+	&Scumm::o5_resourceRoutines,
+	&Scumm::o5_walkActorToActor,
+	&Scumm::o5_putActorAtObject,
+	&Scumm::o5_getObjectState,
 	/* 10 */
-	&Scumm::o_getObjectOwner,
-	&Scumm::o_animateActor,
-	&Scumm::o_panCameraTo,
-	&Scumm::o_actorSet,
+	&Scumm::o5_getObjectOwner,
+	&Scumm::o5_animateActor,
+	&Scumm::o5_panCameraTo,
+	&Scumm::o5_actorSet,
 	/* 14 */
-	&Scumm::o_print,
-	&Scumm::o_actorFromPos,
-	&Scumm::o_getRandomNr,
-	&Scumm::o_and,
+	&Scumm::o5_print,
+	&Scumm::o5_actorFromPos,
+	&Scumm::o5_getRandomNr,
+	&Scumm::o5_and,
 	/* 18 */
-	&Scumm::o_jumpRelative,
-	&Scumm::o_doSentence,
-	&Scumm::o_move,
-	&Scumm::o_multiply,
+	&Scumm::o5_jumpRelative,
+	&Scumm::o5_doSentence,
+	&Scumm::o5_move,
+	&Scumm::o5_multiply,
 	/* 1C */
-	&Scumm::o_startSound,
-	&Scumm::o_ifClassOfIs,
-	&Scumm::o_walkActorTo,
-	&Scumm::o_isActorInBox,
+	&Scumm::o5_startSound,
+	&Scumm::o5_ifClassOfIs,
+	&Scumm::o5_walkActorTo,
+	&Scumm::o5_isActorInBox,
 	/* 20 */
-	&Scumm::o_stopMusic,
-	&Scumm::o_putActor,
-	&Scumm::o_getAnimCounter,
-	&Scumm::o_getActorY,
+	&Scumm::o5_stopMusic,
+	&Scumm::o5_putActor,
+	&Scumm::o5_getAnimCounter,
+	&Scumm::o5_getActorY,
 	/* 24 */
-	&Scumm::o_loadRoomWithEgo,
-	&Scumm::o_pickupObject,
-	&Scumm::o_setVarRange,
-	&Scumm::o_stringOps,
+	&Scumm::o5_loadRoomWithEgo,
+	&Scumm::o5_pickupObject,
+	&Scumm::o5_setVarRange,
+	&Scumm::o5_stringOps,
 	/* 28 */
-	&Scumm::o_equalZero,
-	&Scumm::o_setOwnerOf,
-	&Scumm::o_startScript,
-	&Scumm::o_delayVariable,
+	&Scumm::o5_equalZero,
+	&Scumm::o5_setOwnerOf,
+	&Scumm::o5_startScript,
+	&Scumm::o5_delayVariable,
 	/* 2C */
-	&Scumm::o_cursorCommand,
-	&Scumm::o_putActorInRoom,
-	&Scumm::o_delay,
-	&Scumm::o_badOpcode,
+	&Scumm::o5_cursorCommand,
+	&Scumm::o5_putActorInRoom,
+	&Scumm::o5_delay,
+	&Scumm::o5_badOpcode,
 	/* 30 */
-	&Scumm::o_matrixOps,
-	&Scumm::o_getInventoryCount,
-	&Scumm::o_setCameraAt,
-	&Scumm::o_roomOps,
+	&Scumm::o5_matrixOps,
+	&Scumm::o5_getInventoryCount,
+	&Scumm::o5_setCameraAt,
+	&Scumm::o5_roomOps,
 	/* 34 */
-	&Scumm::o_getDist,
-	&Scumm::o_findObject,
-	&Scumm::o_walkActorToObject,
-	&Scumm::o_startObject,
+	&Scumm::o5_getDist,
+	&Scumm::o5_findObject,
+	&Scumm::o5_walkActorToObject,
+	&Scumm::o5_startObject,
 	/* 38 */
-	&Scumm::o_lessOrEqual,
-	&Scumm::o_doSentence,
-	&Scumm::o_subtract,
-	&Scumm::o_getActorScale,
+	&Scumm::o5_lessOrEqual,
+	&Scumm::o5_doSentence,
+	&Scumm::o5_subtract,
+	&Scumm::o5_getActorScale,
 	/* 3C */
-	&Scumm::o_stopSound,
-	&Scumm::o_findInventory,
-	&Scumm::o_walkActorTo,
-	&Scumm::o_drawBox,
+	&Scumm::o5_stopSound,
+	&Scumm::o5_findInventory,
+	&Scumm::o5_walkActorTo,
+	&Scumm::o5_drawBox,
 	/* 40 */
-	&Scumm::o_cutscene,
-	&Scumm::o_putActor,
-	&Scumm::o_chainScript,
-	&Scumm::o_getActorX,
+	&Scumm::o5_cutscene,
+	&Scumm::o5_putActor,
+	&Scumm::o5_chainScript,
+	&Scumm::o5_getActorX,
 	/* 44 */
-	&Scumm::o_isLess,
-	&Scumm::o_badOpcode,
-	&Scumm::o_increment,
-	&Scumm::o_setState,
+	&Scumm::o5_isLess,
+	&Scumm::o5_badOpcode,
+	&Scumm::o5_increment,
+	&Scumm::o5_setState,
 	/* 48 */
-	&Scumm::o_isEqual,
-	&Scumm::o_faceActor,
-	&Scumm::o_startScript,
-	&Scumm::o_getVerbEntrypoint,
+	&Scumm::o5_isEqual,
+	&Scumm::o5_faceActor,
+	&Scumm::o5_startScript,
+	&Scumm::o5_getVerbEntrypoint,
 	/* 4C */
-	&Scumm::o_soundKludge,
-	&Scumm::o_walkActorToActor,
-	&Scumm::o_putActorAtObject,
-	&Scumm::o_badOpcode,
+	&Scumm::o5_soundKludge,
+	&Scumm::o5_walkActorToActor,
+	&Scumm::o5_putActorAtObject,
+	&Scumm::o5_badOpcode,
 	/* 50 */
-	&Scumm::o_badOpcode,
-	&Scumm::o_animateActor,
-	&Scumm::o_actorFollowCamera,
-	&Scumm::o_actorSet,
+	&Scumm::o5_badOpcode,
+	&Scumm::o5_animateActor,
+	&Scumm::o5_actorFollowCamera,
+	&Scumm::o5_actorSet,
 	/* 54 */
-	&Scumm::o_setObjectName,
-	&Scumm::o_actorFromPos,
-	&Scumm::o_getActorMoving,
-	&Scumm::o_or,
+	&Scumm::o5_setObjectName,
+	&Scumm::o5_actorFromPos,
+	&Scumm::o5_getActorMoving,
+	&Scumm::o5_or,
 	/* 58 */
-	&Scumm::o_overRide,
-	&Scumm::o_doSentence,
-	&Scumm::o_add,
-	&Scumm::o_divide,
+	&Scumm::o5_overRide,
+	&Scumm::o5_doSentence,
+	&Scumm::o5_add,
+	&Scumm::o5_divide,
 	/* 5C */
-	&Scumm::o_badOpcode,
-	&Scumm::o_actorSetClass,
-	&Scumm::o_walkActorTo,
-	&Scumm::o_isActorInBox,
+	&Scumm::o5_badOpcode,
+	&Scumm::o5_actorSetClass,
+	&Scumm::o5_walkActorTo,
+	&Scumm::o5_isActorInBox,
 	/* 60 */
-	&Scumm::o_freezeScripts,
-	&Scumm::o_putActor,
-	&Scumm::o_stopScript,
-	&Scumm::o_getActorFacing,
+	&Scumm::o5_freezeScripts,
+	&Scumm::o5_putActor,
+	&Scumm::o5_stopScript,
+	&Scumm::o5_getActorFacing,
 	/* 64 */
-	&Scumm::o_loadRoomWithEgo,
-	&Scumm::o_pickupObject,
-	&Scumm::o_getClosestObjActor,
-	&Scumm::o_dummy,
+	&Scumm::o5_loadRoomWithEgo,
+	&Scumm::o5_pickupObject,
+	&Scumm::o5_getClosestObjActor,
+	&Scumm::o5_dummy,
 	/* 68 */
-	&Scumm::o_getScriptRunning,
-	&Scumm::o_setOwnerOf,
-	&Scumm::o_startScript,
-	&Scumm::o_debug,
+	&Scumm::o5_getScriptRunning,
+	&Scumm::o5_setOwnerOf,
+	&Scumm::o5_startScript,
+	&Scumm::o5_debug,
 	/* 6C */
-	&Scumm::o_getActorWidth,
-	&Scumm::o_putActorInRoom,
-	&Scumm::o_stopObjectScript,
-	&Scumm::o_badOpcode,
+	&Scumm::o5_getActorWidth,
+	&Scumm::o5_putActorInRoom,
+	&Scumm::o5_stopObjectScript,
+	&Scumm::o5_badOpcode,
 	/* 70 */
-	&Scumm::o_lights,
-	&Scumm::o_getActorCostume,
-	&Scumm::o_loadRoom,
-	&Scumm::o_roomOps,
+	&Scumm::o5_lights,
+	&Scumm::o5_getActorCostume,
+	&Scumm::o5_loadRoom,
+	&Scumm::o5_roomOps,
 	/* 74 */
-	&Scumm::o_getDist,
-	&Scumm::o_findObject,
-	&Scumm::o_walkActorToObject,
-	&Scumm::o_startObject,
+	&Scumm::o5_getDist,
+	&Scumm::o5_findObject,
+	&Scumm::o5_walkActorToObject,
+	&Scumm::o5_startObject,
 	/* 78 */
-	&Scumm::o_isGreater, /* less? */
-	&Scumm::o_doSentence,
-	&Scumm::o_verbOps,
-	&Scumm::o_getActorWalkBox,
+	&Scumm::o5_isGreater, /* less? */
+	&Scumm::o5_doSentence,
+	&Scumm::o5_verbOps,
+	&Scumm::o5_getActorWalkBox,
 	/* 7C */
-	&Scumm::o_isSoundRunning,
-	&Scumm::o_findInventory,
-	&Scumm::o_walkActorTo,
-	&Scumm::o_drawBox,
+	&Scumm::o5_isSoundRunning,
+	&Scumm::o5_findInventory,
+	&Scumm::o5_walkActorTo,
+	&Scumm::o5_drawBox,
 	/* 80 */
-	&Scumm::o_breakHere,
-	&Scumm::o_putActor,
-	&Scumm::o_startMusic,
-	&Scumm::o_getActorRoom,
+	&Scumm::o5_breakHere,
+	&Scumm::o5_putActor,
+	&Scumm::o5_startMusic,
+	&Scumm::o5_getActorRoom,
 	/* 84 */
-	&Scumm::o_isGreaterEqual, /* less equal? */
-	&Scumm::o_drawObject,
-	&Scumm::o_getActorElevation,
-	&Scumm::o_setState,
+	&Scumm::o5_isGreaterEqual, /* less equal? */
+	&Scumm::o5_drawObject,
+	&Scumm::o5_getActorElevation,
+	&Scumm::o5_setState,
 	/* 88 */
-	&Scumm::o_isNotEqual,
-	&Scumm::o_faceActor,
-	&Scumm::o_startScript,
-	&Scumm::o_getVerbEntrypoint,
+	&Scumm::o5_isNotEqual,
+	&Scumm::o5_faceActor,
+	&Scumm::o5_startScript,
+	&Scumm::o5_getVerbEntrypoint,
 	/* 8C */
-	&Scumm::o_resourceRoutines,
-	&Scumm::o_walkActorToActor,
-	&Scumm::o_putActorAtObject,
-	&Scumm::o_getObjectState,
+	&Scumm::o5_resourceRoutines,
+	&Scumm::o5_walkActorToActor,
+	&Scumm::o5_putActorAtObject,
+	&Scumm::o5_getObjectState,
 	/* 90 */
-	&Scumm::o_getObjectOwner,
-	&Scumm::o_animateActor,
-	&Scumm::o_panCameraTo,
-	&Scumm::o_actorSet,
+	&Scumm::o5_getObjectOwner,
+	&Scumm::o5_animateActor,
+	&Scumm::o5_panCameraTo,
+	&Scumm::o5_actorSet,
 	/* 94 */
-	&Scumm::o_print,
-	&Scumm::o_actorFromPos,
-	&Scumm::o_getRandomNr,
-	&Scumm::o_and,
+	&Scumm::o5_print,
+	&Scumm::o5_actorFromPos,
+	&Scumm::o5_getRandomNr,
+	&Scumm::o5_and,
 	/* 98 */
-	&Scumm::o_quitPauseRestart,
-	&Scumm::o_doSentence,
-	&Scumm::o_move,
-	&Scumm::o_multiply,
+	&Scumm::o5_quitPauseRestart,
+	&Scumm::o5_doSentence,
+	&Scumm::o5_move,
+	&Scumm::o5_multiply,
 	/* 9C */
-	&Scumm::o_startSound,
-	&Scumm::o_ifClassOfIs,
-	&Scumm::o_walkActorTo,
-	&Scumm::o_isActorInBox,
+	&Scumm::o5_startSound,
+	&Scumm::o5_ifClassOfIs,
+	&Scumm::o5_walkActorTo,
+	&Scumm::o5_isActorInBox,
 	/* A0 */
-	&Scumm::o_stopObjectCode,
-	&Scumm::o_putActor,
-	&Scumm::o_getAnimCounter,
-	&Scumm::o_getActorY,
+	&Scumm::o5_stopObjectCode,
+	&Scumm::o5_putActor,
+	&Scumm::o5_getAnimCounter,
+	&Scumm::o5_getActorY,
 	/* A4 */
-	&Scumm::o_loadRoomWithEgo,
-	&Scumm::o_pickupObject,
-	&Scumm::o_setVarRange,
-	&Scumm::o_dummy,
+	&Scumm::o5_loadRoomWithEgo,
+	&Scumm::o5_pickupObject,
+	&Scumm::o5_setVarRange,
+	&Scumm::o5_dummy,
 	/* A8 */
-	&Scumm::o_notEqualZero,
-	&Scumm::o_setOwnerOf,
-	&Scumm::o_startScript,
-	&Scumm::o_saveRestoreVerbs,
+	&Scumm::o5_notEqualZero,
+	&Scumm::o5_setOwnerOf,
+	&Scumm::o5_startScript,
+	&Scumm::o5_saveRestoreVerbs,
 	/* AC */
-	&Scumm::o_expression,
-	&Scumm::o_putActorInRoom,
-	&Scumm::o_wait,
-	&Scumm::o_badOpcode,
+	&Scumm::o5_expression,
+	&Scumm::o5_putActorInRoom,
+	&Scumm::o5_wait,
+	&Scumm::o5_badOpcode,
 	/* B0 */
-	&Scumm::o_matrixOps,
-	&Scumm::o_getInventoryCount,
-	&Scumm::o_setCameraAt,
-	&Scumm::o_roomOps,
+	&Scumm::o5_matrixOps,
+	&Scumm::o5_getInventoryCount,
+	&Scumm::o5_setCameraAt,
+	&Scumm::o5_roomOps,
 	/* B4 */
-	&Scumm::o_getDist,
-	&Scumm::o_findObject,
-	&Scumm::o_walkActorToObject,
-	&Scumm::o_startObject,
+	&Scumm::o5_getDist,
+	&Scumm::o5_findObject,
+	&Scumm::o5_walkActorToObject,
+	&Scumm::o5_startObject,
 	/* B8 */
-	&Scumm::o_lessOrEqual,
-	&Scumm::o_doSentence,
-	&Scumm::o_subtract,
-	&Scumm::o_getActorScale,
+	&Scumm::o5_lessOrEqual,
+	&Scumm::o5_doSentence,
+	&Scumm::o5_subtract,
+	&Scumm::o5_getActorScale,
 	/* BC */
-	&Scumm::o_stopSound,
-	&Scumm::o_findInventory,
-	&Scumm::o_walkActorTo,
-	&Scumm::o_drawBox,
+	&Scumm::o5_stopSound,
+	&Scumm::o5_findInventory,
+	&Scumm::o5_walkActorTo,
+	&Scumm::o5_drawBox,
 	/* C0 */
-	&Scumm::o_endCutscene,
-	&Scumm::o_putActor,
-	&Scumm::o_chainScript,
-	&Scumm::o_getActorX,
+	&Scumm::o5_endCutscene,
+	&Scumm::o5_putActor,
+	&Scumm::o5_chainScript,
+	&Scumm::o5_getActorX,
 	/* C4 */
-	&Scumm::o_isLess,
-	&Scumm::o_badOpcode,
-	&Scumm::o_decrement,
-	&Scumm::o_setState,
+	&Scumm::o5_isLess,
+	&Scumm::o5_badOpcode,
+	&Scumm::o5_decrement,
+	&Scumm::o5_setState,
 	/* C8 */
-	&Scumm::o_isEqual,
-	&Scumm::o_faceActor,
-	&Scumm::o_startScript,
-	&Scumm::o_getVerbEntrypoint,
+	&Scumm::o5_isEqual,
+	&Scumm::o5_faceActor,
+	&Scumm::o5_startScript,
+	&Scumm::o5_getVerbEntrypoint,
 	/* CC */
-	&Scumm::o_pseudoRoom,
-	&Scumm::o_walkActorToActor,
-	&Scumm::o_putActorAtObject,
-	&Scumm::o_badOpcode,
+	&Scumm::o5_pseudoRoom,
+	&Scumm::o5_walkActorToActor,
+	&Scumm::o5_putActorAtObject,
+	&Scumm::o5_badOpcode,
 	/* D0 */
-	&Scumm::o_badOpcode,
-	&Scumm::o_animateActor,
-	&Scumm::o_actorFollowCamera,
-	&Scumm::o_actorSet,
+	&Scumm::o5_badOpcode,
+	&Scumm::o5_animateActor,
+	&Scumm::o5_actorFollowCamera,
+	&Scumm::o5_actorSet,
 	/* D4 */
-	&Scumm::o_setObjectName,
-	&Scumm::o_actorFromPos,
-	&Scumm::o_getActorMoving,
-	&Scumm::o_or,
+	&Scumm::o5_setObjectName,
+	&Scumm::o5_actorFromPos,
+	&Scumm::o5_getActorMoving,
+	&Scumm::o5_or,
 	/* D8 */
-	&Scumm::o_printEgo,
-	&Scumm::o_doSentence,
-	&Scumm::o_add,
-	&Scumm::o_divide,
+	&Scumm::o5_printEgo,
+	&Scumm::o5_doSentence,
+	&Scumm::o5_add,
+	&Scumm::o5_divide,
 	/* DC */
-	&Scumm::o_badOpcode,
-	&Scumm::o_actorSetClass,
-	&Scumm::o_walkActorTo,
-	&Scumm::o_isActorInBox,
+	&Scumm::o5_badOpcode,
+	&Scumm::o5_actorSetClass,
+	&Scumm::o5_walkActorTo,
+	&Scumm::o5_isActorInBox,
 	/* E0 */
-	&Scumm::o_freezeScripts,
-	&Scumm::o_putActor,
-	&Scumm::o_stopScript,
-	&Scumm::o_getActorFacing,
+	&Scumm::o5_freezeScripts,
+	&Scumm::o5_putActor,
+	&Scumm::o5_stopScript,
+	&Scumm::o5_getActorFacing,
 	/* E4 */
-	&Scumm::o_loadRoomWithEgo,
-	&Scumm::o_pickupObject,
-	&Scumm::o_getClosestObjActor,
-	&Scumm::o_dummy,
+	&Scumm::o5_loadRoomWithEgo,
+	&Scumm::o5_pickupObject,
+	&Scumm::o5_getClosestObjActor,
+	&Scumm::o5_dummy,
 	/* E8 */
-	&Scumm::o_getScriptRunning,
-	&Scumm::o_setOwnerOf,
-	&Scumm::o_startScript,
-	&Scumm::o_debug,
+	&Scumm::o5_getScriptRunning,
+	&Scumm::o5_setOwnerOf,
+	&Scumm::o5_startScript,
+	&Scumm::o5_debug,
 	/* EC */
-	&Scumm::o_getActorWidth,
-	&Scumm::o_putActorInRoom,
-	&Scumm::o_stopObjectScript,
-	&Scumm::o_badOpcode,
+	&Scumm::o5_getActorWidth,
+	&Scumm::o5_putActorInRoom,
+	&Scumm::o5_stopObjectScript,
+	&Scumm::o5_badOpcode,
 	/* F0 */
-	&Scumm::o_lights,
-	&Scumm::o_getActorCostume,
-	&Scumm::o_loadRoom,
-	&Scumm::o_roomOps,
+	&Scumm::o5_lights,
+	&Scumm::o5_getActorCostume,
+	&Scumm::o5_loadRoom,
+	&Scumm::o5_roomOps,
 	/* F4 */
-	&Scumm::o_getDist,
-	&Scumm::o_findObject,
-	&Scumm::o_walkActorToObject,
-	&Scumm::o_startObject,
+	&Scumm::o5_getDist,
+	&Scumm::o5_findObject,
+	&Scumm::o5_walkActorToObject,
+	&Scumm::o5_startObject,
 	/* F8 */
-	&Scumm::o_isGreater,
-	&Scumm::o_doSentence,
-	&Scumm::o_verbOps,
-	&Scumm::o_getActorWalkBox,
+	&Scumm::o5_isGreater,
+	&Scumm::o5_doSentence,
+	&Scumm::o5_verbOps,
+	&Scumm::o5_getActorWalkBox,
 	/* FC */
-	&Scumm::o_isSoundRunning,
-	&Scumm::o_findInventory,
-	&Scumm::o_walkActorTo,
-	&Scumm::o_drawBox
+	&Scumm::o5_isSoundRunning,
+	&Scumm::o5_findInventory,
+	&Scumm::o5_walkActorTo,
+	&Scumm::o5_drawBox
 	};
 
 	_opcodes = opcode_list;
 }
 
-void Scumm::o_actorFollowCamera() {
+void Scumm::o5_actorFollowCamera() {
 	actorFollowCamera(getVarOrDirectByte(0x80));
 }
 
-void Scumm::o_actorFromPos() {
+void Scumm::o5_actorFromPos() {
 	int x,y;
 	getResultPos();
 	x = getVarOrDirectWord(0x80);
@@ -370,7 +372,7 @@ void Scumm::o_actorFromPos() {
 	setResult(getActorFromPos(x,y));
 }
 
-void Scumm::o_actorSet() {
+void Scumm::o5_actorSet() {
 	int act = getVarOrDirectByte(0x80);
 	Actor *a = derefActorSafe(act, "actorSet");
 	int i,j;
@@ -435,7 +437,7 @@ void Scumm::o_actorSet() {
 			a->initFrame = getVarOrDirectByte(0x80);
 			break;
 		case 15: /* unk */
-			error("o_actorset:unk not implemented");
+			error("o5_actorset:unk not implemented");
 			break;
 		case 16: /* width */
 			a->width = getVarOrDirectByte(0x80);
@@ -472,12 +474,12 @@ FixRoom:
 			a->data8 = getVarOrDirectByte(0x80); /* unused */
 			break;
 		default:
-			error("o_actorSet: default case");
+			error("o5_actorSet: default case");
 		}
 	}
 }
 
-void Scumm::o_actorSetClass() {
+void Scumm::o5_actorSetClass() {
 	int act = getVarOrDirectWord(0x80);
 	int i;
 
@@ -494,21 +496,21 @@ void Scumm::o_actorSetClass() {
 	}
 }
 
-void Scumm::o_add() {
+void Scumm::o5_add() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
 	setResult(readVar(_resultVarNumber) + a);
 }
 
-void Scumm::o_and() {
+void Scumm::o5_and() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
 	setResult(readVar(_resultVarNumber) & a);
 }
 
-void Scumm::o_animateActor() {
+void Scumm::o5_animateActor() {
 	int act, anim;
 
 	act = getVarOrDirectByte(0x80);
@@ -516,16 +518,16 @@ void Scumm::o_animateActor() {
 	animateActor(act,anim);
 }
 
-void Scumm::o_badOpcode() {
+void Scumm::o5_badOpcode() {
 	error("Scumm opcode %d illegal", _opcode);
 }
 
-void Scumm::o_breakHere() {
+void Scumm::o5_breakHere() {
 	updateScriptPtr();
 	_currentScript = 0xFF;
 }
 
-void Scumm::o_chainScript() {
+void Scumm::o5_chainScript() {
 	int16 vars[16];
 	int data;
 	int cur;
@@ -547,7 +549,7 @@ void Scumm::o_chainScript() {
 	runScript(data, vm.slot[cur].unk1, vm.slot[cur].unk2, vars);
 }
 
-void Scumm::o_cursorCommand() {
+void Scumm::o5_cursorCommand() {
 	int i,j,k;
 	int16 table[16];
 
@@ -612,41 +614,41 @@ void Scumm::o_cursorCommand() {
 	_vars[VAR_USERPUT] = _userPut;
 }
 
-void Scumm::o_cutscene() {
+void Scumm::o5_cutscene() {
 	int16 args[16];
 	getWordVararg(args);
 	cutscene(args);
 }
 
-void Scumm::o_endCutscene() {
+void Scumm::o5_endCutscene() {
 	endCutscene();
 }
 
-void Scumm::o_debug() {
+void Scumm::o5_debug() {
 	getVarOrDirectWord(0x80);
 }
 
-void Scumm::o_decrement() {
+void Scumm::o5_decrement() {
 	getResultPos();
 	setResult(readVar(_resultVarNumber)-1);
 }
 
-void Scumm::o_delay() {
+void Scumm::o5_delay() {
 	int delay = fetchScriptByte();
 	delay |= fetchScriptByte()<<8;
 	delay |= fetchScriptByte()<<16;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
-	o_breakHere();
+	o5_breakHere();
 }
 
-void Scumm::o_delayVariable() {
+void Scumm::o5_delayVariable() {
 	vm.slot[_currentScript].delay = readVar(fetchScriptWord());
 	vm.slot[_currentScript].status = 1;
-	o_breakHere();
+	o5_breakHere();
 }
 
-void Scumm::o_divide() {
+void Scumm::o5_divide() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
@@ -657,7 +659,7 @@ void Scumm::o_divide() {
 		setResult(readVar(_resultVarNumber) / a);
 }
 
-void Scumm::o_doSentence() {
+void Scumm::o5_doSentence() {
 	int a,b;
 	SentenceTab *st;
 
@@ -684,7 +686,7 @@ void Scumm::o_doSentence() {
 	st->unk = 0;
 }
 
-void Scumm::o_drawBox() {
+void Scumm::o5_drawBox() {
 	int x,y,x2,y2,color;
 
 	x = getVarOrDirectWord(0x80);
@@ -698,7 +700,7 @@ void Scumm::o_drawBox() {
 	drawBox(x, y, x2, y2, color);
 }
 
-void Scumm::o_drawObject() {
+void Scumm::o5_drawObject() {
 	int state,obj,index,i;
 	ObjectData *od;
 	byte x,y,w,h;
@@ -718,7 +720,7 @@ void Scumm::o_drawObject() {
 	case 0x1F: /* neither */
 		break;
 	default:
-		error("o_drawObject: default case");
+		error("o5_drawObject: default case");
 	}
 	index = getObjectIndex(obj);
 	if (index==-1)
@@ -747,12 +749,12 @@ void Scumm::o_drawObject() {
 	putState(obj, state);
 }
 
-void Scumm::o_dummy() {
+void Scumm::o5_dummy() {
 	/* nothing */
 }
 
 
-void Scumm::o_expression() {
+void Scumm::o5_expression() {
 	int dst, i;
 
 	_scummStackPos = 0;
@@ -794,28 +796,28 @@ void Scumm::o_expression() {
 	setResult(pop());
 }
 
-void Scumm::o_faceActor() {
+void Scumm::o5_faceActor() {
 	int act, obj;
 	act = getVarOrDirectByte(0x80);
 	obj = getVarOrDirectWord(0x40);
 	faceActorToObj(act, obj);
 }
 
-void Scumm::o_findInventory() {
+void Scumm::o5_findInventory() {
 	int t;
 	getResultPos();
 	t = getVarOrDirectByte(0x80);
 	setResult(findInventory(t,getVarOrDirectByte(0x40)));
 }
 
-void Scumm::o_findObject() {
+void Scumm::o5_findObject() {
 	int t;
 	getResultPos();
 	t = getVarOrDirectWord(0x80);
 	setResult(findObject(t, getVarOrDirectWord(0x40)));
 }
 
-void Scumm::o_freezeScripts() {
+void Scumm::o5_freezeScripts() {
 	int scr = getVarOrDirectByte(0x80);
 
 	if (scr!=0)
@@ -824,62 +826,62 @@ void Scumm::o_freezeScripts() {
 		unfreezeScripts();
 }
 
-void Scumm::o_getActorCostume() {
+void Scumm::o5_getActorCostume() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorCostume")->costume);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorCostume")->costume);
 }
 
-void Scumm::o_getActorElevation() {
+void Scumm::o5_getActorElevation() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorElevation")->elevation);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorElevation")->elevation);
 }
 
-void Scumm::o_getActorFacing() {
+void Scumm::o5_getActorFacing() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorFacing")->facing);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorFacing")->facing);
 }
 
-void Scumm::o_getActorMoving() {
+void Scumm::o5_getActorMoving() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorMoving")->moving);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorMoving")->moving);
 }
 
-void Scumm::o_getActorRoom() {
+void Scumm::o5_getActorRoom() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorRoom")->room);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorRoom")->room);
 }
 
-void Scumm::o_getActorScale() {
+void Scumm::o5_getActorScale() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorScale")->scalex);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorScale")->scalex);
 }
 
-void Scumm::o_getActorWalkBox() {
+void Scumm::o5_getActorWalkBox() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorWalkbox")->walkbox);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorWalkbox")->walkbox);
 }
 
-void Scumm::o_getActorWidth() {
+void Scumm::o5_getActorWidth() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorWidth")->width);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorWidth")->width);
 }
 
-void Scumm::o_getActorX() {
+void Scumm::o5_getActorX() {
 	getResultPos();
 	setResult(getObjX(getVarOrDirectWord(0x80)));
 }
 
-void Scumm::o_getActorY() {
+void Scumm::o5_getActorY() {
 	getResultPos();
 	setResult(getObjY(getVarOrDirectWord(0x80)));
 }
 
-void Scumm::o_getAnimCounter() {
+void Scumm::o5_getAnimCounter() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o_getActorAnimCounter")->cost.animCounter1);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorAnimCounter")->cost.animCounter1);
 }
 
-void Scumm::o_getClosestObjActor() {
+void Scumm::o5_getClosestObjActor() {
 	int obj;
 	int act;
 	int closobj=-1, closnum=-1;
@@ -901,7 +903,7 @@ void Scumm::o_getClosestObjActor() {
 	setResult(closnum);
 }
 
-void Scumm::o_getDist() {
+void Scumm::o5_getDist() {
 	int o1,o2;
 	getResultPos();
 	o1 = getVarOrDirectWord(0x80);
@@ -909,32 +911,32 @@ void Scumm::o_getDist() {
 	setResult(getObjActToObjActDist(o1,o2));
 }
 
-void Scumm::o_getInventoryCount() {
+void Scumm::o5_getInventoryCount() {
 	getResultPos();
 	setResult(getInventoryCount(getVarOrDirectByte(0x80)));
 }
 
-void Scumm::o_getObjectOwner() {
+void Scumm::o5_getObjectOwner() {
 	getResultPos();
 	setResult(getOwner(getVarOrDirectWord(0x80)));
 }
 
-void Scumm::o_getObjectState() {
+void Scumm::o5_getObjectState() {
 	getResultPos();
 	setResult(getState(getVarOrDirectWord(0x80)));
 }
 
-void Scumm::o_getRandomNr() {
+void Scumm::o5_getRandomNr() {
 	getResultPos();
 	setResult(getRandomNumber(getVarOrDirectByte(0x80)+1));
 }
 
-void Scumm::o_getScriptRunning() {
+void Scumm::o5_getScriptRunning() {
 	getResultPos();
 	setResult(getScriptRunning(getVarOrDirectByte(0x80)));
 }
 
-void Scumm::o_getVerbEntrypoint() {
+void Scumm::o5_getVerbEntrypoint() {
 	int a,b;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
@@ -942,7 +944,7 @@ void Scumm::o_getVerbEntrypoint() {
 	setResult(getVerbEntrypoint(a, b));
 }
 
-void Scumm::o_ifClassOfIs() {
+void Scumm::o5_ifClassOfIs() {
 	int act,cls;
 	bool cond = true, b;
 
@@ -957,83 +959,83 @@ void Scumm::o_ifClassOfIs() {
 	if (cond)
 		ignoreScriptWord();
 	else
-		o_jumpRelative();
+		o5_jumpRelative();
 }
 
-void Scumm::o_increment() {
+void Scumm::o5_increment() {
 	getResultPos();
 	setResult(readVar(_resultVarNumber)+1);
 }
 
-void Scumm::o_isActorInBox() {
+void Scumm::o5_isActorInBox() {
 	int box;
 	Actor *a;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o_isActorInBox");
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_isActorInBox");
 	box = getVarOrDirectByte(0x40);
 
 	if (!checkXYInBoxBounds(box, a->x, a->y))
-		o_jumpRelative();
+		o5_jumpRelative();
 	else
 		ignoreScriptWord();
 }
 
-void Scumm::o_isEqual() {
+void Scumm::o5_isEqual() {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
 	if (b == a) ignoreScriptWord();
-	else o_jumpRelative();
+	else o5_jumpRelative();
 
 }
 
-void Scumm::o_isGreater() {
+void Scumm::o5_isGreater() {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
 	if (b > a) ignoreScriptWord();
-	else o_jumpRelative();
+	else o5_jumpRelative();
 }
 
-void Scumm::o_isGreaterEqual() {
+void Scumm::o5_isGreaterEqual() {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
 	if (b >= a) ignoreScriptWord();
-	else o_jumpRelative();
+	else o5_jumpRelative();
 }
 
-void Scumm::o_isLess() {
+void Scumm::o5_isLess() {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
 	if (b < a) ignoreScriptWord();
-	else o_jumpRelative();
+	else o5_jumpRelative();
 }
 
-void Scumm::o_lessOrEqual() {
+void Scumm::o5_lessOrEqual() {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
 	if (b <= a) ignoreScriptWord();
-	else o_jumpRelative();
+	else o5_jumpRelative();
 }
 
-void Scumm::o_isNotEqual() {
+void Scumm::o5_isNotEqual() {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
 	if (b != a) ignoreScriptWord();
-	else o_jumpRelative();
+	else o5_jumpRelative();
 }
 
-void Scumm::o_notEqualZero() {
+void Scumm::o5_notEqualZero() {
 	int a = readVar(fetchScriptWord());
 	if (a != 0) ignoreScriptWord();
-	else o_jumpRelative();
+	else o5_jumpRelative();
 }
 
-void Scumm::o_equalZero() {
+void Scumm::o5_equalZero() {
 	int a = readVar(fetchScriptWord());
 	if (a == 0) ignoreScriptWord();
-	else o_jumpRelative();
+	else o5_jumpRelative();
 }
 
-void Scumm::o_isSoundRunning() {
+void Scumm::o5_isSoundRunning() {
 	int snd;
 	getResultPos();
 	snd = getVarOrDirectByte(0x80);
@@ -1042,11 +1044,11 @@ void Scumm::o_isSoundRunning() {
 	setResult(snd);
 }
 
-void Scumm::o_jumpRelative() {
+void Scumm::o5_jumpRelative() {
 	_scriptPointer += (int16)fetchScriptWord();
 }
 
-void Scumm::o_lights() {
+void Scumm::o5_lights() {
 	int a,b,c;
 
 	a = getVarOrDirectByte(0x80);
@@ -1061,21 +1063,21 @@ void Scumm::o_lights() {
 	_fullRedraw=1;
 }
 
-void Scumm::o_loadRoom() {
+void Scumm::o5_loadRoom() {
 	int room = getVarOrDirectByte(0x80);
 	debug(1,"Loading room %d", room);
 	startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
 
-void Scumm::o_loadRoomWithEgo() {
+void Scumm::o5_loadRoomWithEgo() {
 	int obj, room, x,y;
 	Actor *a;
 
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
 
-	a = derefActorSafe(_vars[VAR_UNK_ACTOR], "o_loadRoomWithEgo");
+	a = derefActorSafe(_vars[VAR_UNK_ACTOR], "o5_loadRoomWithEgo");
 
 	/* Warning: uses _xPos, _yPos from a previous update of those */
 	putActor(a, _xPos, _yPos, room);
@@ -1099,7 +1101,7 @@ void Scumm::o_loadRoomWithEgo() {
 	}
 }
 
-void Scumm::o_matrixOps() {
+void Scumm::o5_matrixOps() {
 	int a,b;
 
 	_opcode = fetchScriptByte();
@@ -1125,12 +1127,12 @@ void Scumm::o_matrixOps() {
 	}
 }
 
-void Scumm::o_move() {
+void Scumm::o5_move() {
 	getResultPos();
 	setResult(getVarOrDirectWord(0x80));
 }
 
-void Scumm::o_multiply() {
+void Scumm::o5_multiply() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
@@ -1138,25 +1140,25 @@ void Scumm::o_multiply() {
 }
 
 
-void Scumm::o_or() {
+void Scumm::o5_or() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
 	setResult(readVar(_resultVarNumber) | a);
 }
 
-void Scumm::o_overRide() {
+void Scumm::o5_overRide() {
 	if(fetchScriptByte()!=0)
 		beginOverride();
 	else
 		endOverride();
 }
 
-void Scumm::o_panCameraTo() {
+void Scumm::o5_panCameraTo() {
 	panCameraTo(getVarOrDirectWord(0x80));
 }
 
-void Scumm::o_pickupObject() {
+void Scumm::o5_pickupObject() {
 	int obj, room;
 
 	obj = getVarOrDirectWord(0x80);
@@ -1172,17 +1174,17 @@ void Scumm::o_pickupObject() {
 	runHook(1);
 }
 
-void Scumm::o_print() {
+void Scumm::o5_print() {
 	_actorToPrintStrFor = getVarOrDirectByte(0x80);
 	decodeParseString();
 }
 
-void Scumm::o_printEgo() {
+void Scumm::o5_printEgo() {
 	_actorToPrintStrFor = _vars[VAR_UNK_ACTOR];
 	decodeParseString();
 }
 
-void Scumm::o_pseudoRoom() {
+void Scumm::o5_pseudoRoom() {
 	int i = fetchScriptByte(), j;
 	while ((j = fetchScriptByte()) != 0) {
 		if (j >= 0x80) {
@@ -1191,11 +1193,11 @@ void Scumm::o_pseudoRoom() {
 	}
 }
 
-void Scumm::o_putActor() {
+void Scumm::o5_putActor() {
 	int x,y;
 	Actor *a;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o_putActor");
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActor");
 	x = getVarOrDirectWord(0x40);
 	y = getVarOrDirectWord(0x20);
 	
@@ -1203,11 +1205,11 @@ void Scumm::o_putActor() {
 }
 
 
-void Scumm::o_putActorAtObject() {
+void Scumm::o5_putActorAtObject() {
 	int obj;
 	Actor *a;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o_putActorAtObject");
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActorAtObject");
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj)!=-1)
 		getObjectXYPos(obj);
@@ -1218,11 +1220,11 @@ void Scumm::o_putActorAtObject() {
 	putActor(a, _xPos, _yPos, a->room);
 }
 
-void Scumm::o_putActorInRoom() {
+void Scumm::o5_putActorInRoom() {
 	int room;
 	Actor *a;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o_putActorInRoom");
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActorInRoom");
 	room = getVarOrDirectByte(0x40);
 	if (a->visible && _currentRoom!=room && _vars[VAR_TALK_ACTOR]==a->number) {
 		clearMsgQueue();
@@ -1232,7 +1234,7 @@ void Scumm::o_putActorInRoom() {
 		putActor(a, 0, 0, 0);
 }
 
-void Scumm::o_quitPauseRestart() {
+void Scumm::o5_quitPauseRestart() {
 	switch(fetchScriptByte()) {
 	case 1:
 		pauseGame(0);
@@ -1243,7 +1245,7 @@ void Scumm::o_quitPauseRestart() {
 	}
 }
 
-void Scumm::o_resourceRoutines() {
+void Scumm::o5_resourceRoutines() {
 	int res;
 
 	_opcode = fetchScriptByte();
@@ -1322,7 +1324,7 @@ void Scumm::o_resourceRoutines() {
 	}
 }
 
-void Scumm::o_roomOps() {
+void Scumm::o5_roomOps() {
 	int a,b,c,d,e;
 
 	_opcode = fetchScriptByte();
@@ -1436,7 +1438,7 @@ void Scumm::o_roomOps() {
 	}
 }
 
-void Scumm::o_saveRestoreVerbs() {
+void Scumm::o5_saveRestoreVerbs() {
 	int a,b,c,slot, slot2;
 
 	_opcode = fetchScriptByte();
@@ -1481,15 +1483,15 @@ void Scumm::o_saveRestoreVerbs() {
 		}
 		break;
 	default:
-		error("o_saveRestoreVerbs: invalid opcode");
+		error("o5_saveRestoreVerbs: invalid opcode");
 	}
 }
 
-void Scumm::o_setCameraAt() {
+void Scumm::o5_setCameraAt() {
 	setCameraAtEx(getVarOrDirectWord(0x80));
 }
 
-void Scumm::o_setObjectName() {
+void Scumm::o5_setObjectName() {
 	int act = getVarOrDirectWord(0x80);
 	int size;
 	int a;
@@ -1521,7 +1523,7 @@ void Scumm::o_setObjectName() {
 	runHook(0);
 }
 
-void Scumm::o_setOwnerOf() {
+void Scumm::o5_setOwnerOf() {
 	int obj, owner;
 
 	obj = getVarOrDirectWord(0x80);
@@ -1530,7 +1532,7 @@ void Scumm::o_setOwnerOf() {
 	setOwnerOf(obj, owner);
 }
 
-void Scumm::o_setState() {
+void Scumm::o5_setState() {
 	int obj, state;
 	obj = getVarOrDirectWord(0x80);
 	state = getVarOrDirectByte(0x40);
@@ -1540,7 +1542,7 @@ void Scumm::o_setState() {
 		clearDrawObjectQueue();
 }
 
-void Scumm::o_setVarRange() {
+void Scumm::o5_setVarRange() {
 	int a,b;
 
 	getResultPos();
@@ -1556,7 +1558,7 @@ void Scumm::o_setVarRange() {
 	} while (--a);
 }
 
-void Scumm::o_soundKludge() {
+void Scumm::o5_soundKludge() {
 	int16 items[15];
 	int i;
 	
@@ -1569,11 +1571,11 @@ void Scumm::o_soundKludge() {
 
 }
 
-void Scumm::o_startMusic() {
+void Scumm::o5_startMusic() {
 	addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
-void Scumm::o_startObject() {
+void Scumm::o5_startObject() {
 	int obj, script;
 	int16 data[16];
 
@@ -1584,7 +1586,7 @@ void Scumm::o_startObject() {
 	runVerbCode(obj, script, 0, 0, data);
 }
 
-void Scumm::o_startScript() {
+void Scumm::o5_startScript() {
 	int op,script;
 	int16 data[16];
 	int a,b;
@@ -1601,24 +1603,24 @@ void Scumm::o_startScript() {
 	runScript(script, a, b, data);
 }
 
-void Scumm::o_startSound() {
+void Scumm::o5_startSound() {
 	addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
-void Scumm::o_stopMusic() {
+void Scumm::o5_stopMusic() {
 	/* TODO: not implemented */
-	warning("o_stopMusic: not implemented");
+	warning("o5_stopMusic: not implemented");
 }
 
-void Scumm::o_stopObjectCode() {
+void Scumm::o5_stopObjectCode() {
 	stopObjectCode();
 }
 
-void Scumm::o_stopObjectScript() {
+void Scumm::o5_stopObjectScript() {
 	stopObjectScript(getVarOrDirectWord(0x80));
 }
 
-void Scumm::o_stopScript() {
+void Scumm::o5_stopScript() {
 	int script;
 
 	script = getVarOrDirectByte(0x80);
@@ -1628,11 +1630,11 @@ void Scumm::o_stopScript() {
 		stopScriptNr(script);
 }
 
-void Scumm::o_stopSound() {
+void Scumm::o5_stopSound() {
 	unkSoundProc1(getVarOrDirectByte(0x80));
 }
 
-void Scumm::o_stringOps() {
+void Scumm::o5_stringOps() {
 	int a,b,c,i;
 	byte *ptr;
 
@@ -1681,14 +1683,14 @@ void Scumm::o_stringOps() {
 	}
 }
 
-void Scumm::o_subtract() {
+void Scumm::o5_subtract() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
 	setResult(readVar(_resultVarNumber) - a);
 }
 
-void Scumm::o_verbOps() {
+void Scumm::o5_verbOps() {
 	int verb,slot;
 	VerbSlot *vs;
 	int a,b;
@@ -1803,7 +1805,7 @@ void Scumm::o_verbOps() {
 	verbMouseOver(0);
 }
 
-void Scumm::o_wait() {
+void Scumm::o5_wait() {
 	byte *oldaddr;
 
 	oldaddr = _scriptPointer - 1;
@@ -1811,7 +1813,7 @@ void Scumm::o_wait() {
 	_opcode = fetchScriptByte();
 	switch(_opcode&0x1F) {
 	case 1: /* wait for actor */
-		if (derefActorSafe(getVarOrDirectByte(0x80), "o_wait")->moving)
+		if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving)
 			break;
 		return;
 	case 2: /* wait for message */
@@ -1833,35 +1835,35 @@ void Scumm::o_wait() {
 			return;
 		break;
 	default:
-		error("o_wait: default case");
+		error("o5_wait: default case");
 		return;
 	}
 
 	_scriptPointer = oldaddr;
-	o_breakHere();
+	o5_breakHere();
 }
 
-void Scumm::o_walkActorTo() {
+void Scumm::o5_walkActorTo() {
 	int x, y;
 	Actor *a;
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o_walkActorTo");
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorTo");
 	x = getVarOrDirectWord(0x40);
 	y = getVarOrDirectWord(0x20);
 	startWalkActor(a, x, y, 0xFF);
 }
 
-void Scumm::o_walkActorToActor() {
+void Scumm::o5_walkActorToActor() {
 	int b,x,y;
 	Actor *a, *a2;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o_walkActorToActor");
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToActor");
 	if (a->room != _currentRoom) {
 		getVarOrDirectByte(0x40);
 		fetchScriptByte();
 		return;
 	}
 
-	a2 = derefActorSafe(getVarOrDirectByte(0x40), "o_walkActorToActor(2)");
+	a2 = derefActorSafe(getVarOrDirectByte(0x40), "o5_walkActorToActor(2)");
 	if (a2->room != _currentRoom) {
 		fetchScriptByte();
 		return;
@@ -1881,11 +1883,11 @@ void Scumm::o_walkActorToActor() {
 	startWalkActor(a, x, y, 0xFF);
 }
 
-void Scumm::o_walkActorToObject() {
+void Scumm::o5_walkActorToObject() {
 	int obj;
 	Actor *a;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o_walkActorToObject");
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToObject");
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj)!=-1) {
 		getObjectXYPos(obj);
@@ -1995,4 +1997,3 @@ void Scumm::decodeParseString() {
 }
 
 
-#endif

@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.4  2001/10/16 12:20:20  strigeus
  * made files compile on unix
  *
@@ -91,7 +95,7 @@ void Scumm::openRoom(int room) {
 			error("Room %d not in %s", room, buf);
 			return;
 		}
-		askForDisk();
+		askForDisk(buf);
 	}
 
 	do {
@@ -99,7 +103,7 @@ void Scumm::openRoom(int room) {
 		_encbyte = 0;
 		if (openResourceFile(buf)) 
 			break;
-		askForDisk();
+		askForDisk(buf);
 	} while(1);
 
 	deleteRoomOffsets();
@@ -165,14 +169,11 @@ bool Scumm::openResourceFile(const char *filename) {
 	return _fileHandle != NULL;
 }
 
-void Scumm::askForDisk() {
-	/* TODO: Not yet implemented */
-	error("askForDisk: not yet implemented");
+void Scumm::askForDisk(const char *filename) {
+	error("Cannot find '%s'", filename);
 }
 
-#if !defined(DOTT)
-
-void Scumm::readIndexFile(int mode) {
+void Scumm::readIndexFileV5(int mode) {
 	uint32 blocktype,itemsize;
 	int numblock = 0;
 #if defined(SCUMM_BIG_ENDIAN)
@@ -263,10 +264,8 @@ void Scumm::readIndexFile(int mode) {
 	_numGlobalScripts = _maxScripts;
 	_dynamicRoomOffsets = true;
 }
-#else
 
-
-void Scumm::readIndexFile() {
+void Scumm::readIndexFileV6() {
 	uint32 blocktype,itemsize;
 	int numblock = 0;
 	int num, i;
@@ -342,10 +341,8 @@ void Scumm::readIndexFile() {
 
 	openRoom(-1);
 }
-#endif
 
 
-#if defined(DOTT)
 void Scumm::readArrayFromIndexFile() {
 	int num;
 	int a,b,c;
@@ -361,31 +358,6 @@ void Scumm::readArrayFromIndexFile() {
 	}
 }
 
-#endif
-
-#if defined(DOTT)
-
-void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
-	int num,i;
-	
-	debug(9, "readResTypeList(%d,%x,%s)",id,FROM_LE_32(tag),name);
-
-	num = fileReadWordLE();
-	assert(num == res.num[id]);
-
-	fileRead(_fileHandle, res.roomno[id], num*sizeof(uint8));
-	fileRead(_fileHandle, res.roomoffs[id], num*sizeof(uint32));
-#if defined(SCUMM_BIG_ENDIAN)
-	for (i=0; i<num; i++)
-		res.roomoffs[id][i] = FROM_LE_32(res.roomoffs[id][i]);
-#endif
-
-}
-
-	
-
-#else
-
 void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 	int num;
 	int i;
@@ -394,11 +366,16 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 	
 	num = fileReadWordLE();
 
-	if (num>=0xFF) {
-		error("Too many %ss (%d) in directory", name, num);
+	if (_majorScummVersion == 6) {
+		if (num != res.num[id]) {
+			error("Invalid number of %ss (%d) in directory", name, num);	
+		}
+	} else {
+		if (num>=0xFF) {
+			error("Too many %ss (%d) in directory", name, num);
+		}
+		allocResTypeData(id, tag, num, name, 1);
 	}
-
-	allocResTypeData(id, tag, num, name, 1);
 	
 	fileRead(_fileHandle, res.roomno[id], num*sizeof(uint8));
 	fileRead(_fileHandle, res.roomoffs[id], num*sizeof(uint32));
@@ -409,7 +386,6 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 #endif
 }
 
-#endif
 
 void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name, int mode) {
 	debug(9, "allocResTypeData(%d,%x,%d,%s,%d)",id,FROM_LE_32(tag),num,name,mode);
@@ -774,7 +750,6 @@ void Scumm::unkResProc(int a, int b) {
 }
 
 
-#if defined(DOTT)
 void Scumm::readMAXS() {
 	_numVariables = fileReadWordLE();
 	fileReadWordLE();
@@ -821,6 +796,5 @@ void Scumm::readMAXS() {
 	_numGlobalScripts = 200;
 	_dynamicRoomOffsets = 1;
 }
-#endif
 
 

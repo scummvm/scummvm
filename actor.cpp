@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.5  2001/10/16 10:01:44  strigeus
  * preliminary DOTT support
  *
@@ -54,10 +58,8 @@ void Scumm::initActor(Actor *a, int mode) {
 	a->elevation = 0;
 	a->width = 0x18;
 	a->talkColor = 0xF;
-#if defined(DOTT)
 	a->new_2 = 0;
 	a->new_1 = -80;
-#endif
 	a->scaley = a->scalex = 0xFF;
 	a->charset = 0;
 	a->sound[0] = 0;
@@ -75,9 +77,7 @@ void Scumm::initActor(Actor *a, int mode) {
 
 	a->ignoreBoxes = 0;
 	a->neverZClip = 0;
-#if defined(DOTT)
 	a->new_3 = 0;
-#endif
 	a->initFrame = 1;
 	a->walkFrame = 2;
 	a->standFrame = 3;
@@ -636,7 +636,7 @@ void Scumm::walkActors() {
 	}
 }
 
-#if !defined(DOTT)
+/* Used in Scumm v5 only. Play sounds associated with actors */
 void Scumm::playActorSounds() {
 	int i;
 	Actor *a;
@@ -654,7 +654,6 @@ void Scumm::playActorSounds() {
 		}
 	}
 }
-#endif
 
 void Scumm::walkActor(Actor *a) {
 	int j;

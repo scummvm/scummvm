@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.5  2001/10/17 12:37:50  strigeus
  * fixed big endian bug
  *
@@ -133,7 +137,6 @@ int Scumm::getObjectOrActorXY(int object) {
 	return 0;
 }
 
-#if defined(DOTT)
 void Scumm::getObjectXYPos(int object) {
 	ObjectData *od = &_objs[getObjectIndex(object)];
 	int state;
@@ -142,37 +145,32 @@ void Scumm::getObjectXYPos(int object) {
 	int x,y;
 	AdjustBoxResult abr;
 
-	state = getState(object)-1;
-	if (state<0)
-		state = 0;
+	if (_majorScummVersion==6) {
+		state = getState(object)-1;
+		if (state<0)
+			state = 0;
 
-	if (od->fl_object_index) {
-		ptr = getResourceAddress(0xD, od->fl_object_index);
-		ptr = findResource(MKID('OBIM'), ptr);
+		if (od->fl_object_index) {
+			ptr = getResourceAddress(0xD, od->fl_object_index);
+			ptr = findResource(MKID('OBIM'), ptr);
+		} else {
+			ptr = getResourceAddress(1, _roomResource);
+			ptr += od->offs_obim_to_room;
+		}
+
+		imhd = (ImageHeader*)findResource2(MKID('IMHD'), ptr);
+		x = od->x_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
+		y = od->y_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
 	} else {
-		ptr = getResourceAddress(1, _roomResource);
-		ptr += od->offs_obim_to_room;
+		x = od->cdhd_10;
+		y = od->cdhd_12;
 	}
-
-	imhd = (ImageHeader*)findResource2(MKID('IMHD'), ptr);
-	x = od->x_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
-	y = od->y_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
 
 	abr = adjustXYToBeInBox(0, x, y);
 	_xPos = abr.x;
 	_yPos = abr.y;
 	_dir = od->actordir&3;
 }
-#else
-void Scumm::getObjectXYPos(int object) {
-	ObjectData *od = &_objs[getObjectIndex(object)];
-	AdjustBoxResult abr;
-	abr = adjustXYToBeInBox(0, od->cdhd_10, od->cdhd_12);
-	_xPos = abr.x;
-	_yPos = abr.y;
-	_dir = od->actordir&3;
-}
-#endif
 
 int Scumm::getObjActToObjActDist(int a, int b) {
 	int x,y;
@@ -406,28 +404,33 @@ void Scumm::loadRoomObjects() {
 		cdhd = (CodeHeader*)findResource2(MKID('CDHD'), ptr);
 		_objs[i].obj_nr = READ_LE_UINT16(&cdhd->obj_id);
 
-#if defined(DOTT)
-		_objs[i].numstrips = READ_LE_UINT16(&cdhd->w)>>3;
-		_objs[i].height = READ_LE_UINT16(&cdhd->h)>>3;
-		_objs[i].x_pos = ((int16)READ_LE_UINT16(&cdhd->x))>>3;
-		_objs[i].y_pos = ((int16)READ_LE_UINT16(&cdhd->y))>>3;
-#else
-		_objs[i].numstrips = cdhd->w;
-		_objs[i].height = cdhd->h;
-		_objs[i].x_pos = cdhd->x;
-		_objs[i].y_pos = cdhd->y;
-#endif
-		if (cdhd->flags == 0x80) {
-			_objs[i].parentstate = 1<<4;
+		if (_majorScummVersion == 6) {
+			_objs[i].numstrips = READ_LE_UINT16(&cdhd->v6.w)>>3;
+			_objs[i].height = READ_LE_UINT16(&cdhd->v6.h)>>3;
+			_objs[i].x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x))>>3;
+			_objs[i].y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y))>>3;
+			if (cdhd->v6.flags == 0x80) {
+				_objs[i].parentstate = 1<<4;
+			} else {
+				_objs[i].parentstate = (cdhd->v6.flags&0xF)<<4;
+			}
+			_objs[i].parent = cdhd->v6.parent;
+			_objs[i].actordir = cdhd->v6.actordir;
 		} else {
-			_objs[i].parentstate = (cdhd->flags&0xF)<<4;
+			_objs[i].numstrips = cdhd->v5.w;
+			_objs[i].height = cdhd->v5.h;
+			_objs[i].x_pos = cdhd->v5.x;
+			_objs[i].y_pos = cdhd->v5.y;
+			if (cdhd->v5.flags == 0x80) {
+				_objs[i].parentstate = 1<<4;
+			} else {
+				_objs[i].parentstate = (cdhd->v5.flags&0xF)<<4;
+			}
+			_objs[i].parent = cdhd->v5.parent;
+			_objs[i].cdhd_10 = READ_LE_UINT16(&cdhd->v5.unk2);
+			_objs[i].cdhd_12 = READ_LE_UINT16(&cdhd->v5.unk3);
+			_objs[i].actordir = cdhd->v5.actordir;
 		}
-		_objs[i].parent = cdhd->parent;
-#if !defined(DOTT)
-		_objs[i].cdhd_10 = READ_LE_UINT16(&cdhd->unk2);
-		_objs[i].cdhd_12 = READ_LE_UINT16(&cdhd->unk3);
-#endif
-		_objs[i].actordir = cdhd->actordir;
 		_objs[i].fl_object_index = 0;
 	}
 
@@ -705,7 +708,6 @@ int Scumm::getInventoryCount(int owner) {
 	return count;
 }
 
-#if defined(DOTT)
 void Scumm::setObjectState(int obj, int state, int x, int y) {
 	int i;
 
@@ -729,7 +731,6 @@ static int getDist(int x, int y, int x2, int y2) {
 		return a;
 	return b;
 }
-
 
 int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f) {
 	int i,j;
@@ -764,4 +765,3 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 
 	return getDist(x,y,x2,y2) * 0xFF / ((i + j)>>1);
 }
-#endif

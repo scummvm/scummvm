@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.11  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.10  2001/10/17 11:30:19  strigeus
  * *** empty log message ***
  *
@@ -58,6 +62,7 @@
 #define SCALEUP_2x2
 
 Scumm scumm;
+ScummDebugger debugger;
 
 static SDL_Surface *screen;
 
@@ -103,6 +108,9 @@ void waitForTimer(Scumm *s) {
 				}
 				if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
 					s->_fastMode ^= 1;
+				}
+				if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
+					debugger.attach(s);
 				}
 				
 				break;
@@ -345,19 +353,10 @@ void initGraphics(Scumm *s) {
 		sizeof(ImageHeader),
 		sizeof(Scumm)
 	);
-
-
 }
 
 #undef main
 int main(int argc, char* argv[]) {
-#if defined(DOTT)
-	scumm._exe_name = "tentacle";
-#elif defined(INDY4)
-	scumm._exe_name = "atlantis";
-#else
-	scumm._exe_name = "monkey2";
-#endif
 	scumm._videoMode = 0x13;
 	scumm.scummMain(argc, argv);
 	return 0;

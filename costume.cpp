@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.4  2001/10/16 20:31:27  strigeus
  * misc fixes
  *
@@ -112,7 +116,6 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	_ymove -= (int16)READ_LE_UINT16(_srcptr+10);
 	_srcptr += 12;
 
-#if defined(DOTT)
 	switch(_ptr[7]&0x7F) {
 	case 0x60: case 0x61:
 		ex1 = _srcptr[0];
@@ -123,7 +126,6 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 			_srcptr = _ptr + READ_LE_UINT16(_ptr + ex1 + ex2*2) + 14;
 		}
 	} 
-#endif
 
 	_xpos = _actorX;
 	_ypos = _actorY;
@@ -686,12 +688,15 @@ StartPos:;
 }
 
 void CostumeRenderer::loadCostume(int id) {
-	_ptr = _vm->getResourceAddress(3, id)
-#if defined(DOTT)
-		+ 8;
-#else
-		+ 2;
-#endif
+	
+	_ptr = _vm->getResourceAddress(3, id);
+	
+	if (_vm->_majorScummVersion == 6) {
+		_ptr += 8;
+	} else {
+		_ptr += 2;
+	}
+
 	switch(_ptr[7]&0x7F) {
 	case 0x58:
 		_numColors = 16;
@@ -699,14 +704,12 @@ void CostumeRenderer::loadCostume(int id) {
 	case 0x59:
 		_numColors = 32;
 		break;
-#if defined(DOTT)
-	case 0x60:
+	case 0x60: /* New since version 6 */
 		_numColors = 16;
 		break;
-	case 0x61:
+	case 0x61: /* New since version 6 */
 		_numColors = 32;
 		break;
-#endif
 	default:
 		error("Costume %d is invalid", id);
 	}

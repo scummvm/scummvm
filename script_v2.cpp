@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.2  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.1  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -26,330 +30,328 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-#if defined(DOTT)
-
 void Scumm::setupOpcodes2() {
 	static const OpcodeProc opcode_list[256] = {
 	/* 00 */
-	&Scumm::o2_pushByte,
-	&Scumm::o2_pushWord,
-	&Scumm::o2_pushByteVar,
-	&Scumm::o2_pushWordVar,
+	&Scumm::o6_pushByte,
+	&Scumm::o6_pushWord,
+	&Scumm::o6_pushByteVar,
+	&Scumm::o6_pushWordVar,
 	/* 04 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_byteArrayRead,
-	&Scumm::o2_wordArrayRead,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_byteArrayRead,
+	&Scumm::o6_wordArrayRead,
 	/* 08 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_byteArrayIndexedRead,
-	&Scumm::o2_wordArrayIndexedRead,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_byteArrayIndexedRead,
+	&Scumm::o6_wordArrayIndexedRead,
 	/* 0C */
-	&Scumm::o2_dup,
-	&Scumm::o2_zero,
-	&Scumm::o2_eq,
-	&Scumm::o2_neq,
+	&Scumm::o6_dup,
+	&Scumm::o6_zero,
+	&Scumm::o6_eq,
+	&Scumm::o6_neq,
 	/* 10 */
-	&Scumm::o2_gt,
-	&Scumm::o2_lt,
-	&Scumm::o2_le,
-	&Scumm::o2_ge,
+	&Scumm::o6_gt,
+	&Scumm::o6_lt,
+	&Scumm::o6_le,
+	&Scumm::o6_ge,
 	/* 14 */
-	&Scumm::o2_add,
-	&Scumm::o2_sub,
-	&Scumm::o2_mul,
-	&Scumm::o2_div,
+	&Scumm::o6_add,
+	&Scumm::o6_sub,
+	&Scumm::o6_mul,
+	&Scumm::o6_div,
 	/* 18 */
-	&Scumm::o2_land,
-	&Scumm::o2_lor,
-	&Scumm::o2_kill,
-	&Scumm::o2_invalid,
+	&Scumm::o6_land,
+	&Scumm::o6_lor,
+	&Scumm::o6_kill,
+	&Scumm::o6_invalid,
 	/* 1C */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 20 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 24 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 28 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 2C */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 30 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 34 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 38 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 3C */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* 40 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_writeByteVar,
-	&Scumm::o2_writeWordVar,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_writeByteVar,
+	&Scumm::o6_writeWordVar,
 	/* 44 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_byteArrayWrite,
-	&Scumm::o2_wordArrayWrite,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_byteArrayWrite,
+	&Scumm::o6_wordArrayWrite,
 	/* 48 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_byteArrayIndexedWrite,
-	&Scumm::o2_wordArrayIndexedWrite,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_byteArrayIndexedWrite,
+	&Scumm::o6_wordArrayIndexedWrite,
 	/* 4C */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_byteVarInc,
-	&Scumm::o2_wordVarInc,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_byteVarInc,
+	&Scumm::o6_wordVarInc,
 	/* 50 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_byteArrayInc,
-	&Scumm::o2_wordArrayInc,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_byteArrayInc,
+	&Scumm::o6_wordArrayInc,
 	/* 54 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_byteVarDec,
-	&Scumm::o2_wordVarDec,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_byteVarDec,
+	&Scumm::o6_wordVarDec,
 	/* 58 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_byteArrayDec,
-	&Scumm::o2_wordArrayDec,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_byteArrayDec,
+	&Scumm::o6_wordArrayDec,
 	/* 5C */
-	&Scumm::o2_jumpTrue,
-	&Scumm::o2_jumpFalse,
-	&Scumm::o2_startScriptEx,
-	&Scumm::o2_startScript,
+	&Scumm::o6_jumpTrue,
+	&Scumm::o6_jumpFalse,
+	&Scumm::o6_startScriptEx,
+	&Scumm::o6_startScript,
 	/* 60 */
-	&Scumm::o2_startObject,
-	&Scumm::o2_setObjectState,
-	&Scumm::o2_setObjectXY,
-	&Scumm::o2_invalid,
+	&Scumm::o6_startObject,
+	&Scumm::o6_setObjectState,
+	&Scumm::o6_setObjectXY,
+	&Scumm::o6_invalid,
 	/* 64 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_stopObjectCode,
-	&Scumm::o2_stopObjectCode,
-	&Scumm::o2_endCutscene,
+	&Scumm::o6_invalid,
+	&Scumm::o6_stopObjectCode,
+	&Scumm::o6_stopObjectCode,
+	&Scumm::o6_endCutscene,
 	/* 68 */
-	&Scumm::o2_cutScene,
-	&Scumm::o2_stopMusic,
-	&Scumm::o2_freezeUnfreeze,
-	&Scumm::o2_cursorCommand,
+	&Scumm::o6_cutScene,
+	&Scumm::o6_stopMusic,
+	&Scumm::o6_freezeUnfreeze,
+	&Scumm::o6_cursorCommand,
 	/* 6C */
-	&Scumm::o2_breakHere,
-	&Scumm::o2_ifClassOfIs,
-	&Scumm::o2_setClass,
-	&Scumm::o2_getState,
+	&Scumm::o6_breakHere,
+	&Scumm::o6_ifClassOfIs,
+	&Scumm::o6_setClass,
+	&Scumm::o6_getState,
 	/* 70 */
-	&Scumm::o2_setState,
-	&Scumm::o2_setOwner,
-	&Scumm::o2_getOwner,
-	&Scumm::o2_jump,
+	&Scumm::o6_setState,
+	&Scumm::o6_setOwner,
+	&Scumm::o6_getOwner,
+	&Scumm::o6_jump,
 	/* 74 */
-	&Scumm::o2_startSound,
-	&Scumm::o2_stopSound,
-	&Scumm::o2_startMusic,
-	&Scumm::o2_stopObjectScript,
+	&Scumm::o6_startSound,
+	&Scumm::o6_stopSound,
+	&Scumm::o6_startMusic,
+	&Scumm::o6_stopObjectScript,
 	/* 78 */
-	&Scumm::o2_panCameraTo,
-	&Scumm::o2_actorFollowCamera,
-	&Scumm::o2_setCameraAt,
-	&Scumm::o2_loadRoom,
+	&Scumm::o6_panCameraTo,
+	&Scumm::o6_actorFollowCamera,
+	&Scumm::o6_setCameraAt,
+	&Scumm::o6_loadRoom,
 	/* 7C */
-	&Scumm::o2_stopScript,
-	&Scumm::o2_walkActorToObj,
-	&Scumm::o2_walkActorTo,
-	&Scumm::o2_putActorInRoom,
+	&Scumm::o6_stopScript,
+	&Scumm::o6_walkActorToObj,
+	&Scumm::o6_walkActorTo,
+	&Scumm::o6_putActorInRoom,
 	/* 80 */
-	&Scumm::o2_putActorAtObject,
-	&Scumm::o2_faceActor,
-	&Scumm::o2_animateActor,
-	&Scumm::o2_doSentence,
+	&Scumm::o6_putActorAtObject,
+	&Scumm::o6_faceActor,
+	&Scumm::o6_animateActor,
+	&Scumm::o6_doSentence,
 	/* 84 */
-	&Scumm::o2_pickupObject,
-	&Scumm::o2_loadRoomWithEgo,
-	&Scumm::o2_invalid,
-	&Scumm::o2_getRandomNumber,
+	&Scumm::o6_pickupObject,
+	&Scumm::o6_loadRoomWithEgo,
+	&Scumm::o6_invalid,
+	&Scumm::o6_getRandomNumber,
 	/* 88 */
-	&Scumm::o2_getRandomNumberRange,
-	&Scumm::o2_invalid,
-	&Scumm::o2_getActorMoving,
-	&Scumm::o2_getScriptRunning,
+	&Scumm::o6_getRandomNumberRange,
+	&Scumm::o6_invalid,
+	&Scumm::o6_getActorMoving,
+	&Scumm::o6_getScriptRunning,
 	/* 8C */
-	&Scumm::o2_getActorRoom,
-	&Scumm::o2_getObjectX,
-	&Scumm::o2_getObjectY,
-	&Scumm::o2_getObjectDir,
+	&Scumm::o6_getActorRoom,
+	&Scumm::o6_getObjectX,
+	&Scumm::o6_getObjectY,
+	&Scumm::o6_getObjectDir,
 	/* 90 */
-	&Scumm::o2_getActorWalkBox,
-	&Scumm::o2_getActorCostume,
-	&Scumm::o2_findInventory,
-	&Scumm::o2_getInventoryCount,
+	&Scumm::o6_getActorWalkBox,
+	&Scumm::o6_getActorCostume,
+	&Scumm::o6_findInventory,
+	&Scumm::o6_getInventoryCount,
 	/* 94 */
-	&Scumm::o2_getVerbFromXY,
-	&Scumm::o2_beginOverride,
-	&Scumm::o2_endOverride,
-	&Scumm::o2_setObjectName,
+	&Scumm::o6_getVerbFromXY,
+	&Scumm::o6_beginOverride,
+	&Scumm::o6_endOverride,
+	&Scumm::o6_setObjectName,
 	/* 98 */
-	&Scumm::o2_isSoundRunning,
-	&Scumm::o2_setBoxFlags,
-	&Scumm::o2_createBoxMatrix,
-	&Scumm::o2_resourceRoutines,
+	&Scumm::o6_isSoundRunning,
+	&Scumm::o6_setBoxFlags,
+	&Scumm::o6_createBoxMatrix,
+	&Scumm::o6_resourceRoutines,
 	/* 9C */
-	&Scumm::o2_roomOps,
-	&Scumm::o2_actorSet,
-	&Scumm::o2_verbOps,
-	&Scumm::o2_getActorFromXY,
+	&Scumm::o6_roomOps,
+	&Scumm::o6_actorSet,
+	&Scumm::o6_verbOps,
+	&Scumm::o6_getActorFromXY,
 	/* A0 */
-	&Scumm::o2_findObject,
-	&Scumm::o2_pseudoRoom,
-	&Scumm::o2_getActorElevation,
-	&Scumm::o2_getVerbEntrypoint,
+	&Scumm::o6_findObject,
+	&Scumm::o6_pseudoRoom,
+	&Scumm::o6_getActorElevation,
+	&Scumm::o6_getVerbEntrypoint,
 	/* A4 */
-	&Scumm::o2_arrayOps,
-	&Scumm::o2_saveRestoreVerbs,
-	&Scumm::o2_drawBox,
-	&Scumm::o2_invalid,
+	&Scumm::o6_arrayOps,
+	&Scumm::o6_saveRestoreVerbs,
+	&Scumm::o6_drawBox,
+	&Scumm::o6_invalid,
 	/* A8 */
-	&Scumm::o2_getActorWidth,
-	&Scumm::o2_wait,
-	&Scumm::o2_getActorScaleX,
-	&Scumm::o2_getActorAnimCounter1,
+	&Scumm::o6_getActorWidth,
+	&Scumm::o6_wait,
+	&Scumm::o6_getActorScaleX,
+	&Scumm::o6_getActorAnimCounter1,
 	/* AC */
-	&Scumm::o2_soundKludge,
-	&Scumm::o2_isAnyOf,
-	&Scumm::o2_quitPauseRestart,
-	&Scumm::o2_isActorInBox,
+	&Scumm::o6_soundKludge,
+	&Scumm::o6_isAnyOf,
+	&Scumm::o6_quitPauseRestart,
+	&Scumm::o6_isActorInBox,
 	/* B0 */
-	&Scumm::o2_delay,
-	&Scumm::o2_delayLonger,
-	&Scumm::o2_delayVeryLong,
-	&Scumm::o2_stopSentence,
+	&Scumm::o6_delay,
+	&Scumm::o6_delayLonger,
+	&Scumm::o6_delayVeryLong,
+	&Scumm::o6_stopSentence,
 	/* B4 */
-	&Scumm::o2_print_0,
-	&Scumm::o2_print_1,
-	&Scumm::o2_print_2,
-	&Scumm::o2_print_3,
+	&Scumm::o6_print_0,
+	&Scumm::o6_print_1,
+	&Scumm::o6_print_2,
+	&Scumm::o6_print_3,
 	/* B8 */
-	&Scumm::o2_printActor,
-	&Scumm::o2_printEgo,
-	&Scumm::o2_talkActor,
-	&Scumm::o2_talkEgo,
+	&Scumm::o6_printActor,
+	&Scumm::o6_printEgo,
+	&Scumm::o6_talkActor,
+	&Scumm::o6_talkEgo,
 	/* BC */
-	&Scumm::o2_dim,
-	&Scumm::o2_invalid,
-	&Scumm::o2_runVerbCodeQuick,
-	&Scumm::o2_runScriptQuick,
+	&Scumm::o6_dim,
+	&Scumm::o6_invalid,
+	&Scumm::o6_runVerbCodeQuick,
+	&Scumm::o6_runScriptQuick,
 	/* C0 */
-	&Scumm::o2_dim2,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_dim2,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* C4 */
-	&Scumm::o2_abs,
-	&Scumm::o2_distObjectObject,
-	&Scumm::o2_distObjectPt,
-	&Scumm::o2_distPtPt,
+	&Scumm::o6_abs,
+	&Scumm::o6_distObjectObject,
+	&Scumm::o6_distObjectPt,
+	&Scumm::o6_distPtPt,
 	/* C8 */
-	&Scumm::o2_invalid,
-	&Scumm::o2_miscOps,
-	&Scumm::o2_breakMaybe,
-	&Scumm::o2_pickOneOf,
+	&Scumm::o6_invalid,
+	&Scumm::o6_miscOps,
+	&Scumm::o6_breakMaybe,
+	&Scumm::o6_pickOneOf,
 	/* CC */
-	&Scumm::o2_pickOneOfDefault,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_pickOneOfDefault,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* D0 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* D4 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* D8 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* DC */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* E0 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* E4 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* E8 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* EC */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* F0 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* F4 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* F8 */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	/* FC */	
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
-	&Scumm::o2_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
+	&Scumm::o6_invalid,
 	};
 
 	_opcodes = opcode_list;
@@ -404,215 +406,215 @@ int Scumm::getStackList(int16 *args, uint maxnum) {
 	return num;
 }
 
-void Scumm::o2_pushByte() {
+void Scumm::o6_pushByte() {
 	push(fetchScriptByte());
 }
 
-void Scumm::o2_pushWord() {
+void Scumm::o6_pushWord() {
 	push((int16)fetchScriptWord());
 }
 
-void Scumm::o2_pushByteVar() {
+void Scumm::o6_pushByteVar() {
 	push(readVar(fetchScriptByte()));
 }
 
-void Scumm::o2_pushWordVar() {
+void Scumm::o6_pushWordVar() {
 	push(readVar(fetchScriptWord()));
 }
 
-void Scumm::o2_invalid() {
+void Scumm::o6_invalid() {
 	error("Invalid opcode '%x' at %x", _opcode, _scriptPointer - _scriptOrgPointer);
 }
 
-void Scumm::o2_byteArrayRead() {
+void Scumm::o6_byteArrayRead() {
 	int base = pop();
 	push(readArray(fetchScriptByte(), 0, base));
 }
 
-void Scumm::o2_wordArrayRead() {
+void Scumm::o6_wordArrayRead() {
 	int base = pop();
 	push(readArray(fetchScriptWord(), 0, base));
 }
 
-void Scumm::o2_byteArrayIndexedRead() {
+void Scumm::o6_byteArrayIndexedRead() {
 	int base = pop();
 	int index = pop();
 	push(readArray(fetchScriptByte(), index, base));
 }
 
-void Scumm::o2_wordArrayIndexedRead() {
+void Scumm::o6_wordArrayIndexedRead() {
 	int base = pop();
 	int index = pop();
 	push(readArray(fetchScriptWord(), index, base));
 }
 
-void Scumm::o2_dup() {
+void Scumm::o6_dup() {
 	int a = pop();
 	push(a);
 	push(a);
 }
 
-void Scumm::o2_zero() {
+void Scumm::o6_zero() {
 	push( pop() == 0 );
 }
 
-void Scumm::o2_eq() {
+void Scumm::o6_eq() {
 	push( pop() == pop() );
 }
 
-void Scumm::o2_neq() {
+void Scumm::o6_neq() {
 	push( pop() != pop() );
 }
 
-void Scumm::o2_gt() {
+void Scumm::o6_gt() {
 	int a = pop();
 	push( pop() > a );
 }
 
-void Scumm::o2_lt() {
+void Scumm::o6_lt() {
 	int a = pop();
 	push( pop() < a );
 }
 
-void Scumm::o2_le() {
+void Scumm::o6_le() {
 	int a = pop();
 	push( pop() <= a );
 }
 
-void Scumm::o2_ge() {
+void Scumm::o6_ge() {
 	int a = pop();
 	push( pop() >= a );
 }
 
-void Scumm::o2_add() {
+void Scumm::o6_add() {
 	int a = pop();
 	push( pop() + a );
 }
 
-void Scumm::o2_sub() {
+void Scumm::o6_sub() {
 	int a = pop();
 	push( pop() - a );
 }
 
-void Scumm::o2_mul() {
+void Scumm::o6_mul() {
 	int a = pop();
 	push( pop() * a );
 }
 
-void Scumm::o2_div() {
+void Scumm::o6_div() {
 	int a = pop();
 	if (a==0) error("division by zero");
 	push( pop() / a );
 }
 
-void Scumm::o2_land() {
+void Scumm::o6_land() {
 	int a = pop();
 	push( pop() && a );
 }
 
-void Scumm::o2_lor() {
+void Scumm::o6_lor() {
 	int a = pop();
 	push( pop() || a );
 }
 
-void Scumm::o2_kill() {
+void Scumm::o6_kill() {
 	pop();
 }
 
-void Scumm::o2_writeByteVar() {
+void Scumm::o6_writeByteVar() {
 	writeVar(fetchScriptByte(), pop());
 }
 
-void Scumm::o2_writeWordVar() {
+void Scumm::o6_writeWordVar() {
 	writeVar(fetchScriptWord(), pop());
 }
 
-void Scumm::o2_byteArrayWrite() {
+void Scumm::o6_byteArrayWrite() {
 	int a = pop();
 	writeArray(fetchScriptByte(), 0, pop(), a);
 }
 
-void Scumm::o2_wordArrayWrite() {
+void Scumm::o6_wordArrayWrite() {
 	int a = pop();
 	writeArray(fetchScriptWord(), 0, pop(), a);
 }
 
-void Scumm::o2_byteArrayIndexedWrite() {
+void Scumm::o6_byteArrayIndexedWrite() {
 	int val = pop();
 	int base = pop();
 	writeArray(fetchScriptByte(), pop(), base, val);
 }
 
-void Scumm::o2_wordArrayIndexedWrite() {
+void Scumm::o6_wordArrayIndexedWrite() {
 	int val = pop();
 	int base = pop();
 	writeArray(fetchScriptWord(), pop(), base, val);
 }
 
-void Scumm::o2_byteVarInc() {
+void Scumm::o6_byteVarInc() {
 	int var = fetchScriptByte();
 	writeVar(var,readVar(var)+1);
 }
 
-void Scumm::o2_wordVarInc() {
+void Scumm::o6_wordVarInc() {
 	int var = fetchScriptWord();
 	writeVar(var,readVar(var)+1);
 }
 
-void Scumm::o2_byteArrayInc() {
+void Scumm::o6_byteArrayInc() {
 	int var = fetchScriptByte();
 	int base = pop();
 	writeArray(var, 0, base, readArray(var, 0, base) + 1);
 }
 
-void Scumm::o2_wordArrayInc() {
+void Scumm::o6_wordArrayInc() {
 	int var = fetchScriptWord();
 	int base = pop();
 	writeArray(var, 0, base, readArray(var, 0, base) + 1);
 }
 
 
-void Scumm::o2_byteVarDec() {
+void Scumm::o6_byteVarDec() {
 	int var = fetchScriptByte();
 	writeVar(var,readVar(var)-1);
 }
 
-void Scumm::o2_wordVarDec() {
+void Scumm::o6_wordVarDec() {
 	int var = fetchScriptWord();
 	writeVar(var,readVar(var)-1);
 }
 
-void Scumm::o2_byteArrayDec() {
+void Scumm::o6_byteArrayDec() {
 	int var = fetchScriptByte();
 	int base = pop();
 	writeArray(var, 0, base, readArray(var, 0, base) - 1);
 }
 
-void Scumm::o2_wordArrayDec() {
+void Scumm::o6_wordArrayDec() {
 	int var = fetchScriptWord();
 	int base = pop();
 	writeArray(var, 0, base, readArray(var, 0, base) - 1);
 }
 
-void Scumm::o2_jumpTrue() {
+void Scumm::o6_jumpTrue() {
 	if (pop())
-		o2_jump();
+		o6_jump();
 	else
 		fetchScriptWord();
 }
 
-void Scumm::o2_jumpFalse() {
+void Scumm::o6_jumpFalse() {
 	if (!pop())
-		o2_jump();
+		o6_jump();
 	else
 		fetchScriptWord();
 }
 
-void Scumm::o2_jump() {
+void Scumm::o6_jump() {
 	_scriptPointer += (int16)fetchScriptWord();
 }
 
-void Scumm::o2_startScriptEx() {
+void Scumm::o6_startScriptEx() {
 	int16 args[16];
 	int script,flags;
 
@@ -622,7 +624,7 @@ void Scumm::o2_startScriptEx() {
 	runScript(script, flags&1, flags&2, args);
 }
 
-void Scumm::o2_startScript() {
+void Scumm::o6_startScript() {
 	int16 args[16];
 	int script;
 	getStackList(args,sizeof(args)/sizeof(args[0]));
@@ -630,7 +632,7 @@ void Scumm::o2_startScript() {
 	runScript(script, 0, 0, args);
 }
 
-void Scumm::o2_startObject() {
+void Scumm::o6_startObject() {
 	int16 args[16];
 	int script,entryp;
 	int flags;
@@ -641,37 +643,37 @@ void Scumm::o2_startObject() {
 	runVerbCode(script, entryp, flags&1, flags&2, args);
 }
 
-void Scumm::o2_setObjectState() {
+void Scumm::o6_setObjectState() {
 	int a = pop();
 	if (a==0) a=1;
 	setObjectState(pop(), a, -1, -1);
 }
 
-void Scumm::o2_setObjectXY() {
+void Scumm::o6_setObjectXY() {
 	int y = pop();
 	int x = pop();
 	setObjectState(pop(), 1, x, y);
 }
 
-void Scumm::o2_stopObjectCode() {
+void Scumm::o6_stopObjectCode() {
 	stopObjectCode();
 }
 
-void Scumm::o2_endCutscene() {
+void Scumm::o6_endCutscene() {
 	endCutscene();
 }
 
-void Scumm::o2_cutScene() {
+void Scumm::o6_cutScene() {
 	int16 args[16];
 	getStackList(args,sizeof(args)/sizeof(args[0]));
 	cutscene(args);
 }
 
-void Scumm::o2_stopMusic() {
-	warning("o2_stopMusic: not implemented");
+void Scumm::o6_stopMusic() {
+	warning("o6_stopMusic: not implemented");
 }
 
-void Scumm::o2_freezeUnfreeze() {
+void Scumm::o6_freezeUnfreeze() {
 	int a = pop();
 	if (a)
 		freezeScripts(a);
@@ -679,7 +681,7 @@ void Scumm::o2_freezeUnfreeze() {
 		unfreezeScripts();
 }
 
-void Scumm::o2_cursorCommand() {
+void Scumm::o6_cursorCommand() {
 	int a,num,i;
 	int16 args[16];
 
@@ -739,12 +741,12 @@ void Scumm::o2_cursorCommand() {
 	_vars[VAR_USERPUT] = _userPut;
 }
 
-void Scumm::o2_breakHere() {
+void Scumm::o6_breakHere() {
 	updateScriptPtr();
 	_currentScript = 0xFF;
 }
 
-void Scumm::o2_ifClassOfIs() {
+void Scumm::o6_ifClassOfIs() {
 	int16 args[16];
 	int num,obj,cls;
 	bool b;
@@ -762,7 +764,7 @@ void Scumm::o2_ifClassOfIs() {
 	push(cond);
 }
 
-void Scumm::o2_setClass() {
+void Scumm::o6_setClass() {
 	int16 args[16];
 	int num,obj,cls;
 
@@ -780,11 +782,11 @@ void Scumm::o2_setClass() {
 	}
 }
 
-void Scumm::o2_getState() {
+void Scumm::o6_getState() {
 	push(getState(pop()));
 }
 
-void Scumm::o2_setState() {
+void Scumm::o6_setState() {
 	int state = pop();
 	int obj = pop();
 
@@ -794,53 +796,53 @@ void Scumm::o2_setState() {
 		clearDrawObjectQueue();
 }
 
-void Scumm::o2_setOwner() {
+void Scumm::o6_setOwner() {
 	int owner = pop();
 	int obj = pop();
 
 	setOwnerOf(obj, owner);
 }
 
-void Scumm::o2_getOwner() {
+void Scumm::o6_getOwner() {
 	push(getOwner(pop()));
 }
 
-void Scumm::o2_startSound() {
+void Scumm::o6_startSound() {
 	addSoundToQueue(pop());
 }
 
-void Scumm::o2_stopSound() {
+void Scumm::o6_stopSound() {
 	unkSoundProc1(pop());
 }
 
-void Scumm::o2_startMusic() {
+void Scumm::o6_startMusic() {
 	addSoundToQueue(pop());
 }
 
-void Scumm::o2_stopObjectScript() {
+void Scumm::o6_stopObjectScript() {
 	stopObjectScript(pop());
 }
 
-void Scumm::o2_panCameraTo() {
+void Scumm::o6_panCameraTo() {
 	panCameraTo(pop());
 }
 
-void Scumm::o2_actorFollowCamera() {
+void Scumm::o6_actorFollowCamera() {
 	actorFollowCamera(pop());
 }
 
-void Scumm::o2_setCameraAt() {
+void Scumm::o6_setCameraAt() {
 	setCameraAtEx(pop());
 }
 
-void Scumm::o2_loadRoom() {
+void Scumm::o6_loadRoom() {
 	int room = pop();
 	debug(1,"Loading room %d", room);
 	startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
 
-void Scumm::o2_stopScript() {
+void Scumm::o6_stopScript() {
 	int script = pop();
 	if (script==0)
 		stopObjectCode();
@@ -848,14 +850,14 @@ void Scumm::o2_stopScript() {
 		stopScriptNr(script);
 }
 
-void Scumm::o2_walkActorToObj() {
+void Scumm::o6_walkActorToObj() {
 	int obj,dist;
 	Actor *a, *a2;
 	int x;
 
 	dist = pop();
 	obj = pop();
-	a = derefActorSafe(pop(), "o2_walkActorToObj");
+	a = derefActorSafe(pop(), "o6_walkActorToObj");
 
 	if (obj >= 17) {
 		if (whereIsObject(obj)==-1)
@@ -863,7 +865,7 @@ void Scumm::o2_walkActorToObj() {
 		getObjectXYPos(obj);
 		startWalkActor(a, _xPos, _yPos, _dir);
 	} else {
-		a2 = derefActorSafe(obj, "o2_walkActorToObj(2)");
+		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
 		if (a2->room != _currentRoom ||
 			  a->room != _currentRoom)
 					return;
@@ -880,21 +882,21 @@ void Scumm::o2_walkActorToObj() {
 	}
 }
 
-void Scumm::o2_walkActorTo() {
+void Scumm::o6_walkActorTo() {
 	int x,y;
 	y = pop();
 	x = pop();
-	startWalkActor(derefActorSafe(pop(), "o2_walkActorTo"), x, y, 0xFF);
+	startWalkActor(derefActorSafe(pop(), "o6_walkActorTo"), x, y, 0xFF);
 }
 
-void Scumm::o2_putActorInRoom() {
+void Scumm::o6_putActorInRoom() {
 	int room, x, y;
 	Actor *a;
 
 	room = pop();
 	y = pop();
 	x = pop();
-	a = derefActorSafe(pop(), "o2_putActorInRoom");
+	a = derefActorSafe(pop(), "o6_putActorInRoom");
 	if (room==0xFF) {
 		room = a->room;
 	} else {
@@ -907,14 +909,14 @@ void Scumm::o2_putActorInRoom() {
 	putActor(a, x, y, room);
 }
 
-void Scumm::o2_putActorAtObject() {
+void Scumm::o6_putActorAtObject() {
 	int room,obj,x,y;
 	Actor *a;
 
 	room = pop();
 	obj = pop();
 
-	a = derefActorSafe(pop(), "o2_putActorAtObject");
+	a = derefActorSafe(pop(), "o6_putActorAtObject");
 	if (whereIsObject(obj)!=-1) {
 		getObjectXYPos(obj);
 		x = _xPos;
@@ -928,20 +930,20 @@ void Scumm::o2_putActorAtObject() {
 	putActor(a, x, y, room);
 }
 
-void Scumm::o2_faceActor() {
+void Scumm::o6_faceActor() {
 	int act,obj;
 	obj = pop();
 	act = pop();
 	faceActorToObj(act, obj);
 }
 
-void Scumm::o2_animateActor() {
+void Scumm::o6_animateActor() {
 	int anim = pop();
 	int act = pop();
 	animateActor(act, anim);
 }
 
-void Scumm::o2_doSentence() {
+void Scumm::o6_doSentence() {
 	int a,b,c;
 	SentenceTab *st;
 
@@ -964,7 +966,7 @@ void Scumm::o2_doSentence() {
 	st->unk = 0;
 }
 
-void Scumm::o2_pickupObject() {
+void Scumm::o6_pickupObject() {
 	int obj, room;
 
 	room = pop();
@@ -981,7 +983,7 @@ void Scumm::o2_pickupObject() {
 	runHook(obj); /* Difference */
 }
 
-void Scumm::o2_loadRoomWithEgo() {
+void Scumm::o6_loadRoomWithEgo() {
 	Actor *a;
 	int room,obj,x,y;
 
@@ -1007,64 +1009,64 @@ void Scumm::o2_loadRoomWithEgo() {
 	}
 }
 
-void Scumm::o2_getRandomNumber() {
+void Scumm::o6_getRandomNumber() {
 	int rnd;
 	rnd = getRandomNumber(pop()+1);
-	_vars[VAR_RANDOM_NR] = rnd;
+	_vars[VAR_V6_RANDOM_NR] = rnd;
 	push(rnd);
 }
 
-void Scumm::o2_getRandomNumberRange() {
+void Scumm::o6_getRandomNumberRange() {
 	int max = pop();
 	int min = pop();
 	int rnd = getRandomNumber(max-min+1) + min;
-	_vars[VAR_RANDOM_NR] = rnd;
+	_vars[VAR_V6_RANDOM_NR] = rnd;
 	push(rnd);
 }
 
-void Scumm::o2_getActorMoving() {
-	push(derefActorSafe(pop(),"o2_getActorMoving")->moving);
+void Scumm::o6_getActorMoving() {
+	push(derefActorSafe(pop(),"o6_getActorMoving")->moving);
 }
 
-void Scumm::o2_getScriptRunning() {
+void Scumm::o6_getScriptRunning() {
 	push(getScriptRunning(pop()));
 }
 
-void Scumm::o2_getActorRoom() {
-	push(derefActorSafe(pop(),"o2_getActorRoom")->room);
+void Scumm::o6_getActorRoom() {
+	push(derefActorSafe(pop(),"o6_getActorRoom")->room);
 }
 
-void Scumm::o2_getObjectX() {
+void Scumm::o6_getObjectX() {
 	push(getObjX(pop()));
 }
 
-void Scumm::o2_getObjectY() {
+void Scumm::o6_getObjectY() {
 	push(getObjY(pop()));
 }
 
-void Scumm::o2_getObjectDir() {
+void Scumm::o6_getObjectDir() {
 	push(getObjDir(pop()));
 }
 
-void Scumm::o2_getActorWalkBox() {
-	push(derefActorSafe(pop(),"o2_getActorWalkBox")->walkbox);
+void Scumm::o6_getActorWalkBox() {
+	push(derefActorSafe(pop(),"o6_getActorWalkBox")->walkbox);
 }
 
-void Scumm::o2_getActorCostume() {
-	push(derefActorSafe(pop(),"o2_getActorCostume")->costume);
+void Scumm::o6_getActorCostume() {
+	push(derefActorSafe(pop(),"o6_getActorCostume")->costume);
 }
 
-void Scumm::o2_findInventory() {
+void Scumm::o6_findInventory() {
 	int index = pop();
 	int owner = pop();
 	push(findInventory(owner,index));
 }
 
-void Scumm::o2_getInventoryCount() {
+void Scumm::o6_getInventoryCount() {
 	push(getInventoryCount(pop()));
 }
 
-void Scumm::o2_getVerbFromXY() {
+void Scumm::o6_getVerbFromXY() {
 	int y = pop();
 	int x = pop();
 	int over = checkMouseOver(x,y);
@@ -1073,15 +1075,15 @@ void Scumm::o2_getVerbFromXY() {
 	push(over);
 }
 
-void Scumm::o2_beginOverride() {
+void Scumm::o6_beginOverride() {
 	beginOverride();
 }
 
-void Scumm::o2_endOverride() {
+void Scumm::o6_endOverride() {
 	endOverride();
 }
 
-void Scumm::o2_setObjectName() {
+void Scumm::o6_setObjectName() {
 	int obj = pop();
 	int i;
 
@@ -1111,14 +1113,14 @@ void Scumm::o2_setObjectName() {
 	error("New name of %d overflows name table (max = %d)", obj, 50);
 }
 
-void Scumm::o2_isSoundRunning() {
+void Scumm::o6_isSoundRunning() {
 	int snd = pop();
 	if (snd)
 		snd = unkSoundProc23(snd);
 	push(snd);
 }
 
-void Scumm::o2_setBoxFlags() {
+void Scumm::o6_setBoxFlags() {
 	int16 table[65];
 	int num,value;
 
@@ -1130,11 +1132,11 @@ void Scumm::o2_setBoxFlags() {
 	}
 }
 
-void Scumm::o2_createBoxMatrix() {
+void Scumm::o6_createBoxMatrix() {
 	createBoxMatrix();
 }
 
-void Scumm::o2_resourceRoutines() {
+void Scumm::o6_resourceRoutines() {
 	int res;
 
 	switch(fetchScriptByte()) {
@@ -1228,11 +1230,11 @@ void Scumm::o2_resourceRoutines() {
 		unkResProc(pop(), res);
 		break;
 	default:
-		error("o2_resourceRoutines: default case");
+		error("o6_resourceRoutines: default case");
 	}
 }
 
-void Scumm::o2_roomOps() {
+void Scumm::o6_roomOps() {
 	int a,b,c,d,e;
 
 	switch(fetchScriptByte()) {
@@ -1279,7 +1281,7 @@ void Scumm::o2_roomOps() {
 	case 180:
 		_saveLoadData = pop();
 		_saveLoadFlag = pop();
-		warning("o2_roomops:180: partially unimplemented");
+		warning("o6_roomops:180: partially unimplemented");
 		break;
 
 	case 181:
@@ -1340,11 +1342,11 @@ void Scumm::o2_roomOps() {
 		break;
 
 	default:
-		error("o2_roomOps: default case");
+		error("o6_roomOps: default case");
 	}
 }
 
-void Scumm::o2_actorSet() {
+void Scumm::o6_actorSet() {
 	Actor *a;
 	int i,j,k;
 	int16 args[8];
@@ -1356,7 +1358,7 @@ void Scumm::o2_actorSet() {
 		return;
 	}
 	
-	a = derefActorSafe(_curActor, "o2_actorSet");
+	a = derefActorSafe(_curActor, "o6_actorSet");
 
 	switch(b) {
 	case 76: /* actor-costume */
@@ -1464,11 +1466,11 @@ FixRooms:;
 		initActor(a, 2);
 		break;	
 	default:
-		error("o2_actorset: default case");
+		error("o6_actorset: default case");
 	}
 }
 
-void Scumm::o2_verbOps() {
+void Scumm::o6_verbOps() {
 	int slot,a,b;
 	VerbSlot *vs;
 	byte *ptr, op;
@@ -1578,24 +1580,24 @@ void Scumm::o2_verbOps() {
 		verbMouseOver(0);
 		break;
 	default:
-		error("o2_verbops: default case");
+		error("o6_verbops: default case");
 	}
 }
 
-void Scumm::o2_getActorFromXY() {
+void Scumm::o6_getActorFromXY() {
 	int y = pop();
 	int x = pop();
 	push(getActorFromPos(x,y));
 }
 
-void Scumm::o2_findObject() {
+void Scumm::o6_findObject() {
 	int y = pop();
 	int x = pop();
 	int r = findObject(x,y);
 	push(r);
 }
 
-void Scumm::o2_pseudoRoom() {
+void Scumm::o6_pseudoRoom() {
 	int16 list[100];
 	int num,a,value;
 
@@ -1609,17 +1611,17 @@ void Scumm::o2_pseudoRoom() {
 	}
 }
 
-void Scumm::o2_getActorElevation() {
-	push(derefActorSafe(pop(),"o2_getActorElevation")->elevation);
+void Scumm::o6_getActorElevation() {
+	push(derefActorSafe(pop(),"o6_getActorElevation")->elevation);
 }
 
-void Scumm::o2_getVerbEntrypoint() {
+void Scumm::o6_getVerbEntrypoint() {
 	int e = pop();
 	int v = pop();
 	push(getVerbEntrypoint(v,e));
 }
 
-void Scumm::o2_arrayOps() {
+void Scumm::o6_arrayOps() {
 	int a,b,c,d,num;
 	int16 list[128];
 
@@ -1654,11 +1656,11 @@ void Scumm::o2_arrayOps() {
 		}
 		break;
 	default:
-		error("o2_arrayOps: default case");
+		error("o6_arrayOps: default case");
 	}
 }
 
-void Scumm::o2_saveRestoreVerbs() {
+void Scumm::o6_saveRestoreVerbs() {
 	int a,b,c;
 	int slot,slot2;
 
@@ -1702,11 +1704,11 @@ void Scumm::o2_saveRestoreVerbs() {
 		}
 		break;
 	default:
-		error("o2_saveRestoreVerbs: default case");
+		error("o6_saveRestoreVerbs: default case");
 	}
 }
 
-void Scumm::o2_drawBox() {
+void Scumm::o6_drawBox() {
 	int x,y,x2,y2,color;
 	color = pop();
 	y2 = pop();
@@ -1716,18 +1718,18 @@ void Scumm::o2_drawBox() {
 	drawBox(x, y, x2, y2, color);
 }
 
-void Scumm::o2_getActorWidth() {
-	push(derefActorSafe(pop(),"o2_getActorWidth")->width);
+void Scumm::o6_getActorWidth() {
+	push(derefActorSafe(pop(),"o6_getActorWidth")->width);
 }
 
-void Scumm::o2_wait() {
+void Scumm::o6_wait() {
 	byte oldaddr;
 	
 	switch(fetchScriptByte()) {
 	case 168:
-		if (derefActorSafe(pop(), "o2_wait")->moving) {
+		if (derefActorSafe(pop(), "o6_wait")->moving) {
 			_scriptPointer += (int16)fetchScriptWord();
-			o2_breakHere();
+			o6_breakHere();
 		} else {
 			fetchScriptWord();
 		}
@@ -1751,28 +1753,28 @@ void Scumm::o2_wait() {
 			return;
 		break;
 	default:
-		error("o2_wait: default case");
+		error("o6_wait: default case");
 	}
 
 	_scriptPointer -= 2;
-	o2_breakHere();
+	o6_breakHere();
 }
 
-void Scumm::o2_getActorScaleX() {
-	push(derefActorSafe(pop(),"o2_getActorScale")->scalex);
+void Scumm::o6_getActorScaleX() {
+	push(derefActorSafe(pop(),"o6_getActorScale")->scalex);
 }
 
-void Scumm::o2_getActorAnimCounter1() {
-	push(derefActorSafe(pop(),"o2_getActorAnimCounter")->cost.animCounter1);
+void Scumm::o6_getActorAnimCounter1() {
+	push(derefActorSafe(pop(),"o6_getActorAnimCounter")->cost.animCounter1);
 }
 
-void Scumm::o2_soundKludge() {
+void Scumm::o6_soundKludge() {
 	int16 list[8];
 	getStackList(list,sizeof(list)/sizeof(list[0]));
 	soundKludge(list);
 }
 
-void Scumm::o2_isAnyOf() {
+void Scumm::o6_isAnyOf() {
 	int16 list[100];
 	int num;
 	int16 val;
@@ -1790,7 +1792,7 @@ void Scumm::o2_isAnyOf() {
 	return;
 }
 
-void Scumm::o2_quitPauseRestart() {
+void Scumm::o6_quitPauseRestart() {
 	switch(fetchScriptByte()) {
 	case 158:
 		pauseGame(0);
@@ -1799,70 +1801,70 @@ void Scumm::o2_quitPauseRestart() {
 		shutDown(0);
 		break;
 	default:
-		error("o2_quitPauseRestart: invalid case");
+		error("o6_quitPauseRestart: invalid case");
 	}
 }
 
-void Scumm::o2_isActorInBox() {
+void Scumm::o6_isActorInBox() {
 	int box = pop();
-	Actor *a = derefActorSafe(pop(), "o2_isActorInBox");
+	Actor *a = derefActorSafe(pop(), "o6_isActorInBox");
 	push(checkXYInBoxBounds(box, a->x, a->y));
 }
 
-void Scumm::o2_delay() {
+void Scumm::o6_delay() {
 	uint32 delay = (uint16)pop();
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
-	o2_breakHere();
+	o6_breakHere();
 }
 
-void Scumm::o2_delayLonger() {
+void Scumm::o6_delayLonger() {
 	uint32 delay = (uint16)pop() * 60;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
-	o2_breakHere();
+	o6_breakHere();
 }
 
-void Scumm::o2_delayVeryLong() {
+void Scumm::o6_delayVeryLong() {
 	uint32 delay = (uint16)pop() * 3600;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
-	o2_breakHere();
+	o6_breakHere();
 }
 
-void Scumm::o2_stopSentence() {
+void Scumm::o6_stopSentence() {
 	_sentenceIndex = 0xFF;
 	stopScriptNr(_vars[VAR_SENTENCE_SCRIPT]);
 	clearClickedStatus();
 }
 
-void Scumm::o2_print_0() {
+void Scumm::o6_print_0() {
 	_actorToPrintStrFor = 0xFF;
 	decodeParseString2(0,0);
 }
 
-void Scumm::o2_print_1() {
+void Scumm::o6_print_1() {
 	decodeParseString2(1,0);
 }
 
-void Scumm::o2_print_2() {
+void Scumm::o6_print_2() {
 	decodeParseString2(2,0);
 }
 
-void Scumm::o2_print_3() {
+void Scumm::o6_print_3() {
 	decodeParseString2(3,0);
 }
 
-void Scumm::o2_printActor() {
+void Scumm::o6_printActor() {
 	decodeParseString2(0,1);
 }
 
-void Scumm::o2_printEgo() {
+void Scumm::o6_printEgo() {
 	push(_vars[VAR_UNK_ACTOR]);
 	decodeParseString2(0,1);
 }
 
-void Scumm::o2_talkActor() {
+void Scumm::o6_talkActor() {
 	_actorToPrintStrFor = pop();
 	_messagePtr = _scriptPointer;
 	setStringVars(0);
@@ -1870,7 +1872,7 @@ void Scumm::o2_talkActor() {
 	_scriptPointer = _messagePtr;
 }
 
-void Scumm::o2_talkEgo() {
+void Scumm::o6_talkEgo() {
 	_actorToPrintStrFor = _vars[VAR_UNK_ACTOR];
 	_messagePtr = _scriptPointer;
 	setStringVars(0);
@@ -1878,7 +1880,7 @@ void Scumm::o2_talkEgo() {
 	_scriptPointer = _messagePtr;
 }
 
-void Scumm::o2_dim() {
+void Scumm::o6_dim() {
 	byte b;
 	int data;
 
@@ -1902,13 +1904,13 @@ void Scumm::o2_dim() {
 		nukeArray(fetchScriptWord());
 		return;
 	default:
-		error("o2_dim: default case");
+		error("o6_dim: default case");
 	}
 
 	defineArray(fetchScriptWord(), data, 0, pop());
 }
 
-void Scumm::o2_runVerbCodeQuick() {
+void Scumm::o6_runVerbCodeQuick() {
 	int16 args[16];
 	int script,entryp;
 	getStackList(args,sizeof(args)/sizeof(args[0]));
@@ -1917,7 +1919,7 @@ void Scumm::o2_runVerbCodeQuick() {
 	runVerbCode(script, entryp, 0, 1, args);
 }
 
-void Scumm::o2_runScriptQuick() {
+void Scumm::o6_runScriptQuick() {
 	int16 args[16];
 	int script;
 	getStackList(args,sizeof(args)/sizeof(args[0]));
@@ -1925,7 +1927,7 @@ void Scumm::o2_runScriptQuick() {
 	runScript(script, 0, 1, args);
 }
 
-void Scumm::o2_dim2() {
+void Scumm::o6_dim2() {
 	int a,b,data;
 	switch(fetchScriptByte()) {
 	case 199:
@@ -1944,7 +1946,7 @@ void Scumm::o2_dim2() {
 		data = 4;
 		break;
 	default:
-		error("o2_dim2: default case");
+		error("o6_dim2: default case");
 	}
 
 	b = pop();
@@ -1952,19 +1954,19 @@ void Scumm::o2_dim2() {
 	defineArray(fetchScriptWord(), data, a, b);
 }
 
-void Scumm::o2_abs() {
+void Scumm::o6_abs() {
 	push(abs(pop()));
 }
 
 
-void Scumm::o2_distObjectObject() {
+void Scumm::o6_distObjectObject() {
 	int a,b;
 	b = pop();
 	a = pop();
 	push(getDistanceBetween(true, a, 0, true, b, 0));
 }
 
-void Scumm::o2_distObjectPt() {
+void Scumm::o6_distObjectPt() {
 	int a,b,c;
 	c = pop();
 	b = pop();
@@ -1972,7 +1974,7 @@ void Scumm::o2_distObjectPt() {
 	push(getDistanceBetween(true, a, 0, false, b, c));
 }
 
-void Scumm::o2_distPtPt() {
+void Scumm::o6_distPtPt() {
 	int a,b,c,d;
 	d = pop();
 	c = pop();
@@ -1981,18 +1983,18 @@ void Scumm::o2_distPtPt() {
 	push(getDistanceBetween(false, a, b, false, c, d));
 }
 
-void Scumm::o2_dummy_stacklist() {
-	error("opcode o2_dummy_stacklist invalid");
+void Scumm::o6_dummy_stacklist() {
+	error("opcode o6_dummy_stacklist invalid");
 }
 
-void Scumm::o2_miscOps() {
+void Scumm::o6_miscOps() {
 	int16 args[30];
 	int i;
 
 	getStackList(args,sizeof(args)/sizeof(args[0]));
 	switch(args[0]) {
 	case 3:
-		warning("o2_miscOps: nothing in 3");
+		warning("o6_miscOps: nothing in 3");
 		break;
 	case 4:
 		unkMiscOp4(args[1], args[2], args[3], args[4]);
@@ -2017,7 +2019,7 @@ void Scumm::o2_miscOps() {
 	}
 }
 
-void Scumm::o2_breakMaybe() {
+void Scumm::o6_breakMaybe() {
 	ScriptSlot *ss = &vm.slot[_currentScript];
 	if (ss->newfield == 0) {
 		ss->newfield = pop();
@@ -2026,22 +2028,22 @@ void Scumm::o2_breakMaybe() {
 	}
 	if (ss->newfield) {
 		_scriptPointer--;
-		o2_breakHere();
+		o6_breakHere();
 	}
 }
 
-void Scumm::o2_pickOneOf() {
+void Scumm::o6_pickOneOf() {
 	int16 args[100];
 	int i,num;
 
 	num = getStackList(args,sizeof(args)/sizeof(args[0]));
 	i = pop();
 	if (i<0 || i>=num)
-		error("o2_pickOneOf: out of range");
+		error("o6_pickOneOf: out of range");
 	push(args[i]);
 }
 
-void Scumm::o2_pickOneOfDefault() {
+void Scumm::o6_pickOneOfDefault() {
 	int16 args[100];
 	int i,num,def;
 
@@ -2121,4 +2123,3 @@ void Scumm::decodeParseString2(int m, int n) {
 	}
 }
 
-#endif

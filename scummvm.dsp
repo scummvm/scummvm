@@ -66,7 +66,8 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "CHECK_HEAP" /D "DUMP_SCRIPTS" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "CHECK_HEAP" /Yu"stdafx.h" /FD /GZ /c
+# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
 BSC32=bscmake.exe
@@ -99,6 +100,10 @@ SOURCE=.\costume.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\debug.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\gfx.cpp
 # End Source File
 # Begin Source File
@@ -128,6 +133,10 @@ SOURCE=.\script_v2.cpp
 # Begin Source File
 
 SOURCE=.\scummvm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sdl.cpp
 # End Source File
 # Begin Source File
 

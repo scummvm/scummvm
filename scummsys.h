@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.4  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -37,6 +41,8 @@
 
 #pragma warning (disable: 4244)
 #pragma warning (disable: 4101)
+
+#define scumm_stricmp stricmp
 
 
 #if defined(CHECK_HEAP)
@@ -64,6 +70,8 @@ typedef signed long int32;
 #define END_PACK_STRUCTS   pack(pop)
 
 #elif defined(UNIX)
+
+#define scumm_stricmp strcasecmp
 
 #define CHECK_HEAP
 

@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
  * Revision 1.6  2001/10/16 20:31:27  strigeus
  * misc fixes
  *
@@ -828,13 +832,6 @@ void drawMouse(Scumm *s, int, int, int, byte*, bool) {
 int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
 
-#if defined(DOTT)
-	scumm._exe_name = "tentacle";
-#elif defined(INDY4)
-	scumm._exe_name = "atlantis";
-#else
-	scumm._exe_name = "monkey2";
-#endif
 
 	wm->init();
 	wm->_vgabuf = (byte*)calloc(320,200);
