@@ -58,15 +58,19 @@ void ListWidget::scrollBarRecalc()
 
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
 {
-	int oldSelectedItem = _selectedItem;
-
-	if (_flags & WIDGET_ENABLED) {
+	if (isEnabled()) {
+		int oldSelectedItem = _selectedItem;
 		_selectedItem = (y - 1) / kLineHeight + _currentPos;
+		if (_selectedItem > _list.size() - 1)
+			_selectedItem = -1;
 
-		if (_editMode && oldSelectedItem != _selectedItem) {
-			// undo any changes made
-			_list[oldSelectedItem] = _backupString;
-			_editMode = false;
+		if (oldSelectedItem != _selectedItem) {
+			if (_editMode) {
+				// undo any changes made
+				_list[oldSelectedItem] = _backupString;
+				_editMode = false;
+			}
+			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		}
 		draw();
 	}
@@ -96,7 +100,7 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 			// enter, confirm edit and exit editmode
 			_editMode = false;
 			dirty = true;
-			sendCommand(kListItemChangedCmd, _selectedItem);
+			sendCommand(kListItemActivatedCmd, _selectedItem);
 		} else if (key == 27) {
 			// ESC, abort edit and exit editmode
 			_editMode = false;
@@ -172,6 +176,7 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 		draw();
 
 	if (_selectedItem != oldSelectedItem) {
+		sendCommand(kListSelectionChangedCmd, _selectedItem);
 		// also draw scrollbar
 		_scrollBar->draw();
 	}

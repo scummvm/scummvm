@@ -38,6 +38,7 @@ public:
 
 protected:
 	ListWidget	*_list;
+	Widget *_startButton;
 	StringList	_filenames;
 	GameDetector &_detector;
 };

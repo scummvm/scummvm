@@ -34,8 +34,9 @@ enum {
 
 // Some special commands
 enum {
-	kListItemDoubleClickedCmd	= 'LIdb',	// 'data' will be item index
-	kListItemChangedCmd			= 'LIch',	// 'data' will be item index
+	kListItemDoubleClickedCmd	= 'LIdb',	// double click on item - 'data' will be item index
+	kListItemActivatedCmd		= 'LIac',	// item activated by return/enter - 'data' will be item index
+	kListSelectionChangedCmd	= 'Lsch',	// selection changed - 'data' will be item index
 };
 
 /* ListWidget */

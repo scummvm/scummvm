@@ -23,9 +23,14 @@
 #include "dialog.h"
 #include "newgui.h"
 
+
+
 #ifdef _MSC_VER
+
 #	pragma warning( disable : 4068 ) // unknown pragma
+
 #endif
+
 
 
 Widget::Widget (Dialog *boss, int x, int y, int w, int h)
@@ -98,7 +103,9 @@ void StaticTextWidget::setValue(int value)
 void StaticTextWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
-	gui->drawString(_label.c_str(), _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor, _align);
+	gui->drawString(_label.c_str(), _x, _y, _w,
+	                !isEnabled() ? gui->_color :
+	                hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
 
 
@@ -114,7 +121,7 @@ ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const Strin
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
-	if (_flags & WIDGET_ENABLED && x >= 0 && x < _w && y >= 0 && y < _h)
+	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h)
 		sendCommand(_cmd, 0);
 }
 
@@ -142,7 +149,7 @@ CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const S
 
 void CheckboxWidget::handleMouseDown(int x, int y, int button, int clickCount)
 {
-	if (_flags & WIDGET_ENABLED) {
+	if (isEnabled()) {
 		_state = !_state;
 		draw();
 		sendCommand(_cmd, 0);
@@ -177,7 +184,7 @@ SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const Strin
 }
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) { 
-	if ((_flags & WIDGET_ENABLED) && _isDragging) {
+	if (isEnabled() && _isDragging) {
 		int newValue = posToValue(x);
 		
 		if (newValue < _valueMin)
@@ -195,7 +202,7 @@ void SliderWidget::handleMouseMoved(int x, int y, int button) {
 
 void SliderWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	
-	if (_flags & WIDGET_ENABLED) {
+	if (isEnabled()) {
 		int barx;
 		
 		barx = valueToPos(_value);
@@ -208,7 +215,7 @@ void SliderWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 void SliderWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
-	if ((_flags & WIDGET_ENABLED) && _isDragging) {
+	if (isEnabled() && _isDragging) {
 		sendCommand(_cmd, _value);
 	}
 

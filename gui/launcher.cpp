@@ -50,7 +50,8 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	// Add three buttons at the bottom
 	addButton(1*(_w - 54)/6, _h - 24, 54, 16, "Quit", kQuitCmd, 'Q');
 	addButton(3*(_w - 54)/6, _h - 24, 54, 16, "Options", kOptionsCmd, 'O');
-	addButton(5*(_w - 54)/6, _h - 24, 54, 16, "Start", kStartCmd, 'S');
+	_startButton = addButton(5*(_w - 54)/6, _h - 24, 54, 16, "Start", kStartCmd, 'S');
+	_startButton->setEnabled(false);
 
 	// Add list with game titles
 	_list = new ListWidget(this, 10, 10, 300, 112);
@@ -83,14 +84,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
 		item =  _list->getSelected();
-		if (item >= 0) {
-			printf("Selected game: %s\n", _filenames[item].c_str());
-			_detector.setGame(_filenames[item].c_str());
-			close();
-		} else {
-			// TODO - beep or so ?
-			// Ideally, the start button should be disabled if no game is selected
-		}
+		assert(item >= 0);
+		_detector.setGame(_filenames[item].c_str());
+		close();
+		break;
+	case kListSelectionChangedCmd:
+		_startButton->setEnabled(_list->getSelected() >= 0);
+		_startButton->draw();
 		break;
 	case kQuitCmd:
 		g_system->quit();
