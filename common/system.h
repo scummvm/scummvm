@@ -602,12 +602,25 @@ public:
 	virtual void quit() = 0;
 
 	/**
-	  * Set a window caption or any other comparable status display to the
-	  * given value.
-	  * @param caption	the window caption to use from now on
+	 * Set a window caption or any other comparable status display to the
+	 * given value.
+	 * @param caption	the window caption to use from now on
 	 */
 	virtual void setWindowCaption(const char *caption) {}
-	
+
+	/**
+	 * Display a message in an 'on screen display'. That is, display it in a
+	 * fashion where it is visible on or near the screen (e.g. in a transparent
+	 * rectangle over the regular screen content; or in a message box beneath
+	 * it; etc.).
+	 *
+	 * @note There is a default implementation which uses a TimedMessageDialog
+	 *       to display the message. Hence implementing this is optional.
+	 *
+	 * @param msg	the message to display on screen
+	 */
+	virtual void displayMessageOnOSD(const char *msg);
+
 	/** Savefile management. */
 	virtual SaveFileManager *get_savefile_manager() {
 		return new SaveFileManager();
@@ -626,13 +639,12 @@ namespace Common {
  */
 class StackLock {
 	OSystem::MutexRef _mutex;
-	OSystem *_syst;
 	const char *_mutexName;
 
 	void lock();
 	void unlock();
 public:
-	StackLock(OSystem::MutexRef mutex, OSystem *syst = 0, const char *mutexName = NULL);
+	StackLock(OSystem::MutexRef mutex, const char *mutexName = NULL);
 	~StackLock();
 };
 

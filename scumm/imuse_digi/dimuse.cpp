@@ -53,7 +53,7 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 IMuseDigital::~IMuseDigital() {
 	stopAllSounds(true);
 	{
-		Common::StackLock lock(_mutex, g_system, "IMuseDigital::~IMuseDigital()");
+		Common::StackLock lock(_mutex, "IMuseDigital::~IMuseDigital()");
 		_vm->_timer->removeTimerProc(timer_handler);
 	}
 	delete _sound;
@@ -61,7 +61,7 @@ IMuseDigital::~IMuseDigital() {
 }
 
 void IMuseDigital::callback() {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::callback()");
+	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
 	int l = 0;
 
 	if (_pause || !_vm)
@@ -227,7 +227,7 @@ void IMuseDigital::switchToNextRegion(int track) {
 }
 
 void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, int hookId, int volume, int priority) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::startSound()");
+	Common::StackLock lock(_mutex, "IMuseDigital::startSound()");
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 	int l;
 	int lower_priority = 127;
@@ -358,7 +358,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 }
 
 void IMuseDigital::stopSound(int soundId) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::stopSound()");
+	Common::StackLock lock(_mutex, "IMuseDigital::stopSound()");
 	debug(5, "IMuseDigital::stopSound(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
@@ -372,7 +372,7 @@ void IMuseDigital::stopSound(int soundId) {
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::setPriority()");
+	Common::StackLock lock(_mutex, "IMuseDigital::setPriority()");
 	debug(5, "IMuseDigital::setPrioritySound(%d, %d)", soundId, priority);
 
 	assert ((priority >= 0) && (priority <= 127));
@@ -385,7 +385,7 @@ void IMuseDigital::setPriority(int soundId, int priority) {
 }
 
 void IMuseDigital::setVolume(int soundId, int volume) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::setVolume()");
+	Common::StackLock lock(_mutex, "IMuseDigital::setVolume()");
 	debug(5, "IMuseDigital::setVolumeSound(%d, %d)", soundId, volume);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
@@ -395,7 +395,7 @@ void IMuseDigital::setVolume(int soundId, int volume) {
 }
 
 void IMuseDigital::setPan(int soundId, int pan) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::setPan()");
+	Common::StackLock lock(_mutex, "IMuseDigital::setPan()");
 	debug(5, "IMuseDigital::setVolumeSound(%d, %d)", soundId, pan);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
@@ -405,7 +405,7 @@ void IMuseDigital::setPan(int soundId, int pan) {
 }
 
 void IMuseDigital::setFade(int soundId, int destVolume, int delay60HzTicks) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::setFade()");
+	Common::StackLock lock(_mutex, "IMuseDigital::setFade()");
 	debug(5, "IMuseDigital::setFade(%d, %d, %d)", soundId, destVolume, delay60HzTicks);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
@@ -420,7 +420,7 @@ void IMuseDigital::setFade(int soundId, int destVolume, int delay60HzTicks) {
 void IMuseDigital::refreshScripts() {
 	bool found = false;
 	{
-		Common::StackLock lock(_mutex, g_system, "IMuseDigital::refreshScripts()");
+		Common::StackLock lock(_mutex, "IMuseDigital::refreshScripts()");
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			if ((_track[l].used) && (_track[l].soundGroup == IMUSE_MUSIC) && (!_track[l].volFadeUsed)) {
 				found = true;
@@ -436,7 +436,7 @@ void IMuseDigital::refreshScripts() {
 void IMuseDigital::stopAllSounds(bool waitForStop) {
 	debug(5, "IMuseDigital::stopAllSounds");
 	{
-		Common::StackLock lock(_mutex, g_system, "IMuseDigital::stopAllSounds()");
+		Common::StackLock lock(_mutex, "IMuseDigital::stopAllSounds()");
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			if (_track[l].used) {
 				if (_track[l].stream) {
@@ -461,7 +461,7 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 }
 
 void IMuseDigital::fadeOutMusic(int fadeDelay) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::fadeOutMusic()");
+	Common::StackLock lock(_mutex, "IMuseDigital::fadeOutMusic()");
 	debug(5, "IMuseDigital::fadeOutMusic");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].used) && (_track[l].soundGroup == IMUSE_MUSIC) && (!_track[l].volFadeUsed)) {
@@ -474,7 +474,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 }
 
 void IMuseDigital::pause(bool p) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::pause()");
+	Common::StackLock lock(_mutex, "IMuseDigital::pause()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if (_track[l].used) {
 			_vm->_mixer->pauseHandle(_track[l].handle, p);
@@ -611,7 +611,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 }
 
 int IMuseDigital::getSoundStatus(int sound) const {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::getSoundStatus()");
+	Common::StackLock lock(_mutex, "IMuseDigital::getSoundStatus()");
 	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == sound) && _track[l].used) {
@@ -665,7 +665,7 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 }
 
 int32 IMuseDigital::getCurMusicPosInMs() {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::getCurMusicPosInMs()");
+	Common::StackLock lock(_mutex, "IMuseDigital::getCurMusicPosInMs()");
 	int soundId = -1;
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
@@ -680,7 +680,7 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::getCutVoiceLipSyncWidth()");
+	Common::StackLock lock(_mutex, "IMuseDigital::getCutVoiceLipSyncWidth()");
 	int32 msPos = getPosInMs(kTalkSoundID) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
@@ -690,7 +690,7 @@ int32 IMuseDigital::getCurVoiceLipSyncWidth() {
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncHeight() {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::getCurVoiceLipSyncHeight()");
+	Common::StackLock lock(_mutex, "IMuseDigital::getCurVoiceLipSyncHeight()");
 	int32 msPos = getPosInMs(kTalkSoundID) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
@@ -700,7 +700,7 @@ int32 IMuseDigital::getCurVoiceLipSyncHeight() {
 }
 
 int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::getCurMusicLipSyncWidth()");
+	Common::StackLock lock(_mutex, "IMuseDigital::getCurMusicLipSyncWidth()");
 	int soundId = -1;
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
@@ -718,7 +718,7 @@ int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
 }
 
 int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
-	Common::StackLock lock(_mutex, g_system, "IMuseDigital::getCurMusicLipSyncHeight()");
+	Common::StackLock lock(_mutex, "IMuseDigital::getCurMusicLipSyncHeight()");
 	int soundId = -1;
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {

@@ -137,6 +137,10 @@ public:
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
 
+#ifdef USE_OSD
+	void displayMessageOnOSD(const char *msg);
+#endif
+
 protected:
 	void init_intern();
 
@@ -150,8 +154,6 @@ protected:
 		kOSDColorKey = 1,
 		kOSDInitialAlpha = 80			// Initial alpha level, in percent
 	};
-	
-	void displayMessageOnOSD(const char *msg);
 #endif
 
 	// hardware screen
@@ -252,7 +254,7 @@ protected:
 	void toggleMouseGrab();
 
 
-	void internUpdateScreen();
+	virtual void internUpdateScreen();
 
 	void load_gfx_mode();
 	void unload_gfx_mode();

@@ -333,7 +333,7 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 	else
 		_toolbarHandler.setOffset(400);	
 
-	OSystem_SDL_Common::initSize(w, h);	
+	OSystem_SDL::initSize(w, h);	
 
 	update_game_settings();
 
@@ -623,10 +623,8 @@ void OSystem_WINCE3::update_keyboard() {
 	}
 }
 
-void OSystem_WINCE3::updateScreen() {
+void OSystem_WINCE3::internUpdateScreen() {
 	assert(_hwscreen != NULL);
-
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 
 	update_keyboard();
 
@@ -820,7 +818,7 @@ void OSystem_WINCE3::updateScreen() {
 
 uint32 OSystem_WINCE3::property(int param, Property *value) {
 
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		// FIXME
@@ -898,7 +896,7 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 bool OSystem_WINCE3::save_screenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	SDL_SaveBMP(_hwscreen, filename);
 	return true;
 }
@@ -928,7 +926,7 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
 void OSystem_WINCE3::draw_mouse() {
 	// FIXME
 	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset()) && !_forceHideMouse)
-		OSystem_SDL_Common::draw_mouse();
+		OSystem_SDL::draw_mouse();
 }
 
 void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
@@ -987,7 +985,7 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 		}
 	}
 
-	OSystem_SDL_Common::add_dirty_rect(x, y, w, h);
+	OSystem_SDL::add_dirty_rect(x, y, w, h);
 }
 
 // FIXME
@@ -1305,5 +1303,5 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 
 void OSystem_WINCE3::quit() {
 	CEDevice::disableHardwareKeyMapping();
-	OSystem_SDL_Common::quit();
+	OSystem_SDL::quit();
 }

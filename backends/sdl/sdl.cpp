@@ -144,7 +144,7 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 		break;
 	case kFeatureAspectRatioCorrection:
 		if (_screenHeight == 200 && _adjustAspectRatio != enable) {
-			Common::StackLock lock(_graphicsMutex, this);
+			Common::StackLock lock(_graphicsMutex);
 
 			//assert(_hwscreen != 0);
 			_adjustAspectRatio ^= true;

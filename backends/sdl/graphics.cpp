@@ -50,7 +50,7 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 }
 
 bool OSystem_SDL::setGraphicsMode(int mode) {
-	Common::StackLock lock(_graphicsMutex, this);
+	Common::StackLock lock(_graphicsMutex);
 
 	int newScaleFactor = 1;
 	ScalerProc *newScalerProc;
@@ -327,7 +327,7 @@ void OSystem_SDL::hotswap_gfx_mode() {
 }
 
 void OSystem_SDL::updateScreen() {
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	internUpdateScreen();
 }
@@ -490,13 +490,13 @@ void OSystem_SDL::internUpdateScreen() {
 bool OSystem_SDL::save_screenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	SDL_SaveBMP(_hwscreen, filename);
 	return true;
 }
 
 void OSystem_SDL::setFullscreenMode(bool enable) {
-	Common::StackLock lock(_graphicsMutex, this);
+	Common::StackLock lock(_graphicsMutex);
 
 	if (_full_screen != enable) {
 		assert(_hwscreen != 0);
@@ -536,7 +536,7 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	if (_screen == NULL)
 		return;
 
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	
 	if (((long)src & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
 			w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
@@ -755,7 +755,7 @@ void OSystem_SDL::move_screen(int dx, int dy, int height) {
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
 
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	byte *src, *dst;
 	int x, y;
@@ -849,7 +849,7 @@ void OSystem_SDL::clearOverlay() {
 	if (!_overlayVisible)
 		return;
 	
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	
 	// hide the mouse
 	undraw_mouse();

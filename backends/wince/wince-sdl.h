@@ -36,15 +36,16 @@
 
 #include <SDL.h>
 
-class OSystem_WINCE3 : public OSystem_SDL_Common {
+class OSystem_WINCE3 : public OSystem_SDL {
 public:
 	OSystem_WINCE3();
 
 	// Update the dirty areas of the screen
-	void updateScreen();
+	void internUpdateScreen();
 
-	// Set a parameter
-	uint32 property(int param, Property *value);
+	bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
+	bool getFeatureState(Feature f);
 
 	void initSize(uint w, uint h);
 
