@@ -154,12 +154,27 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 	if (strlen(_tuneList[tuneId]) > 0) {
 		int newStream = 0;
 		if (_handles[0].streaming() && _handles[1].streaming()) {
-			// If both handles are playing, stop the one that's
-			// fading down.
-			if (_handles[0].fading() > 0)
-				_handles[0].stop();
-			else
-				_handles[1].stop();
+			int streamToStop;
+			// Both streams playing - one must be forced to stop.
+			if (!_handles[0].fading() && !_handles[1].fading()) {
+				// None of them are fading. Shouldn't happen,
+				// so it doesn't matter which one we pick.
+				streamToStop = 0;
+			} else if (_handles[0].fading() && !_handles[1].fading()) {
+				// Stream 0 is fading, so pick that one.
+				streamToStop = 0;
+			} else if (!_handles[0].fading() && _handles[1].fading()) {
+				// Stream 1 is fading, so pick that one.
+				streamToStop = 1;
+			} else {
+				// Both streams are fading. Pick the one that
+				// is closest to silent.
+				if (ABS(_handles[0].fading()) < ABS(_handles[1].fading()))
+					streamToStop = 0;
+				else
+					streamToStop = 1;
+			}
+			_handles[streamToStop].stop();
 		}
 		if (_handles[0].streaming()) {
 			_handles[0].fadeDown();
