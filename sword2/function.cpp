@@ -198,7 +198,7 @@ int32 FN_random_pause(int32 *params) {
 	return FN_pause(pars);
 }
 
-int32 FN_pass_graph(int32 *params) {	// Tony28Nov96
+int32 FN_pass_graph(int32 *params) {
 	// makes an engine local copy of passed graphic_structure and
 	// mega_structure - run script 4 of an object to request this
 	// used by FN_turn_to(id) etc
@@ -224,7 +224,7 @@ int32 FN_pass_mega(int32 *params) {
 
 	// params 	0 pointer to a mega structure
 
-	memcpy(&engine_mega, (uint8*) params[0], sizeof(Object_mega));
+	memcpy(&engine_mega, (uint8 *) params[0], sizeof(Object_mega));
 
 	//makes no odds
 	return IR_CONT;
@@ -358,7 +358,7 @@ int32 FN_reset_globals(int32 *params) {
 
 	debug(5, "globals size %d", size / 4);
 
-	globals = (uint32*) ((uint8 *) res_man.open(1) + sizeof(_standardHeader));
+	globals = (uint32 *) ((uint8 *) res_man.open(1) + sizeof(_standardHeader));
 
 	// blank each global variable
 	for (j = 0; j < size / 4; j++)
@@ -369,12 +369,7 @@ int32 FN_reset_globals(int32 *params) {
 	// all objects but george
 	res_man.killAllObjects(0);
 
-	// reopen global variables resource & send address to interpreter - it
-	// won't be moving
-	// SetGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
-	// res_man.close(1);
-
-	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET! (James29may97)
+	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from FN_init_background
 
 	// switch on scrolling (2 means first time on screen)
@@ -394,9 +389,6 @@ int32 FN_play_credits(int32 *params) {
 		uint8 tmpPal[1024];
 		int32 music_length;
 		int32 pars[2];
-
-		// FIXME: We need a better method for saving/restoring the
-		// music state as this one only restarts looping music.
 
 		g_sound->saveMusicState();
 

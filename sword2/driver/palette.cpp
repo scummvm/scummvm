@@ -29,11 +29,10 @@ namespace Sword2 {
 #define PALTABLESIZE 64 * 64 * 64
 
 uint8 palCopy[256][4];
-uint8 fadePalette[256][4];
 
-uint8 paletteMatch[PALTABLESIZE];
-
-uint8 fadeStatus = RDFADE_NONE;
+static uint8 fadePalette[256][4];
+static uint8 paletteMatch[PALTABLESIZE];
+static uint8 fadeStatus = RDFADE_NONE;
 
 static int32 fadeStartTime;
 static int32 fadeTotalTime;
@@ -65,8 +64,7 @@ uint8 GetMatch(uint8 r, uint8 g, uint8 b) {
 	min = diff;
 	minIndex = 0;
 	if (diff > 0) {
-		i = 1;
-		while (i < 256)	{
+		for (i = 1; i < 256; i++) {
 			diffred = palCopy[i][0] - r;
 			diffgreen = palCopy[i][1] - g;
 			diffblue = palCopy[i][2] - b;
@@ -78,7 +76,6 @@ uint8 GetMatch(uint8 r, uint8 g, uint8 b) {
 				if (min == 0)
 					break;
 			}
-			i++;
 		}
 	}
 
@@ -111,7 +108,7 @@ int32 UpdatePaletteMatchTable(uint8 *data) {
 			}
 		}
 	} else {
-		// The provided data is th new palette match table
+		// The provided data is the new palette match table
 		memcpy(paletteMatch, data, PALTABLESIZE);
 	}
 
@@ -155,10 +152,10 @@ int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint
 
 int32 DimPalette(void) {
 	byte *p = (byte *) palCopy;
-	uint32 i;
 
-	for (i = 0; i < 256 * 4; i++)
+	for (int i = 0; i < 256 * 4; i++)
 		p[i] /= 2;
+
 	g_system->set_palette(p, 0, 256);
 	return RD_OK;
 }

@@ -66,34 +66,4 @@ int32 SetLanguageVersion(uint8 version) {
 	return RD_OK;
 }
 
-/**
- * Fills the string pointed to by 'name' with the title of the game, depending
- * upon what the current language version is.
- * @param name buffer to store the title of the game in
- */
-
-int32 GetGameName(uint8 *name) {
-	uint8 version;
-	int32 rv;
-
-	rv = GetLanguageVersion(&version);
-
-	switch (version) {
-	case ENGLISH:
-		strcpy((char *) name, "Broken Sword II");
-		break;
-	case AMERICAN:
-		strcpy((char *) name, "Circle of Blood II");
-		break;
-	case GERMAN:
-		strcpy((char *) name, "Baphomet's Fluch II");
-		break;
-	default:
-		strcpy((char *) name, "Some game or other, part 86");
-		return RDERR_INVALIDVERSION;
-	}
-
-	return rv;
-}
-
 } // End of namespace Sword2

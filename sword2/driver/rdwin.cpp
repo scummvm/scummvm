@@ -18,8 +18,7 @@
  */
 
 #include "common/stdafx.h"
-#include "base/engine.h"
-#include "common/timer.h"
+#include "bs2/sword2.h"
 #include "bs2/driver/driver96.h"
 #include "bs2/driver/_mouse.h"
 #include "bs2/driver/keyboard.h"
@@ -29,11 +28,8 @@
 #include "bs2/driver/render.h"
 #include "bs2/driver/menu.h"
 #include "bs2/driver/d_sound.h"
-#include "bs2/sword2.h"
 
 namespace Sword2 {
-
-#define MENUDEEP 40		// Temporary, until menu.h is written!
 
 // ---------------------------------------------------------------------------
 // OSystem Event Handler. Full of cross platform goodness and 99% fat free!
@@ -117,14 +113,14 @@ int32 ServiceWindows(void) {
 }
 
 /**
- * Set the window name to windowName and stores this name in gameName for
- * future use.
+ * Set the window title
  */
 
 void SetWindowName(const char *windowName) {
-	warning("stub SetWindowName( %s )", windowName);
-	// SetWindowText(hwnd, windowName);
-	// strcpy(gameName, windowName);
+	OSystem::Property prop;
+
+	prop.caption = windowName;
+	g_system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 }
 
 } // End of namespace Sword2

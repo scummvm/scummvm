@@ -50,7 +50,6 @@ int32 FN_init_background(int32 *params)	{
 	_screenHeader *screen_head;
 	_layerHeader *layer;
  	_spriteInfo spriteInfo;
-	uint32 j;
 	uint8 *file;
 	uint32 rv;
 
@@ -83,8 +82,8 @@ int32 FN_init_background(int32 *params)	{
 	if (this_screen.background_layer_id)
 		CloseBackgroundLayer();
 
-	this_screen.background_layer_id = *params;	// set the res id
-	this_screen.new_palette = *(params + 1);	// yes or no - palette is taken from layer file
+	this_screen.background_layer_id = params[0];	// set the res id
+	this_screen.new_palette = params[1];		// yes or no - palette is taken from layer file
 
 	// ok, now read the resource and pull out all the normal sort layer
 	// info/and set them up at the beginning of the sort list - why do it
@@ -106,19 +105,19 @@ int32 FN_init_background(int32 *params)	{
 	SetLocationMetrics(screen_head->width, screen_head->height);
 
 	if (screen_head->noLayers) {
-		for (j = 0; j < screen_head->noLayers; j++) {
-			// get layer header for layer j
-			layer = FetchLayerHeader(file, j);
+		for (int i = 0; i < screen_head->noLayers; i++) {
+			// get layer header for layer i
+			layer = FetchLayerHeader(file, i);
 
 			// add into the sort list
 
 			// need this for sorting - but leave the rest blank,
 			// we'll take from the header at print time
-			sort_list[j].sort_y = layer->y + layer->height;
+			sort_list[i].sort_y = layer->y + layer->height;
 			// signifies a layer
-			sort_list[j].layer_number = j + 1;
+			sort_list[i].layer_number = i + 1;
 
-			debug(5, "init layer %d", j);
+			debug(5, "init layer %d", i);
 		}
 	}
 

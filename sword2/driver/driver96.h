@@ -303,7 +303,6 @@ extern void  SetWindowName(const char *windowName);
 //-----------------------------------------------------------------------------
 extern int32 GetLanguageVersion(uint8 *version);
 extern int32 SetLanguageVersion(uint8 version);
-extern int32 GetGameName(uint8 *name);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

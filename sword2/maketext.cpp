@@ -451,7 +451,7 @@ typedef	struct {
 	mem *text_mem;
 } text_bloc;
 
-text_bloc text_sprite_list[MAX_text_blocs];
+static text_bloc text_sprite_list[MAX_text_blocs];
 
 void Init_text_bloc_system(void) {
 	for (int j = 0; j < MAX_text_blocs; j++)
@@ -648,15 +648,20 @@ void InitialiseFontResourceFlags(void) {
 
 	// Get the game name for the windows application
 
-	// FIXME: Since SetWindowName() is stubbed, this doesn't actually do
-	// anything at the moment. Should it be removed?
-
 	// Get the text line - skip the 2 chars containing the wavId
 
 	if (g_sword2->_gameId == GID_SWORD2_DEMO)
 		textLine = FetchTextLine(textFile, 451) + 2;
 	else
 		textLine = FetchTextLine(textFile, 54) + 2;
+
+	// According to the GetNameFunction(), which was never called and has
+	// therefore been removed, the name of the game is:
+	//
+	// ENGLISH:  "Broken Sword II"
+	// AMERICAN: "Circle of Blood II"
+	// GERMAN:   "Baphomet's Fluch II"
+	// default:  "Some game or other, part 86"
 
 	SetWindowName((char *) textLine);
 

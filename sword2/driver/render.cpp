@@ -49,14 +49,14 @@ static uint16 layer = 0;
 
 #define RENDERAVERAGETOTAL 4
 
-int32 renderCountIndex = 0;
-int32 renderTimeLog[RENDERAVERAGETOTAL] = { 60, 60, 60, 60 };
-int32 initialTime;
-int32 startTime;
-int32 totalTime;
-int32 renderAverageTime = 60;
-int32 framesPerGameCycle;
-int32 renderTooSlow;
+static int32 renderCountIndex = 0;
+static int32 renderTimeLog[RENDERAVERAGETOTAL] = { 60, 60, 60, 60 };
+static int32 initialTime;
+static int32 startTime;
+static int32 totalTime;
+static int32 renderAverageTime = 60;
+static int32 framesPerGameCycle;
+static int32 renderTooSlow;
 
 #define BLOCKWIDTH 64
 #define BLOCKHEIGHT 64
@@ -64,8 +64,8 @@ int32 renderTooSlow;
 #define BLOCKHBITS 6
 #define MAXLAYERS 5
 
-uint8 xblocks[MAXLAYERS];
-uint8 yblocks[MAXLAYERS];
+static uint8 xblocks[MAXLAYERS];
+static uint8 yblocks[MAXLAYERS];
 
 // blockSurfaces stores an array of sub-blocks for each of the parallax layers.
 
@@ -74,7 +74,7 @@ typedef struct {
 	bool transparent;
 } BlockSurface;
 
-BlockSurface **blockSurfaces[MAXLAYERS] = { 0, 0, 0, 0, 0 };
+static BlockSurface **blockSurfaces[MAXLAYERS] = { 0, 0, 0, 0, 0 };
 
 void UploadRect(Common::Rect *r) {
 	g_system->copy_rect(lpBackBuffer + r->top * screenWide + r->left,
@@ -403,41 +403,16 @@ int32 RestoreBackgroundLayer(_parallax *p, int16 l)
  */
 
 int32 PlotPoint(uint16 x, uint16 y, uint8 colour) {
-	warning("stub PlotPoint( %d, %d, %d )", x, y, colour);
-/*
+	uint8 *buf = lpBackBuffer + 40 * RENDERWIDE;
 	int16 newx, newy;
 	
 	newx = x - scrollx;
 	newy = y - scrolly;
 
-	if ((newx < 0) || (newx > RENDERWIDE) || (newy < 0) || (newy > RENDERDEEP))
-	{
-		return(RD_OK);
-	}
-	if (renderCaps & RDBLTFX_ALLHARDWARE)
-	{
-		DDSURFACEDESC ddsd;
-		HRESULT hr;
+	if (newx >= 0 && newx < RENDERWIDE && newy >= 0 && newy < RENDERDEEP)
+		buf[newy * RENDERWIDE + newx] = colour;
 
-		ddsd.dwSize = sizeof(DDSURFACEDESC);
-		hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-		if (hr != DD_OK)
-		{
-			hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-		}
-
-		if (hr == DD_OK)
-		{
-
-			*((uint8 *) ddsd.lpSurface + (newy + 40) * ddsd.lPitch + newx) = colour;
-			IDirectDrawSurface2_Unlock(lpBackBuffer, ddsd.lpSurface);
-		}
-	}
-	else
-		myScreenBuffer[newy * RENDERWIDE + newx] = colour;
-*/	
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 /**
@@ -451,46 +426,24 @@ int32 PlotPoint(uint16 x, uint16 y, uint8 colour) {
 
 // Uses Bressnham's incremental algorithm!
 int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
-	warning("stub DrawLine( %d, %d, %d, %d, %d )", x0, y0, x1, y1, colour);
-/*
+	uint8 *buf = lpBackBuffer + 40 * RENDERWIDE;
 	int dx, dy;
 	int dxmod, dymod;
 	int ince, incne;
-	int	d;
+	int d;
 	int x, y;
 	int addTo;
-	DDSURFACEDESC ddsd;
-	HRESULT hr;
 
 	x1 -= scrollx;
 	y1 -= scrolly;
 	x0 -= scrollx;
 	y0 -= scrolly;
 
-
 	// Lock the surface if we're rendering to the back buffer.
 
-	if (renderCaps & RDBLTFX_ALLHARDWARE)
-	{
-		ddsd.dwSize = sizeof(DDSURFACEDESC);
-		hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-		if (hr != DD_OK)
-		{
-			hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-		}
-		if (hr != DD_OK)
-			return(RD_OK);
-
-		(uint8 *) ddsd.lpSurface += (40 * ddsd.lPitch);
-
-	}
-
-
-
-
 	//Make sure we're going from left to right
-	if (x1 < x0)
-	{
+
+	if (x1 < x0) {
 		x = x1;
 		x1 = x0;
 		x0 = x;
@@ -498,6 +451,7 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 		y1 = y0;
 		y0 = y;
 	}
+
 	dx = x1 - x0;
 	dy = y1 - y0;
 	
@@ -511,42 +465,29 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 	else
 		dymod = dy;
 
-	if (dxmod >= dymod)
-	{
-		if (dy > 0)
-		{
+	if (dxmod >= dymod) {
+		if (dy > 0) {
 			d = 2 * dy - dx;
 			ince = 2 * dy;
 			incne = 2 * (dy - dx);
 			x = x0;
 			y = y0;
-			if ((x >= 0) && (x < RENDERWIDE) && (y >= 0) && (y < RENDERDEEP))
-				if (renderCaps & RDBLTFX_ALLHARDWARE)
-					*((uint8 *) ddsd.lpSurface + y * ddsd.lPitch + x) = colour;
-				else
-					myScreenBuffer[y * RENDERWIDE + x] = colour;
-			while (x < x1)
-			{
-				if (d <= 0)
-				{
+			if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
+				buf[y * RENDERWIDE + x] = colour;
+
+			while (x < x1) {
+				if (d <= 0) {
 					d += ince;
-					x += 1;
-				}
-				else
-				{
+					x++;
+				} else {
 					d += incne;
-					x += 1;
-					y += 1;
+					x++;
+					y++;
 				}
-				if ((x >= 0) && (x < RENDERWIDE) && (y >= 0) && (y < RENDERDEEP))
-					if (renderCaps & RDBLTFX_ALLHARDWARE)
-						*((uint8 *) ddsd.lpSurface + y * ddsd.lPitch + x) = colour;
-					else
-						myScreenBuffer[y * RENDERWIDE + x] = colour;
+				if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
+					buf[y * RENDERWIDE + x] = colour;
 			}
-		}
-		else
-		{
+		} else {
 			addTo = y0;
 			y0 = 0;
 			y1 -= addTo;
@@ -558,39 +499,26 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 			incne = 2 * (dy - dx);
 			x = x0;
 			y = y0;
-			if ((x >= 0) && (x < RENDERWIDE) && (addTo - y >= 0) && (addTo - y < RENDERDEEP))
-				if (renderCaps & RDBLTFX_ALLHARDWARE)
-					*((uint8 *) ddsd.lpSurface + (addTo - y) * ddsd.lPitch + x) = colour;
-				else
-					myScreenBuffer[(addTo - y) * RENDERWIDE + x] = colour;
-			while (x < x1)
-			{
-				if (d <= 0)
-				{
-					d += ince;
-					x += 1;
-				}
-				else
-				{
-					d += incne;
-					x += 1;
-					y += 1;
-				}
-				if ((x >= 0) && (x < RENDERWIDE) && (addTo - y >= 0) && (addTo - y < RENDERDEEP))
-					if (renderCaps & RDBLTFX_ALLHARDWARE)
-						*((uint8 *) ddsd.lpSurface + (addTo - y) * ddsd.lPitch + x) = colour;
-					else
-						myScreenBuffer[(addTo - y) * RENDERWIDE + x] = colour;
-			}
+			if (x >= 0 && x < RENDERWIDE && addTo - y >= 0 && addTo - y < RENDERDEEP)
+				buf[(addTo - y) * RENDERWIDE + x] = colour;
 
+			while (x < x1) {
+				if (d <= 0) {
+					d += ince;
+					x++;
+				} else {
+					d += incne;
+					x++;
+					y++;
+				}
+				if (x >= 0 && x < RENDERWIDE && addTo - y >= 0 && addTo - y < RENDERDEEP)
+					buf[(addTo - y) * RENDERWIDE + x] = colour;
+			}
 		}
-	}
-	else
-	{
+	} else {
 		//OK, y is now going to be the single increment.
 		//	Ensure the line is going top to bottom
-		if (y1 < y0)
-		{
+		if (y1 < y0) {
 			x = x1;
 			x1 = x0;
 			x0 = x;
@@ -601,40 +529,28 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 		dx = x1 - x0;
 		dy = y1 - y0;
 
-		if (dx > 0)
-		{
+		if (dx > 0) {
 			d = 2 * dx - dy;
 			ince = 2 * dx;
 			incne = 2 * (dx - dy);
 			x = x0;
 			y = y0;
-			if ((x >= 0) && (x < RENDERWIDE) && (y >= 0) && (y < RENDERDEEP))
-				if (renderCaps & RDBLTFX_ALLHARDWARE)
-					*((uint8 *) ddsd.lpSurface + y * ddsd.lPitch + x) = colour;
-				else
-					myScreenBuffer[y * RENDERWIDE + x] = colour;
-			while (y < y1)
-			{
-				if (d <= 0)
-				{
+			if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
+				buf[y * RENDERWIDE + x] = colour;
+
+			while (y < y1) {
+				if (d <= 0) {
 					d += ince;
-					y += 1;
-				}
-				else
-				{
+					y++;
+				} else {
 					d += incne;
-					x += 1;
-					y += 1;
+					x++;
+					y++;
 				}
-				if ((x >= 0) && (x < RENDERWIDE) && (y >= 0) && (y < RENDERDEEP))
-					if (renderCaps & RDBLTFX_ALLHARDWARE)
-						*((uint8 *) ddsd.lpSurface + y * ddsd.lPitch + x) = colour;
-					else
-						myScreenBuffer[y * RENDERWIDE + x] = colour;
+				if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
+					buf[y * RENDERWIDE + x] = colour;
 			}
-		}
-		else
-		{
+		} else {
 			addTo = x0;
 			x0 = 0;
 			x1 -= addTo;
@@ -646,41 +562,24 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 			incne = 2 * (dx - dy);
 			x = x0;
 			y = y0;
-			if ((addTo - x >= 0) && (addTo - x < RENDERWIDE) && (y >= 0) && (y < RENDERDEEP))
-				if (renderCaps & RDBLTFX_ALLHARDWARE)
-					*((uint8 *) ddsd.lpSurface + y * ddsd.lPitch + addTo - x) = colour;
-				else
-					myScreenBuffer[y * RENDERWIDE + addTo - x] = colour;
-			while (y < y1)
-			{
-				if (d <= 0)
-				{
+			if (addTo - x >= 0 && addTo - x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
+				buf[y * RENDERWIDE + addTo - x] = colour;
+
+			while (y < y1) {
+				if (d <= 0) {
 					d += ince;
-					y += 1;
-				}
-				else
-				{
+					y++;
+				} else {
 					d += incne;
-					x += 1;
-					y += 1;
+					x++;
+					y++;
 				}
-				if ((addTo - x >= 0) && (addTo - x < RENDERWIDE) && (y >= 0) && (y < RENDERDEEP))
-					if (renderCaps & RDBLTFX_ALLHARDWARE)
-						*((uint8 *) ddsd.lpSurface + y * ddsd.lPitch + addTo - x) = colour;
-					else
-						myScreenBuffer[y * RENDERWIDE + addTo - x] = colour;
+				if (addTo - x >= 0 && addTo - x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
+					buf[y * RENDERWIDE + addTo - x] = colour;
 			}
-
 		}
-
 	}
 
-	if (renderCaps & RDBLTFX_ALLHARDWARE)
-	{
-		(uint8 *) ddsd.lpSurface -= (40 * ddsd.lPitch);
-		IDirectDrawSurface2_Unlock(lpBackBuffer, ddsd.lpSurface);
-	}
-*/
 	return RD_OK;
 }
 
@@ -796,7 +695,7 @@ int32 EndRenderCycle(bool *end) {
 	startTime = time;
 	renderAverageTime = (renderTimeLog[0] + renderTimeLog[1] + renderTimeLog[2] + renderTimeLog[3]) >> 2;
 
-	framesPerGameCycle += 1;
+	framesPerGameCycle++;
 
 	if (++renderCountIndex == RENDERAVERAGETOTAL)
 		renderCountIndex = 0;
@@ -869,8 +768,6 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 
 	// This function is called to re-initialise the layers if they have
 	// been lost. We know this if the layers have already been assigned.
-
-	// TODO: Can layers still be lost, or is that a DirectDraw-ism?
 
 	if (layer == MAXLAYERS)
 		CloseBackgroundLayer();
