@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter            Version 0.01-CVS
-(C) 2003- The ScummVM-Residual team                  Last Updated: 21st Aug 2003
+(C) 2003- The ScummVM-Residual team                  Last Updated: 24st Aug 2003
 --------------------------------------------------------------------------------
 
 What is Residual?
@@ -33,12 +33,21 @@ the lines:
        DataDir=.
        good_times=TRUE
 
+It runs really slow!
+--------------------
+A large portion of older cards (Such as 3dfx cards, Radeon 7500 and earlier,
+Matrox G4xx series cards, etc) do not have a fast glDrawPixels implementation.
+Unix users can achieve a usable speed by using Mesa 5.0 or newer, but people
+unable to upgrade or Windows users are stuck.
+
+We are working on this problem, however it is a tricky one and no easy
+solution has yet been found.
+
 What is the state of Residual?
 -------------------------------
 Many features are not yet supported. 2D graphics and text are not yet drawn,
 although you can interact with objects that do not appear (eg, the mail tube)
-It may crash. There is no kind of zbuffering, so Manny is always 'in front'
-of objects. You can walk off the screen and into places you should not be
+It may crash. You can walk off the screen and into places you should not be
 able to. There is no lighting. Basically, not all that great.
 
 However, the game itself is in a fairly decent state. You can (using the

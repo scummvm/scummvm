@@ -2,14 +2,14 @@ Residual in-progress items (in rough order of priority):
 -------------------------------------------------------0
  * Add SMUSH (low-priority, but important) - Assigned to aquadran
  * Implement limiting actor to walkplane boundries - Assigned to daniel
+ * Implement text fonts (conversations, etc) - Assigned to Ender
 
 Residual TODO list (in rough order of priority):
 ------------------------------------------------ 
+ * Figure out how to speed-up zbuffering (only draw buffer around active objects)
  * Implement 2D primitives 
- * Implement text fonts (conversations, etc)
  * Remove hash_map usage (not implemented on Visual Studio & other compilers)
  * Remove as much other STL stuff as possible (see above)
- * Z-Planes (translate ZBitmap data into OpenGL format?)
  * Add OpenGL lighting
  * Rewrite sound mixer (volume control, etc)
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
@@ -34,4 +34,3 @@ MSVC notes:
  GL_UNSIGNED_SHORT_5_6_5 in bitmap.cc does not exist in MSVC
  round() function in lua.cpp's check_int does not exist in MSVC
  vsscanf function does not exist in MSVC (already worked around)
- dirent stuff in resource.cpp needs to use Win32 API equivs (eg, findFirstFile etc)
