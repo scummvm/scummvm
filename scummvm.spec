@@ -48,7 +48,7 @@ rm -Rf %{buildroot}
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc readme.txt whatsnew.txt copying.txt scummvm.xpm
+%doc README NEWS COPYING scummvm.xpm
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_mandir}/man6/scummvm.6*
 

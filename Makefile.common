@@ -84,7 +84,7 @@ SOUND_OBJS = sound/fmopl.o sound/mididrv.o sound/mixer.o
 OBJS	+= $(COMMON_OBJS) $(GUI_OBJS) scumm/libscumm.a simon/libsimon.a $(SOUND_OBJS)
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
-	debugrl.h whatsnew.txt readme.txt copying.txt \
+	debugrl.h NEWS README COPYING \
 	scummvm.dsp scummvm.dsw sound/fmopl.h gui.h sound.h
 
 all: scummvm$(EXEEXT)
