@@ -3500,15 +3500,18 @@ void SimonEngine::processSpecialKeys() {
 }
 
 void SimonEngine::pause() {
-	_key_pressed = 0;
+	_key_pressed = 1;
 	_pause = 1;
-	for (;;) {
+	midi.pause(_music_paused ^= 1);
+	_sound->ambientPause(_ambient_paused ^= 1);
+	while (_pause) {
 		delay(1);
 		if (_key_pressed == 'p')
-			goto get_out;
+			_pause = 0;
 	}
-get_out:;
-	_pause = 0;
+	midi.pause(_music_paused ^= 1);
+	_sound->ambientPause(_ambient_paused ^= 1);
+
 }
 
 #ifdef __PALM_OS__
