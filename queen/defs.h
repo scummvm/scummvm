@@ -89,6 +89,12 @@ enum {
 	PANEL_AREA_INV_4    = 14
 };
 
+enum Language {
+	ENGLISH  = 'E',
+	FRENCH   = 'F',
+	GERMAN   = 'G',
+	ITALIAN  = 'I'
+};
 
 } // End of namespace Queen
 

@@ -216,7 +216,224 @@ void Logic::initialise() {
 	}
 
 	//Command List Data
+	_numCmdList = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_cmdList = new CmdListData[_numCmdList + 1];
+	for (i = 1; i <= _numCmdList; i++) {
+		_cmdList[i].verb = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_cmdList[i].nounObj1 = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_cmdList[i].nounObj2 = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_cmdList[i].song = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_cmdList[i].setAreas = READ_BE_UINT16(ptr) != 0;
+		ptr += 2;
+		_cmdList[i].setObjects = READ_BE_UINT16(ptr) != 0;
+		ptr += 2;
+		_cmdList[i].setItems = READ_BE_UINT16(ptr) != 0;
+		ptr += 2;
+		_cmdList[i].setConditions = READ_BE_UINT16(ptr) != 0;
+		ptr += 2;
+		_cmdList[i].image = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_cmdList[i].specialSection = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
+	
+	//Command AREA
+	_numCmdArea = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_cmdArea = new CmdArea[_numCmdArea + 1];
+	for (i = 1; i <= _numCmdArea; i++) {
+		_cmdArea[i].id = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_cmdArea[i].area = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_cmdArea[i].room = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
+	
+	//Command OBJECT
+	_numCmdObject = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_cmdObject = new CmdObject[_numCmdObject + 1];
+	for (i = 1; i <= _numCmdObject; i++) {
+		_cmdObject[i].id = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+		_cmdObject[i].dstObj = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+		_cmdObject[i].srcObj = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+	}
 
+	//Command INVENTORY
+	_numCmdInventory = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_cmdInventory = new CmdInventory[_numCmdInventory + 1];
+	for (i = 1; i <= _numCmdInventory; i++) {
+		_cmdInventory[i].id = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+		_cmdInventory[i].dstItem = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+		_cmdInventory[i].srcItem = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+	}
+	
+	//Command GAMESTATE
+	_numCmdGameState = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_cmdGameState = new CmdGameState[_numCmdGameState + 1];
+	for (i = 1; i <= _numCmdGameState; i++) {
+		_cmdGameState[i].id = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+		_cmdGameState[i].gameStateSlot = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+		_cmdGameState[i].gameStateValue = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+		_cmdGameState[i].speakValue = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;		
+	}
+
+	_entryObj = READ_BE_UINT16(ptr);
+	ptr += 2;
+
+	//Furniture DATA
+	_numFurniture = READ_BE_UINT16(ptr);
+	ptr += 2;
+
+	_furnitureData = new FurnitureData[_numFurniture + 1];
+	for (i = 1; i <= _numFurniture; i++) {
+		_furnitureData[i].room = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_furnitureData[i].gameStateValue = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
+
+	_numActors = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numAAnim = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numAName = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numAFile = READ_BE_UINT16(ptr);
+	ptr += 2;
+
+	_actorData = new ActorData[_numActors + 1];
+	for (i = 1; i <= _numActors; i++) {
+		_actorData[i].room = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].bobNum = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].name = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].gameStateSlot = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].gameStateValue = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].color = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].bobFrameStanding = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].x = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].y = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].anim = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].bankNum = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_actorData[i].actorFile = READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
+
+	_numGraphicAnim = READ_BE_UINT16(ptr);
+	ptr += 2;
+	
+	_graphicAnim = new GraphicAnim[_numGraphicAnim + 1];
+	for (i = 1; i <= _numGraphicAnim; i++) {
+		_graphicAnim[i].frame1 = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_graphicAnim[i].frame2 = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_graphicAnim[i].frame3 = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
+	
+	_currentRoom = _objectData[_entryObj].room;
+	_entryObj = 0;
+	
+	/*
+		switch (_resource->getLanguage()) {
+			case	ENGLISH:
+					_keyLanguage = _keyCommands[KEYS_ENGLISH];
+					break;
+			case	GERMAN:
+					_keyLanguage = _keyCommands[KEYS_GERMAN];
+					break;
+			case	FRENCH:
+					_keyLanguage = _keyCommands[KEYS_FRENCH];
+					break;
+			case	ITALIAN:
+					_keyLanguage = _keyCommands[KEYS_ITALIAN];
+					break;
+			default:
+					_keyLanguage = _keyCommands[KEYS_ENGLISH];
+					break;
+		}
+	*/
+
+	_objDescription = new char*[_numDescriptions + 1];
+	_objDescription[0] = 0;
+	for (i = 1; i <= _numDescriptions; i++)
+		_objDescription[i] = _resource->getJAS2Line();
+
+	//Patch for German text bug
+	if (_resource->getLanguage() == GERMAN) {
+		char *txt = new char[48];
+		strcpy(txt, "Es bringt nicht viel, das festzubinden.");
+		_objDescription[296] = txt;
+	}
+	
+	_objName = new char*[_numNames + 1];
+	_objName[0] = 0;
+	for (i = 1; i <= _numNames; i++)
+		_objName[i] = _resource->getJAS2Line();
+
+	_roomName = new char*[_numRooms + 1];
+	_roomName[0] = 0;
+	for (i = 1; i <= _numRooms; i++)
+		_roomName[i] = _resource->getJAS2Line();
+
+	_verbName[0] = 0;
+	for (i = 1; i <= 12; i++)
+		_verbName[i] = _resource->getJAS2Line();
+
+	_joeResponse[0] = 0;
+	for (i = 1; i <= JOE_RESPONSE_MAX; i++)
+		_joeResponse[i] = _resource->getJAS2Line();
+
+	_aAnim = new char*[_numAAnim + 1];
+	_aAnim[0] = 0;
+	for (i = 1; i <= _numAAnim; i++)
+		_aAnim[i] = _resource->getJAS2Line();
+
+	_aName = new char*[_numAName + 1];
+	_aName[0] = 0;
+	for (i = 1; i <= _numAName; i++)
+		_aName[i] = _resource->getJAS2Line();
+	
+	_aFile = new char*[_numAFile + 1];
+	_aFile[0] = 0;
+	for (i = 1; i <= _numAFile; i++)
+		_aFile[i] = _resource->getJAS2Line();
+
+	_textToggle = true;	
+	if (_resource->isFloppy())
+		_speechToggle = false;
+	else
+		_speechToggle = true;
 
 	_graphics->panelLoad();
 	_graphics->bobSetupControl();
@@ -224,7 +441,6 @@ void Logic::initialise() {
 
 	memset(_zones, 0, sizeof(_zones));
 	_oldRoom = 0;
-	_entryObj = 0;
 }
 
 uint16 Logic::currentRoom() {

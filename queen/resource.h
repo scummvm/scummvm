@@ -23,6 +23,7 @@
 #define QUEEN_RESOURCE_H
 
 #include "common/file.h"
+#include "defs.h"
 
 namespace Queen {
 
@@ -60,12 +61,17 @@ public:
 	Resource(const Common::String &datafilePath);
 	~Resource(void);
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0);
+	char *getJAS2Line();
 	bool exists(const char *filename);
 	bool isDemo();
+	bool isFloppy();
 	uint32 fileSize(const char *filename);
+	Language getLanguage();
 
 protected:
 	File *_resourceFile;
+	char *_JAS2Ptr;
+	uint32 _JAS2Pos;
 	const Common::String _datafilePath;
 	const GameVersion *_gameVersion;
 	uint32 _resourceEntries;

@@ -27,15 +27,8 @@
 
 namespace Queen {
 
-#define MAX_ZONES_NUMBER 32
-
-
-enum Language {
-	ENGLISH  = 'E',
-	FRENCH   = 'F',
-	GERMAN   = 'G',
-	ITALIAN  = 'I'
-};
+#define MAX_ZONES_NUMBER	32
+#define JOE_RESPONSE_MAX	40
 
 enum RoomDisplayMode {
 	RDM_FADE_NOJOE  = 0, // fade in, no Joe
@@ -95,7 +88,10 @@ public:
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
 
-	Language language() { return ENGLISH; } // FIXME: get from queen.jas
+	char *getRoomName(uint16 roomNum)	{ return _roomName[roomNum] ; }
+	char *getObjectName(uint16 objNum)	{ return _objName[objNum]; }
+
+	Language language()	{ return _resource->getLanguage(); } 
 
 	void zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void zoneSet(uint16 screen, uint16 zone, const Box& box);
@@ -118,6 +114,9 @@ public:
 
 
 protected:
+	bool _textToggle;
+	bool _speechToggle;
+	
 	uint8 *_jas;
 	uint16 _numRooms;
 	uint16 _currentRoom;
@@ -132,6 +131,17 @@ protected:
 	uint16 _numObjectBoxes;
 	uint16 _numWalkOffs;
 	uint16 _numObjDesc;
+	uint16 _numCmdList;	//COM_LIST_MAX
+	uint16 _numCmdArea;	//COM_A_MAX
+	uint16 _numCmdObject;	//COM_O_MAX
+	uint16 _numCmdInventory;	//COM_I_MAX
+	uint16 _numCmdGameState;	//COM_G_MAX
+	uint16 _numFurniture;	//FURN_DATA_MAX
+	uint16 _numActors;	//ACTOR_DATA_MAX
+	uint16 _numAAnim;	//A_ANIM_MAX
+	uint16 _numAName;	//A_NAME_MAX
+	uint16 _numAFile;	//A_FILE_MAX
+	uint16 _numGraphicAnim;	//GRAPHIC_ANIM_MAX
 
 	uint16 *_roomData;
 	uint16 *_sfxName;
@@ -142,11 +152,27 @@ protected:
 	GraphicData *_graphicData;
 	ObjectData *_objectData;
 	ObjectDescription *_objectDescription;
-	uint16 (*_actorData)[12]; // FIXME: ActorData *_actorData;
+	ActorData *_actorData;
 	Area (*_area)[11];
 	WalkOffData *_walkOffData;
+	CmdListData *_cmdList;
+	CmdArea *_cmdArea;
+	CmdObject *_cmdObject;
+	CmdInventory *_cmdInventory;	
+	CmdGameState *_cmdGameState;
+	FurnitureData *_furnitureData;
+	GraphicAnim *_graphicAnim;
 	ZoneSlot _zones[2][MAX_ZONES_NUMBER];
 	uint16 _entryObj;
+
+	char **_objDescription;	//OBJECT_DESCRstr
+	char **_objName;	//OBJECT_NAMEstr
+	char **_roomName;	//ROOM_NAMEstr	
+	char *_verbName[13];	//VERB_NAMEstr
+	char *_joeResponse[JOE_RESPONSE_MAX + 1];	//JOE_RESPstr
+	char **_aAnim;	//A_ANIMstr
+	char **_aName;	//A_NAMEstr
+	char **_aFile;	//A_FILEstr
 
 	enum {
 		GAME_STATE_COUNT = 211

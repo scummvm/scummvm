@@ -44,7 +44,7 @@ const GameVersion Resource::_gameVersions[] = {
 };
 
 Resource::Resource(const Common::String &datafilePath)
-	: _resourceEntries(0), _resourceTable(NULL), _datafilePath(datafilePath) {
+	: _resourceEntries(0), _resourceTable(NULL), _datafilePath(datafilePath), _JAS2Pos(0) {
 
 	_resourceFile = new File();
 	_resourceFile->open(dataFilename, _datafilePath);
@@ -69,12 +69,15 @@ Resource::Resource(const Common::String &datafilePath)
 		error("Verifying game version failed! (expected: '%s', found: '%s')", _gameVersion->versionString, JASVersion());
 
 	debug(5, "Detected game version: %s, which has %d resource entries", _gameVersion->versionString, _resourceEntries);
+
+	_JAS2Ptr = (char *)loadFile("QUEEN2.JAS", 0);
 }
 
 Resource::~Resource() {
 	_resourceFile->close();
 	if(_resourceTable != _resourceTablePEM10) 
 		delete[] _resourceTable;
+	delete[] _JAS2Ptr;
 }
 
 int32 Resource::resourceIndex(const char *filename) {
@@ -118,6 +121,19 @@ int32 Resource::resourceIndex(const char *filename) {
 	return -1;
 }
 
+char *Resource::getJAS2Line() {
+	char *startOfLine = _JAS2Ptr + _JAS2Pos;
+	char *pos = strstr(startOfLine, "\r\n");
+	if (pos) {
+		*pos = '\0';
+		pos += 2;
+	} else {
+		error("Couldn't find newline");
+	}
+	_JAS2Pos = (pos - _JAS2Ptr);	
+	return startOfLine;
+}
+
 uint32 Resource::fileSize(const char *filename) {
 	return _resourceTable[resourceIndex(filename)].size;
 }
@@ -151,6 +167,25 @@ const char *Resource::JASVersion() {
 
 bool Resource::isDemo() {
 	return _gameVersion->isDemo;
+}
+
+bool Resource::isFloppy() {
+	return _gameVersion->isFloppy;
+}
+
+Language Resource::getLanguage() {
+	switch (_gameVersion->versionString[1]) {
+		case 'E':
+			return ENGLISH;
+		case 'G':
+			return GERMAN;
+		case 'F':
+			return FRENCH;
+		case 'I':
+			return ITALIAN;
+		default:
+			return ENGLISH;
+	}
 }
 
 const GameVersion *Resource::detectGameVersion(uint32 dataFilesize) {
