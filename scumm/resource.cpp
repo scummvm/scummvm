@@ -195,7 +195,7 @@ bool Scumm::openResourceFile(const char *filename)
 	}
 
 	strcpy(buf, filename);
-	_fileHandle.open(buf, getResDataPath(), 1, _encbyte);
+	_fileHandle.open(buf, getGameDataPath(), 1, _encbyte);
 
 	return _fileHandle.isOpen();
 }
@@ -207,7 +207,7 @@ void Scumm::askForDisk(const char *filename, int disknum)
 	if (_features & GF_AFTER_V8) {
 		char result;
 
-		sprintf(buf, "Cannot find file: '%s'\nInsert disk %d into drive %s\nHit Ok to retry, Cancel to exit", filename, disknum, getResDataPath());
+		sprintf(buf, "Cannot find file: '%s'\nInsert disk %d into drive %s\nHit Ok to retry, Cancel to exit", filename, disknum, getGameDataPath());
 
 		result = displayError(true, buf);
 		if (result == 2)

@@ -291,18 +291,7 @@ public:
 	bool _insaneState;
 	bool _videoFinished;
 	
-	const char *getResDataPath() const { return _gameDataPath; }
-	const char *getGameDataPath() const {
-		if (_features & GF_AFTER_V8) {
-			static char resourcePath[256];
-			if (_gameDataPath[0] == '\0')
-				return "resource";
-
-			sprintf(resourcePath, "%sresource", _gameDataPath);
-			return resourcePath;
-		}
-		return _gameDataPath; 
-	}
+	const char *getGameDataPath() const { return _gameDataPath; }
 
 	void pauseGame(bool user);
 	void shutDown(int i);
