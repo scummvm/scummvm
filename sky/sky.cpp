@@ -176,7 +176,7 @@ void SkyEngine::doCheat(uint8 num) {
 
 void SkyEngine::handleKey(void) {
 
-	if (_key_pressed == '`') {
+	if (_key_pressed == '`' || _key_pressed == '~' || _key_pressed == '#') {
 		_debugger->attach();
 	}
 	
@@ -458,6 +458,9 @@ void SkyEngine::delay(uint amount) {
 					if (event.kbd.keycode == 'g') {
 						_fastMode ^= 2;
 						break;
+					}
+					if (event.kbd.keycode == 'd') {
+						_debugger->attach();
 					}
 				}
 
