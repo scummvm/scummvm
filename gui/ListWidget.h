@@ -18,10 +18,10 @@
  * $Header$
  */
 
-#ifndef LISTWIDGET_H
-#define LISTWIDGET_H
+#ifndef GUI_LISTWIDGET_H
+#define GUI_LISTWIDGET_H
 
-#include "gui/widget.h"
+#include "gui/editable.h"
 #include "common/str.h"
 
 namespace GUI {
@@ -42,9 +42,10 @@ enum {
 };
 
 /* ListWidget */
-class ListWidget : public Widget, public CommandSender {
-	typedef Common::StringList StringList;
+class ListWidget : public EditableWidget, public CommandSender {
+public:
 	typedef Common::String String;
+	typedef Common::StringList StringList;
 protected:
 	StringList		_list;
 	bool			_editable;
@@ -55,13 +56,10 @@ protected:
 	int				_selectedItem;
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
-	String			_backupString;
-
-	bool			_caretVisible;
-	uint32			_caretTime;
 	
 	String			_quickSelectStr;
 	uint32			_quickSelectTime;
+
 public:
 	ListWidget(GuiObject *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
@@ -86,16 +84,19 @@ public:
 
 	virtual bool wantsFocus() { return true; };
 
-	void scrollBarRecalc();
-	
+	// Made startEditMode for SCUMM's SaveLoadChooser
 	void startEditMode();
-	void abortEditMode();
 
 protected:
 	void drawWidget(bool hilite);
+
+	void scrollBarRecalc();
+
+	void endEditMode();
+	void abortEditMode();
 	
-	int getCaretPos() const;
-	void drawCaret(bool erase);
+	Common::Rect getEditRect() const;
+	int getCaretOffset() const;
 
 	void lostFocusWidget();
 	void scrollToCurrent();

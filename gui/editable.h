@@ -18,47 +18,44 @@
  * $Header$
  */
 
-#ifndef GUI_EDITTEXTWIDGET_H
-#define GUI_EDITTEXTWIDGET_H
+#ifndef GUI_EDITABLE_H
+#define GUI_EDITABLE_H
 
-#include "gui/editable.h"
 #include "common/str.h"
+#include "common/rect.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
-/* EditTextWidget */
-class EditTextWidget : public EditableWidget {
-protected:
-	typedef Common::String String;
 
-	String		_backupString;
+class EditableWidget : public Widget {
+public:
+	typedef Common::String String;
+protected:
+	String		_editString;
+
+	bool		_caretVisible;
+	uint32		_caretTime;
+	int			_caretPos;
+
+	bool		_caretInverse;
+
+	int			_editScrollOffset;
 
 public:
-	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text);
+	EditableWidget(GuiObject *boss, int x, int y, int w, int h);
+	virtual ~EditableWidget();
 
-//	void setString(const String &str)	{ _editString = str; }
-	const String &getString() const		{ return _editString; }
-
-	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
-
-	virtual bool wantsFocus() { return true; };
+	virtual void handleTickle();
 
 protected:
-	void drawWidget(bool hilite);
-	void receivedFocusWidget();
-	void lostFocusWidget();
-	
-	void startEditMode();
-	void endEditMode();
-	void abortEditMode();
+	virtual void startEditMode() = 0;
+	virtual void endEditMode() = 0;
+	virtual void abortEditMode() = 0;
 
-	Common::Rect getEditRect() const;
-	int getCaretOffset() const;
-	bool setCaretPos(int newPos);
-	bool adjustOffset();
-	
-	virtual bool tryInsertChar(char c, int pos);
+	virtual Common::Rect getEditRect() const = 0;
+	virtual int getCaretOffset() const = 0;
+	void drawCaret(bool erase);
 };
 
 } // End of namespace GUI

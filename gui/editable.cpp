@@ -1,0 +1,74 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2002-2005 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ */
+
+#include "stdafx.h"
+#include "gui/editable.h"
+#include "gui/newgui.h"
+
+
+namespace GUI {
+
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h)
+ : Widget(boss, x, y, w, h) {
+	_caretVisible = false;
+	_caretTime = 0;
+	_caretPos = 0;	// FIXME
+
+	_caretInverse = false;
+
+	_editScrollOffset = 0;
+}
+
+EditableWidget::~EditableWidget() {
+}
+
+void EditableWidget::handleTickle() {
+	uint32 time = getMillis();
+	if (_caretTime < time) {
+		_caretTime = time + kCaretBlinkTime;
+		drawCaret(_caretVisible);
+	}
+}
+
+void EditableWidget::drawCaret(bool erase) {
+	// Only draw if item is visible
+	if (!isVisible() || !_boss->isVisible())
+		return;
+
+	int16 color = (erase ^ _caretInverse) ? g_gui._bgcolor : g_gui._textcolorhi;
+	int x = getEditRect().left;
+	int y = getEditRect().top;
+
+	x += getCaretOffset();
+
+	if (y < 0 || y + kLineHeight >= _h)
+		return;
+	
+	x += getAbsX();
+	y += getAbsY();
+
+	g_gui.vLine(x, y, y + kLineHeight, color);
+	g_gui.addDirtyRect(x, y, 2, kLineHeight);
+
+	_caretVisible = !erase;
+}
+
+
+} // End of namespace GUI

@@ -82,7 +82,7 @@ public:
 protected:
 	bool tryInsertChar(char c, int pos) {
 		if (isalnum(c) || c == '-' || c == '_') {
-			_label.insertChar(c, pos);
+			_editString.insertChar(c, pos);
 			return true;
 		}
 		return false;
@@ -303,7 +303,7 @@ void EditGameDialog::open() {
 
 void EditGameDialog::close() {
 	if (getResult()) {
-		ConfMan.set("description", _descriptionWidget->getLabel(), _domain);
+		ConfMan.set("description", _descriptionWidget->getString(), _domain);
 
 		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 		if (lang < 0)
@@ -389,7 +389,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	case kOKCmd: {
 		// Write back changes made to config object
-		String newDomain(_domainWidget->getLabel());
+		String newDomain(_domainWidget->getString());
 		if (newDomain != _domain) {
 			if (newDomain.isEmpty() || ConfMan.hasGameDomain(newDomain)) {
 				MessageDialog alert("This game ID is already taken. Please choose another one.");

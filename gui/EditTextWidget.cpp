@@ -27,57 +27,48 @@
 namespace GUI {
 
 EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
-	: StaticTextWidget(boss, x, y - 1, w, h + 2, text, kTextAlignLeft), _backupString(text) {
+	: EditableWidget(boss, x, y - 1, w, h + 2) {
+	_editString = text;
+	_backupString = text;
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kEditTextWidget;
 
-	_caretVisible = false;
-	_caretTime = 0;
+	_caretPos = _editString.size();
 
-	_pos = _label.size();
-
-	_labelOffset = (g_gui.getStringWidth(_label) - (_w - 6));
-	if (_labelOffset < 0)
-		_labelOffset = 0;
+	_editScrollOffset = (g_gui.getStringWidth(_editString) - (getEditRect().width()));
+	if (_editScrollOffset < 0)
+		_editScrollOffset = 0;
 }
 
-void EditTextWidget::handleTickle() {
-	uint32 time = getMillis();
-	if (_caretTime < time) {
-		_caretTime = time + kCaretBlinkTime;
-		drawCaret(_caretVisible);
-	}
-}
-
-void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount){
+void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	// First remove caret
 	if (_caretVisible)
 		drawCaret(true);
 
 	NewGui *gui = &g_gui;
 
-	x += _labelOffset;
+	x += _editScrollOffset;
 
 	int width = 0;
 	uint i;
 
-	for (i = 0; i < _label.size(); ++i) {
-		width += gui->getCharWidth(_label[i]);
+	for (i = 0; i < _editString.size(); ++i) {
+		width += gui->getCharWidth(_editString[i]);
 		if (width >= x)
 			break;
 	}
-	_pos = i;
-	if (adjustOffset())
+	if (setCaretPos(i))
 		draw();
 }
 
 bool EditTextWidget::tryInsertChar(char c, int pos) {
 	if (isprint(c)) {
-		_label.insertChar(c, pos);
+		_editString.insertChar(c, pos);
 		return true;
 	}
 	return false;
 }
+
 
 bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	bool handled = true;
@@ -90,52 +81,44 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	switch (keycode) {
 	case '\n':	// enter/return
 	case '\r':
-		releaseFocus();
+		// confirm edit and exit editmode
+		endEditMode();
 		dirty = true;
 		break;
 	case 27:	// escape
-		_label = _backupString;
-		_pos = _label.size() - 1;
-		_labelOffset = (g_gui.getStringWidth(_label) - (_w-6));
-		if (_labelOffset < 0)
-			_labelOffset = 0;
-		releaseFocus();
+		abortEditMode();
 		dirty = true;
 		break;
 	case 8:		// backspace
-		if (_pos > 0) {
-			_pos--;
-			_label.deleteChar(_pos);
+		if (_caretPos > 0) {
+			_caretPos--;
+			_editString.deleteChar(_caretPos);
 		}
 		dirty = true;
 		break;
 	case 127:	// delete
-		_label.deleteChar(_pos);
+		_editString.deleteChar(_caretPos);
 		dirty = true;
 		break;
 	case 256 + 20:	// left arrow
-		if (_pos > 0) {
-			_pos--;
-			dirty = adjustOffset();
+		if (_caretPos > 0) {
+			dirty = setCaretPos(_caretPos - 1);
 		}
 		break;
 	case 256 + 19:	// right arrow
-		if (_pos < (int)_label.size()) {
-			_pos++;
-			dirty = adjustOffset();
+		if (_caretPos < (int)_editString.size()) {
+			dirty = setCaretPos(_caretPos + 1);
 		}
 		break;
 	case 256 + 22:	// home
-		_pos = 0;
-		dirty = adjustOffset();
+		dirty = setCaretPos(0);
 		break;
 	case 256 + 23:	// end
-		_pos = _label.size();
-		dirty = adjustOffset();
+		dirty = setCaretPos(_editString.size());
 		break;
 	default:
-		if (tryInsertChar((char)ascii, _pos)) {
-			_pos++;
+		if (tryInsertChar((char)ascii, _caretPos)) {
+			_caretPos++;
 			dirty = true;
 		} else {
 			handled = false;
@@ -157,57 +140,78 @@ void EditTextWidget::drawWidget(bool hilite) {
 
 	// Draw the text
 	adjustOffset();
-	g_gui.drawString(_label, _x + 2, _y + 2, _w - 6, g_gui._textcolor, kTextAlignLeft, -_labelOffset, false);
+	g_gui.drawString(_editString, _x + 2, _y + 2, getEditRect().width(), g_gui._textcolor, kTextAlignLeft, -_editScrollOffset, false);
 }
 
-int EditTextWidget::getCaretPos() const {
-	int caretpos = 0;
-	for (int i = 0; i < _pos; i++)
-		caretpos += g_gui.getCharWidth(_label[i]);
+Common::Rect EditTextWidget::getEditRect() const {
+	Common::Rect r(2, 1, _w - 2, _h);
+	
+	return r;
+}
 
-	caretpos -= _labelOffset;
+int EditTextWidget::getCaretOffset() const {
+	int caretpos = 0;
+	for (int i = 0; i < _caretPos; i++)
+		caretpos += g_gui.getCharWidth(_editString[i]);
+
+	caretpos -= _editScrollOffset;
 
 	return caretpos;
 }
 
-void EditTextWidget::drawCaret(bool erase) {
-	// Only draw if item is visible
-	if (!isVisible() || !_boss->isVisible())
-		return;
+void EditTextWidget::receivedFocusWidget() {
+}
 
-	int16 color = erase ? g_gui._bgcolor : g_gui._textcolorhi;
-	int x = getAbsX() + 2;
-	int y = getAbsY() + 1;
+void EditTextWidget::lostFocusWidget() {
+	// If we loose focus, 'commit' the user changes
+	_backupString = _editString;
+	drawCaret(true);
+}
 
-	x += getCaretPos();
+void EditTextWidget::startEditMode() {
+}
 
-	g_gui.vLine(x, y, y + kLineHeight, color);
-	g_gui.addDirtyRect(x, y, 2, kLineHeight);
+void EditTextWidget::endEditMode() {
+	releaseFocus();
+}
 
-	_caretVisible = !erase;
+void EditTextWidget::abortEditMode() {
+	_editString = _backupString;
+	_caretPos = _editString.size();
+	_editScrollOffset = (g_gui.getStringWidth(_editString) - (getEditRect().width()));
+	if (_editScrollOffset < 0)
+		_editScrollOffset = 0;
+	releaseFocus();
+}
+
+bool EditTextWidget::setCaretPos(int newPos) {
+	assert(newPos >= 0 && newPos <= (int)_editString.size());
+	_caretPos = newPos;
+	return adjustOffset();
 }
 
 bool EditTextWidget::adjustOffset() {
 	// check if the caret is still within the textbox; if it isn't,
-	// adjust _labelOffset 
+	// adjust _editScrollOffset 
 
-	int caretpos = getCaretPos();
+	int caretpos = getCaretOffset();
+	const int editWidth = getEditRect().width();
 
 	if (caretpos < 0) {
 		// scroll left
-		_labelOffset += caretpos;
+		_editScrollOffset += caretpos;
 		return true;
-	} else if (caretpos >= _w - 6) {
+	} else if (caretpos >= editWidth) {
 		// scroll right
-		_labelOffset -= (_w - 6 - caretpos);
+		_editScrollOffset -= (editWidth - caretpos);
 		return true;
-	} else if (_labelOffset > 0) {
-		int width = g_gui.getStringWidth(_label);
-		if (width - _labelOffset < (_w - 6)) {
+	} else if (_editScrollOffset > 0) {
+		const int strWidth = g_gui.getStringWidth(_editString);
+		if (strWidth - _editScrollOffset < editWidth) {
 			// scroll right
-			_labelOffset = (width - (_w - 6));
-			if (_labelOffset < 0)
-				_labelOffset = 0;
+			_editScrollOffset = (strWidth - editWidth);
+			if (_editScrollOffset < 0)
+				_editScrollOffset = 0;
 		}
 	}
 

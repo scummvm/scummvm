@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	gui/console.o \
 	gui/consolefont.o \
 	gui/dialog.o \
+	gui/editable.o \
 	gui/EditTextWidget.o \
 	gui/launcher.o \
 	gui/ListWidget.o \
