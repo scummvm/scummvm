@@ -242,6 +242,12 @@
 			Name="sound"
 			Filter="">
 			<File
+				RelativePath="..\..\sound\audiocd.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\audiocd.h">
+			</File>
+			<File
 				RelativePath="..\..\sound\audiostream.cpp">
 			</File>
 			<File
@@ -278,6 +284,12 @@
 				RelativePath="..\..\sound\mixer.h">
 			</File>
 			<File
+				RelativePath="..\..\sound\mp3.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\mp3.h">
+			</File>
+			<File
 				RelativePath="..\..\sound\mpu401.cpp">
 			</File>
 			<File
@@ -294,6 +306,12 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\voc.h">
+			</File>
+			<File
+				RelativePath="..\..\sound\vorbis.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\vorbis.h">
 			</File>
 		</Filter>
 		<Filter
