@@ -52,7 +52,6 @@ protected:
 
 	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY, _scaleIndexYTop;
-	byte _docontinue;
 	byte _palette[32];
 
 public:

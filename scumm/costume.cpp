@@ -184,9 +184,10 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
 
-	_docontinue = 0;
 	if (x_left >= _vm->_screenWidth || x_right <= 0)
 		return 1;
+
+	v1.replen = 0;
 
 	if (_mirror) {
 		if (!use_scaling)
@@ -195,7 +196,6 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			_width2 -= skip;
 			codec1_ignorePakCols(skip);
 			v1.x = 0;
-			_docontinue = 1;
 		} else {
 			skip = x_right - _vm->_screenWidth;
 			if (skip <= 0) {
@@ -211,7 +211,6 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			_width2 -= skip;
 			codec1_ignorePakCols(skip);
 			v1.x = _vm->_screenWidth - 1;
-			_docontinue = 1;
 		} else {
 			skip = -1 - x_left;
 			if (skip <= 0)
@@ -284,12 +283,12 @@ void CostumeRenderer::proc3() {
 	y = v1.y;
 	src = _srcptr;
 	dst = v1.destptr;
-	len = v1.repcolor;
+	len = v1.replen;
 	color = v1.repcolor;
 	height = _height;
 	width = _width2;
 
-	if (_docontinue)
+	if (v1.replen)
 		goto StartPos;
 
 	do {
