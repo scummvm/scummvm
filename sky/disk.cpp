@@ -89,6 +89,11 @@ void SkyDisk::flushPrefetched(void) {
 	_prefRoot = NULL;
 }
 
+bool SkyDisk::fileExists(uint16 fileNr) {
+	
+	return (getFileInfo(fileNr) != NULL);
+}
+
 //load in file file_nr to address dest
 //if dest == NULL, then allocate memory for this file
 uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {

@@ -87,10 +87,6 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
-	if (detector->_language > 10)
-		_systemVars.language = SKY_USA;
-	else
-		_systemVars.language = _languageTable[detector->_language];
 	_detector = detector;
 
 	_floppyIntro = detector->_floppyIntro;
@@ -232,11 +228,11 @@ void SkyState::initialise(void) {
 			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _system);
 	}
 
-        // Override global fullscreen setting with any game-specific define
-        if (g_config->getBool("fullscreen", false)) {
-                if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
-                        _system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
-        }
+	// Override global fullscreen setting with any game-specific define
+	if (g_config->getBool("fullscreen", false)) {
+		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
+			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+	}
 
 	if (isCDVersion()) {
 		if (_detector->_noSubtitles)
@@ -267,6 +263,16 @@ void SkyState::initialise(void) {
 
 	if (_systemVars.gameVersion == 288)
 		SkyCompact::patchFor288();
+
+	if (_detector->_language > 10)
+		_systemVars.language = SKY_USA;
+	else
+		_systemVars.language = _languageTable[_detector->_language];
+
+	if (!_skyDisk->fileExists(60600 + SkyState::_systemVars.language * 8)) {
+		warning("The language you selected does not exist in your BASS version.\nSwitching to english.");
+		SkyState::_systemVars.language = SKY_ENGLISH;
+	}
 
 	uint16 result = 0;
 	if (_detector->_save_slot >= 0)

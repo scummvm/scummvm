@@ -39,6 +39,8 @@ public:
 	~SkyDisk(void);
 
 	uint8 *loadFile(uint16 fileNr, uint8 *dest);
+	bool fileExists(uint16 fileNr);
+
 	void prefetchFile(uint16 fileNr);
 	void flushPrefetched(void);
 
