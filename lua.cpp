@@ -595,7 +595,7 @@ static void ShutUpActor() {
 
 static void HardwareAccelerated() {
 	// FIXME: Are we always in HW accelerated ?
-	lua_pushnumber( TRUE );
+	lua_pushnumber( true );
 }
 
 // Sector functions
