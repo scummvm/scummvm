@@ -2952,10 +2952,17 @@ void Scumm_v6::o6_findAllObjects() {
 
 void Scumm_v6::o6_pickVarRandom() {
 	int args[16];
-	int a, b;
+	int num;
+	int a, b, i;
 
-	warning("stub: o6_pickVarRandom()");
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	num = getStackList(args, sizeof(args) / sizeof(args[0]));
+	
+	printf("WARNING: stub o6_pickVarRandom([");
+	for (i=0; i < num; i++) 
+		printf(" %d", args[i]);
+	printf(" ])!\n");
+		
+	
 	a = fetchScriptWord();
 	b = readVar(a);
 	// readArray(a, 0, 0);
@@ -2989,9 +2996,8 @@ void Scumm_v6::o6_unknownE0() {
         if (a != 0) {
                 a--;
                 a--;
-                if (a != 0) {
+                if (a != 0) 
                         return;
-                }
                 pop();
                 return;
         }
