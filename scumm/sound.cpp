@@ -708,7 +708,7 @@ int Sound::isSoundRunning(int sound) const {
 
 	if (_vm->_features & GF_HUMONGOUS) {
 		if (sound == -2 || sound == 10001) {
-			return isSfxFinished();
+			return !isSfxFinished();
 		} else if (sound == -1 || sound == 10000 || sound == _currentMusic) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
@@ -793,6 +793,10 @@ void Sound::stopSound(int a) {
 			// Stop current sfx
 		} else if (a == -1 || a == 10000) {
 			// Stop current music
+			if (_currentMusic)
+				_vm->_mixer->stopID(_currentMusic);
+			else if (_vm->_imuse)
+				_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
 		}
 	}
 
