@@ -824,24 +824,13 @@ void Scumm::readMAXS() {
 	allocResTypeData(4, MKID('SOUN'), _numSounds, "sound", 1);
 	allocResTypeData(2, MKID('SCRP'), _numScripts, "script", 1);
 	allocResTypeData(6, MKID('CHAR'), _numCharsets, "charset", 1);
-	allocResTypeData(5, MKID('NONE'),	_numInventory, "inventory", 0);
-	allocResTypeData(8, MKID('NONE'), _numVerbs,"verb", 0);
-	allocResTypeData(7, MKID('NONE'), _numArray,"array", 0);
-	allocResTypeData(13, MKID('NONE'),_numFlObject,"flobject", 0);
-	allocResTypeData(12,MKID('NONE'),10, "temp", 0);
-	allocResTypeData(11,MKID('NONE'),5, "scale table", 0);
-	allocResTypeData(9, MKID('NONE'),13,"actor name", 0);
-	allocResTypeData(10, MKID('NONE'),10,"buffer", 0);
-	allocResTypeData(14, MKID('NONE'),10,"boxes", 0);
+	
 	allocResTypeData(16, MKID('NONE'),50,"new name", 0);
 
+	allocateArrays();
+
 	_objectFlagTable = (byte*)alloc(_numGlobalObjects);
-	_inventory = (uint16*)alloc(_numInventory * sizeof(uint16));
 	_arrays = (byte*)alloc(_numArray);
-	_verbs = (VerbSlot*)alloc(_numVerbs * sizeof(VerbSlot));
-	_objs = (ObjectData*)alloc(_numLocalObjects * sizeof(ObjectData));
-	_vars = (int16*)alloc(_numVariables * sizeof(int16));
-	_bitVars = (byte*)alloc(_numBitVariables >> 3);
 	_newNames = (uint16*)alloc(50 * sizeof(uint16));
 	_classData = (uint32*)alloc(_numGlobalObjects * sizeof(uint32));
 
@@ -849,4 +838,20 @@ void Scumm::readMAXS() {
 	_dynamicRoomOffsets = 1;
 }
 
+void Scumm::allocateArrays() {
+	_inventory = (uint16*)alloc(_numInventory * sizeof(uint16));
+	_verbs = (VerbSlot*)alloc(_numVerbs * sizeof(VerbSlot));
+	_objs = (ObjectData*)alloc(_numLocalObjects * sizeof(ObjectData));
+	_vars = (int16*)alloc(_numVariables * sizeof(int16));
+	_bitVars = (byte*)alloc(_numBitVariables >> 3);
 
+	allocResTypeData(rtInventory, MKID('NONE'),	_numInventory, "inventory", 0);
+	allocResTypeData(rtTemp,MKID('NONE'),10, "temp", 0);
+	allocResTypeData(rtScaleTable,MKID('NONE'),5, "scale table", 0);
+	allocResTypeData(rtActorName, MKID('NONE'),13,"actor name", 0);
+	allocResTypeData(rtBuffer, MKID('NONE'),10,"buffer", 0);
+ 	allocResTypeData(rtVerb, MKID('NONE'),_numVerbs,"verb", 0);
+	allocResTypeData(rtString, MKID('NONE'),_numArray,"array", 0);
+	allocResTypeData(rtFlObject, MKID('NONE'),_numFlObject,"flobject", 0);
+	allocResTypeData(rtMatrix, MKID('NONE'),10,"boxes", 0);
+}

@@ -749,7 +749,7 @@ struct Scumm {
 	byte _talk_sound_mode;
 
 	int _drawObjectQueNr;
-	byte _drawObjectQue[0xC8];
+	byte _drawObjectQue[200];
 
 	uint16 _currentDrive;
 	uint16 _soundCardType;
@@ -1573,6 +1573,8 @@ struct Scumm {
 	void setupCursor() { _cursorAnimate = true; }
 
 	void decompressDefaultCursor(int index);
+
+	void allocateArrays();
 };
 
 struct ScummDebugger {

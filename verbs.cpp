@@ -260,8 +260,8 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 	numobj = READ_LE_UINT16(&roomhdr->numObjects);
 	if (numobj==0)
 		error("No images found in room %d", room);
-	if (numobj > 200)
-		error("More (%d) than %d objects in room %d", numobj, 200, room);
+	if (numobj > _numLocalObjects)
+		error("More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
 	for (i=0; i<numobj; i++) {
 		obimptr = findResource(MKID('OBIM'), roomptr, i);

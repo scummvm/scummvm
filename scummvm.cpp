@@ -30,22 +30,12 @@ void Scumm::initThingsV5() {
 	_numLocalObjects = 200;
 	_numVerbs = 100;
 	_numInventory = 80;
+	_numVerbs = 100;
+	_numArray = 0x32;
+	_numFlObject = 0x32;
 	
-	_inventory = (uint16*)alloc(_numInventory * sizeof(uint16));
-	_verbs = (VerbSlot*)alloc(100 * sizeof(VerbSlot));
-	_objs = (ObjectData*)alloc(200 * sizeof(ObjectData));
-	_vars = (int16*)alloc(800 * sizeof(int16));
-	_bitVars = (byte*)alloc(2048 >> 3);
-
-	allocResTypeData(5, MKID('NONE'),	0x50, "inventory", 0);
-	allocResTypeData(12,MKID('NONE'),10, "temp", 0);
-	allocResTypeData(11,MKID('NONE'),5, "scale table", 0);
-	allocResTypeData(9, MKID('NONE'),13,"actor name", 0);
-	allocResTypeData(10, MKID('NONE'),10,"buffer", 0);
- 	allocResTypeData(8, MKID('NONE'),100,"verb", 0);
-	allocResTypeData(7, MKID('NONE'),0x32,"string", 0);
-	allocResTypeData(13, MKID('NONE'),0x32,"flobject", 0);
-	allocResTypeData(14, MKID('NONE'),10,"boxes", 0);
+	allocateArrays();
+	
 	readIndexFileV5(2);
 	initRandSeeds();
 

@@ -493,7 +493,7 @@ void Scumm::removeObjectFromRoom(int obj) {
 
 void Scumm::addObjectToDrawQue(int object) {
 	_drawObjectQue[_drawObjectQueNr++] = object;
-	if (_drawObjectQueNr > 200)
+	if (_drawObjectQueNr > sizeof(_drawObjectQue)/sizeof(_drawObjectQue[0]))
 		error("Draw Object Que overflow");
 }
 
@@ -580,8 +580,8 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 	numobj = READ_LE_UINT16(&roomhdr->numObjects);
 	if (numobj==0)
 		error("addObjectToInventory: No object found in room %d", room);
-	if (numobj > 200)
-		error("addObjectToInventory: More (%d) than %d objects in room %d", numobj, 200, room);
+	if (numobj > _numLocalObjects)
+		error("addObjectToInventory: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
 	for (i=0; i<numobj; i++) {
 		obcdptr = findResource(MKID('OBCD'), roomptr, i);
