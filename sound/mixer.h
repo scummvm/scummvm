@@ -85,11 +85,11 @@ public:
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
 				byte volume, int8 pan, int id = -1, uint32 loopStart = 0, uint32 loopEnd = 0);
 #ifdef USE_MAD
-	int playMP3(PlayingSoundHandle *handle, File *file, uint32 size);
-	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration);
+	int playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan);
+	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan);
 #endif
 #ifdef USE_VORBIS
-	int playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
+	int playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan);
 #endif
 
 	/** Premix procedure, useful when using fmopl adlib */

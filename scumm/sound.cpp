@@ -917,7 +917,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 			playSfxSound_Vorbis(data, file_size, handle);
 		} else {
 #ifdef USE_MAD
-			_scumm->_mixer->playMP3(handle, file, file_size);
+			_scumm->_mixer->playMP3(handle, file, file_size, 255, 0);
 #endif
 		}
 		return;
@@ -1473,7 +1473,7 @@ void Sound::playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *ha
 		delete f;
 		free(sound);
 	} else
-		_scumm->_mixer->playVorbis(handle, ov_file, 0, false);
+		_scumm->_mixer->playVorbis(handle, ov_file, 0, false, 255, 0);
 #endif
 }
 
@@ -1750,7 +1750,7 @@ int MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startF
 	}
 
 	// Play it
-	return mixer->playMP3CDTrack(handle, _file, durationTime);
+	return mixer->playMP3CDTrack(handle, _file, durationTime, 255, 0);
 }
 
 MP3TrackInfo::~MP3TrackInfo() {
@@ -1854,7 +1854,7 @@ int VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int sta
 #endif
 	return mixer->playVorbis(handle, &_ov_file,
 				 duration * ov_info(&_ov_file, -1)->rate / 75,
-				 true);
+				 true, 255, 0);
 }
 
 VorbisTrackInfo::~VorbisTrackInfo() {

@@ -245,7 +245,7 @@ int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound+1] - _offsets[sound];
 
-	return _mixer->playMP3(handle, _file, size);
+	return _mixer->playMP3(handle, _file, size, 255, 0);
 }
 #endif
 

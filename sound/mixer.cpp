@@ -52,7 +52,7 @@ public:
 	int _id;
 
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
-		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _paused(false), _id(-1) {
+		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _volume(0), _pan(0), _paused(false), _id(-1) {
 		assert(mixer);
 	}
 	virtual ~Channel();
@@ -97,13 +97,13 @@ public:
 #ifdef USE_MAD
 class ChannelMP3 : public Channel {
 public:
-	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size);
+	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size, byte volume, int8 pan);
 	bool isMusicChannel() const		{ return false; }
 };
 
 class ChannelMP3CDMusic : public Channel {
 public:
-	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration);
+	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan);
 	bool isMusicChannel() const		{ return true; }
 };
 #endif // USE_MAD
@@ -112,7 +112,7 @@ public:
 class ChannelVorbis : public Channel {
 	bool _is_cd_track;
 public:
-	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
+	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan);
 	bool isMusicChannel() const		{ return _is_cd_track; }
 };
 #endif // USE_VORBIS
@@ -243,20 +243,20 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 }
 
 #ifdef USE_MAD
-int SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size) {
+int SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan) {
 	StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelMP3(this, handle, file, size));
+	return insertChannel(handle, new ChannelMP3(this, handle, file, size, volume, pan));
 }
-int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration) {
+int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) {
 	StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelMP3CDMusic(this, handle, file, duration));
+	return insertChannel(handle, new ChannelMP3CDMusic(this, handle, file, duration, volume, pan));
 }
 #endif
 
 #ifdef USE_VORBIS
-int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
+int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan) {
 	StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelVorbis(this, handle, ov_file, duration, is_cd_track));
+	return insertChannel(handle, new ChannelVorbis(this, handle, ov_file, duration, is_cd_track, volume, pan));
 }
 #endif
 
@@ -578,8 +578,10 @@ void ChannelStream::mix(int16 *data, uint len) {
 }
 
 #ifdef USE_MAD
-ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size)
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size, byte volume, int8 pan)
 	: Channel(mixer, handle) {
+	_volume = volume;
+	_pan = pan;
 	// Create the input stream
 	_input = makeMP3Stream(file, mad_timer_zero, size);
 
@@ -587,8 +589,10 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file
 	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
 }
 
-ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration) 
+ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) 
 	: Channel(mixer, handle) {
+	_volume = volume;
+	_pan = pan;
 	// Create the input stream
 	_input = makeMP3Stream(file, duration, 0);
 
@@ -598,8 +602,10 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 #endif // USE_MAD
 
 #ifdef USE_VORBIS
-ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track)
+ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan)
 	: Channel(mixer, handle) {
+	_volume = volume;
+	_pan = pan;
 	// Create the input stream
 	_input = makeVorbisStream(ov_file, duration);
 
