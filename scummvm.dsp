@@ -392,6 +392,14 @@ SOURCE=.\backends\fs\fs.h
 SOURCE=".\backends\fs\windows\windows-fs.cpp"
 # End Source File
 # End Group
+# Begin Group "midi"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\backends\midi\adlib.cpp
+# End Source File
+# End Group
 # End Group
 # End Group
 # Begin Source File
