@@ -955,7 +955,8 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 
 void ScummEngine_v90he::o90_setSpriteInfo() {
 	int args[16];
-	int spriteId, tmp[2];
+	int spriteId;
+	int32 tmp[2];
 	static int storedFields[2];
 	int n;
 

@@ -1227,7 +1227,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 	int res_id, res_state;
 	Common::Rect *bboxPtr;
 	int rot_angle, zoom;
-	int w, h;
+	int32 w, h;
 	WizParameters wiz;
 
 	if (!_numSpritesToProcess)

@@ -1582,7 +1582,8 @@ void ScummEngine_v100he::o100_startSound() {
 
 void ScummEngine_v100he::o100_setSpriteInfo() {
 	int args[16];
-	int spriteId, n, tmp[2];
+	int spriteId, n;
+	int32 tmp[2];
 	static int storedFields[2];
 	byte string[80];
 

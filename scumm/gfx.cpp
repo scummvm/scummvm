@@ -578,7 +578,7 @@ void Gdi::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height
 void Gdi::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
 	byte *srcptr, *dstptr;
 	int xo = *x, yo = *y, widtho = *width, heighto = *height;
-	int idx1, idx2, dsty = 0;
+	int idx1, idx2, dsty = 0, y1;
 	static const byte cgaDither[2][2][16] = {
 		{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
 		 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
@@ -586,7 +586,7 @@ void Gdi::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int
 		 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
 
 	// calculate dsty
-	for (int y1 = 0; y1 < yo; y1++) {
+	for (y1 = 0; y1 < yo; y1++) {
 		dsty += 2;
 		if (y1 % 4 == 3)
 			dsty--;
@@ -596,7 +596,7 @@ void Gdi::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int
 	*width *= 2;
 	*height = 0;
 
-	for (int y1 = 0; y1 < heighto;) {
+	for (y1 = 0; y1 < heighto;) {
 		srcptr = src + y1 * srcPitch;
 		dstptr = hercbuf + dsty * Common::kHercW + xo * 2;
 
