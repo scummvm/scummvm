@@ -423,6 +423,21 @@ void Sound::playSound(int soundID) {
 	if (_scumm->_features & GF_OLD_BUNDLE)
 		return;	// FIXME
 
+	if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
+		// FIXME: This evil hack works around the fact that in some
+		// places in MonkeyVGA, the music is never explicitly stopped.
+		// Rather it seems that starting a new music is supposed to 
+		// automatically stop the old song.
+		// This hack relays on the fact that we currently don't support SFX
+		// in these games, only music. Once we add SFX support, we'll have to
+		// revise it / replace it by a proper fix.
+		static int lastSound = -1;
+		if (lastSound > 0 && ptr) {
+			stopSound(lastSound);
+			lastSound = soundID;
+		}
+	}
+
 	if (_scumm->_imuse) {
 		_scumm->getResourceAddress(rtSound, soundID);
 		_scumm->_imuse->startSound(soundID);
