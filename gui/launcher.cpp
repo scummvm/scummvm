@@ -228,18 +228,18 @@ void LauncherDialog::close() {
 }
 
 void LauncherDialog::updateListing() {
-	int i;
 	Common::StringList l;
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
 	StringList domains = g_config->get_domains();
-	for (i = 0; i < domains.size(); i++) {
-		String name(g_config->get("gameid", domains[i]));
-		String description(g_config->get("description", domains[i]));
+	StringList::ConstIterator iter = domains.begin();
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		String name(g_config->get("gameid", *iter));
+		String description(g_config->get("description", *iter));
 
 		if (name.isEmpty())
-			name = domains[i];
+			name = *iter;
 		if (description.isEmpty()) {
 			const TargetSettings *v = _detector.findTarget(name.c_str());
 			if (v && v->description)
@@ -253,7 +253,7 @@ void LauncherDialog::updateListing() {
 			while (pos < size && (description > l[pos]))
 				pos++;
 			l.insert_at(pos, description);
-			_domains.insert_at(pos, domains[i]);
+			_domains.insert_at(pos, *iter);
 		}
 	}
 

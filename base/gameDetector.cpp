@@ -298,8 +298,9 @@ void GameDetector::list_games() {
 	printf("Game             Full Title                                             Config\n"
 	       "---------------- ------------------------------------------------------ -------\n");
 
-	for (int i = 0; i < plugins.size(); i++) {
-		v = plugins[i]->getTargets();
+	PluginList::ConstIterator iter = plugins.begin();
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		v = (*iter)->getTargets();
 		while (v->targetName && v->description) {
 			config = (g_config->has_domain(v->targetName)) ? "Yes" : "";
 			printf("%-17s%-56s%s\n", v->targetName, v->description, config);
@@ -314,11 +315,12 @@ const TargetSettings *GameDetector::findTarget(const char *targetName, const Plu
 	const TargetSettings *target;
 	const PluginList &plugins = g_pluginManager->getPlugins();
 	
-	for (int i = 0; i < plugins.size(); i++) {
-		target = plugins[i]->findTarget(targetName);
+	PluginList::ConstIterator iter = plugins.begin();
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		target = (*iter)->findTarget(targetName);
 		if (target) {
 			if (plugin)
-				*plugin = plugins[i];
+				*plugin = *iter;
 			return target;
 		}
 	}
