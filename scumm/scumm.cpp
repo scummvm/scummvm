@@ -1329,7 +1329,7 @@ void ScummEngine::scummInit() {
 	_tempMusic = 0;
 	debug(9, "scummInit");
 
-	if ((_gameId == GID_MANIAC) && (_version == 1)) {
+	if ((_gameId == GID_MANIAC) && (_version == 1) && !(_features & GF_NES)) {
 		initScreens(16, 152);
 	} else if (_version >= 7 || _heversion >= 71) {
 		initScreens(0, _screenHeight);
