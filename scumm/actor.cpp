@@ -415,7 +415,6 @@ void Actor::setupActorScale()
 
 void Actor::startAnimActor(int f)
 {
-	frame = f;
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		switch (f) {
 		case 1001:
@@ -434,6 +433,8 @@ void Actor::startAnimActor(int f)
 			f = talkFrame2;
 			break;
 		}
+
+		frame = f;
 
 		if (costume != 0) {
 			animProgress = 0;
@@ -464,6 +465,7 @@ void Actor::startAnimActor(int f)
 		}
 		
 		assert(f != 0x3E);
+		frame = f;
 	
 		// FIXME: This is a hack to fix decapitation, which somehow occurs only on
 		// the standFrame (CHORE mode 3). We hack around this by simply using the
@@ -1024,7 +1026,10 @@ void Actor::drawActorCostume()
 
 		ar.draw_top = top = 0x7fffffff;
 		ar.draw_bottom = bottom = 0;
-		ar.drawCostume();
+		if (ar.drawCostume()) {
+			needBgReset = true;
+			needRedraw = true;
+		}
 		top = ar.draw_top;
 		bottom = ar.draw_bottom;
 	}
