@@ -1220,7 +1220,7 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 
 	if (!isInCurrentRoom()) {
 		x = abr.x;
-		x = abr.y;
+		y = abr.y;
 		if (dir != -1)
 			setActorDirection(dir);
 		return;
