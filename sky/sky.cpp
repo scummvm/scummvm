@@ -54,7 +54,7 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_game = detector->_gameId;
 
 	if (!_mixer->bindToSystem(syst))
-			warning("Sound initialisation failed.");
+		warning("Sound initialisation failed.");
 
 	_mixer->setVolume(detector->_sfx_volume); //unnecessary?
 	

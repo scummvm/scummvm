@@ -22,8 +22,6 @@
 #include "stdafx.h"
 #include "sky/sound.h"
 #include "sky/struc.h"
-#include "common/file.h"
-#include "common/engine.h"
 
 SkySound::SkySound(SoundMixer *mixer) {
 	_mixer = mixer;
