@@ -359,7 +359,7 @@ void MP3InputStream::refill(bool first) {
 
 		} else if (MAD_RECOVERABLE(_stream.error)) {
 			// FIXME: should we do anything here?
-			debug(1, "MP3InputStream: Recoverable error...");
+			debug(6, "MP3InputStream: Recoverable error...");
 		} else {
 			error("MP3InputStream: Unrecoverable error");
 		}
