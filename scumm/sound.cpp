@@ -182,7 +182,8 @@ void Sound::playSound(int sound) {
 	ptr = _scumm->getResourceAddress(rtSound, sound);
 	if (ptr) {
 		if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')){
-			_scumm->_imuseDigital->startSound(sound);
+			if (_scumm->_imuseDigital)
+				_scumm->_imuseDigital->startSound(sound);
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
