@@ -355,6 +355,14 @@ SOURCE=.\scumm\intern.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\nut_renderer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\nut_renderer.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\object.cpp
 # End Source File
 # Begin Source File
