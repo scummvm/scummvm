@@ -283,13 +283,11 @@ class Insane {
 
 	void initvars(void);
 	void readFileToMem(const char *name, byte **buf);
-	void startVideo(const char *filename, int num, int argC, int frameRate, int doMainLoop);
-	void startVideo1(const char *filename, int num, int argC, int frameRate, 
-					 int doMainLoop, byte *fluPtr, int32 numFrames);
+	void startVideo(const char *filename, int num, int argC, int frameRate, 
+					 int doMainLoop, byte *fluPtr = 0, int32 numFrames = 0);
 	void smush_proc39(void);
 	void smush_proc40(void);
 	void smush_proc41(void);
-	void imuseCode04(void);
 	void smush_warpMouse(int x, int y, int buttons);
 	void putActors(void);
 	void readState(void);

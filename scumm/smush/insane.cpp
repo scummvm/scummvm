@@ -1919,14 +1919,12 @@ void Insane::runScene(int arraynum) {
 		if (_val55d) {
 			initScene(5);
 			startVideo("tovista2.san", 1, 32, 12, 0);
+		} else if (_val56d) {
+			initScene(5);
+			startVideo("tovista2.san", 1, 32, 12, 0, _smush_tovista2Flu, 60);
 		} else {
-			if (_val56d) {
-				initScene(5);
-				startVideo1("tovista2.san", 1, 32, 12, 0, _smush_tovista2Flu, 60);
-			} else {
-				initScene(4);
-				startVideo("tovista1.san", 1, 32, 12, 0);
-			}
+			initScene(4);
+			startVideo("tovista1.san", 1, 32, 12, 0);
 		}
 		break;
 	case 3:
@@ -1936,15 +1934,13 @@ void Insane::runScene(int arraynum) {
 		_val8d = readArray(_numberArray, 2);
 		if (_val55d) {
 			initScene(6);
-			startVideo1("toranch.san", 1, 32, 12, 0, _smush_toranchFlu, 300);
+			startVideo("toranch.san", 1, 32, 12, 0, _smush_toranchFlu, 300);
+		} else if (_val56d) {
+			initScene(6);
+			startVideo("toranch.san", 1, 32, 12, 0, _smush_toranchFlu, 240);
 		} else {
-			if (_val56d) {
-				initScene(6);
-				startVideo1("toranch.san", 1, 32, 12, 0, _smush_toranchFlu, 240);
-			} else {
-				initScene(6);
-				startVideo("toranch.san", 1, 32, 12, 0);
-			}
+			initScene(6);
+			startVideo("toranch.san", 1, 32, 12, 0);
 		}
 		break;
 	case 4:
@@ -1964,7 +1960,7 @@ void Insane::runScene(int arraynum) {
 		smlayer_setFluPalette(_smush_roadrashRip, 1);
 		smlayer_setActorCostume(0, 2, readArray(_numberArray, 10));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
-		startVideo1("minedriv.san", 1, 32, 12, 0, _smush_minedrivFlu, 420);
+		startVideo("minedriv.san", 1, 32, 12, 0, _smush_minedrivFlu, 420);
 		break;
 	case 7:
 	case 8:
@@ -2016,11 +2012,6 @@ void Insane::runScene(int arraynum) {
 }
 
 void Insane::startVideo(const char *filename, int num, int argC, int frameRate, 
-						int doMainLoop) {
-	startVideo1(filename, num, argC, frameRate, doMainLoop, 0, 0);
-}
-
-void Insane::startVideo1(const char *filename, int num, int argC, int frameRate, 
 						 int doMainLoop, byte *fluPtr, int32 numFrames) {
 
 	// Demo has different insane, so disable it now
