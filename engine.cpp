@@ -184,6 +184,7 @@ void Engine::mainLoop() {
 
 		}
 
+		g_imuse->flushTracks();
 		g_imuse->refreshScripts();
 
 		g_driver->flipBuffer();
