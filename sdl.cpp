@@ -918,8 +918,9 @@ int main(int argc, char* argv[]) {
 	
 #endif
 
-	detecter.detectMain(argc, argv);
+	long i;
 
+	detecter.detectMain(argc, argv);
 
 	if( detecter._features & GF_AFTER_V7 ) // not final implementation. This is just a test
 		scumm = new Scumm_v7;
@@ -928,6 +929,94 @@ int main(int argc, char* argv[]) {
 		scumm = new Scumm_v3;
 	else
 		scumm = new Scumm;
+
+/* All those stuff should be moved to the constructor.... */
+
+	for (i=0;i<17;i++)
+	{
+		scumm->res.address[i]=0;
+		scumm->res.flags[i]=0;
+		scumm->res.mode[i]=0;
+		scumm->res.name[i]=0;
+		scumm->res.num[i]=0;
+		scumm->res.roomno[i]=0;
+		scumm->res.roomoffs[i]=0;
+		scumm->res.tags[i]=0;
+	}
+
+	scumm->_resFilePath=0;
+	scumm->_resFilePrefix=0;
+
+	for (i=1; i<NUM_SCRIPT_SLOT; i++)
+	{
+		scumm->vm.slot[i].status=0;
+		scumm->vm.slot[i].cutsceneOverride=0;
+		scumm->vm.slot[i].delay=0;
+		scumm->vm.slot[i].didexec=0;
+		scumm->vm.slot[i].freezeCount=0;
+		scumm->vm.slot[i].newfield=0;
+		scumm->vm.slot[i].number=0;
+		scumm->vm.slot[i].offs=0;
+		scumm->vm.slot[i].unk1=0;
+		scumm->vm.slot[i].unk2=0;
+		scumm->vm.slot[i].unk5=0;
+		scumm->vm.slot[i].where=0;
+	}
+
+	for (i=0; i<5;i++)
+	{
+		scumm->vm.cutScenePtr[i]=0;
+		scumm->vm.cutSceneScript[i]=0;
+		scumm->vm.cutSceneData[i]=0;
+	}
+
+	scumm->vm.cutSceneScriptIndex=0;
+	scumm->vm.cutSceneStackPointer=0;
+
+	scumm->_scummStackPos=0;
+	scumm->_verbMouseOver=0;
+
+	scumm->_palDirtyMax=0;
+	scumm->_palDirtyMin=0;
+
+	scumm->_debugger=0;
+	scumm->camera._cur.x=0;
+	scumm->camera._cur.y=0;
+	scumm->camera._dest.x=0;
+	scumm->camera._dest.y=0;
+	scumm->camera._accel.x=0;
+	scumm->camera._accel.y=0;
+	scumm->camera._last.x=0;
+	scumm->camera._last.y=0;
+	scumm->camera._leftTrigger=0;
+	scumm->camera._rightTrigger=0;
+	scumm->camera._follows=0;
+	scumm->camera._mode=0;
+	scumm->camera._movingToActor=0;
+
+	scumm->mouse.x=0;
+	scumm->mouse.y=0;
+
+	scumm->delta=0;
+
+	scumm->_soundEngine=0;
+	scumm->_gui=0;
+
+	scumm->_verbs=0;
+	scumm->_objs=0;
+	scumm->_debugger=0;
+
+	scumm->_inventory=0;
+	scumm->_arrays=0;
+	scumm->_newNames=0;
+	scumm->_vars=0;
+	scumm->_varwatch=0;
+	scumm->_bitVars=0;
+
+	scumm->_talk_sound_mode=0;
+
+/* */
+
 
 	scumm->_fullScreen = detecter._fullScreen;
 	scumm->_debugMode = detecter._debugMode;
