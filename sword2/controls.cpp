@@ -54,16 +54,16 @@
 #define CHARACTER_OVERLAP 2		// overlap characters by 3 pixels
 //-----------------------------------------------------------------------------------------------------------------------
 
-void	Create_surface_image(_spriteInfo *sprite, uint32	*surface, uint32	res,	uint32	x,	uint32	y, uint32	pc);
+void	Create_surface_image(_spriteInfo *sprite, uint8 **surface, uint32 res, uint32 x, uint32 y, uint32 pc);
 void	Build_surfaces(void);
 void	Build_chr_surfaces(void);
 void	Kill_chr_surfaces(void);
 void	Kill_surfaces(void);
 void	Renew_surfaces(void);
-void	Engine_string(uint32	x,	uint32	y, uint32	res, uint32	*surface_list, uint8	*buf);
+void	Engine_string(uint32 x, uint32 y, uint32 res, uint8 **surface_list, uint8 *buf);
 void	Kill_mini_surfaces(void);
 void	Build_mini_surfaces(void);
-uint32	Generic_mini_control(uint32	text_id);
+uint32	Generic_mini_control(uint32 text_id);
 uint32	Pixel_text_length(uint8	*buf, uint32 res);
 void	Control_error(char* text);
 
@@ -139,50 +139,50 @@ void	Control_error(char* text);
 
 //--------------------------------------------
 
-uint32	panel_surface;
+uint8	*panel_surface;
 _spriteInfo panel_sprite;
 
 _spriteInfo slab_sprite[8];
-uint32	slab_surface[8];
+uint8	*slab_surface[8];
 
 _spriteInfo	chr_sprite;
 
 #define SIZE_OF_CHAR_SET (256-32)	// our fonts start on SPACE character (32)
-uint32	chr_surface[SIZE_OF_CHAR_SET];
-uint32	red_chr_surface[SIZE_OF_CHAR_SET];
+uint8	*chr_surface[SIZE_OF_CHAR_SET];
+uint8	*red_chr_surface[SIZE_OF_CHAR_SET];
 
 _spriteInfo can_button_sprite[2];
-uint32	can_button_surface[2];
+uint8	*can_button_surface[2];
 uint32	can_button_state=0;
 uint32	touching_can_button=0;
 
 _spriteInfo button_sprite[2];
-uint32	button_surface[2];
+uint8	*button_surface[2];
 uint32	restore_button_state=0;
 uint32	touching_restore_button=0;
 
 _spriteInfo up_button_sprite[2];
-uint32	up_button_surface[2];
+uint8	*up_button_surface[2];
 uint32	up_button_state=0;
 uint32	touching_up_button=0;
 
 _spriteInfo down_button_sprite[2];
-uint32	down_button_surface[2];
+uint8	*down_button_surface[2];
 uint32	down_button_state=0;
 uint32	touching_down_button=0;
 
 _spriteInfo zup_button_sprite[2];
-uint32	zup_button_surface[2];
+uint8	*zup_button_surface[2];
 uint32	zup_button_state=0;
 uint32	touching_zup_button=0;
 
 _spriteInfo zdown_button_sprite[2];
-uint32	zdown_button_surface[2];
+uint8	*zdown_button_surface[2];
 uint32	zdown_button_state=0;
 uint32	touching_zdown_button=0;
 
 _spriteInfo grfx_icon_sprite[4];
-uint32	grfx_icon_surface[4];
+uint8 *grfx_icon_surface[4];
 
 uint8	*charSet;
 uint8	*red_charSet;
@@ -670,7 +670,7 @@ uint32	Restore_control(void)	//Tony20Mar97
 	return(0);
 }
 //-----------------------------------------------------------------------------------------------------------------------
-void	Create_surface_image(_spriteInfo *sprite, uint32	*surface, uint32	res,	uint32	x,	uint32	y, uint32	pc)	//TonyMarch97
+void	Create_surface_image(_spriteInfo *sprite, uint8	**surface, uint32	res,	uint32	x,	uint32	y, uint32	pc)	//TonyMarch97
 {
 	uint8			*file, *colTablePtr=NULL;
 	_animHeader		*anim_head;
@@ -1765,7 +1765,7 @@ void	Kill_mini_surfaces(void)	//tony3Apr97
 }
 //-----------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
-void	Engine_string(uint32	x,	uint32	y, uint32	res, uint32	*surface_list, uint8	*buf)	//tony2Apr97
+void Engine_string(uint32 x, uint32 y, uint32 res, uint8 **surface_list, uint8 *buf)	//tony2Apr97
 {
 //takes fonts as sprites and prints transparently to screen
 //requires the chr$ surfaces have been setup

@@ -1197,264 +1197,146 @@ int32 SoftwareRenderCompressed256(_spriteInfo *s)
 }
 
 
-int32 CreateSurface(_spriteInfo *s, uint32 *surface)
+// The purpose of this function seems to be to decode a sprite to its
+// simplest form in advance.
 
-{
-	warning("stub CreateSurface");
-/*
+int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
+	uint8 *newSprite;
 
-	uint8				*sprite, *newSprite;
-	uint8				*src, *dst;
-	int32				freeSprite = 0;
-	int32				i;
-	HRESULT				hr;
-	DDSURFACEDESC		ddsd;
-	LPDIRECTDRAWSURFACE dds;
+	*sprite = (uint8 *) malloc(s->w * s->h);
+	if (!*sprite)
+		return RDERR_OUTOFMEMORY;
 
-
-	//	Create a surface for the sprite and then draw it.
-	memset(&ddsd, 0, sizeof(DDSURFACEDESC));
-	ddsd.dwSize = sizeof(DDSURFACEDESC);
-	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-	if (s->scale & 0xff)
-	{
-		if (dxHalCaps & RDCAPS_BLTSTRETCH)
-			ddsd.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
-		else
-			ddsd.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-	}
-	else
-	{
-		if (dxHalCaps & RDCAPS_SRCBLTCKEY)
-			ddsd.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
-		else
-			ddsd.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-	}
-
-	ddsd.dwWidth = s->w;
-	ddsd.dwHeight = s->h;
-	hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, &dds, NULL);
-	if (hr == DDERR_OUTOFVIDEOMEMORY)
-	{
-		ddsd.ddsCaps.dwCaps &= (0xffffffff - DDSCAPS_VIDEOMEMORY);
-		ddsd.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-		hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, &dds, NULL);
-	}
-	if (hr != DD_OK)
-	{
-		DirectDrawError("Cannot create sprite surface", hr);
-		return(hr);
-	}
-
-	if (s->type & RDSPR_TRANS)
-		hr = IDirectDrawSurface2_SetColorKey(dds, DDCKEY_SRCBLT, &blackColorKey);
-
-	if (s->type &RDSPR_NOCOMPRESSION)
-	{
-		sprite = s->data;
-	}
-	else
-	{
-		sprite = (uint8 *) malloc(s->w * s->h);
-		freeSprite = 1;
-		if (sprite == NULL)
-		{
-			IDirectDrawSurface2_Release(dds);
-			return(RDERR_OUTOFMEMORY);
-		}
-
-		if (s->type >> 8 == RDSPR_RLE16 >> 8)
-		{
-			if (DecompressRLE16(sprite, s->data, s->w * s->h, s->colourTable))
-				return(RDERR_DECOMPRESSION);
-		}
-		else
-		{
-			if (DecompressRLE256(sprite, s->data, s->w * s->h))
-				return(RDERR_DECOMPRESSION);
-		}
-
-		if (s->type & RDSPR_FLIP)
-		{
-			newSprite = (uint8 *) malloc(s->w * s->h);
-			if (newSprite == NULL)
-			{
-				free(sprite);
-				return(RDERR_OUTOFMEMORY);
+	if (s->type & RDSPR_NOCOMPRESSION) {
+		memcpy(*sprite, s->data, s->w * s->h);
+	} else {
+		if (s->type >> 8 == RDSPR_RLE16 >> 8) {
+			if (DecompressRLE16(*sprite, s->data, s->w * s->h, s->colourTable)) {
+				free(*sprite);
+				return RDERR_DECOMPRESSION;
 			}
-			MirrorSprite(newSprite, sprite, s->w, s->h);
-			free(sprite);
-			sprite = newSprite;
+		} else {
+			if (DecompressRLE256(*sprite, s->data, s->w * s->h)) {
+				free(*sprite);
+				return RDERR_DECOMPRESSION;
+			}
+		}
+
+		if (s->type & RDSPR_FLIP) {
+			newSprite = (uint8 *) malloc(s->w * s->h);
+			if (!newSprite) {
+				free(*sprite);
+				return RDERR_OUTOFMEMORY;
+			}
+			MirrorSprite(newSprite, *sprite, s->w, s->h);
+			free(*sprite);
+			*sprite = newSprite;
 		}
 	}
-
-	hr = IDirectDrawSurface2_Lock(dds, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-	if (hr != DD_OK)
-	{
-		IDirectDrawSurface2_Restore(dds);
-		hr = IDirectDrawSurface2_Lock(dds, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-		if (hr != DD_OK)
-		{
-			DirectDrawError("Cannot lock sprite surface", hr);
-			return(hr);
-		}
-	}
-
-	src = sprite;
-	dst = ddsd.lpSurface;
-	for (i=0; i<s->h; i++)
-	{
-		memcpy(dst, src, s->w);
-		src += s->w;
-		dst += ddsd.lPitch;
-	}
-
-	IDirectDrawSurface2_Unlock(dds, ddsd.lpSurface);
-
-	*surface = (uint32) dds;
-
-	if (freeSprite)
-		free(sprite);
-*/
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 
-int32 DrawSurface(_spriteInfo *s, uint32 surface)
+int32 DrawSurface(_spriteInfo *s, uint8 *surface) {
+	ScummVM::Rect rd, rs;
+	uint16 x, y, srcPitch, scale;
+	uint8 *sprite, *src, *dst;
+	bool freeSprite = false;
 
-{
-	warning("stub DrawSurface");
-/*
+	// FIXME: It should be possible to implement this in terms of the
+	// DrawSprite() function.
 
-	HRESULT				hr;
-	RECT				rd, rs;
-	LPDIRECTDRAWSURFACE	dds;
-	char myString[256];
-
-
-	dds = (LPDIRECTDRAWSURFACE) surface;
-
-	// Set startx and starty for the screen buffer		ADDED THIS!
-	if (s->type & RDSPR_DISPLAYALIGN)
+	if (s->type & RDSPR_DISPLAYALIGN) {
 		rd.top = s->y;
-	else
-		rd.top = s->y - scrolly;
-		
-	if (s->type & RDSPR_DISPLAYALIGN)
 		rd.left = s->x;
-	else
+	} else {
+		rd.top = s->y - scrolly;
 		rd.left = s->x - scrollx;
+	}
 
 	rs.left = 0;
 	rs.right = s->w;
 	rs.top = 0;
 	rs.bottom = s->h;
-	if (s->scale & 0xff)
-	{
-		rd.right = rd.left + s->scaledWidth;
-		rd.bottom = rd.top + s->scaledHeight;
-		// Do clipping
-		if (rd.top < 40)
-		{
-			rs.top = (40 - rd.top) * 256 / s->scale;
-			rd.top = 40;
-		}
-		if (rd.bottom > 440)
-		{
-			rs.bottom -= ((rd.bottom - 440) * 256 / s->scale);
-			rd.bottom = 440;
-		}
-		if (rd.left < 0)
-		{
-			rs.left = (0 - rd.left) * 256 / s->scale;
-			rd.left = 0;
-		}
-		if (rd.right > 640)
-		{
-			rs.right -= ((rd.right - 640) * 256 / s->scale);
-			rd.right = 640;
-		}
-	}
-	else
-	{
-		rd.right = rd.left + s->w;
-		rd.bottom = rd.top + s->h;
 
-		// Do clipping
-		if (rd.top < 40)
-		{
-			rs.top = 40 - rd.top;
-			rd.top = 40;
-		}
-		if (rd.bottom > 440)
-		{
-			rs.bottom -= (rd.bottom - 440);
-			rd.bottom = 440;
-		}
-		if (rd.left < 0)
-		{
-			rs.left = 0 - rd.left;
-			rd.left = 0;
-		}
-		if (rd.right > 640)
-		{
-			rs.right -= (rd.right - 640);
-			rd.right = 640;
-		}
+	scale = (s->scale == 0) ? 256 : s->scale;
+
+	if (scale != 256) {
+		rs.right = s->scaledWidth;
+		rs.bottom = s->scaledHeight;
+		srcPitch = s->scaledWidth;
+	} else {
+		rs.right = s->w;
+		rs.bottom = s->h;
+		srcPitch = s->w;
 	}
 
-	if (s->type & RDSPR_TRANS)
-	{
-		hr = IDirectDrawSurface2_Blt(lpBackBuffer, &rd, dds, &rs, DDBLT_WAIT | DDBLT_KEYSRC, NULL);
-		if (hr)
-		{
-			if (hr == DDERR_SURFACELOST)
-				hr = RDERR_SURFACELOST;
-			else if (dxHalCaps & RDCAPS_BLTSTRETCH)
-				dxHalCaps -= RDCAPS_BLTSTRETCH;
-			else
-			{
-				sprintf(myString, "DrawSurface failed, sprite: x%d y%d w%d h%d s%d t%d sx%d sy%d", s->x, s->y, s->w, s->h, s->scale, s->type, scrollx, scrolly);
-				DirectDrawError(myString, hr);
+	rd.right = rd.left + rs.right;
+	rd.bottom = rd.top + rs.bottom;
+
+	// Do clipping
+	if (rd.top < 40) {
+		rs.top = (40 - rd.top) * 256 / s->scale;
+		rd.top = 40;
+	}
+	if (rd.bottom > 440) {
+		rs.bottom -= ((rd.bottom - 440) * 256 / s->scale);
+		rd.bottom = 440;
+	}
+	if (rd.left < 0) {
+		rs.left = (0 - rd.left) * 256 / s->scale;
+		rd.left = 0;
+	}
+	if (rd.right > 640) {
+		rs.right -= ((rd.right - 640) * 256 / s->scale);
+		rd.right = 640;
+	}
+
+	if (scale != 256) {
+		sprite = (uint8 *) malloc(s->scaledWidth * s->scaledHeight);
+		if (!sprite)
+			return RDERR_OUTOFMEMORY;
+		
+		if (scale < 256) {
+			SquashImage(sprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, surface, s->w, s->w, s->h);
+		} else {
+			StretchImage(sprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, surface, s->w, s->w, s->h);
+		}
+
+		freeSprite = true;
+	} else
+		sprite = surface;
+
+	src = sprite + rs.top * srcPitch + rs.left;
+	dst = lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
+
+	if (s->type & RDSPR_TRANS) {
+		for (y = 0; y < rd.bottom - rd.top; y++) {
+			for (x = 0; x < rd.right - rd.left; x++) {
+				if (src[x])
+					dst[x] = src[x];
 			}
+			src += srcPitch;
+			dst += lpBackBuffer->_width;
 		}
-	}
-	else
-	{
-		hr = IDirectDrawSurface2_Blt(lpBackBuffer, &rd, dds, &rs, DDBLT_WAIT, NULL);
-		if (hr)
-		{
-			if (hr == DDERR_SURFACELOST)
-				hr = RDERR_SURFACELOST;
-			else
-			{
-				sprintf(myString, "DrawSurface failed, sprite: x%d y%d w%d h%d s%d t%d sx%d sy%d", s->x, s->y, s->w, s->h, s->scale, s->type, scrollx, scrolly);
-				DirectDrawError(myString, hr);
-			}
-		}
+	} else {
+		for (y = 0; y < rd.bottom - rd.top; y++)
+			memcpy(dst, src, lpBackBuffer->_width);
+		src += srcPitch;
+		dst += lpBackBuffer->_width;
 	}
 
-	return(hr);
-*/
+	if (freeSprite)
+		free(sprite);
+
+	UploadRect(&rd);
 	return 0;
 }
 
 
-int32 DeleteSurface(uint32 surface)
-
-{
-	warning("stub DeleteSurface( %d )", surface);
-/*
-
-	LPDIRECTDRAWSURFACE dds;
-
-	dds = (LPDIRECTDRAWSURFACE) surface;
-	return(IDirectDrawSurface2_Release(dds));
-*/
+int32 DeleteSurface(uint8 *surface) {
+	free(surface);
 	return 0;
-
 }
 
 #define SCALE_MAXWIDTH 512
@@ -1722,7 +1604,7 @@ int32 DrawSprite(_spriteInfo *s) {
 	if (freeSprite)
 		free(sprite);
 
-	lpBackBuffer->upload(&rd);
+	UploadRect(&rd);
 
 /*
 

@@ -262,6 +262,7 @@ void	Build_display(void)	//Tony21Sept96
 			if (SVM_timeGetTime() > cycleTime)
 			{
 				fps = frameCount;
+				debug(2, "FPS: %d", fps);
 				frameCount = 0;
 				cycleTime = SVM_timeGetTime()+1000;
 			}

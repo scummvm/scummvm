@@ -389,7 +389,7 @@ int32 NextSmackerFrame(void) {
 }
 
 
-uint32 textSurface = 0;
+uint8 *textSurface = NULL;
 
 void OpenTextObject(_movieTextObject *obj) {
 	CreateSurface(obj->textSprite, &textSurface);

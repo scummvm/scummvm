@@ -1248,19 +1248,23 @@ typedef int BOOL;
 #define FALSE 0
 
 // FIXME: Temporary (?) surface class to replace LPDIRECTDRAWSURFACE for now.
+// Actually, this class should be used as little as possible since it
+// introduces an extra layer of data copying. It should only be used where we
+// decode something once and draw it many times, such as the parallax layers.
+//
+// Even then it's only necessary if we also need to keep track of the
+// surface's coordinates.
 
 class Surface {
 public:
 	uint16 _width, _height;
 	uint16 _pitch;
 	byte *_pixels;
-	int _colorKey;
 
 	Surface(uint width, uint height) {
 		_width = width;
 		_height = height;
 		_pixels = (byte *) calloc(_width, _height);
-		_colorKey = -1;
 	};
 
 	~Surface() {
@@ -1270,10 +1274,6 @@ public:
 	void clear();
 	void blit(Surface *s, ScummVM::Rect *r);
 	void blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect);
-	void upload(ScummVM::Rect *r);
-	void setColorKey(int colorKey) {
-		_colorKey = colorKey;
-	};
 };
 
 //
@@ -1538,9 +1538,9 @@ extern void  GetKeyStatus(_drvKeyStatus *s);
 //	Sprite functions - from sprite.c
 //-----------------------------------------------------------------------------
 extern int32 DrawSprite(_spriteInfo *s);
-extern int32 CreateSurface(_spriteInfo *s, uint32 *surface);
-extern int32 DrawSurface(_spriteInfo *s, uint32 surface);
-extern int32 DeleteSurface(uint32 surface);
+extern int32 CreateSurface(_spriteInfo *s, uint8 **surface);
+extern int32 DrawSurface(_spriteInfo *s, uint8 *surface);
+extern int32 DeleteSurface(uint8 *surface);
 extern int32 OpenLightMask(_spriteInfo *s);
 extern int32 CloseLightMask(void);
 //-----------------------------------------------------------------------------

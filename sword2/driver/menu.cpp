@@ -246,7 +246,7 @@ int32 ProcessMenu(void) {
 								dst += lpBackBuffer->_width;
 							}
 						}
-						lpBackBuffer->upload(&r);
+						UploadRect(&r);
 					}
 				}
 				curx += (RDMENU_ICONSPACING + RDMENU_ICONWIDE);
