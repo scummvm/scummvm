@@ -1559,11 +1559,11 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	// 8/9 used in 3do version of puttputt joins the parade maybe others
 	case 8:
 		useOrDecompress = true;
-		unkDecode12(bgbak_ptr, src, numLinesToProcess);
+		decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, true);
 		break;
 
 	case 9:
-		unkDecode13(bgbak_ptr, src, numLinesToProcess);
+		decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, false);
 		break;
 
 	// used in amiga version of Monkey Island
@@ -2173,159 +2173,71 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 }
 
 
-// TODO: C'ify it
-void Gdi::unkDecode12(byte *dst, const byte *src, int height) {
-	int var_8, di, var_6;
-	const byte *bx;
-	byte si, var_4;
+void Gdi::decodeStrip3DO(byte *dst, const byte *src, int height, byte transpCheck) {
+	int destbytes, olddestbytes2, olddestbytes1;
+	byte color;
+	int data;
 
-	var_8 = 0;
+	olddestbytes1 = 0;
 
-	di = height << 3;
-
-	if (!height)
-		return;
-
-	_cont1:
-	bx = src;
-	src++;
-	si = *bx;
-
-	if (!(si & 1)) {
-		si >>= 1;
-		si++;
-		di -= si;
-		if (di < 0)
-			si += di;
-
-		var_6 = di;
-		di = var_8;
-
-		do {
-			bx = src;
-			src++;
-
-			if (*bx != _transparentColor)
-				*dst = *bx;
-			
-			dst++;
-			di++;
-			if (!(di & 7))
-				dst += 312;
-
-			si--;
-		} while (si);
-		var_8 = di;
-		if (var_6 > 0) {
-			di = var_6;
-			goto _cont1;
-		}
-		return;
-	} else {
-		si >>= 1;
-		bx = src;
-		src++;
-		var_4 = *bx;
-		si++;
-		di -= si;
-		if (di < 0)
-			si += di;
-		var_6 = di;
-		di = var_8;
-
-		do {
-			if (var_4 != _transparentColor)
-				*dst = var_4;
-			dst++;
-			di++;
-			if (!(di & 7))
-				dst += 312;
-			si--;
-		} while (si);
-		var_8 = di;
-		if (var_6 > 0) {
-			di = var_6;
-			goto _cont1;
-		}
-		return;
-	}
-}
-
-
-// TODO: C'ify it
-void Gdi::unkDecode13(byte *dst, const byte *src, int height) {
-	int var_8, di, var_6;
-	const byte *bx;
-	byte si, var_4;
-
-	var_8 = 0;
-
-	di = height << 3;
+	destbytes = height << 3;
 
 	if (!height)
 		return;
 
-	_cont1:
-	bx = src;
-	src++;
-	si = *bx;
+	do {
+		data = *src;
+		src++;
 
-	if (!(si & 1)) {
-		si >>= 1;
-		si++;
-		di -= si;
-		if (di < 0)
-			si += di;
+		if (!(data & 1)) {
+			data >>= 1;
+			data++;
+			destbytes -= data;
+			if (destbytes < 0)
+				data += destbytes;
 
-		var_6 = di;
-		di = var_8;
+			olddestbytes2 = destbytes;
+			destbytes = olddestbytes1;
 
-		do {
-			bx = src;
+			for (; data > 0; data--, src++, dst++) {
+				if (*src != _transparentColor || !transpCheck)
+					*dst = *src;
+			
+				destbytes++;
+				if (!(destbytes & 7))
+					dst += 312;
+			}
+
+			olddestbytes1 = destbytes;
+			if (olddestbytes2 > 0) {
+				destbytes = olddestbytes2;
+			}
+		} else {
+			data >>= 1;
+			color = *src;
 			src++;
 
-			*dst = *bx;
-			
-			dst++;
-			di++;
-			if (!(di & 7))
-				dst += 312;
+			data++;
+			destbytes -= data;
+			if (destbytes < 0)
+				data += destbytes;
 
-			si--;
-		} while (si);
-		var_8 = di;
-		if (var_6 > 0) {
-			di = var_6;
-			goto _cont1;
-		}
-		return;
-	} else {
-		si >>= 1;
-		bx = src;
-		src++;
-		var_4 = *bx;
-		si++;
-		di -= si;
-		if (di < 0)
-			si += di;
-		var_6 = di;
-		di = var_8;
+			olddestbytes2 = destbytes;
+			destbytes = olddestbytes1;
 
-		do {
-			*dst = var_4;
-			dst++;
-			di++;
-			if (!(di & 7))
-				dst += 312;
-			si--;
-		} while (si);
-		var_8 = di;
-		if (var_6 > 0) {
-			di = var_6;
-			goto _cont1;
+			for (; data > 0; data--, dst++) {
+				if (color != _transparentColor || !transpCheck)
+					*dst = color;
+				destbytes++;
+				if (!(destbytes & 7))
+					dst += 312;
+			}
+			olddestbytes1 = destbytes;
+			if (olddestbytes2 > 0) {
+				destbytes = olddestbytes2;
+			}
 		}
-		return;
-	}
+	} while (olddestbytes2 > 0);
 }
 
 
