@@ -163,7 +163,7 @@ void Scumm_v7::setupScummVars()
 	VAR_RESTART_KEY = 63;			// ???
 	VAR_PAUSE_KEY = 64;
 	VAR_SAVELOADDIALOG_KEY = 65;	// ???
-	VAR_TALKSTOP_KEY = 68;
+	VAR_TALKSTOP_KEY = 66;
 
 	VAR_TIMER_NEXT = 97;
 	VAR_TMR_1 = 98;
@@ -256,6 +256,7 @@ void Scumm_v8::setupScummVars()
 
 	VAR_PAUSE_KEY = 64;
 	VAR_SAVELOADDIALOG_KEY = 65;
+	VAR_TALKSTOP_KEY = 67;
 
 
 	// FIXME - HACK: no clue where these really are located, but we need to put them
