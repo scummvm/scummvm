@@ -1349,12 +1349,12 @@ void Scumm_v2::o2_cutscene() {
 	
 	VAR(VAR_CURSORSTATE) = 200;
 	
-	// FIXME demo mode in V1 Maniac Mansion shows quotes in this area
-	// during the introduction
-	if (!(_gameId == GID_MANIAC && _version == 1 && _demo_mode)) {
+	// FIXME allows quotes script (173) to start during introudction of
+	// demo mode of V1 Maniac Mansion. setUserState was halting script
+	// 173 before it started.
+	if (!(_gameId == GID_MANIAC && _version == 1 && _demo_mode))
 	// Hide inventory, freeze scripts, hide cursor
 	setUserState(15);
-	}
 	
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
