@@ -686,7 +686,7 @@ void Scumm_v6::o6_startScriptEx() {
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = pop();
-	runScript(script, flags & 1, flags & 2, args);
+	runScript(script, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
 void Scumm_v6::o6_jumpToScript() {
@@ -697,7 +697,7 @@ void Scumm_v6::o6_jumpToScript() {
 	script = pop();
 	flags = pop();
 	stopObjectCode();
-	runScript(script, flags & 1, flags & 2, args);
+	runScript(script, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
 void Scumm_v6::o6_startScript() {
@@ -724,7 +724,7 @@ void Scumm_v6::o6_startObjectEx() {
 	entryp = pop();
 	script = pop();
 	flags = pop();
-	runVerbCode(script, entryp, flags & 1, flags & 2, args);
+	runVerbCode(script, entryp, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
 void Scumm_v6::o6_startObjectQuick() {

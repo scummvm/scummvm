@@ -2080,7 +2080,7 @@ void Scumm_v5::o5_startScript() {
 	if (op & 0x20)
 		a = 1;
 
-	runScript(script, a, b, data);
+	runScript(script, a != 0, b != 0, data);
 }
 
 void Scumm_v5::o5_stopObjectCode() {
