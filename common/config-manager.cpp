@@ -41,14 +41,14 @@
 #define MAXLINELEN 256
 
 static char *ltrim(char *t) {
-	while (*t == ' ')
+	while (isspace(*t))
 		t++;
 	return t;
 }
 
 static char *rtrim(char *t) {
 	int l = strlen(t) - 1;
-	while (l >= 0 && t[l] == ' ')
+	while (l >= 0 && isspace(t[l]))
 		t[l--] = 0;
 	return t;
 }
@@ -109,60 +109,71 @@ void ConfigManager::switchFile(const String &filename) {
 
 void ConfigManager::loadFile(const String &filename) {
 	FILE *cfg_file;
-	char buf[MAXLINELEN];
-	char *t;
-	String domain;
 
 	if (!(cfg_file = fopen(filename.c_str(), "r"))) {
-		debug(1, "Unable to open configuration file: %s", filename.c_str());
+		warning("Unable to open configuration file: %s", filename.c_str());
 	} else {
+		char buf[MAXLINELEN];
+		String domain;
+		int lineno = 0;
+
 		while (!feof(cfg_file)) {
-			t = buf;
-			if (!fgets(t, MAXLINELEN, cfg_file))
+			lineno++;
+			if (!fgets(buf, MAXLINELEN, cfg_file))
 				continue;
-			if (t[0] && t[0] != '#') {
-				if (t[0] == '[') {
-					// It's a new domain which begins here.
-					char *p = strchr(t, ']');
-					if (!p) {
-						error("Config file buggy: no ] at the end of the domain name.\n");
-					} else {
-						*p = 0;
-						// TODO: Some kind of domain name verification might be nice.
-						// E.g. restrict to only a-zA-Z0-9 and maybe -_  or so...
-						domain = t + 1;
-					}
+			if (!buf[0] || buf[0] == '#') {
+				// Skip empty lines and comments
+				// TODO: Comments should be preserved here!
+			} else if (buf[0] == '[') {
+				// It's a new domain which begins here.
+				char *p = buf + 1;
+				// Get the domain name, and check whether it's valid (that
+				// is, verify that it only consists of alphanumerics,
+				// dashes and underscores).
+				while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
+					p++;
+
+				switch (*p) {
+				case '\0':
+					error("Config file buggy: missing ] in line %d", lineno);
+					break;
+				case ']':
+					*p = 0;
+					domain = buf + 1;
+					break;
+				default:
+					error("Config file buggy: Invalid character '%c' occured in domain name in line %d", *p, lineno);
+				}
+			} else {
+				// Skip leading whitespaces
+				char *t = ltrim(buf);
+
+				// Skip empty lines
+				if (*t == 0)
+					continue;
+
+				// If no domain has been set, this config file is invalid!
+				if (domain.isEmpty()) {
+					error("Config file buggy: Key/value pair found outside a domain in line %d", lineno);
+				}
+
+				// It's a new key in the domain.
+				char *p = strchr(t, '\n');
+				if (p)
+					*p = 0;
+				p = strchr(t, '\r');
+				if (p)
+					*p = 0;
+
+				// Split string at '=' into 'key' and 'value'.
+				p = strchr(t, '=');
+				if (!p) {
+					error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
 				} else {
-					// Skip leading whitespaces
-					while (*t && isspace(*t)) {
-						t++;
-					}
-					// Skip empty lines
-					if (*t == 0)
-						continue;
-
-					// If no domain has been set, this config file is invalid!
-					if (domain.isEmpty()) {
-						error("Config file buggy: we have a key without a domain first.\n");
-					}
-
-					// It's a new key in the domain.
-					char *p = strchr(t, '\n');
-					if (p)
-						*p = 0;
-					p = strchr(t, '\r');
-					if (p)
-						*p = 0;
-
-					if (!(p = strchr(t, '='))) {
-						if (strlen(t))
-							warning("Config file buggy: there is junk: %s", t);
-					} else {
-						*p = 0;
-						String key = ltrim(rtrim(t));
-						String value = ltrim(p + 1);
-						set(key, value, domain);
-					}
+					*p = 0;
+					String key = rtrim(t);
+					String value = rtrim(ltrim(p + 1));
+					set(key, value, domain);
 				}
 			}
 		}
@@ -293,16 +304,23 @@ const String & ConfigManager::get(const String &key, const String &domain) const
 
 int ConfigManager::getInt(const String &key, const String &dom) const {
 	String value(get(key, dom));
-	// Convert the string to an integer.
-	// TODO: We should perform some error checking.
-	return (int)strtol(value.c_str(), 0, 10);
+	char *errpos;
+	int ivalue = (int)strtol(value.c_str(), &errpos, 10);
+	if (value.c_str() == errpos)
+		error("Config file buggy: '%s' is not a valid integer", errpos);
+
+	return ivalue;
 }
 
 bool ConfigManager::getBool(const String &key, const String &dom) const {
 	String value(get(key, dom));
-	// '1', 'true' and 'yes' are accepted as true values; everything else
-	// maps to value 'false'.
-	return (value == trueStr) || (value == "yes") || (value == "1");
+
+	if ((value == trueStr) || (value == "yes") || (value == "1"))
+		return true;
+	if ((value == falseStr) || (value == "no") || (value == "0"))
+		return false;
+
+	error("Config file buggy: '%s' is not a valid bool", value.c_str());
 }
 
 
