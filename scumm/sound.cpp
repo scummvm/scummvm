@@ -423,7 +423,7 @@ void Sound::processSfxQueues() {
 		_talk_sound_mode = 0;
 	}
 
-	const int act = _vm->talkingActor();
+	const int act = _vm->getTalkingActor();
 	if ((_sfxMode & 2) && act != 0) {
 		Actor *a;
 		bool b, finished;

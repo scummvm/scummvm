@@ -1238,7 +1238,7 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 
 	VAR(VAR_CHARINC) = 4;
-	talkingActor(0);
+	setTalkingActor(0);
 }
 
 #pragma mark -

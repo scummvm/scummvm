@@ -777,8 +777,8 @@ public:
 	int16 _talkDelay;
 	void actorTalk(const byte *msg);
 	void stopTalk();
-	int talkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac
-	void talkingActor(int variable);
+	int getTalkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac
+	void setTalkingActor(int variable);
 
 	// Costume class
 	void cost_decodeData(Actor *a, int frame, uint usemask);
