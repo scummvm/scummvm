@@ -143,7 +143,7 @@ uint32 SaveGame(uint16 slotNo, uint8 *desc) {
 	// allocate the savegame buffer
 
 	bufferSize = FindBufferSize();
-	saveBufferMem = Twalloc(bufferSize, MEM_locked, UID_savegame_buffer);
+	saveBufferMem = memory.allocMemory(bufferSize, MEM_locked, UID_savegame_buffer);
 
 	FillSaveBuffer(saveBufferMem, bufferSize, desc);
 
@@ -154,7 +154,7 @@ uint32 SaveGame(uint16 slotNo, uint8 *desc) {
 
 	// free the buffer
 
-	Free_mem(saveBufferMem);
+	memory.freeMemory(saveBufferMem);
 
 	return errorCode;
 }
@@ -273,7 +273,7 @@ uint32 RestoreGame(uint16 slotNo) {
 	// allocate the savegame buffer
 
 	bufferSize = FindBufferSize();
-	saveBufferMem = Twalloc(bufferSize, MEM_locked, UID_savegame_buffer);
+	saveBufferMem = memory.allocMemory(bufferSize, MEM_locked, UID_savegame_buffer);
 
 	// read the savegame file into our buffer
 
@@ -291,7 +291,7 @@ uint32 RestoreGame(uint16 slotNo) {
 		// loading in the new screen & runlist
 	} else {
 		// because RestoreFromBuffer would have freed it
-		Free_mem(saveBufferMem);
+		memory.freeMemory(saveBufferMem);
 	}
 
 	return errorCode;
@@ -354,7 +354,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	// (James05aug97)
 
 	if (g_header.checksum != CalcChecksum(buffer->ad + sizeof(g_header.checksum), size - sizeof(g_header.checksum))) {
-		Free_mem(buffer);
+		memory.freeMemory(buffer);
 
 		// error: incompatible save-data - can't use!
 		return SR_ERR_INCOMPATIBLE;
@@ -369,7 +369,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	// if header contradicts actual current size of global variables
 	if (g_header.varLength != res_man.fetchLen(1)) {
-		Free_mem(buffer);
+		memory.freeMemory(buffer);
 
 		// error: incompatible save-data - can't use!
 		return SR_ERR_INCOMPATIBLE;
@@ -415,7 +415,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	// free it now, rather than in RestoreGame, to unblock memory before
 	// new screen & runlist loaded
-	Free_mem(buffer);
+	memory.freeMemory(buffer);
 
 	pars[0] = g_header.screenId;
 	pars[1] = 1;

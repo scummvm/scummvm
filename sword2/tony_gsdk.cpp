@@ -44,7 +44,7 @@ uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 	size = fh.size();
 
 	// reserve enough floating memory for the file
-	*membloc = Twalloc(size, MEM_float, uid);
+	*membloc = memory.allocMemory(size, MEM_float, uid);
 	
 	if (fh.read((*membloc)->ad, size) != size) {
 		debug(5, "Read_file read fail %d", name);

@@ -134,7 +134,7 @@ uint32 Init_start_menu(void) {
 			debug(5, "- resource %d invalid", res);
 	}
 
-	Free_mem(temp);	// release the Talloc
+	memory.freeMemory(temp);
 
 	return 1;
 }

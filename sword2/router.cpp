@@ -272,7 +272,7 @@ void AllocateRouteMem(void) {
 	if (route_slots[slotNo])
 		FreeRouteMem();
 
-	route_slots[slotNo] = Twalloc(sizeof(_walkData) * O_WALKANIM_SIZE, MEM_locked, UID_walk_anim);
+	route_slots[slotNo] = memory.allocMemory(sizeof(_walkData) * O_WALKANIM_SIZE, MEM_locked, UID_walk_anim);
 
 	// 12000 bytes were used for this in Sword1 mega compacts, based on
 	// 20 bytes per '_walkData' frame
@@ -290,14 +290,14 @@ void AllocateRouteMem(void) {
 _walkData* LockRouteMem(void) {
 	uint8 slotNo = ReturnSlotNo(ID); 
 	
-	Lock_mem(route_slots[slotNo]);
+	memory.lockMemory(route_slots[slotNo]);
 	return (_walkData *) route_slots[slotNo]->ad;
 }
 
 void FloatRouteMem(void) {
 	uint8 slotNo = ReturnSlotNo(ID); 
 
-	Float_mem(route_slots[slotNo]);
+	memory.floatMemory(route_slots[slotNo]);
 }
 
 void FreeRouteMem(void) {
@@ -305,7 +305,7 @@ void FreeRouteMem(void) {
 
 	// free the mem block pointed to from this entry of route_slots[]
 
-	Free_mem(route_slots[slotNo]);
+	memory.freeMemory(route_slots[slotNo]);
 	route_slots[slotNo] = NULL;
 }
 
@@ -314,7 +314,7 @@ void FreeAllRouteMem(void) {
 		if (route_slots[slotNo]) {
 			// free the mem block pointed to from this entry of
 			// route_slots[]
-			Free_mem(route_slots[slotNo]);
+			memory.freeMemory(route_slots[slotNo]);
 			route_slots[slotNo] = NULL;
 		}
 	}

@@ -379,7 +379,7 @@ void DisplayMsg(uint8 *text, int time) {
 
 	FadeUp((float) 0.75);
 
-	Free_mem(text_spr);
+	memory.freeMemory(text_spr);
 
 	WaitForFade();
 

@@ -24,11 +24,6 @@
 
 #define	MAX_res_files	20
 
-#if 0
-#define	RES_locked	1
-#define	RES_perm	2
-#endif
-
 class ResourceManager {
 public:
 	void init(void);		// read in the config file

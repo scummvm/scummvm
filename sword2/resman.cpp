@@ -111,7 +111,7 @@ void ResourceManager::init(void) {
 	end = file.size();
 
 	//get some space for the incoming resource file - soon to be trashed
-	temp = Twalloc(end, MEM_locked, UID_temp);
+	temp = memory.allocMemory(end, MEM_locked, UID_temp);
 
 	if (file.read(temp->ad, end) != end) {
 		file.close();
@@ -213,7 +213,7 @@ void ResourceManager::init(void) {
 	}
 
 	_resTime = 1;	//cannot start at 0
-	Free_mem(temp);	//get that memory back
+	memory.freeMemory(temp);	//get that memory back
 
 	// FIXME: Is this really needed?
 
@@ -533,12 +533,7 @@ uint8 *ResourceManager::open(uint32 res) {
 
 		// ok, we know the length so try and allocate the memory
 		// if it can't then old files will be ditched until it works
-		_resList[res] = Twalloc(len, MEM_locked, res);
-
-/* This probably isn't needed
-		// Do a quick ServiceWindows to stop the music screwing up.
-		ServiceWindows();
-*/
+		_resList[res] = memory.allocMemory(len, MEM_locked, res);
 
 		// now load the file
 		// hurray, load it in.
@@ -563,7 +558,7 @@ uint8 *ResourceManager::open(uint32 res) {
 
 	// pass the address of the mem & lock the memory too
 	// might be locked already (if count > 1)
-	Lock_mem(_resList[res]);
+	memory.lockMemory(_resList[res]);
 
 	return (uint8 *) _resList[res]->ad;
 }
@@ -642,7 +637,8 @@ void ResourceManager::close(uint32 res) {
 
 	//if noone has the file open then unlock and allow to float
 	if (!_count[res]) {
-		Float_mem(_resList[res]);	// pass the address of the mem
+		// pass the address of the mem
+		memory.floatMemory(_resList[res]);
 	}
 }
 
@@ -732,7 +728,7 @@ uint32 ResourceManager::helpTheAgedOut(void) {
 	// trash this old resource
 
 	_age[oldest_res] = 0;		// effectively gone from _resList
-	Free_mem(_resList[oldest_res]);	// release the memory too
+	memory.freeMemory(_resList[oldest_res]);	// release the memory too
 
 	return _resList[oldest_res]->size;	// return bytes freed
 }
@@ -890,7 +886,7 @@ void ResourceManager::kill(uint8 *input) {
 		if (!_count[res]) {
 			if (_age[res]) {
 				_age[res] = 0;		// effectively gone from _resList
-				Free_mem(_resList[res]);	// release the memory too
+				memory.freeMemory(_resList[res]);	// release the memory too
 				Print_to_console(" trashed %d", res);
 			} else
 				Print_to_console("%d not in memory", res);
@@ -904,7 +900,7 @@ void ResourceManager::kill(uint8 *input) {
 void ResourceManager::remove(uint32 res) {
 	if (_age[res]) {
 		_age[res] = 0;			// effectively gone from _resList
-		Free_mem(_resList[res]);	// release the memory too
+		memory.freeMemory(_resList[res]);	// release the memory too
 		debug(5, " - Trashing %d", res);
 	} else
 		debug(5, "remove(%d) not even in memory!", res);
@@ -917,16 +913,16 @@ void ResourceManager::removeAll(void) {
 	int j;
 	uint32 res;
 
-	j = base_mem_block;
+	j = memory._baseMemBlock;
 
 	do {
-		if (mem_list[j].uid < 65536) {	// a resource
-			res = mem_list[j].uid;
+		if (memory._memList[j].uid < 65536) {	// a resource
+			res = memory._memList[j].uid;
 			_age[res] = 0;		// effectively gone from _resList
-			Free_mem(_resList[res]);	// release the memory too
+			memory.freeMemory(_resList[res]);	// release the memory too
 		}
 
-		j = mem_list[j].child;
+		j = memory._memList[j].child;
 	} while	(j != -1);
 }
 
@@ -942,11 +938,11 @@ void ResourceManager::killAll(uint8 wantInfo) {
 	int scrolls = 0;
 	_keyboardEvent ke;
 
-	j = base_mem_block;
+	j = memory._baseMemBlock;
 
 	do {
-		if (mem_list[j].uid < 65536) {	// a resource
-			res = mem_list[j].uid;
+		if (memory._memList[j].uid < 65536) {	// a resource
+			res = memory._memList[j].uid;
 
 			// not the global vars which are assumed to be open in
 			// memory & not the player object!
@@ -955,7 +951,7 @@ void ResourceManager::killAll(uint8 wantInfo) {
 				res_man.close(res);
 
 				_age[res] = 0;		// effectively gone from _resList
-				Free_mem(_resList[res]);	// release the memory too
+				memory.freeMemory(_resList[res]);	// release the memory too
 				nuked++;
 
 				// if this was called from the console + we
@@ -985,7 +981,7 @@ void ResourceManager::killAll(uint8 wantInfo) {
 				}	
 			}
 		}
-		j = mem_list[j].child;
+		j = memory._memList[j].child;
 	} while (j != -1);
 
 	// if this was called from the console + we want info!
@@ -1015,20 +1011,20 @@ void ResourceManager::killAllObjects(uint8 wantInfo) {
 	int scrolls = 0;
 	_keyboardEvent ke;
 
-	j = base_mem_block;
+	j = memory._baseMemBlock;
 
 	do {
-		if (mem_list[j].uid < 65536) {	//a resource
-			res=mem_list[j].uid;
+		if (memory._memList[j].uid < 65536) {	// a resource
+			res = memory._memList[j].uid;
 			//not the global vars which are assumed to be open in
-			// memory & not the player object! (James17jan97)
+			// memory & not the player object!
 			if (res != 1 && res != CUR_PLAYER_ID) {
 				header = (_standardHeader*) res_man.open(res);
 				res_man.close(res);
 
 				if (header->fileType == GAME_OBJECT) {
 					_age[res] = 0;		// effectively gone from _resList
-					Free_mem(_resList[res]);	// release the memory too
+					memory.freeMemory(_resList[res]);	// release the memory too
    					nuked++;
 
 					// if this was called from the console + we want info
@@ -1059,7 +1055,7 @@ void ResourceManager::killAllObjects(uint8 wantInfo) {
 				}
 			}
 		}
-		j = mem_list[j].child;
+		j = memory._memList[j].child;
 	} while (j != -1);
 
 	// if this was called from the console + we want info
@@ -1266,7 +1262,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	inFile.close();
 	outFile.close();
-	Free_mem(text_spr);
+	memory.freeMemory(text_spr);
 
 	EraseBackBuffer();
 
@@ -1436,6 +1432,6 @@ void ResourceManager::getCd(int cd) {
 		spriteInfo.x = oldX;
 	} while (!done);
 
-	Free_mem(text_spr);
+	memory.freeMemory(text_spr);
 	RemoveMsg();
 }

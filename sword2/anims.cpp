@@ -603,7 +603,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 		// if we've made a text sprite for this line...
 
 		if (sequence_text_list[line].text_mem) {
-			Lock_mem(sequence_text_list[line].text_mem);
+			memory.lockMemory(sequence_text_list[line].text_mem);
 
 			// now fill out the _spriteInfo structure in the
 			// _movieTextObjectStructure
@@ -642,7 +642,7 @@ void ClearSequenceSpeech(_movieTextObject *textSprites[]) {
 
 		// free up the mem block containing this text sprite
 		if (sequence_text_list[line].text_mem)
-			Free_mem(sequence_text_list[line].text_mem);
+			memory.freeMemory(sequence_text_list[line].text_mem);
 
 		// free up the mem block containing this speech sample
 		if (sequence_text_list[line].speech_mem)

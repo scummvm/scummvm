@@ -60,19 +60,46 @@ typedef	struct {
 #define	UID_savegame_buffer		0xfffffff6
 #define UID_restoregame_buffer		0xfffffff5
 
-void Init_memory_manager(void);
-void Close_memory_manager(void);				// Tony2Oct96
-mem *Twalloc(uint32 size, uint32 type, uint32 unique_id);	// high level
-void Free_mem(mem *block);
-void Float_mem(mem *block);
-void Lock_mem(mem *block);
-void Mem_debug(void);
-void Visual_mem_display(void);
-int32 Defrag_mem(uint32 req_size);				// Tony10Apr96
+class MemoryManager {
+private:
+	// Address of init malloc to be freed later
+	uint8 *_freeMemman;
 
-extern uint32 total_blocks;
-extern uint32 base_mem_block;
-extern mem mem_list[MAX_mem_blocks];
-extern uint32 total_free_memory;
+	uint32 _totalFreeMemory;
+	uint32 _totalBlocks;
+
+	// Start position of the defragger as indicated by its sister,
+	// VirtualDefrag.
+	int32 _suggestedStart;
+
+	mem *lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id);
+	int32 defragMemory(uint32 req_size);
+
+	// Used to determine if the required size can be obtained if the
+	// defragger is allowed to run.
+	int32 virtualDefrag(uint32 size);
+
+	// Debugging functions
+	void debugMemory(void);
+	const char *fetchOwner(uint32 uid);
+	void memoryString(char *string);
+
+public:
+	// List of defined memory handles - each representing a block of memory
+	mem _memList[MAX_mem_blocks];
+	uint32 _baseMemBlock;
+
+	void init(void);
+	void exit(void);
+	mem *allocMemory(uint32 size, uint32 type, uint32 unique_id);
+	void freeMemory(mem *block);
+	void floatMemory(mem *block);
+	void lockMemory(mem *block);
+
+	// Debugging function
+	void displayMemory(void);
+};
+
+extern MemoryManager memory;
 
 #endif

@@ -168,10 +168,10 @@ void Init_console(void) {
 	// Force a palatte for the console.
 	BS2_SetPalette(CON_PEN, 1, white, RDPAL_INSTANT);
 
-	console_sprite = Twalloc(con_width * (CON_lines * con_chr_height), MEM_float, UID_con_sprite);
+	console_sprite = memory.alloc(con_width * (CON_lines * con_chr_height), MEM_float, UID_con_sprite);
 
 	if (!console_sprite) {
-		ExitWithReport("Init_console Talloc fail");
+		ExitWithReport("Init_console alloc fail");
 	}
 
 	con_depth = CON_lines * con_chr_height;
@@ -444,7 +444,7 @@ uint32 Parse_user_input(void) {
 					Con_help();
 					return 0;
 				case 1:		// MEM
-					Console_mem_display();
+					memory.displayMemory();
 					return 0;
 				case 2:		// Q
 					// quit the console

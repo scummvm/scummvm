@@ -235,7 +235,7 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		CreateSurface(&msgSprite, &msgSurface);
 		DrawSurface(&msgSprite, msgSurface);
 		DeleteSurface(msgSurface);
-		Free_mem(data);
+		memory.freeMemory(data);
 
 		// In case the cutscene has a long lead-in, start just before
 		// the first line of text.

@@ -133,7 +133,7 @@ mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes)
 
 	// allocate memory for array of lineInfo structures
 
-	line = Twalloc(MAX_LINES * sizeof(_lineInfo), MEM_locked, UID_temp);
+	line = memory.allocMemory(MAX_LINES * sizeof(_lineInfo), MEM_locked, UID_temp);
 
 	// get details of sentence breakdown into array of _lineInfo structures
 	// and get the no of lines involved
@@ -146,7 +146,7 @@ mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes)
 	textSprite = BuildTextSprite(sentence, fontRes, pen, (_lineInfo *) line->ad, noOfLines);
 
 	// free up the lineInfo array now
-	Free_mem(line);
+	memory.freeMemory(line);
 
 	return textSprite;
 }
@@ -259,7 +259,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 
 	// allocate memory for sprite, and lock it ready for use
 	// NB. 'textSprite' is the given pointer to the handle to be used
-	textSprite = Twalloc(sizeof(_frameHeader) + sizeOfSprite, MEM_locked, UID_text_sprite);
+	textSprite = memory.allocMemory(sizeof(_frameHeader) + sizeOfSprite, MEM_locked, UID_text_sprite);
 
 	// the handle (*textSprite) now points to UNMOVABLE memory block
 	// set up the frame header
@@ -320,7 +320,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 	res_man.close(fontRes);
 
 	// unlock the sprite memory block, so it's movable
-	Float_mem(textSprite);
+	memory.floatMemory(textSprite);
 
 	return textSprite;
 }
@@ -601,7 +601,7 @@ void Kill_text_bloc(uint32 bloc_number) {
 
 	if (text_sprite_list[bloc_number].text_mem) {
 		// release the floating memory and mark it as free
-		Free_mem(text_sprite_list[bloc_number].text_mem);
+		memory.freeMemory(text_sprite_list[bloc_number].text_mem);
 		text_sprite_list[bloc_number].text_mem = 0;
 	} else {
 		// illegal kill - stop the system

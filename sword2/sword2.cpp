@@ -49,6 +49,8 @@
 #include "bs2/driver/driver96.h"
 #include "bs2/driver/palette.h"
 
+extern uint16 _debugLevel;
+
 uint8 quitGame = 0;
 
 // version & owner details
@@ -106,6 +108,7 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	_game_name = strdup(detector->_gameFileName.c_str());
 	_bootParam = detector->_bootParam;
 	_saveSlot = detector->_save_slot;
+	_debugLevel = detector->_debugLevel;
 
 	// Setup mixer
 	if (!_mixer->bindToSystem(syst))
@@ -134,8 +137,8 @@ int32 Sword2State::InitialiseGame(void) {
 	// get some falling RAM and put it in your pocket, never let it slip
 	// away
 
-	debug(5, "CALLING: Init_memory_manager");
-	Init_memory_manager();
+	debug(5, "CALLING: memory.init");
+	memory.init();
 
 	// initialise the resource manager
 	debug(5, "CALLING: res_man.init");
@@ -205,7 +208,7 @@ void Close_game() {
 	Kill_music();
 
 	// free the memory again
-	Close_memory_manager();
+	memory.exit();
 	res_man.exit();
 }
 

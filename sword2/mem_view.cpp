@@ -21,14 +21,13 @@
 #include "build_display.h"
 #include "console.h"
 #include "header.h"
-#include "mem_view.h"
 #include "memory.h"
 #include "resman.h"
 
 // has to be global because a local in Fetch_mem_owner is destroyed on exit
 char buf[50];
 
-void Console_mem_display(void) {
+void MemoryManager::displayMemory(void) {
 	int pass, found_end, k, j, free = 0;
 	_standardHeader	*file_header;
 	int scrolls = 0;
@@ -41,14 +40,14 @@ void Console_mem_display(void) {
 		{ "M_float " }
 	};
 
-	j = base_mem_block;
+	j = _baseMemBlock;
 	do {
-		if (mem_list[j].uid < 65536) {
-			file_header = (_standardHeader*) res_man.open(mem_list[j].uid);
+		if (_memList[j].uid < 65536) {
+			file_header = (_standardHeader*) res_man.open(_memList[j].uid);
 			// close immediately so give a true count
-			res_man.close(mem_list[j].uid);
+			res_man.close(_memList[j].uid);
 
-			debug(5, "view %d", mem_list[j].uid);
+			debug(5, "view %d", _memList[j].uid);
 
 			pass = 0;
 			found_end = 0;
@@ -68,29 +67,29 @@ void Console_mem_display(void) {
 
 			if (!pass && found_end) { // && file_header->fileType < 10)
 				Print_to_console("%d %s, size 0x%.5x (%dk %d%%), res %d %s %s, A%d, C%d",
-					j, inf[mem_list[j].state],
-					mem_list[j].size,
-					mem_list[j].size / 1024,
-					(mem_list[j].size * 100) / total_free_memory,
-					mem_list[j].uid,
-					res_man.fetchCluster(mem_list[j].uid),
+					j, inf[_memList[j].state],
+					_memList[j].size,
+					_memList[j].size / 1024,
+					(_memList[j].size * 100) / _totalFreeMemory,
+					_memList[j].uid,
+					res_man.fetchCluster(_memList[j].uid),
 					file_header->name,
-					res_man.fetchAge(mem_list[j].uid),
-					res_man.fetchCount(mem_list[j].uid));
+					res_man.fetchAge(_memList[j].uid),
+					res_man.fetchCount(_memList[j].uid));
 			} else
-				Print_to_console(" %d is an illegal resource", mem_list[j].uid);
+				Print_to_console(" %d is an illegal resource", _memList[j].uid);
 		} else {
 			Print_to_console("%d %s, size 0x%.5x (%dk %d%%), %s",
-				j, inf[mem_list[j].state], mem_list[j].size,
-				mem_list[j].size / 1024,
-				(mem_list[j].size * 100) / total_free_memory,
-				Fetch_mem_owner(mem_list[j].uid));
+				j, inf[_memList[j].state], _memList[j].size,
+				_memList[j].size / 1024,
+				(_memList[j].size * 100) / _totalFreeMemory,
+				fetchOwner(_memList[j].uid));
 		}
 
-		if (mem_list[j].state == MEM_free)
-			free += mem_list[j].size;
+		if (_memList[j].state == MEM_free)
+			free += _memList[j].size;
 
-		j = mem_list[j].child;
+		j = _memList[j].child;
 
 		scrolls++;
 
@@ -116,12 +115,12 @@ void Console_mem_display(void) {
 
 	Scroll_console();
 	Print_to_console("(total memory block 0x%.8x %dk %dMB) %d / %d%% free",
-		total_free_memory, total_free_memory / 1024,
-		total_free_memory / (1000 * 1024), free,
-		(free * 100) / total_free_memory);
+		_totalFreeMemory, _totalFreeMemory / 1024,
+		_totalFreeMemory / (1000 * 1024), free,
+		(free * 100) / _totalFreeMemory);
 }
 
-const char *Fetch_mem_owner(uint32 uid) {
+const char *MemoryManager::fetchOwner(uint32 uid) {
 	switch (uid) {
 	case UID_memman:
 		return "MEMMAN";
@@ -147,8 +146,8 @@ const char *Fetch_mem_owner(uint32 uid) {
 	}
 }
 
-void Create_mem_string(char *string) {
-	int blockNo = base_mem_block;
+void MemoryManager::memoryString(char *string) {
+	int blockNo = _baseMemBlock;
 	int blocksUsed = 0;
 	int mem_free = 0;
 	int mem_locked = 0;
@@ -157,27 +156,27 @@ void Create_mem_string(char *string) {
 	int percent;
 
 	while (blockNo != -1) {
-		switch (mem_list[blockNo].state) {
+		switch (_memList[blockNo].state) {
 			case MEM_free:
 				mem_free++;
 				break;
 
 			case MEM_locked:
 				mem_locked++;
-				memUsed += mem_list[blockNo].size;
+				memUsed += _memList[blockNo].size;
 				break;
 
 			case MEM_float:
 				mem_floating++;
-				memUsed += mem_list[blockNo].size;
+				memUsed += _memList[blockNo].size;
 				break;
 		}
 
 		blocksUsed++;
-		blockNo = mem_list[blockNo].child;
+		blockNo = _memList[blockNo].child;
 	}
 
-	percent =  (memUsed * 100) / total_free_memory;
+	percent =  (memUsed * 100) / _totalFreeMemory;
 
 	sprintf(string,
 		"locked(%u)+float(%u)+free(%u) = %u/%u blocks (%u%% used)(cur %uk)",
