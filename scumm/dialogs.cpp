@@ -463,6 +463,9 @@ void ConfigDialog::close() {
 	if (getResult()) {
 		// Subtitles
 		ConfMan.set("subtitles", subtitlesCheckbox->getState(), _domain);
+		// Sync with current setting
+		if (_vm->_version >= 7)
+			_vm->VAR(_vm->VAR_VOICE_MODE) = subtitlesCheckbox->getState();
 	}
 
 	GUI_OptionsDialog::close();
