@@ -100,6 +100,7 @@ void Actor::initActor(int mode) {
 	ignoreBoxes = false;
 	forceClip = 0;
 	ignoreTurns = false;
+	flip = 0;
 	
 	talkFrequency = 256;
 	talkPan = 64;
