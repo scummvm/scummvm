@@ -989,7 +989,7 @@ void Scumm_v2::o2_drawSentence() {
 	else
 		_string[2].color = 13;
 
-	sentence[80] = 0;
+	sentence[41] = 0;	// Maximal length: 40 characters
 	_messagePtr = (byte*)sentence;
 
 	sentenceline.top = virtscr[2].topline;
