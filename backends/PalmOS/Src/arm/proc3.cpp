@@ -22,8 +22,9 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 	SET8	(byte			,_scaleX					)
 	SET8	(byte			,_scaleY					)
 	SET32	(int32			,_numStrips					)
-	SET32	(int			,_outwidth					)
-	SET32	(int			,_outheight					)
+	SET32	(int			,_out_pitch					)
+	SET32	(int			,_out_w						)
+	SET32	(int			,_out_h						)
 	SETPTR	(byte *			,_shadow_table				)
 	SETPTR	(byte *			,_palette					)
 	SET8	(byte			,_shadow_mode				)
@@ -74,7 +75,7 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 
 		do {
 			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
-				masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && (mask[0] & maskbit));
+				masked = (y < 0 || y >= _out_h) || (v1.mask_ptr && (mask[0] & maskbit));
 
 				if (color && !masked) {
 					// FIXME: Fully implement _shadow_mode.in Sam & Max
@@ -88,7 +89,7 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 					}
 					*dst = pcolor;
 				}
-				dst += _outwidth;
+				dst += _out_w;
 				mask += _numStrips;
 				y++;
 			}
@@ -104,7 +105,7 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 
 				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= _outwidth)
+					if (v1.x < 0 || v1.x >= _out_w)
 						return _scaleIndexX;
 						//goto end_jump;
 					maskbit = revBitMask[v1.x & 7];

@@ -108,8 +108,9 @@ typedef struct {
 	byte _scaleY;
 	int32 _numStrips;
 
-	int _outwidth;
-	int _outheight;
+	int _out_pitch;
+	int _out_w;
+	int _out_h;
 
 	byte *_shadow_table;
 	byte *_palette;
