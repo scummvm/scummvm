@@ -46,6 +46,7 @@ struct CmdText {
 		COMMAND_Y_POS   = 151
 	};
 
+	bool _isReversed;
 	char _command[MAX_COMMAND_LEN];
 	QueenEngine *_vm;
 };

@@ -432,24 +432,34 @@ void Graphics::setBobText(
 
 	char lines[8][MAX_STRING_SIZE];
 	int lineCount = 0;
-	int wordCount = 0;
 	int lineLength = 0;
 	int i;
 
-	for (i = 0; i < length; i++) {
-		if (textCopy[i] == ' ')
-			wordCount++;
+	// Hebrew strings are written from right to left and should be cut
+	// to lines in reverse
+	if (_vm->resource()->getLanguage() == HEBREW) {
+		for (i = length - 1; i >= 0; i--) {
+			lineLength++;
 
-		lineLength++;
+			if ((lineLength > 20 && textCopy[i] == ' ') || i == 0) {
+				memcpy(lines[lineCount], textCopy + i, lineLength);
+				lines[lineCount][lineLength] = '\0';
+				lineCount++;
+				lineLength = 0;
+			}
+		}
+	} else {
+		for (i = 0; i < length; i++) {
+			lineLength++;
 
-		if ((lineLength > 20 && textCopy[i] == ' ') || i == (length-1)) {
-			memcpy(lines[lineCount], textCopy + i + 1 - lineLength, lineLength);
-			lines[lineCount][lineLength] = '\0';
-			lineCount++;
-			lineLength = 0;
+			if ((lineLength > 20 && textCopy[i] == ' ') || i == (length-1)) {
+				memcpy(lines[lineCount], textCopy + i + 1 - lineLength, lineLength);
+				lines[lineCount][lineLength] = '\0';
+				lineCount++;
+				lineLength = 0;
+			}
 		}
 	}
-
 
 	// Plan: write each line to Screen 2, put black outline around lines and
 	// pick them up as a BOB.

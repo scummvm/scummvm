@@ -45,15 +45,27 @@ void CmdText::display(uint8 color) {
 }
 
 void CmdText::displayTemp(uint8 color, bool locked, Verb v, const char *name) {
-	char temp[MAX_COMMAND_LEN];
-	if (locked) {
-		sprintf(temp, "%s%s", _vm->logic()->joeResponse(39), _vm->logic()->verbName(v));
+	char temp[MAX_COMMAND_LEN] = "";
+	if (_isReversed) {
+		if (name != NULL)
+			sprintf(temp, "%s ", name);
+
+		if (locked) {
+			strcat(temp, _vm->logic()->verbName(v));
+			strcat(temp, " ");
+			strcat(temp, _vm->logic()->joeResponse(39));
+		} else
+			strcat(temp, _vm->logic()->verbName(v));
 	} else {
-		strcpy(temp, _vm->logic()->verbName(v));
-	}
-	if (name != NULL) {
-		strcat(temp, " ");
-		strcat(temp, name);
+		if (locked)
+			sprintf(temp, "%s %s", _vm->logic()->joeResponse(39), _vm->logic()->verbName(v));
+		else
+			strcpy(temp, _vm->logic()->verbName(v));
+
+		if (name != NULL) {
+			strcat(temp, " ");
+			strcat(temp, name);
+		}
 	}
 	_vm->display()->textCurrentColor(color);
 	_vm->display()->setTextCentered(COMMAND_Y_POS, temp, false);
@@ -61,7 +73,10 @@ void CmdText::displayTemp(uint8 color, bool locked, Verb v, const char *name) {
 
 void CmdText::displayTemp(uint8 color, const char *name) {
 	char temp[MAX_COMMAND_LEN];
-	sprintf(temp, "%s %s", _command, name);
+	if (_isReversed)
+		sprintf(temp, "%s %s", name, _command);
+	else
+		sprintf(temp, "%s %s", _command, name);
 	_vm->display()->textCurrentColor(color);
 	_vm->display()->setTextCentered(COMMAND_Y_POS, temp, false);
 }
@@ -71,13 +86,31 @@ void CmdText::setVerb(Verb v) {
 }
 
 void CmdText::addLinkWord(Verb v) {
-	strcat(_command, " ");
-	strcat(_command, _vm->logic()->verbName(v));
+	if (_isReversed) {
+		char temp[MAX_COMMAND_LEN];
+		
+		strcpy(temp, _command);
+		strcpy(_command, _vm->logic()->verbName(v));
+		strcat(_command, " ");
+		strcat(_command, temp);
+	} else {
+		strcat(_command, " ");
+		strcat(_command, _vm->logic()->verbName(v));
+	}
 }
 
 void CmdText::addObject(const char *objName) {
-	strcat(_command, " ");
-	strcat(_command, objName);
+	if (_isReversed) {
+		char temp[MAX_COMMAND_LEN];
+		
+		strcpy(temp, _command);
+		strcpy(_command, objName);
+		strcat(_command, " ");
+		strcat(_command, temp);
+	} else {
+		strcat(_command, " ");
+		strcat(_command, objName);
+	}
 }
 
 bool CmdText::isEmpty() const {
@@ -95,6 +128,7 @@ void CmdState::init() {
 
 Command::Command(QueenEngine *vm)
 	: _vm(vm) {
+	_cmdText._isReversed = (vm->resource()->getLanguage() == HEBREW);
 	_cmdText._vm = vm;
 }
 
