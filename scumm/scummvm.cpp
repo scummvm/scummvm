@@ -164,7 +164,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"funpack", "Putt-Putt's Fun Pack", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
+	{"fbpack", "Fatty Bear's Fun Pack", GID_FBPACK, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},

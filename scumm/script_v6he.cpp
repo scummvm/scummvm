@@ -338,9 +338,9 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_seekFile),
+		OPCODE(o6_seekFilePos),
 		OPCODE(o6_redimArray),
-		OPCODE(o6_invalid),
+		OPCODE(o6_readFilePos),
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -956,6 +956,9 @@ void ScummEngine_v6he::o6_openFile() {
 		else
 			error("o6_openFile(): wrong open file mode");
 
+		if (_hFileTable[slot].isOpen() == false)
+			slot = -1;
+
 		debug(1, "%d = o6_openFile(\"%s\", %d)", slot, filename + r, mode);
 	}
 	push(slot);
@@ -1021,33 +1024,40 @@ int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 	if (size == 0)
 		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
 	writeVar(0, 0);
-	defineArray(0, 3, 0, size);
-	byte *ptr = getResourceAddress(rtString, readVar(0));
-	_hFileTable[slot].read(ptr, size);
+
+	ArrayHeader *ah = defineArray(0, rtCostume, 0, size);
+	_hFileTable[slot].read(ah->data, size);
+
 	return readVar(0);
 }
 
 void ScummEngine_v6he::o6_readFile() {
 	int32 size = pop();
 	int slot = pop();
+	int val;
+
+	debug(1, "o6_readFile(%d, %d)", slot, size);
 
 	// Fatty Bear uses positive values
 	if (_gameId == GID_FBEAR)
 		size = -size;
 
 	if (size == -2) {
-		push(_hFileTable[slot].readUint16LE());
+		val = _hFileTable[slot].readUint16LE();
+		push(val);
 	} else if (size == -1) {
-		push(_hFileTable[slot].readByte());
+		val = _hFileTable[slot].readByte();
+		push(val);
 	} else {
-		push(readFileToArray(slot, size));
+		val = readFileToArray(slot, size);
+		push(val);
 	}
-	debug(1, "o6_readFile(%d, %d)", slot, size);
 }
 
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
 	byte *ptr = getResourceAddress(rtString, resID);
 	// FIXME: hack for proper size: / 2 - 5
+	// does it really needed? Needs checking
 	int32 size = getResourceSize(rtString, resID) / 2 - 5;
 	_hFileTable[slot].write(ptr, size);
 }
@@ -1097,81 +1107,111 @@ void ScummEngine_v6he::o6_unknownFA() {
 	_scriptPointer += len + 1;
 }
 
-void ScummEngine_v6he::o6_seekFile() {
-	int a, b, c;
-	a = pop();
-	b = pop();
-	c = pop();
+void ScummEngine_v6he::o6_seekFilePos() {
+	int mode, offset, slot;
+	mode = pop();
+	offset = pop();
+	slot = pop();
 
-	switch (a) {
+	debug(1, "o6_seekFile(%d, %d, %d)", slot, offset, mode);
+
+	switch (mode) {
 	case 1:
-		//seekWrapper(c, b, 0, 0);
+		seekFilePos(slot, offset, 0);
 		break;
 	case 2:
-		//seekWrapper(c, b, ?, 1);
+		seekFilePos(slot, offset, 1);
+		break;
+	case 3:
+		seekFilePos(slot, offset, 2);
 		break;
 	default:
 		break;
 	}
+}
 
-	warning("stub o6_seekFile(%d, %d, %d)", a, b, c);
+void ScummEngine_v6he::seekFilePos(int slot, int offset, int mode) {
+	if (slot == 1)
+		return;
+
+	switch (mode) {
+	case 0:
+		_hFileTable[slot].seek(offset, SEEK_SET);
+		break;
+	case 1:
+		_hFileTable[slot].seek(offset, SEEK_CUR);
+		break;
+	case 2:
+		_hFileTable[slot].seek(offset, SEEK_END);
+		break;
+	}
+}
+
+void ScummEngine_v6he::o6_readFilePos() {
+	int slot = pop();
+
+	debug(1, "o6_tellFile(%d)", slot);
+
+	if (slot == -1) {
+		push(0);
+		return;
+	}
+
+	push(_hFileTable[slot].pos());
 }
 
 void ScummEngine_v6he::o6_redimArray() {
-	int edi, esi, eax;
-	edi = pop();
-	esi = pop();
+	int subcode, newX, newY;
+	newY = pop();
+	newX = pop();
 
-	if (edi ==  0) {
-		eax = esi;
-		esi = edi;
-		edi = eax;
-	}
+	if (newY ==  0)
+		SWAP(newX, newY);
 
-	eax = fetchScriptByte();
-	switch (eax) {
+	subcode = fetchScriptByte();
+	switch (subcode) {
 	case 199:
-		redimArray(fetchScriptWord(), esi, edi, 5);
+		redimArray(fetchScriptWord(), newX, newY, rtInventory);
 		break;
 	case 202:
-		redimArray(fetchScriptWord(), esi, edi, 3);
+		redimArray(fetchScriptWord(), newX, newY, rtCostume);
 		break;
 	default:
 		break;
 	}
 }
 
-void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int d) {
+void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 	// Used in mini game at Cosmic Dust Diner in puttmoon
 	int var_2, var_4, ax, cx;
 
 	if (readVar(arrayId) == 0)
 		error("redimArray: Reference to zeroed array pointer");
 
-	byte *ptr = getResourceAddress(rtString, readVar(arrayId));
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(arrayId));
 
-	if (!ptr)
+	if (!ah)
 		error("redimArray: Invalid array (%d) reference", readVar(arrayId));
 
-	if (d == 5)
+	if (type == rtInventory)
 		var_2 = 2;
-	else
+	else // rtCostume
 		var_2 = 1;
 
-	if (READ_LE_UINT16(ptr) == 5)
+	if (FROM_LE_16(ah->type) == rtInventory)
 		var_4 = 2;
 	else
 		var_4 = 1;
 
 	cx = var_2 * (newX + 1) * (newY + 1);
-	ax = var_4 * READ_LE_UINT16(ptr + 2) * READ_LE_UINT16(ptr + 4);
+	ax = var_4 * FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2);
 
-	if (ax == cx)
+	if (ax != cx)
 		error("redimArray: array %d redim mismatch", readVar(arrayId));
 
-	WRITE_LE_UINT16(ptr, d);
-	WRITE_LE_UINT16(ptr + 2, newX + 1);
-	WRITE_LE_UINT16(ptr + 4, newY + 1);
+	ah->type = TO_LE_16(type);
+	ah->dim1 = TO_LE_16(newY + 1);
+	ah->dim2 = TO_LE_16(newX + 1);
 }
 
 void ScummEngine_v6he::o6_unknownEE() {

@@ -561,6 +561,7 @@ protected:
 	void redimArray(int arrayId, int newX, int newY, int d);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
+	void seekFilePos(int slot, int offset, int mode);
 
 	/* Version 6 script opcodes */
 	void o6_drawBlastObject();
@@ -583,13 +584,14 @@ protected:
 	void o6_rename();
 	void o6_writeFile();
 	void o6_setVolume();
-	void o6_seekFile();
+	void o6_seekFilePos();
 	void o6_localizeArray();
 	void o6_unknownEE();
 	void o6_unknownFA();
 	void o6_redimArray();
 	void o6_readINI();
 	void o6_unknownF9();
+	void o6_readFilePos();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

@@ -401,8 +401,13 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 	int size;
 	ArrayHeader *ah;
 
-	if (type != 4)
-		type = 5;
+	if (!(_features & GF_HUMONGOUS)) {
+		if (type != rtSound)
+			type = rtInventory;
+	} else {
+		if (type == rtScript || type == rtRoom)
+			type = rtCostume;
+	}
 
 	nukeArray(array);
 
@@ -500,7 +505,7 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	// from the function, but don't just go on overwriting memory!
 	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
 
-	if (FROM_LE_16(ah->type) == 4) {
+	if (FROM_LE_16(ah->type) == 4 || (_features & GF_HUMONGOUS && FROM_LE_16(ah->type) == rtCostume)) {
 		return ah->data[base];
 	} else if (_version == 8) {
 		return (int32)READ_LE_UINT32(ah->data + base * 4);
@@ -517,7 +522,7 @@ void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
 
 	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
 
-	if (FROM_LE_16(ah->type) == 4) {
+	if (FROM_LE_16(ah->type) == rtSound || (_features & GF_HUMONGOUS && FROM_LE_16(ah->type) == rtCostume)) {
 		ah->data[base] = value;
 	} else if (_version == 8) {
 #if defined(SCUMM_NEED_ALIGNMENT)
