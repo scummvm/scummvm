@@ -20,10 +20,11 @@
  */
 
 #include "stdafx.h"
-#include "scumm/scumm.h"
-#include "scumm/imuse_digi.h"
-#include "scumm/sound.h"
+#include "imuse_digi.h"
+#include "scumm.h"
+#include "sound.h"
 #include "sound/mixer.h"
+#include "common/timer.h"
 
 ////////////////////////////////////////
 //

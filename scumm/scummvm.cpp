@@ -82,96 +82,98 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
-	{"maniac", "Maniac Mansion", GID_MANIAC, 2,
+	{"maniac", "Maniac Mansion", GID_MANIAC, 2, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
-	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2,
+	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 
 	/* Scumm Version 3 */
-	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3,
+	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
-	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3,
+	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_OLD256 | GF_ADLIB_DEFAULT, "00.LFL"},
-	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3,
+	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_OLD256 | GF_AUDIOTRACKS, "00.LFL"},
-	{"loom", "Loom", GID_LOOM, 3,
+	{"loom", "Loom", GID_LOOM, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
 
 	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4,
+	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_ADLIB_DEFAULT, "000.LFL"},
-	{"pass", "Passport to Adventure", GID_MONKEY_EGA, 4,
+	{"pass", "Passport to Adventure", GID_MONKEY_EGA, 4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_ADLIB_DEFAULT, "000.LFL"},
 
 	/* Scumm version 5 */
-	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4,
+	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_ADLIB_DEFAULT, "000.LFL"},
-	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4,
+	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, "000.LFL"},
-	{"monkey", "Monkey Island 1", GID_MONKEY, 5,
+	{"monkey", "Monkey Island 1", GID_MONKEY, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
-	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5,
+	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
-	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5,
+	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5,
+	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5,
+	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5,
+	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5,
+	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5,
+	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
 
 	/* Scumm Version 6 */
-	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_SAMNMAX, 6,
+	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6,
+	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS, 0},
-	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_SAMNMAX, 6,
+	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_SAMNMAX, 6,
+	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"funpack", "Putt-Putt's Fun Pack", GID_SAMNMAX, 6,
+	{"funpack", "Putt-Putt's Fun Pack", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_SAMNMAX, 6,
+	{"fbpack", "Fatty Bear's Fun Pack", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_SAMNMAX, 6,
+	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_SAMNMAX, 6,
+	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6,
+	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6,
+	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"samnmax", "Sam & Max", GID_SAMNMAX, 6,
+
+	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, VersionSettings::ADLIB_DONT_CARE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0},
-	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6,
+
+	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6,
+	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6,
+	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
 
-	{"test", "Test demo game", GID_SAMNMAX, 6, GF_NEW_OPCODES, 0},
+	{"test", "Test demo game", GID_SAMNMAX, 6, VersionSettings::ADLIB_DONT_CARE, GF_NEW_OPCODES, 0},
 
 	/* Humongous Entertainment Scumm Version 7 */
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_SAMNMAX, 6,
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_DONT_CARE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	/* Scumm Version 7 */
-	{"ft", "Full Throttle", GID_FT, 7,
+	{"ft", "Full Throttle", GID_FT, 7, VersionSettings::ADLIB_DONT_CARE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
-	{"dig", "The Dig", GID_DIG, 7,
+	{"dig", "The Dig", GID_DIG, 7, VersionSettings::ADLIB_DONT_CARE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 
 	/* Scumm Version 8 */
-	{"comi", "The Curse of Monkey Island", GID_CMI, 8,
+	{"comi", "The Curse of Monkey Island", GID_CMI, 8, VersionSettings::ADLIB_DONT_CARE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0},
 
-	{NULL, NULL, 0, 0, 0, NULL}
+	{NULL, NULL, 0, 0, VersionSettings::ADLIB_DONT_CARE, 0, NULL}
 };
 
 const VersionSettings *Engine_SCUMM_targetList() {

@@ -33,6 +33,8 @@
 #include "common/engine.h"
 #include "common/gameDetector.h"
 
+#include "scumm/scumm.h"	// FIXME: this is only for GF_HUMONGOUS and *EVIL*
+
 enum {
 	kStartCmd = 'STRT',
 	kOptionsCmd = 'OPTN',

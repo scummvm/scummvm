@@ -27,6 +27,21 @@
 #define SCUMMVM_VERSION "0.4.2cvs"
 #define SCUMMVM_CVS "2003-05-25"
 
+
+enum GameId {
+	GID_SCUMM_FIRST = 1,
+	GID_SCUMM_LAST = GID_SCUMM_FIRST + 99,
+
+	// Simon the Sorcerer
+	GID_SIMON_FIRST,
+	GID_SIMON_LAST = GID_SIMON_FIRST + 49,
+
+	// Beneath a Steel Sky
+	GID_SKY_FIRST,
+	GID_SKY_LAST = GID_SKY_FIRST + 49
+};
+
+
 class SoundMixer;
 class GameDetector;
 class Timer;

@@ -20,13 +20,14 @@
  */
 
 #include "stdafx.h"
-#include "scumm/scumm.h"
-#include "sound/mididrv.h"
-#include "scumm/imuse.h"
-#include "scumm/instrument.h"
-#include "scumm/saveload.h"
-#include "common/util.h"
+#include "imuse.h"
 #include "imuse_internal.h"
+#include "instrument.h"
+#include "saveload.h"
+#include "scumm.h"
+#include "common/util.h"
+#include "sound/mididrv.h"
+#include "common/gameDetector.h"	// For kDefaultMasterVolume etc.
 
 
 

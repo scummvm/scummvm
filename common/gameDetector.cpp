@@ -627,8 +627,9 @@ int GameDetector::detectMain() {
 	 * and the game is one of those that want adlib as
 	 * default, OR if the game is an older game that doesn't
 	 * support anything else anyway. */
-#ifndef __PALM_OS__ // currently adlib is not supported, is this really needed ?
-	if ((_midi_driver == MD_AUTO && _game.features & GF_ADLIB_DEFAULT) || _game.features & GF_SMALL_HEADER) {
+#ifndef __PALM_OS__ // currently adlib is not supported on PalmOS
+	if ((_game.adlib & VersionSettings::ADLIB_ALWAYS) ||
+	   ((_game.adlib & VersionSettings::ADLIB_PREFERRED) && _midi_driver == MD_AUTO)) {
 		_midi_driver = MD_ADLIB;
 		_use_adlib = true;
 	}

@@ -23,6 +23,8 @@
 #ifndef IMUSE_H
 #define IMUSE_H
 
+#include "scummsys.h"
+
 class IMuseInternal;
 class MidiDriver;
 class OSystem;

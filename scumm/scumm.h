@@ -24,13 +24,13 @@
 #define SCUMM_H
 
 #include "common/engine.h"
-#include "common/gameDetector.h"
 #include "common/file.h"
 #include "common/map.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "common/timer.h"
-#include "common/util.h"
+
+#include "gfx.h"
+#include "boxes.h"
 
 class CharsetRenderer;
 class GameDetector;
@@ -63,6 +63,29 @@ enum {
 	KEY_SET_OPTIONS = 3456 // WinCE
 };
 
+/** SCUMM feature flags. */
+enum GameFeatures {
+	GF_NEW_OPCODES         = 1 << 0,
+	GF_NEW_CAMERA          = 1 << 1,
+	GF_NEW_COSTUMES        = 1 << 2,
+	GF_DIGI_IMUSE          = 1 << 3,
+	GF_USE_KEY             = 1 << 4,
+	GF_DRAWOBJ_OTHER_ORDER = 1 << 5,
+	GF_SMALL_HEADER        = 1 << 6,
+	GF_SMALL_NAMES         = 1 << 7,
+	GF_OLD_BUNDLE          = 1 << 8,
+	GF_16COLOR             = 1 << 9,
+	GF_OLD256              = 1 << 10,
+	GF_AUDIOTRACKS         = 1 << 11,
+	GF_NO_SCALLING         = 1 << 12,
+	GF_ADLIB_DEFAULT       = 1 << 13,
+	GF_AMIGA               = 1 << 14,
+	GF_HUMONGOUS           = 1 << 15,
+	GF_AFTER_HEV7          = 1 << 16,
+
+	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
+};
+
 enum ObjectClass {
 	kObjectClassNeverClip = 20,
 	kObjectClassAlwaysClip = 21,
@@ -72,9 +95,6 @@ enum ObjectClass {
 	kObjectClassPlayer = 31,	// Actor is controlled by the player
 	kObjectClassUntouchable = 32
 };
-
-#include "gfx.h"
-#include "boxes.h"
 
 struct MemBlkHeader {
 	uint32 size;

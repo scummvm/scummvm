@@ -23,6 +23,8 @@
 #ifndef IMUSE_DIGI_H
 #define IMUSE_DIGI_H
 
+#include "scummsys.h"
+
 #define MAX_DIGITAL_CHANNELS 8
 #define MAX_IMUSE_JUMPS 1
 #define MAX_IMUSE_REGIONS 3

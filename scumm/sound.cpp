@@ -21,16 +21,17 @@
  */
 
 #include "stdafx.h"
+#include "actor.h"
+#include "bundle.h"
+#include "imuse.h"
+#include "imuse_digi.h"
+#include "player_v2.h"
 #include "scumm.h"
 #include "sound.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
-#include "imuse.h"
-#include "imuse_digi.h"
-#include "player_v2.h"
-#include "actor.h"
-#include "bundle.h"
 #include "common/config-file.h"
+#include "common/timer.h"
 #include "common/util.h"
 
 #include "sound/midiparser.h"

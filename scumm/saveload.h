@@ -22,6 +22,8 @@
 #ifndef SAVELOAD_H
 #define SAVELOAD_H
 
+#include "scummsys.h"
+
 // Support for "old" savegames (made with 2501 CVS build)
 // Can be useful for other ports too :)
 
@@ -102,6 +104,8 @@ struct SaveLoadEntry {
 
 typedef int SerializerSaveReference(void *me, byte type, void *ref);
 typedef void *SerializerLoadReference(void *me, byte type, int ref);
+
+class SaveFile;
 
 class Serializer {
 public:

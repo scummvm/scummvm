@@ -28,10 +28,18 @@
 class OSystem;
 class MidiDriver;
 
+/** Default sound/music volumes.
+ * @todo move this to a better place.
+ */
 enum {
 	kDefaultMasterVolume = 192,
 	kDefaultSFXVolume = 192,
 	kDefaultMusicVolume = 192
+};
+
+/** Global (shared) game feature flags. */
+enum {
+	GF_DEFAULT_TO_1X_SCALER = 1 << 31
 };
 
 /* Languages
@@ -51,50 +59,16 @@ enum {
 	HB_HEB = 20
 };
 
-enum GameId {
-	GID_SCUMM_FIRST = 1,
-	GID_SCUMM_LAST = GID_SCUMM_FIRST + 99,
-
-	// Simon the Sorcerer
-	GID_SIMON_FIRST,
-	GID_SIMON_LAST = GID_SIMON_FIRST + 49,
-
-	// Beneath a Steel Sky
-	GID_SKY_FIRST,
-	GID_SKY_LAST = GID_SKY_FIRST + 49
-};
-
-// TODO: the GameFeatures really should be moved to scumm/scumm.h, too
-// but right now, gameDetector.h still uses GF_ADLIB_DEFAULT, so we can't.
-enum GameFeatures {
-	// SCUMM features
-	GF_NEW_OPCODES         = 1 << 0,
-	GF_USE_KEY             = 1 << 4,
-	GF_DRAWOBJ_OTHER_ORDER = 1 << 5,
-	GF_SMALL_HEADER        = 1 << 6,
-	GF_SMALL_NAMES         = 1 << 7,
-	GF_OLD_BUNDLE          = 1 << 8,
-	GF_16COLOR             = 1 << 9,
-	GF_OLD256              = 1 << 10,
-	GF_AUDIOTRACKS         = 1 << 11,
-	GF_NO_SCALLING         = 1 << 12,
-	GF_ADLIB_DEFAULT       = 1 << 13,
-	GF_AMIGA               = 1 << 14,
-	GF_HUMONGOUS           = 1 << 15,
-	GF_NEW_COSTUMES        = 1 << 16,
-	GF_DEFAULT_TO_1X_SCALER = 1 << 17,
-	GF_AFTER_HEV7          = 1 << 23,
-
-	GF_NEW_CAMERA          = 1 << 24,
-	GF_DIGI_IMUSE          = 1 << 25,
-
-	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
-};
-
 struct VersionSettings {
 	const char *filename;
 	const char *gamename;
 	byte id, version;
+	enum {
+		ADLIB_DONT_CARE = 0,
+		ADLIB_PREFERRED = 1,
+		ADLIB_ALWAYS    = 2,
+		ADLIB_NEVER     = 3
+	} adlib;
 	uint32 features;
 	char *detectname;
 };
