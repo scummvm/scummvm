@@ -645,18 +645,18 @@ static void bompInit(const byte *src) {
 }
 
 static void bompDecodeMain(byte *dst, const byte *src, int size) {
-	int count = size / 2;
-	byte *start = dst;
-
+	size /= 2;
 	bompInit(src);
 	while (size--) {
-		*dst++ = bompDecode();
+#ifdef SYSTEM_BIG_ENDIAN
+		*(dst + 1) = bompDecode();
+		*(dst + 0) = bompDecode();
+#else
+		*(dst + 0) = bompDecode();
+		*(dst + 1) = bompDecode();
+#endif
+		dst += 2;
 	}
-#ifdef SYSTEM_BIG_ENDIAN              
-        for (int i = 0; i < count; ++i) {
-                ((uint16 *)start)[i] = SWAP_BYTES_16(((uint16 *)start)[i]);
-        }       
-#endif  
 }
 
 void Blocky16::decode(byte *dst, const byte *src) {
@@ -674,12 +674,12 @@ void Blocky16::decode(byte *dst, const byte *src) {
 			memset(_deltaBufs[1], src[32], _frameSize);
 		} else {
 			int count = _frameSize / 2;
-			byte *ptr1 = _deltaBufs[0];
-			byte *ptr2 = _deltaBufs[1];
+			uint16 *ptr1 = (uint16 *)_deltaBufs[0];
+			uint16 *ptr2 = (uint16 *)_deltaBufs[1];
 			uint16 val = READ_LE_UINT16(src + 32);
 			while (count--) {
-				*(uint16 *)(ptr1) = *(uint16 *)(ptr2) = val;
-				ptr1 += 2; ptr2 += 2;
+				*(uint16 *)(ptr1++) = val;
+				*(uint16 *)(ptr2++) = val;
 			};
 		
 		}
@@ -688,12 +688,13 @@ void Blocky16::decode(byte *dst, const byte *src) {
 
 	switch(src[18]) {
 	case 0:
-	#ifdef SYSTEM_BIG_ENDIAN
-                for (int i = 0; i < _width * _height; ++i) {
-                        ((uint16*)gfx_data)[i] = TO_LE_16(((uint16*)gfx_data)[i]);
-                }
-	#endif
+#ifdef SYSTEM_BIG_ENDIAN
+		for (int i = 0; i < _width * _height; i++) {
+			((uint16 *)_curBuf)[i] = READ_LE_UINT16(((uint16 *)gfx_data)[i]);
+		}
+#else
 		memcpy(_curBuf, gfx_data, _frameSize);
+#endif
 		break;
 	case 1:
 		error("blocky16: not implemented decode1 proc");
@@ -715,11 +716,10 @@ void Blocky16::decode(byte *dst, const byte *src) {
 	case 6:
 		{
 			int count = _frameSize / 2;
-			byte *ptr = _curBuf;
+			uint16 *ptr = (uint16 *)_curBuf;
 			while (count--) {
 				int offset = *gfx_data++ * 2;
-				*ptr++ = *(src + 40 + offset);
-				*ptr++ = *(src + 40 + offset + 1);
+				*(uint16 *)ptr++ = READ_LE_UINT16(src + 40 + offset);
 			};
 			break;
 		}
@@ -730,11 +730,10 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		{
 			bompInit(gfx_data);
 			int count = _frameSize / 2;
-			byte *ptr = _curBuf;
+			uint16 *ptr = (uint16 *)_curBuf;
 			while (count--) {
 				int offset = bompDecode() * 2;
-				*ptr++ = *(src + 40 + offset);
-				*ptr++ = *(src + 40 + offset + 1);
+				*(uint16 *)ptr++ = READ_LE_UINT16(src + 40 + offset);
 			};
 			break;
 		}
