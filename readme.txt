@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2002-04-28
+Last updated:    2002-05-01
 Release version: 0.2.0 [CVS Build]
 ------------------------------------------------------------------------
 
@@ -22,8 +22,14 @@ Also ScummVM is capable of playing several non-SCUMM games, at the moment
 this includes Simon The Sorcerer.
 
 If you enjoy ScummVM feel free to donate using the PayPal button on the
-ScummVM homepage.
+ScummVM homepage. This will help us buy utilities needed to develop ScummVM
+easier and quicker. If you cannot donate, help and contribute a patch!
 
+Contacting:
+-----------
+The easiest way to contact the ScummVM team is by subitting bug reports or
+commenting in our forums. You can also join and e-mail the scummvm-devel
+mailing list, or chat with us on irc (#scummvm, irc.openprojects.net)
 
 Supported Games:
 ----------------
@@ -295,8 +301,7 @@ depending on your operating system and configuration.
         
         -eadlib     - Uses internal Adlib Emulation (default) 
         -ewindows   - Windows MIDI. Uses built-in sequencer, for Windows users
-        -etimidity  - Uses Timidity for music. Requires Timidity.
-        -eseq       - Uses /dev/sequencer for MIDI, *nix users.
+        -eseq       - Uses /dev/sequencer for MIDI, *nix users. See below.
         -eqt        - Quicktime sound, for Macintosh users.
         -ecore      - CoreAudio sound, for MacOS X users.
         -eamidi     - Uses the MorphOS MIDI system, for MorphOS users
@@ -325,22 +330,13 @@ variable "SCUMMVM_MIDI" to your sequencer device - eg, /dev/sequencer
 Then start ScummVM with the parameter '-eseq'. This should work on several
 cards, and may offer better performance and quality than Adlib emulation.
 
-
-Playing music with Timidity:
-----------------------------
-Start Timidity with the following command line :
-        $ timidity -irv 7777
-Then start ScummVM with the parameter '-etimidity'. However, Timidity is not
-designed to cope with the rapid changes most iMUSE equipped games use - so
-its use over Adlib emulation or sequencer support is not recommended.
-
-
 Using MP3 files for CD audio:
 -----------------------------
 Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
-to use this option. You'll need to rip the file from the CD as a WAV file, then
-encode the MP3 files in Constant Bit Rate sampled at 22 kHz. This can be done with the following LAME command line:
+to use this option. You'll need to rip the file from the CD as a WAV file,
+then encode the MP3 files in Constant Bit Rate sampled at 22 kHz. This can
+be done with the following LAME command line:
 
 lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
 
