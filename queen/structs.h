@@ -58,7 +58,7 @@ struct GraphicData {
 
 
 struct ObjectData {
-	int16 name;
+	int16 name; // FIXME: rename to 'object'
 	uint16 x;
 	uint16 y;
 	uint16 description;
@@ -70,15 +70,15 @@ struct ObjectData {
 
 
 struct ObjectDescription {
-	uint16 field1;
-	uint16 field2;
-	uint16 field3;
-	uint16 field4;
+	uint16 object;
+	uint16 type; // see select.c l.75-101
+	uint16 lastDescription;
+	uint16 seenCount;
 };
 
 
 struct ItemData {
-	int16 name;
+	int16 item;
 	int16 description;
 	int16 state;
 	uint16 bobFrame;
@@ -90,8 +90,8 @@ struct ActorData {
 	int16 room;
 	int16 bobNum;
 	uint16 name;
-	uint16 gameStateSlot;
-	uint16 gameStateValue;
+	int16 gameStateSlot;
+	int16 gameStateValue;
 	uint16 color;
 	uint16 bobFrameStanding;
 	uint16 x;
@@ -99,6 +99,61 @@ struct ActorData {
 	uint16 anim;
 	uint16 bankNum;
 	uint16 actorFile;
+};
+
+
+struct CmdListData {
+	int16 verb;
+	int16 nounObj1;
+	int16 nounObj2;
+	bool setAreas;
+	bool setObjects;
+	bool setItems;
+	bool setConditions;
+	int16 image;
+	int16 specialSection; // see execute.c l.423-451
+};
+
+
+struct CmdArea {
+	int16 id;
+	int16 area; // <0: turn off, >0: turn on
+	int16 room;
+};
+
+
+struct CmdObject {
+	int16 id;
+	int16 dstObj; // >0: show, <0: hide
+	int16 srcObj; // >0: copy from srcObj, -1: delete dstObj
+};
+
+
+struct CmdInventory {
+	int16 id;
+	int16 dstItem; // <0 : delete, >0 : add
+	int16 srcItem; // >0 : valid
+};
+
+
+struct CmdGameState {
+	int16 id;
+	int16 gameStateSlot;
+	int16 gameStateValue;
+	int16 speakValue;
+};
+
+
+struct FurnitureData {
+	int16 room;
+	int16 gameStateValue;
+};
+
+
+struct GraphicAnim {
+	int16 frame1;
+	int16 frame2;
+	int16 frame3;
 };
 
 

@@ -107,10 +107,10 @@ void Logic::initialise() {
 	_numItems = READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	_itemData = new ItemData[_numItems + 1];	
+	_itemData = new ItemData[_numItems + 1];
 
 	for (i = 1; i <= _numItems; i++) {
-		_itemData[i].name = (int16)READ_BE_UINT16(ptr);
+		_itemData[i].item = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 		_itemData[i].description = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
@@ -194,13 +194,13 @@ void Logic::initialise() {
 
 	_objectDescription = new ObjectDescription[_numObjDesc + 1];
 	for (i = 1; i <= _numObjDesc; i++) {
-		_objectDescription[i].field1 = READ_BE_UINT16(ptr);
+		_objectDescription[i].object = READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectDescription[i].field2 = READ_BE_UINT16(ptr);
+		_objectDescription[i].type = READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectDescription[i].field3 = READ_BE_UINT16(ptr);
+		_objectDescription[i].lastDescription = READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectDescription[i].field4 = READ_BE_UINT16(ptr);
+		_objectDescription[i].seenCount = READ_BE_UINT16(ptr);
 		ptr += 2;
 	}
 
