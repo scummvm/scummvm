@@ -738,7 +738,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = _playerV2 = new Player_V2(this);
 	} else if (_version > 2) {
-		_musicEngine = _imuse = IMuse::create(syst, _mixer, detector->createMidi());
+		MidiDriver *driver = detector->createMidi();
+		if (driver && detector->_native_mt32)
+			driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		_musicEngine = _imuse = IMuse::create(syst, _mixer, driver);
 		if (_imuse) {
 			if (detector->_gameTempo != 0)
 				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);

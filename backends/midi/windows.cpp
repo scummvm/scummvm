@@ -39,7 +39,6 @@ private:
 	bool _isOpen;
 
 	void check_error(MMRESULT result);
-	uint32 property(int prop, uint32 param) { return 0; }
 
 public:
 	MidiDriver_WIN() : _isOpen (false) { }

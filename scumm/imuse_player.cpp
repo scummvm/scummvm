@@ -374,6 +374,7 @@ void Player::sysEx(byte *p, uint16 len) {
 			// as follows:
 			//   BYTE 00: Channel #
 			//   BYTE 02: BIT 01(0x01): Part on?(1 = yes)
+			//   BYTE 04: Priority adjustment [guessing]
 			//   BYTE 05: Volume(upper 4 bits) [guessing]
 			//   BYTE 06: Volume(lower 4 bits) [guessing]
 			//   BYTE 09: BIT 04(0x08): Percussion?(1 = yes)
@@ -382,6 +383,7 @@ void Player::sysEx(byte *p, uint16 len) {
 			part = getPart(p[0] & 0x0F);
 			if (part) {
 				part->set_onoff(p[2] & 0x01);
+				part->set_pri (p[4]);
 				part->setVolume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
 				part->_percussion = _isGM ?((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {

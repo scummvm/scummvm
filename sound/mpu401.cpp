@@ -85,7 +85,8 @@ MidiDriver_MPU401::MidiDriver_MPU401() :
 	_started_thread (false),
 	_mutex (0),
 	_timer_proc (0),
-	_timer_param (0)
+	_timer_param (0),
+	_channel_mask (0xFFFF) // Permit all 16 channels by default
 {
 	
 	uint i;
@@ -106,12 +107,22 @@ void MidiDriver_MPU401::close() {
 		send (0x7B << 8 | 0xB0 | i);
 }
 
+uint32 MidiDriver_MPU401::property (int prop, uint32 param) {
+	switch (prop) {
+		case PROP_CHANNEL_MASK:
+			_channel_mask = param & 0xFFFF;
+			return 1;
+	}
+
+	return 0;
+}
+
 MidiChannel *MidiDriver_MPU401::allocateChannel() {
 	MidiChannel_MPU401 *chan;
 	uint i;
 
 	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
-		if (i == 9)
+		if (i == 9 || !(_channel_mask & (1 << i)))
 			continue;
 		chan = &_midi_channels[i];
 		if (!chan->_allocated) {

@@ -85,6 +85,7 @@ private:
 	OSystem::MutexRef _mutex; // Concurrent shutdown barrier
 	volatile TimerCallback _timer_proc;
 	void *_timer_param;
+	uint16 _channel_mask;
 
 	static int midi_driver_thread (void *param);
 
@@ -94,6 +95,7 @@ public:
 	virtual void close();
 	void setTimerCallback(void *timer_param, TimerCallback timer_proc);
 	uint32 getBaseTempo(void) { return 10000; }
+	uint32 property(int prop, uint32 param);
 
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_midi_channels [9]; }
