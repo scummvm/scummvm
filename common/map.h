@@ -61,16 +61,19 @@ protected:
 	}
 
 public:
-	class Iterator {
+	class ConstIterator {
+		friend class Map<Key, Value>;
 	protected:
 		Node *_node;
+		ConstIterator(Node *node) : _node(node) {}
 		
 	public:
-		Iterator(Node *node = 0) : _node(node) {}
+		ConstIterator() : _node(0) {}
+
 		Node &operator *() { assert(_node != 0); return *_node; }
 		const Node &operator *() const { assert(_node != 0); return *_node; }
         const Node *operator->() const { assert(_node != 0); return _node; }
-        bool operator !=(const Iterator &iter) const { return _node != iter._node; }
+        bool operator !=(const ConstIterator &iter) const { return _node != iter._node; }
 		void operator ++() {
 			if (!_node)
 				return;
@@ -188,23 +191,23 @@ public:
 		// different walk order (infix comes to mind).
 		if (map.isEmpty())
 			return;
-		Iterator x(map.begin()), e(map.end());
+		ConstIterator x(map.begin()), e(map.end());
 		for (; x != e; ++x) {
 			(*this)[x->_key] = x->_value;
 		}
 	}
 
-	Iterator	begin() const {
+	ConstIterator	begin() const {
 		Node *node = _root;
 		if (node) {
 			while (node->_left)
 				node = node->_left;
 		}
-		return Iterator(node);
+		return ConstIterator(node);
 	}
 
-	Iterator	end() const {
-		return Iterator();
+	ConstIterator	end() const {
+		return ConstIterator();
 	}
 
 protected:

@@ -164,12 +164,12 @@ void Config::flush() const {
 	if (!(cfg_file = fopen(filename.c_str(), "w"))) {
 		debug(1, "Unable to write configuration file: %s.\n", filename.c_str());
 	} else {
-		DomainMap::Iterator d;
+		DomainMap::ConstIterator d;
 		for (d = domains.begin(); d != domains.end(); ++d) {
 			fprintf(cfg_file, "[%s]\n", d->_key.c_str());
 
 			const StringMap &data = d->_value;
-			StringMap::Iterator x;
+			StringMap::ConstIterator x;
 			for (x = data.begin(); x != data.end(); ++x) {
 				const String &value = x->_value;
 				if (!value.isEmpty())
@@ -209,7 +209,7 @@ void Config::set_filename(const String &f) {
 }
 
 void Config::merge_config(const Config &c) {
-	DomainMap::Iterator d, end(c.domains.end());
+	DomainMap::ConstIterator d, end(c.domains.end());
 	for (d = c.domains.begin(); d != end; ++d) {
 		domains[d->_key].merge(d->_value);
 	}
@@ -221,7 +221,7 @@ void Config::set_writing(bool w) {
 
 const int Config::count_domains() {
 	int count = 0;
-	DomainMap::Iterator d, end(domains.end());
+	DomainMap::ConstIterator d, end(domains.end());
 	for (d = domains.begin(); d != end; ++d)
 		count++;
 
@@ -230,7 +230,7 @@ const int Config::count_domains() {
 
 Common::StringList Config::get_domains() {
 	StringList domainNames;
-	DomainMap::Iterator d, end(domains.end());
+	DomainMap::ConstIterator d, end(domains.end());
 	for (d = domains.begin(); d != end; ++d) {
 		domainNames.push_back(d->_key);
 	}
