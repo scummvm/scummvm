@@ -27,7 +27,7 @@
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {
 public:
-	OSystem_SDL_Normal() : sdl_tmpscreen(0), sdl_hwscreen(0) {}
+	OSystem_SDL_Normal() : sdl_tmpscreen(0), sdl_hwscreen(0), _overlay_visible(false) {}
 
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
@@ -198,11 +198,8 @@ void OSystem_SDL_Normal::undraw_mouse() {
 
 void OSystem_SDL_Normal::load_gfx_mode() {
 	_forceFull = true;
-	_scaleFactor = 1;
-	_mode_flags = 0;
-	_overlay_visible = false;
+	_mode_flags = DF_WANT_RECT_OPTIM | DF_UPDATE_EXPAND_1_PIXEL;
 
-	_scaler_proc = NULL;
 	sdl_tmpscreen = NULL;
 	TMP_SCREEN_WIDTH = (_screenWidth + 3);
 	
@@ -243,26 +240,41 @@ normal_mode:;
 		_scaleFactor = 1;
 		_scaler_proc = Normal1x;
 		break;
+	default:
+		error("unknown gfx mode");
+		_scaleFactor = 1;
+		_scaler_proc = NULL;
 	}
 
+	//
+	// Create the surface that contains the 8 bit game data
+	//
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, _screenHeight, 8, 0, 0, 0, 0);
 	if (_screen == NULL)
-		error("_screen failed failed");
+		error("_screen failed");
 
-	uint16 *tmp_screen = (uint16*)calloc(TMP_SCREEN_WIDTH*(_screenHeight+3),sizeof(uint16));
-	_mode_flags = DF_WANT_RECT_OPTIM | DF_UPDATE_EXPAND_1_PIXEL;
 
+	//
+	// Create the surface that contains the scaled graphics in 16 bit mode
+	//
 	sdl_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, _screenHeight * _scaleFactor, 16, 
 		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
 	if (sdl_hwscreen == NULL)
 		error("sdl_hwscreen failed");
 	
-	/* Need some extra bytes around when using 2XSAI */
-	if (sdl_hwscreen->format->Rmask == 0x7C00)	// HACK HACK HACK
+	//
+	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
+	//
+
+	// Distinguish 555 and 565 mode
+	if (sdl_hwscreen->format->Rmask == 0x7C00)
 		Init_2xSaI(555);
 	else
 		Init_2xSaI(565);
+	
+	// Need some extra bytes around when using 2xSaI
+	uint16 *tmp_screen = (uint16*)calloc(TMP_SCREEN_WIDTH*(_screenHeight+3),sizeof(uint16));
 	sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
 						TMP_SCREEN_WIDTH, _screenHeight + 3, 16, TMP_SCREEN_WIDTH*2,
 						sdl_hwscreen->format->Rmask,
@@ -402,40 +414,42 @@ void OSystem_SDL_Normal::update_screen() {
 }
 
 void OSystem_SDL_Normal::hotswap_gfx_mode() {
-	/* hmm, need to allocate a 320x200 bitmap
-	 * which will contain the "backup" of the screen during the change.
-	 * then draw that to the new screen right after it's setup.
+	/* We allocate a screen sized bitmap which contains a "backup"
+	 * of the screen data during the change. Then we draw that to
+	 * the new screen right after it's setup.
 	 */
 	
 	byte *bak_mem = (byte*)malloc(_screenWidth*_screenHeight);
 
-	get_320x200_image(bak_mem);
+	get_screen_image(bak_mem);
 
 	unload_gfx_mode();
 	load_gfx_mode();
-
-	_forceFull = true;
 
 	// reset palette
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
 
 	// blit image
-	OSystem_SDL_Normal::copy_rect(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	copy_rect(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	free(bak_mem);
 
-	OSystem_SDL_Normal::update_screen();
+	update_screen();
 }
 
 uint32 OSystem_SDL_Normal::property(int param, Property *value) {
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
+		assert(sdl_hwscreen != 0);
 		_full_screen ^= true;
 
 		if (!SDL_WM_ToggleFullScreen(sdl_hwscreen)) {
-			/* if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode */
+			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
 			hotswap_gfx_mode();
 		}
 		return 1;
+	} else if (param == PROP_OVERLAY_IS_565) {
+		assert(sdl_tmpscreen != 0);
+		return (sdl_tmpscreen->format->Rmask != 0x7C00);
 	}
 	
 	return OSystem_SDL_Common::property(param, value);

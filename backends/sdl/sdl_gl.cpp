@@ -154,12 +154,13 @@ void OSystem_SDL_GL::hotswap_gfx_mode() {
 	
 	byte *bak_mem = (byte*)malloc(_screenWidth*_screenHeight);
 
-	get_320x200_image(bak_mem);
+	get_screen_image(bak_mem);
 
 	unload_gfx_mode();
 	load_gfx_mode();
 
 	fb2gl.setPalette(0,256);
+	// FIXME - this seems to be tied to 320x200 - what about Zak256 which needs 320x240 ?
 	fb2gl.update(_screen->pixels,320,200,320,0,_currentShakePos);
 
 	/* blit image */

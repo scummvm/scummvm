@@ -48,8 +48,10 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 
 	SDL_ShowCursor(SDL_DISABLE);
 
+#ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
 	// Setup the icon
 	syst->setup_icon();
+#endif
 
 #ifndef MACOSX		// Work around a bug in OS X
 	// Clean up on exit
@@ -634,7 +636,7 @@ bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte forma
 
 
 /* retrieve the 320x200 bitmap currently being displayed */
-void OSystem_SDL_Common::get_320x200_image(byte *buf) {
+void OSystem_SDL_Common::get_screen_image(byte *buf) {
 	/* make sure the mouse is gone */
 	undraw_mouse();
 	

@@ -187,7 +187,7 @@ protected:
 	virtual void unload_gfx_mode() = 0;
 	virtual void hotswap_gfx_mode() = 0;
 
-	void get_320x200_image(byte *buf);	
+	void get_screen_image(byte *buf);	
 
 	void setup_icon();
 	void kbd_mouse();
