@@ -66,6 +66,7 @@ SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyText *skyText, Sky
 		_moduleList[i] = 0;
 	_stackPtr = 0;
 	
+	_currentSection = 0xFF; //force music & sound reload
 	initScriptVariables();
 }
 
