@@ -119,6 +119,8 @@ void Scumm::scummInit()
 	if (!(_features & GF_AFTER_V7)) {
 		_vars[VAR_V5_DRAWFLAGS] = 11;
 		_vars[VAR_59] = 3;
+
+		_vars[VAR_CURRENT_LIGHTS] = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
 
 	mouse.x = 104;
@@ -330,9 +332,10 @@ int Scumm::scummLoop(int delta)
 		setActorRedrawFlags();
 		resetActorBgs();
 
-//    if (!(_vars[VAR_V5_DRAWFLAGS]&2) && _vars[VAR_V5_DRAWFLAGS]&4) {
-//      error("Flashlight not implemented in this version");
-//    }
+		if (!(_vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_screen) &&
+		      _vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_flashlight) {
+			error("Flashlight not implemented in this version");
+		}
 
 		processActors();
 		clear_fullRedraw();
@@ -341,7 +344,7 @@ int Scumm::scummLoop(int delta)
 
 		if (_doEffect) {
 			_doEffect = false;
-			screenEffect(_newEffect);
+			fadeIn(_newEffect);
 			clearClickedStatus();
 		}
 
@@ -383,7 +386,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 
 	clearMsgQueue();
 
-	fadeToBlackEffect(_switchRoomEffect2);
+	fadeOut(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;
 
 	if (_currentScript != 0xFF) {

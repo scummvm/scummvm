@@ -134,7 +134,7 @@ bool Scumm::loadState(int slot, bool compat)
 	// Force a fade to black
 	int old_screenEffectFlag = _screenEffectFlag;
 	_screenEffectFlag = true;
-	fadeToBlackEffect(129);
+	fadeOut(129);
 	_screenEffectFlag = old_screenEffectFlag;
 
 	initScreens(0, sb, 320, sh);

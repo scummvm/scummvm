@@ -1547,11 +1547,14 @@ void Scumm::o5_lights()
 	b = fetchScriptByte();
 	c = fetchScriptByte();
 
-/*	if (c==0)
-		_vars[VAR_V5_DRAWFLAGS] = a;
-	else if (c==1) {*/
-	warning("o5_lights: lights not implemented");
-//  }
+	warning("o5_lights(%d,%d,%d): lights not implemented", a, b, c);
+
+	if (c==0)
+		_vars[VAR_CURRENT_LIGHTS] = a;
+	else if (c==1) {
+		//LightDx = a;
+		//LightDy = b;
+	}
 	_fullRedraw = 1;
 }
 
@@ -1967,10 +1970,10 @@ void Scumm::o5_roomOps()
 	case 10:											/* ? */
 		a = getVarOrDirectWord(0x80);
 		if (a) {
-			_switchRoomEffect = (byte)(a);
+			_switchRoomEffect = (byte)a;
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
-			screenEffect(_newEffect);
+			fadeIn(_newEffect);
 		}
 		break;
 	case 11:											/* ? */
@@ -2754,13 +2757,11 @@ void Scumm::o5_oldRoomEffect()
 	_opcode = fetchScriptByte();
 	if ((_opcode & 0x1F) == 3) {
 		a = getVarOrDirectWord(0x80);
-		switch (a) {
-		case 4:
-			_fullRedraw = true;
-			break;
-		default:
-			warning("Unsupported oldRoomEffect %d", a);
-			break;
+		if (a) {
+			_switchRoomEffect = (byte)a;
+			_switchRoomEffect2 = (byte)(a >> 8);
+		} else {
+			fadeIn(_newEffect);
 		}
 	}
 }

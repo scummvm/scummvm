@@ -1843,7 +1843,7 @@ void Scumm::o6_roomOps()
 			_switchRoomEffect = (byte)(a);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
-			screenEffect(_newEffect);
+			fadeIn(_newEffect);
 		}
 		break;
 
@@ -2785,7 +2785,7 @@ void Scumm::o6_miscOps()
 			grabCursor(args[1], args[2], args[3], args[4]);
 			break;
 		case 5:
-			fadeToBlackEffect(args[1]);
+			fadeOut(args[1]);
 			break;
 		case 6:
 			_fullRedraw = 1;
@@ -2793,7 +2793,7 @@ void Scumm::o6_miscOps()
 			for (i = 0; i < NUM_ACTORS; i++)
 				derefActor(i)->needRedraw = true;
 			processActors();
-			screenEffect(args[1]);
+			fadeIn(args[1]);
 			break;
 		case 8:
 			startManiac();

@@ -552,7 +552,44 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction)
 	}
 }
 
-void Scumm::fadeToBlackEffect(int a)
+void Scumm::fadeIn(int effect)
+{
+	switch (effect) {
+	case 1:
+	case 2:
+	case 3:
+		transitionEffect(effect - 1);
+		break;
+	case 128:
+		unkScreenEffect6();
+		break;
+	case 130:
+		unkScreenEffect1();
+		break;
+	case 131:
+		unkScreenEffect2();
+		break;
+	case 132:
+		unkScreenEffect3();
+		break;
+	case 133:
+		unkScreenEffect4();
+		break;
+	case 134:
+		unkScreenEffect5(0);
+		break;
+	case 135:
+		unkScreenEffect5(1);
+		break;
+	case 129:
+		break;
+	default:
+		warning("Unknown screen effect, %d", effect);
+	}
+	_screenEffectFlag = true;
+}
+
+void Scumm::fadeOut(int a)
 {
 	VirtScreen *vs;
 
@@ -594,7 +631,7 @@ void Scumm::fadeToBlackEffect(int a)
 		unkScreenEffect5(1);
 		break;
 	default:
-		warning("fadeToBlackEffect: default case %d", a);
+		warning("fadeOut: default case %d", a);
 	}
 }
 
@@ -2164,43 +2201,6 @@ void Scumm::swapPalColors(int a, int b)
 	setDirtyColors(a, b);
 }
 
-void Scumm::screenEffect(int effect)
-{
-	switch (effect) {
-	case 1:
-	case 2:
-	case 3:
-		transitionEffect(effect - 1);
-		break;
-	case 128:
-		unkScreenEffect6();
-		break;
-	case 130:
-		unkScreenEffect1();
-		break;
-	case 131:
-		unkScreenEffect2();
-		break;
-	case 132:
-		unkScreenEffect3();
-		break;
-	case 133:
-		unkScreenEffect4();
-		break;
-	case 134:
-		unkScreenEffect5(0);
-		break;
-	case 135:
-		unkScreenEffect5(1);
-		break;
-	case 129:
-		break;
-	default:
-		warning("Unknown screen effect, %d", effect);
-	}
-	_screenEffectFlag = true;
-}
-
 void Gdi::resetBackground(int top, int bottom, int strip)
 {
 	VirtScreen *vs = &_vm->virtscr[0];
@@ -2219,7 +2219,8 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 
 	_numLinesToProcess = bottom - top;
 	if (_numLinesToProcess) {
-		if (1 /*_vm->_vars[VAR_V5_DRAWFLAGS]&2*/ ) {
+		if ((_vm->_features & GF_AFTER_V7) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen)) {
+//		if (1 /*_vm->_vars[VAR_V5_DRAWFLAGS]&2*/ ) {
 			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
 				draw8ColWithMasking();
 			else

@@ -255,6 +255,14 @@ enum ResTypes {
 };
 
 enum {
+	LIGHTMODE_dark			= 0,
+	LIGHTMODE_actor_base	= 1,
+	LIGHTMODE_screen		= 2,
+	LIGHTMODE_flashlight	= 4,
+	LIGHTMODE_actor_color	= 8
+};
+
+enum {
 	OF_OWNER_MASK = 0x0F,
 	OF_STATE_MASK = 0xF0,
 	
@@ -1112,10 +1120,10 @@ public:
 	void updateDirtyScreen(int slot);
 
 	VirtScreen *findVirtScreen(int y);
-	void fadeToBlackEffect(int a);
+	void fadeOut(int a);
 	static void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
 
-	void screenEffect(int effect);
+	void fadeIn(int effect);
 	void unkScreenEffect1();
 	void unkScreenEffect2();
 	void unkScreenEffect3();
