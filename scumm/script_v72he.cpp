@@ -762,7 +762,7 @@ void ScummEngine_v72he::o72_getObjectImageX() {
 		return;
 	}
 
-	push(_objs[objnum].x_pos);
+	push(_objs[objnum].x_pos / 8);
 }
 
 void ScummEngine_v72he::o72_getObjectImageY() {
@@ -774,7 +774,7 @@ void ScummEngine_v72he::o72_getObjectImageY() {
 		return;
 	}
 
-	push(_objs[objnum].y_pos);
+	push(_objs[objnum].y_pos / 8);
 }
 
 void ScummEngine_v72he::o72_captureWizImage() {

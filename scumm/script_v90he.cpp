@@ -2005,13 +2005,13 @@ void ScummEngine_v90he::o90_getObjectData() {
 		if (_heObjectNum == -1)
 			push(0);
 		else
-			push(_objs[_heObjectNum].x_pos);
+			push(_objs[_heObjectNum].x_pos / 8);
 		break;
 	case 7:
 		if (_heObjectNum == -1)
 			push(0);
 		else
-			push(_objs[_heObjectNum].y_pos);
+			push(_objs[_heObjectNum].y_pos / 8);
 		break;
 	case 20:
 		push(getState(_heObject));
