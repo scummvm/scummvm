@@ -32,6 +32,7 @@
 #define strcpy			StrCopy
 #define strncpy			StrNCopy
 #define stricmp			StrCaselessCompare
+#define strnicmp		StrNCaselessCompare
 #define strlen			StrLen
 #define strncmp			StrNCompare
 #define strstr			StrStr
