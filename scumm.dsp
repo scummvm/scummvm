@@ -383,11 +383,11 @@ SOURCE=.\scumm\script.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\script_v1.cpp
+SOURCE=.\scumm\script_v5.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\script_v2.cpp
+SOURCE=.\scumm\script_v6.cpp
 # End Source File
 # Begin Source File
 
