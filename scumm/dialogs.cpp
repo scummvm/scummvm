@@ -596,7 +596,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 			_scumm->_imuse->set_master_volume(_soundVolumeMaster);
 		}
 
-		_scumm->_mixer->setVolume(_soundVolumeSfx);
+		_scumm->_mixer->setVolume(_soundVolumeSfx * _soundVolumeMaster / 255);
 		_scumm->_mixer->setMusicVolume(_soundVolumeMusic);
 		
 		g_config->setInt("master_volume", _soundVolumeMaster);

@@ -700,7 +700,7 @@ void Sound::setupSound() {
 
 		_scumm->_imuse->set_master_volume(_sound_volume_master);
 		_scumm->_imuse->set_music_volume(_sound_volume_music);
-		_scumm->_mixer->setVolume(_sound_volume_sfx);
+		_scumm->_mixer->setVolume(_sound_volume_sfx * _sound_volume_master / 255);
 		_scumm->_mixer->setMusicVolume(_sound_volume_music);
 	}
 	_sfxFile = openSfxFile();

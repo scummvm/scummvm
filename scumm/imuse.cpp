@@ -407,8 +407,8 @@ private:
 
 	byte _queue_marker;
 	byte _queue_cleared;
-	byte _master_volume;					/* Master volume. 0-127 */
-	byte _music_volume;						/* Global music volume. 0-128 */
+	byte _master_volume;					// Master volume. 0-255
+	byte _music_volume;						// Global music volume. 0-255
 
 	uint16 _trigger_count;
 	ImTrigger _snm_triggers[16];	// Sam & Max triggers
@@ -466,8 +466,6 @@ private:
 
 	void lock();
 	void unlock();
-
-	int set_master_volume_intern(uint vol);
 
 public:
 	~IMuseInternal();
@@ -1142,7 +1140,7 @@ int IMuseInternal::get_channel_volume(uint a)
 {
 	if (a < 8)
 		return _channel_volume_eff[a];
-	return _master_volume;
+	return (_master_volume * _music_volume / 255) >> 1;
 }
 
 Part *IMuseInternal::allocate_part(byte pri)
@@ -1425,48 +1423,50 @@ int IMuseInternal::query_queue(int param)
 
 int IMuseInternal::get_music_volume()
 {
-	return _music_volume * 2;
+	return _music_volume;
 }
 
 int IMuseInternal::set_music_volume(uint vol)
 {
-	if (vol > 256)
-		vol = 256;
+	if (vol > 255)
+		vol = 255;
 	else if (vol < 0)
 		vol = 0;
 
-	_music_volume = vol / 2;
-	return 0;
-}
-
-int IMuseInternal::set_master_volume_intern(uint vol)
-{
-	if (vol > 127)
-		return -1;
-
-	vol = vol * _music_volume / 128;
-
-	_master_volume = vol;
-	for (int i = 0; i != 8; i++)
-		_channel_volume_eff[i] = (_channel_volume[i] + 1) * vol >> 7;
+	if (_music_volume == vol)
+		return 0;
+	_music_volume = vol;
+	vol = vol * _master_volume / 255;
+	for (int i = 0; i < ARRAYSIZE (_channel_volume); i++) {
+		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
+	}
 	if (!_paused)
 		update_volumes();
-
 	return 0;
 }
 
-int IMuseInternal::set_master_volume(uint vol)
+int IMuseInternal::set_master_volume (uint vol)
 {
-	// recalibrate from 0-256 range
-	vol = vol * 127 / 256;
+	if (vol > 255)
+		vol = 255;
+	else if (vol < 0)
+		vol = 0;
+	if (_master_volume == vol)
+		return 0;
 
-	return set_master_volume_intern(vol);
+	_master_volume = vol;
+	vol = vol * _music_volume / 255;
+	for (int i = 0; i < ARRAYSIZE (_channel_volume); i++) {
+		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
+	}
+	if (!_paused)
+		update_volumes();
+	return 0;
 }
 
 int IMuseInternal::get_master_volume()
 {
-	// recalibrate to 0-256 range
-	return _master_volume * 256 / 127;
+	return _master_volume;
 }
 
 int IMuseInternal::terminate()
@@ -1519,9 +1519,12 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 	if (param == 0) {
 		switch (cmd) {
 		case 6:
-			return set_master_volume_intern(b);
+			if (b > 127)
+				return -1;
+			else
+				return set_master_volume ((b << 1) | (b ? 0 : 1)); // Convert b from 0-127 to 0-255
 		case 7:
-			return _master_volume;
+			return _master_volume >> 1; // Convert from 0-255 to 0-127
 		case 8:
 			return start_sound(b) ? 0 : -1;
 		case 9:
@@ -1731,7 +1734,7 @@ int IMuseInternal::set_channel_volume(uint chan, uint vol)
 		return -1;
 
 	_channel_volume[chan] = vol;
-	_channel_volume_eff[chan] = _master_volume * (vol + 1) >> 7;
+	_channel_volume_eff[chan] = _master_volume * _music_volume * vol / 255 / 255;
 	update_volumes();
 	return 0;
 }
@@ -1896,7 +1899,7 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer
 
 	driv->init(this, syst);
 
-	_master_volume = 127;
+	_master_volume = 255;
 	if (_music_volume < 1)
 		_music_volume = kDefaultMusicVolume;
 
@@ -1924,25 +1927,13 @@ void IMuseInternal::init_queue()
 
 void IMuseInternal::pause(bool paused)
 {
-	lock();
-
-	int i;
-	Part *part;
-
-	for (i = ARRAYSIZE(_parts), part = _parts; i != 0; i--, part++) {
-		if (part->_player) {
-			if (paused) {
-				part->_vol_eff = 0;
-			} else {
-				part->set_vol(part->_vol);
-			}
-			part->changed(IMuseDriver::pcVolume);
-		}
-	}
+	int vol = _music_volume;
+	if (paused)
+		_music_volume = 0;
+	update_volumes();
+	_music_volume = vol;
 
 	_paused = paused;
-
-	unlock();
 }
 
 
