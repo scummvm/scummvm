@@ -387,11 +387,8 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 			PluginManager::instance().unloadPluginsExcept(detector._plugin);
 
 			int result = runGame(detector, system);
-			// TODO: for now, return code 0 (which is currently the only return
-			// code anyway) is interpreted to mean "return to launcher". This is
-			// *not* fixed, we could (and probably will) change the meaning etc.
-			if (result != 0)
-				running = false;
+			if (result == 0)
+				break;
 
 			// There are some command-line options that it's
 			// unlikely that we want to preserve now that we're
