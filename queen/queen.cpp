@@ -110,7 +110,6 @@ QueenEngine::~QueenEngine() {
 	delete _display;
 	delete _logic;
 	delete _graphics;
-	delete _logic;
 	delete _input;
 }
 
