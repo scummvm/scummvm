@@ -397,7 +397,7 @@ void Scumm::loadRoomObjects()
 	ObjectData *od;
 	byte *ptr;
 	uint16 obim_id;
-	byte *room, *searchptr;
+	byte *room, *searchptr, *rootptr;
 	ImageHeader *imhd;
 	RoomHeader *roomhdr;
 	CodeHeader *cdhd;
@@ -421,16 +421,16 @@ void Scumm::loadRoomObjects()
 	od = &_objs[1];
 
 	if (_features & GF_AFTER_V8)
-		searchptr = getResourceAddress(rtRoomScripts, _roomResource);
+		searchptr = rootptr = getResourceAddress(rtRoomScripts, _roomResource);
 	else
-		searchptr = room;
+		searchptr = rootptr = room;
 
 	for (i = 0; i < _numObjectsInRoom; i++, od++) {
 		ptr = findResource(MKID('OBCD'), searchptr);
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
-		od->offs_obcd_to_room = ptr - searchptr;
+		od->offs_obcd_to_room = ptr - rootptr;
 		cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), ptr);
 
 		if (_features & GF_AFTER_V7)
