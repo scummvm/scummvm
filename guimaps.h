@@ -37,7 +37,7 @@ static const char* string_map_table_custom[] = {
 	"Keys",				//6
 	"About",			//7
 	"Pocket ScummVM",	//8
-	"Build " SCUMMVM_VERSION "(" SCUMMVM_CVS ")",	//9
+	"Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")",	//9
 	"ScummVM http://scummvm.sourceforge.net",		//10
 	"All games (c) LucasArts",						//11
 	"Quit",											//12
@@ -48,7 +48,7 @@ static const char* string_map_table_custom[] = {
 	"Options",									//17
 	"Misc",											//18
 	"Show speech subtitles",		//19
-	"Amiga pallette conversion",	//20
+	"Amiga palette conversion",	//20
 	"Except:",									//21
 	"Simon the Sorcerer (c) Adventuresoft", //22
 	"Close"											//23

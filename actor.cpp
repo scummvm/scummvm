@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "akos.h"
+#include "costume.h"
 
 #include <math.h>
 

@@ -20,24 +20,10 @@
  *
  */
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
+#ifndef BOXES_H
+#define BOXES_H
 
 #define SIZEOF_BOX 20
-struct Box {				/* Internal walkbox file format */
-	int16 ulx,uly;
-	int16 urx,ury;
-	int16 llx,lly;
-	int16 lrx,lry;
-	byte mask;
-	byte flags;
-	uint16 scale;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
 
 struct AdjustBoxResult {	/* Result type of AdjustBox functions */
 	int16 x,y;
@@ -51,12 +37,8 @@ struct BoxCoords {			/* Box coordinates */
 	ScummPoint lr;
 };
 
-struct PathNode {		/* Linked list of walkpath nodes */
-	uint index;
-	struct PathNode *left, *right;
-};
+struct Box;
+struct PathNode;
+struct PathVertex;
 
-struct PathVertex {		/* Linked list of walkpath nodes */
-	PathNode *left;
-	PathNode *right;
-};
+#endif

@@ -28,7 +28,7 @@
 #include "sound/mixer.h"
 
 #define SCUMMVM_VERSION "0.2.2 CVS"
-#define SCUMMVM_CVS "070802"
+#define SCUMMVM_CVS "2002-07-16"
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
@@ -349,87 +349,6 @@ struct CharsetRenderer {
 	int getSpacing(char chr);
 	int getStringWidth(int a, byte *str, int pos);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
-};
-
-class LoadedCostume {
-protected:
-	Scumm *_vm;
-
-public:
-	byte *_ptr;
-	byte *_dataptr;
-	byte _numColors;
-
-	LoadedCostume(Scumm *vm) : _vm(vm), _ptr(0), _dataptr(0), _numColors(0) {}
-
-	void loadCostume(int id);
-	byte increaseAnims(Actor *a);
-
-protected:
-	byte increaseAnim(Actor *a, int slot);
-};
-
-class CostumeRenderer {
-protected:
-	Scumm *_vm;
-	
-	LoadedCostume _loaded;
-	
-public:
-	byte *_shadow_table;
-
-	byte *_frameptr;
-	byte *_srcptr;
-	byte *_bgbak_ptr, *_backbuff_ptr, *_mask_ptr, *_mask_ptr_dest;
-	int _actorX, _actorY;
-	byte _zbuf;
-	uint _scaleX, _scaleY;
-	int _xmove, _ymove;
-	bool _mirror;
-	byte _maskval;
-	byte _shrval;
-	byte _width2;
-	int _width;
-	byte _height2;
-	int _height;
-	int _xpos, _ypos;
-
-	uint _outheight;
-	int _scaleIndexXStep;
-	int _scaleIndexYStep;
-	byte _scaleIndexX;						/* must wrap at 256 */
-	byte _scaleIndexY, _scaleIndexYTop;
-	int _left, _right;
-	int _dir2;
-	int _top, _bottom;
-	int _ypostop;
-	int _ypitch;
-	byte _docontinue;
-	int _imgbufoffs;
-	byte _repcolor;
-	byte _replen;
-	byte _palette[32];
-	byte _transEffect[0x100];
-
-	void proc6();
-	void proc5();
-	void proc4();
-	void proc3();
-	void proc2();
-	void proc1();
-	void proc_special(Actor *a, byte mask);
-	byte mainRoutine(Actor *a, int slot, int frame);
-	void ignorePakCols(int num);
-
-	byte drawOneSlot(Actor *a, int slot);
-	byte drawCostume(Actor *a);
-
-	void setPalette(byte *palette);
-	void setFacing(uint16 facing);
-	void setCostume(int costume);
-
-public:
-	CostumeRenderer(Scumm *vm) : _vm(vm), _loaded(vm) {}
 };
 
 #define ARRAY_HDR_SIZE 6
@@ -1183,7 +1102,6 @@ public:
 	uint16 _extraBoxFlags[65];
 	int16 _foundPathX, _foundPathY;
 
-	PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
 	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
 	bool areBoxesNeighbours(int i, int j);
 	void addToBoxMatrix(byte b);

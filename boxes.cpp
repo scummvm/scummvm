@@ -26,6 +26,38 @@
 
 #include <math.h>
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
+struct Box {				/* Internal walkbox file format */
+	int16 ulx, uly;
+	int16 urx, ury;
+	int16 lrx, lry;
+	int16 llx, lly;
+	byte mask;
+	byte flags;
+	uint16 scale;
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
+
+struct PathNode {		/* Linked list of walkpath nodes */
+	uint index;
+	struct PathNode *left, *right;
+};
+
+struct PathVertex {		/* Linked list of walkpath nodes */
+	PathNode *left;
+	PathNode *right;
+};
+
+
+PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
+
+
 byte Scumm::getMaskFromBox(int box)
 {
 	Box *ptr = getBoxBaseAddr(box);
@@ -106,23 +138,23 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y)
 
 	getBoxCoordinates(b, &box);
 
-	if (x < box.ul.x && x < box.ur.x && x < box.ll.x && x < box.lr.x)
+	if (x < box.ul.x && x < box.ur.x && x < box.lr.x && x < box.ll.x)
 		return 0;
 
-	if (x > box.ul.x && x > box.ur.x && x > box.ll.x && x > box.lr.x)
+	if (x > box.ul.x && x > box.ur.x && x > box.lr.x && x > box.ll.x)
 		return 0;
 
-	if (y < box.ul.y && y < box.ur.y && y < box.ll.y && y < box.lr.y)
+	if (y < box.ul.y && y < box.ur.y && y < box.lr.y && y < box.ll.y)
 		return 0;
 
-	if (y > box.ul.y && y > box.ur.y && y > box.ll.y && y > box.lr.y)
+	if (y > box.ul.y && y > box.ur.y && y > box.lr.y && y > box.ll.y)
 		return 0;
 
-	if (box.ul.x == box.ur.x && box.ul.y == box.ur.y && box.ll.x == box.lr.x && box.ll.y == box.lr.y ||
-		box.ul.x == box.lr.x && box.ul.y == box.lr.y && box.ur.x == box.ll.x && box.ur.y == box.ll.y) {
+	if (box.ul.x == box.ur.x && box.ul.y == box.ur.y && box.lr.x == box.ll.x && box.lr.y == box.ll.y ||
+		box.ul.x == box.ll.x && box.ul.y == box.ll.y && box.ur.x == box.lr.x && box.ur.y == box.lr.y) {
 
 		ScummPoint pt;
-		pt = closestPtOnLine(box.ul.x, box.ul.y, box.ll.x, box.ll.y, x, y);
+		pt = closestPtOnLine(box.ul.x, box.ul.y, box.lr.x, box.lr.y, x, y);
 		if (distanceFromPt(x, y, pt.x, pt.y) <= 4)
 			return 1;
 	}
@@ -130,13 +162,13 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y)
 	if (!compareSlope(box.ul.x, box.ul.y, box.ur.x, box.ur.y, x, y))
 		return 0;
 
-	if (!compareSlope(box.ur.x, box.ur.y, box.ll.x, box.ll.y, x, y))
+	if (!compareSlope(box.ur.x, box.ur.y, box.lr.x, box.lr.y, x, y))
 		return 0;
 
-	if (!compareSlope(box.lr.x, box.lr.y, x, y, box.ll.x, box.ll.y))
+	if (!compareSlope(box.ll.x, box.ll.y, x, y, box.lr.x, box.lr.y))
 		return 0;
 
-	if (!compareSlope(box.ul.x, box.ul.y, x, y, box.lr.x, box.lr.y))
+	if (!compareSlope(box.ul.x, box.ul.y, x, y, box.ll.x, box.ll.y))
 		return 0;
 
 	return 1;
@@ -266,19 +298,19 @@ bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold)
 		return 1;
 
 	t = x - threshold;
-	if (t > box.ul.x && t > box.ur.x && t > box.ll.x && t > box.lr.x)
+	if (t > box.ul.x && t > box.ur.x && t > box.lr.x && t > box.ll.x)
 		return 0;
 
 	t = x + threshold;
-	if (t < box.ul.x && t < box.ur.x && t < box.ll.x && t < box.lr.x)
+	if (t < box.ul.x && t < box.ur.x && t < box.lr.x && t < box.ll.x)
 		return 0;
 
 	t = y - threshold;
-	if (t > box.ul.y && t > box.ur.y && t > box.ll.y && t > box.lr.y)
+	if (t > box.ul.y && t > box.ur.y && t > box.lr.y && t > box.ll.y)
 		return 0;
 
 	t = y + threshold;
-	if (t < box.ul.y && t < box.ur.y && t < box.ll.y && t < box.lr.y)
+	if (t < box.ul.y && t < box.ur.y && t < box.lr.y && t < box.ll.y)
 		return 0;
 
 	return 1;
@@ -302,7 +334,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y)
 		best.y = pt.y;
 	}
 
-	pt = closestPtOnLine(box.ur.x, box.ur.y, box.ll.x, box.ll.y, x, y);
+	pt = closestPtOnLine(box.ur.x, box.ur.y, box.lr.x, box.lr.y, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -310,7 +342,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y)
 		best.y = pt.y;
 	}
 
-	pt = closestPtOnLine(box.ll.x, box.ll.y, box.lr.x, box.lr.y, x, y);
+	pt = closestPtOnLine(box.lr.x, box.lr.y, box.ll.x, box.ll.y, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -318,7 +350,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y)
 		best.y = pt.y;
 	}
 
-	pt = closestPtOnLine(box.lr.x, box.lr.y, box.ul.x, box.ul.y, x, y);
+	pt = closestPtOnLine(box.ll.x, box.ll.y, box.ul.x, box.ul.y, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -488,15 +520,15 @@ int Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr)
 			}
 			tmp = box1.ul;
 			box1.ul = box1.ur;
-			box1.ur = box1.ll;
-			box1.ll = box1.lr;
-			box1.lr = tmp;
+			box1.ur = box1.lr;
+			box1.lr = box1.ll;
+			box1.ll = tmp;
 		}
 		tmp = box2.ul;
 		box2.ul = box2.ur;
-		box2.ur = box2.ll;
-		box2.ll = box2.lr;
-		box2.lr = tmp;
+		box2.ur = box2.lr;
+		box2.lr = box2.ll;
+		box2.ll = tmp;
 	}
 	return 0;
 }
@@ -651,7 +683,7 @@ void Scumm::createBoxMatrix()
 	nukeResource(rtMatrix, 3);
 }
 
-PathVertex *Scumm::unkMatrixProc1(PathVertex *vtx, PathNode *node)
+PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node)
 {
 	if (node == NULL || vtx == NULL)
 		return NULL;
@@ -790,24 +822,24 @@ bool Scumm::areBoxesNeighbours(int box1nr, int box2nr)
 			tmp_y = box2.ul.y;
 			box2.ul.x = box2.ur.x;
 			box2.ul.y = box2.ur.y;
-			box2.ur.x = box2.ll.x;
-			box2.ur.y = box2.ll.y;
-			box2.ll.x = box2.lr.x;
-			box2.ll.y = box2.lr.y;
-			box2.lr.x = tmp_x;
-			box2.lr.y = tmp_y;
+			box2.ur.x = box2.lr.x;
+			box2.ur.y = box2.lr.y;
+			box2.lr.x = box2.ll.x;
+			box2.lr.y = box2.ll.y;
+			box2.ll.x = tmp_x;
+			box2.ll.y = tmp_y;
 		} while (--k);
 
 		tmp_x = box.ul.x;
 		tmp_y = box.ul.y;
 		box.ul.x = box.ur.x;
 		box.ul.y = box.ur.y;
-		box.ur.x = box.ll.x;
-		box.ur.y = box.ll.y;
-		box.ll.x = box.lr.x;
-		box.ll.y = box.lr.y;
-		box.lr.x = tmp_x;
-		box.lr.y = tmp_y;
+		box.ur.x = box.lr.x;
+		box.ur.y = box.lr.y;
+		box.lr.x = box.ll.x;
+		box.lr.y = box.ll.y;
+		box.ll.x = tmp_x;
+		box.ll.y = tmp_y;
 	} while (--j);
 
 	return result;
@@ -901,8 +933,8 @@ void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB
 	getBoxCoordinates(trap1, &box);
 	poly[0] = box.ul;
 	poly[1] = box.ur;
-	poly[2] = box.ll;
-	poly[3] = box.lr;
+	poly[2] = box.lr;
+	poly[3] = box.ll;
 	for (i = 0; i < 4; i++) {
 		abr = getClosestPtOnBox(trap2, poly[i].x, poly[i].y);
 		Dist[i] = abr.dist;
@@ -914,8 +946,8 @@ void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB
 	getBoxCoordinates(trap2, &box);
 	poly[4] = box.ul;
 	poly[5] = box.ur;
-	poly[6] = box.ll;
-	poly[7] = box.lr;
+	poly[6] = box.lr;
+	poly[7] = box.ll;
 	for (i = 4; i < 8; i++) {
 		abr = getClosestPtOnBox(trap1, poly[i].x, poly[i].y);
 		Dist[i] = abr.dist;
