@@ -275,7 +275,6 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
                 gm++;
         }
 
-#ifndef _WIN32_WCE
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Fullscreen mode");
 	yoffset += 16;
@@ -283,8 +282,13 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Aspect ratio correction");
 	yoffset += 16;
+
+#ifdef _WIN32_WCE
+	_fullscreenCheckbox->setState(TRUE);
+	_fullscreenCheckbox->setEnabled(FALSE);
+	_aspectCheckbox->setEnabled(FALSE);
 #endif
-	
+
 	_enableGraphicSettings = true;
 
 	return yoffset;
