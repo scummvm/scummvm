@@ -102,7 +102,7 @@ void WindowsFilesystemNode::addFile(FSList &list, ListMode mode, const char *bas
 	entry._path += asciiName;
 	if (entry._isDirectory)
 		entry._path += "\\";
-	entry._isValid = true;	
+	entry._isValid = true;
 	entry._isPseudoRoot = false;
 
 	list.push_back(wrap(new WindowsFilesystemNode(&entry)));
@@ -197,8 +197,10 @@ const char *lastPathComponent(const Common::String &str) {
 
 AbstractFilesystemNode *WindowsFilesystemNode::parent() const {
 	assert(_isValid || _isPseudoRoot);
-	WindowsFilesystemNode *p = 0;
-	if (!_isPseudoRoot && _path.size() > 3) {
+	if (_isPseudoRoot)
+		return 0;
+	WindowsFilesystemNode *p = new WindowsFilesystemNode();
+	if (_path.size() > 3) {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path);
 
