@@ -1055,8 +1055,8 @@ void Scumm::launch()
 	else
 		OF_OWNER_ROOM = 0x0F;
 	
-	if (_gameId==GID_MONKEY2 && _bootParam == 0)
-		_bootParam = 10001;
+//	if (_gameId==GID_MONKEY2 && _bootParam == 0)
+//		_bootParam = 10001;
 	
 	readIndexFile();
 
