@@ -1,4 +1,5 @@
 /* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2004 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -30,8 +31,11 @@
 
 #include <SDL.h>
 
-class OSystem_SDL_Common : public OSystem {
+class OSystem_SDL : public OSystem {
 public:
+	OSystem_SDL();
+	virtual ~OSystem_SDL();
+
 	// Set the size of the video bitmap.
 	// Typically, 320x200
 	void initSize(uint w, uint h);
@@ -129,16 +133,11 @@ public:
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
 
-
-	static OSystem *create();
-
 protected:
-	OSystem_SDL_Common();
-	virtual ~OSystem_SDL_Common();
-
-	static OSystem_SDL_Common *create_intern();
-
 	void init_intern();
+
+	// hardware screen
+	SDL_Surface *_hwscreen;
 
 	// unseen game screen
 	SDL_Surface *_screen;
@@ -227,27 +226,27 @@ protected:
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);
 
-	virtual void add_dirty_rect(int x, int y, int w, int h);
+	void add_dirty_rect(int x, int y, int w, int h);
 
-	virtual void draw_mouse();
-	virtual void undraw_mouse();
+	void draw_mouse();
+	void undraw_mouse();
 	/** Set the position of the virtual mouse cursor. */
 	void set_mouse_pos(int x, int y);
 	void fillMouseEvent(Event &event, int x, int y);
 	void toggleMouseGrab();
 
 
-	virtual void internUpdateScreen() = 0;
+	void internUpdateScreen();
 
-	virtual void load_gfx_mode() = 0;
-	virtual void unload_gfx_mode() = 0;
-	virtual void hotswap_gfx_mode() = 0;
+	void load_gfx_mode();
+	void unload_gfx_mode();
+	void hotswap_gfx_mode();
 	
-	virtual void setFullscreenMode(bool enable) = 0;
+	void setFullscreenMode(bool enable);
 
-	virtual bool save_screenshot(const char *filename) = 0;
+	bool save_screenshot(const char *filename);
 	
-	virtual int effectiveScreenHeight() { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
+	int effectiveScreenHeight() { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
 
 	void setup_icon();
 	void kbd_mouse();

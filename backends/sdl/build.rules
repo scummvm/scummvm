@@ -3,10 +3,7 @@ MODULES  += backends/sdl
 DEFINES  += -DUNIX
 INCLUDES += `sdl-config --cflags`
 LIBS     += `sdl-config --libs`
-OBJS	 += backends/sdl/sdl-common.o 
-
-# The normal (non OpenGL-accelerated) SDL backend
-OBJS	 += backends/sdl/sdl.o 
+OBJS	 += backends/sdl/events.o backends/sdl/graphics.o backends/sdl/sdl.o 
 
 # Uncomment this in addition to the above if you compile on Mac OS X
 # DEFINES += -DMACOSX

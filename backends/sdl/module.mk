@@ -1,8 +1,9 @@
 MODULE := backends/sdl
 
 MODULE_OBJS := \
-	backends/sdl/sdl.o \
-	backends/sdl/sdl-common.o
+	backends/sdl/events.o \
+	backends/sdl/graphics.o \
+	backends/sdl/sdl.o
 
 MODULE_DIRS += \
 	backend/sdl

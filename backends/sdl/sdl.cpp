@@ -20,373 +20,345 @@
  *
  */
 
-#include "sdl-common.h"
+#include "backends/sdl/sdl-common.h"
+#include "common/config-manager.h"
 #include "common/util.h"
 
-class OSystem_SDL : public OSystem_SDL_Common {
-public:
-	OSystem_SDL();
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
 
-	// Update the dirty areas of the screen
-	void internUpdateScreen();
+#include "scummvm.xpm"
 
-protected:
-	SDL_Surface *_hwscreen;    // hardware screen
 
-	virtual void load_gfx_mode();
-	virtual void unload_gfx_mode();
-	virtual bool save_screenshot(const char *filename);
-	virtual void hotswap_gfx_mode();
-	
-	virtual void setFullscreenMode(bool enable);
-};
-
-OSystem_SDL_Common *OSystem_SDL_Common::create_intern() {
+OSystem *OSystem_SDL_create() {
 	return new OSystem_SDL();
 }
 
+void OSystem_SDL::init_intern() {
+
+	int joystick_num = ConfMan.getInt("joystick_num");
+	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
+
+	if (joystick_num > -1)
+		sdlFlags |= SDL_INIT_JOYSTICK;
+
+	if (SDL_Init(sdlFlags) == -1) {
+		error("Could not initialize SDL: %s", SDL_GetError());
+	}
+
+	_graphicsMutex = createMutex();
+
+	SDL_ShowCursor(SDL_DISABLE);
+	
+	// Enable unicode support if possible
+	SDL_EnableUNICODE(1); 
+
+	cksum_valid = false;
+	_mode = GFX_DOUBLESIZE;
+	_full_screen = ConfMan.getBool("fullscreen");
+	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
+	_mode_flags = 0;
+
+
+#ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
+	// Setup the icon
+	setup_icon();
+#endif
+
+	// enable joystick
+	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
+		printf("Using joystick: %s\n", SDL_JoystickName(0));
+		init_joystick(joystick_num);
+	}
+}
+
 OSystem_SDL::OSystem_SDL()
-	 : _hwscreen(0)
-{
+	: _hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
+	_tmpscreen(0), _tmpScreenWidth(0), _overlayVisible(false),
+	_cdrom(0), _scaler_proc(0), _modeChanged(false), _dirty_checksums(0),
+	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
+	_mouseHotspotX(0), _mouseHotspotY(0),
+	_currentShakePos(0), _newShakePos(0),
+	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+	_graphicsMutex(0) {
+
+	// allocate palette storage
+	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
+
+	// allocate the dirty rect storage
+	_mouseBackup = (byte *)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
+
+	// reset mouse state
+	memset(&km, 0, sizeof(km));
+	
+	init_intern();
 }
 
-void OSystem_SDL::load_gfx_mode() {
-	_forceFull = true;
-	_mode_flags |= DF_UPDATE_EXPAND_1_PIXEL;
+OSystem_SDL::~OSystem_SDL() {
+//	unload_gfx_mode();
 
-	_tmpscreen = NULL;
-	_tmpScreenWidth = (_screenWidth + 3);
-	
-	switch(_mode) {
-	case GFX_NORMAL:
-		_scaleFactor = 1;
-		_scaler_proc = Normal1x;
-		break;
-	case GFX_DOUBLESIZE:
-		_scaleFactor = 2;
-		_scaler_proc = Normal2x;
-		break;
-	case GFX_TRIPLESIZE:
-		_scaleFactor = 3;
-		_scaler_proc = Normal3x;
-		break;
+	if (_dirty_checksums)
+		free(_dirty_checksums);
+	free(_currentPalette);
+	free(_mouseBackup);
+	deleteMutex(_graphicsMutex);
 
-	case GFX_2XSAI:
-		_scaleFactor = 2;
-		_scaler_proc = _2xSaI;
-		break;
-	case GFX_SUPER2XSAI:
-		_scaleFactor = 2;
-		_scaler_proc = Super2xSaI;
-		break;
-	case GFX_SUPEREAGLE:
-		_scaleFactor = 2;
-		_scaler_proc = SuperEagle;
-		break;
-	case GFX_ADVMAME2X:
-		_scaleFactor = 2;
-		_scaler_proc = AdvMame2x;
-		break;
-	case GFX_ADVMAME3X:
-		_scaleFactor = 3;
-		_scaler_proc = AdvMame3x;
-		break;
-	case GFX_HQ2X:
-		_scaleFactor = 2;
-		_scaler_proc = HQ2x;
-		break;
-	case GFX_HQ3X:
-		_scaleFactor = 3;
-		_scaler_proc = HQ3x;
-		break;
-	case GFX_TV2X:
-		_scaleFactor = 2;
-		_scaler_proc = TV2x;
-		break;
-	case GFX_DOTMATRIX:
-		_scaleFactor = 2;
-		_scaler_proc = DotMatrix;
-		break;
+	SDL_ShowCursor(SDL_ENABLE);
+	SDL_Quit();
+}
 
+uint32 OSystem_SDL::get_msecs() {
+	return SDL_GetTicks();	
+}
+
+void OSystem_SDL::delay_msecs(uint msecs) {
+	SDL_Delay(msecs);
+}
+
+void OSystem_SDL::set_timer(TimerProc callback, int timer) {
+	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
+}
+
+void OSystem_SDL::setWindowCaption(const char *caption) {
+	SDL_WM_SetCaption(caption, caption);
+}
+
+bool OSystem_SDL::hasFeature(Feature f) {
+	return
+		(f == kFeatureFullscreenMode) ||
+		(f == kFeatureAspectRatioCorrection) ||
+		(f == kFeatureAutoComputeDirtyRects);
+}
+
+void OSystem_SDL::setFeatureState(Feature f, bool enable) {
+	Common::StackLock lock(_graphicsMutex, this);
+
+	switch (f) {
+	case kFeatureFullscreenMode:
+		setFullscreenMode(enable);
+		break;
+	case kFeatureAspectRatioCorrection:
+		if (_screenHeight == 200 && _adjustAspectRatio != enable) {
+			//assert(_hwscreen != 0);
+			_adjustAspectRatio ^= true;
+			hotswap_gfx_mode();
+		}
+		break;
+	case kFeatureAutoComputeDirtyRects:
+		if (enable)
+			_mode_flags |= DF_WANT_RECT_OPTIM;		
+		else
+			_mode_flags &= ~DF_WANT_RECT_OPTIM;		
+		break;
 	default:
-		error("unknown gfx mode %d", _mode);
-	}
-
-	//
-	// Create the surface that contains the 8 bit game data
-	//
-	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, _screenHeight, 8, 0, 0, 0, 0);
-	if (_screen == NULL)
-		error("_screen failed");
-
-	//
-	// Create the surface that contains the scaled graphics in 16 bit mode
-	//
-
-	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor, 16, 
-		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
-	);
-	if (_hwscreen == NULL) {
-		// DON'T use error(), as this tries to bring up the debug
-		// console, which WON'T WORK now that _hwscreen is hosed.
-
-		// FIXME: We should be able to continue the game without
-		// shutting down or bringing up the debug console, but at
-		// this point we've already screwed up all our member vars.
-		// We need to find a way to call SDL_SetVideoMode *before*
-		// that happens and revert to all the old settings if we
-		// can't pull off the switch to the new settings.
-		//
-		// Fingolfin says: the "easy" way to do that is not to modify
-		// the member vars before we are sure everything is fine. Think
-		// of "transactions, commit, rollback" style... we use local vars
-		// in place of the member vars, do everything etc. etc.. In case
-		// of a failure, rollback is trivial. Only if everything worked fine
-		// do we "commit" the changed values to the member vars.
-		warning("SDL_SetVideoMode says we can't switch to that mode");
-		quit();
-	}
-
-	//
-	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
-	//
-
-	// Distinguish 555 and 565 mode
-	if (_hwscreen->format->Rmask == 0x7C00)
-		InitScalers(555);
-	else
-		InitScalers(565);
-	
-	// Need some extra bytes around when using 2xSaI
-	uint16 *tmp_screen = (uint16 *)calloc(_tmpScreenWidth * (_screenHeight + 3), sizeof(uint16));
-	_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
-						_tmpScreenWidth, _screenHeight + 3, 16, _tmpScreenWidth * 2,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
-
-	if (_tmpscreen == NULL)
-		error("_tmpscreen failed");
-
-	// keyboard cursor control, some other better place for it?
-	km.x_max = _screenWidth * _scaleFactor - 1;
-	km.y_max = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor - 1;
-	km.delay_time = 25;
-	km.last_time = 0;
-}
-
-void OSystem_SDL::unload_gfx_mode() {
-	if (_screen) {
-		SDL_FreeSurface(_screen);
-		_screen = NULL; 
-	}
-
-	if (_hwscreen) {
-		SDL_FreeSurface(_hwscreen); 
-		_hwscreen = NULL;
-	}
-
-	if (_tmpscreen) {
-		free(_tmpscreen->pixels);
-		SDL_FreeSurface(_tmpscreen);
-		_tmpscreen = NULL;
+		break;
 	}
 }
 
-void OSystem_SDL::hotswap_gfx_mode() {
-	if (!_screen)
+bool OSystem_SDL::getFeatureState(Feature f) {
+	switch (f) {
+	case kFeatureFullscreenMode:
+		return _full_screen;
+	case kFeatureAspectRatioCorrection:
+		return _adjustAspectRatio;
+	case kFeatureAutoComputeDirtyRects:
+		return _mode_flags & DF_WANT_RECT_OPTIM;
+	default:
+		return false;
+	}
+}
+
+void OSystem_SDL::quit() {
+	if(_cdrom) {
+		SDL_CDStop(_cdrom);
+		SDL_CDClose(_cdrom);
+	}
+	unload_gfx_mode();
+
+	SDL_ShowCursor(SDL_ENABLE);
+	SDL_Quit();
+
+	exit(0);
+}
+
+void OSystem_SDL::setup_icon() {
+	int w, h, ncols, nbytes, i;
+	unsigned int rgba[256], icon[32 * 32];
+	unsigned char mask[32][4];
+
+	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
+	if ((w != 32) || (h != 32) || (ncols > 255) || (nbytes > 1)) {
+		warning("Could not load the icon (%d %d %d %d)", w, h, ncols, nbytes);
 		return;
-
-	// Keep around the old _screen & _tmpscreen so we can restore the screen data
-	// after the mode switch.
-	SDL_Surface *old_screen = _screen;
-	SDL_Surface *old_tmpscreen = _tmpscreen;
-
-	// Release the HW screen surface
-	SDL_FreeSurface(_hwscreen); 
-
-	// Setup the new GFX mode
-	load_gfx_mode();
-
-	// reset palette
-	SDL_SetColors(_screen, _currentPalette, 0, 256);
-
-	// Restore old screen content
-	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
-	SDL_BlitSurface(old_tmpscreen, NULL, _tmpscreen, NULL);
-	
-	// Free the old surfaces
-	SDL_FreeSurface(old_screen);
-	free(old_tmpscreen->pixels);
-	SDL_FreeSurface(old_tmpscreen);
-
-	// Blit everything to the screen
-	internUpdateScreen();
-	
-	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
-	_modeChanged = true;
-}
-
-void OSystem_SDL::internUpdateScreen() {
-	assert(_hwscreen != NULL);
-
-	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _screenWidth * _scaleFactor, _newShakePos * _scaleFactor};
-
-		if (_adjustAspectRatio)
-			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
-
-		SDL_FillRect(_hwscreen, &blackrect, 0);
-
-		_currentShakePos = _newShakePos;
-
-		_forceFull = true;
 	}
-
-	// Make sure the mouse is drawn, if it should be drawn.
-	draw_mouse();
-	
-	// Check whether the palette was changed in the meantime and update the
-	// screen surface accordingly. 
-	if (_paletteDirtyEnd != 0) {
-		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart, 
-			_paletteDirtyStart,
-			_paletteDirtyEnd - _paletteDirtyStart);
-		
-		_paletteDirtyEnd = 0;
-
-		_forceFull = true;
-	}
-
-	// Force a full redraw if requested
-	if (_forceFull) {
-		_num_dirty_rects = 1;
-
-		_dirty_rect_list[0].x = 0;
-		_dirty_rect_list[0].y = 0;
-		_dirty_rect_list[0].w = _screenWidth;
-		_dirty_rect_list[0].h = _screenHeight;
-	}
-
-	// Only draw anything if necessary
-	if (_num_dirty_rects > 0) {
-
-		SDL_Rect *r; 
-		SDL_Rect dst;
-		uint32 srcPitch, dstPitch;
-		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
-
-		if (_scaler_proc == Normal1x && !_adjustAspectRatio) {
-			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
-			for (r = _dirty_rect_list; r != last_rect; ++r) {
-				dst = *r;
-				
-				if (_overlayVisible) {
-					// FIXME: I don't understand why this is necessary...
-					dst.x--;
-					dst.y--;
-				}
-				dst.y += _currentShakePos;
-				if (SDL_BlitSurface(target, r, _hwscreen, &dst) != 0)
-					error("SDL_BlitSurface failed: %s", SDL_GetError());
-			}
+	for (i = 0; i < ncols; i++) {
+		unsigned char code;
+		char color[32];
+		unsigned int col;
+		sscanf(scummvm_icon[1 + i], "%c c %s", &code, color);
+		if (!strcmp(color, "None"))
+			col = 0x00000000;
+		else if (!strcmp(color, "black"))
+			col = 0xFF000000;
+		else if (color[0] == '#') {
+			sscanf(color + 1, "%06x", &col);
+			col |= 0xFF000000;
 		} else {
-			if (!_overlayVisible) {
-				for (r = _dirty_rect_list; r != last_rect; ++r) {
-					dst = *r;
-					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
-					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
-						error("SDL_BlitSurface failed: %s", SDL_GetError());
-				}
-			}
-
-			SDL_LockSurface(_tmpscreen);
-			SDL_LockSurface(_hwscreen);
-
-			srcPitch = _tmpscreen->pitch;
-			dstPitch = _hwscreen->pitch;
-
-			for (r = _dirty_rect_list; r != last_rect; ++r) {
-				register int dst_y = r->y + _currentShakePos;
-				register int dst_h = 0;
-				register int orig_dst_y = 0;
-
-				if (dst_y < _screenHeight) {
-					dst_h = r->h;
-					if (dst_h > _screenHeight - dst_y)
-						dst_h = _screenHeight - dst_y;
-
-					dst_y *= _scaleFactor;
-
-					if (_adjustAspectRatio) {
-						orig_dst_y = dst_y;
-						dst_y = real2Aspect(dst_y);
-					}
-
-					_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
-				}
-
-				r->x *= _scaleFactor;
-				r->y = dst_y;
-				r->w *= _scaleFactor;
-				r->h = dst_h * _scaleFactor;
-
-				if (_adjustAspectRatio && orig_dst_y / _scaleFactor < _screenHeight)
-					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y);
-			}
-			SDL_UnlockSurface(_tmpscreen);
-			SDL_UnlockSurface(_hwscreen);
+			warning("Could not load the icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
+			return;
 		}
-
-		// Readjust the dirty rect list in case we are doing a full update.
-		// This is necessary if shaking is active.
-		if (_forceFull) {
-			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor;
+		
+		rgba[code] = col;
+	}
+	memset(mask, 0, sizeof(mask));
+	for (h = 0; h < 32; h++) {
+		const char *line = scummvm_icon[1 + ncols + h];
+		for (w = 0; w < 32; w++) {
+			icon[w + 32 * h] = rgba[(int)line[w]];
+			if (rgba[(int)line[w]] & 0xFF000000) {
+				mask[h][w >> 3] |= 1 << (7 - (w & 0x07));
+			}
 		}
-
-		// Finally, blit all our changes to the screen
-		SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
 	}
 
-	_num_dirty_rects = 0;
-	_forceFull = false;
+	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
+	SDL_WM_SetIcon(sdl_surf, (unsigned char *) mask);
+	SDL_FreeSurface(sdl_surf);
 }
 
-bool OSystem_SDL::save_screenshot(const char *filename) {
-	assert(_hwscreen != NULL);
+OSystem::MutexRef OSystem_SDL::createMutex(void) {
+	return (MutexRef) SDL_CreateMutex();
+}
 
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
-	SDL_SaveBMP(_hwscreen, filename);
+void OSystem_SDL::lockMutex(MutexRef mutex) {
+	SDL_mutexP((SDL_mutex *) mutex);
+}
+
+void OSystem_SDL::unlockMutex(MutexRef mutex) {
+	SDL_mutexV((SDL_mutex *) mutex);
+}
+
+void OSystem_SDL::deleteMutex(MutexRef mutex) {
+	SDL_DestroyMutex((SDL_mutex *) mutex);
+}
+
+#pragma mark -
+#pragma mark --- Audio ---
+#pragma mark -
+
+bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
+	SDL_AudioSpec desired;
+
+	memset(&desired, 0, sizeof(desired));
+
+	desired.freq = SAMPLES_PER_SEC;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 2;
+	desired.samples = 2048;
+	desired.callback = proc;
+	desired.userdata = param;
+	if (SDL_OpenAudio(&desired, NULL) != 0) {
+		return false;
+	}
+	SDL_PauseAudio(0);
 	return true;
 }
 
-void OSystem_SDL::setFullscreenMode(bool enable) {
-	if (_full_screen != enable) {
-		assert(_hwscreen != 0);
-		_full_screen ^= true;
+void OSystem_SDL::clearSoundCallback() {
+	SDL_CloseAudio();
+}
 
-		if (_mouseDrawn)
-			undraw_mouse();
-	
-#if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
-		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
-		// before SDL 1.2.6 it always returned -1 (which would indicate a
-		// successful switch). So we simply don't call it at all and use
-		// hotswap_gfx_mode() directly to switch to fullscreen mode.
-		hotswap_gfx_mode();
-#else
-		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
-			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
-			hotswap_gfx_mode();
+int OSystem_SDL::getOutputSampleRate() const {
+	return SAMPLES_PER_SEC;
+}
+
+#pragma mark -
+#pragma mark --- CD Audio ---
+#pragma mark -
+
+bool OSystem_SDL::openCD(int drive) {
+	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
+		_cdrom = NULL;
+	else {
+		_cdrom = SDL_CDOpen(drive);
+		// Did it open? Check if _cdrom is NULL
+		if (!_cdrom) {
+			warning("Couldn't open drive: %s", SDL_GetError());
 		} else {
-			// Make sure that an EVENT_SCREEN_CHANGED gets sent later
-			_modeChanged = true;
+			cd_num_loops = 0;
+			cd_stop_time = 0;
+			cd_end_time = 0;
 		}
-#endif
+	}
+	
+	return (_cdrom != NULL);
+}
+
+void OSystem_SDL::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
+	cd_stop_time = SDL_GetTicks() + 100;
+	cd_num_loops = 0;
+}
+
+void OSystem_SDL::play_cdrom(int track, int num_loops, int start_frame, int duration) {
+	if (!num_loops && !start_frame)
+		return;
+
+	if (!_cdrom)
+		return;
+	
+	if (duration > 0)
+		duration += 5;
+
+	cd_track = track;
+	cd_num_loops = num_loops;
+	cd_start_frame = start_frame;
+
+	SDL_CDStatus(_cdrom);
+	if (start_frame == 0 && duration == 0)
+		SDL_CDPlayTracks(_cdrom, track, 0, 1, 0);
+	else
+		SDL_CDPlayTracks(_cdrom, track, start_frame, 0, duration);
+	cd_duration = duration;
+	cd_stop_time = 0;
+	cd_end_time = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
+}
+
+bool OSystem_SDL::poll_cdrom() {
+	if (!_cdrom)
+		return false;
+
+	return (cd_num_loops != 0 && (SDL_GetTicks() < cd_end_time || SDL_CDStatus(_cdrom) != CD_STOPPED));
+}
+
+void OSystem_SDL::update_cdrom() {
+	if (!_cdrom)
+		return;
+
+	if (cd_stop_time != 0 && SDL_GetTicks() >= cd_stop_time) {
+		SDL_CDStop(_cdrom);
+		cd_num_loops = 0;
+		cd_stop_time = 0;
+		return;
+	}
+
+	if (cd_num_loops == 0 || SDL_GetTicks() < cd_end_time)
+		return;
+
+	if (cd_num_loops != 1 && SDL_CDStatus(_cdrom) != CD_STOPPED) {
+		// Wait another second for it to be done
+		cd_end_time += 1000;
+		return;
+	}
+
+	if (cd_num_loops > 0)
+		cd_num_loops--;
+
+	if (cd_num_loops != 0) {
+		if (cd_start_frame == 0 && cd_duration == 0)
+			SDL_CDPlayTracks(_cdrom, cd_track, 0, 1, 0);
+		else
+			SDL_CDPlayTracks(_cdrom, cd_track, cd_start_frame, 0, cd_duration);
+		cd_end_time = SDL_GetTicks() + _cdrom->track[cd_track].length * 1000 / CD_FPS;
 	}
 }
