@@ -883,7 +883,9 @@ void Scumm_v5::o5_faceActor() {
 	obj = getVarOrDirectWord(0x40);
 
 	a = derefActorSafe(act, "o5_faceActor");
-	assert(a);
+	if (!a)
+		return;
+	//assert(a);
 
 	a->faceToObject(obj);
 }
@@ -1327,7 +1329,7 @@ void Scumm_v5::o5_loadRoom() {
 	// For small header games, we only call startScene if the room
 	// actually changed. This avoid unwanted (wrong) fades in Zak256
 	// and others. OTOH, it seems to cause a problem in newer games.
-	if (!(_features & GF_SMALL_HEADER) || room != _currentRoom)
+	//if (!(_features & GF_SMALL_HEADER) || room != _currentRoom)
 		startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
