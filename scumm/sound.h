@@ -43,7 +43,7 @@ enum {
 	bool _soundsPaused2;
 	bool _soundVolumePreset;
 
-	int32 _numberBundleMusic;
+	char * _nameBundleMusic;
 	int32 _currentSampleBundleMusic;
 	int32 _numberSamplesBundleMusic;
 	int32 _offsetSampleBundleMusic;
@@ -51,7 +51,7 @@ enum {
 	byte * _musicBundleBufFinal;
 	byte * _musicBundleBufOutput;
 	bool _pauseBundleMusic;
-
+	int32 _bundleMusicTrack;
 
 	int _talkChannel;	/* Mixer channel actor is talking on */
 	File *_sfxFile;
@@ -118,7 +118,7 @@ public:
 	void stopSfxSound();
 	bool isSfxFinished();
 	uint32 decode12BitsSample(byte * src, byte ** dst, uint32 size, bool stereo);
-	void playBundleMusic(int32 song);
+	void playBundleMusic(char * song);
 	void pauseBundleMusic(bool state);
 	void bundleMusicHandler(Scumm * scumm);
 	void stopBundleMusic();
