@@ -28,7 +28,7 @@
 struct HuffTree {
 	unsigned char lChild;
 	unsigned char rChild;
-	char value;
+	unsigned char value;
 };
 
 class SkyText {
@@ -38,7 +38,7 @@ public:
 	void getText(uint32 textNr);
 	struct displayText_t displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	struct displayText_t displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
-	void makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&data, uint8 color);
+	void makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&data, uint8 color);
 	struct lowTextManager_t lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre);
 	void fnSetFont(uint32 fontNr);
 	void fnTextModule(uint32 textInfoId, uint32 textNo);

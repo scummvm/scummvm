@@ -221,7 +221,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	
 	//Render text pointed to by *textPtr in buffer *dest
 
-	char textChar;
+	uint8 textChar;
 	char *curPos = textPtr;
 	char *lastSpace = curPos;
 	byte *centerTblPtr = _centreTable;
@@ -235,7 +235,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	_dtText = textPtr;
 	_dtCentre = centre;
 
-	textChar = *curPos++;
+	textChar = (uint8)*curPos++;
 	_dtLetters++;
 
 	while (textChar >= 0x20) {
@@ -261,7 +261,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 			curPos = lastSpace;	//go back for new count
 		}
 
-		textChar = *curPos++;
+		textChar = (uint8)*curPos++;
 		_dtLetters++;
 	}
 
@@ -309,7 +309,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 			curDest += width;
 		}
 
-		textChar = *curPos++;
+		textChar = (uint8)*curPos++;
 		while (textChar >= 0x20) {
 			textChar -= 0x20;
 			makeGameCharacter(textChar, _characterSet, curDest, color);
@@ -328,7 +328,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	return ret;
 }
 
-void SkyText::makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color) {
+void SkyText::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color) {
 
 	bool maskBit, dataBit;	
 	uint8 charWidth = (uint8)((*(charSetPtr + textChar)) + 1 - _dtCharSpacing);
