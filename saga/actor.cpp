@@ -150,8 +150,11 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	_pathNodeList = _newPathNodeList = NULL;
 	_pathList = NULL;
+	_pathDirectionList = NULL;
 	_pathListAlloced = _pathNodeListAlloced = _newPathNodeListAlloced = 0;
 	_pathListIndex = _pathNodeListIndex = _newPathNodeListIndex = -1;
+	_pathDirectionListCount = 0;
+	_pathDirectionListAlloced = 0;
 		
 
 	_centerActor = _protagonist = NULL;
@@ -226,7 +229,7 @@ Actor::~Actor() {
 #ifdef ACTOR_DEBUG
 	free(_debugPoints);
 #endif
-
+	free(_pathDirectionList);
 	free(_pathNodeList);
 	free(_newPathNodeList);
 	free(_pathList);
@@ -1248,6 +1251,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 	Point collision;
 	Point pointFrom, pointTo, pointBest, pointAdd;
 	Point delta, bestDelta;
+	Point tempPoint;
 	bool extraStartNode;
 	bool extraEndNode;
 
@@ -1366,7 +1370,6 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 			}
 
 			if (extraEndNode) {
-				Point tempPoint;
 				toLocation.toScreenPointXY(tempPoint);
 				actor->walkStepsCount--;
 				actor->addWalkStepPoint(tempPoint);
@@ -1622,27 +1625,26 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &bestPoint) {
 	int bestRating;
 	int currentRating;
+	int i;
 	Point bestPath;
 	int pointCounter;
-	int startDirection;
-	PathDirectionList pathDirectionList;
+	int startDirection;	
 	PathDirectionData *pathDirection;
+	PathDirectionData *newPathDirection;
 	PathDirectionData *samplePathDirection;
-	PathDirectionList::iterator pathDirectionIterator;
-	PathDirectionList::iterator newPathDirectionIterator;
 	Point nextPoint;
 	int directionCount;
 
+	_pathDirectionListCount = 0;
 	pointCounter = 0;
 	bestRating = quickDistance(fromPoint, toPoint);
 	bestPath = fromPoint;
 	
 	for (startDirection = 0; startDirection < 4; startDirection++) {
-		newPathDirectionIterator = pathDirectionList.pushBack();
-		pathDirection = newPathDirectionIterator.operator->();
-		pathDirection->x = fromPoint.x;
-		pathDirection->y = fromPoint.y;
-		pathDirection->direction = startDirection;
+		newPathDirection = addPathDirectionListData();
+		newPathDirection->x = fromPoint.x;
+		newPathDirection->y = fromPoint.y;
+		newPathDirection->direction = startDirection;
 	}
 
 	if (validPathCellPoint(fromPoint)) {
@@ -1653,10 +1655,11 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 #endif
 	}	
 	
-	pathDirectionIterator = pathDirectionList.begin();
+	
+	i = 0;
 
 	do {
-		pathDirection = pathDirectionIterator.operator->();
+		pathDirection = &_pathDirectionList[i];
 		for (directionCount = 0; directionCount < 3; directionCount++) {
 			samplePathDirection = &pathDirectionLUT[pathDirection->direction][directionCount];
 			nextPoint.x = samplePathDirection->x + pathDirection->x;
@@ -1675,11 +1678,10 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 #ifdef ACTOR_DEBUG
 			addDebugPoint(nextPoint, samplePathDirection->direction + 96);
 #endif
-			newPathDirectionIterator = pathDirectionList.pushBack();
-			pathDirection = newPathDirectionIterator.operator->();
-			pathDirection->x = nextPoint.x;
-			pathDirection->y = nextPoint.y;
-			pathDirection->direction = samplePathDirection->direction;
+			newPathDirection = addPathDirectionListData();
+			newPathDirection->x = nextPoint.x;
+			newPathDirection->y = nextPoint.y;
+			newPathDirection->direction = samplePathDirection->direction;
 			++pointCounter;
 			if (nextPoint == toPoint) {
 				bestPoint = toPoint;
@@ -1690,11 +1692,12 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 				bestRating = currentRating;
 				bestPath = nextPoint;
 			}
+			pathDirection = &_pathDirectionList[i];
 		}
-		++pathDirectionIterator;
-	} while (pathDirectionIterator != pathDirectionList.end());
+		++i;
+	} while (i < _pathDirectionListCount);
 
-	bestPoint = bestPath;	
+	bestPoint = bestPath;
 	return pointCounter;
 }
 

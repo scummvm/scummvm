@@ -116,11 +116,9 @@ enum PathCellType {
 
 struct PathDirectionData {
 	int8 direction;
-	int	x;
-	int y;
+	int16	x;
+	int16 y;
 };
-
-typedef SortedList<PathDirectionData> PathDirectionList;
 
 struct PathNode {
 	Point point;
@@ -366,6 +364,17 @@ private:
 	int _xCellCount;
 	int _yCellCount;
 	Rect _pathRect;
+
+	PathDirectionData *_pathDirectionList;
+	int _pathDirectionListCount;
+	int _pathDirectionListAlloced;
+	PathDirectionData * addPathDirectionListData() {
+		if (_pathDirectionListCount + 1 >= _pathDirectionListAlloced) {
+			_pathDirectionListAlloced += 100;
+			_pathDirectionList = (PathDirectionData*) realloc(_pathDirectionList, _pathDirectionListAlloced * sizeof(*_pathDirectionList));
+		}
+		return &_pathDirectionList[_pathDirectionListCount++];
+	}
 
 	Point *_pathList;
 	int _pathListIndex;
