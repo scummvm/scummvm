@@ -47,6 +47,10 @@ static uint32 up_down_arrows[8] = {
 
 const ScummVM::String PopUpWidget::emptyStr;
 
+//
+// PopUpDialog
+//
+
 class PopUpDialog : public Dialog {
 protected:
 	PopUpWidget	*_popUpBoss;
@@ -59,20 +63,19 @@ public:
 	
 	void drawDialog();
 
-	void handleMouseDown(int x, int y, int button, int clickCount);
+//	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseUp(int x, int y, int button, int clickCount);
-//	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
+	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
 	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
-//	bool handleKeyDown(uint16 ascii, int keycode, int modifiers);	// Scroll through entries with arrow keys etc.
+	void handleKeyDown(uint16 ascii, int keycode, int modifiers);	// Scroll through entries with arrow keys etc.
 //	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-//	void backupMenuBackground();
-//	void restoreMenuBackground();
-	
 	void drawMenuEntry(int entry, bool hilite);
 	
 	int findItem(int x, int y) const;
+	void setSelection(int item);
+	bool isMouseDown();
 };
 
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
@@ -118,11 +121,6 @@ void PopUpDialog::drawDialog()
 	_gui->addDirtyRect(_x, _y, _w, _h);
 }
 
-void PopUpDialog::handleMouseDown(int x, int y, int button, int clickCount)
-{
-}
-
-
 void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount)
 {
 	// Mouse was released. If it wasn't moved much since the original mouse down, 
@@ -137,10 +135,72 @@ void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount)
 	_openTime = (uint32)-1;
 }
 
+void PopUpDialog::handleMouseWheel(int x, int y, int direction)
+{
+	if (direction < 0) {
+		if (_selection > 0)
+			setSelection(_selection-1);
+	} else if (direction > 0) {
+		if (_selection < _popUpBoss->_entries.size()-1)
+			setSelection(_selection+1);
+	}
+}
+
 void PopUpDialog::handleMouseMoved(int x, int y, int button)
 {
-	// Compute over which item
+	// Compute over which item the mouse is...
 	int item = findItem(x, y);
+
+	if (item == -1 && !isMouseDown())
+		return;
+
+	// ...and update the selection accordingly
+	setSelection(item);
+}
+
+void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
+{
+	if (keycode == 27) {	// escape
+		close();
+		return;
+	}
+
+	if (isMouseDown())
+		return;
+
+	switch (keycode) {
+		case '\n':		// enter/return
+		case '\r':
+			setResult(_selection);
+			close();
+			break;
+		case 256+17:	// up arrow
+			if (_selection > 0)
+				setSelection(_selection-1);
+			break;
+		case 256+18:	// down arrow
+			if (_selection < _popUpBoss->_entries.size()-1)
+				setSelection(_selection+1);
+			break;
+		case 256+22:	// home
+			setSelection(0);
+			break;
+		case 256+23:	// end
+			setSelection(_popUpBoss->_entries.size()-1);
+			break;
+	}
+}
+
+int PopUpDialog::findItem(int x, int y) const
+{
+	if (x >= 0 && x < _w && y >= 0 && y < _h) {
+		return (y-2) / kLineHeight;
+	}
+	return -1;
+}
+
+void PopUpDialog::setSelection(int item)
+{
 	if (item != _selection) {
 		// Undraw old selection
 		if (_selection >= 0)
@@ -155,33 +215,14 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button)
 	}
 }
 
-int PopUpDialog::findItem(int x, int y) const
+bool PopUpDialog::isMouseDown()
 {
-	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		return (y-2) / kLineHeight;
-	}
-	return _popUpBoss->_selectedItem;
+	// TODO/FIXME - need a way to determine whether any mouse buttons are pressed or not.
+	// Sure, we could just count mouse button up/down events, but that is cumbersome and
+	// error prone. Would be much nicer to add an API to OSystem for this...
+	
+	return false;
 }
-
-/*
-void PopUpWidget::backupMenuBackground()
-{
-	NewGui	*gui = _boss->getGui();
-
-	assert(_menu.buffer);
-	gui->blitToBuffer(_menu.x1, _menu.y1, _menu.w, _menu.h, _menu.buffer, _menu.w * 2);
-}
-
-void PopUpWidget::restoreMenuBackground()
-{
-	NewGui	*gui = _boss->getGui();
-
-	assert(_menu.buffer);
-	gui->blitFromBuffer(_menu.x1, _menu.y1, _menu.w, _menu.h, _menu.buffer, _menu.w * 2);
-	gui->addDirtyRect(_menu.x1, _menu.y1, _menu.w, _menu.h);
-	draw();
-}
-*/
 
 void PopUpDialog::drawMenuEntry(int entry, bool hilite)
 {
@@ -193,17 +234,15 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite)
 
 	_gui->fillRect(x, y, w, kLineHeight,
 						hilite ? _gui->_textcolorhi : _gui->_bgcolor);
-	_gui->drawString(_popUpBoss->_entries[entry].name, x+1, y+1, w-2,
+	_gui->drawString(_popUpBoss->_entries[entry].name, x+1, y+2, w-2,
 						hilite ? _gui->_bgcolor : _gui->_textcolor);
 	_gui->addDirtyRect(x, y, w, kLineHeight);
 }
 
-//
-//
-//
-//
-//
 
+//
+// PopUpWidget
+//
 
 PopUpWidget::PopUpWidget(Dialog *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y-1, w, h+2), CommandSender(boss)
