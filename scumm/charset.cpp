@@ -1515,15 +1515,18 @@ void CharsetRendererNut::printChar(int chr) {
 		_hasMask = true;
 		_textScreenID = kMainVirtScreen;
 	}
+	
+	int drawTop = _top;
 	if (_ignoreCharsetMask) {
 		VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
 		s = *vs;
-		s.pixels = vs->getPixels(0, _vm->_screenTop);
+		s.pixels = vs->getPixels(0, 0);
 	} else {
 		s = _vm->gdi._textSurface;
+		drawTop -= _vm->_screenTop;
 	}
 
-	_current->drawShadowChar(s, chr, _left, _top, _color, _curId != 3);
+	_current->drawShadowChar(s, chr, _left, drawTop, _color, _curId != 3);
 	_vm->markRectAsDirty(kMainVirtScreen, shadow);
 
 	if (_str.left > _left)
