@@ -1070,13 +1070,12 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	
 	if (_vm->_heversion >= 80 && talkUnk == 0) {
 		condMask &= 0xFFFFFC00;
-		condMask |= 1
-;		if (_vm->getTalkingActor() == number) {
+		condMask |= 1;
+		if (_vm->getTalkingActor() == number) {
 			// Checks if talk sound is active?
 			// Otherwise just do rand animation
 			int rnd = _vm->_rnd.getRandomNumberRng(1, 10);
-;			setTalkCondition(rnd);
-
+			setTalkCondition(rnd);
 		} 
 	}
 	talkUnk = 0;
