@@ -239,14 +239,14 @@ void md5_finish( md5_context *ctx, uint8 digest[16] )
     PUT_UINT32( ctx->state[3], digest, 12 );
 }
 
-bool md5_file( const char *name, uint8 digest[16] )
+bool md5_file( const char *name, uint8 digest[16], const char *directory )
 {
     File f;
     md5_context ctx;
     int i;
     unsigned char buf[1000];
 
-	f.open(name);
+	f.open(name, File::kFileReadMode, directory);
 	if( ! f.isOpen() )
 	{
 		warning( "md5_file couldn't open '%s'", name );
