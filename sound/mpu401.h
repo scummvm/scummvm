@@ -46,6 +46,7 @@ private:
 	void allocate() { _allocated = true; }
 
 public:
+	MidiDriver *device();
 	void release() { _allocated = false; }
 
 	// Regular messages

@@ -36,17 +36,15 @@ struct MidiEvent {
 class MidiDriver {
 
 public:
-	/* Special events that can be inserted in a MidiEvent.
-	 * event = (ME_xxx<<24) | <24-bit data associated with event>
-	 */
+	// Special events that can be inserted in a MidiEvent.
+	// event = (ME_xxx<<24) | <24-bit data associated with event>
 	enum {
 		ME_NONE = 0,
 		ME_TEMPO = 1,
 	};
 
-	/* error codes returned by open.
-	 * can be converted to a string with getErrorName()
-	 */
+	// Error codes returned by open.
+	// Can be converted to a string with getErrorName()
 	enum {
 		MERR_CANNOT_CONNECT = 1,
 //		MERR_STREAMING_NOT_AVAILABLE = 2,
@@ -60,20 +58,20 @@ public:
 	};
 
 
-	// open the midi driver.
-	// returns 0 if successful, otherwise an error code.
+	// Open the midi driver.
+	// Returns 0 if successful, otherwise an error code.
 	virtual int open() = 0;
 
-	// close the midi driver
+	// Close the midi driver
 	virtual void close() = 0;
 
-	// output a packed midi command to the midi stream
+	// Output a packed midi command to the midi stream
 	virtual void send(uint32 b) = 0;
 
-	/* Get or set a property */
+	// Get or set a property
 	virtual uint32 property(int prop, uint32 param);
 
-	/* retrieve a string representation of an error code */
+	// Retrieve a string representation of an error code
 	static const char *getErrorName(int error_code);
 
 	// HIGH-LEVEL SEMANTIC METHODS
@@ -85,6 +83,7 @@ public:
 		send((  0   << 16) | ( 38 << 8) | (0xB0 | channel));
 	}
 
+	virtual void sysEx (byte *msg, uint16 length) { }
 	virtual void sysEx_customInstrument (byte channel, uint32 type, byte *instr) { }
 
 	// Timing functions - MidiDriver now operates timers
@@ -100,6 +99,7 @@ public:
 
 class MidiChannel {
 public:
+	virtual MidiDriver *device() = 0;
 	virtual void release() = 0;
 
 	// Regular messages
@@ -143,8 +143,7 @@ enum {
 };
 
 
-/* Factory functions => no need to include the specific classes
- * in this header => faster compile */
+// Factory functions, for faster compile
 extern MidiDriver *MidiDriver_NULL_create();
 extern MidiDriver *MidiDriver_ADLIB_create();
 extern MidiDriver *MidiDriver_WIN_create();

@@ -31,6 +31,7 @@ void MidiChannel_MPU401::init (MidiDriver_MPU401 *owner, byte channel)
 	_allocated = false;
 }
 
+MidiDriver *MidiChannel_MPU401::device() { return _owner; }
 void MidiChannel_MPU401::noteOff (byte note) { _owner->send(note << 8 | 0x80 | _channel); }
 void MidiChannel_MPU401::noteOn (byte note, byte velocity) { _owner->send (velocity << 16 | note << 8 | 0x90 | _channel); }
 void MidiChannel_MPU401::programChange (byte program) { _owner->send(program << 8 | 0xC0 | _channel); }
