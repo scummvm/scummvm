@@ -178,7 +178,9 @@ public:
 
 protected:
 	void readIndexFile();
+	void loadCharset(int no);
 	void readMAXS();
+
 	typedef void (Scumm_v2::*OpcodeProcV2)();
 	struct OpcodeEntryV2 {
 		OpcodeProcV2 proc;

@@ -87,3 +87,7 @@ void Scumm_v2::readMAXS() {
 	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
 	allocateArrays();
 }
+
+void Scumm_v2::loadCharset(int num) {
+	warning("Charset loading not yet implmeneted for V1/V2");
+}
