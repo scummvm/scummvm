@@ -43,6 +43,7 @@ MODULE_OBJS := \
 	scumm/script_v72he.o \
 	scumm/script_v80he.o \
 	scumm/script_v90he.o \
+	scumm/script_v100he.o \
 	scumm/script_v8.o \
 	scumm/scumm.o \
 	scumm/sound.o \

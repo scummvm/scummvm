@@ -793,7 +793,7 @@ void ScummEngine_v72he::o72_getTimer() {
 	int timer = pop();
 	int cmd = fetchScriptByte();
 
-	if (cmd == 10) {
+	if (cmd == 10 || cmd == 50) {
 		checkRange(3, 1, timer, "o72_getTimer: Timer %d out of range(%d)");
 		int diff = _system->getMillis() - _timers[timer];
 		push(diff);
@@ -806,7 +806,7 @@ void ScummEngine_v72he::o72_setTimer() {
 	int timer = pop();
 	int cmd = fetchScriptByte();
 
-	if (cmd == 158) {
+	if (cmd == 158 || cmd == 61) {
 		checkRange(3, 1, timer, "o72_setTimer: Timer %d out of range(%d)");
 		_timers[timer] = _system->getMillis();
 	} else {
@@ -850,16 +850,19 @@ void ScummEngine_v72he::o72_drawObject() {
 	int state = 0, y = -1, x = -1;
 
 	switch (subOp) {
+	case 6:
 	case 62:
 		state = pop();
 		y = pop();
 		x = pop();
 		break;
+	case 7:
 	case 63:
 		state = pop();
 		if (state == 0)
 			state = 1;
 		break;
+	case 40:
 	case 65:
 		state = 1;
 		y = pop();
@@ -2337,12 +2340,14 @@ void ScummEngine_v72he::o72_readINI() {
 	type = fetchScriptByte();
 
 	switch (type) {
+	case 43: // HE 100
 	case 6: // number
 		if (!strcmp((char *)option, "NoPrinting"))
 			push(1);
 		else
 			push(0);
 		break;
+	case 77: // HE 100
 	case 7: // string
 		writeVar(0, 0);
 		defineArray(0, kStringArray, 0, 0, 0, 0);
@@ -2363,11 +2368,13 @@ void ScummEngine_v72he::o72_writeINI() {
 	type = fetchScriptByte();
 
 	switch (type) {
+	case 43: // HE 100
 	case 6: // number
 		value = pop();
 		copyScriptString(option);
 		debug(1,"o72_writeINI: %s set to %d", option, value);
 		break;
+	case 77: // HE 100
 	case 7: // string
 		copyScriptString(string);
 		copyScriptString(option);
@@ -2472,6 +2479,7 @@ void ScummEngine_v72he::o72_getResourceSize() {
 		break;
 	default:
 		warning("o72_getResourceSize: default type %d", subOp);
+		push(0);
 		return;
 	}
 

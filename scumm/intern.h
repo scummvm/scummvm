@@ -901,6 +901,46 @@ protected:
 	void o90_getActorAnimProgress();
 };
 
+class ScummEngine_v100he : public ScummEngine_v90he {
+protected:
+	typedef void (ScummEngine_v100he::*OpcodeProcV100he)();
+	struct OpcodeEntryV100he {
+		OpcodeProcV100he proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryV100he *_opcodesV100he;
+
+public:
+	ScummEngine_v100he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v90he(detector, syst, gs, md5sum) {}
+
+protected:
+	virtual void setupOpcodes();
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
+	
+	virtual void decodeParseString(int a, int b);
+
+	/* HE version 100 script opcodes */
+	void o100_actorOps();
+	void o100_arrayOps();
+	void o100_dim2dimArray();
+	void o100_dimArray();
+	void o100_drawObject();
+	void o100_unknown28();
+	void o100_resourceRoutines();
+	void o100_wizImageOps();
+	void o100_dim2dim2Array();
+	void o100_paletteOps();
+	void o100_roomOps();
+	void o100_startSound();
+	void o100_unknown26();
+	void o100_quitPauseRestart();
+	void o100_cursorCommand();
+	void o100_wait();
+	void o100_unknown25();
+};
+
 class ScummEngine_v7 : public ScummEngine_v6 {
 public:
 	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v6(detector, syst, gs, md5sum) {}

@@ -916,6 +916,8 @@ void ScummEngine_v70he::o70_polygonOps() {
 	int fromId, toId;
 
 	switch (b) {
+	case 68: // HE 100
+	case 69: // HE 100
 	case 246:
 	case 248:
 		vert4y = pop();
@@ -928,9 +930,10 @@ void ScummEngine_v70he::o70_polygonOps() {
 		vert1x = pop();
 		id = pop();
 
-		polygonStore(id, (b == 248), vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, 
+		polygonStore(id, (b == 69 || b == 248), vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, 
 					 vert4x, vert4y);
 		break;
+	case 28: // HE 100
 	case 247:
 		toId = pop();
 		fromId = pop();

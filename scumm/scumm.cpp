@@ -337,7 +337,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
-	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
@@ -364,6 +364,14 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+
+	// Humongous Entertainment Scumm Version ?
+	{"PuttTTT", "Putt-Putt Travels Through Time *updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"SamsFunShop", "Pajama Sam's One-Stop Fun Shop", GID_HEGAME, 6, 100, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+
+
 #endif
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
 };
@@ -404,7 +412,7 @@ static const ScummGameSettings he_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (updated Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spyfox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
@@ -2833,6 +2841,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 6:
 		switch (game.heversion) {
 #ifndef __PALM_OS__
+		case 100:
+			engine = new ScummEngine_v100he(detector, syst, game, md5sum);
+			break;
 		case 90:
 		case 98:
 		case 99:
