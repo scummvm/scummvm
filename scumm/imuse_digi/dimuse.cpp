@@ -237,7 +237,7 @@ void IMuseDigital::callback() {
 				int bits = _sound->getBits(_track[l]->soundHandle);
 				int channels = _sound->getChannels(_track[l]->soundHandle);
 
-				int32 bufferUsage = _track[l]->iteration - _track[l]->stream->getFreeSpace();
+//				int32 bufferUsage = _track[l]->iteration - _track[l]->stream->getFreeSpace();
 				int32 bufferMin = _track[l]->iteration / 25;
 //				if (bufferMin < bufferUsage)
 //					continue;
