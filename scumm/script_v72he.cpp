@@ -562,17 +562,14 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 			chr = string[num++];
 			switch(chr) {
 			case 'b':
-				itoa(args[val--], (char *)dst, 2);
-				while (*dst != 0)
-					*dst++;
+				// FIXME TODO
+				//dst += sprintf((char *)dst, "%b", args[val--]);
 				break;
 			case 'c':
 				*dst++ = args[val--];
 				break;
 			case 'd':
-				itoa(args[val--], (char *)dst, 10);
-				while (*dst != 0)
-					*dst++;
+				dst += sprintf((char *)dst, "%d", args[val--]);
 				break;
 			case 's':
 				src = getStringAddress(args[val--]);
@@ -580,9 +577,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 					*dst++ = *src++;
 				break;
 			case 'x':
-				itoa(args[val--], (char *)dst, 16);
-				while (*dst != 0)
-					*dst++;
+				dst += sprintf((char *)dst, "%x", args[val--]);
 				break;
 			default:
 				error("decodeScriptString: Unknown type %d", chr);
