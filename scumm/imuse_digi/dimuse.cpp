@@ -223,6 +223,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			int bits = 0, freq = 0, channels = 0, mixerFlags = 0;
 
 			if (input) {
+				_track[l].iteration = 1; // ?
 				// Do nothing here, we already have an audio stream
 			} else {
 				if (soundName == NULL)
@@ -236,6 +237,9 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				bits = _sound->getBits(_track[l].soundHandle);
 				channels = _sound->getChannels(_track[l].soundHandle);
 				freq = _sound->getFreq(_track[l].soundHandle);
+				_track[l].iteration = freq * channels;
+				if ((bits == 12) || (bits == 16))
+					_track[l].iteration *= 2;
 
 				if (channels == 2) {
 					mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
@@ -548,28 +552,39 @@ void IMuseDigital::closeBundleFiles() {
 	// TODO
 }
 
-int32 IMuseDigital::getCurMusicPosInMs() {
-	// TODO
+int32 IMuseDigital::getPosInMs(int soundId) {
+	debug(5, "IMuseDigital::getPosInMs(%d)", soundId);
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		if ((_track[l].idSound == soundId) && _track[l].used) {
+			int32 pos = 1000 * _track[l].trackOffset / _track[l].iteration;
+			return pos;
+		}
+	}
+
 	return 0;
 }
 
+int32 IMuseDigital::getCurMusicPosInMs() {
+	return getPosInMs(_curMusicId);
+}
+
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
-	// TODO
+	int32 pos = getPosInMs(kTalkSoundID);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncHeight() {
-	// TODO
+	int32 pos = getPosInMs(kTalkSoundID);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurMusicLipSyncWidth() {
-	// TODO
+	int32 pos = getPosInMs(_curMusicId);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurMusicLipSyncHeight() {
-	// TODO
+	int32 pos = getPosInMs(_curMusicId);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 

@@ -55,6 +55,7 @@ private:
 		int curRegion;
 		int curHookId;
 		int soundGroup;
+		int iteration;
 		void *soundHandle;
 		int32 pullSize;
 		int mod;
@@ -103,6 +104,7 @@ public:
 	void pause(bool pause);
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
 	int getSoundStatus(int sound) const;
+	int32 getPosInMs(int soundId);
 	int32 getCurMusicPosInMs();
 	int32 getCurVoiceLipSyncWidth();
 	int32 getCurVoiceLipSyncHeight();
