@@ -148,7 +148,8 @@ void SkyMusicBase::pollMusic(void)
 	uint8 newTempo;
 	if (_onNextPoll.doReInit) startDriver();
 	if (_onNextPoll.doStopMusic) stopMusic();
-	if (_onNextPoll.musicToProcess) loadNewMusic();
+	if (_onNextPoll.musicToProcess == _currentMusic) _onNextPoll.musicToProcess = 0;
+	if (_onNextPoll.musicToProcess)	loadNewMusic();
 
 	_aktTime += _tempo;
 
