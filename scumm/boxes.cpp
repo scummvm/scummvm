@@ -289,7 +289,7 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	// checking at all. All the problems so far have been cases where
 	// the value was exactly one more than what we consider the maximum.
 	// So it's very well possible that all of these are script errors.
-	if ((_gameId == GID_MONKEY_EGA) || ((_features & GF_OLD_BUNDLE)
+	if ((_gameId == GID_PASS) || ((_features & GF_OLD_BUNDLE)
 	    && (_gameId == GID_INDY3 || _gameId == GID_ZAK))) {
 		checkRange(ptr[0], 0, box, "Illegal box %d");
 	} else

@@ -87,7 +87,7 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 4 */
 	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, "000.LFL"},
-	{"pass", "Passport to Adventure", GID_MONKEY_EGA, 4, VersionSettings::ADLIB_ALWAYS,
+	{"pass", "Passport to Adventure", GID_PASS, 4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, "000.LFL"},
 
 	/* Scumm version 5 */

@@ -491,7 +491,7 @@ void Scumm_v5::o5_actorSet() {
 			a->width = getVarOrDirectByte(0x80);
 			break;
 		case 17:										/* scale */
-			if ((_gameId == GID_MONKEY_VGA) || (_gameId == GID_MONKEY_EGA)) {
+			if ((_gameId == GID_MONKEY_VGA) || (_gameId == GID_MONKEY_EGA) || (_gameId == GID_PASS)) {
 				a->scalex = a->scaley = getVarOrDirectByte(0x80);
 			} else {
 				a->scalex = getVarOrDirectByte(0x80);

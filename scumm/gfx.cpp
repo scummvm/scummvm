@@ -592,7 +592,7 @@ void Scumm::initBGBuffers(int height) {
 		ptr = findResourceData(MKID('SMAP'), room);
 		gdi._numZBuffer = 0;
 
-		if (_gameId == GID_MONKEY_EGA)
+		if (_gameId == GID_MONKEY_EGA || _gameId == GID_PASS)
 			off = READ_LE_UINT16(ptr);
 		else
 			off = READ_LE_UINT32(ptr);
