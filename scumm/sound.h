@@ -62,7 +62,7 @@ enum {
 	int _talk_sound_frame;
 	bool _mouthSyncMode;
 	bool _endOfMouthSync;
-	uint16 _mouthSyncTimes[52];
+	uint16 _mouthSyncTimes[64];
 	uint _curSoundPos;
 
 	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
