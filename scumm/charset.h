@@ -39,6 +39,7 @@ public:
 
 protected:
 	byte _color;
+	byte _shadowColor;
 	bool _dropShadow;
 
 public:

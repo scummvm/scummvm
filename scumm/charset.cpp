@@ -927,6 +927,7 @@ int CharsetRendererV3::getCharWidth(byte chr) {
 void CharsetRendererV3::setColor(byte color)
 {
 	_color = color;
+	_shadowColor = (_vm->_gameId == GID_ZAK256) ? 8 : 0;
 	if (_vm->_gameId == GID_ZAK256) {
 		_dropShadow = ((_color & 0x80) != 0);
 		_color &= 0x7f;
@@ -952,8 +953,6 @@ void CharsetRendererV3::printChar(int chr) {
 
 	if (chr == '@')
 		return;
-
-	_vm->_charsetColorMap[1] = _color;
 
 	if (_firstChar) {
 		_str.left = _left;
@@ -1186,11 +1185,11 @@ void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src
 				bits = *src++;
 			if ((bits & revBitMask[x % 8]) && y + drawTop >= 0) {
 				if (_dropShadow) {
-					*(dst + 1) = 0;
-					*(dst + _vm->_screenWidth) = 0;
-					*(dst + _vm->_screenWidth + 1) = 0;
+					*(dst + 1) = _shadowColor;
+					*(dst + _vm->_screenWidth) = _shadowColor;
+					*(dst + _vm->_screenWidth + 1) = _shadowColor;
 				}					
-				*dst = _vm->_charsetColorMap[1];
+				*dst = _color;
 				if (useMask) {
 					mask[maskpos] |= maskmask;
 					if (_dropShadow) {
