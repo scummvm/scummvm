@@ -127,7 +127,7 @@ void screenBlocksAddRectangle( int top, int right, int left, int bottom, float d
 
 	for (int i = firstLeft; i < firstLeft + width; i++) {
 		for (int j = firstTop; j < firstTop + height; j++) {
-			if(screenBlockData[i][j].depth < depth)
+			if (screenBlockData[i][j].depth < depth)
 				screenBlockData[i][j].isDirty = true;
 		}
 	}
@@ -188,7 +188,7 @@ void screenBlocksBlitDirtyBlocks() {
 				}
 				for (int y = 0; y < 16; y++) {
 					glRasterPos2i(start * 16, j * 16 + y + 1);
-					glDrawPixels(16 * width, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp + ((j * 16 + y) * 640)+(start * 16));
+					glDrawPixels(16 * width, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp + ((j * 16 + y) * 640) + (start * 16));
 				}
 			}
 		}

@@ -107,6 +107,7 @@ void Driver::drawModel(const Model::Mesh *model) {
 	GLdouble modelView[500];
 	GLdouble projection[500];
 	GLint viewPort[500];
+	int i, j;
 
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
 	glGetDoublev(GL_PROJECTION_MATRIX, projection);
@@ -114,13 +115,9 @@ void Driver::drawModel(const Model::Mesh *model) {
 
 	// Yaz: debug
 	// this draw the model node in red
-	//glMatrixMode(GL_PROJECTION);
-	/*glPushMatrix();
+/*
+	glPushMatrix();
 	glLoadIdentity();
-
-	GLdouble modelView[500];
-	GLdouble projection[500];
-	GLint viewPort[500];
 
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
 	glGetDoublev(GL_PROJECTION_MATRIX, projection);
@@ -131,40 +128,34 @@ void Driver::drawModel(const Model::Mesh *model) {
 	glColor4f(1.f, 0.f, 0.f, 1.f);
 	glDisable(GL_TEXTURE_2D );
 	glBegin(GL_POINTS);
-	glVertex3f(_matrix._pos.x(), _matrix._pos.y(), _matrix._pos.z());
+	glVertex3f(model->_matrix._pos.x(), model->_matrix._pos.y(), model->_matrix._pos.z());
 	glEnd();
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
-	glEnable(GL_TEXTURE_2D);*/
-
+	glEnable(GL_TEXTURE_2D);
+*/
 	// Yaz: debug
 	// this draw the poly points
-
-	/*glPushMatrix();
+/*
+	glPushMatrix();
 	glLoadIdentity();
 	glPointSize(3.f);
 	glColor4f(0.f, 1.f, 0.f, 1.f);
 	glDisable(GL_TEXTURE_2D);
-	{
-		GLdouble modelView[500];
-		GLdouble projection[500];
-		GLint viewPort[500];
 
-		glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
-		glGetDoublev(GL_PROJECTION_MATRIX, projection);
-		glGetIntegerv(GL_VIEWPORT, viewPort);
-	}
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewPort);
 
-	glBegin( GL_POINTS );
+	glBegin(GL_POINTS);
 
-	for (int i = 0; i < _numFaces; i++) {
+	for (i = 0; i < model->_numFaces; i++) {
 		Vector3d v;
-		Matrix4 tempMatrix = _matrix;
+		Matrix4 tempMatrix = model->_matrix;
 		float* pVertices;
-		int j;
 
-		for( j =0; j< faces_[i].numVertices_; j++ ) {
-			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
+		for(j = 0; j < model->_faces[i]._numVertices; j++ ) {
+			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
 
 			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
@@ -178,7 +169,8 @@ void Driver::drawModel(const Model::Mesh *model) {
 	glEnd();
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
-	glEnable(GL_TEXTURE_2D ); */
+	glEnable(GL_TEXTURE_2D );
+*/
 
 	// Ender: HACK HACK HACK
 	// Mannys head isn't computed correctly, so bail out to prevent memory corruption.
@@ -196,11 +188,10 @@ void Driver::drawModel(const Model::Mesh *model) {
 	GLdouble left = 1000;
 	GLdouble bottom = -1000;
 
-	for (int i = 0; i < model->_numFaces; i++) {
+	for (i = 0; i < model->_numFaces; i++) {
 		Vector3d v;
 		Matrix4 tempMatrix = model->_matrix;
 		float* pVertices;
-		int j;
 		float bestDepth = 0;
 
 		for (j = 0; j < model->_faces[i]._numVertices; j++) {
@@ -241,7 +232,8 @@ void Driver::drawModel(const Model::Mesh *model) {
 		if (SCREENBLOCKS_GLOBAL)
 			screenBlocksAddRectangle((int)top, (int)right, (int)left, (int)bottom, (int)bestDepth);
 	}
-	/*
+
+/*
 	glDisable(GL_DEPTH_TEST);
 	glPointSize(3.f);
 	glColor4f(1.f, 1.f, 0.f, 1.f);
@@ -281,7 +273,8 @@ void Driver::drawModel(const Model::Mesh *model) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D); 
 */
- 	glPopMatrix();
+
+	glPopMatrix();
 }
 
 void Driver::updateMesh(const Model::Mesh *mesh) {
