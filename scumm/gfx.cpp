@@ -571,7 +571,7 @@ void ScummEngine::redrawBGAreas() {
 		byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
 		if (findResource(MKID('BMAP'), room) != NULL) {
 			if (_fullRedraw) {
-				_BgNeedsRedraw = 0;
+				_BgNeedsRedraw = false;
 				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip, _screenWidth);
 			}
 			cont = false;
@@ -746,6 +746,7 @@ byte *Gdi::getMaskBuffer(int x, int y, int z) {
 #pragma mark -
 
 static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
+	assert(w > 0);
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
@@ -1183,7 +1184,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				drawStripC64Background(bgbak_ptr, stripnr, height);
 		} else if (_vm->_version > 2) {
 			if (_vm->_features & GF_16COLOR) {
-				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
+				drawStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
 			} else if (_vm->_features & GF_SMALL_HEADER) {
 				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
 			} else {
@@ -1301,7 +1302,7 @@ next_iter:
 
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
- * and objects, used throughout in 7.2+ HE versions
+ * used throughout in 7.2+ HE versions
  */
 void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width) {
 	assert(ptr);
@@ -1393,55 +1394,6 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 
 		copyVirtScreenBuffers(rect1);
 	}
-}
-
-void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const byte *src, int shr, int mask) {
-	uint32 color, dataBit, data, shift;
-	int32 iteration;
-
-     color = *src;
-	 src++;
-	 data = READ_LE_UINT24(src);
-	 src += 3;
-     shift = 24;
-
-	 while (height) {
-		 for (iteration = 0; iteration < w; iteration++) {
-			 *dst++ = color;
-			 if (shift <= 16) {
-				 data |= *src << shift;
-				 src++;
-				 shift += 8;
-				 data |= *src << shift;
-				 src++;
-				 shift += 8;
-			 }
-			 
-			 dataBit = data & 1;
-			 shift--;
-			 data >>= 1;
-			 if (dataBit) {
-				 dataBit = data & 1;
-				 shift--;
-				 data >>= 1;
-				 if (!dataBit) {
-					 color = mask & data;
-					 shift -= shr;
-					 data >>= shr;
-				 } else {
-					 dataBit = data & 7;
-					 shift -= 3;
-					 data >>= 3;
-					 if (dataBit >= 4)
-						 color += dataBit - 3;
-					 else
-						 color += dataBit - 4;
-				 }
-			 }
-		 }
-		 dst += screenwidth - w;
-		 height--;
-	 }
 }
 
 void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, Common::Rect *rect) {
@@ -1730,7 +1682,9 @@ void Gdi::copyVirtScreenBuffers(Common::Rect rect) {
 	src = (byte *)_vm->virtscr[0].backBuf + (_vm->_screenStartStrip + rect.top * _numStrips) * 8 + rect.left;
 	dst = (byte *)_vm->virtscr[0].pixels + (_vm->_screenStartStrip + rect.top * _numStrips) * 8 + rect.left;
 	
-	copyBufferBox(dst, src, rw, rh);
+	assert(rw <= _vm->_screenWidth && rw > 0);
+	assert(rh <= _vm->_screenHeight && rh > 0);
+	blit(dst, _vm->_screenWidth, src, _vm->_screenWidth, rw, rh);
 	_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right, rect.top, rect.bottom, 0);
 }
 
@@ -1933,7 +1887,7 @@ void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) {
 	}
 }
 
-void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
+void Gdi::drawStripEGA(byte *dst, const byte *src, int height) {
 	byte color = 0;
 	int run = 0, x = 0, y = 0, z;
 
@@ -2023,16 +1977,16 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 		// 8/9 used in 3do version of puttputt joins the parade maybe others
 		case 8:
 			useOrDecompress = true;
-			decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, true);
+			drawStrip3DO(bgbak_ptr, src, numLinesToProcess, true);
 			break;
 	
 		case 9:
-			decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, false);
+			drawStrip3DO(bgbak_ptr, src, numLinesToProcess, false);
 			break;
 	
 		// used in amiga version of Monkey Island
 		case 10:
-			decodeStripEGA(bgbak_ptr, src, numLinesToProcess);
+			drawStripEGA(bgbak_ptr, src, numLinesToProcess);
 			break;
 
 		default:
@@ -2048,21 +2002,21 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 			// FIXME: Ugly workaround for bug #901462
 			if (_vm->_version == 8)
 				useOrDecompress = true;
-			unkDecodeC(bgbak_ptr, src, numLinesToProcess);
+			drawStripBasicV(bgbak_ptr, src, numLinesToProcess);
 			break;
 	
 		case 2:
-			unkDecodeB(bgbak_ptr, src, numLinesToProcess);
+			drawStripBasicH(bgbak_ptr, src, numLinesToProcess);
 			break;
 	
 		case 3:
 			useOrDecompress = true;
-			unkDecodeC_trans(bgbak_ptr, src, numLinesToProcess);
+			drawStripBasicV_trans(bgbak_ptr, src, numLinesToProcess);
 			break;
 	
 		case 4:
 			useOrDecompress = true;
-			unkDecodeB_trans(bgbak_ptr, src, numLinesToProcess);
+			drawStripBasicH_trans(bgbak_ptr, src, numLinesToProcess);
 			break;
 	
 		case 6:
@@ -2070,22 +2024,22 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 			// FIXME: Ugly workaround for bug #901462
 			if (_vm->_version == 8 && code == 10)
 				useOrDecompress = true;
-			unkDecodeA(bgbak_ptr, src, numLinesToProcess);
+			drawStripComplex(bgbak_ptr, src, numLinesToProcess);
 			break;
 	
 		case 8:
 		case 12:
 			useOrDecompress = true;
-			unkDecodeA_trans(bgbak_ptr, src, numLinesToProcess);
+			drawStripComplex_trans(bgbak_ptr, src, numLinesToProcess);
 			break;
 	
 		case 13:
-			decodeStripHE(bgbak_ptr, src, numLinesToProcess, false);
+			drawStripHE(bgbak_ptr, src, numLinesToProcess, false);
 			break;
 	
 		case 14:
 			useOrDecompress = true;
-			decodeStripHE(bgbak_ptr, src, numLinesToProcess, true);
+			drawStripHE(bgbak_ptr, src, numLinesToProcess, true);
 			break;
 	
 		default:
@@ -2094,22 +2048,6 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	}
 	
 	return useOrDecompress;
-}
-
-void Gdi::copyBufferBox(byte *dst, const byte *src, int width, int height) {
-	assert(width <= _vm->_screenWidth && width > 0);
-	assert(height <= _vm->_screenHeight && height > 0);
-
-	do {
-#if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(dst, src, width);
-#else
-		for(int i = 0; i < width; i++)
-			dst[i] = src[i];
-#endif
-		dst += _vm->_screenWidth;
-		src += _vm->_screenWidth;
-	} while (--height);
 }
 
 void Gdi::draw8Col(byte *dst, const byte *src, int height) {
@@ -2188,6 +2126,158 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) {
 	}
 }
 
+#define READ_BIT (shift--, dataBit = data & 1, data >>= 1, dataBit)
+#define FILL_BITS do {               \
+		if (shift <= 16) {           \
+			data |= READ_LE_UINT16(src) << shift; \
+			src += 2;                 \
+			shift += 16;              \
+		}                             \
+	} while (0)
+
+
+// NOTE: decompressBMAPbg is actually very similar to drawStripComplex
+void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const byte *src, int shr, int mask) {
+	uint32 dataBit, data, shift;
+	byte color;
+	int32 iteration;
+
+     color = *src;
+	 src++;
+	 data = READ_LE_UINT24(src);
+	 src += 3;
+     shift = 24;
+
+	 while (height) {
+		 for (iteration = 0; iteration < w; iteration++) {
+			 FILL_BITS;
+			 *dst++ = color;
+			 
+			 if (READ_BIT) {
+				 if (!READ_BIT) {
+					 color = data & mask;
+					 shift -= shr;
+					 data >>= shr;
+				 } else {
+					 dataBit = data & 7;
+					 shift -= 3;
+					 data >>= 3;
+					 // map (0, 1, 2, 3, 4, 5, 6, 7) to (-4, -3, -2, -1, 1, 2, 3, 4)
+					 if (dataBit >= 4)
+						 color += dataBit - 3;
+					 else
+						 color += dataBit - 4;
+				 }
+			 }
+		 }
+		 dst += screenwidth - w;
+		 height--;
+	 }
+}
+
+// FIXME/TODO: drawStripHE and decompressBMAPbg are essentially identical!
+void Gdi::drawStripHE(byte *dst, const byte *src, int height, const bool transpCheck) {
+	uint32 dataBit, data, shift, iteration;
+	byte color;
+
+     color = *src;
+	 src++;
+	 data = READ_LE_UINT24(src);
+	 src += 3;
+     shift = 24;
+
+	 while (height) {
+		 for (iteration = 0; iteration < 8; iteration++) {
+			 if (!transpCheck || color != _transparentColor)
+				 *dst = _roomPalette[color];
+			 dst++;
+			 FILL_BITS;
+			 
+			 if (READ_BIT) {
+				 if (!READ_BIT) {
+					 color = _decomp_mask & data;
+					 shift -= _decomp_shr;
+					 data >>= _decomp_shr;
+				 } else {
+					 dataBit = data & 7;
+					 shift -= 3;
+					 data >>= 3;
+					 if (dataBit >= 4)
+						 color += dataBit - 3;
+					 else
+						 color += dataBit - 4;
+				 }
+			 }
+		 }
+		 dst += _vm->_screenWidth - 8;
+		 height--;
+	 }
+}
+
+#undef READ_BIT
+#undef FILL_BITS
+
+
+void Gdi::drawStrip3DO(byte *dst, const byte *src, int height, const bool transpCheck) {
+	int destbytes, olddestbytes2, olddestbytes1;
+	byte color;
+
+	uint32 dataBit, data;
+
+	olddestbytes1 = 0;
+
+	destbytes = height << 3;
+
+	if (!height)
+		return;
+
+	// FIXME/TODO: This is a simple RLE encoding; the code could be made
+	// clearer by renaming some vars and/or rearranginge the code.
+
+	do {
+		data = *src++;
+
+		dataBit = data & 1;
+		data >>= 1;
+		data++;
+
+		destbytes -= data;
+		
+		// Clip!
+		if (destbytes < 0)
+			data += destbytes;
+
+		olddestbytes2 = destbytes;
+		destbytes = olddestbytes1;
+
+		if (!dataBit) {
+			for (; data > 0; data--, src++, dst++) {
+				if (!transpCheck || *src != _transparentColor)
+					*dst = _roomPalette[*src];
+			
+				destbytes++;
+				if (!(destbytes & 7))
+					dst += _vm->_screenWidth - 8;	// Next row
+			}
+		} else {
+			color = *src;
+			src++;
+
+			for (; data > 0; data--, dst++) {
+				if (!transpCheck || color != _transparentColor)
+					*dst = _roomPalette[color];
+				destbytes++;
+				if (!(destbytes & 7))
+					dst += _vm->_screenWidth - 8;	// Next row
+			}
+		}
+
+		olddestbytes1 = destbytes;
+		destbytes = olddestbytes2;
+	} while (olddestbytes2 > 0);
+}
+
+
 #define READ_BIT (cl--, bit = bits & 1, bits >>= 1, bit)
 #define FILL_BITS do {              \
 		if (cl <= 8) {              \
@@ -2196,7 +2286,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) {
 		}                           \
 	} while (0)
 
-void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
+void Gdi::drawStripComplex(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2244,7 +2334,7 @@ void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
 	} while (--height);
 }
 
-void Gdi::unkDecodeA_trans(byte *dst, const byte *src, int height) {
+void Gdi::drawStripComplex_trans(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2296,7 +2386,7 @@ void Gdi::unkDecodeA_trans(byte *dst, const byte *src, int height) {
 	} while (--height);
 }
 
-void Gdi::unkDecodeB(byte *dst, const byte *src, int height) {
+void Gdi::drawStripBasicH(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2326,7 +2416,7 @@ void Gdi::unkDecodeB(byte *dst, const byte *src, int height) {
 	} while (--height);
 }
 
-void Gdi::unkDecodeB_trans(byte *dst, const byte *src, int height) {
+void Gdi::drawStripBasicH_trans(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2358,7 +2448,7 @@ void Gdi::unkDecodeB_trans(byte *dst, const byte *src, int height) {
 	} while (--height);
 }
 
-void Gdi::unkDecodeC(byte *dst, const byte *src, int height) {
+void Gdi::drawStripBasicV(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2390,7 +2480,7 @@ void Gdi::unkDecodeC(byte *dst, const byte *src, int height) {
 	} while (--x);
 }
 
-void Gdi::unkDecodeC_trans(byte *dst, const byte *src, int height) {
+void Gdi::drawStripBasicV_trans(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2427,13 +2517,22 @@ void Gdi::unkDecodeC_trans(byte *dst, const byte *src, int height) {
 #undef FILL_BITS
 
 /* Ender - Zak256/Indy256 decoders */
-#define READ_256BIT                        \
+#define READ_BIT_256                       \
 		do {                               \
 			if ((mask <<= 1) == 256) {     \
 				buffer = *src++;           \
 				mask = 1;                  \
 			}                              \
 			bits = ((buffer & mask) != 0); \
+		} while (0)
+
+#define READ_N_BITS(n, c)                  \
+		do {                               \
+			c = 0;                         \
+			for (int b = 0; b < n; b++) {  \
+				READ_BIT_256;              \
+				c += (bits << b);          \
+			}                              \
 		} while (0)
 
 #define NEXT_ROW                           \
@@ -2448,9 +2547,9 @@ void Gdi::unkDecodeC_trans(byte *dst, const byte *src, int height) {
 		} while (0)
 
 void Gdi::unkDecode7(byte *dst, const byte *src, int height) {
-	uint h = height;
 
 	if (_vm->_features & GF_OLD256) {
+		uint h = height;
 		int x = 8;
 		for (;;) {
 			*dst = *src++;
@@ -2487,27 +2586,19 @@ void Gdi::unkDecode8(byte *dst, const byte *src, int height) {
 }
 
 void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
-	unsigned char c, bits, color, run;
-	int i, j;
+	byte c, bits, color, run;
+	int i;
 	uint buffer = 0, mask = 128;
 	int h = height;
-	i = j = run = 0;
+	i = run = 0;
 
 	int x = 8;
 	for (;;) {
-		c = 0;
-		for (i = 0; i < 4; i++) {
-			READ_256BIT;
-			c += (bits << i);
-		}
+		READ_N_BITS(4, c);
 
 		switch (c >> 2) {
 		case 0:
-			color = 0;
-			for (i = 0; i < 4; i++) {
-				READ_256BIT;
-				color += bits << i;
-			}
+			READ_N_BITS(4, color);
 			for (i = 0; i < ((c & 3) + 2); i++) {
 				*dst = _roomPalette[run * 16 + color];
 				NEXT_ROW;
@@ -2516,22 +2607,14 @@ void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 
 		case 1:
 			for (i = 0; i < ((c & 3) + 1); i++) {
-				color = 0;
-				for (j = 0; j < 4; j++) {
-					READ_256BIT;
-					color += bits << j;
-				}
+				READ_N_BITS(4, color);
 				*dst = _roomPalette[run * 16 + color];
 				NEXT_ROW;
 			}
 			break;
 
 		case 2:
-			run = 0;
-			for (i = 0; i < 4; i++) {
-				READ_256BIT;
-				run += bits << i;
-			}
+			READ_N_BITS(4, run);
 			break;
 		}
 	}
@@ -2539,7 +2622,7 @@ void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 
 void Gdi::unkDecode10(byte *dst, const byte *src, int height) {
 	int i;
-	unsigned char local_palette[256], numcolors = *src++;
+	byte local_palette[256], numcolors = *src++;
 	uint h = height;
 
 	for (i = 0; i < numcolors; i++)
@@ -2567,7 +2650,7 @@ void Gdi::unkDecode10(byte *dst, const byte *src, int height) {
 void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 	int bits, i;
 	uint buffer = 0, mask = 128;
-	unsigned char inc = 1, color = *src++;
+	byte inc = 1, color = *src++;
 
 	int x = 8;
 	do {
@@ -2576,7 +2659,7 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 			*dst = _roomPalette[color];
 			dst += _vm->_screenWidth;
 			for (i = 0; i < 3; i++) {
-				READ_256BIT;
+				READ_BIT_256;
 				if (!bits)
 					break;
 			}
@@ -2591,12 +2674,8 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 				break;
 
 			case 3:
-				color = 0;
 				inc = 1;
-				for (i = 0; i < 8; i++) {
-					READ_256BIT;
-					color += bits << i;
-				}
+				READ_N_BITS(8, color);
 				break;
 			}
 		} while (--h);
@@ -2605,126 +2684,8 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 }
 
 
-void Gdi::decodeStrip3DO(byte *dst, const byte *src, int height, byte transpCheck) {
-	int destbytes, olddestbytes2, olddestbytes1;
-	byte color;
-	int data;
-
-	olddestbytes1 = 0;
-
-	destbytes = height << 3;
-
-	if (!height)
-		return;
-
-	do {
-		data = *src;
-		src++;
-
-		if (!(data & 1)) {
-			data >>= 1;
-			data++;
-			destbytes -= data;
-			if (destbytes < 0)
-				data += destbytes;
-
-			olddestbytes2 = destbytes;
-			destbytes = olddestbytes1;
-
-			for (; data > 0; data--, src++, dst++) {
-				if (*src != _transparentColor || !transpCheck)
-					*dst = _roomPalette[*src];
-			
-				destbytes++;
-				if (!(destbytes & 7))
-					dst += 312;
-			}
-
-			olddestbytes1 = destbytes;
-			if (olddestbytes2 > 0) {
-				destbytes = olddestbytes2;
-			}
-		} else {
-			data >>= 1;
-			color = *src;
-			src++;
-
-			data++;
-			destbytes -= data;
-			if (destbytes < 0)
-				data += destbytes;
-
-			olddestbytes2 = destbytes;
-			destbytes = olddestbytes1;
-
-			for (; data > 0; data--, dst++) {
-				if (color != _transparentColor || !transpCheck)
-					*dst = _roomPalette[color];
-				destbytes++;
-				if (!(destbytes & 7))
-					dst += 312;
-			}
-			olddestbytes1 = destbytes;
-			if (olddestbytes2 > 0) {
-				destbytes = olddestbytes2;
-			}
-		}
-	} while (olddestbytes2 > 0);
-}
-
-
-void Gdi::decodeStripHE(byte *dst, const byte *src, int height, byte transpCheck) {
-	uint32 color, dataBit, data, shift, iteration;
-
-     color = *src;
-	 src++;
-	 data = READ_LE_UINT24(src);
-	 src += 3;
-     shift = 24;
-
-	 while (height) {
-		 for (iteration = 0; iteration < 8; iteration++) {
-			 if (color != _transparentColor || !transpCheck)
-				 *dst = _roomPalette[color];
-			 dst++;
-			 if (shift <= 16) {
-				 data |= *src << shift;
-				 src++;
-				 shift += 8;
-				 data |= *src << shift;
-				 src++;
-				 shift += 8;
-			 }
-			 
-			 dataBit = data & 1;
-			 shift--;
-			 data >>= 1;
-			 if (dataBit) {
-				 dataBit = data & 1;
-				 shift--;
-				 data >>= 1;
-				 if (!dataBit) {
-					 color = _decomp_mask & data;
-					 shift -= _decomp_shr;
-					 data >>= _decomp_shr;
-				 } else {
-					 dataBit = data & 7;
-					 shift -= 3;
-					 data >>= 3;
-					 if (dataBit >= 4)
-						 color += dataBit - 3;
-					 else
-						 color += dataBit - 4;
-				 }
-			 }
-		 }
-		 dst += _vm->_screenWidth - 8;;
-		 height--;
-	 }
-}
-
 #undef NEXT_ROW
-#undef READ_256BIT
+#undef READ_BIT_256
 
 #pragma mark -
 #pragma mark --- Transition effects ---

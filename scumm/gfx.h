@@ -232,27 +232,27 @@ protected:
 
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProcess);
-	void decodeStripEGA(byte *dst, const byte *src, int height);
+	void drawStripEGA(byte *dst, const byte *src, int height);
 	void decodeC64Gfx(const byte *src, byte *dst, int size);
 	void drawStripC64Object(byte *dst, int stripnr, int width, int height);
 	void drawStripC64Background(byte *dst, int stripnr, int height);
 	void drawStripC64Mask(byte *dst, int stripnr, int width, int height);
-	void unkDecodeA(byte *dst, const byte *src, int height);
-	void unkDecodeA_trans(byte *dst, const byte *src, int height);
-	void unkDecodeB(byte *dst, const byte *src, int height);
-	void unkDecodeB_trans(byte *dst, const byte *src, int height);
-	void unkDecodeC(byte *dst, const byte *src, int height);
-	void unkDecodeC_trans(byte *dst, const byte *src, int height);
+
+	void drawStripComplex(byte *dst, const byte *src, int height);
+	void drawStripComplex_trans(byte *dst, const byte *src, int height);
+	void drawStripBasicH(byte *dst, const byte *src, int height);
+	void drawStripBasicH_trans(byte *dst, const byte *src, int height);
+	void drawStripBasicV(byte *dst, const byte *src, int height);
+	void drawStripBasicV_trans(byte *dst, const byte *src, int height);
 
 	void unkDecode7(byte *dst, const byte *src, int height);
 	void unkDecode8(byte *dst, const byte *src, int height);
 	void unkDecode9(byte *dst, const byte *src, int height);
 	void unkDecode10(byte *dst, const byte *src, int height);
 	void unkDecode11(byte *dst, const byte *src, int height);
-	void decodeStrip3DO(byte *dst, const byte *src, int height, byte transpCheck);
-	void decodeStripHE(byte *dst, const byte *src, int height, byte transpCheck);
+	void drawStrip3DO(byte *dst, const byte *src, int height, const bool transpCheck);
+	void drawStripHE(byte *dst, const byte *src, int height, const bool transpCheck);
 
-	void copyBufferBox(byte *dst, const byte *src, int width, int height);
 	void draw8Col(byte *dst, const byte *src, int height);
 	void clear8Col(byte *dst, int height);
 	void decompressMaskImgOr(byte *dst, const byte *src, int height);
