@@ -389,6 +389,11 @@ void Actor::updateActorsScene() {
 	ActorLocation possibleLocation;
 	Point delta;
 	
+	if (_vm->_gameType == GType_IHNM) {
+		warning("Actors aren't implemented for IHNM yet");
+		return;
+	}
+
 	_activeSpeech.stringsCount = 0;
 	_protagonist = NULL;
 

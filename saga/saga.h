@@ -140,12 +140,13 @@ enum GAME_IDS {
 	GID_ITE_AMIGACD_DE, // TODO
 	GID_ITE_OLDMAC_DE,  // TODO
 	GID_ITE_AMIGA_FL_DE,// TODO
-	GID_ITE_CD_DE,      // don't have it
+	GID_ITE_CD_DE,      // reported by mld. Bestsellergamers cover disk
 	GID_ITE_AMIGA_AGA_DEMO, // TODO
 	GID_ITE_AMIGA_ECS_DEMO, // TODO
 
 	GID_IHNM_DEMO,
-	GID_IHNM_CD
+	GID_IHNM_CD,
+	GID_IHNM_CD_DE   // reported by mld. German retail
 };
 
 enum GAME_FILETYPES {
@@ -156,7 +157,8 @@ enum GAME_FILETYPES {
 	GAME_DEMOFILE     = 1 << 4,
 	GAME_MUSICFILE    = 1 << 5,
 	GAME_MUSICFILE_GM = 1 << 6,
-	GAME_MUSICFILE_FM = 1 << 7
+	GAME_MUSICFILE_FM = 1 << 7,
+	GAME_PATCHFILE    = 1 << 8
 };
 
 enum GAME_SOUNDINFO_TYPES {

@@ -245,7 +245,8 @@ int SagaEngine::go() {
 			if (msec > MAX_TIME_DELTA) {
 				msec = MAX_TIME_DELTA;
 			}
-			if (!_vm->_scene->isInDemo())
+
+			if (!_vm->_scene->isInDemo() && _gameType == GType_ITE)
 				if (_vm->_interface->getMode() == kPanelMain ||
 						 _vm->_interface->getMode() == kPanelConverse ||
 						 _vm->_interface->getMode() == kPanelNull)

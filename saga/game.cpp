@@ -163,12 +163,29 @@ static GAME_FILEDESC IHNMCD_GameFiles[] = {
 	{"musicfm.res", GAME_MUSICFILE_FM},
 	{"musicgm.res", GAME_MUSICFILE_GM},
 	{"scream.res", GAME_RESOURCEFILE},
+	{"patch.re_", GAME_PATCHFILE},
 	{"scripts.res", GAME_SCRIPTFILE},
 	{"sfx.res", GAME_SOUNDFILE},
 	{"voices1.res", GAME_VOICEFILE},
 	{"voices2.res", GAME_VOICEFILE},
 	{"voices3.res", GAME_VOICEFILE},
 	{"voices4.res", GAME_VOICEFILE},
+	{"voices5.res", GAME_VOICEFILE},
+	{"voices6.res", GAME_VOICEFILE},
+	{"voicess.res", GAME_VOICEFILE}
+};
+
+// I Have No Mouth and I Must Scream - Retail German CD version
+static GAME_FILEDESC IHNMCDDE_GameFiles[] = {
+	{"musicfm.res", GAME_MUSICFILE_FM},
+	{"musicgm.res", GAME_MUSICFILE_GM},
+	{"scream.res", GAME_RESOURCEFILE},
+	{"scripts.res", GAME_SCRIPTFILE},
+	{"patch.re_", GAME_PATCHFILE},
+	{"sfx.res", GAME_SOUNDFILE},
+	{"voices1.res", GAME_VOICEFILE},
+	{"voices2.res", GAME_VOICEFILE},
+	{"voices3.res", GAME_VOICEFILE},
 	{"voices5.res", GAME_VOICEFILE},
 	{"voices6.res", GAME_VOICEFILE},
 	{"voicess.res", GAME_VOICEFILE}
@@ -219,6 +236,12 @@ static GAME_MD5 game_md5[] = {
 	{ GID_ITE_CD,       "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
 	{ GID_ITE_CD,       "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", false },
 
+	// reported by mld. Bestsellergamers cover disk
+	{ GID_ITE_CD_DE,    "869fc23c8f38f575979ec67152914fee", "ite.rsc", false },
+	{ GID_ITE_CD_DE,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
+	{ GID_ITE_CD_DE,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
+	{ GID_ITE_CD_DE,    "2fbad5d10b9b60a3415dc4aebbb11718", "voices.rsc", false },
+
 	{ GID_ITE_DEMO_G,   "986c79c4d2939dbe555576529fd37932", "ite.rsc", false },
 	{ GID_ITE_DEMO_G,   "d5697dd3240a3ceaddaa986c47e1a2d7", "scripts.rsc", false },
 	{ GID_ITE_DEMO_G,   "c58e67c506af4ffa03fd0aac2079deb0", "voices.rsc", false },
@@ -268,12 +291,11 @@ static GAME_MD5 game_md5[] = {
 	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc", false },
 	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", false },
 
-	// My CD also has a file called 'patch.re_'. I assume it contains
-	// bugfixes, but let's ignore it for now.
 	{ GID_IHNM_CD, "0439083e3dfdc51b486071d45872ae52", "musicfm.res", false },
 	{ GID_IHNM_CD, "80f875a1fb384160d1f4b27166eef583", "musicgm.res", false },
 	{ GID_IHNM_CD, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res", false },
 	{ GID_IHNM_CD, "be38bbc5a26be809dbf39f13befebd01", "scripts.res", false },
+	{ GID_IHNM_CD, "58b79e61594779513c7f2d35509fa89e", "patch.re_", false },
 	{ GID_IHNM_CD, "1c610d543f32ec8b525e3f652536f269", "sfx.res", false },
 	{ GID_IHNM_CD, "fc6440b38025f4b2cc3ff55c3da5c3eb", "voices1.res", false },
 	{ GID_IHNM_CD, "b37f10fd1696ade7d58704ccaaebceeb", "voices2.res", false },
@@ -282,6 +304,21 @@ static GAME_MD5 game_md5[] = {
 	{ GID_IHNM_CD, "1f501ce4b72392bdd1d9ec38f6eec6da", "voices5.res", false },
 	{ GID_IHNM_CD, "f580ed7568c7d6ef34e934ba20adf834", "voices6.res", false },
 	{ GID_IHNM_CD, "54b1f2013a075338ceb0e258d97808bd", "voicess.res", false },
+
+	// Reported by mld. German Retail
+	{ GID_IHNM_CD_DE, "0439083e3dfdc51b486071d45872ae52", "musicfm.res", false },
+	{ GID_IHNM_CD_DE, "80f875a1fb384160d1f4b27166eef583", "musicgm.res", false },
+	{ GID_IHNM_CD_DE, "c92370d400e6f2a3fc411c3729d09224", "scream.res", false },
+	{ GID_IHNM_CD_DE, "32aa01a89937520fe0ea513950117292", "scripts.res", false },
+	// FIXME: may be wrong
+	{ GID_IHNM_CD_DE, "58b79e61594779513c7f2d35509fa89e", "patch.re_", false },
+	{ GID_IHNM_CD_DE, "1c610d543f32ec8b525e3f652536f269", "sfx.res", false },
+	{ GID_IHNM_CD_DE, "424971e1e2373187c3f5734fe36071a2", "voices1.res", false },
+	{ GID_IHNM_CD_DE, "c270e0980782af43641a86e4a14e2a32", "voices2.res", false },
+	{ GID_IHNM_CD_DE, "49e42befea883fd101ec3d0f5d0647b9", "voices3.res", false },
+	{ GID_IHNM_CD_DE, "c477443c52a0aa56e686ebd8d051e4ab", "voices5.res", false },
+	{ GID_IHNM_CD_DE, "2b9aea838f74b4eecfb29a8f205a2bd4", "voices6.res", false },
+	{ GID_IHNM_CD_DE, "8b09a196a52627cacb4eab13bfe0b2c3", "voicess.res", false },
 
 	{ GID_IHNM_DEMO, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res", false },
 	{ GID_IHNM_DEMO, "9626bda8978094ff9b29198bc1ed5f9a", "scripts.res", false },
@@ -454,6 +491,24 @@ static GAMEDESC GameDescs[] = {
 		0
 	},
 
+	// Inherit the earth - DOS CD German version
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_CD_DE,
+		"Inherit the Earth (De DOS CD Version)",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFiles),
+		ITECD_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		GF_LANG_DE
+	},
+
 	// Inherit the earth - CD version
 	{
 		"ite",
@@ -538,6 +593,24 @@ static GAMEDESC GameDescs[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFiles),
 		IHNMCD_GameFiles,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		&IHNM_GameSound,
+		GF_DEFAULT_TO_1X_SCALER
+	},
+
+	// I Have No Mouth And I Must Scream - De CD version
+	{
+		"ihnm",
+		GType_IHNM,
+		GID_IHNM_CD_DE,
+		"I Have No Mouth and I Must Scream (DE DOS)",
+		640, 480,
+		7,
+		152,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCDDE_GameFiles),
+		IHNMCDDE_GameFiles,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
