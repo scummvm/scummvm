@@ -349,7 +349,7 @@ void ScummEngine::updateScriptPtr() {
 void ScummEngine::nukeArrays(int script) {
 	int i;
 
-	if (!_heversion || !script)
+	if (!(_features & GF_HUMONGOUS) || !script)
 		return;
 
 	for (i = 1; i < _numArray; i++) {
