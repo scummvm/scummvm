@@ -42,7 +42,7 @@ AboutDialog::AboutDialog(NewGui *gui)
 	new StaticTextWidget(this, 10, 45, _w - 20, kLineHeight, "http://www.scummvm.org", kTextAlignCenter);
 
 	new StaticTextWidget(this, 10, 65, _w - 20, kLineHeight, "SCUMM Games (C) LucasArts", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 75, _w - 20, kLineHeight, "Simon the Sorcerer (C) Adventuresoft", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 75, _w - 20, kLineHeight, "Simon the Sorcerer (C) Adventure Soft", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 85, _w - 20, kLineHeight, "Beneath a Steel Sky (C) Revolution", kTextAlignCenter);
 }
 
