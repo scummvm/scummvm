@@ -453,6 +453,9 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 			error("No image for verb %d", verb);
 	}
 	assert(imptr);
+	if (_features & GF_AFTER_V1) {
+		gdi._C64ObjectMode = true;
+	}
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
 		if (tmp < gdi._numStrips)

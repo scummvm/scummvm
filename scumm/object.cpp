@@ -444,6 +444,10 @@ void Scumm::drawObject(int obj, int arg) {
 		byte flags = Gdi::dbAllowMaskOr;
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.
+		if (_features & GF_AFTER_V1) {
+			gdi._C64ObjectMode = true;
+			gdi.decodeC64Gfx(ptr, gdi._C64ObjectMap, width * (height >> 3));
+		}
 		if ((_features & GF_AFTER_V7 || _gameId == GID_SAMNMAX) && getClass(od->obj_nr, kObjectClassIgnoreBoxes))
 			flags |= Gdi::dbDrawMaskOnAll;
 		gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width << 3, height, x - xpos, numstrip, flags);

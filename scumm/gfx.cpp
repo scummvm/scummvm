@@ -776,6 +776,9 @@ void Scumm::redrawBGStrip(int start, int num) {
 	for (int i = 0; i < num; i++)
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
+	if (_features & GF_AFTER_V1) {
+		gdi._C64ObjectMode = false;
+	}
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
 	               &virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0, _roomStrips);
 }
@@ -1123,7 +1126,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			bgbak_ptr = backbuff_ptr;
 
 		if (_vm->_features & GF_AFTER_V1) {
-			drawStripC64Background(bgbak_ptr, stripnr, height);
+			if (_C64ObjectMode)
+				drawStripC64Object(bgbak_ptr, stripnr, width, height);
+			else
+				drawStripC64Background(bgbak_ptr, stripnr, height);
 		} else if (!(_vm->_features & GF_AFTER_V2)) {
 			if (_vm->_features & GF_16COLOR) {
 				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
@@ -1343,6 +1349,22 @@ void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 	}
 }
 
+void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
+	int y, i, j;
+	height >>= 3;
+	width >>= 3;
+	for (y = 0; y < height; y++) {
+		_C64Colors[3] = (_C64ObjectMap[y * width + stripnr] & 7);
+		for (i = 0; i < 8; i++) {
+			for (j = 7; j >= 0; j--) {
+				byte c = _C64CharMap[_C64ObjectMap[y * width + stripnr] * 8 + i] >> (j & 6);
+				dst[7 - j] = _C64Colors[c & 3];
+			}
+			dst += _vm->_screenWidth;
+		}
+	}
+}
+
 void Gdi::drawStripC64Mask(byte *dst, int stripnr, int height) {
 	int y, i, j;
 	height >>= 3;
@@ -1357,7 +1379,7 @@ void Gdi::drawStripC64Mask(byte *dst, int stripnr, int height) {
 	}
 }
 
-void Gdi::decodeC64Gfx(byte *src, byte *dst, int size) {
+void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) {
 	int x, z;
 	byte color, run, common[4];
 
