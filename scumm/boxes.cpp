@@ -600,6 +600,7 @@ int Scumm::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY) {
 
 byte *Scumm::getBoxMatrixBaseAddr() {
 	byte *ptr = getResourceAddress(rtMatrix, 1);
+	assert(ptr);
 	if (*ptr == 0xFF)
 		ptr++;
 	return ptr;
@@ -612,9 +613,8 @@ byte *Scumm::getBoxMatrixBaseAddr() {
  * If there is no connection -1 is return.
  */
 int Scumm::getPathToDestBox(byte from, byte to) {
-	byte *boxm;
+	const byte *boxm;
 	byte i;
-	int dest = -1;
 	const int numOfBoxes = getNumBoxes();
 	
 	if (from == to)
@@ -636,24 +636,46 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 		// The first numOfBoxes bytes contain indices to the start of the corresponding
 		// row (although that seems unnecessary to me - the value is easily computable.
 		boxm += numOfBoxes + boxm[from];
-		return boxm[to];
+		return (int8)boxm[to];
 	}
 
+	// WORKAROUND #1: It seems that in some cases, the box matrix is corrupt
+	// (more precisely, is too short) in the datafiles already. In
+	// particular this seems to be the case in room 46 of Indy3 EGA (see
+	// also bug #770690). This didn't cause problems in the original
+	// engine, because there, the memory layout is different. After the
+	// walkbox would follow the rest of the room file, thus the program
+	// always behaved the same (and by chance, correct). Not so for us,
+	// since random data may follow after the resource in ScummVM.
+	//
+	// As a workaround, we add a check for the end of the box matrix
+	// resource, and abort the search once we reach the end.
+	const byte *end = boxm + getResourceSize(rtMatrix, 1);
+
+	// WORKAROUND #2: In addition to the above, we have to add this special
+	// case to fix the scene in Indy3 where Indy meets Hitler in Berlin.
+	// It's one of the places (or maybe even the only one?). See bug #770690
+	if (_gameId == GID_INDY3 && _roomResource == 46 && from == 1 && to == 0)
+		return 0;
+
 	// Skip up to the matrix data for box 'from'
-	for (i = 0; i < from; i++) {
+	for (i = 0; i < from && boxm < end; i++) {
 		while (*boxm != 0xFF)
 			boxm += 3;
 		boxm++;
 	}
 
 	// Now search for the entry for box 'to'
-	while (boxm[0] != 0xFF) {
+	while (boxm < end && boxm[0] != 0xFF) {
 		if (boxm[0] <= to && to <= boxm[1])
-			dest = boxm[2];
+			return (int8)boxm[2];
 		boxm += 3;
 	}
+	
+	if (boxm >= end)
+		warning("The box matrix apparently is truncated (room %d)", _roomResource);
 
-	return dest;
+	return -1;
 }
 
 /*

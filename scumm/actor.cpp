@@ -1409,14 +1409,12 @@ void Actor::walkActorOld() {
 			break;
 
 		next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
-
 		if (next_box < 0) {
 			moving |= MF_LAST_LEG;
 			return;
 		}
 
-		// FIXME: not sure if this is needed in non-Zak games, but I think it shouldn't
-		// hurt there either.
+		// Can't walk through locked boxes
 		int flags = _vm->getBoxFlags(next_box);
 		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
 			moving |= MF_LAST_LEG;
