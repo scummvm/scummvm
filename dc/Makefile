@@ -1,6 +1,6 @@
 # $Header$
 
-ronindir = /home/marcus/hack/dreamcast/libronin
+ronindir = /usr/local/ronin
 
 VPATH = ..
 
