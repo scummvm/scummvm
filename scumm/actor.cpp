@@ -90,7 +90,8 @@ void Actor::initActor(int mode) {
 	memset(sound, 0, sizeof(sound));
 	targetFacing = facing;
 
-	_vm->stopScript(walkScript);
+	if (walkScript)
+		_vm->stopScript(walkScript);
 	moving = 0;
 
 	shadow_mode = 0;
@@ -701,9 +702,8 @@ void Actor::adjustActorPos() {
 	moving = 0;
 	cost.soundCounter = 0;
 
-	if (_vm->_features & GF_NEW_COSTUMES) {
+	if (walkScript)
 		_vm->stopScript(walkScript);
-	}
 
 	if (walkbox != kInvalidBox) {
 		byte flags = _vm->getBoxFlags(walkbox);
