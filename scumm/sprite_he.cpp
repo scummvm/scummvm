@@ -371,6 +371,7 @@ void ScummEngine_v90he::spriteInfoSet_groupNum(int spriteId, int value) {
 	checkRange(_varNumSpriteGroups, 0, value, "Invalid sprite group %d");
 
 	_spriteTable[spriteId].group_num = value;
+	_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_dx_dy(int spriteId, int value1, int value2) {
