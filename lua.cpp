@@ -460,8 +460,7 @@ static void IsActorInSector(void) {
   const char *name = luaL_check_string(2);
   int i, numSectors = Engine::instance()->currScene()->getSectorCount();
 
-  warning("IsActorInSector(%s, %s): STUB", act->name(), name);
-  printf("Looping over %d sectors\n", numSectors);
+  warning("IsActorInSector(%s, %s): SEMI-STUB", act->name(), name);
   for (i=0; i<numSectors; i++) {
    const char *sector_name = Engine::instance()->currScene()->getSectorName(i);
    if (sector_name && strstr(sector_name, name)) {
