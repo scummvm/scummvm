@@ -163,7 +163,7 @@ const char *Win32ResExtractor::res_type_string_to_id(const char *type) {
 		return NULL;
 
 	for (c = 0 ; c < (int)RES_TYPE_COUNT ; c++) {
-		if (res_types[c] != NULL && !strcasecmp(type, res_types[c]))
+		if (res_types[c] != NULL && !scumm_stricmp(type, res_types[c]))
 			return res_type_ids[c];
 	}
 
