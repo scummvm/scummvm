@@ -47,6 +47,7 @@ private:
 
 public:
 	MidiDriver *device();
+	byte getNumber() { return _channel; }
 	void release() { _allocated = false; }
 
 	// Regular messages

@@ -100,6 +100,7 @@ public:
 class MidiChannel {
 public:
 	virtual MidiDriver *device() = 0;
+	virtual byte getNumber() = 0;
 	virtual void release() = 0;
 
 	// Regular messages
