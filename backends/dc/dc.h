@@ -98,6 +98,7 @@ class OSystem_Dreamcast : public OSystem {
   void *_sound_proc_param;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
+  float _overlay_fade;
 
   unsigned char *screen;
   unsigned short *mouse;
