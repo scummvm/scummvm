@@ -34,6 +34,7 @@ QueenLogic::~QueenLogic() {
 }
 
 void QueenLogic::initialise() {
+	uint16 i;
 	uint8 *ptr = _jas;
 
 	//_display->loadFont();
@@ -55,7 +56,7 @@ void QueenLogic::initialise() {
 	for (uint16 j = 0; j < 8; j++)
 		_objectData[0][j] = 0;
 	
-	for (uint16 i = 1; i < (_numObjects + 1); i++)
+	for (i = 1; i < (_numObjects + 1); i++)
 		for (uint16 j = 0; j < 8; j++) {
 			_objectData[i][j] = READ_BE_UINT16(ptr);
 			ptr += 2;
@@ -63,7 +64,7 @@ void QueenLogic::initialise() {
 	
 	//Room data
 	_roomData = new uint16[_numRooms + 2];
-	for (uint16 i = 1; i < (_numRooms + 2); i++) {
+	for (i = 1; i < (_numRooms + 2); i++) {
 		_roomData[i] = READ_BE_UINT16(ptr);
 		ptr += 2;
 	}
@@ -72,7 +73,7 @@ void QueenLogic::initialise() {
 
 	//SFX Name
 	_sfxName = new uint16[_numRooms + 1];
-	for (uint16 i = 0; i < (_numRooms + 1); i++) {
+	for (i = 0; i < (_numRooms + 1); i++) {
 		_sfxName[i] = READ_BE_UINT16(ptr);
 		ptr += 2;
 	}	
@@ -83,7 +84,7 @@ void QueenLogic::initialise() {
 
 	_itemData = new uint16[_numItems + 1][5];
 	
-	for (uint16 i = 1; i < (_numItems + 1); i++) {
+	for (i = 1; i < (_numItems + 1); i++) {
 		_itemData[i][0] = READ_BE_UINT16(ptr);
 		ptr += 2;
 		for (uint16 j = 1; j < 5; j++) {
@@ -99,7 +100,7 @@ void QueenLogic::initialise() {
 
 	_graphicData = new uint16[_numGraphics + 1][5];
 
-	for (uint16 i = 1; i < _numGraphics; i++)
+	for (i = 1; i < _numGraphics; i++)
 		for (uint16 j = 0; j < 5; j++) {
 			_graphicData[i][j] = READ_BE_UINT16(ptr);
 			ptr += 2;
