@@ -1285,7 +1285,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.unk_174 = spi->field_14;
 		}
 		if (spi->res_id && spi->group_num && _spriteGroups[spi->group_num].field_20) {
-			wiz.processFlags |= 0x1000;
+			wiz.processFlags |= 0x10000;
 			wiz.unk_380 = _spriteGroups[spi->group_num].field_20;
 		}
 		displayWizComplexImage(&wiz);
