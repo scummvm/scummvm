@@ -1363,11 +1363,11 @@ void ScummEngine::initScummVars() {
 			} else
 				VAR(VAR_SOUNDCARD) = 3;
 		}
-		// Amiga and FM Towns versions of MI2 use unique values
-		if (_gameId == GID_MONKEY2 && (_features & GF_AMIGA))
-			VAR(VAR_VIDEOMODE) = 82;
-		else if (_gameId == GID_MONKEY2 && (_features & GF_FMTOWNS))
+		// Amiga version of MI2 and FM Towns versions use unique values
+		if (_features & GF_FMTOWNS)
 			VAR(VAR_VIDEOMODE) = 42;
+		else if (_gameId == GID_MONKEY2 && (_features & GF_AMIGA))
+			VAR(VAR_VIDEOMODE) = 82;
 		else
 			VAR(VAR_VIDEOMODE) = 19;
 		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {
