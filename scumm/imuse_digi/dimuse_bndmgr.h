@@ -30,7 +30,6 @@ class BundleDirCache {
 public:
 	struct AudioTable {
 		char filename[13];
-		int32 size;
 		int32 offset;
 	};
 private:
@@ -63,15 +62,16 @@ private:
 	BundleDirCache *_cache;
 	BundleDirCache::AudioTable *_bundleTable;
 	CompTable *_compTable;
-	int32 _numFiles;
-	int32 _numCompItems;
-	int32 _curSample;
+	int _numFiles;
+	int _numCompItems;
+	int _curSample;
 	File _file;
 	bool _compTableLoaded;
 	int _fileBundleId;
-	byte _blockChache[0x2000];
-	int32 _lastCacheOutputSize;
-	int32 _lastBlock;
+	byte _compOutput[0x2000];
+	byte *_compInput;
+	int _outputSize;
+	int _lastBlock;
 
 public:
 

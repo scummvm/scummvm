@@ -104,7 +104,7 @@ int BundleDirCache::matchFile(const char *filename, const char *directory) {
 			name[z] = '\0';
 			strcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name);
 			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
-			_budleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
+			file.seek(4, SEEK_CUR);
 		}
 		return freeSlot;
 	} else {
@@ -140,7 +140,7 @@ bool BundleMgr::openFile(const char *filename, const char *directory) {
 	_bundleTable = _cache->getTable(filename, directory);
 	assert(_bundleTable);
 	_compTableLoaded = false;
-	_lastCacheOutputSize = 0;
+	_outputSize = 0;
 	_lastBlock = -1;
 
 	return true;
@@ -154,10 +154,14 @@ void BundleMgr::closeFile() {
 		_numCompItems = 0;
 		_compTableLoaded = false;
 		_lastBlock = -1;
-		_lastCacheOutputSize = 0;
+		_outputSize = 0;
 		_curSample = -1;
 		free(_compTable);
 		_compTable = NULL;
+		if (_compInput) {
+			free(_compInput);
+			_compInput = NULL;
+		}
 	}
 }
 
@@ -167,7 +171,6 @@ int32 BundleMgr::decompressSampleByCurIndex(int32 offset, int32 size, byte **com
 
 int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside) {
 	int32 i, tag, num, final_size, output_size;
-	byte *comp_input, *comp_output;
 	int skip, first_block, last_block;
 	
 	if (index != -1)
@@ -182,8 +185,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		_file.seek(_bundleTable[index].offset, SEEK_SET);
 		tag = _file.readUint32BE();
 		_numCompItems = num = _file.readUint32BE();
-		_file.readUint32BE();
-		_file.readUint32BE();
+		_file.seek(8, SEEK_CUR);
 
 		if (tag != MKID_BE('COMP')) {
 			warning("BundleMgr::decompressSampleByIndex() Compressed sound %d invalid (%s)", index, tag2str(tag));
@@ -191,23 +193,27 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		}
 
 		_compTable = (CompTable *)malloc(sizeof(CompTable) * num);
+		int32 maxSize = 0;
 		for (i = 0; i < num; i++) {
 			_compTable[i].offset = _file.readUint32BE();
 			_compTable[i].size = _file.readUint32BE();
 			_compTable[i].codec = _file.readUint32BE();
-			_file.readUint32BE();
+			_file.seek(4, SEEK_CUR);
+			if (_compTable[i].size > maxSize)
+				maxSize = _compTable[i].size;
 		}
+		// CMI hack: one more byte at the end of input buffer
+		_compInput = (byte *)malloc(maxSize + 1);
 		_compTableLoaded = true;
 	}
 
 	first_block = (offset + header_size) / 0x2000;
 	last_block = (offset + size + header_size - 1) / 0x2000;
 
-	// workaround for bug when (offset + size + header_size - 1) is more one byte after sound resource
+	// case when (offset + size + header_size - 1) is more one byte after sound resource
 	if ((last_block >= _numCompItems) && (_numCompItems > 0))
 		last_block = _numCompItems - 1;
 
-	comp_output = (byte *)malloc(0x2000);
 	int32 blocks_final_size = 0x2000 * (1 + last_block - first_block);
 	*comp_final = (byte *)malloc(blocks_final_size);
 	final_size = 0;
@@ -215,25 +221,16 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 	skip = offset - (first_block * 0x2000) + header_size;
 
 	for (i = first_block; i <= last_block; i++) {
-		byte *curBuf;
 		if (_lastBlock != i) {
 			// CMI hack: one more zero byte at the end of input buffer
-			comp_input = (byte *)malloc(_compTable[i].size + 1);
-			comp_input[_compTable[i].size] = 0;
+			_compInput[_compTable[i].size] = 0;
 			_file.seek(_bundleTable[index].offset + _compTable[i].offset, SEEK_SET);
-			_file.read(comp_input, _compTable[i].size);
-
-			output_size = BundleCodecs::decompressCodec(_compTable[i].codec, comp_input, comp_output, _compTable[i].size);
-			assert(output_size <= 0x2000);
+			_file.read(_compInput, _compTable[i].size);
+			_outputSize = BundleCodecs::decompressCodec(_compTable[i].codec, _compInput, _compOutput, _compTable[i].size);
 			_lastBlock = i;
-			_lastCacheOutputSize = output_size;
-			memcpy(_blockChache, comp_output, output_size);
-			curBuf = comp_output;
-			free(comp_input);
-		} else {
-			output_size = _lastCacheOutputSize;
-			curBuf = _blockChache;
 		}
+
+		output_size = _outputSize;
 
 		if (header_outside) {
 			output_size -= skip;
@@ -247,16 +244,16 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 
 		assert(final_size + output_size <= blocks_final_size);
 
-		memcpy(*comp_final + final_size, curBuf + skip, output_size);
-
+		memcpy(*comp_final + final_size, _compOutput + skip, output_size);
 		final_size += output_size;
+
 		size -= output_size;
 		assert(size >= 0);
 		if (size == 0)
 			break;
+
 		skip = 0;
 	}
-	free(comp_output);
 
 	return final_size;
 }

@@ -194,7 +194,7 @@ static int32 compDecode(byte *src, byte *dst) {
 	int data, size, bit, bitsleft = 16, mask = READ_LE_UINT16(srcptr);
 	srcptr += 2;
 
-	while (1) {
+	for (;;) {
 		NextBit;
 		if (bit) {
 			*dstptr++ = *srcptr++;
@@ -269,22 +269,23 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		memset(t_table, 0, output_size);
 
 		src = comp_output;
-		length = (output_size * 8) / 12;
+		length = (output_size << 3) / 12;
 		k = 0;
 		if (length > 0) {
 			c = -12;
 			s = 0;
 			j = 0;
 			do {
-				ptr = src + length + k / 2;
+				ptr = src + length + (k >> 1);
+				t_tmp2 = src[j];
 				if (k & 1) {
-					r = c / 8;
-					t_table[r + 2] = ((src[j] & 0x0f) << 4) | (ptr[1] >> 4);
-					t_table[r + 1] = (src[j] & 0xf0) | (t_table[r + 1]);
+					r = c >> 3;
+					t_table[r + 2] = ((t_tmp2 & 0x0f) << 4) | (ptr[1] >> 4);
+					t_table[r + 1] = (t_tmp2 & 0xf0) | (t_table[r + 1]);
 				} else {
-					r = s / 8;
-					t_table[r + 0] = ((src[j] & 0x0f) << 4) | (ptr[0] & 0x0f);
-					t_table[r + 1] = src[j] >> 4;
+					r = s >> 3;
+					t_table[r + 0] = ((t_tmp2 & 0x0f) << 4) | (ptr[0] & 0x0f);
+					t_table[r + 1] = t_tmp2 >> 4;
 				}
 				s += 12;
 				c += 12;
@@ -292,7 +293,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				j++;
 			} while (k < length);
 		}
-		offset1 = ((length - 1) * 3) / 2;
+		offset1 = ((length - 1) * 3) >> 1;
 		t_table[offset1 + 1] = (t_table[offset1 + 1]) | (src[length - 1] & 0xf0);
 		memcpy(src, t_table, output_size);
 		free(t_table);
@@ -310,24 +311,25 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		memset(t_table, 0, output_size);
 
 		src = comp_output;
-		length = (output_size * 8) / 12;
+		length = (output_size << 3) / 12;
 		k = 1;
 		c = 0;
 		s = 12;
-		t_table[0] = src[length] / 16;
+		t_table[0] = src[length] >> 4;
 		t = length + k;
 		j = 1;
 		if (t > k) {
 			do {
-				ptr = src + length + k / 2;
+				t_tmp1 = *(src + length + (k >> 1));
+				t_tmp2 = src[j - 1];
 				if (k & 1) {
-					r = c / 8;
-					t_table[r + 0] = (src[j - 1] & 0xf0) | t_table[r];
-					t_table[r + 1] = ((src[j - 1] & 0x0f) << 4) | (ptr[0] & 0x0f);
+					r = c >> 3;
+					t_table[r + 0] = (t_tmp2 & 0xf0) | t_table[r];
+					t_table[r + 1] = ((t_tmp2 & 0x0f) << 4) | (t_tmp1 & 0x0f);
 				} else {
-					r = s / 8;
-					t_table[r + 0] = src[j - 1] >> 4;
-					t_table[r - 1] = ((src[j - 1] & 0x0f) << 4) | (ptr[0] >> 4);
+					r = s >> 3;
+					t_table[r + 0] = t_tmp2 >> 4;
+					t_table[r - 1] = ((t_tmp2 & 0x0f) << 4) | (t_tmp1 >> 4);
 				}
 				s += 12;
 				c += 12;
@@ -351,7 +353,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		memset(t_table, 0, output_size);
 
 		src = comp_output;
-		length = (output_size * 8) / 12;
+		length = (output_size << 3) / 12;
 		k = 0;
 		c = 0;
 		j = 0;
@@ -361,15 +363,16 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		t = length - 1;
 		if (t > 0) {
 			do {
-				ptr = src + length + k / 2;
+				t_tmp1 = *(src + length + (k >> 1));
+				t_tmp2 = src[j];
 				if (k & 1) {
-					r = s / 8;
-					t_table[r + 2] = (src[j] & 0xf0) | *(t_table + r + 2);
-					t_table[r + 3] = ((src[j] & 0x0f) << 4) | (ptr[0] >> 4);
+					r = s >> 3;
+					t_table[r + 2] = (t_tmp2 & 0xf0) | t_table[r + 2];
+					t_table[r + 3] = ((t_tmp2 & 0x0f) << 4) | (t_tmp1 >> 4);
 				} else {
-					r = c / 8;
-					t_table[r + 2] = src[j] >> 4;
-					t_table[r + 1] = ((src[j] & 0x0f) << 4) | (ptr[0] & 0x0f);
+					r = c >> 3;
+					t_table[r + 2] = t_tmp2 >> 4;
+					t_table[r + 1] = ((t_tmp2 & 0x0f) << 4) | (t_tmp1 & 0x0f);
 				}
 				s += 12;
 				c += 12;
@@ -393,36 +396,33 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		memcpy(t_table, p, output_size);
 
 		offset1 = output_size / 3;
-		offset2 = offset1 * 2;
+		offset2 = offset1 << 1;
 		offset3 = offset2;
 		src = comp_output;
-		do {
-			if (offset1 == 0)
-				break;
-			offset1--;
+
+		while (offset1--) {
 			offset2 -= 2;
 			offset3--;
 			t_table[offset2 + 0] = src[offset1];
 			t_table[offset2 + 1] = src[offset3];
-		} while (1);
+		}
 
 		src = comp_output;
-		length = (output_size * 8) / 12;
+		length = (output_size << 3) / 12;
 		k = 0;
 		if (length > 0) {
 			c = -12;
 			s = 0;
 			do {
-				j = length + k / 2;
+				j = length + (k >> 1);
+				t_tmp1 = t_table[k];
 				if (k & 1) {
-					r = c / 8;
-					t_tmp1 = t_table[k];
+					r = c >> 3;
 					t_tmp2 = t_table[j + 1];
 					src[r + 2] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 >> 4);
 					src[r + 1] = (src[r + 1]) | (t_tmp1 & 0xf0);
 				} else {
-					r = s / 8;
-					t_tmp1 = t_table[k];
+					r = s >> 3;
 					t_tmp2 = t_table[j];
 					src[r + 0] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
 					src[r + 1] = t_tmp1 >> 4;
@@ -432,7 +432,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				k++;
 			} while (k < length);
 		}
-		offset1 = ((length - 1) * 3) / 2;
+		offset1 = ((length - 1) * 3) >> 1;
 		src[offset1 + 1] = (t_table[length] & 0xf0) | src[offset1 + 1];
 		free(t_table);
 		break;
@@ -449,40 +449,36 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		memcpy(t_table, p, output_size);
 
 		offset1 = output_size / 3;
-		offset2 = offset1 * 2;
+		offset2 = offset1 << 1;
 		offset3 = offset2;
 		src = comp_output;
-		do {
-			if (offset1 == 0)
-				break;
-			offset1--;
+
+		while (offset1--) {
 			offset2 -= 2;
 			offset3--;
 			t_table[offset2 + 0] = src[offset1];
 			t_table[offset2 + 1] = src[offset3];
-		} while (1);
+		}
 
 		src = comp_output;
-		length = (output_size * 8) / 12;
+		length = (output_size << 3) / 12;
 		k = 1;
 		c = 0;
 		s = 12;
-		t_tmp1 = t_table[length] / 16;
+		t_tmp1 = t_table[length] >> 4;
 		src[0] = t_tmp1;
 		t = length + k;
 		if (t > k) {
 			do {
-				j = length + k / 2;
+				j = length + (k >> 1);
+				t_tmp1 = t_table[k - 1];
+				t_tmp2 = t_table[j];
 				if (k & 1) {
-					r = c / 8;
-					t_tmp1 = t_table[k - 1];
-					t_tmp2 = t_table[j];
+					r = c >> 3;
 					src[r + 0] = (src[r]) | (t_tmp1 & 0xf0);
 					src[r + 1] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
 				} else {
-					r = s / 8;
-					t_tmp1 = t_table[k - 1];
-					t_tmp2 = t_table[j];
+					r = s >> 3;
 					src[r + 0] = t_tmp1 >> 4;
 					src[r - 1] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 >> 4);
 				}
@@ -506,21 +502,19 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		memcpy(t_table, p, output_size);
 
 		offset1 = output_size / 3;
-		offset2 = offset1 * 2;
+		offset2 = offset1 << 1;
 		offset3 = offset2;
 		src = comp_output;
-		do {
-			if (offset1 == 0)
-				break;
-			offset1--;
+
+		while (offset1--) {
 			offset2 -= 2;
 			offset3--;
 			t_table[offset2 + 0] = src[offset1];
 			t_table[offset2 + 1] = src[offset3];
-		} while (1);
+		}
 
 		src = comp_output;
-		length = (output_size * 8) / 12;
+		length = (output_size << 3) / 12;
 		k = 0;
 		c = 0;
 		s = -12;
@@ -529,17 +523,15 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		t = length - 1;
 		if (t > 0) {
 			do {
-				j = length + k / 2;
+				j = length + (k >> 1);
+				t_tmp1 = t_table[k];
+				t_tmp2 = t_table[j];
 				if (k & 1) {
-					r = s / 8;
-					t_tmp1 = t_table[k];
-					t_tmp2 = t_table[j];
+					r = s >> 3;
 					src[r + 2] = (src[r + 2]) | (t_tmp1 & 0xf0);
 					src[r + 3] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 >> 4);
 				} else {
-					r = c / 8;
-					t_tmp1 = t_table[k];
-					t_tmp2 = t_table[j];
+					r = c >> 3;
 					src[r + 2] = t_tmp1 >> 4;
 					src[r + 1] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
 				}
@@ -592,8 +584,8 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 					left = 0x2000 - firstWord;
 					output_size = left;
 				} else {
-					left = 0x1000 - firstWord / 2;
-					output_size = left * 2;
+					left = 0x1000 - (firstWord >> 1);
+					output_size = left << 1;
 				}
 				output_size += firstWord;
 			} else {
@@ -621,38 +613,19 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				}
 
 				left = origLeft;
-				destPos = l * 2;
+				destPos = l << 1;
 
 				if (channels == 2) {
 					if (l == 0)
 						left++;
-					left /= 2;
+					left >>= 1;
 				}
 
 				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
 					decompTable = (byte)(curTableEntry - 2);
 					bitMask = 2 << decompTable;
-					readPos = src + tableEntrySum / 8;
-					
-					// FIXME - it seems the decoder often reads exactly one byte too
-					// far - that is, it reads 2 bytes at once, and the second byte
-					// is just outside the buffer. However, it seems of these two bytes,
-					// only the upper one is actually used, so this should be fine.
-					// Still, I put this error message into place. If somebody one day
-					// encounters a situation where the second byte would be used, too,
-					// then this would indicate there is a bug in the decoder...
-					if (readPos + 1 >= comp_input + input_size) {
-						// OK an overflow... if it is more than one byte or if we
-						// need more than 8 bit of data -> error
-						if (readPos + 1 > comp_input + input_size ||
-						    curTableEntry + (tableEntrySum & 7) > 8) {
-							error("decompressCodec: input buffer overflow: %d bytes over (we need %d bits of data)",
-									(int)((readPos + 1) - (comp_input + input_size)) + 1,
-									curTableEntry + (tableEntrySum & 7)
-								);
-						}
-					}
+					readPos = src + (tableEntrySum >> 3);
 					readWord = (uint16)(READ_BE_UINT16(readPos) << (tableEntrySum & 7));
 					otherTablePos = (byte)(readWord >> (16 - curTableEntry));
 					tableEntrySum += curTableEntry;
@@ -682,7 +655,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 						curTablePos = 0;
 					imcTableEntry = imcTable[curTablePos];
 
-					destPos += channels * 2;
+					destPos += channels << 1;
 				}
 			}
 		}

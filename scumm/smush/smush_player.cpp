@@ -48,6 +48,10 @@
 #include <png.h>
 #endif
 
+#ifdef USE_ZLIB
+#include <zlib.h>
+#endif
+
 namespace Scumm {
 
 const int MAX_STRINGS = 200;
@@ -241,26 +245,23 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 }
 
 SmushPlayer::~SmushPlayer() {
-	deinit();
+	release();
 }
 
 void SmushPlayer::init() {
-
 	_frame = 0;
-
+	_alreadyInit = false;
 	_vm->_videoFinished = false;
-
-	_smixer = new SmushMixer(_vm->_mixer);
-
 	_vm->setDirtyColors(0, 255);
 	_dst = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
+	_smixer = new SmushMixer(_vm->_mixer);
 	g_timer->installTimerProc(&timerCallback, _speed, this);
-
-	_alreadyInit = false;
 }
 
-void SmushPlayer::deinit() {
+void SmushPlayer::release() {
 	_vm->_timer->removeTimerProc(&timerCallback);
+
+	_vm->_videoFinished = true;
 
 	for (int i = 0; i < 5; i++) {
 		if (_sf[i]) {
@@ -284,12 +285,11 @@ void SmushPlayer::deinit() {
 		delete _base;
 		_base = NULL;
 	}
-	
 	if (_specialBuffer) {
 		free(_specialBuffer);
 		_specialBuffer = NULL;
 	}
-
+	
 	_vm->_mixer->stopHandle(_IACTchannel);
 
 	_vm->_fullRedraw = true;
@@ -518,11 +518,12 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		str++; // For Full Throttle text resources
 	}
 
+	byte transBuf[512];
 	if (_vm->_gameId == GID_CMI) {
-		_vm->translateText((const byte *)str - 1, _vm->_transText);
+		_vm->translateText((const byte *)str - 1, transBuf);
 		while (*str++ != '/')
 			;
-		string2 = (char *)_vm->_transText;
+		string2 = (char *)transBuf;
 
 		// If string2 contains formatting information there probably
 		// wasn't any translation for it in the language.tab file. In
@@ -565,10 +566,10 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	// bit 3 - wrap around  8
 	switch (flags & 9) {
 	case 0: 
-		sf->drawStringAbsolute(str, _dst, _width, pos_x, pos_y);
+		sf->drawString(str, _dst, _width, _height, pos_x, pos_y, false);
 		break;
 	case 1:
-		sf->drawStringCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top));
+		sf->drawString(str, _dst, _width, _height, pos_x, MAX(pos_y, top), true);
 		break;
 	case 8:
 		// FIXME: Is 'right' the maximum line width here, just
@@ -576,7 +577,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		// in The Dig's intro, where 'left' and 'right' are
 		// always 0 and 321 respectively, and apparently we
 		// handle that correctly.
-		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right);
+		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right, false);
 		break;
 	case 9:
 		// In this case, the 'right' parameter is actually the
@@ -585,7 +586,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		//
 		// Note that in The Dig's "Spacetime Six" movie it's
 		// 621. I have no idea what that means.
-		sf->drawStringWrapCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width));
+		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width), true);
 		break;
 	default:
 		warning("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
@@ -673,6 +674,83 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 
 void smush_decode_codec1(byte *dst, byte *src, int left, int top, int height, int width, int dstWidth);
 
+#ifdef USE_ZLIB
+void SmushPlayer::handleZlibFrameObject(Chunk &b) {
+	if (_skipNext) {
+		_skipNext = false;
+		return;
+	}
+
+	int32 chunkSize = b.getSize();
+	byte *chunkBuffer = (byte *)malloc(chunkSize);
+	assert(chunkBuffer);
+	b.read(chunkBuffer, chunkSize);
+
+	unsigned long decompressedSize = READ_BE_UINT32(chunkBuffer);
+	byte *fobjBuffer = (byte *)malloc(decompressedSize);
+	int result = uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4);
+	if (result != Z_OK)
+		error("SmushPlayer::handleZlibFrameObject() Zlib uncompress error");
+	free(chunkBuffer);
+
+	byte *ptr = fobjBuffer;
+	int codec = READ_LE_UINT16(ptr); ptr += 2;
+	int left = READ_LE_UINT16(ptr); ptr += 2;
+	int top = READ_LE_UINT16(ptr); ptr += 2;
+	int width = READ_LE_UINT16(ptr); ptr += 2;
+	int height = READ_LE_UINT16(ptr); ptr += 2;
+
+	if ((height == 242) && (width == 384)) {
+		_dst = _specialBuffer = (byte *)malloc(242 * 384);
+	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
+		return;
+	// FT Insane uses smaller frames to draw overlays with moving objects
+	// Other .san files do have them as well but their purpose in unknown
+	// and often it causes memory overdraw. So just skip those frames
+	else if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
+		return;
+
+	if (!_alreadyInit) {
+		_codec37.init(width, height);
+		_codec47.init(width, height);
+		_alreadyInit = true;
+	}
+
+	if ((height == 242) && (width == 384)) {
+		_width = width;
+		_height = height;
+	} else {
+		_width = _vm->_screenWidth;
+		_height = _vm->_screenHeight;
+	}
+
+	switch (codec) {
+	case 1:
+	case 3:
+		smush_decode_codec1(_dst, fobjBuffer + 14, left, top, height, width, _vm->_screenWidth);
+		break;
+	case 37:
+		_codec37.decode(_dst, fobjBuffer + 14);
+		break;
+	case 47:
+		_codec47.decode(_dst, fobjBuffer + 14);
+		break;
+	default:
+		error("Invalid codec for frame object : %d", (int)codec);
+	}
+
+	if (_storeFrame) {
+		if (_frameBuffer == NULL) {
+			_frameBuffer = (byte *)malloc(_width * _height);
+		}
+		memcpy(_frameBuffer, _dst, _width * _height);
+		_storeFrame = false;
+	}
+
+	free(fobjBuffer);
+}
+#endif
+
 void SmushPlayer::handleFrameObject(Chunk &b) {
 	checkBlock(b, TYPE_FOBJ, 14);
 	if (_skipNext) {
@@ -681,8 +759,8 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	}
 
 	int codec = b.getWord();
-	int left = b.getWord(); // left
-	int top = b.getWord(); // top
+	int left = b.getWord();
+	int top = b.getWord();
 	int width = b.getWord();
 	int height = b.getWord();
 
@@ -766,6 +844,11 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		case TYPE_FOBJ:
 			handleFrameObject(*sub);
 			break;
+#ifdef USE_ZLIB
+		case TYPE_ZFOB:
+			handleZlibFrameObject(*sub);
+			break;
+#endif
 		case TYPE_PSAD:
 			handleSoundFrame(*sub);
 			break;
@@ -902,6 +985,11 @@ void SmushPlayer::parseNextFrame() {
 		error("Unknown Chunk found at %x: %x, %d", _base->tell(), sub->getType(), sub->getSize());
 	}
 	delete sub;
+
+	if (_insanity)
+		_vm->_sound->processSoundQues();
+
+	_vm->_imuseDigital->flushTracks();
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -1051,7 +1139,7 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 		_middleAudio = true;
 	}
 
-	while (true) {
+	for (;;) {
 		_vm->parseEvents();
 		_vm->processKbd(true);
 		if (_updateNeeded) {
@@ -1061,9 +1149,6 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 			start_time = _vm->_system->get_msecs();
 			_vm->_system->update_screen();
 			_updateNeeded = false;
-
-			if (_insanity)
-				_vm->_sound->processSoundQues();
 
 			end_time = _vm->_system->get_msecs();
 
@@ -1075,8 +1160,8 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 		_vm->_system->delay_msecs(10);
 	};
 
-	deinit();
-	
+	release();
+
 	// Reset mouse state
 	_vm->_system->show_mouse(oldMouseState);
 }

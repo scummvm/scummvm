@@ -2497,8 +2497,10 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 					const int insaneVarNum = ((_features & GF_DEMO) && (_features & GF_PC)) 
 						? 232 : 233;
 
+					_insaneRunning = true;
 					_insane->setSmushParams(speed);
 					_insane->runScene(insaneVarNum);
+					_insaneRunning = false;
 				}
 			}
 			break;

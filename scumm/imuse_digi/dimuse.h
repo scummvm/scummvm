@@ -43,6 +43,8 @@ struct imuseComiTable;
 class IMuseDigital : public MusicEngine {
 private:
 
+	int _callbackFps;
+
 	struct Track {
 		int8 pan;			// pan
 		int32 vol;			// volume
@@ -55,11 +57,11 @@ private:
 		char soundName[15];
 		bool used;
 		bool toBeRemoved;
+		bool readyToRemove;
 		bool started;
 		bool souStream;
 		int32 priority;
 		int32 regionOffset;
-		int32 trackOffset;
 		int32 dataOffset;
 		int32 curRegion;
 		int32 curHookId;
@@ -99,8 +101,8 @@ private:
 
 	static void timer_handler(void *refConf);
 	void callback();
-	void switchToNextRegion(int track);
-	bool allocSlot(int priority);
+	void switchToNextRegion(int trackId);
+	int allocSlot(int priority);
 	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
 	void selectVolumeGroup(int soundId, int volGroupId);
 
@@ -109,7 +111,7 @@ private:
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
-	int cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTrack);
+	int cloneToFadeOutTrack(int trackId, int fadeDelay);
 
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
@@ -125,7 +127,7 @@ private:
 	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
 
 public:
-	IMuseDigital(ScummEngine *scumm);
+	IMuseDigital(ScummEngine *scumm, int fps);
 	virtual ~IMuseDigital();
 
 	void startVoice(int soundId, AudioStream *input);
@@ -156,6 +158,7 @@ public:
 	void pause(bool pause);
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
 	void refreshScripts();
+	void flushTracks();
 	int getSoundStatus(int sound) const;
 	int32 getCurMusicPosInMs();
 	int32 getCurVoiceLipSyncWidth();

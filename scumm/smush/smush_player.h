@@ -91,7 +91,7 @@ private:
 	void updatePalette(void);
 	void parseNextFrame();
 	void init();
-	void deinit();
+	void release();
 	void setupAnim(const char *file, const char *directory);
 	void updateScreen();
 
@@ -100,6 +100,9 @@ private:
 	void handleAnimHeader(Chunk &);
 	void handleFrame(Chunk &);
 	void handleNewPalette(Chunk &);
+#ifdef USE_ZLIB
+	void handleZlibFrameObject(Chunk &b);
+#endif
 	void handleFrameObject(Chunk &);
 	void handleSoundBuffer(int32, int32, int32, int32, int32, int32, Chunk &, int32);
 	void handleSoundFrame(Chunk &);

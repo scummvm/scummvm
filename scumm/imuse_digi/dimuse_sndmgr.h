@@ -34,7 +34,7 @@ class BundleMgr;
 class ImuseDigiSndMgr {
 public:
 
-#define MAX_IMUSE_SOUNDS 10
+#define MAX_IMUSE_SOUNDS 16
 
 #define IMUSE_RESOURCE 1
 #define IMUSE_BUNDLE 2
@@ -83,6 +83,7 @@ public:
 		BundleMgr *bundle;
 		int type;
 		int volGroupId;
+		int disk;
 	};
 
 private:
@@ -90,15 +91,15 @@ private:
 	soundStruct _sounds[MAX_IMUSE_SOUNDS];
 
 	bool checkForProperHandle(soundStruct *soundHandle);
-	int allocSlot();
-	void prepareSound(byte *ptr, int slot);
+	soundStruct *allocSlot();
+	void prepareSound(byte *ptr, soundStruct *sound);
 
 	ScummEngine *_vm;
 	byte _disk;
 	BundleDirCache *_cacheBundleDir;
 
-	bool openMusicBundle(int slot);
-	bool openVoiceBundle(int slot);
+	bool openMusicBundle(soundStruct *sound, int disk);
+	bool openVoiceBundle(soundStruct *sound, int disk);
 
 	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs);
 
@@ -107,7 +108,7 @@ public:
 	ImuseDigiSndMgr(ScummEngine *scumm);
 	~ImuseDigiSndMgr();
 
-	soundStruct *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId);
+	soundStruct *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk);
 	void closeSound(soundStruct *soundHandle);
 	soundStruct *cloneSound(soundStruct *soundHandle);
 

@@ -77,7 +77,7 @@ void SmushMixer::addChannel(SmushChannel *c) {
 	}
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
-		warning("channel %d : %p(%d, %d) %d", i, (void *)_channels[i].chan, 
+		warning("channel %d : %p(%d, %d)", i, (void *)_channels[i].chan, 
 			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1, 
 			_channels[i].chan ? _channels[i].chan->isTerminated() : 1);
 	}
@@ -120,7 +120,7 @@ bool SmushMixer::handleFrame() {
 
 				if (_mixer->isReady()) {
 					if (!_channels[i].handle.isActive())
-						_mixer->newStream(&_channels[i].handle, rate, flags, 400000);
+						_mixer->newStream(&_channels[i].handle, rate, flags, 500000);
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);
 					_mixer->appendStream(_channels[i].handle, data, size);

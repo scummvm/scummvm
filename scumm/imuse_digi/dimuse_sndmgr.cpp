@@ -79,7 +79,7 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 	} while (tag != MKID_BE('DATA'));
 }
 
-void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
+void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 	if (READ_UINT32(ptr) == MKID('Crea')) {
 		bool quit = false;
 		int len;
@@ -87,12 +87,11 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 		int32 offset = READ_LE_UINT16(ptr + 20);
 		int16 code = READ_LE_UINT16(ptr + 24);
 
-		_sounds[slot].region = (_region *)malloc(sizeof(_region) * 70);
-		_sounds[slot].jump = (_jump *)malloc(sizeof(_jump));
-		_sounds[slot].resPtr = ptr;
-		_vm->lock(rtSound, _sounds[slot].soundId);
-		_sounds[slot].bits = 8;
-		_sounds[slot].channels = 1;
+		sound->region = (_region *)malloc(sizeof(_region) * 70);
+		sound->jump = (_jump *)malloc(sizeof(_jump));
+		sound->resPtr = ptr;
+		sound->bits = 8;
+		sound->channels = 1;
 
 		while (!quit) {
 			len = READ_LE_UINT32(ptr + offset);
@@ -117,23 +116,23 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 					int time_constant = ptr[offset];
 					offset += 2;
 					len -= 2;
-					_sounds[slot].freq = getSampleRateFromVOCRate(time_constant);
-					_sounds[slot].region[_sounds[slot].numRegions].offset = offset;
-					_sounds[slot].region[_sounds[slot].numRegions].length = len;
-					_sounds[slot].numRegions++;
+					sound->freq = getSampleRateFromVOCRate(time_constant);
+					sound->region[sound->numRegions].offset = offset;
+					sound->region[sound->numRegions].length = len;
+					sound->numRegions++;
 				}
 				break;
 			case 6:	// begin of loop
-				_sounds[slot].jump[0].dest = offset + 8;
-				_sounds[slot].jump[0].hookId = 0;
-				_sounds[slot].jump[0].fadeDelay = 0;
+				sound->jump[0].dest = offset + 8;
+				sound->jump[0].hookId = 0;
+				sound->jump[0].fadeDelay = 0;
 				break;
 			case 7:	// end of loop
-				_sounds[slot].jump[0].offset = offset - 4;
-				_sounds[slot].numJumps++;
-				_sounds[slot].region[_sounds[slot].numRegions].offset = offset - 4;
-				_sounds[slot].region[_sounds[slot].numRegions].length = 0;
-				_sounds[slot].numRegions++;
+				sound->jump[0].offset = offset - 4;
+				sound->numJumps++;
+				sound->region[sound->numRegions].offset = offset - 4;
+				sound->region[sound->numRegions].length = 0;
+				sound->numRegions++;
 				break;
 			default:
 				error("Invalid code in VOC file : %d", code);
@@ -152,22 +151,22 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 		int curIndexJump = 0;
 		int curIndexSync = 0;
 
-		_sounds[slot].numRegions = 0;
-		_sounds[slot].numJumps = 0;
-		_sounds[slot].numSyncs = 0;
-		countElements(ptr, _sounds[slot].numRegions, _sounds[slot].numJumps, _sounds[slot].numSyncs);
-		_sounds[slot].region = (_region *)malloc(sizeof(_region) * _sounds[slot].numRegions);
-		_sounds[slot].jump = (_jump *)malloc(sizeof(_jump) * _sounds[slot].numJumps);
-		_sounds[slot].sync = (_sync *)malloc(sizeof(_sync) * _sounds[slot].numSyncs);
+		sound->numRegions = 0;
+		sound->numJumps = 0;
+		sound->numSyncs = 0;
+		countElements(ptr, sound->numRegions, sound->numJumps, sound->numSyncs);
+		sound->region = (_region *)malloc(sizeof(_region) * sound->numRegions);
+		sound->jump = (_jump *)malloc(sizeof(_jump) * sound->numJumps);
+		sound->sync = (_sync *)malloc(sizeof(_sync) * sound->numSyncs);
 
 		do {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
 			switch(tag) {
 			case MKID_BE('FRMT'):
 				ptr += 12;
-				_sounds[slot].bits = READ_BE_UINT32(ptr); ptr += 4;
-				_sounds[slot].freq = READ_BE_UINT32(ptr); ptr += 4;
-				_sounds[slot].channels = READ_BE_UINT32(ptr); ptr += 4;
+				sound->bits = READ_BE_UINT32(ptr); ptr += 4;
+				sound->freq = READ_BE_UINT32(ptr); ptr += 4;
+				sound->channels = READ_BE_UINT32(ptr); ptr += 4;
 				break;
 			case MKID_BE('TEXT'):
 			case MKID_BE('STOP'):
@@ -175,23 +174,23 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				break;
 			case MKID_BE('REGN'):
 				ptr += 4;
-				_sounds[slot].region[curIndexRegion].offset = READ_BE_UINT32(ptr); ptr += 4;
-				_sounds[slot].region[curIndexRegion].length = READ_BE_UINT32(ptr); ptr += 4;
+				sound->region[curIndexRegion].offset = READ_BE_UINT32(ptr); ptr += 4;
+				sound->region[curIndexRegion].length = READ_BE_UINT32(ptr); ptr += 4;
 				curIndexRegion++;
 				break;
 			case MKID_BE('JUMP'):
 				ptr += 4;
-				_sounds[slot].jump[curIndexJump].offset = READ_BE_UINT32(ptr); ptr += 4;
-				_sounds[slot].jump[curIndexJump].dest = READ_BE_UINT32(ptr); ptr += 4;
-				_sounds[slot].jump[curIndexJump].hookId = READ_BE_UINT32(ptr); ptr += 4;
-				_sounds[slot].jump[curIndexJump].fadeDelay = READ_BE_UINT32(ptr); ptr += 4;
+				sound->jump[curIndexJump].offset = READ_BE_UINT32(ptr); ptr += 4;
+				sound->jump[curIndexJump].dest = READ_BE_UINT32(ptr); ptr += 4;
+				sound->jump[curIndexJump].hookId = READ_BE_UINT32(ptr); ptr += 4;
+				sound->jump[curIndexJump].fadeDelay = READ_BE_UINT32(ptr); ptr += 4;
 				curIndexJump++;
 				break;
 			case MKID_BE('SYNC'):
 				size = READ_BE_UINT32(ptr); ptr += 4;
-				_sounds[slot].sync[curIndexSync].size = size;
-				_sounds[slot].sync[curIndexSync].ptr = (byte *)malloc(size);
-				memcpy(_sounds[slot].sync[curIndexSync].ptr, ptr, size);
+				sound->sync[curIndexSync].size = size;
+				sound->sync[curIndexSync].ptr = (byte *)malloc(size);
+				memcpy(sound->sync[curIndexSync].ptr, ptr, size);
 				curIndexSync++;
 				ptr += size;
 				break;
@@ -199,94 +198,100 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				ptr += 4;
 				break;
 			default:
-				error("ImuseDigiSndMgr::prepareSound(%d/%s) Unknown sfx header '%s'", _sounds[slot].soundId, _sounds[slot].name, tag2str(tag));
+				error("ImuseDigiSndMgr::prepareSound(%d/%s) Unknown sfx header '%s'", sound->soundId, sound->name, tag2str(tag));
 			}
 		} while (tag != MKID_BE('DATA'));
-		_sounds[slot].offsetData =  ptr - s_ptr;
+		sound->offsetData =  ptr - s_ptr;
 	} else {
 		error("ImuseDigiSndMgr::prepareSound(): Unknown sound format");
 	}
 }
 
-int ImuseDigiSndMgr::allocSlot() {
+ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::allocSlot() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		if (!_sounds[l].inUse) {
 			_sounds[l].inUse = true;
-			return l;
+			return &_sounds[l];
 		}
 	}
 
-	return -1;
+	return NULL;
 }
 
-bool ImuseDigiSndMgr::openMusicBundle(int slot) {
+bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 	bool result = false;
 
-	_sounds[slot].bundle = new BundleMgr(_cacheBundleDir);
+	sound->bundle = new BundleMgr(_cacheBundleDir);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
-			result = _sounds[slot].bundle->openFile("music.bun", _vm->getGameDataPath());
+			result = sound->bundle->openFile("music.bun", _vm->getGameDataPath());
 		} else {
 			char musicfile[20];
-			sprintf(musicfile, "musdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
-			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
+			if (disk == -1)
+				sprintf(musicfile, "musdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
+			else
+				sprintf(musicfile, "musdisk%d.bun", disk);
+//			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
 //				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_imuseDigital->stopAllSounds();
-				_sounds[slot].bundle->closeFile();
-			}
+//				sound->bundle->closeFile();
+//			}
 
-			result = _sounds[slot].bundle->openFile(musicfile, _vm->getGameDataPath());
+			result = sound->bundle->openFile(musicfile, _vm->getGameDataPath());
 
 			if (result == false)
-				result = _sounds[slot].bundle->openFile("music.bun", _vm->getGameDataPath());
+				result = sound->bundle->openFile("music.bun", _vm->getGameDataPath());
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
 	} else if (_vm->_gameId == GID_DIG)
-		result = _sounds[slot].bundle->openFile("digmusic.bun", _vm->getGameDataPath());
+		result = sound->bundle->openFile("digmusic.bun", _vm->getGameDataPath());
 	else
 		error("ImuseDigiSndMgr::openMusicBundle() Don't know which bundle file to load");
 
 	return result;
 }
 
-bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
+bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 	bool result = false;
 
-	_sounds[slot].bundle = new BundleMgr(_cacheBundleDir);
+	sound->bundle = new BundleMgr(_cacheBundleDir);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
-			result = _sounds[slot].bundle->openFile("voice.bun", _vm->getGameDataPath());
+			result = sound->bundle->openFile("voice.bun", _vm->getGameDataPath());
 		} else {
 			char voxfile[20];
-			sprintf(voxfile, "voxdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
-			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
+			if (disk == -1)
+				sprintf(voxfile, "voxdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
+			else
+				sprintf(voxfile, "voxdisk%d.bun", disk);
+//			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
 //				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_imuseDigital->stopAllSounds();
-				_sounds[slot].bundle->closeFile();
-			}
+//				sound->bundle->closeFile();
+//			}
 
-			result = _sounds[slot].bundle->openFile(voxfile, _vm->getGameDataPath());
+			result = sound->bundle->openFile(voxfile, _vm->getGameDataPath());
 
 			if (result == false)
-				result = _sounds[slot].bundle->openFile("voice.bun", _vm->getGameDataPath());
+				result = sound->bundle->openFile("voice.bun", _vm->getGameDataPath());
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
 	} else if (_vm->_gameId == GID_DIG)
-		result = _sounds[slot].bundle->openFile("digvoice.bun", _vm->getGameDataPath());
+		result = sound->bundle->openFile("digvoice.bun", _vm->getGameDataPath());
 	else
 		error("ImuseDigiSndMgr::openVoiceBundle() Don't know which bundle file to load");
 
 	return result;
 }
 
-ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const char *soundName, int soundType, int volGroupId) {
+ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk) {
 	assert(soundId >= 0);
 	assert(soundType);
 
-	int slot = allocSlot();
-	if (slot == -1) {
+	soundStruct *sound = allocSlot();
+	if (!sound) {
 		error("ImuseDigiSndMgr::openSound() can't alloc free sound slot");
 	}
 
@@ -294,34 +299,39 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 	byte *ptr = NULL;
 
 	if (soundName[0] == 0) {
-		_sounds[slot].name[0] = 0;
+		sound->name[0] = 0;
 		if ((soundType == IMUSE_RESOURCE)) {
+			_vm->ensureResourceLoaded(rtSound, soundId);
+			_vm->lock(rtSound, soundId);
 			ptr = _vm->getResourceAddress(rtSound, soundId);
 			if (ptr == NULL) {
-				closeSound(&_sounds[slot]);
+				closeSound(sound);
 				return NULL;
 			}
-			_sounds[slot].resPtr = ptr;
-			_sounds[slot].soundId = soundId;
-			_sounds[slot].type = soundType;
-			_sounds[slot].volGroupId = volGroupId;
+			sound->resPtr = ptr;
+			sound->soundId = soundId;
+			sound->type = soundType;
+			sound->volGroupId = volGroupId;
 			result = true;
 		} else if (soundType == IMUSE_BUNDLE) {
 			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 			if (volGroupId == IMUSE_VOLGRP_VOICE)
-				result = openVoiceBundle(slot);
+				result = openVoiceBundle(sound, disk);
 			else if (volGroupId == IMUSE_VOLGRP_MUSIC)
-				result = openMusicBundle(slot);
+				result = openMusicBundle(sound, disk);
 			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 			if (!result) {
-				closeSound(&_sounds[slot]);
+				closeSound(sound);
 				return NULL;
 			}
-			_sounds[slot].bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside);
-			_sounds[slot].soundId = soundId;
-			_sounds[slot].type = soundType;
-			_sounds[slot].volGroupId = volGroupId;
+			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0) {
+				closeSound(sound);
+				return NULL;
+			}
+			sound->soundId = soundId;
+			sound->type = soundType;
+			sound->volGroupId = volGroupId;
 		} else {
 			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 		}
@@ -329,20 +339,23 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		if (soundType == IMUSE_BUNDLE) {
 			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 			if (volGroupId == IMUSE_VOLGRP_VOICE)
-				result = openVoiceBundle(slot);
+				result = openVoiceBundle(sound, disk);
 			else if (volGroupId == IMUSE_VOLGRP_MUSIC)
-				result = openMusicBundle(slot);
+				result = openMusicBundle(sound, disk);
 			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 			if (!result) {
-				closeSound(&_sounds[slot]);
+				closeSound(sound);
 				return NULL;
 			}
-			_sounds[slot].bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside);
-			strcpy(_sounds[slot].name, soundName);
-			_sounds[slot].soundId = soundId;
-			_sounds[slot].type = soundType;
-			_sounds[slot].volGroupId = volGroupId;
+			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0) {
+				closeSound(sound);
+				return NULL;
+			}
+			strcpy(sound->name, soundName);
+			sound->soundId = soundId;
+			sound->type = soundType;
+			sound->volGroupId = volGroupId;
 		} else {
 			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %s", soundName);
 		}
@@ -350,11 +363,12 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 
 	if (result) {
 		if (ptr == NULL) {
-			closeSound(&_sounds[slot]);
+			closeSound(sound);
 			return NULL;
 		}
-		prepareSound(ptr, slot);
-		return &_sounds[slot];
+		sound->disk = _disk;
+		prepareSound(ptr, sound);
+		return sound;
 	}
 
 	return NULL;
@@ -363,8 +377,15 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
 
-	if (soundHandle->resPtr)
-		_vm->unlock(rtSound, soundHandle->soundId);
+	if (soundHandle->resPtr) {
+		bool found = false;
+		for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
+			if ((_sounds[l].soundId == soundHandle->soundId) && (&_sounds[l] != soundHandle))
+				found = true;
+		}
+		if (!found)
+			_vm->unlock(rtSound, soundHandle->soundId);
+	}
 
 	delete soundHandle->bundle;
 	for (int r = 0; r < soundHandle->numSyncs; r++)
@@ -378,7 +399,7 @@ void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::cloneSound(soundStruct *soundHandle) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
 
-	return openSound(soundHandle->soundId, soundHandle->name, soundHandle->type, soundHandle->volGroupId);
+	return openSound(soundHandle->soundId, soundHandle->name, soundHandle->type, soundHandle->volGroupId, soundHandle->disk);
 }
 
 bool ImuseDigiSndMgr::checkForProperHandle(soundStruct *soundHandle) {
@@ -431,8 +452,9 @@ int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(soundStruct *soundHandle, int re
 	debug(5, "getJumpIdByRegionAndHookId() region:%d, hookId:%d", region, hookId);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
+	int32 offset = soundHandle->region[region].offset;
 	for (int l = 0; l < soundHandle->numJumps; l++) {
-		if (soundHandle->jump[l].offset == soundHandle->region[region].offset) {
+		if (offset == soundHandle->jump[l].offset) {
 			if (soundHandle->jump[l].hookId == hookId)
 				return l;
 		}
@@ -457,8 +479,9 @@ int ImuseDigiSndMgr::getRegionIdByJumpId(soundStruct *soundHandle, int jumpId) {
 	debug(5, "getRegionIdByJumpId() jumpId:%d", jumpId);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(jumpId >= 0 && jumpId < soundHandle->numJumps);
+	int32 dest = soundHandle->jump[jumpId].dest;
 	for (int l = 0; l < soundHandle->numRegions; l++) {
-		if (soundHandle->jump[jumpId].dest == soundHandle->region[l].offset) {
+		if (dest == soundHandle->region[l].offset) {
 			return l;
 		}
 	}
