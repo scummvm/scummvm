@@ -4613,15 +4613,15 @@ void SimonState::initSound()
 
 		_effects_offsets = NULL;
 		_effects_file = fopen_maybe_lowercase(e);
-		if (_effects_file == NULL)
-			return;
+		if (_effects_file != NULL)
+		{
+			_effects_offsets = (uint32 *)malloc(gss->NUM_EFFECTS_RESOURCES * sizeof(uint32));
+			if (_effects_offsets == NULL)
+				error("Out of memory for effects offsets");
 
-		_effects_offsets = (uint32 *)malloc(gss->NUM_EFFECTS_RESOURCES * sizeof(uint32));
-		if (_effects_offsets == NULL)
-			error("Out of memory for effects offsets");
-
-		if (fread(_effects_offsets, gss->NUM_EFFECTS_RESOURCES * sizeof(uint32), 1, _effects_file) != 1)
-			error("Cannot read effects offsets");
+			if (fread(_effects_offsets, gss->NUM_EFFECTS_RESOURCES * sizeof(uint32), 1, _effects_file) != 1)
+				error("Cannot read effects offsets");
+		}
 
 #if defined(SCUMM_BIG_ENDIAN)
 		for (int r = 0; r < gss->NUM_VOICE_RESOURCES; r++)
@@ -4688,7 +4688,6 @@ void SimonState::playVoice(uint voice)
 				|| wave_hdr.fmt != MKID('fmt ') || READ_LE_UINT16(&wave_hdr.format_tag) != 1
 				|| READ_LE_UINT16(&wave_hdr.channels) != 1
 				|| READ_LE_UINT16(&wave_hdr.bits_per_sample) != 8) {
-			warning("playVoice(%d): cannot read RIFF header", voice);
 			return;
 		}
 
