@@ -114,10 +114,6 @@ SCUMM
 * Implement file related opcode stubs needed for Humongous games
 * Add support for graphics codecs used in 3DO versions of Humongous games
 * Proper handling of .tlk files for Humongous games
-* Add fully implementation of iMUSE Digital for The Dig, COMI and FT
-* Try to remove all use of MAD/Ogg code from scumm/sound.cpp:
-  Ideally, only code in sound/ should access these libs. This will
-  become important for loadable module support
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
