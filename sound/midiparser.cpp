@@ -279,7 +279,7 @@ void MidiParser::hangAllActiveNotes() {
 				_active_notes [_next_event.basic.param1] &= ~ (1 << _next_event.channel());
 			}
 		} else if (_next_event.event == 0xFF && _next_event.ext.type == 0x2F) {
-			printf ("MidiParser::hangAllActiveNotes(): Hit End of Track with active notes left!\n");
+			// printf ("MidiParser::hangAllActiveNotes(): Hit End of Track with active notes left!\n");
 			memset (_active_notes, 0, sizeof (_active_notes));
 			break;
 		}
