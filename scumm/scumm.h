@@ -25,7 +25,7 @@
 
 #include "common/engine.h"
 #include "common/timer.h"
-#include "scumm/bundle.h"
+#include "common/file.h"
 
 class GameDetector;
 class Gui;
@@ -34,6 +34,7 @@ class Scumm;
 class IMuse;
 class Actor;
 class Sound;
+class Bundle;
 struct ScummDebugger;
 struct Serializer;
 struct FindObjectInRoom;

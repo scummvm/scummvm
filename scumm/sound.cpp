@@ -21,13 +21,14 @@
  */
 
 #include "stdafx.h"
-#include "scumm/scumm.h"
+#include "scumm.h"
 #include "sound.h"
 #include "sound/mididrv.h"
-#include "scumm/imuse.h"
-#include "scumm/actor.h"
-#include "config-file.h"
-#include "util.h"
+#include "imuse.h"
+#include "actor.h"
+#include "bundle.h"
+#include "common/config-file.h"
+#include "common/util.h"
 
 #ifdef _WIN32_WCE
 extern void *bsearch(const void *, const void *, size_t,

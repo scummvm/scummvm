@@ -26,6 +26,7 @@
 #include "sound/mididrv.h"
 #include "scumm/sound.h"
 #include "scumm/imuse.h"
+#include "scumm/bundle.h"
 #include "actor.h"
 #include "debug.h"
 #include "gameDetector.h"
