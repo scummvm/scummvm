@@ -1,12 +1,16 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.3.1-cvs (2002-12-28)
-- Very experimental Curse of Monkey Island (comi) support
+0.3.9-cvs (2003-03-24)
+- Curse of Monkey Island (comi) support (experimental)
+- Very pre-alpha Beneath a Steel Sky code. Don't expect it to do anything. 
 - New debug console and several GUI/Launcher enhancements (incomplete)
 - New Save/Load code (easier to expand while retaining compatability)
+- DreamCast port now works with new games added for 0.3.0b
 - Many more Simon the Sorcerer fixes
 - Various minor SCUMM game fixes
+- Large memory leak fixed for The Dig/ComI
+- SMUSH code optimised, framedropping added for slower machines
 - Code cleanups
 
 0.3.0b (2002-12-08)
