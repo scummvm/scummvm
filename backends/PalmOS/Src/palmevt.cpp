@@ -121,7 +121,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 		keyCurrentState = KeyCurrentState();
 
 		// arrow keys emulation
-		if ((keyCurrentState & _keyMask) && 0) {
+		if ((keyCurrentState & _keyMask)) {
 			Int8 sx = 0;
 			Int8 sy = 0;
 
