@@ -117,10 +117,15 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st
 	ostart = obuf;
 	oend = obuf + *osamp * 2;
 
-	while (obuf < oend && !input.eof()) {
+	while (obuf < oend) {
 
 		// read enough input samples so that ipos > opos
 		while (ipos <= opos + 1) {
+
+			// Abort if we reached the end of the input buffer
+			if (input.eof())
+				goto the_end;
+
 			ilast[0] = icur[0];
 			icur[0] = input.read();
 			if (stereo) {
@@ -128,10 +133,6 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st
 				icur[1] = input.read();
 			}
 			ipos++;
-
-			// Abort if we reached the end of the input buffer
-			if (input.eof())
-				goto the_end;
 		}
 
 		// Loop as long as the outpos trails behind, and as long as there is
