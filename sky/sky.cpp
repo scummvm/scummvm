@@ -183,7 +183,7 @@ void SkyState::initialise(void) {
 			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _system);
 	}
 	if (isCDVersion())
-		_systemVars.systemFlags |= SF_ALLOW_SPEECH;
+		_systemVars.systemFlags |= SF_ALLOW_SPEECH | SF_ALLOW_TEXT;
 	else
 		_systemVars.systemFlags |= SF_ALLOW_TEXT;
 

@@ -47,6 +47,10 @@ class SkyMouse;
 #define SP_HEIGHT 149
 #define SP_TOP_GAP 12
 #define SP_BOT_GAP 27
+#define CROSS_SZ_X 27
+#define CROSS_SZ_Y 22
+
+#define TEXT_FLAG_MASK (SF_ALLOW_SPEECH | SF_ALLOW_TEXT)
 
 #define GAME_NAME_X (SPNL_X + 18)				// x coordinate of game names
 #define GAME_NAME_Y (SPNL_Y + SP_TOP_GAP)		// start y coord of game names
@@ -138,6 +142,7 @@ public:
 	SkyTextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
 	virtual ~SkyTextResource(void);
 	virtual void drawToScreen(bool doMask);
+	void flushForRedraw(void);
 private:
 	uint16 _oldX, _oldY;
 	uint8 *_oldScreen;
@@ -166,9 +171,11 @@ private:
 	uint16 doMusicSlide(void);
 	uint16 doSpeedSlide(void);
 	uint16 toggleFx(SkyConResource *pButton);
-	uint16 toggleText(SkyConResource *pButton);
+	uint16 toggleText(void);
 	uint16 shiftDown(uint8 speed);
 	uint16 shiftUp(uint8 speed);
+	void drawTextCross(uint32 flags);
+	void drawCross(uint16 x, uint16 y);
 
 	uint16 saveRestorePanel(bool allowSave);
 	void loadDescriptions(uint8 *destBuf);
@@ -249,6 +256,7 @@ private:
 	SkyConResource *_savePanLookList[6], *_restorePanLookList[6];
 
 	static char _quitTexts[12][30];
+	static uint8 _crossImg[594];
 };
 
 #endif // CONTROL_H
