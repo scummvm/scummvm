@@ -1360,9 +1360,6 @@ void Logic::loadState(uint32 ver, byte *&ptr) {
 }
 
 void Logic::setupRestoredGame() {
-	uint16 flag = _vm->bam()->_flag;
-	_vm->bam()->_flag = BamScene::F_STOP;
-
 	_vm->sound()->playLastSong();
 
 	switch (gameState(VAR_DRESSING_MODE)) {
@@ -1380,19 +1377,34 @@ void Logic::setupRestoredGame() {
 		break;
 	}
 
-	_joe.cutFacing = _joe.facing;
-	joeFace();
+	BobSlot *pbs = _vm->graphics()->bob(0);
+	pbs->xflip = (joeFacing() == DIR_LEFT);
+	joePrevFacing(joeFacing());
+	joeCutFacing(joeFacing());
+	switch (joeFacing()) {
+	case DIR_FRONT:
+		pbs->frameNum = 34 + FRAMES_JOE_XTRA;
+		_vm->bankMan()->unpack(3, 29 + FRAMES_JOE_XTRA, 7);
+		break;
+	case DIR_BACK:
+		pbs->frameNum = 35 + FRAMES_JOE_XTRA;
+		_vm->bankMan()->unpack(5, 29 + FRAMES_JOE_XTRA, 7);
+		break;
+	default:
+		pbs->frameNum = 33 + FRAMES_JOE_XTRA;
+		_vm->bankMan()->unpack(1, 29 + FRAMES_JOE_XTRA, 7);
+		break;
+	}	
 
 	_oldRoom = 0;
 	_newRoom = _currentRoom;
 	_entryObj = 0;
 
-	inventoryRefresh();
-
-	if (flag != BamScene::F_STOP) {
-		_vm->bam()->_flag = flag;
+	if (_vm->bam()->_flag != BamScene::F_STOP) {
 		_vm->bam()->prepareAnimation();
 	}
+
+	inventoryRefresh();
 }
 
 void Logic::sceneStart() {
