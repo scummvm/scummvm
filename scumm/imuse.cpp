@@ -1462,7 +1462,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 16:
 			return set_volchan(b, c);
 		case 17:
-			if (g_scumm->_features & GID_SAMNMAX) {
+			if (g_scumm->_gameId == GID_SAMNMAX) {
 				// Sam & Max: ImSetTrigger.
 				// Sets a trigger for a particular player and
 				// marker ID, along with do_command parameters
@@ -1510,12 +1510,12 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 
 		switch (cmd) {
 		case 0:
-			if (g_scumm->_features & GID_SAMNMAX)
+			if (g_scumm->_gameId == GID_SAMNMAX)
 				return player->_def_do_command_trigger;
 			else
 				return player->get_param(c, d);
 		case 1:
-			if (g_scumm->_features & GID_SAMNMAX) // Jamieson630: Nasty
+			if (g_scumm->_gameId == GID_SAMNMAX) // Jamieson630: Nasty
 				player->jump (d - 1, (e - 1) * 4 + f, ((g * player->_ticks_per_beat) >> 2) + h);
 			else
 				player->set_priority(c);
@@ -3270,7 +3270,7 @@ void Part::setup(Player *player)
 	_transpose = 0;
 	_detune = 0;
 	_detune_eff = player->_detune;
-	_pitchbend_factor = ((g_scumm->_features & GID_SAMNMAX) ? 2 : 12);
+	_pitchbend_factor = ((g_scumm->_gameId == GID_SAMNMAX) ? 2 : 12);
 	_pitchbend = 0;
 	_effect_level = 64;
 	_program = 255;
