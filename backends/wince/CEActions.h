@@ -31,37 +31,25 @@
 #include "wince-sdl.h"
 #include "Key.h"
 
-enum ActionType {
-        ACTION_NONE = 0,
-        ACTION_PAUSE,
-        ACTION_SAVE,
-        ACTION_QUIT,
-        ACTION_SKIP,
-        ACTION_HIDE,
-        ACTION_KEYBOARD,
-        ACTION_SOUND,
-        ACTION_RIGHTCLICK,
-        ACTION_CURSOR,
-        ACTION_FREELOOK,
+#define MAX_ACTIONS 20
 
-		ACTION_LAST
-};
-
-#define ACTIONS_VERSION 1
+typedef int ActionType;
 
 class OSystem_WINCE3;
 
 class CEActions {
 	public:
 		static CEActions* Instance();
-		static void init(OSystem_WINCE3 *mainSystem, GameDetector &detector);
+		static void init(GameDetector &detector);
+		virtual void initInstance(OSystem_WINCE3 *mainSystem);
+		bool initialized();
 
 		// Actions
-		bool perform(ActionType action);
+		virtual bool perform(ActionType action, bool pushed = true) = 0;
 		bool isActive(ActionType action);
 		bool isEnabled(ActionType action);
-		String actionName(ActionType action);
-		int size();
+		virtual String actionName(ActionType action) = 0;
+		virtual int size() = 0;
 
 		// Mapping
 		void beginMapping(bool start);
@@ -72,22 +60,23 @@ class CEActions {
 		unsigned int getMapping(ActionType action);
 		void setMapping(ActionType action, unsigned int keyCode);
 
-		// Utility
-		bool needsRightClickMapping();
-		bool needsHideToolbarMapping();
+		// Action domain
+		virtual String domain() = 0;
+		virtual int version() = 0;
 
-		~CEActions();
-	private:
-		CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector);
+		virtual ~CEActions();
+
+	protected:
+		CEActions(GameDetector &detector);
 		static CEActions* _instance;
 		OSystem_WINCE3 *_mainSystem;
-		Key _key_action[ACTION_LAST];
-		bool _action_active[ACTION_LAST];
-		bool _action_enabled[ACTION_LAST];
-		unsigned int _action_mapping[ACTION_LAST];
+		GameDetector *_detector;
+		Key _key_action[MAX_ACTIONS + 1];
+		bool _action_active[MAX_ACTIONS + 1];
+		bool _action_enabled[MAX_ACTIONS + 1];
+		unsigned int _action_mapping[MAX_ACTIONS + 1];
 		bool _mapping_active;
-		bool _right_click_needed;
-		bool _hide_toolbar_needed;
+		bool _initialized;
 	};	
 
 #endif
