@@ -117,7 +117,7 @@ public:
 	BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height);
 	virtual ~BaseAnimationState();
 
-	bool init(const char *name);
+	bool init(const char *name, void *audioArg = NULL);
 	bool decodeFrame();
 #ifndef BACKEND_8BIT
 	void invalidateLookup(bool rebuild);
@@ -126,6 +126,7 @@ public:
 protected:
 	bool checkPaletteSwitch();
 	virtual void drawYUV(int width, int height, byte *const *dat) = 0;
+	virtual AudioStream *createAudioStream(const char *name, void *arg);
 
 #ifdef BACKEND_8BIT
 	void buildLookup(int p, int lines);

@@ -1134,6 +1134,15 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 			error(msg);
 		}
 	}
+
+	// check cutscene pack version
+	_systemVars.cutscenePackVersion = 0;
+#ifdef USE_MPEG2
+	if (test.open("intro.snd")) {
+		_systemVars.cutscenePackVersion = 1;
+		test.close();
+	}
+#endif
 }
 
 int SwordEngine::go() {

@@ -26,10 +26,35 @@
 
 #include "sword1/screen.h"
 #include "sword1/sound.h"
-
-
+#include "sound/audiostream.h"
 
 namespace Sword1 {
+
+enum {
+	SEQ_FERRARI = 0,
+	SEQ_LADDER,
+	SEQ_STEPS,
+	SEQ_SEWER,
+	SEQ_INTRO,
+	SEQ_RIVER,
+	SEQ_TRUCK,
+	SEQ_GRAVE,
+	SEQ_MONTFCON,
+	SEQ_TAPESTRY,
+	SEQ_IRELAND,
+	SEQ_FINALE,
+	SEQ_HISTORY,
+	SEQ_SPANISH,
+	SEQ_WELL,
+	SEQ_CANDLE,
+	SEQ_GEODROP,
+	SEQ_VULTURE,
+	SEQ_ENDDEMO,
+	SEQ_CREDITS
+};
+
+#define INTRO_LOGO_OVLS 12
+#define INTRO_TEXT_OVLS 8
 
 class AnimationState : public Graphics::BaseAnimationState {
 private:
@@ -38,6 +63,9 @@ private:
 public:
 	AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys);
 	~AnimationState();
+	void updateScreen();
+	OverlayColor *giveRgbBuffer(void);
+	bool soundFinished();
 
 private:
 	void drawYUV(int width, int height, byte *const *dat);
@@ -45,19 +73,48 @@ private:
 #ifdef BACKEND_8BIT
 	void setPalette(byte *pal);
 #endif
+
+protected:
+	virtual AudioStream *createAudioStream(const char *name, void *arg);
 };
 
 class MoviePlayer {
+public:
+	MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys);
+	~MoviePlayer(void);
+	void play(uint32 id);
 private:
+	void insertOverlay(OverlayColor *buf, uint8 *ovl, OverlayColor *pal);
+	void processFrame(uint32 animId, AnimationState *anim, uint32 frameNo);
+	bool initOverlays(uint32 id);
+	void decompressRle(uint8 *src, uint8 *dest, uint32 srcSize);
 	Screen *_scr;
 	SoundMixer *_snd;
 	OSystem *_sys;
 
-public:
-	MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys);
-	void play(const char *filename);
+	static const char *_sequenceList[20];
+	uint8 *_logoOvls[INTRO_LOGO_OVLS];
+	OverlayColor *_introPal;
 };
 
-} // End of namespace Sword2
+struct FileQueue {
+	AudioStream *stream;
+	FileQueue *next;
+};
+
+class SplittedAudioStream : public AudioStream {
+public:
+	SplittedAudioStream(void);
+	~SplittedAudioStream(void);
+	void appendStream(AudioStream *stream);
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo(void) const;
+	virtual bool endOfData(void) const;
+	virtual int getRate(void) const;
+private:
+	FileQueue *_queue;
+};
+
+} // End of namespace Sword1
 
 #endif

@@ -46,7 +46,7 @@ BaseAnimationState::~BaseAnimationState() {
 }
 
 
-bool BaseAnimationState::init(const char *name) {
+bool BaseAnimationState::init(const char *name, void *audioArg) {
 #ifdef USE_MPEG2
 	char tempFile[512];
 
@@ -130,7 +130,7 @@ bool BaseAnimationState::init(const char *name) {
 	ticks = _sys->getMillis();
 
 	// Play audio
-	bgSoundStream = AudioStream::openStreamFile(name);
+	bgSoundStream = createAudioStream(name, audioArg);
 
 	if (bgSoundStream != NULL) {
 		_snd->playInputStream(&bgSound, bgSoundStream, false, -1, 255, 0, false);
@@ -142,6 +142,10 @@ bool BaseAnimationState::init(const char *name) {
 #else /* USE_MPEG2 */
 	return false;
 #endif
+}
+
+AudioStream *BaseAnimationState::createAudioStream(const char *name, void *arg) {
+	return AudioStream::openStreamFile(name);
 }
 
 bool BaseAnimationState::decodeFrame() {
