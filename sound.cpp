@@ -379,7 +379,7 @@ void *Scumm::openSfxFile() {
 	sprintf(buf, "%s%s.sou", _gameDataPath, _exe_name);
 	file = fopen(buf, "rb");
 	if (!file) {
-		sprintf(buf, "%smonster.sou", _gameDataPath, _exe_name);
+		sprintf(buf, "%smonster.sou", _gameDataPath);
 		file = fopen(buf, "rb");
 	}
 	return file;
