@@ -852,19 +852,24 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 
 	AudioStream *input = NULL;
 	
+	printf("startSfxSound: file_size = %d\n", file_size);
+	
 	switch (_soundMode) {
 	case kMP3Mode:
 #ifdef USE_MAD
+		assert(file_size > 0);
 		input = makeMP3Stream(file, file_size);
 #endif
 		break;
 	case kVorbisMode:
 #ifdef USE_VORBIS
+		assert(file_size > 0);
 		input = makeVorbisStream(file, file_size);
 #endif
 		break;
 	case kFlacMode:
 #ifdef USE_FLAC
+		assert(file_size > 0);
 		input = makeFlacStream(file, file_size);
 #endif
 		break;
@@ -956,10 +961,10 @@ File *Sound::openSfxFile() {
 		size = compressed_offset;
 		cur = _offsetTable;
 		while (size > 0) {
-			cur[0].org_offset = file->readUint32BE();
-			cur[0].new_offset = file->readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
-			cur[0].num_tags = file->readUint32BE();
-			cur[0].compressed_size = file->readUint32BE();
+			cur->org_offset = file->readUint32BE();
+			cur->new_offset = file->readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
+			cur->num_tags = file->readUint32BE();
+			cur->compressed_size = file->readUint32BE();
 			size -= 4 * 4;
 			cur++;
 		}
