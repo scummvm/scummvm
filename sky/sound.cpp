@@ -1087,7 +1087,6 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	if (dataSize == dataLoop)
 		flags |= SoundMixer::FLAG_LOOP;
 	
-	//_mixer->stopAll();
 	if (_ingameSound > 0) _mixer->stop(_ingameSound - 1);
 	_mixer->setVolume(volume);
 	_mixer->playRaw(&_ingameSound, _soundData + dataOfs, dataSize, sampleRate, flags);
@@ -1154,5 +1153,4 @@ void SkySound::fnStartSpeech(uint16 textNum) {
     // TODO: implement pre_after_table_area to find and prefetch file for next speech
 	
 	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-    
 }

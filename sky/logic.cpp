@@ -2074,7 +2074,6 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	if (SkyState::isCDVersion(_gameVersion))
 		_skySound->fnStartSpeech((uint16)textNum);
-//		warning("stdSpeak: speech not implemented yet");
 
 	//now form the text sprite
 	struct lowTextManager_t textInfo;
