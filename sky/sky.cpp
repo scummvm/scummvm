@@ -446,10 +446,8 @@ void SkyEngine::delay(int32 amount) {
 			}
 		}
 
-#ifndef __PALM_OS__
 		if (amount > 0)
 			_system->delayMillis((amount > 10) ? 10 : amount);
-#endif
 
 	} while (_system->getMillis() < start + amount);
 }
