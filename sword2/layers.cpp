@@ -27,8 +27,11 @@
 //	up to 2 foreground parallax layers
 
 #include "common/stdafx.h"
+
 #include "sword2/sword2.h"
+#include "sword2/defs.h"
 #include "sword2/logic.h"
+#include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 
@@ -110,7 +113,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 		// off the edge. The minimum offsets are both 0.
 
 		_thisScreen.max_scroll_offset_x = screen_head->width - _screenWide;
-		_thisScreen.max_scroll_offset_y = screen_head->height - (_screenDeep - (RDMENU_MENUDEEP * 2));
+		_thisScreen.max_scroll_offset_y = screen_head->height - (_screenDeep - (MENUDEEP * 2));
 	} else {
 		// The later fits on the phyiscal screen. Switch off scrolling.
 		_thisScreen.scroll_flag = 0;

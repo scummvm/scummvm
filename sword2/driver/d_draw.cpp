@@ -21,8 +21,7 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/menu.h"
-#include "sword2/driver/render.h"
+#include "sword2/mouse.h"
 
 namespace Sword2 {
 

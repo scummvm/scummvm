@@ -488,7 +488,7 @@ void Sword2Engine::parseEvents() {
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			if (!(_eventFilter & RD_KEYDOWN)) {
-				_mouse->setPos(event.mouse.x, event.mouse.y - RDMENU_MENUDEEP);
+				_mouse->setPos(event.mouse.x, event.mouse.y - MENUDEEP);
 			}
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:

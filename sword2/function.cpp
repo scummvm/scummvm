@@ -35,7 +35,6 @@
 #include "sword2/router.h"
 #include "sword2/sound.h"
 #include "sword2/driver/animation.h"
-#include "sword2/driver/render.h"
 
 namespace Sword2 {
 

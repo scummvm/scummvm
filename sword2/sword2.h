@@ -32,7 +32,6 @@
 
 #include "common/util.h"
 
-#include "sword2/driver/driver96.h"
 #include "sword2/build_display.h"
 #include "sword2/header.h"
 #include "sword2/icons.h"

@@ -204,7 +204,7 @@ void Screen::displayMsg(byte *text, int time) {
 
 	spriteInfo.x = _screenWide / 2 - frame->width / 2;
 	if (!time)
-		spriteInfo.y = _screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
+		spriteInfo.y = _screenDeep / 2 - frame->height / 2 - MENUDEEP;
 	else
 		spriteInfo.y = 400 - frame->height;
 	spriteInfo.w = frame->width;

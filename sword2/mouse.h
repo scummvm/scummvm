@@ -28,6 +28,38 @@ namespace Sword2 {
 struct ObjectMouse;
 struct BuildUnit;
 
+// Menubar defines.
+
+#define RDMENU_TOP		0
+#define RDMENU_BOTTOM		1
+
+enum {
+	MOUSE_normal		= 0,	// normal in game
+	MOUSE_menu		= 1,	// menu chooser
+	MOUSE_drag		= 2,	// dragging luggage
+	MOUSE_system_menu	= 3,	// system menu chooser
+	MOUSE_holding		= 4	// special
+};
+
+enum {
+	RDMOUSE_NOFLASH,
+	RDMOUSE_FLASH
+};
+
+enum {
+	RDMENU_HIDDEN,
+	RDMENU_SHOWN,
+	RDMENU_OPENING,
+	RDMENU_CLOSING,
+	RDMENU_ALMOST_HIDDEN
+};
+
+#define RDMENU_ICONWIDE		35
+#define RDMENU_ICONDEEP		30
+#define RDMENU_ICONSTART	24
+#define RDMENU_ICONSPACING	5
+#define RDMENU_MAXPOCKETS	15
+
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif

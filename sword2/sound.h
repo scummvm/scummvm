@@ -63,6 +63,21 @@ enum {
 	FX_LOOPING	= 4
 };
 
+// Sound defines
+
+enum {
+	RDSE_SAMPLEFINISHED		= 0,
+	RDSE_SAMPLEPLAYING		= 1,
+	RDSE_FXTOCLEAR			= 0,		// Unused
+	RDSE_FXCACHED			= 1,		// Unused
+	RDSE_FXSPOT			= 0,
+	RDSE_FXLOOP			= 1,
+	RDSE_FXLEADIN			= 2,
+	RDSE_FXLEADOUT			= 3,
+	RDSE_QUIET			= 1,
+	RDSE_SPEAKING			= 0
+};
+
 class CLUInputStream : public AudioStream {
 private:
 	File *_file;

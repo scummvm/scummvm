@@ -37,6 +37,10 @@
 #define BLOCKHEIGHT      64
 #define MAXLAYERS        5
 
+#define MENUDEEP         40
+#define RENDERWIDE       640
+#define RENDERDEEP       (480 - (MENUDEEP * 2))
+
 // Maximum scaled size of a sprite
 #define SCALE_MAXWIDTH   512
 #define SCALE_MAXHEIGHT  512
@@ -47,9 +51,56 @@
 
 namespace Sword2 {
 
+class Sword2Engine;
+
 struct ObjectMouse;
 struct ObjectGraphic;
 struct ObjectMega;
+
+// Sprite defines
+
+enum {
+	// This is the low byte part of the sprite type.
+
+	RDSPR_TRANS			= 0x0001,
+	RDSPR_BLEND			= 0x0004,
+	RDSPR_FLIP			= 0x0008,
+	RDSPR_SHADOW			= 0x0010,
+	RDSPR_DISPLAYALIGN		= 0x0020,
+	RDSPR_NOCOMPRESSION		= 0x0040,
+	RDSPR_EDGEBLEND			= 0x0080,	// Unused
+
+	// This is the high byte part of the sprite type, which defines what
+	// type of compression is used. Unless RDSPR_NOCOMPRESSION is set.
+
+	RDSPR_RLE16			= 0x0000,
+	RDSPR_RLE256			= 0x0100,
+	RDSPR_RLE256FAST		= 0x0200
+};
+
+// Fading defines
+
+enum {
+	RDFADE_NONE,
+	RDFADE_UP,
+	RDFADE_DOWN,
+	RDFADE_BLACK
+};
+
+// Palette defines
+
+enum {
+	RDPAL_FADE,
+	RDPAL_INSTANT
+};
+
+// Blitting FX defines
+
+enum {
+	RDBLTFX_SPRITEBLEND		= 0x01,
+	RDBLTFX_SHADOWBLEND		= 0x02,
+	RDBLTFX_EDGEBLEND		= 0x04
+};
 
 // Structure filled out by each object to register its graphic printing
 // requrements
@@ -76,14 +127,6 @@ struct BuildUnit {
 	// True means we want this frame to be affected by the shading mask
 
 	bool shadingFlag;
-};
-
-enum {
-	MOUSE_normal		= 0,	// normal in game
-	MOUSE_menu		= 1,	// menu chooser
-	MOUSE_drag		= 2,	// dragging luggage
-	MOUSE_system_menu	= 3,	// system menu chooser
-	MOUSE_holding		= 4	// special
 };
 
 struct ScreenInfo {
@@ -132,6 +175,20 @@ struct BlockSurface {
 	byte data[BLOCKWIDTH * BLOCKHEIGHT];
 	bool transparent;
 };
+
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
+struct Parallax {
+	uint16 w;
+	uint16 h;
+	uint32 offset[2];	// 2 is arbitrary
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 class Screen {
 private:

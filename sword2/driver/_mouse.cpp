@@ -22,6 +22,7 @@
 #include "common/system.h"
 
 #include "sword2/sword2.h"
+#include "sword2/defs.h"
 #include "sword2/mouse.h"
 
 namespace Sword2 {

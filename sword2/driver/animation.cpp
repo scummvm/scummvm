@@ -27,12 +27,11 @@
 #include "sound/mp3.h"
 
 #include "sword2/sword2.h"
+#include "sword2/defs.h"
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 #include "sword2/driver/animation.h"
-#include "sword2/driver/menu.h"
-#include "sword2/driver/render.h"
 
 namespace Sword2 {
 
@@ -415,7 +414,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	byte *msgSurface;
 
 	msgSprite.x = _vm->_screen->getScreenWide() / 2 - frame->width / 2;
-	msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
+	msgSprite.y = MENUDEEP / 2 - frame->height / 2;
 	msgSprite.w = frame->width;
 	msgSprite.h = frame->height;
 	msgSprite.type = RDSPR_NOCOMPRESSION;
