@@ -614,6 +614,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 			_imuse->property (IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
 			_imuse->property (IMuse::PROP_MULTI_MIDI, detector->_multi_midi);
 			_imuse->property (IMuse::PROP_NATIVE_MT32, detector->_native_mt32);
+			if (_features & GF_HUMONGOUS) {
+				_imuse->property (IMuse::PROP_LIMIT_PLAYERS, 1);
+				_imuse->property (IMuse::PROP_RECYCLE_PLAYERS, 1);
+			}
 			_imuse->set_music_volume(_sound->_sound_volume_music);
 		}
 	}
@@ -815,7 +819,7 @@ void Scumm::initScummVars() {
 		VAR(VAR_VIDEOMODE) = 0x13;
 		VAR(VAR_HEAPSPACE) = 1400;
 		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?
-		if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
+		if (_features & GF_HUMONGOUS)
 			VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
 		else 
 			VAR(VAR_SOUNDPARAM) = 0;

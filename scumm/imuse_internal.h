@@ -366,6 +366,9 @@ private:
 
 	int _tempoFactor;
 
+	int  _player_limit;    // Limits how many simultaneous music tracks are played
+	bool _recycle_players; // Can we stop a player in order to start another one?
+
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;
 
@@ -390,7 +393,7 @@ private:
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
 
-	byte *findTag(int sound, char *tag, int index);
+	byte *findStartOfSound (int sound);
 	bool isMT32(int sound);
 	bool isGM(int sound);
 	int get_queue_sound_status(int sound);
@@ -457,8 +460,7 @@ public:
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stop_all_sounds();
-	int getSoundStatus(int sound);
-	bool get_sound_active(int sound);
+	int getSoundStatus (int sound, bool ignoreFadeouts = true);
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int clear_queue();
 	void setBase(byte **base);

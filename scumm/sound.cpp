@@ -236,55 +236,8 @@ void Sound::playSound(int soundID) {
 		}
 		// XMIDI 
 		else if ((READ_UINT32_UNALIGNED(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
-			// skip HSHD
-			ptr += 8 + READ_BE_UINT32_UNALIGNED(ptr+12);
-			if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
-				return; // abort
-			
-			size = READ_BE_UINT32_UNALIGNED(ptr+4) - 8;
-			ptr += 8; // don't need SDAT block anymore
-
-			// XMIDI playing stuff goes here
-			// ptr should be pointing to XMIDI file in memory
-			// HACK (Jamieson630): Just to see if it works.
-			static MidiParser *parser = 0;
-
-			MidiDriver *driver = 0;
-			if (_scumm && _scumm->_imuse)
-				driver = _scumm->_imuse->getMidiDriver();
-			if (driver) {
-				driver->setTimerCallback (0, 0);
-				if (parser) {
-					delete parser;
-					parser = 0;
-				}
-				parser = MidiParser::createParser_XMIDI();
-				parser->setMidiDriver (driver);
-				parser->setTimerRate (driver->getBaseTempo());
-				if (_scumm->_gameId != GID_PUTTDEMO)
-					parser->property (MidiParser::mpAutoLoop, 1);
-				parser->loadMusic (ptr, size);
-				driver->open();
-				driver->setTimerCallback (parser, &MidiParser::timerCallback);
-			}
-
-			// FIXME: dumping xmi files for testing, remove when working
-			if (1) {
-				File out;
-				char buf[64];
-				sprintf(buf, "dumps/sound-%d.xmi", soundID);
-				
-				out.open(buf, "", 1);
-				if (out.isOpen() == false) {
-					out.open(buf, "", 2);
-					if (out.isOpen() == false)
-						return;
-					out.write(ptr, size);
-				}
-				out.close();
-			}
-
-			return;
+			// Pass XMIDI on to IMuse unprocessed.
+			// IMuse can handle XMIDI resources now.
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('ADL ')) {
 			// played as MIDI, just to make perhaps the later use
@@ -636,11 +589,13 @@ int Sound::isSoundRunning(int sound) {
 		return pollCD();
 	
 	if (_scumm->_features & GF_HUMONGOUS) {
-			if (sound == -2) {
-				return isSfxFinished();
-			// FIXME are we playing music?
-			} else if (sound == -1)
-				return 1;
+		if (sound == -2) {
+			return isSfxFinished();
+		} else if (sound == -1) {
+			// getSoundStatus(), with a -1, will return the
+			// ID number of the first active music it finds.
+			return _scumm->_imuse->getSoundStatus (sound);
+		}
 	}
 	
 	_scumm->_mixer->stopID(sound);

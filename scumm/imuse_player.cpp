@@ -88,6 +88,14 @@ bool Player::startSound (int sound, MidiDriver *midi) {
 	void *mdhd;
 	int i;
 
+	// Not sure what the old code was doing,
+	// but we'll go ahead and do a similar check.
+	mdhd = _se->findStartOfSound (sound);
+	if (!mdhd) {
+			warning ("Player::startSound(): Couldn't find start of sound %d!", sound);
+			return false;
+	}
+/*
 	mdhd = _se->findTag(sound, MDHD_TAG, 0);
 	if (mdhd == NULL) {
 		mdhd = _se->findTag(sound, MDPG_TAG, 0);
@@ -96,7 +104,7 @@ bool Player::startSound (int sound, MidiDriver *midi) {
 				return false;
 		}
 	}
-
+*/
 	_isMT32 = _se->isMT32(sound);
 	_isGM = _se->isGM(sound);
 
@@ -114,8 +122,8 @@ bool Player::startSound (int sound, MidiDriver *midi) {
 
 	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i)
 		_parameterFaders[i].init();
-
 	hook_clear();
+
 	if (start_seq_sound(sound) != 0) {
 		_active = false;
 		_midi = NULL;
@@ -163,14 +171,16 @@ int Player::start_seq_sound(int sound) {
 	setTempo(500000);
 	setSpeed(128);
 
-	ptr = _se->findTag (sound, "MThd", 0);
+	ptr = _se->findStartOfSound (sound);
 	if (ptr == NULL)
 		return -1;
 	if (_parser)
 		delete _parser;
 
-	ptr -= 8; // findTag puts us past the tag and length
-	_parser = MidiParser::createParser_SMF();
+	if (!memcmp (ptr, "FORM", 4))
+		_parser = MidiParser::createParser_XMIDI();
+	else
+		_parser = MidiParser::createParser_SMF();
 	_parser->setTimerRate ((_midi->getBaseTempo() * _speed) >> 7);
 	_parser->setMidiDriver (this);
 	_parser->property (MidiParser::mpSmartJump, 1);

@@ -49,6 +49,8 @@ _base_sounds (0),
 _paused (false),
 _initialized (false),
 _tempoFactor (0),
+_player_limit (ARRAYSIZE(_players)),
+_recycle_players (false),
 _queue_end (0),
 _queue_pos (0),
 _queue_sound (0),
@@ -89,7 +91,7 @@ MidiDriver *IMuseInternal::getMidiDriver() {
 	return driver;
 }
 
-byte *IMuseInternal::findTag(int sound, char *tag, int index) {
+byte *IMuseInternal::findStartOfSound (int sound) {
 	byte *ptr = NULL;
 	int32 size, pos;
 
@@ -97,7 +99,7 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index) {
 		ptr = _base_sounds[sound];
 
 	if (ptr == NULL) {
-		  debug(1, "IMuseInternal::findTag completely failed finding sound %d", sound);
+		debug (1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist!", sound);
 		return NULL;
 
 	}
@@ -106,16 +108,18 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index) {
 	size = READ_BE_UINT32_UNALIGNED(ptr);
 	ptr += 4;
 
+	// Okay, we're looking for one of those things: either
+	// an 'MThd' tag (for SMF), or a 'FORM' tag (for XMIDI).
+	size = 48; // Arbitrary; we should find our tag within the first 48 bytes of the resource
 	pos = 0;
-
 	while (pos < size) {
-		if (!memcmp(ptr + pos, tag, 4) && !index--)
-			return ptr + pos + 8;
-		pos += READ_BE_UINT32_UNALIGNED(ptr + pos + 4) + 8;
+		if (!memcmp (ptr + pos, "MThd", 4) || !memcmp (ptr + pos, "FORM", 4))
+			return ptr + pos;
+		++pos; // We could probably iterate more intelligently
 	}
 
-	debug(3, "IMuseInternal::findTag failed finding sound %d", sound);
-	return NULL;
+	debug(3, "IMuseInternal::findStartOfSound(): Failed to align on sound %d!", sound);
+	return 0;
 }
 
 bool IMuseInternal::isMT32(int sound) {
@@ -219,6 +223,14 @@ bool IMuseInternal::startSound(int sound) {
 			return false;
 	}
 
+	// Not sure exactly what the old code was doing,
+	// but we'll go ahead and do a similar check.
+	mdhd = findStartOfSound (sound);
+	if (!mdhd) {
+		debug (2, "IMuseInternal::startSound(): Couldn't find sound %d!", sound);
+		return false;
+	}
+/*
 	mdhd = findTag(sound, MDHD_TAG, 0);
 	if (!mdhd) {
 		mdhd = findTag(sound, MDPG_TAG, 0);
@@ -227,6 +239,7 @@ bool IMuseInternal::startSound(int sound) {
 			return false;
 		}
 	}
+*/
 
 	// Check which MIDI driver this track should use.
 	// If it's NULL, it ain't something we can play.
@@ -257,7 +270,7 @@ Player *IMuseInternal::allocate_player(byte priority) {
 	int i;
 	byte bestpri = 255;
 
-	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
+	for (i = _player_limit; i != 0; i--, player++) {
 		if (!player->isActive())
 			return player;
 		if (player->getPriority() < bestpri) {
@@ -266,7 +279,7 @@ Player *IMuseInternal::allocate_player(byte priority) {
 		}
 	}
 
-	if (bestpri < priority)
+	if (bestpri < priority || _recycle_players)
 		return best;
 
 	debug(1, "Denying player request");
@@ -410,22 +423,21 @@ Part *IMuseInternal::allocate_part (byte pri, MidiDriver *midi) {
 	return best;
 }
 
-int IMuseInternal::getSoundStatus(int sound) {
-	Player *player = findActivePlayer (sound);
-	if (player && !player->isFadingOut())
+int IMuseInternal::getSoundStatus (int sound, bool ignoreFadeouts) {
+	Player *player;
+	if (sound == -1) {
+		player = _players;
+		for (int i = ARRAYSIZE(_players); i; --i, ++player) {
+			if (player->isActive() && (!ignoreFadeouts || !player->isFadingOut()))
+				return player->getID();
+		}
+		return 0;
+	}
+
+	player = findActivePlayer (sound);
+	if (player && (!ignoreFadeouts || !player->isFadingOut()))
 		return 1;
 	return get_queue_sound_status(sound);
-}
-
-// This is exactly the same as getSoundStatus except that
-// it treats sounds that are fading out just the same as
-// other sounds. This is the method to use when determining
-// what resources to expire from memory.
-bool IMuseInternal::get_sound_active(int sound) {
-	Player *player = findActivePlayer (sound);
-	if (player)
-		return 1;
-	return (get_queue_sound_status(sound) != 0);
 }
 
 int IMuseInternal::get_queue_sound_status(int sound) {
@@ -1041,6 +1053,17 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 
 	case IMuse::PROP_OLD_ADLIB_INSTRUMENTS:
 		_old_adlib_instruments = (value > 0);
+		break;
+
+	case IMuse::PROP_LIMIT_PLAYERS:
+		if (value > 0 && value <= ARRAYSIZE(_players))
+			_player_limit = (int) value;
+		break;
+
+	case IMuse::PROP_RECYCLE_PLAYERS:
+		if (value > 0 && value <= ARRAYSIZE(_players))
+			_recycle_players = (value != 0);
+		break;
 	}
 	return 0;
 }
@@ -1674,8 +1697,8 @@ int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); o
 bool IMuse::startSound(int sound) { in(); bool ret = _target->startSound (sound); out(); return ret; }
 int IMuse::stopSound(int sound) { in(); int ret = _target->stopSound (sound); out(); return ret; }
 int IMuse::stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
-int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus (sound); out(); return ret; }
-bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->get_sound_active (sound); out(); return ret; }
+int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus (sound, true); out(); return ret; }
+bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->getSoundStatus (sound, false) ? 1 : 0; out(); return ret; }
 int32 IMuse::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand (a,b,c,d,e,f,g,h); out(); return ret; }
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
 void IMuse::setBase(byte **base) { in(); _target->setBase (base); out(); }
