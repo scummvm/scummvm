@@ -37,23 +37,6 @@
 
 #define OPCODE(x)	{ &Scumm_v8::x, #x }
 
-/*
-// FIXME: Move this somewhere better :)
-void Scumm_v8::loadCharset(int charset) {
-	char fontname[256];
-	sprintf(fontname, "resource/font%d.nut", charset);
-	warning("Loading charset %s\n", fontname);
-	_fr[charset] = new NutRenderer(this);
-	if (!(_fr[charset]->loadFont(fontname, getGameDataPath()))) {
-		delete _fr[charset];
-		_fr[charset] = NULL;
-		return;
-	}
-
-	_fr[charset]->bindDisplay(virtscr[0].screenPtr, _realWidth, _realHeight, _realWidth);
-}
-*/
-
 void Scumm_v8::setupOpcodes()
 {
 	// TODO: any of the o6_ entries are potentially wrong and pure guesses :-)
@@ -290,7 +273,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_drawBox),
 		/* B8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o8_startVideo),
 		OPCODE(o6_kernelSetFunctions),
 		OPCODE(o6_invalid),
 		/* BC */
@@ -1249,6 +1232,13 @@ void Scumm_v8::o8_system()
 //	default:
 		error("o8_system: default case %d", subOp);
 //	}
+}
+
+void Scumm_v8::o8_startVideo()
+{
+	int len = resStrLen((char*)_scriptPointer);
+	warning("o8_startVideo(%s)", (char*)_scriptPointer);
+	_scriptPointer += len + 1;
 }
 
 void Scumm_v8::o6_kernelSetFunctions()

@@ -406,11 +406,6 @@ protected:
 
 	void decodeParseString(int m, int n);
 
-	/* Version 8 Font Stuff */
-/*
-	void loadCharset(int charset);
-	NutRenderer *_fr[4];
-*/
 	/* Version 8 script opcodes */
 	void o8_mod();
 	void o8_wait();
@@ -433,6 +428,7 @@ protected:
 	
 	void o8_soundKludge();
 	void o8_system();
+	void o8_startVideo();
 	void o6_kernelSetFunctions();
 	void o6_kernelGetFunctions();
 
