@@ -40,6 +40,9 @@ namespace Saga {
 #define RID_IHNMDEMO_SCENE_LUT  286
 #define RID_IHNMDEMO_SCRIPT_LUT 18
 
+//obj names
+#define ITE_OBJ_MAP 14
+
 // SCENES
 #define ITE_SCENE_INV -1
 

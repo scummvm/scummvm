@@ -26,6 +26,8 @@
 #ifndef SAGA_ISOMAP_H_
 #define SAGA_ISOMAP_H_
 
+#include "saga/actor.h"
+
 namespace Saga {
 
 #define SAGA_ISOTILEDATA_LEN 8
@@ -45,6 +47,11 @@ namespace Saga {
 #define SAGA_METATILEDATA_LEN 36
 
 #define SAGA_MULTI_TILE (1 << 15)
+
+#define SAGA_SCROLL_LIMIT_X1 32
+#define SAGA_SCROLL_LIMIT_X2 64
+#define SAGA_SCROLL_LIMIT_Y1 8
+#define SAGA_SCROLL_LIMIT_Y2 32
 
 enum TileMapEdgeType {
 	kEdgeTypeBlack	= 0,
@@ -106,12 +113,39 @@ public:
 	void loadMulti(const byte * resourcePointer, size_t resourceLength);
 	void freeMem();
 	int draw(SURFACE *ds);
-private:
-	void drawTiles(SURFACE *ds);
-	void drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV);
-	void drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH);	
-	void drawTile(SURFACE *ds, uint16 tileIndex, const Point &point);
+	void drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale);
+	void adjustScroll(bool jump);
+	void tileCoordsToScreenPoint(const Location &location, Point &position) {
+		position.x = location.u() - location.v() + (128 * SAGA_TILEMAP_W) - _viewScroll.x + 16;
+		position.y = -((location.u() + location.v()) >> 1) + (128 * SAGA_TILEMAP_W) - _viewScroll.y - location.z;
+	}
 	
+private:
+	void drawTiles(SURFACE *ds, const Location *location);
+	void drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV);
+	void drawSpriteMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV);
+	void drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH);	
+	void drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH);	
+	void drawTile(SURFACE *ds, uint16 tileIndex, const Point &point);
+	void drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &location, const Point &point);
+	int16 smoothSlide(int16 value, int16 min, int16 max) {
+		if (value < min) {
+			if (value < min - 100 || value > min - 4) {
+				value = min;
+			} else {
+				value += 4;
+			}
+		} else {
+			if (value > max) {
+				if (value > max + 100 || value < max + 4) {
+					value = max;
+				} else {
+					value -= 4;
+				}
+			}
+		}
+		return value;
+	}	
 
 	byte *_tileData;
 	size_t _tileDataLength;	
@@ -128,7 +162,7 @@ private:
 
 	TileMapData _tileMap;
 	
-	Point _tileScroll;
+	Point _mapPosition;
 public:
 	int _viewDiff;
 	Point _viewScroll;

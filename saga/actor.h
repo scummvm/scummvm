@@ -146,6 +146,12 @@ struct Location {
 	int &v() {
 		return y;
 	}
+	int u() const {
+		return x;
+	}
+	int v() const {
+		return y;
+	}
 	void delta(const Location &location, Location &result) const {
 		result.x = x - location.x;
 		result.y = y - location.y;

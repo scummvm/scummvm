@@ -34,6 +34,7 @@
 #include "saga/sound.h"
 #include "saga/scene.h"
 
+#include "saga/isomap.h"
 #include "saga/actor.h"
 #include "saga/itedata.h"
 #include "saga/stream.h"
@@ -634,6 +635,9 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	}
 
 	handleActions(0, true);
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
+		_vm->_isoMap->adjustScroll(true);
+	}
 }
 
 ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
@@ -1041,10 +1045,12 @@ int Actor::direct(int msec) {
 	return SUCCESS;
 }
 
+
 void Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 	int	beginSlope, endSlope, middle;
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+		_vm->_isoMap->tileCoordsToScreenPoint(commonObjectData->location, commonObjectData->screenPosition);
+		commonObjectData->screenScale = 256;
 	} else {
 		middle = _vm->getSceneHeight() - commonObjectData->location.y / ACTOR_LMULT;
 
@@ -1159,7 +1165,7 @@ int Actor::drawActors() {
 		
 		
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
-			//todo: it
+			_vm->_isoMap->drawSprite(back_buf,*spriteList, frameNumber, drawObject->location, drawObject->screenPosition, drawObject->screenScale);
 		} else {
 			_vm->_sprite->drawOccluded(back_buf, *spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, drawObject->screenDepth);
 		}

@@ -905,6 +905,7 @@ int Scene::draw(SURFACE *dst_s) {
 	_vm->_render->getBufferInfo(&buf_info);
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
+		_vm->_isoMap->adjustScroll(false);
 		_vm->_isoMap->draw(dst_s);
 	} else {
 		bufToSurface(dst_s, buf_info.bg_buf, _vm->getDisplayWidth(),

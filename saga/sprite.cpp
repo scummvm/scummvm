@@ -170,48 +170,44 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int
 
 }
 
-int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale) {
-	const byte *spriteBuffer;
-	int i, j;
-	byte *bufRowPointer;
-	const byte *srcRowPointer;
+void Sprite::drawClip(SURFACE *ds, Rect clip, const Point &spritePointer, int width, int height, const byte *spriteBuffer) {
 	int clipWidth;
 	int clipHeight;
-	int width;
-	int height;
-	int xAlign;
-	int yAlign;
-	Point spritePointer;
 
-	assert(_initialized);
-
-	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
-	
-	spritePointer.x = screenCoord.x + xAlign;
-	spritePointer.y = screenCoord.y + yAlign;
-
-	if (spritePointer.x < 0) {
-		return 0;
-	}
-	if (spritePointer.y < 0) {
-		return 0;
-	}
+	int i, j, jo, io;
+	byte *bufRowPointer;
+	const byte *srcRowPointer;
 
 	bufRowPointer = (byte *)ds->pixels + ds->pitch * spritePointer.y;
 	srcRowPointer = spriteBuffer;
 
 	clipWidth = width;
-	if (width > (ds->w - spritePointer.x)) {
-		clipWidth = (ds->w - spritePointer.x);
+	if (width > (clip.right - spritePointer.x)) {
+		clipWidth = (clip.right - spritePointer.x);
 	}
 
 	clipHeight = height;
-	if (height > (ds->h - spritePointer.y)) {
-		clipHeight = (ds->h - spritePointer.y);
+	if (height > (clip.bottom - spritePointer.y)) {
+		clipHeight = (clip.bottom - spritePointer.y);
 	}
 
-	for (i = 0; i < clipHeight; i++) {
-		for (j = 0; j < clipWidth; j++) {
+	jo = 0;
+	io = 0;
+	if (spritePointer.x < clip.left) {
+		jo = clip.left - spritePointer.x; 
+	}
+	if (spritePointer.y < clip.top) {
+		io = clip.top - spritePointer.y;
+		bufRowPointer += ds->pitch * io;
+		srcRowPointer += width * io;
+	}
+	for (i = io; i < clipHeight; i++) {
+		for (j = jo; j < clipWidth; j++) {
+			assert((uint)ds->pixels <= (uint)(bufRowPointer + j + spritePointer.x));
+			assert(((uint)ds->pixels + (_vm->getDisplayWidth() * _vm->getDisplayHeight())) > (uint)(bufRowPointer + j + spritePointer.x));
+			assert((uint)spriteBuffer <= (uint)(srcRowPointer + j));
+			assert(((uint)spriteBuffer + (width * height)) > (uint)(srcRowPointer + j));
+
 			if (*(srcRowPointer + j) != 0) {
 				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
 			}
@@ -219,6 +215,24 @@ int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Po
 		bufRowPointer += ds->pitch;
 		srcRowPointer += width;
 	}
+}
+
+int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale) {
+	const byte *spriteBuffer;
+	int width;
+	int height;
+	int xAlign;
+	int yAlign;
+	Point spritePointer;
+	Rect clip(_vm->getDisplayWidth(),_vm->getDisplayHeight());
+
+	assert(_initialized);
+
+	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
+	
+	spritePointer.x = screenCoord.x + xAlign;
+	spritePointer.y = screenCoord.y + yAlign;
+	drawClip(ds, clip, spritePointer, width, height, spriteBuffer);
 
 	return SUCCESS;
 }

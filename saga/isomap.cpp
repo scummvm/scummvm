@@ -26,6 +26,8 @@
 
 #include "saga/gfx.h"
 
+#include "saga/resnames.h"
+#include "saga/scene.h"
 #include "saga/isomap.h"
 #include "saga/stream.h"
 
@@ -199,37 +201,133 @@ void IsoMap::freeMem() {
 	_multiCount = 0;
 }
 
+void IsoMap::adjustScroll(bool jump) {
+	Point playerPoint;
+	Point minScrollPos;
+	Point maxScrollPos;
+	
+
+	tileCoordsToScreenPoint(_vm->_actor->_centerActor->location, playerPoint);
+
+	if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE) {
+		_mapPosition.x = (playerPoint.x + _viewScroll.x) * 30 / 100 - (381);
+		_mapPosition.y = (playerPoint.y + _viewScroll.y) * 30 / 100 - (342);
+	}
+
+	if (_vm->_actor->_centerActor != _vm->_actor->_protagonist) {
+		playerPoint.y -= 24;
+	}
+	playerPoint.y -= 28;
+
+	playerPoint.x += _viewScroll.x - _vm->getDisplayWidth()/2;
+	playerPoint.y += _viewScroll.y - _vm->getSceneHeight()/2;
+
+	minScrollPos.x = playerPoint.x - SAGA_SCROLL_LIMIT_X1;
+	minScrollPos.y = playerPoint.y - SAGA_SCROLL_LIMIT_Y1;
+
+	maxScrollPos.x = playerPoint.x + SAGA_SCROLL_LIMIT_X1;
+	maxScrollPos.y = playerPoint.y + SAGA_SCROLL_LIMIT_Y2;
+
+	if (jump) {
+		if (_viewScroll.y < minScrollPos.y) {
+			_viewScroll.y = minScrollPos.y;
+		}
+		if (_viewScroll.y > maxScrollPos.y) {
+			_viewScroll.y = maxScrollPos.y;
+		}
+		if (_viewScroll.x < minScrollPos.x) {
+			_viewScroll.x = minScrollPos.x;
+		}
+		if (_viewScroll.x > maxScrollPos.x) {
+			_viewScroll.x = maxScrollPos.x;
+		}
+	} else {
+		_viewScroll.y = smoothSlide( _viewScroll.y, minScrollPos.y, maxScrollPos.y );
+		_viewScroll.x = smoothSlide( _viewScroll.x, minScrollPos.x, maxScrollPos.x );
+	}
+
+	if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE) {
+		ObjectData *obj;
+		uint16 objectId;
+		objectId = _vm->_actor->objIndexToId(ITE_OBJ_MAP);
+		obj = _vm->_actor->getObj(objectId);
+		if (obj->sceneNumber != ITE_SCENE_INV) {
+			_viewScroll.x = 1552 + 8;
+			_viewScroll.y = 1456 + 8;
+		}
+	}
+}
+
 int IsoMap::draw(SURFACE *ds) {
 	
 	Rect isoRect(_vm->getDisplayWidth(), _vm->getDisplayInfo().sceneHeight);
 	drawRect(ds, &isoRect, 0);
 	_tileClip = isoRect;
-	drawTiles(ds);
+	drawTiles(ds, NULL);
 
 	return SUCCESS;
 }
 
-void IsoMap::drawTiles(SURFACE *ds) {
+void IsoMap::drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale) {
+	int width;
+	int height;
+	int xAlign;
+	int yAlign;
+	const byte *spriteBuffer;
+	Point spritePointer;
+	Rect clip(_vm->getDisplayWidth(),_vm->getSceneHeight());
+
+	_vm->_sprite->getScaledSpriteBuffer(spriteList,spriteNumber,scale, width, height, xAlign, yAlign, spriteBuffer);
+
+	spritePointer.x = screenPosition.x + xAlign;
+	spritePointer.y = screenPosition.y + yAlign;
+
+	_tileClip.left = screenPosition.x;
+	_tileClip.top = screenPosition.y;
+	_tileClip.right = screenPosition.x + width;
+	_tileClip.bottom = screenPosition.y + height;
+
+	if (_tileClip.left < 0) {
+		_tileClip.left = 0;
+	}
+	if (_tileClip.right > _vm->getDisplayWidth()) {
+		_tileClip.right = _vm->getDisplayWidth();
+	}
+	if (_tileClip.top < 0) {
+		_tileClip.top = 0;
+	}
+	if (_tileClip.bottom > _vm->getSceneHeight()) {
+		_tileClip.bottom = _vm->getSceneHeight();
+	}
+
+	_vm->_sprite->drawClip(ds, clip, spritePointer, width, height, spriteBuffer);
+	drawTiles(ds, &location);
+}
+
+
+void IsoMap::drawTiles(SURFACE *ds,  const Location *location) {
 	Point view1;
 	Point fineScroll;
+	Point tileScroll;
 	Point metaTileY;
 	Point metaTileX;
 	int16 u0, v0, 
 		  u1, v1,
 		  u2, v2,
 		  uc, vc;
+	uint16 metaTileIndex;
+	Location rLocation;
 	int16 workAreaWidth;
 	int16 workAreaHeight;
-	uint16 metaTileIndex;
 
-	_tileScroll.x = _viewScroll.x >> 4;
-	_tileScroll.y = _viewScroll.y >> 4;
+	tileScroll.x = _viewScroll.x >> 4;
+	tileScroll.y = _viewScroll.y >> 4;
 
 	fineScroll.x = _viewScroll.x & 0xf;
 	fineScroll.y = _viewScroll.y & 0xf;
 
-	view1.x = _tileScroll.x - (8 * SAGA_TILEMAP_W);
-	view1.y = (8 * SAGA_TILEMAP_W) - _tileScroll.y;
+	view1.x = tileScroll.x - (8 * SAGA_TILEMAP_W);
+	view1.y = (8 * SAGA_TILEMAP_W) - tileScroll.y;
 
 	u0 = ((view1.y + 64) * 2 + view1.x) >> 4;
 	v0 = ((view1.y + 64) * 2 - view1.x) >> 4;
@@ -271,7 +369,14 @@ void IsoMap::drawTiles(SURFACE *ds) {
 				metaTileIndex = _tileMap.tilePlatforms[uc][vc];
 			}
 
-			drawMetaTile(ds, metaTileIndex, metaTileX, u2 << 3, v2 << 3);
+			if (location != NULL) {
+				rLocation.u() = location->u() - (u2 << 7);
+				rLocation.v() = location->v() - (v2 << 7);
+				rLocation.z = location->z;
+				drawSpriteMetaTile(ds, metaTileIndex, metaTileX, rLocation, u2 << 3, v2 << 3);
+			} else {
+				drawMetaTile(ds, metaTileIndex, metaTileX, u2 << 3, v2 << 3);
+			}
 		}
 
 		metaTileY.y += 64;
@@ -308,11 +413,45 @@ void IsoMap::drawTiles(SURFACE *ds) {
 				metaTileIndex = _tileMap.tilePlatforms[uc][vc];
 			}
 
-			drawMetaTile(ds, metaTileIndex, metaTileX, u2 << 3, v2 << 3);
+			if (location != NULL) {
+				rLocation.u() = location->u() - (u2 << 7);
+				rLocation.v() = location->v() - (v2 << 7);
+				rLocation.z = location->z;
+				drawSpriteMetaTile(ds, metaTileIndex, metaTileX, rLocation, u2 << 3, v2 << 3);
+			} else {
+				drawMetaTile(ds, metaTileIndex, metaTileX, u2 << 3, v2 << 3);
+			}
 		}
 		metaTileY.y += 64;
 	}
 
+}
+
+void IsoMap::drawSpriteMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV) {
+	MetaTileData * metaTile;
+	uint16 high;
+	int16 platformIndex;
+	Point platformPoint;
+	platformPoint = point;
+
+	if (_metaTilesCount <= metaTileIndex) {
+		error("IsoMap::drawMetaTile wrong metaTileIndex");
+	}
+
+	metaTile = &_metaTileList[metaTileIndex];
+
+	if (metaTile->highestPlatform > 18) {
+		metaTile->highestPlatform = 0;
+	}
+
+	for (high = 0; high <= metaTile->highestPlatform; high++, platformPoint.y -= 8, location.z -= 8) {
+		assert(SAGA_MAX_PLATFORM_H > high);
+		platformIndex = metaTile->stack[high];
+
+		if (platformIndex >= 0) {
+			drawSpritePlatform( ds, platformIndex, platformPoint, location, absU, absV, high );
+		}
+	}	
 }
 
 void IsoMap::drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV) {
@@ -342,6 +481,61 @@ void IsoMap::drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point,
 	}	
 }
 
+void IsoMap::drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH) {
+	TilePlatformData *tilePlatform;
+	int16 u, v;
+	Point s;
+	Point s0;
+	int16 tileIndex;
+	Location copyLocation(location);
+
+	if (_tilePlatformsCount <= platformIndex) {
+		error("IsoMap::drawPlatform wrong platformIndex");
+	}
+
+	tilePlatform = &_tilePlatformList[platformIndex];
+
+	if ((point.y <= _tileClip.top) || (point.y - SAGA_MAX_TILE_H - SAGA_PLATFORM_W * SAGA_TILE_NOMINAL_H >= _tileClip.bottom)) {
+		return;
+	}
+
+	s0 = point;
+	s0.y -= (((SAGA_PLATFORM_W - 1) + (SAGA_PLATFORM_W - 1)) * 8);
+
+	for (v = SAGA_PLATFORM_W - 1,
+		copyLocation.v() = location.v() - ((SAGA_PLATFORM_W - 1) << 4);
+		v >= 0 && s0.y - SAGA_MAX_TILE_H < _tileClip.bottom && s0.x - 128 < _tileClip.right;
+		v--, copyLocation.v() += 16, s0.x += 16, s0.y += 8) {
+
+		if ((tilePlatform->vBits & (1 << v)) == 0) {
+			continue;
+		}
+
+		if (s0.x + 128 + 32 < _tileClip.left) {
+			continue;
+		}
+
+		s = s0;
+
+		for (u = SAGA_PLATFORM_W - 1,
+			copyLocation.u() = location.u() - ((SAGA_PLATFORM_W - 1) << 4); 
+			 u >= 0 && s.x + 32 > _tileClip.left && s.y - SAGA_MAX_TILE_H < _tileClip.bottom; 
+			 u--, copyLocation.u() += 16, s.x -= 16, s.y += 8 ) {
+			if (s.x < _tileClip.right && s.y > _tileClip.top) {
+
+				tileIndex = tilePlatform->tiles[u][v];
+				if (tileIndex != 0) {
+					if (tileIndex & SAGA_MULTI_TILE) {
+						warning("SAGA_MULTI_TILE"); //TODO: do it !
+					}
+
+					drawSpriteTile(ds, tileIndex, location, s);
+				}
+			}
+		}
+	}
+}
+
 void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH) {
 	TilePlatformData *tilePlatform;
 	int16 u, v;
@@ -362,7 +556,9 @@ void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point,
 	s0 = point;
 	s0.y -= (((SAGA_PLATFORM_W - 1) + (SAGA_PLATFORM_W - 1)) * 8);
 
-	for (v = SAGA_PLATFORM_W - 1; v >= 0 && s0.y - SAGA_MAX_TILE_H < _tileClip.bottom && s0.x - 128 < _tileClip.right; v--, s0.x += 16, s0.y += 8) {
+	for (v = SAGA_PLATFORM_W - 1;
+		v >= 0 && s0.y - SAGA_MAX_TILE_H < _tileClip.bottom && s0.x - 128 < _tileClip.right;
+		v--, s0.x += 16, s0.y += 8) {
 
 		if ((tilePlatform->vBits & (1 << v)) == 0) {
 			continue;
@@ -374,7 +570,9 @@ void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point,
 
 		s = s0;
 
-		for (u = SAGA_PLATFORM_W - 1; u >= 0 && s.x + 32 > _tileClip.left && s.y - SAGA_MAX_TILE_H < _tileClip.bottom; u--, s.x -= 16, s.y += 8 ) {
+		for (u = SAGA_PLATFORM_W - 1;
+			u >= 0 && s.x + 32 > _tileClip.left && s.y - SAGA_MAX_TILE_H < _tileClip.bottom;
+			u--, s.x -= 16, s.y += 8 ) {
 			if (s.x < _tileClip.right && s.y > _tileClip.top) {
 				
 				tileIndex = tilePlatform->tiles[u][v];
@@ -457,7 +655,7 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 				}
 				while ((col < _tileClip.right) && (count < fgRunCount)) {
 					assert((uint)ds->pixels <= (uint)(drawPointer + count));
-					assert(((uint)ds->pixels + (ds->pitch * _vm->getDisplayWidth())) > (uint)(drawPointer + count));
+					assert(((uint)ds->pixels + (_vm->getDisplayWidth() * _vm->getDisplayHeight())) > (uint)(drawPointer + count));
 					drawPointer[count] = readPointer[count];
 					count++;
 					col++;
@@ -476,6 +674,99 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 				fgRunCount = *readPointer++;
 				widthCount += fgRunCount;
 				
+				readPointer += fgRunCount;
+			}
+		}
+	}
+
+}
+
+void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &location, const Point &point) {
+	const byte *tilePointer;
+	const byte *readPointer;
+	byte *drawPointer;
+	Point drawPoint;
+	int height;
+	int widthCount = 0;
+	int row, col, count, lowBound;
+	int bgRunCount;
+	int fgRunCount;
+
+
+	if (tileIndex >= _tilesCount) {
+		error("IsoMap::drawTile wrong tileIndex");
+	}
+
+
+	if (point.x + SAGA_ISOTILE_WIDTH < _tileClip.left) {
+		return;
+	}
+
+	if (point.x - SAGA_ISOTILE_WIDTH >= _tileClip.right) {
+		return;
+	}
+
+	tilePointer = _tileData + _tilesTable[tileIndex].offset;
+	height = _tilesTable[tileIndex].height;
+
+
+
+	if ((height <= 8) || (height > 64)) {
+		return;
+	}
+
+	drawPoint = point;
+	drawPoint.y -= height;
+
+	if (drawPoint.y >= _tileClip.bottom) {
+		return;
+	}
+
+	readPointer = tilePointer;
+	lowBound = MIN((int)(drawPoint.y + height), (int)_tileClip.bottom);
+	for (row = drawPoint.y; row < lowBound; row++) {
+		widthCount = 0;
+		if (row >= _tileClip.top) {
+			drawPointer = (byte *)ds->pixels + drawPoint.x + (row * ds->pitch);
+			col = drawPoint.x;
+			for (;;) {
+				bgRunCount = *readPointer++;
+				widthCount += bgRunCount;
+				if (widthCount >= SAGA_ISOTILE_WIDTH) {
+					break;
+				}
+
+				drawPointer += bgRunCount;
+				col += bgRunCount;
+				fgRunCount = *readPointer++;
+				widthCount += fgRunCount;
+
+				count = 0;
+				while ((col < _tileClip.left) && (count < fgRunCount)) {
+					count++;
+					col++;
+				}
+				while ((col < _tileClip.right) && (count < fgRunCount)) {
+					assert((uint)ds->pixels <= (uint)(drawPointer + count));
+					assert(((uint)ds->pixels + (_vm->getDisplayWidth() * _vm->getDisplayHeight())) > (uint)(drawPointer + count));
+					drawPointer[count] = readPointer[count];
+					count++;
+					col++;
+				}
+				readPointer += fgRunCount;
+				drawPointer += fgRunCount;
+			}
+		} else {
+			for (;;) {
+				bgRunCount = *readPointer++;
+				widthCount += bgRunCount;
+				if (widthCount >= SAGA_ISOTILE_WIDTH) {
+					break;
+				}
+
+				fgRunCount = *readPointer++;
+				widthCount += fgRunCount;
+
 				readPointer += fgRunCount;
 			}
 		}
