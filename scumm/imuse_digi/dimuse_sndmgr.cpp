@@ -219,7 +219,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			_sounds[slot].resPtr = ptr;
 			result = true;
 		} else if (soundType == IMUSE_BUNDLE) {
-			bool header_outside = _vm->_gameId != GID_DIG;
+			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 			if (soundGroup == IMUSE_VOICE)
 				result = openVoiceBundle(slot);
 			else if (soundGroup == IMUSE_MUSIC)
@@ -234,7 +234,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		}
 	} else if (soundName != NULL) {
 		if (soundType == IMUSE_BUNDLE) {
-			bool header_outside = _vm->_gameId != GID_DIG;
+			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 			if (soundGroup == IMUSE_VOICE)
 				result = openVoiceBundle(slot);
 			else if (soundGroup == IMUSE_MUSIC)
@@ -396,7 +396,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 	}
 
 	int header_size = soundHandle->offsetData;
-	bool header_outside = _vm->_gameId != GID_DIG;
+	bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 	if (soundHandle->_bundle) {
 		size = soundHandle->_bundle->decompressSampleByCurIndex(start + offset, size, buf, header_size, header_outside);
 	} else if (soundHandle->resPtr) {
