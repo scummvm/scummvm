@@ -618,7 +618,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */ ,
 			uint32 E, F, G, H;
 			uint32 I, J, K, L;
 			uint32 x1, x2, a1, f1, f2;
-			uint32 position, product1;
+			uint32 position, product1 = 0;
 
 			position = w >> 16;
 			A = bP[position];					// current pixel

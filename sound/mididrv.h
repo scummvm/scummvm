@@ -20,6 +20,11 @@
  *
  */
 
+#ifndef SOUND_MIDIDRV_H
+#define SOUND_MIDIDRV_H
+
+#include "scummsys.h"
+
 struct MidiEvent {
 	uint32 delta;
 	uint32 event;
@@ -122,3 +127,5 @@ extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_AMIDI_create();
 extern MidiDriver *MidiDriver_MIDIEMU_create();
 extern MidiDriver *MidiDriver_ALSA_create();
+
+#endif

@@ -328,7 +328,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			s->_saveLoadSlot = _savegameList->getSelected();
 			s->_saveLoadCompatible = false;
 			s->_saveLoadFlag = 1;		// 1 for save, I assume (Painelf)
-			strcpy(s->_saveLoadName, _savegameList->getSelectedString());
+			strcpy(s->_saveLoadName, _savegameList->getSelectedString().c_str());
 			close();
 		}
 		break;
@@ -494,9 +494,9 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		scumm->_mixer->setVolume(_soundVolumeSfx);
 		scumm->_mixer->setMusicVolume(_soundVolumeMusic);
 		
-		scummcfg->set("master_volume", _soundVolumeMaster);
-		scummcfg->set("music_volume", _soundVolumeMusic);
-		scummcfg->set("sfx_volume", _soundVolumeSfx);
+		scummcfg->setInt("master_volume", _soundVolumeMaster);
+		scummcfg->setInt("music_volume", _soundVolumeMusic);
+		scummcfg->setInt("sfx_volume", _soundVolumeSfx);
 		scummcfg->flush();
 		}
 	case kCancelCmd:

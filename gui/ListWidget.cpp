@@ -231,7 +231,7 @@ void ListWidget::drawWidget(bool hilite)
 
 		buffer += _list[pos];
 	
-		gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10,
+		gui->drawString(buffer.c_str(), _x+5, _y+2 + LINE_HEIGHT * i, _w - 10,
 							(_selectedItem == pos && _hasFocus) ? gui->_textcolorhi : gui->_textcolor);
 	}
 }

@@ -21,8 +21,8 @@
  */
 
 #include "sdl-common.h"
-#include "scaler.h"
-#include "scumm.h"	// Only #included for error() and warning()
+#include "common/scaler.h"
+#include "common/engine.h"	// Only #included for error() and warning()
 
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {

@@ -1,0 +1,235 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2002 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ */
+
+#include "stdafx.h"
+#include "str.h"
+
+
+namespace ScummVM {
+
+String::String(const char *str)
+{
+	_refCount = new int(1);
+	if (str) {
+		_capacity = _len = strlen(str);
+		_str = (char *)calloc(1, _capacity+1);
+		memcpy(_str, str, _len+1);
+	} else {
+		_capacity = _len = 0;
+		_str = 0;
+	}
+}
+
+String::String(const String &str)
+{
+	++(*str._refCount);
+
+	_refCount = str._refCount;
+	_capacity = str._capacity;
+	_len = str._capacity;
+	_str = str._str;
+}
+
+String::~String()
+{
+	decRefCount();
+}
+
+void String::decRefCount()
+{
+	--(*_refCount);
+	if (*_refCount <= 0) {
+		delete _refCount;
+		if (_str)
+			free(_str);
+	}
+}
+
+String& String::operator  =(const char* str)
+{
+	int len = strlen(str);
+	if (len > 0) {
+		ensureCapacity(len, false);
+		
+		_len = len;
+		memcpy(_str, str, _len + 1);
+	} else if (_len > 0) {
+		decRefCount();
+		
+		_refCount = new int(1);
+		_capacity = 0;
+		_len = 0;
+		_str = 0;
+	}
+	return *this;
+}
+
+String& String::operator  =(const String& str)
+{
+	++(*str._refCount);
+
+	decRefCount();
+	
+	_refCount = str._refCount;
+	_capacity = str._capacity;
+	_len = str._len;
+	_str = str._str;
+
+	return *this;
+}
+
+String& String::operator +=(const char* str)
+{
+	int len = strlen(str);
+	if (len > 0) {
+		ensureCapacity(_len + len, true);
+
+		memcpy(_str + _len, str, len + 1);
+		_len += len;
+	}
+	return *this;
+}
+
+String& String::operator +=(const String& str)
+{
+	int len = str._len;
+	if (len > 0) {
+		ensureCapacity(_len + len, true);
+
+		memcpy(_str + _len, str._str, len + 1);
+		_len += len;
+	}
+	return *this;
+}
+
+String& String::operator +=(char c)
+{
+	ensureCapacity(_len + 1, true);
+	
+	_str[_len++] = c;
+	_str[_len] = 0;
+
+	return *this;
+}
+
+bool String::operator ==(const String& x) const
+{
+	return (_len == x._len) && ((_len == 0) || (0 == strcmp(_str, x._str)));
+}
+
+bool String::operator ==(const char* x) const
+{
+	if (_str == 0)
+		return (x == 0) || (*x == 0);
+	if (x == 0)
+		return (_len == 0);
+	return (0 != strcmp(_str, x));
+}
+
+bool String::operator !=(const String& x) const
+{
+	return (_len != x._len) || ((_len != 0) && (0 != strcmp(_str, x._str)));
+}
+
+bool String::operator !=(const char* x) const
+{
+	if (_str == 0)
+		return (x != 0) && (*x != 0);
+	if (x == 0)
+		return (_len != 0);
+	return (0 == strcmp(_str, x));
+}
+
+bool String::operator < (const String& x) const
+{
+	if (!_len || !x._len)	// Any or both particpants are empty?
+		return !_len && x._len;	// Less only if this string is empty and the other isn't
+	return strcmp(_str, x._str) < 0;
+}
+
+bool String::operator <= (const String& x) const
+{
+	if (!_len || !x._len)	// Any or both particpants are empty?
+		return !_len;	// Less or equal unless the other string is empty and this one isn't
+	return strcmp(_str, x._str) <= 0;
+}
+
+bool String::operator > (const String& x) const
+{
+	return (x < *this);
+}
+
+bool String::operator >= (const String& x) const
+{
+	return (x <= *this);
+}
+
+void String::deleteLastChar() {
+	if (_len > 0) {
+		ensureCapacity(_len - 1, true);
+		_str[--_len] = 0;
+	}
+}
+
+void String::clear()
+{
+	if (_capacity) {
+		decRefCount();
+		
+		_refCount = new int(1);
+		_capacity = 0;
+		_len = 0;
+		_str = 0;
+	}
+}
+
+void String::ensureCapacity(int new_len, bool keep_old)
+{
+	// If there is not enough space, or if we are not the only owner 
+	// of the current data, then we have to reallocate it.
+	if (new_len <= _capacity && *_refCount == 1)
+		return;
+
+	int		newCapacity = (new_len <= _capacity) ? _capacity : new_len + 32;
+	char	*newStr = (char *)calloc(1, newCapacity+1);
+
+	if (keep_old && _str)
+		memcpy(newStr, _str, _len + 1);
+	else
+		_len = 0;
+
+	decRefCount();
+	
+	_refCount = new int(1);
+	_capacity = newCapacity;
+	_str = newStr;
+}
+
+bool operator == (const char* y, const String& x)
+{
+	return (x == y);
+}
+
+bool operator != (const char* y, const String& x)
+{
+	return x != y;
+}
+
+};	// End of namespace ScummVM

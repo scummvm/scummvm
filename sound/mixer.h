@@ -29,6 +29,9 @@
 #include <mad.h>
 #endif
 
+#include "common/scummsys.h"
+#include "common/system.h"
+
 typedef uint32 PlayingSoundHandle;
 
 class File;
@@ -61,6 +64,7 @@ private:
 
 	public:
 		ChannelRaw(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags);
+
 		void mix(int16 * data, uint len);
 		void realDestroy();
 	};
@@ -78,6 +82,7 @@ private:
 
 	public:
 		ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags);
+
 		void append(void * sound, uint32 size);
 		void mix(int16 * data, uint len);
 		void realDestroy();
@@ -99,6 +104,7 @@ private:
 
 	public:
 		ChannelMP3(SoundMixer * mixer, void *sound, uint size, byte flags);
+
 		void mix(int16 * data, uint len);
 		void realDestroy();
 
@@ -117,8 +123,10 @@ private:
 		File * _file;
 		bool _initialized;
 
+
 	public:
 		ChannelMP3CDMusic(SoundMixer * mixer, File * file, mad_timer_t duration);
+
 		void mix(int16 * data, uint len);
 		void realDestroy();
 		bool soundFinished();

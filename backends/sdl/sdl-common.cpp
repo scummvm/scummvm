@@ -21,9 +21,9 @@
 
 #include "sdl-common.h"
 #include "sound/mididrv.h"
-#include "gameDetector.h"
-#include "scaler.h"
-#include "scumm.h"	// Only #included for error() and warning()
+#include "common/gameDetector.h"
+#include "common/scaler.h"
+#include "common/engine.h"	// Only #included for error() and warning()
 
 #include "scummvm.xpm"
 

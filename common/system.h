@@ -20,10 +20,12 @@
  *
  */
 
-#ifndef _SYSTEM_H
-#define _SYSTEM_H
+#ifndef COMMON_SYSTEM_H
+#define COMMON_SYSTEM_H
 
-/* Interface to what's below ScummVM */
+#include "scummsys.h"
+
+// Interface to the ScummVM backend
 
 class OSystem {
 public:

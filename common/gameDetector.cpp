@@ -139,7 +139,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'a':
 				CHECK_OPTION();
 				_amiga = (c == 'a');
-				scummcfg->set("amiga", _amiga);
+				scummcfg->setBool("amiga", _amiga);
 				break;
 			case 'b':
 				HANDLE_OPTION();
@@ -148,7 +148,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'c':
 				HANDLE_OPTION();
 				_cdrom = atoi(option);
-				scummcfg->set("cdrom", _cdrom);
+				scummcfg->setInt("cdrom", _cdrom);
 				break;
 			case 'd':
 				_debugMode = true;
@@ -166,7 +166,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'f':
 				CHECK_OPTION();
 				_fullScreen = (c == 'f');
-				scummcfg->set("fullscreen", _fullScreen, "scummvm");
+				scummcfg->setBool("fullscreen", _fullScreen, "scummvm");
 				break;
 			case 'g':
 				HANDLE_OPTION();
@@ -179,7 +179,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				HANDLE_OPTION();
 				{
 					Config * newconfig = new Config(option, "scummvm");
-					scummcfg->merge_config(newconfig);
+					scummcfg->merge_config(*newconfig);
 					delete newconfig;
 					updateconfig();
 					break;
@@ -188,12 +188,12 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'm':
 				HANDLE_OPTION();
 				_music_volume = atoi(option);
-				scummcfg->set("music_volume", _music_volume);
+				scummcfg->setInt("music_volume", _music_volume);
 				break;
 			case 'n':
 				CHECK_OPTION();
 				_noSubtitles = (c == 'n');
-				scummcfg->set("nosubtitles", _noSubtitles);
+				scummcfg->setBool("nosubtitles", _noSubtitles);
 				break;
 			case 'p':
 				HANDLE_OPTION();
@@ -207,7 +207,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 's':
 				HANDLE_OPTION();
 				_sfx_volume = atoi(option);
-				scummcfg->set("sfx_volume", _sfx_volume);
+				scummcfg->setInt("sfx_volume", _sfx_volume);
 				break;
 			case 't':
 				HANDLE_OPTION();
@@ -227,20 +227,20 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				scummcfg->set_writing(true);
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
-					scummcfg->change_filename(option);
+					scummcfg->set_filename(option);
 				break;
 			case 'x':
 				_save_slot = 0;
 				HANDLE_OPT_OPTION();
 				if (option != NULL) {
 					_save_slot = atoi(option);
-					scummcfg->set("save_slot", _save_slot);
+					scummcfg->setInt("save_slot", _save_slot);
 				}
 				break;
 			case 'y':
 				HANDLE_OPTION();
 				_talkSpeed = atoi(option);				
-				scummcfg->set("talkspeed", _talkSpeed);
+				scummcfg->setInt("talkspeed", _talkSpeed);
 				break;
 			default:
 				goto ShowHelpAndExit;

@@ -19,13 +19,12 @@
  *
  */
 
+#ifndef COMMON_FILE_H
+#define COMMON_FILE_H
+
 #include <stdio.h>
 #include "stdafx.h"
 #include "scummsys.h"
-#include "scumm.h"
-
-#ifndef FILE_H
-#define FILE_H
 
 class File {
 private:

@@ -16,7 +16,7 @@ CP  = cp
 CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar
 DEFINES  =
 LDFLAGS :=
-INCLUDES:= -I. -Icommon -Iscumm
+INCLUDES:= -I. -Icommon
 LIBS	 =
 OBJS	 =
 

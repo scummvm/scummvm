@@ -20,7 +20,7 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
+#include "scumm/scumm.h"
 #include "sound/mididrv.h"
 #include "scumm/sound.h"
 #include "scumm/imuse.h"
@@ -625,9 +625,9 @@ void Gui::handleSoundDialogCommand(int cmd)
 		_s->_mixer->setVolume(_s->_sound->_sound_volume_sfx);
 		_s->_mixer->setMusicVolume(_s->_sound->_sound_volume_music);
 
-		scummcfg->set("master_volume", _s->_sound->_sound_volume_master);
-		scummcfg->set("music_volume", _s->_sound->_sound_volume_music);
-		scummcfg->set("sfx_volume", _s->_sound->_sound_volume_sfx);
+		scummcfg->setInt("master_volume", _s->_sound->_sound_volume_master);
+		scummcfg->setInt("music_volume", _s->_sound->_sound_volume_music);
+		scummcfg->setInt("sfx_volume", _s->_sound->_sound_volume_sfx);
 		scummcfg->flush();
 
 		close();

@@ -22,7 +22,7 @@
 #include "engine.h"
 #include "gameDetector.h"
 #include "config-file.h"
-#include "scumm.h"
+#include "scumm/scumm.h"
 #include "simon/simon.h"
 #include "sound/mixer.h"
 

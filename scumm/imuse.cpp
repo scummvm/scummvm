@@ -26,6 +26,7 @@
 #include "scumm/imuse.h"
 #include "scumm/saveload.h"
 #include "scumm/sound.h"
+#include "common/util.h"
 
 /*
  * Some constants

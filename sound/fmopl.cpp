@@ -24,13 +24,15 @@
 
 #include "stdafx.h"
 
-#include "scumm.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
+
 #include "fmopl.h"
+
+#include "common/engine.h"	// for warning/error/debug
 
 #ifndef PI
 #define PI 3.14159265358979323846

@@ -18,12 +18,16 @@
  * $Header$
  */
 
+#ifndef __MORPHOS__
+
 #include "stdafx.h"
-#include "scumm.h"
 #include "scummsys.h"
 #include "timer.h"
+#include "scumm/scumm.h"
 
-#ifndef __MORPHOS__
+// FIXME - this shouldn't use Scumm, but rather Engine (so that e.g. we can
+// reuse the code for Simon).
+
 static Scumm * scumm;
 
 Timer::Timer(Scumm * parent) {
@@ -154,5 +158,5 @@ void Timer::releaseProcedure (TimerProc procedure) {
 	}
 	_timerRunning = true;
 }
-#endif
 
+#endif

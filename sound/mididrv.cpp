@@ -31,15 +31,16 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
 #include "mididrv.h"
 #include "fmopl.h"
 #include "mixer.h"
+#include "common/engine.h"	// for warning/error/debug
+#include "common/util.h"
 
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
 /* Windows MIDI driver */
-class MidiDriver_WIN:public MidiDriver {
+class MidiDriver_WIN : public MidiDriver {
 public:
 	int open(int mode);
 	void close();

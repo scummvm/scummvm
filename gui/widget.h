@@ -22,7 +22,7 @@
 #define WIDGET_H
 
 #include "scummsys.h"
-#include "common/util.h"
+#include "common/str.h"
 
 class Dialog;
 

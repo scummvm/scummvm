@@ -23,31 +23,39 @@
 #ifndef CONFIG_FILE_H
 #define CONFIG_FILE_H
 
-class hashconfig;
+#include "common/util.h"
+#include "common/map.h"
+#include "common/str.h"
 
 class Config {
 public:
-	Config (const char * = "config.cfg", const char * = "default");
-	 ~Config ();
-	const char *get(const char *key, const char *dom = 0) const;
-	const int getInt(const char *key, int def = 0, const char *dom = 0) const;
-	const bool getBool(const char *key, bool def = false, const char *dom = 0) const;
+	typedef ScummVM::String String;
 
-	const char *set(const char *key, const char *value, const char *dom = 0);
-	const char *set(const char *key, int value, const char *dom = 0);
-	const char *set(const char *key, bool value, const char *dom = 0);
+	Config (const String & = String("config.cfg"), const String & = String("default"));
+	const char *get(const String &key, const String &dom = String()) const;
+	const int getInt(const String &key, int def = 0, const String &dom = String()) const;
+	const bool getBool(const String &key, bool def = false, const String &dom = String()) const;
 
-	void set_domain(const char *);
+	void set(const String &key, const String &value, const String &dom = String());
+	void setInt(const String &key, int value, const String &dom = String());
+	void setBool(const String &key, bool value, const String &dom = String());
+
+	void set_domain(const String &);
 	void flush() const;
-	void rename_domain(const char *);
-	void delete_domain(const char *);
-	void change_filename(const char *);
-	void merge_config(const Config *);
+	void rename_domain(const String &);
+	void delete_domain(const String &);
+	void set_filename(const String &);
+	void merge_config(const Config &);
 	void set_writing(bool);
-private:
-	char *filename, *domain;
-	hashconfig **hash;
-	int ndomains;
+
+protected:
+	typedef ScummVM::StringMap StringMap;
+	typedef ScummVM::Map<String, StringMap> DomainMap;
+
+	DomainMap domains;
+	String filename;
+	String defaultDomain;
+
 	bool willwrite;
 };
 

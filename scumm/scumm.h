@@ -23,15 +23,9 @@
 #ifndef SCUMM_H
 #define SCUMM_H
 
-#include "engine.h"
-#include "bundle.h"
-#include "timer.h"
-
-#define SCUMMVM_VERSION "0.2.2 CVS"
-#define SCUMMVM_CVS "2002-08-21"
-
-#define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
-#define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
+#include "common/engine.h"
+#include "common/timer.h"
+#include "scumm/bundle.h"
 
 class GameDetector;
 class Gui;

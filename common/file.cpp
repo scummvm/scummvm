@@ -20,6 +20,7 @@
  */
 
 #include "file.h"
+#include "engine.h"	// For debug/warning/error
 
 File::File() {
 	_handle = NULL;

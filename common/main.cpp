@@ -22,10 +22,8 @@
 
 #include "stdafx.h"
 #include "engine.h"
-#include "scumm.h"
 #include "sound/mididrv.h"
 #include "gameDetector.h"
-#include "simon/simon.h"
 #include "config-file.h"
 
 GameDetector detector;

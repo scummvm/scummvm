@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "resource.h"
+#include "common/util.h"
 
 /* Script status type (slot.status) */
 enum {
@@ -70,6 +71,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr)
 	s->unk1 = a;
 	s->unk2 = b;
 	s->freezeCount = 0;
+
 	s->delayFrameCount = 0;
 
 	initializeLocals(slot, lvarptr);
@@ -621,7 +623,9 @@ void Scumm::runExitScript()
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
 		vm.slot[slot].freezeCount = 0;
+
 		vm.slot[slot].delayFrameCount = 0;
+
 		runScriptNested(slot);
 	}
 	if (_vars[VAR_EXIT_SCRIPT2])

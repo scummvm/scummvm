@@ -21,8 +21,8 @@
  */
 
 #include "sdl-common.h"
-#include "scaler.h"
-#include "scumm.h"	// Only #included for error() and warning()
+#include "common/scaler.h"
+#include "common/engine.h"	// Only #included for error() and warning()
 
 #ifdef WIN32
 int glColorTable(int, int, int, int, int, void *) { return 0; }

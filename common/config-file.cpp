@@ -20,29 +20,14 @@
  *
  */
 
+#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "stdafx.h"
+#include <string.h>
 #include "config-file.h"
-#include "scumm.h"
+#include "engine.h" // for debug()
 
 #define MAXLINELEN 256
-
-#define xfree(p) {if (p) free(p);}
-
-#ifdef NEED_STRDUP
-char *strdup(const char *s) {
-	if (s) {
-		int len = strlen(s) + 1;
-		char *d = (char *)malloc(len);
-		if (d)
-			memcpy(d, s, len);
-		return d;
-	}
-	return NULL;
-}
-#endif /* NEED_STRDUP */
-
 
 static char *ltrim(char *t)
 {
@@ -64,115 +49,16 @@ static char *rtrim(char *t)
 	return t;
 }
 
-class hashconfig {
-public:
-	hashconfig (const char *);
-	 ~hashconfig ();
-	bool is_domain(const char *) const;
-	const char *get(const char *) const;
-	const char *set(const char *, const char *);
-	const char *getdomain() const;
-	void flush(FILE *) const;
-	void rename(const char *);
-	void merge(const hashconfig *);
-private:
-	char *domain;
-	char **keys, **values;
-	int nkeys;
-};
+// The config-class itself.
 
-hashconfig::hashconfig (const char *dom):domain(dom ? strdup(dom) : 0),
-keys(0), values(0), nkeys(0)
-{
-}
-
-hashconfig::~hashconfig () {
-	xfree(domain);
-}
-
-bool hashconfig::is_domain(const char *d) const
-{
-	return d && domain && !strcmp(d, domain);
-}
-
-const char *hashconfig::get(const char *key) const
-{
-	int i;
-
-	for (i = 0; i < nkeys; i++) {
-		if (!strcmp(key, keys[i])) {
-			return values[i];
-		}
-	}
-
-	return 0;
-}
-
-const char *hashconfig::set(const char *key, const char *value)
-{
-	int i;
-
-	for (i = 0; i < nkeys; i++) {
-		if (!strcmp(key, keys[i])) {
-			xfree(values[i]);
-			return values[i] = value ? strdup(value) : 0;
-		}
-	}
-
-	nkeys++;
-	keys = (char **)realloc(keys, nkeys * sizeof(char *));
-	values = (char **)realloc(values, nkeys * sizeof(char *));
-	keys[nkeys - 1] = strdup(key);
-	return values[nkeys - 1] = value ? strdup(value) : 0;
-}
-
-const char *hashconfig::getdomain() const
-{
-	return domain;
-}
-
-void hashconfig::flush(FILE *cfg_file) const
-{
-	int i;
-
-	if (!domain)
-		return;
-
-	fprintf(cfg_file, "[%s]\n", domain);
-
-	for (i = 0; i < nkeys; i++) {
-		if (values[i]) {
-			fprintf(cfg_file, "%s=%s\n", keys[i], values[i]);
-		}
-	}
-	fprintf(cfg_file, "\n");
-}
-
-void hashconfig::rename(const char *d)
-{
-	xfree(domain);
-	domain = d ? strdup(d) : 0;
-}
-
-void hashconfig::merge(const hashconfig *h)
-{
-	int i;
-
-	for (i = 0; i < h->nkeys; i++) {
-		set(h->keys[i], h->values[i]);
-	}
-}
-
-// The config-class itself.
-
-Config::Config (const char *cfg, const char *d)
-: filename(strdup(cfg)), domain(d ? strdup(d) : 0), hash(0), ndomains(0), willwrite(false)
+Config::Config (const String &cfg, const String &d)
+ : filename(cfg), defaultDomain(d), willwrite(false)
 {
 	FILE *cfg_file;
 	char t[MAXLINELEN];
 
-	if (!(cfg_file = fopen(cfg, "r"))) {
-		debug(1, "Unable to open configuration file: %s.\n", filename);
+	if (!(cfg_file = fopen(filename.c_str(), "r"))) {
+		debug(1, "Unable to open configuration file: %s.\n", filename.c_str());
 	} else {
 		while (!feof(cfg_file)) {
 			if (!fgets(t, MAXLINELEN, cfg_file))
@@ -189,7 +75,7 @@ Config::Config (const char *cfg, const char *d)
 					}
 				} else {
 					// It's a new key in the domain.
-					if (!domain) {
+					if (defaultDomain.isEmpty()) {
 						debug(1, "Config file buggy: we have a key without a domain first.\n");
 					}
 					char *p = strchr(t, '\n');
@@ -217,35 +103,22 @@ Config::Config (const char *cfg, const char *d)
 	}
 }
 
-Config::~Config () {
-	int i;
-
-	xfree(filename);
-	xfree(domain);
-
-	for (i = 0; i < ndomains; i++) {
-		delete hash[i];
-	}
-	xfree(hash);
-}
-
-const char *Config::get(const char *key, const char *d) const
+const char *Config::get(const String &key, const String &d) const
 {
-	int i;
+	String domain;
 
-	if (!d)
-		d = domain;
+	if (d.isEmpty())
+		domain = defaultDomain;
+	else
+		domain = d;
 
-	for (i = 0; i < ndomains; i++) {
-		if (hash[i]->is_domain(d)) {
-			return hash[i]->get(key);
-		}
-	}
+	if (domains.contains(domain) && domains[domain].contains(key))
+		return domains[domain][key].c_str();
 
 	return 0;
 }
 
-const int Config::getInt(const char *key, int def, const char *d) const
+const int Config::getInt(const String &key, int def, const String &d) const
 {
 	const char *value = get(key, d);
 	
@@ -254,7 +127,7 @@ const int Config::getInt(const char *key, int def, const char *d) const
 	return def;
 }
 
-const bool Config::getBool(const char *key, bool def, const char *d) const
+const bool Config::getBool(const String &key, bool def, const String &d) const
 {
 	const char *value = get(key, d);
 	
@@ -263,133 +136,93 @@ const bool Config::getBool(const char *key, bool def, const char *d) const
 	return def;
 }
 
-const char *Config::set(const char *key, const char *value, const char *d)
+void Config::set(const String &key, const String &value, const String &d)
 {
-	int i;
+	String domain;
 
-	if (!d)
-		d = domain;
+	if (d.isEmpty())
+		domain = defaultDomain;
+	else
+		domain = d;
 
-	for (i = 0; i < ndomains; i++) {
-		if (hash[i]->is_domain(d)) {
-			return hash[i]->set(key, value);
-		}
-	}
-
-	ndomains++;
-	hash = (hashconfig **)realloc(hash, ndomains * sizeof(hashconfig *));
-	hash[ndomains - 1] = new hashconfig (d);
-
-	return hash[ndomains - 1]->set(key, value);
+	domains[domain][key] = value;
 }
 
-const char *Config::set(const char *key, int value_i, const char *d)
+void Config::setInt(const String &key, int value_i, const String &d)
 {
 	char value[MAXLINELEN];
 	sprintf(value, "%i", value_i);
-	return set(key, value, d);
+	set(key, String(value), d);
 }
 
-const char *Config::set(const char *key, bool value_b, const char *d)
+void Config::setBool(const String &key, bool value_b, const String &d)
 {
-	const char *value = value_b ? "true" : "false";
-	return set(key, value, d);
+	String value(value_b ? "true" : "false");
+	set(key, value, d);
 }
 
-void Config::set_domain(const char *d)
+void Config::set_domain(const String &d)
 {
-	int i;
-	xfree(domain);
-	domain = d ? strdup(d) : 0;
-
-	for (i = 0; i < ndomains; i++) {
-		if (hash[i]->is_domain(domain))
-			return;
-	}
-	ndomains++;
-	hash = (hashconfig **)realloc(hash, ndomains * sizeof(hashconfig *));
-	hash[ndomains - 1] = new hashconfig (domain);
+	defaultDomain = d;
 }
 
 void Config::flush() const
 {
 	FILE *cfg_file;
-	int i;
 
 	if (!willwrite)
 		return;
 
-	if (!(cfg_file = fopen(filename, "w"))) {
-		debug(1, "Unable to write configuration file: %s.\n", filename);
+	if (!(cfg_file = fopen(filename.c_str(), "w"))) {
+		debug(1, "Unable to write configuration file: %s.\n", filename.c_str());
 	} else {
-		for (i = 0; i < ndomains; i++) {
-			hash[i]->flush(cfg_file);
+		DomainMap::Iterator d;
+		for (d = domains.begin(); d != domains.end(); ++d) {
+			fprintf(cfg_file, "[%s]\n", d->_key.c_str());
+			
+			const StringMap &data = d->_value;
+			StringMap::Iterator x;
+			for (x = data.begin(); x != data.end(); ++x) {
+				const String &value = x->_value;
+				if (!value.isEmpty())
+					fprintf(cfg_file, "%s=%s\n", x->_key.c_str(), value.c_str());
+			}
+			fprintf(cfg_file, "\n");
 		}
 		fclose(cfg_file);
 	}
 }
 
-void Config::rename_domain(const char *d)
+void Config::rename_domain(const String &d)
 {
-	int i, index = -1;
+	if (d == defaultDomain)
+		return;
 
-	for (i = 0; i < ndomains; i++) {
-		if (hash[i]->is_domain(d)) {
-			index = i;
-		}
-	}
+	StringMap &oldHash = domains[defaultDomain];
+	StringMap &newHash = domains[d];
 
-	for (i = 0; i < ndomains; i++) {
-		if (hash[i]->is_domain(domain)) {
-			if (index >= 0) {
-				hash[i]->merge(hash[index]);
-				hash[index]->rename(0);
-				rename_domain(d);
-			} else {
-				hash[i]->rename(d);
-				set_domain(d);
-			}
-		}
-	}
+	newHash.merge(oldHash);
+	
+	domains.remove(defaultDomain);
+	
+	defaultDomain = d;
 }
 
-void Config::delete_domain(const char *d)
+void Config::delete_domain(const String &d)
 {
-	int i;
-
-	for (i = 0; i < ndomains; i++) {
-		if (hash[i]->is_domain(d)) {
-			hash[i]->rename(0);
-		}
-	}
+	domains.remove(d);
 }
 
-void Config::change_filename(const char *f)
+void Config::set_filename(const String &f)
 {
-	xfree(filename);
-	filename = f ? strdup(f) : 0;
+	filename = f;
 }
 
-void Config::merge_config(const Config *c)
+void Config::merge_config(const Config &c)
 {
-	int i, j;
-	bool found;
-
-	for (i = 0; i < c->ndomains; i++) {
-		found = false;
-		for (j = 0; j < ndomains; j++) {
-			if (hash[j]->is_domain(c->hash[i]->getdomain())) {
-				hash[j]->merge(c->hash[i]);
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			ndomains++;
-			hash = (hashconfig **)realloc(hash, ndomains * sizeof(hashconfig *));
-			hash[ndomains - 1] = new hashconfig (domain);
-			hash[ndomains - 1]->merge(c->hash[i]);
-		}
+	DomainMap::Iterator d, end(c.domains.end());
+	for (d = c.domains.begin(); d != end; ++d) {
+		domains[d->_key].merge(d->_value);
 	}
 }
 
