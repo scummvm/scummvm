@@ -417,7 +417,7 @@ void SwordControl::setupVolumePanel(void) {
 	renderText(_lStrings[STR_SPEECH], 320, 39 + 40, TEXT_CENTER);
 	renderText(_lStrings[STR_FX], 438, 39 + 40, TEXT_LEFT_ALIGN);
 
-	renderText((uint8*)"NOT YET IMPLEMENTED", 320, 240, TEXT_CENTER);
+	renderText((const uint8*)"NOT YET IMPLEMENTED", 320, 240, TEXT_CENTER);
 
 	createButtons(_volumeButtons, 1);
 	renderText(_lStrings[STR_DONE], _volumeButtons[0].x - 10, _volumeButtons[0].y, TEXT_RIGHT_ALIGN);
