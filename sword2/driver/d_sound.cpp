@@ -186,6 +186,7 @@ void Sound::saveMusicState() {
 		saveStream = 1;
 	} else {
 		_music[2]._streaming = false;
+		savedMusicFilename = NULL;
 		return;
 	}
 
