@@ -61,45 +61,6 @@ enum {
 	INS_quit		= 42
 };
 
-// when not playing a wav we calculate the speech time based upon length of
-// ascii
-
-uint32 speech_time = 0;
-
-uint32 speech_text_bloc_no = 0;
-uint32 anim_id = 0;
-
-// 0 lip synced and repeating - 1 normal once through
-uint32 speech_anim_type;
-
-uint32 left_click_delay = 0;	// click-delay for LEFT mouse button
-uint32 right_click_delay = 0;	// click-delay for RIGHT mouse button
-
-// ref number for default response when luggage icon is used on a person
-// & it doesn't match any of the icons which would have been in the chooser
-uint32 default_response_id = 0;
-
-// "TEXT" - current official text line number - will match the wav filenames
-int16 officialTextNumber = 0;
-
-// usually 0; if non-zero then it's the id of whoever we're waiting for in a
-// speech script see fnTheyDo, fnTheyDoWeWait and fnWeWait
-int32 speechScriptWaiting = 0;
-
-// calculated by LocateTalker() for use in speech-panning & text-sprite
-// positioning
-int16 text_x, text_y;
-
-_subject_unit subject_list[MAX_SUBJECT_LIST];
-
-void LocateTalker(int32	*params);
-void Form_text(int32 *params);
-uint8 WantSpeechForLine(uint32 wavId);
-
-#ifdef _SWORD2_DEBUG
-void GetCorrectCdForSpeech(int32 wavId);	// for testing speech & text
-#endif
-
 int32 Logic::fnAddSubject(int32 *params) {
 	// params:	0 id
 	//		1 daves reference number
@@ -108,7 +69,7 @@ int32 Logic::fnAddSubject(int32 *params) {
 		// This is the start of the new subject list
 		// Set the default repsonse id to zero in case we're never
 		// passed one
-		default_response_id = 0;
+		_defaultResponseId = 0;
 	}
 
 	// - this just means we'd get the response for the 1st icon in the
@@ -120,13 +81,13 @@ int32 Logic::fnAddSubject(int32 *params) {
 		// default response
 
 		// and here it is - this is the ref number we will return if
-		default_response_id = params[1];
+		_defaultResponseId = params[1];
 
 		// a luggage icon is clicked on someone when it wouldn't have
 		// been in the chooser list (see fnChoose below)
 	} else {
-		subject_list[IN_SUBJECT].res = params[0];
-		subject_list[IN_SUBJECT].ref = params[1];
+		_subjectList[IN_SUBJECT].res = params[0];
+		_subjectList[IN_SUBJECT].ref = params[1];
 
 		debug(5, "fnAddSubject res %d, uid %d", params[0], params[1]);
 
@@ -135,9 +96,6 @@ int32 Logic::fnAddSubject(int32 *params) {
 
 	return IR_CONT;
 }
-
-// could alternately use logic->looping of course
-int choosing = 0;
 
 int32 Logic::fnChoose(int32 *params) {
 	// params:	none
@@ -167,7 +125,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 		// scan the subject list for a match with our 'object_held'
 		while (pos < IN_SUBJECT) {
-			if (subject_list[pos].res == OBJECT_HELD) {
+			if (_subjectList[pos].res == OBJECT_HELD) {
 				// if we've found a match, clear it so it
 				// doesn't keep happening!
 				OBJECT_HELD = 0;
@@ -177,7 +135,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 				// return special subject chosen code (same
 				// as in normal chooser routine below)
-				return IR_CONT + (subject_list[pos].ref << 3);
+				return IR_CONT + (_subjectList[pos].ref << 3);
 			}
 			pos++;
 		}
@@ -187,7 +145,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 		// so that the speech script uses the default text for
 		// objects that are not accounted for
-		return IR_CONT + (default_response_id << 3);
+		return IR_CONT + (_defaultResponseId << 3);
 	}
 
 	// new thing for skipping chooser with "nothing else to say" text
@@ -195,16 +153,16 @@ int32 Logic::fnChoose(int32 *params) {
 	// If this is the 1st time the chooser is coming up in this
 	// conversation, AND there's only 1 subject, AND it's the EXIT icon
 
-	if (CHOOSER_COUNT_FLAG == 0 && IN_SUBJECT == 1 && subject_list[0].res == EXIT_ICON) {
+	if (CHOOSER_COUNT_FLAG == 0 && IN_SUBJECT == 1 && _subjectList[0].res == EXIT_ICON) {
 		AUTO_SELECTED = 1;	// for speech script
 		IN_SUBJECT = 0;		// clear the subject list
 
 		// return special subject chosen code (same as in normal
 		// chooser routine below)
-		return IR_CONT + (subject_list[0].ref << 3);
+		return IR_CONT + (_subjectList[0].ref << 3);
 	}
 
-	if (!choosing) {
+	if (!_choosing) {
 		// new choose session
 		// build menus from subject_list
 
@@ -216,10 +174,10 @@ int32 Logic::fnChoose(int32 *params) {
 
 		for (j = 0; j < 15; j++) {
 			if (j < IN_SUBJECT) {
-				debug(5, " ICON res %d for %d", subject_list[j].res, j);
-				icon = res_man->openResource(subject_list[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+				debug(5, " ICON res %d for %d", _subjectList[j].res, j);
+				icon = res_man->openResource(_subjectList[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
 				g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-				res_man->closeResource(subject_list[j].res);
+				res_man->closeResource(_subjectList[j].res);
 			} else {
 				//no icon here
 				debug(5, " NULL for %d", j);
@@ -233,7 +191,7 @@ int32 Logic::fnChoose(int32 *params) {
 		// lets have the mouse pointer back
 		g_sword2->setMouse(NORMAL_MOUSE_ID);
 
-		choosing = 1;
+		_choosing = true;
 
 		// again next cycle
 		return IR_REPEAT;
@@ -261,35 +219,35 @@ int32 Logic::fnChoose(int32 *params) {
 
 					// change icons
 					for (j = 0; j < IN_SUBJECT; j++) {
-						debug(5, "%s", g_sword2->fetchObjectName(subject_list[j].res));
+						debug(5, "%s", g_sword2->fetchObjectName(_subjectList[j].res));
 
 						// change all others to grey
 						if (j != hit) {
-							icon = res_man->openResource( subject_list[j].res ) + sizeof(_standardHeader);
+							icon = res_man->openResource( _subjectList[j].res ) + sizeof(_standardHeader);
 							g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-							res_man->closeResource(subject_list[j].res);
+							res_man->closeResource(_subjectList[j].res);
 						}
 					}
 
 
-					debug(5, "Selected: %s", g_sword2->fetchObjectName(subject_list[hit].res));
+					debug(5, "Selected: %s", g_sword2->fetchObjectName(_subjectList[hit].res));
 
 					// this is our looping flag
-					choosing = 0;
+					_choosing = false;
 
 					IN_SUBJECT = 0;
 
 					// blank mouse again
 					g_sword2->setMouse(0);
 
-					debug(5, "hit %d - ref %d  ref*8 %d", hit, subject_list[hit].ref, subject_list[hit].ref * 8);
+					debug(5, "hit %d - ref %d  ref*8 %d", hit, _subjectList[hit].ref, _subjectList[hit].ref * 8);
 
 					// for non-speech scripts that manually
 					// call the chooser
-					RESULT = subject_list[hit].res;
+					RESULT = _subjectList[hit].res;
 
 					// return special subject chosen code
-					return IR_CONT + (subject_list[hit].ref << 3);
+					return IR_CONT + (_subjectList[hit].ref << 3);
 				}
 			}
 		}
@@ -378,7 +336,7 @@ int32 Logic::fnTheyDo(int32 *params) {
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
 
-		speechScriptWaiting = 0;
+		_speechScriptWaiting = 0;
 
 		SPEECH_ID = params[0];
 		INS_COMMAND = params[1];
@@ -392,7 +350,7 @@ int32 Logic::fnTheyDo(int32 *params) {
 	}
 
 	// debug flag to indicate who we're waiting for - see debug.cpp
-	speechScriptWaiting = target;
+	_speechScriptWaiting = target;
 
 	// target is busy so come back again next cycle
 	return IR_REPEAT;
@@ -451,7 +409,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 		ob_logic->looping = 1;
 
 		// debug flag to indicate who we're waiting for - see debug.cpp
-		speechScriptWaiting = target;
+		_speechScriptWaiting = target;
 
 		// finish this cycle - but come back again to check for it
 		// being finished
@@ -459,7 +417,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	} else if (ob_logic->looping == 0) {
 		// did not send the command
 		// debug flag to indicate who we're waiting for - see debug.cpp
-		speechScriptWaiting = target;
+		_speechScriptWaiting = target;
 
 		// come back next go and try again to send the instruction
 		return IR_REPEAT;
@@ -478,14 +436,14 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
-		speechScriptWaiting = 0;
+		_speechScriptWaiting = 0;
 		return IR_CONT;
 	}
 
 	debug(5, "FNtdww just waiting");
 
 	// debug flag to indicate who we're waiting for - see debug.cpp
-	speechScriptWaiting = target;
+	_speechScriptWaiting = target;
 
 	// see ya next cycle
 	return IR_REPEAT;
@@ -518,12 +476,12 @@ int32 Logic::fnWeWait(int32 *params) {
 	if (RESULT == 1) {
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
-		speechScriptWaiting = 0;
+		_speechScriptWaiting = 0;
 		return IR_CONT;
 	}
 
 	// debug flag to indicate who we're waiting for - see debug.cpp
-	speechScriptWaiting = target;
+	_speechScriptWaiting = target;
 
 	// target is busy so come back again next cycle
 	return IR_REPEAT;
@@ -572,7 +530,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
-		speechScriptWaiting = 0;
+		_speechScriptWaiting = 0;
 
 		return IR_CONT;
 	}
@@ -591,13 +549,13 @@ int32 Logic::fnTimedWait(int32 *params) {
 
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
-		speechScriptWaiting = 0;
+		_speechScriptWaiting = 0;
 
 		return IR_CONT;
 	}
 
 	// debug flag to indicate who we're waiting for - see debug.cpp
-	speechScriptWaiting = target;
+	_speechScriptWaiting = target;
 
 	// target is busy so come back again next cycle
 	return IR_REPEAT;
@@ -888,18 +846,18 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 	}
 }
 
-#define S_OB_GRAPHIC	0
-#define S_OB_SPEECH	1
-#define S_OB_LOGIC	2
-#define S_OB_MEGA	3
+enum {
+	S_OB_GRAPHIC	= 0,
+	S_OB_SPEECH	= 1,
+	S_OB_LOGIC	= 2,
+	S_OB_MEGA	= 3,
 
-#define S_TEXT		4
-#define S_WAV		5
-#define S_ANIM		6
-#define S_DIR_TABLE	7
-#define S_ANIM_MODE	8
-
-uint32 unpause_zone = 0;
+	S_TEXT		= 4,
+	S_WAV		= 5,
+	S_ANIM		= 6,
+	S_DIR_TABLE	= 7,
+	S_ANIM_MODE	= 8
+};
 
 int32 Logic::fnISpeak(int32 *params) {
 	// its the super versatile fnSpeak
@@ -960,7 +918,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// for this line either, then just quit back to script right
 		// now!
 
-		if (gui->_subtitles == 0 && WantSpeechForLine(params[S_WAV]) == 0)
+		if (gui->_subtitles == 0 && wantSpeechForLine(params[S_WAV]) == 0)
 			return IR_CONT;
 
 		if (cycle_skip == 0) {
@@ -1031,7 +989,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 		// open text file & get the line
 		text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
-		officialTextNumber = READ_LE_UINT16(text);
+		_officialTextNumber = READ_LE_UINT16(text);
 
 		// now ok to close the text file
 		res_man->closeResource(text_res);
@@ -1042,7 +1000,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		if (SYSTEM_TESTING_TEXT) {	// if testing text & speech
 			// if actor number is 0 and text line is just a 'dash'
 			// character
-			if (officialTextNumber == 0 && text[2] == '-' && text[3] == 0) {
+			if (_officialTextNumber == 0 && text[2] == '-' && text[3] == 0) {
 				// dud line - return & continue script
 				RESULT = 3;
 				return IR_CONT;
@@ -1054,30 +1012,30 @@ int32 Logic::fnISpeak(int32 *params) {
 		ob_logic->looping = 1;
 
 		// can't left-click past the text for the first half second
-		left_click_delay = 6;
+		_leftClickDelay = 6;
 
 		// can't right-click past the text for the first quarter second
-		right_click_delay = 3;
+		_rightClickDelay = 3;
 
 		// Write to walkthrough file (zebug0.txt)
 		// if (player_id != george), then player is controlling Nico
 
 		if (PLAYER_ID != CUR_PLAYER_ID)
-			debug(5, "(%d) Nico: %s", officialTextNumber, text + 2);
+			debug(5, "(%d) Nico: %s", _officialTextNumber, text + 2);
 		else
-			debug(5, "(%d) %s: %s", officialTextNumber, g_sword2->fetchObjectName(ID), text + 2);
+			debug(5, "(%d) %s: %s", _officialTextNumber, g_sword2->fetchObjectName(ID), text + 2);
 
 		// Set up the speech animation
 
 		if (params[S_ANIM]) {
 			// just a straight anim
-			anim_id = params[S_ANIM];
+			_animId = params[S_ANIM];
 
 			// anim type
-			speech_anim_type = SPEECHANIMFLAG;
+			_speechAnimType = SPEECHANIMFLAG;
 
 			// set the talker's graphic to this speech anim now
-			ob_graphic->anim_resource = anim_id;
+			ob_graphic->anim_resource = _animId;
 
 			// set to first frame
 			ob_graphic->anim_pc = 0;
@@ -1091,28 +1049,28 @@ int32 Logic::fnISpeak(int32 *params) {
 			anim_table = (int32 *) params[S_DIR_TABLE];
 
 			// appropriate anim resource is in 'table[direction]'
-			anim_id = anim_table[ob_mega->current_dir];
+			_animId = anim_table[ob_mega->current_dir];
 
 			// anim type
-			speech_anim_type = SPEECHANIMFLAG;
+			_speechAnimType = SPEECHANIMFLAG;
 
 			// set the talker's graphic to this speech anim now
-			ob_graphic->anim_resource = anim_id;
+			ob_graphic->anim_resource = _animId;
 
 			// set to first frame
 			ob_graphic->anim_pc = 0;
 		} else {
 			// no animation choosen
-			anim_id = 0;
+			_animId = 0;
 		}
 
 		// Default back to looped lip synced anims.
 		SPEECHANIMFLAG = 0;
 
-		// set up 'text_x' & 'text_y' for speech-pan and/or
+		// set up '_textX' & '_textY' for speech-pan and/or
 		// text-sprite position
 
-		LocateTalker(params);
+		locateTalker(params);
 
 		// is it to be speech or subtitles or both?
 
@@ -1123,20 +1081,20 @@ int32 Logic::fnISpeak(int32 *params) {
 		// if speech is selected, and this line is allowed speech
 		// (not if it's an fx subtitle!)
 
-		if (!g_sound->isSpeechMute() && WantSpeechForLine(officialTextNumber)) {
+		if (!g_sound->isSpeechMute() && wantSpeechForLine(_officialTextNumber)) {
 			// if the wavId paramter is zero because not yet
 			// compiled into speech command, we can still get it
 			// from the 1st 2 chars of the text line
 
 			if (!params[S_WAV])
-				params[S_WAV] = (int32) officialTextNumber;
+				params[S_WAV] = (int32) _officialTextNumber;
 
 #define SPEECH_VOLUME	16	// 0..16
 #define SPEECH_PAN	0	// -16..16
 
-			speech_pan = ((text_x - 320) * 16) / 320;
+			speech_pan = ((_textX - 320) * 16) / 320;
 
-			// 'text_x'	'speech_pan'
+			// '_textX'	'speech_pan'
 			//  0		-16
 			//  320		0
 			//  640		16
@@ -1197,7 +1155,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			textRunning = 1;
 
 			// so create the text sprite
-			Form_text(params);
+			formText(params);
 		} else {
 			// otherwise don't want text
 			textRunning = 0;
@@ -1206,7 +1164,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// EVERY TIME: run a cycle of animation, if there is one
 
-	if (anim_id) {
+	if (_animId) {
 		// there is an animation
 		// increment the anim frame number
 		ob_graphic->anim_pc++;
@@ -1215,7 +1173,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		anim_file = res_man->openResource(ob_graphic->anim_resource);
 		anim_head = g_sword2->fetchAnimHeader(anim_file);
 
-		if (!speech_anim_type) {
+		if (!_speechAnimType) {
 			// ANIM IS TO BE LIP-SYNC'ED & REPEATING
 			// if finished the anim
 			if (ob_graphic->anim_pc == (int32) (anim_head->noAnimFrames)) {
@@ -1223,7 +1181,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				ob_graphic->anim_pc = 0;
 			} else if (speechRunning) {
 				// if playing a sample
-				if (!unpause_zone) {
+				if (!_unpauseZone) {
 					// if we're at a quiet bit
 					if (g_sound->amISpeaking() == RDSE_QUIET) {
 						// restart from frame 0
@@ -1237,16 +1195,16 @@ int32 Logic::fnISpeak(int32 *params) {
 			if (ob_graphic->anim_pc == (int32) (anim_head->noAnimFrames) - 1) {
 				// reached the last frame of the anim
 				// hold anim on this last frame
-				anim_id = 0;
+				_animId = 0;
 			}
 		}
 
 		// close the anim file
 		res_man->closeResource(ob_graphic->anim_resource);
-	} else if (speech_anim_type) {
+	} else if (_speechAnimType) {
 		// Placed here so we actually display the last frame of the
 		// anim.
-		speech_anim_type = 0;
+		_speechAnimType = 0;
 	}
 
 	// EVERY TIME: FIND OUT IF WE NEED TO STOP THE SPEECH NOW...
@@ -1256,21 +1214,21 @@ int32 Logic::fnISpeak(int32 *params) {
 	// if playing a sample (note that value of '2' means about to play!)
 
 	if (speechRunning == 1) {
-		if (!unpause_zone) {
+		if (!_unpauseZone) {
 			// has it finished?
 			if (g_sound->getSpeechStatus() == RDSE_SAMPLEFINISHED)
 				speechFinished = 1;
 		} else
-			unpause_zone--;
-	} else if (speechRunning == 0 && speech_time) {
+			_unpauseZone--;
+	} else if (speechRunning == 0 && _speechTime) {
 		// counting down text time because there is no sample - this
 		// ends the speech
 
-		// if no sample then we're using speech_time to end speech
+		// if no sample then we're using _speechTime to end speech
 		// naturally
 
-		speech_time--;
-		if (!speech_time)
+		_speechTime--;
+		if (!_speechTime)
 			speechFinished = 1;
 	}
 
@@ -1285,8 +1243,8 @@ int32 Logic::fnISpeak(int32 *params) {
 		// Note that we now have TWO click-delays - one for LEFT
 		// button, one for RIGHT BUTTON
 
-		if ((!left_click_delay && me && (me->buttons & RD_LEFTBUTTONDOWN)) ||
-		    (!right_click_delay && me && (me->buttons&RD_RIGHTBUTTONDOWN))) {
+		if ((!_leftClickDelay && me && (me->buttons & RD_LEFTBUTTONDOWN)) ||
+		    (!_rightClickDelay && me && (me->buttons & RD_RIGHTBUTTONDOWN))) {
 			// mouse click, after click_delay has expired -> end
 			// the speech we ignore mouse releases
 
@@ -1319,21 +1277,21 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// if we are finishing the speech this cycle, do the business
 
-	// !speech_anim_type, as we want an anim which is playing once to
-	// have finished.
+	// !speechAnimType, as we want an anim which is playing once to have
+	// finished.
 
-	if (speechFinished && !speech_anim_type) {
+	if (speechFinished && !_speechAnimType) {
 		// if there is text
-		if (speech_text_bloc_no) {
+		if (_speechTextBlocNo) {
 			// kill the text block
-			fontRenderer.killTextBloc(speech_text_bloc_no);
-			speech_text_bloc_no = 0;
+			fontRenderer.killTextBloc(_speechTextBlocNo);
+			_speechTextBlocNo = 0;
 		}
 
 		// if there is a speech anim
-		if (anim_id) {
+		if (_animId) {
 			// end it on 1st frame (closed mouth)
-			anim_id = 0;
+			_animId = 0;
 			ob_graphic->anim_pc = 0;
 		}
 
@@ -1348,7 +1306,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 		// reset to zero, in case text line not even extracted (since
 		// this number comes from the text line)
-		officialTextNumber = 0;
+		_officialTextNumber = 0;
 
 		RESULT = 0;	// ok
 		return IR_CONT;
@@ -1359,11 +1317,11 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// count down to clickability
 
-	if (left_click_delay)
-		left_click_delay--;
+	if (_leftClickDelay)
+		_leftClickDelay--;
 
- 	if (right_click_delay)
-		right_click_delay--;
+ 	if (_rightClickDelay)
+		_rightClickDelay--;
 
 	// back again next cycle
 	return IR_REPEAT;
@@ -1371,9 +1329,9 @@ int32 Logic::fnISpeak(int32 *params) {
 
 #define GAP_ABOVE_HEAD	20	// distance kept above talking sprite
 
-void LocateTalker(int32	*params) {
-	// sets 'text_x' & 'text_y' for position of text sprite
-	// but 'text_x' also used to calculate speech-pan
+void Logic::locateTalker(int32 *params) {
+	// sets '_textX' & '_textY' for position of text sprite
+	// but '_textX' also used to calculate speech-pan
 
 	// params:	0 pointer to ob_graphic
 	//		1 pointer to ob_speech
@@ -1395,16 +1353,16 @@ void LocateTalker(int32	*params) {
 	uint16 scale;
 
 	// if there's no anim
-	if (anim_id == 0) {
+	if (_animId == 0) {
 		// assume it's Voice-Over text, so it goes at bottom of screen
-		text_x = 320;
-		text_y = 400;
+		_textX = 320;
+		_textY = 400;
 	} else {
 		// Note: this code has been adapted from Register_frame() in
 		// build_display.cpp
 
 		// open animation file & set up the necessary pointers
-		file = res_man->openResource(anim_id);
+		file = res_man->openResource(_animId);
 
 		anim_head = g_sword2->fetchAnimHeader(file);
 
@@ -1433,34 +1391,34 @@ void LocateTalker(int32	*params) {
 			// scaled height
 
 			// just use 'feet_x' as centre
-			text_x = (int16) (ob_mega->feet_x);
+			_textX = (int16) (ob_mega->feet_x);
 
 			// add scaled y-offset to feet_y coord to get top of
 			// sprite
-			text_y = (int16) (ob_mega->feet_y + (cdt_entry->y * scale) / 256);
+			_textY = (int16) (ob_mega->feet_y + (cdt_entry->y * scale) / 256);
 		} else {
 			// it's a non-scaling anim - calc suitable centre
 			// point above the head, based on scaled width
 
 			// x-coord + half of width
-			text_x = cdt_entry->x + (frame_head->width) / 2;
-			text_y = cdt_entry->y;
+			_textX = cdt_entry->x + (frame_head->width) / 2;
+			_textY = cdt_entry->y;
 		}
 
 		// leave space above their head
-		text_y -= GAP_ABOVE_HEAD;
+		_textY -= GAP_ABOVE_HEAD;
 			
 		// adjust the text coords for RDSPR_DISPLAYALIGN
 
-		text_x -= g_sword2->_thisScreen.scroll_offset_x;
-		text_y -= g_sword2->_thisScreen.scroll_offset_y;
+		_textX -= g_sword2->_thisScreen.scroll_offset_x;
+		_textY -= g_sword2->_thisScreen.scroll_offset_y;
 
 		// release the anim resource
-		res_man->closeResource(anim_id);
+		res_man->closeResource(_animId);
 	}
 }
 
-void Form_text(int32 *params) {
+void Logic::formText(int32 *params) {
 	// its the first time in so we build the text block if we need one
 	// we also bring in the wav if there is one
 	// also setup the animation if there is one
@@ -1515,8 +1473,8 @@ void Form_text(int32 *params) {
 		// 'text + 2' to skip the first 2 bytes which form the line
 		// reference number
 
-		speech_text_bloc_no = fontRenderer.buildNewBloc(
-			text + 2, text_x, text_y,
+		_speechTextBlocNo = fontRenderer.buildNewBloc(
+			text + 2, _textX, _textY,
 			textWidth, ob_speech->pen,
 			RDSPR_TRANS | RDSPR_DISPLAYALIGN,
 			g_sword2->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
@@ -1527,7 +1485,7 @@ void Form_text(int32 *params) {
 		// set speech duration, in case not using wav
 		// no. of cycles = (no. of chars) + 30
 
-		speech_time = strlen((char *) text) + 30;
+		_speechTime = strlen((char *) text) + 30;
 	} else {
 		// no text line passed? - this is bad
 		debug(5, "no text line for speech wav %d", params[S_WAV]);
@@ -1535,7 +1493,7 @@ void Form_text(int32 *params) {
 }
 
 #ifdef _SWORD2_DEBUG
-void GetCorrectCdForSpeech(int32 wavId) {
+void Logic::getCorrectCdForSpeech(int32 wavId) {
 	File fp;
 
 	// 1, 2 or 0 (if speech on both cd's, ie. no need to change)
@@ -1561,7 +1519,7 @@ void GetCorrectCdForSpeech(int32 wavId) {
 // speech samples too
 // - and we only want the subtitles if selected, not if samples can't be found!
 
-uint8 WantSpeechForLine(uint32 wavId) {
+bool Logic::wantSpeechForLine(uint32 wavId) {
 	switch (wavId) {
 	case 1328:	// AttendantSpeech
 			//	SFX(Phone71);
@@ -1591,10 +1549,10 @@ uint8 WantSpeechForLine(uint32 wavId) {
 	case 923:	// location 62
 	case 926:	// location 62
 		// don't want speech for these lines!
-		return 0;
+		return false;
 	default:
 		// ok for all other lines
-		return 1;
+		return true;
 	}
 }
 

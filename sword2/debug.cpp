@@ -31,8 +31,8 @@
 #include "sword2/protocol.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"			// for plotWalkGrid()
-#include "sword2/speech.h"			// for 'officialTextNumber' and
-						// 'speechScriptWaiting'
+#include "sword2/speech.h"			// for '_officialTextNumber'
+						// and '_speechScriptWaiting'
 
 namespace Sword2 {
 
@@ -152,7 +152,7 @@ void Debugger::buildDebugText(void) {
 			sprintf(buf, "pos: %d", _textNumber & 0xffff);
 			makeDebugTextBlock(buf, 0, 370);
 
- 			sprintf(buf, "TEXT: %d", officialTextNumber);
+ 			sprintf(buf, "TEXT: %d", g_logic._officialTextNumber);
 			makeDebugTextBlock(buf, 0, 385);
 		}
 	}
@@ -269,10 +269,10 @@ void Debugger::buildDebugText(void) {
 		// "waiting for person" indicator - set form fnTheyDo and
 		// fnTheyDoWeWait
 
-		if (speechScriptWaiting) {
+		if (g_logic._speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				g_sword2->fetchObjectName(speechScriptWaiting),
-				speechScriptWaiting);
+				g_sword2->fetchObjectName(g_logic._speechScriptWaiting),
+				g_logic._speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}
 

@@ -33,7 +33,7 @@
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/sound.h"
-#include "sword2/speech.h"		// for 'speech_text_bloc_no' - so that speech text can be cleared when running a new start-script
+#include "sword2/speech.h"		// for '_speechTextBlocNo' - so that speech text can be cleared when running a new start-script
 #include "sword2/startup.h"
 #include "sword2/sync.h"
 #include "sword2/tony_gsdk.h"
@@ -223,9 +223,9 @@ void Con_start(int start) {
 		router.freeAllRouteMem();
 
 		// if there was speech text, kill the text block
-		if (speech_text_bloc_no) {
-			fontRenderer.killTextBloc(speech_text_bloc_no);
-			speech_text_bloc_no = 0;
+		if (g_logic._speechTextBlocNo) {
+			fontRenderer.killTextBloc(g_logic._speechTextBlocNo);
+			g_logic._speechTextBlocNo = 0;
 		}
 
 		// set the key

@@ -20,30 +20,9 @@
 #ifndef	_SPEECH
 #define	_SPEECH
 
-#include "sword2/header.h"
-
-namespace Sword2 {
-
 #define	MAX_SUBJECT_LIST 30	// is that enough?
 
-// array of these for subject menu build up
-typedef	struct {
-	uint32 res;
-	uint32 ref;
-} _subject_unit;
-
-// so speech text cleared when running a new start-script
-extern uint32 speech_text_bloc_no;
-
-extern int16 officialTextNumber;
-
-extern int32 speechScriptWaiting;
-
-//could alternately use logic->looping of course
-extern	int choosing;
-
-extern	uint32 unpause_zone;
-
+namespace Sword2 {
 } // End of namespace Sword2
 
 #endif

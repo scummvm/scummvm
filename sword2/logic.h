@@ -24,6 +24,7 @@
 
 #include "sword2/header.h"
 #include "sword2/memory.h"
+#include "sword2/speech.h"
 #include "sword2/driver/driver96.h"
 
 namespace Sword2 {
@@ -97,11 +98,78 @@ private:
 	void createSequenceSpeech(_movieTextObject *sequenceText[]);
 	void clearSequenceSpeech(_movieTextObject *sequenceText[]);
 
+	// array of these for subject menu build up
+
+	struct _subject_unit {
+		uint32 res;
+		uint32 ref;
+	};
+
+	_subject_unit _subjectList[MAX_SUBJECT_LIST];
+
+	// when not playing a wav we calculate the speech time based upon
+	// length of ascii
+
+	uint32 _speechTime;
+
+	uint32 _animId;
+
+	// 0 lip synced and repeating - 1 normal once through
+	uint32 _speechAnimType;
+
+	uint32 _leftClickDelay;		// click-delay for LEFT mouse button
+	uint32 _rightClickDelay;	// click-delay for RIGHT mouse button
+
+	// ref number for default response when luggage icon is used on a
+	// person & it doesn't match any of the icons which would have been in
+	// the chooser
+
+	uint32 _defaultResponseId;
+
+	// calculated by locateTalker() for use in speech-panning & text-sprite
+	// positioning
+
+	int16 _textX, _textY;
+
+	void locateTalker(int32 *params);
+	void formText(int32 *params);
+	bool wantSpeechForLine(uint32 wavId);
+
+#ifdef _SWORD2_DEBUG
+	// for testing speech & text
+	void getCorrectCdForSpeech(int32 wavId);
+#endif
+
 public:
 	Logic() : _globals(NULL), _kills(0), _debugFlag(false),
-		  _smackerLeadOut(0), _sequenceTextLines(0) {
+		  _smackerLeadOut(0), _sequenceTextLines(0), _speechTime(0),
+		  _animId(0), _leftClickDelay(0), _rightClickDelay(0),
+		  _defaultResponseId(0), _officialTextNumber(0),
+		  _speechScriptWaiting(0), _speechTextBlocNo(0),
+		  _choosing(false), _unpauseZone(0) {
+		memset(_subjectList, 0, sizeof(_subjectList));
 		setupOpcodes();
 	}
+
+	// "TEXT" - current official text line number - will match the wav
+	// filenames
+
+	int16 _officialTextNumber;
+
+	// usually 0; if non-zero then it's the id of whoever we're waiting for
+	// in a speech script see fnTheyDo, fnTheyDoWeWait and fnWeWait
+
+	int32 _speechScriptWaiting;
+
+	// so speech text cleared when running a new start-script
+
+	uint32 _speechTextBlocNo;
+
+	// could alternately use logic->looping of course
+
+	bool _choosing;
+
+	uint32 _unpauseZone;
 
 	void setGlobalInterpreterVariables(int32 *vars);
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
@@ -245,6 +313,7 @@ public:
 	void totalRestart(void);
 	void examineRunList(void);
 	void resetKillList(void);
+
 };
 
 extern Logic g_logic;

@@ -580,10 +580,10 @@ void UnpauseGame(void) {
 	}
 
 	gamePaused = 0;
-	unpause_zone = 2;
+	g_logic._unpauseZone = 2;
 
 	// if mouse is about or we're in a chooser menu
-	if (!g_sword2->_mouseStatus || choosing)
+	if (!g_sword2->_mouseStatus || g_logic._choosing)
 		g_sword2->setMouse(NORMAL_MOUSE_ID);
 }
 
