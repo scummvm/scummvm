@@ -2721,7 +2721,7 @@ void Scumm::o6_kernelFunction()
 	Actor *a;
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
-	printf("kernel(%d)\n", args[0]);
+
 	switch (args[0]) {
 	case 113:
 		// This is used for the Sam & Max paint-by-numbers mini-game
