@@ -141,7 +141,7 @@ void MusicHandle::fadeUp(void) {
 	if (_fading > 0)
 		_fading = -_fading;
 	else if (_fading == 0)
-		_fading = -FADE_SAMPLES;
+		_fading = -1;
 }
 
 int32 MusicHandle::play(const char *filename, uint32 musicId, bool looping) {
@@ -221,8 +221,10 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 				}
 				out = (out * _fading) / FADE_SAMPLES;
 			} else if (_fading < 0) {
-				_fading++;
-				out = (out * (FADE_SAMPLES + _fading)) / FADE_SAMPLES;
+				_fading--;
+				out = -(out * _fading) / FADE_SAMPLES;
+				if (_fading == -FADE_SAMPLES)
+					_fading = 0;
 			}
 		}
 
@@ -420,14 +422,27 @@ int32 Sound::streamCompMusic(const char *filename, uint32 musicId, bool looping)
 	int32 primaryStream = -1;
 	int32 secondaryStream = -1;
 
-	// If both music streams are playing, that should mean one of them is
-	// fading out. Pick that one, and stop it completely.
+	// If both music streams are playing, one of them will have to go.
 
 	if (_music[0]._streaming && _music[1]._streaming) {
-		if (_music[0]._fading > 0)
+		if (_music[0]._fading == 0 && _music[1]._fading == 0) {
+			// None of them are fading. This shouldn't happen, so
+			// just pick one and be done with it.
 			primaryStream = 0;
-		else
+		} else if (_music[0]._fading != 0 && _music[1]._fading == 0) {
+			// Stream 0 is fading, so pick that one.
+			primaryStream = 0;
+		} else if (_music[0]._fading == 0 && _music[1]._fading > 0) {
+			// Stream 1 is fading, so pick that one.
 			primaryStream = 1;
+		} else {
+			// Both streams are fading. Pick the one that is
+			// closest to silent.
+			if (ABS(_music[0]._fading) < ABS(_music[1]._fading))
+				primaryStream = 0;
+			else
+				primaryStream = 1;
+		}
 
 		_music[primaryStream].stop();
 	}
