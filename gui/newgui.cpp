@@ -97,7 +97,7 @@ NewGui::NewGui() : _screen(0), _needRedraw(false),
 void NewGui::updateColors() {
 	// Setup some default GUI colors.
 	_bgcolor = _system->RGBToColor(0, 0, 0);
-	_color = _system->RGBToColor(96, 96, 96);
+	_color = _system->RGBToColor(104, 104, 104);
 	_shadowcolor = _system->RGBToColor(64, 64, 64);
 	_textcolor = _system->RGBToColor(32, 160, 32);
 	_textcolorhi = _system->RGBToColor(0, 255, 0);
