@@ -991,7 +991,7 @@ void CostumeRenderer::setPalette(byte *palette)
 
 void CostumeRenderer::setFacing(uint16 facing)
 {
-	_mirror = _vm->newDirToOldDir(facing) != 0
+	_mirror = Scumm::newDirToOldDir(facing) != 0
 		|| (_loaded._ptr[7] & 0x80);
 }
 

@@ -183,7 +183,7 @@ void AkosRenderer::setCostume(int costume)
 
 void AkosRenderer::setFacing(Actor * a)
 {
-	mirror = (_vm->newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
+	mirror = (Scumm::newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
 	if (a->flip)
 		mirror ^= 1;
 }
