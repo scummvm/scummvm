@@ -2072,6 +2072,9 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	target->grafixProg = animPtr;
 
+	if (SkyState::isCDVersion(_gameVersion))
+		warning("stdSpeak: speech not implemented yet");
+
 	//now form the text sprite
 	struct lowTextManager_t textInfo;
 	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->extCompact->spColour, true);    
