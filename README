@@ -791,6 +791,7 @@ The following keywords are recognized:
         talkspeed       number   Text speed (default: 60)
 
         fullscreen      bool     Fullscreen mode
+        aspect_ratio    bool     Enable aspect ratio correction
         gfx_mode        string   Graphics mode (normal, 2x, 3x, 2xsai,
                                  super2xsai, supereagle, advmame2x, advmame3x,
                                  tv2x, dotmatrix)
@@ -806,6 +807,10 @@ The following keywords are recognized:
                                  there is a true Roland MT-32 available.
         sfx_volume      int      The sfx volume setting (0-255)
         tempo           int      The music tempo (50-200) (default: 100)
+
+        demo_mode       bool     Start demo in Maniac Mansion (Classic version)
+        floppy_intro    bool     Use floppy version of introduction in Beneath a 
+                                 Steel Sky (CD version)
 
         debuglevel      int      Enable debug output. The higher number, the
                                  more verbose output.
