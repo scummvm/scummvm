@@ -1648,10 +1648,15 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 
 		switch (cmd) {
 		case 0:
-			if (g_scumm->_gameId == GID_SAMNMAX)
-				return player->_marker;
-			else
+			if (g_scumm->_gameId == GID_SAMNMAX) {
+				if (d == 1)
+					return player->_marker;
+				else if (d == 2)
+					return player->_beat_index;
+				return -1;
+			} else {
 				return player->get_param(c, d);
+			}
 		case 1:
 			if (g_scumm->_gameId == GID_SAMNMAX)
 				player->jump (d - 1, (e - 1) * 4 + f, ((g * player->_ticks_per_beat) >> 2) + h);
@@ -2275,7 +2280,6 @@ void Player::parse_sysex(byte *p, uint len)
 			if (part) {
 				memcpy (buf, p + 6, 10);
 				buf[10] = '\0';
-				// debug (0, "[%02d] Roland (model 0x%02X, cmd 0x%02X) Instrument: \"%8s\"", p[0], p[1], p[2], buf);
 				for (b = 0; b < ARRAYSIZE(roland_to_gm_map); ++b) {
 					if (!memcmp (roland_to_gm_map[b].name, buf, 10)) {
 						a = roland_to_gm_map[b].program;
@@ -4796,10 +4800,6 @@ int IMuseGM::midi_driver_thread(void *param)
 	IMuseGM *mid = (IMuseGM *)param;
 	int old_time, cur_time;
 	
-	// Avoid race condition
-	if (NULL == g_scumm->_imuse)
-		return 0;
-
 	old_time = mid->_system->get_msecs();
 
 	for (;;) {
@@ -4808,9 +4808,11 @@ int IMuseGM::midi_driver_thread(void *param)
 		cur_time = mid->_system->get_msecs();
 		while (old_time < cur_time) {
 			old_time += 10;
-			// We can't use this here: mid->_se->on_timer() according to Jamieson630,
-			// because we have to go through the IMuseMonitor...
-			g_scumm->_imuse->on_timer();
+			// Don't use mid->_se_on_timer()
+			// We must come in through IMuseMonitor to protect
+			// against conflicts with script access to IMuse.
+			if (g_scumm->_imuse)
+				g_scumm->_imuse->on_timer();
 		}
 	}
 
@@ -5004,7 +5006,7 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 	if (what & pcEffectLevel)
 		midiEffectLevel(mc->_chan, part->_effect_level);
 
-	if (what & pcProgram) {
+	if (what & pcProgram && part->_program < 128) {
 		_midi_program_last [part->_chan] = part->_program;
 		if (part->_bank) {
 			midiControl0(mc->_chan, part->_bank);
