@@ -42,10 +42,11 @@
 class OSystem {
 public:
 	/**
-	 * Returns a pointer to the (singleton) OSystem instance, i.e. the backend.
-	 * This is not a proper singleton, since OSystem is an interface, not
-	 * a real class.
-	 * @return	the pointer to the singleton) OSystem instance
+	 * Returns a pointer to the (singleton) OSystem instance, that is, to the
+	 * active backend.
+	 * This is not quite a "proper" singleton, since OSystem is an interface
+	 * not a real class (and thus it isn't based on our Singleton template).
+	 * @return	the pointer to the (singleton) OSystem instance
 	 */
 	static OSystem *instance();
 
@@ -168,6 +169,7 @@ public:
 	 * is up to the backend. This mode is set by the client code when no user
 	 * overrides are present (i.e. if no custom graphics mode is selected via
 	 * the command line or a config file).
+	 *
 	 * @return the ID of the 'default' graphics mode
 	 */
 	virtual int getDefaultGraphicsMode() const = 0;
@@ -175,6 +177,7 @@ public:
 	/**
 	 * Switch to the specified graphics mode. If switching to the new mode
 	 * failed, this method returns false.
+	 *
 	 * @param mode	the ID of the new graphics mode
 	 * @return true if the switch was successful, false otherwise
 	 */
@@ -183,6 +186,7 @@ public:
 	/**
 	 * Switch to the graphics mode with the given name. If 'name' is unknown,
 	 * or if switching to the new mode failed, this method returns false.
+	 *
 	 * @param name	the name of the new graphics mode
 	 * @return true if the switch was successful, false otherwise
 	 * @note This is implemented via the setGraphicsMode(int) method, as well
@@ -202,11 +206,13 @@ public:
 	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
 	 *  - 320x240 (e.g. for FM-TOWN SCUMM games)
 	 *  - 640x480 (e.g. for Curse of Monkey Island)
+	 *
 	 * This is the resolution for which the client code generates data;
 	 * this is not necessarily equal to the actual display size. For example,
 	 * a backend my magnify the graphics to fit on screen (see also the
 	 * GraphicsMode); stretch the data to perform aspect ratio correction;
 	 * or shrink it to fit on small screens (in cell phones).
+	 *
 	 * @param width		the new virtual screen width
 	 * @param height	the new virtual screen height
 	 */
@@ -297,12 +303,23 @@ public:
 	virtual bool show_mouse(bool visible) = 0;
 
 	/** 
-	 * Move ("warp") the mouse cursor to the specified position.
+	 * Move ("warp") the mouse cursor to the specified position in virtual 
+	 * screen coordinates.
+	 * @param x		the new x position of the mouse
+	 * @param y		the new x position of the mouse
 	 */
 	virtual void warp_mouse(int x, int y) = 0;
 
-	/** Set the bitmap used for drawing the cursor. */
-	virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) = 0;
+	/**
+	 * Set the bitmap used for drawing the cursor.
+	 *
+	 * @param buf		the pixmap data to be used (8bit/pixel)
+	 * @param w			width of the mouse cursor
+	 * @param h			height of the mouse cursor
+	 * @param hotspotX	horizontal offset from the left side to the hotspot
+	 * @param hotspotY	vertical offset from the top side to the hotspot
+	 */
+	virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY) = 0;
 
 	//@}
 
@@ -537,8 +554,9 @@ public:
 	virtual int16 get_overlay_height()	{ return getHeight(); }
 	virtual int16 get_overlay_width()	{ return getWidth(); }
 
-	/** Convert the given RGB triplet into a OverlayColor. A OverlayColor can be
-	 * 8bit, 16bit or 32bit, depending on the target system. The default
+	/**
+	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
+	 * be 8bit, 16bit or 32bit, depending on the target system. The default
 	 * implementation generates a 16 bit color value, in the 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
 	 * @see colorToRGB
@@ -547,8 +565,9 @@ public:
 		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
 	}
 
-	/** Convert the given OverlayColor into a RGB triplet. A OverlayColor can be
-	 * 8bit, 16bit or 32bit, depending on the target system. The default
+	/**
+	 * Convert the given OverlayColor into a RGB triplet. An OverlayColor can
+	 * be 8bit, 16bit or 32bit, depending on the target system. The default
 	 * implementation takes a 16 bit color value and assumes it to be in 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
 	 * @see RGBToColor
