@@ -28,6 +28,7 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/md5.h"
 
 #include "gui/about.h"
 #include "gui/message.h"
@@ -36,6 +37,7 @@
 #include "simon/intern.h"
 #include "simon/vga.h"
 #include "simon/debugger.h"
+#include "simon/simon-md5.h"
 
 #include "sound/mididrv.h"
 
@@ -61,20 +63,23 @@ struct SimonGameSettings {
 
 static const SimonGameSettings simon_settings[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
-	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", GAME_SIMON1ACORN, "DATA"},
+	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", GAME_SIMON1ACORN, "GAMEBASE"},
 	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GAME_SIMON1DOS, "GAMEPC"},
 	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GAME_SIMON1AMIGA, "gameamiga"},
 	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GAME_SIMON2DOS, "GAME32"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie (DOS)", GAME_SIMON1TALKIE, "SIMON.GME"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie (DOS)", GAME_SIMON2TALKIE, "GSPTR30"},
-	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GAME_SIMON1WIN, "SIMON.GME"},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie", GAME_SIMON1TALKIE, "GAMEPC"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie", GAME_SIMON2TALKIE, "GSPTR30"},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GAME_SIMON2WIN, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2MAC, "simon2.dic"},
 	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"}, 
 
 	{NULL, NULL, 0, NULL}
 };
+
+static int compareMD5Table(const void *a, const void *b) {
+	const char *key = (const char *)a;
+	const MD5Table *elem = (const MD5Table *)b;
+	return strcmp(key, elem->md5);
+}
 
 GameList Engine_SIMON_gameList() {
 	const SimonGameSettings *g = simon_settings;
@@ -92,6 +97,9 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 	char detectName[128];
 	char detectName2[128];
 
+	typedef Common::Map<Common::String, bool> StringSet;
+	StringSet fileSet;
+
 	for (g = simon_settings; g->name; ++g) {
 		strcpy(detectName, g->detectname);
 		strcpy(detectName2, g->detectname);
@@ -105,14 +113,70 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 				(0 == scumm_stricmp(detectName2, name))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				detectedGames.push_back(g->toGameSettings());
+				fileSet.addKey(file->path());
 				break;
 			}
 		}
 	}
+
+	// Now, we check the MD5 sums of the 'candidate' files. If we have an exact match,
+	// only return that.
+	bool exactMatch = false;
+	for (StringSet::const_iterator iter = fileSet.begin(); iter != fileSet.end(); ++iter) {
+		uint8 md5sum[16];
+		const char *name = iter->_key.c_str();
+		if (md5_file(name, md5sum)) {
+			char md5str[32+1];
+			for (int j = 0; j < 16; j++) {
+				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+			}
+
+			const MD5Table *elem;
+			elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
+			if (elem) {
+				if (!exactMatch)
+					detectedGames.clear();	// Clear all the non-exact candidates
+				// Find the GameSettings for that target
+				for (g = simon_settings; g->name; ++g) {
+					if (0 == scumm_stricmp(g->name, elem->target))
+						break;
+				}
+				assert(g->name);
+				// Insert the 'enhanced' game data into the candidate list
+				detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, elem->platform));
+				exactMatch = true;
+			}
+		}
+	}
+
 	return detectedGames;
 }
 
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
+	const SimonGameSettings *g = simon_settings;
+	while (g->name) {
+		if (!scumm_stricmp(detector->_game.name, g->name))
+			break;
+		g++;
+	}
+	if (!g->name)
+		error("Invalid game '%s'\n", detector->_game.name);
+
+	SimonGameSettings game = *g;
+
+	switch (Common::parsePlatform(ConfMan.get("platform"))) {
+	case Common::kPlatformAmiga:
+	case Common::kPlatformMacintosh:
+		if (game.features & GF_SIMON2)
+			game.features |= GF_WIN;
+		break;
+	case Common::kPlatformWindows:
+		game.features |= GF_WIN;
+		break;
+	default:
+		break;
+	}
+
 	return new Simon::SimonEngine(detector, syst);
 }
 
@@ -127,7 +191,6 @@ static const GameSpecificSettings *simon1acorn_settings;
 static const GameSpecificSettings *simon1amiga_settings;
 static const GameSpecificSettings *simon1demo_settings;
 static const GameSpecificSettings *simon2win_settings;
-static const GameSpecificSettings *simon2mac_settings;
 static const GameSpecificSettings *simon2dos_settings;
 #else
 #define PTR(a) &a
@@ -201,20 +264,6 @@ static const GameSpecificSettings simon2win_settings = {
 	"GSPTR30",                              // gamepc_filename
 };
 
-static const GameSpecificSettings simon2mac_settings = {
-	"Simon2.gme",                           // gme_filename
-	"",                                     // wav_filename
-	"",                                     // voc_filename
-	"SIMON2.MP3",                           // mp3_filename
-	"SIMON2.OGG",                           // vorbis_filename
-	"SIMON2.FLA",                           // flac_filename
-	"",                                     // voc_effects_filename
-	"",                                     // mp3_effects_filename
-	"",                                     // vorbis_effects_filename
-	"",                                     // flac_effects_filename
-	"gsptr30",                              // gamepc_filename
-};
-
 static const GameSpecificSettings simon2dos_settings = {
 	"SIMON2.GME",                           // gme_filename
 	"",                                     // wav_filename
@@ -269,15 +318,13 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		SOUND_INDEX_BASE = 0;
 	}
 
-	if (_game & GF_MAC) {
-		gss = PTR(simon2mac_settings);
+	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
+		gss = PTR(simon2win_settings);
 
 		// Add default file directories
 		File::addDefaultDirectory(_gameDataPath + "/voices/");
 		File::addDefaultDirectory(_gameDataPath + "/VOICES/");
-	} else if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
-		gss = PTR(simon2win_settings);
-	else if (_game & GF_SIMON2)
+	} else if (_game & GF_SIMON2)
 		gss = PTR(simon2dos_settings);
 	else if (_game & GF_ACORN) {
 		gss = PTR(simon1acorn_settings);
@@ -1224,11 +1271,11 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 				readSubroutineBlock(in);
 				closeTablesFile(in);
 
-				if (_game == GAME_SIMON1WIN) {
+				if (_game & GF_SIMON2) {
+					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
+				} else if (_game & GF_WIN) {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename);
-				} else if (_game & GF_SIMON2) {
-					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
 				}
 
 				alignTableMem();
@@ -5127,7 +5174,6 @@ _GSETPTR(Simon::simon1acorn_settings, GBVARS_SIMON1ACORNSETTINGS_INDEX, Simon::G
 _GSETPTR(Simon::simon1amiga_settings, GBVARS_SIMON1AMIGASETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::simon1demo_settings, GBVARS_SIMON1DEMOSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::simon2win_settings, GBVARS_SIMON2WINSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
-_GSETPTR(Simon::simon2mac_settings, GBVARS_SIMON2MACSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::simon2dos_settings, GBVARS_SIMON2DOSSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_SIMON)
 _GEND
@@ -5138,7 +5184,6 @@ _GRELEASEPTR(GBVARS_SIMON1ACORNSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON1AMIGASETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON1DEMOSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON2WINSETTINGS_INDEX, GBVARS_SIMON)
-_GRELEASEPTR(GBVARS_SIMON2MACSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON2DOSSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON1CURSOR_INDEX, GBVARS_SIMON)
 _GEND
