@@ -181,8 +181,8 @@ void IMuseDigital::callback() {
 							break;
 					}
 					mixer_size -= result;
-//					if (mixer_size < 0)
-//						mixer_size = 0;
+					if (mixer_size < 0)
+						mixer_size = 0;
 					assert(mixer_size >= 0);
 				} while (mixer_size != 0);
 			}
