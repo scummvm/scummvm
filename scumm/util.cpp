@@ -20,6 +20,7 @@
  */
 
 #include "scumm/util.h"
+#include "common/util.h"
 
 namespace Scumm {
 

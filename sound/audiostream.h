@@ -24,7 +24,6 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "common/util.h"
 
 
 /**

@@ -31,6 +31,7 @@
 #include "sound/audiostream.h"
 #include "sound/rate.h"
 #include "sound/mixer.h"
+#include "common/util.h"
 
 /**
  * The precision of the fractional computations used by the rate converter.

@@ -28,6 +28,7 @@
 #include "common/map.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/util.h"
 
 #include "scumm/gfx.h"
 #include "scumm/script.h"

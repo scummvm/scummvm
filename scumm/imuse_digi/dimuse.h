@@ -22,6 +22,7 @@
 #define IMUSE_DIGI_H
 
 #include "common/scummsys.h"
+#include "common/util.h"
 
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"

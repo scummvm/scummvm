@@ -26,6 +26,7 @@
 
 #include <math.h>
 
+#include "common/util.h"
 
 ////////////////////////////////////////
 //

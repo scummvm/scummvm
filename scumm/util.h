@@ -23,7 +23,6 @@
 #define SCUMM_UTIL_H
 
 #include "common/file.h"
-#include "common/util.h"
 
 namespace Scumm {
 

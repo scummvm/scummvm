@@ -24,7 +24,6 @@
 
 #include "common/scummsys.h"
 #include "base/engine.h"
-#include "common/util.h"
 
 //#include "sound/audiostream.h"
 class AudioStream;
