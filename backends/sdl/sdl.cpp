@@ -137,6 +137,9 @@ void OSystem_SDL_Normal::draw_mouse() {
 	if (SDL_LockSurface(sdl_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
+	// Mark as dirty
+	add_dirty_rect(x, y, w, h);
+
 	dst = (uint16 *)sdl_tmpscreen->pixels + (y+1) * TMP_SCREEN_WIDTH + (x+1);
 	while (h > 0) {
 		int width = w;
@@ -156,9 +159,6 @@ void OSystem_SDL_Normal::draw_mouse() {
 
 	SDL_UnlockSurface(sdl_tmpscreen);
 	
-	// Mark as dirty
-	add_dirty_rect(x, y, w, h);
-
 	// Finally, set the flag to indicate the mouse has been drawn
 	_mouseDrawn = true;
 }
