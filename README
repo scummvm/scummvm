@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-10-31
-Release version: 0.2.7 [CVS]
+Last updated:    2002-11-10
+Release version: 0.2.8 [CVS]
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -368,7 +368,6 @@ depending on your operating system and configuration.
         
         -eadlib     - Uses internal Adlib Emulation (default) 
         -ewindows   - Windows MIDI. Uses built-in sequencer, for Windows users
-        -emidiemu   - Emulated midi music, for Sam and Max (BETA - BUGGY)
         -eseq       - Uses /dev/sequencer for MIDI, *nix users. See below.
         -eqt        - Quicktime sound, for Macintosh users.
         -ecore      - CoreAudio sound, for MacOS X users.
