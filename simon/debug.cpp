@@ -25,6 +25,10 @@
 #include "simon/intern.h"
 #include "simon/vga.h"
 
+#if defined (WIN32) && !defined(_WIN32_WCE)
+#include <sys/stat.h>
+#endif
+
 #ifdef SIMONDEBUG
 #define SIMON2
 #define SIMON2WIN
