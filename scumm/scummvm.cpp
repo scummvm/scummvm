@@ -1423,8 +1423,14 @@ load_game:
 		_completeScreenRedraw = false;
 		gdi.clearCharsetMask();
 		_charset->_hasMask = false;
-		for (int i = 0; i < _maxVerbs; i++)
-			drawVerb(i, 0);
+
+		if (_version > 3) {
+			for (int i = 0; i < _maxVerbs; i++)
+				drawVerb(i, 0);
+		} else {
+			redrawVerbs();
+		}
+
 		verbMouseOver(0);
 
 		if (_version <= 2) {
