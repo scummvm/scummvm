@@ -1203,17 +1203,14 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 	int run = _vm->_egaStripRun[stripnr];
 	bool dither = false;
 	byte dither_table[128];
-	byte data = 0;
 	byte *ptr_dither_table;
-	int x = 8;
-	int y;
 	memset(dither_table, 0, sizeof(dither_table));	// FIXME - is that correct?
-	do {
+
+	for (int x = 0; x < 8; x++) {
 		ptr_dither_table = dither_table;
-		y = height;
-		do {
+		for (int y = 0; y < height; y++) {
 			if (--run == 0) {
-				data = *src++;
+				byte data = *src++;
 				if (data & 0x80) {
 					run = data & 0x7f;
 					dither = true;
@@ -1231,10 +1228,10 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 			}
 			*dst = *ptr_dither_table++;
 			dst += _vm->_realWidth;
-		} while (--y);
-		dst -= _vm->_realWidth * 128;
+		}
+		dst -= _vm->_realWidth * height;
 		dst++;
-	} while (--x);
+	}
 }
 
 void Gdi::decompressMaskImgOld(byte *dst, byte *src, int stripnr) {
