@@ -642,7 +642,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 #endif
 
 			// Ctr-Alt-<key> will change the GFX mode
-			if (b == (KBD_CTRL|KBD_ALT)) {
+			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
 				static const int gfxModes[][4] = {
 						{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
 						{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
@@ -691,8 +691,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 				// Increase/decrease the scale factor
 				// TODO: Shall we 'wrap around' here?
-				if (ev.key.keysym.sym == '+' || ev.key.keysym.sym == '-') {
-					factor += (ev.key.keysym.sym == '+' ? +1 : -1);
+				if (ev.key.keysym.sym == '=' || ev.key.keysym.sym == '+' || ev.key.keysym.sym == '-') {
+					factor += (ev.key.keysym.sym == '-' ? -1 : +1);
 					if (0 <= factor && factor < 4 && gfxModes[_scalerType][factor] >= 0) {
 						prop.gfx_mode = gfxModes[_scalerType][factor];
 						property(PROP_SET_GFX_MODE, &prop);
