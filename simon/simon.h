@@ -36,7 +36,6 @@ namespace Simon {
 /* Various other settings */
 //#define DUMP_FILE_NR 8
 //#define DUMP_BITMAPS_FILE_NR 8
-//#define DUMP_DRAWN_BITMAPS
 
 uint fileReadItemID(File *in);
 
@@ -197,6 +196,7 @@ protected:
 	bool _continous_mainscript;
 	bool _continous_vgascript;
 	bool _draw_images_debug;
+	bool _dump_images;
 	bool _speech;
 	bool _subtitles;
 	byte _mouse_cursor;

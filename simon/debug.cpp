@@ -354,21 +354,19 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 }
 
 void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
-/* Only supported for win32 atm. mkdir doesn't work otherwise. */
-#if defined (WIN32) && !defined(_WIN32_WCE)
-	char buf[255], buf2[255];
+	char buf[255];
 	struct stat statbuf;
 
-	sprintf(buf, "bmp_%d\\%d.bmp", file, image);
+#if defined(MACOS_CARBON)
+	sprintf(buf, ":dumps:File%d_Image%d.bmp", file, image);
+#else
+	sprintf(buf, "dumps/File%d_Image%d.bmp", file, image);
+#endif
 
 	if (stat(buf, &statbuf) == 0)
 		return;
 
-	sprintf(buf2, "bmp_%d", file);
-	mkdir(buf2);
-
 	dump_bitmap(buf, offs, w, h, 0, _palette, base);
-#endif
 }
 
 void pal_load(byte *pal, const byte *vga1, int a, int b) {
@@ -391,8 +389,6 @@ void pal_load(byte *pal, const byte *vga1, int a, int b) {
 }
 
 void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
-/* Only supported for win32 atm. mkdir doesn't work otherwise. */
-#if defined (WIN32) && !defined(_WIN32_WCE)
 
 	int i;
 	uint32 offs;
@@ -436,12 +432,15 @@ void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 		/* dump bitmap */
 		{
 			char buf[255];
-			sprintf(buf, "bmp_%d\\%d.bmp", res, i);
+#if defined(MACOS_CARBON)
+			sprintf(buf, ":dumps:Res%d_Image%d.bmp", res, i);
+#else
+			sprintf(buf, "dumps/Res%d_Image%d.bmp", res, i);
+#endif
 
 			dump_bitmap(buf, vga + offs, width, height, flags, pal, 0);
 		}
 	}
-#endif
 }
 
 void SimonEngine::dump_vga_script_always(byte *ptr, uint res, uint sprite_id) {

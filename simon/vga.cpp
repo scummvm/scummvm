@@ -628,10 +628,9 @@ void SimonEngine::vc_10_draw() {
 	if (height == 0 || width == 0)
 		return;
 
-#ifdef DUMP_DRAWN_BITMAPS
-	dump_single_bitmap(_vga_cur_file_id, state.image, state.depack_src, width * 16, height,
-										 state.base_color);
-#endif
+	if (_dump_images)
+		dump_single_bitmap(_vga_cur_file_id, state.image, state.depack_src, width * 16, height,
+											 state.base_color);
 
 	if (flags & 0x80 && !(state.e & 0x10)) {
 		if (state.e & 1) {

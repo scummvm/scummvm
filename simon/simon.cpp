@@ -321,6 +321,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_continous_mainscript = 0;
 	_continous_vgascript = 0;
 	_draw_images_debug = 0;
+	_dump_images = 0;
 	_speech = false;
 	_subtitles = false;
 	_mouse_cursor = 0;
@@ -3500,6 +3501,10 @@ void SimonEngine::processSpecialKeys() {
 	case 'i':
 		if (_debugMode)
 			_draw_images_debug ^= 1;
+		break;
+	case 'd':
+		if (_debugMode)
+			_dump_images ^=1;
 		break;
 	}
 	
