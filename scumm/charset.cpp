@@ -123,7 +123,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int width = 1;
 	byte chr;
 	int oldID = getCurID();
-	int code = (_vm->_gameId == GID_PAJAMA) ? 127 : 64;
+	int code = (_vm->_heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
 		if (_vm->_heversion >= 72 && chr == code) {
@@ -178,7 +178,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int curw = 1;
 	byte chr;
 	int oldID = getCurID();
-	int code = (_vm->_gameId == GID_PAJAMA) ? 127 : 64;
+	int code = (_vm->_heversion >= 80) ? 127 : 64;
 
 	while ((chr = str[pos++]) != 0) {
 		if (_vm->_heversion >= 72 && chr == code) {

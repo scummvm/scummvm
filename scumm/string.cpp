@@ -82,7 +82,7 @@ void ScummEngine::CHARSET_1() {
 	int frme;
 	Actor *a;
 	byte *buffer;
-	int code = (_gameId == GID_PAJAMA) ? 127 : 64;
+	int code = (_heversion >= 80) ? 127 : 64;
 	char value[32];
 
 	if (!_haveMsg)
