@@ -677,8 +677,9 @@ void SimonState::vc_10_draw()
 	if (state.e & 0x10)
 		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 	else if (state.e & 1)
-		state.depack_src = vc_10_no_depack_swap(state.depack_src);
-
+		// FIXME: vc_10_no_depack_swap support needs to be added.
+		//state.depack_src = vc_10_no_depack_swap(state.depack_src);
+		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 
 	vlut = &_video_windows[_video_palette_mode * 4];
 

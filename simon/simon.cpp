@@ -54,6 +54,24 @@ static const GameSpecificSettings simon1_settings = {
 	"GAMEPC",									/* gamepc_filename */
 };
 
+static const GameSpecificSettings simon1cd32_settings = {
+	1,										/* VGA_DELAY_BASE */
+	1576 / 4,									/* TABLE_INDEX_BASE */
+	1460 / 4,									/* TEXT_INDEX_BASE */
+	64,										/* NUM_VIDEO_OP_CODES */
+	1000000,									/* VGA_MEM_SIZE */
+	50000,										/* TABLES_MEM_SIZE */
+	1316 / 4,									/* MUSIC_INDEX_BASE */
+	0,										/* SOUND_INDEX_BASE */
+	"",										/* gme_filename */
+	"",										/* wav_filename */
+	"",										/* voc_filename */
+	"SIMON.MP3",									/* mp3_filename */
+	"",									/* voc_effects_filename */
+	"",									/* mp3_effects_filename */
+	"gameamiga",									/* gamepc_filename */
+};
+
 static const GameSpecificSettings simon1demo_settings = {
 	1,										/* VGA_DELAY_BASE */
 	1576 / 4,									/* TABLE_INDEX_BASE */
@@ -965,7 +983,7 @@ void SimonState::closeTablesFile_simon1(File *in)
 
 uint SimonState::loadTextFile(const char *filename, byte *dst)
 {
-	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return loadTextFile_simon1(filename, dst);
 	else
 		return loadTextFile_gme(filename, dst);
@@ -973,7 +991,7 @@ uint SimonState::loadTextFile(const char *filename, byte *dst)
 
 File *SimonState::openTablesFile(const char *filename)
 {
-	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
@@ -981,7 +999,7 @@ File *SimonState::openTablesFile(const char *filename)
 
 void SimonState::closeTablesFile(File *in)
 {
-	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		closeTablesFile_simon1(in);
 	else
 		closeTablesFile_gme(in);
@@ -1473,7 +1491,10 @@ uint SimonState::item_get_icon_number(Item *item)
 void SimonState::loadIconFile()
 {
 	File in;
-	in.open("ICON.DAT", _gameDataPath);
+	if (_game == GAME_SIMON1CD32)
+		in.open("icon.pkd", _gameDataPath);
+	else
+		in.open("ICON.DAT", _gameDataPath);
 	uint size;
 
 	if (in.isOpen() == false)
@@ -1866,6 +1887,7 @@ void SimonState::o_print_str()
 	switch (_game) {
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
+	case GAME_SIMON1CD32:
  		if (speech_id != 0) {
   			talk_with_speech(speech_id, num_1);
   		} else if (string_ptr != NULL) {
@@ -4342,14 +4364,22 @@ void SimonState::print_char_helper_6(uint i)
 
 void SimonState::read_vga_from_datfile_1(uint vga_id)
 {
-	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
 		uint32 size;
-		if (vga_id == 23) 
-			sprintf(buf, "0112.VGA"); 
-		if (vga_id == 328) 
-			sprintf(buf, "0119.VGA"); 
+		if (vga_id == 23) {
+			if (_game == GAME_SIMON1CD32)
+				sprintf(buf, "0112.out"); 
+			else
+				sprintf(buf, "0112.VGA"); 
+		}
+		if (vga_id == 328) {
+			if (_game == GAME_SIMON1CD32)
+				sprintf(buf, "0119.out"); 
+			else
+				sprintf(buf, "0119.VGA"); 
+		}
 
 		in.open(buf, _gameDataPath);
 		if (in.isOpen() == false)
@@ -4371,13 +4401,16 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 
 byte *SimonState::read_vga_from_datfile_2(uint id)
 {
-	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
 		uint32 size;
 		byte *dst;
 
-		sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
+		if (_game == GAME_SIMON1CD32)
+			sprintf(buf, "%.3d%d.out", id >> 1, (id & 1) + 1);
+		else
+			sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
 
 		in.open(buf, _gameDataPath);
 		if (in.isOpen() == false)
@@ -4415,7 +4448,7 @@ void SimonState::resfile_read(void *dst, uint32 offs, uint32 size)
 
 void SimonState::openGameFile()
 {
-	if (_game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
+	if (_game != GAME_SIMON1CD32 && _game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
 		_game_file = new File();
 		_game_file->open(gss->gme_filename, _gameDataPath);
 
@@ -4601,6 +4634,8 @@ void SimonState::go()
 		gss = &simon2win_settings;
 	} else if (_game == GAME_SIMON2DOS) {
 		gss = &simon2dos_settings;
+	} else if (_game == GAME_SIMON1CD32) {
+		gss = &simon1cd32_settings;
 	} else if (_game == GAME_SIMON1DEMO) {
 		gss = &simon1demo_settings;
 	} else {
@@ -4964,7 +4999,7 @@ void SimonState::playMusic(uint music_unk, uint music)
 		_vc70_var1 = 0xFFFF;
 		_vc72_var3 = 0xFFFF;
 		_midi_unk2 = 0xFFFF;
-	} else if (!(_game & GAME_DEMO)){ // Simon 1 music
+	} else if (!(_game & GAME_DEMO) && (_game != GAME_SIMON1CD32)){ // Simon 1 music
 		midi.shutdown();
 		if (_game & GAME_WIN) {	
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);

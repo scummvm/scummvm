@@ -265,6 +265,7 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 	switch (_game) {
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
+	case GAME_SIMON1CD32:
 		table = opcode_arg_table_simon1win;
 		break;
 	case GAME_SIMON2DOS:
