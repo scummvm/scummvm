@@ -80,6 +80,8 @@ public:
 	void palCustomColors(uint16 roomNum);
 	void palCustomScroll(uint16 roomNum);
 	void palCustomFlash();
+	void palCustomLightsOff(uint16 roomNum);
+	void palCustomLightsOn(uint16 roomNum);
 	void palSetAllDirty() { _pal.dirtyMin = 0; _pal.dirtyMax = 255; }
 
 	void screenMode(int comPanel, bool inCutaway);

@@ -291,7 +291,7 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 	int n = end - start + 1;
 	if (!(roomNum < 90 || (roomNum > 94 && roomNum < 114))) {
 		memset(_pal.screen + start * 3, 0, n * 3);
-		palSet(_pal.screen, start, end);
+		palSet(_pal.screen, start, end, true);
 	}
 	else {
 		uint8 tempPal[256 * 3];
@@ -614,6 +614,34 @@ void Display::palCustomFlash() {
 	palSet(tempPal, 0, 255, true);
 	// restore original palette
 	palSet(_pal.screen, 0, 255, true);
+}
+
+
+void Display::palCustomLightsOff(uint16 roomNum) {
+
+	int end = 223;
+	int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 16;
+	int n = end - start + 1;
+
+	memset(_pal.screen + start * 3, 0, n * 3);
+	palSet(_pal.screen, start, end, true);
+
+	_pal.scrollable = false;
+}
+
+
+void Display::palCustomLightsOn(uint16 roomNum) {
+
+	int end = 223;
+	int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 0;
+	int n = end - start + 1;
+
+	memcpy(_pal.screen + start * 3, _pal.room + start * 3, n * 3);
+	palSet(_pal.screen, start, end, true);
+	
+	_pal.dirtyMin = 0;
+	_pal.dirtyMax = 223;
+	_pal.scrollable = true;
 }
 
 

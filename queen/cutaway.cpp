@@ -404,6 +404,26 @@ void Cutaway::actionSpecialMove(int index) {
 			_graphics->cameraBob(0);
 			break;
 
+
+		case 19:
+			_logic->gameState(VAR_AZURA_IN_LOVE, 1);
+			break;
+
+
+		case 21:
+			_logic->display()->palCustomLightsOff(_logic->currentRoom());
+			break;
+
+		case 22:
+			_logic->display()->palCustomLightsOn(_logic->currentRoom());
+			break;
+
+        // manequin area on
+        case 23:
+			_logic->area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours = ABS(_logic->area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours);
+			break;
+
+
 		// c75b.cut - Lightning hits plane
 		case 28:
 			{
