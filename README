@@ -100,6 +100,7 @@ listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
        Simon The Sorcerer:
+                - Music requires real midi support, adlib emulation isn't supported.
                 - Some minor graphical glitches may be present
 
        Indy 3 (The Last Crusade):
