@@ -274,7 +274,7 @@ static int getDist(int x, int y, int x2, int y2) {
 }
 
 int ScummEngine::getObjActToObjActDist(int a, int b) {
-	int x, y, x2, y2, dist;
+	int x, y, x2, y2;
 	Actor *acta = NULL;
 	Actor *actb = NULL;
 
@@ -293,25 +293,26 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	if (getObjectOrActorXY(b, x2, y2) == -1)
 		return 0xFF;
 
-	if (acta) {
+	// Only call FOO in V5 games. Older versions don't seem to make this
+	// call at all, and using it caused at least one bug (#853874).
+	if (acta && _version == 5) {
 		AdjustBoxResult r = acta->adjustXYToBeInBox(x2, y2);
 		x2 = r.x;
 		y2 = r.y;
 	}
 
 	// Now compute the distance between the two points
-	x = ABS(x - x2);
-	y = ABS(y - y2);
-
-	// For V1/V2 games, distances are measured in the original "character"
-	// based coordinate system, instead of pixels. Otherwise various scripts
-	// will break.
 	if (_version <= 2) {
-		dist = MAX(x/8, y/2);
-	} else 
-		dist = MAX(x, y);
+		// For V1/V2 games, distances are measured in the original "character"
+		// based coordinate system, instead of pixels. Otherwise various scripts
+		// will break. See bugs #853874, #774529
+		x /= 8;
+		y /= 2;
+		x2 /= 8;
+		y2 /= 2;
+	}
 
-	return dist;
+	return getDist(x, y, x2, y2);
 }
 
 int ScummEngine::findObject(int x, int y) {
