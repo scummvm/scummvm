@@ -671,18 +671,18 @@ Credits:
         Max Horn             - Lead Developer
         Jeremy Newman        - Webmaster
 
-        Jonathan Gray        - Engine: SCUMM
         Robert Goeffringmann - Engine: Beneath a Steel Sky
+        Jonathan Gray        - Engine: SCUMM
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
         Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
         Joost Peters         - Engine: Beneath a Steel Sky
-        Chris Apers          - Port:   PalmOS
-        Nicolas Bacca        - Port:   PocketPC/WinCE port
-        Marcus Comstedt      - Port:   DreamCast
-        Ruediger Hanke       - Port:   MorphOS
-        Travis Howell        - Port:   Win32, Engine: Simon
-        Peter Moraliyski     - Port:   GP32
-        Lionel Ulmer         - Port:   X11
+        Chris Apers          - Port: PalmOS
+        Nicolas Bacca        - Port: PocketPC/WinCE port
+        Marcus Comstedt      - Port: DreamCast
+        Ruediger Hanke       - Port: MorphOS
+        Travis Howell        - Port: Win32, Engine: Simon
+        Peter Moraliyski     - Port: GP32
+        Lionel Ulmer         - Port: X11
 
         Torbjorn Andersson   - Generic Bugfixer and Patch Submitter
         Jamieson Christian   - iMuse, MIDI, all things musical.
