@@ -1890,14 +1890,13 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		_actors[i].hideActor();
 	}
 
-	if (_version < 7) {
-		for (i = 0; i < 256; i++) {
-			_roomPalette[i] = i;
+	for (i = 0; i < 256; i++) {
+		_roomPalette[i] = i;
+		if (_version < 7)
 			_shadowPalette[i] = i;
-		}
-		if (_features & GF_SMALL_HEADER)
-			setDirtyColors(0, 255);
 	}
+	if (_features & GF_SMALL_HEADER)
+		setDirtyColors(0, 255);
 
 	clearDrawObjectQueue();
 
