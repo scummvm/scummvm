@@ -453,26 +453,26 @@ void Codec47Decoder::level3(byte *d_dst) {
 
 	if (code < 0xF8) {
 		tmp = _table[code] + _offset1;
-		*(uint16 *)(d_dst + (_d_pitch * 0)) = *(uint16 *)(d_dst + (_d_pitch * 0) + tmp);
-		*(uint16 *)(d_dst + (_d_pitch * 1)) = *(uint16 *)(d_dst + (_d_pitch * 1) + tmp);
+		*(uint16 *)(d_dst) = *(uint16 *)(d_dst + tmp);
+		*(uint16 *)(d_dst + _d_pitch) = *(uint16 *)(d_dst + _d_pitch + tmp);
 	} else if (code == 0xFF) {
-		*(uint16 *)(d_dst + (_d_pitch * 0)) = *(uint16 *)(_d_src + 0);
-		*(uint16 *)(d_dst + (_d_pitch * 1)) = *(uint16 *)(_d_src + 2);
+		*(uint16 *)(d_dst) = *(uint16 *)(_d_src + 0);
+		*(uint16 *)(d_dst + _d_pitch) = *(uint16 *)(_d_src + 2);
 		_d_src += 4;
 	} else if (code == 0xFE) {
 		byte t = *_d_src++;
 		tmp = t | t << 8;
-		*(uint16 *)(d_dst + (_d_pitch * 0)) = (uint16)tmp;
-		*(uint16 *)(d_dst + (_d_pitch * 1)) = (uint16)tmp;
+		*(uint16 *)(d_dst) = (uint16)tmp;
+		*(uint16 *)(d_dst + _d_pitch) = (uint16)tmp;
 	} else if (code == 0xFC) {
 		tmp = _offset2;
-		*(uint16 *)(d_dst + (_d_pitch * 0)) = *(uint16 *)(d_dst + (_d_pitch * 0) + tmp);
-		*(uint16 *)(d_dst + (_d_pitch * 1)) = *(uint16 *)(d_dst + (_d_pitch * 1) + tmp);
+		*(uint16 *)(d_dst) = *(uint16 *)(d_dst + tmp);
+		*(uint16 *)(d_dst + _d_pitch) = *(uint16 *)(d_dst + _d_pitch + tmp);
 	} else {
 		byte t = _paramPtr[code];
 		tmp = t | t << 8;
-		*(uint16 *)(d_dst + (_d_pitch * 0)) = (uint16)tmp;
-		*(uint16 *)(d_dst + (_d_pitch * 1)) = (uint16)tmp;
+		*(uint16 *)(d_dst) = (uint16)tmp;
+		*(uint16 *)(d_dst + _d_pitch) = (uint16)tmp;
 	}
 }
 
