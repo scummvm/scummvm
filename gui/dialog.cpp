@@ -194,8 +194,10 @@ void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	}
 
 	// ESC closes all dialogs by default
-	if (keycode == 27)
+	if (keycode == 27) {
+		setResult(-1);
 		close();
+	}
 
 	// TODO: tab/shift-tab should focus the next/previous focusable widget
 }
