@@ -60,6 +60,11 @@ extern const TargetSettings *Engine_SWORD2_targetList();
 extern Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst);
 #endif
 
+#ifndef DISABLE_QUEEN
+extern const TargetSettings *Engine_QUEEN_targetList();
+extern Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst);
+#endif
+
 #endif
 
 
@@ -247,6 +252,11 @@ void PluginManager::loadPlugins() {
 	#ifndef DISABLE_SWORD2
 		tryLoadPlugin(new StaticPlugin("sword2", Engine_SWORD2_targetList(), Engine_SWORD2_create));
 	#endif
+	
+	#ifndef DISABLE_QUEEN
+		tryLoadPlugin(new StaticPlugin("queen", Engine_QUEEN_targetList(), Engine_QUEEN_create));
+	#endif
+		
 #else
 	// Load dynamic plugins
 	// TODO... this is right now just a nasty hack. 
@@ -277,6 +287,11 @@ void PluginManager::loadPlugins() {
 	#ifndef DISABLE_SWORD2
 		tryLoadPlugin(new DynamicPlugin("bs2/libbs2.so"));
 	#endif
+
+	#ifndef DISABLE_QUEEN
+		tryLoadPlugin(new DynamicPlugin("queen/libqueen.so"));
+	#endif
+		
 #endif
 }
 

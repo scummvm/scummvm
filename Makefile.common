@@ -91,6 +91,12 @@ else
 MODULES += bs2
 endif
 
+ifdef DISABLE_QUEEN
+DEFINES += -DDISABLE_QUEEN
+else
+MODULES += queen
+endif
+
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \

@@ -33,6 +33,7 @@ _build_scumm=yes
 _build_simon=yes
 _build_sky=yes
 _build_bs2=yes
+_build_queen=yes
 _need_memalign=no
 # more defaults
 _backend=sdl
@@ -162,6 +163,7 @@ Optional Features:
   --disable-simon          don't build the simon engine
   --disable-sky            don't build the Beneath a Steel Sky engine
   --disable-bs2            don't build the Broken Sword II engine
+  --disable-queen          don't build the Flight of the Amazon Queen engine
 
 Optional Libraries:
   --with-alsa-prefix=PFX   Prefix where alsa is installed (optional)
@@ -185,6 +187,7 @@ for ac_option in $@; do
       --disable-simon)		_build_simon=no ;;
       --disable-sky)		_build_sky=no ;;
       --disable-bs2)		_build_bs2=no ;;
+      --disable-queen)          _build_queen=no ;;
       --enable-alsa)		_alsa=yes	;;
       --disable-alsa)		_alsa=no	;;
       --enable-vorbis)		_vorbis=yes	;;
@@ -324,6 +327,12 @@ if test "$_build_bs2" = no ; then
 	_mak_bs2='DISABLE_SWORD2 = 1'
 else
 	_mak_bs2='# DISABLE_SWORD2 = 1'
+fi
+
+if test "$_build_queen" = no ; then
+	_mak_queen='DISABLE_QUEEN = 1'
+else
+	_mak_queen='# DISABLE_QUEEN = 1'
 fi
 
 #
@@ -500,6 +509,9 @@ if test "$_build_sky" = yes ; then
 fi
 if test "$_build_bs2" = yes ; then
   echo "    Broken Sword II"
+fi
+if test "$_build_queen" = yes ; then
+  echo "    Flight of the Amazon Queen"
 fi
 echo
 

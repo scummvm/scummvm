@@ -43,11 +43,15 @@ enum GameId {
 
 	// Beneath a Steel Sky
 	GID_SKY_FIRST,
-	GID_SKY_LAST = GID_SKY_FIRST + 49,
+	GID_SKY_LAST = GID_SKY_FIRST + 9,
 
 	// Broken Sword 2
 	GID_SWORD2_FIRST,
-	GID_SWORD2_LAST = GID_SWORD2_FIRST + 49
+	GID_SWORD2_LAST = GID_SWORD2_FIRST + 9,
+
+	//Flight of the Amazon Queen
+	GID_QUEEN_FIRST,
+	GID_QUEEN_LAST = GID_QUEEN_FIRST + 9
 };
 
 
