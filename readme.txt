@@ -114,11 +114,6 @@ listed here, nor in the compatibility table on the web site, please see below.
 
                 - No music or sound effects yet.
 
-                - You may get stuck buying items in the shop, due to a walkbox
-                  issue. To escape, use "ctrl-d" to enter the debugger, then
-                  "r 5" <return>, "q" <return>, and walk back into the shop to
-                  recover your inventory.
-
 
        Loom (256 Talkie):
                 - If you are having random crashes, this is a Windows bug.
