@@ -1146,13 +1146,14 @@ bool SkySound::fnStartFx(uint32 sound) {
 	return true;
 }
 
-void SkySound::fnStartSpeech(uint16 textNum) {
+bool SkySound::startSpeech(uint16 textNum) {
     
 	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);
 	
 	uint8 *speechData = _skyDisk->loadFile(speechFileNum + 50000, NULL);
 	if (!speechData) {
-		error("File %d (speechFile %d from section %d) wasn't found!\n", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);
+		debug(9,"File %d (speechFile %d from section %d) wasn't found!\n", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);
+		return false;
 	}
 
 	uint32 speechSize = ((dataFileHeader*)speechData)->s_tot_size;
@@ -1165,4 +1166,5 @@ void SkySound::fnStartSpeech(uint16 textNum) {
     // TODO: implement pre_after_table_area to find and prefetch file for next speech
 	
 	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	return true;
 }

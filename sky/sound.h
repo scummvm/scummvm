@@ -50,7 +50,7 @@ public:
 	void loadSection(uint8 pSection);
 	void playSound(uint16 sound, uint16 volume);
 	bool fnStartFx(uint32 sound);
-	void fnStartSpeech(uint16 textNum);
+	bool startSpeech(uint16 textNum);
 	bool speechFinished(void) { return _ingameSpeech == 0; };
 	void fnPauseFx(void);
 	void fnUnPauseFx(void) { _sfxPaused = false; };

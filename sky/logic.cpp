@@ -2347,8 +2347,6 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	//create the x coordinate for the speech text
 	//we need the talkers sprite information
-
-	//_compact->screen = target->screen;	
 	textCompact->screen = target->screen;	//put our screen in
 
 	if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen 
