@@ -3846,7 +3846,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	uint m, n;
 	uint height;
 
-	// FIXME: Simon1 Mine - Fix text for dwarf song
+	// FIXME: Simon1dos Dwarf Mine - Fix text for dwarf song
 	if (num_1 >= 100)
 		num_1 -= 100;
 
