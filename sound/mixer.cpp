@@ -26,6 +26,22 @@
 #include "common/file.h"
 
 
+class Channel {
+protected:
+	SoundMixer *_mixer;
+public:
+	bool _toBeDestroyed;
+	int _id;
+	Channel() : _mixer(0), _toBeDestroyed(false), _id(-1) {}
+	virtual ~Channel() {}
+	virtual void mix(int16 *data, uint len) = 0;
+	void destroy() {
+		_toBeDestroyed = true;
+	}
+	virtual bool isActive();
+	virtual bool isMusicChannel() = 0;
+};
+
 class ChannelRaw : public Channel {
 	byte *_ptr;
 	uint32 _pos;
@@ -42,6 +58,9 @@ public:
 	~ChannelRaw();
 
 	void mix(int16 *data, uint len);
+	bool isMusicChannel() {
+		return false; // TODO: IS this correct? Or does any Scumm game us this for music?
+	}
 };
 
 class ChannelStream : public Channel {
@@ -61,6 +80,9 @@ public:
 
 	void mix(int16 *data, uint len);
 	void append(void *sound, uint32 size);
+	bool isMusicChannel() {
+		return true;
+	}
 };
 
 #ifdef USE_MAD
@@ -81,6 +103,9 @@ public:
 	~ChannelMP3();
 
 	void mix(int16 *data, uint len);
+	bool isMusicChannel() {
+		return false;
+	}
 };
 
 class ChannelMP3CDMusic : public Channel {
@@ -101,7 +126,10 @@ public:
 	~ChannelMP3CDMusic();
 
 	void mix(int16 *data, uint len);
-	bool soundFinished();
+	bool isActive();
+	bool isMusicChannel() {
+		return true;
+	}
 };
 
 #endif
@@ -116,7 +144,10 @@ public:
 	ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int duration, bool is_cd_track);
 
 	void mix(int16 *data, uint len);
-	bool soundFinished();
+	bool isActive();
+	bool isMusicChannel() {
+		return _is_cd_track;
+	}
 };
 #endif
 
@@ -276,10 +307,20 @@ void SoundMixer::pause(bool paused) {
 	_paused = paused;
 }
 
-bool SoundMixer::hasActiveChannel() {
+bool SoundMixer::hasActiveSFXChannel() {
+	// FIXME/TODO: We need to distinguish between SFX and music channels
+	// (and maybe also voice) here to work properly in iMuseDigital
+	// games. In the past that was achieve using the _beginSlots hack.
+	// Since we don't have that anymore, it's not that simple anymore.
 	for (int i = 0; i != NUM_CHANNELS; i++)
-		if (_channels[i])
+		if (_channels[i] && !_channels[i]->isMusicChannel())
 			return true;
+	return false;
+}
+
+bool SoundMixer::isActiveChannel(int index) {
+	if (_channels[index])
+		return _channels[index]->isActive();
 	return false;
 }
 
@@ -596,9 +637,9 @@ static int16 mixer_element_size[] = {
 	4, 4
 };
 
-bool Channel::soundFinished() {
-	warning("sound_finished should never be called on a non-MP3 mixer ");
-	return false;
+bool Channel::isActive() {
+	error("isActive should never be called on a non-MP3 mixer ");
+	return true;
 }
 
 /* RAW mixer */
@@ -979,8 +1020,8 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 	}
 }
 
-bool ChannelMP3CDMusic::soundFinished() {
-	return mad_timer_compare(_duration, mad_timer_zero) <= 0;
+bool ChannelMP3CDMusic::isActive() {
+	return mad_timer_compare(_duration, mad_timer_zero) > 0;
 }
 
 #endif
@@ -1061,8 +1102,8 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 		destroy();
 }
 
-bool ChannelVorbis::soundFinished() {
-	return _eof_flag || (_end_pos > 0 && ov_pcm_tell(_ov_file) >= _end_pos);
+bool ChannelVorbis::isActive() {
+	return !_eof_flag && (_end_pos <= 0 && ov_pcm_tell(_ov_file) >= _end_pos);
 }
 
 #endif

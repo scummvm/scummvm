@@ -958,7 +958,7 @@ void Sound::stopSfxSound() {
 }
 
 bool Sound::isSfxFinished() {
-	return !_scumm->_mixer->hasActiveChannel();
+	return !_scumm->_mixer->hasActiveSFXChannel();
 }
 
 uint32 Sound::decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo = false) {
@@ -1577,7 +1577,7 @@ int Sound::updateMP3CD() {
 		return -1;
 	}
 
-	if (_scumm->_mixer->_channels[_dig_cd_index]->soundFinished()) {
+	if (!_scumm->_mixer->isActiveChannel(_dig_cd_index)) {
 		if (_dig_cd_num_loops == -1 || --_dig_cd_num_loops > 0)
 			playMP3CDTrack(_dig_cd_track, _dig_cd_num_loops, _dig_cd_start, _dig_cd_delay);
 		else

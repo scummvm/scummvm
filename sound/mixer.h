@@ -41,26 +41,6 @@ typedef uint32 PlayingSoundHandle;
 
 class Channel;
 class File;
-class SoundMixer;
-
-// TODO: class Channel should really be declared non-public, inside mixer.cpp
-// However, right now Sound::updateMP3CD directly calls soundFinished. That
-// should be changed, by adding proper API abstraction to SoundMixer for
-// MP3/Vorbis "CD" playback.
-class Channel {
-protected:
-	SoundMixer *_mixer;
-public:
-	bool _toBeDestroyed;
-	int _id;
-	Channel() : _mixer(0), _toBeDestroyed(false), _id(-1) {}
-	virtual ~Channel() {}
-	virtual void mix(int16 *data, uint len) = 0;
-	void destroy() {
-		_toBeDestroyed = true;
-	}
-	virtual bool soundFinished();
-};
 
 class SoundMixer {
 public:
@@ -133,8 +113,11 @@ public:
 	/** append to existing sound */
 	int append(int index, void * sound, uint32 size);
 
-	/** is any channel active? */
-	bool hasActiveChannel();
+	/** Check whether any SFX channel is active.*/
+	bool hasActiveSFXChannel();
+	
+	/** Check whether the specified channel si active. */
+	bool isActiveChannel(int index);
 
 	/** bind to the OSystem object => mixer will be
 	 * invoked automatically when samples need
