@@ -122,7 +122,7 @@ void Router::allocateRouteMem(void) {
 }
 
 WalkData *Router::lockRouteMem(void) {
-	uint8 slotNo = returnSlotNo(ID); 
+	uint8 slotNo = returnSlotNo(ID);
 	
 	_vm->_memory->lockMemory(_routeSlots[slotNo]);
 	return (WalkData *) _routeSlots[slotNo]->ad;
@@ -2411,7 +2411,7 @@ void Router::loadWalkGrid(void) {
 			// open walk grid file
 			fPolygrid = _vm->_resman->openResource(_walkGridList[i]);
  			fPolygrid += sizeof(StandardHeader);
- 			memmove((uint8 *) &floorHeader, fPolygrid, sizeof(WalkGridHeader));
+ 			memcpy((uint8 *) &floorHeader, fPolygrid, sizeof(WalkGridHeader));
  			fPolygrid += sizeof(WalkGridHeader);
 
 			// how many bars & nodes are we getting from this
@@ -2420,24 +2420,15 @@ void Router::loadWalkGrid(void) {
 			theseBars = floorHeader.numBars;
 			theseNodes = floorHeader.numNodes;
 
-#ifdef _SWORD2_DEBUG
 			// check that we're not going to exceed the max
 			// allowed in the complete walkgrid arrays
 
-			if (_nBars + theseBars >= O_GRID_SIZE)
-				error("Adding walkgrid(%d): %d+%d bars exceeds max %d",
-					_walkGridList[i], _nBars, theseBars,
-					O_GRID_SIZE);
-
-			if (_nNodes + theseNodes >= O_GRID_SIZE)
-				error("Adding walkgrid(%d): %d+%d nodes exceeds max %d",
-					_walkGridList[i], _nNodes, theseBars,
-					O_GRID_SIZE);
-#endif
+			assert(_nBars + theseBars < O_GRID_SIZE);
+			assert(_nNodes + theseNodes < O_GRID_SIZE);
 
 			// lines
 
- 			memmove((uint8 *) &_bars[_nBars], fPolygrid, theseBars * sizeof(BarData));
+ 			memcpy((uint8 *) &_bars[_nBars], fPolygrid, theseBars * sizeof(BarData));
 
 			// move pointer to start of node data
 			fPolygrid += theseBars * sizeof(BarData);
@@ -2446,7 +2437,7 @@ void Router::loadWalkGrid(void) {
 
 			// leave node 0 for start node
 			for (uint j = 0; j < theseNodes; j++) {
-				memmove((uint8 *) &_node[_nNodes + j].x, fPolygrid, 2 * sizeof(int16));
+				memcpy((uint8 *) &_node[_nNodes + j].x, fPolygrid, 2 * sizeof(int16));
 				fPolygrid += 2 * sizeof(int16);
 			}
 
@@ -2463,7 +2454,7 @@ void Router::loadWalkGrid(void) {
 }
 
 void Router::clearWalkGridList(void) {
-	memset(_walkGridList, 0, ARRAYSIZE(_walkGridList));
+	memset(_walkGridList, 0, sizeof(_walkGridList));
 }
 
 // called from fnAddWalkGrid
@@ -2486,7 +2477,7 @@ void Router::addWalkGrid(int32 gridResource) {
 		}
 	}
 
-	error("ERROR: _walkGridList[] full");
+	error("_walkGridList[] full");
 }
 
 // called from fnRemoveWalkGrid
