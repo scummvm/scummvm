@@ -1529,7 +1529,8 @@ void SimonState::startUp_helper_2()
 		_fcs_unk_1 = 0;
 		if (_fcs_ptr_array_3[0] != 0) {
 			_fcs_ptr_1 = _fcs_ptr_array_3[0];
-			showmessage_helper_3(_fcs_ptr_1->unk6, _fcs_ptr_1->unk7);
+			showmessage_helper_3(_fcs_ptr_1->textLength,
+                                 _fcs_ptr_1->textMaxLength);
 		}
 		_mortal_flag = false;
 	}
@@ -2306,22 +2307,25 @@ restart:;
 
 		fcs = _fcs_ptr_array_3[5];
 
-		fcs->unk2 = unk132_result;
-		fcs->unk1 = 2;
-		fcs->unk3 = 2;
-		fcs->unk6 = 3;
+		fcs->textRow = unk132_result;
+
+        // init x offset with a 2 character savegame number + a period (18 pix)
+		fcs->textColumn = 2;
+		fcs->textColumnOffset = 2;
+		fcs->textLength = 3;
 
 		name = buf + i * 18;
 
+        // now process entire savegame name to get correct x offset for cursor
 		name_len = 0;
 		while (name[name_len]) {
-			fcs->unk6++;
-			fcs->unk3 += 6;
+			fcs->textLength++;
+			fcs->textColumnOffset += 6;
 			if (name[name_len] == 'i' || name[name_len] == 'l')
-				fcs->unk3 -= 2;
-			if (fcs->unk3 >= 8) {
-				fcs->unk3 -= 8;
-				fcs->unk1++;
+				fcs->textColumnOffset -= 2;
+			if (fcs->textColumnOffset >= 8) {
+				fcs->textColumnOffset -= 8;
+				fcs->textColumn++;
 			}
 			name_len++;
 		}
@@ -2666,7 +2670,7 @@ void SimonState::checkTimerCallback()
 
 
 
-void SimonState::fcs_proc_1(FillOrCopyStruct *fcs, uint value)
+void SimonState::fcs_setTextColor(FillOrCopyStruct *fcs, uint value)
 {
 	fcs->text_color = value;
 }
@@ -2746,7 +2750,7 @@ void SimonState::fcs_unk_2(uint a)
 	startUp_helper_3();
 	_fcs_ptr_1 = _fcs_ptr_array_3[a];
 
-	showmessage_helper_3(_fcs_ptr_1->unk6, _fcs_ptr_1->unk7);
+	showmessage_helper_3(_fcs_ptr_1->textLength, _fcs_ptr_1->textMaxLength);
 }
 
 
@@ -2768,10 +2772,10 @@ FillOrCopyStruct *SimonState::fcs_alloc(uint x, uint y, uint w, uint h, uint fla
 	fcs->flags = flags;
 	fcs->fill_color = fill_color;
 	fcs->text_color = unk4;
-	fcs->unk1 = 0;
-	fcs->unk2 = 0;
-	fcs->unk3 = 0;
-	fcs->unk7 = fcs->width * 8 / 6;
+	fcs->textColumn = 0;
+	fcs->textRow = 0;
+	fcs->textColumnOffset = 0;
+	fcs->textMaxLength = fcs->width * 8 / 6; // characters are 6 pixels
 	return fcs;
 }
 
@@ -2897,10 +2901,10 @@ void SimonState::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs)
 	else
 		video_erase(fcs);
 
-	fcs->unk1 = 0;
-	fcs->unk2 = 0;
-	fcs->unk3 = 0;
-	fcs->unk6 = 0;
+	fcs->textColumn = 0;
+	fcs->textRow = 0;
+	fcs->textColumnOffset = 0;
+	fcs->textLength = 0;
 }
 
 /* ok */
@@ -3163,7 +3167,8 @@ void SimonState::showMessageFormat(const char *s, ...)
 		showmessage_helper_2();
 		if (!_showmessage_flag) {
 			_fcs_ptr_array_3[0] = _fcs_ptr_1;
-			showmessage_helper_3(_fcs_ptr_1->unk6, _fcs_ptr_1->unk7);
+			showmessage_helper_3(_fcs_ptr_1->textLength,
+                                 _fcs_ptr_1->textMaxLength);
 		}
 		_showmessage_flag = true;
 		_fcs_data_1[_fcs_unk_1] = 1;
@@ -3241,47 +3246,48 @@ void SimonState::video_putchar(FillOrCopyStruct *fcs, byte c)
 	if (c == 0xC) {
 		video_fill_or_copy_from_3_to_2(fcs);
 	} else if (c == 0xD || c == 0xA) {
-		video_putchar_helper(fcs);
+		video_putchar_newline(fcs);
 	} else if (c == 8 || c == 1) {
 		int8 val = (c == 8) ? 6 : 4;
-		if (fcs->unk6 != 0) {
-			fcs->unk6--;
-			fcs->unk3 -= val;
-			if ((int8)fcs->unk3 < val) {
-				fcs->unk3 += 8;
-				fcs->unk1--;
+		if (fcs->textLength != 0) {
+			fcs->textLength--;
+			fcs->textColumnOffset -= val;
+			if ((int8)fcs->textColumnOffset < val) {
+				fcs->textColumnOffset += 8;
+				fcs->textColumn--;
 			}
 		}
 	} else if (c >= 0x20) {
-		if (fcs->unk6 == fcs->unk7) {
-			video_putchar_helper(fcs);
-		} else if (fcs->unk2 == fcs->height) {
-			video_putchar_helper(fcs);
-			fcs->unk2--;
+		if (fcs->textLength == fcs->textMaxLength) {
+			video_putchar_newline(fcs);
+		} else if (fcs->textRow == fcs->height) {
+			video_putchar_newline(fcs);
+			fcs->textRow--;
 		}
 
-		video_putchar_helper_2(fcs, fcs->unk1 + fcs->x, fcs->unk2 * 8 + fcs->y, c);
+		video_putchar_drawchar(fcs, fcs->textColumn + fcs->x, 
+                               fcs->textRow * 8 + fcs->y, c);
 
-		fcs->unk6++;
-		fcs->unk3 += 6;
+		fcs->textLength++;
+		fcs->textColumnOffset += 6;
 		if (c == 'i' || c == 'l')
-			fcs->unk3 -= 2;
+			fcs->textColumnOffset -= 2;
 
-		if (fcs->unk3 >= 8) {
-			fcs->unk3 -= 8;
-			fcs->unk1++;
+		if (fcs->textColumnOffset >= 8) {
+			fcs->textColumnOffset -= 8;
+			fcs->textColumn++;
 		}
 	}
 }
 
-void SimonState::video_putchar_helper(FillOrCopyStruct *fcs)
+void SimonState::video_putchar_newline(FillOrCopyStruct *fcs)
 {
-	fcs->unk3 = 0;
-	fcs->unk6 = 0;
-	fcs->unk1 = 0;
+	fcs->textColumnOffset = 0;
+	fcs->textLength = 0;
+	fcs->textColumn = 0;
 
-	if (fcs->unk2 != fcs->height)
-		fcs->unk2++;
+	if (fcs->textRow != fcs->height)
+		fcs->textRow++;
 }
 
 static const byte video_font[] = {
@@ -3385,7 +3391,7 @@ static const byte video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-void SimonState::video_putchar_helper_2(FillOrCopyStruct *fcs, uint x, uint y, byte chr)
+void SimonState::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr)
 {
 	const byte *src;
 	byte color, *dst;
@@ -3394,7 +3400,7 @@ void SimonState::video_putchar_helper_2(FillOrCopyStruct *fcs, uint x, uint y, b
 	_lock_word |= 0x8000;
 
 	dst = dx_lock_2();
-	dst += y * _dx_surface_pitch + x * 8 + fcs->unk3;
+	dst += y * _dx_surface_pitch + x * 8 + fcs->textColumnOffset;
 
 	src = video_font + (chr - 0x20) * 8;
 

@@ -99,8 +99,8 @@ void SimonState::showActionString(uint x, const byte *string)
 	if (fcs == NULL || fcs->text_color == 0)
 		return;
 
-	fcs->unk1 = x >> 3;
-	fcs->unk3 = x & 7;
+	fcs->textColumn = x >> 3;
+	fcs->textColumnOffset = x & 7;
 
 	for (; *string; string++)
 		video_putchar(fcs, *string);

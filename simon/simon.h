@@ -127,10 +127,14 @@ struct FillOrCopyStruct {
 	byte flags;
 	uint16 x, y;
 	uint16 width, height;
-	uint16 unk1, unk2;
-	uint8 unk3, unk6, unk7, fill_color, text_color, unk5;
+	uint16 textColumn, textRow;
+	uint8 textColumnOffset, textLength, textMaxLength;
+    uint8 fill_color, text_color, unk5;
 	FillOrCopyData *fcs_data;
 };
+// note on text offset: 
+// the actual x-coordinate is: textColumn * 8 + textColumnOffset
+// the actual y-coordinate is: textRow * 8
 
 
 enum {
@@ -943,7 +947,7 @@ public:
 
 	bool vc_get_bit(uint bit);
 
-	void fcs_proc_1(FillOrCopyStruct *fcs, uint value);
+	void fcs_setTextColor(FillOrCopyStruct *fcs, uint value);
 
 	void video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs);
 	void delete_hitarea_by_index(uint index);
@@ -1010,8 +1014,8 @@ public:
 	void showmessage_helper_2();
 	void print_char_helper_6(uint i);
 
-	void video_putchar_helper(FillOrCopyStruct *fcs);
-	void video_putchar_helper_2(FillOrCopyStruct *fcs, uint x, uint y, byte chr);
+	void video_putchar_newline(FillOrCopyStruct *fcs);
+	void video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr);
 
 	void initSound();
 	void playVoice(uint voice);

@@ -1576,7 +1576,7 @@ void SimonState::o_unk_163(uint a)
 
 void SimonState::o_unk_160(uint a)
 {
-	fcs_proc_1(_fcs_ptr_array_3[_fcs_unk_1], a);
+	fcs_setTextColor(_fcs_ptr_array_3[_fcs_unk_1], a);
 }
 
 void SimonState::o_unk_103()
@@ -1621,6 +1621,7 @@ void SimonState::o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, 
 
 	if (a == _fcs_unk_1) {
 		_fcs_ptr_1 = _fcs_ptr_array_3[a];
-		showmessage_helper_3(_fcs_ptr_1->unk6, _fcs_ptr_1->unk7);
+		showmessage_helper_3(_fcs_ptr_1->textLength,
+                             _fcs_ptr_1->textMaxLength);
 	}
 }
