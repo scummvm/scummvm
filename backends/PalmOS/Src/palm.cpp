@@ -31,13 +31,14 @@
 #include "cd_msa.h"
 
 #ifndef DISABLE_TAPWAVE
-//#include "tapwave.h"
+#include "tapwave.h"
 //#include "cd_zodiac.h"
 #endif
 
 #define EXITDELAY			(500) // delay to exit : calc button : double tap 1/500 sec
 #define ftrOverlayPtr		(1000)
 #define ftrBackupPtr		(1001)
+//#define	SND_BLOCK			(8192)
 #define	SND_BLOCK			(3072)
 
 OSystem *OSystem_PALMOS::create(UInt16 gfx_mode, bool full_screen) {
@@ -107,7 +108,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 		case GFX_WIDE:
 		case GFX_DOUBLEBUFFER:
 			_screenH	= WinGetDisplayWindow();
-			_offScreenH	= WinCreateOffscreenWindow(_screenWidth, _screenHeight, screenFormat, &e);
+			_offScreenH	= WinCreateOffscreenWindow(_screenWidth, _screenHeight,screenFormat, &e);
 			_offScreenP	= (byte *)(BmpGetBits(WinGetBitmap(_offScreenH)));
 
 			if (_mode == GFX_WIDE) {
@@ -210,7 +211,7 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 			}
 
 		// Tapwave Zodiac and other DIA compatible devices
-		} else {
+		} else if (OPTIONS(optIsLandscapeMode)) {
 /*			UInt32 width = hrWidth;
 			UInt32 height= hrHeight;
 			UInt32 depth = 16;
@@ -220,6 +221,7 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 			SysSetOrientation(sysOrientationLandscape);
 			PINSetInputAreaState(pinInputAreaClosed);
 			StatHide();	
+
 		}
 	}
 
@@ -410,23 +412,21 @@ void OSystem_PALMOS::update_screen__dbuffer() {
 	TwGfxSurfaceType *dst;
 	TwGfxRectType d = {0,0,480,300}, s = {0,0,320,200};
 	TwGfxSurfaceInfoType t;
-	byte *temp;
-	TwGfxRectType dd = {0,0,320,200};
+	TwGfxPointType dd = {0,0};
 	
 	t.size = sizeof(TwGfxSurfaceInfoType);
 	t.width = 320;
 	t.height = 200;
-	t.rowBytes = 320;
+	t.rowBytes = 640;
 	t.location = twGfxLocationAcceleratorMemory;
 	t.pixelFormat = twGfxPixelFormatRGB565_LE;
+	
+
 	
 	TwGfxType *gfx;
 	e = TwGfxOpen(&gfx, NULL);
 	e = TwGfxAllocSurface(gfx, &src, &t);
-	//TwGfxLockSurface(src, (void **)&temp);
-	//MemMove(temp, _offScreenP,320*200);
-	//TwGfxUnlockSurface(src,false);
-	e = TwGfxDrawPalmBitmap(src, (TwGfxPointType *)&dd, WinGetBitmap(_offScreenH));
+	e = TwGfxDrawPalmBitmap(src, &dd, WinGetBitmap(_offScreenH));
 	
 	e = TwGfxGetPalmDisplaySurface(gfx, &dst);
 	e = TwGfxStretchBlt(dst, &d, src, &s); 
@@ -512,8 +512,7 @@ static void drawNumPad(OSystem_PALMOS *sys, UInt8 color) {
 	UInt32 pitch = sys->_screenPitch;
 	UInt8 *scr = sys->_screenP + sys->_screenPitch * (sys->get_height() + 2);
 
-	scr += sys->get_width() - 66;
-
+	scr += (sys->get_width() >> 1) - 32;
 	hTemp	= DmGetResource(bitmapRsc,bmpID);
 	
 	if (hTemp) {
@@ -718,13 +717,29 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 	// sound handler
 	if(_sound.active)
 		check_sound();
-	
+
 	// timer handler
-	if (_timer.active && (current_msecs >= _timer.next_expiry)) {
+	if (_timer.active)
+		 _timer.callback(_timer.duration);
+/*	if (_timer.active && (current_msecs >= _timer.next_expiry)) {
 		_timer.duration = _timer.callback(_timer.duration);
 		_timer.next_expiry = current_msecs + _timer.duration;
 	}
+*/
+/*
+	if (_timer.active) {
+		if (current_msecs - _timer.next_expiry >= 10)
+			_timer.sleep = false;
 
+		if (!_timer.sleep) {
+			_timer.sleep = true;
+			while (_timer.next_expiry < current_msecs) {
+				_timer.next_expiry += 10;
+				_timer.duration = _timer.callback(_timer.duration);
+			}
+		}
+	}
+*/
 	if (_selfQuit)
 		quit();
 
@@ -780,43 +795,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					_lastKeyPressed = vchrCalc;
 					return true;
 
-				// mouse emulation
-				case vchrJogPush:
-				case vchrHard1: // left button
-					event->event_code = EVENT_LBUTTONDOWN;
-					event->mouse.x = _mouseCurState.x;
-					event->mouse.y = _mouseCurState.y;
-					_lastKeyPressed = -1;
-					return true;
-
-				case vchrHard2:	// move left
-					SimulateArrowKeys(event, -1, 0);
-					_lastKeyPressed = vchrHard2;
-					return true;
-					
-				case vchrPageUp: // move up
-					SimulateArrowKeys(event, 0, -1);
-					_lastKeyPressed = vchrPageUp;
-					return true;
-
-				case vchrPageDown: // move down
-					SimulateArrowKeys(event, 0, 1);
-					_lastKeyPressed = vchrPageDown;
-					return true;
-
-				case vchrHard3: // move right
-					SimulateArrowKeys(event, 1, 0);
-					_lastKeyPressed = vchrHard3;
-					return true;
-
-				case vchrJogBack:
-				case vchrHard4: // right button
-					event->event_code = EVENT_RBUTTONDOWN;
-					event->mouse.x = _mouseCurState.x;
-					event->mouse.y = _mouseCurState.y;
-					_lastKeyPressed = -1;
-					return true;
-
+				// wheel
 				case vchrJogUp:
 					event->event_code = EVENT_WHEELUP;
 					return true;
@@ -829,6 +808,48 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				case vchrHardCradle:
 				case vchrHardCradle2:
 					_selfQuit = true;
+			}
+			
+//			if (gVars->options & opt5WayNavigator)*/ {
+//			} else {
+				// mouse emulation for device without 5-Way navigator
+				switch (ev.data.keyDown.chr) {
+					case vchrJogBack:
+					case vchrHard4: // right button
+						event->event_code = EVENT_RBUTTONDOWN;
+						event->mouse.x = _mouseCurState.x;
+						event->mouse.y = _mouseCurState.y;
+						_lastKeyPressed = -1;
+						return true;
+
+					case vchrJogPush:
+					case vchrHard1: // left button
+						event->event_code = EVENT_LBUTTONDOWN;
+						event->mouse.x = _mouseCurState.x;
+						event->mouse.y = _mouseCurState.y;
+						_lastKeyPressed = -1;
+						return true;
+
+					case vchrHard2:	// move left
+						SimulateArrowKeys(event, -1, 0);
+						_lastKeyPressed = vchrHard2;
+						return true;
+						
+					case vchrPageUp: // move up
+						SimulateArrowKeys(event, 0, -1);
+						_lastKeyPressed = vchrPageUp;
+						return true;
+
+					case vchrPageDown: // move down
+						SimulateArrowKeys(event, 0, 1);
+						_lastKeyPressed = vchrPageDown;
+						return true;
+
+					case vchrHard3: // move right
+						SimulateArrowKeys(event, 1, 0);
+						_lastKeyPressed = vchrHard3;
+						return true;
+//				}
 			}
 		}
 
@@ -900,11 +921,12 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 			getCoordinates(&ev, (_mode == GFX_WIDE), &x, &y);
 
 			if (_useNumPad) {
-				Coord x2 = _screenOffset.x + _screenWidth - 64 - 2;
+				Coord x2 = _screenOffset.x + (_screenWidth >> 1) - 20; // - 64 / 2 + 12
 				Coord y2 = _screenOffset.y + _screenHeight + 2;
+
 				if (y >= y2 && y < (y2 + 34) && x >= x2 && x < (x2 + 64)) {	// numpad location
 					UInt8 key = '1';
-					key += 9 - ( (3 - ((x - x2) / 21)) + (3 * ((y - y2) / 11)) );
+					key += 9 - ( (3 - ((x - x2) / 13)) + (3 * ((y - y2) / 11)) );
 
 					_lastEvent = keyDownEvent;
 					_lastKeyPressed = -1;
@@ -965,7 +987,7 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 		WinSetForeColor(255);
 
 		if (_useHRmode) {
-			y = 160 - (h >> 1) - 20;
+			y = 160 - (h >> 1) - 10;
 			HRFntSetFont(gVars->HRrefNum,hrTinyBoldFont);
 			w = FntCharsWidth(caption,StrLen(caption));
 			w = (320 - w) >> 1;
@@ -984,7 +1006,7 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 			WinSetDrawWindow(tmpH);
 
 			FntSetFont(boldFont);
-			y = 80 - (h >> 2) - 10;
+			y = 80 - (h >> 2) - 5;
 			w = FntCharsWidth(caption, StrLen(caption));
 			w = (320 - w) >> 1;
 			WinDrawChars(caption, StrLen(caption), w, 0 + h);
@@ -1008,6 +1030,7 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 		break;
 
 	case PROP_GET_SAMPLE_RATE:
+//		return SAMPLES_PER_SEC;
 		return 8000;
 	}
 
@@ -1018,8 +1041,8 @@ void OSystem_PALMOS::quit() {
 	if (_quit)
 		return;
 
-	if (_selfQuit && g_scumm)
-		g_scumm->_quit = true;
+	if (_selfQuit && Scumm::g_scumm)
+		Scumm::g_scumm->_quit = true;
 
 	free(_currentPalette);
 	free(_mouseBackupP);
