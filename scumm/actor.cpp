@@ -112,7 +112,7 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY)
 
 int Scumm::getAngleFromPos(int x, int y)
 {
-	if (_gameId == GID_DIG) {
+	if (_gameId == GID_DIG || _gameId == GID_CMI) {
 		double temp = atan2((double)x, (double)-y);
 		return normalizeAngle((int)(temp * 180 / 3.1415926535));
 	} else {

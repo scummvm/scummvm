@@ -218,7 +218,7 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir)
 		y = od->walk_y;
 	}
 	if (_features & GF_AFTER_V8)
-		dir = od->actordir;
+		dir = fromSimpleDir(1, od->actordir);
 	else
 		dir = oldDirToNewDir(od->actordir & 3);
 }
@@ -657,7 +657,8 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr)
 		od->y_pos = (int)READ_LE_UINT32(&imhd->v8.y_pos);
 		od->width = (uint)READ_LE_UINT32(&imhd->v8.width);
 		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
-		od->actordir = (byte)READ_LE_UINT32(&imhd->v8.actordir);
+		// HACK: This is done sinec an angle doesn't fit into a byte (360 > 256)
+		od->actordir = toSimpleDir(1, READ_LE_UINT32(&imhd->v8.actordir));
 
 	} else if (_features & GF_AFTER_V7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
