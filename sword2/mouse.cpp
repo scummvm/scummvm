@@ -122,7 +122,7 @@ void Mouse::setPos(int x, int y) {
  */
 
 void Mouse::resetMouseList() {
-	_curMouse = 1;
+	_curMouse = 0;
 }
 
 void Mouse::registerMouse(ObjectMouse *ob_mouse, BuildUnit *build_unit) {
@@ -968,7 +968,7 @@ uint32 Mouse::checkMouseList() {
 
 	// Number of priorities subject to implementation needs
 	for (int priority = 0; priority < 10; priority++) {
-		for (uint i = 1; i < _curMouse; i++) {
+		for (uint i = 0; i < _curMouse; i++) {
 			// If the mouse pointer is over this
 			// mouse-detection-box
 
