@@ -2294,8 +2294,8 @@ void Scumm_v6::o6_printActor()
 
 void Scumm_v6::o6_printEgo()
 {
-	push(_vars[VAR_EGO]);
-	decodeParseString(0, 1);
+	_actorToPrintStrFor = _vars[VAR_EGO];
+	decodeParseString(0, 0);
 }
 
 void Scumm_v6::o6_talkActor()

@@ -374,19 +374,15 @@ void Scumm::description()
 
 	do {
 		c = *buf++;
-		if (c == 0) {
-			_haveMsg = 1;
-			break;
-		}
-		if (c != 0xFF) {
+		if (c != 0 && c != 0xFF) {
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
 			_charset->printChar(c);
 			_charset->_nextLeft = _charset->_left;
 			_charset->_nextTop = _charset->_top;
-			continue;
 		}
-	} while (1);
+	} while (c);
+	_haveMsg = 1;
 
 	gdi._mask_left = _charset->_strLeft;
 	gdi._mask_right = _charset->_strRight;
@@ -423,19 +419,15 @@ void Scumm::drawDescString(byte *msg)
 
 	do {
 		c = *buf++;
-		if (c == 0) {
-			_haveMsg = 1;
-			break;
-		}
-		if (c != 0xFF) {
+		if (c != 0 && c != 0xFF) {
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
 			_charset->printChar(c);
 			_charset->_nextLeft = _charset->_left;
 			_charset->_nextTop = _charset->_top;
-			continue;
 		}
-	} while (1);
+	} while (c);
+	_haveMsg = 1;
 
 	gdi._mask_left = _charset->_strLeft;
 	gdi._mask_right = _charset->_strRight;

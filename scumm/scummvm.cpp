@@ -558,8 +558,10 @@ int Scumm::scummLoop(int delta)
 		}
 
 		drawBlastObjects();
+		drawBlastTexts();
 		drawDirtyScreenParts();
 		removeBlastObjects();
+		removeBlastTexts();
 
 		if (!(_features & GF_AFTER_V6))
 			playActorSounds();

@@ -199,7 +199,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_dummy),				// O_RETURN boils down to a NOP
 		OPCODE(o6_startObjectEx),
 		/* 80 */
-		OPCODE(o6_stopObjectScript),	// FIXME - is this right?
+		OPCODE(o6_stopObjectScript),
 		OPCODE(o6_cutscene),
 		OPCODE(o6_endCutscene),
 		OPCODE(o6_freezeUnfreeze),
@@ -236,7 +236,7 @@ void Scumm_v8::setupOpcodes()
 		/* 9C */
 		OPCODE(o8_cursorCommand),
 		OPCODE(o6_loadRoom),
-		OPCODE(o6_loadRoomWithEgo),	// FIXME - this is a pure guess
+		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_walkActorToObj),
 		/* A0 */
 		OPCODE(o6_walkActorTo),
@@ -249,7 +249,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_pickupObject),
 		OPCODE(o6_setBoxFlags),
 		/* A8 */
-		OPCODE(o6_createBoxMatrix), // fixme?
+		OPCODE(o6_createBoxMatrix),
 		OPCODE(o6_invalid),
 		OPCODE(o8_resourceRoutines),
 		OPCODE(o8_roomOps),
@@ -289,7 +289,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C8 */
-		OPCODE(o6_startScriptQuick),	// FIXME - this function returns something in V8 !
+		OPCODE(o6_startScriptQuick),
 		OPCODE(o6_startObjectQuick),
 		OPCODE(o6_pickOneOf),
 		OPCODE(o6_pickOneOfDefault),
@@ -299,7 +299,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_getRandomNumber),
 		OPCODE(o6_getRandomNumberRange),
 		/* D0 */
-		OPCODE(o6_ifClassOfIs),	// FIXME - this is a guess
+		OPCODE(o6_ifClassOfIs),
 		OPCODE(o6_getState),
 		OPCODE(o6_getOwner),
 		OPCODE(o6_isScriptRunning),
@@ -331,7 +331,7 @@ void Scumm_v8::setupOpcodes()
 		/* E8 */
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getActorWidth),
-		OPCODE(o6_getObjectNewDir),		// FIXME: is this right?
+		OPCODE(o6_getObjectNewDir),
 		OPCODE(o6_getObjectX),
 		/* EC */
 		OPCODE(o6_getObjectY),
@@ -460,6 +460,7 @@ void Scumm_v8::writeVar(uint var, int value)
 void Scumm_v8::decodeParseString(int m, int n)
 {
 	byte b;
+	bool containsSpeech;
 
 	b = fetchScriptByte();
 
@@ -468,7 +469,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 		setStringVars(m);
 		if (n)
 			_actorToPrintStrFor = pop();
-		return;
+		break;
 	case 0xC9:
 		_string[m].t_xpos = _string[m].xpos;
 		_string[m].t_ypos = _string[m].ypos;
@@ -478,7 +479,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 		_string[m].t_right = _string[m].right;
 		_string[m].t_color = _string[m].color;
 		_string[m].t_charset = _string[m].charset;
-		return;
+		break;
 	case 0xCA:
 		_string[m].ypos = pop();
 		_string[m].xpos = pop();
@@ -491,11 +492,8 @@ void Scumm_v8::decodeParseString(int m, int n)
 		_string[m].center = true;
 		_string[m].overhead = false;
 		break;
-	case 0xCD: {		// SO_PRINT_CHARSET Set print character set
-		// FIXME - TODO
-		int charset = pop();
-		_string[m].charset = charset;
-	}
+	case 0xCD:		// SO_PRINT_CHARSET Set print character set
+		_string[m].charset = pop();
 		break;
 	case 0xCE:
 		_string[m].center = false;
@@ -511,8 +509,10 @@ void Scumm_v8::decodeParseString(int m, int n)
 		break;
 	case 0xD1:
 		_messagePtr = _scriptPointer;
+		
+		containsSpeech = (_messagePtr[0] == '/');
 
-		if (_messagePtr[0] == '/') {
+		if (containsSpeech) {
 			char pointer[20];
 			int i, j;
 
@@ -530,40 +530,32 @@ void Scumm_v8::decodeParseString(int m, int n)
 
 //			_sound->_talkChannel = _sound->playBundleSound(pointer);
 			_messagePtr = _transText;
-
-			switch (m) {
-			case 0:
-				actorTalk();
-				break;
-			case 1:
-				drawString(1);
-				break;
-			case 2:
-				unkMessage1();
-				break;
-			case 3:
-				unkMessage2();
-				break;
-			}
-			return;
-		} else {
-			switch (m) {
-			case 0:
-				actorTalk();
-				break;
-			case 1:
-				drawString(1);
-				break;
-			case 2:
-				unkMessage1();
-				break;
-			case 3:
-				unkMessage2();
-				break;
-			}
-			_scriptPointer = _messagePtr;
-			return;
 		}
+		
+		switch (m) {
+		case 0:
+			actorTalk();
+			break;
+		case 1:
+			drawString(1);
+			break;
+		case 2:
+			unkMessage1();
+			break;
+		case 3:
+			unkMessage2();
+			break;
+		case 5:{
+			byte buffer[256];
+			_msgPtrToAdd = buffer;
+			_messagePtr = addMessageToStack(_messagePtr);
+			enqueueText(buffer, _string[m].xpos, _string[m].ypos, _string[m].color, _string[m].charset, _string[m].center);
+			}
+			break;
+		}
+
+		if (!containsSpeech)
+			_scriptPointer = _messagePtr;
 		break;
 //	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
 //		error("decodeParseString: SO_PRINT_MUMBLE");
@@ -571,6 +563,56 @@ void Scumm_v8::decodeParseString(int m, int n)
 	default:
 		error("decodeParseString: default case 0x%x", b);
 	}
+}
+
+void Scumm::enqueueText(byte *text, int x, int y, byte color, byte charset, bool center)
+{
+	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
+	assert(_blastTextQueuePos <= 8);
+	
+	strcpy((char *)bt.text, (const char *)text);
+	bt.xpos = x;
+	bt.ypos = y;
+	bt.color = color;
+	bt.charset = charset;
+	bt.center = center;
+}
+
+void Scumm::drawBlastTexts()
+{
+	// FIXME
+
+	byte *buf;
+	byte c;
+	int i;
+
+	_charset->_ignoreCharsetMask = true;
+	for (i = 0; i < _blastTextQueuePos; i++) {
+
+		buf = _blastTextQueue[i].text;
+
+		_charset->_top = _blastTextQueue[i].ypos;
+		_charset->_startLeft = _charset->_left = _blastTextQueue[i].xpos;
+		_charset->_right = _realWidth - 1;
+		_charset->_center = _blastTextQueue[i].center;
+		_charset->_color = _blastTextQueue[i].color;
+		_charset->_disableOffsX = _charset->_firstChar = true;
+		_charset->setCurID(_blastTextQueue[i].charset);
+		_charset->_nextLeft = _blastTextQueue[i].xpos;
+		_charset->_nextTop = _blastTextQueue[i].ypos;
+
+		do {
+			c = *buf++;
+			if (c != 0 && c != 0xFF) {
+				_charset->_left = _charset->_nextLeft;
+				_charset->_top = _charset->_nextTop;
+				_charset->printChar(c);
+				_charset->_nextLeft = _charset->_left;
+				_charset->_nextTop = _charset->_top;
+			}
+		} while (c);
+	}
+	_charset->_ignoreCharsetMask = false;
 }
 
 void Scumm_v8::o8_mod()
@@ -732,7 +774,7 @@ void Scumm_v8::o8_arrayOps()
 void Scumm_v8::o8_blastText()
 {
 	// FIXME
-	decodeParseString(1, 0);
+	decodeParseString(5, 0);
 }
 
 void Scumm_v8::o8_cursorCommand()
@@ -1261,7 +1303,6 @@ void Scumm_v8::o8_verbOps()
 	case 0xA6:		// SO_VERB_CHARSET Choose charset for verb
 		// FIXME - TODO
 		vs->charset_nr = pop();
-		//printf("Set to charset %d\n", vs->charset_nr);
 		break;
 	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
 		// FIXME - TODO
@@ -1478,8 +1519,8 @@ void Scumm_v8::o8_kernelGetFunctions()
 		int y = args[2] + (camera._cur.y - (_realHeight /2));;
 		BlastObject *eo;
 
-		for (int i = _enqueuePos; i >= 0; i--) {
-			eo = &_enqueuedObjects[i];
+		for (int i = _blastObjectQueuePos; i >= 0; i--) {
+			eo = &_blastObjectQueue[i];
 
 			if (eo->posX <= x && eo->width + eo->posX > x &&
 			    eo->posY <= y && eo->height + eo->posY > y) {

@@ -113,7 +113,15 @@ struct NestedScript {
 	uint8 where;
 	uint8 slot;
 };
- 
+
+struct BlastText {
+	int16 xpos, ypos;
+	byte color;
+	byte charset;
+	bool center;
+	byte text[256];
+};
+
 enum ResTypes {
 	rtFirst = 1,
 	rtRoom = 1,
@@ -792,12 +800,20 @@ public:
 	uint _shakeFrame;
 	int _screenStartStrip, _screenEndStrip;
 	int _screenLeft, _screenTop;
-	int _enqueuePos; 
-	BlastObject _enqueuedObjects[128];
+
+	int _blastObjectQueuePos; 
+	BlastObject _blastObjectQueue[128];
+
+	int _blastTextQueuePos;
+	BlastText _blastTextQueue[8];	// FIXME - how many blast texts can there be at once?
+
+	void enqueueText(byte *text, int x, int y, byte color, byte charset, bool center);
+	void drawBlastTexts();
+	void removeBlastTexts() { _blastTextQueuePos = 0; }
 
 	void enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
 	                   int objectHeight, int scaleX, int scaleY, int image, int mode);
-	void clearEnqueue() { _enqueuePos = 0; }
+	void clearEnqueue() { _blastObjectQueuePos = 0; }
 	void drawBlastObjects();
 	void drawBlastObject(BlastObject *eo);
 	void removeBlastObjects();

@@ -1271,12 +1271,12 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 	BlastObject *eo;
 	ObjectData *od;
 
-	if (_enqueuePos == sizeof(_enqueuedObjects) / sizeof(_enqueuedObjects[0])) {
+	if (_blastObjectQueuePos == sizeof(_blastObjectQueue) / sizeof(_blastObjectQueue[0])) {
 		warning("enqueueObject: overflow");
 		return;
 	}
 
-	eo = &_enqueuedObjects[_enqueuePos++];
+	eo = &_blastObjectQueue[_blastObjectQueuePos++];
 	eo->number = objectNumber;
 	eo->posX = objectX + (camera._cur.x & 7);
 	eo->posY = objectY + (camera._cur.y - (_realHeight / 2));
@@ -1305,8 +1305,8 @@ void Scumm::drawBlastObjects()
 	BlastObject *eo;
 	int i;
 
-	eo = _enqueuedObjects;
-	for (i = 0; i < _enqueuePos; i++, eo++) {
+	eo = _blastObjectQueue;
+	for (i = 0; i < _blastObjectQueuePos; i++, eo++) {
 		drawBlastObject(eo);
 	}
 }
@@ -1568,8 +1568,8 @@ void Scumm::removeBlastObjects()
 	BlastObject *eo;
 	int i;
 
-	eo = _enqueuedObjects;
-	for (i = 0; i < _enqueuePos; i++, eo++) {
+	eo = _blastObjectQueue;
+	for (i = 0; i < _blastObjectQueuePos; i++, eo++) {
 		removeBlastObject(eo);
 	}
 
