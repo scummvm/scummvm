@@ -87,7 +87,6 @@ protected:
 	EditTextWidget *_descriptionWidget;
 	EditTextWidget *_domainWidget;
 	CheckboxWidget *_fullscreenCheckbox;
-	CheckboxWidget *_amigaCheckbox;
 };
 
 EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, GameSettings target)
@@ -120,22 +119,6 @@ EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, GameSettings t
 	_fullscreenCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
 	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
-/*
-	// FIXME: The amiga checkbox is outdated cruft. It should be replaced by a
-	// a "platform" popup.
-
-	// Determine whether this is a SCUMM game
-	// FIXME: This check is evil, as it requires us to hard code GIDs.
-	bool isScumm = (GID_SCUMM_FIRST <= target.id && target.id <= GID_SCUMM_LAST);
-
-	// Display 'Amiga' checkbox, but only for Scumm games.
-	if (isScumm) {
-		_amigaCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Amiga Version", 0, 'A');
-		_amigaCheckbox->setState(ConfMan.getBool("amiga", _domain));
-	} else {
-		_amigaCheckbox = 0;
-	}
-*/
 	// Add OK & Cancel buttons
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
 	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
@@ -154,8 +137,6 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			ConfMan.renameGameDomain(_domain, newDomain);
 		}
 		ConfMan.set("description", _descriptionWidget->getLabel(), newDomain);
-		if (_amigaCheckbox)
-			ConfMan.set("amiga", _amigaCheckbox->getState(), newDomain);
 		ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), newDomain);
 		setResult(1);
 		close();
