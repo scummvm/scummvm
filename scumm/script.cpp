@@ -969,7 +969,6 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 
 	if (_features & GF_AFTER_V8) {
 		if (array & 0x40000000) {
-			_arrays[id] = (char)vm.slot[_currentScript].number;
 		}
 	
 		if (array & 0x80000000) {
@@ -979,7 +978,6 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 		size = (type == 5) ? 32 : 8;
 	} else {
 		if (array & 0x4000) {
-			_arrays[id] = (char)vm.slot[_currentScript].number;
 		}
 	
 		if (array & 0x8000) {
@@ -1011,7 +1009,6 @@ void Scumm::nukeArray(int a) {
 
 	if (data)
 		nukeResource(rtString, data);
-	_arrays[data] = 0;
 
 	writeVar(a, 0);
 }

@@ -1753,7 +1753,6 @@ void Scumm::allocateArrays() {
 	_objectOwnerTable = (byte *)calloc(_numGlobalObjects, 1);
 	_objectStateTable = (byte *)calloc(_numGlobalObjects, 1);
 	_classData = (uint32 *)calloc(_numGlobalObjects, sizeof(uint32));
-	_arrays = (byte *)calloc(_numArray, 1);
 	_newNames = (uint16 *)calloc(_numNewNames, sizeof(uint16));
 
 	_inventory = (uint16 *)calloc(_numInventory, sizeof(uint16));

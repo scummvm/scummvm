@@ -220,7 +220,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	memset(&gdi,0,sizeof(Gdi));
 	_actors = NULL;
 	_inventory = NULL;
-	_arrays = NULL;
 	_newNames = NULL;
 	_scummVars = NULL;
 	_varwatch = 0;
@@ -1948,7 +1947,6 @@ void Scumm::destroy() {
 	free(_objectRoomTable);
 	free(_objectOwnerTable);
 	free(_inventory);
-	free(_arrays);
 	free(_verbs);
 	free(_objs);
 	free(_scummVars);

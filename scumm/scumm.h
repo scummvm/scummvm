@@ -384,7 +384,6 @@ protected:
 	Actor *_actors;	// Has _numActors elements
 	
 	uint16 *_inventory;
-	byte *_arrays;
 	uint16 *_newNames;
 public:
 	// VAR is a wrapper around scummVar, which attempts to include additional

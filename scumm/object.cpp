@@ -888,21 +888,6 @@ byte *Scumm::getObjOrActorName(int obj) {
 	if (obj < _numActors)
 		return derefActor(obj, "getObjOrActorName")->getActorName();
 
-	if (_features & GF_SMALL_HEADER) {
-		byte offset = 0;
-
-		objptr = getOBCDFromObject(obj);
-		if (objptr) {
-			if (_features & GF_AFTER_V2)
-				offset = *(objptr + 14);
-			else if (_features & GF_OLD_BUNDLE)
-				offset = *(objptr + 16);
-			else
-				offset = READ_LE_UINT16(objptr + 18);
-		}
-		return (objptr + offset);
-	}
-
 	if (_features & GF_AFTER_V6) {
 		for (i = 0; i < _numNewNames; i++) {
 			if (_newNames[i] == obj) {
@@ -916,6 +901,19 @@ byte *Scumm::getObjOrActorName(int obj) {
 	objptr = getOBCDFromObject(obj);
 	if (objptr == NULL)
 		return NULL;
+
+	if (_features & GF_SMALL_HEADER) {
+		byte offset = 0;
+
+		if (_features & GF_AFTER_V2)
+			offset = *(objptr + 14);
+		else if (_features & GF_OLD_BUNDLE)
+			offset = *(objptr + 16);
+		else
+			offset = READ_LE_UINT16(objptr + 18);
+
+		return (objptr + offset);
+	}
 
 #if 0
 	return findResourceData(MKID('OBNA'), objptr);
