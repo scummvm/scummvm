@@ -671,8 +671,8 @@ int Scumm::readSoundResource(int type, int idx)
 		debug(1, "Ignoring base tag Mac1 in sound %d, size %d", idx, total_size);
 		debug(1, "It was at position %d", filePos(_fileHandle));
 	} else {
-		error("Unrecognized base tag %c%c%c%c in sound %d",
-					basetag & 0xff, basetag >> 8, basetag >> 16, basetag >> 24, idx);
+		fprintf(stderr, "WARNING: Unrecognized base tag 0x%08lx in sound %d\n",
+					basetag, idx);
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
