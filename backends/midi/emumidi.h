@@ -40,6 +40,7 @@ private:
 
 protected:
 	virtual void generate_samples(int16 *buf, int len) = 0;
+	virtual void on_timer() {}
 
 public:
 	MidiDriver_Emulated(SoundMixer *mixer) : _mixer(mixer) {
@@ -90,6 +91,7 @@ public:
 			if (!(_next_tick >> FIXP_SHIFT)) {
 				if (_timer_proc)
 					(*_timer_proc)(_timer_param);
+				on_timer();
 				_next_tick += _samples_per_tick;
 			}
 			data += step * stereoFactor;
