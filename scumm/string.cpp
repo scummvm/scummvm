@@ -827,6 +827,7 @@ void ScummEngine::playSpeech(const byte *ptr) {
 			strcat(pointer, ".IMX");
 
 		_sound->stopTalkSound();
+		_imuseDigital->stopSound(kTalkSoundID);
 		_imuseDigital->startVoice(kTalkSoundID, pointer);
 		_sound->talkSound(0, 0, 2);
 	}
