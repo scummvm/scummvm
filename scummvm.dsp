@@ -218,11 +218,35 @@ SOURCE=.\gui\dialog.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gui\ListWidget.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\ListWidget.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\newgui.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\newgui.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\ScrollBarWidget.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\ScrollBarWidget.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\util.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\util.h
 # End Source File
 # Begin Source File
 
@@ -324,10 +348,6 @@ SOURCE=.\init.cpp
 # Begin Source File
 
 SOURCE=.\insane.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\gui\ListWidget.cpp
 # End Source File
 # Begin Source File
 
@@ -565,10 +585,6 @@ SOURCE=.\guimaps.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\gui\ListWidget.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\scumm.h
 # End Source File
 # Begin Source File
@@ -598,3 +614,4 @@ SOURCE=.\scummvm.ico
 # End Source File
 # End Target
 # End Project
+
