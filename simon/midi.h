@@ -28,38 +28,58 @@
 class File;
 class OSystem;
 
+struct MusicInfo {
+	MidiParser *parser;
+	byte * data;
+	byte   num_songs;      // For Type 1 SMF resources
+	byte * songs[16];      // For Type 1 SMF resources
+	uint32 song_sizes[16]; // For Type 1 SMF resources
+	bool   in_use[16];     // Tracks which resource is using which MIDI channels
+
+	MusicInfo() { clear(); }
+	void clear() {
+		parser = 0; data = 0; num_songs = 0;
+		memset (songs, 0, sizeof (songs));
+		memset (song_sizes, 0, sizeof (song_sizes));
+		memset (in_use, 0, sizeof (in_use));
+	}
+};
+
 class MidiPlayer : public MidiDriver {
 protected:
 	OSystem *_system;
 	void *_mutex;
 	MidiDriver *_driver;
-	MidiParser *_parser;
 
-	byte *_data;
+	MusicInfo _music;
+	MusicInfo _sfx;
+	MusicInfo *_current; // Allows us to establish current context for operations.
+
+	// These are maintained for both music and SFX
 	byte _volumeTable[16]; // 0-127
 	byte _masterVolume;    // 0-255
 	bool _paused;
+
+	// These are only used for music.
 	byte _currentTrack;
 	bool _loopTrack;
 	byte _queuedTrack;
 	bool _loopQueuedTrack;
 
-	byte _num_songs;
-	byte *_songs[16];
-	uint32 _song_sizes[16];
-
 	static void onTimer (void *data);
 	void clearConstructs();
+	void clearConstructs (MusicInfo &info);
 
 public:
-	bool _midi_sfx_toggle;
+	bool _enable_sfx;
 
+public:
 	MidiPlayer (OSystem *system);
 	virtual ~MidiPlayer();
 
-	void loadSMF (File *in, int song);
-	void loadMultipleSMF (File *in);
-	void loadXMIDI (File *in);
+	void loadSMF (File *in, int song, bool sfx = false);
+	void loadMultipleSMF (File *in, bool sfx = false);
+	void loadXMIDI (File *in, bool sfx = false);
 
 	void setLoop (bool loop);
 	void startTrack(int track);

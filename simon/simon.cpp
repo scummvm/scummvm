@@ -1065,7 +1065,7 @@ void SimonState::loadTablesIntoMem(uint subr_id) {
 }
 
 void SimonState::playSting(uint a) {
-	if (!midi._midi_sfx_toggle)
+	if (!midi._enable_sfx)
 		return;
 
 	char filename[11];
@@ -1088,7 +1088,7 @@ void SimonState::playSting(uint a) {
 
 	// midi.shutdown();
 	_mus_file->seek(_mus_offsets[a], SEEK_SET);
-	midi.loadSMF (_mus_file, a);
+	midi.loadSMF (_mus_file, a, true);
 	midi.startTrack (0);
 }
 
@@ -3335,13 +3335,9 @@ void SimonState::processSpecialKeys() {
 			break;
 
 		case 's':
-			if (_game == GAME_SIMON1DOS) {
-				midi._midi_sfx_toggle ^= 1;
-				if (midi._midi_sfx_toggle)
-					midi.stop();
-				else
-					loadMusic(_last_music_played);
-			} else
+			if (_game == GAME_SIMON1DOS)
+				midi._enable_sfx ^= 1;
+			else
 				_sound->effectsPause(_effects_paused ^= 1);
 			break;
 
@@ -4990,8 +4986,6 @@ void SimonState::go() {
 	if  (_language >= 2)
 		_subtitles = true;
 
-	midi._midi_sfx_toggle = false;
-
 	while (1) {
 		hitarea_stuff();
 		handle_verb_clicked(_verb_hitarea);
@@ -5292,9 +5286,6 @@ bool SimonState::load_game(uint slot) {
 }
 
 void SimonState::loadMusic (uint music) {
-	if (midi._midi_sfx_toggle)
-		return;
-
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
