@@ -535,7 +535,7 @@ void ScummEngine_v6he::o6_roomOps() {
 	case 234:		// HE 7.2
 		b = pop();
 		a = pop();
-		warning("o6_roomOps: case %d (%d, %d)", op, b, a);
+		swapObjects(a, b);
 		break;
 	case 236:		// HE 7.2
 		b = pop();
@@ -545,6 +545,32 @@ void ScummEngine_v6he::o6_roomOps() {
 	default:
 		error("o6_roomOps: default case %d", op);
 	}
+}
+
+void ScummEngine_v6he::swapObjects(int object1, int object2) {
+	int idx1 = -1, idx2 = -1;
+	
+	if (_numObjectsInRoom >= 0) { // how could it be negative?
+		for (int i = 0; i < _numObjectsInRoom; i++) {
+			if (_objs[i].obj_nr == object1)
+				idx1 = i;
+
+			if (_objs[i].obj_nr == object2)
+				idx2 = i;
+		}
+	}
+	
+	if (idx1 == -1 || idx2 == -1 || idx1 >= idx2)
+		return;
+
+	stopObjectScript(object1);
+	stopObjectScript(object2);
+
+	struct ObjectData tmpOd;
+
+	memcpy(&tmpOd, &_objs[idx1], sizeof(tmpOd));
+	memcpy(&_objs[idx1], &_objs[idx2], sizeof(tmpOd));
+	memcpy(&_objs[idx2], &tmpOd, sizeof(tmpOd));
 }
 
 void ScummEngine_v6he::o6_actorOps() {

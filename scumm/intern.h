@@ -573,6 +573,7 @@ protected:
 	uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data);
 	void seekFilePos(int slot, int offset, int mode);
 	virtual void decodeParseString(int a, int b);
+	void swapObjects(int object1, int object2);
 
 	/* Version 6 script opcodes */
 	void o6_setState();

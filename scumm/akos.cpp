@@ -323,6 +323,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 			break;
 		case 32:
 			// TODO Add codec32
+			warning("akos_drawLimb codec32");
 			result = 1;
 			break;
 		default:
@@ -364,6 +365,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 				break;
 			case 32:
 				// TODO Add codec32
+				warning("akos_drawLimb: codec32 stub");
 				result = 1;
 				break;
 			default:
