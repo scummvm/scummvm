@@ -1094,8 +1094,7 @@ void Actor::handleActions(int msec, bool setup) {
 			hitZone = NULL;
 			// tiled stuff
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				hitPoint.x = actor->location.u();
-				hitPoint.y = actor->location.v();
+				actor->location.toScreenPointUV(hitPoint);
 			} else {
 				actor->location.toScreenPointXY(hitPoint);
 			}
@@ -1259,7 +1258,7 @@ int Actor::drawActors() {
 		
 		
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
-			_vm->_isoMap->drawSprite(back_buf,*spriteList, frameNumber, drawObject->location, drawObject->screenPosition, drawObject->screenScale);
+			_vm->_isoMap->drawSprite(back_buf, *spriteList, frameNumber, drawObject->location, drawObject->screenPosition, drawObject->screenScale);
 		} else {
 			_vm->_sprite->drawOccluded(back_buf, *spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, drawObject->screenDepth);
 		}

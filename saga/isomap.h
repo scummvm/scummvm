@@ -91,19 +91,19 @@ struct IsoTileData {
 	size_t offset;
 	uint16 terrainMask;
 	byte FGDBGDAttr;
-	int8 GetMaskRule() {
+	int8 GetMaskRule() const {
 		return attributes & 0x0F;
 	}
-	byte GetFGDAttr() {
+	byte GetFGDAttr() const {
 		return FGDBGDAttr >> 4;
 	}
-	byte GetBGDAttr() {
+	byte GetBGDAttr() const {
 		return FGDBGDAttr & 0x0F;
 	}
-	uint16 GetFGDMask() {
+	uint16 GetFGDMask() const {
 		return 1 << GetFGDAttr();
 	}
-	uint16 GetBGDMask() {
+	uint16 GetBGDMask() const {
 		return 1 << GetBGDAttr();
 	}
 };
@@ -160,7 +160,7 @@ public:
 	void adjustScroll(bool jump);
 	void tileCoordsToScreenPoint(const Location &location, Point &position) {
 		position.x = location.u() - location.v() + (128 * SAGA_TILEMAP_W) - _viewScroll.x + 16;
-		position.y = -((location.u() + location.v()) >> 1) + (128 * SAGA_TILEMAP_W) - _viewScroll.y - location.z;
+		position.y = -(location.uv() >> 1) + (128 * SAGA_TILEMAP_W) - _viewScroll.y - location.z;
 	}
 	void screenPointToTileCoords(const Point &position, Location &location);
 	void placeOnTileMap(const Location &start, Location &result, int16 distance, uint16 direction);

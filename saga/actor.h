@@ -152,6 +152,9 @@ struct Location {
 	int v() const {
 		return y;
 	}
+	int uv() const {
+		return u() + v();
+	}
 	void delta(const Location &location, Location &result) const {
 		result.x = x - location.x;
 		result.y = y - location.y;
@@ -170,6 +173,10 @@ struct Location {
 	void toScreenPointXY(Point &screenPoint) const {
 		screenPoint.x = x / ACTOR_LMULT;
 		screenPoint.y = y / ACTOR_LMULT;
+	}
+	void toScreenPointUV(Point &screenPoint) const {
+		screenPoint.x = u();
+		screenPoint.y = v();
 	}
 	void toScreenPointXYZ(Point &screenPoint) const {
 		screenPoint.x = x / ACTOR_LMULT;

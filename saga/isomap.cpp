@@ -129,9 +129,9 @@ void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
 	for (i = 0; i < _tilesCount; i++) {
 		tileData = &_tilesTable[i];
 		tileData->height = readS.readByte();
-		tileData->attributes = readS.readByte();
+		tileData->attributes = readS.readSByte();
 		tileData->offset = readS.readUint16();
-		tileData->terrainMask = readS.readSint16();
+		tileData->terrainMask = readS.readUint16();
 		tileData->FGDBGDAttr = readS.readByte();
 		readS.readByte(); //skip
 	}
@@ -638,7 +638,7 @@ void IsoMap::drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &
 						tileIndex = findMulti(tileIndex, absU + u, absU + v, absH);
 					}
 
-					drawTile(ds, tileIndex, s, &location);
+					drawTile(ds, tileIndex, s, &copyLocation);
 				}
 			}
 		}
@@ -791,17 +791,17 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point, const L
 					}
 					break;
 				case kMaskRuleYMIN:
-					if (location->u() + location->v() < THRESH0 * 2) {
+					if (location->uv() < THRESH0 * 2) {
 						return;
 					}
 					break;
 				case kMaskRuleYMID:
-					if (location->u() + location->v() < THRESH8 * 2) {
+					if (location->uv() < THRESH8 * 2) {
 						return;
 					}
 					break;
 				case kMaskRuleYMAX:
-					if (location->u() + location->v() < THRESH16 * 2) {
+					if (location->uv() < THRESH16 * 2) {
 						return;
 					}
 					break;
