@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include "common/config-manager.h"
 #include "scumm/actor.h"
 #include "scumm/akos.h"
 #include "scumm/charset.h"
@@ -1472,13 +1473,13 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		}
 		break;
 	case 0xDD:		// getMasterSFXVol
-		push(_sound->_sound_volume_sfx / 2);
+		push(ConfMan.getInt("sfx_volume") / 2);
 		break;
 	case 0xDE:		// getMasterVoiceVol
-		push(_sound->_sound_volume_sfx / 2);
+		push(ConfMan.getInt("sfx_volume") / 2);
 		break;
 	case 0xDF:		// getMasterMusicVol
-		push(_sound->_sound_volume_music / 2);
+		push(ConfMan.getInt("music_volume") / 2);
 		break;
 	case 0xE0:		// readRegistryValue
 		{

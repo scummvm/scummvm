@@ -791,11 +791,11 @@ void Sound::setupSound() {
 	if (_scumm->_imuse) {
 		_scumm->_imuse->setBase(_scumm->res.address[rtSound]);
 
-		_scumm->_imuse->setMasterVolume(_sound_volume_master);
-		_scumm->_imuse->set_music_volume(_sound_volume_music);
+		_scumm->_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
+		_scumm->_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 	}
-	_scumm->_mixer->setVolume(_sound_volume_sfx * _sound_volume_master / 255);
-	_scumm->_mixer->setMusicVolume(_sound_volume_music);
+	_scumm->_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
+	_scumm->_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
 	delete _sfxFile;
 	_sfxFile = openSfxFile();
 }

@@ -47,6 +47,8 @@ extern void save_key_mapping();
 extern void load_key_mapping();
 #endif
 
+using namespace GUI;
+
 namespace Scumm {
 
 struct ResString {
@@ -389,11 +391,7 @@ void MainMenuDialog::load() {
 #pragma mark -
 
 enum {
-	kMasterVolumeChanged	= 'mavc',
-	kMusicVolumeChanged		= 'muvc',
-	kSfxVolumeChanged		= 'sfvc',
-	kOKCmd					= 'ok  ',
-	kCancelCmd				= 'cncl'
+	kOKCmd					= 'ok  '
 };
 
 enum {
@@ -402,46 +400,29 @@ enum {
 
 #ifndef _WIN32_WCE
 OptionsDialog::OptionsDialog(ScummEngine *scumm)
-	: ScummDialog(scumm, 40, 30, 240, 124) {
+	: GUI::OptionsDialog("", 40, 30, 240, 124), _scumm(scumm) {
 #else
 OptionsDialog::OptionsDialog(ScummEngine *scumm)
-	: ScummDialog(scumm, 40, 30, 240, 124 + kButtonHeight + 4) {
+	: GUI::OptionsDialog("", 40, 30, 240, 124 + kButtonHeight + 4), _scumm(scumm) {
 #endif
 	//
 	// Add the buttons
 	//
 #ifdef _WIN32_WCE
-	addButton(_w - kButtonWidth - 8, _h - 24 - kButtonHeight - 4, "OK", kOKCmd, 'O');
-	addButton(_w - 2 * kButtonWidth - 12, _h - 24 - kButtonHeight - 4, "Cancel", kCancelCmd, 'C');
+	addButton(_w - kButtonWidth - 8, _h - 24 - kButtonHeight - 4, "OK", GUI::OptionsDialog::kOKCmd, 'O');
+	addButton(_w - 2 * kButtonWidth - 12, _h - 24 - kButtonHeight - 4, "Cancel", kCloseCmd, 'C');
 
 	addButton(kButtonWidth+12, _h - 24, "Keys", kKeysCmd, 'K');
 #else
-	addButton(_w - kButtonWidth-8, _h - 24, "OK", kOKCmd, 'O');
-	addButton(_w - 2 * kButtonWidth-12, _h - 24, "Cancel", kCancelCmd, 'C');
+	addButton(_w - kButtonWidth-8, _h - 24, "OK", GUI::OptionsDialog::kOKCmd, 'O');
+	addButton(_w - 2 * kButtonWidth-12, _h - 24, "Cancel", kCloseCmd, 'C');
 #endif
 
 	//
 	// Sound controllers
 	//
 	int yoffset = 8;
-
-	_masterVolumeSlider = new SliderWidget(this, 5, yoffset, 185, 12, "Master volume: ", 100, kMasterVolumeChanged);
-	_masterVolumeLabel = new StaticTextWidget(this, 200, yoffset + 2, 24, 16, "100%", kTextAlignLeft);
-	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
-	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
-	yoffset += 16;
-
-	_musicVolumeSlider = new SliderWidget(this, 5, yoffset, 185, 12, "Music volume: ", 100, kMusicVolumeChanged);
-	_musicVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
-	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
-	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
-	yoffset += 16;
-
-	_sfxVolumeSlider = new SliderWidget(this, 5, yoffset, 185, 12, "SFX volume: ", 100, kSfxVolumeChanged);
-	_sfxVolumeLabel  = new StaticTextWidget(this, 200, yoffset + 2, 24, 16, "100%", kTextAlignLeft);
-	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
-	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
-	yoffset += 16;
+	yoffset = addVolumeControls(this, yoffset);
 
 	//
 	// Some misc options
@@ -463,24 +444,40 @@ OptionsDialog::~OptionsDialog() {
 }
 
 void OptionsDialog::open() {
-	ScummDialog::open();
-
-	// display current sound settings
-	_soundVolumeMaster = _scumm->_sound->_sound_volume_master;
-	_soundVolumeMusic = _scumm->_sound->_sound_volume_music;
-	_soundVolumeSfx = _scumm->_sound->_sound_volume_sfx;
-
-	_masterVolumeSlider->setValue(_soundVolumeMaster);
-	_musicVolumeSlider->setValue(_soundVolumeMusic);
-	_sfxVolumeSlider->setValue(_soundVolumeSfx);
-
-	_masterVolumeLabel->setValue(_soundVolumeMaster);
-	_musicVolumeLabel->setValue(_soundVolumeMusic);
-	_sfxVolumeLabel->setValue(_soundVolumeSfx);
+	GUI::OptionsDialog::open();
 
 	// update checkboxes, too
 	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
 }
+
+void OptionsDialog::close() {
+	
+	if (getResult()) {
+		// Subtitles
+		ConfMan.set("nosubtitles", !subtitlesCheckbox->getState(), _domain);
+	}
+	GUI::OptionsDialog::close();
+
+
+	// Sync the engine with the config manager
+	int soundVolumeMaster = ConfMan.getInt("master_volume");
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
+
+	if (_scumm->_imuse) {
+		_scumm->_imuse->set_music_volume(soundVolumeMusic);
+	}
+	if (_scumm->_musicEngine) {
+		_scumm->_musicEngine->setMasterVolume(soundVolumeMaster);
+	}
+
+	_scumm->_mixer->setVolume(soundVolumeSfx * soundVolumeMaster / 255);
+	_scumm->_mixer->setMusicVolume(soundVolumeMusic);
+	
+	// Subtitles?
+	_scumm->_noSubtitles = ConfMan.getBool("nosubtitles");
+}
+
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
@@ -489,53 +486,8 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_keysDialog->runModal();
 #endif
 		break;
-	case kMasterVolumeChanged:
-		_soundVolumeMaster = _masterVolumeSlider->getValue();
-		_masterVolumeLabel->setValue(_soundVolumeMaster);
-		_masterVolumeLabel->draw();
-		break;
-	case kMusicVolumeChanged:
-		_soundVolumeMusic = _musicVolumeSlider->getValue();
-		_musicVolumeLabel->setValue(_soundVolumeMusic);
-		_musicVolumeLabel->draw();
-		break;
-	case kSfxVolumeChanged:
-		_soundVolumeSfx = _sfxVolumeSlider->getValue();
-		_sfxVolumeLabel->setValue(_soundVolumeSfx);
-		_sfxVolumeLabel->draw();
-		break;
-	case kOKCmd: {
-		// Update the sound settings 
-		_scumm->_sound->_sound_volume_master = _soundVolumeMaster;	// Master
-		_scumm->_sound->_sound_volume_music = _soundVolumeMusic;	// Music
-		_scumm->_sound->_sound_volume_sfx = _soundVolumeSfx;	// SFX
-		
-		if (_scumm->_imuse) {
-			_scumm->_imuse->set_music_volume(_soundVolumeMusic);
-		}
-		if (_scumm->_musicEngine) {
-			_scumm->_musicEngine->setMasterVolume(_soundVolumeMaster);
-		}
-
-		_scumm->_mixer->setVolume(_soundVolumeSfx * _soundVolumeMaster / 255);
-		_scumm->_mixer->setMusicVolume(_soundVolumeMusic);
-		
-		ConfMan.set("master_volume", _soundVolumeMaster);
-		ConfMan.set("music_volume", _soundVolumeMusic);
-		ConfMan.set("sfx_volume", _soundVolumeSfx);
-
-		// Subtitles?
-		_scumm->_noSubtitles = !subtitlesCheckbox->getState();
-		ConfMan.set("nosubtitles", _scumm->_noSubtitles);
-		
-		// Finally flush the modified config
-		ConfMan.flushToDisk();
-		}
-	case kCancelCmd:
-		close();
-		break;
 	default:
-		ScummDialog::handleCommand(sender, cmd, data);
+		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
 
@@ -671,7 +623,7 @@ KeysDialog::KeysDialog(ScummEngine *scumm)
 	: ScummDialog(scumm, 30, 20, 260, 160) {
 	addButton(160, 20, "Map", kMapCmd, 'M');	// Map
 	addButton(160, 40, "OK", kOKCmd, 'O');						// OK
-	addButton(160, 60, "Cancel", kCancelCmd, 'C');				// Cancel
+	addButton(160, 60, "Cancel", kCloseCmd, 'C');				// Cancel
 
 	_actionsList = new ListWidget(this, 10, 20, 140, 90);
 	_actionsList->setNumberingMode(kListNumberingZero);
@@ -727,7 +679,7 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 		save_key_mapping();
 		close();
 		break;
-	case kCancelCmd:
+	case kCloseCmd:
 		load_key_mapping();
 		close();
 		break;

@@ -24,6 +24,7 @@
 #include "common/str.h"
 #include "gui/about.h"
 #include "gui/dialog.h"
+#include "gui/options.h"
 #include "gui/widget.h"
 
 #ifndef DISABLE_HELP
@@ -33,17 +34,16 @@
 namespace GUI {
 	class ListWidget;
 }
-using namespace GUI;	// FIXME: Bad style to use a using directive in a header
 
 
 namespace Scumm {
 
 class ScummEngine;
 
-class ScummDialog : public Dialog {
+class ScummDialog : public GUI::Dialog {
 public:
 	ScummDialog(ScummEngine *scumm, int x, int y, int w, int h)
-		: Dialog(x, y, w, h), _scumm(scumm) {}
+		: GUI::Dialog(x, y, w, h), _scumm(scumm) {}
 	
 protected:
 	typedef Common::String String;
@@ -58,14 +58,14 @@ class MainMenuDialog : public ScummDialog {
 public:
 	MainMenuDialog(ScummEngine *scumm);
 	~MainMenuDialog();
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void open();	
 	virtual void close();
 
 protected:
-	Dialog		*_aboutDialog;
+	GUI::Dialog		*_aboutDialog;
 #ifndef DISABLE_HELP
-	Dialog		*_helpDialog;
+	GUI::Dialog		*_helpDialog;
 #endif
 
 	void save();
@@ -77,17 +77,17 @@ protected:
 class HelpDialog : public ScummDialog {
 public:
 	HelpDialog(ScummEngine *scumm);
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
 	typedef Common::String String;
 
-	ButtonWidget *_nextButton;
-	ButtonWidget *_prevButton;
+	GUI::ButtonWidget *_nextButton;
+	GUI::ButtonWidget *_prevButton;
 
-	StaticTextWidget *_title;
-	StaticTextWidget *_key[HELP_NUM_LINES];
-	StaticTextWidget *_dsc[HELP_NUM_LINES];
+	GUI::StaticTextWidget *_title;
+	GUI::StaticTextWidget *_key[HELP_NUM_LINES];
+	GUI::StaticTextWidget *_dsc[HELP_NUM_LINES];
 
 	int _page;
 	int _numPages;
@@ -97,10 +97,11 @@ protected:
 
 #endif
 
-class OptionsDialog : public ScummDialog {
+class OptionsDialog : public GUI::OptionsDialog {
 protected:
+	ScummEngine *_scumm;
 #ifdef _WIN32_WCE
-	Dialog		*_keysDialog;
+	GUI::Dialog		*_keysDialog;
 #endif
 
 public:
@@ -108,23 +109,11 @@ public:
 	~OptionsDialog();
 
 	virtual void open();
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void close();
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-
-	int _soundVolumeMaster;
-	int _soundVolumeMusic;
-	int _soundVolumeSfx;
-
-	SliderWidget *_masterVolumeSlider;
-	SliderWidget *_musicVolumeSlider;
-	SliderWidget *_sfxVolumeSlider;
-
-	StaticTextWidget *_masterVolumeLabel;
-	StaticTextWidget *_musicVolumeLabel;
-	StaticTextWidget *_sfxVolumeLabel;
-	
-	CheckboxWidget *subtitlesCheckbox;
+	GUI::CheckboxWidget *subtitlesCheckbox;
 };
 
 class InfoDialog : public ScummDialog {
@@ -170,14 +159,14 @@ class KeysDialog : public ScummDialog {
 public:
 	KeysDialog(ScummEngine *scumm);
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 
 protected:
 
-	ListWidget		 *_actionsList;
-	StaticTextWidget *_actionTitle;
-	StaticTextWidget *_keyMapping;
+	GUI::ListWidget		 *_actionsList;
+	GUI::StaticTextWidget *_actionTitle;
+	GUI::StaticTextWidget *_keyMapping;
 	int				 _actionSelected;
 };
 

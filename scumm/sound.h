@@ -101,10 +101,6 @@ public:
 	bool _soundsPaused;
 	byte _sfxMode;
 	
-	// FIXME: Should add API to get/set volumes (and automatically
-	// update iMuse/iMuseDigi/Player_v2/SoundMIxer, too
-	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
-
 	Bundle *_bundle;	// FIXME: should be protected but is used by ScummEngine::askForDisk
 
 public:

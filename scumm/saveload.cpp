@@ -677,8 +677,8 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	
 	if (_imuse && (_saveSound || !_saveLoadCompatible)) {
 		_imuse->save_or_load(s, this);
-		_imuse->setMasterVolume(_sound->_sound_volume_master);
-		_imuse->set_music_volume(_sound->_sound_volume_music);
+		_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
+		_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 	}
 }
 

@@ -654,9 +654,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_debugger = new ScummDebugger(this);
 
 	_sound = new Sound(this);
-	_sound->_sound_volume_master = ConfMan.getInt("master_volume");
-	_sound->_sound_volume_sfx = ConfMan.getInt("sfx_volume");
-	_sound->_sound_volume_music = ConfMan.getInt("music_volume");
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
@@ -673,8 +670,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_silentDigitalImuse = true;
 		_noDigitalSamples = true;
 	}
-	_mixer->setVolume(_sound->_sound_volume_sfx * _sound->_sound_volume_master / 255);
-	_mixer->setMusicVolume(_sound->_sound_volume_music);
+	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
+	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
 
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
@@ -705,7 +702,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			}
 			if (_features & GF_FMTOWNS)
 				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
-			_imuse->set_music_volume(_sound->_sound_volume_music);
+			_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 		}
 	}
 #endif // ph0x-hack
@@ -1363,7 +1360,7 @@ load_game:
 #endif
 			sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
 	
-			TimedMessageDialog dialog(buf, 1500);
+			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);
 		}
 		if (success && _saveLoadFlag != 1)
@@ -1613,7 +1610,7 @@ void ScummEngine::parseEvents() {
 			break;
 	
 		case OSystem::EVENT_QUIT:
-			if(_confirmExit)
+			if (_confirmExit)
 				confirmexitDialog();
 			else
 			_quit = true;
@@ -1811,18 +1808,18 @@ void ScummEngine::processKbd() {
 			stopTalk();
 		return;
 	} else if (_lastKeyHit == '[') { // [ Music volume down
-		int vol = _sound->_sound_volume_music;
+		int vol = ConfMan.getInt("music_volume");
 		if (!(vol & 0xF) && vol)
 			vol -= 16;
 		vol = vol & 0xF0;
-		_sound->_sound_volume_music = vol;
+		ConfMan.set("music_volume", vol);
 		if (_imuse)
 			_imuse->set_music_volume (vol);
 	} else if (_lastKeyHit == ']') { // ] Music volume up
-		int vol = _sound->_sound_volume_music;
+		int vol = ConfMan.getInt("music_volume");
 		vol = (vol + 16) & 0xFF0;
 		if (vol > 255) vol = 255;
-		_sound->_sound_volume_music = vol;
+		ConfMan.set("music_volume", vol);
 		if (_imuse)
 			_imuse->set_music_volume (vol);
 	} else if (_lastKeyHit == '-') { // - text speed down
@@ -2493,7 +2490,7 @@ char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 	vsprintf(buf, message, va);
 	va_end(va);
 
-	MessageDialog dialog(buf, "OK", "Cancel");
+	GUI::MessageDialog dialog(buf, "OK", "Cancel");
 	return runDialog(dialog);
 }
 
@@ -2503,70 +2500,74 @@ char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 
 int SJIStoFMTChunk(int f, int s) //convert sjis code to fmt font offset
 {
-	enum {KANA = 0, KANJI = 1, EKANJI = 2};
+	enum {
+		KANA = 0,
+		KANJI = 1,
+		EKANJI = 2
+	};
 	int base = s - (s % 32) - 1;
 	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr, kanjiType = KANA;
 
-	if(f >= 0x81 && f <= 0x84) kanjiType = KANA;
-	if(f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
-	if(f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
+	if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
+	if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
+	if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
 
-	if((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
+	if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
 		c = 48; //correction
 		p = -8; //correction
 	}
 
-	if(kanjiType == KANA) {//Kana
+	if (kanjiType == KANA) {//Kana
 		chunk_f = (f - 0x81) * 2;
-	} else if(kanjiType == KANJI) {//Standard Kanji
+	} else if (kanjiType == KANJI) {//Standard Kanji
 		p += f - 0x88;
 		chunk_f = c + 2 * p;
-	} else if(kanjiType == EKANJI) {//Enhanced Kanji
+	} else if (kanjiType == EKANJI) {//Enhanced Kanji
 		p += f - 0xe0;
 		chunk_f = c + 2 * p;
 	}
 
-	if(base == 0x7f && s == 0x7f)
+	if (base == 0x7f && s == 0x7f)
 		base -= 0x20; //correction
-	if((base == 0x7f && s == 0x9e) || (base == 0x9f && s == 0xbe) || (base == 0xbf && s == 0xde))
+	if ((base == 0x7f && s == 0x9e) || (base == 0x9f && s == 0xbe) || (base == 0xbf && s == 0xde))
 		base += 0x20; //correction
 
 	switch(base) {
 	case 0x3f:
 		cr = 0; //3f
-		if(kanjiType == KANA) chunk = 1;
-		else if(kanjiType == KANJI) chunk = 31;
-		else if(kanjiType == EKANJI) chunk = 111;
+		if (kanjiType == KANA) chunk = 1;
+		else if (kanjiType == KANJI) chunk = 31;
+		else if (kanjiType == EKANJI) chunk = 111;
 		break;
 	case 0x5f:
 		cr = 0; //5f
-		if(kanjiType == KANA) chunk = 17;
-		else if(kanjiType == KANJI) chunk = 47;
-		else if(kanjiType == EKANJI) chunk = 127;
+		if (kanjiType == KANA) chunk = 17;
+		else if (kanjiType == KANJI) chunk = 47;
+		else if (kanjiType == EKANJI) chunk = 127;
 		break;
 	case 0x7f:
 		cr = -1; //80
-		if(kanjiType == KANA) chunk = 9;
-		else if(kanjiType == KANJI) chunk = 63;
-		else if(kanjiType == EKANJI) chunk = 143;
+		if (kanjiType == KANA) chunk = 9;
+		else if (kanjiType == KANJI) chunk = 63;
+		else if (kanjiType == EKANJI) chunk = 143;
 		break;
 	case 0x9f:
 		cr = 1; //9e
-		if(kanjiType == KANA) chunk = 2;
-		else if(kanjiType == KANJI) chunk = 32;
-		else if(kanjiType == EKANJI) chunk = 112;
+		if (kanjiType == KANA) chunk = 2;
+		else if (kanjiType == KANJI) chunk = 32;
+		else if (kanjiType == EKANJI) chunk = 112;
 		break;
 	case 0xbf:
 		cr = 1; //be
-		if(kanjiType == KANA) chunk = 18;
-		else if(kanjiType == KANJI) chunk = 48;
-		else if(kanjiType == EKANJI) chunk = 128;
+		if (kanjiType == KANA) chunk = 18;
+		else if (kanjiType == KANJI) chunk = 48;
+		else if (kanjiType == EKANJI) chunk = 128;
 		break;
 	case 0xdf:
 		cr = 1; //de
-		if(kanjiType == KANA) chunk = 10;
-		else if(kanjiType == KANJI) chunk = 64;
-		else if(kanjiType == EKANJI) chunk = 144;
+		if (kanjiType == KANA) chunk = 10;
+		else if (kanjiType == KANJI) chunk = 64;
+		else if (kanjiType == EKANJI) chunk = 144;
 		break;
 	default:
 		return 0;
