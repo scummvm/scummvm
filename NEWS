@@ -7,15 +7,21 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      and "Inherit the Earth").
 
  General:
-   - Added a MT-32 emulator. (It was actually added in 0.7.0 but we forgot to
-     put it into the NEWS file :-).
+   - ...
 
  <ENGINE #1 NEWS>
    - ...
 
-
  <PORT #1 NEWS>
    - ...
+
+0.7.1 (2005-xx-xx)
+ General:
+   - Added a MT-32 emulator. (It was actually added in 0.7.0 but we forgot to
+     put it into the NEWS file :-).
+
+ SCUMM:
+   - Fixed wrong actor animation in Full Throttle INSANE
 
 0.7.0 (2004-12-24)
  New Games:
