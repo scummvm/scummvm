@@ -325,9 +325,8 @@ void ScummEngine::drawDirtyScreenParts() {
 	// Update verbs
 	updateDirtyScreen(kVerbVirtScreen);
 	
-	// In V1-V3, update the conversation area (at the top of the screen)
-	if (_version <= 3)
-		updateDirtyScreen(kTextVirtScreen);
+	// Update the conversation area (at the top of the screen)
+	updateDirtyScreen(kTextVirtScreen);
 
 	// Update game area ("stage")
 	if (camera._last.x != camera._cur.x || (_features & GF_NEW_CAMERA && (camera._cur.y != camera._last.y))) {
