@@ -231,6 +231,14 @@ SOURCE=".\scumm\base-costume.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\bomp.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\bomp.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\boxes.cpp
 # End Source File
 # Begin Source File
