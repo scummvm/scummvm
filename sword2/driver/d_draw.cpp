@@ -19,15 +19,17 @@
 
 #include <stdio.h>
 #include "stdafx.h"
-#include "driver96.h"
+#include "bs2/driver/driver96.h"
 #include "bs2/header.h"		// HACK: For cutscenes instruction message
 #include "bs2/maketext.h"	// HACK: For cutscenes instruction message
 #include "bs2/sword2.h"
 #include "sound/mixer.h"
-#include "rdwin.h"
-#include "d_draw.h"
-#include "palette.h"
-#include "render.h"
+#include "bs2/driver/rdwin.h"
+#include "bs2/driver/d_draw.h"
+#include "bs2/driver/palette.h"
+#include "bs2/driver/render.h"
+
+namespace Sword2 {
 
 byte *lpBackBuffer;
 
@@ -331,3 +333,5 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 	return RD_OK;
 }
+
+} // End of namespace Sword2

@@ -35,6 +35,8 @@
 #include "sound.h"
 #include "sword2.h"
 
+namespace Sword2 {
+
 // pointer resource id's
 
 #define CROSHAIR	18
@@ -1388,3 +1390,5 @@ void Monitor_player_activity(void) {
 		player_activity_delay++;
 	}
 }
+
+} // End of namespace Sword2

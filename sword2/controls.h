@@ -20,6 +20,8 @@
 #ifndef	_CONTROL_S
 #define	_CONTROL_S
 
+namespace Sword2 {
+
 class Sword2Gui {
 public:
 	int _baseSlot;
@@ -43,5 +45,7 @@ public:
 };
 
 extern Sword2Gui gui;
+
+} // End of namespace Sword2
 
 #endif

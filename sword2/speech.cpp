@@ -41,6 +41,8 @@
 #include "sword2.h"
 #include "walker.h"
 
+namespace Sword2 {
+
 #define	INS_talk		1
 #define	INS_anim		2
 #define	INS_reverse_anim	3
@@ -1628,3 +1630,5 @@ uint8 WantSpeechForLine(uint32 wavId) {
 		return 1;
 	}
 }
+
+} // End of namespace Sword2

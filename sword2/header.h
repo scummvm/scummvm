@@ -22,6 +22,8 @@
 
 #include "common/scummsys.h"
 
+namespace Sword2 {
+
 //----------------------------------------------------------
 // SYSTEM FILE & FRAME HEADERS
 //----------------------------------------------------------
@@ -298,5 +300,7 @@ struct _textHeader {
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS
 #endif
+
+} // End of namespace Sword2
 
 #endif

@@ -32,6 +32,8 @@
 
 #include "common/scummsys.h"
 
+namespace Sword2 {
+
 // fx types
 
 #define FX_SPOT		0
@@ -58,5 +60,7 @@ int32 FN_stop_music(int32 *params);
 
 // used to store id of tunes that loop, for save & restore
 extern uint32 looping_music_id;
+
+} // End of namespace Sword2
 
 #endif

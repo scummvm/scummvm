@@ -28,6 +28,8 @@
 #include "object.h"
 #include "sync.h"
 
+namespace Sword2 {
+
 _event_unit event_list[MAX_events];
 
 void Init_event_system(void) {
@@ -347,3 +349,5 @@ void Kill_all_ids_events(uint32 id) {
 		}
 	}
 }
+
+} // End of namespace Sword2

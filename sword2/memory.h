@@ -22,6 +22,8 @@
 
 #include "common/scummsys.h"
 
+namespace Sword2 {
+
 typedef	struct {
 	uint32 state;
 	uint32 age;	// *not used*
@@ -101,5 +103,7 @@ public:
 };
 
 extern Sword2MemoryManager memory;
+
+} // End of namespace Sword2
 
 #endif

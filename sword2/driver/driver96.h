@@ -29,9 +29,7 @@
 #include "common/system.h"
 #include "common/rect.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace Sword2 {
 
 //
 //	Defines
@@ -425,8 +423,6 @@ extern int16 mousey;		// Mouse screen y coordinate
 extern int32 renderCaps;	// Flags which determine how to render the scene.
 extern uint8 palCopy[256][4];	// Current palette.
 
-#ifdef __cplusplus
-}
-#endif
+} // End of namespace Sword2
 
 #endif

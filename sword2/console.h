@@ -23,6 +23,8 @@
 #include "driver/driver96.h"
 #include "memory.h"
 
+namespace Sword2 {
+
 #ifdef _SWORD2_DEBUG
 
 void Init_console(void);
@@ -61,5 +63,7 @@ void Scroll_console(void);
 #endif
 
 extern	uint32	console_status;
+
+} // End of namespace Sword2
 
 #endif

@@ -27,6 +27,8 @@
 #include "sword2.h"
 #include "common/file.h"
 
+namespace Sword2 {
+
 uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 	// read the file in and place into an allocated MEM_float block
 
@@ -56,3 +58,5 @@ uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 	//ok, done it - return bytes read
 	return size;
 }
+
+} // End of namespace Sword2

@@ -47,11 +47,12 @@
 //#include "ddraw.h"
 
 #include "stdafx.h"
-#include "driver96.h"
+#include "bs2/driver/driver96.h"
 
-#include "d_draw.h"
+#include "bs2/driver/d_draw.h"
 
 
+namespace Sword2 {
 
 uint8			consoleStatus = 0;			// 1 - console display
 //static uint16	consoley = 0;
@@ -152,3 +153,4 @@ int32 CloseConsole(void)
 
 }
 
+} // End of namespace Sword2

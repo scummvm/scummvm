@@ -20,6 +20,8 @@
 #ifndef	_STARTUP
 #define	_STARTUP
 
+namespace Sword2 {
+
 #define	MAX_starts	100
 #define	MAX_description	100
 
@@ -39,5 +41,7 @@ extern _startup start_list[MAX_starts];
 uint32 Init_start_menu(void);
 uint32 Con_print_start_menu(void);
 uint32 Con_start(uint8 *input);
+
+} // End of namespace Sword2
 
 #endif

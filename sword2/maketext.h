@@ -59,6 +59,8 @@
 
 #include "memory.h"
 
+namespace Sword2 {
+
 // only for debug text, since it doesn't keep text inside the screen margin!
 #define	NO_JUSTIFICATION		0
 // these all force text inside the screen edge margin when necessary
@@ -91,5 +93,7 @@ void InitialiseFontResourceFlags(uint8 language);
 extern uint32 speech_font_id;
 extern uint32 controls_font_id;
 extern uint32 red_font_id;
+
+} // End of namespace Sword2
 
 #endif

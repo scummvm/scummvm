@@ -26,6 +26,8 @@
 #include "layers.h"
 #include "scroll.h"
 
+namespace Sword2 {
+
 // max no of pixel allowed to scroll per cycle
 #define MAX_SCROLL_DISTANCE 8
 
@@ -174,3 +176,5 @@ int32 FN_set_scroll_speed_slow(int32 *params) {
 	scroll_fraction = 32;
 	return IR_CONT;
 }
+
+} // End of namespace Sword2

@@ -38,6 +38,8 @@
 #include "sound.h"
 #include "sword2.h"
 
+namespace Sword2 {
+
 typedef struct {
 	uint32 resource;	// resource id of sample
 	uint32 fetchId;		// Id of resource in PSX CD queue. :)
@@ -426,3 +428,5 @@ void UnpauseAllSound(void) {
 	g_sound->unpauseSpeech();
 	g_sound->unpauseFx();
 }
+
+} // End of namespace Sword2

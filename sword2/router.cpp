@@ -89,6 +89,8 @@
 #include "resman.h"
 #include "router.h"
 
+namespace Sword2 {
+
 #define MAX_FRAMES_PER_CYCLE	16
 #define NO_DIRECTIONS		8
 #define MAX_FRAMES_PER_CHAR	(MAX_FRAMES_PER_CYCLE * NO_DIRECTIONS)
@@ -2848,3 +2850,5 @@ void RemoveWalkGrid(int32 gridResource) {
 	if (entry < MAX_WALKGRIDS)
 		walkGridList[entry] = 0;
 }
+
+} // End of namespace Sword2

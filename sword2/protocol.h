@@ -25,6 +25,8 @@
 #include "driver/driver96.h"
 #include "header.h"
 
+namespace Sword2 {
+
 uint8 *FetchPalette(uint8 *screenFile);
 _screenHeader *FetchScreenHeader(uint8 *screenFile);
 _layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo);
@@ -40,5 +42,7 @@ uint8 *FetchTextLine(uint8 *file, uint32 text_line);
 uint8 CheckTextLine(uint8 *file, uint32	text_line);
 uint8 *FetchPaletteMatchTable(uint8 *screenFile);
 uint8 *FetchObjectName(int32 resourceId);
+
+} // End of namespace Sword2
 
 #endif

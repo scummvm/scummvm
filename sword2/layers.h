@@ -22,6 +22,8 @@
 
 #include "memory.h"
 
+namespace Sword2 {
+
 typedef	struct {
 	uint16 scroll_offset_x;		// Position x
 	uint16 scroll_offset_y;		// Position y
@@ -53,5 +55,7 @@ int32 FN_init_background(int32 *params);
 // called from control panel (as well as inside FN_init_background)
 
 void SetUpBackgroundLayers(void);
+
+} // End of namespace Sword2
 
 #endif

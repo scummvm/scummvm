@@ -45,6 +45,8 @@
 #include "router.h"
 #include "sync.h"
 
+namespace Sword2 {
+
 int16 standby_x;		// see FN_set_standby_coords
 int16 standby_y;
 uint8 standby_dir;
@@ -798,3 +800,5 @@ int32 FN_set_standby_coords(int32 *params) {
 
 	return IR_CONT;
 }
+
+} // End of namespace Sword2

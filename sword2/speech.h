@@ -22,6 +22,8 @@
 
 #include "header.h"
 
+namespace Sword2 {
+
 #define	MAX_SUBJECT_LIST 30	// is that enough?
 
 // array of these for subject menu build up
@@ -41,5 +43,7 @@ extern int32 speechScriptWaiting;
 extern	int choosing;
 
 extern	uint32 unpause_zone;
+
+} // End of namespace Sword2
 
 #endif

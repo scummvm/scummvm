@@ -39,6 +39,8 @@
 #include "sync.h"
 #include "tony_gsdk.h"
 
+namespace Sword2 {
+
 uint32 total_startups = 0;
 uint32 total_screen_managers = 0;
 uint32 res;
@@ -309,3 +311,5 @@ uint32 Con_start(uint8 *input) {
 
 	return 1;
 }
+
+} // End of namespace Sword2

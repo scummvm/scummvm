@@ -22,10 +22,12 @@
 
 #include "object.h"
 
-typedef	struct {
+namespace Sword2 {
+
+struct _event_unit {
 	uint32 id;
 	uint32 interact_id;
-} _event_unit;
+};
 
 #define	MAX_events 10
 
@@ -40,5 +42,7 @@ int32 FN_start_event(void);
 uint32 Check_event_waiting(void);
 void Kill_all_ids_events(uint32 id);
 uint32 CountEvents(void);
+
+} // End of namespace Sword2
 
 #endif

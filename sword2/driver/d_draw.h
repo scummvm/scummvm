@@ -20,16 +20,12 @@
 #ifndef D_DRAW_H
 #define D_DRAW_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "bs2/driver/driver96.h"
 
-#include "driver96.h"
+namespace Sword2 {
 
 extern byte *lpBackBuffer;
 
-#ifdef __cplusplus
-}
-#endif
+} // End of namespace Sword2
 
 #endif

@@ -34,6 +34,8 @@
 #include "resman.h"
 #include "sound.h"	// for Clear_fx_queue() called from FN_init_background()
 
+namespace Sword2 {
+
 // this_screen describes the current back buffer and its in-game scroll
 // positions, etc.
 
@@ -240,3 +242,5 @@ void SetUpBackgroundLayers(void) {
 		res_man.close(this_screen.background_layer_id);
 	}
 }
+
+} // End of namespace Sword2

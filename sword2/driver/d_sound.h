@@ -25,6 +25,8 @@
 #include "sound/rate.h"
 #include "common/file.h"
 
+namespace Sword2 {
+
 extern void sword2_sound_handler(void *refCon);
 
 typedef struct {
@@ -135,5 +137,7 @@ public:
 	int32 setFxIdVolumePan(int32 id, uint8 vol, int8 pan);
 	int32 setFxIdVolume(int32 id, uint8 vol);
 };
+
+} // End of namespace Sword2
 
 #endif

@@ -18,7 +18,9 @@
  */
 
 #include "stdafx.h"
-#include "driver96.h"
+#include "bs2/driver/driver96.h"
+
+namespace Sword2 {
 
 uint8 languageVersion = ENGLISH;
 
@@ -83,3 +85,5 @@ int32 GetGameName(uint8 *name) {
 
 	return rv;
 }
+
+} // End of namespace Sword2

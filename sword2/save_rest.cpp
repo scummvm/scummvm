@@ -47,6 +47,8 @@
 #include "sword2.h"
 #include "walker.h"
 
+namespace Sword2 {
+
 // max length of a savegame filename, including full path
 #define	MAX_FILENAME_LEN 128
 
@@ -653,3 +655,5 @@ uint32 CalcChecksum(uint8 *buffer, uint32 size) {
 
 	return total;
 }
+
+} // End of namespace Sword2

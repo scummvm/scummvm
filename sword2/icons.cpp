@@ -23,6 +23,8 @@
 #include "interpreter.h"
 #include "mouse.h"
 
+namespace Sword2 {
+
 // tempory list
 menu_object temp_list[TOTAL_engine_pockets];
 uint32 total_temp = 0;
@@ -248,3 +250,5 @@ void Build_system_menu(void) {
 
 	ShowMenu(RDMENU_TOP);
 }
+
+} // End of namespace Sword2

@@ -64,6 +64,8 @@
 #include "resman.h"
 #include "sword2.h"
 
+namespace Sword2 {
+
 extern uint32 sequenceTextLines;	// see anims.cpp
 
 // info for each line of words in the output text sprite
@@ -686,3 +688,5 @@ void InitialiseFontResourceFlags(uint8 language) {
 		break;
 	}
 }
+
+} // End of namespace Sword2

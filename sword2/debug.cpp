@@ -44,6 +44,8 @@
 #include "speech.h"			// for 'officialTextNumber' and
 					// 'speechScriptWaiting'
 
+namespace Sword2 {
+
 uint8 displayDebugText = 0;		// "INFO"		0=off; 1=on
 uint8 displayWalkGrid = 0;		// "WALKGRID"
 uint8 displayMouseMarker = 0;		// "MOUSE"
@@ -422,8 +424,12 @@ void Print_current_info(void) {
 	Scroll_console();
 }
 
+} // End of namespace Sword2
+
 #else
 
+namespace Sword2 {
 void Draw_debug_graphics(void) {}
+} // End of namespace Sword2
 
 #endif

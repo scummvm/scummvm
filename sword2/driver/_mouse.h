@@ -17,13 +17,17 @@
  * $Header$
  */
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#ifndef DRIVER_MOUSE_H
+#define DRIVER_MOUSE_H
+
+namespace Sword2 {
 
 extern int16 mousex;		// Mouse x coordinate
 extern int16 mousey;		// Mouse y coordinate
 
 extern void LogMouseEvent(uint16 buttons);
 extern int32 DrawMouse(void);
+
+} // End of namespace Sword2
 
 #endif

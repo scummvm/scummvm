@@ -22,6 +22,8 @@
 
 #include "memory.h"
 
+namespace Sword2 {
+
 #define	SAVE_DESCRIPTION_LEN	64
 
 uint32 SaveGame(uint16 slotNo, uint8 *description);
@@ -53,5 +55,7 @@ uint32 FindBufferSize(void);
 						// Something screwed up during
 						// the fwrite() - could be
 						// hard-drive full..?
+
+} // End of namespace Sword2
 
 #endif

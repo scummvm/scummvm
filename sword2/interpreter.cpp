@@ -23,6 +23,8 @@
 #include "driver/driver96.h"
 #include "interpreter.h"
 
+namespace Sword2 {
+
 // This file serves two purposes. It is compiled as part of the test functions
 // of Linc, and also as part of the game
 
@@ -710,3 +712,5 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 
 	return 1;
 }
+
+} // End of namespace Sword2

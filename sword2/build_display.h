@@ -22,6 +22,8 @@
 
 #include "driver/driver96.h"
 
+namespace Sword2 {
+
 // structure filled out by each object to register its graphic printing
 // requrements
 
@@ -97,5 +99,7 @@ void SetFullPalette(int32 palRes);
 // needed by debug.cpp for displaying as part of top-screen info
 
 extern uint32 fps;
+
+} // End of namespace Sword2
 
 #endif

@@ -36,6 +36,8 @@
 #include "sound.h"
 #include "sword2.h"
 
+namespace Sword2 {
+
 #define	MAX_STRING_LEN		64	// 20 was too low; better to be safe ;)
 #define CHARACTER_OVERLAP	 2	// overlap characters by 3 pixels
 
@@ -1558,3 +1560,5 @@ void Sword2Gui::updateGraphicsLevel(uint8 newLevel) {
 
 	_currentGraphicsLevel = newLevel;
 }
+
+} // End of namespace Sword2

@@ -23,6 +23,8 @@
 #include "debug.h"
 #include "header.h"
 
+namespace Sword2 {
+
 // Interpreter return codes
 
 #define IR_STOP				0
@@ -89,5 +91,7 @@ int RunScript (char *scriptData, char *objectData, uint32 *offset);
 #define	OP_GTTHANE			35	// >=
 #define	OP_LSTHANE			36	// <=
 #define	OP_OROR				37	// || or OR
+
+} // End of namespace Sword2
 
 #endif

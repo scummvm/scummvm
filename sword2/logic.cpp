@@ -27,6 +27,8 @@
 #include "sound.h"
 #include "sync.h"
 
+namespace Sword2 {
+
 logic LLogic;
 
 #define LEVEL (_curObjectHub->logic_level)
@@ -448,3 +450,5 @@ void logic::processKillList(void) {
 void logic::resetKillList(void) {
 	kills = 0;
 }
+
+} // End of namespace Sword2

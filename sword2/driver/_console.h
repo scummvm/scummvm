@@ -30,12 +30,14 @@
 //=============================================================================
 
 
-#ifndef CONSOLE_H
-#define CONSOLE_H
+#ifndef DRIVER_CONSOLE_H
+#define DRIVER_CONSOLE_H
 
-
+namespace Sword2 {
 
 extern void DisplayConsole(void);
+
+} // End of namespace Sword2
 
 
 #endif

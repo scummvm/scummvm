@@ -33,12 +33,14 @@
 // opinions on this?
 
 #include "stdafx.h"
-#include "driver96.h"
-#include "d_sound.h"
-#include "../sword2.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/driver/d_sound.h"
+#include "bs2/sword2.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/rate.h"
+
+namespace Sword2 {
 
 // Fade-out takes half a second. This may need some tuning.
 #define FADE_SAMPLES 11025
@@ -1150,3 +1152,5 @@ void Sword2Sound::muteMusic(uint8 mute) {
 uint8 Sword2Sound::isMusicMute(void) {
 	return _musicMuted;
 }
+
+} // End of namespace Sword2

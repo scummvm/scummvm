@@ -18,7 +18,9 @@
  */
 
 #include "stdafx.h"
-#include "driver96.h"
+#include "bs2/driver/driver96.h"
+
+namespace Sword2 {
 
 uint8 keyBacklog = 0;	// The number of key presses waiting to be processed.
 uint8 keyPointer = 0;	// Index of the next key to read from the buffer.
@@ -69,3 +71,5 @@ int32 ReadKey(_keyboardEvent *ev) {
 
 	return RD_OK;
 }
+
+} // End of namespace Sword2

@@ -35,6 +35,8 @@
 #include "protocol.h"
 #include "resman.h"
 
+namespace Sword2 {
+
 // ---------------------------------------------------------------------------
 
 buildit	bgp0_list[MAX_bgp0_sprites];
@@ -1163,3 +1165,5 @@ int32 FN_change_shadows(int32 *params) {
 
 	return IR_CONT;
 }
+
+} // End of namespace Sword2

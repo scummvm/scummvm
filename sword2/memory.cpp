@@ -43,6 +43,8 @@
 #include "memory.h"
 #include "resman.h"
 
+namespace Sword2 {
+
 Sword2MemoryManager memory;
 
 #define MEMORY_POOL (1024 * 12000)
@@ -547,3 +549,5 @@ int32 Sword2MemoryManager::virtualDefrag(uint32 size) {
 
 	return 1;
 }
+
+} // End of namespace Sword2

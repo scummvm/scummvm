@@ -23,6 +23,8 @@
 #include "interpreter.h"
 #include "sync.h"
 
+namespace Sword2 {
+
 typedef	struct {
 	uint32 id;
 	uint32 sync;
@@ -125,3 +127,5 @@ int32 FN_wait_sync(int32 *params) {
 	// back again next cycle
 	return IR_REPEAT;
 }
+
+} // End of namespace Sword2

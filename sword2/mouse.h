@@ -24,6 +24,8 @@
 
 #include "object.h"
 
+namespace Sword2 {
+
 #define	TOTAL_mouse_list	50
 
 #define	MOUSE_normal		0
@@ -98,5 +100,7 @@ int32 FN_no_human(int32 *params);
 int32 FN_add_human(int32 *params);
 
 void ClearPointerText(void);
+
+} // End of namespace Sword2
 
 #endif

@@ -18,11 +18,13 @@
  */
 
 #include "stdafx.h"
-#include "driver96.h"
-#include "d_draw.h"
-#include "render.h"
-#include "menu.h"
-#include "../sword2.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/driver/d_draw.h"
+#include "bs2/driver/render.h"
+#include "bs2/driver/menu.h"
+#include "bs2/sword2.h"
+
+namespace Sword2 {
 
 #define MAX_MOUSE_EVENTS 16
 #define MOUSEFLASHFRAME 6
@@ -312,3 +314,5 @@ int32 SetLuggageAnim(uint8 *ma, int32 size) {
 
 	return RD_OK;
 }
+
+} // End of namespace Sword2

@@ -27,6 +27,8 @@
 #include "protocol.h"
 #include "resman.h"
 
+namespace Sword2 {
+
 // Returns a pointer to the first palette entry, given the pointer to the
 // start of the screen file.
 
@@ -216,3 +218,5 @@ uint8 *FetchObjectName(int32 resourceId) {
 
 	return header->name;
 }
+
+} // End of namespace Sword2

@@ -21,17 +21,19 @@
 #include "base/engine.h"
 #include "common/timer.h"
 
-#include "driver96.h"
+#include "bs2/driver/driver96.h"
 
-#include "_mouse.h"
-#include "keyboard.h"
-#include "rdwin.h"
-#include "d_draw.h"
-#include "palette.h"
-#include "render.h"
-#include "menu.h"
-#include "d_sound.h"
+#include "bs2/driver/_mouse.h"
+#include "bs2/driver/keyboard.h"
+#include "bs2/driver/rdwin.h"
+#include "bs2/driver/d_draw.h"
+#include "bs2/driver/palette.h"
+#include "bs2/driver/render.h"
+#include "bs2/driver/menu.h"
+#include "bs2/driver/d_sound.h"
 #include "bs2/sword2.h"
+
+namespace Sword2 {
 
 #define MENUDEEP 40		// Temporary, until menu.h is written!
 
@@ -126,3 +128,5 @@ void SetWindowName(const char *windowName) {
 	// SetWindowText(hwnd, windowName);
 	// strcpy(gameName, windowName);
 }
+
+} // End of namespace Sword2

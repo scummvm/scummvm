@@ -43,6 +43,8 @@
 #include "sword2.h"	// for CloseGame()
 #include "router.h"
 
+namespace Sword2 {
+
 // ---------------------------------------------------------------------------
 // welcome to the easy resource manager - written in simple code for easy
 // maintenance
@@ -1435,3 +1437,5 @@ void Sword2ResourceManager::getCd(int cd) {
 	memory.freeMemory(text_spr);
 	RemoveMsg();
 }
+
+} // End of namespace Sword2

@@ -46,6 +46,8 @@
 #include "sync.h"
 #include "sound.h"		// for Speech stuff.
 
+namespace Sword2 {
+
 // stores resource id of wav to use as lead-out from smacker
 uint32 smackerLeadOut = 0;
 
@@ -793,3 +795,5 @@ int32 FN_play_sequence(int32 *params) {
 	// continue script
 	return IR_CONT;
 }
+
+} // End of namespace Sword2

@@ -22,9 +22,11 @@
 
 #include "common/util.h"
 #include "base/engine.h"
-#include "d_draw.h"
-#include "driver96.h"
-#include "../sword2.h"
+#include "bs2/driver/d_draw.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/sword2.h"
+
+namespace Sword2 {
 
 #define PALTABLESIZE 64 * 64 * 64
 
@@ -263,3 +265,5 @@ void FadeServer() {
 
 	g_system->set_palette(newPalette, 0, 256);
 }
+
+} // End of namespace Sword2

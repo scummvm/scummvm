@@ -22,6 +22,8 @@
 
 #include "driver/driver96.h"
 
+namespace Sword2 {
+
 int32 FN_anim(int32 *params);
 int32 FN_reverse_anim(int32 *params);
 int32 FN_mega_table_anim(int32 *params);
@@ -31,5 +33,7 @@ int32 FN_no_sprite(int32 *params);
 int32 FN_back_sprite(int32 *params);
 int32 FN_sort_sprite(int32 *params);
 int32 FN_fore_sprite(int32 *params);
+
+} // End of namespace Sword2
 
 #endif

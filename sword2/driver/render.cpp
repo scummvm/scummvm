@@ -18,13 +18,15 @@
  */
 
 #include "stdafx.h"
-#include "driver96.h"
-#include "d_draw.h"
-#include "rdwin.h"
-#include "_mouse.h"
-#include "render.h"
-#include "menu.h"
-#include "../sword2.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/driver/d_draw.h"
+#include "bs2/driver/rdwin.h"
+#include "bs2/driver/_mouse.h"
+#include "bs2/driver/render.h"
+#include "bs2/driver/menu.h"
+#include "bs2/sword2.h"
+
+namespace Sword2 {
 
 #define MILLISECSPERCYCLE 83
 
@@ -1010,3 +1012,5 @@ int32 CloseBackgroundLayer(void) {
 	layer = 0;
 	return RD_OK;
 }
+
+} // End of namespace Sword2

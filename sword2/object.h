@@ -22,6 +22,8 @@
 
 #include "driver/driver96.h"
 
+namespace Sword2 {
+
 // these structures represent the broken up compact components
 // these here declared to the system must be the same as those declared to
 // LINC (or it wont work)
@@ -121,5 +123,7 @@ typedef struct {
 	int32 dx[8 * (12 + 1)];		// walk step distances in x direction
 	int32 dy[8 * (12 + 1)];		// walk step distances in y direction
 } Object_walkdata;
+
+} // End of namespace Sword2
 
 #endif

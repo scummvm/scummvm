@@ -22,8 +22,12 @@
 
 #include "object.h"
 
+namespace Sword2 {
+
 void Init_sync_system(void);
 void Clear_syncs(uint32	id);
 uint32 Get_sync(void);
+
+} // End of namespace Sword2
 
 #endif

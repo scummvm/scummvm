@@ -33,7 +33,9 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include "menu.h"
+#include "bs2/driver/menu.h"
+
+namespace Sword2 {
 
 #define RENDERWIDE		640
 #define ALIGNRENDERDEEP		480
@@ -57,5 +59,7 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf);
 
 void UploadRect(Common::Rect *r);
+
+} // End of namespace Sword2
 
 #endif

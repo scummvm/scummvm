@@ -22,6 +22,13 @@
 
 #include "driver/d_sound.h"
 
+enum BSGameId {
+	GID_SWORD2 = GID_SWORD2_FIRST,
+	GID_SWORD2_DEMO
+};
+
+namespace Sword2 {
+
 // Bodge for PCF76 version so that their demo CD can be labelled "PCF76"
 // rather than "RBSII1"
 
@@ -42,11 +49,6 @@ void UnpauseGame(void);
 
 extern uint8 version_string[];		// for displaying from the console
 extern uint8 unencoded_name[];
-
-enum BSGameId {
-	GID_SWORD2 = GID_SWORD2_FIRST,
-	GID_SWORD2_DEMO
-};
 
 // TODO move stuff into class
 
@@ -74,5 +76,7 @@ public:
 
 extern Sword2State *g_sword2;
 extern Sword2Sound *g_sound;
+
+} // End of namespace Sword2
 
 #endif

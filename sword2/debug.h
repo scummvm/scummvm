@@ -26,6 +26,8 @@
 #include "driver.h"
 #include "object.h"
 
+namespace Sword2 {
+
 #define MAX_DEBUG_TEXT_BLOCKS	50
 
 extern uint8 displayDebugText;	// 0=off; 1=on
@@ -62,10 +64,16 @@ void Draw_debug_graphics(void);
 
 void Print_current_info(void);
 
+} // End of namespace Sword2
+
 #else	// ie. not _SWORD2_DEBUG
+
+namespace Sword2 {
 
 void Build_debug_text(void);
 void Draw_debug_graphics(void);
+
+} // End of namespace Sword2
 
 #endif
 

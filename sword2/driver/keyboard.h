@@ -34,6 +34,10 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+namespace Sword2 {
+
 void WriteKey(uint16 ascii, int keycode, int modifier);		// Adds a keypress to the buffer
+
+} // End of namespace Sword2
 
 #endif

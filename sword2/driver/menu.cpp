@@ -18,11 +18,13 @@
  */
 
 #include "stdafx.h"
-#include "driver96.h"
-#include "menu.h"
-#include "d_draw.h"
-#include "render.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/driver/menu.h"
+#include "bs2/driver/d_draw.h"
+#include "bs2/driver/render.h"
 #include "common/rect.h"
+
+namespace Sword2 {
 
 #define MENUDEEP 40
 #define MAXMENUANIMS 8
@@ -326,5 +328,4 @@ uint8 GetMenuStatus(uint8 menu) {
 	return menuStatus[menu];
 }
 
-
-
+} // End of namespace Sword2

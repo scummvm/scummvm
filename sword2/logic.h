@@ -25,6 +25,8 @@
 #include "defs.h"
 #include "header.h"
 
+namespace Sword2 {
+
 #define	TREE_SIZE 3
 
 class logic {
@@ -66,5 +68,7 @@ private:
 extern logic LLogic;
 
 int32 FN_add_to_kill_list(int32 *params);
+
+} // End of namespace Sword2
 
 #endif

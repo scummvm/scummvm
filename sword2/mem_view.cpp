@@ -24,6 +24,8 @@
 #include "memory.h"
 #include "resman.h"
 
+namespace Sword2 {
+
 // has to be global because a local in Fetch_mem_owner is destroyed on exit
 char buf[50];
 
@@ -183,3 +185,5 @@ void Sword2MemoryManager::memoryString(char *string) {
 		mem_locked, mem_floating, mem_free, blocksUsed, MAX_mem_blocks,
 		percent, (res_man.fetchUsage() / 1024));
 }
+
+} // End of namespace Sword2

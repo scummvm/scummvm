@@ -20,7 +20,9 @@
 #include "stdafx.h"
 #include "driver/driver96.h"
 
+namespace Sword2 {
 uint32	console_status = 0;	//0 off		// LEFT IN RELEASE VERSION
+} // End of namespace Sword2
 
 #ifdef _SWORD2_DEBUG
 
@@ -50,6 +52,8 @@ uint32	console_status = 0;	//0 off		// LEFT IN RELEASE VERSION
 #include "startup.h"
 #include "sword2.h"
 #include "time.h"
+
+namespace Sword2 {
 
 uint32 Parse_user_input(void);
 void Clear_console_line(void);
@@ -1058,7 +1062,11 @@ void Con_display_events() {
 	}
 }
 
+} // End of namespace Sword2
+
 #else
+
+namespace Sword2 {
 
 void Print_to_console(const char *format, ...) {}
 void Temp_print_to_console(const char *format, ...) {}
@@ -1066,5 +1074,7 @@ void Clear_console_line(void) {}
 void Scroll_console(void) {}
 void Init_console(void) {}
 void StartConsole(void) {}
+
+} // End of namespace Sword2
 
 #endif

@@ -33,6 +33,8 @@
 #include "sound.h"
 #include "sword2.h"		// for CloseGame()
 
+namespace Sword2 {
+
 Object_graphic engine_graph;	// global for engine
 Object_mega engine_mega;	// global for engine
 
@@ -469,3 +471,5 @@ int32 FN_play_credits(int32 *params) {
 
 	return IR_CONT;
 }
+
+} // End of namespace Sword2

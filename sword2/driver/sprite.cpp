@@ -25,6 +25,8 @@
 #include "palette.h"
 #include "rdwin.h"
 
+namespace Sword2 {
+
 static uint8 *lightMask = 0;
 
 /**
@@ -714,3 +716,5 @@ int32 CloseLightMask(void) {
 	lightMask = 0;
 	return RD_OK;
 }
+
+} // End of namespace Sword2

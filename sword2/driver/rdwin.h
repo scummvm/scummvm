@@ -20,6 +20,10 @@
 #ifndef RDWIN_H
 #define RDWIN_H
 
+namespace Sword2 {
+
 extern void SetNeedRedraw(void);
+
+} // End of namespace Sword2
 
 #endif

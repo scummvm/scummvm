@@ -22,6 +22,8 @@
 
 #include "memory.h"
 
+namespace Sword2 {
+
 #define	MAX_res_files	20
 
 class Sword2ResourceManager {
@@ -104,5 +106,7 @@ private:
 };							
 
 extern Sword2ResourceManager res_man;	//declare the object global
+
+} // End of namespace Sword2
 
 #endif

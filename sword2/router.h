@@ -23,6 +23,8 @@
 #include "memory.h"
 #include "object.h"
 
+namespace Sword2 {
+
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif
@@ -74,5 +76,7 @@ void PlotWalkGrid(void);
 void AddWalkGrid(int32 gridResource);
 void RemoveWalkGrid(int32 gridResource);
 void ClearWalkGridList(void);
+
+} // End of namespace Sword2
 
 #endif
