@@ -63,7 +63,7 @@ static bool find_track(int track, int &first_sec, int &last_sec)
   last = TOC_TRACK(toc->last);
   if(first < 1 || last > 99 || first > last)
     return false;
-  for(i=last; i>=first; --i)
+  for(i=first; i<=last; i++)
     if(!(TOC_CTRL(toc->entry[i-1])&4))
       if(track==1) {
 	first_sec = TOC_LBA(toc->entry[i-1]);
