@@ -37,7 +37,7 @@ private:
 	static void passTimerFunc(void *param);
 	void timerCall(void);
 
-	bool _ignoreNextPoll;
+	uint32 _timerCount;
 	uint8 *_sysExSequence;
 	MidiDriver *_midiDrv;
 	static byte _mt32_to_gm[128];

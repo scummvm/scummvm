@@ -38,11 +38,10 @@ GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk, OSystem *system)
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();
-	if (midiRes != 0) {
+	if (midiRes != 0)
 		error("Can't open midi device. Errorcode: %d", midiRes);
-	}
+	_timerCount = 0;
 	_midiDrv->setTimerCallback(this, passTimerFunc);
-	_ignoreNextPoll = false;
 }
 
 GmMusic::~GmMusic(void) {
@@ -62,13 +61,13 @@ void GmMusic::setVolume(uint8 volume) {
 }
 
 void GmMusic::timerCall(void) {
-
-	// midi driver polls hundred times per sec. We only want 50 times.
-	_ignoreNextPoll = !_ignoreNextPoll;
-	if (!_ignoreNextPoll) return;
-
-	if (_musicData != NULL)
-		pollMusic();
+	_timerCount += _midiDrv->getBaseTempo();
+	if (_timerCount > (1000000 / 50)) {
+		// call pollMusic() 50 times per second
+		_timerCount -= 1000000 / 50;
+		if (_musicData != NULL)
+			pollMusic();
+	}
 }
 
 void GmMusic::setupPointers(void) {

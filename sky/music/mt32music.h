@@ -38,7 +38,7 @@ private:
 	bool processPatchSysEx(uint8 *sysExData);
 	virtual void setVolume(uint8 volume);
 
-	bool _ignoreNextPoll;
+	uint32 _timerCount;
 	uint8 *_sysExSequence;
 	MidiDriver *_midiDrv;
 	uint8 _dummyMap[128];
