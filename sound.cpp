@@ -989,7 +989,35 @@ void Scumm::decompressBundleSound(int index) {
 					*(t_table + offset2 + 1) = *(src + offset3);
 				} while(1);
 
-				// completed soon
+				src = CompOutput;
+				length = (outputSize * 8) / 12;
+				k = 0;
+				c = 0;
+				s = -12;
+				*(src) = *(outputSize + t_table - 1);
+				*(src + outputSize - 1) = *(t_table + length - 1);
+				t = length - 1;
+				if (t > 0) {
+					do {
+						j = length + (k / 2);
+						if (k & 1) {
+							r = s / 8;
+							t_tmp1 = *(t_table + k);
+							t_tmp2 = *(t_table + j);
+							*(src + r + 2) = (*(src + r + 2)) | (t_tmp1 & 0xf0);
+							*(src + r + 3) = ((t_tmp1 & 0x0f) << 4) | ((t_tmp2 & 0xf0) >> 4);
+						} else {
+							r = c / 8;
+							t_tmp1 = *(t_table + k);
+							t_tmp2 = *(t_table + j);
+							*(src + r + 2) = (t_tmp1 & 0xf0) >> 4;
+							*(src + r + 1) = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
+						}
+						s += 12;
+						k++;
+						c += 12;
+					} while (k < t);
+				}
 
 			break;
 
