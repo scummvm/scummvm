@@ -560,10 +560,9 @@ void Scumm::drawString(int a)
 		charset._left -= charset.getStringWidth(a, buf, 0) >> 1;
 	}
 
-	// Full Throttle's conversation menus should definitely mask the
-	// background.
-	if (!(_features & GF_AFTER_V7))
-		charset._ignoreCharsetMask = 1;
+	// Verb text should never time out.
+	if (a == 4)
+		_talkDelay = -1;
 
 	if (!buf[0]) {
 		buf[0] = ' ';

@@ -374,9 +374,15 @@ int Scumm::scummLoop(int delta)
 
 	decreaseScriptDelay(delta);
 
-	_talkDelay -= delta;
-	if (_talkDelay < 0)
-		_talkDelay = 0;
+	// If _talkDelay is -1, that means the text should never time out.
+	// This is used for drawing verb texts, e.g. the Full Throttle
+	// dialogue choices.
+
+	if (_talkDelay != -1) {
+		_talkDelay -= delta;
+		if (_talkDelay < 0)
+			_talkDelay = 0;
+	}
 
 	processKbd();
 

@@ -899,7 +899,7 @@ void Actor::drawActorCostume()
 		}
 	} else {
 		AkosRenderer ar(_vm);
-
+		ar.charsetmask = true;
 		ar.x = x - _vm->virtscr->xstart;
 		ar.y = y - elevation;
 		ar.scale_x = scalex;
@@ -910,7 +910,6 @@ void Actor::drawActorCostume()
 			if (ar.clipping > (byte)_vm->gdi._numZBuffer)
 				ar.clipping = _vm->gdi._numZBuffer;
 		}
-		ar.charsetmask = _vm->_vars[_vm->VAR_CHARSET_MASK] != 0;
 
 		ar.outptr = _vm->virtscr->screenPtr + _vm->virtscr->xstart;
 		ar.outwidth = _vm->virtscr->width;
