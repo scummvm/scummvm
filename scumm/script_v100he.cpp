@@ -663,18 +663,19 @@ void ScummEngine_v100he::o100_arrayOps() {
 		break;
 	case 131:
 		{
-		// TODO
-		//Array1
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
-		//Array2
-		array = fetchScriptWord();
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
+			int a1_dim1end = pop();
+			int a1_dim1start = pop();
+			int a1_dim2end = pop();
+			int a1_dim2start = pop();
+			int array2 = fetchScriptWord();
+			int a2_dim1end = pop();
+			int a2_dim1start = pop();
+			int a2_dim2end = pop();
+			int a2_dim2start = pop();
+			if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
+				warning("Source and dest ranges size are mismatched");
+			}
+			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 		}
 		break;
 	case 133:
