@@ -108,6 +108,7 @@ enum GameFeatures {
 	GF_NO_SCALING          = 1 << 12,
 	GF_FEW_LOCALS          = 1 << 13,
 	GF_HUMONGOUS           = 1 << 14,
+	GF_MULTIPLE_VERSIONS   = 1 << 15,
 	
 	GF_FMTOWNS             = 1 << 17,
 	GF_AMIGA               = 1 << 18,

@@ -194,7 +194,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Humongous Entertainment Scumm Version 6
 	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0},
 	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 0, MDT_ADLIB | MDT_NATIVE,
 	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
@@ -336,6 +336,18 @@ static const ScummGameSettings scumm_settings[] = {
 #endif
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0}
 };
+
+// This additional table is used for titles where GF_MULTIPLE_VERSIONS is specified.
+// Now these are HE games. Some of them were released for different versions of SPUTM,
+// and instead of multiplying GIDs this table is used.
+//
+// Use main table to specify default flags and this table to override defaults.
+static const ScummGameSettings he_md5_settings[] = {
+	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (early version)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
+	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0}
+};
+
 
 static int compareMD5Table(const void *a, const void *b) {
 	const char *key = (const char *)a;
@@ -3037,6 +3049,35 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		error("Invalid game '%s'\n", detector->_game.name);
 
 	ScummGameSettings game = *g;
+
+	if (game.features & GF_MULTIPLE_VERSIONS) {
+		uint8 md5sum[16];
+		char buf[256];
+		const char *name = game.name;
+		char md5str[32+1];
+		
+		if (game.features & GF_HUMONGOUS)
+			sprintf(buf, "%s.he0", name);
+		else
+			sprintf(buf, "%s.000", name);
+
+		if (md5_file(buf, md5sum, ConfMan.get("path").c_str())) {
+			for (int j = 0; j < 16; j++) {
+				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+			}
+		}
+		
+		g = he_md5_settings;
+		while (g->name) {
+			if (!scumm_stricmp(md5str, g->name))
+				break;
+			g++;
+		}
+		if (g->name) {
+			game = *g;
+			game.name = name;
+		}
+	}
 
 	if (ConfMan.hasKey("amiga")) {
 		warning("Configuration key 'amiga' is deprecated. Use 'platform=amiga' instead");
