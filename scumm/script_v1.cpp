@@ -2063,7 +2063,7 @@ void Scumm::o5_roomOps()
 		c = getVarOrDirectByte(0x40);
 		_opcode = fetchScriptByte();
 		d = getVarOrDirectByte(0x80);
-		palManipulateInit(b, c, a, d, 1);
+		palManipulateInit(b, c, a, d);
 		break;
 
 	case 16:

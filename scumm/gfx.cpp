@@ -2459,86 +2459,59 @@ void Scumm::setCameraAtEx(int at)
 	}
 }
 
-void Scumm::palManipulateInit(int start, int end, int d, int time, int e)
+void Scumm::palManipulateInit(int start, int end, int string_id, int time)
 {
-	// TODO - correctly implement this function (see also bug #558245)
-	//
-	// There are two known places (both in FOA) where this function is being
-	// called. The fist is during the FOA extro, to change the color to match
-	// the sinking sun. The following three calls (with some pauses between them)
-	// are issued:
-	//
-	// palManipulateInit(16, 190, 32, 180, 1)
-	// palManipulateInit(16, 190, 32, 1, 1)
-	// palManipulateInit(16, 190, 32, 800, 1)
-	//
-	// The second place is in the Inner Sanctum after you used the stone discs,
-	// here it is used to give the scene a "lava glow".
-	//
-	// palManipulateInit(32, 65, 46, 20, 1): not implemented!
-	//
-	// The first two parameters seem to specify a palette range (as the colors
-	// from 16 to 190 are the ones that make up water & sky).
-	//
-	// Maybe the change has to be done over a period of time, possibly specified
-	// by the second last parameter - between call 1 and 2, about 17-18 seconds
-	// seem to pass (well using get_msecs, I measured 17155 ms, 17613 ms, 17815 ms).
-	//
-	// No clue about the third and fifth parameter right now, they just always
-	// are 32 and 1 - possibly finding another example of this function being
-	// used would help a lot. Also, I can't currently compare it with the original,
-	// doing that (and possibly, taking screenshots of it for analysis!) would 
-	// help a lot.
-	
-	warning("palManipulateInit(%d, %d, %d, %d, %d): not implemented", start, end, d, time, e);
-
-	// FIXME - is this right?
-	// It seems we already have had this "palManipulate" and "moveMemInPalRes"
-	// functions, only they were never used (somebody disassembled them and
-	// didn't disassmble the functions using them?).
-	//
-	// I 
 	_palManipStart = start;
 	_palManipEnd = end;
-	//_palManipCounter = ?
-	
-	{
-		int redScale = 0xFF;
-		int greenScale = 0xFF - d;
-		int blueScale = 0xFF - d;
-		byte *cptr;
-		byte *cur;
-		int num;
-		int color;
-	
-		cptr = _currentPalette + start * 3;
-		cur = _currentPalette + start * 3;
-		num = end - start + 1;
+	_palManipCounter = 0;
 
-		do {
-			color = *cptr++;
-			if (redScale != 0xFF)
-				color = color * redScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-
-			color = *cptr++;
-			if (greenScale != 0xFF)
-				color = color * greenScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-
-			color = *cptr++;
-			if (blueScale != 0xFF)
-				color = color * blueScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-		} while (--num);
-		setDirtyColors(start, end);
+	byte *startptr = getResourceAddress(rtTemp, 4);
+	if (startptr)
+		nukeResource(rtTemp, 4);
+	startptr = createResource(rtTemp, 4, 256 * 6);
+	if (!startptr) {
+		warning("palManipulateInit(%d,%d,%d,%d): Cannot create rtTemp resource index 4\n", start, end, string_id, time);
+		return;
 	}
+	startptr += _palManipStart * 6;
+
+	byte *endptr = getResourceAddress(rtTemp, 5);
+	if (endptr)
+		nukeResource(rtTemp, 5);
+	endptr = createResource(rtTemp, 5, 256 * 6);
+	if (!endptr) {
+		warning("palManipulateInit(%d,%d,%d,%d): Cannot create rtTemp resource index 5\n", start, end, string_id, time);
+		return;
+	}
+	endptr += _palManipStart * 6;
+
+	byte *curptr = _currentPalette + _palManipStart * 3;
+	byte *string1ptr = getStringAddress(string_id) + _palManipStart;
+	byte *string2ptr = getStringAddress(string_id + 1) + _palManipStart;
+	byte *string3ptr = getStringAddress(string_id + 2) + _palManipStart;
+	if (!string1ptr || !string2ptr || !string3ptr) {
+		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d\n",
+		        start, end, string_id, time, string_id, string_id + 1, string_id + 2);
+		return;
+	}
+
+	int i;
+	for (i = _palManipStart; i <= _palManipEnd; ++i) {
+		*((uint16 *)startptr) = ((uint16) *curptr++) << 8;
+		*((uint16 *)endptr) = ((uint16) *string1ptr++) << 8;
+		startptr += 2;
+		endptr += 2;
+		*((uint16 *)startptr) = ((uint16) *curptr++) << 8;
+		*((uint16 *)endptr) = ((uint16) *string2ptr++) << 8;
+		startptr += 2;
+		endptr += 2;
+		*((uint16 *)startptr) = ((uint16) *curptr++) << 8;
+		*((uint16 *)endptr) = ((uint16) *string3ptr++) << 8;
+		startptr += 2;
+		endptr += 2;
+	}
+
+	_palManipCounter = time;
 }
 
 void Scumm::palManipulate()
@@ -2559,17 +2532,17 @@ void Scumm::palManipulate()
 
 	i = _palManipStart;
 	while (i < _palManipEnd) {
-		j = (*((uint16 *)srcptr) += *(uint16 *)destptr);
+		j = (*((uint16 *)srcptr) += (*(uint16 *)destptr - *((uint16 *)srcptr)) / _palManipCounter);
 		*pal++ = j >> 8;
 		srcptr += 2;
 		destptr += 2;
 
-		j = (*((uint16 *)srcptr) += *(uint16 *)destptr);
+		j = (*((uint16 *)srcptr) += (*(uint16 *)destptr - *((uint16 *)srcptr)) / _palManipCounter);
 		*pal++ = j >> 8;
 		srcptr += 2;
 		destptr += 2;
 
-		j = (*((uint16 *)srcptr) += *(uint16 *)destptr);
+		j = (*((uint16 *)srcptr) += (*(uint16 *)destptr - *((uint16 *)srcptr)) / _palManipCounter);
 		*pal++ = j >> 8;
 		srcptr += 2;
 		destptr += 2;

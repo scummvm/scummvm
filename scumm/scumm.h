@@ -785,7 +785,7 @@ public:
 	void swapPalColors(int a, int b);
 	void cyclePalette();
 	void stopCycle(int i);
-	void palManipulateInit(int a, int b, int c, int d, int e);
+	void palManipulateInit(int start, int end, int string_id, int time);
 	void palManipulate();
 	void unkRoomFunc3(int a, int b, int c, int d, int e);
 	int remapPaletteColor(int r, int g, int b, uint threshold);
