@@ -104,7 +104,7 @@ EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, const TargetSe
 
 	// Determine whether this is a SCUMM game
 	// FIXME: This check is evil, as it requires us to hard code GIDs.
-	bool isScumm = (GID_SCUMM_FIRST <= target->id && target->id <= GID_SCUMM_LAST);
+	bool isScumm = target && (GID_SCUMM_FIRST <= target->id && target->id <= GID_SCUMM_LAST);
 
 	
 	// Label & edit widget for the game ID
