@@ -24,6 +24,8 @@
 #include "common/util.h"
 #include "sound/mididrv.h"
 
+namespace Sky {
+
 void SkyMT32Music::passTimerFunc(void *param) {
 
 	((SkyMT32Music*)param)->timerCall();
@@ -164,3 +166,5 @@ void SkyMT32Music::startDriver(void) {
 	while (processPatchSysEx(sysExData))
 		sysExData += 5;
 }
+
+} // End of namespace Sky

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 reset_48_47[] = {
@@ -579,5 +581,7 @@ Compact sc47_floor = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

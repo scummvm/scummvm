@@ -24,6 +24,8 @@
 
 #include "stdafx.h"
 
+namespace Sky {
+
 class RncDecoder {
 
 protected:
@@ -53,5 +55,7 @@ protected:
 	uint16 inputValue(uint16 *table);
 	
 };
+
+} // End of namespace Sky
 
 #endif

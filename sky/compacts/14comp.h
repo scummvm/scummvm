@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 rs_foster_14_13[] = {
@@ -2074,5 +2076,7 @@ uint16 change6_seq[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

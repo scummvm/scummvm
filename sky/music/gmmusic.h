@@ -26,6 +26,8 @@
 
 class MidiDriver;
 
+namespace Sky {
+
 class SkyGmMusic : public SkyMusicBase {
 public:
 	SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system);
@@ -45,5 +47,7 @@ private:
 	virtual void setupChannels(uint8 *channelData);
 	virtual void startDriver(void);
 };
+
+} // End of namespace Sky
 
 #endif //GMMUSIC_H

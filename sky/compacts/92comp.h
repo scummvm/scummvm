@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact bridge_e = {
@@ -1683,5 +1685,7 @@ Compact slab3 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

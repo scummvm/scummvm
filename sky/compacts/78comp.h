@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc78_ledge_table[] = {
@@ -1205,5 +1207,7 @@ uint16 sc78_fast_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

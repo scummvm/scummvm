@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 gal_look_up[] = {
@@ -1222,5 +1224,7 @@ uint16 s20_mouse[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

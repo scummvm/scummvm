@@ -25,6 +25,8 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
+namespace Sky {
+
 struct Compact;
 class SkyGrid;
 
@@ -47,6 +49,8 @@ private:
 	static const int16 _routeDirections[4];
 	static const uint16 _logicCommands[4];
 };
+
+} // End of namespace Sky
 
 #endif // AUTOROUTE_H
 

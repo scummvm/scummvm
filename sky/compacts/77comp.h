@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc77_fpushl_2[] = {
@@ -1093,5 +1095,7 @@ Compact sc77_door76 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

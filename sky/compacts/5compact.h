@@ -33,6 +33,8 @@
 #include "17comp.h"
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact copter = {
@@ -4924,5 +4926,7 @@ void *data_2[] = {
 uint32 *table2 = (uint32*)data_2;
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -30,6 +30,8 @@
 #include "sky/struc.h"
 #include "sky/text.h"
 
+namespace Sky {
+
 #define SHOWSCREEN		 0
 #define COMMANDEND		 0 // end of COMMANDFLIRT block
 #define FADEUP			 1 // fade up palette
@@ -904,3 +906,5 @@ bool SkyIntro::escDelay(uint32 msecs) {
 	} while (msecs > 0);
 	return true;
 }
+
+} // End of namespace Sky

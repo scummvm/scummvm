@@ -26,6 +26,8 @@
 #include "sky/struc.h"
 #include "sky/skydefs.h"
 
+namespace Sky {
+
 namespace SkyCompact {
 	MegaSet *getMegaSet(Compact *cpt, uint16 megaSet);
 	uint16 **getTurnTable(Compact *cpt, uint16 megaSet, uint16 dir);
@@ -3253,5 +3255,7 @@ namespace SkyCompact {
 	extern uint16 wit_auto[];
 	extern uint16 minif_auto[];
 }
+
+} // End of namespace Sky
 
 #endif

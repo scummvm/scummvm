@@ -25,6 +25,8 @@
 #include "common/util.h"
 #include "sound/mididrv.h"
 
+namespace Sky {
+
 void SkyGmMusic::passTimerFunc(void *param) {
 
 	((SkyGmMusic*)param)->timerCall();
@@ -130,3 +132,4 @@ uint8 SkyGmMusic::_veloTab[128] = {
 	0x7C, 0x7C, 0x7D, 0x7D, 0x7E, 0x7E, 0x7F, 0x7F
 };
 
+} // End of namespace Sky

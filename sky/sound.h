@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "sound/mixer.h"
 
+namespace Sky {
+
 class SkyDisk;
 
 enum {
@@ -86,5 +88,7 @@ private:
 	static uint16 _speechConvertTable[8];
 	static SfxQueue _sfxQueue[MAX_QUEUED_FX];
 };
+
+} // End of namespace Sky
 
 #endif

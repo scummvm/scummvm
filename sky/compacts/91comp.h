@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact decomp_obj = {
@@ -1519,5 +1521,7 @@ Compact door_r91f = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 car_down_seq[] = {
@@ -1973,5 +1975,7 @@ uint16 fire1_seq[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

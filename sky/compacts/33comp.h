@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc33_lock = {
@@ -825,5 +827,7 @@ uint16 reset_30_33[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

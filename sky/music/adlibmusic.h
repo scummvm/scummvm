@@ -27,6 +27,8 @@
 
 class SoundMixer;
 
+namespace Sky {
+
 class SkyAdlibMusic : public SkyMusicBase {
 public:
 	SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *system);
@@ -44,5 +46,7 @@ private:
 	void premixerCall(int16 *buf, uint len);
 	static void passMixerFunc(void *param, int16 *buf, uint len);
 };
+
+} // End of namespace Sky
 
 #endif //ADLIBMUSIC_H

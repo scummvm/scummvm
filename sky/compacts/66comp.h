@@ -41,6 +41,8 @@
 #include "82comp.h"
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc66_hi_beam_an1[] = {
@@ -6690,5 +6692,7 @@ void *data_5[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

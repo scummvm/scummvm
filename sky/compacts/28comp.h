@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 s28_chip_list[] = {
@@ -990,5 +992,7 @@ Compact small_l_28 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 rs_foster_19_28[] = {
@@ -722,5 +724,7 @@ uint16 s19_fast_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

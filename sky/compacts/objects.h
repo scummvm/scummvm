@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact blank5 = {
@@ -1259,5 +1261,7 @@ Compact menu_bar = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

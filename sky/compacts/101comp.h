@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact cancel_button = {
@@ -883,5 +885,7 @@ uint16 s101_chip_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

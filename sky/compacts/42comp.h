@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc42_jdg_hammer[] = {
@@ -1709,5 +1711,7 @@ uint16 sc42_fos_leave[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

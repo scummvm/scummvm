@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc96_mouse[] = {
@@ -925,5 +927,7 @@ uint16 fast_list_sc96[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

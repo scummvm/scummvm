@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc791_palette[] = {
@@ -1656,5 +1658,7 @@ Compact sc79_pipe = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 liyt_4_seq[] = {
@@ -2431,5 +2433,7 @@ Compact liyt_1 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

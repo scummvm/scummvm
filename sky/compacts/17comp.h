@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 pulseb_seq[] = {
@@ -915,5 +917,7 @@ Compact pulse = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

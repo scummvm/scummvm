@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc75_floor_table[] = {
@@ -1911,5 +1913,7 @@ uint16 sc75_get_tiss[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

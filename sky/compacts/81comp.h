@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc81_big_tent3 = {
@@ -2763,5 +2765,7 @@ uint16 sc81_foster_sit[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

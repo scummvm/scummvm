@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc68_pulse5 = {
@@ -1410,5 +1412,7 @@ uint16 sc68_joey_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

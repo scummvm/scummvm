@@ -23,6 +23,8 @@
 #include "sky/disk.h"
 #include "common/util.h"
 
+namespace Sky {
+
 SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system) {
 
 	_musicData = NULL;
@@ -182,3 +184,5 @@ void SkyMusicBase::pollMusic(void) {
 	_system->unlock_mutex(_mutex);
 	_aktTime &= 0xFFFF;
 }
+
+} // End of namespace Sky

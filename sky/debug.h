@@ -25,6 +25,8 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
+namespace Sky {
+
 class SkyDebug {
 public:
 	static void fetchCompact(uint32 a);
@@ -32,5 +34,7 @@ public:
 	static void script(uint32 command, uint16 *scriptData);
 	static void mcode(uint32 mcode, uint32 a, uint32 b, uint32 c);
 };
+
+} // End of namespace Sky
 
 #endif

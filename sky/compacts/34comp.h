@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc34_fast_list[] = {
@@ -955,5 +957,7 @@ Compact sc34_door = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

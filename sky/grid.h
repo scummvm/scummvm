@@ -25,6 +25,8 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
+namespace Sky {
+
 struct Compact;
 class SkyDisk;
 
@@ -56,5 +58,7 @@ private:
 	uint8 *_gameGrids;
 	SkyDisk *_skyDisk;
 };
+
+} // End of namespace Sky
 
 #endif //SKYGRID_H

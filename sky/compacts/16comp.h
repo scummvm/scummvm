@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact reactor_lower = {
@@ -981,5 +983,7 @@ uint16 fost_con_look[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

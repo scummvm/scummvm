@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 spu_left[] = {
@@ -3829,5 +3831,7 @@ uint16 sc38_lift_down[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,10 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 
+class OSystem;
+
+namespace Sky {
+
 class SkyDisk;
 class SkyScreen;
 class SkyLogic;
@@ -32,7 +36,6 @@ class SkyMouse;
 class SkyText;
 class SkyMusicBase;
 class SkySound;
-class OSystem;
 struct Compact;
 struct dataFileHeader;
 struct MegaSet;
@@ -295,5 +298,7 @@ private:
 	static char _quitTexts[16][35];
 	static uint8 _crossImg[594];
 };
+
+} // End of namespace Sky
 
 #endif // CONTROL_H

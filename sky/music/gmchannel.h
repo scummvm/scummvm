@@ -26,6 +26,8 @@
 
 class MidiDriver;
 
+namespace Sky {
+
 typedef struct {
 	uint16 eventDataPtr;
 	int32 nextEventTime;
@@ -73,5 +75,7 @@ private:
 	void com90_setStartOfData(void);     // 12
 	void com90_getChannelControl(void);     // 13
 };
+
+} // End of namespace Sky
 
 #endif //SKYGMCHANNEL_H

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc82_push_button[] = {
@@ -713,5 +715,7 @@ uint16 sc82_jobs_return[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -40,6 +40,8 @@ extern void force_keyboard(bool);
 #endif
 
 
+namespace Sky {
+
 SkyConResource::SkyConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) {
 
 	_spriteData = (dataFileHeader *)pSpData;
@@ -1820,3 +1822,4 @@ uint8 SkyControl::_crossImg[594] = {
 	0xFF, 0xFF
 };
 
+} // End of namespace Sky

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 fast_list_sc95[] = {
@@ -1358,5 +1360,7 @@ uint16 door_l95_anim[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc74_monitor3 = {
@@ -6682,5 +6684,7 @@ uint16 sc74_slot_flash[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

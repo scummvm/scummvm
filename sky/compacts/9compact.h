@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 s9_floor_table[] = {
@@ -1690,5 +1692,7 @@ uint16 s9_pal[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

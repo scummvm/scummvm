@@ -26,6 +26,8 @@
 #include "sky/skydefs.h"
 #include "sky/struc.h"
 
+namespace Sky {
+
 #define FIRST_TEXT_SEC	77
 #define	FIRST_TEXT_BUFFER	274
 #define NO_OF_TEXT_SECTIONS	8	// 8 sections per language
@@ -667,3 +669,5 @@ const uint16 SkyText::_patchLangNum[8] = {
 	0, // SKY_PORTUGUESE
 	0  // SKY_SPANISH
 };
+
+} // End of namespace Sky

@@ -25,6 +25,8 @@
 #include "sky/music/musicbase.h"
 #include "sound/fmopl.h"
 
+namespace Sky {
+
 typedef struct {
 	uint8 ad_Op1, ad_Op2;
 	uint8 sr_Op1, sr_Op2;
@@ -97,5 +99,7 @@ private:
 	void com90_setStartOfData(void);    // 12
 	//void com90_do_two_Lodsb(void);    // 13
 };
+
+} // End of namespace Sky
 
 #endif //ADLIBCHANNEL_H

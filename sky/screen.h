@@ -27,6 +27,9 @@
 #include "sky/skydefs.h"
 
 class OSystem;
+
+namespace Sky {
+
 class SkyDisk;
 class SkyEngine;
 struct Compact;
@@ -122,5 +125,7 @@ private:
 	void vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 layerId);
 	void vectorToGame(uint8 gridVal);
 };
+
+} // End of namespace Sky
 
 #endif //SKYSCREEN_H

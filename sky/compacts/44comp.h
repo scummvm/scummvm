@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc44_chip_list[] = {
@@ -650,5 +652,7 @@ uint16 reset_37_44[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

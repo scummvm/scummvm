@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc80_bubble10 = {
@@ -3566,5 +3568,7 @@ Compact sc80_goo = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 medi_d_to_u[] = {
@@ -1701,5 +1703,7 @@ uint16 sc71_light2_anim[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -21,6 +21,8 @@
 
 #include "text.h"
 
+namespace Sky {
+
 const HuffTree SkyText::_huffTree_00109[] = {
 	{ 1, 22, 0 },
 	{ 2, 9, 0 },
@@ -1998,3 +2000,5 @@ const HuffTree SkyText::_huffTree_00372[] = {
 	{ 0, 0, 148 },
 	{ 0, 0, '!' },
 };
+
+} // End of namespace Sky

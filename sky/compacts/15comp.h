@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 rs_foster_13_15[] = {
@@ -1107,5 +1109,7 @@ uint16 s15_chip_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 botbelt_seq[] = {
@@ -2228,5 +2230,7 @@ uint16 topbelt_seq[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -24,6 +24,8 @@
 #include "sky/grid.h"
 #include "sky/logic.h"
 
+namespace Sky {
+
 #define	GRID_FILE_START	60000
 
 int8 SkyGrid::_gridConvertTable[] = {
@@ -244,3 +246,5 @@ uint8 *SkyGrid::giveGrid(uint32 pScreen)
 {
 	return _gameGrids + GRID_SIZE * _gridConvertTable[pScreen];
 }
+
+} // End of namespace Sky

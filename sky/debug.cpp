@@ -23,6 +23,8 @@
 #include "common/util.h"
 #include "sky/debug.h"
 
+namespace Sky {
+
 static const char *section_0_compacts[] = {
 	"UNDEFINED",
 	"joey",
@@ -1263,3 +1265,4 @@ void SkyDebug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 	debug(6, "MCODE: %s(%d, %d, %d)", mcodes[mcode], a, b, c);
 }
 
+} // End of namespace Sky

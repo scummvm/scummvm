@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc41_mouse_list[] = {
@@ -745,5 +747,7 @@ uint16 sc41_palette[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint32 *sc65_walk_grid = 0;
@@ -672,5 +674,7 @@ uint16 sc65_palette[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

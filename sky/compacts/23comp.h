@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint32 *grid23 = 0;
@@ -796,5 +798,7 @@ uint16 rs_foster_29_23[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

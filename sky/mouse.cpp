@@ -28,6 +28,8 @@
 #include "sky/skydefs.h"
 #include "sky/struc.h"
 
+namespace Sky {
+
 #define MICE_FILE	60300
 #define NO_MAIN_OBJECTS	24
 #define NO_LINC_OBJECTS	21
@@ -328,3 +330,4 @@ bool SkyMouse::wasClicked(void) {
 		return false;
 }
 
+} // End of namespace Sky

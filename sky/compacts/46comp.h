@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc46_floor_table[] = {
@@ -565,5 +567,7 @@ Compact sc46_floor = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

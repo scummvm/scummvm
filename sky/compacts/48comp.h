@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc48_eyes = {
@@ -1163,5 +1165,7 @@ uint16 sc48_light_pal[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

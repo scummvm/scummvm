@@ -103,10 +103,13 @@ DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
 }
 
 Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
-	return new SkyEngine(detector, syst);
+	return new Sky::SkyEngine(detector, syst);
 }
 
 REGISTER_PLUGIN("Beneath a Steel Sky", Engine_SKY_gameList, Engine_SKY_create, Engine_SKY_detectGames)
+
+
+namespace Sky {
 
 void **SkyEngine::_itemList[300];
 
@@ -538,3 +541,4 @@ bool SkyEngine::isCDVersion(void) {
 	}
 }
 
+} // End of namespace Sky

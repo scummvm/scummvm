@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc67_logic_list[] = {
@@ -2090,5 +2092,7 @@ Compact sc67_clot = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

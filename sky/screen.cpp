@@ -28,6 +28,8 @@
 #include "sky/skydefs.h"
 #include "sky/struc.h"
 
+namespace Sky {
+
 uint8 SkyScreen::_top16Colours[16*3] = {
 	0, 0, 0,
 	38, 38, 38,
@@ -783,3 +785,4 @@ void SkyScreen::showGrid(uint8 *gridBuf) {
 
 }
 
+} // End of namespace Sky

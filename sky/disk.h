@@ -28,6 +28,8 @@
 
 class File;
 
+namespace Sky {
+
 #define MAX_FILES_IN_LIST 60
 
 struct PrefFile {
@@ -77,5 +79,7 @@ protected:
 	File *_dataDiskHandle;
 	File *_dnrHandle;
 };
+
+} // End of namespace Sky
 
 #endif

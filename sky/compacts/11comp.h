@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact slat_3 = {
@@ -1726,5 +1728,7 @@ uint16 cable_fall2_seq[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

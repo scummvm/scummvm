@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 rs_low_lift2[] = {
@@ -1844,5 +1846,7 @@ Compact low_barrel = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

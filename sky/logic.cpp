@@ -40,6 +40,8 @@
 #include "base/gameDetector.h"
 */
 
+namespace Sky {
+
 uint32 SkyLogic::_scriptVariables[838];
 
 typedef void (SkyLogic::*LogicTable) ();
@@ -2538,3 +2540,4 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	target->logic = L_TALK; 
 }
 
+} // End of namespace Sky

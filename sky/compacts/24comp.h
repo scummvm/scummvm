@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 give_mag_seq[] = {
@@ -1312,5 +1314,7 @@ uint16 s24_fast_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -26,8 +26,11 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-class SkyDisk;
 class OSystem;
+
+namespace Sky {
+
+class SkyDisk;
 
 #define FILES_PER_SECTION 4
 
@@ -90,5 +93,7 @@ protected:
 	void stopMusic();                                                            // 7
 	void setFMVolume(uint16 param);                                              // 13
 };
+
+} // End of namespace Sky
 
 #endif //MUSICBASE_H

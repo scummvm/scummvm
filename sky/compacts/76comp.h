@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 ken_u_to_r[] = {
@@ -2815,5 +2817,7 @@ Compact sc76_door75 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

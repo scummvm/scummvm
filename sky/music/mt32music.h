@@ -26,6 +26,8 @@
 
 class MidiDriver;
 
+namespace Sky {
+
 class SkyMT32Music : public SkyMusicBase {
 public:
 	SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system);
@@ -45,5 +47,7 @@ private:
 	virtual void setupChannels(uint8 *channelData);
 	virtual void startDriver(void);
 };
+
+} // End of namespace Sky
 
 #endif //MT32MUSIC_H

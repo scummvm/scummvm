@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact playbak_menu = {
@@ -799,5 +801,7 @@ Compact blind_menu = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -22,6 +22,8 @@
 #ifndef SKYTALKS_H
 #define SKYTALKS_H
 
+namespace Sky {
+
 namespace SkyTalkAnims {
 
 uint16 show_mag[] = {
@@ -11893,5 +11895,7 @@ bool animTalkTableIsPointer[] = {
 	true
 };
 }
-#endif	//SKYTALKS_H
 
+} // End of namespace Sky
+
+#endif	//SKYTALKS_H

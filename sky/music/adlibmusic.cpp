@@ -24,6 +24,8 @@
 #include "sound/mixer.h"
 #include "sky/sky.h"
 
+namespace Sky {
+
 void SkyAdlibMusic::passMixerFunc(void *param, int16 *buf, uint len) {
 
 	((SkyAdlibMusic*)param)->premixerCall(buf, len);
@@ -130,3 +132,5 @@ void SkyAdlibMusic::startDriver(void) {
 	}
 	_allowedCommands = 0xD;
 }
+
+} // End of namespace Sky

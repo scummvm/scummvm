@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "sound/mixer.h"
 
+namespace Sky {
+
 class SkyDisk;
 class SkyScreen;
 class SkyMusicBase;
@@ -64,5 +66,6 @@ private:
 	void restoreScreen(void);
 };
 
-#endif // INTRO_H
+} // End of namespace Sky
 
+#endif // INTRO_H

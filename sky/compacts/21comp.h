@@ -26,6 +26,8 @@
 #include "22comp.h"
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 lamb_sit_up[] = {
@@ -2143,5 +2145,7 @@ uint16 take_cassette_seq[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

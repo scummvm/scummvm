@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 reset_44_45[] = {
@@ -630,5 +632,7 @@ uint16 sc45_mouse_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

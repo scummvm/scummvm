@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 fost_replace_pill[] = {
@@ -1582,5 +1584,7 @@ Compact fish_poster = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

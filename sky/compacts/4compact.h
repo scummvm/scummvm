@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 jobs_u_to_l[] = {
@@ -1347,5 +1349,7 @@ Compact cupboard_s4 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -37,6 +37,8 @@
 #include "10comp.h"
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 rs_joey_7_29[] = {
@@ -1591,5 +1593,7 @@ void *data_3[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

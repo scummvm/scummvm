@@ -27,6 +27,8 @@
 #include "sky/sound.h"
 #include "sky/struc.h"
 
+namespace Sky {
+
 #define SOUND_FILE_BASE 60203
 #define MAX_FX_NUMBER 393
 #define SFXF_START_DELAY 0x80
@@ -1245,3 +1247,5 @@ void SkySound::fnUnPauseFx(void) {
 	_mixer->pauseID(SOUND_CH0, false);
 	_mixer->pauseID(SOUND_CH1, false);
 }
+
+} // End of namespace Sky

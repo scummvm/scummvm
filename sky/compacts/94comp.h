@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 door_l94_anim[] = {
@@ -1378,5 +1380,7 @@ Compact hologram_a = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

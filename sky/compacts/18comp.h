@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 steam_alert_seq[] = {
@@ -1602,5 +1604,7 @@ Compact right_exit_s18 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

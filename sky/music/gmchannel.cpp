@@ -23,6 +23,8 @@
 #include "common/util.h"
 #include "sound/mididrv.h"
 
+namespace Sky {
+
 SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab) {
 
 	_musicData = pMusicData;
@@ -203,3 +205,5 @@ void SkyGmChannel::com90_getChannelControl(void) {
 	_channelData.eventDataPtr += 2;
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | (conNum << 8) | (conDat << 16));
 }
+
+} // End of namespace Sky

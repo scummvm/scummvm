@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc40_body_2 = {
@@ -1221,5 +1223,7 @@ uint16 sc40_ascend[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -27,6 +27,8 @@
 
 class GameDetector;
 
+namespace Sky {
+
 struct SystemVars {
 	uint32 systemFlags;
 	uint32 gameVersion;
@@ -115,5 +117,7 @@ protected:
 	
 	static int CDECL game_thread_proc(void *param);
 };
+
+} // End of namespace Sky
 
 #endif

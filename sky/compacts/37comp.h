@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc37_mouse_list[] = {
@@ -1905,5 +1907,7 @@ uint16 sc37_crbarbox[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc70_bar = {
@@ -1261,5 +1263,7 @@ uint16 sc70_mouse_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

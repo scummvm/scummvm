@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint32 *grid69 = 0;
@@ -1192,5 +1194,7 @@ Compact sc69_floor = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

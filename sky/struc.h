@@ -22,6 +22,8 @@
 #ifndef SKYSTRUC_H
 #define SKYSTRUC_H
 
+namespace Sky {
+
 struct lowTextManager_t {
 	byte *textData;
 	uint16 compactNum;
@@ -163,5 +165,7 @@ struct Compact {
 
 	ExtCompact *extCompact;
 };
+
+} // End of namespace Sky
 
 #endif

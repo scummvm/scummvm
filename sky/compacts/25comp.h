@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sales_chart = {
@@ -1118,5 +1120,7 @@ Compact s25_floor = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -27,6 +27,8 @@
 #include "sky/skydefs.h"
 #include "sky/struc.h"
 
+namespace Sky {
+
 #define ROUTE_GRID_WIDTH ((GAME_SCREEN_WIDTH/8)+2)
 #define ROUTE_GRID_HEIGHT ((GAME_SCREEN_HEIGHT/8)+2)
 #define ROUTE_GRID_SIZE (ROUTE_GRID_WIDTH*ROUTE_GRID_HEIGHT*2)
@@ -266,3 +268,4 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt) {
 	return 0;
 }
 
+} // End of namespace Sky

@@ -24,6 +24,8 @@
 
 #include "stdafx.h"
 
+namespace Sky {
+
 //This file is incomplete, several flags still missing.
 
 // grafixProg pointer types:
@@ -4305,5 +4307,6 @@
 
 #define TEXT_MOUSE_WIDTH 0x80
 
-#endif
+} // End of namespace Sky
 
+#endif

@@ -24,6 +24,8 @@
 #include "sky/music/adlibchannel.h"
 #include "sky/sky.h"
 
+namespace Sky {
+
 SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 	_opl = opl;
 	_musicData = pMusicData;
@@ -337,3 +339,5 @@ void SkyAdlibChannel::com90_setStartOfData(void) {
 
 	_channelData.startOfData = _channelData.eventDataPtr;
 }
+
+} // End of namespace Sky

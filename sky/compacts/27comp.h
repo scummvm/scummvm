@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 s27_logic[] = {
@@ -3275,5 +3277,7 @@ Compact chair_27 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

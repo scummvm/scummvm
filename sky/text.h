@@ -25,6 +25,8 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
+namespace Sky {
+
 struct Compact;
 class SkyDisk;
 
@@ -116,5 +118,7 @@ protected:
 public:
 	uint32 _dtLetters;	//no of chars in message
 };
+
+} // End of namespace Sky
 
 #endif

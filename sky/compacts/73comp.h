@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 gal_u_to_l[] = {
@@ -2547,5 +2549,7 @@ Compact sc73_cham4_light = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

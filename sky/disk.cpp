@@ -28,6 +28,8 @@
 #include "sky/sky.h"
 #include "sky/struc.h"
 
+namespace Sky {
+
 static const char *dataFilename = "sky.dsk";
 static const char *dinnerFilename = "sky.dnr";
 
@@ -459,3 +461,5 @@ uint32 SkyDisk::determineGameVersion() {
 		break;
 	}
 }
+
+} // End of namespace Sky

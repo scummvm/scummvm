@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 reset_start_31[] = {
@@ -2851,5 +2853,7 @@ uint16 sc31_joey_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

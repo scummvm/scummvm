@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc85_palette[] = {
@@ -435,5 +437,7 @@ uint16 sc85_logic_list[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

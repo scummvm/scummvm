@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact bio_door = {
@@ -1304,5 +1306,7 @@ Compact s26_floor = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -33,6 +33,8 @@
 #include "96comp.h"
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact door_r90f = {
@@ -1858,5 +1860,7 @@ void *data_6[] = {
 uint32 *sec6_compacts = (uint32*)data_6;
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

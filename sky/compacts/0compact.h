@@ -29,6 +29,8 @@
 #include "1compact.h"
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 slide2_seq[] = {
@@ -9323,5 +9325,7 @@ void *data_1[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

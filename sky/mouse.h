@@ -26,6 +26,9 @@
 #include "common/scummsys.h"
 
 class OSystem;
+
+namespace Sky {
+
 class SkyDisk;
 class SkyLogic;
 
@@ -80,5 +83,7 @@ protected:
 	SkyDisk *_skyDisk;
 	SkyLogic *_skyLogic;
 };
+
+} // End of namespace Sky
 
 #endif //SKYMOUSE_H

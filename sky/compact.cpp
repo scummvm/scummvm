@@ -37,6 +37,8 @@
 #include "sky/compacts/lincmenu.h"
 #include "sky/compacts/z_compac.h"
 
+namespace Sky {
+
 #define COMPACT_SIZE (sizeof(compactOffsets)/sizeof(uint32))
 #define EXTCOMPACT_SIZE (sizeof(extCompactOffsets)/sizeof(uint32))
 #define MEGASET_SIZE (sizeof(megaSetOffsets)/sizeof(uint32))
@@ -604,3 +606,4 @@ void patchFor288(void) {
 
 }
 
+} // End of namespace Sky

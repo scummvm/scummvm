@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sml_loaderb_l_to_u[] = {
@@ -1821,5 +1823,7 @@ Compact top_barrel = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 #include "stdafx.h"
 #include "common/util.h"
 
+namespace Sky {
+
 struct Compact;
 
 enum scriptVariableOffsets {
@@ -273,5 +275,7 @@ protected:
 	SkyMouse *_skyMouse;
 	SkyControl *_skyControl;
 };
+
+} // End of namespace Sky
 
 #endif

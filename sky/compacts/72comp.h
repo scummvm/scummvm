@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 wit_st_right[] = {
@@ -2415,5 +2417,7 @@ Compact sc72_chamber1 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc36_get_glass[] = {
@@ -4270,5 +4272,7 @@ Compact sc36_exit_30 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

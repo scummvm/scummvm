@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 window_mouse[] = {
@@ -572,5 +574,7 @@ uint16 rs_foster_s90[] = {
 uint32 *grid93 = 0;
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

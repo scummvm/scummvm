@@ -23,6 +23,8 @@
 #include "common/scummsys.h"
 #include "sky/rnc_deco.h"
 
+namespace Sky {
+
 //return codes
 #define NOT_PACKED	0
 #define PACKED_CRC	-1
@@ -258,3 +260,4 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	return unpackLen;
 }
 
+} // End of namespace Sky

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 get_adjust[] = {
@@ -835,5 +837,7 @@ uint16 pal93[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

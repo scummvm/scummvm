@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 restore_seq[] = {
@@ -569,5 +571,7 @@ Compact restart_butt = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

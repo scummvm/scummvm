@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc32_gardening1[] = {
@@ -1837,5 +1839,7 @@ Compact sc32_exit_33 = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

@@ -25,6 +25,8 @@
 
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 Compact sc39_exit_31 = {
@@ -775,5 +777,7 @@ uint16 sc39_palette[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif

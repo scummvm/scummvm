@@ -42,6 +42,8 @@
 #include "42comp.h"
 
 
+namespace Sky {
+
 namespace SkyCompact {
 
 uint16 sc32_vinc_talk[] = {
@@ -6616,5 +6618,7 @@ void *data_4[] = {
 };
 
 } // namespace SkyCompact
+
+} // namespace Sky
 
 #endif
