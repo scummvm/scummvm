@@ -41,7 +41,6 @@ public:
 	int y() const { return _y; }
 
 	char *getData() { return _data[_currImage]; }
-	char *getZbufferData() { return _data[_currImage - 1]; }
 
 	~Bitmap();
 
