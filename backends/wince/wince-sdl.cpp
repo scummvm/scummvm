@@ -35,6 +35,8 @@
 #include "resource.h"
 
 #include "CEActions.h"
+#include "CEActionsPocket.h"
+#include "CEActionsSmartphone.h"
 #include "ItemAction.h"
 #include "CEKeysDialog.h"
 
@@ -62,6 +64,8 @@ using namespace CEGUI;
 // Given to the true main, needed for backend adaptation
 
 static GameDetector _gameDetector;
+static FILE *stdout_file;
+static FILE *stderr_file;
 
 // Static member inits
 
@@ -75,6 +79,17 @@ OSystem::SoundProc OSystem_WINCE3::_originalSoundProc = NULL;
 extern "C" int scummvm_main(GameDetector &gameDetector, int argc, char **argv);
 
 int SDL_main(int argc, char **argv) {
+	/* Sanity check */
+#ifndef WIN32_PLATFORM_WFSP
+	if (CEDevice::hasSmartphoneResolution()) {
+		MessageBox(NULL, TEXT("This build was not compiled with Smartphone support"), TEXT("ScummVM error"), MB_OK | MB_ICONERROR);
+		return 0;
+	}
+#endif
+	/* Avoid print problems - this file will be put in RAM anyway */
+	stdout_file = fopen("\\scummvm_stdout.txt", "w");
+	stderr_file = fopen("\\scummvm_stderr.txt", "w");
+	CEActions::init(_gameDetector);
 	return scummvm_main(_gameDetector, argc, argv);
 }    
    
@@ -83,37 +98,37 @@ int SDL_main(int argc, char **argv) {
 
 // ********************************************************************************************
 
+void pumpMessages() {
+	MSG msg;
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
 void drawError(char *error) {
-	OutputDebugString(TEXT("Error !\r\n"));
+	TCHAR errorUnicode[200];
+	MultiByteToWideChar(CP_ACP, 0, error, strlen(error) + 1, errorUnicode, sizeof(errorUnicode));
+	pumpMessages();
+	MessageBox(GetActiveWindow(), errorUnicode, TEXT("ScummVM error"), MB_OK | MB_ICONERROR);
+	pumpMessages();
 }
 
 bool isSmartphone(void) {
-	return false;  
+	return CEDevice::hasSmartphoneResolution();
 }
-
 
 // ********************************************************************************************
 
-OSystem *OSystem_WINCE3_create(int gfx_mode) {
-	return OSystem_SDL_Common::create(gfx_mode);
-}
-
 OSystem *OSystem_WINCE3_create() {
-	return OSystem_SDL_Common::create(GFX_NORMAL);
-}
-
-
-OSystem_SDL_Common *OSystem_SDL_Common::create_intern() {
 	return new OSystem_WINCE3();
 }
 
-OSystem_WINCE3::OSystem_WINCE3()
-	 : _hwscreen(0), _scaler_proc(0), _orientationLandscape(false), _newOrientation(false),
-	   _panelInitialized(false), _forcePanelInvisible(false), _panelVisible(true),
-	   _panelStateForced(false), _addRightClickDown(false), _addRightClickUp(false),
-	   _forceHideMouse(false), _freeLook(false), _toolbarHighDrawn(false)
+OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(), 
+	_orientationLandscape(false), _newOrientation(false), _panelInitialized(false),
+	_panelVisible(false), _panelStateForced(false), _forceHideMouse(false),
+	_freeLook(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false)
 {
-	CEDevice::enableHardwareKeyMapping();
 	create_toolbar();
 }
 
@@ -126,11 +141,12 @@ void OSystem_WINCE3::swap_panel_visibility() {
 		else
 			add_dirty_rect(0, 200, 320, 40);
 			
-		updateScreen();
+		internUpdateScreen();
 	}
 }
 
 void OSystem_WINCE3::swap_panel() {
+	_toolbarHighDrawn = false;
 	if (!_panelStateForced) {
 		if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD)
 			_toolbarHandler.setActive(NAME_MAIN_PANEL);
@@ -146,7 +162,9 @@ void OSystem_WINCE3::swap_sound_master() {
 }
 
 void OSystem_WINCE3::add_right_click() {
-	_addRightClickDown = true;
+	int x, y;
+	retrieve_mouse_location(x, y);
+	EventsBuffer::simulateMouseRightClick(x, y);
 }
 
 void OSystem_WINCE3::swap_mouse_visibility() {
@@ -159,11 +177,97 @@ void OSystem_WINCE3::swap_freeLook() {
 	_freeLook = !_freeLook;
 }
 
+void OSystem_WINCE3::swap_zoom_up() {	
+	if (_zoomUp) {
+		// restore visibility
+		_toolbarHandler.setVisible(_saveToolbarZoom);
+		// restore scaler
+		_scaleFactorYd = 2;
+		_scaler_proc = PocketPCHalf;
+		_zoomUp = false;
+	}
+	else
+	{
+		// only active if running on a PocketPC
+		if (_scaler_proc != PocketPCHalf && _scaler_proc != PocketPCHalfZoom)
+			return;
+		if (_scaler_proc == PocketPCHalf) {
+			_saveToolbarZoom = _toolbarHandler.visible();
+			_toolbarHandler.setVisible(false);
+			// set zoom scaler
+			_scaleFactorYd = 1;
+			_scaler_proc = PocketPCHalfZoom;
+		}
+		else
+			_zoomDown = false;
+
+		_zoomUp = true;
+	}
+	// redraw whole screen
+	add_dirty_rect(0, 0, 640, 480);
+	internUpdateScreen();
+}
+
+void OSystem_WINCE3::swap_zoom_down() {	
+	if (_zoomDown) {
+		// restore visibility
+		_toolbarHandler.setVisible(_saveToolbarZoom);
+		// restore scaler
+		_scaleFactorYd = 2;
+		_scaler_proc = PocketPCHalf;
+		_zoomDown = false;
+	}
+	else
+	{
+		// only active if running on a PocketPC
+		if (_scaler_proc != PocketPCHalf && _scaler_proc != PocketPCHalfZoom)
+			return;
+		if (_scaler_proc == PocketPCHalf) {
+			_saveToolbarZoom = _toolbarHandler.visible();
+			_toolbarHandler.setVisible(false);
+			// set zoom scaler
+			_scaleFactorYd = 1;
+			_scaler_proc = PocketPCHalfZoom;
+		}
+		else
+			_zoomUp = false;
+
+		_zoomDown = true;
+	}
+	// redraw whole screen
+	add_dirty_rect(0, 0, 640, 480);
+	internUpdateScreen();
+}
+
+#ifdef WIN32_PLATFORM_WFSP
+// Smartphone actions
+
+void OSystem_WINCE3::add_left_click() {
+	_addLeftClickDown = true;
+}
+
+void OSystem_WINCE3::move_cursor_up() {
+}
+
+void OSystem_WINCE3::move_cursor_down() {
+}
+
+void OSystem_WINCE3::move_cursor_left() {
+}
+
+void OSystem_WINCE3::move_cursor_right() {
+}
+
+void OSystem_WINCE3::switch_zone() {
+}
+#endif
+
+
 void OSystem_WINCE3::create_toolbar() {
 	PanelKeyboard *keyboard;
 
 	// Add the keyboard
-	keyboard = new PanelKeyboard(PANEL_KEYBOARD, _keysBuffer);
+	keyboard = new PanelKeyboard(PANEL_KEYBOARD);
 	_toolbarHandler.add(NAME_PANEL_KEYBOARD, *keyboard);
 
 }
@@ -187,12 +291,14 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
                 if (!ov_open(testFile, test_ov_file, NULL, 0)) {
                         bool highSampleRate = (ov_info(test_ov_file, -1)->rate == 22050);
                         ov_clear(test_ov_file);
+						delete test_ov_file;
                         return highSampleRate;
                 }
         }
 
         // Do not test for OGG samples - too big and too slow anyway :)
 
+		delete test_ov_file;
         return false;
 }
 #endif
@@ -205,7 +311,7 @@ void OSystem_WINCE3::get_sample_rate() {
 		strncmp(_gameDetector._targetName.c_str(), "sky", 3) == 0)
 			_sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
-		if (ConfMan.getBool("CE_high_sample_rate"))
+		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
 			_sampleRate = SAMPLES_PER_SEC_NEW;
 		else
 			_sampleRate = SAMPLES_PER_SEC_OLD;
@@ -217,6 +323,60 @@ void OSystem_WINCE3::get_sample_rate() {
      if (checkOggHighSampleRate())
 		 _sampleRate = SAMPLES_PER_SEC_NEW;
 #endif
+}
+
+int OSystem_WINCE3::getOutputSampleRate() const {
+	return _sampleRate;
+}
+
+void OSystem_WINCE3::setWindowCaption(const char *caption) {
+	check_mappings(); // called here to initialize virtual keys handling
+	//update_game_settings();
+	get_sample_rate(); // called here to initialize mixer
+}
+
+bool OSystem_WINCE3::openCD(int drive) {
+	return false;
+}
+
+
+bool OSystem_WINCE3::hasFeature(Feature f) {
+return
+		(f == kFeatureAutoComputeDirtyRects || f == kFeatureVirtualKeyboard);
+}
+
+void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
+	switch(f) {
+		case kFeatureFullscreenMode:
+			return;
+		case kFeatureVirtualKeyboard:
+			_toolbarHighDrawn = false;
+			if (enable) {
+				_panelStateForced = true;
+				_saveToolbarState = _toolbarHandler.visible();
+				_saveActiveToolbar = _toolbarHandler.activeName();
+				_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
+				_toolbarHandler.setVisible(true);
+			}
+			else {
+				_panelStateForced = false;
+				_toolbarHandler.setActive(_saveActiveToolbar);
+				_toolbarHandler.setVisible(_saveToolbarState);
+			}
+			return;
+		default:
+			OSystem_SDL::setFeatureState(f, enable);
+	}
+}
+
+bool OSystem_WINCE3::getFeatureState(Feature f) {
+	switch(f) {
+		case kFeatureFullscreenMode:
+			return false;
+		case kFeatureVirtualKeyboard:
+			return (_panelStateForced);
+	}
+	return OSystem_SDL::getFeatureState(f);
 }
 
 bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
@@ -235,7 +395,7 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 	desired.userdata = param;
 
 	// Add sound thread priority
-	if (ConfMan.get("CE_sound_thread_priority").isEmpty()) {
+	if (!ConfMan.hasKey("sound_thread_priority")) {
 #ifdef SH3
 		thread_priority = THREAD_PRIORITY_NORMAL;
 #else
@@ -243,7 +403,7 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 #endif
 	}
 	else
-		thread_priority = ConfMan.getInt("CE_sound_thread_priority");
+		thread_priority = ConfMan.getInt("sound_thread_priority");
 
 	desired.thread_priority = thread_priority;
 
@@ -255,40 +415,59 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 }
 
 void OSystem_WINCE3::check_mappings() {
-		if (!_gameDetector._targetName.size())
+		CEActionsPocket *instance;
+
+		if (!_gameDetector._targetName.size() || CEActions::Instance()->initialized())
 			return;
-		
-		CEActions::init(this, _gameDetector);
+
+		CEActions::Instance()->initInstance(this);
 		// Load key mapping
 		CEActions::Instance()->loadMapping();
 
+		if (CEDevice::hasSmartphoneResolution())
+			return;
+
+		instance = (CEActionsPocket*)CEActions::Instance();
+
 		// Some games need to map the right click button, signal it here if it wasn't done
-		if (CEActions::Instance()->needsRightClickMapping()) {
-			while (!CEActions::Instance()->getMapping(ACTION_RIGHTCLICK)) {
-				CEKeysDialog *keysDialog = new CEKeysDialog("Map right click action");	
+		if (instance->needsRightClickMapping()) {
+			CEKeysDialog *keysDialog = new CEKeysDialog("Map right click action");	
+			while (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
 				keysDialog->runModal();
-				if (!CEActions::Instance()->getMapping(ACTION_RIGHTCLICK)) {
+				if (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
 					GUI::MessageDialog alert("You must map a key to the 'Right Click' action to play this game");
 					alert.runModal();
 				}					
 			}
+			delete keysDialog;
 		}
 
 		// Map the "hide toolbar" action if needed
-		if (CEActions::Instance()->needsHideToolbarMapping()) {
-			while (!CEActions::Instance()->getMapping(ACTION_HIDE)) {
-				CEKeysDialog *keysDialog = new CEKeysDialog("Map hide toolbar action");
+		if (instance->needsHideToolbarMapping()) {
+			CEKeysDialog *keysDialog = new CEKeysDialog("Map hide toolbar action");
+			while (!instance->getMapping(POCKET_ACTION_HIDE)) {
 				keysDialog->runModal();
-				if (!CEActions::Instance()->getMapping(ACTION_HIDE)) {
+				if (!instance->getMapping(POCKET_ACTION_HIDE)) {
 					GUI::MessageDialog alert("You must map a key to the 'Hide toolbar' action to play this game");
 					alert.runModal();
 				}
 			}
+			delete keysDialog;
+		}
+
+		// Map the "zoom" actions if needed
+		if (instance->needsZoomMapping()) {
+			CEKeysDialog *keysDialog = new CEKeysDialog("Map Zoom Up action (optional)");
+			keysDialog->runModal();
+			delete keysDialog;
+			keysDialog = new CEKeysDialog("Map Zoom Down action (optional)");
+			keysDialog->runModal();
+			delete keysDialog;
 		}
 
 		// Extra warning for Zak Mc Kracken
 		if (strncmp(_gameDetector._targetName.c_str(), "zak", 3) == 0 &&  
-			!CEActions::Instance()->getMapping(ACTION_HIDE)) {
+			!CEActions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
 			GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
 			alert.runModal();
 		}
@@ -303,14 +482,16 @@ void OSystem_WINCE3::update_game_settings() {
 		panel = new Panel(10, 40);
 		panel->setBackground(IMAGE_PANEL);
 		// Save
-		panel->add(NAME_ITEM_OPTIONS, new ItemAction(ITEM_OPTIONS, ACTION_SAVE));
+		panel->add(NAME_ITEM_OPTIONS, new ItemAction(ITEM_OPTIONS, POCKET_ACTION_SAVE));
 		// Skip
-		panel->add(NAME_ITEM_SKIP, new ItemAction(ITEM_SKIP, ACTION_SKIP));
+		panel->add(NAME_ITEM_SKIP, new ItemAction(ITEM_SKIP, POCKET_ACTION_SKIP));
 		// sound
 		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster)); 
 		// portrait/landscape - screen dependant
-		if (_screenWidth <= 320) 
+		if (_screenWidth <= 320 && !CEDevice::hasDesktopResolution()) {
+			_newOrientation = _orientationLandscape = (ConfMan.hasKey("landscape") ? ConfMan.getBool("landscape") : false);
 			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation));
+		}
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
 
@@ -319,14 +500,19 @@ void OSystem_WINCE3::update_game_settings() {
 			_monkeyKeyboard = true;
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 		}
+
+		if (ConfMan.hasKey("landscape") && ConfMan.getBool("landscape")) {
+			setGraphicsMode(GFX_NORMAL);
+			hotswap_gfx_mode();
+		}
 	}
+
+	get_sample_rate();
 }
 
 void OSystem_WINCE3::initSize(uint w, uint h) {
 	if (w == 320 && h == 200)
 		h = 240; // use the extra 40 pixels height for the toolbar
-
-	check_mappings(); // do it here to have a readable dialog
 
 	if (h == 240)
 		_toolbarHandler.setOffset(200);
@@ -336,29 +522,16 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 	OSystem_SDL::initSize(w, h);	
 
 	update_game_settings();
-
 }
 
-void OSystem_WINCE3::load_gfx_mode() {
-	int displayWidth;
-	int displayHeight;
+int OSystem_WINCE3::getDefaultGraphicsMode() const {
+    return GFX_NORMAL;
+}
 
-	_full_screen = true; // forced  
-	_forceFull = true;
-	_mode_flags |= DF_UPDATE_EXPAND_1_PIXEL;
-   
-	_tmpscreen = NULL;
-	_tmpScreenWidth = (_screenWidth + 3); 
-
-	_scaleFactorXm = -1;
-	_scaleFactorXd = -1;
-	_scaleFactorYm = -1;    
-	_scaleFactorYd = -1;  
-
-	_newOrientation = _orientationLandscape = ConfMan.getBool("CE_landscape");
+bool OSystem_WINCE3::update_scalers() {
 
 	if (CEDevice::hasPocketPCResolution()) {
-		if (!_orientationLandscape && _screenWidth == 320) {
+		if (!_orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
 			_scaleFactorXm = 3;
 			_scaleFactorXd = 4;
 			_scaleFactorYm = 1; 
@@ -374,8 +547,39 @@ void OSystem_WINCE3::load_gfx_mode() {
 			_scaler_proc = PocketPCHalf;
 			_mode_flags = 0;
 		}
+
+		return true;
 	}
 
+#ifdef WIN32_PLATFORM_WFSP
+	if (CEDevice::hasSmartphoneResolution()) {
+		if (_screenWidth > 320) 
+			error("Game resolution not supported on Smartphone");
+		_scaleFactorXm = 2;
+		_scaleFactorXd = 3;
+		_scaleFactorYm = 7;
+		_scaleFactorYd = 8;
+		_scaler_proc = SmartphoneLandscape;
+		_mode_flags = 0;
+		return true;
+	}
+#endif
+
+	return false;
+}
+
+bool OSystem_WINCE3::setGraphicsMode(int mode) {
+	Common::StackLock lock(_graphicsMutex);
+
+	_scaleFactorXm = -1;
+	_scaleFactorXd = -1;
+	_scaleFactorYm = -1;    
+	_scaleFactorYd = -1;  
+
+	_newOrientation = _orientationLandscape = (ConfMan.hasKey("landscape") ? ConfMan.getBool("landscape") : false);
+	
+	update_scalers();
+	
 	if (CEDevice::hasPocketPCResolution() && _orientationLandscape)
 		_mode = GFX_NORMAL;
 
@@ -453,6 +657,25 @@ void OSystem_WINCE3::load_gfx_mode() {
 		_scaleFactorYd = 1;
 	}
 
+	_forceFull = true;
+
+	return true;
+
+}
+
+void OSystem_WINCE3::load_gfx_mode() {
+	int displayWidth;
+	int displayHeight;
+
+	_full_screen = true; // forced  
+	_forceFull = true;
+	_mode_flags |= DF_UPDATE_EXPAND_1_PIXEL;
+   
+	_tmpscreen = NULL;
+
+	// Recompute scalers if necessary
+	update_scalers();
+
 	// 
 	// Create the surface that contains the 8 bit game data
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, _screenHeight, 8, 0, 0, 0, 0);
@@ -506,9 +729,10 @@ void OSystem_WINCE3::load_gfx_mode() {
 	initCEScaler();
 	
 	// Need some extra bytes around when using 2xSaI
-	uint16 *tmp_screen = (uint16 *)calloc(_tmpScreenWidth * (_screenHeight + 3), sizeof(uint16));
-	_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
-						_tmpScreenWidth, _screenHeight + 3, 16, _tmpScreenWidth * 2,
+	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE,
+						_screenWidth + 3, 
+						_screenHeight + 3, 
+						16,
 						_hwscreen->format->Rmask,
 						_hwscreen->format->Gmask,
 						_hwscreen->format->Bmask,
@@ -564,7 +788,6 @@ void OSystem_WINCE3::unload_gfx_mode() {
 	}
 
 	if (_tmpscreen) {
-		free(_tmpscreen->pixels);
 		SDL_FreeSurface(_tmpscreen);
 		_tmpscreen = NULL;
 	}
@@ -602,11 +825,10 @@ void OSystem_WINCE3::hotswap_gfx_mode() {
 	
 	// Free the old surfaces
 	SDL_FreeSurface(old_screen);
-	free(old_tmpscreen->pixels);
 	SDL_FreeSurface(old_tmpscreen);
 
 	// Blit everything to the screen
-	updateScreen();
+	internUpdateScreen();
 	
 	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
@@ -615,7 +837,7 @@ void OSystem_WINCE3::hotswap_gfx_mode() {
 void OSystem_WINCE3::update_keyboard() {
 
 	// Update the forced keyboard for Monkey Island copy protection
-	if (_monkeyKeyboard && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
+	if (_monkeyKeyboard && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
 		Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90) {
 			// Switch back to the normal panel now that the keyboard is not used anymore
 			_monkeyKeyboard = false;
@@ -662,9 +884,15 @@ void OSystem_WINCE3::internUpdateScreen() {
 		_num_dirty_rects = 1;
 
 		_dirty_rect_list[0].x = 0;
-		_dirty_rect_list[0].y = 0;
+		if (!_zoomDown)
+			_dirty_rect_list[0].y = 0;
+		else
+			_dirty_rect_list[0].y = _screenHeight / 2;
 		_dirty_rect_list[0].w = _screenWidth;
-		_dirty_rect_list[0].h = _screenHeight;
+		if (!_zoomUp && !_zoomDown)
+			_dirty_rect_list[0].h = _screenHeight;
+		else
+			_dirty_rect_list[0].h = _screenHeight / 2;
 
 		_toolbarHandler.forceRedraw();
 	}
@@ -687,7 +915,6 @@ void OSystem_WINCE3::internUpdateScreen() {
 				// Check if the toolbar is overwritten
 				if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset)  {
 					_toolbarHandler.forceRedraw();
-					_toolbarHighDrawn = true;
 				}
 
 				if (_overlayVisible) {
@@ -724,7 +951,6 @@ void OSystem_WINCE3::internUpdateScreen() {
 				// Check if the toolbar is overwritten			
 				if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset) {
 					_toolbarHandler.forceRedraw();
-					_toolbarHighDrawn = true;
 				}
 				
 				if (dst_y < _screenHeight) {
@@ -740,12 +966,20 @@ void OSystem_WINCE3::internUpdateScreen() {
 						dst_y = real2Aspect(dst_y);
 					}
 				
-					_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					if (!_zoomDown)
+						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					else {
+						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + (dst_y - 240) * dstPitch, dstPitch, r->w, dst_h);
+					}
 				}
 
 				r->x = r->x * _scaleFactorXm / _scaleFactorXd;
-				r->y = dst_y;
+				if (!_zoomDown)
+					r->y = dst_y;
+				else
+					r->y = dst_y - 240;
 				r->w = r->w * _scaleFactorXm / _scaleFactorXd;
 				r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
 
@@ -761,7 +995,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 		// This is necessary if shaking is active.
 		if (_forceFull) {
 			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactorYm / _scaleFactorYd;
+			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : (_zoomUp || _zoomDown ? _screenHeight / 2 : _screenHeight)) * _scaleFactorYm / _scaleFactorYd;
 		}
 	}
 	// Add the toolbar if needed
@@ -779,6 +1013,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 				Normal2x((byte*)_toolbarLow->pixels, _toolbarLow->pitch, (byte*)_toolbarHigh->pixels, _toolbarHigh->pitch, toolbar_rect[0].w, toolbar_rect[0].h);
 				SDL_UnlockSurface(_toolbarHigh);
 				SDL_UnlockSurface(_toolbarLow);
+				_toolbarHighDrawn = true;
 			}
 			else
 				_toolbarHighDrawn = false;
@@ -815,84 +1050,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 	_num_dirty_rects = 0;
 	_forceFull = false;
 }
-
-uint32 OSystem_WINCE3::property(int param, Property *value) {
-
-	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
-
-	if (param == PROP_TOGGLE_FULLSCREEN) {
-		// FIXME
-		assert(_hwscreen != 0);
-		_full_screen ^= true;
-		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
-			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
-			hotswap_gfx_mode();
-		}
-		return 1;
-	} else if (param == PROP_SET_GFX_MODE) {
-		if (value->gfx_mode > 11)	// FIXME! HACK, hard coded threshold, not good
-			return 0;
-
-		_mode = value->gfx_mode;
-		hotswap_gfx_mode();
-
-		return 1;
-	} else if (param == PROP_TOGGLE_ASPECT_RATIO) {
-		if (_screenHeight == 200) {
-			assert(_hwscreen != 0);
-			_adjustAspectRatio ^= true;
-			hotswap_gfx_mode();
-		}
-		return 1;
-	} else if (param == PROP_TOGGLE_VIRTUAL_KEYBOARD) {
-		if (value->show_keyboard) {
-			_panelStateForced = true;
-			_saveToolbarState = _toolbarHandler.visible();
-			_saveActiveToolbar = _toolbarHandler.activeName();
-			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
-			_toolbarHandler.setVisible(true);
-		}
-		else {
-			_panelStateForced = false;
-			_toolbarHandler.setActive(_saveActiveToolbar);
-			_toolbarHandler.setVisible(_saveToolbarState);
-		}
-		return 1;
-	} else if (param == PROP_HAS_SCALER) {
-		switch(value->gfx_mode) {
-			case GFX_NORMAL:
-				return 1;
-			case GFX_DOUBLESIZE:
-			case GFX_2XSAI:
-			case GFX_SUPER2XSAI:
-			case GFX_SUPEREAGLE:
-			case GFX_ADVMAME2X:
-			case GFX_HQ2X:
-			case GFX_TV2X:
-			case GFX_DOTMATRIX:
-				return (CEDevice::hasWideResolution());
-			default:
-				return 0;
-		}
-	} else if (param == PROP_GET_SAMPLE_RATE) {
-		if (!_sampleRate)
-			get_sample_rate();
-		return _sampleRate;
-	} else if (param == PROP_GET_FMOPL_ENV_BITS) { // imuse FM quality
-		if (ConfMan.getBool("CE_FM_high_quality"))
-			return FMOPL_ENV_BITS_HQ;
-		else
-			return FMOPL_ENV_BITS_LQ;
-	} else if (param == PROP_GET_FMOPL_EG_ENT) { // imuse FM quality
-		if (ConfMan.getBool("CE_FM_high_quality"))
-			return FMOPL_EG_ENT_HQ;
-		else
-			return FMOPL_EG_ENT_LQ;
-	}
-	
-	return OSystem_SDL_Common::property(param, value);
-}
-
+  
 bool OSystem_WINCE3::save_screenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
@@ -906,6 +1064,9 @@ bool OSystem_WINCE3::save_screenshot(const char *filename) {
 
 static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
 {
+	if (CEActions::Instance()->mappingActive())
+		return key;
+
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
 		return key - SDLK_F1 + 315;
 	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
@@ -938,8 +1099,22 @@ void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
 	km.y = event.mouse.y;
 
 	// Adjust for the screen scaling
+	if (_zoomDown) 
+		event.mouse.y += 240;
+
 	event.mouse.x = event.mouse.x * _scaleFactorXd / _scaleFactorXm;
 	event.mouse.y = event.mouse.y * _scaleFactorYd / _scaleFactorYm;
+}
+
+void OSystem_WINCE3::retrieve_mouse_location(int &x, int &y) {
+	x = _mouseCurState.x;
+	y = _mouseCurState.y;
+
+	x = x * _scaleFactorXm / _scaleFactorXd;
+	y = y * _scaleFactorYm / _scaleFactorYd;
+
+	if (_zoomDown)
+		y -= 240;
 }
 
 void OSystem_WINCE3::warpMouse(int x, int y) {
@@ -958,30 +1133,43 @@ void OSystem_WINCE3::warpMouse(int x, int y) {
 }
 
 void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
-	if (_scaler_proc == PocketPCPortrait) {
-		// Align on a 4 bytes boundary for the Portrait mode
-		if (x != 0) {
-			while (x % 4) {
-				x--;
-				w++;
+	// Align on boundaries
+	if (_scaleFactorXd > 1) {
+		while (x % _scaleFactorXd) {
+			x--;
+			w++;
+		}
+		while (w % _scaleFactorXd) w++;
+	}
+
+	if (_scaleFactorYd > 1) {
+		while (y % _scaleFactorYd) {
+			y--;
+			h++;
+		}
+		while (h % _scaleFactorYd) h++;
+	}
+
+	if (_scaler_proc == PocketPCHalfZoom) {
+		// Restrict rect if we're zooming
+		if (_zoomUp) {
+			if (y + h >= 240) {
+				if (y >= 240)
+					return;
+				else
+					h = 240 - y;
 			}
 		}
-		while (w % 4) w++;
-	}
-	else
-	if (_scaler_proc == PocketPCHalf) {
-		// Align on a 2x2 square
-		if (x != 0) {
-			while (x % 2) {
-				x--;
-				w++;
+		else
+		if (_zoomDown) {
+			if (y + h >= 240) {
+				if (y < 240) {
+					h = 240 - y;
+					y = 240;
+				}
 			}
-			while (y % 2) {
-				y--;
-				h++;
-			}
-			while (w % 2) w++;
-			while (h % 2) h++;
+			else
+				return;
 		}
 	}
 
@@ -989,42 +1177,15 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 }
 
 // FIXME
-// Remove useless mappings
+// See if some SDL mapping can be useful for HPCs
 
 bool OSystem_WINCE3::poll_event(Event *event) {
 	SDL_Event ev;
 	byte b = 0;
 	Event temp_event;
 
-	// Check if the keys queue is empty
-	Key *key = _keysBuffer->Instance()->get();
-	if (key) {
-		event->kbd.flags = key->flags();
-		event->kbd.ascii = key->ascii();
-		event->kbd.keycode = key->keycode();
-		if (key->pushed())
-			event->event_code = EVENT_KEYDOWN;
-		else
-			event->event_code = EVENT_KEYUP;
-		return true;
-	}
-	
-	// Check if a right click event must be generated
-	if (_addRightClickDown || _addRightClickUp) {
-		event->event_code = (_addRightClickDown ? EVENT_RBUTTONDOWN : EVENT_RBUTTONUP);
-		event->mouse.x = _mouseCurState.x;
-		event->mouse.y = _mouseCurState.y;
-
-		if (_addRightClickDown) {
-			_addRightClickDown = false;
-			_addRightClickUp = true;
-		}
-		else {
-			_addRightClickUp = false;
-		}	
-		
-		return true;
-	}
+	memset(&temp_event, 0, sizeof(Event));
+	memset(event, 0, sizeof(Event));
 
 	kbd_mouse();
 	
@@ -1038,200 +1199,29 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
-
-			if (ev.key.keysym.mod & KMOD_SHIFT)
-				b |= KBD_SHIFT;
-			if (ev.key.keysym.mod & KMOD_CTRL)
-				b |= KBD_CTRL;
-			if (ev.key.keysym.mod & KMOD_ALT)
-				b |= KBD_ALT;
-			event->kbd.flags = b;
-
-			// Alt-Return toggles full screen mode				
-			if (b == KBD_ALT && ev.key.keysym.sym == SDLK_RETURN) {
-				property(PROP_TOGGLE_FULLSCREEN, NULL);
-				break;
-			}
-
-			if (b == KBD_ALT && ev.key.keysym.sym == 's') {
-				char filename[20];
-
-				for (int n = 0;; n++) {
-					SDL_RWops *file;
-
-					sprintf(filename, "scummvm%05d.bmp", n);
-					file = SDL_RWFromFile(filename, "r");
-					if (!file)
-						break;
-					SDL_RWclose(file);
-				}
-				if (save_screenshot(filename))
-					printf("Saved '%s'\n", filename);
-				else
-					printf("Could not save screenshot!\n");
-				break;
-			}
-
-			// Ctrl-m toggles mouse capture
-			if (b == KBD_CTRL && ev.key.keysym.sym == 'm') {
-				property(PROP_TOGGLE_MOUSE_GRAB, NULL);
-				break;
-			}
-
-			// Ctrl-z and Alt-X quit
-			if ((b == KBD_CTRL && ev.key.keysym.sym == 'z') || (b == KBD_ALT && ev.key.keysym.sym == 'x')) {
-				event->event_code = EVENT_QUIT;
-				return true;
-			}
-
-			// Ctrl-Alt-<key> will change the GFX mode
-			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
-				static const int gfxModes[][4] = {
-						{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
-						{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
-						{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
-						{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
-						{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
-						{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
-						{ GFX_NORMAL, GFX_TV2X, -1, -1 },
-						{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
-					};
-
-				// FIXME EVIL HACK: This shouldn't be a static int, rather it
-				// should be a member variable. Furthermore, it shouldn't be
-				// set in this code, rather it should be set by load_gfx_mode().
-				// But for now this quick&dirty hack works.
-				static int _scalerType = 0;
-				if (_mode != GFX_NORMAL) {
-					// Try to figure out which gfx mode "group" we are in
-					// This is just a temporary hack until the proper solution
-					// (i.e. code in load_gfx_mode()) is in effect.
-					for (int i = 0; i < ARRAYSIZE(gfxModes); i++) {
-						if (gfxModes[i][1] == _mode || gfxModes[i][2] == _mode) {
-							_scalerType = i;
-							break;
-						}
-					}
-				}
-				
-
-				Property prop;
-				int factor = _scaleFactor - 1;
-
-				// Ctrl-Alt-a toggles aspect ratio correction
-				if (ev.key.keysym.sym == 'a') {
-					property(PROP_TOGGLE_ASPECT_RATIO, NULL);
-					break;
-				}
-
-				// Increase/decrease the scale factor
-				// TODO: Shall we 'wrap around' here?
-				if (ev.key.keysym.sym == '=' || ev.key.keysym.sym == '+' || ev.key.keysym.sym == '-') {
-					factor += (ev.key.keysym.sym == '-' ? -1 : +1);
-					if (0 <= factor && factor < 4 && gfxModes[_scalerType][factor] >= 0) {
-						prop.gfx_mode = gfxModes[_scalerType][factor];
-						property(PROP_SET_GFX_MODE, &prop);
-					}
-					break;
-				}
-				
-				if ('1' <= ev.key.keysym.sym && ev.key.keysym.sym <= '9') {
-					_scalerType = ev.key.keysym.sym - '1';
-					if (_scalerType >= ARRAYSIZE(gfxModes))
-						break;
-					
-					while (gfxModes[_scalerType][factor] < 0) {
-						assert(factor > 0);
-						factor--;
-					}
-					prop.gfx_mode = gfxModes[_scalerType][factor];
-					property(PROP_SET_GFX_MODE, &prop);
-					break;
-				}
-			}
-
-			// Check mapping
-			if (CEActions::Instance()->mappingActive()) {
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.ascii = (ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode);
-				event->kbd.flags = 0xff;
-				return true;
-			}
-			else
-			if (CEActions::Instance()->performMapped((ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode), true))
+			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
 				return true;
 
 			event->event_code = EVENT_KEYDOWN;
 			event->kbd.keycode = ev.key.keysym.sym;
 			event->kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-			
-			switch(ev.key.keysym.sym) {
-			case SDLK_LEFT:
-				km.x_vel = -1;
-				km.x_down_count = 1;
-				break;
-			case SDLK_RIGHT:
-				km.x_vel =  1;
-				km.x_down_count = 1;
-				break;
-			case SDLK_UP:
-				km.y_vel = -1;
-				km.y_down_count = 1;
-				break;
-			case SDLK_DOWN:
-				km.y_vel =  1;
-				km.y_down_count = 1;
-				break;
-			default:
-				break;
-			}
 
+			if (CEActions::Instance()->mappingActive())
+				event->kbd.flags = 0xFF;
+			
 			return true;
 	
-		case SDL_KEYUP:
-			// Check mapping
-			if (CEActions::Instance()->mappingActive()) {
-				event->event_code = EVENT_KEYUP;
-				event->kbd.ascii = (ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode);
-				event->kbd.flags = 0xff;
-				return true;
-			}
-			else
-			if (CEActions::Instance()->performMapped((ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode), false))
+		case SDL_KEYUP:			
+			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
 				return true;
 			
 			event->event_code = EVENT_KEYUP;
 			event->kbd.keycode = ev.key.keysym.sym;
 			event->kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+			
+			if (CEActions::Instance()->mappingActive())
+				event->kbd.flags = 0xFF;
 
-			switch(ev.key.keysym.sym) {
-			case SDLK_LEFT:
-				if (km.x_vel < 0) {
-					km.x_vel = 0;
-					km.x_down_count = 0;
-				}
-				break;
-			case SDLK_RIGHT:
-				if (km.x_vel > 0) {
-					km.x_vel = 0;
-					km.x_down_count = 0;
-				}
-				break;
-			case SDLK_UP:
-				if (km.y_vel < 0) {
-					km.y_vel = 0;
-					km.y_down_count = 0;
-				}
-				break;
-			case SDLK_DOWN:
-				if (km.y_vel > 0) {
-					km.y_vel = 0;
-					km.y_down_count = 0;
-				}
-				break;
-			default:
-				break;
-			}
 			return true;
 
 		case SDL_MOUSEMOTION:
@@ -1252,11 +1242,12 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, true)) {
 				if (!_toolbarHandler.drawn())
-					updateScreen();
+					internUpdateScreen();
 				if (_newOrientation != _orientationLandscape) {
 					_orientationLandscape = _newOrientation;
-					ConfMan.set("CE_landscape", _orientationLandscape);
+					ConfMan.set("landscape", _orientationLandscape);
 					ConfMan.flushToDisk();
+					setGraphicsMode(GFX_NORMAL);
 					hotswap_gfx_mode();
 				}
 			}
@@ -1279,7 +1270,7 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, false)) {
 				if (!_toolbarHandler.drawn())
-					updateScreen();
+					internUpdateScreen();
 			}
 			else {
 				if (!_freeLook)
@@ -1294,7 +1285,6 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 
 		case SDL_QUIT:
 			event->event_code = EVENT_QUIT;
-			CEDevice::disableHardwareKeyMapping();
 			return true;
 		}
 	}
@@ -1302,6 +1292,9 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 }
 
 void OSystem_WINCE3::quit() {
-	CEDevice::disableHardwareKeyMapping();
+	fclose(stdout_file);
+	fclose(stderr_file);
+	DeleteFile(TEXT("\\scummvm_stdout.txt"));
+	DeleteFile(TEXT("\\scummvm_stderr.txt"));
 	OSystem_SDL::quit();
 }

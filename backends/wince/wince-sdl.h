@@ -43,10 +43,6 @@ public:
 	// Update the dirty areas of the screen
 	void internUpdateScreen();
 
-	bool hasFeature(Feature f);
-	void setFeatureState(Feature f, bool enable);
-	bool getFeatureState(Feature f);
-
 	void initSize(uint w, uint h);
 
 	// Overloaded from SDL_Common (toolbar handling)
@@ -71,17 +67,39 @@ public:
 	void add_right_click();
 	void swap_mouse_visibility();
 	void swap_freeLook();
+	void swap_zoom_up();
+	void swap_zoom_down();
+
+#ifdef WIN32_PLATFORM_WFSP
+	// Smartphone actions
+	void add_left_click();
+	void move_cursor_up();
+	void move_cursor_down();
+	void move_cursor_left();
+	void move_cursor_right();
+	void switch_zone();
+#endif
+
 
 protected:
-	SDL_Surface *_hwscreen;    // hardware screen
-
-	ScalerProc *_scaler_proc;
-
-	virtual void load_gfx_mode();
-	virtual void unload_gfx_mode();
-	virtual bool save_screenshot(const char *filename);
+	void load_gfx_mode();
+	void unload_gfx_mode();
 	void hotswap_gfx_mode();
+	bool save_screenshot(const char *filename);
 
+	
+	//const GraphicsMode *getSupportedGraphicsModes() const;	
+	bool setGraphicsMode(int mode);
+	//int getGraphicsMode() const;	
+	int getDefaultGraphicsMode() const;
+
+	void setWindowCaption(const char *caption);
+	bool openCD(int drive);
+	int getOutputSampleRate() const;
+
+	bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
+	bool getFeatureState(Feature f);
 
 private:
 
@@ -92,13 +110,15 @@ private:
 	static void private_sound_proc(void *param, byte *buf, int len);
 	static SoundProc _originalSoundProc;
 
+	bool update_scalers();
 	void create_toolbar();
 	void update_game_settings();
 	void check_mappings();
 	void update_keyboard();
 	void get_sample_rate();	
 
-	CEKEYS::KeysBuffer *_keysBuffer;
+	void retrieve_mouse_location(int &x, int &y);
+
 	CEGUI::ToolbarHandler _toolbarHandler;
 
 	SDL_Surface *_toolbarLow;	// toolbar 320x40
@@ -110,9 +130,6 @@ private:
 	bool _freeLook;				// freeLook mode (do not send mouse button events)
 
 	bool _forceHideMouse;		// force invisible mouse cursor
-
-	bool _addRightClickDown;	// add a right click event (button pushed)
-	bool _addRightClickUp;		// add a right click event (button released)
 
 	bool _forcePanelInvisible;  // force panel visibility for some cases
 	bool _panelVisible;			// panel visibility
@@ -128,6 +145,10 @@ private:
 
 	bool _saveToolbarState;		// save visibility when forced
 	String _saveActiveToolbar;	// save active toolbar when forced
+
+	bool _saveToolbarZoom;		// save visibility when zooming 
+	bool _zoomUp;				// zooming up mode
+	bool _zoomDown;				// zooming down mode
 
 	int _scaleFactorXm;
 	int _scaleFactorXd;
