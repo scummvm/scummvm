@@ -179,7 +179,6 @@
 	typedef signed char int8;
 	typedef signed short int16;
 	typedef signed long int32;
-	typedef Boolean bool;
 	
 	#define START_PACK_STRUCTS pack (1)
 	#define END_PACK_STRUCTS   pack ()
