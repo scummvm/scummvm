@@ -283,8 +283,8 @@ void GameDetector::updateconfig() {
 
 	_talkSpeed = g_config->getInt("talkspeed", _talkSpeed);
 
-	_multi_midi = g_config->getBool ("multi_midi");
-	_native_mt32 = g_config->getBool ("native_mt32");
+	_multi_midi = g_config->getBool ("multi_midi", _multi_midi);
+	_native_mt32 = g_config->getBool ("native_mt32", _native_mt32);
 }
 
 void GameDetector::list_games() {
