@@ -190,7 +190,8 @@ enum ScummGameId {
 	GID_PUTTPUTT,
 	GID_PJSDEMO,
 	GID_MONKEY_SEGA,
-	GID_FTDEMO
+	GID_FTDEMO,
+	GID_CMIDEMO
 };
 
 #define _maxRooms res.num[rtRoom]

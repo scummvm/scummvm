@@ -1030,7 +1030,6 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		debug(5, "ImuseSetState (%d)", b);
 		if (_scumm->_gameId == GID_DIG) {
 			if (b == 1000) {		// STATE_NULL
-				// FIXME: Fade this out properly, in the same increments as the real engine
 				_scumm->_sound->stopBundleMusic();
 				return 0;
 			}
@@ -1048,9 +1047,26 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					return 0;
 				}
 			}
+		} else if (_scumm->_gameId == GID_CMIDEMO) {
+			if (b == 1000) {		// STATE_NULL
+				_scumm->_sound->stopBundleMusic();
+				return 0;
+			} else if (b == 1001)
+				_scumm->_sound->playBundleMusic("in1.imx");
+			else if (b == 1100)
+				_scumm->_sound->playBundleMusic("in2.imx");
+			else if (b == 1120)
+				_scumm->_sound->playBundleMusic("out1.imx");
+			else if (b == 1140)
+				_scumm->_sound->playBundleMusic("out2.imx");
+			else if (b == 1205)
+				_scumm->_sound->playBundleMusic("gun.imx");
+			else {
+				warning("imuse digital: set state unknown for cmi demo: %d", b);
+				return 1;
+			}
 		} else if (_scumm->_gameId == GID_CMI) {
 			if (b == 1000) {		// STATE_NULL
-				// FIXME: Fade this out properly, in the same increments as the real engine
 				_scumm->_sound->stopBundleMusic();
 				return 0;
 			}
