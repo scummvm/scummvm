@@ -746,6 +746,44 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	}
 }
 
+void AdvMame3x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+							 int width, int height) {
+	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	uint16 *p = (uint16 *)srcPtr;
+
+	unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	uint16 *q = (uint16 *)dstPtr;
+	
+	uint16 A, B, C;
+	uint16 D, E, F;
+	uint16 G, H, I;
+
+	while (height--) {
+		B = C = *(p - nextlineSrc);
+		E = F = *(p);
+		H = I = *(p + nextlineSrc);
+		for (int i = 0; i < width; ++i) {
+			p++;
+			A = B; B = C; C = *(p - nextlineSrc);
+			D = E; E = F; F = *(p);
+			G = H; H = I; I = *(p + nextlineSrc);
+
+			*(q) = D == B && B != F && D != H ? D : E;
+			*(q + 1) = E;
+			*(q + 2) = B == F && B != D && F != H ? F : E;
+			*(q + nextlineDst) = E;
+			*(q + nextlineDst + 1) = E;
+			*(q + nextlineDst + 2) = E;
+			*(q + 2 * nextlineDst) = D == H && D != B && H != F ? D : E;
+			*(q + 2 * nextlineDst + 1) = E;
+			*(q + 2 * nextlineDst + 2) = H == F && D != H && B != F ? F : E;
+			q += 3;
+		}
+		p += nextlineSrc - width;
+		q += (nextlineDst - width) * 3;
+	}
+}
+
 void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	while (height--) {

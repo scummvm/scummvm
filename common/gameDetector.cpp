@@ -90,6 +90,7 @@ static const struct GraphicsMode gfx_modes[] = {
 	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
 	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
+	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
 #else

@@ -570,7 +570,7 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 				_glScreenStart = 0;
 				break;
 			default: // SDL backend
-				if (value->gfx_mode >= 9)
+				if (value->gfx_mode >= 10)
 				  return 0;
 
 				_mode = value->gfx_mode;
