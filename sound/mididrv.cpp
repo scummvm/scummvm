@@ -45,7 +45,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (uint range) { }
+	void setPitchBendRange (byte channel, uint range) { }
 
 private:
 	struct MyMidiHdr {
@@ -305,7 +305,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (uint range) { }
+	void setPitchBendRange (byte channel, uint range) { }
 
 private:
 	enum {
@@ -517,7 +517,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (uint range) { }
+	void setPitchBendRange (byte channel, uint range) { }
 
 private:
 	StreamCallback *_stream_proc;
@@ -655,7 +655,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause) { }
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (uint range);
+	void setPitchBendRange (byte channel, uint range);
 
 private:
 	NoteAllocator qtNoteAllocator;
@@ -817,9 +817,8 @@ void MidiDriver_QT::send(uint32 b)
 			// multiply it by a factor. If all was right, the factor would be 3/8, but for
 			// mysterious reasons the actual factor we have to use is more like 1/32 or 3/64.
 			// Maybe the QT docs are right, and 
-			long theBend = ((long)midiCmd[1] | (long)(midiCmd[2] << 7));
-			_pitchbend[chanID] = theBend;
-			theBend = (theBend - 0x2000) * _pitchbend_range[channel] / 32;
+			_pitchbend[chanID] = ((uint16) midiCmd[1] | (uint16) (midiCmd[2] << 7));
+ 			long theBend = ((long) _pitchbend[chanID] - 0x2000) * _pitchbend_range[chanID] / 32;
 
 			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPitchBend, theBend);
 		}
@@ -832,7 +831,7 @@ void MidiDriver_QT::send(uint32 b)
 	}
 }
 
-void MidiDriver_QT::setPitchBendRange (channel, range)
+void MidiDriver_QT::setPitchBendRange (byte channel, uint range)
 {
 	if (_pitchbend_range[channel] == range)
 		return;
@@ -865,7 +864,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (uint range) { }
+	void setPitchBendRange (byte channel, uint range) { }
 
 private:
 	AudioUnit au_MusicDevice;
@@ -988,7 +987,7 @@ public:
 	void send(uint32 b) { }
 	void pause(bool pause) { }
 	void set_stream_callback(void *param, StreamCallback *sc) { }
-	void setPitchBendRange (uint range) { }
+	void setPitchBendRange (byte channel, uint range) { }
 private:
 };
 
@@ -1061,7 +1060,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (uint range) { }
+	void setPitchBendRange (byte channel, uint range) { }
 
 private:
 	void send_event(int do_flush);
