@@ -184,6 +184,7 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 									WaitIO((IORequest *) timer_slots[t].ts_IORequest);
 									signal_mask &= ~timer_slots[t].ts_SignalBit;
 									timer_bits &= ~timer_slots[t].ts_SignalBit;
+									CloseDevice((IORequest *) timer_slots[t].ts_IORequest);
 									DeleteIORequest((IORequest *) timer_slots[t].ts_IORequest);
 									DeleteMsgPort(timer_slots[t].ts_Port);
 									if (t < timers-1)
@@ -234,6 +235,7 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 	{
 		AbortIO((IORequest *) timer_slots[t].ts_IORequest);
 		WaitIO((IORequest *) timer_slots[t].ts_IORequest);
+		CloseDevice((IORequest *) timer_slots[t].ts_IORequest);
 		DeleteIORequest((IORequest *) timer_slots[t].ts_IORequest);
 		DeleteMsgPort(timer_slots[t].ts_Port);
 	}
