@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.5  2001/10/18 20:04:58  strigeus
  * flags were not saved properly
  *
@@ -72,6 +75,7 @@ bool Scumm::loadState(const char *filename) {
 	FILE *out = fopen(filename,"rb");
 	int i,j;
 	SaveGameHeader hdr;
+	int sb,sh;
 
 	if (out==NULL)
 		return false;
@@ -105,11 +109,20 @@ bool Scumm::loadState(const char *filename) {
 	saveOrLoad(out,false);
 	fclose(out);
 
-	initScreens(0, _screenB, 320, _screenH);
+	sb = _screenB;
+	sh = _screenH;
+	
+	initScreens(0, 0, 320, 200);
+	_screenEffectFlag = 1;
+	unkVirtScreen4(129);
+
+	initScreens(0, sb, 320, sh);
 
 	_completeScreenRedraw = 1;
 	setDirtyColors(0,255);
 
+	_lastCodePtr = NULL;
+ 
 	_drawObjectQueNr = 0;
 	_verbMouseOver = 0;
 
@@ -255,7 +268,7 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,_numObjectsInRoom,sleByte),
 		MKLINE(Scumm,_currentScript,sleByte),
 		MKARRAY(Scumm,_localScriptList[0],sleUint32,0x39),
-		MKARRAY(Scumm,vm.localvar[0],sleUint16,20*17),
+		MKARRAY(Scumm,vm.localvar[0],sleUint16,NUM_SCRIPT_SLOT*17),
 		MKARRAY(Scumm,_resourceMapper[0],sleByte,128),
 		MKARRAY(Scumm,charset._colorMap[0],sleByte,16),
 		MKARRAY(Scumm,_charsetData[0][0],sleByte,10*16),
@@ -293,29 +306,28 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,_numNestedScripts,sleByte),
 		MKLINE(Scumm,_userPut,sleByte),
 		MKLINE(Scumm,_cursorState,sleByte),
-		MKLINE(Scumm,gdi.unk4,sleByte),
-		MKLINE(Scumm,gdi.currentCursor,sleByte),
+		MKLINE(Scumm,gdi._unk4,sleByte),
+		MKLINE(Scumm,gdi._currentCursor,sleByte),
 
-		MKLINE(Scumm,doEffect,sleByte),
+		MKLINE(Scumm,_doEffect,sleByte),
 		MKLINE(Scumm,_switchRoomEffect,sleByte),
 		MKLINE(Scumm,_newEffect,sleByte),
 		MKLINE(Scumm,_switchRoomEffect2,sleByte),
 		MKLINE(Scumm,_BgNeedsRedraw,sleByte),
 
 		MKARRAY(Scumm,actorDrawBits[0],sleUint16,200),
-		MKLINE(Scumm,gdi.transparency,sleByte),
+		MKLINE(Scumm,gdi._transparency,sleByte),
 		MKARRAY(Scumm,_currentPalette[0],sleByte,768),
 		/* virtscr */
 
 		MKARRAY(Scumm,charset._buffer[0],sleByte,256),
 
-		MKLINE(Scumm,dseg_3A76,sleUint16),
+		MKLINE(Scumm,_egoPositioned,sleByte),
 
-		MKARRAY(Scumm,_imgBufOffs[0],sleUint16,4),
-		MKLINE(Scumm,_numZBuffer,sleUint16),
+		MKARRAY(Scumm,gdi._imgBufOffs[0],sleUint16,4),
+		MKLINE(Scumm,gdi._numZBuffer,sleByte),
 
-		MKLINE(Scumm,dseg_4EA0,sleUint16),
-		MKLINE(Scumm,dseg_4EA0,sleUint16),
+		MKLINE(Scumm,_screenEffectFlag,sleByte),
 
 		MKLINE(Scumm,_randSeed1,sleUint32),
 		MKLINE(Scumm,_randSeed2,sleUint32),
@@ -327,12 +339,6 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,_screenB,sleUint16),
 		MKLINE(Scumm,_screenH,sleUint16),
 
-		MKARRAY(Scumm,_colorCycleDelays[0],sleUint16,17),
-		MKARRAY(Scumm,_colorCycleCounter[0],sleUint16,17),
-		MKARRAY(Scumm,_colorCycleFlags[0],sleUint16,17),
-		MKARRAY(Scumm,_colorCycleStart[0],sleByte,17),
-		MKARRAY(Scumm,_colorCycleEnd[0],sleByte,17),
-		
 		MKARRAY(Scumm,cost._transEffect[0],sleByte,256),
 		MKEND()
 	};
@@ -393,6 +399,14 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKEND()
 	};
 
+	const SaveLoadEntry colorCycleEntries[] = {
+		MKLINE(ColorCycle,delay,sleUint16),
+		MKLINE(ColorCycle,counter,sleUint16),
+		MKLINE(ColorCycle,flags,sleUint16),
+		MKLINE(ColorCycle,start,sleByte),
+		MKLINE(ColorCycle,end,sleByte),
+	};
+
 	int i,j;
 
 	_saveLoadStream = inout;
@@ -401,7 +415,7 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 	saveLoadEntries(this,mainEntries);
 	for (i=1; i<13; i++)
 		saveLoadEntries(&actor[i],actorEntries);
-	for (i=0; i<20; i++)
+	for (i=0; i<NUM_SCRIPT_SLOT; i++)
 		saveLoadEntries(&vm.slot[i],scriptSlotEntries);
 	for (i=0; i<_numLocalObjects; i++)
 		saveLoadEntries(&_objs[i],objectEntries);
@@ -413,6 +427,8 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		saveLoadEntries(&sentence[i],sentenceTabEntries);
 	for (i=0; i<6; i++)
 		saveLoadEntries(&string[i],stringTabEntries);
+	for (i=0; i<16; i++)
+		saveLoadEntries(&_colorCycle,colorCycleEntries);
 
 	for (i=1; i<16; i++)
 		if (res.mode[i]==0)

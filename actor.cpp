@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.6  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -445,8 +448,8 @@ void Scumm::putActor(Actor *a, int x, int y, byte room) {
 	a->needRedraw = true;
 	a->needBgReset = true;
 
-	if (_vars[VAR_UNK_ACTOR]==a->number) {
-		dseg_3A76 = 1;
+	if (_vars[VAR_EGO]==a->number) {
+		_egoPositioned = true;
 	}
 
 	if (a->visible) {
@@ -774,8 +777,8 @@ void Scumm::setupCostumeRenderer(CostumeRenderer *c, Actor *a) {
 	c->_actorX = a->x - virtscr->xstart;
 	c->_actorY = a->y - a->elevation;
 	c->_zbuf = a->mask;
-	if (c->_zbuf > _numZBuffer)
-		c->_zbuf = (byte)_numZBuffer;
+	if (c->_zbuf > gdi._numZBuffer)
+		c->_zbuf = (byte)gdi._numZBuffer;
 	if (a->neverZClip)
 		c->_zbuf = a->neverZClip;
 	

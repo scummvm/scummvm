@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.12  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.11  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -102,6 +105,7 @@ void waitForTimer(Scumm *s) {
 						s->_saveLoadFlag = 1;
 					else if (event.key.keysym.mod&KMOD_CTRL)
 						s->_saveLoadFlag = 2;
+					s->_saveLoadCompatible = false;
 				}
 				if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
 					exit(1);
@@ -328,7 +332,7 @@ void initGraphics(Scumm *s) {
 	}
 
 	/* Clean up on exit */
-  	atexit(SDL_Quit);
+ 	atexit(SDL_Quit);
 
 	char buf[512], *gameName;
 	

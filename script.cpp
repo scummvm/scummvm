@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.4  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -101,7 +104,7 @@ void Scumm::stopScriptNr(int script) {
 
 	ss = &vm.slot[1];
 	
-	for (i=1; i<20; i++,ss++) {
+	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
 		if (script!=ss->number || ss->type!=2 && ss->type!=3 || ss->status==0)
 			continue;
 
@@ -138,7 +141,7 @@ void Scumm::stopObjectScript(int script) {
 
 	ss = &vm.slot[1];
 	
-	for (i=1; i<20; i++,ss++) {
+	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
 		if (script==ss->number && (ss->type==1 || ss->type==0 || ss->type==4) && ss->status!=0) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override", script);
@@ -169,11 +172,11 @@ int Scumm::getScriptSlot() {
 	int i;
 	ss = &vm.slot[1];
 	
-	for (i=1; i<20; i++,ss++) {
+	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
 		if(ss->status==0)
 			return i;
 	}
-	error("Too many scripts running, %d max", 20);
+	error("Too many scripts running, %d max", NUM_SCRIPT_SLOT);
 }
 
 void Scumm::runScriptNested(int script) {
@@ -414,12 +417,14 @@ void Scumm::setResult(int value) {
 
 void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 	int top,bottom,count;
+	VirtScreen *vs;
+	byte *backbuff;
 
-	if (findVirtScreen(y)==-1)
+	if ((vs=findVirtScreen(y)) == NULL)
 		return;
 
-	top = virtscr[gdi.virtScreen].topline;
-	bottom = top + virtscr[gdi.virtScreen].height;
+	top = vs->topline;
+	bottom = top + vs->height;
 
 	if (x > x2)
 		SWAP(x,x2);
@@ -436,16 +441,14 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 	if (x2>320) x2=320;
 	if (y2 > bottom) y2=bottom;
 
-	updateDirtyRect(gdi.virtScreen, x, x2, y-top, y2-top, 0);
+	updateDirtyRect(vs->number, x, x2, y-top, y2-top, 0);
 
-	gdi.bg_ptr = getResourceAddress(0xA, gdi.virtScreen+1) 
-		+ virtscr[gdi.virtScreen].xstart
-		+ (y-top)*320 + x;
+	backbuff = getResourceAddress(0xA, vs->number+1) + vs->xstart	+ (y-top)*320 + x;
 
 	count = y2 - y;
 	while (count) {
-		memset(gdi.bg_ptr, color, x2 - x);
-		gdi.bg_ptr += 320;
+		memset(backbuff, color, x2 - x);
+		backbuff += 320;
 		count--;
 	}
 }
@@ -477,7 +480,7 @@ bool Scumm::isScriptLoaded(int script) {
 	int i;
 
 	ss = vm.slot;
-	for (i=0; i<20; i++,ss++) {
+	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++) {
 		if (ss->number == script)
 			return true;
 	}
@@ -495,7 +498,7 @@ void Scumm::runHook(int i) {
 void Scumm::freezeScripts(int flag) {
 	int i;
 
-	for(i=1; i<20; i++) {
+	for(i=1; i<NUM_SCRIPT_SLOT; i++) {
 		if (_currentScript!=i && vm.slot[i].status!=0 && (vm.slot[i].unk1==0 || flag>=0x80)) {
 			vm.slot[i].status |= 0x80;
 			vm.slot[i].freezeCount++;
@@ -513,7 +516,7 @@ void Scumm::freezeScripts(int flag) {
 
 void Scumm::unfreezeScripts() {
 	int i;
-	for (i=1; i<20; i++) {
+	for (i=1; i<NUM_SCRIPT_SLOT; i++) {
 		if (vm.slot[i].status&0x80) {
 			if (!--vm.slot[i].freezeCount) {
 				vm.slot[i].status&=0x7F;
@@ -530,11 +533,11 @@ void Scumm::unfreezeScripts() {
 void Scumm::runAllScripts() {
 	int i;
 
-	for (i=0; i<20; i++)
+	for (i=0; i<NUM_SCRIPT_SLOT; i++)
 		vm.slot[i].didexec = 0;
 	
 	_currentScript = 0xFF;
-	for(_curExecScript = 0; _curExecScript<20; _curExecScript++) {
+	for(_curExecScript = 0; _curExecScript<NUM_SCRIPT_SLOT; _curExecScript++) {
 		if (vm.slot[_curExecScript].status == 2 &&
 			vm.slot[_curExecScript].didexec == 0) {
 			_currentScript = _curExecScript;
@@ -587,7 +590,7 @@ void Scumm::killScriptsAndResources() {
 
 	ss = &vm.slot[1];
 	
-	for (i=1; i<20; i++,ss++) {
+	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
 		if (ss->type==1 || ss->type==4) {
 			if(ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
@@ -613,7 +616,7 @@ void Scumm::checkAndRunVar33() {
 	memset(_localParamList, 0, sizeof(_localParamList));
 	if (isScriptLoaded(_vars[VAR_SENTENCE_SCRIPT])) {
 		ss = vm.slot;
-		for (i=0; i<20; i++,ss++)
+		for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
 			if (ss->number==_vars[VAR_SENTENCE_SCRIPT] && ss->status!=0 && ss->freezeCount==0)
 				return;
 	}
@@ -648,7 +651,7 @@ void Scumm::runInputScript(int a, int cmd, int mode) {
 void Scumm::decreaseScriptDelay(int amount) {
 	ScriptSlot *ss = &vm.slot[0];
 	int i;
-	for (i=0; i<20; i++,ss++) {
+	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++) {
 		if(ss->status==1) {
 			ss->delay -= amount;
 			if (ss->delay < 0){
@@ -712,7 +715,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 
 	objptr = getObjectAddress(obj);
 
-	verbptr = findResource(MKID('VERB'), objptr);
+	verbptr = findResource(MKID('VERB'), objptr, 0);
 	if (verbptr==NULL)
 		error("No verb block in object %d", obj);
 
@@ -842,7 +845,7 @@ void Scumm::animateActor(int act, int anim) {
 int Scumm::getScriptRunning(int script) {
 	int i;
 	ScriptSlot *ss = vm.slot;
-	for (i=0; i<20; i++,ss++)
+	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
 		if (ss->number==script && (ss->type==2 || ss->type==3) && ss->status)
 			return 1;
 	return 0;
@@ -937,6 +940,16 @@ int Scumm::getArrayId() {
 			return i;
 	}
 	error("Out of array pointers, %d max", _numArray);
+}
+
+void Scumm::arrayop_1(int a, byte *ptr) {
+	ArrayHeader *ah;
+	int r;
+	int len = getStringLen(ptr);
+			
+	r = defineArray(a, 4, 0, len);
+	ah = (ArrayHeader*)getResourceAddress(7,r);
+	copyString(ah->data,ptr,len);
 }
 
 void Scumm::copyString(byte *dst, byte *src, int len) {

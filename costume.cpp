@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.5  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -286,21 +289,21 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 		return 2;
 	}
 
-	_where_to_draw_ptr = _vm->getResourceAddress(0xA, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
-	_bg_ptr = _vm->getResourceAddress(0xA, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+	_bgbak_ptr = _vm->getResourceAddress(0xA, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+	_backbuff_ptr = _vm->getResourceAddress(0xA, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
 	charsetmask = _vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right, _vm->virtscr[0].topline + _bottom);
 	masking = 0;
 
 	if (_zbuf) {
 		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,
-			_vm->getResourceAddress(0xA, 9) + _vm->_imgBufOffs[_zbuf] + _vm->_screenStartStrip
+			_vm->getResourceAddress(0xA, 9) + _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip
 		);
 	}
 
 	if (_zbuf || charsetmask) {
 		_mask_ptr = _vm->getResourceAddress(0xA, 9) + _ypos*40 + _vm->_screenStartStrip;
 
-		_imgbufoffs = _vm->_imgBufOffs[_zbuf];
+		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && _zbuf!=0)
 			_mask_ptr += _imgbufoffs;
 		_mask_ptr_dest = _mask_ptr + _xpos / 8;
@@ -344,7 +347,7 @@ void CostumeRenderer::proc6() {
 	y = _ypos;
 	len = _replen;
 	src = _srcptr;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	color = _repcolor;
 	scrheight = _vscreenheight;
 	width = _width2;
@@ -391,7 +394,7 @@ void CostumeRenderer::proc5() {
 	maskbit = revBitMask[_xpos&7];
 	y = _ypos;
 	src = _srcptr;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	len = _replen;
 	color = _repcolor;
 	scrheight = _vscreenheight;
@@ -451,7 +454,7 @@ void CostumeRenderer::proc4() {
 	maskbit = revBitMask[_xpos&7];
 	y = _ypos;
 	src = _srcptr;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	len = _replen;
 	color = _repcolor;
 	scrheight = _vscreenheight;
@@ -508,7 +511,7 @@ void CostumeRenderer::proc3() {
 	uint y;
 	
 	mask = _mask_ptr_dest;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	height = _height2;
 	width = _width2;
 	len = _replen;
@@ -549,9 +552,9 @@ void CostumeRenderer::proc3() {
 					if (_xpos >= 320)
 						return;
 					maskbit = revBitMask[_xpos&7];
-					_bg_ptr += _scaleIndexXStep;
+					_backbuff_ptr += _scaleIndexXStep;
 				}
-				dst = _bg_ptr;
+				dst = _backbuff_ptr;
 				mask = _mask_ptr + (_xpos>>3);
 			}
 StartPos:;
@@ -566,7 +569,7 @@ void CostumeRenderer::proc2() {
 	uint y;
 	
 	mask = _mask_ptr_dest;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	height = _height2;
 	width = _width2;
 	len = _replen;
@@ -607,9 +610,9 @@ void CostumeRenderer::proc2() {
 					if (_xpos >= 320)
 						return;
 					maskbit = revBitMask[_xpos&7];
-					_bg_ptr += _scaleIndexXStep;
+					_backbuff_ptr += _scaleIndexXStep;
 				}
-				dst = _bg_ptr;
+				dst = _backbuff_ptr;
 				mask = _mask_ptr + (_xpos>>3);
 			}
 StartPos:;
@@ -619,28 +622,17 @@ StartPos:;
 }
 
 void CostumeRenderer::proc1() {
-	byte *mask,*src,*dst;
+	byte *mask,*src,*dst,*dstorg;
 	byte maskbit,len,height,pcolor,width;
 	uint y;
 	int color;
 	int t;
 
-#if 0
-	debug(1, "proc1(): (%d %d),(%d %d %d),(%d %d %d),(%d %d,%d %d,%d %d),(%d %d)",
-				_xpos, _ypos, 
-				_width2, _height2, _height,
-				_replen,_repcolor,_docontinue,
-				_scaleX, _scaleY, _scaleIndexX, _scaleIndexY, 
-				_scaleIndexXStep, _scaleIndexYStep,
-				_scaleIndexYTop,_vscreenheight
-				);
-#endif
-	
 	mask = _mask_ptr = _mask_ptr_dest;
 	maskbit = revBitMask[_xpos&7];
 	y = _ypos;
 
-	dst = _bg_ptr;
+	dstorg = dst = _backbuff_ptr;
 	height = _height2;
 	width = _width2;
 	len = _replen;
@@ -678,9 +670,9 @@ void CostumeRenderer::proc1() {
 					_xpos += _scaleIndexXStep;
 					if (_xpos >= 320)
 						return;
-					_bg_ptr += _scaleIndexXStep;
+					_backbuff_ptr += _scaleIndexXStep;
 				}
-				dst = _bg_ptr;
+				dst = _backbuff_ptr;
 			}
 StartPos:;
 		} while (--len);

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.14  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.13  2001/10/24 20:12:52  strigeus
  * fixed some bugs related to string handling
  *
@@ -73,6 +76,8 @@ struct Actor;
 
 typedef void (Scumm::*OpcodeProc)();
 
+#define NUM_SCRIPT_SLOT 25
+
 #pragma START_PACK_STRUCTS
 	
 struct Point {
@@ -109,6 +114,7 @@ struct VerbSlot {
 };
 
 struct VirtScreen {
+	int number;
 	uint16 unk1;
 	uint16 topline;
 	uint16 width,height;
@@ -258,80 +264,78 @@ enum {
 };
 
 enum ScummVars {
-	VAR_UNK_ACTOR = 1,
-	VAR_WALKTO_OBJ = 38,
+	VAR_EGO = 1,
+	VAR_CAMERA_CUR_POS = 2,
+	VAR_HAVE_MSG = 3,
+	VAR_ROOM = 4,
 	VAR_OVERRIDE = 5,
 	VAR_NUM_ACTOR = 8,
-	VAR_OBJECT_LO = 15,
-	VAR_OBJECT_HI = 16,
 	VAR_CURRENTDRIVE = 10,
-	VAR_TALK_ACTOR = 25,
-	VAR_DEBUGMODE = 39,
-	VAR_VERSION = 75,
-	VAR_FIXEDDISK = 51,
-	VAR_CURSORSTATE = 52,
-	VAR_USERPUT = 53,
-	VAR_SOUNDCARD = 48,
-	VAR_VIDEOMODE = 49,
-	VAR_HEAPSPACE = 40,
-	VAR_MOUSEPRESENT = 67,
-	VAR_SOUNDPARAM = 64,
-	VAR_SOUNDPARAM2 = 65,
-	VAR_SOUNDPARAM3 = 66,
-	VAR_GAME_LOADED = 71,
+	VAR_TMR_1 = 11,
+	VAR_TMR_2 = 12,
+	VAR_TMR_3 = 13,
+	VAR_CAMERA_MIN = 17,
+	VAR_CAMERA_MAX = 18,
+	VAR_TIMER_NEXT = 19,
 	VAR_VIRT_MOUSE_X = 20,
 	VAR_VIRT_MOUSE_Y = 21,
-	VAR_PERFORMANCE_1 = 68,
-	VAR_PERFORMANCE_2 = 69,
-	VAR_ROOM_FLAG = 70,
-	VAR_HAVE_MSG = 3,
+	VAR_ROOM_RESOURCE = 22,
+	VAR_LAST_SOUND = 23,
+	VAR_CUTSCENEEXIT_KEY = 24,
+	VAR_TALK_ACTOR = 25,
+	VAR_CAMERA_FAST = 26,
+	VAR_SCROLL_SCRIPT = 27,
 	VAR_ENTRY_SCRIPT = 28,
 	VAR_ENTRY_SCRIPT2 = 29,
 	VAR_EXIT_SCRIPT = 30,
 	VAR_EXIT_SCRIPT2 = 31,
 	VAR_VERB_SCRIPT = 32,
 	VAR_SENTENCE_SCRIPT = 33,
-	VAR_LAST_SOUND = 23,
 	VAR_HOOK_SCRIPT = 34,
 	VAR_CUTSCENE_START_SCRIPT = 35,
 	VAR_CUTSCENE_END_SCRIPT = 36,
-	VAR_SCROLL_SCRIPT = 27,
-	VAR_CAMERA_MIN = 17,
-	VAR_CAMERA_MAX = 18,
-	VAR_CAMERA_FAST = 26,
-	VAR_CAMERA_CUR_POS = 2,
-	VAR_NEW_ROOM = 72,
-	VAR_ROOM = 4,
-	VAR_ROOM_RESOURCE = 22,
-
-	VAR_MOUSE_X = 44,
-	VAR_MOUSE_Y = 45,
-	
-	VAR_TIMER = 46,
-	VAR_TIMER_NEXT = 19,
-
-	VAR_TMR_1 = 11,
-	VAR_TMR_2 = 12,
-	VAR_TMR_3 = 13,
-	VAR_TMR_4 = 47,
-
-	VAR_DRAWFLAGS = 9,
-
-	VAR_SOUNDRESULT = 56,
-
-	VAR_PLAYBACKTIMER = 19,
-
-	VAR_TALK_STRING_Y = 54,
-	VAR_CHARFLAG = 60,
 	VAR_CHARINC = 37,
-
+	VAR_WALKTO_OBJ = 38,
+	VAR_DEBUGMODE = 39,
+	VAR_HEAPSPACE = 40,
 	VAR_RESTART_KEY = 42,
 	VAR_PAUSE_KEY = 43,
-	VAR_CUTSCENEEXIT_KEY = 24,
-	VAR_TALKSTOP_KEY = 57,
+	VAR_MOUSE_X = 44,
+	VAR_MOUSE_Y = 45,
+	VAR_TIMER = 46,
+	VAR_TMR_4 = 47,
+	VAR_SOUNDCARD = 48,
+	VAR_VIDEOMODE = 49,
 	VAR_SAVELOADDIALOG_KEY = 50,
+	VAR_FIXEDDISK = 51,
+	VAR_CURSORSTATE = 52,
+	VAR_USERPUT = 53,
+	VAR_SOUNDRESULT = 56,
+	VAR_TALKSTOP_KEY = 57,
+	VAR_59 = 59,
+	
+	VAR_SOUNDPARAM = 64,
+	VAR_SOUNDPARAM2 = 65,
+	VAR_SOUNDPARAM3 = 66,
+	VAR_MOUSEPRESENT = 67,
+	VAR_PERFORMANCE_1 = 68,
+	VAR_PERFORMANCE_2 = 69,
+	VAR_ROOM_FLAG = 70,
+	VAR_GAME_LOADED = 71,
+	VAR_NEW_ROOM = 72,
+	VAR_VERSION = 75,
 
+	VAR_V5_DRAWFLAGS = 9,
+	VAR_V5_OBJECT_LO = 15,
+	VAR_V5_OBJECT_HI = 16,
+	VAR_V5_TALK_STRING_Y = 54,
+	VAR_V5_CHARFLAG = 60,
+
+	VAR_V6_SCREEN_WIDTH = 41,
+	VAR_V6_SCREEN_HEIGHT = 54,
+	VAR_V6_EMSSPACE = 76,
 	VAR_V6_RANDOM_NR = 118,
+
 };
 
 #define _maxRooms res.num[1]
@@ -366,6 +370,7 @@ struct CharsetRenderer {
 	int _right;
 	byte _color;
 	bool _hasMask;
+	bool _blitAlso;
 	
 	int _strLeft, _strRight, _strTop, _strBottom;
 //	int _mask_bottom, _mask_right, _mask_top, _mask_left;
@@ -386,8 +391,9 @@ struct CharsetRenderer {
 
 	byte _ignoreCharsetMask;
 
-	byte *_bg_ptr, *_where_to_draw_ptr;
+	byte *_backbuff_ptr, *_bgbak_ptr;
 	byte *_mask_ptr;
+	byte *_bg_ptr2;
 		
 	byte _colorMap[16];
 	byte _buffer[256];
@@ -405,7 +411,7 @@ struct CostumeRenderer {
 	byte *_dataptr;
 	byte *_frameptr;
 	byte *_srcptr;
-	byte *_where_to_draw_ptr, *_bg_ptr, *_mask_ptr, *_mask_ptr_dest;
+	byte *_bgbak_ptr, *_backbuff_ptr, *_mask_ptr, *_mask_ptr_dest;
 	int _actorX, _actorY;
 	byte _zbuf;
 	uint _scaleX, _scaleY;
@@ -519,6 +525,82 @@ struct StringTab {
 	int16 mask_top, mask_bottom, mask_right, mask_left;
 };
 
+struct ColorCycle {
+	uint16 delay;
+	uint16 counter;
+	uint16 flags;
+	byte start;
+	byte end;
+};
+
+struct Gdi {
+	Scumm *_vm;
+
+	byte *_readPtr;
+	uint _readOffs;
+
+	int8 _unk4;
+
+	int _numZBuffer;
+	int _imgBufOffs[4];
+	byte _disable_zbuffer;
+
+	byte dseg_4E3B;
+	byte _numLinesToProcess;
+	byte _tempNumLines;
+	byte _currentX;
+	byte _hotspot_x;
+	byte _hotspot_y;
+	int16 _drawMouseX;
+	int16 _drawMouseY;
+	byte _currentCursor;
+	byte _mouseColors[4];
+	byte _mouseColor;
+	byte _mouseClipMask1, _mouseClipMask2, _mouseClipMask3;
+	byte _mouseColorIndex;
+	byte *_mouseMaskPtr;
+	byte *_smap_ptr;
+	byte *_backbuff_ptr;
+	byte *_bgbak_ptr;
+	byte *_mask_ptr;
+	byte *_mask_ptr_dest;
+	byte *_z_plane_ptr;
+
+	byte _decomp_shr, _decomp_mask;
+	byte _transparency;
+	uint16 _vertStripNextInc;
+	byte *_backupIsWhere;
+	
+	byte _mouseMask[0x200];
+
+	void unkDecode1();
+	void unkDecode2();
+	void unkDecode3();
+	void unkDecode4();
+	void unkDecode5();
+	void unkDecode6();
+	void unkDecode7();
+
+	void decompressBitmap();
+
+	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, bool flag);
+	void clearUpperMask();
+
+	void disableZBuffer() { _disable_zbuffer++; }
+	void enableZBuffer() { _disable_zbuffer--; }
+
+	void draw8ColWithMasking();
+	void clear8ColWithMasking();
+	void clear8Col();
+	void decompressMaskImgOr();
+	void decompressMaskImg();
+
+	void resetBackground(byte top, byte bottom, int strip);
+	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
+	void updateDirtyScreen(VirtScreen *vs);
+};
+
+
 enum GameId {
 	GID_TENTACLE = 1,
 	GID_MONKEY2 = 2,
@@ -545,8 +627,10 @@ struct Scumm {
 	void *_fileHandle;
 	char *_exe_name;
 
-	int _saveLoadSlot;
-	
+	byte _saveLoadFlag;
+	byte _saveLoadSlot;
+	bool _saveLoadCompatible;
+
 	bool _dynamicRoomOffsets;
 	byte _resFilePathId;
 	
@@ -571,6 +655,8 @@ struct Scumm {
 
 	int _curPalIndex;
 
+	VirtScreen *_curVirtScreen;
+
 	int _numVariables;
 	int _numBitVariables;
 	int _numLocalObjects;
@@ -584,47 +670,39 @@ struct Scumm {
 	int _numSounds;
 	int _numCharsets;
 	int _numCostumes;
+
+	byte *_msgPtrToAdd;
 	
 	uint8 *_roomFileIndexes;
 	byte *_objectFlagTable;
 	uint32 *_classData;
 
 	byte _numGlobalScripts;
-	
-	uint16 _numZBuffer;
-	
+	byte *_scriptPointer, *_scriptOrgPointer;
+	byte *_scriptPointerStart;
+	byte _opcode;
+
 	uint32 _randSeed1;
 	uint32 _randSeed2;
 
 	uint16 _screenB, _screenH;
 
-	uint16 dseg_3A76;
 	uint16 _defaultTalkDelay;
-	uint16 _lightsValueA,_lightsValueB;
 	byte _haveMsg;
 	byte _newEffect;
 	uint16 _fullRedraw;
-	uint16 dseg_3DB6;
-	uint16 dseg_2456; /* lastDrawnRoom */
-	uint16 dseg_4E8A;
 	uint16 _soundParam,_soundParam2,_soundParam3;
-	uint16 dseg_4F8C;
 	
 	byte _switchRoomEffect2, _switchRoomEffect;
-	uint16 dseg_4AC2;
 
-	bool doEffect;
-	
-	uint16 _drawBmpX;
-	uint16 dseg_719E;
-	uint16 _drawBmpY;
-	uint16 dseg_4174;
-	byte dseg_4E3C;
-	uint16 _lastXstart;
-	uint16 dseg_4EA0;
-	
+	bool _egoPositioned;
+	bool _doEffect;
+	bool _screenEffectFlag;
 	bool _keepText;
 	
+	byte _bkColor;
+	uint16 _lastXstart;
+		
 	int16 _talkDelay;
 	int16 _shakeMode;
 
@@ -639,7 +717,6 @@ struct Scumm {
 	byte *_messagePtr;
 
 	byte _numNestedScripts;
-	byte _unkTabIndex;
 	byte _currentScript;
 
 	byte _currentRoom;
@@ -656,7 +733,7 @@ struct Scumm {
 	
 	uint16 _completeScreenRedraw;
 
-	byte _saveLoadFlag;
+	
 
 	int8 _userPut;
 	int8 _cursorState;
@@ -666,7 +743,6 @@ struct Scumm {
 
 	int _numInMsgStack;
 
-//	VerbSlot verbs[102];
 	VirtScreen virtscr[4];
 
 	uint32 _ENCD_offs, _EXCD_offs;
@@ -703,55 +779,14 @@ struct Scumm {
 		int16 cutSceneData[5];
 		int16 cutSceneScriptIndex;
 		byte cutSceneStackPointer;
-		ScriptSlot slot[20];
+		ScriptSlot slot[NUM_SCRIPT_SLOT];
 		NestedScript nest[15];
-		int16 localvar[20*17];
+		int16 localvar[NUM_SCRIPT_SLOT*17];
 	} vm;
 
 	struct {
 		int16 x,y;
 	} mouse;
-
-	struct {
-		byte *readPtr;
-		uint16 readOffs;
-		uint16 drawY;
-		uint16 drawHeight;
-		uint16 drawWidth;
-		uint16 draw8xPos;
-		int16 virtScreen;
-		uint16 drawBottom;
-		uint16 drawTop;
-
-		int8 unk4;
-
-		byte numLinesToProcess;
-		byte tempNumLines;
-		byte currentX;
-		byte hotspot_x;
-		byte hotspot_y;
-		int16 drawMouseX;
-		int16 drawMouseY;
-		byte currentCursor;
-		byte mouseColors[4];
-		byte mouseColor;
-		byte mouseClipMask1, mouseClipMask2, mouseClipMask3;
-		byte mouseColorIndex;
-		byte mouseMask[0x200];
-		byte *mouseMaskPtr;
-		byte *smap_ptr;
-		byte *bg_ptr;
-		byte *where_to_draw_ptr;
-		byte *mask_ptr;
-		byte *mask_ptr_dest;
-		byte *z_plane_ptr;
-
-		byte decomp_shr, decomp_mask;
-		byte transparency;
-		uint16 vertStripNextInc;
-		byte *backupIsWhere;
-//		byte mouseBackup[16*24];
-	} gdi;
 
 	Actor actor[13];
 
@@ -788,10 +823,6 @@ struct Scumm {
 
 	uint32 _whereInResToRead;
 
-	byte *_scriptPointer, *_scriptOrgPointer;
-	byte *_scriptPointerStart;
-	byte _opcode;
-
 	int _xPos, _yPos;
 	byte _dir;
 
@@ -799,40 +830,12 @@ struct Scumm {
 
 	int _resultVarNumber;
 
-	uint16 _imgBufOffs[4];
-
 	byte _sentenceIndex;
 	SentenceTab sentence[6];
 
-
-#if 0	
-	byte _sentenceTab[6];
-	byte _sentenceTab2[6];
-	uint16 _sentenceTab3[6];
-	uint16 _sentenceTab4[6];
-	byte _sentenceTab5[6];
-#endif
-
 	StringTab string[6];
 
-#if 0
-//	int _stringXPos[4], _stringYPos[4];
-	uint16 _stringOverhead[6];
-	uint16 _stringCenter[6];
-	uint16 _stringRight[6];
-	uint16 _stringColor[6];
-
-	int16 _stringXpos[6];
-	int16 _stringYpos[6];
-	uint16 _stringCharset[6];
-
-	int16 _stringXpos2[6];
-	int16 _stringYpos2[6];
-#endif
-
 	CostumeRenderer cost;
-
-//	ObjectData objs[184];
 
 	int16 _soundQuePos;
 	int16 _soundQue[0x100];
@@ -851,22 +854,11 @@ struct Scumm {
 
 	int _palDirtyMin, _palDirtyMax;
 
-	byte _saveLoadData;
 
-	uint16 _colorCycleDelays[17];
-	uint16 _colorCycleCounter[17];
-	uint16 _colorCycleFlags[17];
-	byte _colorCycleStart[17];
-	byte _colorCycleEnd[17];
+	ColorCycle _colorCycle[16];
 
-	byte dseg_4E3B;
-
-	uint32 _findResSize, _findResHeaderSize;
-	byte *_findResPos;
-
-	uint32 _findResSize2, _findResHeaderSize2;
-	byte *_findResPos2;
-
+	Gdi gdi;
+	
 	bool _BgNeedsRedraw;
 
 	int16 _localParamList[16];
@@ -886,8 +878,6 @@ struct Scumm {
 	int _boxPathVertexHeapIndex;
 	int _boxMatrixItem;
 	
-	byte *_msgPtrToAdd;
-
 	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
 
 	void openRoom(int room);
@@ -958,8 +948,8 @@ struct Scumm {
 	void updateDirtyScreen(int slot);
 	void unkVirtScreen4(int a);
 	
+	
 
-	void drawStripToScreen();
 	void restoreMouse();
 	void initActor(Actor *a, int mode);
 	bool checkFixedDisk();
@@ -1327,8 +1317,10 @@ struct Scumm {
 	void initBGBuffers();
 	void setDirtyColors(int min, int max);
 
+#if 0
 	byte *findResource(uint32 tag, byte *searchin);
 	byte *findResource2(uint32 tag, byte *searchin);
+#endif
 
 	void setScaleItem(int slot, int a, int b, int c, int d);
 
@@ -1341,26 +1333,13 @@ struct Scumm {
 	void redrawBGStrip(int start, int num);
 	void drawObject(int obj, int arg);
 
-	void drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr);
-	void decompressBitmap();
+//	void drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr);
+	
 	int hasCharsetMask(int x, int y, int x2, int y2);
-	void draw8ColWithMasking();
-	void clear8ColWithMasking();
-	void clear8Col();
-	void decompressMaskImgOr();
-	void decompressMaskImg();
-
-	void GDI_UnkDecode1();
-	void GDI_UnkDecode2();
-	void GDI_UnkDecode3();
-	void GDI_UnkDecode4();
-	void GDI_UnkDecode5();
-	void GDI_UnkDecode6();
-	void GDI_UnkDecode7();
 
 	void restoreBG(int left, int top, int right, int bottom);
 	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint16 dirtybits);
-	int findVirtScreen(int y);
+	VirtScreen *findVirtScreen(int y);
 
 	void unkScreenEffect1();
 	void unkScreenEffect2();
@@ -1375,7 +1354,7 @@ struct Scumm {
 	void decreaseScriptDelay(int amount);
 	void processKbd();
 
-	void clearUpperMask();
+	
 	void redrawVerbs();
 	void checkExecVerbs();
 	void checkAndRunVar33();
@@ -1447,7 +1426,7 @@ struct Scumm {
 	void unkHeapProc2(int a, int b);
 	void unkResProc(int a, int b);
 	void setPalColor(int index, int r, int g, int b);
-	void unkRoomFunc2(int a, int b, int c, int d, int e);
+	void darkenPalette(int a, int b, int c, int d, int e);
 	void unkRoomFunc3(int a, int b, int c, int d, int e);
 	void unkRoomFunc4(int a, int b, int c, int d, int e);
 	int getVerbSlot(int id, int mode);
@@ -1484,9 +1463,6 @@ struct Scumm {
 
 	void drawMouse();
 
-	void GDI_drawMouse();
-	void GDI_removeMouse();
-
 	void dumpResource(char *tag, int index, byte *ptr);
 
 	FILE *_saveLoadStream;
@@ -1508,7 +1484,6 @@ struct Scumm {
 	byte loadByte();
 	uint16 loadWord();
 	uint32 loadUint32();
-
 
 	Actor *derefActor(int id) { return &actor[id]; }
 	Actor *derefActorSafe(int id, const char *errmsg);
@@ -1588,6 +1563,10 @@ struct Scumm {
 	void startManiac();
 
 	void readIndexFileV5(int i);
+
+	void grabCursor(byte *ptr, int width, int height);
+
+	byte *getPalettePtr();
 };
 
 struct ScummDebugger {
@@ -1607,6 +1586,9 @@ struct ScummDebugger {
 	int get_command();
 	void attach(Scumm *s);
 	void detach();
+
+	void printActors(int act);
+	void printScripts();
 };
 
 
@@ -1624,3 +1606,5 @@ void initGraphics(Scumm *s);
 void updateScreen(Scumm *s);
 
 void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
+void blit(byte *dst, byte *src, int w, int h);
+byte *findResource(uint32 id, byte *searchin, int index);

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.3  2001/10/24 20:12:52  strigeus
  * fixed some bugs related to string handling
  *
@@ -978,7 +981,7 @@ void Scumm::o6_pickupObject() {
 	if (room==0)
 		room = _roomResource;
 	addObjectToInventory(obj, room);
-	putOwner(obj, _vars[VAR_UNK_ACTOR]);
+	putOwner(obj, _vars[VAR_EGO]);
 	putClass(obj, 32, 1);
 	putState(obj, 1);
 	removeObjectFromRoom(obj);
@@ -995,15 +998,16 @@ void Scumm::o6_loadRoomWithEgo() {
 	room = pop();
 	obj = pop();
 
-	a = derefActorSafe(_vars[VAR_UNK_ACTOR], "o_loadRoomWithEgo");
+	a = derefActorSafe(_vars[VAR_EGO], "o_loadRoomWithEgo");
 
 	putActor(a, 0, 0, room);
-	dseg_3A76 = 0;
+	_egoPositioned = false;
+
 	_vars[VAR_WALKTO_OBJ] = obj;
 	startScene(a->room, a, obj);
 	_vars[VAR_WALKTO_OBJ] = 0;
 
-	/* startScene maybe modifies VAR_UNK_ACTOR, i hope not */
+	/* startScene maybe modifies VAR_EGO, i hope not */
 	camera._destPos = camera._curPos = a->x;
 	setCameraFollows(a);
 	_fullRedraw=1;
@@ -1278,11 +1282,12 @@ void Scumm::o6_roomOps() {
 		c = pop();
 		b = pop();
 		a = pop();
-		unkRoomFunc2(b,c,a,a,a);
+		darkenPalette(b,c,a,a,a);
 		break;
 
 	case 180:
-		_saveLoadData = pop();
+		_saveLoadCompatible = true;
+		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
 		warning("o6_roomops:180: partially unimplemented");
 		break;
@@ -1303,7 +1308,7 @@ void Scumm::o6_roomOps() {
 		c = pop();
 		b = pop();
 		a = pop();
-		unkRoomFunc2(d, e, a, b, c);
+		darkenPalette(d, e, a, b, c);
 		break;
 
 	case 183:
@@ -1334,10 +1339,8 @@ void Scumm::o6_roomOps() {
 	case 187: /* color cycle delay */
 		b = pop();
 		a = pop();
-		if (b!=0)
-			_colorCycleDelays[a] = 0x4000 / (b*0x4C);
-		else
-			_colorCycleDelays[a] = 0;
+		checkRange(16, 1, a, "o6_roomOps: 187: color cycle out of range (%d)");
+		_colorCycle[a-1].delay = (b!=0) ? 0x4000 / (b*0x4C) : 0;
 		break;
 
 	case 213: /* set palette */
@@ -1863,7 +1866,7 @@ void Scumm::o6_printActor() {
 }
 
 void Scumm::o6_printEgo() {
-	push(_vars[VAR_UNK_ACTOR]);
+	push(_vars[VAR_EGO]);
 	decodeParseString2(0,1);
 }
 
@@ -1876,7 +1879,7 @@ void Scumm::o6_talkActor() {
 }
 
 void Scumm::o6_talkEgo() {
-	_actorToPrintStrFor = _vars[VAR_UNK_ACTOR];
+	_actorToPrintStrFor = _vars[VAR_EGO];
 	_messagePtr = _scriptPointer;
 	setStringVars(0);
 	actorTalk();

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.3  2001/10/16 10:01:48  strigeus
  * preliminary DOTT support
  *
@@ -164,7 +167,7 @@ void Scumm::restoreVerbBG(int verb) {
 	vs = &_verbs[verb];
 
 	if (vs->oldleft != -1) {
-		dseg_4E3C = vs->bkcolor;
+		_bkColor = vs->bkcolor;
 		restoreBG(vs->oldleft, vs->oldtop, vs->oldright, vs->oldbottom);
 		vs->oldleft = -1;
 	}
@@ -177,17 +180,16 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	byte twobufs, *imptr;
 	int ydiff, xstrip;
 	int imgw, imgh;
-	int i;
+	int i,tmp;
 	byte *IMHD_ptr;
+	byte *obim;
 
-	if (findVirtScreen(y) == -1)
+	if ((vs=findVirtScreen(y)) == NULL)
 		return;
 
 	_lastXstart = virtscr[0].xstart;
-	nozbufs = _numZBuffer;
-	_numZBuffer = 0;
-
-	vs = &virtscr[gdi.virtScreen];
+	
+	gdi.disableZBuffer();
 
 	twobufs = vs->alloctwobuffers;
 	vs->alloctwobuffers = 0;
@@ -195,22 +197,21 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	xstrip = x>>3;
 	ydiff = y - vs->topline;
 
-	IMHD_ptr = findResource2(MKID('IMHD'), getResourceAddress(8, vrb));
+
+	obim = getResourceAddress(8, vrb);
+	IMHD_ptr = findResource(MKID('IMHD'), obim, 0);
 
 	imgw = READ_LE_UINT16(IMHD_ptr+0x14) >> 3;
 	imgh = READ_LE_UINT16(IMHD_ptr+0x16) >> 3;
 	
-	imptr = findResource2(MKID('IM01'), NULL);
+	imptr = findResource(MKID('IM01'), obim, 0);
 	if (!imptr)
 		error("No image for verb %d", vrb);
 
 	for (i=0; i<imgw; i++) {
-		_drawBmpX = xstrip + i;
-		if (_drawBmpX < 40) {
-			_drawBmpY = ydiff;
-			gdi.numLinesToProcess = imgh<<3;
-			drawBmp(imptr, i, 1, 1, "Verb", READ_LE_UINT16(IMHD_ptr+8));
-		}
+		tmp = xstrip + i;
+		if ((uint)tmp < 40)
+			gdi.drawBitmap(imptr, vs, tmp, ydiff, imgh<<3, i, 1, true);
 	}
 
 	vst = &_verbs[vrb];
@@ -220,7 +221,8 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	vst->oldright = vst->right;
 	vst->oldtop = vst->y;
 	vst->oldbottom = vst->bottom;
-	_numZBuffer = nozbufs;
+	
+	gdi.enableZBuffer();
 
 	vs->alloctwobuffers = twobufs;
 }
@@ -258,7 +260,7 @@ void Scumm::setVerbObject(int room, int object, int verb) {
 	int numobj, i;
 	byte  *obimptr;
 	uint32 imoffs,size;
-	byte *roomptr,*tmp_roomptr;
+	byte *roomptr;
 	ImageHeader *imhd;
 	RoomHeader *roomhdr;
 
@@ -267,7 +269,7 @@ void Scumm::setVerbObject(int room, int object, int verb) {
 
 	ensureResourceLoaded(1,room);
 	roomptr = getResourceAddress(1, room);
-	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr);
+	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
 
 	numobj = READ_LE_UINT16(&roomhdr->numObjects);
 	if (numobj==0)
@@ -275,12 +277,11 @@ void Scumm::setVerbObject(int room, int object, int verb) {
 	if (numobj > 200)
 		error("More (%d) than %d objects in room %d", numobj, 200, room);
 
-	tmp_roomptr = roomptr;
-	for (i=1; i<=numobj; i++) {
-		obimptr = findResource(MKID('OBIM'), tmp_roomptr);
+	for (i=0; i<numobj; i++) {
+		obimptr = findResource(MKID('OBIM'), roomptr, i);
 		if (obimptr==NULL)
 			error("Not enough image blocks in room %d", room);
-		imhd = (ImageHeader*)findResource2(MKID('IMHD'), obimptr);
+		imhd = (ImageHeader*)findResource(MKID('IMHD'), obimptr, 0);
 		if ( READ_LE_UINT16(&imhd->obj_id) == object) {
 			imoffs = obimptr - roomptr;
 			size = READ_BE_UINT32_UNALIGNED(obimptr+4);
@@ -289,7 +290,6 @@ void Scumm::setVerbObject(int room, int object, int verb) {
 			memcpy(getResourceAddress(8, verb), obimptr, size);
 			return;
 		}
-		tmp_roomptr = NULL;
 	}
 	error("Image %d not found in room %d", object, room);
 }

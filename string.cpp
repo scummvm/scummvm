@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.4  2001/10/24 20:12:52  strigeus
  * fixed some bugs related to string handling
  *
@@ -160,6 +163,8 @@ void Scumm::unkMessage1() {
 	byte buf[100];
 	_msgPtrToAdd = buf;
 	_messagePtr = addMessageToStack(_messagePtr);
+
+//	warning("unkMessage1(\"%s\")", buf);
 }
 
 void Scumm::unkMessage2() {
@@ -171,7 +176,7 @@ void Scumm::unkMessage2() {
 	if (string[3].color==0)
 		string[3].color = 4;
 
-	error("unkMessage2: call to printScummMessage(%s)", buf);
+	warning("unkMessage2(\"%s\")", buf);
 	_messagePtr = tmp;
 }
 
@@ -193,11 +198,11 @@ void Scumm::CHARSET_1() {
 		if (_majorScummVersion==5) {
 			string[0].xpos = a->x - camera._curPos + 160;
 
-			if (_vars[VAR_TALK_STRING_Y] < 0) {
-				s = (a->scaley * (int)_vars[VAR_TALK_STRING_Y]) / 0xFF;
-				string[0].ypos = ((_vars[VAR_TALK_STRING_Y]-s)>>1) + s - a->elevation + a->y;
+			if (_vars[VAR_V5_TALK_STRING_Y] < 0) {
+				s = (a->scaley * (int)_vars[VAR_V5_TALK_STRING_Y]) / 0xFF;
+				string[0].ypos = ((_vars[VAR_V5_TALK_STRING_Y]-s)>>1) + s - a->elevation + a->y;
 			} else {
-				string[0].ypos = _vars[VAR_TALK_STRING_Y];
+				string[0].ypos = _vars[VAR_V5_TALK_STRING_Y];
 			}
 			if (string[0].ypos < 1)
 				string[0].ypos = 1;
@@ -232,7 +237,7 @@ void Scumm::CHARSET_1() {
 	charset._center = string[0].center;
 	charset._right = string[0].right;
 	charset._color = _charsetColor;
-	dseg_4E3C = 0;
+	_bkColor = 0;
 
 	for (i=0; i<4; i++)
 		charset._colorMap[i] = _charsetData[charset._curId][i];
@@ -303,9 +308,14 @@ newLine:;
 			charset._left = string[0].xpos2;
 			charset._top = string[0].ypos2;
 			
-			if (!_vars[VAR_CHARFLAG]) {
+			if (_majorScummVersion==5) {
+				if (!_vars[VAR_V5_CHARFLAG]) {
+					charset.printChar(c);
+				}
+			} else {
 				charset.printChar(c);
 			}
+
 			string[0].xpos2 = charset._left;
 			string[0].ypos2 = charset._top;
 
@@ -366,6 +376,7 @@ void Scumm::drawString(int a) {
 	byte *charsetptr,*space;
 	int i;
 	byte byte1, chr;
+	uint color;
 	
 	_msgPtrToAdd = buf;
 	_messagePtr = addMessageToStack(_messagePtr);
@@ -376,7 +387,7 @@ void Scumm::drawString(int a) {
 	charset._center = string[a].center;
 	charset._right = string[a].right;
 	charset._color = string[a].color;
-	dseg_4E3C = 0;
+	_bkColor = 0;
 	charset._unk12 = 1;
 	charset._disableOffsX = 1;
 
@@ -420,6 +431,7 @@ void Scumm::drawString(int a) {
 			chr = buf[i++];
 			switch(chr) {
 			case 9:
+			case 10: case 13: case 14:
 				i += 2;
 				break;
 			case 1: case 8:
@@ -428,10 +440,22 @@ void Scumm::drawString(int a) {
 				} else {
 					charset._left = charset._left2;
 				}
-				charset._top += byte1;			
+				charset._top += byte1;
+				break;
+			case 12:
+				color = buf[i] + (buf[i+1]<<8);
+				i+=2;
+				if (color==0xFF)
+					charset._color = string[a].color;
+				else
+					charset._color = color;
+				break;
 			}
 		} else {
+			if (a==1 && _majorScummVersion==6)
+				charset._blitAlso = true;
 			charset.printChar(chr);
+			charset._blitAlso = false;
 		}
 	}
 
@@ -603,10 +627,8 @@ void CharsetRenderer::printChar(int chr) {
 	VirtScreen *vs;
 	
 	_vm->checkRange(_vm->_maxCharsets-1, 1, _curId, "Printing with bad charset %d");
-	if (_vm->findVirtScreen(_top)==-1)
+	if ((vs=_vm->findVirtScreen(_top)) == NULL)
 		return;
-
-	vs = &_vm->virtscr[_vm->gdi.virtScreen];
 
 	if (chr=='@')
 		return;
@@ -678,19 +700,33 @@ void CharsetRenderer::printChar(int chr) {
 		_strTop = _top;
 
 	_drawTop = _top - vs->topline;
+	if (_drawTop<0) _drawTop = 0;
 
 	_bottom = _drawTop + _height + _offsY;
 
-	_vm->updateDirtyRect(_vm->gdi.virtScreen, _left, right, _drawTop, _bottom, 0);
+	_vm->updateDirtyRect(vs->number, _left, right, _drawTop, _bottom, 0);
 
-	if (_vm->gdi.virtScreen==0)
+#if defined(OLD)
+	if (vs->number==0)
 		_hasMask = true;
+#else
+	if (vs->number!=0)
+		_blitAlso = false;
+	if (vs->number==0 && _blitAlso==0)
+		_hasMask = true;
+#endif
 
-	_bg_ptr = _vm->getResourceAddress(0xA, _vm->gdi.virtScreen+1) 
+	_bg_ptr2 = _backbuff_ptr = _vm->getResourceAddress(0xA, vs->number+1) 
 		+ vs->xstart + _drawTop * 320 + _left;
-	
-	_where_to_draw_ptr = _vm->getResourceAddress(0xA, _vm->gdi.virtScreen+5)
-		+ vs->xstart + _drawTop * 320 + _left;
+
+#if !defined(OLD)
+	if (_blitAlso) {
+#else
+	if (1) {
+#endif
+		_bg_ptr2 = _bgbak_ptr = _vm->getResourceAddress(0xA, vs->number+5)
+			+ vs->xstart + _drawTop * 320 + _left;
+	}
 
 	_mask_ptr = _vm->getResourceAddress(0xA, 9)
 		+ _drawTop * 40 + _left/8 
@@ -702,7 +738,12 @@ void CharsetRenderer::printChar(int chr) {
 	_charPtr += 4;
 
 	drawBits();
-	
+
+#if !defined(OLD)
+	if (_blitAlso)
+		blit(_backbuff_ptr, _bgbak_ptr, _width, _height);
+#endif
+
 	_left += _width;
 	if (_left  > _strRight)
 		_strRight = _left;
@@ -722,12 +763,12 @@ void CharsetRenderer::drawBits() {
 	int color;
 	byte numbits,bits;
 
-	usemask = (_vm->gdi.virtScreen==0 && _ignoreCharsetMask==0);
+	usemask = (_vm->_curVirtScreen->number==0 && _ignoreCharsetMask==0);
 
 	bits = *_charPtr++;
 	numbits = 8;
 
-	dst = _bg_ptr;
+	dst = _bg_ptr2;
 	mask = _mask_ptr;
 	y = 0;
 
@@ -754,7 +795,7 @@ void CharsetRenderer::drawBits() {
 				maskpos++;
 			}
 		}
-		dst = (_bg_ptr += 320);
+		dst = (_bg_ptr2 += 320);
 		mask += 40;
 		y++;
 	}

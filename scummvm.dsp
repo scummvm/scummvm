@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /Zp4 /W3 /GX /O1 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /Zp4 /MD /W3 /GX /O1 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
 BSC32=bscmake.exe
@@ -66,7 +66,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "CHECK_HEAP" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "DUMP_SCRIPTS" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -89,71 +89,225 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\actor.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\boxes.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\costume.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\debug.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\gfx.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\object.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\resource.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\saveload.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\script.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\script_v1.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\script_v2.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\scummvm.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\sound.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\StdAfx.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd /Yc"stdafx.h"
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
 # ADD CPP /Yc"stdafx.h"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\string.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\sys.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\verbs.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+# ADD CPP /Gd
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 

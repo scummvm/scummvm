@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.3  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -890,7 +893,7 @@ void Scumm::o5_getClosestObjActor() {
 	getResultPos();
 
 	act = getVarOrDirectWord(0x80);
-	obj = _vars[VAR_OBJECT_HI];
+	obj = _vars[VAR_V5_OBJECT_HI];
 
 	do {
 		dist = getObjActToObjActDist(obj,act);
@@ -898,7 +901,7 @@ void Scumm::o5_getClosestObjActor() {
 			closnum = dist;
 			closobj = obj;
 		}
-	} while (--obj >= _vars[VAR_OBJECT_LO]);
+	} while (--obj >= _vars[VAR_V5_OBJECT_LO]);
 
 	setResult(closnum);
 }
@@ -1054,11 +1057,11 @@ void Scumm::o5_lights() {
 	a = getVarOrDirectByte(0x80);
 	b = fetchScriptByte();
 	c = fetchScriptByte();
+
 	if (c==0)
-		_vars[VAR_DRAWFLAGS] = a;
+		_vars[VAR_V5_DRAWFLAGS] = a;
 	else if (c==1) {
-		_lightsValueA = a;
-		_lightsValueB = b;
+		warning("o5_lights: lights not implemented");
 	}
 	_fullRedraw=1;
 }
@@ -1077,7 +1080,7 @@ void Scumm::o5_loadRoomWithEgo() {
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
 
-	a = derefActorSafe(_vars[VAR_UNK_ACTOR], "o5_loadRoomWithEgo");
+	a = derefActorSafe(_vars[VAR_EGO], "o5_loadRoomWithEgo");
 
 	/* Warning: uses _xPos, _yPos from a previous update of those */
 	putActor(a, _xPos, _yPos, room);
@@ -1085,7 +1088,7 @@ void Scumm::o5_loadRoomWithEgo() {
 	x = (int16)fetchScriptWord();
 	y = (int16)fetchScriptWord();
 
-	dseg_3A76 = 0;
+	_egoPositioned = false;
 
 	_vars[VAR_WALKTO_OBJ] = obj;
 
@@ -1166,7 +1169,7 @@ void Scumm::o5_pickupObject() {
 	if (room==0)
 		room = _roomResource;
 	addObjectToInventory(obj, room);
-	putOwner(obj, _vars[VAR_UNK_ACTOR]);
+	putOwner(obj, _vars[VAR_EGO]);
 	putClass(obj, 32, 1);
 	putState(obj, 1);
 	removeObjectFromRoom(obj);
@@ -1180,7 +1183,7 @@ void Scumm::o5_print() {
 }
 
 void Scumm::o5_printEgo() {
-	_actorToPrintStrFor = _vars[VAR_UNK_ACTOR];
+	_actorToPrintStrFor = _vars[VAR_EGO];
 	decodeParseString();
 }
 
@@ -1367,12 +1370,12 @@ void Scumm::o5_roomOps() {
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		c = getVarOrDirectByte(0x20);
-		unkRoomFunc2(b, c, a, a, a);
+		darkenPalette(b, c, a, a, a);
 		break;
 	case 9: /* ? */
 		_saveLoadFlag = getVarOrDirectByte(0x80);
-		_saveLoadData = getVarOrDirectByte(0x40);
-		_saveLoadData = 0; /* TODO: weird behaviour */
+		_saveLoadSlot = getVarOrDirectByte(0x40);
+		_saveLoadSlot = 99; /* use this slot */
 		break;
 	case 10: /* ? */
 		a = getVarOrDirectWord(0x80);
@@ -1390,7 +1393,7 @@ void Scumm::o5_roomOps() {
 		_opcode = fetchScriptByte();
 		d = getVarOrDirectByte(0x80);
 		e = getVarOrDirectByte(0x40);
-		unkRoomFunc2(d, e, a, b, c);
+		darkenPalette(d, e, a, b, c);
 		break;
 	case 12: /* ? */
 		a = getVarOrDirectWord(0x80);
@@ -1430,10 +1433,8 @@ void Scumm::o5_roomOps() {
 	case 16: /* ? */
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
-		if (b!=0)
-			_colorCycleDelays[a] = 0x4000 / (b*0x4C);
-		else
-			_colorCycleDelays[a] = 0;
+		checkRange(16, 1, a, "o5_roomOps: 16: color cycle out of range (%d)");
+		_colorCycle[a-1].delay = (b!=0) ? 0x4000 / (b*0x4C) : 0;
 		break;
 	}
 }

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.13  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.12  2001/10/24 20:12:52  strigeus
  * fixed some bugs related to string handling
  *
@@ -160,11 +163,9 @@ void Scumm::scummInit() {
 
 	virtscr[0].xstart = 0;
 
-	_vars[9] = 11;
+	_vars[VAR_V5_DRAWFLAGS] = 11;
 
-	_lightsValueA = _lightsValueB = 7;
-
-	_vars[59] = 3;
+	_vars[VAR_59] = 3;
 
 	mouse.x = 104;
 	mouse.y = 56;
@@ -172,8 +173,8 @@ void Scumm::scummInit() {
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
 
-	_unkTabIndex = 0xFF;
 	_currentScript = 0xFF;
+	_sentenceIndex = 0xFF;
 
 	_currentRoom = 0;
 	_numObjectsInRoom = 0;
@@ -184,7 +185,7 @@ void Scumm::scummInit() {
 
 	_screenStartStrip = 0;
 
-	_vars[25] = 0;
+	_vars[VAR_TALK_ACTOR] = 0;
 
 	_talkDelay = 0;
 	_keepText = false;
@@ -212,7 +213,8 @@ void Scumm::scummInit() {
 
 	initScummVars();
 
-	_vars[54] = -0x50;
+	if (_majorScummVersion==5)
+		_vars[VAR_V5_TALK_STRING_Y] = -0x50;
 
 	getGraphicsPerformance();	
 }
@@ -228,6 +230,8 @@ void Scumm::initScummVars() {
 	_vars[VAR_SOUNDPARAM] = _soundParam;
 	_vars[VAR_SOUNDPARAM2] = _soundParam2;
 	_vars[VAR_SOUNDPARAM3] = _soundParam3;
+	if (_majorScummVersion==6)
+		_vars[VAR_V6_EMSSPACE] = 10000;
 }
 
 void Scumm::checkRange(int max, int min, int no, const char *str) {
@@ -242,6 +246,7 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	charset._vm = this;
 	cost._vm = this;
+	gdi._vm = this;
 
 	_fileHandle = NULL;
 	
@@ -278,8 +283,8 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	do {
 		if (_playBackFile) {
-			while ((_scummTimer>>2) < _vars[VAR_PLAYBACKTIMER]) {}
-			_scummTimer = _vars[VAR_PLAYBACKTIMER] << 2;
+			while ((_scummTimer>>2) < _vars[VAR_TIMER_NEXT]) {}
+			_scummTimer = _vars[VAR_TIMER_NEXT] << 2;
 		}
 		
 		CHECK_HEAP
@@ -323,18 +328,24 @@ void Scumm::scummMain(int argc, char **argv) {
 
 		if (_saveLoadFlag) {
 			char buf[256];
+
 			sprintf(buf, "savegame.%d", _saveLoadSlot);
 			if (_saveLoadFlag==1) {
 				saveState(buf);
+				if (_saveLoadCompatible)
+					_vars[VAR_GAME_LOADED] = 201;
 			} else {
 				loadState(buf);
+				if (_saveLoadCompatible) {
+					_vars[VAR_GAME_LOADED] = 203;
+				}
 			}
 			_saveLoadFlag = 0;
 		}
 
 		if (_completeScreenRedraw) {
 			_completeScreenRedraw = 0;
-			clearUpperMask();
+			gdi.clearUpperMask();
 			charset._hasMask = false;
 			redrawVerbs();
 			_fullRedraw = 1;
@@ -347,7 +358,7 @@ void Scumm::scummMain(int argc, char **argv) {
 		checkAndRunVar33();
 
 		if (_currentRoom==0) {
-			gdi.unk4 = 0;
+			gdi._unk4 = 0;
 			CHARSET_1();
 			unkVirtScreen2();
 			unkSoundProc22();
@@ -366,7 +377,7 @@ void Scumm::scummMain(int argc, char **argv) {
 		setActorRedrawFlags();
 		resetActorBgs();
 
-		if (!(_vars[VAR_DRAWFLAGS]&2) && _vars[VAR_DRAWFLAGS]&4) {
+		if (!(_vars[VAR_V5_DRAWFLAGS]&2) && _vars[VAR_V5_DRAWFLAGS]&4) {
 			error("Flashlight not implemented in this version");
 		}
 
@@ -375,8 +386,8 @@ void Scumm::scummMain(int argc, char **argv) {
 		cyclePalette();
 		palManipulate();
 		
-		if (doEffect) {
-			doEffect = false;
+		if (_doEffect) {
+			_doEffect = false;
 			screenEffect(_newEffect);
 			clearClickedStatus();
 		}
@@ -385,7 +396,7 @@ void Scumm::scummMain(int argc, char **argv) {
 			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
 		}
 
-		gdi.unk4 = _cursorState > 0;
+		gdi._unk4 = _cursorState > 0;
 
 		unkVirtScreen2();
 
@@ -548,7 +559,12 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	camera._mode = 1;
 	camera._curPos = camera._destPos = 160;
-	
+
+	if (_majorScummVersion==6) {
+		_vars[VAR_V6_SCREEN_WIDTH] = _scrWidthIn8Unit<<3;
+		_vars[VAR_V6_SCREEN_HEIGHT] = _scrHeight;
+	}
+
 	if (_roomResource == 0)
 		return;
 
@@ -568,17 +584,16 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	}
 
 	showActors();
-	dseg_3A76 = 0;
+
+	_egoPositioned = false;
 	runEntryScript();
-
-
-	if (a && dseg_3A76==0) {
+	if (a && !_egoPositioned) {
 		getObjectXYPos(objectNr);
 		putActor(a, _xPos, _yPos, _currentRoom);
 		a->moving = 0;
 	}
 
-	doEffect = true;
+	_doEffect = true;
 
 	CHECK_HEAP
 }
@@ -601,14 +616,14 @@ void Scumm::initRoomSubBlocks() {
 
 	roomptr = getResourceAddress(1, _roomResource);
 	
-	ptr = findResource(MKID('RMHD'), roomptr);
+	ptr = findResource(MKID('RMHD'), roomptr, 0);
 	_scrWidthIn8Unit = READ_LE_UINT16(&((RoomHeader*)ptr)->width) >> 3;
 	_scrHeight = READ_LE_UINT16(&((RoomHeader*)ptr)->height);
 
-	_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - 
+	_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr, 0), 0) - 
 		roomptr;
 	
-	ptr = findResource(MKID('EXCD'), roomptr);
+	ptr = findResource(MKID('EXCD'), roomptr, 0);
 	if (ptr) {
 		_EXCD_offs = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
@@ -616,7 +631,7 @@ void Scumm::initRoomSubBlocks() {
 #endif
 	}
 
-	ptr = findResource(MKID('ENCD'), roomptr);
+	ptr = findResource(MKID('ENCD'), roomptr, 0);
 	if (ptr) {
 		_ENCD_offs = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
@@ -624,25 +639,25 @@ void Scumm::initRoomSubBlocks() {
 #endif
 	}
 	
-	ptr = findResource(MKID('BOXD'), roomptr);
+	ptr = findResource(MKID('BOXD'), roomptr, 0);
 	if (ptr) {
 		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
 		createResource(14, 2, size);
 		roomptr = getResourceAddress(1, _roomResource);
-		ptr = findResource(MKID('BOXD'), roomptr);
+		ptr = findResource(MKID('BOXD'), roomptr, 0);
 		memcpy(getResourceAddress(0xE, 2), ptr, size);
 	}
 
-	ptr = findResource(MKID('BOXM'), roomptr);
+	ptr = findResource(MKID('BOXM'), roomptr, 0);
 	if (ptr) {
 		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
 		createResource(14, 1, size);
 		roomptr = getResourceAddress(1, _roomResource);
-		ptr = findResource(MKID('BOXM'), roomptr);
+		ptr = findResource(MKID('BOXM'), roomptr, 0);
 		memcpy(getResourceAddress(0xE, 1), ptr, size);
 	}
 
-	ptr = findResource(MKID('SCAL'), roomptr);
+	ptr = findResource(MKID('SCAL'), roomptr, 0);
 	if (ptr) {
 		offs = ptr - roomptr;
 		for (i=1; i<_maxScaleTable; i++, offs+=8) {
@@ -659,10 +674,8 @@ void Scumm::initRoomSubBlocks() {
 	memset(_localScriptList, 0, (0x100 - _numGlobalScripts) * 4);
 
 	roomptr = getResourceAddress(1, _roomResource);
-	ptr = findResource(MKID('LSCR'), roomptr);
-	while (ptr) {
+	for (i=0; ptr = findResource(MKID('LSCR'), roomptr, i++) ;) {
 		_localScriptList[ptr[8] - _numGlobalScripts] = ptr - roomptr;
-
 #ifdef DUMP_SCRIPTS
 		do {
 			char buf[32];
@@ -670,35 +683,34 @@ void Scumm::initRoomSubBlocks() {
 			dumpResource(buf, ptr[8], ptr);
 		} while (0);
 #endif
-
-		ptr = findResource(MKID('LSCR'), NULL);
 	}
+	
 
-	ptr = findResource(MKID('EPAL'), roomptr);
+	ptr = findResource(MKID('EPAL'), roomptr, 0);
 	if (ptr)
 		_EPAL_offs = ptr - roomptr;
 	
-	ptr = findResource(MKID('CLUT'), roomptr);
+	ptr = findResource(MKID('CLUT'), roomptr, 0);
 	if (ptr) {
 		_CLUT_offs = ptr - roomptr;
 		setPaletteFromRes();
 	}
 
 	if (_majorScummVersion==6) {
-		ptr = findResource(MKID('PALS'), roomptr);
+		ptr = findResource(MKID('PALS'), roomptr, 0);
 		if (ptr) {
 			_PALS_offs = ptr - roomptr;
 			setPalette(0);
 		}
 	}
 	
-	initCycl(findResource(MKID('CYCL'), roomptr) + 8);
+	initCycl(findResource(MKID('CYCL'), roomptr, 0) + 8);
 
-	ptr = findResource(MKID('TRNS'), roomptr);
+	ptr = findResource(MKID('TRNS'), roomptr, 0);
 	if (ptr)
-		gdi.transparency = ptr[8];
+		gdi._transparency = ptr[8];
 	else
-		gdi.transparency = 255;
+		gdi._transparency = 255;
 
 	initBGBuffers();
 }
@@ -764,63 +776,11 @@ void Scumm::unkRoomFunc3(int a, int b, int c, int d, int e) {
 	warning("stub unkRoomFunc3(%d,%d,%d,%d,%d)",a,b,c,d,e);
 }
 
-void Scumm::unkRoomFunc2(int a, int b, int c, int d, int e) {
-	byte *cptr, *cur;
-	int num;
-	byte color;
-
-	if (_videoMode==0xE) {
-		warning("stub unkRoomFunc2(%d,%d,%d,%d,%d)",a,b,c,d,e);
-	}
-
-	if (_videoMode==0x13) {
-		cptr = getResourceAddress(1, _roomResource);
-		if (_CLUT_offs) {
-			cptr += _CLUT_offs;
-		} else {
-			cptr = findPalInPals(cptr + _PALS_offs, _curPalIndex);
-		}
-		cptr += 8 + a*3;
-		cur = _currentPalette + a*3;
-		if (a <= b) {
-			num = b - a + 1;
-
-			do {
-				if (c != 0xFF) {
-					color = *cptr++ * (c>>2) / 0xFF;
-				} else {
-					color = *cptr++ >> 2;
-				}
-				if(color>63) color = 63;
-				*cur++=color;
-
-				if (d != 0xFF) {
-					color = *cptr++ * (d>>2) / 0xFF;
-				} else {
-					color = *cptr++ >> 2;
-				}
-				if(color>63) color = 63;
-				*cur++=color;
-
-				if (e != 0xFF) {
-					color = *cptr++ * (e>>2) / 0xFF;
-				} else {
-					color = *cptr++ >> 2;
-				}
-				if(color>63) color = 63;
-				*cur++=color;
-			} while (--num);
-		}
-		setDirtyColors(a,b);
-	}
-}
-
 
 void Scumm::unkRoomFunc4(int a, int b, int c, int d, int e) {
 	/* TODO: implement this */
 	warning("unkRoomFunc4: not implemented");
 }
-
 
 void Scumm::pauseGame(int i) {
 	/* TODO: implement this */
@@ -924,7 +884,7 @@ Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
 }
 
 void Scumm::new_unk_1(int a) {
-	error("stub new_unk_1(%d)", a);
+	warning("stub new_unk_1(%d)", a);
 }
 
 void Scumm::setCursorHotspot2(int x,int y) {
@@ -932,29 +892,15 @@ void Scumm::setCursorHotspot2(int x,int y) {
 }
 
 void Scumm::setStringVars(int slot) {
-	string[slot].xpos = string[slot].t_xpos;
-	string[slot].ypos = string[slot].t_ypos;
-	string[slot].center = string[slot].t_center;
-	string[slot].overhead = string[slot].t_overhead;
-	string[slot].new_3 = string[slot].t_new3;
-	string[slot].right = string[slot].t_right;
-	string[slot].color = string[slot].t_color;
-	string[slot].charset = string[slot].t_charset;
-}
-
-void Scumm::arrayop_1(int a, byte *ptr) {
-	ArrayHeader *ah;
-	int r;
-	int len = getStringLen(ptr);
-			
-	r = defineArray(a, 4, 0, len);
-	ah = (ArrayHeader*)getResourceAddress(7,r);
-	copyString(ah->data,ptr,len);
-}
-
-
-void Scumm::unkMiscOp4(int a, int b, int c, int d) {
-	warning("stub unkMiscOp4(%d,%d,%d,%d)", a,b,c,d);
+	StringTab *st = &string[slot];
+	st->xpos = st->t_xpos;
+	st->ypos = st->t_ypos;
+	st->center = st->t_center;
+	st->overhead = st->t_overhead;
+	st->new_3 = st->t_new3;
+	st->right = st->t_right;
+	st->color = st->t_color;
+	st->charset = st->t_charset;
 }
 
 void Scumm::unkMiscOp9() {

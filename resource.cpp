@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.6  2001/10/24 20:12:52  strigeus
  * fixed some bugs related to string handling
  *
@@ -650,20 +653,19 @@ void Scumm::unkResourceProc() {
 	warning("unkResourceProc: not implemented");
 }
 
+byte *findResource(uint32 tag, byte *searchin, int index) {
+	uint32 maxsize,curpos,totalsize,size;
 
-byte *Scumm::findResource(uint32 tag, byte *searchin) {
-	uint32 size;
+	searchin += 4;
+	totalsize = READ_BE_UINT32_UNALIGNED(searchin);
+	curpos = 8;
+	searchin += 4;
 
-	if (searchin) {
-		searchin+=4;
-		_findResSize = READ_BE_UINT32_UNALIGNED(searchin);
-		_findResHeaderSize = 8;
-		_findResPos = searchin+4;
-		goto startScan;
-	}
+	while (curpos<totalsize) {
+		if (READ_UINT32_UNALIGNED(searchin)==tag && !index--)
+			return searchin;
 
-	do {
-		size = READ_BE_UINT32_UNALIGNED(_findResPos+4);
+		size = READ_BE_UINT32_UNALIGNED(searchin+4);
 		if ((int32)size <= 0) {
 			error("(%c%c%c%c) Not found in %d... illegal block len %d", 
 				tag&0xFF,(tag>>8)&0xFF,(tag>>16)&0xFF,(tag>>24)&0xFF,
@@ -671,53 +673,17 @@ byte *Scumm::findResource(uint32 tag, byte *searchin) {
 				size);
 			return NULL;
 		}
-		_findResHeaderSize += size;
-		_findResPos += size;
-		
-startScan:;
-		if (_findResHeaderSize >= _findResSize)
-			return NULL;
-/* endian OK, tags are in native format */
-	} while (READ_UINT32_UNALIGNED(_findResPos) != tag);
 
-	return _findResPos;
-}
+		curpos += size;
+		searchin += size;
+	} 
 
-byte *Scumm::findResource2(uint32 tag, byte *searchin) {
-	uint32 size;
-
-	if (searchin) {
-		searchin+=4;
-		_findResSize2 = READ_BE_UINT32_UNALIGNED(searchin);
-		_findResHeaderSize2 = 8;
-		_findResPos2 = searchin+4;
-		goto startScan;
-	}
-
-	do {
-		size = READ_BE_UINT32_UNALIGNED(_findResPos2+4);
-		if ((int32)size <= 0) {
-			error("(%c%c%c%c) Not found in %d... illegal block len %d", 
-				tag&0xFF,(tag>>8)&0xFF,(tag>>16)&0xFF,(tag>>24)&0xFF,
-				0,
-				size);
-			return NULL;
-		}
-		_findResHeaderSize2 += size;
-		_findResPos2 += size;
-		
-startScan:;
-		if (_findResHeaderSize2 >= _findResSize2)
-			return NULL;
-/* endian OK, tags are in native format */
-	} while (READ_UINT32_UNALIGNED(_findResPos2) != tag);
-	return _findResPos2;
+	return NULL;
 }
 
 void Scumm::lock(int type, int i) {
 	validateResource("Locking", type, i);
 	res.flags[type][i] |= 0x80;
-
 }
 
 void Scumm::unlock(int type, int i) {

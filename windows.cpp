@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.7  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -133,6 +136,7 @@ void Error(const char *msg) {
 
 int sel;
 Scumm scumm;
+ScummDebugger debugger;
 WndMan wm[1];
 byte veryFastMode;
 
@@ -148,6 +152,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		case WM_CLOSE:
 			PostQuitMessage(0);
 			break;
+
 		case WM_CHAR:
 			wm->_scumm->_keyPressed = wParam;
 			break;
@@ -159,6 +164,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 					wm->_scumm->_saveLoadFlag = 1;
 				else if (GetAsyncKeyState(VK_CONTROL)<0)
 					wm->_scumm->_saveLoadFlag = 2;
+				wm->_scumm->_saveLoadCompatible = false;
 			}
 
 			if (wParam=='F') {
@@ -167,6 +173,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
 			if (wParam=='G') {
 				veryFastMode ^= 1;
+			}
+
+			if (wParam=='D') {
+				debugger.attach(wm->_scumm);
 			}
 
 			break;

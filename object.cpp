@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
  * Revision 1.6  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -152,13 +155,13 @@ void Scumm::getObjectXYPos(int object) {
 
 		if (od->fl_object_index) {
 			ptr = getResourceAddress(0xD, od->fl_object_index);
-			ptr = findResource(MKID('OBIM'), ptr);
+			ptr = findResource(MKID('OBIM'), ptr, 0);
 		} else {
 			ptr = getResourceAddress(1, _roomResource);
 			ptr += od->offs_obim_to_room;
 		}
 
-		imhd = (ImageHeader*)findResource2(MKID('IMHD'), ptr);
+		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr, 0);
 		x = od->x_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
 		y = od->y_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
 	} else {
@@ -196,7 +199,6 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 	if (getObjectOrActorXY(b)==-1)
 		return 0xFF;
 
-	/* XXX: bug here? should be <= */
 	if (acta) {
 		AdjustBoxResult r = adjustXYToBeInBox(acta, _xPos, _yPos);
 		_xPos = r.x;
@@ -281,12 +283,13 @@ void Scumm::drawObject(int obj, int arg) {
 	ObjectData *od;
 	int xpos, ypos, height, width;
 	byte *ptr;
-	int x,a,b;
+	int x,a,numstrip;
+	int tmp;
 
 	if (_BgNeedsRedraw)
 		arg = 0;
 
-	gdi.virtScreen = 0;
+	_curVirtScreen = &virtscr[0];
 	
 	od = &_objs[obj];
 
@@ -300,40 +303,39 @@ void Scumm::drawObject(int obj, int arg) {
 	
 	if (od->fl_object_index) {
 		ptr = getResourceAddress(0xD, od->fl_object_index);
-		ptr = findResource(MKID('OBIM'), ptr); 
+		ptr = findResource(MKID('OBIM'), ptr, 0); 
 	} else {
 		ptr = getResourceAddress(1, _roomResource);
 		ptr = ptr + od->offs_obim_to_room;
 	}
 
-	ptr = findResource(state_tags[getState(od->obj_nr)], ptr);
+	ptr = findResource(state_tags[getState(od->obj_nr)], ptr, 0);
 	if (!ptr)
 		return;
 
 	x = 0xFFFF;
 
-	for (a=b=0; a<width; a++) {
-		_drawBmpX = xpos + a;
-		if (arg==1 && _screenStartStrip!=_drawBmpX)
+	for (a=numstrip=0; a<width; a++) {
+		tmp = xpos + a;
+		if (arg==1 && _screenStartStrip!=tmp)
 			continue;
-		if (arg==2 && _screenEndStrip!=_drawBmpX)
+		if (arg==2 && _screenEndStrip!=tmp)
 			continue;
-		if (_screenStartStrip > _drawBmpX || _drawBmpX > _screenEndStrip)
+		if (tmp < _screenStartStrip || tmp > _screenEndStrip)
 			continue;
-		actorDrawBits[_drawBmpX] |= 0x8000;
-		if (_drawBmpX < x)
-			x = _drawBmpX;
-		b++;
+		actorDrawBits[tmp] |= 0x8000;
+		if (tmp < x)
+			x = tmp;
+		numstrip++;
 	}
 
-	if (b==0)
-		return;
+	if (numstrip!=0)
+		gdi.drawBitmap(ptr, _curVirtScreen, x, ypos<<3, height<<3, x-xpos, numstrip, true);
 
-	_drawBmpY = ypos << 3;
-	gdi.numLinesToProcess = height << 3;
-
-	_drawBmpX = x;
-	drawBmp(ptr, x - xpos, b, 1, "Object", od->obj_nr);
+//	_drawBmpY = ypos << 3;
+//	gdi._numLinesToProcess = height << 3;
+//	_drawBmpX = x;
+//	drawBmp(ptr, x - xpos, b, 1, "Object", od->obj_nr);
 }
 
 void Scumm::loadRoomObjects() {
@@ -341,7 +343,7 @@ void Scumm::loadRoomObjects() {
 	ObjectData *od;
 	byte *ptr;
 	uint16 obim_id;
-	byte *room,*tmp_room;
+	byte *room;
 	ImageHeader *imhd;
 	RoomHeader *roomhdr;
 
@@ -350,7 +352,7 @@ void Scumm::loadRoomObjects() {
 	CHECK_HEAP
 	
 	room = getResourceAddress(1, _roomResource);
-	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), room);
+	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), room, 0);
 
 	_numObjectsInRoom = READ_LE_UINT16(&roomhdr->numObjects);
 	
@@ -360,16 +362,14 @@ void Scumm::loadRoomObjects() {
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
-	tmp_room = room;
-
 	od = &_objs[1];
-	for (i=1; i<=_numObjectsInRoom; i++,od++) {
-		ptr = findResource(MKID('OBCD'), tmp_room);
+	for (i=0; i<_numObjectsInRoom; i++,od++) {
+		ptr = findResource(MKID('OBCD'), room, i);
 		if (ptr==NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
 		od->offs_obcd_to_room = ptr - room;
-		cdhd = (CodeHeader*)findResource2(MKID('CDHD'), ptr);
+		cdhd = (CodeHeader*)findResource(MKID('CDHD'), ptr, 0);
 		od->obj_nr = READ_LE_UINT16(&cdhd->obj_id);
 
 #ifdef DUMP_SCRIPTS
@@ -379,29 +379,26 @@ void Scumm::loadRoomObjects() {
 			dumpResource(buf, od->obj_nr, ptr);
 		} while (0);
 #endif
-		tmp_room = NULL;
 	}
 
-	tmp_room = room;
-	for (i=1; i<=_numObjectsInRoom; i++) {
-		ptr = findResource(MKID('OBIM'), tmp_room);
+	for (i=0; i<_numObjectsInRoom; i++) {
+		ptr = findResource(MKID('OBIM'), room, i);
 		if (ptr==NULL)
 			error("Room %d missing image blocks(s)", _roomResource);
 
-		imhd = (ImageHeader*)findResource2(MKID('IMHD'), ptr);
+		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr, 0);
 		obim_id = READ_LE_UINT16(&imhd->obj_id);
 
 		for(j=1; j<=_numObjectsInRoom; j++) {
 			if (_objs[j].obj_nr==obim_id)
 				_objs[j].offs_obim_to_room = ptr - room;
 		}
-		tmp_room = NULL;
 	}
 
 	od = &_objs[1];
 	for (i=1; i<=_numObjectsInRoom; i++,od++) {
 		ptr = room + _objs[i].offs_obcd_to_room;
-		cdhd = (CodeHeader*)findResource2(MKID('CDHD'), ptr);
+		cdhd = (CodeHeader*)findResource(MKID('CDHD'), ptr,0);
 		_objs[i].obj_nr = READ_LE_UINT16(&cdhd->obj_id);
 
 		if (_majorScummVersion == 6) {
@@ -482,14 +479,15 @@ void Scumm::clearOwnerOf(int obj) {
 				nukeResource(5, i);
 				_inventory[i] = 0;
 			}
-			a = &_inventory[2];
-			for (i=1; i < _maxInventoryItems-1; i++) {
-				if (!a[-1] && a[0]) {
-					a[-1] = a[0];
+			a = &_inventory[1];
+			for (i=1; i < _maxInventoryItems-1; i++,a++) {
+				if (!a[0] && a[1]) {
+					a[0] = a[1];
+					a[1] = 0;
 					ptr = getResourceAddress(5, i+1);
 					_baseInventoryItems[i] = _baseInventoryItems[i+1];
+					_baseInventoryItems[i+1] = 0;
 					/* TODO: some wacky write is done here */
-					error("clearOwnerOf: not fully implemented");
 				}
 			}
 			return;
@@ -536,7 +534,7 @@ byte *Scumm::getObjOrActorName(int obj) {
 	if (objptr==NULL)
 		return (byte*)" ";
 	
-	return findResource(MKID('OBNA'), objptr) + 8;
+	return findResource(MKID('OBNA'), objptr, 0) + 8;
 }
 
 uint32 Scumm::getOBCDOffs(int object) {
@@ -579,7 +577,7 @@ void Scumm::addObjectToInventory(int obj, int room) {
 	byte *ptr,*obcdptr;
 	uint32 size,cdoffs;
 	int numobj;
-	byte *tmp_roomptr,*roomptr;
+	byte *roomptr;
 	CodeHeader *cdhd;
 	RoomHeader *roomhdr;
 
@@ -601,19 +599,18 @@ void Scumm::addObjectToInventory(int obj, int room) {
 	}
 	ensureResourceLoaded(1, room);
 	roomptr = getResourceAddress(1, room);
-	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr);
+	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
 	numobj = READ_LE_UINT16(&roomhdr->numObjects);
 	if (numobj==0)
 		error("addObjectToInventory: No object found in room %d", room);
 	if (numobj > 200)
 		error("addObjectToInventory: More (%d) than %d objects in room %d", numobj, 200, room);
 
-	tmp_roomptr = roomptr;
-	for (i=1; i<=numobj; i++) {
-		obcdptr = findResource(MKID('OBCD'), tmp_roomptr);
+	for (i=0; i<numobj; i++) {
+		obcdptr = findResource(MKID('OBCD'), roomptr, i);
 		if(obcdptr==NULL)
 			error("addObjectToInventory: Not enough code blocks in room %d", room);
-		cdhd = (CodeHeader*)findResource2(MKID('CDHD'), obcdptr);
+		cdhd = (CodeHeader*)findResource(MKID('CDHD'), obcdptr, 0);
 		if ( READ_LE_UINT16(&cdhd->obj_id) == obj) {
 			cdoffs = obcdptr - roomptr;
 			size = READ_BE_UINT32_UNALIGNED(obcdptr+4);
@@ -625,7 +622,6 @@ void Scumm::addObjectToInventory(int obj, int room) {
 			CHECK_HEAP
 			return;
 		}
-		tmp_roomptr = NULL;
 	}
 
 	error("addObjectToInventory: Object %d not found in room %d", obj, room);
