@@ -231,7 +231,7 @@ void Smush::play(const char *filename, const char *directory) {
 
 		warning("Decompressing SMUSH cutscene %s - This may take a minute", filename);
 		fread(inBuf, 4, sizeof(byte), tmp);		//	Header, Method, Flags
-		flags = inBuf[4];
+		flags = inBuf[3];
 		fread(inBuf, 6, sizeof(byte), tmp);		// 	XFlags
 
 		if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))	// Misc
@@ -261,7 +261,7 @@ void Smush::play(const char *filename, const char *directory) {
 
 		for (;;) {
 			if (z.avail_in == 0) {
-				z.next_in = (Bytef*)inBuf;
+				z.next_in = (Bytef *)inBuf;
 				z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
 			}
 
