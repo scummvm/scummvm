@@ -1126,7 +1126,7 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 	memset(memchunk, 0, p->w * p->h);
 
 	for (i = 0; i < p->h; i++) {
-		if (FROM_LE_32(p->offset[i]) == 0)
+		if (p->offset[i] == 0)
 			continue;
 
 		line = (_parallaxLine *) ((uint8 *) p + FROM_LE_32(p->offset[i]));
