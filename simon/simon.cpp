@@ -4072,25 +4072,18 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vga_sprite_id) {
 	}
 }
 
-void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width) {
-	char print_str_buf[0x140];
-	char *char_buf;
-	const char *string_ptr_2, *string_ptr_3;
-	int j;
-	uint letters_per_row, len_div_3, num_of_rows;
-	uint m, n;
-	uint height;
+void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *string, int16 x, int16 y, int16 width) {
+	char convertedString[320];
+	char *convertedString2 = convertedString;
+	int16 height, len_div_3;
+	int stringLength = strlen(string);
+	int pos, padding, lettersPerRow;
+	const int textHeight = 10;
 
-	char_buf = print_str_buf;
-	string_ptr_3 = string_ptr_2 = string_ptr;
+	height = textHeight;
+	lettersPerRow = width / 6;
 
-	height = 10;
-	j = 0;
-
-	letters_per_row = width / 6;
-
-	len_div_3 = (strlen(string_ptr) + 3) / 3;
-
+	len_div_3 = (stringLength + 3) / 3;
 	if (!(_game & GF_SIMON2) && (_game & GF_TALKIE)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
@@ -4103,238 +4096,52 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 		_variableArray[85] = len_div_3 * 5;
 	}
 
-	num_of_rows = strlen(string_ptr) / letters_per_row;
-
-	while (num_of_rows == 1 && j != -1) {
-		m = strlen(string_ptr) >> 1;
-		m -= j;
-		string_ptr_2 += m;
-
-		while (*string_ptr_2++ != ' ' && m <= letters_per_row)
-			m++;
-
-		if (m <= letters_per_row && strlen(string_ptr_2) < letters_per_row) {
-			// if_1
-			n = (letters_per_row - m + 1) >> 1;
-
-			while (n != 0) {
-				*char_buf++ = ' ';
-				n--;
-			}
-			strncpy(char_buf, string_ptr, m);
-			char_buf += m;
-			*char_buf++ = 10;
-
-			height += 10;
-			y -= 10;
-			j = -1;
-		} else {
-			// else_1
-			j -= 4;
-			if (j == -12) {
-				j = 0;
-				num_of_rows = 2;
-			}
-			string_ptr_2 = string_ptr_3;
-		}
+	assert(stringLength > 0);
+	while (stringLength > 0) {
+		if (stringLength > lettersPerRow) {
+			pos = lettersPerRow;
+			while (string[pos] != ' ' && pos > 0)
+				pos--;
+			height += textHeight;
+			y -= textHeight;
+		} else
+			pos = stringLength;
+		padding = (lettersPerRow - pos) / 2;
+		while (padding--)
+			*convertedString2++ = ' ';
+		stringLength -= pos;
+		while (pos--)
+			*convertedString2++ = *string++;
+		*convertedString2++ = '\n';
+		string++; // skip space
+		stringLength--; // skip space
 	}
+	*(convertedString2 - 1) = '\0';
 
-	if (j != -1 && width * 30 > 8000)
-		num_of_rows = 4;
-
-	while (num_of_rows == 2 && j != -1) {
-		m = strlen(string_ptr) / 3;
-		m += j;
-		string_ptr_2 += m;
-
-		while (*string_ptr_2++ != ' ' && m <= letters_per_row)
-			m++;
-
-		if (m <= letters_per_row) {
-			// if_4
-			n = (letters_per_row - m + 1) >> 1;
-			while (n) {
-				*char_buf++ = ' ';
-				n--;
-			}
-			strncpy(char_buf, string_ptr, m);
-			char_buf += m;
-			*char_buf++ = 10;
-
-			string_ptr = string_ptr_2;
-			string_ptr_2 += m;
-
-			while (*string_ptr_2-- != ' ' && m > 0)
-				m--;
-			// while_6_end
-
-			string_ptr_2 += 2;
-
-			if (strlen(string_ptr_2) <= m && m > 0) {
-				// if_6
-				n = (letters_per_row - m + 1) >> 1;
-				while (n) {
-					*char_buf++ = ' ';
-					n--;
-				}
-				strncpy(char_buf, string_ptr, m);
-				char_buf += m;
-				*char_buf++ = 10;
-				height += 20;
-				y -= 20;
-				j = -1;
-			} else {
-				// else_6
-				j += 2;
-				string_ptr_2 = string_ptr_3;
-				string_ptr = string_ptr_3;
-				char_buf = print_str_buf;
-			}
-		} else {
-			num_of_rows = 3;
-			string_ptr_2 = string_ptr_3;
-			string_ptr = string_ptr_3;
-			char_buf = print_str_buf;
-			j = 0;
-		}
-	}
-
-	if (j != -1 && width * 40 > 8000)
-		num_of_rows = 4;
-
-	// while_8
-	while (num_of_rows == 3 && j != -1) {
-		m = strlen(string_ptr) >> 2;
-		m += j;
-		string_ptr_2 += m;
-		while (*string_ptr_2++ != ' ' && m <= letters_per_row)
-			m++;
-
-		if (m <= letters_per_row) {
-			// if_10
-			n = (letters_per_row - m + 1) >> 1;
-			while (n) {
-				*char_buf++ = ' ';
-				n--;
-			}
-			strncpy(char_buf, string_ptr, m);
-			char_buf += m;
-			*char_buf++ = '\n';
-			string_ptr = string_ptr_2;
-			string_ptr_2 += m;
-			while (*string_ptr_2-- != ' ' && m > 0)
-				m--;
-			string_ptr_2 += 2;
-
-			if (strlen(string_ptr_2) < m * 2 && m > 0) {
-				// if_11
-				n = (letters_per_row - m + 1) >> 1;
-				while (n) {
-					*char_buf++ = ' ';
-					n--;
-				}
-				strncpy(char_buf, string_ptr, m);
-				char_buf += m;
-				*char_buf++ = 10;
-				string_ptr = string_ptr_2;
-				string_ptr_2 += m;
-
-				while (*string_ptr_2-- != ' ' && m > 0)
-					m--;
-				string_ptr_2 += 2;
-
-				if (strlen(string_ptr_2) <= m && m > 0) {
-					// if_15
-					n = (letters_per_row - m + 1) >> 1;
-					while (n) {
-						*char_buf++ = ' ';
-						n--;
-					}
-					strncpy(char_buf, string_ptr, m);
-					char_buf += m;
-					*char_buf++ = '\n';
-					height += 30;
-					y -= 30;
-					j = -1;
-				} else {
-					// else_15
-					j += 2;
-					string_ptr_2 = string_ptr_3;
-					string_ptr = string_ptr_3;
-					char_buf = print_str_buf;
-				}
-			} else {
-				// else_11
-				j += 2;
-				string_ptr_2 = string_ptr_3;
-				string_ptr = string_ptr_3;
-				char_buf = print_str_buf;
-			}
-		} else {
-			// else_10
-			num_of_rows = 4;
-			string_ptr = string_ptr_3;
-			string_ptr_2 = string_ptr_3;
-			char_buf = print_str_buf;
-		}
-	}
-
-	// while_8_end
-	if (num_of_rows >= 4) {
-		while (strlen(string_ptr) > letters_per_row) {
-			m = letters_per_row;
-			string_ptr_2 += m;
-			while (*string_ptr_2-- != ' ' && m)
-				m--;
-			string_ptr_2 += 2;
-			n = (letters_per_row - m + 1) >> 1;
-			while (n) {
-				*char_buf++ = ' ';
-				n--;
-			}
-			strncpy(char_buf, string_ptr, m);
-			char_buf += m;
-			*char_buf++ = 10;
-			height += 10;
-			y -= 10;
-			string_ptr = string_ptr_2;
-		}
-	}
-
-	n = (letters_per_row - strlen(string_ptr_2) + 1) >> 1;
-	while (n) {
-		*char_buf++ = ' ';
-		n--;
-	}
-
-	strcpy(char_buf, string_ptr_2);
-	if (!(_game & GF_SIMON2)) {
-		o_kill_sprite_simon1(199 + vga_sprite_id);
-	} else {
+	if (_game & GF_SIMON2)
 		o_kill_sprite_simon2(2, vga_sprite_id);
-	}
+	else
+		o_kill_sprite_simon1(vga_sprite_id + 199);
+
 	color = color * 3 + 192;
-
 	if (_game & GF_AMIGA)
-		render_string_amiga(vga_sprite_id, color, width, height, print_str_buf);
+		render_string_amiga(vga_sprite_id, color, width, height, convertedString);
 	else
-		render_string(vga_sprite_id, color, width, height, print_str_buf);
+		render_string(vga_sprite_id, color, width, height, convertedString);
 		
-
-	uint b;
-	if (_bit_array[8] & 0x20)
-		b = 4;
-	else
+	int b = 4;
+	if (!(_bit_array[8] & 0x20))
 		b = 3;
 
+	x >>= 3;
+	
 	if (y < 2)
 		y = 2;
 
-	if (!(_game & GF_SIMON2)) {
-		start_vga_code(b, 2, 199 + vga_sprite_id, x >> 3, y, 12);
-	} else {
-		start_vga_code(b, 2, vga_sprite_id, x >> 3, y, 12);
-	}
+	if (_game & GF_SIMON2)
+		start_vga_code(b, 2, vga_sprite_id, x, y, 12);
+	else
+		start_vga_code(b, 2, vga_sprite_id + 199, x, y, 12);
 }
 
 // Thanks to Stuart Caie for providing the original
