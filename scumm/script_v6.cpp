@@ -931,7 +931,7 @@ void ScummEngine_v6::o6_cursorCommand() {
 		_userPut--;
 		break;
 	case 0x99:{		// SO_CURSOR_IMAGE Set cursor image
-			if (_features & GF_AFTER_HEV7) {
+			if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
 				warning("cursorCommand 0x99 PC_SetCursorToID(%d) stub", pop());
 				break;
 			}

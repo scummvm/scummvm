@@ -563,6 +563,8 @@ protected:
 	int kernelGetFunctions1(byte *addr, int arg1, int arg2, int arg3, int agr4);
 	void kernelSetFunctions1(byte *addr);
 	void seekFilePos(int slot, int offset, int mode);
+	byte stringLen(byte *);
+	virtual void decodeParseString(int a, int b);
 
 	/* Version 6 script opcodes */
 	void o6_drawBlastObject();
@@ -589,6 +591,7 @@ protected:
 	void o6_localizeArray();
 	void o6_unknownFA();
 	void o6_redimArray();
+	void o6_stringLen();
 	void o6_readINI();
 	void o6_unknownF9();
 	void o6_readFilePos();
@@ -613,8 +616,6 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
-
-	virtual void decodeParseString(int a, int b);
 
 	byte stringLen(byte *);
 

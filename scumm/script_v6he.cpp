@@ -344,7 +344,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_stringLen),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
@@ -1244,6 +1244,56 @@ void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 	ah->dim2 = TO_LE_16(newX + 1);
 }
 
+void ScummEngine_v6he::o6_stringLen() {
+	int a, len;
+	byte *addr;
+
+	if (!(_features & GF_WINDOWS)) {
+		o6_invalid();
+		return;
+	}
+
+	a = pop();
+
+	addr = getStringAddress(a);
+	if (!addr) {
+		// FIXME: should be error here
+		warning("ScummEngine_v6he::o7_stringLen: Reference to zeroed array pointer (%d)", a);
+		push(0);
+		return;
+	}
+
+	len = stringLen(addr);
+	push(len);
+}
+
+byte ScummEngine_v6he::stringLen(byte *ptr) {
+	byte len;
+	byte c;
+	if (!ptr) {
+		//ptr = _someGlobalPtr;
+		error("ScummEngine_v6he::stringLen(): zero ptr. Undimplemented behaviour");
+		return 1;
+	}
+
+	len = 0;
+	c = *ptr++;
+
+	if (len == c)
+		return 1;
+
+	do {
+		len++;
+		if (c == 0xff) {
+			ptr += 3;
+			len += 3;
+		}
+		c = *ptr++;
+	} while (c);
+
+	return len+1;
+}
+
 void ScummEngine_v6he::o6_readINI() {
 	int len;
 
@@ -1283,6 +1333,92 @@ void ScummEngine_v6he::o6_unknownF9() {
 	}
 
 	warning("stub o6_unknownF9(\"%s\")", filename + r);
+}
+
+void ScummEngine_v6he::decodeParseString(int m, int n) {
+	byte b;
+	int c;
+
+	b = fetchScriptByte();
+
+	switch (b) {
+	case 65:		// SO_AT
+		_string[m].ypos = pop();
+		_string[m].xpos = pop();
+		_string[m].overhead = false;
+		break;
+	case 66:		// SO_COLOR
+		_string[m].color = pop();
+		break;
+	case 67:		// SO_CLIPPED
+		_string[m].right = pop();
+		break;
+	case 69:		// SO_CENTER
+		_string[m].center = true;
+		_string[m].overhead = false;
+		break;
+	case 71:		// SO_LEFT
+		_string[m].center = false;
+		_string[m].overhead = false;
+		break;
+	case 72:		// SO_OVERHEAD
+		_string[m].overhead = true;
+		_string[m].no_talk_anim = false;
+		break;
+	case 73:		// SO_SAY_VOICE
+		error("decodeParseString: case 73");
+		break;
+	case 74:		// SO_MUMBLE
+		_string[m].no_talk_anim = true;
+		break;
+	case 75:		// SO_TEXTSTRING
+		_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
+		_scriptPointer += resStrLen(_scriptPointer)+ 1;
+
+		switch (m) {
+		case 0:
+			actorTalk();
+			break;
+		case 1:
+			drawString(1);
+			break;
+		case 2:
+			unkMessage1();
+			break;
+		case 3:
+			unkMessage2();
+			break;
+		}
+		return;
+	case 0xF9:
+		c = pop();
+		if (c == 1) {
+			_string[m].color = pop();
+		} else {	
+			push(c);
+			int args[16];
+			getStackList(args, ARRAYSIZE(args));
+		}
+		warning("decodeParseString case 0xF9 stub");
+		return;
+	case 0xFE:
+		setStringVars(m);
+		if (n)
+			_actorToPrintStrFor = pop();
+		return;
+	case 0xFF:
+		_string[m].t_xpos = _string[m].xpos;
+		_string[m].t_ypos = _string[m].ypos;
+		_string[m].t_center = _string[m].center;
+		_string[m].t_overhead = _string[m].overhead;
+		_string[m].t_no_talk_anim = _string[m].no_talk_anim;
+		_string[m].t_right = _string[m].right;
+		_string[m].t_color = _string[m].color;
+		_string[m].t_charset = _string[m].charset;
+		return;
+	default:
+		error("decodeParseString: default case 0x%x", b);
+	}
 }
 
 } // End of namespace Scumm

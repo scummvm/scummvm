@@ -667,7 +667,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	if (_features & GF_FMTOWNS) {	// FMTowns V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
-	} else if ((_gameId == GID_CMI) || (_features & GF_WINDOWS)) {
+	} else if ((_gameId == GID_CMI) || ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS))) {
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else if (_features & GF_NES) {
