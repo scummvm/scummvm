@@ -942,7 +942,7 @@ byte AkosRenderer::codec5() {
 	}
 
 	if ((clip_right <= clip_left) || (clip_top >= clip_bottom))
-		return 0;
+		return 1;
 
 	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
 
