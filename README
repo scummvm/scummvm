@@ -236,6 +236,10 @@ the section on Reporting Bugs.
                 - Highway subgame does not behave correctly.
                 - Music is broken under Dreamcast, causing game freezes
 
+       Curse of Monkey Island
+                - Demo does not work correctly
+                - Some minor graphical glitches remain
+
        Beneath a Steel Sky:
                 - Floppy demo does not work at all
                 - Amiga versions aren't supported and probably never will be
@@ -256,10 +260,6 @@ the section on Reporting Bugs.
                   in simon2mac
                 - F10 key animation in simon2mac is different compared to
                   original game
-
-       Curse of Monkey Island
-                - Demo does not work correctly
-                - Some minor graphical glitches remain
 
        FM Towns versions:
                 - Kanji versions require the FM Towns Font ROM
@@ -526,22 +526,6 @@ simon games.
         Enter                  - Simulate left mouse button press
         Tab                    - Simulate right mouse button press
 
-    Simon:
-        Ctrl 0-9 and Alt 0-9   - Load and save game state
-        Ctrl-d                 - Starts the debugger
-        F1 - F3                - Text speed, faster - slower
-        F10                    - Shows all characters and objects you can 
-                                 interact with
-        - and +                - Music volume, down/up
-        m                      - Music on/off
-        s                      - Sound effects on/off
-        b                      - Background sounds on/off
-        p                      - Toggles pause
-        t                      - Switch between speech and subtitles
-        v                      - Switch between subtitles only and
-                                 combined speech & subtitles
-                                 [Simon the Sorcerer 2 only]
-
     Beneath a Steel Sky:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-g                 - Runs in really REALLY fast mode
@@ -559,6 +543,22 @@ simon games.
 
     Flight of the Amazon Queen:
         Ctrl-d                 - Starts the debugger
+
+    Simon the Sorcerer 1 & 2:
+        Ctrl 0-9 and Alt 0-9   - Load and save game state
+        Ctrl-d                 - Starts the debugger
+        F1 - F3                - Text speed, faster - slower
+        F10                    - Shows all characters and objects you can 
+                                 interact with
+        - and +                - Music volume, down/up
+        m                      - Music on/off
+        s                      - Sound effects on/off
+        b                      - Background sounds on/off
+        p                      - Toggles pause
+        t                      - Switch between speech and subtitles
+        v                      - Switch between subtitles only and
+                                 combined speech & subtitles
+                                 [Simon the Sorcerer 2 only]
 
 Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being ran faster than their normal speed, as scripts will lose synchronisation.
