@@ -1368,7 +1368,7 @@ void ScummEngine::initScummVars() {
 		else if (_gameId == GID_MONKEY2 && (_features & GF_AMIGA))
 			VAR(VAR_VIDEOMODE) = 82;
 		else
-			VAR(VAR_VIDEOMODE) = 14;
+			VAR(VAR_VIDEOMODE) = 19;
 		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {
 			// Set number of sound resources
 			if (!(_features & GF_MACINTOSH))
