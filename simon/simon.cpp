@@ -1772,24 +1772,11 @@ void SimonState::o_print_str()
 	switch (_game) {
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
-#ifdef USE_TEXT_HACK
-		if (speech_id != 0) {
-			if (string_ptr == NULL)
-				talk_with_speech(speech_id, num_1);
-			else if (speech_id != 9999)
-				playVoice(speech_id);
-		}
-
-		if (string_ptr != NULL) {
-			talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
-		}
-#else
-		if (speech_id != 0) {
+		if (speech_id != 0 && !_vk_t_toggle) {
 			talk_with_speech(speech_id, num_1);
 		} else if (string_ptr != NULL) {
 			talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
 		}
-#endif
 		break;
 
 	case GAME_SIMON1DEMO:
@@ -3435,13 +3422,9 @@ void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte 
 
 bool SimonState::vc_59_helper()
 {
-#ifdef USE_TEXT_HACK
-	return true;
-#else
-	if (_voice_file == NULL)
+	if (_vk_t_toggle)
 		return true;
 	return _voice_sound == 0;
-#endif
 }
 
 void SimonState::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs)
@@ -4569,7 +4552,12 @@ void SimonState::go()
 
 	_last_music_played = (uint) - 1;
 	_vga_base_delay = 1;
+	
+	if (_voice_type != FORMAT_NONE) {
 	_vk_t_toggle = false;
+	} else {
+	_vk_t_toggle = true;
+	}
 
 	while (1) {
 		hitarea_stuff();
