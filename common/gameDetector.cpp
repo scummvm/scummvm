@@ -173,6 +173,7 @@ GameDetector::GameDetector() {
 	_master_volume = kDefaultMasterVolume;
 	_music_volume = kDefaultMusicVolume;
 	_sfx_volume = kDefaultSFXVolume;
+	_amiga = false;
 	_platform = 0;
 	_language = 0;
 
@@ -587,12 +588,12 @@ void GameDetector::setGame(const String &name) {
 
 	// The command line and launcher options
 	// override config file global and game-specific options.
-	g_config->set_domain ("_COMMAND_LINE");
+	g_config->set_domain("_COMMAND_LINE");
 	updateconfig();
-	g_config->set_domain ("_USER_OVERRIDES");
+	g_config->set_domain("_USER_OVERRIDES");
 	updateconfig();
-	g_config->delete_domain ("_COMMAND_LINE");
-	g_config->delete_domain ("_USER_OVERRIDES");
+	g_config->delete_domain("_COMMAND_LINE");
+	g_config->delete_domain("_USER_OVERRIDES");
 	g_config->set_domain(name);
 	if (_debugMode)
 		debug(1, "Debuglevel (from config): %d", _debugLevel);
