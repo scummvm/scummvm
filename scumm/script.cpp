@@ -769,12 +769,19 @@ void Scumm::checkAndRunSentenceScript() {
 
 void Scumm::runInputScript(int a, int cmd, int mode) {
 	int args[16];
+	int verbScript;
+
+	if (_features & GF_AFTER_V2)
+		verbScript = 2;
+	else
+		verbScript = VAR(VAR_VERB_SCRIPT);
+
 	memset(args, 0, sizeof(args));
 	args[0] = a;
 	args[1] = cmd;
 	args[2] = mode;
-	if (VAR(VAR_VERB_SCRIPT))
-		runScript(VAR(VAR_VERB_SCRIPT), 0, 0, args);
+	if (verbScript)
+		runScript(verbScript, 0, 0, args);
 }
 
 void Scumm::decreaseScriptDelay(int amount) {
