@@ -48,11 +48,17 @@ LIBS    += -lmad
 
 
 #######################################################################
-# Misc stuff - you should normally never have to edit this            #
+# Control which modules are built - uncomment any to disable module   #
 #######################################################################
 
-# Concat DEFINES and INCLUDES to for the CPPFLAGS
-CPPFLAGS:= $(DEFINES) $(INCLUDES)
+# DISABLE_SCUMM = 1
+# DISABLE_SIMON = 1
+# DISABLE_SKY = 1
+
+
+#######################################################################
+# Misc stuff - you should normally never have to edit this            #
+#######################################################################
 
 include Makefile.common
 

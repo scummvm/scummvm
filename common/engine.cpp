@@ -79,18 +79,26 @@ const char *Engine::getSavePath() const {
 Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst) {
 	Engine *engine = NULL;
 
+#ifndef DISABLE_SCUMM
+	if (detector->_gameId >= GID_SCUMM_FIRST && detector->_gameId <= GID_SCUMM_LAST) {
+		// Some kind of Scumm game
+		engine = Engine_SCUMM_create(detector, syst);
+	}
+#endif
+
+#ifndef DISABLE_SIMON
 	if (detector->_gameId >= GID_SIMON_FIRST && detector->_gameId <= GID_SIMON_LAST) {
 		// Simon the Sorcerer
 		engine = Engine_SIMON_create(detector, syst);
-	} else if (detector->_gameId >= GID_SCUMM_FIRST && detector->_gameId <= GID_SCUMM_LAST) {
-		// Some kind of Scumm game
-		engine = Engine_SCUMM_create(detector, syst);
-	} else if (detector->_gameId >= GID_SKY_FIRST && detector->_gameId <= GID_SKY_LAST) {
+	}
+#endif
+
+#ifndef DISABLE_SKY
+	if (detector->_gameId >= GID_SKY_FIRST && detector->_gameId <= GID_SKY_LAST) {
 		// Beneath a Steel Sky
 		engine = Engine_SKY_create(detector, syst);
-	} else {
-		// Unknown game
 	}
+#endif
 
 	return engine;
 }

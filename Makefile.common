@@ -22,10 +22,26 @@ DEPDIR := .deps
 # TODO - the nested ones (scumm/smush, backends/...) should be handled from the
 # module.mk of their parents. In fact the only reason they are listed here is to ensure the
 # DEPDIRS directive works correctly.
+
+ifdef DISABLE_SCUMM
+DEFINES += -DDISABLE_SCUMM
+else
+MODULES += scumm
+endif
+
+ifdef DISABLE_SIMON
+DEFINES += -DDISABLE_SIMON
+else
+MODULES += simon
+endif
+
+ifdef DISABLE_SKY
+DEFINES += -DDISABLE_SKY
+else
+MODULES += sky
+endif
+
 MODULES += \
-	scumm \
-	simon \
-	sky \
 	common \
 	gui \
 	backends \
@@ -36,8 +52,11 @@ MODULES += \
 	backends/fs/windows \
 	backends/midi
 
+# Concat DEFINES and INCLUDES to form the CPPFLAGS
+CPPFLAGS:= $(DEFINES) $(INCLUDES)
+
 # Include the build instructions for all modules
--include $(patsubst %,%/module.mk,$(MODULES))
+-include $(addsuffix /module.mk,$(MODULES))
 
 # HACK temporary fix to get compilation on OS X (and possibly others) working again
 OBJS:=common/engine.o $(OBJS)
@@ -59,8 +78,8 @@ clean:
 
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking. 
-DEPDIRS = $(patsubst %,%/$(DEPDIR),$(MODULES))
-DEPFILES = $(wildcard $(patsubst %,%/*.d,$(DEPDIRS)))
+DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULES))
+DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 
 .cpp.o:
 	$(MKDIR) $(*D)/$(DEPDIR)

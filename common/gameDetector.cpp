@@ -162,26 +162,45 @@ GameDetector::GameDetector() {
 	_default_gfx_mode = true;
 
 	if (version_settings == NULL) {
+		int totalCount = 0;
+		
 		// Gather & combine the target lists from the modules
+
+#ifndef DISABLE_SCUMM
 		const VersionSettings *scummVersions = Engine_SCUMM_targetList();
-		const VersionSettings *simonVersions = Engine_SIMON_targetList();
-		const VersionSettings *skyVersions = Engine_SKY_targetList();
-		
 		int scummCount = countVersions(scummVersions);
+		totalCount += scummCount;
+#endif
+
+#ifndef DISABLE_SIMON
+		const VersionSettings *simonVersions = Engine_SIMON_targetList();
 		int simonCount = countVersions(simonVersions);
+		totalCount += simonCount;
+#endif
+
+#ifndef DISABLE_SKY
+		const VersionSettings *skyVersions = Engine_SKY_targetList();
 		int skyCount = countVersions(skyVersions);
+		totalCount += skyCount;
+#endif
 		
-		VersionSettings *v = (VersionSettings *)calloc(scummCount + simonCount + skyCount + 1, sizeof(VersionSettings));
+		VersionSettings *v = (VersionSettings *)calloc(totalCount + 1, sizeof(VersionSettings));
 		version_settings = v;
 
+#ifndef DISABLE_SCUMM
 		memcpy(v, scummVersions, scummCount * sizeof(VersionSettings));
 		v += scummCount;
+#endif
 
+#ifndef DISABLE_SIMON
 		memcpy(v, simonVersions, simonCount * sizeof(VersionSettings));
 		v += simonCount;
+#endif
 
+#ifndef DISABLE_SKY
 		memcpy(v, skyVersions, skyCount * sizeof(VersionSettings));
 		v += skyCount;
+#endif
 	}
 }
 
