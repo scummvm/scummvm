@@ -200,7 +200,7 @@ void Scumm::CHARSET_1() {
 	}
 
 	buffer = _charsetBuffer + _charsetBufPos;
-	if (!(_features & GF_AFTER_V2))
+	if (!(_features & GF_AFTER_V2 || _features & GF_AFTER_V3))
 		_charset->addLinebreaks(0, buffer, 0, t);
 
 	if (_charset->_center) {
