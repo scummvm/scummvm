@@ -1,7 +1,6 @@
 Residual in-progress items (in rough order of priority):
 -------------------------------------------------------0
  * Add SMUSH (low-priority, but important) - Assigned to aquadran
- * Implement limiting actor to walkplane boundries - Assigned to daniel (MAYBE)
  * Add LAF font support to replace existing hack   ]______
  * .. meanwhile add Win32 support for said hack :) ]        Ender
 

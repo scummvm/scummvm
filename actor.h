@@ -59,6 +59,8 @@ public:
   float angleTo(const Actor &a) const;
   float yawTo(Vector3d p) const;
 
+  bool validBoxVector(Vector3d forwardVec, float dist);
+
   bool inSet(const char *name) const {
     return setName_ == name;
   }

@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter            Version 0.01-CVS
-(C) 2003- The ScummVM-Residual team                  Last Updated: 10th Oct 2003
+(C) 2003- The ScummVM-Residual team                  Last Updated: 11th Oct 2003
 --------------------------------------------------------------------------------
 
 What is Residual?
@@ -51,8 +51,8 @@ What is the state of Residual?
 ------------------------------- 
 Many features are not yet supported. 2D graphics are not yet drawn, nor do we
 use the built-in fonts. You can, however, still interact with objects that are
-not drawn (such as the mail tube). It may crash. You can walk off the screen and
-into places you should not be able to. There is no lighting.
+not drawn (such as the mail tube). It may crash. Walking is not quite right.
+There is no lighting.
 
 The game itself is in a fairly decent state, and you can play at least up until
 you retrieve your first customer. The default Grim keys 
