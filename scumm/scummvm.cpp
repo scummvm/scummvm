@@ -58,10 +58,6 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#ifdef __PALM_OS__
-#include "globals.h"
-#endif
-
 #ifdef MACOSX
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -205,7 +201,6 @@ static const ScummGameSettings scumm_settings[] = {
 	{"digdemo", "The Dig (Demo)", GID_DIG, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, "dig"},
 
-#ifndef __PALM_OS__ // these are SVGA games not supported under PalmOS
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0},
@@ -295,7 +290,6 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	// bunch of backyard sports games...
 */
-#endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0}
 };
 
@@ -2959,11 +2953,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 7:
 		engine = new ScummEngine_v7(detector, syst, game);
 		break;
-#ifndef __PALM_OS__
 	case 8:
 		engine = new ScummEngine_v8(detector, syst, game);
 		break;
-#endif
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
 	}
