@@ -501,6 +501,12 @@ simon games.
         s                      - Sound effects on/off
         b                      - Background sounds on/off
 
+    Beneath a Steel Sky:
+        Ctrl-g                 - Runs in really REALLY fast mode.
+        F5                     - Displays a save/load box.
+        Escape                 - Skips the game intro.
+        Period (.)             - Skips current line of text.
+
 Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being ran faster than their normal speed, as scripts will lose synchronisation
 
