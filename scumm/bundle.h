@@ -54,7 +54,6 @@ private:
 	File _voiceFile;
 	File _musicFile;
 
-
 	void initializeImcTables();
 
 	int32 compDecode(byte *src, byte *dst);

@@ -202,6 +202,7 @@ void Bundle::closeVoiceFile() {
 	if (_voiceFile.isOpen()) {
 		_voiceFile.close();
 		free(_bundleVoiceTable);
+		_bundleVoiceTable = NULL;
 	}
 }
 
@@ -249,6 +250,8 @@ void Bundle::closeMusicFile() {
 	if (_musicFile.isOpen()) {
 		_musicFile.close();
 		free(_bundleMusicTable);
+		_bundleMusicTable = NULL;
+		_lastSong = -1;
 	}
 }
 
