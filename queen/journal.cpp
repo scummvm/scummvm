@@ -70,6 +70,12 @@ void Journal::use() {
 			case OSystem::EVENT_LBUTTONDOWN:
 				handleMouseDown(event.mouse.x, event.mouse.y);
 				break;
+			case OSystem::EVENT_WHEELUP:
+				handleMouseWheel(-1);
+				break;
+			case OSystem::EVENT_WHEELDOWN:
+				handleMouseWheel(1);
+				break;
 			case OSystem::EVENT_QUIT:
 				system->quit();
 				break;
@@ -352,6 +358,21 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 	}
 	else if (zoneNum == ZN_NO) {
 		exitYesNoMode();
+	}
+}
+
+
+void Journal::handleMouseWheel(int inc) {
+
+	if (_mode == M_NORMAL) {
+		int curSave = _currentSavePage * SAVE_PER_PAGE + _currentSaveSlot + inc;
+		if (curSave >= 0 && curSave < SAVE_PER_PAGE * 10) {
+			_currentSavePage = curSave / SAVE_PER_PAGE;
+			_currentSaveSlot = curSave % SAVE_PER_PAGE;
+			drawSaveDescriptions();
+			drawSaveSlot();
+			update();
+		}
 	}
 }
 

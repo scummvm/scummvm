@@ -132,6 +132,7 @@ private:
 	void handleInfoBoxMode(int16 zoneNum);
 	void handleYesNoMode(int16 zoneNum);
 
+	void handleMouseWheel(int inc);
 	void handleMouseDown(int x, int y);
 	void handleKeyDown(uint16 ascii, int keycode);
 
