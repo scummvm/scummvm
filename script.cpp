@@ -17,8 +17,12 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:13  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/11 13:36:25  strigeus
+ * fixed swapped parameters in o_walkActorToActor
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -26,12 +30,19 @@
 #include "stdafx.h"
 #include "scumm.h"
 
+#define NO_SOUND_HACK
+
 void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	byte *scriptPtr;
 	uint32 scriptOffs;
 	byte scriptType;
 	int slot,i;
 	ScriptSlot *s;
+
+#ifdef NO_SOUND_HACK
+	if (script==212 && _currentRoom==50)
+		return;
+#endif
 
 	if (script==0)
 		return;
@@ -2462,8 +2473,8 @@ void Scumm::o_walkActorToActor() {
 		b = a2->scalex * a->width / 0xFF;
 		b = b + b/2;
 	}
-	y = a2->x;
-	x = a2->y;
+	x = a2->x;
+	y = a2->y;
 	if (x < a->x)
 		x += b;
 	else
