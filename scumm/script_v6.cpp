@@ -1761,8 +1761,9 @@ void Scumm_v6::o6_actorOps() {
 			a->needRedraw = 1;
 			a->drawActorCostume();
 //			a->_zbuf = 0; ???
-			a->needRedraw = 0;
+			a->needRedraw = 1;
 			a->drawActorCostume();
+			a->needRedraw = 0;
 
 			if (a->top > top_actor) {
 				a->bottom = top_actor;
