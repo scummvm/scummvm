@@ -1,18 +1,18 @@
 General
 =======
-* add plugin system (both dynamic & static plugin support)
+* Add plugin system (both dynamic & static plugin support)
   [if you want to work on it, ask Fingolfin about this, he already has done
   some planning. Also make sure that your system support 'static' plugins, too]
-* revise the way "quit" is handled. Maybe add a global variable "g_quit" which
+* Revise the way "quit" is handled. Maybe add a global variable "g_quit" which
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
-* add API to query backend for a list of available music engines
+* Add API to query backend for a list of available music engines
   Useful for Options dialog
-* add API to query backend for a list of available scalers/screenmodes
+* Add API to query backend for a list of available scalers/screenmodes
   (that is, a list of user presentable names, and corresponding PROP_SET_GFX_MODE
   values). This is useful for the options dialog
-* add PROP_GET_GFX_MODE (mirroring PROP_SET_GFX_MODE)
-* consider replacing the PROP_TOGGLE_* properties with GET/SET ones -> 
+* Add PROP_GET_GFX_MODE (mirroring PROP_SET_GFX_MODE)
+* Consider replacing the PROP_TOGGLE_* properties with GET/SET ones -> 
   this allows more control over these properties (like, it allows the GUI to
   display checkboxes for these in the options dialog)
 * gameDetector.cpp is quite messy. Also, it makes providing native GUI front
@@ -32,37 +32,54 @@ GUI
 
 Audio
 =====
-* get the high quality resample code to work
+* Get the high quality resample code to work
    [Fingolfin has started work on this]
-* add a command line/config file option for the output sample rate (to allow
+* Add a command line/config file option for the output sample rate (to allow
   for output sample rates other than 22050 Hz, e.g. 44100). Code should do
   sanity checking (e.g. restrict to rates between 8000 - 65535 Hz)
 
 Config
 ======
-* the config system could stand an overhaul
-* preserve comments in config file somehow
-* add two virtual domains (for command line settings and user overrides);
+* The config system could stand an overhaul
+* Preserve comments in config file somehow
+* Add two virtual domains (for command line settings and user overrides);
   while we currently do something like this already, our implementation is
   a big ugly hack (no offense meant) and has some cumbersome problems. For
   example, currently to query a config value, one would have to search up to
   four domains manually (user override, command line, game specific, global
   application domain, in that order). Ideally all this should be hidden
   inside the config system. If you are interested in this, I can elaborate
-* add a way to distinguish if a given key is present at all. That is, it
+* Add a way to distinguish if a given key is present at all. That is, it
   would be nice if one could distinguish between an explicit "fullscreen=false"
   and the absence of any fullscreen config.
 
 SCUMM
 =====
-* fix C64 costume code
-* add a common base class "MusicEngine" or so for Player_V2, IMuse, IMuseDigital
+* Fix C64 costume code
+* Add a common base class "MusicEngine" or so for Player_V2, IMuse, IMuseDigital
   -> their API is similar in many ways, and this could be used to simplify
      some code in scumm/sound.cpp and other places which right now has to duplicate
      code to cope with those three different music engine types.
+* Make it possible to restart games properly
+* Add support for handling Kanji in FM Towns games (foreground is rendered on a
+  second plane at 640x480)
+* Figure out how to extract resources from Apple II and Commodore 64 versions
+* Document and Fix AKOS differences in Humongous Entertainment games
+* Support various newer Humongous Entertainment games
+* Implement file related opcode stubs needed for Humongous games
+* Add support for graphics codecs used in 3DO versions of Humongous games
+* Proper handling of .tlk files for Humongous games
+* Merge iMUSE and iMUSE Digital
+* Add support for FM Euphony sounds used in FM Towns games
+* Implement the needed INSANE bits for Full Throttle action sequences
+* iMUSE Digital enhancements/fixes for Full Throttle and COMI
 
 Broken Sword 2
 ==============
-* replace all uses of std C file I/O (fopen, fread, fwrite, fclose) by
-  the File class
-* fix endianess problems
+* Replace all uses of std C file I/O (fopen, fread, fwrite, fclose) by
+  the File class (excluding that in SWORD2_DEBUG)
+* Fix endianess problems
+
+SIMON
+=====
+* Add support for Amiga decompressor and music
