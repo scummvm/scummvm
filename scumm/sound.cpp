@@ -322,7 +322,6 @@ void Sound::playSound(int soundID) {
 			return;
 		} else if (_scumm->_features & GF_FMTOWNS) {
 			size = READ_LE_UINT32(ptr);
-			hexdump(ptr, size);
 			rate = 11025;
 			int type = *(ptr + 0x0D);
 
