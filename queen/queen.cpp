@@ -125,17 +125,24 @@ void QueenEngine::roomChanged() {
 
 	if (_logic->currentRoom() == 7) {
 		warning("Room 7 not yet handled!");
-		// XXX R_MAP();
+		// _logic->handlePinnacleRoom();
 		// XXX fadeout(0,223);
 	}
 	else if (_logic->currentRoom() == FOTAQ_LOGO && _logic->gameState(VAR_INTRO_PLAYED) == 0) {
+		bool pcGamesDemo = _resource->isDemo() && !_resource->exists("pclogo.cut");
+
+		if (pcGamesDemo) {
+			_logic->currentRoom(79);
+		}
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_NOJOE, 100, 2, true);
 
 		if (_resource->isDemo()) {
-			if (_resource->exists("pclogo.cut"))
-				_logic->playCutaway("pclogo.cut");
-			else
+			if (pcGamesDemo) {
 				_logic->playCutaway("clogo.cut");
+			}
+			else {
+				_logic->playCutaway("pclogo.cut");
+			}
 		}
 		else {
 			_logic->playCutaway("copy.cut");
@@ -151,7 +158,7 @@ void QueenEngine::roomChanged() {
 			_logic->playCutaway("cred.cut");
 		}
 
-		_logic->currentRoom(ROOM_HOTEL_UPSTAIRS);
+		_logic->currentRoom(ROOM_HOTEL_LOBBY); //ROOM_HOTEL_UPSTAIRS);
 		_logic->entryObj(584);
 
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 2, true);
