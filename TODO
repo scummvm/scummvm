@@ -223,6 +223,14 @@ SCUMM
   reused for this...
 * Add support for NES version of Maniac Mansion
 
+Broken Sword 1 & 2
+==================
+* Currently BS1 & BS2 duplicate some code for MPEG2 playback. It would seem
+  logical to share that code (for all the usual good reasons).
+  We might even want to add a "video" dir (analog to "sound") for the shared
+  code, if it can be rewritten so that it's reusable.
+  DO NOT ADD SUCH A DIR without first consulting with Ender and Fingolfin !
+
 Broken Sword 2
 ==============
 * Enforce ScummVM code formatting guidelines. (Mostly done?)
