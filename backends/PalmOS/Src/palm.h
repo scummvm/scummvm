@@ -152,7 +152,9 @@ private:
 	WinHandle _screenH;
 	WinHandle _offScreenH;
 	
+public:
 	byte *_screenP;
+private:
 	byte *_offScreenP;
 	byte *_tmpScreenP;
 
@@ -224,11 +226,11 @@ private:
 
 	// PALM spec
 
-	void drawKeyState();
-
 	Int32 lastKeyPressed;
 	UInt32 lastKeyRepeat;
 	UInt8 lastKeyModifier;
+	
+	Boolean _useNumPad;
 
 	eventsEnum lastEvent;
 

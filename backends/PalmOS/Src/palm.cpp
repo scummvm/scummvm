@@ -242,6 +242,87 @@ void OSystem_PALMOS::update_screen__direct()
 	}
 }
 
+#define MD_NONE 0
+#define MD_CTRL 1
+#define MD_ALT	2
+
+static void drawKeyState(OSystem_PALMOS *sys, UInt8 state) {
+	UInt8 i,j;
+	UInt16 bmpID = 3000 + state - 1;
+	
+	MemHandle hTemp;
+	BitmapType *bmTemp;
+	UInt32 *bmData;
+	
+	UInt32 pitch = sys->get_width();
+	UInt8 *scr = sys->_screenP + sys->get_width() * (sys->get_height() + 2) + 2;
+
+	hTemp	= DmGetResource(bitmapRsc,bmpID);
+	
+	if (hTemp) { // draw
+		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
+		bmData	= (UInt32 *)BmpGetBits(bmTemp);
+
+		for (i = 0; i < 7; i++) {
+			for (j = 0; j < 32; j++) {
+				if (*bmData & (1 << (31-j)))
+					*scr++ = gVars->indicator.on;
+				else
+					*scr++ = gVars->indicator.off;
+			}
+			scr += pitch - 32;
+			bmData++;
+		}
+
+		MemPtrUnlock(bmTemp);
+		DmReleaseResource(hTemp);
+	} else {	// undraw
+		for (i = 0; i < 7; i++) {
+			for (j = 0; j < 32; j++) {
+				*scr++ = gVars->indicator.off;
+			}
+			scr += pitch - 32;
+		}
+	}
+}
+
+static void drawNumPad(OSystem_PALMOS *sys, UInt8 color) {
+	UInt8 i,j,k;
+	UInt16 bmpID = 3010;	// numPadBitmap 64x34
+
+	MemHandle hTemp;
+	BitmapType *bmTemp;
+	UInt32 *bmData;
+	
+	UInt32 pitch = sys->get_width();
+	UInt8 *scr = sys->_screenP +sys->get_width() * (sys->get_height() + 2);
+
+	scr += pitch - 66;
+
+	hTemp	= DmGetResource(bitmapRsc,bmpID);
+	
+	if (hTemp) {
+		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
+		bmData	= (UInt32 *)BmpGetBits(bmTemp);
+
+		for (i = 0; i < 34; i++) {
+			for (k = 0; k < 2; k++) {
+				for (j = 0; j < 32; j++) {
+					if (*bmData & (1 << (31-j)))
+						*scr++ = color;
+					else
+						*scr++ = 0;
+				}
+				bmData++;
+			}
+			scr += pitch - 64;
+		}
+
+		MemPtrUnlock(bmTemp);
+		DmReleaseResource(hTemp);
+	}
+}
+
 void OSystem_PALMOS::update_screen() {
 	if(_quit)
 		return;
@@ -252,20 +333,26 @@ void OSystem_PALMOS::update_screen() {
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
 	if (_paletteDirtyEnd != 0) {
-			if (gVars->stdPalette) {
-				WinSetDrawWindow(WinGetDisplayWindow());	// hack by Doug
-				WinPalette(winPaletteSet, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart,_currentPalette + _paletteDirtyStart);
-			} else {
-				HwrDisplayPalette(winPaletteSet, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart,_currentPalette + _paletteDirtyStart);
-			}
+		UInt8 oldCol;
 
+		if (gVars->stdPalette) {
+			WinSetDrawWindow(WinGetDisplayWindow());	// hack by Doug
+			WinPalette(winPaletteSet, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart,_currentPalette + _paletteDirtyStart);
+		} else {
+			HwrDisplayPalette(winPaletteSet, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart,_currentPalette + _paletteDirtyStart);
+		}
 		_paletteDirtyEnd = 0;
-
-//		_msg.color = RGBToColor(255,255,255);
+		oldCol = gVars->indicator.on;
 		gVars->indicator.on = RGBToColor(0,255,0);
-//		gVars->indicator.off= 0; //RGBToColor(0,0,0);
-		if (lastKeyModifier)
-			drawKeyState();
+
+		if (oldCol != gVars->indicator.on) {	
+			// redraw if needed
+			if (lastKeyModifier)
+				drawKeyState(this, lastKeyModifier);
+			
+			if(_useNumPad)
+				drawNumPad(this, gVars->indicator.on);
+		}
 	}
 
 	((this)->*(_renderer_proc))();
@@ -395,53 +482,15 @@ void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Bo
 	event->mouse.y = y;
 }
 
-#define MD_NONE 0
-#define MD_CTRL 1
-#define MD_ALT	2
-
-void OSystem_PALMOS::drawKeyState() {
-	UInt8 i,j;
-	UInt16 bmpID = 3000 + lastKeyModifier - 1;
-	
-	MemHandle hTemp;
-	BitmapType *bmTemp;
-	UInt32 *bmData;
-	UInt8 *scr = _screenP + _screenWidth * (_screenHeight + 2) + 2;
-
-	hTemp	= DmGetResource(bitmapRsc,bmpID);
-	
-	if (hTemp) {
-		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
-		bmData	= (UInt32 *)BmpGetBits(bmTemp);
-
-		for (i = 0; i < 7; i++) {
-			for (j = 0; j < 32; j++) {
-				if (*bmData & (1 << (31-j)))
-					*scr++ = gVars->indicator.on;
-				else
-					*scr++ = gVars->indicator.off;
-			}
-			scr += _screenWidth - 32;
-			bmData++;
-		}
-
-		MemPtrUnlock(bmTemp);
-		DmReleaseResource(hTemp);
-	} else {
-		for (i = 0; i < 7; i++) {
-			for (j = 0; j < 32; j++) {
-				*scr++ = gVars->indicator.off;
-			}
-			scr += _screenWidth - 32;
-		}
-	}
-}
-
 bool OSystem_PALMOS::poll_event(Event *event) {
 	EventType ev;
 	Boolean handled;
 	uint32 current_msecs;
 	UInt32 keyCurrentState = 0;
+	Coord x, y;
+	
+	if(_quit)
+		return false;
 
 	current_msecs = get_msecs();
 	//thread handler
@@ -475,7 +524,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					event->kbd.ascii = 27;
 					event->kbd.flags = 0;
 					return true;
-				
+
 				case vchrMenu:
 					lastKeyPressed = -1;
 					event->event_code = EVENT_KEYDOWN;
@@ -579,48 +628,75 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				if (ev.data.keyDown.chr == vchrCommand && (ev.data.keyDown.modifiers & commandKeyMask)) {
 					lastKeyModifier++;
 					lastKeyModifier %= 3;
-					drawKeyState();				
+					drawKeyState(this, lastKeyModifier);			
 
 				} else {
 					byte b = 0;
 					if (lastKeyModifier == MD_CTRL)	b = KBD_CTRL;
 					if (lastKeyModifier == MD_ALT)	b = KBD_ALT;
 					
-					if  (ev.data.keyDown.chr == 'q' && b == KBD_CTRL)
+					if  (ev.data.keyDown.chr == 'q' && b == KBD_CTRL) {
 						quit();
+					} else if (ev.data.keyDown.chr == 'n' && b == KBD_CTRL) {
+						UInt8 *scr = _screenP + _screenWidth * (_screenHeight + 2);
+						_useNumPad = !_useNumPad;
+						drawNumPad(this, _useNumPad ? gVars->indicator.on : 0);
+					}
 
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = ev.data.keyDown.chr;
 					event->kbd.ascii = (ev.data.keyDown.chr>='a' && ev.data.keyDown.chr<='z' && (event->kbd.flags & KBD_SHIFT) ? ev.data.keyDown.chr &~ 0x20 : ev.data.keyDown.chr);
 					event->kbd.flags = b;
 					lastKeyModifier = MD_NONE;
-					drawKeyState();				
+					drawKeyState(this, lastKeyModifier);			
 				}
 				return true;
 			}
 
 		case penMoveEvent:
-			if (ev.screenY*2-_decaly > _screenHeight || ev.screenY*2-_decaly < 0)
+			x = ev.screenX << 1;
+			y = ev.screenY << 1;
+
+			if ((y -_decaly) > _screenHeight || (y - _decaly) < 0)
 				return true;
 
-			if (lastEvent != penMoveEvent && (abs(ev.screenY*2-event->mouse.y) <= 2 || abs(ev.screenX*2-event->mouse.x) <= 2)) // move only if
+			if (lastEvent != penMoveEvent && (abs(y - event->mouse.y) <= 2 || abs(x - event->mouse.x) <= 2)) // move only if
 				return true;
 
 			lastEvent = penMoveEvent;
 			event->event_code = EVENT_MOUSEMOVE;
-			event->mouse.x = ev.screenX*2;
-			event->mouse.y = ev.screenY*2 - _decaly;
+			event->mouse.x = x;
+			event->mouse.y = y - _decaly;
 			return true;
 
 		case penDownEvent:
-			lastEvent = penDownEvent;
+			x = ev.screenX << 1;
+			y = ev.screenY << 1;
 
-			if (ev.screenY*2-_decaly > _screenHeight || ev.screenY*2-_decaly < 0)
+			if (_useNumPad) {
+				Coord y2 = _decaly + _screenHeight + 2;
+				if (y >= y2 && y < (y2 + 34) && x >= 254 && x < 318) {	// numpad location
+					UInt8 key = '1';
+					key += 9 - ( (3 - ((x - 254) / 21)) + (3 * ((y - y2) / 11)) );
+
+					lastEvent = keyDownEvent;
+					lastKeyPressed = -1;
+					
+					event->event_code = EVENT_KEYDOWN;
+					event->kbd.keycode = key;
+					event->kbd.ascii = key;
+					event->kbd.flags = 0;
+					return true;
+				}
+			}
+
+			lastEvent = penDownEvent;
+			if ((y -_decaly) > _screenHeight || (y - _decaly) < 0)
 				return true;
 
 			event->event_code = EVENT_LBUTTONDOWN;
-			event->mouse.x = ev.screenX*2;
-			event->mouse.y = ev.screenY*2 - _decaly;
+			event->mouse.x = x;
+			event->mouse.y = y - _decaly;
 			set_mouse_pos(event->mouse.x, event->mouse.y);
 			return true;
 
@@ -836,6 +912,8 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	lastKeyPressed = -1;
 	lastKeyRepeat = 100;
 	lastKeyModifier = MD_NONE;
+	
+	_useNumPad = false;
 	
 	// sound
 	_isSndPlaying = false;
