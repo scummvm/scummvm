@@ -950,8 +950,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
-		const int left = stripnr << 3;
-		const int right = left + numstrip << 3;
+		const int left = (stripnr << 3);
+		const int right = left + (numstrip << 3);
 		byte *dst = bgbak_ptr;
 		byte *src = smap_ptr;
 		byte color = 0, data = 0;
