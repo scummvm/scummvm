@@ -4069,7 +4069,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 	uint height;
 
 	// FIXME: Shows Dwarf Song subtitles in Dwarf Mine under simon1dos
-	if ((_game == GAME_SIMON1DOS) && (vga_sprite_id >= 100))
+	if (!(_game & GF_SIMON2) && !(_game & GF_TALKIE) && (vga_sprite_id >= 100))
 		vga_sprite_id -= 100;
 
 	char_buf = print_str_buf;
