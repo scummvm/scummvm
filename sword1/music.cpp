@@ -90,8 +90,10 @@ bool SwordMusicHandle::play(const char *filename, bool loop) {
 	uint8 wavHeader[WAVEHEADERSIZE];
 	stop();
 	_file.open(filename);
-	if (!_file.isOpen())
+	if (!_file.isOpen()) {
+		warning("Music file %s could not be opened", filename);
 		return false;
+	}
 	_file.read(wavHeader, WAVEHEADERSIZE);
 	_stereo = (READ_LE_UINT16(wavHeader + 0x16) == 2);
 	_rate = READ_LE_UINT16(wavHeader + 0x18);
@@ -159,9 +161,10 @@ void SwordMusic::startMusic(int32 tuneId, int32 loopFlag) {
 		}
 		char fName[20];
 		sprintf(fName, "music/%s.wav", _tuneList[tuneId]);
-		_handles[newStream].play(fName, loopFlag != 0);
-		delete _converter[newStream];
-		_converter[newStream] = makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
+		if (_handles[newStream].play(fName, loopFlag != 0)) {
+			delete _converter[newStream];
+			_converter[newStream] = makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
+		}
 	} else {
 		if (_handles[0].streaming())
 			_handles[0].fadeDown();
