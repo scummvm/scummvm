@@ -1219,7 +1219,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 			if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG)))
 				stopTalk();
 			setTalkingActor(a->number);
-			if ((_version == 8) || (_version <= 7 && !_string[0].no_talk_anim)) {
+			if (!_string[0].no_talk_anim) {
 				a->runActorTalkScript(a->talkStartFrame);
 				_useTalkAnims = true;
 			}
@@ -1275,7 +1275,7 @@ void ScummEngine::stopTalk() {
 	if (act && act < 0x80) {
 		Actor *a = derefActor(act, "stopTalk");
 		if (a->isInCurrentRoom()) {
-			if (_version == 8 || (_version == 7 && !_string[0].no_talk_anim) || (_version <= 6 && _useTalkAnims)) {
+			if ((_version >= 7 && !_string[0].no_talk_anim) || (_version <= 6 && _useTalkAnims)) {
 				a->runActorTalkScript(a->talkStopFrame);
 				_useTalkAnims = false;
 			}
