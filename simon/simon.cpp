@@ -828,46 +828,32 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 		warning("loadTablesIntoMem: didn't find %d", subr_id);
 }
 
-bool SimonState::readSting(uint a)
-{
-	char filename[11];
-	uint16 size;
-
-	_mus_file = new File();
-	
-	sprintf(filename, "stings%i.mus", a);
-
-	_mus_file->open(filename, _gameDataPath);
-
-	if (!_mus_file->isOpen()) {
-		warning("Can't load sound effect from '%s'", filename);
-		return false;
-	}
-
-	size = _mus_file->readUint16LE();
-
-	_mus_offsets = (uint16 *)malloc(size);
-
-	_mus_file->seek(0, SEEK_SET);
-
-	if (_mus_file->read(_mus_offsets, size) != size)
-		error("Cannot read offsets");
-
-	return true;
-}
-
 void SimonState::playSting(uint a)
 {
 	if (!midi._midi_sfx_toggle)
 		return;
 
-	if (!readSting(_midi_sfx))
+	char filename[11];
+	uint16 size;
+
+	_mus_file = new File();
+	sprintf(filename, "STINGS%i.MUS", a);
+	_mus_file->open(filename, _gameDataPath);
+	if (!_mus_file->isOpen()) {
+		warning("Can't load sound effect from '%s'", filename);
 		return;
-	
+	}
+
+	size = _mus_file->readUint16LE();
+	_mus_offsets = (uint16 *)malloc(size);
+
+	_mus_file->seek(0, SEEK_SET);
+	if (_mus_file->read(_mus_offsets, size) != size)
+		error("Cannot read offsets");
+
 	midi.shutdown();
 	_mus_file->seek(_mus_offsets[a], SEEK_SET);
 	midi.read_all_songs_old(_mus_file, a, _mus_offsets[a+1] - _mus_offsets[a]);
-
 	midi.initialize();
 	midi.play();
 }
