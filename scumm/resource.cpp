@@ -2321,8 +2321,6 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numRoomVariables = 64;
 		_numGlobalScripts = 200;
 
-		_shadowPaletteSize = 256;
-
 	} else if (_heversion >= 70 && (blockSize == 38 + 8)) { // Scummsys.9x
 		_numVariables = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();
@@ -2349,7 +2347,6 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numRoomVariables = 64;
 		_numGlobalScripts = 200;
 
-		_shadowPaletteSize = 256;
 	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
 		if (blockSize != 32 + 8)
 				error("MAXS block of size %d not supported, please report", blockSize);
@@ -2374,7 +2371,6 @@ void ScummEngine::readMAXS(int blockSize) {
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numGlobalScripts = 200;
 
-		_shadowPaletteSize = 256;
 	} else if (_version == 6) {
 		if (blockSize != 30 + 8)
 			error("MAXS block of size %d not supported", blockSize);
