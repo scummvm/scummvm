@@ -10,11 +10,12 @@ LastPage=0
 
 ClassCount=0
 
-ResourceCount=4
-Resource1=IDD_GAMESELECT (English (U.S.))
-Resource2=IDM_MENU (English (U.S.))
+ResourceCount=5
+Resource1=IDM_MENU
+Resource2=IDD_DIALOG1
 Resource3=IDD_GAMESELECT
-Resource4=IDM_MENU
+Resource4=IDD_GAMESELECT (English (U.S.))
+Resource5=IDM_MENU (English (U.S.))
 
 [DLG:IDD_GAMESELECT (English (U.S.))]
 Type=1
@@ -39,7 +40,6 @@ Command5=IDC_SKIP
 Command6=IDC_SOUND
 CommandCount=6
 
-
 [DLG:IDD_GAMESELECT]
 Type=1
 Class=?
@@ -62,4 +62,13 @@ Command4=IDC_LANDSCAPE
 Command5=IDC_SKIP
 Command6=IDC_SOUND
 CommandCount=6
+
+
+
+[DLG:IDD_DIALOG1]
+Type=1
+Class=?
+ControlCount=2
+Control1=IDOK,button,1342242817
+Control2=IDCANCEL,button,1342242816
 
