@@ -138,6 +138,9 @@ void Graphics::bobSetupControl() {
 	bankUnpack(3, 3, 17); // Up arrow dialogue
 	bankUnpack(4, 4, 17); // Down arrow dialogue
 	bankErase(17);
+
+	BobFrame *bf = &_frames[1];
+	_display->mouseCursorInit(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
 }
 
 

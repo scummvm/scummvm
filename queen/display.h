@@ -104,6 +104,8 @@ public:
 	void handleTimer();
 	void waitForTimer();
 
+	void mouseCursorInit(uint8* buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
+	void mouseCursorShow(bool show);
 
 private:
 
@@ -139,6 +141,8 @@ private:
 	uint16 _bdWidth, _bdHeight;
 
 	bool _gotTick;
+
+	uint8 _mouseCursor[14 * 14];
 
 	Dynalum _dynalum;
 	OSystem *_system;

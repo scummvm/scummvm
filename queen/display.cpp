@@ -275,7 +275,7 @@ void Display::palFadeIn(int start, int end, uint16 roomNum) {
 		}
 	}
 	_pals.dirtyMin = 0;
-	_pals.dirtyMax = (roomNum >= 114) ? 255 : 223;
+	_pals.dirtyMax = 255; // (roomNum >= 114) ? 255 : 223; // FIXME: only for tests
 	_pals.scrollable = true;
 }
 
@@ -822,6 +822,30 @@ void Display::waitForTimer() {
 		_system->delay_msecs(10);
 		while (_system->poll_event(&event));
 	}
+}
+
+
+void Display::mouseCursorInit(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs) {
+
+	// change transparency color match the one expected by the backend (0xFF)
+	uint16 size = w * h;
+	uint8 *p = buf;
+	while (size--) {
+		if (*p == 255) {
+			*p = 223;
+		}
+		else if (*p == 0) {
+			*p = 255;
+		}
+		++p;
+	}
+	_system->set_mouse_cursor(buf, w, h, xhs, yhs);
+}
+
+
+void Display::mouseCursorShow(bool show) {
+
+	_system->show_mouse(show);
 }
 
 
