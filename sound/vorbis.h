@@ -47,9 +47,8 @@ public:
 };
 
 
-void playSfxSound_Vorbis(SoundMixer *mixer, File *file, uint32 size, PlayingSoundHandle *handle);
-
 AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration);
+AudioInputStream *makeVorbisStream(File *file, uint32 size);
 
 #endif
 

@@ -128,24 +128,6 @@ VorbisTrackInfo::~VorbisTrackInfo() {
 	}
 }
 
-void playSfxSound_Vorbis(SoundMixer *mixer, File *file, uint32 size, PlayingSoundHandle *handle) {
-	OggVorbis_File *ov_file = new OggVorbis_File;
-	file_info *f = new file_info;
-
-	f->file = file;
-	f->start = file->pos();
-	f->len = size;
-	f->curr_pos = 0;
-
-	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, g_File_wrap) < 0) {
-		warning("Invalid file format");
-		delete ov_file;
-		delete f;
-	} else
-		mixer->playVorbis(handle, ov_file, 0, false);
-}
-
-
 #pragma mark -
 #pragma mark --- Ogg Vorbis stream ---
 #pragma mark -
@@ -264,5 +246,22 @@ AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration) {
 	return new VorbisInputStream(file, duration);
 }
 
+AudioInputStream *makeVorbisStream(File *file, uint32 size) {
+	OggVorbis_File *ov_file = new OggVorbis_File;
+	file_info *f = new file_info;
+
+	f->file = file;
+	f->start = file->pos();
+	f->len = size;
+	f->curr_pos = 0;
+
+	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, g_File_wrap) < 0) {
+		warning("Invalid file format");
+		delete ov_file;
+		delete f;
+		return 0;
+	} else
+		return new VorbisInputStream(ov_file, 0);
+}
 
 #endif

@@ -99,15 +99,15 @@ public:
 	void playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
 				int id = -1, byte volume = 255, int8 pan = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
 #ifdef USE_MAD
-	void playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0);
-	void playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume = 255, int8 pan = 0);
+	void playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0, int id = -1);
+	void playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume = 255, int8 pan = 0, int id = -1);
 #endif
 #ifdef USE_VORBIS
-	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size);
-	void playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume = 255, int8 pan = 0);
+	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0, int id = -1);
+	void playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume = 255, int8 pan = 0, int id = -1);
 #endif
 
-	void playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0);
+	void playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0, int id = -1);
 
 
 	/** Start a new stream. */
@@ -116,7 +116,12 @@ public:
 	/** Append to an existing stream. */
 	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
 
-	/** Mark a stream as finished - it will play all its remaining data, then stop. */
+	/**
+	 * Mark a stream as finished.
+	 * Where stopHandle() would stop the sound immediately, when using this
+	 * method, the stream will first finish playing all its data before it
+	 * finally stops.
+	 */
 	void endStream(PlayingSoundHandle handle);
 
 	/** stop all currently playing sounds */

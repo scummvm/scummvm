@@ -256,34 +256,50 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 }
 
 #ifdef USE_MAD
-void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan) {
+void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan, int id) {
 	// Create the input stream
 	AudioInputStream *input = makeMP3Stream(file, mad_timer_zero, size);
-	playInputStream(handle, input, false, volume, pan);
+	playInputStream(handle, input, false, volume, pan, id);
 }
-void SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) {
+void SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan, int id) {
 	// Create the input stream
 	AudioInputStream *input = makeMP3Stream(file, duration, 0);
-	playInputStream(handle, input, true, volume, pan);
+	playInputStream(handle, input, true, volume, pan, id);
 }
 #endif
 
 #ifdef USE_VORBIS
-void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size) {
-	playSfxSound_Vorbis(this, file, size, handle);
+void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan, int id) {
+	// Create the input stream
+	AudioInputStream *input = makeVorbisStream(file, size);
+	playInputStream(handle, input, false, volume, pan, id);
 }
-void SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan) {
+void SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan, int id) {
 	// Create the input stream
 	AudioInputStream *input = makeVorbisStream(ov_file, duration);
-	playInputStream(handle, input, is_cd_track, volume, pan);
+	playInputStream(handle, input, is_cd_track, volume, pan, id);
 }
 #endif
 
-void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan) {
+void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, int id) {
 	Common::StackLock lock(_mutex);
 
+	if (input == 0) {
+		warning("input stream is 0");
+		return;
+	}
+
+	// Prevent duplicate sounds
+	if (id != -1) {
+		for (int i = 0; i != NUM_CHANNELS; i++)
+			if (_channels[i] != 0 && _channels[i]->getId() == id) {
+				delete input;
+				return;
+			}
+	}
+
 	// Create the channel
-	Channel *chan = new Channel(this, handle, input, isMusic, volume, pan);
+	Channel *chan = new Channel(this, handle, input, isMusic, volume, pan, false, id);
 	insertChannel(handle, chan);
 }
 
