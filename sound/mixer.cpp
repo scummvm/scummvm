@@ -448,7 +448,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 					memcpy(_ptr, _stream.next_frame, not_decoded);
 					_size =	fread((unsigned char *)_ptr + not_decoded, 1, _buffer_size - not_decoded, _file);
 				}
-				_stream.error = MAD_ERROR_NONE;
+				_stream.error = (enum mad_error)0;
 				// Restream
 				mad_stream_buffer(&_stream, (unsigned char *)_ptr, _size + not_decoded);
 				if (mad_frame_decode(&_frame, &_stream) == -1) {
