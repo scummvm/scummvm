@@ -578,7 +578,8 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 
 	// Because old savegames won't fill the entire gfxUsageBits[] array,
 	// clear it here just to be sure it won't hold any unforseen garbage.
-	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
+	if (!s->isSaving())
+		memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
 	s->saveLoadEntries(this, mainEntries);
 
