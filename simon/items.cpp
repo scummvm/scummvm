@@ -1299,7 +1299,7 @@ void SimonState::o_177()
 		}
 
 	}
-	if (child != NULL && child->avail_props & 1 && !_vk_t_toggle) {
+	if (child != NULL && (child->avail_props & 1) && _vk_t_toggle) {
 		if (child->avail_props & 0x100) {
 			sprintf(buf, "%d%s", child->array[getOffsetOfChild2Param(child, 0x100)], s);
 			s = buf;
