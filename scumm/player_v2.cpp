@@ -526,37 +526,60 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 		} else { // opcode < 0xf8
 			for (;;) {
 				int16 note, octave;
-				dest_channel = &channels[opcode >> 5];
-				channel->d.time_left = channel->d.tempo * note_lengths[opcode & 0x1f];
+				int is_last_note;
+				dest_channel = &channels[(opcode >> 5) & 3];
+
+				if (!(opcode & 0x80)) {
+
+					int tempo = channel->d.tempo;
+					if (!tempo)
+						tempo = 1;
+					channel->d.time_left = tempo * note_lengths[opcode & 0x1f];
+
+					note = *script_ptr++;
+					is_last_note = note & 0x80;
+					note &= 0x7f;
+					if (note == 0x7f) 
+						goto end;
+				} else {
+
+					channel->d.time_left = ((opcode & 7) << 8) | *script_ptr++;
+
+					if ((opcode & 0x10))
+						goto end;
+
+					is_last_note = 0;
+					note = (*script_ptr++) & 0x7f;
+				}
+
+
 				debug(9, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s\n", 
-				      opcode>>5, script_ptr ? script_ptr - current_data : 0,
-				      *script_ptr & 0x7f, (signed short) dest_channel->d.transpose, opcode & 0x1f,
+				      dest_channel - channel, script_ptr ? script_ptr - current_data - 2 : 0,
+				      note, (signed short) dest_channel->d.transpose, channel->d.time_left,
 				      dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
 				      dest_channel->d.freqmod_incr,dest_channel->d.freqmod_multiplier,
-				      *script_ptr & 0x80 ? "last":"");
-				opcode = *script_ptr++;
-				note = opcode & 0x7f;
-				if (note != 0x7f) {
-					uint16 myfreq;
-					dest_channel->d.time_left = channel->d.time_left;
-					dest_channel->d.note_length = 
+				      is_last_note ? "last":"");
+
+
+				uint16 myfreq;
+				dest_channel->d.time_left = channel->d.time_left;
+				dest_channel->d.note_length = 
 					channel->d.time_left - dest_channel->d.inter_note_pause;
-					note += dest_channel->d.transpose;
-					while (note < 0)
-						note += 12;
-					octave = note / 12;
-					note = note % 12;
-					dest_channel->d.hull_offset = 0;
-					dest_channel->d.hull_counter = 1;
-					if (pcjr && dest_channel == &channels[3]) {
-						dest_channel->d.hull_curve = 180 + note * 12;
-						myfreq = 384 - 64 * octave;
-					} else {
-						myfreq = freqs_table[note] >> octave;
-					}
-					dest_channel->d.freq = dest_channel->d.base_freq = myfreq;
+				note += dest_channel->d.transpose;
+				while (note < 0)
+					note += 12;
+				octave = note / 12;
+				note = note % 12;
+				dest_channel->d.hull_offset = 0;
+				dest_channel->d.hull_counter = 1;
+				if (pcjr && dest_channel == &channels[3]) {
+					dest_channel->d.hull_curve = 180 + note * 12;
+					myfreq = 384 - 64 * octave;
+				} else {
+					myfreq = freqs_table[note] >> octave;
 				}
-				if ((opcode & 0x80) != 0)
+				dest_channel->d.freq = dest_channel->d.base_freq = myfreq;
+				if (is_last_note)
 					goto end;
 				opcode = *script_ptr++;
 			}
@@ -647,31 +670,22 @@ void Player_V2::do_mix (int16 *data, int len) {
 		step = len;
 		if (step > _next_tick)
 			step = _next_tick;
-		generate_samples(data, step);
+
+		if (freq == 0 && level == 0)
+			memset (data, 0, sizeof(int16) * step);
+		else
+			generate_samples(data, step);
+		data += step;
 
 		if (!(_next_tick -= step)) {
 //			if (_timer_proc)
 //				(*_timer_proc) (_timer_param);
+			int winning_channel = -1;
 			for (int i = 0; i < 4; i++) {
 				if (!channels[i].d.time_left)
 					continue;
 				next_freqs(&channels[i]);
-			}
-			_next_tick = 93;
-		}
-		data += step;
-	} while (len -= step);
-}
 
-void Player_V2::generate_samples(int16 *data, int step) {
-	int winning_channel = -1;
-	int i, j;
-	for (j = 0; j < step; j++) {
-		if ((samples_left -= FREQ_HZ) < 0) {
-			for (i = 0; i < 4; i++) {
-//				if (!channels[i].d.time_left)
-//					continue;
-//				next_freqs(&channels[i]);
 				if (winning_channel == -1
 				    && channels[i].d.volume
 				    && channels[i].d.time_left) {
@@ -682,14 +696,15 @@ void Player_V2::generate_samples(int16 *data, int step) {
 				freq = channels[winning_channel].d.freq;
 			} else {
 				freq = 0;
-				if (!last_freq) {
-					memset (data, 0, step);
-					return;
-				}
 			}
-			samples_left = sample_rate;
+			_next_tick = 93;
 		}
-	
+	} while (len -= step);
+}
+
+void Player_V2::generate_samples(int16 *data, int step) {
+	int j;
+	for (j = 0; j < step; j++) {
 		level = (level * decay) >> 16;
 		if (ticks_counted < freq*500)
 			level += 0xffff - decay;
