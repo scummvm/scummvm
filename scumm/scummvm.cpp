@@ -108,7 +108,9 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS},
-	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, MDT_TOWNS,
+	{"zak256", "Zak McKracken 256 (depreciated)", GID_ZAK256, 3, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS},
+	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM Towns)", GID_ZAK256, 3, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS},
 	{"loom", "Loom", GID_LOOM, 3, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE},
@@ -179,7 +181,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER},
 
-	{"test", "Test demo game", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES},
+//	{"test", "Test demo game", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES},
 
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, MDT_NONE,
