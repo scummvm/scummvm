@@ -103,7 +103,7 @@ public:
 	virtual String displayName() const = 0;
 
 	/**
-	 * Is this node valid (i.e. refering to an actual FS object)?
+	 * Is this node valid (i.e. referring to an actual FS object)?
 	 */
 	virtual bool isValid() const = 0;
 

@@ -383,7 +383,7 @@ void OSystem_GP32::move_screen(int dx, int dy, int height) {
 		}
 	} else {
 		// free movement
-		// not neccessary for now
+		// not necessary for now
 	}
 }
 

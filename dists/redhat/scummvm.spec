@@ -108,7 +108,7 @@ rm -Rf %{buildroot}
   - added digital iMUSE implementation for The Dig and Full Throttle music.
   - Loom CD speech+music syncronisation improved greatly
   - added midi-emulation via adlib, for platforms without sequencer support
-  - code seperation of various engine parts into several libraries
+  - code separation of various engine parts into several libraries
   - several fixes to prevent Simon the Sorcerer crashing and hanging
   - hundreds of bugfixes for many other games
   - new SMUSH video engine, for Full Throttle and The Dig
