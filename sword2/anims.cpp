@@ -579,26 +579,13 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 			// set up path to speech cluster
 			// first checking if we have speech1.clu or speech2.clu in current directory (for translators to test)
 
-			if (g_sword2->_gameId == GID_SWORD2_DEMO) {
-				strcpy(speechFile,"speech.clu");
-			} else {
+			File fp;
 
-				#ifdef _SWORD2_DEBUG
-					if ((res_man.WhichCd()==1) && (!access("speech1.clu",0)))	// if 0 ie. if it's there
-					{
-						strcpy(speechFile,"speech1.clu");
-					}
-					else if ((res_man.WhichCd()==2) && (!access("speech2.clu",0)))	// if 0 ie. if it's there
-					{
-						strcpy(speechFile,"speech2.clu");
-					}
-					else
-					#endif	// _SWORD2_DEBUG
-					{
-						strcpy(speechFile, "speech.clu");
-					}
-			}
-			//------------------------------
+			sprintf(speechFile, "speech%d.clu", res_man.WhichCd());
+			if (fp.open(speechFile, g_sword2->getGameDataPath()))
+				fp.close();
+			else
+				strcpy(speechFile, "speech.clu");
 
 			wavSize = g_sword2->_sound->GetCompSpeechSize(speechFile, wavId);		// returns size of decompressed wav, or 0 if wav not found
 			if (wavSize)	// if we've got the wav
