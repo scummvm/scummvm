@@ -34,12 +34,12 @@
 #include <SDL_thread.h>
 
 #ifdef WIN32
-int glColorTable(int, int, int, int, int, void *){ return 0; }
-int glGetColorTable(int, int, int, void *){ return 0; }
+int glColorTable(int, int, int, int, int, void *) { return 0; }
+int glGetColorTable(int, int, int, void *) { return 0; }
 /* Use OpenGL 1.1 */
-bool OGL_1_1=true;
+bool OGL_1_1 = true;
 #else
-bool OGL_1_1=false;
+bool OGL_1_1 = false;
 #endif
 
 #include "fb2opengl.h"
@@ -201,6 +201,7 @@ private:
 	void setup_icon();
 };
 
+bool atexit_proc_instaled = false;
 void atexit_proc() {
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_Quit();
@@ -224,8 +225,11 @@ OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {
 	/* Setup the icon */
 	syst->setup_icon();
 
+#ifndef MACOSX		// Work around a bug in OS X
 	/* Clean up on exit */
+	atexit_proc_instaled = true;
  	atexit(atexit_proc);
+#endif
 
 	return syst;
 }
@@ -285,6 +289,13 @@ void OSystem_SDL::load_gfx_mode() {
 	    fb2gl.init(640,480,0,70,gl_flags);	
 	  }
 	}
+
+#ifdef MACOSX		// Work around a bug in OS X
+	if (!atexit_proc_instaled) {
+		atexit_proc_instaled = true;
+		atexit(atexit_proc);
+	}
+#endif
 
 	SDL_SetGamma(1.25,1.25,1.25);
 	  
@@ -755,10 +766,10 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 }
 		
 void OSystem_SDL::quit() {
-  if(cdrom) {
-    SDL_CDStop(cdrom);
-    SDL_CDClose(cdrom);
-  }
+	if(cdrom) {
+		SDL_CDStop(cdrom);
+		SDL_CDClose(cdrom);
+	}
 	unload_gfx_mode();		
 	exit(1);
 }
