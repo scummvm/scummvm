@@ -301,8 +301,7 @@ void SkyLogic::mainAnim() {
 		// ok, setup turning
 		_compact->extCompact->dir = *(sequence + 1);
 
-		uint16 **tt = (uint16 **)SkyCompact::getCompactElem(_compact,
-				C_TURN_TABLE + _compact->extCompact->megaSet + dir * 20);
+		uint16 **tt = SkyCompact::getTurnTable(_compact,_compact->extCompact->megaSet, dir);
 		if (tt[_compact->extCompact->dir]) {
 			_compact->extCompact->turnProg = tt[_compact->extCompact->dir];
 			_compact->logic = L_AR_TURNING;
@@ -1247,11 +1246,10 @@ uint32 SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 uint32 SkyLogic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 	// turn compact to direction dir
 
-	uint16 curDir = _compact->extCompact->dir * 20; // get current direction
+	uint16 curDir = _compact->extCompact->dir; // get current direction
 	_compact->extCompact->dir = (uint16)(dir & 0xffff); // set new direction
 
-	uint16 **tt = (uint16 **)SkyCompact::getCompactElem(_compact,
-			C_TURN_TABLE + _compact->extCompact->megaSet + curDir);
+	uint16 **tt = SkyCompact::getTurnTable(_compact, _compact->extCompact->megaSet, curDir);
 
 	if (!tt[dir])
 		return 1; // keep going

@@ -65,6 +65,24 @@ MegaSet *getMegaSet(Compact *cpt, uint16 megaSet) {
 	}
 }
 
+uint16 **getTurnTable(Compact *cpt, uint16 megaSet, uint16 dir) {
+	MegaSet *m = getMegaSet(cpt, megaSet);
+	switch (dir) {
+	case 0:
+		return m->turnTable->turnTableUp;
+	case 1:
+		return m->turnTable->turnTableDown;
+	case 2:
+		return m->turnTable->turnTableLeft;
+	case 3:
+		return m->turnTable->turnTableRight;
+	case 4:
+		return m->turnTable->turnTableTalk;
+	default:
+		error("No TurnTable (%d) in MegaSet (%d)", dir, megaSet);
+	}
+}
+
 uint16 *getSub(Compact *cpt, uint16 mode) {
 	switch (mode) {
 	case 0:
