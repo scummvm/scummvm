@@ -32,7 +32,7 @@
 #include <vorbis/vorbisfile.h>
 
 
-AudioStream *makeVorbisStream(OggVorbis_File *file, int duration);
+static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration);
 
 
 #pragma mark -
@@ -211,11 +211,12 @@ class VorbisInputStream : public AudioStream {
 	int16 _buffer[4096];
 	const int16 *_bufferEnd;
 	const int16 *_pos;
+	bool _deleteFileAfterUse;
 	
 	void refill();
 	inline bool eosIntern() const;
 public:
-	VorbisInputStream(OggVorbis_File *file, int duration);
+	VorbisInputStream(OggVorbis_File *file, int duration, bool deleteFileAfterUse);
 	~VorbisInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -234,8 +235,10 @@ public:
 #endif
 
 
-VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration) 
-	: _ov_file(file), _bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
+VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration, bool deleteFileAfterUse) 
+	: _ov_file(file),
+	_bufferEnd(_buffer + ARRAYSIZE(_buffer)),
+	_deleteFileAfterUse(deleteFileAfterUse) {
 
 	// Check the header, determine if this is a stereo stream
 	_numChannels = ov_info(_ov_file, -1)->channels;
@@ -252,6 +255,8 @@ VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration)
 
 VorbisInputStream::~VorbisInputStream() {
 	ov_clear(_ov_file);
+	if (_deleteFileAfterUse)
+		delete _ov_file;
 }
 
 inline int16 VorbisInputStream::read() {
@@ -320,8 +325,8 @@ void VorbisInputStream::refill() {
 	_bufferEnd = (int16 *)read_pos;
 }
 
-AudioStream *makeVorbisStream(OggVorbis_File *file, int duration) {
-	return new VorbisInputStream(file, duration);
+static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration) {
+	return new VorbisInputStream(file, duration, false);
 }
 
 AudioStream *makeVorbisStream(File *file, uint32 size) {
@@ -340,7 +345,7 @@ AudioStream *makeVorbisStream(File *file, uint32 size) {
 		return 0;
 	} else {
 		file->incRef();
-		return new VorbisInputStream(ov_file, 0);
+		return new VorbisInputStream(ov_file, 0, true);
 	}
 }
 
