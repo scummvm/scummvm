@@ -123,13 +123,11 @@ bool SimonState::loadGamePcFile(const char *filename)
 	if (in->isOpen() == false)
 		return false;
 
-	in->seek(0, SEEK_END);
-	file_size = in->pos();
+	file_size = in->size();
 
 	_tbl_list = (byte *)malloc(file_size);
 	if (_tbl_list == NULL)
 		error("Out of memory for strip table list");
-	in->seek(0, SEEK_SET);
 	in->read(_tbl_list, file_size);
 	in->close();
 
@@ -143,12 +141,10 @@ bool SimonState::loadGamePcFile(const char *filename)
 	if (in->isOpen() == false)
 		return false;
 
-	in->seek(0, SEEK_END);
-	file_size = in->pos();
+	file_size = in->size();
 	_stripped_txt_mem = (byte *)malloc(file_size);
 	if (_stripped_txt_mem == NULL)
 		error("Out of memory for strip text list");
-	in->seek(0, SEEK_SET);
 	in->read(_stripped_txt_mem, file_size);
 	in->close();
 

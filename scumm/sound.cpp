@@ -1300,8 +1300,7 @@ int Sound::getCachedTrack(int track) {
 	mad_frame_finish(&frame);
 	mad_stream_finish(&stream);
 	// Get file size
-	file->seek(0, SEEK_END);
-	_mp3_size[current_index] = file->pos();
+	_mp3_size[current_index] = file->size();
 	_mp3_tracks[current_index] = file;
 	
 	return current_index;

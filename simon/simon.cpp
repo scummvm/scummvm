@@ -869,9 +869,7 @@ uint SimonState::loadTextFile_simon1(const char *filename, byte *dst)
 	if (fo.isOpen() == false)
 		error("loadTextFile: Cannot open '%s'", filename);
 
-	fo.seek(0, SEEK_END);
-	size = fo.pos();
-	fo.seek(0, SEEK_SET);
+	size = fo.size();
 
 	if (fo.read(dst, size) != size)
 		error("loadTextFile: fread failed");
@@ -1421,14 +1419,11 @@ void SimonState::loadIconFile()
 	if (in.isOpen() == false)
 		error("Cannot open icon.dat");
 
-	in.seek(0, SEEK_END);
-	size = in.pos();
+	size = in.size();
 
 	_icon_file_ptr = (byte *)malloc(size);
 	if (_icon_file_ptr == NULL)
 		error("Out of icon memory");
-
-	in.seek(0, SEEK_SET);
 
 	in.read(_icon_file_ptr, size);
 	in.close();
@@ -3276,10 +3271,7 @@ void SimonState::readSfxFile(const char *filename)
 			return;
 		}
 
-		in.seek(0, SEEK_END);
-		size = in.pos();
-
-		in.seek(0, SEEK_SET);
+		size = in.size();
 
 		/* stop all sounds */
 		_mixer->stopAll();
@@ -4036,9 +4028,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 			return;
 		}
 
-		in.seek(0, SEEK_END);
-		size = in.pos();
-		in.seek(0, SEEK_SET);
+		size = in.size();
 
 		if (in.read(_vga_buffer_pointers[11].vgaFile2, size) != size)
 			error("read_vga_from_datfile_1: read failed");
@@ -4066,9 +4056,7 @@ byte *SimonState::read_vga_from_datfile_2(uint id)
 		if (in.isOpen() == false)
 			error("read_vga_from_datfile_2: cannot open %s", buf);
 
-		in.seek(0, SEEK_END);
-		size = in.pos();
-		in.seek(0, SEEK_SET);
+		size = in.size();
 
 		dst = setup_vga_destination(size);
 
@@ -4880,10 +4868,7 @@ void SimonState::playMusic(uint music)
 
 	/* FIXME: not properly implemented */
 	if (_game & GAME_WIN) {
-		int32 offset = _game_offsets_ptr[gss->MUSIC_INDEX_BASE + music];
-		if (_game & GAME_SIMON2)
-			offset--;
-		_game_file->seek(offset, SEEK_SET);
+		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 		File *f = _game_file;
 		midi.read_all_songs(f);
 	} else {
