@@ -343,6 +343,9 @@ void ScummEngine::verbMouseOver(int verb) {
 }
 
 int ScummEngine::checkMouseOver(int x, int y) const {
+	if (!_numVerbs)
+		return 0;
+
 	VerbSlot *vs;
 	int i = _numVerbs - 1;
 
