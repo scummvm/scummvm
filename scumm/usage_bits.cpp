@@ -61,7 +61,7 @@ bool Scumm::testGfxUsageBit(int strip, int bit)
 bool Scumm::testGfxAnyUsageBits(int strip)
 {
 	// Exclude the DIRTY and RESTORED bits from the test
-	uint32 bitmask[3] = { 0x3FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF };
+	uint32 bitmask[3] = { 0xFFFFFFFF, 0xFFFFFFFF, 0x3FFFFFFF };
 	int i;
 
 	for (i = 0; i < 3; i++)
