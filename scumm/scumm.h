@@ -1038,7 +1038,7 @@ protected:
 	const byte *_messagePtr;
 	bool _keepText;
 public:
-	uint16 _language;
+	Common::Language _language;
 protected:
 	bool _existLanguageFile;
 	char *_languageBuffer;

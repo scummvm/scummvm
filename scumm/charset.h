@@ -122,9 +122,9 @@ protected:
 	int getCharWidth(byte chr) { return 8; }
 
 public:
-	CharsetRendererV2(ScummEngine *vm) : CharsetRendererV3(vm) {}
+	CharsetRendererV2(ScummEngine *vm, Common::Language language);
 	
-	void setCurID(byte id);
+	void setCurID(byte id) {}
 };
 
 class CharsetRendererNut : public CharsetRenderer {

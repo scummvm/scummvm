@@ -364,7 +364,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;
-	_language = 0;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
@@ -788,6 +787,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 				fontFile = "chinese.fnt";
 			}
 			break;
+		default:
+			break;
 		}
 		if (fontFile && fp.open(fontFile, getGameDataPath())) {
 			debug(2, "Loading CJK Font");
@@ -806,6 +807,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 				break;
 			case Common::ZH_TWN:
 				numChar = 1; //FIXME
+				break;
+			default:
 				break;
 			}
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
@@ -829,7 +832,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// Create the charset renderer
 	if (_version <= 2)
-		_charset = new CharsetRendererV2(this);
+		_charset = new CharsetRendererV2(this, _language);
 	else if (_version == 3)
 		_charset = new CharsetRendererV3(this);
 	else if (_version == 8)

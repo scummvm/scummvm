@@ -864,9 +864,10 @@ static byte spanishCharsetDataV2[] = {
 };
 #endif
 
-void CharsetRendererV2::setCurID(byte id) {
+CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
+	: CharsetRendererV3(vm) {
 
-	switch (_vm->_language) {
+	switch (language) {
 	case Common::DE_DEU:
 		_fontPtr = germanCharsetDataV2;
 		break;
