@@ -4674,11 +4674,15 @@ bool SimonState::load_game(uint slot)
 
 void SimonState::initSound()
 {
+	uint i;
 	/* only read voice file in windows game */
 	if (_game & GAME_TALKIE) {
 		const char *s;
 		const char *e;
 
+		//
+		// Load voice file
+		//
 		_voice_offsets = NULL;
 		_voice_file = new File();
 		_voice_type = FORMAT_NONE;
@@ -4725,6 +4729,10 @@ void SimonState::initSound()
 	
 			if (_voice_file->read(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32)) != gss->NUM_VOICE_RESOURCES * sizeof(uint32))
 				error("Cannot read voice offsets");
+#ifdef SCUMM_BIG_ENDIAN
+			for (i = 0; i < gss->NUM_VOICE_RESOURCES; i++)
+				_voice_offsets[i] = FROM_LE_32(_voice_offsets[i]);
+#endif
 #ifdef USE_MAD
 			if (_voice_type == FORMAT_MP3) {
 				uint8 buf[2048];
@@ -4740,6 +4748,9 @@ void SimonState::initSound()
 #endif
 		}
 
+		//
+		// Load effects
+		//
 		_effects_offsets = NULL;
 		_effects_file = new File();
 		_effects_type = FORMAT_VOC;
@@ -4772,6 +4783,10 @@ void SimonState::initSound()
 
 			if (_effects_file->read(_effects_offsets, gss->NUM_EFFECTS_RESOURCES * sizeof(uint32)) != gss->NUM_EFFECTS_RESOURCES * sizeof(uint32))
 				error("Cannot read effects offsets");
+#ifdef SCUMM_BIG_ENDIAN
+			for (i = 0; i < gss->NUM_EFFECTS_RESOURCES; i++)
+				_effects_offsets[i] = FROM_LE_32(_effects_offsets[i]);
+#endif
 #ifdef USE_MAD
 			if (_effects_type == FORMAT_MP3) {
 				uint8 buf[2048];
@@ -4789,18 +4804,6 @@ void SimonState::initSound()
 			_effects_type = FORMAT_NONE;
 		}
 
-#if defined(SCUMM_BIG_ENDIAN)
-		uint r;
-		if (_voice_offsets) {
-			for (r = 0; r < gss->NUM_VOICE_RESOURCES; r++)
-				_voice_offsets[r] = FROM_LE_32(_voice_offsets[r]);
-		}
-
-		if (_effects_offsets) {
-			for (r = 0; r < gss->NUM_EFFECTS_RESOURCES; r++)
-				_effects_offsets[r] = FROM_LE_32(_effects_offsets[r]);
-		}
-#endif
 	}
 }
 
