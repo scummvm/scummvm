@@ -372,18 +372,17 @@ void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int
 }
 
 void pal_load(byte *pal, const byte *vga1, int a, int b) {
-	uint num = a==0 ? 0x20 : 0x10;
+	uint num = (a == 0) ? 0x20 : 0x10;
 	byte *palptr;
 	const byte *src;
 	
-	palptr = (byte*)&pal[a<<4];
-
-	src = vga1 + 6 + b*96;
+	palptr = (byte *)&pal[a << 4];
+	src = vga1 + 6 + b * 96;
 	
 	do {
-		palptr[0] = src[0]<<2;
-		palptr[1] = src[1]<<2;
-		palptr[2] = src[2]<<2;
+		palptr[0] = src[0] << 2;
+		palptr[1] = src[1] << 2;
+		palptr[2] = src[2] << 2;
 		palptr[3] = 0;
 
 		palptr += 4;
@@ -398,7 +397,6 @@ void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 	int i;
 	uint32 offs;
 	byte *p2;
-
 	byte pal[768];
 
 	{
@@ -419,16 +417,16 @@ void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 	
 	i = 538;
 
-	for(i=1; ; i++) {
+	for(i = 1; ; i++) {
 		p2 = vga + i * 8;
-		offs = TO_BE_32(*(uint32*)p2);
+		offs = TO_BE_32(*(uint32 *)p2);
 
 		/* try to detect end of images.
 		 * assume the end when offset >= 200kb */
 		if (offs >= 200*1024)
 			return;
 		
-		width = TO_BE_16(*(uint16*)(p2+6));
+		width = TO_BE_16(*(uint16 *)(p2 + 6));
 		height = p2[5];
 		flags = p2[4];
 

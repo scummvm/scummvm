@@ -2931,7 +2931,7 @@ void SimonEngine::skip_speech() {
 		start_vga_code(4, 1, 0x1e, 0, 0, 0);
 		o_wait_for_vga(0x82);
 		o_kill_sprite_simon2(2, 1);
-	}       
+	}
 }
 
 void SimonEngine::timer_vga_sprites() {
@@ -3729,10 +3729,10 @@ void decompress_icon_amiga (byte *dst, byte *src, byte base, uint pitch) {
 	for (y = 0; y < 24; y++) {
 		for (x = 0; x < 24; x++) {
 			byte pixel =
-				  (icon_pln[((   y)*3) + (x>>3)] & (1<<(7-(x&7))) ? 1 : 0)
-				| (icon_pln[((24+y)*3) + (x>>3)] & (1<<(7-(x&7))) ? 2 : 0)
-				| (icon_pln[((48+y)*3) + (x>>3)] & (1<<(7-(x&7))) ? 4 : 0)
-				| (icon_pln[((72+y)*3) + (x>>3)] & (1<<(7-(x&7))) ? 8 : 0);
+				  (icon_pln[((     y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 1 : 0)
+				| (icon_pln[((24 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 2 : 0)
+				| (icon_pln[((48 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 4 : 0)
+				| (icon_pln[((72 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 8 : 0);
 			if (pixel)
 				dst[x] = pixel | base;
 		}
@@ -4261,12 +4261,26 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this decruncher is based.
 
-#define SD_GETBIT(var) do { \
-if(!bits--){s-=4;if(s<src)return false;bb=READ_BE_UINT32(s);bits=31;}(var)=bb&1;bb>>=1; \
+#define SD_GETBIT(var) do {     \
+	if (!bits--) {              \
+		s -= 4;                 \
+		if (s < src)            \
+			return false;       \
+		bb = READ_BE_UINT32(s); \
+		bits = 31;              \
+	}                           \
+	(var) = bb & 1;             \
+	bb >>= 1;                   \
 }while(0)
 
 #define SD_GETBITS(var, nbits) do { \
-bc=(nbits);(var)=0;while(bc--){(var)<<=1;SD_GETBIT(bit);(var)|=bit;} \
+	bc = (nbits);                   \
+	(var) = 0;                      \
+	while(bc--) {                   \
+		(var) <<= 1;                \
+		SD_GETBIT(bit);             \
+		(var) |= bit;               \
+	}                               \
 }while(0)
 
 #define SD_TYPE_LITERAL (0)
@@ -4292,7 +4306,7 @@ static bool decrunch_file_amiga (byte *src, byte *dst, uint32 size) {
 	while (d > dst) {
 		SD_GETBIT(x);
 		if (x) {
-			SD_GETBITS(x,2);
+			SD_GETBITS(x, 2);
 			switch (x) {
 			case 0:
 				type = SD_TYPE_MATCH;
@@ -4309,7 +4323,7 @@ static bool decrunch_file_amiga (byte *src, byte *dst, uint32 size) {
 			case 2:
 				type = SD_TYPE_MATCH;
 				x = 12;
-				SD_GETBITS(y,8);
+				SD_GETBITS(y, 8);
 				break;
 
 			default:
@@ -4331,18 +4345,18 @@ static bool decrunch_file_amiga (byte *src, byte *dst, uint32 size) {
 		}
 
 		if (type == SD_TYPE_LITERAL) {
-			SD_GETBITS(x,x);
+			SD_GETBITS(x, x);
 			y += x;
 			if ((int)(y + 1) > (d - dst))
 				return false; // Overflow?
 			do {
-				SD_GETBITS(x,8);
+				SD_GETBITS(x, 8);
 				*--d = x;
 			} while (y-- > 0);
 		} else {
 			if ((int)(y + 1) > (d - dst))
 				return false; // Overflow?
-			SD_GETBITS(x,x);
+			SD_GETBITS(x, x);
 			if ((d + x) > (dst + destlen))
 				return false; // Offset overflow?
 			do {
@@ -4629,7 +4643,7 @@ void SimonEngine::fadeUpPalette() {
 		int i;
 
 		done = true;
-	  	src = _palette;
+		src = _palette;
 		dst = _video_buf_1;
 
 		for (i = 0; i < _palette_color_count; i++) {

@@ -58,7 +58,6 @@ public:
 	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 
-
 BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 base, bool bigendian) {
 	_mixer = mixer;
 	_file = file;
@@ -230,10 +229,6 @@ int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 	return _mixer->playMP3(handle, _file, size);
 }
 #endif
-
-
-/******************************************************************************/
-
 
 SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer)
 	: _game(game), _gameDataPath(gameDataPath), _mixer(mixer) {

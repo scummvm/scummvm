@@ -1238,7 +1238,6 @@ void SimonEngine::vc_27_reset_simon1() {
 		vfs++;
 	}
 
-
 	vte = _vga_timer_list;
 	while (vte->delay) {
 		if (vte->sprite_id != 0x80) {
