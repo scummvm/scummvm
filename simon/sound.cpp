@@ -387,9 +387,7 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
 		}
 	}
 
-	if (_effects)
-		delete _effects;
-
+	delete _effects;
 	if (_game == GAME_SIMON1CD32) {
 		_effects = new VocSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
 	} else
@@ -425,14 +423,14 @@ void SimonSound::readVoiceFile(const char *filename, const char *gameDataPath) {
 		}
 	}
 
-	if (_voice)
-		delete _voice;
-
+	delete _voice;
 	_voice = new RawSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
 }
 
 void SimonSound::playVoice(uint sound) {
 	if (_game == GAME_SIMON2MAC && _filenums) {
+		stopAll();
+
 		char filename[16];
 		sprintf(filename, "voices%d.dat", _filenums[sound]);
 		File *file = new File();
@@ -440,9 +438,7 @@ void SimonSound::playVoice(uint sound) {
 		if (file->isOpen() == false) {
 			warning("Can't open voice file %s", filename);
 		} else {
-			if (_voice)
-				delete _voice;
-
+			delete _voice;
 			_voice = new WavSound(_mixer, file, _offsets);
 		}
 	}
