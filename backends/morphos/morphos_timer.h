@@ -57,7 +57,7 @@ struct TimerServiceMessage
 class Timer
 {
 	public:
-	   Timer(Scumm * system);
+		Timer(Engine * engine);
 	   ~Timer();
 
 		bool init();
@@ -67,7 +67,7 @@ class Timer
 
 	protected:
 		bool SendMsg(ULONG MsgID, TimerProc procedure, LONG interval);
-		static void TimerService(Timer *, Scumm *);
+		static void TimerService(Timer *, Engine *);
 
 		Process *TimerServiceThread;
 		SignalSemaphore TimerServiceSemaphore;

@@ -65,6 +65,13 @@ class OSystem_MorphOS : public OSystem
 		// Shaking is used in SCUMM. Set current shake position.
 		virtual void set_shake_pos(int shake_pos);
 
+		// Overlay
+		virtual void show_overlay();
+		virtual void hide_overlay();
+		virtual void clear_overlay();
+		virtual void grab_overlay(int16 *buf, int pitch);
+		virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+
 		// Get the number of milliseconds since the program was started.
 		virtual uint32 get_msecs();
 

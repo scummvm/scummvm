@@ -1343,3 +1343,24 @@ void OSystem_MorphOS::init_size(uint w, uint h)
 	CreateScreen(CSDSPTYPE_KEEP);
 }
 
+void OSystem_MorphOS::show_overlay()
+{
+}
+
+void OSystem_MorphOS::hide_overlay()
+{
+}
+
+void OSystem_MorphOS::clear_overlay()
+{
+}
+
+void OSystem_MorphOS::grab_overlay(int16 *buf, int pitch)
+{
+}
+
+void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int y, int w, int h)
+{
+}
+
+

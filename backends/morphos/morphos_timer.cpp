@@ -39,7 +39,7 @@ static TagItem TimerServiceTags[] = { { NP_Entry,    0 },
 									  { TAG_DONE,    0 }
 									};
 
-Timer::Timer(Scumm * system)
+Timer::Timer(Engine * engine)
 {
 	static EmulFunc ThreadEmulFunc;
 
@@ -50,7 +50,7 @@ Timer::Timer(Scumm * system)
 	ThreadEmulFunc.StackSize = 16000;
 	ThreadEmulFunc.Extension = 0;
 	ThreadEmulFunc.Arg1 = (ULONG) this;
-	ThreadEmulFunc.Arg2 = (ULONG) system;
+	ThreadEmulFunc.Arg2 = (ULONG) engine;
 	TimerServiceTags[0].ti_Data = (ULONG) &ThreadEmulFunc;
 	TimerServiceThread = CreateNewProc(TimerServiceTags);
 }
@@ -116,7 +116,7 @@ bool Timer::SendMsg(ULONG msg_id, TimerProc procedure, LONG interval)
 	return true;
 }
 
-void Timer::TimerService(Timer *this_ptr, Scumm *system)
+void Timer::TimerService(Timer *this_ptr, Engine *engine)
 {
 	MsgPort *port = &((Process *) FindTask(NULL))->pr_MsgPort;
 	ULONG port_bit = 1 << port->mp_SigBit;
@@ -216,7 +216,7 @@ void Timer::TimerService(Timer *this_ptr, Scumm *system)
 					timerequest *req = timer_slots[t].ts_IORequest;
 					WaitIO((IORequest *) req);
 					interval = timer_slots[t].ts_Interval;
-					(*timer_slots[t].ts_Callback)(system);
+					(*timer_slots[t].ts_Callback)(engine);
 					GetSysTime(&end_callback);
 					SubTime(&end_callback, &start_callback);
 					interval -= end_callback.tv_sec*1000+end_callback.tv_micro/1000+40;
