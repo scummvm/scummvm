@@ -578,6 +578,13 @@ static int16 * (*mixer_helper_table[8]) (int16 * data, uint * len_ptr, byte ** s
 	mix_signed_stereo_16, mix_unsigned_stereo_16
 };
 
+static int16 mixer_element_size[] = {
+	1, 1, 
+	2, 2,
+	2, 2,
+	4, 4
+};
+
 void SoundMixer::ChannelRaw::mix(int16 * data, uint len) {
 	byte *s, *s_org = NULL;
 	uint32 fp_pos;
@@ -648,12 +655,14 @@ void SoundMixer::ChannelRaw::realDestroy() {
 	delete this;
 }
 
+#define WARP_WORKAROUND 50000
+
 SoundMixer::ChannelStream::ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate,
 										 byte flags, int32 timeout, int32 buffer_size) {
 	_mixer = mixer;
 	_flags = flags;
 	_bufferSize = buffer_size;
-	_ptr = (byte *)malloc(_bufferSize);
+	_ptr = (byte *)malloc(_bufferSize + WARP_WORKAROUND);
 	memcpy(_ptr, sound, size);
 	_endOfData = _ptr + size;
 	_endOfBuffer = _ptr + _bufferSize;
@@ -722,7 +731,23 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 	if (_pos < end_of_data) {
 		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data, (_flags & FLAG_REVERSE_STEREO) ? true : false);
 	} else {
-		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, _endOfBuffer, (_flags & FLAG_REVERSE_STEREO) ? true : false);
+		int wrap_offset = 0;
+
+		// see if we will wrap
+		if (_pos + (mixer_element_size[_flags & 0x07] * len) > _endOfBuffer) {			
+			wrap_offset = _pos + (mixer_element_size[_flags & 0x07] * len) - _endOfBuffer;
+			debug(9, "using wrap workaround for %d bytes", wrap_offset);
+			memcpy(_endOfBuffer, _ptr, wrap_offset);
+		}
+			 
+		
+		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, _endOfBuffer + wrap_offset, (_flags & FLAG_REVERSE_STEREO) ? true : false);
+
+		// recover from wrap
+		if (wrap_offset)
+			_pos = _ptr + wrap_offset;
+
+		// shouldn't happen anymore
 		if (len != 0) {
 			//FIXME: what is wrong ?
 			warning("bad play sound in stream(wrap around)");
