@@ -22,18 +22,27 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "intern.h"
+#include "player_v2.h"
+#include "player_v1.h"
 #include "resource.h"
+#include "sound/mididrv.h"
 
 void Scumm_v2::readClassicIndexFile() {
 	int i;
 
 	if (_gameId == GID_MANIAC) {
+		if (!(_features & GF_AMIGA))
+			_playerV2 = new Player_V1(this);
+
 		_numGlobalObjects = 800;
 		_numRooms = 55;
 		_numCostumes = 35;
 		_numScripts = 200;
 		_numSounds = 100;
 	} else if (_gameId == GID_ZAK) {
+		if (!(_features & GF_AMIGA))
+			_playerV2 = new Player_V2(this);
+
 		_numGlobalObjects = 775;
 		_numRooms = 61;
 		_numCostumes = 37;
@@ -96,6 +105,13 @@ void Scumm_v2::readClassicIndexFile() {
 }
 
 void Scumm_v2::readEnhancedIndexFile() {
+
+	if (!(_features & GF_AMIGA)) {
+		_playerV2 = new Player_V2(this);
+		if (_midiDriver == MD_PCSPK)
+			_playerV2->set_pcjr(false);
+	}
+
 	_numGlobalObjects = _fileHandle.readUint16LE();
 	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
 	_numRooms = _fileHandle.readByte();

@@ -73,18 +73,18 @@ class SoundMixer;
 class Player_V2 {
 public:
 	Player_V2(Scumm *scumm);
-	~Player_V2();
+	virtual ~Player_V2();
 
-	void set_pcjr(bool pcjr);
-	void set_master_volume(int vol);
+	virtual void set_pcjr(bool pcjr);
+	virtual void set_master_volume(int vol);
 
-	void startSound(int nr, byte *data);
-	void stopSound(int nr);
-	void stopAllSounds();
-	bool getSoundStatus(int nr) const;
-	int  getMusicTimer() const;
+	virtual void startSound(int nr, byte *data);
+	virtual void stopSound(int nr);
+	virtual void stopAllSounds();
+	virtual bool getSoundStatus(int nr) const;
+	virtual int  getMusicTimer() const;
 
-private:
+protected:
 	bool _isV3Game;
 	SoundMixer *_mixer;
 	OSystem *_system;
@@ -121,15 +121,15 @@ private:
 	void mutex_up() { _system->lock_mutex (_mutex); }
 	void mutex_down() { _system->unlock_mutex (_mutex); }
 
-	void restartSound();
+	virtual void restartSound();
 	void execute_cmd(ChannelInfo *channel);
-	void next_freqs(ChannelInfo *channel);
-	void clear_channel(int i);
-	void chainSound(int nr, byte *data);
-	void chainNextSound();
+	virtual void next_freqs(ChannelInfo *channel);
+	virtual void clear_channel(int i);
+	virtual void chainSound(int nr, byte *data);
+	virtual void chainNextSound();
 
 	static void premix_proc(void *param, int16 *buf, uint len);
-	void do_mix (int16 *buf, uint len);
+	virtual void do_mix (int16 *buf, uint len);
 
 	void lowPassFilter(int16 *data, uint len);
 	void squareGenerator(int channel, int freq, int vol,

@@ -178,6 +178,7 @@ void Sound::playSound(int soundID) {
 	debug(3,"playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (ptr) {
+	  //hexdump(ptr, 0x400);
 		if (READ_UINT32(ptr) == MKID('iMUS')){
 			assert(_scumm->_imuseDigital);
 			_scumm->_imuseDigital->startSound(soundID);
@@ -453,23 +454,8 @@ void Sound::playSound(int soundID) {
 		return;
 	}
 
-	if (((_scumm->_midiDriver == MD_PCJR) || (_scumm->_midiDriver == MD_PCSPK) && (_scumm->_version < 5)) || (_scumm->_version <= 2)) {
-		//TODO: support maniac v1 sounds
-		if ((_scumm->_version == 1) && (_scumm->_gameId == GID_MANIAC)) 
-			return;
-		// other versions seem to be 0000 at this point...
-		// hopefully this test is correct
-		// 0xfe7f seems to be sound and 0x764a music
-		bool amigatest = (READ_LE_UINT16(ptr + 12) == 0xfe7f) || (READ_LE_UINT16(ptr + 12) == 0x764a);
-		if (amigatest) {
-			// TODO: support amiga sounds
-		} else {
-			if (_scumm->_playerV2) {
-				_scumm->_playerV2->startSound (soundID, ptr);
-			}
-		}
-		return;
-	}
+	if (_scumm->_playerV2)
+		_scumm->_playerV2->startSound (soundID, ptr);
 
 	if (_scumm->_imuse) {
 		_scumm->getResourceAddress(rtSound, soundID);

@@ -32,6 +32,7 @@
 #include "intern.h"
 #include "object.h"
 #include "player_v2.h"
+#include "player_v1.h"
 #include "resource.h"
 #include "sound.h"
 #include "string.h"
@@ -620,14 +621,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuseDigital = new IMuseDigital(this);
 	} else if ((_features & GF_AMIGA) && (_features & GF_OLD_BUNDLE)) {
 		_playerV2 = NULL;
-	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK) && (_version < 5)) || (_version <= 2)) {
-		if ((_version == 1) && (_gameId == GID_MANIAC)) {
-			_playerV2 = NULL;
-		} else {
-			_playerV2 = new Player_V2(this);
-			if (_midiDriver == MD_PCSPK)
-				_playerV2->set_pcjr(false);
-		}
+	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
+		_playerV2 = new Player_V2(this);
+		if (_midiDriver == MD_PCSPK)
+			_playerV2->set_pcjr(false);
 	} else {
 		_imuse = IMuse::create (syst, _mixer, detector->createMidi());
 		if (_imuse) {
