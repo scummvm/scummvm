@@ -448,7 +448,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	}
 
 	if (!strcmp(argv[2], "pickup")) {
-		for (i = 1; i < _vm->_maxInventoryItems; i++) {
+		for (i = 0; i < _vm->_maxInventoryItems; i++) {
 			if (_vm->_inventory[i] == (uint16)obj) {
 				_vm->putOwner(obj, _vm->VAR(_vm->VAR_EGO));
 				_vm->runInventoryScript(obj);

@@ -829,15 +829,15 @@ void ScummEngine::clearOwnerOf(int obj) {
 		return;
 	}
 
-	for (i = 1; i < _maxInventoryItems; i++) {
+	for (i = 0; i < _maxInventoryItems; i++) {
 		if (_inventory[i] == obj) {
 			j = whereIsObject(obj);
 			if (j == WIO_INVENTORY) {
 				nukeResource(rtInventory, i);
 				_inventory[i] = 0;
 			}
-			a = &_inventory[1];
-			for (i = 1; i < _maxInventoryItems - 1; i++, a++) {
+			a = _inventory;
+			for (i = 0; i < _maxInventoryItems - 1; i++, a++) {
 				if (!a[0] && a[1]) {
 					a[0] = a[1];
 					a[1] = 0;
@@ -1180,7 +1180,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 
 int ScummEngine::getInventorySlot() {
 	int i;
-	for (i = 1; i <= _maxInventoryItems; i++) {
+	for (i = 0; i < _maxInventoryItems; i++) {
 		if (_inventory[i] == 0)
 			return i;
 	}
@@ -1269,7 +1269,7 @@ int ScummEngine::getObjNewDir(int obj) {
 
 int ScummEngine::findInventory(int owner, int idx) {
 	int count = 1, i, obj;
-	for (i = 0; i != _maxInventoryItems; i++) {
+	for (i = 0; i < _maxInventoryItems; i++) {
 		obj = _inventory[i];
 		if (obj && getOwner(obj) == owner && count++ == idx)
 			return obj;
@@ -1280,7 +1280,7 @@ int ScummEngine::findInventory(int owner, int idx) {
 int ScummEngine::getInventoryCount(int owner) {
 	int i, obj;
 	int count = 0;
-	for (i = 0; i != _maxInventoryItems; i++) {
+	for (i = 0; i < _maxInventoryItems; i++) {
 		obj = _inventory[i];
 		if (obj && getOwner(obj) == owner)
 			count++;

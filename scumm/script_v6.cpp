@@ -1134,7 +1134,7 @@ void ScummEngine_v6::o6_pickupObject() {
 	if (room == 0)
 		room = _roomResource;
 
-	for (i = 1; i < _maxInventoryItems; i++) {
+	for (i = 0; i < _maxInventoryItems; i++) {
 		if (_inventory[i] == (uint16)obj) {
 			putOwner(obj, VAR(VAR_EGO));
 			runInventoryScript(obj);
