@@ -72,35 +72,35 @@ public:
 		_verb = VERB_NONE;
 	}
 
-    Verb(VerbEnum v) {
+	Verb(VerbEnum v) {
 		_verb = v;
 	}
 
 	//! _verb is open/close/move/give/look at/pick up/talk to
-    bool isPanelCommand() const {
+	bool isPanelCommand() const {
 		return 
-			_verb >= VERB_PANEL_COMMAND_FIRST &&	
+			_verb >= VERB_PANEL_COMMAND_FIRST &&
 			_verb <= VERB_PANEL_COMMAND_LAST;
 	}
 
-    bool isScrollInventory() const {
+	bool isScrollInventory() const {
 		return 
 			_verb == VERB_SCROLL_UP || 
 			_verb == VERB_SCROLL_DOWN;
 	}
 
-    bool isInventory() const {
+	bool isInventory() const {
 		return 
 			_verb >= VERB_INV_FIRST && 
 			_verb <= VERB_INV_LAST;
 	}
 
-    bool isJournal() const {
+	bool isJournal() const {
 		return _verb == VERB_USE_JOURNAL;
 	}
 
-    bool isTwoLevelsCommand() const {
-		 return 
+	bool isTwoLevelsCommand() const {
+		return 
 			 _verb == VERB_GIVE ||
 			 _verb == VERB_USE;
 	}
@@ -113,6 +113,17 @@ public:
 
 	bool isSkipText() const {
 		return _verb == VERB_SKIP_TEXT;
+	}
+
+	bool isAction() const {
+		return 
+			isPanelCommand() || 
+			_verb == VERB_WALK_TO || 
+			isScrollInventory();
+	}
+
+	bool isNone() const {
+		return _verb == VERB_NONE;
 	}
 
 	VerbEnum value() const {
@@ -128,6 +139,10 @@ public:
 
 	bool operator==(const Verb& other) const {
 		return _verb == other._verb;
+	}
+
+	bool operator!=(const Verb& other) const {
+		return _verb != other._verb;
 	}
 
 	static void initName(int i, char* name) {
