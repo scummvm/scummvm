@@ -84,22 +84,24 @@ void ScummEngine::setupScummVars() {
 		VAR_FIXEDDISK = 51;
 		VAR_CURSORSTATE = 52;
 		VAR_USERPUT = 53;
-		VAR_SOUNDRESULT = 56;
-		VAR_TALKSTOP_KEY = 57;
-		VAR_NOSUBTITLES = 60;
+	}
 
+	if (_gameId == GID_LOOM256 || _version >= 5) {
+		VAR_NOSUBTITLES = 60;
 		VAR_SOUNDPARAM = 64;
 		VAR_SOUNDPARAM2 = 65;
 		VAR_SOUNDPARAM3 = 66;
 	}
 	if (_version >= 5) {
+		VAR_SOUNDRESULT = 56;
+		VAR_TALKSTOP_KEY = 57;
 		VAR_FADE_DELAY = 59;
 		VAR_MOUSEPRESENT = 67;
 		VAR_MEMORY_PERFORMANCE = 68;
-		VAR_VIDEO_PERFORMANCE = 69;	// Zak256 Note: Cashcard for Zak
-		VAR_ROOM_FLAG = 70;	// Zak256 Note: Cashcard for Annie
-		VAR_GAME_LOADED = 71;	// Zak256 Note: Cashcard for Melissa
-		VAR_NEW_ROOM = 72;	// Zak256 Note: Cashcard for Leslie
+		VAR_VIDEO_PERFORMANCE = 69;
+		VAR_ROOM_FLAG = 70;
+		VAR_GAME_LOADED = 71;
+		VAR_NEW_ROOM = 72;
 	}
 }
 
@@ -528,26 +530,23 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_NUM_UNK) = _numUnk;
 		}
 	} else {
-		VAR(VAR_CURRENTDRIVE) = 0;
 		switch (_midiDriver) {
 		case MD_NULL:  VAR(VAR_SOUNDCARD) = 0; break;
-		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
 		case MD_PCSPK:
 		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
+		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
 		default:       
 			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || _gameId == GID_LOOM)
 			   &&  (_features & GF_PC)) {
 				if (_gameId == GID_LOOM) {
 					char buf[50];
-					uint i = 82;
 					File f;
-					while (i < 85) {
+					for (int i = 82; i < 86; i++) {
 						sprintf(buf, "%d.LFL", i);
 						f.open(buf);
 						if (f.isOpen() == false)
 							error("Native MIDI support requires Roland patch from LucasArts");
 						f.close();
-						i++;
 					}
 				} else if (_gameId == GID_MONKEY_EGA) {
 						File f;
@@ -556,9 +555,21 @@ void ScummEngine::initScummVars() {
 							error("Native MIDI support requires Roland patch from LucasArts");
 				}
 				VAR(VAR_SOUNDCARD) = 4;
-			} else
+			} else {
 				VAR(VAR_SOUNDCARD) = 3;
+			}
 		}
+		if (_gameId == GID_LOOM256 || _version >= 5) {
+			if (_features & GF_HUMONGOUS) {
+				VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
+				VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
+			} else {
+				VAR(VAR_SOUNDPARAM) = 0;
+				VAR(VAR_SOUNDPARAM2) = 0;
+			}
+			VAR(VAR_SOUNDPARAM3) = 0;
+		}
+
 		if (_features & GF_FMTOWNS)
 			VAR(VAR_VIDEOMODE) = 42;
 		else if (_gameId == GID_INDY3 && (_features & GF_MACINTOSH))
@@ -573,22 +584,21 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_VIDEOMODE) = 13;
 		else
 			VAR(VAR_VIDEOMODE) = 19;
-		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {
-			// Set number of sound resources
-			if (!(_features & GF_MACINTOSH))
+
+		VAR(VAR_CURRENTDRIVE) = 0;
+		if (_gameId == GID_LOOM && (_features & GF_OLD_BUNDLE)) {
+			if (_features & GF_MACINTOSH) {
+				// This is the for the Mac version of Indy3/Loom
+				VAR(39) = 320;
+			} else {
+				// Set number of sound resources
 				VAR(39) = 80;
+			}
 			VAR(VAR_HEAPSPACE) = 1400;
-		} else if (_version >= 4) {
+		} 
+		if (_version >= 4) {
 			VAR(VAR_HEAPSPACE) = 1400;
 			VAR(VAR_FIXEDDISK) = true;
-			if (_features & GF_HUMONGOUS) {
-				VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
-				VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
-			} else {
-				VAR(VAR_SOUNDPARAM) = 0;
-				VAR(VAR_SOUNDPARAM2) = 0;
-			}
-			VAR(VAR_SOUNDPARAM3) = 0;
 		}
 		if (_version >= 5)
 			VAR(VAR_MOUSEPRESENT) = true;
@@ -596,11 +606,6 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_V6_EMSSPACE) = 10000;
 	}
 	
-	if ((_features & GF_MACINTOSH) && (_version == 3)) {
-		// This is the for the Mac version of Indy3/Loom
-		VAR(39) = 320;
-	}
-
 	if (VAR_CURRENT_LIGHTS != 0xFF) {
 		// Setup light
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;

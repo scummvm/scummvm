@@ -1311,7 +1311,6 @@ int ScummEngine::init(GameDetector &detector) {
 	initScummVars();
 
 	if (VAR_DEBUGMODE != 0xFF) {
-		// This is NOT for the Mac version of Indy3/Loom
 		VAR(VAR_DEBUGMODE) = _debugMode;
 		if (_heversion >= 80 && _debugMode)
 			VAR(85) = 1;
