@@ -1066,7 +1066,7 @@ int ScummEngine::init() {
 	}
 
 	if (_features & GF_OLD_BUNDLE)
-		_resourceHeaderSize = 4; // FIXME - to be rechecked
+		_resourceHeaderSize = 4;
 	else if (_features & GF_SMALL_HEADER)
 		_resourceHeaderSize = 6;
 	else
@@ -1098,22 +1098,6 @@ int ScummEngine::init() {
 	// Create debugger
 	if (!_debugger)
 		_debugger = new ScummDebugger(this);
-
-
-	// If requested, load a save game instead of running the boot script
-	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
-		int args[16];
-		memset(args, 0, sizeof(args));
-		args[0] = _bootParam;	
-
-		_saveLoadFlag = 0;
-		if (_gameId == GID_MANIAC && _demoMode)
-			runScript(9, 0, 0, args);
-		else
-			runScript(1, 0, 0, args);
-	} else {
-		_saveLoadFlag = 0;
-	}
 
 	return 0;
 }
@@ -1395,6 +1379,21 @@ void ScummEngine::setupMusic(int midi) {
 #pragma mark -
 
 int ScummEngine::go() {
+	// If requested, load a save game instead of running the boot script
+	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
+		int args[16];
+		memset(args, 0, sizeof(args));
+		args[0] = _bootParam;	
+
+		_saveLoadFlag = 0;
+		if (_gameId == GID_MANIAC && _demoMode)
+			runScript(9, 0, 0, args);
+		else
+			runScript(1, 0, 0, args);
+	} else {
+		_saveLoadFlag = 0;
+	}
+
 	int delta = 0;
 	int diff = _system->getMillis();
 
