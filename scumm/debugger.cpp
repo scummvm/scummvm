@@ -17,6 +17,8 @@
 	#define Debug_Printf printf
 #endif
 
+extern uint16 _debugLevel;
+
 ScummDebugger::ScummDebugger()
 {
 	_s = 0;
@@ -62,6 +64,8 @@ void ScummDebugger::attach(Scumm *s)
 
 		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
 		DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
+
+		DCmd_Register("level", &ScummDebugger::Cmd_DebugLevel);
 	}
 }
 
@@ -352,6 +356,30 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 						 a->scalex, a->speedx, a->facing, int(_s->_classData[a->number]&0xFF));
 	}
 	Debug_Printf("+--------------------------------------------------------------------+\n");
+	return true;
+}
+
+bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
+	int level;
+	
+	if (argc == 1) {
+		if (_s->_debugMode == false)
+			Debug_Printf("Debugging is not enabled at this time\n");
+		else
+			Debug_Printf("Debugging is currently set at level %d\n", _debugLevel);
+	} else { // set level
+		int level = atoi(argv[1]);
+		_debugLevel = level;
+		if (level > 0) {
+			_s->_debugMode = true;
+			Debug_Printf("Debug level set to level %d\n", level);
+		} else if (level == 0) {
+			_s->_debugMode = false;
+			Debug_Printf("Debugging is now disabled\n");
+		} else
+			Debug_Printf("Not a valid debug level\n");
+	}
+		
 	return true;
 }
 

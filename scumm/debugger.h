@@ -77,8 +77,10 @@ protected:
 	bool Cmd_PrintBox(int argc, const char **argv);
 	bool Cmd_Actor(int argc, const char **argv);
 	
-	void printBox(int box);
+	bool Cmd_DebugLevel(int argc, const char **argv);
 	
+	void printBox(int box);
+
 #ifdef USE_CONSOLE
 	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
 #endif
