@@ -88,8 +88,8 @@ public:
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
 
-	char *getRoomName(uint16 roomNum)	{ return _roomName[roomNum] ; }
-	char *getObjectName(uint16 objNum)	{ return _objName[objNum]; }
+	const char *roomName(uint16 roomNum)	{ return _roomName[roomNum] ; }
+	const char *objectName(uint16 objNum)	{ return _objName[objNum]; }
 
 	Language language()	{ return _resource->getLanguage(); } 
 
