@@ -31,18 +31,20 @@ Debugger::Debugger(SimonEngine *vm)
 	_vm = vm;
 		
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
+	DCmd_Register("help", &Debugger::Cmd_Help);
 	DCmd_Register("quit", &Debugger::Cmd_Exit);
-	DCmd_Register("playVoice", &Debugger::Cmd_PlayVoice);
+	DCmd_Register("voice", &Debugger::Cmd_PlayVoice);
+	DCmd_Register("music", &Debugger::Cmd_PlayMusic);
 }
 
 
 void Debugger::preEnter() {
-	_vm->midi.pause(1);
+	//_vm->midi.pause(1);
 }
 
 
 void Debugger::postEnter() {
-	_vm->midi.pause(0);
+	//_vm->midi.pause(0);
 }
 
 
@@ -51,12 +53,45 @@ bool Debugger::Cmd_Exit(int argc, const char **argv) {
 	return false;	
 }
  
+bool Debugger::Cmd_Help(int argc, const char **argv) {
+	// console normally has 39 line width
+	// wrap around nicely
+	int width = 0, size, i;
+
+	DebugPrintf("Commands are:\n");
+	for (i = 0 ; i < _dcmd_count ; i++) {
+		size = strlen(_dcmds[i].name) + 1;
+
+		if ((width + size) >= 39) {
+			DebugPrintf("\n");
+			width = size;
+		} else
+			width += size;
+
+		DebugPrintf("%s ", _dcmds[i].name);
+	}
+	DebugPrintf("\n");
+	return true;
+}
+
+bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
+	uint music = atoi(argv[1]);
+	if (_vm->_game & GF_SIMON2) {
+		DebugPrintf("No support for Simon the Sorcerer 2\n");
+	} else if (music > 0 && music < 35) {
+		_vm->loadMusic(music);
+	} else
+		DebugPrintf("Syntax: music <musicnum>\n");
+
+	return true;
+}
+
 bool Debugger::Cmd_PlayVoice(int argc, const char **argv) {
 	if (argc > 1) {
 		uint voice = atoi(argv[1]);
 		_vm->_sound->playVoice(voice);
 	} else
-		DebugPrintf("Syntax: playvoice <soundnum>\n");
+		DebugPrintf("Syntax: voice <soundnum>\n");
 
 	return true;
 }
