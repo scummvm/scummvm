@@ -24,6 +24,7 @@
 #define COMMON_SAVEFILE_H
 
 #include <stdio.h>
+#include <string.h>
 
 class SaveFile {
 public:
