@@ -405,7 +405,7 @@ int SimonState::runScript()
 			break;
 
 		case 68:{									/* exit interpreter */
-				system->quit();
+				_system->quit();
 			}
 			break;
 
