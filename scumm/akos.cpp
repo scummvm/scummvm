@@ -729,7 +729,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 
 byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
-	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh, tmp_x, tmp_y;
+	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh;
 
 	if (!_mirror) {
 		clip_left = (_actorX - xmoveCur - _width) + 1;
@@ -737,35 +737,32 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 		clip_left = _actorX + xmoveCur - 1;
 	}
 
-	clip_right = (clip_left + _width) - 1;
 	clip_top = _actorY + ymoveCur;
+	clip_right = (clip_left + _width) - 1;
 	clip_bottom = (clip_top + _height) - 1;
 	maxw = _outwidth - 1;
 	maxh = _outheight - 1;
+
+	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
+
+	if (clip_top < 0) {
+		clip_top = 0;
+	}
+
+	if (clip_bottom > maxh) {
+		clip_bottom = maxh;
+	}
 
 	if (clip_left < 0) {
 		clip_left = 0;
 	}
 
-	tmp_x = clip_right - maxw;
-	if (tmp_x > 0) {
-		clip_right -= tmp_x;
+	if (clip_right > maxw) {
+		clip_right = maxw;
 	}
 
-	tmp_y = clip_top;
-	if (tmp_y < 0) {
-		clip_top -= tmp_y;
-	}
-
-	tmp_y = clip_bottom - maxh;
-	if (tmp_y > 0) {
-		clip_bottom -= tmp_y;
-	}
-
-	if ((clip_right <= clip_left) || (clip_top >= clip_bottom))
-		return 1;
-
-	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
+	if ((clip_left >= clip_right) || (clip_top >= clip_bottom))
+		return 0;
 
 	if (_draw_top > clip_top)
 		_draw_top = clip_top;
@@ -1010,63 +1007,51 @@ void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, const byte *src
 }
 
 byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
-	int32 clip_left;
-
+	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh;
+	int32 skip_x, skip_y, cur_x, cur_y;
+	const byte transparency = (_vm->_features & GF_HUMONGOUS) ? 0 : 255;
+	
 	if(!_mirror) {
 		clip_left = (_actorX - xmoveCur - _width) + 1;
 	} else {
 		clip_left = _actorX + xmoveCur;
 	}
 
-	int32 clip_top = ymoveCur + _actorY;
-	int32 clip_right = (clip_left + _width) - 1;
-	int32 clip_bottom = (clip_top + _height) - 1;
-	int32 skip_x = 0;
-	int32 skip_y = 0;
-	int32 cur_x = _width - 1;
-	int32 cur_y = _height - 1;
-	int32 maxw = _outwidth - 1;
-	int32 maxh = _outheight - 1;
-	int32 tmp_x, tmp_y;
-	byte transparency = (_vm->_features & GF_HUMONGOUS) ? 0 : 255;
+	clip_top = ymoveCur + _actorY;
+	clip_right = (clip_left + _width) - 1;
+	clip_bottom = (clip_top + _height) - 1;
+	maxw = _outwidth - 1;
+	maxh = _outheight - 1;
 
-/*
-	tmp_x = clip_left;
-	if(tmp_x < 0) {
-		tmp_x = -tmp_x;
-		clip_left -= tmp_x;
-		skip_x = tmp_x;
-	}
-*/
+	skip_x = 0;
+	skip_y = 0;
+	cur_x = _width - 1;
+	cur_y = _height - 1;
 
-	// Modified by ludde
+	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
+
 	if (clip_left < 0) {
 		skip_x = -clip_left;
 		clip_left = 0;
 	}
 
-	tmp_x = clip_right - maxw;
-	if(tmp_x > 0) {
-		cur_x -= tmp_x;
-		clip_right -= tmp_x;
+	if(clip_right > maxw) {
+		cur_x -= clip_right - maxw;
+		clip_right = maxw;
 	}
 
-	tmp_y = clip_top;
-	if(tmp_y < 0) {
-		skip_y -= tmp_y;
-		clip_top -= tmp_y;
+	if(clip_top < 0) {
+		skip_y -= clip_top;
+		clip_top = 0;
 	}
 
-	tmp_y = clip_bottom - maxh;
-	if(tmp_y > 0) {
-		cur_y -= tmp_y;
-		clip_bottom -= tmp_y;
+	if(clip_bottom > maxh) {
+		cur_y -= clip_bottom - maxh;
+		clip_bottom = maxh;
 	}
 
 	if ((clip_left >= clip_right) || (clip_top >= clip_bottom))
 		return 0;
-
-	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
 
 	if (_draw_top > clip_top)
 		_draw_top = clip_top;
@@ -1092,18 +1077,18 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		width_unk = clip_left;
 	}
 
-	tmp_y = cur_y - skip_y;
-	if(tmp_y < 0) {
-		tmp_y = -tmp_y;
-	}
+	int32 out_height;
 
-	int32 out_height = tmp_y + 1;
+	out_height = cur_y - skip_y;
+	if (out_height < 0) {
+		out_height = -out_height;
+	}
+	out_height++;
 
 	cur_x -= skip_x;
 	if(cur_x < 0) {
 		cur_x = -cur_x;
 	}
-
 	cur_x++;
 
 	int32 numskip_before = skip_x + (skip_y * _width);

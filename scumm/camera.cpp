@@ -320,15 +320,13 @@ void Scumm::cameraMoved() {
 		}
 	}
 
-	_screenStartStrip = (camera._cur.x - (_screenWidth / 2)) >> 3;
+	_screenStartStrip = camera._cur.x / 8 - gdi._numStrips / 2;
 	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
 
 	_screenTop = camera._cur.y - (_screenHeight / 2);
 	if (_features & GF_AFTER_V7) {
-
 		_screenLeft = camera._cur.x - (_screenWidth / 2);
 	} else {
-
 		_screenLeft = _screenStartStrip << 3;
 	}
 
