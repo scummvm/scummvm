@@ -762,6 +762,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 }
 
 
+#ifdef USE_VORBIS
 bool checkOggSampleRate(char *directory) {
 	char trackFile[255];
 	FILE *testFile;
@@ -782,6 +783,7 @@ bool checkOggSampleRate(char *directory) {
 
 	return false;
 }
+#endif
 
 
 void runGame(char *game_name) {
@@ -831,10 +833,12 @@ void runGame(char *game_name) {
 	//new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "monkey") == 0);
 	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0);
 
+#ifdef USE_VORBIS
 	// Modify the sample rate on the fly if OGG is involved 
 
 	if (!new_audio_rate)
 		new_audio_rate = checkOggSampleRate(_directory);
+#endif
 
 	detector.parseCommandLine(argc, argv);
 
