@@ -41,10 +41,10 @@ AnimationState::~AnimationState() {
 	if (decoder)
 		mpeg2_close(decoder);
 	delete mpgfile;
-        delete sndfile;
+	delete sndfile;
 #ifndef BACKEND_8BIT
-        _vm->_system->hide_overlay();
-        delete overlay;
+	_vm->_system->hide_overlay();
+	delete overlay;
 #endif
 #endif
 }
@@ -56,11 +56,11 @@ bool AnimationState::init(const char *name) {
 	decoder = NULL;
 	mpgfile = NULL;
 	sndfile = NULL;
-        bgSoundStream = NULL;
+	bgSoundStream = NULL;
 
 #ifdef BACKEND_8BIT
 
-        int i, p;
+	int i, p;
 
 	// Load lookup palettes
 	// TODO: Binary format so we can use File class
@@ -280,7 +280,7 @@ void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *cons
 			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
 			ptr[RENDERWIDE + linepos++] = lut[i + dat[0][width + ypos++]];
 
-                }
+		}
 		linepos += (2 * 640 - width);
 		ypos += width;
 	}
@@ -370,12 +370,12 @@ bool AnimationState::decodeFrame() {
 #else
 
 				if ((bgSoundStream == NULL) ||
-					(bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+					(bgSoundStream->getSamplesPlayed() * 12 / bgSoundStream->getRate()) < (framenum+3)){
 
 					plotYUV(lookup2, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum + 1)
+						while ((bgSoundStream->getSamplesPlayed() * 12 / bgSoundStream->getRate()) < framenum + 1)
 							_vm->_system->delay_msecs(10);
 					} else {
 						ticks += 83;
@@ -390,7 +390,7 @@ bool AnimationState::decodeFrame() {
 				framenum++;
 				return true;
 
-                        }
+			}
 			break;
 
 		default:
@@ -460,7 +460,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 #endif
 
 	while (anim->decodeFrame()) {
-		if (text && text[textCounter]) {                      
+		if (text && text[textCounter]) {
 			if (frameCounter == text[textCounter]->startFrame) {
 				openTextObject(text[textCounter]);
 				textVisible = true;
