@@ -161,7 +161,7 @@ void Resource::checkJASVersion() {
 	else if (isInterview())
 		offset += JAS_VERSION_OFFSET_INTV;
 	else 
-		offset += JAS_VERSION_OFFSET;
+		offset += JAS_VERSION_OFFSET_PC;
 	_resourceFile->seek(offset);
 
 	char versionStr[6];

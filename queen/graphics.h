@@ -72,8 +72,6 @@ struct BobSlot {
 	uint16 dx, dy;
 	uint16 total;
 
-	static const Box _defaultBox;
-
 	void curPos(int16 xx, int16 yy);
 	void move(int16 dstx, int16 dsty, int16 spd);
 	void moveOneStep();
@@ -85,6 +83,8 @@ struct BobSlot {
 	void scaleWalkSpeed(uint16 ms);
 
 	void clear();
+
+	static const Box _defaultBox;
 };
 
 class QueenEngine;
@@ -95,21 +95,46 @@ public:
 	Graphics(QueenEngine *vm);
 	~Graphics();
 
+	//! unpacks control frames (ie. arrows)
 	void unpackControlBank();
+	
+	//! setup dialog arrows
 	void setupArrows();
+	
+	//! setup mouse cursor
 	void setupMouseCursor();
 
+	//! draw a bob
 	void drawBob(const BobSlot *bs, const BobFrame *bf, const Box *box, int16 x, int16 y);
+	
+	//! draw an inventory item
 	void drawInventoryItem(uint32 frameNum, uint16 x, uint16 y);
+	
+	//! draw a bob directly on the backdrop bitmap
 	void pasteBob(uint16 objNum, uint16 image);
+	
+	//! resize a bobframe
 	void shrinkFrame(const BobFrame *bf, uint16 percentage);
+	
+	//! animate/move bobs and sort them
 	void sortBobs();
+	
+	//! draw all the sorted bobs
 	void drawBobs();
+	
+	//! clear all setup bobs
 	void clearBobs();
+	
+	//! stop all animating/movings bobs
 	void stopBobs();
+	
+	//! returns a reference to the specified bob
 	BobSlot *bob(int index);
+	
+	//! display a text 'near' the specified bob
 	void setBobText(const BobSlot *bob, const char *text, int textX, int textY, int color, int flags);
 
+	//! handles parallax scrolling for the specified room
 	void handleParallax(uint16 roomNum);
 
 	void setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, uint16 furnitureCount);
@@ -173,18 +198,19 @@ private:
 	
 	uint16 _personFrames[4];
 
-	//! Number of animated furniture in current room
+	//! number of animated furniture in current room
 	uint16 _numFurnitureAnimated;
 
-	//! Number of static furniture in current room
+	//! number of static furniture in current room
 	uint16 _numFurnitureStatic;
 
-	//! Total number of frames for the animated furniture
+	//! total number of frames for the animated furniture
 	uint16 _numFurnitureAnimatedLen;
 
-	//! Current number of frames unpacked
+	//! current number of frames unpacked
 	uint16 _numFrames;
 
+	//! bob number followed by camera
 	int _cameraBob;
 
 	QueenEngine *_vm;

@@ -31,38 +31,55 @@ class QueenEngine;
 class LineReader;
 
 class Credits {
-
 public:
 
 	Credits(QueenEngine *vm, const char* filename);
 	~Credits();
 
+	//! update/display credits for current room
 	void update();
+	
+	//! handles room switching
 	void nextRoom();
 
+	//! returns true if the credits are running
 	bool running() const { return _running; }
 
 private:
 
-	QueenEngine *_vm;
-	LineReader *_credits;
-
-	struct Line
-	{
-		short x,y,color,fontSize;
-		char *text;
+	struct Line {
+		short x, y, color, fontSize;
+		const char *text;
 	};
-
+	
+	//! contains the formatted lines of texts to display
 	Line _list[19];
 
+	//! true if end of credits description hasn't been reached
 	bool _running;
+	
+	//! number of elements in _list array
 	int _count;
+	
+	//! pause counts for next room
 	int _pause;
+	
+	//! current text justification mode
 	int _justify;
+	
+	//! current font size (unused ?)
 	int _fontSize;
+	
+	//! current text color
 	int _color;
+	
+	//! current text position
 	int _zone;
 
+	//! contains the credits description
+	LineReader *_credits;
+
+	QueenEngine *_vm;	
 };
 
 } // End of namespace Queen

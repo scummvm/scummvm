@@ -34,23 +34,43 @@ struct CmdText {
 
 	CmdText(bool reversed, uint8 y, QueenEngine *vm);
 
+	//! reset the command sentence
 	void clear();
+	
+	//! display the command sentence using the specified color
 	void display(uint8 color);
+	
+	//! display a temporary command sentence using the specified parameters
 	void displayTemp(uint8 color, Verb v, const char *name = NULL, bool outlined = false);
+	
+	//! display a temporary command sentence using the specified parameters
 	void displayTemp(uint8 color, const char *name, bool outlined = false);
+	
+	//! set the verb for the command sentence
 	void setVerb(Verb v);
+	
+	//! set the link word (between verb and object) for the command sentence
 	void addLinkWord(Verb v);
+	
+	//! add an object name to the command sentence
 	void addObject(const char *objName);
+	
+	//! returns true if the command sentence is empty
 	bool isEmpty() const;
 
 	enum {
 		MAX_COMMAND_LEN = 256,
 		COMMAND_Y_POS   = 151
 	};
-
+	
 	uint8 _y;
+
+	//! flag indicating if the words in the sentence are reversed (hebrew version)
 	bool _isReversed;
+	
+	//! buffer containing the current command sentence
 	char _command[MAX_COMMAND_LEN];
+	
 	QueenEngine *_vm;
 };
 
@@ -92,25 +112,49 @@ public:
 
 private:
 
+	//! get a reference to the ObjectData for the specified room object
 	ObjectData *findObjectData(uint16 objRoomNum) const;
+	
+	//! get a reference to the ItemData for the specified inventory object
 	ItemData *findItemData(Verb invNum) const;
 
+	//! execute the current command
 	int16 executeCommand(uint16 comId, int16 condResult);
 
+	//! move Joe to the specified position, handling new room switching
 	int16 makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWalk);
 
+	//! update command state with current selected action
 	void grabCurrentSelection();
+	
+	//! update command state with current selected object
 	void grabSelectedObject(int16 objNum, uint16 objState, uint16 objName);
+	
+	//! update command state with current selected inventory object
 	void grabSelectedItem();
+	
+	//! update command state with current selected room object
 	void grabSelectedNoun();
+	
+	//! update command state with current selected verb
 	void grabSelectedVerb();
 
+	//! if the description is a cutaway file, execute it
 	bool executeIfCutaway(const char *description);
+	
+	//! if the description is a dialog file, execute it
 	bool executeIfDialog(const char *description);
 	
+	//! handle a wrong/invalid user action
 	bool handleWrongAction();
+	
+	//! make Joe speak something for a wrong/invalid action
 	void sayInvalidAction(Verb action, int16 subj1, int16 subj2);
+	
+	//! update an object state
 	void changeObjectState(Verb action, int16 obj, int16 song, bool cutDone);
+	
+	//! reset current action
 	void cleanupCurrentAction();
 	
 	//! OPEN_CLOSE_OTHER(OBJECT_DATA[S][4])
@@ -140,22 +184,32 @@ private:
 	//! get the current icon panel under the cursor (inventory item or verb)
 	void lookForCurrentIcon(int16 cx, int16 cy);
 
+	//! returns true if the verb is an action verb
 	bool isVerbAction(Verb v) const { return (v >= VERB_PANEL_COMMAND_FIRST && v <= VERB_PANEL_COMMAND_LAST) || (v == VERB_WALK_TO); };
+	
+	//! return true if the verb is an inventory item
 	bool isVerbInv(Verb v) const { return v >= VERB_INV_FIRST && v <= VERB_INV_LAST; }
+	
+	//! returns true if the specified verb is an inventory scroll
 	bool isVerbInvScroll(Verb v) const { return v == VERB_SCROLL_UP || v == VERB_SCROLL_DOWN; }
  
+ 	//! commands list for each possible action
 	CmdListData *_cmdList;
 	uint16 _numCmdList;
 
+	//! commands list for areas
 	CmdArea *_cmdArea;
 	uint16 _numCmdArea;
 
+	//! commands list for objects
 	CmdObject *_cmdObject;
 	uint16 _numCmdObject;
 
+	//! commands list for inventory
 	CmdInventory *_cmdInventory;
 	uint16 _numCmdInventory;
 
+	//! commands list for gamestate
 	CmdGameState *_cmdGameState;
 	uint16 _numCmdGameState;
 

@@ -62,7 +62,7 @@ void Credits::update() {
 		return;
 
 	for (;;) {
-		char *line = _credits->nextLine();
+		const char *line = _credits->nextLine();
 
 		if (0 == memcmp(line, "EN", 2)) {
 			_running = false;

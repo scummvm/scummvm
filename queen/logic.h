@@ -129,28 +129,42 @@ public:
 	bool initPerson(uint16 noun, const char *actorName, bool loadBank, Person *pp);
 	uint16 findPersonNumber(uint16 obj, uint16 room) const;
 
+	//! load banks used for Joe animation
 	void loadJoeBanks(const char *animBank, const char *standBank);
 
-	//! Load the various bobs needed to animate Joe
+	//! load the various bobs needed to animate Joe
 	void setupJoe();
 
-	//! Setup Joe at the right place when entering a room
+	//! setup Joe at the right place when entering a room
 	void setupJoeInRoom(bool autoPosition, uint16 scale);
 	
 	uint16 joeFace();
 	void joeGrab(int16 grabState);
 
+	//! change Joe clothes to dress
 	void joeUseDress(bool showCut);
+	
+	//! restore Joe clothes
 	void joeUseClothes(bool showCut);
+	
+	//! change Joe clothes to underwear
 	void joeUseUnderwear();
 
-	void makeJoeSpeak(uint16 descNum, bool objectType = false);
+	void makeJoeSpeak(uint16 descNum, bool objectType = false);	
 	void makePersonSpeak(const char *sentence, Person *person, const char *voiceFilePrefix);
+	
+	//! start the specified dialogue
 	void startDialogue(const char *dlgFile, int personInRoom, char *cutaway);
+	
+	//! play the specified cutaway
 	void playCutaway(const char *cutFile, char *next = NULL);
 
 	void inventorySetup();
+	
+	//! get the inventory item for the specified inventory slot
 	uint16 findInventoryItem(int invSlot) const;
+	
+	//! refresh inventory contents
 	void inventoryRefresh();
 	int16 previousInventoryItem(int16 first) const;
 	int16 nextInventoryItem(int16 first) const;
@@ -161,11 +175,13 @@ public:
 	void inventoryScroll(uint16 count, bool up);
 	void removeHotelItemsFromInventory();
 
-	//! Copy data from dummy object to object
+	//! copy data from dummy object to object
 	void objectCopy(int dummyObjectIndex, int objectIndex);
 
+	//! handle a particular event when Joe walks on this area
 	void handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataNum);
 
+	//! handle the pinnacle room (in jungle)
 	void handlePinnacleRoom();
 
 	void update();
@@ -175,19 +191,21 @@ public:
 
 	void setupRestoredGame();
 
-	//! Ugly hack from original code
+	//! ugly hack from original code
 	void sceneReset() { _scene = 0; }
 
-	//! Make a scene
+	//! make a scene
 	void sceneStart();
 
-	//! Stop making a scene
+	//! stop making a scene
 	void sceneStop();
 
 	void changeRoom();
 
+	//! enter the Journal (save/load, configuration)
 	virtual void useJournal() = 0;
 
+	//! execute a special move
 	void executeSpecialMove(uint16 sm);
 
 	void startCredits(const char *filename);
@@ -255,19 +273,19 @@ protected:
 	uint16 _oldRoom;
 	uint16 _newRoom;
 
-	//! Total number of room in game
+	//! total number of room in game
 	uint16 _numRooms;
 
-	//! First object number in room
+	//! first object number in room
 	uint16 *_roomData;
 
-	//! Background music to play in room
+	//! background music to play in room
 	uint16 *_sfxName;
 
-	//! Bounding box of object
+	//! bounding box of object
 	Box *_objectBox;
 
-	//! Inventory items
+	//! inventory items
 	ItemData *_itemData;
 	uint16 _numItems;
 
@@ -283,7 +301,7 @@ protected:
 	ActorData *_actorData;
 	uint16 _numActors;
 
-	//! Walk off point for an object
+	//! walk off point for an object
 	WalkOffData *_walkOffData;
 	uint16 _numWalkOffs;
 
@@ -293,32 +311,32 @@ protected:
 	GraphicAnim *_graphicAnim;
 	uint16 _numGraphicAnim;
 
-	//! Actor position in room is _walkOffData[_entryObj]
+	//! actor initial position in room is _walkOffData[_entryObj]
 	int16 _entryObj;
 
-	//! Object description (Look At)
+	//! object description (Look At)
 	Common::StringList _objDescription;
 	uint16 _numDescriptions;
 
 	Common::StringList _objName;
 	uint16 _numNames;
 
-	//! Room name, prefix for data files (PCX, LUM...)
+	//! room name, prefix for data files (PCX, LUM...)
 	Common::StringList _roomName;
 
 	Common::StringList _verbName;
 
 	Common::StringList _joeResponse;
 
-	//! Actor animation string
+	//! actor animation strings
 	Common::StringList _aAnim;
 	uint16 _numAAnim;
 
-	//! Actor name
+	//! actor names
 	Common::StringList _aName;
 	uint16 _numAName;
 
-	//! Actor filename
+	//! actor filenames
 	Common::StringList _aFile;
 	uint16 _numAFile;
 
@@ -333,13 +351,13 @@ protected:
 
 	TalkSelected _talkSelected[TALK_SELECTED_COUNT];
 
-	//! Inventory items
+	//! inventory items
 	int16 _inventoryItem[4];
 
-	//! Puzzle counter for room T7
+	//! puzzle counter for room T7
 	uint8 _puzzleAttemptCount;
 
-	//! Cutscene counter
+	//! cutscene counter
 	int _scene;
 
 	Credits *_credits;

@@ -30,27 +30,20 @@ namespace Queen {
 class QueenEngine;
 
 class Talk {
-  public:
+public:
 
 	//! Public interface to run a talk from a file
-	static void talk(
-		const char *filename,
-		int personInRoom,
-		char *cutawayFilename, 
-		QueenEngine *vm);
+	static void talk(const char *filename, int personInRoom, char *cutawayFilename, QueenEngine *vm);
 
 	//! Public interface to speak a sentence
-	static bool speak(
-		const char *sentence, 
-		Person *person, 
-		const char *voiceFilePrefix,
-		QueenEngine *vm);
+	static bool speak(const char *sentence, Person *person, const char *voiceFilePrefix, QueenEngine *vm);
 
 	//! Read a string from ptr and update offset
 	static void getString(const byte *ptr, uint16 &offset, char *str, int maxLength, int align = 2);
 
 private:
-	//!  Collection of constants used by Talk
+
+	//! Collection of constants used by Talk
 	enum {
 	  LINE_HEIGHT = 10,
 	  MAX_STRING_LENGTH = 255,

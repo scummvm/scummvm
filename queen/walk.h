@@ -108,10 +108,16 @@ private:
 	bool calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y);
 
 
+	//! areas for current room
 	const Area *_roomArea;
+	
+	//! number of areas for current room
 	uint16 _roomAreaCount;
 
+	//! walking steps
 	WalkData _walkData[MAX_WALK_DATA];
+	
+	//! number of walking steps
 	uint16 _walkDataCount;
 	
 	uint16 _areaStrike[MAX_WALK_DATA];
@@ -128,6 +134,7 @@ private:
 
 	QueenEngine *_vm;
 
+	//! persons walking animation data
 	static const MovePersonData _moveData[];
 };
 

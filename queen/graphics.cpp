@@ -416,11 +416,7 @@ BobSlot *Graphics::bob(int index) {
 	return &_bobs[index];
 }
 
-void Graphics::setBobText(
-		const BobSlot *pbs, 
-		const char *text, 
-		int textX, int textY, 
-		int color, int flags) {
+void Graphics::setBobText(const BobSlot *pbs, const char *text, int textX, int textY, int color, int flags) {
 
 	if (text[0] == '\0')
 		return;
