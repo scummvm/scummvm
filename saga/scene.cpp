@@ -114,7 +114,7 @@ int SCENE_Init(void)
 	/* Load scene lookup table
 	 * \*------------------------------------------------------------ */
 	R_printf(R_STDOUT,
-	    "SCENE_Init(): Loading scene LUT from resource %d.\n",
+	    "SCENE_Init(): Loading scene LUT from resource %ld.\n",
 	    gs_desc.scene_lut_rn);
 
 	result = RSC_LoadResource(SceneModule.scene_ctxt,
@@ -575,7 +575,7 @@ SCENE_Load(int scene_num,
 		SceneModule.scene_rn = res_number;
 		assert(SceneModule.scene_rn != 0);
 
-		R_printf(R_STDOUT, "Loading scene resource %d:\n", res_number);
+		R_printf(R_STDOUT, "Loading scene resource %ld:\n", res_number);
 
 		if (LoadSceneDescriptor(res_number) != R_SUCCESS) {
 			R_printf(R_STDERR,

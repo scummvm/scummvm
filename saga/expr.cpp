@@ -107,7 +107,7 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 
 	int i;
 	int in_char;
-	int equ_offset;
+	int equ_offset = 0;
 	int rvalue_offset;
 
 	char *lvalue_str;
@@ -322,7 +322,7 @@ char *EXPR_ReadString(const char **string_p, int *len, int term_char)
 {
 
 	int string_len;
-	char *str_p;
+	char *str_p = NULL;
 	char *term_p;
 
 	const char *scan_p;
