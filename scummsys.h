@@ -75,7 +75,7 @@ typedef signed long int32;
 #define FORCEINLINE inline
 
 #if defined(__GNUC__)
-#define NORETURN __dead2
+#define NORETURN __attribute__((__noreturn__)) 
 #else
 #endif
 #define CDECL 
