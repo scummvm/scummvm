@@ -522,8 +522,9 @@ protected:
 	virtual void setupScummVars();
 
 	virtual void setCameraAt(int pos_x, int pos_y);
-	virtual void panCameraTo(int x, int y);
 	virtual void setCameraFollows(Actor *a);
+	virtual void moveCamera();
+	virtual void panCameraTo(int x, int y);
 };
 
 class Scumm_v8 : public Scumm_v7 {

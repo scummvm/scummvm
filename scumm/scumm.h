@@ -816,12 +816,12 @@ protected:
 	void redrawBGStrip(int start, int num);	
 	void redrawBGAreas();	
 	
-	void moveCamera();
 	void cameraMoved();
 	void setCameraAtEx(int at);
 	virtual void setCameraAt(int pos_x, int pos_y);
-	virtual void panCameraTo(int x, int y);
 	virtual void setCameraFollows(Actor *a);
+	virtual void moveCamera();
+	virtual void panCameraTo(int x, int y);
 	void clampCameraPos(ScummVM::Point *pt);
 	void actorFollowCamera(int act);
 
