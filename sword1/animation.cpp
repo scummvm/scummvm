@@ -308,7 +308,7 @@ bool AnimationState::decodeFrame() {
 				 */
 
 #ifdef BACKEND_8BIT
-				if (checkPaletteSwitch() || (bgSoundStream == 0) ||
+				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
                                     (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
 					_scr->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
@@ -330,7 +330,7 @@ bool AnimationState::decodeFrame() {
 
 #else
 
-				if ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+				if ((bgSoundStream == NULL) || (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
 					plotYUV(lookup2, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
