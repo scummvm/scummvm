@@ -264,7 +264,11 @@ static const byte mt32_to_gm[128] = {
 			byte *idx  = ((byte *)data) + 0x200;
 
 			for (uint i = 0; i < packedSize; i++)
+#if defined(SCUMM_NEED_ALIGNMENT)
+				memcpy(&_buf[i], &data[*(idx + i)], sizeof(uint16));
+#else
 				_buf[i] = data[*(idx + i)];
+#endif
 
 			musicPtr = ((byte *)_buf) + ((*musicPtr == 0x63) ? 1 : 0);
 			size = packedSize * 2;
