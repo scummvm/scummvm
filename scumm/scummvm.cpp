@@ -1450,11 +1450,8 @@ void Scumm::initRoomSubBlocks() {
 		gdi._C64ObjectMode = true;
 	} else if (_features & GF_OLD_BUNDLE) {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
-		if (_version == 2) {
-			if (_roomStrips != NULL)
-				free(_roomStrips);
+		if (_version == 2)
 			_roomStrips = gdi.generateStripTable(roomptr + _IM00_offs, _roomWidth, _roomHeight, _roomStrips);
-		}
 	} else if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
 	else if (_version == 8) {
