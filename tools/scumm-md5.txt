@@ -243,15 +243,19 @@ Fatty Bears Birthday Surprise
 	Demo	Windows	en	22c9eb04455440131ffc157aeb8d40a8	fbdemo	khalek
 	Demo	Mac	en	6df20c50c1ab19799de9be7ae7716881	TODO	khalek
 	-	DOS	en	3824e60cdf639d22f6df92a03dc4b131	fbear	khalek
+	-	DOS	hb	ef74d9071d4e564b037cb44bd6774de7	fbear	sev
 	-	Windows	en	179879b6e35c1ead0d93aab26db0951b	fbear	khalek
 	-	Mac	en	3df6ead57930488bc61e6e41901d0e97	Fatty Bear	khalek
+	-	3DO	en	5b08000a9c47b2887df6506ac767ca68	fbear	sev
 
 Fatty Bears Fun Pack
-	-	DOS	hb	f06e66fd45b2f8b0f4a2833ff4476050	fbpack
+	-	DOS	hb	f06e66fd45b2f8b0f4a2833ff4476050	fbpack	sev
+	-	3DO	en	e01acc8c12ef44e8f778fe87e5f90f4e	fbpack	sev
 
 Freddi Fish 1: The Case of the Missing Kelp Seeds
 	-	All	en	df047cc4792150f601290357566d36a6	freddi	khalek
 	-	Windows	ru	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
+	-	Windows	se	507bb360688dc4180fdf0d7597352a69	freddi	Sven Arvidsson
 	Demo	Windows	en	084ed0fa98a6d1e9368d67fe9cfbd417	freddemo	khalek
 	Demo	Windows	en	0855496dde35356b1a9691e22ba84cdc	freddemo	khalek
 	Demo	Windows	en	566165a7338fa11029e7c14d94fa70d0	freddemo	khalek
@@ -331,6 +335,7 @@ Pajama Sam's Lost & Found
 
 Pajama Sam's Sock Works
 	-	Windows	en	5e8fb66971a60e523e5afbc4c129c0e8	socks	Kirben
+	-	Windows	ru	19263586f749a560c1adf8b3393a9593	socks	sev
 
 Putt-Putt Enters the Race
 	-	Windows	en	981e1e1891f2be7e25a01f50ae55a5af	puttrace
@@ -342,6 +347,8 @@ Putt-Putt Goes To The Moon
 	Demo	Windows	en	9c143c5905055d5df7a0f014ab379aee	moondemo	khalek
 	Demo	Mac	en	4af4a6b248103c1fe9edef619677f540	moondemo	khalek
 	-	DOS	en	780e4a0ae2ff17dc296f4a79543b44f8	puttmoon	khalek
+	-	DOS	hb	697c9b7c55a05d8199c48b48e379d2c8	puttmoon	sev
+	-	3DO	en	a9543ef0d79bcb47cd76ec197ad0a967	puttmoon	sev
 	-	Windows	en	9c92eeaf517a31b7221ec2546ab669fd	puttmoon	khalek
 	-	Mac	en	9dc02577bf50d4cfaf3de3fbac06fbe2	Putt-Putt Moon	khalek
 
@@ -354,6 +361,8 @@ Putt-Putt Joins The Parade
 	Demo	Windows	en	37ff1b308999c4cca7319edfcc1280a0	puttdemo	khalek
 	Demo	Mac	en	f40a7f495f59188ca57a9d1d50301bb6	puttdemo	khalek
 	-	DOS	en	9708cf716ed8bcc9ff3fcfc69413b746	puttputt	khalek
+	-	DOS	hb	e361a7058ed8e8ebb462663c0a3ae8d6	puttputt	sev
+	-	DOS	ru	0b3222aaa7efcf283eb621e0cefd26cc	puttputt	sev
 	-	Windows	en	6a30a07f353a75cdc602db27d73e1b42	puttputt	khalek
 	-	Mac	en	684732efb5799c0f78804c99d8de9aba	Putt-Putt Parade	khalek
 	-	3DO	en	7e151c17adf624f1966c8fc5827c95e9	puttputt	khalek
@@ -380,8 +389,9 @@ Putt-Putt and Pep's Dog on a Stick
 	-	Windows	en	d4b8ee426b1afd3e53bc0cf020418cf6	dog	sev
 	-	Windows	en	eae95b2b3546d8ba86ae1d397c383253	dog	Kirben
 
-Putt-Putts Fun Pack
+Putt-Putt's Fun Pack
 	-	DOS	en	46b53fd430adcfbed791b48a0d4b079f	funpack	khalek
+	-	3DO	en	8afb3cf9f95abf208358e984f0c9e738	funpack	sev
 
 Spy Fox 1: Dry Cereal
 	-	Windows	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
