@@ -67,6 +67,7 @@ public:
 	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }
+	void scrollTo(int item);
 	
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);

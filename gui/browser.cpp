@@ -30,22 +30,102 @@
  * - others???
  */
 
+enum {
+	kChooseCmd = 'Chos',
+	kGoUpCmd = 'GoUp'
+};
+
 BrowserDialog::BrowserDialog(NewGui *gui)
-	: Dialog(gui, 50, 20, 320-2*50, 200-2*20)
+	: Dialog(gui, 40, 10, 320-2*40, 200-2*10)
 {
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, 10, _w-2*10, kLineHeight,
+	new StaticTextWidget(this, 10, 8, _w-2*10, kLineHeight,
 		"Select directory with game data", kTextAlignCenter);
+	
+	// Current path - TODO: handle long paths ?
+	_currentPath =
+	new StaticTextWidget(this, 10, 20, _w-2*10, kLineHeight,
+		"DUMMY", kTextAlignLeft);
 
 	// Add file list
-	_fileList = new ListWidget(this, 10, 20, _w-2*10, _h-20-24-10);
+	_fileList = new ListWidget(this, 10, 34, _w-2*10, _h-34-24-10);
+	_fileList->setNumberingMode(kListNumberingOff);
 	
 	// Buttons
-	addButton(10, _h-24, "Go up", kCloseCmd, 0);
+	addButton(10, _h-24, "Go up", kGoUpCmd, 0);
 	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
-	addButton(_w-(kButtonWidth+10), _h-24, "Choose", kCloseCmd, 0);
-
-	// TODO - populate list item, implement buttons, etc. etc.
-	// TODO - will the choose button select the directory we are currrently in?!?
-	// TODO - double clicking an item should traverse into that directory
+	addButton(_w-(kButtonWidth+10), _h-24, "Choose", kChooseCmd, 0);
 }
+
+void BrowserDialog::open()
+{
+	// If no node has been set, or the last used one is now invalid,
+	// go back to the root/default dir.
+	if (_node == NULL || !_node->isValid()) {
+		delete _node;
+		_node = FilesystemNode::getRoot();
+		assert(_node != NULL);
+	}
+
+	// Alway refresh file list
+	updateListing();
+
+	// Call super implementation
+	Dialog::open();
+}
+
+void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
+{
+	FilesystemNode *tmp;
+	
+	switch (cmd) {
+	case kChooseCmd:
+		// If nothing is selected in the list widget, choose the current dir.
+		// Else, choose the dir that is selected.
+		// TODO
+		close();
+		break;
+	case kGoUpCmd:
+/*
+		tmp = _node->parent();
+		delete _node;
+		_node = tmp;
+		updateListing();
+*/
+		break;
+	case kListItemDoubleClickedCmd:
+		tmp = (*_nodeContent)[data].clone();
+		delete _node;
+		_node = tmp;
+		updateListing();
+		break;
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void BrowserDialog::updateListing()
+{
+	assert(_node != NULL);
+
+	// Update the path display
+	_currentPath->setLabel(_node->path());
+
+	// Read in the data from the file system
+	delete _nodeContent;
+	_nodeContent = _node->listDir();
+	assert(_nodeContent != NULL);
+
+	// Populate the ListWidget
+	ScummVM::StringList list;
+	int size = _nodeContent->size();
+	for (int i = 0; i < size; i++) {
+		list.push_back((*_nodeContent)[i].displayName());
+	}
+	_fileList->setList(list);
+	_fileList->scrollTo(0);
+	
+	// Finally, redraw
+	draw();
+}
+

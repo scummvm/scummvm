@@ -26,6 +26,8 @@
 #include "common/list.h"
 
 class ListWidget;
+class StaticTextWidget;
+
 class FilesystemNode;
 class FSList;
 
@@ -35,11 +37,16 @@ class BrowserDialog : public Dialog {
 public:
 	BrowserDialog(NewGui *gui);
 
+	virtual void open();	
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
 protected:
 	ListWidget		*_fileList;
+	StaticTextWidget*_currentPath;
 	FilesystemNode	*_node;
-	FSList			*_content;
+	FSList			*_nodeContent;
 	
+	void updateListing();
 };
 
 #endif

@@ -65,6 +65,20 @@ void ListWidget::setList(const StringList& list)
 	scrollBarRecalc();
 }
 
+void ListWidget::scrollTo(int item)
+{
+	int size = _list.size();
+	if (item >= size)
+		item = size - 1;
+	else if (item < 0)
+		item = 0;
+
+	if (_currentPos != item) {
+		_currentPos = item;
+		scrollBarRecalc();
+	}
+}
+
 void ListWidget::scrollBarRecalc()
 {
 	_scrollBar->_numEntries = _list.size();
