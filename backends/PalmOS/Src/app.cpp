@@ -1,6 +1,7 @@
 #include <PalmOS.h>
 #include <SonyClie.h>
 #include <PalmNavigator.h>
+#include "Pa1Lib.h"
 
 #include "StarterRsc.h"
 #include "start.h"
@@ -69,6 +70,7 @@ static Err AppStartCheckHRmode()
 			error = HRWinScreenMode (gVars->HRrefNum, winScreenModeSet, &width, &height, &depth, &color);
 		} else {
 			error = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color);
+			
 			// check if we are now in hi-density
 			if (!error) {
 				UInt32 attr;
@@ -277,12 +279,12 @@ static Err AppStartCheckScreenSize() {
 					}
 				}
 			}
-		}
 
-		if (error)
-			gVars->slkRefNum = sysInvalidRefNum;
-		else
-			OPTIONS_SET(kOptModeWide);
+			if (error)
+				gVars->slkRefNum = sysInvalidRefNum;
+			else
+				OPTIONS_SET(kOptModeWide);
+		}
 	}
 	// Tapwave Zodiac and other DIA API compatible devies
 	// get max screen size
@@ -365,23 +367,28 @@ Err AppStart(void) {
 			OPTIONS_SET(kOptDeviceOS5);
 
 	// ARM ?
-#ifndef DISABLE_ARM
  	if (!FtrGet(sysFileCSystem, sysFtrNumProcessorID, &ulProcessorType))
  		if (sysFtrNumProcessorIsARM(ulProcessorType))
  			OPTIONS_SET(kOptDeviceARM);
  		else if (ulProcessorType == sysFtrNumProcessorx86)
  			OPTIONS_SET(kOptDeviceProcX86);
-#endif
+
 	// 5Way Navigator
 	if (!FtrGet(navFtrCreator, navFtrVersion, &version))
 		if (version >= 1)
 	 		OPTIONS_SET(kOpt5WayNavigator);
 
-	// Sound API ?
-/*	if (!FtrGet(sysFileCSoundMgr, sndFtrIDVersion, &version))
+	// Palm Sound API ?
+	if (!FtrGet(sysFileCSoundMgr, sndFtrIDVersion, &version))
 		if (version >= 1)
 			OPTIONS_SET(kOptPalmSoundAPI);
-*/
+
+	// Sony Pa1 Sound API
+	if (Pa1Lib_Open()) {
+		OPTIONS_SET(kOptSonyPa1LibAPI);
+		Pa1Lib_Close();
+	}
+
 	// check for 16bit mode
 	if (!WinScreenMode(winScreenModeGetSupportedDepths, NULL, NULL, &depth, &color))
 		OPTIONS_SET(((depth & 0x8000) ? kOptMode16Bit : kOptNone));
@@ -404,12 +411,10 @@ Err AppStart(void) {
 
 		gPrefs->stdPalette = OPTIONS_TST(kOptDeviceOS5);
 		
-		gPrefs->volume.speaker = 16;
-		gPrefs->volume.headphone = 16;
-		
 		gPrefs->volume.master = 192;
 		gPrefs->volume.music = 192;
 		gPrefs->volume.sfx = 192;
+		gPrefs->volume.speech = 192;
 		
 		gPrefs->sound.tempo = 100;
 		gPrefs->sound.defaultTrackLength = 10;
