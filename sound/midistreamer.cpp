@@ -19,48 +19,9 @@
  *
  */
 
-
-#include "stdafx.h"
-#include "mididrv.h"
-#include "engine.h"
+// #include "stdafx.h"
+#include "midistreamer.h"
 #include "common/util.h"
-
-class MidiStreamer : public MidiDriver {
-private:
-	MidiDriver *_target;
-	StreamCallback *_stream_proc;
-	void *_stream_param;
-	volatile int _mode;
-	volatile bool _paused;
-
-	MidiEvent _events [64];
-	int _event_count;
-	int _event_index;
-
-	long _driver_tempo;
-	long _tempo;
-	uint16 _ticks_per_beat;
-	long _delay;
-
-	volatile bool _active;
-
-	uint32 property(int prop, uint32 param);
-	static void timer_thread (void *param);
-	void on_timer();
-
-public:
-	MidiStreamer (MidiDriver *target);
-
-	int open(int mode);
-	void close();
-	void send(uint32 b) { if (_mode) _target->send (b); }
-	void pause(bool p) { _paused = p; }
-	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (byte channel, uint range) { _target->setPitchBendRange (channel, range); }
-
-	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
-	uint32 getBaseTempo (void) { return _target->getBaseTempo(); }
-};
 
 MidiStreamer::MidiStreamer (MidiDriver *target) :
 _target (target),
@@ -72,8 +33,7 @@ _event_count (0),
 _event_index (0),
 _tempo (500000), // 120 BPM = 500,000 microseconds between each beat
 _ticks_per_beat (96),
-_delay (0),
-_active (false)
+_delay (0)
 { }
 
 void MidiStreamer::set_stream_callback (void *param, StreamCallback *sc)
@@ -86,41 +46,17 @@ void MidiStreamer::set_stream_callback (void *param, StreamCallback *sc)
 		_event_index = 0;
 	}
 }
-/*
-int MidiStreamer::timer_thread (void *param) {
-	MidiStreamer *mid = (MidiStreamer *) param;
-	int old_time, cur_time;
-	while (mid->_mode) {
-		g_system->delay_msecs (100);
-		while (!mid->_stream_proc);
-		old_time = g_system->get_msecs();
-		while (!mid->_paused) {
-			g_system->delay_msecs(10);
 
-			cur_time = g_system->get_msecs();
-			while (old_time < cur_time) {
-				old_time += 10;
-				mid->on_timer();
-			}
-		}
-	}
-
-	// Turn off all notes on all channels,
-	// just to catch anything still playing.
-	int i;
-	for (i = 0; i < 16; ++i)
-		mid->_target->send ((0x7B << 8) | 0xB0 | i);
-	mid->_active = false;
-	return 0;
-}
-*/
 void MidiStreamer::timer_thread (void *param) {
 	((MidiStreamer *) param)->on_timer();
 }
 
 void MidiStreamer::on_timer()
 {
-	_delay += _driver_tempo; // 10000;
+	if (_paused || !_stream_proc)
+		return;
+
+	_delay += _driver_tempo;
 	while (true) {
 		if (_event_index >= _event_count) {
 			_event_count = _stream_proc (_stream_param, _events, ARRAYSIZE (_events));

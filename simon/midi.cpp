@@ -24,12 +24,9 @@
 #include "scummsys.h"
 #include "common/system.h"
 #include "common/file.h"
-#include "sound/mididrv.h"
+#include "sound/midistreamer.h"
 #include "sound/mixer.h"
 #include "simon/simon.h"
-
-// FIXME: This is a horrible place to put this, but for now....
-#include "sound/midistreamer.cpp"
 
 MidiPlayer::MidiPlayer() {
 	// Since initialize() is called every time the music changes,
