@@ -52,9 +52,8 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	_curMusicCue = 0;
 	memset(_attributesSeq, 0, sizeof(_attributesSeq));
 	memset(_attributesState, 0, sizeof(_attributesState));
+	memset(_attributesTable, 0, sizeof(_attributesTable));
 	_curSeqAtribPos = 0;
-
-	_curMusicSoundId = -1;
 }
 
 IMuseDigital::~IMuseDigital() {
@@ -303,30 +302,12 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
 			}
 
-			if ((_track[l].soundGroup == IMUSE_MUSIC) && (_vm->_gameId != GID_FT) && !((_vm->_gameId == GID_CMI) && (_vm->_features != GF_DEMO))) {
-				fadeOutMusic(120);
-				_curMusicSoundId = soundId;
-			}
-
 			_track[l].locked = false;
 			_track[l].used = true;
 			return;
 		}
 	}
 	warning("IMuseDigital::startSound(): All slots are full");
-}
-
-void IMuseDigital::stopMusic() {
-	debug(5, "IMuseDigital::stopMusic()");
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		_track[l].locked = true;
-		if ((_track[l].soundId == _curMusicSoundId) && _track[l].used) {
-			if (_track[l].stream) {
-				_track[l].toBeRemoved = true;
-			}
-		}
-		_track[l].locked = false;
-	}
 }
 
 void IMuseDigital::stopSound(int soundId) {
@@ -356,8 +337,6 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 		}
 		_track[l].locked = false;
 	}
-
-	_curMusicSoundId = -1;
 
 	if (waitForStop) {
 		bool used;
@@ -411,8 +390,6 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				_track[l].locked = true;
 				if ((_track[l].soundId == sample) && _track[l].used) {
 					_track[l].vol = d * 1000;
-//					if (_track[l].volFadeUsed)
-//						_track[l].volFadeStep = (_track[l].volFadeDest - _track[l].vol) * 60 * 40 / (1000 * _track[chan].volFadeDelay);
 				}
 				_track[l].locked = false;
 			}
@@ -469,16 +446,6 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			break;
 		}
 		break;
-	case 15: // ImuseSetHook
-		debug(5, "ImuseSetHookId (%d, %d)", sample, c);
-		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-			_track[l].locked = true;
-			if ((_track[l].soundId == sample) && _track[l].used) {
-				_track[l].curHookId = c;
-			}
-			_track[l].locked = false;
-		}
-		break;
 	case 25: // ImuseStartStream
 		debug(5, "ImuseStartStream (%d, %d, %d)", sample, c, d);
 		break;
@@ -488,41 +455,36 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 	case 0x1000: // ImuseSetState
 		debug(5, "ImuseSetState (%d)", b);
 		if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
-			if (b == 1)
+			if (b == 1) {
+				fadeOutMusic(120);
 				startMusic(1, false);
-			else {
-				if (getSoundStatus(2) == 0)
+			} else {
+				if (getSoundStatus(2) == 0) {
+					fadeOutMusic(120);
 					startMusic(2, false);
-			}
-		} else if (_vm->_gameId == GID_DIG) {
-			if (b == 1000) {		// STATE_NULL
-				stopMusic();
-				return;
-			}
-			for (l = 0; _digStateMusicMap[l].room != -1; l++) {
-				if (_digStateMusicMap[l].room == b) {
-					int music = _digStateMusicMap[l].table_index;
-					debug(5, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
-					if (_digStateMusicTable[music].filename[0] != 0) {
-						startMusic(_digStateMusicTable[music].filename, _digStateMusicTable[music].id, false, 0);
-					}
-					break;
 				}
 			}
 		} else if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO)) {
 			if (b == 2) {
+				fadeOutMusic(120);
 				startMusic("in1.imx", 2002, false, 0);
 			} else if (b == 4) {
+				fadeOutMusic(120);
 				startMusic("in2.imx", 2004, false, 0);
 			} else if (b == 8) {
+				fadeOutMusic(120);
 				startMusic("out1.imx", 2008, false, 0);
 			} else if (b == 9) {
+				fadeOutMusic(120);
 				startMusic("out2.imx", 2009, false, 0);
 			} else if (b == 16) {
+				fadeOutMusic(120);
 				startMusic("gun.imx", 2016, false, 0);
 			} else {
 				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, this->_vm->_currentRoom);
 			}
+		} else if (_vm->_gameId == GID_DIG) {
+			setDigMusicState(b);
 		} else if (_vm->_gameId == GID_CMI) {
 			setComiMusicState(b);
 		} else if (_vm->_gameId == GID_FT) {
@@ -532,15 +494,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 	case 0x1001: // ImuseSetSequence
 		debug(5, "ImuseSetSequence (%d)", b);
 		if (_vm->_gameId == GID_DIG) {
-			for (l = 0; _digSeqMusicTable[l].room != -1; l++) {
-				if (_digSeqMusicTable[l].room == b) {
-					debug(5, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
-					if (_digSeqMusicTable[l].filename[0] != 0) {
-						startMusic(_digSeqMusicTable[l].filename, b, false, 0);
-					}
-					break;
-				}
-			}
+			setDigMusicSequence(b);
 		} else if (_vm->_gameId == GID_CMI) {
 			setComiMusicSequence(b);
 		} else if (_vm->_gameId == GID_FT) {
@@ -556,6 +510,8 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 	case 0x1003: // ImuseSetAttribute
 		debug(5, "ImuseSetAttribute (%d, %d)", b, c);
 		if (_vm->_gameId == GID_DIG) {
+			assert(b >= 0 && b < 11);
+			_attributesTable[b] = c;
 		}
 		break;
 	case 0x2000: // ImuseSetMasterSFXVolume

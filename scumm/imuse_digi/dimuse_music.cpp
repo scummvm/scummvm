@@ -25,10 +25,164 @@
 
 namespace Scumm {
 
+void IMuseDigital::setDigMusicState(int stateId) {
+	int l, num = -1;
+
+	for (l = 0; _digStateMusicTable[l].soundId != -1; l++) {
+		if ((_digStateMusicTable[l].soundId == stateId)) {
+			debug(5, "Set music state: %s, %s, %s", _digStateMusicTable[l].name, _digStateMusicTable[l].title, _digStateMusicTable[l].filename);
+			num = l;
+			break;
+		}
+	}
+
+	if (num == -1) {
+		for (l = 0; _digStateMusicMap[l].roomId != -1; l++) {
+			if ((_digStateMusicMap[l].roomId == stateId)) {
+				break;
+			}
+		}
+		num = l;
+
+		int val2 = _attributesTable[_digStateMusicMap[num].unk1];
+		if (val2 == 0) {
+			if (_attributesTable[_digStateMusicMap[num].unk3] != 0) {
+				num = _digStateMusicMap[num].unk4;
+			} else {
+				num = _digStateMusicMap[num].musicTableIndex;
+			}
+		} else {
+			int val = _attributesTable[_digStateMusicMap[num].unk2];
+			if (val == 0) {
+				num = _digStateMusicMap[num].musicTableIndex + val2;
+			} else {
+				num = val;
+			}
+		}
+	}
+
+	debug(5, "Set music state: %s, %s, %s", _digStateMusicTable[num].name, _digStateMusicTable[num].title, _digStateMusicTable[num].filename);
+
+	if (_curMusicState == num)
+		return;
+
+	if (_curMusicSeq == 0) {
+		if (num == 0)
+			playDigMusic(NULL, &_digStateMusicTable[num], num, false);
+		else
+			playDigMusic(_digStateMusicTable[num].name, &_digStateMusicTable[num], num, false);
+	}
+
+	_curMusicState = num;
+}
+
+void IMuseDigital::setDigMusicSequence(int seqId) {
+	int l, num = -1;
+
+	if (seqId == 0)
+		seqId = 2000;
+
+	for (l = 0; _digSeqMusicTable[l].soundId != -1; l++) {
+		if ((_digSeqMusicTable[l].soundId == seqId)) {
+			debug(5, "Set music sequence: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
+			num = l;
+			break;
+		}
+	}
+	assert(num != -1);
+
+	if (_curMusicSeq == num)
+		return;
+
+	if (num != 0) {
+		if (_curMusicSeq == 0) {
+			playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
+			_curSeqAtribPos = 0;
+			_attributesSeq[num] = 1;
+		} else {
+			if ((_digSeqMusicTable[_curMusicSeq].opcode == 4) && (_digSeqMusicTable[_curMusicSeq].opcode == 6)) {
+				_curSeqAtribPos = num;
+				return;
+			} else if (_digSeqMusicTable[_curMusicSeq].opcode == 6) {
+				playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
+				_curSeqAtribPos = 0;
+				_attributesSeq[num] = 1;
+			}
+		}
+	} else {
+		if (_curSeqAtribPos != 0) {
+			playDigMusic(_digSeqMusicTable[_curSeqAtribPos].name, &_digSeqMusicTable[num], 0, true);
+			_attributesSeq[_curSeqAtribPos] = 1;
+			_curSeqAtribPos = 0;
+			num = _curSeqAtribPos;
+		} else {
+			if (_curMusicState != 0)
+				playDigMusic(_digStateMusicTable[_curMusicState].name, &_digSeqMusicTable[num], _curMusicState, false);
+			else
+				playDigMusic(NULL, &_digStateMusicTable[num], _curMusicState, false);
+			num = 0;
+		}
+	}
+
+	_curMusicSeq = num;
+}
+
+void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence) {
+	int hookId = 0;
+
+	if (songName != NULL) {
+		if ((_attributesSeq[38] != 0) && (_attributesSeq[41] == _attributesSeq[38])) {
+			if ((atribPos == 43) || (atribPos == 44))
+				hookId = 3;
+		}
+
+		if ((_attributesSeq[46] != 0) && (_attributesSeq[48] == 0)) {
+			if ((atribPos == 38) || (atribPos == 39))
+				hookId = 3;
+		}
+
+		if ((_attributesSeq[53] != 0)) {
+			if ((atribPos == 50) || (atribPos == 51))
+				hookId = 3;
+		}
+
+		if ((atribPos != 0) && (hookId == 0)) {
+			if (table->param != 0)
+				atribPos = table->param;
+			hookId = _attributesSeq[atribPos];
+		}
+	}
+
+	if (table->filename[0] == 0) {
+		fadeOutMusic(120);
+		return;
+	}
+
+	fadeOutMusic(120);
+
+	switch(table->opcode) {
+		case 0:
+		case 5:
+		case 6:
+			break;
+		case 3:
+			if ((!sequence) && (table->param != 0)) {
+				if (table->param == _digStateMusicTable[_curMusicState].param) {
+					startMusic(table->filename, table->soundId, sequence, 0);
+				} 
+			} else {
+				startMusic(table->filename, table->soundId, sequence, hookId);
+			}
+		case 4:
+			startMusic(table->filename, table->soundId, sequence, 0);
+			break;
+	}
+}
+
 void IMuseDigital::setComiMusicState(int stateId) {
 	int l, num = -1;
 
-	if (stateId == 0)
+	if ((stateId == 0) && (stateId == 4))
 		stateId = 1000;
 
 	for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {

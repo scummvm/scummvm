@@ -35,6 +35,7 @@ namespace Scumm {
 
 #define MAX_DIGITAL_TRACKS 16
 
+struct imuseDigTable;
 struct imuseComiTable;
 
 class IMuseDigital : public MusicEngine {
@@ -77,6 +78,7 @@ private:
 	ImuseDigiSndMgr *_sound;
 	bool _pause;
 
+	int _attributesTable[11];
 	int _attributesState[97];
 	int _attributesSeq[91];
 	int _curSeqAtribPos;
@@ -84,8 +86,6 @@ private:
 	int _curMusicState;
 	int _curMusicSeq;
 	int _curMusicCue;
-
-	int _curMusicSoundId;
 
 	static void timer_handler(void *refConf);
 	void callback();
@@ -95,10 +95,9 @@ private:
 	int32 getPosInMs(int soundId);
 	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
 
-	void stopMusic();
-
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
+
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
 	void setFtMusicCuePoint(int cueId);
@@ -107,6 +106,10 @@ private:
 	void setComiMusicState(int stateId);
 	void setComiMusicSequence(int seqId);
 	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence);
+
+	void setDigMusicState(int stateId);
+	void setDigMusicSequence(int seqId);
+	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
@@ -141,24 +144,21 @@ public:
 	int32 getCurMusicLipSyncHeight(int syncId);
 };
 
-struct imuse_music_map {
-	int room;
-	int table_index;
+struct imuseRoomMap {
+	int roomId;
+	int musicTableIndex;
 	int unk1;
 	int unk2;
 	int unk3;
 	int unk4;
 };
 
-struct imuseDigtable {
-	int room;
-	int id;
-	int unk1;
-	int unk2;
-	int unk3;
-	int unk4;
-	char name[30];
+struct imuseDigTable {
 	char title[30];
+	int opcode;
+	int soundId;
+	char name[30];
+	int param;
 	char filename[13];
 };
 
@@ -192,18 +192,18 @@ struct imuseFtSeqTable {
 };
 
 #ifdef __PALM_OS__
-extern imuse_music_map *_digStateMusicMap;
-extern const imuseDigtable *_digStateMusicTable;
-extern const imuseDigtable *_comiStateMusicTable;
+extern const imuseRoomMap *_digStateMusicMap;
+extern const imuseDigTable *_digStateMusicTable;
+extern const imuseDigTable *_comiStateMusicTable;
 extern const imuseComiTable *_comiSeqMusicTable;
 extern const imuseComiTable *_digSeqMusicTable;
 extern const imuseFtStateTable *_ftStateMusicTable;
 extern const imuseFtSeqTable *_ftSeqMusicTable;
 extern const imuseFtNames *_ftSeqNames;
 #else
-extern imuse_music_map _digStateMusicMap[];
-extern const imuseDigtable _digStateMusicTable[];
-extern const imuseDigtable _digSeqMusicTable[];
+extern const imuseRoomMap _digStateMusicMap[];
+extern const imuseDigTable _digStateMusicTable[];
+extern const imuseDigTable _digSeqMusicTable[];
 extern const imuseComiTable _comiStateMusicTable[];
 extern const imuseComiTable _comiSeqMusicTable[];
 extern const imuseFtStateTable _ftStateMusicTable[];
