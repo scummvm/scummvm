@@ -2091,10 +2091,10 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 		xPos += width - (FIXED_TEXT_WIDTH / 2);	//middle of talker
 
-		if (xPos > TOP_LEFT_X)
+		if (xPos < TOP_LEFT_X)
 			xPos = TOP_LEFT_X;
 
-		width += FIXED_TEXT_WIDTH;
+		width = xPos + FIXED_TEXT_WIDTH;
 		if ((TOP_LEFT_X + FULL_SCREEN_WIDTH) <= width) {
 			xPos = TOP_LEFT_X + FULL_SCREEN_WIDTH;
 			xPos -= FIXED_TEXT_WIDTH;
@@ -2103,7 +2103,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 		_compact->xcood = xPos;
 		uint16 yPos = target->ycood + ((struct dataFileHeader *)targetGfx)->s_offset_y - 6 - ((struct dataFileHeader *)textGfx)->s_height;
 		
-		if (yPos > TOP_LEFT_Y)
+		if (yPos < TOP_LEFT_Y)
 			yPos = TOP_LEFT_Y;
 
 		_compact->ycood = yPos;
