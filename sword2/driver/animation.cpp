@@ -35,7 +35,7 @@
 namespace Sword2 {
 
 AnimationState::AnimationState(Sword2Engine *vm)
-	: BaseAnimationState(_vm->_mixer, _vm->_system, 640, 480), _vm(vm) {
+	: BaseAnimationState(vm->_mixer, vm->_system, 640, 480), _vm(vm) {
 }
 
 AnimationState::~AnimationState() {
