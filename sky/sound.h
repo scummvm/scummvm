@@ -52,6 +52,9 @@ public:
 	bool fnStartFx(uint32 sound);
 	void fnStartSpeech(uint16 textNum);
 	bool speechFinished(void) { return _ingameSpeech == 0; };
+	void fnPauseFx(void);
+	void fnUnPauseFx(void) { _sfxPaused = false; };
+	void fnStopFx(void) { if (_ingameSound) _mixer->stop(_ingameSound - 1); };
 
 private:
 	SkyDisk *_skyDisk;
@@ -59,6 +62,7 @@ private:
 	uint16 _sfxBaseOfs;
 	uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;
+	bool _sfxPaused;
 
 	static uint16 _speechConvertTable[8];
 };

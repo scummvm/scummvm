@@ -351,7 +351,7 @@ void SkyDisk::fnMiniLoad(uint16 fileNum) {
 		if (_loadedFilesList[cnt] == fileNum) return ;
 		cnt++;
 	}
-	_loadedFilesList[cnt] = fileNum;
+	_loadedFilesList[cnt] = fileNum & 0x7FFFU;
 	_loadedFilesList[cnt + 1] = 0;
 	SkyState::_itemList[fileNum & 2047] = (void**)loadFile(fileNum, NULL);
 }

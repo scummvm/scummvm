@@ -408,7 +408,14 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 	ret.compactNum = (uint16)compactNum;
 
 	return ret;
+}
 
+void SkyText::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
+
+	dataFileHeader *header = (dataFileHeader*)sprData;
+	sprData += sizeof(dataFileHeader);
+	for (uint16 cnt = 0; cnt < header->s_sp_size; cnt++)
+		if (sprData[cnt] < 241) sprData[cnt] = newCol;
 }
 
 static const HuffTree huffTree_00267[] = {

@@ -1014,6 +1014,7 @@ SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk) {
 	_bgSoundHandle = 0;
 	_ingameSound = 0;
 	_ingameSpeech = 0;
+	_sfxPaused = false;
 }
 
 SkySound::~SkySound(void) {
@@ -1093,8 +1094,14 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	_mixer->playRaw(&_ingameSound, _soundData + dataOfs, dataSize, sampleRate, flags);
 }
 
+void SkySound::fnPauseFx(void) {
+
+	if (_ingameSound) _mixer->stop(_ingameSound - 1);
+	_sfxPaused = true;
+}
+
 bool SkySound::fnStartFx(uint32 sound) {
-	if (sound < 256 || sound > MAX_FX_NUMBER)
+	if (sound < 256 || sound > MAX_FX_NUMBER || _sfxPaused)
 		return true;
 
 	uint8 screen = (uint8)(SkyLogic::_scriptVariables[SCREEN] & 0xff);
@@ -1116,7 +1123,7 @@ bool SkySound::fnStartFx(uint32 sound) {
 
 	// get fx volume
 
-	uint8 volume = 0x7f; // start with max vol
+	uint8 volume = 0x40; // start with max vol
 
 	if (!SkyState::isCDVersion()) {
 		// as long as we can't set the volume for sfx without changing the speech volume,

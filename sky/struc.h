@@ -43,8 +43,8 @@ struct dataFileHeader {
 	uint16 s_sp_size;
 	uint16 s_tot_size;
 	uint16 s_n_sprites;
-	uint16 s_offset_x;
-	uint16 s_offset_y;
+	int16 s_offset_x;
+	int16 s_offset_y;
 	uint16 s_compressed_size;
 };
 
@@ -134,8 +134,8 @@ struct Compact {
 	uint16 mouseOff;
 	uint16 mouseClick; // dword script
 
-	uint16 mouseRelX;
-	uint16 mouseRelY;
+	int16 mouseRelX;
+	int16 mouseRelY;
 	uint16 mouseSizeX;
 	uint16 mouseSizeY;
 

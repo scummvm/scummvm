@@ -1594,22 +1594,27 @@ bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 		uint16 width = ((dataFileHeader *)data)->s_width;
 		width >>= 1;
 
-		for (uint16 i = height; i > 0; i--) {
-			for (uint16 j = width; j > 0; j--) {
+		data += sizeof(dataFileHeader);
+
+        width--;
+		for (uint16 i = 0; i < height; i++) {
+			for (uint16 j = 0; j < width; j++) {
 				if (!*data) // only change 0's
 					*data = 1;
-				*data += 2;
+				data += 2;
 			}
 			data++;
 		}
 
-		_compact->getToFlag = (uint16)(textNum & 0xffff);
-		_compact->downFlag = (uint16)(*p++ & 0xffff); // get animation number
+		Compact *textCompact = SkyState::fetchCompact(lowText.compactNum);
 
-		_compact->status |= ST_MOUSE; // mouse detects
+		textCompact->getToFlag = (uint16)textNum;
+		textCompact->downFlag = (uint16)*p++; // get animation number
 
-		_compact->xcood = TOP_LEFT_X; // set coordinates
-		_compact->ycood = ycood;
+		textCompact->status |= ST_MOUSE; // mouse detects
+
+		textCompact->xcood = TOP_LEFT_X; // set coordinates
+		textCompact->ycood = ycood;
 		ycood += 12;
 	}
 
@@ -1623,7 +1628,13 @@ bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnHighlight(uint32 itemNo, uint32 pen, uint32 c) {
-	error("Stub: fnHighlight");
+	pen -= 11;
+	pen ^= 1;
+	pen += 241;
+	Compact *textCompact = SkyState::fetchCompact(itemNo);
+	uint8 *sprData = (uint8*)SkyState::fetchItem(textCompact->flag);
+	_skyText->changeTextSpriteColour(sprData, (uint8)pen);
+	return true;
 }
 
 bool SkyLogic::fnTextKill(uint32 a, uint32 b, uint32 c) {
@@ -2224,7 +2235,7 @@ bool SkyLogic::fnStartFx(uint32 sound, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnStopFx");
+	_skySound->fnStopFx();
 	return true;
 }
 
@@ -2253,12 +2264,12 @@ bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnPauseFx");
+	_skySound->fnPauseFx();
 	return true;
 }
 
 bool SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnUnPauseFx");
+	_skySound->fnUnPauseFx();
 	return true;
 }
 
@@ -2278,9 +2289,12 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	else 	//then it must be a value
 		animPtr = (uint16 *)SkyState::fetchCompact(SkyTalkAnims::animTalkTableVal[animNum]);
 	
-	target->offset = *animPtr++;
-	target->getToFlag = *animPtr++;
-	target->grafixProg = animPtr;
+	if (animPtr) {
+		target->offset = *animPtr++;
+		target->getToFlag = *animPtr++;
+		target->grafixProg = animPtr;
+	} else
+		target->grafixProg = 0;
 
 	if (SkyState::isCDVersion())
 		_skySound->fnStartSpeech((uint16)textNum);
@@ -2295,7 +2309,8 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	//create the x coordinate for the speech text
 	//we need the talkers sprite information
 
-	_compact->screen = target->screen;	//put our screen in
+	//_compact->screen = target->screen;	
+	textCompact->screen = target->screen;	//put our screen in
 
 	if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen 
 		//talking on-screen
@@ -2326,7 +2341,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	} else {
 		//talking off-screen
 		target->extCompact->spTextId = 0; 	//don't kill any text 'cos none was made
-		_compact->status = 0;	//don't display text
+		textCompact->status = 0;	//don't display text
 		//_logicTalkButtonRelease = 1; 
 	}
 	// In CD version, we're doing the timing by checking when the VOC has stopped playing.

@@ -560,7 +560,6 @@ void SkyScreen::doSprites(uint8 layer) {
 					uint8 *toBeDrawn = (uint8*)SkyState::fetchItem(spriteData->frame >> 6);
 					if (!toBeDrawn) {
 						printf("Spritedata %d not loaded!\n",spriteData->frame >> 6);
-						getchar();
 						spriteData->status = 0;
 					} else {
 						drawSprite(toBeDrawn, spriteData);
@@ -570,7 +569,7 @@ void SkyScreen::doSprites(uint8 layer) {
 					}
 				}
 			}
-			if (drawList[0] == 0xFFFF)
+			while (drawList[0] == 0xFFFF)
 				drawList = (uint16*)SkyState::fetchCompact(drawList[1]);
 		}
 	}
@@ -641,7 +640,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	}
 	
 	for (uint8 cnty = 0; cnty < _sprHeight; cnty++) {
-		for (uint8 cntx = 0; cntx < _sprWidth; cntx++)
+		for (uint16 cntx = 0; cntx < _sprWidth; cntx++)
 			if (spriteData[cntx + _maskX1]) screenPtr[cntx] = spriteData[cntx + _maskX1];
 		spriteData += _sprWidth + _maskX2 + _maskX1;
 		screenPtr += GAME_SCREEN_WIDTH;
