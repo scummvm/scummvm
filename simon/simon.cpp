@@ -33,14 +33,6 @@ extern bool draw_keyboard;
 
 #endif
 
-#if defined (WIN32) && defined (NDEBUG)
-
-extern "C" {
-	int errno;
-}
-
-#endif
-
 static const GameSpecificSettings simon1_settings = {
 	1,														/* VGA_DELAY_BASE */
 	1576 / 4,											/* TABLE_INDEX_BASE */
