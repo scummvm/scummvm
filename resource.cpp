@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/10/29 21:49:25  strigeus
+ * fixed bug in validateResource
+ *
  * Revision 1.7  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -626,7 +629,7 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 }
 
 void Scumm::validateResource(const char *str, int type, int index) {
-	if (type<1 || type>15 || index<0 || index >= res.num[type]) {
+	if (type<1 || type>16 || index<0 || index >= res.num[type]) {
 		error("%d Illegal Glob type %d num %d", str, type, index);
 	}
 }
