@@ -18,8 +18,7 @@
  * $Header$
  */
 
-// TODO - how about we #define WINDOWS for all our windows targets?
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#ifdef WIN32
 
 #include "../fs.h"
 #include <stdio.h>
@@ -212,4 +211,4 @@ FilesystemNode *WindowsFilesystemNode::parent() const {
 	return p;
 }
 
-#endif // defined(_MSC_VER) || defined(__MINGW32__)
+#endif // WIN32
