@@ -577,7 +577,7 @@ bool GameDetector::detectGame()
 			_gameRealName = gnl->filename;
 			_features = gnl->features;
 			_gameText = gnl->gamename;
-			debug(1, "Detected game '%s', version %d.%d.%d",
+			debug(1, "Trying to start game '%s', version %d.%d.%d",
 						gnl->gamename, gnl->major, gnl->middle, gnl->minor);
 			return true;
 		}
