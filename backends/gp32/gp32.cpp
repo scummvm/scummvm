@@ -67,6 +67,7 @@ void OSystem_GP32::initSize(uint w, uint h) {
 	if (_dirty_checksums)
 		free(_dirty_checksums);
 	_dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
+	_mouseData = NULL;
 
 	unload_gfx_mode();
 	load_gfx_mode();
@@ -538,7 +539,7 @@ void OSystem_GP32::draw_mouse() {
 		while (width > 0) {
 			*bak++ = *dst;
 			color = *src++;
-			if (color != 0xFF)	// 0xFF = transparent, don't draw
+			if (color != _mouseKeycolor)	// transparent, don't draw
 				*dst = color;
 			dst++;
 			width--;
@@ -830,14 +831,20 @@ void OSystem_GP32::warpMouse(int x, int y) {
 }
 
 // Set the bitmap that's used when drawing the cursor.
-void OSystem_GP32::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) { 
+void OSystem_GP32::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor) { 
 	_mouse_cur_state.w = w;
 	_mouse_cur_state.h = h;
 
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
-	_mouseData = (byte*)buf;
+	_mouseKeycolor = keycolor;
+
+	if (_mouseData)
+		free(_mouseData);
+
+	_mouseData = (byte *)malloc(w * h);
+	memcpy(_mouseData, buf, w * h);
 
 	undraw_mouse();
 }

@@ -62,7 +62,7 @@ public:
 	void set_mouse_pos(int x, int y);
 	
 	// Set the bitmap that's used when drawing the cursor.
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, int keycolor = 255);
 	
 	// Shaking is used in SCUMM. Set current shake position.
 	void set_shake_pos(int shake_pos);
@@ -188,6 +188,7 @@ private:
 	MousePos _mouse_old_state;
 	int16 _mouseHotspotX;
 	int16 _mouseHotspotY;
+	byte _mouseKeycolor;
 
 	// Shake mode
 	int _currentShakePos;

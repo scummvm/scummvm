@@ -107,7 +107,7 @@ public:
 	void warpMouse(int x, int y);
 
 	// Set the bitmap that's used when drawing the cursor.
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor = 255);
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void set_shake_pos(int shake_pos);
@@ -222,9 +222,10 @@ private:
 		int hot_x, hot_y;
 	} mouse_state;
 	mouse_state old_state, cur_state;
-	const byte *_ms_buf;
+	byte *_ms_buf;
 	bool _mouse_visible;
 	bool _mouse_state_changed;
+	byte _mouseKeycolor;
 
 	uint32 _timer_duration, _timer_next_expiry;
 	bool _timer_active;
@@ -363,6 +364,7 @@ OSystem_X11::OSystem_X11() {
 	_overlay_visible = false;
 	_mouse_state_changed = true;
 	_mouse_visible = true;
+	_ms_buf = NULL;
 	cur_state.x = 0;
 	cur_state.y = 0;
 	cur_state.hot_x = 0;
@@ -780,7 +782,7 @@ void OSystem_X11::draw_mouse(dirty_square *dout) {
 		int width = real_w;
 		while (width > 0) {
 			byte color = *buf;
-			if (color != 0xFF) {
+			if (color != _mouseKeycolor) {
 				*dst = palette[color];
 			}
 			buf++;
@@ -808,16 +810,21 @@ void OSystem_X11::warpMouse(int x, int y) {
 	set_mouse_pos(x, y);
 }
 
-void OSystem_X11::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+void OSystem_X11::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor) {
 	cur_state.w = w;
 	cur_state.h = h;
 	cur_state.hot_x = hotspot_x;
 	cur_state.hot_y = hotspot_y;
-	_ms_buf = buf;
+
+	if (_ms_buf)
+		free(_ms_buf);
+	_ms_buf = malloc(w * h);
+	memcpy(_ms_buf, buf, w * h);
 
 	if (_mouse_state_changed == false) {
 		undraw_mouse();
 	}
+	_mouseKeycolor = keycolor;
 	_mouse_state_changed = true;
 }
 

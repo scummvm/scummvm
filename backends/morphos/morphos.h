@@ -64,7 +64,7 @@ class OSystem_MorphOS : public OSystem
 		virtual void set_mouse_pos(int x, int y);
 
 		// Set the bitmap that's used when drawing the cursor.
-		virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+		virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor = 255);
 
 		// Shaking is used in SCUMM. Set current shake position.
 		virtual void set_shake_pos(int shake_pos);
@@ -201,6 +201,7 @@ class OSystem_MorphOS : public OSystem
 		int   MouseOldWidth, MouseOldHeight;
 		int   MouseHotspotX, MouseHotspotY;
 		byte *MouseImage, MouseBackup[MAX_MOUSE_W*MAX_MOUSE_H];
+		byte  MouseKeycolor;
 		MsgPort* InputMsgPort;
 		IOStdReq*InputIORequest;
 

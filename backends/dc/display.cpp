@@ -259,15 +259,21 @@ void OSystem_Dreamcast::warpMouse(int x, int y)
 }
 
 void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
-					 int hotspot_x, int hotspot_y)
+								   int hotspot_x, int hotspot_y, byte keycolor)
 {
   _ms_cur_w = w;
   _ms_cur_h = h;
   
   _ms_hotspot_x = hotspot_x;
   _ms_hotspot_y = hotspot_y;
+
+  _ms_keycolor = keycolor;
   
-  _ms_buf = (byte*)buf;
+  if (_ms_buf)
+    free(_ms_buf);
+
+  _ms_buf = (byte *)malloc(w * h);
+  memcpy(_ms_buf, buf, w * h);
 }
 
 void OSystem_Dreamcast::set_shake_pos(int shake_pos)
@@ -456,7 +462,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
     for(int y=0; y<h; y++) {
       int x;
       for(x=0; x<w; x++)
-	if(*buf == 0xff) {
+	if(*buf == _ms_keycolor) {
 	  *dst++ = 0;
 	  buf++;
 	} else

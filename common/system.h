@@ -357,8 +357,9 @@ public:
 	 * @param h			height of the mouse cursor
 	 * @param hotspotX	horizontal offset from the left side to the hotspot
 	 * @param hotspotY	vertical offset from the top side to the hotspot
+	 * @param keycolor	transparency color index
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255) = 0;
 
 	//@}
 

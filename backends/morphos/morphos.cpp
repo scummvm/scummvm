@@ -130,6 +130,7 @@ OSystem_MorphOS::OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen)
 	ScummNoCursor = NULL;
 	UpdateRegion = NULL;
 	NewUpdateRegion = NULL;
+	MouseImage = NULL;
 }
 
 bool OSystem_MorphOS::Initialise()
@@ -1360,7 +1361,7 @@ void OSystem_MorphOS::DrawMouse()
 				if (xdraw+x < ScummBufferWidth)
 				{
 					bak[x] = dst[x];
-					if ((color=buf[x])!=0xFF)
+					if ((color=buf[x])!=MouseKeycolor)
 						dst[x] = color;
 				}
 			}
@@ -1423,7 +1424,7 @@ void OSystem_MorphOS::set_mouse_pos(int x, int y)
 	}
 }
 
-void OSystem_MorphOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y)
+void OSystem_MorphOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor = 255)
 {
 	MouseWidth = w;
 	MouseHeight	= h;
@@ -1431,7 +1432,13 @@ void OSystem_MorphOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspo
 	MouseHotspotX = hotspot_x;
 	MouseHotspotY = hotspot_y;
 
-	MouseImage = (byte*)buf;
+	MouseKeycolor = keycolor;
+
+	if (MouseImage)
+		free(MouseImage);
+
+	MouseImage = (byte *)malloc(w * h);
+	memcpy(mouseImage, buf, w * h);
 
 	UndrawMouse();
 }

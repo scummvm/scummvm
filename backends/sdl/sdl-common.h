@@ -64,7 +64,7 @@ public:
 	void warpMouse(int x, int y);
 
 	// Set the bitmap that's used when drawing the cursor.
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor = 255);
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void set_shake_pos(int shake_pos);
@@ -217,11 +217,12 @@ protected:
 	// mouse
 	bool _mouseVisible;
 	bool _mouseDrawn;
-	const byte *_mouseData;
+	byte *_mouseData;
 	byte *_mouseBackup;
 	MousePos _mouseCurState;
 	int16 _mouseHotspotX;
 	int16 _mouseHotspotY;
+	byte _mouseKeycolor;
 
 	// joystick
 	SDL_Joystick *_joystick;

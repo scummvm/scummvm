@@ -62,6 +62,7 @@ void OSystem_PALMOS::init_intern(UInt16 gfx_mode) {
 	_vibrate = gVars->vibrator;
 	_fullscreen = (ConfMan.getBool("fullscreen") && OPTIONS_TST(kOptModeWide));
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
+	_mouseDataP = NULL;
 }
 
 void OSystem_PALMOS::setPalette(const byte *colors, uint start, uint num) {
@@ -701,14 +702,19 @@ void OSystem_PALMOS::set_mouse_pos(int x, int y) {
 	}
 }
 
-void OSystem_PALMOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+void OSystem_PALMOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor) {
 	_mouseCurState.w = w;
 	_mouseCurState.h = h;
 
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
-	_mouseDataP = (byte*)buf;
+	_mouseKeycolor = keycolor;
+
+	if (_mouseDataP)
+		free(_mouseDataP);
+	_mouseDataP = malloc(w * h);
+	memcpy(_mouseDataP, buf, w * h);
 
 	undraw_mouse();
 }
@@ -1316,7 +1322,7 @@ void OSystem_PALMOS::draw_mouse() {
 			while (width > 0) {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != 0xFF)	// 0xFF = transparent, don't draw
+				if (color != _mouseKeycolor)	// transparent, don't draw
 					*dst = color;
 				dst++;
 				width--;
