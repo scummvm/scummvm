@@ -22,9 +22,10 @@
 
 #include "stdafx.h"
 #include "sound/mididrv.h"
-#include "common/engine.h"
-#include "common/gameDetector.h"
-#include "common/config-file.h"
+#include "engine.h"
+#include "gameDetector.h"
+#include "config-file.h"
+#include "scaler.h"	// Only for gfx_modes
 
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
 #define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
@@ -76,7 +77,7 @@ static const char USAGE_STRING[] =
 // This contains a pointer to a list of all supported games.
 const VersionSettings *version_settings = NULL;
 
-static const struct GraphicsModes gfx_modes[] = {
+static const struct GraphicsMode gfx_modes[] = {
 	{"normal", "Normal (no scaling)", GFX_NORMAL},
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
 	{"2x", "2x", GFX_DOUBLESIZE},
@@ -90,7 +91,7 @@ static const struct GraphicsModes gfx_modes[] = {
 	{0, 0}
 };
 
-static const struct Languages languages[] = {
+static const struct Language languages[] = {
 	{"en", "English", EN_USA},
 	{"de", "German", DE_DEU},
 	{"fr", "French", FR_FRA},
@@ -104,7 +105,7 @@ static const struct Languages languages[] = {
 	{0, 0, 0}
 };
 
-static const struct MusicDrivers music_drivers[] = {
+static const struct MusicDriver music_drivers[] = {
 	{"auto", "Default", MD_AUTO},
 	{"null", "No music", MD_NULL},
 	{"windows", "Windows MIDI", MD_WINDOWS},
@@ -159,26 +160,6 @@ GameDetector::GameDetector() {
 	_gfx_mode = GFX_NORMAL;
 #endif
 	_default_gfx_mode = true;
-
-#if defined(USE_NULL_DRIVER)
-	_gfx_driver = GD_NULL;
-#elif defined(__DC__)
-	_gfx_driver = GD_DC;
-#elif defined(X11_BACKEND)
-	_gfx_driver = GD_X;
-#elif defined(__MORPHOS__)
-	_gfx_driver = GD_MORPHOS;
-#elif defined(_WIN32_WCE)
-	_gfx_driver = GD_WINCE;
-#elif defined(MACOS_CARBON)
-	_gfx_driver = GD_MAC;
-#elif defined(__GP32__)	// ph0x
-	_gfx_driver = GD_GP32;
-#else
-	/* SDL is the default driver for now */
-	_gfx_driver = GD_SDL;
-#endif
-
 
 	if (version_settings == NULL) {
 		// Gather & combine the target lists from the modules
@@ -466,7 +447,7 @@ void GameDetector::setGame(const String &name) {
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {
-	const GraphicsModes *gm = gfx_modes;
+	const GraphicsMode *gm = gfx_modes;
 	while(gm->name) {
 		if (!scumm_stricmp(gm->name, s)) {
 			_default_gfx_mode = false;
@@ -479,7 +460,7 @@ int GameDetector::parseGraphicsMode(const char *s) {
 }
 
 int GameDetector::parseLanguage(const char *s) {
-	const Languages *l = languages;
+	const Language *l = languages;
 	while(l->name) {
 		if (!scumm_stricmp(l->name, s))
 			return l->id;
@@ -516,12 +497,12 @@ bool GameDetector::isMusicDriverAvailable(int drv) {
 	return false;
 }
 
-const MusicDrivers *GameDetector::getMusicDrivers() {
+const MusicDriver *GameDetector::getMusicDrivers() {
 	return music_drivers;
 }
 
 bool GameDetector::parseMusicDriver(const char *s) {
-	const MusicDrivers *md = music_drivers;
+	const MusicDriver *md = music_drivers;
 
 	while (md->name) {
 		if (!scumm_stricmp(md->name, s)) {
@@ -613,37 +594,24 @@ int GameDetector::detectMain() {
 }
 
 OSystem *GameDetector::createSystem() {
-	/* auto is to use SDL */
-	switch(_gfx_driver) {
-#if defined(X11_BACKEND)
-	case GD_X:
-		return OSystem_X11_create();
+#if defined(USE_NULL_DRIVER)
+	return OSystem_NULL_create();
 #elif defined(__DC__)
-	case GD_DC:
-		return OSystem_Dreamcast_create();
-#elif defined(_WIN32_WCE)
-	case GD_WINCE:
-		return OSystem_WINCE3_create();
+	return OSystem_Dreamcast_create();
+#elif defined(X11_BACKEND)
+	return OSystem_X11_create();
 #elif defined(__MORPHOS__)
-	case GD_MORPHOS:
-		return OSystem_MorphOS_create(_gameId, _gfx_mode, _fullScreen);
+	return OSystem_MorphOS_create(_gameId, _gfx_mode, _fullScreen);
+#elif defined(_WIN32_WCE)
+	return OSystem_WINCE3_create();
 #elif defined(MACOS_CARBON)
-	case GD_MAC:
-		return OSystem_MAC_create(_gfx_mode, _fullScreen);
-#elif defined(USE_NULL_DRIVER)
-	case GD_NULL:
-		return OSystem_NULL_create();
-#elif defined(__GP32__) //ph0x
-	case GD_GP32:
-		return OSystem_GP32_create(GFX_NORMAL, true);
+	return OSystem_MAC_create(_gfx_mode, _fullScreen);
+#elif defined(__GP32__)	// ph0x
+	return OSystem_GP32_create(GFX_NORMAL, true);
 #else
-	case GD_SDL:
-		return OSystem_SDL_create(_gfx_mode, _fullScreen);
+	/* SDL is the default driver for now */
+	return OSystem_SDL_create(_gfx_mode, _fullScreen);
 #endif
-	}
-
-	error("Invalid graphics driver");
-	return NULL;
 }
 
 MidiDriver *GameDetector::createMidi() {

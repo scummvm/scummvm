@@ -41,4 +41,18 @@ extern void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
 extern void DotMatrix(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
+
+enum {
+	GFX_NORMAL = 0,
+	GFX_DOUBLESIZE = 1,
+	GFX_TRIPLESIZE = 2,
+	GFX_2XSAI = 3,
+	GFX_SUPER2XSAI = 4,
+	GFX_SUPEREAGLE = 5,
+	GFX_ADVMAME2X = 6,
+	GFX_TV2X = 7,
+	GFX_DOTMATRIX = 8
+};
+
+
 #endif

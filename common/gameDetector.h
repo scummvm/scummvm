@@ -101,19 +101,19 @@ struct VersionSettings {
 	char *detectname;
 };
 
-struct MusicDrivers {
+struct MusicDriver {
 	const char *name;
 	const char *description;
 	int id;
 };
 
-struct GraphicsModes {
+struct GraphicsMode {
 	const char *name;
 	const char *description;
 	int id;
 };
 
-struct Languages {
+struct Language {
 	const char *name;
 	const char *description;
 	int id;
@@ -126,7 +126,7 @@ class GameDetector {
 	typedef ScummVM::String String;
 
 public:
-	static const MusicDrivers *getMusicDrivers();
+	static const MusicDriver *getMusicDrivers();
 	static bool isMusicDriverAvailable(int drv);
 
 public:
@@ -163,7 +163,6 @@ public:
 	String _gameRealName;
 	uint32 _features;
 
-	int _gfx_driver;
 	int _gfx_mode;
 	bool _default_gfx_mode;
 	

@@ -78,7 +78,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	midiPopUp = new PopUpWidget(this, 105, 26, 180, kLineHeight);
 	
 	// Populate it
-	const MusicDrivers *md = GameDetector::getMusicDrivers();
+	const MusicDriver *md = GameDetector::getMusicDrivers();
 	while (md->name) {
 		if (GameDetector::isMusicDriverAvailable(md->id))
 			midiPopUp->appendEntry(md->description, md->id);

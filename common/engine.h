@@ -29,6 +29,7 @@
 
 class SoundMixer;
 class GameDetector;
+class Timer;
 struct VersionSettings;
 
 /* FIXME - BIG HACK for MidiEmu */

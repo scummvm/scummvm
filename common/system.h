@@ -26,8 +26,6 @@
 #include "scummsys.h"
 #include "savefile.h"
 
-class Timer;
-
 // Interface to the ScummVM backend
 
 class OSystem {
@@ -210,31 +208,6 @@ extern OSystem *OSystem_WINCE3_create();
 extern OSystem *OSystem_X11_create();
 extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
 extern OSystem *OSystem_GP32_create(int gfx_mode, bool full_screen); //ph0x 
-
-enum {
-	GFX_NORMAL = 0,
-	GFX_DOUBLESIZE = 1,
-	GFX_TRIPLESIZE = 2,
-	GFX_2XSAI = 3,
-	GFX_SUPER2XSAI = 4,
-	GFX_SUPEREAGLE = 5,
-	GFX_ADVMAME2X = 6,
-	GFX_TV2X = 7,
-	GFX_DOTMATRIX = 8
-};
-
-
-/* Graphics drivers */
-enum {
-	GD_NULL = 0,
-	GD_SDL,
-	GD_X,
-	GD_MORPHOS,
-	GD_WINCE,
-	GD_MAC,
-	GD_DC,
-	GD_GP32 //ph0x
-};
 
 enum {
 #ifdef _WIN32_WCE

@@ -24,6 +24,7 @@
 #include "engine.h"
 #include "gameDetector.h"
 #include "config-file.h"
+#include "scaler.h"	// For GFX_NORMAL
 #include "gui/newgui.h"
 #include "gui/launcher.h"
 #include "gui/message.h"
