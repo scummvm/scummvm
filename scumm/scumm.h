@@ -595,6 +595,7 @@ public:
 	int loadResource(int type, int i);
 	int getResourceRoomNr(int type, int index);
 	int readSoundResource(int type, int index);
+	int readSoundResourceSmallHeader(int type, int index);
 	void setResourceCounter(int type, int index, byte flag);
 	void validateResource(const char *str, int type, int index);
 	void increaseResourceCounter();

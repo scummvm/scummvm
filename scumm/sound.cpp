@@ -175,6 +175,8 @@ void Sound::playSound(int sound) {
 	int size;
 	int rate;
 	
+	debug(3,"playSound #%d (room %d)",
+		sound, _scumm->getResourceRoomNr(rtSound, sound));
 	ptr = _scumm->getResourceAddress(rtSound, sound);
 	if (ptr) {
 		if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
@@ -227,6 +229,10 @@ void Sound::playSound(int sound) {
 				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			}
 			return;
+		}
+		else if (READ_UINT32_UNALIGNED(ptr) == MKID('ADL ')) {
+			// played as MIDI, just to make perhaps the later use
+			// of WA possible (see "else if" with GF_OLD256 below)
 		}
 		// Support for sampled sound effects in Monkey1 and Monkey2
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SBL ')) {
@@ -364,9 +370,6 @@ void Sound::playSound(int sound) {
 			_scumm->_mixer->playRaw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		}
-	
-		if (_scumm->_gameId == GID_MONKEY_VGA)
-			return;											/* FIXME */
 	
 	}
 
@@ -667,6 +670,14 @@ void Sound::pauseSounds(bool pause) {
 
 	_soundsPaused = pause;
 	_scumm->_mixer->pause(pause);	
+
+	if ((_scumm->_features & GF_AUDIOTRACKS) && _scumm->_vars[_scumm->VAR_MI1_TIMER] > 0) {
+		if (pause)
+			stopCDTimer();
+		else
+			startCDTimer();
+	}
+		
 }
 
 int Sound::startSfxSound(File *file, int file_size) {
@@ -1028,16 +1039,71 @@ int Sound::playSfxSound_MP3(void *sound, uint32 size) {
 	return -1;
 }
 
+// We use a real timer in an attempt to get better sync with CD tracks. This is
+// necessary for games like Loom CD.
+
+static void cd_timer_handler(void *ptr)
+{
+	Scumm *scumm = (Scumm *) ptr;
+
+	// Maybe I could simply update _vars[VAR_MI1_TIMER] directly here, but
+	// I don't feel comfortable just doing that from what might be a
+	// separate thread. If someone tells me it's safe, I'll make the
+	// change right away.
+	
+	// FIXME: Turn off the timer when it's no longer needed. In theory, it
+	// should be possible to check with pollCD(), but since CD sound isn't
+	// properly restarted when reloading a saved game, I don't dare to.
+
+	scumm->_sound->_cd_timer_value += 6;
+}
+
+int Sound::readCDTimer()
+{
+	return _cd_timer_value;
+}
+
+void Sound::startCDTimer()
+{
+	int timer_interval;
+
+	// The timer interval has been tuned for Loom CD and the Monkey 1
+	// intro. I have to use 100 for Loom, or there will be a nasty stutter
+	// when Chaos first appears, and I have to use 101 for Monkey 1 or the
+	// intro music will be cut short.
+
+	if (_scumm->_gameId == GID_LOOM256)
+		timer_interval = 100;
+	else 
+		timer_interval = 101;
+
+	_scumm->_timer->releaseProcedure(&cd_timer_handler);
+	_cd_timer_value = _scumm->_vars[_scumm->VAR_MI1_TIMER];
+	_scumm->_timer->installProcedure(&cd_timer_handler, timer_interval);
+}
+
+void Sound::stopCDTimer()
+{
+	_scumm->_timer->releaseProcedure(&cd_timer_handler);
+}
+
 void Sound::playCDTrack(int track, int num_loops, int start, int delay)
 {
 #ifdef COMPRESSED_SOUND_FILE
 	if (playMP3CDTrack(track, num_loops, start, delay) == -1)
 #endif
 		_scumm->_system->play_cdrom(track, num_loops, start, delay);
+
+	// Start the timer after starting the track. Starting an MP3 track is
+	// almost instantaneous, but a CD player may take some time. Hopefully
+	// play_cdrom() will block during that delay.
+
+	startCDTimer();
 }
 
 void Sound::stopCD()
 {
+	stopCDTimer();
 #ifdef COMPRESSED_SOUND_FILE
 	if (stopMP3CD() == -1)
 #endif

@@ -23,6 +23,7 @@
 
 #include "scummsys.h"
 #include "sound/mixer.h"
+#include "common/timer.h"
 
 class Scumm;
 class File;
@@ -88,6 +89,7 @@ public:
 
 #endif
 
+	int _cd_timer_value;
 	bool _soundsPaused;
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 	byte _sfxMode;
@@ -123,6 +125,10 @@ public:
 	void playBundleSound(char *sound);
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
 	int playSfxSound_MP3(void *sound, uint32 size);
+
+	int readCDTimer();
+	void startCDTimer();
+	void stopCDTimer();
 
 	void playCDTrack(int track, int num_loops, int start, int delay);
 	void stopCD();

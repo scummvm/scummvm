@@ -159,6 +159,9 @@ bool Scumm::loadState(int slot, bool compat)
 
 	initBGBuffers(_scrHeight);
 
+	if ((_features & GF_AUDIOTRACKS) && _vars[VAR_MI1_TIMER] > 0)
+		_sound->startCDTimer();
+
 	CHECK_HEAP debug(1, "State loaded from '%s'", filename);
 
 
