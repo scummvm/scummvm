@@ -63,13 +63,8 @@ struct MemBlkHeader {
 struct Box { /* file format */
 	int16 ulx,uly;
 	int16 urx,ury;
-#if 1				// Ender - set to 0 for indy3/zak256
 	int16 llx,lly;
 	int16 lrx,lry;
-#else
-	int16 lrx,lry;
-	int16 llx,lly;
-#endif	
 	byte mask;
 	byte flags;
 	uint16 scale;

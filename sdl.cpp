@@ -776,10 +776,10 @@ void BoxTest(int num) {
 	Sint16 rx1[4], ry1[4];
 	
 	scumm.getBoxCoordinates(num,  &box);
-	rx1[0] = box.ul.x*2; ry1[0] = box.ul.y*2;
-	rx1[1] = box.ur.x*2; ry1[1] = box.ur.y*2;
-	rx1[2] = box.lr.x*2; ry1[2] = box.lr.y*2;
-	rx1[3] = box.ll.x*2; ry1[3] = box.ll.y*2;
+	rx1[0] = box.ul.x*2; ry1[0] = box.ul.y*2+32;
+	rx1[1] = box.ur.x*2; ry1[1] = box.ur.y*2+32;
+	rx1[2] = box.lr.x*2; ry1[2] = box.lr.y*2+32;
+	rx1[3] = box.ll.x*2; ry1[3] = box.ll.y*2+32;
 
 	filledPolygonColor(screen, &rx1[0], &ry1[0], 4, 255);
 	SDL_UpdateRect(screen, 0,0,0,0);

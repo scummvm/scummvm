@@ -628,8 +628,9 @@ void Scumm::clearMsgQueue() {
 void Scumm::walkActors() {
 	int i;
 	Actor *a;
+
 	for (i=1; i<NUM_ACTORS; i++) {
-		a = derefActor(i);	
+		a = derefActor(i);
 		if (a->room==_currentRoom)
 			walkActor(a);
 	}

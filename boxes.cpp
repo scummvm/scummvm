@@ -116,14 +116,25 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 
 void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	Box *bp = getBoxBaseAddr(boxnum);
-	box->ul.x = (int16)FROM_LE_16(bp->ulx);
-	box->ul.y = (int16)FROM_LE_16(bp->uly);
-	box->ur.x = (int16)FROM_LE_16(bp->urx);
-	box->ur.y = (int16)FROM_LE_16(bp->ury);
-	box->ll.x = (int16)FROM_LE_16(bp->llx);
-	box->ll.y = (int16)FROM_LE_16(bp->lly);
-	box->lr.x = (int16)FROM_LE_16(bp->lrx);
-	box->lr.y = (int16)FROM_LE_16(bp->lry);
+	if(_features & GF_NO_SCALLING){
+		box->ul.x = (int16)FROM_LE_16(bp->ulx);
+		box->ul.y = (int16)FROM_LE_16(bp->uly);
+		box->ur.x = (int16)FROM_LE_16(bp->urx);
+		box->ur.y = (int16)FROM_LE_16(bp->ury);
+		box->lr.x = (int16)FROM_LE_16(bp->llx);
+		box->lr.y = (int16)FROM_LE_16(bp->lly);
+		box->ll.x = (int16)FROM_LE_16(bp->lrx);
+		box->ll.y = (int16)FROM_LE_16(bp->lry);
+	} else {
+		box->ul.x = (int16)FROM_LE_16(bp->ulx);
+		box->ul.y = (int16)FROM_LE_16(bp->uly);
+		box->ur.x = (int16)FROM_LE_16(bp->urx);
+		box->ur.y = (int16)FROM_LE_16(bp->ury);
+		box->ll.x = (int16)FROM_LE_16(bp->llx);
+		box->ll.y = (int16)FROM_LE_16(bp->lly);
+		box->lr.x = (int16)FROM_LE_16(bp->lrx);
+		box->lr.y = (int16)FROM_LE_16(bp->lry);
+	}
 }
 
 uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
