@@ -54,6 +54,8 @@ protected:
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 	String			_backupString;
+	bool			_caretVisible;
+	uint32			_caretTime;
 public:
 	ListWidget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
@@ -66,6 +68,7 @@ public:
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }
 	
+	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseWheel(int x, int y, int direction);
@@ -82,6 +85,7 @@ public:
 
 protected:
 	void drawWidget(bool hilite);
+	void drawCaret(bool erase);
 	void lostFocusWidget();
 	void scrollToCurrent();
 };

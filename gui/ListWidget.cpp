@@ -23,6 +23,7 @@
 #include "ScrollBarWidget.h"
 #include "dialog.h"
 #include "newgui.h"
+#include "common/engine.h"
 
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
@@ -37,6 +38,9 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 	_currentKeyDown = 0;
+
+	_caretVisible = false;
+	_caretTime = 0;
 	
 	// FIXME: This flag should come from widget definition
 	_editable = true;
@@ -50,6 +54,8 @@ ListWidget::~ListWidget()
 
 void ListWidget::setList(const StringList& list)
 {
+	if (_editMode && _caretVisible)
+		drawCaret(true);
 	int size = list.size();
 	_list = list;
 	if (_currentPos >= size)
@@ -67,6 +73,53 @@ void ListWidget::scrollBarRecalc()
 	_scrollBar->recalc();
 }
 
+void ListWidget::handleTickle()
+{
+	uint32 time = g_system->get_msecs();
+	if (_editMode && _caretTime < time) {
+		_caretTime = time + 300;
+		if (_caretVisible) {
+			drawCaret(true);
+		} else {
+			drawCaret(false);
+		}
+	}
+}
+
+void ListWidget::drawCaret(bool erase)
+{
+	// Only draw if item is visible
+	if (_selectedItem < _currentPos || _selectedItem >= _currentPos + _entriesPerPage)
+		return;
+	if (!isVisible() || !_boss->isVisible())
+		return;
+
+	NewGui *gui = _boss->getGui();
+	
+	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
+	int16 color = erase ? gui->_textcolorhi : gui->_bgcolor;
+	int x = _x + _boss->getX() + 3;
+	int y = _y + _boss->getY() + 1;
+	ScummVM::String	buffer;
+
+	y += (_selectedItem - _currentPos) * kLineHeight;
+
+	if (_numberingMode == kListNumberingZero || _numberingMode == kListNumberingOne) {
+		char temp[10];
+		sprintf(temp, "%2d. ", (_selectedItem + _numberingMode));
+		buffer = temp;
+		buffer += _list[_selectedItem];
+	} else
+		buffer = _list[_selectedItem];
+
+	x += gui->getStringWidth(buffer);
+
+	gui->vline(x, y, y+kLineHeight, color);
+	gui->addDirtyRect(x, y, 2, kLineHeight);
+	
+	_caretVisible = !erase;
+}
+
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
 {
 	if (isEnabled()) {
@@ -80,6 +133,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
 				// undo any changes made
 				_list[oldSelectedItem] = _backupString;
 				_editMode = false;
+				drawCaret(true);
 			}
 			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		}
@@ -109,8 +163,8 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 
 	if (_editMode) {
 
-		// get rid of caret
-		_list[_selectedItem].deleteLastChar();
+		if (_caretVisible)
+			drawCaret(true);
 
 		if (key == '\n' || key == '\r') {
 			// enter, confirm edit and exit editmode
@@ -184,10 +238,6 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 		scrollToCurrent();
 	}
 
-	if (_editMode)
-		// re-add caret
-		_list[_selectedItem] += '_';
-
 	if (dirty || _selectedItem != oldSelectedItem)
 		draw();
 
@@ -218,12 +268,8 @@ bool ListWidget::handleKeyUp(char key, int modifiers)
 
 void ListWidget::lostFocusWidget()
 {
-	if (_editMode) {
-		// loose caret
-		_list[_selectedItem].deleteLastChar();
-		_editMode = false;
-	}
-
+	_editMode = false;
+	drawCaret(true);
 	draw();
 }
 
@@ -256,18 +302,17 @@ void ListWidget::drawWidget(bool hilite)
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
+			buffer += _list[pos];
 		} else
-			buffer = "";
+			buffer = _list[pos];
 
-		buffer += _list[pos];
-		
 		if (_selectedItem == pos) {
 			if (_hasFocus)
 				gui->fillRect(_x+1, _y+1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 			else
 				gui->frameRect(_x+1, _y+1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 		}
-		gui->drawString(buffer.c_str(), _x+2, _y+3 + kLineHeight * i, _w - 4,
+		gui->drawString(buffer, _x+2, _y+3 + kLineHeight * i, _w - 4,
 							(_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor);
 	}
 }
@@ -295,7 +340,6 @@ void ListWidget::startEditMode()
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		_backupString = _list[_selectedItem];
-		_list[_selectedItem] += '_';
 		draw();
 	}
 }
@@ -305,6 +349,7 @@ void ListWidget::abortEditMode()
 	if (_editMode) {
 		_editMode = false;
 		_list[_selectedItem] = _backupString;
+		drawCaret(true);
 		draw();
 	}
 }

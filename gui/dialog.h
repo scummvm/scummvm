@@ -54,6 +54,8 @@ public:
 
 	NewGui	*getGui()			{ return _gui; }
 	bool 	isVisible() const	{ return _visible; }
+	int16	getX() const		{ return _x; }
+	int16	getY() const		{ return _y; }
 
 protected:
 	virtual void open();
