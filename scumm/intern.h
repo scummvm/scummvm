@@ -615,6 +615,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	byte stringLen(byte *);
+	int getCharsetOffset(int letter);
 
 	/* Version 7 script opcodes */
 	void o7_cursorCommand();

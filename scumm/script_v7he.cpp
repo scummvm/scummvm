@@ -407,6 +407,31 @@ byte ScummEngine_v7he::stringLen(byte *ptr) {
 	return len;
 }
 
+int ScummEngine_v7he::getCharsetOffset(int letter) {
+	int offset, result;
+	int id = _charset->getCurID();
+
+	byte *ptr = getResourceAddress(rtCharset, id);
+	if (!ptr)
+		error("getCharsetOffset: charset %d not found!", id);
+
+	offset = READ_LE_UINT32(ptr + 29 + letter);
+	if (offset == 0)
+		return 0;
+
+	ptr += offset;
+	
+	result = READ_LE_UINT16(ptr + 2);
+	byte start = *ptr;
+
+	if (result >= 0x80) {
+		result = result - 256 + start;
+	} else {
+		result += start;
+	};
+	return (result);
+}
+
 void ScummEngine_v7he::o7_cursorCommand() {
 	int a, i;
 	int args[16];
@@ -726,8 +751,7 @@ void ScummEngine_v7he::o7_unknownED() {
 	writeVar(0, array);
 	while (len >= pos) {
 		letter = readArray(0, 0, pos);
-		if (letter)
-			result += _charset->getLetter(letter);
+		result += getCharsetOffset(letter);
 		pos++;
 	}
 
@@ -903,7 +927,7 @@ void ScummEngine_v7he::o7_unknownF5() {
 
 	while (len <= pos) {
 		letter = readArray(0, 0, pos);
-		result += _charset->getLetter(letter);
+		result += getCharsetOffset(letter);
 		if (result >= ebx)
 			break;
 		pos++;
