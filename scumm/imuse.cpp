@@ -28,10 +28,6 @@
 #include "common/util.h"
 #include "imuse_internal.h"
 
-// Unremark this statement to activate some of
-// the most common iMuse diagnostic messages.
-// #define IMUSE_DEBUG
-
 
 
 ////////////////////////////////////////
@@ -101,7 +97,6 @@ byte *IMuseInternal::findStartOfSound (int sound) {
 	if (ptr == NULL) {
 		debug (1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist!", sound);
 		return NULL;
-
 	}
 
 	ptr += 8;

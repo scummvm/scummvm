@@ -70,7 +70,6 @@ _loop_from_tick (0),
 _tempo (0),
 _tempo_eff (0),
 _speed (128),
-_abort (false),
 _isMT32 (false),
 _isGM (false),
 _se (0),
@@ -145,7 +144,6 @@ bool Player::isFadingOut() {
 }
 
 void Player::clear() {
-	uninit_seq();
 	cancel_volume_fade();
 	uninit_parts();
 	_se->ImFireAllTriggers (_id);
@@ -225,10 +223,6 @@ void Player::uninit_parts() {
 	// In case another player is waiting to allocate parts
 	if (_midi)
 		_se->reallocateMidiChannels (_midi);
-}
-
-void Player::uninit_seq() {
-	_abort = true;
 }
 
 void Player::setSpeed(byte speed) {

@@ -26,6 +26,10 @@
 #include "common/scummsys.h"
 #include "scumm/instrument.h"
 
+// Unremark this statement to activate some of
+// the most common iMuse diagnostic messages.
+// #define IMUSE_DEBUG
+
 struct HookDatas;
 struct ParameterFader;
 struct DeferredCommand;
@@ -215,7 +219,6 @@ protected:
 	void clear_active_notes();
 
 	// Sequencer part
-	void uninit_seq();
 	void setTempo(uint32 data);
 	int start_seq_sound(int sound);
 	int query_param(int param);
