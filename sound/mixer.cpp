@@ -293,6 +293,11 @@ SoundMixer::ChannelRaw::ChannelRaw(SoundMixer * mixer, void * sound, uint32 size
 		_size = _size >> 1;
 	if (_flags & FLAG_STEREO)
 		_size = _size >> 1;
+
+	if (flags & FLAG_LOOP) {
+		_loop_ptr = sound;
+		_loop_size = size;
+	}
 }
 
 
@@ -623,8 +628,16 @@ void SoundMixer::ChannelRaw::mix(int16 * data, uint len) {
 		free(s_org);
 	}
 
-	if (_size < 1)
-		realDestroy();
+	if (_size < 1) {
+		if (_flags & FLAG_LOOP) {
+			_ptr = _loop_ptr;
+			_size = _loop_size;
+			_pos = 0;
+			_fpPos = 0;
+		} else {
+			realDestroy();
+		}
+	}
 
 }
 
