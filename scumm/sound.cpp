@@ -88,8 +88,8 @@ Sound::~Sound() {
 
 void Sound::addSoundToQueue(int sound, int offset) {
 	_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
-	// Music resources are in separate file
-	if (!((_vm->_heversion >= 70) && sound >= 4000))
+	// HE music resources are in separate file
+	if (sound <= _vm->_numSounds)
 		_vm->ensureResourceLoaded(rtSound, sound);
 	addSoundToQueue2(sound, offset);
 }
