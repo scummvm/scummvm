@@ -39,7 +39,7 @@ void Scumm_v3::readIndexFile() {
 			warning("The magic id doesn't match (0x%X)\n", magic);
 
 		_numGlobalObjects = _fileHandle.readUint16LE();
-		_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
+		_fileHandle.seek(_numGlobalObjects * 4, SEEK_CUR);
 		_numRooms = _fileHandle.readByte();
 		_fileHandle.seek(_numRooms * 3, SEEK_CUR);
 		_numCostumes = _fileHandle.readByte();

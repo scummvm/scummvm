@@ -1025,7 +1025,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	byte code = *smap_ptr++;
 	assert(numLinesToProcess);
 
-	if (_vm->_features & GF_AMIGA)
+	if ((_vm->_features & GF_AMIGA) || (_vm->_features & GF_16COLOR))
 		_palette_mod = 16;
 	else
 		_palette_mod = 0;

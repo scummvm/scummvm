@@ -86,7 +86,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	byte newAmiCost;
 	int ex1, ex2;
 	
-	newAmiCost = (_vm->_gameId == GID_MONKEY2 || _vm->_gameId == GID_INDY4) && (_vm->_features & GF_AMIGA);
+	newAmiCost = (_vm->_gameId == GID_MONKEY2 || _vm->_gameId == GID_INDY4) && ((_vm->_features & GF_AMIGA) || (_vm->_features & GF_16COLOR));
 
 	CHECK_HEAP
 	_maskval = 0xF;
