@@ -39,7 +39,7 @@ typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 #ifdef UNIX
 #include <dlfcn.h>
-#define DYNAMIC_PLUGIN_PATH(name) (name "/lib" name ".so")
+#define DYNAMIC_PLUGIN_PATH(name) (name "/" PLUGIN_PREFIX name PLUGIN_SUFFIX)
 #else
 #ifdef __DC__
 #include "dcloader.h"

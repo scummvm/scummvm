@@ -29,18 +29,6 @@ CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wconversion
 CXXFLAGS+= -Wshadow -Wimplicit -Wundef -Wnon-virtual-dtor
 CXXFLAGS+= -Wno-reorder -Wwrite-strings -fcheck-new -Wctor-dtor-privacy 
 
-######################################################################
-# Plugin settings
-######################################################################
-
-# Plugin prefix. Typically "lib" on Unix, and nothing everywhere else
-PLUGIN_PREFIX := lib
-# Plugin suffix. For static/shared libs this is typically ".so"/".a" on Unix,
-# ".dll"/".lib" on Windows, ".bundle"/".a" on OS X, etc.
-PLUGIN_SUFFIX := .so
-
-PLUGIN_EXTRA_DEPS := $(EXECUTABLE)
-
 #######################################################################
 # Misc stuff - you should never have to edit this                     #
 #######################################################################
