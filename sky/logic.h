@@ -29,7 +29,7 @@
 
 class SkyLogic {
 public:
-	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid);
+	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText);
 	void engine();
 
 	void lreturn();
@@ -167,7 +167,7 @@ public:
 	uint32 fnUnPauseFx(uint32 a, uint32 b, uint32 c);
 	uint32 fnPrintf(uint32 a, uint32 b, uint32 c);
 
-	static uint16 SkyLogic::_screen;
+	static uint16 _screen;
 	
 protected:
 	void push(uint32);
@@ -185,6 +185,7 @@ protected:
 
 	SkyDisk *_skyDisk;
 	SkyGrid *_skyGrid;
+	SkyText *_skyText;
 	SkyAutoRoute *_skyAutoRoute;
 };
 

@@ -48,9 +48,10 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid) {
+SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText) {
 	_skyDisk = skyDisk;
 	_skyGrid = skyGrid;
+	_skyText = skyText;
 	_skyAutoRoute = new SkyAutoRoute(_skyGrid);
 
 	for (uint i = 0; i < sizeof(_moduleList)/sizeof(uint16*); i++)
@@ -952,8 +953,7 @@ uint32 SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
-	warning("fnChooser: lowTextManager unimplented");
-	return 1;
+	
 	// setup the text questions to be clicked on
 	// read from TEXT1 until 0
 
@@ -967,7 +967,9 @@ uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	while (*p) {
 		uint32 textNum = *p++;
 
-		uint8 *data; // = lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, 0);
+		struct lowTextManager_t lowText = _skyText->lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, 0);
+		
+		uint8 *data = lowText.textData;
 
 		// stipple the text
 		uint16 height = ((dataFileHeader *)data)->s_height;

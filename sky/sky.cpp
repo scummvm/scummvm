@@ -106,7 +106,7 @@ void SkyState::initialise(void) {
 
 	_sound = new SkySound(_mixer);
 	_skyDisk = new SkyDisk(_gameDataPath);
-	_music = new SkyMusic(_mixer,_skyDisk);
+	_music = new SkyMusic(_mixer, _skyDisk);
 	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = getSkyText();
 	
@@ -116,9 +116,8 @@ void SkyState::initialise(void) {
 	initItemList();
 	//initScript();
 	//initialiseRouter();
-	_skyText = getSkyText();
 	_grid = new SkyGrid(_skyDisk);
-	_skyLogic = new SkyLogic(_skyDisk, _grid);
+	_skyLogic = new SkyLogic(_skyDisk, _grid, _skyText);
 }
 
 void SkyState::initItemList() {
