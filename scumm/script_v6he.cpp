@@ -463,7 +463,7 @@ void ScummEngine_v6he::o6_roomOps() {
 
 	case 181:		// SO_ROOM_FADE
 		a = pop();
-		if (_heversion == 70) {
+		if (_heversion >= 70) {
 			// Defaults to 1 but doesn't use fade effects
 		} else if (a) {
 			_switchRoomEffect = (byte)(a & 0xFF);
