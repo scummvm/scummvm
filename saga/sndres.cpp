@@ -77,6 +77,11 @@ int SndRes::playVoice(ulong voice_rn) {
 
 	debug(0, "SndRes::playVoice(%ld)", voice_rn);
 
+	// FIXME: In the Wyrmkeep re-release of Inherit the Earth, voices 4 and
+	// 5 are identical, even though their resources are stored at different
+	// offsets in the resource file. The correct sound for voice 4 is
+	// provided as a separate file, sound/p2_a.voc
+
 	result = load(_voice_ctxt, voice_rn, &snd_buffer);
 	if (result != R_SUCCESS) {
 		return R_FAILURE;
