@@ -348,6 +348,9 @@ static void PutActorAt() {
 	float x = luaL_check_number(2);
 	float y = luaL_check_number(3);
 	float z = luaL_check_number(4);
+	x = get_float((const char *)&x);
+	y = get_float((const char *)&y);
+	z = get_float((const char *)&z);
 	act->setPos(Vector3d(x, y, z));
 }
 
@@ -364,6 +367,9 @@ static void SetActorRot() {
 	float pitch = luaL_check_number(2);
 	float yaw = luaL_check_number(3);
 	float roll = luaL_check_number(4);
+	pitch = get_float((const char *)&pitch);
+	yaw = get_float((const char *)&yaw);
+	roll = get_float((const char *)&roll);
 	if (getbool(5))
 		act->turnTo(pitch, yaw, roll);
 	else
@@ -407,6 +413,7 @@ static void PutActorInSet() {
 static void SetActorWalkRate() {
 	Actor *act = check_actor(1);
 	float rate = luaL_check_number(2);
+	rate = get_float((const char *)&rate);
 	act->setWalkRate(rate);
 }
 
@@ -439,6 +446,12 @@ static void WalkActorTo() {
 	double x = luaL_check_number(2);
 	double y = luaL_check_number(3);
 	double z = luaL_check_number(4);
+	#ifdef SYSTEM_BIG_ENDIAN
+	//is this okay? treating the double as a float
+	x = get_float((const char *)&x);
+	y = get_float((const char *)&y);
+	z = get_float((const char *)&z);
+	#endif	
 	act->walkTo(Vector3d(x, y, z));
 }
 
