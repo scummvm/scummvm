@@ -73,6 +73,7 @@ public:
 	virtual void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *ptr, uint32 size);
 	uint32 write(const void *ptr, uint32 size);
+	char *gets(void *ptr, uint32 size);
 };
 
 #endif

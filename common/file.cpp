@@ -269,3 +269,20 @@ uint32 File::write(const void *ptr, uint32 len) {
 
 	return len;
 }
+
+char *File::gets(void *ptr, uint32 len) {
+	char *ptr2 = (char *)ptr;
+	char *res;
+
+	if (_handle == NULL) {
+		error("File::gets: File is not open!");
+		return 0;
+	}
+
+	if (len == 0)
+		return 0;
+
+	res = fgets(ptr2, len, _handle);
+
+	return res;
+}
