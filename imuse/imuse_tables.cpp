@@ -198,7 +198,7 @@ const imuseTable _grimStateMusicTable[] = {
 	{2, 1353,   0, 0, 60, 127,   0, "1353 - Greenhouse Appr.IMC"},
 	{2, 1355,   0, 0, 60, 127,   0, "1354 - Game Ending.IMC"},
 	{2, 1354,   0, 0, 60, 127,   0, "1355 - Shootout.IMC"},
-	{2, 1400,   0, 0, 60,  20, 105, "1400 - Start Credits.IMC"},
+	{2, 1400,   0, 0,  1, 105,   0, "1400 - Start Credits.IMC"},
 	{2, 1401,   0, 0, 60, 127,   0, "1401 - Smooth Hector.IMC"},
 	{0, 1500,   0, 0, 60, 127,   0, ""},
 	{0,   -1,   0, 0,  0,   0,   0, ""}
