@@ -162,7 +162,7 @@ void Scumm_v5::setupOpcodes()
 		OPCODE(o5_getClosestObjActor),
 		OPCODE(o5_dummy),
 		/* 68 */
-		OPCODE(o5_getScriptRunning),
+		OPCODE(o5_isScriptRunning),
 		OPCODE(o5_setOwnerOf),
 		OPCODE(o5_startScript),
 		OPCODE(o5_debug),
@@ -322,7 +322,7 @@ void Scumm_v5::setupOpcodes()
 		OPCODE(o5_getClosestObjActor),
 		OPCODE(o5_dummy),
 		/* E8 */
-		OPCODE(o5_getScriptRunning),
+		OPCODE(o5_isScriptRunning),
 		OPCODE(o5_setOwnerOf),
 		OPCODE(o5_startScript),
 		OPCODE(o5_debug),
@@ -354,6 +354,17 @@ void Scumm_v5::setupOpcodes()
 	};
 
 	_opcodesV5 = opcodes;
+}
+
+void Scumm_v5::executeOpcode(int i)
+{
+	OpcodeProcV5 op = _opcodesV5[i].proc;
+	(this->*op) ();
+}
+
+const char *Scumm_v5::getOpcodeDesc(int i)
+{
+	return _opcodesV5[i].desc;
 }
 
 void Scumm_v5::o5_actorFollowCamera()
@@ -1137,7 +1148,7 @@ void Scumm_v5::o5_getRandomNr()
 	setResult(_rnd.getRandomNumber(getVarOrDirectByte(0x80)));
 }
 
-void Scumm_v5::o5_getScriptRunning()
+void Scumm_v5::o5_isScriptRunning()
 {
 	getResultPos();
 	setResult(isScriptRunning(getVarOrDirectByte(0x80)));

@@ -34,8 +34,6 @@ class NewGui;
 class Dialog;
 class ConsoleDialog;
 class Scumm;
-class Scumm_v5;
-class Scumm_v6;
 class IMuse;
 class IMuseDigital;
 class Actor;
@@ -44,19 +42,6 @@ class Bundle;
 class ScummDebugger;
 class Serializer;
 struct FindObjectInRoom;
-
-typedef void (Scumm_v5::*OpcodeProcV5)();
-typedef void (Scumm_v6::*OpcodeProcV6)();
-
-struct OpcodeEntryV5 {
-	OpcodeProcV5 proc;
-	const char *desc;
-};
-
-struct OpcodeEntryV6 {
-	OpcodeProcV6 proc;
-	const char *desc;
-};
 
 // Use g_scumm from error() ONLY
 extern Scumm *g_scumm;
@@ -1081,6 +1066,12 @@ public:
 class Scumm_v5 : public Scumm
 {
 protected:
+	typedef void (Scumm_v5::*OpcodeProcV5)();
+	struct OpcodeEntryV5 {
+		OpcodeProcV5 proc;
+		const char *desc;
+	};
+	
 	const OpcodeEntryV5 *_opcodesV5;
 	
 public:
@@ -1141,7 +1132,7 @@ protected:
 	void o5_getObjectOwner();
 	void o5_getObjectState();
 	void o5_getRandomNr();
-	void o5_getScriptRunning();
+	void o5_isScriptRunning();
 	void o5_getVerbEntrypoint();
 	void o5_ifClassOfIs();
 	void o5_increment();
@@ -1236,6 +1227,12 @@ public:
 class Scumm_v6 : public Scumm
 {
 protected:
+	typedef void (Scumm_v6::*OpcodeProcV6)();
+	struct OpcodeEntryV6 {
+		OpcodeProcV6 proc;
+		const char *desc;
+	};
+	
 	const OpcodeEntryV6 *_opcodesV6;
 	
 public:
@@ -1264,7 +1261,7 @@ protected:
 	void o6_byteArrayIndexedRead();
 	void o6_wordArrayIndexedRead();
 	void o6_dup();
-	void o6_zero();
+	void o6_not();
 	void o6_eq();
 	void o6_neq();
 	void o6_gt();
@@ -1334,7 +1331,7 @@ protected:
 	void o6_getRandomNumber();
 	void o6_getRandomNumberRange();
 	void o6_getActorMoving();
-	void o6_getScriptRunning();
+	void o6_isScriptRunning();
 	void o6_getActorRoom();
 	void o6_getObjectX();
 	void o6_getObjectY();

@@ -287,28 +287,6 @@ void Scumm::executeScript()
 	CHECK_HEAP;
 }
 
-void Scumm_v5::executeOpcode(int i)
-{
-	OpcodeProcV5 op = _opcodesV5[i].proc;
-	(this->*op) ();
-}
-
-const char *Scumm_v5::getOpcodeDesc(int i)
-{
-	return _opcodesV5[i].desc;
-}
-
-void Scumm_v6::executeOpcode(int i)
-{
-	OpcodeProcV6 op = _opcodesV6[i].proc;
-	(this->*op) ();
-}
-
-const char *Scumm_v6::getOpcodeDesc(int i)
-{
-	return _opcodesV6[i].desc;
-}
-
 byte Scumm::fetchScriptByte()
 {
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {

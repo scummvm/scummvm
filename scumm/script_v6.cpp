@@ -57,7 +57,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_wordArrayIndexedRead),
 		/* 0C */
 		OPCODE(o6_dup),
-		OPCODE(o6_zero),
+		OPCODE(o6_not),
 		OPCODE(o6_eq),
 		OPCODE(o6_neq),
 		/* 10 */
@@ -214,7 +214,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_getRandomNumberRange),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getActorMoving),
-		OPCODE(o6_getScriptRunning),
+		OPCODE(o6_isScriptRunning),
 		/* 8C */
 		OPCODE(o6_getActorRoom),
 		OPCODE(o6_getObjectX),
@@ -364,6 +364,18 @@ void Scumm_v6::setupOpcodes()
 
 	_opcodesV6 = opcodes;
 }
+
+void Scumm_v6::executeOpcode(int i)
+{
+	OpcodeProcV6 op = _opcodesV6[i].proc;
+	(this->*op) ();
+}
+
+const char *Scumm_v6::getOpcodeDesc(int i)
+{
+	return _opcodesV6[i].desc;
+}
+
 void Scumm_v6::o6_setBlastObjectWindow()
 {																// Set BOMP processing window
 	int a, b, c, d;
@@ -508,7 +520,7 @@ void Scumm_v6::o6_dup()
 	push(a);
 }
 
-void Scumm_v6::o6_zero()
+void Scumm_v6::o6_not()
 {
 	push(pop() == 0);
 }
@@ -1228,7 +1240,7 @@ void Scumm_v6::o6_getActorMoving()
 	push(derefActorSafe(pop(), "o6_getActorMoving")->moving);
 }
 
-void Scumm_v6::o6_getScriptRunning()
+void Scumm_v6::o6_isScriptRunning()
 {
 	push(isScriptRunning(pop()));
 }
