@@ -894,7 +894,8 @@ void SimonState::vc_10_draw()
 		if (_game & GAME_SIMON2 && state.e & 0x4 && _bit_array[10] & 0x800) {
 			state.surf_addr = state.surf2_addr;
 			state.surf_pitch = state.surf2_pitch;
-			warning("vc_10_draw: (state.e&0x4)");
+			if (_debugMode)
+				warning("vc_10_draw: (state.e&0x4)");
 		}
 
 		if (state.e & 0x8) {
@@ -1166,7 +1167,8 @@ void SimonState::vc_23_set_pri()
 	VgaSprite bak;
 
 	if (vsp->id == 0) {
-		warning("tried to set pri for unknown id %d", _vga_cur_sprite_id);
+		if (_debugMode)
+			warning("tried to set pri for unknown id %d", _vga_cur_sprite_id);
 		return;
 	}
 
@@ -1204,7 +1206,8 @@ void SimonState::vc_24_set_image_xy()
 	vsp->image = vc_read_var_or_word();
 
 	if (vsp->id == 0) {
-		warning("Trying to set XY of nonexistent sprite '%d'", _vga_cur_sprite_id);
+		if (_debugMode)
+			warning("Trying to set XY of nonexistent sprite '%d'", _vga_cur_sprite_id);
 	}
 
 	vsp->x += (int16)vc_read_next_word();
@@ -1783,7 +1786,8 @@ void SimonState::vc_62_palette_thing()
 	vc_29_stop_all_sounds();
 
 	if ((_game & GAME_SIMON2) && (!_video_var_3)) {
-		warning("vc_62_palette_thing: music stuff?");
+		if (_debugMode)
+			warning("vc_62_palette_thing: music stuff?");
 	}
 
 	_video_var_3 = true;
@@ -1897,7 +1901,8 @@ void SimonState::vc_69()
 	uint16 a = vc_read_next_word();
 	uint16 b = vc_read_next_word();
 
-	warning("vc_69(%d,%d): music stuff?", a, b);
+	if (_debugMode)
+		warning("vc_69(%d,%d): music stuff?", a, b);
 }
 
 void SimonState::vc_70()

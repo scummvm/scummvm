@@ -138,6 +138,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 						"Features of the game that depend on sound synchronization will most likely break");
 	midi.set_volume(detector->_music_volume);
 	set_volume(detector->_sfx_volume);
+	_debugMode = detector->_debugMode;
 
 	_effects_paused = false;
 	_ambient_paused = false;
@@ -821,7 +822,8 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 		}
 	}
 
-	warning("loadTablesIntoMem: didn't find %d", subr_id);
+	if (_debugMode)
+		warning("loadTablesIntoMem: didn't find %d", subr_id);
 }
 
 Subroutine *SimonState::getSubroutineByID(uint subroutine_id)
@@ -840,7 +842,8 @@ Subroutine *SimonState::getSubroutineByID(uint subroutine_id)
 			return cur;
 	}
 
-	warning("getSubroutineByID: subroutine %d not found", subroutine_id);
+	if (_debugMode)
+		warning("getSubroutineByID: subroutine %d not found", subroutine_id);
 	return NULL;
 }
 
@@ -1938,7 +1941,8 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id)
 	uint16 c;
 	byte *vc_ptr_org;
 
-	//warning("Set video mode internal: %d, %d", mode, vga_res_id);
+	if (_debugMode)
+		warning("Set video mode internal: %d, %d", mode, vga_res_id);
 
 	_video_palette_mode = mode;
 	_lock_word |= 0x20;
@@ -2500,7 +2504,6 @@ void SimonState::o_wait_for_vga(uint a)
 		}
 
 	}
-//  warning("waiting on %d done", a);
 	_system->show_mouse(true);
 }
 
@@ -3369,7 +3372,8 @@ void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte 
 	h = ha->height;
 
 	if (!(h > 0 && w > 0 && ha->x + w <= 320 && ha->y + h <= 200)) {
-		warning("Invalid coordinates in video_toggle_colors (%d,%d,%d,%d)", ha->x, ha->y, ha->width,
+		if (_debugMode)
+			warning("Invalid coordinates in video_toggle_colors (%d,%d,%d,%d)", ha->x, ha->y, ha->width,
 						ha->height);
 		_lock_word &= ~0x8000;
 		return;
@@ -4409,7 +4413,8 @@ void SimonState::dx_update_screen_and_palette()
 void SimonState::realizePalette()
 {
 	if (_palette_color_count & 0x8000) {
-		warning("realizePalette subroutine unimplemented");
+		if (_debugMode)
+			warning("realizePalette subroutine unimplemented");
 		_palette_color_count = 0;
 	} else {
 	_video_var_9 = false;
@@ -4510,13 +4515,8 @@ void SimonState::delay(uint amount)
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.ascii == 'r') {
-					_start_mainscript ^= 1;
-				} else if (event.kbd.ascii == 'o') {
-					_continous_mainscript ^= 1;
-				} else if (event.kbd.ascii == 'v') {
-					_continous_vgascript ^= 1;
-				} else if (event.kbd.ascii == 't') {
+
+				if (event.kbd.ascii == 't') {
 					_vk_t_toggle ^= 1;
 				} else if (event.kbd.ascii == '+') {
 					midi.set_volume(midi.get_volume() + 16);
@@ -4528,10 +4528,16 @@ void SimonState::delay(uint amount)
 					_sound->effectsPause(_effects_paused ^= 1);
 				} else if (event.kbd.ascii == 'b') {
 					_sound->ambientPause(_ambient_paused ^= 1);
-				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
-					if (event.kbd.ascii == 'f') {
+				} else if (event.kbd.flags==OSystem::KBD_CTRL) {
+					if (event.kbd.keycode == 'f')
 						_fast_mode ^= 1;
-					}
+				} else if (_debugMode) {
+					if (event.kbd.ascii == 'r') {
+						_start_mainscript ^= 1;
+					} else if (event.kbd.ascii == 'o') {
+						_continous_mainscript ^= 1;
+					} else if (event.kbd.ascii == 'v') 
+						_continous_vgascript ^= 1;
 				}
 				_key_pressed = (byte)event.kbd.ascii;
 				break;

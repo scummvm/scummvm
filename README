@@ -315,6 +315,7 @@ simon games.
     Common:
         Ctrl-z OR Alt-x        - quit
         Keyboard Arrow Keys    - simulate mouse movement
+        Ctrl-f                 - runs in fast mode.
         Ctrl-Alt 1-7           - Switch between graphics filters
         Ctrl-Alt 1             - Switch beetwen bilinear and non-linear filtering [OpenGL backend]
         Ctrl-Alt 2             - Don't fit the game in the whole screen (black borders) [OpenGL backend]
@@ -323,7 +324,6 @@ simon games.
 
     Scumm:
         Ctrl 0-9 and Alt 0-9   - load and save game state
-        Ctrl-f                 - runs in fast mode.
         Ctrl-g                 - runs in really REALLY fast mode.
         Ctrl-d                 - starts the debugger.
         Ctrl-s                 - shows memory consumption.
