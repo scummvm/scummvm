@@ -387,6 +387,12 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 
 			runGame(detector, system);
 
+			// There are some command-line options that it's
+			// unlikely that we want to preserve now that we're
+			// going to start a different game.
+			ConfMan.removeKey("boot_param", ConfMan.kTransientDomain);
+			ConfMan.removeKey("save_slot", ConfMan.kTransientDomain);
+
 			// PluginManager::instance().unloadPlugins();
 			// PluginManager::instance().loadPlugins();
                 	launcherDialog(detector, system);
