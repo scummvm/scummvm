@@ -881,12 +881,8 @@ void Cutaway::run(char *nextFilename) {
 
 		if (_roomFade) {
 			_vm->update();
-			int end = 223;
-			if (Logic::isIntroRoom(_vm->logic()->currentRoom())) {
-				end = 255;
-			}
 			BobSlot *j = _vm->graphics()->bob(0);
-			_vm->display()->palFadeIn(0, end, _vm->logic()->currentRoom(), j->active, j->x, j->y);
+			_vm->display()->palFadeIn(_vm->logic()->currentRoom(), j->active, j->x, j->y);
 			_roomFade = false;
 		}
 

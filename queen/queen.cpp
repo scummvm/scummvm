@@ -314,17 +314,14 @@ int QueenEngine::go() {
 			if (_logic->currentRoom() == _logic->newRoom()) {
 				_logic->newRoom(0);
 			}
+		} else if (_logic->joeWalk() == JWM_EXECUTE) {
+			_logic->joeWalk(JWM_NORMAL);
+			_command->executeCurrentAction();
 		} else {
-			if (_logic->joeWalk() == JWM_EXECUTE) {
-				_logic->joeWalk(JWM_NORMAL);
-				_command->executeCurrentAction();
-			} else {
-				_logic->joeWalk(JWM_NORMAL);
-				update(true);
-			}
+			_logic->joeWalk(JWM_NORMAL);
+			update(true);
 		}
 	}
-	
 	return 0;
 }
 

@@ -244,7 +244,9 @@ enum {
 
 	FAYE_HEAD                 =  37,
 	AZURA_HEAD                = 106,
-	FRANK_HEAD                = 107
+	FRANK_HEAD                = 107,
+	
+	ROOM_JOURNAL              = 200 // dummy value to keep Display methods happy
 };
 
 

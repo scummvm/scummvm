@@ -46,8 +46,8 @@ public:
 	void palSetJoeDress();
 	void palSetJoeNormal();
 	void palSetPanel();
-	void palFadeIn(int start, int end, uint16 roomNum, bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
-	void palFadeOut(int start, int end, uint16 roomNum);
+	void palFadeIn(uint16 roomNum, bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
+	void palFadeOut(uint16 roomNum);
 	void palGreyPanel();
 	void palScroll(int start, int end);
 	void palCustomColors(uint16 roomNum);
@@ -56,6 +56,9 @@ public:
 	void palCustomLightsOff(uint16 roomNum);
 	void palCustomLightsOn(uint16 roomNum);
 	void palSetAllDirty() { _pal.dirtyMin = 0; _pal.dirtyMax = 255; }
+
+	int getNumColorsForRoom(uint16 room) const;
+	bool isPalFadingDisabled(uint16 room) const;
 
 	void screenMode(int comPanel, bool inCutaway);
 

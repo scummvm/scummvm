@@ -72,9 +72,6 @@ public:
 		_newRoom = room; 
 	}
 
-	static bool isAltIntroRoom(uint16 room) { return room >= 90 && room <= 94; }
-	static bool isIntroRoom(uint16 room) { return room >= 115 && room <= 125; }
-
 	ObjectData *objectData(int index) const;
 	uint16 roomData(int room) const { return _roomData[room]; }
 	GraphicData *graphicData(int index) const { return &_graphicData[index]; }

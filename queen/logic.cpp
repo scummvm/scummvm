@@ -478,11 +478,7 @@ void Logic::eraseRoom() {
 	_vm->bankMan()->close(10);
 	_vm->bankMan()->close(12);
 
-	if (_currentRoom >= 114) {
-		_vm->display()->palFadeOut(0, 255, _currentRoom);
-	} else {
-		_vm->display()->palFadeOut(0, 223, _currentRoom);
-	}
+	_vm->display()->palFadeOut(_currentRoom);
 
 	// invalidates all persons animations
 	_vm->graphics()->clearPersonFrames();
@@ -544,8 +540,7 @@ void Logic::displayRoom(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	if (mode != RDM_NOFADE_JOE) {
 		_vm->update();
 		BobSlot *joe = _vm->graphics()->bob(0);
-		int end = isIntroRoom(_currentRoom) ? 255 : 223;
-		_vm->display()->palFadeIn(0, end, _currentRoom, joe->active, joe->x, joe->y);
+		_vm->display()->palFadeIn(_currentRoom, joe->active, joe->x, joe->y);
 	}
 	if (mode != RDM_FADE_NOJOE && joeX() != 0 && joeY() != 0) {
 		int16 jx = joeX();
@@ -1218,7 +1213,7 @@ void Logic::handlePinnacleRoom() {
 	joe->animating = piton->animating = false;
 
 	_vm->update();
-	_vm->display()->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
+	_vm->display()->palFadeIn(ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
@@ -1291,7 +1286,7 @@ void Logic::handlePinnacleRoom() {
 	// camera follows Joe again
 	_vm->graphics()->putCameraOnBob(0);
 
-	_vm->display()->palFadeOut(0, 223, ROOM_JUNGLE_PINNACLE);
+	_vm->display()->palFadeOut(ROOM_JUNGLE_PINNACLE);
 }
 
 void Logic::update() {
@@ -1821,7 +1816,7 @@ void Logic::asmScaleEnding() {
 	for (i = 0; i < 50; ++i) {
 		_vm->update();
 	}
-	_vm->display()->palFadeOut(0, 255, currentRoom());
+	_vm->display()->palFadeOut(_currentRoom);
 }
 
 void Logic::asmWaitForCarPosition() {

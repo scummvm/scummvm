@@ -51,11 +51,11 @@ void Journal::use() {
 	memset(_saveDescriptions, 0, sizeof(_saveDescriptions));
 	_vm->findGameStateDescriptions(_saveDescriptions);
 	_panelTextCount = 0;
-	_vm->display()->palFadeOut(0, 255, JOURNAL_ROOM);
+	_vm->display()->palFadeOut(_vm->logic()->currentRoom());
 	prepare();
 	redraw();
 	update();
-	_vm->display()->palFadeIn(0, 255, JOURNAL_ROOM);
+	_vm->display()->palFadeIn(ROOM_JOURNAL);
 
 	_quitCleanly = true;
 	_quit = false;
@@ -123,7 +123,7 @@ void Journal::prepare() {
 	_vm->grid()->setZone(GS_ROOM, ZN_VOICE_TOGGLE, 158 - 24, 155, 168, 164);
 	_vm->grid()->setZone(GS_ROOM, ZN_TEXT_TOGGLE, 125 - 16, 168, 135, 177);
 
-	_vm->display()->setupNewRoom("journal", JOURNAL_ROOM);
+	_vm->display()->setupNewRoom("journal", ROOM_JOURNAL);
 	_vm->bankMan()->load("journal.BBK", JOURNAL_BANK);
 	for (i = 1; i <= 20; ++i) {
 		int frameNum = JOURNAL_FRAMES + i;
@@ -141,7 +141,7 @@ void Journal::prepare() {
 void Journal::restore() {
 	_vm->display()->fullscreen(false);
 	_vm->display()->forceFullRefresh();
-
+	
 	_vm->logic()->joePos(_prevJoeX, _prevJoeY);
 	_vm->logic()->joeCutFacing(_vm->logic()->joeFacing());
 
@@ -157,7 +157,7 @@ void Journal::redraw() {
 }
 
 void Journal::update() {
-	_vm->graphics()->update(JOURNAL_ROOM);
+	_vm->graphics()->update(ROOM_JOURNAL);
 	if (_edit.enable) {
 		int16 x = 136 + _edit.posCursor;
 		int16 y = 9 + _currentSaveSlot * 13 + 8;
@@ -178,8 +178,7 @@ void Journal::hideBob(int bobNum) {
 }
 
 void Journal::drawSaveDescriptions() {
-	int i;
-	for (i = 0; i < SAVE_PER_PAGE; ++i) {
+	for (int i = 0; i < SAVE_PER_PAGE; ++i) {
 		int n = _currentSavePage * 10 + i;
 		char nb[4];
 		sprintf(nb, "%d", n + 1);
@@ -269,7 +268,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 		case ZN_REVIEW_ENTRY:
 			if (_saveDescriptions[currentSlot][0]) {
 				_vm->graphics()->clearBobs();
-				_vm->display()->palFadeOut(0, 223, JOURNAL_ROOM);
+				_vm->display()->palFadeOut(ROOM_JOURNAL);
 				_vm->music()->stopSong();
 				_vm->loadGameState(currentSlot);
 				_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);

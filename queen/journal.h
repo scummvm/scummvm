@@ -36,8 +36,7 @@ public:
   
 	enum {
 		JOURNAL_BANK   = 8,
-		JOURNAL_FRAMES = 40,
-		JOURNAL_ROOM   = 0 // dummy value to make Graphics methods happy
+		JOURNAL_FRAMES = 40
 	};
 
 	enum {

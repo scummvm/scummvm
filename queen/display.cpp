@@ -98,7 +98,7 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 	delete[] _dynalum.lumBuf;
 	_dynalum.lumBuf = NULL;
 
-	if (!(Logic::isAltIntroRoom(roomNum) || Logic::isIntroRoom(roomNum))) {
+	if (!isPalFadingDisabled(roomNum)) {
 		char filename[20];
 		sprintf(filename, "%s.msk", roomName);
 		if (_vm->resource()->fileExists(filename)) {
@@ -119,12 +119,12 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 
 	if (x < 0) {
 		x = 0;
-	} else if (x >= _bdWidth) {
+	} else if (x > _bdWidth) {
 		x = _bdWidth;
 	}
 	if (y < 0) {
 		y = 0;
-	} else if (y >= ROOM_ZONE_HEIGHT - 1) {
+	} else if (y > ROOM_ZONE_HEIGHT - 1) {
 		y = ROOM_ZONE_HEIGHT - 1;
 	}
 
@@ -191,54 +191,42 @@ void Display::palSetPanel() {
 	memcpy(_pal.screen + 144 * 3, _pal.panel, (256 - 144) * 3);
 }
 
-void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY) {
-	debug(9, "Display::palFadeIn(%d, %d)", start, end);
-	memcpy(_pal.screen, _pal.room, 256 * 3);
-	if (!(Logic::isAltIntroRoom(roomNum) || Logic::isIntroRoom(roomNum))) {
+void Display::palFadeIn(uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY) {
+	debug(9, "Display::palFadeIn(%d)", roomNum);
+	int n = getNumColorsForRoom(roomNum);
+	memcpy(_pal.screen, _pal.room, n * 3);
+	if (!isPalFadingDisabled(roomNum)) {
 		if (dynalum) {
 			dynalumUpdate(dynaX, dynaY);
 		}
-		int n = end - start + 1;
 		uint8 tempPal[256 * 3];
-		int i;
-		for (i = 0; i <= FADE_SPEED; ++i) {
-			int j = n * 3;
-			uint8 *outPal = tempPal + start * 3;
-			const uint8 *inPal = _pal.screen + start * 3;
-			while (j--) {
-				*outPal = *inPal * i / FADE_SPEED;
-				++outPal;
-				++inPal;
+		for (int i = 0; i <= FADE_SPEED; ++i) {
+			for (int j = 0; j < n * 3; ++j) {
+				tempPal[j] = _pal.screen[j] * i / FADE_SPEED;
 			}
-			palSet(tempPal, start, end, true);
+			palSet(tempPal, 0, n - 1, true);
 		}
 	}
-	_pal.dirtyMin = start;
-	_pal.dirtyMax = end;
+	_pal.dirtyMin = 0;
+	_pal.dirtyMax = n - 1;
 	_pal.scrollable = true;
 }
 
-void Display::palFadeOut(int start, int end, uint16 roomNum) {
-	debug(9, "Display::palFadeOut(%d, %d, %d)", start, end, roomNum);
+void Display::palFadeOut(uint16 roomNum) {
+	debug(9, "Display::palFadeOut(%d)", roomNum);
 	_pal.scrollable = false;
-	int n = end - start + 1;
-	if (Logic::isAltIntroRoom(roomNum) || Logic::isIntroRoom(roomNum)) {
-		memset(_pal.screen + start * 3, 0, n * 3);
-		palSet(_pal.screen, start, end, true);
+	int n = getNumColorsForRoom(roomNum);
+	if (isPalFadingDisabled(roomNum)) {
+		memset(_pal.screen, 0, n * 3);
+		palSet(_pal.screen, 0, n - 1, true);
 	} else {
 		uint8 tempPal[256 * 3];
-		memcpy(tempPal + start * 3, _pal.screen + start * 3, n * 3);
-		int i;
-		for (i = FADE_SPEED; i >= 0; --i) {
-			int j = n * 3;
-			uint8 *outPal = _pal.screen + start * 3;
-			const uint8 *inPal = tempPal + start * 3;
-			while (j--) {
-				*outPal = *inPal * i / FADE_SPEED;
-				++outPal;
-				++inPal;
+		memcpy(tempPal, _pal.screen, n * 3);
+		for (int i = FADE_SPEED; i >= 0; --i) {
+			for (int j = 0; j < n * 3; ++j) {
+				_pal.screen[j] = tempPal[j] * i / FADE_SPEED;
 			}
-			palSet(_pal.screen, start, end, true);
+			palSet(_pal.screen, 0, n - 1, true);
 		}
 	}
 }
@@ -560,6 +548,19 @@ void Display::palCustomLightsOn(uint16 roomNum) {
 	_pal.scrollable = true;
 }
 
+int Display::getNumColorsForRoom(uint16 room) const {
+	int n = 224;
+	if (room >= 114 && room <= 125) {
+		n = 256;
+	}
+	return n;
+}
+
+bool Display::isPalFadingDisabled(uint16 room) const {
+	// introduction rooms don't fade palette
+	return (room >= 90 && room <= 94) || (room >= 115 && room <= 125);
+}
+
 void Display::screenMode(int comPanel, bool inCutaway) {
 	debug(6, "Display::screenMode(%d, %d)", comPanel, inCutaway);
 
@@ -669,7 +670,11 @@ void Display::setupNewRoom(const char *name, uint16 room) {
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
 	readPCX(_backdropBuf, BACKDROP_W, pcxBuf + 128, _bdWidth, _bdHeight);
-	memcpy(_pal.room, pcxBuf + size - 768, Logic::isIntroRoom(room) ? 256 * 3 : 144 * 3);
+	int n = getNumColorsForRoom(room);
+	if (n != 256) {
+		n = 144;
+	}
+	memcpy(_pal.room, pcxBuf + size - 768, n * 3);
 	delete[] pcxBuf;
 
 	palCustomColors(room);
