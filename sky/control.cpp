@@ -512,6 +512,7 @@ void Control::doControlPanel(void) {
 uint16 Control::handleClick(ConResource *pButton) {
 
 	char quitDos[] = "Quit to DOS?";
+	char restart[] = "Restart?";
 
 	switch(pButton->_onClick) {
 	case DO_NOTHING:
@@ -570,7 +571,7 @@ uint16 Control::handleClick(ConResource *pButton) {
 		return QUIT_PANEL;
 	case RESTART:
 		animClick(pButton);
-		if (getYesNo(NULL)) {
+		if (getYesNo(restart)) {
 			restartGame();
 			return GAME_RESTORED;
 		} else
