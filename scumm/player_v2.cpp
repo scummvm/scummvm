@@ -310,8 +310,8 @@ static const int8 freqmod_table[0x502] = {
 };
 
 static const uint16  spk_freq_table[12] = {
-	36484, 34436, 32503, 30679, 29007, 27332, 
-	25798, 24350, 22983, 21693,  20476, 19326
+	36484, 34436, 32503, 30679, 28957, 27332, 
+	25798, 24350, 22983, 21693, 20476, 19326
 };
 
 static const uint16 pcjr_freq_table[12] = {
@@ -413,7 +413,7 @@ void Player_V2::set_master_volume (int vol) {
 	/* scale to int16, FIXME: find best value */
 	double out = vol * 128 / 3;
 	
-    /* build volume table (2dB per step) */
+	/* build volume table (2dB per step) */
 	for (int i = 0; i < 15; i++) {
 		/* limit volume to avoid clipping */
 		if (out > 0x7fff)
