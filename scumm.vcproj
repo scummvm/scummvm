@@ -308,6 +308,9 @@
 				RelativePath=".\scumm\intern.h">
 			</File>
 			<File
+				RelativePath=".\scumm\midiparser_ro.cpp">
+			</File>
+			<File
 				RelativePath=".\scumm\nut_renderer.cpp">
 			</File>
 			<File
