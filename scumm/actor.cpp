@@ -1039,7 +1039,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 
 	bcr->_shadow_mode = _shadowMode;
-	if (_vm->_features & GF_SMALL_HEADER)
+	if ((_vm->_features & GF_SMALL_HEADER) || _vm->_heversion >= 71)
 		bcr->_shadow_table = NULL;
 	else if (_vm->_heversion == 70)
 		bcr->_shadow_table = _vm->_HEV7ActorPalette;
