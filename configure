@@ -567,7 +567,7 @@ else
 fi
 echo "$_zlib"
 
-echocheck "libmpeg2 >= 0.4.0"
+echocheck "libmpeg2 >= 0.3.2"
 if test "$_mpeg2" = auto ; then
   _mpeg2=no
   cat > $TMPC << EOF
@@ -578,13 +578,13 @@ int main(void) {
 	mpeg2_state_t state;
 
         #ifdef MPEG2_RELEASE
-		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 4, 0))
+		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 3, 2))
 			return 0;
 	#endif
 	return 1;
 }
 EOF
-  cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
+  cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO && _mpeg2=yes
 fi
 if test "$_mpeg2" = yes ; then
   _def_mpeg2='#define USE_MPEG2'
