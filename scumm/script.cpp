@@ -345,9 +345,7 @@ int Scumm::readVar(uint var) {
 		if (var == 490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
 			copyprotbypassed = true;
 			var = 518;
-		}
-
-		if (var == 179 && (_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && !copyprotbypassed) {
+		} else if (var == 179 && (_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && !copyprotbypassed) {
 			copyprotbypassed = true;
 			var = 266;
 		}
@@ -377,7 +375,13 @@ int Scumm::readVar(uint var) {
 			var &= 0x0FFF;
 			var >>= 4;
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
-			return (_vars[ var ] & ( 1 << b ) ) ? 1 : 0;
+#if defined(BYPASS_COPY_PROT)
+			if (var == 94 && _gameId == GID_INDY3 && !copyprotbypassed) {
+				copyprotbypassed = true;
+				return 0;
+			} else
+#endif
+				return (_vars[ var ] & ( 1 << b ) ) ? 1 : 0;
 		}
 
 		var &= 0x7FFF;
