@@ -108,7 +108,8 @@ void waitForTimer(Scumm *s, int msec_delay) {
 				} else if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
 					s->resourceStats();
 				} else if (event.key.keysym.sym==SDLK_RETURN && event.key.keysym.mod&KMOD_ALT) {
-					SDL_WM_ToggleFullScreen(screen);
+					if(!SDL_WM_ToggleFullScreen(screen))
+						warning("Full screen failed");
 				}
 
 	#if defined(__APPLE__)
@@ -470,8 +471,6 @@ int music_thread(Scumm *s) {
 
 void initGraphics(Scumm *s, bool fullScreen) {
 	SDL_AudioSpec desired;
-
-	putenv("SDL_VIDEODRIVER=windib");
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
