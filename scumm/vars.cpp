@@ -53,7 +53,6 @@ void ScummEngine::setupScummVars() {
 	VAR_LAST_SOUND = 23;
 	VAR_CUTSCENEEXIT_KEY = 24;
 	VAR_TALK_ACTOR = 25;
-	VAR_CAMERA_FAST_X = 26;
 	VAR_SCROLL_SCRIPT = 27;
 	VAR_ENTRY_SCRIPT = 28;
 	VAR_ENTRY_SCRIPT2 = 29;
@@ -80,7 +79,6 @@ void ScummEngine::setupScummVars() {
 	VAR_FIXEDDISK = 51;
 	VAR_CURSORSTATE = 52;
 	VAR_USERPUT = 53;
-	VAR_V5_TALK_STRING_Y = 54;
 	VAR_SOUNDRESULT = 56;
 	VAR_TALKSTOP_KEY = 57;
 	VAR_59 = 59;
@@ -142,6 +140,8 @@ void ScummEngine_v5::setupScummVars() {
 	ScummEngine::setupScummVars();
 
 	VAR_CURRENT_LIGHTS = 9;
+	VAR_CAMERA_FAST_X = 26;
+	VAR_V5_TALK_STRING_Y = 54;
 }
 
 void ScummEngine_v6::setupScummVars() {
@@ -303,20 +303,16 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_MAINMENU_KEY = 65;
 	VAR_TALKSTOP_KEY = 67;
 
-
-	// FIXME - HACK: no clue where these really are located, but we need to put them
-	// somewhere so that camera clamping works. So for now just assume they are on their
-	// V6 positions (which is somewhat unlikely, considering most stuff moved...)
-	VAR_CAMERA_MIN_X = 101;
-	VAR_CAMERA_MAX_X = 102;
-	VAR_CAMERA_MIN_Y = 103;
-	VAR_CAMERA_MAX_Y = 104;
-	VAR_CAMERA_THRESHOLD_X = 105;
-	VAR_CAMERA_THRESHOLD_Y = 106;
-	VAR_CAMERA_SPEED_X = 107;
-	VAR_CAMERA_SPEED_Y = 108;
-	VAR_CAMERA_ACCEL_X = 109;
-	VAR_CAMERA_ACCEL_Y = 110;
+	VAR_CAMERA_MIN_X = 116;
+	VAR_CAMERA_MAX_X = 117;
+	VAR_CAMERA_MIN_Y = 118;
+	VAR_CAMERA_MAX_Y = 119;
+	VAR_CAMERA_SPEED_X = 120;
+	VAR_CAMERA_SPEED_Y = 121;
+	VAR_CAMERA_ACCEL_X = 122;
+	VAR_CAMERA_ACCEL_Y = 123;
+	VAR_CAMERA_THRESHOLD_X = 124;
+	VAR_CAMERA_THRESHOLD_Y = 125;
 
 	VAR_CUSTOMSCALETABLE = 111;	// FIXME - guess
 
