@@ -35,7 +35,6 @@
 #define FB_WNOISE 0x12000       /* feedback for white noise */
 #define FB_PNOISE 0x08000       /* feedback for periodic noise */
 
-
 const uint8 note_lengths[] = {
 	0,  
 	0,  0,  2,
@@ -884,11 +883,31 @@ void Player_V2::generateSpkSamples(int16 *data, int len) {
 }
 
 void Player_V2::generatePCjrSamples(int16 *data, int len) {
-	int i;
+	int i, j;
 	int freq, vol;
 
 	memset(data, 0, sizeof(int16) * len);
 	bool hasdata = false;
+
+	for (i = 1; i < 3; i++) {
+		freq = channels[i].d.freq >> 6;
+		if (channels[i].d.volume && channels[i].d.time_left) {
+			for (j = 0; j < i; j++) {
+				if (channels[j].d.volume
+				    && channels[j].d.time_left
+				    && freq == (channels[j].d.freq >> 6)) {
+					/* HACK: this channel is playing at
+					 * the same frequency as another.
+					 * Synchronize it to the same phase to
+					 * prevent interference. 
+					 */
+					_timer_count[i] = _timer_count[j];
+					_timer_output ^= (1 << i) &
+						(_timer_output ^ _timer_output << (i - j));
+				}
+			}
+		}
+	}
 
 	for (i = 0; i < 4; i++) {
 		freq = channels[i].d.freq >> 6;
