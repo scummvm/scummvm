@@ -256,7 +256,6 @@ void Imuse::callback() {
 						continue;
 				}
 
-				int bits = _sound->getBits(track->soundHandle);
 				int channels = _sound->getChannels(track->soundHandle);
 
 				int32 mixer_size = track->iteration / _callbackFps;
