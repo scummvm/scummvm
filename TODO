@@ -142,6 +142,9 @@ GUI
 * LAUNCHER: add more options to game target options dialog 
 * Remove hardcoded 320x200 assumptions, use game screen size
 * Add ability to scale GUI (ie. to make the GUI less tiny in COMI)
+* Remove code duplication between EditTextWidget and ListWidget (i.e. text 
+  editing code; maybe we can factor that out into a common base or aggregate
+  class... not yet sure).
 
 Game Detector
 =============
