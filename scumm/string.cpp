@@ -854,6 +854,7 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 	char *buf = _languageBuffer;
 
 	if (_gameId == GID_CMI) {
+#ifndef __DC__
 		if ((text[0] == '/') && (_existLanguageFile == true)) {
 			struct langIndexNode target;
 			struct langIndexNode *found = NULL;
@@ -897,6 +898,7 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 				}
 			}
 		}
+#endif
 		byte *pointer = (byte *)strchr((char *)text + 1, '/');
 		if (pointer != NULL) {
 			pointer++;
