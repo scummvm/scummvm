@@ -503,6 +503,11 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 
 	while (1) {
 		chr = src[num++];
+		if (_heversion >= 99 && chr == '[') {
+			while (src[num++] != ']');
+			continue;
+		}
+
 		if (chr == 0)
 			break;
 		if (chr == 0xFF) {
