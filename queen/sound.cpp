@@ -94,7 +94,7 @@ void Sound::playSfx(const char *base) {
 }
 
 void Sound::playSong(int16 songNum) {
-	if (songNum == STOP_MUSIC) {
+	if (songNum <= 0) {
 		_vm->music()->stopSong();
 		return;
 	}
