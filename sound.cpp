@@ -352,7 +352,7 @@ void Mixer::setImuseSeq(int state) {
 			return;
 		}
 
-		Sound *newSound = ResourceLoader::instance()->loadSound(e->filename);
+		newSound = ResourceLoader::instance()->loadSound(e->filename);
 		if (newSound == NULL) {
 			warning("Could not find music file %s\n", e->filename);
 			return;
