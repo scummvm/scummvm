@@ -690,6 +690,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;
+	_heV7DiskOffsets = NULL;
+	_heV7RoomOffsets = NULL;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
