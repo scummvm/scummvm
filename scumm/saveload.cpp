@@ -286,9 +286,9 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	// Restore the virtual screens and force a fade to black.
 	initScreens(kMainVirtScreen, _screenHeight);
-	VirtScreen *vs = &virtscr[0];
-	memset(vs->screenPtr + vs->xstart, 0, vs->width * vs->height);
-	vs->setDirtyRange(0, vs->height);
+	VirtScreen *vs = &virtscr[kMainVirtScreen];
+	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
+	vs->setDirtyRange(0, vs->h);
 	updateDirtyScreen(kMainVirtScreen);
 	updatePalette();
 	initScreens(sb, sh);

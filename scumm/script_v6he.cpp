@@ -771,16 +771,13 @@ void ScummEngine_v6he::virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2
 	debug(1, "ScummEngine_v6he::virtScreenLoad(%d, %d, %d, %d, %d)", resIdx, x1, y1, x2, y2);
 	vsUnpackCtx ctx;
 	memset(&ctx, 0, sizeof(ctx));
-	int vs = 0; // XXX gdi_virtScreen = 0;
+	VirtScreen &vs = virtscr[kMainVirtScreen]; // XXX gdi_virtScreen = 0;
 
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resIdx);
 	virtScreenLoadUnpack(&ctx, ah->data);
 	for (int j = y1; j <= y2; ++j) {
-		uint32 yoff = (j - virtscr[kMainVirtScreen].topline) * 320;		
-		uint8 *p1 = getResourceAddress(rtBuffer, vs + 1);
-		p1 += yoff + virtscr[kMainVirtScreen].xstart + x1;
-		uint8 *p2 = getResourceAddress(rtBuffer, vs + 5);
-		p2 += yoff + virtscr[kMainVirtScreen].xstart + x1;
+		uint8 *p1 = vs.getPixels(x1, j - vs.topline);
+		uint8 *p2 = vs.getBackPixels(x1, j - vs.topline);
 		if (x2 >= x1) {
 			uint32 w = x2 - x1 + 1;
 			while (w--) {
@@ -852,12 +849,10 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 int ScummEngine_v6he::virtScreenSave(byte *dst, int x1, int y1, int x2, int y2) {
 	debug(1, "ScummEngine_v6he::virtScreenSave(%d, %d, %d, %d)", x1, y1, x2, y2);
 	int packedSize = 0;
-	int vs = 0; // XXX = gdi_virtScreen;
+	VirtScreen &vs = virtscr[kMainVirtScreen]; // XXX gdi_virtScreen = 0;
 
 	for (int j = y1; j <= y2; ++j) {
-		uint8 *p = getResourceAddress(rtBuffer, vs + 5);
-		p += virtscr[kMainVirtScreen].xstart;
-		p += (j - virtscr[kMainVirtScreen].topline) * 320 + x1;
+		uint8 *p = vs.getBackPixels(x1, j - vs.topline);
 		
 		int size = virtScreenSavePack(dst, p, x2 - x1 + 1, 0);
 		if (dst != 0) {

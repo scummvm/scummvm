@@ -1940,7 +1940,7 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	if (_virtualMouse.y < 0)
 		_virtualMouse.y = -1;
-	if (_virtualMouse.y >= virtscr[0].height)
+	if (_virtualMouse.y >= virtscr[0].h)
 		_virtualMouse.y = -1;
 
 	//

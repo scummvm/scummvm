@@ -79,7 +79,7 @@ enum VirtScreenNumber {
  * Each of these virtual screens has a fixed number or id (see also
  * \ref VirtScreenNumber).
  */
-struct VirtScreen {
+struct VirtScreen : Graphics::Surface {
 	/**
 	 * The unique id of this screen (corresponds to its position in the
 	 * ScummEngine:virtscr array).
@@ -96,12 +96,6 @@ struct VirtScreen {
 	 */
 	uint16 topline;
 	
-	/** Width of the virtual screen (currently always identical to _screenWidth). */
-	uint16 width;
-
-	/** Height of the virtual screen. */
-	uint16 height;
-
 	/**
 	 * Horizontal scroll offset, tells how far the screen is scrolled to the
 	 * right. Only used for the main screen. After all, verbs and the
@@ -118,12 +112,6 @@ struct VirtScreen {
 	 * and useIm01Cursor()), we keep it (at least for now).
 	 */
 	bool hasTwoBuffers;
-	
-	/**
-	 * Pointer to the screen's data buffer. This is where the content of
-	 * the screen is stored. Just as one would expect :-).
-	 */
-	byte *screenPtr;
 	
 	/**
 	 * Pointer to the screen's back buffer, if it has one (see also
@@ -166,6 +154,14 @@ struct VirtScreen {
 			tdirty[i] = top;
 			bdirty[i] = bottom;
 		}
+	}
+	
+	byte *getPixels(int x, int y) const {
+		return (byte *)pixels + xstart + y * pitch + x;
+	}
+
+	byte *getBackPixels(int x, int y) const {
+		return (byte *)backBuf + xstart + y * pitch + x;
 	}
 };
 

@@ -84,7 +84,7 @@ void ScummEngine::grabCursor(int x, int y, int w, int h) {
 		return;
 	}
 
-	grabCursor(vs->screenPtr + (y - vs->topline) * vs->width + x, w, h);
+	grabCursor((byte *)vs->pixels + (y - vs->topline) * vs->pitch + x, w, h);
 
 }
 
@@ -119,15 +119,17 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 	w *= 8;
 	h *= 8;
 
-	dst = buf = (byte *) malloc(w * h);
-	src = vs->screenPtr + vs->xstart;
+	// Backup the screen content
+	dst = buf = (byte *)malloc(w * h);
+	src = vs->getPixels(0, 0);
 
 	for (i = 0; i < h; i++) {
 		memcpy(dst, src, w);
 		dst += w;
-		src += vs->width;
+		src += vs->pitch;
 	}
 
+	// Do some drawing
 	drawBox(0, 0, w - 1, h - 1, 0xFF);
 
 	vs->hasTwoBuffers = false;
@@ -136,14 +138,16 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 	vs->hasTwoBuffers = true;
 	gdi.enableZBuffer();
 
-	grabCursor(vs->screenPtr + vs->xstart, w, h);
+	// Grab the data we just drew and setup the cursor with it
+	grabCursor(vs->getPixels(0, 0), w, h);
 
+	// Restore the screen content
 	src = buf;
-	dst = vs->screenPtr + vs->xstart;
+	dst = vs->getPixels(0, 0);
 
 	for (i = 0; i < h; i++) {
 		memcpy(dst, src, w);
-		dst += vs->width;
+		dst += vs->pitch;
 		src += w;
 	}
 

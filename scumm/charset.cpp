@@ -980,7 +980,7 @@ void CharsetRendererV3::printChar(int chr) {
 		_textScreenID = vs->number;
 	}
 	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
-		dest_ptr = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
+		dest_ptr = vs->getPixels(_left, drawTop);
 	} else {
 		dest_ptr = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
 	}
@@ -1096,14 +1096,14 @@ void CharsetRendererClassic::printChar(int chr) {
 		_textScreenID = vs->number;
 	}
 	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
-		dst = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
+		dst = vs->getPixels(_left, drawTop);
 	} else {
 		dst = (byte *)_vm->gdi._textSurface.pixels + (_top - _vm->_screenTop) * _vm->gdi._textSurface.pitch + _left;
 	}
 
 	back = dst;
 	if (_blitAlso && vs->hasTwoBuffers) {
-		dst = vs->backBuf + vs->xstart + drawTop * vs->width + _left;
+		dst = vs->getBackPixels(_left, drawTop);
 	}
 
 	if (is2byte) {
@@ -1120,11 +1120,12 @@ void CharsetRendererClassic::printChar(int chr) {
 		// once to each of the two buffers. That should hypothetically yield
 		// identical results, though I didn't try it and right now I don't know
 		// any spots where I can test this...
+		warning("This is broken?!");
 		int h = height;
 		do {
 			memcpy(back, dst, width);
-			back += vs->width;
-			dst += vs->width;
+			back += vs->pitch;
+			dst += vs->pitch;
 		} while (--h);
 	}
 	
@@ -1151,7 +1152,7 @@ void CharsetRendererClassic::drawBitsN(VirtScreen *vs, byte *dst, const byte *sr
 	bits = *src++;
 	numbits = 8;
 
-	for (y = 0; y < height && y + drawTop < vs->height; y++) {
+	for (y = 0; y < height && y + drawTop < vs->h; y++) {
 		for (x = 0; x < width; x++) {
 			color = (bits >> (8 - bpp)) & 0xFF;
 			
@@ -1166,7 +1167,7 @@ void CharsetRendererClassic::drawBitsN(VirtScreen *vs, byte *dst, const byte *sr
 				numbits = 8;
 			}
 		}
-		dst += vs->width - width;
+		dst += vs->pitch - width;
 	}
 }
 
@@ -1174,22 +1175,22 @@ void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src
 	int y, x;
 	byte bits = 0;
 
-	for (y = 0; y < height && y + drawTop < vs->height; y++) {
+	for (y = 0; y < height && y + drawTop < vs->h; y++) {
 		for (x = 0; x < width; x++) {
 			if ((x % 8) == 0)
 				bits = *src++;
 			if ((bits & revBitMask[x % 8]) && y + drawTop >= 0) {
 				if (_dropShadow) {
 					*(dst + 1) = _shadowColor;
-					*(dst + vs->width) = _shadowColor;
-					*(dst + vs->width + 1) = _shadowColor;
+					*(dst + vs->pitch) = _shadowColor;
+					*(dst + vs->pitch + 1) = _shadowColor;
 				}					
 				*dst = _color;
 			}
 			dst++;
 		}
 
-		dst += vs->width - width;
+		dst += vs->pitch - width;
 	}
 }
 
@@ -1274,11 +1275,8 @@ void CharsetRendererNut::printChar(int chr) {
 	}
 	if (_ignoreCharsetMask) {
 		VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
-		s.pixels = vs->screenPtr + vs->xstart + _vm->_screenTop * vs->width;
-		s.w = vs->width;
-		s.h = vs->height;
-		s.pitch = vs->width;
-		s.bytesPerPixel = 1;
+		s = *vs;
+		s.pixels = vs->getPixels(0, _vm->_screenTop);
 	} else {
 		s = _vm->gdi._textSurface;
 	}

@@ -1515,9 +1515,9 @@ void ScummEngine::drawBlastObject(BlastObject *eo) {
 		bdd.srcheight = READ_LE_UINT16(&((const BompHeader *)bomp)->old.height);
 	}
 	
-	bdd.out = vs->screenPtr + vs->xstart;
-	bdd.outwidth = vs->width;
-	bdd.outheight = vs->height;
+	bdd.out = vs->getPixels(0, 0);
+	bdd.outwidth = vs->w;
+	bdd.outheight = vs->h;
 	if (_version == 8) {
 		bdd.dataptr = bomp + 8;	// Why this? See also useBompCursor
 	} else {
@@ -1570,17 +1570,17 @@ void ScummEngine::removeBlastObject(BlastObject *eo) {
 
 	r = eo->rect;
 
-	if (r.bottom < 0 || r.right < 0 || r.top > vs->height || r.left > vs->width)
+	if (r.bottom < 0 || r.right < 0 || r.top > vs->h || r.left > vs->w)
 		return;
 
 	if (r.top < 0)
 		r.top = 0;
-	if (r.bottom > vs->height)
-		r.bottom = vs->height;
+	if (r.bottom > vs->h)
+		r.bottom = vs->h;
 	if (r.left < 0)
 		r.left = 0;
-	if (r.right > vs->width)
-		r.right = vs->width;
+	if (r.right > vs->w)
+		r.right = vs->w;
 
 	left_strip = r.left / 8;
 	right_strip = (r.right - 1) / 8;

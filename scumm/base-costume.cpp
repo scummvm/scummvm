@@ -30,13 +30,13 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &c
 	byte result = 0;
 
 	if (drawVirScr)
-		_outptr = _vm->getResourceAddress(rtBuffer, 5) + vs.xstart;
+		_outptr = _vm->virtscr[0].getPixels(0, 0);
 	else
-		_outptr = vs.screenPtr + vs.xstart;
+		_outptr = vs.getPixels(0, 0);
 
-	_outwidth = vs.width;
-	_outheight = vs.height;
-	_numStrips = vs.width / 8;
+	_outwidth = vs.w;
+	_outheight = vs.h;
+	_numStrips = _outwidth / 8;
 
 	if (_vm->_version == 1) {
 		_xmove = 0;

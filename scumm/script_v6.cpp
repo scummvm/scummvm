@@ -2739,12 +2739,12 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 
 		{
 			VirtScreen *vs = &virtscr[0];
-			if (args[1] < 0 || args[1] >= vs->width || args[2] < 0 || args[2] >= vs->height) {
+			if (args[1] < 0 || args[1] >= vs->w || args[2] < 0 || args[2] >= vs->h) {
 				// FIXME: Until we know what to do in this case...
-				warning("o6_kernelGetFunctions:113: asking for pixel (%d, %d) outside of %dx%d screen", args[1], args[2], vs->width, vs->height);
+				warning("o6_kernelGetFunctions:113: asking for pixel (%d, %d) outside of %dx%d screen", args[1], args[2], vs->w, vs->h);
 				push(0);
 			} else
-				push(vs->screenPtr[args[1] + args[2] * vs->width]);
+				push(*((byte *)vs->pixels + args[1] + args[2] * vs->pitch));
 		}
 		break;
 	case 115:
@@ -3123,9 +3123,7 @@ void ScummEngine_v6::o6_getPixel() {
 		return;
 	}
 
-	int offset = (y - vs->topline) * vs->width + x + vs->xstart;
-
-	byte area = *(vs->screenPtr + offset);
+	byte area = *vs->getPixels(x, y - vs->topline);
 	push(area);
 }
 

@@ -705,7 +705,7 @@ static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color) {
 		x2 = right - 1;
 
 
-	ptr = vs->screenPtr + x1 + y * vs->width;
+	ptr = (byte *)vs->pixels + x1 + y * vs->pitch;
 
 	while (x1++ <= x2) {
 		*ptr++ = color;
@@ -784,7 +784,7 @@ void ScummDebugger::drawBox(int box) {
 
 	VirtScreen *vs = _vm->findVirtScreen(coords.ul.y);
 	if (vs != NULL)
-		_vm->markRectAsDirty(vs->number, 0, vs->width, 0, vs->height);
+		_vm->markRectAsDirty(vs->number, 0, vs->w, 0, vs->h);
 	_vm->drawDirtyScreenParts();
 	_vm->_system->updateScreen();
 }

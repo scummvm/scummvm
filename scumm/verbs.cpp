@@ -126,7 +126,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 		if (v2_mouseover_box != -1) {
 			rect = v2_mouseover_boxes[v2_mouseover_box].rect;
 
-			dst = ptr = vs->screenPtr + vs->xstart + rect.top * vs->width + rect.left;
+			dst = ptr = vs->getPixels(rect.left, rect.top);
 
 			// Remove highlight.
 			for (y = rect.height() - 1; y >= 0; y--) {
@@ -134,7 +134,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 					if (dst[x] == v2_mouseover_boxes[v2_mouseover_box].hicolor)
 						dst[x] = v2_mouseover_boxes[v2_mouseover_box].color;
 				}
-				dst += vs->width;
+				dst += vs->pitch;
 			}
 
 			markRectAsDirty(kVerbVirtScreen, rect);
@@ -143,7 +143,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 		if (new_box != -1) {
 			rect = v2_mouseover_boxes[new_box].rect;
 
-			dst = ptr = vs->screenPtr + vs->xstart + rect.top * vs->width + rect.left;
+			dst = ptr = vs->getPixels(rect.left, rect.top);
 
 			// Apply highlight
 			for (y = rect.height() - 1; y >= 0; y--) {
@@ -151,7 +151,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 					if (dst[x] == v2_mouseover_boxes[new_box].color)
 						dst[x] = v2_mouseover_boxes[new_box].hicolor;
 				}
-				dst += vs->width;
+				dst += vs->pitch;
 			}
 
 			markRectAsDirty(kVerbVirtScreen, rect);
@@ -209,9 +209,9 @@ void ScummEngine::redrawV2Inventory() {
 
 	// Clear on all invocations
 	inventoryBox.top = vs->topline + 32;
-	inventoryBox.bottom = vs->topline + virtscr[2].height;
+	inventoryBox.bottom = vs->topline + virtscr[2].h;
 	inventoryBox.left = 0;
-	inventoryBox.right = vs->width;
+	inventoryBox.right = vs->w;
 	restoreBG(inventoryBox);
 
 	_string[1].charset = 1;

@@ -2762,8 +2762,8 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 				// For now, we force a redraw of the screen background. This 
 				// Makes the Zak end credits work more or less correctly.
 				VirtScreen *vs = &virtscr[0];
-				restoreBG(Common::Rect(0,vs->topline, vs->width, vs->topline + vs->height));
-				virtscr[0].setDirtyRange(0, virtscr[0].height);
+				restoreBG(Common::Rect(0,vs->topline, vs->w, vs->topline + vs->h));
+				vs->setDirtyRange(0, vs->h);
 				updateDirtyScreen(kMainVirtScreen);
 				
 				if (byte_2FCCF) {

@@ -972,8 +972,6 @@ protected:
 	void dissolveEffect(int width, int height);
 	void scrollEffect(int dir);
 
-	void blit(byte *dst, const byte *src, int w, int h);
-
 	// bomp
 public:
 	byte *_bompActorPalettePtr;

@@ -28,6 +28,8 @@
 
 namespace Scumm {
 
+static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
+
 struct StripTable {
 	int offsets[160];
 	int run[160];
@@ -235,14 +237,16 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	}
 
 	vs->number = slot;
-	vs->width = width;
+	vs->w = width;
 	vs->topline = top;
-	vs->height = height;
+	vs->h = height;
 	vs->hasTwoBuffers = twobufs;
 	vs->xstart = 0;
 	vs->backBuf = NULL;
+	vs->bytesPerPixel = 1;
+	vs->pitch = width;
 
-	size = vs->width * vs->height;
+	size = vs->pitch * vs->h;
 	if (scrollable) {
 		// Allow enough spaces so that rooms can be up to 4 resp. 8 screens
 		// wide. To achieve (horizontal!) scrolling, we use a neat trick:
@@ -251,15 +255,15 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 		// memory overhead (namely for every pixel we want to scroll, we need
 		// one additional byte in the buffer).
 		if (_version >= 7) {
-			size += width * 8;
+			size += vs->pitch * 8;
 		} else {
-			size += width * 4;
+			size += vs->pitch * 4;
 		}
 	}
 
 	createResource(rtBuffer, slot + 1, size);
-	vs->screenPtr = getResourceAddress(rtBuffer, slot + 1);
-	memset(vs->screenPtr, 0, size);			// reset background
+	vs->pixels = getResourceAddress(rtBuffer, slot + 1);
+	memset(vs->pixels, 0, size);			// reset background
 
 	if (twobufs) {
 		vs->backBuf = createResource(rtBuffer, slot + 5, size);
@@ -275,7 +279,7 @@ VirtScreen *ScummEngine::findVirtScreen(int y) {
 	int i;
 
 	for (i = 0; i < 3; i++, vs++) {
-		if (y >= vs->topline && y < vs->topline + vs->height) {
+		if (y >= vs->topline && y < vs->topline + vs->h) {
 			return vs;
 		}
 	}
@@ -288,13 +292,13 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 
 	if (left > right || top > bottom)
 		return;
-	if (top > vs->height || bottom < 0)
+	if (top > vs->h || bottom < 0)
 		return;
 
 	if (top < 0)
 		top = 0;
-	if (bottom > vs->height)
-		bottom = vs->height;
+	if (bottom > vs->h)
+		bottom = vs->h;
 
 	if (virt == kMainVirtScreen && dirtybit) {
 		lp = left / 8 + _screenStartStrip;
@@ -355,8 +359,8 @@ void ScummEngine::drawDirtyScreenParts() {
 		// Small side note: most of our GFX code relies on this identity:
 		// gdi._numStrips * 8 == _screenWidth == vs->width
 		VirtScreen *vs = &virtscr[kMainVirtScreen];
-		gdi.drawStripToScreen(vs, 0, vs->width, 0, vs->height);
-		vs->setDirtyRange(vs->height, 0);
+		gdi.drawStripToScreen(vs, 0, vs->w, 0, vs->h);
+		vs->setDirtyRange(vs->h, 0);
 	} else {
 		updateDirtyScreen(kMainVirtScreen);
 	}
@@ -381,7 +385,7 @@ void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
  */
 void Gdi::updateDirtyScreen(VirtScreen *vs) {
 	// Do nothing for unused virtual screens
-	if (vs->height == 0)
+	if (vs->h == 0)
 		return;
 
 	int i;
@@ -392,7 +396,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 		if (vs->bdirty[i]) {
 			const int top = vs->tdirty[i];
 			const int bottom = vs->bdirty[i];
-			vs->tdirty[i] = vs->height;
+			vs->tdirty[i] = vs->h;
 			vs->bdirty[i] = 0;
 			if (i != (_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
 				// Simple optimizations: if two or more neighbouring strips
@@ -419,11 +423,11 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	if (bottom <= top)
 		return;
 
-	if (top >= vs->height)
+	if (top >= vs->h)
 		return;
 
-	assert(top >= 0 && bottom <= vs->height);	// Paranoia checks
-	assert(x >= 0 && width <= vs->width);
+	assert(top >= 0 && bottom <= vs->h);	// Paranoia checks
+	assert(x >= 0 && width <= vs->w);
 	assert(_textSurface.pixels);
 	assert(_compositeBuf);
 
@@ -438,7 +442,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	const int height = bottom - top;
 	
 	// Compute screen etc. buffer pointers 
-	const byte *src = vs->screenPtr + (x + vs->xstart) + top * vs->width;
+	const byte *src = vs->getPixels(x, top);
 	byte *dst = _compositeBuf + x + y * _vm->_screenWidth;
 	const byte *text = (byte *)_textSurface.pixels + x + y * _textSurface.pitch;
 
@@ -450,7 +454,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 			else
 				dst[w] = text[w];
 		}
-		src += vs->width;
+		src += vs->pitch;
 		dst += _vm->_screenWidth;
 		text += _textSurface.pitch;
 	}
@@ -601,7 +605,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 		room = getResourceAddress(rtRoom, _roomResource);
 
 	gdi.drawBitmap(room + _IM00_offs,
-					&virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0, _roomStrips);
+					&virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0, _roomStrips);
 }
 
 void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
@@ -616,19 +620,18 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if ((vs = findVirtScreen(rect.top)) == NULL)
 		return;
 
-	if (rect.left > vs->width)
+	if (rect.left > vs->w)
 		return;
 
 	// Convert 'rect' to local (virtual screen) coordinates
 	rect.top -= vs->topline;
 	rect.bottom -= vs->topline;
 
-	rect.clip(vs->width, vs->height);
+	rect.clip(vs->w, vs->h);
 
 	markRectAsDirty(vs->number, rect, USAGE_BIT_RESTORED);
 
-	const int offset = rect.top * vs->width + vs->xstart + rect.left;
-	screenBuf = vs->screenPtr + offset;
+	screenBuf = vs->getPixels(rect.left, rect.top);
 
 	int height = rect.height();
 	int width = rect.width();
@@ -637,7 +640,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 		return;
 
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
-		blit(screenBuf, vs->backBuf + offset, width, height);
+		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
 			// Note: At first sight it may look as if this could
 			// be optimized to (rect.right - rect.left) / 8 and
@@ -653,7 +656,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	} else {
 		while (height--) {
 			memset(screenBuf, backColor, width);
-			screenBuf += vs->width;
+			screenBuf += vs->pitch;
 		}
 	}
 }
@@ -672,26 +675,26 @@ void CharsetRenderer::restoreCharsetBg() {
 		// currently covered by the charset mask.
 
 		VirtScreen *vs = &_vm->virtscr[_textScreenID];
-		if (!vs->height)
+		if (!vs->h)
 			return;
 
-		_vm->markRectAsDirty(vs->number, Common::Rect(vs->width, vs->height), USAGE_BIT_RESTORED);
+		_vm->markRectAsDirty(vs->number, Common::Rect(vs->w, vs->h), USAGE_BIT_RESTORED);
 	
-		byte *screenBuf = vs->screenPtr + vs->xstart;
+		byte *screenBuf = vs->getPixels(0, 0);
 
 		if (vs->hasTwoBuffers && _vm->_currentRoom != 0 && _vm->isLightOn()) {
-			const byte *backBuf = vs->backBuf + vs->xstart;
+			const byte *backBuf = vs->getBackPixels(0, 0);
 
 			if (vs->number == kMainVirtScreen) {
 				// Clean out the charset mask
 				memset(_vm->gdi._textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
 			} else {
 				// Restore from back buffer
-				_vm->blit(screenBuf, backBuf, vs->width, vs->height);
+				blit(screenBuf, vs->pitch, backBuf, vs->pitch, vs->w, vs->h);
 			}
 		} else {
 			// Clear area
-			memset(screenBuf, 0, vs->height * vs->width);
+			memset(screenBuf, 0, vs->h * vs->pitch);
 		}
 	}
 }
@@ -714,22 +717,22 @@ byte *Gdi::getMaskBuffer(int x, int y, int z) {
 #pragma mark --- Misc ---
 #pragma mark -
 
-void ScummEngine::blit(byte *dst, const byte *src, int w, int h) {
+static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
 	
 	// TODO: This function currently always assumes that srcPitch == dstPitch
 	// and furthermore that both equal _screenWidth.
+	//if (w==_screenWidth)
 
-	if (w==_screenWidth)
-		memcpy (dst, src, w*h);
-	else
-	{
+	if (w == srcPitch && w == dstPitch) {
+		memcpy(dst, src, w*h);
+	} else {
 		do {
 			memcpy(dst, src, w);
-			dst += _screenWidth;
-			src += _screenWidth;
+			dst += dstPitch;
+			src += srcPitch;
 		} while (--h);
 	}
 }
@@ -758,45 +761,45 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	// Clip the coordinates
 	if (x < 0)
 		x = 0;
-	else if (x >= vs->width)
+	else if (x >= vs->w)
 		return;
 
 	if (x2 < 0)
 		return;
-	else if (x2 > vs->width)
-		x2 = vs->width;
+	else if (x2 > vs->w)
+		x2 = vs->w;
 
 	if (y < 0)
 		y = 0;
-	else if (y > vs->height)
+	else if (y > vs->h)
 		return;
 
 	if (y2 < 0)
 		return;
-	else if (y2 > vs->height)
-		y2 = vs->height;
+	else if (y2 > vs->h)
+		y2 = vs->h;
 	
 	markRectAsDirty(vs->number, x, x2, y, y2);
 
-	backbuff = vs->screenPtr + vs->xstart + y * vs->width + x;
+	backbuff = vs->getPixels(x, y);
 
 	width = x2 - x;
 	height = y2 - y;
 	if (color == -1) {
 		if (vs->number != kMainVirtScreen)
 			error("can only copy bg to main window");
-		bgbuff = vs->backBuf + vs->xstart + y * vs->width + x;
-		blit(backbuff, bgbuff, width, height);
+		bgbuff = vs->getBackPixels(x, y);
+		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
 	} else {
 		while (height--) {
 			memset(backbuff, color, width);
-			backbuff += vs->width;
+			backbuff += vs->pitch;
 		}
 	}
 }
 
 void ScummEngine::drawFlashlight() {
-	int i, j, offset, x, y;
+	int i, j, x, y;
 	VirtScreen *vs = &virtscr[kMainVirtScreen];
 
 	// Remove the flash light first if it was previously drawn
@@ -808,7 +811,7 @@ void ScummEngine::drawFlashlight() {
 			i = _flashlight.h;
 			do {
 				memset(_flashlight.buffer, 0, _flashlight.w);
-				_flashlight.buffer += vs->width;
+				_flashlight.buffer += vs->pitch;
 			} while (--i);
 		}
 		_flashlight.isDrawn = false;
@@ -841,32 +844,31 @@ void ScummEngine::drawFlashlight() {
 		_flashlight.x = gdi._numStrips * 8 - _flashlight.w;
 	if (_flashlight.y < 0)
 		_flashlight.y = 0;
-	else if (_flashlight.y + _flashlight.h> vs->height)
-		_flashlight.y = vs->height - _flashlight.h;
+	else if (_flashlight.y + _flashlight.h> vs->h)
+		_flashlight.y = vs->h - _flashlight.h;
 
 	// Redraw any actors "under" the flashlight
 	for (i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
 		assert(0 <= i && i < gdi._numStrips);
 		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
 		vs->tdirty[i] = 0;
-		vs->bdirty[i] = vs->height;
+		vs->bdirty[i] = vs->h;
 	}
 
 	byte *bgbak;
-	offset = _flashlight.y * vs->width + vs->xstart + _flashlight.x;
-	_flashlight.buffer = vs->screenPtr + offset;
-	bgbak = vs->backBuf + offset;
+	_flashlight.buffer = vs->getPixels(_flashlight.x, _flashlight.y);
+	bgbak = vs->getBackPixels(_flashlight.x, _flashlight.y);
 
-	blit(_flashlight.buffer, bgbak, _flashlight.w, _flashlight.h);
+	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h);
 
 	// Round the corners. To do so, we simply hard-code a set of nicely
 	// rounded corners.
 	static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
 	int minrow = 0;
 	int maxcol = _flashlight.w - 1;
-	int maxrow = (_flashlight.h - 1) * vs->width;
+	int maxrow = (_flashlight.h - 1) * vs->pitch;
 
-	for (i = 0; i < 8; i++, minrow += vs->width, maxrow -= vs->width) {
+	for (i = 0; i < 8; i++, minrow += vs->pitch, maxrow -= vs->pitch) {
 		int d = corner_data[i];
 
 		for (j = 0; j < d; j++) {
@@ -906,9 +908,9 @@ void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, cons
 	memset(dither_table, 0, sizeof(dither_table));
 
 	if (vs->hasTwoBuffers)
-		dst = vs->backBuf + (y * _numStrips + x) * 8;
+		dst = vs->backBuf + y * vs->pitch + x * 8;
 	else
-		dst = vs->screenPtr + (y * _numStrips + x) * 8;
+		dst = (byte *)vs->pixels + y * vs->pitch + x * 8;
 
 	mask_ptr = getMaskBuffer(x, y, 1);
 
@@ -951,7 +953,7 @@ void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, cons
 			}
 			if (left <= theX && theX < right) {
 				*dst = *ptr_dither_table++;
-				dst += vs->width;
+				dst += vs->pitch;
 			}
 		}
 		if (left <= theX && theX < right) {
@@ -1099,11 +1101,11 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	}
 
 	bottom = y + height;
-	if (bottom > vs->height) {
-		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->height);
+	if (bottom > vs->h) {
+		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->h);
 	}
 
-	_vertStripNextInc = height * vs->width - 1;
+	_vertStripNextInc = height * vs->pitch - 1;
 
 	sx = x - vs->xstart / 8;
 
@@ -1132,7 +1134,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		if (bottom > vs->bdirty[sx])
 			vs->bdirty[sx] = bottom;
 
-		backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
+		backbuff_ptr = (byte *)vs->pixels + (y * _numStrips + x) * 8;
 		if (vs->hasTwoBuffers)
 			bgbak_ptr = vs->backBuf + (y * _numStrips + x) * 8;
 		else
@@ -1267,7 +1269,7 @@ next_iter:
 void Gdi::resetBackground(int top, int bottom, int strip) {
 	VirtScreen *vs = &_vm->virtscr[0];
 	byte *backbuff_ptr, *bgbak_ptr;
-	int offs, numLinesToProcess;
+	int numLinesToProcess;
 
 	assert(0 <= strip && strip < _numStrips);
 
@@ -1277,9 +1279,8 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	offs = top * vs->width + vs->xstart + strip * 8;
-	bgbak_ptr = vs->backBuf + offs;
-	backbuff_ptr = vs->screenPtr + offs;
+	bgbak_ptr = vs->getBackPixels(strip * 8, top);
+	backbuff_ptr = vs->getPixels(strip * 8, top);
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
@@ -2297,7 +2298,7 @@ void ScummEngine::fadeOut(int effect) {
 	
 		// Fill screen 0 with black
 		
-		memset(vs->screenPtr + vs->xstart, 0, vs->width * vs->height);
+		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
 	
 		// Fade to black with the specified effect, if any.
 		switch (effect) {
@@ -2313,7 +2314,7 @@ void ScummEngine::fadeOut(int effect) {
 			break;
 		case 129:
 			// Just blit screen 0 to the display (i.e. display will be black)
-			vs->setDirtyRange(0, vs->height);
+			vs->setDirtyRange(0, vs->h);
 			updateDirtyScreen(kMainVirtScreen);
 			break;
 		case 134:
@@ -2350,7 +2351,7 @@ void ScummEngine::transitionEffect(int a) {
 	int i, j;
 	int bottom;
 	int l, t, r, b;
-	const int height = MIN((int)virtscr[0].height, _screenHeight);
+	const int height = MIN((int)virtscr[0].h, _screenHeight);
 
 	for (i = 0; i < 16; i++) {
 		delta[i] = transitionEffects[a].deltaTable[i];
@@ -2418,16 +2419,16 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	// since we're only dealing with relatively small images, it shouldn't
 	// be too bad.
 
-	w = vs->width / width;
-	h = vs->height / height;
+	w = vs->w / width;
+	h = vs->h / height;
 
 	// When used correctly, vs->width % width and vs->height % height
 	// should both be zero, but just to be safe...
 
-	if (vs->width % width)
+	if (vs->w % width)
 		w++;
 
-	if (vs->height % height)
+	if (vs->h % height)
 		h++;
 
 	offsets = (int *) malloc(w * h * sizeof(int));
@@ -2441,7 +2442,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	if (width == 1 && height == 1) {
 		// Optimized case for pixel-by-pixel dissolve
 
-		for (i = 0; i < vs->width * vs->height; i++)
+		for (i = 0; i < vs->w * vs->h; i++)
 			offsets[i] = i;
 
 		for (i = 1; i < w * h; i++) {
@@ -2454,9 +2455,9 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	} else {
 		int *offsets2;
 
-		for (i = 0, x = 0; x < vs->width; x += width)
-			for (y = 0; y < vs->height; y += height)
-				offsets[i++] = y * vs->width + x;
+		for (i = 0, x = 0; x < vs->w; x += width)
+			for (y = 0; y < vs->h; y += height)
+				offsets[i++] = y * vs->pitch + x;
 
 		offsets2 = (int *) malloc(w * h * sizeof(int));
 		if (offsets2 == NULL) {
@@ -2493,9 +2494,9 @@ void ScummEngine::dissolveEffect(int width, int height) {
 		blits_before_refresh *= 2;
 
 	for (i = 0; i < w * h; i++) {
-		x = offsets[i] % vs->width;
-		y = offsets[i] / vs->width;
-		_system->copyRectToScreen(vs->screenPtr + vs->xstart + y * vs->width + x, vs->width, x, y + vs->topline, width, height);
+		x = offsets[i] % vs->pitch;
+		y = offsets[i] / vs->pitch;
+		_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
 
 		if (++blits >= blits_before_refresh) {
 			blits = 0;
@@ -2519,9 +2520,9 @@ void ScummEngine::scrollEffect(int dir) {
 	int step;
 
 	if ((dir == 0) || (dir == 1))
-		step = vs->height;
+		step = vs->h;
 	else
-		step = vs->width;
+		step = vs->w;
 
 	step = (step * kPictureDelay) / kScrolltime;
 
@@ -2529,12 +2530,12 @@ void ScummEngine::scrollEffect(int dir) {
 	case 0:
 		//up
 		y = 1 + step;
-		while (y < vs->height) {
-			_system->move_screen(0, -step, vs->height);
-			_system->copyRectToScreen(vs->screenPtr + vs->xstart + (y - step) * vs->width,
-				vs->width,
-				0, vs->height - step,
-				vs->width, step);
+		while (y < vs->h) {
+			_system->move_screen(0, -step, vs->h);
+			_system->copyRectToScreen(vs->getPixels(0, y - step),
+				vs->pitch,
+				0, vs->h - step,
+				vs->w, step);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2544,12 +2545,12 @@ void ScummEngine::scrollEffect(int dir) {
 	case 1:
 		// down
 		y = 1 + step;
-		while (y < vs->height) {
-			_system->move_screen(0, step, vs->height);
-			_system->copyRectToScreen(vs->screenPtr + vs->xstart + vs->width * (vs->height-y),
-				vs->width,
+		while (y < vs->h) {
+			_system->move_screen(0, step, vs->h);
+			_system->copyRectToScreen(vs->getPixels(0, vs->h - y),
+				vs->pitch,
 				0, 0,
-				vs->width, step);
+				vs->w, step);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2559,12 +2560,12 @@ void ScummEngine::scrollEffect(int dir) {
 	case 2:
 		// left
 		x = 1 + step;
-		while (x < vs->width) {
-			_system->move_screen(-step, 0, vs->height);
-			_system->copyRectToScreen(vs->screenPtr + vs->xstart + x - step,
-				vs->width,
-				vs->width - step, 0,
-				step, vs->height);
+		while (x < vs->w) {
+			_system->move_screen(-step, 0, vs->h);
+			_system->copyRectToScreen(vs->getPixels(x - step, 0),
+				vs->pitch,
+				vs->w - step, 0,
+				step, vs->h);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2574,12 +2575,12 @@ void ScummEngine::scrollEffect(int dir) {
 	case 3:
 		// right
 		x = 1 + step;
-		while (x < vs->width) {
-			_system->move_screen(step, 0, vs->height);
-			_system->copyRectToScreen(vs->screenPtr + vs->xstart + vs->width - x,
-				vs->width,
+		while (x < vs->w) {
+			_system->move_screen(step, 0, vs->h);
+			_system->copyRectToScreen(vs->getPixels(vs->w - x, 0),
+				vs->pitch,
 				0, 0,
-				step, vs->height);
+				step, vs->h);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
