@@ -318,15 +318,70 @@ public:
 
 
 
-	/** @name Overlay */
+	/**
+	 * @name Overlay
+	 * In order to be able to display dialogs atop the game graphics, backends
+	 * must provide an overlay mode.
+	 * 
+	 * While the game graphics are always 8 bpp, the overlay can be 8 or 16 bpp.
+	 * Depending on which it is, OverlayColor is 8 or 16 bit.
+	 *
+	 * For 'coolness' we usually want to have an overlay which is blended over
+	 * the game graphics. On backends which support alpha blending, this is
+	 * no issue; but on other systems (in particular those which only support
+	 * 8bpp), this needs some trickery.
+	 * 
+	 * Essentially, we fake (alpha) blending on these systems by copying the
+	 * game graphics into the overlay buffer, then manually compose whatever
+	 * graphics we want to show in the overlay.
+	 */
 	//@{
+	
+	/** Activate the overlay mode. */
 	virtual void showOverlay() = 0;
+
+	/** Deactivate the overlay mode. */
 	virtual void hideOverlay() = 0;
+
+	/**
+	 * Reset the overlay.
+	 *
+	 * After calling this method while the overlay mode is active, the user
+	 * should be seeing only the game graphics. How this is achieved depends
+	 * on how the backend implements the overlay. Either it sets all pixels of
+	 * the overlay to be transparent (when alpha blending is used).
+	 *
+	 * Or, in case of fake alpha blending, it might just put a copy of the
+	 * current game graphics screen into the overlay.
+	 */
 	virtual void clearOverlay() = 0;
+	
+	/**
+	 * Copy the content of the overlay into a buffer provided by the caller.
+	 * This is used to implement fake alpha blending.
+	 */
 	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
+	
+	/**
+	 * Blit a graphics buffer to the overlay. 
+	 * In a sense, this is the reverse of grabOverlay.
+	 * @see copyRectToScreen
+	 * @see grabOverlay
+	 */
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
+	
+	/**
+	 * Return the height of the overlay.
+	 * @see getHeight
+	 */
 	virtual int16 getOverlayHeight()  { return getHeight(); }
+
+	/**
+	 * Return the width of the overlay.
+	 * @see getWidth
+	 */
 	virtual int16 getOverlayWidth()   { return getWidth(); }
+
 	virtual int screenToOverlayX(int x) { return x; }
 	virtual int screenToOverlayY(int y) { return y; }
 	virtual int overlayToScreenX(int x) { return x; }
@@ -345,6 +400,7 @@ public:
 	 * implementation generates a 16 bit color value, in the 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
 	 * @see colorToRGB
+	 * @see ARGBToColor
 	 */
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) {
 		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
@@ -356,6 +412,7 @@ public:
 	 * implementation takes a 16 bit color value and assumes it to be in 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
 	 * @see RGBToColor
+	 * @see colorToARGB
 	 */
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 		r = (((color >> 11) & 0x1F) << 3);
@@ -369,6 +426,7 @@ public:
 	 * implementation generates a 16 bit color value, in the 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
 	 * @see colorToRGB
+	 * @see RGBToColor
 	 */
 	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
 		return RGBToColor(r, g, b);
@@ -379,7 +437,8 @@ public:
 	 * be 8bit, 16bit or 32bit, depending on the target system. The default
 	 * implementation takes a 16 bit color value and assumes it to be in 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @see RGBToColor
+	 * @see ARGBToColor
+	 * @see colorToRGB
 	 */
 	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
 		colorToRGB(color, r, g, b);
