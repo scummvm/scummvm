@@ -61,22 +61,22 @@ private:
 
 
 char* WindowsFilesystemNode::toAscii(TCHAR *x) {
-static char asciiString[MAX_PATH];
 
 #ifndef UNICODE
 	return (char*)x;
-#else
+#else	
+	static char asciiString[MAX_PATH];
 	WideCharToMultiByte(CP_ACP, 0, x, _tcslen(x) + 1, asciiString, sizeof(asciiString), NULL, NULL);
 	return asciiString;
 #endif
 }
 
 TCHAR* WindowsFilesystemNode::toUnicode(char *x) {
-static TCHAR unicodeString[MAX_PATH];
 
 #ifndef UNICODE
 	return (TCHAR*)x;
 #else
+	static TCHAR unicodeString[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString));
 	return unicodeString;
 #endif
