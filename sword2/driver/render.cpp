@@ -613,7 +613,7 @@ int32 RenderParallax(_parallax *p, int16 layer)
 
 #if PROFILING == 1
 
-	LARGE_INTEGER startTime, endTime;
+	long int startTime, endTime;
 
 	QueryPerformanceCounter(&startTime);
 
@@ -1005,8 +1005,8 @@ int32 CopyScreenBuffer(void)
 	HRESULT			hr;
 
 #if PROFILING == 1
-	static LARGE_INTEGER	endTime;
-	LARGE_INTEGER			startTime;
+	static long int	endTime;
+	long int	startTime;
 	int32					lastEndTime, profileTotalTime;
 #endif
 

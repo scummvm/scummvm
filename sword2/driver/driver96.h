@@ -1255,12 +1255,6 @@ typedef int BOOL;
 #define TRUE 1
 #define FALSE 0
 
-#ifdef WIN32
-#undef LARGE_INTEGER
-#endif
-
-typedef long int LARGE_INTEGER;
-
 //
 //	Structure definitions
 //	---------------------
@@ -1656,7 +1650,7 @@ extern int32	renderCaps;			// Flags which determine how to render the scene.
 extern uint8	palCopy[256][4];	// Current palette.
 //-----------------------------------------------------------------------------
 
-extern LARGE_INTEGER myTimers[10][2];
+extern long int myTimers[10][2];
 
 
 #ifdef __cplusplus

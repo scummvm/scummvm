@@ -239,7 +239,7 @@ int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 wind
     DDSCAPS             ddscaps;
     HRESULT             hr;
 	DDCAPS				helCaps;
-	LARGE_INTEGER timerFrequency;
+	long int timerFrequency;
 	int32 capsError = 0;
 
 

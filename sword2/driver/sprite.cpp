@@ -282,7 +282,7 @@ extern int32 profileDecompression;
 
 
 #define DEBUG_TIMING 0
-//LARGE_INTEGER myTimers[10][2];
+//long int myTimers[10][2];
 
 
 char shitColourTable[1024];
@@ -354,7 +354,7 @@ int32 DecompressRLE256(uint8 *dest, uint8 *source, int32 decompSize)
 	int32 rv;
 
 #if PROFILING == 1
-	LARGE_INTEGER startTime, endTime;
+	long int startTime, endTime;
 	QueryPerformanceCounter(&startTime);
 #endif
 
@@ -464,7 +464,7 @@ int32 DecompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTa
 	int32 rv;
 
 #if PROFILING == 1
-	LARGE_INTEGER startTime, endTime;
+	long int startTime, endTime;
 	QueryPerformanceCounter(&startTime);
 #endif
 
@@ -1499,7 +1499,7 @@ int32 DrawSprite(_spriteInfo *s)
 /*
 
 #if PROFILING == 1
-	LARGE_INTEGER startTime, endTime;
+	long int startTime, endTime;
 
 	QueryPerformanceCounter(&startTime);
 #endif
