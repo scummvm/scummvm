@@ -1031,13 +1031,6 @@ load_game:
 			clearClickedStatus();
 		}
 
-#if 1
-		// FIXME - MM / Zak hack
-		if ((_features & GF_AFTER_V2) && (_mouseButStat & MBS_LEFT_CLICK)) {
-			_scummVars[32] = 2;
-			printf("mouse click\n");
-		}
-#endif
 
 		if (!_verbRedraw && _cursor.state > 0) {
 			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
@@ -1860,6 +1853,22 @@ int Scumm::getKeyInput() {
 		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
 //    VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed&msClicked) != 0;
 		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
+	} else if (_features & GF_AFTER_V2) {
+		// Store the input type. So far we can't distinguise
+		// between 1, 3 and 5.
+		// 1) Verb	2) Scene	3) Inv.		4) Key
+		// 5) Sentence Bar
+
+		if  (_mouseButStat & MBS_LEFT_CLICK) {
+			VirtScreen *zone = findVirtScreen(mouse.y);
+
+			if (zone->number == 0)		// Clicked in scene
+				_scummVars[32] = 2;
+			else if (zone->number == 2) 	// Clicked in verb/sentence
+				_scummVars[32] = 1;
+
+		} else if (_lastKeyHit) 		// Key Input
+			_scummVars[32] = 4;
 	}
 
 	_leftBtnPressed &= ~msClicked;
