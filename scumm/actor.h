@@ -119,7 +119,8 @@ public:
 		number = 0;
 		needRedraw = needBgReset = costumeNeedsInit = visible = false;
 		flip = false;
-		speedx = speedy = 0;
+		speedx = 8;
+		speedy = 2;
 		frame = 0;
 		walkbox = 0;
 		animProgress = 0;
