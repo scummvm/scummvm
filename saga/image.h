@@ -37,8 +37,6 @@ namespace Saga {
 struct IMAGE_HEADER {
 	int width;
 	int height;
-	int unknown4;
-	int unknown6;
 };
 
 } // End of namespace Saga

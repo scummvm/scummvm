@@ -109,3 +109,9 @@ Tile.h
  tilePlatform.highestPixel ISO_METATILE_ENTRY.highest_pixel
  tilePlatform.vBits        ISO_METATILE_ENTRY.v_bits
  tilePlatform.uBits        ISO_METATILE_ENTRY.u_bits
+
+Resource.h
+==========
+ PicHeader.width           IMAGE_HEADER.width
+ PicHeader.height          IMAGE_HEADER.height
+
