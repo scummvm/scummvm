@@ -658,7 +658,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 	_maxHeapThreshold = 0;
 	_minHeapThreshold = 0;
-	memset(_localScriptList, 0, sizeof(_localScriptList));
+	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
 	_scriptPointer = NULL;
 	_scriptOrgPointer = NULL;
 	_opcode = 0;
@@ -2020,7 +2020,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 void ScummEngine::initRoomSubBlocks() {
 	int i;
 	const byte *ptr;
-	byte *roomptr, *searchptr, *roomResPtr, *roomImagePtr = 0;
+	byte *roomptr, *searchptr, *roomResPtr = 0;
 	const RoomHeader *rmhd;
 
 	_ENCD_offs = 0;
@@ -2029,21 +2029,11 @@ void ScummEngine::initRoomSubBlocks() {
 	_CLUT_offs = 0;
 	_PALS_offs = 0;
 
-	nukeResource(rtMatrix, 1);
-	nukeResource(rtMatrix, 2);
-
-	for (i = 1; i < res.num[rtScaleTable]; i++)
-		nukeResource(rtScaleTable, i);
-
-	memset(_localScriptList, 0, sizeof(_localScriptList));
-
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 
 	// Determine the room and room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
-	if (_heversion >= 70)
-		roomImagePtr = getResourceAddress(rtRoomImage, _roomResource);
-	else if (_version == 8)
+	if (_version == 8)
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 	if (!roomptr || !roomResPtr)
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
@@ -2097,6 +2087,7 @@ void ScummEngine::initRoomSubBlocks() {
 	} else if (_features & GF_SMALL_HEADER) {
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
 	} else if (_heversion >= 70) {
+		byte *roomImagePtr = getResourceAddress(rtRoomImage, _roomResource);
 		_IM00_offs = findResource(MKID('IM00'), roomImagePtr) - roomImagePtr;
 	} else {
 		_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
@@ -2147,6 +2138,8 @@ void ScummEngine::initRoomSubBlocks() {
 	//
 	// Load box data
 	//
+	nukeResource(rtMatrix, 1);
+	nukeResource(rtMatrix, 2);
 	if (_features & GF_SMALL_HEADER) {
 		if (_version <= 2)
 			ptr = roomptr + *(roomptr + 0x15);
@@ -2204,6 +2197,9 @@ void ScummEngine::initRoomSubBlocks() {
 	//
 	// Load scale data
 	//
+	for (i = 1; i < res.num[rtScaleTable]; i++)
+		nukeResource(rtScaleTable, i);
+
 	if (_features & GF_OLD_BUNDLE)
 		ptr = 0;
 	else
@@ -2241,6 +2237,8 @@ void ScummEngine::initRoomSubBlocks() {
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 	searchptr = roomResPtr;
 
+	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
+
 	if (_features & GF_OLD_BUNDLE) {
 		int num_objects = *(roomResPtr + 20);
 		int num_sounds;
@@ -2261,7 +2259,7 @@ void ScummEngine::initRoomSubBlocks() {
 			while (*ptr) {
 				int id = *ptr;
 
-				_localScriptList[id - _numGlobalScripts] = READ_LE_UINT16(ptr + 1);
+				_localScriptOffsets[id - _numGlobalScripts] = READ_LE_UINT16(ptr + 1);
 				ptr += 3;
 	
 				if (_dumpScripts) {
@@ -2271,12 +2269,12 @@ void ScummEngine::initRoomSubBlocks() {
 					// HACK: to determine the sizes of the local scripts, we assume that
 					// a) their order in the data file is the same as in the index
 					// b) the last script at the same time is the last item in the room "header"
-					int len = - (int)_localScriptList[id - _numGlobalScripts] + _resourceHeaderSize;
+					int len = - (int)_localScriptOffsets[id - _numGlobalScripts] + _resourceHeaderSize;
 					if (*ptr)
 						len += READ_LE_UINT16(ptr + 1);
 					else
 						len += READ_LE_UINT16(roomResPtr);
-					dumpResource(buf, id, roomResPtr + _localScriptList[id - _numGlobalScripts] - _resourceHeaderSize, len);
+					dumpResource(buf, id, roomResPtr + _localScriptOffsets[id - _numGlobalScripts] - _resourceHeaderSize, len);
 				}
 			}
 		}
@@ -2293,7 +2291,7 @@ void ScummEngine::initRoomSubBlocks() {
 				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
 
-			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
+			_localScriptOffsets[id - _numGlobalScripts] = ptr + 1 - roomptr;
 		}
 	} else if (_heversion >= 90) {
 		ResourceIterator localScriptIterator2(searchptr, false);
@@ -2305,7 +2303,7 @@ void ScummEngine::initRoomSubBlocks() {
 			id = READ_LE_UINT32(ptr);
 
 			checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
-			_localScriptList[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
+			_localScriptOffsets[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
 
 			if (_dumpScripts) {
 				char buf[32];
@@ -2321,7 +2319,7 @@ void ScummEngine::initRoomSubBlocks() {
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 
 			id = ptr[0];
-			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
+			_localScriptOffsets[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
 
 			if (_dumpScripts) {
 				char buf[32];
@@ -2340,14 +2338,14 @@ void ScummEngine::initRoomSubBlocks() {
 			if (_version == 8) {
 				id = READ_LE_UINT32(ptr);
 				checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
-				_localScriptList[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
+				_localScriptOffsets[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
 			} else if (_version == 7) {
 				id = READ_LE_UINT16(ptr);
 				checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
-				_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomResPtr;
+				_localScriptOffsets[id - _numGlobalScripts] = ptr + 2 - roomResPtr;
 			} else {
 				id = ptr[0];
-				_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
+				_localScriptOffsets[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
 			}
 
 			if (_dumpScripts) {

@@ -54,7 +54,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		debugC(DEBUG_SCRIPTS, "runScript(Global-%d) from %d-%d", script, 
 				       vm.slot[_currentScript].number, _roomResource);
 	} else {
-		scriptOffs = _localScriptList[script - _numGlobalScripts];
+		scriptOffs = _localScriptOffsets[script - _numGlobalScripts];
 		if (scriptOffs == 0)
 			error("Local script %d is not in room %d", script, _roomResource);
 		scriptType = WIO_LOCAL;
