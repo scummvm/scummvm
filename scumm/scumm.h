@@ -870,6 +870,7 @@ protected:
 	void actorFollowCamera(int act);
 
 	const byte *getPalettePtr();
+	void setupAmigaPalette();
 	void setupEGAPalette();
 	void setupC64Palette();
 	void setPalette(int pal);

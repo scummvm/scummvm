@@ -2527,6 +2527,25 @@ void Scumm::setShake(int mode) {
 #pragma mark --- Palette ---
 #pragma mark -
 
+void Scumm::setupAmigaPalette() {
+	setPalColor( 0,   0,   0,   0);
+	setPalColor( 1,   0,   0, 204);
+	setPalColor( 2,   0, 204,   0);
+	setPalColor( 3,   0, 204, 204);
+	setPalColor( 4, 204,   0,   0);
+	setPalColor( 5, 204,   0, 204);
+	setPalColor( 6, 204, 102,   0);
+	setPalColor( 7, 204, 204, 204);
+	setPalColor( 8, 102, 102, 102);
+	setPalColor( 9, 102, 102, 255);
+	setPalColor(10,  0,  255,   0);
+	setPalColor(11,   0, 255, 255);
+	setPalColor(12, 255, 153, 153);
+	setPalColor(13, 255,   0, 255);
+	setPalColor(14, 255, 255,   0);
+	setPalColor(15, 255, 255, 255);
+}
+
 void Scumm::setupEGAPalette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1,   0,   0, 168);
@@ -2534,16 +2553,14 @@ void Scumm::setupEGAPalette() {
 	setPalColor( 3,   0, 168, 168);
 //	setPalColor( 4, 168,   0,   0); // prev value
 	setPalColor( 4, 189,   0,   0);
-	setPalColor( 5, 168,   0, 168); // prev value
-//	setPalColor( 5, 189,   0, 189); // Amiga value
+	setPalColor( 5, 168,   0, 168); 
 	setPalColor( 6, 168,  84,   0);
 	setPalColor( 7, 168, 168, 168);
 	setPalColor( 8,  84,  84,  84);
 	setPalColor( 9,  84,  84, 252);
 	setPalColor(10,  84, 252,  84);
 	setPalColor(11,  84, 252, 252);
-	setPalColor(12, 252,  84,  84); // PC
-//	setPalColor(12, 252, 144, 144); // Amiga value gives nicer skin colour
+	setPalColor(12, 252,  84,  84);
 	setPalColor(13, 252,  84, 252);
 	setPalColor(14, 252, 252,  84);
 	setPalColor(15, 252, 252, 252);
