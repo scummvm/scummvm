@@ -115,7 +115,7 @@ LIB32=link.exe -lib
 # ADD LIB32 /nologo
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_MPEG2" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARMV4) Debug"
 
@@ -141,7 +141,7 @@ LIB32=link.exe -lib
 # ADD LIB32 /nologo
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Debug"
 
@@ -187,7 +187,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -239,7 +239,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clmips.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -291,7 +291,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=shcl.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -403,7 +403,9 @@ DEP_CPP__MOUS=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP__MOUS=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -435,10 +437,10 @@ DEP_CPP__MOUS=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP__MOUS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -472,7 +474,9 @@ DEP_CPP__MOUS=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP__MOUS=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -503,10 +507,10 @@ DEP_CPP__MOUS=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP__MOUS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -537,10 +541,10 @@ DEP_CPP__MOUS=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP__MOUS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -711,6 +715,7 @@ DEP_CPP_ANIMA=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
+	"..\..\..\graphics\animation.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\mp3.h"\
@@ -735,9 +740,11 @@ DEP_CPP_ANIMA=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_ANIMA=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\sword2\driver\graphics\animation.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Debug"
@@ -780,11 +787,11 @@ DEP_CPP_ANIMA=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -831,7 +838,9 @@ DEP_CPP_ANIMA=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMA=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -874,11 +883,11 @@ DEP_CPP_ANIMA=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -921,11 +930,11 @@ DEP_CPP_ANIMA=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -1117,7 +1126,9 @@ DEP_CPP_D_DRA=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_D_DRA=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1151,10 +1162,10 @@ DEP_CPP_D_DRA=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_D_DRA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -1190,7 +1201,9 @@ DEP_CPP_D_DRA=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_D_DRA=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -1223,10 +1236,10 @@ DEP_CPP_D_DRA=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_D_DRA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -1259,10 +1272,10 @@ DEP_CPP_D_DRA=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_D_DRA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -1442,7 +1455,9 @@ DEP_CPP_D_SOU=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_D_SOU=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1479,10 +1494,10 @@ DEP_CPP_D_SOU=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_D_SOU=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -1521,7 +1536,9 @@ DEP_CPP_D_SOU=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_D_SOU=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -1557,10 +1574,10 @@ DEP_CPP_D_SOU=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_D_SOU=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -1596,10 +1613,10 @@ DEP_CPP_D_SOU=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_D_SOU=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -1691,289 +1708,6 @@ SOURCE=..\..\..\sword2\driver\driver96.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\sword2\driver\keyboard.cpp
-
-!IF  "$(CFG)" == "sword2 - Win32 (WCE emulator) Release"
-
-NODEP_CPP_KEYBO=\
-	"..\..\..\sword2\driver\common\stdafx.h"\
-	"..\..\..\sword2\driver\sword2\sword2.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_KEYBO=\
-	"..\..\..\sword2\driver\common\stdafx.h"\
-	"..\..\..\sword2\driver\sword2\sword2.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARMV4) Release"
-
-DEP_CPP_KEYBO=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword2\build_display.h"\
-	"..\..\..\sword2\driver\driver96.h"\
-	"..\..\..\sword2\header.h"\
-	"..\..\..\sword2\icons.h"\
-	"..\..\..\sword2\layers.h"\
-	"..\..\..\sword2\memory.h"\
-	"..\..\..\sword2\mouse.h"\
-	"..\..\..\sword2\object.h"\
-	"..\..\..\sword2\save_rest.h"\
-	"..\..\..\sword2\sound.h"\
-	"..\..\..\sword2\sword2.h"\
-	
-NODEP_CPP_KEYBO=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_KEYBO=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword2\build_display.h"\
-	"..\..\..\sword2\driver\driver96.h"\
-	"..\..\..\sword2\header.h"\
-	"..\..\..\sword2\icons.h"\
-	"..\..\..\sword2\layers.h"\
-	"..\..\..\sword2\memory.h"\
-	"..\..\..\sword2\mouse.h"\
-	"..\..\..\sword2\object.h"\
-	"..\..\..\sword2\save_rest.h"\
-	"..\..\..\sword2\sound.h"\
-	"..\..\..\sword2\sword2.h"\
-	
-NODEP_CPP_KEYBO=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_KEYBO=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword2\build_display.h"\
-	"..\..\..\sword2\driver\driver96.h"\
-	"..\..\..\sword2\header.h"\
-	"..\..\..\sword2\icons.h"\
-	"..\..\..\sword2\layers.h"\
-	"..\..\..\sword2\memory.h"\
-	"..\..\..\sword2\mouse.h"\
-	"..\..\..\sword2\object.h"\
-	"..\..\..\sword2\save_rest.h"\
-	"..\..\..\sword2\sound.h"\
-	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_KEYBO=\
-	"..\..\..\common\extend.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
-
-DEP_CPP_KEYBO=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword2\build_display.h"\
-	"..\..\..\sword2\driver\driver96.h"\
-	"..\..\..\sword2\header.h"\
-	"..\..\..\sword2\icons.h"\
-	"..\..\..\sword2\layers.h"\
-	"..\..\..\sword2\memory.h"\
-	"..\..\..\sword2\mouse.h"\
-	"..\..\..\sword2\object.h"\
-	"..\..\..\sword2\save_rest.h"\
-	"..\..\..\sword2\sound.h"\
-	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_KEYBO=\
-	"..\..\..\common\extend.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_KEYBO=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword2\build_display.h"\
-	"..\..\..\sword2\driver\driver96.h"\
-	"..\..\..\sword2\header.h"\
-	"..\..\..\sword2\icons.h"\
-	"..\..\..\sword2\layers.h"\
-	"..\..\..\sword2\memory.h"\
-	"..\..\..\sword2\mouse.h"\
-	"..\..\..\sword2\object.h"\
-	"..\..\..\sword2\save_rest.h"\
-	"..\..\..\sword2\sound.h"\
-	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_KEYBO=\
-	"..\..\..\common\extend.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_KEYBO=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword2\build_display.h"\
-	"..\..\..\sword2\driver\driver96.h"\
-	"..\..\..\sword2\header.h"\
-	"..\..\..\sword2\icons.h"\
-	"..\..\..\sword2\layers.h"\
-	"..\..\..\sword2\memory.h"\
-	"..\..\..\sword2\mouse.h"\
-	"..\..\..\sword2\object.h"\
-	"..\..\..\sword2\save_rest.h"\
-	"..\..\..\sword2\sound.h"\
-	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_KEYBO=\
-	"..\..\..\common\extend.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_KEYBO=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword2\build_display.h"\
-	"..\..\..\sword2\driver\driver96.h"\
-	"..\..\..\sword2\header.h"\
-	"..\..\..\sword2\icons.h"\
-	"..\..\..\sword2\layers.h"\
-	"..\..\..\sword2\memory.h"\
-	"..\..\..\sword2\mouse.h"\
-	"..\..\..\sword2\object.h"\
-	"..\..\..\sword2\save_rest.h"\
-	"..\..\..\sword2\sound.h"\
-	"..\..\..\sword2\sword2.h"\
-	
-NODEP_CPP_KEYBO=\
-	"..\..\..\common\extend.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Release"
-
-DEP_CPP_KEYBO=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword2\build_display.h"\
-	"..\..\..\sword2\driver\driver96.h"\
-	"..\..\..\sword2\header.h"\
-	"..\..\..\sword2\icons.h"\
-	"..\..\..\sword2\layers.h"\
-	"..\..\..\sword2\memory.h"\
-	"..\..\..\sword2\mouse.h"\
-	"..\..\..\sword2\object.h"\
-	"..\..\..\sword2\save_rest.h"\
-	"..\..\..\sword2\sound.h"\
-	"..\..\..\sword2\sword2.h"\
-	
-NODEP_CPP_KEYBO=\
-	"..\..\..\common\extend.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\sword2\driver\menu.cpp
 
 !IF  "$(CFG)" == "sword2 - Win32 (WCE emulator) Release"
@@ -2062,7 +1796,9 @@ DEP_CPP_MENU_=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_MENU_=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2096,10 +1832,10 @@ DEP_CPP_MENU_=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MENU_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -2135,7 +1871,9 @@ DEP_CPP_MENU_=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MENU_=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -2168,10 +1906,10 @@ DEP_CPP_MENU_=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MENU_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -2204,10 +1942,10 @@ DEP_CPP_MENU_=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MENU_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -2371,7 +2109,9 @@ DEP_CPP_PALET=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_PALET=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2403,10 +2143,10 @@ DEP_CPP_PALET=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -2440,7 +2180,9 @@ DEP_CPP_PALET=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -2471,10 +2213,10 @@ DEP_CPP_PALET=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -2505,10 +2247,10 @@ DEP_CPP_PALET=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -2668,7 +2410,9 @@ DEP_CPP_RDWIN=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_RDWIN=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2701,10 +2445,10 @@ DEP_CPP_RDWIN=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RDWIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -2739,7 +2483,9 @@ DEP_CPP_RDWIN=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RDWIN=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -2771,10 +2517,10 @@ DEP_CPP_RDWIN=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RDWIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -2806,10 +2552,10 @@ DEP_CPP_RDWIN=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RDWIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -2964,6 +2710,7 @@ DEP_CPP_RENDE=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
+	"..\..\..\graphics\animation.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword2\build_display.h"\
 	"..\..\..\sword2\driver\animation.h"\
@@ -2982,9 +2729,11 @@ DEP_CPP_RENDE=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_RENDE=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\sword2\driver\graphics\animation.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Debug"
@@ -3020,11 +2769,11 @@ DEP_CPP_RENDE=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RENDE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -3064,7 +2813,9 @@ DEP_CPP_RENDE=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RENDE=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -3100,11 +2851,11 @@ DEP_CPP_RENDE=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RENDE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -3140,11 +2891,11 @@ DEP_CPP_RENDE=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RENDE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -3314,7 +3065,9 @@ DEP_CPP_SPRIT=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_SPRIT=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3346,10 +3099,10 @@ DEP_CPP_SPRIT=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPRIT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -3383,7 +3136,9 @@ DEP_CPP_SPRIT=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPRIT=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -3414,10 +3169,10 @@ DEP_CPP_SPRIT=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPRIT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -3448,10 +3203,10 @@ DEP_CPP_SPRIT=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPRIT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -3629,6 +3384,7 @@ DEP_CPP_ANIMS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
+	"..\..\..\graphics\animation.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword2\build_display.h"\
@@ -3657,9 +3413,11 @@ DEP_CPP_ANIMS=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_ANIMS=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\sword2\driver\graphics\animation.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Debug"
@@ -3706,11 +3464,11 @@ DEP_CPP_ANIMS=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -3761,7 +3519,9 @@ DEP_CPP_ANIMS=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMS=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -3808,11 +3568,11 @@ DEP_CPP_ANIMS=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -3859,11 +3619,11 @@ DEP_CPP_ANIMS=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
+	".\peg2dec\mpeg2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -4085,7 +3845,9 @@ DEP_CPP_BUILD=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_BUILD=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4128,10 +3890,10 @@ DEP_CPP_BUILD=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BUILD=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -4176,7 +3938,9 @@ DEP_CPP_BUILD=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BUILD=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -4218,10 +3982,10 @@ DEP_CPP_BUILD=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BUILD=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -4263,10 +4027,10 @@ DEP_CPP_BUILD=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BUILD=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -4473,6 +4237,8 @@ DEP_CPP_CONSO=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\newgui.h"\
@@ -4503,8 +4269,9 @@ DEP_CPP_CONSO=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_CONSO=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\gui\graphics\font.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4558,10 +4325,10 @@ DEP_CPP_CONSO=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -4617,7 +4384,9 @@ DEP_CPP_CONSO=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONSO=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -4670,10 +4439,10 @@ DEP_CPP_CONSO=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -4726,10 +4495,10 @@ DEP_CPP_CONSO=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -4971,7 +4740,9 @@ DEP_CPP_CONTR=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_CONTR=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5016,10 +4787,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -5066,7 +4837,9 @@ DEP_CPP_CONTR=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -5110,10 +4883,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -5157,10 +4930,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -5376,7 +5149,9 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_DEBUG=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5418,10 +5193,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -5465,7 +5240,9 @@ DEP_CPP_DEBUG=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -5506,10 +5283,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -5550,10 +5327,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -5763,7 +5540,9 @@ DEP_CPP_EVENT=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_EVENT=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5804,10 +5583,10 @@ DEP_CPP_EVENT=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EVENT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -5850,7 +5629,9 @@ DEP_CPP_EVENT=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EVENT=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -5890,10 +5671,10 @@ DEP_CPP_EVENT=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EVENT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -5933,10 +5714,10 @@ DEP_CPP_EVENT=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EVENT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -6150,7 +5931,9 @@ DEP_CPP_FUNCT=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_FUNCT=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6195,10 +5978,10 @@ DEP_CPP_FUNCT=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FUNCT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -6245,7 +6028,9 @@ DEP_CPP_FUNCT=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FUNCT=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -6289,10 +6074,10 @@ DEP_CPP_FUNCT=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FUNCT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -6336,10 +6121,10 @@ DEP_CPP_FUNCT=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FUNCT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -6547,7 +6332,9 @@ DEP_CPP_ICONS=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_ICONS=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6586,10 +6373,10 @@ DEP_CPP_ICONS=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ICONS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -6630,7 +6417,9 @@ DEP_CPP_ICONS=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ICONS=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -6668,10 +6457,10 @@ DEP_CPP_ICONS=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ICONS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -6709,10 +6498,10 @@ DEP_CPP_ICONS=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ICONS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -6898,7 +6687,9 @@ DEP_CPP_INTER=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_INTER=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6934,10 +6725,10 @@ DEP_CPP_INTER=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -6975,7 +6766,9 @@ DEP_CPP_INTER=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTER=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -7010,10 +6803,10 @@ DEP_CPP_INTER=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -7048,10 +6841,10 @@ DEP_CPP_INTER=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -7237,7 +7030,9 @@ DEP_CPP_LAYER=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_LAYER=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -7275,10 +7070,10 @@ DEP_CPP_LAYER=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -7318,7 +7113,9 @@ DEP_CPP_LAYER=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LAYER=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -7355,10 +7152,10 @@ DEP_CPP_LAYER=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -7395,10 +7192,10 @@ DEP_CPP_LAYER=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -7596,7 +7393,9 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_LOGIC=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -7637,10 +7436,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -7683,7 +7482,9 @@ DEP_CPP_LOGIC=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -7723,10 +7524,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -7766,10 +7567,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -7971,7 +7772,9 @@ DEP_CPP_MAKET=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_MAKET=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -8011,10 +7814,10 @@ DEP_CPP_MAKET=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MAKET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -8056,7 +7859,9 @@ DEP_CPP_MAKET=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MAKET=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -8095,10 +7900,10 @@ DEP_CPP_MAKET=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MAKET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -8137,10 +7942,10 @@ DEP_CPP_MAKET=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MAKET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -8320,7 +8125,9 @@ DEP_CPP_MEMOR=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_MEMOR=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -8354,10 +8161,10 @@ DEP_CPP_MEMOR=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MEMOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -8393,7 +8200,9 @@ DEP_CPP_MEMOR=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MEMOR=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -8426,10 +8235,10 @@ DEP_CPP_MEMOR=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MEMOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -8462,10 +8271,10 @@ DEP_CPP_MEMOR=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MEMOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -8675,7 +8484,9 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_MOUSE=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -8722,10 +8533,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -8774,7 +8585,9 @@ DEP_CPP_MOUSE=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -8820,10 +8633,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -8869,10 +8682,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -9066,7 +8879,9 @@ DEP_CPP_PROTO=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_PROTO=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -9098,10 +8913,10 @@ DEP_CPP_PROTO=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PROTO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -9135,7 +8950,9 @@ DEP_CPP_PROTO=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PROTO=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -9166,10 +8983,10 @@ DEP_CPP_PROTO=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PROTO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -9200,10 +9017,10 @@ DEP_CPP_PROTO=\
 	"..\..\..\sword2\save_rest.h"\
 	"..\..\..\sword2\sound.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PROTO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -9389,7 +9206,9 @@ DEP_CPP_RESMA=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_RESMA=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -9431,10 +9250,10 @@ DEP_CPP_RESMA=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESMA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -9478,7 +9297,9 @@ DEP_CPP_RESMA=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESMA=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -9519,10 +9340,10 @@ DEP_CPP_RESMA=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESMA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -9563,10 +9384,10 @@ DEP_CPP_RESMA=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESMA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -9766,7 +9587,9 @@ DEP_CPP_ROUTE=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_ROUTE=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -9804,10 +9627,10 @@ DEP_CPP_ROUTE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ROUTE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -9847,7 +9670,9 @@ DEP_CPP_ROUTE=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ROUTE=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -9884,10 +9709,10 @@ DEP_CPP_ROUTE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ROUTE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -9924,10 +9749,10 @@ DEP_CPP_ROUTE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ROUTE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -10117,7 +9942,9 @@ DEP_CPP_SAVE_=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_SAVE_=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -10155,10 +9982,10 @@ DEP_CPP_SAVE_=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -10198,7 +10025,9 @@ DEP_CPP_SAVE_=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVE_=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -10235,10 +10064,10 @@ DEP_CPP_SAVE_=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -10275,10 +10104,10 @@ DEP_CPP_SAVE_=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -10464,7 +10293,9 @@ DEP_CPP_SCROL=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_SCROL=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -10501,10 +10332,10 @@ DEP_CPP_SCROL=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -10543,7 +10374,9 @@ DEP_CPP_SCROL=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -10579,10 +10412,10 @@ DEP_CPP_SCROL=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -10618,10 +10451,10 @@ DEP_CPP_SCROL=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -10817,7 +10650,9 @@ DEP_CPP_SOUND=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -10859,10 +10694,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -10906,7 +10741,9 @@ DEP_CPP_SOUND=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -10947,10 +10784,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -10991,10 +10828,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -11224,7 +11061,9 @@ DEP_CPP_SPEEC=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_SPEEC=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -11272,10 +11111,10 @@ DEP_CPP_SPEEC=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPEEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -11325,7 +11164,9 @@ DEP_CPP_SPEEC=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPEEC=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -11372,10 +11213,10 @@ DEP_CPP_SPEEC=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPEEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -11422,10 +11263,10 @@ DEP_CPP_SPEEC=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPEEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -11655,7 +11496,9 @@ DEP_CPP_START=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_START=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -11700,10 +11543,10 @@ DEP_CPP_START=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_START=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -11750,7 +11593,9 @@ DEP_CPP_START=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_START=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -11794,10 +11639,10 @@ DEP_CPP_START=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_START=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -11841,10 +11686,10 @@ DEP_CPP_START=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_START=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -12092,7 +11937,9 @@ DEP_CPP_SWORD=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_SWORD=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -12144,10 +11991,10 @@ DEP_CPP_SWORD=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SWORD=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -12162,6 +12009,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\debugger.h"\
+	"..\..\..\common\file.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
@@ -12201,7 +12049,9 @@ DEP_CPP_SWORD=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SWORD=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -12252,10 +12102,10 @@ DEP_CPP_SWORD=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SWORD=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -12306,10 +12156,10 @@ DEP_CPP_SWORD=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SWORD=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -12523,7 +12373,9 @@ DEP_CPP_SYNC_=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_SYNC_=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -12560,10 +12412,10 @@ DEP_CPP_SYNC_=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SYNC_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -12602,7 +12454,9 @@ DEP_CPP_SYNC_=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SYNC_=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -12638,10 +12492,10 @@ DEP_CPP_SYNC_=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SYNC_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -12677,10 +12531,10 @@ DEP_CPP_SYNC_=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SYNC_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
@@ -12868,7 +12722,9 @@ DEP_CPP_WALKE=\
 	"..\..\..\sword2\sword2.h"\
 	
 NODEP_CPP_WALKE=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -12907,10 +12763,10 @@ DEP_CPP_WALKE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALKE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE ARM) Release"
@@ -12951,7 +12807,9 @@ DEP_CPP_WALKE=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALKE=\
+	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Debug"
@@ -12989,10 +12847,10 @@ DEP_CPP_WALKE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALKE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE MIPS) Release"
@@ -13030,10 +12888,10 @@ DEP_CPP_WALKE=\
 	"..\..\..\sword2\speech.h"\
 	"..\..\..\sword2\startup.h"\
 	"..\..\..\sword2\sword2.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALKE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword2 - Win32 (WCE SH3) Debug"
