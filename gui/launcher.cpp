@@ -536,6 +536,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		break;
 	case kStartCmd:
+	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
 		assert(item >= 0);
