@@ -3021,6 +3021,7 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm) {
 			scumm->getResourceAddress(rtSound, player->_id);
 			player->_mt32emulate = isMT32(player->_id);
 			player->_isGM = isGM(player->_id);
+			player->_midi = _midi_native;
 		}
 	}
 }
