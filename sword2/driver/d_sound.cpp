@@ -1712,7 +1712,7 @@ void Sword2Sound::SetFxVolume(uint8 volume)
 
 void Sword2Sound::MuteFx(uint8 mute)
 {
-	warning("stub MuteFx( %d )");
+	warning("stub MuteFx( %d )", mute);
 /*
 	int32 fxi;
 
