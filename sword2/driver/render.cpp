@@ -606,8 +606,8 @@ void Graphics::startRenderCycle(void) {
 
 /**
  * This function should be called at the end of the render cycle.
- * @param end the function sets this to true if the render cycle is to be
- * terminated, or false if it should continue
+ * @return true if the render cycle is to be terminated, 
+ *         or false if it should continue
  */
 
 bool Graphics::endRenderCycle(void) {

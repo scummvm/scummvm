@@ -181,7 +181,7 @@ public:
 	/**
 	 * Switch to the graphics mode with the given name. If 'name' is unknown,
 	 * or if switching to the new mode failed, this method returns false.
-	 * @param mode	the name of the new graphics mode
+	 * @param name	the name of the new graphics mode
 	 * @return true if the switch was successful, false otherwise
 	 * @note This is implemented via the setGraphicsMode(int) method, as well
 	 *       as getSupportedGraphicsModes() and getDefaultGraphicsMode().

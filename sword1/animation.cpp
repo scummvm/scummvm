@@ -379,10 +379,7 @@ bool AnimationState::decodeFrame() {
 /**
  * Plays an animated cutscene.
  * @param filename the file name of the cutscene file
- * @param text the subtitles and voiceovers for the cutscene
- * @param musicOut lead-out music
  */
-
 void MoviePlayer::play(const char *filename) {
 #ifdef USE_MPEG2
 	AnimationState *anim = new AnimationState(_scr, _snd, _sys);
