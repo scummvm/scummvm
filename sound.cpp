@@ -597,7 +597,7 @@ static int get_int(FILE * f)
 
 void *Scumm::openSfxFile()
 {
-	char buf[50];
+	char buf[256];
 	FILE *file = NULL;
 
 	if (_gameId == GID_DIG) {
