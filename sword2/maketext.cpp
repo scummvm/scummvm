@@ -297,7 +297,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 		// text sprite and inc the sprite ptr by the character's
 		// width minus the 'overlap'
 
-		for(posInLine = 0; posInLine < line[lineNo].length; posInLine++) {
+		for (posInLine = 0; posInLine < line[lineNo].length; posInLine++) {
 			charPtr = FindChar(sentence[pos++], charSet);
 
 #ifdef _SWORD2_DEBUG			

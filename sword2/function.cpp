@@ -433,7 +433,7 @@ int32 FN_play_credits(int32 *params) {
 
 			// FIXME: Draw the credits text. The actual text
 			// messages are stored in credits.clu, and I'm guessing
-			// that credits.bmp may be the font.
+			// that credits.bmp or font.clu may be the font.
 
 			ServiceWindows();
 
