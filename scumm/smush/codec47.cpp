@@ -27,7 +27,7 @@
 bool Codec47Decoder::initSize(const Point & p, const Rect & r) {
 	Decoder::initSize(p, r);
 	clean();
-	int32 frame_size = getRect().width() * getRect().height();
+//	int32 frame_size = getRect().width() * getRect().height();
 
 	return true;
 }
