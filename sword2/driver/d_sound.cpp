@@ -290,7 +290,7 @@ void Sword2Sound::FxServer(void) {
 
 	if (fxPaused) {
 		for (i = 0; i < MAXFX; i++) {
-			if ((fxId[i] == 0xfffffffe) || (fxId[i] == 0xffffffff)) {
+			if ((fxId[i] == (int32) 0xfffffffe) || (fxId[i] == (int32) 0xffffffff)) {
 				if (!g_engine->_mixer->isChannelActive(soundHandleFx[i])) {
 					fxId[i] = 0;
 					if (bufferFx[i] != NULL) {
@@ -632,8 +632,8 @@ int32 Sword2Sound::UnpauseSpeech(void) {
 }
 
 int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
- 	int32 			i, fxi;
-	uint32			*data32;
+ 	int32 	i, fxi;
+	uint32	*data32 = NULL;
 	_wavHeader	*wav;
 
 	wav = (_wavHeader *) data;
@@ -805,7 +805,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 
 int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 	int32 i, loop;
-	HRESULT hr;
+	uint32 hr;
 
 	if (type == RDSE_FXLOOP)
 		loop = 1;
@@ -855,13 +855,13 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 //				IDirectSoundBuffer_SetPan(dsbFx[i], panTable[pan+16]);
 
 				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], 22050, flagsFx[i]);
-				if (id == 0xffffffff) {
+				if (id == (int32) 0xffffffff) {
 					fxCached[i] = RDSE_FXTOCLEAR;
 				}
 			}
 		} else {
 			if (type == RDSE_FXLEADIN) {
-				id = 0xfffffffe;
+				id = (int32) 0xfffffffe;
 				hr = OpenFx(id, data);
 				if (hr != RD_OK) {
 					return hr;
@@ -1042,7 +1042,7 @@ int32 Sword2Sound::ClearAllFx(void) {
 
 	i = 0;
 	while (i < MAXFX) {
-		if ((fxId[i]) && (fxId[i] != 0xfffffffe) && (fxId[i] != 0xffffffff)) {
+		if ((fxId[i]) && (fxId[i] != (int32) 0xfffffffe) && (fxId[i] != (int32) 0xffffffff)) {
 			g_engine->_mixer->stopHandle(soundHandleFx[i]);
 			fxId[i] = 0;
 			fxiPaused[i] = 0;
@@ -1101,7 +1101,7 @@ int32 Sword2Sound::PauseFxForSequence(void) {
 
 	if (!fxPaused) {
 		for (i = 0; i<MAXFX; i++) {
-			if ((fxId[i]) && (fxId[i] != 0xfffffffe)) {
+			if ((fxId[i]) && (fxId[i] != (int32) 0xfffffffe)) {
 				g_engine->_mixer->stopHandle(soundHandleFx[i]);
 				fxiPaused[i] = 1;
 			} else {
@@ -1173,7 +1173,7 @@ void Sword2Sound::StartMusicFadeDown(int i) {
 }
 
 int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping) {
-	int32		i, j;
+	int32		i, z;
 	int32 		v0, v1;
 	uint16   *data16;
 	uint8	   *data8;
@@ -1224,7 +1224,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		fpMus.seek(musFilePos[i], SEEK_SET);
 
 		// Read the compressed data in to the buffer
-		if (fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
+		if ((int32) fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
 			fpMus.close();
 			free(data8);
 			return (RDERR_INVALIDID);
@@ -1237,18 +1237,18 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		data16 = (uint16 *)malloc(bufferSizeMusic);
 				
 		data16[0] = *((int16 *)data8);	// First sample value
-		j = 1;
+		z = 1;
 
-		while (j < (bufferSizeMusic / 2) - 1) {
-			if (GetCompressedSign(data8[j + 1]))
-				data16[j] = data16[j - 1] - (GetCompressedAmplitude(data8[j + 1]) << GetCompressedShift(data8[j + 1]));
+		while (z < (bufferSizeMusic / 2) - 1) {
+			if (GetCompressedSign(data8[z + 1]))
+				data16[z] = data16[z - 1] - (GetCompressedAmplitude(data8[z + 1]) << GetCompressedShift(data8[z + 1]));
 			else
-				data16[j] = data16[j - 1] + (GetCompressedAmplitude(data8[j + 1]) << GetCompressedShift(data8[j + 1]));
-			j++;
+				data16[z] = data16[z - 1] + (GetCompressedAmplitude(data8[z + 1]) << GetCompressedShift(data8[z + 1]));
+			z++;
 		}
 
 		// Store the value of the last sample ready for next batch of decompression
-		musLastSample[i] = data16[j - 1];
+		musLastSample[i] = data16[z - 1];
 
 		//	Free the decompression buffer and unlock the buffer now that we've filled it
 		free(data8);
@@ -1275,8 +1275,8 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		}
 
 		//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
-		for (int32 j = 0; j < (bufferSizeMusic / 2); j++) {
-			data16[j] = TO_BE_16(data16[j]);
+		for (int32 y = 0; y < (bufferSizeMusic / 2); y++) {
+			data16[y] = TO_BE_16(data16[y]);
 		}
 
 		if (soundHandleMusic[i] == 0) {
@@ -1348,7 +1348,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		fpMus.seek(musFilePos[i], SEEK_SET);
 
 		// Read the compressed data in to the buffer
-		if (fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
+		if ((int32) fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
 			fpMus.close();
 			free(data8);
 			return (RDERR_INVALIDID);
@@ -1361,18 +1361,18 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		data16 = (uint16 *)malloc(bufferSizeMusic);
 				
 		data16[0] = *((int16 *)data8);	// First sample value
-		j = 1;
+		z = 1;
 
-		while (j < (bufferSizeMusic / 2) - 1) {
-			if (GetCompressedSign(data8[j + 1]))
-				data16[j] = data16[j - 1] - (GetCompressedAmplitude(data8[j + 1]) << GetCompressedShift(data8[j + 1]));
+		while (z < (bufferSizeMusic / 2) - 1) {
+			if (GetCompressedSign(data8[z + 1]))
+				data16[z] = data16[z - 1] - (GetCompressedAmplitude(data8[z + 1]) << GetCompressedShift(data8[z + 1]));
 			else
-				data16[j] = data16[j - 1] + (GetCompressedAmplitude(data8[j + 1]) << GetCompressedShift(data8[j + 1]));
-			j++;
+				data16[z] = data16[z - 1] + (GetCompressedAmplitude(data8[z + 1]) << GetCompressedShift(data8[z + 1]));
+			z++;
 		}
 
 		// Store the value of the last sample ready for next batch of decompression
-		musLastSample[i] = data16[j - 1];
+		musLastSample[i] = data16[z - 1];
 
 		// Free the compressiong buffer and unlock the buffer now that we've filled it
 		free(data8);
@@ -1399,8 +1399,8 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		}
 
 		//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
-		for (int32 j = 0; j < (bufferSizeMusic / 2); j++)
-			data16[j] = TO_BE_16(data16[j]);
+		for (int32 y = 0; y < (bufferSizeMusic / 2); y++)
+			data16[y] = TO_BE_16(data16[y]);
 
 		if (soundHandleMusic[i] == 0) {
 				soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
@@ -1882,11 +1882,11 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					}
 
 					// Seek to update position of compressed music when neccassary (probably never occurs)
-					if (fpMus.pos() != musFilePos[i]) {
+					if ((int32) fpMus.pos() != musFilePos[i]) {
 						fpMus.seek(musFilePos[i], SEEK_SET);
 					}
 					// Read the compressed data in to the buffer
-					if (fpMus.read(data8, len / 2) != (len / 2)) {
+					if ((int32)fpMus.read(data8, len / 2) != (len / 2)) {
 						fpMus.close();
 						free(data8);
 						musFading[i] = -16;
@@ -1918,8 +1918,8 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					musLastSample[i] = data16[j - 1];
 
 					//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
-					for (int32 j = 0; j < (len / 2); j++) {
-						data16[j] = TO_BE_16(data16[j]);
+					for (int32 y = 0; y < (len / 2); y++) {
+						data16[y] = TO_BE_16(data16[y]);
 					}
 
 					if (soundHandleMusic[i] == 0) {
