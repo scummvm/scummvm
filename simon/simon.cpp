@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
+#include "sound/mididrv.h"
 #include "common/gameDetector.h"
 #include <errno.h>
 #include <time.h>
@@ -50,25 +51,6 @@ static const GameSpecificSettings simon1_settings = {
 	"SIMON.VOC",									/* wav_filename2 */
 	"EFFECTS.VOC",								/* effects_filename */
 	"GAMEPC",											/* gamepc_filename */
-};
-
-static const GameSpecificSettings simon2_settings = {
-	5,														/* VGA_DELAY_BASE */
-	1580 / 4,											/* TABLE_INDEX_BASE */
-	1500 / 4,											/* TEXT_INDEX_BASE */
-	2116 / 4,											/* NUM_GAME_OFFSETS */
-	75,														/* NUM_VIDEO_OP_CODES */
-	2000000,											/* VGA_MEM_SIZE */
-	100000,												/* TABLES_MEM_SIZE */
-	12256,												/* NUM_VOICE_RESOURCES */
-	0,
-	1128 / 4,											/* MUSIC_INDEX_BASE */
-	1660 / 4,											/* SOUND_INDEX_BASE */
-	"SIMON2.GME",									/* gme_filename */
-	"SIMON2.WAV",									/* wav_filename */
-	NULL,
-	"",
-	"GSPTR30",										/* gamepc_filename */
 };
 
 static const GameSpecificSettings simon2win_settings = {
@@ -122,6 +104,8 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_fcs_list = new FillOrCopyStruct[16];
 
 	/* Setup midi driver */
+	if (driver)
+		driver = MidiDriver_NULL_create();
 	midi.set_driver(driver);
 
 	_game = detector->_gameId;
