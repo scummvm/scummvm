@@ -215,8 +215,8 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 	varsRes = res_man.Res_open(1);									// open variables resource
 	memcpy(buffer->ad + sizeof(g_header), varsRes, FROM_LE_32(g_header.varLength));	// copy that to the buffer, following the header
 #ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *)(buffer->ad + sizeof(g_header));
-	const uint numVars = FROM_LE_32(g_header.varLength)/4;
+	uint32 *globalVars = (uint32 *)(buffer->ad + sizeof(g_header) + sizeof(_standardHeader));
+	const uint numVars = (FROM_LE_32(g_header.varLength) - sizeof(_standardHeader))/4;
 	for (uint i = 0; i < numVars; i++) {
 		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
 	}
@@ -389,8 +389,8 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 	varsRes = res_man.Res_open(1);								// open variables resource
 	memcpy( varsRes, buffer->ad + sizeof(g_header), g_header.varLength );// copy that to the buffer, following the header
 #ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *)varsRes;
-	const uint numVars = g_header.varLength/4;
+	uint32 *globalVars = (uint32 *)(varsRes + sizeof(_standardHeader));
+	const uint numVars = (g_header.varLength - sizeof(_standardHeader))/4;
 	for (uint i = 0; i < numVars; i++) {
 		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
 	}
