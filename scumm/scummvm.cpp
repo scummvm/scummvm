@@ -141,7 +141,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY, 0},
 	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
-	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, MDT_ADLIB,
+	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
 	{"indy4", "Indiana Jones and the Fate of Atlantis (FM Towns)", GID_INDY4, 5, MDT_ADLIB,
 	 GF_USE_KEY, 0},
