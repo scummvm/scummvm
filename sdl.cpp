@@ -981,7 +981,7 @@ int main(int argc, char* argv[]) {
 
 	scumm->vm.cutSceneScriptIndex=0;
 	scumm->vm.cutSceneStackPointer=0;
-	
+
 	scumm->_scummStackPos=0;
 	scumm->_verbMouseOver=0;
 
@@ -1072,6 +1072,17 @@ int main(int argc, char* argv[]) {
 	scumm->_PALS_offs = 0;
 
 	scumm->_fastMode = 0;
+
+	for (i=0; i<6; i++) {
+		scumm->string[i].t_center = 0;
+		scumm->string[i].t_xpos = 0;
+		scumm->string[i].t_ypos = 0;
+		scumm->string[i].t_color = 0;
+		scumm->string[i].t_overhead  =0;
+		scumm->string[i].t_charset = 0;
+		scumm->string[i].t_right = 0;
+	}
+
 	scumm->_charsetColor = 0;
 /* */
 
@@ -1106,8 +1117,6 @@ int main(int argc, char* argv[]) {
 //	scumm->scummMain(argc, argv); // Todo: need to change that as well
 	
 	gui.init(scumm);	/* Reinit GUI after loading a game */
-
-	
 	scumm->mainRun();
 
 	return 0;
