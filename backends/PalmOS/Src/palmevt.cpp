@@ -27,26 +27,29 @@
 #include <PalmNavigator.h>
 
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+#include <TwChars.h>
 #endif
 
 #define EXITDELAY (500) // delay to exit : calc button : double tap 1/500 sec
 
-void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat) {
+void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert) {
 	Int16 x = _mouseCurState.x;
 	Int16 y = _mouseCurState.y;
+	Int16 slow;
 
-	if (_lastKeyPressed != kLastKeyNone || repeat) {
-		_lastKeyRepeat += 2;
+	if (_lastKeyPressed != kLastKeyNone) {
+		_lastKeyRepeat++;
 
-		if (_lastKeyRepeat > 32)
-			_lastKeyRepeat = 32;
+		if (_lastKeyRepeat > 16)
+			_lastKeyRepeat = 16;
 	}
 	else
 		_lastKeyRepeat = 0;
 
-	x = x + iHoriz * (_lastKeyRepeat >> 1);
-	y = y + iVert * (_lastKeyRepeat >> 1);
+	slow = (iHoriz && iVert) ? 2 : 1;
+
+	x += iHoriz * (_lastKeyRepeat >> 1) / slow;
+	y += iVert * (_lastKeyRepeat >> 1) / slow;
 
 	x = (x < 0				) ? 0					: x;
 	x = (x >= _screenWidth	) ? _screenWidth - 1	: x;
@@ -107,46 +110,54 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 	UInt32 keyCurrentState;
 	Coord x, y;
 
-	if(_quitCount) {
-		if (_quitCount >= 10)
-			SysReset();
-		else
-			_quitCount++;
-	
-		event->event_code = EVENT_QUIT;
-		exit(0);	// resend an exit event
-		return false;
-	}
-
-	// battery status
 	battery_handler();
-	
-	// sound handler
 	sound_handler();
-
-	// timer handler
 	timer_handler(get_msecs());
-
-	if (_selfQuit)
-		quit();
 
 	for(;;) {
 		EvtGetEvent(&ev, evtNoWait);
 
-		// check for hardkey repeat for mouse emulation (no 5way only)
+		// check for hardkey repeat for mouse emulation
 		keyCurrentState = KeyCurrentState();
-		if (_lastKeyPressed != kLastKeyNone && _lastKeyPressed != kLastKeyCalc &&
-			!(	(keyCurrentState & keyBitHard2) ||		// left
-				(keyCurrentState & keyBitPageUp) ||		// up
-				(keyCurrentState & keyBitPageDown) ||	// down
-				(keyCurrentState & keyBitHard3)			// right
-				)
-			) {
-					_lastKeyPressed = kLastKeyNone;
+
+		// arrow keys emulation
+		if ((keyCurrentState & _keyMask) && 0) {
+			Int8 sx = 0;
+			Int8 sy = 0;
+
+			if (keyCurrentState & _keyMouse.bitButLeft) {
+				event->event_code = EVENT_LBUTTONDOWN;
+				event->mouse.x = _mouseCurState.x;
+				event->mouse.y = _mouseCurState.y;
+				_lastKeyPressed = kLastKeyNone;
+				return true;
+			}
+
+			if (keyCurrentState & _keyMouse.bitUp)
+				sy = -1;
+			else if (keyCurrentState & _keyMouse.bitDown)
+				sy = +1;
+				
+			if (keyCurrentState & _keyMouse.bitLeft)
+				sx = -1;
+			else if (keyCurrentState & _keyMouse.bitRight)
+				sx = +1;					
+			
+			SimulateArrowKeys(event, sx, sy);
+			updateScreen();
+			update_cdrom();
+			_lastKeyPressed = kLastKeyMouse;
+			return true;
+
+		} else if (_lastKeyPressed != kLastKeyCalc) {
+			_lastKeyPressed = kLastKeyNone;
 		}
 
-		if (ev.eType == nilEvent)
+		if (ev.eType == nilEvent) {
+			// force CD update, useful when the game is paused in some cases
+			update_cdrom();
 			return false;
+		}
 
 		if (ev.eType == keyDownEvent) {
 			switch (ev.data.keyDown.chr) {
@@ -163,6 +174,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				// F5 = menu
 				case vchrJogPushRepeat:
 				case vchrMenu:
+				case vchrThumbWheelBack:	// Tapwave back button
 					_lastKeyPressed = kLastKeyNone;
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = 319;
@@ -172,10 +184,8 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 				case vchrCalc:
 					if (_lastKeyPressed & kLastKeyCalc)
-						if ((get_msecs() - _exit_delay) <= (EXITDELAY)) {
+						if ((get_msecs() - _exit_delay) <= (EXITDELAY))
 							event->event_code = EVENT_QUIT;
-							_selfQuit = true;
-						}
 
 					_exit_delay = get_msecs();
 					_lastKeyPressed = kLastKeyCalc;
@@ -184,6 +194,9 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				// mouse button
 				case vchrJogBack:
 				case vchrHard4: // right button
+#ifndef DISABLE_TAPWAVE
+				case vchrActionRight:
+#endif
 					event->event_code = EVENT_RBUTTONDOWN;
 					event->mouse.x = _mouseCurState.x;
 					event->mouse.y = _mouseCurState.y;
@@ -208,12 +221,9 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					return true;
 
 
-				// if hotsync pressed
+				// if hotsync pressed, etc...
 				case vchrHardCradle:
 				case vchrHardCradle2:
-					_selfQuit = true;
-					break;
-
 				case vchrLowBattery:
 				case vchrFind:
 				case vchrBrightness:
@@ -235,7 +245,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 						SndStreamPause(*((SndStreamRef *)_sound.handle), false);
 					break;
 			}
-			
+
 			if (OPTIONS_TST(kOpt5WayNavigator)) {
 				// mouse emulation for device with 5-Way navigator
 				switch (ev.data.keyDown.chr) {
@@ -263,78 +273,6 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 						event->kbd.keycode = 319;
 						event->kbd.ascii = 319;
 						event->kbd.flags = 0;
-						return true;
-					
-					case vchrPageUp:
-					case vchrPageDown:
-					case vchrNavChange:
-						// left mouse button
-						if (ev.data.keyDown.keyCode & (navBitSelect|navChangeSelect)) {
-							event->event_code = EVENT_LBUTTONDOWN;
-							event->mouse.x = _mouseCurState.x;
-							event->mouse.y = _mouseCurState.y;
-							_lastKeyPressed = kLastKeyNone;
-							return true;						
-
-						// mouse move
-						} else {
-							Boolean kUp		= (ev.data.keyDown.keyCode & navBitUp);
-							Boolean kDown	= (ev.data.keyDown.keyCode & navBitDown);
-							Boolean kLeft	= (ev.data.keyDown.keyCode & navBitLeft);
-							Boolean kRight	= (ev.data.keyDown.keyCode & navBitRight);
-							Boolean kRepeat	= (ev.data.keyDown.modifiers & autoRepeatKeyMask);
-							Boolean process	= (kUp || kDown || kLeft || kRight);
-							
-							if (process) {
-								Int8 stepX = 0;
-								Int8 stepY = 0;
-
-								if (kLeft)
-									stepX = -1;
-								else if (kRight)
-									stepX = +1;
-									
-								if (kUp)
-									stepY = -1;
-								else if (kDown)
-									stepY = +1;
-								
-								SimulateArrowKeys(event, stepX, stepY, kRepeat);
-								_lastKeyPressed = kLastKeyNone;	// use only repeat flag
-								return true;
-							}
-						}
-						break;
-				}
-
-			} else {
-				// mouse emulation for device without 5-Way navigator
-				switch (ev.data.keyDown.chr) {
-					case vchrHard1: // left button
-						event->event_code = EVENT_LBUTTONDOWN;
-						event->mouse.x = _mouseCurState.x;
-						event->mouse.y = _mouseCurState.y;
-						_lastKeyPressed = kLastKeyNone;
-						return true;
-
-					case vchrHard2:	// move left
-						SimulateArrowKeys(event, -1, 0);
-						_lastKeyPressed = kLastKeyMouseLeft;
-						return true;
-						
-					case vchrPageUp: // move up
-						SimulateArrowKeys(event, 0, -1);
-						_lastKeyPressed = kLastKeyMouseUp;
-						return true;
-
-					case vchrPageDown: // move down
-						SimulateArrowKeys(event, 0, 1);
-						_lastKeyPressed = kLastKeyMouseDown;
-						return true;
-
-					case vchrHard3: // move right
-						SimulateArrowKeys(event, 1, 0);
-						_lastKeyPressed = kLastKeyMouseRight;
 						return true;
 				}
 			}
@@ -384,7 +322,6 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					
 					} else if  ((keycode == 'z' && b == KBD_CTRL) || (b == KBD_ALT && keycode == 'x')) {
 						event->event_code = EVENT_QUIT;
-						_selfQuit = true;
 						return true;
 
 					} else if (keycode == 'n' && b == KBD_CTRL) {
@@ -394,7 +331,16 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 						return true;
 
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+					// Zodiac only keys
+					} else if (keycode == vchrTriggerRight) {
+						setFeatureState(kFeatureAspectRatioCorrection, 0);
+						return true;
+
+					} else if (keycode == vchrTriggerLeft) {
+						if (_initMode == GFX_WIDE)
+							hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
+						else
+							setFeatureState(kFeatureFullscreenMode, !_fullscreen);
 #endif
 					}
 					
@@ -431,7 +377,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 			getCoordinates(&ev, &x, &y);
 
 			if (_useNumPad) {
-				Coord x2 = (_screenWidth >> 1) - 20; // - 64 / 2 + 12
+				Coord x2 = (_screenWidth >> 1) - 20;
 				Coord y2 = _screenHeight + 2;
 
 				if (y >= y2 && y < (y2 + 34) && x >= x2 && x < (x2 + 40)) {	// numpad location
