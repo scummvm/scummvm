@@ -278,7 +278,7 @@ int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, 
 void SoundMixer::mix(int16 *buf, uint len) {
 	StackLock lock(_mutex);
 
-	if (_premixProc) {
+	if (_premixProc && !_paused) {
 		int i;
 		_premixProc(_premixParam, buf, len);
 		// Convert mono data from the premix proc to stereo
