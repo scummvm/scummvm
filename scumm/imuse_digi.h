@@ -87,6 +87,8 @@ private:
 		PlayingSoundHandle handle;
 		bool used;
 		bool toBeRemoved;
+		
+		Channel() : idSound(-1), used(false) {}
 	};
 
 	Channel _channel[MAX_DIGITAL_CHANNELS];

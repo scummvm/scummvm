@@ -720,8 +720,6 @@ void IMuseDigital::timer_handler(void *refCon) {
 
 IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	: _scumm(scumm) {
-	memset(_channel, 0, sizeof(Channel) * MAX_DIGITAL_CHANNELS);
-	_scumm->_timer->installTimerProc(timer_handler, 40000, this);
 	_pause = false;
 	
 	_nameBundleMusic = "";
@@ -730,6 +728,8 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	_musicDisk = 0;
 
 	_bundle = new Bundle();
+
+	_scumm->_timer->installTimerProc(timer_handler, 40000, this);
 }
 
 IMuseDigital::~IMuseDigital() {
@@ -814,14 +814,19 @@ void IMuseDigital::startSound(int sound) {
 				warning("IMuseDigital::startSound(%d) NULL resource pointer", sound);
 				return;
 			}
-			_channel[l].idSound = sound;
-			_channel[l].offset = 0;
 			_channel[l].pan = 0;
 			_channel[l].vol = 127 * 1000;
-			_channel[l].volFadeUsed = false;
 			_channel[l].volFadeDest = 0;
 			_channel[l].volFadeStep = 0;
 			_channel[l].volFadeDelay = 0;
+			_channel[l].volFadeUsed = false;
+
+			_channel[l].numJumps = 0;
+			_channel[l].numRegions = 0;
+			_channel[l].numMarkers = 0;
+
+			_channel[l].offset = 0;
+			_channel[l].idSound = sound;
 
 			uint32 tag;
 			int32 size = 0;
@@ -855,7 +860,7 @@ void IMuseDigital::startSound(int sound) {
 					break;
 					case MKID_BE('TEXT'):
 						size = READ_BE_UINT32(ptr); ptr += 4;
-						if (_channel[l].numRegions >= MAX_IMUSE_MARKERS) {
+						if (_channel[l].numMarkers >= MAX_IMUSE_MARKERS) {
 							warning("IMuseDigital::startSound() Not enough space for Marker");
 							ptr += size;
 							break;
