@@ -280,7 +280,8 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 
 
 		output_size =
 			decompressCodec(_compVoiceTable[i].codec, comp_input, comp_output, _compVoiceTable[i].size, i, channels);
-		memcpy((byte *)&comp_final[final_size], comp_output, output_size);
+		assert(output_size <= 10000);
+		memcpy(comp_final + final_size, comp_output, output_size);
 		final_size += output_size;
 
 		free(comp_input);

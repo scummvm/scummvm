@@ -163,6 +163,7 @@ int32 NutRenderer::getStringWidth(char *string) {
 	return length;
 }
 
+/*
 void NutRenderer::drawString(const char *string, int32 x, int32 y, byte color, int32 mode) {
 	debug(2,  "NutRenderer::drawString() called");
 	if (_loaded == false) {
@@ -189,9 +190,10 @@ void NutRenderer::drawString(const char *string, int32 x, int32 y, byte color, i
 
 	_vm->updateDirtyRect(0, left, x, y, y + height, 0);
 }
+*/
 
-void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
-	debug(2,  "NutRenderer::drawChar('%c', %d, %d, %d) called", c, x, y, (int)color);
+void NutRenderer::drawChar(char c, int32 x, int32 y, byte color, bool useMask) {
+	debug(2,  "NutRenderer::drawChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
 	if (_loaded == false) {
 		debug(2, "NutRenderer::drawChar() Font is not loaded");
 		return;
@@ -215,17 +217,19 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 	int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
 	int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
 	int cTable[7] =  {  0,  0, 0, 0, 0, 0, color };
+
+	byte *dst, *mask = NULL;
+	byte maskmask;
+	int maskpos;
 	
 	for (int i = 0; i < 7; i++) {
 		x += offsetX[i];
 		y += offsetY[i];
 		color = cTable[i];
 	
-		byte *dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x + _vm->virtscr[0].xstart;
-		byte *mask = _vm->getResourceAddress(rtBuffer, 9)
+		dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x + _vm->virtscr[0].xstart;
+		mask = _vm->getResourceAddress(rtBuffer, 9)
 						+ (y * _vm->_realWidth + x) / 8 + _vm->_screenStartStrip;
-		byte maskmask;
-		int maskpos;
 	
 		src = _tmpCodecBuffer;
 	
@@ -237,7 +241,8 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 #if 1
 				if (pixel != 0) {
 					dst[tx] = color;
-					mask[maskpos] |= maskmask;
+					if (useMask)
+						mask[maskpos] |= maskmask;
 				}
 #else
 				if (pixel != 0) {
@@ -246,7 +251,8 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 					if (pixel == 0xff)
 						pixel = 0x0;
 					dst[tx] = pixel;
-					mask[maskpos] |= maskmask;
+					if (useMask)
+						mask[maskpos] |= maskmask;
 				}
 #endif
 				maskmask >>= 1;
