@@ -66,17 +66,17 @@ SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusi
 }
 
 void SkyLogic::engine() {
-	Compact *compact2 = SkyState::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
+	uint16 *logicList = (uint16 *)SkyState::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
 
-	while (compact2->logic) { // 0 means end of list
-		if (compact2->logic == 0xffff) {
+	while (uint16 id = *logicList++) { // 0 means end of list
+		if (id == 0xffff) {
 			// Change logic data address
-			compact2 = SkyState::fetchCompact(compact2->status);
+			logicList = (uint16 *)SkyState::fetchCompact(id);
 			continue;
 		}
 
-		_scriptVariables[CUR_ID] = compact2->logic;
-		_compact = SkyState::fetchCompact(compact2->logic);
+		_scriptVariables[CUR_ID] = id;
+		_compact = SkyState::fetchCompact(id);
 
 		// check the id actually wishes to be processed
 		if (!(_compact->status & (1 << 6)))
@@ -1260,7 +1260,7 @@ uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 		uint16 width = ((dataFileHeader *)data)->s_width;
 		width >>= 1;
 
-		for (uint16 i = height; i > 0; i++) {
+		for (uint16 i = height; i > 0; i--) {
 			for (uint16 j = width; j > 0; j--) {
 				if (!*data) // only change 0's
 					*data = 1;
