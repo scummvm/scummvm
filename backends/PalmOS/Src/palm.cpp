@@ -527,8 +527,8 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 			_thread.proc(_thread.param);
 
 		// sound handler
-//		if(_sound.active)
-//			check_sound();
+		if(_sound.active)
+			check_sound();
 		
 //		if (_msg.state != 0)
 //			drawMessage();
@@ -1154,7 +1154,6 @@ bool OSystem_PALMOS::set_sound_proc(void *param, SoundProc *proc, byte format) {
 
 	_sound = false;*/
 //	Pa1Lib_Open();
-return false;
 
 	_sound.active = true;
 	_sound.proc = proc;
