@@ -62,60 +62,37 @@
 //
 //=============================================================================
 
-
 #include "stdafx.h"
 #include "driver96.h"
-
-
 
 uint8 languageVersion = ENGLISH;
 
 static uint8 versionFromFile = 0;
 
-
-
-
-int32 GetLanguageVersion(uint8 *version)
-
-{
-
-	if (versionFromFile)
-	{
+int32 GetLanguageVersion(uint8 *version) {
+	if (versionFromFile) {
 		*version = languageVersion;
-	}
-	else
-	{
+	} else {
 		versionFromFile = 1;
 		languageVersion = AMERICAN;
 		return(RDERR_OPENVERSIONFILE);
 	}
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 
-int32 SetLanguageVersion(uint8 version)
-
-{
-
+int32 SetLanguageVersion(uint8 version) {
 	languageVersion = version;
-	return(RD_OK);
-
+	return RD_OK;
 }
 
-
-int32 GetGameName(uint8 *name)
-
-{
-
+int32 GetGameName(uint8 *name) {
 	uint8 version;
 	int32 rv;
 
-
 	rv = GetLanguageVersion(&version);
 
-	switch(version)
-	{
+	switch (version) {
 	case ENGLISH:
 		strcpy((char *)name, "Broken Sword II");
 		break;
@@ -130,6 +107,5 @@ int32 GetGameName(uint8 *name)
 		return(RDERR_INVALIDVERSION);
 	}
 
-	return(rv);
-
+	return rv;
 }
