@@ -1465,18 +1465,9 @@ void ScummEngine_v6::o6_setBoxFlags() {
 }
 
 void ScummEngine_v6::o6_createBoxMatrix() {
-	int i;
-	Actor *a;
-
 	createBoxMatrix();
 
-	if ((_gameId == GID_DIG) || (_gameId == GID_CMI)) {
-		for (i = 1; i < _numActors; i++) {
-			a = &_actors[i];
-			if (a && a->isInCurrentRoom())
-				a->putActor(a->_pos.x, a->_pos.y, _currentRoom);
-		}
-	}
+	putActors();
 }
 
 void ScummEngine_v6::o6_resourceRoutines() {
@@ -3145,15 +3136,8 @@ void ScummEngine_v6::o6_setBoxSet() {
 	assert(matrix);
 	memcpy(matrix, boxm, mboxSize);
 
-	if (_version == 7) {
-		Actor *a;
-
-		for (i = 1; i < _numActors; i++) {
-			a = &_actors[i];
-			if (a && a->isInCurrentRoom())
-				a->putActor(a->_pos.x, a->_pos.y, _currentRoom);
-		}
-	}
+	if (_version == 7)
+		putActors();
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {

@@ -806,6 +806,17 @@ void ScummEngine::setTalkingActor(int value) {
 		VAR(VAR_TALK_ACTOR) = value;
 }
 
+void ScummEngine::putActors() {
+	Actor *a;
+	int i;
+
+	for (i = 1; i < _numActors; i++) {
+		a = &_actors[i];
+		if (a && a->isInCurrentRoom())
+			a->putActor(a->_pos.x, a->_pos.y, a->room);
+	}
+}
+
 void ScummEngine::showActors() {
 	int i;
 
