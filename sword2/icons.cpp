@@ -65,7 +65,7 @@ void Sword2Engine::buildMenu(void) {
 	bool icon_coloured;
 	uint8 *icon;
 	uint8 *head;
-	uint32 res;
+	uint32 res = 0;
 
 	// reset temp list which will be totally rebuilt
 	_totalTemp = 0;

@@ -109,7 +109,7 @@ void AdlibChannel::stopNote(void) {
 
 int32 AdlibChannel::getNextEventTime(void) {
 	int32 retV = 0; 
-	uint8 cnt, lVal;
+	uint8 cnt, lVal = 0;
 	for (cnt = 0; cnt < 4; cnt++) {
 		lVal = _musicData[_channelData.eventDataPtr];
 		_channelData.eventDataPtr++;
