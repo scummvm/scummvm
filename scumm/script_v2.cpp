@@ -567,6 +567,7 @@ void Scumm_v2::o2_actorSet() {
 	int act = getVarOrDirectByte(0x80);
 	int arg = getVarOrDirectByte(0x40);
 	Actor *a = derefActorSafe(act, "actorSet");
+	int i;
 
 	if (!a)
 		return;
@@ -576,10 +577,10 @@ void Scumm_v2::o2_actorSet() {
 			a->sound[0] = arg;
 			break;
 
-		case 2:	{	// Unknown - Init?
-			int unk1 = fetchScriptByte();
-			warning("o2_actorSet(%d, %d, %d) - Init(?) Not Implemented", act, arg, unk1);
-		}
+		case 2:		// Actor Set Color
+			i = fetchScriptByte();
+			a->palette[i] = arg;
+			a->needRedraw = true;
 			break;
 
 		case 3:		// Actor Name
