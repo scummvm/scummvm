@@ -24,6 +24,7 @@
 
 #include "common/config-manager.h"
 #include "queen/command.h"
+#include "queen/credits.h"
 #include "queen/cutaway.h"
 #include "queen/debug.h"
 #include "queen/defs.h"
@@ -42,7 +43,7 @@
 namespace Queen {
 
 Logic::Logic(QueenEngine *vm)
-	: _vm(vm) {
+	:  _queen2jas(NULL), _vm(vm), _credits(NULL) {
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
 	memset(_gameState, 0, sizeof(_gameState));
@@ -61,6 +62,10 @@ Logic::Logic(QueenEngine *vm)
 	}
 }
 
+Logic::~Logic() {
+	delete _credits;
+	delete _queen2jas;
+}
 
 void Logic::initialise() {
 	
@@ -71,6 +76,8 @@ void Logic::initialise() {
 
 	uint8 *jas = _vm->resource()->loadFile("QUEEN.JAS", 20);
 	uint8 *ptr = jas;
+
+	_queen2jas = new LineReader((char*)_vm->resource()->loadFile("QUEEN2.JAS"));
 
 	_numRooms = READ_BE_UINT16(ptr); ptr += 2;
 	_numNames = READ_BE_UINT16(ptr); ptr += 2;
@@ -215,7 +222,7 @@ void Logic::initialise() {
 	_objDescription = new char*[_numDescriptions + 1];
 	_objDescription[0] = 0;
 	for (i = 1; i <= _numDescriptions; i++)
-		_objDescription[i] = _vm->resource()->getJAS2Line();
+		_objDescription[i] = _queen2jas->nextLine();
 
 	//Patch for German text bug
 	if (_vm->resource()->getLanguage() == GERMAN) {
@@ -227,35 +234,35 @@ void Logic::initialise() {
 	_objName = new char*[_numNames + 1];
 	_objName[0] = 0;
 	for (i = 1; i <= _numNames; i++)
-		_objName[i] = _vm->resource()->getJAS2Line();
+		_objName[i] = _queen2jas->nextLine();
 
 	_roomName = new char*[_numRooms + 1];
 	_roomName[0] = 0;
 	for (i = 1; i <= _numRooms; i++)
-		_roomName[i] = _vm->resource()->getJAS2Line();
+		_roomName[i] = _queen2jas->nextLine();
 
 	_verbName[0] = 0;
 	for (i = 1; i <= 12; i++)
-		_verbName[i] = _vm->resource()->getJAS2Line();
+		_verbName[i] = _queen2jas->nextLine();
 
 	_joeResponse[0] = 0;
 	for (i = 1; i <= JOE_RESPONSE_MAX; i++)
-		_joeResponse[i] = _vm->resource()->getJAS2Line();
+		_joeResponse[i] = _queen2jas->nextLine();
 
 	_aAnim = new char*[_numAAnim + 1];
 	_aAnim[0] = 0;
 	for (i = 1; i <= _numAAnim; i++)
-		_aAnim[i] = _vm->resource()->getJAS2Line();
+		_aAnim[i] = _queen2jas->nextLine();
 
 	_aName = new char*[_numAName + 1];
 	_aName[0] = 0;
 	for (i = 1; i <= _numAName; i++)
-		_aName[i] = _vm->resource()->getJAS2Line();
+		_aName[i] = _queen2jas->nextLine();
 	
 	_aFile = new char*[_numAFile + 1];
 	_aFile[0] = 0;
 	for (i = 1; i <= _numAFile; i++)
-		_aFile[i] = _vm->resource()->getJAS2Line();
+		_aFile[i] = _queen2jas->nextLine();
 
 
 	// Step 3 : initialise game state / variables
@@ -977,6 +984,9 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	debug(6, "Logic::roomDisplay(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
 
 	roomErase();
+
+	if (_credits)
+		_credits->nextRoom();
 
 	roomSetup(roomName(room), comPanel, inCutaway);
 	ObjectData *pod = NULL;
@@ -2078,6 +2088,8 @@ void Logic::update() {
 	}
 
 	_vm->graphics()->update(_currentRoom);
+	if (_credits)
+		_credits->update();
 
 	_vm->input()->delay();
 
@@ -3178,6 +3190,19 @@ void Logic::asmInterviewIntro() {
 void Logic::asmEndInterview() {
 	debug(0, "Interactive Interview copyright (c) 1995, IBI.");
 	OSystem::instance()->quit();
+}
+
+void Logic::startCredits(const char *filename) {
+
+	stopCredits();
+	_credits = new Credits(_vm, filename);
+}
+
+void Logic::stopCredits() {
+	if (_credits) {
+		delete _credits;
+		_credits = NULL;
+	}
 }
 
 

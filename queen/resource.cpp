@@ -44,14 +44,13 @@ const GameVersion Resource::_gameVersions[] = {
 
 
 Resource::Resource(const Common::String &datafilePath, SaveFileManager *mgr, const char *savePath)
-	: _JAS2Pos(0), _datafilePath(datafilePath), _savePath(savePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr) {
+	: _datafilePath(datafilePath), _savePath(savePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr) {
 
 	_resourceFile = new File();
 	if (!findCompressedVersion() && !findNormalVersion())
 		error("Could not open resource file '%s%s'", _datafilePath.c_str(), "queen.1");
 	checkJASVersion();
 	debug(5, "Detected game version: %s, which has %d resource entries", _versionString, _resourceEntries);
-	_JAS2Ptr = (char *)loadFile("QUEEN2.JAS", 0);
 }
 
 Resource::~Resource() {
@@ -59,7 +58,6 @@ Resource::~Resource() {
 	delete _resourceFile;
 	if(_resourceTable != _resourceTablePEM10) 
 		delete[] _resourceTable;
-	delete[] _JAS2Ptr;
 	delete _saveFileManager;
 }
 
@@ -110,17 +108,6 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 		return &_resourceTable[index];
 	else 
 		return NULL;
-}
-
-char *Resource::getJAS2Line() {
-	assert(_JAS2Pos < resourceEntry("QUEEN2.JAS")->size);
-	char *startOfLine = _JAS2Ptr + _JAS2Pos;
-	char *curPos = startOfLine;
-	while (*curPos++ != 0xd) ;
-	*(curPos - 1) = '\0';     // '\r'
-	*curPos = '\0';           // '\n'
-	_JAS2Pos = (curPos - _JAS2Ptr) + 1;
-	return startOfLine;
 }
 
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) {
@@ -293,6 +280,23 @@ bool Resource::readSave(uint16 slot, byte *&ptr) {
 	}
 
 	return true;
+}
+
+LineReader::LineReader(char *buffer) : _buffer(buffer), _current(0) {
+}
+
+LineReader::~LineReader() {
+	delete[] _buffer;
+}
+
+char* LineReader::nextLine() {
+	char *startOfLine = _buffer + _current;
+	char *curPos = startOfLine;
+	while (*curPos++ != 0xd) ;
+	*(curPos - 1) = '\0';     // '\r'
+	*curPos = '\0';           // '\n'
+	_current = (curPos - _buffer) + 1;
+	return startOfLine;
 }
 
 } // End of namespace Queen

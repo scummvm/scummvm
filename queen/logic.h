@@ -25,6 +25,7 @@
 #include "common/util.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
+#include "queen/resource.h"
 
 namespace Queen {
 
@@ -53,11 +54,13 @@ struct ZoneSlot {
 };
 
 class QueenEngine;
+class Credits;
 
 class Logic {
 
 public:
 	Logic(QueenEngine *vm);
+	~Logic();
 
 	uint16 currentRoom() const { return _currentRoom; }
 	void currentRoom(uint16 room) { 
@@ -296,6 +299,9 @@ public:
 	void asmInterviewIntro();
 	void asmEndInterview();
 
+	void startCredits(const char *filename);
+	void stopCredits();
+
 	typedef bool (Logic::*ExecuteSpecialMoveProc)(uint16);
 	typedef bool (Logic::*PreChangeRoomProc)();
 
@@ -311,6 +317,8 @@ public:
 protected:
 
 	void initialise();
+
+	LineReader *_queen2jas;
 
 	uint16 _currentRoom;
 	uint16 _oldRoom;
@@ -440,6 +448,7 @@ protected:
 	PreChangeRoomProc _preChangeRoom;
 
 	QueenEngine *_vm;
+	Credits *_credits;
 };
 
 

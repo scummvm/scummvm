@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "queen/cutaway.h"
 
+#include "queen/credits.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
@@ -820,8 +821,8 @@ void Cutaway::handlePersonRecord(
 
 	if (0 != strcmp(sentence, "*")) {
 		if (sentence[0] == '#') {
-			warning("Credit scripting system not yet implemented");
-			// XXX Cinit(sentence + 1);
+			debug(0, "Starting credits");
+			_vm->logic()->startCredits(sentence + 1);
 		}
 		else {
 			if (object.objectNumber > 0) {
@@ -1095,7 +1096,7 @@ void Cutaway::stop() {
 		int i;
 		
 		// Stop the credits from running
-		// XXX CFlag = 0;
+		_vm->logic()->stopCredits();
 		
 		_vm->graphics()->bobStopAll();
 

@@ -61,6 +61,17 @@ struct GameVersion {
 	uint32 dataFileSize;
 };
 
+class LineReader {
+
+public:
+	LineReader(char *buffer);
+	~LineReader();
+	char* nextLine();
+
+private:
+	char *_buffer;
+	int _current;
+};
 
 class Resource {
 
@@ -81,7 +92,6 @@ public:
 	uint8 compression() const { return _compression; }
 	const char *JASVersion() const { return _versionString; }
 	Language getLanguage() const;
-	char *getJAS2Line();
 
 	bool writeSave(uint16 slot, const byte *saveData, uint32 size);
 	bool readSave(uint16 slot, byte *&ptr);
@@ -94,8 +104,6 @@ public:
 
 protected:
 	File *_resourceFile;
-	char *_JAS2Ptr;
-	uint32 _JAS2Pos;
 	uint8 _compression;
 	const Common::String _datafilePath;
 	char _versionString[6];
