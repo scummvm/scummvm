@@ -46,8 +46,8 @@ void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
 	_areaMax[0] = 0;
 	memset(&_area[0], 0, sizeof(Area) * MAX_AREAS_NUMBER);
 	for (i = 1; i <= _numRoomAreas; i++) {
-		_objMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		_areaMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		_objMax[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
+		_areaMax[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
 		memset(&_area[i][0], 0, sizeof(Area));
 		for (j = 1; j <= _areaMax[i]; j++) {
 			assert(j < MAX_AREAS_NUMBER);

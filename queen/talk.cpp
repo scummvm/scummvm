@@ -296,8 +296,8 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	uint8 *ptr = _cutawayPtr;
 
-	int16 cutawayGameState = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	int16 cutawayTestValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	int16 cutawayGameState = (int16)READ_BE_INT16(ptr); ptr += 2;
+	int16 cutawayTestValue = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 	if (_vm->logic()->gameState(cutawayGameState) == cutawayTestValue) {
 		getString(ptr, cutawayFilename, 20);
@@ -356,7 +356,7 @@ void Talk::findDialogueString(byte *ptr, int16 id, int16 max, char *str) {
 
 	for (int i = 1; i <= max; i++) {
 		ptr += 2;
-		int16 currentId = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		int16 currentId = (int16)READ_BE_INT16(ptr); ptr += 2;
 		if (id == currentId) {
 			ptr = getString(ptr, str, MAX_STRING_LENGTH, 4);
 			//debug(6, "Found string with ID %i: '%s'", id, str);
@@ -405,7 +405,7 @@ void Talk::load(const char *filename) {
 	// Load talk header
 	//
 
-	_levelMax = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_levelMax = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 	//debug(6, "levelMax = %i", _levelMax);
 
@@ -416,15 +416,15 @@ void Talk::load(const char *filename) {
 	else
 		canQuit = true;
 
-	_uniqueKey      = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	_talkKey        = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	_jMax           = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	_pMax           = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_uniqueKey      = (int16)READ_BE_INT16(ptr); ptr += 2;
+	_talkKey        = (int16)READ_BE_INT16(ptr); ptr += 2;
+	_jMax           = (int16)READ_BE_INT16(ptr); ptr += 2;
+	_pMax           = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 	for (i = 0; i < 2; i++) {
-		_gameState [i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		_testValue [i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		_itemNumber[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		_gameState [i] = (int16)READ_BE_INT16(ptr); ptr += 2;
+		_testValue [i] = (int16)READ_BE_INT16(ptr); ptr += 2;
+		_itemNumber[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
 	}
 
 	//debug(6, "uniqueKey = %i", _uniqueKey);
@@ -450,13 +450,13 @@ void Talk::load(const char *filename) {
 	for (i = 1; i <= _levelMax; i++)
 		for (int j = 0; j <= 5; j++) {
 			ptr += 2;
-			_dialogueTree[i][j].head = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			_dialogueTree[i][j].head = (int16)READ_BE_INT16(ptr); ptr += 2;
 			ptr += 2;
-			_dialogueTree[i][j].dialogueNodeValue1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			_dialogueTree[i][j].dialogueNodeValue1 = (int16)READ_BE_INT16(ptr); ptr += 2;
 			ptr += 2;
-			_dialogueTree[i][j].gameStateIndex = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			_dialogueTree[i][j].gameStateIndex = (int16)READ_BE_INT16(ptr); ptr += 2;
 			ptr += 2;
-			_dialogueTree[i][j].gameStateValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			_dialogueTree[i][j].gameStateValue = (int16)READ_BE_INT16(ptr); ptr += 2;
 		}
 }
 

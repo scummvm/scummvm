@@ -155,7 +155,7 @@ void Sound::saveState(byte *&ptr) {
 }
 
 void Sound::loadState(uint32 ver, byte *&ptr) {
-	_lastOverride = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_lastOverride = (int16)READ_BE_INT16(ptr); ptr += 2;
 }
 
 void SBSound::playSound(byte *sound, uint32 size, bool isSpeech) {
