@@ -760,7 +760,9 @@ void Scumm::scummInit() {
 	tempMusic = 0;
 	debug(9, "scummInit");
 
-	if (_features & GF_AFTER_V7) {
+	if (_features & GF_AFTER_V1) {
+		initScreens(0, 16, _screenWidth, 152);
+	} else if (_features & GF_AFTER_V7) {
 		initScreens(0, 0, _screenWidth, _screenHeight);
 	} else {
 		initScreens(0, 16, _screenWidth, 144);
@@ -899,7 +901,8 @@ void Scumm::scummInit() {
 
 	initScummVars();
 
-	getGraphicsPerformance();
+	// FIXME: disabled, why we need this, it's looks completly dummy and slow down startup
+	//	getGraphicsPerformance();
 
 	_sound->_current_cache = 0;
 
