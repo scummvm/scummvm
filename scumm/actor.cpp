@@ -848,17 +848,21 @@ void Scumm::playActorSounds()
 void Scumm::processActors()
 {
 	int i;
-	Actor *actors[NUM_ACTORS], *a, **ac, **ac2, *tmp, **end;
+	Actor **actors, *a, **ac, **ac2, *tmp, **end;
 	int numactors = 0;
 
+	actors = new Actor*[NUM_ACTORS];
+	
 	// Make a list of all actors in this room
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom())
 			actors[numactors++] = a;
 	}
-	if (!numactors)
+	if (!numactors) {
+		delete [] actors;
 		return;
+	}
 
 	end = actors + numactors;
 
@@ -883,6 +887,8 @@ void Scumm::processActors()
 			CHECK_HEAP a->animateCostume();
 		}
 	}
+	
+	delete [] actors;
 }
 
 void Actor::drawActorCostume()
