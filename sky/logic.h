@@ -169,7 +169,7 @@ public:
 	uint32 fnUnPauseFx(uint32 a, uint32 b, uint32 c);
 	uint32 fnPrintf(uint32 a, uint32 b, uint32 c);
 
-	static uint16 _screen;
+	static uint32 _scriptVariables[838];
 	
 protected:
 	void push(uint32);
@@ -180,13 +180,15 @@ protected:
 	void initScriptVariables();
 	void mainAnim();
 	void runGetOff();
+	void stopAndWait();
 
 	uint16 *_moduleList[16];
 	uint32 _stack[20];
 	byte _stackPtr;
 
 	Compact *_compact;
-	uint32 _scriptVariables[838];
+
+	uint32 _objectList[30];
 
 	uint32 _currentSection;
 	uint32 _saveCurrentSection;

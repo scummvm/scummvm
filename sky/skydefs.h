@@ -37,19 +37,23 @@
 #define	FIRST_TEXT_COMPACT	23
 
 // scriptVariable offsets
-#define RESULT 0
-#define LOGIC_LIST_NO 2
-#define CUR_ID 12
-#define MOUSE_STATUS 13
-#define MOUSE_STOP 14
+#define RESULT	0
+#define SCREEN	1
+#define LOGIC_LIST_NO	2
+#define CUR_ID	12
+#define MOUSE_STATUS	13
+#define MOUSE_STOP	14
 #define GET_OFF	18
-#define PLAYER_X 27
-#define PLAYER_Y 28
-#define PLAYER_MOOD 29
-#define PLAYER_SCREEN 30
-#define HIT_ID 37
-#define THE_CHOSEN_ONE 51
-#define TEXT1 53
+#define PLAYER_X	27
+#define PLAYER_Y	28
+#define PLAYER_MOOD	29
+#define PLAYER_SCREEN	30
+#define HIT_ID	37
+#define THE_CHOSEN_ONE	51
+#define TEXT1	53
+#define MENU_LENGTH	100
+#define SCROLL_OFFSET	101
+#define MENU	102
 #define CUR_SECTION	143
 
 //screen/grid defines

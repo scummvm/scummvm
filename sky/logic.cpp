@@ -25,7 +25,7 @@
 #include "sky/compact.h"
 #include "sky/skydefs.h"
 
-uint16 SkyLogic::_screen;
+uint32 SkyLogic::_scriptVariables[838];
 
 typedef void (SkyLogic::*LogicTable) ();
 static const LogicTable logicTable[] = {
@@ -174,8 +174,10 @@ void SkyLogic::arAnim() {
 		// fine because the later collision will almost certainly
 		// take longer to clear than the earlier one.
 
-		if (collide(SkyState::fetchCompact(_compact->extCompact->waitingFor)))
-			error("stop_and_wait not implemented\n");
+		if (collide(SkyState::fetchCompact(_compact->extCompact->waitingFor))) {
+			stopAndWait();
+			return;
+		}
 
 		// we are not in fact hitting this person so clr & continue
 		// it must have registered some time ago
@@ -607,6 +609,19 @@ void SkyLogic::runGetOff() {
 	_scriptVariables[GET_OFF] = 0;
 	if (getOff)
 		script((uint16)(getOff & 0xffff), (uint16)(getOff >> 16));
+}
+
+void SkyLogic::stopAndWait() {
+	_compact->mode += 4;
+
+	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
+	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
+
+	*scriptNo = (uint16)(_compact->extCompact->stopScript & 0xffff);
+	*offset   = (uint16)(_compact->extCompact->stopScript >> 16);
+
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::checkModuleLoaded(uint16 moduleNo) {
@@ -1447,7 +1462,12 @@ uint32 SkyLogic::fnStopMode(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnWeWait(uint32 id, uint32 b, uint32 c) {
-	error("Stub: fnWeWait");
+	// We have hit another mega
+	// we are going to wait for it to move
+
+	_compact->extCompact->waitingFor = id;
+	stopAndWait();
+	return 1; // not sure about this
 }
 
 uint32 SkyLogic::fnSendSync(uint32 mega, uint32 sync, uint32 c) {
@@ -1489,8 +1509,72 @@ uint32 SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 	return 0; // drop from script
 }
 
-uint32 SkyLogic::fnStartMenu(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnStartMenu");
+uint32 SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
+	// initialise the top menu bar
+	// firstObject is o0 for game menu, k0 for linc
+
+	// (1) FIRST, SET UP THE 2 ARROWS SO THEY APPEAR ON SCREEN
+
+	Compact *cpt = SkyState::fetchCompact(47);
+	cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
+	cpt->screen = (uint16)(_scriptVariables[SCREEN] & 0xffff);
+
+	cpt = SkyState::fetchCompact(48);
+	cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
+	cpt->screen = (uint16)(_scriptVariables[SCREEN] & 0xffff);
+
+	// (2) COPY OBJECTS FROM NON-ZERO INVENTORY VARIABLES INTO OBJECT DISPLAY LIST (& COUNT THEM)
+
+	// sort the objects and pad with blanks
+
+	uint32 menuLength = 0;
+	for (uint i = firstObject; i < firstObject + ARRAYSIZE(_objectList); i++) {
+		if ( _scriptVariables[i] )
+			_objectList[menuLength++] = _scriptVariables[i];
+	}
+	_scriptVariables[MENU_LENGTH] = menuLength;
+
+	// (3) OK, NOW TOP UP THE LIST WITH THE REQUIRED NO. OF BLANK OBJECTS (for min display length 11)
+
+	uint32 blankID = 51;
+	for (uint i = menuLength; i < 11; i++)
+		_objectList[i] = blankID++;
+
+	// (4) KILL ID's OF ALL 20 OBJECTS SO UNWANTED ICONS (SCROLLED OFF) DON'T REMAIN ON SCREEN
+	// (There should be a better way of doing this - only kill id of 12th item when menu has scrolled right)
+
+	for (int i = 0; i < ARRAYSIZE(_objectList); i++) {
+		if (_objectList[i])
+			(SkyState::fetchCompact(_objectList[i]))->status = ST_LOGIC;
+	}
+
+	// (5) NOW FIND OUT WHICH OBJECT TO START THE DISPLAY FROM (depending on scroll offset)
+
+	if (menuLength < 11) // check we can scroll
+		_scriptVariables[SCROLL_OFFSET] = 0;
+	else if (menuLength < _scriptVariables[SCROLL_OFFSET] + 11)
+		_scriptVariables[SCROLL_OFFSET] = menuLength - 11;
+
+	// (6) AND FINALLY, INITIALISE THE 11 OBJECTS SO THEY APPEAR ON SCREEEN
+
+	uint16 rollingX = 128 + 28;
+	for (int i = 0; i < 11; i++) {
+		cpt = SkyState::fetchCompact(
+				_objectList[_scriptVariables[SCROLL_OFFSET] + i]);
+
+		cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
+		cpt->screen = (uint16)(_scriptVariables[SCREEN] & 0xffff);
+
+		cpt->xcood = rollingX;
+		rollingX += 24;
+
+		if (_scriptVariables[MENU] == 2)
+			cpt->ycood = 136;
+		else
+			cpt->ycood = 112;
+	}
+
+	return 1;
 }
 
 uint32 SkyLogic::fnUnhighlight(uint32 item, uint32 b, uint32 c) {
@@ -1798,12 +1882,14 @@ uint32 SkyLogic::fnSaveCoods(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnSaveCoods");
 }
 
-uint32 SkyLogic::fnPlotGrid(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnPlotGrid");
+uint32 SkyLogic::fnPlotGrid(uint32 x, uint32 y, uint32 width) {
+	_skyGrid->plotGrid(x, y, width, _compact);
+	return 1;
 }
 
-uint32 SkyLogic::fnRemoveGrid(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnRemoveGrid");
+uint32 SkyLogic::fnRemoveGrid(uint32 x, uint32 y, uint32 width) {
+	_skyGrid->removeGrid(x, y, width, _compact);
+	return 1;
 }
 
 uint32 SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
@@ -1840,7 +1926,7 @@ uint32 SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
-	
+
 	if (SkyState::isDemo(_gameVersion))
 		if (sectionNo > 2)
 			error("End of demo");

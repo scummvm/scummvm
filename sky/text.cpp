@@ -366,7 +366,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 	cpt->logic = logicNum; 
 	cpt->status = ST_LOGIC | ST_FOREGROUND | ST_RECREATE;
-	cpt->screen = SkyLogic::_screen; 
+	cpt->screen = SkyLogic::_scriptVariables[SCREEN]; 
 
 	struct lowTextManager_t ret;
 	ret.textData = _dtData;
