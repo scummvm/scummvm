@@ -72,7 +72,7 @@ public:
 	void modulationWheel (byte value) { controlChange (1, value); }
 	void volume (byte value) { controlChange (7, value); }
 	void panPosition (byte value) { controlChange (10, value); }
-	void pitchBendFactor (byte value) { controlChange (16, value); }
+	void pitchBendFactor (byte value);
 	void detune (byte value) { controlChange (17, value); }
 	void priority (byte value) { controlChange (18, value); }
 	void sustain (bool value) { controlChange (64, value ? 1 : 0); }
@@ -119,6 +119,7 @@ void MidiChannel_MPU401::noteOn (byte note, byte velocity) { _owner->send (veloc
 void MidiChannel_MPU401::programChange (byte program) { _owner->send(program << 8 | 0xC0 | _channel); }
 void MidiChannel_MPU401::pitchBend (int16 bend) { _owner->send((((bend + 0x2000) >> 7) & 0x7F) << 16 | ((bend + 0x2000) & 0x7F) << 8 | 0xE0 | _channel); }
 void MidiChannel_MPU401::controlChange (byte control, byte value) { _owner->send(value << 16 | control << 8 | 0xB0 | _channel); }
+void MidiChannel_MPU401::pitchBendFactor (byte value) { _owner->setPitchBendRange (_channel, value); }
 void MidiChannel_MPU401::sysEx_customInstrument (uint32 type, byte *instr) { _owner->sysEx_customInstrument (_channel, type, instr); }
 
 
