@@ -582,10 +582,12 @@ AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 30, 20, 260, 124) {
 	addButton((_w - kButtonWidth)/2, 100, queryCustomString(23), kCloseCmd, 'C');	// Close dialog - FIXME
 	new StaticTextWidget(this, 10, 10, 240, 16, "ScummVM " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 20, 240, 16, "(built on " __DATE__ ")", kTextAlignCenter);
+
 	new StaticTextWidget(this, 10, 30, 240, 16, "http://www.scummvm.org", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 50, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 64, 240, 16, "Except", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 78, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 50, 240, 16, "SCUMM Games (c) LucasArts", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 64, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 78, 240, 16, "Beneath a Steel Sky (c) Revolution", kTextAlignCenter);
 }
 
 #ifndef DISABLE_HELP
