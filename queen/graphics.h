@@ -108,6 +108,29 @@ struct TextSlot {
 };
 
 
+struct CarBamData {
+	struct Obj {
+		int16 x, y;
+		uint16 frame;
+	};
+	Obj truck;
+	Obj rico;
+	Obj fx;
+	int16 sfx;
+};
+
+
+struct BamData {
+	bool enable;
+	int16 index;
+	int16 sfx;
+
+	BamData()
+		: enable(false), index(0), sfx(0) {
+	}
+};
+
+
 class Display;
 class Input;
 
@@ -167,6 +190,11 @@ public:
 	void cameraBob(int bobNum) { _cameraBob = bobNum; }
 	int cameraBob() const { return _cameraBob; }
 
+	BamData *bamData() { return &_bam; }
+	void initCarBamScene();
+	void updateCarBamScene();
+	void cleanupCarBamScene(uint16 i);
+
 	void update(uint16 room);
 
 
@@ -205,9 +233,13 @@ private:
 
 	int _cameraBob; // cambob
 
+	BamData _bam;
+
 	Display *_display;
 	Input *_input;
 	Resource *_resource;
+
+	static const CarBamData CARBAM_DATA[];
 
 };
 

@@ -232,6 +232,8 @@ A_FILE_MAX					Logic::_numAFile
 ACTOR_DATA_MAX				Logic::_numActors
 AREA						Logic::_area
 AREAMAX						Logic::_areaMax
+bamflag						Graphics::_bam.enable
+bamindex					Graphics::_bam.index
 DESCTOT						Logic::_numDescriptions
 ENTRY_OBJ					Logic::_entryObj
 FMAX						Logic::_numFurnitureStatic
@@ -331,8 +333,6 @@ playsong()
 sfxbusy()
 sfxplay()
 -
-bamflag
-bamindex
 CURRSONG
 SFXNAME						Logic::_sfxName
 tmpbamflag

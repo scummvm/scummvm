@@ -279,6 +279,7 @@ public:
 	void inventoryDeleteItem(uint16 itemNum, bool refresh = true);
 	void inventoryScroll(uint16 count, bool up);
 
+
 	//! Copy data from dummy object to object
 	void objectCopy(int dummyObjectIndex, int objectIndex);
 

@@ -317,22 +317,11 @@ void Cutaway::actionSpecialMove(int index) {
 
 		// c73e.cut - carbam background animation
 		case 7:
-			_graphics->bobClear(5);	// Car
-			_graphics->bobClear(6);	// FX
-			_graphics->bobClear(7);	// Rico
-			_graphics->bob(5)->active = true;
-			_graphics->bob(6)->active = true;
-			_graphics->bob(7)->active = true;
+			_graphics->initCarBamScene();
 			break;
 
-		// c74a.cut - Turn off big oil splat and gun shots!
 		case 8:
-			{
-				// XXX bamflag=0;
-				uint16 oilBobIndex = _logic->findBob(594);
-				_graphics->bob(oilBobIndex)->active = false;
-				_graphics->bob(7)->active = false;
-			}
+			_graphics->cleanupCarBamScene(_logic->findBob(594)); // Oil object
 			break;
 
 		// cdint.cut - put camera on Joe
