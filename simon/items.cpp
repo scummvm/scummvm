@@ -20,14 +20,15 @@
  */
 
 // Item script opcodes for Simon1/Simon2
+#include <ctype.h>
+
 #include "stdafx.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
 
 #ifdef _WIN32_WCE
 
-extern bool toolbar_drawn;
-extern bool draw_keyboard;
+extern void force_keyboard(bool);
 
 #endif
 
@@ -752,18 +753,27 @@ int SimonState::runScript()
 
 		case 132:{									/* save game */
 #ifdef _WIN32_WCE
-
-				if (!draw_keyboard) {
-					draw_keyboard = true;
-					toolbar_drawn = false;
-				}
+				force_keyboard(true);
 #endif
+
 				o_save_game();
+
+#ifdef _WIN32_WCE
+				force_keyboard(false);
+#endif
 			}
 			break;
 
 		case 133:{									/* load game */
+#ifdef _WIN32_WCE
+				force_keyboard(true);
+#endif
+
 				o_load_game();
+
+#ifdef _WIN32_WCE
+				force_keyboard(false);
+#endif
 			}
 			break;
 
@@ -774,7 +784,15 @@ int SimonState::runScript()
 			break;
 
 		case 135:{									/* quit if user presses y */
+#ifdef _WIN32_WCE
+				force_keyboard(true);
+#endif
+
 				o_quit_if_user_presses_y();
+
+#ifdef _WIN32_WCE
+				force_keyboard(false);
+#endif
 			}
 			break;
 
@@ -1482,11 +1500,16 @@ void SimonState::o_quit_if_user_presses_y()
 
 	for (;;) {
 		_system->poll_event(&event);
-		if (event.event_code == OSystem::EVENT_KEYDOWN)
-			if (event.kbd.keycode == 'y')
+		if (event.event_code == OSystem::EVENT_KEYDOWN) {
+			event.kbd.keycode = toupper(event.kbd.keycode);
+			// FIXME Arisme : better than being blocked ?
+			if (event.kbd.keycode == 'Y' ||
+				event.kbd.keycode == 'O' || /* french */
+				event.kbd.keycode == 'J' /* german I guess :) */)
 				_system->quit();
-			else if (event.kbd.keycode == 'n')
+			else if (event.kbd.keycode == 'N')
 				break;
+		}
 		delay(10);
 	}
 }
