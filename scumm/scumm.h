@@ -28,7 +28,6 @@
 #include "common/file.h"
 
 class GameDetector;
-class Gui;
 class NewGui;
 class Dialog;
 class Scumm;
@@ -395,7 +394,6 @@ public:
 
 
 	// GUI
-	Gui *_gui;
 	NewGui *_newgui;
 
 	Dialog *_pauseDialog;
@@ -1351,7 +1349,6 @@ public:
 
 	void go();
 
-	void setupGUIColors();
 	byte getDefaultGUIColor(int color);
 	void waitForTimer(int msec_delay);
 

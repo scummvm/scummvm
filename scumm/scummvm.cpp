@@ -31,7 +31,6 @@
 #include "debug.h"
 #include "dialogs.h"
 #include "gameDetector.h"
-#include "gui/gui.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
 #include "object.h"
@@ -101,9 +100,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_realHeight = 200;
 	}
 
-	_gui = new Gui();
-	_gui->init(this);
-	
 	_newgui = g_gui;
 	_bundle = new Bundle();
 	_sound = new Sound(this);
@@ -176,8 +172,6 @@ Scumm::~Scumm ()
 		delete _optionsDialog;
 	if (_saveLoadDialog)
 		delete _saveLoadDialog;
-
-	delete _gui;
 
 	delete _bundle;
 	delete _sound;
@@ -935,13 +929,11 @@ int Scumm::checkKeyHit()
 
 void Scumm::pauseGame(bool user)
 {
-	//_gui->pause();
 	pauseDialog();
 }
 
 void Scumm::setOptions()
 {
-	_gui->options();
 	//_newgui->optionsDialog();
 }
 
@@ -964,18 +956,7 @@ void Scumm::runDialog(Dialog *dialog)
 void Scumm::pauseDialog()
 {
 	if (!_pauseDialog) {
-#if 0
-	// HACK HACK
-		const char *message = "This demonstrates MessageDialog's abilities.\n"
-						      "For example it supports multi line text.\n"
-						      "\n"
-						      "Well, not much more right now, really :-)\n"
-						      "And there are still some bugs in it, too\n";
-						      	// <- FIXME: This is needed due to a bug...
-		_pauseDialog = new MessageDialog(_newgui, message);
-#else
 		_pauseDialog = new PauseDialog(_newgui, this);
-#endif
 	}
 
 	runDialog(_pauseDialog);
@@ -1065,7 +1046,6 @@ void Scumm::processKbd()
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT], 0, 0, 0);
 
-		//_gui->saveLoadDialog();	// FIXME: Old Gui
 		saveloadDialog();		// Display NewGui
 
 		if (_features & GF_AFTER_V7)
@@ -1487,14 +1467,9 @@ void Scumm::mainRun()
 		new_time = _system->get_msecs();
 		waitForTimer(delta * 15 + last_time - new_time);
 		last_time = _system->get_msecs();
-		if (_gui->isActive()) {
-			_gui->loop();
-			delta = 5;
-		} else {
-			delta = scummLoop(delta);
-			if (delta < 1)	// Ensure we don't get into a loop
-				delta = 1;  // by not decreasing sleepers.
-		}
+		delta = scummLoop(delta);
+		if (delta < 1)	// Ensure we don't get into a loop
+			delta = 1;  // by not decreasing sleepers.
 	}
 }
 
@@ -1562,7 +1537,6 @@ void Scumm::launch()
 
 void Scumm::go() {
 	launch();
-	setupGUIColors();
 	mainRun();
 }
 
@@ -1578,18 +1552,6 @@ byte Scumm::getDefaultGUIColor(int color)
 		return readArray(110, 0, color);
 	} else {
 		return getStringAddress(21)[color];
-	}
-}
-
-void Scumm::setupGUIColors() {
-
-	/* FIXME: strange IF line? */
-	if (_gameId && !(_features & GF_SMALL_HEADER) && !(_features & GF_AFTER_V7)) {
-		_gui->_bgcolor = getDefaultGUIColor(0);
-		_gui->_color = getDefaultGUIColor(1);
-		_gui->_textcolor = getDefaultGUIColor(2);
-		_gui->_textcolorhi = getDefaultGUIColor(6);
-		_gui->_shadowcolor = getDefaultGUIColor(8);
 	}
 }
 
