@@ -782,7 +782,7 @@ void Scumm_v2::o2_resourceRoutines() {
 	if (0 <= (opcode >> 4) && (opcode >> 4) < (int)ARRAYSIZE(resTypes))
 		type = resTypes[opcode >> 4];
 
-	if (type == rtNumTypes)
+	if ((opcode & 0x0f) == 0 || type == rtNumTypes)
 		return;
 
 	if ((opcode & 0x0f) == 1) {
