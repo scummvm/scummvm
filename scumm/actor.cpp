@@ -421,8 +421,15 @@ void Actor::setupActorScale() {
 	}
 
 	// FIXME - Hack for The Dig 'Tomb' (room 88)
-	//	Otherwise walking to the far-left door causes the actor
-	//	to shrink to a one-pixel dot. (!?!?)
+	// Otherwise walking to the far-left door causes the actor
+	// to shrink to a one-pixel dot. The reason for this is that
+	// scale items (as handled in setScaleItem etc.) are only
+	// working as long as the room height is <= 200!!! That's a
+	// serious problem for DIG/FT, and causes the FIXME below, too.
+	// A way to properly fix the problem would be to use the
+	// V8 "scale slots" instead. This would be almost perfect, the
+	// only problem being that it might render some old savegames
+	// partially broken...
 	if (_vm->_gameId == GID_DIG && _vm->_currentRoom == 88) {
 		scale = 0xFF;
 	}
