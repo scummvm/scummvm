@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.14  2001/11/05 20:45:07  strigeus
+ * fixed playSfxSound types
+ *
  * Revision 1.13  2001/11/05 19:21:49  strigeus
  * bug fixes,
  * speech in dott
@@ -402,8 +405,8 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 #define BITS_PER_SAMPLE 16
 
 static void *_sfx_sound;
-static int _sfx_pos;
-static int _sfx_size;
+static uint32 _sfx_pos;
+static uint32 _sfx_size;
 
 static uint32 _sfx_fp_speed;
 static uint32 _sfx_fp_pos;
@@ -412,7 +415,7 @@ bool isSfxFinished() {
 	return _sfx_size == 0;
 }
 
-void playSfxSound(void *sound, int size, int rate) {
+void playSfxSound(void *sound, uint32 size, uint rate) {
 	if (_sfx_sound) {
 		free(_sfx_sound);
 	}
@@ -420,10 +423,11 @@ void playSfxSound(void *sound, int size, int rate) {
 	_sfx_pos = 0;
 	_sfx_fp_speed = (1<<16) * rate / 22050;
 	_sfx_fp_pos = 0;
+	debug(1, "size=%d, rate=%d", size, rate);
 	_sfx_size = size * 22050 / rate;
 }
 
-void mix_sound(int16 *data, int len) {
+void mix_sound(int16 *data, uint32 len) {
 	int8 *s;
 	int i;
 	uint32 fp_pos, fp_speed;

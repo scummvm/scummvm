@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.17  2001/11/05 20:45:07  strigeus
+ * fixed playSfxSound types
+ *
  * Revision 1.16  2001/11/05 19:21:49  strigeus
  * bug fixes,
  * speech in dott
@@ -1689,5 +1692,5 @@ void updateScreen(Scumm *s);
 void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 id, byte *searchin, int index);
-void playSfxSound(void *sound, int size, int rate);
+void playSfxSound(void *sound, uint32 size, uint rate);
 bool isSfxFinished();
