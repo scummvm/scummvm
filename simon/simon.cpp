@@ -263,6 +263,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst), midi(syst) {
 
 	_vc_ptr = 0;
+	_vc_get_out_of_code = 0;
 	_game_offsets_ptr = 0;
 	
 	const SimonGameSettings *g = simon_settings;
@@ -2420,7 +2421,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
 	uint16 c;
-	byte *vc_ptr_org;
+	const byte *vc_ptr_org;
 
 	_video_palette_mode = mode;
 	_lock_word |= 0x20;
@@ -2561,7 +2562,7 @@ void SimonEngine::expire_vga_timers() {
 		if (!--vte->delay) {
 			uint16 cur_file = vte->cur_vga_file;
 			uint16 cur_unk = vte->sprite_id;
-			byte *script_ptr = vte->script_pointer;
+			const byte *script_ptr = vte->script_pointer;
 
 			_next_vga_timer_to_process = vte + 1;
 			delete_vga_timer(vte);
@@ -2601,7 +2602,7 @@ void SimonEngine::scroll_timeout() {
 	add_vga_timer(6, NULL, 0, 0);
 }
 
-void SimonEngine::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
+void SimonEngine::vc_resume_sprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
 	VgaPointersEntry *vpe;
 
 	_vga_cur_sprite_id = cur_sprite;
@@ -2618,7 +2619,7 @@ void SimonEngine::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_s
 	run_vga_script();
 }
 
-void SimonEngine::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file) {
+void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite, uint cur_file) {
 	VgaTimerEntry *vte;
 
 	// When Simon talks to the Golum about stew in French version of
@@ -2711,7 +2712,7 @@ void SimonEngine::skip_speech() {
 void SimonEngine::timer_vga_sprites() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	byte *vc_ptr_org = _vc_ptr;
+	const byte *vc_ptr_org = _vc_ptr;
 	uint16 params[5];							// parameters to vc_10
 
 	if (_video_var_9 == 2)
@@ -2743,7 +2744,7 @@ void SimonEngine::timer_vga_sprites() {
 			params[4] = READ_BE_UINT16(&vsp->unk4);
 		}
 
-		_vc_ptr = (byte *)params;
+		_vc_ptr = (const byte *)params;
 		vc_10_draw();
 
 		vsp++;
@@ -2757,7 +2758,8 @@ void SimonEngine::timer_vga_sprites() {
 }
 
 void SimonEngine::timer_vga_sprites_helper() {
-	byte *dst = dx_lock_2(), *src;
+	byte *dst = dx_lock_2();
+	const byte *src;
 	uint x;
 
 	if (_vga_var3 < 0) {
@@ -2774,7 +2776,7 @@ void SimonEngine::timer_vga_sprites_helper() {
 	}
 
 	src = _vga_var7 + x * 4;
-	decodeStripA(dst, src + READ_BE_UINT32(&*((uint32 *)src)), _vga_var5);
+	decodeStripA(dst, src + READ_BE_UINT32(src), _vga_var5);
 
 	dx_unlock_2();
 
@@ -2793,7 +2795,7 @@ void SimonEngine::timer_vga_sprites_helper() {
 void SimonEngine::timer_vga_sprites_2() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	byte *vc_ptr_org = _vc_ptr;
+	const byte *vc_ptr_org = _vc_ptr;
 	uint16 params[5];							// parameters to vc_10_draw
 
 	if (_video_var_9 == 2)
@@ -2817,7 +2819,7 @@ void SimonEngine::timer_vga_sprites_2() {
 		params[2] = READ_BE_UINT16(&vsp->x);
 		params[3] = READ_BE_UINT16(&vsp->y);
 		params[4] = READ_BE_UINT16(&vsp->unk4);
-		_vc_ptr = (byte *)params;
+		_vc_ptr = (const byte *)params;
 		vc_10_draw();
 
 		vsp++;
@@ -3009,7 +3011,7 @@ uint SimonEngine::itemPtrToID(Item *id) {
 }
 
 void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
-	uint16 *p;
+	const uint16 *p;
 	uint i, j;
 	uint prev_i;
 	uint x_diff, y_diff;
@@ -3021,7 +3023,7 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 
 	prev_i = 21 - _variableArray[12];
 	for (i = 20; i != 0; --i) {
-		p = (uint16 *)_pathfind_array[20 - i];
+		p = (const uint16 *)_pathfind_array[20 - i];
 		if (!p)
 			continue;
 		for (j = 0; READ_BE_UINT16(&p[0]) != 999; j++, p += 2) {	// 0xE703 = byteswapped 999

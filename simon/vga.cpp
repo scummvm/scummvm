@@ -28,7 +28,6 @@
 namespace Simon {
 
 typedef void (SimonEngine::*VgaOpcodeProc) ();
-static uint16 vc_get_out_of_code = 0;
 
 // Opcode tables
 static const VgaOpcodeProc vga_opcode_table[] = {
@@ -115,7 +114,7 @@ void SimonEngine::run_vga_script() {
 		uint opcode;
 
 		if (_continous_vgascript) {
-			if (_vc_ptr != (byte *)&vc_get_out_of_code) {
+			if (_vc_ptr != (const byte *)&_vc_get_out_of_code) {
 				fprintf(_dump_file, "%.5d %.5X: %5d %4d ", _vga_tick_counter, _vc_ptr - _cur_vga_file_1, _vga_cur_sprite_id, _vga_cur_file_id);
 				dump_video_script(_vc_ptr, true);
 			}
@@ -223,7 +222,8 @@ void SimonEngine::vc_2_call() {
 	uint num;
 	uint res;
 	byte *old_file_1, *old_file_2;
-	byte *b, *bb, *vc_ptr_org;
+	byte *b, *bb;
+	const byte *vc_ptr_org;
 
 	num = vc_read_var_or_word();
 
@@ -392,7 +392,7 @@ void SimonEngine::vc_9_skip_if_unk3_is() {
 
 byte *vc_10_depack_column(VC10_state * vs) {
 	int8 a = vs->depack_cont;
-	byte *src = vs->depack_src;
+	const byte *src = vs->depack_src;
 	byte *dst = vs->depack_dest;
 	byte dh = vs->dh;
 	byte color;
@@ -440,7 +440,7 @@ void vc_10_skip_cols(VC10_state *vs) {
 	}
 }
 
-byte *SimonEngine::vc_10_depack_swap(byte *src, uint w, uint h) {
+byte *SimonEngine::vc_10_depack_swap(const byte *src, uint w, uint h) {
 	w <<= 3;
 
 	{
@@ -513,7 +513,7 @@ byte *SimonEngine::vc_10_depack_swap(byte *src, uint w, uint h) {
 	return _video_buf_1;
 }
 
-byte *SimonEngine::vc_10_no_depack_swap(byte *src, uint w, uint h) {
+byte *SimonEngine::vc_10_no_depack_swap(const byte *src, uint w, uint h) {
 	if (src == _vc_10_base_ptr_old)
 		return _video_buf_1;
 
@@ -544,7 +544,7 @@ static uint16 _video_windows[128] = {
 };
 
 /* simon2 specific */
-void SimonEngine::decodeStripA(byte *dst, byte *src, int height) {
+void SimonEngine::decodeStripA(byte *dst, const byte *src, int height) {
 	const uint pitch = _dx_surface_pitch;
 	int8 reps = (int8)0x80;
 	byte color;
@@ -642,7 +642,8 @@ void SimonEngine::vc_10_draw() {
 	}
 
 	if (_game & GF_SIMON2 && width >= 21) {
-		byte *src, *dst;
+		const byte *src;
+		byte *dst;
 		uint w;
 
 		_vga_var1 = width * 2 - 40;
@@ -794,7 +795,8 @@ void SimonEngine::vc_10_draw() {
 
 		/* vc_10_helper_5 */
 	} else if (_lock_word & 0x20 && state.base_color == 0 || state.base_color == 0xC0) {
-		byte *src, *dst;
+		const byte *src;
+		byte *dst;
 		uint h, i;
 
 		if (!(state.e & 8)) {
@@ -962,7 +964,8 @@ void SimonEngine::vc_10_draw() {
 			}
 			/* vc_10_helper_6 */
 		} else {
-			byte *src, *dst;
+			const byte *src;
+			byte *dst;
 			uint count;
 
 			src = state.depack_src + (width * state.y_skip) * 8;
@@ -1025,7 +1028,7 @@ void SimonEngine::vc_12_delay() {
 		num += VGA_DELAY_BASE;
 
 	add_vga_timer(num, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
-	_vc_ptr = (byte *)&vc_get_out_of_code;
+	_vc_ptr = (byte *)&_vc_get_out_of_code;
 }
 
 void SimonEngine::vc_13_set_sprite_offset_x() {
@@ -1071,12 +1074,12 @@ void SimonEngine::vc_16_sleep_on_id() {
 	vfs->sprite_id = _vga_cur_sprite_id;
 	vfs->cur_vga_file = _vga_cur_file_id;
 
-	_vc_ptr = (byte *)&vc_get_out_of_code;
+	_vc_ptr = (byte *)&_vc_get_out_of_code;
 }
 
 void SimonEngine::vc_17_set_pathfind_item() {
 	uint a = vc_read_next_word();
-	_pathfind_array[a - 1] = (uint16 *)_vc_ptr;
+	_pathfind_array[a - 1] = (const uint16 *)_vc_ptr;
 	while (READ_BE_UINT16(_vc_ptr) != 999)
 		_vc_ptr += 4;
 	_vc_ptr += 2;
@@ -1095,36 +1098,28 @@ void SimonEngine::vc_19_chain_to_script() {
 
 /* helper routines */
 
-/* write unaligned 16-bit */
-static void write_16_le(void *p, uint16 a) {
-	((byte *)p)[0] = (byte)(a);
-	((byte *)p)[1] = (byte)(a >> 8);
-}
-
-/* read unaligned 16-bit */
-static uint16 read_16_le(void *p) {
-	return ((byte *)p)[0] | (((byte *)p)[1] << 8);
-}
-
-/* FIXME: unaligned access */
 void SimonEngine::vc_20_set_code_word() {
+	/* FIXME: This pücode is somewhat strange: it first reads a BE word from 
+	 * the script (advancing the script pointer in doing so); then it writes
+	 * back the same word, this time as LE, into the script.
+	 */
 	uint16 a = vc_read_next_word();
-	write_16_le(_vc_ptr, a);
+	WRITE_LE_UINT16(const_cast<byte *>(_vc_ptr), a);
 	_vc_ptr += 2;
 }
 
-/* FIXME: unaligned access */
 void SimonEngine::vc_21_jump_if_code_word() {
 	int16 a = vc_read_next_word();
-	byte *tmp = _vc_ptr + a;
+	const byte *tmp = _vc_ptr + a;
 	if (_game & GF_SIMON2)
 		tmp += 3;
 	else
 		tmp += 4;
 
-	uint16 val = read_16_le(tmp);
+	uint16 val = READ_LE_UINT16(tmp);
 	if (val != 0) {
-		write_16_le(tmp, val - 1);
+		// Decrement counter
+		WRITE_LE_UINT16(const_cast<byte *>(tmp), val - 1);
 		_vc_ptr = tmp + 2;
 	}
 }
@@ -1210,7 +1205,7 @@ void SimonEngine::vc_25_halt_sprite() {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
 		vsp++;
 	}
-	_vc_ptr = (byte *)&vc_get_out_of_code;
+	_vc_ptr = (byte *)&_vc_get_out_of_code;
 	_vga_sprite_changed++;
 }
 
@@ -1456,7 +1451,7 @@ void SimonEngine::vc_42_delay_if_not_eq() {
 	if (val != vc_read_next_word()) {
 
 		add_vga_timer(_vga_base_delay + 1, _vc_ptr - 4, _vga_cur_sprite_id, _vga_cur_file_id);
-		_vc_ptr = (byte *)&vc_get_out_of_code;
+		_vc_ptr = (byte *)&_vc_get_out_of_code;
 	}
 }
 
@@ -1493,7 +1488,7 @@ void SimonEngine::vc_48() {
 	uint a = (uint16)_variableArray[12];
 	uint b = (uint16)_variableArray[13];
 	int c = _variableArray[14];
-	uint16 *p = _pathfind_array[a - 1];
+	const uint16 *p = _pathfind_array[a - 1];
 	int step;
 	int y1, y2;
 	int16 *vp;
@@ -1595,7 +1590,7 @@ void SimonEngine::vc_56_delay() {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
 
 		add_vga_timer(num + VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
-		_vc_ptr = (byte *)&vc_get_out_of_code;
+		_vc_ptr = (byte *)&_vc_get_out_of_code;
 	}
 }
 
@@ -1617,7 +1612,7 @@ void SimonEngine::vc_59() {
 void SimonEngine::vc_58() {
 	uint sprite = _vga_cur_sprite_id;
 	uint file = _vga_cur_file_id;
-	byte *vc_ptr_org;
+	const byte *vc_ptr_org;
 	uint16 tmp;
 
 	_vga_cur_file_id = vc_read_next_word();
@@ -1643,7 +1638,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
 	VgaTimerEntry *vte;
-	byte *vc_ptr_org;
+	const byte *vc_ptr_org;
 
 	old_sprite_id = _vga_cur_sprite_id;
 	old_cur_file_id = _vga_cur_file_id;
@@ -1736,7 +1731,7 @@ void SimonEngine::vc_62_palette_thing() {
 			uint16 params[5];						/* parameters to vc_10_draw */
 			VgaSprite *vsp;
 			VgaPointersEntry *vpe;
-			byte *vc_ptr_org = _vc_ptr;
+			const byte *vc_ptr_org = _vc_ptr;
 
 			vsp = _vga_sprites;
 			while (vsp->id != 0) {

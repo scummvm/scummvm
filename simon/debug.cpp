@@ -169,7 +169,7 @@ void SimonEngine::dumpSubroutines() {
 	}
 }
 
-void SimonEngine::dump_video_script(byte *src, bool one_opcode_only) {
+void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 	uint opcode;
 	const char *str, *strn;
 
@@ -233,43 +233,43 @@ void SimonEngine::dump_video_script(byte *src, bool one_opcode_only) {
 	} while (!one_opcode_only);
 }
 
-void SimonEngine::dump_vga_file(byte *vga) {
+void SimonEngine::dump_vga_file(const byte *vga) {
 	{
-		byte *pp;
-		byte *p;
+		const byte *pp;
+		const byte *p;
 		int count;
 
 		pp = vga;
-		p = pp + READ_BE_UINT16(&((VgaFile1Header *) pp)->hdr2_start);
-		count = READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_count);
-		p = pp + READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_table);
+		p = pp + READ_BE_UINT16(&((const VgaFile1Header *) pp)->hdr2_start);
+		count = READ_BE_UINT16(&((const VgaFile1Header2 *) p)->id_count);
+		p = pp + READ_BE_UINT16(&((const VgaFile1Header2 *) p)->id_table);
 		while (--count >= 0) {
-			int id = READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id);
+			int id = READ_BE_UINT16(&((const VgaFile1Struct0x6 *) p)->id);
 
-			dump_vga_script_always(vga + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), id / 100, id);
+			dump_vga_script_always(vga + READ_BE_UINT16(&((const VgaFile1Struct0x6 *) p)->script_offs), id / 100, id);
 			p += sizeof(VgaFile1Struct0x6);
 		}
 	}
 
 	{
-		byte *bb, *b;
+		const byte *bb, *b;
 		int c;
 
 		bb = vga;
-		b = bb + READ_BE_UINT16(&((VgaFile1Header *) bb)->hdr2_start);
-		c = READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk1);
-		b = bb + READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk2_offs);
+		b = bb + READ_BE_UINT16(&((const VgaFile1Header *) bb)->hdr2_start);
+		c = READ_BE_UINT16(&((const VgaFile1Header2 *) b)->unk1);
+		b = bb + READ_BE_UINT16(&((const VgaFile1Header2 *) b)->unk2_offs);
 
 		while (--c >= 0) {
-			int id = READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->id);
+			int id = READ_BE_UINT16(&((const VgaFile1Struct0x8 *) b)->id);
 
-			dump_vga_script_always(vga + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs), id / 100, id);
+			dump_vga_script_always(vga + READ_BE_UINT16(&((const VgaFile1Struct0x8 *) b)->script_offs), id / 100, id);
 			b += sizeof(VgaFile1Struct0x8);
 		}
 	}
 }
 
-const byte bmp_hdr[] = {
+static const byte bmp_hdr[] = {
 	0x42, 0x4D,
 	0x9E, 0x14, 0x00, 0x00,				/* offset 2, file size */
 	0x00, 0x00, 0x00, 0x00,
@@ -323,7 +323,7 @@ void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint3
 	fclose(out);
 }
 
-void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, const byte *palette,
+static void dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
 								 byte base)
 {
 	/* allocate */
@@ -351,7 +351,7 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 	free(b);
 }
 
-void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
+void SimonEngine::dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base) {
 	char buf[40];
 #if !defined(__PALM_OS__) && !defined(__DC__)
 	struct stat statbuf;
@@ -390,11 +390,11 @@ void pal_load(byte *pal, const byte *vga1, int a, int b) {
 	} while (--num);
 }
 
-void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
+void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 
 	int i;
 	uint32 offs;
-	byte *p2;
+	const byte *p2;
 	byte pal[768];
 
 	{
@@ -411,14 +411,14 @@ void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 
 	for(i = 1; ; i++) {
 		p2 = vga + i * 8;
-		offs = TO_BE_32(*(uint32 *)p2);
+		offs = READ_BE_UINT32(p2);
 
 		/* try to detect end of images.
 		 * assume the end when offset >= 200kb */
 		if (offs >= 200*1024)
 			return;
 		
-		width = TO_BE_16(*(uint16 *)(p2 + 6));
+		width = READ_BE_UINT16(p2 + 6);
 		height = p2[5];
 		flags = p2[4];
 
@@ -439,14 +439,14 @@ void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 	}
 }
 
-void SimonEngine::dump_vga_script_always(byte *ptr, uint res, uint sprite_id) {
+void SimonEngine::dump_vga_script_always(const byte *ptr, uint res, uint sprite_id) {
 	fprintf(_dump_file, "; address=%x, vgafile=%d  vgasprite=%d\n",
 					ptr - _vga_buffer_pointers[res].vgaFile1, res, sprite_id);
 	dump_video_script(ptr, false);
 	fprintf(_dump_file, "; end\n");
 }
 
-void SimonEngine::dump_vga_script(byte *ptr, uint res, uint sprite_id) {
+void SimonEngine::dump_vga_script(const byte *ptr, uint res, uint sprite_id) {
 	dump_vga_script_always(ptr, res, sprite_id);
 }
 

@@ -73,7 +73,7 @@ struct VC10_state {
 
 	byte dl, dh;
 
-	byte *depack_src;
+	const byte *depack_src;
 	int8 depack_cont;
 
 	byte depack_dest[200];

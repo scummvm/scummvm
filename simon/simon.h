@@ -87,7 +87,7 @@ struct VgaSprite {
 
 struct VgaSleepStruct {
 	uint16 ident;
-	byte *code_ptr;
+	const byte *code_ptr;
 	uint16 sprite_id;
 	uint16 cur_vga_file;
 	VgaSleepStruct() { memset(this, 0, sizeof(*this)); }
@@ -95,7 +95,7 @@ struct VgaSleepStruct {
 
 struct VgaTimerEntry {
 	uint16 delay;
-	byte *script_pointer;
+	const byte *script_pointer;
 	uint16 sprite_id;
 	uint16 cur_vga_file;
 	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
@@ -112,7 +112,9 @@ class SimonEngine : public Engine {
 protected:
 	void playSting(uint a);
 	
-	byte *_vc_ptr;								/* video code ptr */
+	const byte *_vc_ptr;								/* video code ptr */
+	uint16 _vc_get_out_of_code;
+
 
 	uint32 *_game_offsets_ptr;
 
@@ -211,7 +213,7 @@ protected:
 	int16 _script_unk_1;
 	bool _vga_var6;
 	int _x_scroll, _vga_var1, _vga_var2, _vga_var3, _vga_var5;
-	byte *_vga_var7;
+	const byte *_vga_var7;
 	byte _vga_var8;
 
 	int16 _script_cond_a, _script_cond_b, _script_cond_c;
@@ -323,7 +325,7 @@ protected:
 	VgaSprite _vga_sprites[180];
 	VgaSleepStruct _vga_sleep_structs[30];
 
-	uint16 *_pathfind_array[20];
+	const uint16 *_pathfind_array[20];
 
 	uint8 _palette_backup[1024];
 	uint8 _palette[1024];
@@ -371,7 +373,7 @@ protected:
 
 	Common::RandomSource _rnd;
 
-	byte *_vc_10_base_ptr_old;
+	const byte *_vc_10_base_ptr_old;
 	byte _hebrew_char_widths[32];
 
 public:
@@ -695,7 +697,7 @@ public:
 
 protected:
 	void delete_vga_timer(VgaTimerEntry * vte);
-	void vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
+	void vc_resume_sprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
 	int vc_read_var_or_word();
 	uint vc_read_next_word();
 	uint vc_read_next_byte();
@@ -707,7 +709,7 @@ protected:
 	bool itemIsParentOf(uint16 a, uint16 b);
 	bool vc_maybe_skip_proc_1(uint16 a, int16 b);
 
-	void add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file);
+	void add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite, uint cur_file);
 	VgaSprite *find_cur_sprite();
 	void vc_set_bit_to(uint bit, bool value);
 
@@ -755,12 +757,12 @@ protected:
 	void dx_clear_surfaces(uint num_lines);
 	void dx_update_screen_and_palette();
 
-	void dump_video_script(byte *src, bool one_opcode_only);
-	void dump_vga_file(byte *vga);
-	void dump_vga_script(byte *ptr, uint res, uint sprite_id);
-	void dump_vga_script_always(byte *ptr, uint res, uint sprite_id);
-	void dump_vga_bitmaps(byte *vga, byte *vga1, int res);
-	void dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base);
+	void dump_video_script(const byte *src, bool one_opcode_only);
+	void dump_vga_file(const byte *vga);
+	void dump_vga_script(const byte *ptr, uint res, uint sprite_id);
+	void dump_vga_script_always(const byte *ptr, uint res, uint sprite_id);
+	void dump_vga_bitmaps(const byte *vga, byte *vga1, int res);
+	void dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base);
 
 	void dx_clear_attached_from_top(uint lines);
 	void dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h);
@@ -773,8 +775,8 @@ protected:
 	void quick_load_or_save();
 	void shutdown();
 
-	byte *vc_10_depack_swap(byte *src, uint w, uint h);
-	byte *vc_10_no_depack_swap(byte *src, uint w, uint h);
+	byte *vc_10_depack_swap(const byte *src, uint w, uint h);
+	byte *vc_10_no_depack_swap(const byte *src, uint w, uint h);
 
 	Item *getNextItemPtrStrange();
 
@@ -796,7 +798,7 @@ protected:
 	void o_190_helper(uint i);
 	void timer_vga_sprites_helper();
 
-	void decodeStripA(byte *dst, byte *src, int height);
+	void decodeStripA(byte *dst, const byte *src, int height);
 	void scroll_timeout();
 	void hitarea_stuff_helper_2();
 	void realizePalette();
