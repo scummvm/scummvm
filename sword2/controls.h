@@ -47,7 +47,7 @@ public:
 	void updateGraphicsLevel(int newLevel);
 };
 
-extern Gui gui;
+extern Gui *gui;
 
 } // End of namespace Sword2
 

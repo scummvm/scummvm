@@ -243,19 +243,19 @@ void System_menu_mouse(void) {
 				// call the relevent screen
 				switch (hit) {
 				case 0:
-					gui.optionControl();
+					gui->optionControl();
 					break;
 				case 1:
-					gui.quitControl();
+					gui->quitControl();
 					break;
 				case 2:
-					gui.saveControl();
+					gui->saveControl();
 					break;
 				case 3:
-					gui.restoreControl();
+					gui->restoreControl();
 					break;
 				case 4:
-					gui.restartControl();
+					gui->restartControl();
 					break;
 				}
 
@@ -877,7 +877,7 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {
 	int16 xOffset, yOffset;
 	uint8 justification;
 
-	if (gui._pointerTextSelected) {
+	if (gui->_pointerTextSelected) {
 		if (textId) {
 			// check what the pointer is, to set offsets
 			// correctly for text position

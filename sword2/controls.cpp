@@ -45,7 +45,7 @@ namespace Sword2 {
 // our fonts start on SPACE character (32)
 #define SIZE_OF_CHAR_SET (256 - 32)
 
-Gui gui;
+Gui *gui;
 
 enum {
 	kAlignLeft,
@@ -775,11 +775,11 @@ public:
 		registerWidget(_okButton);
 		registerWidget(_cancelButton);
 
-		gui.readOptionSettings();
+		gui->readOptionSettings();
 
-		_objectLabelsSwitch->setValue(gui._pointerTextSelected != 0);
-		_subtitlesSwitch->setValue(gui._subtitles != 0);
-		_reverseStereoSwitch->setValue(gui._stereoReversed != 0);
+		_objectLabelsSwitch->setValue(gui->_pointerTextSelected != 0);
+		_subtitlesSwitch->setValue(gui->_subtitles != 0);
+		_reverseStereoSwitch->setValue(gui->_stereoReversed != 0);
 		_musicSwitch->setValue(!g_sound->isMusicMute());
 		_speechSwitch->setValue(!g_sound->isSpeechMute());
 		_fxSwitch->setValue(!g_sound->isFxMute());
@@ -843,9 +843,9 @@ public:
 		// is handled when the dialog is terminated.
 
 		if (widget == _reverseStereoSwitch) {
-			if (result != gui._stereoReversed)
+			if (result != gui->_stereoReversed)
 				g_sound->reverseStereo();
-			gui._stereoReversed = result;
+			gui->_stereoReversed = result;
 		} else if (widget == _musicSwitch) {
 			g_sound->muteMusic(result);
 		} else if (widget == _musicSlider) {
@@ -858,7 +858,7 @@ public:
 			_fxSwitch->setValue(result != 0);
 		} else if (widget == _gfxSlider) {
 			_gfxPreview->setState(result);
-			gui.updateGraphicsLevel(result);
+			gui->updateGraphicsLevel(result);
 		} else if (widget == _okButton) {
 			// Apply the changes
 			g_sound->muteMusic(!_musicSwitch->getValue());
@@ -868,17 +868,17 @@ public:
 			g_sound->setSpeechVolume(_speechSlider->getValue());
 			g_sound->setFxVolume(_fxSlider->getValue());
 
-			gui.updateGraphicsLevel(_gfxSlider->getValue());
+			gui->updateGraphicsLevel(_gfxSlider->getValue());
 
-			gui._subtitles = _subtitlesSwitch->getValue();
-			gui._pointerTextSelected = _objectLabelsSwitch->getValue();
-			gui._stereoReversed = _reverseStereoSwitch->getValue();
+			gui->_subtitles = _subtitlesSwitch->getValue();
+			gui->_pointerTextSelected = _objectLabelsSwitch->getValue();
+			gui->_stereoReversed = _reverseStereoSwitch->getValue();
 
-			gui.writeOptionSettings();
+			gui->writeOptionSettings();
 			setResult(1);
 		} else if (widget == _cancelButton) {
 			// Revert the changes
-			gui.readOptionSettings();
+			gui->readOptionSettings();
 			setResult(0);
 		}
 	}
@@ -1074,13 +1074,13 @@ public:
 
 	void updateSlots() {
 		for (int i = 0; i < 8; i++) {
-			Slot *slot = _slotButton[(gui._baseSlot + i) % 8];
+			Slot *slot = _slotButton[(gui->_baseSlot + i) % 8];
 			FontRendererGui *fr;
 			uint8 description[SAVE_DESCRIPTION_LEN];
 
 			slot->setY(72 + i * 36);
 
-			if (gui._baseSlot + i == _selectedSlot) {
+			if (gui->_baseSlot + i == _selectedSlot) {
 				slot->setEditable(_mode == kSaveDialog);
 				slot->setState(1);
 				fr = _fr2;
@@ -1090,11 +1090,11 @@ public:
 				fr = _fr1;
 			}
 
-			if (GetSaveDescription(gui._baseSlot + i, description) == SR_OK) {
-				slot->setText(fr, gui._baseSlot + i, (char *) description);
+			if (GetSaveDescription(gui->_baseSlot + i, description) == SR_OK) {
+				slot->setText(fr, gui->_baseSlot + i, (char *) description);
 				slot->setClickable(true);
 			} else {
-				slot->setText(fr, gui._baseSlot + i, NULL);
+				slot->setText(fr, gui->_baseSlot + i, NULL);
 				slot->setClickable(_mode == kSaveDialog);
 			}
 
@@ -1107,29 +1107,29 @@ public:
 
 	virtual void onAction(Widget *widget, int result = 0) {
 		if (widget == _zupButton) {
-			if (gui._baseSlot > 0) {
-				if (gui._baseSlot >= 8)
-					gui._baseSlot -= 8;
+			if (gui->_baseSlot > 0) {
+				if (gui->_baseSlot >= 8)
+					gui->_baseSlot -= 8;
 				else
-					gui._baseSlot = 0;
+					gui->_baseSlot = 0;
 				updateSlots();
 			}
 		} else if (widget == _upButton) {
-			if (gui._baseSlot > 0) {
-				gui._baseSlot--;
+			if (gui->_baseSlot > 0) {
+				gui->_baseSlot--;
 				updateSlots();
 			}
 		} else if (widget == _downButton) {
-			if (gui._baseSlot < 92) {
-				gui._baseSlot++;
+			if (gui->_baseSlot < 92) {
+				gui->_baseSlot++;
 				updateSlots();
 			}
 		} else if (widget == _zdownButton) {
-			if (gui._baseSlot < 92) {
-				if (gui._baseSlot <= 84)
-					gui._baseSlot += 8;
+			if (gui->_baseSlot < 92) {
+				if (gui->_baseSlot <= 84)
+					gui->_baseSlot += 8;
 				else
-					gui._baseSlot = 92;
+					gui->_baseSlot = 92;
 				updateSlots();
 			}
 		} else if (widget == _okButton) {
@@ -1187,7 +1187,7 @@ public:
 				}
 			} else {
 				if (result == kSelectSlot)
-					_selectedSlot = gui._baseSlot + (slot->getY() - 72) / 35;
+					_selectedSlot = gui->_baseSlot + (slot->getY() - 72) / 35;
 				else if (result == kDeselectSlot)
 					_selectedSlot = -1;
 
@@ -1215,7 +1215,7 @@ public:
 		// but I doubt that will make any noticeable difference.
 
 		slot->paint();
-		_fr2->drawText(_editBuffer, 130, 78 + (_selectedSlot - gui._baseSlot) * 36);
+		_fr2->drawText(_editBuffer, 130, 78 + (_selectedSlot - gui->_baseSlot) * 36);
 	}
 
 	virtual void paint() {
@@ -1392,9 +1392,9 @@ void Gui::writeOptionSettings(void) {
 	ConfMan.set("speech_mute", g_sound->isSpeechMute());
 	ConfMan.set("sfx_mute", g_sound->isFxMute());
 	ConfMan.set("gfx_details", g_display->getRenderLevel());
-	ConfMan.set("nosubtitles", !gui._subtitles);
-	ConfMan.set("object_labels", gui._pointerTextSelected);
-	ConfMan.set("reverse_stereo", gui._stereoReversed);
+	ConfMan.set("nosubtitles", !_subtitles);
+	ConfMan.set("object_labels", _pointerTextSelected);
+	ConfMan.set("reverse_stereo", _stereoReversed);
 
 	ConfMan.flushToDisk();
 }

@@ -959,7 +959,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// for this line either, then just quit back to script right
 		// now!
 
-		if (gui._subtitles == 0 && WantSpeechForLine(params[S_WAV]) == 0)
+		if (gui->_subtitles == 0 && WantSpeechForLine(params[S_WAV]) == 0)
 			return IR_CONT;
 
 		if (cycle_skip == 0) {
@@ -1191,7 +1191,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		}
 
 		// if we want subtitles, or speech failed to load
-		if (gui._subtitles || speechRunning == 0) {
+		if (gui->_subtitles || speechRunning == 0) {
 			// then we're going to show the text
 			textRunning = 1;
 

@@ -137,6 +137,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	g_sound = _sound = new Sound(_mixer);
 	g_display = _display = new Display(640, 480);
+	gui = new Gui();
 
 	_newgui = g_gui;
 	_debugger = new Debugger(this);
@@ -159,6 +160,7 @@ Sword2Engine::~Sword2Engine() {
 	delete _sound;
 	delete _display;
 	delete _debugger;
+	delete gui;
 }
 
 void Sword2Engine::errorString(const char *buf1, char *buf2) {
@@ -301,7 +303,7 @@ void Sword2Engine::go() {
 	// via a window, thus time becomes a loop.
 
 	debug(5, "CALLING: readOptionSettings");
-	gui.readOptionSettings();
+	gui->readOptionSettings();
 
 	debug(5, "CALLING: InitialiseGame");
 	if (InitialiseGame()) {
@@ -314,7 +316,7 @@ void Sword2Engine::go() {
 			RestoreGame(_saveSlot);
 		else { // show restore menu
 			Set_mouse(NORMAL_MOUSE_ID);
-			if (!gui.restoreControl())
+			if (!gui->restoreControl())
 				Start_game();
 		}
 	} else
@@ -517,8 +519,8 @@ void PauseGame(void) {
 	// if level at max, turn down because palette-matching won't work
 	// when dimmed
 
-	if (gui._currentGraphicsLevel == 3) {
-		gui.updateGraphicsLevel(2);
+	if (gui->_currentGraphicsLevel == 3) {
+		gui->updateGraphicsLevel(2);
 		graphics_level_fudged = 1;
 	}
 
@@ -545,7 +547,7 @@ void UnpauseGame(void) {
 
 	// If graphics level at max, turn up again
  	if (graphics_level_fudged) {
-		gui.updateGraphicsLevel(3);
+		gui->updateGraphicsLevel(3);
 		graphics_level_fudged = 0;
 	}
 

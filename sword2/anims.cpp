@@ -538,7 +538,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 		// if we want subtitles, or speech failed to load
 
-		if (gui._subtitles || !speechRunning) {
+		if (gui->_subtitles || !speechRunning) {
 			// open text resource & get the line
 			text = FetchTextLine(res_man.open(text_res), local_text);
 			// make the sprite
