@@ -1072,7 +1072,7 @@ void Scumm::launch()
 
 	setupSound();
 
-	runScript(1,0,0,&_bootParam);
+//	runScript(1,0,0,&_bootParam);
 	
 //	_scummTimer = 0;
 

@@ -952,12 +952,15 @@ int main(int argc, char* argv[]) {
 	scumm->_system = &_system;
 
 	scumm->launch();
+
+	_system.last_time = SDL_GetTicks();
+
+	scumm->runScript(1,0,0,&scumm->_bootParam);
 	
 //	scumm->scummMain(argc, argv); // Todo: need to change that as well
 	
 	gui.init(scumm);	/* Reinit GUI after loading a game */
 
-	_system.last_time = SDL_GetTicks();
 	
 	scumm->mainRun();
 
@@ -1983,14 +1986,17 @@ void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 
 int OSystem::waitTick(int delta)
 {
-	updateScreen(scumm);
-	new_time = SDL_GetTicks();
-	waitForTimer(scumm, delta * 15 + last_time - new_time);
-	last_time = SDL_GetTicks();
-	if (gui._active) { 
-		gui.loop();
-		delta = 5;
-	}
+	do
+	{
+		updateScreen(scumm);
+		new_time = SDL_GetTicks();
+		waitForTimer(scumm, delta * 15 + last_time - new_time);
+		last_time = SDL_GetTicks();
+		if (gui._active) { 
+			gui.loop();
+			delta = 5;
+		}
+	}while(gui._active);
 
 	return(delta);
 }
