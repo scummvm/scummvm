@@ -36,8 +36,8 @@
 namespace Kyra {
 
 /** decompress format 80 compressed data.
- * @param image_in compressed data.
- * @param image_out pointer to output uncompressed data.
+ * @param image_in	compressed data.
+ * @param image_out	pointer to output uncompressed data.
  * @returns size of uncompressed data.
  */
 int Compression::decode80(const uint8* image_in, uint8* image_out) {
@@ -114,8 +114,8 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
 }
 
 /** decompress format 40 compressed data.
- * @param compressed data.
- * @param pointer to put uncompressed data in.
+ * @param image_in	compressed data.
+ * @param image_out	pointer to put uncompressed data in.
  * @returns size of uncompressed data.
  */
 int Compression::decode40(const uint8* image_in, uint8* image_out) {
@@ -188,8 +188,8 @@ int Compression::decode40(const uint8* image_in, uint8* image_out) {
 }
 
 /** decompress format 3 compressed data.
- * @param compressed data.
- * @param pointer to put uncompressed data in.
+ * @param image_in	compressed data.
+ * @param image_out	pointer to put uncompressed data in.
  * @param size of uncompressed image.
  */
 int Compression::decode3(const uint8* image_in, uint8* image_out, int size) {
@@ -231,9 +231,9 @@ int Compression::decode3(const uint8* image_in, uint8* image_out, int size) {
 }
 
 /** decompress format 20 compressed data.
- * @param compressed data.
- * @param pointer to pu uncompressed data in.
- * @param size of compressed data?
+ * @param s	compressed data.
+ * @param d	pointer to pu uncompressed data in.
+ * @param cb_s	size of compressed data?
  * @returns size of uncompressed data?
  */
 int Compression::decode2(const uint8* s, uint8* d, int cb_s) {
