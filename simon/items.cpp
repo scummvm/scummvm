@@ -378,9 +378,7 @@ int SimonEngine::runScript() {
 				if (_game & GF_TALKIE) {
 					uint speech_id = getNextWord();
 					if (var < 20) {
-						_stringid_array_3_backup[var] = _stringid_array_3[var];
 						_stringid_array_3[var] = string_id;
-						_speechid_array_4_backup[var] = _speechid_array_4[var];
 						_speechid_array_4[var] = speech_id;
 					}
 				} else {
@@ -936,8 +934,6 @@ int SimonEngine::runScript() {
 				_show_preposition = true;
 				o_setup_cond_c();
 				_show_preposition = false;
-				if (!(_game & GF_SIMON2) && (_game & GF_TALKIE))
-					_reset_arrays = true;
 			}
 			break;
 
@@ -1010,18 +1006,6 @@ int SimonEngine::runScript() {
 					talk_with_speech(speech_id, vga_sprite_id);
 				if (string_ptr != NULL && _subtitles)
 					talk_with_text(vga_sprite_id, color, string_ptr, tv->a, tv->b, tv->c);
-
-				if (_reset_arrays) {
-					// Work around for bug in original Simon the Sorcerer 1
-					// The game wouldn't reset array back to room descriptions
-					// after a conversation.
-					uint i;
-					for (i = 0; i < 21; i++) {
-						_stringid_array_3[i] = _stringid_array_3_backup[i];
-						_speechid_array_4[i] = _speechid_array_4_backup[i];
-					}
-					_reset_arrays = 0;
-				}
 			}
 			break;
 
