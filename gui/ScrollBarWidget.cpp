@@ -61,8 +61,7 @@ static uint32 down_arrow[8] = {
 };
 
 ScrollBarWidget::ScrollBarWidget(Dialog *boss, int x, int y, int w, int h)
-	: Widget (boss, x, y, w, h), CommandSender(boss)
-{
+	: Widget (boss, x, y, w, h), CommandSender(boss) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE;
 	_type = kScrollBarWidget;
 
@@ -78,8 +77,7 @@ ScrollBarWidget::ScrollBarWidget(Dialog *boss, int x, int y, int w, int h)
 	_currentPos = 0;
 }
 
-void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount)
-{
+void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	int old_pos = _currentPos;
 
 	// Do nothing if there are less items than fit on one page
@@ -107,13 +105,11 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount)
 	checkBounds(old_pos);
 }
 
-void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount)
-{
+void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_draggingPart = kNoPart;
 }
 
-void ScrollBarWidget::handleMouseWheel(int x, int y, int direction)
-{
+void ScrollBarWidget::handleMouseWheel(int x, int y, int direction) {
 	int old_pos = _currentPos;
 
 	if (_numEntries < _entriesPerPage)
@@ -129,8 +125,7 @@ void ScrollBarWidget::handleMouseWheel(int x, int y, int direction)
 	checkBounds(old_pos);
 }
 
-void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
-{
+void ScrollBarWidget::handleMouseMoved(int x, int y, int button) {
 	// Do nothing if there are less items than fit on one page
 	if (_numEntries <= _entriesPerPage)
 		return;
@@ -167,8 +162,7 @@ void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
 	}
 }
 
-void ScrollBarWidget::handleTickle()
-{
+void ScrollBarWidget::handleTickle() {
 /*
 	// FIXME - this code is supposed to allow for "click-repeat" (like key repeat),
 	// i.e. if you click on one of the arrows and keep clicked, it will scroll
@@ -188,8 +182,7 @@ void ScrollBarWidget::handleTickle()
 */
 }
 
-void ScrollBarWidget::checkBounds(int old_pos)
-{
+void ScrollBarWidget::checkBounds(int old_pos) {
 	if (_numEntries <= _entriesPerPage || _currentPos < 0)
 		_currentPos = 0;
 	else if (_currentPos > _numEntries - _entriesPerPage)
@@ -202,8 +195,7 @@ void ScrollBarWidget::checkBounds(int old_pos)
 	}
 }
 
-void ScrollBarWidget::recalc()
-{
+void ScrollBarWidget::recalc() {
 	if (_numEntries > _entriesPerPage) {
 		_sliderHeight = (_h - 2 * UP_DOWN_BOX_HEIGHT) * _entriesPerPage / _numEntries;
 		if (_sliderHeight < UP_DOWN_BOX_HEIGHT)
@@ -219,9 +211,7 @@ void ScrollBarWidget::recalc()
 	}
 }
 
-
-void ScrollBarWidget::drawWidget(bool hilite)
-{
+void ScrollBarWidget::drawWidget(bool hilite) {
 	NewGui *gui = _boss->getGui();
 	int bottomY = _y + _h;
 	bool isSinglePage = (_numEntries <= _entriesPerPage);
@@ -234,19 +224,19 @@ void ScrollBarWidget::drawWidget(bool hilite)
 	// Up arrow
 	gui->frameRect(_x, _y, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
 	gui->drawBitmap(up_arrow, _x, _y,
-	                isSinglePage ? gui->_color :
-	                (hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
+									isSinglePage ? gui->_color :
+									(hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Down arrow
 	gui->frameRect(_x, bottomY - UP_DOWN_BOX_HEIGHT, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
 	gui->drawBitmap(down_arrow, _x, bottomY - UP_DOWN_BOX_HEIGHT,
-	                isSinglePage ? gui->_color :
-	                (hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
+									isSinglePage ? gui->_color :
+									(hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Slider
 	if (!isSinglePage) {
 		gui->checkerRect(_x, _y + _sliderPos, _w, _sliderHeight,
-		                 (hilite && _part == kSliderPart) ? gui->_textcolorhi : gui->_textcolor);
+										(hilite && _part == kSliderPart) ? gui->_textcolorhi : gui->_textcolor);
 		gui->frameRect(_x, _y + _sliderPos, _w, _sliderHeight, gui->_color);
 	}
 }

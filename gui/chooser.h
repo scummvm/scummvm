@@ -36,7 +36,7 @@ class ChooserDialog : public Dialog {
 	typedef ScummVM::String String;
 	typedef ScummVM::StringList StringList;
 public:
-	ChooserDialog(NewGui *gui, const String title, const StringList& list);
+	ChooserDialog(NewGui *gui, const String title, const StringList &list);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 

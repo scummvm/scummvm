@@ -77,11 +77,10 @@ protected:
 
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	: Dialog(boss->_boss->getGui(), 0, 0, 16, 16),
-	_popUpBoss(boss)
-{
+	_popUpBoss(boss) {
 	// Copy the selection index
 	_selection = _popUpBoss->_selectedItem;
-	
+
 	// Calculate real popup dimensions
 	_x = _popUpBoss->_boss->getX() + _popUpBoss->_x;
 	_y = _popUpBoss->_boss->getY() + _popUpBoss->_y - _popUpBoss->_selectedItem * kLineHeight;
@@ -104,18 +103,17 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	// Remember original mouse position
 	_clickX = clickX - _x;
 	_clickY = clickY - _y;
-	
+
 	// Time the popup was opened
 	_openTime = g_system->get_msecs();
 }
 
-void PopUpDialog::drawDialog()
-{
+void PopUpDialog::drawDialog() {
 	// Draw the menu border
-	_gui->hline(_x, _y, _x+_w-1, _gui->_color);
-	_gui->hline(_x, _y+_h-1, _x+_w-1, _gui->_shadowcolor);
-	_gui->vline(_x, _y, _y+_h-1, _gui->_color);
-	_gui->vline(_x+_w-1, _y, _y+_h-1, _gui->_shadowcolor);
+	_gui->hline(_x, _y, _x+_w - 1, _gui->_color);
+	_gui->hline(_x, _y + _h - 1, _x + _w - 1, _gui->_shadowcolor);
+	_gui->vline(_x, _y, _y+_h - 1, _gui->_color);
+	_gui->vline(_x + _w - 1, _y, _y + _h - 1, _gui->_shadowcolor);
 
 	// Draw the entries
 	int count = _popUpBoss->_entries.size();
@@ -126,12 +124,11 @@ void PopUpDialog::drawDialog()
 	_gui->addDirtyRect(_x, _y, _w, _h);
 }
 
-void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount)
-{
+void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	// Mouse was released. If it wasn't moved much since the original mouse down, 
 	// let the popup stay open. If it did move, assume the user made his selection.
 	int dist = (_clickX - x) * (_clickX - x) + (_clickY - y) * (_clickY - y);
-	if (dist > 3*3 || g_system->get_msecs() - _openTime > 300) {
+	if (dist > 3 * 3 || g_system->get_msecs() - _openTime > 300) {
 		setResult(_selection);
 		close();
 	}
@@ -140,16 +137,14 @@ void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount)
 	_openTime = (uint32)-1;
 }
 
-void PopUpDialog::handleMouseWheel(int x, int y, int direction)
-{
+void PopUpDialog::handleMouseWheel(int x, int y, int direction) {
 	if (direction < 0)
 		moveUp();
 	else if (direction > 0)
 		moveDown();
 }
 
-void PopUpDialog::handleMouseMoved(int x, int y, int button)
-{
+void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	// Compute over which item the mouse is...
 	int item = findItem(x, y);
 
@@ -163,8 +158,7 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button)
 	setSelection(item);
 }
 
-void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
-{
+void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	if (keycode == 27) {	// escape
 		close();
 		return;
@@ -194,16 +188,14 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 	}
 }
 
-int PopUpDialog::findItem(int x, int y) const
-{
+int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
 		return (y-2) / kLineHeight;
 	}
 	return -1;
 }
 
-void PopUpDialog::setSelection(int item)
-{
+void PopUpDialog::setSelection(int item) {
 	if (item != _selection) {
 		// Undraw old selection
 		if (_selection >= 0)
@@ -218,8 +210,7 @@ void PopUpDialog::setSelection(int item)
 	}
 }
 
-bool PopUpDialog::isMouseDown()
-{
+bool PopUpDialog::isMouseDown() {
 	// TODO/FIXME - need a way to determine whether any mouse buttons are pressed or not.
 	// Sure, we could just count mouse button up/down events, but that is cumbersome and
 	// error prone. Would be much nicer to add an API to OSystem for this...
@@ -227,8 +218,7 @@ bool PopUpDialog::isMouseDown()
 	return false;
 }
 
-void PopUpDialog::moveUp()
-{
+void PopUpDialog::moveUp() {
 	if (_selection < 0) {
 		setSelection(_popUpBoss->_entries.size() - 1);
 	} else if (_selection > 0) {
@@ -241,8 +231,7 @@ void PopUpDialog::moveUp()
 	}
 }
 
-void PopUpDialog::moveDown()
-{
+void PopUpDialog::moveDown() {
 	int lastItem = _popUpBoss->_entries.size() - 1;
 
 	if (_selection < 0) {
@@ -257,9 +246,7 @@ void PopUpDialog::moveDown()
 	}
 }
 
-
-void PopUpDialog::drawMenuEntry(int entry, bool hilite)
-{
+void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	// Draw one entry of the popup menu, including selection
 	assert(entry >= 0);
 	int x = _x + 1;
@@ -270,30 +257,27 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite)
 	_gui->fillRect(x, y, w, kLineHeight, hilite ? _gui->_textcolorhi : _gui->_bgcolor);
 	if (name.size() == 0) {
 		// Draw a seperator
-		_gui->hline(x, y+kLineHeight/2, x+w-1, _gui->_color);
-		_gui->hline(x+1, y+1+kLineHeight/2, x+w-1, _gui->_shadowcolor);
+		_gui->hline(x, y + kLineHeight / 2, x + w - 1, _gui->_color);
+		_gui->hline(x + 1, y + 1 + kLineHeight / 2, x + w - 1, _gui->_shadowcolor);
 	} else {
-		_gui->drawString(name, x+1, y+2, w-2, hilite ? _gui->_bgcolor : _gui->_textcolor);
+		_gui->drawString(name, x + 1, y + 2, w - 2, hilite ? _gui->_bgcolor : _gui->_textcolor);
 	}
 	_gui->addDirtyRect(x, y, w, kLineHeight);
 }
-
 
 //
 // PopUpWidget
 //
 
 PopUpWidget::PopUpWidget(Dialog *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y-1, w, h+2), CommandSender(boss)
-{
+	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
 	_type = 'POPU';
 
 	_selectedItem = -1;
 }
 
-void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount)
-{
+void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	PopUpDialog popupDialog(this, x + _x + _boss->getX(), y + _y + _boss->getY());
 	int newSel = popupDialog.runModal();
 	if (newSel != -1 && _selectedItem != newSel) {
@@ -302,22 +286,19 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount)
 	}
 }
 
-void PopUpWidget::appendEntry(const String &entry, uint32 tag)
-{
+void PopUpWidget::appendEntry(const String &entry, uint32 tag) {
 	Entry e;
 	e.name = entry;
 	e.tag = tag;
 	_entries.push_back(e);
 }
 
-void PopUpWidget::clearEntries()
-{
+void PopUpWidget::clearEntries() {
 	_entries.clear();
 	_selectedItem = -1;
 }
 
-void PopUpWidget::setSelected(int item)
-{
+void PopUpWidget::setSelected(int item) {
 	// FIXME
 	if (item != _selectedItem) {
 		if (item >= 0 && item < _entries.size()) {
@@ -328,20 +309,19 @@ void PopUpWidget::setSelected(int item)
 	}
 }
 
-void PopUpWidget::drawWidget(bool hilite)
-{
+void PopUpWidget::drawWidget(bool hilite) {
 	NewGui	*gui = _boss->getGui();
 
 	// Draw a thin frame around us.
 	// TODO - should look different than the EditTextWidget fram
-	gui->hline(_x, _y, _x+_w-1, gui->_color);
-	gui->hline(_x, _y+_h-1, _x+_w-1, gui->_shadowcolor);
+	gui->hline(_x, _y, _x + _w - 1, gui->_color);
+	gui->hline(_x, _y +_h-1, _x + _w - 1, gui->_shadowcolor);
 	gui->vline(_x, _y, _y+_h-1, gui->_color);
-	gui->vline(_x+_w-1, _y, _y+_h-1, gui->_shadowcolor);
-	
+	gui->vline(_x + _w - 1, _y, _y +_h - 1, gui->_shadowcolor);
+
 	// Draw an arrow pointing down at the right end to signal this is a dropdown/popup
 	gui->drawBitmap(up_down_arrows, _x+_w - 10, _y+2, hilite ? gui->_textcolorhi : gui->_textcolor);
-	
+
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {
 		int align = (gui->getStringWidth(_entries[_selectedItem].name) > _w-6) ? kTextAlignRight : kTextAlignLeft;

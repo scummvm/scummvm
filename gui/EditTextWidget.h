@@ -30,10 +30,10 @@ class EditTextWidget : public StaticTextWidget {
 	typedef ScummVM::StringList StringList;
 	typedef ScummVM::String String;
 protected:
-	String			_backupString;
+	String		_backupString;
 	bool			_caretVisible;
-	uint32			_caretTime;
-	int			_pos;
+	uint32		_caretTime;
+	int				_pos;
 public:
 	EditTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text);
 

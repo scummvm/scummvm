@@ -48,20 +48,19 @@ This code is not finished, so please don't complain :-)
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
 ConsoleDialog::ConsoleDialog(NewGui *gui, int _realWidth)
-	: Dialog(gui, 0, 0, _realWidth, 12*kLineHeight+2)
-{
+	: Dialog(gui, 0, 0, _realWidth, 12 * kLineHeight + 2) {
 	_lineWidth = (_w - kScrollBarWidth - 2) / kCharWidth;
 	_linesPerPage = (_h - 2) / kLineHeight;
 
 	memset(_buffer, ' ', kBufferSize);
 	_linesInBuffer = kBufferSize / _lineWidth;
-	
+
 	_currentPos = 0;
 	_scrollLine = _linesPerPage - 1;
-	
+
 	_caretVisible = false;
 	_caretTime = 0;
-	
+
 	// Add scrollbar
 	_scrollBar = new ScrollBarWidget(this, _w - kScrollBarWidth - 1, 0, kScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
@@ -69,23 +68,22 @@ ConsoleDialog::ConsoleDialog(NewGui *gui, int _realWidth)
 	// Display greetings & prompt
 	print("ScummVM "SCUMMVM_VERSION" (" SCUMMVM_CVS ")\n");
 	print("Console is ready\n");
-	
+
 	_promptStartPos = _promptEndPos = -1;
-	
+
 	// Init callback
 	_callbackProc = 0;
 	_callbackRefCon = 0;
- 
- 	// Init History
- 	_historyIndex = 0;
- 	_historyLine = 0;
- 	_historySize = 0;
- 	for (int i = 0; i < kHistorySize; i++)
- 		_history[i][0] = '\0';
+
+	// Init History
+	_historyIndex = 0;
+	_historyLine = 0;
+	_historySize = 0;
+	for (int i = 0; i < kHistorySize; i++)
+		_history[i][0] = '\0';
 }
 
-void ConsoleDialog::open()
-{
+void ConsoleDialog::open() {
 	Dialog::open();
 	if (_promptStartPos == -1) {
 		print(PROMPT);
@@ -93,13 +91,12 @@ void ConsoleDialog::open()
 	}
 }
 
-void ConsoleDialog::drawDialog()
-{
+void ConsoleDialog::drawDialog() {
 	// Blend over the background
 	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor, 2);
-	
+
 	// Draw a border
-	_gui->hline(_x, _y+_h-1, _x+_w-1, _gui->_color);
+	_gui->hline(_x, _y + _h - 1, _x + _w - 1, _gui->_color);
 
 	// Draw text
 	int start = _scrollLine - _linesPerPage + 1;
@@ -107,7 +104,7 @@ void ConsoleDialog::drawDialog()
 	for (int line = 0; line < _linesPerPage; line++) {
 		int x = _x + 1;
 		for (int column = 0; column < _lineWidth; column++) {
-			int l = (start+line) % _linesInBuffer;
+			int l = (start + line) % _linesInBuffer;
 			byte c = _buffer[l * _lineWidth + column];
 			_gui->drawChar(c, x, y, _gui->_textcolor);
 			x += kCharWidth;
@@ -122,8 +119,7 @@ void ConsoleDialog::drawDialog()
 	_gui->addDirtyRect(_x, _y, _w, _h);
 }
 
-void ConsoleDialog::handleTickle()
-{
+void ConsoleDialog::handleTickle() {
 	uint32 time = _gui->get_time();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
@@ -135,15 +131,13 @@ void ConsoleDialog::handleTickle()
 	}
 }
 
-void ConsoleDialog::handleMouseWheel(int x, int y, int direction)
-{
+void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
-void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
-{
+void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	int i;
-	
+
 	switch (keycode) {
 		case '\n':	// enter/return
 		case '\r': {
@@ -158,7 +152,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			// FIXME - len should NEVER be negative. If anything makes it negative,
 			// then the code doing that is buggy and needs to be fixed.
 			assert(len >= 0);
-			
+
 			if (len > 0) {
 
 				// We have to allocate the string buffer with new, since VC++ sadly does not
@@ -169,21 +163,21 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 				for (i = 0; i < len; i++)
 					str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
 				str[len] = '\0';
-				
+
 				// Add the input to the history
 				addToHistory(str);
-				
+
 				// Pass it to the input callback, if any
 				if (_callbackProc)
 					keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
-	
+
 					// Get rid of the string buffer
 				delete [] str;
 			}
-			
+
 			print(PROMPT);
 			_promptStartPos = _promptEndPos = _currentPos;
-			
+
 			draw();
 			if (!keepRunning)
 				close();
@@ -195,7 +189,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		case 8:		// backspace
 			if (_caretVisible)
 				drawCaret(true);
-		
+
 			if (_currentPos > _promptStartPos) {
 				_currentPos--;
 				killChar();
@@ -208,23 +202,23 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			draw();
 			break;
 /*
-		case 256+24:	// pageup
+		case 256 + 24:	// pageup
 			_selectedItem -= _entriesPerPage - 1;
 			if (_selectedItem < 0)
 				_selectedItem = 0;
 			break;
-		case 256+25:	// pagedown
+		case 256 + 25:	// pagedown
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= _list.size() )
 				_selectedItem = _list.size() - 1;
 			break;
 */
-		case 256+22:	// home
+		case 256 + 22:	// home
 			_scrollLine = _linesPerPage - 1;	// FIXME - this is not correct after a wrap around
 			updateScrollBar();
 			draw();
 			break;
-		case 256+23:	// end
+		case 256 + 23:	// end
 			_scrollLine = _currentPos / _lineWidth;
 			updateScrollBar();
 			draw();
@@ -253,7 +247,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 				specialKeys(keycode);
 			} else if (isprint((char)ascii)) {
 				for (i = _promptEndPos-1; i >= _currentPos; i--)
-					_buffer[(i+1) % kBufferSize] = _buffer[i % kBufferSize];
+					_buffer[(i + 1) % kBufferSize] = _buffer[i % kBufferSize];
 				_promptEndPos++;
 				putchar((char)ascii);
 				scrollToCurrent();
@@ -261,8 +255,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 	}
 }
 
-void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
 		int newPos = (int)data + _linesPerPage - 1;
@@ -274,8 +267,7 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
-void ConsoleDialog::specialKeys(int keycode)
-{
+void ConsoleDialog::specialKeys(int keycode) {
 	switch (keycode) {
 		case 'a':
 			_currentPos = _promptStartPos;
@@ -302,23 +294,20 @@ void ConsoleDialog::specialKeys(int keycode)
 	}
 }
 
-void ConsoleDialog::killChar()
-{
+void ConsoleDialog::killChar() {
 	for (int i = _currentPos; i < _promptEndPos; i++)
 		_buffer[i % kBufferSize] = _buffer[(i+1) % kBufferSize];
 	_buffer[_promptEndPos % kBufferSize] = ' ';
 	_promptEndPos--;
 }
 
-void ConsoleDialog::killLine()
-{
+void ConsoleDialog::killLine() {
 	for (int i = _currentPos; i < _promptEndPos; i++)
 		_buffer[i % kBufferSize] = ' ';
 	_promptEndPos = _currentPos;
 }
 
-void ConsoleDialog::killLastWord()
-{
+void ConsoleDialog::killLastWord() {
 	int pos;
 	int cnt = 0;
 	while (_currentPos > _promptStartPos) {
@@ -336,8 +325,7 @@ void ConsoleDialog::killLastWord()
 	_promptEndPos -= cnt + 1;
 }
 
-void ConsoleDialog::addToHistory(const char *str)
-{
+void ConsoleDialog::addToHistory(const char *str) {
 	strcpy(_history[_historyIndex], str);
 	_historyIndex = (_historyIndex + 1) % kHistorySize;
 	_historyLine = 0;
@@ -345,8 +333,7 @@ void ConsoleDialog::addToHistory(const char *str)
 		_historySize++;
 }
 
-void ConsoleDialog::historyScroll(int direction)
-{
+void ConsoleDialog::historyScroll(int direction) {
 	if (_historySize == 0)
 		return;
 
@@ -383,26 +370,23 @@ void ConsoleDialog::historyScroll(int direction)
 	for (int i = 0; i < kLineBufferSize && _history[idx][i] != '\0'; i++)
 		putcharIntern(_history[idx][i]);
 	_promptEndPos = _currentPos;
-	
+
 	// Ensure once more the caret is visible (in case of very long history entries)
 	scrollToCurrent();
-	
+
 	draw();
 }
 
-
-void ConsoleDialog::nextLine()
-{
+void ConsoleDialog::nextLine() {
 	int line = _currentPos / _lineWidth;
 	if (line == _scrollLine)
 		_scrollLine++;
 	_currentPos = (line + 1) * _lineWidth;
-	
+
 	updateScrollBar();
 }
 
-void ConsoleDialog::updateScrollBar()
-{
+void ConsoleDialog::updateScrollBar() {
 	int line = _currentPos / _lineWidth;
 	_scrollBar->_numEntries = (line < _linesInBuffer) ? line + 1 : _linesInBuffer;
 	_scrollBar->_currentPos = _scrollBar->_numEntries - (line - _scrollLine + _linesPerPage);
@@ -410,8 +394,7 @@ void ConsoleDialog::updateScrollBar()
 	_scrollBar->recalc();
 }
 
-int ConsoleDialog::printf(const char *format, ...)
-{
+int ConsoleDialog::printf(const char *format, ...) {
 	va_list	argptr;
 
 	va_start(argptr, format);
@@ -420,8 +403,7 @@ int ConsoleDialog::printf(const char *format, ...)
 	return count;
 }
 
-int ConsoleDialog::vprintf(const char *format, va_list argptr)
-{
+int ConsoleDialog::vprintf(const char *format, va_list argptr) {
 	char	buf[2048];
 
 #if defined(WIN32)
@@ -433,18 +415,15 @@ int ConsoleDialog::vprintf(const char *format, va_list argptr)
 	return count;
 }
 
-void ConsoleDialog::putchar(int c)
-{
+void ConsoleDialog::putchar(int c) {
 	if (_caretVisible)
 		drawCaret(true);
 
 	putcharIntern(c);
-
 	draw();	// FIXME - not nice to redraw the full console just for one char!
 }
 
-void ConsoleDialog::putcharIntern(int c)
-{
+void ConsoleDialog::putcharIntern(int c) {
 	if (c == '\n')
 		nextLine();
 	else {
@@ -457,8 +436,7 @@ void ConsoleDialog::putcharIntern(int c)
 	}
 }
 
-void ConsoleDialog::print(const char *str)
-{
+void ConsoleDialog::print(const char *str) {
 	if (_caretVisible)
 		drawCaret(true);
 
@@ -468,8 +446,7 @@ void ConsoleDialog::print(const char *str)
 	draw();
 }
 
-void ConsoleDialog::drawCaret(bool erase)
-{
+void ConsoleDialog::drawCaret(bool erase) {
 	int line = _currentPos / _lineWidth;
 	int displayLine = line - _scrollLine + _linesPerPage - 1;
 
@@ -485,21 +462,20 @@ void ConsoleDialog::drawCaret(bool erase)
 	char c = _buffer[getBufferPos()];
 	if (erase) {
 		_gui->fillRect(x, y, kCharWidth, kLineHeight, _gui->_bgcolor);
-		_gui->drawChar(c, x, y+2, _gui->_textcolor);
+		_gui->drawChar(c, x, y + 2, _gui->_textcolor);
 	} else {
 		_gui->fillRect(x, y, kCharWidth, kLineHeight, _gui->_textcolor);
-		_gui->drawChar(c, x, y+2, _gui->_bgcolor);
+		_gui->drawChar(c, x, y + 2, _gui->_bgcolor);
 	}
 	_gui->addDirtyRect(x, y, kCharWidth, kLineHeight);
-	
+
 	_caretVisible = !erase;
 }
 
-void ConsoleDialog::scrollToCurrent()
-{
+void ConsoleDialog::scrollToCurrent() {
 	int line = _currentPos / _lineWidth;
 	int displayLine = line - _scrollLine + _linesPerPage - 1;
-	
+
 	if (displayLine < 0) {
 		// TODO - this should only occur for loong edit lines, though
 	} else if (displayLine >= _linesPerPage) {

@@ -47,14 +47,14 @@ protected:
 
 private:
 	int		_result;
-	
+
 public:
 	Dialog(NewGui *gui, int x, int y, int w, int h)
 		: _gui(gui), _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
-		  _mouseWidget(0), _focusedWidget(0), _visible(false)
-		{}
+		  _mouseWidget(0), _focusedWidget(0), _visible(false) {
+	}
 	virtual ~Dialog();
-	
+
 	virtual int runModal();
 
 	NewGui	*getGui()			{ return _gui; }
@@ -80,10 +80,10 @@ protected:
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	
-	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any
+	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 
-	ButtonWidget* addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
-	PushButtonWidget* addPushButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
+	ButtonWidget *addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
+	PushButtonWidget *addPushButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
 
 	void setResult(int result) { _result = result; }
 };

@@ -23,14 +23,12 @@
 #include "newgui.h"
 
 enum {
-        kOkCmd = 'OK  ',
-        kCancelCmd = 'CNCL'
+	kOkCmd = 'OK  ',
+	kCancelCmd = 'CNCL'
 };
 
-
 MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, bool showOkButton, bool showCancelButton)
-	: Dialog(gui, 30, 20, 260, 124)
-{
+	: Dialog(gui, 30, 20, 260, 124) {
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
@@ -96,15 +94,13 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, b
 		_timer = 0;
 }
 
-void MessageDialog::handleTickle()
-{
+void MessageDialog::handleTickle() {
 	Dialog::handleTickle();
 	if (_timer && _gui->get_time() > _timer)
 		close();
 }
 
-int MessageDialog::addLine(StringList &lines, const char *line, int size)
-{
+int MessageDialog::addLine(StringList &lines, const char *line, int size) {
 	int width = 0, maxWidth = 0;
 	const char *start = line, *pos = line, *end = start + size;
 	String tmp;
@@ -149,8 +145,7 @@ int MessageDialog::addLine(StringList &lines, const char *line, int size)
 	return maxWidth;
 }
 
-void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == kOkCmd) {
 		setResult(1);
 		close();

@@ -44,7 +44,6 @@ enum {
 
 typedef ScummVM::List<const VersionSettings *> GameList;
 
-
 /*
  * A dialog that allows the user to edit a config game entry.
  * TODO: add widgets for some/all of the following
@@ -78,17 +77,16 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	Config			&_config;
-	const String	&_domain;
-	EditTextWidget	*_descriptionWidget;
-	EditTextWidget	*_domainWidget;
-	CheckboxWidget  *_fullscreenCheckbox;
-	CheckboxWidget  *_amigaPalCheckbox;
+	Config &_config;
+	const String &_domain;
+	EditTextWidget *_descriptionWidget;
+	EditTextWidget *_domainWidget;
+	CheckboxWidget *_fullscreenCheckbox;
+	CheckboxWidget *_amigaPalCheckbox;
 };
 
 EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain)
-	: Dialog(gui, 8, 50, 320-2*8, 200-2*40), _config(config), _domain(domain)
-{
+	: Dialog(gui, 8, 50, 320 - 2 * 8, 200 - 2 * 40), _config(config), _domain(domain) {
 	// Determine the description string
 	String gameid(_config.get("gameid", _domain));
 	String description(_config.get("description", _domain));
@@ -111,18 +109,18 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	// Label & edit widget for the game ID
 	new StaticTextWidget(this, 10, 10, 40, kLineHeight, "ID: ", kTextAlignRight);
 	_domainWidget =
-		new EditTextWidget(this, 50, 10, _w-50-10, kLineHeight, _domain);
-	
+		new EditTextWidget(this, 50, 10, _w - 50 - 10, kLineHeight, _domain);
+
 	// Label & edit widget for the description
 	new StaticTextWidget(this, 10, 26, 40, kLineHeight, "Name: ", kTextAlignRight);
 	_descriptionWidget =
-		new EditTextWidget(this, 50, 26, _w-50-10, kLineHeight, description);
+		new EditTextWidget(this, 50, 26, _w - 50 - 10, kLineHeight, description);
 
 	// Path to game data (view only)
 	String path(_config.get("path", _domain));
 	new StaticTextWidget(this, 10, 42, 40, kLineHeight, "Path: ", kTextAlignRight);
-	new StaticTextWidget(this, 50, 42, _w-50-10, kLineHeight, path, kTextAlignLeft);
-	
+	new StaticTextWidget(this, 50, 42, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
+
 	// Full screen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
 	_fullscreenCheckbox->setState(_config.getBool("fullscreen", false, _domain));
@@ -136,12 +134,11 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	}
 
 	// Add OK & Cancel buttons
-	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
-	addButton(_w-(kButtonWidth+10), _h-24, "OK", kOKCmd, 0);
+	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
+	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
 }
 
-void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == kOKCmd) {
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getLabel());
@@ -164,7 +161,6 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-
 /*
  * TODO list
  * - add an text entry widget
@@ -177,29 +173,28 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
  */
 
 LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
-	: Dialog(gui, 0, 0, 320, 200), _detector(detector)
-{
+	: Dialog(gui, 0, 0, 320, 200), _detector(detector) {
 	// Show game name
 	new StaticTextWidget(this, 10, 8, 300, kLineHeight,
 								"ScummVM "SCUMMVM_VERSION " (" SCUMMVM_CVS ")", 
 								kTextAlignCenter);
 
 	// Add three buttons at the bottom
-	addButton(1*(_w - kButtonWidth)/6, _h - 24, "Quit", kQuitCmd, 'Q');
-	addButton(3*(_w - kButtonWidth)/6, _h - 24, "Options", kOptionsCmd, 'O');
-	_startButton = addButton(5*(_w - kButtonWidth)/6, _h - 24, "Start", kStartCmd, 'S');
+	addButton(1 * (_w - kButtonWidth) / 6, _h - 24, "Quit", kQuitCmd, 'Q');
+	addButton(3 * (_w - kButtonWidth) / 6, _h - 24, "Options", kOptionsCmd, 'O');
+	_startButton = addButton(5 * (_w - kButtonWidth)/6, _h - 24, "Start", kStartCmd, 'S');
 
 	// Add list with game titles
 	_list = new ListWidget(this, 10, 28, 300, 112);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
-	
+
 	// Two more buttons directly below the list box
 	const int kBigButtonWidth = 90;
 	new ButtonWidget(this, 10, 144, kBigButtonWidth, 16, "Add Game...", kAddGameCmd, 'A');
-	_editButton = new ButtonWidget(this, (320-kBigButtonWidth)/2, 144, kBigButtonWidth, 16, "Edit Game...", kEditGameCmd, 'E');
-	_removeButton = new ButtonWidget(this, 320-kBigButtonWidth-10, 144, kBigButtonWidth, 16, "Remove Game", kRemoveGameCmd, 'R');
-	
+	_editButton = new ButtonWidget(this, (320-kBigButtonWidth) / 2, 144, kBigButtonWidth, 16, "Edit Game...", kEditGameCmd, 'E');
+	_removeButton = new ButtonWidget(this, 320-kBigButtonWidth - 10, 144, kBigButtonWidth, 16, "Remove Game", kRemoveGameCmd, 'R');
+
 	// Populate the list
 	updateListing();
 
@@ -211,29 +206,24 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 
 	// Create file browser dialog
 	_browser = new BrowserDialog(_gui);
-
 }
 
-LauncherDialog::~LauncherDialog()
-{
+LauncherDialog::~LauncherDialog() {
 	delete _browser;
 }
 
-void LauncherDialog::open()
-{
+void LauncherDialog::open() {
 	Dialog::open();
 	g_config->set_writing(true);
 }
 
-void LauncherDialog::close()
-{
+void LauncherDialog::close() {
 	g_config->flush();
 	g_config->set_writing(false);
 	Dialog::close();
 }
 
-void LauncherDialog::updateListing()
-{
+void LauncherDialog::updateListing() {
 	int i;
 	const VersionSettings *v = version_settings;
 	ScummVM::StringList l;
@@ -244,7 +234,7 @@ void LauncherDialog::updateListing()
 	for (i = 0; i < domains.size(); i++) {
 		String name(g_config->get("gameid", domains[i]));
 		String description(g_config->get("description", domains[i]));
-		
+
 		if (name.isEmpty())
 			name = domains[i];
 		if (description.isEmpty()) {
@@ -276,8 +266,7 @@ void LauncherDialog::updateListing()
 /*
  * Return a list of all games which might be the game in the specified directory.
  */
-GameList findGame(FilesystemNode *dir)
-{
+GameList findGame(FilesystemNode *dir) {
 	GameList list;
 
 	FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
@@ -322,8 +311,7 @@ GameList findGame(FilesystemNode *dir)
 	return list;
 }
 
-void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int item =  _list->getSelected();
 
 	switch (cmd) {
@@ -342,12 +330,12 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (_browser->runModal()) {
 			// User did make a choice...
 			FilesystemNode *dir = _browser->getResult();
-			
+
 			// ...so let's determine a list of candidates, games that
 			// could be contained in the specified directory.
 			GameList candidates = findGame(dir);
 			const VersionSettings *v = 0;
-			
+
 			if (candidates.isEmpty()) {
 				// No game was found in the specified directory
 				MessageDialog alert(_gui, "ScummVM could not find any game in the specified directory!");
@@ -367,7 +355,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				if (0 <= i && i < candidates.size())
 					v = candidates[i];
 			}
-			
+
 			if (v != 0) {
 				// The auto detector or the user made a choice.
 				// Pick a domain name which does not yet exist (after all, we

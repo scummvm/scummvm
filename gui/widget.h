@@ -79,8 +79,7 @@ public:
 	void setTarget(CommandReceiver *target)	{ _target = target; }
 	CommandReceiver *getTarget() const		{ return _target; }
 
-	virtual void sendCommand(uint32 cmd, uint32 data)
-	{
+	virtual void sendCommand(uint32 cmd, uint32 data) {
 		if (_target && cmd)
 			_target->handleCommand(this, cmd, data);
 	}
@@ -120,7 +119,7 @@ public:
 	void setFlags(int flags)	{ _flags |= flags; }
 	void clearFlags(int flags)	{ _flags &= ~flags; }
 	int getFlags() const		{ return _flags; }
-	
+
 	void setEnabled(bool e)		{ if (e) setFlags(WIDGET_ENABLED); else clearFlags(WIDGET_ENABLED); }
 	bool isEnabled() const		{ return _flags & WIDGET_ENABLED; }
 	bool isVisible() const		{ return !(_flags & WIDGET_INVISIBLE); }
@@ -132,7 +131,6 @@ protected:
 	virtual void lostFocusWidget() {}
 };
 
-
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
@@ -143,15 +141,14 @@ protected:
 public:
 	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text, int align);
 	void setValue(int value);
-	void setLabel(const String &label) { _label = label; }
-	const String &getLabel() const     { return _label; }
-	void setAlign(int align)           { _align = align; }
-	int getAlign() const               { return _align; }
+	void setLabel(const String &label)	{ _label = label; }
+	const String &getLabel() const			{ return _label; }
+	void setAlign(int align)						{ _align = align; }
+	int getAlign() const								{ return _align; }
 
 protected:
 	void drawWidget(bool hilite);
 };
-
 
 /* ButtonWidget */
 class ButtonWidget : public StaticTextWidget, public CommandSender {
@@ -221,7 +218,7 @@ public:
 
 protected:
 	void drawWidget(bool hilite);
-	
+
 	int valueToPos(int value);
 	int posToValue(int pos);
 };

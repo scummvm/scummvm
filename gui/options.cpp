@@ -53,8 +53,7 @@ enum {
 };
 
 GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
-	: Dialog(gui, 10, 15, 320-2*10, 200-2*15)
-{
+	: Dialog(gui, 10, 15, 320 - 2 * 10, 200 - 2 * 15) {
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
 	new StaticTextWidget(this, 5, 10+1, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
@@ -87,7 +86,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	}
 	midiPopUp->setSelected(0);
 
-
 	//
 	// Sound controllers
 	//
@@ -107,7 +105,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(255);
 
 	Widget *masterVolumeLabel, *musicVolumeLabel, *sfxVolumeLabel;
-	
+
 	masterVolumeLabel = new StaticTextWidget(this, 200, yoffset+10, 24, 16, "100%", kTextAlignLeft);
 	musicVolumeLabel  = new StaticTextWidget(this, 200, yoffset+26, 24, 16, "100%", kTextAlignLeft);
 	sfxVolumeLabel    = new StaticTextWidget(this, 200, yoffset+42, 24, 16, "100%", kTextAlignLeft);
@@ -128,16 +126,14 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	//
 	// Add OK & Cancel buttons
 	//
-	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
-	addButton(_w-(kButtonWidth+10), _h-24, "OK", kOKCmd, 0);
+	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
+	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
 }
 
-GlobalOptionsDialog::~GlobalOptionsDialog()
-{
+GlobalOptionsDialog::~GlobalOptionsDialog() {
 }
 
-void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == kOKCmd) {
 		// TODO Write back changes made to config object
 		setResult(1);

@@ -41,8 +41,8 @@ public:
 	virtual void open();
 	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	
-	FilesystemNode	*getResult()	{ return _choice; };
+
+	FilesystemNode	*getResult() { return _choice; };
 
 protected:
 	ListWidget		*_fileList;
@@ -50,7 +50,7 @@ protected:
 	FilesystemNode	*_node;
 	FSList			*_nodeContent;
 	FilesystemNode	*_choice;
-	
+
 	void updateListing();
 };
 

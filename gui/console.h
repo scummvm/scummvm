@@ -46,7 +46,7 @@ protected:
 
 	int		_lineWidth;
 	int		_linesPerPage;
-	
+
 	int		_currentPos;
 	int		_scrollLine;
 	
@@ -55,13 +55,13 @@ protected:
 
 	bool	_caretVisible;
 	uint32	_caretTime;
-	
-	ScrollBarWidget	*_scrollBar;
-	
+
+	ScrollBarWidget *_scrollBar;
+
 	// The _callbackProc is called whenver a data line is entered
 	// 
 	InputCallbackProc _callbackProc;
-	void	*_callbackRefCon;
+	void *_callbackRefCon;
 
 	char _history[kHistorySize][kLineBufferSize];
 	int _historySize;
@@ -84,8 +84,7 @@ public:
 #undef putchar
 	void putchar(int c);
 	
-	void setInputeCallback(InputCallbackProc proc, void *refCon)
-	{
+	void setInputeCallback(InputCallbackProc proc, void *refCon) {
 		_callbackProc = proc;
 		_callbackRefCon = refCon;
 	}

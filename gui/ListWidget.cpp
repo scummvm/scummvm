@@ -26,8 +26,7 @@
 
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w - kScrollBarWidth, h), CommandSender(boss)
-{
+	: Widget(boss, x, y, w - kScrollBarWidth, h), CommandSender(boss) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
 	_numberingMode = kListNumberingOne;
@@ -47,12 +46,10 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	_editMode = false;
 }
 
-ListWidget::~ListWidget()
-{
+ListWidget::~ListWidget() {
 }
 
-void ListWidget::setList(const StringList& list)
-{
+void ListWidget::setList(const StringList &list) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 	int size = list.size();
@@ -66,8 +63,7 @@ void ListWidget::setList(const StringList& list)
 	scrollBarRecalc();
 }
 
-void ListWidget::scrollTo(int item)
-{
+void ListWidget::scrollTo(int item) {
 	int size = _list.size();
 	if (item >= size)
 		item = size - 1;
@@ -80,16 +76,14 @@ void ListWidget::scrollTo(int item)
 	}
 }
 
-void ListWidget::scrollBarRecalc()
-{
+void ListWidget::scrollBarRecalc() {
 	_scrollBar->_numEntries = _list.size();
 	_scrollBar->_entriesPerPage = _entriesPerPage;
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
 }
 
-void ListWidget::handleTickle()
-{
+void ListWidget::handleTickle() {
 	uint32 time = _boss->getGui()->get_time();
 	if (_editMode && _caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
@@ -101,8 +95,7 @@ void ListWidget::handleTickle()
 	}
 }
 
-void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
-{
+void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isEnabled()) {
 		int oldSelectedItem = _selectedItem;
 		_selectedItem = (y - 1) / kLineHeight + _currentPos;
@@ -122,8 +115,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
 	}
 }
 
-void ListWidget::handleMouseUp(int x, int y, int button, int clickCount)
-{
+void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	// If this was a double click and the mouse is still over the selected item,
 	// send the double click command
 	if (clickCount > 1 && (_selectedItem == (y - 1) / kLineHeight + _currentPos)) {
@@ -131,13 +123,11 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount)
 	}
 }
 
-void ListWidget::handleMouseWheel(int x, int y, int direction)
-{
+void ListWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
-bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
-{
+bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	bool handled = true;
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
@@ -237,26 +227,23 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 	_currentKeyDown = keycode;
 
 #endif
-	
+
 	return handled;
 }
 
-bool ListWidget::handleKeyUp(uint16 ascii, int keycode, int modifiers)
-{
+bool ListWidget::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 	if (keycode == _currentKeyDown)
 		_currentKeyDown = 0;
 	return true;
 }
 
-void ListWidget::lostFocusWidget()
-{
+void ListWidget::lostFocusWidget() {
 	_editMode = false;
 	drawCaret(true);
 	draw();
 }
 
-void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
@@ -267,16 +254,15 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	}
 }
 
-void ListWidget::drawWidget(bool hilite)
-{
-	NewGui			*gui = _boss->getGui();
-	int				i, pos, len = _list.size();
-	ScummVM::String	buffer;
+void ListWidget::drawWidget(bool hilite) {
+	NewGui *gui = _boss->getGui();
+	int i, pos, len = _list.size();
+	ScummVM::String buffer;
 
 	// Draw a thin frame around the list.
-	gui->hline(_x, _y, _x+_w-1, gui->_color);
-	gui->hline(_x, _y+_h-1, _x+_w-1, gui->_shadowcolor);
-	gui->vline(_x, _y, _y+_h-1, gui->_color);
+	gui->hline(_x, _y, _x + _w - 1, gui->_color);
+	gui->hline(_x, _y + _h - 1, _x + _w - 1, gui->_shadowcolor);
+	gui->vline(_x, _y, _y + _h - 1, gui->_color);
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
@@ -290,17 +276,16 @@ void ListWidget::drawWidget(bool hilite)
 
 		if (_selectedItem == pos) {
 			if (_hasFocus)
-				gui->fillRect(_x+1, _y+1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
+				gui->fillRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 			else
-				gui->frameRect(_x+1, _y+1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
+				gui->frameRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 		}
-		gui->drawString(buffer, _x+2, _y+3 + kLineHeight * i, _w - 4,
+		gui->drawString(buffer, _x + 2, _y + 3 + kLineHeight * i, _w - 4,
 							(_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor);
 	}
 }
 
-void ListWidget::drawCaret(bool erase)
-{
+void ListWidget::drawCaret(bool erase) {
 	// Only draw if item is visible
 	if (_selectedItem < _currentPos || _selectedItem >= _currentPos + _entriesPerPage)
 		return;
@@ -308,7 +293,7 @@ void ListWidget::drawCaret(bool erase)
 		return;
 
 	NewGui *gui = _boss->getGui();
-	
+
 	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
 	int16 color = erase ? gui->_textcolorhi : gui->_bgcolor;
 	int x = _x + _boss->getX() + 3;
@@ -334,7 +319,6 @@ void ListWidget::drawCaret(bool erase)
 }
 
 void ListWidget::scrollToCurrent() {
-
 	// Only do something if the current item is not in our view port
 	if (_selectedItem < _currentPos) {
 		// it's above our view
@@ -351,8 +335,7 @@ void ListWidget::scrollToCurrent() {
 	_scrollBar->recalc();
 }
 
-void ListWidget::startEditMode()
-{
+void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		_backupString = _list[_selectedItem];
@@ -360,8 +343,7 @@ void ListWidget::startEditMode()
 	}
 }
 
-void ListWidget::abortEditMode()
-{
+void ListWidget::abortEditMode() {
 	if (_editMode) {
 		_editMode = false;
 		_list[_selectedItem] = _backupString;

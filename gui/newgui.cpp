@@ -43,9 +43,8 @@
  */
 
 enum {
-	kDoubleClickDelay = 500,    // milliseconds
+	kDoubleClickDelay = 500, // milliseconds
 	kCursorAnimateDelay = 500,
-	
 	kKeyRepeatInitialDelay = 400,
 	kKeyRepeatSustainDelay = 100
 };
@@ -82,17 +81,15 @@ static byte guifont[] = {
 
 // Constructor
 NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false),
-	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
-{
+	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
-	
+
 	// Reset key repeat
 	_currentKeyDown.keycode = 0;
 }
 
-void NewGui::runLoop()
-{
+void NewGui::runLoop() {
 	Dialog *activeDialog = _dialogStack.top();
 	bool didSaveState = false;
 
@@ -110,7 +107,7 @@ void NewGui::runLoop()
 	_shadowcolor = _system->RBGToColor(64, 64, 64);
 	_textcolor = _system->RBGToColor(32, 160, 32);
 	_textcolorhi = _system->RBGToColor(0, 255, 0);
-	
+
 	if (!_stateIsSaved) {
 		saveState();
 		didSaveState = true;
@@ -119,7 +116,7 @@ void NewGui::runLoop()
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 
 		activeDialog->handleTickle();
-	
+
 		if (_needRedraw) {
 			// Restore the overlay to its initial state, then draw all dialogs.
 			// This is necessary to get the blending right.
@@ -129,7 +126,7 @@ void NewGui::runLoop()
 				_dialogStack[i]->drawDialog();
 			_needRedraw = false;
 		}
-		
+
 		animateCursor();
 		_system->update_screen();		
 
@@ -165,8 +162,8 @@ void NewGui::runLoop()
 				case OSystem::EVENT_LBUTTONDOWN:
 				case OSystem::EVENT_RBUTTONDOWN: {
 					if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-					      && ABS(_lastClick.x - event.mouse.x) < 3
-					      && ABS(_lastClick.y - event.mouse.y) < 3) {
+								&& ABS(_lastClick.x - event.mouse.x) < 3
+								&& ABS(_lastClick.y - event.mouse.y) < 3) {
 						_lastClick.count++;
 					} else {
 						_lastClick.x = event.mouse.x;
@@ -191,10 +188,8 @@ void NewGui::runLoop()
 		}
 
 		// check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != 0)
-		{
-			if (_keyRepeatTime < time)
-			{
+		if (_currentKeyDown.keycode != 0) {
+			if (_keyRepeatTime < time) {
 				// fire event
 				activeDialog->handleKeyDown(_currentKeyDown.ascii, _currentKeyDown.keycode, _currentKeyDown.flags);
 				_keyRepeatTime = time + kKeyRepeatSustainDelay;
@@ -211,14 +206,13 @@ void NewGui::runLoop()
 
 #pragma mark -
 
-void NewGui::saveState()
-{
+void NewGui::saveState() {
 	int sys_height = _system->get_height();
 	int sys_width = _system->get_width();
 
 	// Backup old cursor
 	_oldCursorMode = _system->show_mouse(true);
-	
+
 	_system->show_overlay();
 	// TODO - add getHeight & getWidth methods to OSystem.
 	_screen = new int16[sys_width * sys_height];
@@ -233,8 +227,7 @@ void NewGui::saveState()
 	_stateIsSaved = true;
 }
 
-void NewGui::restoreState()
-{
+void NewGui::restoreState() {
 	_system->show_mouse(_oldCursorMode);
 
 	_system->hide_overlay();
@@ -242,40 +235,34 @@ void NewGui::restoreState()
 		delete [] _screen;
 		_screen = 0;
 	}
-	
+
 	_system->update_screen();
 	
 	_stateIsSaved = false;
 }
 
-void NewGui::openDialog(Dialog *dialog)
-{
+void NewGui::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
 	_needRedraw = true;
 }
 
-void NewGui::closeTopDialog()
-{
+void NewGui::closeTopDialog() {
 	// Don't do anything if no dialog is open
 	if (_dialogStack.empty())
 		return;
-	
+
 	// Remove the dialog from the stack
 	_dialogStack.pop();
 	_needRedraw = true;
 }
 
-
 #pragma mark -
 
-
-int16 *NewGui::getBasePtr(int x, int y)
-{
+int16 *NewGui::getBasePtr(int x, int y) {
 	return _screen + x + y * _screenPitch;
 }
 
-void NewGui::box(int x, int y, int width, int height, bool inverted)
-{
+void NewGui::box(int x, int y, int width, int height, bool inverted) {
 	int16 colorA = inverted ? _shadowcolor : _color;
 	int16 colorB = inverted ? _color : _shadowcolor;
 
@@ -290,8 +277,7 @@ void NewGui::box(int x, int y, int width, int height, bool inverted)
 	vline(x + width - 2, y + 1, y + height - 1, colorB);
 }
 
-void NewGui::line(int x, int y, int x2, int y2, int16 color)
-{
+void NewGui::line(int x, int y, int x2, int y2, int16 color) {
 	int16 *ptr;
 
 	if (x2 < x)
@@ -316,8 +302,7 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 	}
 }
 
-void NewGui::blendRect(int x, int y, int w, int h, int16 color, int level)
-{
+void NewGui::blendRect(int x, int y, int w, int h, int16 color, int level) {
 	int r, g, b;
 	uint8 ar, ag, ab;
 	_system->colorToRBG(color, ar, ag, ab);
@@ -338,8 +323,7 @@ void NewGui::blendRect(int x, int y, int w, int h, int16 color, int level)
 	}
 }
 
-void NewGui::fillRect(int x, int y, int w, int h, int16 color)
-{
+void NewGui::fillRect(int x, int y, int w, int h, int16 color) {
 	int i;
 	int16 *ptr = getBasePtr(x, y);
 
@@ -351,8 +335,7 @@ void NewGui::fillRect(int x, int y, int w, int h, int16 color)
 	}
 }
 
-void NewGui::checkerRect(int x, int y, int w, int h, int16 color)
-{
+void NewGui::checkerRect(int x, int y, int w, int h, int16 color) {
 	int i;
 	int16 *ptr = getBasePtr(x, y);
 
@@ -365,8 +348,7 @@ void NewGui::checkerRect(int x, int y, int w, int h, int16 color)
 	}
 }
 
-void NewGui::frameRect(int x, int y, int w, int h, int16 color)
-{
+void NewGui::frameRect(int x, int y, int w, int h, int16 color) {
 	int i;
 	int16 *ptr, *basePtr = getBasePtr(x, y);
 	if (basePtr == NULL)
@@ -386,8 +368,7 @@ void NewGui::frameRect(int x, int y, int w, int h, int16 color)
 		*ptr = color;
 }
 
-void NewGui::addDirtyRect(int x, int y, int w, int h)
-{
+void NewGui::addDirtyRect(int x, int y, int w, int h) {
 	// For now we don't keep yet another list of dirty rects but simply
 	// blit the affected area directly to the overlay. At least for our current
 	// GUI/widget/dialog code that is just fine.
@@ -395,8 +376,7 @@ void NewGui::addDirtyRect(int x, int y, int w, int h)
 	_system->copy_rect_overlay(buf, _screenPitch, x, y, w, h);
 }
 
-void NewGui::drawChar(const byte chr, int xx, int yy, int16 color)
-{
+void NewGui::drawChar(const byte chr, int xx, int yy, int16 color) {
 	unsigned int buffer = 0, mask = 0, x, y;
 	byte *tmp;
 
@@ -419,8 +399,7 @@ void NewGui::drawChar(const byte chr, int xx, int yy, int16 color)
 	}
 }
 
-int NewGui::getStringWidth(const String &str)
-{
+int NewGui::getStringWidth(const String &str) {
 	int space = 0;
 
 	for (int i = 0; i < str.size(); ++i)
@@ -428,13 +407,11 @@ int NewGui::getStringWidth(const String &str)
 	return space;
 }
 
-int NewGui::getCharWidth(byte c)
-{
+int NewGui::getCharWidth(byte c) {
 	return guifont[c+6];
 }
 
-void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int align)
-{
+void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int align) {
 	const int leftX = x, rightX = x + w;
 	int width = getStringWidth(str);
 	if (align == kTextAlignCenter)
@@ -455,8 +432,7 @@ void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int
 //
 // Blit from a buffer to the display
 //
-void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch)
-{
+void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch) {
 	int16 *ptr = getBasePtr(x, y);
 
 	assert(buf);
@@ -467,12 +443,10 @@ void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pit
 	}
 }
 
-
 //
 // Blit from the display to a buffer
 //
-void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch)
-{
+void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch) {
 	int16 *ptr = getBasePtr(x, y);
 
 	assert(buf);
@@ -483,12 +457,10 @@ void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch)
 	}
 }
 
-
 //
 // Draw an 8x8 bitmap at location (x,y)
 //
-void NewGui::drawBitmap(uint32 *bitmap, int x, int y, int16 color, int h)
-{
+void NewGui::drawBitmap(uint32 *bitmap, int x, int y, int16 color, int h) {
 	int16 *ptr = getBasePtr(x, y);
 
 	for (y = 0; y < h; y++) {
@@ -506,8 +478,7 @@ void NewGui::drawBitmap(uint32 *bitmap, int x, int y, int16 color, int h)
 // Draw the mouse cursor (animated). This is mostly ripped from the cursor code in gfx.cpp
 // We could plug in a different cursor here if we like to.
 //
-void NewGui::animateCursor()
-{
+void NewGui::animateCursor() {
 	int time = get_time(); 
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		const byte colors[4] = { 15, 15, 7, 8 };

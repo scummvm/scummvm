@@ -38,8 +38,7 @@
  * ...
  */
 
-Dialog::~Dialog()
-{
+Dialog::~Dialog() {
 	Widget *w = _firstWidget, *next;
 	while (w) {
 		next = w->_next;
@@ -50,22 +49,20 @@ Dialog::~Dialog()
 	_firstWidget = 0;
 }
 
-int Dialog::runModal()
-{
+int Dialog::runModal() {
 	// Open up
 	open();
-	
+
 	// Start processing events
 	_gui->runLoop();
-	
+
 	// Return the result code
 	return _result;
 }
 
-void Dialog::open()
-{
+void Dialog::open() {
 	Widget *w = _firstWidget;
-	
+
 	_result = 0;
 	_visible = true;
 	_gui->openDialog(this);
@@ -74,15 +71,14 @@ void Dialog::open()
 	while (w && !w->wantsFocus()) {
 		w = w->_next;
 	}
-	
+
 	if (w) {
 		w->receivedFocus();
 		_focusedWidget = w;
 	}
 }
 
-void Dialog::close()
-{
+void Dialog::close() {
 	_visible = false;
 	_gui->closeTopDialog();
 
@@ -93,22 +89,18 @@ void Dialog::close()
 	releaseFocus();
 }
 
-void Dialog::releaseFocus()
-{
+void Dialog::releaseFocus() {
 	if (_focusedWidget) {
 		_focusedWidget->lostFocus();
 		_focusedWidget = 0;
 	}
 }
 
-
-void Dialog::draw()
-{
+void Dialog::draw() {
 	_gui->_needRedraw = true;
 }
 
-void Dialog::drawDialog()
-{
+void Dialog::drawDialog() {
 	Widget *w = _firstWidget;
 	
 	if (!isVisible())
@@ -125,8 +117,7 @@ void Dialog::drawDialog()
 	_gui->addDirtyRect(_x, _y, _w, _h);
 }
 
-void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
-{
+void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	Widget *w;
 	w = findWidget(x, y);
 
@@ -141,11 +132,11 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
 		// The focus will change. Tell the old focused widget (if any)
 		// that it lost the focus.
 		releaseFocus();
-	
+
 		// Tell the new focused widget (if any) that it just gained the focus.
 		if (w)
 			w->receivedFocus();
-	
+
 		_focusedWidget = w;
 	}
 
@@ -153,10 +144,9 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
 		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button, clickCount);
 }
 
-void Dialog::handleMouseUp(int x, int y, int button, int clickCount)
-{
+void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	Widget *w;
-	
+
 	if (_focusedWidget) {
 		w = _focusedWidget;
 		
@@ -173,8 +163,7 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount)
 		w->handleMouseUp(x - w->_x, y - w->_y, button, clickCount);
 }
 
-void Dialog::handleMouseWheel(int x, int y, int direction)
-{
+void Dialog::handleMouseWheel(int x, int y, int direction) {
 	Widget *w;
 
 	// This may look a bit backwards, but I think it makes more sense for
@@ -188,8 +177,7 @@ void Dialog::handleMouseWheel(int x, int y, int direction)
 		w->handleMouseWheel(x, y, direction);
 }
 
-void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
-{
+void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	if (_focusedWidget) {
 		if (_focusedWidget->handleKeyDown(ascii, keycode, modifiers))
 			return;
@@ -212,19 +200,17 @@ void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 	// ESC closes all dialogs by default
 	if (keycode == 27)
 		close();
-	
+
 	// TODO: tab/shift-tab should focus the next/previous focusable widget
 }
 
-void Dialog::handleKeyUp(uint16 ascii, int keycode, int modifiers)
-{
+void Dialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 	// Focused widget recieves keyup events
 	if (_focusedWidget)
 		_focusedWidget->handleKeyUp(ascii, keycode, modifiers);
 }
 
-void Dialog::handleMouseMoved(int x, int y, int button)
-{
+void Dialog::handleMouseMoved(int x, int y, int button) {
 	Widget *w;
 	
 	if (_focusedWidget) {
@@ -261,16 +247,14 @@ void Dialog::handleMouseMoved(int x, int y, int button)
 	w->handleMouseMoved(x - w->_x, y - w->_y, button);
 }
 
-void Dialog::handleTickle()
-{
+void Dialog::handleTickle() {
 	// Focused widget recieves tickle notifications
 	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE) {
 		_focusedWidget->handleTickle();
 	}
 }
 
-void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kCloseCmd:
 		close();
@@ -282,8 +266,7 @@ void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
  * Determine the widget at location (x,y) if any. Assumes the coordinates are
  * in the local coordinate system, i.e. relative to the top left of the dialog.
  */
-Widget *Dialog::findWidget(int x, int y)
-{
+Widget *Dialog::findWidget(int x, int y) {
 	Widget *w = _firstWidget;
 	while (w) {
 		// Stop as soon as we find a widget that contains the point (x,y)
@@ -294,13 +277,11 @@ Widget *Dialog::findWidget(int x, int y)
 	return w;
 }
 
-ButtonWidget *Dialog::addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey)
-{
+ButtonWidget *Dialog::addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey) {
 	return new ButtonWidget(this, x, y, kButtonWidth, 16, label, cmd, hotkey);
 }
 
-PushButtonWidget *Dialog::addPushButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey)
-{
+PushButtonWidget *Dialog::addPushButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey) {
 	return new PushButtonWidget(this, x, y, kButtonWidth, 16, label, cmd, hotkey);
 }
 

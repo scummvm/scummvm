@@ -36,37 +36,33 @@ enum {
 };
 
 BrowserDialog::BrowserDialog(NewGui *gui)
-	: Dialog(gui, 40, 10, 320-2*40, 200-2*10),
-	  _node(0), _nodeContent(0)
-{
+	: Dialog(gui, 40, 10, 320 -2 * 40, 200 - 2 * 10),
+	  _node(0), _nodeContent(0) {
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, 8, _w-2*10, kLineHeight,
+	new StaticTextWidget(this, 10, 8, _w-2 * 10, kLineHeight,
 		"Select directory with game data", kTextAlignCenter);
-	
+
 	// Current path - TODO: handle long paths ?
-	_currentPath =
-	new StaticTextWidget(this, 10, 20, _w-2*10, kLineHeight,
-		"DUMMY", kTextAlignLeft);
+	_currentPath = new StaticTextWidget(this, 10, 20, _w - 2 * 10, kLineHeight,
+								"DUMMY", kTextAlignLeft);
 
 	// Add file list
-	_fileList = new ListWidget(this, 10, 34, _w-2*10, _h-34-24-10);
+	_fileList = new ListWidget(this, 10, 34, _w - 2 * 10, _h - 34 - 24 - 10);
 	_fileList->setNumberingMode(kListNumberingOff);
-	
+
 	// Buttons
-	addButton(10, _h-24, "Go up", kGoUpCmd, 0);
-	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
+	addButton(10, _h - 24, "Go up", kGoUpCmd, 0);
+	addButton(_w-2 * (kButtonWidth+10), _h - 24, "Cancel", kCloseCmd, 0);
 	addButton(_w-(kButtonWidth+10), _h-24, "Choose", kChooseCmd, 0);
 }
 
-BrowserDialog::~BrowserDialog()
-{
+BrowserDialog::~BrowserDialog() {
 	delete _node;
 	delete _nodeContent;
 	delete _choice;
 }
 
-void BrowserDialog::open()
-{
+void BrowserDialog::open() {
 	// If no node has been set, or the last used one is now invalid,
 	// go back to the root/default dir.
 	if (_node == NULL || !_node->isValid()) {
@@ -86,8 +82,7 @@ void BrowserDialog::open()
 	Dialog::open();
 }
 
-void BrowserDialog::close()
-{
+void BrowserDialog::close() {
 	delete _nodeContent;
 	_nodeContent = 0;
 
@@ -95,8 +90,7 @@ void BrowserDialog::close()
 	Dialog::close();
 }
 
-void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	FilesystemNode *tmp;
 	
 	switch (cmd) {
@@ -130,8 +124,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
-void BrowserDialog::updateListing()
-{
+void BrowserDialog::updateListing() {
 	assert(_node != NULL);
 
 	// Update the path display
