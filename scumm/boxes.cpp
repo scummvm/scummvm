@@ -616,6 +616,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	const byte *boxm;
 	byte i;
 	const int numOfBoxes = getNumBoxes();
+	int dest = -1;
 	
 	if (from == to)
 		return to;
@@ -662,7 +663,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 
 	// Skip up to the matrix data for box 'from'
 	for (i = 0; i < from && boxm < end; i++) {
-		while (*boxm != 0xFF)
+		while (boxm < end && *boxm != 0xFF)
 			boxm += 3;
 		boxm++;
 	}
@@ -670,14 +671,14 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	// Now search for the entry for box 'to'
 	while (boxm < end && boxm[0] != 0xFF) {
 		if (boxm[0] <= to && to <= boxm[1])
-			return (int8)boxm[2];
+			dest = (int8)boxm[2];
 		boxm += 3;
 	}
 	
 	if (boxm >= end)
 		warning("The box matrix apparently is truncated (room %d)", _roomResource);
 
-	return -1;
+	return dest;
 }
 
 /*
