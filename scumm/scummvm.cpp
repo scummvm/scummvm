@@ -954,7 +954,7 @@ void ScummEngine::launch() {
 		args[0] = _bootParam;	
 
 		_saveLoadFlag = 0;
-		if (_gameId == GID_MANIAC && _version == 1 && _demoMode)
+		if (_gameId == GID_MANIAC && _demoMode)
 			runScript(9, 0, 0, args);
 		else
 			runScript(1, 0, 0, args);
@@ -1026,6 +1026,17 @@ void ScummEngine::scummInit() {
 		// this is from IDB
 		if ((_version == 1) || (_gameId == GID_MANIAC && _demoMode))
 			_actors[i].setActorCostume(i);
+	}
+
+	// HACK Some palette changes needed for demo script
+	// in Maniac Mansion (Enchanced)
+	if (_gameId == GID_MANIAC && _version == 2 && _demoMode) {
+		_actors[3].setPalette(3, 1);
+		_actors[9].talkColor = 15;
+		_actors[10].talkColor = 7;
+		_actors[11].talkColor = 2;
+		_actors[13].talkColor = 5;
+		_actors[23].talkColor = 14;
 	}
 
 	vm.numNestedScripts = 0;

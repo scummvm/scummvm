@@ -85,7 +85,7 @@ static const char USAGE_STRING[] =
 #endif
 #ifndef DISABLE_SCUMM
 	"  --copy-protection        Enable the original copy protection in SCUMM games\n"
-	"  --demo-mode              Start demo mode of Maniac Mansion (Classic version)\n"
+	"  --demo-mode              Start demo mode of Maniac Mansion\n"
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
 	"  --talkspeed=NUM          Set talk speed for SCUMM games (default: 60)\n"

@@ -950,7 +950,7 @@ The following keywords are recognized:
 
         copy_protection bool     Enable copy protection in SCUMM games ,when
                                  ScummVM disables it by default.
-        demo_mode       bool     Start demo in Maniac Mansion (Classic version)
+        demo_mode       bool     Start demo in Maniac Mansion
         alt_intro       bool     Use alternative intro for CD versions of
                                  Beneath a Steel Sky and Flight of the Amazon
                                  Queen
