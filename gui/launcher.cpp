@@ -30,6 +30,7 @@
 enum {
 	kStartCmd = 'STRT',
 	kOptionsCmd = 'OPTN',
+	kAddGameCmd = 'ADDG',
 	kQuitCmd = 'QUIT'
 };
 	
@@ -47,20 +48,29 @@ enum {
 LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	: Dialog(gui, 0, 0, 320, 200), _detector(detector)
 {
+	Widget *bw;
+
+	// Show game name
+	new StaticTextWidget(this, 10, 8, 300, kLineHeight,
+								"ScummVM "SCUMMVM_VERSION " (" SCUMMVM_CVS ")", 
+								kTextAlignCenter);
+
 	// Add three buttons at the bottom
-	addButton(1*(_w - 54)/6, _h - 24, "Quit", kQuitCmd, 'Q');
-	addButton(3*(_w - 54)/6, _h - 24, "Options", kOptionsCmd, 'O');
-	_startButton = addButton(5*(_w - 54)/6, _h - 24, "Start", kStartCmd, 'S');
+	bw = addButton(1*(_w - kButtonWidth)/6, _h - 24, "Quit", kQuitCmd, 'Q');
+	bw = addButton(3*(_w - kButtonWidth)/6, _h - 24, "Options", kOptionsCmd, 'O');
+	bw->setEnabled(false);
+	_startButton = addButton(5*(_w - kButtonWidth)/6, _h - 24, "Start", kStartCmd, 'S');
 	_startButton->setEnabled(false);
 
 	// Add list with game titles
-	_list = new ListWidget(this, 10, 10, 300, 112);
+	_list = new ListWidget(this, 10, 28, 300, 112);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 	
 	const VersionSettings *v = version_settings;
 	ScummVM::StringList l;
 
+	// TODO - sort by name ?
 	// TODO - maybe only display those games for which settings are known
 	// (i.e. a path to the game data was set and is accesible) ?
 	while (v->filename && v->gamename) {
@@ -73,6 +83,11 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 
 	_list->setList(l);
 //	_list->setSelected(0);
+
+	// Two more buttons directly below the list box
+	bw = new ButtonWidget(this, 10, 144, 80, 16, "Add Game...", kAddGameCmd, 'A');
+	bw->setEnabled(false);
+//	addButton(20 + 4 + kButtonWidth, 144, "Change Setting...");
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)

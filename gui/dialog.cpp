@@ -257,6 +257,6 @@ Widget *Dialog::findWidget(int x, int y)
 
 Widget *Dialog::addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey)
 {
-	return new ButtonWidget(this, x, y, 54, 16, label, cmd, hotkey);
+	return new ButtonWidget(this, x, y, kButtonWidth, 16, label, cmd, hotkey);
 }
 
