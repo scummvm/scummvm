@@ -26,7 +26,17 @@
 #include "sky/sky.h"
 
 #define WAIT_SEQUENCE	while (_tseqFrames != 0) { checkCommands(commandPtr); delay(50); CHECK_ESC }
-#define CHECK_ESC	if (_key_pressed == 27) { _tseqFrames = 0; return; }
+#define CHECK_ESC	if (_key_pressed == 27) { _tseqFrames = 0; REMOVE_INTRO return; }
+#define FREE_IF_NOT_0(ptr)	if (ptr != NULL) { free (ptr); ptr = 0; }
+#define REMOVE_INTRO	commandPtr = (uint32 *)zeroCommands; \
+			FREE_IF_NOT_0(_vgaData) \
+			FREE_IF_NOT_0(_diffData) \
+			FREE_IF_NOT_0(_workBase) \
+			FREE_IF_NOT_0(_tempPal) \
+			FREE_IF_NOT_0(seq1) \
+			FREE_IF_NOT_0(seq2) \
+			FREE_IF_NOT_0(_introTextSpace) \
+			FREE_IF_NOT_0(_introTextSave) 
 
 #define INTRO_TEXT_WIDTH    128
 
@@ -198,10 +208,8 @@ void SkyState::initVirgin() {
 
 void SkyState::intro(void) {
 
-	uint8 *seq1aData, *seq1bData, *seq1cData, *seq1dData, *seq1eData;
-	uint8 *seq4aData, *seq4bData, *seq4cData;
-	uint8 *seq5Data;
-	uint8 *seq6aData, *seq6bData;
+	uint8 *seq1 = 0;
+	uint8 *seq2 = 0;
 	uint32 *commandPtr = (uint32 *)zeroCommands;
 
 	_workScreen = _skyDisk->loadFile(60112, NULL); //while virgin screen is up, load rev screen
@@ -248,7 +256,7 @@ void SkyState::intro(void) {
 
 		_tempPal = _skyDisk->loadFile(FN_A_PAL, NULL);
 		_workScreen = _skyDisk->loadFile(FN_1A_LOG, NULL);
-		seq1aData = _skyDisk->loadFile(FN_1A, NULL);
+		seq2 = _skyDisk->loadFile(FN_1A, NULL);
 
 		//keep gibbo up for 2 seconds
 		delay(2000);
@@ -257,30 +265,29 @@ void SkyState::intro(void) {
 		showScreen();
 		paletteFadeUp(_tempPal);
 
-		startTimerSequence(seq1aData);
+		startTimerSequence(seq2);
 		free(_tempPal);
 		
-		seq1bData = _skyDisk->loadFile(FN_1B, NULL);
-		seq1cData = _skyDisk->loadFile(FN_1C, NULL);
-
+		seq1 = _skyDisk->loadFile(FN_1B, NULL);
 		WAIT_SEQUENCE;
-	
-		startTimerSequence(seq1bData);
+		free (seq2);
+		seq2 = _skyDisk->loadFile(FN_1C, NULL);
+
+		startTimerSequence(seq1);
 		WAIT_SEQUENCE;
-		startTimerSequence(seq1cData);
+		startTimerSequence(seq2);
 		WAIT_SEQUENCE;
 
-		free(seq1aData);
-		free(seq1bData);
-		seq1dData = _skyDisk->loadFile(FN_1D, NULL);
-		seq1eData = _skyDisk->loadFile(FN_1E, NULL);
+		free(seq1);
+		free(seq2);
+		seq1 = _skyDisk->loadFile(FN_1D, NULL);
+		seq2 = _skyDisk->loadFile(FN_1E, NULL);
 
-		startTimerSequence(seq1dData);
+		startTimerSequence(seq1);
 		WAIT_SEQUENCE;
-		startTimerSequence(seq1eData);
+		startTimerSequence(seq2);
 
-		free(seq1cData);
-		free(seq1dData);	
+		free(seq1);
 
 		_vgaData = _skyDisk->loadFile(60100, NULL);
 		_vgaPointer = _vgaData;
@@ -289,10 +296,12 @@ void SkyState::intro(void) {
 		_noFrames = READ_LE_UINT16(_diffData);
 		_diffPointer = _diffData + 2;
 
-		seq4aData = _skyDisk->loadFile(FN_4A, NULL);
+		seq1 = _skyDisk->loadFile(FN_4A, NULL);
 		
 		WAIT_SEQUENCE;		
 
+		free (seq2);
+		
 		//set up the scrolling intro
 		_workBase = (byte *)malloc(GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT * 2);
 
@@ -307,7 +316,6 @@ void SkyState::intro(void) {
 		_workScreenEnd = _workScreen + (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);	
 
 		_frameCounter = 1;
-		free(seq1eData);
 
 		byte scrollByte; 
 
@@ -320,20 +328,28 @@ void SkyState::intro(void) {
 			}
 
 			delay(40); 
-
+			if (_key_pressed == 27) {
+				_workScreen = (byte *)calloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT, 1);
+				REMOVE_INTRO;
+				return;
+			}
+			
 			//non-scrolling frame update
 			introFrame();
 
 		}
 
-		startTimerSequence(seq4aData);
+		startTimerSequence(seq1);
 		free(_vgaData);
+		_vgaData = 0;
 		free(_diffData);
+		_diffData = 0;
 		WAIT_SEQUENCE;
  		
 		free(_workBase);
+		_workBase = 0;
 		_workScreen = _skyDisk->loadFile(FN_4B_LOG, NULL);
-		seq4bData = _skyDisk->loadFile(FN_4B, NULL);	
+		seq2 = _skyDisk->loadFile(FN_4B, NULL);	
 
 		showScreen();
 
@@ -341,21 +357,22 @@ void SkyState::intro(void) {
 		WAIT_SEQUENCE; 
 
 		commandPtr = (uint32 *)cockpitCommands;
-		startTimerSequence(seq4bData); 
+		startTimerSequence(seq2); 
 
 		checkCommands(commandPtr);
 		checkCommands(commandPtr);
 
 		WAIT_SEQUENCE; //4b
 		free (_workScreen);
-		free (seq4aData);
+		_workScreen = 0;
+		free (seq1);
 
 		_workScreen = _skyDisk->loadFile(FN_4C_LOG, NULL);
-		seq4cData = _skyDisk->loadFile(FN_4C, NULL);
+		seq1 = _skyDisk->loadFile(FN_4C, NULL);
 
 		showScreen();
-		startTimerSequence(seq4cData);
-		free(seq4bData);
+		startTimerSequence(seq1);
+		free(seq2);
 
 		commandPtr = (uint32 *)anim4cCommands;
 		WAIT_SEQUENCE; //4c
@@ -363,15 +380,15 @@ void SkyState::intro(void) {
 		
 		_tempPal = _skyDisk->loadFile(FN_5_PAL, NULL);
 		_workScreen = _skyDisk->loadFile(FN_5_LOG, NULL);
-		seq5Data = _skyDisk->loadFile(FN_5, NULL);
+		seq2 = _skyDisk->loadFile(FN_5, NULL);
 		
 		fnFadeDown(0);
 		showScreen();
 		paletteFadeUp(_tempPal);
 		
-		startTimerSequence(seq5Data);
+		startTimerSequence(seq2);
 		free (_tempPal);
-		free (seq4cData);
+		free (seq1);
 
 		commandPtr = (uint32 *)anim5Commands;
 		
@@ -379,7 +396,7 @@ void SkyState::intro(void) {
 		free (_workScreen);
 		_tempPal = _skyDisk->loadFile(FN_6_PAL, NULL);
 		_workScreen = _skyDisk->loadFile(FN_6_LOG, NULL);
-		seq6aData = _skyDisk->loadFile(FN_6A, NULL);
+		seq1 = _skyDisk->loadFile(FN_6A, NULL);
 
 		fnFadeDown(0);
 		showScreen();
@@ -387,20 +404,20 @@ void SkyState::intro(void) {
 		_skyMusic->startMusic(2);
 		paletteFadeUp(_tempPal);
 
-		startTimerSequence(seq6aData);
-		seq6bData = _skyDisk->loadFile(FN_6B, NULL);
+		startTimerSequence(seq1);
+		free (seq2);
+		seq2 = _skyDisk->loadFile(FN_6B, NULL);
 		
 		commandPtr = (uint32 *)anim6aCommands;
 		WAIT_SEQUENCE; //6a
 		
-		free (seq5Data);
+		free (seq1);
 		free (_tempPal);
 		
-		startTimerSequence(seq6bData);
-		free (seq6aData);
+		startTimerSequence(seq2);
 		commandPtr = (uint32 *)anim6bCommands;
 		WAIT_SEQUENCE; //6b
-		free (seq6bData);
+		free (seq2);
 
 	}
 
