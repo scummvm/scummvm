@@ -32,7 +32,7 @@ void Scumm_v2::readClassicIndexFile() {
 
 	if (_gameId == GID_MANIAC) {
 		if (!(_features & GF_AMIGA) && !(_features & GF_NES))
-			_playerV2 = new Player_V1(this);
+			_musicEngine = _playerV2 = new Player_V1(this);
 
 		_numGlobalObjects = 800;
 		_numRooms = 55;
@@ -41,7 +41,7 @@ void Scumm_v2::readClassicIndexFile() {
 		_numSounds = 100;
 	} else if (_gameId == GID_ZAK) {
 		if (!(_features & GF_AMIGA))
-			_playerV2 = new Player_V2(this);
+			_musicEngine = _playerV2 = new Player_V2(this);
 
 		_numGlobalObjects = 775;
 		_numRooms = 61;
