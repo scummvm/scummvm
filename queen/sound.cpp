@@ -138,7 +138,7 @@ void Sound::playSong(int16 songNum) {
 			break;
 		// Alter song settings (such as volume) and exit
 		case  2:
-			_vm->music()->toggleVChange();
+			//_vm->music()->toggleVChange();
 		default:
 			return;
 			break;
