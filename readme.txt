@@ -84,9 +84,11 @@ although patches to fix them are welcome.
                 - German talkie version may crash when talking to Thomas
                   Jefferson.
        Loom (256 Talkie):
-                - CD music and voices are not correctly syncronised
+                - CD music and voices are not always syncronised
                 - Some voices may be skipped altogether
                 - Staff notes draw incorrectly
+                - Copy data files from CD to harddisk. Windows (XP at least)
+                  cannot correctly data from a volume playing music.
 
 Reporting Bugs:
 ---------------
@@ -167,6 +169,7 @@ Command Line Options:
 
         -p<path>  - path to where the game is installed
 	-b<num>   - start in that room
+        -c<num>   - drive to play cd audio from. eg, 0 is first drive
         -s<num>   - set the scale factor, 1-3    default is '2'
         -m<num>   - set the music volume, 0-100  default is '60'
         -t<num>   - set music tempo              default is '2031616'
