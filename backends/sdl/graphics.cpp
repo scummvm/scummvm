@@ -1057,13 +1057,16 @@ void OSystem_SDL::warpMouse(int x, int y) {
 }
 	
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+	if (w == 0 || h == 0)
+		return;
+ 
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
 	_mouseKeyColor = keycolor;
 
  	_cursorTargetScale = cursorTargetScale;
- 
+
  	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
  		_mouseCurState.w = w;
  		_mouseCurState.h = h;
@@ -1099,7 +1102,7 @@ void OSystem_SDL::blitCursor() {
 	byte color;
 	int w, h;
   
-	if (!_mouseOrigSurface)
+	if (!_mouseOrigSurface || !_mouseData)
  		return;
   
 	w = _mouseCurState.w;
