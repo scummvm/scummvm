@@ -89,6 +89,12 @@ struct ScummGameSettings {
 };
 
 
+enum {
+	// We only compute the MD5 of the first megabyte of our data files.
+	kMD5FileSizeLimit = 1024 * 1024
+};
+
+
 static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
@@ -453,7 +459,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
 
 	if (!elem)
-		printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
+		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
 	// Add default file directories.
 	if (((_features & GF_AMIGA) || (_features & GF_ATARI_ST)) && (_version <= 4)) {
@@ -2617,7 +2623,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	for (StringSet::const_iterator iter = fileSet.begin(); iter != fileSet.end(); ++iter) {
 		uint8 md5sum[16];
 		const char *name = iter->_key.c_str();
-		if (md5_file(name, md5sum)) {
+		if (md5_file(name, md5sum, 0, kMD5FileSizeLimit)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
@@ -2697,7 +2703,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		strcat(detectName, ".000");
 	}
 
-	if (md5_file(detectName, md5sum, ConfMan.get("path").c_str())) {
+	if (md5_file(detectName, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
 		for (int j = 0; j < 16; j++) {
 			sprintf(gameMD5 + j*2, "%02x", (int)md5sum[j]);
 		}
