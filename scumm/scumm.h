@@ -116,6 +116,7 @@ struct NestedScript {
 
 struct BlastText {
 	int16 xpos, ypos;
+	int16 left, right, top, bottom;
 	byte color;
 	byte charset;
 	bool center;
@@ -877,7 +878,7 @@ public:
 
 	void enqueueText(byte *text, int x, int y, byte color, byte charset, bool center);
 	void drawBlastTexts();
-	void removeBlastTexts() { _blastTextQueuePos = 0; }
+	void removeBlastTexts();
 
 	void enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
 	                   int objectHeight, int scaleX, int scaleY, int image, int mode);

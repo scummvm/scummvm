@@ -361,7 +361,7 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte **comp_final) {
 			return final_size;
 		}
 	}
-	warning("Failed finding voice %s", name);
+	debug(2, "Failed finding voice %s", name);
 	return final_size;
 }
 

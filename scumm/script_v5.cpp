@@ -2346,7 +2346,7 @@ void Scumm_v5::o5_walkActorToObject() {
 int Scumm_v5::getWordVararg(int *ptr) {
 	int i;
 
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < 15; i++)
 		ptr[i] = 0;
 
 	i = 0;
@@ -2494,6 +2494,7 @@ void Scumm_v5::o5_oldRoomEffect() {
 			// that something is missing here :-)
 		
 			if (a == 4) {
+printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 				// No idea what byte_2FCCF is, but it's a globale boolean flag.
 				// I only add it here as a temporary hack to make the pseudo code compile.
 				int byte_2FCCF = 0;

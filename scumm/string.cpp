@@ -857,15 +857,22 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 	if (_gameId == GID_CMI) {
 		if ((text[0] == '/') && (_existLanguageFile == true)) {
 			struct langIndexNode target;
-			struct langIndexNode *found;
+			struct langIndexNode *found = NULL;
 
 			// copy name from text /..../
 			for (l = 0; (l < 8) && (text[l + 1] != '/'); l++)
 				target.tag[l] = toupper(text[l + 1]);
 			target.tag[l] = 0;
 
-			found = (struct langIndexNode *)bsearch(&target, _languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
+			// HACK: These are used for the object line when
+			// using one object on another. I don't know if the
+			// text in the language file is a placeholder or if
+			// we're supposed to use it, but at least in the
+			// English version things will work so much better if
+			// we can't find translations for these.
 
+			if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
+				found = (struct langIndexNode *)bsearch(&target, _languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
 			if (found != NULL) {
 				File file;
 

@@ -515,11 +515,14 @@ void Scumm_v8::decodeParseString(int m, int n) {
 			}
 			pointer[j] = 0;
 
-			// Stop any talking that's still going on
-			if (_sound->_talkChannel > -1)
-				_mixer->stop(_sound->_talkChannel);
+			int new_sound = _sound->playBundleSound(pointer);
+			if (new_sound != -1) {
+				// Stop any talking that's still going on
+				if (_sound->_talkChannel > -1)
+					_mixer->stop(_sound->_talkChannel);
+				_sound->_talkChannel = new_sound;
+			}
 
-			_sound->_talkChannel = _sound->playBundleSound(pointer);
 			_messagePtr = _transText;
 		}
 		
@@ -607,8 +610,22 @@ void Scumm::drawBlastTexts() {
 				_charset->_nextTop = _charset->_top;
 			}
 		} while (c);
+
+		_blastTextQueue[i].left = _charset->_strLeft;
+		_blastTextQueue[i].right = _charset->_strRight;
+		_blastTextQueue[i].top = _charset->_strTop;
+		_blastTextQueue[i].bottom = _charset->_strBottom;
 	}
 	_charset->_ignoreCharsetMask = false;
+}
+
+void Scumm::removeBlastTexts() {
+	int i;
+
+	for (i = 0; i < _blastTextQueuePos; i++) {
+		restoreBG(_blastTextQueue[i].left, _blastTextQueue[i].top, _blastTextQueue[i].right, _blastTextQueue[i].bottom);
+	}
+	_blastTextQueuePos = 0;
 }
 
 void Scumm_v8::o8_mod() {
@@ -1614,7 +1631,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		// scripts. Probably a wrong push/pop somewhere. For now override to correct value.
 		array = 658;
 		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
-		if (!strcmp((char *)ah->data, "Saveload Page"))
+		if (!strcmp((char *)ah->data, "Saveload Page") || !strcmp((char *)ah->data, "Object Names"))
 			push(1);
 		else
 			push(0);
