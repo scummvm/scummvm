@@ -178,7 +178,6 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("confirm_exit", false);
 
 	_dumpScripts = false;
-	_midi_driver = MD_AUTO;
 
 	_game.features = 0;
 	_plugin = 0;
@@ -492,23 +491,6 @@ int GameDetector::parseGraphicsMode(const String &str) {
 	return -1;
 }
 
-int GameDetector::parseMusicDriver(const String &str) {
-	if (str.isEmpty())
-		return -1;
-
-	const char *s = str.c_str();
-	const MidiDriverDescription *md = getAvailableMidiDrivers();
-
-	while (md->name) {
-		if (!scumm_stricmp(md->name, s)) {
-			return md->id;
-		}
-		md++;
-	}
-
-	return -1;
-}
-
 bool GameDetector::detectGame() {
 	String realGame;
 
@@ -529,6 +511,53 @@ bool GameDetector::detectGame() {
 	}
 }
 
+int GameDetector::detectMusicDriver(int midiFlags) {
+	int musicDriver = parseMusicDriver(ConfMan.get("music_driver"));
+	/* Use the adlib sound driver if auto mode is selected,
+	 * and the game is one of those that want adlib as
+	 * default, OR if the game is an older game that doesn't
+	 * support anything else anyway. */
+	if (musicDriver == MD_AUTO || musicDriver < 0) {
+		if (midiFlags & MDT_PREFER_NATIVE) {
+			if (musicDriver == MD_AUTO) {
+				#if defined (WIN32) && !defined(_WIN32_WCE)
+					musicDriver = MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
+				#elif defined(MACOSX)
+					musicDriver = MD_COREAUDIO;
+				#elif defined(__PALM_OS__)	// must be before mac
+					musicDriver = MD_YPA1;
+				#elif defined(__MORPHOS__)
+					musicDriver = MD_ETUDE;
+				#elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
+					// Always use MIDI emulation via adlib driver on CE and UNIX device
+				
+					// TODO: We should, for the Unix targets, attempt to detect
+					// whether a sequencer is available, and use it instead.
+					musicDriver = MD_ADLIB;
+				#else
+				    musicDriver = MD_NULL;
+				#endif
+			}
+		} else
+			musicDriver = MD_TOWNS;
+	}
+	bool nativeMidiDriver =
+		(musicDriver != MD_NULL && musicDriver != MD_ADLIB &&
+		 musicDriver != MD_PCSPK && musicDriver != MD_PCJR &&
+		 musicDriver != MD_TOWNS);
+
+	if (nativeMidiDriver && !(midiFlags & MDT_NATIVE))
+		musicDriver = MD_TOWNS;
+	if (musicDriver == MD_TOWNS && !(midiFlags & MDT_TOWNS))
+		musicDriver = MD_ADLIB;
+	if (musicDriver == MD_ADLIB && !(midiFlags & MDT_ADLIB))
+		musicDriver = MD_PCJR;
+	if ((musicDriver == MD_PCSPK || musicDriver == MD_PCJR) && !(midiFlags & MDT_PCSPK))
+		musicDriver = MD_NULL;
+
+	return musicDriver;
+}
+
 bool GameDetector::detectMain() {
 	if (_targetName.isEmpty()) {
 		warning("No game was specified...");
@@ -539,30 +568,6 @@ bool GameDetector::detectMain() {
 		warning("%s is an invalid target. Use the -z parameter to list targets", _targetName.c_str());
 		return false;
 	}
-
-	/* Use the adlib sound driver if auto mode is selected,
-	 * and the game is one of those that want adlib as
-	 * default, OR if the game is an older game that doesn't
-	 * support anything else anyway. */
-	_midi_driver = parseMusicDriver(ConfMan.get("music_driver"));
-	if (_midi_driver == MD_AUTO || _midi_driver < 0) {
-		if (_game.midi & MDT_PREFER_NATIVE)
-			_midi_driver = getMidiDriverType();
-		else
-			_midi_driver = MD_TOWNS;
-	}
-	bool nativeMidiDriver =
-		(_midi_driver != MD_NULL && _midi_driver != MD_ADLIB &&
-		 _midi_driver != MD_PCSPK && _midi_driver != MD_PCJR &&
-		 _midi_driver != MD_TOWNS);
-	if (nativeMidiDriver && !(_game.midi & MDT_NATIVE))
-		_midi_driver = MD_TOWNS;
-	if (_midi_driver == MD_TOWNS && !(_game.midi & MDT_TOWNS))
-		_midi_driver = MD_ADLIB;
-	if (_midi_driver == MD_ADLIB && !(_game.midi & MDT_ADLIB))
-		_midi_driver = MD_PCJR;
-	if ((_midi_driver == MD_PCSPK || _midi_driver == MD_PCJR) && !(_game.midi & MDT_PCSPK))
-		_midi_driver = MD_NULL;
 
 	String gameDataPath(ConfMan.get("path"));
 	if (gameDataPath.isEmpty()) {
@@ -611,38 +616,12 @@ Engine *GameDetector::createEngine(OSystem *sys) {
 	return _plugin->createInstance(this, sys);
 }
 
-int GameDetector::getMidiDriverType() {
-
-	if (_midi_driver != MD_AUTO) return _midi_driver;
-
-#if defined (WIN32) && !defined(_WIN32_WCE)
-		return MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
-#elif defined(MACOSX)
-		return MD_COREAUDIO;
-#elif defined(__PALM_OS__)	// must be before mac
-		return MD_YPA1;
-#elif defined(macintosh)
-		return MD_QTMUSIC;
-#elif defined(__MORPHOS__)
-		return MD_ETUDE;
-#elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
-	// Always use MIDI emulation via adlib driver on CE and UNIX device
-
-	// TODO: We should, for the Unix targets, attempt to detect
-	// whether a sequencer is available, and use it instead.
-	return MD_ADLIB;
-#endif
-    return MD_NULL;
-}
-
 SoundMixer *GameDetector::createMixer() {
 	return new SoundMixer();
 }
 
-MidiDriver *GameDetector::createMidi() {
-	int drv = getMidiDriverType();
-
-	switch(drv) {
+MidiDriver *GameDetector::createMidi(int midiDriver) {
+	switch(midiDriver) {
 	case MD_NULL:      return MidiDriver_NULL_create();
 
 	// In the case of Adlib, we won't specify anything.

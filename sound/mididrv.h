@@ -27,7 +27,7 @@
 
 class MidiChannel;
 class SoundMixer;
-
+namespace Common { class String; }
 
 /** MIDI Driver Types */
 enum {
@@ -47,6 +47,9 @@ enum {
 	MD_TOWNS = 13,
 	MD_YPA1 = 14 // PalmOS
 };
+
+/** Convert a string containing a music driver name into MIDI Driver type. */
+extern int parseMusicDriver(const Common::String &str);
 
 /**
  * Abstract description of a MIDI driver. Used by the config file and command

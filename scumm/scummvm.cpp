@@ -604,7 +604,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// differing from the regular version(s) of that game.
 	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : detector->_game.gameName;
 
-	_midiDriver = detector->_midi_driver;
+	_midiDriver = GameDetector::detectMusicDriver(detector->_game.midi);
 
 	_demoMode = ConfMan.getBool("demo_mode");
 	_noSubtitles = ConfMan.getBool("nosubtitles");
@@ -654,11 +654,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_silentDigitalImuse = false;
 	if (!_mixer->bindToSystem(syst)) {
 		warning("Sound mixer initialization failed");
-		if (detector->_midi_driver == MD_ADLIB ||
-		    detector->_midi_driver == MD_PCSPK ||
-		    detector->_midi_driver == MD_PCJR)
+		if (_midiDriver == MD_ADLIB ||
+		    _midiDriver == MD_PCSPK ||
+		    _midiDriver == MD_PCJR)
 		{
-			_midiDriver = detector->_midi_driver = MD_NULL;
+			_midiDriver = MD_NULL;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
 		_silentDigitalImuse = true;
@@ -679,7 +679,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 	} else if (_version > 2) {
-		MidiDriver *driver = detector->createMidi();
+		MidiDriver *driver = detector->createMidi(_midiDriver);
 		if (driver && _native_mt32)
 			driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		_musicEngine = _imuse = IMuse::create(syst, _mixer, driver);

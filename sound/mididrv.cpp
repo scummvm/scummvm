@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "sound/mididrv.h"
+#include "common/str.h"
 
 
 /** Internal list of all available 'midi' drivers. */
@@ -66,4 +67,21 @@ static const struct MidiDriverDescription midiDrivers[] = {
 
 const MidiDriverDescription *getAvailableMidiDrivers() {
 	return midiDrivers;
+}
+
+int parseMusicDriver(const Common::String &str) {
+	if (str.isEmpty())
+		return -1;
+
+	const char *s = str.c_str();
+	const MidiDriverDescription *md = getAvailableMidiDrivers();
+
+	while (md->name) {
+		if (!scumm_stricmp(md->name, s)) {
+			return md->id;
+		}
+		md++;
+	}
+
+	return -1;
 }

@@ -71,20 +71,17 @@ public:
 	
 	bool _dumpScripts;
 
-	int _midi_driver;
-
 public:
-	OSystem *createSystem();
-	Engine *createEngine(OSystem *system);
-
-	SoundMixer *createMixer();
-	MidiDriver *createMidi();
-	int getMidiDriverType();	// FIXME: Try to get rid of this, only Sky frontend uses it
-
 	void setTarget(const String &name);
 
+	Engine *createEngine(OSystem *system);
+
+	static OSystem *createSystem();
+	static SoundMixer *createMixer();
+	static MidiDriver *createMidi(int midiDriver);
+
 	static int parseGraphicsMode(const String &s);	// Used in main()
-	static int parseMusicDriver(const String &s);
+	static int detectMusicDriver(int midiFlags);
 	
 	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);
 

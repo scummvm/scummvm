@@ -506,7 +506,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	set_volume(ConfMan.getInt("sfx_volume"));
 
 	// Setup midi driver
-	MidiDriver *driver = detector->createMidi();
+	MidiDriver *driver = detector->createMidi(GameDetector::detectMusicDriver(detector->_game.midi));
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
 	else if (ConfMan.getBool("native_mt32"))

@@ -92,9 +92,10 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	
 	// Populate it
 	const MidiDriverDescription *md = getAvailableMidiDrivers();
+	const int midiDriver = parseMusicDriver(ConfMan.get("music_driver"));
 	while (md->name) {
 		_midiPopUp->appendEntry(md->description, md->id);
-		if (md->id == detector._midi_driver)
+		if (md->id == midiDriver)
 			midiSelected = i;
 		i++;
 		md++;
