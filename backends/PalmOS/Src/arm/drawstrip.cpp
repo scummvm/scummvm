@@ -6,7 +6,7 @@
 
 #define CHARSET_MASK_TRANSPARENCY	253
 
-void Gdi_drawStripToScreen(void *userData68KP) {
+UInt32 Gdi_drawStripToScreen(void *userData68KP) {
 // import variables
 	SET32	(int			,width				)
 	SET32	(int			,height				)
@@ -30,4 +30,6 @@ void Gdi_drawStripToScreen(void *userData68KP) {
 		dst += _vm_screenWidth;
 		text += _textSurface_pitch;
 	}
+	
+	return 0;
 }

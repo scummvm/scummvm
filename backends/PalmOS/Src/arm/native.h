@@ -1,38 +1,51 @@
 #ifndef _ARMNATIVE_H_
 #define _ARMNATIVE_H_
 
-#include "PNOLoader.h"
-
-//#define DISABLE_ARM
-//#define DEBUG_ARM
+#include "arm/pnodefs.h"
 
 #ifndef __PALM_OS__
 
 typedef UInt8 byte;
 typedef UInt8 uint8;
 typedef Int32 int32;
+typedef UInt32 uint32;
+typedef Int16 int16;
 typedef UInt16 uint16;
 typedef unsigned int uint;
 
 #endif
 
-// rsrc
+typedef struct {
+	UInt32 funcID;
+	void *dataP;
+} PnoType;
+
+typedef UInt32 (PnoProc)(void *);
+
 enum {
-	RSC_WIDELANDSCAPE = 1,
-	RSC_WIDEPORTRAIT,
-	RSC_COPYRECT,
-	RSC_COSTUMEPROC3,
-	RSC_DRAWSTRIP,
-	RSC_BLIT
+	COMMON_COPYRECT = 0,
+	COMMON_WPORTRAIT,
+	COMMON_WLANDSCAPE,
+//	COMMON_SNDBUFFER
 };
 
 enum {
-	PNO_COPYRECT = 0,
-	PNO_WIDE,
-	PNO_COSTUMEPROC3,
-	PNO_DRAWSTRIP,
-	PNO_BLIT,
-	PNO_COUNT
+	QUEEN_BLIT = 0
+};
+
+enum {
+	SCUMM_DRAWSTRIP = 0,
+	SCUMM_PROC3
+};
+
+enum {
+	SWORD1_SCREENDRAW = 0,
+	SWORD1_DRAWSPRITE,
+	SWORD1_FASTSHRINK,
+	SWORD1_RENDERPARALLAX,
+	SWORD1_DECOMPTONY,
+	SWORD1_DECOMPRLE7,
+	SWORD1_DECOMPRLE0
 };
 
 // types
@@ -41,20 +54,6 @@ typedef struct {
 	void *dstP;
 	UInt32 length;
 } ARMPa1SndType, *ARMPa1SndPtr;
-
-typedef struct {
-	void *proc;
-	void *param;
-
-	void	*handle;	// sound handle
-	UInt32	size;		// buffer size
-	UInt32	slot;
-	UInt32 	active,		// is the sound handler active
-			set,		// is the buffer filled
-			wait;		// do we need to wait for sound completion
-	void	*dataP,		// main buffer
-			*tmpP;		// tmp buffer (convertion)
-} SoundDataType;
 
 typedef struct {
 	void *dst;
@@ -141,5 +140,62 @@ typedef struct {
 	byte xflip;
 	byte masked;
 } BlitType;
+
+// Sword1
+typedef struct {
+	uint8 *data;
+	uint32 *lineIndexes;
+	uint8 *_screenBuf;
+	uint16 _scrnSizeX;
+	uint16 scrnScrlX;
+	uint16 scrnScrlY;
+	uint16 paraScrlX;
+	uint16 paraScrlY;
+	uint16 scrnWidth;
+	uint16 scrnHeight;
+} ParallaxType;
+
+typedef struct {
+	uint8 *sprData;
+	uint8 *dest;
+	uint16 sprHeight;
+	uint16 sprWidth;
+	uint16 sprPitch;
+	uint16 _scrnSizeX;
+} DrawSpriteType;
+
+typedef struct {
+	uint8 *src;
+	uint8 *dest;
+	uint16 _scrnSizeX;
+	uint16 _scrnSizeY;
+} DrawType;
+
+typedef struct {
+	uint8 *src;
+	uint8 *dest;
+	uint32 width;
+	uint32 height;
+	uint32 scale;
+} FastShrinkType;
+
+typedef struct {
+	uint8 *src;
+	uint32 compSize;
+	uint8 *dest;
+} CompressType;
+
+typedef struct {
+	int32 samples;
+	int32 len;
+	int16 *buffer;
+	const byte *_ptr;
+	int32 is16Bit;
+	int32 isUnsigned;
+	int32 isLE;
+} ReadBufferType;
+
+// Warning : all the struct MUST be 4byte align and even
+// from one member to another
 
 #endif
