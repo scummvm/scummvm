@@ -233,29 +233,29 @@ protected:
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess);
 
-	void drawStripEGA(byte *dst, int dstPitch, const byte *src, int height);
+	void drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) const;
 	void drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height);
 	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
 
-	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height);
-	void drawStripComplex_trans(byte *dst, int dstPitch, const byte *src, int height);
-	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height);
-	void drawStripBasicH_trans(byte *dst, int dstPitch, const byte *src, int height);
-	void drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height);
-	void drawStripBasicV_trans(byte *dst, int dstPitch, const byte *src, int height);
+	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStripComplex_trans(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStripBasicH_trans(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStripBasicV_trans(byte *dst, int dstPitch, const byte *src, int height) const;
 
-	void unkDecode7(byte *dst, int dstPitch, const byte *src, int height);
-	void unkDecode8(byte *dst, int dstPitch, const byte *src, int height);
-	void unkDecode9(byte *dst, int dstPitch, const byte *src, int height);
-	void unkDecode10(byte *dst, int dstPitch, const byte *src, int height);
-	void unkDecode11(byte *dst, int dstPitch, const byte *src, int height);
-	void drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck);
-	void drawStripHE(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck);
+	void unkDecode7(byte *dst, int dstPitch, const byte *src, int height) const;
+	void unkDecode8(byte *dst, int dstPitch, const byte *src, int height) const;
+	void unkDecode9(byte *dst, int dstPitch, const byte *src, int height) const;
+	void unkDecode10(byte *dst, int dstPitch, const byte *src, int height) const;
+	void unkDecode11(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
+	void drawStripHE(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 
 	/* Mask decompressors */
-	void drawStripC64Mask(byte *dst, int stripnr, int width, int height);
-	void decompressMaskImgOr(byte *dst, const byte *src, int height);
-	void decompressMaskImg(byte *dst, const byte *src, int height);
+	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
+	void decompressMaskImgOr(byte *dst, const byte *src, int height) const;
+	void decompressMaskImg(byte *dst, const byte *src, int height) const;
 
 	/* Misc */
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
@@ -263,21 +263,22 @@ protected:
 	
 	byte *getMaskBuffer(int x, int y, int z);
 	
-	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9]);
+	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9]) const;
 
-	void decompressBMAPbg(byte *dst, int dstPitch, int w, int h, const byte *ptr);
+	void decompressBMAPbg(byte *dst, int dstPitch, int w, int h, const byte *ptr) const;
 
 	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 
 	                int stripnr, int numstrip, StripTable *table);
 
 public:
 	void init();
+	void updateNumStrips();
 
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag, StripTable *table = 0);
 
-	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table);
-	void decodeC64Gfx(const byte *src, byte *dst, int size);
+	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
+	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
 
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
