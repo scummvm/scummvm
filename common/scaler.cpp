@@ -32,6 +32,20 @@ static uint32 qlowpixelMask = 0x18631863;
 static uint32 redblueMask = 0xF81F;
 static uint32 greenMask = 0x7E0;
 
+static const uint16 dotmatrix_565[16] = {
+  0x01E0, 0x0007, 0x3800, 0x0000,
+  0x39E7, 0x0000, 0x39E7, 0x0000,
+  0x3800, 0x0000, 0x01E0, 0x0007,
+  0x39E7, 0x0000, 0x39E7, 0x0000
+};
+static const uint16 dotmatrix_555[16] = {
+  0x00E0, 0x0007, 0x1C00, 0x0000,
+  0x1CE7, 0x0000, 0x1CE7, 0x0000,
+  0x1C00, 0x0000, 0x00E0, 0x0007,
+  0x1CE7, 0x0000, 0x1CE7, 0x0000
+};
+static const uint16 *dotmatrix;
+
 int Init_2xSaI(uint32 BitFormat)
 {
 	if (BitFormat == 565) {
@@ -41,6 +55,7 @@ int Init_2xSaI(uint32 BitFormat)
 		qlowpixelMask = 0x18631863;
 		redblueMask = 0xF81F;
 		greenMask = 0x7E0;
+		dotmatrix = dotmatrix_565;
 	} else if (BitFormat == 555) {
 		colorMask = 0x7BDE7BDE;
 		lowPixelMask = 0x04210421;
@@ -48,6 +63,7 @@ int Init_2xSaI(uint32 BitFormat)
 		qlowpixelMask = 0x0C630C63;
 		redblueMask = 0x7C1F;
 		greenMask = 0x3E0;
+		dotmatrix = dotmatrix_555;
 	} else {
 		return 0;
 	}
@@ -825,6 +841,32 @@ void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dst
 			*(q + j + 1) = p1;
 			*(q + j + nextlineDst) = (uint16)pi;
 			*(q + j + nextlineDst + 1) = (uint16)pi;
+		}
+		p += nextlineSrc;
+		q += nextlineDst << 1;
+	}
+}
+
+static inline uint16 DOT_16(uint16 c, int j, int i) {
+  return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));
+}
+
+void DotMatrix(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+					int width, int height)
+{
+	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	uint16 *p = (uint16 *)srcPtr;
+
+	unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	uint16 *q = (uint16 *)dstPtr;
+
+	for (int j = 0, jj = 0; j < height; ++j, jj += 2) {
+		for (int i = 0, ii = 0; i < width; ++i, ii += 2) {
+			uint16 c = *(p + i);
+			*(q + ii) = DOT_16(c, jj, ii);
+			*(q + ii + 1) = DOT_16(c, jj, ii + 1);
+			*(q + ii + nextlineDst) = DOT_16(c, jj + 1, ii);
+			*(q + ii + nextlineDst + 1) = DOT_16(c, jj + 1, ii + 1);
 		}
 		p += nextlineSrc;
 		q += nextlineDst << 1;

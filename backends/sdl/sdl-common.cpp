@@ -503,9 +503,9 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					quit();
 					break;
 				}
-				// Ctr-Alt-1 till Ctrl-Alt-8 will change the GFX mode
+				// Ctr-Alt-1 till Ctrl-Alt-9 will change the GFX mode
 				if (b == (KBD_CTRL|KBD_ALT) && 
-				    (ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='8')) {
+				    (ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='9')) {
 					Property prop;
 					prop.gfx_mode = ev.key.keysym.sym - '1';
 					property(PROP_SET_GFX_MODE, &prop);

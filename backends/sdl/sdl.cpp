@@ -103,6 +103,10 @@ void OSystem_SDL::load_gfx_mode() {
 		_scaleFactor = 2;
 		_scaler_proc = TV2x;
 		break;
+	case GFX_DOTMATRIX:
+		_scaleFactor = 2;
+		_scaler_proc = DotMatrix;
+		break;
 
 	case GFX_DOUBLESIZE:
 		_scaleFactor = 2;
@@ -345,7 +349,7 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 #endif
 		return 1;
 	} else if (param == PROP_SET_GFX_MODE) {
-		if (value->gfx_mode >= 8)
+		if (value->gfx_mode >= 9)
 			return 0;
 
 		_mode = value->gfx_mode;

@@ -38,5 +38,7 @@ extern void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 extern void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
+extern void DotMatrix(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
+								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 #endif
