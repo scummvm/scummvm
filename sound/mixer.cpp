@@ -1032,7 +1032,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 		return;
 	}
 
-	const int volume = _mixer->getVolume();
+	const int volume = _mixer->getMusicVolume();
 	st_size_t tmpLen = len;
 	_converter->flow(*_input, data, &tmpLen, volume);
 #else
