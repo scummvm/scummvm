@@ -1273,7 +1273,7 @@ void ScummEngine::stopTalk() {
 	act = getTalkingActor();
 	if (act && act < 0x80) {
 		Actor *a = derefActor(act, "stopTalk");
-		if (a->isInCurrentRoom()) {
+		if (a->isInCurrentRoom() || _version >= 7) {
 			if ((_version >= 7 && !_string[0].no_talk_anim) || (_version <= 6 && _useTalkAnims)) {
 				a->runActorTalkScript(a->talkStopFrame);
 				_useTalkAnims = false;
