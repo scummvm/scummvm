@@ -958,8 +958,10 @@ void Sound::playBundleMusic(char * song) {
 		// FIXME: we have MUSDISK1.BUN and MUSDISK2.BUN in COMI.
 		_outputMixerSize = 66150; // ((22050 * 2 * 2) / 4) * 3
 		if (_scumm->_gameId == GID_CMI) {
+			char bunfile[20];
+			sprintf(bunfile, "musdisk%d.bun", _scumm->_vars[_scumm->VAR_CURRENTDISK]);
 			printf("Opening bundle\n");
-			if (_scumm->_bundle->openMusicFile("musdisk1.bun", _scumm->getGameDataPath()) == false)
+			if (_scumm->_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false)
 				return;
 			_outputMixerSize = 88140; // ((22050 * 2 * 2)
 		} else {
@@ -1123,11 +1125,11 @@ int Sound::playBundleSound(char *sound) {
 	byte * ptr;
 	bool result;
 	
-	if (_scumm->_gameId == GID_CMI)
-		// FIXME: HACK! There are actually two voice files in COMI... I dunno how to do this
-		// right, though :-/
-		result = _scumm->_bundle->openVoiceFile("voxdisk1.bun", _scumm->getGameDataPath());
-	else if (_scumm->_gameId == GID_DIG)
+	if (_scumm->_gameId == GID_CMI) {
+		char voxfile[20];
+		sprintf(voxfile, "voxdisk%d.bun", _scumm->_vars[_scumm->VAR_CURRENTDISK]);
+		result = _scumm->_bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
+	} else if (_scumm->_gameId == GID_DIG)
 		result = _scumm->_bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath());
 	else
 		error("Don't know which bundle file to load");

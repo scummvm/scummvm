@@ -474,7 +474,7 @@ int Scumm::scummLoop(int delta)
 
 		makeSavegameName(filename, _saveLoadSlot, _saveLoadCompatible);
 		if (!success) {
-			displayError(errMsg, filename);
+			displayError(false, errMsg, filename);
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveLoadCompatible) {
 			// Display "Save succesful" message, except for auto saves
 			char buf[1024];
@@ -1065,18 +1065,20 @@ void Scumm::optionsDialog()
 	runDialog(_optionsDialog);
 }
 
-void Scumm::displayError(const char *message, ...)
+char Scumm::displayError(bool showCancel, const char *message, ...)
 {
-	char buf[1024];
+	char buf[1024], result;
 	va_list va;
 
 	va_start(va, message);
 	vsprintf(buf, message, va);
 	va_end(va);
 
-	Dialog *dialog = new MessageDialog(_newgui, buf);
-	runDialog(dialog);
+	Dialog *dialog = new MessageDialog(_newgui, buf, 0, true, showCancel);
+	result = runDialog(dialog);
 	delete dialog;
+
+	return result;
 }
 
 void Scumm::shutDown(int i)

@@ -22,8 +22,13 @@
 #include "message.h"
 #include "newgui.h"
 
+enum {
+        kOkCmd = 'OK  ',
+        kCancelCmd = 'CNCL'
+};
 
-MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, bool showButton)
+
+MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, bool showOkButton, bool showCancelButton)
 	: Dialog(gui, 30, 20, 260, 124)
 {
 	// First, determine the size the dialog needs. For this we have to break
@@ -34,7 +39,7 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, b
 	const char *str = message.c_str();
 	const char *start = str;
 	int lineWidth, maxlineWidth = 0;
-	int lineCount;
+	int lineCount, okButtonPos, cancelButtonPos;
 	
 	while (*str) {
 		if (*str == '\n') {
@@ -55,7 +60,7 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, b
 	_w = maxlineWidth + 20;
 	lineCount = lines.size();
 	_h = lineCount * kLineHeight + 16;
-	if (showButton)
+	if (showOkButton || showCancelButton)
 		_h += 24;
 
 	if (_h > 180) {
@@ -72,8 +77,18 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, b
 
 	// FIXME - allow for multiple buttons, and return in runModal() which one
 	// was selected.
-	if (showButton)
-		addButton((_w - kButtonWidth)/2, _h - 24, "OK", kCloseCmd, '\n');	// Confirm dialog
+	if (showOkButton && showCancelButton) { 
+		okButtonPos = (_w - (kButtonWidth * 2))/2;
+		cancelButtonPos = ((_w - (kButtonWidth * 2))/2) + kButtonWidth + 10;
+	} else {
+		okButtonPos = cancelButtonPos = (_w-kButtonWidth)/2;
+	}
+
+	if (showOkButton)
+		addButton(okButtonPos, _h - 24, "OK", kOkCmd, '\n');	// Confirm dialog
+
+	if (showCancelButton)
+		addButton(cancelButtonPos, _h - 24, "CANCEL", kCancelCmd, '\27');	// Cancel dialog
 	
 	if (timer)
 		_timer = _gui->get_time() + timer;
@@ -132,5 +147,18 @@ int MessageDialog::addLine(StringList &lines, const char *line, int size)
 		lines.push_back(tmp);
 	}
 	return maxWidth;
+}
+
+void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
+{
+	if (cmd == kOkCmd) {
+		setResult(1);
+		close();
+	} else if (cmd == kCancelCmd) {
+		setResult(2);
+		close();
+	} else {
+		Dialog::handleCommand(sender, cmd, data);
+	}
 }
 

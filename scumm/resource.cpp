@@ -27,9 +27,8 @@
 #include "scumm/sound.h"
 #include "common/map.h"
 #include "common/str.h"
-
-#include <stdio.h>
-
+#include "gui/message.h"
+#include "dialogs.h"
 
 uint16 newTag2Old(uint32 oldTag);
 
@@ -75,9 +74,11 @@ void Scumm::openRoom(int room)
 		}
 		if (!(_features & GF_SMALL_HEADER)) {
 
-			if (_features & GF_AFTER_V7)
+			if (_features & GF_AFTER_V7) {
+				if (room > 0)
+					_vars[VAR_CURRENTDISK] = res.roomno[rtRoom][room];
 				sprintf(buf, "%s.la%d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
-			else if (_features & GF_HUMONGOUS)
+			} else if (_features & GF_HUMONGOUS)
 				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 			else
 				sprintf(buf, "%s.%.3d",  _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
@@ -90,10 +91,10 @@ void Scumm::openRoom(int room)
 				if (openResourceFile(buf)) {
 					return;
 				}
-				askForDisk(buf);
+				askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
 
 			} else {
-				sprintf(buf, "disk%.2d.lec",  res.roomno[rtRoom][room]);
+				sprintf(buf, "disk%.2d.lec", room == 0 ? 0 : res.roomno[rtRoom][room]);
 				_encbyte = 0x69;
 			}
 		} else {
@@ -115,7 +116,7 @@ void Scumm::openRoom(int room)
 			error("Room %d not in %s", room, buf);
 			return;
 		}
-		askForDisk(buf);
+		askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
 	}
 
 	do {
@@ -123,7 +124,7 @@ void Scumm::openRoom(int room)
 		_encbyte = 0;
 		if (openResourceFile(buf))
 			break;
-		askForDisk(buf);
+		askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
 	} while (1);
 
 	deleteRoomOffsets();
@@ -199,9 +200,25 @@ bool Scumm::openResourceFile(const char *filename)
 	return _fileHandle.isOpen();
 }
 
-void Scumm::askForDisk(const char *filename)
+void Scumm::askForDisk(const char *filename, int disknum)
 {
-	error("ask Cannot find '%s'", filename);
+	char buf[128];
+
+	if (_features & GF_AFTER_V8) {
+		char result;
+
+		sprintf(buf, "Cannot find file: '%s'\nInsert disk %d into drive %s\nHit Ok to retry, Cancel to exit", filename, disknum, getResDataPath());
+
+		result = displayError(true, buf);
+		if (result == 2)
+			error("Cannot find file: '%s'", filename);
+	} else { 
+		sprintf(buf, "Cannot find file: '%s'", filename);
+		InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
+		runDialog (dialog);
+		delete dialog;
+		error("Cannot find file: '%s'", filename);
+	}
 }
 
 void Scumm::readIndexFile()

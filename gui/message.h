@@ -29,9 +29,10 @@ class MessageDialog : public Dialog {
 	typedef ScummVM::String String;
 	typedef ScummVM::StringList StringList;
 public:
-	MessageDialog(NewGui *gui, const String &message, uint32 timer = 0, bool showButton = true);
+	MessageDialog(NewGui *gui, const String &message, uint32 timer = 0, bool showOKButton = true, bool showCancelButton = false);
 	
 	void handleTickle();
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
 	uint32 _timer;

@@ -321,7 +321,7 @@ public:
 	void pauseDialog();
 	void saveloadDialog();
 	void optionsDialog();
-	void displayError(const char *message, ...);
+	char displayError(bool showCancel, const char *message, ...);
 
 	// Misc startup/event functions
 	void main();
@@ -512,7 +512,7 @@ public:
 	void closeRoom();
 	void deleteRoomOffsets();
 	void readRoomsOffsets();
-	void askForDisk(const char *filename);
+	void askForDisk(const char *filename, int disknum);
 	bool openResourceFile(const char *filename);
 	void loadPtrToResource(int type, int i, byte *ptr);
 	void readResTypeList(int id, uint32 tag, const char *name);
