@@ -504,6 +504,7 @@ void OSystem_WINCE3::load_gfx_mode() {
 		InitScalers(555);
 	else
 		InitScalers(565);
+	initCEScaler();
 	
 	// Need some extra bytes around when using 2xSaI
 	uint16 *tmp_screen = (uint16 *)calloc(_tmpScreenWidth * (_screenHeight + 3), sizeof(uint16));
