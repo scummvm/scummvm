@@ -36,6 +36,8 @@ namespace Queen {
 
    - Finish Cutaway::handleAnimation
 
+   - Finish Cutaway::actionSpecialMove
+
    - Support the remaining cutaway object types:
 	   OBJECT_TYPE_TEXT_SPEAK
 	   OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK
@@ -702,11 +704,16 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 				if (object.animType == 2 || object.animType == 0) {
 					// Unpack animation, but do not unpack moving people
 
-					if (!(objAnim[0].mx || objAnim[0].my) && InRange(objAnim[i].object, 0, 3))
+					if (!(objAnim[i].mx || objAnim[i].my) && InRange(objAnim[i].object, 0, 3))
 						_graphics->bankUnpack(
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
 								objAnim[i].bank);
+
+					if (0 == objAnim[i].object) {
+						// Scale Joe
+						// XXX bob->scale = SF;
+					}
 				}
 
 				if (objAnim[i].cx || objAnim[i].cy) {
