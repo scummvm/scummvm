@@ -17,13 +17,11 @@
  * $Header$
  */
 
-//the usual suspects
+// the usual suspects
 
 #ifndef	_SCROLL
 #define	_SCROLL
 
-//#include "src\driver96.h"
-
-void	Set_scrolling(void);
+void Set_scrolling(void);
 
 #endif

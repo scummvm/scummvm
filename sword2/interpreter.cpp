@@ -19,20 +19,18 @@
 
 #include "stdafx.h"
 
-#ifndef INSIDE_LINC			// Are we running in linc?
 #include "console.h"
-#endif
-
 #include "driver/driver96.h"
 #include "interpreter.h"
 
+// This file serves two purposes. It is compiled as part of the test functions
+// of Linc, and also as part of the game
 
+// I assume Linc was the name of some sort of development tool. Anyway, I've
+// removed the pieces of code that were labelled as INSIDE_LINC, because they
+// didn't look easily portable.
 
-//		This file serves two purposes. It is compiled as part of the test functions
-//		of Linc, and also as part of the game
-
-
-//		The machine code table
+// The machine code table
 
 int32 FN_test_function(int32 *params);
 int32 FN_test_flags(int32 *params);
@@ -50,11 +48,11 @@ int32 FN_add_subject(int32 *);
 int32 FN_interact(int32 *);
 int32 FN_choose(int32 *);
 int32 FN_walk(int32 *);
-int32 FN_walk_to_anim(int32 *);					// walk to start position of anim
-int32 FN_turn(int32 *);							// turn to (dir)
-int32 FN_stand_at(int32 *);						// stand at (x,y,dir)
-int32 FN_stand(int32 *);						// stand facing (dir)
-int32 FN_stand_after_anim(int32 *);				// stand at end position of anim
+int32 FN_walk_to_anim(int32 *);		// walk to start position of anim
+int32 FN_turn(int32 *);			// turn to (dir)
+int32 FN_stand_at(int32 *);		// stand at (x,y,dir)
+int32 FN_stand(int32 *);		// stand facing (dir)
+int32 FN_stand_after_anim(int32 *);	// stand at end position of anim
 int32 FN_pause(int32 *);
 int32 FN_mega_table_anim(int32 *);
 int32 FN_add_menu_object(int32 *);
@@ -154,16 +152,15 @@ int32 FN_change_shadows(int32 *params);
 
 #define MAX_FN_NUMBER	117
 
-extern int32 (*McodeTable[])(int32 *);
+extern int32 (*McodeTable[]) (int32 *);
 
-#ifndef INSIDE_LINC
-int32 * globalInterpreterVariables2 = NULL;		// Point to the global varibale data
-int		g_debugFlag = 0;						// Set this to turn debugging on
-#endif
+// Point to the global variable data
+int32 *globalInterpreterVariables2 = NULL;
 
+int g_debugFlag = 0;	// Set this to turn debugging on
 
-int32 (*McodeTable[MAX_FN_NUMBER+1])(int32 *) =
-{	FN_test_function,
+int32 (*McodeTable[MAX_FN_NUMBER + 1]) (int32 *) = {
+	FN_test_function,
 	FN_test_flags,
 	FN_register_start_point,
 	FN_init_background,
@@ -283,320 +280,276 @@ int32 (*McodeTable[MAX_FN_NUMBER+1])(int32 *) =
 	FN_change_shadows,
 };
 
-#define CHECKSTACKPOINTER2 ASSERT((stackPointer2>=0)&&(stackPointer2<STACK_SIZE));
-#define	PUSHONSTACK(x) {stack2[stackPointer2] = (x);stackPointer2++;CHECKSTACKPOINTER2;}
-#define POPOFFSTACK(x) {x=stack2[stackPointer2-1];stackPointer2--;CHECKSTACKPOINTER2;}
-#define DOOPERATION(x) {stack2[stackPointer2-2] = (x);stackPointer2--;CHECKSTACKPOINTER2;}
+#define CHECKSTACKPOINTER2 ASSERT(stackPointer2 >= 0 && stackPointer2 < STACK_SIZE);
+#define	PUSHONSTACK(x) { stack2[stackPointer2] = (x); stackPointer2++; CHECKSTACKPOINTER2 }
+#define POPOFFSTACK(x) { x = stack2[stackPointer2 - 1]; stackPointer2--; CHECKSTACKPOINTER2 }
+#define DOOPERATION(x) { stack2[stackPointer2 - 2] = (x); stackPointer2--; CHECKSTACKPOINTER2 }
 
-#ifndef INSIDE_LINC
-void SetGlobalInterpreterVariables(int32 *vars)
-{
+void SetGlobalInterpreterVariables(int32 *vars) {
 	globalInterpreterVariables2 = vars;
 }
-#endif
 
-#ifdef INSIDE_LINC			// Are we running in linc?
-int RunScript ( MCBOVirtualSword &engine , const char * scriptData , char * objectData , uint32 *offset )
-#else
-int RunScript ( char * scriptData , char * objectData , uint32 *offset )
-#endif
-{
+int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 	#define STACK_SIZE		10
 
-	_standardHeader *header = (_standardHeader *)scriptData;
+	_standardHeader *header = (_standardHeader *) scriptData;
 	scriptData += sizeof(_standardHeader) + sizeof(_object_hub);
 
 	// The script data format:
-
-
-	//		int32_TYPE	1									Size of variable space in bytes
-	//		...											The variable space
-	//		int32_TYPE	1									numberOfScripts
-	//		int32_TYPE	numberOfScripts						The offsets for each script
-
+	//	int32_TYPE	1		Size of variable space in bytes
+	//	...				The variable space
+	//	int32_TYPE	1		numberOfScripts
+	//	int32_TYPE	numberOfScripts	The offsets for each script
 
 	// Initialise some stuff
 
-	int ip = 0;									// Code pointer
-	int curCommand,parameter,value;				// Command and parameter variables
-	int32 stack2[STACK_SIZE];						// The current stack
-	int32 stackPointer2 = 0;						// Position within stack
-	int parameterReturnedFromMcodeFunction=0;	// Allow scripts to return things
-	int savedStartOfMcode=0;			// For saving start of mcode commands
+	int ip = 0;			 // Code pointer
+	int curCommand,parameter, value; // Command and parameter variables
+	int32 stack2[STACK_SIZE];	 // The current stack
+	int32 stackPointer2 = 0;	// Position within stack
+	int parameterReturnedFromMcodeFunction = 0;	// Allow scripts to return things
+	int savedStartOfMcode = 0;	// For saving start of mcode commands
+
+	int count;
+	int retVal;
+	int caseCount, foundCase;
+	int scriptNumber, foundScript;
+	const char *tempScrPtr;
 
 	// Get the start of variables and start of code
-	DEBUG3("Enter interpreter data %x, object %x, offset %d",scriptData,objectData,*offset);
+	DEBUG("Enter interpreter data %x, object %x, offset %d", scriptData, objectData, *offset);
 
 	// FIXME: 'scriptData' and 'variables' used to be const. However,
 	// this code writes into 'variables' so it can not be const.
+
 	char *variables = scriptData + sizeof(int);
-	const char *code = scriptData + (int32)READ_LE_UINT32(scriptData) + sizeof(int);
-	uint32 noScripts = (int32)READ_LE_UINT32(code);
-	if ( (*offset) < noScripts)
-	{	ip = (int32)READ_LE_UINT32((const int *)code + (*offset) + 1);
-		DEBUG2("Start script %d with offset %d",*offset,ip);
-	}
-	else
-	{	ip = (*offset);
-		DEBUG1("Start script with offset %d",ip);
+	const char *code = scriptData + (int32) READ_LE_UINT32(scriptData) + sizeof(int);
+	uint32 noScripts = (int32) READ_LE_UINT32(code);
+
+	if (*offset < noScripts) {
+		ip = READ_LE_UINT32((const int *) code + *offset + 1);
+		DEBUG("Start script %d with offset %d",*offset,ip);
+	} else {
+		ip = *offset;
+		DEBUG("Start script with offset %d",ip);
 	}
 
 	code += noScripts * sizeof(int) + sizeof(int);
 
-/************************************************************************************************/
 #ifdef DONTPROCESSSCRIPTCHECKSUM
-
+	code += sizeof(int) * 3;
+#else
+	// Code should nop be pointing at an identifier and a checksum
+	const int *checksumBlock = (const int *) code;
 	code += sizeof(int) * 3;
 
-#else
-
-	// Code should nopw be pointing at an identifier and a checksum
-	const int *checksumBlock = (const int *)code;
-	code += sizeof(int) * 3;
-
-	if ((int32)READ_LE_UINT32(checksumBlock) != 12345678)
-	{
-#ifdef INSIDE_LINC
-		AfxMessageBox(CVString("Invalid script in object %s",header->name));
-#else
-		Con_fatal_error("Invalid script in object %s",header->name);
-#endif
-		return(0);
+	if (READ_LE_UINT32(checksumBlock) != 12345678) {
+		Con_fatal_error("Invalid script in object %s", header->name);
+		return 0;
 	}
-	int codeLen = (int32)READ_LE_UINT32(checksumBlock + 1);
+
+	int codeLen = READ_LE_UINT32(checksumBlock + 1);
 	int checksum = 0;
-	for (int count = 0 ; count < codeLen ; count++)
-		checksum += (unsigned char)code[count];
-	if ( checksum != (int32)READ_LE_UINT32(checksumBlock + 2) )
-	{
-#ifdef INSIDE_LINC
-		AfxMessageBox(CVString("Checksum error in script %s",header->name));
-#else
-		Con_fatal_error("Checksum error in object %s",header->name);
-#endif
-		return(0);
+
+	for (count = 0; count < codeLen; count++)
+		checksum += (unsigned char) code[count];
+
+	if (checksum != (int32) READ_LE_UINT32(checksumBlock + 2)) {
+		Con_fatal_error("Checksum error in object %s", header->name);
+		return 0;
 	}
-
-#endif //DONTPROCESSSCRIPTCHECKSUM
-
-/************************************************************************************************/
+#endif
 
 	int runningScript = 1;
-	while ( runningScript )
-	{	curCommand = code[ip++];
-		switch(curCommand)
-		{	case CP_END_SCRIPT:			// 0	End the script
-				DEBUG1("End script",0);
+
+	while (runningScript) {
+		curCommand = code[ip++];
+
+		switch(curCommand) {
+			case CP_END_SCRIPT:
+				// End the script
+				DEBUG("End script",0);
 				runningScript = 0;
-#ifdef INSIDE_LINC
-				engine.AddTextLine( "End script" , VS_COL_GREY );
-				engine.AddTextLine(	"" , VS_COL_GREY );
-#endif
 				break;
 
-			case CP_PUSH_LOCAL_VAR32:		// 1	Push the contents of a local variable
-				Read16ip(parameter)
-				DEBUG2("Push local var %d (%d)",parameter,*(int32 *)(variables+parameter));
-				PUSHONSTACK ( *(int32 *)(variables+parameter) );
+			case CP_PUSH_LOCAL_VAR32:
+				// Push the contents of a local variable
+				Read16ip(parameter);
+				DEBUG("Push local var %d (%d)", parameter, *(int32 *) (variables + parameter));
+				PUSHONSTACK(*(int32 *) (variables + parameter));
 				break;
 
-
-			case CP_PUSH_GLOBAL_VAR32:			// 2	Push a global variable
-				Read16ip(parameter)
-#ifdef INSIDE_LINC
-				DEBUG2("Push global var %d (%d)",parameter,g_GlobalVariables.GetLocalByIndex(parameter).GetValue());
-				PUSHONSTACK ( g_GlobalVariables.GetLocalByIndex(parameter).GetValue() );
-#else
-				DEBUG2("Push global var %d (%d)",parameter,globalInterpreterVariables2[parameter]);
+			case CP_PUSH_GLOBAL_VAR32:
+				// Push a global variable
+				Read16ip(parameter);
+				DEBUG("Push global var %d (%d)", parameter, globalInterpreterVariables2[parameter]);
 				ASSERT(globalInterpreterVariables2);
-				PUSHONSTACK ( globalInterpreterVariables2[parameter] );
-#endif
+				PUSHONSTACK(globalInterpreterVariables2[parameter]);
 				break;
 
-			case CP_POP_LOCAL_VAR32:		// 3	Pop a value into a local word variable
-				Read16ip(parameter)
-				POPOFFSTACK ( value );
-				DEBUG2("Pop %d into var %d",value,parameter);
-				*((int32 *)(variables+parameter)) = value;
+			case CP_POP_LOCAL_VAR32:
+				// Pop a value into a local word variable
+				Read16ip(parameter);
+				POPOFFSTACK(value);
+				DEBUG("Pop %d into var %d", value, parameter);
+				*((int32 *) (variables + parameter)) = value;
 				break;
 
-			case CP_CALL_MCODE:			// 4	Call an mcode routine
-			{
-				Read16ip(parameter)
+			case CP_CALL_MCODE:
+				// Call an mcode routine
+				Read16ip(parameter);
 				ASSERT(parameter <= MAX_FN_NUMBER);
-				value = *((const int8 *)(code+ip));			// amount to adjust stack by (no of parameters)
-				ip ++;
-				DEBUG2("Call mcode %d with stack = %x",parameter,stack2+(stackPointer2-value));
-#ifdef INSIDE_LINC
-				int retVal = engine.McodeTable(parameter , stack2+(stackPointer2-value));
-#else
-				int retVal = McodeTable[parameter](stack2+(stackPointer2-value));
-#endif
+				// amount to adjust stack by (no of parameters)
+				Read8ip(value);
+				DEBUG("Call mcode %d with stack = %x", parameter, stack2 + stackPointer2 - value);
+				retVal = McodeTable[parameter](stack2 + stackPointer2 - value);
 				stackPointer2 -= value;
 				CHECKSTACKPOINTER2
-				switch ( retVal & 7 )
-				{	case IR_STOP:	// 0: Quit out for a cycle
-						*offset = ip;
-						return(0);
 
-					case IR_CONT:	//	1:	// Continue as normal
+				switch (retVal & 7) {
+					case IR_STOP:
+						// Quit out for a cycle
+						*offset = ip;
+						return 0;
+
+					case IR_CONT:
+						// Continue as normal
 						break;
 
-					case IR_TERMINATE:	//	2:
-						// Return without updating the offset
-						return(2);
+					case IR_TERMINATE:
+						// Return without updating the
+						// offset
+						return 2;
 
-					case IR_REPEAT:	//	3:
-						// Return setting offset to start of this function call
+					case IR_REPEAT:
+						// Return setting offset to
+						// start of this function call
 						*offset = savedStartOfMcode;
-						return(0);
+						return 0;
 
-					case IR_GOSUB:	//	4:	//that's really neat
+					case IR_GOSUB:
+						// that's really neat
 						*offset = ip;
-						return(2);
+						return 2;
 
 					default:
 						ASSERT(FALSE);
 				}
 				parameterReturnedFromMcodeFunction = retVal >> 3;
-			}
 				break;
 
-			case CP_PUSH_LOCAL_ADDR:	// 5	push the address of a local variable
-				Read16ip(parameter)
-				DEBUG2("Push address of local variable %d (%x)",parameter,(int32)(variables + parameter));
-				PUSHONSTACK ( (int32)(variables + parameter) );
+			case CP_PUSH_LOCAL_ADDR:
+				// push the address of a local variable
+				Read16ip(parameter);
+				DEBUG("Push address of local variable %d (%x)", parameter, (int32) (variables + parameter));
+				PUSHONSTACK((int32) (variables + parameter));
 				break;
 
-			case CP_PUSH_INT32:			// 6	Push a long word value on to the stack
-				Read32ip(parameter)
-				DEBUG2("Push int32 %d (%x)",parameter,parameter);
-				PUSHONSTACK ( parameter );
+			case CP_PUSH_INT32:
+				// Push a long word value on to the stack
+				Read32ip(parameter);
+				DEBUG("Push int32 %d (%x)", parameter, parameter);
+				PUSHONSTACK(parameter);
 				break;
 
-
-			case CP_SKIPONFALSE:		//	7	Skip if the value on the stack is false
-				Read32ipLeaveip(parameter)
-				POPOFFSTACK ( value );
-				DEBUG2("Skip %d if %d is false",parameter,value);
+			case CP_SKIPONFALSE:
+				// Skip if the value on the stack is false
+				Read32ipLeaveip(parameter);
+				POPOFFSTACK(value);
+				DEBUG("Skip %d if %d is false", parameter, value);
 				if (value)
 					ip += sizeof(int32);
 				else
 					ip += parameter;
 				break;
 
-			case CP_SKIPALLWAYS:		// 8 skip a block
-				Read32ipLeaveip(parameter)
-				DEBUG1("Skip %d",parameter);
+			case CP_SKIPALWAYS:
+				// skip a block
+				Read32ipLeaveip(parameter);
+				DEBUG("Skip %d", parameter);
 				ip += parameter;
 				break;
 
-			case CP_SWITCH:				// 9 switch
-			{	POPOFFSTACK ( value );
-				int caseCount;
-				Read32ip(caseCount)
+			case CP_SWITCH:
+				// 9 switch
+				POPOFFSTACK(value);
+				Read32ip(caseCount);
+
 				// Search the cases
-				int foundCase = 0;
-				for (int count = 0 ; (count < caseCount) && (!foundCase) ; count++)
-				{
-					if (value == (int32)READ_LE_UINT32(code+ip))
-					{	// We have found the case, so lets jump to it
+				foundCase = 0;
+				for (count = 0; count < caseCount && !foundCase; count++) {
+					if (value == (int32) READ_LE_UINT32(code + ip)) {
+						// We have found the case, so
+						// lets jump to it
 						foundCase = 1;
-						ip += (int32)READ_LE_UINT32(code+ip+sizeof(int32));
-					}
-					else
+						ip += READ_LE_UINT32(code + ip + sizeof(int32));
+					} else
 						ip += sizeof(int32) * 2;
 				}
-				// If we found no matching case then use the default
+
+				// If we found no matching case then use the
+				// default
+
 				if (!foundCase)
-				{
-					ip += (int32)READ_LE_UINT32(code+ip);
-				}
-			}
+					ip += READ_LE_UINT32(code + ip);
+
 				break;
 
-			case CP_ADDNPOP_LOCAL_VAR32:						// 10
-				Read16ip(parameter)
-				POPOFFSTACK ( value );
-				*((int32 *)(variables+parameter)) += value;
-				DEBUG3("+= %d into var %d->%d",value,parameter,*(int32 *)(variables+parameter));
+			case CP_ADDNPOP_LOCAL_VAR32:
+				Read16ip(parameter);
+				POPOFFSTACK(value);
+				*((int32 *) (variables + parameter)) += value;
+				DEBUG("+= %d into var %d->%d", value, parameter, *(int32 *) (variables + parameter));
 				break;
 
-			case CP_SUBNPOP_LOCAL_VAR32:						// 11
-				Read16ip(parameter)
-				POPOFFSTACK ( value );
-				*((int32 *)(variables+parameter)) -= value;
-				DEBUG3("-= %d into var %d->%d",value,parameter,*(int32 *)(variables+parameter));
+			case CP_SUBNPOP_LOCAL_VAR32:
+				Read16ip(parameter);
+				POPOFFSTACK(value);
+				*((int32 *) (variables + parameter)) -= value;
+				DEBUG("-= %d into var %d->%d", value, parameter, *(int32 *) (variables + parameter));
 				break;
 
-			case CP_SKIPONTRUE:									//	12	Skip if the value on the stack is TRUE
-				Read32ipLeaveip(parameter)
-				POPOFFSTACK ( value );
-				DEBUG2("Skip %d if %d is false",parameter,value);
+			case CP_SKIPONTRUE:
+				// Skip if the value on the stack is TRUE
+				Read32ipLeaveip(parameter);
+				POPOFFSTACK(value);
+				DEBUG("Skip %d if %d is false", parameter, value);
 				if (!value)
 					ip += sizeof(int32);
 				else
 					ip += parameter;
 				break;
 
-			case CP_POP_GLOBAL_VAR32:							// 13				// Pop a global variable
-				Read16ip(parameter)
-				POPOFFSTACK ( value );
-				DEBUG2("Pop %d into global var %d",value,parameter);
-#ifdef INSIDE_LINC
-				g_GlobalVariables.lclSet(parameter,value);
-				engine.AddTextLine(CVString(	"Set variable %s to %d",
-													g_GlobalVariables.GetLocalByIndex(parameter).GetName(),
-													g_GlobalVariables.GetLocalByIndex(parameter).GetValue() ),
-									VS_COL_GREY);
-#else //INSIDE_LINC
+			case CP_POP_GLOBAL_VAR32:
+				// Pop a global variable
+				Read16ip(parameter);
+				POPOFFSTACK(value);
+				DEBUG("Pop %d into global var %d", value, parameter);
 
 #ifdef TRACEGLOBALVARIABLESET
-				TRACEGLOBALVARIABLESET(parameter,value);
+				TRACEGLOBALVARIABLESET(parameter, value);
 #endif
 
 				globalInterpreterVariables2[parameter] = value;
-
-#endif
 				break;
 
-			case CP_ADDNPOP_GLOBAL_VAR32:						// 14			Add and pop a global variable
-			{	Read16ip(parameter)
-//				parameter = *((int16_TYPE *)(code+ip));
-//				ip += 2;
-				POPOFFSTACK ( value );
-#ifdef INSIDE_LINC
-				int newVal = g_GlobalVariables.GetLocalByIndex(parameter).GetValue() + value ;
-				g_GlobalVariables.lclSet(parameter, newVal );
-				engine.AddTextLine(	CVString(	"Set variable %s to %d",
-													g_GlobalVariables.GetLocalByIndex(parameter).GetName(),
-													g_GlobalVariables.GetLocalByIndex(parameter).GetValue() ),
-										VS_COL_GREY);
-#else
+			case CP_ADDNPOP_GLOBAL_VAR32:
+				// Add and pop a global variable
+				Read16ip(parameter);
+				// parameter = *((int16_TYPE *) (code + ip));
+				// ip += 2;
+				POPOFFSTACK(value);
 				globalInterpreterVariables2[parameter] += value;
-				DEBUG3("+= %d into global var %d->%d",value,parameter,*(int32 *)(variables+parameter));
-#endif
+				DEBUG("+= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
 				break;
-			}
 
-			case CP_SUBNPOP_GLOBAL_VAR32:						// 15			Sub and pop a global variable
-			{	Read16ip(parameter)
-//				parameter = *((int16_TYPE *)(code+ip));
-//				ip += 2;
-				POPOFFSTACK ( value );
-#ifdef INSIDE_LINC
-				int newVal = g_GlobalVariables.GetLocalByIndex(parameter).GetValue() - value ;
-				g_GlobalVariables.lclSet(parameter, newVal );
-				engine.AddTextLine(	CVString(	"Set variable %s to %d",
-													g_GlobalVariables.GetLocalByIndex(parameter).GetName(),
-													g_GlobalVariables.GetLocalByIndex(parameter).GetValue() ),
-										VS_COL_GREY);
-#else
+			case CP_SUBNPOP_GLOBAL_VAR32:
+				// Sub and pop a global variable
+				Read16ip(parameter);
+				POPOFFSTACK(value);
 				globalInterpreterVariables2[parameter] -= value;
-				DEBUG3("-= %d into global var %d->%d",value,parameter,*(int32 *)(variables+parameter));
-#endif
+				DEBUG("-= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
 				break;
-			}
 
 			case CP_DEBUGON:
 				// Turn debugging on
@@ -609,187 +562,195 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 				break;
 
 			case CP_QUIT:
-#ifdef INSIDE_LINC
-				break;
-#else
 				// Quit out for a cycle
 				*offset = ip;
-				return(0);
-#endif
+				return 0;
 
 			case CP_TERMINATE:
-				// Quit out immediately without affecting the offset pointer
-				return(3);
-
-/******************************************************************************************************************
-******************************************************************************************************************/
+				// Quit out immediately without affecting the
+				// offset pointer
+				return 3;
 
 			// Operators
 
-			case OP_ISEQUAL:	//	20				// '=='
-				DEBUG3("%d == %d -> %d",	stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] == stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] == stack2[stackPointer2-1]) );
+			case OP_ISEQUAL:
+				// '=='
+				DEBUG("%d == %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
+				DOOPERATION (stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
 				break;
 
-			case OP_PLUS:		//	21				// '+'
-				DEBUG3("%d + %d -> %d",		stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] + stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] + stack2[stackPointer2-1]) );
+			case OP_PLUS:
+				// '+'
+				DEBUG("%d + %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] + stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] + stack2[stackPointer2 - 1]);
 				break;
 
-			case OP_MINUS:		//	22				// '+'
-				DEBUG3("%d - %d -> %d",		stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] - stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] - stack2[stackPointer2-1]) );
+			case OP_MINUS:
+				// '-'
+				DEBUG("%d - %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] - stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] - stack2[stackPointer2 - 1]);
 				break;
 
-			case OP_TIMES:		//	23				// '+'
-				DEBUG3("%d * %d -> %d",		stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] * stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] * stack2[stackPointer2-1]) );
+			case OP_TIMES:
+				// '*'
+				DEBUG("%d * %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] * stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] * stack2[stackPointer2 - 1]);
 				break;
 
-			case OP_DEVIDE:		//	24				// '+'
-				DEBUG3("%d / %d -> %d",		stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] / stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] / stack2[stackPointer2-1]) );
+			case OP_DIVIDE:
+				// '/'
+				DEBUG("%d / %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] / stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] / stack2[stackPointer2 - 1]);
 				break;
 
-			case OP_NOTEQUAL:	//	25				// '!='
-				DEBUG3("%d != %d -> %d",	stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] != stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] != stack2[stackPointer2-1]) );
+			case OP_NOTEQUAL:
+				// '!='
+				DEBUG("%d != %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] != stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] != stack2[stackPointer2 - 1]);
 				break;
 
-			case OP_ANDAND:		// 26
-				DEBUG3("%d != %d -> %d",	stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] && stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] && stack2[stackPointer2-1]) );
+			case OP_ANDAND:
+				// '&&'
+				DEBUG("%d != %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] && stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] && stack2[stackPointer2 - 1]);
 				break;
 
-			case OP_GTTHAN:		// 27 >
-				DEBUG3("%d > %d -> %d",		stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] > stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] > stack2[stackPointer2-1]) );
+			case OP_GTTHAN:
+				// '>'
+				DEBUG("%d > %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] > stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] > stack2[stackPointer2 - 1]);
 				break;
 
-			case OP_LSTHAN:		// 28 <
-				DEBUG3("%d < %d -> %d",		stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] < stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] < stack2[stackPointer2-1]) );
+			case OP_LSTHAN:
+				// '<'
+				DEBUG("%d < %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] < stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] < stack2[stackPointer2 - 1]);
 				break;
 
-			case CP_JUMP_ON_RETURNED:	// 29
-			{	// Jump to a part of the script depending on the return value from an mcode routine
-				parameter = *((const int8 *)(code+ip));		// Get the maximum value
-				ip++;
-#ifdef INSIDE_LINC
-				TRACE("ip %d: Parameter %d skip %d\r\n",	ip,
-															parameterReturnedFromMcodeFunction,
-															(int32)READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4) );
-#endif
+			case CP_JUMP_ON_RETURNED:
+				// Jump to a part of the script depending on
+				// the return value from an mcode routine
 
-				ip += (int32)READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4);
-			}
+				// Get the maximum value
+				Read8ip(parameter);
+
+				ip += READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4);
 				break;
 
-			case CP_TEMP_TEXT_PROCESS:	// 30
+			case CP_TEMP_TEXT_PROCESS:
 				// Process a text line
-				Read32ip(parameter)
-//				parameter = *((int32_TYPE *)(code+ip));
-//				ip += sizeof(int32_TYPE);;
-				DEBUG1("Process text id %d",parameter);
-#ifdef INSIDE_LINC
-				// Linc only for the moment
-				engine.ProcessTextLine(parameter);
-#endif //INSIDE_LINC
+				// This was apparently used in Linc
+				Read32ip(parameter);
+				DEBUG("Process text id %d", parameter);
 				break;
 
-			case CP_SAVE_MCODE_START:	// 31
-				// Save the start position on an mcode instruction in case we need to restart it again
-				savedStartOfMcode = ip-1;
+			case CP_SAVE_MCODE_START:
+				// Save the start position on an mcode
+				// instruction in case we need to restart it
+				// again
+				savedStartOfMcode = ip - 1;
 				break;
 
-			case CP_RESTART_SCRIPT:	// 32
-			{	// Start the script again
-				// Do a ip search to find the script we are running
-				const char *tempScrPtr = scriptData + (int32)READ_LE_UINT32(scriptData) + sizeof(int);
-				int scriptNumber = 0;
-				int foundScript = 0;
-				uint32 count = 0;
-				for (count = 1 ; (count < noScripts) && (!foundScript) ; count++)
-				{	if (ip < ((const int *)tempScrPtr)[count+1])
-					{	scriptNumber = count - 1 ;
+			case CP_RESTART_SCRIPT:
+				// Start the script again
+				// Do a ip search to find the script we are
+				// running
+
+				tempScrPtr = scriptData + READ_LE_UINT32(scriptData) + sizeof(int);
+				scriptNumber = 0;
+				foundScript = 0;
+
+				for (count = 1; count < (int) noScripts && !foundScript; count++) {
+					if (ip < ((const int *) tempScrPtr)[count + 1]) {
+						scriptNumber = count - 1;
 						foundScript = 1;
 					}
 				}
+
 				if (!foundScript)
-					scriptNumber = count - 1 ;
-				// So we know what script we are running, lets restart it
-				ip = ((const int *)tempScrPtr)[scriptNumber+1];
-				break;
-			}
+					scriptNumber = count - 1;
 
-			case CP_PUSH_STRING:	// 33
-			{	// Push the address of a string on to the stack
-				parameter = *((const int8 *)(code+ip));		// Get the string size
-				ip += 1;
+				// So we know what script we are running,
+				// lets restart it
+
+				ip = ((const int *) tempScrPtr)[scriptNumber + 1];
+				break;
+
+			case CP_PUSH_STRING:
+				// Push the address of a string on to the stack
+				// Get the string size
+				Read8ip(parameter);
 				// ip points to the string
-				PUSHONSTACK( (int)(code+ip) );
-				ip += (parameter+1);
-				break;
-			}
-
-			case CP_PUSH_DEREFERENCED_STRUCTURE:	// 34
-			{	// Push the address of a dereferenced structure
-				Read32ip(parameter)
-				DEBUG1("Push address of far variable (%x)",(int32)(variables + parameter));
-				PUSHONSTACK( (int)(objectData + sizeof(int) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
-				break;
-			}
-
-			case OP_GTTHANE:		// 35 >=
-				DEBUG3("%d > %d -> %d",		stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] >= stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] >= stack2[stackPointer2-1]) );
+				PUSHONSTACK((int) (code + ip));
+				ip += (parameter + 1);
 				break;
 
-			case OP_LSTHANE:		// 36 <=
-				DEBUG3("%d < %d -> %d",		stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] <= stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] <= stack2[stackPointer2-1]) );
+			case CP_PUSH_DEREFERENCED_STRUCTURE:
+				// Push the address of a dereferenced structure
+				Read32ip(parameter);
+				DEBUG("Push address of far variable (%x)", (int32) (variables + parameter));
+				PUSHONSTACK((int) (objectData + sizeof(int) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
 				break;
 
-			case OP_OROR:			// 37
-				DEBUG3("%d || %d -> %d",	stack2[stackPointer2-2],
-											stack2[stackPointer2-1],
-											stack2[stackPointer2-2] || stack2[stackPointer2-1]);
-				DOOPERATION ( (stack2[stackPointer2-2] || stack2[stackPointer2-1]) );
+			case OP_GTTHANE:
+				// '>='
+				DEBUG("%d > %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] >= stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] >= stack2[stackPointer2 - 1]);
 				break;
 
+			case OP_LSTHANE:
+				// '<='
+				DEBUG("%d < %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] <= stack2[stackPointer2 - 1]);
+				DOOPERATION(stack2[stackPointer2 - 2] <= stack2[stackPointer2 - 1]);
+				break;
+
+			case OP_OROR:
+				// '||'
+				DEBUG("%d || %d -> %d",
+					stack2[stackPointer2 - 2],
+					stack2[stackPointer2 - 1],
+					stack2[stackPointer2 - 2] || stack2[stackPointer2 - 1]);
+				DOOPERATION (stack2[stackPointer2 - 2] || stack2[stackPointer2 - 1]);
+				break;
 
 			default:
-#ifdef INSIDE_LINC
-				AfxMessageBox(CVString("Invalid interpreter token %d",curCommand));
-#else
 				Con_fatal_error("Interpreter error: Invalid token %d", curCommand);
-#endif
-				return(3);
+				return 3;
 		}
-
 	}
 
-	return(1);
+	return 1;
 }

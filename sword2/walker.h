@@ -20,15 +20,11 @@
 #ifndef	_WALKER
 #define	_WALKER
 
-//#include "src\driver96.h"
-
-
-
 int32 FN_face_mega(int32 *params);
 int32 FN_turn(int32 *params);
-int32 FN_walk(int32 *params);				// James (14nov96)
-int32 FN_walk_to_anim(int32 *params);		// James (14nov96)
-int32 FN_stand_after_anim(int32 *params);	// James (18jun97)
-int32 FN_stand(int32 *params);				// James
+int32 FN_walk(int32 *params);
+int32 FN_walk_to_anim(int32 *params);
+int32 FN_stand_after_anim(int32 *params);
+int32 FN_stand(int32 *params);
 
 #endif

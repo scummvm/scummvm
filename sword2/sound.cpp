@@ -17,346 +17,330 @@
  * $Header$
  */
 
-//--------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //								BROKEN SWORD 2
 //
-//	SOUND.CPP		Contains the sound engine, fx & music functions
-//					Some very 'sound' code in here ;)
+//	SOUND.CPP	Contains the sound engine, fx & music functions
+//			Some very 'sound' code in here ;)
 //
 //	(16Dec96 JEL)
 //
-//--------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 #include <stdio.h>
 
 #include "stdafx.h"
-//#include "src\driver96.h"
 #include "console.h"
-#include "defs.h"	// for RESULT
+#include "defs.h"		// for RESULT
 #include "interpreter.h"
-#include "protocol.h"	// for FetchObjectName() for debugging FN_play_fx
+#include "protocol.h"		// for FetchObjectName() for debugging FN_play_fx
 #include "resman.h"
 #include "sound.h"
 #include "sword2.h"
 
-//--------------------------------------------------------------------------------------
-typedef struct
-{
-	uint32	resource;		// resource id of sample
-	uint32	fetchId;		// Id of resource in PSX CD queue. :)
-	uint16	delay;			// cycles to wait before playing (or 'random chance' if FX_RANDOM)
-	uint8	volume;			// 0..16
-	int8	pan;			// -16..16
-	uint8	type;			// FX_SPOT, FX_RANDOM or FX_LOOP
+typedef struct {
+	uint32 resource;	// resource id of sample
+	uint32 fetchId;		// Id of resource in PSX CD queue. :)
+	uint16 delay;		// cycles to wait before playing (or 'random chance' if FX_RANDOM)
+	uint8 volume;		// 0..16
+	int8 pan;		// -16..16
+	uint8 type;		// FX_SPOT, FX_RANDOM or FX_LOOP
 } _fxq_entry;
 
-#define FXQ_LENGTH 32		// max number of fx in queue at once [DO NOT EXCEED 255]
+// max number of fx in queue at once [DO NOT EXCEED 255]
+#define FXQ_LENGTH 32
 
 _fxq_entry fxq[FXQ_LENGTH];
 
-//--------------------------------------------------------------------------------------
+// used to store id of tunes that loop, for save & restore
+uint32 looping_music_id=0;
 
-uint32 looping_music_id=0;	// used to store id of tunes that loop, for save & restore
 char musicDirectory[120];
 
-//--------------------------------------------------------------------------------------
-// local function prototypes
+void Trigger_fx(uint8 j);
 
-void Trigger_fx (uint8 j);
-
-//--------------------------------------------------------------------------------------
 // initialise the fxq by clearing all the entries
 
-void Init_fx_queue(void)
-{
-	uint8 j;
-
-
-	for (j=0; j < FXQ_LENGTH; j++)	// scan the queue
-	{
-		fxq[j].resource = 0;		// 0 resource means 'empty' slot
-		fxq[j].fetchId	= 0;		// Not being fetched.
+void Init_fx_queue(void) {
+	for (int j = 0; j < FXQ_LENGTH; j++) {
+		fxq[j].resource = 0;	// 0 resource means 'empty' slot
+		fxq[j].fetchId = 0;	// Not being fetched.
 	}
 }
 
-//--------------------------------------------------------------------------------------
 // process the fxq once every game cycle
 
-void Process_fx_queue(void)
-{
-	uint8 j;	// assuming FXQ_LENGTH is 255 or less
+void Process_fx_queue(void) {
+	for (int j = 0; j < FXQ_LENGTH; j++) {
+		if (!fxq[j].resource)
+			continue;
 
+		switch (fxq[j].type) {
+			case FX_RANDOM:
+				// 1 in 'delay' chance of this fx occurring
+				if (rand() % fxq[j].delay == 0)
+					Trigger_fx(j);
+				break;
 
-	for (j=0; j < FXQ_LENGTH; j++)				// scan the queue
-	{
-		if (fxq[j].resource)					// if this entry isn't empty
-		{
-			if (fxq[j].type == FX_RANDOM)		// if it's type FX_RANDOM
-			{
-				if (rand()%(fxq[j].delay)==0)	// 1 in 'delay' chance of this fx occurring
-				{	
-					Trigger_fx(j);				// play it
-				}
-
-			}
-			else if(fxq[j].type == FX_SPOT)
-			{
-				if (fxq[j].delay)				// if delay is above 0
-					fxq[j].delay--;				// decrement delay countdown
-				else							// if zero delay remaining
-				{
-					Trigger_fx(j);				// play it
+			case FX_SPOT:
+				if (fxq[j].delay)
+					fxq[j].delay--;
+				else {
+					Trigger_fx(j);
 					fxq[j].type = FX_SPOT2;
 				}
-			}
-			else if (fxq[j].type == FX_SPOT2)
-			{
-				if (g_sound->IsFxOpen(j+1))
-					fxq[j].resource = 0;		// Once the Fx has finished remove it from the queue.
-			}
+				break;
+
+			case FX_SPOT2:
+				// Once the Fx has finished remove it from
+				// the queue.
+
+				if (g_sound->IsFxOpen(j + 1))
+					fxq[j].resource = 0;
+				break;
 		}
 	}
 }
 
-//--------------------------------------------------------------------------------------
-void Trigger_fx(uint8 j)	// called from Process_fx_queue only
-{
+void Trigger_fx(uint8 j) {	// called from Process_fx_queue only
 	uint8 *data;
 	int32 id;
 	uint32 rv;
 
-	id = (uint32)j+1;	// because 0 is not a valid id
+	id = (uint32) j + 1;	// because 0 is not a valid id
 
-	if (fxq[j].type == FX_SPOT)
-	{
-		data = res_man.Res_open(fxq[j].resource);						// load in the sample
+	if (fxq[j].type == FX_SPOT) {
+		// load in the sample
+		data = res_man.Res_open(fxq[j].resource);
 		data += sizeof(_standardHeader);
-		rv = g_sound->PlayFx( id, data, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT );		// wav data gets copied to sound memory
-		res_man.Res_close(fxq[j].resource);								// release the sample
-//		fxq[j].resource = 0;											// clear spot fx from queue
-	}
-	else	// random & looped fx are already loaded into sound memory by FN_play_fx()
-	{		// - to be referenced by 'j', so pass NULL data
+		// wav data gets copied to sound memory
+		rv = g_sound->PlayFx(id, data, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
+		// release the sample
+		res_man.Res_close(fxq[j].resource);
+	} else {
+		// random & looped fx are already loaded into sound memory
+		// by FN_play_fx()
+		// - to be referenced by 'j', so pass NULL data
 
-		if (fxq[j].type == FX_RANDOM)
-			rv = g_sound->PlayFx( id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT );	// not looped
-		else			// FX_LOOP
-			rv = g_sound->PlayFx( id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXLOOP );	// looped
+		if (fxq[j].type == FX_RANDOM) {
+			// Not looped
+			rv = g_sound->PlayFx(id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
+		} else {
+			// Looped
+			rv = g_sound->PlayFx(id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXLOOP);
+		}
 	}
 
-	#ifdef _SWORD2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (rv)
 		Zdebug("SFX ERROR: PlayFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
-	#endif
+#endif
 }
 
-//--------------------------------------------------------------------------------------
-int32 FN_play_fx(int32 *params)		// called from script only
-{
+int32 FN_play_fx(int32 *params) {		// called from script only
 	// params:	0 sample resource id
-	//			1 type		(FX_SPOT, FX_RANDOM, FX_LOOP)
-	//			2 delay		(0..65535)
-	//			3 volume	(0..16)
-	//			4 pan		(-16..16)
+	//		1 type		(FX_SPOT, FX_RANDOM, FX_LOOP)
+	//		2 delay		(0..65535)
+	//		3 volume	(0..16)
+	//		4 pan		(-16..16)
 
-	// example script:	FN_play_fx (FXWATER, FX_LOOP, 0, 10, 15);
-	//					fx_water = result;	// fx_water is just a local script flag
-	//					.
-	//					.
-	//					.
-	//					FN_stop_fx (fx_water);
+	// example script:
+	//		FN_play_fx (FXWATER, FX_LOOP, 0, 10, 15);
+	//		// fx_water is just a local script flag
+	//		fx_water = result;
+	//		.
+	//		.
+	//		.
+	//		FN_stop_fx (fx_water);
 
-	uint8	j=0;
-	uint8	*data;
-	uint32	id;
+	uint8 j = 0;
+	uint8 *data;
+	uint32 id;
 	uint32 rv;
 
-	//----------------------------------
-	#ifdef _SWORD2_DEBUG
-
+#ifdef _SWORD2_DEBUG
 	_standardHeader *header;
 	char type[10];
 
-
-	if (wantSfxDebug)
-	{
+	if (wantSfxDebug) {
 		switch (params[1])	// 'type'
 		{
 			case FX_SPOT:
-				strcpy(type,"SPOT");
+				strcpy(type, "SPOT");
 				break;
 
 			case FX_LOOP:
-				strcpy(type,"LOOPED");
+				strcpy(type, "LOOPED");
 				break;
 
 			case FX_RANDOM:
-				strcpy(type,"RANDOM");
+				strcpy(type, "RANDOM");
 				break;
 
 			default:
-				strcpy(type,"INVALID");
+				strcpy(type, "INVALID");
 		}
 
 		Zdebug("SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);
 	}
+#endif
 
-	#endif	//_SWORD2_DEBUG
-	//----------------------------------
-
-	while ((j < FXQ_LENGTH) && (fxq[j].resource != 0))
+	while (j < FXQ_LENGTH && fxq[j].resource != 0)
 		j++;
 
-	if (j==FXQ_LENGTH)
-	{
-		return (IR_CONT);
-//		Con_fatal_error("ERROR: Sound queue overflow in FN_play_fx() (%s line %u)",__FILE__,__LINE__);
-	}
-	else
-	{
-		fxq[j].resource	= params[0];			// wav resource id
-		fxq[j].type		= params[1];			// FX_SPOT, FX_LOOP or FX_RANDOM
+	if (j == FXQ_LENGTH)
+		return IR_CONT;
 
-		if (fxq[j].type == FX_RANDOM)			// FX_RANDOM:
-			fxq[j].delay = params[2] * 12 + 1;	//  'delay' param is the intended average no. seconds between playing this effect (+1 to avoid divide-by-zero in Process_fx_queue)
-		else									// FX_SPOT or FX_LOOP:
- 			fxq[j].delay = params[2];			//  'delay' is no. frames to wait before playing
+	fxq[j].resource	= params[0];	// wav resource id
+	fxq[j].type = params[1];	// FX_SPOT, FX_LOOP or FX_RANDOM
 
-		fxq[j].volume	= params[3];			// 0..16
-		fxq[j].pan		= params[4];			// -16..16
-
-
-		if (fxq[j].type == FX_SPOT)						// spot fx
-		{
-			#ifdef _SWORD2_DEBUG
- 			data = res_man.Res_open(fxq[j].resource);	// "pre-load" the sample; this gets it into memory
-			header = (_standardHeader*)data;
-			if (header->fileType != WAV_FILE)
-				Con_fatal_error("FN_play_fx given invalid resource (%s line %u)",__FILE__,__LINE__);
-			#else
-			res_man.Res_open(fxq[j].resource);			// "pre-load" the sample; this gets it into memory
-			#endif
-			res_man.Res_close(fxq[j].resource);			// but then releases it to "age" out if the space is needed
-		}
-		else											// random & looped fx
-		{
-			id = (uint32)j+1;							// because 0 is not a valid id
-
-			data = res_man.Res_open(fxq[j].resource);	// load in the sample
-
-			#ifdef _SWORD2_DEBUG
-			header = (_standardHeader*)data;
-			if (header->fileType != WAV_FILE)
-				Con_fatal_error("FN_play_fx given invalid resource (%s line %u)",__FILE__,__LINE__);
-			#endif
-
-			data += sizeof(_standardHeader);
-			rv = g_sound->OpenFx(id,data);							// copy it to sound memory, using position in queue as 'id'
-
-			#ifdef _SWORD2_DEBUG
-			if (rv)
-				Zdebug("SFX ERROR: OpenFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
-			#endif
-
-			res_man.Res_close(fxq[j].resource);			// release the sample
-		}
+	if (fxq[j].type == FX_RANDOM) {
+		// 'delay' param is the intended average no. seconds between
+		// playing this effect (+1 to avoid divide-by-zero in
+		// Process_fx_queue)
+		fxq[j].delay = params[2] * 12 + 1;
+	} else {
+		// FX_SPOT or FX_LOOP:
+		//  'delay' is no. frames to wait before playing
+		fxq[j].delay = params[2];
 	}
 
+	fxq[j].volume = params[3];	// 0..16
+	fxq[j].pan = params[4];		// -16..16
 
-	//---------------------------------------------
+	if (fxq[j].type == FX_SPOT) {
+		// "pre-load" the sample; this gets it into memory
+		data = res_man.Res_open(fxq[j].resource);
+
+#ifdef _SWORD2_DEBUG
+		header = (_standardHeader*) data;
+		if (header->fileType != WAV_FILE)
+			Con_fatal_error("FN_play_fx given invalid resource (%s line %u)", __FILE__, __LINE__);
+#endif
+
+		// but then releases it to "age" out if the space is needed
+		res_man.Res_close(fxq[j].resource);
+	} else {
+		// random & looped fx
+
+		id = (uint32) j + 1;	// because 0 is not a valid id
+
+		// load in the sample
+		data = res_man.Res_open(fxq[j].resource);
+
+#ifdef _SWORD2_DEBUG
+		header = (_standardHeader*)data;
+		if (header->fileType != WAV_FILE)
+			Con_fatal_error("FN_play_fx given invalid resource (%s line %u)", __FILE__, __LINE__);
+#endif
+
+		data += sizeof(_standardHeader);
+
+		// copy it to sound memory, using position in queue as 'id'
+		rv = g_sound->OpenFx(id,data);
+
+#ifdef _SWORD2_DEBUG
+		if (rv)
+			Zdebug("SFX ERROR: OpenFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
+#endif
+
+		// release the sample
+		res_man.Res_close(fxq[j].resource);
+	}
+
 	// (James07uag97)
-	if (fxq[j].type == FX_LOOP)		// looped fx
-		Trigger_fx(j);				// play now, rather than in Process_fx_queue where it was getting played again & again!
- 	//---------------------------------------------
 
+	if (fxq[j].type == FX_LOOP) {
+		// play now, rather than in Process_fx_queue where it was
+		// getting played again & again!
+		Trigger_fx(j);
+	}
 
-	RESULT = j;	// in case we want to call FN_stop_fx() later, to kill this fx (mainly for FX_LOOP & FX_RANDOM)
+	// in case we want to call FN_stop_fx() later, to kill this fx
+	// (mainly for FX_LOOP & FX_RANDOM)
 
-	return(IR_CONT);	//	continue script
+	RESULT = j;
+	return IR_CONT;
 }
 
-//--------------------------------------------------------------------------------------
-int32 FN_sound_fetch(int32 *params)
-{
+int32 FN_sound_fetch(int32 *params) {
 	return (IR_CONT);
 }
-//--------------------------------------------------------------------------------------
+
 // to alter the volume and pan of a currently playing fx
-int32 FN_set_fx_vol_and_pan(int32 *params)
-{
-//	params	0	id of fx (ie. the id returned in 'result' from FN_play_fx
-//			1	new volume (0..16)
-//			2	new pan (-16..16)
+int32 FN_set_fx_vol_and_pan(int32 *params) {
+	// params:	0 id of fx (ie. the id returned in 'result' from
+	//		  FN_play_fx
+	//		1 new volume (0..16)
+	//		2 new pan (-16..16)
 
-//	SetFxVolumePan(int32 id, uint8 vol, uint8 pan);
-	g_sound->SetFxVolumePan(1+params[0], params[1], params[2]);	// driver fx_id is 1+<pos in queue>
-//	Zdebug("%d",params[2]);
+	// Zdebug("%d", params[2]);
 
-	return (IR_CONT);
+	// SetFxVolumePan(int32 id, uint8 vol, uint8 pan);
+	// driver fx_id is 1 + <pos in queue>
+	g_sound->SetFxVolumePan(1 + params[0], params[1], params[2]);
+	return IR_CONT;
 }
-//--------------------------------------------------------------------------------------
+
 // to alter the volume  of a currently playing fx
-int32 FN_set_fx_vol(int32 *params)
-{
-//	params	0	id of fx (ie. the id returned in 'result' from FN_play_fx
-//			1	new volume (0..16)
+int32 FN_set_fx_vol(int32 *params) {
+	// params:	0 id of fx (ie. the id returned in 'result' from
+	//		  FN_play_fx
+	//		1 new volume (0..16)
 
-//	SetFxIdVolume(int32 id, uint8 vol);
-	g_sound->SetFxIdVolume(1+params[0], params[1]);
-
-	return (IR_CONT);
+	// SetFxIdVolume(int32 id, uint8 vol);
+	g_sound->SetFxIdVolume(1 + params[0], params[1]);
+	return IR_CONT;
 }
-//--------------------------------------------------------------------------------------
-int32 FN_stop_fx(int32 *params)		// called from script only
-{
+
+int32 FN_stop_fx(int32 *params) {	// called from script only
 	// params:	0 position in queue
 
-	// This will stop looped & random fx instantly, and remove the fx from the queue.
-	// So although it doesn't stop spot fx, it will remove them from the queue if they haven't yet played
+	// This will stop looped & random fx instantly, and remove the fx
+	// from the queue. So although it doesn't stop spot fx, it will
+	// remove them from the queue if they haven't yet played
 
-	uint8	j = (uint8) params[0];
-	uint32	id;
-	uint32	rv;
+	uint8 j = (uint8) params[0];
+	uint32 id;
+	uint32 rv;
 
-	if ((fxq[j].type == FX_RANDOM) || (fxq[j].type == FX_LOOP))
-	{
-		id = (uint32)j+1;	// because 0 is not a valid id
-		rv = g_sound->CloseFx(id);		// stop fx & remove sample from sound memory
+	if (fxq[j].type == FX_RANDOM || fxq[j].type == FX_LOOP) {
+		id = (uint32) j + 1;		// because 0 is not a valid id
 
-		#ifdef _SWORD2_DEBUG
+		// stop fx & remove sample from sound memory
+		rv = g_sound->CloseFx(id);
+
+#ifdef _SWORD2_DEBUG
 		if (rv)
 			Zdebug("SFX ERROR: CloseFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
-		#endif
+#endif
 	}
 
-	fxq[j].resource = 0;	// remove from queue
+	// remove from queue
+	fxq[j].resource = 0;
 
-
-	return(IR_CONT);		//	continue script
+	return IR_CONT;
 }
 
-//--------------------------------------------------------------------------------------
-int32 FN_stop_all_fx(int32 *params)		// called from script only
-{
+int32 FN_stop_all_fx(int32 *params) {		// called from script only
 	// Stops all looped & random fx and clears the entire queue
-	// NO PARAMS
+	// params:	none
 
 	Clear_fx_queue();
-
-	return(IR_CONT);		//	continue script
+	return IR_CONT;
 }
-//--------------------------------------------------------------------------------------
+
 // Stops all looped & random fx and clears the entire queue
 
-void Clear_fx_queue(void)
-{
-	g_sound->ClearAllFx();			// stop all fx & remove the samples from sound memory
-	Init_fx_queue();		// clean out the queue
+void Clear_fx_queue(void) {
+	// stop all fx & remove the samples from sound memory
+	g_sound->ClearAllFx();
+
+	// clean out the queue
+	Init_fx_queue();
 }
 
-//--------------------------------------------------------------------------------------
-
-//=============================================================================
+// ===========================================================================
 //	int32 StreamMusic(uint8 *filename, int32 loopFlag)
 //
 //	Streams music from the file defined by filename.  The loopFlag should
@@ -364,58 +348,59 @@ void Clear_fx_queue(void)
 //	Otherwise, it should be RDSE_FXSPOT.
 //	The return value must be checked for any problems.
 //
-//	--------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 //	int32 PauseMusic(void)
 //
 //	Stops the music dead in it's tracks.
 //
-//	--------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 //	int32 UnpauseMusic(void)
 //
 //	Re-starts the music from where it was stopped.
 //
-//=============================================================================
-int32 FN_prepare_music(int32 *params)
-{
-	return (IR_CONT);
+// ===========================================================================
+
+int32 FN_prepare_music(int32 *params) {
+	return IR_CONT;
 }
 
-//--------------------------------------------------------------------------------------
-// Start a tune playing, to play once or to loop until stopped or next one played
-int32 FN_play_music(int32 *params)		// updated by James on 10apr97
-{
-	// params	0 tune id
-	//			1 loop flag (0 or 1)
+// Start a tune playing, to play once or to loop until stopped or next one
+// played
 
-	char	filename[128];
-	uint32	loopFlag;
-	uint32	rv;	// drivers return value
+int32 FN_play_music(int32 *params) {		// updated by James on 10apr97
+	// params:	0 tune id
+	//		1 loop flag (0 or 1)
 
+	char filename[128];
+	uint32 loopFlag;
+	uint32 rv;
 
-//	Zdebug("FN_play_music(%d)", params[0]);
+	// Zdebug("FN_play_music(%d)", params[0]);
 
-	if (params[1]==FX_LOOP)				// if it is to loop
-	{
+	if (params[1] == FX_LOOP) {
 		loopFlag = RDSE_FXLOOP;
-		looping_music_id = params[0];	// keep a note of the id, for restarting after an interruption to gameplay
-	}
-	else								// just play once
-	{
- 		loopFlag = RDSE_FXSPOT;
-		looping_music_id = 0;			// don't need to restart this tune after control panel or restore
-	}
 
+		// keep a note of the id, for restarting after an
+		// interruption to gameplay
+		looping_music_id = params[0];
+	} else {
+ 		loopFlag = RDSE_FXSPOT;
+
+		// don't need to restart this tune after control panel or
+		// restore
+		looping_music_id = 0;
+	}
 
 	// add the appropriate file extension & play it
 
-	if (g_sword2->_gameId == GID_SWORD2_DEMO)
+	if (g_sword2->_gameId == GID_SWORD2_DEMO) {
 		// The demo I found didn't come with any music file, but you
 		// could use the music from the first CD of the complete game,
 		// I suppose...
 		strcpy(filename, "music.clu");
-	else {
+	} else {
 		File f;
 
 		sprintf(filename, "music%d.clu", res_man.WhichCd());
@@ -427,59 +412,49 @@ int32 FN_play_music(int32 *params)		// updated by James on 10apr97
 
 	rv = g_sound->StreamCompMusic(filename, params[0], loopFlag);
 
-	#ifdef _SWORD2_DEBUG
+#ifdef _SWORD2_DEBUG
 		if (rv)
 	 		Zdebug("ERROR: StreamCompMusic(%s, %d, %d) returned error 0x%.8x", filename, params[0], loopFlag, rv);
-	#endif
+#endif
 
-//	Zdebug("FN_play_music(%d) returning", params[0]);
+	// Zdebug("FN_play_music(%d) returning", params[0]);
 
-	return(IR_CONT);	//	continue script
+	return IR_CONT;
 }
 
-//--------------------------------------------------------------------------------------
-int32 FN_stop_music(int32 *params)		// called from script only
-{
+int32 FN_stop_music(int32 *params) {	// called from script only
 	// params:	none
 
-
-	looping_music_id=0;		// clear the 'looping' flag
-
+	looping_music_id = 0;		// clear the 'looping' flag
 	g_sound->StopMusic();
-
-	if (params);
-
-	return(IR_CONT);	//	continue script
+	return IR_CONT;
 }
-//--------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------
-void Kill_music(void)	// James22aug97
-{
-	uint8 count;
 
-	looping_music_id=0;		// clear the 'looping' flag
+void Kill_music(void) {			// James22aug97
+	looping_music_id = 0;		// clear the 'looping' flag
 	g_sound->StopMusic();
 
+/* I don't think this is needed with our music code
 	// THIS BIT CAUSES THE MUSIC TO STOP INSTANTLY!
-	for(count=0; count<16; count++)
+	for(int count=0; count<16; count++)
 		g_sound->UpdateCompSampleStreaming();
+*/
 }
-//--------------------------------------------------------------------------------------
-int32 FN_check_music_playing(int32 *params)		// James (30july97)
-{
 
-	// params: none
+int32 FN_check_music_playing(int32 *params) {		// James (30july97)
+	// params:	none
+
 	// sets result to no. of seconds of current tune remaining
 	// or 0 if no music playing
 
-	RESULT = g_sound->MusicTimeRemaining();	// in seconds, rounded up to the nearest second
+	// in seconds, rounded up to the nearest second
+	RESULT = g_sound->MusicTimeRemaining();
 
-	return(IR_CONT);	//	continue script
+	return IR_CONT;
 }
-//--------------------------------------------------------------------------------------
-void PauseAllSound(void)	// James25july97
-{
-	uint32	rv;	// for drivers return value
+
+void PauseAllSound(void) {	// James25july97
+	uint32	rv;
 
 	rv = g_sound->PauseMusic();
 	if (rv != RD_OK)
@@ -493,10 +468,9 @@ void PauseAllSound(void)	// James25july97
 	if (rv != RD_OK)
 		Zdebug("ERROR: PauseFx() returned %.8x in PauseAllSound()", rv);
 }
-//--------------------------------------------------------------------------------------
-void UnpauseAllSound(void)	// James25july97
-{
-	uint32	rv;	// for drivers return value
+
+void UnpauseAllSound(void) {	// James25july97
+	uint32	rv;
 
 	rv = g_sound->UnpauseMusic();
 	if (rv != RD_OK)
@@ -510,5 +484,3 @@ void UnpauseAllSound(void)	// James25july97
  	if (rv != RD_OK)
 		Zdebug("ERROR: UnpauseFx() returned %.8x in UnpauseAllSound()", rv);
 }
-//--------------------------------------------------------------------------------------
-

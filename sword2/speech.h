@@ -20,25 +20,26 @@
 #ifndef	_SPEECH
 #define	_SPEECH
 
-//#include "src\driver96.h"
 #include "header.h"
 
+#define	MAX_SUBJECT_LIST 30	// is that enough?
 
-#define	MAX_SUBJECT_LIST	30	//is that enough?
-
-
-
-typedef	struct	//array of these for subject menu build up
-{
-	uint32	res;
-	uint32	ref;
+// array of these for subject menu build up
+typedef	struct {
+	uint32 res;
+	uint32 ref;
 } _subject_unit;
 
-extern uint32	speech_text_bloc_no;	// so speech text cleared when running a new start-script
-extern int16	officialTextNumber;
+// so speech text cleared when running a new start-script
+extern uint32 speech_text_bloc_no;
 
-extern int32	speechScriptWaiting;
+extern int16 officialTextNumber;
 
-extern	int	choosing;	//could alternately use logic->looping of course
-extern	uint32	unpause_zone;
+extern int32 speechScriptWaiting;
+
+//could alternately use logic->looping of course
+extern	int choosing;
+
+extern	uint32 unpause_zone;
+
 #endif

@@ -33,23 +33,30 @@
 #include "common/scummsys.h"
 
 // fx types
+
 #define FX_SPOT		0
 #define FX_LOOP		1
 #define FX_RANDOM	2
 #define FX_SPOT2	3
 
-void Init_fx_queue(void);		// to be called during system initialisation
-void Process_fx_queue(void);	// to be called from the main loop, once per cycle
-void Clear_fx_queue(void);		// stops all fx & clears the queue - eg. when leaving a location
-void PauseAllSound(void);		// James25july97
-void UnpauseAllSound(void);		// James25july97
+// to be called during system initialisation
+void Init_fx_queue(void);
 
-void Kill_music(void);			// James22aug97
+// to be called from the main loop, once per cycle
+void Process_fx_queue(void);
 
+// stops all fx & clears the queue - eg. when leaving a location
+void Clear_fx_queue(void);
+
+void PauseAllSound(void);
+void UnpauseAllSound(void);
+
+void Kill_music(void);
 
 int32 FN_play_music(int32 *params);		// for save_Rest.cpp
 int32 FN_stop_music(int32 *params);
 
-extern uint32 looping_music_id;		// used to store id of tunes that loop, for save & restore
+// used to store id of tunes that loop, for save & restore
+extern uint32 looping_music_id;
 
 #endif
