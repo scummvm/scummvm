@@ -407,7 +407,7 @@ private:
 	CommonObjectOrderList _drawOrderList;
 	
 protected:
-	friend IsoMap;
+	friend class IsoMap;
 	int _actorsCount;
 	ActorData **_actors;
 
