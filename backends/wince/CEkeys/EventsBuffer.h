@@ -37,8 +37,8 @@ namespace CEKEYS {
 	public:
 		static bool simulateKey(Key *key);
 		static bool simulateMouseMove(int x, int y);
-		static bool simulateMouseLeftClick(int x, int y);
-		static bool simulateMouseRightClick(int x, int y);
+		static bool simulateMouseLeftClick(int x, int y, bool pushed);
+		static bool simulateMouseRightClick(int x, int y, bool pushed);
 
 	};	
 }

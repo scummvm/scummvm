@@ -259,10 +259,10 @@ void OSystem_WINCE3::swap_sound_master() {
 		_toolbarHandler.forceRedraw(); // redraw sound icon
 }
 
-void OSystem_WINCE3::add_right_click() {
+void OSystem_WINCE3::add_right_click(bool pushed) {
 	int x, y;
 	retrieve_mouse_location(x, y);
-	EventsBuffer::simulateMouseRightClick(x, y);
+	EventsBuffer::simulateMouseRightClick(x, y, pushed);
 }
 
 void OSystem_WINCE3::swap_mouse_visibility() {
@@ -361,10 +361,10 @@ void OSystem_WINCE3::loadSmartphoneConfiguration() {
 	ConfMan.flushToDisk();
 }
 
-void OSystem_WINCE3::add_left_click() {
+void OSystem_WINCE3::add_left_click(bool pushed) {
 	int x, y;
 	retrieve_mouse_location(x, y);
-	EventsBuffer::simulateMouseLeftClick(x, y);
+	EventsBuffer::simulateMouseLeftClick(x, y, pushed);
 }
 
 void OSystem_WINCE3::move_cursor_up() {

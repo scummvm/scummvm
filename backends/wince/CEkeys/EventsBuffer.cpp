@@ -52,29 +52,23 @@ namespace CEKEYS {
 		return (SDL_PushEvent(&ev) == 0);
 	}
 
-	bool EventsBuffer::simulateMouseLeftClick(int x, int y) {
+	bool EventsBuffer::simulateMouseLeftClick(int x, int y, bool pushed) {
 		SDL_Event ev = {0};
 
-		ev.type = SDL_MOUSEBUTTONDOWN;
+		ev.type = (pushed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP);
 		ev.button.button = SDL_BUTTON_LEFT;
 		ev.button.x = x;
 		ev.button.y = y;
-		if (SDL_PushEvent(&ev))
-			return false;
-		ev.type = SDL_MOUSEBUTTONUP;
 		return (SDL_PushEvent(&ev) == 0);
 	}
 
-	bool EventsBuffer::simulateMouseRightClick(int x, int y) {
+	bool EventsBuffer::simulateMouseRightClick(int x, int y, bool pushed) {
 		SDL_Event ev = {0};
 
-		ev.type = SDL_MOUSEBUTTONDOWN;
+		ev.type = (pushed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP);
 		ev.button.button = SDL_BUTTON_RIGHT;
 		ev.button.x = x;
 		ev.button.y = y;
-		if (SDL_PushEvent(&ev))
-			return false;
-		ev.type = SDL_MOUSEBUTTONUP;
 		return (SDL_PushEvent(&ev) == 0);
 	}
 }

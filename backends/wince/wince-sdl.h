@@ -64,7 +64,7 @@ public:
 	void swap_panel_visibility();
 	void swap_panel();
 	void swap_sound_master();
-	void add_right_click();
+	void add_right_click(bool pushed);
 	void swap_mouse_visibility();
 	void swap_freeLook();
 	void swap_zoom_up();
@@ -74,7 +74,7 @@ public:
 	// Smartphone actions
 	void loadSmartphoneConfigurationElement(String element, int &value, int defaultValue);
 	void loadSmartphoneConfiguration();
-	void add_left_click();
+	void add_left_click(bool pushed);
 	void move_cursor_up();
 	void move_cursor_down();
 	void move_cursor_left();

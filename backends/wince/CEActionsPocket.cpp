@@ -160,8 +160,14 @@ CEActionsPocket::~CEActionsPocket() {
 }
 
 bool CEActionsPocket::perform(ActionType action, bool pushed) {
-	if (!pushed)
+	if (!pushed) {
+		switch(action) {
+			case POCKET_ACTION_RIGHTCLICK:
+				_mainSystem->add_right_click(false);
+				return true;
+		}
 		return false;
+	}
 
 	switch (action) {
 		case POCKET_ACTION_PAUSE:
@@ -179,7 +185,7 @@ bool CEActionsPocket::perform(ActionType action, bool pushed) {
 			_mainSystem->swap_sound_master();
 			return true;
 		case POCKET_ACTION_RIGHTCLICK:
-			_mainSystem->add_right_click();
+			_mainSystem->add_right_click(true);
 			return true;
 		case POCKET_ACTION_CURSOR:
 			_mainSystem->swap_mouse_visibility();

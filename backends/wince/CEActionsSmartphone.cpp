@@ -146,6 +146,14 @@ CEActionsSmartphone::~CEActionsSmartphone() {
 
 bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 	if (!pushed) {
+		switch (action) {
+			case SMARTPHONE_ACTION_RIGHTCLICK:
+				_mainSystem->add_right_click(false);
+				return true;
+			case SMARTPHONE_ACTION_LEFTCLICK:
+				_mainSystem->add_left_click(false);
+				return true;
+		}
 		return false;
 	}
 
@@ -155,10 +163,10 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 			EventsBuffer::simulateKey(&_key_action[action]);
 			return true;
 		case SMARTPHONE_ACTION_RIGHTCLICK:
-			_mainSystem->add_right_click();
+			_mainSystem->add_right_click(true);
 			return true;
 		case SMARTPHONE_ACTION_LEFTCLICK:
-			_mainSystem->add_left_click();
+			_mainSystem->add_left_click(true);
 			return true;
 		case SMARTPHONE_ACTION_UP:
 			_mainSystem->move_cursor_up();
