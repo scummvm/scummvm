@@ -561,7 +561,11 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 
 		case RESTART:
 			animClick(pButton);
-			return 0;
+			if (getYesNo(NULL)) {
+				restartGame();
+				return GAME_RESTORED;
+			} else
+				return 0;
 
 		case QUIT_TO_DOS:
 			animClick(pButton);
