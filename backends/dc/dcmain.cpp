@@ -25,7 +25,9 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
-#include "base/engine.h"
+#include <base/engine.h>
+#include <base/gameDetector.h>
+#include <base/plugins.h>
 #include "dc.h"
 #include "icon.h"
 
@@ -170,8 +172,12 @@ int main()
   dc_init_hardware();
   initSound();
 
+  PluginManager::instance().loadPlugins();
+
   if(!selectGame(argv[2], argv[1], icon))
     exit(0);
+
+  PluginManager::instance().unloadPlugins();
 
   scumm_main(argc, argv);
 
