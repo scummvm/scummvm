@@ -250,9 +250,9 @@ void ScummEngine::initScreens(int a, int b, int w, int h) {
 			initVirtScreen(3, 0, 80, _screenWidth, 13, false, false);
 		}
 	}
-	initVirtScreen(0, 0, b, _screenWidth, h - b, true, true);
-	initVirtScreen(1, 0, 0, _screenWidth, b, false, false);
-	initVirtScreen(2, 0, h, _screenWidth, _screenHeight - h, false, false);
+	initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, true, true);
+	initVirtScreen(kTextVirtScreen, 0, 0, _screenWidth, b, false, false);
+	initVirtScreen(kVerbVirtScreen, 0, h, _screenWidth, _screenHeight - h, false, false);
 
 	_screenB = b;
 	_screenH = h;
@@ -371,32 +371,34 @@ void ScummEngine::updateDirtyRect(int virt, int left, int right, int top, int bo
 	}
 }
 
+/**
+ * Update all dirty screen areas. This method blits all of the internal engine
+ * graphics to the actual display, as needed. In addition, the 'shaking'
+ * code in the backend is controlled from here.
+ */
 void ScummEngine::drawDirtyScreenParts() {
-	int i;
-	VirtScreen *vs;
-	byte *src;
-
-	updateDirtyScreen(2);
+	// Update verbs
+	updateDirtyScreen(kVerbVirtScreen);
+	
+	// In V1-V3, update the conversation area (at the top of the screen)
 	if (_version <= 3)
-		updateDirtyScreen(1);
+		updateDirtyScreen(kTextVirtScreen);
 
-	if (camera._last.x == camera._cur.x && (camera._last.y == camera._cur.y || !(_features & GF_NEW_CAMERA))) {
-		updateDirtyScreen(0);
+	// Update game area ("stage")
+	if (camera._last.x != camera._cur.x || (_features & GF_NEW_CAMERA && (camera._cur.y != camera._last.y))) {
+		// Camera moved: redraw everything
+		// Small side note: most of our GFX code relies on this identity:
+		// gdi._numStrips * 8 == _screenWidth == vs->width
+		VirtScreen *vs = &virtscr[kMainVirtScreen];
+		gdi.drawStripToScreen(vs, 0, vs->width, 0, vs->height);
+		vs->setDirtyRange(vs->height, 0);
 	} else {
-		vs = &virtscr[0];
-
-		src = vs->screenPtr + vs->xstart + _screenTop * _screenWidth;
-		_system->copy_rect(src, _screenWidth, 0, vs->topline, _screenWidth, vs->height - _screenTop);
-
-		for (i = 0; i < gdi._numStrips; i++) {
-			vs->tdirty[i] = vs->height;
-			vs->bdirty[i] = 0;
-		}
+		updateDirtyScreen(kMainVirtScreen);
 	}
 
-	/* Handle shaking */
+	// Handle shaking
 	if (_shakeEnabled) {
-		_shakeFrame = (_shakeFrame + 1) & (NUM_SHAKE_POSITIONS - 1);
+		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS;
 		_system->set_shake_pos(shake_positions[_shakeFrame]);
 	} else if (!_shakeEnabled &&_shakeFrame != 0) {
 		_shakeFrame = 0;
@@ -409,44 +411,38 @@ void ScummEngine::updateDirtyScreen(int slot) {
 }
 
 /**
- * Blit the data from the given VirtScreen to the display. If the camera moved,
+ * Blit the dirty data from the given VirtScreen to the display. If the camera moved,
  * a full blit is done, otherwise only the visible dirty areas are updated.
  */
 void Gdi::updateDirtyScreen(VirtScreen *vs) {
+	// Do nothing for unused virtual screens
 	if (vs->height == 0)
 		return;
 
-	if (_vm->_features & GF_NEW_CAMERA && (_vm->camera._cur.y != _vm->camera._last.y)) {
-		drawStripToScreen(vs, 0, _numStrips * 8, 0, vs->height);
-	} else {
-		int i;
-		int start, w, top, bottom;
+	int i;
+	int w = 8;
+	int start = 0;
 
-		w = 8;
-		start = 0;
-
-		for (i = 0; i < _numStrips; i++) {
-			bottom = vs->bdirty[i];
-
-			if (bottom) {
-				top = vs->tdirty[i];
-				vs->tdirty[i] = vs->height;
-				vs->bdirty[i] = 0;
-				if (i != (_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
-					// Simple optimizations: if two or more neighbouring strips form one bigger rectangle,
-					// blit them all at once.
-					w += 8;
-					continue;
-				}
-				// handle vertically scrolling rooms
-				if (_vm->_features & GF_NEW_CAMERA)
-					drawStripToScreen(vs, start * 8, w, 0, vs->height);
-				else
-					drawStripToScreen(vs, start * 8, w, top, bottom);
-				w = 8;
+	for (i = 0; i < _numStrips; i++) {
+		if (vs->bdirty[i]) {
+			const int bottom = vs->bdirty[i];
+			const int top = vs->tdirty[i];
+			vs->tdirty[i] = vs->height;
+			vs->bdirty[i] = 0;
+			if (i != (_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
+				// Simple optimizations: if two or more neighbouring strips form one bigger rectangle,
+				// blit them all at once.
+				w += 8;
+				continue;
 			}
-			start = i + 1;
+			// handle vertically scrolling rooms
+			if (_vm->_features & GF_NEW_CAMERA)
+				drawStripToScreen(vs, start * 8, w, 0, vs->height);
+			else
+				drawStripToScreen(vs, start * 8, w, top, bottom);
+			w = 8;
 		}
+		start = i + 1;
 	}
 }
 
@@ -2257,7 +2253,7 @@ void ScummEngine::fadeOut(int effect) {
 		case 129:
 			// Just blit screen 0 to the display (i.e. display will be black)
 			vs->setDirtyRange(0, vs->height);
-			updateDirtyScreen(0);
+			updateDirtyScreen(kMainVirtScreen);
 			break;
 		case 134:
 			dissolveEffect(1, 1);
@@ -2341,7 +2337,7 @@ void ScummEngine::transitionEffect(int a) {
 				else
 					virtscr[0].bdirty[l] = (b + 1) * 8;
 			}
-			updateDirtyScreen(0);
+			updateDirtyScreen(kMainVirtScreen);
 		}
 
 		for (i = 0; i < 16; i++)

@@ -29,7 +29,7 @@ namespace Scumm {
 
 void ScummEngine::setCameraAtEx(int at) {
 	if (!(_features & GF_NEW_CAMERA)) {
-		camera._mode = CM_NORMAL;
+		camera._mode = kNormalCameraMode;
 		camera._cur.x = at;
 		setCameraAt(at, 0);
 		camera._movingToActor = false;
@@ -37,7 +37,7 @@ void ScummEngine::setCameraAtEx(int at) {
 }
 
 void ScummEngine::setCameraAt(int pos_x, int pos_y) {
-	if (camera._mode != CM_FOLLOW_ACTOR || abs(pos_x - camera._cur.x) > (_screenWidth / 2)) {
+	if (camera._mode != kFollowActorCameraMode || abs(pos_x - camera._cur.x) > (_screenWidth / 2)) {
 		camera._cur.x = pos_x;
 	}
 	camera._dest.x = pos_x;
@@ -89,12 +89,12 @@ void ScummEngine::setCameraFollows(Actor *a) {
 
 	int t, i;
 
-	camera._mode = CM_FOLLOW_ACTOR;
+	camera._mode = kFollowActorCameraMode;
 	camera._follows = a->number;
 
 	if (!a->isInCurrentRoom()) {
 		startScene(a->getRoom(), 0, 0);
-		camera._mode = CM_FOLLOW_ACTOR;
+		camera._mode = kFollowActorCameraMode;
 		camera._cur.x = a->_pos.x;
 		setCameraAt(camera._cur.x, 0);
 	}
@@ -174,7 +174,7 @@ void ScummEngine::moveCamera() {
 		return;
 	}
 
-	if (camera._mode == CM_FOLLOW_ACTOR) {
+	if (camera._mode == kFollowActorCameraMode) {
 		a = derefActor(camera._follows, "moveCamera");
 
 		actorx = a->_pos.x;
@@ -353,7 +353,7 @@ void ScummEngine::cameraMoved() {
 
 void ScummEngine::panCameraTo(int x, int y) {
 	camera._dest.x = x;
-	camera._mode = CM_PANNING;
+	camera._mode = kPanningCameraMode;
 	camera._movingToActor = false;
 }
 
@@ -373,7 +373,7 @@ void ScummEngine::actorFollowCamera(int act) {
 /*
 		// MI1 compatibilty
 		if (act == 0) {
-			camera._mode = CM_NORMAL;
+			camera._mode = kNormalCameraMode;
 			camera._follows = 0;
 			camera._movingToActor = false;
 			return;

@@ -1411,7 +1411,7 @@ void ScummEngine_v2::o2_endCutscene() {
 	
 	if (_gameId == GID_MANIAC) {
 		camera._mode = (byte) vm.cutSceneData[3];
-		if (camera._mode == CM_FOLLOW_ACTOR) {
+		if (camera._mode == kFollowActorCameraMode) {
 			actorFollowCamera(VAR(VAR_EGO));
 		} else if (vm.cutSceneData[2] != _currentRoom) {
 			startScene(vm.cutSceneData[2], 0, 0);

@@ -29,13 +29,15 @@ namespace Scumm {
 
 class ScummEngine;
 
-enum {					/** Camera modes */
-	CM_NORMAL = 1,
-	CM_FOLLOW_ACTOR = 2,
-	CM_PANNING = 3
+/** Camera modes */
+enum {
+	kNormalCameraMode = 1,
+	kFollowActorCameraMode = 2,
+	kPanningCameraMode = 3
 };
 
-struct CameraData {		/** Camera state data */
+/** Camera state data */
+struct CameraData {
 	Common::Point _cur;
 	Common::Point _dest;
 	Common::Point _accel;
@@ -45,7 +47,15 @@ struct CameraData {		/** Camera state data */
 	bool _movingToActor;
 };
 
-struct VirtScreen {		/** Virtual screen areas */
+/** Virtual screen identifiers */
+enum {
+	kMainVirtScreen = 0,	// The 'stage'
+	kTextVirtScreen = 1,	// In V1-V3 games: the area where text is printed
+	kVerbVirtScreen = 2		// The verb area
+};
+
+/** Virtual screen areas */
+struct VirtScreen {
 	int number;
 	uint16 topline;
 	uint16 width, height;
@@ -66,7 +76,8 @@ struct VirtScreen {		/** Virtual screen areas */
 	}
 };
 
-struct ColorCycle {		/** Palette cycles */
+/** Palette cycles */
+struct ColorCycle {
 	uint16 delay;
 	uint16 counter;
 	uint16 flags;
@@ -74,7 +85,8 @@ struct ColorCycle {		/** Palette cycles */
 	byte end;
 };
 
-struct BlastObject {		/** BlastObjects to draw */
+/** BlastObjects to draw */
+struct BlastObject {
 	uint16 number;
 	int16 posX, posY;
 	uint16 width, height;
@@ -190,14 +202,14 @@ public:
 // to get it fixed and so that really interested parties can experiment it.
 // It is NOT FIT FOR GENERAL USAGE! You have been warned.
 //
-// Doing this correctly will be quite some more complicated. Basically, with smooth
-// scrolling, the virtual screen strips don't match the display screen strips.
-// Hence we either have to draw partial strips - but that'd be rather cumbersome.
-// Or the much simple (and IMHO more elegant) solution is to simply use a screen pitch
-// that is 8 pixel wider than the real screen width, and always draw one strip more than 
-// needed to the backbuf. This will still require quite some code to be changed but
-// should otherwise be relatively easy to understand, and using VirtScreen::pitch
-// will actually clean up the code.
+// Doing this correctly will be complicated. Basically, with smooth scrolling,
+// the virtual screen strips don't match the display screen strips. Hence we
+// either have to draw partial strips (but that'd be rather cumbersome). Or the
+// alternative (and IMHO more elegant) solution is to simply use a screen pitch
+// that is 8 pixel wider than the real screen width, and always draw one strip
+// more than needed to the backbuf. This will still require quite some code to
+// be changed but should otherwise be relatively easy to understand, and using
+// VirtScreen::pitch will actually clean up the code.
 //
 // #define V7_SMOOTH_SCROLLING_HACK
 

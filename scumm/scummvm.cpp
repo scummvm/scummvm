@@ -2083,7 +2083,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
 		setCameraAt(_screenWidth / 2, _screenHeight / 2);
 	} else {
-		camera._mode = CM_NORMAL;
+		camera._mode = kNormalCameraMode;
 		if (_version > 2)
 			camera._cur.x = camera._dest.x = _screenWidth / 2;
 		camera._cur.y = camera._dest.y = _screenHeight / 2;
