@@ -265,9 +265,9 @@ uint32 File::read(void *ptr, uint32 len) {
 
 	if (_encbyte != 0) {
 		uint32 t_size = real_len;
-		do {
+		while (t_size--) {
 			*ptr2++ ^= _encbyte;
-		} while (--t_size);
+		}
 	}
 
 	return real_len;
