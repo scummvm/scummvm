@@ -836,6 +836,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
+	debug(1,"o100_setSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		pop();
@@ -908,7 +909,6 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 	default:
 		error("o100_setSpriteGroupInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o100_setSpriteGroupInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_resourceRoutines() {
@@ -1506,6 +1506,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 
 	byte subOp = fetchScriptByte();
 
+	debug(1,"o100_setSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		_curMaxSpriteId = pop();
@@ -1805,7 +1806,6 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 	default:
 		error("o100_setSpriteInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o100_setSpriteInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_quitPauseRestart() {
@@ -1999,6 +1999,8 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 	int spriteGroupId, type;
 
 	byte subOp = fetchScriptByte();
+
+	debug(1,"o100_getSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 5:
 		spriteGroupId = pop();
@@ -2072,8 +2074,6 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 	default:
 		error("o100_getSpriteGroupInfo: Unknown case %d", subOp);
 	}
-
-	debug(1,"o100_getSpriteGroupInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_getWizData() {
@@ -2237,6 +2237,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 
 	byte subOp = fetchScriptByte();
 
+	debug(1,"o100_getSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 3:
 		spriteId = pop();
@@ -2464,7 +2465,6 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	default:
 		error("o100_getSpriteInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o100_getSpriteInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::decodeParseString(int m, int n) {

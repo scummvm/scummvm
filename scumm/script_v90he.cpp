@@ -704,7 +704,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
-	debug(1,"o90_getSpriteInfo stub (%d)", subOp);
+	debug(1,"o90_getSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		spriteId = pop();
@@ -953,9 +953,11 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	int args[16];
 	int spriteId, tmp[2];
 	static int storedFields[2];
+
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
 
+	debug(1,"o90_setSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		args[0] = pop();
@@ -1252,7 +1254,6 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	default:
 		error("o90_setSpriteInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o90_setSpriteInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getSpriteGroupInfo() {
@@ -1260,6 +1261,8 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	int spriteGroupId, type;
 
 	byte subOp = fetchScriptByte();
+
+	debug(1,"o90_getSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 8: // HE 99+
 		spriteGroupId = pop();
@@ -1333,14 +1336,13 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	default:
 		error("o90_getSpriteGroupInfo: Unknown case %d", subOp);
 	}
-
-	debug(1,"o90_getSpriteGroupInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 37;
 
+	debug(1,"o90_setSpriteGroupInfo stub (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		switch (pop()) {
@@ -1406,7 +1408,6 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 	default:
 		error("o90_setSpriteGroupInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o90_setSpriteGroupInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getWizData() {
