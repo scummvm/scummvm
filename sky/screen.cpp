@@ -300,6 +300,12 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 
 	//_currentScreen points to new screen,
 	//_scrollScreen points to graphic showing old room
+	if (scroll == 13) scroll = 123; // script bug (?) in lower area
+	if ((scroll != 123) && (scroll != 321) && (scroll)) {
+		warning("unknown scroll parameter %d",scroll);
+		scroll = 0;
+	}
+
 	if ((scroll == 0) || (SkyState::_systemVars.systemFlags & SF_NO_SCROLL)) {
 		uint8 *palette = (uint8*)SkyState::fetchCompact(palNum);
 		if (palette == NULL)
@@ -350,7 +356,7 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 		}
 		showScreen(_currentScreen);
 		free(_scrollScreen);
-	} else error("Unknown scroll parameter: %d\n",scroll);
+	}
 }
 
 void SkyScreen::waitForTimer(void) {

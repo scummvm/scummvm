@@ -697,7 +697,7 @@ bool SkyLogic::collide(Compact *cpt) {
 		x -= m1->colOffset; // compensate for inner x offsets
 		x += m2->colOffset;
 
-		if ((x + m2->colWidth) >= _compact->xcood) // their rightmoast
+		if ((x + m2->colWidth) < _compact->xcood) // their rightmoast
 			return false;
 
 		x -= m1->colWidth; // our left, their right
@@ -1280,6 +1280,7 @@ bool SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
 
 bool SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 	debug(5, "Call: fnDrawScreen(%X, %X)\n",a,b);
+	SkyState::_systemVars.currentPalette = a;
 	_skyScreen->fnDrawScreen(a, b);
 	return true;
 }
