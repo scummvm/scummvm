@@ -103,9 +103,7 @@ void StaticTextWidget::setValue(int value)
 void StaticTextWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
-	gui->drawString(_label.c_str(), _x, _y, _w,
-	                !isEnabled() ? gui->_color :
-	                hilite ? gui->_textcolorhi : gui->_textcolor, _align);
+	gui->drawString(_label.c_str(), _x, _y, _w, gui->_textcolor, _align);
 }
 
 
@@ -123,6 +121,14 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h)
 		sendCommand(_cmd, 0);
+}
+
+void ButtonWidget::drawWidget(bool hilite)
+{
+	NewGui *gui = _boss->getGui();
+	gui->drawString(_label.c_str(), _x, _y, _w,
+	                !isEnabled() ? gui->_color :
+	                hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
 
 #pragma mark -

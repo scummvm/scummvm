@@ -48,9 +48,9 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	: Dialog(gui, 0, 0, 320, 200), _detector(detector)
 {
 	// Add three buttons at the bottom
-	addButton(1*(_w - 54)/6, _h - 24, 54, 16, "Quit", kQuitCmd, 'Q');
-	addButton(3*(_w - 54)/6, _h - 24, 54, 16, "Options", kOptionsCmd, 'O');
-	_startButton = addButton(5*(_w - 54)/6, _h - 24, 54, 16, "Start", kStartCmd, 'S');
+	addButton(1*(_w - 54)/6, _h - 24, "Quit", kQuitCmd, 'Q');
+	addButton(3*(_w - 54)/6, _h - 24, "Options", kOptionsCmd, 'O');
+	_startButton = addButton(5*(_w - 54)/6, _h - 24, "Start", kStartCmd, 'S');
 	_startButton->setEnabled(false);
 
 	// Add list with game titles

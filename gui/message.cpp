@@ -69,5 +69,5 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	}
 
 	// FIXME - the vertical position has to be adjusted
-	addButton((_w - 54)/2, _h - 24, 54, 16, "OK", kCloseCmd, '\n');	// Confirm dialog
+	addButton((_w - kButtonWidth)/2, _h - 24, "OK", kCloseCmd, '\n');	// Confirm dialog
 }

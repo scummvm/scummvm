@@ -48,7 +48,7 @@ public:
 		: _gui(gui), _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
 		  _mouseWidget(0), _focusedWidget(0), _visible(false)
 		{}
-	virtual ~Dialog() {};
+	virtual ~Dialog();
 
 	virtual void open();
 	virtual void close();
@@ -70,7 +70,7 @@ public:
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any
 
-	Widget* addButton(int x, int y, int w, int h, const ScummVM::String &label, uint32 cmd, char hotkey);
+	Widget* addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
 };
 
 #endif

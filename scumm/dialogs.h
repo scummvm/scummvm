@@ -67,49 +67,13 @@ public:
 class OptionsDialog : public ScummDialog {
 protected:
 	Dialog		*_aboutDialog;
-	Dialog		*_soundDialog;
+#ifdef _WIN32_WCE
 	Dialog		*_keysDialog;
-	Dialog		*_miscDialog;
+#endif
 
 public:
 	OptionsDialog(NewGui *gui, Scumm *scumm);
 	~OptionsDialog();
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-};
-
-class PauseDialog : public ScummDialog {
-public:
-	PauseDialog(NewGui *gui, Scumm *scumm);
-
-	virtual void handleMouseDown(int x, int y, int button, int clickCount)
-		{ close(); }
-	virtual void handleKeyDown(char key, int modifiers)
-		{
-			if (key == 32)
-				close();
-			else
-				Dialog::handleKeyDown(key, modifiers);
-		}
-
-	// Enforce no transparency!
-	virtual void	setupScreenBuf() {}
-	virtual void	teardownScreenBuf() {}
-
-};
-
-
-class SoundDialog : public ScummDialog {
-public:
-	SoundDialog(NewGui *gui, Scumm *scumm);
-
-	enum {
-		kMasterVolumeChanged	= 'mavc',
-		kMusicVolumeChanged		= 'muvc',
-		kSfxVolumeChanged		= 'sfvc',
-		kOKCmd					= 'ok  ',
-		kCancelCmd				= 'cncl',
-	};
 
 	virtual void open();
 
@@ -128,6 +92,24 @@ protected:
 	StaticTextWidget *masterVolumeLabel;
 	StaticTextWidget *musicVolumeLabel;
 	StaticTextWidget *sfxVolumeLabel;
+	
+	CheckboxWidget *subtitlesCheckbox;
+	CheckboxWidget *amigaPalCheckbox;
+};
+
+class PauseDialog : public ScummDialog {
+public:
+	PauseDialog(NewGui *gui, Scumm *scumm);
+
+	virtual void handleMouseDown(int x, int y, int button, int clickCount)
+		{ close(); }
+	virtual void handleKeyDown(char key, int modifiers)
+		{
+			if (key == ' ')  // Close pause dialog if space key is pressed
+				close();
+			else
+				ScummDialog::handleKeyDown(key, modifiers);
+		}
 };
 
 

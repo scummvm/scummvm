@@ -38,6 +38,18 @@
  * ...
  */
 
+Dialog::~Dialog()
+{
+	Widget *w = _firstWidget, *next;
+	while (w) {
+		next = w->_next;
+		w->_next = 0;
+		delete w;
+		w = next;
+	}
+	_firstWidget = 0;
+}
+
 void Dialog::open()
 {
 	Widget *w = _firstWidget;
@@ -243,8 +255,8 @@ Widget *Dialog::findWidget(int x, int y)
 	return w;
 }
 
-Widget *Dialog::addButton(int x, int y, int w, int h, const ScummVM::String &label, uint32 cmd, char hotkey)
+Widget *Dialog::addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey)
 {
-	return new ButtonWidget(this, x, y, w, h, label, cmd, hotkey);
+	return new ButtonWidget(this, x, y, 54, 16, label, cmd, hotkey);
 }
 

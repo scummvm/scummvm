@@ -34,7 +34,6 @@
 #	pragma warning( disable : 4068 )
 #endif
 
-
 struct ResString {
 	int num;
 	char string[80];
@@ -284,7 +283,6 @@ const char *ScummDialog::queryCustomString(int stringno)
 
 #pragma mark -
 
-
 enum {
 	kSaveCmd = 'SAVE',
 	kLoadCmd = 'LOAD',
@@ -309,11 +307,11 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 //  addResText(10, 7, 240, 16, 2);
 //  addResText(10, 7, 240, 16, 3);
 
-	addButton(200, 20, 54, 16, queryResString(4), kSaveCmd, 'S');	// Save
-	addButton(200, 40, 54, 16, queryResString(5), kLoadCmd, 'L');	// Load
-	addButton(200, 60, 54, 16, queryResString(6), kPlayCmd, 'P');	// Play
-	addButton(200, 80, 54, 16, queryCustomString(17), kOptionsCmd, 'O');	// Options
-	addButton(200, 100, 54, 16, queryResString(8), kQuitCmd, 'Q');	// Quit
+	addButton(200, 20, queryResString(4), kSaveCmd, 'S');	// Save
+	addButton(200, 40, queryResString(5), kLoadCmd, 'L');	// Load
+	addButton(200, 60, queryResString(6), kPlayCmd, 'P');	// Play
+	addButton(200, 80, queryCustomString(17), kOptionsCmd, 'O');	// Options
+	addButton(200, 100, queryResString(8), kQuitCmd, 'Q');	// Quit
 	
 	_savegameList = new ListWidget(this, 10, 20, 180, 90);
 	_savegameList->setNumberingMode(kListNumberingZero);
@@ -362,7 +360,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_scumm->_system->quit();
 		break;
 	default:
-		Dialog::handleCommand(sender, cmd, data);
+		ScummDialog::handleCommand(sender, cmd, data);
 	}
 }
 
@@ -370,105 +368,82 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 #pragma mark -
 
 enum {
-	kSoundCmd = 'SOUN',
+	kMasterVolumeChanged	= 'mavc',
+	kMusicVolumeChanged		= 'muvc',
+	kSfxVolumeChanged		= 'sfvc',
+	kOKCmd					= 'ok  ',
+	kCancelCmd				= 'cncl',
+};
+
+enum {
 	kKeysCmd = 'KEYS',
 	kAboutCmd = 'ABOU',
-	kMiscCmd = 'OPTN'
 };
 
 OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 50, 80, 210, 60)
-{
-	addButton( 10, 10, 40, 16, queryCustomString(5), kSoundCmd, 'S');	// Sound
-	addButton( 80, 10, 40, 16, queryCustomString(6), kKeysCmd, 'K');	// Keys
-	addButton(150, 10, 40, 16, queryCustomString(7), kAboutCmd, 'A');	// About
-	addButton( 10, 35, 40, 16, queryCustomString(18), kMiscCmd, 'M');	// Misc
-	addButton(150, 35, 40, 16, queryCustomString(23), kCloseCmd, 'C');	// Close dialog - FIXME
-
-	_aboutDialog = new AboutDialog(gui, scumm);
-	_soundDialog = new SoundDialog(gui, scumm);
-}
-
-OptionsDialog::~OptionsDialog()
-{
-	delete _aboutDialog;
-	delete _soundDialog;
-}
-
-void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
-	switch (cmd) {
-	case kSoundCmd:
-		_soundDialog->open();
-		break;
-	case kKeysCmd:
-		break;
-	case kAboutCmd:
-		_aboutDialog->open();
-		break;
-	case kMiscCmd:
-		break;
-	default:
-		Dialog::handleCommand(sender, cmd, data);
-	}
-}
-
-#pragma mark -
-
-AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 30, 20, 260, 124)
 {
-	addButton(110, 100, 40, 16, queryCustomString(23), kCloseCmd, 'C');	// Close dialog - FIXME
-	new StaticTextWidget(this, 10, 10, 240, 16, "ScummVM " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 30, 240, 16, "http://scummvm.sourceforge.net", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 50, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 64, 240, 16, "Except", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 78, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
-}
+	//
+	// Add the buttons
+	//
+	addButton(_w-kButtonWidth-8, _h-24, "OK", kOKCmd, 'O');
+	addButton(_w-2*kButtonWidth-12, _h-24, "Cancel", kCancelCmd, 'C');
 
-#pragma mark -
+	addButton(8, _h-24, "About", kAboutCmd, 'A');
+#ifdef _WIN32_WCE
+	addButton(kButtonWidth+12, _h-24, "Keys", kKeysCmd, 'K');
+#endif
 
-PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 35, 80, 250, 16)
-{
-	addResText(4, 4, 250-8, 16, 10);
-}
 
-#pragma mark -
+	//
+	// Sound controllers
+	//
+	new StaticTextWidget(this, 25, 10, 85, 16, "Master volume:", kTextAlignRight);
+	new StaticTextWidget(this, 25, 26, 85, 16, "Music volume:", kTextAlignRight);
+	new StaticTextWidget(this, 25, 42, 85, 16, "SFX volume:", kTextAlignRight);
 
-SoundDialog::SoundDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 30, 20, 260, 110)
-{
-
-	// set up dialog
-	addButton(70, 90, 54, 16, "OK", kOKCmd, 'O');	// Confirm dialog
-	addButton(136, 90, 54, 16, "Cancel", kCancelCmd, 'C');	// Abort dialog
-	new StaticTextWidget(this, 20, 17, 85, 16, "Master volume:", kTextAlignRight);
-	new StaticTextWidget(this, 20, 37, 85, 16, "Music volume:", kTextAlignRight);
-	new StaticTextWidget(this, 20, 57, 85, 16, "SFX volume:", kTextAlignRight);
-
-	masterVolumeSlider = new SliderWidget(this, 110, 13, 80, 16, "Volume1", kMasterVolumeChanged);
-	musicVolumeSlider = new SliderWidget(this, 110, 33, 80, 16, "Volume2", kMusicVolumeChanged);
-	sfxVolumeSlider = new SliderWidget(this, 110, 53, 80, 16, "Volume3", kSfxVolumeChanged);
+	masterVolumeSlider = new SliderWidget(this, 115, 8, 80, 12, "Volume1", kMasterVolumeChanged);
+	musicVolumeSlider  = new SliderWidget(this, 115, 24, 80, 12, "Volume2", kMusicVolumeChanged);
+	sfxVolumeSlider    = new SliderWidget(this, 115, 40, 80, 12, "Volume3", kSfxVolumeChanged);
 
 	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(256);
 	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(256);
 	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(256);
 
-	masterVolumeLabel = new StaticTextWidget(this, 195, 17, 60, 16, "Volume1", kTextAlignLeft);
-	musicVolumeLabel = new StaticTextWidget(this, 195, 37, 60, 16, "Volume2", kTextAlignLeft);
-	sfxVolumeLabel = new StaticTextWidget(this, 195, 57, 60, 16, "Volume3", kTextAlignLeft);
+	masterVolumeLabel = new StaticTextWidget(this, 200, 10, 60, 16, "Volume1", kTextAlignLeft);
+	musicVolumeLabel  = new StaticTextWidget(this, 200, 26, 60, 16, "Volume2", kTextAlignLeft);
+	sfxVolumeLabel    = new StaticTextWidget(this, 200, 42, 60, 16, "Volume3", kTextAlignLeft);
 	
 	masterVolumeLabel->setFlags(WIDGET_CLEARBG);
 	musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
+
+	//
+	// Some misc options
+	//
+	subtitlesCheckbox = new CheckboxWidget(this, 25, 62, 100, 16, "Show subtitles", 0, 'S');
+	amigaPalCheckbox  = new CheckboxWidget(this, 25, 80, 100, 16, "Amiga palette conversion", 0, 'P');
+
+
+	//
+	// Finally create the sub dialogs
+	//
+	_aboutDialog = new AboutDialog(gui, scumm);
+#ifdef _WIN32_WCE
+	// TODO - create _keysDialog
+#endif
 }
 
-void SoundDialog::open()
+OptionsDialog::~OptionsDialog()
 {
-	Dialog::open();
+	delete _aboutDialog;
+}
 
-	// get current variables
+void OptionsDialog::open()
+{
+	ScummDialog::open();
+
+	// display current sound settings
 	_soundVolumeMaster = _scumm->_sound->_sound_volume_master;
 	_soundVolumeMusic = _scumm->_sound->_sound_volume_music;
 	_soundVolumeSfx = _scumm->_sound->_sound_volume_sfx;
@@ -480,12 +455,21 @@ void SoundDialog::open()
 	masterVolumeLabel->setValue(_soundVolumeMaster);
 	musicVolumeLabel->setValue(_soundVolumeMusic);
 	sfxVolumeLabel->setValue(_soundVolumeSfx);
+
+	// update checkboxes, too
+	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
+	amigaPalCheckbox->setState(_scumm->_features & GF_AMIGA);
 }
 
-
-void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
+void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
+	case kKeysCmd:
+		// TODO
+		break;
+	case kAboutCmd:
+		_aboutDialog->open();
+		break;
 	case kMasterVolumeChanged:
 		_soundVolumeMaster = masterVolumeSlider->getValue();
 		masterVolumeLabel->setValue(_soundVolumeMaster);
@@ -502,7 +486,7 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		sfxVolumeLabel->draw();
 		break;
 	case kOKCmd: {
-		// FIXME: Look at Fingolfins comments in Gui::handleSoundDialogCommand(), gui.cpp 
+		// Update the sound settings 
 		_scumm->_sound->_sound_volume_master = _soundVolumeMaster;	// Master
 		_scumm->_sound->_sound_volume_music = _soundVolumeMusic;	// Music
 		_scumm->_sound->_sound_volume_sfx = _soundVolumeSfx;	// SFX
@@ -515,12 +499,46 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		g_config->setInt("master_volume", _soundVolumeMaster);
 		g_config->setInt("music_volume", _soundVolumeMusic);
 		g_config->setInt("sfx_volume", _soundVolumeSfx);
+
+		// Subtitles?
+		_scumm->_noSubtitles = !subtitlesCheckbox->getState();
+		g_config->setBool("nosubtitles", _scumm->_noSubtitles);
+		
+		// Amiga palette?
+		if (amigaPalCheckbox->getState())
+			_scumm->_features |= GF_AMIGA;
+		else
+			_scumm->_features &= ~GF_AMIGA;
+		g_config->setBool("amiga", amigaPalCheckbox->getState());
+		
+		// Finally flush the modified config
 		g_config->flush();
 		}
 	case kCancelCmd:
 		close();
 		break;
 	default:
-		Dialog::handleCommand(sender, cmd, data);
+		ScummDialog::handleCommand(sender, cmd, data);
 	}
+}
+
+#pragma mark -
+
+AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
+	: ScummDialog(gui, scumm, 30, 20, 260, 124)
+{
+	addButton(110, 100, queryCustomString(23), kCloseCmd, 'C');	// Close dialog - FIXME
+	new StaticTextWidget(this, 10, 10, 240, 16, "ScummVM " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 30, 240, 16, "http://scummvm.sourceforge.net", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 50, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 64, 240, 16, "Except", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 78, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
+}
+
+#pragma mark -
+
+PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
+	: ScummDialog(gui, scumm, 35, 80, 250, 16)
+{
+	addResText(4, 4, 250-8, 16, 10);
 }

@@ -47,6 +47,13 @@ enum {
 	kScrollBarWidget	= 'SCRB'
 };
 
+enum {
+	kButtonWidth = 54,
+	kButtonHeight = 16,
+};
+
+
+
 class CommandReceiver;
 class CommandSender;
 
@@ -155,6 +162,9 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+
+protected:
+	void drawWidget(bool hilite);
 };
 
 /* CheckboxWidget */

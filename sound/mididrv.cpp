@@ -815,11 +815,15 @@ void MidiDriver_QT::send(uint32 b)
 		break;
 
 	case 0xE0:{									// Pitch bend
-			long theBend = (long)midiCmd[1] | (long)(midiCmd[2] << 8);
 			// QuickTime specifies pitchbend in semitones, using 8.8 fixed point values;
-			// but iMuse sends us the pitch bend data relative to +/- 12 semitones. Thus
-			// we have to convert it to the QT format.
-			theBend = (theBend - 0x4000) * 6 / 128;
+			// but iMuse sends us the pitch bend data as 0-32768. which has to be mapped
+			// to +/- 12 semitones. Based on this, we first center the input data, then
+			// multiply it by a factor. If all was right, the factor would be 3/8, but for
+			// mysterious reasons the actual factor we have to use is more like 1/32 or 3/64.
+			// Maybe the QT docs are right, and 
+			long theBend = (long)midiCmd[1] | (long)(midiCmd[2] << 7);
+			theBend = (theBend - 0x2000) * 2 / 64;
+
 			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPitchBend, theBend);
 		}
 		break;
@@ -880,6 +884,9 @@ int MidiDriver_CORE::open(int mode)
 	if (au_output != NULL)
 		return MERR_ALREADY_OPEN;
 
+	if (mode == MO_STREAMING)
+		return MERR_STREAMING_NOT_AVAILABLE;
+
 	_mode = mode;
 
 	int err;
@@ -913,6 +920,21 @@ int MidiDriver_CORE::open(int mode)
 
 	// start the output
 	AudioOutputUnitStart(au_output);
+
+#if 1
+	// Send initial pitch bend sensitivity values for +/- 12 semitones.
+	// For information on control change registered parameters,
+	// which includes the Pitch Bend sensitivity settings,
+	// visit http://www.midi.org/about-midi/table3.htm,
+	// Table 3a.
+	int chan;
+	for (chan = 0; chan < 16; ++chan) {
+		MusicDeviceMIDIEvent(au_MusicDevice, (0xB0 | chan), 101,  0, 0);
+		MusicDeviceMIDIEvent(au_MusicDevice, (0xB0 | chan), 100,  0, 0);
+		MusicDeviceMIDIEvent(au_MusicDevice, (0xB0 | chan),   6, 12, 0);
+		MusicDeviceMIDIEvent(au_MusicDevice, (0xB0 | chan),  38,  0, 0);
+	} // next for
+#endif
 
 	return 0;
 }
