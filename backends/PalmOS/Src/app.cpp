@@ -173,15 +173,59 @@ static void AppStopMathLib() {
 	}
 }
 
+// Set the screen pitch for direct screen access
+// avaliable only before a game start
+void WinScreenGetPitch() {
+	if (gVars->HRrefNum == sysInvalidRefNum) // TODO : better to check if Hi-Density feature is present (?)
+		WinScreenGetAttribute(winScreenRowBytes, &(gVars->screenPitch));		
+	else
+		gVars->screenPitch = gVars->screenFullWidth;
+}
+
+void PINGetScreenDimensions() {
+	UInt32 ftr;
+
+	gVars->pinUpdate = false;
+
+	// if feature set, not set on Garmin iQue3600
+	if (!(FtrGet(sysFtrCreator, sysFtrNumInputAreaFlags, &ftr))) {
+		if (ftr & grfFtrInputAreaFlagCollapsible) {
+
+			RectangleType r;
+			UInt16 curOrientation = SysGetOrientation();
+
+			gVars->options |= optIsCollapsible;
+			// reset previous options if any
+			gVars->options &= ~optHasWideMode;
+			gVars->options &= ~optHasLandscapeMode;
+			gVars->options &= ~optIsLandscapeDisplay;
+
+			PINSetInputAreaState(pinInputAreaClosed);
+			StatHide();
+
+			WinGetBounds(WinGetDisplayWindow(), &r);
+			gVars->screenFullWidth = r.extent.x << 1;
+			gVars->screenFullHeight = r.extent.y << 1;
+
+			gVars->options |= optHasWideMode;
+			
+			if (curOrientation == sysOrientationLandscape ||
+				curOrientation == sysOrientationReverseLandscape
+					)
+				gVars->options |= optHasLandscapeMode;
+			
+			StatShow();
+			PINSetInputAreaState(pinInputAreaOpen);
+		}
+	}
+
+	gVars->pinUpdate = true;
+}
+
 static Err AppStartCheckScreenSize() {
 	SonySysFtrSysInfoP sonySysFtrSysInfoP;
 	Err error = errNone;
-	UInt32 ftr = 0;
 
-//	WinGetDisplayExtent(&gVars->screenWidth, &gVars->screenHeight);
-	
-//	gVars->screenWidth <<= 1;
-//	gVars->screenHeight <<= 1;
 	gVars->screenWidth = 320;
 	gVars->screenHeight = 320;
 
@@ -216,7 +260,7 @@ static Err AppStartCheckScreenSize() {
 				 	error = VskOpen(gVars->slkRefNum);
 					if(!error) {
 						VskSetState(gVars->slkRefNum, vskStateEnable, (gVars->slkVersion == vskVersionNum2 ? vskResizeVertically : vskResizeHorizontally));
-						gVars->options |= (gVars->slkVersion == vskVersionNum2 ? optIsLandscapeMode : 0);
+						gVars->options |= (gVars->slkVersion == vskVersionNum2 ? optHasLandscapeMode : 0);
 						VskSetState(gVars->slkRefNum, vskStateResize, vskResizeNone);
 						HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
 						VskSetState(gVars->slkRefNum, vskStateResize, vskResizeMax);
@@ -231,31 +275,12 @@ static Err AppStartCheckScreenSize() {
 		else
 			gVars->options |= optHasWideMode;
 	}
+	// Tapwave Zodiac and other DIA API compatible devies
+	// get max screen size
+	if (error)
+		PINGetScreenDimensions();
 
-	// Tapwave Zodiac and other DIA API compatible devies, TODO : a better handler, read the doc
-	if (error) {
-		if (!(error = FtrGet(sysFtrCreator, sysFtrNumInputAreaFlags, &ftr))) {
-			if (ftr & grfFtrInputAreaFlagLandscape) {
-				UInt16 old = SysGetOrientation();
-				error = SysSetOrientation(sysOrientationLandscape);
-				error = (error) ? error : PINSetInputAreaState(pinInputAreaClosed);
-				error = (error) ? error : StatHide();
-
-				if (!error) {
-					RectangleType r;
-					WinGetBounds(WinGetDisplayWindow(), &r);
-					gVars->screenFullWidth = r.extent.x << 1;
-					gVars->screenFullHeight = r.extent.y << 1;
-					gVars->options |= optHasWideMode|optIsLandscapeMode;
-				}
-				
-				error = StatShow();
-				error = PINSetInputAreaState(pinInputAreaOpen);
-				error = SysSetOrientation(old);
-			}
-		}	
-	}
-	
+	WinScreenGetPitch();
 	return error;
 }
 
