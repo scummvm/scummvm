@@ -209,7 +209,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	v1.scaleXstep = _mirror ? 1 : -1;
 
 	if (_vm->_version == 1)
-		//HACK: it fix gfx glitches left by actor costume in V1 games, when actor moving to left
+		// HACK: Fix a glitch where costumes in V1 games leave a trail when the actor moves left
 		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
 	else
 		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
@@ -405,7 +405,7 @@ void CostumeRenderer::procC64(int actor) {
 			if (!rep)
 				color = *src++;
 			
-			if (0 <= y && y < _outheight) {
+			if (0 <= y && y < _outheight && v1.x < _outwidth) {
 				if (!_mirror) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
