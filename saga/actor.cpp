@@ -960,7 +960,7 @@ int Actor::direct(int msec) {
 	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
 
-	if (_lastTickMsec > ticksToMSec(2)) { // fixme
+	if (_lastTickMsec > 1000 / 15) { // fixme
 		_lastTickMsec = 0;
 		//process actions
 		handleActions(msec, false);
