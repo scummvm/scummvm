@@ -1396,14 +1396,13 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 	}
 	copyVirtScreenBuffers(Common::Rect(vs->w, vs->h));
 
-	if (_numZBuffer <= 1)
+	int numzbuf = getZPlanes(ptr, zplane_list, true);
+	if (numzbuf <= 1)
 		return;
-	
-	getZPlanes(ptr, zplane_list, true);
 
 	uint32 offs;
 	for (int stripnr = 0; stripnr < _numStrips; stripnr++)
-		for (int i = 1; i < _numZBuffer; i++) {
+		for (int i = 1; i < numzbuf; i++) {
 			if (!zplane_list[i])
 				continue;
 
