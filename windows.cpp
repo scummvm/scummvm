@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.10  2001/11/05 20:44:34  strigeus
+ * speech support
+ *
  * Revision 1.9  2001/11/05 19:21:49  strigeus
  * bug fixes,
  * speech in dott
@@ -161,7 +164,11 @@ void Error(const char *msg) {
 int sel;
 Scumm scumm;
 ScummDebugger debugger;
+
+#if defined(USE_IMUSE)
 SoundEngine sound;
+#endif
+
 WndMan wm[1];
 byte veryFastMode;
 
@@ -843,6 +850,60 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 
 }
 
+#define SAMPLES_PER_SEC 22050
+#define BUFFER_SIZE (8192)
+#define BITS_PER_SAMPLE 16
+
+static void *_sfx_sound;
+static uint32 _sfx_pos;
+static uint32 _sfx_size;
+
+static uint32 _sfx_fp_speed;
+static uint32 _sfx_fp_pos;
+
+bool isSfxFinished() {
+	return _sfx_size == 0;
+}
+
+void playSfxSound(void *sound, uint32 size, uint rate) {
+	if (_sfx_sound) {
+		free(_sfx_sound);
+	}
+	_sfx_sound = sound;
+	_sfx_pos = 0;
+	_sfx_fp_speed = (1<<16) * rate / 22050;
+	_sfx_fp_pos = 0;
+	debug(1, "size=%d, rate=%d", size, rate);
+	_sfx_size = size * 22050 / rate;
+}
+
+void mix_sound(int16 *data, uint32 len) {
+	int8 *s;
+	int i;
+	uint32 fp_pos, fp_speed;
+
+	if (!_sfx_size)
+		return;
+	if (len > _sfx_size)
+		len = _sfx_size;
+	_sfx_size -= len;
+
+	s = (int8*)_sfx_sound + _sfx_pos;
+	fp_pos = _sfx_fp_pos;
+	fp_speed = _sfx_fp_speed;
+
+	do {
+		fp_pos += fp_speed;
+		*data++ += (*s<<6);
+		s += fp_pos >> 16;
+		fp_pos &= 0x0000FFFF;
+	} while (--len);
+
+	_sfx_pos = s - (int8*)_sfx_sound;
+	_sfx_fp_speed = fp_speed;
+	_sfx_fp_pos = fp_pos;
+}
+
 int clock;
 
 void updateScreen(Scumm *s) {
@@ -869,6 +930,15 @@ void initGraphics(Scumm *s) {
 void drawMouse(Scumm *s, int, int, int, byte*, bool) {
 }
 
+void fill_buffer(int16 *buf, int len) {
+#if defined(USE_IMUSE)
+	sound.generate_samples(buf,len);
+#else
+	memset(buf, 0, len*2);
+#endif
+	mix_sound(buf,len);
+}
+
 void WndMan::prepare_header(WAVEHDR *wh, int i) {
 	memset(wh, 0, sizeof(WAVEHDR));
 	wh->lpData = (char*)malloc(BUFFER_SIZE);
@@ -876,7 +946,7 @@ void WndMan::prepare_header(WAVEHDR *wh, int i) {
 
 	waveOutPrepareHeader(_handle, wh, sizeof(WAVEHDR));
 
-	sound.generate_samples((int16*)wh->lpData, wh->dwBufferLength>>1);
+	fill_buffer((int16*)wh->lpData, wh->dwBufferLength>>1);
 	waveOutWrite(_handle, wh, sizeof(WAVEHDR));
 }
 
@@ -910,7 +980,7 @@ DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
 		for(i=0; i<2; i++) {
 			WAVEHDR *hdr = &wm->_hdr[i];
 			if (hdr->dwFlags & WHDR_DONE) {
-				sound.generate_samples((int16*)hdr->lpData, hdr->dwBufferLength>>1);
+				fill_buffer((int16*)hdr->lpData, hdr->dwBufferLength>>1);
 				waveOutWrite(wm->_handle, hdr, sizeof(WAVEHDR));
 			}
 		}
@@ -936,14 +1006,5 @@ int main(int argc, char* argv[]) {
 	scumm.scummMain(argc, argv);
 
 	return 0;
-}
-
-
-bool isSfxFinished() {
-	return true;
-}
-
-void playSfxSound(void *sound, int size, int rate) {
-	
 }
 
