@@ -146,8 +146,8 @@ template<bool stereo, bool is16Bit, bool isUnsigned>
 int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, int numSamples) {
 	int samples = 0;
 #if 1
-	for (int i = (_pos > _end) ? 0 : 1; i < 2 && samples < numSamples && !eosIntern(); i++) {
-		const byte *endMarker = (i == 0) ? _bufferEnd : _end;
+	while (samples < numSamples && !eosIntern()) {
+		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
 		const int len = MIN(numSamples, (endMarker - _pos) / (is16Bit ? 2 : 1));
 
 		while (samples < len) {
