@@ -32,16 +32,11 @@ namespace Saga {
 #define R_FULLSCREEN_DEFAULT 0
 #define R_DOUBLERES_DEFAULT  1
 #define R_HICOLOR_DEFAULT    1
-#define R_SOFTCURSOR_DEFAULT 1
 
 #define R_PAUSEGAME_MSG "PAWS GAME"
 
 struct R_RENDER_MODULE {
 	int initialized;
-
-	// Init cvars
-	int r_fullscreen;
-	int r_softcursor;
 
 	// Module data
 	R_SURFACE *r_backbuf_surface;

@@ -63,6 +63,11 @@ int GFX_Init(OSystem *system, int width, int height) {
 	// Set module data
 	GfxModule.r_back_buf = r_back_buf;
 	GfxModule.init = 1;
+	GfxModule.white_index = -1;
+	GfxModule.black_index = -1;
+
+	// For now, always show the mouse cursor.
+	SYSINPUT_ShowMouse();
 
 	return R_SUCCESS;
 }
@@ -374,73 +379,6 @@ int GFX_BufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 	}
 
 	return R_SUCCESS;
-}
-
-int GFX_DrawCursor(R_SURFACE *ds, R_POINT *p1) {
-	static byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
-		0,   0,   0,   255, 0,   0,   0,
-		0,   0,   0,   255, 0,   0,   0,
-		0,   0,   0,   0,   0,   0,   0,
-		255, 255, 0,   0,   0,   255, 255,
-		0,   0,   0,   0,   0,   0,   0,
-		0,   0,   0,   255, 0,   0,   0,
-		0,   0,   0,   255, 0,   0,   0
-	};
-
-	R_CLIPINFO ci;
-
-	byte *src_p, *dst_p;
-
-	int x, y;
-	int src_skip, dst_skip;
-
-	R_POINT cur_pt;
-	R_RECT cur_rect;
-
-	// Clamp point to surface
-	cur_pt.x = MAX(p1->x, (int16)0);
-	cur_pt.y = MAX(p1->y, (int16)0);
-
-	cur_pt.x = MIN(p1->x, (int16)(ds->buf_w - 1));
-	cur_pt.y = MIN(p1->y, (int16)(ds->buf_h - 1));
-
-	cur_pt.x -= R_CURSOR_ORIGIN_X;
-	cur_pt.y -= R_CURSOR_ORIGIN_Y;
-
-	//Clip cursor to surface
-	cur_rect.left = 0;
-	cur_rect.top = 0;
-	cur_rect.right = R_CURSOR_W - 1;
-	cur_rect.bottom = R_CURSOR_H - 1;
-
-	ci.dst_rect = &ds->clip_rect;
-	ci.src_rect = &cur_rect;
-	ci.dst_pt = &cur_pt;
-
-	GFX_GetClipInfo(&ci);
-
-	src_p = cursor_img + ci.src_draw_x + (ci.src_draw_y * R_CURSOR_W);
-	dst_p = ds->buf + ci.dst_draw_x + (ci.dst_draw_y * ds->buf_pitch);
-
-	src_skip = R_CURSOR_W - ci.draw_w;
-	dst_skip = ds->buf_pitch - ci.draw_w;
-
-	for (y = 0; y < ci.draw_h; y++) {
-		for (x = 0; x < ci.draw_w; x++) {
-			if (*src_p != 0) {
-				*dst_p = *src_p;
-			}
-
-			dst_p++;
-			src_p++;
-		}
-
-		src_p += src_skip;
-		dst_p += dst_skip;
-	}
-
-	return R_SUCCESS;
-
 }
 
 // Fills a rectangle in the surface ds from point 'p1' to point 'p2' using
@@ -961,6 +899,32 @@ int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
 			best_windex = i;
 			best_wdelta = color_delta;
 		}
+	}
+
+	// When the palette changes, make sure the cursor colours are still
+	// correct. We may have to reconsider this code later, but for now
+	// there is only one cursor image.
+
+	if (GfxModule.white_index != best_windex) {
+		// Set up the mouse cursor
+		static byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
+			0,   0,   0,   255, 0,   0,   0,
+			0,   0,   0,   255, 0,   0,   0,
+			0,   0,   0,   0,   0,   0,   0,
+			255, 255, 0,   0,   0,   255, 255,
+			0,   0,   0,   0,   0,   0,   0,
+			0,   0,   0,   255, 0,   0,   0,
+			0,   0,   0,   255, 0,   0,   0
+		};
+
+		for (i = 0; i < R_CURSOR_W * R_CURSOR_H; i++) {
+			if (cursor_img[i] == 0)
+				cursor_img[i] = 255;
+			else if (cursor_img[i] == 255)
+				cursor_img[i] = best_windex;
+		}
+
+		_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4);
 	}
 
 	// Set whitest and blackest color indices

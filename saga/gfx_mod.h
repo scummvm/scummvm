@@ -49,7 +49,6 @@ int GFX_DrawPalette(R_SURFACE *dst_s);
 int GFX_BufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt);
 int GFX_BufToBuffer(byte * dst_buf, int dst_w, int dst_h, const byte *src,
 					int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt);
-int GFX_DrawCursor(R_SURFACE *ds, R_POINT *p1);
 int GFX_DrawRect(R_SURFACE *ds, R_RECT *dst_rect, int color);
 int GFX_DrawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color);
 int GFX_DrawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color);

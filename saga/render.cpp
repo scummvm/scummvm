@@ -53,14 +53,6 @@ static OSystem *_system;
 const char *test_txt = "The quick brown fox jumped over the lazy dog. She sells sea shells down by the sea shore.";
 
 int RENDER_Register() {
-	// Register "r_softcursor" cfg cvar
-	RenderModule.r_softcursor = R_SOFTCURSOR_DEFAULT;
-
-	if (CVAR_Register_I(&RenderModule.r_softcursor,
-		"r_softcursor", NULL, R_CVAR_CFG, 0, 1) != R_SUCCESS) {
-		return R_FAILURE;
-	}
-
 	return R_SUCCESS;
 }
 
@@ -104,11 +96,6 @@ int RENDER_Init(OSystem *system) {
 	RenderModule.r_tmp_buf_h = tmp_h;
 
 	RenderModule.r_backbuf_surface = GFX_GetBackBuffer();
-
-	// Initialize cursor state
-	if (RenderModule.r_softcursor) {
-		SYSINPUT_HideMouse();
-	}
 
 	_system = system;
 	RenderModule.initialized = 1;
@@ -185,10 +172,6 @@ int RENDER_DrawScene() {
 	// Update user interface
 
 	INTERFACE_Update(&mouse_pt, UPDATE_MOUSEMOVE);
-
-	if (RenderModule.r_softcursor) {
-		GFX_DrawCursor(backbuf_surface, &mouse_pt);
-	}
 
 	// Display text formatting test, if applicable
 	if (RenderModule.r_flags & RF_TEXT_TEST) {
