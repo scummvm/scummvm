@@ -192,33 +192,36 @@ void SmushFont::drawStringCentered(const char *str, byte *buffer, int dst_width,
 
 	char *z = strchr(str, '\n');
 	if (z != 0) {
+		// FIXME: this is actually evil, because it silently modifes the
+		// string 'str' passed to us, despite it being declared const.
+		warning("drawStringCentered: got input string containing \\n");
 		*z = 0;
 	}
 	char **words = split(str, ' ');
-	int nb_sub = 0;
+	int word_count = 0;
 
-	while (words[nb_sub])
-		nb_sub++;
+	while (words[word_count])
+		word_count++;
 
-	int *sizes = new int[nb_sub];
-	int i = 0, max_width = 0, height = 0, nb_subs = 0;
+	int i = 0, max_width = 0, height = 0, line_count = 0;
 
-	for (i = 0; i < nb_sub; i++)
-		sizes[i] = getStringWidth(words[i]);
-
-	char **substrings = new char *[nb_sub];
-	int *substr_widths = new int[nb_sub];
+	char **substrings = new char *[word_count];
+	int *substr_widths = new int[word_count];
 	int space_width = getCharWidth(' ');
 
 	i = 0;
-	while (i < nb_sub) {
-		int substr_width = sizes[i];
+	while (i < word_count) {
+		int substr_width = getStringWidth(words[i]);
 		char *substr = new char[1000];
 		strcpy(substr, words[i]);
 		int j = i + 1;
 
-		while (j < nb_sub && (substr_width + space_width + sizes[j]) < width) {
-			substr_width += sizes[j++] + space_width;
+		while (j < word_count) {
+			int word_width = getStringWidth(words[j]);
+			if ((substr_width + space_width + word_width) >= width)
+				break;
+			substr_width += word_width + space_width;
+			j++;
 		}
 
 		for (int k = i + 1; k < j; k++) {
@@ -226,16 +229,15 @@ void SmushFont::drawStringCentered(const char *str, byte *buffer, int dst_width,
 			strcat(substr, words[k]);
 		}
 
-		substrings[nb_subs] = substr;
-		substr_widths[nb_subs++] = substr_width;
+		substrings[line_count] = substr;
+		substr_widths[line_count++] = substr_width;
 		if (substr_width > max_width)
 			max_width = substr_width;
 		i = j;
 		height += getStringHeight(substr);
 	}
 
-	delete[] sizes;
-	for (i = 0; i < nb_sub; i++) {
+	for (i = 0; i < word_count; i++) {
 		delete[] words[i];
 	}
 	delete[] words;
@@ -252,7 +254,7 @@ void SmushFont::drawStringCentered(const char *str, byte *buffer, int dst_width,
 	if (x > dst_width - max_width)
 		x = dst_width - max_width;
 
-	for (i = 0; i < nb_subs; i++) {
+	for (i = 0; i < line_count; i++) {
 		drawSubstring(substrings[i], buffer, dst_width, x - substr_widths[i] / 2, y);
 		y += getStringHeight(substrings[i]);
 		delete[] substrings[i];
@@ -267,33 +269,36 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 
 	char *z = strchr(str, '\n');
 	if (z != 0) {
+		// FIXME: this is actually evil, because it silently modifes the
+		// string 'str' passed to us, despite it being declared const.
+		warning("drawStringWrap: got input string containing \\n");
 		*z = 0;
 	}
 	char **words = split(str, ' ');
-	int nb_sub = 0;
+	int word_count = 0;
 
-	while (words[nb_sub])
-		nb_sub++;
+	while (words[word_count])
+		word_count++;
 
-	int *sizes = new int[nb_sub];
-	int i = 0, max_width = 0, height = 0, nb_subs = 0;
+	int i = 0, max_width = 0, height = 0, line_count = 0;
 
-	for (i = 0; i < nb_sub; i++)
-		sizes[i] = getStringWidth(words[i]);
-
-	char **substrings = new char *[nb_sub];
-	int *substr_widths = new int[nb_sub];
+	char **substrings = new char *[word_count];
+	int *substr_widths = new int[word_count];
 	int space_width = getCharWidth(' ');
 
 	i = 0;
-	while (i < nb_sub) {
-		int substr_width = sizes[i];
+	while (i < word_count) {
+		int substr_width = getStringWidth(words[i]);
 		char *substr = new char[1000];
 		strcpy(substr, words[i]);
 		int j = i + 1;
 
-		while (j < nb_sub && (substr_width + space_width + sizes[j]) < width) {
-			substr_width += sizes[j++] + space_width;
+		while (j < word_count) {
+			int word_width = getStringWidth(words[j]);
+			if ((substr_width + space_width + word_width) >= width)
+				break;
+			substr_width += word_width + space_width;
+			j++;
 		}
 
 		for (int k = i + 1; k < j; k++) {
@@ -301,16 +306,15 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 			strcat(substr, words[k]);
 		}
 
-		substrings[nb_subs] = substr;
-		substr_widths[nb_subs++] = substr_width;
+		substrings[line_count] = substr;
+		substr_widths[line_count++] = substr_width;
 		if (max_width < substr_width)
 			max_width = substr_width;
 		i = j;
 		height += getStringHeight(substr);
 	}
 
-	delete[] sizes;
-	for (i = 0; i < nb_sub; i++) {
+	for (i = 0; i < word_count; i++) {
 		delete[] words[i];
 	}
 	delete[] words;
@@ -322,7 +326,7 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 	if (x > dst_width - max_width)
 		x = dst_width - max_width;
 
-	for (i = 0; i < nb_subs; i++) {
+	for (i = 0; i < line_count; i++) {
 		drawSubstring(substrings[i], buffer, dst_width, x, y);
 		y += getStringHeight(substrings[i]);
 		delete[] substrings[i];
@@ -337,34 +341,37 @@ void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_wi
 	
 	char *z = strchr(str, '\n');
 	if (z != 0) {
+		// FIXME: this is actually evil, because it silently modifes the
+		// string 'str' passed to us, despite it being declared const.
+		warning("drawStringWrapCentered: got input string containing \\n");
 		*z = 0;
 	}
 	char **words = split(str, ' ');
-	int nb_sub = 0;
+	int word_count = 0;
 
-	while (words[nb_sub])
-		nb_sub++;
+	while (words[word_count])
+		word_count++;
 
-	int *sizes = new int[nb_sub];
-	int i = 0, max_width = 0, height = 0, nb_subs = 0;
+	int i = 0, max_width = 0, height = 0, line_count = 0;
 
-	for (i = 0; i < nb_sub; i++)
-		sizes[i] = getStringWidth(words[i]);
-
-	char **substrings = new char *[nb_sub];
-	int *substr_widths = new int[nb_sub];
+	char **substrings = new char *[word_count];
+	int *substr_widths = new int[word_count];
 	int space_width = getCharWidth(' ');
 
 	i = 0;
 	width = MIN(width, dst_width);
-	while (i < nb_sub) {
-		int substr_width = sizes[i];
+	while (i < word_count) {
+		int substr_width = getStringWidth(words[i]);
 		char *substr = new char[1000];
 		strcpy(substr, words[i]);
 		int j = i + 1;
 
-		while (j < nb_sub && (substr_width + space_width + sizes[j]) < width) {
-			substr_width += sizes[j++] + space_width;
+		while (j < word_count) {
+			int word_width = getStringWidth(words[j]);
+			if ((substr_width + space_width + word_width) >= width)
+				break;
+			substr_width += word_width + space_width;
+			j++;
 		}
 
 		for (int k = i + 1; k < j; k++) {
@@ -372,16 +379,15 @@ void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_wi
 			strcat(substr, words[k]);
 		}
 
-		substrings[nb_subs] = substr;
-		substr_widths[nb_subs++] = substr_width;
+		substrings[line_count] = substr;
+		substr_widths[line_count++] = substr_width;
 		if (max_width < substr_width)
 			max_width = substr_width;
 		i = j;
 		height += getStringHeight(substr);
 	}
 
-	delete[] sizes;
-	for (i = 0; i < nb_sub; i++) {
+	for (i = 0; i < word_count; i++) {
 		delete[] words[i];
 	}
 	delete[] words;
@@ -397,7 +403,7 @@ void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_wi
 	if (x > dst_width - max_width)
 		x = dst_width - max_width;
 
-	for (i = 0; i < nb_subs; i++) {
+	for (i = 0; i < line_count; i++) {
 		drawSubstring(substrings[i], buffer, dst_width, x - substr_widths[i] / 2, y);
 		y += getStringHeight(substrings[i]);
 		delete[] substrings[i];
