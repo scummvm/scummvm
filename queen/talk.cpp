@@ -1230,9 +1230,7 @@ TalkSelected *Talk::talkSelected() {
 }
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
-
 	// Check to see if option fits on one line, and exit early
-
 	if (_vm->resource()->getLanguage() == ENGLISH || 
 		_vm->display()->textWidth(str) <= MAX_TEXT_WIDTH) {
 		strcpy(optionText[0], str);
@@ -1419,7 +1417,7 @@ int16 Talk::selectSentence() {
 						// Changed zone, change text colors
 						int y;
 
-						debug(0, "Changed zone. oldZone = %i, zone = %i",
+						debug(6, "Changed zone. oldZone = %i, zone = %i",
 								oldZone, zone);
 
 						if (zone > 0) {
@@ -1453,25 +1451,11 @@ int16 Talk::selectSentence() {
 				}
 				else if (mouseButton) {
 					selectedSentence = zone;
-					break;
 				}
 
 			} // while()
 		}
 	}
-
-
-	// XXX Begin debug stuff
-	// debug(6, "----- Select a sentence of these -----");
-	for (i = 1; i <= 4; i++) {
-		if (_talkString[i][0] != '\0') {
-			// XXX debug(6, "%i: %s", i, _talkString[i]);
-			if (!selectedSentence)
-				selectedSentence = i;
-		}
-	}
-	// XXX End debug stuff
-
 
 	debug(6, "Selected sentence %i", selectedSentence);
 
