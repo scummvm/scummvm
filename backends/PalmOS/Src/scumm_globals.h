@@ -55,15 +55,27 @@ enum {
 	GBVARS_PCJRFREQTABLE_INDEX
 };
 
+enum {
+	GBVARS_RESOURCETABLEPE100V1_INDEX = 0,
+	GBVARS_RESOURCETABLEPE100V2_INDEX,
+	GBVARS_RESOURCETABLEPM10_INDEX,
+	GBVARS_RESOURCETABLECM10_INDEX
+};
+
 void *GlbGetRecord(UInt16 index, UInt16 id);
 void GlbReleaseRecord(UInt16 index, UInt16 id);
 void GlbOpen();
 void GlbClose();
 
-#define GBVARS_SCUMM	0
-#define GBVARS_SIMON	1
-#define GBVARS_SKY		2
-#define GBVARS_SWORD2	3
+enum {
+	GBVARS_SCUMM = 0,
+	GBVARS_SIMON,
+	GBVARS_SKY,
+	GBVARS_SWORD2,
+	GBVARS_QUEEN,
+	
+	GBVARS_COUNT
+};
 
 #define _GINIT(x) void initGlobals_##x() {
 #define _GEND }
@@ -78,6 +90,7 @@ void GlbClose();
 #define PROTO_GLOBALS(x)		void CALL_INIT(x);\
 								void CALL_RELEASE(x);
 
+#ifndef DISABLE_SCUMM
 PROTO_GLOBALS(IMuseDigital)
 PROTO_GLOBALS(NewGui)
 PROTO_GLOBALS(Akos)
@@ -88,6 +101,11 @@ PROTO_GLOBALS(Dialogs)
 PROTO_GLOBALS(Charset)
 PROTO_GLOBALS(Costume)
 PROTO_GLOBALS(PlayerV2)
+#endif
+
+#ifndef DISABLE_QUEEN
+PROTO_GLOBALS(Restables)
+#endif
 
 #undef PROTO_GLOBALS
 

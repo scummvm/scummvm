@@ -25,33 +25,49 @@
 #include "globals.h"
 #include "scumm_globals.h"
 
+#include "scumm.h"
+
 static void GlbInitAll() {
 #ifndef DISABLE_SCUMM
-	CALL_INIT(IMuseDigital)
-	CALL_INIT(NewGui)
-	CALL_INIT(Akos)
-	CALL_INIT(Bundle)
-	CALL_INIT(Codec47)
-	CALL_INIT(Gfx)
-	CALL_INIT(Dialogs)
-	CALL_INIT(Charset)
-	CALL_INIT(Costume)
-	CALL_INIT(PlayerV2)
+	if (gVars->globals[GBVARS_SCUMM]) {
+		CALL_INIT(IMuseDigital)
+		CALL_INIT(NewGui)
+		CALL_INIT(Akos)
+		CALL_INIT(Bundle)
+		CALL_INIT(Codec47)
+		CALL_INIT(Gfx)
+		CALL_INIT(Dialogs)
+		CALL_INIT(Charset)
+		CALL_INIT(Costume)
+		CALL_INIT(PlayerV2)
+	}
+#endif
+#ifndef DISABLE_QUEEN
+	if (gVars->globals[GBVARS_QUEEN]) {
+		CALL_INIT(Restables)
+	}
 #endif
 }
 
 static void GlbReleaseAll() {
 #ifndef DISABLE_SCUMM
-	CALL_RELEASE(IMuseDigital)
-	CALL_RELEASE(NewGui)
-	CALL_RELEASE(Akos)
-	CALL_RELEASE(Bundle)
-	CALL_RELEASE(Codec47)
-	CALL_RELEASE(Gfx)
-	CALL_RELEASE(Dialogs)
-	CALL_RELEASE(Charset)
-	CALL_RELEASE(Costume)
-	CALL_RELEASE(PlayerV2)
+	if (gVars->globals[GBVARS_SCUMM]) {
+		CALL_RELEASE(IMuseDigital)
+		CALL_RELEASE(NewGui)
+		CALL_RELEASE(Akos)
+		CALL_RELEASE(Bundle)
+		CALL_RELEASE(Codec47)
+		CALL_RELEASE(Gfx)
+		CALL_RELEASE(Dialogs)
+		CALL_RELEASE(Charset)
+		CALL_RELEASE(Costume)
+		CALL_RELEASE(PlayerV2)
+	}
+#endif
+#ifndef DISABLE_QUEEN
+	if (gVars->globals[GBVARS_QUEEN]) {
+		CALL_RELEASE(Restables)
+	}
 #endif
 }
 
@@ -71,8 +87,9 @@ static DmOpenRef GlbOpenInternal(const Char *nameP) {
 void GlbOpen() {
 	gVars->globals[GBVARS_SCUMM] = GlbOpenInternal("Scumm-Globals");
 	gVars->globals[GBVARS_SIMON] = GlbOpenInternal("Simon-Globals");
-	gVars->globals[GBVARS_SKY] = GlbOpenInternal("Sky-Globals");
-	
+	gVars->globals[GBVARS_SKY  ] = GlbOpenInternal("Sky-Globals");
+	gVars->globals[GBVARS_QUEEN] = GlbOpenInternal("Queen-Globals");
+
 	GlbInitAll();
 }
 
@@ -85,6 +102,8 @@ void GlbClose() {
 		DmCloseDatabase(gVars->globals[GBVARS_SIMON]);
 	if (gVars->globals[GBVARS_SKY])
 		DmCloseDatabase(gVars->globals[GBVARS_SKY]);
+	if (gVars->globals[GBVARS_QUEEN])
+		DmCloseDatabase(gVars->globals[GBVARS_QUEEN]);
 }
 
 void *GlbGetRecord(UInt16 index, UInt16 id) {
