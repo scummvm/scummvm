@@ -186,16 +186,16 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 	// set up the g_header
 
 	// 'checksum' gets filled in last of all
-	sprintf(g_header.description, "%s", (char*)desc);					// player's description of savegame
+	sprintf(g_header.description, "%s", (char*)desc);				// player's description of savegame
 	g_header.varLength	= res_man.Res_fetch_len(1);					// length of global variables resource
-	g_header.screenId		= this_screen.background_layer_id;			// resource id of current screen file
+	g_header.screenId	= this_screen.background_layer_id;			// resource id of current screen file
 	g_header.runListId	= LLogic.Return_run_list();					// resource id of current run-list
 	g_header.feet_x		= this_screen.feet_x;						// those scroll position control things
 	g_header.feet_y		= this_screen.feet_y;						//
-	g_header.music_id		= looping_music_id;							// id of currently looping music (or zero)
+	g_header.music_id	= looping_music_id;							// id of currently looping music (or zero)
 
 	// object hub
-	memcpy (&g_header.player_hub, res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
+	memcpy(&g_header.player_hub, res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
 	res_man.Res_close(CUR_PLAYER_ID);
 
 	// logic, graphic & mega structures
@@ -207,13 +207,13 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 #ifdef SCUMM_BIG_ENDIAN
 	converHeaderEndian(g_header);
 #endif
-	memcpy( buffer->ad, &g_header, sizeof(g_header) );					// copy the header to the savegame buffer
+	memcpy(buffer->ad, &g_header, sizeof(g_header));					// copy the header to the savegame buffer
 
 	//------------------------------------------------------
 	// copy the global variables to the buffer
 
 	varsRes = res_man.Res_open(1);									// open variables resource
-	memcpy( buffer->ad + sizeof(g_header), varsRes, FROM_LE_32(g_header.varLength) );	// copy that to the buffer, following the header
+	memcpy(buffer->ad + sizeof(g_header), varsRes, FROM_LE_32(g_header.varLength));	// copy that to the buffer, following the header
 #ifdef SCUMM_BIG_ENDIAN
 	uint32 *globalVars = (uint32 *)(buffer->ad + sizeof(g_header));
 	const uint numVars = FROM_LE_32(g_header.varLength)/4;

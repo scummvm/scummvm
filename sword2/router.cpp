@@ -221,10 +221,10 @@ static	_barData	bars[O_GRID_SIZE+EXTRA_GRID_SIZE];	// because extra bars will be
 static	_nodeData	node[O_GRID_SIZE+EXTRA_GRID_SIZE];
 
 // area for extra route data to block parts of floors and enable routing round mega charaters
-static int32		nExtraBars	= 0;
-static int32		nExtraNodes	= 0;
-static _barData		extraBars[EXTRA_GRID_SIZE];
-static _nodeData	extraNode[EXTRA_GRID_SIZE];
+static	int32		nExtraBars	= 0;
+static	int32		nExtraNodes	= 0;
+static	_barData		extraBars[EXTRA_GRID_SIZE];
+static	_nodeData	extraNode[EXTRA_GRID_SIZE];
 
 static	int32	startX;
 static	int32	startY;
@@ -240,45 +240,45 @@ static	_pathData	modularPath[O_ROUTE_SIZE];
 static	int32   	routeLength;
 
 
-int32	framesPerStep;
-int32	framesPerChar;
+static	int32	framesPerStep;
+static	int32	framesPerChar;
 
-uint8	nWalkFrames;				// no. of frames per walk cycle
-uint8	usingStandingTurnFrames;	// any standing turn frames?
-uint8	usingWalkingTurnFrames;		// any walking turn frames?
-uint8	usingSlowInFrames;			// any slow-in frames?
-uint8	usingSlowOutFrames;			// any slow-out frames?
-int32 	dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-int32	dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-int8	modX[NO_DIRECTIONS];
-int8	modY[NO_DIRECTIONS];
-int32	diagonalx = 0;
-int32	diagonaly = 0;
+static	uint8	nWalkFrames;				// no. of frames per walk cycle
+static	uint8	usingStandingTurnFrames;	// any standing turn frames?
+static	uint8	usingWalkingTurnFrames;		// any walking turn frames?
+static	uint8	usingSlowInFrames;			// any slow-in frames?
+static	uint8	usingSlowOutFrames;			// any slow-out frames?
+static	int32 	dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+static	int32	dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+static	int8	modX[NO_DIRECTIONS];
+static	int8	modY[NO_DIRECTIONS];
+static	int32	diagonalx = 0;
+static	int32	diagonaly = 0;
 
-int32	firstStandFrame;
+static	int32	firstStandFrame;
 
-int32	firstStandingTurnLeftFrame;
-int32	firstStandingTurnRightFrame;
+static	int32	firstStandingTurnLeftFrame;
+static	int32	firstStandingTurnRightFrame;
 
-int32	firstWalkingTurnLeftFrame;	// left walking turn
-int32	firstWalkingTurnRightFrame; // right walking turn
+static	int32	firstWalkingTurnLeftFrame;	// left walking turn
+static	int32	firstWalkingTurnRightFrame; // right walking turn
 
-uint32	firstSlowInFrame[NO_DIRECTIONS];
-uint32	numberOfSlowInFrames[NO_DIRECTIONS];
+static	uint32	firstSlowInFrame[NO_DIRECTIONS];
+static	uint32	numberOfSlowInFrames[NO_DIRECTIONS];
 
-uint32	leadingLeg[NO_DIRECTIONS];
+static	uint32	leadingLeg[NO_DIRECTIONS];
 
-int32	firstSlowOutFrame;
-int32	numberOfSlowOutFrames;	// number of slow-out frames on for each leading-leg in each direction
+static	int32	firstSlowOutFrame;
+static	int32	numberOfSlowOutFrames;	// number of slow-out frames on for each leading-leg in each direction
 
 
-int32	stepCount;
+static	int32	stepCount;
 
-int32	moduleX;
-int32	moduleY;
-int32	currentDir;
-int32	lastCount;
-int32	frame;
+static	int32	moduleX;
+static	int32	moduleY;
+static	int32	currentDir;
+static	int32	lastCount;
+static	int32	frame;
 
 // ie. total number of slow-out frames = (numberOfSlowOutFrames * 2 * NO_DIRECTIONS)
 
