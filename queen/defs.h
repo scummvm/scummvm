@@ -86,6 +86,7 @@ enum Language {
 	ENGLISH  = 'E',
 	FRENCH   = 'F',
 	GERMAN   = 'G',
+	HEBREW   = 'H',
 	ITALIAN  = 'I',
 	SPANISH  = 'S'
 };

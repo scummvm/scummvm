@@ -45,7 +45,7 @@ class Input {
 			MOUSE_RBUTTON = 2
 		};
 
-		Input(OSystem *system);
+		Input(Language language, OSystem *system);
 
 		//! calls the other delay() with a value adjusted depending on _fastMode
 		void delay();
@@ -96,6 +96,11 @@ class Input {
 			
 			KEY_F1 = 282
 		};
+
+		enum 
+		{
+			LANGUAGE_COUNT = 6
+		};
 		
 		//! Used to get keyboard and mouse events
 		OSystem *_system;
@@ -127,6 +132,11 @@ class Input {
 		//! Set by delay();
 		int _mouseButton;
 
+		//! Command keys for current language
+		const char* _currentCommandKeys;
+
+		//! Command keys for all languages
+		static const char* _commandKeys[LANGUAGE_COUNT];
 };
 
 } // End of namespace Queen

@@ -26,11 +26,43 @@
 
 namespace Queen {
 
+const char* Input::_commandKeys[LANGUAGE_COUNT] = {
+	{ "ocmglptu" }, // English
+	{ "osbgpnre" }, // German
+	{ "ofdnepau" }, // French
+	{ "acsdgpqu" }, // Italian
+	{ "ocmglptu" }, // Hebrew
+	{ "acodmthu" }  // Spanish
+};  
 
-Input::Input(OSystem *system) : 
+Input::Input(Language language, OSystem *system) : 
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE), 
 	_cutawayRunning(false), _cutawayQuit(false), _talkQuit(false),
 	_inKey(0), _mouse_x(0), _mouse_y(0), _mouseButton(0) {
+
+	switch (language) {
+		case ENGLISH:
+			_currentCommandKeys = _commandKeys[0];
+			break;
+		case GERMAN:
+			_currentCommandKeys = _commandKeys[1];
+			break;
+		case FRENCH:
+			_currentCommandKeys = _commandKeys[2];
+			break;
+		case ITALIAN:
+			_currentCommandKeys = _commandKeys[3];
+			break;
+		case HEBREW:
+			_currentCommandKeys = _commandKeys[4];
+			break;
+		case SPANISH:
+			_currentCommandKeys = _commandKeys[5];
+			break;
+		default:
+			error("Unknown language");
+			break;
+	}
 }
 
 void Input::delay() {
@@ -155,6 +187,22 @@ void Input::checkKeys() {
 			break;
 
 		default:
+			if(_inKey == _currentCommandKeys[0])
+				_keyVerb = Verb(VERB_OPEN);
+			else if(_inKey == _currentCommandKeys[1])
+				_keyVerb = Verb(VERB_CLOSE);
+			else if(_inKey == _currentCommandKeys[2])
+				_keyVerb = Verb(VERB_MOVE);
+			else if(_inKey == _currentCommandKeys[3])
+				_keyVerb = Verb(VERB_GIVE);
+			else if(_inKey == _currentCommandKeys[4])
+				_keyVerb = Verb(VERB_LOOK_AT);
+			else if(_inKey == _currentCommandKeys[5])
+				_keyVerb = Verb(VERB_PICK_UP);
+			else if(_inKey == _currentCommandKeys[6])
+				_keyVerb = Verb(VERB_TALK_TO);
+			else if(_inKey == _currentCommandKeys[7])
+				_keyVerb = Verb(VERB_USE);
 			break;
 	}
 	
