@@ -320,8 +320,7 @@ void mult_animate(void) {
 			} else {
 				pAnimData->frame++;
 				if (pAnimData->frame >=
-				    scen_animations[pAnimData->animation].
-				    layers[pAnimData->layer]->framesCount) {
+				    scen_animations[(int)pAnimData->animation].layers[pAnimData->layer]->framesCount) {
 					switch (pAnimData->animType) {
 					case 0:
 						pAnimData->frame = 0;
@@ -332,11 +331,11 @@ void mult_animate(void) {
 
 						*(mult_objects[i].pPosX) =
 						    *(mult_objects[i].pPosX) +
-						    scen_animations[pAnimData->animation].layers[pAnimData->layer]->animDeltaX;
+						    scen_animations[(int)pAnimData->animation].layers[pAnimData->layer]->animDeltaX;
 
 						*(mult_objects[i].pPosY) =
 						    *(mult_objects[i].pPosY) +
-						    scen_animations[pAnimData->animation].layers[pAnimData->layer]->animDeltaY;
+						    scen_animations[(int)pAnimData->animation].layers[pAnimData->layer]->animDeltaY;
 						break;
 
 					case 2:
@@ -1128,7 +1127,7 @@ void mult_loadMult(int16 resId) {
 }
 
 void mult_freeMultKeys(void) {
-	char i;
+	int i;
 	char animCount;
 	char staticCount;
 

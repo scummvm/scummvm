@@ -31,7 +31,7 @@ namespace Gob {
 		return;
 	}
 
-	Snd_SoundDesc *snd_loadSoundData(char *path) {
+	Snd_SoundDesc *snd_loadSoundData(const char *path) {
 		return NULL;
 	}
 void snd_freeSoundData(Snd_SoundDesc * sndDesc) {;}

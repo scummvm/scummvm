@@ -461,14 +461,10 @@ void gob_animateObjects(void) {
 
 			if (objDesc->multState != -1) {
 				if (objDesc->multState > 39) {
-					objDesc->stateMach =
-					    gob_goblins[objDesc->
-					    multObjIndex]->stateMach;
-					objDesc->state =
-					    objDesc->multState - 40;
+					objDesc->stateMach = gob_goblins[(int)(objDesc->multObjIndex)]->stateMach;
+					objDesc->state = objDesc->multState - 40;
 				} else {
-					objDesc->stateMach =
-					    objDesc->realStateMach;
+					objDesc->stateMach = objDesc->realStateMach;
 					objDesc->state = objDesc->multState;
 				}
 				objDesc->animation =
@@ -565,7 +561,7 @@ int16 gob_objIntersected(Gob_Object *obj1, Gob_Object *obj2) {
 }
 
 void gob_setMultStates(Gob_Object * gobDesc) {
-	gobDesc->stateMach = gob_goblins[gobDesc->multObjIndex]->stateMach;
+	gobDesc->stateMach = gob_goblins[(int)gobDesc->multObjIndex]->stateMach;
 }
 
 int16 gob_nextLayer(Gob_Object *gobDesc) {
@@ -2268,12 +2264,10 @@ void gob_placeItem(int16 indexInPocket, int16 idInPocket) {
 		map_itemPoses[idInPocket].orient = lookDir;
 		if (map_itemPoses[idInPocket].orient == 0) {
 //                      map_itemPoses[idInPocket].x++;
-			if (map_passMap[map_itemPoses[idInPocket].
-				y][map_itemPoses[idInPocket].x + 1] == 1)
+			if (map_passMap[(int)map_itemPoses[idInPocket].y][map_itemPoses[idInPocket].x + 1] == 1)
 				map_itemPoses[idInPocket].x++;
 		} else {
-			if (map_passMap[map_itemPoses[idInPocket].
-				y][map_itemPoses[idInPocket].x - 1] == 1)
+			if (map_passMap[(int)map_itemPoses[idInPocket].y][map_itemPoses[idInPocket].x - 1] == 1)
 				map_itemPoses[idInPocket].x--;
 		}
 	}

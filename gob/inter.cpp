@@ -159,7 +159,7 @@ void inter_printText(void) {
 			switch (*inter_execPtr) {
 			case 23:
 			case 26:
-				sprintf(buf + i, "%ld", READ_LE_UINT32(inter_variables + parse_parseVarIndex()));
+				sprintf(buf + i, "%d", READ_LE_UINT32(inter_variables + parse_parseVarIndex()));
 				break;
 
 			case 25:

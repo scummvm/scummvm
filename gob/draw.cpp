@@ -850,7 +850,7 @@ void draw_printText(void) {
 			cmd = ptr2[17] & 0x7f;
 			if (cmd == 0) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
-				sprintf(buf, "%ld",  READ_LE_UINT32(inter_variables + val));
+				sprintf(buf, "%d",  READ_LE_UINT32(inter_variables + val));
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 
@@ -858,18 +858,18 @@ void draw_printText(void) {
 			} else {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 
-				sprintf(buf, "%ld",  READ_LE_UINT32(inter_variables + val));
+				sprintf(buf, "%d",  READ_LE_UINT32(inter_variables + val));
 				if (buf[0] == '-') {
 					while (strlen(buf) - 1 < (uint32)ptr2[17]) {
-						util_insertStr((char *)"0", buf, 1);
+						util_insertStr("0", buf, 1);
 					}
 				} else {
 					while (strlen(buf) - 1 < (uint32)ptr2[17]) {
-						util_insertStr((char *)"0", buf, 0);
+						util_insertStr("0", buf, 0);
 					}
 				}
 
-				util_insertStr((char *)",", buf, strlen(buf) + 1 - ptr2[17]);
+				util_insertStr(",", buf, strlen(buf) + 1 - ptr2[17]);
 			}
 
 			draw_textToPrint = buf;

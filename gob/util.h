@@ -50,7 +50,7 @@ void vid_waitRetrace(int16 mode);
 FontDesc *util_loadFont(const char *path);
 void util_freeFont(FontDesc * fontDesc);
 void util_clearPalette(void);
-void util_insertStr(char *str1, char *str2, int16 pos);
+void util_insertStr(const char *str1, char *str2, int16 pos);
 void util_cutFromStr(char *str, int16 from, int16 cutlen);
 int16 util_strstr(const char *str1, char *str2);
 void util_waitEndFrame(void);

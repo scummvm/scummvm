@@ -446,7 +446,7 @@ int16 game_checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char handl
 	util_processInput();
 
 	if (READ_LE_UINT32(inter_variables + 0xe8) != 0) {
-		if (mult_frameStart != READ_LE_UINT32(inter_variables + 0xe8) - 1)
+		if (mult_frameStart != (int)READ_LE_UINT32(inter_variables + 0xe8) - 1)
 			mult_frameStart++;
 		else
 			mult_frameStart = 0;
@@ -1793,7 +1793,7 @@ void game_playTot(int16 skipPlay) {
 
 			filePtr = (char *)game_totFileData + 0x30;
 
-			if (READ_LE_UINT32(filePtr) != -1) {
+			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
 				curPtr = game_totFileData;
 				game_totTextData =
 				    (Game_TotTextTable *) (curPtr +
@@ -1802,7 +1802,7 @@ void game_playTot(int16 skipPlay) {
 			}
 
 			filePtr = (char *)game_totFileData + 0x34;
-			if (READ_LE_UINT32(filePtr) != -1) {
+			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
 				curPtr = game_totFileData;
 
 				game_totResourceTable = 

@@ -286,7 +286,7 @@ void util_clearPalette(void) {
 		vid_setPalElem(i, 0, 0, 0, 0, videoMode);
 }
 
-void util_insertStr(char *str1, char *str2, int16 pos) {
+void util_insertStr(const char *str1, char *str2, int16 pos) {
 	int16 len1;
 	int16 i;
 	int16 from;

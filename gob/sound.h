@@ -37,7 +37,7 @@ typedef struct Snd_SoundDesc {
 } Snd_SoundDesc;
 
 void snd_playSample(Snd_SoundDesc * soundDesc, int16 repCount, int16 frequency);
-Snd_SoundDesc *snd_loadSoundData(char *path);
+Snd_SoundDesc *snd_loadSoundData(const char *path);
 void snd_freeSoundData(Snd_SoundDesc * sndDesc);
 void snd_playComposition(Snd_SoundDesc ** samples, int16 *composit, int16 freqVal);
 void snd_waitEndPlay(void);
