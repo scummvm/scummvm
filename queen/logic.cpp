@@ -331,6 +331,9 @@ Area *Logic::area(int room, int num) {
 }
 
 Area *Logic::currentRoomArea(int num) {
+	if (num == 0 || num > _areaMax[_currentRoom]) {
+		error("Logic::currentRoomArea() - Bad area number = %d (max = %d), currentRoom = %d", num, _areaMax[_currentRoom], _currentRoom);
+	}
 	return &_area[_currentRoom][num];
 }
 
@@ -602,6 +605,7 @@ void Logic::gameState(int index, int16 newValue) {
 
 void Logic::zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
+	debug(9, "Logic::zoneSet(%d, %d, (%d,%d), (%d,%d))", screen, zone, x1, y1, x2, y2);
 	ZoneSlot *pzs = &_zones[screen][zone];
 	pzs->valid = true;
 	pzs->box.x1 = x1;
@@ -614,7 +618,6 @@ void Logic::zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2,
 void Logic::zoneSet(uint16 screen, uint16 zone, const Box& box) {
 	
 	debug(9, "Logic::zoneSet(%d, %d, (%d,%d), (%d,%d))", screen, zone, box.x1, box.y1, box.x2, box.y2);
-
 	ZoneSlot *pzs = &_zones[screen][zone];
 	pzs->valid = true;
 	pzs->box = box;
@@ -660,6 +663,7 @@ void Logic::zoneClearAll(uint16 screen) {
 
 void Logic::zoneSetup() {
 
+	debug(9, "Logic::zoneSetup()");
 	zoneClearAll(ZONE_ROOM);
 
 	int i;
@@ -1132,6 +1136,7 @@ void Logic::roomSetup(const char* room, int comPanel, bool inCutaway) {
 	sprintf(filename, "%s.BBK", room);
 	_graphics->bankLoad(filename, 15);
 
+	zoneSetup();
 	_numFrames = 37 + FRAMES_JOE_XTRA;
 	roomSetupFurniture();
 	roomSetupObjects();
@@ -1145,7 +1150,6 @@ void Logic::roomDisplay(const char* room, RoomDisplayMode mode, uint16 scale, in
 	roomErase();
 	// TODO: _sound->loadSFX(SFXNAME[_currentRoom]);
 	roomSetup(room, comPanel, inCutaway);
-	zoneSetup();
 	ObjectData *pod = NULL;
 	if (mode != RDM_FADE_NOJOE) {
 		pod = joeSetupInRoom(mode != RDM_FADE_JOE_XY, scale);
