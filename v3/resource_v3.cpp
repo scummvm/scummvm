@@ -150,6 +150,8 @@ void Scumm_v3::readIndexFile() {
 void Scumm_v3::loadCharset(int no){
 	uint32 size;
 
+		memset(_charsetData, 0, sizeof(_charsetData));
+
         checkRange(4 ,0 ,no , "Loading illegal charset %d");
         openRoom(-1);
         
