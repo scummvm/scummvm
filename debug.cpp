@@ -104,6 +104,5 @@ void error(const char *fmt, ...) {
 	va_end(va);
 	std::fprintf(stderr, "\n");
 
-	SDL_Quit();
 	exit(1);
 }
