@@ -241,11 +241,15 @@ SCUMM
   - Fix o6_setboxset, only used when leaving basement in fbear
   - Fix nukeArrays, it is nuking wrong arrays in fbear
 * Humongous entertainment >= v7 titles:
+  - Add support for song sync. in HE80+ games.
+  - Add support for additional sound resources
   - Add support for sprites (Used by HE90+ games)
+  - Add support for multi-blocks, often used when loading wizImages
   - Add support for additional drawWizImage flags
   - Add support for WizPolygon rendering (cyx)
   - Add support for aux animation code used by cut scenes (cyx)
-  - Add support for akos codec 32 shadows
+  - Add shadows support for akos codecs, uses XMAP resources.
+  - Add array sorting
   - Fix debug strings (Reports incorrect values) (Kirben)
   - Fix array issues in Buzzy games (Kirben)
   - Fix inventory disappearing in puttzoo/zoodemo/timedemo
