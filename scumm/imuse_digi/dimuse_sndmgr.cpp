@@ -305,83 +305,58 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		error("ImuseDigiSndMgr::openSound() can't alloc free sound slot");
 	}
 
+	const bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 	bool result = false;
 	byte *ptr = NULL;
+	
+	switch (soundType) {
+	case IMUSE_RESOURCE:
+		assert(soundName[0] == 0);	// Paranoia check
 
-	if (soundName[0] == 0) {
-		sound->name[0] = 0;
-		if ((soundType == IMUSE_RESOURCE)) {
-			_vm->ensureResourceLoaded(rtSound, soundId);
-			_vm->lock(rtSound, soundId);
-			ptr = _vm->getResourceAddress(rtSound, soundId);
-			if (ptr == NULL) {
-				closeSound(sound);
-				return NULL;
-			}
-			sound->resPtr = ptr;
-			sound->soundId = soundId;
-			sound->type = soundType;
-			sound->volGroupId = volGroupId;
-			result = true;
-		} else if (soundType == IMUSE_BUNDLE) {
-			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
-			if (volGroupId == IMUSE_VOLGRP_VOICE)
-				result = openVoiceBundle(sound, disk);
-			else if (volGroupId == IMUSE_VOLGRP_MUSIC)
-				result = openMusicBundle(sound, disk);
-			else
-				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
-			if (!result) {
-				closeSound(sound);
-				return NULL;
-			}
-			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0) {
-				closeSound(sound);
-				return NULL;
-			}
-			sound->soundId = soundId;
-			sound->type = soundType;
-			sound->volGroupId = volGroupId;
-		} else {
-			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
-		}
-	} else {
-		if (soundType == IMUSE_BUNDLE) {
-			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
-			if (volGroupId == IMUSE_VOLGRP_VOICE)
-				result = openVoiceBundle(sound, disk);
-			else if (volGroupId == IMUSE_VOLGRP_MUSIC)
-				result = openMusicBundle(sound, disk);
-			else
-				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
-			if (!result) {
-				closeSound(sound);
-				return NULL;
-			}
-			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0) {
-				closeSound(sound);
-				return NULL;
-			}
-			strcpy(sound->name, soundName);
-			sound->soundId = soundId;
-			sound->type = soundType;
-			sound->volGroupId = volGroupId;
-		} else {
-			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %s", soundName);
-		}
-	}
-
-	if (result) {
+		_vm->ensureResourceLoaded(rtSound, soundId);
+		_vm->lock(rtSound, soundId);
+		ptr = _vm->getResourceAddress(rtSound, soundId);
 		if (ptr == NULL) {
 			closeSound(sound);
 			return NULL;
 		}
-		sound->disk = _disk;
-		prepareSound(ptr, sound);
-		return sound;
+		sound->resPtr = ptr;
+		break;
+	case IMUSE_BUNDLE:
+		if (volGroupId == IMUSE_VOLGRP_VOICE)
+			result = openVoiceBundle(sound, disk);
+		else if (volGroupId == IMUSE_VOLGRP_MUSIC)
+			result = openMusicBundle(sound, disk);
+		else
+			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
+		if (!result) {
+			closeSound(sound);
+			return NULL;
+		}
+		if (soundName[0] == 0) {
+			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {
+				closeSound(sound);
+				return NULL;
+			}
+		} else {
+			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0 || ptr == NULL) {
+				closeSound(sound);
+				return NULL;
+			}
+		}
+		sound->resPtr = 0;
+		break;
+	default:
+		error("ImuseDigiSndMgr::openSound() Unknown soundType %d (trying to load sound %d)", soundType, soundId);
 	}
 
-	return NULL;
+	strcpy(sound->name, soundName);
+	sound->soundId = soundId;
+	sound->type = soundType;
+	sound->volGroupId = volGroupId;
+	sound->disk = _disk;
+	prepareSound(ptr, sound);
+	return sound;
 }
 
 void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
