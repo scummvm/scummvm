@@ -215,6 +215,15 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 			_vm->_system->delay_msecs(90);
 		}
 
+		// Wait for the voice to stop playing. This is to make sure
+		// that we don't cut off the speech in mid-sentence, and - even
+		// more importantly - that we don't free the sound buffer while
+		// it's in use.
+
+		while (handle) {
+			_vm->_system->delay_msecs(100);
+		};
+
 		closeTextObject(text[textCounter]);
 
 		_vm->_graphics->clearScene();
