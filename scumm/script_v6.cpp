@@ -2811,8 +2811,9 @@ void Scumm_v6::o6_kernelFunction()
 		if ((_extraBoxFlags[args[1]] & 0x00FF) == 0x00C0) {
 			push(_extraBoxFlags[args[1]]);
 		} else {
-			byte *temp = (byte *)getBoxBaseAddr(args[1]);
-			push((byte)(*(temp + 17)));
+//			byte *temp = (byte *)getBoxBaseAddr(args[1]);
+//			push((byte)(*(temp + 17)));
+			push(getBoxFlags(args[1]));
 		}
 		break;
 	default:
