@@ -53,7 +53,7 @@ int SYSTIMER_InitMSCounter() {
 		return R_FAILURE;
 	}
 
-	R_TimerData.t_previous_ticks = SDL_GetTicks();
+	R_TimerData.t_previous_ticks = g_system->get_msecs();
 	R_TimerData.initialized = 1;
 
 	return R_SUCCESS;
@@ -66,7 +66,7 @@ unsigned long SYSTIMER_ReadMSCounter() {
 		return 0;
 	}
 
-	R_TimerData.t_current_ticks = SDL_GetTicks();
+	R_TimerData.t_current_ticks = g_system->get_msecs();
 
 	if (R_TimerData.t_current_ticks < R_TimerData.t_previous_ticks) {
 		// Timer has rolled over after 49 days
@@ -83,13 +83,13 @@ int SYSTIMER_ResetMSCounter() {
 		return R_FAILURE;
 	}
 
-	R_TimerData.t_previous_ticks = SDL_GetTicks();
+	R_TimerData.t_previous_ticks = g_system->get_msecs();
 
 	return R_SUCCESS;
 }
 
 int SYSTIMER_Sleep(uint16 msec) {
-	SDL_Delay(msec);
+	g_system->delay_msecs(msec);
 
 	return R_SUCCESS;
 }

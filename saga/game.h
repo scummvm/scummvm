@@ -60,10 +60,11 @@ struct R_GAMEDESC {
 	int gd_fontct;
 	R_GAME_FONTDESC *gd_fontdescs;
 	R_GAME_SOUNDINFO *gd_soundinfo;
+	uint32 features;
 	int gd_supported;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, gd_title, gd_game_id };
+		GameSettings dummy = { name, gd_title, features };
 		return dummy;
 	}
 };

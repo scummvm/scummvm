@@ -173,6 +173,7 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
 		&ITEDEMO_GameSound,
+		0,
 		0 // Game supported flag
 	},
 
@@ -191,6 +192,7 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		0,
 		0
 	},
 	
@@ -210,6 +212,7 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		0,
 		1
 	},
 
@@ -228,6 +231,7 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEDISK_GameFonts),
 		ITEDISK_GameFonts,
 		&ITE_GameSound,
+		0,
 		1
 	},
 
@@ -246,6 +250,7 @@ R_GAMEDESC GameDescs[] = {
 		0,
 		NULL,
 		&IHNM_GameSound,
+		GF_DEFAULT_TO_1X_SCALER,
 		0
 	},
 
@@ -257,19 +262,14 @@ R_GAMEDESC GameDescs[] = {
 		"I Have No Mouth and I Must Scream (DOS)",
 		640, 480,
 		304,
-
 		1,
-
 		&IHNM_Resources,
-
 		ARRAYSIZE(IHNMCD_GameFiles),
 		IHNMCD_GameFiles,
-
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
-
 		&IHNM_GameSound,
-
+		GF_DEFAULT_TO_1X_SCALER,
 		1
 	}
 };
