@@ -10,7 +10,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  SCUMM:
    - Fixed wrong actor animation in Full Throttle INSANE
  
- PocketPC:
+ Windows Mobile port (PocketPC / Smartphone) :
    - Fixed FOTAQ crash on all platforms when leaving the hotel AGAIN
    - Better low quality Adlib emulation for FOTAQ
    - Fix randomly broken Hide Toolbar option (thanks iKi)
@@ -22,6 +22,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Remove AYGSHELL.DLL dependency to work on CE .Net platforms
    - Fix key mapping issues introduced in 0.7.0
    - Full Throttle interactive action sequences should be more playable.
+   - Quit Simon game with 'Action key' on Smartphones
 
  Sword2:
    - Fixed crash caused by attempting to play music from CD1 and CD2 at the
