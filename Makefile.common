@@ -41,10 +41,21 @@ PLUGIN_PREFIX := lib
 PLUGIN_SUFFIX := .so
 
 ifdef BUILD_PLUGINS
-# FIXME/TODO: The following is OS X specific
-LDFLAGS += -all_load
+# TODO: The following stuff should be controlled by 'configure'
+
+# Define DYNAMIC_MODULES during building
 CXXFLAGS += -DDYNAMIC_MODULES
+
+# Uncomment these for Mac OS X
+#PLUGIN_LDFLAGS := -bundle -bundle_loader $(EXECUTABLE)
+#LDFLAGS += -all_load
+#LIBS += -ldl
+
+# Uncomment these for Linux
+CXXFLAGS += -fpic
+PLUGIN_LDFLAGS := -shared
 LIBS += -ldl
+
 endif
 
 ######################################################################
@@ -96,6 +107,10 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 # Include the build instructions for all modules
 -include $(addsuffix /module.mk,$(MODULES))
 
+# Depdir information
+DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULE_DIRS))
+DEPFILES = 
+
 # Make main.o depend on all other object files. This way if anything is
 # changed, it causes main.cpp to be recompiled. This in turn ensures that
 # the build date in gScummVMBuildDate is correct.
@@ -105,13 +120,14 @@ base/main.o: $(filter-out base/libbase.a,$(OBJS))
 $(EXECUTABLE):  $(OBJS)
 	$(CXX) $(LDFLAGS) $+ $(LIBS) -o $@
 
+distclean: clean
+	$(RM_REC) $(DEPDIRS)
+	$(RM) build.rules config.h config.mak config.log
+
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
 
 .PHONY: all clean dist distclean
-
-DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULE_DIRS))
-DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 
 # Old (dumb) compile & dependcy rules
 #INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
@@ -137,8 +153,7 @@ else
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 endif
--include $(DEPFILES) /dev/null
 
-distclean: clean
-	$(RM_REC) $(DEPDIRS)
-	$(RM) build.rules config.h config.mak config.log
+# Include the dependency tracking files. We add /dev/null at the end
+# of the list to avoid a warning/error if no .d file exist
+-include $(wildcard $(addsuffix /*.d,$(DEPDIRS))) /dev/null

@@ -10,7 +10,7 @@ ifdef PLUGIN
 # one of several build rules
 PLUGIN-$(MODULE) := $(MODULE)/$(PLUGIN_PREFIX)$(MODULE)$(PLUGIN_SUFFIX)
 $(PLUGIN-$(MODULE)): $(MODULE_OBJS) $(EXECUTABLE)
-	$(CXX) -bundle -bundle_loader $(EXECUTABLE) $(filter-out $(EXECUTABLE),$+) $(LIBS) -o $@
+	$(CXX) $(PLUGIN_LDFLAGS) $(EXECUTABLE) $(filter-out $(EXECUTABLE),$+) $(LIBS) -o $@
 PLUGIN:=
 plugins: $(PLUGIN-$(MODULE))
 
