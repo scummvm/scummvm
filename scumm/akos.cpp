@@ -1125,7 +1125,10 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				curpos += 3;
 				break;
 			case AKC_SoundStuff:
-				curpos += 8;		// in Putt is 6
+				if (_features & GF_HUMONGOUS) 
+					curpos += 6;
+				else
+					curpos += 8;
 				break;
 			case AKC_Cmd3:
 			case AKC_SetVarInActor:
