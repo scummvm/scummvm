@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-05-25
+Last updated:    2003-06-12
 Release version: 0.4.2cvs
 ------------------------------------------------------------------------
 
@@ -50,12 +50,14 @@ be playable to the end:
         Day of the Tentacle                        [Game: tentacle]
         Sam & Max                                  [Game: samnmax]
         The Dig                                    [Game: dig]
-        Simon the Sorcerer 1                       [Game: simon1dos/simon1talkie/simon1win]
-        Simon the Sorcerer 2                       [Game: simon2dos/simon2talkie/simon2win/simon2mac]
+        Simon the Sorcerer 1                       [Game: simon1dos/
+                                                     simon1talkie/simon1win]
+        Simon the Sorcerer 2                       [Game: simon2dos/simon2talkie
+                                                     /simon2win/simon2mac]
 
 The following games should be finishable, but have some criticial problems that
-prevent them from being fully supported at this time. Please do not file bug reports
-about them.
+prevent them from being fully supported at this time. Please do not file bug
+reports about them.
         
         Full Throttle                              [Game: ft]
         Curse of Monkey Island                     [Game: comi]
@@ -139,20 +141,23 @@ the section on Reporting Bugs.
                 - Highway subgame does not behave correctly.
 
        Simon the Sorcerer 1:
-                - No inventory scrolling arrows shown in simon1dos and simon1talkie,
-                  can still move around inventory though. 
+                - No inventory scrolling arrows shown in simon1dos and
+                  simon1talkie, can still move around inventory though.
                 - simon1dos freezes briefly after Swampling leaves his house and
                   when talking to demons in Sordid's Tower
                 - Minor graphical glitches when using ring
                 - Minor graphical glitch with Sordid statue after leaving room
 
        Simon the Sorcerer 2:
-                - Text in copy protection screen of simon2dos is only shown for short time
-                - simon2dos and simon2talkie (With subtitles enabled) freeze briefly when 
-                  Pirate Captain is talking to Mate, when Simon tries to escape
+                - Text in copy protection screen of simon2dos is only shown for
+                  a short time
+                - simon2dos and simon2talkie (With subtitles enabled) freeze 
+                  briefly when Pirate Captain is talking to Mate, when Simon
+                  tries to escape
                 - Minor graphical glitch when giving items to baby
                 - Only default language in data files is supported in simon2mac
-                - F10 key animation in simon2mac is different compared to original game
+                - F10 key animation in simon2mac is different compared to
+                  original game
 
        All CD games:
                - If you are experiencing random crashes, and your game
@@ -177,10 +182,11 @@ If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
 and the DOS Talkie version in the DOS directory of the CD.
 
-The filenames of saved games for Simon the Sorcerer 1 & 2 were changed in 0.3.0 too:
-Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
-Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
-So if you have any pre 0.3.0 save games you will need to change their filenames to use them.
+Filenames of saved games for Simon the Sorcerer 1 & 2 were changed in 0.3.0 too:
+  Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
+  Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
+So if you have any pre 0.3.0 save games you will need to change their filenames
+to use them.
 
 
 Reporting Bugs:
@@ -229,7 +235,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
     Mingw:
         * Open Makefile.mingw, alter SDL paths and choose compiling options.
-        * Type make -f Makefile.mingw and hopefully ScummVM will compile for you.
+        * Type make -f Makefile.mingw,  hopefully ScummVM will compile for you.
 
     Microsoft Visual C++:
         * Open the workspace, scummwm.dsw
@@ -256,14 +262,15 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         
     Mac OS X:
         * Make sure you have the developer tools installed.
-        * Edit backends/sdl/build.rules, and enable the Mac OS X specific line(s).
-        * Depending on where you have installed SDL, you have to add the location
-          of its headers to the INCLUDES variables. For example if you installed SDL
-          via Fink, you can add this at the end of build.rules:
+        * Edit backends/sdl/build.rules, and enable the Mac OS X specific 
+          line(s).
+        * Depending on where you have installed SDL, you have to add the
+          location of its headers to the INCLUDES variables. For example if you
+          installed SDL via Fink, you can add this at the end of build.rules:
           INCLUDES+= -I/sw/include
         * You can now 'make' to create a command line binary.
-        * To get a version you can run from Finder, type 'make bundle' which will
-          create ScummVM.app.
+        * To get a version you can run from Finder, type 'make bundle' which
+          will create ScummVM.app.
 
 
 Running:
@@ -309,8 +316,9 @@ Command Line Options:
 
         scummvm [OPTIONS] [GAME]
 
-        [GAME]        - Short name of game to load. For example, 'monkey' for Monkey Island.
-        
+        [GAME]        - Short name of game to load. For example, 'monkey' for
+                        Monkey Island.
+
         -p<path>      - Path to where the game is installed. Default is Cwd.
         -x[<num>]     - Save game slot to load (default: autosave)
         -f            - Full-screen mode.
@@ -331,7 +339,8 @@ Command Line Options:
         -z            - Display list of games
         -b<num>       - Start in room <num>.
         -d[<num>]     - Set debug verbosity to <num>
-        -u            - Dump scripts if a directory called 'dumps' exists in current directory
+        -u            - Dump scripts if a directory called 'dumps' exists in
+                        current directory
         --multi-midi  - enable combination Adlib and native MIDI
         --native-mt32 - true Roland MT-32 (disable GM emulation)
 
@@ -346,10 +355,14 @@ simon games.
         Keyboard Arrow Keys    - simulate mouse movement
         Ctrl-f                 - runs in fast mode.
         Ctrl-Alt 0-9           - Switch between graphics filters
-        Ctrl-Alt 1             - Switch beetwen bilinear and non-linear filtering [OpenGL backend]
-        Ctrl-Alt 2             - Don't fit the game in the whole screen (black borders) [OpenGL backend]
-        Ctrl-Alt 3             - Fit the game in the whole screen (no black borders) [OpenGL backend]
-        Ctrl-Alt 4-7           - Switch between graphics filters [OpenGL backend]
+        Ctrl-Alt 1             - Switch beetwen bilinear and non-linear
+                                 filtering [OpenGL backend]
+        Ctrl-Alt 2             - Don't fit the game in the whole screen 
+                                 (black borders) [OpenGL backend]
+        Ctrl-Alt 3             - Fit the game in the whole screen
+                                 (no black borders) [OpenGL backend]
+        Ctrl-Alt 4-7           - Switch between graphics filters 
+                                 [OpenGL backend]
 
     Scumm:
         Ctrl 0-9 and Alt 0-9   - load and save game state
@@ -379,7 +392,8 @@ being ran faster than their normal speed, as scripts will loose synchronisation
 
 Language options:
 -----------------
-ScummVM includes a language option for the Curse of Money Island and the Simon the Sorcerer 1 & 2 games.
+ScummVM includes a language option for the Curse of Money Island and the Simon
+the Sorcerer 1 & 2 games.
 
         en  - English (default)
         de  - German
@@ -401,7 +415,8 @@ Note: the resolutions listed assume the game was originally 320x200
 
 They are:
         normal     - No filtering, original 320x200 resolution. Fastest.
-        2x         - No filtering, double screen/window size to 640x400 (default)
+        2x         - No filtering, double screen/window size to 640x400 
+                     (default)
         3x         - No filtering, triple screen/window size to 960x600
         2xsai      - 2xsai filtering, double screen/window size to 640x400
         super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
@@ -411,7 +426,8 @@ They are:
         tv2x       - 640x400 scaling. Horizontal scanlines.
         dotmatrix  - 640x400 scaling. Dot matrix effect.
 
-To select a graphics filter, pass its name via the '-g' option to scummvm, for example:
+To select a graphics filter, pass its name via the '-g' option to scummvm,
+for example:
 
     scummvm -g advmame2x monkey2
 
@@ -467,7 +483,8 @@ choices of output, depending on your operating system and configuration.
         alsa      - Output using ALSA sequencer device. See below.
         null      - Null output. Don't play any music.
 
-To select a sound driver, pass its name via the '-e' option to scummvm, for example:
+To select a sound driver, pass its name via the '-e' option to scummvm,
+for example:
 
     scummvm -e adlib monkey2
 
@@ -693,12 +710,14 @@ Credits:
         Janne Huttunen       - V3 actor mask support, Dig/FT SMUSH audio
         Kovacs Endre Janos   - Several fixes for Simon1
         Jeroen Janssen       - Numerous readability and bugfix patches
-        Claudio Matsuoka     - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
-        Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and Dot Matrix implementation
+        Claudio Matsuoka     - Daily Linux/BeOS builds 
+        Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and Dot Matrix
+                               implementation
         Mikesch Nepomuk      - MI1 VGA Floppy patches.
         Nicolas Noble        - Config file and ALSA support
         Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom Audio
-        Daniel Schepler      - Final MI1 CD music support/ Initial Ogg Vorbis support
+        Daniel Schepler      - Final MI1 CD music support/ 
+                               Initial Ogg Vorbis support
         Andre Souza          - SDL-based OpenGL renderer
         Tim 'realmz'         - Initial MI1 CD music support
 
@@ -708,7 +727,7 @@ Credits:
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codec
-	Jim Leiterman   - Various info on his FmTowns/Marty SCUMM ports
+        Jim Leiterman   - Various info on his FmTowns/Marty SCUMM ports
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
         Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
