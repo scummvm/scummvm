@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 class SaveFile {
 public:
 	virtual ~SaveFile() {}
@@ -47,29 +48,12 @@ public:
 	void writeUint16BE(uint16 value);
 	void writeUint32BE(uint32 value);
 
+	virtual bool isOpen() const = 0;
+
 protected:
 	/* Only for internal use, use File compatible API above instead */
 	virtual int fread(void *buf, int size, int cnt) = 0;
 	virtual int fwrite(const void *buf, int size, int cnt) = 0;
-};
-
-class StdioSaveFile : public SaveFile {
-private:
-	FILE *fh;
-public:
-	StdioSaveFile(const char *filename, const char *mode)
-		{ fh = ::fopen(filename, mode); }
-	~StdioSaveFile()
-		{ if(fh) ::fclose(fh); }
-
-
-	bool is_open() { return fh != NULL; }
-
-protected:
-	int fread(void *buf, int size, int cnt)
-		{ return ::fread(buf, size, cnt, fh); }
-	int fwrite(const void *buf, int size, int cnt)
-		{ return ::fwrite(buf, size, cnt, fh); }	
 };
 
 class SaveFileManager {
@@ -78,15 +62,13 @@ public:
 	virtual ~SaveFileManager() {}
 
 	virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
-
 	virtual void list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num) {
 		memset(marks, true, num * sizeof(bool));
 	}
 
 protected:
-	void join_paths(const char *filename, const char *directory,
-			char *buf, int bufsize);
-
+	void join_paths(const char *filename, const char *directory, char *buf, int bufsize);
+	virtual SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
 #endif
