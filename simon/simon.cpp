@@ -2650,7 +2650,10 @@ void SimonState::timer_proc1()
 	if (_game & GAME_SIMON2) {
 		if (_lock_word & 0x80E9 || _lock_word & 2)
 		return;
-	} else if (_lock_word & 0xC0E9 || _lock_word & 2)
+	} else if (_game & GAME_TALKIE) {
+		if (_lock_word & 0xC0E9 || _lock_word & 2)
+		return;
+	} else 	if (_lock_word & 0x8000 || _lock_word & 0xE9 || _lock_word & 2)
 		return;
 
 	_timer_1++;
@@ -2680,6 +2683,7 @@ void SimonState::timer_proc1()
 		}
 	}
 
+	/* XXX: more stuff here */
 	timer_vga_sprites();
 #ifdef DRAW_IMAGES_DEBUG
 	timer_vga_sprites_2();
@@ -2695,10 +2699,8 @@ void SimonState::timer_proc1()
 		_copy_partial_mode = 0;
 	}
 
-	/* XXX: more stuff here */
 	if (_video_var_8) {
 		handle_mouse_moved();
-		/* XXX: more stuff here */
 		dx_update_screen_and_palette();
 		_sync_flag_1 = false;
 		_video_var_8 = false;

@@ -1388,6 +1388,7 @@ void SimonState::vc_35()
 
 void SimonState::vc_36_saveload_thing()
 {
+	_video_var_8 = false;
 	uint vga_res = vc_read_next_word();
 	uint mode = vc_read_next_word();
 
