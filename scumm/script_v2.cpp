@@ -874,9 +874,11 @@ void Scumm_v2::o2_doSentence() {
 
 void Scumm_v2::o2_drawSentence() {
 	ScummVM::Rect sentenceline;
-
 	static char sentence[80];
 	int slot = getVerbSlot(_scummVars[VAR_SENTENCE_VERB],0);
+
+	if (_userPut < 1)
+		return;
 
 	strcpy(sentence, (char*)getResourceAddress(rtVerb, slot));
 
@@ -1187,6 +1189,8 @@ void Scumm_v2::o2_pickupObject() {
 	// FIXME: Ender Quick Hack to allow further Zak testing.
 	// In reality, we should probably stuff the inventory into verbs
 	// as later games do. Easier hotspot tracking :)
+	if (_userPut < 1)
+		return;
 {
         int i, items = 0, curInventoryCount = 0;
 	bool alternate = false;
@@ -1275,9 +1279,14 @@ void Scumm_v2::o2_cursorCommand() {
 		_scummVars[21] = cmd & 0xFF;
 		printf("Set cmd %d\n", cmd & 0xFF);
 	}
+
 	if (a2 & 4) {
-		_userPut = 1;
-		warning("TODO: o2_cursorCommand(userface)");
+		if (_userPut == 1)
+			_userPut = 0;
+		else
+			_userPut = 1;
+
+		warning("TODO: o2_cursorCommand(userface) -> %d", _userPut);
 	} // Toggle verbs on/off, etc
 
 	if (a2 & 1) {						// Freeze
