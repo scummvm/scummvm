@@ -44,18 +44,20 @@ uint16 SkyAutoRoute::checkBlock(uint16 *blockPos) {
 	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) retVal = fieldVal;
 	fieldVal = (blockPos - 1)[0]; // field to the left
 	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) {
-		if ((fieldVal > retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
+		if ((fieldVal < retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
 	}
 	fieldVal = (blockPos + ROUTE_GRID_WIDTH)[0]; // upper field
 	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) {
-		if ((fieldVal > retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
+		if ((fieldVal < retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
 	}
 	fieldVal = (blockPos - ROUTE_GRID_WIDTH)[0]; // upper field
 	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) {
-		if ((fieldVal > retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
+		if ((fieldVal < retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
 	}
 	return retVal;
 }
+
+#undef ARDEBUG
 
 uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 
@@ -66,8 +68,8 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 	screenGrid += GRID_SIZE-4; // all arrays are processed from behind, so make
 	// screenGrid point to the last element of our grid.
 
-	uint16 *routeCalc = _routeGrid + (ROUTE_GRID_SIZE >> 1) - 1;	
-	
+	uint16 *routeCalc = _routeGrid + (ROUTE_GRID_SIZE >> 1) - ROUTE_GRID_WIDTH - 2;
+
 	uint8 stretch1, stretch2; // bl / bh
 	stretch1 = 0;
 	MegaSet *mega = SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet);
@@ -197,17 +199,25 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 		numCols = (ROUTE_GRID_WIDTH - 1) - initBlockX;
 	}
 	// calculate destination address
-	//postBlockX <<= 1; postBlockY <<= 1; // multiply by 2
 	uint16 *routeDestCalc;
-	routeDestCalc = postBlockY * ROUTE_GRID_WIDTH + postBlockX + _routeGrid;
-	routeDestCalc += ROUTE_GRID_WIDTH+1; // skip blank edges (what?)
+	routeDestCalc = (postBlockY + 1) * ROUTE_GRID_WIDTH + postBlockX + 1 + _routeGrid;
 
-	//initBlockX <<= 1; initBlockY <<= 1;
 	uint16 *routeSrcCalc;
-	routeSrcCalc = initBlockY * ROUTE_GRID_WIDTH + initBlockX + _routeGrid;
-	routeSrcCalc += ROUTE_GRID_WIDTH+1; // skip blank edges
+	routeSrcCalc = (initBlockY + 1) * ROUTE_GRID_WIDTH + initBlockX + 1 + _routeGrid;
 	routeSrcCalc[0] = 1; //start this one off
 	// means: mark the block we start from as accessible
+#ifdef ARDEBUG
+	uint16 dcnt1, dcnt2;
+	for (dcnt1 = 0; dcnt1 < ROUTE_GRID_HEIGHT; dcnt1++) {
+		for (dcnt2 = 0; dcnt2 < ROUTE_GRID_WIDTH; dcnt2++) {
+			if (!_routeGrid[dcnt1*ROUTE_GRID_WIDTH + dcnt2]) printf("_"); 
+			else if (_routeGrid[dcnt1*ROUTE_GRID_WIDTH + dcnt2] == 1) printf("S");
+			else printf("X");
+		}
+		printf("\n");
+	}
+	getchar();
+#endif
 
 	// if we are on the edge, move diagonally from start
 	if (numLines < ROUTE_GRID_HEIGHT-3)
@@ -265,7 +275,14 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			}
 		} else foundRoute = true;			
 	} while ((!foundRoute) && gridChanged);
-
+#ifdef ARDEBUG
+	for (dcnt1 = 0; dcnt1 < ROUTE_GRID_HEIGHT; dcnt1++) {
+		for (dcnt2 = 0; dcnt2 < ROUTE_GRID_WIDTH; dcnt2++) {
+            printf(" %02X",_routeGrid[dcnt1*ROUTE_GRID_WIDTH + dcnt2]&0xFF);
+		}
+		printf("\n");
+	}
+#endif
 	if (!routeDestCalc[0]) {
 		// no route exists from routeSrc to routeDest
 		return 2;
@@ -286,12 +303,13 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			saveRoute[1] = RIGHTY;
 			saveRoute[0] = 0;
 			while ((lastVal == (routeDestCalc-1)[0]) && (!routeDone)) {
+				routeDestCalc--; // keep checking left
+				saveRoute[0] += WALK_JUMP;
+#ifdef ARDEBUG
+				printf("left\n");
+#endif
 				lastVal--;
 				if (lastVal == 0) routeDone = true;
-				else {
-					routeDestCalc--; // keep checking left
-					saveRoute[0] += WALK_JUMP;
-				}
 			}
 		} else if (lastVal == routeDestCalc[1]) {
 			// look_right
@@ -299,12 +317,13 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			saveRoute[1] = LEFTY;
 			saveRoute[0] = 0;
 			while ((lastVal == routeDestCalc[1]) && (!routeDone)) {
+				routeDestCalc++; // keep checking right
+				saveRoute[0] += WALK_JUMP;
+#ifdef ARDEBUG
+				printf("right\n");
+#endif
 				lastVal--;
 				if (lastVal == 0) routeDone = true;
-				else {
-					routeDestCalc++; // keep checking right
-					saveRoute[0] += WALK_JUMP;
-				}
 			}
 		} else if (lastVal == (routeDestCalc - ROUTE_GRID_WIDTH)[0]) {
 			// look_up
@@ -312,12 +331,13 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			saveRoute[1] = DOWNY;
 			saveRoute[0] = 0;
 			while ((lastVal == (routeDestCalc - ROUTE_GRID_WIDTH)[0]) && (!routeDone)) {
+				routeDestCalc -= ROUTE_GRID_WIDTH; // keep checking up
+				saveRoute[0] += WALK_JUMP;
+#ifdef ARDEBUG
+				printf("up\n");
+#endif
 				lastVal--;
 				if (lastVal == 0) routeDone = true;
-				else {
-					routeDestCalc -= ROUTE_GRID_WIDTH; // keep checking up
-					saveRoute[0] += WALK_JUMP;
-				}
 			}
 		} else if (lastVal == (routeDestCalc + ROUTE_GRID_WIDTH)[0]) {
 			// look_down
@@ -325,17 +345,21 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			saveRoute[1] = UPY;
 			saveRoute[0] = 0;
 			while ((lastVal == (routeDestCalc + ROUTE_GRID_WIDTH)[0]) && (!routeDone)) {
+				routeDestCalc += ROUTE_GRID_WIDTH; // keep checking right
+				saveRoute[0] += WALK_JUMP;
+#ifdef ARDEBUG
+				printf("down\n");
+#endif
 				lastVal--;
 				if (lastVal == 0) routeDone = true;
-				else {
-					routeDestCalc += ROUTE_GRID_WIDTH; // keep checking right
-					saveRoute[0] += WALK_JUMP;
-				}
 			}
 		} else {
 			error("AutoRoute:: Can't find way backwards through _routeGrid");
 		}
 	} while (!routeDone);
+#ifdef ARDEBUG
+	getchar();
+#endif
 	// the route is done. if there was an initial x/y movement tag it onto the start
 	if (initX < 0) {
         saveRoute -= 4;
