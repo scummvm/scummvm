@@ -386,7 +386,7 @@ Until recently, some games (particularly Sam and Max) were only able to run
 in MIDI mode. This prevented music for these games from working on platforms
 that do not support MIDI, or soundcards that do not provide MIDI drivers (e.g.,
 many soundcards will not play MIDI under Linux). ScummVM can now emulate MIDI
-mode using sampled waves and Adlib emulation using the -adlib option.
+mode using sampled waves and Adlib emulation using the -eadlib option.
 However, if you are capable of using native MIDI, we recommend using one of
 the MIDI modes below for best sound.
 
