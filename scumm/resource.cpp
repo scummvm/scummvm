@@ -2445,7 +2445,6 @@ void ScummEngine::allocateArrays() {
 	_roomVars = (int32 *)calloc(_numRoomVariables, sizeof(int32));
 	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
-	_images = (uint16 *)calloc(_numImages, sizeof(uint16));
 	if (_features & GF_HUMONGOUS)
 		_arraySlot = (byte *)calloc(_numArray, 1);
 

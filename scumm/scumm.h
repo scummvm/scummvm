@@ -463,7 +463,6 @@ protected:
 	byte *_arraySlot;
 	uint16 *_inventory;
 	uint16 *_newNames;
-	uint16 *_images;
 public:
 	// VAR is a wrapper around scummVar, which attempts to include additional
 	// useful information should an illegal var access be detected.

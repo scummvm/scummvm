@@ -978,10 +978,12 @@ ScummEngine::~ScummEngine() {
 	free(_inventory);
 	free(_verbs);
 	free(_objs);
+	free(_roomVars);
 	free(_scummVars);
 	free(_bitVars);
 	free(_newNames);
 	free(_classData);
+	free(_arraySlot);
 
 	free(_roomStrips);
 	free(_languageIndex);
