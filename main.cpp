@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 	// Parse command line
 	ZBUFFER_GLOBAL = parseBoolStr(Registry::instance()->get("zbuffer"));
 	SCREENBLOCKS_GLOBAL = parseBoolStr(Registry::instance()->get("screenblocks"));
-	SHOWFPS_GLOBAL = parseBoolStr(Registry::instance()->get("showfps"));
+	SHOWFPS_GLOBAL = parseBoolStr(Registry::instance()->get("fps"));
 	for (i=1;i<argc;i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
 			ZBUFFER_GLOBAL = true;
