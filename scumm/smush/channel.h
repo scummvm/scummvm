@@ -129,7 +129,7 @@ public:
 	void getSoundData(int8 *sound_buffer, int32 size);
 	int32 getRate() { return _rate; }
 	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) {
-		rate = _frequency;
+		rate = _rate;
 		stereo = (_channels == 2);
 		is_16bit = (_bitsize > 8);
 		return true;

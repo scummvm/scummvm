@@ -322,27 +322,13 @@ void ImuseChannel::getSoundData(int16 *snd, int32 size) {
 	if (_dataSize <= 0 || _bitsize <= 8) error("invalid call to imuse_channel::read_sound_data()");
 	if (_channels == 2) size *= 2;
 	byte * buf = (byte*)snd;
-	if (_rate == 11025) {
-		// TODO / FIXME: Instead of upsampling here in the worst possible way
-		// (by repeating samples), we should pass the 11khz data to the mixer,
-		// and leave the upsampling to the mixer.
-		for (int32 i = 0; i < size; i++) {
-			byte sample1 = *(_sbuffer + i * 2);
-			byte sample2 = *(_sbuffer + i * 2 + 1);
-			uint16 sample = (uint16)(((int16)((sample1 << 8) | sample2) * _volume) >> 8);
-			buf[i * 4 + 0] = (byte)(sample >> 8);
-			buf[i * 4 + 1] = (byte)(sample & 0xff);
-			buf[i * 4 + 2] = buf[i * 4 + 0];
-			buf[i * 4 + 3] = buf[i * 4 + 1];
-		}
-	} else {
-		for (int32 i = 0; i < size; i++){
-			byte sample1 = *(_sbuffer + i * 2);
-			byte sample2 = *(_sbuffer + i * 2 + 1);
-			uint16 sample = (uint16)(((int16)((sample1 << 8) | sample2) * _volume) >> 8);
-			buf[i * 2 + 0] = (byte)(sample >> 8);
-			buf[i * 2 + 1] = (byte)(sample & 0xff);
-		}
+
+	for (int32 i = 0; i < size; i++){
+		byte sample1 = *(_sbuffer + i * 2);
+		byte sample2 = *(_sbuffer + i * 2 + 1);
+		uint16 sample = (uint16)(((int16)((sample1 << 8) | sample2) * _volume) >> 8);
+		buf[i * 2 + 0] = (byte)(sample >> 8);
+		buf[i * 2 + 1] = (byte)(sample & 0xff);
 	}
 	delete []_sbuffer;
 	assert(_sbufferSize == 2 * size);
@@ -354,18 +340,9 @@ void ImuseChannel::getSoundData(int16 *snd, int32 size) {
 void ImuseChannel::getSoundData(int8 *snd, int32 size) {
 	if (_dataSize <= 0 || _bitsize > 8) error("invalid call to imuse_channel::read_sound_data()");
 	if (_channels == 2) size *= 2;
-	if (_rate == 11025) {
-		// TODO / FIXME: Instead of upsampling here in the worst possible way
-		// (by repeating samples), we should pass the 11khz data to the mixer,
-		// and leave the upsampling to the mixer.
-		for (int32 i = 0; i < size; i++) {
-			snd[i * 2] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
-			snd[i * 2 + 1] = snd[i * 2];
-		}
-	} else {
-		for (int32 i = 0; i < size; i++){
-			snd[i] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
-		}
+
+	for (int32 i = 0; i < size; i++){
+		snd[i] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
 	}
 	delete []_sbuffer;
 	_sbuffer = 0;

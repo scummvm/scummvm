@@ -117,8 +117,6 @@ bool SmushMixer::handleFrame() {
 				if (is_short) {
 					data = malloc(size * (stereo ? 2 : 1) * 4);
 					_channels[i].chan->getSoundData((int16 *)data, size);
-					if (_channels[i].chan->getRate() == 11025)
-						size *= 2;
 					size *= stereo ? 4 : 2;
 
 					flags |= SoundMixer::FLAG_16BITS;
@@ -126,8 +124,6 @@ bool SmushMixer::handleFrame() {
 				} else {
 					data = malloc(size * (stereo ? 2 : 1) * 2);
 					_channels[i].chan->getSoundData((int8 *)data, size);
-					if (_channels[i].chan->getRate() == 11025)
-						size *= 2;
 					size *= stereo ? 2 : 1;
 
 					flags |= SoundMixer::FLAG_UNSIGNED;
