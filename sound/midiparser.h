@@ -43,7 +43,7 @@ public:
 
 	virtual bool loadMusic (byte *data, uint32 size) = 0;
 	virtual void unloadMusic() = 0;
-	virtual void property (int property, int value) { }
+	virtual void property (int prop, int value) { }
 
 	void setMidiDriver (MidiDriver *driver) { _driver = driver; }
 	void setTimerRate (uint32 rate) { _timer_rate = rate / 500; }
