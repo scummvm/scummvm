@@ -244,6 +244,12 @@ static int findGames(Scumm *s, Game *games, int max)
 	      }
 	    }
 	    checkName(s, games[curr_game]);
+#if 0
+	    printf("Registered game <%s> in <%s> <%s> because of <%s> <%s>\n",
+		   games[curr_game].text, games[curr_game].dir,
+		   games[curr_game].filename_base,
+		   dirs[curr_dir-1].name, entry->d_name);
+#endif
 	    curr_game++;
 	  }
       closedir(dirp);
@@ -276,7 +282,7 @@ void waitForDisk()
   ta_sync();
   void *mark = ta_txmark();
   lab.create_texture("Please insert game CD.");
-  printf("waitForDisk, cdstate = %d\n", getCdState());
+  //printf("waitForDisk, cdstate = %d\n", getCdState());
   for(;;) {
     int s = getCdState();
     if(s >= 6)
@@ -379,11 +385,10 @@ int gameMenu(Game *games, int num_games)
 	float y = 40.0;
 
 	if(fade < 256)
-	  for(int i=top_game, cnt=0; cnt<10 && i<num_games; i++, cnt++)
-	    if(cnt != selector_pos) {
+	  for(int i=top_game, cnt=0; cnt<10 && i<num_games; 
+	      i++, cnt++, y += 40.0)
+	    if(cnt != selector_pos)
 	      drawGameLabel(games[i], 48+(i&15), 50.0, y, 0xffffff, fade);
-	      y += 40.0;
-	    }
 
 	y = (40.0/256.0 * (selector_pos + 1))*(256-fade) + 80.0/256.0*fade;
 	float x = 50.0/256.0*(256-fade) + 160.0/256.0*fade;
