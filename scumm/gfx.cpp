@@ -945,7 +945,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 				else if (_vm->_features & GF_SMALL_HEADER)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
 				else if (_vm->_features & GF_AFTER_V8)
-					offs = READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
+					offs = (uint16) READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 

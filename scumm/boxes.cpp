@@ -85,7 +85,7 @@ byte Scumm::getMaskFromBox(int box)
 		return 0;
 
 	if (_features & GF_AFTER_V8)
-		return FROM_LE_32(ptr->v8.mask);
+		return (byte) FROM_LE_32(ptr->v8.mask);
 	else
 		return ptr->old.mask;
 }
@@ -114,7 +114,7 @@ byte Scumm::getBoxFlags(int box)
 	if (!ptr)
 		return 0;
 	if (_features & GF_AFTER_V8)
-		return FROM_LE_32(ptr->v8.flags);
+		return (byte) FROM_LE_32(ptr->v8.flags);
 	else
 		return ptr->old.flags;
 }
@@ -147,7 +147,7 @@ byte Scumm::getNumBoxes()
 	if (!ptr)
 		return 0;
 	if (_features & GF_AFTER_V8)
-		return READ_LE_UINT32(ptr);
+		return (byte) READ_LE_UINT32(ptr);
 	else
 		return ptr[0];
 }
