@@ -1184,11 +1184,17 @@ void CostumeRenderer::proc_special(byte mask2) {
 void LoadedCostume::loadCostume(int id) {
 	_ptr = _vm->getResourceAddress(rtCostume, id);
 
-	if (_vm->_features & GF_AFTER_V6) {
+printf("Costume %d:\n", id);
+hexdump(_ptr, 0x40);
+
+	if (_vm->_features & GF_AFTER_V6)
 		_ptr += 8;
-	} else if (!(_vm->_features & GF_SMALL_HEADER)) {
+	else if (_vm->_features & GF_OLD_BUNDLE)
+		_ptr += -2;
+	else if (_vm->_features & GF_SMALL_HEADER)
+		_ptr += 0;
+	else
 		_ptr += 2;
-	}
 
 	switch (_ptr[7] & 0x7F) {
 	case 0x58:
