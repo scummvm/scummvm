@@ -317,18 +317,22 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 
 void NewGui::blendRect(int x, int y, int w, int h, int16 color)
 {
+	#define ALPHA_LEVEL	2
 	uint8 r, g, b;
 	uint8 ar, ag, ab;
 	_system->colorToRBG(color, r, g, b);
-	r *= 3;
-	g *= 3;
-	b *= 3;
+	
+	r *= ALPHA_LEVEL;
+	g *= ALPHA_LEVEL;
+	b *= ALPHA_LEVEL;
 	int16 *ptr = getBasePtr(x, y);
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
 			_system->colorToRBG(ptr[i], ar, ag, ab);
-			ptr[i] = _system->RBGToColor((ar+r)/4, (ag+g)/4,  (ab+b)/4);
+			ptr[i] = _system->RBGToColor((ar+r)/(ALPHA_LEVEL+1),
+										 (ag+g)/(ALPHA_LEVEL+1),
+										 (ab+b)/(ALPHA_LEVEL+1));
 		}
 		ptr += _screenPitch;
 	}
