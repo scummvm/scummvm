@@ -758,7 +758,6 @@ int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
  ****************************************************************************/
 {
 	static	int32  k;   
-	int32	tempK;   
 	int32	x;   
 	int32	y;   
 	int32	x2;   
@@ -783,7 +782,6 @@ int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
 	{
 		k = 1;
 	}
-	tempK = 0;
 	x = route[p].x;
 	y = route[p].y;
 	x2 = route[p + 1].x;
@@ -805,109 +803,105 @@ int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
 	}
 
 // set up sd0-ss2 to reflect possible movement in each direction
-		if ((dirS == 0)	|| (dirS == 4))// vert and diag
-		{
-		  ddx = ldx;
-			ddy = (ldx*diagonaly)/diagonalx;
-			dsy = ldy - ddy;
-			ddx = ddx * dirX;
-			ddy = ddy * dirY;
-			dsy = dsy * dirY;
-			dsx = 0;
+	if ((dirS == 0) || (dirS == 4))// vert and diag
+	{
+		ddx = ldx;
+		ddy = (ldx*diagonaly)/diagonalx;
+		dsy = ldy - ddy;
+		ddx = ddx * dirX;
+		ddy = ddy * dirY;
+		dsy = dsy * dirY;
+		dsx = 0;
 
-			sd0 = (ddx + modX[dirD]/2)/ modX[dirD];
-			ss0 = (dsy + modY[dirS]/2) / modY[dirS];
-			sd1 = sd0/2;
-			ss1 = ss0/2;
-			sd2 = sd0 - sd1;
-			ss2 = ss0 - ss1;
-		}
-		else
-		{
-		  ddy = ldy;
-			ddx = (ldy*diagonalx)/diagonaly;
-			dsx = ldx - ddx;
-			ddy = ddy * dirY;
-			ddx = ddx * dirX;
-			dsx = dsx * dirX;
-			dsy = 0;
+		sd0 = (ddx + modX[dirD]/2)/ modX[dirD];
+		ss0 = (dsy + modY[dirS]/2) / modY[dirS];
+		sd1 = sd0/2;
+		ss1 = ss0/2;
+		sd2 = sd0 - sd1;
+		ss2 = ss0 - ss1;
+	}
+	else
+	{
+		ddy = ldy;
+		ddx = (ldy*diagonalx)/diagonaly;
+		dsx = ldx - ddx;
+		ddy = ddy * dirY;
+		ddx = ddx * dirX;
+		dsx = dsx * dirX;
+		dsy = 0;
 
-			sd0 = (ddy + modY[dirD]/2)/ modY[dirD];
-			ss0 = (dsx + modX[dirS]/2)/ modX[dirS];
-			sd1 = sd0/2;
-			ss1 = ss0/2;
-			sd2 = sd0 - sd1;
-			ss2 = ss0 - ss1;
-		}
+		sd0 = (ddy + modY[dirD]/2)/ modY[dirD];
+		ss0 = (dsx + modX[dirS]/2)/ modX[dirS];
+		sd1 = sd0/2;
+		ss1 = ss0/2;
+		sd2 = sd0 - sd1;
+		ss2 = ss0 - ss1;
+	}
 
-			if (best == 0) //halfsquare, diagonal,	halfsquare
-			{
-							smoothPath[k].x		= x+dsx/2;
-							smoothPath[k].y		= y+dsy/2;
-							smoothPath[k].dir	= dirS;
-							smoothPath[k].num	= ss1;
-							k = k + 1;
-							smoothPath[k].x		= x+dsx/2+ddx;
-							smoothPath[k].y		= y+dsy/2+ddy;
-							smoothPath[k].dir	= dirD;
-							smoothPath[k].num	= sd0;
-							k = k + 1;
-							smoothPath[k].x		= x+dsx+ddx;
-							smoothPath[k].y		= y+dsy+ddy;
-							smoothPath[k].dir	= dirS;
-							smoothPath[k].num	= ss2;
-							k = k + 1;
-							tempK = k;
-			}
-			else if (best == 1) //square, diagonal
-			{
-						smoothPath[k].x = x+dsx;
-						smoothPath[k].y = y+dsy;
-						smoothPath[k].dir = dirS;
-						smoothPath[k].num = ss0;
-						k = k + 1;
-						smoothPath[k].x = x2;
-						smoothPath[k].y = y2;
-						smoothPath[k].dir = dirD;
-						smoothPath[k].num = sd0;
-						k = k + 1;
-						tempK = k;
-			}
-			else if (best == 2) //diagonal square
-			{
-						smoothPath[k].x = x+ddx;
-						smoothPath[k].y = y+ddy;
-						smoothPath[k].dir = dirD;
-						smoothPath[k].num = sd0;
-						k = k + 1;
-						smoothPath[k].x = x2;
-						smoothPath[k].y = y2;
-						smoothPath[k].dir = dirS;
-						smoothPath[k].num = ss0;
-						k = k + 1;
-						tempK = k;
-			}
-			else //halfdiagonal, square, halfdiagonal
-			{
-							smoothPath[k].x = x+ddx/2;
-							smoothPath[k].y = y+ddy/2;
-							smoothPath[k].dir = dirD;
-							smoothPath[k].num = sd1;
-							k = k + 1;
-							smoothPath[k].x = x+dsx+ddx/2;
-							smoothPath[k].y = y+dsy+ddy/2;
-							smoothPath[k].dir = dirS;
-							smoothPath[k].num = ss0;
-							k = k + 1;
-							smoothPath[k].x = x2;
-							smoothPath[k].y = y2;
-							smoothPath[k].dir = dirD;
-							smoothPath[k].num = sd2;
-							k = k + 1;
-							tempK = k;
-			}
-
-	return tempK;	
+	if (best == 0) //halfsquare, diagonal,	halfsquare
+	{
+		smoothPath[k].x		= x+dsx/2;
+		smoothPath[k].y		= y+dsy/2;
+		smoothPath[k].dir	= dirS;
+		smoothPath[k].num	= ss1;
+		k++;
+		smoothPath[k].x		= x+dsx/2+ddx;
+		smoothPath[k].y		= y+dsy/2+ddy;
+		smoothPath[k].dir	= dirD;
+		smoothPath[k].num	= sd0;
+		k++;
+		smoothPath[k].x		= x+dsx+ddx;
+		smoothPath[k].y		= y+dsy+ddy;
+		smoothPath[k].dir	= dirS;
+		smoothPath[k].num	= ss2;
+		k++;
+	}
+	else if (best == 1) //square, diagonal
+	{
+		smoothPath[k].x = x+dsx;
+		smoothPath[k].y = y+dsy;
+		smoothPath[k].dir = dirS;
+		smoothPath[k].num = ss0;
+		k++;
+		smoothPath[k].x = x2;
+		smoothPath[k].y = y2;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd0;
+		k++;
+	}
+	else if (best == 2) //diagonal square
+	{
+		smoothPath[k].x = x+ddx;
+		smoothPath[k].y = y+ddy;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd0;
+		k++;
+		smoothPath[k].x = x2;
+		smoothPath[k].y = y2;
+		smoothPath[k].dir = dirS;
+		smoothPath[k].num = ss0;
+		k++;
+	}
+	else //halfdiagonal, square, halfdiagonal
+	{
+		smoothPath[k].x = x+ddx/2;
+		smoothPath[k].y = y+ddy/2;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd1;
+		k++;
+		smoothPath[k].x = x+dsx+ddx/2;
+		smoothPath[k].y = y+dsy+ddy/2;
+		smoothPath[k].dir = dirS;
+		smoothPath[k].num = ss0;
+		k++;
+		smoothPath[k].x = x2;
+		smoothPath[k].y = y2;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd2;
+		k++;
+	}
+	
+	return k;	
 }
 
 int32 SlidyPath()
@@ -991,8 +985,8 @@ int32 AddSlowInFrames(_walkData *walkAnim)
 			walkAnim[stepCount].frame	= firstSlowInFrame[currentDir] + slowInFrameNo;
 			walkAnim[stepCount].step	= 0;
 			walkAnim[stepCount].dir		= currentDir;
-			walkAnim[stepCount].x			= moduleX;
-			walkAnim[stepCount].y			= moduleY;
+			walkAnim[stepCount].x		= moduleX;
+			walkAnim[stepCount].y		= moduleY;
 			stepCount += 1;
 		}
 		return(1);
@@ -1206,11 +1200,11 @@ void SlidyWalkAnimator(_walkData *walkAnim)
 		{
 			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
 			{
-				module =	firstStandingTurnLeftFrame + lastDir;
+				module = firstStandingTurnLeftFrame + lastDir;
 			}
 			else
 			{
-				module =	firstStandingTurnRightFrame + lastDir;
+				module = firstStandingTurnRightFrame + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -1227,14 +1221,14 @@ void SlidyWalkAnimator(_walkData *walkAnim)
 			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
 			{
 				if ( lastDir < 0)
-						lastDir += NO_DIRECTIONS;
-				module =	firstStandingTurnLeftFrame + lastDir;
+					lastDir += NO_DIRECTIONS;
+				module = firstStandingTurnLeftFrame + lastDir;
 			}
 			else
 			{
 				if ( lastDir > 7)
-						lastDir -= NO_DIRECTIONS;
-				module =	firstStandingTurnRightFrame + lastDir;
+					lastDir -= NO_DIRECTIONS;
+				module = firstStandingTurnRightFrame + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -1488,11 +1482,11 @@ void SlidyWalkAnimator(_walkData *walkAnim)
 		{
 			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
 			{
-				module =	firstStandingTurnLeftFrame + lastDir;
+				module = firstStandingTurnLeftFrame + lastDir;
 			}
 			else
 			{
-				module =	firstStandingTurnRightFrame + lastDir;
+				module = firstStandingTurnRightFrame + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -1509,14 +1503,14 @@ void SlidyWalkAnimator(_walkData *walkAnim)
 			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
 			{
 				if ( lastRealDir < 0)
-						lastRealDir += NO_DIRECTIONS;
-				module =	firstStandingTurnLeftFrame + lastRealDir;
+					lastRealDir += NO_DIRECTIONS;
+				module = firstStandingTurnLeftFrame + lastRealDir;
 			}
 			else
 			{
 				if ( lastRealDir > 7)
-						lastRealDir -= NO_DIRECTIONS;
-				module =	firstStandingTurnRightFrame + lastRealDir;
+					lastRealDir -= NO_DIRECTIONS;
+				module = firstStandingTurnRightFrame + lastRealDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -2304,21 +2298,21 @@ int32 Check(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 //returns 1 if line didn't cross any bars
   int32   steps;
 
-	if ((x1 == x2) &&	(y1 == y2))
+	if ((x1 == x2) && (y1 == y2))
 	{
 		steps = 1;
 	}
 	else if (x1 == x2)
 	{
-			steps = VertCheck(x1, y1, y2);
+		steps = VertCheck(x1, y1, y2);
 	}
 	else if (y1 == y2)
 	{
-			steps = HorizCheck(x1, y1, x2);
+		steps = HorizCheck(x1, y1, x2);
 	}
 	else
 	{
-			steps = LineCheck(x1, y1, x2, y2);
+		steps = LineCheck(x1, y1, x2, y2);
 	}
 	return steps;
 
@@ -2733,7 +2727,7 @@ void	ExtractRoute()
 	int32	prevy;
 	int32	last;
 	int32	point;
-  int32 p;     
+	int32 p;     
 	int32	dirx;
 	int32	diry;
 	int32	dir;
