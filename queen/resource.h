@@ -115,7 +115,6 @@ protected:
 	bool findNormalVersion();
 	bool findCompressedVersion();
 	void checkJASVersion();
-	int32 resourceIndex(const char *filename) const;
 	ResourceEntry *resourceEntry(const char *filename) const;
 	bool readTableFile(const GameVersion *gameVersion);
 	void readTableCompResource();

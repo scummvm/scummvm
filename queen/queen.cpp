@@ -216,7 +216,7 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 		// write header
 		GameStateHeader header;
 		memset(&header, 0, sizeof(header));
-		file->writeUint32BE('SCVM');
+		file->writeUint32BE(MKID_BE('SCVM'));
 		header.version = TO_BE_32(SAVESTATE_CUR_VER);
 		header.flags = TO_BE_32(0);
 		header.dataSize = TO_BE_32(dataSize);

@@ -513,85 +513,56 @@ void Talk::initialTalk() {
 int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &index) {
 	// Lines 1299-1362 in talk.c
 	int commandCode = SPEAK_DEFAULT;
-
-	// cyx: what about something like:
-	// uint16 id = (sentence[index] << 8) | sentence[index + 1];
-	// switch(id) { case 'AO': ... }
-	switch (sentence[index]) {
-		case 'A':
-			if (sentence[index + 1] == 'O')
-				commandCode = SPEAK_AMAL_ON;
+	uint16 id = (sentence[index] << 8) | sentence[index + 1];
+	switch (id) {
+	case MKID_BE('AO'):
+		commandCode = SPEAK_AMAL_ON;
+		break;			
+	case MKID_BE('FL'):
+		commandCode = SPEAK_FACE_LEFT;
+		break;
+	case MKID_BE('FF'):
+		commandCode = SPEAK_FACE_FRONT;
+		break;
+	case MKID_BE('FB'):
+		commandCode = SPEAK_FACE_BACK;
+		break;
+	case MKID_BE('FR'):
+		commandCode = SPEAK_FACE_RIGHT;
+		break;
+	case MKID_BE('GD'):
+		_vm->logic()->joeGrab(STATE_GRAB_DOWN);
+		commandCode = SPEAK_NONE;
+		break;
+	case MKID_BE('GM'):
+		_vm->logic()->joeGrab(STATE_GRAB_MID);
+		commandCode = SPEAK_NONE;
+		break; 
+	case MKID_BE('WT'):
+		commandCode = SPEAK_PAUSE;
+		break;			
+	case MKID_BE('XY'):
+		// For example *XY00(237,112)
+		{
+			commandCode = atoi(sentence + index + 2);
+			int x = atoi(sentence + index + 5);
+			int y = atoi(sentence + index + 9);
+			if (0 == strcmp(person->name, "JOE"))
+				_vm->walk()->moveJoe(0, x, y, _vm->input()->cutawayRunning());
 			else
-				warning("Unknown command string: '%2s'", sentence + index);
-			break;
-			
-		case 'F':
-			switch (sentence[index + 1]) {
-				case 'L':
-					commandCode = SPEAK_FACE_LEFT;
-					break;
-				case 'F':
-					commandCode = SPEAK_FACE_FRONT;
-					break;
-				case 'B':
-					commandCode = SPEAK_FACE_BACK;
-					break;
-				case 'R':
-					commandCode = SPEAK_FACE_RIGHT;
-					break;
-				default:
-					warning("Unknown command string: '%2s'", sentence + index);
-					break;
-			}
-			break;
-
-		case 'G':
-			switch (sentence[index + 1]) {
-				case 'D':
-					_vm->logic()->joeGrab(STATE_GRAB_DOWN);
-					break;
-				case 'M':
-					_vm->logic()->joeGrab(STATE_GRAB_MID);
-					break; 
-				default:
-					warning("Unknown command string: '%2s'", sentence + index);
-					break;
-			}
-			commandCode = SPEAK_NONE;
-			break;
-
-		case 'W':
-			if (sentence[index + 1] == 'T')
-				commandCode = SPEAK_PAUSE;
-			else
-				warning("Unknown command string: '%2s'", sentence + index);
-			break;
-			
-		case 'X':
-			// For example *XY00(237,112)
-			if (sentence[index + 1] == 'Y') {
-				commandCode = atoi(sentence + index + 2);
-				int x = atoi(sentence + index + 5);
-				int y = atoi(sentence + index + 9);
-				if (0 == strcmp(person->name, "JOE"))
-					_vm->walk()->moveJoe(0, x, y, _vm->input()->cutawayRunning());
-				else
-					_vm->walk()->movePerson(person, x, y, _vm->graphics()->numFrames(), 0);
-				index += 11;
-				// if(JOEWALK==3) CUTQUIT=0;
-				// XXX personWalking = true;
-			}
-			else
-				warning("Unknown command string: '%2s'", sentence + index);
-			break;
-
-		default:
-			if (sentence[index + 0] >= '0' && sentence[index + 0] <= '9' &&
-					sentence[index + 1] >= '0' && sentence[index + 1] <= '9') {
-				commandCode = (sentence[index] - '0') * 10 + (sentence[index + 1] - '0');
-			}
-			else
-				warning("Unknown command string: '%2s'", sentence + index);
+				_vm->walk()->movePerson(person, x, y, _vm->graphics()->numFrames(), 0);
+			index += 11;
+			// if(JOEWALK==3) CUTQUIT=0;
+			// XXX personWalking = true;
+		}
+		break;
+	default:
+		if (sentence[index + 0] >= '0' && sentence[index + 0] <= '9' &&
+				sentence[index + 1] >= '0' && sentence[index + 1] <= '9') {
+			commandCode = (sentence[index] - '0') * 10 + (sentence[index + 1] - '0');
+		}
+		else
+			warning("Unknown command string: '%2s'", sentence + index);
 	}
 
 	index += 2;

@@ -46,6 +46,11 @@ const GameVersion Resource::_gameVersions[] = {
 	{ "PEint", 0x00103838,   1915913 }
 };
 
+static int compareResourceEntry(const void *a, const void *b) {
+	const char *key = (const char *)a;
+	const ResourceEntry *entry = (const ResourceEntry *)b;
+	return strcmp(key, entry->filename);
+}
 
 Resource::Resource(const Common::String &datafilePath)
 	: _datafilePath(datafilePath), _resourceEntries(0), _resourceTable(NULL) {
@@ -64,8 +69,7 @@ Resource::~Resource() {
 		delete[] _resourceTable;
 }
 
-int32 Resource::resourceIndex(const char *filename) const {
-
+ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	char entryName[14];
 	char *ptr = entryName;
 
@@ -75,6 +79,11 @@ int32 Resource::resourceIndex(const char *filename) const {
 		*ptr = toupper(*ptr);
 	while (*ptr++);
 
+	ResourceEntry *re = NULL;
+#ifndef __PALM_OS__
+	re = (ResourceEntry *)bsearch(entryName, _resourceTable, _resourceEntries, sizeof(ResourceEntry), compareResourceEntry);
+#else
+	// cyx: is that code still necessary ?
 	uint32 low = 0;
 	uint32 high = _resourceEntries - 1;
 
@@ -82,44 +91,19 @@ int32 Resource::resourceIndex(const char *filename) const {
 		return low;
 	if (!strcmp(entryName, _resourceTable[high].filename))
 		return high;
-	
 
-	//Use simple binary search to locate file
-#ifndef __PALM_OS__
-	for (;;) {
-		uint32 cur = (low + high) / 2;
-		int32 diff = strcmp(entryName, _resourceTable[cur].filename);
-
-		if (!diff)
-			return cur;
-
-		if ((cur == low) || (cur == high))
-			break;
-
-		if (diff > 0)
-			low = cur;
-		else
-			high = cur;
-	}
-#else
 	// Does work for me (????) use this instead
 	uint32 cur = 0;
 	do {
-		if (!strcmp(entryName, _resourceTable[cur].filename))
-			return cur;
+		if (!strcmp(entryName, _resourceTable[cur].filename)) {
+			re = &_resourceTable[cur];
+			break;
+		}
 	} while (cur++ <= high);
 #endif
 
 	debug(7, "Couldn't find file '%s'", entryName);
-	return -1;
-}
-
-ResourceEntry *Resource::resourceEntry(const char *filename) const {
-	int32 index = resourceIndex(filename);
-	if (index >= 0)
-		return &_resourceTable[index];
-	else 
-		return NULL;
+	return re;
 }
 
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) {
