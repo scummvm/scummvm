@@ -70,7 +70,7 @@ public:
 	}
 	int readBuffer(int16 *buffer, int numSamples) {
 		int samples = 0;
-		do {
+		while (samples < numSamples && !eosIntern()) {
 			const int len = MIN(numSamples, (_end - _ptr) / (is16Bit ? 2 : 1));
 			for (; samples < len; samples++) {
 				*buffer++ = readSample<is16Bit, isUnsigned>(_ptr);
@@ -80,7 +80,7 @@ public:
 				_ptr = _loopPtr;
 				_end = _loopEnd;
 			}
-		} while (samples < numSamples && !eosIntern());
+		}
 		return samples;
 	}
 
