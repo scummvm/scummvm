@@ -2640,19 +2640,25 @@ CHECK_HEAP;
 }
 
 
+/* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
+
 void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax)
 {
 	byte *palPtr;
 	byte *curPtr;
 	byte *searchPtr;
 
-	byte colorComp1;
-	byte colorComp2;
-	byte colorComp3;
+	byte readComp1;
+	byte readComp2;
+	byte readComp3;
 
-	byte searchComp1;
-	byte searchComp2;
-	byte searchComp3;
+	int colorComp1;
+	int colorComp2;
+	int colorComp3;
+
+	int searchComp1;
+	int searchComp2;
+	int searchComp3;
 
 	short int bestResult;
 	short int currentResult;
@@ -2664,28 +2670,27 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 
 	palPtr = getPalettePtr();
 
-	for(i=colorMin;i<colorMax;i++)
+	for(i=0;i<256;i++)
 		_proc_special_palette[i]=i;
 
 	curPtr = palPtr + colorMin*3;
 
 	for(i=colorMin;i<colorMax;i++)
 	{
-		//colorComp1=((((*curPtr++)>>2)*c)>>8)&0x7F; 
-		//colorComp2=((((*curPtr++)>>2)*d)>>8)&0x7F;
-		//colorComp3=((((*curPtr++)>>2)*e)>>8)&0x7F;
+		readComp1=*(curPtr++);
+		readComp2=*(curPtr++);
+		readComp3=*(curPtr++);
 
-		/* Yazoo: I can't get the right formula, so I made one that just work fine with SamnMax flashlight */
 
-		colorComp1=(*curPtr++)+10;
-		colorComp2=(*curPtr++)+10;
-		colorComp3=(*curPtr++)+10;
+		colorComp1=((readComp1)*c)>>8;
+		colorComp2=((readComp2)*d)>>8;
+		colorComp3=((readComp3)*e)>>8;
 
 		searchPtr = palPtr;
-		bestResult = 0x7FFF;
+		bestResult = 32000;
 		currentIndex = 0;
 
-		for(j=0;j<256;j++)
+		for(j=a;j<b;j++)
 		{
 			searchComp1 = (*searchPtr++);
 			searchComp2 = (*searchPtr++);
@@ -2694,11 +2699,10 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 			currentResult = abs(searchComp1-colorComp1) + abs(searchComp2-colorComp2) + abs(searchComp3-colorComp3);
 
 			if(currentResult<bestResult)
-				if(currentIndex >= a && currentIndex <= b)
-				{
-					_proc_special_palette[i]=currentIndex;
-					bestResult=currentResult;
-				}
+			{
+				_proc_special_palette[i]=currentIndex;
+				bestResult=currentResult;
+			}
 
 			currentIndex++;
 		}
