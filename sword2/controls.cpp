@@ -148,16 +148,16 @@ public:
 	FontRendererGui(Gui *gui, int fontId);
 	~FontRendererGui();
 
-	void fetchText(int textId, uint8 *buf);
+	void fetchText(uint32 textId, uint8 *buf);
 
 	int getCharWidth(uint8 c);
 	int getCharHeight(uint8 c);
 
 	int getTextWidth(uint8 *text);
-	int getTextWidth(int textId);
+	int getTextWidth(uint32 textId);
 
 	void drawText(uint8 *text, int x, int y, int alignment = kAlignLeft);
-	void drawText(int textId, int x, int y, int alignment = kAlignLeft);
+	void drawText(uint32 textId, int x, int y, int alignment = kAlignLeft);
 };
 
 FontRendererGui::FontRendererGui(Gui *gui, int fontId)
@@ -186,7 +186,7 @@ FontRendererGui::~FontRendererGui() {
 		_gui->_vm->_graphics->deleteSurface(_glyph[i]._data);
 }
 
-void FontRendererGui::fetchText(int textId, uint8 *buf) {
+void FontRendererGui::fetchText(uint32 textId, uint8 *buf) {
 	uint8 *data = _gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff);
 	int i;
 
@@ -220,7 +220,7 @@ int FontRendererGui::getTextWidth(uint8 *text) {
 	return textWidth;
 }
 
-int FontRendererGui::getTextWidth(int textId) {
+int FontRendererGui::getTextWidth(uint32 textId) {
 	uint8 text[MAX_STRING_LEN];
 
 	fetchText(textId, text);
@@ -259,7 +259,7 @@ void FontRendererGui::drawText(uint8 *text, int x, int y, int alignment) {
 	}
 }
 
-void FontRendererGui::drawText(int textId, int x, int y, int alignment) {
+void FontRendererGui::drawText(uint32 textId, int x, int y, int alignment) {
 	uint8 text[MAX_STRING_LEN];
 
 	fetchText(textId, text);
@@ -784,20 +784,23 @@ public:
 };
 
 /**
- * A "mini" dialog is basically a yes/no question.
+ * A "mini" dialog is usually a yes/no question, but also used for the
+ * restart/restore dialog at the beginning of the game.
  */
 
 class MiniDialog : public Dialog {
 private:
-	int _textId;
+	uint32 _headerTextId;
+	uint32 _okTextId;
+	uint32 _cancelTextId;
 	FontRendererGui *_fr;
 	Widget *_panel;
 	Button *_okButton;
 	Button *_cancelButton;
 
 public:
-	MiniDialog(Gui *gui, uint32 textId)
-		: Dialog(gui), _textId(textId) {
+	MiniDialog(Gui *gui, uint32 headerTextId, uint32 okTextId = 149618688, uint32 cancelTextId = 149618689)
+		: Dialog(gui), _headerTextId(headerTextId), _okTextId(okTextId), _cancelTextId(cancelTextId) {
 		_fr = new FontRendererGui(_gui, _gui->_vm->_controlsFontId);
 
 		_panel = new Widget(this, 1);
@@ -821,9 +824,10 @@ public:
 	virtual void paint() {
 		Dialog::paint();
 
-		_fr->drawText(_textId, 310, 134, FontRendererGui::kAlignCenter);
-		_fr->drawText(149618688, 270, 214);	// ok
-		_fr->drawText(149618689, 270, 276);	// cancel
+		if (_headerTextId)
+			_fr->drawText(_headerTextId, 310, 134, FontRendererGui::kAlignCenter);
+		_fr->drawText(_okTextId, 270, 214);
+		_fr->drawText(_cancelTextId, 270, 276);
 	}
 
 	virtual void onAction(Widget *widget, int result = 0) {
@@ -938,7 +942,7 @@ public:
 		int maxWidth = 0;
 		int width;
 
-		int alignTextIds[] = {
+		uint32 alignTextIds[] = {
 			149618700,	// object labels
 			149618702,	// music volume
 			149618703,	// speech volume
@@ -1573,6 +1577,26 @@ void Gui::saveControl(void) {
 	saveDialog.run();
 	prop.show_keyboard = false;
 	_vm->_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+}
+
+bool Gui::startControl(void) {
+	while (1) {
+		MiniDialog startDialog(this, 0, 149618693, 149618690);
+
+		if (startDialog.run())
+			return true;
+
+		if (_vm->_quit)
+			return false;
+
+		if (restoreControl())
+			return false;
+
+		if (_vm->_quit)
+			return false;
+	}
+
+	return true;
 }
 
 void Gui::quitControl(void) {

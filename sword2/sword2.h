@@ -314,6 +314,7 @@ public:
 	uint32 saveGame(uint16 slotNo, uint8 *description);
 	uint32 restoreGame(uint16 slotNo);
 	uint32 getSaveDescription(uint16 slotNo, uint8 *description);
+	bool saveExists(void);
 	bool saveExists(uint16 slotNo);
 	void fillSaveBuffer(Memory *buffer, uint32 size, uint8 *desc);
 	uint32 restoreFromBuffer(Memory *buffer, uint32 size);
