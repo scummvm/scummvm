@@ -302,8 +302,8 @@ void Scumm::setupOpcodes2()
 		/* D4 */
 		&Scumm::o6_invalid,
 		&Scumm::o6_jumpToScript,
-		&Scumm::o6_invalid,
-		&Scumm::o6_invalid,
+		&Scumm::o6_land,
+		&Scumm::o6_lor,
 		/* D8 */
 		&Scumm::o6_isRoomScriptRunning,
 		&Scumm::o6_invalid,
@@ -625,8 +625,8 @@ void Scumm::setupOpcodes2()
 		/* D4 */
 		"o6_invalid",
 		"o6_jumpToScript",
-		"o6_invalid",
-		"o6_invalid",
+		"o6_land",
+		"o6_lor",
 		/* D8 */
 		"o6_isRoomScriptRunning",
 		"o6_invalid",
@@ -2771,7 +2771,10 @@ void Scumm::o6_miscOps()
 						writeArray(233, 0, 53, 1); // INSANE callback: 2x4
 						writeArray(233, 0, 54, 1); // INSANE callback: Wrench
 						writeArray(233, 0, 55, 1); // INSANE callback: Dust
-						writeArray(233, 0, 8, 1);  // INSANE callback: 
+						writeArray(233, 0, 8, 1);  // INSANE callback: Give Googles
+
+						writeArray(233, 0, 3, 45);
+						//writeArray(233, 0, 1, 130);
 // 						sp->play("minefite.san", getGameDataPath());
 					 }
 						break;
