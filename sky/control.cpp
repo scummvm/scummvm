@@ -1527,7 +1527,6 @@ void Control::delay(unsigned int amount) {
 			}
 		}
 
-#ifndef __PALM_OS__
 		uint this_delay = 20; // 1?
 #ifdef _WIN32_WCE
 		this_delay = 10;
@@ -1536,7 +1535,7 @@ void Control::delay(unsigned int amount) {
 			this_delay = amount;
 
 		if (this_delay > 0)	_system->delayMillis(this_delay);
-#endif
+
 		cur = _system->getMillis();
 	} while (cur < start + amount);
 }
