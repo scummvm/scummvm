@@ -195,11 +195,20 @@ ImuseSndMgr::SoundStruct *ImuseSndMgr::openSound(const char *soundName, int volG
 void ImuseSndMgr::closeSound(SoundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 
-	if (soundHandle->mcmpMgr)
+	if (soundHandle->mcmpMgr) {
 		delete soundHandle->mcmpMgr;
+		soundHandle->mcmpMgr = NULL;
+	}
 
-	free(soundHandle->region);
-	free(soundHandle->jump);
+	if (soundHandle->region) {
+		free(soundHandle->region);
+		soundHandle->region = NULL;
+	}
+
+	if (soundHandle->jump) {
+		free(soundHandle->jump);
+		soundHandle->jump = NULL;
+	}
 
 	memset(soundHandle, 0, sizeof(SoundStruct));
 }
