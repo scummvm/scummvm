@@ -244,7 +244,7 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	Common::StackLock lock(_mutex, "IMuseDigital::getSoundStatus()");
 	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		if ((_track[l]->soundId == sound) && _track[l]->used) {
+		if ((_track[l]->soundId == sound) && _track[l]->handle.isActive()) {
 			return 1;
 		}
 	}
