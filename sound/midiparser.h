@@ -131,21 +131,134 @@ struct NoteTimer {
 //
 //////////////////////////////////////////////////
 
-//! A framework and common functionality for parsing MIDI streams.
-/*! The MidiParser provides a framework in which to load
- *  parse and traverse MIDI streams. Loading and parsing
- *  events for specific formats requires a class to be
- *  derived from MidiParser.
+//! A framework and common functionality for parsing event-based music streams.
+/*! The MidiParser provides a framework in which to load,
+ *  parse and traverse event-based music data. Note the
+ *  avoidance of the phrase "MIDI data." Despite its name,
+ *  MidiParser derivatives can be used to manage a wide
+ *  variety of event-based music formats. It is, however,
+ *  based on the premise that the format in question can
+ *  be played in the form of specification MIDI events.
  *
- *  The MidiParser must be provided with a MidiDriver interface,
- *  which it uses to transmit events. However, it does NOT
- *  automatically hook into the MidiDriver's timer callback
- *  or set up its timer rate from the MidiDriver. The client
- *  using the MidiParser must set the timer rate and provide
- *  a means of firing the MidiParser's onTimer() method at
- *  appropriate intervals. The onTimer() event may be called
- *  by the client or by manually hooking and unhooking the
- *  MidiParser to the MidiDriver's timer callback.
+ *  In order to use MidiParser to parse your music format,
+ *  follow these steps:
+ *
+ *  <b>STEP 1: Write a MidiParser derivative.</b>
+ *  The MidiParser base class provides functionality
+ *  considered common to the task of parsing event-based
+ *  music. In order to parse a particular format, create
+ *  a derived class that implements, at minimum, the
+ *  following format-specific methods:
+ *    - loadMusic
+ *    - parseNextEvent
+ *
+ *  In addition to the above functions, the derived class
+ *  may also override the default MidiParser behavior for
+ *  the following methods:
+ *    - resetTracking
+ *    - allNotesOff
+ *    - unloadMusic
+ *    - property
+ *    - getTick
+ *
+ *  Please see the documentation for these individual
+ *  functions for more information on their use.
+ *
+ *  The naming convention for classes derived from
+ *  MidiParser is MidiParser_XXX, where "XXX" is some
+ *  short designator for the format the class will
+ *  support. For instance, the MidiParser derivative
+ *  for parsing the Standard MIDI File format is
+ *  MidiParser_SMF.
+ *
+ *  <b>STEP 2: Create an object of your derived class.</b>
+ *  Each MidiParser object can parse at most one (1) song
+ *  at a time. However, a MidiParser object can be reused
+ *  to play another song once it is no longer needed to
+ *  play whatever it was playing. In other words, MidiParser
+ *  objects do not have to be destroyed and recreated from
+ *  one song to the next.
+ *
+ *  <b>STEP 3: Specify a MidiDriver to send events to.</b>
+ *  MidiParser works by sending MIDI and meta events to a
+ *  MidiDriver. In the simplest configuration, you can plug
+ *  a single MidiParser directly into the output MidiDriver
+ *  being used. However, you can only plug in one at a time;
+ *  otherwise channel conflicts will occur. Furthermore,
+ *  meta events that may be needed to interactively control
+ *  music flow cannot be handled because they are being
+ *  sent directly to the output device.
+ *
+ *  If you need more control over the MidiParser while it's
+ *  playing, you can create your own "pseudo-MidiDriver" and
+ *  place it in between your MidiParser and the output
+ *  MidiDriver. The MidiParser will send events to your
+ *  pseudo-MidiDriver, which in turn must send them to the
+ *  output MidiDriver (or do whatever special handling is
+ *  required).
+ *
+ *  To specify the MidiDriver to send music output to,
+ *  use the MidiParser::setMidiDriver method.
+ *
+ *  <b>STEP 4: Specify the onTimer call rate.</b>
+ *  MidiParser bases the timing of its parsing on an external
+ *  clock. Every time MidiParser::onTimer is called, a bit
+ *  more music is parsed. You must specify how many
+ *  microseconds will occur between each call to onTimer,
+ *  in order to ensure an accurate music tempo.
+ *
+ *  To set the onTimer call rate, in microseconds,
+ *  use the MidiParser::setTimerRate method. The onTimer
+ *  call rate will typically match the timer rate for
+ *  the output MidiDriver used. This rate can be obtained
+ *  by calling MidiDriver::getBaseTempo.
+ *
+ *  <b>STEP 5: Load the music.</b>
+ *  MidiParser requires that the music data already be loaded
+ *  into memory. The client code is responsible for memory
+ *  management on this block of memory. That means that the
+ *  client code must ensure that the data remain in memory
+ *  while the MidiParser is using it, and properly freed
+ *  after it is no longer needed. Some MidiParser variants may
+ *  require internal buffers as well; memory management for those
+ *  buffers is the responsibility of the MidiParser object.
+ *
+ *  To load the music into the MidiParser, use the
+ *  MidiParser::loadMusic method, specifying a memory pointer
+ *  to the music data and the size of the data. (NOTE: Some
+ *  MidiParser variants don't require a size, and 0 is fine.
+ *  However, when writing client code to use MidiParser, it is
+ *  best to assume that a valid size will be required.
+ *
+ *  Convention requires that each implementation of
+ *  MidiParser::loadMusic automatically set up default tempo
+ *  and current track. This effectively means that the
+ *  MidiParser will start playing as soon as timer events
+ *  start coming in.
+ *
+ *  <b>STEP 6: Activate a timer source for the MidiParser.</b>
+ *  The easiest timer source to use is the timer of the
+ *  output MidiDriver. You can attach the MidiDriver's
+ *  timer output directly to a MidiParser by calling
+ *  MidiDriver::setTimerCallback. In this case, the timer_proc
+ *  will be the static method MidiParser::timerCallback,
+ *  and timer_param will be a pointer to your MidiParser object.
+ *
+ *  This configuration only allows one MidiParser to be driven
+ *  by the MidiDriver at a time. To drive more MidiDrivers, you
+ *  will need to create a "pseudo-MidiDriver" as described earlier,
+ *  In such a configuration, the pseudo-MidiDriver should be set
+ *  as the timer recipient in MidiDriver::setTimerCallback, and
+ *  could then call MidiParser::onTimer for each MidiParser object.
+ *
+ *  <b>STEP 7: Music shall begin to play!</b>
+ *  Congratulations! At this point everything should be hooked up
+ *  and the MidiParser should generate music. Note that there is
+ *  no way to "stop" the MidiParser. You can "pause" the MidiParser
+ *  simply by not sending timer events to it, or you can call
+ *  MidiParser::unloadMusic to permanently stop the music. (This
+ *  method resets everything and detaches the MidiParser from the
+ *  memory block containing the music data.)
  */
 
 class MidiParser {
