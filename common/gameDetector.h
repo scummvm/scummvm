@@ -93,7 +93,9 @@ enum GameFeatures {
 	GF_AFTER_V5            = 1 << 22,
 	GF_AFTER_HEV7          = 1 << 23,
 
-	GF_HAS_ROOMTABLE       = GF_AFTER_V7,
+	GF_NEW_CAMERA          = 1 << 24,
+	GF_DIGI_IMUSE          = 1 << 25,
+
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };
 
