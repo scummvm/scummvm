@@ -7631,8 +7631,10 @@ void SimonState::read_vga_from_datfile_1(uint vga_id) {
 		sprintf(buf, "%.3d%d.VGA", vga_id>>1, (vga_id&1)+1);
 
 		in = fopen_maybe_lowercase(buf);
-		if (in==NULL)
-			error("read_vga_from_datfile_1: cannot open %s", buf);
+		if (in==NULL) {
+			warning("read_vga_from_datfile_1: cannot open %s", buf);
+			return;
+		}
 
 		fseek(in, 0, SEEK_END);
 		size = ftell(in);
