@@ -52,10 +52,8 @@ void ScummEngine::unkMessage1(const byte *msg) {
 
 		// Sam and Max uses a caching system, printing empty messages
 		// and setting VAR_V6_SOUNDMODE beforehand. See patch 609791.
-		// FIXME: There are other VAR_V6_SOUNDMODE states, as
-		// mentioned in the patch. FIXME after iMUSE is done.
-		if (_gameId != GID_SAMNMAX || (VAR(VAR_V6_SOUNDMODE) != 2))
-			_sound->talkSound(a, b, 1);
+		if (VAR(VAR_V6_SOUNDMODE) != 2)
+			_sound->talkSound(a, b, 1, VAR(VAR_V6_SOUNDMODE));
 	}
 }
 

@@ -64,7 +64,7 @@ protected:
 	int _numSoundEffects;		// For compressed audio
 
 	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;
-	byte _talk_sound_mode;
+	byte _talk_sound_mode, _talk_sound_channel;
 	bool _mouthSyncMode;
 	bool _endOfMouthSync;
 	uint16 _mouthSyncTimes[64];
@@ -97,7 +97,7 @@ public:
 	void stopSound(int a);
 	void stopAllSounds();
 	void soundKludge(int *list, int num);
-	void talkSound(uint32 a, uint32 b, int mode);
+	void talkSound(uint32 a, uint32 b, int mode, int channel = 0);
 	void setupSound();
 	void pauseSounds(bool pause);
 

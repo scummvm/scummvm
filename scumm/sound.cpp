@@ -64,6 +64,7 @@ Sound::Sound(ScummEngine *parent)
 	_talk_sound_b1(0),
 	_talk_sound_b2(0),
 	_talk_sound_mode(0),
+	_talk_sound_channel(0),
 	_mouthSyncMode(false),
 	_endOfMouthSync(false),
 	_curSoundPos(0),
@@ -623,15 +624,9 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		// Some games frequently assume that starting one sound effect will
 		// automatically stop any other that may be playing at that time. So
 		// that is what we do here, but we make an exception for speech.
-		//
-		// Do any other games than these need this hack?
-		//
-		// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
-		// from being interrupted.
 
-		if (mode == 1 && (_vm->_gameId == GID_TENTACLE
-			|| (_vm->_gameId == GID_SAMNMAX && !_vm->isScriptRunning(99)))) {
-			id = 777777;
+		if (mode == 1 && (_vm->_gameId == GID_TENTACLE || _vm->_gameId == GID_SAMNMAX)) {
+			id = 777777 + _talk_sound_channel;
 			_vm->_mixer->stopID(id);
 		}
 
@@ -875,10 +870,11 @@ void Sound::soundKludge(int *list, int num) {
 	}
 }
 
-void Sound::talkSound(uint32 a, uint32 b, int mode) {
+void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
 	if (mode == 1) {
 		_talk_sound_a1 = a;
 		_talk_sound_b1 = b;
+		_talk_sound_channel = channel;
 	} else {
 		_talk_sound_a2 = a;
 		_talk_sound_b2 = b;
