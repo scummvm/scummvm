@@ -54,6 +54,8 @@ OSystem *OSystem::makeInstance() {
 	return OSystem_GP32_create();
 #elif defined(__PALM_OS__) //chrilith
 	return OSystem_PALMOS_create();
+#elif defined(__PLAYSTATION2__)
+	return OSystem_PS2_create();
 #else
 	/* SDL is the default driver for now */
 	return OSystem_SDL_create();

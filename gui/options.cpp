@@ -467,7 +467,7 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 void GlobalOptionsDialog::open() {
 	OptionsDialog::open();
 
-#if !( defined(__DC__) || defined(__GP32__) )
+#if !( defined(__DC__) || defined(__GP32__) || defined(__PLAYSTATION2__) )
 	// Set _savePath to the current save path
 	Common::String dir(ConfMan.get("savepath", _domain));
 	Common::String extraPath(ConfMan.get("extrapath", _domain));

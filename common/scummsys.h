@@ -22,7 +22,7 @@
 #ifndef SCUMMSYS_H
 #define SCUMMSYS_H
 
-#ifndef _STDAFX_H
+#if !defined(_STDAFX_H) && !defined(__PLAYSTATION2__)
 #error Included scummsys.h without including stdafx.h first!
 #endif
 
@@ -278,6 +278,51 @@
 
 	#define START_PACK_STRUCTS pack (push, 1)
 	#define END_PACK_STRUCTS	 pack(pop)
+#elif defined __PLAYSTATION2__
+	#define CDECL 
+	#define SCUMM_NEED_ALIGNMENT
+	#define SCUMM_LITTLE_ENDIAN 
+
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+	#define CHECK_HEAP
+
+	#define FORCEINLINE inline
+	#define NORETURN __attribute__((__noreturn__))
+	#define GCC_PACK __attribute__((packed))
+
+	typedef unsigned char byte;
+	typedef unsigned char uint8;
+	typedef unsigned short uint16;
+	typedef unsigned int uint32;
+	typedef unsigned int uint;
+	typedef unsigned long uint64;
+	typedef signed char int8;
+	typedef signed short int16;
+	typedef signed int int32;
+	typedef signed long int64;
+
+	#define START_PACK_STRUCTS pack (push, 1)
+	#define END_PACK_STRUCTS	 pack(pop)
+
+	#include "backends/ps2/fileio.h"
+
+	#define fopen(a, b)			ps2_fopen(a, b)
+	#define fclose(a)			ps2_fclose(a)
+	#define fflush(a)			ps2_fflush(a)
+	#define fseek(a, b, c)		ps2_fseek(a, b, c)
+	#define ftell(a)			ps2_ftell(a)
+	#define feof(a)				ps2_feof(a)
+	#define fread(a, b, c, d)	ps2_fread(a, b, c, d)
+	#define fwrite(a, b, c, d)	ps2_fwrite(a, b, c, d)
+	#define fgetc(a)			ps2_fgetc(a)
+	#define fgets(a, b, c)		ps2_fgets(a, b, c)
+	#define fputc(a, b)			ps2_fputc(a, b)
+	#define fputs(a, b)			ps2_fputs(a, b)
+	#define fprintf				ps2_fprintf
+	#define fsize(a)			ps2_fsize(a)
+
+	extern void ps2_disableHandleCaching(void);
 #else
 	#error No system type defined
 #endif

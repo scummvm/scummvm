@@ -90,6 +90,8 @@ void ConfigManager::loadDefaultConfigFile() {
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 	#elif defined(__PALM_OS__)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
+	#elif defined(__PLAYSTATION2__)
+		strcpy(configFile, "mc0:ScummVM/" DEFAULT_CONFIG_FILE);
 	#else
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 	#endif

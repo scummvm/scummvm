@@ -111,7 +111,9 @@
 #endif
 #if !defined(macintosh)
 #include <sys/types.h>
+#if !defined(__PLAYSTATION2__)
 #include <sys/uio.h>
+#endif
 #include <sys/param.h>
 #endif
 #if !defined (__BEOS__)
