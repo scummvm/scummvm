@@ -31,8 +31,6 @@ struct AkosOffset;
 
 class AkosRenderer : public BaseCostumeRenderer {
 public:
-	bool charsetmask;	// FIXME - it seems charsetmask is only set once, in actor.cpp, to true. So can we get rid of it?!?
-
 	byte *outptr;
 	uint outwidth, outheight;
 

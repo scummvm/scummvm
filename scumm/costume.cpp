@@ -80,8 +80,8 @@ const byte cost_scaleTable[256] = {
 byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	int xmove, ymove, i, b, s;
 	uint scal;
-	byte scaling;
-	byte charsetmask, masking;
+	bool scaling;
+	bool charsetmask, masking;
 	byte startScaleIndexX;
 	byte newAmiCost;
 	int ex1, ex2;
@@ -284,17 +284,18 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	charsetmask =
 		_vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right,
 												_vm->virtscr[0].topline + _bottom);
-	masking = 0;
-
+	masking = false;
 	if (_vm->_features & GF_SMALL_HEADER)
 		masking = (_zbuf != 0);
-	else
+	else if (_zbuf != 0) {
 		masking =
 			_vm->isMaskActiveAt(_left, _top, _right, _bottom,
 													_vm->getResourceAddress(rtBuffer, 9) +
 													_vm->gdi._imgBufOffs[_zbuf] +
 													_vm->_screenStartStrip);
+	}
 
+	_mask_ptr = NULL;
 	if (masking || charsetmask) {
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos * _numStrips + _vm->_screenStartStrip;
 		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];

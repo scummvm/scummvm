@@ -1001,7 +1001,6 @@ void Actor::drawActorCostume() {
 		bottom = cr._draw_bottom;
 	} else {
 		AkosRenderer ar(_vm);
-		ar.charsetmask = true;
 		ar._actorX = x - _vm->virtscr[0].xstart;
 		ar._actorY = y - elevation;
 		ar._scaleX = scalex;

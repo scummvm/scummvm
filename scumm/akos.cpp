@@ -636,7 +636,7 @@ void AkosRenderer::codec1() {
 	int cur_x, x_right, x_left, skip = 0, tmp_x, tmp_y;
 	int cur_y, y_top, y_bottom;
 	bool y_clipping;
-	bool masking;
+	bool charsetmask, masking;
 	int step;
 
 	/* implement custom scale table */
@@ -835,15 +835,17 @@ void AkosRenderer::codec1() {
 
 	v1.destptr = outptr + cur_x + cur_y * outwidth;
 
+	charsetmask =
+		_vm->hasCharsetMask(x_left, y_top + _vm->virtscr[0].topline, x_right,
+												_vm->virtscr[0].topline + y_bottom);
 	masking = false;
-	if (_zbuf) {
+	if (_zbuf != 0) {
 		masking = _vm->isMaskActiveAt(x_left, y_top, x_right, y_bottom,
 										_vm->getResourceAddress(rtBuffer, 9) +
 										_vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip) != 0;
 	}
 
 	v1.mask_ptr = NULL;
-
 	if (masking || charsetmask || _shadow_mode) {
 		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + cur_y * _numStrips + _vm->_screenStartStrip;
 		v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
