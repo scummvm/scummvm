@@ -167,8 +167,6 @@ class OSystem_MorphOS : public OSystem
 		/* CD-ROM related attributes */
 		CDRIVEPTR 		 CDrive;
 		ULONG 			 CDDATrackOffset;
-		int 				 cd_track, cd_num_loops, cd_start_frame, cd_end_frame;
-		uint32 			 cd_end_time, cd_stop_time, cd_next_second;
 
 		/* Scaling-related attributes */
 		SCALERTYPE ScummScaler;

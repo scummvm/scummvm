@@ -60,6 +60,7 @@ static struct TagItem PlayTags[] =   { { CDPA_StartTrack, 1 },
 													{ CDPA_StartFrame, 0 },
 													{ CDPA_EndTrack, 	 1 },
 													{ CDPA_EndFrame, 	 0 },
+													{ CDPA_Loops, 	    1 },
 													{ TAG_DONE,			 0	}
 												 };
 
@@ -248,7 +249,7 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 
 		case PROP_OPEN_CD:
 			FindCDTags[ 0 ].ti_Data = (ULONG)((GameID == GID_LOOM256) ? "LoomCD" : "Monkey1CD");
-			if( !CDDABase ) CDDABase = OpenLibrary( "cdda.library", 0 );
+			if( !CDDABase ) CDDABase = OpenLibrary( "cdda.library", 2 );
 			if( CDDABase )
 			{
 				CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
@@ -262,7 +263,7 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 					else if( GameID == GID_LOOM256 )
 					{
 						// Offset correction *may* be required
-						struct CDS_TrackInfo ti;
+						struct CDS_TrackInfo ti = { sizeof( struct CDS_TrackInfo ) };
 
 						if( CDDA_GetTrackInfo( CDrive, 1, 0, &ti ) )
 							CDDATrackOffset = ti.ti_TrackStart.tm_Format.tm_Frame-22650;
@@ -294,24 +295,15 @@ void OSystem_MorphOS::play_cdrom( int track, int num_loops, int start_frame, int
 {
 	if( CDrive && start_frame >= 0 )
 	{
-		struct CDS_TrackInfo ti;
-
 		if( start_frame > 0 )
 			start_frame -= CDDATrackOffset;
-
-		cd_track = track;
-		cd_num_loops = num_loops;
-		cd_start_frame = start_frame;
 
 		PlayTags[ 0 ].ti_Data = track;
 		PlayTags[ 1 ].ti_Data = start_frame;
 		PlayTags[ 2 ].ti_Data = (length == 0) ? track+1 : track;
 		PlayTags[ 3 ].ti_Data = length ? start_frame+length : 0;
+		PlayTags[ 4 ].ti_Data = (num_loops == 0) ? 1 : num_loops;
 		CDDA_Play( CDrive, PlayTags );
-		cd_stop_time = 0;
-		
-		CDDA_GetTrackInfo( CDrive, track, 0, &ti );
-		cd_end_time = get_msecs() + ti.ti_TrackLength.tm_Format.tm_Frame * 1000 / 75;
 	}
 }
 
@@ -319,8 +311,7 @@ void OSystem_MorphOS::play_cdrom( int track, int num_loops, int start_frame, int
 // track is started in the meantime.
 void OSystem_MorphOS::stop_cdrom()
 {
-	cd_stop_time = get_msecs() + 100;
-	cd_num_loops = 0;
+	CDDA_Stop( CDrive );
 }
 
 bool OSystem_MorphOS::poll_cdrom()
@@ -331,47 +322,11 @@ bool OSystem_MorphOS::poll_cdrom()
 		return false;
 
 	CDDA_GetAttr( CDDA_Status, CDrive, &status );
-	return (cd_num_loops != 0 && (get_msecs() < cd_end_time || status != CDDA_Status_Ready));
+	return status == CDDA_Status_Busy;
 }
 
 void OSystem_MorphOS::update_cdrom()
 {
-	if( CDrive )
-	{
-		if( cd_stop_time != 0 && get_msecs() >= cd_stop_time )
-		{
-			CDDA_Stop( CDrive );
-			cd_num_loops = 0;
-			cd_stop_time = 0;
-			return;
-		}
-		if( cd_num_loops == 0 || get_msecs() < cd_end_time )
-			return;
-
-		ULONG status;
-		CDDA_GetAttr( CDDA_Status, CDrive, &status );
-		if( cd_num_loops != 1 && status != CDDA_Status_Ready )
-		{
-			// Wait another second for it to be done
-			cd_end_time += 1000;
-			return;
-		}
-
-		if( cd_num_loops > 0 )
-			cd_num_loops--;
-
-		if( cd_num_loops != 0 )
-		{
-			struct CDS_TrackInfo ti;
-
-			PlayTags[ 0 ].ti_Data = cd_track;
-			PlayTags[ 1 ].ti_Data = cd_start_frame;
-			CDDA_Play( CDrive, PlayTags );
-		
-			CDDA_GetTrackInfo( CDrive, cd_track, 0, &ti );
-			cd_end_time = get_msecs() + ti.ti_TrackLength.tm_Format.tm_Frame * 1000 / 75;
-		}
-	}
 }
 
 void OSystem_MorphOS::quit()
