@@ -61,7 +61,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getRandomNr),
-		OPCODE(o2_setState04),
+		OPCODE(o2_setState02),
 		/* 18 */
 		OPCODE(o5_jumpRelative),
 		OPCODE(o2_doSentence),
@@ -81,7 +81,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_loadRoomWithEgo),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_setVarRange),
-		OPCODE(o2_ifNotState04),
+		OPCODE(o2_setState04),
 		/* 28 */
 		OPCODE(o5_equalZero),
 		OPCODE(o2_setOwnerOf),
@@ -141,7 +141,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
-		OPCODE(o2_setState02),
+		OPCODE(o2_clearState02),
 		/* 58 */
 		OPCODE(o2_beginOverride),
 		OPCODE(o2_doSentence),
@@ -191,7 +191,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isSoundRunning),
 		OPCODE(o2_setActorElevation),
 		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifNotState01),
+		OPCODE(o2_ifState01),
 		/* 80 */
 		OPCODE(o5_breakHere),
 		OPCODE(o2_putActor),
@@ -261,7 +261,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getDist),
 		OPCODE(o2_findObject),
 		OPCODE(o2_walkActorToObject),
-		OPCODE(o2_setState02),
+		OPCODE(o2_setState01),
 		/* B8 */
 		OPCODE(o5_lessOrEqual),
 		OPCODE(o2_doSentence),
@@ -301,7 +301,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
-		OPCODE(o2_setState02),
+		OPCODE(o2_clearState02),
 		/* D8 */
 		OPCODE(o5_printEgo),
 		OPCODE(o2_doSentence),
