@@ -34,11 +34,7 @@ int glGetColorTable(int, int, int, void *) { return 0; }
 
 class OSystem_SDL_OpenGL : public OSystem_SDL_Common {
 public:
-	OSystem_SDL_OpenGL() { 
-	  _glScreenStart = 0; 
-	  _glBilinearFilter = true;
-	  _glBottomOfTexture = 256; // height is always 256
-	}
+	OSystem_SDL_OpenGL();
 
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
@@ -49,14 +45,24 @@ public:
 	// Set a parameter
 	uint32 property(int param, Property *value);
 
+	// Get the next event.
+	// Returns true if an event was retrieved.	
+//	bool poll_event(Event *event);
+
 protected:
 	FB2GL fb2gl;
 	int _glFlags;
 	int _glScreenStart;
 	bool _glBilinearFilter;
+	bool _usingOpenGL;
 	SDL_Surface *tmpSurface; // Used for black rectangles blitting 
-	SDL_Rect tmpBlackRect; // Black rectangle at end of the GL screen
+	SDL_Rect tmpBlackRect;   // Black rectangle at end of the GL screen
+	SDL_Rect _glWindow;      // Only uses w and h (for window resizing)
 	int _glBottomOfTexture;
+
+	SDL_Surface *_hwscreen;  // hardware screen (=> _usingOpenGL == false)
+
+	ScalerProc *_scaler_proc;
 	
 	virtual void load_gfx_mode();
 	virtual void unload_gfx_mode();
@@ -65,6 +71,18 @@ protected:
 
 OSystem_SDL_Common *OSystem_SDL_Common::create() {
 	return new OSystem_SDL_OpenGL();
+}
+
+OSystem_SDL_OpenGL::OSystem_SDL_OpenGL()
+  : _hwscreen(0), _scaler_proc(0)
+{
+  _glScreenStart = 0; 
+  _glBilinearFilter = true;
+  _usingOpenGL = true; // false => Switch to filters used in the sdl.cpp version
+  _glBottomOfTexture = 256; // height is always 256
+  // 640x480 resolution
+  _glWindow.w = 640;
+  _glWindow.h = 480;
 }
 
 void OSystem_SDL_OpenGL::set_palette(const byte *colors, uint start, uint num) {
@@ -93,13 +111,51 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	Gmask = 0x07E0; // 6
 	Bmask = 0x001F; // 5
 	Amask = 0;
-	
+
 	_forceFull = true;
 	_mode_flags = DF_UPDATE_EXPAND_1_PIXEL;
-	_scaleFactor = 2;
 
 	_tmpscreen = NULL;
 	_tmpScreenWidth = (_screenWidth + 3);
+
+	switch(_mode) {
+	case GFX_2XSAI:
+		_scaleFactor = 2;
+		_scaler_proc = _2xSaI;
+		break;
+	case GFX_SUPER2XSAI:
+		_scaleFactor = 2;
+		_scaler_proc = Super2xSaI;
+		break;
+	case GFX_SUPEREAGLE:
+		_scaleFactor = 2;
+		_scaler_proc = SuperEagle;
+		break;
+	case GFX_ADVMAME2X:
+		_scaleFactor = 2;
+		_scaler_proc = AdvMame2x;
+		break;
+	case GFX_TV2X:
+		_scaleFactor = 2;
+		_scaler_proc = TV2x;
+		break;
+	case GFX_DOTMATRIX:
+		_scaleFactor = 2;
+		_scaler_proc = DotMatrix;
+		break;
+	case GFX_NORMAL:
+		_scaleFactor = 1;
+		_scaler_proc = Normal1x;
+		break;
+	default:
+//		error("unknown gfx mode");
+		_mode = GFX_NORMAL;
+		_scaleFactor = 1;
+		_scaler_proc = Normal1x;
+	}
+
+	if (_mode != GFX_NORMAL)
+	  _usingOpenGL = false;
 	
 	//
 	// Create the surface that contains the 8 bit game data
@@ -108,21 +164,37 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	if (_screen == NULL)
 		error("_screen failed");
 
-
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
-
-	_glFlags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
-	if (_full_screen) {
-		_glFlags |= (FB2GL_FS);
-		_glScreenStart = 0;
+	if (_usingOpenGL) {
+	  
+		_glFlags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
+		if (_full_screen) {
+			_glFlags |= (FB2GL_FS);
+			_glScreenStart = 0;
+		}
+		// _glWindow defines the resolution
+		fb2gl.init(_glWindow.w, _glWindow.h, 0, _glScreenStart? 15: 70, 
+		    _glFlags);
+		
 	}
-	// 640x480 screen resolution
-	fb2gl.init(640, 480, 0,_glScreenStart? 15: 70,_glFlags);
+	else { // SDL backend
+	  
+		_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, _screenHeight * _scaleFactor, 16, 
+		  _full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+		);
+		if (_hwscreen == NULL)
+			error("_hwscreen failed");
+
+		// Distinguish 555 and 565 mode
+		if (_hwscreen->format->Rmask == 0x7C00)
+			Init_2xSaI(555);
+		else
+			Init_2xSaI(565);
+	}
 
 	SDL_SetGamma(1.25, 1.25, 1.25);
-
 	
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
@@ -130,12 +202,29 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 
 	// Need some extra bytes around when using 2xSaI
 	uint16 *tmp_screen = (uint16 *)calloc(_tmpScreenWidth * (_screenHeight + 3),sizeof(uint16));
-	_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
-						_tmpScreenWidth, _screenHeight + 3, 16, _tmpScreenWidth * 2,
+
+	if (_usingOpenGL) {
+		_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
+						_tmpScreenWidth, 
+						_screenHeight + 3, 
+						16, 
+						_tmpScreenWidth * 2,
 						Rmask,
 						Gmask,
 						Bmask,
 						Amask);
+	}
+	else { // SDL backend
+		_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
+						_tmpScreenWidth, 
+						_screenHeight + 3, 
+						16, 
+						_tmpScreenWidth * 2,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
+	}
 
 	tmpSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, 
 						// 320x256 texture (black end)
@@ -162,12 +251,17 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 }
 
 void OSystem_SDL_OpenGL::unload_gfx_mode() {
+  
 	SDL_SetGamma(1.0, 1.0, 1.0);
+
 	if (_screen) {
 		SDL_FreeSurface(_screen);
 		_screen = NULL; 
 	}
-
+	if (_hwscreen) {
+		SDL_FreeSurface(_hwscreen);
+		_hwscreen = NULL; 
+	}
 	if (_tmpscreen) {
 		free((uint16 *)_tmpscreen->pixels);
 		SDL_FreeSurface(_tmpscreen);
@@ -185,8 +279,14 @@ void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
 	SDL_Surface *old_tmpscreen = _tmpscreen;
 
 	// Release the HW screen surface
-	SDL_FreeSurface(fb2gl.getScreen());
-	fb2gl.setScreen(NULL);
+	if (fb2gl.getScreen()) { // _usingOpenGL was true
+	  SDL_FreeSurface(fb2gl.getScreen());
+	  fb2gl.setScreen(NULL);
+	}
+	if (_hwscreen) {
+	  SDL_FreeSurface(_hwscreen);
+	  _hwscreen = NULL;
+	}
 
 	// Setup the new GFX mode
 	load_gfx_mode();
@@ -210,10 +310,21 @@ void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
 void OSystem_SDL_OpenGL::update_screen() {
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, _glScreenStart, _screenWidth, _newShakePos+_glScreenStart};
+		if (_usingOpenGL) {
+			SDL_Rect blackrect = {
+			  0, 
+			  _glScreenStart, 
+			  _screenWidth, 
+			  _newShakePos + _glScreenStart
+			};
 		
-		SDL_FillRect(tmpSurface, &blackrect, 0);
-		fb2gl.blit16(tmpSurface, 1, &blackrect, 0, 0);
+			SDL_FillRect(tmpSurface, &blackrect, 0);
+			fb2gl.blit16(tmpSurface, 1, &blackrect, 0, 0);
+		}
+		else { // SDL backend
+			SDL_Rect blackrect = {0, 0, _screenWidth * _scaleFactor, _newShakePos * _scaleFactor};
+			SDL_FillRect(_hwscreen, &blackrect, 0);
+		}
 
 		_currentShakePos = _newShakePos;
 
@@ -249,45 +360,141 @@ void OSystem_SDL_OpenGL::update_screen() {
 	if (_num_dirty_rects > 0) {
 	
 		SDL_Rect *r; 
+		uint32 srcPitch, dstPitch;
 		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
-	
+
 		// Convert appropriate parts of the 8bpp image into 16bpp
+		SDL_Rect dst;
 		if (!_overlayVisible) {
-			SDL_Rect dst;
 			for(r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
-//				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
-//				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-				if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
+				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+				if (_scaler_proc == Normal1x) {
+				    if (_usingOpenGL) {
+					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
+						error("SDL_BlitSurface failed: %s", SDL_GetError());
+				    }
+				    else { // SDL backend
+					if (SDL_BlitSurface(_screen, r, _hwscreen, &dst) != 0)
+						error("SDL_BlitSurface failed: %s", SDL_GetError());
+				    }
+				} else { // _scaler_proc != Normal1x
+					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
+						error("SDL_BlitSurface failed: %s", SDL_GetError());
+				}
+			}
+		} else {
+		    if (!_usingOpenGL) {
+			for(r = _dirty_rect_list; r != last_rect; ++r) {
+				dst = *r;
+				if (SDL_BlitSurface(_tmpscreen, r, _hwscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
+		    }
 		}
 
-		// Almost the same thing as SDL_UpdateRects
-		fb2gl.blit16(_tmpscreen, _num_dirty_rects, _dirty_rect_list, 0,
-									_currentShakePos+_glScreenStart);
-
-		int _glBottomOfGameScreen = _screenHeight + _glScreenStart + _currentShakePos; 
-		// Bottom black border height
-		tmpBlackRect.h = _glBottomOfTexture - _glBottomOfGameScreen;
 		
-		if (!(_full_screen) && (tmpBlackRect.h > 0)) {
-		  SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
-		  fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0,
-		      _glBottomOfGameScreen);
-		}
+		if (_usingOpenGL) {
+			// Almost the same thing as SDL_UpdateRects
+			fb2gl.blit16(
+			    _tmpscreen, 
+			    _num_dirty_rects, 
+			    _dirty_rect_list, 
+			    0,
+			    _currentShakePos + _glScreenStart
+			);
 
-		fb2gl.display();
-	}
+			int _glBottomOfGameScreen = _screenHeight + 
+			  _glScreenStart + _currentShakePos; 
+
+			// Bottom black border height
+			tmpBlackRect.h = _glBottomOfTexture - _glBottomOfGameScreen;
+			if (!(_full_screen) && (tmpBlackRect.h > 0)) {
+				SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
+				fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0,
+				  _glBottomOfGameScreen);
+			}
+
+			fb2gl.display();
+		}
+		else { // SDL backend
+		
+		  if (_scaler_proc != Normal1x) {
+			SDL_LockSurface(_tmpscreen);
+			SDL_LockSurface(_hwscreen);
+
+			srcPitch = _tmpscreen->pitch;
+			dstPitch = _hwscreen->pitch;
+
+			for(r = _dirty_rect_list; r != last_rect; ++r) {
+				register int dst_y = r->y + _currentShakePos;
+				register int dst_h = 0;
+				if (dst_y < _screenHeight) {
+					dst_h = r->h;
+					if (dst_h > _screenHeight - dst_y)
+						dst_h = _screenHeight - dst_y;
+
+						dst_y *= _scaleFactor;
+
+						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch, NULL,
+						(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
+				}
+			
+				r->x *= _scaleFactor;
+				r->y = dst_y;
+				r->w *= _scaleFactor;
+				r->h = dst_h * _scaleFactor;
+			}
+
+			SDL_UnlockSurface(_tmpscreen);
+			SDL_UnlockSurface(_hwscreen);
+		  }
+
+		  // Readjust the dirty rect list in case we are doing a full update.
+		  // This is necessary if shaking is active.
+		  if (_forceFull) {
+			_dirty_rect_list[0].y = 0;
+			_dirty_rect_list[0].h = _screenHeight * _scaleFactor;
+		  }
+
+		  // Finally, blit all our changes to the screen
+		  SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
+		} // END OF "SDL backend"
+	} // if (num_dirty_rects > 0) ...
 
 	_num_dirty_rects = 0;
 	_forceFull = false;
 }
 
+/*
+bool OSystem_SDL_OpenGL::poll_event(Event *event) {
+	SDL_Event ev;
+	ev.type = 0;
+
+	SDL_PeepEvents(&ev, 1, SDL_GETEVENT, SDL_VIDEORESIZEMASK);
+
+	if (ev.type == SDL_VIDEORESIZE) {
+	      int w = ev.resize.w; 
+	      int h = ev.resize.h;
+	      glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	      glMatrixMode(GL_PROJECTION);
+	      glLoadIdentity();
+	      glOrtho(-1.0,1.0,-1.0,1.0,-1.0,1.0);
+	      _glWindow.w = w;
+	      _glWindow.h = h;
+	}
+
+	return OSystem_SDL_Common::poll_event(event);
+}
+*/
+
 uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 	int i;
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
+		if (!_usingOpenGL)
+			assert(_hwscreen != 0);
 		_full_screen ^= true;
 #ifdef MACOSX
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
@@ -295,7 +502,15 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 		// use hotswap_gfx_mode() directly to switch to fullscreen mode.
 		hotswap_gfx_mode();
 #else
-		if (!SDL_WM_ToggleFullScreen(fb2gl.getScreen())) {
+		SDL_Surface *_tmpScreen;
+		if (_usingOpenGL) {
+			_tmpScreen = fb2gl.getScreen();
+		} 
+		else { // SDL backend
+			_tmpScreen = _hwscreen;
+		}
+
+		if (!SDL_WM_ToggleFullScreen(_tmpScreen)) {
 			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
 			hotswap_gfx_mode();
 		}
@@ -305,23 +520,46 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 	}
 	else if (param == PROP_SET_GFX_MODE) {
 		SDL_Rect full = {0, 0, _screenWidth, _screenHeight};
-		glPopMatrix();
 
+		if (value->gfx_mode < 3) { // OpenGL modes
+			if (!_usingOpenGL) {
+				_usingOpenGL = true;
+				_mode = GFX_NORMAL;
+				hotswap_gfx_mode();
+			}
+		}
+	  
 		switch(value->gfx_mode) {
 			case 0: // Bilinear Filtering (on/off)
 				_glBilinearFilter ^= true;
 				for (i = 0; i < 2; i++) {
 					glBindTexture(GL_TEXTURE_2D, i);
 					if (_glBilinearFilter) {
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						glTexParameteri(
+						    GL_TEXTURE_2D, 
+						    GL_TEXTURE_MAG_FILTER, 
+						    GL_LINEAR
+						);
+						glTexParameteri(
+						    GL_TEXTURE_2D, 
+						    GL_TEXTURE_MIN_FILTER, 
+						    GL_LINEAR
+						);
 					} else {
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						glTexParameteri(
+						    GL_TEXTURE_2D, 
+						    GL_TEXTURE_MAG_FILTER, 
+						    GL_NEAREST
+						);
+						glTexParameteri(
+						    GL_TEXTURE_2D, 
+						    GL_TEXTURE_MIN_FILTER, 
+						    GL_NEAREST
+						);
 					}
 				}
 				break;
-			case 1: // Don't use the whole screen
+			case 1: // Don't use the whole screen (black borders)
 				fb2gl.init(0, 0, 0, 15, _glFlags);
 				_glScreenStart = 20;
 				SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
@@ -331,25 +569,26 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 				fb2gl.init(0, 0, 0, 70, _glFlags);
 				_glScreenStart = 0;
 				break;
-			default: // Zooming
-				glPushMatrix();
-/*				SDL_FillRect(tmpSurface, &full, 0);
-				fb2gl.blit16(tmpSurface, 1, &full,0, _glScreenStart);
-				fb2gl.display();
-				double x = (double)((_mouseCurState.x) 
-						- (_screenWidth / 2)) / (_screenWidth / 2);
-				double y = (double)((_mouseCurState.y) 
-						- (_screenHeight / 2)) / (_screenHeight / 2);
-				glTranslatef(-x, y, 0);
-*/
-				glScalef(1.0 + (double)(value->gfx_mode - 1) / 10,
-						1.0 + (double)(value->gfx_mode - 1) / 10, 0);
+			default: // SDL backend
+				if (value->gfx_mode >= 9)
+				  return 0;
+
+				_mode = value->gfx_mode;
+
+				if (_usingOpenGL)
+					_usingOpenGL = false;
+				
+				hotswap_gfx_mode();
 		};
-		fb2gl.blit16(_tmpscreen, 1, &full, 0, _glScreenStart);
-		fb2gl.display();
+
+		if (_usingOpenGL) {
+			fb2gl.blit16(_tmpscreen, 1, &full, 0, _glScreenStart);
+			fb2gl.display();
+		}
 
 		return 1;
 	}
 
 	return OSystem_SDL_Common::property(param, value);
 }
+

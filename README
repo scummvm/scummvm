@@ -335,7 +335,7 @@ simon games.
         Ctrl-Alt 1             - Switch beetwen bilinear and non-linear filtering [OpenGL backend]
         Ctrl-Alt 2             - Don't fit the game in the whole screen (black borders) [OpenGL backend]
         Ctrl-Alt 3             - Fit the game in the whole screen (no black borders) [OpenGL backend]
-        Ctrl-Alt 4-7           - Zoom [OpenGL backend]
+        Ctrl-Alt 4-7           - Switch between graphics filters [OpenGL backend]
 
     Scumm:
         Ctrl 0-9 and Alt 0-9   - load and save game state
