@@ -1213,6 +1213,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->_charsetColorMap[1] = _color;
 
+	int charUnk = *_fontPtr;
 	if (is2byte) {
 		_dropShadow = true;
 		charPtr = _vm->get2byteCharPtr(chr);
@@ -1282,7 +1283,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height + offsY);
 
-	byte *dst;
+	byte *dstPtr;
 	byte *back = NULL;
 
 	if (!_ignoreCharsetMask) {
@@ -1294,64 +1295,90 @@ void CharsetRendererClassic::printChar(int chr) {
 	Graphics::Surface backSurface;
 	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
 		dstSurface = *vs;
-		dst = vs->getPixels(_left, drawTop);
+		dstPtr = vs->getPixels(_left, drawTop);
 	} else {
 		dstSurface = _vm->gdi._textSurface;
-		dst = (byte *)_vm->gdi._textSurface.pixels + (_top - _vm->_screenTop) * _vm->gdi._textSurface.pitch + _left;
+		dstPtr = (byte *)_vm->gdi._textSurface.pixels + (_top - _vm->_screenTop) * _vm->gdi._textSurface.pitch + _left;
 	}
 
 	if (_blitAlso && vs->hasTwoBuffers) {
 		backSurface = dstSurface;
-		back = dst;
+		back = dstPtr;
 		dstSurface = *vs;
-		dst = vs->getBackPixels(_left, drawTop);
+		dstPtr = vs->getBackPixels(_left, drawTop);
 	}
 
 	if (!_ignoreCharsetMask && vs->hasTwoBuffers) {
 		drawTop = _top - _vm->_screenTop;
 	}
 
-	if (is2byte) {
-		drawBits1(dstSurface, dst, charPtr, drawTop, origWidth, origHeight);
+	if (_vm->_heversion >= 71 && charUnk >= 8) {
+		Common::Rect clip, src, dst;
+
+		clip.top = clip.left = 0;
+		clip.right = vs->w - 1;
+		clip.bottom = vs->h - 1;
+
+		dst.left = _left;
+		dst.top = _top;
+		dst.right = dst.left + width;
+		dst.bottom = dst.top + height;
+
+		dst.clip(clip);
+		if ((dst.left >= dst.right) || (dst.top >= dst.bottom))
+			return;
+
+		src = dst;
+		src.moveTo(0, 0);
+
+		_vm->gdi.decompressWizImage(dstPtr, vs->w, dst, charPtr, src);
+
+		if (_blitAlso && vs->hasTwoBuffers)
+			_vm->gdi.copyVirtScreenBuffers(dst);
+
 	} else {
-		drawBitsN(dstSurface, dst, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
-	}
-
-	if (_blitAlso && vs->hasTwoBuffers) {
-		// FIXME: Revisiting this code, I think the _blitAlso mode is likely broken
-		// right now -- we are copying stuff from "dst" to "back", but "dst" really
-		// only conatains charset data... 
-		// One way to fix this: don't copy etc.; rather simply render the char twice,
-		// once to each of the two buffers. That should hypothetically yield
-		// identical results, though I didn't try it and right now I don't know
-		// any spots where I can test this...
-		if (!_ignoreCharsetMask)
-			warning("This might be broken -- please report where you encountered this to Fingolfin");
-
-		// Perform some clipping
-		int w = MIN(width, dstSurface.w - _left);
-		int h = MIN(height, dstSurface.h - drawTop);
-		if (_left < 0) {
-			w += _left;
-			back -= _left;
-			dst -= _left;
+		if (is2byte) {
+			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight);
+		} else {
+			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
 		}
-		if (drawTop < 0) {
-			h += drawTop;
-			back -= drawTop * backSurface.pitch;
-			dst -= drawTop * dstSurface.pitch;
-		}
+
+		if (_blitAlso && vs->hasTwoBuffers) {
+			// FIXME: Revisiting this code, I think the _blitAlso mode is likely broken
+			// right now -- we are copying stuff from "dstPtr" to "back", but "dstPtr" really
+			// only conatains charset data... 
+			// One way to fix this: don't copy etc.; rather simply render the char twice,
+			// once to each of the two buffers. That should hypothetically yield
+			// identical results, though I didn't try it and right now I don't know
+			// any spots where I can test this...
+			if (!_ignoreCharsetMask)
+				warning("This might be broken -- please report where you encountered this to Fingolfin");
+
+			// Perform some clipping
+			int w = MIN(width, dstSurface.w - _left);
+			int h = MIN(height, dstSurface.h - drawTop);
+			if (_left < 0) {
+				w += _left;
+				back -= _left;
+				dstPtr -= _left;
+			}
+			if (drawTop < 0) {
+				h += drawTop;
+				back -= drawTop * backSurface.pitch;
+				dstPtr -= drawTop * dstSurface.pitch;
+			}
 		
-		// Blit the image data
-		if (w > 0) {
-			while (h-- > 0) {
-				memcpy(back, dst, w);
-				back += backSurface.pitch;
-				dst += dstSurface.pitch;
+			// Blit the image data
+			if (w > 0) {
+				while (h-- > 0) {
+					memcpy(back, dstPtr, w);
+					back += backSurface.pitch;
+					dstPtr += dstSurface.pitch;
+				}
 			}
 		}
-	}
-	
+	}	
+
 	_left += origWidth;
 
 	if (_str.right < _left) {

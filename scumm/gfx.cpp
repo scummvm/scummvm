@@ -1478,7 +1478,8 @@ void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int src
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		if (r1.isValidRect() && r2.isValidRect()) {
-			decompressWizImage(dst, dstw, r2, src, r1);
+			uint8 *dstPtr = dst + r2.left + r2.top * dstw;
+			decompressWizImage(dstPtr, dstw, r2, src, r1);
 		}
 	}
 }
@@ -1491,7 +1492,7 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	int h, w, xoff;
 	uint16 off;
 	
-	dstPtr = dst + dstRect.left + dstRect.top * dstPitch;
+	dstPtr = dst;
 	dataPtr = src;
 	
 	// Skip over the first 'srcRect->top' lines in the data
