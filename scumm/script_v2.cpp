@@ -917,7 +917,7 @@ void Scumm_v2::o2_doSentence() {
 
 void Scumm_v2::o2_drawSentence() {
 	ScummVM::Rect sentenceline;
-	static char sentence[80];
+	static char sentence[256];
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB),0);
 
@@ -971,6 +971,7 @@ void Scumm_v2::o2_drawSentence() {
 	_string[2].xpos = 0;
 	_string[2].color = 5;
 
+	sentence[80] = 0;
 	_messagePtr = (byte*)sentence;
 
 	sentenceline.top = virtscr[2].topline;
