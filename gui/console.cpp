@@ -24,18 +24,6 @@
 
 #include "common/engine.h"
 
-/*
-
- _   _           _                                 _                   _   _             
-| | | |_ __   __| | ___ _ __    ___ ___  _ __  ___| |_ _ __ _   _  ___| |_(_) ___  _ __  
-| | | | '_ \ / _` |/ _ \ '__|  / __/ _ \| '_ \/ __| __| '__| | | |/ __| __| |/ _ \| '_ \ 
-| |_| | | | | (_| |  __/ |    | (_| (_) | | | \__ \ |_| |  | |_| | (__| |_| | (_) | | | |
- \___/|_| |_|\__,_|\___|_|     \___\___/|_| |_|___/\__|_|   \__,_|\___|\__|_|\___/|_| |_|
-                                                                                         
-This code is not finished, so please don't complain :-)
-
-*/
-
 
 #define PROMPT	") "
 
@@ -44,7 +32,6 @@ This code is not finished, so please don't complain :-)
  *   Instead, we could just copy the GFX of the blank console (i.e. after the transparent
  *   background is drawn, before any text is drawn). Then using that, it becomes trivial
  *   to erase a single character, do scrolling etc.
- * - add a scrollbar widget to allow scrolling in the history
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
 ConsoleDialog::ConsoleDialog(NewGui *gui, int _realWidth)
