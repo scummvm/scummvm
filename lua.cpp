@@ -1008,6 +1008,8 @@ static void MakeTextObject() {
 			width = atoi(lua_getstring(lua_getresult(2)));
 		else if (strstr(key_text, "center"))
 			warning("MakeTextObject key center not implemented");
+		else if (strstr(key_text, "font"))
+			warning("MakeTextObject key font not implemented");
 		else
 			error("Unknown MakeTextObject key %s\n", key_text);
 	}
@@ -1234,6 +1236,44 @@ static void stubWarning() {
 #endif
 }
 
+static void BlastText() {
+	char * str = luaL_check_string(1), *key_text = NULL;
+	lua_Object table_obj = lua_getparam(2), key;
+	int x = 0, y = 0, height = 0, width = 0;
+	Color *fgColor = NULL;
+
+	while(1) {
+		lua_pushobject(table_obj);
+		if (key_text)
+			lua_pushobject(key);
+		else
+			lua_pushnil();
+
+		lua_call("next");
+		key=lua_getresult(1);
+		if (lua_isnil(key)) 
+			break;
+
+		key_text=lua_getstring(key);
+		//val_text=lua_getstring(lua_getresult(2));
+		if (strstr(key_text, "x"))
+			x = atoi(lua_getstring(lua_getresult(2)));
+		else if (strstr(key_text, "y"))
+			y = atoi(lua_getstring(lua_getresult(2)));
+		else if (strstr(key_text, "fgcolor"))
+			fgColor = check_color(2);
+		else if (strstr(key_text, "font"))
+			lua_getresult(2);
+		else if (strstr(key_text, "center")) // TRUE or FALSE
+			lua_getresult(2);
+		else
+			error("Unknown BlastText key %s\n", key_text);
+	}
+
+	warning("STUB: BlastText(\"%s\", x = %d, y = %d)\n", 
+			Localizer::instance()->localize(str).c_str(), x, y);
+}
+
 static char *stubFuncs[] = {
 	"RestoreIMuse",
 	"SaveIMuse",
@@ -1358,7 +1398,6 @@ static char *stubFuncs[] = {
 	"GetTranslationMode",
 	"SetTranslationMode",
 	"ExpireText",
-	"BlastText",
 	"PrintLine",
 	"SetSayLineDefaults",
 	"PurgePrimitiveQueue",
@@ -1538,6 +1577,7 @@ struct luaL_reg builtins[] = {
 	{ "dofile", new_dofile },
 	{ "PrintDebug", PrintDebug },
 	{ "PrintWarning", PrintWarning },
+	{ "BlastText", BlastText },
 	{ "FunctionName", FunctionName },
 	{ "CheckForFile", CheckForFile },
 	{ "MakeColor", MakeColor },
