@@ -187,6 +187,7 @@ public:
 
 	BamScene(QueenEngine *vm);
 	
+	void playSfx();
 	void prepareAnimation();
 	void updateCarAnimation();
 	void updateFightAnimation();
@@ -201,6 +202,10 @@ public:
 		F_STOP     = 0,
 		F_PLAY     = 1,
 		F_REQ_STOP = 2
+	};
+
+	enum {
+		SFX_SKIP = 8
 	};
 
 	uint16 _flag, _index;
@@ -224,6 +229,7 @@ private:
 	BobSlot *_objfx;
 	bool _screenShaked;
 	const BamDataBlock *_fightData;
+	uint16 _lastSoundIndex;
 
 	QueenEngine *_vm;
 

@@ -1151,6 +1151,19 @@ BamScene::BamScene(QueenEngine *vm)
 }
 
 
+void BamScene::playSfx() {
+	// FIXME - we don't play all sfx here. This is only necessary for
+	// the fight bam, where the number of 'sfx bam frames' is too much 
+	// important / too much closer. The original game does not have
+	// this problem since their playSfx() function returns immediately
+	// if a sound is already begin played.
+	if (_lastSoundIndex == 0 || _index - _lastSoundIndex >= SFX_SKIP) {
+		_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+		_lastSoundIndex = _index;
+	}
+}
+
+
 void BamScene::prepareAnimation() {
 	_obj1 = _vm->graphics()->bob(BOB_OBJ1);
 	_obj1->clear();
@@ -1165,6 +1178,7 @@ void BamScene::prepareAnimation() {
 	_objfx->active = true;
 
 	_index = 0;
+	_lastSoundIndex = 0;
 }
 
 
@@ -1196,7 +1210,7 @@ void BamScene::updateCarAnimation() {
 		}
 
 		if (bdb->sfx == 2) {
-			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+			playSfx();
 		}
 	}
 }
@@ -1238,15 +1252,15 @@ void BamScene::updateFightAnimation() {
 			_screenShaked = true;
 			break;
 		case 2: // play background sfx
-			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+			playSfx();
 			break;
 		case 3: // play background sfx and shake screen
-			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+			playSfx();
 			OSystem::instance()->set_shake_pos(3);
 			_screenShaked = true;
 			break;
 		case 99: // end of BAM data
-			_index = 0;
+			_lastSoundIndex = _index = 0;
 			const BamDataBlock *data[] = {
 				_fight1Data, 
 				_fight2Data,
