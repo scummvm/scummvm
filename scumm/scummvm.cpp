@@ -727,8 +727,7 @@ Scumm::~Scumm () {
 
 	delete _costumeRenderer;
 
-	if (_shadowPalette)
-		free(_shadowPalette);
+	free(_shadowPalette);
 	
 	destroy();
 
@@ -2145,11 +2144,8 @@ void Scumm::destroy() {
 	free(_exe_name);
 	free(_game_name);
 
-	if (_roomStrips)
-		free(_roomStrips);
-
-	if (_languageIndex)
-		free(_languageIndex);
+	free(_roomStrips);
+	free(_languageIndex);
 }
 
 //
