@@ -128,9 +128,9 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		if ((soundId == kTalkSoundID) && (soundType == IMUSE_BUNDLE)) {
 			if (_vm->_actorToPrintStrFor != 0xFF && _vm->_actorToPrintStrFor != 0) {
 				Actor *a = _vm->derefActor(_vm->_actorToPrintStrFor, "IMuseDigital::startSound");
-				freq = (freq * a->talkFrequency) / 256;
-				track->pan = a->talkPan;
-				track->vol = a->talkVolume * 1000;
+				freq = (freq * a->_talkFrequency) / 256;
+				track->pan = a->_talkPan;
+				track->vol = a->_talkVolume * 1000;
 			}
 		}
 

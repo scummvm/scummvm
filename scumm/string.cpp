@@ -126,18 +126,18 @@ void ScummEngine::CHARSET_1() {
 		if (_version <= 5) {
 
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
-				s = (a->scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
+				s = (a->_scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
 				_string[0].ypos += (int)(((VAR(VAR_V5_TALK_STRING_Y) - s) / 2) + s);
 			} else {
 				_string[0].ypos = (int)VAR(VAR_V5_TALK_STRING_Y);
 			}
 
 		} else {
-			s = a->scalex * a->talkPosX / 0xFF;
-			_string[0].xpos += ((a->talkPosX - s) / 2) + s;
+			s = a->_scalex * a->_talkPosX / 0xFF;
+			_string[0].xpos += ((a->_talkPosX - s) / 2) + s;
 
-			s = a->scaley * a->talkPosY / 0xFF;
-			_string[0].ypos += ((a->talkPosY - s) / 2) + s;
+			s = a->_scaley * a->_talkPosY / 0xFF;
+			_string[0].ypos += ((a->_talkPosY - s) / 2) + s;
 
 			if (_string[0].ypos > _screenHeight - 40)
 				_string[0].ypos = _screenHeight - 40;
@@ -158,8 +158,8 @@ void ScummEngine::CHARSET_1() {
 	_charset->_center = _string[0].center;
 	_charset->setColor(_charsetColor);
 
-	if (a && a->charset)
-		_charset->setCurID(a->charset);
+	if (a && a->_charset)
+		_charset->setCurID(a->_charset);
 	else
 		_charset->setCurID(_string[0].charset);
 

@@ -94,7 +94,7 @@ void ScummEngine::setCameraFollows(Actor *a) {
 	int t, i;
 
 	camera._mode = kFollowActorCameraMode;
-	camera._follows = a->number;
+	camera._follows = a->_number;
 
 	if (!a->isInCurrentRoom()) {
 		startScene(a->getRoom(), 0, 0);
@@ -110,7 +110,7 @@ void ScummEngine::setCameraFollows(Actor *a) {
 
 	for (i = 1; i < _numActors; i++) {
 		if (_actors[i].isInCurrentRoom())
-			_actors[i].needRedraw = true;
+			_actors[i]._needRedraw = true;
 	}
 	runInventoryScript(0);
 }
@@ -120,8 +120,8 @@ void ScummEngine_v7::setCameraFollows(Actor *a) {
 	byte oldfollow = camera._follows;
 	int ax, ay;
 
-	camera._follows = a->number;
-	VAR(VAR_CAMERA_FOLLOWED_ACTOR) = a->number;
+	camera._follows = a->_number;
+	VAR(VAR_CAMERA_FOLLOWED_ACTOR) = a->_number;
 
 	if (!a->isInCurrentRoom()) {
 		startScene(a->getRoom(), 0, 0);
@@ -134,7 +134,7 @@ void ScummEngine_v7::setCameraFollows(Actor *a) {
 		setCameraAt(a->_pos.x, a->_pos.y);
 	}
 
-	if (a->number != oldfollow)
+	if (a->_number != oldfollow)
 		runInventoryScript(0);
 }
 

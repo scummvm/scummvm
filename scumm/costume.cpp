@@ -628,7 +628,7 @@ byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int i;
 	int code;
 	const byte *frameptr;
-	const CostumeData &cost = a->cost;
+	const CostumeData &cost = a->_cost;
 
 	// If the specified limb is stopped or not existing, do nothing.
 	if (cost.curpos[limb] == 0xFFFF || cost.stopped & (1 << limb))
@@ -690,7 +690,7 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 	int anim;
 	LoadedCostume lc(this);
 
-	lc.loadCostume(a->costume);
+	lc.loadCostume(a->_costume);
 
 	anim = cost_frameToAnim(a, frame);
 
@@ -724,22 +724,22 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 			}
 			if (usemask & 0x8000) {
 				if (j == 0xFFFF) {
-					a->cost.curpos[i] = 0xFFFF;
-					a->cost.start[i] = 0;
-					a->cost.frame[i] = frame;
+					a->_cost.curpos[i] = 0xFFFF;
+					a->_cost.start[i] = 0;
+					a->_cost.frame[i] = frame;
 				} else {
 					extra = *r++;
 					cmd = lc._animCmds[j];
 					if (cmd == 0x7A) {
-						a->cost.stopped &= ~(1 << i);
+						a->_cost.stopped &= ~(1 << i);
 					} else if (cmd == 0x79) {
-						a->cost.stopped |= (1 << i);
+						a->_cost.stopped |= (1 << i);
 					} else {
-						a->cost.curpos[i] = a->cost.start[i] = j;
-						a->cost.end[i] = j + (extra & 0x7F);
+						a->_cost.curpos[i] = a->_cost.start[i] = j;
+						a->_cost.end[i] = j + (extra & 0x7F);
 						if (extra & 0x80)
-							a->cost.curpos[i] |= 0x8000;
-						a->cost.frame[i] = frame;
+							a->_cost.curpos[i] |= 0x8000;
+						a->_cost.frame[i] = frame;
 					}
 				}
 			} else {
@@ -795,7 +795,7 @@ byte LoadedCostume::increaseAnims(Actor *a) {
 	byte r = 0;
 
 	for (i = 0; i != 16; i++) {
-		if (a->cost.curpos[i] != 0xFFFF)
+		if (a->_cost.curpos[i] != 0xFFFF)
 			r += increaseAnim(a, i);
 	}
 	return r;
@@ -806,23 +806,23 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	int i, end;
 	byte code, nc;
 
-	if (a->cost.curpos[slot] == 0xFFFF)
+	if (a->_cost.curpos[slot] == 0xFFFF)
 		return 0;
 
-	highflag = a->cost.curpos[slot] & 0x8000;
-	i = a->cost.curpos[slot] & 0x7FFF;
-	end = a->cost.end[slot];
+	highflag = a->_cost.curpos[slot] & 0x8000;
+	i = a->_cost.curpos[slot] & 0x7FFF;
+	end = a->_cost.end[slot];
 	code = _animCmds[i] & 0x7F;
 	
 	if (_vm->_version <= 3) {
 		if (_animCmds[i] & 0x80)
-			a->cost.soundCounter++;
+			a->_cost.soundCounter++;
 	}
 	
 	do {
 		if (!highflag) {
 			if (i++ >= end)
-				i = a->cost.start[slot];
+				i = a->_cost.start[slot];
 		} else {
 			if (i != end)
 				i++;
@@ -830,27 +830,27 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 		nc = _animCmds[i];
 
 		if (nc == 0x7C) {
-			a->cost.animCounter++;
-			if (a->cost.start[slot] != end)
+			a->_cost.animCounter++;
+			if (a->_cost.start[slot] != end)
 				continue;
 		} else {
 			if (_vm->_version >= 6) {
 				if (nc >= 0x71 && nc <= 0x78) {
 					uint sound = (_vm->_features & GF_HUMONGOUS) ? 0x78 - nc : nc - 0x71;
-					_vm->_sound->addSoundToQueue2(a->sound[sound]);
-					if (a->cost.start[slot] != end)
+					_vm->_sound->addSoundToQueue2(a->_sound[sound]);
+					if (a->_cost.start[slot] != end)
 						continue;
 				}
 			} else {
 				if (nc == 0x78) {
-					a->cost.soundCounter++;
-					if (a->cost.start[slot] != end)
+					a->_cost.soundCounter++;
+					if (a->_cost.start[slot] != end)
 						continue;
 				}
 			}
 		}
 
-		a->cost.curpos[slot] = i | highflag;
+		a->_cost.curpos[slot] = i | highflag;
 		return (_animCmds[i] & 0x7F) != code;
 	} while (1);
 }

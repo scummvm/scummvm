@@ -188,7 +188,7 @@ bool ScummDebugger::Cmd_IMuse(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 	if (argc > 1) {
 		int room = atoi(argv[1]);
-		_vm->_actors[_vm->VAR(_vm->VAR_EGO)].room = room;
+		_vm->_actors[_vm->VAR(_vm->VAR_EGO)]._room = room;
 		_vm->_sound->stopAllSounds();
 		_vm->startScene(room, 0, 0);
 		_vm->_fullRedraw = 1;
@@ -378,14 +378,14 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		DebugPrintf("Actor[%d].animVar[%d] = %d\n", actnum, value, a->getAnimVar(value));
 
 	} else if (!strcmp(argv[2], "ignoreboxes")) {
-		a->ignoreBoxes = (value > 0);
-		DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
+		a->_ignoreBoxes = (value > 0);
+		DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->_ignoreBoxes);
 	} else if (!strcmp(argv[2], "x")) {
-		a->putActor(value, a->_pos.y, a->room);
+		a->putActor(value, a->_pos.y, a->_room);
 		DebugPrintf("Actor[%d].x = %d\n", actnum, a->_pos.x);
 		_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "y")) {
-		a->putActor(a->_pos.x, value, a->room);
+		a->putActor(a->_pos.x, value, a->_room);
 		DebugPrintf("Actor[%d].y = %d\n", actnum, a->_pos.y);
 		_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "_elevation")) {
@@ -398,7 +398,7 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		else {
 			a->setActorCostume(value);
 			_vm->_fullRedraw = 1;
-			DebugPrintf("Actor[%d].costume = %d\n", actnum, a->costume);
+			DebugPrintf("Actor[%d].costume = %d\n", actnum, a->_costume);
 		}
 	} else if (!strcmp(argv[2], "name")) {
 		DebugPrintf("Name of actor %d: %s\n", actnum, _vm->getObjOrActorName(actnum));
@@ -418,11 +418,11 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	DebugPrintf("+--+----+----+---+----+---+---+---+---+---+---+---+---+\n");
 	for (i = 1; i < _vm->_numActors; i++) {
 		a = &_vm->_actors[i];
-		if (a->visible)
+		if (a->_visible)
 			DebugPrintf("|%2d|%4d|%4d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%02x|\n",
-						 a->number, a->_pos.x, a->_pos.y, a->width, a->getElevation(),
-						 a->costume, a->_walkbox, a->moving, a->forceClip, a->frame,
-						 a->scalex, a->getFacing(), int(_vm->_classData[a->number]&0xFF));
+						 a->_number, a->_pos.x, a->_pos.y, a->_width, a->getElevation(),
+						 a->_costume, a->_walkbox, a->_moving, a->_forceClip, a->_frame,
+						 a->_scalex, a->getFacing(), int(_vm->_classData[a->_number]&0xFF));
 	}
 	DebugPrintf("+-----------------------------------------------------+\n");
 	return true;

@@ -609,20 +609,20 @@ void ScummEngine_v80he::o80_unknownE0() {
 	case 55:
 		{
 		Actor *a = derefActorSafe(num, "o80_unknownE0");
-		int top_actor = a->top;
-		int bottom_actor = a->bottom;
-		a->drawToBackBuf = true;
-		a->needRedraw = true;
+		int top_actor = a->_top;
+		int bottom_actor = a->_bottom;
+		a->_drawToBackBuf = true;
+		a->_needRedraw = true;
 		a->drawActorCostume();
-		a->drawToBackBuf = false;
-		a->needRedraw = true;
+		a->_drawToBackBuf = false;
+		a->_needRedraw = true;
 		a->drawActorCostume();
-		a->needRedraw = false;
+		a->_needRedraw = false;
 
-		if (a->top > top_actor)
-			a->top = top_actor;
-		if (a->bottom < bottom_actor)
-			a->bottom = bottom_actor;
+		if (a->_top > top_actor)
+			a->_top = top_actor;
+		if (a->_bottom < bottom_actor)
+			a->_bottom = bottom_actor;
 
 		type = 2;
 		}

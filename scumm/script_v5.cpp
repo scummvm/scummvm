@@ -426,7 +426,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->setActorWalkSpeed(i, j);
 			break;
 		case 3:			// SO_SOUND
-			a->sound[0] = getVarOrDirectByte(PARAM_1);
+			a->_sound[0] = getVarOrDirectByte(PARAM_1);
 			break;
 		case 4:			// SO_WALK_ANIMATION
 			a->_walkFrame = getVarOrDirectByte(PARAM_1);
@@ -471,10 +471,10 @@ void ScummEngine_v5::o5_actorOps() {
 			if (act == 0)
 				_string[0].color = getVarOrDirectByte(PARAM_1);
 			else
-				a->talkColor = getVarOrDirectByte(PARAM_1);
+				a->_talkColor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 13:		// SO_ACTOR_NAME
-			loadPtrToResource(rtActorName, a->number, NULL);
+			loadPtrToResource(rtActorName, a->_number, NULL);
 			break;
 		case 14:		// SO_INIT_ANIMATION
 			a->_initFrame = getVarOrDirectByte(PARAM_1);
@@ -490,11 +490,11 @@ void ScummEngine_v5::o5_actorOps() {
 			getWordVararg(args);
 			for (i = 0; i < 16; i++)
 				if (args[i] != 0xFF)
-					a->palette[i] = args[i];
+					a->_palette[i] = args[i];
 #endif
 			break;
 		case 16:		// SO_ACTOR_WIDTH
-			a->width = getVarOrDirectByte(PARAM_1);
+			a->_width = getVarOrDirectByte(PARAM_1);
 			break;
 		case 17:		// SO_ACTOR_SCALE
 			if (_version == 4) {
@@ -504,21 +504,21 @@ void ScummEngine_v5::o5_actorOps() {
 				j = getVarOrDirectByte(PARAM_2);
 			}
 
-			a->boxscale = i;
+			a->_boxscale = i;
 			a->setScale(i, j);
 			break;
 		case 18:		// SO_NEVER_ZCLIP
-			a->forceClip = 0;
+			a->_forceClip = 0;
 			break;
 		case 19:		// SO_ALWAYS_ZCLIP
-			a->forceClip = getVarOrDirectByte(PARAM_1);
+			a->_forceClip = getVarOrDirectByte(PARAM_1);
 			break;
 		case 20:		// SO_IGNORE_BOXES
 		case 21:		// SO_FOLLOW_BOXES
-			a->ignoreBoxes = !(_opcode & 1);
-			a->forceClip = 0;
+			a->_ignoreBoxes = !(_opcode & 1);
+			a->_forceClip = 0;
 			if (a->isInCurrentRoom())
-				a->putActor(a->_pos.x, a->_pos.y, a->room);
+				a->putActor(a->_pos.x, a->_pos.y, a->_room);
 			break;
 
 		case 22:		// SO_ANIMATION_SPEED
@@ -544,8 +544,8 @@ void ScummEngine_v5::o5_setClass() {
 			_classData[obj] = 0;
 			if ((_features & GF_SMALL_HEADER) && obj <= _numActors) {
 				Actor *a = derefActor(obj, "o5_setClass");
-				a->ignoreBoxes = false;
-				a->forceClip = 0;
+				a->_ignoreBoxes = false;
+				a->_forceClip = 0;
 			}
 		} else
 			putClass(obj, newClass, (newClass & 0x80) ? true : false);
@@ -1020,7 +1020,7 @@ void ScummEngine_v5::o5_getActorCostume() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorCostume");
-	setResult(a->costume);
+	setResult(a->_costume);
 }
 
 void ScummEngine_v5::o5_getActorElevation() {
@@ -1041,7 +1041,7 @@ void ScummEngine_v5::o5_getActorMoving() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorMoving");
-	setResult(a->moving);
+	setResult(a->_moving);
 }
 
 void ScummEngine_v5::o5_getActorRoom() {
@@ -1056,7 +1056,7 @@ void ScummEngine_v5::o5_getActorRoom() {
 	}
 	
 	Actor *a = derefActor(act, "o5_getActorRoom");
-	setResult(a->room);
+	setResult(a->_room);
 }
 
 void ScummEngine_v5::o5_getActorScale() {
@@ -1066,7 +1066,7 @@ void ScummEngine_v5::o5_getActorScale() {
 	if (_gameId == GID_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
 		a = derefActor(getVarOrDirectByte(PARAM_1), "o5_getActorScale (wait)");
-		if (a->moving) {
+		if (a->_moving) {
 			_scriptPointer = oldaddr;
 			o5_breakHere();
 		}
@@ -1076,7 +1076,7 @@ void ScummEngine_v5::o5_getActorScale() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	a = derefActor(act, "o5_getActorScale");
-	setResult(a->scalex);
+	setResult(a->_scalex);
 }
 
 void ScummEngine_v5::o5_getActorWalkBox() {
@@ -1090,7 +1090,7 @@ void ScummEngine_v5::o5_getActorWidth() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorWidth");
-	setResult(a->width);
+	setResult(a->_width);
 }
 
 void ScummEngine_v5::o5_getActorX() {
@@ -1187,7 +1187,7 @@ void ScummEngine_v5::o5_getAnimCounter() {
 
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getAnimCounter");
-	setResult(a->cost.animCounter);
+	setResult(a->_cost.animCounter);
 }
 
 void ScummEngine_v5::o5_getClosestObjActor() {
@@ -1494,7 +1494,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	y = (int16)fetchScriptWord();
 
 	VAR(VAR_WALKTO_OBJ) = obj;
-	startScene(a->room, a, obj);
+	startScene(a->_room, a, obj);
 	VAR(VAR_WALKTO_OBJ) = 0;
 
 	if (_version <= 4) {
@@ -1504,7 +1504,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 			if (a->getFacing() == oldDir)
 				a->setDirection(dir + 180);
 		}
-		a->moving = 0;
+		a->_moving = 0;
 	}
 
 	// This is based on disassembly
@@ -1629,7 +1629,7 @@ void ScummEngine_v5::o5_putActor() {
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_putActor");
 	x = getVarOrDirectWord(PARAM_2);
 	y = getVarOrDirectWord(PARAM_3);
-	a->putActor(x, y, a->room);
+	a->putActor(x, y, a->_room);
 }
 
 void ScummEngine_v5::o5_putActorAtObject() {
@@ -1644,7 +1644,7 @@ void ScummEngine_v5::o5_putActorAtObject() {
 		x = 240;
 		y = 120;
 	}
-	a->putActor(x, y, a->room);
+	a->putActor(x, y, a->_room);
 }
 
 void ScummEngine_v5::o5_putActorInRoom() {
@@ -1654,10 +1654,10 @@ void ScummEngine_v5::o5_putActorInRoom() {
 
 	a = derefActor(act, "o5_putActorInRoom");
 	
-	if (a->visible && _currentRoom != room && getTalkingActor() == a->number) {
+	if (a->_visible && _currentRoom != room && getTalkingActor() == a->_number) {
 		stopTalk();
 	}
-	a->room = room;
+	a->_room = room;
 	if (!room)
 		a->putActor(0, 0, 0);
 }
@@ -2480,7 +2480,7 @@ void ScummEngine_v5::o5_wait() {
 	case 1:		// SO_WAIT_FOR_ACTOR
 		{
 			Actor *a = derefActorSafe(getVarOrDirectByte(PARAM_1), "o5_wait");
-			if (a && a->isInCurrentRoom() && a->moving)
+			if (a && a->isInCurrentRoom() && a->_moving)
 				break;
 			return;
 		}
@@ -2563,8 +2563,8 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	if (_version <= 2)
 		dist *= 8;
 	else if (dist == 0xFF) {
-		dist = a->scalex * a->width / 0xFF;
-		dist += (a2->scalex * a2->width / 0xFF) / 2;
+		dist = a->_scalex * a->_width / 0xFF;
+		dist += (a2->_scalex * a2->_width / 0xFF) / 2;
 	}
 	x = a2->_pos.x;
 	y = a2->_pos.y;

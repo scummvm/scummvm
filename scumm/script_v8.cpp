@@ -546,7 +546,7 @@ void ScummEngine_v8::o8_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_ACTOR");
-		if (a->isInCurrentRoom() && a->moving)
+		if (a->isInCurrentRoom() && a->_moving)
 			break;
 		return;
 	case 0x1F:		// SO_WAIT_FOR_MESSAGE Wait for message
@@ -570,14 +570,14 @@ void ScummEngine_v8::o8_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_ANIMATION");
-		if (a->isInCurrentRoom() && a->needRedraw)
+		if (a->isInCurrentRoom() && a->_needRedraw)
 			break;
 		return;
 	case 0x23:		// SO_WAIT_FOR_TURN
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_TURN");
-		if (a->isInCurrentRoom() && a->moving & MF_TURN)
+		if (a->isInCurrentRoom() && a->_moving & MF_TURN)
 			break;
 		return;
 	default:
@@ -953,45 +953,45 @@ void ScummEngine_v8::o8_actorOps() {
 		a->setPalette(i, j);
 		break;
 	case 0x70:		// SO_ACTOR_TALK_COLOR Set actor talk color
-		a->talkColor = pop();
+		a->_talkColor = pop();
 		break;
 	case 0x71:		// SO_ACTOR_NAME Set name of actor
-		loadPtrToResource(rtActorName, a->number, NULL);
+		loadPtrToResource(rtActorName, a->_number, NULL);
 		break;
 	case 0x72:		// SO_ACTOR_WIDTH Set width of actor
-		a->width = pop();
+		a->_width = pop();
 		break;
 	case 0x73:		// SO_ACTOR_SCALE Set scaling of actor
 		i = pop();
 		a->setScale(i, i);
 		break;
 	case 0x74:		// SO_ACTOR_NEVER_ZCLIP
-		a->forceClip = 0;
+		a->_forceClip = 0;
 		break;
 	case 0x75:		// SO_ACTOR_ALWAYS_ZCLIP
-		a->forceClip = pop();
+		a->_forceClip = pop();
 		// V8 uses 255 where we used to use 100
-		if (a->forceClip == 255)
-			a->forceClip = 100;
+		if (a->_forceClip == 255)
+			a->_forceClip = 100;
 		break;
 	case 0x76:		// SO_ACTOR_IGNORE_BOXES Make actor ignore boxes
-		a->ignoreBoxes = true;
-		a->forceClip = 100;
+		a->_ignoreBoxes = true;
+		a->_forceClip = 100;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 0x77:		// SO_ACTOR_FOLLOW_BOXES Make actor follow boxes
-		a->ignoreBoxes = false;
-		a->forceClip = 100;
+		a->_ignoreBoxes = false;
+		a->_forceClip = 100;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 0x78:		// SO_ACTOR_SPECIAL_DRAW
 		a->_shadowMode = pop();
 		break;
 	case 0x79:		// SO_ACTOR_TEXT_OFFSET Set text offset relative to actor
-		a->talkPosY = pop();
-		a->talkPosX = pop();
+		a->_talkPosY = pop();
+		a->_talkPosX = pop();
 		break;
 //	case 0x7A:		// SO_ACTOR_INIT Set current actor (handled above)
 	case 0x7B:		// SO_ACTOR_VARIABLE Set actor variable
@@ -999,10 +999,10 @@ void ScummEngine_v8::o8_actorOps() {
 		a->setAnimVar(pop(), i);
 		break;
 	case 0x7C:		// SO_ACTOR_IGNORE_TURNS_ON Make actor ignore turns
-		a->ignoreTurns = true;
+		a->_ignoreTurns = true;
 		break;
 	case 0x7D:		// SO_ACTOR_IGNORE_TURNS_OFF Make actor follow turns
-		a->ignoreTurns = false;
+		a->_ignoreTurns = false;
 		break;
 	case 0x7E:		// SO_ACTOR_NEW New actor
 		a->initActor(2);
@@ -1015,32 +1015,32 @@ void ScummEngine_v8::o8_actorOps() {
 		a->startAnimActor(a->_standFrame);
 		break;
 	case 0x81:		// SO_ACTOR_FACE Make actor face angle
-		a->moving &= ~MF_TURN;
+		a->_moving &= ~MF_TURN;
 		a->setDirection(pop());
 		break;
 	case 0x82:		// SO_ACTOR_TURN Turn actor
 		a->turnToDirection(pop());
 		break;
 	case 0x83:		// SO_ACTOR_WALK_SCRIPT Set walk script for actor?
-		a->walkScript = pop();
+		a->_walkScript = pop();
 		break;
 	case 0x84:		// SO_ACTOR_TALK_SCRIPT Set talk script for actor?
-		a->talkScript = pop();
+		a->_talkScript = pop();
 		break;
 	case 0x85:		// SO_ACTOR_WALK_PAUSE
-		a->moving |= MF_FROZEN;
+		a->_moving |= MF_FROZEN;
 		break;
 	case 0x86:		// SO_ACTOR_WALK_RESUME
-		a->moving &= ~MF_FROZEN;
+		a->_moving &= ~MF_FROZEN;
 		break;
 	case 0x87:		// SO_ACTOR_VOLUME Set volume of actor speech
-		a->talkVolume = pop();
+		a->_talkVolume = pop();
 		break;
 	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
-		a->talkFrequency = pop();
+		a->_talkFrequency = pop();
 		break;
 	case 0x89:		// SO_ACTOR_PAN
-		a->talkPan = pop();
+		a->_talkPan = pop();
 		break;
 	default:
 		error("o8_actorOps: default case 0x%x", subOp);
@@ -1431,14 +1431,14 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 void ScummEngine_v8::o8_getActorChore() {
 	int actnum = pop();
 	Actor *a = derefActor(actnum, "o8_getActorChore");
-	push(a->frame);
+	push(a->_frame);
 }
 
 void ScummEngine_v8::o8_getActorZPlane() {
 	int actnum = pop();
 	Actor *a = derefActor(actnum, "o8_getActorZPlane");
 
-	int z = a->forceClip;
+	int z = a->_forceClip;
 	if (z == 100) {
 		z = getMaskFromBox(a->_walkbox);
 		if (z > gdi._numZBuffer - 1)

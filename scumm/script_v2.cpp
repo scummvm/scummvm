@@ -647,7 +647,7 @@ void ScummEngine_v2::o2_subtract() {
 
 void ScummEngine_v2::o2_waitForActor() {
 	Actor *a = derefActor(getVarOrDirectByte(PARAM_1), "o2_waitForActor");
-	if (a->moving) {
+	if (a->_moving) {
 		_scriptPointer -= 2;
 		o5_breakHere();
 	}
@@ -686,7 +686,7 @@ void ScummEngine_v2::o2_actorOps() {
 
 	switch (_opcode) {
 	case 1: 	// SO_SOUND
-		a->sound[0] = arg;
+		a->_sound[0] = arg;
 		break;
 	case 2:		// SO_PALETTE
 		if (_version == 1)
@@ -697,16 +697,16 @@ void ScummEngine_v2::o2_actorOps() {
 		a->setPalette(i, arg);
 		break;
 	case 3:		// SO_ACTOR_NAME
-		loadPtrToResource(rtActorName, a->number, NULL);
+		loadPtrToResource(rtActorName, a->_number, NULL);
 		break;
 	case 4:		// SO_COSTUME
 		a->setActorCostume(arg);
 		break;
 	case 5:		// SO_TALK_COLOR
 		if (_gameId == GID_MANIAC && _version == 2 && _demoMode && arg == 1)
-			a->talkColor = 15;
+			a->_talkColor = 15;
 		else
-			a->talkColor = arg;
+			a->_talkColor = arg;
 		break;
 	default:
 		warning("o2_actorOps: opcode %d not yet supported", _opcode);
@@ -1094,7 +1094,7 @@ void ScummEngine_v2::o2_putActor() {
 	x = getVarOrDirectByte(PARAM_2) * 8;
 	y = getVarOrDirectByte(PARAM_3) * 2;
 
-	a->putActor(x, y, a->room);
+	a->putActor(x, y, a->_room);
 }
 
 void ScummEngine_v2::o2_startScript() {
@@ -1164,7 +1164,7 @@ void ScummEngine_v2::o2_putActorAtObject() {
 		y = 120;
 	}
 
-	a->putActor(x, y, a->room);
+	a->putActor(x, y, a->_room);
 }
 
 void ScummEngine_v2::o2_getActorElevation() {
@@ -1302,7 +1302,7 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 	x = (int8)fetchScriptByte() * 8;
 	y = (int8)fetchScriptByte() * 2;
 
-	startScene(a->room, a, obj);
+	startScene(a->_room, a, obj);
 
 	getObjectXYPos(obj, x2, y2, dir);
 	a->putActor(x2, y2, _currentRoom);

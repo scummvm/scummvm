@@ -560,7 +560,7 @@ void ScummEngine_v70he::o70_getActorRoom() {
 
 	if (act < _numActors) {
 		Actor *a = derefActor(act, "o70_getActorRoom");
-		push(a->room);
+		push(a->_room);
 	} else
 		push(getObjectRoom(act));
 }

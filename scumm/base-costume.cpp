@@ -80,7 +80,7 @@ bool ScummEngine::isCostumeInUse(int cost) const {
 	if (_roomResource != 0)
 		for (i = 1; i < _numActors; i++) {
 			a = derefActor(i);
-			if (a->isInCurrentRoom() && a->costume == cost)
+			if (a->isInCurrentRoom() && a->_costume == cost)
 				return true;
 		}
 

@@ -1379,7 +1379,7 @@ int32 Insane::getLastKey(bool arg_0) {
 bool Insane::smlayer_actorNeedRedraw(int actornum, int actnum) {
 	Actor *a = _vm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_actorNeedRedraw");
 
-	return a->needRedraw;
+	return a->_needRedraw;
 }
 
 int32 Insane::readArray (int item) {

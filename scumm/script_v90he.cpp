@@ -478,7 +478,7 @@ void ScummEngine_v90he::o90_getActorData() {
 		push(a->_layer);
 		break;
 	case 6:
-		push(a->hePaletteNum);
+		push(a->_hePaletteNum);
 		break;
 	default:
 		error("o90_getActorData: Unknown actor property %d", subOp);

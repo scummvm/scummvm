@@ -149,7 +149,7 @@ bool ScummEngine::akos_hasManyDirections(int costume) {
 }
 
 int ScummEngine::akos_frameToAnim(Actor *a, int frame) {
-	if (_version >= 7 && akos_hasManyDirections(a->costume))
+	if (_version >= 7 && akos_hasManyDirections(a->_costume))
 		return toSimpleDir(1, a->getFacing()) + frame * 8;
 	else
 		return newDirToOldDir(a->getFacing()) + frame * 4;
@@ -165,12 +165,12 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 	uint16 start, len;
 	uint16 mask;
 
-	if (a->costume == 0)
+	if (a->_costume == 0)
 		return;
 
 	anim = akos_frameToAnim(a, frame);
 
-	akos = getResourceAddress(rtCostume, a->costume);
+	akos = getResourceAddress(rtCostume, a->_costume);
 	assert(akos);
 
 	akhd = (const AkosHeader *)findResourceData(MKID('AKHD'), akos);
@@ -197,12 +197,12 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 			if (usemask & 0x8000) {
 				switch (code) {
 				case 1:
-					a->cost.active[i] = 0;
-					a->cost.frame[i] = frame;
-					a->cost.end[i] = 0;
-					a->cost.start[i] = 0;
-					a->cost.curpos[i] = 0;
-					a->cost.seq3[i] = 0;
+					a->_cost.active[i] = 0;
+					a->_cost.frame[i] = frame;
+					a->_cost.end[i] = 0;
+					a->_cost.start[i] = 0;
+					a->_cost.curpos[i] = 0;
+					a->_cost.seq3[i] = 0;
 
 					if (akst) {
 						int size = getResourceDataSize(akst) / 8;
@@ -210,69 +210,69 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 							bool found = false;
 							while (size--) {
 								if (READ_LE_UINT32(akst) == 0) {
-									a->cost.seq3[i] = READ_LE_UINT32(akst + 4);
+									a->_cost.seq3[i] = READ_LE_UINT32(akst + 4);
 									found = true;
 									break;
 								}
 								akst += 8;
 							}
 							if (!found) {
-								warning("Sequence not found in actor 0x%X costume %d", a, a->costume);
+								warning("Sequence not found in actor 0x%X costume %d", a, a->_costume);
 							}
 						}
 					}
 					break;
 				case 4:
-					a->cost.stopped |= 1 << i;
+					a->_cost.stopped |= 1 << i;
 					break;
 				case 5:
-					a->cost.stopped &= ~(1 << i);
+					a->_cost.stopped &= ~(1 << i);
 					break;
 				default:
 					start = READ_LE_UINT16(r); r += 2;
 					len = READ_LE_UINT16(r); r += 2;
 
-					a->cost.seq1[i] = 0;
-					a->cost.seq2[i] = 0;
+					a->_cost.seq1[i] = 0;
+					a->_cost.seq2[i] = 0;
 					if (aksf) {
 						int size = getResourceDataSize(aksf) / 6;
 						if (size > 0) {
 							bool found = false;
 							while (size--) {
 								if (READ_LE_UINT16(aksf) == start) {
-									a->cost.seq1[i] = READ_LE_UINT16(aksf + 2);
-									a->cost.seq2[i] = READ_LE_UINT16(aksf + 4);
+									a->_cost.seq1[i] = READ_LE_UINT16(aksf + 2);
+									a->_cost.seq2[i] = READ_LE_UINT16(aksf + 4);
 									found = true;
 									break;
 								}
 								aksf += 6;
 							}
 							if (!found) {
-								warning("Sequence not found in actor 0x%X costume %d", a, a->costume);
+								warning("Sequence not found in actor 0x%X costume %d", a, a->_costume);
 							}							
 						}
 					}
 
-					a->cost.active[i] = code;
-					a->cost.frame[i] = frame;
-					a->cost.end[i] = start + len;
-					a->cost.start[i] = start;
-					a->cost.curpos[i] = start;
-					a->cost.seq3[i] = 0;
+					a->_cost.active[i] = code;
+					a->_cost.frame[i] = frame;
+					a->_cost.end[i] = start + len;
+					a->_cost.start[i] = start;
+					a->_cost.curpos[i] = start;
+					a->_cost.seq3[i] = 0;
 					if (akst) {
 						int size = getResourceDataSize(akst) / 8;
 						if (size > 0) {
 							bool found = false;
 							while (size--) {
 								if (READ_LE_UINT32(akst) == start) {
-									a->cost.seq3[i] = READ_LE_UINT32(akst + 4);
+									a->_cost.seq3[i] = READ_LE_UINT32(akst + 4);
 									found = true;
 									break;
 								}
 								akst += 8;
 							}
 							if (!found) {
-								warning("Sequence not found in actor 0x%X costume %d", a, a->costume);
+								warning("Sequence not found in actor 0x%X costume %d", a, a->_costume);
 							}
 						}
 					}					
@@ -337,7 +337,7 @@ void AkosRenderer::setCostume(int costume) {
 
 void AkosRenderer::setFacing(const Actor *a) {
 	_mirror = (newDirToOldDir(a->getFacing()) != 0 || akhd->flags & 1);
-	if (a->flip)
+	if (a->_flip)
 		_mirror = !_mirror;
 }
 
@@ -345,7 +345,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	uint code;
 	const byte *p;
 	const AkosOffset *off;
-	const CostumeData &cost = a->cost;
+	const CostumeData &cost = a->_cost;
 	const CostumeInfo *costumeInfo;
 	uint i, extra;
 	byte result = 0;
@@ -465,11 +465,11 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 					uint32 type = cond & 0xC0000000;
 					cond &= 0x3FFFFFFF;
 					if (type == 0x40000000) {
-						decflag = (a->heCondMask & cond) ? 1 : 0;
+						decflag = (a->_heCondMask & cond) ? 1 : 0;
 					} else if (type == 0x80000000) {
-						decflag = (a->heCondMask & cond) ? 0 : 1;
+						decflag = (a->_heCondMask & cond) ? 0 : 1;
 					} else {
-						decflag = (a->heCondMask & cond) ? 1 : 0;
+						decflag = (a->_heCondMask & cond) ? 1 : 0;
 					}
 				}
 			}
@@ -1256,7 +1256,7 @@ bool ScummEngine::akos_increaseAnims(const byte *akos, Actor *a) {
 
 	result = false;
 	for (i = 0; i < 16; i++) {
-		if (a->cost.active[i] != 0)
+		if (a->_cost.active[i] != 0)
 			result |= akos_increaseAnim(a, i, aksq, (const uint16 *)akfo, size);
 	}
 	return result;
@@ -1273,9 +1273,9 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 	bool flag_value, needRedraw;
 	int tmp, tmp2;
 
-	active = a->cost.active[chan];
-	end = a->cost.end[chan];
-	old_curpos = curpos = a->cost.curpos[chan];
+	active = a->_cost.active[chan];
+	end = a->_cost.end[chan];
+	old_curpos = curpos = a->_cost.curpos[chan];
 	flag_value = false;
 	needRedraw = false;
 
@@ -1388,7 +1388,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		case 2:
 			curpos += (code & 0x8000) ? 2 : 1;
 			if (curpos > end)
-				curpos = a->cost.start[chan];
+				curpos = a->_cost.start[chan];
 			break;
 		case 3:
 			if (curpos != end)
@@ -1432,7 +1432,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			a->setAnimVar(GB(4), a->getAnimVar(GB(4)) + GW(2));
 			continue;
 		case AKC_Flip:
-			a->flip = GW(2) != 0;
+			a->_flip = GW(2) != 0;
 			continue;
 		case AKC_CmdQue3:
 		case AKC_C042:
@@ -1441,10 +1441,10 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			else
 				tmp = GB(2) - 1;
 			if ((uint) tmp < 24)
-				akos_queCommand(3, a, a->sound[tmp], 0);
+				akos_queCommand(3, a, a->_sound[tmp], 0);
 			continue;
 		case AKC_CmdQue3Quick:
-			akos_queCommand(3, a, a->sound[0], 0);
+			akos_queCommand(3, a, a->_sound[0], 0);
 			continue;
 		case AKC_StartAnim:
 			akos_queCommand(4, a, GB(2), 0);
@@ -1470,7 +1470,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			tmp2 = GB(4);
 			if (tmp2 < 1 || tmp2 > 3)
 				error("akos_increaseAnim:8 invalid code %d", tmp2);
-			akos_queCommand(tmp2 + 6, a, a->sound[tmp], GB(6));
+			akos_queCommand(tmp2 + 6, a, a->_sound[tmp], GB(6));
 			continue;
 		case AKC_SetDrawOffs:
 			akos_queCommand(6, a, GW(2), GW(4));
@@ -1480,9 +1480,9 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				error("akos_increaseAnim: no AKFO table");
 			tmp = a->getAnimVar(GB(2)) - 1;
 			if (_heversion >= 80) {
-				if (tmp < 0 || tmp > a->cost.seq2[chan] - 1)
+				if (tmp < 0 || tmp > a->_cost.seq2[chan] - 1)
 					error("akos_increaseAnim: invalid jump value %d", tmp);
-				curpos = READ_LE_UINT16(akfo + a->cost.seq1[chan] + tmp * 2);
+				curpos = READ_LE_UINT16(akfo + a->_cost.seq1[chan] + tmp * 2);
 			} else {
 				if (tmp < 0 || tmp > numakfo - 1)
 					error("akos_increaseAnim: invalid jump value %d", tmp);
@@ -1523,7 +1523,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 
 		case AKC_Ignore2:
 			if (_heversion >= 71)
-				akos_queCommand(3, a, a->sound[a->getAnimVar(GB(2))], 0);
+				akos_queCommand(3, a, a->_sound[a->getAnimVar(GB(2))], 0);
 			continue;
 
 		case AKC_SkipE:
@@ -1554,31 +1554,31 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			akos_queCommand(8, a, a->getAnimVar(GB(2)), 0);
 			continue;
 		case AKC_C016:
-			if (_sound->isSoundRunning( a->sound[a->getAnimVar(GB(4))]))  {
+			if (_sound->isSoundRunning( a->_sound[a->getAnimVar(GB(4))]))  {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_C017:
-			if (!_sound->isSoundRunning(a->sound[a->getAnimVar(GB(4))])) {
+			if (!_sound->isSoundRunning(a->_sound[a->getAnimVar(GB(4))])) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_C018:
-			if (_sound->isSoundRunning(a->sound[GB(4)])) {
+			if (_sound->isSoundRunning(a->_sound[GB(4)])) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_C019:
-			if (!_sound->isSoundRunning(a->sound[GB(4)])) {
+			if (!_sound->isSoundRunning(a->_sound[GB(4)])) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_C044:
-			akos_queCommand(3, a, a->sound[a->getAnimVar(GB(2))], 0);
+			akos_queCommand(3, a, a->_sound[a->getAnimVar(GB(2))], 0);
 			continue;
 
 		case AKC_C045:
@@ -1610,7 +1610,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 
 	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_C08E || code2 == AKC_ComplexChan2 || code2 == AKC_C021 || code2 == AKC_C022);
 
-	a->cost.curpos[chan] = curpos;
+	a->_cost.curpos[chan] = curpos;
 
 	if (needRedraw)
 		return 1;
@@ -1623,7 +1623,7 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	checkRange(31, 0, _akosQueuePos, "akos_queCommand overflow");
 
 	_akosQueue[_akosQueuePos].cmd = cmd;
-	_akosQueue[_akosQueuePos].actor = a->number;
+	_akosQueue[_akosQueuePos].actor = a->_number;
 	_akosQueue[_akosQueuePos].param1 = param_1;
 	_akosQueue[_akosQueuePos].param2 = param_2;
 }
@@ -1646,7 +1646,7 @@ void ScummEngine::akos_processQueue() {
 			a->putActor(0, 0, 0);
 			break;
 		case 2:
-			warning("unimplemented akos_queCommand(2,%d,%d,%d)", a->number, param_1, param_2);
+			warning("unimplemented akos_queCommand(2,%d,%d,%d)", a->_number, param_1, param_2);
 			// start script token in actor
 			break;
 		case 3:
@@ -1661,7 +1661,7 @@ void ScummEngine::akos_processQueue() {
 			a->startAnimActor(param_1);
 			break;
 		case 5:
-			a->forceClip = param_1;
+			a->_forceClip = param_1;
 			break;
 		case 6:
 			a->_offsX = param_1;
@@ -1669,7 +1669,7 @@ void ScummEngine::akos_processQueue() {
 			break;
 		case 7:
 			if (_heversion >= 71) {
-				queueAuxEntry(a->number, param_1);
+				queueAuxEntry(a->_number, param_1);
 			} else if (param_1 != 0) {
 				if (_imuseDigital) {
 					_imuseDigital->setVolume(param_1, param_2);
@@ -1678,14 +1678,14 @@ void ScummEngine::akos_processQueue() {
 			break;
 		case 8:
 			if (_heversion >= 71) {
-				_actorToPrintStrFor = a->number;
+				_actorToPrintStrFor = a->_number;
 
-				a->talkPosX = a->heTalkQueue[param_1].posX;
-				a->talkPosY = a->heTalkQueue[param_1].posY;
-				a->talkColor = a->heTalkQueue[param_1].color;
+				a->_talkPosX = a->_heTalkQueue[param_1].posX;
+				a->_talkPosY = a->_heTalkQueue[param_1].posY;
+				a->_talkColor = a->_heTalkQueue[param_1].color;
 
 				_string[0].loadDefault();
-				actorTalk(a->heTalkQueue[param_1].sentence);
+				actorTalk(a->_heTalkQueue[param_1].sentence);
 
 			} else if (param_1 != 0) {
 				if (_imuseDigital) {
@@ -1701,7 +1701,7 @@ void ScummEngine::akos_processQueue() {
 			}
 			break;
 		default:
-			warning("akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
+			warning("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param_1, param_2);
 		}
 	}
 }

@@ -1028,14 +1028,14 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 24: // HE 80+
 		k = pop();
-		a->heNoTalkAnimation = 1;
+		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
 		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
 	case 43: // HE 90+
 		// Uses reverse order of layering, so we adjust
 		a->_layer = -pop();
-		a->needRedraw = true;
+		a->_needRedraw = true;
 		break;
 	case 64:
 		_actorClipOverride.bottom = pop();
@@ -1052,7 +1052,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 65: // HE 98+
 		i = pop();
 		j = pop();
-		a->putActor(i, j, a->room);
+		a->putActor(i, j, a->_room);
 		break;
 	case 68: // HE 90+
 		k = pop();
@@ -1069,7 +1069,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 78:		// SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)
-			a->sound[i] = args[i];
+			a->_sound[i] = args[i];
 		break;
 	case 79:		// SO_WALK_ANIMATION
 		a->_walkFrame = pop();
@@ -1105,98 +1105,98 @@ void ScummEngine_v72he::o72_actorOps() {
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
 		a->remapActorPaletteColor(i, j);
-		a->needRedraw = true;
+		a->_needRedraw = true;
 		break;
 	case 87:		// SO_TALK_COLOR
-		a->talkColor = pop();
+		a->_talkColor = pop();
 		break;
 	case 88:		// SO_ACTOR_NAME
 		copyScriptString(string);
-		loadPtrToResource(rtActorName, a->number, string);
+		loadPtrToResource(rtActorName, a->_number, string);
 		break;
 	case 89:		// SO_INIT_ANIMATION
 		a->_initFrame = pop();
 		break;
 	case 91:		// SO_ACTOR_WIDTH
-		a->width = pop();
+		a->_width = pop();
 		break;
 	case 92:		// SO_SCALE
 		i = pop();
 		a->setScale(i, i);
 		break;
 	case 93:		// SO_NEVER_ZCLIP
-		a->forceClip = 0;
+		a->_forceClip = 0;
 		break;
 	case 94:		// SO_ALWAYS_ZCLIP
-		a->forceClip = pop();
+		a->_forceClip = pop();
 		break;
 	case 95:		// SO_IGNORE_BOXES
-		a->ignoreBoxes = 1;
-		a->forceClip = 0;
+		a->_ignoreBoxes = 1;
+		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 96:		// SO_FOLLOW_BOXES
-		a->ignoreBoxes = 0;
-		a->forceClip = 0;
+		a->_ignoreBoxes = 0;
+		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 97:		// SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());
 		break;
 	case 98:		// SO_SHADOW
 		a->_shadowMode = pop();
-		a->needRedraw = true;
+		a->_needRedraw = true;
 		debug(0, "Set actor XMAP idx to %d", a->_shadowMode);
 		break;
 	case 99:		// SO_TEXT_OFFSET
-		a->talkPosY = pop();
-		a->talkPosX = pop();
+		a->_talkPosY = pop();
+		a->_talkPosX = pop();
 		break;
 	case 156:		// HE 72+
-		a->charset = pop();
+		a->_charset = pop();
 		break;
 	case 175:		// HE 99+
-		a->hePaletteNum = pop();
-		a->needRedraw = true;
+		a->_hePaletteNum = pop();
+		a->_needRedraw = true;
 		break;
 	case 198:		// SO_ACTOR_VARIABLE
 		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
 	case 215:		// SO_ACTOR_IGNORE_TURNS_ON
-		a->ignoreTurns = true;
+		a->_ignoreTurns = true;
 		break;
 	case 216:		// SO_ACTOR_IGNORE_TURNS_OFF
-		a->ignoreTurns = false;
+		a->_ignoreTurns = false;
 		break;
 	case 217:		// SO_ACTOR_NEW
 		a->initActor(2);
 		break;
 	case 218:		
 		{
-			int top_actor = a->top;
-			int bottom_actor = a->bottom;
-			a->drawToBackBuf = true;
-			a->needRedraw = true;
+			int top_actor = a->_top;
+			int bottom_actor = a->_bottom;
+			a->_drawToBackBuf = true;
+			a->_needRedraw = true;
 			a->drawActorCostume();
-			a->drawToBackBuf = false;
-			a->needRedraw = true;
+			a->_drawToBackBuf = false;
+			a->_needRedraw = true;
 			a->drawActorCostume();
-			a->needRedraw = false;
+			a->_needRedraw = false;
 
-			if (a->top > top_actor)
-				a->top = top_actor;
-			if (a->bottom < bottom_actor)
-				a->bottom = bottom_actor;
+			if (a->_top > top_actor)
+				a->_top = top_actor;
+			if (a->_bottom < bottom_actor)
+				a->_bottom = bottom_actor;
 
 		}
 		break;
 	case 219:
-		a->drawToBackBuf = false;
-		a->needRedraw = true;
-		a->needBgReset = true;
+		a->_drawToBackBuf = false;
+		a->_needRedraw = true;
+		a->_needBgReset = true;
 		break;
 	case 225:
 		{
@@ -1204,11 +1204,11 @@ void ScummEngine_v72he::o72_actorOps() {
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
-		addMessageToStack(string, a->heTalkQueue[slot].sentence, len);
+		addMessageToStack(string, a->_heTalkQueue[slot].sentence, len);
 
-		a->heTalkQueue[slot].posX = a->talkPosX;
-		a->heTalkQueue[slot].posY = a->talkPosY;
-		a->heTalkQueue[slot].color = a->talkColor;
+		a->_heTalkQueue[slot].posX = a->_talkPosX;
+		a->_heTalkQueue[slot].posY = a->_talkPosY;
+		a->_heTalkQueue[slot].color = a->_talkColor;
 		break;
 		}
 	default:

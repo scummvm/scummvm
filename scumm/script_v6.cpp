@@ -1186,7 +1186,7 @@ void ScummEngine_v6::o6_walkActorToObj() {
 		if (!a->isInCurrentRoom() || !a2->isInCurrentRoom())
 			return;
 		if (dist == 0) {
-			dist = a2->scalex * a2->width / 0xFF;
+			dist = a2->_scalex * a2->_width / 0xFF;
 			dist += dist / 2;
 		}
 		x = a2->_pos.x;
@@ -1218,13 +1218,13 @@ void ScummEngine_v6::o6_putActorAtXY() {
 	a = derefActor(act, "o6_putActorAtXY");
 
 	if (room == 0xFF || room == 0x7FFFFFFF) {
-		room = a->room;
+		room = a->_room;
 	} else {
-		if (a->visible && _currentRoom != room && getTalkingActor() == a->number) {
+		if (a->_visible && _currentRoom != room && getTalkingActor() == a->_number) {
 			stopTalk();
 		}
 		if (room != 0)
-			a->room = room;
+			a->_room = room;
 	}
 	a->putActor(x, y, room);
 }
@@ -1248,7 +1248,7 @@ void ScummEngine_v6::o6_putActorAtObject() {
 		y = 120;
 	}
 	if (room == 0xFF)
-		room = a->room;
+		room = a->_room;
 	a->putActor(x, y, room);
 }
 
@@ -1330,7 +1330,7 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 
 	if (VAR_WALKTO_OBJ != 0xFF)
 		VAR(VAR_WALKTO_OBJ) = obj;
-	startScene(a->room, a, obj);
+	startScene(a->_room, a, obj);
 	if (VAR_WALKTO_OBJ != 0xFF)
 		VAR(VAR_WALKTO_OBJ) = 0;
 
@@ -1373,7 +1373,7 @@ void ScummEngine_v6::o6_isRoomScriptRunning() {
 
 void ScummEngine_v6::o6_getActorMoving() {
 	Actor *a = derefActor(pop(), "o6_getActorMoving");
-	push(a->moving);
+	push(a->_moving);
 }
 
 void ScummEngine_v6::o6_getActorRoom() {
@@ -1399,17 +1399,17 @@ void ScummEngine_v6::o6_getActorRoom() {
 	}
 
 	Actor *a = derefActor(act, "o6_getActorRoom");
-	push(a->room);
+	push(a->_room);
 }
 
 void ScummEngine_v6::o6_getActorWalkBox() {
 	Actor *a = derefActor(pop(), "o6_getActorWalkBox");
-	push(a->ignoreBoxes ? 0 : a->_walkbox);
+	push(a->_ignoreBoxes ? 0 : a->_walkbox);
 }
 
 void ScummEngine_v6::o6_getActorCostume() {
 	Actor *a = derefActor(pop(), "o6_getActorCostume");
-	push(a->costume);
+	push(a->_costume);
 }
 
 void ScummEngine_v6::o6_getActorElevation() {
@@ -1419,17 +1419,17 @@ void ScummEngine_v6::o6_getActorElevation() {
 
 void ScummEngine_v6::o6_getActorWidth() {
 	Actor *a = derefActor(pop(), "o6_getActorWidth");
-	push(a->width);
+	push(a->_width);
 }
 
 void ScummEngine_v6::o6_getActorScaleX() {
 	Actor *a = derefActor(pop(), "o6_getActorScale");
-	push(a->scalex);
+	push(a->_scalex);
 }
 
 void ScummEngine_v6::o6_getActorAnimCounter1() {
 	Actor *a = derefActor(pop(), "o6_getActorAnimCounter");
-	push(a->cost.animCounter);
+	push(a->_cost.animCounter);
 }
 
 void ScummEngine_v6::o6_getAnimateVariable() {
@@ -1789,7 +1789,7 @@ void ScummEngine_v6::o6_actorOps() {
 	case 78:		// SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)
-			a->sound[i] = args[i];
+			a->_sound[i] = args[i];
 		break;
 	case 79:		// SO_WALK_ANIMATION
 		a->_walkFrame = pop();
@@ -1827,39 +1827,39 @@ void ScummEngine_v6::o6_actorOps() {
 		a->setPalette(i, j);
 		break;
 	case 87:		// SO_TALK_COLOR
-		a->talkColor = pop();
+		a->_talkColor = pop();
 		break;
 	case 88:		// SO_ACTOR_NAME
-		loadPtrToResource(rtActorName, a->number, NULL);
+		loadPtrToResource(rtActorName, a->_number, NULL);
 		break;
 	case 89:		// SO_INIT_ANIMATION
 		a->_initFrame = pop();
 		break;
 	case 91:		// SO_ACTOR_WIDTH
-		a->width = pop();
+		a->_width = pop();
 		break;
 	case 92:		// SO_SCALE
 		i = pop();
 		a->setScale(i, i);
 		break;
 	case 93:		// SO_NEVER_ZCLIP
-		a->forceClip = 0;
+		a->_forceClip = 0;
 		break;
 	case 225:		// SO_ALWAYS_ZCLIP
 	case 94:		// SO_ALWAYS_ZCLIP
-		a->forceClip = pop();
+		a->_forceClip = pop();
 		break;
 	case 95:		// SO_IGNORE_BOXES
-		a->ignoreBoxes = 1;
-		a->forceClip = (_version >= 7) ? 100 : 0;
+		a->_ignoreBoxes = 1;
+		a->_forceClip = (_version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 96:		// SO_FOLLOW_BOXES
-		a->ignoreBoxes = 0;
-		a->forceClip = (_version >= 7) ? 100 : 0;
+		a->_ignoreBoxes = 0;
+		a->_forceClip = (_version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 97:		// SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());
@@ -1868,18 +1868,18 @@ void ScummEngine_v6::o6_actorOps() {
 		a->_shadowMode = pop();
 		break;
 	case 99:		// SO_TEXT_OFFSET
-		a->talkPosY = pop();
-		a->talkPosX = pop();
+		a->_talkPosY = pop();
+		a->_talkPosX = pop();
 		break;
 	case 198:		// SO_ACTOR_VARIABLE
 		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
 	case 215:		// SO_ACTOR_IGNORE_TURNS_ON
-		a->ignoreTurns = true;
+		a->_ignoreTurns = true;
 		break;
 	case 216:		// SO_ACTOR_IGNORE_TURNS_OFF
-		a->ignoreTurns = false;
+		a->_ignoreTurns = false;
 		break;
 	case 217:		// SO_ACTOR_NEW
 		a->initActor(2);
@@ -1888,27 +1888,27 @@ void ScummEngine_v6::o6_actorOps() {
 		a->_layer = pop();
 		break;
 	case 228:		// SO_ACTOR_WALK_SCRIPT
-		a->walkScript = pop();
+		a->_walkScript = pop();
 		break;
 	case 229:		// SO_ACTOR_STOP
 		a->stopActorMoving();
 		a->startAnimActor(a->_standFrame);
 		break;
 	case 230:										/* set direction */
-		a->moving &= ~MF_TURN;
+		a->_moving &= ~MF_TURN;
 		a->setDirection(pop());
 		break;
 	case 231:										/* turn to direction */
 		a->turnToDirection(pop());
 		break;
 	case 233:		// SO_ACTOR_WALK_PAUSE
-		a->moving |= MF_FROZEN;
+		a->_moving |= MF_FROZEN;
 		break;
 	case 234:		// SO_ACTOR_WALK_RESUME
-		a->moving &= ~MF_FROZEN;
+		a->_moving &= ~MF_FROZEN;
 		break;
 	case 235:		// SO_ACTOR_TALK_SCRIPT
-		a->talkScript = pop();
+		a->_talkScript = pop();
 		break;
 	default:
 		error("o6_actorOps: default case %d", subOp);
@@ -2181,7 +2181,7 @@ void ScummEngine_v6::o6_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:168");
-		if (a->isInCurrentRoom() && a->moving)
+		if (a->isInCurrentRoom() && a->_moving)
 			break;
 		return;
 	case 169:		// SO_WAIT_FOR_MESSAGE Wait for message
@@ -2211,7 +2211,7 @@ void ScummEngine_v6::o6_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:226");
-		if (a->isInCurrentRoom() && a->needRedraw)
+		if (a->isInCurrentRoom() && a->_needRedraw)
 			break;
 		return;
 	case 232:		// SO_WAIT_FOR_TURN
@@ -2231,7 +2231,7 @@ void ScummEngine_v6::o6_wait() {
 			actnum = _curActor;
 		}
 		a = derefActor(actnum, "o6_wait:232b");
-		if (a->isInCurrentRoom() && a->moving & MF_TURN)
+		if (a->isInCurrentRoom() && a->_moving & MF_TURN)
 			break;
 		return;
 	default:
@@ -2744,7 +2744,7 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 	case 212:
 		a = derefActor(args[1], "o6_kernelGetFunctions:212");
 		// This is used by walk scripts
-		push(a->frame);
+		push(a->_frame);
 		break;
 	case 213:
 		slot = getVerbSlot(args[1], 0);
@@ -2921,12 +2921,12 @@ void ScummEngine_v6::o6_stampObject() {
 			state = 255;
 
 		Actor *a = derefActor(object, "o6_stampObject");
-		a->scalex = state;
-		a->scaley = state;
+		a->_scalex = state;
+		a->_scaley = state;
 		a->putActor(x, y, _currentRoom);
-		a->drawToBackBuf = true;
+		a->_drawToBackBuf = true;
 		a->drawActorCostume();
-		a->drawToBackBuf = false;
+		a->_drawToBackBuf = false;
 		a->drawActorCostume();
 		return;
 	}

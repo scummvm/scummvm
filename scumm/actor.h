@@ -96,21 +96,21 @@ public:
 	Common::Rect _clipOverride;
 
 	int _offsX, _offsY;
-	int top, bottom;
-	uint width;
-	byte number;
-	uint16 costume;
-	byte room;
-	byte talkColor;
-	int talkFrequency;
-	byte talkPan;
-	byte talkVolume;
-	uint16 boxscale;
-	byte scalex, scaley;
-	byte charset;
-	byte moving;
-	bool ignoreBoxes;
-	byte forceClip;
+	int _top, _bottom;
+	uint _width;
+	byte _number;
+	uint16 _costume;
+	byte _room;
+	byte _talkColor;
+	int _talkFrequency;
+	byte _talkPan;
+	byte _talkVolume;
+	uint16 _boxscale;
+	byte _scalex, _scaley;
+	byte _charset;
+	byte _moving;
+	bool _ignoreBoxes;
+	byte _forceClip;
 
 	byte _initFrame;
 	byte _walkFrame;
@@ -118,45 +118,45 @@ public:
 	byte _talkStartFrame;
 	byte _talkStopFrame;
 
-	bool needRedraw, needBgReset, visible;
+	bool _needRedraw, _needBgReset, _visible;
 	byte _shadowMode;
-	bool flip;
-	byte frame;
+	bool _flip;
+	byte _frame;
 	byte _walkbox;
-	int16 talkPosX, talkPosY;
-	uint16 talkScript, walkScript;
-	bool ignoreTurns;
-	bool drawToBackBuf;
+	int16 _talkPosX, _talkPosY;
+	uint16 _talkScript, _walkScript;
+	bool _ignoreTurns;
+	bool _drawToBackBuf;
 	int8 _layer;
-	uint16 sound[32];
-	CostumeData cost;
+	uint16 _sound[32];
+	CostumeData _cost;
 
 	/* HE specific */
-	byte hePaletteNum;
-	bool heNoTalkAnimation;
-	bool heSkipLimbs;
+	byte _hePaletteNum;
+	bool _heNoTalkAnimation;
+	bool _heSkipLimbs;
 	bool _heTalking;
-	uint32 heCondMask;
+	uint32 _heCondMask;
 
-	AuxBlock auxBlock;
+	AuxBlock _auxBlock;
 
 	struct {
 		int16 posX;
 		int16 posY;
 		int16 color;
 		byte sentence[128];
-	} heTalkQueue[16];
+	} _heTalkQueue[16];
 
 protected:
-	byte palette[256];
+	byte _palette[256];
 	int _elevation;
-	uint16 facing;
-	uint16 targetFacing;
-	uint speedx, speedy;
-	byte animProgress, animSpeed;
-	bool costumeNeedsInit;
-	ActorWalkData walkdata;
-	int16 animVariable[27];
+	uint16 _facing;
+	uint16 _targetFacing;
+	uint _speedx, _speedy;
+	byte _animProgress, _animSpeed;
+	bool _costumeNeedsInit;
+	ActorWalkData _walkdata;
+	int16 _animVariable[27];
 
 	static ScummEngine *_vm;
 
@@ -212,39 +212,39 @@ public:
 	void animateActor(int anim);
 
 	bool isInCurrentRoom() const {
-		return room == _vm->_currentRoom;
+		return _room == _vm->_currentRoom;
 	}
 	
 	int getActorXYPos(int &x, int &y) const;
 
 	int getRoom() const {
-		return room;
+		return _room;
 	}
 	
 	int getFacing() const {
-		return facing;
+		return _facing;
 	}
 
 	int getAnimVar(byte var) const {
 		checkRange(26, 0, var, "getAnimVar %d out of range(r)");
-		return animVariable[var];
+		return _animVariable[var];
 	}
 	void setAnimVar(byte var, int value) {
 		checkRange(26, 0, var, "setAnimVar %d out of range(r)");
-		animVariable[var] = value;
+		_animVariable[var] = value;
 	}
 	
 	void setAnimSpeed(byte newAnimSpeed) {
-		animSpeed = newAnimSpeed;
-		animProgress = 0;
+		_animSpeed = newAnimSpeed;
+		_animProgress = 0;
 	}
 
 	int getAnimSpeed() const {
-		return animSpeed;
+		return _animSpeed;
 	}
 
 	int getAnimProgress() const {
-		return animProgress;
+		return _animProgress;
 	}
 
 	int getElevation() const {
@@ -254,21 +254,21 @@ public:
 	void setElevation(int newElevation) {
 		if (_elevation != newElevation) {
 			_elevation = newElevation;
-			needRedraw = true;
+			_needRedraw = true;
 		}
 	}
 	
 	void setPalette(int idx, int val) {
-		palette[idx] = val;
-		needRedraw = true;
+		_palette[idx] = val;
+		_needRedraw = true;
 	}
 	
 	void setScale(int sx, int sy) {
 		if (sx != -1)
-			scalex = sx;
+			_scalex = sx;
 		if (sy != -1)
-			scaley = sy;
-		needRedraw = true;
+			_scaley = sy;
+		_needRedraw = true;
 	}
 
 	void classChanged(int cls, bool value);

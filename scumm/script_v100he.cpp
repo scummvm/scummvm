@@ -408,34 +408,34 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 6:
 		i = pop();
 		j = pop();
-		a->putActor(i, j, a->room);
+		a->putActor(i, j, a->_room);
 		break;
 	case 8:
-		a->drawToBackBuf = false;
-		a->needRedraw = true;
-		a->needBgReset = true;
+		a->_drawToBackBuf = false;
+		a->_needRedraw = true;
+		a->_needBgReset = true;
 		break;
 	case 9:		
 		{
-			int top_actor = a->top;
-			int bottom_actor = a->bottom;
-			a->drawToBackBuf = true;
-			a->needRedraw = true;
+			int top_actor = a->_top;
+			int bottom_actor = a->_bottom;
+			a->_drawToBackBuf = true;
+			a->_needRedraw = true;
 			a->drawActorCostume();
-			a->drawToBackBuf = false;
-			a->needRedraw = true;
+			a->_drawToBackBuf = false;
+			a->_needRedraw = true;
 			a->drawActorCostume();
-			a->needRedraw = false;
+			a->_needRedraw = false;
 
-			if (a->top > top_actor)
-				a->top = top_actor;
-			if (a->bottom < bottom_actor)
-				a->bottom = bottom_actor;
+			if (a->_top > top_actor)
+				a->_top = top_actor;
+			if (a->_bottom < bottom_actor)
+				a->_bottom = bottom_actor;
 
 		}
 		break;
 	case 14:
-		a->charset = pop();
+		a->_charset = pop();
 		break;
 	case 18:
 		a->_clipOverride.bottom = pop();
@@ -462,7 +462,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 52:		// SO_ACTOR_NAME
 		copyScriptString(string);
-		loadPtrToResource(rtActorName, a->number, string);
+		loadPtrToResource(rtActorName, a->_number, string);
 		break;
 	case 53:		// SO_ACTOR_NEW
 		a->initActor(2);
@@ -472,16 +472,16 @@ void ScummEngine_v100he::o100_actorOps() {
 		i = pop();
 		checkRange(255, 0, i, "o100_actorOps: Illegal palette slot %d");
 		a->remapActorPaletteColor(i, j);
-		a->needRedraw = true;
+		a->_needRedraw = true;
 		break;
 	case 59:
 		// Uses reverse order of layering, so we adjust
 		a->_layer = -pop();
-		a->needRedraw = true;
+		a->_needRedraw = true;
 		break;
 	case 63:
-		a->hePaletteNum = pop();
-		a->needRedraw = true;
+		a->_hePaletteNum = pop();
+		a->_needRedraw = true;
 		break;
 	case 65:		// SO_SCALE
 		i = pop();
@@ -489,7 +489,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 70:		// SO_SHADOW
 		a->_shadowMode = pop();
-		a->needRedraw = true;
+		a->_needRedraw = true;
 		debug(0, "o100_actorOps: Set actor XMAP idx to %d", a->_shadowMode);
 		break;
 	case 74:		// SO_STEP_DIST
@@ -503,11 +503,11 @@ void ScummEngine_v100he::o100_actorOps() {
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
-		addMessageToStack(string, a->heTalkQueue[slot].sentence, len);
+		addMessageToStack(string, a->_heTalkQueue[slot].sentence, len);
 
-		a->heTalkQueue[slot].posX = a->talkPosX;
-		a->heTalkQueue[slot].posY = a->talkPosY;
-		a->heTalkQueue[slot].color = a->talkColor;
+		a->_heTalkQueue[slot].posX = a->_talkPosX;
+		a->_heTalkQueue[slot].posY = a->_talkPosY;
+		a->_heTalkQueue[slot].color = a->_talkColor;
 		}
 		break;
 	case 83:		// SO_ACTOR_VARIABLE
@@ -515,10 +515,10 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->setAnimVar(pop(), i);
 		break;
 	case 87:		// SO_ALWAYS_ZCLIP
-		a->forceClip = pop();
+		a->_forceClip = pop();
 		break;
 	case 89:		// SO_NEVER_ZCLIP
-		a->forceClip = 0;
+		a->_forceClip = 0;
 		break;
 	case 128:
 		_actorClipOverride.bottom = pop();
@@ -529,10 +529,10 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 130:		// SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)
-			a->sound[i] = args[i];
+			a->_sound[i] = args[i];
 		break;
 	case 131:		// SO_ACTOR_WIDTH
-		a->width = pop();
+		a->_width = pop();
 		break;
 	case 132:		// SO_ANIMATION_DEFAULT
 		a->_initFrame = 1;
@@ -545,22 +545,22 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->setElevation(pop());
 		break;
 	case 134:		// SO_FOLLOW_BOXES
-		a->ignoreBoxes = 0;
-		a->forceClip = 0;
+		a->_ignoreBoxes = 0;
+		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 135:		// SO_IGNORE_BOXES
-		a->ignoreBoxes = 1;
-		a->forceClip = 0;
+		a->_ignoreBoxes = 1;
+		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 136:		// SO_ACTOR_IGNORE_TURNS_OFF
-		a->ignoreTurns = false;
+		a->_ignoreTurns = false;
 		break;
 	case 137:		// SO_ACTOR_IGNORE_TURNS_ON
-		a->ignoreTurns = true;
+		a->_ignoreTurns = true;
 		break;
 	case 138:		// SO_INIT_ANIMATION
 		a->_initFrame = pop();
@@ -573,17 +573,17 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_talkStartFrame = pop();
 		break;
 	case 141:		// SO_TALK_COLOR
-		a->talkColor = pop();
+		a->_talkColor = pop();
 		break;
 	case 142:
 		k = pop();
-		a->heNoTalkAnimation = 1;
+		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
 		debug(1,"o100_actorOps: case 24 (%d)", k);
 		break;
 	case 143:		// SO_TEXT_OFFSET
-		a->talkPosY = pop();
-		a->talkPosX = pop();
+		a->_talkPosY = pop();
+		a->_talkPosX = pop();
 		break;
 	case 144:		// SO_WALK_ANIMATION
 		a->_walkFrame = pop();
@@ -829,20 +829,20 @@ void ScummEngine_v100he::o100_unknownE0() {
 	case 1:
 		{
 		Actor *a = derefActorSafe(num, "o100_unknownE0");
-		int top_actor = a->top;
-		int bottom_actor = a->bottom;
-		a->drawToBackBuf = true;
-		a->needRedraw = true;
+		int top_actor = a->_top;
+		int bottom_actor = a->_bottom;
+		a->_drawToBackBuf = true;
+		a->_needRedraw = true;
 		a->drawActorCostume();
-		a->drawToBackBuf = false;
-		a->needRedraw = true;
+		a->_drawToBackBuf = false;
+		a->_needRedraw = true;
 		a->drawActorCostume();
-		a->needRedraw = false;
+		a->_needRedraw = false;
 
-		if (a->top > top_actor)
-			a->top = top_actor;
-		if (a->bottom < bottom_actor)
-			a->bottom = bottom_actor;
+		if (a->_top > top_actor)
+			a->_top = top_actor;
+		if (a->_bottom < bottom_actor)
+			a->_bottom = bottom_actor;
 
 		type = 2;
 		}
@@ -2148,7 +2148,7 @@ void ScummEngine_v100he::o100_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o100_wait:168");
-		if (a->moving)
+		if (a->_moving)
 			break;
 		return;
 	case 129:		// SO_WAIT_FOR_CAMERA Wait for camera

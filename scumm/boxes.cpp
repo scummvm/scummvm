@@ -804,8 +804,8 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point
 				} else {
 					pos = _pos.y;
 					if (box2nr == box3nr) {
-						int diffX = walkdata.dest.x - _pos.x;
-						int diffY = walkdata.dest.y - _pos.y;
+						int diffX = _walkdata.dest.x - _pos.x;
+						int diffY = _walkdata.dest.y - _pos.y;
 						int boxDiffX = box1.ul.x - _pos.x;
 
 						if (diffX != 0) {
@@ -859,8 +859,8 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point
 				} else {
 
 					if (box2nr == box3nr) {
-						int diffX = walkdata.dest.x - _pos.x;
-						int diffY = walkdata.dest.y - _pos.y;
+						int diffX = _walkdata.dest.x - _pos.x;
+						int diffY = _walkdata.dest.y - _pos.y;
 						int boxDiffY = box1.ul.y - _pos.y;
 
 						pos = _pos.x;
@@ -1145,10 +1145,10 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
 		// 'maze' in the zeppeling (see bug #1032964).
 		if (_vm->_gameId != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
 			// Is the actor (x,y) between both gates?
-			if (compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateA[0].x, gateA[0].y) !=
-					compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateB[0].x, gateB[0].y) &&
-					compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateA[1].x, gateA[1].y) !=
-					compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateB[1].x, gateB[1].y)) {
+			if (compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateA[0].x, gateA[0].y) !=
+					compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateB[0].x, gateB[0].y) &&
+					compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateA[1].x, gateA[1].y) !=
+					compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateB[1].x, gateB[1].y)) {
 				return;
 			}
 		}

@@ -1366,7 +1366,7 @@ void ScummEngine::scummInit() {
 	Actor::initActorClass(this);
 	_actors = new Actor[_numActors];
 	for (i = 0; i < _numActors; i++) {
-		_actors[i].number = i;
+		_actors[i]._number = i;
 		_actors[i].initActor(1);
 	
 		// this is from IDB
@@ -1380,11 +1380,11 @@ void ScummEngine::scummInit() {
 		// HACK Some palette changes needed for demo script
 		// in Maniac Mansion (Enhanced)
 		_actors[3].setPalette(3, 1);
-		_actors[9].talkColor = 15;
-		_actors[10].talkColor = 7;
-		_actors[11].talkColor = 2;
-		_actors[13].talkColor = 5;
-		_actors[23].talkColor = 14;
+		_actors[9]._talkColor = 15;
+		_actors[10]._talkColor = 7;
+		_actors[11]._talkColor = 2;
+		_actors[13]._talkColor = 5;
+		_actors[23]._talkColor = 14;
 	}
 
 	vm.numNestedScripts = 0;
@@ -2155,7 +2155,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			int x, y;
 			getObjectXYPos(objectNr, x, y);
 			a->putActor(x, y, _currentRoom);
-			a->moving = 0;
+			a->_moving = 0;
 		}
 	} else if (_version >= 7) {
 		if (camera._follows) {
