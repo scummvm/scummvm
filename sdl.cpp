@@ -96,6 +96,9 @@ public:
 	// Set a parameter
 	uint32 property(int param, Property *value);
 
+	// Add a callback timer
+	void set_timer(int timer, void* callback);
+
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 private:
@@ -176,8 +179,7 @@ private:
 
 	void hotswap_gfx_mode();
 
-	void get_320x200_image(byte *buf);
-	static uint32 autosave(uint32);
+	void get_320x200_image(byte *buf);	
 
 	void setup_icon();
 };
@@ -203,14 +205,6 @@ void atexit_proc() {
 	SDL_Quit();
 }
 
-uint32 OSystem_SDL::autosave(uint32 interval)
-{
-	g_scumm->_doAutosave = true;
-
-	return interval;
-}
-
-
 OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {
 	OSystem_SDL *syst = new OSystem_SDL();
 	syst->_mode = gfx_mode;
@@ -225,7 +219,6 @@ OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {
 #endif						  /* doesn't do COOPERATIVE mode*/
 
 	SDL_ShowCursor(SDL_DISABLE);
-	SDL_SetTimer(5 * 60 * 1000, (SDL_TimerCallback) autosave);
 
 	/* Setup the icon */
 	syst->setup_icon();
@@ -236,6 +229,9 @@ OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {
 	return syst;
 }
 
+void OSystem_SDL::set_timer(int timer, void* callback) {
+	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
+}
 OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
 	return OSystem_SDL::create(gfx_mode, full_screen);
 }
@@ -891,13 +887,15 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 
 	case PROP_TOGGLE_FULLSCREEN:
 		_full_screen ^= true;
-		g_scumm->_fullScreen = _full_screen;
 
 		if (!SDL_WM_ToggleFullScreen(sdl_hwscreen)) {
 			/* if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode */
 			hotswap_gfx_mode();
 		}
 		return 1;
+
+	case PROP_GET_FULLSCREEN:
+		return _full_screen;
 
 	case PROP_SET_WINDOW_CAPTION:
 		SDL_WM_SetCaption(value->caption, value->caption);
@@ -1050,9 +1048,6 @@ void OSystem_SDL::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
 }
 
 void OSystem_SDL::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
-	/* Reset sync count */
-	g_scumm->_vars[g_scumm->VAR_MI1_TIMER] = 0;
-
 	if (!num_loops && !start_frame)
 		return;
 

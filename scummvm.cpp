@@ -28,6 +28,12 @@
 #include "string.h"
 #include "gameDetector.h"
 
+int autosave(int interval)	/* Not in class to prevent being bound */
+{
+	g_scumm->_doAutosave = true;
+	return interval;
+}
+
 void Scumm::initRandSeeds()
 {
 	_randSeed1 = 0xA943DE35;
@@ -170,6 +176,8 @@ void Scumm::scummInit()
 #ifdef COMPRESSED_SOUND_FILE
 	_current_cache = 0;
 #endif
+	
+	_system->set_timer(5 * 60 * 1000, &autosave);
 }
 
 
@@ -1198,7 +1206,7 @@ void Scumm::waitForTimer(int msec_delay) {
 						_fastMode ^= 1;
 					else if (event.kbd.keycode=='g')
 						_fastMode ^= 2;
-					else if ((event.kbd.keycode=='d') && (_fullScreen == false))
+					else if ((event.kbd.keycode=='d') && (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0)))
 						g_debugger.attach(this);
 					else if (event.kbd.keycode=='s')
 						resourceStats();
@@ -1410,7 +1418,7 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	g_scumm = scumm;
 	/* END HACK */
 
-	scumm->_fullScreen = detector->_fullScreen;
+//	scumm->_fullScreen = detector->_fullScreen;
 	scumm->_debugMode = detector->_debugMode;
 	scumm->_bootParam = detector->_bootParam;
 	scumm->_gameDataPath = detector->_gameDataPath;

@@ -62,6 +62,7 @@ public:
 		PROP_SET_GFX_MODE = 4,
 		PROP_SHOW_DEFAULT_CURSOR = 5,
 		PROP_GET_SAMPLE_RATE = 6,
+		PROP_GET_FULLSCREEN = 7
 	};
 	union Property {
 		char *caption;
@@ -134,6 +135,9 @@ public:
 
 	// Update cdrom audio status
 	virtual void update_cdrom() = 0;
+
+	// Add a new callback timer
+	virtual void set_timer(int timer, void* callback) = 0;
 
 	// Quit
 	virtual void quit() = 0;

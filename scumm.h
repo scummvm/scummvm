@@ -1140,7 +1140,8 @@ public:
 	uint32 _CLUT_offs, _EPAL_offs;
 	uint32 _IM00_offs, _PALS_offs;
 
-	bool _fullScreen, _fullRedraw, _BgNeedsRedraw, _shakeEnabled;
+	//ender: fullscreen
+	bool _fullRedraw, _BgNeedsRedraw, _shakeEnabled;
 	bool _screenEffectFlag, _completeScreenRedraw;
 
 	int _cursorHotspotX, _cursorHotspotY, _cursorWidth, _cursorHeight;

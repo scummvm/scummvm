@@ -464,6 +464,7 @@ Credits:
         Thanks!
 
  Special thanks to:
+        Sander Buskens  - For his work on the initial reversing of Monkey2
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codecs
 

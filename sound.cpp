@@ -160,6 +160,7 @@ void Scumm::playSound(int sound)
 	ptr = getResourceAddress(rtSound, sound);
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 		ptr += 8;
+		_vars[VAR_MI1_TIMER] = 0;
 #ifdef COMPRESSED_SOUND_FILE
 		if ((playMP3CDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0)) == -1)

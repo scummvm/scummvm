@@ -47,11 +47,6 @@ void fileWriteBE16(FILE *in, uint16 value);
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 #define CHECK_BOUNDS(x,y) assert((uint)(x)<ARRAYSIZE(y))
 
-enum {
-       CHILD1_SIZE = 12,
-       CHILD2_SIZE = 16
-};
-
 struct Child {
 	Child *next;
 	uint16 type;
@@ -87,6 +82,10 @@ struct ThreeValues {
 	uint16 a, b, c;
 };
 
+enum {
+    CHILD1_SIZE = sizeof(Child1) - sizeof(uint16),
+	CHILD2_SIZE = sizeof(Child2) - sizeof(int16)
+};
 
 struct Item {
 	uint16 parent;
