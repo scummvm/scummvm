@@ -115,6 +115,7 @@ void Graphics::setRenderLevel(int8 level) {
 
 void Graphics::clearScene(void) {
 	memset(_buffer + MENUDEEP * _screenWide, 0, _screenWide * RENDERDEEP);
+	_needFullRedraw = true;
 }
 
 } // End of namespace Sword2
