@@ -102,6 +102,8 @@ public:
 	void drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr);
 	void drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col);
+	
+	void shake(bool reset);
 
 	void blankScreen();
 	void blankScreenEffect1();

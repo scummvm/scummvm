@@ -1201,12 +1201,12 @@ void BamScene::updateFightAnimation() {
 		switch (bdb->sfx) {
 		case 0: // nothing, so reset shaked screen if necessary
 			if (_screenShaked) {
-				OSystem::instance()->set_shake_pos(0);
+				_vm->display()->shake(true);
 				_screenShaked = false;
 			}
 			break;
 		case 1: // shake screen
-			OSystem::instance()->set_shake_pos(3);
+			_vm->display()->shake(false);
 			_screenShaked = true;
 			break;
 		case 2: // play background sfx
@@ -1214,7 +1214,7 @@ void BamScene::updateFightAnimation() {
 			break;
 		case 3: // play background sfx and shake screen
 			playSfx();
-			OSystem::instance()->set_shake_pos(3);
+			_vm->display()->shake(false);
 			_screenShaked = true;
 			break;
 		case 99: // end of BAM data

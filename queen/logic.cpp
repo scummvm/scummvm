@@ -1960,9 +1960,9 @@ void Logic::asmWaitForCarPosition() {
 
 
 void Logic::asmShakeScreen() {
-	OSystem::instance()->set_shake_pos(3);
+	_vm->display()->shake(false);
 	_vm->update();
-	OSystem::instance()->set_shake_pos(0);
+	_vm->display()->shake(true);
 	_vm->update();
 }
 

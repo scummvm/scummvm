@@ -196,8 +196,8 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 			palSet(tempPal, start, end, true);
 		}
 	}
-	_pal.dirtyMin = 0;
-	_pal.dirtyMax = _vm->logic()->isIntroRoom(roomNum) ? 255 : 223;
+	_pal.dirtyMin = start;
+	_pal.dirtyMax = end;
 	_pal.scrollable = true;
 }
 
@@ -895,22 +895,17 @@ void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool o
 	const uint8 *str = (const uint8*)text;
 	uint16 xs = x;
 	while (*str && x < SCREEN_W) {
-
 		uint8 c = (_vm->resource()->getLanguage() == FRENCH && *str == 0x96) ? 0xFB : *str;
 		const uint8 *pchr = _font + c * 8;
 
 		if (outlined) {
-			drawChar(x - 1, y - 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(x    , y - 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(x + 1, y - 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(x + 1, y    , INK_OUTLINED_TEXT, pchr);
-			drawChar(x + 1, y + 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(x    , y + 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(x - 1, y + 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(x - 1, y    , INK_OUTLINED_TEXT, pchr);
+			const int xOff[] = { -1, 0, 1, 1, 1, 0, -1, -1 };
+			const int yOff[] = { -1, -1, -1, 0, 1, 1, 1, 0 };
+			for (int i = 0; i < 8; ++i) {
+				drawChar(x + xOff[i], y + yOff[i], INK_OUTLINED_TEXT, pchr);
+			}
 		}
 		drawChar(x, y, color, pchr);
-
 		x += _charWidth[ c ];
 		++str;
 	}
@@ -926,6 +921,10 @@ void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 	for (i = x1; i <= x2; ++i) {
 		*(p + y1 * SCREEN_W + i) = *(p + y2 * SCREEN_W + i) = col;
 	}
+}
+
+void Display::shake(bool reset) {
+	_system->set_shake_pos(reset ? 0 : 3);
 }
 
 void Display::blankScreen() {
