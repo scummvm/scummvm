@@ -75,29 +75,8 @@ void GameDetector::updateconfig()
 		else
 			_amiga = false;
 
-	if ((val = scummcfg->get("fullscreen", "scummvm")))
-		if (!scumm_stricmp(val, "true"))
-			_fullScreen = true;
-		else
-			_fullScreen = false;
-
-	if ((val = scummcfg->get("path")))
-		_gameDataPath = Scumm::Strdup(val);
-
-	if ((val = scummcfg->get("tempo")))
-		_gameTempo = strtol(val, NULL, 0);
-
-	if ((val = scummcfg->get("music_volume")))
-		_music_volume = atoi(val);
-
-	if ((val = scummcfg->get("sfx_volume")))
-		_sfx_volume = atoi(val);
-
-	if ((val = scummcfg->get("nosubtitles")))
-		if (!scumm_stricmp(val, "true"))
-			_noSubtitles = true;
-		else
-			_noSubtitles = false;
+	if ((val = scummcfg->get("cdrom")))
+		_cdrom = atoi(val);
 
 	if ((val = scummcfg->get("music_driver")))
 		if (!parseMusicDriver(val)) {
@@ -106,6 +85,12 @@ void GameDetector::updateconfig()
 			exit(-1);
 		}
 
+	if ((val = scummcfg->get("fullscreen", "scummvm")))
+		if (!scumm_stricmp(val, "true"))
+			_fullScreen = true;
+		else
+			_fullScreen = false;
+
 	if ((val = scummcfg->get("gfx_mode")))
 		if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
 			printf("Error in the config file: invalid gfx_mode.\n");
@@ -113,8 +98,26 @@ void GameDetector::updateconfig()
 			exit(-1);
 		}
 
-	if ((val = scummcfg->get("cdrom")))
-		_cdrom = atoi(val);
+	if ((val = scummcfg->get("music_volume")))
+		_music_volume = atoi(val);
+
+	if ((val = scummcfg->get("nosubtitles")))
+		if (!scumm_stricmp(val, "true"))
+			_noSubtitles = true;
+		else
+			_noSubtitles = false;
+
+	if ((val = scummcfg->get("path")))
+		_gameDataPath = Scumm::Strdup(val);
+
+	if ((val = scummcfg->get("sfx_volume")))
+		_sfx_volume = atoi(val);
+
+	if ((val = scummcfg->get("tempo")))
+		_gameTempo = strtol(val, NULL, 0);
+
+	if ((val = scummcfg->get("talkspeed")))
+		_talkspeed = atoi(val);
 }
 
 void GameDetector::parseCommandLine(int argc, char **argv)
