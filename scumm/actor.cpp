@@ -77,7 +77,7 @@ void Actor::initActor(int mode) {
 		_pos.y = 0;
 		facing = 180;
 		if (_vm->_version >= 7)
-			visible = 0;
+			visible = false;
 	} else if (mode == 2) {
 		facing = 180;
 	}
