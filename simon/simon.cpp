@@ -1735,7 +1735,6 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->unk3 = 1;
 
 		// Simon1 specific
-		warning("Updating inventory area");
 		_keep_arrows = 1;
 		o_kill_sprite_simon1(0x80);
 		start_vga_code(0, 1, 0x80, 0, 0, 0xE);
