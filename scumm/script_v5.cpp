@@ -636,8 +636,11 @@ void Scumm_v5::o5_cursorCommand() {
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
 		// cursor image in both Looms is based on image from charset
-		// omit for now
+		// omit for now.
+		// FIXME: Actually: is this opcode ever called by a non-Loom game?
+		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
 		if ((_gameId != GID_LOOM256) && (_gameId != GID_LOOM)) {
+			warning("setCursorImg called - tell Fingolfin where you saw this!");
 			setCursorImg(i, j, 1);
 		}
 		break;
