@@ -189,19 +189,21 @@ builds of Win32, Redhat, Debian and other packages here:
 Command Line Options:
 ---------------------
 
-        scummvm [-f] [-n] [-p<path>] [-s<n>] [-m<n>] [-t<n>] [-b<n>] game
+        scummvm [OPTIONS] [GAME]
 
-        -p<path>  - path to where the game is installed
-	-b<num>   - start in that room
-        -c<num>   - drive to play cd audio from. eg, 0 is first drive
-        -s<num>   - set the scale factor, 1-3    default is '2'
-        -m<num>   - set the music volume, 0-100  default is '60'
-        -t<num>   - set music tempo              default is '2031616'
-        -e<mode>  - select sound engine. see below.
-        -g<mode>  - select graphics scaler. see below.
-	-f        - full-screen mode
-        -n        - disable subtitles
-        -r        - enable Roland conversion. Try if music sounds incorrect.
+	[GAME]    - Short name of game to load. E.g. monkey for Monkey Island.
+	
+        -p<path>  - Path to where the game is installed. Default is Cwd.
+	-b<num>   - Start in room <num>.
+        -c<num>   - Drive to play cd audio from.  E.g., 0 is first drive.
+        -s<num>   - Set the sfx volume, 0-255.    Default is '100'
+        -m<num>   - Set the music volume, 0-100.  Default is '60'
+        -t<num>   - Set music tempo.              Default is '2031616'
+        -e<mode>  - Select sound engine. See below.
+        -g<mode>  - Select graphics scaler. See below.
+	-f        - Full-screen mode.
+        -n        - Disable subtitles. Use with games that have voice.
+        -r        - Enable Roland conversion. Try if music sounds incorrect.
 
 
 In game Hot Keys:
@@ -225,7 +227,7 @@ MAME.
 
 They are:
         -gnormal     - No filtering, original 320x200 resolution. Fastest.
-        -g2x         - No filtering, double screen/window size to 640x480
+        -g2x         - No filtering, double screen/window size to 640x480 (default)
         -g3x         - No filtering, triple screen/window size to 800x600
         -g2xsai      - 2xsai filtering, double screen/window size to 640x480
         -gsuper2xsai - Enhanced 2xsai filtering. 640x480 screen/window size
