@@ -1,7 +1,5 @@
 #!/bin/sh
 #
-# THIS SCRIPT DOESN'T DO ANYTHING YET!
-#
 # Some things this script could/should do when finished
 #
 # * detect the compiler name (g++/c++/...)
@@ -168,7 +166,7 @@ Optional Libraries:
   --with-ogg-prefix=PFX    Prefix where libogg is installed (optional)
   --with-vorbis-prefix=PFX Prefix where libvorbis is installed (optional)
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
-  --with-mad-prefix=PFX Prefix where libmad is installed (optional)
+  --with-mad-prefix=PFX    Prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
  
 EOF
