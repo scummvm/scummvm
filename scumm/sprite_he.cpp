@@ -305,7 +305,7 @@ void ScummEngine_v90he::spriteInfoSet_tx_ty(int spriteId, int value1, int value2
 
 void ScummEngine_v90he::spriteInfoSet_groupNum(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-	checkRange(_varNumSpriteGroups, 1, value, "Invalid sprite group%d");
+	checkRange(_varNumSpriteGroups, 0, value, "Invalid sprite group %d");
 
 	_spriteTable[spriteId].group_num = value;
 }
