@@ -541,8 +541,8 @@ void Scumm_v5::o5_setClass() {
 			// Class '0' means: clean all class data
 			_classData[obj] = 0;
 			if ((_features & GF_SMALL_HEADER) && obj <= _numActors) {
-				Actor *a;
-				a = derefActorSafe(obj, "setClass");
+				Actor *a = derefActorSafe(obj, "setClass");
+				assert(a);
 				a->ignoreBoxes = false;
 				a->forceClip = 0;
 			}
@@ -570,8 +570,10 @@ void Scumm_v5::o5_animateActor() {
 	int anim = getVarOrDirectByte(0x40);
 
 	Actor *a = derefActorSafe(act, "o5_animateActor");
-	if (!a)
+	if (!a) {
+		warning("Invalid actor %d in o5_animateActor", act);
 		return;
+	}
 
 	a->animateActor(anim);
 }
@@ -890,9 +892,10 @@ void Scumm_v5::o5_faceActor() {
 	obj = getVarOrDirectWord(0x40);
 
 	a = derefActorSafe(act, "o5_faceActor");
-	if (!a)
+	if (!a) {
+		warning("Invalid actor %d in o5_faceActor", act);
 		return;
-	//assert(a);
+	}
 
 	a->faceToObject(obj);
 }
@@ -929,6 +932,7 @@ void Scumm_v5::o5_getActorCostume() {
 	a = derefActorSafe(act, "o5_getActorCostume");
 	if (!a) {
 		warning("Invalid actor %d in o5_getActorCostume", act);
+		setResult(0);
 		return;
 	}
 
@@ -944,6 +948,7 @@ void Scumm_v5::o5_getActorElevation() {
 	a = derefActorSafe(act, "o5_getActorElevation");
 	if (!a) {
 		warning("Invalid actor %d in o5_getActorElevation", act);
+		setResult(0);
 		return;
 	}
 
@@ -959,10 +964,11 @@ void Scumm_v5::o5_getActorFacing() {
 	a = derefActorSafe(act, "o5_getActorFacing");
 	if (!a) {
 		warning("Invalid actor %d in o5_getActorFacing", act);
+		setResult(0);
 		return;
 	}
 
-	setResult(newDirToOldDir (a->facing));
+	setResult(newDirToOldDir(a->facing));
 }
 
 void Scumm_v5::o5_getActorMoving() {
@@ -974,6 +980,7 @@ void Scumm_v5::o5_getActorMoving() {
 	a = derefActorSafe(act, "o5_getActorMoving");
 	if (!a) {
 		warning("Invalid actor %d in o5_getActorMoving", act);
+		setResult(0);
 		return;
 	}
 
@@ -989,6 +996,7 @@ void Scumm_v5::o5_getActorRoom() {
 	a = derefActorSafe(act, "o5_getActorRoom");
 	if (!a) {
 		warning("Invalid actor %d in o5_getActorRoom", act);
+		setResult(0);
 		return;
 	}
 
@@ -996,6 +1004,8 @@ void Scumm_v5::o5_getActorRoom() {
 }
 
 void Scumm_v5::o5_getActorScale() {
+	Actor *a;
+	
 	// dummy opcode in the loom
 	if (_gameId == GID_LOOM)
 		return;
@@ -1003,7 +1013,9 @@ void Scumm_v5::o5_getActorScale() {
 	// INDY3 uses this opcode as a wait_for_actor();
 	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
 		const byte *oldaddr = _scriptPointer - 1;
-		if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving) {
+		a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorScale (wait)");
+		assert(a);
+		if (a->moving) {
 			_scriptPointer = oldaddr;
 			o5_breakHere();
 		}
@@ -1011,22 +1023,33 @@ void Scumm_v5::o5_getActorScale() {
 	}
 
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorScale")->scalex);
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorScale");
+	assert(a);
+	setResult(a->scalex);
 }
 
 void Scumm_v5::o5_getActorWalkBox() {
+	int act;
 	Actor *a;
 	getResultPos();
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWalkbox");
-	if (a) // FIXME - bug 572977 workaround
-		setResult(a->walkbox);
-	else
+	act = getVarOrDirectByte(0x80);
+
+	a = derefActorSafe(act, "o5_getActorWalkbox");
+	if (!a) { // FIXME - bug 572977 workaround
+		warning("Invalid actor %d in o5_getActorWalkbox", act);
 		setResult(0);
+		return;
+	}
+
+	setResult(a->walkbox);
 }
 
 void Scumm_v5::o5_getActorWidth() {
+	Actor *a;
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWidth")->width);
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWidth");
+	assert(a);
+	setResult(a->width);
 }
 
 void Scumm_v5::o5_getActorX() {
@@ -1060,15 +1083,19 @@ void Scumm_v5::o5_getActorY() {
 }
 
 void Scumm_v5::o5_getAnimCounter() {
+	int act;
 	Actor *a;
 	getResultPos();
+	act = getVarOrDirectByte(0x80);
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorAnimCounter");
-
-	if (a) // FIXME
-		setResult(a->cost.animCounter1);
-	else
+	a = derefActorSafe(act, "o5_getAnimCounter");
+	if (!a) {
+		warning("Invalid actor %d in o5_getAnimCounter", act);
 		setResult(0);
+		return;
+	}
+
+	setResult(a->cost.animCounter1);
 }
 
 void Scumm_v5::o5_getClosestObjActor() {
@@ -1199,6 +1226,7 @@ void Scumm_v5::o5_isActorInBox() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_isActorInBox");
+	assert(a);
 	box = getVarOrDirectByte(0x40);
 
 	if (!checkXYInBoxBounds(box, a->x, a->y))
@@ -1336,6 +1364,7 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 	room = getVarOrDirectByte(0x40);
 
 	a = derefActorSafe(VAR(VAR_EGO), "o5_loadRoomWithEgo");
+	assert(a);
 
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
@@ -1467,8 +1496,7 @@ void Scumm_v5::o5_putActor() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActor");
-	if (!a)
-		return;
+	assert(a);
 	x = getVarOrDirectWord(0x40);
 	y = getVarOrDirectWord(0x20);
 
@@ -1480,6 +1508,7 @@ void Scumm_v5::o5_putActorAtObject() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActorAtObject");
+	assert(a);
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
 		getObjectXYPos(obj, x, y);
@@ -1491,13 +1520,17 @@ void Scumm_v5::o5_putActorAtObject() {
 }
 
 void Scumm_v5::o5_putActorInRoom() {
-	int room;
 	Actor *a;
+	int act = getVarOrDirectByte(0x80);
+	int room = getVarOrDirectByte(0x40);
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActorInRoom");
-	room = getVarOrDirectByte(0x40);
+	a = derefActorSafe(act, "o5_putActorInRoom");
 
-	if (a == NULL) return; // FIXME - yet another null dref hack, see bug 639201
+	if (!a) { // FIXME - yet another null dref hack, see bug 639201
+		warning("Invalid actor %d in o5_putActorInRoom", act);
+		return;
+	}
+
 	if (a->visible && _currentRoom != room && VAR(VAR_TALK_ACTOR) == a->number) {
 		clearMsgQueue();
 	}
@@ -2347,6 +2380,7 @@ void Scumm_v5::o5_walkActorTo() {
 	int x, y;
 	Actor *a;
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorTo");
+	assert(a);
 	x = getVarOrDirectWord(0x40);
 	y = getVarOrDirectWord(0x20);
 	a->startWalkActor(x, y, -1);
@@ -2394,6 +2428,7 @@ void Scumm_v5::o5_walkActorToObject() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToObject");
+	assert(a);
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		int x, y, dir;
