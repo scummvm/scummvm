@@ -4727,11 +4727,12 @@ struct VocHeader {
 	uint16 datablock_offset;
 	uint16 version;
 	uint16 id;
-	uint8 blocktype;
 } GCC_PACK;
 
 struct VocBlockHeader {
-	uint8 tc;
+	uint8 blocktype;
+	uint8 size[3];
+	uint8 sr;
 	uint8 pack;
 } GCC_PACK;
 
@@ -4791,12 +4792,10 @@ void SimonState::playVoice(uint voice)
 			return;
 		}
 
-		_voice_file->read(&size, 4);
-		size = size & 0xffffff;
-		_voice_file->seek(-1, SEEK_CUR);
 		_voice_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
 
-		uint32 samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.tc);
+		size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
+		uint32 samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.sr);
 
 		byte *buffer = (byte *)malloc(size);
 		_voice_file->read(buffer, size);
@@ -4824,14 +4823,10 @@ void SimonState::playSound(uint sound)
 				return;
 			}
 
-			_effects_file->read(&size, 4);
-			// FIXME - do we really want to read a block of 4 bytes, ignoring endian issues?
-			printf("FOO %08x / %d (please report this to Fingolfin)\n", size, size & 0xffffff);
-			size = size & 0xffffff;
-			_effects_file->seek(-1, SEEK_CUR);
 			_effects_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
 
-			uint32 samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.tc);
+			size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
+			uint32 samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.sr);
 
 			byte *buffer = (byte *)malloc(size);
 			_effects_file->read(buffer, size);
