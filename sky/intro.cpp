@@ -231,7 +231,7 @@ uint16 SkyIntro::_mainIntroSeq[] = {
 	FADEUP,     60115,
 	DELAY,       2000,
 	FADEDOWN,
-    SEQEND
+	SEQEND
 };
 
 uint16 SkyIntro::_cdIntroSeq[] = {
@@ -283,14 +283,14 @@ uint16 SkyIntro::_cdIntroSeq[] = {
 		WAITVOICE,
 		PLAYVOICE,	CDV_13,
 		WAITVOICE,
-    WAITFLIRT,
+	WAITFLIRT,
 	WAITVOICE,
 	PLAYVOICE,	CDV_14,
 	LOADBG,		59498, // fade-in heli
 	PLAYBG,
 	DOFLIRT,	CD_13,
 	WAITVOICE,
-    PLAYVOICE,	CDV_15,
+	PLAYVOICE,	CDV_15,
 	FADEDOWN,
 	SHOWSCREEN,	CD_15_LOG,
 	FADEUP,		CD_15_PAL,
@@ -326,7 +326,7 @@ uint16 SkyIntro::_cdIntroSeq[] = {
 	WAITVOICE,
 	PLAYVOICE,	CDV_22,
 	LOADBG,		59494, // heli whine
-    PLAYBG,
+	PLAYBG,
 	WAITVOICE,
 	PLAYVOICE,	CDV_23,
 	FADEDOWN,
@@ -336,7 +336,7 @@ uint16 SkyIntro::_cdIntroSeq[] = {
 	PLAYVOICE,	CDV_24,
 	WAITVOICE,
 	PLAYVOICE,	CDV_25,
-    WAITVOICE,
+	WAITVOICE,
 	PLAYVOICE,	CDV_26,
 	WAITVOICE,
 	FADEDOWN,
@@ -504,7 +504,7 @@ uint16 SkyIntro::_cdIntroSeq[] = {
 	PLAYVOICE,	CDV_79,
 	WAITVOICE,
 	PLAYVOICE,	CDV_80,
-    BGFLIRT,	CD_100,
+	BGFLIRT,	CD_100,
 		WAITVOICE,
 		PLAYVOICE,	CDV_81,
 		WAITVOICE,
@@ -555,7 +555,7 @@ uint16 SkyIntro::_floppyIntroSeq[] = {
 		 50, IC_FX_VOLUME,  90,
 		  5, IC_FX_VOLUME, 100,
 	COMMANDEND,
-    SHOWSCREEN,   60088,
+	SHOWSCREEN,   60088,
 	COMMANDFLIRT, 60089, // => command list 4b (cockpit)
 		1000, IC_PREPARE_TEXT,  77,
 		 220, IC_SHOW_TEXT,     20, 160, // radar detects jamming signal
@@ -592,13 +592,13 @@ uint16 SkyIntro::_floppyIntroSeq[] = {
 	COMMANDFLIRT, 60098, // => command list 6b
 		131, IC_REMOVE_TEXT,
 		131, IC_PREPARE_TEXT, 479,
-         74, IC_SHOW_TEXT,    175, 155,
+		 74, IC_SHOW_TEXT,    175, 155,
 		 45, IC_REMOVE_TEXT,
 		 45, IC_PREPARE_TEXT, 162,
 		 44, IC_SHOW_TEXT,    175, 155,
 		  4, IC_REMOVE_TEXT,
 	COMMANDEND,
-    SEQEND
+	SEQEND
 };
 
 SkyIntro::SkyIntro(SkyDisk *disk, SkyScreen *screen, SkyMusicBase *music, SkySound *sound, SkyText *text, SoundMixer *mixer, OSystem *system) {
@@ -658,7 +658,7 @@ bool SkyIntro::doIntro(bool floppyIntro) {
 		if (!nextPart(seqData))
 			return false;
 	}
-    return true;
+	return true;
 }
 
 bool SkyIntro::nextPart(uint16 *&data) {
@@ -846,7 +846,7 @@ void SkyIntro::showTextBuf(void) {
 	uint8 *saveBuf = _saveBuf + sizeof(dataFileHeader);
 	uint8 *textBuf = _textBuf + sizeof(dataFileHeader);
 	for (uint16 cnty = 0; cnty < height; cnty++) {
-        memcpy(saveBuf, screenBuf, width);
+		memcpy(saveBuf, screenBuf, width);
 		for (uint16 cntx = 0; cntx < width; cntx++)
 			if (textBuf[cntx])
 				screenBuf[cntx] = textBuf[cntx];
@@ -893,7 +893,7 @@ bool SkyIntro::escDelay(uint32 msecs) {
 		uint8 nDelay = (msecs > 50)?(50):((uint8)msecs);
 #endif
 		_system->delay_msecs(nDelay);
-        msecs -= nDelay;
+		msecs -= nDelay;
 	} while (msecs > 0);
 	return true;
 }

@@ -31,7 +31,7 @@ SkyGmMusic::SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system)
 	: SkyMusicBase(pSkyDisk, system) {
 
 	_driverFileBase = 60200;
-    _midiDrv = pMidiDrv;
+	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();
 	if (midiRes != 0) {
 		error("Can't open midi device. Errorcode: %d",midiRes);

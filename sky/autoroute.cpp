@@ -88,7 +88,7 @@ void SkyAutoRoute::initWalkGrid(uint8 screen, uint8 width) {
 	screenGrid += GRID_SIZE;
 	wGridPos = _routeGrid + (ROUTE_GRID_SIZE >> 1) - ROUTE_GRID_WIDTH - 2;
 
-    memset(_routeGrid, 0, ROUTE_GRID_SIZE);
+	memset(_routeGrid, 0, ROUTE_GRID_SIZE);
 	uint8 bitsLeft = 0; uint32 gridData = 0;
 	for (uint8 gridCntY = 0; gridCntY < ROUTE_GRID_HEIGHT - 2; gridCntY++) {
 		for (uint8 gridCntX = 0; gridCntX < ROUTE_GRID_WIDTH - 2; gridCntX++) {
@@ -142,7 +142,7 @@ bool SkyAutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 d
 
 	if (roiX < ROUTE_GRID_WIDTH-2)
 		walkStart -= directionX;
-    
+
 	bool gridChanged = true;
 	bool foundRoute = false;
 

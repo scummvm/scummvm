@@ -223,7 +223,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 		if (!cflag) {
 			warning("patching header for uncompressed file %d", fileNr);
 			uint16 *headPtr = (uint16 *)_fileDest;
-		    for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
+			for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
 				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
 		}
 #endif
@@ -270,7 +270,7 @@ uint8 *SkyDisk::givePrefetched(uint16 fileNr, uint32 *fSize) {
 	*fEntry = (*fEntry)->next;
 	*fSize = retStr->fileSize;
 	delete retStr;
-    return retPtr;
+	return retPtr;
 }
 
 uint8 *SkyDisk::getFileInfo(uint16 fileNr) {

@@ -366,12 +366,12 @@ void SkyScreen::waitForTimer(void) {
 }
 
 void SkyScreen::waitForSequence(void) {
-         while (_seqInfo.running) {
-               OSystem::Event event;
+	while (_seqInfo.running) {
+		OSystem::Event event;
 
-               _system->delay_msecs(20);
-               while (_system->poll_event(&event));
-        }
+		_system->delay_msecs(20);
+		while (_system->poll_event(&event));
+	}
 }
 
 void SkyScreen::handleTimer(void) {
@@ -419,7 +419,7 @@ void SkyScreen::processSequence(void) {
 		_seqInfo.delay = SEQ_DELAY;
 		memset(_seqGrid, 0, 12 * 20);
 
-        uint8 nrToSkip, nrToDo, cnt;
+		uint8 nrToSkip, nrToDo, cnt;
 		do {
 			do {
 				nrToSkip = _seqInfo.seqDataPos[0];

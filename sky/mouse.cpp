@@ -290,11 +290,11 @@ uint16 SkyMouse::findMouseCursor(uint32 itemNum) {
 			return cnt;
 		}
 	}
-    return 0;
+	return 0;
 }
 
 void SkyMouse::fnOpenCloseHand(bool open) {
-    
+
 	if ((!open) && (!SkyLogic::_scriptVariables[OBJECT_HELD])) {
 		spriteMouse(1, 0, 0);
 		return;
@@ -310,7 +310,7 @@ void SkyMouse::fnOpenCloseHand(bool open) {
 	srcData = (uint8 *)_objectMouseData + size * cursor + sizeof(dataFileHeader);
 	destData = (uint8 *)_miceData + sizeof(dataFileHeader);
 	memcpy(destData, srcData, size);
-    spriteMouse(0, 5, 5);
+	spriteMouse(0, 5, 5);
 }
 
 bool SkyMouse::wasClicked(void) {

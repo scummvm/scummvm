@@ -31,7 +31,7 @@ SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *sys
 	: SkyMusicBase(pSkyDisk, system) {
 
 	_driverFileBase = 60202;
-    _mixer = pMixer;
+	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
 
 	int env_bits = g_system->property(OSystem::PROP_GET_FMOPL_ENV_BITS, NULL);   

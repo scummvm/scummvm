@@ -75,7 +75,7 @@ private:
 	InstrumentStruct *_instruments;
 	uint16 *_frequenceTable;
 	uint8 *_instrumentMap;
-    uint8 *_registerTable, *_opOutputTable;
+	uint8 *_registerTable, *_opOutputTable;
 	uint8 *_adlibRegMirror;
 	//-                          normal subs
 	void setRegister(uint8 regNum, uint8 value);
@@ -84,7 +84,7 @@ private:
 	void adlibSetupInstrument(void);
 	void setupInstrument(uint8 opcode);
 	void setupChannelVolume(uint8 volume);
-    //-                          Streamfunctions from Command90hTable
+	//-                          Streamfunctions from Command90hTable
 	void com90_caseNoteOff(void);       // 0
 	void com90_stopChannel(void);       // 1
 	void com90_setupInstrument(void);   // 2

@@ -1228,7 +1228,7 @@ void SkySound::stopSpeech(void) {
 }
 
 bool SkySound::startSpeech(uint16 textNum) {
-    
+
 	if (!(SkyState::_systemVars.systemFlags & SF_ALLOW_SPEECH))
 		return false;
 	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);

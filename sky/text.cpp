@@ -282,7 +282,7 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 			blockPtr += 2;
 		} while (--nr32MsgBlocks); 
 	}
-       
+
 	uint32 remItems = textNr; 
 	textNr &= 0x1f;
 	if (textNr) {
@@ -336,7 +336,7 @@ void SkyText::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 24;
 		else _mouseOfsX = TOP_LEFT_X  - 8 - _lowTextWidth;
 	} else {
-        _mouseOfsY = TOP_LEFT_Y - 10;
+		_mouseOfsY = TOP_LEFT_Y - 10;
 		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 13;
 		else _mouseOfsX = TOP_LEFT_X - 8 - _lowTextWidth;
 	}

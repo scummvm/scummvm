@@ -57,7 +57,7 @@ private:
 	void adlibSetupInstrument(void);
 	void setupInstrument(uint8 opcode);
 	void setupChannelVolume(uint8 volume);
-    //-                          Streamfunctions from Command90hTable
+	//-                          Streamfunctions from Command90hTable
 	void com90_caseNoteOff(void);        // 0
 	void com90_stopChannel(void);        // 1
 	void com90_setupInstrument(void);    // 2

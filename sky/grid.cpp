@@ -175,11 +175,11 @@ bool SkyGrid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint
 	} else
 		x -= TOP_LEFT_X >> 3;
 
-    if ((GAME_SCREEN_WIDTH >> 3) <= x) return false; // off screen
+	if ((GAME_SCREEN_WIDTH >> 3) <= x) return false; // off screen
 	if ((GAME_SCREEN_WIDTH >> 3) < x + width) // partially off screen
 		width = (GAME_SCREEN_WIDTH >> 3) - x;
 
-    bitPos += x;
+	bitPos += x;
 	int32 screenGridOfs = _gridConvertTable[cpt->screen] * GRID_SIZE;
 	bitPos += (screenGridOfs << 3); // convert to bits
 	uint32 tmpBits = 0x1F - (bitPos&0x1F);

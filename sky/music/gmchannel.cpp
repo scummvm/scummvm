@@ -22,8 +22,8 @@
 #include "gmchannel.h"
 #include "common/util.h"
 
-SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab)
-{
+SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab) {
+
 	_musicData = pMusicData;
 	_midiDrv = pMidiDrv;
 	_channelData.midiChannelNumber = 0;
@@ -59,8 +59,8 @@ void SkyGmChannel::stopNote(void) {
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x7B00 | 0 | 0x79000000);
 }
 
-int32 SkyGmChannel::getNextEventTime(void)
-{
+int32 SkyGmChannel::getNextEventTime(void) {
+
 	int32 retV = 0; 
 	uint8 cnt, lVal;
 	for (cnt = 0; cnt < 4; cnt++) {

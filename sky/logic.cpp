@@ -1134,7 +1134,7 @@ void SkyLogic::initScriptVariables() {
 	if (SkyState::_systemVars.gameVersion == 288)
 		memcpy(_scriptVariables + 352, forwardList1b288, sizeof(forwardList1b288));
 	else
-        memcpy(_scriptVariables + 352, forwardList1b, sizeof(forwardList1b));
+		memcpy(_scriptVariables + 352, forwardList1b, sizeof(forwardList1b));
 		
 	memcpy(_scriptVariables + 656, forwardList2b, sizeof(forwardList2b));
 	memcpy(_scriptVariables + 721, forwardList3b, sizeof(forwardList3b));
@@ -2478,7 +2478,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	//now form the text sprite
 	struct lowTextManager_t textInfo;
-	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->extCompact->spColour, true);    
+	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->extCompact->spColour, true);
 	Compact *textCompact = SkyState::fetchCompact(textInfo.compactNum);
 	target->extCompact->spTextId = textInfo.compactNum;	//So we know what text to kill
 	byte *textGfx = textInfo.textData;

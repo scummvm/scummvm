@@ -109,7 +109,7 @@ private:
 		bool runningItem; // when playing an item, don't free it afterwards.
 	} _seqInfo;
 
-    //- more regular screen.asm + layer.asm routines
+	//- more regular screen.asm + layer.asm routines
 	void convertPalette(uint8 *inPal, uint8* outPal);
 	void palette_fadedown_helper(uint32 *pal, uint num);
 	
