@@ -1000,8 +1000,8 @@ void Scumm::clearClickedStatus()
 {
 	checkKeyHit();
 	_mouseButStat = 0;
-	_leftBtnPressed = 0;
-	_rightBtnPressed = 0;
+	_leftBtnPressed &= ~msClicked;
+	_rightBtnPressed &= ~msClicked;
 }
 
 int Scumm::checkKeyHit()
@@ -1219,9 +1219,14 @@ int Scumm::getKeyInput(int a)
 		_vars[VAR_MOUSE_BUTTONS] = 0;
 		if (_leftBtnPressed & msClicked)
 			_vars[VAR_MOUSE_BUTTONS] += 1;
-
 		if (_rightBtnPressed & msClicked)
 			_vars[VAR_MOUSE_BUTTONS] += 2;
+
+		_vars[VAR_MOUSE_HOLD] = 0;
+		if (_leftBtnPressed & msDown)
+			_vars[VAR_MOUSE_HOLD] += 1;
+		if (_rightBtnPressed & msDown)
+			_vars[VAR_MOUSE_HOLD] += 2;
 
 	} else if (_features & GF_AFTER_V7) {
 //    _vars[VAR_LEFTBTN_DOWN] = (_leftBtnPressed&msClicked) != 0;
