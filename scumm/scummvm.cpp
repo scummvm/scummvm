@@ -68,107 +68,107 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
-	{"maniac", "Maniac Mansion", GID_MANIAC, 2, VersionSettings::ADLIB_ALWAYS,
+	{"maniac", "Maniac Mansion", GID_MANIAC, 2, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, "00.LFL"},
-	{"maniacnes", "Maniac Mansion (NES)", GID_MANIAC, 2, VersionSettings::ADLIB_ALWAYS,
+	{"maniacnes", "Maniac Mansion (NES)", GID_MANIAC, 2, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, "00.LFL"},
-	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, VersionSettings::ADLIB_ALWAYS,
+	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, "00.LFL"},
 
 	/* Scumm Version 3 */
-	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, VersionSettings::ADLIB_ALWAYS,
+	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
-	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3, 3, VersionSettings::ADLIB_ALWAYS,
+	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3, 3, MDT_NONE,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
-	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, VersionSettings::ADLIB_ALWAYS,
+	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, "00.LFL"},
-	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, VersionSettings::ADLIB_ALWAYS,
+	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
-	{"loom", "Loom", GID_LOOM, 3, VersionSettings::ADLIB_PREFERRED,
+	{"loom", "Loom", GID_LOOM, 3, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
 
 	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, VersionSettings::ADLIB_PREFERRED,
+	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, "000.LFL"},
-	{"pass", "Passport to Adventure", GID_PASS, 4, VersionSettings::ADLIB_ALWAYS,
+	{"pass", "Passport to Adventure", GID_PASS, 4, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, "000.LFL"},
 
 	/* Scumm version 5 */
-	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4, VersionSettings::ADLIB_PREFERRED,
+	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY, "000.LFL"},
-	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, VersionSettings::ADLIB_ALWAYS,
+	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, "000.LFL"},
-	{"monkey", "Monkey Island 1", GID_MONKEY, 5, VersionSettings::ADLIB_PREFERRED,
+	{"monkey", "Monkey Island 1", GID_MONKEY, 5, MDT_NONE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
-	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, VersionSettings::ADLIB_PREFERRED,
+	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
-	{"game", "Monkey Island 1 (SegaCD version)", GID_MONKEY_SEGA, 5, VersionSettings::ADLIB_PREFERRED,
+	{"game", "Monkey Island 1 (SegaCD version)", GID_MONKEY_SEGA, 5, MDT_NONE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
-	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, VersionSettings::ADLIB_PREFERRED,
+	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
-	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, VersionSettings::ADLIB_PREFERRED,
+	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
-	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, VersionSettings::ADLIB_PREFERRED,
+	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, MDT_NONE,
 	 GF_USE_KEY, 0},
-	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, VersionSettings::ADLIB_PREFERRED,
+	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
-	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, VersionSettings::ADLIB_PREFERRED,
+	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
-	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, VersionSettings::ADLIB_PREFERRED,
+	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
 
 	/* Scumm Version 6 */
-	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_PUTTPUTT, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
-	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_PUTTPUTT, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_PUTTPUTT, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"funpack", "Putt-Putt's Fun Pack", GID_PUTTPUTT, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"funpack", "Putt-Putt's Fun Pack", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_PUTTPUTT, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"fbpack", "Fatty Bear's Fun Pack", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_PUTTPUTT, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_PUTTPUTT, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, VersionSettings::ADLIB_PREFERRED,
+	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0},
-	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, VersionSettings::ADLIB_PREFERRED,
+	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0},
 
-	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0},
 
-	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
+	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER, 0},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER, 0},
-	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_ALWAYS,
+	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER, 0},
 
-	{"test", "Test demo game", GID_SAMNMAX, 6, VersionSettings::ADLIB_DONT_CARE, GF_NEW_OPCODES, 0},
+	{"test", "Test demo game", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES, 0},
 
 	/* Humongous Entertainment Scumm Version 7 */
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_DONT_CARE,
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_SAMNMAX, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	/* Scumm Version 7 */
-	{"ft", "Full Throttle", GID_FT, 7, VersionSettings::ADLIB_DONT_CARE,
+	{"ft", "Full Throttle", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
-	{"ftdemo", "Full Throttle (Mac Demo)", GID_FT, 7, VersionSettings::ADLIB_DONT_CARE,
+	{"ftdemo", "Full Throttle (Mac Demo)", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 
-	{"dig", "The Dig", GID_DIG, 7, VersionSettings::ADLIB_DONT_CARE,
+	{"dig", "The Dig", GID_DIG, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 
 	/* Scumm Version 8 */
-	{"comi", "The Curse of Monkey Island", GID_CMI, 8, VersionSettings::ADLIB_DONT_CARE,
+	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0},
 
-	{NULL, NULL, 0, 0, VersionSettings::ADLIB_DONT_CARE, 0, NULL}
+	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
 const VersionSettings *Engine_SCUMM_targetList() {
@@ -634,7 +634,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 			if (detector->_gameTempo != 0)
 				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
 			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
-			_imuse->property(IMuse::PROP_MULTI_MIDI, detector->_multi_midi);
+			_imuse->property(IMuse::PROP_MULTI_MIDI, detector->_multi_midi && _midiDriver != MD_NULL);
 			_imuse->property(IMuse::PROP_NATIVE_MT32, detector->_native_mt32);
 			if (_features & GF_HUMONGOUS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);

@@ -704,13 +704,17 @@ int GameDetector::detectMain() {
 	 * and the game is one of those that want adlib as
 	 * default, OR if the game is an older game that doesn't
 	 * support anything else anyway. */
+	if (_midi_driver == MD_AUTO)
+		_midi_driver = MD_ADLIB;
 	bool nativeMidiDriver =
 		(_midi_driver != MD_NULL && _midi_driver != MD_ADLIB &&
 		 _midi_driver != MD_PCSPK && _midi_driver != MD_PCJR);
-	if ((_game.adlib & VersionSettings::ADLIB_ALWAYS) && nativeMidiDriver ||
-	    (_game.adlib & VersionSettings::ADLIB_PREFERRED) && _midi_driver == MD_AUTO) {
+	if (nativeMidiDriver && !(_game.midi & MDT_NATIVE))
 		_midi_driver = MD_ADLIB;
-	}
+	if (_midi_driver == MD_ADLIB && !(_game.midi & MDT_ADLIB))
+		_midi_driver = MD_PCJR;
+	if ((_midi_driver == MD_PCSPK || _midi_driver == MD_PCJR) && !(_game.midi & MDT_PCSPK))
+		_midi_driver = MD_NULL;
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming the data files are in the current directory");

@@ -61,16 +61,18 @@ enum {
 	HB_HEB = 20
 };
 
+enum MidiDriverType {
+	MDT_NONE   = 0,
+	MDT_PCSPK  = 1, // MD_PCSPK and MD_PCJR
+	MDT_ADLIB  = 2, // MD_ADLIB
+	MDT_NATIVE = 4  // Everything else
+};
+
 struct VersionSettings {
 	const char *filename;
 	const char *gamename;
 	byte id, version;
-	enum {
-		ADLIB_DONT_CARE = 0,
-		ADLIB_PREFERRED = 1,
-		ADLIB_ALWAYS    = 2,
-		ADLIB_NEVER     = 3
-	} adlib;
+	int midi; // MidiDriverType values
 	uint32 features;
 	const char *detectname;
 };

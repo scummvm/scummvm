@@ -61,8 +61,8 @@ extern bool draw_keyboard;
 
 static const VersionSettings sky_settings[] = {
 	/* Beneath a Steel Sky */
-	{"sky", "Beneath a Steel Sky", GID_SKY_FIRST, 99, VersionSettings::ADLIB_DONT_CARE, 0, "sky.dsk" },
-	{NULL, NULL, 0, 0, VersionSettings::ADLIB_DONT_CARE, 0, NULL}
+	{"sky", "Beneath a Steel Sky", GID_SKY_FIRST, 99, MDT_ADLIB | MDT_NATIVE, 0, "sky.dsk" },
+	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
 const VersionSettings *Engine_SKY_targetList() {
