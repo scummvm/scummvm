@@ -1763,10 +1763,8 @@ void SimonEngine::f10_key() {
 		do {
 			if (ha->id != 0 && ha->flags & 0x20 && !(ha->flags & 0x40)) {
 
-				/* XXX: add code to skip inventory and verbs area */
-
-				if (ha->y >= 0xc8)
-						continue;
+				 if (ha->y >= 0xc8 || ha->y >= _vga_var8)
+					continue;
 
 				y_ = (ha->height >> 1) - 4 + ha->y;
 
@@ -2321,6 +2319,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		_dx_use_3_or_4_for_lock = false;
 	} else {
 		uint num_lines = _video_palette_mode == 4 ? 134 : 200;
+		_vga_var8 = num_lines;
 		dx_copy_from_attached_to_2(0, 0, 320, num_lines);
 		dx_copy_from_attached_to_3(num_lines);
 		_sync_flag_2 = 1;
