@@ -951,7 +951,8 @@ void Scumm_v2::o2_drawSentence() {
 			{ " ", " in", " with", " on", " to" },	// Chinese
 			{ " ", " in", " with", " on", " to" }	// Korean
 			};
-		strcat(sentence, prepositions[0][VAR(VAR_SENTENCE_PREPOSITION)]);
+		int lang = (_language <= 8) ? _language : 0;
+		strcat(sentence, prepositions[lang][VAR(VAR_SENTENCE_PREPOSITION)]);
 	}
 
 	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {

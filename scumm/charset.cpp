@@ -463,8 +463,18 @@ static byte frenchCharsetDataV2[] = {
 
 void CharsetRendererV2::setCurID(byte id) {
 
-	_fontPtr = frenchCharsetDataV2;
-	_fontPtr = germanCharsetDataV2;
+	switch (_vm->_language) {
+	case DE_DEU:
+		_fontPtr = germanCharsetDataV2;
+		break;
+	case FR_FRA:
+		_fontPtr = frenchCharsetDataV2;
+		break;
+	default:
+		// For now we default to the german font
+		_fontPtr = germanCharsetDataV2;
+		break;
+	}
 
 #if 0
 	// Decompress weird encoding in which the Zak executable contains the font.

@@ -1071,7 +1071,9 @@ protected:
 	byte *_msgPtrToAdd;
 	const byte *_messagePtr;
 	bool _keepText;
+public:
 	uint16 _language;
+protected:
 	bool _existLanguageFile;
 	char *_languageBuffer;
 	struct langIndexNode *_languageIndex;
