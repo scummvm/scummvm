@@ -1518,8 +1518,13 @@ void Scumm_v8::o8_kernelGetFunctions()
 		break;
 	case 0xD3:		// getKeyState
 		switch(args[1]) {
+			// Stub out a few specific cases, just to make things less noisy
+
+			// To actually implement this, we may need a new OSystem call to do
+			// asyncronous keyboard state checking...
 			case 0x14B:	//	Left Arrow depressed?
 			case 0x14D:	//	Right Arrow depressed?
+			case 0x09:	// 	Tab depressed (fire in ship combat)
 				push(0);
 				break;
 			default:
@@ -1552,10 +1557,38 @@ void Scumm_v8::o8_kernelGetFunctions()
 		push(0);
 		break;
 	}
-	case 0xD9:		// actorHit
-		warning("actorHit(%d,%d,%d)", args[3], args[2], args[1]);
-		push(0);
+	case 0xD9:		// actorHit - used, for example, to detect ship collision
+				// during ship-to-ship combat.
+		push(1);
+
+/*		
+		// Rough sketch, thanks to DanielFox and ludde
+		struct SomeStruct {
+			int RoomHeight, RoomWidth;
+			byte *ScreenBuffer;
+		}
+
+		dword_4FC150 = args[3];			// X 
+		dword_4FC154 = args[2];			// Y
+		Actor &a = pActors[args[1]];	
+		Point rel = GetScreenCoordsRelativeToRoom(), pt, scale;
+		SomeStruct tmp;
+
+		pt.x = a.x + a.field_18 - rel.x;	// 18/1C are some kind of 
+		pt.y = a.y + a.field_1C - rel.y;	// X/Y offsets...
+		scale.x = a.scale_x;
+		scale.y = a.scale_y;
+
+		dword_4FC148 = 2;
+		graphics_getBuffer1Info(&tmp);		// Some kind of get_virtscreen?
+		chore_drawActor(tmp, actor_nr, &pt, &scale);
+
+		if (dword_4FC148 != 1)			// Guess this is changed by
+			dword_4FC148 = 0;		// chore_drawActor
+		push(dword_4FC148);
+*/
 		break;
+
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
 		// TODO - get lip sync data for the currently active voice
