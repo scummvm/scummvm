@@ -224,7 +224,7 @@ void Sound::playSound(int soundID) {
 			if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
 				return;	// abort
 	
-			size = READ_BE_UINT32_UNALIGNED(ptr+4);
+			size = READ_BE_UINT32_UNALIGNED(ptr+4) - 8;
 			// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
 			rate = 11025;
 			
