@@ -43,7 +43,7 @@ void Scumm::initV1MouseOver() {
 	for (i = 0; i < 2; i++) {
 		v2_mouseover_boxes[2 * i].rect.left = 0;
 		v2_mouseover_boxes[2 * i].rect.right = 144;
-		v2_mouseover_boxes[2 * i].rect.top = 34 + 8 * i;
+		v2_mouseover_boxes[2 * i].rect.top = 32 + 8 * i;
 		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
 
 		v2_mouseover_boxes[2 * i].color = 4;
@@ -63,16 +63,16 @@ void Scumm::initV1MouseOver() {
 
 	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
 	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 34;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 42;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 32;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 40;
 
 	v2_mouseover_boxes[kInventoryUpArrow].color = 6;
 	v2_mouseover_boxes[kInventoryUpArrow].hicolor = 7;
 
 	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
 	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 42;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 50;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 40;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 48;
 
 	v2_mouseover_boxes[kInventoryDownArrow].color = 6;
 	v2_mouseover_boxes[kInventoryDownArrow].hicolor = 7;
