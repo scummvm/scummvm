@@ -24,6 +24,9 @@
 #include "newgui.h"
 #include "common/engine.h"
 
+#ifdef _MSC_VER
+#	pragma warning( disable : 4068 ) // unknown pragmas
+#endif
 
 #define UP_DOWN_BOX_HEIGHT	10
 
