@@ -88,9 +88,22 @@ enum GameFeatures {
 struct VersionSettings {
 	const char *filename;
 	const char *gamename;
-	byte id, major, middle, minor;
-	uint32 features;
+	const byte id, major, middle, minor;
+	const uint32 features;
 	const char *detectname;
+};
+
+struct MusicDrivers {
+	const char *name;
+	const char *description;
+	const int id;
+	bool available;
+};
+
+struct GraphicsModes {
+	const char *name;
+	const char *description;
+	int id;
 };
 
 extern const VersionSettings version_settings[];
@@ -98,8 +111,10 @@ extern const VersionSettings version_settings[];
 
 class GameDetector {
 	typedef ScummVM::String String;
-protected:
-	bool detectGame(void);
+
+public:
+	static const MusicDrivers *getMusicDrivers();
+	static bool isMusicDriverAvailable(int drv);
 
 public:
 	GameDetector();
@@ -108,7 +123,7 @@ public:
 	int detectMain();
 	void setGame(const String &name);
 	const String& getGameName(void);
-
+	
 	bool _fullScreen;
 	byte _gameId;
 
@@ -141,16 +156,19 @@ public:
 	
 	bool _saveconfig;
 
-	int parseGraphicsMode(const char *s);
-
-	bool parseMusicDriver(const char *s);
-	
-	void updateconfig();
-	void list_games();
-
 public:
 	OSystem *createSystem();
 	MidiDriver *createMidi();
+
+	void updateconfig();
+
+protected:
+	bool detectGame(void);
+
+	int parseGraphicsMode(const char *s);
+	bool parseMusicDriver(const char *s);
+	
+	void list_games();
 };
 
 #endif

@@ -25,7 +25,7 @@
 
 #include "common/config-file.h"
 //#include "common/engine.h"
-//#include "common/gameDetector.h"
+#include "common/gameDetector.h"
 
 // TODO - allow changing options for:
 // - the save path (use _browser!)
@@ -42,7 +42,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 {
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
-	new StaticTextWidget(this, 10, 10+1, 100, kLineHeight, "Graphics: ", kTextAlignRight);
+	new StaticTextWidget(this, 10, 10+1, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
 	gfxPopUp = new PopUpWidget(this, 110, 10, 180, kLineHeight);
 	gfxPopUp->appendEntry("<default>");
@@ -52,21 +52,22 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	gfxPopUp->appendEntry("3x");
 	gfxPopUp->appendEntry("2xSAI");
 	gfxPopUp->appendEntry("Super2xSAI");
-	gfxPopUp->appendEntry("AuperEagle");
+	gfxPopUp->appendEntry("SuperEagle");
 	gfxPopUp->appendEntry("AdvMAME2x");
 	gfxPopUp->setSelected(0);
 
 	// The MIDI mode popup & a label
-	// TODO - add an API to query the list of available MIDI drivers
-	new StaticTextWidget(this, 10, 26+1, 100, kLineHeight, "MIDI driver: ", kTextAlignRight);
+	new StaticTextWidget(this, 10, 26+1, 100, kLineHeight, "Music driver: ", kTextAlignRight);
 	PopUpWidget *midiPopUp;
 	midiPopUp = new PopUpWidget(this, 110, 26, 180, kLineHeight);
-	midiPopUp->appendEntry("<default>");
-	midiPopUp->appendEntry("-");
-	midiPopUp->appendEntry("None");
-	midiPopUp->appendEntry("Adlib");
-	midiPopUp->appendEntry("CoreAudio");
-	midiPopUp->appendEntry("QuickTime");
+	
+	// Populate it
+	const MusicDrivers *md = GameDetector::getMusicDrivers();
+	while (md->name) {
+		if (GameDetector::isMusicDriverAvailable(md->id))
+			midiPopUp->appendEntry(md->description, md->id);
+		md++;
+	}
 	midiPopUp->setSelected(0);
 
 
