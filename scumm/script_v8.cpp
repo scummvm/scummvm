@@ -1383,9 +1383,10 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		push(getKeyState(args[1]));
 		break;
 	case 0xCE:		// getRGBSlot
+		push(remapPaletteColor(args[1], args[2], args[3], (uint) - 1));
+		break;
 	case 0xD7:		// getBox
-		push(0);
-		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
+		push(checkXYInBoxBounds(args[3], args[1], args[2]));
 		break;
 	case 0xD8: {		// findBlastObject
 		int x = args[1] + (camera._cur.x & 7);
