@@ -47,10 +47,10 @@ public:
 	Player_V1(ScummEngine *scumm);
 	~Player_V1();
 
-	void startSound(int nr);
-	void stopAllSounds();
-	void stopSound(int nr);
-	int  getMusicTimer() const;
+	virtual void startSound(int sound);
+	virtual void stopSound(int sound);
+	virtual void stopAllSounds();
+	virtual int  getMusicTimer() const;
 
 protected:
 	virtual void nextTick();

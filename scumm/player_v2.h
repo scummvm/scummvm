@@ -77,12 +77,11 @@ public:
 	virtual ~Player_V2();
 
 	virtual void setMasterVolume(int vol);
-
-	virtual void startSound(int nr);
-	virtual void stopSound(int nr);
+	virtual void startSound(int sound);
+	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getSoundStatus(int nr) const;
 	virtual int  getMusicTimer() const;
+	virtual int  getSoundStatus(int sound) const;
 
 protected:
 	bool _isV3Game;

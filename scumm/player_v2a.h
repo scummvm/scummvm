@@ -41,11 +41,11 @@ public:
 	virtual ~Player_V2A();
 
 	virtual void setMasterVolume(int vol);
-	virtual void startSound(int nr);
-	virtual void stopSound(int nr);
+	virtual void startSound(int sound);
+	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
 	virtual int  getMusicTimer() const;
-	virtual int  getSoundStatus(int nr) const;
+	virtual int  getSoundStatus(int sound) const;
 
 private:
 	OSystem *_system;
