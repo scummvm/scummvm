@@ -1030,7 +1030,7 @@ bool Scumm::isResourceInUse(int type, int i)
 	case rtCostume:
 		return isCostumeInUse(i);
 	case rtSound:
-		return isSoundRunning(i) != 0;
+		return _sound->isSoundRunning(i) != 0;
 	default:
 		return false;
 	}

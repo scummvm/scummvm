@@ -38,7 +38,7 @@
 extern void GraphicsOff(void);
 #endif
 
-void autosave(Scumm * scumm)	/* Not in class to prevent being bound */
+void autosave(Scumm * scumm)
 {
 	scumm->_doAutosave = true;
 }
@@ -67,6 +67,7 @@ Scumm::Scumm (void) {
 	_newgui = new NewGui(this);
 	_bundle = new Bundle(this);
 	_timer = new Timer(this);
+	_sound = new Sound(this);
 }
 
 Scumm::~Scumm (void) {
@@ -74,6 +75,7 @@ Scumm::~Scumm (void) {
 	delete _newgui;
 	delete _bundle;
 	delete _timer;
+	delete _sound;
 }
 
 void Scumm::scummInit()
@@ -81,7 +83,7 @@ void Scumm::scummInit()
 	int i;
 	Actor *a;
 
-	tempMusic=0;
+	tempMusic = 0;
 	debug(9, "scummInit");
 
 	if (_features & GF_SMALL_HEADER)
@@ -203,12 +205,8 @@ void Scumm::scummInit()
 	getGraphicsPerformance();
 
 #ifdef COMPRESSED_SOUND_FILE
-	_current_cache = 0;
+	_sound->_current_cache = 0;
 #endif
-
-	_numberBundleMusic = -1;
-	_musicBundleBufFinal = NULL;
-	_musicBundleBufOutput = NULL;
 
 	_timer->installProcedure(&autosave, 5 * 60 * 1000);
 }
@@ -342,7 +340,7 @@ int Scumm::scummLoop(int delta)
 		gdi._cursorActive = 0;
 		CHARSET_1();
 		drawDirtyScreenParts();
-		processSoundQues();
+		_sound->processSoundQues();
 		camera._last = camera._cur;
 	} else {
 		walkActors();
@@ -390,7 +388,7 @@ int Scumm::scummLoop(int delta)
 		if (!(_features & GF_AFTER_V6))
 			playActorSounds();
 
-		processSoundQues();
+		_sound->processSoundQues();
 		camera._last = camera._cur;
 	}
 
@@ -969,19 +967,19 @@ void Scumm::processKbd()
 			runScript(_vars[VAR_UNK_SCRIPT_2], 0, 0, 0);
 	} else if (_lastKeyHit == _vars[VAR_TALKSTOP_KEY]) {
 		_talkDelay = 0;
-		if (_sfxMode == 2)
+		if (_sound->_sfxMode == 2)
 			stopTalk();
 		return;
 	} else if (_lastKeyHit == '[') { // [, eg volume down
-		_sound_volume_master-=5;
-		if (_sound_volume_master < 0)
-			_sound_volume_master = 0;
-		_imuse->set_master_volume(_sound_volume_master);
+		_sound->_sound_volume_master-=5;
+		if (_sound->_sound_volume_master < 0)
+			_sound->_sound_volume_master = 0;
+		_imuse->set_master_volume(_sound->_sound_volume_master);
 	} else if (_lastKeyHit == ']') { // ], eg volume down
-		_sound_volume_master+=5;
-		if (_sound_volume_master > 128)
-			_sound_volume_master = 128;		
-		_imuse->set_master_volume(_sound_volume_master);
+		_sound->_sound_volume_master+=5;
+		if (_sound->_sound_volume_master > 128)
+			_sound->_sound_volume_master = 128;		
+		_imuse->set_master_volume(_sound->_sound_volume_master);
 	} else if (_lastKeyHit == '-') { // -, eg text speed down
 		_defaultTalkDelay+=5;
 		if (_defaultTalkDelay > 90)
@@ -1373,7 +1371,7 @@ void Scumm::waitForTimer(int msec_delay) {
 			}
 		}
 #ifdef COMPRESSED_SOUND_FILE
-		if (updateMP3CD() == -1)
+		if (_sound->updateMP3CD() == -1)
 #endif
 			_system->update_cdrom(); /* Loop CD Audio if needed */
 		if (_system->get_msecs() >= start_time + msec_delay)
@@ -1502,7 +1500,7 @@ void Scumm::launch()
 	if (_gameId == GID_MONKEY)
 		_vars[74] = 1225;
 
-	setupSound();
+	_sound->setupSound();
 
 	runScript(1, 0, 0, &_bootParam);
 
@@ -1571,8 +1569,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	scumm->_noSubtitles = detector->_noSubtitles;
 	scumm->_cdrom = detector->_cdrom;
 	scumm->_defaultTalkDelay = detector->_talkSpeed;
-	scumm->_sound_volume_sfx = detector->_sfx_volume;	
-	scumm->_sound_volume_music = detector->_music_volume;	
+	scumm->_sound->_sound_volume_sfx = detector->_sfx_volume;	
+	scumm->_sound->_sound_volume_music = detector->_music_volume;	
 	{
 		IMuse *imuse;
 
@@ -1587,7 +1585,7 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 		if (detector->_gameTempo != 0)
 			imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
 		
-		imuse->set_music_volume(scumm->_sound_volume_music);
+		imuse->set_music_volume(scumm->_sound->_sound_volume_music);
 		scumm->_imuse = imuse;
 	}
 

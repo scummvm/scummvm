@@ -447,9 +447,9 @@ void SoundDialog::open()
 	Dialog::open();
 
 	// get current variables
-	_soundVolumeMaster = scumm->_sound_volume_master;
-	_soundVolumeMusic = scumm->_sound_volume_music;
-	_soundVolumeSfx = scumm->_sound_volume_sfx;
+	_soundVolumeMaster = scumm->_sound->_sound_volume_master;
+	_soundVolumeMusic = scumm->_sound->_sound_volume_music;
+	_soundVolumeSfx = scumm->_sound->_sound_volume_sfx;
 
 	masterVolumeSlider->setValue(_soundVolumeMaster);
 	musicVolumeSlider->setValue(_soundVolumeMusic);
@@ -483,9 +483,9 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		Scumm	*scumm = _gui->getScumm();
 		
 		// FIXME: Look at Fingolfins comments in Gui::handleSoundDialogCommand(), gui.cpp 
-		scumm->_sound_volume_master = _soundVolumeMaster;	// Master
-		scumm->_sound_volume_music = _soundVolumeMusic;	// Music
-		scumm->_sound_volume_sfx = _soundVolumeSfx;	// SFX
+		scumm->_sound->_sound_volume_master = _soundVolumeMaster;	// Master
+		scumm->_sound->_sound_volume_music = _soundVolumeMusic;	// Music
+		scumm->_sound->_sound_volume_sfx = _soundVolumeSfx;	// SFX
 		
 		scumm->_imuse->set_music_volume(_soundVolumeMusic);
 		scumm->_imuse->set_master_volume(_soundVolumeMaster);

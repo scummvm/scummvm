@@ -738,7 +738,7 @@ void Scumm::stopTalk()
 {
 	int act;
 
-	stopTalkSound();
+	_sound->stopTalkSound();
 
 	_haveMsg = 0;
 	_talkDelay = 0;
@@ -787,7 +787,7 @@ void Scumm::playActorSounds()
 		a = derefActor(i);
 		if (a->cost.animCounter2 && a->isInCurrentRoom() && a->sound) {
 			_currentScript = 0xFF;
-			addSoundToQueue(a->sound[0]);
+			_sound->addSoundToQueue(a->sound[0]);
 			for (i = 1; i < NUM_ACTORS; i++) {
 				a = derefActor(i);
 				a->cost.animCounter2 = 0;

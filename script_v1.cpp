@@ -1532,7 +1532,7 @@ void Scumm::o5_isSoundRunning()
 	getResultPos();
 	snd = getVarOrDirectByte(0x80);
 	if (snd)
-		snd = isSoundRunning(snd);
+		snd = _sound->isSoundRunning(snd);
 	setResult(snd);
 }
 
@@ -2221,13 +2221,12 @@ void Scumm::o5_soundKludge()
 
 	getWordVararg(items);
 
-	soundKludge(items);
+	_sound->soundKludge(items);
 }
 
 void Scumm::o5_startMusic()
 {
-
-	addSoundToQueue(getVarOrDirectByte(0x80));
+	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
 void Scumm::o5_startObject()
@@ -2267,12 +2266,12 @@ void Scumm::o5_startSound()
 
 	_vars[VAR_MUSIC_FLAG] = 0;
 
-	addSoundToQueue(getVarOrDirectByte(0x80));
+	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
 void Scumm::o5_stopMusic()
 {
-	stopAllSounds();
+	_sound->stopAllSounds();
 }
 
 void Scumm::o5_stopObjectCode()
@@ -2298,7 +2297,7 @@ void Scumm::o5_stopScript()
 
 void Scumm::o5_stopSound()
 {
-	stopSound(getVarOrDirectByte(0x80));
+	_sound->stopSound(getVarOrDirectByte(0x80));
 }
 
 void Scumm::o5_stringOps()
@@ -2714,12 +2713,12 @@ void Scumm::decodeParseString()
 					_vars[VAR_MI1_TIMER] = 0;
 					if (offset == 0 && delay == 0) {
 #ifdef COMPRESSED_SOUND_FILE
-						if (stopMP3CD() == -1)
+						if (_sound->stopMP3CD() == -1)
 #endif
 							_system->stop_cdrom();
 					} else {
 #ifdef COMPRESSED_SOUND_FILE
-						if (playMP3CDTrack(1, 0, offset, delay) == -1)
+						if (_sound->playMP3CDTrack(1, 0, offset, delay) == -1)
 #endif
 							_system->play_cdrom(1, 0, offset, delay);
 					}

@@ -173,7 +173,7 @@ void Scumm::unkMessage1()
 		a = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
 		b = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 //    if (_saveSound != 1)
-		talkSound(a, b, 1);
+		_sound->talkSound(a, b, 1);
 	}
 //  warning("unkMessage1(\"%s\")", buffer);
 }
@@ -283,7 +283,7 @@ void Scumm::CHARSET_1()
 		return;
 
 	if (_haveMsg != 0xFF && _haveMsg != 0xFE) {
-		if (_sfxMode == 0)
+		if (_sound->_sfxMode == 0)
 			stopTalk();
 		return;
 	}
@@ -403,7 +403,7 @@ void Scumm::CHARSET_1()
 
 			tmpA = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
 			tmpB = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
-			talkSound(tmpA, tmpB, 2);
+			_sound->talkSound(tmpA, tmpB, 2);
 			buffer += 14;
 
 			// Set flag that speech variant exist of this msg

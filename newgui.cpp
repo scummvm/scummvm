@@ -200,8 +200,8 @@ void NewGui::loop()
 
 void NewGui::saveState()
 {
-	_old_soundsPaused = _s->_soundsPaused;
-	_s->pauseSounds(true);
+	_old_soundsPaused = _s->_sound->_soundsPaused;
+	_s->_sound->pauseSounds(true);
 
 	// Backup old cursor
 	memcpy(_old_grabbedCursor, _s->_grabbedCursor, sizeof(_old_grabbedCursor));
@@ -231,7 +231,7 @@ void NewGui::restoreState()
 
 	_s->_system->show_mouse(_old_cursor_mode);
 
-	_s->pauseSounds(_old_soundsPaused);
+	_s->_sound->pauseSounds(_old_soundsPaused);
 }
 
 void NewGui::openDialog(Dialog *dialog)

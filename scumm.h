@@ -26,6 +26,7 @@
 #include "engine.h"
 #include "bundle.h"
 #include "timer.h"
+#include "sound.h"
 
 #define SCUMMVM_VERSION "0.2.2 CVS"
 #define SCUMMVM_CVS "2002-08-03"
@@ -338,6 +339,7 @@ public:
 	ScummDebugger *_debugger;
 	Bundle * _bundle;
 	Timer * _timer;
+	Sound * _sound;
 
 	struct {
 		byte mode[rtNumTypes];
@@ -599,7 +601,7 @@ public:
 	bool isResourceLoaded(int type, int index);
 	void initRoomSubBlocks();
 	void loadRoomObjects();
-    void loadRoomObjectsSmall();
+    	void loadRoomObjectsSmall();
 	void readArrayFromIndexFile();
 	void readMAXS();
 	bool isGlobInMemory(int type, int index);
@@ -695,98 +697,6 @@ public:
 	void killVerb(int slot);
 	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
 	void setVerbObject(uint room, uint object, uint verb);
-
-	/* Should be in Sound class */
-//	MixerChannel _mixer_channel[NUM_MIXER];
-	byte _sfxMode;
-	bool _use_adlib;
-	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
-	int _saveSound;
-	void *_sfxFile;
-	uint16 _soundParam, _soundParam2, _soundParam3;
-	uint32 _talk_sound_a, _talk_sound_b;
-	byte _talk_sound_mode;
-	bool _mouthSyncMode;
-	bool _endOfMouthSync;
-	uint16 _mouthSyncTimes[52];
-	uint _curSoundPos;
-	int current_cd_sound, _cd_loops, _cd_frame, _cd_track, _cd_end;
-
-	int tempMusic;
-
-#ifdef COMPRESSED_SOUND_FILE
-
-	#define CACHE_TRACKS 10
-
-	/* used for mp3 CD music */
-
-	int _current_cache;
-	int _cached_tracks[CACHE_TRACKS];
-	struct mad_header _mad_header[CACHE_TRACKS];
-	long _mp3_size[CACHE_TRACKS];
-	FILE *_mp3_tracks[CACHE_TRACKS];
-	int _mp3_index;
-	bool _mp3_cd_playing;
-
-	int getCachedTrack(int track);
-	int playMP3CDTrack(int track, int num_loops, int start, int delay);
-	int stopMP3CD();
-	int updateMP3CD();
-	int pollMP3CD();
-#endif
-
-	int16 _soundQuePos, _soundQue[0x100];
-	byte _soundQue2Pos, _soundQue2[10];
-	bool _soundsPaused, _soundsPaused2;
-	bool _soundVolumePreset;
-
-	int32 _numberBundleMusic;
-	int32 _currentSampleBundleMusic;
-	int32 _numberSamplesBundleMusic;
-	int32 _offsetSampleBundleMusic;
-	int32 _offsetBufBundleMusic;
-	byte * _musicBundleBufFinal;
-	byte * _musicBundleBufOutput;
-	bool _pauseBundleMusic;
-
-	void setupSound();
-	void processSoundQues();
-	void playSound(int sound);
-	void stopAllSounds();
-	void stopSound(int sound);
-	bool isSoundInQueue(int sound);
-	void clearSoundQue();
-	void talkSound(uint32 a, uint32 b, int mode);
-	void processSfxQueues();
-	int startTalkSound(uint32 a, uint32 b, int mode);
-	void stopTalkSound();
-	bool isMouthSyncOff(uint pos);
-	int startSfxSound(void *file, int size);
-	void *openSfxFile();
-	void addSoundToQueue(int sound);
-	void addSoundToQueue2(int sound);
-	void soundKludge(int16 *list);
-	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
-	int num_sound_effects;		// SO3 MP3 compressed audio
-
-	void pauseSounds(bool pause);
-	bool isSfxFinished();
-	void playBundleSound(char *sound);
-	void playBundleMusic(int32 song);
-	void pauseBundleMusic(bool state);
-	void stopBundleMusic();
-	void bundleMusicHandler(Scumm * scumm);
-	void decompressBundleSound(int index);
-	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned = false);
- 	int playSfxSound_MP3(void *sound, uint32 size);
-	void stopSfxSound();
-
-	int _talkChannel;	/* Mixer channel actor is talking on */
-	bool _useTalkAnims;
-	uint16 _defaultTalkDelay;
-	byte _haveMsg;
-	int isSoundRunning(int a);
-
 
 	/* Should be in Actor class */
 	Actor *derefActor(int id);
@@ -954,8 +864,14 @@ public:
 	byte _bkColor;
 	uint16 _lastXstart;
 
-	
-
+	byte _haveMsg;
+	bool _useTalkAnims;
+	uint16 _defaultTalkDelay;
+	bool _use_adlib;
+	int tempMusic;
+	int _saveSound;
+	uint16 _soundParam, _soundParam2, _soundParam3;
+	int current_cd_sound, _cd_loops, _cd_frame, _cd_track, _cd_end;
 
 	/* Walkbox / Navigation class */
 	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;

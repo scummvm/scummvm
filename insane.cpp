@@ -41,7 +41,7 @@ SmushPlayer::SmushPlayer(Scumm * parent) {
 SmushPlayer::~SmushPlayer() {
 }
 
-static void smush_handler (Scumm * _scumm) {
+static void smush_handler (Scumm * scumm) {
 	h_sp->update();
 }
 
@@ -1430,7 +1430,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 
 	memset (&pcd37, 0, sizeof (PersistentCodecData37));
 
-	_scumm->pauseBundleMusic(true);
+	_scumm->_sound->pauseBundleMusic(true);
 	init();
 	openFile(videoFile);
 
@@ -1505,5 +1505,5 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 
 	_scumm->_insaneState = 0;
 	_scumm->exitCutscene();
-	_scumm->pauseBundleMusic(false);
+	_scumm->_sound->pauseBundleMusic(false);
 }

@@ -615,18 +615,18 @@ void Gui::handleSoundDialogCommand(int cmd)
 	if (cmd == 50) {
 		close();
 	} else if (cmd == 40) {
-		_s->_sound_volume_master = _gui_variables[0];	// Master
-		_s->_sound_volume_music = _gui_variables[1];	// Music
-		_s->_sound_volume_sfx = _gui_variables[2];		// SFX
+		_s->_sound->_sound_volume_master = _gui_variables[0];	// Master
+		_s->_sound->_sound_volume_music = _gui_variables[1];	// Music
+		_s->_sound->_sound_volume_sfx = _gui_variables[2];		// SFX
 
-		_s->_imuse->set_music_volume(_s->_sound_volume_music);
-		_s->_imuse->set_master_volume(_s->_sound_volume_master);
-		_s->_mixer->set_volume(_s->_sound_volume_sfx);
-		_s->_mixer->set_music_volume(_s->_sound_volume_music);
+		_s->_imuse->set_music_volume(_s->_sound->_sound_volume_music);
+		_s->_imuse->set_master_volume(_s->_sound->_sound_volume_master);
+		_s->_mixer->set_volume(_s->_sound->_sound_volume_sfx);
+		_s->_mixer->set_music_volume(_s->_sound->_sound_volume_music);
 
-		scummcfg->set("master_volume", _s->_sound_volume_master);
-		scummcfg->set("music_volume", _s->_sound_volume_music);
-		scummcfg->set("sfx_volume", _s->_sound_volume_sfx);
+		scummcfg->set("master_volume", _s->_sound->_sound_volume_master);
+		scummcfg->set("music_volume", _s->_sound->_sound_volume_music);
+		scummcfg->set("sfx_volume", _s->_sound->_sound_volume_sfx);
 		scummcfg->flush();
 
 		close();
@@ -650,9 +650,9 @@ void Gui::handleOptionsDialogCommand(int cmd)
 	switch (cmd) {
 	case 1:
 		_widgets[0] = sound_dialog;
-		_gui_variables[0] = _s->_sound_volume_master;
-		_gui_variables[1] = _s->_sound_volume_music;
-		_gui_variables[2] = _s->_sound_volume_sfx;
+		_gui_variables[0] = _s->_sound->_sound_volume_master;
+		_gui_variables[1] = _s->_sound->_sound_volume_music;
+		_gui_variables[2] = _s->_sound->_sound_volume_sfx;
 		_active = true;
 		_cur_page = 0;
 		_dialog = SOUND_DIALOG;
@@ -1052,8 +1052,8 @@ void Gui::loop()
 	if (_active && !_inited) {
 		_inited = true;
 		draw(0, 200);								// was 100    
-		_old_soundsPaused = _s->_soundsPaused;
-		_s->pauseSounds(true);
+		_old_soundsPaused = _s->_sound->_soundsPaused;
+		_s->_sound->pauseSounds(true);
 
 		// Backup old cursor
 		memcpy(_old_grabbedCursor, _s->_grabbedCursor, sizeof(_old_grabbedCursor));
@@ -1112,7 +1112,7 @@ void Gui::close()
 
 	_s->_system->show_mouse(_old_cursor_mode);
 
-	_s->pauseSounds(_old_soundsPaused);
+	_s->_sound->pauseSounds(_old_soundsPaused);
 	_active = false;
 	_inited = false;
 

@@ -605,6 +605,10 @@ SOURCE=.\smush.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sound.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File

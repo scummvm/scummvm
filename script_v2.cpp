@@ -1096,7 +1096,7 @@ void Scumm::o6_cutScene()
 
 void Scumm::o6_stopMusic()
 {
-	stopAllSounds();
+	_sound->stopAllSounds();
 }
 
 void Scumm::o6_freezeUnfreeze()
@@ -1249,17 +1249,17 @@ void Scumm::o6_getOwner()
 
 void Scumm::o6_startSound()
 {
-	addSoundToQueue(pop());
+	_sound->addSoundToQueue(pop());
 }
 
 void Scumm::o6_stopSound()
 {
-	stopSound(pop());
+	_sound->stopSound(pop());
 }
 
 void Scumm::o6_startMusic()
 {
-	addSoundToQueue(pop());
+	_sound->addSoundToQueue(pop());
 }
 
 void Scumm::o6_stopObjectScript()
@@ -1650,13 +1650,13 @@ void Scumm::o6_isSoundRunning()
 	// FIXME: This fixes wak-a-rat until we correctly implement 
 	//      sam and max iMUSE
 	if (_gameId == GID_SAMNMAX && _currentRoom == 18 && snd == 23) {
-		stopSound(snd);
+		_sound->stopSound(snd);
 		push(0);
 		return;
 	}
 
 	if (snd)
-		snd = isSoundRunning(snd);
+		snd = _sound->isSoundRunning(snd);
 
 	push(snd);
 }
@@ -2426,7 +2426,7 @@ void Scumm::o6_soundKludge()
 	if (list[1] == 163 && _gameId == GID_DIG)
 		return;
 
-	soundKludge(list);
+	_sound->soundKludge(list);
 }
 
 void Scumm::o6_isAnyOf()
@@ -2540,7 +2540,7 @@ void Scumm::o6_talkActor()
 	if (_scriptPointer[0] == '/') {
 		char *pointer = strtok((char *)_scriptPointer, "/");
 		int bunsize = strlen(pointer) + 2;
-		playBundleSound(pointer);
+		_sound->playBundleSound(pointer);
 		_scriptPointer += bunsize;
 		_messagePtr = _scriptPointer;
 	}
@@ -2558,7 +2558,7 @@ void Scumm::o6_talkEgo()
 	if (_scriptPointer[0] == '/') {
 		char *pointer = strtok((char *)_scriptPointer, "/");
 		int bunsize = strlen(pointer) + 2;
-		playBundleSound(pointer);
+		_sound->playBundleSound(pointer);
 		_scriptPointer += bunsize;
 		_messagePtr = _scriptPointer;
 	}
@@ -3077,7 +3077,7 @@ void Scumm::decodeParseString2(int m, int n)
 			if (_scriptPointer[0] == '/') {
 				char *pointer = strtok((char *)_scriptPointer, "/");
 				int bunsize = strlen(pointer) + 2;
-				playBundleSound(pointer);
+				_sound->playBundleSound(pointer);
 				_scriptPointer += bunsize;
 				_messagePtr = _scriptPointer;
 			}

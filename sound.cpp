@@ -33,11 +33,20 @@ extern void *bsearch(const void *, const void *, size_t,
 										 size_t, int (*x) (const void *, const void *));
 #endif
 
-void Scumm::addSoundToQueue(int sound)
-{
-	if (!(_features & GF_AFTER_V7)) {
-		_vars[VAR_LAST_SOUND] = sound;
-		ensureResourceLoaded(rtSound, sound);
+Sound::Sound(Scumm *parent) {
+	_scumm = parent;
+	_numberBundleMusic = -1;
+	_musicBundleBufFinal = NULL;
+	_musicBundleBufOutput = NULL;
+}
+
+Sound::~Sound() {
+}
+
+void Sound::addSoundToQueue(int sound) {
+	if (!(_scumm->_features & GF_AFTER_V7)) {
+		_scumm->_vars[_scumm->VAR_LAST_SOUND] = sound;
+		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);
 	}
 
@@ -45,15 +54,13 @@ void Scumm::addSoundToQueue(int sound)
 //		warning("Requesting audio track: %d", sound);
 }
 
-void Scumm::addSoundToQueue2(int sound)
-{
+void Sound::addSoundToQueue2(int sound) {
 	if (_soundQue2Pos < 10) {
 		_soundQue2[_soundQue2Pos++] = sound;
 	}
 }
 
-void Scumm::processSoundQues()
-{
+void Sound::processSoundQues() {
 	byte d;
 	int i, j;
 	int num;
@@ -81,7 +88,7 @@ void Scumm::processSoundQues()
 				data[j] = _soundQue[i + j];
 			i += num;
 
-			se = _imuse;
+			se = _scumm->_imuse;
 #if 0
 			debug(1, "processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
 						data[0] >> 8,
@@ -90,12 +97,12 @@ void Scumm::processSoundQues()
 				);
 #endif
 			
-			if ((_gameId == GID_DIG) && (data[0] == 4096)){
+			if ((_scumm->_gameId == GID_DIG) && (data[0] == 4096)){
 					playBundleMusic(data[1] - 1);
 			}
-			if ((_gameId == GID_DIG) && ((data[0] == 12) || (data[0] == 14))){
+			if ((_scumm->_gameId == GID_DIG) && ((data[0] == 12) || (data[0] == 14))){
 				uint32 size = 0, rate = 0, tag, chan = 0, bits = 0;
-				uint8 * ptr = getResourceAddress(rtSound, data[1]);
+				uint8 * ptr = _scumm->getResourceAddress(rtSound, data[1]);
 				if (ptr != NULL) {
 					ptr+=16;       /* Skip header */
 					for (;;) {
@@ -125,42 +132,27 @@ void Scumm::processSoundQues()
 						byte * buffer = (byte*)malloc (size);
 						memcpy(buffer, ptr, size);
 						if (chan == 1) {
-							_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
+							_scumm->_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
 						}
 						else if (chan == 2) {
-							_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
+							_scumm->_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
 						}
 					} else if (bits == 12) {
-						uint32 s_size = (size * 4) / 3;
-						byte * buffer = (byte*)malloc (s_size + 4);
-						uint32 l = 0, r = 0, tmp;
-						for (; l < size; l += 3)
-						{
-							tmp = (ptr[l + 1] & 0x0f) << 8;
-							tmp = (tmp | ptr[l + 0]) << 4;
-							tmp -= 0x8000;
-							buffer[r++] = (uint8)((tmp >> 8) & 0xff);
-							buffer[r++] = (uint8)(tmp & 0xff);
-
-							tmp = (ptr[l + 1] & 0xf0) << 4;
-							tmp = (tmp | ptr[l + 2]) << 4;
-							tmp -= 0x8000;
-							buffer[r++] = (uint8)((tmp >> 8) & 0xff);
-							buffer[r++] = (uint8)(tmp & 0xff);
-						} 
+						byte * buffer = NULL;
+						uint32 final_size = decode12BitsSample(ptr, &buffer, size);
 						if (chan == 1) {
-							_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS);
+							_scumm->_mixer->play_raw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS);
 						}
 						else if (chan == 2) {
-							_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+							_scumm->_mixer->play_raw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
 						}
 					}
 				}
 			}
 																										    																																						
-			if (!(_features & GF_AFTER_V7)) {
+			if (!(_scumm->_features & GF_AFTER_V7)) {
 				if (se)
-					_vars[VAR_SOUNDRESULT] =
+					_scumm->_vars[_scumm->VAR_SOUNDRESULT] =
 						(short)se->do_command(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
 			}
@@ -170,23 +162,22 @@ void Scumm::processSoundQues()
 	_soundQuePos = 0;
 }
 
-void Scumm::playSound(int sound)
-{
+void Sound::playSound(int sound) {
 	byte *ptr;
-	IMuse *se = _imuse;
+	IMuse *se = _scumm->_imuse;
 
-	ptr = getResourceAddress(rtSound, sound);
+	ptr = _scumm->getResourceAddress(rtSound, sound);
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 		ptr += 8;
-		_vars[VAR_MI1_TIMER] = 0;
+		_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
 #ifdef COMPRESSED_SOUND_FILE
 		if ((playMP3CDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0)) == -1)
 #endif
- 		_system->play_cdrom(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
+ 		_scumm->_system->play_cdrom(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
  						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
 
-		current_cd_sound = sound;
+		_scumm->current_cd_sound = sound;
 		return;
 	}
 
@@ -205,7 +196,7 @@ void Scumm::playSound(int sound)
 		// Allocate a sound buffer, copy the data into it, and play
 		char *sound = (char*)malloc(size);
 		memcpy(sound, ptr, size);
-		_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 	// Support for Putt-Putt sounds - very hackish, too 8-)
@@ -222,11 +213,11 @@ void Scumm::playSound(int sound)
 		// Allocate a sound buffer, copy the data into it, and play
 		char *sound = (char*)malloc(size);
 		memcpy(sound, ptr+8, size);
-		_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 
-	if ((_features & GF_OLD256) && (ptr != NULL)) {
+	if ((_scumm->_features & GF_OLD256) && (ptr != NULL)) {
 		char *sound;
 		int size = READ_LE_UINT32(ptr);
 		
@@ -272,20 +263,20 @@ void Scumm::playSound(int sound)
 			int result = 0;
 			int track = *ptr;
 
-			if (track == current_cd_sound)
+			if (track == _scumm->current_cd_sound)
 #ifdef COMPRESSED_SOUND_FILE
 				if (pollMP3CD())
 					result = 1;
 				else
 #endif
-				result = _system->poll_cdrom();
+				result = _scumm->_system->poll_cdrom();
 			if (result == 1) return;
 
 #ifdef COMPRESSED_SOUND_FILE
         	        if (playMP3CDTrack(track, 1, 0, 0) == -1)
 #endif
-	                _system->play_cdrom(track, 0, 0, 0);
-	                current_cd_sound = track;
+	                _scumm->_system->play_cdrom(track, 0, 0, 0);
+	                _scumm->current_cd_sound = track;
 			return;
 		}
 
@@ -298,21 +289,20 @@ void Scumm::playSound(int sound)
 
 		// FIXME: Something in the header signifies looping. Need to track it down and add a 
 		//	  mixer flag or something.
-		_mixer->play_raw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->play_raw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 
-	if (_gameId == GID_MONKEY_VGA)
+	if (_scumm->_gameId == GID_MONKEY_VGA)
 		return;											/* FIXME */
 
 	if (se) {
-		getResourceAddress(rtSound, sound);
+		_scumm->getResourceAddress(rtSound, sound);
 		se->start_sound(sound);
 	}
 }
 
-void Scumm::processSfxQueues()
-{
+void Sound::processSfxQueues() {
 	Actor *a;
 	int act;
 	bool b, finished;
@@ -325,19 +315,19 @@ void Scumm::processSfxQueues()
 		_talk_sound_mode = 0;
 	}
 
-	if (_vars[VAR_TALK_ACTOR]) { //_sfxMode == 2) {
-		act = _vars[VAR_TALK_ACTOR];
+	if (_scumm->_vars[_scumm->VAR_TALK_ACTOR]) { //_sfxMode == 2) {
+		act = _scumm->_vars[_scumm->VAR_TALK_ACTOR];
 		if (_talkChannel < 0)
 			finished = false;
-		else if (_mixer->_channels[_talkChannel] == NULL)
+		else if (_scumm->_mixer->_channels[_talkChannel] == NULL)
 			finished = true;
 		else
 			finished = false;
 		
 
-		if (act != 0 && (uint) act < 0x80 && !string[0].no_talk_anim) {
-			a = derefActorSafe(act, "processSfxQueues");
-			if (a->room == _currentRoom && (finished || !_endOfMouthSync)) {
+		if (act != 0 && (uint) act < 0x80 && !_scumm->string[0].no_talk_anim) {
+			a = _scumm->derefActorSafe(act, "processSfxQueues");
+			if (a->room == _scumm->_currentRoom && (finished || !_endOfMouthSync)) {
 				b = true;
 				if (!finished)
 					b = isMouthSyncOff(_curSoundPos);
@@ -348,8 +338,8 @@ void Scumm::processSfxQueues()
 			}
 		}
 		
-		if (finished  && _talkDelay == 0) {
-			stopTalk();
+		if (finished  && _scumm->_talkDelay == 0) {
+			_scumm->stopTalk();
 			_sfxMode = 0;
 			_talkChannel = -1;
 		}
@@ -370,8 +360,7 @@ static int compar(const void *a, const void *b)
 }
 #endif
 
-int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
-{
+int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	int num = 0, i;
 	byte file_byte, file_byte_2;
 	int size;
@@ -410,11 +399,11 @@ int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 		size = -1;
 	}
 
-	fileSeek((FILE *) _sfxFile, offset, SEEK_SET);
+	_scumm->fileSeek((FILE *) _sfxFile, offset, SEEK_SET);
 	i = 0;
 	while (num > 0) {
-		fileRead((FILE *) _sfxFile, &file_byte, sizeof(file_byte));
-		fileRead((FILE *) _sfxFile, &file_byte_2, sizeof(file_byte_2));
+		_scumm->fileRead((FILE *) _sfxFile, &file_byte, sizeof(file_byte));
+		_scumm->fileRead((FILE *) _sfxFile, &file_byte_2, sizeof(file_byte_2));
 		_mouthSyncTimes[i++] = file_byte | (file_byte_2 << 8);
 		num--;
 	}
@@ -426,16 +415,14 @@ int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 	return startSfxSound(_sfxFile, size);
 }
 
-void Scumm::stopTalkSound()
-{
+void Sound::stopTalkSound() {
 	if (_sfxMode == 2) {
 		stopSfxSound();
 		_sfxMode = 0;
 	}
 }
 
-bool Scumm::isMouthSyncOff(uint pos)
-{
+bool Sound::isMouthSyncOff(uint pos) {
 	uint j;
 	bool val = true;
 	uint16 *ms = _mouthSyncTimes;
@@ -453,18 +440,17 @@ bool Scumm::isMouthSyncOff(uint pos)
 }
 
 
-int Scumm::isSoundRunning(int sound)
-{
+int Sound::isSoundRunning(int sound) {
 	IMuse *se;
 	int i;
 
-	if (sound == current_cd_sound)
+	if (sound == _scumm->current_cd_sound)
 #ifdef COMPRESSED_SOUND_FILE
 		if (pollMP3CD())
 			return 1;
 		else
 #endif
-			return _system->poll_cdrom();
+			return _scumm->_system->poll_cdrom();
 
 	i = _soundQue2Pos;
 	while (i--) {
@@ -475,17 +461,16 @@ int Scumm::isSoundRunning(int sound)
 	if (isSoundInQueue(sound))
 		return 1;
 
-	if (!isResourceLoaded(rtSound, sound))
+	if (!_scumm->isResourceLoaded(rtSound, sound))
 		return 0;
 
-	se = _imuse;
+	se = _scumm->_imuse;
 	if (!se)
 		return 0;
 	return se->get_sound_status(sound);
 }
 
-bool Scumm::isSoundInQueue(int sound)
-{
+bool Sound::isSoundInQueue(int sound) {
 	int i = 0, j, num;
 	int16 table[16];
 
@@ -505,20 +490,19 @@ bool Scumm::isSoundInQueue(int sound)
 	return 0;
 }
 
-void Scumm::stopSound(int a)
-{
+void Sound::stopSound(int a) {
 	IMuse *se;
 	int i;
 
-	if (a != 0 && a == current_cd_sound) {
-		current_cd_sound = 0;
+	if (a != 0 && a == _scumm->current_cd_sound) {
+		_scumm->current_cd_sound = 0;
 #ifdef COMPRESSED_SOUND_FILE
 		if (stopMP3CD() == -1)
 #endif
-			_system->stop_cdrom();
+			_scumm->_system->stop_cdrom();
 	}
 
-	se = _imuse;
+	se = _scumm->_imuse;
 	if (se)
 		se->stop_sound(a);
 
@@ -527,16 +511,16 @@ void Scumm::stopSound(int a)
 			_soundQue2[i] = 0;
 }
 
-void Scumm::stopAllSounds()
+void Sound::stopAllSounds()
 {
-	IMuse *se = _imuse;
+	IMuse *se = _scumm->_imuse;
 
-	if (current_cd_sound != 0) {
-		current_cd_sound = 0;
+	if (_scumm->current_cd_sound != 0) {
+		_scumm->current_cd_sound = 0;
 #ifdef COMPRESSED_SOUND_FILE
 		if (stopMP3CD() == -1)
 #endif
-			_system->stop_cdrom();
+			_scumm->_system->stop_cdrom();
 	}
 
 	if (se) {
@@ -547,14 +531,12 @@ void Scumm::stopAllSounds()
 	stopSfxSound();
 }
 
-void Scumm::clearSoundQue()
-{
+void Sound::clearSoundQue() {
 	_soundQue2Pos = 0;
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 }
 
-void Scumm::soundKludge(int16 * list)
-{
+void Sound::soundKludge(int16 * list) {
 	int16 *ptr;
 	int i;
 
@@ -573,8 +555,7 @@ void Scumm::soundKludge(int16 * list)
 		error("Sound que buffer overflow");
 }
 
-void Scumm::talkSound(uint32 a, uint32 b, int mode)
-{
+void Sound::talkSound(uint32 a, uint32 b, int mode) {
 	_talk_sound_a = a;
 	_talk_sound_b = b;
 	_talk_sound_mode = mode;
@@ -587,41 +568,32 @@ void Scumm::talkSound(uint32 a, uint32 b, int mode)
  * is needed.
  */
 
-void Scumm::setupSound()
-{
-	if (_imuse) {
-		_imuse->setBase(res.address[rtSound]);
+void Sound::setupSound() {
+	if (_scumm->_imuse) {
+		_scumm->_imuse->setBase(_scumm->res.address[rtSound]);
 
 		_sound_volume_music = scummcfg->getInt("music_volume", kDefaultMusicVolume);
 		_sound_volume_master = scummcfg->getInt("master_volume", kDefaultMasterVolume);
 		_sound_volume_sfx = scummcfg->getInt("sfx_volume", kDefaultSFXVolume);
 
-		_imuse->set_master_volume(_sound_volume_master);
-		_imuse->set_music_volume(_sound_volume_music);
-		_mixer->set_volume(_sound_volume_sfx);
-		_mixer->set_music_volume(_sound_volume_music);
+		_scumm->_imuse->set_master_volume(_sound_volume_master);
+		_scumm->_imuse->set_music_volume(_sound_volume_music);
+		_scumm->_mixer->set_volume(_sound_volume_sfx);
+		_scumm->_mixer->set_music_volume(_sound_volume_music);
 	}
 	_sfxFile = openSfxFile();
 }
 
-void Scumm::pauseSounds(bool pause)
-{
-	IMuse *se = _imuse;
+void Sound::pauseSounds(bool pause) {
+	IMuse *se = _scumm->_imuse;
 	if (se)
 		se->pause(pause);
 
 	_soundsPaused = pause;
-	_mixer->pause(pause);	
+	_scumm->_mixer->pause(pause);	
 }
 
-enum {
-	SOUND_HEADER_SIZE = 26,
-	SOUND_HEADER_BIG_SIZE = 26 + 8,
-
-};
-
-int Scumm::startSfxSound(void *file, int file_size)
-{
+int Sound::startSfxSound(void *file, int file_size) {
 	char ident[8];
 	int block_type;
 	byte work[8];
@@ -688,8 +660,7 @@ int Scumm::startSfxSound(void *file, int file_size)
 
 
 #ifdef COMPRESSED_SOUND_FILE
-static int get_int(FILE * f)
-{
+static int get_int(FILE * f) {
 	int ret = 0;
 	for (int size = 0; size < 4; size++) {
 		int c = fgetc(f);
@@ -703,8 +674,7 @@ static int get_int(FILE * f)
 }
 #endif
 
-void *Scumm::openSfxFile()
-{
+void * Sound::openSfxFile() {
 	char buf[256];
 	FILE *file = NULL;
 
@@ -714,10 +684,10 @@ void *Scumm::openSfxFile()
 #ifdef COMPRESSED_SOUND_FILE
 	offset_table = NULL;
 
-	sprintf(buf, "%s%s.so3", _gameDataPath, _exe_name);
+	sprintf(buf, "%s%s.so3", _scumm->_gameDataPath, _scumm->_exe_name);
 	file = fopen(buf, "rb");
 	if (!file) {
-		sprintf(buf, "%smonster.so3", _gameDataPath);
+		sprintf(buf, "%smonster.so3", _scumm->_gameDataPath);
 		file = fopen(buf, "rb");
 	}
 	if (file != NULL) {
@@ -755,38 +725,58 @@ void *Scumm::openSfxFile()
 		return file;
 	}
 #endif
-	sprintf(buf, "%s%s.sou", _gameDataPath, _exe_name);
+	sprintf(buf, "%s%s.sou", _scumm->_gameDataPath, _scumm->_exe_name);
 	file = fopen(buf, "rb");
 	if (!file) {
-		sprintf(buf, "%smonster.sou", _gameDataPath);
+		sprintf(buf, "%smonster.sou", _scumm->_gameDataPath);
 		file = fopen(buf, "rb");
 	}
 	return file;
 }
 
-void Scumm::stopSfxSound()
-{
-	_mixer->stop_all();
+void Sound::stopSfxSound() {
+	_scumm->_mixer->stop_all();
 }
 
 
-bool Scumm::isSfxFinished()
-{
-	return !_mixer->has_active_channel();
+bool Sound::isSfxFinished() {
+	return !_scumm->_mixer->has_active_channel();
+}
+
+uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size) {
+	uint32 s_size = (size * 4) / 3;
+	byte * ptr = *dst = (byte*)malloc (s_size + 4);
+
+	uint32 r = 0, tmp, l;
+	for (l = 0; l < size; l += 3) {
+		tmp = (src[l + 1] & 0x0f) << 8;
+		tmp = (tmp | src[l + 0]) << 4;
+		tmp -= 0x8000;
+		ptr[r++] = (byte)((tmp >> 8) & 0xff);
+		ptr[r++] = (byte)(tmp & 0xff);
+
+		tmp = (src[l + 1] & 0xf0) << 4;
+		tmp = (tmp | src[l + 2]) << 4;
+		tmp -= 0x8000;
+		ptr[r++] = (byte)((tmp >> 8) & 0xff);
+		ptr[r++] = (byte)(tmp & 0xff);
+	}
+
+	return r;
 }
 
 static void music_handler (Scumm * scumm) {
-	scumm->bundleMusicHandler(scumm);
+	scumm->_sound->bundleMusicHandler(scumm);
 }
 
 #define OUTPUT_SIZE 66150 // ((22050 * 2 * 2) / 4) * 3
 
-void Scumm::playBundleMusic(int32 song) {
+void Sound::playBundleMusic(int32 song) {
 	char buf[256];
 
 	if (_numberBundleMusic == -1) {
-		sprintf(buf, "%s%smusic.bun", _gameDataPath, _exe_name);
-		if (_bundle->openMusicFile((char*)&buf) == false)
+		sprintf(buf, "%s%smusic.bun", _scumm->_gameDataPath, _scumm->_exe_name);
+		if (_scumm->_bundle->openMusicFile((char*)&buf) == false)
 			return;
 		_musicBundleBufFinal = (byte*)malloc(OUTPUT_SIZE);
 		_musicBundleBufOutput = (byte*)malloc(10 * 0x2000);
@@ -794,13 +784,13 @@ void Scumm::playBundleMusic(int32 song) {
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
 		_pauseBundleMusic = false;	
-		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByIndex(song);
+		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByIndex(song);
 		_numberBundleMusic = song;
-		_timer->installProcedure(&music_handler, 1000);
+		_scumm->_timer->installProcedure(&music_handler, 1000);
 		return;
 	}
 	if (_numberBundleMusic != song) {
-		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByIndex(song);
+		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByIndex(song);
 		_numberBundleMusic = song;
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
@@ -808,12 +798,12 @@ void Scumm::playBundleMusic(int32 song) {
 	}
 }
 
-void Scumm::pauseBundleMusic(bool state) {
+void Sound::pauseBundleMusic(bool state) {
 	_pauseBundleMusic = state;
 }
 
-void Scumm::stopBundleMusic() {
-	_timer->releaseProcedure(&music_handler);
+void Sound::stopBundleMusic() {
+	_scumm->_timer->releaseProcedure(&music_handler);
 	_numberBundleMusic = -1;
 	if (_musicBundleBufFinal) {
 		free(_musicBundleBufFinal);
@@ -825,7 +815,7 @@ void Scumm::stopBundleMusic() {
 	}
 }
 
-void Scumm::bundleMusicHandler(Scumm * scumm) {
+void Sound::bundleMusicHandler(Scumm * scumm) {
 	byte * ptr;
 	int32 l, num = _numberSamplesBundleMusic, length, k;
 	int32 rate = 22050;
@@ -837,7 +827,7 @@ void Scumm::bundleMusicHandler(Scumm * scumm) {
 		return;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
-		length = _bundle->decompressMusicSampleByIndex(_numberBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
+		length = _scumm->_bundle->decompressMusicSampleByIndex(_numberBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
 		_offsetSampleBundleMusic += length;
 
 		if (l == 0) {
@@ -894,35 +884,19 @@ void Scumm::bundleMusicHandler(Scumm * scumm) {
 
 	size = OUTPUT_SIZE;
 	ptr = _musicBundleBufFinal;
-	uint32 s_size = (size * 4) / 3;
-	byte * buffer = (byte*)malloc (s_size + 4);
-	uint32 r = 0, tmp;
-	for (l = 0; l < size; l += 3) {
-		tmp = (ptr[l + 1] & 0x0f) << 8;
-		tmp = (tmp | ptr[l + 0]) << 4;
-		tmp -= 0x8000;
-		buffer[r++] = (uint8)((tmp >> 8) & 0xff);
-		buffer[r++] = (uint8)(tmp & 0xff);
-
-		tmp = (ptr[l + 1] & 0xf0) << 4;
-		tmp = (tmp | ptr[l + 2]) << 4;
-		tmp -= 0x8000;
-		buffer[r++] = (uint8)((tmp >> 8) & 0xff);
-		buffer[r++] = (uint8)(tmp & 0xff);
-	}
-
-	_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+	byte * buffer = NULL;
+	uint32 final_size = decode12BitsSample(ptr, &buffer, size);
+	_scumm->_mixer->play_raw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
 }
 
-void Scumm::playBundleSound(char *sound)
-{
+void Sound::playBundleSound(char *sound) {
 	char buf[256];
 	byte * ptr;
 
-	sprintf(buf, "%s%svoice.bun", _gameDataPath, _exe_name);
-	_bundle->openVoiceFile((char*)&buf);
+	sprintf(buf, "%s%svoice.bun", _scumm->_gameDataPath, _scumm->_exe_name);
+	_scumm->_bundle->openVoiceFile((char*)&buf);
 	ptr = (byte *)malloc(1000000);
-	if (_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
+	if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
 		delete ptr;
 		return;
 	}
@@ -969,32 +943,30 @@ void Scumm::playBundleSound(char *sound)
 	
 	byte * final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
-	_mixer->play_raw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	_scumm->_mixer->play_raw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 }
 
-int Scumm::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned)
-{
+int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
 	if (_soundsPaused)
 		return -1;
 	byte flags = SoundMixer::FLAG_AUTOFREE;
 	if (isUnsigned)
 		flags |= SoundMixer::FLAG_UNSIGNED;
-	return _mixer->play_raw(NULL, sound, size, rate, flags);
+	return _scumm->_mixer->play_raw(NULL, sound, size, rate, flags);
 }
 
-int Scumm::playSfxSound_MP3(void *sound, uint32 size)
-{
+int Sound::playSfxSound_MP3(void *sound, uint32 size) {
 #ifdef COMPRESSED_SOUND_FILE
 	if (_soundsPaused)
 		return -1;
-	return _mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
+	return _scumm->_mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
 #endif
 	return -1;
 }
 
 #ifdef COMPRESSED_SOUND_FILE
 
-int Scumm::getCachedTrack(int track) {
+int Sound::getCachedTrack(int track) {
 	int i;
 	char track_name[1024];
 	FILE* file;
@@ -1017,7 +989,7 @@ int Scumm::getCachedTrack(int track) {
 	_current_cache %= CACHE_TRACKS;
 
 	// Not found, see if it exists
-	sprintf(track_name, "%strack%d.mp3", _gameDataPath, track);
+	sprintf(track_name, "%strack%d.mp3", _scumm->_gameDataPath, track);
 	file = fopen(track_name, "rb");
 	_cached_tracks[current_index] = track;
 
@@ -1096,11 +1068,11 @@ int Scumm::getCachedTrack(int track) {
 	return -1;
 }
 
-int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
+int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	int index;
 	unsigned int offset;
 	mad_timer_t duration;
-	_vars[VAR_MI1_TIMER] = 0;
+	_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
 
 	if (_soundsPaused)
 		return 0;
@@ -1128,37 +1100,37 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	fseek(_mp3_tracks[index], offset, SEEK_SET);
 
 	if (_mp3_cd_playing == true)
-		_mixer->stop(_mp3_index);		
-	_mp3_index = _mixer->play_mp3_cdtrack(NULL, _mp3_tracks[index], duration);
+		_scumm->_mixer->stop(_mp3_index);		
+	_mp3_index = _scumm->_mixer->play_mp3_cdtrack(NULL, _mp3_tracks[index], duration);
 	_mp3_cd_playing = true;
 	return 0;
 }
 
-int Scumm::stopMP3CD() {
+int Sound::stopMP3CD() {
 	if (_mp3_cd_playing == true) {
-		_mixer->stop(_mp3_index);
+		_scumm->_mixer->stop(_mp3_index);
 		_mp3_cd_playing = false;
 		return 0;
 	}
 	return -1;
 }
 
-int Scumm::pollMP3CD() {
+int Sound::pollMP3CD() {
 	if (_mp3_cd_playing == true)
 		return 1;
 	return 0;
 }
 
-int Scumm::updateMP3CD() {
+int Sound::updateMP3CD() {
 	if (_mp3_cd_playing == false)
 		return -1;
 
-	if (_mixer->_channels[_mp3_index] == NULL) {
+	if (_scumm->_mixer->_channels[_mp3_index] == NULL) {
 		warning("Error in MP3 decoding");
 		return -1;
 	}
 
-	if (_mixer->_channels[_mp3_index]->sound_finished())
+	if (_scumm->_mixer->_channels[_mp3_index]->sound_finished())
 		stopMP3CD();
 	return 0;
 }

@@ -108,7 +108,7 @@ bool Scumm::loadState(int slot, bool compat)
 	_current_version = hdr.ver;
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
-	pauseSounds(true);
+	_sound->pauseSounds(true);
 
 	CHECK_HEAP openRoom(-1);
 	memset(_inventory, 0, sizeof(_inventory[0]) * _numInventory);
@@ -159,7 +159,7 @@ bool Scumm::loadState(int slot, bool compat)
 	CHECK_HEAP debug(1, "State loaded from '%s'", filename);
 
 
-	pauseSounds(false);
+	_sound->pauseSounds(false);
 
 	return true;
 }

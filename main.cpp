@@ -202,9 +202,9 @@ game settings!
 		g_scumm = scumm;
 		g_system = scumm->_system;
 		g_mixer = &scumm->_mixer[0];
-		scumm->_sound_volume_master = 0;
-		scumm->_sound_volume_music = detector._music_volume;
-		scumm->_sound_volume_sfx = detector._sfx_volume;
+		scumm->_sound->_sound_volume_master = 0;
+		scumm->_sound->_sound_volume_music = detector._music_volume;
+		scumm->_sound->_sound_volume_sfx = detector._sfx_volume;
 
 		/* bind to Gui */
 		scumm->_gui = &gui;
