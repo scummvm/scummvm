@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Action map module - public module header
-
- Notes: 
-*/
+// Action map module - public module header
 
 #ifndef SAGA_ACTIONMAP_MOD_H_
 #define SAGA_ACTIONMAP_MOD_H_
@@ -37,13 +31,12 @@ namespace Saga {
 int ACTIONMAP_Register(void);
 int ACTIONMAP_Init(void);
 
-int ACTIONMAP_Load(const byte * exmap_res, size_t exmap_res_len);
-int ACTIONMAP_Draw(R_SURFACE * ds, int color);
+int ACTIONMAP_Load(const byte *exmap_res, size_t exmap_res_len);
+int ACTIONMAP_Draw(R_SURFACE *ds, int color);
 
 int ACTIONMAP_Free(void);
 int ACTIONMAP_Shutdown(void);
 
 } // End of namespace Saga
 
-#endif				/* R_ACTIONMAP_MOD_H_ */
-/* end "r_actionmap_mod.h" */
+#endif

@@ -20,15 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Actor management module header file
 
- Notes: 
- 
-	Hardcoded actor table present in r_actordata.c
-*/
+// Actor management module header file
 
 #ifndef SAGA_ACTOR_H__
 #define SAGA_ACTOR_H__
@@ -49,27 +42,21 @@ namespace Saga {
 #define R_ACTOR_LMULT 4
 
 enum R_ACTOR_INTENTS {
-
 	INTENT_NONE = 0,
 	INTENT_PATH = 1,
 	INTENT_SPEAK = 2
 };
 
 struct R_ACTORACTIONITEM {
-
 	int frame_index;
 	int frame_count;
-
 };
 
 struct R_ACTORACTION {
-
 	R_ACTORACTIONITEM dir[4];
-
 };
 
 struct R_WALKINTENT {
-
 	int wi_active;
 	uint16 wi_flags;
 	int wi_init;
@@ -85,158 +72,112 @@ struct R_WALKINTENT {
 
 	int sem_held;
 	R_SEMAPHORE *sem;
-	
-	R_WALKINTENT() { memset(this, 0, sizeof(*this)); }
 
+	R_WALKINTENT() { memset(this, 0, sizeof(*this)); }
 };
 
 struct R_WALKNODE {
-
 	int calc_flag;
 	R_POINT node_pt;
-
 };
 
 struct R_SPEAKINTENT {
-
 	int si_init;
 	uint16 si_flags;
 	int si_last_action;
-
 	YS_DL_LIST *si_diaglist;	/* Actor dialogue list */
-
 };
 
 struct R_ACTORINTENT {
-
 	int a_itype;
 	uint16 a_iflags;
 	int a_idone;
-
 	void *a_data;
-	
-	R_ACTORINTENT() { memset(this, 0, sizeof(*this)); }
 
+	R_ACTORINTENT() { memset(this, 0, sizeof(*this)); }
 };
 
 struct R_ACTOR {
-
-	int id;			/* Actor id */
-	int name_i;		/* Actor's index in actor name string list */
+	int id;            // Actor id
+	int name_i;        // Actor's index in actor name string list
 	uint16 flags;
 
-	R_POINT a_pt;		/* Actor's logical coordinates */
-	R_POINT s_pt;		/* Actor's screen coordinates */
+	R_POINT a_pt;      // Actor's logical coordinates
+	R_POINT s_pt;      // Actor's screen coordinates
 
-	int sl_rn;		/* Actor's sprite list res # */
-	int si_rn;		/* Actor's sprite index res # */
-	R_SPRITELIST *sl_p;	/* Actor's sprite list data */
+	int sl_rn;         // Actor's sprite list res #
+	int si_rn;         // Actor's sprite index res #
+	R_SPRITELIST *sl_p;// Actor's sprite list data
 
 	int idle_time;
 	int orient;
 	int speaking;
 
-	int a_dcolor;		/* Actor dialogue color */
+	int a_dcolor;      // Actor dialogue color
 
-	/* The actor intent list describes what the actor intends to do;
-	 * multiple intents can be queued. The actor must complete an 
-	 * intent before moving on to the next; thus actor movements, esp
-	 * as described from scripts, can be serialized */
+	// The actor intent list describes what the actor intends to do;
+	// multiple intents can be queued. The actor must complete an 
+	// intent before moving on to the next; thus actor movements, esp
+	// as described from scripts, can be serialized
 
 	YS_DL_LIST *a_intentlist;
-/*	
-    R_WALKPATH path;
-*/
+
+//	R_WALKPATH path;
 
 	int def_action;
 	uint16 def_action_flags;
 
 	int action;
 	uint16 action_flags;
-
 	int action_frame;
 	int action_time;
 
-	R_ACTORACTION *act_tbl;	/* Action lookup table */
-	int action_ct;		/* Number of actions in the action LUT */
-
-	YS_DL_NODE *node;	/* Actor's node in the actor list */
-	
+	R_ACTORACTION *act_tbl; // Action lookup table
+	int action_ct;          // Number of actions in the action LUT
+	YS_DL_NODE *node;       // Actor's node in the actor list
 	R_ACTOR() { memset(this, 0, sizeof(*this)); }
-
 };
 
 struct R_ACTORDIALOGUE {
-
 	int d_playing;
 	const char *d_string;
 	uint16 d_voice_rn;
-
 	long d_time;
 	int d_sem_held;
 	R_SEMAPHORE *d_sem;
-	
 	R_ACTORDIALOGUE() { memset(this, 0, sizeof(*this)); }
-
 };
 
 struct R_ACTIONTIMES {
-
 	int action;
 	int time;
-
 };
 
 struct R_ACTOR_MODULE {
-
 	int init;
-
 	R_RSCFILE_CONTEXT *actor_ctxt;
-
 	uint16 count;
-
 	int *alias_tbl;
 	YS_DL_NODE **tbl;
 	YS_DL_LIST *list;
-
 	int err_n;
 	const char *err_str;
-
 };
 
 R_ACTOR *LookupActor(int index);
-
 int AddActor(R_ACTOR * actor);
-
 int Z_Compare(const void *elem1, const void *elem2);
-
-int
-HandleWalkIntent(R_ACTOR * actor,
-    R_WALKINTENT * a_walk_int, int *complete_p, int msec);
-
-int
-HandleSpeakIntent(R_ACTOR * actor,
-    R_SPEAKINTENT * a_speakint, int *complete_p, int msec);
-
-int
-ACTOR_SetPathNode(R_WALKINTENT * walk_int,
-    R_POINT * src_pt, R_POINT * dst_pt, R_SEMAPHORE * sem);
-
-int LoadActorSpriteIndex(R_ACTOR * actor, int si_rn, int *last_frame_p);
-
+int HandleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walk_int, int *complete_p, int msec);
+int HandleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *complete_p, int msec);
+int ACTOR_SetPathNode(R_WALKINTENT *walk_int, R_POINT *src_pt, R_POINT *dst_pt, R_SEMAPHORE *sem);
+int LoadActorSpriteIndex(R_ACTOR *actor, int si_rn, int *last_frame_p);
 static void CF_actor_add(int argc, char *argv[]);
-
 static void CF_actor_del(int argc, char *argv[]);
-
 static void CF_actor_move(int argc, char *argv[]);
-
 static void CF_actor_moverel(int argc, char *argv[]);
-
 static void CF_actor_seto(int argc, char *argv[]);
-
 static void CF_actor_setact(int argc, char *argv[]);
 
 } // End of namespace Saga
 
-#endif				/* R_ACTOR_H__ */
-/* end "r_actor.h" */
+#endif

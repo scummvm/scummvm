@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Background animation management module public header
 
- Notes: 
-*/
+// Background animation management module public header
 
 #ifndef SAGA_ANIMATION_MOD_H__
 #define SAGA_ANIMATION_MOD_H__
@@ -34,34 +29,21 @@
 namespace Saga {
 
 enum ANIM_FLAGS {
-
 	ANIM_LOOP = 0x01,
-	ANIM_ENDSCENE = 0x80	/* When animation ends, dispatch scene end event */
+	ANIM_ENDSCENE = 0x80	// When animation ends, dispatch scene end event
 };
 
 int ANIM_Register(void);
-
 int ANIM_Init(void);
-
 int ANIM_Shutdown(void);
-
-int
-ANIM_Load(const byte * anim_resdata,
-    size_t anim_resdata_len, uint16 * anim_id_p);
-
+int ANIM_Load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p);
 int ANIM_Free(uint16 anim_id);
-
 int ANIM_Play(uint16 anim_id, int vector_time);
-
 int ANIM_Link(uint16 anim_id1, uint16 anim_id2);
-
 int ANIM_SetFlag(uint16 anim_id, uint16 flag);
-
 int ANIM_SetFrameTime(uint16 anim_id, int time);
-
 int ANIM_Reset(void);
 
 } // End of namespace Saga
 
-#endif				/* R_ANIMATION_MOD_H__ */
-/* end "r_animation_mod.h__ */
+#endif

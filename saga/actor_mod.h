@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Actor management module public header file
 
- Notes: 
-*/
+// Actor management module public header file
 
 #ifndef SAGA_ACTOR_MOD_H
 #define SAGA_ACTOR_MOD_H
@@ -34,13 +29,11 @@
 namespace Saga {
 
 enum R_ACTOR_WALKFLAGS {
-
 	WALK_NONE = 0x00,
 	WALK_NOREORIENT = 0x01
 };
 
 enum R_ACTOR_ORIENTATIONS {
-
 	ORIENT_N = 0,
 	ORIENT_NE = 1,
 	ORIENT_E = 2,
@@ -52,7 +45,6 @@ enum R_ACTOR_ORIENTATIONS {
 };
 
 enum R_ACTOR_ACTIONS {
-
 	ACTION_IDLE = 0,
 	ACTION_WALK = 1,
 	ACTION_SPEAK = 2,
@@ -60,34 +52,33 @@ enum R_ACTOR_ACTIONS {
 };
 
 enum R_ACTOR_ACTIONFLAGS {
-
 	ACTION_NONE = 0x00,
 	ACTION_LOOP = 0x01
 };
 
-int ACTOR_Register(void);
-int ACTOR_Init(void);
-int ACTOR_Shutdown(void);
+int ACTOR_Register();
+int ACTOR_Init();
+int ACTOR_Shutdown();
 
 int ACTOR_Direct(int msec);
 
 int ACTOR_Create(int actor_id, int x, int y);
 int ACTOR_ActorExists(uint16 actor_id);
 
-int ACTOR_DrawList(void);
-int ACTOR_AtoS(R_POINT * logical, const R_POINT * actor);
-int ACTOR_StoA(R_POINT * actor, const R_POINT * screen);
+int ACTOR_DrawList();
+int ACTOR_AtoS(R_POINT *logical, const R_POINT *actor);
+int ACTOR_StoA(R_POINT *actor, const R_POINT *screen);
 
-int ACTOR_Move(int index, R_POINT * move_pt);
-int ACTOR_MoveRelative(int index, R_POINT * move_pt);
+int ACTOR_Move(int index, R_POINT *move_pt);
+int ACTOR_MoveRelative(int index, R_POINT *move_pt);
 
-int ACTOR_WalkTo(int index, R_POINT * walk_pt, uint16 flags, R_SEMAPHORE * sem);
+int ACTOR_WalkTo(int index, R_POINT *walk_pt, uint16 flags, R_SEMAPHORE *sem);
 
 int ACTOR_GetActorIndex(uint16 actor_id);
 
-int ACTOR_Speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE * sem);
+int ACTOR_Speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE *sem);
 
-int ACTOR_SkipDialogue(void);
+int ACTOR_SkipDialogue();
 
 int ACTOR_GetSpeechTime(const char *d_string, uint16 d_voice_rn);
 int ACTOR_SetOrientation(int index, int orient);
@@ -96,5 +87,4 @@ int ACTOR_SetDefaultAction(int index, int action_n, uint16 action_flags);
 
 } // End of namespace Saga
 
-#endif				/* R_ACTOR_MOD_H */
-/* end "r_actor_mod.h" */
+#endif

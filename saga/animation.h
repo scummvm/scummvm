@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Background animation management module private header
 
- Notes: 
-*/
+// Background animation management module private header
 
 #ifndef SAGA_ANIMATION_H_
 #define SAGA_ANIMATION_H_
@@ -39,12 +34,10 @@ namespace Saga {
 #define SAGA_FRAME_HEADER_MAGIC 15
 #define SAGA_FRAME_HEADER_LEN 12
 
-/* All animation resources begin with an ANIMATION_HEADER
- * at 0x00, followed by a RLE code stream
-\*--------------------------------------------------------------------------*/
+// All animation resources begin with an ANIMATION_HEADER
+// at 0x00, followed by a RLE code stream
 
 struct R_ANIMATION_HEADER {
-
 	uint16 magic;
 
 	uint16 screen_w;
@@ -61,12 +54,7 @@ struct R_ANIMATION_HEADER {
 
 };
 
-/* A byte from the code stream of FRAME_HEADER_MAGIC signifies that a
- * FRAME_HEADER structure follows
-\*--------------------------------------------------------------------------*/
-
 struct R_FRAME_HEADER {
-
 	int x_start;
 	int y_start;
 
@@ -75,10 +63,9 @@ struct R_FRAME_HEADER {
 
 	int width;
 	int height;
-
 };
 
-/* Animation info array member */
+// Animation info array member
 struct R_ANIMATION {
 
 	const byte *resdata;
@@ -86,51 +73,31 @@ struct R_ANIMATION {
 
 	uint16 n_frames;
 	size_t *frame_offsets;
-
 	uint16 current_frame;
 	uint16 end_frame;
 	uint16 stop_frame;
-
 	const byte *cur_frame_p;
 	size_t cur_frame_len;
-
 	int frame_time;
 
 	uint16 play_flag;
 	int link_flag;
 	uint16 link_id;
-
 	uint16 flags;
-
 };
 
 struct R_ANIMINFO {
-
 	int initialized;
-
 	uint16 anim_count;
 	uint16 anim_limit;
-
 	R_ANIMATION *anim_tbl[R_MAX_ANIMATIONS];
-
 };
 
-int ANIM_GetNumFrames(const byte * anim_resource, uint16 * n_frames);
-
-int
-ITE_DecodeFrame(const byte * anim_resource,
-    size_t frame_offset, byte * buf, size_t buf_len);
-
-int
-IHNM_DecodeFrame(byte * decode_buf,
-    size_t decode_buf_len,
-    const byte * thisf_p,
-    size_t thisf_len, const byte ** nextf_p, size_t * nextf_len);
-
-int
-ANIM_GetFrameOffset(const byte * anim_resource,
-    uint16 find_frame, size_t * frame_offset);
-
+int ANIM_GetNumFrames(const byte *anim_resource, uint16 *n_frames);
+int ITE_DecodeFrame(const byte * anim_resource, size_t frame_offset, byte * buf, size_t buf_len);
+int IHNM_DecodeFrame(byte * decode_buf, size_t decode_buf_len, const byte * thisf_p,
+					size_t thisf_len, const byte ** nextf_p, size_t * nextf_len);
+int ANIM_GetFrameOffset(const byte * anim_resource, uint16 find_frame, size_t * frame_offset);
 static void CF_anim_info(int argc, char *argv[]);
 
 } // End of namespace Saga

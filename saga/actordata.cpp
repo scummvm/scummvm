@@ -20,28 +20,23 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Actor data table
 
- Notes: 
-*/
+// Actor data table
 
 #include "actordata.h"
 
 namespace Saga {
 
-/* Lookup table to convert 8 cardinal directions to 4 */
+// Lookup table to convert 8 cardinal directions to 4
 int ActorOrientationLUT[] = { 2, 0, 0, 0, 3, 1, 1, 1 };
 
 R_ACTORTABLE ActorTable[R_ACTORCOUNT] = {
 
-/*   namei                         sl_rn si_rn        col
-     -----                         ----- -----        ---              */
+//   namei                         sl_rn si_rn        col
+//   -----                         ----- -----        ---
 	{0, 1, 0, 0, 0, 37, 135, 0, 1, 0, 0, 0},
-	/* original okk entry
-	 * { 1,    0,    0,    0,    0,    0,    0,    1,    132, 0,   0,   0 }, */
+	// original okk entry
+	// { 1,    0,    0,    0,    0,    0,    0,    1,    132, 0,   0,   0 },
 	{1, 0, 0, 0, 0, 45, 144, 1, 132, 0, 0, 0},
 	{2, 0, 0, 0, 0, 48, 143, 2, 161, 0, 0, 0},
 	{3, 0, 240, 480, 0, 115, 206, 0, 25, 0, 0, 0},

@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Actor data table header file
 
- Notes: 
-*/
+// Actor data table header file
 
 #ifndef SAGA_ACTORDATA_H
 #define SAGA_ACTORDATA_H
@@ -34,7 +29,6 @@
 namespace Saga {
 
 struct R_ACTORTABLE {
-
 	int name_index;
 	int unknown1;
 	int unknown2;
@@ -47,7 +41,6 @@ struct R_ACTORTABLE {
 	unsigned char unknown6;
 	unsigned char unknown7;
 	unsigned char unknown8;
-
 };
 
 #define R_ACTORCOUNT 181
@@ -57,6 +50,4 @@ extern R_ACTORTABLE ActorTable[R_ACTORCOUNT];
 
 } // End of namespace Saga
 
-#endif				/* R_ACTORDATA_H */
-
-/* end "r_actordata.h" */
+#endif

@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Action map module - private header
-
- Notes: 
-*/
+// Action map module - private header
 
 #ifndef SAGA_ACTIONMAP_H_
 #define SAGA_ACTIONMAP_H_
@@ -35,7 +29,6 @@
 namespace Saga {
 
 struct R_ACTIONMAP_ENTRY {
-
 	int unknown00;
 	int unknown02;
 	int exit_scene;
@@ -43,25 +36,19 @@ struct R_ACTIONMAP_ENTRY {
 
 	int pt_count;
 	R_POINT *pt_tbl;
-
 };
 
 struct R_ACTIONMAP_INFO {
-
 	int init;
-
 	int exits_loaded;
 	int n_exits;
 	R_ACTIONMAP_ENTRY *exits_tbl;
-
 	const byte *exmap_res;
 	size_t exmap_res_len;
-
 };
 
 void CF_action_info(int argc, char *argv[]);
 
 } // End of namespace Saga
 
-#endif				/* R_ACTIONMAP_H_ */
-/* end "r_actionmap.h" */
+#endif
