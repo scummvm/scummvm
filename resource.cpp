@@ -24,7 +24,7 @@
 
 /* Open a room */
 void Scumm::openRoom(int room) {
-	uint room_offs;
+	uint room_offs, roomlimit;
 	char buf[256];
 
 	debug(9, "openRoom(%d)",room);
@@ -48,7 +48,8 @@ void Scumm::openRoom(int room) {
 #if REAL_CODE
 		room_offs = _roomFileOffsets[room];
 #else
-                if(_features & GF_EXTERNAL_CHARSET && room>=900)
+				if( _features & GF_SMALL_NAMES) roomlimit = 98; else roomlimit=900;
+                if(_features & GF_EXTERNAL_CHARSET && room>=roomlimit)
                         room_offs = 0;
                 else
                         room_offs = room ? _roomFileOffsets[room] : 0;
