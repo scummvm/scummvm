@@ -258,6 +258,13 @@ public:
 	 * @param format	the sample type format.
 	 */
 	virtual bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format) = 0;
+	
+	/**
+	 * Remove any audio callback previously set via set_sound_proc, thus effectively
+	 * stopping all audio output immediately.
+	 * @see set_sound_proc
+	 */
+	virtual void clear_sound_proc() = 0;
 	//@} 
 		
 

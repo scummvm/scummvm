@@ -79,6 +79,8 @@ public:
 
 	// Set function that generates samples 
 	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+	
+	void clear_sound_proc();
 
 	// Poll CD status
 	// Returns true if cd audio is playing

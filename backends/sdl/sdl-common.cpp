@@ -847,6 +847,10 @@ bool OSystem_SDL_Common::set_sound_proc(SoundProc *proc, void *param, SoundForma
 	return true;
 }
 
+void OSystem_SDL_Common::clear_sound_proc() {
+	SDL_CloseAudio();
+}
+
 uint32 OSystem_SDL_Common::property(int param, Property *value) {
 	switch(param) {
 
