@@ -125,12 +125,10 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
-	if (_imuseDigital) {
-		_imuseDigital->stopAllSounds();
-	}
-
+	_sound->stopAllSounds();
 	_sound->stopBundleMusic();
 	_sound->stopCD();
+
 	_sound->pauseSounds(true);
 
 	CHECK_HEAP
@@ -558,10 +556,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	int i, j;
 	int var120Backup;
 	int var98Backup;
-
-	if (s->isLoading() && (_saveSound || !_saveLoadCompatible)) {
-		_sound->stopAllSounds();
-	}
 
 	// Because old savegames won't fill the entire gfxUsageBits[] array,
 	// clear it here just to be sure it won't hold any unforseen garbage.
