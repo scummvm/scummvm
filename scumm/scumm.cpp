@@ -111,8 +111,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, 0},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, 0},
-	{"zak256", "Zak McKracken 256 (deprecated)", GID_ZAK256, 3, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, 0},
+
 	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM Towns)", GID_ZAK256, 3, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, 0},
 	{"loom", "Loom", GID_LOOM, 3, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
