@@ -33,11 +33,11 @@ extern bool toolbar_drawn;
 extern bool draw_keyboard;
 extern bool get_key_mapping;
 extern struct keyops keyMapping;
-extern void registry_save(void);
+extern void save_key_mapping(void);
 uint16 _key_mapping_required;
 uint16 _current_page;
 #else
-#define registry_save() ;
+#define save_key_mapping() ;
 bool get_key_mapping;
 uint16 _key_mapping_required;
 #endif
@@ -168,7 +168,8 @@ void Gui::drawWidget(const GuiWidget * w)
 	case GUI_VARTEXT:
 	case GUI_KEYTEXT:
 	case GUI_ACTIONTEXT:
-	case GUI_RESTEXT:{
+	case GUI_RESTEXT:
+	case GUI_NEXTTEXT:{
 			char text[500];
 			text[0] = '\0';
 
@@ -492,7 +493,11 @@ void Gui::handleSoundDialogCommand(int cmd)
 			IMuse *imuse = _s->_imuse;
 			imuse->set_music_volume(_s->_sound_volume_music);
 			imuse->set_master_volume(_s->_sound_volume_master);
-			registry_save();
+			_s->_mixer->set_volume(_s->_sound_volume_sfx);
+			scummcfg->set("master_volume", _s->_sound_volume_master, "scummvm");
+			scummcfg->set("music_volume", _s->_sound_volume_music, "scummvm");
+			scummcfg->set("sfx_volume", _s->_sound_volume_sfx, "scummvm");
+			scummcfg->flush();
 		}
 
 		close();
@@ -545,7 +550,7 @@ void Gui::handleOptionsDialogCommand(int cmd)
 void Gui::handleKeysDialogCommand(int cmd)
 {
 #ifdef _WIN32_WCE
-	if (cmd < 100 && cmd != 60) {
+	if (cmd < 100 && cmd != 60 && cmd != 61) {
 
 		if ((cmd % 10) == 1)
 			setNextType((_current_page * 5) + (cmd / 10) - 1);
@@ -562,7 +567,7 @@ void Gui::handleKeysDialogCommand(int cmd)
 
 	if (cmd == 60) {
 		get_key_mapping = false;
-		registry_save();
+		save_key_mapping();
 		close();
 	}
 
@@ -893,6 +898,7 @@ void Gui::close()
 		draw_keyboard = false;
 		toolbar_drawn = false;
 	}
+
 #endif
 }
 
