@@ -850,15 +850,24 @@ int CharsetRendererNut::getFontHeight() {
 }
 
 void CharsetRendererNut::printChar(int chr) {
+	int shadow_left, shadow_right, shadow_top, shadow_bottom;
+
 	assert(_current);
 	if (chr == '@')
 		return;
 
+	shadow_left = _left - 1;
+	shadow_top = _top - 1;
+
+	// Note that the character is drawn with a shadow, so it is slightly
+	// larger than the advertised dimensions. See drawShadowChar() for
+	// details.
+
 	if (_firstChar) {
-		_str.left = _left;
-		_str.top = _top;
-		_str.right = _left;
-		_str.bottom = _top;
+		_str.left = shadow_left;
+		_str.top = shadow_top;
+		_str.right = shadow_left;
+		_str.bottom = shadow_top;
 		_firstChar = false;
 	}
 
@@ -868,16 +877,20 @@ void CharsetRendererNut::printChar(int chr) {
 	if (chr >= 256 && _vm->_CJKMode)
 		width = 16;
 
+	shadow_right = _left + width + 2;
+	shadow_bottom = _top + height + 2;
+
 	_hasMask = true;
 	_current->drawShadowChar(chr, _left, _top, _color, !_ignoreCharsetMask);
-	_vm->updateDirtyRect(0, _left, _left + width, _top, _top + height, 0);
+	_vm->updateDirtyRect(0, shadow_left, shadow_right, shadow_top, shadow_bottom, 0);
 
 	_left += width;
-	if (_left > _str.right)
-		_str.right = _left;
 
-	if (_top + height > _str.bottom)
-		_str.bottom = _top + height;
+	if (shadow_right > _str.right)
+		_str.right = shadow_right;
+
+	if (shadow_bottom > _str.bottom)
+		_str.bottom = shadow_bottom;
 }
 
 #ifdef __PALM_OS__
