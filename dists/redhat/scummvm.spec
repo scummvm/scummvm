@@ -8,7 +8,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.5.4cvs
+Version		: 0.6.0
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -16,11 +16,10 @@ License		: GPL
 
 Url             : http://www.scummvm.org
 
-Source		: %{name}-%{version}.tar.gz
+Source		: %{name}-%{version}.tar.bz2
+Source1		: libmad-0.15.1b.tar.bz2
+Source2		: mpeg2dec-0.4.0b.tar.bz2
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
-
-Patch0: scummvm-nomad.patch
-Patch1: scummvm-vorbis.patch
 
 #------------------------------------------------------------------------------
 #   Description
@@ -28,26 +27,28 @@ Patch1: scummvm-vorbis.patch
 %description
 ScummVM is an interpreter that will play graphic adventure games written for
 LucasArts' SCUMM virtual machine, Adventure Soft's Simon the Sorcerer 1 and 2,
-and Revolution Software Ltd's Beneath a Steel Sky. It uses the SDL library for
-outputting graphics.
+Revolution Software Ltd's Beneath a Steel Sky and Renegade Software's
+Flight of the Amazon Queen. It uses the SDL library for outputting graphics.
 
 #------------------------------------------------------------------------------
 #   install scripts
 #------------------------------------------------------------------------------
 %prep
-%setup -q -n scummvm-%{version}
-%patch0 -p1 -b .mad
-%patch1 -p1 -b .vorbis
+%setup -q -a 1 -a 2 -n scummvm-%{version}
+mkdir tmp
 
 %build
+(cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
+(cd mpeg2dec-0.4.0; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
+./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp
 make
 
 %install
 install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
-install -m644 -D scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
+install -m644 -D scummvm.6 %{buildroot}/%{_mandir}/man6/scummvm.6
 
 %clean
-rm -Rf %{buildroot}
+rm -Rf ${RPM_BUILD_ROOT}
 
 #------------------------------------------------------------------------------
 #   Files listing.  
@@ -62,6 +63,8 @@ rm -Rf %{buildroot}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Mon Mar 15 2004 (0.6.0)
+  - included libmad and libmpeg2
 * Sat Aug 02 2003 (0.5.0)
   - Enhanced versions of Maniac Mansion and Zak McKracken are now supported and completable
   - Beneath A Steel Sky is now supported and completable
