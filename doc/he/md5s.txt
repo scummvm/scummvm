@@ -43,7 +43,7 @@ c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
 765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
 
 (farm cd)
-khalek
+khalek, sev
 7.0.0 (Jun 22 1995 14:06:25)
 3d43af3f3ecc18744dda721d951e2a2f  airdemo.w32
 8ffd618a776a4c0d8922bb28b09f8ce8  airdemo.he0
