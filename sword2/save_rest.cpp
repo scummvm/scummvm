@@ -350,7 +350,7 @@ uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 	varsRes = _resman->openResource(1);
 
 	// copy that to the buffer, following the header
-	memcpy(varsRes, buffer->ad + sizeof(_saveGameHeader), _saveGameHeader.varLength );
+	memcpy(varsRes, buffer->ad + sizeof(_saveGameHeader), _saveGameHeader.varLength);
 
 #ifdef SCUMM_BIG_ENDIAN
 	uint32 *globalVars = (uint32 *) (varsRes + sizeof(StandardHeader));
@@ -583,10 +583,10 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 		ob_mega->currently_walking = 0;
 
 		// pointer to object's graphic structure
-		pars[0] = (int32) ob_graphic;
+		pars[0] = _vm->_memory->ptrToInt((const uint8 *) ob_graphic);
 
 		// pointer to object's mega structure
-		pars[1] = (int32) ob_mega;
+		pars[1] = _vm->_memory->ptrToInt((const uint8 *) ob_mega);
 
 		// target direction
 		pars[2] = ob_mega->current_dir;
