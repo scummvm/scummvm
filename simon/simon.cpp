@@ -2214,7 +2214,7 @@ void SimonEngine::hitarea_stuff_helper_2() {
 void SimonEngine::startUp_helper_2() {
 	if (!_mortal_flag) {
 		_mortal_flag = true;
-		startUp_helper_3();
+		showmessage_print_char(0);
 		_fcs_unk_1 = 0;
 		if (_fcs_ptr_array_3[0] != 0) {
 			_fcs_ptr_1 = _fcs_ptr_array_3[0];
@@ -2222,10 +2222,6 @@ void SimonEngine::startUp_helper_2() {
 		}
 		_mortal_flag = false;
 	}
-}
-
-void SimonEngine::startUp_helper_3() {
-	showmessage_print_char(0);
 }
 
 void SimonEngine::pollMouseXY() {
@@ -3365,7 +3361,7 @@ void SimonEngine::fcs_unk_2(uint a) {
 		return;
 
 	_fcs_unk_1 = a;
-	startUp_helper_3();
+	showmessage_print_char(0);
 	_fcs_ptr_1 = _fcs_ptr_array_3[a];
 
 	showmessage_helper_3(_fcs_ptr_1->textLength, _fcs_ptr_1->textMaxLength);
@@ -4523,15 +4519,6 @@ void SimonEngine::openGameFile() {
 
 	vc_34_force_lock();
 	
-	startUp(1);
-}
-
-void SimonEngine::startUp(uint a) {
-	if (a == 1)
-		startUp_helper();
-}
-
-void SimonEngine::startUp_helper() {
 	runSubroutine101();
 	startUp_helper_2();
 }

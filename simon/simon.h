@@ -578,10 +578,7 @@ protected:
 	void processSpecialKeys();
 	void hitarea_stuff_helper();
 
-	void startUp(uint a);
 	void startUp_helper_2();
-	void startUp_helper_3();
-	void startUp_helper();
 	void showmessage_helper_3(uint a, uint b);
 	void showmessage_print_char(byte chr);
 
