@@ -1549,7 +1549,7 @@ void ScummEngine_v90he::scummInit() {
 	_hePaletteNum = 0;
 
 	spritesResetTables(0);
-	_hePalettes = (uint8 *)malloc(_numPalettes * 1024);
+	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
 	memset(&_wizParams, 0, sizeof(_wizParams));
 }
 
