@@ -242,7 +242,11 @@ void rewind(FILE *stream)
 }
 
 
+#if _WIN32_WCE < 300
+char *_strdup(const char *strSource)
+#else
 char *strdup(const char *strSource)
+#endif
 {
 	char* buffer;
 	buffer = (char*)malloc(strlen(strSource)+1);
@@ -391,16 +395,28 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 
 #if _WIN32_WCE < 300 || defined(_TEST_HPC_STDIO)
 
-int _heapchk() {
-	return _HEAPOK;
-}
-
 void *calloc(size_t n, size_t s) {
 	void *result = malloc(n * s);
 	if (result) 
 		memset(result, 0, n * s);
 
 	return result;
+}
+
+char *strpbrk(const char *s, const char *accept) {
+	int i;
+
+	if (!s || !accept) 
+		return NULL;
+
+	for (i=0; i<strlen(s); i++) {
+		int j;
+		for (j=0; j<strlen(accept); j++)
+			if (s[i] == accept[j])
+				return (char*)&s[i];
+	}
+
+	return NULL;
 }
 
 #ifndef _TEST_HPC_STDIO
@@ -418,6 +434,9 @@ int isspace(int c) {
 }
 
 #endif
+
+#ifndef WIN32_PLATFORM_HPCPRO
+
 
 int printf(const char *format, ...) {
 	// useless anyway :)
@@ -533,15 +552,7 @@ int fflush(FILE *stream) {
 	return 0;
 }
 
-void assert (int expression) {
-	if (!expression)
-		abort();
-}
-
-void assert (void *expression) {
-	if (!expression)
-		abort();
-}
+#endif
 
 int stricmp( const char *string1, const char *string2 ) {
 	char src[4096];
@@ -563,10 +574,6 @@ int stricmp( const char *string1, const char *string2 ) {
 	dest[i] = 0;
 
 	return strcmp(src, dest);
-}
-
-int _stricmp( const char *string1, const char *string2 ) {
-	return stricmp(string1, string2);
 }
 
 char *strrchr(const char *s, int c) {
