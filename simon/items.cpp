@@ -1624,7 +1624,9 @@ void SimonState::o_unk_127()
 		if (a == 12)
 			a=0;
 
-		if (a != _last_music_played) {
+		//FIXME simon 1 attempts to use music track 35 in ending sequences 
+		// which doesn't exist so prevent that happening
+		if ((a != _last_music_played)  && (a < 35)) {
 			_last_music_played = a;
 			playMusic(a);
 		}
