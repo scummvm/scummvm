@@ -53,7 +53,7 @@ public:
 	 * Returns the actual number of samples read, or -1 if
 	 * a critical error occured (note: you *must* check if
 	 * this value is less than what you requested, this can
-	 * happened when the stream is fully used up).
+	 * happen when the stream is fully used up).
 	 * For stereo stream, buffer will be filled with interleaved
 	 * left and right channel samples.
 	 *
