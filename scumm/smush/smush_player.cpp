@@ -834,8 +834,8 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 			_sf[0]->loadFont("scummfnt.nut", directory);
 			_sf[2]->loadFont("titlfnt.nut", directory);
 		} else {
-		_sf[0] = new SmushFont(true, false);
-		_sf[0]->loadFont("scummfnt.nut", directory);
+			_sf[0] = new SmushFont(true, false);
+			_sf[0]->loadFont("scummfnt.nut", directory);
 		}
 	} else if (_scumm->_gameId == GID_DIG) {
 		if (!(_scumm->_features & GF_DEMO)) {
@@ -847,11 +847,11 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 		}
 	} else if (_scumm->_gameId == GID_CMI) {
 		for (i = 0; i < 5; i++) {
-			if ((!(_scumm->_features & GF_DEMO)) && (i != 5)) {
-				sprintf(file_font, "font%d.nut", i);
-				_sf[i] = new SmushFont(false, true);
-				_sf[i]->loadFont(file_font, directory);
-			}
+			if ((_scumm->_features & GF_DEMO) && (i == 5))
+				break;
+			sprintf(file_font, "font%d.nut", i);
+			_sf[i] = new SmushFont(false, true);
+			_sf[i]->loadFont(file_font, directory);
 		}
 	} else {
 		error("SmushPlayer::setupAnim() Unknown font setup for game");
