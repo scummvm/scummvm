@@ -168,7 +168,6 @@ void Insane::initvars(void) {
 	_smlayer_room = 0;
 	_smlayer_room2 = 0;
 	_isBenCut = 0;
-	_smush_isPauseImuse = false;
 	_continueFrame = 0;
 	_continueFrame1 = 0;
 	_counter1 = 0;
@@ -1131,14 +1130,6 @@ int Insane::smlayer_loadSound(int id, int flag, int phase) {
 	return resid;
 }
 
-void Insane::IMUSE_shutVolume(void) {
-	_vm->_imuse->pause(true);
-}
-
-void Insane::IMUSE_restoreVolume(void) {
-	_vm->_imuse->pause(false);
-}
-
 // smlayer_loadCostume1 && smlayer_loadCostume2
 int Insane::smlayer_loadCostume(int id, int phase) {
 	int resid;
@@ -1448,8 +1439,6 @@ void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFr
 	debugC(DEBUG_INSANE, "Insane::smush_setupSanFile(%s, %x, %d)", filename, offset, contFrame);
 
 	_player->seekSan(filename, offset, contFrame);
-
-	_vm->_imuseDigital->pause(false);
 }
 
 }

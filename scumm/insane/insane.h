@@ -142,7 +142,6 @@ class Insane {
 	bool _smush_isSanFileSetup;
 	bool _isBenCut;
 	int _smush_smushState;
-	bool _smush_isPauseImuse;
 	int _continueFrame;
 	int _continueFrame1;
 	int _counter1;
@@ -363,8 +362,6 @@ class Insane {
 	int32 enemy8handler(int32, int32, int32);
 	int32 enemy8initializer(int32, int32, int32);
 	int32 enemyBenHandler(int32, int32, int32);
-	void IMUSE_shutVolume(void);
-	void IMUSE_restoreVolume(void);
 	bool smlayer_isSoundRunning(int32 sound);
 	bool smlayer_startSfx(int32 sound);
 	bool smlayer_startVoice(int32 sound);

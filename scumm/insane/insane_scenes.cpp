@@ -793,17 +793,12 @@ void Insane::procPreRendering(void) {
 		_val115_ = true;
 		if (!_keyboardDisable) {
 			smush_changeState(1);
-			_smush_isPauseImuse = true;
-			IMUSE_shutVolume();
 			_keyboardDisable = 1;
 		}
 	} else {
 		_val115_ = false;
 		if (_keyboardDisable) {
 			smush_changeState(0);
-			_smush_isPauseImuse = false;
-			IMUSE_restoreVolume();
-
 			_keyboardDisable = 0;
 		}
 	}
