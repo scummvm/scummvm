@@ -41,9 +41,9 @@
 
 extern Config *g_config;
 
-#define CURRENT_GAMES_VERSION 3
+#define CURRENT_GAMES_VERSION 5
 
-#define MAX_GAMES 23
+#define MAX_GAMES 29
 int MAX_DIRECTORY = 40;
 
 #define MAX_DISPLAYED_DIRECTORIES 7
@@ -56,7 +56,7 @@ struct ScummGame {
 	const char *check_file_1;
 	const char *check_file_2;
 	const char *filename;
-	unsigned char next_demo;
+	unsigned char is_demo;
 };
 
 struct InstalledScummGame {
@@ -77,41 +77,62 @@ static const ScummGame GameList[] = {
 
 	{	 "Simon 1 demo",
 		 "Playable",
-		 "0001.VGA", "GDEMO", "",
+		 "", "GDEMO", "",
 		 "simon1demo",
-		 0
+		 1
 	},
 	{	
 		 "Simon 1 dos",
 		 "Completable",
-		 "", "1631.VGA", "GAMEPC",
+		 "", "GAMEPC", "",
 		 "simon1dos",
+		 0
+	},
+	{
+		 "Simon 1 talk",
+		 "Completable",
+		 "", "SIMON.GME", "DOS",
+		 "simon1talkie",
 		 0
 	},
 	{	 
 		 "Simon 1 win",
 		 "Completable",
-		 "", "SIMON.GME", "GAMEPC",
+		 "", "SIMON.GME", "WIN",
 		 "simon1win",
 		 0
 	},
 	{	 
 		 "Simon 2 dos",
-		 "To be tested",
-		 "", "SIMON2.GME", "GAME32",
+		 "Completable, no music",
+		 "", "GAME32", "",
 		 "simon2dos",
+		 0
+	},
+	{
+		 "Simon 2 talk",
+		 "Completable, no music",
+		 "", "GSPTR30", "DOS",
+		 "simon2talkie",
 		 0
 	},
 	{	 
 		 "Simon 2 win",
-		 "To be tested",
-		 "", "SIMON2.GME", "GSPTR30",
+		 "Completable, no music",
+		 "", "GSPTR30", "WIN",
 		 "simon2win",
+		 0
+	},
+	{
+		 "Indiana Jones 3 EGA",
+		 "Completable, missing music",
+		 "indy3EGA", "", "",
+		 "indy3ega",
 		 0
 	},
 	{ 
 		 "Indiana Jones 3 VGA", 
-	     "Buggy, playable a bit", 
+	     "Completable, missing music", 
 		 "indy3", "", "", 
 		 "indy3",
 	     0 
@@ -123,8 +144,22 @@ static const ScummGame GameList[] = {
 		 "zak256",
 		 0
 	},
+	{	 
+		 "Zak Mc Kracken CGA",
+		 "Not working",
+		 "zak", "", "",
+		 "zak",
+		 0
+	},
 	{
-		 "Loom old",
+		 "Maniac Mansion",
+		 "Not working",
+		 "maniac", "", "",
+		 "maniac",
+		 0
+	},
+	{
+		 "Loom EGA",
 		 "Not working",
 		 "loom", "", "",
 		 "loom",
@@ -132,28 +167,28 @@ static const ScummGame GameList[] = {
 	},
 	{
 		 "Monkey Island 1 EGA",
-		 "Not tested",
+		 "Completable",
 		 "monkeyEGA", "", "",
-		 "monkeyEGA",
+		 "monkeyega",
 		 0
 	},
 	{
 		 "Loom VGA",
-		 "Completable, MP3 audio",
+		 "Completable, CD music",
 		 "loomcd", "", "",
 		 "loomcd",
 		 0
 	},
 	{
 		 "Monkey Island 1 VGA CD",
-		 "Completable, MP3 music",
+		 "Completable, CD music",
 		 "", "MONKEY.000", "MONKEY.001",
 		 "monkey",
 		 0
 	},
 	{
 		 "Monkey Island 1 VGA CD",
-		 "Completable, MP3 music",
+		 "Completable, CD music",
 		 "", "MONKEY1.000", "MONKEY1.001",
 		 "monkey1",
 		 0
@@ -177,42 +212,42 @@ static const ScummGame GameList[] = {
 		 "Completable",
 		 "", "ATLANTIS.000", "ATLANTIS.001",
 		 "atlantis",
-		 1
+		 0
 	},
 	{
 		 "Indiana Jones 4 demo",
 		 "Completable",
 		 "", "PLAYFATE.000", "PLAYFATE.001",
 		 "playfate",
-		 0
+		 1
 	},
 	{
 		 "Day of the Tentacle",
 		 "Completable",
 		 "", "TENTACLE.000", "TENTACLE.001",
 		 "tentacle",
-		 1
+		 0
 	},
 	{
 		 "Day of Tentacle demo",
 		 "Completable",
 		 "", "DOTTDEMO.000", "DOTTDEMO.001",
 		 "dottdemo",
-		 0
+		 1
 	},
 	{	
 		 "Sam & Max",
 		 "Completable",
 		 "", "SAMNMAX.000", "SAMNMAX.001",
 		 "samnmax",
-		 1
+		 0
 	},
 	{
 		 "Sam & Max demo",
 		 "Completable",
 		 "", "SNMDEMO.000", "SNMDEMO.001",
 		 "snmdemo",
-		 0
+		 1
 	},
 	{
 		 "Full Throttle",
@@ -226,6 +261,20 @@ static const ScummGame GameList[] = {
 		 "Completable",
 		 "", "DIG.LA0", "DIG.LA1",
 		 "dig",
+		 0
+	},
+	{	
+		 "Curse of Monkey Island",
+		 "Completable",
+		 "", "COMI.LA0", "COMI.LA1",
+		 "comi",
+		 0
+	},
+	{
+		 "Beneath a Steel Sky",
+		 "Not working",
+		 "", "SKY.DSK", "SKY.DNR",
+		 "sky",
 		 0
 	},
 	{
@@ -772,12 +821,13 @@ void startFindGame(BOOL display, TCHAR *path) {
 
 }
 
-void getSelectedGame(int result, char *id, TCHAR *directory) {
+void getSelectedGame(int result, char *id, TCHAR *directory, char *is_demo) {
 	ScummGame game;
 
 	game = GameList[gamesInstalled[listIndex[result].reference].reference];
 	strcpy(id, game.filename);
 	wcscpy(directory, gamesInstalled[listIndex[result].reference].directory);
+	*is_demo = game.is_demo;
 }
 
 void displayGameInfo(int index) {
