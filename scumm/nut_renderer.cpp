@@ -100,6 +100,9 @@ bool NutRenderer::loadFont(char *filename, char *dir) {
 		return false;
 	}
 
+	if (_dataSrc != NULL)
+		free(_dataSrc);
+
 	uint32 length = file.readUint32BE();
 	_dataSrc = (byte *)malloc(length);
 	file.read(_dataSrc, length);
