@@ -90,7 +90,7 @@ void MidiPlayer::send (uint32 b) {
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// Only respond to an All Notes Off if this channel
-		// has already been marked "in use" by this parser.
+		// has already been allocated.
 		if (!_current->channel [b & 0x0F])
 			return;
 	}
@@ -99,7 +99,7 @@ void MidiPlayer::send (uint32 b) {
 	if (!_current->channel [channel])
 		_current->channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 	if (_current->channel [channel])
-		_driver->send ((b & ~0x0F) | _current->channel[channel]->getNumber());
+		_driver->send ((b & 0xFFFFFFF0) | _current->channel[channel]->getNumber());
 }
 
 void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
@@ -156,7 +156,9 @@ void MidiPlayer::startTrack (int track) {
 		_system->lock_mutex (_mutex);
 
 		if (_music.parser) {
+			_current = &_music;
 			delete _music.parser;
+			_current = 0;
 			_music.parser = 0;
 		}
 
@@ -179,7 +181,9 @@ void MidiPlayer::startTrack (int track) {
 			return;
 		}
 		_currentTrack = (byte) track;
+		_current = &_music;
 		_music.parser->jumpToTick (0);
+		_current = 0;
 	}
 
 	_system->unlock_mutex (_mutex);
@@ -187,8 +191,11 @@ void MidiPlayer::startTrack (int track) {
 
 void MidiPlayer::stop() {
 	_system->lock_mutex (_mutex);
-	if (_music.parser)
+	if (_music.parser) {
+		_current = &_music;
 		_music.parser->jumpToTick(0);
+	}
+	_current = 0;
 	_currentTrack = 255;
 	_system->unlock_mutex (_mutex);
 }
