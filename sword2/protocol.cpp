@@ -18,70 +18,66 @@
  */
 
 #include <stdio.h>
-//#include <windows.h>
 
 #include "stdafx.h"
-//#include "src\driver96.h"
 #include "console.h"
-#include "debug.h"
 #include "defs.h"
 #include "header.h"
-#include "logic.h"
 #include "memory.h"
 #include "protocol.h"
 #include "resman.h"
 
-//-----------------------------------------------------------------------------------------------------------------------
-// returns a pointer to the first palette entry, given the pointer to the start of the screen file
-// assumes it has been passed a pointer to a valid screen file
-uint8 *FetchPalette(uint8 *screenFile)	// Chris 04Oct96
-{
+// Returns a pointer to the first palette entry, given the pointer to the
+// start of the screen file.
+
+uint8 *FetchPalette(uint8 *screenFile) {	// Chris 04Oct96
 	uint8 *palette;
 
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
-	palette = (uint8 *)mscreenHeader + mscreenHeader->palette;
+	palette = (uint8 *) mscreenHeader + mscreenHeader->palette;
 
-	palette[0] = 0;	// always set colour 0 to black
-	palette[1] = 0;	// because most background screen palettes have a bright colour 0
-	palette[2] = 0;	// although it should come out as black in the game!
+	// Always set colour 0 to black, because while most background screen
+	// palettes have a bright colour 0 it should come out as black in the
+	// game.
+
+	palette[0] = 0;
+	palette[1] = 0;
+	palette[2] = 0;
 	palette[3] = 0;
    
 	return palette;
 }
-//-----------------------------------------------------------------------------------------------------------------------
-// returns a pointer to the start of the palette match table, given the pointer to the start of the screen file
-// assumes it has been passed a pointer to a valid screen file
 
-uint8 *FetchPaletteMatchTable(uint8 *screenFile)	// James 09dec96
-{
+// Returns a pointer to the start of the palette match table, given the
+// pointer to the start of the screen file.
+
+uint8 *FetchPaletteMatchTable(uint8 *screenFile) {	// James 09dec96
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 	return (uint8 *) mscreenHeader + mscreenHeader->paletteTable;
 }
 
-//-----------------------------------------------------------------------------------------------------------------------
-// returns a pointer to the screen header, given the pointer to the start of the screen file
-// assumes it has been passed a pointer to a valid screen file
-_screenHeader *FetchScreenHeader(uint8 *screenFile)	//Chris 04Oct96
-{
-	// Get the table
+// Returns a pointer to the screen header, given the pointer to the start of
+// the screen file.
+
+_screenHeader *FetchScreenHeader(uint8 *screenFile) {	// Chris 04Oct96
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 	_screenHeader *screenHeader = (_screenHeader*) ((uint8 *) mscreenHeader + mscreenHeader->screen);
 
 	return screenHeader;
 }
-//-----------------------------------------------------------------------------------------------------------------------
-// returns a pointer to the requested layer header, given the pointer to the start of the screen file
-// drops out if the requested layer number exceeds the number of layers on this screen
-// assumes it has been passed a pointer to a valid screen file
-_layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo)	//Chris 04Oct96
-{
+
+// Returns a pointer to the requested layer header, given the pointer to the
+// start of the screen file. Drops out if the requested layer number exceeds
+// the number of layers on this screen.
+
+_layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo) {	// Chris 04Oct96
 #ifdef _SWORD2_DEBUG
 	_screenHeader *screenHead = FetchScreenHeader(screenFile);
 
-	if (layerNo > (screenHead->noLayers-1))	// layer number too large!
-		Con_fatal_error("FetchLayerHeader(%d) invalid layer number! (%s line %u)",layerNo,__FILE__,__LINE__);
+	if (layerNo > screenHead->noLayers - 1)
+		Con_fatal_error("FetchLayerHeader(%d) invalid layer number! (%s line %u)", layerNo, __FILE__, __LINE__);
 #endif
 
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
@@ -91,164 +87,132 @@ _layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo)	//Chris 04Oct9
 	return layerHeader;
 }
 
-//---------------------------------------------------------------
-// returns a pointer to the start of the shading mask, given the pointer to the start of the screen file
-// assumes it has been passed a pointer to a valid screen file
+// Returns a pointer to the start of the shading mask, given the pointer to
+// the start of the screen file.
 
-uint8 *FetchShadingMask(uint8 *screenFile)	// James 08apr97
-{
+uint8 *FetchShadingMask(uint8 *screenFile) {		// James 08apr97
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 	return (uint8 *) mscreenHeader + mscreenHeader->maskOffset;
 }
 
-//-----------------------------------------------------------------------------------------------------------------------
-// returns a pointer to the anim header, given the pointer to the start of the anim file
-// assumes it has been passed a pointer to a valid anim file
+// Returns a pointer to the anim header, given the pointer to the start of
+// the anim file.
 
-_animHeader *FetchAnimHeader(uint8 *animFile)	// (25sep96JEL)
-{
-	_animHeader *animHead;
-	animHead = (_animHeader *) (animFile + sizeof(_standardHeader));
-	
-	return animHead;
+_animHeader *FetchAnimHeader(uint8 *animFile) {		// (25sep96JEL)
+	return (_animHeader *) (animFile + sizeof(_standardHeader));
 }
 
-//---------------------------------------------------------------
-// returns a pointer to the requested frame number's cdtEntry, given the pointer to the start of the anim file
-// drops out if the requested frame number exceeds the number of frames in this anim
-// assumes it has been passed a pointer to a valid anim file
+// Returns a pointer to the requested frame number's cdtEntry, given the
+// pointer to the start of the anim file. Drops out if the requested frame
+// number exceeds the number of frames in this anim.
 
-_cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo)	// Chris 09Oct96
-{
-	_animHeader *animHead;
-
-	animHead = FetchAnimHeader(animFile);
+_cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {	// Chris 09Oct96
+	_animHeader *animHead = FetchAnimHeader(animFile);
 
 #ifdef _SWORD2_DEBUG
-	if (frameNo > (animHead->noAnimFrames-1))	// frame number too large!
-		Con_fatal_error("FetchCdtEntry(animFile,%d) - anim only %d frames (%s line %u)",frameNo,animHead->noAnimFrames,__FILE__,__LINE__);
+	if (frameNo > animHead->noAnimFrames - 1)
+		Con_fatal_error("FetchCdtEntry(animFile,%d) - anim only %d frames (%s line %u)", frameNo, animHead->noAnimFrames, __FILE__, __LINE__);
 #endif
 
-	_cdtEntry *cdtEntry;
-	cdtEntry = (_cdtEntry *) ( (uint8 *)animHead + sizeof(_animHeader) + frameNo * sizeof(_cdtEntry) );
-
-	return cdtEntry;
+	return (_cdtEntry *) ((uint8 *) animHead + sizeof(_animHeader) + frameNo * sizeof(_cdtEntry));
 }
 
-//---------------------------------------------------------------
-// returns a pointer to the requested frame number's header, given the pointer to the start of the anim file
-// drops out if the requested frame number exceeds the number of frames in this anim
-// assumes it has been passed a pointer to a valid anim file
+// Returns a pointer to the requested frame number's header, given the
+// pointer to the start of the anim file. Drops out if the requested frame
+// number exceeds the number of frames in this anim
 
-_frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo)	// James 31oct96
-{
+_frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo)	{	// James 31oct96
 	// required address = (address of the start of the anim header) + frameOffset
-	_frameHeader *frameHeader = (_frameHeader *) (animFile + sizeof(_standardHeader) + (FetchCdtEntry(animFile,frameNo)->frameOffset) );
-	
-	return frameHeader;
+	return (_frameHeader *) (animFile + sizeof(_standardHeader) + FetchCdtEntry(animFile, frameNo)->frameOffset);
 }
-//---------------------------------------------------------------
+
 // Returns a pointer to the requested parallax layer data.
-// Assumes it has been passed a pointer to a valid screen file.
-_parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) // Chris 04Oct96
-{
+
+_parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {	// Chris 04Oct96
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->bg_parallax[layer] == 0)
-		Con_fatal_error("FetchBackgroundParallaxLayer(%d) - No parallax layer exists (%s line %u)",layer,__FILE__,__LINE__);
+		Con_fatal_error("FetchBackgroundParallaxLayer(%d) - No parallax layer exists (%s line %u)", layer, __FILE__, __LINE__);
 #endif
 
-	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
-	
-	return parallax;
+	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
 }
-//---------------------------------------------------------------
-_parallax *FetchBackgroundLayer(uint8 *screenFile) // Chris 04Oct96
-{
+
+_parallax *FetchBackgroundLayer(uint8 *screenFile) {	// Chris 04Oct96
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->screen == 0)
-		Con_fatal_error("FetchBackgroundLayer (%d) - No background layer exists (%s line %u)",__FILE__,__LINE__);
+		Con_fatal_error("FetchBackgroundLayer (%d) - No background layer exists (%s line %u)", __FILE__, __LINE__);
 #endif
 
-	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
-	
-	return parallax;
+	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
 }
-//---------------------------------------------------------------
-_parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) // Chris 04Oct96
-{
+
+_parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) {	// Chris 04Oct96
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->fg_parallax[layer] == 0)
-		Con_fatal_error("FetchForegroundParallaxLayer(%d) - No parallax layer exists (%s line %u)",layer,__FILE__,__LINE__);
+		Con_fatal_error("FetchForegroundParallaxLayer(%d) - No parallax layer exists (%s line %u)",layer, __FILE__, __LINE__);
 #endif
 
-	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[layer]);
-	
-	return parallax;
+	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[layer]);
 }
-//---------------------------------------------------------------
-uint8 errorLine[128];
-//---------------------------------------------------------------
-uint8 *FetchTextLine(uint8 *file, uint32	text_line)	//Tony24Oct96
-{
-	// Get the table
-	_standardHeader *fileHeader;
-	uint32	*point;
 
+uint8 errorLine[128];
+
+uint8 *FetchTextLine(uint8 *file, uint32 text_line) {	// Tony24Oct96
+	_standardHeader *fileHeader;
+	uint32 *point;
 
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
-
-	if	(text_line>=text_header->noOfLines)		// (James08aug97)
-	{
+	if (text_line >= text_header->noOfLines) {	// (James08aug97)
 		fileHeader = (_standardHeader*)file;
-		sprintf ((char*)errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, text_header->noOfLines-1);
-		errorLine[0]=0;	// first 2 chars are NULL so that actor-number comes out as '0'
-		errorLine[1]=0;
-		return(errorLine);
+		sprintf((char*) errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, text_header->noOfLines - 1);
 
-//		GOT RID OF CON_FATAL_ERROR HERE BECAUSE WE DON'T WANT IT TO CRASH OUT ANY MORE!
-//		Con_fatal_error("FetchTextLine cannot get %d, only 0..%d avail (%s line %u)", text_line, text_header->noOfLines-1,__FILE__,__LINE__);
+
+		// first 2 chars are NULL so that actor-number comes out as '0'
+		errorLine[0] = 0;
+		errorLine[1] = 0;
+		return errorLine;
 	}
 
-	point=(uint32*) text_header+1;	//point to the lookup table
+	//point to the lookup table
+	point = (uint32*) text_header + 1;
 
-	return( (uint8*) (file + READ_LE_UINT32(point+text_line)) );
+	return (uint8*) (file + READ_LE_UINT32(point + text_line));
 }
-//---------------------------------------------------------------
+
+
 // Used for testing text & speech (see FN_I_speak in speech.cpp)
-uint8 CheckTextLine(uint8 *file, uint32	text_line)	// (James26jun97)
-{
+
+uint8 CheckTextLine(uint8 *file, uint32	text_line) {	// (James26jun97)
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
-	if (text_line>=text_header->noOfLines)
-		return(0);	// out of range => invalid
-	else
-		return(1);	// valid
+	// out of range => invalid
+	if (text_line >= text_header->noOfLines)
+		return 0;
+
+	// valid
+	return 1;
 }
-//---------------------------------------------------------------
-uint8 *FetchObjectName(int32 resourceId)	// James15jan97
-{
+
+uint8 *FetchObjectName(int32 resourceId) {	// James15jan97
 	_standardHeader *header;
 	
 	header = (_standardHeader*) res_man.Res_open(resourceId);
-
 	res_man.Res_close(resourceId);
 
-	return (header->name);	// note this pointer is no longer valid, but it should be ok until another resource is opened!
+	// note this pointer is no longer valid, but it should be ok until
+	// another resource is opened!
+
+	// FIXME: I don't like the sound of this at all. Though thanks to the
+	// BS2 memory manager, at least it will still point to malloced
+	// memory.
+
+	return header->name;
 }
-//---------------------------------------------------------------
-//---------------------------------------------------------------
-//---------------------------------------------------------------
-//---------------------------------------------------------------
-//---------------------------------------------------------------
-//---------------------------------------------------------------
-//---------------------------------------------------------------
-//---------------------------------------------------------------
-//---------------------------------------------------------------

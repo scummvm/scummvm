@@ -25,20 +25,20 @@
 #include "driver/driver96.h"
 #include "header.h"
 
-uint8			*FetchPalette(uint8 *screenFile);	// Chris 04Oct96
-_screenHeader	*FetchScreenHeader(uint8 *screenFile);	//Chris 04Oct96
-_layerHeader	*FetchLayerHeader(uint8 *screenFile, uint16 layerNo);	//Chris 04Oct96
-uint8			 *FetchShadingMask(uint8 *screenFile);	// James 08apr97
+uint8 *FetchPalette(uint8 *screenFile);
+_screenHeader *FetchScreenHeader(uint8 *screenFile);
+_layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo);
+uint8 *FetchShadingMask(uint8 *screenFile);
 
-_animHeader		*FetchAnimHeader(uint8 *animFile);	// (25sep96JEL)
-_cdtEntry		*FetchCdtEntry(uint8 *animFile, uint16 frameNo);	// (31oct96 JEL)
-_frameHeader	*FetchFrameHeader(uint8 *animFile, uint16 frameNo);	// (25sep96JEL)
-_parallax		*FetchBackgroundParallaxLayer(uint8 *screenFile, int layer); // Chris 04Oct96
-_parallax		*FetchBackgroundLayer(uint8 *screenFile); // Chris 04Oct96
-_parallax		*FetchForegroundParallaxLayer(uint8 *screenFile, int layer); // Chris 04Oct96
-uint8			*FetchTextLine(uint8 *file, uint32	text_line);	//Tony24Oct96
-uint8			CheckTextLine(uint8 *file, uint32	text_line);	// (James26jun97)
-uint8			*FetchPaletteMatchTable(uint8 *screenFile);	// James 09dec96
-uint8			*FetchObjectName(int32 resourceId);	// James15jan97
+_animHeader *FetchAnimHeader(uint8 *animFile);
+_cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo);
+_frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo);
+_parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer);
+_parallax *FetchBackgroundLayer(uint8 *screenFile);
+_parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer);
+uint8 *FetchTextLine(uint8 *file, uint32 text_line);
+uint8 CheckTextLine(uint8 *file, uint32	text_line);
+uint8 *FetchPaletteMatchTable(uint8 *screenFile);
+uint8 *FetchObjectName(int32 resourceId);
 
 #endif
