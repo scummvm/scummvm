@@ -4750,9 +4750,9 @@ void SimonState::playVoice(uint voice)
 	_voice_file->seek(_voice_offsets[voice], SEEK_SET);
 
 	const char *s2 = gss->wav_filename2;
-	_music_file = new File();
-	_music_file->open(s2, _gameDataPath);
-	if (_music_file->isOpen() == false) {			/* WAVE audio */
+	File music_file;
+	music_file.open(s2, _gameDataPath);
+	if (music_file.isOpen() == false) {			/* WAVE audio */
 		WaveHeader wave_hdr;
 		uint32 data[2];
 
@@ -4842,9 +4842,9 @@ void SimonState::playSound(uint sound)
 		/* Simon 2 dos talkie sfx aren't supported */
 		/* Simon 2 dos sfx isn't supported */
 		const char *s2 = gss->wav_filename2;
-		_music_file = new File();
-		_music_file->open(s2, _gameDataPath);
-		if (_music_file->isOpen() == false) {
+		File music_file;
+		music_file.open(s2, _gameDataPath);
+		if (music_file.isOpen() == false) {
 
 			byte *p;
 
@@ -4885,31 +4885,31 @@ void SimonState::playMusic(uint music)
 	/* Simon 1/2 dos talkie music aren't supported */
 	/* Simon 2 dos music isn't supported */
 	const char *s2 = gss->wav_filename2;
-	_music_file = new File();
-	_music_file->open(s2, _gameDataPath);
-	if (_music_file->isOpen() == false) {
-
-	midi.shutdown();
+	File music_file;
+	music_file.open(s2, _gameDataPath);
+	if (music_file.isOpen() == false) {
 	
-	if (_game & GAME_WIN) {
-		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-		File *f = _game_file;
-		midi.read_all_songs(f);
-	} else {
-		char buf[50];
-		File *f = new File();
-		sprintf(buf, "MOD%d.MUS", music);
-		f->open(buf, _gameDataPath);
-		if (f->isOpen() == false) {
-			warning("Cannot load music from '%s'", buf);
-			return;
+		midi.shutdown();
+		
+		if (_game & GAME_WIN) {
+			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+			File *f = _game_file;
+			midi.read_all_songs(f);
+		} else {
+			char buf[50];
+			File *f = new File();
+			sprintf(buf, "MOD%d.MUS", music);
+			f->open(buf, _gameDataPath);
+			if (f->isOpen() == false) {
+				warning("Cannot load music from '%s'", buf);
+				return;
+			}
+			midi.read_all_songs_old(f);
+			delete f;
 		}
-		midi.read_all_songs_old(f);
-		delete f;
-	}
-
-	midi.initialize();
-	midi.play();
+	
+		midi.initialize();
+		midi.play();
 	}
 }
 
