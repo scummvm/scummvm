@@ -61,7 +61,14 @@ int luaV_tonumber (TObject *obj)
 
 int luaV_tostring (TObject *obj)
 { /* LUA_NUMBER */
-  if (ttype(obj) != LUA_T_NUMBER)
+  /* The Lua scripts for Grim Fandango sometimes end up executing
+     str..nil.  The nil shows up in the original engine as "(nil)"... */
+  if (ttype(obj) == LUA_T_NIL) {
+    tsvalue(obj) = luaS_new("(nil)");
+    ttype(obj) = LUA_T_STRING;
+    return 0;
+  }
+  else if (ttype(obj) != LUA_T_NUMBER)
     return 1;
   else {
     char s[60];
