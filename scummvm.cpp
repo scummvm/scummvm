@@ -803,7 +803,13 @@ void Scumm::shutDown(int i)
 
 void Scumm::processKbd()
 {
+	int saveloadkey;
 	getKeyInput(0);
+
+	if (_features & GF_OLD256) /* FIXME: Support ingame screen */
+		saveloadkey = 319;
+	else
+		saveloadkey = _vars[VAR_SAVELOADDIALOG_KEY];
 
 	_virtual_mouse_x = mouse.x + virtscr[0].xstart;
 
@@ -811,9 +817,7 @@ void Scumm::processKbd()
 
 	if(_features & GF_AFTER_V7)
 		_virtual_mouse_y = mouse.y + camera._cur.y-100;
-
 	else
-
 		_virtual_mouse_y = mouse.y;
 
 	if (!(_features & GF_OLD256))
@@ -823,6 +827,7 @@ void Scumm::processKbd()
 
 	if (_virtual_mouse_y < 0)
 		_virtual_mouse_y = -1;
+
 	if (_features & GF_OLD256) {
 		if (_virtual_mouse_y >= virtscr[0].height + virtscr[0].topline)
 			_virtual_mouse_y = -1;
@@ -856,7 +861,7 @@ void Scumm::processKbd()
 			videoFinished = 1;
 		} else
 			exitCutscene();
-	} else if (_lastKeyHit == _vars[VAR_SAVELOADDIALOG_KEY]
+	} else if (_lastKeyHit == saveloadkey
 						 && _currentRoom != 0) {
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT], 0, 0, 0);
