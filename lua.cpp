@@ -675,18 +675,54 @@ void GetControlState() {
 
 // Text functions
 static void MakeTextObject() {
- char *line = lua_getstring(lua_getparam(1));
+ char *line = lua_getstring(lua_getparam(1)), *key_text = NULL, *val_text = NULL;
+ lua_Object table_obj = lua_getparam(2), key;
  std::string text = Localizer::instance()->localize(line);
-// TextObject *textObj = check_textobject(2);
 
- warning("STUB: MakeTextObject(%s, <textObject>) = %s", line, text.c_str());
+ printf("STUB: MakeTextObject(%s, {", line);
+ while(1) {
+   lua_pushobject(table_obj);
+   if (key_text)
+    lua_pushobject(key);
+   else
+    lua_pushnil();
+
+   lua_call("next");
+   key=lua_getresult(1);
+   if (lua_isnil(key)) 
+    break;
+
+   key_text=lua_getstring(key);
+   val_text=lua_getstring(lua_getresult(2));
+   printf(" %s=%s ", key_text, val_text);
+ }
+
+ printf("}) = %s\n", text.c_str());
 }
 
 static void ChangeTextObject() {
- char *line = lua_getstring(lua_getparam(1));
-// TextObject *text = check_textobject(2);
+ char *line = lua_getstring(lua_getparam(1)), *key_text = NULL, *val_text = NULL;
+ lua_Object table_obj = lua_getparam(2), key;
 
- warning("STUB: ChangeTextObject(%s, <textObject>)", line);
+ printf("STUB: ChangeTextObject(%s, ", line);
+ while(1) {
+   lua_pushobject(table_obj);
+   if (key_text)
+    lua_pushobject(key);
+   else
+    lua_pushnil();
+
+   lua_call("next");
+   key=lua_getresult(1);
+   if (lua_isnil(key)) 
+    break;
+
+   key_text=lua_getstring(key);
+   val_text=lua_getstring(lua_getresult(2));
+   printf(" %s=%s ", key_text, val_text);
+ }
+
+ printf(")\n");
 }
 
 static void GetTextObjectDimensions() {
