@@ -1004,7 +1004,7 @@ void Actor::animateLimb(int limb, int f) {
 		if (costume == 0)
 			return;
 
-		byte *aksq, *akfo;
+		const byte *aksq, *akfo;
 		uint size;
 		byte *akos = _vm->getResourceAddress(rtCostume, costume);
 		assert(akos);
@@ -1016,7 +1016,7 @@ void Actor::animateLimb(int limb, int f) {
 	
 		while (f--) {
 			if (cost.active[limb] != 0)
-				_vm->akos_increaseAnim(this, limb, aksq, (uint16 *)akfo, size);
+				_vm->akos_increaseAnim(this, limb, aksq, (const uint16 *)akfo, size);
 		}
 
 //		needRedraw = true;
@@ -1422,7 +1422,7 @@ byte *Actor::getActorName() {
 }
 
 void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold) {
-	byte *akos, *rgbs, *akpl;
+	const byte *akos, *rgbs, *akpl;
 	int akpl_size, i;
 	int r, g, b;
 	byte akpl_color;

@@ -586,7 +586,7 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 #pragma mark -
 
 void Scumm::initBGBuffers(int height) {
-	byte *ptr;
+	const byte *ptr;
 	int size, itemsize, i;
 	byte *room;
 
@@ -923,15 +923,17 @@ bool Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 #pragma mark --- Image drawing ---
 #pragma mark -
 
-void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
+void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
                      int stripnr, int numstrip, byte flag) {
 	assert(ptr);
 	assert(height > 0);
-	byte *backbuff_ptr, *bgbak_ptr, *smap_ptr;
+	byte *backbuff_ptr, *bgbak_ptr;
+	const byte *smap_ptr;
+	const byte *z_plane_ptr;
 	byte *mask_ptr;
 
 	int i;
-	byte *zplane_list[9];
+	const byte *zplane_list[9];
 
 	int bottom;
 	int numzbuf;
@@ -976,7 +978,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 			}
 		} else if (_vm->_features & GF_AFTER_V8) {
 			// Find the OFFS chunk of the ZPLN chunk
-			byte *zplnOffsChunkStart = smap_ptr + READ_BE_UINT32(smap_ptr + 12) + 24;
+			const byte *zplnOffsChunkStart = smap_ptr + READ_BE_UINT32(smap_ptr + 12) + 24;
 			
 			// Each ZPLN contains a WRAP chunk, which has (as always) an OFFS subchunk pointing
 			// at ZSTR chunks. These once more contain a WRAP chunk which contains nothing but
@@ -1039,7 +1041,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 		const int left = (stripnr << 3);
 		const int right = left + (numstrip << 3);
 		byte *dst = bgbak_ptr;
-		byte *src = smap_ptr;
+		const byte *src = smap_ptr;
 		byte color = 0, data = 0;
 		int run = 1;
 		bool dither = false;
@@ -1202,7 +1204,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 			// don't know what for. At the time of writing, these games
 			// are still too unstable for me to investigate.
 
-			byte *z_plane_ptr;
 			if (_vm->_features & GF_AFTER_V8)
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT32(zplane_list[1] + stripnr * 4 + 8);
 			else
@@ -1235,7 +1236,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 				mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 
 				if (offs) {
-					byte *z_plane_ptr = zplane_list[i] + offs;
+					z_plane_ptr = zplane_list[i] + offs;
 
 					if (useOrDecompress && (flag & dbAllowMaskOr)) {
 						decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
@@ -1339,10 +1340,10 @@ void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 	}
 }
 
-bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess) {
+bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProcess) {
 	assert(numLinesToProcess);
 
-	byte code = *smap_ptr++;
+	byte code = *src++;
 
 	if (_vm->_features & GF_AMIGA)
 		_palette_mod = 16;
@@ -1355,23 +1356,23 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	
 	switch (code) {
 	case 1:
-		unkDecode7(bgbak_ptr, smap_ptr, numLinesToProcess);
+		unkDecode7(bgbak_ptr, src, numLinesToProcess);
 		break;
 
 	case 2:
-		unkDecode8(bgbak_ptr, smap_ptr, numLinesToProcess);       /* Ender - Zak256/Indy256 */
+		unkDecode8(bgbak_ptr, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 		break;
 
 	case 3:
-		unkDecode9(bgbak_ptr, smap_ptr, numLinesToProcess);       /* Ender - Zak256/Indy256 */
+		unkDecode9(bgbak_ptr, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 		break;
 
 	case 4:
-		unkDecode10(bgbak_ptr, smap_ptr, numLinesToProcess);      /* Ender - Zak256/Indy256 */
+		unkDecode10(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
 
 	case 7:
-		unkDecode11(bgbak_ptr, smap_ptr, numLinesToProcess);      /* Ender - Zak256/Indy256 */
+		unkDecode11(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
 
 	case 14:
@@ -1379,7 +1380,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 16:
 	case 17:
 	case 18:
-		unkDecodeC(bgbak_ptr, smap_ptr, numLinesToProcess);
+		unkDecodeC(bgbak_ptr, src, numLinesToProcess);
 		break;
 
 	case 24:
@@ -1387,7 +1388,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 26:
 	case 27:
 	case 28:
-		unkDecodeB(bgbak_ptr, smap_ptr, numLinesToProcess);
+		unkDecodeB(bgbak_ptr, src, numLinesToProcess);
 		break;
 
 	case 34:
@@ -1396,7 +1397,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 37:
 	case 38:
 		useOrDecompress = true;
-		unkDecodeC_trans(bgbak_ptr, smap_ptr, numLinesToProcess);
+		unkDecodeC_trans(bgbak_ptr, src, numLinesToProcess);
 		break;
 
 	case 44:
@@ -1405,7 +1406,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 47:
 	case 48:
 		useOrDecompress = true;
-		unkDecodeB_trans(bgbak_ptr, smap_ptr, numLinesToProcess);
+		unkDecodeB_trans(bgbak_ptr, src, numLinesToProcess);
 		break;
 
 	case 64:
@@ -1418,7 +1419,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 106:
 	case 107:
 	case 108:
-		unkDecodeA(bgbak_ptr, smap_ptr, numLinesToProcess);
+		unkDecodeA(bgbak_ptr, src, numLinesToProcess);
 		break;
 
 	case 84:
@@ -1432,7 +1433,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 127:
 	case 128:
 		useOrDecompress = true;
-		unkDecodeA_trans(bgbak_ptr, smap_ptr, numLinesToProcess);
+		unkDecodeA_trans(bgbak_ptr, src, numLinesToProcess);
 		break;
 
 	default:
@@ -2791,7 +2792,7 @@ void Scumm::setDirtyColors(int min, int max) {
 		_palDirtyMax = max;
 }
 
-void Scumm::initCycl(byte *ptr) {
+void Scumm::initCycl(const byte *ptr) {
 	int j;
 	ColorCycle *cycl;
 
@@ -3011,9 +3012,9 @@ void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueS
 }
 
 void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
-	byte *basepal = getPalettePtr();
-	byte *pal = basepal;
-	byte *compareptr;
+	const byte *basepal = getPalettePtr();
+	const byte *pal = basepal;
+	const byte *compareptr;
 	byte *table = _shadowPalette;
 	int i;
 
@@ -3086,9 +3087,8 @@ void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int 
 /* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
 void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
 			int16 startColor, int16 endColor) {
-	byte *palPtr;
-	byte *curPtr;
-	byte *searchPtr;
+	const byte *palPtr, *curPtr;
+	const byte *searchPtr;
 
 	uint bestResult;
 	uint currentResult;
@@ -3141,7 +3141,8 @@ void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int start
 		return;
 
 	if (startColor <= endColor) {
-		byte *cptr, *cur;
+		const byte *cptr;
+		byte *cur;
 		int j;
 		int color;
 
@@ -3199,7 +3200,8 @@ void Scumm::desaturatePalette(int hueScale, int satScale, int lightScale, int st
 	// FIXME: Rewrite using integer arithmetics only?
 
 	if (startColor <= endColor) {
-		byte *cptr, *cur;
+		const byte *cptr;
+		byte *cur;
 		int j;
 
 		cptr = getPalettePtr() + startColor * 3;
@@ -3380,15 +3382,15 @@ void Scumm::setPalColor(int idx, int r, int g, int b) {
 }
 
 void Scumm::setPalette(int palindex) {
-	byte *pals;
+	const byte *pals;
 
 	_curPalIndex = palindex;
 	pals = getPalettePtr();
 	setPaletteFromPtr(pals);
 }
 
-byte *Scumm::findPalInPals(byte *pal, int idx) {
-	byte *offs;
+const byte *Scumm::findPalInPals(const byte *pal, int idx) {
+	const byte *offs;
 	uint32 size;
 
 	pal = findResource(MKID('WRAP'), pal);
@@ -3407,8 +3409,8 @@ byte *Scumm::findPalInPals(byte *pal, int idx) {
 	return offs + READ_LE_UINT32(offs + idx * sizeof(uint32));
 }
 
-byte *Scumm::getPalettePtr() {
-	byte *cptr;
+const byte *Scumm::getPalettePtr() {
+	const byte *cptr;
 
 	cptr = getResourceAddress(rtRoom, _roomResource);
 	assert(cptr);
@@ -3459,9 +3461,10 @@ void Scumm::grabCursor(byte *ptr, int width, int height) {
 	updateCursor();
 }
 
-void Scumm::useIm01Cursor(byte *im, int w, int h) {
+void Scumm::useIm01Cursor(const byte *im, int w, int h) {
 	VirtScreen *vs = &virtscr[0];
-	byte *buf, *src, *dst;
+	byte *buf, *dst;
+	const byte *src;
 	int i;
 
 	w <<= 3;
@@ -3529,7 +3532,7 @@ void Scumm::animateCursor() {
 	}
 }
 
-void Scumm::useBompCursor(byte *im, int width, int height) {
+void Scumm::useBompCursor(const byte *im, int width, int height) {
 	uint size;
 
 	width <<= 3;
@@ -3830,7 +3833,7 @@ void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
 		clip_bottom -= tmp_y - bd->outheight;
 	}
 
-	byte *src = bd->dataptr;
+	const byte *src = bd->dataptr;
 	byte *dst = bd->out + bd->y * bd->outwidth + bd->x + clip_left;
 
 	mask_pitch = _screenWidth / 8;

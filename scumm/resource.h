@@ -33,8 +33,8 @@ struct ResHdr {
 	#pragma END_PACK_STRUCTS
 #endif
 
-#define RES_DATA(x) (((byte*)x) + sizeof(ResHdr))
-#define RES_SIZE(x) (READ_BE_UINT32_UNALIGNED(&((ResHdr* )x)->size))
+#define RES_DATA(x) (((const byte*)x) + sizeof(ResHdr))
+#define RES_SIZE(x) (READ_BE_UINT32_UNALIGNED(&((const ResHdr* )x)->size))
 
 enum {
 	OF_OWNER_MASK = 0x0F,
@@ -50,9 +50,9 @@ enum {
 };
 
 
-byte *findResource(uint32 tag, byte *searchin, int index);
-byte *findResourceSmall(uint32 tag, byte *searchin, int index);
-byte *findResource(uint32 tag, byte *searchin);
-byte *findResourceSmall(uint32 tag, byte *searchin);
+const byte *findResource(uint32 tag, const byte *searchin, int index);
+const byte *findResourceSmall(uint32 tag, const byte *searchin, int index);
+const byte *findResource(uint32 tag, const byte *searchin);
+const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
 #endif

@@ -622,9 +622,9 @@ protected:
 
 	int _lastLoadedRoom;
 public:
-	byte *findResourceData(uint32 tag, byte *ptr);
+	const byte *findResourceData(uint32 tag, const byte *ptr);
 	int getResourceDataSize(const byte *ptr) const;
-	void dumpResource(const char *tag, int index, byte *ptr, int length = -1);
+	void dumpResource(const char *tag, int index, const byte *ptr, int length = -1);
 
 protected:
 	int getArrayId();
@@ -651,7 +651,7 @@ protected:
 	ObjectIDMap _objectIDMap;
 	byte _numObjectsInRoom;
 
-	void setupRoomObject(ObjectData *od, byte *room, byte *searchptr = NULL);
+	void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 	void removeObjectFromRoom(int obj);
 	void loadFlObject(uint object, uint room);
 	void nukeFlObjects(int min, int max);
@@ -755,8 +755,8 @@ public:
 	int cost_frameToAnim(Actor *a, int frame);
 
 	// Akos Class
-	bool akos_increaseAnims(byte *akos, Actor *a);
-	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
+	bool akos_increaseAnims(const byte *akos, Actor *a);
+	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
 	bool akos_compare(int a, int b, byte cmd);
 	void akos_decodeData(Actor *a, int frame, uint usemask);
@@ -804,7 +804,7 @@ protected:
 	void initScreens(int a, int b, int w, int h);
 	void initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs, bool scrollable);
 	void initBGBuffers(int height);
-	void initCycl(byte *ptr);	// Color cycle
+	void initCycl(const byte *ptr);	// Color cycle
 
 	void createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax);
 
@@ -825,14 +825,14 @@ protected:
 	void setCameraFollows(Actor *a);
 	void clampCameraPos(ScummVM::Point *pt);
 
-	byte *getPalettePtr();
+	const byte *getPalettePtr();
 	void setupEGAPalette();
 	void setPalette(int pal);
 	void setPaletteFromPtr(const byte *ptr);
 	void setPaletteFromRes();
 	void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);
-	byte *findPalInPals(byte *pal, int index);
+	const byte *findPalInPals(const byte *pal, int index);
 	void swapPalColors(int a, int b);
 	void copyPalColor(int dst, int src);
 	void cyclePalette();
@@ -856,8 +856,8 @@ protected:
 	void makeCursorColorTransparent(int a);
 	void setupCursor() { _cursor.animate = 1; }
 	void decompressDefaultCursor(int index);
-	void useIm01Cursor(byte *im, int w, int h);
-	void useBompCursor(byte *im, int w, int h);
+	void useIm01Cursor(const byte *im, int w, int h);
+	void useBompCursor(const byte *im, int w, int h);
 
 
 public:

@@ -104,7 +104,7 @@ struct BompDrawData {		/* Bomp graphics data */
 	int outwidth, outheight;
 	int x, y;
 	byte scale_x, scale_y;
-	byte *dataptr;
+	const byte *dataptr;
 	int srcwidth, srcheight;
 	uint16 shadowMode;
 };
@@ -133,7 +133,7 @@ protected:
 	bool _zbufferDisabled;
 
 	/* Bitmap decompressors */
-	bool decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess);
+	bool decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProcess);
 	void decodeStripEGA(byte *dst, const byte *src, int height);
 	void decodeStripOldEGA(byte *dst, const byte *src, int height, int stripnr);
 	void decompressMaskImgOld(byte *dst, const byte *src, int stripnr);
@@ -161,7 +161,7 @@ protected:
 	void updateDirtyScreen(VirtScreen *vs);
 
 public:
-	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
+	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag);
 	void clearUpperMask();
 

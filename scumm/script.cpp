@@ -128,7 +128,7 @@ void Scumm::initializeLocals(int slot, int *vars) {
 }
 
 int Scumm::getVerbEntrypoint(int obj, int entry) {
-	byte *objptr, *verbptr;
+	const byte *objptr, *verbptr;
 	int verboffs;
 
 	if (whereIsObject(obj) == WIO_NOT_FOUND)
@@ -154,7 +154,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 		verbptr += _resourceHeaderSize;
 
 	if (_features & GF_AFTER_V8) {
-		uint32 *ptr = (uint32 *)verbptr;
+		const uint32 *ptr = (const uint32 *)verbptr;
 		uint32 verb;
 		do {
 			verb = READ_LE_UINT32(ptr);
@@ -729,7 +729,7 @@ void Scumm::runExitScript() {
 			// FIXME: Oddly, Indy3 seems to contain exit scripts with only a size
 			// and a tag - not even a terminating NULL!
 			byte *roomptr = getResourceAddress(rtRoom, _roomResource);
-			byte *excd = findResourceData(MKID('EXCD'), roomptr) - _resourceHeaderSize;
+			const byte *excd = findResourceData(MKID('EXCD'), roomptr) - _resourceHeaderSize;
 			if (!excd || (getResourceDataSize(excd) < 1)) {
 				debug(2, "Exit-%d is empty", _roomResource);
 				return;

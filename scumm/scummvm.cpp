@@ -1244,9 +1244,9 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 
 void Scumm::initRoomSubBlocks() {
 	int i, offs;
-	byte *ptr;
+	const byte *ptr;
 	byte *roomptr, *searchptr, *roomResPtr;
-	RoomHeader *rmhd;
+	const RoomHeader *rmhd;
 
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
@@ -1274,9 +1274,9 @@ void Scumm::initRoomSubBlocks() {
 	// Determine the room dimensions (width/height)
 	//
 	if (_features & GF_OLD_BUNDLE)
-		rmhd = (RoomHeader *)(roomptr + 4);
+		rmhd = (const RoomHeader *)(roomptr + 4);
 	else
-		rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
+		rmhd = (const RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 	
 	if (_features & GF_AFTER_V8) {
 		_roomWidth = READ_LE_UINT32(&(rmhd->v8.width));
@@ -1610,7 +1610,7 @@ void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, i
 	_scaleSlots[slot-1].scale1 = scale1;
 }
 
-void Scumm::dumpResource(const char *tag, int idx, byte *ptr, int length) {
+void Scumm::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
 	char buf[256];
 	File out;
 

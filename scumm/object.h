@@ -136,11 +136,11 @@ struct ImageHeader { /* file format */
 #endif
 
 struct FindObjectInRoom {
-	CodeHeader *cdhd;
-	byte *obcd;
-	ImageHeader *imhd;
-	byte *obim;
-	byte *roomptr;
+	const CodeHeader *cdhd;
+	const byte *obcd;
+	const ImageHeader *imhd;
+	const byte *obim;
+	const byte *roomptr;
 };
 
 enum FindObjectWhat {

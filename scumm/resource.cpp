@@ -1344,7 +1344,7 @@ void Scumm::nukeResource(int type, int idx) {
 	}
 }
 
-byte *Scumm::findResourceData(uint32 tag, byte *ptr) {
+const byte *Scumm::findResourceData(uint32 tag, const byte *ptr) {
 	if (_features & GF_OLD_BUNDLE)
 		error("findResourceData must not be used in GF_OLD_BUNDLE games");
 	else if (_features & GF_SMALL_HEADER)
@@ -1371,11 +1371,11 @@ int Scumm::getResourceDataSize(const byte *ptr) const {
 
 struct FindResourceState {
 	uint32 size, pos;
-	byte *ptr;
+	const byte *ptr;
 };
 
 /* just O(N) complexity when iterating with this function */
-byte *findResource(uint32 tag, byte *searchin) {
+const byte *findResource(uint32 tag, const byte *searchin) {
 	uint32 size;
 	static FindResourceState frs;
 	FindResourceState *f = &frs;	/* easier to make it thread safe like this */
@@ -1403,7 +1403,7 @@ byte *findResource(uint32 tag, byte *searchin) {
 	return f->ptr;
 }
 
-byte *findResourceSmall(uint32 tag, byte *searchin) {
+const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 	uint32 size;
 	static FindResourceState frs;
 	FindResourceState *f = &frs;	/* easier to make it thread safe like this */
@@ -1434,7 +1434,7 @@ byte *findResourceSmall(uint32 tag, byte *searchin) {
 	return f->ptr;
 }
 
-byte *findResource(uint32 tag, byte *searchin, int idx) {
+const byte *findResource(uint32 tag, const byte *searchin, int idx) {
 	uint32 curpos, totalsize, size;
 
 	assert(searchin);
@@ -1462,7 +1462,7 @@ byte *findResource(uint32 tag, byte *searchin, int idx) {
 	return NULL;
 }
 
-byte *findResourceSmall(uint32 tag, byte *searchin, int idx) {
+const byte *findResourceSmall(uint32 tag, const byte *searchin, int idx) {
 	uint32 curpos, totalsize, size;
 	uint16 smallTag;
 

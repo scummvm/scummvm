@@ -36,7 +36,7 @@ public:
 
 protected:
 	uint16 codec;
-	byte *srcptr;
+	const byte *srcptr;
 
 	// movement of cel to decode
 	int _xmoveCur, _ymoveCur;
@@ -45,12 +45,12 @@ protected:
 	byte palette[256];
 
 	// pointer to various parts of the costume resource
-	byte *akos;
-	AkosHeader *akhd;
+	const byte *akos;
+	const AkosHeader *akhd;
 
-	byte *akpl, *akci, *aksq;
-	AkosOffset *akof;
-	byte *akcd;
+	const byte *akpl, *akci, *aksq;
+	const AkosOffset *akof;
+	const byte *akcd;
 
 	struct {
 		/* codec stuff */
@@ -77,7 +77,7 @@ protected:
 		byte shift;
 		uint16 bits;
 		byte numbits;
-		byte *dataptr;
+		const byte *dataptr;
 		byte buffer[336];
 	} akos16;
 
@@ -111,13 +111,13 @@ protected:
 	void codec5();
 
 	void codec16();
-	void akos16SetupBitReader(byte *src);
-	void akos16PutOnScreen(byte *dest, byte *src, byte transparency, int32 count);
+	void akos16SetupBitReader(const byte *src);
+	void akos16PutOnScreen(byte *dest, const byte *src, byte transparency, int32 count);
 	void akos16SkipData(int32 numskip);
 	void akos16DecodeLine(byte *buf, int32 numbytes, int32 dir);
 	void akos16ApplyMask(byte *dest, byte *maskptr, byte bits, int32 count, byte fillwith);
-	void akos16Decompress(byte *dest, int32 pitch, byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency);
-	void akos16DecompressMask(byte *dest, int32 pitch, byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte *maskptr, int32 bitpos_start);
+	void akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency);
+	void akos16DecompressMask(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte *maskptr, int32 bitpos_start);
 };
 
 #endif

@@ -287,12 +287,13 @@ void Scumm::restoreVerbBG(int verb) {
 void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	VirtScreen *vs;
 	VerbSlot *vst;
-	byte twobufs, *imptr = 0;
+	byte twobufs;
+	const byte *imptr = 0;
 	int ydiff, xstrip;
 	int imgw, imgh;
 	int i, tmp;
 	byte *obim;
-	ImageHeader *imhd;
+	const ImageHeader *imhd;
 	uint32 size;
 
 	if ((vs = findVirtScreen(y)) == NULL)
@@ -319,7 +320,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 		imgh = (*(obim + size + 17)) >> 3;
 		imptr = (obim + 8);
 	} else {
-		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), obim);
+		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
 		if (_features & GF_AFTER_V7) {
 			imgw = READ_LE_UINT16(&imhd->v7.width) >> 3;
 			imgh = READ_LE_UINT16(&imhd->v7.height) >> 3;
@@ -393,8 +394,8 @@ void Scumm::killVerb(int slot) {
 }
 
 void Scumm::setVerbObject(uint room, uint object, uint verb) {
-	byte *obimptr;
-	byte *obcdptr;
+	const byte *obimptr;
+	const byte *obcdptr;
 	uint32 size, size2;
 	FindObjectInRoom foir;
 	int i;
