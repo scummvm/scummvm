@@ -189,8 +189,12 @@ void SwordMusic::startMusic(int32 tuneId, int32 loopFlag) {
 				_fadeBuf = NULL;
 			}
 		}
-	} else if (_playing)
-		fadeDown();
+	} else {
+		if (_playing)
+			fadeDown();
+		if (_musicFile.isOpen())
+			_musicFile.close();
+	}
 	_system->unlock_mutex(_mutex);
 	stream();
 }

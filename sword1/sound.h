@@ -61,6 +61,7 @@ public:
 	~SwordSound(void);
 	void newScreen(uint32 screen);
 	void quitScreen(void);
+	void closeCowSystem(void);
 
 	bool startSpeech(uint16 roomNo, uint16 localNo);
 	bool speechFinished(void);
@@ -75,7 +76,6 @@ public:
 private:
 	void playSample(QueueElement *elem);
 	void initCowSystem(void);
-	void closeCowSystem(void);
 
 	int16 *uncompressSpeech(uint32 index, uint32 cSize, uint32 *size);
 	void calcWaveVolume(int16 *data, uint32 length);

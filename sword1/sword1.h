@@ -37,11 +37,10 @@ class SwordMusic;
 class SwordControl;
 
 struct SystemVars {
-	// todo: move these to a better place
+	bool	runningFromCd;
 	uint32	currentCD;			// starts at zero, then either 1 or 2 depending on section being played
 	uint32	justRestoredGame;	// see main() in sword.c & New_screen() in gtm_core.c
 	uint32	gamePaused;			// 1 when paused
-	uint32	rate;				// game rate  => what's this for?
 
 	uint8	deathScreenFlag;	// 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
 	bool	forceRestart;
@@ -64,6 +63,7 @@ private:
 	void delay(uint amount);
 	void initialize(void);
 
+	void checkCdFiles(void);
 	void checkCd(void);
 	uint8 mainLoop(void);
 	void startPositions(int32 startNumber);

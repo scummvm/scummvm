@@ -153,11 +153,61 @@ SwordControl::SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system,
 	_mouse = pMouse;
 	_music = pMusic;
 	strcpy(_savePath, savePath);
+	_lStrings = _languageStrings + MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH) * 20;
+}
+
+void SwordControl::askForCd(void) {
+	_screenBuf = (uint8*)malloc(640 * 480);
+	_font = (uint8*)_resMan->openFetchRes(SR_FONT);
+	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
+	uint8 *palOut = (uint8*)malloc(256 * 4);
+	for (uint16 cnt = 1; cnt < 256; cnt++) {
+		palOut[cnt * 4 + 0] = pal[cnt * 3 + 0] << 2;
+		palOut[cnt * 4 + 1] = pal[cnt * 3 + 1] << 2;
+		palOut[cnt * 4 + 2] = pal[cnt * 3 + 2] << 2;
+	}
+	palOut[0] = palOut[1] = palOut[2] = palOut[3] = 0;
+	_resMan->resClose(SR_PALETTE);
+	_system->set_palette(palOut, 0, 256);
+	free(palOut);
+
+	File test;
+	char fName[10], textA[50];
+	sprintf(fName, "cd%d.id", SwordEngine::_systemVars.currentCD);
+	sprintf(textA, "%s%d", _lStrings[STR_INSERT_CD_A], SwordEngine::_systemVars.currentCD);
+	bool notAccepted = true;
+	bool refreshText = true;
+	do {
+		if (refreshText) {
+			memset(_screenBuf, 0, 640 * 480);
+			renderText(textA, 320, 220, TEXT_CENTER);
+			renderText(_lStrings[STR_INSERT_CD_B], 320, 240, TEXT_CENTER);
+			_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
+			_system->update_screen();
+		}
+		delay(300);
+		if (_keyPressed) {
+			test.open(fName);
+			if (!test.isOpen()) {
+				memset(_screenBuf, 0, 640 * 480);
+				renderText(_lStrings[STR_INCORRECT_CD], 320, 230, TEXT_CENTER);
+				_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
+				_system->update_screen();
+				delay(2000);
+				refreshText = true;
+			} else {
+				test.close();
+				notAccepted = false;
+			}
+		}
+	} while (notAccepted);
+
+	_resMan->resClose(SR_FONT);
+	free(_screenBuf);
 }
 
 uint8 SwordControl::runPanel(void) {
 	_restoreBuf = NULL;
-	_lStrings = _languageStrings + MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH) * 20;
 	_keyPressed = _numButtons = 0;
 	_screenBuf = (uint8*)malloc(640 * 480);
 	_font = (uint8*)_resMan->openFetchRes(SR_FONT); // todo: czech support
@@ -460,6 +510,18 @@ void SwordControl::writeSavegameDescriptions(void) {
 	}
 	delete outf;
 	delete mgr;
+}
+
+bool SwordControl::savegamesExist(void) {
+	bool retVal = false;
+	SaveFileManager *mgr = _system->get_savefile_manager();
+	SaveFile *inf;
+	inf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
+	if (inf->isOpen())
+		retVal = true;
+	delete inf;
+	delete mgr;
+	return retVal;
 }
 
 void SwordControl::showSavegameNames(void) {

@@ -58,7 +58,9 @@ DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
 		const char *gameName = file->displayName().c_str();
 
-		if (0 == scumm_stricmp("swordres.rif", gameName)) {
+		if ((0 == scumm_stricmp("swordres.rif", gameName)) ||
+			(0 == scumm_stricmp("cd1.id", gameName)) ||
+			(0 == scumm_stricmp("cd2.id", gameName))) {
 			// Match found, add to list of candidates, then abort inner loop.
 			detectedGames.push_back(sword1_setting);
 			break;
@@ -116,7 +118,6 @@ void SwordEngine::initialize(void) {
 	_systemVars.justRestoredGame = _systemVars.currentCD = 
 		_systemVars.gamePaused = 0;
 	_systemVars.deathScreenFlag = 3;
-	_systemVars.rate = 8;
 	_systemVars.forceRestart = false;
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
@@ -158,7 +159,7 @@ void SwordEngine::reinitialize(void) {
 	_logic->initialize();     // now reinitialize these objects as they (may) have locked
 	_objectMan->initialize(); // resources which have just been wiped.
 	_mouse->initialize();
-	// todo: reinitialize swordmenu.
+	_system->warp_mouse(320, 240);
 	_systemVars.wantFade = true;
 }
 
@@ -1026,28 +1027,53 @@ void SwordEngine::startPositions(int32 startNumber) {
 	_systemVars.wantFade = true;
 }
 
+void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or what...
+	File test;
+
+	_systemVars.playSpeech = true;
+	if (test.open("SPEECH1.CLU")) {
+		test.close();
+		if (test.open("SPEECH2.CLU")) {
+			// both files exist, assume running from HDD and everything's fine.
+			test.close();
+			_systemVars.runningFromCd = false;
+			_systemVars.playSpeech = true;
+			return ;
+		} else
+			error("SPEECH2.CLU not found.\nPlease copy the SPEECH.CLU from CD2 and rename it to SPEECH2.CLU");
+	} else { // speech1.clu & speech2.clu not present. are we running from cd?
+		if (test.open("cd1.id")) {
+			_systemVars.runningFromCd = true;
+			_systemVars.currentCD = 1;
+			test.close();
+		} else if (test.open("cd2.id")) {
+			_systemVars.runningFromCd = true;
+			_systemVars.currentCD = 2;
+			test.close();
+		} else
+			error("Unable to find files.\nPlease read the instructions again");
+	}
+}
+
 void SwordEngine::go(void) {
 	
 	initialize();
-	_systemVars.deathScreenFlag = 3;
-	// check if we have savegames. if we do, show control panel, else start intro.
-	/* death flags:
-		   0 = not dead, normal game
-		   1 = dead
-		   2 = game won
-		   3 = game was just started */
+	checkCdFiles();
 
 	uint8 startPos = ConfMan.getInt("boot_param");
-	if (startPos) {
+	if (startPos)
 		startPositions(startPos);
-		_systemVars.deathScreenFlag = 0;
-	} else {
-		// Temporary:
-		startPositions(0);
-		_systemVars.deathScreenFlag = 0;
-		//todo: check if we have savegames. if we do, show control panel, else start intro.
-		//control->runPanel();
+	else {
+		if (_control->savegamesExist()) {
+			_systemVars.deathScreenFlag = 3;
+			if (_control->runPanel() == CONTROL_GAME_RESTORED)
+				_control->doRestore();
+			else
+				startPositions(0);
+		} else // no savegames, start new game.
+			startPositions(0);
 	}
+	_systemVars.deathScreenFlag = 0;
 
 	do {
 		uint8 action = mainLoop();
@@ -1065,11 +1091,16 @@ void SwordEngine::go(void) {
 
 void SwordEngine::checkCd(void) {
 	uint8 needCd = _cdList[SwordLogic::_scriptVars[NEW_SCREEN]];
-	if (needCd == 0) {
-		if (_systemVars.currentCD == 0)
-			_systemVars.currentCD = 1;
-	} else
+	if ((needCd == 0) && (_systemVars.currentCD == 0))
+		needCd = 1;
+	if (needCd != _systemVars.currentCD) {
 		_systemVars.currentCD = needCd;
+		if (_systemVars.runningFromCd) {
+			_music->startMusic(0, 0);
+			_sound->closeCowSystem();
+			_control->askForCd();
+		}
+	}
 }
 
 uint8 SwordEngine::mainLoop(void) {

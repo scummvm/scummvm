@@ -67,6 +67,8 @@ public:
 	~SwordControl(void);
 	uint8 runPanel(void);
 	void doRestore(void);
+	void askForCd(void);
+	bool savegamesExist(void);
 private:
 	void initData(void);
 	void closeData(void);
