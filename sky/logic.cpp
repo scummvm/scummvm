@@ -2154,7 +2154,7 @@ bool SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
-	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(a));
+	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(a));
 	SkyState::_systemVars.currentPalette = a;
 	return true;
 }
