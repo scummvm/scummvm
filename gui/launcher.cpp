@@ -95,6 +95,9 @@ protected:
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_aspectCheckbox;
+
+	CheckboxWidget *_multiMidiCheckbox;
+	CheckboxWidget *_mt32Checkbox;
 };
 
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
@@ -215,6 +218,17 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Audio");
 	yoffset = vBorder;
 	
+	// Multi midi setting
+	_multiMidiCheckbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Mixed Adlib/MIDI mode");
+	_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
+	yoffset += 16;
+
+	// Native mt32 setting
+	_mt32Checkbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "True Roland MT-32 (disable GM emulation)");
+	_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
+	yoffset += 16;
+
+	
 	// TODO: Volume/driver/midi/... settings
 
 
@@ -242,6 +256,8 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		ConfMan.set("description", _descriptionWidget->getLabel(), newDomain);
 		ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), newDomain);
 		ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), newDomain);
+		ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), newDomain);
+		ConfMan.set("native_mt32", _mt32Checkbox->getState(), newDomain);
 
 		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 		if (lang < 0)

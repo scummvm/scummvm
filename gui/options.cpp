@@ -157,19 +157,17 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 	
-#if 1
-	// TODO: cd drive setting
-	// TODO: multi midi setting
-	// TODO: native mt32 setting
+	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Mixed Adlib/MIDI mode");
 	_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi"));
 	yoffset += 16;
 
+	// Native mt32 setting
 	_mt32Checkbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "True Roland MT-32 (disable GM emulation)");
 	_mt32Checkbox->setState(ConfMan.getBool("native_mt32"));
 	yoffset += 16;
-#endif
 
+	// TODO: cd drive setting
 
 	//
 	// 3) The miscellaneous tab
@@ -268,6 +266,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue());
 		ConfMan.set("fullscreen", _fullscreenCheckbox->getState());
 		ConfMan.set("aspect_ratio", _aspectCheckbox->getState());
+		ConfMan.set("multi_midi", _multiMidiCheckbox->getState());
+		ConfMan.set("native_mt32", _mt32Checkbox->getState());
 
 		const MidiDriverDescription *md = getAvailableMidiDrivers();
 		for (; md->name; md++) {
