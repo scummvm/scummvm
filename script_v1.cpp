@@ -2706,7 +2706,7 @@ void Scumm::decodeParseString()
 				int delay;
 
 				if (x != 0)
-					offset = (int)((x & 0xffff) * 7.5 - 2265);
+					offset = (int)((x & 0xffff) * 7.5 - 22650);
 				else
 					offset = 0;
 				delay = (int)((getVarOrDirectWord(0x40) & 0xffff) * 7.5);
