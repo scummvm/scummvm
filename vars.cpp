@@ -88,10 +88,10 @@ void Scumm::setupScummVarsOld()
 	VAR_SOUNDPARAM3 = 66;
 	VAR_MOUSEPRESENT = 67;
 	VAR_PERFORMANCE_1 = 68;
-	VAR_PERFORMANCE_2 = 69;
-	VAR_ROOM_FLAG = 70;
-	VAR_GAME_LOADED = 71;
-	VAR_NEW_ROOM = 72;
+	VAR_PERFORMANCE_2 = 69;	// Zak256 Note: Cashcard for Zak
+	VAR_ROOM_FLAG = 70;	// Zak256 Note: Cashcard for Annie
+	VAR_GAME_LOADED = 71;	// Zak256 Note: Cashcard for Melissa
+	VAR_NEW_ROOM = 72;	// Zak256 Note: Cashcard for Leslie
 	VAR_VERSION = 75;
 
 	VAR_V5_DRAWFLAGS = 9;
