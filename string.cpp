@@ -750,8 +750,7 @@ void Scumm::unkAddMsgToStack5(int var)
 {
 	byte *ptr;
 
-	if (_features & GF_AFTER_V6)
-		var = readVar(var);
+	var = readVar(var);
 
 	if (var) {
 		ptr = getStringAddress(var);
