@@ -37,10 +37,9 @@
 
 namespace Sky {
 
-uint32 Logic::_scriptVariables[838];
+uint32 Logic::_scriptVariables[NUM_SKY_SCRIPTVARS];
 
-typedef void (Logic::*LogicTable) ();
-static const LogicTable logicTable[] = {
+const LogicTable Logic::_logicTable[] = {
 	&Logic::nop,
 	&Logic::logicScript,	 // 1  script processor
 	&Logic::autoRoute,	 // 2  Make a route
@@ -81,58 +80,71 @@ Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *sky
 	initScriptVariables();
 }
 
-bool Logic::checkProtection(void) {
+void Logic::initScreen0(void) {
+	fnEnterSection(0, 0, 0);
+	_skyMusic->startMusic(2);
+	SkyEngine::_systemVars.currentMusic = 2;
+}
 
-	if (!_scriptVariables[ENTER_DIGITS]) return false;
-	if (_scriptVariables[CONSOLE_TYPE] == 5) { // reactor code
-		_scriptVariables[FS_COMMAND] = 240;
+void Logic::parseSaveData(uint32 *data) {
+	if (!SkyEngine::isDemo())
+		fnLeaveSection(_scriptVariables[CUR_SECTION], 0, 0);
+	for (uint16 cnt = 0; cnt < NUM_SKY_SCRIPTVARS; cnt++)
+		_scriptVariables[cnt] = READ_LE_UINT32(data++);
+	fnEnterSection(_scriptVariables[CUR_SECTION], 0, 0);
+}
+
+bool Logic::checkProtection(void) {
+	if (_scriptVariables[ENTER_DIGITS]) {
+		if (_scriptVariables[CONSOLE_TYPE] == 5) // reactor code
+			_scriptVariables[FS_COMMAND] = 240;
+		else									 // copy protection
+			_scriptVariables[FS_COMMAND] = 337;
 		_scriptVariables[ENTER_DIGITS] = 0;
 		return true;
-	} else {								   // copy protection
-		_scriptVariables[FS_COMMAND] = 337;
-		_scriptVariables[ENTER_DIGITS] = 0;
-		return true;
-	}
+	} else
+		return false;
 }
 
 void Logic::engine() {
-	uint16 *logicList = (uint16 *)_skyCompact->fetchCpt(_scriptVariables[LOGIC_LIST_NO]);
-	//uint16 *logicList = (uint16*)_skyCompact->fetchFromDataList(_scriptVariables[LOGIC_LIST_NO]);
+	do {
+		uint16 *logicList = (uint16 *)_skyCompact->fetchCpt(_scriptVariables[LOGIC_LIST_NO]);
 
-	while (uint16 id = *logicList++) { // 0 means end of list
-		if (id == 0xffff) {
-			// Change logic data address
-			if (*logicList == ID_STD_MENU_LOGIC)
-				printf("\n\n\nMenu Logic:\n");
-			logicList = (uint16 *)_skyCompact->fetchCpt(*logicList);
-			continue;
+		while (uint16 id = *logicList++) { // 0 means end of list
+			if (id == 0xffff) {
+				// Change logic data address
+				logicList = (uint16 *)_skyCompact->fetchCpt(*logicList);
+				continue;
+			}
+
+			_scriptVariables[CUR_ID] = id;
+			_compact = _skyCompact->fetchCpt(id);
+
+			// check the id actually wishes to be processed
+			if (!(_compact->status & (1 << 6)))
+				continue;
+
+			// ok, here we process the logic bit system
+
+			if (_compact->status & (1 << 7))
+				_skyGrid->removeObjectFromWalk(_compact);
+
+			Debug::logic(_compact->logic);
+			(this->*_logicTable[_compact->logic]) ();
+
+			if (_compact->status & (1 << 7))
+				_skyGrid->objectToWalk(_compact);
+
+			// a sync sent to the compact is available for one cycle
+			// only. that cycle has just ended so remove the sync.
+			// presumably the mega has just reacted to it.
+			_compact->sync = 0;
 		}
-
-		_scriptVariables[CUR_ID] = id;
-		_compact = _skyCompact->fetchCpt(id);
-
-		// check the id actually wishes to be processed
-		if (!(_compact->status & (1 << 6)))
-			continue;
-
-		// ok, here we process the logic bit system
-
-		if (_compact->status & (1 << 7))
-			_skyGrid->removeObjectFromWalk(_compact);
-
-		Debug::logic(_compact->logic);
-		(this->*logicTable[_compact->logic]) ();
-
-		if (_compact->status & (1 << 7))
-			_skyGrid->objectToWalk(_compact);
-
-		// a sync sent to the compact is available for one cycle
-		// only. that cycle has just ended so remove the sync.
-		// presumably the mega has just reacted to it.
-		_compact->sync = 0;
-		if (id == ID_STD_MENU_LOGIC)
-			printf("\n\n\n");
-	}
+		// usually this loop is run only once, it'll only be run a second time if the game
+		// script just asked the user to enter a copy protection code.
+		// this is done to prevent the copy protection screen from flashing up.
+		// (otherwise it would be visible for 1/50 second)
+	} while (checkProtection());
 }
 
 void Logic::nop() {}
@@ -808,8 +820,7 @@ uint32 Logic::pop() {
 	return _stack[--_stackPtr];
 }
 
-typedef bool (Logic::*McodeTable) (uint32, uint32, uint32);
-static  McodeTable mcodeTable[] = {
+const McodeTable Logic::_mcodeTable[] = {
 	&Logic::fnCacheChip,
 	&Logic::fnCacheFast,
 	&Logic::fnDrawScreen,
@@ -1121,7 +1132,7 @@ static const uint32 forwardList5b[] = {
 };
 
 void Logic::fnExec(uint16 num, uint32 a, uint32 b, uint32 c) {
-	(this->*mcodeTable[num])(a, b, c);
+	(this->*_mcodeTable[num])(a, b, c);
 }
 
 void Logic::initScriptVariables() {
@@ -1296,7 +1307,7 @@ script:
 				Debug::mcode(mcode, a, b, c);
 
 				Compact *saveCpt = _compact;
-				bool ret = (this->*mcodeTable[mcode]) (a, b, c);
+				bool ret = (this->*_mcodeTable[mcode]) (a, b, c);
 				_compact = saveCpt;
 
 				if (!ret)

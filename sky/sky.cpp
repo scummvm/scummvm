@@ -75,8 +75,6 @@ extern bool draw_keyboard;
  With apologies to the CD32 SteelSky file.
 */
 
-#undef WITH_DEBUG_CHEATS
-
 static const GameSettings skySetting =
 	{"sky", "Beneath a Steel Sky", 0 };
 
@@ -141,57 +139,43 @@ void SkyEngine::initVirgin() {
 	_skyScreen->showScreen(60110);
 }
 
-void SkyEngine::doCheat(uint8 num) {
-
-	switch(num) {
-	case 1: warning("executed cheat: get jammer");
-		Logic::_scriptVariables[GOT_JAMMER] = 42;
-		Logic::_scriptVariables[GOT_SPONSOR] = 69;
-		break;
-	case 2: warning("executed cheat: computer room");
-		Logic::_scriptVariables[CARD_STATUS] = 2;
-		Logic::_scriptVariables[CARD_FIX] = 1;
-		break;
-	case 3: warning("executed cheat: get to burke");
-		Logic::_scriptVariables[KNOWS_PORT] = 42;
-		break;
-	case 4: warning("executed cheat: get to reactor section");
-		Logic::_scriptVariables[FOREMAN_FRIEND] = 42;
-		_skyLogic->fnSendSync(8484, 1, 0); // send sync to RAD suit (put in locker)
-		_skyLogic->fnKillId(ID_ANITA_SPY, 0, 0); // stop anita from getting to you
-		break;
-	default: warning("unknown cheat: %d", num);
-		break;
-	}
-}
-
 void SkyEngine::handleKey(void) {
 
-	if (_key_pressed == '`' || _key_pressed == '~' || _key_pressed == '#') {
-		_debugger->attach();
-	}
-	
-	if (_key_pressed == 63)
-		_skyControl->doControlPanel();
+	if (_keyFlags == OSystem::KBD_CTRL) {
+		if (_keyPressed == 'f')
+			_fastMode ^= 1;
+		else if (_keyPressed == 'g')
+			_fastMode ^= 2;
+		else if (_keyPressed == 'd')
+			_debugger->attach();
+	} else {
+		if (_keyPressed == '`' || _keyPressed == '~' || _keyPressed == '#')
+			_debugger->attach();
+		
+		if (_keyPressed == 63)
+			_skyControl->doControlPanel();
 
-	if ((_key_pressed == 27) && (!_systemVars.pastIntro))
-		_skyControl->restartGame();
-#ifdef WITH_DEBUG_CHEATS
-	if ((_key_pressed >= '0') && (_key_pressed <= '9'))
-		doCheat(_key_pressed - '0');
-#endif
-	if (_key_pressed == '.')
-		_skyMouse->logicClick();
-	_key_pressed = 0;
+		if ((_keyPressed == 27) && (!_systemVars.pastIntro))
+			_skyControl->restartGame();
+
+		if (_keyPressed == '.')
+			_skyMouse->logicClick();
+	}
+	_keyFlags = _keyPressed = 0;
 }
 
 int SkyEngine::go() {
 
-	_sdl_mouse_x = GAME_SCREEN_WIDTH / 2;
-	_sdl_mouse_y = GAME_SCREEN_HEIGHT / 2;
-	
-	bool introSkipped = false;
-	if (!_quickLaunch) {
+	_mouseX = GAME_SCREEN_WIDTH / 2;
+	_mouseY = GAME_SCREEN_HEIGHT / 2;
+	_keyFlags = _keyPressed = 0;
+
+	uint16 result = 0;
+	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0)
+		result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
+
+	if (result != GAME_RESTORED) {	
+		bool introSkipped = false;
 		if (_systemVars.gameVersion > 267) {// don't do intro for floppydemos
 			_skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			introSkipped = !_skyIntro->doIntro(_floppyIntro);
@@ -201,25 +185,20 @@ int SkyEngine::go() {
 			}
 			delete _skyIntro;
 		}
-		loadBase0();
-	}
 
-	if (introSkipped)
-		_skyControl->restartGame();
+		_skyLogic->initScreen0();
+
+		if (introSkipped)
+			_skyControl->restartGame();
+	}
 	
 	_lastSaveTime = _system->getMillis();
 
 	while (1) {
-		if (_debugger->isAttached()) {
+		if (_debugger->isAttached())
 			_debugger->onFrame();
-		}
-			
-		if (_fastMode & 2)
-			delay(0);
-		else if (_fastMode & 1)
-			delay(10);
-		else
-			delay(_systemVars.gameSpeed);
+		
+		int32 frameTime = (int32)_system->getMillis();
 
 		if (_system->getMillis() - _lastSaveTime > 5 * 60 * 1000) {
 			if (_skyControl->loadSaveAllowed()) {
@@ -229,19 +208,23 @@ int SkyEngine::go() {
 				_lastSaveTime += 30 * 1000; // try again in 30 secs
 		}
 		_skySound->checkFxQueue();
-		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
-		if (_key_pressed)
-			handleKey();
+		_skyMouse->mouseEngine((uint16)_mouseX, (uint16)_mouseY);
+		handleKey();
 		_skyLogic->engine();
-		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up
-			_skyScreen->recreate();
-			_skyScreen->spriteEngine();
-			if (_debugger->showGrid()) {
-				_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(Logic::_scriptVariables[SCREEN]));
-				_skyScreen->forceRefresh();
-			}
-			_skyScreen->flip();
+		_skyScreen->recreate();
+		_skyScreen->spriteEngine();
+		if (_debugger->showGrid()) {
+			_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(Logic::_scriptVariables[SCREEN]));
+			_skyScreen->forceRefresh();
 		}
+		_skyScreen->flip();
+
+		if (_fastMode & 2)
+			delay(0);
+		else if (_fastMode & 1)
+			delay(10);
+		else
+			delay((frameTime + _systemVars.gameSpeed) - _system->getMillis());
 	}
 	
 	return 0;
@@ -351,19 +334,9 @@ int SkyEngine::init(GameDetector &detector) {
 				}
 	}
 
-	uint16 result = 0;
-	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0)
-		result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
-
-	if (result == GAME_RESTORED)
-		_quickLaunch = true;
-	else
-		_quickLaunch = false;
-
 	_skyMusic->setVolume(ConfMan.getInt("music_volume") >> 1);
 
 	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen, _skyCompact);
-	
 	return 0;
 }
 
@@ -389,13 +362,6 @@ void SkyEngine::initItemList() {
 		_itemList[124] = (void **)SkyCompact::data_5; // Compacts - Section 5
 		_itemList[125] = (void **)SkyCompact::data_6; // Compacts - Section 6
 	}*/
-}
-
-void SkyEngine::loadBase0(void) {
-
-	_skyLogic->fnEnterSection(0, 0, 0);
-	_skyMusic->startMusic(2);
-	_systemVars.currentMusic = 2;
 }
 
 void SkyEngine::loadFixedItems(void) {
@@ -433,42 +399,27 @@ void SkyEngine::gotTimerTick(void) {
 	_skyScreen->handleTimer();
 }
 
-void SkyEngine::delay(uint amount) {
+void SkyEngine::delay(int32 amount) {
 
 	OSystem::Event event;
 
 	uint32 start = _system->getMillis();
-	uint32 cur = start;
-	_key_pressed = 0;	//reset
+	_keyFlags = _keyPressed = 0;	//reset
+
+	if (amount < 0)
+		amount = 0;
 
 	do {
 		while (_system->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.flags == OSystem::KBD_CTRL) {
-					if (event.kbd.keycode == 'f') {
-						_fastMode ^= 1;
-						break;
-					}
-					if (event.kbd.keycode == 'g') {
-						_fastMode ^= 2;
-						break;
-					}
-					if (event.kbd.keycode == 'd') {
-						_debugger->attach();
-					}
-				}
-
-				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == 8)
-					_key_pressed = 8;
-				else
-					_key_pressed = (byte)event.kbd.ascii;
+				_keyFlags = event.kbd.flags;
+				_keyPressed = (byte)event.kbd.ascii;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
-					_sdl_mouse_x = event.mouse.x;
-					_sdl_mouse_y = event.mouse.y;
+					_mouseX = event.mouse.x;
+					_mouseY = event.mouse.y;
 				}
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
@@ -485,21 +436,10 @@ void SkyEngine::delay(uint amount) {
 				break;
 			}
 		}
+		if (amount > 0)
+			_system->delayMillis((amount > 10) ? 10 : amount);
 
-		if (amount == 0)
-			break;
-
-		{
-			uint this_delay = 20;
-#ifdef _WIN32_WCE
-			this_delay = 10;
-#endif
-			if (this_delay > amount)
-				this_delay = amount;
-			_system->delayMillis(this_delay);
-		}
-		cur = _system->getMillis();
-	} while (cur < start + amount);
+	} while (_system->getMillis() < start + amount);
 }
 
 bool SkyEngine::isDemo(void) {

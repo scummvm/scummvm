@@ -288,7 +288,7 @@ uint16 *SkyCompact::getSub(Compact *cpt, uint16 mode) {
 uint16 *SkyCompact::getGrafixPtr(Compact *cpt) {
 	uint16 *gfxBase = (uint16*)fetchCpt(cpt->grafixProgId);
 	if ((gfxBase == NULL) && cpt->grafixProgPos) {
-		warning("SkyCompact::getGrafixPtr: got offset for null ptr");
+		debug(1, "SkyCompact::getGrafixPtr: got offset for null ptr");
 		return NULL;
 	}
 	return gfxBase + cpt->grafixProgPos;

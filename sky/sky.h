@@ -57,11 +57,10 @@ class SkyCompact;
 class SkyEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
-	byte _key_pressed;
-	bool _quickLaunch; // set when starting with -x
+	byte _keyPressed, _keyFlags;
 	bool _floppyIntro;
 
-	int _sdl_mouse_x, _sdl_mouse_y;
+	int _mouseX, _mouseY;
 
 	Sound *_skySound;
 	Disk *_skyDisk;
@@ -91,15 +90,12 @@ public:
 protected:
 	byte _fastMode;
 
-	void logic_engine();
-	void delay(uint amount);
+	void delay(int32 amount);
 	int go();
-	void doCheat(uint8 num);
 	void handleKey(void);
 
 	uint32 _lastSaveTime;
 
-	Text *getText();
 	int init(GameDetector &detector);
 	void initItemList();
 
@@ -107,9 +103,6 @@ protected:
 	static void timerHandler(void *ptr);
 	void gotTimerTick();
 	void loadFixedItems();
-	void loadBase0();
-	
-	static int CDECL game_thread_proc(void *param);
 };
 
 } // End of namespace Sky

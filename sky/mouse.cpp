@@ -221,10 +221,8 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 		while ((*currentList != 0) && (*currentList != 0xFFFF)) {
 			uint16 itemNum = *currentList;
 			Compact *itemData = _skyCompact->fetchCpt(itemNum);
-			if (itemNum == 0x2E)
-				printf("menu\n");
 			currentList++;
-			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) &&	(itemData->status & 16)) {
+			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) && (itemData->status & 16)) {
 				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
 				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < xPos) continue;
 				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos) continue;

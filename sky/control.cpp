@@ -1327,6 +1327,8 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 			return RESTORE_FAILED;
 		}
 	}
+	SkyEngine::_systemVars.systemFlags |= SF_GAME_RESTORED;
+
 	LODSW(srcPos, _skySound->_saveSounds[0]);
 	LODSW(srcPos, _skySound->_saveSounds[1]);
 	_skySound->restoreSfx();
@@ -1337,8 +1339,8 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	LODSD(srcPos, mouseType);
 	LODSD(srcPos, palette);
 
-	for (cnt = 0; cnt < 838; cnt++)
-		LODSD(srcPos, Logic::_scriptVariables[cnt]);
+	_skyLogic->parseSaveData((uint32*)srcPos);
+	srcPos += NUM_SKY_SCRIPTVARS * sizeof(uint32);
 
 	for (cnt = 0; cnt < 60; cnt++)
 		LODSD(srcPos, reloadList[cnt]);
@@ -1375,11 +1377,6 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	if (srcPos - srcBuf != (int32)size)
 		error("Restore failed! Savegame data = %d bytes. Expected size: %d", srcPos-srcBuf, size);
 
-	SkyEngine::_systemVars.systemFlags |= SF_GAME_RESTORED;
-	if (!SkyEngine::isDemo()) {
-		_skyLogic->fnLeaveSection(oldSection, 0, 0);
-		_skyLogic->fnEnterSection(Logic::_scriptVariables[CUR_SECTION], 0, 0);
-	}
 	_skyDisk->refreshFilesList(reloadList);
 	SkyEngine::_systemVars.currentMusic = (uint16)music;
 	if (!(SkyEngine::_systemVars.systemFlags & SF_MUS_OFF))

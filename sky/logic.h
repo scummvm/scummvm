@@ -112,6 +112,8 @@ enum scriptVariableOffsets {
 	SC40_LOCKER_5_FLAG = 821
 };
 
+#define NUM_SKY_SCRIPTVARS 838
+
 class AutoRoute;
 class Control;
 class Disk;
@@ -122,6 +124,11 @@ class Screen;
 class Sound;
 class Text;
 class SkyCompact;
+
+class Logic;
+
+typedef void (Logic::*LogicTable) ();
+typedef bool (Logic::*McodeTable) (uint32, uint32, uint32);
 
 class Logic {
 public:
@@ -134,9 +141,29 @@ public:
 		Mouse *skyMouse,
 		Sound *skySound);
 	void engine();
-	bool checkProtection(void);
 	void useControlInstance(Control *control) { _skyControl = control; };
 
+	uint16 mouseScript(uint32 scrNum, Compact *scriptComp);
+	
+	static uint32 _scriptVariables[NUM_SKY_SCRIPTVARS];
+	Grid *_skyGrid;
+
+	uint16 script(uint16 scriptNo, uint16 offset);
+	void initScreen0(void);
+	void parseSaveData(uint32 *data);
+	
+protected:
+	void push(uint32);
+	uint32 pop();
+	void checkModuleLoaded(uint16 moduleNo);
+	bool collide(Compact *cpt);
+	void initScriptVariables();
+	void mainAnim();
+	void runGetOff();
+	void stopAndWait();
+	bool checkProtection(void);
+
+	static const LogicTable _logicTable[];
 	void nop();
 	void logicScript();
 	void autoRoute();
@@ -154,9 +181,8 @@ public:
 	void pause();
 	void waitSync();
 	void simpleAnim();
-	uint16 mouseScript(uint32 scrNum, Compact *scriptComp);
-	uint16 script(uint16 scriptNo, uint16 offset);
 
+	static const McodeTable _mcodeTable[];
 	bool fnCacheChip(uint32 a, uint32 b, uint32 c);
 	bool fnCacheFast(uint32 a, uint32 b, uint32 c);
 	bool fnDrawScreen(uint32 a, uint32 b, uint32 c);
@@ -275,19 +301,6 @@ public:
 
 	void stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base);
 	void fnExec(uint16 num, uint32 a, uint32 b, uint32 c);
-	
-	static uint32 _scriptVariables[838];
-	Grid *_skyGrid;
-	
-protected:
-	void push(uint32);
-	uint32 pop();
-	void checkModuleLoaded(uint16 moduleNo);
-	bool collide(Compact *cpt);
-	void initScriptVariables();
-	void mainAnim();
-	void runGetOff();
-	void stopAndWait();
 
 	uint16 *_moduleList[16];
 	uint32 _stack[20];
@@ -310,6 +323,8 @@ protected:
 	AutoRoute	*_skyAutoRoute;
 	Mouse		*_skyMouse;
 	Control		*_skyControl;
+
+	friend class Debugger;
 };
 
 } // End of namespace Sky
