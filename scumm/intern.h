@@ -898,6 +898,14 @@ protected:
 	void spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty);
 	void spriteInfoGet_field_2C_30(int spriteId, int32 &field_2C, int32 &field_30);
 
+	int spriteGroupGet_field_10(int spriteId);
+	int spriteGroupGet_field_20(int spriteId);
+	int spriteGroupGet_field_30(int spriteId);
+	int spriteGroupGet_field_34(int spriteId);
+	int spriteGroupGet_field_38(int spriteId);
+	int spriteGroupGet_field_3C(int spriteId);
+	void spriteGroupGet_tx_ty(int spriteId, int32 &tx, int32 &ty);
+
 	void spriteInfoSet_field_14(int spriteId, int value);
 	void spriteInfoSet_field_7C(int spriteId, int value);
 	void spriteInfoSet_field_80(int spriteId, int value);

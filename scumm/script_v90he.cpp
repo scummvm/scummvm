@@ -1143,35 +1143,82 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 }
 
 void ScummEngine_v90he::o90_getSpriteGroupInfo() {
+	int32 tx, ty;
+	int spriteId, type;
+
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 8: // HE 99+
 		pop();
+		push(0);
 		break;
 	case 30:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			spriteGroupGet_tx_ty(spriteId, tx, ty);
+			push(tx);
+		} else {
+			push(0);
+		}
 		break;
 	case 31:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			spriteGroupGet_tx_ty(spriteId, tx, ty);
+			push(ty);
+		} else {
+			push(0);
+		}
 		break;
 	case 42: // HE 99+
-		pop();
-		pop();
+		type = pop();
+		spriteId = pop();
+		if (spriteId) {
+			switch(type) {
+			case 0:
+				push(spriteGroupGet_field_30(spriteId));
+				break;
+			case 1:
+				push(spriteGroupGet_field_34(spriteId));
+				break;
+			case 2:
+				push(spriteGroupGet_field_38(spriteId));
+				break;
+			case 3:
+				push(spriteGroupGet_field_3C(spriteId));
+				break;
+			default:
+				push(0);
+			}
+		} else {
+			push(0);
+		}
 		break;
 	case 43:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			push(spriteGroupGet_field_10(spriteId));
+		} else {
+			push(0);
+		}
 		break;
 	case 63: // HE 99+
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			push(spriteGroupGet_field_20(spriteId));
+		} else {
+			push(0);
+		}
 		break;
 	case 139: // HE 99+
+		// dummy case
 		pop();
 		pop();
+		push(0);
 		break;
 	default:
 		error("o90_getSpriteGroupInfo: Unknown case %d", subOp);
 	}
-	push(0);
 
 	debug(1,"o90_getSpriteGroupInfo stub (%d)", subOp);
 }
