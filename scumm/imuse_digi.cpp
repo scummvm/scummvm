@@ -1407,7 +1407,11 @@ void IMuseDigital::bundleMusicHandler() {
 		return;
 	}
 
-	_bundleSongPosInMs = (_bundleMusicPosition * 5) / (_outputMixerSize / 200);
+	// Compute the position in the song in milliseconds (in brief: _outputMixerSize
+	// gives the number of bytes used for one second, so if we compute the value of
+	// (_bundleMusicPosition / _outputMixerSize), that is an offset in seconds;
+	// multiplying that by 1000 gives milliseconds).
+	_bundleSongPosInMs = 1000 * _bundleMusicPosition / _outputMixerSize;
 	_bundleMusicPosition += final_size;
 	if (!_bundleMusicTrack.isActive())
 		_scumm->_mixer->newStream(&_bundleMusicTrack, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000);
