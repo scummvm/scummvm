@@ -721,7 +721,7 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 	unsigned int nextlineSrc = srcPitch / sizeof(short);
 	short *p = (short *)srcPtr;
 
-	unsigned nextlineDst = dstPitch / sizeof(short);
+	unsigned int nextlineDst = dstPitch / sizeof(short);
 	short *q = (short *)dstPtr;
 
 	while (height--) {
@@ -805,24 +805,26 @@ void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 }
 
 void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, 
-            int width, int height)
+					int width, int height)
 {
-	unsigned int nextlineSrc = srcPitch / sizeof(short);
-	short *p = (short *)srcPtr;
+	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	uint16 *p = (uint16 *)srcPtr;
 
-	unsigned int nextlineDst = dstPitch / sizeof(short);
-	short *q = (short *)dstPtr;
+	unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	uint16 *q = (uint16 *)dstPtr;
 
 	while(height--) {
 		for (int i = 0, j = 0; i < width; ++i, j += 2) {
-			unsigned short p1 = *(p + i);
-			unsigned short p2 = *(p + i + nextlineSrc);
-			unsigned short pi = (unsigned short)((INTERPOLATE(p1, p2) & colorMask) >> 1);
+			uint16 p1 = *(p + i);
+			uint32 pi;
+
+			pi = (((p1 & redblueMask) * 7) >> 3) & redblueMask;
+			pi |= (((p1 & greenMask) * 7) >> 3) & greenMask;
 
 			*(q + j) = p1;
 			*(q + j + 1) = p1;
-			*(q + j + nextlineDst) = pi;
-			*(q + j + nextlineDst + 1) = pi;
+			*(q + j + nextlineDst) = (uint16)pi;
+			*(q + j + nextlineDst + 1) = (uint16)pi;
 		}
 		p += nextlineSrc;
 		q += nextlineDst << 1;
