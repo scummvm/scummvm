@@ -1021,7 +1021,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			}
 			_channel[chan].vol = d * 1000;
 			if (_channel[chan].volFadeUsed)
-				_channel[chan].volFadeStep = (_channel[chan].volFadeDest - _channel[chan].vol) / (((1000 * _channel[chan].volFadeDelay) / 60) / 40);
+				_channel[chan].volFadeStep = (_channel[chan].volFadeDest - _channel[chan].vol) * 60 * 40 / (1000 * _channel[chan].volFadeDelay);
 			return;
 		case 0x700: // set pan
 			debug(5, "ImuseSetParam (0x700), sample(%d), pan(%d)", sample, d);
@@ -1044,7 +1044,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 	case 14: // ImuseFadeParam
 		switch (sub_cmd) {
 		case 0x600: // set new volume with fading
-			debug(5, "ImuseFadeParam - fade sample(%d), to volume(%d) with 60hz ticks(%d)", sample, d, e);
+			debug(0, "ImuseFadeParam - fade sample(%d), to volume(%d) with 60hz ticks(%d)", sample, d, e);
 			if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
 				stopSound(sample);
 				return;
@@ -1061,7 +1061,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			}
 			_channel[chan].volFadeDelay = e;
 			_channel[chan].volFadeDest = d * 1000;
-			_channel[chan].volFadeStep = (_channel[chan].volFadeDest - _channel[chan].vol) / (((1000 * e) / 60) / 40);
+			_channel[chan].volFadeStep = (_channel[chan].volFadeDest - _channel[chan].vol) * 60 * 40 / (1000 * e);
 			_channel[chan].volFadeUsed = true;
 			debug(5, "ImuseFadeParam: vol %d, volDest %d, step %d", _channel[chan].vol, d * 1000, _channel[chan].volFadeStep);
 			return;
