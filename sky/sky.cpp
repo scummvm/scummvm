@@ -286,8 +286,7 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 					break;
 
 				case OSystem::EVENT_LBUTTONDOWN:
-					_left_button_down++;
-					_skyMouse->buttonPressed();
+					_skyMouse->buttonPressed(1);
 #ifdef _WIN32_WCE
 					_sdl_mouse_x = event.mouse.x;
 					_sdl_mouse_y = event.mouse.y;
@@ -295,7 +294,7 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 					break;
 
 				case OSystem::EVENT_RBUTTONDOWN:
-					
+					_skyMouse->buttonPressed(2);					
 					break;
 
 				default:

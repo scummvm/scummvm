@@ -65,7 +65,6 @@ protected:
 
 	uint16 _debugMode;
 	uint16 _debugLevel;
-	uint _left_button_down;
 
 	int _numScreenUpdates;
 
