@@ -1573,6 +1573,7 @@ void ScummEngine_v72he::o72_writeFile() {
 		_hFileTable[slot].writeUint32LE(resID);
 		break;
 	case 8:
+		fetchScriptByte();
 		writeFileFromArray(slot, resID);
 		break;
 	default:
