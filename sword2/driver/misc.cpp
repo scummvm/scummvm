@@ -33,10 +33,6 @@ void SVM_DeleteFile(char *file) {
 	warning("stub DeleteFile");
 }
 
-void SVM_GetCurrentDirectory(uint32 max, char* path) {
-	warning("stub GetCurrentDirectory");
-}
-
 int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, uint32 *dwMaxCompLength, uint32 *dwFSFlags, uint8 *, uint32 a) {
 	warning("stub GetVolumeInformation %s", cdPath);
 	strcpy(sCDName, CD1_LABEL);

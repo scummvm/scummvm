@@ -1486,7 +1486,6 @@ extern int32 CloseMenuImmediately(void);
 extern uint32 SVM_timeGetTime(void);
 extern void SVM_SetFileAttributes(char *file, uint32 atrib);
 extern void SVM_DeleteFile(char *file);
-extern void SVM_GetCurrentDirectory(uint32 max, char* path);
 extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, uint32 *dwMaxCompLength, uint32 *dwFSFlags, uint8 *, uint32 a);
 extern void scumm_mkdir(const char *pathname);
 extern void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen);

@@ -75,10 +75,18 @@ resMan	res_man;	//declare the object global
 #define LOCAL_CACHE	0x4		// Cluster is cached on HDD
 #define LOCAL_PERM	0x8		// Cluster is on HDD.
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 typedef struct {
 	uint8 clusterName[20];	// Null terminated cluster name.
 	uint8 cd;		// Cd cluster is on and whether it is on the local drive or not.
-} _cd_inf;
+} GCC_PACK _cd_inf;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 // ---------------------------------------------------------------------------
 
@@ -1155,12 +1163,12 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	// Git rid of read-only status, if it is set.
 	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);
 
-	FILE *inFile, *outFile;
+	File inFile, outFile;
 	
-	inFile  = fopen(buf, "rb");
-	outFile = fopen(resource_files[newCluster], "wb");
+	inFile.open(buf, g_sword2->getGameDataPath());
+	outFile.open(resource_files[newCluster], g_sword2->getGameDataPath(), File::kFileWriteMode);
 
-	if (inFile == NULL || outFile == NULL) {
+	if (!inFile.isOpen() || !outFile.isOpen()) {
 		Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
 		Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
 	}
@@ -1231,9 +1239,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 
 	WaitForFade();
 
-	fseek(inFile, 0, SEEK_END);
-	uint32 size = ftell(inFile);
-	fseek(inFile, 0, SEEK_SET);
+	uint32 size = inFile.size();
 
 	char buffer[BUFFERSIZE];
 	int stepSize = (size / BUFFERSIZE) / 100;
@@ -1243,9 +1249,9 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	uint32 realRead = 0;
 
 	do {
-		realRead = fread(buffer, 1, BUFFERSIZE, inFile);
+		realRead = inFile.read(buffer, BUFFERSIZE);
 		read += realRead;
-		if (fwrite(buffer, 1, realRead, outFile) != realRead) {
+		if (outFile.write(buffer, realRead) != realRead) {
 			Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
 			Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
 		}
@@ -1288,8 +1294,8 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 		Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
 	}
 
-	fclose(inFile);
-	fclose(outFile);
+	inFile.close();
+	outFile.close();
 	Free_mem(text_spr);
 
 	EraseBackBuffer();		// for hardware rendering
@@ -1328,26 +1334,6 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	fseek(file, -1, SEEK_CUR);
 	fwrite(&cdTab[newCluster], 1, 1, file);
 	fclose(file);
-
-	// Now update DelList.log to indicate that this cluster should be
-	// removed at uninstall.
-	file = fopen("DelList.log", "r+");
-
-	if (file != NULL) {
-		fseek(file, -3, SEEK_END);
-
-		char path[_MAX_PATH];
-		SVM_GetCurrentDirectory(_MAX_PATH, path);
-
-		strcat(path, "\\");
-		strcat(path, resource_files[newCluster]);
-		fwrite(path, 1, strlen(path), file);
-
-		sprintf(path, "\nend");
-		fwrite(path, 1, 4, file);
-
-		fclose(file);
-	}
 }
 
 void resMan::GetCd(int cd) {
