@@ -47,8 +47,6 @@
 
 #define MAX_PATH 260
 
-void Start_game(void);
-
 int  RunningFromCd();
 
 uint8 quitGame = 0;
@@ -79,9 +77,6 @@ uint8 gamePaused=0;			// James17jun97
 uint8 graphics_level_fudged=0;	// James10july97
 uint8 stepOneCycle=0;	// for use while game paused
 
-//------------------------------------------------------------------------------------
-void PauseGame(void);			// James17jun97
-void UnpauseGame(void);			// James17jun97
 //------------------------------------------------------------------------------------
 
 static const VersionSettings bs2_settings[] = {
@@ -238,8 +233,6 @@ void BS2State::go()
 	uint32 rv;
 	uint8  breakOut = 0;
 	char	c;
-	int	j=100;
-	uint32	pc=0;
 
 //	Zdebug("[%s]", lpCmdLine);
 
@@ -457,10 +450,10 @@ void BS2State::go()
 //------------------------------------------------------------------------------------
 int RunningFromCd()
 {
+/*
    char  sCDName[MAX_PATH];
    char  sRoot[MAX_PATH];
    DWORD dwMaxCompLength, dwFSFlags;
-/*
    GetModuleFileName(NULL , sRoot, _MAX_PATH);
    *(strchr(sRoot,'\\')+1) = '\0';
 

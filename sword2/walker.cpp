@@ -112,7 +112,6 @@ int32 FN_walk(int32 *params)	// James (14nov96)
 	int8			route;
 	int32			walk_pc;
 	_walkData		*walkAnim;
-	uint8			colliding=0;	// set to 1 when collision avoided
 
 	//----------------------------------------------------------------------------------------
 	// get the parameters

@@ -289,8 +289,8 @@ int32	frame;
 //--------------------------------------------------------------------------------------
 uint8 CheckForCollision(void)
 {
-	static uint32 player_pc;
-	static uint32 non_player_pc;
+//	static uint32 player_pc;
+//	static uint32 non_player_pc;
 
 
 	uint8 collision=0;

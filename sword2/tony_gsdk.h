@@ -25,9 +25,9 @@
 
 
 
-uint32	Read_file(char	*name,	mem	**membloc, uint32 uid);
-int32	Direct_read_file(char	*name,	char	*ad);
-int32	Direct_write_file(char	*name,	char	*ad, uint32 total_bytes);
+uint32	Read_file(const char	*name,	mem	**membloc, uint32 uid);
+int32	Direct_read_file(const char	*name,	char	*ad);
+int32	Direct_write_file(const char	*name,	char	*ad, uint32 total_bytes);
 
 
 #endif

@@ -17,7 +17,6 @@
  * $Header$
  */
 
-#include <process.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -111,7 +110,8 @@ void	resMan::InitResMan(void)	//Tony29May96
 	temp = Twalloc(end, MEM_locked, UID_temp);	//get some space for the incoming resource file - soon to be trashed
 
 	file.seek(0, SEEK_SET );
-	if	(file.read( temp->ad, end )==-1)
+	file.read( temp->ad, end );
+	if	(file.ioFailed())
 	{
 		file.close();
 		Zdebug("InitResMan cannot *READ* resource.inf");
@@ -163,7 +163,8 @@ void	resMan::InitResMan(void)	//Tony29May96
 //table seems ok so malloc some space
 	res_conv_table = (uint16 *) malloc( end );
 
-	if	(file.read( res_conv_table, end )==-1)
+	file.read( res_conv_table, end );
+	if	(file.ioFailed())
 	{
 		file.close();
 		Zdebug("InitResMan cannot *READ* resource.tab");
@@ -301,8 +302,6 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 	uint32	pos,len;
 
 	uint32	table_offset;
-
-	int	first=0;
 
 
 #ifdef _DEBUG
@@ -985,8 +984,6 @@ void	resMan::Kill_all_objects(uint8 wantInfo)	// James17jan97
 
 void resMan::CacheNewCluster(uint32 newCluster)
 {
-	uint8 black[4]={0,0,0,0};
-
 	//----------------------------------------------------------------------------------------
 	// Stop any music from streaming off the CD before we start the cluster-copy!
 	// - eg. the looping restore-panel music will still be playing if we restored a game
@@ -1466,9 +1463,6 @@ void resMan::GetCd(int cd)
 			done = TRUE;
 		else
 		{
-			char	sCDName[_MAX_PATH];
-			DWORD   dwMaxCompLength, dwFSFlags;
-
 			index = 0;
 			while((cdDrives[index] != 0) && (!done) && (index<24))
 			{

@@ -18,8 +18,7 @@
  */
 
 //------------------------------------------------------------------------------------
-#include <io.h>		// for access()
-#include <stdio.h>
+#include "stdafx.h"
 
 //#include "src\driver96.h"
 #include "anims.h"

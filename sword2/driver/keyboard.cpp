@@ -67,8 +67,6 @@
 
 #include "driver96.h"
 
-#define MAX_KEY_BUFFER 23
-
 uint8	keyBacklog = 0;				// The number of key presses waiting to be processed.
 uint8	keyPointer = 0;				// Index of the next key to read from the buffer.
 char    keyBuffer[MAX_KEY_BUFFER];	// The keyboard buffer

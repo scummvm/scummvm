@@ -64,8 +64,8 @@
 
 
 uint8			consoleStatus = 0;			// 1 - console display
-static uint16	consoley = 0;
-static uint32	consoleSize;
+//static uint16	consoley = 0;
+//static uint32	consoleSize;
 static uint8	*consoleSprite = NULL;
 
 

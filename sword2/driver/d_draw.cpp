@@ -89,7 +89,7 @@ int32			dxHelCaps = 0;
 //DDCOLORKEY		blackColorKey;
 
 
-static int32 platformIsNT = 0;
+//static int32 platformIsNT = 0;
 
 
 //----------------------------------------------------------------------------------------------------------------
@@ -120,11 +120,11 @@ int32 PlotDots(int16 x, int16 y, int16 count)
 
 {
 
+	warning("stub PlotDots( %d, %d, %d )", x, y, count);
+/*
 	int16			i;
 	uint8			*dst;
 
-	warning("stub PlotDots( %d, %d, %d )", x, y, count);
-/*
 	DDSURFACEDESC	ddDescription;
 	HRESULT			hr;
 

@@ -26,7 +26,6 @@
 
 //general odds and ends
 
-#include <sys/type.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 //#include <io.h>
@@ -48,7 +47,7 @@
 
 //-----------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
-uint32	Read_file(char	*name,	mem	**membloc, uint32	uid)	//Tony25Apr96
+uint32	Read_file(const char	*name,	mem	**membloc, uint32	uid)	//Tony25Apr96
 {
 //read the file in and place into an allocated MEM_float block
 //used for non resources manager files - stuff like fonts, etc.
@@ -74,7 +73,7 @@ uint32	Read_file(char	*name,	mem	**membloc, uint32	uid)	//Tony25Apr96
 	
 	fseek( fh, 0, SEEK_SET );	//back to beginning of file
 
-	if	(fread( (*membloc)->ad, sizeof(char), end,fh)==-1)
+	if	(fread( (*membloc)->ad, sizeof(char), end,fh) < end)
 	{	Zdebug("Read_file read fail %d", name);
 		return(0);
 	}
@@ -84,7 +83,7 @@ uint32	Read_file(char	*name,	mem	**membloc, uint32	uid)	//Tony25Apr96
 	return(end);	//ok, done it - return bytes read
 }
 //-----------------------------------------------------------------------------------------------------------------------
-int32	Direct_read_file(char	*name,	char	*ad)	//Tony1May96
+int32	Direct_read_file(const char	*name,	char	*ad)	//Tony1May96
 {
 //load the file directly into the memory location passed
 //memory must be pre-allocated
@@ -105,7 +104,7 @@ int32	Direct_read_file(char	*name,	char	*ad)	//Tony1May96
    end = ftell(fh);	//finally got the end
 	fseek( fh, 0, SEEK_SET );	//back to beginning of file
 
-	if	(fread( ad, sizeof(char), end,fh)==-1)
+	if	(fread( ad, sizeof(char), end,fh) < end)
 	{	Zdebug("Direct_read_file read fail %d", name);
 		return(0);
 	}
@@ -116,7 +115,7 @@ int32	Direct_read_file(char	*name,	char	*ad)	//Tony1May96
 	return(end);	//ok, done it - return bytes read
 }
 //-----------------------------------------------------------------------------------------------------------------------
-int32	Direct_write_file(char	*name,	char	*ad, uint32 total_bytes)	//Tony1May96
+int32	Direct_write_file(const char	*name,	char	*ad, uint32 total_bytes)	//Tony1May96
 {
 //load the file directly into the memory location passed
 	int	fh;
