@@ -746,27 +746,23 @@ void IMuseDigital::callback() {
 	}
 }
 
-void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_rate) {
+void IMuseDigital::startSound(int sound, byte *voiceBundleData, AudioInputStream *input) {
 	debug(5, "IMuseDigital::startSound(%d)", sound);
 	int l, r;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (!_channel[l].used && !_channel[l].handle.isActive()) {
 			byte *ptr, *s_ptr;
-			byte *_voiceVocData = (voc_src && voc_size > 0) ? voc_src : 0;
-			byte *_voiceBundleData = (voc_src && voc_size <= 0) ? voc_src : 0;
-			if ((sound == kTalkSoundID) && (_voiceBundleData)) {
-				s_ptr = ptr = _voiceBundleData;
-			} else if ((sound == kTalkSoundID) && (_voiceVocData)) {
-				//
-				s_ptr = ptr = 0;
-			} else if (sound != kTalkSoundID) {
-				ptr = _scumm->getResourceAddress(rtSound, sound);
-				s_ptr = ptr;
+			if (sound != kTalkSoundID) {
+				s_ptr = ptr = _scumm->getResourceAddress(rtSound, sound);
 				if (ptr == NULL) {
 					warning("IMuseDigital::startSound(%d) NULL resource pointer", sound);
 					return;
 				}
+			} else if (voiceBundleData) {
+				s_ptr = ptr = voiceBundleData;
+			} else if (input) {
+				s_ptr = ptr = 0;
 			} else {
 				error("IMuseDigital::startSound() unknown condition");
 			}
@@ -782,26 +778,20 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 			_channel[l].numMarkers = 0;
 
 			_channel[l].idSound = sound;
-			
-			uint32 tag;
-			int32 size = 0;
-			
-			int freq, channels, bits;
-			int mixerFlags;
-			byte *data;
 
-			if ((sound == kTalkSoundID) && (_voiceVocData) || (READ_UINT32(ptr) == MKID('Crea'))) {
-				if (ptr && READ_UINT32(ptr) == MKID('Crea')) {
-					int loops = 0;
-					voc_src = readVOCFromMemory(ptr, voc_size, voc_rate, loops);
-				}
-				freq = voc_rate;
-				size = voc_size;
-				bits = 8;
-				channels = 1;
-				mixerFlags = SoundMixer::FLAG_UNSIGNED;
-				data = voc_src;
+			if (input) {
+				// Do nothing here, we already have an audio stream
+			} else if (READ_UINT32(ptr) == MKID('Crea')) {
+				// Create an AudioInputStream
+				input = makeVOCStream(ptr);
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
+				uint32 tag;
+				int32 size = 0;
+				
+				int freq, channels, bits;
+				int mixerFlags;
+				byte *data;
+
 				ptr += 16;
 				freq = channels = bits = 0;
 				do {
@@ -863,7 +853,7 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					}
 				} while (tag != MKID_BE('DATA'));
 
-				if ((sound == kTalkSoundID) && (_voiceBundleData)) {
+				if ((sound == kTalkSoundID) && voiceBundleData) {
 					if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
 						Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
 						freq = (freq * a->talkFrequency) / 256;
@@ -931,12 +921,15 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					memcpy(data, ptr, size);
 				} else
 					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
+
+				// Create an AudioInputStream
+				input = makeLinearInputStream(freq, mixerFlags | SoundMixer::FLAG_AUTOFREE, data, size, 0, 0);
 			} else {
 				error("IMuseDigital::startSound(): Unknown sound format");
 			}
 
-			// Create an AudioInputStream and hook it to the mixer.
-			_channel[l].stream = makeLinearInputStream(freq, mixerFlags | SoundMixer::FLAG_AUTOFREE, data, size, 0, 0);
+			// Set the audio stream for this new channel
+			_channel[l].stream = input;
 
 			_channel[l].started = false;
 			_channel[l].used = true;
@@ -1424,7 +1417,7 @@ void IMuseDigital::playBundleSound(const char *sound) {
 
 	if (ptr) {
 		stopSound(kTalkSoundID);
-		startSound(kTalkSoundID, ptr);
+		startSound(kTalkSoundID, ptr, 0);
 		free(ptr);
 	}
 }

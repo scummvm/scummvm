@@ -30,10 +30,10 @@ EXECUTABLE := scummvm$(EXEEXT)
 include config.mak
 
 # Uncomment this for stricter compile time code verification
-# CXXFLAGS+= -Werror
+CXXFLAGS+= -Werror
 
 CXXFLAGS:= -Wall $(CXXFLAGS)
-CXXFLAGS+= -O -Wuninitialized
+#CXXFLAGS+= -O -Wuninitialized
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 # Even more warnings...
 CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wconversion

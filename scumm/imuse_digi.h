@@ -128,7 +128,7 @@ public:
 	void stopBundleMusic();
 	void playBundleSound(const char *sound);
 
-	void startSound(int sound, byte *src, int size = 0, int rate = 0);
+	void startSound(int sound, byte *voiceBundleData, AudioInputStream *input);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
@@ -136,7 +136,7 @@ public:
 
 	void setMasterVolume(int vol) {}
 
-	void startSound(int sound) { startSound(sound, 0, 0, 0); }
+	void startSound(int sound) { startSound(sound, 0, 0); }
 	void stopSound(int sound);
 	void stopAllSounds();
 	void pause(bool pause);
