@@ -848,7 +848,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_case28(_curSpriteGroupId, value1, value2);
+		spriteGroupSet_tx_ty(_curSpriteGroupId, value1, value2);
 		break;
 	case 18:
 		value4 = pop();
@@ -928,7 +928,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_case26(_curSpriteGroupId, value1);
+		spriteGroupSet_field_20(_curSpriteGroupId, value1);
 		break;
 	case 49:
 		value2 = pop();
@@ -936,7 +936,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_tx_ty(_curSpriteGroupId, value1, value2);
+		spriteGroupSet_inc_tx_ty(_curSpriteGroupId, value1, value2);
 		break;
 	case 52:
 		copyScriptString(string);
@@ -967,16 +967,16 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 		switch (type) {
 		case 0:
-			spriteGroupSet_case5_0(_curSpriteGroupId, value1);
+			spriteGroupSet_scale_x_ratio_mul(_curSpriteGroupId, value1);
 			break;
 		case 1:
-			spriteGroupSet_case5_1(_curSpriteGroupId, value1);
+			spriteGroupSet_scale_x_ratio_div(_curSpriteGroupId, value1);
 			break;
 		case 2:
-			spriteGroupSet_case5_2(_curSpriteGroupId, value1);
+			spriteGroupSet_scale_y_ratio_mul(_curSpriteGroupId, value1);
 			break;
 		case 3:
-			spriteGroupSet_case5_3(_curSpriteGroupId, value1);
+			spriteGroupSet_scale_y_ratio_div(_curSpriteGroupId, value1);
 			break;
 		default:
 			error("o100_setSpriteGroupInfo subOp 60: Unknown case %d", subOp);
@@ -986,7 +986,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_case56(_curSpriteGroupId);
+		spriteGroupSet_flagNeedRedrawAnd(_curSpriteGroupId);
 		break;
 	default:
 		error("o100_setSpriteGroupInfo: Unknown case %d", subOp);

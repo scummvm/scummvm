@@ -974,16 +974,16 @@ protected:
 	void spriteGroupSet_case0_5(int spriteGroupId, int value);
 	void spriteGroupSet_case0_6(int spriteGroupId, int value);
 	void spriteGroupSet_case0_7(int spriteGroupId, int value);
-	void spriteGroupSet_case5_0(int spriteGroupId, int value);
-	void spriteGroupSet_case5_1(int spriteGroupId, int value);
-	void spriteGroupSet_case5_2(int spriteGroupId, int value);
-	void spriteGroupSet_case5_3(int spriteGroupId, int value);
+	void spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, int x2, int y2);
 	void spriteGroupSet_zorderPriority(int spriteGroupId, int value);
 	void spriteGroupSet_tx_ty(int spriteGroupId, int value1, int value2);
-	void spriteGroupSet_case26(int spriteGroupId, int value);
-	void spriteGroupSet_case28(int spriteGroupId, int value1, int value2);
-	void spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, int x2, int y2);
-	void spriteGroupSet_case56(int spriteGroupId);
+	void spriteGroupSet_inc_tx_ty(int spriteGroupId, int value1, int value2);
+	void spriteGroupSet_field_20(int spriteGroupId, int value);
+	void spriteGroupSet_scale_x_ratio_mul(int spriteGroupId, int value);
+	void spriteGroupSet_scale_x_ratio_div(int spriteGroupId, int value);
+	void spriteGroupSet_scale_y_ratio_mul(int spriteGroupId, int value);
+	void spriteGroupSet_scale_y_ratio_div(int spriteGroupId, int value);
+	void spriteGroupSet_flagNeedRedrawAnd(int spriteGroupId);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
 	void spritesResetGroup(int spriteGroupId);
