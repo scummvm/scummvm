@@ -313,7 +313,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			argumentsCount = scriptS.readByte();
 			functionNumber = scriptS.readUint16LE();
 			if (functionNumber >= SCRIPT_FUNCTION_MAX) {
-				error("Script::runThread() Invalid script function number");
+				error("Script::runThread() Invalid script function number (%d)", functionNumber);
 			}
 
 			debug(8, "Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);

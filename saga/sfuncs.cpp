@@ -126,7 +126,33 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_protectResult),
 		OPCODE(sfRand),
 		OPCODE(SF_fadeMusic),
-		OPCODE(SF_playVoice)
+		OPCODE(SF_playVoice),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub)
 	};
 	_scriptFunctionsList = scriptFunctionsList;
 }
@@ -1559,6 +1585,13 @@ void Script::finishDialog(int replyID, int flags, int bitOffset) {
 
 	_conversingThread = NULL;
 	wakeUpThreads(kWaitTypeDialogBegin);
+}
+
+void Script::SF_stub(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_stub(), %d args", nArgs);
 }
 
 } // End of namespace Saga

@@ -46,7 +46,7 @@ namespace Saga {
 #define S_ERROR_PREFIX "SError: "
 #define S_WARN_PREFIX "SWarning: "
 
-#define SCRIPT_FUNCTION_MAX 78
+#define SCRIPT_FUNCTION_MAX 104
 #define DEFAULT_THREAD_STACK_SIZE 256
 
 enum AddressTypes {
@@ -534,6 +534,7 @@ private:
 	void sfRand(SCRIPTFUNC_PARAMS);
 	void SF_fadeMusic(SCRIPTFUNC_PARAMS);
 	void SF_playVoice(SCRIPTFUNC_PARAMS);
+	void SF_stub(SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga
