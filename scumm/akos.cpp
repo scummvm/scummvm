@@ -309,7 +309,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 			result |= codec16(xmoveCur, ymoveCur);
 			break;
 		default:
-			error("akos_drawCostumeChannel: invalid codec %d", codec);
+			error("akos_drawLimb: invalid codec %d", codec);
 		}
 	} else {
 		extra = p[2];
@@ -343,7 +343,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 				result |= codec16(xmoveCur, ymoveCur);
 				break;
 			default:
-				error("akos_drawCostumeChannel: invalid codec %d", codec);
+				error("akos_drawLimb: invalid codec %d", codec);
 			}
 		}
 	}

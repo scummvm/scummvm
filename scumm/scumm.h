@@ -1036,6 +1036,7 @@ public:
 	byte *_shadowPalette;
 	int _heSndSoundFreq, _heSndOffset, _heSndTimer, _heSndSoundId, _heSndLoop;
 	bool _skipDrawObject;
+	int _timers[4];
 
 protected:
 	int _shadowPaletteSize;

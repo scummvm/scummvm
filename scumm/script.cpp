@@ -657,7 +657,7 @@ void ScummEngine::setResult(int value) {
 
 void ScummEngine::push(int a) {
 	assert(_scummStackPos >= 0 && _scummStackPos < ARRAYSIZE(_vmStack));
-	//debug(9, "push %d", a);
+	debug(9, "push %d", a);
 	_vmStack[_scummStackPos++] = a;
 }
 
@@ -666,7 +666,7 @@ int ScummEngine::pop() {
 		error("No items on stack to pop() for %s (0x%X) at [%d-%d]", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
 	}
 	--_scummStackPos;
-	//debug(9, "pop %d", _vmStack[_scummStackPos]);
+	debug(9, "pop %d", _vmStack[_scummStackPos]);
 	return _vmStack[_scummStackPos];
 }
 

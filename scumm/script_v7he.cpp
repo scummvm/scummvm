@@ -655,7 +655,7 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 	case 122:
 	case 123:
 	case 203:
-		debug(1,"stub queueload (%d) resource %d", op, pop());
+		debug(5,"stub queueload (%d) resource %d", op, pop());
 		break;
 	case 159:
 		resid = pop();
@@ -675,11 +675,11 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 		break;
 	case 233:
 		resid = pop();
-		debug(1,"stub o7_resourceRoutines lock object %d", resid);
+		debug(5,"stub o7_resourceRoutines lock object %d", resid);
 		break;
 	case 235:
 		resid = pop();
-		debug(1,"stub o7_resourceRoutines unlock object %d", resid);
+		debug(5,"stub o7_resourceRoutines unlock object %d", resid);
 		break;
 	default:
 		error("o7_resourceRoutines: default case %d", op);

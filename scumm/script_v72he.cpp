@@ -605,21 +605,28 @@ void ScummEngine_v72he::o72_objectY() {
 }
 
 void ScummEngine_v72he::o72_getTimer() {
-	int b =	pop();
-	int a =	fetchScriptByte();
-	warning("o72_getTimer stub (%d, %d)", b, a);
-	if (a == 10)
-		push(1);
-	else
+	int timer = pop();
+	int cmd = fetchScriptByte();
+
+	if (cmd == 10) {
+		checkRange(3, 1, timer, "o72_getTimer: Timer %d out of range(%d)");
+		int diff = _system->get_msecs() - _timers[timer];
+		push(diff);
+	} else {
 		push(0);
+	}
 }
 
 void ScummEngine_v72he::o72_setTimer() {
-	int b =	pop();
-	int a =	fetchScriptByte();
-	if (a != 158)
-		error("TIMER command %d?", a);
-	warning("o72_setTimer stub (%d, %d)", b, a);
+	int timer = pop();
+	int cmd = fetchScriptByte();
+
+	if (cmd == 158) {
+		checkRange(3, 1, timer, "o72_setTimer: Timer %d out of range(%d)");
+		_timers[timer] = _system->get_msecs();
+	} else {
+		error("TIMER command %d?", cmd);
+	}
 }
 
 void ScummEngine_v72he::o72_wordArrayDec() {

@@ -654,6 +654,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_heSndTimer = 0;
 	_heSndLoop = 0;
 	_heSndSoundFreq = 0;
+	memset(_timers, 0, sizeof(_timers));
 
 	//
 	// Init all VARS to 0xFF
