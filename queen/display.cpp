@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "queen/display.h"
 #include "queen/defs.h"
+#include "queen/logic.h" // For RandomSource
 #include "queen/resource.h"
 
 
@@ -414,7 +415,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 			j += jdir;
 			if(j <= 0 || j >= 14) {
 				jdir = -jdir;
-				if (_randomizer.getRandomNumber(1)) {
+				if (Logic::randomizer.getRandomNumber(1)) {
 					if (ABS(jdir) == 1) {
 						jdir *= 2;
 					}

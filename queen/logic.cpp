@@ -219,6 +219,9 @@ void Command_::readAllCommandsFrom(byte *&ptr) {
 
 
 
+Common::RandomSource Logic::randomizer;
+
+
 Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
 	: _resource(resource), _graphics(graphics), _display(theDisplay), 
 	_input(input), _sound(sound) {

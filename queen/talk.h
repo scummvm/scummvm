@@ -107,8 +107,6 @@ class Talk {
 		signed char ff;
 	};
 
-	Common::RandomSource _randomizer;
-
 	Graphics  *_graphics;
 	Input     *_input;
 	Logic     *_logic;

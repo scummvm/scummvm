@@ -138,8 +138,6 @@ private:
 	uint16 _horizontalScroll;
 	uint16 _bdWidth, _bdHeight;
 
-	Common::RandomSource _randomizer;
-
 	bool _gotTick;
 
 	Dynalum _dynalum;

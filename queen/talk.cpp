@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "queen/talk.h"
 #include "queen/graphics.h"
+#include "queen/logic.h"
 #include "queen/sound.h"
 
 namespace Queen {
@@ -850,7 +851,7 @@ void Talk::speakSegment(
 			int head;
 
 			if (parameters->rf > 0)
-				head = bf + _randomizer.getRandomNumber(parameters->rf);
+				head = bf + Logic::randomizer.getRandomNumber(parameters->rf);
 			else
 				head = bf;
 

@@ -285,6 +285,7 @@ public:
 		GAME_STATE_COUNT   = 211
 	};
 
+	static Common::RandomSource randomizer;
 
 protected:
 
