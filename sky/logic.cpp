@@ -222,7 +222,41 @@ void SkyLogic::waitSync() {
 }
 
 void SkyLogic::simpleAnim() {
-	error("Stub: SkyLogic::simpleAnim");
+	// follow an animation sequence module
+	// whilst ignoring the coordinate data
+
+	uint16 *grafixProg = _compact->grafixProg;
+
+	// *grafix_prog: command
+	while (*grafixProg) {
+		if (*grafixProg != SEND_SYNC) {
+			grafixProg++;
+			grafixProg++; // skip coordinates
+
+			// *grafix_prog: frame
+			if (*grafixProg >= 64)
+				_compact->frame = *grafixProg;
+			else
+				_compact->frame = *grafixProg + _compact->offset;
+
+			grafixProg++;
+			_compact->grafixProg = grafixProg;
+			return;
+		}
+
+		grafixProg++;
+		// *grafix_prog: id to sync
+		Compact *compact2 = SkyState::fetchCompact(*grafixProg);
+		grafixProg++;
+
+		// *grafix_prog: sync
+		compact2->sync = *grafixProg;
+		grafixProg++;
+	}
+
+	_compact->downFlag = 0; // return 'ok' to script
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::checkModuleLoaded(uint16 moduleNo) {
@@ -488,6 +522,7 @@ static const uint32 forwardList5b[] = {
 };
 
 #define RESULT 1
+#define TEXT1 54
 void SkyLogic::initScriptVariables() {
 	for (uint i = 0; i < sizeof(_scriptVariables)/sizeof(uint32); i++)
 		_scriptVariables[i] = 0;
@@ -651,7 +686,7 @@ script:
 			a = (this->*mcodeTable[mcode]) (a, b, c);
 
 			if (!(a & 0xffff))
-				return (((scriptData - moduleStart) << 15) | scriptNo);
+				return (((scriptData - moduleStart) << 16) | scriptNo);
 			break;
 		case 12: // more_than
 			a = pop();
@@ -769,7 +804,8 @@ uint32 SkyLogic::fnAssignBase(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnDiskMouse(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnDiskMouse");
+	warning("Stub: fnDiskMouse");
+	return 1;
 }
 
 uint32 SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
@@ -823,7 +859,16 @@ uint32 SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 }
 
 uint32 SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSetToStand");
+	_compact->mood = 1; // high level stood still
+
+	uint16 *p = (uint16 *)SkyCompact::getCompactElem(_compact, C_STAND_UP
+			+ _compact->extCompact->megaSet + _compact->extCompact->dir * 4); 
+
+	_compact->offset = *p++; // get frames offset
+	_compact->grafixProg = p;
+	_compact->logic = L_SIMPLE_MOD;
+	simpleAnim();
+	return 0; // drop out of script
 }
 
 uint32 SkyLogic::fnTurnTo(uint32 direction, uint32 b, uint32 c) {
@@ -858,11 +903,13 @@ uint32 SkyLogic::fnKillId(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnNoHuman(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnNoHuman");
+	warning("Stub: fnNoHuman");
+	return 1;
 }
 
 uint32 SkyLogic::fnAddHuman(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnAddHuman");
+	warning("Stub: fnAddHuman");
+	return 1;
 }
 
 uint32 SkyLogic::fnAddButtons(uint32 a, uint32 b, uint32 c) {
@@ -894,7 +941,8 @@ uint32 SkyLogic::fnSpeakMe(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnSpeakMeDir(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSpeakMeDir");
+	warning("Stub: fnSpeakMeDir");
+	return 0;
 }
 
 uint32 SkyLogic::fnSpeakWait(uint32 a, uint32 b, uint32 c) {
@@ -906,7 +954,54 @@ uint32 SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnChooser");
+	warning("fnChooser: lowTextManager unimplented");
+	return 1;
+	// setup the text questions to be clicked on
+	// read from TEXT1 until 0
+
+//	systemFlags |= 1 << SF_CHOOSING; // can't save/restore while choosing
+
+//	theChosenOne = 0; // clear result
+
+	uint32 *p = _scriptVariables + TEXT1;
+	uint16 ycood = TOP_LEFT_Y; // rolling coordinate
+
+	while (*p) {
+		uint32 textNum = *p++;
+
+		uint8 *data; // = lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, 0);
+
+		// stipple the text
+		uint16 height = ((dataFileHeader *)data)->s_height;
+		uint16 width = ((dataFileHeader *)data)->s_width;
+		width >>= 1;
+
+		for (uint16 i = height; i > 0; i++) {
+			for (uint16 j = width; j > 0; j--) {
+				if (!*data) // only change 0's
+					*data = 1;
+				*data += 2;
+			}
+			data++;
+		}
+
+		_compact->getToFlag = textNum & 0xffff;
+		_compact->downFlag = *p++ & 0xffff; // get animation number
+
+		_compact->status |= ST_MOUSE; // mouse detects
+
+		_compact->xcood = TOP_LEFT_X; // set coordinates
+		_compact->ycood = ycood;
+		ycood += 12;
+	}
+
+	if (p == _scriptVariables + TEXT1)
+		return 1;
+
+	_compact->logic = L_CHOOSE; // player frozen until choice made
+	fnAddHuman(0, 0, 0); // bring back mouse
+
+	return 0;
 }
 
 uint32 SkyLogic::fnHighlight(uint32 a, uint32 b, uint32 c) {
@@ -1024,7 +1119,8 @@ uint32 SkyLogic::fnAwaitSync(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnIncMegaSet(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnIncMegaSet");
+	_compact->extCompact->megaSet += NEXT_MEGA_SET;
+	return NEXT_MEGA_SET;
 }
 
 uint32 SkyLogic::fnDecMegaSet(uint32 a, uint32 b, uint32 c) {
@@ -1035,16 +1131,30 @@ uint32 SkyLogic::fnSetMegaSet(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnSetMegaSet");
 }
 
-uint32 SkyLogic::fnMoveItems(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnMoveItems");
+uint32 SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
+	// Move a list of id's to another screen
+	uint16 *p = SkyCompact::move_list[listNo];
+	for (int i = 0; i < 2; i++) {
+		if (!*p)
+			return 1;
+		Compact *cpt = SkyState::fetchCompact(*p++);
+		cpt->screen = screenNo & 0xffff;
+	}
+	return 1;
 }
 
 uint32 SkyLogic::fnNewList(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnNewList");
 }
 
-uint32 SkyLogic::fnAskThis(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnAskThis");
+uint32 SkyLogic::fnAskThis(uint32 textNo, uint32 animNo, uint32 c) {
+	// find first free position
+	uint32 *p = _scriptVariables + TEXT1;
+	while (*p)
+		p += 2;
+	*p++ = textNo;
+	*p = animNo;
+	return 1;
 }
 
 uint32 SkyLogic::fnRandom(uint32 a, uint32 b, uint32 c) {

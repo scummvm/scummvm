@@ -57,9 +57,10 @@
 #define C_SP_COLOUR	90
 #define C_MEGA_SET	112
 #define C_GRID_WIDTH	114
+#define C_STAND_UP	138
 
 #define SECTION_0_ITEM 119 //item number of first item section
-#define NEXT_MEGA_SET (sizeof(Compact) + sizeof(ExtCompact) - C_GRID_WIDTH)
+#define NEXT_MEGA_SET (258 - C_GRID_WIDTH)
 
 #define SEND_SYNC	0xFFFF
 #define LF_START_FX	0xFFFE
