@@ -22,20 +22,22 @@
 
 
 #include "stdafx.h"
-#include <time.h>
 
-#include "actor.h"
-#include "charset.h"
-#include "imuse.h"
-#include "intern.h"
-#include "scumm.h"
-#include "sound.h"
-#include "verbs.h"
-#include "smush/smush_player.h"
+#include "scumm/actor.h"
+#include "scumm/charset.h"
+#include "scumm/imuse.h"
+#include "scumm/intern.h"
+#include "scumm/object.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/verbs.h"
+#include "scumm/smush/smush_player.h"
+
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#include "dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
+#include "scumm/dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
 				// Remove when INSANE is implemented
 
 #define OPCODE(x)	{ &Scumm_v6::x, #x }
@@ -2184,7 +2186,7 @@ void Scumm_v6::o6_delay() {
 	// CMI it would seem this should delay for 1/10th of a second...
 	uint32 delay = (uint16)pop();
 	vm.slot[_currentScript].delay = delay;
-	vm.slot[_currentScript].status = 1;
+	vm.slot[_currentScript].status = ssPaused;
 	o6_breakHere();
 }
 
@@ -2199,7 +2201,7 @@ void Scumm_v6::o6_delaySeconds() {
 		delay = delay * 90;
 
 	vm.slot[_currentScript].delay = delay;
-	vm.slot[_currentScript].status = 1;
+	vm.slot[_currentScript].status = ssPaused;
 	o6_breakHere();
 }
 
@@ -2207,7 +2209,7 @@ void Scumm_v6::o6_delayMinutes() {
 	// FIXME - are we really measuring minutes here?
 	uint32 delay = (uint16)pop() * 3600;
 	vm.slot[_currentScript].delay = delay;
-	vm.slot[_currentScript].status = 1;
+	vm.slot[_currentScript].status = ssPaused;
 	o6_breakHere();
 }
 
@@ -2422,29 +2424,26 @@ void Scumm_v6::o6_kernelSetFunctions() {
 						case 2:
 							sp->play("tovista1.san", getGameDataPath());
 							break;
-						case 3: {
-								if (readArray(233,0,50) == 0) {
-									InfoDialog *dialog = new InfoDialog(_newgui, this,
-														"Set MineRoad - You can now jump the gorge.");
-									runDialog (dialog);
-									delete dialog;
+						case 3:
+							if (readArray(233,0,50) == 0) {
+								InfoDialog info(_newgui, this, "Set MineRoad - You can now jump the gorge.");
+								runDialog(info);
 
-									writeArray(233, 0, 50, 1); // INSANE callback: Chain
-									writeArray(233, 0, 51, 1); // INSANE callback: Chainsaw
-									writeArray(233, 0, 52, 1); // INSANE callback: Mace
-									writeArray(233, 0, 53, 1); // INSANE callback: 2x4
-									writeArray(233, 0, 54, 1); // INSANE callback: Wrench
-									writeArray(233, 0, 55, 1); // INSANE callback: Dust
+								writeArray(233, 0, 50, 1); // INSANE callback: Chain
+								writeArray(233, 0, 51, 1); // INSANE callback: Chainsaw
+								writeArray(233, 0, 52, 1); // INSANE callback: Mace
+								writeArray(233, 0, 53, 1); // INSANE callback: 2x4
+								writeArray(233, 0, 54, 1); // INSANE callback: Wrench
+								writeArray(233, 0, 55, 1); // INSANE callback: Dust
 
-									writeArray(233, 0, 8, 1);  // INSANE callback: Give Googles
-									writeArray(233, 0, 7, 1);  // INSANE callback: Give nitro fuel
+								writeArray(233, 0, 8, 1);  // INSANE callback: Give Googles
+								writeArray(233, 0, 7, 1);  // INSANE callback: Give nitro fuel
 
-									putState(235, 1);	   // Cheat and activate Ramp
-									writeVar(142 | 0x8000, 1); // Cheat and activate auto-booster (fan)
-								}
-//								smush->play("minefite.san", getGameDataPath());
+								putState(235, 1);	   // Cheat and activate Ramp
+								writeVar(142 | 0x8000, 1); // Cheat and activate auto-booster (fan)
+							}
+//							sp->play("minefite.san", getGameDataPath());
 							break;
-						}
 						case 4:
 							sp->play("rottopen.san", getGameDataPath());
 							break;

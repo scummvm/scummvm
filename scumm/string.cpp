@@ -76,11 +76,10 @@ void Scumm::unkMessage2() {
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
 	// FIXME: I know this is the right thing to do for MI1 and MI2. For
 	// all other games it's just a guess.
-	VAR(VAR_KEYPRESS) = runDialog (dialog);
-	delete dialog;
+	InfoDialog dialog(_newgui, this, (char*)buf);
+	VAR(VAR_KEYPRESS) = runDialog(dialog);
 
 	_messagePtr = tmp;
 }

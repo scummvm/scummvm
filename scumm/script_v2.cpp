@@ -21,12 +21,13 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "charset.h"
-#include "intern.h"
-#include "sound.h"
-#include "verbs.h"
+#include "scumm/actor.h"
+#include "scumm/charset.h"
+#include "scumm/intern.h"
+#include "scumm/object.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/verbs.h"
 
 #define OPCODE(x)	{ &Scumm_v2::x, #x }
 

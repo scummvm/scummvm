@@ -19,15 +19,18 @@
  *
  */
 #include "stdafx.h"
-#include "scumm.h"
-#include "sound.h"
-#include "actor.h"
-#include "boxes.h"
-#include "imuse.h"
-#include "player_v2.h"
-#include "debugger.h"
-#include "common/util.h"
+
 #include "common/file.h"
+#include "common/util.h"
+
+#include "scumm/actor.h"
+#include "scumm/boxes.h"
+#include "scumm/debugger.h"
+#include "scumm/imuse.h"
+#include "scumm/object.h"
+#include "scumm/player_v2.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
 
 #if USE_CONSOLE
 	#include "gui/console.h"

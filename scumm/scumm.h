@@ -30,6 +30,7 @@
 #include "common/str.h"
 
 #include "scumm/gfx.h"
+#include "scumm/script.h"
 
 class Actor;
 class BaseCostumeRenderer;
@@ -59,7 +60,6 @@ extern Scumm *g_scumm;
 
 /* System Wide Constants */
 enum {
-	NUM_SCRIPT_SLOT = 80,
 	NUM_LOCALSCRIPT = 60,
 	NUM_SENTENCE = 6,
 	NUM_SHADOW_PALETTE = 8,
@@ -110,41 +110,7 @@ struct MemBlkHeader {
 };
 
 struct VerbSlot;
-
-struct ObjectData {
-	uint32 OBIMoffset;
-	uint32 OBCDoffset;
-	int16 walk_x, walk_y;
-	uint16 obj_nr;
-	int16 x_pos;
-	int16 y_pos;
-	uint16 width;
-	uint16 height;
-	byte actordir;
-	byte parent;
-	byte parentstate;
-	byte state;
-	byte fl_object_index;
-};
-
-struct ScriptSlot {
-	uint32 offs;
-	int32 delay;
-	uint16 number;
-	uint16 delayFrameCount;
-	bool freezeResistant, recursive;
-	bool didexec;
-	byte status;
-	byte where;
-	byte freezeCount;
-	byte cutsceneOverride;
-};
-
-struct NestedScript {
-	uint16 number;
-	uint8 where;
-	uint8 slot;
-};
+struct ObjectData;
 
 struct BlastText {
 	int16 xpos, ypos;
@@ -246,14 +212,6 @@ enum ScummGameId {
 
 #define _roomFileOffsets res.roomoffs[rtRoom]
 
-#define ARRAY_HDR_SIZE 6
-struct ArrayHeader {
-	int16 dim1_size;
-	int16 type;
-	int16 dim2_size;
-	byte data[1];
-};
-
 struct SentenceTab {
 	byte verb;
 	byte preposition;
@@ -284,11 +242,6 @@ enum WhereIsObject {
 	WIO_GLOBAL = 2,
 	WIO_LOCAL = 3,
 	WIO_FLOBJECT = 4
-};
-
-enum MouseButtonStatus {
-	msDown = 1,
-	msClicked = 2
 };
 
 struct LangIndexNode {
@@ -332,16 +285,7 @@ public:
 	} res;
 
 protected:
-	struct {
-		uint32 cutScenePtr[5];
-		byte cutSceneScript[5];
-		int16 cutSceneData[5];
-		int16 cutSceneScriptIndex;
-		byte cutSceneStackPointer;
-		ScriptSlot slot[NUM_SCRIPT_SLOT];
-		NestedScript nest[15];
-		int32 localvar[NUM_SCRIPT_SLOT][26];
-	} vm;
+	VirtualMachineState vm;
 
 public:
 	// Constructor / Destructor
@@ -405,7 +349,7 @@ public:
 	ConsoleDialog *_debuggerDialog;
 
 protected:
-	int runDialog(Dialog *dialog);
+	int runDialog(Dialog &dialog);
 	void confirmexitDialog();
 	void pauseDialog();
 	void saveloadDialog();
@@ -540,11 +484,11 @@ protected:
 	/* Script VM - should be in Script class */
 	uint32 _localScriptList[NUM_LOCALSCRIPT];
 	const byte *_scriptPointer, *_scriptOrgPointer;
-	byte _opcode, _numNestedScripts, _currentScript;
+	byte _opcode, _currentScript;
 	uint16 _curExecScript;
 	byte **_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
-	int _localParamList[16],  _scummStack[150];
+	int _scummStack[150];
 	int _keyScriptKey, _keyScriptNo;
 	
 	virtual void setupOpcodes() = 0;

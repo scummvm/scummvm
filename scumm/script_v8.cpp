@@ -20,18 +20,17 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "akos.h"
-#include "charset.h"
-#include "intern.h"
-#include "sound.h"
-#include "verbs.h"
-#include "smush/smush_player.h"
-
+#include "scumm/actor.h"
+#include "scumm/akos.h"
+#include "scumm/charset.h"
+#include "scumm/intern.h"
+#include "scumm/object.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/verbs.h"
+#include "scumm/smush/smush_player.h"
 #include "sound/mixer.h"
-
-#include <time.h>
 
 
 #define OPCODE(x)	{ &Scumm_v8::x, #x }

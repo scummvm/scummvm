@@ -21,12 +21,13 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "charset.h"
-#include "intern.h"
-#include "sound.h"
-#include "verbs.h"
+#include "scumm/actor.h"
+#include "scumm/charset.h"
+#include "scumm/intern.h"
+#include "scumm/object.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/verbs.h"
 
 #define OPCODE(x)	{ &Scumm_v5::x, #x }
 
@@ -623,7 +624,7 @@ void Scumm_v5::o5_chainScript() {
 	}
 
 	vm.slot[cur].number = 0;
-	vm.slot[cur].status = 0;
+	vm.slot[cur].status = ssDead;
 	_currentScript = 0xFF;
 
 	runScript(script, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, vars);
@@ -731,13 +732,13 @@ void Scumm_v5::o5_delay() {
 	delay |= fetchScriptByte() << 8;
 	delay |= fetchScriptByte() << 16;
 	vm.slot[_currentScript].delay = delay;
-	vm.slot[_currentScript].status = 1;
+	vm.slot[_currentScript].status = ssPaused;
 	o5_breakHere();
 }
 
 void Scumm_v5::o5_delayVariable() {
 	vm.slot[_currentScript].delay = getVar();
-	vm.slot[_currentScript].status = 1;
+	vm.slot[_currentScript].status = ssPaused;
 	o5_breakHere();
 }
 

@@ -21,17 +21,22 @@
  */
 
 #include "stdafx.h"
-#include "actor.h"
-#include "charset.h"
-#include "imuse.h"
-#include "imuse_digi.h"
-#include "resource.h"
-#include "saveload.h"
-#include "scumm.h"
-#include "sound.h"
-#include "verbs.h"
+
 #include "common/config-file.h"
+
+#include "scumm/actor.h"
+#include "scumm/charset.h"
+#include "scumm/imuse_digi.h"
+#include "scumm/imuse.h"
+#include "scumm/object.h"
+#include "scumm/resource.h"
+#include "scumm/saveload.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/verbs.h"
+
 #include "sound/mixer.h"
+
 
 struct SaveGameHeader {
 	uint32 type;
@@ -394,7 +399,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKARRAY(Scumm, vm.cutSceneData[0], sleInt16, 5, VER(8)),
 		MKLINE(Scumm, vm.cutSceneScriptIndex, sleInt16, VER(8)),
 
-		MKLINE(Scumm, _numNestedScripts, sleByte, VER(8)),
+		MKLINE(Scumm, vm.numNestedScripts, sleByte, VER(8)),
 		MKLINE(Scumm, _userPut, sleByte, VER(8)),
 		MKLINE(Scumm, _userState, sleUint16, VER(17)),
 		MKLINE(Scumm, _cursor.state, sleByte, VER(8)),

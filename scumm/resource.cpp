@@ -21,17 +21,18 @@
  */
 
 #include "stdafx.h"
-#include "imuse.h"
-#include "scumm.h"
-#include "resource.h"
-#include "bundle.h"
-#include "verbs.h"
-#include "scumm/sound.h"
 #include "common/map.h"
 #include "common/str.h"
-#include "sound/mididrv.h" // Need MD_ enum values
 #include "gui/message.h"
-#include "dialogs.h"
+#include "scumm/bundle.h"
+#include "scumm/dialogs.h"
+#include "scumm/imuse.h"
+#include "scumm/object.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/verbs.h"
+#include "sound/mididrv.h" // Need MD_ enum values
 
 static uint16 newTag2Old(uint32 oldTag);
 static const char *resTypeFromId(int id);
@@ -238,9 +239,8 @@ void Scumm::askForDisk(const char *filename, int disknum) {
 			error("Cannot find file: '%s'", filename);
 	} else { 
 		sprintf(buf, "Cannot find file: '%s'", filename);
-		InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
-		runDialog (dialog);
-		delete dialog;
+		InfoDialog dialog(_newgui, this, (char*)buf);
+		runDialog(dialog);
 		error("Cannot find file: '%s'", filename);
 	}
 }

@@ -50,6 +50,15 @@ enum {
 };
 
 
+#define ARRAY_HDR_SIZE 6
+struct ArrayHeader {
+	int16 dim1_size;
+	int16 type;
+	int16 dim2_size;
+	byte data[1];
+};
+
+
 const byte *findResource(uint32 tag, const byte *searchin);
 const byte *findResourceSmall(uint32 tag, const byte *searchin);
 

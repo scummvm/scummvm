@@ -21,6 +21,22 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+struct ObjectData {
+	uint32 OBIMoffset;
+	uint32 OBCDoffset;
+	int16 walk_x, walk_y;
+	uint16 obj_nr;
+	int16 x_pos;
+	int16 y_pos;
+	uint16 width;
+	uint16 height;
+	byte actordir;
+	byte parent;
+	byte parentstate;
+	byte state;
+	byte fl_object_index;
+};
+
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif	

@@ -21,18 +21,13 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "resource.h"
+
 #include "common/util.h"
 
-/* Script status type (slot.status) */
-enum {
-	ssDead = 0,
-	ssPaused = 1,
-	ssRunning = 2
-};
-
+#include "scumm/actor.h"
+#include "scumm/object.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
 
 /* Start executing script 'script' with the given parameters */
 void Scumm::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr) {
@@ -221,7 +216,7 @@ void Scumm::stopScript(int script) {
 	}
 
 	nest = vm.nest;
-	num = _numNestedScripts;
+	num = vm.numNestedScripts;
 
 	while (num > 0) {
 		if (nest->number == script &&
@@ -258,7 +253,7 @@ void Scumm::stopObjectScript(int script) {
 	}
 
 	nest = vm.nest;
-	num = _numNestedScripts;
+	num = vm.numNestedScripts;
 
 	while (num > 0) {
 		if (nest->number == script &&
@@ -293,7 +288,7 @@ void Scumm::runScriptNested(int script) {
 
 	updateScriptPtr();
 
-	nest = &vm.nest[_numNestedScripts];
+	nest = &vm.nest[vm.numNestedScripts];
 
 	if (_currentScript == 0xFF) {
 		nest->number = 0xFF;
@@ -306,9 +301,9 @@ void Scumm::runScriptNested(int script) {
 		nest->slot = _currentScript;
 	}
 
-	_numNestedScripts++;
+	vm.numNestedScripts++;
 	
-	if (_numNestedScripts > ARRAYSIZE(vm.nest))
+	if (vm.numNestedScripts > ARRAYSIZE(vm.nest))
 		error("Too many nested scripts");
 
 	_currentScript = script;
@@ -316,7 +311,7 @@ void Scumm::runScriptNested(int script) {
 	getScriptEntryPoint();
 	executeScript();
 
-	_numNestedScripts--;
+	vm.numNestedScripts--;
 
 	if (nest->number != 0xFF) {
 		// Try to resume the script which called us, if its status has not changed
@@ -360,7 +355,7 @@ void Scumm::getScriptBaseAddress() {
 		_lastCodePtr = &_baseInventoryItems[idx];
 		break;
 
-	case 3:
+	case WIO_LOCAL:
 	case WIO_ROOM:								/* room script */
 		if (_version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
@@ -865,6 +860,7 @@ void Scumm::doSentence(int verb, int objectA, int objectB) {
 
 void Scumm::checkAndRunSentenceScript() {
 	int i;
+	int localParamList[16];
 	const ScriptSlot *ss;
 	int sentenceScript;
 	if (_version <= 2)
@@ -872,7 +868,7 @@ void Scumm::checkAndRunSentenceScript() {
 	else
 		sentenceScript = VAR(VAR_SENTENCE_SCRIPT);
 
-	memset(_localParamList, 0, sizeof(_localParamList));
+	memset(localParamList, 0, sizeof(localParamList));
 	if (isScriptInUse(sentenceScript)) {
 		ss = vm.slot;
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
@@ -895,13 +891,13 @@ void Scumm::checkAndRunSentenceScript() {
 		_scummVars[VAR_ACTIVE_OBJECT2] = _sentence[_sentenceNum].objectB;
 		_scummVars[VAR_VERB_ALLOWED] = (0 != getVerbEntrypoint(_sentence[_sentenceNum].objectA, _sentence[_sentenceNum].verb));
 	} else {
-		_localParamList[0] = _sentence[_sentenceNum].verb;
-		_localParamList[1] = _sentence[_sentenceNum].objectA;
-		_localParamList[2] = _sentence[_sentenceNum].objectB;
+		localParamList[0] = _sentence[_sentenceNum].verb;
+		localParamList[1] = _sentence[_sentenceNum].objectA;
+		localParamList[2] = _sentence[_sentenceNum].objectB;
 	}
 	_currentScript = 0xFF;
 	if (sentenceScript)
-		runScript(sentenceScript, 0, 0, _localParamList);
+		runScript(sentenceScript, 0, 0, localParamList);
 }
 
 void Scumm::runInputScript(int a, int cmd, int mode) {

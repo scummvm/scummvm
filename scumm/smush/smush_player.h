@@ -23,9 +23,10 @@
 #define SMUSH_PLAYER_H
 
 #include "common/util.h"
-#include "chunk.h"
-#include "codec37.h"
-#include "codec47.h"
+#include "scumm/smush/chunk.h"
+#include "scumm/smush/codec37.h"
+#include "scumm/smush/codec47.h"
+#include "sound/mixer.h"
 
 class SmushFont;
 class SmushMixer;

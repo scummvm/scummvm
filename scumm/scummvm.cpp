@@ -21,33 +21,35 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "boxes.h"
-#include "charset.h"
-#include "debugger.h"
-#include "dialogs.h"
-#include "imuse.h"
-#include "imuse_digi.h"
-#include "intern.h"
-#include "object.h"
-#include "player_v3a.h"
-#include "player_v2.h"
-#include "player_v1.h"
-#include "resource.h"
-#include "sound.h"
-#include "string.h"
-#include "verbs.h"
-#include "common/gameDetector.h"
-#include "common/config-file.h"
-#include "gui/console.h"
-#include "gui/newgui.h"
-#include "gui/message.h"
-#include "sound/mixer.h"
-#include "sound/mididrv.h"
 
-#include "akos.h"
-#include "costume.h"
+#include "common/config-file.h"
+#include "common/gameDetector.h"
+
+#include "gui/console.h"
+#include "gui/message.h"
+#include "gui/newgui.h"
+
+#include "scumm/actor.h"
+#include "scumm/akos.h"
+#include "scumm/boxes.h"
+#include "scumm/charset.h"
+#include "scumm/costume.h"
+#include "scumm/debugger.h"
+#include "scumm/dialogs.h"
+#include "scumm/imuse_digi.h"
+#include "scumm/imuse.h"
+#include "scumm/intern.h"
+#include "scumm/object.h"
+#include "scumm/player_v1.h"
+#include "scumm/player_v2.h"
+#include "scumm/player_v3a.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/verbs.h"
+
+#include "sound/mididrv.h"
+#include "sound/mixer.h"
 
 #ifdef MACOSX
 #include <sys/types.h>
@@ -57,6 +59,11 @@
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
 #endif
+
+enum MouseButtonStatus {
+	msDown = 1,
+	msClicked = 2
+};
 
 // Use g_scumm from error() ONLY
 Scumm *g_scumm = 0;
@@ -368,13 +375,12 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_scriptPointer = NULL;
 	_scriptOrgPointer = NULL;
 	_opcode = 0;
-	_numNestedScripts = 0;
+	vm.numNestedScripts = 0;
 	_currentScript = 0;
 	_curExecScript = 0;
 	_lastCodePtr = NULL;
 	_resultVarNumber = 0;
 	_scummStackPos = 0;
-	memset(_localParamList, 0, sizeof(_localParamList));
 	memset(_scummStack, 0, sizeof(_scummStack));
 	_keyScriptKey = 0;
 	_keyScriptNo = 0;
@@ -1007,7 +1013,7 @@ void Scumm::scummInit() {
 			_actors[i].setActorCostume(i);
 	}
 
-	_numNestedScripts = 0;
+	vm.numNestedScripts = 0;
 	vm.cutSceneStackPointer = 0;
 
 	memset(vm.cutScenePtr, 0, sizeof(vm.cutScenePtr));
@@ -1368,9 +1374,8 @@ load_game:
 #endif
 			sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
 	
-			Dialog *dialog = new MessageDialog(_newgui, buf, 1500, false);
+			MessageDialog dialog(_newgui, buf, 1500, false);
 			runDialog(dialog);
-			delete dialog;
 		}
 		if (success && _saveLoadFlag != 1)
 			clearClickedStatus();
@@ -2392,8 +2397,8 @@ void Scumm::restart() {
 	setShake(0);
 	_sound->stopAllSounds();
 
-        // Empty variables
-	for (i=0;i<255;i++)
+	// Clear the script variables
+	for (i = 0; i < 255; i++)
 		_scummVars[i] = 0;
 
 	// Empty inventory
@@ -2419,7 +2424,7 @@ void Scumm::startManiac() {
 #pragma mark --- GUI ---
 #pragma mark -
 
-int Scumm::runDialog(Dialog *dialog) {
+int Scumm::runDialog(Dialog &dialog) {
 	// Pause sound put
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
@@ -2429,7 +2434,7 @@ int Scumm::runDialog(Dialog *dialog) {
 	_smushPlay = false;
 
 	// Open & run the dialog
-	int result = dialog->runModal();
+	int result = dialog.runModal();
 
 	// Restore old cursor
 	updateCursor();
@@ -2447,35 +2452,35 @@ int Scumm::runDialog(Dialog *dialog) {
 void Scumm::pauseDialog() {
 	if (!_pauseDialog)
 		_pauseDialog = new PauseDialog(_newgui, this);
-	runDialog(_pauseDialog);
+	runDialog(*_pauseDialog);
 }
 
 void Scumm::saveloadDialog() {
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(_newgui, this);
-	runDialog(_saveLoadDialog);
+	runDialog(*_saveLoadDialog);
 }
 
 void Scumm::optionsDialog() {
 	if (!_optionsDialog)
 		_optionsDialog = new OptionsDialog(_newgui, this);
-	runDialog(_optionsDialog);
+	runDialog(*_optionsDialog);
 }
 
 void Scumm::confirmexitDialog() {
 	if (!_confirmExitDialog)
 		_confirmExitDialog = new ConfirmExitDialog(_newgui, this);
 
-	if (runDialog(_confirmExitDialog)) {
+	if (runDialog(*_confirmExitDialog)) {
 		_quit = true;
 	}
 }
 
 char Scumm::displayError(bool showCancel, const char *message, ...) {
 #ifdef __PALM_OS__
-	char buf[256], result; // 1024 is too big overflow the stack
+	char buf[256]; // 1024 is too big overflow the stack
 #else
-	char buf[1024], result;
+	char buf[1024];
 #endif
 	va_list va;
 
@@ -2483,11 +2488,8 @@ char Scumm::displayError(bool showCancel, const char *message, ...) {
 	vsprintf(buf, message, va);
 	va_end(va);
 
-	Dialog *dialog = new MessageDialog(_newgui, buf, 0, true, showCancel);
-	result = runDialog(dialog);
-	delete dialog;
-
-	return result;
+	MessageDialog dialog(_newgui, buf, 0, true, showCancel);
+	return runDialog(dialog);
 }
 
 #pragma mark -

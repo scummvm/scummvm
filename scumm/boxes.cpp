@@ -26,8 +26,6 @@
 #include "boxes.h"
 #include "common/util.h"
 
-#include <math.h>
-
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif

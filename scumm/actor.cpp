@@ -32,8 +32,6 @@
 #include "sound.h"
 #include "usage_bits.h"
 
-#include <math.h>
-
 byte Actor::kInvalidBox = 0;
 Scumm *Actor::_vm = 0;
 
