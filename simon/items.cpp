@@ -1498,10 +1498,17 @@ void SimonState::o_unk_127()
 void SimonState::o_unk_120(uint a)
 {
 	uint16 id = TO_BE_16(a);
-	_lock_word |= 0x4000;
-	_vc_ptr = (byte *)&id;
-	vc_15_wakeup_id();
-	_lock_word &= ~0x4000;
+	if (_game & GAME_SIMON2) {
+		_lock_word |= 0x8000;
+		_vc_ptr = (byte *)&id;
+		vc_15_wakeup_id();
+		_lock_word &= ~0x8000;
+	} else {
+		_lock_word |= 0x4000;
+		_vc_ptr = (byte *)&id;
+		vc_15_wakeup_id();
+		_lock_word &= ~0x4000;
+	}
 }
 
 void SimonState::o_unk_163(uint a)
@@ -1538,10 +1545,10 @@ void SimonState::o_unk_99_simon2(uint a, uint b)
 	items[0] = TO_BE_16(a);
 	items[1] = TO_BE_16(b);
 
-	_lock_word |= 0x4000;
+	_lock_word |= 0x8000;
 	_vc_ptr = (byte *)&items;
 	vc_60_kill_thread();
-	_lock_word &= ~0x4000;
+	_lock_word &= ~0x8000;
 }
 
 /* OK */

@@ -2209,9 +2209,15 @@ void SimonState::o_force_unlock()
 
 void SimonState::o_force_lock()
 {
-	_lock_word |= 0x4000;
-	vc_34_force_lock();
-	_lock_word &= ~0x4000;
+	if (_game & GAME_SIMON2) {
+		_lock_word |= 0x8000;
+		vc_34_force_lock();
+		_lock_word &= ~0x8000;
+	} else {
+		_lock_word |= 0x4000;
+		vc_34_force_lock();
+		_lock_word &= ~0x4000;
+	}
 }
 
 void SimonState::o_save_game()
@@ -2747,9 +2753,15 @@ void SimonState::fcs_setTextColor(FillOrCopyStruct *fcs, uint value)
 
 void SimonState::o_vga_reset()
 {
-	_lock_word |= 0x4000;
-	vc_27_reset();
-	_lock_word &= ~0x4000;
+	if (_game & GAME_SIMON2) {
+		_lock_word |= 0x8000;
+		vc_27_reset();
+		_lock_word &= ~0x8000;
+	} else {
+		_lock_word |= 0x4000;
+		vc_27_reset();
+		_lock_word &= ~0x4000;
+	}	
 }
 
 bool SimonState::vc_maybe_skip_proc_3(uint16 a)
