@@ -1481,6 +1481,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		break;
 	case 0xE2:		// musicLipSyncWidth
 		push(_imuseDigital->getCurMusicLipSyncWidth());
+		break;
 	case 0xE3:		// musicLipSyncHeight
 		push(_imuseDigital->getCurMusicLipSyncHeight());
 		break;
