@@ -24,15 +24,64 @@
 
 #include "sound/rate.h"
 
-typedef struct {
-	byte priv[1024];
-} eff_struct;
-typedef eff_struct *eff_t;
+
+/* this Float MUST match that in filter.c */
+#define Float double/*float*/
+
+// From resample's stddef.h
+typedef int16	HWORD;
+typedef uint16	UHWORD;
+typedef int32	WORD;
+typedef uint32	UWORD;
+
+#define MAX_HWORD (32767)
+#define MIN_HWORD (-32768)
+
+
+#define MAXNWING   8192
+
+
+/* Private data for Lerp via LCM file */
+typedef struct resamplestuff {
+	double Factor;     /* Factor = Fout/Fin sample rates */
+	int quadr;	      /* non-zero to use qprodUD quadratic interpolation */
+
+
+	long Nq;
+
+	long dhb;
+
+	long a, b;	      /* gcd-reduced input,output rates	  */
+	long t;	      /* Current time/pos for exact-coeff's method */
+
+	long Xh;	      /* number of past/future samples needed by filter	 */
+	long Xoff;	      /* Xh plus some room for creep  */
+	long Xread;	      /* X[Xread] is start-position to enter new samples */
+	long Xp;	      /* X[Xp] is position to start filter application	 */
+	long Xsize, Ysize;  /* size (Floats) of X[],Y[]	  */
+	long Yposition;		/* FIXME: offset into Y buffer */
+	Float *X, *Y;      /* I/O buffers */
+} *resample_t;
+
 
 /** High quality rate conversion algorithm, based on SoX (http://sox.sourceforge.net). */
 class ResampleRateConverter : public RateConverter {
 protected:
-	eff_struct effp;
+	resamplestuff rstuff;
+
+	int quadr;	      /* non-zero to use qprodUD quadratic interpolation */
+
+    UHWORD LpScl;	/* Unity-gain scale factor */
+    UHWORD Nwing;	/* Filter table size */
+    UHWORD Nmult;	/* Filter length for up-conversions */
+    HWORD Imp[MAXNWING];		/* Filter coefficients */
+    HWORD ImpD[MAXNWING];	/* ImpD[n] = Imp[n+1]-Imp[n] */
+	
+	HWORD *X1, *Y1;
+	HWORD *X2, *Y2;
+	
+	UWORD Time;	      /* Current time/pos in input sample */
+
 public:
 	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality);
 	~ResampleRateConverter();
