@@ -1152,6 +1152,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 	}
 
 	pp->actor = &_actorData[actor];
+	pp->bankNum = pp->actor->bankNum;
 	pp->name = _aName[pp->actor->name];
 	if (pp->actor->anim != 0) {
 		pp->anim = _aAnim[pp->actor->anim];
