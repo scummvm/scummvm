@@ -69,10 +69,6 @@ enum GameFeatures {
 	GF_USE_ANGLES          = GF_AFTER_V7,
 	GF_DEFAULT             = GF_USE_KEY,
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
-
-	// Simon features (TODO)
-
-	// BASS features (TODO)
 };
 
 struct VersionSettings {
