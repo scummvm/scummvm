@@ -494,10 +494,8 @@ void Actor::startAnimActor(int f) {
 			// Causes Zak to lose his body in several scenes, see bug #771508
 			if (_vm->_version >= 3 && f == initFrame)
 				cost.reset();
-			if (_vm->_features & GF_NEW_COSTUMES) {
-				auxBlock.visible = false;
+			if (_vm->_features & GF_NEW_COSTUMES)
 				_vm->akos_decodeData(this, f, (uint) - 1);
-			}
 			else
 				_vm->cost_decodeData(this, f, (uint) - 1);
 			frame = f;
@@ -606,12 +604,8 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 			}
 			adjustActorPos();
 		} else {
-			if (_vm->_heversion >= 71) {
-				if (auxBlock.visible) {
-					_vm->queueAuxBlock(this);
-					auxBlock.visible = false;
-				}
-			}
+			if (_vm->_heversion >= 71)
+				_vm->queueAuxBlock(this);
 			hideActor();
 		}
 	} else {
@@ -773,6 +767,7 @@ void Actor::hideActor() {
 	cost.soundCounter = 0;
 	needRedraw = false;
 	needBgReset = true;
+	auxBlock.visible = false;
 }
 
 void Actor::showActor() {
@@ -1366,11 +1361,8 @@ void Actor::setActorCostume(int c) {
 		memset(animVariable, 0, sizeof(animVariable));
 		costume = c;
 		
-		if (_vm->_heversion >= 71) {
-			if (auxBlock.visible) {
-				_vm->queueAuxBlock(this);
-			}
-		}
+		if (_vm->_heversion >= 71)
+			_vm->queueAuxBlock(this);
 		
 		if (visible) {
 			if (costume) {
@@ -1967,6 +1959,9 @@ void ScummEngine::postProcessAuxQueue() {
 }
 
 void ScummEngine::queueAuxBlock(Actor *a) {
+	if (!a->auxBlock.visible)
+		return;
+
 	assert(_auxBlocksNum < ARRAYSIZE(_auxBlocks));
 	_auxBlocks[_auxBlocksNum] = a->auxBlock;
 	++_auxBlocksNum;
