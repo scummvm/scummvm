@@ -87,6 +87,13 @@ static inline Sound *check_sound(int num) {
 	return static_cast<Sound *>(lua_getuserdata(lua_getparam(num)));
 }
 
+static inline float check_float(int num) {
+        float val = luaL_check_number(num);
+        val = get_float((const char *)&val);
+
+        return val;
+}
+
 static inline int check_int(int num) {
 	double val = luaL_check_number(num);
 
@@ -345,12 +352,10 @@ static void SetActorVisibility() {
 
 static void PutActorAt() {
 	Actor *act = check_actor(1);
-	float x = luaL_check_number(2);
-	float y = luaL_check_number(3);
-	float z = luaL_check_number(4);
-	x = get_float((const char *)&x);
-	y = get_float((const char *)&y);
-	z = get_float((const char *)&z);
+	float x = check_float(2);
+	float y = check_float(3);
+	float z = check_float(4);
+
 	act->setPos(Vector3d(x, y, z));
 }
 
@@ -364,12 +369,10 @@ static void GetActorPos() {
 
 static void SetActorRot() {
 	Actor *act = check_actor(1);
-	float pitch = luaL_check_number(2);
-	float yaw = luaL_check_number(3);
-	float roll = luaL_check_number(4);
-	pitch = get_float((const char *)&pitch);
-	yaw = get_float((const char *)&yaw);
-	roll = get_float((const char *)&roll);
+	float pitch = check_float(2);
+	float yaw = check_float(3);
+	float roll = check_float(4);
+
 	if (getbool(5))
 		act->turnTo(pitch, yaw, roll);
 	else
@@ -412,8 +415,8 @@ static void PutActorInSet() {
 
 static void SetActorWalkRate() {
 	Actor *act = check_actor(1);
-	float rate = luaL_check_number(2);
-	rate = get_float((const char *)&rate);
+	float rate = check_float(2);
+
 	act->setWalkRate(rate);
 }
 
@@ -443,12 +446,10 @@ static void GetActorPuckVector() {
 
 static void WalkActorTo() {
 	Actor *act = check_actor(1);
-	float x = luaL_check_number(2);
-	float y = luaL_check_number(3);
-	float z = luaL_check_number(4);
-	x = get_float((const char *)&x);
-	y = get_float((const char *)&y);
-	z = get_float((const char *)&z);
+	float x = check_float(2);
+	float y = check_float(3);
+	float z = check_float(4);
+
 	act->walkTo(Vector3d(x, y, z));
 }
 
