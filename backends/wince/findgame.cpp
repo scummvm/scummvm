@@ -41,7 +41,7 @@
 
 extern Config *g_config;
 
-#define MAX_GAMES 20
+#define MAX_GAMES 23
 int MAX_DIRECTORY = 40;
 
 #define MAX_DISPLAYED_DIRECTORIES 7
@@ -159,8 +159,8 @@ static const ScummGame GameList[] = {
 	{
 		 "Monkey Island 1 VGA dk",
 		 "Completable, no sound",
-		 "monkey1vga", "", "",
-		 "monkey1vga",
+		 "monkeyvga", "", "",
+		 "monkeyvga",
 		 0
 	},
 	{
