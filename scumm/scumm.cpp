@@ -1039,6 +1039,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			_renderMode = Common::kRenderDefault;
 		break;
 
+	case Common::kRenderAmiga:
+		if (!(_features & GF_16COLOR))
+			_renderMode = Common::kRenderDefault;
+		break;
+
 	default:
 		break;
 	}
@@ -1318,7 +1323,7 @@ void ScummEngine::scummInit() {
 	} else if (_features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;
-		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
+		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST) || _renderMode == Common::kRenderAmiga)
 			setupAmigaPalette();
 		else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
 			setupHercPalette();

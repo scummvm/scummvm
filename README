@@ -374,7 +374,7 @@ arguments - see the next section.
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
   --aspect-ratio           Enable aspect ratio correction
   --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen
-                           hercAmber)
+                           hercAmber, amiga)
 
   --alt-intro              Use alternative intro for CD versions of Beneath a
                            Steel Sky and Flight of the Amazon Queen

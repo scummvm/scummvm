@@ -226,6 +226,7 @@ const RenderModeDescription g_renderModes[] = {
 	{"hercAmber", "Hercules Amber", kRenderHercA},
 	{"cga", "CGA", kRenderCGA},
 	{"ega", "EGA", kRenderEGA},
+	{"amiga", "Amiga", kRenderAmiga},
 	{0, 0, kRenderDefault}
 };
 

@@ -97,7 +97,7 @@ static const char USAGE_STRING[] =
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
-    "                           hercAmber)\n"
+    "                           hercAmber, amiga)\n"
 	"\n"
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"

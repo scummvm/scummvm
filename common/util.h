@@ -163,7 +163,8 @@ enum RenderMode {
 	kRenderEGA = 1,
 	kRenderCGA = 2,
 	kRenderHercG = 3,
-	kRenderHercA = 4
+	kRenderHercA = 4,
+	kRenderAmiga = 5
 };
 
 enum HerculesDimesnions {
