@@ -26,11 +26,13 @@
 
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
+#include <proto/dos.h>
 #include <proto/etude.h>
 
 #include "stdafx.h"
 #include "sound/mpu401.h"
 #include "common/engine.h" // For warning/error/debug
+#include "morphos.h"
 #include "morphos_sound.h"
 
 /*
@@ -90,4 +92,44 @@ MidiDriver *MidiDriver_ETUDE_create()
 	return EtudeMidiDriver;
 }
 
+int MidiDriver_MPU401::midi_driver_thread(void *param)
+{
+	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
+	int old_time, cur_time;
+	MsgPort *music_timer_port = NULL;
+	timerequest *music_timer_request = NULL;
+
+	ObtainSemaphore(&ScummMusicThreadRunning);
+
+	if (!OSystem_MorphOS::OpenATimer(&music_timer_port, (IORequest **) &music_timer_request, UNIT_MICROHZ, false)) {
+		warning("Could not open a timer - music will not play");
+		Wait(SIGBREAKF_CTRL_C);
+	}
+	else {
+		old_time = g_system->get_msecs();
+
+		for (;;) {
+			music_timer_request->tr_node.io_Command = TR_ADDREQUEST;
+			music_timer_request->tr_time.tv_secs = 0;
+			music_timer_request->tr_time.tv_micro = 10000;
+			DoIO((struct IORequest *)music_timer_request);
+
+			if (CheckSignal(SIGBREAKF_CTRL_C))
+				break;
+
+			cur_time = g_system->get_msecs();
+			while (old_time < cur_time) {
+				old_time += 10;
+				if (mid->_timer_proc)
+					(*(mid->_timer_proc)) (mid->_timer_param);
+			}
+		}
+	}
+
+	ReleaseSemaphore(&ScummMusicThreadRunning);
+	RemTask(NULL);
+	return 0;
+}
+
 #endif
+

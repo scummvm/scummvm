@@ -79,6 +79,7 @@ void MidiDriver_MPU401::setTimerCallback (void *timer_param, void (*timer_proc) 
 	}
 }
 
+#if !defined(__MORPHOS__)
 int MidiDriver_MPU401::midi_driver_thread(void *param)
 {
 	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
@@ -102,4 +103,5 @@ int MidiDriver_MPU401::midi_driver_thread(void *param)
 
 	return 0;
 }
+#endif
 
