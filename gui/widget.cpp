@@ -189,7 +189,8 @@ void CheckboxWidget::drawWidget(bool hilite)
 #pragma mark -
 
 SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _value(0), _old_value(1)
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey),
+	  _value(0), _old_value(1), _valueMin(0), _valueMax(100)
 {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;
@@ -219,18 +220,18 @@ void SliderWidget::drawWidget(bool hilite)
 	
 	// Remove old 'bar' if necessary
 	if (_value != _old_value) {
-		gui->fillRect(_x + 2 + ((_w - 5) * (_old_value - _valueMin) / _valueDelta), _y + 2, 2, _h - 4, gui->_bgcolor);
+		gui->fillRect(_x + 2 + ((_w - 5) * (_old_value - _valueMin) / (_valueMax - _valueMin)), _y + 2, 2, _h - 4, gui->_bgcolor);
 		_old_value = _value;
 	}
 
 	// Draw the 'bar'
-	gui->fillRect(_x + 2 + ((_w - 5) * (_value - _valueMin) / _valueDelta), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->fillRect(_x + 2 + ((_w - 5) * (_value - _valueMin) / (_valueMax - _valueMin)), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
 void SliderWidget::handleMouseDown(int x, int y, int button) {
 	int barx;
 
-	barx = 2 + ((_w - 5) * (_value - _valueMin) / _valueDelta);
+	barx = 2 + ((_w - 5) * (_value - _valueMin) / (_valueMax - _valueMin));
 	
 	// only start dragging if mouse is over bar
 	if (x > (barx - 3) && x < (barx + 3))
