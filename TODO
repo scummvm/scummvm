@@ -262,12 +262,11 @@ SCUMM
 * iMUSE Digital:
   - Add code for MP3 and Ogg Vorbis compressed datafiles
 * SMUSH:
-  - Add support for codec 37 opcode 1, for PC version of FT demo
   - Add code for MP3 encoded sound tracks
 * PC version of FT demo
   - Add insane support
 * Humongous Entertainment Games
-  - Add proper handling of sound and speech in Humongous games
+  - Add proper handling of sound in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
   - Fix akos asserts in puttmoon, caused by butterfly at start, robot near
