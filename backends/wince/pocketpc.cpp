@@ -912,17 +912,17 @@ void runGame(char *game_name) {
 
 	/* Start the engine */
 
-	engine = Engine::createFromDetector(&detector, system);
-
-	keypad_init();
-	load_key_mapping();
+	is_simon = (detector._gameId >= GID_SIMON_FIRST);
 
 	if (detector._gameId == GID_SAMNMAX || detector._gameId == GID_FT || detector._gameId == GID_DIG)
 		hide_cursor = FALSE;
 	else
-		hide_cursor = TRUE;
+		hide_cursor = TRUE;	
 
-	is_simon = (detector._gameId >= GID_SIMON_FIRST);
+	engine = Engine::createFromDetector(&detector, system);
+
+	keypad_init();
+	load_key_mapping();
 
 	engine->go();
 
@@ -1460,6 +1460,11 @@ void action_boss() {
 void action_skip() {
 	OSystem_WINCE3* system;
 	system = (OSystem_WINCE3*)g_scumm->_system;
+
+	if (is_simon) {
+		((SimonState*)engine)->_exit_cutscene = true;
+		return;
+	}
 
 	if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY]);
