@@ -158,6 +158,10 @@ int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
 	int index = param & 0x1FFF;
 
+	if (index >= ARRAYSIZE(ObjectTable)) {
+		return FAILURE;
+	}
+
 	if (ObjectTable[index].sceneIndex != -1) {
 		ObjectTable[index].sceneIndex = -1;
 		_vm->_interface->addToInventory(index);
@@ -551,10 +555,26 @@ int Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
 
 // Script function #32 (0x20)
 int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+	SDataWord_T obj_param = thread->pop();
+	SDataWord_T sprite_param = thread->pop();
+	SDataWord_T x_param = thread->pop();
+	SDataWord_T y_param = thread->pop();
 
-	debug(1, "stub: SF_dropObject(), %d args", nArgs);
+	int index = obj_param & 0x1FFF;
+
+	if (index >= ARRAYSIZE(ObjectTable)) {
+		return FAILURE;
+	}
+
+	if (ObjectTable[index].sceneIndex == -1) {
+		_vm->_interface->removeFromInventory(index);
+	}
+
+	ObjectTable[index].sceneIndex = _vm->_scene->currentSceneNumber();
+	ObjectTable[index].spritelistRn = 9 + sprite_param;
+	ObjectTable[index].x = x_param;
+	ObjectTable[index].y = y_param;
+
 	return SUCCESS;
 }
 
