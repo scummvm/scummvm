@@ -130,7 +130,7 @@ struct VirtScreen : Graphics::Surface {
 	 * This together with bdirty is used to do efficient redrawing of
 	 * the screen.
 	 */
-	uint16 tdirty[80];
+	uint16 tdirty[80 + 1];
 
 	/**
 	 * Array containing for each visible strip of this virtual screen the
@@ -139,7 +139,7 @@ struct VirtScreen : Graphics::Surface {
 	 * This together with tdirty is used to do efficient redrawing of
 	 * the screen.
 	 */
-	uint16 bdirty[80];
+	uint16 bdirty[80 + 1];
 
 	/**
 	 * Convenience method to set the whole tdirty and bdirty arrays to one
@@ -150,7 +150,7 @@ struct VirtScreen : Graphics::Surface {
 	 *   vs->setDirtyRange(0, 0);
 	 */
 	void setDirtyRange(int top, int bottom) {
-		for (int i = 0; i < 80; i++) {
+		for (int i = 0; i < 80 + 1; i++) {
 			tdirty[i] = top;
 			bdirty[i] = bottom;
 		}

@@ -418,19 +418,14 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 	int i;
 	int w = 8;
 	int start = 0;
-#ifdef V7_SMOOTH_SCROLLING_HACK
-	const int numStrips = MIN(_vm->_screenStartStrip + _numStrips, _vm->_roomWidth / 8) - _vm->_screenStartStrip;
-#else
-	const int numStrips = _numStrips;
-#endif
 
-	for (i = 0; i < numStrips; i++) {
+	for (i = 0; i < _numStrips; i++) {
 		if (vs->bdirty[i]) {
 			const int top = vs->tdirty[i];
 			const int bottom = vs->bdirty[i];
 			vs->tdirty[i] = vs->h;
 			vs->bdirty[i] = 0;
-			if (i != (numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
+			if (i != (_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
 				// Simple optimizations: if two or more neighbouring strips
 				// form one bigger rectangle, coalesce them.
 				w += 8;
@@ -462,6 +457,9 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.pixels);
 	assert(_compositeBuf);
+	
+	if (width > vs->w);
+		width = vs->w;
 
 	// Clip to the visible part of the scene
 	if (top < _vm->_screenTop)
