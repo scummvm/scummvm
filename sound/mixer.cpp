@@ -67,19 +67,19 @@ class ChannelRaw : public Channel {
 	byte _flags;
 #ifdef SOX_HACK
 	RateConverter *_converter;
-	AudioInputStream *_input;
+	LinearAudioInputStream *_input;
 #else
 	uint32 _pos;
 	uint32 _size;
 	uint32 _fpSpeed;
 	uint32 _fpPos;
 	uint32 _realSize, _rate;
+#endif
 	byte *_loop_ptr;
 	uint32 _loop_size;
-#endif
 
 public:
-	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id);
+	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd);
 	~ChannelRaw();
 
 	void mix(int16 *data, uint len);
@@ -272,7 +272,7 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 	return index;
 }
 
-int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id) {
+int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd) {
 	StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
@@ -282,7 +282,7 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 				return -1;
 	}
 
-	return insertChannel(handle, new ChannelRaw(this, handle, sound, size, rate, flags, id));
+	return insertChannel(handle, new ChannelRaw(this, handle, sound, size, rate, flags, id, loopStart, loopEnd));
 }
 
 #ifdef USE_MAD
@@ -651,7 +651,7 @@ static int16 mixer_element_size[] = {
 #endif
 
 /* RAW mixer */
-ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id)
+ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd)
 	: Channel(mixer, handle) {
 	_id = id;
 	_ptr = (byte *)sound;
@@ -665,6 +665,23 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo());
+	printf("   data has %d bits and is %s\n",
+			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
+			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
+
+	if (flags & SoundMixer::FLAG_LOOP) {
+		if (loopEnd == 0) {
+			_loop_ptr = _ptr;
+			_loop_size = size;
+		} else {
+			assert(loopStart < loopEnd && loopEnd <= size);
+			_loop_ptr = _ptr + loopStart;
+			_loop_size = loopEnd - loopStart;
+		}
+	} else {
+		_loop_ptr = 0;
+		_loop_size = 0;
+	}
 #else
 	_pos = 0;
 	_fpPos = 0;
@@ -705,9 +722,13 @@ void ChannelRaw::mix(int16 *data, uint len) {
 
 	if (_input->eof()) {
 		// TODO: call drain method
-		// TODO: Looping
-		destroy();
-		return;
+		// Loop if requested
+		if (_loop_ptr) {
+			_input->reset(_loop_ptr, _loop_size);
+		} else {
+			destroy();
+			return;
+		}
 	}
 
 	const int volume = _mixer->getVolume();
@@ -756,6 +777,9 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo());
+	printf("   data has %d bits and is %s\n",
+			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
+			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
 #else
 	_flags = flags;
 	_bufferSize = buffer_size;

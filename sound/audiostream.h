@@ -53,6 +53,11 @@ public:
 	virtual bool eof() const = 0;
 };
 
+class LinearAudioInputStream : public AudioInputStream {
+public:
+	virtual void reset(const byte *data, uint32 len) = 0;
+};
+
 class WrappedAudioInputStream : public AudioInputStream {
 public:
 	virtual void append(const byte *data, uint32 len) = 0;
@@ -118,7 +123,7 @@ public:
 
 
 
-AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len);
+LinearAudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len);
 WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len);
 
 

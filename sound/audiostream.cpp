@@ -40,7 +40,7 @@ static inline int16 readSample(const byte *ptr) {
 
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-class LinearMemoryStream : public AudioInputStream {
+class LinearMemoryStream : public LinearAudioInputStream {
 protected:
 	const byte *_ptr;
 	const byte *_end;
@@ -58,10 +58,16 @@ public:
 		return val;
 	}
 	bool eof() const {
-		return _end <= _ptr;
+		return _ptr >= _end;
 	}
 	bool isStereo() const {
 		return stereo;
+	}
+	void reset(const byte *data, uint32 len) {
+		_ptr = data;
+		_end = data + len;
+		if (stereo)	// Stereo requires even sized data
+			assert(len % 2 == 0);
 	}
 };
 
@@ -413,7 +419,7 @@ void VorbisInputStream::refill() {
 
 
 template<bool stereo>
-static AudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool is16Bit, bool isUnsigned) {
+static LinearAudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool is16Bit, bool isUnsigned) {
 	if (isUnsigned) {
 		if (is16Bit)
 			return new LinearMemoryStream<stereo, true, true>(ptr, len);
@@ -444,7 +450,7 @@ static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool is16Bit,
 }
 
 
-AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len) {
+LinearAudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len) {
 	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
 	if (_flags & SoundMixer::FLAG_STEREO) {
