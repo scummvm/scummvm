@@ -58,6 +58,8 @@ typedef	struct {
 	Boolean autoReset;
 	Boolean demoMode;
 	Boolean fullscreen;
+	Boolean aspectRatio;
+	Boolean copyProtection;
 
 	struct {
 		UInt16 speaker;
@@ -86,13 +88,14 @@ typedef	struct {
 } GlobalsPreferenceType, *GlobalsPreferencePtr;
 
 extern GlobalsPreferencePtr gPrefs;
+extern Boolean bStartScumm;
 
 #define appPrefID				0x00
 #define appVersionNum			0x01
 #define appPrefVersionNum		0x01
 
 #define STACK_DEFAULT			8192
-#define STACK_LARGER			11264
+#define STACK_LARGER			16384
 #define STACK_GET				0
 
 Err AppStart(void);
