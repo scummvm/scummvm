@@ -62,7 +62,7 @@ bool Scumm::saveState(int slot, bool compat)
 
 	hdr.type = MKID('SCVM');
 	hdr.size = 0;
-	hdr.ver = _current_version;
+	hdr.ver = TO_LE_32(_current_version);
 
 	out.fwrite(&hdr, sizeof(hdr), 1);
 
@@ -95,7 +95,10 @@ bool Scumm::loadState(int slot, bool compat)
 		return false;
 	}
 
-	if (hdr.ver < VER_V7 || hdr.ver > _current_version) {
+	if (hdr.ver < VER_V7 || hdr.ver > _current_version)
+		hdr.ver = TO_LE_32(hdr.ver);
+	if (hdr.ver < VER_V7 || hdr.ver > _current_version)
+	{
 		warning("Invalid version of '%s'", filename);
 		out.fclose();
 		return false;
@@ -210,6 +213,8 @@ bool Scumm::getSavegameName(int slot, char *desc)
 		return false;
 	}
 
+	if (hdr.ver < VER_V7 || hdr.ver > _current_version)
+		hdr.ver = TO_LE_32(hdr.ver);
 	if (hdr.ver < VER_V7 || hdr.ver > _current_version) {
 		strcpy(desc, "Invalid version");
 		return false;
