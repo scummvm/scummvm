@@ -288,9 +288,6 @@ private:
 	StreamCallback *_stream_proc;
 	void  *_stream_param;
 	int 	 _mode;
-	uint16 _time_div;
-
-	uint32 property(int prop, uint32 param);
 };
 
 void MidiDriver_AMIDI::set_stream_callback(void *param, StreamCallback *sc) {
@@ -330,17 +327,6 @@ void MidiDriver_AMIDI::pause(bool pause) {
 	}
 }
 
-uint32 MidiDriver_AMIDI::property(int prop, uint32 param) {
-	switch(prop) {
-	/* 16-bit time division according to standard midi specification */
-	case PROP_TIMEDIV:
-		_time_div = (uint16)param;
-		return 1;
-	}
-
-	return 0;
-}
-
 MidiDriver *MidiDriver_AMIDI_create() {
 	return new MidiDriver_AMIDI();
 }
@@ -366,9 +352,7 @@ private:
 	StreamCallback *_stream_proc;
 	void  *_stream_param;
 	int 	 _mode;
-	uint16 _time_div;
 	int device;
-	uint32 property(int prop, uint32 param);
 };
 
 MidiDriver_SEQ::MidiDriver_SEQ(){
@@ -469,17 +453,301 @@ void MidiDriver_SEQ::destroy() {
 	delete this;
 }
 
-uint32 MidiDriver_SEQ::property(int prop, uint32 param) {
-	switch(prop) {
-	/* 16-bit time division according to standard midi specification */
-	case PROP_TIMEDIV:
-		_time_div = (uint16)param;
-		return 1;
+#endif
+
+#if defined(__APPLE__) || defined(__APPLE_CW)
+// FIXME - this is for Mac OS X and Mac OS 9. It's not really possible
+// to check for these *cleanly* without a configure script, though..
+
+#include <QuickTime/QuickTimeComponents.h>
+#include <QuickTime/QuickTimeMusic.h>
+
+
+
+/* QuickTime MIDI driver */
+class MidiDriver_QT : public MidiDriver {
+public:
+	void destroy();
+	int open(int mode);
+	void close();
+	void send(uint32 b);
+	void pause(bool pause);
+	void set_stream_callback(void *param, StreamCallback *sc);
+
+private:
+	NoteAllocator qtNoteAllocator;
+	NoteChannel qtNoteChannel[16];
+	NoteRequest simpleNoteRequest;
+
+	StreamCallback *_stream_proc;
+	void  *_stream_param;
+	int 	 _mode;
+};
+
+void MidiDriver_QT::set_stream_callback(void *param, StreamCallback *sc) {
+	_stream_param = param;
+	_stream_proc = sc;
+}
+
+void MidiDriver_QT::destroy()
+{
+	close();
+	delete this;
+}
+
+int MidiDriver_QT::open(int mode) {
+	ComponentResult qtErr = noErr;
+	qtNoteAllocator = NULL;
+
+	if (mode == MO_STREAMING)
+		return MERR_STREAMING_NOT_AVAILABLE;
+
+	_mode = mode;
+
+	for (int i = 0; i < 15; i++)
+		qtNoteChannel[i] = NULL;
+
+	qtNoteAllocator = OpenDefaultComponent(kNoteAllocatorComponentType, 0);
+	if (qtNoteAllocator == NULL)
+		goto bail;
+
+	simpleNoteRequest.info.flags = 0;
+	*(short *)(&simpleNoteRequest.info.polyphony) = EndianS16_NtoB(15);	// simultaneous tones
+	*(Fixed *) (&simpleNoteRequest.info.typicalPolyphony) =
+		EndianU32_NtoB(0x00010000);
+
+	qtErr = NAStuffToneDescription(qtNoteAllocator, 1, &simpleNoteRequest.tone);
+	if (qtErr != noErr)
+		goto bail;
+
+	for (int i = 0; i < 15; i++) {
+		qtErr =
+			NANewNoteChannel(qtNoteAllocator, &simpleNoteRequest,
+											 &(qtNoteChannel[i]));
+		if ((qtErr != noErr) || (qtNoteChannel == NULL))
+			goto bail;
+	}
+	return 0;
+
+bail:
+	error("Init QT failed %x %x %d\n", (int)qtNoteAllocator, (int)qtNoteChannel,
+					(int)qtErr);
+	for (int i = 0; i < 15; i++) {
+		if (qtNoteChannel[i] != NULL)
+			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
+		qtNoteChannel[i] = NULL;
 	}
 
+	if (qtNoteAllocator != NULL) {
+		CloseComponent(qtNoteAllocator);
+		qtNoteAllocator = NULL;
+	}
+
+	return MERR_DEVICE_NOT_AVAILABLE;
+}
+
+void MidiDriver_QT::close() {
+	_mode = 0;
+
+	for (int i = 0; i < 15; i++) {
+		if (qtNoteChannel[i] != NULL)
+			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
+		qtNoteChannel[i] = NULL;
+	}
+
+	if (qtNoteAllocator != NULL) {
+		CloseComponent(qtNoteAllocator);
+		qtNoteAllocator = NULL;
+	}
+}
+
+void MidiDriver_QT::send(uint32 b) {
+	if (_mode != MO_SIMPLE)
+		error("MidiDriver_QT:send called but driver is not in simple mode");
+
+	MusicMIDIPacket midPacket;
+	unsigned char *midiCmd = midPacket.data;
+	midPacket.length = 3;
+	midiCmd[3] = (b & 0xFF000000) >> 24;
+	midiCmd[2] = (b & 0x00FF0000) >> 16;
+	midiCmd[1] = (b & 0x0000FF00) >> 8;
+	midiCmd[0] = (b & 0x000000FF);
+
+	unsigned char chanID = midiCmd[0] & 0x0F;
+	switch (midiCmd[0] & 0xF0) {
+	case 0x80:										// Note off
+		NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1], 0);
+		break;
+
+	case 0x90:										// Note on
+		NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1], midiCmd[2]);
+		break;
+
+	case 0xB0:										// Effect
+		switch (midiCmd[1]) {
+		case 0x01:									// Modulation
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
+											kControllerModulationWheel, midiCmd[2] << 8);
+			break;
+
+		case 0x07:									// Volume
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
+											kControllerVolume, midiCmd[2] * 300);
+			break;
+
+		case 0x0A:									// Pan
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPan,
+											(midiCmd[2] << 1) + 0xFF);
+			break;
+
+		case 0x40:									// Sustain on/off
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
+											kControllerSustain, midiCmd[2]);
+			break;
+
+		case 0x5b:									// ext effect depth
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
+											kControllerReverb, midiCmd[2] << 8);
+			break;
+
+		case 0x5d:									// chorus depth
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
+											kControllerChorus, midiCmd[2] << 8);
+			break;
+
+		case 0x7b:									// mode message all notes off
+			for (int i = 0; i < 128; i++)
+				NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], i, 0);
+			break;
+
+		default:
+			error("Unknown MIDI effect: %08x\n", (int)b);
+			break;
+		}
+		break;
+
+	case 0xC0:										// Program change
+		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1]);
+		break;
+
+	case 0xE0:{									// Pitch bend
+			long theBend =
+				((((long)midiCmd[1] + (long)(midiCmd[2] << 8))) - 0x4000) / 4;
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
+											kControllerPitchBend, theBend);
+		}
+		break;
+
+	default:
+		error("Unknown Command: %08x\n", (int)b);
+		NASendMIDI(qtNoteAllocator, qtNoteChannel[chanID], &midPacket);
+		break;
+	}
+}
+
+void MidiDriver_QT::pause(bool pause) {
+}
+
+MidiDriver *MidiDriver_QT_create() {
+	return new MidiDriver_QT();
+}
+
+#endif // __APPLE__ || __APPLE_CW
+
+
+#ifdef __APPLE__
+
+#include <AudioUnit/AudioUnit.h>
+
+/* CoreAudio MIDI driver */
+/* Based on code by Benjamin W. Zale */
+class MidiDriver_CORE : public MidiDriver {
+public:
+	void destroy();
+	int open(int mode);
+	void close();
+	void send(uint32 b);
+	void pause(bool pause);
+	void set_stream_callback(void *param, StreamCallback *sc);
+
+private:
+	AudioUnit au_MusicDevice;
+
+	StreamCallback *_stream_proc;
+	void  *_stream_param;
+	int 	 _mode;
+};
+
+void MidiDriver_CORE::set_stream_callback(void *param, StreamCallback *sc) {
+	_stream_param = param;
+	_stream_proc = sc;
+}
+
+void MidiDriver_CORE::destroy() {
+	close();
+	delete this;
+}
+
+int MidiDriver_CORE::open(int mode) {
+	_mode = mode;
+	
+	AudioUnit au_output;
+	
+	int err;
+	struct AudioUnitConnection	auconnect;
+	ComponentDescription compdesc;
+	Component compid;
+	
+	au_MusicDevice=au_output=NULL;
+	
+	//Open the Music Device
+	compdesc.componentType=kAudioUnitComponentType;
+	compdesc.componentSubType=kAudioUnitSubType_MusicDevice;
+	compdesc.componentManufacturer=kAudioUnitID_DLSSynth;
+	compdesc.componentFlags=0;
+	compdesc.componentFlagsMask=0;
+	compid=FindNextComponent(NULL,&compdesc);
+	au_MusicDevice=(AudioUnit)OpenComponent(compid);
+	
+	// open the output unit
+	au_output=(AudioUnit)OpenDefaultComponent(kAudioUnitComponentType,kAudioUnitSubType_Output);
+	// connect the units
+	auconnect.sourceAudioUnit=au_MusicDevice;
+	auconnect.sourceOutputNumber=0;
+	auconnect.destInputNumber=0;
+	err=AudioUnitSetProperty(au_output,kAudioUnitProperty_MakeConnection,kAudioUnitScope_Input,0,(void*)&auconnect,sizeof(struct AudioUnitConnection));
+	// initialize the units
+	AudioUnitInitialize(au_MusicDevice);
+	AudioUnitInitialize(au_output);
+	// start the output
+	AudioOutputUnitStart(au_output);
+	
 	return 0;
 }
-#endif
+
+void MidiDriver_CORE::close() {
+	_mode = 0;
+}
+
+void MidiDriver_CORE::send(uint32 b) {
+	if (_mode != MO_SIMPLE)
+		error("MidiDriver_CORE:send called but driver is not in simple mode");
+
+	unsigned char first_byte, seccond_byte, status_byte;
+	status_byte   = (b & 0x000000FF);
+	first_byte    = (b & 0x0000FF00) >> 8;
+	seccond_byte  = (b & 0x00FF0000) >> 16;
+	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, 0);
+}
+
+void MidiDriver_CORE::pause(bool pause) {
+}
+
+MidiDriver *MidiDriver_CORE_create() {
+	return new MidiDriver_CORE();
+}
+
+#endif // __APPLE__
 
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver {
@@ -490,7 +758,6 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	uint32 property(int prop, uint32 param);
 private:
 };
 
@@ -503,10 +770,17 @@ void MidiDriver_NULL::destroy() {}
 void MidiDriver_NULL::send(uint32 b) {}
 void MidiDriver_NULL::pause(bool pause) {}
 void MidiDriver_NULL::set_stream_callback(void *param, StreamCallback *sc) {}
-uint32 MidiDriver_NULL::property(int prop, uint32 param) { return 0; }
 
 MidiDriver *MidiDriver_NULL_create() {
 	return new MidiDriver_NULL();
+}
+
+
+
+/* Default (empty) property method */
+uint32 MidiDriver::property(int prop, uint32 param)
+{
+	return 0;
 }
 
 
@@ -530,123 +804,12 @@ const char *MidiDriver::get_error_name(int error_code) {
 
 
 
-
-
 #if 0
 
+/* Old code for timidity support, maybe somebody can rewrite this for the 
+   new midi driver system?
+ */
 
-void MidiDriver::midiInit()
-{
-	if (MidiInitialized != true) {
-		switch (DeviceType) {
-		case MIDI_NULL:
-			midiInitNull();
-			break;
-		case MIDI_WINDOWS:
-			midiInitWindows();
-			break;
-		case MIDI_TIMIDITY:
-			midiInitTimidity();
-			break;
-		case MIDI_SEQ:
-			midiInitSeq();
-			break;
-		case MIDI_QTMUSIC:
-			midiInitQuicktime();
-			break;
-		case MIDI_AMIDI:
-			break;
-		default:
-			DeviceType = 0;
-			midiInitNull();
-			break;
-		}
-		MidiInitialized = true;
-	} else {
-		error("Midi driver already initialized");
-	}
-}
-
-void MidiDriver::MidiOut(int b)
-{
-	if (MidiInitialized != true)
-		midiInit();
-
-	if (MidiInitialized == true) {
-		switch (DeviceType) {
-		case MIDI_NULL:
-			break;
-		case MIDI_WINDOWS:
-			MidiOutWindows(_mo, b);
-			break;
-		case MIDI_TIMIDITY:
-		case MIDI_SEQ:
-			MidiOutSeq(_mo, b);
-			break;
-		case MIDI_QTMUSIC:
-			MidiOutQuicktime(_mo, b);
-			break;
-		case MIDI_AMIDI:
-			MidiOutMorphOS(_mo, b);
-			break;
-		default:
-			error("Invalid midi device type ");
-			break;
-		}
-	} else {
-		warning("Trying to write midi data without the driver being initialized");
-	}
-}
-
-/*********** Windows			*/
-void MidiDriver::midiInitWindows()
-{
-#ifdef WIN32
-	if (midiOutOpen((HMIDIOUT *) & _mo, MIDI_MAPPER, NULL, NULL, 0) !=
-			MMSYSERR_NOERROR)
-		error("midiOutOpen failed");
-#endif
-}
-
-void MidiDriver::MidiOutWindows(void *a, int b)
-{
-#ifdef WIN32
-	midiOutShortMsg((HMIDIOUT) a, b);
-#endif
-}
-
-/*********** Raw midi support	*/
-void MidiDriver::midiInitSeq()
-{
-	int device = open_sequencer_device();
-	_mo = (void *)device;
-}
-
-int MidiDriver::open_sequencer_device()
-{
-	int device = 0;
-#if !defined(__APPLE__CW)				// No getenv support on Apple Carbon
-	char *device_name = getenv("SCUMMVM_MIDI");
-	if (device_name != NULL) {
-		device = (open((device_name), O_RDWR, 0));
-	} else {
-		warning
-			("You need to set-up the SCUMMVM_MIDI environment variable properly (see readme.txt) ");
-	}
-	if ((device_name == NULL) || (device < 0)) {
-		if (device_name == NULL)
-			warning("Opening /dev/null (no music will be heard) ");
-		else
-			warning
-				("Cannot open rawmidi device %s - using /dev/null (no music will be heard) ",
-				 device_name);
-		device = (open(("/dev/null"), O_RDWR, 0));
-		if (device < 0)
-			error("Cannot open /dev/null to dump midi output");
-	}
-#endif
-	return device;
-}
 
 /*********** Timidity		*/
 int MidiDriver::connect_to_timidity(int port)
@@ -698,245 +861,5 @@ void MidiDriver::midiInitTimidity()
 	_mo = (void *)s2;
 }
 
-void MidiDriver::MidiOutSeq(void *a, int b)
-{
-	int s = (int)a;
-	unsigned char buf[256];
-	int position = 0;
-
-	switch (b & 0xF0) {
-	case 0x80:
-	case 0x90:
-	case 0xA0:
-	case 0xB0:
-	case 0xE0:
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = b;
-		buf[position++] = DEVICE_NUM;
-		buf[position++] = 0;
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 8) & 0x7F;
-		buf[position++] = DEVICE_NUM;
-		buf[position++] = 0;
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 16) & 0x7F;
-		buf[position++] = DEVICE_NUM;
-		buf[position++] = 0;
-		break;
-	case 0xC0:
-	case 0xD0:
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = b;
-		buf[position++] = DEVICE_NUM;
-		buf[position++] = 0;
-		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 8) & 0x7F;
-		buf[position++] = DEVICE_NUM;
-		buf[position++] = 0;
-		break;
-	default:
-		fprintf(stderr, "Unknown : %08x\n", b);
-		break;
-	}
-	write(s, buf, position);
-}
-
-/* Quicktime music support */
-void MidiDriver::midiInitQuicktime()
-{
-#ifdef __APPLE__CW
-	ComponentResult qtErr = noErr;
-	qtNoteAllocator = NULL;
-
-	for (int i = 0; i < 15; i++)
-		qtNoteChannel[i] = NULL;
-
-	qtNoteAllocator = OpenDefaultComponent(kNoteAllocatorComponentType, 0);
-	if (qtNoteAllocator == NULL)
-		goto bail;
-
-	simpleNoteRequest.info.flags = 0;
-	*(short *)(&simpleNoteRequest.info.polyphony) = EndianS16_NtoB(15);	// simultaneous tones
-	*(Fixed *) (&simpleNoteRequest.info.typicalPolyphony) =
-		EndianU32_NtoB(0x00010000);
-
-	qtErr = NAStuffToneDescription(qtNoteAllocator, 1, &simpleNoteRequest.tone);
-	if (qtErr != noErr)
-		goto bail;
-
-	for (int i = 0; i < 15; i++) {
-		qtErr =
-			NANewNoteChannel(qtNoteAllocator, &simpleNoteRequest,
-											 &(qtNoteChannel[i]));
-		if ((qtErr != noErr) || (qtNoteChannel == NULL))
-			goto bail;
-	}
-	return;
-
-bail:
-	fprintf(stderr, "Init QT failed %x %x %d\n", qtNoteAllocator, qtNoteChannel,
-					qtErr);
-	for (int i = 0; i < 15; i++) {
-		if (qtNoteChannel[i] != NULL)
-			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
-	}
-
-	if (qtNoteAllocator != NULL)
-		CloseComponent(qtNoteAllocator);
-#endif
-}
-
-void MidiDriver::MidiOutQuicktime(void *a, int b)
-{
-#ifdef __APPLE__CW
-	MusicMIDIPacket midPacket;
-	unsigned char *midiCmd = midPacket.data;
-	midPacket.length = 3;
-	midiCmd[3] = (b & 0xFF000000) >> 24;
-	midiCmd[2] = (b & 0x00FF0000) >> 16;
-	midiCmd[1] = (b & 0x0000FF00) >> 8;
-	midiCmd[0] = b;
-
-	unsigned char chanID = midiCmd[0] & 0x0F;
-	switch (midiCmd[0] & 0xF0) {
-	case 0x80:										// Note off
-		NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1], 0);
-		break;
-
-	case 0x90:										// Note on
-		NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1],
-							 midiCmd[2]);
-		break;
-
-	case 0xB0:										// Effect
-		switch (midiCmd[1]) {
-		case 0x01:									// Modulation
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
-											kControllerModulationWheel, midiCmd[2] << 8);
-			break;
-
-		case 0x07:									// Volume
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
-											kControllerVolume, midiCmd[2] * 300);
-			break;
-
-		case 0x0A:									// Pan
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPan,
-											(midiCmd[2] << 1) + 0xFF);
-			break;
-
-		case 0x40:									// Sustain on/off
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
-											kControllerSustain, midiCmd[2]);
-			break;
-
-		case 0x5b:									// ext effect depth
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
-											kControllerReverb, midiCmd[2] << 8);
-			break;
-
-		case 0x5d:									// chorus depth
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
-											kControllerChorus, midiCmd[2] << 8);
-			break;
-
-		case 0x7b:									// mode message all notes off
-			for (int i = 0; i < 128; i++)
-				NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], i, 0);
-			break;
-
-		default:
-			fprintf(stderr, "Unknown MIDI effect: %08x\n", b);
-			break;
-		}
-		break;
-
-	case 0xC0:										// Program change
-		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1]);
-		break;
-
-	case 0xE0:{									// Pitch bend
-			long theBend =
-				((((long)midiCmd[1] + (long)(midiCmd[2] << 8))) - 0x4000) / 4;
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
-											kControllerPitchBend, theBend);
-		}
-		break;
-
-	default:
-		fprintf(stderr, "Unknown Command: %08x\n", b);
-		NASendMIDI(qtNoteAllocator, qtNoteChannel[chanID], &midPacket);
-		break;
-	}
-#endif
-}
-
-/*********** MorphOS            */
-void MidiDriver::MidiOutMorphOS(void *a, int b)
-{
-#ifdef __MORPHOS__
-	if (ScummMidiRequest) {
-		ULONG midi_data = b;				// you never know about an int's size ;-)
-		ScummMidiRequest->amr_Std.io_Command = CMD_WRITE;
-		ScummMidiRequest->amr_Std.io_Data = &midi_data;
-		ScummMidiRequest->amr_Std.io_Length = 4;
-		DoIO((struct IORequest *)ScummMidiRequest);
-	}
-#endif
-}
-
-
-
-void MidiDriver::midiInitNull()
-{
-	warning
-		("Music not enabled - MIDI support selected with no MIDI driver available. Try Adlib");
-}
-
-
-
-/* old header stuff.. */
-/* General Midi header file */
-#define SEQ_MIDIPUTC    5
-#define SPECIAL_CHANNEL 9
-#define DEVICE_NUM 0
-
-
-
-#ifdef __APPLE__CW
-	#include <QuickTimeComponents.h>
-	#include "QuickTimeMusic.h"
-
-	NoteAllocator qtNoteAllocator;
-	NoteChannel qtNoteChannel[16];
-	NoteRequest simpleNoteRequest;
-#endif
-
-#ifdef WIN32
-	#include <winsock.h>
-#elif (defined(UNIX) || defined(UNIX_X11))
-	#include <sys/time.h>
-	#include <unistd.h>
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <netdb.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-#endif
-
-#ifdef __MORPHOS__
-	#include <exec/types.h>
-	#include <devices/amidi.h>
-
-	#define NO_PPCINLINE_STDARG
-	#define NO_PPCINLINE_VARARGS
-	#include <clib/alib_protos.h>
-	#include <proto/exec.h>
-	#undef CMD_INVALID
-
-	extern struct IOMidiRequest *ScummMidiRequest;
-#endif
 
 #endif /* 0 */

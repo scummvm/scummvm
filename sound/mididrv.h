@@ -66,7 +66,7 @@ public:
 
 	
 	/* destroy the midi object */
-	virtual void destroy() = 0;
+//	virtual void destroy() = 0;
 
 	/* open the midi driver.
 	 * returns 0 if successful.
@@ -91,7 +91,7 @@ public:
 
 
 	/* Get or set a property */
-	virtual uint32 property(int prop, uint32 param) = 0;
+	virtual uint32 property(int prop, uint32 param) ;
 
 	/* retrieve a string representation of an error code */
 	static const char *get_error_name(int error_code);
@@ -108,14 +108,16 @@ enum {
 	MD_SEQ = 4,
 	MD_QTMUSIC = 5,
 	MD_AMIDI = 6,
+	MD_COREAUDIO = 7,
 };
 
 
 /* Factory functions => no need to include the specific classes
  * in this header => faster compile */
-MidiDriver *MidiDriver_NULL_create();
-MidiDriver *MidiDriver_WIN_create();
-MidiDriver *MidiDriver_TIMIDITY_create();
-MidiDriver *MidiDriver_SEQ_create();
-MidiDriver *MidiDriver_QT_create();
-MidiDriver *MidiDriver_AMIDI_create();
+extern MidiDriver *MidiDriver_NULL_create();
+extern MidiDriver *MidiDriver_WIN_create();
+extern MidiDriver *MidiDriver_TIMIDITY_create();
+extern MidiDriver *MidiDriver_SEQ_create();
+extern MidiDriver *MidiDriver_QT_create();
+extern MidiDriver *MidiDriver_CORE_create();
+extern MidiDriver *MidiDriver_AMIDI_create();

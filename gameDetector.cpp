@@ -205,6 +205,7 @@ bool GameDetector::parseMusicDriver(const char *s) {
 		{"timidity",MD_TIMIDITY},
 		{"seq",MD_SEQ},
 		{"qt",MD_QTMUSIC},
+		{"core",MD_COREAUDIO},
 		{"amidi",MD_AMIDI},
 		{"adlib",-1},
 	};
@@ -446,6 +447,9 @@ MidiDriver *GameDetector::createMidi() {
 #if defined (WIN32) && !defined(_WIN32_WCE)
 	/* MD_WINDOWS is default MidiDriver on windows targets */
 	if (drv == MD_AUTO) drv = MD_WINDOWS;	
+#elif defined(__APPLE__)
+	/* MD_QTMUSIC is default MidiDriver on MacOS targets */
+	if (drv == MD_AUTO) drv = MD_QTMUSIC;	
 #endif
 	
 	switch(drv) {
@@ -459,6 +463,10 @@ MidiDriver *GameDetector::createMidi() {
 #endif
 #if defined(UNIX) && !defined(__BEOS__)
     case MD_SEQ:        return MidiDriver_SEQ_create();
+#endif
+#if defined(__APPLE__)
+	case MD_QTMUSIC:		return MidiDriver_QT_create();
+	case MD_COREAUDIO:		return MidiDriver_CORE_create();
 #endif
 	}
 
