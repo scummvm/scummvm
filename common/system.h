@@ -24,12 +24,11 @@
 #define COMMON_SYSTEM_H
 
 #include "common/scummsys.h"
-#include "common/util.h"
 #include "common/mutex.h"
 #include "common/rect.h"
-#include "common/savefile.h"
 #include "common/singleton.h"
 
+class SaveFileManager;
 
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system

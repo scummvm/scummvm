@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/timer.h"
+#include "common/savefile.h"
 #include "common/scaler.h"	// For GFX_NORMAL
 #include "common/system.h"
 #include "sound/mixer.h"

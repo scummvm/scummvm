@@ -19,9 +19,10 @@
  *
  */
 
-#include "common/file.h"
 #include "common/stdafx.h"
+#include "common/file.h"
 #include "common/util.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "gui/message.h"

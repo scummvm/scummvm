@@ -29,6 +29,7 @@
 #include "gui/message.h"
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 DECLARE_SINGLETON(OSystem);
