@@ -1230,7 +1230,12 @@ void ScummEngine::scummInit() {
 		_verbs[i].key = 0;
 	}
 
-	if (!(_features & GF_NEW_CAMERA)) {
+	if (_version == 7) {
+		VAR(VAR_CAMERA_THRESHOLD_X) = 100;
+		VAR(VAR_CAMERA_THRESHOLD_Y) = 70;
+		VAR(VAR_CAMERA_ACCEL_X) = 100;
+		VAR(VAR_CAMERA_ACCEL_Y) = 100;
+	} else if (!(_features & GF_NEW_CAMERA)) {
 		camera._leftTrigger = 10;
 		camera._rightTrigger = 30;
 		camera._mode = 0;
