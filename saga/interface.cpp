@@ -534,7 +534,6 @@ int Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePt) {
 	int hit_button;
 	int ibutton_num;
 
-	Point button;
 //	int button_w = 0;
 
 /*	int verb_idx = 0;
