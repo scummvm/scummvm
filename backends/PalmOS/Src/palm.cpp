@@ -29,6 +29,7 @@
 #include "vibrate.h"
 
 #include "cd_msa.h"
+//#undef DISABLE_TAPWAVE
 
 #ifndef DISABLE_TAPWAVE
 #include "tapwave.h"
@@ -54,7 +55,7 @@ OSystem *OSystem_PALMOS_create(int gfx_mode, bool full_screen) {
 }
 
 void OSystem_PALMOS::set_palette(const byte *colors, uint start, uint num) {
-	if (_quit)
+	if (_quitCount)
 		return;
 
 	const byte *b = colors;
@@ -177,12 +178,14 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 
 	_screenWidth = w;
 	_screenHeight = h;
-	_offScreenPitch = gVars->screenFullWidth;
-	_screenPitch = gVars->screenFullWidth;
+	_offScreenPitch = gVars->screenPitch;	// direct screen / flipping use this, set later if double buffer
+	_screenPitch = gVars->screenPitch;
 
 	_overlayVisible = false;
-	_quit = false;
+	_quitCount = 0;
 
+	if (OPTIONS(optIsCollapsible))
+		SysSetOrientationTriggerState(sysOrientationTriggerDisabled);
 
 	// check HiRes+
 	if (_mode == GFX_WIDE) {
@@ -211,16 +214,16 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 			}
 
 		// Tapwave Zodiac and other DIA compatible devices
-		} else if (OPTIONS(optIsLandscapeMode)) {
+		} else if (OPTIONS(optHasWideMode)) {
 /*			UInt32 width = hrWidth;
 			UInt32 height= hrHeight;
 			UInt32 depth = 16;
 			Boolean color = true;
-			Err e;*/
-//			e = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color );
-			SysSetOrientation(sysOrientationLandscape);
+			Err e;
+			e = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color );
+*/			//SysSetOrientation(sysOrientationLandscape);
 			PINSetInputAreaState(pinInputAreaClosed);
-			StatHide();	
+			StatHide();
 
 		}
 	}
@@ -406,20 +409,27 @@ void OSystem_PALMOS::update_screen__dbuffer() {
 	if (_screenPitch == _screenWidth) {
 		MemMove(_screenP + move, _offScreenP, size - move);
 	} else {
-/*#ifndef DISABLE_TAPWAVE
+#ifndef DISABLE_TAPWAVE
 	Err e;
 	TwGfxSurfaceType *src;
 	TwGfxSurfaceType *dst;
 	TwGfxRectType d = {0,0,480,300}, s = {0,0,320,200};
 	TwGfxSurfaceInfoType t;
 	TwGfxPointType dd = {0,0};
-	
+
 	t.size = sizeof(TwGfxSurfaceInfoType);
 	t.width = 320;
 	t.height = 200;
 	t.rowBytes = 640;
 	t.location = twGfxLocationAcceleratorMemory;
 	t.pixelFormat = twGfxPixelFormatRGB565_LE;
+/*	
+	ColorTableType table;
+	RGBColorType *rgb = ColorTableEntries (table);
+	table.numEntries = 256;
+	*rgb = _currentPalette;
+	*/
+	//BitmapType *newBmp = 
 	
 
 	
@@ -432,7 +442,7 @@ void OSystem_PALMOS::update_screen__dbuffer() {
 	e = TwGfxStretchBlt(dst, &d, src, &s); 
 	e = TwGfxFreeSurface(src);
 	e = TwGfxClose(gfx);
-#endif*/
+#endif
 //#if 0
 		byte *src = _offScreenP;
 		byte *dst = _screenP + move;
@@ -440,7 +450,7 @@ void OSystem_PALMOS::update_screen__dbuffer() {
 		do {
 			memcpy(dst, src, _screenWidth);
 			dst += _screenPitch;
-			src += _screenWidth;
+			src += _offScreenPitch;
 		} while (--h);
 //#endif
 	}
@@ -538,7 +548,7 @@ static void drawNumPad(OSystem_PALMOS *sys, UInt8 color) {
 }
 
 void OSystem_PALMOS::update_screen() {
-	if(_quit)
+	if(_quitCount)
 		return;
 
 	// Make sure the mouse is drawn, if it should be drawn.
@@ -642,13 +652,16 @@ uint32 OSystem_PALMOS::get_msecs() {
 }
 
 void OSystem_PALMOS::delay_msecs(uint msecs) {
-	SysTaskDelay((SysTicksPerSecond()*msecs)/1000);
+	UInt32 delay = (SysTicksPerSecond() * msecs) / 1000;
+
+	if (delay)
+		SysTaskDelay(delay);
 }
 
 void OSystem_PALMOS::set_timer(TimerProc callback, int timer) {
 	if (callback != NULL) {
 		_timer.duration = timer;
-		_timer.next_expiry = get_msecs() + timer;
+		_timer.nextExpiry = get_msecs() + timer;
 		_timer.callback = callback;
 		_timer.active = true;
 	} else {
@@ -707,7 +720,13 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 	UInt32 keyCurrentState;
 	Coord x, y;
 
-	if(_quit) {
+	if(_quitCount) {
+		if (_quitCount >= 10)
+			SysReset();
+		else
+			_quitCount++;
+	
+		event->event_code = EVENT_QUIT;
 		exit(0);	// resend an exit event
 		return false;
 	}
@@ -719,13 +738,13 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 		check_sound();
 
 	// timer handler
-	if (_timer.active)
-		 _timer.callback(_timer.duration);
-/*	if (_timer.active && (current_msecs >= _timer.next_expiry)) {
+//	if (_timer.active)
+//		 _timer.callback(_timer.duration);
+	if (_timer.active && (current_msecs >= _timer.nextExpiry)) {
 		_timer.duration = _timer.callback(_timer.duration);
-		_timer.next_expiry = current_msecs + _timer.duration;
+		_timer.nextExpiry = current_msecs + _timer.duration;
 	}
-*/
+
 /*
 	if (_timer.active) {
 		if (current_msecs - _timer.next_expiry >= 10)
@@ -788,8 +807,10 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 				case vchrCalc:
 					if (_lastKeyPressed == vchrCalc)
-						if ((get_msecs() - _exit_delay) <= (EXITDELAY))
+						if ((get_msecs() - _exit_delay) <= (EXITDELAY)) {
+							event->event_code = EVENT_QUIT;
 							_selfQuit = true;
+						}
 
 					_exit_delay = get_msecs();
 					_lastKeyPressed = vchrCalc;
@@ -883,6 +904,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					if (_lastKeyModifier == MD_ALT) b = KBD_ALT;
 					
 					if  ((ev.data.keyDown.chr == 'z' && b == KBD_CTRL) || (b == KBD_ALT && ev.data.keyDown.chr == 'x')) {
+						event->event_code = EVENT_QUIT;
 						_selfQuit = true;
 
 					} else if (ev.data.keyDown.chr == 'n' && b == KBD_CTRL) {
@@ -972,8 +994,6 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 	switch(param) {
 
 	case PROP_SET_WINDOW_CAPTION:
-		if (StrCaselessCompare(value->caption,"ScummVM") == 0)
-			return 1;
 		
 		Char *caption = "Loading, please wait\0";
 		Coord h = FntLineHeight() + 2;
@@ -1030,7 +1050,6 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 		break;
 
 	case PROP_GET_SAMPLE_RATE:
-//		return SAMPLES_PER_SEC;
 		return 8000;
 	}
 
@@ -1038,7 +1057,13 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 }
 
 void OSystem_PALMOS::quit() {
-	if (_quit)
+	// There is no exit(.) function under PalmOS, to exit an app
+	// we need to send an 'exit' event to the event handler
+	// and then the system return to the launcher. But this event
+	// is not handled by the main loop and so we need to force exit.
+	// In other systems like Windows ScummVM exit immediatly and so this doesn't appear.
+
+	if (_quitCount)
 		return;
 
 	if (_selfQuit && Scumm::g_scumm)
@@ -1055,12 +1080,12 @@ void OSystem_PALMOS::quit() {
 	}
 
 	unload_gfx_mode();
-	_quit = true;
+	_quitCount++;
 	exit(1);
 }
 
 void OSystem_PALMOS::draw_mouse() {
-	if (_mouseDrawn || !_mouseVisible || _quit)
+	if (_mouseDrawn || !_mouseVisible || _quitCount)
 		return;
 
 	_mouseCurState.y = _mouseCurState.y >= _screenHeight ? _screenHeight - 1 : _mouseCurState.y;
@@ -1167,7 +1192,7 @@ void OSystem_PALMOS::draw_mouse() {
 }
 
 void OSystem_PALMOS::undraw_mouse() {
-	if (!_mouseDrawn || _quit)
+	if (!_mouseDrawn || _quitCount)
 		return;
 
 	_mouseDrawn = false;
@@ -1236,7 +1261,7 @@ void OSystem_PALMOS::update_cdrom() {
 }
 
 OSystem_PALMOS::OSystem_PALMOS() {
-	_quit = false;
+	_quitCount = 0;
 	_selfQuit = false; // prevent illegal access to g_scumm
 	_current_shake_pos = 0;
 	_new_shake_pos = 0;
@@ -1284,7 +1309,7 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	
 	// sound
 	_isSndPlaying = false;
-	_sndTempP = (UInt8 *)MemPtrNew(SND_BLOCK);
+	_sndTempP = (UInt8 *)calloc(SND_BLOCK,1);
 	_sndDataP = NULL;
 }
 
@@ -1349,17 +1374,57 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 	// Prevent crash on Clie device using successive [HR]WinScrollRectangle !
 	SysTaskDelay(1);
 }
+/*
+typedef struct {
+	bool played;
+	void *data;
+	UInt8 count;
+} CallbackDataType;
+
+CallbackDataType mycallback = {true, NULL, 0};
+
+static Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 frameCount) {
+//	SoundDataType *snd = (SoundDataType *)UserDataP;
+//	snd->proc(snd->param, (UInt8 *)bufferP, frameCount);
+
+	CallbackDataType *ptr = (CallbackDataType *)UserDataP;
+	MemSet(bufferP,frameCount,0);
+
+	if (!ptr->played) {
+		MemMove(bufferP, ptr->data, SND_BLOCK * 3);
+		ptr->played = true;
+	} else {
+		MemSet(bufferP,SND_BLOCK,0);
+	}
+	return errNone;
+}
+*/
+//FILE *mf = NULL;
 
 bool OSystem_PALMOS::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
 	_sound.active = true;
 	_sound.proc = proc;
 	_sound.param = param;
 	_sound.format = format;
+/*
+	mycallback.data = _sndTempP;
 
+	Err e;
+	//_sound.active = false;
+	e = SndStreamCreate(&_sound.sndRefNum, sndOutput, 8000, sndInt16Big, sndStereo, sndCallback, &mycallback, SND_BLOCK *3, false);
+	e = SndStreamStart(_sound.sndRefNum);
+
+	//mf = fopen("/PALM/Programs/ScummVM/dump.wav","wb");
+	*/
 	return _sound.active;
 }
 
 void OSystem_PALMOS::clear_sound_proc() {
+/*	SndStreamStop(_sound.sndRefNum);
+	SndStreamDelete(_sound.sndRefNum);
+	*/
+	//fclose(mf);
+	
 	_sound.active = false;
 }
 
@@ -1368,7 +1433,16 @@ void OSystem_PALMOS::check_sound() {
 	// but i need to use this function to prevent out of memory
 	// on games because the sound buffer growns and it's never
 	// freed.
-	_sound.proc(_sound.param, _sndTempP, SND_BLOCK);
+//	if (mycallback.played) {
+		_sound.proc(_sound.param, _sndTempP, SND_BLOCK);
+	/*	
+		if (mycallback.count == 3) {
+			mycallback.played = false;
+			mycallback.count = 0;
+		}
+		//if (mf)
+		//	fwrite(_sndTempP, SND_BLOCK, 1, mf);
+	}*/
 }
 
 void OSystem_PALMOS::show_overlay() {

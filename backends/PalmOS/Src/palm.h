@@ -133,7 +133,8 @@ public:
 
 	// Quit
 	void quit();
-	bool _quit, _selfQuit;
+	bool _selfQuit;
+	UInt8 _quitCount;
 
 	// Overlay
 	void show_overlay();
@@ -217,9 +218,9 @@ private:
 	UInt32 _exit_delay;
 	
 	struct {
-		uint32 duration, next_expiry;
+		uint32 duration, nextExpiry;
 		bool active;
-		int (*callback) (int);
+		TimerProc callback;
 	} _timer;
 
 	SoundDataType _sound;
