@@ -508,6 +508,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	VAR_CUSTOMSCALETABLE = 0xFF;
 	VAR_V6_SOUNDMODE = 0xFF;
 
+	VAR_CLICK_AREA = 0xFF;
+
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
