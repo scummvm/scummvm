@@ -411,7 +411,7 @@ int ScummEngine_v7he::getCharsetOffset(int letter) {
 	if (!ptr)
 		error("getCharsetOffset: charset %d not found!", _string[0]._default.charset);
 
-	offset = READ_LE_UINT32(ptr + 29 + letter);
+	offset = READ_LE_UINT32(ptr + 29 + letter * 4 + 4);
 	if (offset == 0)
 		return 0;
 
@@ -421,7 +421,7 @@ int ScummEngine_v7he::getCharsetOffset(int letter) {
 	byte start = *ptr;
 
 	if (result >= 0x80) {
-		result = result - 256 + start;
+		result = (result & 0xff) - 256 + start;
 	} else {
 		result += start;
 	};
