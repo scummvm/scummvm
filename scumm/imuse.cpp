@@ -1119,9 +1119,14 @@ void IMuseInternal::initMidiDriver (MidiDriver *midi) {
 
 	// Display a welcome message on MT-32 displays.
 	byte welcome[] = {
-		0x41, 0x00, 0x16, 0x11, 0x20, 0x00, 0x00, 0x00, 0x00, 0x14,
-		' ','W','e','l','c','o','m','e',' ','t','o',' ','S','c','u','m','m','V','M',' '
+		0x41, 0x10, 0x16, 0x12, 0x20, 0x00, 0x00,
+		' ','W','e','l','c','o','m','e',' ','t','o',' ','S','c','u','m','m','V','M',' ',
+		0
 	};
+	byte checksum = 0;
+	for (int i = 4; i < ARRAYSIZE(welcome) - 1; ++i)
+		checksum -= welcome[i];
+	welcome[ARRAYSIZE(welcome)-1] = checksum & 0x7F;
 	midi->sysEx (welcome, ARRAYSIZE(welcome));
 
 	// Connect to the driver's timer
