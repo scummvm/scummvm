@@ -14,13 +14,15 @@
 #define IDS_CAP_OPTIONS                 40015
 #define ID_MENU_OPTIONS                 40016
 #define IDM_SMARTFON_MUSIC              40017
+#define IDM_SMARTFON_SOUND              40017
+#define IDM_SMARTFON_HELP               40021
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        107
-#define _APS_NEXT_COMMAND_VALUE         40021
+#define _APS_NEXT_COMMAND_VALUE         40022
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
