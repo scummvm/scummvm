@@ -1232,7 +1232,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		}
 		
-#if 1
+#if 0
 		// HACK: blit mask(s) onto normal screen. Useful to debug masking 
 		for (i = 0; i < numzbuf; i++) {
 			mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + stripnr + _imgBufOffs[i] + (y * _numStrips);
