@@ -1031,7 +1031,7 @@ void Display::blankScreenEffect2() {
 			p += SCREEN_W;
 		}
 		_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
-			_system->updateScreen();
+		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
@@ -1060,7 +1060,7 @@ void Display::blankScreenEffect3() {
 			++i;
 			_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
 		}
-			_system->updateScreen();
+		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
