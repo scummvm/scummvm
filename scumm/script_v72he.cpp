@@ -24,6 +24,7 @@
 #include "stdafx.h"
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "scumm/actor.h"
@@ -32,7 +33,6 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/resource_v7he.h"
-#include "common/savefile.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"

@@ -24,6 +24,7 @@
 #include "stdafx.h"
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -1028,12 +1029,18 @@ void ScummEngine_v60he::o60_openFile() {
 	}
 
 	if (slot != -1) {
-		if (mode == 1)
-			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
-		else if (mode == 2)
-			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode);
-		else
-			error("o60_openFile(): wrong open file mode");
+		switch(mode) {
+		case 1:
+			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode, _saveFileMan->getSavePath());
+			if (_hFileTable[slot].isOpen() == false)
+				_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
+			break;
+		case 2:
+			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode, _saveFileMan->getSavePath());
+			break;
+		default:
+			error("o60_openFile(): wrong open file mode %d", mode);
+		}
 
 		if (_hFileTable[slot].isOpen() == false)
 			slot = -1;
