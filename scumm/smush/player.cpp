@@ -577,6 +577,8 @@ void SmushPlayer::handleFrame(Chunk & b) {
 			case TYPE_SKIP:
 				handleSkip(*sub);
 				break;
+			case TYPE_TEXT:
+				break;
 			default:
 				error("Unknown frame subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
 		}
