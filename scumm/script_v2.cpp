@@ -1181,8 +1181,26 @@ void Scumm_v2::o2_setObjectName() {
 }
 
 void Scumm_v2::o2_cursorCommand() {
-	getVarOrDirectWord(0x80);
-	warning("TODO: o2_cursorCommand()");
+	int cmd = getVarOrDirectWord(0x80);
+	int a2 = cmd >> 8;
+
+	if (a2 & 4) {Warning("TODO: o2_cursorCommand(userface);} // Toggle verbs on/off, etc
+
+	if (a2 & 1) {						// Freeze
+		if (a2 & 8)
+			freezeScripts(0);
+		else
+			unfreezeScripts();
+	}
+
+	if (a2 & 2) {						// Cursor Show/Hide
+		if (a2 & 16) 
+                	_cursor.state = 1;
+		else
+                	_cursor.state = 0;
+
+                verbMouseOver(0);
+	}
 }
 
 void Scumm_v2::o2_getActorWalkBox() {
