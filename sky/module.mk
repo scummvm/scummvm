@@ -21,8 +21,7 @@ MODULE_OBJS := \
 	sky/music/gmchannel.o \
 	sky/music/gmmusic.o \
 	sky/music/mt32music.o \
-	sky/music/musicbase.o \
-	sky/compacts/savedata.o \
+	sky/music/musicbase.o
 
 MODULE_DIRS += \
 	sky \
