@@ -1442,7 +1442,11 @@ void Scumm::parseEvents() {
 			// this remaps F1 to F5 for comi
 			} else if (event.kbd.ascii == 315 && _gameId == GID_CMI)
 				_keyPressed = 319;
-			else
+			// don't let game have arrow keys as we currently steal them
+			// for keyboard cursor control
+			// this fixes bug with up arrow (273) corresponding to
+			// "instant win" cheat in MI2 mentioned above
+			else if (event.kbd.ascii < 273 || event.kbd.ascii > 276)
 				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			break;
 
