@@ -74,6 +74,10 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount)
 {
 	int old_pos = _currentPos;
 
+	// Do nothing if there are less items than fit on one page
+	if (_numEntries < _entriesPerPage)
+		return;
+
 	if (y <= UP_DOWN_BOX_HEIGHT) {
 		// Up arrow
 		_currentPos--;
@@ -97,12 +101,15 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount)
 
 void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
-	if (_draggingPart != kNoPart)
-		_draggingPart = kNoPart;
+	_draggingPart = kNoPart;
 }
 
 void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
 {
+	// Do nothing if there are less items than fit on one page
+	if (_numEntries < _entriesPerPage)
+		return;
+
 	if (_draggingPart == kSliderPart) {
 		int old_pos = _currentPos;
 		_sliderPos = y - _sliderDeltaMouseDownPos;
@@ -158,10 +165,10 @@ void ScrollBarWidget::handleTickle()
 
 void ScrollBarWidget::checkBounds(int old_pos)
 {
-	if (_currentPos > _numEntries - _entriesPerPage)
-		_currentPos = _numEntries - _entriesPerPage;
-	else if (_currentPos < 0)
+	if (_numEntries < _entriesPerPage || _currentPos < 0)
 		_currentPos = 0;
+	else if (_currentPos > _numEntries - _entriesPerPage)
+		_currentPos = _numEntries - _entriesPerPage;
 
 	if (old_pos != _currentPos) {
 		recalc();
@@ -187,6 +194,7 @@ void ScrollBarWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
 	int bottomY = _y + _h;
+	bool isSinglePage = (_numEntries < _entriesPerPage);
 
 	gui->frameRect(_x, _y, _w, _h, gui->_shadowcolor);
 
@@ -196,15 +204,19 @@ void ScrollBarWidget::drawWidget(bool hilite)
 	// Up arrow
 	gui->frameRect(_x, _y, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
 	gui->drawBitmap(up_arrow, _x, _y,
-									(hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
+	                isSinglePage ? gui->_color :
+	                (hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Down arrow
 	gui->frameRect(_x, bottomY - UP_DOWN_BOX_HEIGHT, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
 	gui->drawBitmap(down_arrow, _x, bottomY - UP_DOWN_BOX_HEIGHT,
-									(hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
+	                isSinglePage ? gui->_color :
+	                (hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Slider
-	gui->checkerRect(_x, _y + _sliderPos, _w, _sliderHeight,
-									(hilite && _part == kSliderPart) ? gui->_textcolorhi : gui->_textcolor);
-	gui->frameRect(_x, _y + _sliderPos, _w, _sliderHeight, gui->_color);
+	if (!isSinglePage) {
+		gui->checkerRect(_x, _y + _sliderPos, _w, _sliderHeight,
+		                 (hilite && _part == kSliderPart) ? gui->_textcolorhi : gui->_textcolor);
+		gui->frameRect(_x, _y + _sliderPos, _w, _sliderHeight, gui->_color);
+	}
 }
