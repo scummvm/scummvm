@@ -169,7 +169,7 @@ resume:
 			rate->opos = rate->opos + rate->opos_inc + (tmp >> FRAC_BITS);
 			rate->opos_frac = tmp & ((1UL << FRAC_BITS) - 1);
 			
-			if (obuf < oend)
+			if (obuf >= oend)
 				goto the_end;
 		}
 
