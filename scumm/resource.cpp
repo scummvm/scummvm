@@ -1381,6 +1381,8 @@ bool Scumm::isResourceInUse(int type, int i)
 	switch (type) {
 	case rtRoom:
 		return _roomResource == (byte)i;
+	case rtRoomScripts:
+		return _roomResource == (byte)i;
 	case rtScript:
 		return isScriptInUse(i);
 	case rtCostume:

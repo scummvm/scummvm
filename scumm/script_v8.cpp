@@ -1423,10 +1423,10 @@ void Scumm_v8::o6_kernelSetFunctions()
 	case 34:	// queryQuit
 		warning("o6_kernelSetFunctions: queryQuit()");
 		break;
-	case 108:
+	case 108:	// buildPaletteShadow
 		setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
-	case 109:
+	case 109:	// setPaletteShadow
 		setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
 		break;
 	case 115:	// getWalkBoxAt

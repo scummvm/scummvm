@@ -826,7 +826,7 @@ void Scumm::addObjectToInventory(uint obj, uint room)
 {
 	int i, slot;
 	uint32 size;
-	byte *obcdptr, *ptr;
+	byte *ptr, *dst;
 	FindObjectInRoom foir;
 
 	debug(1, "Adding object %d from room %d into inventory", obj, room);
@@ -836,23 +836,22 @@ void Scumm::addObjectToInventory(uint obj, uint room)
 		i = getObjectIndex(obj);
 		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
 		size = READ_BE_UINT32_UNALIGNED(ptr + 4);
-		slot = getInventorySlot();
-		_inventory[slot] = obj;
-		createResource(rtInventory, slot, size);
-		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
-		memcpy(getResourceAddress(rtInventory, slot), ptr, size);
 	} else {
 		findObjectInRoom(&foir, foCodeHeader, obj, room);
 		if (_features & GF_SMALL_HEADER)
 			size = READ_LE_UINT32(foir.obcd);
 		else
 			size = READ_BE_UINT32_UNALIGNED(foir.obcd + 4);
-		slot = getInventorySlot();
-		_inventory[slot] = obj;
-		createResource(rtInventory, slot, size);
-		obcdptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obcd;
-		memcpy(getResourceAddress(rtInventory, slot), obcdptr, size);
+		ptr = foir.obcd;
 	}
+
+	slot = getInventorySlot();
+	_inventory[slot] = obj;
+	createResource(rtInventory, slot, size);
+
+	dst = getResourceAddress(rtInventory, slot);
+	assert(dst);
+	memcpy(dst, ptr, size);
 
 	CHECK_HEAP
 }
