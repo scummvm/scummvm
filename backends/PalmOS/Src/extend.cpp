@@ -27,13 +27,15 @@
 #include "globals.h"
 #include "starterrsc.h"
 
-#include "armnative.h"
+#include "arm/native.h"
 
 const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
 
 void PalmFatalError(const Char *err) {
+	WinSetDrawWindow(WinGetDisplayWindow());
 	WinPalette(winPaletteSetToDefault,0,0,0);
 
+	// unlock to show the alert box
 	if (gVars->screenLocked)
 		WinScreenUnlock();
 	
@@ -42,7 +44,10 @@ void PalmFatalError(const Char *err) {
 
 	WinEraseWindow();
 	FrmCustomAlert(FrmFatalErrorAlert, err, 0,0);
-	SysReset();
+
+	// relock to prevent crash unloading gfx mode
+	if (gVars->screenLocked)
+		WinScreenLock(winLockDontCare);
 }
 
 
@@ -139,4 +144,3 @@ void _PnoFree(PnoDescriptor *pnoP, MemPtr armP) {
 	MemPtrUnlock(armP);
 	DmReleaseResource(armH);
 }
-
