@@ -2371,7 +2371,7 @@ void Scumm_v6::o6_setBlastObjectWindow() {
 	b = pop();
 	a = pop();
 
-	warning("o6_setBlastObjectWindow(%d, %d, %d, %d)", a, b, c, d);
+	warning("o6_bompWindow(%d, %d, %d, %d)", a, b, c, d);
 	// sub_274EF(a, b, c, d);
 }
 
@@ -2885,11 +2885,12 @@ void Scumm_v6::o6_deleteFile() {
 }
 
 int Scumm_v6::readFileToArray(int slot, int32 size) {
-	int rest = _hFileTable[slot].size() - _hFileTable[slot].pos();
+	if (size == 0)
+		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
 	writeVar(0, 0);
-	defineArray(0, 3, 0, rest);
+	defineArray(0, 3, 0, size);
 	byte *ptr = getResourceAddress(rtString, readVar(0));
-	_hFileTable[slot].read(ptr, rest);
+	_hFileTable[slot].read(ptr, size);
 	return readVar(0);
 }
 
