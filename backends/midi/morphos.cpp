@@ -74,7 +74,7 @@ void MidiDriver_ETUDE::close()
 
 void MidiDriver_ETUDE::send(uint32 b)
 {
-	if (_isOpen)
+	if (!_isOpen)
 		error("MidiDriver_ETUDE::send called but driver was no opened");
 
 	if (ScummMidiRequest) {
