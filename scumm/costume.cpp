@@ -273,7 +273,7 @@ void CostumeRenderer::procC64() {
 	const byte *src;
 	byte *dst;
 	byte color;
-	byte len = 0;	// FIXME - err, len is never set to anything...
+	byte len = 0;
 
 	int y = 0;
 	src = _srcptr;
@@ -282,7 +282,7 @@ void CostumeRenderer::procC64() {
 	for (int x = 0; x < (_width >> 3); x++) {
 		color = *src++;
 		if (color & 0x80) {
-			len &= 0x7f;
+			len = color & 0x7f;
 			color = *src++;
 			for (int z = 0; z < len; z++) {
 				dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
