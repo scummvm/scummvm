@@ -679,8 +679,10 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 
-	// Special case for FT smush files.
-	if ((height == 1) && (width == 1))
+	// FT Insane uses smaller frames to draw overlays with moving objects
+	// Other .san files do have them as well but their purpose in unknown
+	// and often it causes memory overdraw. So just skip those frames
+	if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
 		return;
 
 	if (!_alreadyInit) {
