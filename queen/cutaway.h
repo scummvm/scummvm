@@ -26,12 +26,14 @@
 
 class QueenResource;
 class QueenLogic;
+class QueenGraphics;
 
 class QueenCutaway {
 	public:
 		//! Public interface to run a cutaway from a file
 		static void run(
-				const char *filename, 
+				const char *filename,
+				char *nextFilename,
 				QueenLogic *queenLogic,
 				QueenResource *queenResource);
 	private:
@@ -43,6 +45,7 @@ class QueenCutaway {
 			PERSON_JOE = -1,
 			OBJECT_JOE = 0,
 			MAX_PERSON_COUNT = 6,
+			CUTAWAY_BANK = 8,
 			MAX_BANK_NAME_COUNT = 5,
 			MAX_FILENAME_LENGTH = 12,
 			MAX_FILENAME_SIZE = (MAX_FILENAME_LENGTH + 1),
@@ -109,10 +112,20 @@ class QueenCutaway {
 			int song;
 		};
 
-		QueenLogic *_queenLogic;
+		struct ObjectDataBackup {
+			int index;
+			int16 value0;
+			int16 value7;
+		};
+
+		QueenLogic 		*_queenLogic;
+		QueenGraphics *_queenGraphics;
 
 		//! Raw .cut file data (without 20 byte header)
 		byte *_fileData;
+
+		//! Game state data inside of _fileDat
+		byte *_gameStatePtr;
 
 		//! Actual cutaway data inside of _fileData
 		byte *_objectData;
@@ -123,11 +136,20 @@ class QueenCutaway {
 		//! Number of cutaway objects at _cutawayData
 		int _cutawayObjectCount;
 
+		//! This cutaway is followed by another
+		bool _anotherCutaway;
+
 		//! Specify if the player can quit this cutaway or not 
 		bool _canQuit;
 
 		//! Set to true to abort the cutaway
 		bool _quit;
+
+		//! Room before cutaway
+		int _initialRoom; 
+
+		//! Temporary room for cutaway
+		int _temporaryRoom; 
 
 		//! Room to stay in 
 		int _finalRoom; 
@@ -142,7 +164,17 @@ class QueenCutaway {
 		char _talkFile[MAX_FILENAME_SIZE];
 
 		//! Used by changeRooms
-		int _savedPersonCount;
+		ObjectDataBackup _personData[MAX_PERSON_COUNT];
+
+		//! Number of elements used in _personData array
+		int _personDataCount;
+
+		//! Play this song when leaving cutaway
+		int16 _lastSong;
+
+		//! Song played before running comic.cut
+		int16 _songBeforeComic;
+
 
 		QueenCutaway(
 				const char *filename, 
@@ -151,7 +183,7 @@ class QueenCutaway {
 		~QueenCutaway();
 
 		//! Run this cutaway object 
-		void run();
+		void run(char *nextFilename);
 
 		//! Load cutaway data from file 
 		void load(const char *filename, QueenResource *queenResource);
@@ -160,7 +192,7 @@ class QueenCutaway {
 		void loadStrings(byte *ptr);
 
 		//! Do something special
-		void specialMove(int index);
+		void actionSpecialMove(int index);
 
 		//! Get persons
 		byte *turnOnPeople(byte *ptr, CutawayObject &object);
@@ -183,6 +215,21 @@ class QueenCutaway {
 				CutawayObject &object, 
 				const char *sentence);
 
+		//! Restore QueenLogic::_objectData from _personData
+		void restorePersonData();
+
+		//! Copy data from dummy object to object
+		void objectCopy(int dummyObjectIndex, int objectIndex);
+
+		//! Go to the final room
+		void goToFinalRoom();
+
+		//! Update game state after cutaway
+		void updateGameState();
+
+		//! Prepare for talk after cutaway
+		void talk(char *nextFilename);
+
 		//! Read a string from ptr and return new ptr
 		static byte *getString(byte *ptr, char *str, int maxLength);
 
@@ -192,7 +239,10 @@ class QueenCutaway {
 		//! Dump a CutawayObject with debug()
 		static void dumpCutawayObject(int index, CutawayObject &object);
 
+		//! Get CutawayAnim data from ptr and return new ptr
 		static byte *getCutawayAnim(byte *ptr, int header, CutawayAnim &anim);
+
+		//! Dump CutawayAnum data with debug()
 		static void dumpCutawayAnim(CutawayAnim &anim);
 
 

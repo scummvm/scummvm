@@ -21,56 +21,78 @@
 
 #include "stdafx.h"
 #include "cutaway.h"
+#include "graphics.h"
 
 /*
 	 Functions needed:
 
-	 queen.c:   DISP_ROOM
+	 queen.c:
+	 
+	 DISP_ROOM
+	 FACE_JOE
+	 FIND_BOB
+	 FIND_FRAME
+	 FIND_GRAPHIC
+	 FIND_SCALE
 	 MOVE_JOE
 	 MOVE_OTHER
+	 SET_PERSON_DATA
 
-	 talk.c:    SPEAK
+	 talk.c:
+	 
+	 SPEAK
 
 
 	 Data needed:
 
+	 CURRSONG
+	 GAMESTATE
+	 JOEF					(Joe's face direction)
 	 JX,JY        (Joe's coordintes)
-	 OBJECT_DATA
-	 ROOM_DATA
+	 PERSON_FACE
+	 PERSON_FACE_MAX
 
  */
 
 void QueenCutaway::run(
 		const char *filename, 
+		char *nextFilename,
 		QueenLogic *queenLogic,
 		QueenResource *queenResource) {
 	QueenCutaway *cutaway = new QueenCutaway(filename, queenLogic, queenResource);
-	cutaway->run();
+	cutaway->run(nextFilename);
 	delete cutaway;
 }
 
 QueenCutaway::QueenCutaway(
 		const char *filename, 
 		QueenLogic *queenLogic,
-		QueenResource *queenResource) : _queenLogic(queenLogic), _quit(false) {
-			memset(&_bankNames, 0, sizeof(_bankNames));
-			load(filename, queenResource); 
-		}
+		QueenResource *queenResource) 
+: _queenLogic(queenLogic), _quit(false), _lastSong(0), _songBeforeComic(0) {
+	// XXX should not create this object ourselves
+	_queenGraphics = new QueenGraphics(queenResource);
+	memset(&_bankNames, 0, sizeof(_bankNames));
+	load(filename, queenResource); 
+}
 
 QueenCutaway::~QueenCutaway() {
+	// XXX only delete this if we created it
+	delete _queenGraphics;
 	delete[] _fileData;
 }
 
 void QueenCutaway::load(const char *filename, QueenResource *queenResource) {
 	byte *ptr;
 
-	/* XXX: make sure that loadFile is not case sensitive */
 	ptr = _fileData = queenResource->loadFile(filename, 20);
 	if (!_fileData) {
-		/* XXX: error message? */
+		error("Failed to load resource data file '%s'", filename);
 		_quit = true;
 		return;
 	}
+
+	if (0 == strcasecmp(filename, "comic.cut"))
+		/* XXX _songBeforeComic = CURRSONG */; 
 
 	strcpy(_basename, filename);
 	_basename[strlen(_basename)-4] = '\0';
@@ -101,19 +123,16 @@ void QueenCutaway::load(const char *filename, QueenResource *queenResource) {
 	else
 		_finalRoom = PREVIOUS_ROOM;
 
-	if (flags1 == 1)
-		/* ANOTHER_CUT = 1 */;
-	else
-		/* ANOTHER_CUT = 0 */;
+	_anotherCutaway = (flags1 == 1);
 
 	/*
 		 Pointers to other places in the cutaway data
 	 */
 
-	/*byte *gameStatesPtr =*/ _fileData + READ_BE_UINT16(ptr);
+	_gameStatePtr       = _fileData + READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	_nextSentence        = _fileData + READ_BE_UINT16(ptr);
+	_nextSentence       = _fileData + READ_BE_UINT16(ptr);
 	ptr += 2;
 
 	byte *bankNamesPtr  = _fileData + READ_BE_UINT16(ptr);
@@ -126,7 +145,7 @@ void QueenCutaway::load(const char *filename, QueenResource *queenResource) {
 
 	if (_bankNames[0][0]) {
 		debug(0, "Loading bank '%s'", _bankNames[0]);
-		/* loadbank(_bankNames[0]) */ ;
+		_queenGraphics->bankLoad(_bankNames[0], CUTAWAY_BANK);
 	}
 
 	char entryString[MAX_STRING_SIZE];
@@ -248,7 +267,8 @@ void QueenCutaway::dumpCutawayObject(int index, CutawayObject &object)
 
 	switch (object.objectNumber) {
 		case -1:  objectNumberStr = "MESSAGE";  break;
-		case 0:   objectNumberStr = "JOE";      break;
+		case 0:   objectNumberStr = "Joe";      break;
+		case 548: objectNumberStr = "Anderson"; break;
 		default:  objectNumberStr = "unknown";  break;
 	}
 
@@ -273,7 +293,7 @@ void QueenCutaway::dumpCutawayObject(int index, CutawayObject &object)
 
 }
 
-void QueenCutaway::specialMove(int index) {
+void QueenCutaway::actionSpecialMove(int index) {
 
 	switch (index) {
 		default:
@@ -302,8 +322,8 @@ byte *QueenCutaway::turnOnPeople(byte *ptr, CutawayObject &object) {
 void QueenCutaway::limitBob(CutawayObject &object) {
 	if (object.limitBobX1) {
 		warning("QueenCutaway::limitBob() not implemented");
-		// FIND_BOB(object.objectNumber);
-		// XXX K=Param;
+		// XXX FIND_BOB(object.objectNumber);
+		// K=Param;
 		// bobs[K].x1 = object.limitBobX1;
 		// bobs[K].y1 = object.limitBobY1;
 		// bobs[K].x2 = object.limitBobX2;
@@ -311,22 +331,56 @@ void QueenCutaway::limitBob(CutawayObject &object) {
 	}
 }
 
+void QueenCutaway::restorePersonData() {
+	for (int i = 0; i < _personDataCount; i++) {
+		int index           = _personData[i].index;
+		int16 *objectData   = _queenLogic->objectData(index);
+		objectData[0]       = _personData[i].value0;
+		objectData[7]       = _personData[i].value7;
+	}
+}
+
 void QueenCutaway::changeRooms(CutawayObject &object) {
 	// Lines 1291-1385 in cutaway.c
-	warning("QueenCutaway::changeRooms() not implemented properly");
 
-	for (int i = 0; i < _savedPersonCount; i++) {
-		// restore parts of OBJECT_DATA array from PERSON_DATA array
-	}
-
-	_savedPersonCount = 0;
+	restorePersonData();
+	_personDataCount = 0;
 
 	if (_finalRoom != object.room) {
-		// XXX loop room data and do stuff
-		// uses ROOM_DATA
-		// uses OBJECT_DATA
-		// backup parts of OBJECT_DATA array in PERSON_DATA array
-		// increase _savedPersonCount
+		int firstObjectInRoom = _queenLogic->roomData(object.room) + 1;
+		int lastObjectInRoom  = _queenLogic->roomData(object.room) + 0; // XXX _queenLogic->objMax(object.room);
+
+		for (int i = firstObjectInRoom; i <= lastObjectInRoom; i++) {
+			int16 *objectData  = _queenLogic->objectData(i);
+			
+			if (objectData[7] == -3 || objectData[7] == -4) {
+
+				//  The object is a person! So record the details...
+				_personData[_personDataCount].index = i;
+				_personData[_personDataCount].value0 = objectData[0];
+				_personData[_personDataCount].value7 = objectData[7];
+				_personDataCount++;
+
+				// Now, check to see if(we need to keep the person on
+				bool on = false;
+				for (int j = 0; j < object.personCount; j++) {
+					if (object.person[j] == i) {
+						on = true;
+						break;
+					}
+				}
+
+				if (on) {
+					// It is needed, so ensure it's ON
+					objectData[0] = abs(objectData[0]);
+				}
+				else {
+					// Not needed, so switch off!
+					objectData[0] = -abs(objectData[0]);
+				}
+
+			}
+		} // for()
 	}
 
 	// set coordinates for Joe if he is on screen
@@ -361,9 +415,7 @@ void QueenCutaway::changeRooms(CutawayObject &object) {
 
 	// XXX TROOM=ROOM;
 
-	for (int i = 0; i < _savedPersonCount; i++) {
-		// restore parts of OBJECT_DATA array from PERSON_DATA array
-	}
+	restorePersonData();
 
 	// XXX CUTAWAY_SCALE(OBJECT);
 	// XXX SF=Param;
@@ -373,14 +425,17 @@ void QueenCutaway::changeRooms(CutawayObject &object) {
 }
 
 QueenCutaway::ObjectType QueenCutaway::getObjectType(CutawayObject &object) {
+	// Lines 1387-1449 in cutaway.c
+	
 	ObjectType objectType = OBJECT_TYPE_ANIMATION;
 
 	if (object.objectNumber > 0) {
 		if (!object.animList) {
 			// No anim frames, so treat as a PERSON, ie. allow to speak/walk
+			int16* objectData = _queenLogic->objectData(object.objectNumber);
 
-			//if(OBJECT_DATA[OBJECT][7]==-3 || OBJECT_DATA[OBJECT][7]==-4)
-			//  OBJTYPE=1;
+			if (objectData[7] == -3 || objectData[7] == -4)
+				objectType = OBJECT_TYPE_PERSON;
 		}
 	}
 	else if (object.objectNumber == OBJECT_JOE) {
@@ -392,23 +447,19 @@ QueenCutaway::ObjectType QueenCutaway::getObjectType(CutawayObject &object) {
 	}
 
 	if (object.fromObject > 0) {
-		warning("Cannot copy objects yet");
-
 		/* Copy FROM_OBJECT into OBJECT */
 
-#if 0
-		if(FROM_OBJECT!=OBJECT)
-			P3_COPY_FROM(FROM_OBJECT,OBJECT);
-		else
-
+		if(object.objectNumber != object.fromObject) {
+			objectCopy(object.fromObject, object.objectNumber);
+		}
+		else {
 			// Same object, so just turn it on!
-
-			OBJECT_DATA[OBJECT][0]=abs(OBJECT_DATA[OBJECT][0]);
-		REDISP_OBJECT(OBJECT);
-#endif
+			int16* objectData = _queenLogic->objectData(object.objectNumber);
+			objectData[0] = abs(objectData[0]);
+		}
+		// XXX REDISP_OBJECT(OBJECT);
 
 		// Skip doing any anim stuff
-
 		objectType = OBJECT_TYPE_NO_ANIMATION;
 	}
 
@@ -611,7 +662,6 @@ void QueenCutaway::handlePersonRecord(
 		else {
 			if (object.objectNumber > 0) {
 				// XXX
-				warning("Stuff not implemented");
 #if 0
 				MTCH=0;
 				for(K=1;K<=PERSON_FACE_MAX;K++)
@@ -636,12 +686,12 @@ void QueenCutaway::handlePersonRecord(
 		return;
 }
 
-void QueenCutaway::run() {
+void QueenCutaway::run(char *nextFilename) {
+	nextFilename[0] = '\0';
 
 	byte *ptr = _objectData;
 
-	int initialRoom = _queenLogic->currentRoom();
-	int previousRoom = initialRoom;
+	_initialRoom = _temporaryRoom = _queenLogic->currentRoom();
 
 	// XXX if(COMPANEL==0 || COMPANEL==2) SCENE_START(0);
 
@@ -656,7 +706,7 @@ void QueenCutaway::run() {
 				!object.moveToY && 
 				object.specialMove && 
 				object.objectNumber >= 0) {
-			specialMove(object.specialMove);
+			actionSpecialMove(object.specialMove);
 			object.specialMove = 0;
 		}
 
@@ -666,8 +716,7 @@ void QueenCutaway::run() {
 		}
 		else {
 			// Change current room
-			warning("Not yet able to change current room");
-			// XXX queenLogic->currentRoom(object.room);
+			_queenLogic->currentRoom(object.room);
 		}
 
 		ptr = turnOnPeople(ptr, object);
@@ -686,7 +735,7 @@ void QueenCutaway::run() {
 			// ROOMFADE = 0;
 		}
 
-		if (object.room != previousRoom)
+		if (object.room != _temporaryRoom)
 			changeRooms(object);
 
 		ObjectType objectType = getObjectType(object);
@@ -716,6 +765,272 @@ void QueenCutaway::run() {
 
 		if (_quit)
 			break;
+
+		// XXX
+#if 0
+		if(ROOMFADE==1)
+		{
+			update();
+			//CR 2 - CD-Rom
+			if(ROOM>=114)
+				fadein(0,255);
+			else
+				fadein(0,223);
+			ROOMFADE=0;
+		}
+#endif 
+	} // for()
+
+	goToFinalRoom();
+
+	_quit = false;
+
+	updateGameState();
+
+	_queenGraphics->bankErase(CUTAWAY_BANK);
+
+	talk(nextFilename);
+
+	// XXX if(COMPANEL==0 || (COMPANEL==2 && ANOTHER_CUT==0)) {
+	// XXX 	SCENE_END(1);
+	// XXX 	COMPANEL=0;
+	// XXX }
+
+	if (nextFilename[0] == '\0' && !_anotherCutaway) {
+		// Lines 2138-2182 in cutaway.c
+		warning("Clean-up stuff needed but not yet implemented");
+	}
+
+	// XXX bobs[0].animating=0;
+	// XXX bobs[0].moving=0;
+	// Make sure Joe is clipped!
+	// XXX bobs[0].y2=149;
+	// XXX CUTON=0;
+	_quit = false;
+
+	if (_songBeforeComic > 0)
+		/* XXX playsong(_songBeforeComic) */ ;
+	else if (_lastSong > 0)
+		/* XXX playsong(_lastSong) */ ;
+}
+
+void QueenCutaway::objectCopy(int dummyObjectIndex, int realObjectIndex) {
+	// P3_COPY_FROM function in cutaway.c
+	/* Copy data from Dummy (D) object to object (K)
+		 If COPY_FROM Object images are greater than COPY_TO Object
+		 images then swap the objects around. */
+
+	int16* dummyObject = _queenLogic->objectData(dummyObjectIndex);
+	int16* realObject  = _queenLogic->objectData(realObjectIndex);
+	
+	int fromState = (dummyObject[0] < 0) ? -1 : 0;
+
+	int frameCountReal = 1;
+	int frameCountDummy = 1;
+
+	int graphic = realObject[7];
+	if (graphic > 0) {
+		if (graphic > 5000)
+			graphic -= 5000;
+
+		// XXX FIND_GRAPHIC(graphic)
+		// XXX if(EFRAME>0) frameCountReal=(EFRAME-SFRAME)+1;
+
+		graphic = dummyObject[7];
+		if (graphic > 0) {
+			if (graphic > 5000)
+				graphic -= 5000;
+
+		// XXX FIND_GRAPHIC(graphic)
+		// XXX if(EFRAME>0) frameCountDummy=(EFRAME-SFRAME)+1;
+
+		}
+	}
+
+	for (int i = 0; i <= 7; i++) {
+		int16 temp = realObject[i];
+		realObject[i] = dummyObject[i];
+		
+		if (frameCountDummy > frameCountReal)
+			dummyObject[i] = temp;
+	}
+
+	realObject[0] = abs(realObject[0]);
+
+	if  (fromState == -1)
+		dummyObject[0] = -abs(dummyObject[0]);
+
+	//  Make sure that WALK_OFF_DATA is copied too!
+
+	for (int i = 1; i <= _queenLogic->walkOffCount(); i++) {
+		uint16* walkOffData = _queenLogic->walkOffData(i);
+		if (walkOffData[0] == dummyObjectIndex) {
+			walkOffData[0] = realObjectIndex;
+			break;
+		}
+	}
+
+}
+
+void QueenCutaway::goToFinalRoom() {
+	// Lines 1901-2032 in cutaway.c
+	byte *ptr = _gameStatePtr;
+
+	// Skipping GAMESTATE data
+	int gameStateCount = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	if (gameStateCount > 0)
+		ptr += (gameStateCount * 12);
+
+	// Get the final room and Joe's final position
+
+	uint16 joeRoom = READ_BE_UINT16(ptr); ptr += 2;
+	uint16 joeX    = READ_BE_UINT16(ptr); ptr += 2;
+	uint16 joeY    = READ_BE_UINT16(ptr); ptr += 2;
+
+	if ((!_quit || (!_anotherCutaway && joeRoom != _finalRoom)) &&
+			joeRoom != _temporaryRoom &&
+			joeRoom != 0) {
+
+		// XXX update global Joe coordinates
+		// JX = joeX;
+		// JY = joeY;
+
+		_queenLogic->currentRoom(joeRoom);
+		_queenLogic->oldRoom(_initialRoom);
+		// XXX  DISP_ROOM(ROOM_NAMEstr[ROOM],3,0);
+	}
+
+	if (_quit) {
+		// Lines 1927-2032 in cutaway.c
+		
+		// Stop the credits from running
+		// XXX CFlag = 0;
+		
+		// Stop all moving bobs
+		warning("Not stopping moving bobs yet");
+
+		// XXX Loop person faces
+
+		int quitObjectCount = (int16)READ_BE_UINT16(ptr); ptr += 2;
+
+		for (int i = 0; i < quitObjectCount; i++) {
+			int16 objectIndex  = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			int16 from    = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			/*int16 x       = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
+			/*int16 y       = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
+			int16 room    = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			/*int16 frame   = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
+
+			// XXX FIND_BOB(object)
+			// XXX int bob = Param;
+
+			if (from > 0) {
+				// XXX
+			}
+
+			int16* objectData = _queenLogic->objectData(objectIndex);
+
+			if (objectData[5] == room) {
+				// XXX
+			}
+		} // for()
+		
+		int16 specialMove = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		actionSpecialMove(specialMove);
+
+		_lastSong = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	}
+
+	if (joeRoom == _temporaryRoom &&
+			joeRoom != 37 &&    // XXX hard coded room number
+			joeRoom != 105 &&   // XXX hard coded room number
+			joeRoom != 106 &&   // XXX hard coded room number
+			(joeX || joeY)) {
+		// XXX bobs[0].x=J_X;
+		// XXX bobs[0].y=J_Y;
+		// XXX FIND_SCALE(J_X,J_Y);
+		// XXX SFACTOR=Param;
+		// XXX FACE_JOE()
+	}
+}
+
+void QueenCutaway::updateGameState() {
+	// Lines 2047-2115 in cutaway.c
+	byte *ptr = _gameStatePtr;
+
+	int gameStateCount = (int16)READ_BE_UINT16(ptr); ptr += 2;
+
+	for (int i = 0; i < gameStateCount; i++) {
+		int16 stateIndex    = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		/*int16 stateValue    = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
+		int16 objectIndex   = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		int16 areaIndex     = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		int16 areaSubIndex  = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		int16 fromObject    = (int16)READ_BE_UINT16(ptr); ptr += 2;
+
+		bool update = false;
+
+		if (stateIndex > 0) {
+			// XXX if(GAMESTATE[stateIndex] == stateValue) 
+			// XXX 	update = true;
+		}
+		else {
+			// XXX GAMESTATE[abs(stateIndex)] = stateValue;
+			update = true;
+		}
+
+		if (update) {
+
+			// Show or hide an object
+
+			if (objectIndex > 0) {                    // Show the object
+				int16* objectData  = _queenLogic->objectData(objectIndex);
+				objectData[0]      = abs(objectData[0]);
+				if (fromObject > 0)
+					objectCopy(fromObject, objectIndex);
+				// XXX REDISP_OBJECT(objectIndex);
+			}
+			else if (objectIndex < 0) {               // Hide the object
+				objectIndex        = -objectIndex;
+				int16* objectData  = _queenLogic->objectData(objectIndex);
+				objectData[0]      = -abs(objectData[0]);
+				// XXX REDISP_OBJECT(objectIndex);
+			}
+
+			if (areaIndex > 0) {
+
+				// Turn area on or off
+
+				if (areaSubIndex > 0) {
+					int16* area = _queenLogic->area(areaIndex, areaSubIndex);
+					area[0] = abs(area[0]);
+				}
+				else {
+					int16* area = _queenLogic->area(areaIndex, abs(areaSubIndex));
+					area[0] = -abs(area[0]);
+				}
+			}
+
+		}
+	} // for()
+}
+
+// XXX this function could probably be useful at other places too
+static char *right(char *str, int count) {
+	// This function does _not_ use static data (the implementation in talk.c does!)
+	int length = strlen(str);
+	if (count > length)
+		return str;
+	else
+		return str + length - count;
+}
+
+void QueenCutaway::talk(char *nextFilename) {
+	// Lines 2119-2131 in cutaway.c
+	
+	if (0 == strcasecmp(right(_talkFile, 4), ".dog")) {
+		warning("QueenCutaway::talk() needed but not yet implemented");
+		nextFilename[0] = '\0';
 	}
 }
 
