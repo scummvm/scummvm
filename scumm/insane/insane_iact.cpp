@@ -87,7 +87,6 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 		if (_approachAnim == -1) {
 			proc62(); //PATCH
-			_currEnemy = EN_VULTM2;
 			_approachAnim = _enemy[_currEnemy].apprAnim;
 		}
 
