@@ -28,6 +28,43 @@ class MidiParser;
 
 class MidiDriver;
 
+
+
+//////////////////////////////////////////////////
+//
+// Support entities
+//
+//////////////////////////////////////////////////
+
+struct Tracker {
+	byte * _play_pos;
+	uint32 _play_time;
+	uint32 _play_tick;
+	uint32 _last_event_time;
+	uint32 _last_event_tick;
+	byte   _running_status;
+
+	Tracker() { clear(); }
+
+	Tracker (const Tracker &copy) :
+	_play_pos (copy._play_pos),
+	_play_time (copy._play_time),
+	_play_tick (copy._play_tick),
+	_last_event_time (copy._last_event_time),
+	_last_event_tick (copy._last_event_tick),
+	_running_status (copy._running_status)
+	{ }
+
+	void clear() {
+		_play_pos = 0;
+		_play_time = 0;
+		_play_tick = 0;
+		_last_event_time = 0;
+		_last_event_tick = 0;
+		_running_status = 0;
+	}
+};
+
 struct EventInfo {
 	byte * start; // Points to delta
 	uint32 delta;
@@ -55,6 +92,15 @@ struct NoteTimer {
 	NoteTimer() : channel(0), note(0), time_left(0) {}
 };
 
+
+
+
+//////////////////////////////////////////////////
+//
+// MidiParser declaration
+//
+//////////////////////////////////////////////////
+
 class MidiParser {
 private:
 	uint16    _active_notes[128]; // Each uint16 is a bit mask for channels that have that note on
@@ -70,17 +116,13 @@ protected:
 	bool   _autoLoop;       // For lightweight clients that don't monitor events
 	bool   _smartJump;      // Support smart expiration of hanging notes when jumping
 
-	byte * _tracks[16];
+	byte * _tracks[32];
 	byte   _num_tracks;
 	byte   _active_track;
 
-	byte * _play_pos;
-	uint32 _play_time;
-	uint32 _play_tick;
-	uint32 _last_event_time;
-	uint32 _last_event_tick;
-	byte   _running_status;
+	Tracker _position;
 	EventInfo _next_event;
+	bool   _abort_parse;     // If a jump or some other interruption occurs
 
 protected:
 	static uint32 readVLQ (byte * &data);
@@ -90,6 +132,7 @@ protected:
 
 	void activeNote (byte channel, byte note, bool active);
 	void hangingNote (byte channel, byte note, uint32 ticks_left);
+	void hangAllActiveNotes();
 
 	// Multi-byte read helpers
 	uint32 read4high (byte * &data) {
@@ -121,11 +164,13 @@ public:
 	virtual void property (int prop, int value);
 
 	void setMidiDriver (MidiDriver *driver) { _driver = driver; }
-	void setTimerRate (uint32 rate) { _timer_rate = rate / 500; }
+	void setTimerRate (uint32 rate) { _timer_rate = rate; }
+	void setTempo (uint32 tempo);
 	void onTimer();
 
 	bool setTrack (int track);
-	void jumpToTick (uint32 tick);
+	bool jumpToTick (uint32 tick, bool fireEvents = false);
+	uint32 getTick() { return _position._play_tick; }
 
 	static MidiParser *createParser_SMF();
 	static MidiParser *createParser_XMIDI();

@@ -21,7 +21,8 @@
 
 #include "stdafx.h"
 #include "scumm/scumm.h"
-#include "sound/mididrv.h"
+#include "sound/midiparser.h"
+#include "scumm/saveload.h"
 #include "common/util.h"
 #include "common/engine.h"
 #include "imuse_internal.h"
@@ -34,86 +35,8 @@
 //
 ////////////////////////////////////////
 
-static uint32 get_delta_time(byte **s) {
-	byte *d = *s, b;
-	uint32 time = 0;
-	do {
-		b = *d++;
-		time = (time << 7) | (b & 0x7F);
-	} while (b & 0x80);
-	*s = d;
-	return time;
-}
-
 static uint read_word(byte *a) {
 	return (a[0] << 8) + a[1];
-}
-
-static void skip_midi_cmd(byte **song_ptr) {
-	byte *s, code;
-
-	const byte num_skip[] = {
-		2, 2, 2, 2, 1, 1, 2
-	};
-
-	s = *song_ptr;
-
-	code = *s++;
-
-	if (code < 0x80) {
-		s = NULL;
-	} else if (code < 0xF0) {
-		s += num_skip[(code & 0x70) >> 4];
-	} else {
-		if (code == 0xF0 || code == 0xF7 || code == 0xFF && *s++ != 0x2F) {
-			s += get_delta_time(&s);
-		} else {
-			s = NULL;
-		}
-	}
-	*song_ptr = s;
-}
-
-static int is_note_cmd(byte **a, IsNoteCmdData * isnote) {
-	byte *s = *a;
-	byte code;
-
-	code = *s++;
-
-	switch (code >> 4) {
-	case 8: // Key Off
-		isnote->chan = code & 0xF;
-		isnote->note = *s++;
-		isnote->vel = *s++;
-		*a = s;
-		return 1;
-	case 9: // Key On
-		isnote->chan = code & 0xF;
-		isnote->note = *s++;
-		isnote->vel = *s++;
-		*a = s;
-		if (isnote->vel)
-			return 2;
-		return 1;
-	case 0xA:
-	case 0xB:
-	case 0xE:
-		s++;
-	case 0xC:
-	case 0xD:
-		s++;
-		break;
-	case 0xF:
-		if (code == 0xF0 || code == 0xF7 || code == 0xFF && *s++ != 0x2F) {
-			s += get_delta_time(&s);
-			break;
-		}
-		return -1;
-	default:
-		return -1;
-	}
-	*a = s;
-	return 0;
 }
 
 
@@ -124,26 +47,41 @@ static int is_note_cmd(byte **a, IsNoteCmdData * isnote) {
 //
 //////////////////////////////////////////////////
 
-bool Player::is_fading_out() {
-	int i;
-	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
-		if (_parameterFaders[i].param == ParameterFader::pfVolume &&
-		    _parameterFaders[i].end == 0)
-		{
-			return true;
-		}
-	}
-	return false;
-}
+Player::Player() :
+_midi (0),
+_parser (0),
+_parts (0),
+_active (false),
+_scanning (false),
+_id (0),
+_priority (0),
+_volume (0),
+_pan (0),
+_transpose (0),
+_detune (0),
+_vol_eff (0),
+_song_index (0),
+_track_index (0),
+_loop_to_beat (0),
+_loop_from_beat (0),
+_loop_counter (0),
+_loop_to_tick (0),
+_loop_from_tick (0),
+_tempo (0),
+_tempo_eff (0),
+_speed (128),
+_abort (false),
+_isMT32 (false),
+_isGM (false),
+_se (0),
+_vol_chan (0)
+{ }
 
-void Player::clear() {
-	uninit_seq();
-	cancel_volume_fade();
-	uninit_parts();
-	_se->ImFireAllTriggers (_id);
-	_active = false;
-	_ticks_per_beat = TICKS_PER_BEAT;
-	_midi = NULL;
+Player::~Player() {
+	if (_parser) {
+		delete _parser;
+		_parser = 0;
+	}
 }
 
 bool Player::startSound (int sound, MidiDriver *midi) {
@@ -159,7 +97,7 @@ bool Player::startSound (int sound, MidiDriver *midi) {
 		}
 	}
 
-	_mt32emulate = _se->isMT32(sound);
+	_isMT32 = _se->isMT32(sound);
 	_isGM = _se->isGM(sound);
 
 	_parts = NULL;
@@ -186,15 +124,35 @@ bool Player::startSound (int sound, MidiDriver *midi) {
 	return true;
 }
 
+bool Player::isFadingOut() {
+	int i;
+	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
+		if (_parameterFaders[i].param == ParameterFader::pfVolume &&
+		    _parameterFaders[i].end == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void Player::clear() {
+	uninit_seq();
+	cancel_volume_fade();
+	uninit_parts();
+	_se->ImFireAllTriggers (_id);
+	_active = false;
+	_midi = NULL;
+}
+
 void Player::hook_clear() {
 	memset(&_hook, 0, sizeof(_hook));
 }
 
 int Player::start_seq_sound(int sound) {
-	byte *ptr, *track_ptr;
+	byte *ptr;
 
 	_song_index = sound;
-	_timer_counter = 0;
 	_loop_to_beat = 1;
 	_loop_from_beat = 1;
 	_track_index = 0;
@@ -202,28 +160,27 @@ int Player::start_seq_sound(int sound) {
 	_loop_to_tick = 0;
 	_loop_from_tick = 0;
 
-	set_tempo(500000);
-	set_speed(128);
-	ptr = _se->findTag(sound, "MTrk", _track_index);
+	setTempo(500000);
+	setSpeed(128);
+
+	ptr = _se->findTag (sound, "MThd", 0);
 	if (ptr == NULL)
 		return -1;
+	if (_parser)
+		delete _parser;
 
-	track_ptr = ptr;
-	_cur_pos = _next_pos = get_delta_time(&track_ptr);
-	_song_offset = track_ptr - ptr;
-
-	_tick_index = _cur_pos;
-	_beat_index = 1;
-
-	if (_tick_index >= _ticks_per_beat) {
-		_beat_index += _tick_index / _ticks_per_beat;
-		_tick_index %= _ticks_per_beat;
-	}
+	ptr -= 8; // findTag puts us past the tag and length
+	_parser = MidiParser::createParser_SMF();
+	_parser->setTimerRate ((_midi->getBaseTempo() * _speed) >> 7);
+	_parser->setMidiDriver (this);
+	_parser->property (MidiParser::mpSmartJump, 1);
+	_parser->loadMusic (ptr, 0);
+	_parser->setTrack (_track_index);
 
 	return 0;
 }
 
-void Player::set_tempo(uint32 b) {
+void Player::setTempo(uint32 b) {
 	uint32 i, j;
 
 	i = _midi->getBaseTempo();
@@ -237,8 +194,6 @@ void Player::set_tempo(uint32 b) {
 	}
 
 	_tempo_eff = (i << 16) / j;
-
-	set_speed(_speed);
 }
 
 void Player::cancel_volume_fade() {
@@ -266,149 +221,110 @@ void Player::uninit_seq() {
 	_abort = true;
 }
 
-void Player::set_speed(byte speed) {
+void Player::setSpeed(byte speed) {
 	_speed = speed;
-	_timer_speed = (_tempo_eff * speed >> 7);
+	if (_parser)
+		_parser->setTimerRate ((_midi->getBaseTempo() * speed) >> 7);
 }
 
-byte *Player::parse_midi(byte *s) {
-	byte cmd, chan, note, velocity, control;
-	uint value;
+void Player::send (uint32 b) {
+	byte cmd = (byte) (b & 0xF0);
+	byte chan = (byte) (b & 0x0F);
+	byte param1 = (byte) ((b >> 8) & 0xFF);
+	byte param2 = (byte) ((b >> 16) & 0xFF);
 	Part *part;
-
-	cmd = *s++;
-
-	chan = cmd & 0xF;
 
 	switch (cmd >> 4) {
 	case 0x8: // Key Off
-		note = *s++;
-		if (!_scanning) {
-			key_off(chan, note);
-		} else {
-			clear_active_note(chan, note);
-		}
-		s++; // Skip velocity
+		if (!_scanning)
+			key_off (chan, param1);
+		else
+			clear_active_note (chan, param1);
 		break;
 
 	case 0x9: // Key On
-		note = *s++;
-		velocity = *s++;
-		if (velocity) {
-			if (!_scanning)
-				key_on(chan, note, velocity);
-			else
-				set_active_note(chan, note);
-		} else {
-			if (!_scanning)
-				key_off(chan, note);
-			else
-				clear_active_note(chan, note);
-		}
-		break;
-
-	case 0xA: // Aftertouch
-		s += 2;
+		if (!_scanning)
+			key_on (chan, param1, param2);
+		else
+			set_active_note (chan, param1);
 		break;
 
 	case 0xB: // Control Change
-		control = *s++;
-		value = *s++;
-		part = get_part(chan);
+		part = (param1 == 123 ? getActivePart (chan) : getPart (chan));
 		if (!part)
 			break;
 
-		switch (control) {
+		switch (param1) {
 		case 1: // Modulation Wheel
-			part->set_modwheel(value);
+			part->set_modwheel (param2);
 			break;
 		case 7: // Volume
-			part->set_vol(value);
+			part->setVolume (param2);
 			break;
 		case 10: // Pan Position
-			part->set_pan(value - 0x40);
+			part->set_pan (param2 - 0x40);
 			break;
 		case 16: // Pitchbend Factor (non-standard)
-			part->set_pitchbend_factor(value);
+			part->set_pitchbend_factor (param2);
 			break;
 		case 17: // GP Slider 2
-			part->set_detune(value - 0x40);
+			part->set_detune (param2 - 0x40);
 			break;
 		case 18: // GP Slider 3
-			part->set_pri(value - 0x40);
+			part->set_pri (param2 - 0x40);
 			_se->reallocateMidiChannels (_midi);
 			break;
 		case 64: // Sustain Pedal
-			part->set_pedal(value != 0);
+			part->set_pedal (param2 != 0);
 			break;
 		case 91: // Effects Level
-			part->set_effect_level(value);
+			part->set_effect_level (param2);
 			break;
 		case 93: // Chorus Level
-			part->set_chorus(value);
+			part->set_chorus(param2);
+			break;
+		case 123: // All Notes Off
+			part->silence();
 			break;
 		default:
-			warning("parse_midi: invalid control %d", control);
+			warning("Player::send(): Invalid control change %d", param1);
 		}
 		break;
 
 	case 0xC: // Program Change
-		value = *s++;
-		part = get_part(chan);
+		part = getPart (chan);
 		if (part) {
 			if (_isGM) {
-				if (value < 128)
-					part->set_program(value);
+				if (param1 < 128)
+					part->set_program (param1);
 			} else {
-				if (value < 32)
-					part->load_global_instrument(value);
+				if (param1 < 32)
+					part->load_global_instrument (param1);
 			}
 		}
-		break;
-
-	case 0xD: // Channel Pressure
-		s++;
 		break;
 
 	case 0xE: // Pitch Bend
-		part = get_part(chan);
+		part = getPart (chan);
 		if (part)
-			part->set_pitchbend(((s[1] << 7) | s[0]) - 0x2000);
-		s += 2;
+			part->set_pitchbend (((param2 << 7) | param1) - 0x2000);
 		break;
 
-	case 0xF:
-		if (chan == 0) {
-			uint size = get_delta_time(&s);
-			parse_sysex(s, size);
-			s += size;
-		} else if (chan == 0xF) {
-			cmd = *s++;
-			if (cmd == 47)
-				goto Error; // End of song
-			if (cmd == 81) {
-				set_tempo((s[1] << 16) | (s[2] << 8) | s[3]);
-				s += 4;
-				break;
-			}
-			s += get_delta_time(&s);
-		} else if (chan == 0x7) {
-			s += get_delta_time(&s);
-		} else {
-			goto Error;
-		}
+	case 0xA: // Aftertouch
+	case 0xD: // Channel Pressure
+	case 0xF: // Sequence Controls
 		break;
 
 	default:
-	Error:;
-		if (!_scanning)
+		if (!_scanning) {
+			warning ("Player::send(): Invalid command %d", cmd);
 			clear();
-		return NULL;
+		}
 	}
-	return s;
+	return;
 }
 
-void Player::parse_sysex(byte *p, uint len) {
+void Player::sysEx (byte *p, uint16 len) {
 	byte code;
 	byte a;
 	uint b;
@@ -422,7 +338,7 @@ void Player::parse_sysex(byte *p, uint len) {
 	if (a != IMUSE_SYSEX_ID) {
 		if (a == ROLAND_SYSEX_ID) {
 			// Roland custom instrument definition.
-			part = get_part (p[0] & 0x0F);
+			part = getPart (p[0] & 0x0F);
 			if (part) {
 				part->_instrument.roland (p - 1);
 				if (part->clearToTransmit())
@@ -464,10 +380,10 @@ void Player::parse_sysex(byte *p, uint len) {
 			//   BYTE 09: BIT 04 (0x08): Percussion? (1 = yes)
 			//   BYTE 15: Program (upper 4 bits)
 			//   BYTE 16: Program (lower 4 bits)
-			part = get_part (p[0] & 0x0F);
+			part = getPart (p[0] & 0x0F);
 			if (part) {
 				part->set_onoff (p[2] & 0x01);
-				part->set_vol ((p[5] & 0x0F) << 4 | (p[6] & 0x0F));
+				part->setVolume ((p[5] & 0x0F) << 4 | (p[6] & 0x0F));
 				part->_percussion = _isGM ? ((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {
 					if (part->_mc) {
@@ -481,7 +397,7 @@ void Player::parse_sysex(byte *p, uint len) {
 					// cases, a regular program change message always seems to follow
 					// anyway.
 					if (_isGM)
-						part->_instrument.program ((p[15] & 0x0F) << 4 | (p[16] & 0x0F), _mt32emulate);
+						part->_instrument.program ((p[15] & 0x0F) << 4 | (p[16] & 0x0F), _isMT32);
 					part->sendAll();
 				}
 			}
@@ -511,7 +427,7 @@ void Player::parse_sysex(byte *p, uint len) {
 		// This SysEx is used in Sam & Max for maybe_jump.
 		if (_scanning)
 			break;
-		maybe_jump (p[0], p[1] - 1, (read_word (p + 2) - 1) * 4 + p[4], ((p[5] * _ticks_per_beat) >> 2) + p[6]);
+		maybe_jump (p[0], p[1] - 1, (read_word (p + 2) - 1) * 4 + p[4], ((p[5] * TICKS_PER_BEAT) >> 2) + p[6]);
 		break;
 
 	case 2: // Start of song. Ignore for now.
@@ -520,7 +436,7 @@ void Player::parse_sysex(byte *p, uint len) {
 	case 16: // Adlib instrument definition (Part)
 		a = *p++ & 0x0F;
 		++p; // Skip hardware type
-		part = get_part(a);
+		part = getPart(a);
 		if (part) {
 			if (len == 63) {
 				decode_sysex_bytes(p, buf, len - 3);
@@ -543,7 +459,7 @@ void Player::parse_sysex(byte *p, uint len) {
 		a = *p++ & 0x0F;
 		++p; // Skip hardware type
 		decode_sysex_bytes(p, buf, len - 3);
-		part = get_part(a);
+		part = getPart(a);
 		if (part)
 			part->set_param(read_word(buf), read_word(buf + 2));
 		break;
@@ -594,17 +510,17 @@ void Player::parse_sysex(byte *p, uint len) {
 
 	case 80: // Loop
 		decode_sysex_bytes(p + 1, buf, len - 2);
-		set_loop(read_word(buf),
+		setLoop(read_word(buf),
 						 read_word(buf + 2), read_word(buf + 4), read_word(buf + 6), read_word(buf + 8)
 			);
 		break;
 
 	case 81: // End loop
-		clear_loop();
+		clearLoop();
 		break;
 
 	case 96: // Set instrument
-		part = get_part(p[0] & 0x0F);
+		part = getPart(p[0] & 0x0F);
 		b = (p[1] & 0x0F) << 12 | (p[2] & 0x0F) << 8 | (p[4] & 0x0F) << 4 | (p[4] & 0x0F);
 		if (part)
 			part->set_instrument(b);
@@ -650,7 +566,7 @@ void Player::maybe_set_transpose(byte *data) {
 	if (cmd != 0 && cmd < 0x80)
 		_hook._transpose = 0;
 
-	set_transpose(data[1], (int8)data[2]);
+	setTranspose(data[1], (int8)data[2]);
 }
 
 void Player::maybe_part_onoff(byte *data) {
@@ -670,7 +586,7 @@ void Player::maybe_part_onoff(byte *data) {
 	if (cmd != 0 && cmd < 0x80)
 		*p = 0;
 
-	part = get_part(chan);
+	part = getPart(chan);
 	if (part)
 		part->set_onoff(data[2] != 0);
 }
@@ -694,9 +610,9 @@ void Player::maybe_set_volume(byte *data) {
 	if (cmd != 0 && cmd < 0x80)
 		*p = 0;
 
-	part = get_part(chan);
+	part = getPart(chan);
 	if (part)
-		part->set_vol(data[2]);
+		part->setVolume(data[2]);
 }
 
 void Player::maybe_set_program(byte *data) {
@@ -717,7 +633,7 @@ void Player::maybe_set_program(byte *data) {
 	if (cmd != 0 && cmd < 0x80)
 		*p = 0;
 
-	part = get_part(chan);
+	part = getPart(chan);
 	if (part)
 		part->set_program(data[2]);
 }
@@ -743,7 +659,7 @@ void Player::maybe_set_transpose_part(byte *data) {
 	part_set_transpose(chan, data[2], (int8)data[3]);
 }
 
-int Player::set_transpose(byte relative, int b) {
+int Player::setTranspose(byte relative, int b) {
 	Part *part;
 
 	if (b > 24 || b < -24 || relative > 1)
@@ -778,7 +694,7 @@ void Player::part_set_transpose(uint8 chan, byte relative, int8 b) {
 	if (b > 24 || b < -24)
 		return;
 
-	part = get_part(chan);
+	part = getPart(chan);
 	if (!part)
 		return;
 	if (relative)
@@ -789,7 +705,7 @@ void Player::part_set_transpose(uint8 chan, byte relative, int8 b) {
 void Player::key_on(uint8 chan, uint8 note, uint8 velocity) {
 	Part *part;
 
-	part = get_part(chan);
+	part = getPart(chan);
 	if (!part || !part->_on)
 		return;
 
@@ -806,61 +722,16 @@ void Player::key_off(uint8 chan, uint8 note) {
 }
 
 bool Player::jump(uint track, uint beat, uint tick) {
-	byte *mtrk, *cur_mtrk, *scanpos;
-	uint32 topos, curpos, track_offs;
-
-	if (!_active)
+	if (!_parser)
 		return false;
-
-	mtrk = _se->findTag(_song_index, "MTrk", track);
-	if (!mtrk)
+	_parser->setTrack (track);
+	if (!_parser->jumpToTick ((beat - 1) * TICKS_PER_BEAT + tick))
 		return false;
-
-	cur_mtrk = _se->findTag(_song_index, "MTrk", _track_index);
-	if (!cur_mtrk)
-		return false;
-
-	if (beat == 0)
-		beat = 1;
-
-	topos = (beat - 1) * _ticks_per_beat + tick;
-
-	if (track == _track_index && topos >= _next_pos) {
-		scanpos = _song_offset + mtrk;
-		curpos = _next_pos;
-	} else {
-		scanpos = mtrk;
-		curpos = get_delta_time(&scanpos);
-	}
-
-	while (curpos < topos) {
-		skip_midi_cmd(&scanpos);
-		if (!scanpos)
-			return false;
-		curpos += get_delta_time(&scanpos);
-	}
-
-	track_offs = scanpos - mtrk;
-
 	turn_off_pedals();
-
-	find_sustaining_notes(cur_mtrk + _song_offset, mtrk + track_offs, curpos - topos);
-
-	_beat_index = beat;
-	_tick_index = tick;
-	_cur_pos = topos;
-	_next_pos = curpos;
-	_timer_counter = 0;
-	_song_offset = track_offs;
-	if (track != _track_index) {
-		_track_index = track;
-		_loop_counter = 0;
-	}
-	_abort = true;
 	return true;
 }
 
-bool Player::set_loop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick) {
+bool Player::setLoop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick) {
 	if (tobeat + 1 >= frombeat)
 		return false;
 
@@ -877,7 +748,7 @@ bool Player::set_loop(uint count, uint tobeat, uint totick, uint frombeat, uint 
 	return true;
 }
 
-void Player::clear_loop() {
+void Player::clearLoop() {
 	_loop_counter = 0;
 }
 
@@ -890,132 +761,34 @@ void Player::turn_off_pedals() {
 	}
 }
 
-void Player::find_sustaining_notes(byte *a, byte *b, uint32 l) {
-	uint32 pos;
-	uint16 mask;
-	uint16 *bitlist_ptr;
-	SustainingNotes *sn, *next;
-	IsNoteCmdData isnote;
-	int j;
-	uint num_active;
-	uint max_off_pos;
-
-	num_active = update_actives();
-
-	// pos contains number of ticks since current position
-	pos = _next_pos - _cur_pos;
-	if ((int32)pos < 0)
-		pos = 0;
-
-	// Locate the positions where the notes are turned off.
-	// Remember each note that was turned off.
-	while (num_active != 0) {
-		// Is note off?
-		j = is_note_cmd(&a, &isnote);
-		if (j == -1)
-			break;
-		if (j == 1) {
-			mask = 1 << isnote.chan;
-			bitlist_ptr = _se->_active_notes + isnote.note;
-			if (*bitlist_ptr & mask) {
-				*bitlist_ptr &= ~mask;
-				num_active--;
-				// Get a node from the free list
-				if ((sn = _se->_sustain_notes_free) == NULL)
-					return;
-				_se->_sustain_notes_free = sn->next;
-
-				// Insert it in the beginning of the used list
-				sn->next = _se->_sustain_notes_used;
-				_se->_sustain_notes_used = sn;
-				sn->prev = NULL;
-				if (sn->next)
-					sn->next->prev = sn;
-
-				sn->note = isnote.note;
-				sn->chan = isnote.chan;
-				sn->player = this;
-				sn->off_pos = pos;
-				sn->pos = 0;
-				sn->counter = 0;
-			}
-		}
-		pos += get_delta_time(&a);
-	}
-
-	// Find the maximum position where a note was turned off
-	max_off_pos = 0;
-	for (sn = _se->_sustain_notes_used; sn; sn = sn->next) {
-		_se->_active_notes[sn->note] |= (1 << sn->chan);
-		if (sn->off_pos > max_off_pos) {
-			max_off_pos = sn->off_pos;
-		}
-	}
-
-	// locate positions where notes are turned on
-	pos = l;
-	while (pos < max_off_pos) {
-		j = is_note_cmd(&b, &isnote);
-		if (j == -1)
-			break;
-		if (j == 2) {
-			mask = 1 << isnote.chan;
-			bitlist_ptr = _se->_active_notes + isnote.note;
-
-			if (*bitlist_ptr & mask) {
-				sn = _se->_sustain_notes_used;
-				while (sn) {
-					next = sn->next;
-					if (sn->note == isnote.note && sn->chan == isnote.chan && pos < sn->off_pos) {
-						*bitlist_ptr &= ~mask;
-						// Unlink from the sustain list
-						if (next)
-							next->prev = sn->prev;
-						if (sn->prev)
-							sn->prev->next = next;
-						else
-							_se->_sustain_notes_used = next;
-						// Insert into the free list
-						sn->next = _se->_sustain_notes_free;
-						_se->_sustain_notes_free = sn;
-					}
-					sn = next;
-				}
-			}
-		}
-		pos += get_delta_time(&b);
-	}
-
-	// Concatenate head and used list
-	if (!_se->_sustain_notes_head) {
-		_se->_sustain_notes_head = _se->_sustain_notes_used;
-		_se->_sustain_notes_used = NULL;
-		return;
-	}
-	sn = _se->_sustain_notes_head;
-	while (sn->next)
-		sn = sn->next;
-	sn->next = _se->_sustain_notes_used;
-	_se->_sustain_notes_used = NULL;
-	if (sn->next)
-		sn->next->prev = sn;
-}
-
-Part *Player::get_part(uint8 chan) {
-	Part *part;
-
-	part = _parts;
+Part *Player::getActivePart (uint8 chan) {
+	Part *part = _parts;
 	while (part) {
 		if (part->_chan == chan)
 			return part;
 		part = part->_next;
 	}
+	return 0;
+}
+
+Part *Player::getPart(uint8 chan) {
+	Part *part = getActivePart (chan);
+	if (part)
+		return part;
 
 	part = _se->allocate_part (_priority, _midi);
 	if (!part) {
 		warning("no parts available");
 		return NULL;
 	}
+
+	// Insert part into front of parts list
+	part->_prev = NULL;
+	part->_next = _parts;
+	if (_parts)
+		_parts->_prev = part;
+	_parts = part;
+
 
 	part->_chan = chan;
 	part->setup(this);
@@ -1037,7 +810,7 @@ uint Player::update_actives() {
 	return count;
 }
 
-void Player::set_priority(int pri) {
+void Player::setPriority (int pri) {
 	Part *part;
 
 	_priority = pri;
@@ -1047,7 +820,7 @@ void Player::set_priority(int pri) {
 	_se->reallocateMidiChannels (_midi);
 }
 
-void Player::set_pan(int pan) {
+void Player::setPan (int pan) {
 	Part *part;
 
 	_pan = pan;
@@ -1056,7 +829,7 @@ void Player::set_pan(int pan) {
 	}
 }
 
-void Player::set_detune(int detune) {
+void Player::setDetune (int detune) {
 	Part *part;
 
 	_detune = detune;
@@ -1066,15 +839,7 @@ void Player::set_detune(int detune) {
 }
 
 int Player::scan(uint totrack, uint tobeat, uint totick) {
-	byte *mtrk, *scanptr;
-	uint32 curpos, topos;
-	uint32 pos;
-
-	if (!_active)
-		return -1;
-
-	mtrk = _se->findTag(_song_index, "MTrk", totrack);
-	if (!mtrk)
+	if (!_active || !_parser)
 		return -1;
 
 	if (tobeat == 0)
@@ -1082,31 +847,18 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 
 	turn_off_parts();
 	clear_active_notes();
-	scanptr = mtrk;
-	curpos = get_delta_time(&scanptr);
 	_scanning = true;
 
-	topos = (tobeat - 1) * _ticks_per_beat + totick;
-
-	while (curpos < topos) {
-		scanptr = parse_midi(scanptr);
-		if (!scanptr) {
-			_scanning = false;
-			return -1;
-		}
-		curpos += get_delta_time(&scanptr);
+	_parser->setTrack (totrack);
+	if (!_parser->jumpToTick ((tobeat - 1) * TICKS_PER_BEAT + totick, true)) {
+		_scanning = false;
+		return -1;
 	}
-	pos = scanptr - mtrk;
 
 	_scanning = false;
 	_se->reallocateMidiChannels (_midi);
 	play_active_notes();
-	_beat_index = tobeat;
-	_tick_index = totick;
-	_cur_pos = topos;
-	_next_pos = curpos;
-	_timer_counter = 0;
-	_song_offset = pos;
+
 	if (_track_index != totrack) {
 		_track_index = totrack;
 		_loop_counter = 0;
@@ -1136,7 +888,7 @@ void Player::play_active_notes() {
 	}
 }
 
-int Player::set_vol(byte vol) {
+int Player::setVolume(byte vol) {
 	Part *part;
 
 	if (vol > 127)
@@ -1146,13 +898,13 @@ int Player::set_vol(byte vol) {
 	_vol_eff = _se->get_channel_volume(_vol_chan) * (vol + 1) >> 7;
 
 	for (part = _parts; part; part = part->_next) {
-		part->set_vol(part->_vol);
+		part->setVolume(part->_vol);
 	}
 
 	return 0;
 }
 
-int Player::get_param(int param, byte chan) {
+int Player::getParam(int param, byte chan) {
 	switch (param) {
 	case 0:
 		return (byte)_priority;
@@ -1169,9 +921,9 @@ int Player::get_param(int param, byte chan) {
 	case 6:
 		return _track_index;
 	case 7:
-		return _beat_index;
+		return getBeatIndex();
 	case 8:
-		return _tick_index;
+		return (_parser ? _parser->getTick() % TICKS_PER_BEAT : 0); // _tick_index;
 	case 9:
 		return _loop_counter;
 	case 10:
@@ -1223,11 +975,7 @@ int Player::query_part_param(int param, byte chan) {
 	return 129;
 }
 
-void Player::sequencer_timer() {
-	byte *mtrk;
-	uint32 counter;
-	byte *song_ptr;
-
+void Player::onTimer() {
 	// First handle any parameter transitions
 	// that are occuring.
 	transitionParameters();
@@ -1235,40 +983,20 @@ void Player::sequencer_timer() {
 	// Since the volume parameter can cause
 	// the player to be deactivated, check
 	// to make sure we're still active.
-	if (!_active)
+	if (!_active || !_parser)
 		return;
 
-	counter = _timer_counter + _timer_speed;
-	_timer_counter = counter & 0xFFFF;
-	_cur_pos += counter >> 16;
-	_tick_index += counter >> 16;
+	uint32 target_tick = _parser->getTick();
+	uint beat_index = target_tick / TICKS_PER_BEAT + 1;
+	uint tick_index = target_tick % TICKS_PER_BEAT;
 
-	if (_tick_index >= _ticks_per_beat) {
-		_beat_index += _tick_index / _ticks_per_beat;
-		_tick_index %= _ticks_per_beat;
-	}
-	if (_loop_counter && _beat_index >= _loop_from_beat && _tick_index >= _loop_from_tick) {
+	if (_loop_counter && (beat_index > _loop_from_beat ||
+	    (beat_index == _loop_from_beat && tick_index >= _loop_from_tick)))
+	{
 		_loop_counter--;
-		jump(_track_index, _loop_to_beat, _loop_to_tick);
+		jump (_track_index, _loop_to_beat, _loop_to_tick);
 	}
-	if (_next_pos <= _cur_pos) {
-		mtrk = _se->findTag(_song_index, "MTrk", _track_index);
-		if (!mtrk) {
-			warning("Sound %d was unloaded while active", _song_index);
-			clear();
-		} else {
-			song_ptr = mtrk + _song_offset;
-			_abort = false;
-
-			while (_next_pos <= _cur_pos) {
-				song_ptr = parse_midi(song_ptr);
-				if (!song_ptr || _abort)
-					return;
-				_next_pos += get_delta_time(&song_ptr);
-				_song_offset = song_ptr - mtrk;
-			}
-		}
-	}
+	_parser->onTimer();
 }
 
 // "time" is referenced as hundredths of a second.
@@ -1336,7 +1064,7 @@ int Player::addParameterFader (int param, int target, int time) {
 }
 
 void Player::transitionParameters() {
-	uint32 advance = _midi->getBaseTempo() / 500;
+	uint32 advance = _midi->getBaseTempo();
 	int value;
 
 	ParameterFader *ptr = &_parameterFaders[0];
@@ -1357,21 +1085,139 @@ void Player::transitionParameters() {
 				clear();
 				return;
 			}
-			set_vol ((byte) value);
+			setVolume ((byte) value);
 			break;
 
 		case ParameterFader::pfSpeed:
 			// Speed.
-			set_speed ((byte) value);
+			setSpeed ((byte) value);
 			break;
 
 		case ParameterFader::pfTranspose:
 			// FIXME: Is this really transpose?
-			set_transpose (0, value);
+			setTranspose (0, value);
 			break;
 		}
 
 		if (ptr->current_time >= ptr->total_time)
 			ptr->param = 0;
 	}
+}
+
+uint Player::getBeatIndex() {
+	return (_parser ? (_parser->getTick() / TICKS_PER_BEAT + 1) : 0);
+}
+
+void Player::removePart (Part *part) {
+	// Unlink
+	if (part->_next)
+		part->_next->_prev = part->_prev;
+	if (part->_prev)
+		part->_prev->_next = part->_next;
+	else
+		_parts = part->_next;
+	part->_next = part->_prev = 0;
+}
+
+void Player::fixAfterLoad() {
+	_midi = _se->getBestMidiDriver (_id);
+	if (!_midi) {
+		clear();
+	} else {
+		start_seq_sound (_id);
+		setTempo (_tempo);
+		if (_parser) {
+			_parser->setTrack (_track_index);
+			_parser->jumpToTick (_music_tick);
+		}
+		_isMT32 = _se->isMT32 (_id);
+		_isGM = _se->isGM (_id);
+	}
+}
+
+uint32 Player::getBaseTempo() {
+	return (_midi ? _midi->getBaseTempo() : 0);
+}
+
+void Player::metaEvent (byte type, byte *msg, uint16 len) {
+	if (type == 0x2F) {
+		_parser->jumpToTick (0); // That aborts current parsing
+		clear();
+		return;
+	}
+
+	if (type == 0x51)
+		setTempo ((msg[0] << 16) | (msg[1] << 8) | msg[2]);
+}
+
+
+
+////////////////////////////////////////
+//
+//  Player save/load functions
+//
+////////////////////////////////////////
+
+enum {
+	TYPE_PART = 1,
+	TYPE_PLAYER = 2
+};
+
+int Player::save_or_load(Serializer *ser) {
+	static const SaveLoadEntry playerEntries[] = {
+		MKREF(Player, _parts, TYPE_PART, VER_V8),
+		MKLINE(Player, _active, sleByte, VER_V8),
+		MKLINE(Player, _id, sleUint16, VER_V8),
+		MKLINE(Player, _priority, sleByte, VER_V8),
+		MKLINE(Player, _volume, sleByte, VER_V8),
+		MKLINE(Player, _pan, sleInt8, VER_V8),
+		MKLINE(Player, _transpose, sleByte, VER_V8),
+		MKLINE(Player, _detune, sleInt8, VER_V8),
+		MKLINE(Player, _vol_chan, sleUint16, VER_V8),
+		MKLINE(Player, _vol_eff, sleByte, VER_V8),
+		MKLINE(Player, _speed, sleByte, VER_V8),
+		MKLINE(Player, _song_index, sleUint16, VER_V8),
+		MKLINE(Player, _track_index, sleUint16, VER_V8),
+		MK_OBSOLETE(Player, _timer_counter, sleUint16, VER_V8, VER_V17),
+		MKLINE(Player, _loop_to_beat, sleUint16, VER_V8),
+		MKLINE(Player, _loop_from_beat, sleUint16, VER_V8),
+		MKLINE(Player, _loop_counter, sleUint16, VER_V8),
+		MKLINE(Player, _loop_to_tick, sleUint16, VER_V8),
+		MKLINE(Player, _loop_from_tick, sleUint16, VER_V8),
+		MKLINE(Player, _tempo, sleUint32, VER_V8),
+		MK_OBSOLETE(Player, _cur_pos, sleUint32, VER_V8, VER_V17),
+		MK_OBSOLETE(Player, _next_pos, sleUint32, VER_V8, VER_V17),
+		MK_OBSOLETE(Player, _song_offset, sleUint32, VER_V8, VER_V17),
+		MK_OBSOLETE(Player, _tick_index, sleUint16, VER_V8, VER_V17),
+		MK_OBSOLETE(Player, _beat_index, sleUint16, VER_V8, VER_V17),
+		MK_OBSOLETE(Player, _ticks_per_beat, sleUint16, VER_V8, VER_V17),
+		MKLINE(Player, _music_tick, sleUint32, VER_V19),
+		MKLINE(Player, _hook._jump[0], sleByte, VER_V8),
+		MKLINE(Player, _hook._transpose, sleByte, VER_V8),
+		MKARRAY(Player, _hook._part_onoff[0], sleByte, 16, VER_V8),
+		MKARRAY(Player, _hook._part_volume[0], sleByte, 16, VER_V8),
+		MKARRAY(Player, _hook._part_program[0], sleByte, 16, VER_V8),
+		MKARRAY(Player, _hook._part_transpose[0], sleByte, 16, VER_V8),
+		MKEND()
+	};
+
+	const SaveLoadEntry parameterFaderEntries[] = {
+		MKLINE(ParameterFader, param,        sleInt16,  VER_V17),
+		MKLINE(ParameterFader, start,        sleInt16,  VER_V17),
+		MKLINE(ParameterFader, end,          sleInt16,  VER_V17),
+		MKLINE(ParameterFader, total_time,   sleUint32, VER_V17),
+		MKLINE(ParameterFader, current_time, sleUint32, VER_V17),
+		MKEND()
+	};
+
+	if (!ser->isSaving() && _parser) {
+		delete _parser;
+		_parser = 0;
+	}
+	_music_tick = _parser ? _parser->getTick() : 0;
+
+	ser->saveLoadEntries (this, playerEntries);
+	ser->saveLoadArrayOf (_parameterFaders, ARRAYSIZE(_parameterFaders),
+		                  sizeof(ParameterFader), parameterFaderEntries);
+	return 0;
 }

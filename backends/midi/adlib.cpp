@@ -564,9 +564,9 @@ public:
 	void setTimerCallback (void *timer_param, void (*timer_proc) (void *));
 	uint32 getBaseTempo() {
 #ifdef _WIN32_WCE
-		return 0x1D9000 * 2;				// Sampled down to 11 kHz
+		return 3991 * 2; // Sampled down to 11 kHz
 #else	//_WIN32_WCE
-		return 0x1D9000;
+		return 3991; // 88 samples per call (at 22 kHz mono)
 #endif //_WIN32_WCE
 	}
 

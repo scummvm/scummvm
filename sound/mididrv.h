@@ -29,8 +29,9 @@ class MidiChannel;
 
 // Abstract MIDI Driver Class
 class MidiDriver {
-
 public:
+	virtual ~MidiDriver() { }
+
 	// Error codes returned by open.
 	// Can be converted to a string with getErrorName()
 	enum {
@@ -41,7 +42,7 @@ public:
 	};
 
 	enum {
-		PROP_TIMEDIV = 1,
+//		PROP_TIMEDIV = 1,
 		PROP_OLD_ADLIB = 2
 	};
 

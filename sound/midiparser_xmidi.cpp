@@ -76,17 +76,17 @@ uint32 MidiParser_XMIDI::readVLQ2 (byte * &pos) {
 }
 
 void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
-	info.start = _play_pos;
-	info.delta = readVLQ2 (_play_pos) - _inserted_delta;
+	info.start = _position._play_pos;
+	info.delta = readVLQ2 (_position._play_pos) - _inserted_delta;
 
 	// Process the next event.
 	_inserted_delta = 0;
-	info.event = *(_play_pos++);
+	info.event = *(_position._play_pos++);
 	switch (info.event >> 4) {
 	case 0x9: // Note On
-		info.basic.param1 = *(_play_pos++);
-		info.basic.param2 = *(_play_pos++);
-		info.length = readVLQ (_play_pos);
+		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param2 = *(_position._play_pos++);
+		info.length = readVLQ (_position._play_pos);
 		if (info.basic.param2 == 0) {
 			info.event = info.channel() | 0x80;
 			info.length = 0;
@@ -94,24 +94,24 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 		break;
 
 	case 0xC: case 0xD:
-		info.basic.param1 = *(_play_pos++);
+		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
 		break;
 
 	case 0x8: case 0xA: case 0xB: case 0xE:
-		info.basic.param1 = *(_play_pos++);
-		info.basic.param2 = *(_play_pos++);
+		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param2 = *(_position._play_pos++);
 		break;
 
 	case 0xF: // Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
-			info.basic.param1 = *(_play_pos++);
-			info.basic.param2 = *(_play_pos++);
+			info.basic.param1 = *(_position._play_pos++);
+			info.basic.param2 = *(_position._play_pos++);
 			break;
 
 		case 0x3: // Song Select
-			info.basic.param1 = *(_play_pos++);
+			info.basic.param1 = *(_position._play_pos++);
 			info.basic.param2 = 0;
 			break;
 
@@ -120,16 +120,16 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ (_play_pos);
-			info.ext.data = _play_pos;
-			_play_pos += info.length;
+			info.length = readVLQ (_position._play_pos);
+			info.ext.data = _position._play_pos;
+			_position._play_pos += info.length;
 			break;
 
 		case 0xF: // META event
-			info.ext.type = *(_play_pos++);
-			info.length = readVLQ (_play_pos);
-			info.ext.data = _play_pos;
-			_play_pos += info.length;
+			info.ext.type = *(_position._play_pos++);
+			info.length = readVLQ (_position._play_pos);
+			info.ext.data = _position._play_pos;
+			_position._play_pos += info.length;
 			if (info.ext.type == 0x51 && info.length == 3) {
 				// Tempo event. We want to make these constant 500,000.
 				info.ext.data[0] = 0x07;
@@ -236,8 +236,8 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 
 		// Ok it's an XMIDI.
 		// We're going to identify and store the location for each track.
-		if (_num_tracks > 16) {
-			printf ("Can only handle 16 tracks but was handed %d\n", (int) _num_tracks);
+		if (_num_tracks > ARRAYSIZE(_tracks)) {
+			printf ("Can only handle %d tracks but was handed %d\n", (int) ARRAYSIZE(_tracks), (int) _num_tracks);
 			return false;
 		}
 

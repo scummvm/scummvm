@@ -22,8 +22,9 @@
 #ifndef DEFINED_IMUSE_INTERNAL
 #define DEFINED_IMUSE_INTERNAL
 
+#include "sound/mididrv.h"
 #include "common/scummsys.h"
-#include "instrument.h"
+#include "scumm/instrument.h"
 
 struct HookDatas;
 struct ParameterFader;
@@ -32,13 +33,12 @@ struct ImTrigger;
 struct SustainingNotes;
 struct CommandQueue;
 struct IsNoteCmdData;
-struct Player;
+class  Player;
 struct Part;
-class IMuseInternal;
+class  IMuseInternal;
 
 // Some entities also referenced
-class MidiDriver;
-class MidiChannel;
+class MidiParser;
 class Scumm;
 class OSystem;
 
@@ -70,7 +70,7 @@ class OSystem;
 //
 ////////////////////////////////////////
 
-static int clamp(int val, int min, int max) {
+inline int clamp(int val, int min, int max) {
 	if (val < min)
 		return min;
 	if (val > max)
@@ -78,7 +78,7 @@ static int clamp(int val, int min, int max) {
 	return val;
 }
 
-static int transpose_clamp(int a, int b, int c) {
+inline int transpose_clamp(int a, int b, int c) {
 	if (b > a)
 		a += (b - a + 11) / 12 * 12;
 	if (c < a)
@@ -104,6 +104,7 @@ struct HookDatas {
 
 	int query_param(int param, byte chan);
 	int set(byte cls, byte value, byte chan);
+	HookDatas() { memset (this, 0, sizeof (HookDatas)); }
 };
 
 struct ParameterFader {
@@ -127,6 +128,7 @@ struct DeferredCommand {
 	MidiDriver *midi;
 	uint32 time_left;
 	int a, b, c, d, e, f;
+	DeferredCommand() { memset (this, 0, sizeof (DeferredCommand)); }
 };
 
 struct ImTrigger {
@@ -134,31 +136,18 @@ struct ImTrigger {
 	byte id;
 	uint16 expire;
 	byte command [4];
-};
-
-struct SustainingNotes {
-	SustainingNotes *next;
-	SustainingNotes *prev;
-	Player *player;
-	byte note, chan;
-	uint32 off_pos;
-	uint32 pos;
-	uint16 counter;
+	ImTrigger() { memset (this, 0, sizeof (ImTrigger)); }
 };
 
 struct CommandQueue {
 	uint16 array[8];
+	CommandQueue() { memset (this, 0, sizeof (CommandQueue)); }
 };
 
-struct IsNoteCmdData {
-	byte chan;
-	byte note;
-	byte vel;
-};
-
-struct Player {
-	IMuseInternal *_se;
+class Player : public MidiDriver {
+protected:
 	MidiDriver *_midi;
+	MidiParser *_parser;
 
 	Part *_parts;
 	bool _active;
@@ -169,12 +158,10 @@ struct Player {
 	int8 _pan;
 	int8 _transpose;
 	int8 _detune;
-	uint _vol_chan;
 	byte _vol_eff;
 
 	uint _song_index;
 	uint _track_index;
-	uint _timer_counter;
 	uint _loop_to_beat;
 	uint _loop_from_beat;
 	uint _loop_counter;
@@ -182,26 +169,24 @@ struct Player {
 	uint _loop_from_tick;
 	uint32 _tempo;
 	uint32 _tempo_eff; // No Save
-	uint32 _cur_pos;
-	uint32 _next_pos;
-	uint32 _song_offset;
-	uint32 _timer_speed; // No Save
-	uint _tick_index;
-	uint _beat_index;
-	uint _ticks_per_beat;
-	byte _speed; // No Save
+	byte _speed;
 	bool _abort;
+
+	// This does not get used by us! It is only
+	// here for save/load purposes, and gets
+	// passed on to the MidiParser during
+	// fixAfterLoad().
+	uint32 _music_tick;
 
 	HookDatas _hook;
 	ParameterFader _parameterFaders[4];
 
-	bool _mt32emulate;
+	bool _isMT32;
 	bool _isGM;
 
+protected:
 	// Player part
 	void hook_clear();
-	void clear();
-	bool startSound (int sound, MidiDriver *midi);
 	void uninit_parts();
 	byte *parse_midi(byte *s);
 	void key_off(uint8 chan, byte data);
@@ -215,20 +200,12 @@ struct Player {
 	void maybe_set_program(byte *data);
 	void maybe_set_transpose_part(byte *data);
 	uint update_actives();
-	Part *get_part(uint8 part);
 	void turn_off_pedals();
-	int set_vol(byte vol);
-	int get_param(int param, byte chan);
-	int query_part_param(int param, byte chan);
-	int set_transpose(byte relative, int b);
-	void set_priority(int pri);
-	void set_pan(int pan);
-	void set_detune(int detune);
+	int  query_part_param(int param, byte chan);
 	void turn_off_parts();
 	void play_active_notes();
 	void cancel_volume_fade();
 
-	int addParameterFader (int param, int target, int time);
 	void transitionParameters();
 
 	static void decode_sysex_bytes(byte *src, byte *dst, int len);
@@ -238,24 +215,68 @@ struct Player {
 	void clear_active_notes();
 
 	// Sequencer part
-	bool set_loop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
-	void clear_loop();
-	void set_speed(byte speed);
-	bool jump(uint track, uint beat, uint tick);
 	void uninit_seq();
-	void set_tempo(uint32 data);
+	void setTempo(uint32 data);
 	int start_seq_sound(int sound);
-	void find_sustaining_notes(byte *a, byte *b, uint32 l);
-	int scan(uint totrack, uint tobeat, uint totick);
 	int query_param(int param);
 
-	bool is_fading_out();
-	void sequencer_timer();
+public:
+	IMuseInternal *_se;
+	uint _vol_chan;
 
-	Player() {
-		memset(this,0,sizeof(Player));
-	}
+public:
+	Player();
+	virtual ~Player();
 
+	int    addParameterFader (int param, int target, int time);
+	void   clear();
+	void   clearLoop();
+	void   fixAfterLoad();
+	Part * getActivePart (uint8 part);
+	uint   getBeatIndex();
+	int8   getDetune() { return _detune; }
+	byte   getEffectiveVolume() { return _vol_eff; }
+	int    getID() { return _id; }
+	MidiDriver *getMidiDriver() { return _midi; }
+	int    getParam (int param, byte chan);
+	int8   getPan() { return _pan; }
+	Part * getPart (uint8 part);
+	byte   getPriority() { return _priority; }
+	uint32 getTempo() { return _tempo; }
+	uint   getTicksPerBeat() { return TICKS_PER_BEAT; }
+	int8   getTranspose() { return _transpose; }
+	byte   getVolume() { return _volume; }
+	bool   isActive() { return _active; }
+	bool   isFadingOut();
+	bool   isGM() { return _isGM; }
+	bool   isMT32() { return _isMT32; }
+	bool   jump (uint track, uint beat, uint tick);
+	void   onTimer();
+	void   removePart (Part *part);
+	int    scan (uint totrack, uint tobeat, uint totick);
+	int    save_or_load (Serializer *ser);
+	int    setHook (byte cls, byte value, byte chan) { return _hook.set (cls, value, chan); }
+	void   setDetune (int detune);
+	bool   setLoop (uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
+	void   setPan (int pan);
+	void   setPriority (int pri);
+	void   setSpeed (byte speed);
+	int    setTranspose(byte relative, int b);
+	int    setVolume (byte vol);
+	bool   startSound (int sound, MidiDriver *midi);
+
+public:
+	// MidiDriver interface
+	int open() { return 0; }
+	void close() { }
+	void send (uint32 b);
+	const char *getErrorName (int error_code) { return "Unknown"; }
+	void sysEx (byte *msg, uint16 length);
+	void metaEvent (byte type, byte *data, uint16 length);
+	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
+	uint32 getBaseTempo();
+	MidiChannel *allocateChannel() { return 0; }
+	MidiChannel *getPercussionChannel() { return 0; }
 };
 
 struct Part {
@@ -300,7 +321,7 @@ struct Part {
 	void load_global_instrument (byte b);
 
 	void set_transpose(int8 transpose);
-	void set_vol(uint8 volume);
+	void setVolume(uint8 volume);
 	void set_detune(int8 detune);
 	void set_pri(int8 pri);
 	void set_pan(int8 pan);
@@ -329,7 +350,7 @@ struct Part {
 // imuse.h contains a public version of the same class.
 // the public version, only contains a set of methods.
 class IMuseInternal {
-	friend struct Player;
+	friend class Player;
 
 private:
 	bool _old_adlib_instruments;
@@ -348,10 +369,6 @@ private:
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;
 
-	SustainingNotes *_sustain_notes_used;
-	SustainingNotes *_sustain_notes_free;
-	SustainingNotes *_sustain_notes_head;
-
 	byte _queue_marker;
 	byte _queue_cleared;
 	byte _master_volume; // Master volume. 0-255
@@ -366,7 +383,6 @@ private:
 	uint16 _volchan_table[8];
 
 	Player _players[8];
-	SustainingNotes _sustaining_notes[24];
 	Part _parts[32];
 
 	uint16 _active_notes[128];
@@ -383,11 +399,9 @@ private:
 	void initMidiDriver (MidiDriver *midi);
 	void init_players();
 	void init_parts();
-	void init_sustaining_notes();
 	void init_queue();
 
 	void sequencer_timers (MidiDriver *midi);
-	void expire_sustain_notes (MidiDriver *midi);
 
 	MidiDriver *getBestMidiDriver (int sound);
 	Player *allocate_player(byte priority);
@@ -403,7 +417,7 @@ private:
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
 	int query_queue(int param);
-	Player *get_player_byid(int id);
+	Player *findActivePlayer (int id);
 
 	int get_volchan_entry(uint a);
 	int set_volchan_entry(uint a, uint b);
@@ -422,9 +436,7 @@ private:
 	static void midiTimerCallback (void *data);
 
 public:
-	IMuseInternal() {
-		memset(this,0,sizeof(IMuseInternal));
-	}
+	IMuseInternal();
 	~IMuseInternal();
 
 	int initialize(OSystem *syst, MidiDriver *midi);

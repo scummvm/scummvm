@@ -80,8 +80,8 @@ void MidiParser_SMF::property (int prop, int value) {
 }
 
 void MidiParser_SMF::parseNextEvent (EventInfo &info) {
-	info.start = _play_pos;
-	info.delta = readVLQ (_play_pos);
+	info.start = _position._play_pos;
+	info.delta = readVLQ (_position._play_pos);
 
 	// Process the next info. If mpMalformedPitchBends
 	// was set, we must skip over any pitch bend events
@@ -89,23 +89,24 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 	// real pitch bend events, they're just two-byte
 	// prefixes before the real info.
 	do {
-		if ((_play_pos[0] & 0xF0) >= 0x80)
-			info.event = *(_play_pos++);
+		if ((_position._play_pos[0] & 0xF0) >= 0x80)
+			info.event = *(_position._play_pos++);
 		else
-			info.event = _running_status;
-	} while (_malformedPitchBends && (info.event & 0xF0) == 0xE0 && _play_pos++);
+			info.event = _position._running_status;
+	} while (_malformedPitchBends && (info.event & 0xF0) == 0xE0 && _position._play_pos++);
 	if (info.event < 0x80)
 		return;
 
+	_position._running_status = info.event;
 	switch (info.command()) {
 	case 0xC: case 0xD:
-		info.basic.param1 = *(_play_pos++);
+		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
 		break;
 
 	case 0x8: case 0x9: case 0xA: case 0xB: case 0xE:
-		info.basic.param1 = *(_play_pos++);
-		info.basic.param2 = *(_play_pos++);
+		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param2 = *(_position._play_pos++);
 		if (info.command() == 0x9 && info.basic.param2 == 0)
 			info.event = info.channel() | 0x80;
 		info.length = 0;
@@ -114,12 +115,12 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 	case 0xF: // System Common, Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
-			info.basic.param1 = *(_play_pos++);
-			info.basic.param2 = *(_play_pos++);
+			info.basic.param1 = *(_position._play_pos++);
+			info.basic.param2 = *(_position._play_pos++);
 			break;
 
 		case 0x3: // Song Select
-			info.basic.param1 = *(_play_pos++);
+			info.basic.param1 = *(_position._play_pos++);
 			info.basic.param2 = 0;
 			break;
 
@@ -128,16 +129,16 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ (_play_pos);
-			info.ext.data = _play_pos;
-			_play_pos += info.length;
+			info.length = readVLQ (_position._play_pos);
+			info.ext.data = _position._play_pos;
+			_position._play_pos += info.length;
 			break;
 
 		case 0xF: // META event
-			info.ext.type = *(_play_pos++);
-			info.length = readVLQ (_play_pos);
-			info.ext.data = _play_pos;
-			_play_pos += info.length;
+			info.ext.type = *(_position._play_pos++);
+			info.length = readVLQ (_position._play_pos);
+			info.ext.data = _position._play_pos;
+			_position._play_pos += info.length;
 			break;
 		}
 	}
@@ -192,8 +193,8 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	}
 
 	// Now we identify and store the location for each track.
-	if (_num_tracks > 16) {
-		printf ("Can only handle 16 tracks but was handed %d\n", (int) _num_tracks);
+	if (_num_tracks > ARRAYSIZE(_tracks)) {
+		printf ("Can only handle %d tracks but was handed %d\n", (int) ARRAYSIZE(_tracks), (int) _num_tracks);
 		return false;
 	}
 

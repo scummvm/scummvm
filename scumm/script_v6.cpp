@@ -2647,7 +2647,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 
 		case 124:									/* samnmax */
-			warning("o6_kernelSetFunctions: _saveSound=%d", args[1]);
+//			warning("o6_kernelSetFunctions: _saveSound=%d", args[1]);
 			_saveSound = args[1];
 			break;
 
