@@ -409,7 +409,9 @@ MidiDriver *GameDetector::createMidi() {
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL:			return MidiDriver_NULL_create();
+#ifdef WIN32
 	case MD_WINDOWS:	return MidiDriver_WIN_create();
+#endif
 	}
 
 	error("Invalid midi driver selected");
