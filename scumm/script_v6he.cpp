@@ -40,8 +40,6 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#include "scumm/insane/insane.h"
-
 namespace Scumm {
 
 #define OPCODE(x)	{ &ScummEngine_v6he::x, #x }
