@@ -49,29 +49,12 @@ void Scumm_v2::readIndexFile() {
 	_fileHandle.clearIOFailed();
 	_fileHandle.seek(0, SEEK_SET);
 
-	// FIXME - I'm not sure for those values yet, they will have to be rechecked
-
-	_numVariables = 800;				/* 800 */
-	_numBitVariables = 4096;			/* 2048 */
-	_numLocalObjects = 200;				/* 200 */
-	_numArray = 50;
-	_numVerbs = 100;
-	_numNewNames = 0;
-	_objectRoomTable = NULL;
-	_numCharsets = 9;					/* 9 */
-	_numInventory = 80;					/* 80 */
-	_numGlobalScripts = 200;
-
-	_shadowPaletteSize = 256;
-	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
+	readMAXS();
 
 	// Jamieson630: palManipulate variable initialization
 	_palManipCounter = 0;
 	_palManipPalette = 0; // Will allocate when needed
 	_palManipIntermediatePal = 0; // Will allocate when needed
-
-	_numFlObject = 50;
-	allocateArrays();
 
 	_fileHandle.readUint16LE(); /* version magic number */
 	_fileHandle.readUint16LE(); /* nb global objects */
@@ -82,4 +65,25 @@ void Scumm_v2::readIndexFile() {
 	readResTypeList(rtSound, MKID('SOUN'), "sound");
 
 	closeRoom();
+}
+
+void Scumm_v2::readMAXS() {
+	// FIXME - I'm not sure for those values yet, they will have to be rechecked
+
+	_numVariables = 800;				// 800
+	_numBitVariables = 4096;			// 2048
+	_numLocalObjects = 200;				// 200
+	_numArray = 50;
+	_numVerbs = 100;
+	_numNewNames = 0;
+	_objectRoomTable = NULL;
+	_numCharsets = 9;					// 9
+	_numInventory = 80;					// 80
+	_numGlobalScripts = 200;
+	_numFlObject = 50;
+
+	_shadowPaletteSize = 256;
+
+	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
+	allocateArrays();
 }

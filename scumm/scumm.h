@@ -564,41 +564,48 @@ protected:
 	void askForDisk(const char *filename, int disknum);
 	bool openResourceFile(const char *filename);
 
-public:
+protected:
 	void loadPtrToResource(int type, int i, byte *ptr);
 	void readResTypeList(int id, uint32 tag, const char *name);
 	char *resTypeFromId(int id);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 	byte *createResource(int type, int index, uint32 size);
+	int loadResource(int type, int i);
 	void nukeResource(int type, int i);	
+
+public:
+	bool isGlobInMemory(int type, int index);
+	bool isResourceLoaded(int type, int index);
 	byte *getResourceAddress(int type, int i);
 	byte *getStringAddress(int i);
 	byte *getStringAddressVar(int i);
 	void ensureResourceLoaded(int type, int i);
-	int loadResource(int type, int i);
 	int getResourceRoomNr(int type, int index);
+
+protected:
 	int readSoundResource(int type, int index);
 	int readSoundResourceSmallHeader(int type, int index);
 	void setResourceCounter(int type, int index, byte flag);
 	bool validateResource(const char *str, int type, int index);
 	void increaseResourceCounter();
 	bool isResourceInUse(int type, int i);
-	bool isResourceLoaded(int type, int index);
 	void initRoomSubBlocks();
 	void clearRoomObjects();
 	void loadRoomObjects();
 	void loadRoomObjectsSmall();
 	void readArrayFromIndexFile();
-	void readMAXS();
-	bool isGlobInMemory(int type, int index);
+	virtual void readMAXS();
 	virtual void readIndexFile();
 	virtual void loadCharset(int i);
 	void nukeCharset(int i);
 
-	int _lastLoadedRoom, _roomResource;
+	int _lastLoadedRoom;
+public:
+	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds accesses it
 	byte *findResourceData(uint32 tag, byte *ptr);
 	int getResourceDataSize(byte *ptr);
 
+protected:
 	int getArrayId();
 	void nukeArray(int a);
 	int defineArray(int a, int b, int c, int d);
@@ -611,7 +618,7 @@ public:
 	void destroy();
 	void dumpResource(char *tag, int index, byte *ptr);
 
-
+public:
 	/* Should be in Object class */
 	byte OF_OWNER_ROOM;
 	int getInventorySlot();

@@ -759,6 +759,8 @@ void Sound::pauseSounds(bool pause) {
 		se->pause(pause);
 
 	// Don't pause sounds if the game isn't active
+	// FIXME - this is quite a nasty hack, replace with something cleaner, and w/o
+	// having to access member vars directly!
 	if (!_scumm->_roomResource)
 		return;
 

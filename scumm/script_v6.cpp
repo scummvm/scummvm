@@ -2808,36 +2808,25 @@ void Scumm_v6::o6_findAllObjects() {
 	push(readVar(0));
 }
 
-static void sub_FEE_78D2(int num, int &arg1, int &arg2) {
-	byte *ptr = g_scumm->getResourceAddress(rtString, num);
-	if (g_scumm->_features & GF_AFTER_V7) {
-		arg1 = READ_LE_UINT32(ptr + 8);
-		arg2 = READ_LE_UINT32(ptr + 4);
-	} else {
-		arg1 = READ_LE_UINT16(ptr + 4);
-		arg2 = READ_LE_UINT16(ptr + 2);
+void Scumm_v6::shuffleArray(int num, int minIdx, int maxIdx) {
+	int range = maxIdx - minIdx;
+	int count = range * 2;
+
+	while (count--) {
+		int rand1 = _rnd.getRandomNumber(range) + minIdx;
+		int rand2 = _rnd.getRandomNumber(range) + minIdx;
+		_vars[VAR_V6_RANDOM_NR] = rand2;
+		
+		// FIXME - uhm this seems wrong. It replaces item rand1 with itself
+		// It would seem more logical if we first read elements rand1 and rand2,
+		// then swapped them. Assembler analysis, anybody?
+		writeArray(num, 0, rand1, readArray(num, 0, rand1));
+		writeArray(num, 0, rand2, readArray(num, 0, rand2));
 	}
 }
 
-static void sub_FEE_7822(int num, int arg1, int arg2) {
-	int var_C = arg2 - arg1;
-	int count = var_C * 2;
-
-	if (count-- == 0)
-		return;
-	
-	do {
-		int cx = var_C + 1;
-		int rand1 = (rand() % cx) + arg1;
-		int rand2 = (rand() % cx) + arg1;
-		g_scumm->_vars[g_scumm->VAR_V6_RANDOM_NR] = rand2;
-		g_scumm->writeArray(num, 0, rand1, g_scumm->readArray(num, 0, rand1));
-		g_scumm->writeArray(num, 0, rand2, g_scumm->readArray(num, 0, rand2));
-	} while (--count);
-}
-
 void Scumm_v6::o6_shuffle() {
-	sub_FEE_7822(fetchScriptWord(), pop(), pop());
+	shuffleArray(fetchScriptWord(), pop(), pop());
 }
 
 void Scumm_v6::o6_pickVarRandom() {
@@ -2857,18 +2846,26 @@ void Scumm_v6::o6_pickVarRandom() {
 			} while (++counter < num);
 		}
 
-		sub_FEE_7822(value, 1, num);
+		shuffleArray(value, 1, num);
 		writeArray(value, 0, 0, 2);
 		push(readArray(value, 0, 1));
 		return;
 	}
 
 	num = readArray(value, 0, 0);
-	sub_FEE_78D2(readVar(value), var_C, var_A);
+
+	byte *ptr = getResourceAddress(rtString, num);
+	if (_features & GF_AFTER_V7) {
+		var_A = READ_LE_UINT32(ptr + 4);
+		var_C = READ_LE_UINT32(ptr + 8);
+	} else {
+		var_A = READ_LE_UINT16(ptr + 2);
+		var_C = READ_LE_UINT16(ptr + 4);
+	}
 
 	if ((var_A - 1) < num) {
 		int16 var_2 = readArray(value, 0, num - 1);
-		sub_FEE_7822(value, 1, var_A - 1);
+		shuffleArray(value, 1, var_A - 1);
 		if (readArray(value, 0, 1) == var_2) {
 			num = 2;
 		} else {

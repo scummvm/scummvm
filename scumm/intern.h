@@ -162,7 +162,9 @@ class Scumm_v2 : public Scumm_v5 {
 public:
 	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm_v5(detector, syst) {}
 
-	virtual void readIndexFile();
+protected:
+	void readIndexFile();
+	void readMAXS();
 };
 
 // FIXME - maybe we should move the opcodes from v5 to v3, and change the inheritance 
@@ -172,14 +174,17 @@ class Scumm_v3 : public Scumm_v5 {
 public:
 	Scumm_v3(GameDetector *detector, OSystem *syst) : Scumm_v5(detector, syst) {}
 
+protected:
 	void readIndexFile();
-	virtual void loadCharset(int no);
+	void loadCharset(int no);
+	void readMAXS();
 };
 
 class Scumm_v4 : public Scumm_v3 {
 public:
 	Scumm_v4(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
 
+protected:
 	void loadCharset(int no);
 };
 
@@ -205,6 +210,8 @@ protected:
 	virtual void setupScummVars();
 
 	int popRoomAndObj(int *room);
+	
+	void shuffleArray(int num, int minIdx, int maxIdx);
 
 	virtual void decodeParseString(int a, int b);
 	int getStackList(int *args, uint maxnum);
