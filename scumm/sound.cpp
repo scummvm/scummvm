@@ -476,7 +476,7 @@ void Sound::processSfxQueues() {
 			}
 		}
 
-		if (finished && _vm->_talkDelay == 0) {
+		if ((!ConfMan.getBool("subtitles") && finished) || (finished && _vm->_talkDelay == 0)) {
 			_vm->stopTalk();
 		}
 	}
