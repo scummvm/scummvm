@@ -558,7 +558,10 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 		i = _resourceMapper[i & 0x7F];
 	}
 
-	if (i == 0)
+	// FIXME - TODO: This check used to be "i==0". However, that causes
+	// problems when using this function to ensure charset 0 is loaded.
+	// Quesetion: Why was this check like that in the first place?
+	if (i < 0)
 		return;
 
 	if (i <= res.num[type])

@@ -29,7 +29,9 @@ void CharsetRendererCommon::setCurID(byte id) {
 	_curId = id;
 
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
-	assert(_fontPtr);
+	if (_fontPtr == 0)
+		error("CharsetRendererCommon::setCurID: charset %d not found!\n", id);
+
 	if (_vm->_features & GF_AFTER_V3) {
 		_nbChars = _fontPtr[4];
 		_fontPtr += 6 + _nbChars;
