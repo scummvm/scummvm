@@ -857,27 +857,20 @@ bool Command::executeIfCutaway(const char *description) {
 
 bool Command::executeIfDialog(const char *description) {
 
-  if (strlen(description) > 4 && 
-      scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
-    char cutaway[20];
+	if (strlen(description) > 4 && 
+			scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
+		char cutaway[20];
 
-    _logic->dialogue(description, _curCmd.noun, cutaway);
+		_logic->dialogue(description, _curCmd.noun, cutaway);
 
-    while (cutaway[0] != '\0') {
-      char currentCutaway[20];
-      strcpy(currentCutaway, cutaway);
-      _logic->playCutaway(currentCutaway, cutaway);
-    }
+		while (cutaway[0] != '\0') {
+			char currentCutaway[20];
+			strcpy(currentCutaway, cutaway);
+			_logic->playCutaway(currentCutaway, cutaway);
+		}
 
-    /* XXX
-       talk(Kstr);
-       strcpy(Kstr,Paramstr);
-       while(Kstr[0]) {
-       CUTAWAY(Kstr);
-       strcpy(Kstr,Paramstr);
-       }*/
-    return true;
-  }
+		return true;
+	}
 	return false;
 }
 

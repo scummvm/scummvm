@@ -111,9 +111,9 @@ public:
 			_verb <= VERB_DIGIT_LAST;
 	}
 
-  int digit() const {
-    return (int)_verb - VERB_DIGIT_1 + 1;
-  }
+	int digit() const {
+		return (int)_verb - VERB_DIGIT_1 + 1;
+	}
 
 	bool isSkipText() const {
 		return _verb == VERB_SKIP_TEXT;
