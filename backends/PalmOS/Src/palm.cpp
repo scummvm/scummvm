@@ -442,34 +442,34 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 	Boolean handled;
 	uint32 current_msecs;
 	UInt32 keyCurrentState = 0;
-	Boolean funcButton = false;
 
-	/* First, handle timers */
-	for(;;) {
-		EvtGetEvent(&ev, 0);
-		
-		keyCurrentState = KeyCurrentState();
-		current_msecs = get_msecs();
+	current_msecs = get_msecs();
+	//thread handler
+	if (_thread.active)
+		_thread.proc(_thread.param);
+
+	// sound handler
+	if(_sound.active)
+		check_sound();
 	
-		//thread handler
-		if (_thread.active)
-			_thread.proc(_thread.param);
+	// timer handler
+	if (_timer.active && (current_msecs >= _timer.next_expiry)) {
+		_timer.duration = _timer.callback(_timer.duration);
+		_timer.next_expiry = current_msecs + _timer.duration;
+	}
 
-		// sound handler
-		if(_sound.active)
-			check_sound();
-		
-		// timer handler
-		if (_timer.active && (current_msecs >= _timer.next_expiry)) {
-			_timer.duration = _timer.callback(_timer.duration);
-			_timer.next_expiry = current_msecs + _timer.duration;
-		}
+	for(;;) {
+		EvtGetEvent(&ev, evtNoWait);
+
+		if (ev.eType == nilEvent)
+			return false;
+
+		keyCurrentState = KeyCurrentState();
 
 		if (ev.eType == keyDownEvent) {
 			switch (ev.data.keyDown.chr) {
 				case vchrLaunch:
 					lastKeyPressed = -1;
-					funcButton = true;
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = 27;
 					event->kbd.ascii = 27;
@@ -478,7 +478,6 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				
 				case vchrMenu:
 					lastKeyPressed = -1;
-					funcButton = true;
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = 319;
 					event->kbd.ascii = 319;
@@ -497,7 +496,6 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 							quit();
 
 					_exit_delay = get_msecs();
-					funcButton = true;
 					lastKeyPressed = vchrCalc;
 					return true;
 
@@ -566,7 +564,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 						(ev.data.keyDown.chr == vchrAttnUnsnooze))); 
 
 		// graffiti strokes, autooff, etc...
-		if (!funcButton && !handled)
+		if (!handled)
 			if (SysHandleEvent(&ev))
 				continue;
 
@@ -578,18 +576,22 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				lastKeyPressed = -1;
 				//if (ev.data.keyDown.modifiers & shiftKeyMask) b |= KBD_SHIFT;
 
-				if (ev.data.keyDown.chr == 262 && (ev.data.keyDown.modifiers & commandKeyMask)) {
+				if (ev.data.keyDown.chr == vchrCommand && (ev.data.keyDown.modifiers & commandKeyMask)) {
 					lastKeyModifier++;
 					lastKeyModifier %= 3;
 					drawKeyState();				
+
 				} else {
 					byte b = 0;
 					if (lastKeyModifier == MD_CTRL)	b = KBD_CTRL;
 					if (lastKeyModifier == MD_ALT)	b = KBD_ALT;
+					
+					if  (ev.data.keyDown.chr == 'q' && b == KBD_CTRL)
+						quit();
 
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = ev.data.keyDown.chr;
-					event->kbd.ascii = (ev.data.keyDown.chr>='a' && ev.data.keyDown.chr<='z' && (event->kbd.flags & KBD_SHIFT)?ev.data.keyDown.chr &~ 0x20 : ev.data.keyDown.chr);
+					event->kbd.ascii = (ev.data.keyDown.chr>='a' && ev.data.keyDown.chr<='z' && (event->kbd.flags & KBD_SHIFT) ? ev.data.keyDown.chr &~ 0x20 : ev.data.keyDown.chr);
 					event->kbd.flags = b;
 					lastKeyModifier = MD_NONE;
 					drawKeyState();				
@@ -889,6 +891,9 @@ bool OSystem_PALMOS::set_sound_proc(void *param, SoundProc *proc, byte format) {
 
 void OSystem_PALMOS::check_sound() {
 	// currently not supported
+	// but i need to use this function to prevent out of memory
+	// on zak256 because the sound buffer growns and it's never
+	// freed.
 	_sound.proc(_sound.param, _sndTempP, 256);
 }
 
