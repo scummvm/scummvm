@@ -1109,6 +1109,28 @@ void Scumm::setActorRedrawFlags() {
 	}
 }
 
+void Scumm::resetActorBgs() {
+	int i, j;
+
+	for (i = 0; i < gdi._numStrips; i++) {
+		int strip = _screenStartStrip + i;
+		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
+		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
+		for (j = 1; j < _numActors; j++) {
+			if (testGfxUsageBit(strip, j) &&
+				((_actors[j].top != 0xFF || _actors[j].needRedraw) || _actors[j].needBgReset)) {
+				clearGfxUsageBit(strip, j);
+				if ((_actors[j].bottom - _actors[j].top) >= 0)
+					gdi.resetBackground(_actors[j].top, _actors[j].bottom, i);
+			}
+		}
+	}
+
+	for (i = 1; i < _numActors; i++) {
+		_actors[i].needBgReset = false;
+	}
+}
+
 int Scumm::getActorFromPos(int x, int y) {
 	int i;
 
@@ -1566,28 +1588,6 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 				b = (b * b_fact) >> 8;
 			palette[i] = _vm->remapPaletteColor(r, g, b, threshold);
 		}
-	}
-}
-
-void Scumm::resetActorBgs() {
-	int i, j;
-
-	for (i = 0; i < gdi._numStrips; i++) {
-		int strip = _screenStartStrip + i;
-		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
-		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
-		for (j = 1; j < _numActors; j++) {
-			if (testGfxUsageBit(strip, j) &&
-				((_actors[j].top != 0xFF || _actors[j].needRedraw) || _actors[j].needBgReset)) {
-				clearGfxUsageBit(strip, j);
-				if ((_actors[j].bottom - _actors[j].top) >= 0)
-					gdi.resetBackground(_actors[j].top, _actors[j].bottom, i);
-			}
-		}
-	}
-
-	for (i = 1; i < _numActors; i++) {
-		_actors[i].needBgReset = false;
 	}
 }
 
