@@ -233,12 +233,14 @@ int Script::SF_actorWalkTo(SCRIPTFUNC_PARAMS) {
 
 // Script function #7 (0x07)
 int Script::SF_doAction(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
-	SDataWord_T param3 = thread->pop();
-	SDataWord_T param4 = thread->pop();
+	SDataWord_T actor_parm = thread->pop();
+	SDataWord_T action_parm = thread->pop();
+	SDataWord_T obj_parm = thread->pop();
+	SDataWord_T withobj_parm = thread->pop();
 
-	debug(1, "stub: SF_doAction(%d, %d, %d, %d)", param1, param2, param3, param4);
+	// The parameters correspond with the thread variables.
+
+	debug(1, "stub: SF_doAction(%d, %d, %d, %d)", actor_parm, action_parm, obj_parm, withobj_parm);
 	return SUCCESS;
 }
 
