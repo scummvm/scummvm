@@ -57,7 +57,8 @@ typedef signed long int32;
 #define SCUMM_LITTLE_ENDIAN
 
 #define FORCEINLINE inline
-#define NORETURN _declspec(noreturn)
+#define NORETURN __attribute__((__noreturn__))
+#define CDECL
 
 typedef unsigned char byte;
 typedef unsigned char uint8;
