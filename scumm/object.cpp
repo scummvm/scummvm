@@ -763,13 +763,22 @@ void Scumm::clearOwnerOf(int obj)
 
 void Scumm::removeObjectFromRoom(int obj)
 {
-	int i, j;
+	int i, j, strip;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == (uint16)obj) {
 			if (_objs[i].width != 0) {
-				for (j = 0; j < _objs[i].width; j++)
-					setGfxUsageBit((_objs[i].x_pos >> 3) + j, USAGE_BIT_DIRTY);
+				for (j = 0; j < _objs[i].width; j++) {
+					strip = (_objs[i].x_pos >> 3) + j;
+
+					// Clip value
+					if (strip < _screenStartStrip)
+						continue;
+					if (strip > _screenEndStrip)
+						break;
+
+					setGfxUsageBit(strip, USAGE_BIT_DIRTY);
+				}
 			}
 			_BgNeedsRedraw = true;
 			return;
