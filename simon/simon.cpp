@@ -153,30 +153,6 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 }
 
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
-	const SimonGameSettings *g = simon_settings;
-	while (g->name) {
-		if (!scumm_stricmp(detector->_game.name, g->name))
-			break;
-		g++;
-	}
-	if (!g->name)
-		error("Invalid game '%s'\n", detector->_game.name);
-
-	SimonGameSettings game = *g;
-
-	switch (Common::parsePlatform(ConfMan.get("platform"))) {
-	case Common::kPlatformAmiga:
-	case Common::kPlatformMacintosh:
-		if (game.features & GF_SIMON2)
-			game.features |= GF_WIN;
-		break;
-	case Common::kPlatformWindows:
-		game.features |= GF_WIN;
-		break;
-	default:
-		break;
-	}
-
 	return new Simon::SimonEngine(detector, syst);
 }
 
@@ -285,7 +261,31 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vc_ptr = 0;
 	_game_offsets_ptr = 0;
 	
-	_game = (byte)detector->_game.features;
+	const SimonGameSettings *g = simon_settings;
+	while (g->name) {
+		if (!scumm_stricmp(detector->_game.name, g->name))
+			break;
+		g++;
+	}
+	if (!g->name)
+		error("Invalid game '%s'\n", detector->_game.name);
+
+	SimonGameSettings game = *g;
+
+	switch (Common::parsePlatform(ConfMan.get("platform"))) {
+	case Common::kPlatformAmiga:
+	case Common::kPlatformMacintosh:
+		if (game.features & GF_SIMON2)
+			game.features |= GF_WIN;
+		break;
+	case Common::kPlatformWindows:
+		game.features |= GF_WIN;
+		break;
+	default:
+		break;
+	}
+
+	_game = game.features;
 
 	if (_game & GF_SIMON2) {
 		VGA_DELAY_BASE = 1;
