@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib simon___Debug\simon.lib scumm___Debug\scumm.lib sky___Debug\sky.lib bs2___Debug\bs2.lib queen___Debug\queen.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /pdbtype:sept /fixed:no
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib simon___Debug\simon.lib scumm___Debug\scumm.lib sky___Debug\sky.lib bs2___Debug\bs2.lib queen___Debug\queen.lib saga___Debug\saga.lib kyra___Debug\kyra.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /pdbtype:sept /fixed:no
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Debug"
@@ -107,7 +107,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib wsock32.lib scumm___mad_mp3_Debug\scumm.lib simon___mad_mp3_Debug\simon.lib sky___mad_mp3_Debug\sky.lib bs2___mad_mp3_Debug\bs2.lib queen___mad_mp3_Debug\queen.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd" /pdbtype:sept /fixed:no
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib wsock32.lib scumm___mad_mp3_Debug\scumm.lib simon___mad_mp3_Debug\simon.lib sky___mad_mp3_Debug\sky.lib bs2___mad_mp3_Debug\bs2.lib queen___mad_mp3_Debug\queen.lib saga___mad_mp3_Debug\saga.lib kyra___mad_mp3_Debug\kyra.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd" /pdbtype:sept /fixed:no
 # SUBTRACT LINK32 /pdb:none /map
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Release"
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Release\simon.lib scumm___Release\scumm.lib sdl.lib /nologo /subsystem:console /machine:I386 /nodefaultlib
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib sky___mad_mp3_Release\sky.lib bs2___mad_mp3_Release\bs2.lib queen___mad_mp3_Release\queen.lib /nologo /subsystem:console /pdb:none /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib sky___mad_mp3_Release\sky.lib bs2___mad_mp3_Release\bs2.lib queen___mad_mp3_Release\queen.lib saga___mad_mp3_Release\saga.lib kyra___mad_mp3_Release\kyra.lib bs1___mad_mp3_Release\bs1.lib /nologo /subsystem:console /pdb:none /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd"
 # SUBTRACT LINK32 /debug
 
 !ENDIF 
@@ -279,6 +279,14 @@ SOURCE=..\..\common\str.cpp
 # Begin Source File
 
 SOURCE=..\..\common\str.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\common\stream.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\common\stream.h
 # End Source File
 # Begin Source File
 
@@ -542,7 +550,11 @@ SOURCE=..\..\gui\widget.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE="..\..\backends\sdl\sdl-common.cpp"
+SOURCE=..\..\backends\sdl\events.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\backends\sdl\graphics.cpp
 # End Source File
 # Begin Source File
 
@@ -585,6 +597,38 @@ SOURCE=..\..\backends\midi\windows.cpp
 SOURCE=..\..\backends\midi\ym2612.cpp
 # End Source File
 # End Group
+# End Group
+# Begin Group "graphics"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\graphics\animation.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\graphics\animation.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\graphics\font.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\graphics\font.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\graphics\newfont.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\graphics\scummfont.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\graphics\surface.h
+# End Source File
 # End Group
 # End Group
 # Begin Source File

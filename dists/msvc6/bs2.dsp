@@ -339,14 +339,6 @@ SOURCE=..\..\sword2\maketext.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\sword2\mem_view.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\sword2\mem_view.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\sword2\memory.cpp
 # End Source File
 # Begin Source File

@@ -238,6 +238,10 @@ SOURCE=..\..\scumm\imuse_digi\dimuse_music.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scumm\imuse_digi\dimuse_script.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scumm\imuse_digi\dimuse_sndmgr.cpp
 # End Source File
 # Begin Source File
@@ -247,6 +251,10 @@ SOURCE=..\..\scumm\imuse_digi\dimuse_sndmgr.h
 # Begin Source File
 
 SOURCE=..\..\scumm\imuse_digi\dimuse_tables.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse_track.cpp
 # End Source File
 # End Group
 # Begin Group "insane"
@@ -523,15 +531,19 @@ SOURCE=..\..\scumm\script_v6he.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scumm\script_v7he.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scumm\script_v8.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\scumm\scumm.h
+SOURCE=..\..\scumm\scumm.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\scumm\scumm.cpp
+SOURCE=..\..\scumm\scumm.h
 # End Source File
 # Begin Source File
 
