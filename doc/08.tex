@@ -1,0 +1,143 @@
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "readme"
+%%% End: 
+
+\section{Configurations Files}
+
+
+By default, the configuration file is saved in, and loaded from:
+
+\begin{itemize}
+\item Windows: <windir>$\backslash$ scummvm.ini
+\item  Unix: ~/.scummvmrc 
+\item Mac OS X: ~/Library/Preferences/ScummVM Preferences 
+\item Others: scummvm.ini in the current directory
+\end{itemize}
+%
+An example config file looks as follows:
+%
+\begin{verbatim}
+        [scummvm]
+        gfx_mode=supereagle
+        fullscreen=true
+        savepath=C:\saves\
+
+        [sky]
+        path=C:\games\SteelSky\
+
+        [germansky]
+        gameid=sky
+        language=de
+        path=C:\games\SteelSky\
+        description=Beneath a Steel Sky w/ German subtitles
+        
+        [germandott]
+        gameid=tentacle
+        path=C:\german\tentacle\
+        description=German version of DOTT
+
+        [tentacle]
+        path=C:\tentacle\
+        subtitles=true
+        master_volume=98
+        music_volume=40
+        sfx_volume=255
+
+        [loomcd]
+        cdrom=1
+        path=C:\loom\
+        talkspeed=55
+        savepath=C:\loom\saves\
+        
+        [monkey2]
+        path=C:\amiga_mi2\
+        music_driver=windows
+        amiga=true
+\end{verbatim}
+%
+The following keywords are recognized:
+
+\begin{tabular}[hf]{lll}
+        basename       &string\\
+        path           &string   The path to where a game's data files are\\
+        read\_only     &bool     If true, ScummVM will never try to overwrite\\
+                       &         the configuration file.\\
+        save\_slot     &number   The save game number to load on startup.\\
+        savepath       &string   The path to where a game will store its\\
+                       &         savegames.\\
+        versioninfo    &string   The version of the ScummVM that created the\\
+                       &         configuration file.\\
+\\
+        gameid         &string   The real id of a game. Useful if you have\\
+                       &         several versions of the same game, and want\\
+                       &         different aliases for them. See the example.\\
+        description    &string   The description of the game as it will appear\\
+                       &         in the launcher.\\
+\\
+        language       &string   Specify language (en, de, fr, it, pt, es, jp,\\
+                       &         zh, kr,se, gb, hb, cz)\\
+        subtitles      &bool     Set to true to enable subtitles.\\
+        talkspeed      &number   Text speed (default: 60)\\
+\\
+        fullscreen     &bool     Fullscreen mode\\
+        aspect\_ratio  &bool     Enable aspect ratio correction\\
+        gfx\_mode      &string   Graphics mode (normal, 2x, 3x, 2xsai,\\
+                       &         super2xsai, supereagle, advmame2x, advmame3x,\\
+                       &         hq2x, hq3x, tv2x, dotmatrix)\\
+\\
+        cdrom           &number   Number of CD-ROM unit to use for audio. If\\
+                        &         negative, don't even try to access the CD-ROM.\\
+        joystick\_num   &number   Number of joystick device to use for input\\
+        master\_volume  &number   The master volume setting (0-255)\\
+        music\_driver   &string   The music engine to use.\\
+        alsa\_port      &string   Port to use for output when using the\\
+                        &         ALSA music driver.\\
+        music\_volume   &number   The music volume setting (0-255)\\
+        multi\_midi     &bool     If true, enable combination Adlib and native\\
+                        &         MIDI.\\
+        native\_mt32    &bool     If true, disable GM emulation and assume that\\
+                        &         there is a true Roland MT-32 available.\\
+        sfx\_volume     &number   The sfx volume setting (0-255)\\
+        tempo           &number   The music tempo (50-200) (default: 100)\\
+\\
+        copy\_protection&bool     Enable copy protection in SCUMM games ,when\\
+                        &         ScummVM disables it by default.\\
+        demo\_mode      &bool     Start demo in Maniac Mansion (Classic version)\\
+        floppy\_intro   &bool     Use floppy version of introduction in Beneath\\
+                        &         a Steel Sky (CD version)\\
+\\
+        boot\_param     &number   Pass this number to the boot script\\
+        debuglevel      &number   Enable debug output. The higher number, the\\
+                        &         more verbose output.\\
+\end{tabular}\\
+~\\
+Broken Sword II adds the following non-standard keywords:\\
+\begin{tabular}[h]{lll}
+        gfx\_details    &number  &Graphics details setting (0-3)\\
+        music\_mute     &bool    &If true, music is muted\\
+        object\_labels  &bool    &If true, object labels are enabled\\
+        reverse\_stereo &bool    &If true, stereo channels are reversed\\
+        sfx\_mute       &bool    &If true, sound effects are muted\\
+        speech\_mute    &bool    &If true, speech is muted\\
+        speech\_volume  &number  &The speech volume setting (0-255)\\
+\end{tabular}\\
+~\\
+Flight of the Amazon Queen adds the following non-standard keywords:\\
+\begin{tabular}[h]{lll}
+        alt\_intro      &bool    &Use alternative version of introduction\\
+        music\_mute     &bool    &If true, music is muted\\
+        sfx\_mute       &bool    &If true, sound effects are muted\\
+        speech\_mute    &bool    &If true, speech is muted\\
+\end{tabular}\\
+Simon the Sorcerer 1 \& 2 add the following non-standard keywords:\\
+~\\
+\begin{tabular}[h]{lll}
+        fade            &bool    &If true, fade effect is enabled\\
+        music\_mute     &bool    &If true, music is muted\\
+        slow\_down      &number  &Makes games slower (1- 10)\\
+        sfx\_mute       &bool    &If true, sound effects are muted\\
+        speech\_mute    &bool    &If true, speech is muted\\
+                        &        &[Simon the Sorcerer 2 only]\\
+\end{tabular}

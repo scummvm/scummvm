@@ -1,0 +1,20 @@
+\subsection {Using data files from Macintosh game versions}
+All LucasArts SCUMM based adventures except CMI also exist in versions for the
+Macintosh. ScummVM can use most (all?) of them, however, in some case some
+additional work is required. First off, if you are not using a Macintosh for
+this, accessing the CD/floppy data might be tricky. There are various tools on
+the net for this, though.\\
+\quad\\
+Secondly, most of the newer games shipped only with a  single data file on the
+Macintosh. You first have to run the 'rescumm' tool from the scummvm-tools
+package to extract the data files ScummVM expects. You invoke rescumm like
+this (where DATAFILE is the path to the single big data file):\\
+\begin{verbatim}
+   rescumm DATAFILE
+\end{verbatim}
+It will extract the data into the current directory, so make sure to
+run it from a writable directory.
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "readme"
+%%% End: 

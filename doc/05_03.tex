@@ -1,0 +1,47 @@
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "readme"
+%%% End: 
+
+
+\subsection {Graphics filters}
+ScummVM offers several anti-aliasing filters to attempt to improve visual
+quality. These are the same filters used in many other emulators, such as
+MAME. These filters take the original game graphics, and scale it by a 
+certain fixed factor (usually 2x or 3x) before displaying them to you.
+So for example, if the game originally run at a resolution of 320x200
+(typical for most of the SCUMM games), then using a filter with scale
+factor 2x will effectively yield 640x400 graphics. Likewise with a 
+3x filter you'll get 960x600.\\
+They are:\\
+\begin{tabular}[h]{ll}
+  normal     & No filtering, no scaling. Fastest.\\
+  2x         & No filtering, factor 2x (default for non 640x480 games).\\
+  3x         & No filtering, factor 3x.\\
+  2xsai      & 2xsai filter, factor 2x.\\
+  super2xsai & Enhanced 2xsai filtering, factor 2x.\\
+  supereagle & Less blurry than 2xsai, but slower. Factor 2x.\\
+  advmame2x  & Doesn't rely on blurring like 2xSAI, fast. Factor 2x.\\
+  advmame3x  & Doesn't rely on blurring like 2xSAI, fast. Factor 3x.\\
+  hq2x       & Very nice high quality filter but slow. Factor 2x.\\
+  hq3x       & Very nice high quality filter but slow. Factor 3x.\\
+  tv2x       & Interlace filter, tries to emulate a TV. Factor 2x.\\
+  dotmatrix  & Dot matrix effect. Factor 2x.\\
+\end{tabular}\\
+
+To select a graphics filter, pass its name via the '-g' option to scummvm,
+for example:
+
+\begin{verbatim}
+    scummvm -g advmame2x monkey2
+\end{verbatim}
+\begin{enumerate}
+\item [Note \#1] Not all backends support all or any filters. The ones
+  listed above are for the default SDL backend.
+\item [Note \#2] Filters can be very slow when ScummVM is compiled in a
+  debug configuration without optimizations. And there is always a
+  speed impact when using any form of anti-aliasing/linear filtering.
+\item [Note \#3] The Fm Towns version of Zak (zaktowns target) uses an
+  original resolution of 320x240 - hence for this game scalers will
+  scale to 640x480 or 960x720.
+\end{enumerate}

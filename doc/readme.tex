@@ -1,0 +1,42 @@
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+\documentclass [a4paper,12pt]{article}
+%\author {Hannes Niederhausen}
+\title {ScummVM ReadMe}
+
+\usepackage {times}
+\usepackage {fancyhdr}
+\usepackage [latin1] {inputenc}
+
+\date {2004/01/18}
+
+\begin{document}
+%
+\pagestyle {empty}
+\fancyhf {}
+\fancyhead [LE, RO] {\thepage}
+\fancyhead [RE, LO] {ScummVM ReadMe}
+\renewcommand {\headrulewidth} {1pt}
+%
+\maketitle
+\newpage
+\thispagestyle {empty}
+\tableofcontents
+%
+\newpage
+\pagestyle {fancy}
+\input {01.tex}
+\input {02.tex}
+\input {03.tex}
+\input {04.tex}
+\input {05.tex}
+\input {06.tex}
+\input {07.tex}
+\input {08.tex}
+\input {09.tex}
+\input {10.tex}
+
+\end {document}

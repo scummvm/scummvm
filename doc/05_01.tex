@@ -1,0 +1,84 @@
+\subsection{Command Line Options}
+
+Usage: scummvm [OPTIONS]... [GAME]\\
+\begin{tabular}{ll}
+  [GAME]                  &Short name of game to load. For example, 'monkey'\\
+                          &for Monkey Island. This can be either a built-in\\
+                          &gameid, or a user configured target.\\
+\\
+  -v, --version           &Display ScummVM version information and exit\\
+  -h, --help              &Display a brief help text and exit\\
+  -z, --list-games        &Display list of supported games and exit\\
+  -t, --list-targets      &Display list of configured targets and exit\\
+\\
+  -p, --path=PATH         &Path to where the game is installed\\
+  -x, --save-slot[=NUM]   &Save game slot to load (default: autosave)\\
+  -f, --fullscreen        &Force full-screen mode\\
+  -F, --no-fullscreen     &Force windowed mode\\
+  -g, --gfx-mode=MODE     &Select graphics scaler (see also section 5.3)\\
+  -e, --music-driver=MODE &Select music driver (see also section 7.0)\\
+  -q, --language=LANG     &Select language (see also section 5.2)\\
+  -m, --music-volume=NUM  &Set the music volume, 0-255 (default: 192)\\
+  -o, --master-volume=NUM &Set the master volume, 0-255 (default: 192)\\
+  -s, --sfx-volume=NUM    &Set the sfx volume, 0-255 (default: 192)\\
+  -n, --subtitles         &Enable subtitles (use with games that have voice)\\
+  -b, --boot-param=NUM    &Pass number to the boot script (boot param)\\
+  -d, --debuglevel=NUM    &Set debug verbosity level\\
+  -u, --dump-scripts      &Enable script dumping if a directory called 'dumps'\\
+                          &exists in the current directory\\
+\\
+  --cdrom=NUM             &CD drive to play CD audio from (default: 0 = first drive)\\
+  --joytick[=NUM]         &Enable input with joystick (default: 0 = first\\
+                          &joystick)\\
+  --platform=WORD         &Specify version of game (allowed values: amiga,\\
+                          &atari, mac, pc)\\
+  --multi-midi            &Enable combination of Adlib and native MIDI\\
+  --native-mt32           &True Roland MT-32 (disable GM emulation)\\
+  --aspect-ratio          &Enable aspect ratio correction\\
+\\
+  --floppy-intro          &Use floppy version intro for Beneath a Steel Sky CD\\
+  --copy-protection       &Enable copy protection in SCUMM games ,when\\
+                          &ScummVM disables it by default.\\
+  --demo-mode             &Start demo mode of Maniac Mansion (Classic version)\\
+  --tempo=NUM             &Set music tempo (in percent, 50-200) for SCUMM games\\
+                          &(default: 100)\\
+  --talkspeed=NUM         &Set talk speed for SCUMM games (default: 60)\\
+\end{tabular}\\
+The meaning of most long options can be inverted by prefixing them with "no-",
+e.g. --no-aspect-ratio. This is useful if you want to override a setting in the
+configuration file.\\
+\quad \\
+The short game name ('game target') you see at the end of the command
+line is very important. A short list is contained at the top of this
+file. You can also get the current list of games and game names at:
+
+\begin{center}
+  http://www.scummvm.org/compatibility.php
+\end{center}
+
+Examples:
+\begin{itemize}
+\item Win32:\\
+Running Monkey Island, fullscreen, from a hard disk:
+\begin{verbatim}
+C:\Games\LucasArts\scummvm.exe -f 
+                   -pC:\Games\LucasArts\monkey\ monkey
+\end{verbatim}
+  Running Full Throttle from CD, fullscreen and with subtitles enabled:
+\begin{verbatim}
+C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
+\end{verbatim}
+ \item Unix:\\
+  Running Monkey Island, fullscreen, from a hard disk:
+\begin{verbatim}
+/path/to/scummvm -f -p/games/LucasArts/monkey/ monkey
+\end{verbatim}
+  Running Full Throttle from CD, fullscreen and with subtitles enabled:
+\begin{verbatim}
+/path/to/scummvm -f -n -p/cdrom/resource/ ft
+\end{verbatim}
+\end{itemize}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "readme"
+%%% End: 
