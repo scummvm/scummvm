@@ -1624,7 +1624,14 @@ void ScummEngine_v6::o6_roomOps() {
 		else
 			setPalette(a);
 		break;
-
+	case 221:
+		int len;
+		len = resStrLen(_scriptPointer);
+		_scriptPointer += len + 1;
+		_saveLoadFlag = pop();
+		_saveLoadSlot = 99;
+		_saveLoadCompatible = true;
+		break;
 	default:
 		error("o6_roomOps: default case %d", op);
 	}
