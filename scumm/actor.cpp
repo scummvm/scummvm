@@ -1555,7 +1555,7 @@ void Actor::walkActorOld() {
 
 		// FIXME: Fingolfin changed the destbox to curbox, matching walkActor.
 		// Motivation for this was comparision with some MI EGA disasm...
-		// However, that caused a regression in Indy3 (bug #813136).
+		// However, that caused a regression in Indy3 (bug #809547).
 		setBox(walkdata.destbox);
 //		setBox(walkdata.curbox);
 	} while (1);
