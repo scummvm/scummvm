@@ -511,7 +511,7 @@ void ScummEngine_v7he::o7_startSound() {
 		break;
 
 	default:
-		break;
+		error("o7_startSound invalid case %d", op);
 	}
 }
 

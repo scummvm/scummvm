@@ -665,6 +665,7 @@ protected:
 	void o72_dimArray();
 	void o72_dim2dimArray();
 	void o72_jumpToScript();
+	void o72_drawObject();
 	void o72_stringLen();
 	void o72_readINI();
 	void o72_unknownF4();

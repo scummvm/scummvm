@@ -559,6 +559,45 @@ void ScummEngine_v72he::o72_jumpToScript() {
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
+void ScummEngine_v72he::o72_drawObject() {
+	int subOp = fetchScriptByte();
+	int state = 0, y = -1, x = -1;
+
+	switch (subOp) {
+	case 62:
+		state = pop();
+		y = pop();
+		x = pop();
+		break;
+	case 63:
+		state = pop();
+		if (state == 0)
+			state = 1;
+		break;
+	case 65:
+		state = 1;
+		y = pop();
+		x = pop();
+	default:
+		warning("o72_drawObject: default case %d", subOp);
+	}
+
+	int object = pop();
+	int objnum = getObjectIndex(object);
+	if (objnum == -1)
+		return;
+
+	if (y != -1 && x != -1) {
+		_objs[objnum].x_pos = x * 8;
+		_objs[objnum].y_pos = y * 8;
+	}
+
+	if (state != -1) {
+		addObjectToDrawQue(objnum);
+		putState(object, state);
+	}
+}
+
 void ScummEngine_v72he::o72_stringLen() {
 	int a, len;
 	byte *addr;
