@@ -129,10 +129,11 @@ void MidiPlayer::send (uint32 b) {
 
 void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
 	// Only thing we care about is End of Track.
-	if (!_current || type != 0x2F || _current == &_sfx)
+	if (!_current || type != 0x2F) {
 		return;
-
-	if (_loopTrack) {
+	} else if (_current == &_sfx) {
+		clearConstructs (_sfx);
+	} else if (_loopTrack) {
 		_current->parser->jumpToTick (0);
 	} else if (_queuedTrack != 255) {
 		_currentTrack = 255;
@@ -299,11 +300,19 @@ void MidiPlayer::clearConstructs (MusicInfo &info) {
 	if (info.num_songs > 0) {
 		for (i = 0; i < info.num_songs; ++i)
 			free (info.songs [i]);
+		info.num_songs = 0;
 	}
-	if (info.data)
+
+	if (info.data) {
 		free (info.data);
-	if (info.parser)
+		info.data = 0;
+	} // end if
+
+	if (info.parser) {
 		delete info.parser;
+		info.parser = 0;
+	}
+
 	if (_driver) {
 		for (i = 0; i < 16; ++i) {
 			if (info.channel[i]) {
@@ -327,9 +336,34 @@ void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs (*p);
 
+	uint32 startpos = in->pos();
+	byte header[4];
+	in->read (header, 4);
+	bool isGMF = !memcmp (header, "GMF\x1", 4);
+	in->seek (startpos, SEEK_SET);
+
 	uint32 size = in->size() - in->pos();
-	if (size > 64000)
-		size = 64000;
+	if (isGMF) {
+		if (sfx) {
+			// Multiple GMF resources are stored in the SFX files,
+			// but each one is referenced by a pointer at the
+			// beginning of the file. Those pointers can be used
+			// to determine file size.
+			in->seek (0, SEEK_SET);
+			uint16 value = in->readUint16LE() >> 2; // Number of resources
+			if (song != value - 1) {
+				in->seek (song * 2 + 2, SEEK_SET);
+				value = in->readUint16LE();
+				size = value - startpos;
+			}
+			in->seek (startpos, SEEK_SET);
+		} else if (size >= 64000) {
+			// For GMF resources not in separate
+			// files, we're going to have to use
+			// hardcoded size tables.
+			size = simon1_gmf_size [song];
+		}
+	}
 
 	// When allocating space, add 4 bytes in case
 	// this is a GMF and we have to tack on our own
@@ -348,10 +382,6 @@ void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
 		if (!sfx)
 			setLoop (p->data[6] != 0);
 
-		// For GMF files, we're going to have to use
-		// hardcoded size tables.
-		if (size == 64000)
-			size = simon1_gmf_size [song];
 	}
 
 	MidiParser *parser = MidiParser::createParser_SMF();
