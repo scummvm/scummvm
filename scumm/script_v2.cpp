@@ -996,15 +996,11 @@ void Scumm_v2::o2_putActor() {
 	Actor *a;
 
 	a = derefActorSafe(act, "o2_putActor");
+	assert(a);
+
 	x = getVarOrDirectByte(0x40) * 8;
 	y = getVarOrDirectByte(0x20) * 2;
 
-	if (!a) {
-		// FIXME - this shouldn't be necessary but for now works around problems
-		// in the Zak intro.
-		warning("o2_putActor: actor %d not found", act);
-		return;
-	}
 	a->putActor(x, y, a->room);
 }
 
@@ -1036,6 +1032,8 @@ void Scumm_v2::o2_putActorAtObject() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_putActorAtObject");
+	assert(a);
+
 	obj = getVarOrDirectByte(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
 		getObjectXYPos(obj, x, y);
@@ -1043,6 +1041,7 @@ void Scumm_v2::o2_putActorAtObject() {
 		x = 240;
 		y = 120;
 	}
+
 	a->putActor(x, y, a->room);
 }
 
