@@ -233,7 +233,8 @@ void ScummEngine::CHARSET_1() {
 			case 9:
 				frme = *buffer++;
 				frme |= *buffer++ << 8;
-				a->startAnimActor(frme);
+				if (a) 
+					a->startAnimActor(frme);
 				break;
 			case 10:
 				talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
