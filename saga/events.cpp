@@ -305,7 +305,7 @@ int Events::handleOneShot(EVENT *event) {
 		 BUFFER_INFO rbuf_info;
 			Point bg_pt;
 
-			if (_vm->_scene->getMode() == SCENE_MODE_NORMAL) {
+			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
 
 				back_buf = _vm->_gfx->getBackBuffer();
 

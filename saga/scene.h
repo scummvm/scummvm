@@ -36,13 +36,6 @@ namespace Saga {
 class ActionMap;
 class ObjectMap;
 
-enum SCENE_MODES {
-	SCENE_MODE_INVALID,
-	SCENE_MODE_NORMAL,
-	SCENE_MODE_ISO
-};
-
-
 struct SCENE_BGINFO {
 	int bg_x;
 	int bg_y;
@@ -232,7 +225,6 @@ class Scene {
 	int endScene();
 	int queueScene(SCENE_QUEUE *scene_queue);
 	int draw(SURFACE *);
-	int getMode();
 	int getFlags() { return _desc.flags; }
 	bool isInDemo() { return !_inGame; }
 	
@@ -279,7 +271,6 @@ class Scene {
 	SceneQueueList _sceneQueue;
 	int _firstScene;
 	bool _sceneLoaded;
-	int _sceneMode;
 	int _sceneNumber;
 	int _sceneResNum;
 	bool _inGame;

@@ -112,7 +112,6 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	_sceneLoaded = false;
-	_sceneMode = 0;
 	_sceneNumber = 0;
 	_sceneResNum = 0;
 	_inGame = false;
@@ -313,12 +312,6 @@ int Scene::changeScene(int scene_num) {
 	loadScene(scene_num, BY_SCENE, SC_defaultScene, NULL, false);
 
 	return SUCCESS;
-}
-
-int Scene::getMode() {
-	assert(_initialized);
-
-	return _sceneMode;
 }
 
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
@@ -532,7 +525,6 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 		return FAILURE;
 	}
 
-	_sceneMode = 0;
 	_loadDesc = true;
 	_sceneNumber = -1;
 
@@ -796,7 +788,6 @@ int Scene::processSceneResources() {
 
 			pal_p = _vm->getImagePal(_bg.res_buf, _bg.res_len);
 			memcpy(_bg.pal, pal_p, sizeof(_bg.pal));
-			_sceneMode = SCENE_MODE_NORMAL;
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource
 			if (_bgMask.loaded) {
@@ -827,7 +818,7 @@ int Scene::processSceneResources() {
 			_actionMap->load(res_data, res_data_len);
 			break;
 		case SAGA_ISO_TILESET:
-			if (_sceneMode == SCENE_MODE_NORMAL) {
+			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
 				warning("Scene::ProcessSceneResources(): Isometric tileset incompatible with normal scene mode");
 				return FAILURE;
 			}
@@ -838,11 +829,9 @@ int Scene::processSceneResources() {
 				warning("Scene::ProcessSceneResources(): Error loading isometric tileset resource");
 				return FAILURE;
 			}
-
-			_sceneMode = SCENE_MODE_ISO;
 			break;
 		case SAGA_ISO_METAMAP:
-			if (_sceneMode == SCENE_MODE_NORMAL) {
+			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
 				warning("Scene::ProcessSceneResources(): Isometric metamap incompatible with normal scene mode");
 				return FAILURE;
 			}
@@ -853,11 +842,9 @@ int Scene::processSceneResources() {
 				warning("Scene::ProcessSceneResources(): Error loading isometric metamap resource");
 				return FAILURE;
 			}
-
-			_sceneMode = SCENE_MODE_ISO;
 			break;
 		case SAGA_ISO_METATILESET:
-			if (_sceneMode == SCENE_MODE_NORMAL) {
+			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
 				warning("Scene::ProcessSceneResources(): Isometric metatileset incompatible with normal scene mode");
 				return FAILURE;
 			}
@@ -868,8 +855,6 @@ int Scene::processSceneResources() {
 				warning("Scene::ProcessSceneResources(): Error loading isometric tileset resource");
 				return FAILURE;
 			}
-
-			_sceneMode = SCENE_MODE_ISO;
 			break;
 		case SAGA_ANIM_1:
 		case SAGA_ANIM_2:
@@ -929,20 +914,11 @@ int Scene::draw(SURFACE *dst_s) {
 	bg_pt.x = 0;
 	bg_pt.y = 0;
 
-	switch (_sceneMode) {
-
-	case SCENE_MODE_NORMAL:
+	if (_vm->_scene->getFlags() & kSceneFlagISO)
+		_vm->_isoMap->draw(dst_s);
+	else
 		bufToSurface(dst_s, buf_info.bg_buf, disp_info.logical_w,
 						MAX(disp_info.scene_h, _bg.h), NULL, &bg_pt);
-		break;
-	case SCENE_MODE_ISO:
-		_vm->_isoMap->draw(dst_s);
-		break;
-	default:
-		// Unknown scene mode
-		return FAILURE;
-		break;
-	};
 
 	return SUCCESS;
 }

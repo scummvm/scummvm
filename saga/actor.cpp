@@ -295,7 +295,7 @@ void Actor::realLocation(ActorLocation &location, uint16 objectId, uint16 walkFl
 	ActorData *actor;
 	if (walkFlags & kWalkUseAngle) {
 		// tiled stuff
-		if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			//todo: it
 		} else {
 			angle = location.x & 15;  
@@ -324,7 +324,7 @@ void Actor::actorFaceTowardsPoint(uint16 actorId, const ActorLocation &toLocatio
 	actor = getActor(actorId);
 
 	// tiled stuff
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
 		toLocation.delta(actor->location, delta);
@@ -415,14 +415,14 @@ void Actor::updateActorsScene() {
 
 /* setup protagonist entry
 	// tiled stuff
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
 	}
 */
 	_protagonist->currentAction = kActionWait;
 
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
 		_vm->_scene->initDoorsState();
@@ -440,7 +440,7 @@ void Actor::updateActorsScene() {
 			actor->location.z = _protagonist->location.z;
 				
 
-			if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				//todo: it
 			} else {
 				followerDirection &= 0x07;
@@ -656,7 +656,7 @@ void Actor::handleActions(int msec, bool setup) {
 			case kActionWalkToPoint:
 			case kActionWalkToLink:
 				// tiled stuff
-				if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+				if (_vm->_scene->getFlags() & kSceneFlagISO) {
 					//todo: it
 				} else {
 					actor->partialTarget.delta(actor->location, delta);
@@ -735,7 +735,7 @@ void Actor::handleActions(int msec, bool setup) {
 
 			case kActionWalkDir:
 				// tiled stuff
-				if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+				if (_vm->_scene->getFlags() & kSceneFlagISO) {
 					//todo: it
 				} else {
 					actor->location.x += directionLUT[actor->actionDirection][0] * 2;
@@ -859,7 +859,7 @@ int Actor::direct(int msec) {
 
 void Actor::calcActorScreenPosition(ActorData *actor) {
 	int	beginSlope, endSlope, middle;
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
 		middle = _vm->getStatusYOffset() - actor->location.y / ACTOR_LMULT;
@@ -935,7 +935,7 @@ int Actor::drawActors() {
 			continue;
 		}
 		
-		if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			//todo: it
 		} else {
 			_vm->_sprite->drawOccluded(back_buf, spriteList, frameNumber, actor->screenPosition, actor->screenScale, actor->screenDepth);
@@ -1003,7 +1003,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 	protagonistLocation = _protagonist->location;
 	calcActorScreenPosition(_protagonist);
 
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {		
 		prefer1.x = (100 * _protagonist->screenScale) >> 8;
@@ -1136,7 +1136,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 		_vm->_scene->setDoorState(3, 0xff);
 	}
 
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
 		

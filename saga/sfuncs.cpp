@@ -494,7 +494,7 @@ int Script::sfScriptOpenDoor(SCRIPTFUNC_PARAMS) {
 	int doorNumber;
 	doorNumber = getUWord(thread->pop());
 
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
 		_vm->_scene->setDoorState(doorNumber, 0);
@@ -508,7 +508,7 @@ int Script::sfScriptCloseDoor(SCRIPTFUNC_PARAMS) {
 	int doorNumber;
 	doorNumber = getUWord(thread->pop());
 
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
 		_vm->_scene->setDoorState(doorNumber, 0xff);
@@ -1251,7 +1251,7 @@ int Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
 	doorNumber = getUWord(thread->pop());
 	doorState = getUWord(thread->pop());
 
-	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
 		_vm->_scene->setDoorState(doorNumber, doorState);
