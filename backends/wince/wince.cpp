@@ -162,6 +162,8 @@ pseudoGAPI availablePseudoGAPI[] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+OSystem_WINCE3 *mainClass;
+
 int _pseudoGAPI_device;
 
 int _thread_priority;
@@ -362,6 +364,7 @@ int gameXGXResume() {
 GameDetector detector;
 Engine *engine;
 bool is_simon;
+bool is_bass;
 NewGui *g_gui;
 extern Scumm *g_scumm;
 //extern SimonEngine *g_simon;
@@ -424,6 +427,8 @@ extern bool toolbar_drawn;
 extern bool draw_keyboard;
 bool hide_toolbar;
 bool hide_cursor;
+bool save_hide_cursor;
+bool freelook;
 bool save_hide_toolbar;
 bool keyboard_override;
 
@@ -563,6 +568,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	smartphone = (GetSystemMetrics(SM_CXSCREEN) < 320 && GetSystemMetrics(SM_CYSCREEN) < 320); 
 
 	hide_toolbar = false;
+	freelook = false;
 	noGAPI = 0;
 
 	g_config = new Config("scummvm.ini", "scummvm");
@@ -841,12 +847,15 @@ void runGame(char *game_name) {
 
 	OSystem *system = detector.createSystem();
 
+	mainClass = (OSystem_WINCE3*)system;
+
 	//g_system = system;
 	g_gui = new NewGui(system);
 
 	/* Start the engine */
 
-	is_simon = (detector._game.id >= GID_SIMON_FIRST);
+	is_simon = (detector._game.id >= GID_SIMON_FIRST && detector._game.id <= GID_SIMON_LAST);
+	is_bass = (detector._game.id >= GID_SKY_FIRST && detector._game.id <= GID_SKY_LAST);
 
 	if (smartphone || detector._game.id == GID_SAMNMAX || detector._game.id == GID_FT || detector._game.id == GID_DIG || detector._game.id == GID_CMI)
 		hide_cursor = FALSE;
@@ -875,8 +884,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);
 	
 	if (!select_game && monkey_keyboard && (
-			g_scumm->VAR_ROOM != 108 &&		// monkey 2
-			g_scumm->VAR_ROOM != 90)) {		// monkey 1 floppy
+			g_scumm->VAR(g_scumm->VAR_ROOM) != 108 &&		// monkey 2
+			g_scumm->VAR(g_scumm->VAR_ROOM) != 90)) {		// monkey 1 floppy
 		monkey_keyboard = false;
 		draw_keyboard = false;
 		toolbar_drawn = false;
@@ -898,7 +907,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		if (need_GAPI)
 			dynamicSHSipPreference(hWnd, SIP_FORCEDOWN);
 //		SHSipPreference(hWnd, SIP_INPUTDIALOG);
-		
+
 		return 0;
 
 	case WM_DESTROY:
@@ -1109,29 +1118,35 @@ void OSystem_WINCE3::addEventKeyPressed(int ascii_code) {
 }
 
 void OSystem_WINCE3::addEventRightButtonClicked() {
-	OSystem_WINCE3* system;
-	system = (OSystem_WINCE3*)g_scumm->_system;
+	//OSystem_WINCE3* system;
+	//system = (OSystem_WINCE3*)g_scumm->_system;
 	
-	system->addEventKeyPressed(9);
+	//system->addEventKeyPressed(9);
+	if (is_bass) 
+		_event.event_code = EVENT_RBUTTONDOWN;
+	else
+		addEventKeyPressed(9);
 }
 
 void action_right_click() {
-	OSystem_WINCE3* system;
-	system = (OSystem_WINCE3*)g_scumm->_system;
+	//OSystem_WINCE3* system;
+	//system = (OSystem_WINCE3*)g_scumm->_system;
 
-	system->addEventRightButtonClicked();	
+	//system->addEventRightButtonClicked();	
+	mainClass->addEventRightButtonClicked();
 }
 
 void action_pause() {
-	OSystem_WINCE3* system;
-	system = (OSystem_WINCE3*)g_scumm->_system;
+	//OSystem_WINCE3* system;
+	//system = (OSystem_WINCE3*)g_scumm->_system;
 
-	system->addEventKeyPressed(mapKey(VK_SPACE));
+	//system->addEventKeyPressed(mapKey(VK_SPACE));
+	mainClass->addEventKeyPressed(mapKey(VK_SPACE));
 }
 
 void action_save() {
-	OSystem_WINCE3* system;
-	system = (OSystem_WINCE3*)g_scumm->_system;
+	//OSystem_WINCE3* system;
+	//system = (OSystem_WINCE3*)g_scumm->_system;
 
 	/*if (GetScreenMode()) {*/
 	/*
@@ -1140,14 +1155,37 @@ void action_save() {
 			toolbar_drawn = false;
 	*/
 	/*}*/
-	if (g_scumm->_features & GF_OLD256 || g_scumm->_gameId == GID_CMI)
-		system->addEventKeyPressed(319);
+
+	if (is_simon)
+		return;
 	else
-		system->addEventKeyPressed(g_scumm->VAR_SAVELOADDIALOG_KEY);						
+	if (is_bass)
+		mainClass->addEventKeyPressed(63);
+	else
+	if (g_scumm->_version <= 2)
+		mainClass->addEventKeyPressed(5);
+	else
+	if ((g_scumm->_features & GF_OLD256) || (g_scumm->_gameId == GID_CMI) || (g_scumm->_features & GF_16COLOR))
+		//system->addEventKeyPressed(319);
+		mainClass->addEventKeyPressed(319);
+	else
+		//system->addEventKeyPressed(g_scumm->VAR(g_scumm->VAR_SAVELOADDIALOG_KEY));
+		mainClass->addEventKeyPressed(g_scumm->VAR(g_scumm->VAR_SAVELOADDIALOG_KEY));
 }
 
 void action_quit() {
 	do_quit();
+}
+
+void action_freelook() {
+	if (!freelook) {
+		save_hide_cursor = hide_cursor;
+		hide_cursor = false;
+	}
+	else {
+		hide_cursor = save_hide_cursor;
+	}
+	freelook = !freelook;
 }
 
 void action_boss() {
@@ -1176,14 +1214,18 @@ void action_boss() {
 }
 
 void action_skip() {
-	OSystem_WINCE3* system;
-	system = (OSystem_WINCE3*)g_scumm->_system;
+	//OSystem_WINCE3* system;
+	//system = (OSystem_WINCE3*)g_scumm->_system;
 
-	if (is_simon) {
-		system->addEventKeyPressed(mapKey(VK_ESCAPE));
+	if (is_simon || is_bass) {
+		//system->addEventKeyPressed(mapKey(VK_ESCAPE));
+		mainClass->addEventKeyPressed(mapKey(VK_ESCAPE));
 		return;
 	}
 
+	//system->addEventKeyPressed(KEY_MAGIC_SKIP);
+	mainClass->addEventKeyPressed(KEY_ALL_SKIP);
+/*
 	if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY]);
 	else 
@@ -1191,6 +1233,7 @@ void action_skip() {
 		system->addEventKeyPressed(g_scumm->VAR_TALKSTOP_KEY);						
 	else
 		system->addEventKeyPressed(mapKey(VK_ESCAPE));
+*/
 }
 
 void do_hide(bool hide_state) {
@@ -1202,7 +1245,8 @@ void do_hide(bool hide_state) {
 	Cls();
 	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 	toolbar_drawn = hide_toolbar;
-	g_scumm->_system->update_screen();
+	//g_scumm->_system->update_screen();
+	mainClass->update_screen();
 }
 
 void action_hide() {
@@ -1233,7 +1277,7 @@ void keypad_init() {
 	static pAction actions[TOTAL_ACTIONS] =
 	{ NULL, action_pause, action_save, action_quit, action_skip, action_hide, 
 	  action_keyboard, action_sound, action_right_click, action_cursoronoff,
-	  action_subtitleonoff, action_boss
+	  action_subtitleonoff, action_boss, action_freelook
 	};
 	
 	GAPIKeysInitActions(actions);
@@ -1277,7 +1321,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	OSystem_WINCE3 *syst = new OSystem_WINCE3();
 	syst->_mode = gfx_mode;
 	syst->_full_screen = full_screen;
-	syst->_event.event_code = -1;
+	syst->_event.event_code = EVENT_WHEELUP;   /* FIXME lazy */
 	syst->_start_time = GetTickCount();
 
 	/* Retrieve the handle of this module */
@@ -1314,7 +1358,8 @@ OSystem *OSystem_WINCE3_create() {
 }
 
 void OSystem_WINCE3::set_timer(int timer, int (*callback)(int)) {
-	SetTimer(hWnd, 1, timer, NULL);
+	if (!SetTimer(hWnd, 1, timer, NULL))
+		exit(1);
 	timer_interval = timer;
 	timer_callback = callback;
 }
@@ -1608,6 +1653,7 @@ void OSystem_WINCE3::set_mouse_pos(int x, int y) {
 	if (x != _ms_cur.x || y != _ms_cur.y) {
 		_ms_cur.x = x;
 		_ms_cur.y = y;
+		undraw_mouse();
 	}
 }
 	
@@ -1636,6 +1682,8 @@ uint32 OSystem_WINCE3::get_msecs() {
 	
 void OSystem_WINCE3::delay_msecs(uint msecs) {
 	//handleMessage();
+	if (msecs <= 0 || msecs >= 10000)
+		exit(1);
 	Sleep(msecs);
 }
 	
@@ -1659,7 +1707,7 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 	for (;;) {
 		MSG msg;
 
-		_event.event_code = -1;
+		_event.event_code = EVENT_WHEELUP; /* FIXME lazy */
 
 		if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			return false;
@@ -1673,7 +1721,12 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 
+		if (_event.event_code == EVENT_WHEELUP)  /* FIXME lazy */
+			return false;
+
 		*event = _event;
+
+		_event.event_code = EVENT_WHEELUP;
 
 		return true;
 	}
@@ -1824,6 +1877,28 @@ void OSystem_WINCE3::move_screen(int dx, int dy, int height) {
 
 /* NECESSARY operators redefinition */
 
+/*
+void *operator new(size_t size) {
+        return memset(malloc(size), 0xE7, size);
+}
+
+void operator delete(void *ptr) {
+        free(ptr);
+}
+
+#undef free
+void free_check(void *ptr) {
+        if ((uint)ptr == 0xE7E7E7E7UL) {
+                printf("ERROR: freeing 0xE7E7E7E7\n");
+                exit(1);
+        }
+        if ((int)ptr & 1) {
+                warning("Freeing odd address 0x%x\n", ptr);
+        }
+        free(ptr);
+}
+*/
+
 
 void *operator new(size_t size) {
 	return calloc(size, 1);
@@ -1832,4 +1907,5 @@ void *operator new(size_t size) {
 void operator delete(void *ptr) {
 	free(ptr);
 }
+
 
