@@ -270,6 +270,8 @@ public:
 	IMuseDigital *_imuseDigital;
 	Player_V2 *_playerV2;
 
+	byte _version;
+	
 	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
 	void setFeatures (uint32 newFeatures);	// Changes the features set. This allows some gamewide stuff to be precalculated/prepared (ie CostumeRenderer)
 
@@ -448,8 +450,6 @@ protected:
 
 	/** The bootparam, to be passed to the script 1, the bootscript. */
 	int _bootParam;
-	
-	byte _version;
 	
 	// Various options useful for debugging
 	bool _dumpScripts;
