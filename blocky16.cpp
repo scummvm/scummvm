@@ -20,6 +20,43 @@
 #include "blocky16.h"
 #include "debug.h"
 
+#if defined(SYSTEM_NEED_ALIGNMENT)
+
+#define COPY_4X1_LINE(dst, src)			\
+	do {					\
+		(dst)[0] = (src)[0];	\
+		(dst)[1] = (src)[1];	\
+		(dst)[2] = (src)[2];	\
+		(dst)[3] = (src)[3];	\
+	} while (0)
+
+#define WRITE_2X1_LINE(dst, v)		\
+	do {				\
+		(dst)[0] = (byte)((v >> 8) & 0xFF);	\
+		(dst)[1] = (byte)((v >> 0) & 0xFF);	\
+	} while (0)
+
+#define WRITE_4X1_LINE(dst, v)		\
+	do {				\
+		(dst)[0] = (byte)((v >> 24) & 0xFF);	\
+		(dst)[1] = (byte)((v >> 16) & 0XFF);	\
+		(dst)[2] = (byte)((v >>  8) & 0xFF);	\
+		(dst)[3] = (byte)((v >>  0) & 0xFF);	\
+	} while (0)
+
+#else /* SYSTEM_NEED_ALIGNMENT */
+
+#define COPY_4X1_LINE(dst, src)			\
+	*(uint32 *)(dst) = *(const uint32 *)(src);
+
+#define WRITE_2X1_LINE(dst, v)		\
+	*(uint16 *)(dst) = v;
+
+#define WRITE_4X1_LINE(dst, v)		\
+	*(uint32 *)(dst) = v;
+
+#endif
+
 static int8 blocky16_table_small1[] = {
 	0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
 };
@@ -296,7 +333,7 @@ void Blocky16::makeTables47(int width) {
 
 void Blocky16::level3(byte *d_dst) {
 	int32 tmp2;
-	uint32 t, val;
+	uint32 t;
 	byte code = *_d_src++;
 	int i;
 
@@ -310,22 +347,22 @@ void Blocky16::level3(byte *d_dst) {
 		}
 		tmp2 += _offset1;
 		for (i = 0; i < 2; i++) {
-			*(uint32 *)(d_dst +  0) = *(uint32 *)(d_dst + tmp2 +  0);
+			COPY_4X1_LINE(d_dst + 0, d_dst + tmp2 + 0);
 			d_dst += _d_pitch;
 		}
 	} else if ((code == 0xFF) || (code == 0xF8)) {
-		*(uint16 *)(d_dst + 0) = READ_LE_UINT16(_d_src + 0);
-		*(uint16 *)(d_dst + 2) = READ_LE_UINT16(_d_src + 2);
+		WRITE_2X1_LINE(d_dst + 0, READ_LE_UINT16(_d_src + 0)); 
+		WRITE_2X1_LINE(d_dst + 2, READ_LE_UINT16(_d_src + 2)); 
 		d_dst += _d_pitch;
-		*(uint16 *)(d_dst + 0) = READ_LE_UINT16(_d_src + 4);
-		*(uint16 *)(d_dst + 2) = READ_LE_UINT16(_d_src + 6);
+		WRITE_2X1_LINE(d_dst + 0, READ_LE_UINT16(_d_src + 4)); 
+		WRITE_2X1_LINE(d_dst + 2, READ_LE_UINT16(_d_src + 6)); 
 		_d_src += 8;
 	} else if (code == 0xFD) {
 		t = *_d_src++;
 		t = READ_LE_UINT16(_param6_7Ptr + t * 2);
 		t = (t << 16) | t;
 		for (i = 0; i < 2; i++) {
-			*(uint32 *)(d_dst +  0) = t;
+			WRITE_4X1_LINE(d_dst + 0, t);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFE) {
@@ -333,33 +370,29 @@ void Blocky16::level3(byte *d_dst) {
 		_d_src += 2;
 		t = (t << 16) | t;
 		for (i = 0; i < 2; i++) {
-			*(uint32 *)(d_dst +  0) = t;
+			WRITE_4X1_LINE(d_dst + 0, t);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xF6) {
 		tmp2 = _offset2;
 		for (i = 0; i < 2; i++) {
-			*(uint32 *)(d_dst +  0) = *(uint32 *)(d_dst + tmp2 +  0);
+			COPY_4X1_LINE(d_dst + 0, d_dst + tmp2 + 0);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xF7) {
 		tmp2 = READ_LE_UINT32(_d_src);
 		_d_src += 4;
-		val = READ_LE_UINT16(_param6_7Ptr + (byte)tmp2 * 2);
-		*(uint16 *)(d_dst +  0) = val;
-		val = READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2);
-		*(uint16 *)(d_dst +  2) = val;
+		WRITE_2X1_LINE(d_dst + 0, READ_LE_UINT16(_param6_7Ptr + (byte)tmp2 * 2));
+		WRITE_2X1_LINE(d_dst + 2, READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2));
 		tmp2 >>= 16;
 		d_dst += _d_pitch;
-		val = READ_LE_UINT16(_param6_7Ptr + (byte)tmp2 * 2);
-		*(uint16 *)(d_dst +  0) = val;
-		val = READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2);
-		*(uint16 *)(d_dst +  2) = val;
+		WRITE_2X1_LINE(d_dst + 0, READ_LE_UINT16(_param6_7Ptr + (byte)tmp2 * 2));
+		WRITE_2X1_LINE(d_dst + 2, READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2));
 	} else if ((code >= 0xF9) && (code <= 0xFC))  {
 		t = READ_LE_UINT16(_paramPtr + code * 2);
 		t = (t << 16) | t;
 		for (i = 0; i < 2; i++) {
-			*(uint32 *)(d_dst +  0) = t;
+			WRITE_4X1_LINE(d_dst + 0, t); 
 			d_dst += _d_pitch;
 		}
 	}
@@ -381,8 +414,8 @@ void Blocky16::level2(byte *d_dst) {
 		}
 		tmp2 += _offset1;
 		for (i = 0; i < 4; i++) {
-			*(uint32 *)(d_dst +  0) = *(uint32 *)(d_dst + tmp2 +  0);
-			*(uint32 *)(d_dst +  4) = *(uint32 *)(d_dst + tmp2 +  4);
+			COPY_4X1_LINE(d_dst +  0, d_dst + tmp2 +  0);
+			COPY_4X1_LINE(d_dst +  4, d_dst + tmp2 +  4);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFF) {
@@ -396,8 +429,8 @@ void Blocky16::level2(byte *d_dst) {
 	} else if (code == 0xF6) {
 		tmp2 = _offset2;
 		for (i = 0; i < 4; i++) {
-			*(uint32 *)(d_dst +  0) = *(uint32 *)(d_dst + tmp2 +  0);
-			*(uint32 *)(d_dst +  4) = *(uint32 *)(d_dst + tmp2 +  4);
+			COPY_4X1_LINE(d_dst +  0, d_dst + tmp2 +  0);
+			COPY_4X1_LINE(d_dst +  4, d_dst + tmp2 +  4);
 			d_dst += _d_pitch;
 		}
 	} else if ((code == 0xF7) || (code == 0xF8)) {
@@ -415,14 +448,14 @@ void Blocky16::level2(byte *d_dst) {
 		byte l = tmp_ptr[96];
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
 		while (l--) {
-			*(uint16* )(d_dst + READ_LE_UINT16(tmp_ptr2) * 2) = val;
+			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val); 
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[97];
 		val >>= 16;
 		tmp_ptr2 = (int16 *)(tmp_ptr + 32);
 		while (l--) {
-			*(uint16* )(d_dst + READ_LE_UINT16(tmp_ptr2) * 2) = val;
+			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val);
 			tmp_ptr2++;
 		}
 	} else if (code >= 0xF9) {
@@ -439,8 +472,8 @@ void Blocky16::level2(byte *d_dst) {
 			t = (t << 16) | t;
 		}
 		for (i = 0; i < 4; i++) {
-			*(uint32 *)(d_dst +  0) = t;
-			*(uint32 *)(d_dst +  4) = t;
+			WRITE_4X1_LINE(d_dst + 0, t);
+			WRITE_4X1_LINE(d_dst + 4, t);
 			d_dst += _d_pitch;
 		}
 	}
@@ -462,10 +495,10 @@ void Blocky16::level1(byte *d_dst) {
 		}
 		tmp2 += _offset1;
 		for (i = 0; i < 8; i++) {
-			*(uint32 *)(d_dst +  0) = *(uint32 *)(d_dst + tmp2 +  0);
-			*(uint32 *)(d_dst +  4) = *(uint32 *)(d_dst + tmp2 +  4);
-			*(uint32 *)(d_dst +  8) = *(uint32 *)(d_dst + tmp2 +  8);
-			*(uint32 *)(d_dst + 12) = *(uint32 *)(d_dst + tmp2 + 12);
+			COPY_4X1_LINE(d_dst +  0, d_dst + tmp2 +  0);
+			COPY_4X1_LINE(d_dst +  4, d_dst + tmp2 +  4);
+			COPY_4X1_LINE(d_dst +  8, d_dst + tmp2 +  8);
+			COPY_4X1_LINE(d_dst + 12, d_dst + tmp2 + 12);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFF) {
@@ -479,10 +512,10 @@ void Blocky16::level1(byte *d_dst) {
 	} else if (code == 0xF6) {
 		tmp2 = _offset2;
 		for (i = 0; i < 8; i++) {
-			*(uint32 *)(d_dst +  0) = *(uint32 *)(d_dst + tmp2 +  0);
-			*(uint32 *)(d_dst +  4) = *(uint32 *)(d_dst + tmp2 +  4);
-			*(uint32 *)(d_dst +  8) = *(uint32 *)(d_dst + tmp2 +  8);
-			*(uint32 *)(d_dst + 12) = *(uint32 *)(d_dst + tmp2 + 12);
+			COPY_4X1_LINE(d_dst +  0, d_dst + tmp2 +  0);
+			COPY_4X1_LINE(d_dst +  4, d_dst + tmp2 +  4);
+			COPY_4X1_LINE(d_dst +  8, d_dst + tmp2 +  8);
+			COPY_4X1_LINE(d_dst + 12, d_dst + tmp2 + 12);
 			d_dst += _d_pitch;
 		}
 	} else if ((code == 0xF7) || (code == 0xF8)) {
@@ -500,14 +533,14 @@ void Blocky16::level1(byte *d_dst) {
 		byte l = tmp_ptr[384];
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
 		while (l--) {
-			*(uint16* )(d_dst + READ_LE_UINT16(tmp_ptr2) * 2) = val;
+			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val);
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[385];
 		val >>= 16;
 		tmp_ptr2 = (int16 *)(tmp_ptr + 128);
 		while (l--) {
-			*(uint16* )(d_dst + READ_LE_UINT16(tmp_ptr2) * 2) = val;
+			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val); 
 			tmp_ptr2++;
 		}
 	} else if (code >= 0xF9) {
@@ -524,10 +557,10 @@ void Blocky16::level1(byte *d_dst) {
 			t = (t << 16) | t;
 		}
 		for (i = 0; i < 8; i++) {
-			*(uint32 *)(d_dst +  0) = t;
-			*(uint32 *)(d_dst +  4) = t;
-			*(uint32 *)(d_dst +  8) = t;
-			*(uint32 *)(d_dst + 12) = t;
+			WRITE_4X1_LINE(d_dst +  0, t);
+			WRITE_4X1_LINE(d_dst +  4, t);
+			WRITE_4X1_LINE(d_dst +  8, t);
+			WRITE_4X1_LINE(d_dst + 12, t);
 			d_dst += _d_pitch;
 		}
 	}
@@ -695,7 +728,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 
 	switch(src[18]) {
 	case 0:
-#if defined(SYSTEM_BIG_ENDIAN) && defined(MACOSX)
+#if defined(SYSTEM_BIG_ENDIAN)
 		for (int i = 0; i < _width * _height; i++) {
 			((uint16 *)_curBuf)[i] = READ_LE_UINT16(gfx_data + i * 2);
 		}
@@ -710,12 +743,6 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		if (seq_nb == _prevSeqNb + 1) {
 			decode2(_curBuf, gfx_data, _width, _height, src + 24, src + 40);
 		}
-
-#if defined(SYSTEM_BIG_ENDIAN) && !defined(MACOSX)
-		for (int i = 0; i < _width * _height; ++i) {
-			((uint16 *)_curBuf)[i] = SWAP_BYTES_16(((uint16 *)_curBuf)[i]);
-		}			
-#endif
 		
 		break;
 	case 3:
