@@ -1449,6 +1449,9 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		}
 		break;
 	// HE 99+
+	case 7:
+		// Used in soccer2004
+		break;
 	case 8:
 		createWizEmptyImage(params);
 		break;
@@ -1456,8 +1459,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		fillWizRect(params);
 		break;
 	default:
-		warning("Unhandled processWizImage mode %d", params->processMode);
-		break;
+		error("Unhandled processWizImage mode %d", params->processMode);
 	}
 }
 

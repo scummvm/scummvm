@@ -261,6 +261,7 @@ SCUMM
   - Add support for displayWizComplexImage 0x10000 flag (Used in bb2demo/footdemo/ff5demo/freddicove)
   - Add support for displayWizComplexImage 0x80000 flag (Used in ff5demo/freddicove)
   - Add support for drawWizComplexPolygon (For Ski Ride & Credits of pajama3)
+  - Add support for processWizImage mode 7 (For soccer2004)
   - Add support for RMAP/XMAP resources in drawWizImage (Used by akos codec 32 too)
   - Add support for arrayOps case 127 (For chase/lost/smaller/bb2demo/footdemo).
   - Add support for o90_sortArray (Used in bb2demo/footdemo/lost/smaller).
@@ -271,6 +272,7 @@ SCUMM
   - Add support for o80_unknownE0 type1 (For binoculars in pajama2)
   - Add support for o80_unknownE0 type2 (For black board in freddi2 and paper in spyfox)
   - Add support for o80_readConfigFile (For loading map.ini details in mustard)
+  - Add support for U32 code, triggered by case 2001 of kernelGet/Set (For soccer2004)
   - Fix actor parts disappearing in pajama2/racedemo (Related to XMAP support?)
   - Fix cursor transparency in puzzle of pajama2 (Related to floodState support?)
   - Fix sprites graphical glitches
