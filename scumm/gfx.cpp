@@ -967,6 +967,15 @@ bool ScummEngine::isLightOn() const {
 	return (VAR_CURRENT_LIGHTS == 0xFF) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
 }
 
+void ScummEngine::setShake(int mode) {
+	if (_shakeEnabled != (mode != 0))
+		_fullRedraw = true;
+
+	_shakeEnabled = mode != 0;
+	_shakeFrame = 0;
+	_system->set_shake_pos(0);
+}
+
 #pragma mark -
 #pragma mark --- Image drawing ---
 #pragma mark -
@@ -1759,235 +1768,6 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	}
 }
 
-/**
- * Create and fill a table with offsets to the graphic and mask strips in the
- * given V2 EGA bitmap.
- * @param src		the V2 EGA bitmap
- * @param width		the width of the bitmap
- * @param height	the height of the bitmap
- * @param table		the strip table to fill
- * @return filled strip table
- */
-StripTable *Gdi::generateStripTable(const byte *src, int width, int height, StripTable *table) const {
-
-	// If no strip table was given to use, allocate a new one
-	if (table == 0)
-		table = (StripTable *)calloc(1, sizeof(StripTable));
-
-	const byte *bitmapStart = src;
-	byte color = 0, data = 0;
-	int x, y, length = 0;
-	byte run = 1;
-
-	// Decode the graphics strips, and memorize the run/color values
-	// as well as the byte offset.
-	for (x = 0 ; x < width; x++) {
-
-		if ((x % 8) == 0) {
-			assert(x / 8 < 160);
-			table->run[x / 8] = run;
-			table->color[x / 8] = color;
-			table->offsets[x / 8] = src - bitmapStart;
-		}
-
-		for (y = 0; y < height; y++) {
-			if (--run == 0) {
-				data = *src++;
-				if (data & 0x80) {
-					run = data & 0x7f;
-				} else {
-					run = data >> 4;
-				}
-				if (run == 0) {
-					run = *src++;
-				}
-				color = data & 0x0f;
-			}
-		}
-	}
-
-	// The mask data follows immediately after the graphics.
-	x = 0;
-	y = height;
-	width /= 8;
-	
-	for (;;) {
-		length = *src++;
-		const byte runFlag = length & 0x80;
-		if (runFlag) {
-			length &= 0x7f;
-			data = *src++;
-		}
-		do {
-			if (!runFlag)
-				data = *src++;
-			if (y == height) {
-				assert(x < 120);
-				table->zoffsets[x] = src - bitmapStart - 1;
-				table->zrun[x] = length | runFlag;
-			}
-			if (--y == 0) {
-				if (--width == 0)
-					return table;
-				x++;
-				y = height;
-			}
-		} while (--length);
-	}
-
-	return table;
-}
-
-void Gdi::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height) {
-	int charIdx;
-	height /= 8;
-	for (int y = 0; y < height; y++) {
-		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
-		// Check for room color change in V1 zak
-		if (_roomPalette[0] == 255) {
-			_C64Colors[2] = _roomPalette[2];
-			_C64Colors[1] = _roomPalette[1];
-		}
-
-		charIdx = _C64PicMap[y + stripnr * height] * 8;
-		for (int i = 0; i < 8; i++) {
-			byte c = _C64CharMap[charIdx + i];
-			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
-			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
-			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
-			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
-			dst += dstPitch;
-		}
-	}
-}
-
-void Gdi::drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height) {
-	int charIdx;
-	height /= 8;
-	width /= 8;
-	for (int y = 0; y < height; y++) {
-		_C64Colors[3] = (_C64ObjectMap[(y + height) * width + stripnr] & 7);
-		charIdx = _C64ObjectMap[y * width + stripnr] * 8;
-		for (int i = 0; i < 8; i++) {
-			byte c = _C64CharMap[charIdx + i];
-			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
-			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
-			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
-			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
-			dst += dstPitch;
-		}
-	}
-}
-
-void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) const {
-	int maskIdx;
-	height /= 8;
-	width /= 8;
-	for (int y = 0; y < height; y++) {
-		if (_C64ObjectMode)
-			maskIdx = _C64ObjectMap[(y + 2 * height) * width + stripnr] * 8;
-		else
-			maskIdx = _C64MaskMap[y + stripnr * height] * 8;
-		for (int i = 0; i < 8; i++) {
-			byte c = _C64MaskChar[maskIdx + i];
-
-			// V1/C64 masks are inverted compared to what ScummVM expects
-			*dst = c ^ 0xFF;
-			dst += _numStrips;
-		}
-	}
-}
-
-void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) const {
-	int x, z;
-	byte color, run, common[4];
-
-	for (z = 0; z < 4; z++) {
-		common[z] = *src++;
-	}
-
-	x = 0;
-	while (x < size) {
-		run = *src++;
-		if (run & 0x80) {
-			color = common[(run >> 5) & 3];
-			run &= 0x1F;
-			for (z = 0; z <= run; z++) {
-				dst[x++] = color;
-			}
-		} else if (run & 0x40) {
-			run &= 0x3F;
-			color = *src++;
-			for (z = 0; z <= run; z++) {
-				dst[x++] = color;
-			}
-		} else {
-			for (z = 0; z <= run; z++) {
-				dst[x++] = *src++;
-			}
-		}
-	}
-}
-
-void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) const {
-	byte color = 0;
-	int run = 0, x = 0, y = 0, z;
-
-	while (x < 8) {
-		color = *src++;
-		
-		if (color & 0x80) {
-			run = color & 0x3f;
-
-			if (color & 0x40) {
-				color = *src++;
-
-				if (run == 0) {
-					run = *src++;
-				}
-				for (z = 0; z < run; z++) {
-					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[color & 0xf] : _roomPalette[color >> 4];
-
-					y++;
-					if (y >= height) {
-						y = 0;
-						x++;
-					}
-				}
-			} else {
-				if (run == 0) {
-					run = *src++;
-				}
-
-				for (z = 0; z < run; z++) {
-					*(dst + y * dstPitch + x) = *(dst + y * dstPitch + x - 1);
-
-					y++;
-					if (y >= height) {
-						y = 0;
-						x++;
-					}
-				}
-			}
-		} else {
-			run = color >> 4;
-			if (run == 0) {
-				run = *src++;
-			}
-			
-			for (z = 0; z < run; z++) {
-				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf];
-
-				y++;
-				if (y >= height) {
-					y = 0;
-					x++;
-				}
-			}
-		}
-	}
-}
-
 bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess) {
 	assert(numLinesToProcess);
 
@@ -2138,6 +1918,235 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 				dst += _numStrips;
 				--height;
 			} while (--b && height);
+		}
+	}
+}
+
+void Gdi::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height) {
+	int charIdx;
+	height /= 8;
+	for (int y = 0; y < height; y++) {
+		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
+		// Check for room color change in V1 zak
+		if (_roomPalette[0] == 255) {
+			_C64Colors[2] = _roomPalette[2];
+			_C64Colors[1] = _roomPalette[1];
+		}
+
+		charIdx = _C64PicMap[y + stripnr * height] * 8;
+		for (int i = 0; i < 8; i++) {
+			byte c = _C64CharMap[charIdx + i];
+			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
+			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
+			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
+			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
+			dst += dstPitch;
+		}
+	}
+}
+
+void Gdi::drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height) {
+	int charIdx;
+	height /= 8;
+	width /= 8;
+	for (int y = 0; y < height; y++) {
+		_C64Colors[3] = (_C64ObjectMap[(y + height) * width + stripnr] & 7);
+		charIdx = _C64ObjectMap[y * width + stripnr] * 8;
+		for (int i = 0; i < 8; i++) {
+			byte c = _C64CharMap[charIdx + i];
+			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
+			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
+			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
+			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
+			dst += dstPitch;
+		}
+	}
+}
+
+void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) const {
+	int maskIdx;
+	height /= 8;
+	width /= 8;
+	for (int y = 0; y < height; y++) {
+		if (_C64ObjectMode)
+			maskIdx = _C64ObjectMap[(y + 2 * height) * width + stripnr] * 8;
+		else
+			maskIdx = _C64MaskMap[y + stripnr * height] * 8;
+		for (int i = 0; i < 8; i++) {
+			byte c = _C64MaskChar[maskIdx + i];
+
+			// V1/C64 masks are inverted compared to what ScummVM expects
+			*dst = c ^ 0xFF;
+			dst += _numStrips;
+		}
+	}
+}
+
+void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) const {
+	int x, z;
+	byte color, run, common[4];
+
+	for (z = 0; z < 4; z++) {
+		common[z] = *src++;
+	}
+
+	x = 0;
+	while (x < size) {
+		run = *src++;
+		if (run & 0x80) {
+			color = common[(run >> 5) & 3];
+			run &= 0x1F;
+			for (z = 0; z <= run; z++) {
+				dst[x++] = color;
+			}
+		} else if (run & 0x40) {
+			run &= 0x3F;
+			color = *src++;
+			for (z = 0; z <= run; z++) {
+				dst[x++] = color;
+			}
+		} else {
+			for (z = 0; z <= run; z++) {
+				dst[x++] = *src++;
+			}
+		}
+	}
+}
+
+/**
+ * Create and fill a table with offsets to the graphic and mask strips in the
+ * given V2 EGA bitmap.
+ * @param src		the V2 EGA bitmap
+ * @param width		the width of the bitmap
+ * @param height	the height of the bitmap
+ * @param table		the strip table to fill
+ * @return filled strip table
+ */
+StripTable *Gdi::generateStripTable(const byte *src, int width, int height, StripTable *table) const {
+
+	// If no strip table was given to use, allocate a new one
+	if (table == 0)
+		table = (StripTable *)calloc(1, sizeof(StripTable));
+
+	const byte *bitmapStart = src;
+	byte color = 0, data = 0;
+	int x, y, length = 0;
+	byte run = 1;
+
+	// Decode the graphics strips, and memorize the run/color values
+	// as well as the byte offset.
+	for (x = 0 ; x < width; x++) {
+
+		if ((x % 8) == 0) {
+			assert(x / 8 < 160);
+			table->run[x / 8] = run;
+			table->color[x / 8] = color;
+			table->offsets[x / 8] = src - bitmapStart;
+		}
+
+		for (y = 0; y < height; y++) {
+			if (--run == 0) {
+				data = *src++;
+				if (data & 0x80) {
+					run = data & 0x7f;
+				} else {
+					run = data >> 4;
+				}
+				if (run == 0) {
+					run = *src++;
+				}
+				color = data & 0x0f;
+			}
+		}
+	}
+
+	// The mask data follows immediately after the graphics.
+	x = 0;
+	y = height;
+	width /= 8;
+	
+	for (;;) {
+		length = *src++;
+		const byte runFlag = length & 0x80;
+		if (runFlag) {
+			length &= 0x7f;
+			data = *src++;
+		}
+		do {
+			if (!runFlag)
+				data = *src++;
+			if (y == height) {
+				assert(x < 120);
+				table->zoffsets[x] = src - bitmapStart - 1;
+				table->zrun[x] = length | runFlag;
+			}
+			if (--y == 0) {
+				if (--width == 0)
+					return table;
+				x++;
+				y = height;
+			}
+		} while (--length);
+	}
+
+	return table;
+}
+
+void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) const {
+	byte color = 0;
+	int run = 0, x = 0, y = 0, z;
+
+	while (x < 8) {
+		color = *src++;
+		
+		if (color & 0x80) {
+			run = color & 0x3f;
+
+			if (color & 0x40) {
+				color = *src++;
+
+				if (run == 0) {
+					run = *src++;
+				}
+				for (z = 0; z < run; z++) {
+					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[color & 0xf] : _roomPalette[color >> 4];
+
+					y++;
+					if (y >= height) {
+						y = 0;
+						x++;
+					}
+				}
+			} else {
+				if (run == 0) {
+					run = *src++;
+				}
+
+				for (z = 0; z < run; z++) {
+					*(dst + y * dstPitch + x) = *(dst + y * dstPitch + x - 1);
+
+					y++;
+					if (y >= height) {
+						y = 0;
+						x++;
+					}
+				}
+			}
+		} else {
+			run = color >> 4;
+			if (run == 0) {
+				run = *src++;
+			}
+			
+			for (z = 0; z < run; z++) {
+				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf];
+
+				y++;
+				if (y >= height) {
+					y = 0;
+					x++;
+				}
+			}
 		}
 	}
 }
@@ -2551,9 +2560,9 @@ void Gdi::unkDecode11(byte *dst, int dstPitch, const byte *src, int height) cons
 	} while (--x);
 }
 
-
 #undef NEXT_ROW
 #undef READ_BIT_256
+
 
 #pragma mark -
 #pragma mark --- Transition effects ---
@@ -2974,15 +2983,6 @@ void ScummEngine::unkScreenEffect5(int a) {
 
 	// FIXME: not implemented
 	warning("stub unkScreenEffect(%d)", a);
-}
-
-void ScummEngine::setShake(int mode) {
-	if (_shakeEnabled != (mode != 0))
-		_fullRedraw = true;
-
-	_shakeEnabled = mode != 0;
-	_shakeFrame = 0;
-	_system->set_shake_pos(0);
 }
 
 } // End of namespace Scumm
