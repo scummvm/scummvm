@@ -22,6 +22,10 @@
 
 namespace Sword2 {
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 // these structures represent the broken up compact components
 // these here declared to the system must be the same as those declared to
 // LINC (or it wont work)
@@ -36,7 +40,7 @@ struct ObjectMouse {
 	int32 y2;
 	int32 priority;
 	int32 pointer;			// type (or resource id?) of pointer used over this area
-};
+} GCC_PACK;
 
 // logic structure - contains fields used in logic script processing
 
@@ -44,7 +48,7 @@ struct ObjectLogic {
 	int32 looping;			// 0 when first calling fn<function>;
 					// 1 when calling subsequent times in same loop
 	int32 pause;			// pause count, used by fnPause()
-};
+} GCC_PACK;
 
 // status bits for 'type' field of ObjectGraphic)
 
@@ -70,7 +74,7 @@ struct ObjectGraphic {
 	int32 type;			// see above
 	int32 anim_resource;		// resource id of animation file
 	int32 anim_pc;			// current frame number of animation
-};
+} GCC_PACK;
 
 // speech structure - contains fields used by speech scripts & text output
 
@@ -84,7 +88,7 @@ struct ObjectSpeech {
 	int32 ins4;
 	int32 ins5;
 	int32 wait_state;		// 0 not waiting, 1 waiting for next speech command
-};
+} GCC_PACK;
 
 // mega structure - contains fields used for mega-character & mega-set
 // processing
@@ -104,7 +108,7 @@ struct ObjectMega {
 	int32 NOT_USED_5;		// means were currently avoiding a collision (see fnWalk)
 	int32 megaset_res;		// resource id of mega-set file
 	int32 NOT_USED_6;		// NOT USED
-};
+} GCC_PACK;
 
 // walk-data structure - contains details of layout of frames in the
 // mega-set, and how they are to be used
@@ -119,7 +123,11 @@ struct ObjectWalkdata {
 	int32 leadingLeg[8];		// leading leg for walk	in each direction  (0 = left  1 = right)
 	int32 dx[8 * (12 + 1)];		// walk step distances in x direction
 	int32 dy[8 * (12 + 1)];		// walk step distances in y direction
-};
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 } // End of namespace Sword2
 
