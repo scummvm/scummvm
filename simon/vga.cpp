@@ -1837,7 +1837,7 @@ void SimonState::vc_70_queue_music() {
 	// track and, if not, whether to switch to
 	// a different track upon completion.
 	midi.setLoop (loop != 0);
-	if (track != -1 && track != 999)
+	if (track != 0xFFFF && track != 999)
 		midi.queueTrack (track, 0);
 }
 
