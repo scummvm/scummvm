@@ -372,7 +372,7 @@ int Scumm_v2::getVar() {
 	return readVar(fetchScriptByte());
 }
 
-int static actor_speech_color[] = {1, 7, 2, 14, 8, 1, 3, 7, 7, 12, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 7, 7, 0};
+int actor_speech_color[] = {1, 7, 2, 14, 8, 1, 3, 7, 7, 12, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 7, 7, 0};
 
 void Scumm_v2::decodeParseString() {
 	byte buffer[512];
@@ -709,7 +709,10 @@ void Scumm_v2::o2_actorSet() {
 			break;
 
 		case 5:		// Talk Color
-			a->talkColor = arg;
+			if ((_gameId == GID_MANIAC) && (_version == 1))
+				actor_speech_color[act] = arg;
+			else
+				a->talkColor = arg;
 			break;
 		default:
 			warning("o2_actorSet: opcode %d not yet supported", _opcode);
