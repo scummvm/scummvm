@@ -36,19 +36,6 @@
 
 namespace Queen {
 
-/*
-   TODO later
-
-   - Finish Cutaway::stop
-
-   - Show credits
-
-   - Play voices
-
-   - Play songs 
-
- */
-
 void Cutaway::run(
 		const char *filename, 
 		char *nextFilename,

@@ -38,13 +38,6 @@
 
 namespace Queen {
 
-/*
-	 Functions needed:
-
-	 Data needed:
-
- */
-
 void Talk::talk(
 		const char *filename, 
 		int personInRoom,
