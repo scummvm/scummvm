@@ -1226,7 +1226,7 @@ void SimonEngine::playSting(uint a) {
 	if (!midi._enable_sfx)
 		return;
 
-	char filename[11];
+	char filename[15];
 
 	File mus_file;
 	uint16 mus_offset;
