@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/17 12:37:50  strigeus
+ * fixed big endian bug
+ *
  * Revision 1.4  2001/10/16 12:20:18  strigeus
  * made files compile on unix
  *
@@ -152,8 +155,8 @@ void Scumm::getObjectXYPos(int object) {
 	}
 
 	imhd = (ImageHeader*)findResource2(MKID('IMHD'), ptr);
-	x = od->x_pos*8 + imhd->hotspot[state].x;
-	y = od->y_pos*8 + imhd->hotspot[state].y;
+	x = od->x_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
+	y = od->y_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
 
 	abr = adjustXYToBeInBox(0, x, y);
 	_xPos = abr.x;
