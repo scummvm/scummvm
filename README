@@ -707,9 +707,10 @@ Some games (such as Sam and Max) only contain MIDI music data.  This once
 prevented music for these games from working on platforms that do not support
 MIDI, or soundcards that do not provide MIDI drivers (e.g, many soundcards will
 not play MIDI under Linux). ScummVM can now emulate MIDI mode using sampled
-waves and Adlib or MT-32 emulation using the -eadlib or -emt32 options respectively.  
-However, if you are capable of using native MIDI, we recommend using one of the MIDI
-modes below for best sound.
+waves and Adlib or MT-32 emulation using the -eadlib or -emt32 options
+respectively.  However, if you are capable of using native MIDI, we recommend
+using one of the MIDI modes below for best sound.
+
 
 7.4) Playing sound with Native MIDI:
 ---- -------------------------------
@@ -886,7 +887,8 @@ to MP3 as well as Ogg Vorbis.
 Easiest way to encode the files is simply copying the executable into your
 BS1 directory (together with the lame encoder) and run it from there.
 This way, it'll automatically encode everything to MP3.
-Afterwards, you can manually remove the SPEECH?.CLU files and the wave music files.
+Afterwards, you can manually remove the SPEECH?.CLU files and the wave music
+files.
 
 Running "sword1mp3 --vorbis" will compress the files using Ogg Vorbis instead
 of MP3.
@@ -1102,12 +1104,14 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
     Microsoft Visual C++ 6.0:
         * Open the workspace, scummwm.dsw
-        * Enter the path to the needed libraries and includes in Tools|Options|Directories
+        * Enter the path to the needed libraries and includes in
+	  Tools|Options|Directories
         * Now it should compile successfully.
 
     Microsoft Visual C++ 7.0:
         * Open the solution file scummwm.sln
-        * Enter the path to the needed libraries and includes in Tools|Options|Projects|VC++ Directories
+        * Enter the path to the needed libraries and includes in
+	  Tools|Options|Projects|VC++ Directories
         * Now it should compile successfully.
 
     PocketPC - Windows CE:
