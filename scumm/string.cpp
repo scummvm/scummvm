@@ -379,8 +379,10 @@ void Scumm::drawDescString(byte *msg) {
 	} while (c);
 	_haveMsg = 1;
 
-	gdi._mask_left = _charset->_strLeft;
-	gdi._mask_right = _charset->_strRight;
+	// hack: more 8 pixels at width redraw before and after text
+	// for proper description redraw while scrolling room
+	gdi._mask_left = _charset->_strLeft - 8;
+	gdi._mask_right = _charset->_strRight + 8;
 	gdi._mask_top = _charset->_strTop;
 	gdi._mask_bottom = _charset->_strBottom;
 }
