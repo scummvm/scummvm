@@ -1626,7 +1626,7 @@ void Scumm::o6_setObjectName()
 	if (obj < NUM_ACTORS)
 		error("Can't set actor %d name with new-name-of", obj);
 
-	if (!getOBCDFromObject(obj))
+	if (!(_features & GF_AFTER_V7) && !getOBCDFromObject(obj))
 		error("Can't set name of object %d", obj);
 
 	for (i = 1; i < 50; i++) {

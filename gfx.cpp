@@ -182,10 +182,8 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 	for (i = 0; i < 40; i++) {
 		bottom = vs->bdirty[i];
 
-		if (_vm->camera._cur.y != _vm->camera._last.y)
-
+		if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y))
 			drawStripToScreen(vs, start, w, 0, vs->height);
-
 		else
 		if (bottom) {
 			top = vs->tdirty[i];
@@ -196,9 +194,10 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 				w += 8;
 				continue;
 			}
-		//	drawStripToScreen(vs, start, w, top, bottom);
-
-			drawStripToScreen(vs, start, w, 0, vs->height);
+			if(_vm->_features & GF_AFTER_V7)
+				drawStripToScreen(vs, start, w, 0, vs->height);
+			else
+				drawStripToScreen(vs, start, w, top, bottom);
 			w = 8;
 		}
 		start = i + 1;

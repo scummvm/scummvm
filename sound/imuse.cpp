@@ -771,9 +771,9 @@ byte *IMuse::findTag(int sound, char *tag, int index)
 		ptr = _base_sounds[sound];
 
 	if (ptr == NULL) {
-		debug(1, "IMuse::findTag completely failed finding sound %d",
-					sound);
-		return 0;
+	//	debug(1, "IMuse::findTag completely failed finding sound %d",
+	//				sound);
+		return NULL;
 	}
 
 	ptr += 8;
