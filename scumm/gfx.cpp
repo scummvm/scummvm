@@ -3319,6 +3319,57 @@ const byte *Scumm::getPalettePtr() {
 	return cptr;
 }
 
+void Scumm::updatePalette() {
+	if (_palDirtyMax == -1)
+		return;
+
+	bool noir_mode = (_gameId == GID_SAMNMAX && readVar(0x8000));
+	int first = _palDirtyMin;
+	int num = _palDirtyMax - first + 1;
+	int i;
+
+	byte palette_colors[1024];
+	byte *p = palette_colors;
+
+	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
+		byte *data;
+
+		if (_features & GF_SMALL_HEADER)
+			data = _currentPalette + _shadowPalette[i] * 3;
+		else
+			data = _currentPalette + i * 3;
+
+		// Sam & Max film noir mode. Convert the colours to grayscale
+		// before uploading them to the backend.
+
+		if (noir_mode) {
+			int r, g, b;
+			byte brightness;
+
+			r = data[0];
+			g = data[1];
+			b = data[2];
+
+			brightness = (byte)((0.299 * r + 0.587 * g + 0.114 * b) + 0.5);
+
+			*p++ = brightness;
+			*p++ = brightness;
+			*p++ = brightness;
+			*p++ = 0;
+		} else {
+			*p++ = data[0];
+			*p++ = data[1];
+			*p++ = data[2];
+			*p++ = 0;
+		}
+	}
+	
+	_system->set_palette(palette_colors, first, num);
+
+	_palDirtyMax = -1;
+	_palDirtyMin = 256;
+}
+
 #pragma mark -
 #pragma mark --- Cursor ---
 #pragma mark -

@@ -28,6 +28,18 @@
 #include "verbs.h"
 #include "scumm/sound.h"
 
+void Scumm::setStringVars(int slot) {
+	StringTab *st = &_string[slot];
+	st->xpos = st->t_xpos;
+	st->ypos = st->t_ypos;
+	st->center = st->t_center;
+	st->overhead = st->t_overhead;
+	st->no_talk_anim = st->t_no_talk_anim;
+	st->right = st->t_right;
+	st->color = st->t_color;
+	st->charset = st->t_charset;
+}
+
 void Scumm::unkMessage1() {
 	byte buffer[100];
 	_msgPtrToAdd = buffer;

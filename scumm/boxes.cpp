@@ -216,6 +216,50 @@ int Scumm::getBoxScale(int box) {
 		return READ_LE_UINT16(&ptr->old.scale);
 }
 
+/*
+ FIXME: It seems that scale items and scale slots are the same thing after
+ all - they only differ in some details (scale item is used to precompute
+ a scale table, while for the scale slots the computations are done on the
+ fly; also for scale slots, the scale along the x axis can vary, too).
+ 
+ Now, there are various known scale glitches in FT (and apparently also
+ in The Dig, see FIXME comments in Actor::setupActorScale). In this context
+ it is very interesting that for V5, there is an opcode which invokes
+ setScaleItem, and for V8 one that invokes setScaleSlot. But there is no
+ such opcode to be found for V6/V7 games.
+ 
+ Hypothesis: we simple are missing this opcode, and implementing it might
+ fix some or all of the Dig/FT scaling issues.
+*/
+void Scumm::setScaleItem(int slot, int y1, int scale1, int y2, int scale2) {
+	byte *ptr;
+	int y, tmp;
+
+	if (y1 == y2)
+		return;
+
+	ptr = createResource(rtScaleTable, slot, 200);
+
+	for (y = 0; y < 200; y++) {
+		tmp = ((scale2 - scale1) * (y - y1)) / (y2 - y1) + scale1;
+		if (tmp < 1)
+			tmp = 1;
+		if (tmp > 255)
+			tmp = 255;
+		*ptr++ = tmp;
+	}
+}
+
+void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
+	assert(1 <= slot && slot <= 20);
+	_scaleSlots[slot-1].x2 = x2;
+	_scaleSlots[slot-1].y2 = y2;
+	_scaleSlots[slot-1].scale2 = scale2;
+	_scaleSlots[slot-1].x1 = x1;
+	_scaleSlots[slot-1].y1 = y1;
+	_scaleSlots[slot-1].scale1 = scale1;
+}
+
 byte Scumm::getNumBoxes() {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)

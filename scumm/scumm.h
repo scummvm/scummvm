@@ -366,7 +366,6 @@ public:
 	void clearClickedStatus();
 
 	// Misc utility functions
-	void checkRange(int max, int min, int no, const char *str) const;
 	const char *getExeName() const { return _exe_name; }
 	const char *getGameDataPath() const;
 
@@ -384,7 +383,6 @@ public:
 	void pauseGame();
 	void restart();
 	void shutDown();
-	void setOptions(void);
 
 	/** We keep running until this is set to true. */
 	bool _quit;
@@ -1251,6 +1249,8 @@ int oldDirToNewDir(int dir);
 int normalizeAngle(int angle);
 int fromSimpleDir(int dirtype, int dir);
 int toSimpleDir(int dirtype, int dir);
+
+void checkRange(int max, int min, int no, const char *str);
 
 
 #endif

@@ -60,21 +60,6 @@ extern void drawError(char*);
 Scumm *g_scumm = 0;
 ScummDebugger *g_debugger;
 
-byte *Scumm::get2byteCharPtr(int idx) {
-	/*
-		switch(language)
-		case korean:
-			return ( (idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
-		case japanese:
-			...
-		case taiwan:
-			...
-	*/
-	idx = ( (idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1; // only for korean
-	return 	_2byteFontPtr + 2 * _2byteHeight * idx;
-}
-
-
 extern NewGui *g_gui;
 extern uint16 _debugLevel;
 
@@ -753,6 +738,98 @@ Scumm::~Scumm () {
 	delete g_debugger;
 }
 
+void Scumm::go() {
+	launch();
+	mainRun();
+}
+
+#pragma mark -
+#pragma mark --- Initialization ---
+#pragma mark -
+
+void Scumm::launch() {
+	gdi._vm = this;
+
+#ifdef __PALM_OS__
+	// PALMOS : check if this value is correct with palm,
+	// old value 450000 doesn't work anymore (return _fntPtr = NULL in zak256, not tested with others)
+	// 2500000 is too big and make ScummVM crashes : MemMove to NULL or immediate exit if try to allocate
+	// memory with new operator
+	_maxHeapThreshold = 550000;
+#else
+	// Since the new costumes are very big, we increase the heap limit, to avoid having
+	// to constantly reload stuff from the data files.
+	if (_features & GF_NEW_COSTUMES)
+		_maxHeapThreshold = 2500000;
+	else
+		_maxHeapThreshold = 550000;
+#endif
+	_minHeapThreshold = 400000;
+
+	_verbRedraw = false;
+
+	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
+	initVirtScreen(0, 0, 0, _screenWidth, _screenHeight, false, false);
+
+	setupScummVars();
+
+	setupOpcodes();
+
+	if (_version == 8)
+		_numActors = 80;
+	else if ((_version == 7) || (_gameId == GID_SAMNMAX))
+		_numActors = 30;
+	else if (_gameId == GID_MANIAC)
+		_numActors = 25;
+	else 
+		_numActors = 13;
+
+	if (_version >= 7)
+		OF_OWNER_ROOM = 0xFF;
+	else
+		OF_OWNER_ROOM = 0x0F;
+
+	// if (_gameId==GID_MONKEY2 && _bootParam == 0)
+	//	_bootParam = 10001;
+
+	if (_gameId == GID_INDY4 && _bootParam == 0) {
+		_bootParam = -7873;
+	}
+
+	if (_features & GF_OLD_BUNDLE)
+		_resourceHeaderSize = 4; // FIXME - to be rechecked
+	else if (_features & GF_SMALL_HEADER)
+		_resourceHeaderSize = 6;
+	else
+		_resourceHeaderSize = 8;
+
+	readIndexFile();
+
+	scummInit();
+
+	if (_version > 2) {
+		if (_version < 7)
+			VAR(VAR_VERSION) = 21;
+	
+		if (_gameId != GID_LOOM && _gameId != GID_INDY3) {
+			// This is the for the Mac version of Indy3/Loom. TODO: add code to properly
+			// distinguish the Mac version from the PC (and other) versions.
+			VAR(VAR_DEBUGMODE) = _debugMode;
+		}
+	}
+
+	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
+		_scummVars[74] = 1225;
+
+	_sound->setupSound();
+
+	// If requested, load a save game instead of running the boot script
+	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
+		runScript(1, 0, 0, &_bootParam);
+	}
+	_saveLoadFlag = 0;
+}
+
 void Scumm::setFeatures (uint32 newFeatures) {
 	bool newCostumes = (_features & GF_NEW_COSTUMES) != 0;
 	bool newNewCostumes = (newFeatures & GF_NEW_COSTUMES) != 0;
@@ -998,16 +1075,51 @@ void Scumm::initScummVars() {
 	VAR(VAR_TALK_ACTOR) = 0;
 }
 
-void Scumm::checkRange(int max, int min, int no, const char *str) const {
-	if (no < min || no > max) {
-#ifdef __PALM_OS__
-		char buf[256]; // 1024 is too big overflow the stack
-#else
-		char buf[1024];
-#endif
-		sprintf(buf, str, no);
-		error("Value %d is out of bounds (%d,%d) in script %d (%s)", no, min,
-					max, vm.slot[_curExecScript].number, buf);
+#pragma mark -
+#pragma mark --- Main loop ---
+#pragma mark -
+
+void Scumm::mainRun() {
+	int delta = 0;
+	int diff = _system->get_msecs();
+
+	while (!_quit) {
+
+		updatePalette();
+		_system->update_screen();
+
+		diff -= _system->get_msecs();
+		waitForTimer(delta * 15 + diff);
+		diff = _system->get_msecs();
+		delta = scummLoop(delta);
+
+		if (delta < 1)	// Ensure we don't get into a loop
+			delta = 1;  // by not decreasing sleepers.
+
+		if (_quit) {
+			// TODO: Maybe perform an autosave on exit?
+			// TODO: Also, we could optionally show a "Do you really want to quit?" dialog here
+		}
+	}
+}
+
+void Scumm::waitForTimer(int msec_delay) {
+	uint32 start_time;
+
+	if (_fastMode & 2)
+		msec_delay = 0;
+	else if (_fastMode & 1)
+		msec_delay = 10;
+
+	start_time = _system->get_msecs();
+
+	while (!_quit) {
+		parseEvents();
+
+		_sound->updateCD(); // Loop CD Audio if needed
+		if (_system->get_msecs() >= start_time + msec_delay)
+			break;
+		_system->delay_msecs(10);
 	}
 }
 
@@ -1270,7 +1382,315 @@ load_game:
 
 }
 
-void Scumm::startScene(int room, Actor * a, int objectNr) {
+#pragma mark -
+#pragma mark --- Events / Input ---
+#pragma mark -
+
+void Scumm::parseEvents() {
+	OSystem::Event event;
+
+	while (_system->poll_event(&event)) {
+
+		switch(event.event_code) {
+		case OSystem::EVENT_KEYDOWN:
+			if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
+				&& (event.kbd.flags == OSystem::KBD_ALT ||
+					event.kbd.flags == OSystem::KBD_CTRL)) {
+				_saveLoadSlot = event.kbd.keycode - '0';
+
+				//  don't overwrite autosave (slot 0)
+				if (_saveLoadSlot == 0)
+					_saveLoadSlot = 10;
+
+				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+				_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
+				_saveLoadCompatible = false;
+			} else if (event.kbd.flags==OSystem::KBD_CTRL) {
+				if (event.kbd.keycode == 'f')
+					_fastMode ^= 1;
+				else if (event.kbd.keycode == 'g')
+					_fastMode ^= 2;
+				else if (event.kbd.keycode == 'd')
+					g_debugger->attach(this, NULL);
+				else if (event.kbd.keycode == 's')
+					resourceStats();
+				else
+					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
+			} else if (event.kbd.flags & OSystem::KBD_ALT) {
+				// The result must be 273 for Alt-W
+				// because that's what MI2 looks for in
+				// its "instant win" cheat.
+				_keyPressed = event.kbd.keycode + 154;
+			} else
+				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
+			break;
+
+		case OSystem::EVENT_MOUSEMOVE:
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
+			_system->set_mouse_pos(event.mouse.x, event.mouse.y);
+			_system->update_screen();
+			break;
+
+		case OSystem::EVENT_LBUTTONDOWN:
+			_leftBtnPressed |= msClicked|msDown;
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
+#endif
+			break;
+
+		case OSystem::EVENT_RBUTTONDOWN:
+			_rightBtnPressed |= msClicked|msDown;
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
+#endif
+			break;
+
+		case OSystem::EVENT_LBUTTONUP:
+			_leftBtnPressed &= ~msDown;
+			break;
+
+		case OSystem::EVENT_RBUTTONUP:
+			_rightBtnPressed &= ~msDown;
+			break;
+	
+		case OSystem::EVENT_QUIT:
+			_quit = true;
+			break;
+	
+		default:
+			break;
+		}
+	}
+}
+
+void Scumm::clearClickedStatus() {
+	checkKeyHit();
+	_mouseButStat = 0;
+	_leftBtnPressed &= ~msClicked;
+	_rightBtnPressed &= ~msClicked;
+}
+
+int Scumm::checkKeyHit() {
+	int a = _keyPressed;
+	_keyPressed = 0;
+	if (_version <= 2 && 315 <= a && a < 315+12) {
+		// Convert F-Keys
+		a -= 314;
+	}
+	return a;
+}
+
+void Scumm::processKbd() {
+	int saveloadkey;
+	getKeyInput();
+
+	if (_version <= 2)
+		saveloadkey = 5;	// F5
+	else if ((_features & GF_OLD256) || (_gameId == GID_CMI) || (_features & GF_16COLOR)) /* FIXME: Support ingame screen ? */
+		saveloadkey = 319;	// F5
+	else
+		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
+
+	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
+
+	if (_features & GF_NEW_CAMERA)
+		_virtualMouse.y = _mouse.y + camera._cur.y - (_screenHeight / 2);
+	else
+		_virtualMouse.y = _mouse.y;
+
+	_virtualMouse.y -= virtscr[0].topline;
+
+	if (_virtualMouse.y < 0)
+		_virtualMouse.y = -1;
+
+	if (_virtualMouse.y >= virtscr[0].height)
+		_virtualMouse.y = -1;
+
+	if (!_lastKeyHit)
+		return;
+
+	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
+		runScript(_keyScriptNo, 0, 0, 0);
+		return;
+	}
+
+#ifdef _WIN32_WCE
+	if (_lastKeyHit == KEY_SET_OPTIONS) {
+		//_newgui->optionsDialog();
+		return;
+	}
+
+	if (_lastKeyHit == KEY_ALL_SKIP) {
+		// Skip cutscene
+		if (_insaneState) {
+			_videoFinished = true;
+			return;
+		}
+		else
+		if (vm.cutScenePtr[vm.cutSceneStackPointer])
+			_lastKeyHit = (uint16)VAR(VAR_CUTSCENEEXIT_KEY);
+		else 
+		// Skip talk 
+		if (_talkDelay > 0) 
+			_lastKeyHit = (uint16)VAR(VAR_TALKSTOP_KEY);
+		else
+		// Escape
+			_lastKeyHit = 27;
+	}
+#endif
+
+	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
+		warning("Restart not implemented");
+		//restart();
+		return;
+	}
+
+	if ((VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) ||
+		(VAR_PAUSE_KEY == 0xFF && _lastKeyHit == ' ')) {
+		pauseGame();
+		return;
+	}
+
+	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY) ||
+		(VAR(VAR_CUTSCENEEXIT_KEY) == 4 && _lastKeyHit == 27)) {
+		if (_insaneState) {
+			_videoFinished = true;
+		} else
+			abortCutscene();
+	} else if (_lastKeyHit == saveloadkey && _currentRoom != 0) {
+		if (VAR_SAVELOAD_SCRIPT != 0xFF)
+			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
+
+		saveloadDialog();		// Display NewGui
+
+		if (VAR_SAVELOAD_SCRIPT2 != 0xFF)
+			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
+		return;
+	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
+		_talkDelay = 0;
+		if (_sound->_sfxMode & 2)
+			stopTalk();
+		return;
+	} else if (_lastKeyHit == '[') { // [ Music volume down
+		int vol = _sound->_sound_volume_music;
+		if (!(vol & 0xF) && vol)
+			vol -= 16;
+		vol = vol & 0xF0;
+		_sound->_sound_volume_music = vol;
+		if (_imuse)
+			_imuse->set_music_volume (vol);
+	} else if (_lastKeyHit == ']') { // ] Music volume up
+		int vol = _sound->_sound_volume_music;
+		vol = (vol + 16) & 0xFF0;
+		if (vol > 255) vol = 255;
+		_sound->_sound_volume_music = vol;
+		if (_imuse)
+			_imuse->set_music_volume (vol);
+	} else if (_lastKeyHit == '-') { // - text speed down
+		_defaultTalkDelay += 5;
+		if (_defaultTalkDelay > 90)
+			_defaultTalkDelay = 90;
+
+		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
+	} else if (_lastKeyHit == '+') { // + text speed up
+		_defaultTalkDelay -= 5;
+		if (_defaultTalkDelay < 5)
+			_defaultTalkDelay = 5;
+
+		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
+	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
+		g_debugger->attach(this, NULL);
+	} else if (_version <= 2) {
+		// Store the input type. So far we can't distinguish
+		// between 1, 3 and 5.
+		// 1) Verb	2) Scene	3) Inv.		4) Key
+		// 5) Sentence Bar
+
+		if (_lastKeyHit) {		// Key Input
+			VAR(VAR_KEYPRESS) = _lastKeyHit;
+		}
+	}
+
+	_mouseButStat = _lastKeyHit;
+}
+
+int Scumm::getKeyInput() {
+	_mouseButStat = 0;
+
+	_lastKeyHit = checkKeyHit();
+	convertKeysToClicks();
+
+	if (_mouse.x < 0)
+		_mouse.x = 0;
+	if (_mouse.x > _screenWidth-1)
+		_mouse.x = _screenWidth-1;
+	if (_mouse.y < 0)
+		_mouse.y = 0;
+	if (_mouse.y > _screenHeight-1)
+		_mouse.y = _screenHeight-1;
+
+	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
+		_mouseButStat = 0;
+		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
+	} else if (_leftBtnPressed & msClicked) {
+		_mouseButStat = MBS_LEFT_CLICK;
+	} else if (_rightBtnPressed & msClicked) {
+		_mouseButStat = MBS_RIGHT_CLICK;
+	}
+
+	if (_version == 8) {
+		VAR(VAR_MOUSE_BUTTONS) = 0;
+		VAR(VAR_MOUSE_HOLD) = 0;
+		VAR(VAR_RIGHTBTN_HOLD) = 0;
+
+		if (_leftBtnPressed & msClicked)
+			VAR(VAR_MOUSE_BUTTONS) += 1;
+
+		if (_rightBtnPressed & msClicked)
+			VAR(VAR_MOUSE_BUTTONS) += 2;
+
+		if (_leftBtnPressed & msDown)
+			VAR(VAR_MOUSE_HOLD) += 1;
+
+		if (_rightBtnPressed & msDown) {
+			VAR(VAR_RIGHTBTN_HOLD) = 1;
+			VAR(VAR_MOUSE_HOLD) += 2;
+		}
+	} else if (_version == 7) {
+		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
+		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
+	}
+
+	_leftBtnPressed &= ~msClicked;
+	_rightBtnPressed &= ~msClicked;
+
+	return _lastKeyHit;
+}
+
+void Scumm::convertKeysToClicks() {
+	if (_lastKeyHit && _cursor.state > 0) {
+		if (_lastKeyHit == 9) {
+			_mouseButStat = MBS_RIGHT_CLICK;
+		} else if (_lastKeyHit == 13) {
+			_mouseButStat = MBS_LEFT_CLICK;
+		} else
+			return;
+		_lastKeyHit = 0;
+	}
+}
+
+#pragma mark -
+#pragma mark --- SCUMM ---
+#pragma mark -
+
+/**
+ * Start a 'scene' by loading the specified room with the given main actor.
+ * The actor is placed next to the object indicated by objectNr.
+ */
+void Scumm::startScene(int room, Actor *a, int objectNr) {
 	int i, where;
 
 	CHECK_HEAP;
@@ -1427,7 +1847,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 			// The DIG; and nothing like this is done there. Also I am pretty
 			// sure this used to work in 0.3.1. So apparently something broke
 			// down here, and I have no clue what that might be :-/
-			a-> adjustActorPos();
+			a->adjustActorPos();
 		}
 		if (camera._follows) {
 			a = derefActor(camera._follows, "startScene: follows");
@@ -1783,104 +2203,53 @@ void Scumm::initRoomSubBlocks() {
 	initBGBuffers(_roomHeight);
 }
 
-/*
- FIXME: It seems that scale items and scale slots are the same thing after
- all - they only differ in some details (scale item is used to precompute
- a scale table, while for the scale slots the computations are done on the
- fly; also for scale slots, the scale along the x axis can vary, too).
- 
- Now, there are various known scale glitches in FT (and apparently also
- in The Dig, see FIXME comments in Actor::setupActorScale). In this context
- it is very interesting that for V5, there is an opcode which invokes
- setScaleItem, and for V8 one that invokes setScaleSlot. But there is no
- such opcode to be found for V6/V7 games.
- 
- Hypothesis: we simple are missing this opcode, and implementing it might
- fix some or all of the Dig/FT scaling issues.
-*/
-void Scumm::setScaleItem(int slot, int y1, int scale1, int y2, int scale2) {
-	byte *ptr;
-	int y, tmp;
-
-	if (y1 == y2)
-		return;
-
-	ptr = createResource(rtScaleTable, slot, 200);
-
-	for (y = 0; y < 200; y++) {
-		tmp = ((scale2 - scale1) * (y - y1)) / (y2 - y1) + scale1;
-		if (tmp < 1)
-			tmp = 1;
-		if (tmp > 255)
-			tmp = 255;
-		*ptr++ = tmp;
-	}
-}
-
-void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
-	assert(1 <= slot && slot <= 20);
-	_scaleSlots[slot-1].x2 = x2;
-	_scaleSlots[slot-1].y2 = y2;
-	_scaleSlots[slot-1].scale2 = scale2;
-	_scaleSlots[slot-1].x1 = x1;
-	_scaleSlots[slot-1].y1 = y1;
-	_scaleSlots[slot-1].scale1 = scale1;
-}
-
-void Scumm::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
-	char buf[256];
-	File out;
-
-	uint32 size;
-	if (length >= 0)
-		size = length;
-	else if (_features & GF_OLD_BUNDLE)
-		size = READ_LE_UINT16(ptr);
-	else if (_features & GF_SMALL_HEADER)
-		size = READ_LE_UINT32(ptr);
-	else
-		size = READ_BE_UINT32(ptr + 4);
-
-#if defined(MACOS_CARBON)
-	sprintf(buf, ":dumps:%s%d.dmp", tag, idx);
-#else
-	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
-#endif
-
-	out.open(buf, "", 1);
-	if (out.isOpen() == false) {
-		out.open(buf, "", 2);
-		if (out.isOpen() == false)
-			return;
-		out.write(ptr, size);
-	}
-	out.close();
-}
-
-void Scumm::clearClickedStatus() {
-	checkKeyHit();
-	_mouseButStat = 0;
-	_leftBtnPressed &= ~msClicked;
-	_rightBtnPressed &= ~msClicked;
-}
-
-int Scumm::checkKeyHit() {
-	int a = _keyPressed;
-	_keyPressed = 0;
-	if (_version <= 2 && 315 <= a && a < 315+12) {
-		// Convert F-Keys
-		a -= 314;
-	}
-	return a;
-}
-
 void Scumm::pauseGame() {
 	pauseDialog();
 }
 
-void Scumm::setOptions() {
-	//_newgui->optionsDialog();
+void Scumm::shutDown() {
+	_quit = true;
 }
+
+void Scumm::restart() {
+// TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
+//	 this leaks memory like a sieve
+
+	int i;
+
+	// Reset some stuff
+	_currentRoom = 0;
+	_currentScript = 0xFF;
+	killAllScriptsExceptCurrent();
+	setShake(0);
+	_sound->stopAllSounds();
+
+        // Empty variables
+	for (i=0;i<255;i++)
+		_scummVars[i] = 0;
+
+	// Empty inventory
+	for (i=0;i<_numGlobalObjects;i++)
+		clearOwnerOf(i);
+
+	// Reinit things
+	allocateArrays();                   // Reallocate arrays
+	readIndexFile();                    // Reread index (reset objectstate etc)
+	createResource(rtTemp, 6, 500);     // Create temp buffer
+	initScummVars();                    // Reinit scumm variables
+	_sound->setupSound();               // Reinit sound engine
+
+	// Re-run bootscript
+	runScript(1, 0, 0, &_bootParam);
+}
+
+void Scumm::startManiac() {
+	warning("stub startManiac()");
+}
+
+#pragma mark -
+#pragma mark --- GUI ---
+#pragma mark -
 
 int Scumm::runDialog(Dialog *dialog) {
 	// Pause sound put
@@ -1944,336 +2313,24 @@ char Scumm::displayError(bool showCancel, const char *message, ...) {
 	return result;
 }
 
-void Scumm::shutDown() {
-	_quit = true;
+#pragma mark -
+#pragma mark --- Miscellaneous ---
+#pragma mark -
+
+byte *Scumm::get2byteCharPtr(int idx) {
+	/*
+		switch(language)
+		case korean:
+			return ( (idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
+		case japanese:
+			...
+		case taiwan:
+			...
+	*/
+	idx = ( (idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1; // only for korean
+	return 	_2byteFontPtr + 2 * _2byteHeight * idx;
 }
 
-void Scumm::restart() {
-// TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
-//	 this leaks memory like a sieve
-
-	int i;
-
-	// Reset some stuff
-	_currentRoom = 0;
-	_currentScript = 0xFF;
-	killAllScriptsExceptCurrent();
-	setShake(0);
-	_sound->stopAllSounds();
-
-        // Empty variables
-	for (i=0;i<255;i++)
-		_scummVars[i] = 0;
-
-	// Empty inventory
-	for (i=0;i<_numGlobalObjects;i++)
-		clearOwnerOf(i);
-
-	// Reinit things
-	allocateArrays();                   // Reallocate arrays
-	readIndexFile();                    // Reread index (reset objectstate etc)
-	createResource(rtTemp, 6, 500);     // Create temp buffer
-	initScummVars();                    // Reinit scumm variables
-	_sound->setupSound();               // Reinit sound engine
-
-	// Re-run bootscript
-	runScript(1, 0, 0, &_bootParam);
-}
-
-void Scumm::processKbd() {
-	int saveloadkey;
-	getKeyInput();
-
-	if (_version <= 2)
-		saveloadkey = 5;	// F5
-	else if ((_features & GF_OLD256) || (_gameId == GID_CMI) || (_features & GF_16COLOR)) /* FIXME: Support ingame screen ? */
-		saveloadkey = 319;	// F5
-	else
-		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
-
-	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
-
-	if (_features & GF_NEW_CAMERA)
-		_virtualMouse.y = _mouse.y + camera._cur.y - (_screenHeight / 2);
-	else
-		_virtualMouse.y = _mouse.y;
-
-	_virtualMouse.y -= virtscr[0].topline;
-
-	if (_virtualMouse.y < 0)
-		_virtualMouse.y = -1;
-
-	if (_virtualMouse.y >= virtscr[0].height)
-		_virtualMouse.y = -1;
-
-	if (!_lastKeyHit)
-		return;
-
-	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
-		runScript(_keyScriptNo, 0, 0, 0);
-		return;
-	}
-
-	if (_lastKeyHit == KEY_SET_OPTIONS) {
-		setOptions();
-		return;
-	}
-
-	if (_lastKeyHit == KEY_ALL_SKIP) {
-		// Skip cutscene
-		if (_insaneState) {
-			_videoFinished = true;
-			return;
-		}
-		else
-		if (vm.cutScenePtr[vm.cutSceneStackPointer])
-			_lastKeyHit = (uint16)VAR(VAR_CUTSCENEEXIT_KEY);
-		else 
-		// Skip talk 
-		if (_talkDelay > 0) 
-			_lastKeyHit = (uint16)VAR(VAR_TALKSTOP_KEY);
-		else
-		// Escape
-			_lastKeyHit = 27;
-	}
-
-	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
-		warning("Restart not implemented");
-		//restart();
-		return;
-	}
-
-	if ((VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) ||
-		(VAR_PAUSE_KEY == 0xFF && _lastKeyHit == ' ')) {
-		pauseGame();
-		return;
-	}
-
-	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY) ||
-		(VAR(VAR_CUTSCENEEXIT_KEY) == 4 && _lastKeyHit == 27)) {
-		if (_insaneState) {
-			_videoFinished = true;
-		} else
-			abortCutscene();
-	} else if (_lastKeyHit == saveloadkey && _currentRoom != 0) {
-		if (VAR_SAVELOAD_SCRIPT != 0xFF)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
-
-		saveloadDialog();		// Display NewGui
-
-		if (VAR_SAVELOAD_SCRIPT2 != 0xFF)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
-		return;
-	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
-		_talkDelay = 0;
-		if (_sound->_sfxMode & 2)
-			stopTalk();
-		return;
-	} else if (_lastKeyHit == '[') { // [ Music volume down
-		int vol = _sound->_sound_volume_music;
-		if (!(vol & 0xF) && vol)
-			vol -= 16;
-		vol = vol & 0xF0;
-		_sound->_sound_volume_music = vol;
-		if (_imuse)
-			_imuse->set_music_volume (vol);
-	} else if (_lastKeyHit == ']') { // ] Music volume up
-		int vol = _sound->_sound_volume_music;
-		vol = (vol + 16) & 0xFF0;
-		if (vol > 255) vol = 255;
-		_sound->_sound_volume_music = vol;
-		if (_imuse)
-			_imuse->set_music_volume (vol);
-	} else if (_lastKeyHit == '-') { // - text speed down
-		_defaultTalkDelay += 5;
-		if (_defaultTalkDelay > 90)
-			_defaultTalkDelay = 90;
-
-		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
-	} else if (_lastKeyHit == '+') { // + text speed up
-		_defaultTalkDelay -= 5;
-		if (_defaultTalkDelay < 5)
-			_defaultTalkDelay = 5;
-
-		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
-	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
-		g_debugger->attach(this, NULL);
-	} else if (_version <= 2) {
-		// Store the input type. So far we can't distinguish
-		// between 1, 3 and 5.
-		// 1) Verb	2) Scene	3) Inv.		4) Key
-		// 5) Sentence Bar
-
-		if (_lastKeyHit) {		// Key Input
-			VAR(VAR_KEYPRESS) = _lastKeyHit;
-		}
-	}
-
-	_mouseButStat = _lastKeyHit;
-}
-
-int Scumm::getKeyInput() {
-	_mouseButStat = 0;
-
-	_lastKeyHit = checkKeyHit();
-	convertKeysToClicks();
-
-	if (_mouse.x < 0)
-		_mouse.x = 0;
-	if (_mouse.x > _screenWidth-1)
-		_mouse.x = _screenWidth-1;
-	if (_mouse.y < 0)
-		_mouse.y = 0;
-	if (_mouse.y > _screenHeight-1)
-		_mouse.y = _screenHeight-1;
-
-	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
-		_mouseButStat = 0;
-		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (_leftBtnPressed & msClicked) {
-		_mouseButStat = MBS_LEFT_CLICK;
-	} else if (_rightBtnPressed & msClicked) {
-		_mouseButStat = MBS_RIGHT_CLICK;
-	}
-
-	if (_version == 8) {
-		VAR(VAR_MOUSE_BUTTONS) = 0;
-		VAR(VAR_MOUSE_HOLD) = 0;
-		VAR(VAR_RIGHTBTN_HOLD) = 0;
-
-		if (_leftBtnPressed & msClicked)
-			VAR(VAR_MOUSE_BUTTONS) += 1;
-
-		if (_rightBtnPressed & msClicked)
-			VAR(VAR_MOUSE_BUTTONS) += 2;
-
-		if (_leftBtnPressed & msDown)
-			VAR(VAR_MOUSE_HOLD) += 1;
-
-		if (_rightBtnPressed & msDown) {
-			VAR(VAR_RIGHTBTN_HOLD) = 1;
-			VAR(VAR_MOUSE_HOLD) += 2;
-		}
-	} else if (_version == 7) {
-		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
-		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
-	}
-
-	_leftBtnPressed &= ~msClicked;
-	_rightBtnPressed &= ~msClicked;
-
-	return _lastKeyHit;
-}
-
-void Scumm::convertKeysToClicks() {
-	if (_lastKeyHit && _cursor.state > 0) {
-		if (_lastKeyHit == 9) {
-			_mouseButStat = MBS_RIGHT_CLICK;
-		} else if (_lastKeyHit == 13) {
-			_mouseButStat = MBS_LEFT_CLICK;
-		} else
-			return;
-		_lastKeyHit = 0;
-	}
-}
-
-Actor *Scumm::derefActor(int id, const char *errmsg) const {
-	if (id < 1 || id >= _numActors || _actors[id].number != id) {
-		if (errmsg)
-			error("Invalid actor %d in %s", id, errmsg);
-		else
-			error("Invalid actor %d", id);
-	}
-	return &_actors[id];
-}
-
-Actor *Scumm::derefActorSafe(int id, const char *errmsg) const {
-	if (id < 1 || id >= _numActors || _actors[id].number != id) {
-		debug(2, "Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
-			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
-		return NULL;
-	}
-	return &_actors[id];
-}
-
-void Scumm::setStringVars(int slot) {
-	StringTab *st = &_string[slot];
-	st->xpos = st->t_xpos;
-	st->ypos = st->t_ypos;
-	st->center = st->t_center;
-	st->overhead = st->t_overhead;
-	st->no_talk_anim = st->t_no_talk_anim;
-	st->right = st->t_right;
-	st->color = st->t_color;
-	st->charset = st->t_charset;
-}
-
-void Scumm::startManiac() {
-	warning("stub startManiac()");
-}
-
-//
-// Convert an old style direction to a new style one (angle),
-//
-int newDirToOldDir(int dir) {
-	if (dir >= 71 && dir <= 109)
-		return 1;
-	if (dir >= 109 && dir <= 251)
-		return 2;
-	if (dir >= 251 && dir <= 289)
-		return 0;
-	return 3;
-}
-
-//
-// Convert an new style (angle) direction to an old style one.
-//
-int oldDirToNewDir(int dir) {
-	assert(0 <= dir && dir <= 3);
-	const int new_dir_table[4] = { 270, 90, 180, 0 };
-	return new_dir_table[dir];
-}
-
-//
-// Convert an angle to a simple direction.
-//
-int toSimpleDir(int dirType, int dir) {
-	if (dirType) {
-		const int16 directions[] = { 22,  72, 107, 157, 202, 252, 287, 337 };
-		for (int i = 0; i < 7; i++)
-			if (dir >= directions[i] && dir <= directions[i+1])
-				return i+1;
-	} else {
-		const int16 directions[] = { 71, 109, 251, 289 };
-		for (int i = 0; i < 3; i++)
-			if (dir >= directions[i] && dir <= directions[i+1])
-				return i+1;
-	}
-
-	return 0;
-}
-
-//
-// Convert a simple direction to an angle
-//
-int fromSimpleDir(int dirType, int dir) {
-	if (dirType)
-		return dir * 45;
-	else
-		return dir * 90;
-}
-
-//
-// Normalize the given angle - that means, ensure it is positive, and
-// change it to the closest multiple of 45 degree by abusing toSimpleDir.
-//
-int normalizeAngle(int angle) {
-	int temp;
-
-	temp = (angle + 360) % 360;
-
-	return toSimpleDir(1, temp) * 45;
-}
 
 const char *Scumm::getGameDataPath() const {
 #ifdef MACOSX
@@ -2322,265 +2379,82 @@ void Scumm::errorString(const char *buf1, char *buf2) {
 	}
 }
 
-void Scumm::waitForTimer(int msec_delay) {
-	uint32 start_time;
+#pragma mark -
+#pragma mark --- Utilities ---
+#pragma mark -
 
-	if (_fastMode & 2)
-		msec_delay = 0;
-	else if (_fastMode & 1)
-		msec_delay = 10;
-
-	start_time = _system->get_msecs();
-
-	while (!_quit) {
-		parseEvents();
-
-		_sound->updateCD(); // Loop CD Audio if needed
-		if (_system->get_msecs() >= start_time + msec_delay)
-			break;
-		_system->delay_msecs(10);
-	}
-}
-
-void Scumm::parseEvents() {
-	OSystem::Event event;
-
-	while (_system->poll_event(&event)) {
-
-		switch(event.event_code) {
-		case OSystem::EVENT_KEYDOWN:
-			if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
-				&& (event.kbd.flags == OSystem::KBD_ALT ||
-					event.kbd.flags == OSystem::KBD_CTRL)) {
-				_saveLoadSlot = event.kbd.keycode - '0';
-
-				//  don't overwrite autosave (slot 0)
-				if (_saveLoadSlot == 0)
-					_saveLoadSlot = 10;
-
-				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-				_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
-				_saveLoadCompatible = false;
-			} else if (event.kbd.flags==OSystem::KBD_CTRL) {
-				if (event.kbd.keycode == 'f')
-					_fastMode ^= 1;
-				else if (event.kbd.keycode == 'g')
-					_fastMode ^= 2;
-				else if (event.kbd.keycode == 'd')
-					g_debugger->attach(this, NULL);
-				else if (event.kbd.keycode == 's')
-					resourceStats();
-				else
-					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-			} else if (event.kbd.flags & OSystem::KBD_ALT) {
-				// The result must be 273 for Alt-W
-				// because that's what MI2 looks for in
-				// its "instant win" cheat.
-				_keyPressed = event.kbd.keycode + 154;
-			} else
-				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-			break;
-
-		case OSystem::EVENT_MOUSEMOVE:
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
-			_system->set_mouse_pos(event.mouse.x, event.mouse.y);
-			_system->update_screen();
-			break;
-
-		case OSystem::EVENT_LBUTTONDOWN:
-			_leftBtnPressed |= msClicked|msDown;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
-#endif
-			break;
-
-		case OSystem::EVENT_RBUTTONDOWN:
-			_rightBtnPressed |= msClicked|msDown;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
-#endif
-			break;
-
-		case OSystem::EVENT_LBUTTONUP:
-			_leftBtnPressed &= ~msDown;
-			break;
-
-		case OSystem::EVENT_RBUTTONUP:
-			_rightBtnPressed &= ~msDown;
-			break;
-	
-		case OSystem::EVENT_QUIT:
-			_quit = true;
-			break;
-	
-		default:
-			break;
-		}
-	}
-}
-
-void Scumm::updatePalette() {
-	if (_palDirtyMax == -1)
-		return;
-
-	bool noir_mode = (_gameId == GID_SAMNMAX && readVar(0x8000));
-	int first = _palDirtyMin;
-	int num = _palDirtyMax - first + 1;
-	int i;
-
-	byte palette_colors[1024];
-	byte *p = palette_colors;
-
-	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
-		byte *data;
-
-		if (_features & GF_SMALL_HEADER)
-			data = _currentPalette + _shadowPalette[i] * 3;
-		else
-			data = _currentPalette + i * 3;
-
-		// Sam & Max film noir mode. Convert the colours to grayscale
-		// before uploading them to the backend.
-
-		if (noir_mode) {
-			int r, g, b;
-			byte brightness;
-
-			r = data[0];
-			g = data[1];
-			b = data[2];
-
-			brightness = (byte)((0.299 * r + 0.587 * g + 0.114 * b) + 0.5);
-
-			*p++ = brightness;
-			*p++ = brightness;
-			*p++ = brightness;
-			*p++ = 0;
-		} else {
-			*p++ = data[0];
-			*p++ = data[1];
-			*p++ = data[2];
-			*p++ = 0;
-		}
-	}
-	
-	_system->set_palette(palette_colors, first, num);
-
-	_palDirtyMax = -1;
-	_palDirtyMin = 256;
-}
-
-void Scumm::mainRun() {
-	int delta = 0;
-	int diff = _system->get_msecs();
-
-	while (!_quit) {
-
-		updatePalette();
-		_system->update_screen();
-
-		diff -= _system->get_msecs();
-		waitForTimer(delta * 15 + diff);
-		diff = _system->get_msecs();
-		delta = scummLoop(delta);
-
-		if (delta < 1)	// Ensure we don't get into a loop
-			delta = 1;  // by not decreasing sleepers.
-
-		if (_quit) {
-			// TODO: Maybe perform an autosave on exit?
-			// TODO: Also, we could optionally show a "Do you really want to quit?" dialog here
-		}
-	}
-}
-
-void Scumm::launch() {
-	gdi._vm = this;
-
+void checkRange(int max, int min, int no, const char *str) {
+	if (no < min || no > max) {
 #ifdef __PALM_OS__
-	// PALMOS : check if this value is correct with palm,
-	// old value 450000 doesn't work anymore (return _fntPtr = NULL in zak256, not tested with others)
-	// 2500000 is too big and make ScummVM crashes : MemMove to NULL or immediate exit if try to allocate
-	// memory with new operator
-	_maxHeapThreshold = 550000;
+		char buf[256]; // 1024 is too big overflow the stack
 #else
-	// Since the new costumes are very big, we increase the heap limit, to avoid having
-	// to constantly reload stuff from the data files.
-	if (_features & GF_NEW_COSTUMES)
-		_maxHeapThreshold = 2500000;
-	else
-		_maxHeapThreshold = 550000;
+		char buf[1024];
 #endif
-	_minHeapThreshold = 400000;
-
-	_verbRedraw = false;
-
-	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
-	initVirtScreen(0, 0, 0, _screenWidth, _screenHeight, false, false);
-
-	setupScummVars();
-
-	setupOpcodes();
-
-	if (_version == 8)
-		_numActors = 80;
-	else if ((_version == 7) || (_gameId == GID_SAMNMAX))
-		_numActors = 30;
-	else if (_gameId == GID_MANIAC)
-		_numActors = 25;
-	else 
-		_numActors = 13;
-
-	if (_version >= 7)
-		OF_OWNER_ROOM = 0xFF;
-	else
-		OF_OWNER_ROOM = 0x0F;
-
-	// if (_gameId==GID_MONKEY2 && _bootParam == 0)
-	//	_bootParam = 10001;
-
-	if (_gameId == GID_INDY4 && _bootParam == 0) {
-		_bootParam = -7873;
+		sprintf(buf, str, no);
+		error("Value %d is out of bounds (%d,%d) (%s)", no, min, max, buf);
 	}
-
-	if (_features & GF_OLD_BUNDLE)
-		_resourceHeaderSize = 4; // FIXME - to be rechecked
-	else if (_features & GF_SMALL_HEADER)
-		_resourceHeaderSize = 6;
-	else
-		_resourceHeaderSize = 8;
-
-	readIndexFile();
-
-	scummInit();
-
-	if (_version > 2) {
-		if (_version < 7)
-			VAR(VAR_VERSION) = 21;
-	
-		if (_gameId != GID_LOOM && _gameId != GID_INDY3) {
-			// This is the for the Mac version of Indy3/Loom. TODO: add code to properly
-			// distinguish the Mac version from the PC (and other) versions.
-			VAR(VAR_DEBUGMODE) = _debugMode;
-		}
-	}
-
-	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
-		_scummVars[74] = 1225;
-
-	_sound->setupSound();
-
-	// If requested, load a save game instead of running the boot script
-	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
-		runScript(1, 0, 0, &_bootParam);
-	}
-	_saveLoadFlag = 0;
 }
 
-void Scumm::go() {
-	launch();
-	mainRun();
+/**
+ * Convert an old style direction to a new style one (angle),
+ */
+int newDirToOldDir(int dir) {
+	if (dir >= 71 && dir <= 109)
+		return 1;
+	if (dir >= 109 && dir <= 251)
+		return 2;
+	if (dir >= 251 && dir <= 289)
+		return 0;
+	return 3;
 }
+
+/**
+ * Convert an new style (angle) direction to an old style one.
+ */
+int oldDirToNewDir(int dir) {
+	assert(0 <= dir && dir <= 3);
+	const int new_dir_table[4] = { 270, 90, 180, 0 };
+	return new_dir_table[dir];
+}
+
+/**
+ * Convert an angle to a simple direction.
+ */
+int toSimpleDir(int dirType, int dir) {
+	if (dirType) {
+		const int16 directions[] = { 22,  72, 107, 157, 202, 252, 287, 337 };
+		for (int i = 0; i < 7; i++)
+			if (dir >= directions[i] && dir <= directions[i+1])
+				return i+1;
+	} else {
+		const int16 directions[] = { 71, 109, 251, 289 };
+		for (int i = 0; i < 3; i++)
+			if (dir >= directions[i] && dir <= directions[i+1])
+				return i+1;
+	}
+
+	return 0;
+}
+
+/**
+ * Convert a simple direction to an angle.
+ */
+int fromSimpleDir(int dirType, int dir) {
+	if (dirType)
+		return dir * 45;
+	else
+		return dir * 90;
+}
+
+/**
+ * Normalize the given angle - that means, ensure it is positive, and
+ * change it to the closest multiple of 45 degree by abusing toSimpleDir.
+ */
+int normalizeAngle(int angle) {
+	int temp;
+
+	temp = (angle + 360) % 360;
+
+	return toSimpleDir(1, temp) * 45;
+}
+

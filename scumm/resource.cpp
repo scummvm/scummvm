@@ -1701,6 +1701,36 @@ bool Scumm::isGlobInMemory(int type, int idx) const{
 	return res.address[type][idx] != NULL;
 }
 
+void Scumm::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
+	char buf[256];
+	File out;
+
+	uint32 size;
+	if (length >= 0)
+		size = length;
+	else if (_features & GF_OLD_BUNDLE)
+		size = READ_LE_UINT16(ptr);
+	else if (_features & GF_SMALL_HEADER)
+		size = READ_LE_UINT32(ptr);
+	else
+		size = READ_BE_UINT32(ptr + 4);
+
+#if defined(MACOS_CARBON)
+	sprintf(buf, ":dumps:%s%d.dmp", tag, idx);
+#else
+	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
+#endif
+
+	out.open(buf, "", 1);
+	if (out.isOpen() == false) {
+		out.open(buf, "", 2);
+		if (out.isOpen() == false)
+			return;
+		out.write(ptr, size);
+	}
+	out.close();
+}
+
 ResourceIterator::ResourceIterator(const byte *searchin, bool smallHeader)
 	: _ptr(searchin), _smallHeader(smallHeader) {
 	assert(searchin);

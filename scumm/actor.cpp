@@ -812,6 +812,25 @@ void Scumm::playActorSounds() {
 	}
 }
 
+Actor *Scumm::derefActor(int id, const char *errmsg) const {
+	if (id < 1 || id >= _numActors || _actors[id].number != id) {
+		if (errmsg)
+			error("Invalid actor %d in %s", id, errmsg);
+		else
+			error("Invalid actor %d", id);
+	}
+	return &_actors[id];
+}
+
+Actor *Scumm::derefActorSafe(int id, const char *errmsg) const {
+	if (id < 1 || id >= _numActors || _actors[id].number != id) {
+		debug(2, "Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
+			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
+		return NULL;
+	}
+	return &_actors[id];
+}
+
 static int compareDrawOrder(const void* a, const void* b)
 {
 	const Actor* actor1 = *(const Actor *const*)a;
