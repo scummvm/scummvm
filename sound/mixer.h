@@ -107,8 +107,10 @@ public:
 	/** stop playing the channel for the given handle */
 	void stopHandle(PlayingSoundHandle handle);
 
+	/** changing the channel volume for the given handle (0 - 255) */
 	void setChannelVolume(PlayingSoundHandle handle, byte volume);
 
+	/** changing the channel pan for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
 	void setChannelPan(PlayingSoundHandle handle, int8 pan);
 
 	bool isChannelActive(PlayingSoundHandle handle);
