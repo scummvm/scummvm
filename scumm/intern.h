@@ -177,6 +177,8 @@ protected:
 class Scumm_v2 : public Scumm_v3 {
 protected:
 	void readIndexFile();
+	void readClassicIndexFile();	// V1
+	void readEnhancedIndexFile();	// V2
 	void loadCharset(int no);
 	void readMAXS();
 

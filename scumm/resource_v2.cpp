@@ -24,18 +24,11 @@
 #include "intern.h"
 #include "resource.h"
 
+void Scumm_v2::readClassicIndexFile() {
+	error("Classic non-blocked format not yet implemented");
+}
 
-void Scumm_v2::readIndexFile() {
-	int magic = 0;
-	debug(9, "readIndexFile()");
-
-	closeRoom();
-	openRoom(0);
-
-	magic = _fileHandle.readUint16LE();
-	if (magic != 0x0100)
-		warning("The magic id doesn't match (0x%X)", magic);
-
+void Scumm_v2::readEnhancedIndexFile() {
 	_numGlobalObjects = _fileHandle.readUint16LE();
 	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
 	_numRooms = _fileHandle.readByte();
@@ -68,6 +61,30 @@ void Scumm_v2::readIndexFile() {
 	readResTypeList(rtCostume, MKID('COST'), "costume");
 	readResTypeList(rtScript, MKID('SCRP'), "script");
 	readResTypeList(rtSound, MKID('SOUN'), "sound");
+}
+
+void Scumm_v2::readIndexFile() {
+	int magic = 0;
+	debug(9, "readIndexFile()");
+
+	closeRoom();
+	openRoom(0);
+
+	magic = _fileHandle.readUint16LE();
+
+	switch(magic) {
+		case 0x0100:
+			warning("Enhanced V2 game detected");
+			readEnhancedIndexFile();			
+			break;
+		case 0x0A31:
+			warning("Classic V1 game detected");
+			readClassicIndexFile();
+			break;
+		default:
+			error("Unknown magic id (0x%X) - this version is unsupported", magic);
+			break;
+	}
 
 	closeRoom();
 }
@@ -94,7 +111,6 @@ void Scumm_v2::readMAXS() {
 }
 
 void Scumm_v2::loadCharset(int num) {
-	warning("loadCharset(%d): Charset loading not yet implemented for V1/V2", num);
-	// TODO: For the old games, the charset is actually encoded in the engine. So we must
-	// rip it out of one of the .exes, and create a fake resource here.
+	// Stub, V2 font resources are hardcoded into the engine. Possibly do some
+	// kind of language detection here in the future for multiple fonts...
 }
