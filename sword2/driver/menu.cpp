@@ -130,12 +130,13 @@ static uint8 menuStatus[2] =
 {
 	RDMENU_HIDDEN, RDMENU_HIDDEN
 };
-
+/*
 static uint8 *icons[2][RDMENU_MAXPOCKETS] =
 {
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
+*/
 
 /*
 static LPDIRECTDRAWSURFACE lpIconSurface[2][RDMENU_MAXPOCKETS] = 
@@ -151,9 +152,9 @@ static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static uint8 menuCounter[2];
-static uint8 lastIcon[2];
-static uint8 iconCount = 0;
+//static uint8 menuCounter[2];
+//static uint8 lastIcon[2];
+//static uint8 iconCount = 0;
 
 
 
@@ -463,6 +464,7 @@ int32 ProcessMenu(void)
 		}
 	}
 */
+	return RD_OK;
 }
 
 
@@ -480,6 +482,8 @@ int32 ShowMenu(uint8 menu)
 
 	menuStatus[menu] = RDMENU_OPENING;
 
+	return RD_OK;
+
 }
 
 
@@ -496,6 +500,8 @@ int32 HideMenu(uint8 menu)
 		return(RDERR_INVALIDCOMMAND);
 
 	menuStatus[menu] = RDMENU_CLOSING;
+
+	return RD_OK;
 
 }
 
@@ -553,6 +559,7 @@ int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon)
 			return(hr);
 	}
 */
+	return RD_OK;
 }
 
 

@@ -380,6 +380,8 @@ int32 FadeUp(float time)
 	fadeStatus = RDFADE_UP;
 	fadeStartTime = timeGetTime();
 
+	return RD_OK;
+
 }
 
 
@@ -393,6 +395,8 @@ int32 FadeDown(float time)
 	fadeTotalTime = (int32) (time * 1000);
 	fadeStatus = RDFADE_DOWN;
 	fadeStartTime = timeGetTime();
+
+	return RD_OK;
 
 }
 

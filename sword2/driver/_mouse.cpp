@@ -161,13 +161,13 @@ int16				mousey;
 static	uint8		mouseBacklog = 0;
 static	uint8		mouseLogPos = 0;
 static	uint8		mouseFrame;
-static	uint8		luggageFrame = 0;
+//static	uint8		luggageFrame = 0;
 static	uint8		*mouseSprite = NULL;
 static	_mouseAnim	*mouseAnim = NULL;
-static	_mouseAnim	*luggageAnim = NULL;
+//static	_mouseAnim	*luggageAnim = NULL;
 static	_mouseEvent	mouseLog[MAX_MOUSE_EVENTS];
 static  int32		*mouseOffsets;
-static	int32		*luggageOffset;
+//static	int32		*luggageOffset;
 //static	LPDIRECTDRAWSURFACE	*mouseSurfaces;
 //static	LPDIRECTDRAWSURFACE luggageSurface = NULL;
 

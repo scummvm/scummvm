@@ -248,7 +248,7 @@ static	int16	scrollxTarget;
 static	int16	scrollyTarget;
 static	int16	scrollxOld;
 static	int16	scrollyOld;
-static	uint16	layer = 0;
+//static	uint16	layer = 0;
 
 
 

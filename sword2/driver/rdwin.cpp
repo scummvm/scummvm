@@ -43,13 +43,13 @@
 
 
 
-static BOOL		bMouseVisible = FALSE;
-static BOOL		controlKey = FALSE;
-static BOOL		altKey = FALSE;
-static BOOL		wasScreenSaverActive = FALSE;
-static BOOL		myAppClosed = FALSE;
+//static BOOL		bMouseVisible = FALSE;
+//static BOOL		controlKey = FALSE;
+//static BOOL		altKey = FALSE;
+//static BOOL		wasScreenSaverActive = FALSE;
+//static BOOL		myAppClosed = FALSE;
 static BOOL		controlQDisabled = FALSE;
-static uint8	gameName[80];
+//static uint8	gameName[80];
 
 
 //BOOL			gotTheFocus = FALSE;

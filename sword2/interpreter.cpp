@@ -323,7 +323,7 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 	int32 stack2[STACK_SIZE];						// The current stack
 	int32 stackPointer2 = 0;						// Position within stack
 	int parameterReturnedFromMcodeFunction=0;	// Allow scripts to return things
-	int savedStartOfMcode;						// For saving start of mcode commands
+	int savedStartOfMcode=0;			// For saving start of mcode commands
 
 	// Get the start of variables and start of code
 	DEBUG3("Enter interpreter data %x, object %x, offset %d",scriptData,objectData,*offset);
