@@ -142,8 +142,8 @@ void EditTextWidget::drawCaret(bool erase) {
 	for (int i = 0; i < _pos; i++)
 		width += gui->getCharWidth(_label[i]);
 
-	if (width > _w - 6)
-		width = _w - 6;
+	if (gui->getStringWidth(_label) - (_w - 6) > 0)
+		width -= gui->getStringWidth(_label) - (_w - 6);
 	x += width;
 
 	gui->vline(x, y, y + kLineHeight, color);
