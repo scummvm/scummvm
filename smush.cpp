@@ -28,6 +28,7 @@
 #include "engine.h"
 
 Smush *g_smush;
+extern SoundMixer *g_mixer;
 
 void Smush::timerCallback(void *refCon) {
 	g_smush->handleFrame();
@@ -45,6 +46,7 @@ Smush::Smush() {
 	_videoFinished = false;
 	_videoPause = true;
 	_updateNeeded = false;
+	_stream = NULL;
 	_movieTime = 0;
 	_surface = NULL;
 	_bufSurface = NULL;
@@ -59,17 +61,12 @@ Smush::~Smush() {
 }
 
 void Smush::init() {
+	_stream = NULL;
 	_frame = 0;
 	_movieTime = 0;
 	_videoFinished = false;
 	_videoPause = false;
-//HACK: If we don't set it here, it'll never get set at all..
-//	This is BAD - but until we find the source of the problem, this'll have to do.
-#if defined(OSX) || defined(UNIX)
-	_updateNeeded = true;
-#else
 	_updateNeeded = false;
-#endif
 	if (!_surface)
 		_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
 	if (!_bufSurface)
@@ -80,10 +77,14 @@ void Smush::init() {
 }
 
 void Smush::deinit() {
+	g_timer->removeTimerProc(&timerCallback);
 	_videoFinished = true;
 	_videoPause = true;
-	g_timer->removeTimerProc(&timerCallback);
-	_file.close();
+	if (_stream) {
+		_stream->finish();
+		_stream = NULL;
+	}
+ 	_file.close();
 }
 
 void Smush::handleBlocky16(byte *src) {
@@ -110,9 +111,12 @@ void Smush::handleWave(const byte *src, uint32 size) {
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
 
-	if (!_soundHandle.isActive())
-		g_mixer->newStream(&_soundHandle, _freq, flags, 500000);
-	g_mixer->appendStream(_soundHandle, (byte *)dst, size * _channels * 2);
+	if (!_stream) {
+		_stream = makeAppendableAudioStream(_freq, flags, 500000);
+		g_mixer->playInputStream(&_soundHandle, _stream, true);
+	}
+ 	if (_stream)
+		_stream->append((byte *)dst, size * _channels * 2);
 }
 
 void Smush::handleFrame() {
@@ -135,10 +139,12 @@ void Smush::handleFrame() {
 			_file.readByte();
 		tag = _file.readUint32BE();
 	}
+
 	assert(tag == MKID_BE('FRME'));
 	size = _file.readUint32BE();
 	byte *frame = (byte*)malloc(size);
 	_file.read(frame, size);
+
 	do {
 		if (READ_BE_UINT32(frame + pos) == MKID_BE('Bl16')) {
 			handleBlocky16(frame + pos + 8);
@@ -177,6 +183,7 @@ void Smush::handleFramesHeader() {
 	size = _file.readUint32BE();
 	byte *f_header = (byte*)malloc(size);
 	_file.read(f_header, size);
+
 	do {
 		if (READ_BE_UINT32(f_header + pos) == MKID_BE('Bl16')) {
 			pos += READ_BE_UINT32(f_header + pos + 4) + 8;
@@ -193,30 +200,32 @@ void Smush::handleFramesHeader() {
 }
 
 bool Smush::setupAnim(const char *file, int x, int y) {
-	if (!_file.open(file))
-		return false;
-
 	uint32 tag;
 	int32 size;
 
+	if (!_file.open(file))
+		return false;
+
 	tag = _file.readUint32BE();
 	assert(tag == MKID_BE('SANM'));
+
 	size = _file.readUint32BE();
 	tag = _file.readUint32BE();
 	assert(tag == MKID_BE('SHDR'));
+
 	size = _file.readUint32BE();
 	byte *s_header = (byte *)malloc(size);
 	_file.read(s_header, size);
 	_nbframes = READ_LE_UINT32(s_header + 2);
-	_x = x;
-	_y = y;
+
 	int width = READ_LE_UINT16(s_header + 8);
 	int height = READ_LE_UINT16(s_header + 10);
-
 	if ((_width != width) || (_height != height)) {
 		_blocky16.init(width, height);
 	}
 
+	_x = x;
+	_y = y;
 	_width = width;
 	_height = height;
 

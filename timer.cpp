@@ -88,11 +88,7 @@ int Timer::handler(int t) {
 			while (_timerSlots[l].counter <= 0) {
 				// A small paranoia check which catches the case where
 				// a timer removes itself (which it never should do).
-				if (!_timerSlots[l].procedure || _timerSlots[l].interval <= 0) {
-					warning("Timer Assert should have triggered");
-					return 0;
-				}
-				//assert(_timerSlots[l].procedure && _timerSlots[l].interval > 0);
+				assert(_timerSlots[l].procedure && _timerSlots[l].interval > 0);
 				_timerSlots[l].counter += _timerSlots[l].interval;
 				_timerSlots[l].procedure(_timerSlots[l].refCon);
 			}

@@ -25,6 +25,7 @@
 
 #include "blocky16.h"
 #include "mixer/mixer.h"
+#include "mixer/audiostream.h"
 
 class zlibFile {
 private:
@@ -54,8 +55,9 @@ private:
 	Blocky16 _blocky16;
 	zlibFile _file;
 	PlayingSoundHandle _soundHandle;
-
-	int32 _frame;
+	AppendableAudioStream *_stream;
+	
+ 	int32 _frame;
 	bool _updateNeeded;
 	int32 _speed;
 	int32 _movieTime;
