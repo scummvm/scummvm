@@ -251,7 +251,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 
 	_local_stringtable = 0;
-	_string_id_local_min = 0;
+	_string_id_local_min = 1;
 	_string_id_local_max = 0;
 
 	_tablesheap_ptr = 0;
@@ -360,7 +360,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_scroll_up_hit_area = 0;
 	_scroll_down_hit_area = 0;
 
-	_video_var_7 = 0;
+	_video_var_7 = 0xFFFF;
 	_palette_color_count = 0;
 
 	_video_var_4 = 0;
@@ -397,7 +397,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_timer_5 = 0;
 	_timer_4 = 0;
 
-	_vga_base_delay = 0;
+	_vga_base_delay = 1;
 
 	_vga_cur_file_2 = 0;
 	_vga_wait_for = 0;
