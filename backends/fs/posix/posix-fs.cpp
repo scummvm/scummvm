@@ -93,6 +93,10 @@ FSList *POSIXFilesystemNode::listDir() const {
 	
 	// ... loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
+		// Skip 'invisible' files
+		if (dp->d_name[0] == '.')
+			continue;
+		
 		POSIXFilesystemNode entry;
 		entry._displayName = dp->d_name;
 		entry._isDirectory = (dp->d_type == DT_DIR);	// TODO - add support for symlinks to dirs?
