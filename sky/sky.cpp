@@ -239,8 +239,8 @@ int SkyEngine::init(GameDetector &detector) {
 	if (!_mixer->isReady())
 		warning("Sound initialisation failed");
 
-	 _mixer->setVolume(ConfMan.getInt("sfx_volume"));
-	 _mixer->setMusicVolume(ConfMan.getInt("music_volume"));
+	 _mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
+	 _mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
 	_floppyIntro = ConfMan.getBool("alt_intro");
 
 	_skyDisk = new Disk(_gameDataPath);

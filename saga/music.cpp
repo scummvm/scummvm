@@ -295,7 +295,7 @@ void MusicPlayer::stopMusic() {
 Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer), _enabled(enabled), _adlib(false) {
 	_player = new MusicPlayer(driver);
 	_musicInitialized = 1;
-	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
 
 	if (_vm->_gameType == GType_ITE) {
 		File file;
@@ -438,7 +438,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 	if (audioStream) {
 		debug(0, "Playing digitized music");
-		_mixer->playInputStream(&_musicHandle, audioStream, true);
+		_mixer->playInputStream(SoundMixer::kMusicAudioDataType, &_musicHandle, audioStream);
 		return SUCCESS;
 	}
 

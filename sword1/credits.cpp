@@ -109,7 +109,7 @@ void CreditsPlayer::play(void) {
 
 	// everything's initialized, time to render and show the credits.
 	PlayingSoundHandle bgSound;
-	_mixer->playInputStream(&bgSound, bgSoundStream, true, 0);
+	_mixer->playInputStream(SoundMixer::kMusicAudioDataType, &bgSound, bgSoundStream, 0);
 
 	int relDelay = 0;
 	uint16 scrollY = 0;

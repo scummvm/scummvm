@@ -68,6 +68,14 @@ public:
 		/** loop the audio */
 		FLAG_LOOP = 1 << 6
 	};
+	
+	enum SoundType {
+		kPlainAudioDataType = 0,
+
+		kMusicAudioDataType = 1,
+		kSFXAudioDataType = 2
+		// kSpeechAudioDataType = 3	  TODO: Add this type later...
+	};
 
 private:
 	enum {
@@ -81,8 +89,7 @@ private:
 
 	uint _outputRate;
 
-	int _globalVolume;
-	int _musicVolume;
+	int _volumeForSoundType[4];
 
 	bool _paused;
 	
@@ -123,14 +130,16 @@ public:
 	 * (using the makeLinearInputStream factory function), which is then
 	 * passed on to playInputStream.
 	 */
-	void playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
+	void playRaw(PlayingSoundHandle *handle,
+				void *sound, uint32 size, uint rate, byte flags,
 				int id = -1, byte volume = 255, int8 balance = 0,
-				uint32 loopStart = 0, uint32 loopEnd = 0);
+				uint32 loopStart = 0, uint32 loopEnd = 0,
+				SoundType type = kSFXAudioDataType);
 
 	/**
 	 * Start playing the given audio input stream.
 	 */
-	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic,
+	void playInputStream(SoundType type, PlayingSoundHandle *handle, AudioStream *input,
 				int id = -1, byte volume = 255, int8 balance = 0,
 				bool autofreeStream = true, bool permanent = false);
 
@@ -223,39 +232,28 @@ public:
 	uint32 getSoundElapsedTime(PlayingSoundHandle handle);
 
 	/**
-	 * Check whether any SFX channel is active.
+	 * Check whether any channel of the given sound type is active.
+	 * For example, this can be used to check whether any SFX sound
+	 * is currently playing, by checking for type kSFXAudioDataType.
 	 *
-	 * @return true if any SFX (= non-music) channels are active.
+	 * @param  type the sound type to look for
+	 * @return true if any channels of the specified type are active.
 	 */
-	bool hasActiveSFXChannel();
+	bool hasActiveChannelOfType(SoundType type);
 
 	/**
-	 * Set the global volume.
+	 * Set the volume for the given sound type.
 	 *
 	 * @param volume the new global volume, 0-256
 	 */
-	void setVolume(int volume);
+	void setVolumeForSoundType(SoundType type, int volume);
 
 	/**
 	 * Query the global volume.
 	 *
 	 * @return the global music volume, 0-256
 	 */
-	int getVolume() const { return _globalVolume; }
-
-	/**
-	 * Set the music volume.
-	 *
-	 * @param volume the new music volume, 0-256
-	 */
-	void setMusicVolume(int volume);
-
-	/**
-	 * Query the music volume.
-	 *
-	 * @return the current music volume, 0-256
-	 */
-	int getMusicVolume() const { return _musicVolume; }
+	int getVolumeForSoundType(SoundType type) const;
 
 	/**
 	 * Query the system's audio output sample rate. This returns

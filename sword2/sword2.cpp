@@ -255,8 +255,8 @@ int Sword2Engine::init(GameDetector &detector) {
 	// We have our own volume settings panel, so don't let ScummVM's mixer
 	// soften the sound in any way.
 
-	_mixer->setVolume(256);
-	_mixer->setMusicVolume(256);
+	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, 256);
+	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, 256);
 
 	// During normal gameplay, we care neither about mouse button releases
 	// nor the scroll wheel.

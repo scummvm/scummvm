@@ -219,7 +219,7 @@ void MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(handle, makeMP3Stream(_file, size), false);
+	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, makeMP3Stream(_file, size));
 }
 #endif
 
@@ -243,7 +243,7 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(handle, makeVorbisStream(_file, size), false);
+	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, makeVorbisStream(_file, size));
 }
 #endif
 
@@ -267,7 +267,7 @@ void FlacSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(handle, makeFlacStream(_file, size), false);
+	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, makeFlacStream(_file, size));
 }
 #endif
 

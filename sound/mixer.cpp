@@ -41,11 +41,12 @@
  * Channels used by the sound mixer.
  */
 class Channel {
+public:
+	const SoundMixer::SoundType	_type;
 private:
 	SoundMixer *_mixer;
 	PlayingSoundHandle *_handle;
 	bool _autofreeStream;
-	const bool _isMusic;
 	bool _permanent;
 	byte _volume;
 	int8 _balance;
@@ -61,8 +62,8 @@ protected:
 
 public:
 
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, int id = -1);
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input, bool autofreeStream, bool isMusic, bool reverseStereo = false, int id = -1, bool permanent = false);
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, SoundMixer::SoundType type, int id = -1);
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, SoundMixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
 	virtual ~Channel();
 
 	void mix(int16 *data, uint len);
@@ -72,9 +73,6 @@ public:
 	}
 	bool isFinished() const {
 		return _input->endOfStream();
-	}
-	bool isMusicChannel() const {
-		return _isMusic;
 	}
 	void pause(bool paused) {
 		_paused = paused;
@@ -107,8 +105,8 @@ SoundMixer::SoundMixer() {
 	_premixChannel = 0;
 	int i = 0;
 
-	_globalVolume = 0;
-	_musicVolume = 0;
+	for (i = 0; i < ARRAYSIZE(_volumeForSoundType); i++)
+		_volumeForSoundType[i] = 256;
 
 	_paused = false;
 	
@@ -148,7 +146,7 @@ void SoundMixer::setupPremix(AudioStream *stream) {
 		return;
 
 	// Create the channel
-	_premixChannel = new Channel(this, 0, stream, false, true);
+	_premixChannel = new Channel(this, 0, kPlainAudioDataType, stream, false);
 }
 
 void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
@@ -172,7 +170,7 @@ void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 }
 
 void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
-			int id, byte volume, int8 balance, uint32 loopStart, uint32 loopEnd) {
+			int id, byte volume, int8 balance, uint32 loopStart, uint32 loopEnd, SoundType type) {
 	Common::StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
@@ -199,13 +197,13 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, handle, input, true, false, (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0, id);
+	Channel *chan = new Channel(this, handle, type, input, true, (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0, id);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);
 }
 
-void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic,
+void SoundMixer::playInputStream(SoundType type, PlayingSoundHandle *handle, AudioStream *input,
 			int id, byte volume, int8 balance, bool autofreeStream, bool permanent) {
 	Common::StackLock lock(_mutex);
 
@@ -225,7 +223,7 @@ void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input,
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, handle, input, autofreeStream, isMusic, false, id, permanent);
+	Channel *chan = new Channel(this, handle, type, input, autofreeStream, false, id, permanent);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);
@@ -396,16 +394,17 @@ bool SoundMixer::isSoundIDActive(int id) {
 	return false;
 }
 
-bool SoundMixer::hasActiveSFXChannel() {
-	// FIXME/TODO: We need to distinguish between SFX and music channels
+bool SoundMixer::hasActiveChannelOfType(SoundType type) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
-		if (_channels[i] && !_channels[i]->isMusicChannel())
+		if (_channels[i] && !_channels[i]->_type == type)
 			return true;
 	return false;
 }
 
-void SoundMixer::setVolume(int volume) {
+void SoundMixer::setVolumeForSoundType(SoundType type, int volume) {
+	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
+
 	// Check range
 	if (volume > 256)
 		volume = 256;
@@ -415,17 +414,13 @@ void SoundMixer::setVolume(int volume) {
 	// TODO: Maybe we should do logarithmic (not linear) volume
 	// scaling? See also Player_V2::setMasterVolume
 
-	_globalVolume = volume;
+	_volumeForSoundType[type] = volume;
 }
 
-void SoundMixer::setMusicVolume(int volume) {
-	// Check range
-	if (volume > 256)
-		volume = 256;
-	else if (volume < 0)
-		volume = 0;
-
-	_musicVolume = volume;
+int SoundMixer::getVolumeForSoundType(SoundType type) const {
+	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
+	
+	return _volumeForSoundType[type];
 }
 
 
@@ -434,16 +429,16 @@ void SoundMixer::setMusicVolume(int volume) {
 #pragma mark -
 
 
-Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, int id)
-	: _mixer(mixer), _handle(handle), _autofreeStream(true), _isMusic(isMusic),
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, SoundMixer::SoundType type, int id)
+	: _type(type), _mixer(mixer), _handle(handle), _autofreeStream(true),
 	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(0) {
 	assert(mixer);
 }
 
-Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input,
-				bool autofreeStream, bool isMusic, bool reverseStereo, int id, bool permanent)
-	: _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream), _isMusic(isMusic),
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, SoundMixer::SoundType type, AudioStream *input,
+				bool autofreeStream, bool reverseStereo, int id, bool permanent)
+	: _type(type), _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream),
 	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input), _permanent(permanent) {
 	assert(mixer);
@@ -481,7 +476,7 @@ void Channel::mix(int16 *data, uint len) {
 		// volume is in the range 0 - 256.
 		// Hence, the vol_l/vol_r values will be in that range, too
 		
-		int vol = (isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume()) * _volume;
+		int vol = _mixer->getVolumeForSoundType(_type) * _volume;
 		st_volume_t vol_l, vol_r;
 
 		if (_balance == 0) {

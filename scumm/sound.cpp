@@ -1029,7 +1029,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 		//_vm->_imuseDigital->stopSound(kTalkSoundID);
 		_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 	} else {
-		_vm->_mixer->playInputStream(handle, input, false, id);
+		_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, input, id);
 	}
 }
 
@@ -1122,7 +1122,7 @@ ScummFile *Sound::openSfxFile() {
 }
 
 bool Sound::isSfxFinished() const {
-	return !_vm->_mixer->hasActiveSFXChannel();
+	return !_vm->_mixer->hasActiveChannelOfType(SoundMixer::kSFXAudioDataType);
 }
 
 // We use a real timer in an attempt to get better sync with CD tracks. This is

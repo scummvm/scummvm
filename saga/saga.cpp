@@ -107,8 +107,8 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 		warning("Sound initialization failed.");
 	}
 
-	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
-	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
 
 	_vm = this;
 }

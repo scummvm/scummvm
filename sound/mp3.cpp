@@ -380,7 +380,7 @@ void MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int start
 
 	// Play it
 	AudioStream *input = new MP3InputStream(_file, durationTime);
-	mixer->playInputStream(handle, input, true);
+	mixer->playInputStream(SoundMixer::kMusicAudioDataType, handle, input);
 }
 
 MP3TrackInfo::~MP3TrackInfo() {
