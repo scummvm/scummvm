@@ -173,9 +173,9 @@ int Events::handleContinuous(R_EVENT *event) {
 		case EVENT_DISSOLVE:
 			_vm->_render->getBufferInfo(&buf_info);
 			_vm->_scene->getBGInfo(&bg_info);
-			TRANSITION_Dissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, buf_info.r_bg_buf_h,
-								buf_info.r_bg_buf_w, bg_info.bg_buf, bg_info.bg_w, 
-								bg_info.bg_h, bg_info.bg_p, 0, 0, 0, event_pc);
+			_vm->transitionDissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, 
+					buf_info.r_bg_buf_h, buf_info.r_bg_buf_w, bg_info.bg_buf, bg_info.bg_w, 
+					bg_info.bg_h, bg_info.bg_p, 0, 0, 0, event_pc);
 			break;
 		case EVENT_DISSOLVE_BGMASK:
 			// we dissolve it centered.
@@ -186,9 +186,9 @@ int Events::handleContinuous(R_EVENT *event) {
 
 			_vm->_render->getBufferInfo(&buf_info);
 			_vm->_scene->getBGMaskInfo(&w, &h, &mask_buf, &len);
-			TRANSITION_Dissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, buf_info.r_bg_buf_h,
-								buf_info.r_bg_buf_w, mask_buf, w, h, 0, 1, (320 - w) / 2,
-								(200 - h) / 2, event_pc);
+			_vm->transitionDissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, 
+					buf_info.r_bg_buf_h, buf_info.r_bg_buf_w, mask_buf, w, h, 0, 1, 
+					(320 - w) / 2, (200 - h) / 2, event_pc);
 			break;
 		default:
 			break;

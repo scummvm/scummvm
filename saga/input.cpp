@@ -28,13 +28,10 @@
 #include "saga/interface.h"
 #include "saga/render.h"
 #include "saga/scene.h"
-#include "saga/script_mod.h"
 
 namespace Saga {
 
-static R_POINT _mousePos;
-
-int SYSINPUT_ProcessInput() {
+int SagaEngine::processInput() {
 	OSystem::Event event;
 
 	R_POINT imouse_pt;
@@ -131,7 +128,7 @@ int SYSINPUT_ProcessInput() {
 	return R_SUCCESS;
 }
 
-R_POINT SYSINPUT_GetMousePos() {
+R_POINT SagaEngine::getMousePos() {
 	return _mousePos;
 }
 

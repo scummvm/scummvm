@@ -124,7 +124,7 @@ int Render::drawScene() {
 	backbuf_surface = _backbuf_surface;
 
 	// Get mouse coordinates
-	mouse_pt = SYSINPUT_GetMousePos();
+	mouse_pt = _vm->getMousePos();
 
 	_vm->_scene->getBGInfo(&bg_info);
 	GAME_GetDisplayInfo(&disp_info);
@@ -149,7 +149,7 @@ int Render::drawScene() {
 	_vm->textDrawList(scene_info.text_list, backbuf_surface);
 
 	// Handle user input
-	SYSINPUT_ProcessInput();
+	_vm->processInput();
 
 	// Display rendering information
 	if (_flags & RF_SHOW_FPS) {

@@ -80,13 +80,6 @@ enum SAGAGameId {
 	GID_IHNM
 };
 
-int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, const byte *src_img,
-						int src_w, int src_h, int src_p, int flags, int x, int y, 
-						double percent);
-
-int SYSINPUT_ProcessInput(void);
-R_POINT SYSINPUT_GetMousePos();
-
 class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
@@ -145,6 +138,15 @@ public:
 				  int effect_color, int flags);
 	int textProcessList(R_TEXTLIST *textlist, long ms);
 
+	int transitionDissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, 
+			const byte *src_img, int src_w, int src_h, int src_p, int flags, int x, int y, 
+			double percent);
+
+	int processInput(void);
+	R_POINT getMousePos();
+
+ private:
+	R_POINT _mousePos;
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects
