@@ -25,27 +25,22 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "gui.h"
-#include "gameDetector.h"
 
 #include <exec/types.h>
 #include <exec/memory.h>
 #include <exec/libraries.h>
 #include <exec/semaphores.h>
+#include <devices/ahi.h>
 #include <dos/dostags.h>
 #include <intuition/screens.h>
 #include <cybergraphics/cybergraphics.h>
 #include <devices/inputevent.h>
 #include <intuition/intuition.h>
-#include <workbench/startup.h>
 
-#define NO_PPCINLINE_STDARG
-#define NO_PPCINLINE_VARARGS
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/graphics.h>
-#include <proto/icon.h>
 #include <proto/intuition.h>
 #include <proto/keymap.h>
 #include <proto/timer.h>
@@ -56,154 +51,246 @@
 
 #include <time.h>
 
-extern "C" struct WBStartup *_WBenchMsg;
+#include "morphos.h"
 
-Scumm *scumm = NULL;
-ScummDebugger debugger;
-Gui gui;
-OSystem _system;
-GameDetector detector;
-
-IMuse sound;
-SOUND_DRIVER_TYPE snd_driv;
-
-typedef void (*ScalerFunc)( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
-
-void Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
-void SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
-void PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
-
-static struct Screen  *ScummScreen = NULL;
-static struct Window  *ScummWindow = NULL;
-static APTR            ScummBuffer = NULL;
-static struct ScreenBuffer *ScummScreenBuffer[ 2 ] = { NULL, NULL };
-static struct BitMap  *ScummRenderTo = NULL;
-static ULONG			  ScummPaintBuffer;
-static UWORD 			 *ScummNoCursor = NULL;
-static struct Process *ScummMusicThread = NULL;
-static ScalerFunc      ScummScaler = &Super2xSaI;
-static ULONG 			  ScummColors[256];
-static USHORT 			  ScummColors16[256];
-static WORD				  ScummWinX = -1;
-static WORD				  ScummWinY = -1;
-static bool				  ScummOrigMouse = false;
-static int 				  ScummShakePos = 0;
-static bool				  ScummPCMode = false;
-
-static struct MsgPort     *TimerMsgPort = NULL;
-static struct timerequest *TimerIORequest = NULL;
-static bool					 	TimerStarted = false;
-
-static char*ScummStory = NULL;
-static char*ScummPath = NULL;
-static char ScummWndTitle[ 125 ];
-static int  ScummDepth = 0;
-static int  ScummScale = 1;
-static bool Scumm16ColFmt16 = false;
-static int  ScummScrWidth = 0;
-static int  ScummScrHeight = 0;
-static LONG ScummMidiUnit = 0;
-static LONG ScummMidiVolume = 0;
-static LONG ScummMidiTempo = 0;
-
-struct Library *CDDABase = NULL;
-static CDRIVEPTR CDrive = NULL;
-static struct TagItem FindCDTags[] =   {  {  CDFA_VolumeName, (ULONG)"LoomCD"  },
-														{  TAG_DONE, 0 } };
-
-static struct TagItem PlayTags[] =   { {  CDPA_StartTrack,  1     },
-													{  CDPA_StartFrame,	0     },
-													{  CDPA_EndTrack, 	1     },
-													{  CDPA_EndFrame, 	0     },
-													{	TAG_DONE,			0		}
+static struct TagItem FindCDTags[] = { { CDFA_VolumeName, 0 },
+													{ TAG_DONE,        0 }
 												 };
-static ULONG CDDATrackOffset = 0;
+static struct TagItem PlayTags[] =   { { CDPA_StartTrack, 1 },
+													{ CDPA_StartFrame, 0 },
+													{ CDPA_EndTrack, 	 1 },
+													{ CDPA_EndFrame, 	 0 },
+													{ TAG_DONE,			 0	}
+												 };
 
+OSystem_MorphOS::GfxScaler OSystem_MorphOS::ScummScalers[ 10 ] = { { "none", ST_NONE },
+																  { "Point", 		ST_POINT },
+																  { "SuperEagle", ST_SUPEREAGLE },
+																  { "Super2xSaI", ST_SUPER2XSAI },
+																  { NULL, ST_INVALID },
+																  { NULL, ST_INVALID },
+																  { NULL, ST_INVALID },
+																  { NULL, ST_INVALID },
+																  { NULL, ST_INVALID },
+																  { NULL, ST_INVALID }
+																};
 
-static struct RDArgs *ScummArgs = NULL;
-static BPTR OrigDirLock = 0;
-
-struct GfxScaler
-{
-	STRPTR 		gs_Name;
-	ScalerFunc  gs_Function;
-};
-
-static struct GfxScaler ScummScalers[] = {	{ "none", NULL	},
-															{ "Point", PointScaler },
-															{ "SuperEagle", SuperEagle },
-															{ "Super2xSaI", Super2xSaI },
-															{ NULL, NULL },
-															{ NULL, NULL },
-															{ NULL, NULL },
-															{ NULL, NULL },
-															{ NULL, NULL },
-															{ NULL, NULL }
-													  };
-
-// For command line parsing
-static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,MIDIUNIT/K/N,NOMUSIC/S,VOLUME/K/N,TEMPO/K,NOSUBTITLES=NST/S";
-typedef enum 					{ USG_STORY = 0,	USG_DATAPATH, 	USG_WBWINDOW,	USG_SCALER, 	USG_MIDIUNIT,	USG_NOMUSIC,	USG_VOLUME,		USG_TEMPO,	 USG_NOSUBTITLES } usageFields;
-static LONG	  args[ 9 ] = 	{ (ULONG)NULL, 	(ULONG)NULL,	FALSE, 			(ULONG)NULL,	(ULONG)NULL, 	false,			(ULONG)NULL,	(ULONG)NULL, false };
-
-// These are for the scaling engine
-static uint32 colorMask = 0xF7DEF7DE;
-static uint32 lowPixelMask = 0x08210821;
-static uint32 qcolorMask = 0xE79CE79C;
-static uint32 qlowpixelMask = 0x18631863;
-static uint32 redblueMask = 0xF81F;
-static uint32 greenMask = 0x7E0;
-static int PixelsPerMask = 2;
-static byte *src_line[4];
-static byte *dst_line[2];
-
-struct EmulFunc MyEmulFunc;
-struct TagItem musicProcTags[] = { { NP_Entry, 	     (ULONG)&MyEmulFunc.Trap    		},
+struct TagItem musicProcTags[] = { { NP_Entry, 	     0							     		},
 											  { NP_Name, 	     (ULONG)"ScummVM Music Thread" 	},
-											  { NP_StackSize,	  16000									},
-											  { NP_Priority,    30 								      },
+											  { NP_StackSize,	  8192 									},
+											  { NP_Priority,    0  								      },
+											  { TAG_DONE,       0 						     			}
+											};
+struct TagItem soundProcTags[] = { { NP_Entry, 	     0							     		},
+											  { NP_Name, 	     (ULONG)"ScummVM Sound Thread" 	},
+											  { NP_StackSize,	  8192 									},
+											  { NP_Priority,    0  								      },
 											  { TAG_DONE,       0 						     			}
 											};
 
-extern int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic );
-
-extern struct SignalSemaphore ScummMusicThreadRunning;
-
-struct Library *CyberGfxBase = NULL;
-struct Device  *TimerBase = NULL;
-
-void updateScreen(Scumm *s);
-
-void BoxTest(int num)
+OSystem_MorphOS *OSystem_MorphOS::create( int game_id, SCALERTYPE gfx_scaler, bool full_screen )
 {
-	/* Debug only, remove */
+	OSystem_MorphOS *syst = new OSystem_MorphOS( game_id, gfx_scaler, full_screen );
+
+	return syst;
 }
 
-int GetTicks()
+OSystem_MorphOS::OSystem_MorphOS( int game_id, SCALERTYPE gfx_mode, bool full_screen )
 {
-/*	  unsigned long long time64;
-	ULONG ClockTicks;
-	struct EClockVal ClockVal;
+	GameID = game_id;
+	ScummScreen = NULL;
+	ScummWindow = NULL;
+	ScummBuffer = NULL;
+	ScummScreenBuffer[ 0 ] = NULL;
+	ScummScreenBuffer[ 1 ] = NULL;
+	ScummRenderTo = NULL;
+	ScummNoCursor = NULL;
+	ScummMusicThread = NULL;
+	ScummSoundThread = NULL;
+	ScummWinX = -1;
+	ScummWinY = -1;
+	ScummOrigMouse = false;
+	ScummShakePos = 0;
+	ScummPCMode = false;
+	ScummScaler = gfx_mode;
+	ScummScale  = (gfx_mode == ST_NONE) ? 0 : 1;
+	ScummDepth = 0;
+	Scumm16ColFmt16 = false;
+	ScummScrWidth = 0;
+	ScummScrHeight = 0;
+	FullScreenMode = full_screen;
+	CDrive = NULL;
+	CDDATrackOffset = 0;
+	strcpy( ScummWndTitle, "ScummVM MorphOS" );
+	TimerMsgPort = NULL;
+	TimerIORequest = NULL;
 
-	ClockTicks = ReadEClock( &ClockVal );
-	time64 = ClockVal.ev_hi;
+	TimerMsgPort = CreateMsgPort();
+	if( TimerMsgPort == NULL )
+	{
+		puts( "Failed to create message port" );
+		exit( 1 );
+	}
 
-	time64 = (time64 << 32) | ClockVal.ev_lo;
-	return (time64/ClockTicks)*1000;*/
+	TimerIORequest = (struct timerequest *)CreateIORequest( TimerMsgPort, sizeof( struct timerequest ) );
+	if( TimerIORequest == NULL )
+	{
+		puts( "Failed to create IO request" );
+		exit( 1 );
+	}
 
+	if( OpenDevice( "timer.device", UNIT_MICROHZ, (struct IORequest *)TimerIORequest, 0 ) )
+	{
+		DeleteIORequest( (struct IORequest *)TimerIORequest );
+		TimerIORequest = NULL;
+		puts( "Failed to open timer device" );
+		exit( 1 );
+	}
+
+	ScummNoCursor = (UWORD *)AllocVec( 16, MEMF_CHIP | MEMF_CLEAR );
+}
+
+OSystem_MorphOS::~OSystem_MorphOS()
+{
+	if( CDrive && CDDABase )
+	{
+		CDDA_Stop( CDrive );
+		CDDA_ReleaseDrive( CDrive );
+	}
+
+	if( TimerIORequest )
+	{
+		CloseDevice( (struct IORequest *)TimerIORequest );
+		DeleteIORequest( (struct IORequest *)TimerIORequest );
+	}
+
+	if( TimerMsgPort )
+		DeleteMsgPort( TimerMsgPort );
+
+	if( ScummMusicThread )
+	{
+		Signal( (struct Task *)ScummMusicThread, SIGBREAKF_CTRL_F );
+		ObtainSemaphore( &ScummMusicThreadRunning );		/* Wait for thread to finish */
+		ReleaseSemaphore( &ScummMusicThreadRunning );
+	}
+
+	if( ScummSoundThread )
+	{
+		Signal( (struct Task *)ScummSoundThread, SIGBREAKF_CTRL_C );
+		ObtainSemaphore( &ScummSoundThreadRunning );		/* Wait for thread to finish */
+		ReleaseSemaphore( &ScummSoundThreadRunning );
+	}
+
+	if( ScummNoCursor )
+		FreeVec( ScummNoCursor );
+
+	if( ScummBuffer )
+		FreeVec( ScummBuffer );
+
+	if( ScummRenderTo && !ScummScreen )
+		FreeBitMap( ScummRenderTo );
+
+	if( ScummWindow )
+		CloseWindow( ScummWindow );
+
+	if( ScummScreen )
+	{
+		if( ScummScreenBuffer[ 0 ] )
+			FreeScreenBuffer( ScummScreen, ScummScreenBuffer[ 0 ] );
+		if( ScummScreenBuffer[ 1 ] )
+			FreeScreenBuffer( ScummScreen, ScummScreenBuffer[ 1 ] );
+		CloseScreen( ScummScreen );
+	}
+}
+
+uint32 OSystem_MorphOS::get_msecs()
+{
 	int ticks = clock();
 	ticks *= (1000/CLOCKS_PER_SEC);
 	return ticks;
 }
 
-static int   cd_track = 0, cd_num_loops = 0, cd_start_frame = 0;
-static ULONG cd_end_time = 0;
-static ULONG cd_stop_time = 0;
+void OSystem_MorphOS::delay_msecs(uint msecs)
+{
+	TimerIORequest->tr_node.io_Command  = TR_ADDREQUEST;
+	TimerIORequest->tr_time.tv_secs  = 0;
+	TimerIORequest->tr_time.tv_micro = msecs*1000;
+	DoIO( (struct IORequest *)TimerIORequest );
+}
+
+void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
+{
+/*	  MyEmulFunc.Trap      = TRAP_FUNC;
+	MyEmulFunc.Address	= (ULONG)proc;
+	MyEmulFunc.StackSize	= 8192;
+	MyEmulFunc.Extension	= 0;
+	MyEmulFunc.Arg1	   = (ULONG)param;
+	MyEmulFunc.Arg2	   = (ULONG)ScummMidiUnit;
+	MyEmulFunc.Arg3	   = (ULONG)args[ USG_NOMUSIC ];
+	ScummMusicThread = CreateNewProc( musicProcTags );*/
+	return NULL;
+}
+
+uint32 OSystem_MorphOS::property(int param, uint32 value)
+{
+	switch( param )
+	{
+		case PROP_TOGGLE_FULLSCREEN:
+			create_screen( CSDSPTYPE_TOGGLE );
+			return 1;
+
+		case PROP_SET_WINDOW_CAPTION:
+			sprintf( ScummWndTitle, "ScummVM MorphOS - %s", (char *)value );
+			if( ScummWindow )
+				SetWindowTitles( ScummWindow, ScummWndTitle, ScummWndTitle );
+			return 1;
+
+		case PROP_OPEN_CD:
+			FindCDTags[ 0 ].ti_Data = (ULONG)((GameID == GID_LOOM256) ? "LoomCD" : "Monkey1CD");
+			if( !CDDABase ) CDDABase = OpenLibrary( "cdda.library", 0 );
+			if( CDDABase )
+			{
+				CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
+				if( CDrive )
+				{
+					if( !CDDA_ObtainDrive( CDrive, CDDA_SHARED_ACCESS, NULL ) )
+					{
+						CDrive = NULL;
+						warning( "Failed to obtain CD drive - music will not play" );
+					}
+					else if( GameID == GID_LOOM256 )
+					{
+						// Offset correction *may* be required
+						struct CDS_TrackInfo ti;
+
+						if( CDDA_GetTrackInfo( CDrive, 1, 0, &ti ) )
+							CDDATrackOffset = ti.ti_TrackStart.tm_Format.tm_Frame-22650;
+					}
+				}
+				else
+					warning( "Could not find game CD inserted in CD-ROM drive - cd audio will not play" );
+			}
+			else
+				warning( "Failed to open cdda.library - cd audio will not play" );
+			break;
+
+		case PROP_SHOW_DEFAULT_CURSOR:
+			if( value )
+				ClearPointer( ScummWindow );
+			else
+				SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
+			break;
+
+		case PROP_GET_SAMPLE_RATE:
+			return SAMPLES_PER_SEC;
+	}
+
+	return 0;
+}
 
 void cd_play( Scumm *s, int track, int num_loops, int start_frame, int length )
 {
-	scumm->_vars[14] = 0;
-	if( CDrive && start_frame >= 0 )
+/*	  if( CDrive && start_frame >= 0 )
 	{
 		struct CDS_TrackInfo ti;
 
@@ -223,31 +310,32 @@ void cd_play( Scumm *s, int track, int num_loops, int start_frame, int length )
 		
 		CDDA_GetTrackInfo( CDrive, track, 0, &ti );
 		cd_end_time = GetTicks() + ti.ti_TrackLength.tm_Format.tm_Frame * 1000 / 75;
-	}
+	}*/
 }
 
 // Schedule the music to be stopped after 1/10 sec, unless another
 // track is started in the meantime.
 void cd_stop()
 {
-	cd_stop_time = GetTicks() + 100;
-	cd_num_loops = 0;
+/*	  cd_stop_time = GetTicks() + 100;
+	cd_num_loops = 0;*/
 }
 
 int cd_is_running()
 {
-	ULONG status;
+/*	  ULONG status;
 
 	if( CDrive == NULL )
 		return 0;
 
 	CDDA_GetAttr( CDDA_Status, CDrive, &status );
-	return (cd_num_loops != 0 && (GetTicks() < cd_end_time || status != CDDA_Status_Ready));
+	return (cd_num_loops != 0 && (GetTicks() < cd_end_time || status != CDDA_Status_Ready));*/
+	return FALSE;
 }
 
 void cd_music_loop()
 {
-	if( CDrive )
+/*	  if( CDrive )
 	{
 		if( cd_stop_time != 0 && GetTicks() >= cd_stop_time )
 		{
@@ -282,81 +370,15 @@ void cd_music_loop()
 			CDDA_GetTrackInfo( CDrive, cd_track, 0, &ti );
 			cd_end_time = GetTicks() + ti.ti_TrackLength.tm_Format.tm_Frame * 1000 / 75;
 		}
-	}
+	}*/
 }
 
-void closeResources()
+void OSystem_MorphOS::quit()
 {
-	if( ScummMusicThread )
-	{
-		Signal( (struct Task *)ScummMusicThread, SIGBREAKF_CTRL_F );
-		ObtainSemaphore( &ScummMusicThreadRunning );		/* Wait for thread to finish */
-		ReleaseSemaphore( &ScummMusicThreadRunning );
-	}
-
-	if( TimerStarted )
-	{
-		AbortIO( (struct IORequest *)TimerIORequest );
-		WaitIO( (struct IORequest *)TimerIORequest );
-	}
-
-	if( TimerIORequest )
-	{
-		CloseDevice( (struct IORequest *)TimerIORequest );
-		DeleteIORequest( (struct IORequest *)TimerIORequest );
-	}
-
-	if( TimerMsgPort )
-		DeleteMsgPort( TimerMsgPort );
-
-	if( OrigDirLock )
-		CurrentDir( OrigDirLock );
-
-	if( ScummPath )
-		FreeVec( ScummPath );
-
-	if( ScummStory )
-		FreeVec( ScummStory );
-
-	if( ScummArgs )
-		FreeArgs( ScummArgs );
-
-	if( ScummNoCursor )
-		FreeVec( ScummNoCursor );
-
-	if( ScummBuffer )
-		FreeVec( ScummBuffer );
-
-	if( ScummRenderTo && !ScummScreen )
-		FreeBitMap( ScummRenderTo );
-	
-	if( ScummWindow )
-		CloseWindow( ScummWindow );
-
-	if( ScummScreen )
-	{
-		if( ScummScreenBuffer[ 0 ] )
-			FreeScreenBuffer( ScummScreen, ScummScreenBuffer[ 0 ] );
-		if( ScummScreenBuffer[ 1 ] )
-			FreeScreenBuffer( ScummScreen, ScummScreenBuffer[ 1 ] );
-		CloseScreen( ScummScreen );
-	}
-
-	if( CDDABase )
-	{
-		if( CDrive && CDDABase )
-		{
-			CDDA_Stop( CDrive );
-			CDDA_ReleaseDrive( CDrive );
-		}
-		CloseLibrary( CDDABase );
-	}
-
-	if( CyberGfxBase )
-		CloseLibrary( CyberGfxBase );
+	exit( 0 );
 }
 
-uint32 makeColForPixFmt( int pixfmt, int r, int g, int b )
+uint32 OSystem_MorphOS::make_color( int pixfmt, int r, int g, int b )
 {
 	uint32 col = 0;
 
@@ -408,39 +430,30 @@ uint32 makeColForPixFmt( int pixfmt, int r, int g, int b )
 	return col;
 }
 
-#define CVT8TO32( byte )   ((byte<<24) | (byte<<16) | (byte<<8) | byte)
+#define CVT8TO32( col )   ((col<<24) | (col<<16) | (col<<8) | col)
 
-void updatePalette( Scumm *s )
+void OSystem_MorphOS::set_palette(const byte *colors, uint start, uint num)
 {
-	int first = s->_palDirtyMin;
-	int num = s->_palDirtyMax - first + 1;
-	int i;
-	byte *data = s->_currentPalette;
-
-	data += first*3;
-	for( i = first; i < first+num; i++, data+=3 )
+	const byte *data = colors;
+	for( uint i = start; i != start+num; i++ )
 	{
 		if( ScummDepth == 8 )
 			SetRGB32( &ScummScreen->ViewPort, i, CVT8TO32( data[ 0 ] ), CVT8TO32( data[ 1 ] ), CVT8TO32( data[ 2 ] ) );
 		ScummColors16[ i ] = Scumm16ColFmt16 ? (((data[ 0 ]*31)/255) << 11) | (((data[ 1 ]*63)/255) << 5) | ((data[ 2 ]*31)/255) : (((data[ 0 ]*31)/255) << 10) | (((data[ 1 ]*31)/255) << 5) | ((data[ 2 ]*31)/255);
 		ScummColors[ i ] = (data[ 0 ] << 16) | (data[ 1 ] << 8) | data[ 2 ];
+		data += 4;
 	}
-
-	s->_palDirtyMax = -1;
-	s->_palDirtyMin = 0x3E8;
 }
 
-typedef enum { CSDSPTYPE_WINDOWED, CSDSPTYPE_FULLSCREEN, CSDSPTYPE_TOGGLE } CS_DSPTYPE;
-
-void createScreen( CS_DSPTYPE dspType )
+void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 {
 	ULONG mode = INVALID_ID;
 	int   depths[] = { 8, 15, 16, 24, 32, 0 };
 	int   i;
 	struct Screen *wb = NULL;
-	bool  fullScreen;
 
-	fullScreen = (dspType == CSDSPTYPE_FULLSCREEN) || (dspType == CSDSPTYPE_TOGGLE && ScummScreen == NULL);
+	if( dspType != CSDSPTYPE_KEEP )
+		FullScreenMode = (dspType == CSDSPTYPE_FULLSCREEN) || (dspType == CSDSPTYPE_TOGGLE && !FullScreenMode);
 
 	if( ScummRenderTo && !ScummScreen )
 		FreeBitMap( ScummRenderTo );
@@ -470,7 +483,7 @@ void createScreen( CS_DSPTYPE dspType )
 	ScummScrWidth  = 320 << ScummScale;
 	ScummScrHeight = 200 << ScummScale;
 
-	if( fullScreen )
+	if( FullScreenMode )
 	{
 		for( i = ScummScale; mode == INVALID_ID && depths[ i ]; i++ )
 			mode = BestCModeIDTags( CYBRBIDTG_NominalWidth, 	ScummScrWidth,
@@ -552,17 +565,18 @@ void createScreen( CS_DSPTYPE dspType )
 													WA_Activate,		TRUE,
 													WA_Title,		   wb ? ScummWndTitle : NULL,
 													WA_ScreenTitle,	wb ? ScummWndTitle : NULL,
-													WA_Borderless,		fullScreen,
-													WA_CloseGadget,	!fullScreen,
-													WA_DepthGadget,	!fullScreen,
-													WA_DragBar,			!fullScreen,
+													WA_Borderless,		FullScreenMode,
+													WA_CloseGadget,	!FullScreenMode,
+													WA_DepthGadget,	!FullScreenMode,
+													WA_DragBar,			!FullScreenMode,
 													WA_ReportMouse,	TRUE,
 													WA_RMBTrap,			TRUE,
+													WA_MouseQueue,		1,
 													WA_IDCMP,			IDCMP_RAWKEY 		|
 																			IDCMP_MOUSEMOVE 	|
 																			IDCMP_CLOSEWINDOW |
 																			IDCMP_MOUSEBUTTONS,
-													WA_CustomScreen,  fullScreen ? (ULONG)ScummScreen : (ULONG)wb,
+													WA_CustomScreen,  FullScreenMode ? (ULONG)ScummScreen : (ULONG)wb,
 													TAG_DONE
 										 );
 
@@ -635,12 +649,12 @@ void createScreen( CS_DSPTYPE dspType )
 			ScummPCMode = true;
 		debug( 1, "Pixelformat = %d", pixfmt );
 
-		colorMask = (makeColForPixFmt( pixfmt, 255, 0, 0 ) - minr) | (makeColForPixFmt( pixfmt, 0, 255, 0 ) - ming) | (makeColForPixFmt( pixfmt, 0, 0, 255 ) - minb);
+		colorMask = (make_color( pixfmt, 255, 0, 0 ) - minr) | (make_color( pixfmt, 0, 255, 0 ) - ming) | (make_color( pixfmt, 0, 0, 255 ) - minb);
 		lowPixelMask = minr | ming | minb;
-		qcolorMask = (makeColForPixFmt( pixfmt, 255, 0, 0 ) - 3*minr) | (makeColForPixFmt( pixfmt, 0, 255, 0) - 3*ming) | (makeColForPixFmt( pixfmt, 0, 0, 255 ) - 3*minb);
+		qcolorMask = (make_color( pixfmt, 255, 0, 0 ) - 3*minr) | (make_color( pixfmt, 0, 255, 0) - 3*ming) | (make_color( pixfmt, 0, 0, 255 ) - 3*minb);
 		qlowpixelMask = (minr * 3) | (ming * 3) | (minb * 3);
-		redblueMask = makeColForPixFmt( pixfmt, 255, 0, 255 );
-		greenMask = makeColForPixFmt( pixfmt, 0, 255, 0 );
+		redblueMask = make_color( pixfmt, 255, 0, 255 );
+		greenMask = make_color( pixfmt, 0, 255, 0 );
 
 		PixelsPerMask = (ScummDepth <= 16) ? 2 : 1;
 
@@ -654,28 +668,20 @@ void createScreen( CS_DSPTYPE dspType )
 	}
 }
 
-int old_mouse_x, old_mouse_y;
-int old_mouse_h, old_mouse_w;
-bool has_mouse,hide_mouse;
-
-#define BAK_WIDTH 40
-#define BAK_HEIGHT 40
-byte old_backup[ BAK_WIDTH*BAK_HEIGHT*2 ];
-
-void SwitchScalerTo( ScalerFunc newScaler )
+void OSystem_MorphOS::SwitchScalerTo( SCALERTYPE newScaler )
 {
-	if( newScaler == NULL && ScummScale )
+	if( newScaler == ST_NONE && ScummScale != 0 )
 	{
-		ScummScale = false;
-		ScummScaler = NULL;
-		createScreen( ScummScreen ? CSDSPTYPE_FULLSCREEN : CSDSPTYPE_WINDOWED );
+		ScummScale = 0;
+		ScummScaler = ST_NONE;
+		create_screen( ScummScreen ? CSDSPTYPE_FULLSCREEN : CSDSPTYPE_WINDOWED );
 	}
 	else
 	{
-		if( !ScummScale )
+		if( ScummScale == 0 )
 		{
-			ScummScale = true;
-			createScreen( ScummScreen ? CSDSPTYPE_FULLSCREEN : CSDSPTYPE_WINDOWED );
+			ScummScale = 1;
+			create_screen( ScummScreen ? CSDSPTYPE_FULLSCREEN : CSDSPTYPE_WINDOWED );
 		}
 
 		if( ScummScaler != newScaler )
@@ -683,182 +689,154 @@ void SwitchScalerTo( ScalerFunc newScaler )
 	}
 }
 
-void waitForTimer( Scumm *s, int msec_delay )
+bool OSystem_MorphOS::poll_event( Event *event )
 {
 	struct IntuiMessage *ScummMsg;
-	ULONG signals;
-	bool  AllDone = false;
 
-	if (s->_fastMode&2)
-		msec_delay = 0;
-	else if (s->_fastMode&1)
-		msec_delay = 10;
-
-	TimerIORequest->tr_node.io_Command  = TR_ADDREQUEST;
-	TimerIORequest->tr_time.tv_secs  = 0;
-	TimerIORequest->tr_time.tv_micro = (msec_delay > 0 ? msec_delay : 1)*1000;
-	SendIO( (struct IORequest *)TimerIORequest );
-	TimerStarted = true;
-
-	do
+	if( ScummMsg = (struct IntuiMessage *)GetMsg( ScummWindow->UserPort ) )
 	{
-		while( ScummMsg = (struct IntuiMessage *)GetMsg( ScummWindow->UserPort ) )
+		switch( ScummMsg->Class )
 		{
-			switch( ScummMsg->Class )
+			case IDCMP_RAWKEY:
 			{
-				case IDCMP_RAWKEY:
+				struct InputEvent FakedIEvent;
+				char charbuf;
+            int  qual = 0;
+
+				memset( &FakedIEvent, 0, sizeof( struct InputEvent ) );
+				FakedIEvent.ie_Class = IECLASS_RAWKEY;
+				FakedIEvent.ie_Code = ScummMsg->Code;
+
+				if( ScummMsg->Qualifier & (IEQUALIFIER_LALT | IEQUALIFIER_RALT) )
+					qual |= KBD_ALT;
+				if( ScummMsg->Qualifier & (IEQUALIFIER_LSHIFT | IEQUALIFIER_RSHIFT) )
+					qual |= KBD_SHIFT;
+				if( ScummMsg->Qualifier & IEQUALIFIER_CONTROL )
+					qual |= KBD_CTRL;
+				event->kbd.flags = qual;
+
+				event->event_code = EVENT_KEYDOWN;
+
+				if( ScummMsg->Code >= 0x50 && ScummMsg->Code <= 0x59 )
 				{
-					struct InputEvent FakedIEvent;
-					char charbuf;
-
-					memset( &FakedIEvent, 0, sizeof( struct InputEvent ) );
-					FakedIEvent.ie_Class = IECLASS_RAWKEY;
-					FakedIEvent.ie_Code = ScummMsg->Code;
-
-					if( ScummMsg->Code >= 0x50 && ScummMsg->Code <= 0x59 )
-					{
-						// Function key
-						s->_keyPressed = (ScummMsg->Code-0x50)+315;
-					}
-					else if( MapRawKey( &FakedIEvent, &charbuf, 1, NULL ) == 1 )
-					{
-						if( charbuf >= '0' && charbuf <= '9' && !(ScummMsg->Qualifier & (IEQUALIFIER_LALT | IEQUALIFIER_RALT)) )
-						{
-							s->_saveLoadSlot = charbuf - '0';
-							if( ScummMsg->Qualifier & (IEQUALIFIER_LSHIFT | IEQUALIFIER_RSHIFT) )
-							{
-								sprintf(s->_saveLoadName, "Quicksave %d", s->_saveLoadSlot);
-								s->_saveLoadFlag = 1;
-							}
-							else if( ScummMsg->Qualifier & IEQUALIFIER_CONTROL )
-								s->_saveLoadFlag = 2;
-							s->_keyPressed = charbuf;
-							s->_saveLoadCompatible = false;
-						}
-						else if( ScummMsg->Qualifier & IEQUALIFIER_CONTROL )
-						{
-							switch( charbuf )
-							{
-								case 'z':
-									ReplyMsg( (struct Message *)ScummMsg );
-									exit(1);
-
-								case 'd':
-									debugger.attach(s);
-									break;
-
-								case 's':
-									s->resourceStats();
-									break;
-							}
-						}
-						else if( ScummMsg->Qualifier & (IEQUALIFIER_RALT | IEQUALIFIER_LALT) )
-						{
-							if( charbuf >= '0' && charbuf <= '9' && ScummScalers[ charbuf-'0' ].gs_Name )
-							{
-								ReplyMsg( (struct Message *)ScummMsg );
-								ScummMsg = NULL;
-								SwitchScalerTo( ScummScalers[ charbuf-'0' ].gs_Function );
-							}
-							else if( charbuf == 0x0d )
-							{
-								ReplyMsg( (struct Message *)ScummMsg );
-								ScummMsg = NULL;
-								createScreen( CSDSPTYPE_TOGGLE );
-							}
-						}
-						else
-							s->_keyPressed = charbuf;
-					}
-					break;
+					/*
+					 * Function key
+					 */
+					event->kbd.ascii = (ScummMsg->Code-0x50)+315;
+					event->kbd.keycode = 0; //ev.key.keysym.sym;
 				}
-
-				case IDCMP_MOUSEMOVE:
+				else if( MapRawKey( &FakedIEvent, &charbuf, 1, NULL ) == 1 )
 				{
-					int newx,newy;
-
-					newx = (ScummMsg->MouseX-ScummWindow->BorderLeft) >> ScummScale;
-					newy = (ScummMsg->MouseY-ScummWindow->BorderTop) >> ScummScale;
-
-					if (newx != s->mouse.x || newy != s->mouse.y)
+					if( qual & KBD_CTRL )
 					{
-						if( newx < 0 || newx > 320 ||
-							 newy < 0 || newy > 200
-						  )
+						switch( charbuf )
 						{
-							if( !ScummOrigMouse )
-							{
-								ScummOrigMouse = true;
-								ClearPointer( ScummWindow );
-							}
+							case 'z':
+								ReplyMsg( (struct Message *)ScummMsg );
+								exit(1);
 						}
-						else if( ScummOrigMouse )
-						{
-							ScummOrigMouse = false;
-							SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
-						}
-						s->mouse.x = newx;
-						s->mouse.y = newy;
-						s->drawMouse();
 					}
-					break;
+					else if( qual & KBD_ALT )
+					{
+						if( charbuf >= '0' && charbuf <= '9' && ScummScalers[ charbuf-'0' ].gs_Name )
+						{
+							ReplyMsg( (struct Message *)ScummMsg );
+							SwitchScalerTo( ScummScalers[ charbuf-'0' ].gs_Type );
+                     return false;
+						}
+						else if( charbuf == 0x0d )
+						{
+							ReplyMsg( (struct Message *)ScummMsg );
+							create_screen( CSDSPTYPE_TOGGLE );
+                     return false;
+						}
+					}
+					else
+					{
+						event->kbd.ascii = charbuf;
+						event->kbd.keycode = 0; //ev.key.keysym.sym;
+					}
 				}
-
-				case IDCMP_MOUSEBUTTONS:
-					switch( ScummMsg->Code )
-					{
-						case SELECTDOWN:
-							s->_leftBtnPressed |= msClicked|msDown;
-							break;
-
-						case SELECTUP:
-							s->_leftBtnPressed &= ~msDown;
-							break;
-
-						case MENUDOWN:
-							s->_rightBtnPressed |= msClicked|msDown;
-							break;
-
-						case MENUUP:
-							s->_rightBtnPressed &= ~msDown;
-							break;
-					}
-					break;
-
-				case IDCMP_CLOSEWINDOW:
-					ReplyMsg( (struct Message *)ScummMsg );
-					exit(1);
-					break;
-			}
-
-			if( ScummMsg )
-				ReplyMsg( (struct Message *)ScummMsg );
-
-			cd_music_loop();
-
-			if( GetMsg( TimerMsgPort ) )
-			{
-				TimerStarted = false;
-				AllDone = true;
 				break;
 			}
-		}
 
-		if( !AllDone )
-		{
-			signals = Wait( (1 << (ScummWindow->UserPort->mp_SigBit)) | (1 << (TimerMsgPort->mp_SigBit) ) );
-
-			if( signals & (1 << (TimerMsgPort->mp_SigBit)) )
+			case IDCMP_MOUSEMOVE:
 			{
-				AllDone = true;
-				TimerStarted = false;
-				GetMsg( TimerMsgPort );
+				int newx,newy;
+
+				newx = (ScummMsg->MouseX-ScummWindow->BorderLeft) >> ScummScale;
+				newy = (ScummMsg->MouseY-ScummWindow->BorderTop) >> ScummScale;
+
+				if( newx < 0 || newx > 320 ||
+					 newy < 0 || newy > 200
+				  )
+				{
+					if( !ScummOrigMouse )
+					{
+						ScummOrigMouse = true;
+						ClearPointer( ScummWindow );
+					}
+				}
+				else if( ScummOrigMouse )
+				{
+					ScummOrigMouse = false;
+					SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
+				}
+				event->event_code = EVENT_MOUSEMOVE;
+				event->mouse.x = newx;
+				event->mouse.y = newy;
+				break;
 			}
+
+			case IDCMP_MOUSEBUTTONS:
+         {
+				int newx,newy;
+
+				newx = (ScummMsg->MouseX-ScummWindow->BorderLeft) >> ScummScale;
+				newy = (ScummMsg->MouseY-ScummWindow->BorderTop) >> ScummScale;
+
+				switch( ScummMsg->Code )
+           	{
+               case SELECTDOWN:
+						event->event_code = EVENT_LBUTTONDOWN;
+                  break;
+
+               case SELECTUP:
+						event->event_code = EVENT_LBUTTONUP;
+                  break;
+
+					case MENUDOWN:
+						event->event_code = EVENT_RBUTTONDOWN;
+                  break;
+
+               case MENUUP:
+						event->event_code = EVENT_RBUTTONUP;
+                  break;
+
+               default:
+               	ReplyMsg( (struct Message *)ScummMsg );
+                  return false;
+            }
+				event->mouse.x = newx;
+				event->mouse.y = newy;
+				break;
+         }
+
+			case IDCMP_CLOSEWINDOW:
+				ReplyMsg( (struct Message *)ScummMsg );
+				exit( 0 );
 		}
-	} while ( !AllDone );
+
+		if( ScummMsg )
+			ReplyMsg( (struct Message *)ScummMsg );
+
+		return true;
+	}
+
+	return false;
 }
 
-void setShakePos( Scumm *s, int shake_pos )
+void OSystem_MorphOS::set_shake_pos( int shake_pos )
 {
 	ScummShakePos = shake_pos;
 }
@@ -871,7 +849,7 @@ void setShakePos( Scumm *s, int shake_pos )
 
 #define SWAP_WORD( word ) word = ((word & 0xff) << 8) | (word >> 8)
 
-void Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
+void OSystem_MorphOS::Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
 {
 	unsigned int x, y;
 	unsigned long color[16];
@@ -1093,7 +1071,7 @@ void Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint3
 	UnLockBitMap( handle );
 }
 
-void SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
+void OSystem_MorphOS::SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
 {
 	unsigned int x, y;
 	unsigned long color[12];
@@ -1321,7 +1299,7 @@ void SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint3
 	UnLockBitMap( handle );
 }
 
-void PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
+void OSystem_MorphOS::PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
 {
 	byte *src;
 	byte *dest;
@@ -1353,7 +1331,7 @@ void PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint
 			g = (ScummColors[ *(src+x) ] >> 8) & 0xff;
 			b = ScummColors[ *(src+x) ] & 0xff;
 			
-			color = makeColForPixFmt( dest_pixfmt, r, g, b );
+			color = make_color( dest_pixfmt, r, g, b );
 			if( PixelsPerMask == 2 )
 			{
 				if( ScummPCMode )
@@ -1384,49 +1362,34 @@ void PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint
 }
 
 /* Copy part of bitmap */
-void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h)
+void OSystem_MorphOS::copy_rect(const byte *src, int pitch, int x, int y, int w, int h)
 {
 	byte *dst;
 
-	hide_mouse = true;
-	if( has_mouse )
-		s->drawMouse();
+	if (x < 0) { w+=x; src-=x; x = 0; }
+	if (y < 0) { h+=y; src-=y*pitch; y = 0; }
+	if (w >= 320-x) { w = 320 - x; }
+	if (h >= 200-y) { h = 200 - y; }
 
-	if( y < 0 )
-	{
-		h += y;
-		src -= y*320;
-		y = 0;
-	}
-
-	if( h > 200 - y )
-		h = 200 - y;
-
-	if( h<=0 )
+	if (w<=0 || h<=0)
 		return;
+
+	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
+	if( MouseDrawn )
+		undraw_mouse();
 
 	dst = (byte *)ScummBuffer+y*320 + x;
 	do
 	{
 		memcpy( dst, src, w );
 		dst += 320;
-		src += 320;
+		src += pitch;
 	} while( --h );
 }
 
-void updateScreen(Scumm *s)
+void OSystem_MorphOS::update_screen()
 {
-	if( s->_fastMode & 2 )
-		return;
-
-	if( hide_mouse )
-	{
-		hide_mouse = false;
-		s->drawMouse();
-	}
-
-	if(s->_palDirtyMax != -1)
-		updatePalette(s);
+	draw_mouse();
 
 	if( !ScummScale )
 	{
@@ -1448,7 +1411,21 @@ void updateScreen(Scumm *s)
 			src_y = -ScummShakePos;
 		else
 			dest_y = ScummShakePos;
-		(*ScummScaler)( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+		
+		switch( ScummScaler )
+		{
+			case ST_POINT:
+				PointScaler( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+				break;
+
+			case ST_SUPEREAGLE:
+				SuperEagle( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+				break;
+
+			case ST_SUPER2XSAI:
+				Super2xSaI( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+				break;
+		}
 	}
 
 	/* Account for shaking (blacken rest of screen) */
@@ -1479,110 +1456,153 @@ void updateScreen(Scumm *s)
 	}
 }
 
-void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf, bool visible )
+void OSystem_MorphOS::draw_mouse()
 {
 	int x,y;
 	byte *dst,*bak;
 	byte color;
 
-	if( hide_mouse )
-		visible = false;
+	if( MouseDrawn || !MouseVisible )
+		return;
+	MouseDrawn = true;
 
-	assert( w<=BAK_WIDTH && h<=BAK_HEIGHT );
+	const int ydraw = MouseY - MouseHotspotY;
+	const int xdraw = MouseX - MouseHotspotX;
+	const int w = MouseWidth;
+	const int h = MouseHeight;
+	bak = MouseBackup;
+	byte *buf = MouseImage;
 
-	if( has_mouse )
+	MouseOldX = xdraw;
+	MouseOldY = ydraw;
+	MouseOldWidth = w;
+	MouseOldHeight = h;
+
+	dst = (byte*)ScummBuffer + ydraw*320 + xdraw;
+	bak = MouseBackup;
+
+	for( y = 0; y < h; y++, dst += 320, bak += MAX_MOUSE_W, buf += w )
 	{
-		dst = (byte*)ScummBuffer + old_mouse_y*320 + old_mouse_x;
-		bak = old_backup;
-	
-		for( y = 0; y < old_mouse_h; y++, bak+=BAK_WIDTH, dst+=320 )
+		if( (uint)(ydraw+y) < 200 )
 		{
-			if( (uint)(old_mouse_y + y) < 200 )
+			for( x = 0; x<w; x++ )
 			{
-				for( x=0; x < old_mouse_w; x++ )
+				if( (uint)(xdraw+x)<320 )
 				{
-					if( (uint)(old_mouse_x + x) < 320 )
-						dst[ x ] = bak[ x ];
+					bak[x] = dst[x];
+					if( (color=buf[x])!=0xFF )
+						dst[ x ] = color;
 				}
 			}
 		}
 	}
+}
 
-	if( visible )
+void OSystem_MorphOS::undraw_mouse()
+{
+	int x,y;
+	byte *dst,*bak;
+
+	if( !MouseDrawn )
+		return;
+	MouseDrawn = false;
+
+	dst = (byte*)ScummBuffer + MouseOldY*320 + MouseOldX;
+	bak = MouseBackup;
+
+	for( y = 0; y < MouseOldHeight; y++, bak += MAX_MOUSE_W, dst += 320 )
 	{
-		dst = (byte*)ScummBuffer + ydraw*320 + xdraw;
-		bak = old_backup;
-
-		for( y = 0; y < h; y++, dst += 320, bak += BAK_WIDTH, buf += w )
+		if( (uint)(MouseOldY + y) < 200 )
 		{
-			if( (uint)(ydraw+y) < 200 )
+			for( x = 0; x < MouseOldWidth; x++ )
 			{
-				for( x=0; x<w; x++ )
-				{
-					if( (uint)(xdraw+x)<320 )
-					{
-						bak[x] = dst[x];
-						if( (color=buf[x])!=0xFF )
-							dst[ x ] = color;
-					}
-				}
+				if( (uint)(MouseOldX + x) < 320 )
+					dst[ x ] = bak[ x ];
 			}
 		}
 	}
+}
 
-	if( has_mouse )
-		has_mouse = false;
+bool OSystem_MorphOS::show_mouse(bool visible)
+{
+	if( MouseVisible == visible )
+		return visible;
+
+	bool last = MouseVisible;
+	MouseVisible = visible;
 
 	if( visible )
+		draw_mouse();
+	else
+		undraw_mouse();
+
+	return last;
+}
+
+void OSystem_MorphOS::set_mouse_pos(int x, int y)
+{
+	if (x != MouseX || y != MouseY)
 	{
-		has_mouse = true;
-		old_mouse_x = xdraw;
-		old_mouse_y = ydraw;
-		old_mouse_w = w;
-		old_mouse_h = h;
+		MouseX = x;
+		MouseY = y;
+		undraw_mouse();
 	}
 }
 
-
-void launcherLoop()
+void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y)
 {
-#if 0
-	int last_time, new_time;
-	int delta = 0;
-	last_time = GetTicks();
+	MouseWidth = w;
+	MouseHeight	= h;
 
-	gui.launcher();
-	do
-	{
-		updateScreen(&scumm);
+	MouseHotspotX = hotspot_x;
+	MouseHotspotY = hotspot_y;
 
-		new_time = GetTicks();
-		waitForTimer( &scumm, delta * 15 + last_time - new_time );
-		last_time = GetTicks();
+	MouseImage = (byte*)buf;
 
-		if (gui._active)
-		{
-			gui.loop();
-			delta = 5;
-		} else
-			error("gui closed!");
-	} while(1);
-#endif
-};
-
-void setWindowName( Scumm *s )
-{
-	/* this is done in initGraphics() ... */
+	undraw_mouse();
 }
 
-void initGraphics( Scumm *s, bool fullScreen, unsigned int scaleFactor )
+void OSystem_MorphOS::set_sound_proc( void *param, OSystem::SoundProc *proc, byte format )
 {
-	ScummNoCursor = (UWORD *)AllocVec( 16, MEMF_CHIP | MEMF_CLEAR );
+	static EmulFunc MySoundEmulFunc;
 
+	SoundProc = proc;
+	SoundParam = param;
+
+	/*
+	 * Create Sound Thread
+	 */
+	MySoundEmulFunc.Trap      = TRAP_FUNC;
+	MySoundEmulFunc.Address	  = (ULONG)&morphos_sound_thread;
+	MySoundEmulFunc.StackSize = 8192;
+	MySoundEmulFunc.Extension = 0;
+	MySoundEmulFunc.Arg1	     = (ULONG)this;
+	MySoundEmulFunc.Arg2	     = AHIST_M16S;
+
+	soundProcTags[ 0 ].ti_Data = (ULONG)&MySoundEmulFunc;
+	ScummSoundThread = CreateNewProc( soundProcTags );
+
+	if( !ScummSoundThread )
+	{
+		puts( "Failed to create sound thread" );
+		exit( 1 );
+	}
+}
+
+void OSystem_MorphOS::fill_sound( byte *stream, int len )
+{
+	if( SoundProc )
+		SoundProc( SoundParam, stream, len );
+	else
+		memset( stream, 0x0, len );
+}
+
+void OSystem_MorphOS::init_size( uint w, uint h )
+{
 	/*
 	 * Allocate image buffer
 	 */
-	ScummBuffer = AllocVec( 320*200, MEMF_ANY | MEMF_CLEAR );
+	ScummBuffer = AllocVec( w*h, MEMF_ANY | MEMF_CLEAR );
 
 	if( ScummBuffer == NULL )
 	{
@@ -1592,71 +1612,17 @@ void initGraphics( Scumm *s, bool fullScreen, unsigned int scaleFactor )
 
 	memset( ScummColors, 0, 256*sizeof( ULONG ) );
 
-	sprintf( ScummWndTitle, "ScummVM MorphOS - %s", s->_gameText);
-
-	createScreen( args[ USG_WBWINDOW ] ? CSDSPTYPE_WINDOWED : CSDSPTYPE_FULLSCREEN );
-
-	InitSemaphore( &ScummMusicThreadRunning );
-
-	// Prepare for CD audio if game is Loom CD version
-	if( (s->_features & GF_AUDIOTRACKS) && !args[ USG_NOMUSIC ] )
-	{
-		FindCDTags[ 0 ].ti_Data = (ULONG)((s->_gameId == GID_LOOM256) ? "LoomCD" : "Monkey1CD");
-		CDDABase = OpenLibrary( "cdda.library", 0 );
-		if( CDDABase )
-		{
-			CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
-			if( CDrive )
-			{
-				if( !CDDA_ObtainDrive( CDrive, CDDA_SHARED_ACCESS, NULL ) )
-				{
-					CDrive = NULL;
-					warning( "Failed to obtain CD drive - music will not play" );
-				}
-				else if( s->_gameId == GID_LOOM256 )
-				{
-					// Offset correction *may* be required
-					struct CDS_TrackInfo ti;
-
-					if( CDDA_GetTrackInfo( CDrive, 1, 0, &ti ) )
-						CDDATrackOffset = ti.ti_TrackStart.tm_Format.tm_Frame-22650;
-				}
-			}
-			else
-				warning( "Could not find game CD inserted in CD-ROM drive - music will not play" );
-		}
-		else
-			warning( "Failed to open cdda.library - music will not play" );
-		args[ USG_NOMUSIC ] = TRUE;	// this avoids AMidi being opened ...
-	}
-
-	// Create Music Thread
-	MyEmulFunc.Trap      = TRAP_FUNC;
-	MyEmulFunc.Address	= (ULONG)&morphos_music_thread;
-	MyEmulFunc.StackSize	= 8192;
-	MyEmulFunc.Extension	= 0;
-	MyEmulFunc.Arg1	   = (ULONG)&scumm;
-	MyEmulFunc.Arg2	   = (ULONG)ScummMidiUnit;
-	MyEmulFunc.Arg3	   = (ULONG)args[ USG_NOMUSIC ];
-	ScummMusicThread = CreateNewProc( musicProcTags );
-	if( !ScummMusicThread )
-	{
-		puts( "Failed to create music thread" );
-		exit( 1 );
-	}
+	create_screen( CSDSPTYPE_KEEP );
 }
 
-static bool FindScaler( const char *ScalerName )
+OSystem_MorphOS::SCALERTYPE OSystem_MorphOS::FindScaler( const char *ScalerName )
 {
 	int scaler = 0;
 	
 	while( ScummScalers[ scaler ].gs_Name )
 	{
 		if( !stricmp( ScalerName, ScummScalers[ scaler ].gs_Name ) )
-		{
-			ScummScaler = ScummScalers[ scaler ].gs_Function;
-			break;
-		}
+			return ScummScalers[ scaler ].gs_Type;
 		scaler++;
 	}
 
@@ -1665,276 +1631,8 @@ static bool FindScaler( const char *ScalerName )
 		puts( "Invalid scaler name. Please use one of the following:" );
 		for( scaler = 0; ScummScalers[ scaler ].gs_Name != NULL; scaler++ )
 			printf( "  %s\n", ScummScalers[ scaler ].gs_Name );
-		return false;
 	}
 
-	ScummScaler = ScummScalers[ scaler ].gs_Function;
-	if( ScummScaler == NULL )
-		ScummScale = 0;
-	else
-		ScummScale = 1;
-
-	return true;
-}
-
-static void ReadToolTypes( struct WBArg *OfFile )
-{
-	struct DiskObject *dobj;
-	char 	*ToolValue;
-	char IconPath[ 256 ];
-
-	NameFromLock( OfFile->wa_Lock, IconPath, 256 );
-	AddPart( IconPath, OfFile->wa_Name, 256 );
-
-	dobj = GetDiskObject( IconPath );
-	if( dobj == NULL )
-		return;
-
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "STORY" ) )
-	{
-		if( ScummStory )
-			FreeVec( ScummStory );
-		ScummStory = (char *)AllocVec( strlen( ToolValue )+1, MEMF_PUBLIC );
-		strcpy( ScummStory, ToolValue );
-	}
-
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "DATAPATH" ) )
-	{
-		if( ScummPath )
-			FreeVec( ScummPath );
-		ScummPath = (char *)AllocVec( strlen( ToolValue )+4, MEMF_PUBLIC );
-		strcpy( ScummPath, "-p" );
-		strcat( ScummPath, ToolValue );
-	}
-
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "WBWINDOW" ) )
-	{
-		if( MatchToolValue( ToolValue, "YES" ) )
-			args[ USG_WBWINDOW ] = TRUE;
-		else if( MatchToolValue( ToolValue, "NO" ) )
-			args[ USG_WBWINDOW ] = FALSE;
-	}
-	
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "SCALER" ) )
-	{
-		if( !FindScaler( ToolValue ) )
-		{
-			FreeDiskObject( dobj );
-			exit( 1 );
-		}
-	}
-
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MUSIC" ) )
-	{
-		if( MatchToolValue( ToolValue, "YES" ) )
-			args[ USG_NOMUSIC ] = FALSE;
-		else if( MatchToolValue( ToolValue, "NO" ) )
-			args[ USG_NOMUSIC ] = TRUE;
-	}
-
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MIDIUNIT" ) )
-		ScummMidiUnit = atoi( ToolValue );
-
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "VOLUME" ) )
-	{
-		int vol = atoi( ToolValue );
-		if( vol >= 0 && vol <= 100 )
-		{
-			ScummMidiVolume = vol;
-			args[ USG_VOLUME ] = (ULONG)&ScummMidiVolume;
-		}
-	}
-
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "TEMPO" ) )
-	{
-		ScummMidiTempo = atoi( ToolValue );
-		args[ USG_TEMPO ] = (ULONG)&ScummMidiTempo;
-	}
-
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "SUBTITLES" ) )
-	{
-		if( MatchToolValue( ToolValue, "YES" ) )
-			args[ USG_NOSUBTITLES ] = FALSE;
-		else if( MatchToolValue( ToolValue, "NO" ) )
-			args[ USG_NOSUBTITLES ] = TRUE;
-	}
-
-	FreeDiskObject( dobj );
-}
-
-#undef main
-
-int main( int argc, char *argv[] )
-{
-	int delta;
-	int last_time, new_time;
-
-	CyberGfxBase = OpenLibrary( "cybergraphics.library", 41 );
-	if( CyberGfxBase == NULL )
-	{
-		puts( "Failed to open cybergraphics.library" );
-		exit( 1 );
-	}
-
-	atexit( &closeResources );
-
-	TimerMsgPort = CreateMsgPort();
-	if( TimerMsgPort == NULL )
-	{
-		puts( "Failed to create message port" );
-		exit( 1 );
-	}
-
-	TimerIORequest = (struct timerequest *)CreateIORequest( TimerMsgPort, sizeof( struct timerequest ) );
-	if( TimerIORequest == NULL )
-	{
-		puts( "Failed to create IO request" );
-		exit( 1 );
-	}
-
-	if( OpenDevice( "timer.device", UNIT_MICROHZ, (struct IORequest *)TimerIORequest, 0 ) )
-	{
-		DeleteIORequest( (struct IORequest *)TimerIORequest );
-		TimerIORequest = NULL;
-		puts( "Failed to open timer device" );
-		exit( 1 );
-	}
-
-	TimerBase = TimerIORequest->tr_node.io_Device;
-
-	if( _WBenchMsg == NULL )
-	{
-		/* Parse the command line here */
-		ScummArgs = ReadArgs( usageTemplate, args, NULL );
-		if( ScummArgs == NULL )
-		{
-			puts( "Error in command line - type \"ScummVM ?\" for usage.\n" );
-			exit( 1 );
-		}
-
-		if( args[ USG_STORY ] )
-		{
-			ScummStory = (char *)AllocVec( strlen( (char *)args[ USG_STORY ] )+1, MEMF_PUBLIC );
-			strcpy( ScummStory, (char *)args[ USG_STORY ] );
-		}
-
-		if( args[ USG_DATAPATH ] )
-		{
-			ScummPath = (char *)AllocVec( strlen( (char *)args[ USG_DATAPATH ] )+4, MEMF_PUBLIC );
-			strcpy( ScummPath, "-p" );
-			strcat( ScummPath, (char *)args[ USG_DATAPATH ] );
-		}
-
-		if( args[ USG_SCALER ] )
-		{
-			if( !FindScaler( (char *)args[ USG_SCALER ] ) )
-				exit( 1 );
-		}
-
-		if( args[ USG_MIDIUNIT ] )
-			ScummMidiUnit = *((LONG *)args[ USG_MIDIUNIT ]);
-
-		if( args[ USG_TEMPO ] )
-			ScummMidiTempo = *((LONG *)args[ USG_TEMPO ]);
-
-		if( args[ USG_VOLUME ] )
-			ScummMidiVolume = *((LONG *)args[ USG_VOLUME ]);
-	}
-	else
-	{
-		/* We've been started from Workbench */
-		ReadToolTypes( &_WBenchMsg->sm_ArgList[ 0 ] );
-		if( _WBenchMsg->sm_NumArgs > 1 )
-		{
-			ReadToolTypes( &_WBenchMsg->sm_ArgList[ 1 ] );
-			OrigDirLock = CurrentDir( _WBenchMsg->sm_ArgList[ 1 ].wa_Lock );
-		}
-	}
-
-	if( ScummPath )
-	{
-		char c = ScummPath[ strlen( ScummPath )-1 ];
-		if( c != '/' && c != ':' )
-			strcat( ScummPath, "/" );
-	}
-
-	char *argvfake[] = { "ScummVM", (char *)ScummStory, "-e5", (char *)ScummPath };
-	if( detector.detectMain( ScummPath ? 4 : 3, argvfake ) )
-		exit( 1 );
-
-	if( detector._features & GF_OLD256 )
-		scumm = new Scumm_v3;
-	else if( detector._features & GF_SMALL_HEADER ) // this force loomCD as v4
-		scumm = new Scumm_v4;
-	else if( detector._features & GF_AFTER_V7 )
-		scumm = new Scumm_v7;
-	else if( detector._features & GF_AFTER_V6 ) // this force SamnmaxCD as v6
-		scumm = new Scumm_v6;
-	else
-		scumm = new Scumm_v5;
-
-	scumm->_fullScreen = detector._fullScreen;
-	scumm->_debugMode = detector._debugMode;
-	scumm->_bootParam = detector._bootParam;
-	scumm->_scale = detector._scale;
-	scumm->_gameDataPath = detector._gameDataPath;
-	scumm->_gameTempo = detector._gameTempo;
-	scumm->_videoMode = detector._videoMode;
-	scumm->_exe_name = detector._exe_name;
-	scumm->_gameId = detector._gameId;
-	scumm->_gameText = detector._gameText;
-	scumm->_features = detector._features;
-	scumm->_soundCardType = detector._soundCardType;
-	scumm->_noSubtitles = args[ USG_NOSUBTITLES ] != FALSE;
-
-	if( args[ USG_VOLUME ] )
-	{
-		int vol = *(LONG *)args[ USG_VOLUME ];
-		if( vol >= 0 && vol <= 100 )
-			sound.set_music_volume( vol );
-	}
-	if( args[ USG_TEMPO ] )
-		scumm->_gameTempo = *(LONG *)args[ USG_TEMPO ];
-
-	scumm->delta=6;
-
-	scumm->_gui = &gui;
-	sound.initialize(scumm, &snd_driv);
-
-	scumm->delta=0;
-	scumm->_system = &_system;
-
-	_system.last_time=0;
-
-	scumm->launch();
-
-	gui.init(scumm);	/* Reinit GUI after loading a game */
-	scumm->mainRun();
-
-	return 0;
-}
-
-int OSystem::waitTick(int delta)
-{
-	do
-	{
-		updateScreen( scumm );
-		new_time = GetTicks();
-		waitForTimer( scumm, delta * 15 + last_time - new_time );
-		last_time = GetTicks();
-		if( gui._active )
-		{
-			gui.loop( scumm );
-			delta = 5;
-		}
-	}
-	while( gui._active );
-
-	return( delta );
-}
-
-OSystem::OSystem()
-{
-	last_time = GetTicks();
+	return ST_INVALID;
 }
 

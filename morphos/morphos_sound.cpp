@@ -31,26 +31,22 @@
 #include <devices/ahi.h>
 #include <devices/amidi.h>
 
-#define NO_PPCINLINE_STDARG
-#define NO_PPCINLINE_VARARGS
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/ahi.h>
 
-extern int GetTicks();
-extern Scumm scumm;
-extern IMuse sound;
-extern SOUND_DRIVER_TYPE snd_driv;
+#include "morphos.h"
 
 #define AHI_BUF_SIZE	 (8*1024)
 
 struct SignalSemaphore ScummMusicThreadRunning;
+struct SignalSemaphore ScummSoundThreadRunning;
 
 static struct MsgPort     *ahiPort    		 = NULL;
 static struct AHIRequest  *ahiReq[ 2 ]		 = { NULL, NULL };
 static UWORD					ahiCurBuf		 = 0;
-static BOOL						ahiReqSent[ 2 ] = { FALSE, FALSE };
+static bool						ahiReqSent[ 2 ] = { false, false };
 static BYTE						ahiDevice		 = -1;
 		 UBYTE					ahiUnit  		 = AHI_DEFAULT_UNIT;
 static char					  *ahiBuf[ 2 ]		 = { NULL, NULL };
@@ -58,7 +54,7 @@ static char					  *ahiBuf[ 2 ]		 = { NULL, NULL };
 static struct MsgPort 		 *ScummMidiPort = NULL;
 		 struct IOMidiRequest *ScummMidiRequest = NULL;
 
-bool init_morphos_sound( ULONG MidiUnit, bool NoMusic )
+bool init_morphos_music( ULONG MidiUnit, bool NoMusic )
 {
 	if( !NoMusic )
 	{
@@ -85,9 +81,29 @@ bool init_morphos_sound( ULONG MidiUnit, bool NoMusic )
 		}
 
 		if( !ScummMidiRequest )
+		{
 			warning( "Could not open AMidi - music will not play" );
+			return false;
+		}
 	}
 
+	return true;
+}
+
+
+void exit_morphos_music()
+{
+	if( ScummMidiRequest )
+	{
+		CloseDevice( (struct IORequest *)ScummMidiRequest );
+		DeleteIORequest( (struct IORequest *)ScummMidiRequest );
+		DeleteMsgPort( ScummMidiPort );
+	}
+}
+
+
+static bool init_morphos_sound()
+{
 	if( !(ahiPort = CreateMsgPort()) )
 		return false;
 
@@ -135,19 +151,16 @@ bool init_morphos_sound( ULONG MidiUnit, bool NoMusic )
 
 	CopyMem( ahiReq[ 0 ], ahiReq[ 1 ], sizeof( struct AHIRequest ) );
 
+	ahiCurBuf = 0;
+	ahiReqSent[ 0 ] = FALSE;
+	ahiReqSent[ 1 ] = FALSE;
+
 	return true;
 }
 
 
-void exit_morphos_sound()
+static void exit_morphos_sound()
 {
-	if( ScummMidiRequest )
-	{
-		CloseDevice( (struct IORequest *)ScummMidiRequest );
-		DeleteIORequest( (struct IORequest *)ScummMidiRequest );
-		DeleteMsgPort( ScummMidiPort );
-	}
-
 	if( ahiReq[ 1 ] )
 		FreeVec( ahiReq[ 1 ] );
 
@@ -167,6 +180,7 @@ void exit_morphos_sound()
 
 int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
 {
+#if 0
 	int  old_time, cur_time;
 	bool initialized;
    bool TimerAvailable = false;
@@ -175,7 +189,7 @@ int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
 
 	ObtainSemaphore( &ScummMusicThreadRunning );
 
-	initialized = init_morphos_sound( MidiUnit, NoMusic );
+	initialized = init_morphos_music( MidiUnit, NoMusic );
 	if( !initialized )
 		warning( "Sound could not be initialized" );
 
@@ -204,70 +218,32 @@ int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
 	}
 	else
 	{
-		old_time = GetTicks();
+		old_time = 0;//GetTicks();
 
 		for(;;)
 		{
 			if( CheckSignal( SIGBREAKF_CTRL_F ) )
-			{
-				if( ahiReqSent[ ahiCurBuf ] )
-				{
-					AbortIO( (struct IORequest *)ahiReq[ ahiCurBuf ] );
-					WaitIO ( (struct IORequest *)ahiReq[ ahiCurBuf ] );
-				}
 				break;
-			}
 
-			if( !snd_driv.wave_based() )
+/*			  if( !snd_driv.wave_based() )
 			{
 				cur_time = GetTicks();
 				while( old_time < cur_time )
 				{
 					old_time += 10;
 					sound.on_timer();
-				}
+				}*/
 /*				  TimerIORequest->tr_time.tv_micro = (old_time-cur_time)*1000;
 				if( TimerIORequest->tr_time.tv_micro == 0 )
 					TimerIORequest->tr_time.tv_micro = 100;*/
-				TimerIORequest->tr_time.tv_micro = 10000;
+/*				  TimerIORequest->tr_time.tv_micro = 10000;
 			}
 			else
-				TimerIORequest->tr_time.tv_micro = 10000;
+				TimerIORequest->tr_time.tv_micro = 10000;*/
 
 			TimerIORequest->tr_node.io_Command  = TR_ADDREQUEST;
 			TimerIORequest->tr_time.tv_secs  = 0;
 			DoIO( (struct IORequest *)TimerIORequest );
-
-			if( !initialized )
-				continue;
-
-			if( !ahiReqSent[ ahiCurBuf ] || CheckIO( (struct IORequest *)ahiReq[ ahiCurBuf ] ) )
-			{
-				struct AHIRequest *req = ahiReq[ ahiCurBuf ];
-				UWORD ahiOtherBuf = !ahiCurBuf;
-
-				if( ahiReqSent[ ahiCurBuf ] )
-					WaitIO( (struct IORequest *)req );
-
-				if( CheckSignal( SIGBREAKF_CTRL_F ) )
-					break;
-
-				scumm.mixWaves( (int16 *)ahiBuf[ ahiCurBuf ], AHI_BUF_SIZE >> 1 );
-
-				req->ahir_Std.io_Message.mn_Node.ln_Pri = 0;
-				req->ahir_Std.io_Command = CMD_WRITE;
-				req->ahir_Std.io_Data    = ahiBuf[ ahiCurBuf ];
-				req->ahir_Std.io_Length  = AHI_BUF_SIZE;
-				req->ahir_Type				 = AHIST_M16S;
-				req->ahir_Frequency		 = SAMPLES_PER_SEC;
-				req->ahir_Position  		 = 0x8000;
-				req->ahir_Volume			 = 0x10000;
-				req->ahir_Link				 = (ahiReqSent[ ahiOtherBuf ] && !CheckIO( (struct IORequest *)ahiReq[ ahiOtherBuf ] )) ? ahiReq[ ahiOtherBuf ] : NULL;
-				SendIO( (struct IORequest *)req );
-
-				ahiReqSent[ ahiCurBuf ] = TRUE;
-				ahiCurBuf = ahiOtherBuf;
-			}
 		}
 	}
 
@@ -278,9 +254,81 @@ int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
 		DeleteMsgPort( TimerMsgPort );
 	}
 
-	exit_morphos_sound();
+	exit_morphos_music();
 
 	ReleaseSemaphore( &ScummMusicThreadRunning );
+	return 0;
+#endif
+}
+
+
+int morphos_sound_thread( OSystem_MorphOS *syst, ULONG SampleType )
+{
+	ULONG signals;
+	bool  initialized;
+
+	ObtainSemaphore( &ScummSoundThreadRunning );
+
+	initialized = init_morphos_sound();
+	if( !initialized )
+	{
+		warning( "Sound could not be initialized. The game may hang at some point (press Ctrl-z then)." );
+		Wait( SIGBREAKF_CTRL_C );
+	}
+	else
+	{
+		for(;;)
+		{
+			while( !ahiReqSent[ ahiCurBuf ] || CheckIO( (struct IORequest *)ahiReq[ ahiCurBuf ] ) )
+			{
+				struct AHIRequest *req = ahiReq[ ahiCurBuf ];
+				UWORD ahiOtherBuf = !ahiCurBuf;
+
+				if( ahiReqSent[ ahiCurBuf ] )
+					WaitIO( (struct IORequest *)req );
+
+				syst->fill_sound( (byte *)ahiBuf[ ahiCurBuf ], AHI_BUF_SIZE );
+	
+				req->ahir_Std.io_Message.mn_Node.ln_Pri = 0;
+				req->ahir_Std.io_Command = CMD_WRITE;
+				req->ahir_Std.io_Data    = ahiBuf[ ahiCurBuf ];
+				req->ahir_Std.io_Length  = AHI_BUF_SIZE;
+				req->ahir_Type				 = SampleType;
+				req->ahir_Frequency		 = SAMPLES_PER_SEC;
+				req->ahir_Position  		 = 0x8000;
+				req->ahir_Volume			 = 0x10000;
+				req->ahir_Link				 = (ahiReqSent[ ahiOtherBuf ] && !CheckIO( (struct IORequest *)ahiReq[ ahiOtherBuf ] )) ? ahiReq[ ahiOtherBuf ] : NULL;
+				SendIO( (struct IORequest *)req );
+
+				ahiReqSent[ ahiCurBuf ] = true;
+				ahiCurBuf = ahiOtherBuf;
+			}
+
+			signals = Wait( SIGBREAKF_CTRL_C | (1 << ahiPort->mp_SigBit) );
+
+			if( signals & SIGBREAKF_CTRL_C )
+				break;
+		}
+
+		if( ahiReqSent[ ahiCurBuf ] )
+		{
+			AbortIO( (struct IORequest *)ahiReq[ ahiCurBuf ] );
+			WaitIO ( (struct IORequest *)ahiReq[ ahiCurBuf ] );
+			ahiReqSent[ ahiCurBuf ] = false;
+		}
+
+		if( ahiReqSent[ !ahiCurBuf ] )
+		{
+			AbortIO( (struct IORequest *)ahiReq[ !ahiCurBuf ] );
+			WaitIO ( (struct IORequest *)ahiReq[ !ahiCurBuf ] );
+			ahiReqSent[ !ahiCurBuf ] = false;
+		}
+	}
+
+	exit_morphos_sound();
+
+	ReleaseSemaphore( &ScummSoundThreadRunning );
+	RemTask( NULL );
 	return 0;
 }
 

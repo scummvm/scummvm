@@ -11,7 +11,7 @@ Gui gui;
 Scumm *g_scumm;
 
 
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(__MORPHOS__)
 #undef main
 #endif
 

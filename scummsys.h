@@ -198,6 +198,7 @@ typedef signed long int32;
 	#define GCC_PACK
 	#define NORETURN
 #endif
+#define main morphos_main
 #elif defined(__DC__)
 
 #define scumm_stricmp strcasecmp

@@ -106,6 +106,7 @@ public:
 /* OSystem_SDL */
 OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen);
 OSystem *OSystem_NULL_create();
+OSystem *OSystem_MorphOS_create(int game_id, int gfx_driver, bool full_screen);
 
 enum {
 	GFX_NORMAL = 0,
