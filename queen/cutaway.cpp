@@ -1352,21 +1352,21 @@ void Cutaway::handleText(
 		flags = 1;
 	}
 
-	if (OBJECT_TYPE_TEXT_SPEAK != type && !_vm->subtitles())
-	{
-		BobSlot *bob = 
-			_vm->graphics()->bob( _vm->logic()->findBob(ABS(object.objectNumber)) );
+	BobSlot *bob = 
+		_vm->graphics()->bob( _vm->logic()->findBob(ABS(object.objectNumber)) );
 
-		_vm->graphics()->setBobText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
-	}
+	_vm->graphics()->setBobText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
 
 	if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
-		char voiceFileName[MAX_STRING_SIZE];
-		findCdCut(_basename, index, voiceFileName);
-		strcat(voiceFileName, "1");
-
-		if (_vm->sound()->speechOn())
+		if (_vm->sound()->speechOn()) {
+			char voiceFileName[MAX_STRING_SIZE];
+			findCdCut(_basename, index, voiceFileName);
+			strcat(voiceFileName, "1");
 			_vm->sound()->playSfx(voiceFileName);
+		}
+
+		if (OBJECT_TYPE_TEXT_SPEAK == type && _vm->sound()->speechOn() && !_vm->subtitles())
+			_vm->display()->clearTexts(0, 150);
 	}
 
 	int i;
