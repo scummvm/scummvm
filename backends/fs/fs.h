@@ -30,11 +30,7 @@
  * paths (and it's left to them whether / or \ or : is the path separator :-);
  * but it is also possible to use inodes or vrefs (MacOS 9) or anything else.
  *
- * NOTE 1: currently ONLY the directory listing mode is used; that is, we only are
- * interested in listing directories. Thus, for now implementation only have to
- * list directories.
- *
- * NOTE 2: Backends still have to provide a way to extract a path from a FSIntern
+ * NOTE: Backends still have to provide a way to extract a path from a FSIntern
  *
  * You may ask now: "isn't this cheating? Why do we go through all this when we use
  * a path in the end anyway?!?".
