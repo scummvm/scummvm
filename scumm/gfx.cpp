@@ -1354,7 +1354,7 @@ void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
 	height >>= 3;
 	width >>= 3;
 	for (y = 0; y < height; y++) {
-		_C64Colors[3] = (_C64ObjectMap[y * width + stripnr] & 7);
+		_C64Colors[3] = (_C64ObjectMap[y * width + stripnr + (width * height)] & 7);
 		for (i = 0; i < 8; i++) {
 			for (j = 7; j >= 0; j--) {
 				byte c = _C64CharMap[_C64ObjectMap[y * width + stripnr] * 8 + i] >> (j & 6);

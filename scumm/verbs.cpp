@@ -455,6 +455,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	assert(imptr);
 	if (_features & GF_AFTER_V1) {
 		gdi._C64ObjectMode = true;
+		gdi.decodeC64Gfx(imptr, gdi._C64ObjectMap, imgw * imgh * 3);
 	}
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
