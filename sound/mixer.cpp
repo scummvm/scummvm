@@ -153,26 +153,25 @@ int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, 
 
 void SoundMixer::mix(int16 *buf, uint len) {
 	_syst->lock_mutex(_mutex);
-	if (_paused) {
-		memset(buf, 0, 2 * len * sizeof(int16));
-		return;
-	}
-	
-	if (_premixProc) {
+		
+	if (_premixProc && !_paused) {
 		int i;
 		_premixProc(_premixParam, buf, len);
 		for (i = (len - 1); i >= 0; i--) {
 			buf[2 * i] = buf[2 * i + 1] = buf[i];
 		}
 	} else {
-		// no premixer available, zero the buf out
+		//  zero the buf out
 		memset(buf, 0, 2 * len * sizeof(int16));
 	}
 
-	/* now mix all channels */
-	for (int i = 0; i != NUM_CHANNELS; i++)
-		if (_channels[i])
-			_channels[i]->mix(buf, len);
+	if (!_paused) {
+		/* now mix all channels */
+		for (int i = 0; i != NUM_CHANNELS; i++)
+			if (_channels[i])
+				_channels[i]->mix(buf, len);
+	}
+	
 	_syst->unlock_mutex(_mutex);
 }
 
