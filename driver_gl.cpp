@@ -207,7 +207,7 @@ void Driver::drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, u
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// prepare view
 	glMatrixMode(GL_PROJECTION);

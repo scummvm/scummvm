@@ -85,64 +85,45 @@ void Engine::mainLoop() {
 	if (SCREENBLOCKS_GLOBAL == 1)
 		screenBlocksReset();
 
-	// Draw the screen
-	g_driver->clearScreen();
-
-	Bitmap::prepareDraw();
-	if (currScene_ != NULL)
-		currScene_->drawBackground();
-
-	glEnable(GL_DEPTH_TEST);
-	if (currScene_ != NULL)
-		currScene_->setupCamera();
-
-	glMatrixMode(GL_MODELVIEW);
 	// Update actor costumes
 	for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
 		Actor *a = *i;
 		assert(currScene_);
 		if (a->inSet(currScene_->name()) && a->visible())
 			a->update();
-	}
-
-	// Draw actors
-	glEnable(GL_TEXTURE_2D);
-	for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
-		Actor *a = *i;
-		if (a->inSet(currScene_->name()) && a->visible())
-			a->draw();
-	}
-	glDisable(GL_TEXTURE_2D);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	if (SCREENBLOCKS_GLOBAL == 1)
-		screenBlocksBlitDirtyBlocks();
+	} 
 
 	if (g_smush->isPlaying()) {
 		if (g_smush->isUpdateNeeded()) {
+			g_driver->clearScreen();
 			g_driver->drawSMUSHframe(g_smush->getX(), g_smush->getY(), g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
 			g_smush->clearUpdateNeeded();
 		}
 	} else {
+		glMatrixMode(GL_MODELVIEW);
+		g_driver->clearScreen();
+
+		if (SCREENBLOCKS_GLOBAL == 1)
+			screenBlocksBlitDirtyBlocks();
+
 		Bitmap::prepareDraw();
 		if (currScene_ != NULL)
 			currScene_->drawBackground();
+
+		glEnable(GL_DEPTH_TEST);
+		if (currScene_ != NULL)
+			currScene_->setupCamera();
+
+		// Draw actors
+		glEnable(GL_TEXTURE_2D);
+		for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
+			Actor *a = *i;
+			if (a->inSet(currScene_->name()) && a->visible())
+				a->draw();
+		}
+		glDisable(GL_TEXTURE_2D);
+		//screenBlocksDrawDebug();
 	}
-
-	glEnable(GL_DEPTH_TEST);
-	if (currScene_ != NULL)
-		currScene_->setupCamera();
-
-	// Draw actors
-	glEnable(GL_TEXTURE_2D);
-	for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
-		Actor *a = *i;
-		if (a->inSet(currScene_->name()) && a->visible())
-			a->draw();
-	}
-	glDisable(GL_TEXTURE_2D);
-
-	//screenBlocksDrawDebug();
 
 	// Draw text
 	for (text_list_type::iterator i = textObjects_.begin();
