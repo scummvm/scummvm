@@ -1339,8 +1339,12 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 
 		case AKC_Cmd3:
 		case AKC_Ignore:
-		case AKC_Ignore2:
 		case AKC_Ignore3:
+			continue;
+
+		case AKC_Ignore2:
+			if (_heversion >= 71)
+				akos_queCommand(3, a, a->sound[a->getAnimVar(GB(2))], 0);
 			continue;
 
 		case AKC_SkipE:
