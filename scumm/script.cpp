@@ -544,14 +544,8 @@ void Scumm::writeVar(uint var, int value) {
 			_scummVars[var] = value;
 
 		// stay in sync with loom cd subtitle var
-		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES && (value == 0 || value == 1)) {
-			// Override default initial setting of subtitles enabled
-			if (vm.slot[_currentScript].number == 1)
-				value = _noSubtitles;
-			else 
-				_noSubtitles = (value != 0);
-		}
-
+		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES && (value == 0 || value == 1)) 
+			_noSubtitles = (value != 0);
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
