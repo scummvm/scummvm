@@ -469,14 +469,14 @@ int32 Sound::streamCompMusic(const char *filename, uint32 musicId, bool looping)
 	// If both music streams are playing, one of them will have to go.
 
 	if (_music[0]._streaming && _music[1]._streaming) {
-		if (_music[0]._fading == 0 && _music[1]._fading == 0) {
+		if (!_music[0]._fading && !_music[1]._fading) {
 			// None of them are fading. This shouldn't happen, so
 			// just pick one and be done with it.
 			primaryStream = 0;
-		} else if (_music[0]._fading != 0 && _music[1]._fading == 0) {
+		} else if (_music[0]._fading && !_music[1]._fading) {
 			// Stream 0 is fading, so pick that one.
 			primaryStream = 0;
-		} else if (_music[0]._fading == 0 && _music[1]._fading > 0) {
+		} else if (!_music[0]._fading && _music[1]._fading) {
 			// Stream 1 is fading, so pick that one.
 			primaryStream = 1;
 		} else {
