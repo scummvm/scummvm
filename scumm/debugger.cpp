@@ -278,68 +278,61 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 			if (num_params > 1) {
 				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
 				switch(_dvars[i].type) {
-					// Integer
-					case DVAR_INT:
-						*(int *)_dvars[i].variable = atoi(param[1]);
-						Debug_Printf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
-					break;
-
-					// Integer Array
-					case DVAR_INTARRAY: {
-						char *chr = strchr(param[0], '[');
-						if (!chr) {
-							Debug_Printf("You must access this array as %s[element]\n", param[0]);
+				// Integer
+				case DVAR_INT:
+					*(int *)_dvars[i].variable = atoi(param[1]);
+					Debug_Printf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
+				break;
+				// Integer Array
+				case DVAR_INTARRAY: {
+					char *chr = strchr(param[0], '[');
+					if (!chr) {
+						Debug_Printf("You must access this array as %s[element]\n", param[0]);
+					} else {
+						int element = atoi(chr+1);
+						int32 *var = *(int32 **)_dvars[i].variable;
+						if (element > _dvars[i].optional) {
+							Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 						} else {
-							int element = atoi(chr+1);
-							int32 *var = *(int32 **)_dvars[i].variable;
-							if (element > _dvars[i].optional) {
-								Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
-							} else {
-								var[element] = atoi(param[1]);
-								Debug_Printf("(int)%s = %d\n", param[0], var[element]);
-
-							}
+							var[element] = atoi(param[1]);
+							Debug_Printf("(int)%s = %d\n", param[0], var[element]);
 						}
 					}
-					break;
-
-					default:
-						Debug_Printf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name, param[1]);
+				}
+				break;
+				default:
+					Debug_Printf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name, param[1]);
 					break;
 				}
 			} else {
 				// And again, type-dependent prints/defrefs. The array one is still ugly.
 				switch(_dvars[i].type) {
-					// Integer
-					case DVAR_INT:
-						Debug_Printf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
-					break;
-
-					// Integer array
-					case DVAR_INTARRAY: {
-						char *chr = strchr(param[0], '[');
-						if (!chr) {
-							Debug_Printf("You must access this array as %s[element]\n", param[0]);
+				// Integer
+				case DVAR_INT:
+					Debug_Printf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
+				break;
+				// Integer array
+				case DVAR_INTARRAY: {
+					char *chr = strchr(param[0], '[');
+					if (!chr) {
+						Debug_Printf("You must access this array as %s[element]\n", param[0]);
+					} else {
+						int element = atoi(chr+1);
+						int16 *var = *(int16 **)_dvars[i].variable;
+						if (element > _dvars[i].optional) {
+							Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 						} else {
-							int element = atoi(chr+1);
-							int16 *var = *(int16 **)_dvars[i].variable;
-							if (element > _dvars[i].optional) {
-								Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
-							} else {
-								Debug_Printf("(int)%s = %d\n", param[0], var[element]);
-
-							}
+							Debug_Printf("(int)%s = %d\n", param[0], var[element]);
 						}
 					}
+				}
+				break;
+				// String
+				case DVAR_STRING:
+					Debug_Printf("(string)%s = %s\n", param[0], *(char **)_dvars[i].variable);
 					break;
-
-					// String
-					case DVAR_STRING:
-						Debug_Printf("(string)%s = %s\n", param[0], *(char **)_dvars[i].variable);
-					break;
-
-					default:
-						Debug_Printf("%s = (unknown type)\n", param[0]);
+				default:
+					Debug_Printf("%s = (unknown type)\n", param[0]);
 					break;
 				}
 			}

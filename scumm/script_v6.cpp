@@ -3116,14 +3116,14 @@ void Scumm_v6::o6_unknownEA() {
 
 	eax = fetchScriptByte();
 	switch (eax) {
-		case 197:
-			unknownEA_func(5, esi, edi, fetchScriptWord(), eax);
-			break;
-		case 202:
-			unknownEA_func(3, esi, edi, fetchScriptWord(), eax);
-			break;
-		default:
-			break;
+	case 197:
+		unknownEA_func(5, esi, edi, fetchScriptWord(), eax);
+		break;
+	case 202:
+		unknownEA_func(3, esi, edi, fetchScriptWord(), eax);
+		break;
+	default:
+		break;
 	}
 }
 

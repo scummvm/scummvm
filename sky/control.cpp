@@ -502,96 +502,77 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 	char quitDos[] = "Quit to DOS?";
 
 	switch(pButton->_onClick) {
-		case DO_NOTHING:
+	case DO_NOTHING:
+		return 0;
+	case REST_GAME_PANEL:
+		if (!loadSaveAllowed())
+			return CANCEL_PRESSED; // can't save/restore while choosing
+		animClick(pButton);
+		return saveRestorePanel(false); // texts can't be edited
+	case SAVE_GAME_PANEL:
+		if (!loadSaveAllowed())
+			return CANCEL_PRESSED; // can't save/restore while choosing
+		animClick(pButton);
+		return saveRestorePanel(true); // texts can be edited
+	case SAVE_A_GAME:
+		animClick(pButton);
+		return saveGameToFile();
+	case RESTORE_A_GAME:
+		animClick(pButton);
+		return restoreGameFromFile(false);
+	case RESTORE_AUTO:
+		animClick(pButton);
+		return restoreGameFromFile(true);
+	case SP_CANCEL:
+		animClick(pButton);
+		return CANCEL_PRESSED;
+	case SHIFT_DOWN_FAST:
+		animClick(pButton);
+		return shiftDown(FAST);
+	case SHIFT_DOWN_SLOW:
+		animClick(pButton);
+		return shiftDown(SLOW);
+	case SHIFT_UP_FAST:
+		animClick(pButton);
+		return shiftUp(FAST);
+	case SHIFT_UP_SLOW:
+		animClick(pButton);
+		return shiftUp(SLOW);
+	case SPEED_SLIDE:
+		_mouseClicked = true;
+		return doSpeedSlide();
+	case MUSIC_SLIDE:
+		_mouseClicked = true;
+		return doMusicSlide();
+	case TOGGLE_FX:
+		return toggleFx(pButton);
+	case TOGGLE_MS:
+		animClick(pButton);
+		toggleMusic();
+		return TOGGLED;
+	case TOGGLE_TEXT:
+		animClick(pButton);
+		return toggleText();
+	case EXIT:
+		animClick(pButton);
+		return QUIT_PANEL;
+	case RESTART:
+		animClick(pButton);
+		if (getYesNo(NULL)) {
+			restartGame();
+			return GAME_RESTORED;
+		} else
 			return 0;
-
-		case REST_GAME_PANEL:
-			if (!loadSaveAllowed())
-				return CANCEL_PRESSED; // can't save/restore while choosing
-			animClick(pButton);
-			return saveRestorePanel(false); // texts can't be edited
-
-		case SAVE_GAME_PANEL:
-			if (!loadSaveAllowed())
-				return CANCEL_PRESSED; // can't save/restore while choosing
-			animClick(pButton);
-			return saveRestorePanel(true); // texts can be edited
-
-		case SAVE_A_GAME:
-			animClick(pButton);
-			return saveGameToFile();
-
-		case RESTORE_A_GAME:
-			animClick(pButton);
-			return restoreGameFromFile(false);
-
-		case RESTORE_AUTO:
-			animClick(pButton);
-			return restoreGameFromFile(true);
-
-		case SP_CANCEL:
-			animClick(pButton);
-			return CANCEL_PRESSED;
-
-		case SHIFT_DOWN_FAST:
-			animClick(pButton);
-			return shiftDown(FAST);
-
-		case SHIFT_DOWN_SLOW:
-			animClick(pButton);
-			return shiftDown(SLOW);
-
-		case SHIFT_UP_FAST:
-			animClick(pButton);
-			return shiftUp(FAST);
-
-		case SHIFT_UP_SLOW:
-			animClick(pButton);
-			return shiftUp(SLOW);
-
-		case SPEED_SLIDE:
-			_mouseClicked = true;
-            return doSpeedSlide();
-
-		case MUSIC_SLIDE:
-			_mouseClicked = true;
-			return doMusicSlide();
-
-		case TOGGLE_FX:
-			return toggleFx(pButton);
-
-		case TOGGLE_MS:
-			animClick(pButton);
-			toggleMusic();
-			return TOGGLED;
-
-		case TOGGLE_TEXT:
-			animClick(pButton);
-			return toggleText();
-
-		case EXIT:
-			animClick(pButton);
-			return QUIT_PANEL;
-
-		case RESTART:
-			animClick(pButton);
-			if (getYesNo(NULL)) {
-				restartGame();
-				return GAME_RESTORED;
-			} else
-				return 0;
-
-		case QUIT_TO_DOS:
-			animClick(pButton);
-			if (getYesNo(quitDos)) {
-				showGameQuitMsg(false);
-				delay(1500);
-				_system->quit();
-			}
-			return 0;
-
-		default: 
-			error("SkyControl::handleClick: unknown routine: %X",pButton->_onClick);
+	case QUIT_TO_DOS:
+		animClick(pButton);
+		if (getYesNo(quitDos)) {
+			showGameQuitMsg(false);
+			delay(1500);
+			_system->quit();
+		}
+		return 0;
+	default: 
+		error("SkyControl::handleClick: unknown routine: %X",pButton->_onClick);
 	}
 }
 
@@ -1649,21 +1630,21 @@ void SkyControl::restartGame(void) {
 
 	uint16 *resetData = lz77decode((uint16 *)_resetData288);
 	switch (SkyState::_systemVars.gameVersion) {
-		case 303:
-			applyDiff(resetData, (uint16*)_resetDiff303, 206);
-			break;
-		case 331:
-			applyDiff(resetData, (uint16*)_resetDiff331, 206);
-			break;
-		case 348:
-			applyDiff(resetData, (uint16*)_resetDiff348, 206);
-			break;
-		case 365:
-		case 368:
-		case 372:
-			applyDiff(resetData, (uint16*)_resetDiffCd, 214);
-		default:
-			break;
+	case 303:
+		applyDiff(resetData, (uint16*)_resetDiff303, 206);
+		break;
+	case 331:
+		applyDiff(resetData, (uint16*)_resetDiff331, 206);
+		break;
+	case 348:
+		applyDiff(resetData, (uint16*)_resetDiff348, 206);
+		break;
+	case 365:
+	case 368:
+	case 372:
+		applyDiff(resetData, (uint16*)_resetDiffCd, 214);
+	default:
+		break;
 	}
 	// ok, we finally have our savedata
 
@@ -1688,41 +1669,35 @@ void SkyControl::delay(unsigned int amount) {
 	do {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
-				case OSystem::EVENT_KEYDOWN:
-					// Make sure backspace works right (this fixes a small issue on OS X)
-					if (event.kbd.keycode == 8)
-						_keyPressed = 8;
-					else
-						_keyPressed = (byte)event.kbd.ascii;
-					break;
-
-				case OSystem::EVENT_MOUSEMOVE:
-					_mouseX = event.mouse.x;
-					_mouseY = event.mouse.y;
-					break;
-
-				case OSystem::EVENT_LBUTTONDOWN:
-					_mouseClicked = true;
+			case OSystem::EVENT_KEYDOWN:
+				// Make sure backspace works right (this fixes a small issue on OS X)
+				if (event.kbd.keycode == 8)
+					_keyPressed = 8;
+				else
+					_keyPressed = (byte)event.kbd.ascii;
+				break;
+			case OSystem::EVENT_MOUSEMOVE:
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+				break;
+			case OSystem::EVENT_LBUTTONDOWN:
+				_mouseClicked = true;
 #ifdef _WIN32_WCE
-					_mouseX = event.mouse.x;
-					_mouseY = event.mouse.y;
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
 #endif
-					break;
-
-				case OSystem::EVENT_LBUTTONUP:
-                    _mouseClicked = false;
-					break;
-
-				case OSystem::EVENT_RBUTTONDOWN:
-					break;
-
-				case OSystem::EVENT_QUIT:
-					if (!SkyState::_systemVars.quitting)
-						showGameQuitMsg(false);
-					break;
-
-				default:
-					break;
+				break;
+			case OSystem::EVENT_LBUTTONUP:
+				_mouseClicked = false;
+				break;
+			case OSystem::EVENT_RBUTTONDOWN:
+				break;
+			case OSystem::EVENT_QUIT:
+				if (!SkyState::_systemVars.quitting)
+					showGameQuitMsg(false);
+				break;
+			default:
+				break;
 			}
 		}
 

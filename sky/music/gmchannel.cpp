@@ -93,30 +93,30 @@ uint8 SkyGmChannel::process(uint16 aktTime) {
 				// dummy opcode
 			} else if (opcode >= 0x90) {
 				switch (opcode&0xF) {
-					case 0: com90_caseNoteOff(); break;
-					case 1: com90_stopChannel(); break;
-					case 2: com90_setupInstrument(); break;
-					case 3: 
-						returnVal = com90_updateTempo();
-						break;
-					case 5: com90_getPitch(); break;
-					case 6: com90_getChannelVolume(); break;
-					case 8: com90_rewindMusic(); break;
-					case 9: com90_keyOff(); break;
-					case 11: com90_getChannelPanValue(); break;
-					case 12: com90_setStartOfData(); break;
-					case 13: com90_getChannelControl(); break;
-					case 4: //com90_dummy();
-					case 7: //com90_skipTremoVibro();
-					case 10: //com90_error();
-						error("SkyChannel: dummy music routine 0x%02X was called",opcode);
-						_channelData.channelActive = 0;
-						break;
-					default:
-						// these opcodes aren't implemented in original music driver
-						error("SkyChannel: Not existant routine 0x%02X was called",opcode);
-						_channelData.channelActive = 0;
-						break;
+				case 0: com90_caseNoteOff(); break;
+				case 1: com90_stopChannel(); break;
+				case 2: com90_setupInstrument(); break;
+				case 3: 
+					returnVal = com90_updateTempo();
+					break;
+				case 5: com90_getPitch(); break;
+				case 6: com90_getChannelVolume(); break;
+				case 8: com90_rewindMusic(); break;
+				case 9: com90_keyOff(); break;
+				case 11: com90_getChannelPanValue(); break;
+				case 12: com90_setStartOfData(); break;
+				case 13: com90_getChannelControl(); break;
+				case 4: //com90_dummy();
+				case 7: //com90_skipTremoVibro();
+				case 10: //com90_error();
+					error("SkyChannel: dummy music routine 0x%02X was called",opcode);
+					_channelData.channelActive = 0;
+					break;
+				default:
+					// these opcodes aren't implemented in original music driver
+					error("SkyChannel: Not existant routine 0x%02X was called",opcode);
+					_channelData.channelActive = 0;
+					break;
 				}
 			} else {
 				// new midi channel assignment

@@ -1838,8 +1838,8 @@ void SimonEngine::vc_69_play_track() {
 	// specifying a non-valid track number (999 or -1)
 	// as a means of stopping what music is currently
 	// playing.
-	midi.setLoop (loop != 0);
-	midi.startTrack (track);
+	midi.setLoop(loop != 0);
+	midi.startTrack(track);
 }
 
 void SimonEngine::vc_70_queue_music() {
@@ -1853,9 +1853,9 @@ void SimonEngine::vc_70_queue_music() {
 	// track and, if not, whether to switch to
 	// a different track upon completion.
 	if (track != 0xFFFF && track != 999)
-		midi.queueTrack (track, loop != 0);
+		midi.queueTrack(track, loop != 0);
 	else
-		midi.setLoop (loop != 0);
+		midi.setLoop(loop != 0);
 }
 
 void SimonEngine::vc_71_check_music_queue() {

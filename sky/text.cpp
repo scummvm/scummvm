@@ -222,17 +222,17 @@ void SkyText::fnSetFont(uint32 fontNr) {
 	struct charSet *newCharSet;
 
 	switch (fontNr) {
-		case 0:
-			newCharSet = &_mainCharacterSet;
-			break;
-		case 1:
-			newCharSet = &_controlCharacterSet;
-			break;
-		case 2:
-			newCharSet = &_linkCharacterSet;
-			break;
-		default:
-			error("Tried to set invalid font (%d)", fontNr);
+	case 0:
+		newCharSet = &_mainCharacterSet;
+		break;
+	case 1:
+		newCharSet = &_controlCharacterSet;
+		break;
+	case 2:
+		newCharSet = &_linkCharacterSet;
+		break;
+	default:
+		error("Tried to set invalid font (%d)", fontNr);
 	}
 
 	_curCharSet = fontNr;

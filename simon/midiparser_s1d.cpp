@@ -40,12 +40,12 @@ protected:
 protected:
 	void parseNextEvent (EventInfo &info);
 	void resetTracking();
-	uint32 readVLQ2 (byte * &data);
+	uint32 readVLQ2(byte * &data);
 
 public:
 	MidiParser_S1D() : _data(0), _no_delta(false) {}
 
-	bool loadMusic (byte *data, uint32 size);
+	bool loadMusic(byte *data, uint32 size);
 };
 
 
@@ -64,7 +64,7 @@ public:
 
 // The VLQs for simon1demo seem to be
 // in Little Endian format.
-uint32 MidiParser_S1D::readVLQ2 (byte * &data) {
+uint32 MidiParser_S1D::readVLQ2(byte * &data) {
 	byte str;
 	uint32 value = 0;
 	int i;
@@ -79,9 +79,9 @@ uint32 MidiParser_S1D::readVLQ2 (byte * &data) {
 	return value;
 }
 
-void MidiParser_S1D::parseNextEvent (EventInfo &info) {
+void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 	info.start = _position._play_pos;
-	info.delta = _no_delta ? 0 : readVLQ2 (_position._play_pos);
+	info.delta = _no_delta ? 0 : readVLQ2(_position._play_pos);
 
 	_no_delta = false;
 	info.event = *(_position._play_pos++);
@@ -127,7 +127,7 @@ void MidiParser_S1D::parseNextEvent (EventInfo &info) {
 	}
 }
 
-bool MidiParser_S1D::loadMusic (byte *data, uint32 size) {
+bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 	unloadMusic();
 
 	byte *pos = data;
@@ -149,8 +149,8 @@ bool MidiParser_S1D::loadMusic (byte *data, uint32 size) {
 	// will persist beyond this call, i.e. we do NOT
 	// copy the data to our own buffer. Take warning....
 	resetTracking();
-	setTempo (500000);
-	setTrack (0);
+	setTempo(500000);
+	setTrack(0);
 	return true;
 }
 

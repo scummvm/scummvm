@@ -147,60 +147,60 @@ void NewGui::runLoop() {
 		uint32 time = get_time();
 
 		while (_system->poll_event(&event)) {
-			switch(event.event_code) {
-				case OSystem::EVENT_KEYDOWN:
+			switch (event.event_code) {
+			case OSystem::EVENT_KEYDOWN:
 #if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
-					// init continuous event stream
-					// not done on WinCE because keyboard is emulated and
-					// keyup is not generated
-					_currentKeyDown.ascii = event.kbd.ascii;
-					_currentKeyDown.keycode = event.kbd.keycode;
-					_currentKeyDown.flags = event.kbd.flags;
-					_keyRepeatTime = time + kKeyRepeatInitialDelay;
+				// init continuous event stream
+				// not done on WinCE because keyboard is emulated and
+				// keyup is not generated
+				_currentKeyDown.ascii = event.kbd.ascii;
+				_currentKeyDown.keycode = event.kbd.keycode;
+				_currentKeyDown.flags = event.kbd.flags;
+				_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
-					activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
-					break;
-				case OSystem::EVENT_KEYUP:
-					activeDialog->handleKeyUp(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
-					if (event.kbd.keycode == _currentKeyDown.keycode)
-						// only stop firing events if it's the current key
-						_currentKeyDown.keycode = 0;
-					break;
-				case OSystem::EVENT_MOUSEMOVE:
-					activeDialog->handleMouseMoved(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 0);
-					break;
-				// We don't distinguish between mousebuttons (for now at least)
-				case OSystem::EVENT_LBUTTONDOWN:
-				case OSystem::EVENT_RBUTTONDOWN: {
-					if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-								&& ABS(_lastClick.x - event.mouse.x) < 3
-								&& ABS(_lastClick.y - event.mouse.y) < 3) {
-						_lastClick.count++;
-					} else {
-						_lastClick.x = event.mouse.x;
-						_lastClick.y = event.mouse.y;
-						_lastClick.count = 1;
-					}
-					_lastClick.time = time;
-					}
-					activeDialog->handleMouseDown(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
-					break;
-				case OSystem::EVENT_LBUTTONUP:
-				case OSystem::EVENT_RBUTTONUP:
-					activeDialog->handleMouseUp(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
-					break;
-				case OSystem::EVENT_WHEELUP:
-					activeDialog->handleMouseWheel(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, -1);
-					break;
-				case OSystem::EVENT_WHEELDOWN:
-					activeDialog->handleMouseWheel(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1);
-					break;
-				case OSystem::EVENT_QUIT:
-					_system->quit();
-					return;
-				case OSystem::EVENT_SCREEN_CHANGED:
-					updateColors();
-					break;
+				activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
+				break;
+			case OSystem::EVENT_KEYUP:
+				activeDialog->handleKeyUp(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
+				if (event.kbd.keycode == _currentKeyDown.keycode)
+					// only stop firing events if it's the current key
+					_currentKeyDown.keycode = 0;
+				break;
+			case OSystem::EVENT_MOUSEMOVE:
+				activeDialog->handleMouseMoved(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 0);
+				break;
+			// We don't distinguish between mousebuttons (for now at least)
+			case OSystem::EVENT_LBUTTONDOWN:
+			case OSystem::EVENT_RBUTTONDOWN: {
+				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
+							&& ABS(_lastClick.x - event.mouse.x) < 3
+							&& ABS(_lastClick.y - event.mouse.y) < 3) {
+					_lastClick.count++;
+				} else {
+					_lastClick.x = event.mouse.x;
+					_lastClick.y = event.mouse.y;
+					_lastClick.count = 1;
+				}
+				_lastClick.time = time;
+				}
+				activeDialog->handleMouseDown(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
+				break;
+			case OSystem::EVENT_LBUTTONUP:
+			case OSystem::EVENT_RBUTTONUP:
+				activeDialog->handleMouseUp(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
+				break;
+			case OSystem::EVENT_WHEELUP:
+				activeDialog->handleMouseWheel(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, -1);
+				break;
+			case OSystem::EVENT_WHEELDOWN:
+				activeDialog->handleMouseWheel(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1);
+				break;
+			case OSystem::EVENT_QUIT:
+				_system->quit();
+				return;
+			case OSystem::EVENT_SCREEN_CHANGED:
+				updateColors();
+				break;
 			}
 		}
 

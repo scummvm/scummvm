@@ -3387,73 +3387,63 @@ bool SimonEngine::has_vgastruct_with_id(uint16 id, uint16 file) {
 
 void SimonEngine::processSpecialKeys() {
 	switch (_key_pressed) {
-		case 27: // escape
+	case 27: // escape
+		_exit_cutscene = true;
+		break;
+	case 59: // F1
+		vc_write_var(5, 50);
+		vc_write_var(86, 0);
+		break;
+	case 60: // F2
+		vc_write_var(5, 75);
+		vc_write_var(86, 1);
+		break;
+	case 61: // F3
+		vc_write_var(5, 125);
+		vc_write_var(86, 2);
+		break;
+	case 63: // F5
+		if (_game & GF_SIMON2)
 			_exit_cutscene = true;
-			break;
-
-		case 59: // F1
-			vc_write_var(5, 50);
-			vc_write_var(86, 0);
-			break;
-		case 60: // F2
-			vc_write_var(5, 75);
-			vc_write_var(86, 1);
-			break;
-		case 61: // F3
-			vc_write_var(5, 125);
-			vc_write_var(86, 2);
-			break;
-		case 63: // F5
-			if (_game & GF_SIMON2)
-				_exit_cutscene = true;
-			break;
-
-		case 't':
-			if (_game & GF_SIMON2 && _game & GF_TALKIE || _game & GF_TALKIE && _language > 1)
-				_subtitles ^= 1;
-			break;
-
-		case '+':
-			midi.set_volume(midi.get_volume() + 16);
-			break;
-
-		case '-':
-			midi.set_volume(midi.get_volume() - 16);
-			break;
-
-		case 'm':
-			midi.pause(_music_paused ^= 1);
-			break;
-
-		case 's':
-			if (_game == GAME_SIMON1DOS)
-				midi._enable_sfx ^= 1;
-			else
-				_sound->effectsPause(_effects_paused ^= 1);
-			break;
-
-		case 'b':
-			_sound->ambientPause(_ambient_paused ^= 1);
-			break;
-
-		case 'r':
-			if (_debugMode)
-				_start_mainscript ^= 1;
-			break;
-
-		case 'o':
-			if (_debugMode)
-				_continous_mainscript ^= 1;
-			break;
-
-		case 'v':
-			if (_debugMode)
-				_continous_vgascript ^= 1;
-			break;
-		case 'i':
-			if (_debugMode)
-				_draw_images_debug ^= 1;
-			break;
+		break;
+	case 't':
+		if (_game & GF_SIMON2 && _game & GF_TALKIE || _game & GF_TALKIE && _language > 1)
+			_subtitles ^= 1;
+		break;
+	case '+':
+		midi.set_volume(midi.get_volume() + 16);
+		break;
+	case '-':
+		midi.set_volume(midi.get_volume() - 16);
+		break;
+	case 'm':
+		midi.pause(_music_paused ^= 1);
+		break;
+	case 's':
+		if (_game == GAME_SIMON1DOS)
+			midi._enable_sfx ^= 1;
+		else
+			_sound->effectsPause(_effects_paused ^= 1);
+		break;
+	case 'b':
+		_sound->ambientPause(_ambient_paused ^= 1);
+		break;
+	case 'r':
+		if (_debugMode)
+			_start_mainscript ^= 1;
+		break;
+	case 'o':
+		if (_debugMode)
+			_continous_mainscript ^= 1;
+		break;
+	case 'v':
+		if (_debugMode)
+			_continous_vgascript ^= 1;
+		break;
+	case 'i':
+		if (_debugMode)
+			_draw_images_debug ^= 1;
+		break;
 	}
 	
 	_key_pressed = 0;
@@ -4565,45 +4555,40 @@ void SimonEngine::delay(uint amount) {
 
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
-				case OSystem::EVENT_KEYDOWN:
-					if (event.kbd.flags==OSystem::KBD_CTRL) {
-						if (event.kbd.keycode == 'f')
-							_fast_mode ^= 1;
-					}
-					// Make sure backspace works right (this fixes a small issue on OS X)
-					if (event.kbd.keycode == 8)
-						_key_pressed = 8;
-					else
-						_key_pressed = (byte)event.kbd.ascii;
-					break;
-
-				case OSystem::EVENT_MOUSEMOVE:
-					_sdl_mouse_x = event.mouse.x;
-					_sdl_mouse_y = event.mouse.y;
-					break;
-
-					case OSystem::EVENT_LBUTTONDOWN:
-					_left_button_down++;
+			case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.flags==OSystem::KBD_CTRL) {
+					if (event.kbd.keycode == 'f')
+						_fast_mode ^= 1;
+				}
+				// Make sure backspace works right (this fixes a small issue on OS X)
+				if (event.kbd.keycode == 8)
+					_key_pressed = 8;
+				else
+					_key_pressed = (byte)event.kbd.ascii;
+				break;
+			case OSystem::EVENT_MOUSEMOVE:
+				_sdl_mouse_x = event.mouse.x;
+				_sdl_mouse_y = event.mouse.y;
+				break;
+			case OSystem::EVENT_LBUTTONDOWN:
+				_left_button_down++;
 #ifdef _WIN32_WCE
-					_sdl_mouse_x = event.mouse.x;
-					_sdl_mouse_y = event.mouse.y;
+				_sdl_mouse_x = event.mouse.x;
+				_sdl_mouse_y = event.mouse.y;
 #endif
-					break;
-
-				case OSystem::EVENT_RBUTTONDOWN:
-					if (_game & GF_SIMON2)
- 						_skip_speech = true;
-					else
-						_exit_cutscene = true;
- 					break;
-
-				case OSystem::EVENT_QUIT:
-					shutdown();
-					return;
-					break;
-				
-				default:
-					break;
+				break;
+			case OSystem::EVENT_RBUTTONDOWN:
+				if (_game & GF_SIMON2)
+					_skip_speech = true;
+				else
+					_exit_cutscene = true;
+				break;
+			case OSystem::EVENT_QUIT:
+				shutdown();
+				return;
+				break;
+			default:
+				break;
 			}
 		}
 

@@ -142,24 +142,24 @@ uint8 SkyState::_languageTable[11] = {
 void SkyState::doCheat(uint8 num) {
 
 	switch(num) {
-		case 1: warning("executed cheat: get jammer");
-			SkyLogic::_scriptVariables[258] = 42; // got_jammer
-			SkyLogic::_scriptVariables[240] = 69; // got_sponsor
-			break;
-		case 2: warning("executed cheat: computer room");
-			SkyLogic::_scriptVariables[479] = 2; // card_status
-			SkyLogic::_scriptVariables[480] = 1; // card_fix
-			break;
-		case 3: warning("executed cheat: get to burke");
-			SkyLogic::_scriptVariables[190] = 42; // knows_port
-			break;
-		case 4: warning("executed cheat: get to reactor section");
-			SkyLogic::_scriptVariables[451] = 42; // foreman_friend
-			_skyLogic->fnSendSync(8484, 1, 0); // send sync to RAD suit (put in locker)
-			_skyLogic->fnKillId(ID_ANITA_SPY, 0, 0); // stop anita from getting to you
-			break;
-		default: warning("unknown cheat: %d", num);
-			break;
+	case 1: warning("executed cheat: get jammer");
+		SkyLogic::_scriptVariables[258] = 42; // got_jammer
+		SkyLogic::_scriptVariables[240] = 69; // got_sponsor
+		break;
+	case 2: warning("executed cheat: computer room");
+		SkyLogic::_scriptVariables[479] = 2; // card_status
+		SkyLogic::_scriptVariables[480] = 1; // card_fix
+		break;
+	case 3: warning("executed cheat: get to burke");
+		SkyLogic::_scriptVariables[190] = 42; // knows_port
+		break;
+	case 4: warning("executed cheat: get to reactor section");
+		SkyLogic::_scriptVariables[451] = 42; // foreman_friend
+		_skyLogic->fnSendSync(8484, 1, 0); // send sync to RAD suit (put in locker)
+		_skyLogic->fnKillId(ID_ANITA_SPY, 0, 0); // stop anita from getting to you
+		break;
+	default: warning("unknown cheat: %d", num);
+		break;
 	}
 }
 
@@ -417,51 +417,46 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 	do {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
-				case OSystem::EVENT_KEYDOWN:
-					if (event.kbd.flags == OSystem::KBD_CTRL) {
-						if (event.kbd.keycode == 'f') {
-							_fastMode ^= 1;
-							break;
-						}
-						if (event.kbd.keycode == 'g') {
-							_fastMode ^= 2;
-							break;
-						}
+			case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.flags == OSystem::KBD_CTRL) {
+					if (event.kbd.keycode == 'f') {
+						_fastMode ^= 1;
+						break;
 					}
-
-					// Make sure backspace works right (this fixes a small issue on OS X)
-					if (event.kbd.keycode == 8)
-						_key_pressed = 8;
-					else
-						_key_pressed = (byte)event.kbd.ascii;
-					break;
-
-				case OSystem::EVENT_MOUSEMOVE:
-					if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
-						_sdl_mouse_x = event.mouse.x;
-						_sdl_mouse_y = event.mouse.y;
+					if (event.kbd.keycode == 'g') {
+						_fastMode ^= 2;
+						break;
 					}
-					break;
+				}
 
-				case OSystem::EVENT_LBUTTONDOWN:
-					_skyMouse->buttonPressed(2);
-#ifdef _WIN32_WCE
+				// Make sure backspace works right (this fixes a small issue on OS X)
+				if (event.kbd.keycode == 8)
+					_key_pressed = 8;
+				else
+					_key_pressed = (byte)event.kbd.ascii;
+				break;
+			case OSystem::EVENT_MOUSEMOVE:
+				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
 					_sdl_mouse_x = event.mouse.x;
 					_sdl_mouse_y = event.mouse.y;
+				}
+				break;
+			case OSystem::EVENT_LBUTTONDOWN:
+				_skyMouse->buttonPressed(2);
+#ifdef _WIN32_WCE
+				_sdl_mouse_x = event.mouse.x;
+				_sdl_mouse_y = event.mouse.y;
 #endif
-					break;
-
-				case OSystem::EVENT_RBUTTONDOWN:
-					_skyMouse->buttonPressed(1);					
-					break;
-
-				case OSystem::EVENT_QUIT:
-					if (!SkyState::_systemVars.quitting)
-						_skyControl->showGameQuitMsg(); // will call _system->quit()
-					break;
-
-				default:
-					break;
+				break;
+			case OSystem::EVENT_RBUTTONDOWN:
+				_skyMouse->buttonPressed(1);
+				break;
+			case OSystem::EVENT_QUIT:
+				if (!SkyState::_systemVars.quitting)
+					_skyControl->showGameQuitMsg(); // will call _system->quit()
+				break;
+			default:
+				break;
 			}
 		}
 

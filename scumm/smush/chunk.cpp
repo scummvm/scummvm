@@ -87,21 +87,21 @@ uint32 BaseChunk::getSize() const {
 
 bool BaseChunk::seek(int32 delta, seek_type dir) {
 	switch(dir) {
-		case seek_cur:
-			_curPos += delta;
-			break;
-		case seek_start:
-			if (delta < 0)
-				error("invalid seek request");
+	case seek_cur:
+		_curPos += delta;
+		break;
+	case seek_start:
+		if (delta < 0)
+			error("invalid seek request");
 
-			_curPos = (uint32)delta;
-			break;
-		case seek_end:
-			if (delta > 0 || _size < (uint32)-delta)
-				error("invalid seek request");
+		_curPos = (uint32)delta;
+		break;
+	case seek_end:
+		if (delta > 0 || _size < (uint32)-delta)
+			error("invalid seek request");
 
-			_curPos = (uint32)(_size + delta);
-			break;
+		_curPos = (uint32)(_size + delta);
+		break;
 	}
 	if (_curPos > _size) {
 		error("invalid seek request : %d > %d (delta == %d)", _curPos, _size, delta);

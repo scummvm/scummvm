@@ -692,36 +692,32 @@ void Scumm_v2::o2_actorSet() {
 	a = derefActor(act, "actorSet");
 
 	switch (_opcode) {
-		case 1: 	// Actor Sound
-			a->sound[0] = arg;
-			break;
+	case 1: 	// Actor Sound
+		a->sound[0] = arg;
+		break;
+	case 2:		// Actor Set Color
+		if (_version == 1)
+			i = act;
+		else
+			i = fetchScriptByte();
 
-		case 2:		// Actor Set Color
-			if (_version == 1)
-				i = act;
-			else
-				i = fetchScriptByte();
-
-			a->palette[i] = arg;
-			a->needRedraw = true;
-			break;
-
-		case 3:		// Actor Name
-			loadPtrToResource(rtActorName, a->number, NULL);
-			break;
-
-		case 4:		// Actor Costume
-			a->setActorCostume(arg);
-			break;
-
-		case 5:		// Talk Color
-			if ((_gameId == GID_MANIAC) && (_version == 1))
-				v1_mm_actor_speech_color[act] = arg;
-			else
-				a->talkColor = arg;
-			break;
-		default:
-			warning("o2_actorSet: opcode %d not yet supported", _opcode);
+		a->palette[i] = arg;
+		a->needRedraw = true;
+		break;
+	case 3:		// Actor Name
+		loadPtrToResource(rtActorName, a->number, NULL);
+		break;
+	case 4:		// Actor Costume
+		a->setActorCostume(arg);
+		break;
+	case 5:		// Talk Color
+		if ((_gameId == GID_MANIAC) && (_version == 1))
+			v1_mm_actor_speech_color[act] = arg;
+		else
+			a->talkColor = arg;
+		break;
+	default:
+		warning("o2_actorSet: opcode %d not yet supported", _opcode);
 	}
 }
 

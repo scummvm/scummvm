@@ -59,18 +59,18 @@ bool Scumm::getClass(int obj, int cls) const {
 		// Translate the new (V5) object classes to the old classes
 		// (for those which differ).
 		switch (cls) {
-			case kObjectClassUntouchable:
-				cls = 24;
-				break;
-			case kObjectClassPlayer:
-				cls = 23;
-				break;
-			case kObjectClassXFlip:
-				cls = 19;
-				break;
-			case kObjectClassYFlip:
-				cls = 18;
-				break;
+		case kObjectClassUntouchable:
+			cls = 24;
+			break;
+		case kObjectClassPlayer:
+			cls = 23;
+			break;
+		case kObjectClassXFlip:
+			cls = 19;
+			break;
+		case kObjectClassYFlip:
+			cls = 18;
+			break;
 		}
 	}
 
@@ -86,18 +86,18 @@ void Scumm::putClass(int obj, int cls, bool set) {
 		// Translate the new (V5) object classes to the old classes
 		// (for those which differ).
 		switch (cls) {
-			case kObjectClassUntouchable:
-				cls = 24;
-				break;
-			case kObjectClassPlayer:
-				cls = 23;
-				break;
-			case kObjectClassXFlip:
-				cls = 19;
-				break;
-			case kObjectClassYFlip:
-				cls = 18;
-				break;
+		case kObjectClassUntouchable:
+			cls = 24;
+			break;
+		case kObjectClassPlayer:
+			cls = 23;
+			break;
+		case kObjectClassXFlip:
+			cls = 19;
+			break;
+		case kObjectClassYFlip:
+			cls = 18;
+			break;
 		}
 	}
 

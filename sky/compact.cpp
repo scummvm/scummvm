@@ -58,27 +58,27 @@ namespace SkyCompact {
 uint16 *getGrafixPtr(Compact *cpt) {
 	uint16 *buf;
 	switch (cpt->grafixProg.ptrType) {
-		case PTR_NULL:
-			return NULL;
-		case AUTOROUTE:
-			if (!cpt->extCompact)
-				error("::getGrafixPtr: request for AR pointer, extCompact is NULL, though.");
-			return (cpt->extCompact->animScratch + cpt->grafixProg.pos);
-		case COMPACT:
-			buf = (uint16*)SkyState::fetchCompact(cpt->grafixProg.ptrTarget);
-			if (buf == NULL)
-				error("::getGrafixPtr: request for cpt %d pointer. It's NULL.", cpt->grafixProg.ptrTarget);
-			return (buf + cpt->grafixProg.pos);
-		case COMPACTELEM:
-			buf = *(uint16 **)SkyCompact::getCompactElem(cpt, cpt->grafixProg.ptrTarget);
-			if (buf == NULL)
-				error("::getGrafixPtr: request for elem ptr %d. It's NULL.", cpt->grafixProg.ptrTarget);
-			return buf + cpt->grafixProg.pos;
-		case TALKTABLE:
-			buf = (uint16 *)SkyTalkAnims::animTalkTablePtr[cpt->grafixProg.ptrTarget];
-			return buf + cpt->grafixProg.pos;
-		default:
-			error("::getGrafixPtr: unknown grafixProg type for Compact cpt");
+	case PTR_NULL:
+		return NULL;
+	case AUTOROUTE:
+		if (!cpt->extCompact)
+			error("::getGrafixPtr: request for AR pointer, extCompact is NULL, though.");
+		return (cpt->extCompact->animScratch + cpt->grafixProg.pos);
+	case COMPACT:
+		buf = (uint16*)SkyState::fetchCompact(cpt->grafixProg.ptrTarget);
+		if (buf == NULL)
+			error("::getGrafixPtr: request for cpt %d pointer. It's NULL.", cpt->grafixProg.ptrTarget);
+		return (buf + cpt->grafixProg.pos);
+	case COMPACTELEM:
+		buf = *(uint16 **)SkyCompact::getCompactElem(cpt, cpt->grafixProg.ptrTarget);
+		if (buf == NULL)
+			error("::getGrafixPtr: request for elem ptr %d. It's NULL.", cpt->grafixProg.ptrTarget);
+		return buf + cpt->grafixProg.pos;
+	case TALKTABLE:
+		buf = (uint16 *)SkyTalkAnims::animTalkTablePtr[cpt->grafixProg.ptrTarget];
+		return buf + cpt->grafixProg.pos;
+	default:
+		error("::getGrafixPtr: unknown grafixProg type for Compact cpt");
 	}
 	return NULL; // never reached
 }

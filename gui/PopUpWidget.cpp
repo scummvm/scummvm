@@ -167,23 +167,23 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		return;
 
 	switch (keycode) {
-		case '\n':		// enter/return
-		case '\r':
-			setResult(_selection);
-			close();
-			break;
-		case 256+17:	// up arrow
-			moveUp();
-			break;
-		case 256+18:	// down arrow
-			moveDown();
-			break;
-		case 256+22:	// home
-			setSelection(0);
-			break;
-		case 256+23:	// end
-			setSelection(_popUpBoss->_entries.size()-1);
-			break;
+	case '\n':		// enter/return
+	case '\r':
+		setResult(_selection);
+		close();
+		break;
+	case 256+17:	// up arrow
+		moveUp();
+		break;
+	case 256+18:	// down arrow
+		moveDown();
+		break;
+	case 256+22:	// home
+		setSelection(0);
+		break;
+	case 256+23:	// end
+		setSelection(_popUpBoss->_entries.size()-1);
+		break;
 	}
 }
 

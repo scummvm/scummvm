@@ -347,63 +347,65 @@ void Sound::playSound(int soundID) {
 		rate = 11025;
 		int type = *(ptr + 0x0D);
 
+		int numInstruments;
+
 		switch(type) {
-			case 0:	{ // Sound effect
-				int numInstruments = *(ptr + 0x14);
-				ptr += 0x16;
-				size -= 0x16;
-				while (numInstruments--) {
-					int waveSize = READ_LE_UINT32(ptr + 0x0C);
-					int loopStart = READ_LE_UINT32(ptr + 0x10);
-					int loopEnd = READ_LE_UINT32(ptr + 0x14);
-					// it's not exactly * 10, maybe it's not even linear, but * 10 sounds ok.
-					rate = READ_LE_UINT32(ptr + 0x18) * 10;
+		case 0:	// Sound effect
+			numInstruments = *(ptr + 0x14);
+			ptr += 0x16;
+			size -= 0x16;
+			while (numInstruments--) {
+				int waveSize = READ_LE_UINT32(ptr + 0x0C);
+				int loopStart = READ_LE_UINT32(ptr + 0x10);
+				int loopEnd = READ_LE_UINT32(ptr + 0x14);
+				// it's not exactly * 10, maybe it's not even linear, but * 10 sounds ok.
+				rate = READ_LE_UINT32(ptr + 0x18) * 10;
 
-					ptr += 0x20;
-					size -= 0x20;
-					if (size < waveSize) {
-						warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
-						waveSize = size;
-					}
-					sound = (char *)malloc(waveSize);
-					for (int x = 0; x < waveSize; x++) {
-						int bit = *ptr++;
-						if (bit < 0x80)
-							sound[x] = 0x7F - bit;
-						else
-							sound[x] = bit;
-					}
-					size -= waveSize;
-
-					if (loopEnd > 0)
-						flags |= SoundMixer::FLAG_LOOP;
-
-					_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
+				ptr += 0x20;
+				size -= 0x20;
+				if (size < waveSize) {
+					warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
+					waveSize = size;
 				}
-				break;
-			}
+				sound = (char *)malloc(waveSize);
+				for (int x = 0; x < waveSize; x++) {
+					int bit = *ptr++;
+					if (bit < 0x80)
+						sound[x] = 0x7F - bit;
+					else
+						sound[x] = bit;
+				}
+				size -= waveSize;
 
-			case 1: { // Music (Euphony format)
-				if (_scumm->_musicEngine)
-					_scumm->_musicEngine->startSound (soundID);
-				break;
+				if (loopEnd > 0)
+					flags |= SoundMixer::FLAG_LOOP;
+
+				_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
 			}
-		
-			case 2: { // CD track resource
-				ptr += 0x16;
+			break;
+		case 1:
+			// Music (Euphony format)
+			if (_scumm->_musicEngine)
+				_scumm->_musicEngine->startSound (soundID);
+			break;
+		case 2: // CD track resource
+			ptr += 0x16;
+
+			if (soundID == _currentCDSound)
+				if (pollCD() == 1)
+					return;
+
+			{
 				int track = ptr[0];
 				int loops = ptr[1];
 				int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
 				int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
 
-				if (soundID == _currentCDSound)
-					if (pollCD() == 1)
-						return;
-
 				playCDTrack(track, loops == 0xff ? -1 : loops, start, end - start);
-				_currentCDSound = soundID;
-				break;
-			}			
+			}
+
+			_currentCDSound = soundID;
+			break;
 		}
 	}
 	else if ((_scumm->_gameId == GID_LOOM) && (_scumm->_features & GF_MACINTOSH))  {
@@ -1277,30 +1279,28 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 	while (tag != MKID_BE('DATA')) {
 		tag = READ_BE_UINT32(ptr); ptr += 4;
 		switch(tag) {
-			case MKID_BE('FRMT'):
-				ptr += 12;
-				bits = READ_BE_UINT32(ptr); ptr += 4;
-				rate = READ_BE_UINT32(ptr); ptr += 4;
-				channels = READ_BE_UINT32(ptr); ptr += 4;
+		case MKID_BE('FRMT'):
+			ptr += 12;
+			bits = READ_BE_UINT32(ptr); ptr += 4;
+			rate = READ_BE_UINT32(ptr); ptr += 4;
+			channels = READ_BE_UINT32(ptr); ptr += 4;
 			break;
-			case MKID_BE('TEXT'):
-			case MKID_BE('REGN'):
-			case MKID_BE('STOP'):
-			case MKID_BE('JUMP'):
-			case MKID_BE('SYNC'):
-				size = READ_BE_UINT32(ptr); ptr += size + 4;
+		case MKID_BE('TEXT'):
+		case MKID_BE('REGN'):
+		case MKID_BE('STOP'):
+		case MKID_BE('JUMP'):
+		case MKID_BE('SYNC'):
+			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
-
-			case MKID_BE('DATA'):
-				size = READ_BE_UINT32(ptr); ptr += 4;
+		case MKID_BE('DATA'):
+			size = READ_BE_UINT32(ptr); ptr += 4;
 			break;
-
-			default:
-				error("Unknown sound header %c%c%c%c",
-					(byte)(tag >> 24),
-					(byte)(tag >> 16),
-					(byte)(tag >> 8),
-					(byte)tag);
+		default:
+			error("Unknown sound header %c%c%c%c",
+				(byte)(tag >> 24),
+				(byte)(tag >> 16),
+				(byte)(tag >> 8),
+				(byte)tag);
 		}
 	}
 

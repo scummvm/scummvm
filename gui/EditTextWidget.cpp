@@ -82,59 +82,59 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		drawCaret(true);
 
 	switch (keycode) {
-		case '\n':	// enter/return
-		case '\r':
-			_boss->releaseFocus();
-			dirty = true;
-			break;
-		case 27:	// escape
-			_label = _backupString;
-			_pos = _label.size() - 1;
-			_labelOffset = (_boss->getGui()->getStringWidth(_label) - (_w-6));
-			if (_labelOffset < 0)
-				_labelOffset = 0;
-			_boss->releaseFocus();
-			dirty = true;
-			break;
-		case 8:		// backspace
-			if (_pos > 0) {
-				_pos--;
-				_label.deleteChar(_pos);
-			}
-			dirty = true;
-			break;
-		case 127:	// delete
+	case '\n':	// enter/return
+	case '\r':
+		_boss->releaseFocus();
+		dirty = true;
+		break;
+	case 27:	// escape
+		_label = _backupString;
+		_pos = _label.size() - 1;
+		_labelOffset = (_boss->getGui()->getStringWidth(_label) - (_w-6));
+		if (_labelOffset < 0)
+			_labelOffset = 0;
+		_boss->releaseFocus();
+		dirty = true;
+		break;
+	case 8:		// backspace
+		if (_pos > 0) {
+			_pos--;
 			_label.deleteChar(_pos);
+		}
+		dirty = true;
+		break;
+	case 127:	// delete
+		_label.deleteChar(_pos);
+		dirty = true;
+		break;
+	case 256 + 20:	// left arrow
+		if (_pos > 0) {
+			_pos--;
+			dirty = adjustOffset();
+		}
+		break;
+	case 256 + 19:	// right arrow
+		if (_pos < _label.size()) {
+			_pos++;
+			dirty = adjustOffset();
+		}
+		break;
+	case 256 + 22:	// home
+		_pos = 0;
+		dirty = adjustOffset();
+		break;
+	case 256 + 23:	// end
+		_pos = _label.size();
+		dirty = adjustOffset();
+		break;
+	default:
+		if (isprint((char)ascii)) {
+			_label.insertChar((char)ascii, _pos++);
+			//_label += (char)ascii;
 			dirty = true;
-			break;
-		case 256 + 20:	// left arrow
-			if (_pos > 0) {
-				_pos--;
-				dirty = adjustOffset();
-			}
-			break;
-		case 256 + 19:	// right arrow
-			if (_pos < _label.size()) {
-				_pos++;
-				dirty = adjustOffset();
-			}
-			break;
-		case 256 + 22:	// home
-			_pos = 0;
-			dirty = adjustOffset();
-			break;
-		case 256 + 23:	// end
-			_pos = _label.size();
-			dirty = adjustOffset();
-			break;
-		default:
-			if (isprint((char)ascii)) {
-				_label.insertChar((char)ascii, _pos++);
-				//_label += (char)ascii;
-				dirty = true;
-			} else {
-				handled = false;
-			}
+		} else {
+			handled = false;
+		}
 	}
 
 	if (dirty)

@@ -874,33 +874,31 @@ void Scumm_v5::saveVars() {
 
 	while ((_opcode = fetchScriptByte()) != 0) {
 		switch (_opcode & 0x1F) {
-			case 0x01: // write a range of variables
-				getResultPos();
-			        a = _resultVarNumber;
-				getResultPos();
-			        b = _resultVarNumber;
-				warning("stub saveVars: vars %d -> %d", a, b);
-				break;
-
-			case 0x02: // write a range of string variables
-				a = getVarOrDirectByte(0x80);
-				b = getVarOrDirectByte(0x40);
-				warning("stub saveVars: strings %d -> %d", a, b);
-				break;
-			case 0x03: // open file
-				a = resStrLen(_scriptPointer);
-				warning("stub saveVars to %s", _scriptPointer);
-				_scriptPointer += a + 1;
-				break;
-			case 0x04:
-				return;
-				break;
-			case 0x1F: // close file
-				warning("stub saveVars close file");
-				return;
-				break;
+		case 0x01: // write a range of variables
+			getResultPos();
+		        a = _resultVarNumber;
+			getResultPos();
+		        b = _resultVarNumber;
+			warning("stub saveVars: vars %d -> %d", a, b);
+			break;
+		case 0x02: // write a range of string variables
+			a = getVarOrDirectByte(0x80);
+			b = getVarOrDirectByte(0x40);
+			warning("stub saveVars: strings %d -> %d", a, b);
+			break;
+		case 0x03: // open file
+			a = resStrLen(_scriptPointer);
+			warning("stub saveVars to %s", _scriptPointer);
+			_scriptPointer += a + 1;
+			break;
+		case 0x04:
+			return;
+			break;
+		case 0x1F: // close file
+			warning("stub saveVars close file");
+			return;
+			break;
 		}
-
 	}
 }
 
@@ -910,34 +908,32 @@ void Scumm_v5::loadVars() {
 	hexdump(_scriptPointer, 64);
 	while ((_opcode = fetchScriptByte()) != 0) {
 		switch (_opcode & 0x1F) {
-			case 0x01: // read a range of variables
-				getResultPos();
-			        a = _resultVarNumber;
-				getResultPos();
-			        b = _resultVarNumber;
-				warning("stub loadVars: vars %d -> %d", a, b);
-				break;
-			case 0x02: // read a range of string variables
-				a = getVarOrDirectByte(0x80);
-				b = getVarOrDirectByte(0x40);
-				warning("stub loadVars: strings %d -> %d", a, b);
-				break;
-			case 0x03: // open file
-				a = resStrLen(_scriptPointer);
-				warning("stub loadVars from %s", _scriptPointer);
-				_scriptPointer += a + 1;
-				break;
-			case 0x04:
-				return;
-				break;
-			case 0x1F: // close file
-				warning("stub loadVars close file");
-				return;
-				break;
+		case 0x01: // read a range of variables
+			getResultPos();
+		        a = _resultVarNumber;
+			getResultPos();
+		        b = _resultVarNumber;
+			warning("stub loadVars: vars %d -> %d", a, b);
+			break;
+		case 0x02: // read a range of string variables
+			a = getVarOrDirectByte(0x80);
+			b = getVarOrDirectByte(0x40);
+			warning("stub loadVars: strings %d -> %d", a, b);
+			break;
+		case 0x03: // open file
+			a = resStrLen(_scriptPointer);
+			warning("stub loadVars from %s", _scriptPointer);
+			_scriptPointer += a + 1;
+			break;
+		case 0x04:
+			return;
+			break;
+		case 0x1F: // close file
+			warning("stub loadVars close file");
+			return;
+			break;
 		}
-				
 	}
-
 }
 
 void Scumm_v5::o5_expression() {
@@ -1142,37 +1138,37 @@ void Scumm_v5::o5_saveLoadGame() {
 		_opcode = a & 0xE0;
 
 	switch (_opcode) {
-		case 0x00: // num slots available
-			result = 100;
-			break;
-		case 0x20: // drive
-			// 0 = hard drive
-			// 1 = disk drive
+	case 0x00: // num slots available
+		result = 100;
+		break;
+	case 0x20: // drive
+		// 0 = hard drive
+		// 1 = disk drive
+		result = 0;
+		break;
+	case 0x40: // load 
+		if (loadState(slot, _saveLoadCompatible))
+			result = 3; // sucess
+		else
+			result = 5; // failed to load
+		break;
+	case 0x80: // save
+		if (saveState(slot, _saveLoadCompatible))
 			result = 0;
-			break;
-		case 0x40: // load 
-			if (loadState(slot, _saveLoadCompatible))
-				result = 3; // sucess
-			else
-				result = 5; // failed to load
-			break;
-		case 0x80: // save
-			if (saveState(slot, _saveLoadCompatible))
-				result = 0;
-			else
-				result = 2;
-			break;
-		case 0xC0: // test if save exists
-			bool avail_saves[100];
-			char filename[256];
-			SaveFileManager *mgr = _system->get_savefile_manager();
-			listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
-			makeSavegameName(filename, slot, false);
-			if (avail_saves[slot] && (mgr->open_savefile(filename, getSavePath(), false)))
-				result = 6; // save file exists
-			else
-				result = 7; // save file does not exist
-			break;
+		else
+			result = 2;
+		break;
+	case 0xC0: // test if save exists
+		bool avail_saves[100];
+		char filename[256];
+		SaveFileManager *mgr = _system->get_savefile_manager();
+		listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
+		makeSavegameName(filename, slot, false);
+		if (avail_saves[slot] && (mgr->open_savefile(filename, getSavePath(), false)))
+			result = 6; // save file exists
+		else
+			result = 7; // save file does not exist
+		break;
 	}
 	setResult(result);
 }

@@ -907,7 +907,7 @@ void Scumm::runInputScript(int a, int cmd, int mode) {
 	if (_version <= 2) {
 		verbScript = 4;
 		_scummVars[VAR_CLICK_AREA] = a;
-		switch(a) {
+		switch (a) {
 		case 1:		// Verb clicked
 			_scummVars[33] = cmd;
 			break;

@@ -141,20 +141,20 @@ bool ImuseChannel::handleMap(Chunk &map) {
 	while (!map.eof()) {
 		Chunk *sub = map.subBlock();
 		switch(sub->getType()) {
-			case TYPE_FRMT:
-				handleFormat(*sub);
-				break;
-			case TYPE_TEXT:
-				handleText(*sub);
-				break;
-			case TYPE_REGN:
-				handleRegion(*sub);
-				break;
-			case TYPE_STOP:
-				handleStop(*sub);
-				break;
-			default:
-				error("Unknown iMUS subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
+		case TYPE_FRMT:
+			handleFormat(*sub);
+			break;
+		case TYPE_TEXT:
+			handleText(*sub);
+			break;
+		case TYPE_REGN:
+			handleRegion(*sub);
+			break;
+		case TYPE_STOP:
+			handleStop(*sub);
+			break;
+		default:
+			error("Unknown iMUS subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
 		}
 		delete sub;
 	}
@@ -213,36 +213,36 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 		switch(type) {
-			case TYPE_MAP_: 
-				_inData = false;
-				if (available_size >= (size + 8)) {
-					MemoryChunk c((byte *)_tbuffer + offset);
-					handleMap(c);
+		case TYPE_MAP_: 
+			_inData = false;
+			if (available_size >= (size + 8)) {
+				MemoryChunk c((byte *)_tbuffer + offset);
+				handleMap(c);
+			}
+			break;
+		case TYPE_DATA:
+			_inData = true;
+			_dataSize = size;
+			offset += 8;
+			{
+				int reqsize = 1;
+				if (_channels == 2)
+					reqsize *= 2;
+				if (_bitsize == 16)
+					reqsize *= 2;
+				else if (_bitsize == 12) {
+					if (reqsize > 1)
+						reqsize = reqsize * 3 / 2;
+					else reqsize = 3;
 				}
-				break;
-			case TYPE_DATA:
-				_inData = true;
-				_dataSize = size;
-				offset += 8;
-				{
-					int reqsize = 1;
-					if (_channels == 2)
-						reqsize *= 2;
-					if (_bitsize == 16)
-						reqsize *= 2;
-					else if (_bitsize == 12) {
-						if (reqsize > 1)
-							reqsize = reqsize * 3 / 2;
-						else reqsize = 3;
-					}
-					if ((size % reqsize) != 0) {
-						debug(2, "Invalid iMUS sound data size : (%d %% %d) != 0, correcting...", size, reqsize);
-						size += 3 - (size % reqsize);
-					}
+				if ((size % reqsize) != 0) {
+					debug(2, "Invalid iMUS sound data size : (%d %% %d) != 0, correcting...", size, reqsize);
+					size += 3 - (size % reqsize);
 				}
-				return false;
-			default:
-				error("unknown Chunk in iMUS track : %s ", Chunk::ChunkString(type));
+			}
+			return false;
+		default:
+			error("unknown Chunk in iMUS track : %s ", Chunk::ChunkString(type));
 		}
 		offset += size + 8;
 		return true;

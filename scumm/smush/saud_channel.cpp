@@ -49,40 +49,37 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		uint32 available_size = _tbufferSize - offset;
 
 		switch(type) {
-			case TYPE_STRK:
-				_inData = false;
-				if (available_size >= (size + 8)) {
-					MemoryChunk c((byte *)_tbuffer + offset);
-					handleStrk(c);
-				}
-				else
-					return false;
-				break;
-			case TYPE_SMRK:
-				_inData = false;
-				if (available_size >= (size + 8)) {
-					MemoryChunk c((byte *)_tbuffer + offset);
-					handleSmrk(c);
-				}
-				else
-					return false;
-				break;
-			case TYPE_SHDR:
-				_inData = false;
-				if (available_size >= (size + 8)) {
-					MemoryChunk c((byte *)_tbuffer + offset);
-					handleShdr(c);
-				}
-				else
-					return false;
-				break;
-			case TYPE_SDAT: 
-				_inData = true;
-				_dataSize = size;
-				offset += 8;
+		case TYPE_STRK:
+			_inData = false;
+			if (available_size >= (size + 8)) {
+				MemoryChunk c((byte *)_tbuffer + offset);
+				handleStrk(c);
+			} else
 				return false;
-			default:
-				error("unknown Chunk in SAUD track : %s ", Chunk::ChunkString(type));
+			break;
+		case TYPE_SMRK:
+			_inData = false;
+			if (available_size >= (size + 8)) {
+				MemoryChunk c((byte *)_tbuffer + offset);
+				handleSmrk(c);
+			} else
+				return false;
+			break;
+		case TYPE_SHDR:
+			_inData = false;
+			if (available_size >= (size + 8)) {
+				MemoryChunk c((byte *)_tbuffer + offset);
+				handleShdr(c);
+			} else
+				return false;
+			break;
+		case TYPE_SDAT: 
+			_inData = true;
+			_dataSize = size;
+			offset += 8;
+			return false;
+		default:
+			error("unknown Chunk in SAUD track : %s ", Chunk::ChunkString(type));
 		}
 		offset += size + 8;
 		return true;

@@ -141,146 +141,143 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	int i;
 
 	switch (keycode) {
-		case '\n':	// enter/return
-		case '\r': {
-			if (_caretVisible)
-				drawCaret(true);
+	case '\n':	// enter/return
+	case '\r': {
+		if (_caretVisible)
+			drawCaret(true);
 			
-			nextLine();
+		nextLine();
 
-			int len = _promptEndPos - _promptStartPos;
-			bool keepRunning = true;
+		int len = _promptEndPos - _promptStartPos;
+		bool keepRunning = true;
 
-			// FIXME - len should NEVER be negative. If anything makes it negative,
-			// then the code doing that is buggy and needs to be fixed.
-			assert(len >= 0);
+		// FIXME - len should NEVER be negative. If anything makes it negative,
+		// then the code doing that is buggy and needs to be fixed.
+		assert(len >= 0);
 
-			if (len > 0) {
+		if (len > 0) {
 
-				// We have to allocate the string buffer with new, since VC++ sadly does not
-				// comply to the C++ standard, so we can't use a dynamic sized stack array.
-				char *str = new char[len + 1];
+			// We have to allocate the string buffer with new, since VC++ sadly does not
+			// comply to the C++ standard, so we can't use a dynamic sized stack array.
+			char *str = new char[len + 1];
 	
-				// Copy the user input to str
-				for (i = 0; i < len; i++)
-					str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
-				str[len] = '\0';
+			// Copy the user input to str
+			for (i = 0; i < len; i++)
+				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
+			str[len] = '\0';
 
-				// Add the input to the history
-				addToHistory(str);
+			// Add the input to the history
+			addToHistory(str);
 
-				// Pass it to the input callback, if any
-				if (_callbackProc)
-					keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
+			// Pass it to the input callback, if any
+			if (_callbackProc)
+				keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
 
-					// Get rid of the string buffer
-				delete [] str;
-			}
-
-			print(PROMPT);
-			_promptStartPos = _promptEndPos = _currentPos;
-
-			draw();
-			if (!keepRunning)
-				close();
-			break;
-			}
-		case 27:	// escape
-			close();
-			break;
-		case 8:		// backspace
-			if (_caretVisible)
-				drawCaret(true);
-
-			if (_currentPos > _promptStartPos) {
-				_currentPos--;
-				killChar();
-			}
-			scrollToCurrent();
-			draw();	// FIXME - not nice to redraw the full console just for one char!
-			break;
-		case 9: // tab
-		{
-			if (_completionCallbackProc) {
-				int len = _currentPos - _promptStartPos;
-				assert(len >= 0);
-				char *str = new char[len + 1];
-	
-				// Copy the user input to str
-				for (i = 0; i < len; i++)
-					str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
-				str[len] = '\0';
-
-				char *completion = 0;
-				if ((*_completionCallbackProc)(this, str, completion,
-											   _callbackRefCon))
-				{
-					if (_caretVisible)
-						drawCaret(true);
-					insertIntoPrompt(completion);
-					scrollToCurrent();
-					draw();
-					delete[] completion;
-				}
-				delete[] str;
-			}
-			break;
+				// Get rid of the string buffer
+			delete [] str;
 		}
-		case 127:
-			killChar();
-			draw();
-			break;
-/*
-		case 256 + 24:	// pageup
-			_selectedItem -= _entriesPerPage - 1;
-			if (_selectedItem < 0)
-				_selectedItem = 0;
-			break;
-		case 256 + 25:	// pagedown
-			_selectedItem += _entriesPerPage - 1;
-			if (_selectedItem >= _list.size() )
-				_selectedItem = _list.size() - 1;
-			break;
-*/
-		case 256 + 22:	// home
-			_scrollLine = _linesPerPage - 1;	// FIXME - this is not correct after a wrap around
-			updateScrollBar();
-			draw();
-			break;
-		case 256 + 23:	// end
-			_scrollLine = _currentPos / _lineWidth;
-			updateScrollBar();
-			draw();
-			break;
-		case 273:	// cursor up
-			historyScroll(+1);
-			break;
-		case 274:	// cursor down
-			historyScroll(-1);
-			break;
-		case 275:	// cursor right
-			if (_currentPos < _promptEndPos)
-				_currentPos++;
-			draw();
-			break;
-		case 276:	// cursor left
-			if (_currentPos > _promptStartPos)
-				_currentPos--;
-			draw();
-			break;
 
-		default:
-			if (ascii == '~' || ascii == '#') {
-				close();
-			} else if (modifiers == OSystem::KBD_CTRL) {
-				specialKeys(keycode);
-			} else if (isprint((char)ascii)) {
-				for (i = _promptEndPos-1; i >= _currentPos; i--)
-					_buffer[(i + 1) % kBufferSize] = _buffer[i % kBufferSize];
-				_promptEndPos++;
-				putchar((char)ascii);
+		print(PROMPT);
+		_promptStartPos = _promptEndPos = _currentPos;
+
+		draw();
+		if (!keepRunning)
+			close();
+		break;
+		}
+	case 27:	// escape
+		close();
+		break;
+	case 8:		// backspace
+		if (_caretVisible)
+			drawCaret(true);
+
+		if (_currentPos > _promptStartPos) {
+			_currentPos--;
+			killChar();
+		}
+		scrollToCurrent();
+		draw();	// FIXME - not nice to redraw the full console just for one char!
+		break;
+	case 9: // tab
+	{
+		if (_completionCallbackProc) {
+			int len = _currentPos - _promptStartPos;
+			assert(len >= 0);
+			char *str = new char[len + 1];
+	
+			// Copy the user input to str
+			for (i = 0; i < len; i++)
+				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
+			str[len] = '\0';
+
+			char *completion = 0;
+			if ((*_completionCallbackProc)(this, str, completion, _callbackRefCon)) {
+				if (_caretVisible)
+					drawCaret(true);
+				insertIntoPrompt(completion);
 				scrollToCurrent();
+				draw();
+				delete[] completion;
 			}
+			delete[] str;
+		}
+		break;
+	}
+	case 127:
+		killChar();
+		draw();
+		break;
+/*
+	case 256 + 24:	// pageup
+		_selectedItem -= _entriesPerPage - 1;
+		if (_selectedItem < 0)
+			_selectedItem = 0;
+		break;
+	case 256 + 25:	// pagedown
+		_selectedItem += _entriesPerPage - 1;
+		if (_selectedItem >= _list.size() )
+			_selectedItem = _list.size() - 1;
+		break;
+*/
+	case 256 + 22:	// home
+		_scrollLine = _linesPerPage - 1;	// FIXME - this is not correct after a wrap around
+		updateScrollBar();
+		draw();
+		break;
+	case 256 + 23:	// end
+		_scrollLine = _currentPos / _lineWidth;
+		updateScrollBar();
+		draw();
+		break;
+	case 273:	// cursor up
+		historyScroll(+1);
+		break;
+	case 274:	// cursor down
+		historyScroll(-1);
+		break;
+	case 275:	// cursor right
+		if (_currentPos < _promptEndPos)
+			_currentPos++;
+		draw();
+		break;
+	case 276:	// cursor left
+		if (_currentPos > _promptStartPos)
+			_currentPos--;
+		draw();
+		break;
+	default:
+		if (ascii == '~' || ascii == '#') {
+			close();
+		} else if (modifiers == OSystem::KBD_CTRL) {
+			specialKeys(keycode);
+		} else if (isprint((char)ascii)) {
+			for (i = _promptEndPos-1; i >= _currentPos; i--)
+				_buffer[(i + 1) % kBufferSize] = _buffer[i % kBufferSize];
+			_promptEndPos++;
+			putchar((char)ascii);
+			scrollToCurrent();
+		}
 	}
 }
 
@@ -310,28 +307,28 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 void ConsoleDialog::specialKeys(int keycode) {
 	switch (keycode) {
-		case 'a':
-			_currentPos = _promptStartPos;
+	case 'a':
+		_currentPos = _promptStartPos;
+		draw();
+		break;
+	case 'd':
+		if (_currentPos < _promptEndPos) {
+			killChar();
 			draw();
-			break;
-		case 'd':
-			if (_currentPos < _promptEndPos) {
-				killChar();
-				draw();
-			}
-			break;
-		case 'e':
-			_currentPos = _promptEndPos;
-			draw();
-			break;
-		case 'k':
-			killLine();
-			draw();
-			break;
-		case 'w':
-			killLastWord();
-			draw();
-			break;
+		}
+		break;
+	case 'e':
+		_currentPos = _promptEndPos;
+		draw();
+		break;
+	case 'k':
+		killLine();
+		draw();
+		break;
+	case 'w':
+		killLastWord();
+		draw();
+		break;
 	}
 }
 

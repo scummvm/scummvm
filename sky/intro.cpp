@@ -667,86 +667,86 @@ bool SkyIntro::nextPart(uint16 *&data) {
 	// return false means cancel intro
 	uint16 command = *data++;
 	switch (command) {
-		case SHOWSCREEN:
-			_skyScreen->showScreen(*data++);
-			return true;
-		case FADEUP:
-			_skyScreen->paletteFadeUp(*data++);
-			return true;
-		case FADEDOWN:
-			_skyScreen->fnFadeDown(0);
-			return true;
-		case DELAY:
-			if (!escDelay(*data++))
+	case SHOWSCREEN:
+		_skyScreen->showScreen(*data++);
+		return true;
+	case FADEUP:
+		_skyScreen->paletteFadeUp(*data++);
+		return true;
+	case FADEDOWN:
+		_skyScreen->fnFadeDown(0);
+		return true;
+	case DELAY:
+		if (!escDelay(*data++))
+			return false;
+		return true;
+	case DOFLIRT:
+		_skyScreen->startSequence(*data++);
+		while (_skyScreen->sequenceRunning())
+			if (!escDelay(50))
 				return false;
-			return true;
-		case DOFLIRT:
-			_skyScreen->startSequence(*data++);
-			while (_skyScreen->sequenceRunning())
-				if (!escDelay(50))
-					return false;
-			return true;
-		case SCROLLFLIRT:
-			return floppyScrollFlirt();
-		case COMMANDFLIRT:
-			return commandFlirt(data);
-		case STOPFLIRT:
-			_skyScreen->stopSequence();
-			return true;
-		case STARTMUSIC:
-			_skyMusic->startMusic(*data++);
-			return true;
-		case WAITMUSIC:
-			while (_skyMusic->musicIsPlaying())
-				if (!escDelay(50))
-					return false;
-			return true;
-		case BGFLIRT:
-			_skyScreen->startSequence(*data++);
-			return true;
-		case WAITFLIRT:
-			while (_skyScreen->sequenceRunning())
-				if (!escDelay(50))
-					return false;
-			return true;
-		case PLAYVOICE:
-			if (!escDelay(200))
+		return true;
+	case SCROLLFLIRT:
+		return floppyScrollFlirt();
+	case COMMANDFLIRT:
+		return commandFlirt(data);
+	case STOPFLIRT:
+		_skyScreen->stopSequence();
+		return true;
+	case STARTMUSIC:
+		_skyMusic->startMusic(*data++);
+		return true;
+	case WAITMUSIC:
+		while (_skyMusic->musicIsPlaying())
+			if (!escDelay(50))
 				return false;
-			vData = _skyDisk->loadFile(*data++, NULL);
-			// HACK: Fill the header with silence. We should
-			// probably use _skySound instead of calling playRaw()
-			// directly, but this will have to do for now.
-			memset(vData, 127, sizeof(struct dataFileHeader));
-			_mixer->playRaw(&_voice, vData, _skyDisk->_lastLoadedFileSize, 11025,
-								SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, SOUND_VOICE);
-			return true;
-		case WAITVOICE:
-			while (_voice)
-				if (!escDelay(50))
-					return false;
-			return true;
-		case LOADBG:
-			_mixer->stopID(SOUND_BG);
-			if (_bgBuf)
-				free(_bgBuf);
-			_bgBuf = _skyDisk->loadFile(*data++, NULL);
-			_bgSize = _skyDisk->_lastLoadedFileSize;
-			return true;
-		case LOOPBG:
-			_mixer->stopID(SOUND_BG);
-			_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
-							SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_LOOP, SOUND_BG);
-			return true;
-		case PLAYBG:
-			_mixer->stopID(SOUND_BG);
-			_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
-							SoundMixer::FLAG_UNSIGNED, SOUND_BG);
-			return true;
-		case STOPBG:
-			_mixer->stopID(SOUND_BG);
-			return true;
-		default:
-			error("Unknown intro command %X", command);
+		return true;
+	case BGFLIRT:
+		_skyScreen->startSequence(*data++);
+		return true;
+	case WAITFLIRT:
+		while (_skyScreen->sequenceRunning())
+			if (!escDelay(50))
+				return false;
+		return true;
+	case PLAYVOICE:
+		if (!escDelay(200))
+			return false;
+		vData = _skyDisk->loadFile(*data++, NULL);
+		// HACK: Fill the header with silence. We should
+		// probably use _skySound instead of calling playRaw()
+		// directly, but this will have to do for now.
+		memset(vData, 127, sizeof(struct dataFileHeader));
+		_mixer->playRaw(&_voice, vData, _skyDisk->_lastLoadedFileSize, 11025,
+				SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, SOUND_VOICE);
+		return true;
+	case WAITVOICE:
+		while (_voice)
+			if (!escDelay(50))
+				return false;
+		return true;
+	case LOADBG:
+		_mixer->stopID(SOUND_BG);
+		if (_bgBuf)
+			free(_bgBuf);
+		_bgBuf = _skyDisk->loadFile(*data++, NULL);
+		_bgSize = _skyDisk->_lastLoadedFileSize;
+		return true;
+	case LOOPBG:
+		_mixer->stopID(SOUND_BG);
+		_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
+				SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_LOOP, SOUND_BG);
+		return true;
+	case PLAYBG:
+		_mixer->stopID(SOUND_BG);
+		_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
+				SoundMixer::FLAG_UNSIGNED, SOUND_BG);
+		return true;
+	case STOPBG:
+		_mixer->stopID(SOUND_BG);
+		return true;
+	default:
+		error("Unknown intro command %X", command);
 	}
 	return true;
 }
@@ -803,27 +803,27 @@ bool SkyIntro::commandFlirt(uint16 *&data) {
 			data++;
 			uint16 command = *data++;
 			switch(command) {
-				case IC_PREPARE_TEXT:
-					_skyText->getText(*data++);
-					_skyText->displayText(_textBuf, true, INTRO_TEXT_WIDTH, 255);
-                    break;
-				case IC_SHOW_TEXT:
-					((dataFileHeader*)_textBuf)->s_x = *data++;
-					((dataFileHeader*)_textBuf)->s_y = *data++;
-					showTextBuf();
-					break;
-				case IC_REMOVE_TEXT:
-					restoreScreen();
-					break;
-				case IC_MAKE_SOUND:
-					_skySound->playSound(data[0], data[1], 0);
-					data += 2;
-					break;
-				case IC_FX_VOLUME:
-					_skySound->playSound(1, *data++, 0);
-					break;
-				default:
-					error("Unknown FLIRT command %X\n", command);
+			case IC_PREPARE_TEXT:
+				_skyText->getText(*data++);
+				_skyText->displayText(_textBuf, true, INTRO_TEXT_WIDTH, 255);
+				break;
+			case IC_SHOW_TEXT:
+				((dataFileHeader*)_textBuf)->s_x = *data++;
+				((dataFileHeader*)_textBuf)->s_y = *data++;
+				showTextBuf();
+				break;
+			case IC_REMOVE_TEXT:
+				restoreScreen();
+				break;
+			case IC_MAKE_SOUND:
+				_skySound->playSound(data[0], data[1], 0);
+				data += 2;
+				break;
+			case IC_FX_VOLUME:
+				_skySound->playSound(1, *data++, 0);
+				break;
+			default:
+				error("Unknown FLIRT command %X\n", command);
 			}
 		}
 		if (!escDelay(50)) {

@@ -542,7 +542,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	}
 
 	while (str[0] == '^') {
-		switch(str[1]) {
+		switch (str[1]) {
 		case 'f':
 			{
 				int id = str[3] - '0';
@@ -574,31 +574,31 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	// bit 2 - ???          4
 	// bit 3 - wrap around  8
 	switch (flags & 9) {
-		case 0: 
-			sf->drawStringAbsolute(str, _dst, _width, pos_x, pos_y);
-			break;
-		case 1:
-			sf->drawStringCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top));
-			break;
-		case 8:
-			// FIXME: Is 'right' the maximum line width here, just
-			// as it is in the next case? It's used several times
-			// in The Dig's intro, where 'left' and 'right' are
-			// always 0 and 321 respectively, and apparently we
-			// handle that correctly.
-			sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right);
-			break;
-		case 9:
-			// In this case, the 'right' parameter is actually the
-			// maximum line width. This explains why it's sometimes
-			// smaller than 'left'.
-			//
-			// Note that in The Dig's "Spacetime Six" movie it's
-			// 621. I have no idea what that means.
-			sf->drawStringWrapCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width));
-			break;
-		default:
-			warning("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
+	case 0: 
+		sf->drawStringAbsolute(str, _dst, _width, pos_x, pos_y);
+		break;
+	case 1:
+		sf->drawStringCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top));
+		break;
+	case 8:
+		// FIXME: Is 'right' the maximum line width here, just
+		// as it is in the next case? It's used several times
+		// in The Dig's intro, where 'left' and 'right' are
+		// always 0 and 321 respectively, and apparently we
+		// handle that correctly.
+		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right);
+		break;
+	case 9:
+		// In this case, the 'right' parameter is actually the
+		// maximum line width. This explains why it's sometimes
+		// smaller than 'left'.
+		//
+		// Note that in The Dig's "Spacetime Six" movie it's
+		// 621. I have no idea what that means.
+		sf->drawStringWrapCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width));
+		break;
+	default:
+		warning("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
 	}
 
 	if (string != NULL) {
@@ -753,39 +753,39 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	while (!b.eof()) {
 		Chunk *sub = b.subBlock();
 		if (sub->getSize() & 1) b.seek(1);
-		switch(sub->getType()) {
-			case TYPE_NPAL:
-				handleNewPalette(*sub);
-				break;
-			case TYPE_FOBJ:
-				handleFrameObject(*sub);
-				break;
-			case TYPE_PSAD:
-				handleSoundFrame(*sub);
-				break;
-			case TYPE_TRES:
-				handleTextResource(*sub);
-				break;
-			case TYPE_XPAL:
-				handleDeltaPalette(*sub);
-				break;
-			case TYPE_IACT:
-				handleImuseAction(*sub);
-				break;
-			case TYPE_STOR:
-				handleStore(*sub);
-				break;
-			case TYPE_FTCH:
-				handleFetch(*sub);
-				break;
-			case TYPE_SKIP:
-				handleSkip(*sub);
-				break;
-			case TYPE_TEXT:
-				handleTextResource(*sub);
-				break;
-			default:
-				error("Unknown frame subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
+		switch (sub->getType()) {
+		case TYPE_NPAL:
+			handleNewPalette(*sub);
+			break;
+		case TYPE_FOBJ:
+			handleFrameObject(*sub);
+			break;
+		case TYPE_PSAD:
+			handleSoundFrame(*sub);
+			break;
+		case TYPE_TRES:
+			handleTextResource(*sub);
+			break;
+		case TYPE_XPAL:
+			handleDeltaPalette(*sub);
+			break;
+		case TYPE_IACT:
+			handleImuseAction(*sub);
+			break;
+		case TYPE_STOR:
+			handleStore(*sub);
+			break;
+		case TYPE_FTCH:
+			handleFetch(*sub);
+			break;
+		case TYPE_SKIP:
+			handleSkip(*sub);
+			break;
+		case TYPE_TEXT:
+			handleTextResource(*sub);
+			break;
+		default:
+			error("Unknown frame subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
 		}
 		delete sub;
 	}
@@ -854,12 +854,12 @@ void SmushPlayer::parseNextFrame() {
 	}
 	Chunk *sub = _base->subBlock();
 
-	switch(sub->getType()) {
-		case TYPE_FRME:
-			handleFrame(*sub);
-			break;
-		default:
-			error("Unknown Chunk found : %d, %d", sub->getType(), sub->getSize());
+	switch (sub->getType()) {
+	case TYPE_FRME:
+		handleFrame(*sub);
+		break;
+	default:
+		error("Unknown Chunk found : %d, %d", sub->getType(), sub->getSize());
 	}
 	delete sub;
 }

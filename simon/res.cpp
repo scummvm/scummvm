@@ -353,7 +353,6 @@ byte *SimonEngine::readSingleOpcode(File *in, byte *ptr) {
 			*ptr++ = val >> 8;
 			*ptr++ = val & 255;
 			break;
-
 		default:
 			error("Bad cmd table entry %c", l);
 		}

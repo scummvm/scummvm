@@ -653,34 +653,34 @@ static byte *readCreativeVocFile(byte *ptr, int32 &size, int &rate) {
 		code = len & 0xFF;
 		len >>= 8;
 		switch(code) {
-			case 0: quit = 1; break;
-			case 1: {
-				int time_constant = ptr[offset++];
-				int packing = ptr[offset++];
-				len -= 2;
-				rate = getSampleRateFromVOCRate(time_constant);
-				debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
-				if (packing == 0) {
-					if (size) {
-						ret_sound = (byte *)realloc(ret_sound, size + len);
-					} else {
-						ret_sound = (byte *)malloc(len);
-					}
-					memcpy(ret_sound + size, ptr + offset, len);
-					size += len;
+		case 0: quit = 1; break;
+		case 1: {
+			int time_constant = ptr[offset++];
+			int packing = ptr[offset++];
+			len -= 2;
+			rate = getSampleRateFromVOCRate(time_constant);
+			debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
+			if (packing == 0) {
+				if (size) {
+					ret_sound = (byte *)realloc(ret_sound, size + len);
 				} else {
-					warning("VOC file packing %d unsupported", packing);
+					ret_sound = (byte *)malloc(len);
 				}
-				} break;
-			case 6:	// begin of loop
-				loops = len + 1;
-				break;
-			case 7:	// end of loop
-				break;
-			default:
-				warning("Invalid code in VOC file : %d", code);
-				quit = 1;
-				break;
+				memcpy(ret_sound + size, ptr + offset, len);
+				size += len;
+			} else {
+				warning("VOC file packing %d unsupported", packing);
+			}
+			} break;
+		case 6:	// begin of loop
+			loops = len + 1;
+			break;
+		case 7:	// end of loop
+			break;
+		default:
+			warning("Invalid code in VOC file : %d", code);
+			quit = 1;
+			break;
 		}
 		// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
 		offset += len;
@@ -848,30 +848,30 @@ void IMuseDigital::startSound(int sound) {
 				for (;;) {
 					tag = READ_BE_UINT32(ptr); ptr += 4;
 					switch(tag) {
-						case MKID_BE('FRMT'):
-							ptr += 12;
-							_channel[l]._bits = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._freq = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._channels = READ_BE_UINT32(ptr); ptr += 4;
+					case MKID_BE('FRMT'):
+						ptr += 12;
+						_channel[l]._bits = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l]._freq = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l]._channels = READ_BE_UINT32(ptr); ptr += 4;
+					break;
+					case MKID_BE('TEXT'):
+						size = READ_BE_UINT32(ptr); ptr += size + 4;
 						break;
-						case MKID_BE('TEXT'):
-							size = READ_BE_UINT32(ptr); ptr += size + 4;
+					case MKID_BE('REGN'):
+						ptr += 12;
 						break;
-						case MKID_BE('REGN'):
-							ptr += 12;
+					case MKID_BE('STOP'):
+						ptr += 4;
+						_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
 						break;
-						case MKID_BE('STOP'):
-							ptr += 4;
-							_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
+					case MKID_BE('JUMP'):
+						ptr += 20;
 						break;
-						case MKID_BE('JUMP'):
-							ptr += 20;
+					case MKID_BE('DATA'):
+						size = READ_BE_UINT32(ptr); ptr += 4;
 						break;
-						case MKID_BE('DATA'):
-							size = READ_BE_UINT32(ptr); ptr += 4;
-						break;
-						default:
-							error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", sound, (byte)(tag >> 24), (byte)(tag >> 16), (byte)(tag >> 8), (byte)tag);
+					default:
+						error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", sound, (byte)(tag >> 24), (byte)(tag >> 16), (byte)(tag >> 8), (byte)tag);
 					}
 					if (tag == MKID_BE('DATA')) break;
 				}
