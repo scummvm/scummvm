@@ -30,9 +30,14 @@ McmpMgr::McmpMgr() {
 	_numCompItems = 0;
 	_curSample = -1;
 	_compInput = NULL;
+	_file = NULL;
 }
 
 McmpMgr::~McmpMgr() {
+	if (_file) {
+		fclose(_file);
+		_file = NULL;
+	}
 	_numCompItems = 0;
 	_compTableLoaded = false;
 	_lastBlock = -1;
@@ -54,6 +59,10 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 		warning("McmpMgr::openFile() Can't open MCMP file: %s", filename);
 		return false;
 	}
+
+	int filePos = ftell(_file);
+	_file = fdopen(fileno(_file), "rb");
+	fseek(_file, filePos, SEEK_SET);
 
 	uint32 tag;
 	fread(&tag, 1, 4, _file);

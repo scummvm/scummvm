@@ -276,6 +276,9 @@ bool zlibFile::open(const char *filename) {
 		warning("zlibFile %s not found", filename);
 		return false;
 	}
+	int filePos = ftell(_handle);
+	_handle = fdopen(fileno(_handle), "rb");
+	fseek(_handle, filePos, SEEK_SET);
 
 	// Read in the GZ header
 	fread(_inBuf, 2, sizeof(char), _handle);				// Header
@@ -312,7 +315,11 @@ bool zlibFile::open(const char *filename) {
 }
 
 void zlibFile::close() {
-	_handle = NULL;
+	if (_handle) {
+		fclose(_handle);
+		_handle = NULL;
+	}
+
 	if (_inBuf) {
  		free(_inBuf);
  		_inBuf = NULL;
