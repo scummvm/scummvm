@@ -10,7 +10,6 @@ MODULE_OBJS = \
 	sky/intro.o \
 	sky/logic.o \
 	sky/mouse.o \
-	sky/musicbase.o \
 	sky/rnc_deco.o \
 	sky/screen.o \
 	sky/sky.o \
@@ -20,6 +19,7 @@ MODULE_OBJS = \
 	sky/music/adlibmusic.o \
 	sky/music/gmchannel.o \
 	sky/music/gmmusic.o \
+	sky/music/musicbase.o \
 
 # Include common rules 
 include common.rules

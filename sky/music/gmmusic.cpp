@@ -19,7 +19,7 @@
  *
  */
 
-#include "sky/gmmusic.h"
+#include "sky/music/gmmusic.h"
 
 void SkyGmMusic::passTimerFunc(void *param) {
 
