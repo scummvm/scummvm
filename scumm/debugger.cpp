@@ -633,6 +633,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 				_s->_fullRedraw = 1;
 				Debug_Printf("Actor[%d].costume = %d\n", actnum, a->costume);
 			}
+	} else if (!strcmp(argv[2], "name")) {
+			Debug_Printf("Name of actor %d: %s\n", actnum, _s->getObjOrActorName(actnum));
 	} else {
 			Debug_Printf("Unknown actor command '%s'\nUse <ignoreboxes |costume> as command\n", argv[2]);
 	}
@@ -711,11 +713,12 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		_s->removeObjectFromRoom(obj);
 		_s->clearDrawObjectQueue();
 		_s->runInventoryScript(obj);
-
 	} else if (!strcmp(argv[2], "state")) {
 		_s->putState(obj, atoi(argv[3]));
 		//is BgNeedsRedraw enough?
 		_s->_BgNeedsRedraw = true;
+	} else if (!strcmp(argv[2], "name")) {
+		Debug_Printf("Name of object %d: %s\n", obj, _s->getObjOrActorName(obj));
 	} else {
 		  Debug_Printf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
 	}
