@@ -230,7 +230,7 @@ void NewGui::restoreState()
 
 	_system->hide_overlay();
 	if (_screen) {
-		delete _screen;
+		delete [] _screen;
 		_screen = 0;
 	}
 	
