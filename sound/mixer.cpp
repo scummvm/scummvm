@@ -134,6 +134,10 @@ SoundMixer::~SoundMixer() {
 	_syst->deleteMutex(_mutex);
 }
 
+bool SoundMixer::isPaused() {
+	return _paused;
+}
+
 void SoundMixer::setupPremix(PremixProc *proc, void *param) {
 	Common::StackLock lock(_mutex);
 	_premixParam = param;
