@@ -37,6 +37,7 @@ typedef FileRef FILE;
 #define clearerr(a)
 #define fflush(a)
 #define vsnprintf(a,b,c,d)	vsprintf(a,c,d)
+#define snprintf(a,b,c,d)	sprintf(a,c,d)
 
 #define	SEEK_SET			vfsOriginBeginning 
 #define	SEEK_CUR			vfsOriginCurrent  
