@@ -357,8 +357,8 @@ protected:
 	ArrayHeader *defineArray(int array, int type, int dim2, int dim1);
 	int findFreeArrayId();
 	void nukeArray(int array);
-	int readArray(int array, int index, int base);
-	void writeArray(int array, int index, int base, int value);
+	virtual int readArray(int array, int index, int base);
+	virtual void writeArray(int array, int index, int base, int value);
 	void shuffleArray(int num, int minIdx, int maxIdx);
 
 	void setCursorTransparency(int a);
@@ -707,11 +707,10 @@ protected:
 	virtual void redrawBGAreas();
 
 	ArrayHeader *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
-	int readArray(int array, int idx2, int idx1);
-	void writeArray(int array, int idx2, int idx1, int value);
+	virtual int readArray(int array, int idx2, int idx1);
+	virtual void writeArray(int array, int idx2, int idx1, int value);
 	void redimArray(int arrayId, int newDim2start, int newDim2end, 
 					int newDim1start, int newDim1end, int type);
-	void shuffleArray(int num, int minIdx, int maxIdx);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 	void arrrays_unk2(int dst, int src, int len2, int len);
@@ -731,10 +730,6 @@ protected:
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();
 	void o72_addMessageToStack();
-	void o72_wordArrayRead();
-	void o72_wordArrayIndexedRead();
-	void o72_wordArrayWrite();
-	void o72_wordArrayIndexedWrite();
 	void o72_isAnyOf();
 	void o72_unknown50();
 	void o72_findObjectWithClassOf();

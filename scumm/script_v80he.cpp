@@ -53,12 +53,12 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_addMessageToStack),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o72_wordArrayRead),
+		OPCODE(o6_wordArrayRead),
 		/* 08 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o72_wordArrayIndexedRead),
+		OPCODE(o6_wordArrayIndexedRead),
 		/* 0C */
 		OPCODE(o6_dup),
 		OPCODE(o6_not),
@@ -133,12 +133,12 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o80_unknown45),
 		OPCODE(o6_invalid),
-		OPCODE(o72_wordArrayWrite),
+		OPCODE(o6_wordArrayWrite),
 		/* 48 */
 		OPCODE(o80_unknown48),
 		OPCODE(o80_unknown49),
 		OPCODE(o80_unknown4A),
-		OPCODE(o72_wordArrayIndexedWrite),
+		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
 		OPCODE(o80_readConfigFile),

@@ -53,12 +53,12 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_addMessageToStack),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o72_wordArrayRead),
+		OPCODE(o6_wordArrayRead),
 		/* 08 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o72_wordArrayIndexedRead),
+		OPCODE(o6_wordArrayIndexedRead),
 		/* 0C */
 		OPCODE(o6_dup),
 		OPCODE(o6_not),
@@ -133,12 +133,12 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o72_wordArrayWrite),
+		OPCODE(o6_wordArrayWrite),
 		/* 48 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o72_wordArrayIndexedWrite),
+		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -654,17 +654,6 @@ void ScummEngine_v72he::o72_addMessageToStack() {
 	_scriptPointer += _stringLength;
 }
 
-void ScummEngine_v72he::o72_wordArrayRead() {
-	int base = pop();
-	push(readArray(fetchScriptWord(), 0, base));
-}
-
-void ScummEngine_v72he::o72_wordArrayIndexedRead() {
-	int base = pop();
-	int idx = pop();
-	push(readArray(fetchScriptWord(), idx, base));
-}
-
 void ScummEngine_v72he::o72_isAnyOf() {
 	int args[128], i = 0;
 	int num = getStackList(args, ARRAYSIZE(args));
@@ -679,17 +668,6 @@ void ScummEngine_v72he::o72_isAnyOf() {
 	}
 
 	push(0);
-}
-
-void ScummEngine_v72he::o72_wordArrayWrite() {
-	int a = pop();
-	writeArray(fetchScriptWord(), 0, pop(), a);
-}
-
-void ScummEngine_v72he::o72_wordArrayIndexedWrite() {
-	int val = pop();
-	int base = pop();
-	writeArray(fetchScriptWord(), pop(), base, val);
 }
 
 void ScummEngine_v72he::o72_unknown50() {
@@ -717,6 +695,12 @@ void ScummEngine_v72he::o72_wordArrayInc() {
 	int var = fetchScriptWord();
 	int base = pop();
 	writeArray(var, 0, base, readArray(var, 0, base) + 1);
+}
+
+void ScummEngine_v72he::o72_wordArrayDec() {
+	int var = fetchScriptWord();
+	int base = pop();
+	writeArray(var, 0, base, readArray(var, 0, base) - 1);
 }
 
 void ScummEngine_v72he::o72_objectX() {
@@ -787,12 +771,6 @@ void ScummEngine_v72he::o72_unknown5A() {
 
 	push(r * 10);
 	debug(1,"o72_unknown5A stub (%d)", snd);
-}
-
-void ScummEngine_v72he::o72_wordArrayDec() {
-	int var = fetchScriptWord();
-	int base = pop();
-	writeArray(var, 0, base, readArray(var, 0, base) - 1);
 }
 
 void ScummEngine_v72he::o72_startScript() {
@@ -1727,24 +1705,6 @@ void ScummEngine_v72he::o72_unknownCF() {
 	//memcpy(ah->data, string, len);
 
 	push(readVar(0));
-}
-
-void ScummEngine_v72he::shuffleArray(int num, int minIdx, int maxIdx) {
-	int range = maxIdx - minIdx;
-	int count = range * 2;
-
-	// Shuffle the array 'num'
-	while (count--) {
-		// Determine two random elements...
-		int rand1 = _rnd.getRandomNumber(range) + minIdx;
-		int rand2 = _rnd.getRandomNumber(range) + minIdx;
-		
-		// ...and swap them
-		int val1 = readArray(num, 0, rand1);
-		int val2 = readArray(num, 0, rand2);
-		writeArray(num, 0, rand1, val2);
-		writeArray(num, 0, rand2, val1);
-	}
 }
 
 void ScummEngine_v72he::o72_shuffle() {
