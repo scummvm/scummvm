@@ -386,7 +386,8 @@ int MidiDriver_SEQ::open(int mode) {
 			error("Cannot open /dev/null to dump midi output");
 	}
 
-	_device_num = atoi(getenv("SCUMMVM_MIDIPORT"));
+	if (getenv("SCUMMVM_MIDIPORT"))
+		_device_num = atoi(getenv("SCUMMVM_MIDIPORT"));
 	return 0;
 }
 
