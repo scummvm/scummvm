@@ -1024,19 +1024,19 @@ void ScummEngine_v6::o6_getOwner() {
 }
 
 void ScummEngine_v6::o6_startSound() {
+	int offset = 0;
+	int snd = pop();
+
+	// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
+	// indicate which note to play, but only when using the standard piano
+	// sound. See also o6_soundOps()
+	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
+		offset = pop();
+		
 	if (_features & GF_DIGI_IMUSE)
-		_imuseDigital->startSfx(pop(), 64);
-	else {
-		if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO)) {
-			// Seems to range between 952 - 9000
-			// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
-			// indicate which note to play, but only when using the standard piano
-			// sound. See also o6_soundOps().
-			int offset = pop();
-			debug(2, "o6_startSound: offset %d", offset);
-		}
-		_sound->addSoundToQueue(pop());
-	}
+		_imuseDigital->startSfx(snd, 64);
+	else 
+		_sound->addSoundToQueue(snd, offset);
 }
 
 void ScummEngine_v6::o6_stopSound() {
@@ -1046,8 +1046,8 @@ void ScummEngine_v6::o6_stopSound() {
 void ScummEngine_v6::o6_startMusic() {
 	if (_features & GF_DIGI_IMUSE)
 		error("o6_startMusic() It shouldn't be called here for imuse digital");
-	else
-		_sound->addSoundToQueue(pop());
+
+	_sound->addSoundToQueue(pop());
 }
 
 void ScummEngine_v6::o6_stopObjectScript() {

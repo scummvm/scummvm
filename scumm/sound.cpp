@@ -75,7 +75,8 @@ Sound::Sound(ScummEngine *parent)
 	_sfxMode(0) {
 	
 	memset(_soundQue, 0, sizeof(_soundQue));
-	memset(_soundQue2, 0, sizeof(_soundQue2));
+	memset(_soundQue2Sound, 0, sizeof(_soundQue2Sound));
+	memset(_soundQue2Offset, 0, sizeof(_soundQue2Offset));
 	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));
 }
 
@@ -84,29 +85,31 @@ Sound::~Sound() {
 	delete _sfxFile;
 }
 
-void Sound::addSoundToQueue(int sound) {
+void Sound::addSoundToQueue(int sound, int offset) {
 	_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 	// Music resources are in separate file
 	if (!((_vm->_heversion >= 70) && sound >= 4000))
 		_vm->ensureResourceLoaded(rtSound, sound);
-	addSoundToQueue2(sound);
+	addSoundToQueue2(sound, offset);
 }
 
-void Sound::addSoundToQueue2(int sound) {
+void Sound::addSoundToQueue2(int sound, int offset) {
 	if ((_vm->_features & GF_HUMONGOUS) && _soundQue2Pos) {
 		int i = _soundQue2Pos;
 		while (i--) {
-			if (_soundQue2[i] == sound)
+			if (_soundQue2Sound[i] == sound)
 				return;
 		}
 	}
 
-	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2));
-	_soundQue2[_soundQue2Pos++] = sound;
+	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2Sound));
+	_soundQue2Sound[_soundQue2Pos] = sound;
+	_soundQue2Offset[_soundQue2Pos] = offset;
+	_soundQue2Pos++;
 }
 
 void Sound::processSoundQues() {
-	int i = 0, d, num;
+	int i = 0, num, offset, snd;
 	int data[16];
 
 	processSfxQueues();
@@ -115,9 +118,11 @@ void Sound::processSoundQues() {
 		return;
 
 	while (_soundQue2Pos) {
-		d = _soundQue2[--_soundQue2Pos];
-		if (d)
-			playSound(d);
+		_soundQue2Pos--;
+		snd = _soundQue2Sound[_soundQue2Pos];
+		offset = _soundQue2Offset[_soundQue2Pos];
+		if (snd)
+			playSound(snd, offset);
 	}
 
 	while (i < _soundQuePos) {
@@ -148,7 +153,7 @@ void Sound::setOverrideFreq(int freq) {
 	_overrideFreq = freq;
 }
 
-void Sound::playSound(int soundID) {
+void Sound::playSound(int soundID, int offset) {
 	byte *ptr;
 	char *sound;
 	int size = -1;
@@ -235,7 +240,7 @@ void Sound::playSound(int soundID) {
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;	// abort
 
-		size = READ_BE_UINT32(ptr+4) - 8;
+		size = READ_BE_UINT32(ptr+4) - offset - 8;
 		if (_overrideFreq) {
 			// Used by the piano in Fatty Bear's Birthday Surprise
 			rate = _overrideFreq;
@@ -244,7 +249,7 @@ void Sound::playSound(int soundID) {
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
-		memcpy(sound, ptr + 8, size);
+		memcpy(sound, ptr + offset + 8, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
@@ -769,7 +774,7 @@ bool Sound::isSoundInQueue(int sound) const {
 
 	i = _soundQue2Pos;
 	while (i--) {
-		if (_soundQue2[i] == sound)
+		if (_soundQue2Sound[i] == sound)
 			return true;
 	}
 
@@ -813,9 +818,12 @@ void Sound::stopSound(int a) {
 	if (_vm->_musicEngine)
 		_vm->_musicEngine->stopSound(a);
 
-	for (i = 0; i < ARRAYSIZE(_soundQue2); i++)
-		if (_soundQue2[i] == a)
-			_soundQue2[i] = 0;
+	for (i = 0; i < ARRAYSIZE(_soundQue2Sound); i++) {
+		if (_soundQue2Sound[i] == a) {
+			_soundQue2Sound[i] = 0;
+			_soundQue2Offset[i] = 0;
+		}
+	}
 }
 
 void Sound::stopAllSounds() {
@@ -827,7 +835,8 @@ void Sound::stopAllSounds() {
 
 	// Clear the (secondary) sound queue
 	_soundQue2Pos = 0;
-	memset(_soundQue2, 0, sizeof(_soundQue2));
+	memset(_soundQue2Sound, 0, sizeof(_soundQue2Sound));
+	memset(_soundQue2Offset, 0, sizeof(_soundQue2Offset));
 
 	if (_vm->_musicEngine) {
 		_vm->_musicEngine->stopAllSounds();

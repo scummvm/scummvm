@@ -55,7 +55,7 @@ protected:
 	ScummEngine *_vm;
 
 	int16 _soundQuePos, _soundQue[0x100];
-	int16 _soundQue2Pos, _soundQue2[10];
+	int16 _soundQue2Pos, _soundQue2Sound[10], _soundQue2Offset[10];
 
 	File *_sfxFile;
 	SoundMode _soundMode;	
@@ -84,11 +84,11 @@ public:
 public:
 	Sound(ScummEngine *parent);
 	~Sound();
-	void addSoundToQueue(int sound);
-	void addSoundToQueue2(int sound);
+	void addSoundToQueue(int sound, int offset = 0);
+	void addSoundToQueue2(int sound, int offset = 0);
 	void processSoundQues();
 	void setOverrideFreq(int freq);
-	void playSound(int sound);
+	void playSound(int sound, int offset = 0);
 	void startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);

@@ -686,7 +686,7 @@ void ScummEngine_v7he::o7_startSound() {
 
 	case 255:
 		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
-		_sound->addSoundToQueue(_heSndSoundId);
+		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
 		debug(2, "o7_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
 		_heSndLoop = 0;
 		break;
