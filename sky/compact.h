@@ -114,7 +114,6 @@ namespace SkyCompact {
 	extern uint16 m_ss_l_to_u[];
 	extern uint16 m_ss_l_to_r[];
 	extern uint16 m_ss_r_to_l[];
-	extern uint16 *mini_so_turnTable[5][5];
 	extern ExtCompact mini_so_ext;
 	extern Compact mini_so;
 	extern uint16 unload_seq1[];
@@ -135,7 +134,6 @@ namespace SkyCompact {
 	extern uint16 f_ss_l_to_d[];
 	extern uint16 f_ss_r_to_u[];
 	extern uint16 f_ss_r_to_l[];
-	extern uint16 *full_so_turnTable[5][5];
 	extern ExtCompact full_so_ext;
 	extern Compact full_so;
 	extern uint16 panel_seq[];
@@ -428,7 +426,6 @@ namespace SkyCompact {
 	extern uint16 foreman_d_to_u[];
 	extern uint16 foreman_d_to_r[];
 	extern uint16 foreman_r_to_d[];
-	extern uint16 *foreman_turnTable[5][5];
 	extern ExtCompact foreman_ext;
 	extern Compact foreman;
 	extern uint16 lite1_seq[];
@@ -467,7 +464,6 @@ namespace SkyCompact {
 	extern uint16 radman_r_to_u[];
 	extern uint16 radman_r_to_d[];
 	extern uint16 radman_r_to_l[];
-	extern uint16 *radman_turnTable[5][5];
 	extern ExtCompact radman_ext;
 	extern Compact radman;
 	extern Compact locker2;
@@ -1089,8 +1085,6 @@ namespace SkyCompact {
 	extern uint16 sml_loaderb_u_to_r[];
 	extern uint16 sml_loaderb_d_to_r[];
 	extern uint16 sml_loaderb_l_to_d[];
-	extern UnknownStuff loader_unk;
-	extern uint16 *loader_turnTable[5][5];
 	extern ExtCompact loader_ext;
 	extern Compact loader;
 	extern Compact junk2;
@@ -1537,8 +1531,6 @@ namespace SkyCompact {
 	extern uint16 sex_st_up[];
 	extern uint16 sex_st_left[];
 	extern uint16 sex_u_to_l[];
-	extern UnknownStuff danielle_unk;
-	extern uint16 *danielle_turnTable[5][5];
 	extern ExtCompact danielle_ext;
 	extern Compact danielle;
 	extern uint16 spu_d_to_r[];
@@ -3121,8 +3113,6 @@ namespace SkyCompact {
 	extern uint16 sjoey_r_to_u[];
 	extern uint16 sjoey_r_to_d[];
 	extern uint16 sjoey_r_to_l[];
-	extern UnknownStuff joey_unk;
-	extern uint16 *joey_turnTable[5][5];
 	extern ExtCompact joey_ext;
 	extern Compact joey;
 	extern uint16 baby_logic_list[];
@@ -3182,8 +3172,6 @@ namespace SkyCompact {
 	extern uint16 bfoster_l_to_u[];
 	extern uint16 bfoster_l_to_d[];
 	extern uint16 bfoster_l_to_r[];
-	extern UnknownStuff foster_unk;
-	extern uint16 *foster_turnTable[5][5];
 	extern ExtCompact foster_ext;
 	extern Compact foster;
 	extern uint16 monitor_up[];
@@ -3218,7 +3206,6 @@ namespace SkyCompact {
 	extern uint16 monitor_l_to_d[];
 	extern uint16 monitor_r_to_d[];
 	extern uint16 monitor_r_to_l[];
-	extern uint16 *monitor_turnTable[5][5];
 	extern ExtCompact monitor_ext;
 	extern Compact monitor;
 	extern ExtCompact anita_ext;

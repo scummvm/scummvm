@@ -38,9 +38,24 @@ struct dataFileHeader {
 	uint16 s_compressed_size;
 };
 
-#if !defined(__GNUC__)
-#pragma START_PACK_STRUCTS
-#endif
+struct MegaSet {
+	uint16 gridWidth;
+	uint16 colOffset;
+	uint16 colWidth;
+	uint16 lastChr;
+
+	uint16 *animUp;
+	uint16 *animDown;
+	uint16 *animLeft;
+	uint16 *animRight;
+
+	uint16 *standUp;
+	uint16 *standDown;
+	uint16 *standLeft;
+	uint16 *standRight;
+	uint16 *standTalk;
+	void *turnTable;
+};
 
 struct ExtCompact {
 	uint16 actionSub;
@@ -76,32 +91,11 @@ struct ExtCompact {
 	void *animScratch; // data area for AR
 
 	uint16 megaSet;
-
-	uint16 gridWidth;
-	uint16 colOffset;
-	uint16 colWidth;
-	uint16 lastChr;
-
-	uint16 *animUp;
-	uint16 *animDown;
-	uint16 *animLeft;
-	uint16 *animRight;
-
-	uint16 *standUp;
-	uint16 *standDown;
-	uint16 *standLeft;
-	uint16 *standRight;
-	uint16 *standTalk;
-} GCC_PACK;
-
-struct UnknownStuff {
-	uint16 unknownStuff_1_1[4];
-	uint16 *unknownStuff_1_2[34];
-	uint16 unknownStuff_2_1[4];
-	uint16 *unknownStuff_2_2[34];
-	uint16 unknownStuff_3_1[4];
-	uint16 *unknownStuff_3_2[34];
-} GCC_PACK;
+	MegaSet *megaSet0;
+	MegaSet *megaSet1;
+	MegaSet *megaSet2;
+	MegaSet *megaSet3;
+};
 
 struct Compact {
 	uint16 logic; // Entry in logic table to run (byte as <256entries in logic table
@@ -144,12 +138,6 @@ struct Compact {
 	uint16 baseSub_off;
 
 	ExtCompact *extCompact;
-	void *turnTable;
-	UnknownStuff *unknownStuff;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-#pragma END_PACK_STRUCTS
-#endif
+};
 
 #endif

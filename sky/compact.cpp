@@ -39,7 +39,6 @@
 
 #define COMPACT_SIZE (sizeof(compactOffsets)/sizeof(uint32))
 #define EXTCOMPACT_SIZE (sizeof(extCompactOffsets)/sizeof(uint32))
-#define UNKNOWNSTUFF_SIZE (sizeof(unknownStuffOffsets)/sizeof(uint32))
 
 #define OFFS(type,item) (((uint32)(&((type*)0)->item)))
 #define MK32(type,item) OFFS(type, item),0,0,0
@@ -104,136 +103,6 @@ static const uint32 extCompactOffsets[] = {
 	MK16(ExtCompact, arTargetY),
 	MK32(ExtCompact, animScratch),
 	MK16(ExtCompact, megaSet),
-	MK16(ExtCompact, gridWidth),
-	MK16(ExtCompact, colOffset),
-	MK16(ExtCompact, colWidth),
-	MK16(ExtCompact, lastChr),
-	MK32(ExtCompact, animUp),
-	MK32(ExtCompact, animDown),
-	MK32(ExtCompact, animLeft),
-	MK32(ExtCompact, animRight),
-	MK32(ExtCompact, standUp),
-	MK32(ExtCompact, standDown),
-	MK32(ExtCompact, standLeft),
-	MK32(ExtCompact, standRight),
-	MK32(ExtCompact, standTalk),
-};
-
-static const uint32 unknownStuffOffsets[] = {
-	MK16(UnknownStuff, unknownStuff_1_1[0]),
-	MK16(UnknownStuff, unknownStuff_1_1[1]),
-	MK16(UnknownStuff, unknownStuff_1_1[2]),
-	MK16(UnknownStuff, unknownStuff_1_1[3]),
-	MK32(UnknownStuff, unknownStuff_1_2[0]),
-	MK32(UnknownStuff, unknownStuff_1_2[1]),
-	MK32(UnknownStuff, unknownStuff_1_2[2]),
-	MK32(UnknownStuff, unknownStuff_1_2[3]),
-	MK32(UnknownStuff, unknownStuff_1_2[4]),
-	MK32(UnknownStuff, unknownStuff_1_2[5]),
-	MK32(UnknownStuff, unknownStuff_1_2[6]),
-	MK32(UnknownStuff, unknownStuff_1_2[7]),
-	MK32(UnknownStuff, unknownStuff_1_2[8]),
-	MK32(UnknownStuff, unknownStuff_1_2[9]),
-	MK32(UnknownStuff, unknownStuff_1_2[10]),
-	MK32(UnknownStuff, unknownStuff_1_2[11]),
-	MK32(UnknownStuff, unknownStuff_1_2[12]),
-	MK32(UnknownStuff, unknownStuff_1_2[13]),
-	MK32(UnknownStuff, unknownStuff_1_2[14]),
-	MK32(UnknownStuff, unknownStuff_1_2[15]),
-	MK32(UnknownStuff, unknownStuff_1_2[16]),
-	MK32(UnknownStuff, unknownStuff_1_2[17]),
-	MK32(UnknownStuff, unknownStuff_1_2[18]),
-	MK32(UnknownStuff, unknownStuff_1_2[19]),
-	MK32(UnknownStuff, unknownStuff_1_2[20]),
-	MK32(UnknownStuff, unknownStuff_1_2[21]),
-	MK32(UnknownStuff, unknownStuff_1_2[22]),
-	MK32(UnknownStuff, unknownStuff_1_2[23]),
-	MK32(UnknownStuff, unknownStuff_1_2[24]),
-	MK32(UnknownStuff, unknownStuff_1_2[25]),
-	MK32(UnknownStuff, unknownStuff_1_2[26]),
-	MK32(UnknownStuff, unknownStuff_1_2[27]),
-	MK32(UnknownStuff, unknownStuff_1_2[28]),
-	MK32(UnknownStuff, unknownStuff_1_2[29]),
-	MK32(UnknownStuff, unknownStuff_1_2[30]),
-	MK32(UnknownStuff, unknownStuff_1_2[31]),
-	MK32(UnknownStuff, unknownStuff_1_2[32]),
-	MK32(UnknownStuff, unknownStuff_1_2[33]),
-	MK16(UnknownStuff, unknownStuff_2_1[0]),
-	MK16(UnknownStuff, unknownStuff_2_1[1]),
-	MK16(UnknownStuff, unknownStuff_2_1[2]),
-	MK16(UnknownStuff, unknownStuff_2_1[3]),
-	MK32(UnknownStuff, unknownStuff_2_2[0]),
-	MK32(UnknownStuff, unknownStuff_2_2[1]),
-	MK32(UnknownStuff, unknownStuff_2_2[2]),
-	MK32(UnknownStuff, unknownStuff_2_2[3]),
-	MK32(UnknownStuff, unknownStuff_2_2[4]),
-	MK32(UnknownStuff, unknownStuff_2_2[5]),
-	MK32(UnknownStuff, unknownStuff_2_2[6]),
-	MK32(UnknownStuff, unknownStuff_2_2[7]),
-	MK32(UnknownStuff, unknownStuff_2_2[8]),
-	MK32(UnknownStuff, unknownStuff_2_2[9]),
-	MK32(UnknownStuff, unknownStuff_2_2[10]),
-	MK32(UnknownStuff, unknownStuff_2_2[11]),
-	MK32(UnknownStuff, unknownStuff_2_2[12]),
-	MK32(UnknownStuff, unknownStuff_2_2[13]),
-	MK32(UnknownStuff, unknownStuff_2_2[14]),
-	MK32(UnknownStuff, unknownStuff_2_2[15]),
-	MK32(UnknownStuff, unknownStuff_2_2[16]),
-	MK32(UnknownStuff, unknownStuff_2_2[17]),
-	MK32(UnknownStuff, unknownStuff_2_2[18]),
-	MK32(UnknownStuff, unknownStuff_2_2[19]),
-	MK32(UnknownStuff, unknownStuff_2_2[20]),
-	MK32(UnknownStuff, unknownStuff_2_2[21]),
-	MK32(UnknownStuff, unknownStuff_2_2[22]),
-	MK32(UnknownStuff, unknownStuff_2_2[23]),
-	MK32(UnknownStuff, unknownStuff_2_2[24]),
-	MK32(UnknownStuff, unknownStuff_2_2[25]),
-	MK32(UnknownStuff, unknownStuff_2_2[26]),
-	MK32(UnknownStuff, unknownStuff_2_2[27]),
-	MK32(UnknownStuff, unknownStuff_2_2[28]),
-	MK32(UnknownStuff, unknownStuff_2_2[29]),
-	MK32(UnknownStuff, unknownStuff_2_2[30]),
-	MK32(UnknownStuff, unknownStuff_2_2[31]),
-	MK32(UnknownStuff, unknownStuff_2_2[32]),
-	MK32(UnknownStuff, unknownStuff_2_2[33]),
-	MK16(UnknownStuff, unknownStuff_3_1[0]),
-	MK16(UnknownStuff, unknownStuff_3_1[1]),
-	MK16(UnknownStuff, unknownStuff_3_1[2]),
-	MK16(UnknownStuff, unknownStuff_3_1[3]),
-	MK32(UnknownStuff, unknownStuff_3_2[0]),
-	MK32(UnknownStuff, unknownStuff_3_2[1]),
-	MK32(UnknownStuff, unknownStuff_3_2[2]),
-	MK32(UnknownStuff, unknownStuff_3_2[3]),
-	MK32(UnknownStuff, unknownStuff_3_2[4]),
-	MK32(UnknownStuff, unknownStuff_3_2[5]),
-	MK32(UnknownStuff, unknownStuff_3_2[6]),
-	MK32(UnknownStuff, unknownStuff_3_2[7]),
-	MK32(UnknownStuff, unknownStuff_3_2[8]),
-	MK32(UnknownStuff, unknownStuff_3_2[9]),
-	MK32(UnknownStuff, unknownStuff_3_2[10]),
-	MK32(UnknownStuff, unknownStuff_3_2[11]),
-	MK32(UnknownStuff, unknownStuff_3_2[12]),
-	MK32(UnknownStuff, unknownStuff_3_2[13]),
-	MK32(UnknownStuff, unknownStuff_3_2[14]),
-	MK32(UnknownStuff, unknownStuff_3_2[15]),
-	MK32(UnknownStuff, unknownStuff_3_2[16]),
-	MK32(UnknownStuff, unknownStuff_3_2[17]),
-	MK32(UnknownStuff, unknownStuff_3_2[18]),
-	MK32(UnknownStuff, unknownStuff_3_2[19]),
-	MK32(UnknownStuff, unknownStuff_3_2[20]),
-	MK32(UnknownStuff, unknownStuff_3_2[21]),
-	MK32(UnknownStuff, unknownStuff_3_2[22]),
-	MK32(UnknownStuff, unknownStuff_3_2[23]),
-	MK32(UnknownStuff, unknownStuff_3_2[24]),
-	MK32(UnknownStuff, unknownStuff_3_2[25]),
-	MK32(UnknownStuff, unknownStuff_3_2[26]),
-	MK32(UnknownStuff, unknownStuff_3_2[27]),
-	MK32(UnknownStuff, unknownStuff_3_2[28]),
-	MK32(UnknownStuff, unknownStuff_3_2[29]),
-	MK32(UnknownStuff, unknownStuff_3_2[30]),
-	MK32(UnknownStuff, unknownStuff_3_2[31]),
-	MK32(UnknownStuff, unknownStuff_3_2[32]),
-	MK32(UnknownStuff, unknownStuff_3_2[33]),
 };
 
 void *getCompactElem(Compact *cpt, uint32 off) {
@@ -245,14 +114,9 @@ void *getCompactElem(Compact *cpt, uint32 off) {
 		return((uint8 *)(cpt->extCompact) + extCompactOffsets[off]);
 
 	off -= EXTCOMPACT_SIZE;
-	if (off < 5*5*4)
-		return ((void **)(cpt->turnTable))[off/4];
+	// TODO: put the MegaSet stuff in
 
-	off -= 5*5*4;
-	if (off < UNKNOWNSTUFF_SIZE)
-		return((uint8 *)(cpt->unknownStuff) + unknownStuffOffsets[off]);
-
-	error("Offset %X out of bounds of compact", off + COMPACT_SIZE + EXTCOMPACT_SIZE + 5*5*4);
+	error("Offset %X out of bounds of compact", off + COMPACT_SIZE + EXTCOMPACT_SIZE);
 }
 };
 
