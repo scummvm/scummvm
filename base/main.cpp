@@ -259,11 +259,11 @@ int main(int argc, char *argv[]) {
 
 		// Set the window caption to the game name
 		prop.caption = ConfMan.get("description", detector._targetName).c_str();
-		if (prop.caption == NULL)
+		if (strnlen(prop.caption, 3) == 0)	
 			prop.caption = detector._game.description;
-		if (prop.caption == NULL)
+		if (strnlen(prop.caption, 3) == 0)	
 			prop.caption = detector._targetName.c_str();
-		if (prop.caption != NULL)
+		if (strnlen(prop.caption, 3) != 0)	
 			system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
 		// FIXME: It seem not logical that we first might set the gfx mode to
