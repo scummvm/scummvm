@@ -20,29 +20,38 @@
 #ifndef	SAVE_REST_H
 #define	SAVE_REST_H
 
-
-//#include "src\driver96.h"
 #include "memory.h"
 
 #define	SAVE_DESCRIPTION_LEN	64
 
-uint32	SaveGame(uint16 slotNo, uint8 *description);
-uint32	RestoreGame(uint16 slotNo);
-uint32	GetSaveDescription(uint16 slotNo, uint8 *description);
-bool	SaveExists(uint16 slotNo);
-void	FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc);
-uint32	RestoreFromBuffer(mem *buffer, uint32 size);
-uint32	FindBufferSize( void );
-
+uint32 SaveGame(uint16 slotNo, uint8 *description);
+uint32 RestoreGame(uint16 slotNo);
+uint32 GetSaveDescription(uint16 slotNo, uint8 *description);
+bool SaveExists(uint16 slotNo);
+void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc);
+uint32 RestoreFromBuffer(mem *buffer, uint32 size);
+uint32 FindBufferSize(void);
 
 // Save & Restore error codes
 
-//		ERROR CODE			VALUE		MEANING													REASON
-//		==========			=====		=======													======
-#define SR_OK				0x00000000	// ok													No worries
-#define SR_ERR_FILEOPEN		0x00000001	// can't open file										Could create file for saving, or couldn't find file for loading
-#define SR_ERR_INCOMPATIBLE	0x00000002	// (RestoreGame only) incompatible savegame data		Savegame file is obsolete. (Won't happen after development stops)
-#define	SR_ERR_READFAIL		0x00000003	// (RestoreGame only) failed on reading savegame file	Something screwed up during the fread()
-#define SR_ERR_WRITEFAIL	0x00000004	// (SaveGame only) failed on writing savegame file		Something screwed up during the fwrite() - could be hard-drive full..?
+#define SR_OK			0x00000000	// No worries
+#define SR_ERR_FILEOPEN		0x00000001	// can't open file - Couldn't
+						// create file for saving, or
+						// couldn't find file for
+						// loading.
+#define SR_ERR_INCOMPATIBLE	0x00000002	// (RestoreGame only)
+						// incompatible savegame data.
+						// Savegame file is obsolete.
+						// (Won't happen after
+						// development stops)
+#define SR_ERR_READFAIL		0x00000003	// (RestoreGame only) failed on
+						// reading savegame file -
+						// Something screwed up during
+						// the fread()
+#define SR_ERR_WRITEFAIL	0x00000004	// (SaveGame only) failed on
+						// writing savegame file -
+						// Something screwed up during
+						// the fwrite() - could be
+						// hard-drive full..?
 
 #endif
