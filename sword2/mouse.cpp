@@ -117,6 +117,16 @@ void Sword2Engine::mouseEngine(void) {
 	}
 }
 
+#if RIGHT_CLICK_CLEARS_LUGGAGE
+bool Sword2Engine::heldIsInInventory(void) {
+	for (uint i = 0; i < _totalMasters; i++) {
+		if ((uint32) _masterMenuList[i].icon_resource == Logic::_scriptVars[OBJECT_HELD])
+			return true;
+	}
+	return false;
+}
+#endif
+
 int Sword2Engine::menuClick(int menu_items) {
 	if (_mouseX < RDMENU_ICONSTART)
 		return -1;
@@ -283,11 +293,8 @@ void Sword2Engine::dragMouse(void) {
 	if (!me)
 		return;
 
-#if 0
-	// If the user right-clicks, cancel drag mode. The original code did
-	// not do this, but it feels natural to me.
-
-	if (me->buttons & RD_RIGHTBUTTONDOWN) {
+#if RIGHT_CLICK_CLEARS_LUGGAGE
+	if ((me->buttons & RD_RIGHTBUTTONDOWN) && heldIsInInventory()) {
 		Logic::_scriptVars[OBJECT_HELD] = 0;
 		_menuSelectedPos = 0;
 		_mouseMode = MOUSE_menu;
@@ -568,11 +575,8 @@ void Sword2Engine::normalMouse(void) {
 		return;
 	}
 
-#if 0
-	// If user right-clicks while holding an object, release it. The
-	// original code did not do this, but it feels natural to me.
-
-	if (Logic::_scriptVars[OBJECT_HELD] && (me->buttons & RD_RIGHTBUTTONDOWN)) {
+#if RIGHT_CLICK_CLEARS_LUGGAGE
+	if (Logic::_scriptVars[OBJECT_HELD] && (me->buttons & RD_RIGHTBUTTONDOWN) && heldIsInInventory()) {
 		Logic::_scriptVars[OBJECT_HELD] = 0;
 		_menuSelectedPos = 0;
 		setLuggage(0);

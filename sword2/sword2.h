@@ -20,6 +20,13 @@
 #ifndef	_SWORD2
 #define	_SWORD2
 
+// Enable this to make it possible to clear the mouse cursor luggage by
+// right-clicking. The original didn't do this, but it feels natural to me.
+// However, I'm afraid that it'll interfer badly with parts of the game, so
+// for now I'll keep it disabled.
+
+#define RIGHT_CLICK_CLEARS_LUGGAGE 0
+
 #include "base/engine.h"
 #include "common/util.h"
 
@@ -237,6 +244,10 @@ public:
 	bool _renderSkip;
 
 	int32 initBackground(int32 res, int32 new_palette);
+
+#if RIGHT_CLICK_CLEARS_LUGGAGE
+	bool heldIsInInventory(void);
+#endif
 
 	int menuClick(int menu_items);
 
