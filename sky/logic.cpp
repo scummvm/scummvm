@@ -162,6 +162,11 @@ void Logic::logicScript() {
 void Logic::autoRoute() {
 	
 	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
+	if ((_compact->downFlag == 2) && (_compact == &SkyCompact::joey) && 
+	   (_compact->mode == 0) && (_compact->baseSub == JOEY_OUT_OF_LIFT)) {
+		   // workaround for script bug #1064113. Details unclear...
+		   _compact->downFlag = 0;
+	}
 	if (_compact->downFlag != 1) { // route ok
 		_compact->grafixProg.pos = 0;
 		_compact->grafixProg.ptrTarget = 0;
