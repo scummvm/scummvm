@@ -325,7 +325,7 @@ void lua_pushnil (void)
 void lua_pushnumber (double n)
 {
   ttype(L->stack.top) = LUA_T_NUMBER;
-  nvalue(L->stack.top) = n;
+  nvalue(L->stack.top) = (real)n;
   incr_top;
 }
 

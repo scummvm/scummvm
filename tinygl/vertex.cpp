@@ -60,13 +60,13 @@ void gl_eval_viewport(GLContext * c)
 
     v = &c->viewport;
 
-    v->trans.X = ((v->xsize - 0.5) / 2.0) + v->xmin;
-    v->trans.Y = ((v->ysize - 0.5) / 2.0) + v->ymin;
-    v->trans.Z = ((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2;
+    v->trans.X = (float)(((v->xsize - 0.5) / 2.0) + v->xmin);
+    v->trans.Y = (float)(((v->ysize - 0.5) / 2.0) + v->ymin);
+    v->trans.Z = (float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2);
 
-    v->scale.X = (v->xsize - 0.5) / 2.0;
-    v->scale.Y = -(v->ysize - 0.5) / 2.0;
-    v->scale.Z = -((zsize - 0.5) / 2.0);
+    v->scale.X = (float)((v->xsize - 0.5) / 2.0);
+    v->scale.Y = (float)(-(v->ysize - 0.5) / 2.0);
+    v->scale.Z = (float)(-((zsize - 0.5) / 2.0));
 }
 
 void glopBegin(GLContext * c, TGLParam * p)

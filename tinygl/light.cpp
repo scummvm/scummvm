@@ -113,7 +113,7 @@ void glopLight(GLContext *c,TGLParam *p)
       float a=v.v[0];
       assert(a == 180 || (a>=0 && a<=90));
       l->spot_cutoff=a;
-      if (a != 180) l->cos_spot_cutoff=cos(a * PI / 180.0);
+      if (a != 180) l->cos_spot_cutoff=(float)(cos(a * PI / 180.0));
     }
     break;
   case TGL_CONSTANT_ATTENUATION:
@@ -268,7 +268,7 @@ void gl_shade_vertex(GLContext *c,GLVertex *v)
       } else {
         s.X=d.X;
         s.Y=d.Y;
-        s.Z=d.Z+1.0;
+        s.Z=(float)(d.Z+1.0);
       }
       dot_spec=n.X*s.X+n.Y*s.Y+n.Z*s.Z;
       if (twoside && dot_spec < 0) dot_spec = -dot_spec;

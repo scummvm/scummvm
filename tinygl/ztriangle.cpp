@@ -298,7 +298,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
   float sz,tz,fz,zinv; \
   n=(x2>>16)-x1;                             \
   fz=(float)z1;\
-  zinv=1.0 / fz;\
+  zinv=(float)(1.0 / fz);\
   pp=(PIXEL *)((char *)pp1 + x1 * PSZB); \
   pz=pz1+x1;					\
   z=z1;						\
@@ -314,7 +314,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
       dsdx= (int)( (dszdx - ss*fdzdx)*zinv );\
       dtdx= (int)( (dtzdx - tt*fdzdx)*zinv );\
       fz+=fndzdx;\
-      zinv=1.0 / fz;\
+      zinv=(float)(1.0 / fz);\
     }\
     PUT_PIXEL(0);							   \
     PUT_PIXEL(1);							   \

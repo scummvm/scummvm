@@ -356,7 +356,7 @@ static inline int gl_clipcode(float x,float y,float z,float w1)
 {
   float w;
 
-  w=w1 * (1.0 + CLIP_EPSILON);
+  w=(float)(w1 * (1.0 + CLIP_EPSILON));
   return (x<-w) |
     ((x>w)<<1) |
     ((y<-w)<<2) |

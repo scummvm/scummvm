@@ -284,7 +284,7 @@ void luaV_pack (StkId firstel, int nvararg, TObject *tab)
   for (i=0; i<nvararg; i++) {
     TObject index;
     ttype(&index) = LUA_T_NUMBER;
-    nvalue(&index) = i+1;
+    nvalue(&index) = (real)i+1;
     *(luaH_set(avalue(tab), &index)) = *(firstelem+i);
   }
   /* store counter in field "n" */ {
@@ -292,7 +292,7 @@ void luaV_pack (StkId firstel, int nvararg, TObject *tab)
     ttype(&index) = LUA_T_STRING;
     tsvalue(&index) = luaS_new("n");
     ttype(&extra) = LUA_T_NUMBER;
-    nvalue(&extra) = nvararg;
+    nvalue(&extra) = (real)nvararg;
     *(luaH_set(avalue(tab), &index)) = extra;
   }
 }
@@ -346,7 +346,7 @@ StkId luaV_execute (struct CallInfo *ci)
         aux -= PUSHNUMBER0;
       pushnumber:
         ttype(S->top) = LUA_T_NUMBER;
-        nvalue(S->top) = aux;
+        nvalue(S->top) = (real)aux;
         S->top++;
         break;
 
@@ -475,7 +475,7 @@ StkId luaV_execute (struct CallInfo *ci)
         TObject *arr = S->top-n-1;
         for (; n; n--) {
           ttype(S->top) = LUA_T_NUMBER;
-          nvalue(S->top) = n+aux;
+          nvalue(S->top) = (real)(n+aux);
           *(luaH_set(avalue(arr), S->top)) = *(S->top-1);
           S->top--;
         }

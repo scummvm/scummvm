@@ -428,7 +428,7 @@ int luaX_lex (LexState *LS) {
 	      ea *= ea;
 	    }
           }
-          LS->seminfo.r = a;
+          LS->seminfo.r = (real)a;
           return NUMBER;
         }
 

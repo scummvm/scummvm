@@ -1422,7 +1422,7 @@ static void SetAmbientLight() {
 }
 
 static void EngineDisplay() {
-	/*bool mode = */check_int(1) != 0;
+	/*bool mode = check_int(1) != 0;*/
 	// it enable/disable updating display
 }
 

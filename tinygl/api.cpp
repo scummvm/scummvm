@@ -357,12 +357,12 @@ void tglFrustum(double left,double right,double bottom,double top,
   TGLParam p[7];
 
   p[0].op=OP_Frustum;
-  p[1].f=left;
-  p[2].f=right;
-  p[3].f=bottom;
-  p[4].f=top;
-  p[5].f=near;
-  p[6].f=farv;
+  p[1].f=(float)left;
+  p[2].f=(float)right;
+  p[3].f=(float)bottom;
+  p[4].f=(float)top;
+  p[5].f=(float)near;
+  p[6].f=(float)farv;
 
   gl_add_op(p);
 }
@@ -496,7 +496,7 @@ void tglClearDepth(double depth)
   TGLParam p[2];
 
   p[0].op=OP_ClearDepth;
-  p[1].f=depth;
+  p[1].f=(float)depth;
 
   gl_add_op(p);
 }

@@ -80,7 +80,7 @@ void tglInit(void *zbuffer1)
     l->enabled=0;
   }
   c->first_light=NULL;
-  c->ambient_light_model=gl_V4_New(0.2,0.2,0.2,1);
+  c->ambient_light_model=gl_V4_New(0.2f,0.2f,0.2f,1);
   c->local_light_model=0;
   c->lighting_enabled=0;
   c->light_model_two_side = 0;
@@ -89,8 +89,8 @@ void tglInit(void *zbuffer1)
   for(i=0;i<2;i++) {
     GLMaterial *m=&c->materials[i];
     m->emission=gl_V4_New(0,0,0,1);
-    m->ambient=gl_V4_New(0.2,0.2,0.2,1);
-    m->diffuse=gl_V4_New(0.8,0.8,0.8,1);
+    m->ambient=gl_V4_New(0.2f,0.2f,0.2f,1);
+    m->diffuse=(gl_V4_New(0.8f,0.8f,0.8f,1));
     m->specular=gl_V4_New(0,0,0,1);
     m->shininess=0;
   }
