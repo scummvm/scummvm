@@ -255,7 +255,6 @@ SCUMM
   - Add proper handling of sound looping in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
-  - Fix o6_setboxset, only used when leaving basement in fbear
 * Humongous entertainment >= v7 titles:
   - Add support for song sync. in HE80+ games.
   - Add support for additional sound resources

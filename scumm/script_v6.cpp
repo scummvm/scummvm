@@ -3071,10 +3071,6 @@ void ScummEngine_v6::o6_getPixel() {
 }
 
 void ScummEngine_v6::o6_setBoxSet() {
-	//FIXME Causes glitches and game to crash 
-	// Only used in fbear when leaving the basement
-	return;
-
 	int arg = pop() - 1;
 
 	const byte *room = getResourceAddress(rtRoom, _roomResource);
@@ -3089,11 +3085,11 @@ void ScummEngine_v6::o6_setBoxSet() {
 	if (!boxd)
 		error("ScummEngine_v6::o6_setBoxSet: Can't find dboxes for set %d", arg);
 
-	dboxSize = READ_BE_UINT32(boxd + 4);
+	dboxSize = READ_BE_UINT32(boxd + 4) - 8;
 	byte *matrix = createResource(rtMatrix, 2, dboxSize);
 
 	assert(matrix);
-	memcpy(matrix, boxd, dboxSize);
+	memcpy(matrix, boxd + 8, dboxSize);
 
 	ResourceIterator boxms(room, false);
 	for (i = 0; i < arg; i++)
@@ -3102,11 +3098,11 @@ void ScummEngine_v6::o6_setBoxSet() {
 	if (!boxm)
 		error("ScummEngine_v6::o6_setBoxSet: Can't find mboxes for set %d", arg);
 
-	mboxSize = READ_BE_UINT32(boxm + 4);
+	mboxSize = READ_BE_UINT32(boxm + 4) - 8;
 	matrix = createResource(rtMatrix, 1, mboxSize);
 
 	assert(matrix);
-	memcpy(matrix, boxm, mboxSize);
+	memcpy(matrix, boxm + 8, mboxSize);
 
 	if (_version == 7)
 		putActors();
