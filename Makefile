@@ -1,12 +1,4 @@
-# $Id$
-#
-# $Log$
-# Revision 1.10  2001/11/07 10:28:33  cmatsuoka
-# Using `sdl-config --libs` as LIBS, will override for cross-build.
-#
-# Revision 1.9  2001/11/06 22:59:59  cmatsuoka
-# Re-added changes to allow cygwin and beos cross-compilation.
-#
+# $Header$
 
 CC	= gcc
 CFLAGS	= -g -Wno-multichar
@@ -21,7 +13,7 @@ INCS	= scumm.h scummsys.h stdafx.h
 
 OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
 	  saveload.o script.o scummvm.o sound.o string.o \
-	  sys.o verbs.o sdl.o script_v1.o script_v2.o debug.o
+	  sys.o verbs.o sdl.o script_v1.o script_v2.o debug.o gui.o
 
 DISTFILES=actor.cpp boxes.cpp costume.cpp gfx.cpp object.cpp resource.cpp \
 	  saveload.cpp script.cpp scummvm.cpp sound.cpp string.cpp \
