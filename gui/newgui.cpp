@@ -279,6 +279,12 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 #ifdef NEWGUI_256
 	fillRect(x, y, w, h, color);
 #else
+	Common::Rect rect(x, y, x + w, y + h);
+	rect.clip(_screen.w, _screen.h);
+	
+	if (!rect.isValidRect())
+		return;
+
 	int r, g, b;
 	uint8 ar, ag, ab;
 	_system->colorToRGB(color, ar, ag, ab);
@@ -286,8 +292,10 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 	g = ag * level;
 	b = ab * level;
 
-	OverlayColor *ptr = getBasePtr(x, y);
+	OverlayColor *ptr = getBasePtr(rect.left, rect.top);
 
+	h = rect.height();
+	w = rect.width();
 	while (h--) {
 		for (int i = 0; i < w; i++) {
 			_system->colorToRGB(ptr[i], ar, ag, ab);
@@ -309,11 +317,17 @@ void NewGui::frameRect(int x, int y, int w, int h, OverlayColor color) {
 }
 
 void NewGui::addDirtyRect(int x, int y, int w, int h) {
+	Common::Rect rect(x, y, x + w, y + h);
+	rect.clip(_screen.w, _screen.h);
+	
+	if (!rect.isValidRect())
+		return;
+
 	// For now we don't keep yet another list of dirty rects but simply
 	// blit the affected area directly to the overlay. At least for our current
 	// GUI/widget/dialog code that is just fine.
-	OverlayColor *buf = getBasePtr(x, y);
-	_system->copyRectToOverlay(buf, _screenPitch, x, y, w, h);
+	OverlayColor *buf = getBasePtr(rect.left, rect.top);
+	_system->copyRectToOverlay(buf, _screenPitch, rect.left, rect.top, rect.width(), rect.height());
 }
 
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color, const Graphics::Font *font) {
@@ -337,17 +351,19 @@ void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color
 //
 // Draw an 8x8 bitmap at location (x,y)
 //
-void NewGui::drawBitmap(uint32 *bitmap, int x, int y, OverlayColor color, int h) {
-	OverlayColor *ptr = getBasePtr(x, y);
+void NewGui::drawBitmap(uint32 *bitmap, int tx, int ty, OverlayColor color, int h) {
+	OverlayColor *ptr = getBasePtr(tx, ty);
 
-	for (y = 0; y < h; y++) {
+	for (int y = 0; y < h; y++, ptr += _screenPitch) {
 		uint32 mask = 0xF0000000;
-		for (x = 0; x < 8; x++) {
+		if (ty + y < 0 || ty + y >= _screen.h)
+			continue;
+		for (int x = 0; x < 8; x++, mask >>= 4) {
+			if (tx + x < 0 || tx + x >= _screen.w)
+				continue;
 			if (bitmap[y] & mask)
 				ptr[x] = color;
-			mask >>= 4;
 		}
-		ptr += _screenPitch;
 	}
 }
 
