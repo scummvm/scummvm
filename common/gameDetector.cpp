@@ -57,6 +57,7 @@ static const char USAGE_STRING[] =
 	"\t-l<file>   - load config file instead of default\n"
 	"\t-m<num>    - set music volume to <num> (0-100)\n"
 	"\t-n         - no subtitles for speech\n"
+	"\t-o<num>    - set master volume to <num> (0-255)\n"
 	"\t-p<path>   - look for game in <path>\n"
 	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
 	"\t-t<num>    - set music tempo (default- adlib: 0x1F0000, midi: 0x460000)\n"
@@ -79,6 +80,7 @@ GameDetector::GameDetector()
 
 	_use_adlib = false;
 
+	_master_volume = kDefaultMasterVolume;
 	_music_volume = kDefaultMusicVolume;
 	_sfx_volume = kDefaultSFXVolume;
 	_amiga = false;
@@ -149,6 +151,8 @@ void GameDetector::updateconfig()
 			printf(USAGE_STRING);
 			exit(-1);
 		}
+
+	_master_volume = g_config->getInt("master_volume", _master_volume);
 
 	_music_volume = g_config->getInt("music_volume", _music_volume);
 
@@ -271,6 +275,11 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				_noSubtitles = (c == 'n');
 				g_config->setBool("nosubtitles", _noSubtitles ? true : false);
 				break;
+ 			case 'o':
+ 				HANDLE_OPTION(); 
+ 				_master_volume = atoi(option); 
+ 				g_config->setInt("master_volume", _master_volume); 
+ 				break; 
 			case 'p':
 				HANDLE_OPTION();
 				_gameDataPath = option;

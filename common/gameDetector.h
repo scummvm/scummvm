@@ -58,6 +58,7 @@ public:
 
 	int _music_volume;
 	int _sfx_volume;
+	int _master_volume;
 	bool _amiga;
 
 	uint16 _talkSpeed;
