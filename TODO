@@ -178,11 +178,26 @@ SCUMM
    would be preferable]
 * Figure out how to extract resources from Apple II and Commodore 64 versions
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
-* Document and fix AKOS differences in Humongous Entertainment games
-* Support various newer Humongous Entertainment games
-* Add support for returning the correct music status for the digital music used 
-  in 3DO versions of Humongous games.
-* Proper handling of .tlk files for Humongous games
+* Humongous Entertainment Games
+  - add proper handling of sound and speech in Humongous games
+  - add support for returning the correct music status for the digital music used 
+    in 3DO versions of Humongous games.
+  - add sound pitch support and fix missing sound effects for piano mini game in fbear
+  - add support kernelSetFunctions/kernelGetFunctions, used for displaying 
+    images on birthday cake in fbear and images in painting game of fbpack.
+  - add
+  - fix akos asserts in puttmoon, caused by butterfly at start, robot near garage and 
+    rock animations near rocket.
+  - fix freezes when letting butterfly into fireworks factory and playing alien tag in puttmoon
+  - fix bugs in actorOps case 218 implementation, actor backgrounds should not be reset
+  - fix creature behind garage door disappearing in moondemo
+  - fix remaining masking issues, when cars come out of garages in puttputt and when Putt-Putt
+    gets off the chair in Cosmic Dust Diner of puttmoon
+  - fix missing sound effects in puttdemo
+  - fix 'costume x undefined x x' errors in veggie head mini game of fbear
+  - fix tangrams game on fbpack, only centre item can selected at the moment
+  - document and fix AKOS differences in Humongous Entertainment games
+  - support various newer Humongous Entertainment games
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
@@ -196,7 +211,6 @@ SCUMM
   piratehook still on ground after pick up")
 * V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
   increments of 8 pixels). See bug #629417.
-* Fix bugs in o6_actorOps case 218 implementation as used in Humongous games
 * Add method of setting initial debug channels from command-line
 * COMI (maybe V7 games, too?): "Fix" CHARSET_1 behaviour when the room scrolls.
   In particular, when text is drawn via CHARSET_1 and then scrolling takes
