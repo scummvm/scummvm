@@ -271,7 +271,7 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	}
 
 	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
-	_backbuff_ptr = _vm->getResourceAddress(rtBuffer, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+	_backbuff_ptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
 	charsetmask = _vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right, _vm->virtscr[0].topline + _bottom);
 	masking = 0;
 

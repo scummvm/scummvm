@@ -720,7 +720,7 @@ void CharsetRenderer::printCharOld(int chr) { // Loom3 / Zak256
 		_unk12 = 0;
 	}
 	char_ptr = _vm->getResourceAddress(rtCharset, _curId) + 224 + (chr + 1)*8;
-	dest_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) + vs->xstart + (_top - vs->topline) * 320 + _left;
+	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * 320 + _left;
 	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
 
 	for(y=0;y<8;y++) {
@@ -839,7 +839,7 @@ void CharsetRenderer::printChar(int chr) {
 		_hasMask = true;
 #endif
 
-	_dest_ptr = _backbuff_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) 
+	_dest_ptr = _backbuff_ptr = vs->screenPtr 
 		+ vs->xstart + _drawTop * 320 + _left;
 
 #if !defined(OLD)

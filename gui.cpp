@@ -266,7 +266,7 @@ byte *Gui::getBasePtr(int x, int y) {
 	if (_vs==NULL)
 		return NULL;
 	
-	return _s->getResourceAddress(rtBuffer, _vs->number+1) + x + (y-_vs->topline)*320 + _s->_screenStartStrip*8;
+	return _vs->screenPtr + x + (y-_vs->topline)*320 + _s->_screenStartStrip*8;
 }
 
 void Gui::lineto(int x, int y) {

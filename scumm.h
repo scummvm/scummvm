@@ -325,6 +325,8 @@ struct VirtScreen {
 	uint16 xstart;
 	byte tdirty[40];
 	byte bdirty[40];
+	byte *screenPtr;
+	byte *backBuf;
 };
 
 struct ActorWalkData {
@@ -919,6 +921,11 @@ public:
 	byte _fastMode;
 	char *getGameName();
 
+	/* video buffer */
+
+	byte _videoBuffer[320*200];
+	byte _svideoBuffer[320*200+4*320];
+	
 	void scummInit();
 	void scummMain(int argc, char **argv);
 	int scummLoop(int delta);

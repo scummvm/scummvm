@@ -414,7 +414,7 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 
 	updateDirtyRect(vs->number, x, x2, y-top, y2-top, 0);
 
-	backbuff = getResourceAddress(rtBuffer, vs->number+1) + vs->xstart + (y-top)*320 + x;
+	backbuff = vs->screenPtr + vs->xstart + (y-top)*320 + x;
 
 	if (color==-1) {
 		if(vs->number!=0)

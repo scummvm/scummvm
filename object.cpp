@@ -1169,7 +1169,7 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 	bdd.srcwidth = READ_LE_UINT16(&((BompHeader*)bomp)->width);
 	bdd.srcheight = READ_LE_UINT16(&((BompHeader*)bomp)->height);
 
-	bdd.out = getResourceAddress(rtBuffer, vs->number+1) + vs->xstart;
+	bdd.out = vs->screenPtr + vs->xstart;
 	bdd.outwidth = 320;
 	bdd.outheight = vs->height;
 	bdd.dataptr = bomp + 10;

@@ -48,7 +48,7 @@ void Scumm::initScreens(int a, int b, int w, int h) {
 	int i;
 	
 	for (i=0; i<3; i++) {
-		nukeResource(rtBuffer, i+1);
+//		nukeResource(rtBuffer, i+1);
 		nukeResource(rtBuffer, i+5);
 	}
 
@@ -81,10 +81,13 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fou
 	vs->xstart = 0;
 	size = vs->width * vs->height;
 	vs->size = size;
+	vs->backBuf = NULL;
 
 	if (vs->scrollable)
 		size += 320*4;
-	createResource(rtBuffer, slot+1, size);
+//	createResource(rtBuffer, slot+1, size);
+
+	vs->screenPtr = _videoBuffer+320*top;
 
 	if (twobufs) {
 		createResource(rtBuffer, slot+5, size);
@@ -125,7 +128,7 @@ void Scumm::drawDirtyScreenParts() {
 	} else {
 		vs = &virtscr[0];
 
-		blitToScreen(this, getResourceAddress(rtBuffer, 1) + _screenStartStrip*8,
+		blitToScreen(this, vs->screenPtr + _screenStartStrip*8,
 			0, vs->topline, 320, vs->height);
 
 		for (i = 0; i<40; i++) {
@@ -210,7 +213,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
 	if (b > vs->height)
 		b = vs->height;
 
-	ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) + (t*40+x)*8 + _readOffs;
+	ptr = vs->screenPtr + (t*40+x)*8 + _readOffs;
 	blitToScreen(_vm, ptr, x*8, vs->topline+t, w, b-t);
 }
 
@@ -522,7 +525,7 @@ void Scumm::unkVirtScreen4(int a) {
 		return;
 
 	vs = &virtscr[0];
-	gdi._backbuff_ptr = getResourceAddress(rtBuffer, 1) + vs->xstart;
+	gdi._backbuff_ptr = vs->screenPtr + vs->xstart;
 	memset(gdi._backbuff_ptr, 0, vs->size);
 
 	switch(a) {
@@ -663,7 +666,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 		if (bottom > vs->bdirty[sx])
 			vs->bdirty[sx] = bottom;
 		
-		_backbuff_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) + (y*40+x)*8;
+		_backbuff_ptr = vs->screenPtr + (y*40+x)*8;
 		_bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number+5) + (y*40+x)*8;
 		if (!twobufs) {
 			_bgbak_ptr = _backbuff_ptr;
@@ -1445,7 +1448,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom) {
 
 	height = (top-topline) * 320 + vs->xstart + left;
 	
-	backbuff = getResourceAddress(rtBuffer, vs->number+1) + height;
+	backbuff = vs->screenPtr + height;
 	bgbak = getResourceAddress(rtBuffer, vs->number+5) + height;
 	mask = getResourceAddress(rtBuffer, 9) + top * 40 + (left>>3) + _screenStartStrip;
 	if (vs->number==0) {
@@ -2021,7 +2024,7 @@ void Gdi::resetBackground(byte top, byte bottom, int strip) {
 	offs = (top * 40 + _vm->_screenStartStrip + strip);
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9)	+ offs;
 	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5)	+ (offs<<3);
-	_backbuff_ptr = _vm->getResourceAddress(rtBuffer, 1)	+ (offs<<3);
+	_backbuff_ptr = vs->screenPtr	+ (offs<<3);
 	
 	_numLinesToProcess = bottom - top;
 	if (_numLinesToProcess) {
@@ -2180,7 +2183,7 @@ void Scumm::grabCursor(int x, int y, int w, int h) {
 	}
 
 	grabCursor(
-		getResourceAddress(rtBuffer, vs->number+1) + (y-vs->topline)*320 + x, 
+		vs->screenPtr + (y-vs->topline)*320 + x, 
 		w,h);
 
 }
@@ -2244,9 +2247,9 @@ void Scumm::useIm01Cursor(byte *im, int w, int h) {
 	vs->alloctwobuffers = true;
 	gdi._disable_zbuffer = false;
 
-	grabCursor(getResourceAddress(rtBuffer, 1) + vs->xstart, w, h);
+	grabCursor(vs->screenPtr + vs->xstart, w, h);
 	
-	blit(getResourceAddress(rtBuffer, 1) + vs->xstart, getResourceAddress(rtBuffer, 5) + vs->xstart, w, h);
+	blit(vs->screenPtr + vs->xstart, getResourceAddress(rtBuffer, 5) + vs->xstart, w, h);
 }
 
 void Scumm::useBompCursor(byte *im, int width, int height) {

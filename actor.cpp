@@ -920,7 +920,7 @@ void Scumm::drawActorCostume(Actor *a) {
 		}
 		ar.charsetmask = _vars[VAR_CHARSET_MASK]!=0;
 	
-		ar.outptr = getResourceAddress(rtBuffer, 1) + virtscr->xstart;
+		ar.outptr = virtscr->screenPtr + virtscr->xstart;
 		ar.outwidth = virtscr->width;
 		ar.outheight = virtscr->height;
 	
