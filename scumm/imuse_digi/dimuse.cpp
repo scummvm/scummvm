@@ -286,7 +286,9 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				channels = _sound->getChannels(_track[l].soundHandle);
 				freq = _sound->getFreq(_track[l].soundHandle);
 				
+				assert(bits == 8 || bits == 12 || bits == 16);
 				assert(channels == 1 || channels == 2);
+				assert(0 < freq && freq <= 65535);
 
 				_track[l].iteration = _track[l].pullSize = freq * channels;
 

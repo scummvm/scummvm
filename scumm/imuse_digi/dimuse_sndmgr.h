@@ -66,7 +66,7 @@ private:
 public:
 
 	struct soundStruct {
-		int16 freq;			// frequency
+		uint16 freq;			// frequency
 		byte channels;		// stereo or mono
 		byte bits;			// 8, 12, 16
 		int8 numJumps;		// number of Jumps
