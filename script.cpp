@@ -883,7 +883,7 @@ void Scumm::faceActorToObj(int act, int obj)
 		return;
 
 	dir = (_xPos > x) ? 90 : 270;
-	turnToDirection(derefActorSafe(act, "faceActorToObj"), dir);
+	derefActorSafe(act, "faceActorToObj")->turnToDirection(dir);
 }
 
 void Scumm::animateActor(int act, int anim)
@@ -905,18 +905,18 @@ void Scumm::animateActor(int act, int anim)
 
 		switch (cmd) {
 		case 2:
-			stopActorMoving(a);
-			startAnimActor(a, a->standFrame);
+			a->stopActorMoving();
+			a->startAnimActor(a->standFrame);
 			break;
 		case 3:
 			a->moving &= ~4;
-			setActorDirection(a, dir);
+			a->setActorDirection(dir);
 			break;
 		case 4:
-			turnToDirection(a, dir);
+			a->turnToDirection(dir);
 			break;
 		default:
-			startAnimActor(a, anim);
+			a->startAnimActor(anim);
 		}
 
 	} else {
@@ -931,18 +931,18 @@ void Scumm::animateActor(int act, int anim)
 
 		switch (anim >> 2) {
 		case 0x3F:
-			stopActorMoving(a);
-			startAnimActor(a, a->standFrame);
+			a->stopActorMoving();
+			a->startAnimActor(a->standFrame);
 			break;
 		case 0x3E:
 			a->moving &= ~4;
-			setActorDirection(a, oldDirToNewDir(dir));
+			a->setActorDirection(oldDirToNewDir(dir));
 			break;
 		case 0x3D:
-			turnToDirection(a, oldDirToNewDir(dir));
+			a->turnToDirection(oldDirToNewDir(dir));
 			break;
 		default:
-			startAnimActor(a, anim);
+			a->startAnimActor(anim);
 		}
 
 	}

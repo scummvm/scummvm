@@ -871,35 +871,35 @@ int Scumm::findPathTowardsOld(Actor * a, byte trap1, byte trap2,
 	GetGates(trap1, trap2);
 	ScummPoint pt;
 
-	p[1].x = actor->x;
-	p[1].y = actor->y;
-	p[2].x = 32000;
-	p[3].x = 32000;
-	p[4].x = 32000;
+	gateLoc[1].x = actor->x;
+	gateLoc[1].y = actor->y;
+	gateLoc[2].x = 32000;
+	gateLoc[3].x = 32000;
+	gateLoc[4].x = 32000;
 
 	if (trap2 == final_trap) {		/* next = final box? */
-		p[4].x = actor->walkdata.destx;
-		p[4].y = actor->walkdata.desty;
+		gateLoc[4].x = actor->walkdata.destx;
+		gateLoc[4].y = actor->walkdata.desty;
 
 		if (getMaskFromBox(trap1) == getMaskFromBox(trap2) || 1) {
-			if (CompareSlope(p[1].x, p[1].y, p[4].x, p[4].y, gate1ax, gate1ay) !=
-					CompareSlope(p[1].x, p[1].y, p[4].x, p[4].y, gate1bx, gate1by) &&
-					CompareSlope(p[1].x, p[1].y, p[4].x, p[4].y, gate2ax, gate2ay) !=
-					CompareSlope(p[1].x, p[1].y, p[4].x, p[4].y, gate2bx, gate2by)) {
+			if (CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate1ax, gate1ay) !=
+					CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate1bx, gate1by) &&
+					CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate2ax, gate2ay) !=
+					CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate2bx, gate2by)) {
 				return 0;								/* same zplane and between both gates? */
 			}
 		}
 	}
 
-	pt = closestPtOnLine(gate2ax, gate2ay, gate2bx, gate2by, p[1].x, p[1].y);
-	p[3].x = pt.x;
-	p[3].y = pt.y;
+	pt = closestPtOnLine(gate2ax, gate2ay, gate2bx, gate2by, gateLoc[1].x, gateLoc[1].y);
+	gateLoc[3].x = pt.x;
+	gateLoc[3].y = pt.y;
 
-	if (CompareSlope(p[1].x, p[1].y, p[3].x, p[3].y, gate1ax, gate1ay) ==
-			CompareSlope(p[1].x, p[1].y, p[3].x, p[3].y, gate1bx, gate1by)) {
-		closestPtOnLine(gate1ax, gate1ay, gate1bx, gate1by, p[1].x, p[1].y);
-		p[2].x = pt.x;							/* if point 2 between gates, ignore! */
-		p[2].y = pt.y;
+	if (CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gate1ax, gate1ay) ==
+			CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gate1bx, gate1by)) {
+		closestPtOnLine(gate1ax, gate1ay, gate1bx, gate1by, gateLoc[1].x, gateLoc[1].y);
+		gateLoc[2].x = pt.x;							/* if point 2 between gates, ignore! */
+		gateLoc[2].y = pt.y;
 	}
 
 	return 0;

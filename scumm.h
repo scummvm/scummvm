@@ -1,5 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001/2002 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,10 +20,14 @@
  *
  */
 
+#ifndef SCUMM_H
+#define SCUMM_H
+
 #include "scummsys.h"
 #include "system.h"
 #include "sound/mixer.h"
 #include "config-file.h"
+#include "actor.h"
 
 #define SCUMMVM_VERSION "0.2.0 Release"
 #define SCUMMVM_CVS "051302"
@@ -198,29 +203,6 @@ public:
 	byte parentstate;
 	byte state;
 	byte fl_object_index;
-};
-
-struct CostumeData {
-	byte active[16];
-	uint16 animCounter1;
-	byte animCounter2;
-	uint16 stopped;
-	uint16 curpos[16];
-	uint16 start[16];
-	uint16 end[16];
-	uint16 frame[16];
-};
-
-struct ActorWalkData {
-	int16 destx,desty;			// Final destination
-	byte destbox;
-	int16 destdir;
-	byte curbox;
-	int16 x,y;					// Current position
-	int16 newx,newy;			// Next position on our way to the destination
-	int32 XYFactor, YXFactor;
-	uint16 xfrac,yfrac;
-	int point3x, point3y;
 };
 
 struct ScriptSlot {
@@ -429,41 +411,6 @@ struct CostumeRenderer {
 	byte drawOneSlot(Actor *a, int slot);
 	byte drawCostume(Actor *a);
 
-};
-
-struct Actor {
-	int x,y,top,bottom;
-	int elevation;
-	uint width;
-	byte number;
-	uint16 facing;
-	uint16 costume;
-	byte room;
-	byte talkColor;
-	byte scalex,scaley;
-	byte charset;
-	int16 newDirection;
-	byte moving;
-	byte ignoreBoxes;
-	byte forceClip;
-	byte initFrame,walkFrame,standFrame,talkFrame1,talkFrame2;
-	bool needRedraw, needBgReset,costumeNeedsInit,visible;
-	byte shadow_mode;
-	bool flip;
-	uint speedx,speedy;
-	byte frame;
-	byte walkbox;
-	byte mask;
-	byte animProgress, animSpeed;
-	int16 new_1,new_2;
-	uint16 talk_script, walk_script;
-	byte new_3;
-	int8 layer;
-	ActorWalkData walkdata;
-	int16 animVariable[16];
-	uint16 sound[8];
-	CostumeData cost;
-	byte palette[64];
 };
 
 #define ARRAY_HDR_SIZE 6
@@ -1039,21 +986,21 @@ public:
 	Actor *derefActorSafe(int id, const char *errmsg);
 	Actor *getFirstActor() {return actor;} 
 	void putActor(Actor *a, int x, int y, byte room);
-	void hideActor(Actor *a);
-	void showActor(Actor *a);
+//	void hideActor(Actor *a);
+//	void showActor(Actor *a);
 	void showActors();
 
-	void initActor(Actor *a, int mode);
-	void setActorWalkSpeed(Actor *a, uint speed1, uint speed2);
-	int calcMovementFactor(Actor *a, int newx, int newy);
-	int actorWalkStep(Actor *a);
-	int remapDirection(Actor *a, int dir);
-	void setupActorScale(Actor *a);
-	void stopActorMoving(Actor *a);
+//	void initActor(Actor *a, int mode);
+//	void setActorWalkSpeed(Actor *a, uint speed1, uint speed2);
+//	int calcMovementFactor(Actor *a, int newx, int newy);
+//	int actorWalkStep(Actor *a);
+//	int remapDirection(Actor *a, int dir);
+//	void setupActorScale(Actor *a);
+//	void stopActorMoving(Actor *a);
 	uint32 *_classData;
-	void startWalkAnim(Actor *a, int cmd, int angle);
-	void startAnimActor(Actor *a, int frame);
-	void setActorBox(Actor *a, int box);
+//	void startWalkAnim(Actor *a, int cmd, int angle);
+//	void startAnimActor(Actor *a, int frame);
+//	void setActorBox(Actor *a, int box);
 
 	int newDirToOldDir(int dir);
 	int oldDirToNewDir(int dir);
@@ -1063,34 +1010,34 @@ public:
 	static int fromSimpleDir(int dirtype, int dir);
 	static int toSimpleDir(int dirtype, int dir);
 	static int numSimpleDirDirections(int dirType);
-	int updateActorDirection(Actor *a);
+//	int updateActorDirection(Actor *a);
 	void startAnimActorEx(Actor *a, int frame, int direction);
 	int getProgrDirChange(Actor *a, int mode);
 	void initActorCostumeData(Actor *a);
-	void setActorDirection(Actor *a, int direction);
+//	void setActorDirection(Actor *a, int direction);
 
 	int getActorXYPos(Actor *a);
-	void adjustActorPos(Actor *a);	
-	void turnToDirection(Actor *a, int newdir);
+//	void adjustActorPos(Actor *a);	
+//	void turnToDirection(Actor *a, int newdir);
 	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom);
 	void walkActors();
 	void playActorSounds();
-	void walkActor(Actor *a);
+//	void walkActor(Actor *a);
 	void setActorRedrawFlags();
 	void resetActorBgs();
 	void processActors();
 	void drawActorCostume(Actor *a);
 	void actorAnimate(Actor *a);
 	int getActorFromPos(int x, int y);
-	void setActorCostume(Actor *a, int c);
-	byte *getActorName(Actor *a);
+//	void setActorCostume(Actor *a, int c);
+//	byte *getActorName(Actor *a);
 	void faceActorToObj(int act, int obj);
 	void animateActor(int act, int anim);
 	void actorFollowCamera(int act);
-	void startWalkActor(Actor *a, int x, int y, int dir);
+//	void startWalkActor(Actor *a, int x, int y, int dir);
 	
-	void remapActor(Actor *a, int b, int c, int d, int e);
-	void walkActorOld(Actor *a);
+//	void remapActor(Actor *a, int b, int c, int d, int e);
+//	void walkActorOld(Actor *a);
 	bool isCostumeInUse(int i);
 
 	/* Actor talking stuff */
@@ -1261,7 +1208,8 @@ public:
 	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;	
 
-	ScummPoint p[5];	/* Gate locations */
+//	ScummPoint p[5];	/* Gate locations */
+	ScummPoint gateLoc[5];	/* Gate locations */
 	int gate1ax, gate1ay, gate1bx, gate1by, gate2ax, gate2ay, gate2bx, gate2by;
 	uint16 _extraBoxFlags[65];
 	int16 _foundPathX, _foundPathY;
@@ -1890,3 +1838,4 @@ byte *findResourceSmall(uint32 tag, byte *searchin);
 void setWindowName(Scumm *s);
 uint16 newTag2Old(uint32 oldTag);
 
+#endif

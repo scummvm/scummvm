@@ -720,7 +720,7 @@ byte *Scumm::getObjOrActorName(int obj)
 	byte *objptr;
 
 	if (obj < NUM_ACTORS)
-		return getActorName(derefActorSafe(obj, "getObjOrActorName"));
+		return derefActorSafe(obj, "getObjOrActorName")->getActorName();
 
 	if (_features & GF_SMALL_HEADER) {
 		byte offset = 0;

@@ -288,7 +288,7 @@ void Scumm::CHARSET_1()
 	}
 
 	if (a && !string[0].no_talk_anim) {
-		startAnimActor(a, a->talkFrame1);
+		a->startAnimActor(a->talkFrame1);
 		_useTalkAnims = true;
 	}
 
@@ -393,16 +393,16 @@ void Scumm::CHARSET_1()
 			frme = *buffer++;
 			frme |= *buffer++ << 8;
 			if (a)
-				startAnimActor(a, frme);
+				a->startAnimActor(frme);
 		} else if (c == 10) {
-			uint32 a, b;
+			uint32 tmpA, tmpB;
 
-			a =
+			tmpA =
 				buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
-			b =
+			tmpB =
 				buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] <<
 																														 24);
-			talkSound(a, b, 2);
+			talkSound(tmpA, tmpB, 2);
 			buffer += 14;
 		} else if (c == 14) {
 			int oldy = getResourceAddress(rtCharset, charset._curId)[30];

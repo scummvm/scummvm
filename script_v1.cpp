@@ -715,12 +715,12 @@ void Scumm::o5_actorSet()
 			getVarOrDirectByte(0x80);
 			break;
 		case 1:										/* costume */
-			setActorCostume(a, getVarOrDirectByte(0x80));
+			a->setActorCostume(getVarOrDirectByte(0x80));
 			break;
 		case 2:										/* walkspeed */
 			i = getVarOrDirectByte(0x80);
 			j = getVarOrDirectByte(0x40);
-			setActorWalkSpeed(a, i, j);
+			a->setActorWalkSpeed(i, j);
 			break;
 		case 3:										/* sound */
 			a->sound[0] = getVarOrDirectByte(0x80);
@@ -741,7 +741,7 @@ void Scumm::o5_actorSet()
 			getVarOrDirectByte(0x20);
 			break;
 		case 8:										/* init */
-			initActor(a, 0);
+			a->initActor(0);
 			break;
 		case 9:										/* elevation */
 			a->elevation = getVarOrDirectWord(0x80);
@@ -1306,17 +1306,15 @@ void Scumm::o5_getActorWidth()
 
 void Scumm::o5_getActorX()
 {
-	int actor;
+	int a;
 	getResultPos();
 
 	if(_gameId == GID_INDY3_256)
-
-		actor = getVarOrDirectByte(0x80);
-
+		a = getVarOrDirectByte(0x80);
 	else
-		actor = getVarOrDirectWord(0x80);
+		a = getVarOrDirectWord(0x80);
 
-	setResult(getObjX(actor));
+	setResult(getObjX(a));
 }
 
 void Scumm::o5_getActorY()
@@ -1634,7 +1632,7 @@ void Scumm::o5_loadRoomWithEgo()
 	_fullRedraw = 1;
 
 	if (x != -1) {
-		startWalkActor(a, x, y, -1);
+		a->startWalkActor(x, y, -1);
 	}
 }
 
@@ -2557,7 +2555,7 @@ void Scumm::o5_walkActorTo()
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorTo");
 	x = getVarOrDirectWord(0x40);
 	y = getVarOrDirectWord(0x20);
-	startWalkActor(a, x, y, -1);
+	a->startWalkActor(x, y, -1);
 }
 
 void Scumm::o5_walkActorToActor()
@@ -2603,7 +2601,7 @@ void Scumm::o5_walkActorToActor()
 	else
 		x -= b;
 
-	startWalkActor(a, x, y, -1);
+	a->startWalkActor(x, y, -1);
 }
 
 void Scumm::o5_walkActorToObject()
@@ -2617,7 +2615,7 @@ void Scumm::o5_walkActorToObject()
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		getObjectXYPos(obj);
-		startWalkActor(a, _xPos, _yPos, _dir);
+		a->startWalkActor(_xPos, _yPos, _dir);
 	}
 }
 

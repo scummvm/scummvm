@@ -213,7 +213,7 @@ void Scumm::processSfxQueues()
 					b = isMouthSyncOff(_curSoundPos);
 				if (_mouthSyncMode != b) {
 					_mouthSyncMode = b;
-					startAnimActor(a, b ? a->talkFrame2 : a->talkFrame1);
+					a->startAnimActor(b ? a->talkFrame2 : a->talkFrame1);
 				}
 			}
 		}

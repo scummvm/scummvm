@@ -1345,7 +1345,7 @@ void Scumm::o6_walkActorToObj()
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return;
 		getObjectXYPos(obj);
-		startWalkActor(a, _xPos, _yPos, _dir);
+		a->startWalkActor(_xPos, _yPos, _dir);
 	} else {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
 		if (!a2)
@@ -1361,7 +1361,7 @@ void Scumm::o6_walkActorToObj()
 			x += dist;
 		else
 			x -= dist;
-		startWalkActor(a, x, a2->y, -1);
+		a->startWalkActor(x, a2->y, -1);
 	}
 }
 
@@ -1370,7 +1370,7 @@ void Scumm::o6_walkActorTo()
 	int x, y;
 	y = pop();
 	x = pop();
-	startWalkActor(derefActorSafe(pop(), "o6_walkActorTo"), x, y, -1);
+	derefActorSafe(pop(), "o6_walkActorTo")->startWalkActor(x, y, -1);
 }
 
 void Scumm::o6_putActorInRoom()
@@ -1508,7 +1508,7 @@ void Scumm::o6_loadRoomWithEgo()
 	}
 	_fullRedraw = 1;
 	if (x != -1) {
-		startWalkActor(a, x, y, -1);
+		a->startWalkActor(x, y, -1);
 	}
 }
 
@@ -1920,12 +1920,12 @@ void Scumm::o6_actorSet()
 
 	switch (b) {
 	case 76:											/* actor-costume */
-		setActorCostume(a, pop());
+		a->setActorCostume(pop());
 		break;
 	case 77:											/* actor-speed */
 		j = pop();
 		i = pop();
-		setActorWalkSpeed(a, i, j);
+		a->setActorWalkSpeed(i, j);
 		break;
 	case 78:											/* actor-sound */
 		k = getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -1948,7 +1948,7 @@ void Scumm::o6_actorSet()
 		pop();
 		break;
 	case 83:
-		initActor(a, 0);
+		a->initActor(0);
 		break;
 	case 84:											/* actor-elevation */
 		a->elevation = pop();
@@ -2026,7 +2026,7 @@ void Scumm::o6_actorSet()
 		a->new_3 = 0;
 		break;
 	case 217:
-		initActor(a, 2);
+		a->initActor(2);
 		break;
 	case 227:										/* actor_layer */
 		a->layer = pop();
@@ -2038,15 +2038,15 @@ void Scumm::o6_actorSet()
 		a->talk_script = pop();
 		break;
 	case 229:										/* stand */
-		stopActorMoving(a);
-		startAnimActor(a, a->standFrame);
+		a->stopActorMoving();
+		a->startAnimActor(a->standFrame);
 		break;
 	case 230:										/* set direction */
 		a->moving &= ~4;
-		setActorDirection(a, pop());
+		a->setActorDirection(pop());
 		break;
 	case 231:										/* turn to direction */
-		turnToDirection(a, pop());
+		a->turnToDirection(pop());
 		break;
 	case 233:										/* freeze actor */
 		a->moving |= 0x80;
@@ -2710,11 +2710,11 @@ void Scumm::o6_miscOps()
 			setCursorImg(args[1], (uint) - 1, args[2]);
 			break;
 		case 13:
-			remapActor(derefActorSafe(args[1], "o6_miscOps:14"), args[2], args[3],
+			derefActorSafe(args[1], "o6_miscOps:14")->remapActor(args[2], args[3],
 								 args[4], -1);
 			break;
 		case 14:
-			remapActor(derefActorSafe(args[1], "o6_miscOps:14"), args[2], args[3],
+			derefActorSafe(args[1], "o6_miscOps:14")->remapActor(args[2], args[3],
 								 args[4], args[5]);
 			break;
 		case 15:

@@ -77,7 +77,7 @@ void Scumm::scummInit()
 
 	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
 		a->number = i;
-		initActor(a, 1);
+		a->initActor(1);
 	}
 	
 	_vars[VAR_CHARINC] = 4;
@@ -408,7 +408,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 
 	for (i = 1, at = getFirstActor(); ++at, i < NUM_ACTORS; i++) {
 		if (at->visible)
-			hideActor(at);
+			at->hideActor();
 	}
 
 	if (!(_features & GF_AFTER_V7)) {
@@ -484,7 +484,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 						_currentRoom);
 		getObjectXYPos(objectNr);
 		putActor(a, _xPos, _yPos, _currentRoom);
-		setActorDirection(a, _dir + 180);
+		a->setActorDirection(_dir + 180);
 		a->moving = 0;
 	}
 
