@@ -179,9 +179,13 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	if (_screenTop < 0)
 		_screenTop = 0;
 	
-	// For a long time, we used incorrect location, causing it to default to zero.
-	if (hdr.ver < VER(30) && _version == 8)
-		_scummVars[VAR_CHARINC] = (_features & GF_DEMO) ? 3 : 1;
+	if (hdr.ver < VER(30)) {
+		// For a long time, we used incorrect location, causing it to default to zero.
+		if (_version == 8)
+			_scummVars[VAR_CHARINC] = (_features & GF_DEMO) ? 3 : 1;
+		// Needed due to subtitle speed changes
+		_defaultTalkDelay /= 20;
+	}
 
 	// For a long time, we used incorrect locations for some camera related
 	// scumm vars. We now know the proper locations. To be able to properly use
