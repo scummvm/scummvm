@@ -1019,9 +1019,11 @@ void ScummEngine::scummInit() {
 	for (i = 0; i < 256; i++)
 		_roomPalette[i] = i;
 	if (_version == 1) {
-		if (_gameId == GID_MANIAC)
+		if (_gameId == GID_MANIAC) {
 			setupV1ManiacPalette();
-		else
+			if (_demoMode)
+				setPalColor(15, 252,  84, 252);
+		} else
 			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
