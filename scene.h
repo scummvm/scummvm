@@ -63,7 +63,7 @@ public:
 			return &sectors_[id];
 		else
 			return NULL;
-		}
+	}
 
 private:
 	struct Setup {		// Camera setup data

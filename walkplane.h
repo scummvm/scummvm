@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -28,24 +28,24 @@ class TextSplitter;
 
 class Sector { 
 public:
-    void load(TextSplitter &ts);
-    void load0(TextSplitter &ts, char *name, int id);
+	void load(TextSplitter &ts);
+	void load0(TextSplitter &ts, char *name, int id);
 
-    void setVisible(bool visible);
+	void setVisible(bool visible);
 
-    const char *name() const { return name_.c_str(); }
-    const int id() const { return id_; }
-    const int type() const { return type_; } // FIXME: Implement type de-masking
-    bool visible() const { return visible_; }
-    bool isPointInSector(Vector3d point) const;
+	const char *name() const { return name_.c_str(); }
+	const int id() const { return id_; }
+	const int type() const { return type_; } // FIXME: Implement type de-masking
+	bool visible() const { return visible_; }
+	bool isPointInSector(Vector3d point) const;
 
 private:
-    int numVertices_, id_;
+	int numVertices_, id_;
 
-    std::string name_;
-    int type_;
-    bool visible_;
-    Vector3d *vertices_;
-    float height_;
+	std::string name_;
+	int type_;
+	bool visible_;
+	Vector3d *vertices_;
+	float height_;
 };
 #endif

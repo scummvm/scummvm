@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -25,18 +25,18 @@
 #include <string>
 
 class TextObject {
- public:
-  TextObject(const char *text, const int x, const int y, const Color& fgColor);
-  void setX(int x);
-  void setY(int y);
-  void setColor(Color *newColor);
+public:
+	TextObject(const char *text, const int x, const int y, const Color& fgColor);
+	void setX(int x);
+	void setY(int y);
+	void setColor(Color *newColor);
 
-  const char *name() const { return textID_; }
-  void draw();
+	const char *name() const { return textID_; }
+void draw();
 
- protected:
-   char textID_[10];
-   Color fgColor_;
-   int x_, y_;
+protected:
+	char textID_[10];
+	Color fgColor_;
+	int x_, y_;
 };
 #endif

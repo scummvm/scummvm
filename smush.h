@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -125,13 +125,12 @@ public:
 	void pause(bool pause) { _videoPause = pause; }
 	bool isPlaying() { return !_videoFinished; }
 	bool isUpdateNeeded() { return _updateNeeded; }
-	void clearUpdateNeeded() {_updateNeeded = false; }
 	byte *getDstPtr() { return _buf; }
 	int getX() { return _x; }
 	int getY() { return _y; }
 	int getWidth() {return _width; }
 	int getHeight() { return _height; }
-	void setUpdateNeeded() { _updateNeeded = true; }
+	void clearUpdateNeeded() { _updateNeeded = false; }
 
 private:
 	static void timerCallback(void *ptr);

@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -166,7 +166,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 
 	uint32 tag;
 	int32 size;
-	
+
 	tag = _file.readUint32BE();
 	assert(tag == MKID_BE('SANM'));
 	size = _file.readUint32BE();
@@ -208,7 +208,7 @@ bool Smush::play(const char *filename, int x, int y) {
 		FILE *tmp = ResourceLoader::instance()->openNewStream(filename);
 		FILE *outFile = NULL;
 		sprintf(tmpOut, "smush.temp");
-	
+
 		if (tmp != NULL) {
 			z_stream z;
 			char inBuf[1024], outBuf[1024], flags;
@@ -221,7 +221,7 @@ bool Smush::play(const char *filename, int x, int y) {
 
 			if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))	// Misc
 				error("Unsupported header flag");
-	
+
 			if ((flags & 0x08) != 0) {				// Name
 				printf("Decompressing ");
 				do {
@@ -568,33 +568,33 @@ bool zlibFile::open(const char *filename) {
 
 	if (filename == NULL || *filename == 0)
 		return false;
-	
+
 	_handle = ResourceLoader::instance()->openNewStream(filename);
 	if (!_handle) {
 		warning("zlibFile %s not found", filename);
-        	return false;
+		return false;
 	}
 
 	warning("zlibFile %s opening...", filename);
 
 	// Read in the GZ header
-	fread(inBuf, 4, sizeof(char), _handle);				// Header, Method, Flags
+	fread(inBuf, 4, sizeof(char), _handle); // Header, Method, Flags
 	flags = inBuf[3];
-	fread(inBuf, 6, sizeof(char), _handle);				// XFlags
+	fread(inBuf, 6, sizeof(char), _handle); // XFlags
 
-	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))		// Misc
+	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0)) // Misc
 		error("Unsupported header flag");
 
-	if ((flags & 0x08) != 0) {                                              // Name
+	if ((flags & 0x08) != 0) { // Name
 		printf("Decompressing ");
 		do {
 			fread(inBuf, 1, sizeof(char), _handle);
 			printf("%c", inBuf[0]);
 		} while(inBuf[0] != 0);
 		printf("\n");
-        }
+}
 
-	if ((flags & 0x02) != 0)                                // CRC
+	if ((flags & 0x02) != 0) // CRC
 		fread(inBuf, 2, sizeof(char), _handle);
 
 	stream.zalloc = NULL;
@@ -650,17 +650,17 @@ void zlibFile::seek(int32 offs, int whence) {
 uint32 zlibFile::read(void *ptr, uint32 len) {
 	byte *ptr2 = (byte *)ptr;
 
- 	if (_handle == NULL) {
- 		error("File is not open!");
- 		return 0;
- 	}
- 
+	if (_handle == NULL) {
+		error("File is not open!");
+		return 0;
+	}
+
 	if (len == 0)
- 		return 0;
+		return 0;
 	int bufferLeft = sizeof(outBuf) - usedBuffer;
- 
+
 	printf("zlibFile::read(%d). usedBuffer: %d. bufferLeft: %d\n", len, usedBuffer, bufferLeft);
- 
+
 	// Do we need to get more than one buffer-read to complete this request?
 	if (len > bufferLeft) {
 		int maxBuffer = sizeof(outBuf);
@@ -687,25 +687,25 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 	} else {
 		memcpy(ptr2, outBuf + usedBuffer, len);
 		usedBuffer+=len;
- 	}
+	}
 	return len;
 }
  
 bool zlibFile::fillZlibBuffer() {
 	int status = 0;
- 
+
 	if (stream.avail_in == 0) {
 		stream.next_in = (Bytef*)inBuf;
 		stream.avail_in = fread(inBuf, 1, sizeof(inBuf), _handle);
- 	}
- 
-        status = inflate(&stream, Z_NO_FLUSH);
+	}
+
+	status = inflate(&stream, Z_NO_FLUSH);
 	if (status == Z_STREAM_END) {
 		if (sizeof(outBuf) - stream.avail_out)
 			warning("fillZlibBuffer: End of buffer");
 		return true;
- 	}
- 
+	}
+
 	if (status != Z_OK) {
 		warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
 		return false;

@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -22,120 +22,120 @@
 
 class Vector3d {
 public:
-  float coords_[3];		// Make sure this stays as an array so
-				// it can be passed to GL functions
+	float coords_[3];		// Make sure this stays as an array so
+	// it can be passed to GL functions
 
-  float& x() { return coords_[0]; }
-  float x() const { return coords_[0]; }
-  float& y() { return coords_[1]; }
-  float y() const { return coords_[1]; }
-  float& z() { return coords_[2]; }
-  float z() const { return coords_[2]; }
+	float& x() { return coords_[0]; }
+	float x() const { return coords_[0]; }
+	float& y() { return coords_[1]; }
+	float y() const { return coords_[1]; }
+	float& z() { return coords_[2]; }
+	float z() const { return coords_[2]; }
 
-  Vector3d() {this->x() = 0; this->y() = 0; this->z() = 0;}
-  Vector3d(float x, float y, float z) {
-    this->x() = x; this->y() = y; this->z() = z;
-  }
-  Vector3d(const Vector3d &v) {
-    x() = v.x(); y() = v.y(); z() = v.z();
-  }
+	Vector3d() {this->x() = 0; this->y() = 0; this->z() = 0;}
+	Vector3d(float x, float y, float z) {
+		this->x() = x; this->y() = y; this->z() = z;
+	}
+	Vector3d(const Vector3d &v) {
+		x() = v.x(); y() = v.y(); z() = v.z();
+	}
 
-  void set(float x, float y, float z) {
-    this->x() = x; this->y() = y; this->z() = z;
-  }
+	void set(float x, float y, float z) {
+		this->x() = x; this->y() = y; this->z() = z;
+	}
 
-  Vector3d& operator =(const Vector3d &v) {
-    x() = v.x(); y() = v.y(); z() = v.z();
-    return *this;
-  }
+	Vector3d& operator =(const Vector3d &v) {
+		x() = v.x(); y() = v.y(); z() = v.z();
+		return *this;
+	}
 
-  bool operator ==(const Vector3d &v) {
-    return ( (x() == v.x()) && (y() == v.y()) && (z() == v.z()) );
-  }
+	bool operator ==(const Vector3d &v) {
+		return ( (x() == v.x()) && (y() == v.y()) && (z() == v.z()) );
+	}
 
-  bool operator !=(const Vector3d &v) {
-    return ( (x() != v.x()) || (y() != v.y()) || (z() != v.z()) );
-  }
+	bool operator !=(const Vector3d &v) {
+		return ( (x() != v.x()) || (y() != v.y()) || (z() != v.z()) );
+	}
 
-  Vector3d& operator +=(const Vector3d &v) {
-    x() += v.x(); y() += v.y(); z() += v.z();
-    return *this;
-  }
+	Vector3d& operator +=(const Vector3d &v) {
+		x() += v.x(); y() += v.y(); z() += v.z();
+		return *this;
+	}
 
-  Vector3d& operator -=(const Vector3d &v) {
-    x() -= v.x(); y() -= v.y(); z() -= v.z();
-    return *this;
-  }
+	Vector3d& operator -=(const Vector3d &v) {
+		x() -= v.x(); y() -= v.y(); z() -= v.z();
+		return *this;
+	}
 
-  Vector3d& operator *=(float s) {
-    x() *= s; y() *= s; z() *= s;
-    return *this;
-  }
+	Vector3d& operator *=(float s) {
+		x() *= s; y() *= s; z() *= s;
+		return *this;
+	}
 
-  Vector3d& operator /=(float s) {
-    x() /= s; y() /= s; z() /= s;
-    return *this;
-  }
+	Vector3d& operator /=(float s) {
+		x() /= s; y() /= s; z() /= s;
+		return *this;
+	}
 
-  float magnitude() const {
-    return std::sqrt(x() * x() + y() * y() + z() * z());
-  }
+	float magnitude() const {
+		return std::sqrt(x() * x() + y() * y() + z() * z());
+	}
 
-  float dotProduct( float sx, float sy, float sz ) {
-	  return x()*sx + y()*sy + z()*sz;
-  }
+	float dotProduct( float sx, float sy, float sz ) {
+		return x()*sx + y()*sy + z()*sz;
+	}
 
-  bool isZero() {
-	  if(x() == 0.f && y() == 0.f && z() == 0.f)
-		  return true;
-	  return false;
-  }
+	bool isZero() {
+		if(x() == 0.f && y() == 0.f && z() == 0.f)
+			return true;
+		return false;
+	}
 };
 
 inline float dot(const Vector3d& v1, const Vector3d& v2) {
-  return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
+	return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
 }
 
 inline Vector3d cross(const Vector3d& v1, const Vector3d& v2) {
-  return Vector3d(v1.y() * v2.z() - v1.z() * v2.y(),
-		  v1.z() * v2.x() - v1.x() * v2.z(),
-		  v1.x() * v2.y() - v1.y() * v2.x());
+	return Vector3d(v1.y() * v2.z() - v1.z() * v2.y(),
+		v1.z() * v2.x() - v1.x() * v2.z(),
+		v1.x() * v2.y() - v1.y() * v2.x());
 }
 
 inline float angle(const Vector3d& v1, const Vector3d& v2) {
-  return std::acos(dot(v1, v2) / (v1.magnitude() * v2.magnitude()));
+	return std::acos(dot(v1, v2) / (v1.magnitude() * v2.magnitude()));
 }
 
 inline Vector3d operator +(const Vector3d& v1, const Vector3d& v2) {
-  Vector3d result = v1;
-  result += v2;
-  return result;
+	Vector3d result = v1;
+	result += v2;
+	return result;
 }
 
 inline Vector3d operator -(const Vector3d& v1, const Vector3d& v2) {
-  Vector3d result = v1;
-  result -= v2;
-  return result;
+	Vector3d result = v1;
+	result -= v2;
+	return result;
 }
 
 inline Vector3d operator *(float s, const Vector3d& v) {
-  Vector3d result = v;
-  result *= s;
-  return result;
+	Vector3d result = v;
+	result *= s;
+	return result;
 }
 
 inline Vector3d operator *(const Vector3d& v, float s) {
-  return s * v;
+	return s * v;
 }
 
 inline Vector3d operator /(const Vector3d& v, float s) {
-  Vector3d result = v;
-  result /= s;
-  return result;
+	Vector3d result = v;
+	result /= s;
+	return result;
 }
 
 inline bool operator ==(const Vector3d& v1, const Vector3d& v2) {
-  return v1.x() == v2.x() && v1.y() == v2.y() && v1.z() == v2.z();
+	return v1.x() == v2.x() && v1.y() == v2.y() && v1.z() == v2.z();
 }
 
 #endif

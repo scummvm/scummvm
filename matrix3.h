@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,8 @@
 class Matrix3{
 public:
 	Vector3d right_;
-    Vector3d up_;
-    Vector3d at_;
+	Vector3d up_;
+	Vector3d at_;
 
 	void buildFromPitchYawRoll( float pitch, float yaw, float roll );
 	void setAsIdentity(void);
@@ -43,8 +43,7 @@ public:
 	void transform( Vector3d* v );
 
 	// operators
-	Matrix3& operator *=(const Matrix3& s)
-	{
+	Matrix3& operator *=(const Matrix3& s) {
 		float x, y, z;
 
 		x = right_.dotProduct( s.right_.x(), s.up_.x(), s.at_.x() );
@@ -67,8 +66,7 @@ public:
 
 		return *this;
 	}
-	Matrix3& operator =(const Matrix3& s)
-	{
+	Matrix3& operator =(const Matrix3& s) {
 		right_ = s.right_;
 		up_ = s.up_;
 		at_ = s.at_;

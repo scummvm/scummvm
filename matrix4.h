@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -24,21 +24,19 @@
 // matrix 4 is a rotation matrix + position
 class Matrix4{
 public:
-    Matrix3 rot_;
+	Matrix3 rot_;
 	Vector3d pos_;
 
 	Matrix4( void );
 
-	Matrix4& operator =(const Matrix4& s)
-	{
+	Matrix4& operator =(const Matrix4& s) {
 		pos_ = s.pos_;
 		rot_ = s.rot_;
 
 		return *this;
 	}
 
-	Matrix4& operator *=(const Matrix4& s)
-	{
+	Matrix4& operator *=(const Matrix4& s) {
 		Vector3d v;
 
 		v = s.pos_;

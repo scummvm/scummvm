@@ -1,16 +1,31 @@
+// Residual - Virtual machine to run LucasArts' 3D adventure games
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License, or (at your option) any later version.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
 #include <math.h>
 #include "matrix3.h"
 
-void Matrix3::setAsIdentity( void )
-{
+void Matrix3::setAsIdentity( void ) {
 	right_.set(1.f, 0.f, 0.f);
 	up_.set(0.f, 1.f, 0.f);
 	at_.set(0.f, 0.f, 0.f);
 }
 
-void Matrix3::buildFromPitchYawRoll( float pitch, float yaw, float roll )
-{
-    Matrix3 temp1, temp2;
+void Matrix3::buildFromPitchYawRoll( float pitch, float yaw, float roll ) {
+	Matrix3 temp1, temp2;
 
 	temp1.constructAroundPitch( pitch );
 	constructAroundRoll( roll );
@@ -22,23 +37,20 @@ void Matrix3::buildFromPitchYawRoll( float pitch, float yaw, float roll )
 	(*this) *= temp2;
 }
 
-#define  MYPI   3.141592654 
-#define  DEGTORAD(a)   (a*MYPI/180.0) 
-#define  RADTODEG(a)   (a*180.0/MYPI) 
+#define MYPI		3.141592654 
+#define DEGTORAD(a)	(a*MYPI/180.0) 
+#define RADTODEG(a)	(a*180.0/MYPI) 
 
-float RadianToDegree( float rad )
-{
+float RadianToDegree( float rad ) {
 	return RADTODEG(rad);
 }
 
-float DegreeToRadian( float degrees )
-{
+float DegreeToRadian( float degrees ) {
 	return DEGTORAD(degrees);
 }
 
 // right
-void Matrix3::constructAroundPitch( float pitch )
-{
+void Matrix3::constructAroundPitch( float pitch ) {
 	float cosa;
 	float sina;
 
@@ -51,8 +63,7 @@ void Matrix3::constructAroundPitch( float pitch )
 }
 
 // up
-void Matrix3::constructAroundYaw( float yaw )
-{
+void Matrix3::constructAroundYaw( float yaw ) {
 	float cosa;
 	float sina;
 
@@ -65,8 +76,7 @@ void Matrix3::constructAroundYaw( float yaw )
 }
 
 // at
-void Matrix3::constructAroundRoll( float roll )
-{
+void Matrix3::constructAroundRoll( float roll ) {
 	float cosa;
 	float sina;
 
@@ -85,8 +95,7 @@ void Matrix3::constructAroundRoll( float roll )
 */
 
 // WARNING: Still buggy in some occasions.
-void Matrix3::getPitchYawRoll( float* pPitch, float* pYaw, float* pRoll )
-{
+void Matrix3::getPitchYawRoll( float* pPitch, float* pYaw, float* pRoll ) {
 	float D;
 	float C;
 	float ftrx;
@@ -95,49 +104,45 @@ void Matrix3::getPitchYawRoll( float* pPitch, float* pYaw, float* pRoll )
 	float angle_y;
 	float angle_z;
 
-    angle_y = D =  asin( right_.z() );        /* Calculate Y-axis angle */
-    C           =  cos( angle_y );
-    angle_y		=  RadianToDegree( angle_y );
+	angle_y = D =  asin( right_.z() );        /* Calculate Y-axis angle */
+	C			=  cos( angle_y );
+	angle_y		=  RadianToDegree( angle_y );
 
-    if ( fabs( C ) > 0.005 )             /* Gimball lock? */
-      {
-      ftrx      =  at_.z() / C;           /* No, so get X-axis angle */
-      ftry      = -up_.z()  / C;
+	if ( fabs( C ) > 0.005 ) {            /* Gimball lock? */
+		ftrx		=  at_.z() / C;           /* No, so get X-axis angle */
+		ftry		= -up_.z()  / C;
 
-      angle_x  = RadianToDegree(atan2( ftry, ftrx ));
+		angle_x		= RadianToDegree(atan2( ftry, ftrx ));
 
-      ftrx      =  right_.x() / C;            /* Get Z-axis angle */
-      ftry      = -right_.y() / C;
+		ftrx		=  right_.x() / C;            /* Get Z-axis angle */
+		ftry		= -right_.y() / C;
 
-      angle_z  = RadianToDegree(atan2( ftry, ftrx ));
-      }
-    else                                 /* Gimball lock has occurred */
-      {      
-		angle_x  = 0;                      /* Set X-axis angle to zqero */
+		angle_z		= RadianToDegree(atan2( ftry, ftrx ));
+	} else {                                 /* Gimball lock has occurred */
+		angle_x		= 0;                      /* Set X-axis angle to zqero */
 
-      ftrx      =  up_.y();                 /* And calculate Z-axis angle */
-      ftry      =  up_.x();
+		ftrx		=  up_.y();                 /* And calculate Z-axis angle */
+		ftry		=  up_.x();
 
-      angle_z  = RadianToDegree(atan2( ftry, ftrx ));
-      }
+		angle_z  = RadianToDegree(atan2( ftry, ftrx ));
+	}
 
-    /* return only positive angles in [0,360] */
-    if (angle_x < 0) angle_x += 360;
-    if (angle_y < 0) angle_y += 360;
-    if (angle_z < 0) angle_z += 360;
+	/* return only positive angles in [0,360] */
+	if (angle_x < 0) angle_x += 360;
+	if (angle_y < 0) angle_y += 360;
+	if (angle_z < 0) angle_z += 360;
 
 	if( pPitch)
 		*pPitch = angle_x;
 
 	if( pYaw )
-        *pYaw = angle_y;
+		*pYaw = angle_y;
 
 	if( pRoll )
 		*pRoll = angle_z;
 }
 
-float Matrix3::getPitch()
-{
+float Matrix3::getPitch() {
 	float pitch;
 
 	getPitchYawRoll( &pitch, 0, 0);
@@ -145,8 +150,7 @@ float Matrix3::getPitch()
 	return pitch;
 }
 
-float Matrix3::getYaw()
-{
+float Matrix3::getYaw() {
 	float yaw;
 
 	getPitchYawRoll( 0, &yaw, 0);
@@ -154,8 +158,7 @@ float Matrix3::getYaw()
 	return yaw;
 }
 
-float Matrix3::getRoll()
-{
+float Matrix3::getRoll() {
 	float roll;
 
 	getPitchYawRoll( 0, 0, &roll);
@@ -163,8 +166,7 @@ float Matrix3::getRoll()
 	return roll;
 }
 
-void Matrix3::transform( Vector3d* v )
-{
+void Matrix3::transform( Vector3d* v ) {
 	float x;
 	float y;
 	float z;

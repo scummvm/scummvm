@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -24,51 +24,51 @@
 
 class Sound : public Resource {
 public:
-  Sound(const char *filename, const char *data, int len);
-  ~Sound();
+	Sound(const char *filename, const char *data, int len);
+	~Sound();
 
-  bool done() const { return currPos_ >= numSamples_; }
+	bool done() const { return currPos_ >= numSamples_; }
 
 private:
-  int numSamples_, numChannels_, currPos_;
-  int16 *samples_;
+	int numSamples_, numChannels_, currPos_;
+	int16 *samples_;
 
-  static void init();
+	static void init();
 
-  void reset();
-  void mix(int16 *data, int samples);
+	void reset();
+	void mix(int16 *data, int samples);
 
-  friend class Mixer;
+	friend class Mixer;
 };
 
 class Mixer {
 public:
-  static Mixer *instance();
+	static Mixer *instance();
 
-  void start();
+	void start();
 
-  void playVoice(Sound *s);
-  void playSfx(Sound *s);
-  void stopSfx(Sound *s);
-  void stopVoice(Sound *s);
-  void setImuseState(int state);
-  void setImuseSeq(int seq);
+	void playVoice(Sound *s);
+	void playSfx(Sound *s);
+	void stopSfx(Sound *s);
+	void stopVoice(Sound *s);
+	void setImuseState(int state);
+	void setImuseSeq(int seq);
 
-  Sound *findSfx(const char *filename);
-  bool voicePlaying() const;
+	Sound *findSfx(const char *filename);
+	bool voicePlaying() const;
 
-  void getAudio(int16 *data, int numSamples);
+	void getAudio(int16 *data, int numSamples);
 
 private:
-  Mixer();
-  ~Mixer();
+	Mixer();
+	~Mixer();
 
-  static Mixer *instance_;
-  typedef std::list<ResPtr<Sound> > sound_list;
-  sound_list voiceSounds_, sfxSounds_;
-  ResPtr<Sound> musicSound_, seqSound_;
+	static Mixer *instance_;
+	typedef std::list<ResPtr<Sound> > sound_list;
+	sound_list voiceSounds_, sfxSounds_;
+	ResPtr<Sound> musicSound_, seqSound_;
 
-  friend void mixerCallback(void *userdata, uint8 *stream, int len);
+	friend void mixerCallback(void *userdata, uint8 *stream, int len);
 };
 
 #endif
