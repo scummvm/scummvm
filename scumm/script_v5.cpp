@@ -940,6 +940,15 @@ void Scumm_v5::o5_getActorMoving() {
 void Scumm_v5::o5_getActorRoom() {
 	getResultPos();
 	int act = getVarOrDirectByte(0x80);
+	// FIXME: Workaround for bug #746349. This is a really odd bu
+	//in either the script or in our script engine. Might be a good
+	// idea to investigate this further by e.g. looking at the FOA
+	// engine a bit closer.
+	if (_gameId == GID_INDY4 && _roomResource == 94 && vm.slot[_currentScript].number == 206 && act > _numActors) {
+		setResult(0);
+		return;
+	}
+	
 	Actor *a = derefActor(act, "o5_getActorRoom");
 	setResult(a->room);
 }
@@ -1049,7 +1058,7 @@ void Scumm_v5::o5_getDist() {
 	o2 = getVarOrDirectWord(0x40);
 	r = getObjActToObjActDist(o1, o2);
 
-	// FIXME: MI2 race workaround, see bug 597022
+	// FIXME: MI2 race workaround, see bug #597022
 	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60) 
 		r = 60; 
 
@@ -2011,20 +2020,13 @@ void Scumm_v5::o5_startObject() {
 void Scumm_v5::o5_startScript() {
 	int op, script;
 	int data[16];
-	int a, b;
 
 	op = _opcode;
 	script = getVarOrDirectByte(0x80);
 
 	getWordVararg(data);
 
-	a = b = 0;
-	if (op & 0x40)
-		b = 1;
-	if (op & 0x20)
-		a = 1;
-
-	runScript(script, a != 0, b != 0, data);
+	runScript(script, (op & 0x20) != 0, (op & 0x40) != 0, data);
 }
 
 void Scumm_v5::o5_stopObjectCode() {
