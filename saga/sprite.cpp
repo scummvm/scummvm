@@ -214,7 +214,6 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Poi
 		so_width = s_width = readS.readUint16();
 		so_height = s_height = readS.readUint16();
 	}
-	debug(0, "%d x %d", s_width, s_height);
 	spr_pt.x = screenCoord.x + x_align;
 	spr_pt.y = screenCoord.y + y_align;
 
