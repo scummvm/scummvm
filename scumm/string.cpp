@@ -216,6 +216,14 @@ void ScummEngine::CHARSET_1() {
 			_keepText = false;
 			break;
 		}
+		
+		// FIXME: This is a workaround for bug #864030: In COMI, some text
+		// contains ASCII character 11 = 0xB. It's not quite clear what it is
+		// good for; so for now we just ignore it, which seems to match the
+		// original engine (BTW, traditionally, this is a 'vertical tab').
+		if (c == 0x0B)
+			continue;
+
 		if (c == 13) {
 		newLine:;
 			_charset->_nextLeft = _string[0].xpos;
@@ -424,10 +432,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				// A better name for _blitAlso might be _imprintOnBackground
 
 				if (_string[a].no_talk_anim == false) {
-					// Sam and Max seems to blitAlso 32 a lot, which does
-					// nothing anyway. So just hide that one for brevity.
-					if (c != 32) 
-						debug(1, "Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
+					//warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
 					_charset->_blitAlso = true;
 				}
 			}
@@ -444,7 +449,6 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_charset->_nextLeft = _charset->_left;
 		_charset->_nextTop = _charset->_top;
 	}
-
 
 	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
 
@@ -485,6 +489,15 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 			break;
 		if (chr == 0xFF) {
 			chr = src[num++];
+
+			// WORKAROUND for bug #985948, a script bug in Indy3. Apparently,
+			// a german 'sz' was encoded incorrectly as 0xFF2E. We replace
+			// this by the correct encoding here. See also ScummEngine::resStrLen().
+			if (_gameId == GID_INDY3 && chr == 0x2E) {
+				*dst++ = 0xE1;
+				continue;
+			}
+
 			if (chr == 1 || chr == 2 || chr == 3 || chr == 8) {
 				// Simply copy these special codes
 				*dst++ = 0xFF;
@@ -844,6 +857,7 @@ void ScummEngine::playSpeech(const byte *ptr) {
 			strcat(pointer, ".IMX");
 
 			_sound->stopTalkSound();
+			_imuseDigital->stopSound(kTalkSoundID);
 			_imuseDigital->startVoice(kTalkSoundID, pointer);
 			_sound->talkSound(0, 0, 2, -1);
 		}
