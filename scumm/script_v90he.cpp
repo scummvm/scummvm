@@ -149,8 +149,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o72_wordArrayInc),
 		/* 54 */
-		OPCODE(o72_objectX),
-		OPCODE(o72_objectY),
+		OPCODE(o72_getObjectImageX),
+		OPCODE(o72_getObjectImageY),
 		OPCODE(o72_unknown56),
 		OPCODE(o6_wordVarDec),
 		/* 58 */

@@ -150,8 +150,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o72_wordArrayInc),
 		/* 54 */
-		OPCODE(o72_objectX),
-		OPCODE(o72_objectY),
+		OPCODE(o72_getObjectImageX),
+		OPCODE(o72_getObjectImageY),
 		OPCODE(o72_unknown56),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
@@ -753,7 +753,7 @@ void ScummEngine_v72he::o72_wordArrayDec() {
 	writeArray(var, 0, base, readArray(var, 0, base) - 1);
 }
 
-void ScummEngine_v72he::o72_objectX() {
+void ScummEngine_v72he::o72_getObjectImageX() {
 	int object = pop();
 	int objnum = getObjectIndex(object);
 
@@ -766,7 +766,7 @@ void ScummEngine_v72he::o72_objectX() {
 }
 
 
-void ScummEngine_v72he::o72_objectY() {
+void ScummEngine_v72he::o72_getObjectImageY() {
 	int object = pop();
 	int objnum = getObjectIndex(object);
 

@@ -730,8 +730,8 @@ protected:
 	void o72_unknown50();
 	void o72_findObjectWithClassOf();
 	void o72_wordArrayInc();
-	void o72_objectX();
-	void o72_objectY();
+	void o72_getObjectImageX();
+	void o72_getObjectImageY();
 	void o72_unknown56();
 	void o72_getTimer();
 	void o72_setTimer();
