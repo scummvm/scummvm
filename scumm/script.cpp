@@ -651,7 +651,9 @@ void ScummEngine::stopObjectCode() {
 
 	if (ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL) {
 		if (ss->cutsceneOverride) {
-			warning("Object %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
+			// Earlier games only checked global scripts at this point
+			if (_version >= 5)
+				warning("Object %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 			ss->cutsceneOverride = 0;
 		}
 	} else {
@@ -819,8 +821,8 @@ void ScummEngine::killScriptsAndResources() {
 			}
 			ss->status = ssDead;
 		} else if (ss->where == WIO_LOCAL) {
-			// HACK to make Indy3 Demo work
-			if (ss->cutsceneOverride != 0 && !(_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && _roomResource == 3)) {
+			// Earlier games only checked global scripts at this point
+			if (ss->cutsceneOverride != 0 && _version >= 5) {
 				warning("Script %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}
@@ -1107,7 +1109,7 @@ void ScummEngine::beginOverride() {
 	fetchScriptByte();
 	fetchScriptWord();
 	
-	// This is based on disassembly
+	// FIXME: why is this here? it doesn't seem to belong here?
 	VAR(VAR_OVERRIDE) = 0;
 }
 
