@@ -2709,8 +2709,13 @@ void Scumm::o6_miscOps()
 		case 4:
 			grabCursor(args[1], args[2], args[3], args[4]);
 			break;
-		case 6: { 
- 				ScummRenderer sr(this);
+		case 6: {
+				uint32 speed;
+				if (strcmp((char*)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
+	 				speed = 71;
+				else
+					speed = 1000 / _insaneFlag;
+				ScummRenderer sr(this, speed);
  				SmushPlayer sp(&sr);
  				char filename[512];
  				strcpy(filename, _gameDataPath);
@@ -2718,6 +2723,7 @@ void Scumm::o6_miscOps()
  				strcat(filename, (char*)getStringAddressVar(VAR_VIDEONAME));
  				sp.play(filename);
  			}
+			break;
 		case 7:
 			warning("o6_miscOps: stub7()");
 			break;

@@ -105,7 +105,7 @@ void Sound::processSoundQues() {
 #endif
 			
 			if ((_scumm->_gameId == GID_DIG) && (data[0] == 4096)){
-					playBundleMusic(data[1] - 1);
+//					playBundleMusic(data[1] - 1);
 			}
 
 			if (!(_scumm->_features & GF_AFTER_V7)) {

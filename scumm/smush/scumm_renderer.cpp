@@ -188,7 +188,10 @@ bool scumm_mixer::stop() {
 	return true;
 }
 
-ScummRenderer::ScummRenderer(Scumm * scumm) : _scumm(scumm), _smixer(0) {
+ScummRenderer::ScummRenderer(Scumm * scumm, uint32 speed) :
+	_scumm(scumm),
+	_smixer(0),
+	_insaneSpeed(speed) {
 }
 
 static ScummRenderer * s_renderer;
@@ -203,7 +206,7 @@ Mixer * ScummRenderer::getMixer() {
 		_smixer = new scumm_mixer(_scumm->_mixer);
 		if(!_smixer) error("unable to allocate a smush mixer");
 		s_renderer = this;
-		_scumm->_timer->installProcedure(&smush_handler, 83);
+		_scumm->_timer->installProcedure(&smush_handler, _insaneSpeed);
 	}
 	return _smixer;
 }

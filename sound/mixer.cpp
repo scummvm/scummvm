@@ -656,11 +656,13 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 	} else {
 		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, _endOfBuffer);
 		if (len != 0) {
+			//FIXME: what is wrong ?
+			warning("bad play sound in stream(wrap around)");
 			_pos = _ptr;
 			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
 		}
 	}
-	_timeOut = 2;
+	_timeOut = 3;
 	_fpPos = fp_pos;
 }
 

@@ -44,9 +44,10 @@ class ScummRenderer : public BaseRenderer {
 private:
 	Scumm * _scumm;
 	scumm_mixer * _smixer;
+	uint32 _insaneSpeed;
 	volatile bool _wait;
 public:
-	ScummRenderer(Scumm * scumm);
+	ScummRenderer(Scumm * scumm, uint32 speed);
 	virtual ~ScummRenderer();
 	virtual bool wait(int32 ms);
 	bool update();
