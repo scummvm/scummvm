@@ -32,4 +32,4 @@ LDFLAGS = -Wl,-T $(LNKSCRIPT)
 LIBS	+= -lgpgraphic -lgpmem -lgpos -lgpstdlib -lgpstdio -lgpsound -lgpfont
 INCLUDES += -Ibackends/gp32
 MODULES	+= backends/gp32
-OBJS	+= $(CCBASE)/arm-agb-elf/lib/gpstart/gpstart.o backends/gp32/gp32.o
+OBJS	+= $(CCBASE)/arm-agb-elf/lib/gpstart/gpstart.o backends/gp32/gp32.o backends/gp32/gp-fs.o

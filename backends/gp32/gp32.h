@@ -28,6 +28,7 @@
 #include "scumm/saveload.h"
 #include "common/scaler.h"
 
+#include "portdefs.h"
 #include "sdl.h"
 
 class OSystem_GP32 : public OSystem {
@@ -52,6 +53,7 @@ public:
 
 	// Either show or hide the mouse cursor
 	bool show_mouse(bool visible);
+	void warp_mouse(int x, int y);
 	
 	// Set the position of the mouse cursor
 	void set_mouse_pos(int x, int y);
@@ -114,10 +116,6 @@ public:
 	void clear_overlay();
 	void grab_overlay(int16 *buf, int pitch);
 	void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
-
-	// Savefiles
-	SaveFileManager *get_savefile_manager();
-
 
 	static OSystem *create(int gfx_mode, bool full_screen);
 private:

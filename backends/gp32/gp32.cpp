@@ -30,9 +30,10 @@ void GpSetPaletteEntry(u8 i, u8 r, u8 g, u8 b);
 #define NAMEME_SURFACE 1
 #define DEBUG_SURFACE 2
 
-GPDRAWSURFACE gpDraw[2];	// surfaces
+GPDRAWSURFACE gpDraw[3];	// surfaces
 int mx=1, my=1;	// wrong if 0?
 char currsurface;
+FILE *fstderr, *fstdout, *fstdin;
 
 // Set colors of the palette
 void OSystem_GP32::set_palette(const byte *colors, uint start, uint num) { 
@@ -609,7 +610,7 @@ void OSystem_GP32::draw_mouse() {
 			*bak++ = *dst;
 			color = *src++;
 			if (color != 0xFF)	// 0xFF = transparent, don't draw
-				*dst = RGB_TO_16(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
+				*dst = RGBToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
 			dst++;
 			width--;
 		}
@@ -824,7 +825,11 @@ void OSystem_GP32::set_mouse_pos(int x, int y) {
 		undraw_mouse();
 	}
 }
-	
+
+void OSystem_GP32::warp_mouse(int x, int y) {
+	set_mouse_pos(x, y);	
+}
+
 // Set the bitmap that's used when drawing the cursor.
 void OSystem_GP32::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) { 
 	_mouse_cur_state.w = w;
@@ -890,8 +895,8 @@ bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly
 		if (key & GPC_VK_FL && key & GPC_VK_FR) { // L+R = save state
 			printf("Saving game, please wait...");
 
-			extern void autosave(void * engine); 
-			autosave(NULL); //FIXME?
+			//extern void autosave(void * engine); 
+			//autosave(NULL); //FIXME?
 			do key=GpKeyGet(); while (key != GPC_VK_NONE) ;
 			return false;
 		} else
@@ -1078,7 +1083,7 @@ void OSystem_GP32::delete_mutex(void *mutex) { }
 // Quit
 void gphalt(int);
 void OSystem_GP32::quit() { 
-	gphalt();
+	exit(0);
 }
 	
 // Overlay
@@ -1220,54 +1225,32 @@ OSystem *OSystem_GP32_create(int gfx_mode, bool full_screen) {
 extern "C" int write(int fd, void *p, size_t n);
 int write(int fd, void *p, size_t n) { return 0; } //ph0x hack!
 
-// fixme - unnecessary?
-class GP32SaveFile : public SaveFile {
-private:
-	FILE *fh;
-public:
-	GP32SaveFile(FILE *f) : fh(f) { }
-
-	~GP32SaveFile();
-
-	int fread(void *buf, int size, int cnt);
-	int fwrite(void *buf, int size, int cnt);
-}
-
-class GP32SaveFileManager : public SaveFileManager {
-	SaveFile *open_savefile(const char *filename, bool saveOrLoad);
-}
-
-int GP32SaveFile::fwrite(void *buf, int size, int cnt) {
-	// implement me
-	return ::fwrite(buf, size, cnt, fh);
-}
-
-SaveFile GP32SaveFileManager::open_savefile(const char *filename,
-					    bool saveOrLoad) {
-	// implement me
-	FILE *fh = ::fopen(filename, (saveOrLoad? "wb":"rb"));
-	//if (saveOrLoad) 	error("Autosaving..");
-	return fh? new GP32SaveFile(fh) : NULL;
-}
-
-void GP32SaveFile::~GP32SaveFile() {
-	// implement me
-	::fclose(fh);
-}
-int GP32SaveFile::fread(void *buf, int size, int cnt) {
-	// implement me
-	return 	::fread(buf, size, cnt, fh);
-
-}
-
-SaveFileManager *OSystem_GP32::get_savefile_manager() {
-	return new GP32SaveFileManager();
-}
-
 // Converts 8bit rgb values to a GP32 palette value 
 void GpSetPaletteEntry(u8 i, u8 r, u8 g, u8 b) {
   GP_PALETTEENTRY entry = GP_RGB16(r,g,b);
   GpPaletteEntryChange ( i, 1, &entry, 0 );
+}
+
+void switchsurf(int surf) {
+	GPLCDINFO lcd;
+	GpLcdInfoGet(&lcd);
+
+	if (surf == DEBUG_SURFACE) {
+		if (lcd.lcd_global.U8_lcd.bpp == 16)
+			GpGraphicModeSet(8, NULL);
+
+		currsurface = DEBUG_SURFACE;
+		GpSurfaceFlip(&gpDraw[currsurface]);
+		GpSetPaletteEntry(0, 0, 0, 0);
+		GpSetPaletteEntry(1, 255, 0, 0);
+		GpSetPaletteEntry(2, 255, 255, 255);
+	} else {
+		if (surf == GAME_SURFACE) {
+			currsurface = GAME_SURFACE;
+			GpSurfaceFlip(&gpDraw[currsurface]);
+		}
+	}
+			
 }
 
 int gpprintf(const char *fmt, ...) { //return 0; //fixme
@@ -1443,6 +1426,39 @@ void gphalt(int code=0) {
 	while (1); 
 }
 
+char *gpstrdup(const char *strSource) {
+
+	char *buffer;
+	buffer = (char *)malloc(strlen(strSource) + 1);
+	if (buffer)
+			strcpy(buffer, strSource);
+	return buffer;
+}
+
+time_t gptime(time_t *timer) {
+
+	time_t t = GpTickCountGet() / 1000;
+	if (timer)
+		*timer = t;
+
+	return t;
+}
+
+void gpdeinit() {
+	fclose(fstdin);
+	fclose(fstdout);
+	fclose(fstderr);
+}
+
+void gpexit(int code) {
+
+	switchsurf(DEBUG_SURFACE);
+
+	printf("Your GP32 will now restart...");
+	gpdeinit();
+	GpAppExit();
+}
+
 //#include <string.h>
 #include "common/gamedetector.h"
 VersionSettings* menu() {
@@ -1501,68 +1517,41 @@ VersionSettings* menu() {
 }
 
 int gpinit() {	
+
+	ERR_CODE err;
+	
+	//GpKeyInit();
+	GpFatInit();
+	GpRelativePathSet("gp:\\gpmm");
+
 	// Initialize graphics 
 	GpGraphicModeSet(8, NULL);
 	GpLcdSurfaceGet(&gpDraw[DEBUG_SURFACE], DEBUG_SURFACE);
 	GpLcdSurfaceGet(&gpDraw[NAMEME_SURFACE], NAMEME_SURFACE);		
 	GpLcdSurfaceGet(&gpDraw[GAME_SURFACE], GAME_SURFACE);	
 	
-//	gpDraw[GAME_SURFACE].oy=19; //center screen?
-//	GpRectFill(NULL,&gpDraw[GAME_SURFACE], 0, 0, 320, 240, 0); //black border
-	GpLcdEnable();
+	GpSetPaletteEntry(0, 0, 0, 0);
+	GpSetPaletteEntry(1, 255, 0, 0);
+	GpSetPaletteEntry(2, 255, 255, 255);
+
 	// fixme - use get function
 	currsurface=DEBUG_SURFACE;
 	GpSurfaceSet(&gpDraw[currsurface]);
 
-//	_gp_sdk_init();
-//	GpKeyInit();
-	GpFatInit();
-	GpRelativePathSet("gp:"); // fixme (get path)
+	GpLcdEnable();
 	
-/*	
-	char s[256];
-	GpRelativePathGet(s);
-	printf("path=%s", s);
-*/	
 #ifdef GPDEBUG
-	printf(">waiting debugger...");
+	printf(">waiting for debugger...");
 	InitDebug();
 #endif
 	printf(">Running ScummVM");
 
 }	
 
-void createfakeini() {
-/*
-char s[] = "\
-[dott]\n\
-gameid=tentacle\n\
-[samnmax]\n\
-gameid=samnmax\n\
-[atlantis]\n\
-gameid=playfate\n\
-";
-FILE *f=fopen("scummvm.ini", "w");
-fwrite(s, 1, sizeof(s)+1, f);
-fclose(f);
-*/
-	printf("Creating scummvm.ini, please wait...");
-	FILE *f=fopen("scummvm.ini", "w");
-	const VersionSettings *v = version_settings;	
-	char s[256];
-	while (v->filename && v->gamename) {
-		sprintf(s, "[%s]\ngameid=%s\n", v->filename, v->filename); 
-		fwrite(s, 1, strlen(s), f);
-		v++;
-	}
-	fclose(f);
-}
-
 extern "C" void GpMain (void * arg); // hack
 void GpMain (void * arg) {
 	gpinit();
-	createfakeini(); //FIXME: use methods :)
-
+	
 	// fixme - use get function
 	currsurface=GAME_SURFACE;
 	GpSurfaceFlip(&gpDraw[currsurface]);
@@ -1572,6 +1561,6 @@ void GpMain (void * arg) {
 
 	extern int main(int argc, char *argv[]);
 	main(argc, argv);
-		
+	
 	error("returned from main ?!");	
 }

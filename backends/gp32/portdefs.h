@@ -55,6 +55,8 @@ typedef int s32;
 	extern void *gpmalloc(size_t size);
 	extern void *gpcalloc(size_t nitems, size_t size);
 	extern void gpfree(void *block);
+	extern char *gpstrdup(const char *s);
+
 	#define malloc gpmalloc 
 	#define calloc gpcalloc //gm_calloc
 	#define free gpfree	
@@ -65,16 +67,22 @@ typedef int s32;
 	#define strncpy gm_strncpy
 	#define strcat gm_strcat
 	#define sprintf gm_sprintf*/
+	#define strdup gpstrdup
 
 	#define assert(e) ((e) ? 0 : (printf("!AS: " #e " (%s, %d)\n", __FILE__, __LINE__)))
 	#define ASSERT assert
 
 	#define ENDLESSLOOP while (1)
 
+	
 	#define FILE F_HANDLE
-	#define stderr NULL	// hack...
-	#define stdout stderr
-	#define stdin stderr
+	extern FILE *fstderr;
+	extern FILE *fstdout;
+	extern FILE *fstdin;
+
+	#define stderr fstderr
+	#define stdout fstdout
+	#define stdin fstdin
 
 	extern FILE *gpfopen(const char *filename, const char *mode);
 	extern int gpfclose(FILE *stream);
@@ -101,10 +109,16 @@ typedef int s32;
 	#define fprintf gpfprintf
 	#define fflush gpfflush
 
-	extern void gphalt(int code=0);
-	#define exit gphalt
+	extern void gpexit(int code);
+	#define exit gpexit
 	//#define error printf
 
-	#define time(x) (0) // fixme! (SIMON)
+	extern time_t gptime(time_t *timer);
+	#define time gptime
+	#define MARK printf("MARK: %s, %s, %d", __FILE__, __FUNCTION__, __LINE__);
+	
+	extern void *gpmemset (void *s, int c, size_t n);
+	extern void *gpmemcpy (void *dest, const void *src, size_t n);
+	//#define memset gpmemset
+	//#define memcpy gpmemcpy
 
-	// EOF

@@ -123,7 +123,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 
-#if !defined(__DC__)
+#if !( defined(__DC__) || defined(__GP32__) )
 	//
 	// Save game path
 	//
