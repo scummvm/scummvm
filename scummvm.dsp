@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib simon___Release\simon.lib scumm___Release\scumm.lib sky___Release\sky.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib simon___Release\simon.lib scumm___Release\scumm.lib sky___Release\sky.lib bs2___Release\bs2.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib simon___Debug\simon.lib scumm___Debug\scumm.lib sky___Debug\sky.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /pdbtype:sept /fixed:no
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib simon___Debug\simon.lib scumm___Debug\scumm.lib sky___Debug\sky.lib bs2___Debug\bs2.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /pdbtype:sept /fixed:no
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Debug"
@@ -107,7 +107,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib wsock32.lib scumm___mad_mp3_Debug\scumm.lib simon___mad_mp3_Debug\simon.lib sky___mad_mp3_Debug\sky.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd" /pdbtype:sept /fixed:no
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib wsock32.lib scumm___mad_mp3_Debug\scumm.lib simon___mad_mp3_Debug\simon.lib sky___mad_mp3_Debug\sky.lib bs2___mad_mp3_Debug\bs2.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd" /pdbtype:sept /fixed:no
 # SUBTRACT LINK32 /pdb:none /map
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Release"
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Release\simon.lib scumm___Release\scumm.lib sdl.lib /nologo /subsystem:console /machine:I386 /nodefaultlib
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib sky___mad_mp3_Release\sky.lib /nologo /subsystem:console /incremental:yes /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib sky___mad_mp3_Release\sky.lib bs2___mad_mp3_Release\bs2.lib /nologo /subsystem:console /incremental:yes /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
