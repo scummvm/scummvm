@@ -1378,12 +1378,15 @@ load_game:
 		gdi.clearCharsetMask();
 		_charset->_hasMask = false;
 
+		// HACK as in game save stuff isn't supported currently
 		if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
 			int args = 2;
 			uint value = (_gameId == GID_LOOM256) ? 150 : 100;
+			byte restoreScript = (_features & GF_FMTOWNS) ? 17 : 18;
 			redrawVerbs();
+			// if verbs should be shown restore them
 			if (VAR(value) == 2)
-				runScript(18, 0, 0, &args);
+				runScript(restoreScript, 0, 0, &args);
 		} else if (_version > 3) {
 			for (int i = 0; i < _maxVerbs; i++)
 				drawVerb(i, 0);
