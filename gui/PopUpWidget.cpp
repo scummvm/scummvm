@@ -25,22 +25,22 @@
 
 /* TODO:
  * - draw an (unselectable) sepeator line for items that start with a '-'
- * - handle looong lists by allowing scrolling (a lot of work if done right, 
+ * - handle long lists by allowing scrolling (a lot of work if done right, 
  *   so I will probably only implement if we really need it)
  * - ...
  */
 
 #define UP_DOWN_BOX_HEIGHT	10
 
-// Down arrow
-static uint32 down_arrow[8] = {
+// Little up/down arrow
+static uint32 up_down_arrows[8] = {
 	0x00000000,
-	0x00000000,
-	0x00100010,
-	0x00110110,
-	0x00011100,
-	0x00011100,
 	0x00001000,
+	0x00011100,
+	0x00111110,
+	0x00000000,
+	0x00111110,
+	0x00011100,
 	0x00001000,
 };
 
@@ -81,7 +81,7 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	_x = _popUpBoss->_boss->getX() + _popUpBoss->_x;
 	_y = _popUpBoss->_boss->getY() + _popUpBoss->_y - _popUpBoss->_selectedItem * kLineHeight;
 	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
-	_w = _popUpBoss->_w;
+	_w = _popUpBoss->_w - 10;
 	
 	// Copy the selection index
 	_selection = _popUpBoss->_selectedItem;
@@ -98,7 +98,11 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 void PopUpDialog::drawDialog()
 {
 	// Draw the menu border
-	_gui->box(_x, _y, _w, _h);
+//	_gui->box(_x, _y, _w, _h);
+	_gui->hline(_x, _y, _x+_w-1, _gui->_color);
+	_gui->hline(_x, _y+_h-1, _x+_w-1, _gui->_shadowcolor);
+	_gui->vline(_x, _y, _y+_h-1, _gui->_color);
+	_gui->vline(_x+_w-1, _y, _y+_h-1, _gui->_shadowcolor);
 
 	// Draw the entries
 	int count = _popUpBoss->_entries.size();
@@ -177,9 +181,9 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite)
 {
 	// Draw one entry of the popup menu, including selection
 	assert(entry >= 0);
-	int x = _x + 2;
-	int y = _y + 2 + kLineHeight * entry;
-	int w = _w - 4;
+	int x = _x + 1;
+	int y = _y + 1 + kLineHeight * entry;
+	int w = _w - 2;
 
 	_gui->fillRect(x, y, w, kLineHeight,
 						hilite ? _gui->_textcolorhi : _gui->_bgcolor);
@@ -252,7 +256,7 @@ void PopUpWidget::drawWidget(bool hilite)
 	gui->vline(_x+_w-1, _y, _y+_h-1, gui->_shadowcolor);
 	
 	// Draw an arrow pointing down at the right end to signal this is a dropdown/popup
-	gui->drawBitmap(down_arrow, _x+_w - 10, _y+1, hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->drawBitmap(up_down_arrows, _x+_w - 10, _y+2, hilite ? gui->_textcolorhi : gui->_textcolor);
 	
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {

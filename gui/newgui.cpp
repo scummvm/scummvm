@@ -477,15 +477,15 @@ void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch)
 //
 // Draw an 8x8 bitmap at location (x,y)
 //
-void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, int16 color)
+void NewGui::drawBitmap(uint32 *bitmap, int x, int y, int16 color, int h)
 {
 	int16 *ptr = getBasePtr(x, y);
 
-	for (int y2 = 0; y2 < 8; y2++) {
+	for (y = 0; y < h; y++) {
 		uint32 mask = 0xF0000000;
-		for (int x2 = 0; x2 < 8; x2++) {
-			if (bitmap[y2] & mask)
-				ptr[x2] = color;
+		for (x = 0; x < 8; x++) {
+			if (bitmap[y] & mask)
+				ptr[x] = color;
 			mask >>= 4;
 		}
 		ptr += _screenPitch;

@@ -22,11 +22,11 @@
 #include "launcher.h"
 #include "browser.h"
 #include "chooser.h"
-#include "newgui.h"
 #include "message.h"
+#include "newgui.h"
+#include "options.h"
 #include "EditTextWidget.h"
 #include "ListWidget.h"
-#include "PopUpWidget.h"
 
 #include "backends/fs/fs.h"
 #include "common/config-file.h"
@@ -87,8 +87,7 @@ protected:
 };
 
 EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain)
-//	: Dialog(gui, 8, 50, 320-2*8, 200-2*40), _config(config), _domain(domain)
-	: Dialog(gui, 8, 30, 320-2*8, 200-2*30), _config(config), _domain(domain)
+	: Dialog(gui, 8, 50, 320-2*8, 200-2*40), _config(config), _domain(domain)
 {
 	// Determine the description string
 	String gameid(_config.get("gameid", _domain));
@@ -132,15 +131,6 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	// Load in settings for the checkboxs
 	_fullscreenCheckbox->setState(_config.getBool("fullscreen", false, _domain));
 	_AmigaPalCheckbox->setState(_config.getBool("amiga", false, _domain));
-	
-	// FIXME HACK - add a dummy popup widget here, for debugging.
-	// Note: this isn't useful at all right now...
-	PopUpWidget *foo;
-	foo = new PopUpWidget(this, 15, 102, 200, kLineHeight);
-	foo->appendEntry("Foo");
-	foo->appendEntry("Bar");
-	foo->appendEntry("Baz", 'QUUX');
-	foo->setSelected(0);
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
@@ -445,11 +435,8 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// - music & graphics driver (but see also the comments on EditGameDialog
 		//   for some techincal difficulties with this)
 		// - default volumes (sfx/master/music)
-		// - 
-		//
-		// We also allow the global save game path to be set here.
-		MessageDialog alert(_gui, "Global game options dialog not yet implemented!");
-		alert.runModal();
+		GlobalOptionsDialog options(_gui);
+		options.runModal();
 		}
 		break;
 	case kStartCmd:

@@ -140,7 +140,7 @@ public:
 	void blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch);
 	void blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch);
 
-	void drawBitmap(uint32 bitmap[8], int x, int y, int16 color);
+	void drawBitmap(uint32 *bitmap, int x, int y, int16 color, int h = 8);
 
 	void addDirtyRect(int x, int y, int w, int h);
 };
