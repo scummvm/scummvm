@@ -4873,8 +4873,29 @@ void IMuseDigital::handler() {
 			uint32 new_size = _channel[l]._mixerSize;
 			uint32 mixer_size = new_size;
 
+			new_mixer = false;
+			if (_channel[l]._mixerTrack == -1) {
+				_scumm->_system->lock_mutex(_scumm->_mixer->_mutex);
+				for (idx = 0; idx < SoundMixer::NUM_CHANNELS; idx++) {
+					if (_scumm->_mixer->_channels[idx] == NULL) {
+						_channel[l]._mixerTrack = idx;
+						new_mixer = true;
+						break;
+					}
+				}
+			}
+			if(SoundMixer::NUM_CHANNELS == idx) {
+				warning("IMuseDigital::handler() no free SoundMixer channel");
+				return;
+			}
+
+			if (new_mixer == true) {
+				mixer_size *= 2;
+				new_size *= 2;
+			}
+
 			if (_channel[l]._isLoop == false) {
-				if (_channel[l]._offset + _channel[l]._mixerSize > _channel[l]._size) {
+				if (_channel[l]._offset + mixer_size > _channel[l]._size) {
 					new_size = _channel[l]._size - _channel[l]._offset;
 					_channel[l]._toBeRemoved = true;
 					mixer_size = new_size;
@@ -4883,7 +4904,7 @@ void IMuseDigital::handler() {
 				if (_channel[l]._jump[0]._numLoops != 500) {
 					_channel[l]._jump[0]._numLoops--;
 				}
-				if (_channel[l]._offset + _channel[l]._mixerSize >= _channel[l]._jump[0]._offset) {
+				if (_channel[l]._offset + mixer_size >= _channel[l]._jump[0]._offset) {
 					new_size = _channel[l]._jump[0]._offset - _channel[l]._offset;
 				}
 			}
@@ -4891,7 +4912,7 @@ void IMuseDigital::handler() {
 			byte *buf = (byte*)malloc(mixer_size);
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
 			if ((new_size != _channel[l]._mixerSize) && (_channel[l]._isLoop == true)) {
-				memcpy(buf + new_size, _channel[l]._data + _channel[l]._jump[0]._dest, _channel[l]._mixerSize - new_size);
+				memcpy(buf + new_size, _channel[l]._data + _channel[l]._jump[0]._dest, mixer_size - new_size);
 			}
 
 			if (_channel[l]._volumeFade != -1) {
@@ -4921,22 +4942,6 @@ void IMuseDigital::handler() {
 				}
 			}
 
-			new_mixer = false;
-			if (_channel[l]._mixerTrack == -1) {
-				_scumm->_system->lock_mutex(_scumm->_mixer->_mutex);
-				for (idx = 0; idx < SoundMixer::NUM_CHANNELS; idx++) {
-					if (_scumm->_mixer->_channels[idx] == NULL) {
-						_channel[l]._mixerTrack = idx;
-						new_mixer = true;
-						break;
-					}
-				}
-			}
-			if(SoundMixer::NUM_CHANNELS == idx) {
-				warning("IMuseDigital::handler() no free SoundMixer channel");
-				return;
-			}
-
 			if (new_mixer) {
 				_scumm->_mixer->playStream(NULL, _channel[l]._mixerTrack, buf, mixer_size,
 																				 _channel[l]._freq, _channel[l]._mixerFlags);
@@ -4946,8 +4951,8 @@ void IMuseDigital::handler() {
 			}
 			_scumm->_system->unlock_mutex(_scumm->_mixer->_mutex);
 
-			if ((new_size != _channel[l]._mixerSize) && (_channel[l]._isLoop == true)) {
-				_channel[l]._offset = _channel[l]._jump[0]._dest + (_channel[l]._mixerSize - new_size);
+			if ((new_size != mixer_size) && (_channel[l]._isLoop == true)) {
+				_channel[l]._offset = _channel[l]._jump[0]._dest + (mixer_size - new_size);
 			} else {
 				_channel[l]._offset += _channel[l]._mixerSize;
 			}
