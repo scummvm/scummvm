@@ -811,7 +811,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
 	if (_version == 1) {
-		gdi._C64ObjectMode = false;
+		gdi._objectMode = false;
 	}
 	if (_heversion >= 70)
 		room = getResourceAddress(rtRoomImage, _roomResource);
@@ -1404,8 +1404,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		if (_vm->_version == 1) {
 			if (_vm->_features & GF_NES)
-				drawStripNES(dstPtr, vs->pitch, stripnr, y, height, _C64ObjectMode);
-			else if (_C64ObjectMode)
+				drawStripNES(dstPtr, vs->pitch, stripnr, y, height);
+			else if (_objectMode)
 				drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
 			else
 				drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
@@ -1454,7 +1454,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		if (_vm->_version == 1) {
 			mask_ptr = getMaskBuffer(x, y, 1);
 			if (_vm->_features & GF_NES) {
-				drawStripNESMask(mask_ptr, stripnr, height, _C64ObjectMode);
+				drawStripNESMask(mask_ptr, stripnr, height);
 			} else {
 				drawStripC64Mask(mask_ptr, stripnr, width, height);
 			}
@@ -2041,21 +2041,21 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 	} while (y < height);
 }
 
-void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height, bool isObject) {
+void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height) {
 //	printf("drawStripNES, pitch=%i, strip=%i, height=%i\n",dstPitch,stripnr,height);
 	top /= 8;
 	height /= 8;
 	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
 
-	if (isObject)
+	if (_objectMode)
 		x += _NESObj_x; // for objects, need to start at the left edge of the object, not the screen
 	if (x > 63) {
 		debug(0,"NES tried to render invalid strip %i",stripnr);
 		return;
 	}
 	for (int y = top; y < top + height; y++) {
-		int palette = ((isObject ? _NESAttributesObj : _NESAttributes)[((y << 2) & 0x30) | ((x >> 2) & 0xF)] >> (((y & 2) << 1) | (x & 2))) & 0x3;
-		int tile = (isObject ? _NESNametableObj : _NESNametable)[y][x];
+		int palette = ((_objectMode ? _NESAttributesObj : _NESAttributes)[((y << 2) & 0x30) | ((x >> 2) & 0xF)] >> (((y & 2) << 1) | (x & 2))) & 0x3;
+		int tile = (_objectMode ? _NESNametableObj : _NESNametable)[y][x];
 
 		for (int i = 0; i < 8; i++) {
 			byte c0 = _vm->_NESPatTable[1][tile * 16 + i];
@@ -2067,13 +2067,13 @@ void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height
 	}
 }
 
-void Gdi::drawStripNESMask(byte *dst, int stripnr, int height, bool isObject) const {
+void Gdi::drawStripNESMask(byte *dst, int stripnr, int height) const {
 	if (!_NEShasmask)
 		return;
 	height /= 8;
 	int x = stripnr + 2;
 
-	if (isObject)
+	if (_objectMode)
 		x += _NESObj_x; // for objects, need to start at the left edge of the object, not the screen
 	if (x > 63) {
 		debug(0,"NES tried to mask invalid strip %i",stripnr);
@@ -2081,7 +2081,7 @@ void Gdi::drawStripNESMask(byte *dst, int stripnr, int height, bool isObject) co
 	}
 	for (int y = 0; y < height; y++) {
 		// the ? 0xFF : 0x00 here might be backwards - '1' bits indicate that sprites can get hidden
-		byte c = (((isObject ? _NESMasktableObj : _NESMasktable)[y][x >> 3] >> (x & 7)) & 1) ? 0xFF : 0x00;
+		byte c = (((_objectMode ? _NESMasktableObj : _NESMasktable)[y][x >> 3] >> (x & 7)) & 1) ? 0xFF : 0x00;
 		for (int i = 0; i < 8; i++) {
 			*dst = c;
 			dst += _numStrips;
@@ -2093,20 +2093,20 @@ void Gdi::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int heigh
 	int charIdx;
 	height /= 8;
 	for (int y = 0; y < height; y++) {
-		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
+		_C64.colors[3] = (_C64.colorMap[y + stripnr * height] & 7);
 		// Check for room color change in V1 zak
 		if (_roomPalette[0] == 255) {
-			_C64Colors[2] = _roomPalette[2];
-			_C64Colors[1] = _roomPalette[1];
+			_C64.colors[2] = _roomPalette[2];
+			_C64.colors[1] = _roomPalette[1];
 		}
 
-		charIdx = _C64PicMap[y + stripnr * height] * 8;
+		charIdx = _C64.picMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64CharMap[charIdx + i];
-			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
-			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
-			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
-			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
+			byte c = _C64.charMap[charIdx + i];
+			dst[0] = dst[1] = _C64.colors[(c >> 6) & 3];
+			dst[2] = dst[3] = _C64.colors[(c >> 4) & 3];
+			dst[4] = dst[5] = _C64.colors[(c >> 2) & 3];
+			dst[6] = dst[7] = _C64.colors[(c >> 0) & 3];
 			dst += dstPitch;
 		}
 	}
@@ -2117,14 +2117,14 @@ void Gdi::drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, in
 	height /= 8;
 	width /= 8;
 	for (int y = 0; y < height; y++) {
-		_C64Colors[3] = (_C64ObjectMap[(y + height) * width + stripnr] & 7);
-		charIdx = _C64ObjectMap[y * width + stripnr] * 8;
+		_C64.colors[3] = (_C64.objectMap[(y + height) * width + stripnr] & 7);
+		charIdx = _C64.objectMap[y * width + stripnr] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64CharMap[charIdx + i];
-			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
-			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
-			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
-			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
+			byte c = _C64.charMap[charIdx + i];
+			dst[0] = dst[1] = _C64.colors[(c >> 6) & 3];
+			dst[2] = dst[3] = _C64.colors[(c >> 4) & 3];
+			dst[4] = dst[5] = _C64.colors[(c >> 2) & 3];
+			dst[6] = dst[7] = _C64.colors[(c >> 0) & 3];
 			dst += dstPitch;
 		}
 	}
@@ -2135,12 +2135,12 @@ void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) const 
 	height /= 8;
 	width /= 8;
 	for (int y = 0; y < height; y++) {
-		if (_C64ObjectMode)
-			maskIdx = _C64ObjectMap[(y + 2 * height) * width + stripnr] * 8;
+		if (_objectMode)
+			maskIdx = _C64.objectMap[(y + 2 * height) * width + stripnr] * 8;
 		else
-			maskIdx = _C64MaskMap[y + stripnr * height] * 8;
+			maskIdx = _C64.maskMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64MaskChar[maskIdx + i];
+			byte c = _C64.maskChar[maskIdx + i];
 
 			// V1/C64 masks are inverted compared to what ScummVM expects
 			*dst = c ^ 0xFF;

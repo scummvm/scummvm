@@ -2307,14 +2307,14 @@ void ScummEngine::initRoomSubBlocks() {
 		} else {
 			_IM00_offs = 0;
 			for (i = 0; i < 4; i++){
-				gdi._C64Colors[i] = roomptr[6 + i];
+				gdi._C64.colors[i] = roomptr[6 + i];
 			}
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64CharMap, 2048);
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64PicMap, roomptr[4] * roomptr[5]);
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64ColorMap, roomptr[4] * roomptr[5]);
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), gdi._C64MaskMap, roomptr[4] * roomptr[5]);
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, gdi._C64MaskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
-			gdi._C64ObjectMode = true;
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64.charMap, 2048);
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64.picMap, roomptr[4] * roomptr[5]);
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64.colorMap, roomptr[4] * roomptr[5]);
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), gdi._C64.maskMap, roomptr[4] * roomptr[5]);
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, gdi._C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
+			gdi._objectMode = true;
 		}
 	} else if (_features & GF_OLD_BUNDLE) {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);

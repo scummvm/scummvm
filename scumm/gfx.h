@@ -208,7 +208,6 @@ public:
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
-	byte _C64Colors[4];
 	
 	Gdi(ScummEngine *vm);
 
@@ -225,9 +224,15 @@ protected:
 
 	bool _zbufferDisabled;
 
-	byte _C64CharMap[2048], _C64ObjectMap[2048], _C64PicMap[4096], _C64ColorMap[4096];
-	byte _C64MaskMap[4096], _C64MaskChar[4096];
-	bool _C64ObjectMode;
+	/** Flag which is true when an object is being rendered, false otherwise. */
+	bool _objectMode;
+
+	/** Render settings which are specific to the C64 graphic decoders. */
+	struct {
+		byte colors[4];
+		byte charMap[2048], objectMap[2048], picMap[4096], colorMap[4096];
+		byte maskMap[4096], maskChar[4096];
+	} _C64;
 
 	byte _NESBaseTiles;
 	byte _NESNametable[16][64], _NESNametableObj[16][64];
@@ -242,7 +247,7 @@ protected:
 	void drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) const;
 	void drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height);
 	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
-	void drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height, bool isObject);
+	void drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height);
 
 	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
@@ -259,7 +264,7 @@ protected:
 
 	/* Mask decompressors */
 	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
-	void drawStripNESMask(byte *dst, int stripnr, int height, bool isObject) const;
+	void drawStripNESMask(byte *dst, int stripnr, int height) const;
 	void decompressMaskImgOr(byte *dst, const byte *src, int height) const;
 	void decompressMaskImg(byte *dst, const byte *src, int height) const;
 

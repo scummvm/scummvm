@@ -481,11 +481,11 @@ void ScummEngine::drawObject(int obj, int arg) {
 		byte flags = od.flags;
 
 		if (_version == 1) {
-			gdi._C64ObjectMode = true;
+			gdi._objectMode = true;
 			if (_features & GF_NES) {
 				gdi.decodeNESObject(ptr, xpos, ypos, width, height);
 			} else {
-				gdi.decodeC64Gfx(ptr, gdi._C64ObjectMap, width * (height / 8) * 3);
+				gdi.decodeC64Gfx(ptr, gdi._C64.objectMap, width * (height / 8) * 3);
 			}
 		}
 		// Sam & Max needs this to fix object-layering problems with
