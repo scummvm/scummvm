@@ -4994,19 +4994,17 @@ void SimonState::playMusic(uint music)
 	/* Simon 1 dos talkie music doesn't detect correct size of music data */
 	/* Simon 2 dos talkie music isn't supported */
 	/* Simon 2 dos music isn't supported */
-	if (_voice_type == FORMAT_WAV) {
+	if (_game & GAME_WIN) {	
 		midi.shutdown();
-		if (_game & GAME_TALKIE || _game & GAME_WIN) {
-			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-			midi.read_all_songs(_game_file);
-		}
+		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+		midi.read_all_songs(_game_file);
 	
 		midi.initialize();
 		midi.play();
 	} else if (!(_game & GAME_SIMON2)){
 		midi.shutdown();
 
-		if (_game & GAME_TALKIE || _game & GAME_WIN) {
+		if (_game & GAME_TALKIE) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs_old(_game_file);
 		} else {
