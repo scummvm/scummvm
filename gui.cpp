@@ -748,20 +748,20 @@ void Gui::handleCommand(int cmd)
 
 	switch (cmd) {
 	case 1:											/* up button */
-		if (_slotIndex == 0)
+		if (_slotIndex - 9 < 0)
 			return;
 		getSavegameNames(_slotIndex - 9);
 		draw(20, 28);
 		return;
 	case 2:											/* down button */
-		if (_slotIndex > 80)
+		if (_slotIndex + 9 > 80)
 			return;
 		getSavegameNames(_slotIndex + 9);
 		draw(20, 28);
 		return;
 	case 3:											/* save button */		
 		_cur_page = 2;
-		getSavegameNames(0);
+		getSavegameNames(1); /* Start at 1, since slot 0 is reserved for autosave */
 		draw(0, 100);
 		return;
 	case 4:											/* load button */
@@ -782,8 +782,8 @@ void Gui::handleCommand(int cmd)
 	case 8:
 		if (lastEdit == -1 || game_names[lastEdit][0] == 0)
 			return;
-		if (_cur_page == 2)
-			_slotIndex++;
+//		if (_cur_page == 2)
+//			_slotIndex++;
 
 		_s->_saveLoadSlot = lastEdit + _slotIndex;
 		_s->_saveLoadCompatible = false;
@@ -819,8 +819,8 @@ void Gui::getSavegameNames(int start)
 {
 	int i;
 	_slotIndex = start;
-	if (_cur_page == 2)
-		start++;
+//	if (_cur_page == 2)
+//		start++;
 
 	for (i = 0; i < 9; i++, start++) {
 		valid_games[i] = _s->getSavegameName(start, game_names[i]);
@@ -947,8 +947,13 @@ void Gui::init(Scumm *s)
 
 void Gui::loop()
 {
+	/* FIXME - _active is a bool, so what was that code meant to do ? */
+#if OLD_WEIRD_CODE
 	if (_active == 1) {
 		_active++;
+#else
+	if (_active) {
+#endif
 		draw(0, 200);								// was 100		
 		_s->pauseSounds(true);
 
