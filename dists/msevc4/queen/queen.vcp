@@ -55,15 +55,15 @@ CFG=queen - Win32 (WCE emulator) Debug
 # PROP CPU_ID "{32E52003-403E-442D-BE48-DE10F8C6131D}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
-# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
+# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE emulator) Debug"
 
@@ -81,15 +81,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{32E52003-403E-442D-BE48-DE10F8C6131D}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
-# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARMV4) Release"
 
@@ -107,15 +107,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{ECBEA43D-CD7B-4852-AD55-D4227B5D624B}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /YX /O2 /M$(CECrtMT) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /O2 /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARMV4) Debug"
 
@@ -133,15 +133,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{ECBEA43D-CD7B-4852-AD55-D4227B5D624B}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DISABLE_SWORD1" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DISABLE_SWORD1" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
 
@@ -161,7 +161,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -213,7 +213,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clmips.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -239,7 +239,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=shcl.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -373,13 +373,13 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
 	
 NODEP_CPP_BANKM=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -397,15 +397,15 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -421,7 +421,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -429,6 +428,7 @@ DEP_CPP_BANKM=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BANKM=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -445,15 +445,15 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -469,15 +469,15 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -493,15 +493,15 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BANKM=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -517,15 +517,15 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -623,7 +623,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -641,6 +640,7 @@ DEP_CPP_COMMA=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_COMMA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -659,7 +659,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -675,10 +674,11 @@ DEP_CPP_COMMA=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -695,7 +695,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -714,6 +713,7 @@ DEP_CPP_COMMA=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMMA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -731,7 +731,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -747,10 +746,11 @@ DEP_CPP_COMMA=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -767,7 +767,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -783,10 +782,11 @@ DEP_CPP_COMMA=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -803,7 +803,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -819,10 +818,11 @@ DEP_CPP_COMMA=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMMA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -839,7 +839,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -855,10 +854,11 @@ DEP_CPP_COMMA=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -932,7 +932,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -940,6 +939,7 @@ DEP_CPP_CREDI=\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_CREDI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -958,16 +958,16 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -984,7 +984,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -993,6 +992,7 @@ DEP_CPP_CREDI=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CREDI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -1010,16 +1010,16 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -1036,16 +1036,16 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -1062,16 +1062,16 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CREDI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -1088,16 +1088,16 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1197,7 +1197,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1215,6 +1214,7 @@ DEP_CPP_CUTAW=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_CUTAW=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -1233,7 +1233,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1249,10 +1248,11 @@ DEP_CPP_CUTAW=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -1269,7 +1269,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1288,6 +1287,7 @@ DEP_CPP_CUTAW=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CUTAW=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -1305,7 +1305,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1321,10 +1320,11 @@ DEP_CPP_CUTAW=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -1341,7 +1341,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1357,10 +1356,11 @@ DEP_CPP_CUTAW=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -1377,7 +1377,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1393,10 +1392,11 @@ DEP_CPP_CUTAW=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CUTAW=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -1413,7 +1413,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1429,10 +1428,11 @@ DEP_CPP_CUTAW=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1534,7 +1534,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\font.h"\
@@ -1552,6 +1551,7 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_DEBUG=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -1573,7 +1573,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\font.h"\
@@ -1589,10 +1588,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -1612,7 +1612,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\font.h"\
@@ -1631,6 +1630,7 @@ DEP_CPP_DEBUG=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -1651,7 +1651,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\font.h"\
@@ -1667,10 +1666,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -1690,7 +1690,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\font.h"\
@@ -1706,10 +1705,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -1729,7 +1729,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\font.h"\
@@ -1745,10 +1744,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -1768,7 +1768,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\font.h"\
@@ -1784,10 +1783,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1869,7 +1869,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1879,6 +1878,7 @@ DEP_CPP_DISPL=\
 	"..\..\..\queen\structs.h"\
 	
 NODEP_CPP_DISPL=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -1897,7 +1897,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1905,10 +1904,11 @@ DEP_CPP_DISPL=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -1925,7 +1925,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1936,6 +1935,7 @@ DEP_CPP_DISPL=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISPL=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -1953,7 +1953,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1961,10 +1960,11 @@ DEP_CPP_DISPL=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -1981,7 +1981,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1989,10 +1988,11 @@ DEP_CPP_DISPL=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -2009,7 +2009,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -2017,10 +2016,11 @@ DEP_CPP_DISPL=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISPL=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -2037,7 +2037,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -2045,10 +2044,11 @@ DEP_CPP_DISPL=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2136,7 +2136,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2150,6 +2149,7 @@ DEP_CPP_GRAPH=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_GRAPH=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -2168,7 +2168,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2180,10 +2179,11 @@ DEP_CPP_GRAPH=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -2200,7 +2200,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2215,6 +2214,7 @@ DEP_CPP_GRAPH=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRAPH=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -2232,7 +2232,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2244,10 +2243,11 @@ DEP_CPP_GRAPH=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -2264,7 +2264,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2276,10 +2275,11 @@ DEP_CPP_GRAPH=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -2296,7 +2296,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2308,10 +2307,11 @@ DEP_CPP_GRAPH=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRAPH=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -2328,7 +2328,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2340,10 +2339,11 @@ DEP_CPP_GRAPH=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2419,7 +2419,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2429,6 +2428,7 @@ DEP_CPP_GRID_=\
 	"..\..\..\queen\structs.h"\
 	
 NODEP_CPP_GRID_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -2447,7 +2447,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2455,10 +2454,11 @@ DEP_CPP_GRID_=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -2475,7 +2475,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2486,6 +2485,7 @@ DEP_CPP_GRID_=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -2503,7 +2503,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2511,10 +2510,11 @@ DEP_CPP_GRID_=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -2531,7 +2531,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2539,10 +2538,11 @@ DEP_CPP_GRID_=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -2559,7 +2559,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2567,10 +2566,11 @@ DEP_CPP_GRID_=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -2587,7 +2587,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2595,10 +2594,11 @@ DEP_CPP_GRID_=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2655,11 +2655,11 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
 NODEP_CPP_INPUT=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -2674,13 +2674,13 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -2693,12 +2693,12 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INPUT=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -2712,13 +2712,13 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -2731,13 +2731,13 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -2750,13 +2750,13 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INPUT=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -2769,13 +2769,13 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2834,6 +2834,7 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
@@ -2842,15 +2843,18 @@ DEP_CPP_JOURN=\
 	"..\..\..\queen\grid.h"\
 	"..\..\..\queen\journal.h"\
 	"..\..\..\queen\logic.h"\
+	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\queen\structs.h"\
+	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_JOURN=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2869,7 +2873,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2886,6 +2889,7 @@ DEP_CPP_JOURN=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_JOURN=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
@@ -2906,7 +2910,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2921,11 +2924,12 @@ DEP_CPP_JOURN=\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -2943,7 +2947,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2961,6 +2964,7 @@ DEP_CPP_JOURN=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_JOURN=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
@@ -2980,7 +2984,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2995,11 +2998,12 @@ DEP_CPP_JOURN=\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -3017,7 +3021,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3032,11 +3035,12 @@ DEP_CPP_JOURN=\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -3054,7 +3058,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3069,11 +3072,12 @@ DEP_CPP_JOURN=\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_JOURN=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -3091,7 +3095,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3106,11 +3109,12 @@ DEP_CPP_JOURN=\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3237,7 +3241,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3260,6 +3263,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_LOGIC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -3282,7 +3286,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3303,10 +3306,11 @@ DEP_CPP_LOGIC=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -3327,7 +3331,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3351,6 +3354,7 @@ DEP_CPP_LOGIC=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -3372,7 +3376,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3393,10 +3396,11 @@ DEP_CPP_LOGIC=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -3417,7 +3421,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3438,10 +3441,11 @@ DEP_CPP_LOGIC=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -3462,7 +3466,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3483,10 +3486,11 @@ DEP_CPP_LOGIC=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -3507,7 +3511,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3528,10 +3531,11 @@ DEP_CPP_LOGIC=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3586,8 +3590,10 @@ DEP_CPP_MUSIC=\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
+	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\config.h"\
@@ -3611,7 +3617,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3622,6 +3627,7 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSIC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
@@ -3642,7 +3648,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3651,11 +3656,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -3673,7 +3679,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3685,6 +3690,7 @@ DEP_CPP_MUSIC=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
@@ -3704,7 +3710,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3713,11 +3718,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -3735,7 +3741,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3744,11 +3749,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -3766,7 +3772,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3775,11 +3780,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -3797,7 +3803,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3806,11 +3811,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3868,12 +3874,12 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSICD=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -3888,14 +3894,14 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -3908,13 +3914,13 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSICD=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -3928,14 +3934,14 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -3948,14 +3954,14 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -3968,14 +3974,14 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSICD=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -3988,14 +3994,14 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4134,7 +4140,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4156,6 +4161,7 @@ DEP_CPP_QUEEN=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_QUEEN=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
@@ -4184,7 +4190,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4204,11 +4209,12 @@ DEP_CPP_QUEEN=\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -4234,7 +4240,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4257,6 +4262,7 @@ DEP_CPP_QUEEN=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUEEN=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
@@ -4284,7 +4290,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4304,11 +4309,12 @@ DEP_CPP_QUEEN=\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -4334,7 +4340,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4354,11 +4359,12 @@ DEP_CPP_QUEEN=\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -4384,7 +4390,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4404,11 +4409,12 @@ DEP_CPP_QUEEN=\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUEEN=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -4434,7 +4440,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4454,11 +4459,12 @@ DEP_CPP_QUEEN=\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4521,11 +4527,11 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESOU=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -4543,13 +4549,13 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -4565,12 +4571,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -4587,13 +4593,13 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -4609,13 +4615,13 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -4631,13 +4637,13 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -4653,13 +4659,13 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4720,11 +4726,11 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESTA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -4742,13 +4748,13 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -4764,12 +4770,12 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESTA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -4786,13 +4792,13 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -4808,13 +4814,13 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -4830,13 +4836,13 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESTA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -4852,13 +4858,13 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4903,6 +4909,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
@@ -4910,11 +4917,13 @@ DEP_CPP_SOUND=\
 	"..\..\..\queen\queen.h"\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\sound.h"\
+	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4933,7 +4942,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -4944,6 +4952,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
@@ -4964,7 +4973,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -4973,11 +4981,12 @@ DEP_CPP_SOUND=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -4995,7 +5004,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5007,6 +5015,7 @@ DEP_CPP_SOUND=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
@@ -5026,7 +5035,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5035,11 +5043,12 @@ DEP_CPP_SOUND=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -5057,7 +5066,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5066,11 +5074,12 @@ DEP_CPP_SOUND=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -5088,7 +5097,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5097,11 +5105,12 @@ DEP_CPP_SOUND=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -5119,7 +5128,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5128,11 +5136,12 @@ DEP_CPP_SOUND=\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5189,11 +5198,11 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
 NODEP_CPP_STATE=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -5208,13 +5217,13 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -5227,12 +5236,12 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STATE=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -5246,13 +5255,13 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -5265,13 +5274,13 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -5284,13 +5293,13 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STATE=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -5303,13 +5312,13 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5415,7 +5424,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5433,6 +5441,7 @@ DEP_CPP_TALK_=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_TALK_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -5451,7 +5460,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5467,10 +5475,11 @@ DEP_CPP_TALK_=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -5487,7 +5496,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5506,6 +5514,7 @@ DEP_CPP_TALK_=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TALK_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -5523,7 +5532,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5539,10 +5547,11 @@ DEP_CPP_TALK_=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -5559,7 +5568,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5575,10 +5583,11 @@ DEP_CPP_TALK_=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -5595,7 +5604,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5611,10 +5619,11 @@ DEP_CPP_TALK_=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TALK_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -5631,7 +5640,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5647,10 +5655,11 @@ DEP_CPP_TALK_=\
 	"..\..\..\queen\talk.h"\
 	"..\..\..\queen\walk.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5735,7 +5744,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5748,6 +5756,7 @@ DEP_CPP_WALK_=\
 	"..\..\..\queen\walk.h"\
 	
 NODEP_CPP_WALK_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -5766,7 +5775,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5777,10 +5785,11 @@ DEP_CPP_WALK_=\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\queen\walk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
@@ -5797,7 +5806,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5811,6 +5819,7 @@ DEP_CPP_WALK_=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALK_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	
 
@@ -5828,7 +5837,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5839,10 +5847,11 @@ DEP_CPP_WALK_=\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\queen\walk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
@@ -5859,7 +5868,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5870,10 +5878,11 @@ DEP_CPP_WALK_=\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\queen\walk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
@@ -5890,7 +5899,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5901,10 +5909,11 @@ DEP_CPP_WALK_=\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\queen\walk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALK_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
@@ -5921,7 +5930,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5932,10 +5940,11 @@ DEP_CPP_WALK_=\
 	"..\..\..\queen\resource.h"\
 	"..\..\..\queen\structs.h"\
 	"..\..\..\queen\walk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
