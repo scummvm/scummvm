@@ -977,8 +977,8 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 		}
 	}
 
-	if (l == num)
-		l = 0;
+	if (_currentSampleBundleMusic == num)
+		_currentSampleBundleMusic = 0;
 
 	size = OUTPUT_SIZE;
 	ptr = _musicBundleBufFinal;
