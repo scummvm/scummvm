@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-03-07
+Last updated:    2003-03-17
 Release version: 0.3.2cvs
 ------------------------------------------------------------------------
 
@@ -81,14 +81,59 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
         Windows         - SDL
         Windows CE      - SDL           (iPaq and other handheld devices)
-        Unix            - SDL/X11       (includes iPaq devices running Linux)
+        Linux           - X11 & OSS audio (includes iPaqs running Linux)
         Mac OS X        - SDL
         AmigaOS         - SDL/AGA
-        MorphOS         - SDL
+        MorphOS         - custom backend
         BeOS            - SDL
         Acorn (RiscOS)  - ???
-        Dreamcast       - ???
-        UNIX            - SDL           (SDL may work on Solaris, IRIX, *BSD)
+        Dreamcast       - custom backend 
+	GP32		- custom backend
+        UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
+
+
+Known Problems in ScummVM 0.4.0:
+--------------------------------
+This release has the following known problems. There is no need to report them,
+although patches to fix them are welcome. If you discover a bug that is not
+listed here, nor in the compatibility table on the web site, please see
+the section on Reporting Bugs.
+
+       Simon The Sorcerer:
+                - No inventory scrolling arrows shown in simon1dos and simon1talkie,
+                  can still move around inventory though. 
+                - simon1dos freezes briefly after Swampling leaves his house and
+                  when talking to demons in Sordid's Tower
+                - Some minor graphical glitches
+
+       Simon The Sorcerer II:
+                - No music in simon2dos and simon2talkie
+                - Some music is missing or wrong in simon2win
+                - Some graphical glitches
+
+       Indy 3 (The Last Crusade):
+                - Music and Sound may not play
+                - In some rooms Indy may be able to walk to odd places
+                - There are some minor graphical glitches
+
+       Indy 4 (Fate Of Atlantis):
+                - Keyboard fighting does not work. ScummVM now defaults to
+                  using mouse fighting.
+
+       Sam and Max:
+                - Highway subgame does not behave correctly.
+
+       Zak McKracken Fm Towns:
+                - The Fm Towns 256 color version of Zak McKracken is rare,
+                  And as the ScummVM team does not encourage piracy in any
+                  way, we do not know where to buy or download a copy of this
+                  game. Petition LucasArts to re-release it :)
+
+       All CD games:
+               - If you are experiencing random crashes, and your game
+                 plays music from CD, you have encountered a Windows bug.
+                 Try copying the data files from CD to your hard disk, and
+                 running them from there.
 
 
 Simon the Sorcerer 1 and 2 games note
@@ -106,10 +151,10 @@ If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
 and the DOS Talkie version in the DOS directory of the CD.
 
-The filenames of saved games for Simon the Sorcerer 1 & 2 were changed too:
+The filenames of saved games for Simon the Sorcerer 1 & 2 were changed in 0.3.0 to:
 Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
 Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
-So if you have any old save games you will need to change their filenames to use them
+So if you have any pre 0.3.0 save games you will need to change their filenames to use them
 
 
 Reporting Bugs:
@@ -165,9 +210,6 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Enter the path to the SDL include files in Tools|Options|Directories
         * Now it should compile successfully.
 
-    BeOS:
-        * Open the 'scummvm.proj' file in BeIDE. Compile as normal.
-
     PocketPC - Windows CE:
         * Download the SDLAudio library:
           http://arisme.free.fr/PocketScumm/sources/SDLAudio-1.2.3-src.zip
@@ -201,8 +243,8 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 Running:
 --------
 Before you run the engine, you need to put the game's datafiles in a
-directory. The filenames must be in lowercase on *nix systems
-(monkey2.000 and monkey2.001). If you use a game with speech, the file
+directory. The filenames must not be in mixed case on *nix systems
+(ie monkey2.000 or MONKEY2.000). If you use a game with speech, the file
 monster.sou must reside in the same directory as the datafiles.
 
 For example, to run a copy of Monkey Island installed in C:\Games\LucasArts
@@ -243,24 +285,26 @@ Command Line Options:
         [GAME]     - Short name of game to load. For example, 'monkey' for Monkey Island.
         
         -p<path>   - Path to where the game is installed. Default is Cwd.
+        -x[<num>]  - Save game slot to load (default: autosave)
+        -f         - Full-screen mode.
+        -g<mode>   - Select graphics scaler. See below.
+        -e<mode>   - Select sound engine. See below.
+        -a         - Enable amiga pal conversion, for playing Amiga versions
         -q<lang>   - Select language. See below.
-        -b<num>    - Start in room <num>.
         -c<num>    - Drive to play cd audio from.  E.g., 0 is first drive.
+        -m<num>    - Set the music volume, 0-255.  Default is '192'
         -o<num>    - Set the master volume, 0-255. Default is '192'
         -s<num>    - Set the sfx volume, 0-255.    Default is '192'
-        -m<num>    - Set the music volume, 0-255.  Default is '192'
         -t<num>    - Set music tempo. Adlib default: 0x1D9000, Midi: 0x4A0000
-        -e<mode>   - Select sound engine. See below.
-        -g<mode>   - Select graphics scaler. See below.
-        -f         - Full-screen mode.
         -n         - Disable subtitles. Use with games that have voice.
         -y         - Set talk speed ('yak option'). Default is '60'
-        -a         - Enable amiga pal conversion, for playing Amiga versions
-        -d[<num>]  - Set debug verbosity to <num>
-        -w[<file>] - Write configuration file
         -l<file>   - Load alternate configuration file
-        -x[<num>]  - Save game slot to load (default: autosave)
+        -w[<file>] - Write configuration file
+	-v         - Show version information and exit
         -z         - Display list of games
+        -b<num>    - Start in room <num>.
+        -d[<num>]  - Set debug verbosity to <num>
+	-u         - Dump scripts if a directory called 'dumps' exists in current directory
 
 
 Hot Keys:
@@ -272,7 +316,7 @@ simon games.
         Ctrl-z OR Alt-x        - quit
         Keyboard Arrow Keys    - simulate mouse movement
         Ctrl-f                 - runs in fast mode.
-        Ctrl-Alt 1-8           - Switch between graphics filters
+        Ctrl-Alt 1-9           - Switch between graphics filters
         Ctrl-Alt 1             - Switch beetwen bilinear and non-linear filtering [OpenGL backend]
         Ctrl-Alt 2             - Don't fit the game in the whole screen (black borders) [OpenGL backend]
         Ctrl-Alt 3             - Fit the game in the whole screen (no black borders) [OpenGL backend]
@@ -282,6 +326,7 @@ simon games.
         Ctrl 0-9 and Alt 0-9   - load and save game state
         Ctrl-g                 - runs in really REALLY fast mode.
         Ctrl-d                 - starts the debugger.
+	Tilde (~)              - Show/hide the debugging console
         Ctrl-s                 - shows memory consumption.
         [ and ]                - music volume, down/up
         - and +                - text speed, slower/faster
@@ -322,7 +367,8 @@ Graphics filters:
 -----------------
 ScummVM offers several anti-aliasing filters to attempt to improve visual
 quality. These are the same filters used in many other emulators, such as
-MAME.
+MAME. 
+Note: the resolutions listed assume the game was originally 320x200
 
 They are:
         normal     - No filtering, original 320x200 resolution. Fastest.
@@ -333,6 +379,7 @@ They are:
         supereagle - Less blurry than 2xsai, but slower. Also 640x400
         advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
         tv2x       - 640x400 scaling. Horizontal scanlines.
+	dotmatrix  - 640x400 scaling. Dot matrix effect.
 
 To select a graphics filter, pass its name via the '-g' option to scummvm, for example:
 
@@ -440,7 +487,7 @@ set the environment variable "SCUMMVM_PORT" to your sequencer port - e.g. 65:0
 
 Here is a little howto on how to use the ALSA sequencer with your soundcard.
 In all cases, to have a list of all the sequencer ports you have, try the
-command "aconnect -o -l". On my system it gives me the output:
+command "aconnect -o -l". This should give output similar to:
 client 64: 'External MIDI 0' [type=kernel]
     0 'MIDI 0-0        '
 client 65: 'Emu10k1 WaveTable' [type=kernel]
@@ -452,17 +499,17 @@ client 128: 'Client-128' [type=user]
     0 'TiMidity port 0 '
     1 'TiMidity port 1 '
 
-It means the external MIDI output of my sound card is located on the
-port 64:0, that I've got four WaveTable MIDI outputs in 65:0, 65:1, 65:2
-and 65:3, and that I've got two TiMidity ports, located at 128:0 and 128:1.
+This means the external MIDI output of the sound card is located on the
+port 64:0, four WaveTable MIDI outputs in 65:0, 65:1, 65:2
+and 65:3, and two TiMidity ports, located at 128:0 and 128:1.
 
 If you have a FM-chip on your card, like the SB16, then you have to load
 the soundfonts using the sbiload software. Example:
   sbiload -p 65:0 /etc/std.o3 /etc/drums.o3
 
 If you have a WaveTable capable sound card, you have to load a sbk or sf2
-soundfont using the sfxload software. If you manage to do so, please mail
-me since I managed to get it working only once, and never again.
+soundfont using the sfxload software. Example:
+  sfxload /path/to/8mbgmsfx.sf2
 
 If you don't have a MIDI capable soundcard, or if you want to take advantage of
 your TiMidity samples, then you can ask TiMidity to become an ALSA sequencer
@@ -594,7 +641,7 @@ Credits:
  Developers:
         Torbjorn Andersson - Many different contributions
         Nicolas Bacca      - PocketPC/WinCE port
-        Ralph Brorsen      - Helped write the new GUI
+        Ralph Brorsen      - Helped write the new GUI (retired)
         Jamieson Christian - Lots of work on iMuse/MIDI
         Marcus Comstedt    - Dreamcast port
         Jonathan Gray      - Expert weaver in the Loom
@@ -602,7 +649,7 @@ Credits:
         Travis Howell      - Daily Win32 builds, Simon The Sorcerer work
         Felix Jakschitsch  - His hard work on Zak256
         Oliver Kiehl       - Simon The Sorcerer work
-        Pawel Kolodziejski - Added missing Dig SMUSH codecs, iMuse work
+        Pawel Kolodziejski - Added missing Dig/COMI SMUSH codecs, iMuse work
         Mutwin Kraus       - MacOS Carbon port (retired)
         Peter Moraliyski   - GP32 port
         Nicolas Noble      - Config file and ALSA support
@@ -614,10 +661,10 @@ Credits:
         Kovacs Endre Janos - Several fixes for Simon1
         Jeroen Janssen     - Numerous readability and bugfix patches
         Claudio Matsuoka   - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
-        Gregory Montoir    - AdvanceMAME Scale-2X and TV 2x implementation
+        Gregory Montoir    - AdvanceMAME Scale-2X, TV 2x and Dot Matrix implementation
         Mikesch Nepomuk    - MI1 VGA Floppy patches.
         Edward Rudd        - Fixes for playing MP3 versions of MI1/Loom Audio
-        Daniel Schepler    - Final MI1 CD music support
+        Daniel Schepler    - Final MI1 CD music support/ Initial Ogg Vorbis support
         Andre Souza        - SDL-based OpenGL renderer
         Tim 'realmz'       - Initial MI1 CD music support
 
