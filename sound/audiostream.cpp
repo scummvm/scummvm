@@ -259,7 +259,7 @@ void MP3InputStream::refill() {
 
 		} else if (MAD_RECOVERABLE(_stream.error)) {
 			// FIXME: should we do anything here?
-			warning("MP3InputStream: Recoverable error...");
+			debug(1, "MP3InputStream: Recoverable error...");
 		} else {
 			error("MP3InputStream: Unrecoverable error");
 		}
@@ -279,14 +279,7 @@ bool MP3InputStream::eof() const {
 	// Time over -> input steam ends
 	if (mad_timer_compare(_duration, mad_timer_zero) <= 0)
 		return true;
-	// Data left in the PCM buffer -> we are not yet done! 
-	if (_posInFrame < _synth.pcm.length)
-		return false;
-	// EOF of the input file, we are done
-	if (_size < 0)
-		return true;
-	// Otherwise, we are still good to go
-	return false;
+	return (_posInFrame >= _synth.pcm.length);
 }
 
 static inline int scale_sample(mad_fixed_t sample) {
@@ -304,13 +297,9 @@ static inline int scale_sample(mad_fixed_t sample) {
 }
 
 int16 MP3InputStream::read() {
-	if (_posInFrame >= _synth.pcm.length) {
-		refill();
-		if (_size < 0)	// EOF
-			return 0;
-	}
+	if (_size < 0 || _posInFrame >= _synth.pcm.length)	// EOF
+		return 0;
 
-	
 	int16 sample;
 	if (_isStereo) {
 		sample = (int16)scale_sample(_synth.pcm.samples[_curChannel][_posInFrame]);
@@ -324,7 +313,11 @@ int16 MP3InputStream::read() {
 		sample = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame]);
 		_posInFrame++;
 	}
-	
+
+	if (_posInFrame >= _synth.pcm.length) {
+		refill();
+	}
+
 	return sample;
 }
 
