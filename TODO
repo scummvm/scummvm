@@ -1,6 +1,9 @@
 Residual TODO list (in rough order of priority):
 ------------------------------------------------
  * Move SMUSH drawing to main thread (will fix crashes/blankscreens)
+ * This assert frequently triggers when escaping SMUSH cutscenes. Why?
+     residual: timer.cpp:91: int Timer::handler(int): Assertion
+               `_timerSlots[l].procedure && _timerSlots[l].interval > 0' failed.
  * Figure out why in-memory decompression of SMUSH movies doesn't work
    (See #define in smush.h)
  * Add LAF font support to replace existing hack 
