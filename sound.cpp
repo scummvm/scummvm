@@ -737,9 +737,7 @@ void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	
 	// Calc delay
 	if (!delay) {
-		struct stat file_stat;
-		fstat(fileno(_mp3_tracks[index]),&file_stat);		
-		mad_timer_set(&duration, 0,file_stat.st_size, (_mad_header[index].bitrate/8));
+		mad_timer_set(&duration, 0, _mp3_size[index], (_mad_header[index].bitrate/8));
 	} else {
 		mad_timer_set(&duration, 0, delay, 75);
 	}	
