@@ -198,13 +198,16 @@ int Actor::remapDirection(int dir)
 		flipX = (walkdata.XYFactor > 0);
 		flipY = (walkdata.YXFactor > 0);
 
+		// FIXME - this special cases for the class might be necesary for other
+		// games besides Loom CD!
+
 		// Check for X-Flip
-		if ((flags & kBoxXFlip) || isInClass(30)) {
+		if ((flags & kBoxXFlip) || isInClass(_vm->_gameId == GID_LOOM256 ? 19 : 30)) {
 			dir = 360 - dir;
 			flipX = !flipX;
 		}
 		// Check for Y-Flip
-		if ((flags & kBoxYFlip) || isInClass(29)) {
+		if ((flags & kBoxYFlip) || isInClass(_vm->_gameId == GID_LOOM256 ? 18 : 29)) {
 			dir = 180 - dir;
 			flipY = !flipY;
 		}
