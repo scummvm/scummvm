@@ -42,7 +42,6 @@
 #ifdef _WIN32_WCE
 #include "gapi_keys.h"
 extern bool _get_key_mapping;
-extern void force_keyboard(bool);
 extern void save_key_mapping();
 extern void load_key_mapping();
 #endif
@@ -325,9 +324,9 @@ MainMenuDialog::~MainMenuDialog() {
 }
 
 void MainMenuDialog::open() {
-#ifdef _WIN32_WCE
-	force_keyboard(true);
-#endif
+	OSystem::Property prop;
+	prop.show_keyboard = true;
+	g_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 
 	ScummDialog::open();
 }
@@ -364,11 +363,12 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void MainMenuDialog::close() {
+	OSystem::Property prop;
+
 	ScummDialog::close();
 
-#ifdef _WIN32_WCE
-	force_keyboard(false);
-#endif
+	prop.show_keyboard = false;
+	g_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 }
 
 void MainMenuDialog::save() {

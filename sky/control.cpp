@@ -35,10 +35,6 @@
 #include "sky/struc.h"
 #include "sky/text.h"
 
-#ifdef _WIN32_WCE
-extern void force_keyboard(bool);
-#endif
-
 
 namespace Sky {
 
@@ -807,11 +803,11 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	uint16 cnt;
 	uint8 lookListLen;
 	if (allowSave) {
+		OSystem::Property prop;	
 		lookList = _savePanLookList;
 		lookListLen = 6;
-#ifdef _WIN32_WCE
-		force_keyboard(true);
-#endif
+		prop.show_keyboard = true;
+		_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 	} else {
 		lookList = _restorePanLookList;
 		if (autoSaveExists())
@@ -918,11 +914,12 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 
 	free(saveGameTexts);
 
-#ifdef _WIN32_WCE
-	if (allowSave)
-		force_keyboard(false);
-#endif
-	
+	if (allowSave) {
+		OSystem::Property prop;
+		prop.show_keyboard = false;
+		_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+	}
+		
 	return clickRes;
 }
 

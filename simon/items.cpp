@@ -26,12 +26,6 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
-#ifdef _WIN32_WCE
-
-extern void force_keyboard(bool);
-
-#endif
-
 namespace Simon {
 
 int SimonEngine::runScript() {
@@ -737,28 +731,22 @@ int SimonEngine::runScript() {
 			break;
 
 		case 132:{									/* save game */
-#ifdef _WIN32_WCE
-				force_keyboard(true);
-#endif
-
+				OSystem::Property prop;
+				prop.show_keyboard = true;
+				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 				o_save_game();
-
-#ifdef _WIN32_WCE
-				force_keyboard(false);
-#endif
+				prop.show_keyboard = false;
+				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 			}
 			break;
 
 		case 133:{									/* load game */
-#ifdef _WIN32_WCE
-				force_keyboard(true);
-#endif
-
+				OSystem::Property prop;
+				prop.show_keyboard = true;
+				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 				o_load_game();
-
-#ifdef _WIN32_WCE
-				force_keyboard(false);
-#endif
+				prop.show_keyboard = false;
+				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 			}
 			break;
 
@@ -769,15 +757,12 @@ int SimonEngine::runScript() {
 			break;
 
 		case 135:{									/* quit if user presses y */
-#ifdef _WIN32_WCE
-				force_keyboard(true);
-#endif
-
+				OSystem::Property prop;
+				prop.show_keyboard = true;
+				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 				o_quit_if_user_presses_y();
-
-#ifdef _WIN32_WCE
-				force_keyboard(false);
-#endif
+				prop.show_keyboard = false;
+				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 			}
 			break;
 
