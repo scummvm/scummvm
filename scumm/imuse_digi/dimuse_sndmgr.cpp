@@ -578,10 +578,14 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 				oggMode = true;
 			}
 			if (!soundHandle->compressedStream) {
+#ifdef USE_VORBIS
 				if (oggMode)
 					soundHandle->compressedStream = makeVorbisStream(cmpFile, len);
 				else
+#endif
+#ifdef USE_MAD
 					soundHandle->compressedStream = makeMP3Stream(cmpFile, len);
+#endif
 				assert(soundHandle->compressedStream);
 				assert(soundHandle->compressedStream->getRate() == 22050);
 				assert(soundHandle->compressedStream->isStereo());
