@@ -207,8 +207,6 @@ void SknApplySkin() {
 	SknCloseSkin(skinDBP);
 	SknScreenUnlock();
 	SknUpdateList();
-	
-	gVars->skinSet = true;	// for winDisplayChangedEvent redraw
 }
 
 void SknGetObjectBounds(DmOpenRef skinDBP, DmResID resID, RectangleType *rP) {
