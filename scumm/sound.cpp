@@ -162,10 +162,9 @@ void Sound::playSound(int soundID, int offset) {
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	bool music = false;
 	
-	debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
-		_vm->getResourceRoomNr(rtSound, soundID));
-
 	if ((_vm->_heversion >= 70) && soundID >= 4000) {
+		debugC(DEBUG_SOUND, "playSound #%d", soundID);
+
 		int music_offs, total_size;
 		char buf[32];
 		File musicFile;
@@ -212,8 +211,12 @@ void Sound::playSound(int soundID, int offset) {
 			_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, 11025, flags, soundID);
 			return;
 		}
-	} else 
+	} else {
+		debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
+			_vm->getResourceRoomNr(rtSound, soundID));
+
 		ptr = _vm->getResourceAddress(rtSound, soundID);
+	}
 
 	if (!ptr) {
 		return;
