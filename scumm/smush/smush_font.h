@@ -25,26 +25,18 @@
 #include "common/scummsys.h"
 
 class SmushFont {
-private:
-
+protected:
 	int _nbChars;
 	int16 _color;
 	bool _new_colors;
 	bool _original;
-	byte *_dataSrc;
 	
 	struct {
 		int width;
 		int height;
-		byte *chr;
+		byte *src;
 	} _chars[256];
 
-public:
-
-	SmushFont(bool use_original_colors, bool new_colors);
-	~SmushFont();
-
-protected:
 
 	int getCharWidth(byte c);
 	int getStringWidth(const char *str);
@@ -53,9 +45,11 @@ protected:
 	int draw2byte(byte *buffer, int dst_width, int x, int y, int idx);
 	int drawChar(byte *buffer, int dst_width, int x, int y, byte chr);
 	void drawSubstring(const char *str, byte *buffer, int dst_width, int x, int y);
-	void decodeCodec(byte *dst, const byte *src, int length);
+	void decodeCodec44(byte *dst, const byte *src, int length);
 
 public:
+	SmushFont(bool use_original_colors, bool new_colors);
+	~SmushFont();
 
 	bool loadFont(const char *filename, const char *directory);
 	void setColor(byte c) { _color = c; }

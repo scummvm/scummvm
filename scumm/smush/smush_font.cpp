@@ -33,20 +33,18 @@ SmushFont::SmushFont(bool use_original_colors, bool new_colors) :
 	_new_colors(new_colors),
 	_original(use_original_colors) {
 	for(int i = 0; i < 256; i++)
-		_chars[i].chr = NULL;
-
-	_dataSrc = NULL;
+		_chars[i].src = NULL;
 }
 
 SmushFont::~SmushFont() {
 	for(int i = 0; i < _nbChars; i++) {
-		if(_chars[i].chr)
-			delete []_chars[i].chr;
+		if(_chars[i].src)
+			delete []_chars[i].src;
 	}
 }
 
 bool SmushFont::loadFont(const char *filename, const char *directory) {
-	debug(2, "SmushFont::loadFont() called");
+	debug(8, "SmushFont::loadFont() called");
 
 	File file;
 	file.open(filename, directory);
@@ -57,55 +55,48 @@ bool SmushFont::loadFont(const char *filename, const char *directory) {
 
 	uint32 tag = file.readUint32BE();
 	if (tag != 'ANIM') {
-		debug(2, "SmushFont::loadFont() there is no ANIM chunk in font header");
+		debug(8, "SmushFont::loadFont() there is no ANIM chunk in font header");
 		return false;
-	}
-
-	if (_dataSrc != NULL) {
-		free(_dataSrc);
-		_dataSrc = NULL;
 	}
 
 	uint32 length = file.readUint32BE();
-	_dataSrc = (byte *)malloc(length);
-	file.read(_dataSrc, length);
+	byte *dataSrc = (byte *)malloc(length);
+	file.read(dataSrc, length);
 	file.close();
 
-	if (READ_BE_UINT32(_dataSrc) != 'AHDR') {
-		debug(2, "SmushFont::loadFont() there is no AHDR chunk in font header");
-		free(_dataSrc);
-		_dataSrc = NULL;
+	if (READ_BE_UINT32(dataSrc) != 'AHDR') {
+		debug(8, "SmushFont::loadFont() there is no AHDR chunk in font header");
+		free(dataSrc);
 		return false;
 	}
 	
-	_nbChars = READ_LE_UINT16(_dataSrc + 10);
-	int offset = READ_BE_UINT32(_dataSrc + 4) + 8;
+	_nbChars = READ_LE_UINT16(dataSrc + 10);
+	uint32 offset = READ_BE_UINT32(dataSrc + 4) + 8;
 	for (int l = 0; l < _nbChars; l++) {
-		if (READ_BE_UINT32(_dataSrc + offset) == 'FRME') {
+		if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
 			offset += 8;
-			if (READ_BE_UINT32(_dataSrc + offset) == 'FOBJ') {
-				_chars[l].width = READ_LE_UINT16(_dataSrc + offset + 14);
-				_chars[l].height = READ_LE_UINT16(_dataSrc + offset + 16);
-				_chars[l].chr = new byte[_chars[l].width * _chars[l].height + 1000];
-				decodeCodec(_chars[l].chr, _dataSrc + offset + 22, READ_BE_UINT32(_dataSrc + offset + 4) - 14);
-				offset += READ_BE_UINT32(_dataSrc + offset + 4) + 8;
+			if (READ_BE_UINT32(dataSrc + offset) == 'FOBJ') {
+				_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
+				_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
+				_chars[l].src = new byte[_chars[l].width * _chars[l].height + 1000];
+				decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
+				offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 			} else {
-				debug(2, "SmushFont::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, directory, l, offset);
+				debug(8, "SmushFont::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, directory, l, offset);
 				break;
 			}
 		} else {
-			debug(2, "SmushFont::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, directory, l, offset);
+			debug(8, "SmushFont::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, directory, l, offset);
 			break;
 		}
 	}
 
-	free(_dataSrc);
-	_dataSrc = NULL;
+	free(dataSrc);
 	return true;
 }
 
-int SmushFont::getCharWidth(byte v) {
-	if(v >= 0x80 && g_scumm->_CJKMode) {
+int SmushFont::getCharWidth(byte c) {
+	if(c >= 0x80 && g_scumm->_CJKMode) {
 		if(g_scumm->_gameId == GID_CMI)
 			return 8;
 		if(g_scumm->_gameId == GID_DIG)
@@ -113,14 +104,14 @@ int SmushFont::getCharWidth(byte v) {
 		return 0;
 	}
 
-	if(v >= _nbChars)
-		error("invalid character in SmushFont::charWidth : %d (%d)", v, _nbChars);
+	if(c >= _nbChars)
+		error("invalid character in SmushFont::charWidth : %d (%d)", c, _nbChars);
 
-	return _chars[v].width;
+	return _chars[c].width;
 }
 
-int SmushFont::getCharHeight(byte v) {
-	if(v >= 0x80 && g_scumm->_CJKMode) {
+int SmushFont::getCharHeight(byte c) {
+	if(c >= 0x80 && g_scumm->_CJKMode) {
 		if(g_scumm->_gameId == GID_CMI)
 			return 16;
 		if(g_scumm->_gameId == GID_DIG)
@@ -128,20 +119,20 @@ int SmushFont::getCharHeight(byte v) {
 		return 0;
 	}
 
-	if(v >= _nbChars)
-		error("invalid character in SmushFont::charHeight : %d (%d)", v, _nbChars);
+	if(c >= _nbChars)
+		error("invalid character in SmushFont::charHeight : %d (%d)", c, _nbChars);
 
-	return _chars[v].height;
+	return _chars[c].height;
 }
 
 int SmushFont::getStringWidth(const char *str) {
-	int ret = 0;
+	int width = 0;
 
 	while(*str) {
-		ret += getCharWidth(*str++);
+		width += getCharWidth(*str++);
 	}
 
-	return ret;
+	return width;
 }
 
 int SmushFont::getStringHeight(const char *str) {
@@ -155,9 +146,9 @@ int SmushFont::getStringHeight(const char *str) {
 	return ret;
 }
 
-void SmushFont::decodeCodec(byte *dst, const byte *src, int length) {
-	int size_line, num;
+void SmushFont::decodeCodec44(byte *dst, const byte *src, int length) {
 	byte val;
+	uint16 size_line, num;
 
 	do {
 		size_line = READ_LE_UINT16(src);
@@ -189,7 +180,7 @@ void SmushFont::decodeCodec(byte *dst, const byte *src, int length) {
 int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 	int w = _chars[chr].width;
 	int h = _chars[chr].height;
-	byte *src = _chars[chr].chr;
+	const byte *src = _chars[chr].src;
 	byte *dst = buffer + dst_width * y + x;
 
 	if(_original) {

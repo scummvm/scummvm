@@ -870,10 +870,7 @@ void CharsetRendererNut::printChar(int chr) {
 		width = 16;
 
 	_hasMask = true;
-	if(chr >= 256 && _vm->_CJKMode)
-		_current->draw2byte(chr, _left, _top, _color, !_ignoreCharsetMask);
-	else
-		_current->drawChar((char)chr, _left, _top, _color, !_ignoreCharsetMask);
+	_current->drawShadowChar(chr, _left, _top, _color, !_ignoreCharsetMask);
 	_vm->updateDirtyRect(0, _left, _left + width, _top, _top + height, 0);
 
 	_left += width;

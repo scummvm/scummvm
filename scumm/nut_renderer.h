@@ -26,27 +26,33 @@
 class Scumm;
 
 class NutRenderer {
-private:
+protected:
 	Scumm *_vm;
-	int32 _offsets[256];
-	byte _tmpCodecBuffer[2000];
-	byte *_dataSrc;
 	bool _initialized;
 	bool _loaded;
+	int _nbChars;
+	struct {
+		int width;
+		int height;
+		byte *src;
+	} _chars[256];
 
-	void decodeCodec44(byte *dst, byte *src, uint32 length);
+	void decodeCodec44(byte *dst, const byte *src, uint32 length);
+
+	void draw2byte(int c, int x, int y, byte color, bool useMask);
+	void drawChar(byte c, int x, int y, byte color, bool useMask);
 
 public:
 	NutRenderer(Scumm *vm);
 	~NutRenderer();
 
 	bool loadFont(const char *filename, const char *dir);
-	void draw2byte(int c, int32 x, int32 y, byte color, bool useMask);
-	void drawChar(byte c, int32 x, int32 y, byte color, bool useMask);
-//	void drawString(const char *string, int32 x, int32 y, byte color, int32 mode);
-	int32 getCharWidth(byte c);
-	int32 getCharHeight(byte c);
-	int32 getStringWidth(const byte *string);
+
+	void drawShadowChar(int c, int x, int y, byte color, bool useMask);
+
+	int getCharWidth(byte c);
+	int getCharHeight(byte c);
+	int getStringWidth(const byte *string);
 };
 
 

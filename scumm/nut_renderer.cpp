@@ -27,17 +27,20 @@ NutRenderer::NutRenderer(Scumm *vm) {
 	_vm = vm;
 	_initialized = false;
 	_loaded = false;
-	_dataSrc = NULL;
+	_nbChars = 0;
+	
+	for(int i = 0; i < 256; i++)
+		_chars[i].src = NULL;
 }
 
 NutRenderer::~NutRenderer() {
-	if (_dataSrc != NULL) {
-		free(_dataSrc);
-		_dataSrc = NULL;
+	for(int i = 0; i < _nbChars; i++) {
+		if(_chars[i].src)
+			delete []_chars[i].src;
 	}
 }
 
-void NutRenderer::decodeCodec44(byte *dst, byte *src, uint32 length) {
+void NutRenderer::decodeCodec44(byte *dst, const byte *src, uint32 length) {
 	byte val;
 	uint16 size_line, num;
 
@@ -68,120 +71,126 @@ void NutRenderer::decodeCodec44(byte *dst, byte *src, uint32 length) {
 	} while (length > 1);
 }
 
-bool NutRenderer::loadFont(const char *filename, const char *dir) {
+bool NutRenderer::loadFont(const char *filename, const char *directory) {
 	debug(8, "NutRenderer::loadFont() called");
-	if (_loaded == true) {
-		debug(8, "NutRenderer::loadFont() Font already loaded, ok, loading...");
+	if (_loaded) {
+		warning("NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
 	
 	File file;
-	file.open(filename, dir);
+	file.open(filename, directory);
 	if (file.isOpen() == false) {
-		warning("NutRenderer::loadFont() Can't open font file: %s/%s", dir, filename);
+		warning("NutRenderer::loadFont() Can't open font file: %s/%s", directory, filename);
 		return false;
 	}
 
 	uint32 tag = file.readUint32BE();
 	if (tag != 'ANIM') {
-		debug(8, "NutRenderer::loadFont() there is no ANIM chunk in font header");
+		warning("NutRenderer::loadFont() there is no ANIM chunk in font header");
 		return false;
-	}
-
-	if (_dataSrc != NULL) {
-		free(_dataSrc);
-		_dataSrc = NULL;
 	}
 
 	uint32 length = file.readUint32BE();
-	_dataSrc = (byte *)malloc(length);
-	file.read(_dataSrc, length);
+	byte *dataSrc = (byte *)malloc(length);
+	file.read(dataSrc, length);
 	file.close();
 
-	if (READ_BE_UINT32(_dataSrc) != 'AHDR') {
-		debug(8, "NutRenderer::loadFont() there is no AHDR chunk in font header");
-		free(_dataSrc);
-		_dataSrc = NULL;
+	if (READ_BE_UINT32(dataSrc) != 'AHDR') {
+		warning("NutRenderer::loadFont() there is no AHDR chunk in font header");
+		free(dataSrc);
 		return false;
 	}
 	
-	int32 l;
-	uint32 offset = READ_BE_UINT32(_dataSrc + 4) + 8;
-	memset(_offsets, 0, 256 * sizeof(int32));
-	for (l = 0; l < 256; l++) {
-		if (READ_BE_UINT32(_dataSrc + offset) == 'FRME') {
+	_nbChars = READ_LE_UINT16(dataSrc + 10);
+	uint32 offset = READ_BE_UINT32(dataSrc + 4) + 8;
+	for (int l = 0; l < _nbChars; l++) {
+		if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
 			offset += 8;
-			if (READ_BE_UINT32(_dataSrc + offset) == 'FOBJ') {
-				_offsets[l] = offset + 8;
-				offset += READ_BE_UINT32(_dataSrc + offset + 4) + 8;
+			if (READ_BE_UINT32(dataSrc + offset) == 'FOBJ') {
+				_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
+				_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
+				_chars[l].src = new byte[_chars[l].width * _chars[l].height + 1000];
+				decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
+				offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 			} else {
-				debug(8, "NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, dir, l, offset);
+				warning("NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, directory, l, offset);
 				break;
 			}
 		} else {
-			debug(8, "NutRenderer::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, dir, l, offset);
+			warning("NutRenderer::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, directory, l, offset);
 			break;
 		}
 	}
 
+	free(dataSrc);
 	_loaded = true;
 	return true;
 }
 
-int32 NutRenderer::getCharWidth(byte c) {
+int NutRenderer::getCharWidth(byte c) {
 	debug(8, "NutRenderer::getCharWidth() called");
-	if (_loaded == false) {
-		debug(8, "NutRenderer::getCharWidth() Font is not loaded");
+	if (!_loaded) {
+		warning("NutRenderer::getCharWidth() Font is not loaded");
 		return 0;
 	}
 
-	if(c & 0x80 && _vm->_CJKMode)
-		return 8;
-	else
-		return READ_LE_UINT16(_dataSrc + _offsets[c] + 6) + 2;
+	if(c >= 0x80 && g_scumm->_CJKMode) {
+		if(g_scumm->_gameId == GID_CMI)
+			return 8;
+		if(g_scumm->_gameId == GID_DIG)
+			return 6;
+		return 0;
+	}
+
+	if(c >= _nbChars)
+		error("invalid character in NutRenderer::getCharWidth : %d (%d)", c, _nbChars);
+
+	return _chars[c].width;
 }
 
-int32 NutRenderer::getCharHeight(byte c) {
+int NutRenderer::getCharHeight(byte c) {
 	debug(8, "NutRenderer::getCharHeight() called");
-	if (_loaded == false) {
-		debug(8, "NutRenderer::getCharHeight() Font is not loaded");
+	if (!_loaded) {
+		warning("NutRenderer::getCharHeight() Font is not loaded");
 		return 0;
 	}
 
-	if(c & 0x80 && _vm->_CJKMode)
-		return 16;
-	else
-		return READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
+	if(c >= 0x80 && g_scumm->_CJKMode) {
+		if(g_scumm->_gameId == GID_CMI)
+			return 16;
+		if(g_scumm->_gameId == GID_DIG)
+			return 10;
+		return 0;
+	}
+
+	if(c >= _nbChars)
+		error("invalid character in NutRenderer::getCharHeight : %d (%d)", c, _nbChars);
+
+	return _chars[c].height;
 }
 
-int32 NutRenderer::getStringWidth(const byte *string) {
+int NutRenderer::getStringWidth(const byte *str) {
 	debug(8, "NutRenderer::getStringWidth() called");
-	if (_loaded == false) {
-		debug(8, "NutRenderer::getStringWidth() Font is not loaded");
+	if (!_loaded) {
+		warning("NutRenderer::getStringWidth() Font is not loaded");
 		return 0;
 	}
-	int32 width = 0;
-	
-	while (*string) {
-		width += getCharWidth(*string++);
+	int width = 0;
+
+	while (*str) {
+		width += getCharWidth(*str++);
 	}
 
 	return width;
 }
 
-void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
+void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) {
 	debug(8, "NutRenderer::drawChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
-	if (_loaded == false) {
-		debug(8, "NutRenderer::drawChar() Font is not loaded");
+	if (!_loaded) {
+		warning("NutRenderer::drawChar() Font is not loaded");
 		return;
 	}
 
-	const uint32 length = READ_BE_UINT32(_dataSrc + _offsets[c] - 4) - 14;
-	const int32 width = READ_LE_UINT16(_dataSrc + _offsets[c] + 6);
-	const int32 height = READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
-
-	byte *src = (byte*)(_dataSrc + _offsets[c] + 14);
-	decodeCodec44(_tmpCodecBuffer, src, length);
-	
 	// HACK: we draw the character a total of 7 times: 6 times shifted
 	// and in black for the shadow, and once in the right color and position.
 	// This way we achieve the exact look as the original CMI had. However,
@@ -194,49 +203,58 @@ void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 	int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
 	int cTable[7] =  {  0,  0, 0, 0, 0, 0, color };
 
-	byte *dst, *mask = NULL;
-	byte maskmask;
-	int maskpos;
-	
 	for (int i = 0; i < 7; i++) {
 		x += offsetX[i];
 		y += offsetY[i];
 		color = cTable[i];
 	
-		dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
-		mask = _vm->getMaskBuffer(x, y, 0);
-	
-		src = _tmpCodecBuffer;
-	
-		for (int32 ty = 0; ty < height; ty++) {
-			maskmask = revBitMask[x & 7];
-			maskpos = 0;
-			for (int32 tx = 0; tx < width; tx++) {
-				byte pixel = *src++;
-				if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
-					continue;
-				if (pixel != 0) {
-					dst[tx] = color;
-					if (useMask)
-						mask[maskpos] |= maskmask;
-				}
-				maskmask >>= 1;
-				if (maskmask == 0) {
-					maskmask = 0x80;
-					maskpos++;
-				}
-			}
-			dst += _vm->_screenWidth;
-			mask += _vm->gdi._numStrips;
-		}
-	
+		if(c >= 256 && _vm->_CJKMode)
+			draw2byte(c, x, y, color, useMask);
+		else
+			drawChar((byte)c, x, y, color, useMask);
+		
 		x -= offsetX[i];
 		y -= offsetY[i];
 	}
 }
 
-void NutRenderer::draw2byte(int c, int32 x, int32 y, byte color, bool useMask) {
-	if (_loaded == false) {
+void NutRenderer::drawChar(byte c, int x, int y, byte color, bool useMask) {
+	const int width = _chars[c].width;
+	const int height = _chars[c].height;
+	const byte *src = _chars[c].src;
+
+	byte *dst, *mask = NULL;
+	byte maskmask;
+	int maskpos;
+	
+	dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
+	mask = _vm->getMaskBuffer(x, y, 0);
+
+	for (int ty = 0; ty < height; ty++) {
+		maskmask = revBitMask[x & 7];
+		maskpos = 0;
+		for (int tx = 0; tx < width; tx++) {
+			byte pixel = *src++;
+			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
+				continue;
+			if (pixel != 0) {
+				dst[tx] = color;
+				if (useMask)
+					mask[maskpos] |= maskmask;
+			}
+			maskmask >>= 1;
+			if (maskmask == 0) {
+				maskmask = 0x80;
+				maskpos++;
+			}
+		}
+		dst += _vm->_screenWidth;
+		mask += _vm->gdi._numStrips;
+	}
+}
+
+void NutRenderer::draw2byte(int c, int x, int y, byte color, bool useMask) {
+	if (!_loaded) {
 		debug(2, "NutRenderer::draw2byte() Font is not loaded");
 		return;
 	}
@@ -264,14 +282,8 @@ void NutRenderer::draw2byte(int c, int32 x, int32 y, byte color, bool useMask) {
 				continue;
 			if (bits & revBitMask[tx % 8]) {
 				dst[tx] = color;
-				dst[tx+1] = 0;
 				if (useMask) {
 					mask[maskpos] |= maskmask;
-					if (maskmask == 1) {
-						mask[maskpos + 1] |= 0x80;
-					} else {
-						mask[maskpos] |= (maskmask >> 1);
-					}
 				}
 			}
 
