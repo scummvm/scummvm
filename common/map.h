@@ -79,6 +79,13 @@ public:
 		_header = new Node();
 		_header->_right = _header->_left = _header;
 	}
+	
+	~Map<Key, Value>()
+	{
+		clearNodes(_root);
+		delete _header;
+		_root = _header = 0;
+	}
 
 	/*
 	 * Return the object for the given key. If no match is found, a new entry
@@ -160,7 +167,7 @@ public:
 		delete node;
 	}
 	
-	void merge(Map<Key, Value> map)
+	void merge(const Map<Key, Value> &map)
 	{
 		// FIXME - this is a very bad algorithm.
 		// Right now we insert the items from 'map' using the default iterator,
@@ -234,8 +241,8 @@ protected:
 		if (!node)
 			return;
 
-		clearNodes(left);
-		clearNodes(right);
+		clearNodes(node->_left);
+		clearNodes(node->_right);
 		delete node;
 	}
 };
