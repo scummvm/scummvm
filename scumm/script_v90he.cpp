@@ -1512,11 +1512,17 @@ void ScummEngine_v90he::o90_paletteOps() {
 
 
 void ScummEngine_v90he::o90_unknownA5() {
+	byte string[80];
+	int a;
+
 	int subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 42:
-		if (pop() - 1 == 0)
+		a = pop();
+		if (a == 2)
+			copyScriptString(string);
+		else if (a == 1)
 			pop();
 		break;
 	case 57:

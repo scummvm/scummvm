@@ -809,7 +809,8 @@ void ScummEngine_v100he::o100_drawObject() {
 }
 
 void ScummEngine_v100he::o100_unknown28() {
-	// Incomplete
+	byte string[260];
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -826,7 +827,60 @@ void ScummEngine_v100he::o100_unknown28() {
 		pop();
 		pop();
 		break;
+	case 38:
+		switch (pop()) {
+		case 1:
+			pop();
+			pop();
+			break;
+		case 2:
+			pop();
+			break;
+		case 3:
+			pop();
+			break;
+		case 4:
+			pop();
+			break;
+		case 5:
+			break;
+		case 6:
+			pop();
+			break;
+		case 7:
+			pop();
+			break;
+		case 8:
+			pop();
+			break;
+		default:
+			error("o100_unknown28 subOp 38: Unknown case %d", subOp);
+		}
+		break;
+	case 40:
+		pop();
+		break;
+	case 49:
+		pop();
+		pop();
+		break;
+	case 52:
+		copyScriptString(string);
+		break;
 	case 53:
+		break;
+	case 54:
+		pop();
+		pop();
+		break;
+	case 59:
+		pop();
+		break;
+	case 60:
+		pop();
+		pop();
+		break;
+	case 89:
 		break;
 	default:
 		error("o100_unknown28: Unknown case %d", subOp);
@@ -1336,27 +1390,98 @@ void ScummEngine_v100he::o100_wait() {
 }
 
 void ScummEngine_v100he::o100_unknown25() {
-	// Incomplete
 	int args[16];
 
 	byte subOp = fetchScriptByte();
-	subOp -= 3;
 
 	switch (subOp) {
+	case 3:
+		pop();
+		break;
+	case 4:
+		pop();
+		break;
+	case 7:
+		pop();
+		break;
+	case 16:
+		getStackList(args, ARRAYSIZE(args));
+		pop();
+		break;
+	case 26:
+		pop();
+		break;
 	case 30:
+		pop();
+		break;
+	case 31:
+		pop();
+		break;
+	case 32:
+		pop();
+		break;
+	case 33:
 		getStackList(args, ARRAYSIZE(args));
 		pop();
 		pop();
 		pop();
 		pop();
 		break;
-	case 36:
+	case 38:
 		pop();
 		break;
-	case 37:
+	case 39:
 		pop();
 		break;
-	case 81:
+	case 40:
+		pop();
+		break;
+	case 48:
+		pop();
+		break;
+	case 54:
+		pop();
+		pop();
+		break;
+	case 57:
+		pop();
+		break;
+	case 59:
+		pop();
+		break;
+	case 60:
+		pop();
+		pop();
+		break;
+	case 65:
+		pop();
+		break;
+	case 70:
+		pop();
+		break;
+	case 73:
+		pop();
+		break;
+	case 75:
+		pop();
+		break;
+	case 76:
+		pop();
+		break;
+	case 82:
+		pop();
+		break;
+	case 83:
+		pop();
+		pop();
+		break;
+	case 84:
+		pop();
+		break;
+	case 85:
+		pop();
+		break;
+	case 86:
 		pop();
 		break;
 	default:
