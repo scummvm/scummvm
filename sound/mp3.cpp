@@ -97,7 +97,7 @@ error:
 	delete file;
 }
 
-int MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
+void MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
 	unsigned int offset;
 	mad_timer_t durationTime;
 
@@ -116,7 +116,7 @@ int MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startF
 	}
 
 	// Play it
-	return mixer->playMP3CDTrack(handle, _file, durationTime);
+	mixer->playMP3CDTrack(handle, _file, durationTime);
 }
 
 MP3TrackInfo::~MP3TrackInfo() {

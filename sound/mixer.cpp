@@ -55,13 +55,13 @@ protected:
 public:
 	int _id;
 
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan)
-		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(0), _id(-1) {
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id = -1)
+		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(0), _id(id) {
 		assert(mixer);
 	}
 
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo = false)
-		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(input), _id(-1) {
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo = false, int id = -1)
+		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(input), _id(id) {
 		assert(mixer);
 		assert(input);
 
@@ -90,13 +90,6 @@ public:
 	int getVolume() const {
 		return isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
 	}
-};
-
-class ChannelRaw : public Channel {
-	byte *_ptr;
-public:
-	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd);
-	~ChannelRaw();
 };
 
 class ChannelStream : public Channel {
@@ -156,9 +149,9 @@ void SoundMixer::setupPremix(PremixProc *proc, void *param) {
 	_premixProc = proc;
 }
 
-int SoundMixer::newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
+void SoundMixer::newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
 	Common::StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelStream(this, handle, sound, size, rate, flags, buffer_size, volume, pan));
+	insertChannel(handle, new ChannelStream(this, handle, sound, size, rate, flags, buffer_size, volume, pan));
 }
 
 void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 size) {
@@ -214,7 +207,7 @@ void SoundMixer::endStream(PlayingSoundHandle handle) {
 	}
 }
 
-int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
+void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 	int index = -1;
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
@@ -225,56 +218,70 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 	if(index == -1) {
 		warning("SoundMixer::out of mixer slots");
 		delete chan;
-		return -1;
+		return;
 	}
 
 	_channels[index] = chan;
 	if (handle)
 		*handle = index + 1;
-	return index;
 }
 
-int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 pan, uint32 loopStart, uint32 loopEnd) {
+void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 pan, uint32 loopStart, uint32 loopEnd) {
 	Common::StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] != NULL && _channels[i]->_id == id)
-				return -1;
+				return;
 	}
 
-	Channel *chan = new ChannelRaw(this, handle, sound, size, rate, flags, volume, pan, id, loopStart, loopEnd);
-	return insertChannel(handle, chan);
+	// Create the input stream
+	AudioInputStream *input;
+	const bool autoFreeMemory = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
+	if (flags & SoundMixer::FLAG_LOOP) {
+		if (loopEnd == 0) {
+			input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, size, autoFreeMemory);
+		} else {
+			assert(loopStart < loopEnd && loopEnd <= size);
+			input = makeLinearInputStream(rate, flags, (byte *)sound, size, loopStart, loopEnd - loopStart, autoFreeMemory);
+		}
+	} else {
+		input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, 0, autoFreeMemory);
+	}
+
+	// Create the channel
+	Channel *chan = new Channel(this, handle, input, false, volume, pan, (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0, id);
+	insertChannel(handle, chan);
 }
 
 #ifdef USE_MAD
-int SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan) {
+void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan) {
 	// Create the input stream
 	AudioInputStream *input = makeMP3Stream(file, mad_timer_zero, size);
-	return playInputStream(handle, input, false, volume, pan);
+	playInputStream(handle, input, false, volume, pan);
 }
-int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) {
+void SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) {
 	// Create the input stream
 	AudioInputStream *input = makeMP3Stream(file, duration, 0);
-	return playInputStream(handle, input, true, volume, pan);
+	playInputStream(handle, input, true, volume, pan);
 }
 #endif
 
 #ifdef USE_VORBIS
-int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan) {
+void SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan) {
 	// Create the input stream
 	AudioInputStream *input = makeVorbisStream(ov_file, duration);
-	return playInputStream(handle, input, is_cd_track, volume, pan);
+	playInputStream(handle, input, is_cd_track, volume, pan);
 }
 #endif
 
-int SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan) {
+void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan) {
 	Common::StackLock lock(_mutex);
 
 	// Create the channel
 	Channel *chan = new Channel(this, handle, input, isMusic, volume, pan);
-	return insertChannel(handle, chan);
+	insertChannel(handle, chan);
 }
 
 void SoundMixer::mix(int16 *buf, uint len) {
@@ -309,17 +316,6 @@ void SoundMixer::stopAll() {
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			_channels[i]->destroy();
-}
-
-void SoundMixer::stopChannel(int index) {
-	if ((index < 0) || (index >= NUM_CHANNELS)) {
-		warning("soundMixer::stop has invalid index %d", index);
-		return;
-	}
-
-	Common::StackLock lock(_mutex);
-	if (_channels[index])
-		_channels[index]->destroy();
 }
 
 void SoundMixer::stopID(int id) {
@@ -386,17 +382,6 @@ void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
 
 void SoundMixer::pauseAll(bool paused) {
 	_paused = paused;
-}
-
-void SoundMixer::pauseChannel(int index, bool paused) {
-	if ((index < 0) || (index >= NUM_CHANNELS)) {
-		warning("soundMixer::pauseChannel has invalid index %d", index);
-		return;
-	}
-
-	Common::StackLock lock(_mutex);
-	if (_channels[index])
-		_channels[index]->pause(paused);
 }
 
 void SoundMixer::pauseID(int id, bool paused) {
@@ -508,35 +493,6 @@ void Channel::mix(int16 *data, uint len) {
 
 		_converter->flow(*_input, data, len, vol_l, vol_r);
 	}
-}
-
-/* RAW mixer */
-ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd)
-	: Channel(mixer, handle, false, volume, pan) {
-	_id = id;
-	_ptr = (byte *)sound;
-	
-	// Create the input stream
-	if (flags & SoundMixer::FLAG_LOOP) {
-		if (loopEnd == 0) {
-			_input = makeLinearInputStream(rate, flags, _ptr, size, 0, size);
-		} else {
-			assert(loopStart < loopEnd && loopEnd <= size);
-			_input = makeLinearInputStream(rate, flags, _ptr, size, loopStart, loopEnd - loopStart);
-		}
-	} else {
-		_input = makeLinearInputStream(rate, flags, _ptr, size, 0, 0);
-	}
-
-	if (!(flags & SoundMixer::FLAG_AUTOFREE))
-		_ptr = 0;
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
-}
-
-ChannelRaw::~ChannelRaw() {
-	free(_ptr);
 }
 
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,

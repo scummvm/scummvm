@@ -97,21 +97,21 @@ public:
 	void setupPremix(PremixProc *proc, void *param);
 
 	// start playing a raw sound
-	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
+	void playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
 				int id = -1, byte volume = 255, int8 pan = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
 #ifdef USE_MAD
-	int playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0);
-	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume = 255, int8 pan = 0);
+	void playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0);
+	void playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume = 255, int8 pan = 0);
 #endif
 #ifdef USE_VORBIS
-	int playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume = 255, int8 pan = 0);
+	void playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume = 255, int8 pan = 0);
 #endif
 
-	int playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0);
+	void playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0);
 
 
 	/** Start a new stream. */
-	int newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 pan = 0);
+	void newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 pan = 0);
 
 	/** Append to an existing stream. */
 	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
@@ -122,9 +122,6 @@ public:
 	/** stop all currently playing sounds */
 	void stopAll();
 
-	/** stop playing the given channel */
-	void stopChannel(int channel);
-
 	/** stop playing the sound with given ID  */
 	void stopID(int id);
 
@@ -133,9 +130,6 @@ public:
 
 	/** pause/unpause all channels */
 	void pauseAll(bool paused);
-
-	/** pause/unpause the given channel */
-	void pauseChannel(int index, bool paused);
 
 	/** pause/unpause the sound with the given ID */
 	void pauseID(int id, bool paused);
@@ -168,7 +162,7 @@ public:
 	uint getOutputRate() const { return _outputRate; }
 
 private:
-	int insertChannel(PlayingSoundHandle *handle, Channel *chan);
+	void insertChannel(PlayingSoundHandle *handle, Channel *chan);
 
 	/** main mixer method */
 	void mix(int16 * buf, uint len);

@@ -111,13 +111,13 @@ VorbisTrackInfo::VorbisTrackInfo(File *file) {
 #define VORBIS_TREMOR
 #endif
 
-int VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
+void VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
 #ifdef VORBIS_TREMOR
 	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
 #else
 	ov_time_seek(&_ov_file, startFrame / 75.0);
 #endif
-	return mixer->playVorbis(handle, &_ov_file,
+	mixer->playVorbis(handle, &_ov_file,
 							duration * ov_info(&_ov_file, -1)->rate / 75, true);
 }
 

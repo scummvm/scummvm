@@ -43,7 +43,7 @@ public:
 	VorbisTrackInfo(File *file);
 	~VorbisTrackInfo();
 	bool error() { return _error_flag; }
-	int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
+	void play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
 };
 
 

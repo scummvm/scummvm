@@ -44,7 +44,7 @@ public:
 	MP3TrackInfo(File *file);
 	~MP3TrackInfo();
 	bool error() { return _error_flag; }
-	int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
+	void play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
 };
 
 AudioInputStream *makeMP3Stream(File *file, mad_timer_t duration, uint size = 0);
