@@ -2163,6 +2163,7 @@ void Logic::handlePinnacleRoom() {
 
 	update();
 	_vm->display()->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
+	_vm->graphics()->textCurrentColor(INK_PINNACLE_ROOM);
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
@@ -2179,6 +2180,8 @@ void Logic::handlePinnacleRoom() {
 		joe->x = piton->x = 3 * mx / 4 + 200;
 		joe->frameNum = mx / 36 + 43 + FRAMES_JOE_XTRA;
 
+		_vm->graphics()->textClear(5, 5);
+
 		uint16 curObj = findObjectUnderCursor(mx, my);
 		if (curObj != 0 && curObj != prevObj) {
 			_entryObj = 0;
@@ -2188,7 +2191,6 @@ void Logic::handlePinnacleRoom() {
 				_entryObj = objData->entryObj;
 				char textCmd[CmdText::MAX_COMMAND_LEN];
 				sprintf(textCmd, "%s %s", verbName(VERB_WALK_TO), _objName[objData->name]);
-				_vm->graphics()->textCurrentColor(INK_PINNACLE_ROOM);
 				_vm->graphics()->textSetCentered(5, textCmd);
 			}
 			prevObj = curObj;
