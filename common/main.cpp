@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
 
 		// print a message if gameid is invalid
 		if (engine == NULL)
-			error("%s is an invalid target. Use the -z parameter to list targets\n", 
+			error("%s is an invalid target. Use the -z parameter to list targets", 
 					detector._gameFileName.c_str());
 
 		// Run the game engine
@@ -257,7 +257,7 @@ void free_check(void *ptr) {
 		exit(1);
 	}
 	if ((int)ptr & 1) {
-		warning("Freeing odd address 0x%x\n", ptr);
+		warning("Freeing odd address 0x%x", ptr);
 	}
 	free(ptr);
 }
