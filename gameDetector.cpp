@@ -574,7 +574,7 @@ int GameDetector::detectMain(int argc, char **argv)
 OSystem *GameDetector::createSystem() {
 	/* auto is to use SDL */
 	switch(_gfx_driver) {
-#if defined(UNIX_X11)
+#if defined(X11_BACKEND)
 	case GD_X:
 		return OSystem_X11_create();
 #elif defined(__DC__)
@@ -616,7 +616,7 @@ MidiDriver *GameDetector::createMidi() {
 #elif defined(__APPLE__) || defined(macintosh)
 	/* MD_QTMUSIC is default MidiDriver on MacOS targets */
 	if (drv == MD_AUTO) drv = MD_QTMUSIC;
-#elif defined(UNIX) || defined(UNIX_X11)
+#elif defined(UNIX) || defined(X11_BACKEND)
 	/* MD_MIDIEMU is default MidiDriver on UNIX targets. */
 	/* FIXME: Attempt to detect if sequencer is available,
 			  and use it in preference. */
