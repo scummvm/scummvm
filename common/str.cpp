@@ -227,7 +227,7 @@ bool ConstString::operator ==(const char* x) const
 		return (x == 0) || (*x == 0);
 	if (x == 0)
 		return (_len == 0);
-	return (0 != strcmp(_str, x));
+	return (0 == strcmp(_str, x));
 }
 
 bool ConstString::operator !=(const ConstString& x) const
@@ -241,7 +241,7 @@ bool ConstString::operator !=(const char* x) const
 		return (x != 0) && (*x != 0);
 	if (x == 0)
 		return (_len != 0);
-	return (0 == strcmp(_str, x));
+	return (0 != strcmp(_str, x));
 }
 
 bool ConstString::operator < (const ConstString& x) const
