@@ -400,16 +400,6 @@ void ScummEngine_v6he::o6_setState() {
 		clearDrawObjectQueue();
 }
 
-void ScummEngine_v6he::o6_startSound() {
-	// Seems to range between 952 - 9000
-	// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
-	// indicate which note to play, but only when using the standard piano
-	// sound. See also o6_soundOps().
-	int offset = pop();
-	debug(2, "o6_startSound: offset %d", offset);
-	_sound->addSoundToQueue(pop());
-}
-
 void ScummEngine_v6he::o6_roomOps() {
 	int a, b, c, d, e;
 	byte op;
@@ -611,10 +601,7 @@ void ScummEngine_v6he::o6_actorOps() {
 		j = pop();
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
-		if (_features & GF_NEW_COSTUMES)
-			a->remapActorPaletteColor(i, j);
-		else
-			a->setPalette(i, j);
+		a->remapActorPaletteColor(i, j);
 		break;
 	case 87:		// SO_TALK_COLOR
 		a->talkColor = pop();

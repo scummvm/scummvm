@@ -343,7 +343,7 @@ static const ScummGameSettings scumm_settings[] = {
 //
 // Use main table to specify default flags and this table to override defaults.
 static const ScummGameSettings he_md5_settings[] = {
-	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (early version)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (early version)", GID_HEGAME, 6, 0, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0}
 };

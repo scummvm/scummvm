@@ -573,7 +573,6 @@ protected:
 	void o6_drawBlastObject();
 	void o6_setBlastObjectWindow();
 	void o6_setState();
-	void o6_startSound();
 	void o6_roomOps();
 	void o6_actorOps();
 	void o6_wait();

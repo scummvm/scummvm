@@ -403,12 +403,12 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 	int size;
 	ArrayHeader *ah;
 
-	if (!(_features & GF_HUMONGOUS)) {
-		if (type != rtSound)
-			type = rtInventory;
-	} else {
+	if (_heversion >= 60) {
 		if (type == rtScript || type == rtRoom)
 			type = rtCostume;
+	} else {
+		if (type != rtSound)
+			type = rtInventory;
 	}
 
 	nukeArray(array);
@@ -502,8 +502,7 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 
 	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
 
-	if (FROM_LE_16(ah->type) == 4 || (_features & GF_HUMONGOUS
-									&& FROM_LE_16(ah->type) == rtCostume)) {
+	if (FROM_LE_16(ah->type) == 4 || (_heversion >= 60 && FROM_LE_16(ah->type) == rtCostume)) {
 		return ah->data[base];
 	} else if (_version == 8) {
 		return (int32)READ_LE_UINT32(ah->data + base * 4);
@@ -520,8 +519,7 @@ void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
 
 	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
 
-	if (FROM_LE_16(ah->type) == rtSound || (_features & GF_HUMONGOUS
-									&& FROM_LE_16(ah->type) == rtCostume)) {
+	if (FROM_LE_16(ah->type) == rtSound || (_heversion >= 60 && FROM_LE_16(ah->type) == rtCostume)) {
 		ah->data[base] = value;
 	} else if (_version == 8) {
 #if defined(SCUMM_NEED_ALIGNMENT)
@@ -1028,8 +1026,17 @@ void ScummEngine_v6::o6_getOwner() {
 void ScummEngine_v6::o6_startSound() {
 	if (_features & GF_DIGI_IMUSE)
 		_imuseDigital->startSfx(pop(), 64);
-	else
+	else {
+		if (_features & GF_HUMONGOUS) {
+			// Seems to range between 952 - 9000
+			// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
+			// indicate which note to play, but only when using the standard piano
+			// sound. See also o6_soundOps().
+			int offset = pop();
+			debug(2, "o6_startSound: offset %d", offset);
+		}
 		_sound->addSoundToQueue(pop());
+	}
 }
 
 void ScummEngine_v6::o6_stopSound() {
