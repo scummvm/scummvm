@@ -910,6 +910,7 @@ public:
 	byte VAR_NUM_ACTOR;
 	byte VAR_CURRENT_LIGHTS;
 	byte VAR_CURRENTDRIVE;
+	byte VAR_CURRENTDISK;
 	byte VAR_TMR_1;
 	byte VAR_TMR_2;
 	byte VAR_TMR_3;

@@ -357,7 +357,11 @@ void Scumm::initScummVars()
 	} else {
 			_vars[VAR_V6_EMSSPACE] = 10000;
 	}
-}
+
+	if (_features & GF_AFTER_V8) {	// Fixme: How do we deal with non-cd installs?
+		_vars[VAR_CURRENTDISK] = 1;
+	}
+}	
 
 void Scumm::checkRange(int max, int min, int no, const char *str)
 {

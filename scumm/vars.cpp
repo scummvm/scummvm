@@ -220,6 +220,7 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_DEST_Y = 12;
 
 	VAR_ROOM = 31;
+	VAR_CURRENTDISK = 42;
 
 	VAR_ENTRY_SCRIPT = 51;
 	VAR_ENTRY_SCRIPT2 = 52;
