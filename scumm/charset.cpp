@@ -759,10 +759,7 @@ void CharsetRendererClassic::drawBits(VirtScreen *vs, byte *dst, byte *mask, int
 		maskpos = 0;
 
 		for (x = 0; x < width; x++) {
-			int myMask = (0xFF << (8 - _bpp)) & 0xFF;
-			int myColor = (bits & myMask) >> (8 - _bpp);
 			color = (bits >> (8 - _bpp)) & 0xFF;
-			assert(color == myColor);
 			
 			if (color) {
 				if (useMask) {
