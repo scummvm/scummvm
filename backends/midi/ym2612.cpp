@@ -109,6 +109,9 @@ protected:
 	int _frequencyOffs;
 	int _frequency;
 	int _algorithm;
+	
+	int *_buffer;
+	int _buflen;
 
 public:
 	Voice2612();
@@ -436,6 +439,10 @@ Voice2612::Voice2612() {
 	_frequency = 440;
 	_frequencyOffs = 0x2000;
 	_algorithm = 7;
+
+	_buffer = 0;
+	_buflen = 0;
+
 	int i;
 	for (i = 0; i < ARRAYSIZE(_opr); ++i)
 		_opr[i] = new Operator2612 (this);
@@ -446,6 +453,7 @@ Voice2612::~Voice2612() {
 	int i;
 	for (i = 0; i < ARRAYSIZE(_opr); ++i)
 		delete _opr[i];
+	free(_buffer);
 }
 
 void Voice2612::velocity(int velo) {
@@ -504,8 +512,15 @@ void Voice2612::nextTick(int *outbuf, int buflen) {
 	if (_velocity == 0)
 		return;
 
-	int *buf1 = (int *) calloc(buflen * 2, sizeof(int));
-	int *buf2 = buf1 + buflen;
+	if (_buflen < buflen) {
+		free(_buffer);
+		_buflen = buflen;
+		_buffer = (int *) malloc(sizeof(int) * buflen * 2);
+	}
+
+	int *buf1 = _buffer;
+	int *buf2 = _buffer + buflen;
+	memset(_buffer, 0, sizeof(int) * buflen * 2);
 
 	switch (_algorithm) {
 	case 0:
@@ -560,8 +575,6 @@ void Voice2612::nextTick(int *outbuf, int buflen) {
 		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
 		break;
 	};
-
-	free (buf1);
 }
 
 void Voice2612::noteOn(int n, int onVelo) {
@@ -832,8 +845,7 @@ void MidiDriver_YM2612::generate_samples(int16 *data, int len) {
 }
 
 void MidiDriver_YM2612::nextTick(int16 *buf1, int buflen) {
-	int *buf0 = new int [buflen];
-	memset(buf0, 0, sizeof(buf0[0]) * buflen);
+	int *buf0 = (int *)buf1;
 
 	int i;
 	for (i = 0; i < ARRAYSIZE(_channel); i++)
@@ -841,7 +853,6 @@ void MidiDriver_YM2612::nextTick(int16 *buf1, int buflen) {
 
 	for (i = 0; i < buflen; ++i)
 		buf1[i*2+1] = buf1[i*2] = ((buf0[i] * volume()) >> 10) & 0xffff;
-	delete [] buf0;
 }
 
 void MidiDriver_YM2612::rate(uint16 r)
