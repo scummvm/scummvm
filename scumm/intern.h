@@ -876,9 +876,6 @@ protected:
 	SpriteInfo *_spriteTable;
 	SpriteGroup *_spriteGroups;
 	SpriteInfo **_activeSpritesTable;
-	uint16 *_imageListTable;
-	uint16 *_imageListStack;
-	int _curSprImageListNum;
 
 public:
 	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v80he(detector, syst, gs, md5sum) {}

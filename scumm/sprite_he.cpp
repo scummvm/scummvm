@@ -700,49 +700,14 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 }
 
 void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr) {
-	int listNum;
-	int *ptr;
 	int origResId, origResWizStates;
 
-	// XXX needs review
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-
-	if (_spriteTable[spriteId].imglist_num) {
-		checkRange(_varMaxSprites, 1, _spriteTable[spriteId].imglist_num,
-				   "Image list %d out of range");
-		_imageListStack[_curSprImageListNum++] = _spriteTable[spriteId].imglist_num - 1;
-		_spriteTable[spriteId].imglist_num = 0;
-	}
 
 	origResId = _spriteTable[spriteId].res_id;
 	origResWizStates = _spriteTable[spriteId].res_wiz_states;
 
-	if (imageNum == 1) {
-		_spriteTable[spriteId].res_id = *spriteIdptr;
-	} else {
-		// This section is currently never called
-		if (!_curSprImageListNum)
-			error("Out of image lists");
-
-		if (imageNum > 32)
-			error("Too many images in image list (%d)!", imageNum);
-
-		_curSprImageListNum--;
-		_spriteTable[spriteId].imglist_num = _imageListStack[_curSprImageListNum] + 1;
-
-		listNum = _spriteTable[spriteId].imglist_num;
-
-		checkRange(_varMaxSprites, 1, listNum, "Image list %d out of range");
-
-		_imageListTable[0x21 * listNum - 1] = imageNum;
-		
-		ptr = spriteIdptr;
-		for (int i = 0; i < listNum; i++) {
-			_imageListTable[0x21 * listNum - 0x21 + i] = *ptr++;
-		}
-		_spriteTable[spriteId].res_id = *spriteIdptr;
-	}
-
+	_spriteTable[spriteId].res_id = *spriteIdptr;
 	_spriteTable[spriteId].field_74 = 0;
 	_spriteTable[spriteId].res_state = 0;
 
@@ -988,8 +953,6 @@ void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int nu
 	_spriteGroups = (SpriteGroup *)malloc((_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
 	_spriteTable = (SpriteInfo *)malloc((_varNumSprites + 1) * sizeof(SpriteInfo));
 	_activeSpritesTable = (SpriteInfo **)malloc((_varNumSprites + 1) * sizeof(SpriteInfo *));
-	_imageListTable = (uint16 *)malloc((_varMaxSprites + 1) * sizeof(uint16) * 2 + 1);
-	_imageListStack = (uint16 *)malloc((_varMaxSprites + 1) * sizeof(uint16));
 }
 
 void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
@@ -1013,11 +976,6 @@ void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
 }
 
 void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
-	int i;
-
-	for (i = 0; i < _varMaxSprites; ++i) {
-		_imageListStack[i] = i;
-	}
 	memset(_spriteTable, 0, (_varNumSprites + 1) * sizeof(SpriteInfo));
 	memset(_spriteGroups, 0, (_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
 	for (int curGrp = 1; curGrp < _varNumSpriteGroups; ++curGrp)
@@ -1123,25 +1081,8 @@ void ScummEngine_v90he::spritesUpdateImages() {
 			++spi->res_state;
 			if (spi->res_state >= spi->res_wiz_states) {
 				spi->res_state = 0;
-				if (spi->imglist_num) {
-					if (!(spi->flags & kSF25)) {
-						checkRange(_varMaxSprites, 1, spi->imglist_num, "Image list %d out of range");
-						uint16 img1 = _imageListTable[0x21 * spi->imglist_num - 1];
-						uint16 img2 = spi->field_74 + 1;
-						if (img2 >= img1)
-							img2 = 0;
-
-						if (spi->field_74 != img2) {
-							spi->field_74 = img2;
-							spi->res_id = _imageListTable[0x21 * (img2 - 1)];
-							spi->flags |= kSFChanged | kSFNeedRedraw;
-							spi->res_wiz_states = getWizImageStates(spi->res_id);
-						}
-					}
+				if (state == 0)
 					continue;
-				} else if (state == 0) {
-					continue;
-				}
 			}
 			spi->flags |= kSFChanged | kSFNeedRedraw;
 		}
