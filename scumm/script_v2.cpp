@@ -837,7 +837,7 @@ void Scumm_v2::o2_verbOps() {
 			y+=8;
 
 		//printf("o2_verbOps: verb = %d, slot = %d, x = %d, y = %d, unk = %d, name = %s\n",
-		//		verb, slot, x, y, unk, _scriptPointer);
+		//		verb, slot, x, y, prep, _scriptPointer);
 
 		VerbSlot *vs;
 		assert(0 < slot && slot < _maxVerbs);
@@ -929,7 +929,7 @@ void Scumm_v2::o2_doSentence() {
 
 			runObjectScript(st->objectA, st->verb, false, false, NULL);
 		} else
-				runObjectScript(st->objectA, 253, (st->verb == 250), true, NULL);
+			runObjectScript(st->objectA, 253, (st->verb == 250), true, NULL);
 		break;
 	case 2:
 		// Print the sentence
