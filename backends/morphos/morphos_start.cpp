@@ -127,10 +127,9 @@ static STRPTR FindMusicDriver(STRPTR argval)
 {
 	if (!stricmp(argval, "off"))  	return "-enull";
 	if (!stricmp(argval, "midi"))	 	return "-eetude";
-	if (!stricmp(argval, "midiemu"))	return "-emidiemu";
 	if (!stricmp(argval, "adlib")) 	return "-eadlib";
 
-	error("No such music driver supported. Possible values are off, Midi, MidiEmu and Adlib.");
+	error("No such music driver supported. Possible values are off, Midi and Adlib.");
 	return NULL;
 }
 
