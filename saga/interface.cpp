@@ -791,4 +791,141 @@ int Interface::inventoryTest(const Point& imousePt, int *ibutton) {
 void Interface::drawVerb(int verb, int state) {
 }
 
+// Converse stuff
+void Interface::converseClear(void) {
+	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++) {
+		if (_converseText[i].text)
+			free(_converseText[i].text);
+		_converseText[i].text = NULL;
+		_converseText[i].stringNum = -1;
+		_converseText[i].replyId = 0;
+		_converseText[i].replyFlags = 0;
+		_converseText[i].replyBit = 0;
+	}
+
+	_converseTextCount = 0;
+	_converseStrCount = 0;
+	_converseStartPos = 0;
+	_converseEndPos = 0;
+	_conversePos = -1;
+}
+
+bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, int replyBit) {
+	int count = 0;         // count how many pieces of text per string
+	char temp[128];
+
+	assert(strlen(text) < 128);
+
+	strncpy(temp, text, 128);
+
+	while (1) {
+		int i;
+		int len = strlen(temp);
+
+		for (i = len; i >= 0; i--) {
+			byte c = temp[i];
+
+			if ((c == ' ' || c == '\0')
+				&& _vm->_font->getStringWidth(SMALL_FONT_ID, temp, i, 0) 
+					<= CONVERSE_MAX_TEXT_WIDTH)
+				break;
+		}
+		if (i < 0) 
+			return true;
+
+		if (_converseTextCount == CONVERSE_MAX_TEXTS)
+			return true;
+
+		_converseText[_converseTextCount].text = (char *)malloc(i + 1);
+		strncpy(_converseText[_converseTextCount].text, temp, i);
+
+		_converseText[_converseTextCount].text[i] = 0;
+		_converseText[_converseTextCount].textNum = count;
+		_converseText[_converseTextCount].stringNum =  _converseStrCount;
+		_converseText[_converseTextCount].replyId =  replyId;
+		_converseText[_converseTextCount].replyFlags =  replyFlags;
+		_converseText[_converseTextCount].replyBit =  replyBit;
+
+		_converseTextCount++;
+		count++;
+
+		if (len == i) 
+			break;
+
+		strncpy(temp, &temp[i + 1], len - i);
+	}
+
+	_converseStrCount++;
+
+	return false;
+}
+
+enum converseColors {
+	kColorBrightWhite = 0x2,
+	kColorDarkGrey = 0xa,
+	kColorGrey = 0xb,
+	kColorGreen = 0xba,
+	kColorBlack = 0xf,
+	kColorBlue = 0x93
+};
+
+void Interface::converseDisplayText(int pos) {
+	int end;
+
+	if (pos >= _converseTextCount)
+		pos = _converseTextCount - 1;
+	if (pos < 0)
+		pos = 0;
+
+	_converseStartPos = pos;
+
+	end = _converseTextCount - CONVERSE_TEXT_LINES;
+
+	if (end < 0)
+		end = 0;
+
+	_converseEndPos = end;
+
+	converseDisplayTextLine(kColorBrightWhite, false, true);
+}
+
+
+void Interface::converseSetTextLines(int row, int textcolor, bool btnDown) {
+	_conversePos = row + _converseStartPos;
+	if (_conversePos >= _converseTextCount)
+		_conversePos = -1;
+
+	converseDisplayTextLine(textcolor, btnDown, false);
+}
+
+void Interface::converseDisplayTextLine(int textcolor, bool btnDown, bool rebuild) {
+}
+
+void Interface::converseChangePos(int chg) {
+	if ((chg < 0 && _converseStartPos + chg >= 0) ||
+		(chg > 0 && _converseStartPos  < _converseEndPos)) {
+		_converseStartPos += chg;
+		converseDisplayTextLine(kColorBlue, false, true);
+	}
+}
+
+void Interface::converseSetPos(void) {
+	Converse *ct;
+	int selection = 1; // = keyStroke - '1'; // FIXME
+
+	if (selection >= _converseTextCount)
+		return;
+
+	// FIXME: wait until Andrew defines proper color
+	converseSetTextLines(selection, kColorBrightWhite, false);
+
+	ct = &_converseText[_conversePos];
+	// FIXME: TODO: finish dialog thread
+
+	// FIXME: TODO: Puzzle
+
+	_conversePos = -1;
+}
+
+
 } // End of namespace Saga

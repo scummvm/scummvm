@@ -101,6 +101,12 @@ enum INTERFACE_UPDATE_FLAGS {
 #define IHNM_INVENTORY_XSPACING 0
 #define IHNM_INVENTORY_YSPACING 0
 
+// Converse-specific stuff
+#define CONVERSE_MAX_TEXTS      64
+#define CONVERSE_MAX_TEXT_WIDTH (256 - 60)
+#define CONVERSE_TEXT_HEIGHT	10
+#define CONVERSE_TEXT_LINES     4
+
 enum PANEL_MODES {
 	kPanelNull,
 	kPanelMain,
@@ -201,6 +207,15 @@ struct VERB_DATA {
 	int s_verb;
 };
 
+struct Converse {
+	char *text;
+	int stringNum;
+	int textNum;
+	int replyId;
+	int replyFlags;
+	int replyBit;
+};
+
 class Interface {
 public:
 	Interface(SagaEngine *vm);
@@ -237,6 +252,18 @@ private:
 	int handlePlayfieldClick(SURFACE *ds, const Point& imousePt);
 	void drawVerb(int verb, int state);
 
+public:
+	void converseClear(void);
+	bool converseAddText(const char *text, int replyId, byte replyFlags, int replyBit);
+	void converseDisplayText(int pos);
+	void converseSetTextLines(int row, int textcolor, bool btnDown);
+	void converseChangePos(int chg);
+	void converseSetPos(void);
+
+private:
+	void converseDisplayTextLine(int textcolor, bool btnUp, bool rebuild);
+
+
 private:
 	SagaEngine *_vm;
 
@@ -261,6 +288,13 @@ private:
 	uint16 *_inventory;
 	int _inventorySize;
 	byte _inventoryCount;
+
+	Converse _converseText[CONVERSE_MAX_TEXTS];
+	int _converseTextCount;
+	int _converseStrCount;
+	int _converseStartPos;
+	int _converseEndPos;
+	int _conversePos;
 };
 
 } // End of namespace Saga
