@@ -73,6 +73,7 @@ LIBS    += -lvorbisfile -lvorbis -logg
 # DISABLE_SWORD1 = 1
 # DISABLE_SWORD2 = 1
 # DISABLE_QUEEN = 1
+# DISABLE_SAGA = 1
 
 
 #######################################################################
