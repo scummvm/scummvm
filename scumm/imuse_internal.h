@@ -28,7 +28,7 @@
 
 // Unremark this statement to activate some of
 // the most common iMuse diagnostic messages.
-// #define IMUSE_DEBUG
+#define IMUSE_DEBUG
 
 struct HookDatas;
 struct ParameterFader;
@@ -208,7 +208,6 @@ protected:
 	int  query_part_param(int param, byte chan);
 	void turn_off_parts();
 	void play_active_notes();
-	void cancel_volume_fade();
 
 	void transitionParameters();
 

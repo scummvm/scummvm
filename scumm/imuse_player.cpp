@@ -144,7 +144,6 @@ bool Player::isFadingOut() {
 }
 
 void Player::clear() {
-	cancel_volume_fade();
 	uninit_parts();
 	_se->ImFireAllTriggers (_id);
 	_active = false;
@@ -202,16 +201,6 @@ void Player::setTempo(uint32 b) {
 	}
 
 	_tempo_eff = (i << 16) / j;
-}
-
-void Player::cancel_volume_fade() {
-	int i;
-	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
-		if (_parameterFaders[i].param == ParameterFader::pfVolume) {
-			_parameterFaders[i].param = 0;
-			break;
-		}
-	}
 }
 
 void Player::uninit_parts() {
