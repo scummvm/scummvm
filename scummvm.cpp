@@ -322,7 +322,7 @@ int Scumm::scummLoop(int delta) {
 			  camera._cur.y != camera._last.y || _BgNeedsRedraw || 
 				_fullRedraw) {
 #endif
-			redrawBGAreas();
+		redrawBGAreas();
 		}
 		processDrawQue();
 		setActorRedrawFlags();

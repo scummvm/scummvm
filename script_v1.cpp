@@ -1409,7 +1409,7 @@ void Scumm::o5_roomOps() {
                         b = getVarOrDirectWord(0x40);
                        checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
                        _currentPalette[a]=b; /*FIXME: should be shadow palette */
-                        _fullRedraw = 1;
+                //        _fullRedraw = 1;
                } else {
                         a = getVarOrDirectWord(0x80);
                         b = getVarOrDirectWord(0x40);
