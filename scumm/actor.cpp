@@ -49,8 +49,8 @@ void Actor::initActor(int mode) {
 	elevation = 0;
 	width = 24;
 	talkColor = 15;
-	talkPosX = -80;
-	talkPosY = 0;
+	talkPosX = 0;
+	talkPosY = -80;
 	scaley = scalex = 0xFF;
 	charset = 0;
 	memset(sound, 0, sizeof(sound));
