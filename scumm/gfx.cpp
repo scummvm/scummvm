@@ -1260,7 +1260,12 @@ void Gdi::unkDecode1(byte *dst, byte *src, int height)
 
 		againPos:
 			if (!READ_BIT) {
-			} else if (READ_BIT) {
+			} else if (!READ_BIT) {
+				FILL_BITS;
+				color = bits & _decomp_mask;
+				bits >>= _decomp_shr;
+				cl -= _decomp_shr;
+			} else {
 				incm = (bits & 7) - 4;
 				cl -= 3;
 				bits >>= 3;
@@ -1282,11 +1287,6 @@ void Gdi::unkDecode1(byte *dst, byte *src, int height)
 					bits |= (*src++) << (cl - 8);
 					goto againPos;
 				}
-			} else {
-				FILL_BITS;
-				color = bits & _decomp_mask;
-				cl -= _decomp_shr;
-				bits >>= _decomp_shr;
 			}
 		} while (--x);
 		dst += _vm->_realWidth - 8;
@@ -1296,10 +1296,10 @@ void Gdi::unkDecode1(byte *dst, byte *src, int height)
 void Gdi::unkDecode2(byte *dst, byte *src, int height)
 {
 	byte color = *src++;
-	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
+	int8 inc = -1;
 
 	do {
 		int x = 8;
@@ -1344,7 +1344,12 @@ void Gdi::unkDecode3(byte *dst, byte *src, int height)
 
 		againPos:
 			if (!READ_BIT) {
-			} else if (READ_BIT) {
+			} else if (!READ_BIT) {
+				FILL_BITS;
+				color = bits & _decomp_mask;
+				bits >>= _decomp_shr;
+				cl -= _decomp_shr;
+			} else {
 				incm = (bits & 7) - 4;
 				cl -= 3;
 				bits >>= 3;
@@ -1368,11 +1373,6 @@ void Gdi::unkDecode3(byte *dst, byte *src, int height)
 					bits |= (*src++) << (cl - 8);
 					goto againPos;
 				}
-			} else {
-				FILL_BITS;
-				color = bits & _decomp_mask;
-				cl -= _decomp_shr;
-				bits >>= _decomp_shr;
 			}
 		} while (--x);
 		dst += _vm->_realWidth - 8;
@@ -1382,10 +1382,10 @@ void Gdi::unkDecode3(byte *dst, byte *src, int height)
 void Gdi::unkDecode4(byte *dst, byte *src, int height)
 {
 	byte color = *src++;
-	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
+	int8 inc = -1;
 
 	int x = 8;
 	do {
@@ -1416,10 +1416,10 @@ void Gdi::unkDecode4(byte *dst, byte *src, int height)
 void Gdi::unkDecode5(byte *dst, byte *src, int height)
 {
 	byte color = *src++;
-	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
+	int8 inc = -1;
 
 	do {
 		int x = 8;
@@ -1447,10 +1447,10 @@ void Gdi::unkDecode5(byte *dst, byte *src, int height)
 void Gdi::unkDecode6(byte *dst, byte *src, int height)
 {
 	byte color = *src++;
-	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
+	int8 inc = -1;
 
 	int x = 8;
 	do {
