@@ -151,12 +151,12 @@ private:
 		int16 x,y,w,h;
 	};
 
-	byte *_ms_buf;
-	byte *_ms_backup;
-	MousePos _ms_cur;
-	MousePos _ms_old;
-	int16 _ms_hotspot_x;
-	int16 _ms_hotspot_y;
+	byte *_mouse_data;
+	byte *_mouse_backup;
+	MousePos _mouse_cur_state;
+	MousePos _mouse_old_state;
+	int16 _mouse_hotspot_x;
+	int16 _mouse_hotspot_y;
 	int _current_shake_pos;
 	int _new_shake_pos;
 	TwoXSaiProc *_sai_func;
@@ -385,7 +385,7 @@ void OSystem_SDL::init_size(uint w, uint h) {
 	_cur_pal = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
 
 	dirty_rect_list = (SDL_Rect*)calloc(NUM_DIRTY_RECT, sizeof(SDL_Rect));
-	_ms_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING);
+	_mouse_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING);
 	dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
 
 	load_gfx_mode();
@@ -674,21 +674,21 @@ bool OSystem_SDL::show_mouse(bool visible) {
 }
 	
 void OSystem_SDL::set_mouse_pos(int x, int y) {
-	if (x != _ms_cur.x || y != _ms_cur.y) {
-		_ms_cur.x = x;
-		_ms_cur.y = y;
+	if (x != _mouse_cur_state.x || y != _mouse_cur_state.y) {
+		_mouse_cur_state.x = x;
+		_mouse_cur_state.y = y;
 		undraw_mouse();
 	}
 }
 	
 void OSystem_SDL::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
-	_ms_cur.w = w;
-	_ms_cur.h = h;
+	_mouse_cur_state.w = w;
+	_mouse_cur_state.h = h;
 
-	_ms_hotspot_x = hotspot_x;
-	_ms_hotspot_y = hotspot_y;
+	_mouse_hotspot_x = hotspot_x;
+	_mouse_hotspot_y = hotspot_y;
 
-	_ms_buf = (byte*)buf;
+	_mouse_data = (byte*)buf;
 
 	undraw_mouse();
 }
@@ -922,43 +922,71 @@ void OSystem_SDL::quit() {
 void OSystem_SDL::draw_mouse() {
 	if (_mouse_drawn || !_mouse_visible)
 		return;
-	_mouse_drawn = true;
+
+	int x = _mouse_cur_state.x - _mouse_hotspot_x;
+	int y = _mouse_cur_state.y - _mouse_hotspot_y;
+	int w = _mouse_cur_state.w;
+	int h = _mouse_cur_state.h;
+	byte color;
+	byte *src = _mouse_data;		// Image representing the mouse
+	byte *bak = _mouse_backup;		// Surface used to backup the area obscured by the mouse
+	byte *dst;					// Surface we are drawing into
+
+	// clip the mouse rect, and addjust the src pointer accordingly
+	if (x < 0) {
+		w += x;
+		src -= x;
+		x = 0;
+	}
+	if (y < 0) {
+		h += y;
+		src -= y * _mouse_cur_state.w;
+		y = 0;
+	}
+	if (w > SCREEN_WIDTH - x)
+		w = SCREEN_WIDTH - x;
+	if (h > SCREEN_HEIGHT - y)
+		h = SCREEN_HEIGHT - y;
+
+	// Store the bounding box so that undraw mouse can restore the area the
+	// mouse currently covers to its original content.
+	_mouse_old_state.x = x;
+	_mouse_old_state.y = y;
+	_mouse_old_state.w = w;
+	_mouse_old_state.h = h;
+
+	// Quick check to see if anything has to be drawn at all
+	if (w <= 0 || h <= 0)
+		return;
+
+	// Draw the mouse cursor; backup the covered area in "bak"
 
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	const int ydraw = _ms_cur.y - _ms_hotspot_y;
-	const int xdraw = _ms_cur.x - _ms_hotspot_x;
-	const int w = _ms_cur.w;
-	const int h = _ms_cur.h;
-	int x,y;
-	byte color;
-	byte *dst, *bak = _ms_backup;
-	byte *buf = _ms_buf;
-
-	_ms_old.w = w;
-	_ms_old.h = h;
-	_ms_old.x = xdraw;
-	_ms_old.y = ydraw;
-
-	dst = (byte *)sdl_screen->pixels + ydraw * SCREEN_WIDTH + xdraw;
-
-	for (y = 0; y < h; y++, dst += SCREEN_WIDTH, bak += MAX_MOUSE_W, buf += w) {
-		if ((ydraw + y) < SCREEN_HEIGHT) {
-			for (x = 0; x < w; x++) {
-				if ((xdraw + x) < SCREEN_WIDTH) {
-					bak[x] = dst[x];
-					if ((color = buf[x]) != 0xFF) {
-						dst[x] = color;
-					}
-				}
-			}
+	dst = (byte *)sdl_screen->pixels + y * SCREEN_WIDTH + x;
+	while (h > 0) {
+		int width = w;
+		while (width > 0) {
+			*bak++ = *dst;
+			color = *src++;
+			if (color != 0xFF)	// 0xFF = transparent, don't draw
+				*dst = color;
+			dst++;
+			width--;
 		}
+		src += _mouse_cur_state.w - w;
+		bak += MAX_MOUSE_W - w;
+		dst += SCREEN_WIDTH - w;
+		h--;
 	}
 
-	add_dirty_rect(xdraw,ydraw,w,h);
+	add_dirty_rect(x, y, w, h);
 
 	SDL_UnlockSurface(sdl_screen);
+	
+	// Finally, set the flag to indicate the mouse has been drawn
+	_mouse_drawn = true;
 }
 
 void OSystem_SDL::undraw_mouse() {
@@ -969,22 +997,19 @@ void OSystem_SDL::undraw_mouse() {
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	byte *dst, *bak = _ms_backup;
-	const int old_mouse_x = _ms_old.x;
-	const int old_mouse_y = _ms_old.y;
-	const int old_mouse_w = _ms_old.w;
-	const int old_mouse_h = _ms_old.h;
+	byte *dst, *bak = _mouse_backup;
+	const int old_mouse_x = _mouse_old_state.x;
+	const int old_mouse_y = _mouse_old_state.y;
+	const int old_mouse_w = _mouse_old_state.w;
+	const int old_mouse_h = _mouse_old_state.h;
 	int x,y;
 
-	dst = (byte *)sdl_screen->pixels + old_mouse_y * SCREEN_WIDTH + old_mouse_x;
+	// No need to do clipping here, since draw_mouse() did that already
 
-	for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W, dst += SCREEN_WIDTH) {
-		if ((old_mouse_y + y) < SCREEN_HEIGHT) {
-			for (x = 0; x < old_mouse_w; x++) {
-				if ((old_mouse_x + x) < SCREEN_WIDTH) {
-					dst[x] = bak[x];
-				}
-			}
+	dst = (byte *)sdl_screen->pixels + old_mouse_y * SCREEN_WIDTH + old_mouse_x;
+	for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += SCREEN_WIDTH) {
+		for (x = 0; x < old_mouse_w; ++x) {
+			dst[x] = bak[x];
 		}
 	}
 
