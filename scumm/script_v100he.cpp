@@ -2057,14 +2057,15 @@ void ScummEngine_v100he::o100_quitPauseRestart() {
 	subOp -= 61;
 
 	switch (subOp) {
+	case 0:		// SO_RESTART
+		restart();
+		break;
 	case 67:
 		clearDrawObjectQueue();
 		break;
 	case 71:
+	case 72:
 		shutDown();
-		break;
-	case 72:		// SO_RESTART
-		restart();
 		break;
 	case 75:
 		// Clear screen
