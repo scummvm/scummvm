@@ -111,7 +111,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_cond),
 		OPCODE(o90_dim2dim2Array),
 		/* 38 */
-		OPCODE(o6_invalid),
+		OPCODE(o90_redim2dimArray),
 		OPCODE(o6_invalid),
 		OPCODE(o90_sortArray),
 		OPCODE(o6_invalid),
@@ -1819,6 +1819,30 @@ void ScummEngine_v90he::o90_dim2dim2Array() {
 	}
 
 	defineArray(fetchScriptWord(), data, dim2start, dim2end, dim1start, dim1end);
+}
+
+void ScummEngine_v90he::o90_redim2dimArray() {
+	int a, b, c, d;
+	d = pop();
+	c = pop();
+	b = pop();
+	a = pop();
+
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 4:
+		redimArray(fetchScriptWord(), a, b, c, d, kByteArray);
+		break;
+	case 5:
+		redimArray(fetchScriptWord(), a, b, c, d, kIntArray);
+		break;
+	case 6:
+		redimArray(fetchScriptWord(), a, b, c, d, kDwordArray);
+		break;
+	default:
+		error("o90_redim2dimArray: default type %d", subOp);
+	}
 }
 
 void ScummEngine_v90he::o90_sortArray() {

@@ -1038,6 +1038,7 @@ protected:
 	void o90_getPolygonOverlap();
 	void o90_cond();
 	void o90_dim2dim2Array();
+	void o90_redim2dimArray();
 	void o90_sortArray();
 	void o90_getObjectData();
 	void o90_getPaletteData();
