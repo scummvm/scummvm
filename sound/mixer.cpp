@@ -163,12 +163,19 @@ public:
 
 #ifdef USE_VORBIS
 class ChannelVorbis : public Channel {
+#ifdef SOX_HACK
+	RateConverter *_converter;
+	AudioInputStream *_input;
+#else
 	OggVorbis_File *_ov_file;
 	int _end_pos;
-	bool _eof_flag, _is_cd_track;
+	bool _eof_flag;
+#endif
+	bool _is_cd_track;
 
 public:
 	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
+	~ChannelVorbis();
 
 	void mix(int16 *data, uint len);
 	bool isActive();
@@ -675,17 +682,8 @@ printf("ChannelRaw: flags 0x%x, input rate %d, output rate %d, size %d\n", flags
 	_input = makeLinearInputStream(flags, _ptr, size);
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
-	// If rate conversion is necessary, create a converter
-//	printf("inrate %d, outrate %d\n", rate, mixer->getOutputRate());
-	if (rate != mixer->getOutputRate()) {
-		_converter = new LinearRateConverter(rate, mixer->getOutputRate());
-		//_converter = new ResampleRateConverter(rate, mixer->getOutputRate(), 1);
-	} else {
-		if (flags & SoundMixer::FLAG_STEREO)
-			_converter = new CopyRateConverter<true>();
-		else
-			_converter = new CopyRateConverter<false>();
-	}
+	// Get a rate converter instance
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), flags & SoundMixer::FLAG_STEREO);
 #else
 	_pos = 0;
 	_fpPos = 0;
@@ -721,17 +719,18 @@ ChannelRaw::~ChannelRaw() {
 
 void ChannelRaw::mix(int16 *data, uint len) {
 #ifdef SOX_HACK
-	const int volume = _mixer->getVolume();
-	uint tmpLen = len;
+	assert(_input);
+	assert(_converter);
+
 	if (_input->eof()) {
 		// TODO: call drain method
 		// TODO: Looping
 		destroy();
 	}
 
-	assert(_converter);
+	const int volume = _mixer->getVolume();
+	uint tmpLen = len;
 	_converter->flow(*_input, data, &tmpLen, volume);
-
 #else
 	byte *s, *end;
 
@@ -777,17 +776,8 @@ printf("ChannelStream: flags 0x%x, input rate %d, output rate %d, size %d\n", fl
 	_input->append((const byte *)sound, size);
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
-	// If rate conversion is necessary, create a converter
-//	printf("inrate %d, outrate %d\n", rate, mixer->getOutputRate());
-	if (rate != mixer->getOutputRate()) {
-		_converter = new LinearRateConverter(rate, mixer->getOutputRate());
-		//_converter = new ResampleRateConverter(rate, mixer->getOutputRate(), 1);
-	} else {
-		if (flags & SoundMixer::FLAG_STEREO)
-			_converter = new CopyRateConverter<true>();
-		else
-			_converter = new CopyRateConverter<false>();
-	}
+	// Get a rate converter instance
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), flags & SoundMixer::FLAG_STEREO);
 #else
 	_flags = flags;
 	_bufferSize = buffer_size;
@@ -845,8 +835,8 @@ void ChannelStream::append(void *data, uint32 len) {
 
 void ChannelStream::mix(int16 *data, uint len) {
 #ifdef SOX_HACK
-	const int volume = _mixer->getVolume();
-	uint tmpLen = len;
+	assert(_input);
+	assert(_converter);
 
 	if (_input->eof()) {
 		// TODO: call drain method
@@ -863,7 +853,8 @@ void ChannelStream::mix(int16 *data, uint len) {
 		return;
 	}
 
-	assert(_converter);
+	const int volume = _mixer->getVolume();
+	uint tmpLen = len;
 	_converter->flow(*_input, data, &tmpLen, volume);
 #else
 	if (_pos == _endOfData) {
@@ -1149,6 +1140,17 @@ bool ChannelMP3CDMusic::isActive() {
 #ifdef USE_VORBIS
 ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track)
 	: Channel(mixer, handle) {
+#ifdef SOX_HACK
+	vorbis_info *vi;
+	
+	// Create the input stream
+	_input = new VorbisInputStream(ov_file, duration);
+
+	// Get a rate converter instance
+	vi = ov_info(ov_file, -1);
+	assert(vi->channels == 1 || vi->channels == 2);
+	_converter = makeRateConverter(vi->rate, mixer->getOutputRate(), vi->channels >= 2);
+#else
 	_ov_file = ov_file;
 
 	if (duration)
@@ -1157,7 +1159,15 @@ ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggV
 		_end_pos = 0;
 
 	_eof_flag = false;
+#endif
 	_is_cd_track = is_cd_track;
+}
+
+ChannelVorbis::~ChannelVorbis() {
+#ifdef SOX_HACK
+	delete _converter;
+	delete _input;
+#endif
 }
 
 #ifdef CHUNKSIZE
@@ -1166,6 +1176,19 @@ ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggV
 
 void ChannelVorbis::mix(int16 *data, uint len) {
 
+#ifdef SOX_HACK
+	assert(_input);
+	assert(_converter);
+
+	if (_input->eof() && !_is_cd_track) {
+		// TODO: call drain method
+		destroy();
+	}
+
+	const int volume = _mixer->getVolume();
+	uint tmpLen = len;
+	_converter->flow(*_input, data, &tmpLen, volume);
+#else
 	if (_eof_flag) {
 		return;
 	}
@@ -1221,10 +1244,15 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 
 	if (_eof_flag && !_is_cd_track)
 		destroy();
+#endif
 }
 
 bool ChannelVorbis::isActive() {
+#ifdef SOX_HACK
+	return !_input->eof();
+#else
 	return !_eof_flag && !(_end_pos > 0 && ov_pcm_tell(_ov_file) >= _end_pos);
+#endif
 }
 
 #endif
