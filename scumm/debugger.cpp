@@ -524,7 +524,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 			
 bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 	int i;
-	ScriptSlot *ss = &_s->vm.slot[0];
+	ScriptSlot *ss = _s->vm.slot;
 	Debug_Printf("+--------------------------------------+\n");
 	Debug_Printf("|# | num | offset|sta|typ|fr|rec|fc|cut|\n");
 	Debug_Printf("+--+-----+-------+---+---+--+--+---+---+\n");

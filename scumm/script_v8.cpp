@@ -1696,17 +1696,27 @@ void Scumm_v8::o8_getObjectImageHeight() {
 
 void Scumm_v8::o8_getStringWidth() {
 	int charset = pop();
-	int len = resStrLen(_scriptPointer);
 	int oldID = _charset->getCurID(); 
 	int width;
+	const byte *msg = _scriptPointer;
 	
+	// Skip to the next instruction
+	_scriptPointer += resStrLen(_scriptPointer) + 1;
+
+	if (msg[0] == '/') {
+		translateText(msg, _transText);
+		msg = _transText;
+	} 
+
+
 	// Temporary set the specified charset id
-	_charset->setCurID(charset);
-	width = _charset->getStringWidth(0, _scriptPointer);
+	_charset->setCurID(_string[charset].charset);
+	// Determine the strings width
+	width = _charset->getStringWidth(0, msg);
+	// Revert to old font
 	_charset->setCurID(oldID);
-	
+
 	push(width);
-	_scriptPointer += len + 1;
 }
 
 void Scumm_v8::o8_drawObject() {
