@@ -991,7 +991,9 @@ void ScummEngine::launch() {
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
 		int args[16];
 		memset(args, 0, sizeof(args));
-		args[0] = _bootParam;		
+		args[0] = _bootParam;	
+
+		_saveLoadFlag = 0;
 		if (_gameId == GID_MANIAC && _version == 1 && _demoMode)
 			runScript(9, 0, 0, args);
 		else

@@ -73,9 +73,26 @@ void OptionsDialog::open() {
 	setResult(0);
 	
 	if (_fullscreenCheckbox) {
-		// FIXME - disable GFX popup for now
 		_gfxPopUp->setSelected(0);
 		_gfxPopUp->setEnabled(false);
+
+		if (ConfMan.hasKey("gfx_mode", _domain)) {
+			const GraphicsMode *gm = gfx_modes;
+			String gfxMode = ConfMan.get("gfx_mode", _domain);
+			int gfxCount = 1;
+			while (gm->name) {
+				OSystem::Property prop;
+				prop.gfx_mode = gm->id;
+
+				if (g_system->property(OSystem::PROP_HAS_SCALER, &prop) != 0)
+					gfxCount++;
+
+				if (scumm_stricmp(gm->name, gfxMode.c_str()) == 0)
+					_gfxPopUp->setSelected(gfxCount);
+
+				gm++;
+			}
+		}
 
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
@@ -128,9 +145,13 @@ void OptionsDialog::close() {
 			if (_enableGraphicSettings) {
 				ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), _domain);
+
+				if ((int32)_gfxPopUp->getSelectedTag() >= 0)
+					ConfMan.set("gfx_mode", _gfxPopUp->getSelectedString(), _domain);
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
+				ConfMan.removeKey("gfx_mode", _domain);
 			}
 		}
 
@@ -198,7 +219,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
-//	_gfxPopUp->setEnabled(enabled);
+	_gfxPopUp->setEnabled(enabled);
 	_fullscreenCheckbox->setEnabled(enabled);
 	_aspectCheckbox->setEnabled(enabled);
 }
@@ -225,28 +246,25 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	const int x = 10;
 	const int w = _w - 2 * 10;
+        const GraphicsMode *gm = gfx_modes;
 
 	// The GFX mode popup
-	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
 	_gfxPopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Graphics mode: ", 100);
 	yoffset += 16;
 
-	// FIXME: For the GlobalOptionsDialog, we don't want a <default> here;
-	// rather, we want to setSelected to the current global
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
-	_gfxPopUp->appendEntry("Normal (no scaling)", GFX_NORMAL);
-	_gfxPopUp->appendEntry("2x", GFX_DOUBLESIZE);
-	_gfxPopUp->appendEntry("3x", GFX_TRIPLESIZE);
-	_gfxPopUp->appendEntry("2xSAI", GFX_2XSAI);
-	_gfxPopUp->appendEntry("Super2xSAI", GFX_SUPER2XSAI);
-	_gfxPopUp->appendEntry("SuperEagle", GFX_SUPEREAGLE);
-	_gfxPopUp->appendEntry("AdvMAME2x", GFX_ADVMAME2X);
-	_gfxPopUp->appendEntry("AdvMAME3x", GFX_ADVMAME3X);
-	_gfxPopUp->appendEntry("hq2x", GFX_HQ2X);
-	_gfxPopUp->appendEntry("hq3x", GFX_HQ3X);
-	_gfxPopUp->appendEntry("TV2x", GFX_TV2X);
-	_gfxPopUp->appendEntry("DotMatrix", GFX_DOTMATRIX);
+        while (gm->name) {
+		OSystem::Property prop;
+		prop.gfx_mode = gm->id;
+
+		if (g_system->property(OSystem::PROP_HAS_SCALER, &prop) != 0) {
+			_gfxPopUp->appendEntry(gm->name, gm->id);
+
+		}
+
+                gm++;
+        }
 
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Fullscreen mode");
@@ -332,7 +350,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	tab->addTab("Graphics");
 	yoffset = vBorder;
 	yoffset = addGraphicControls(tab, yoffset);
-
 
 	//
 	// 2) The audio tab

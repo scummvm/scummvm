@@ -99,7 +99,8 @@ public:
 		PROP_GET_FMOPL_EG_ENT,
 		PROP_TOGGLE_ASPECT_RATIO,
 		PROP_TOGGLE_MOUSE_GRAB,
-		PROP_WANT_RECT_OPTIM
+		PROP_WANT_RECT_OPTIM,
+		PROP_HAS_SCALER
 	};
 	union Property {
 		const char *caption;
