@@ -728,6 +728,10 @@ void IMuseDigital::callback() {
 			}
 
 			int32 mixer_size = _channel[l].mixerSize;
+			
+			assert(_channel[l].stream);
+			if (_channel[l].stream->endOfData())
+				mixer_size *= 2;
 
 			if (_channel[l].offset + mixer_size > _channel[l].size) {
 				mixer_size = _channel[l].size - _channel[l].offset;
@@ -738,7 +742,6 @@ void IMuseDigital::callback() {
 			if (_scumm->_mixer->isReady()) {
 				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
 				_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
-				assert(_channel[l].stream);
 				_channel[l].stream->append(_channel[l].data + _channel[l].offset, mixer_size);
 			}
 			_channel[l].offset += mixer_size;
