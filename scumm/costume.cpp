@@ -560,35 +560,26 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	// Determine the position the limb is at
 	i = cost.curpos[limb] & 0x7FFF;
 	
-//printf("costume %d, limb %d:\n", _loaded._id, limb);
-
 	// Get the frame pointer for that limb
 	frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._frameOffsets + limb * 2);
-
-//printf("frameptr:\n");
-//hexdump(frameptr-0x10, 0x20);
 
 	// Determine the offset to the costume data for the limb at position i
 	code = _loaded._animCmds[i] & 0x7F;
 
 	// Code 0x7B indicates a limb for which there is nothing to draw
 	if (code != 0x7B) {
-//printf("code %d:\n", code);
-//hexdump(frameptr + code * 2 - 0x10, 0x20);
 		_srcptr = _loaded._baseptr + READ_LE_UINT16(frameptr + code * 2);
-//printf("_srcptr:\n");
-//hexdump(_srcptr, 0x20);
 
 		if (!(_vm->_features & GF_OLD256) || code < 0x79) {
 			const CostumeInfo *costumeInfo;
 			int xmoveCur, ymoveCur;
 
 			if (_vm->_version == 1) {
-				_width = _srcptr[0];
+				_width = _srcptr[0] * 8;
 				_height = _srcptr[1];
-				xmoveCur = _xmove + _srcptr[2];
+				xmoveCur = _xmove + _srcptr[2] * 8;
 				ymoveCur = _ymove + _srcptr[3];
-				_xmove += _srcptr[4];
+				_xmove += _srcptr[4] * 8;
 				_ymove -= _srcptr[5];
 				_srcptr += 6;
 			} else {
