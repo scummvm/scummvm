@@ -24,12 +24,20 @@ General
   in the game detector, in favor of getting all these directly from the
   config system).
 * fix the Map<> template, make it more robust; maybe use a red-black tree?
+* add iterators to List<> template and make use of them
+* allow for return-to-launcher instead of a normal "quit" ?
 
 GUI
 ===
+* implement "tabs" for multi-pane prefs dialog
+  -> could also be used by the Scumm help dialog in scumm/help.cpp
 * LAUNCHER: fix global options dialog to be properly persistent
 * LAUNCHER: add more options to global options dialog
-* LAUNCHER: add more options to game options dialog 
+* LAUNCHER: add more options to game target options dialog 
+* global & game target options dialogs probably could share some "panes"
+  -> write code allowing this
+  -> also, 'in game' option dialogs (for volume/scaler/etc. settings)
+     could potentially reuse these, too
 
 Audio
 =====
