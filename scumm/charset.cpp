@@ -1781,8 +1781,14 @@ void CharsetRendererNES::printChar(int chr) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
-	dst = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
-	drawBits1(_vm->gdi._textSurface, dst, charPtr, drawTop, origWidth, origHeight);
+
+	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
+		dst = vs->getPixels(_left, drawTop);
+		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
+	} else {
+		dst = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
+		drawBits1(_vm->gdi._textSurface, dst, charPtr, drawTop, origWidth, origHeight);
+	}
 
 	if (_str.left > _left)
 		_str.left = _left;
