@@ -328,10 +328,10 @@ void Sound::playSound(int soundID) {
 			83 84 86 88 89 8b 89 89  |........|
 			
 			As you can see, there are quite some patterns, e.g.
-			the 00 00 00 3c - the sound data seems to start at
+			the "3c 00 00 00" - the sound data seems to start at
 			offset 54 = 0x36, but it could also be 0x3c...
 			
-			Indy 3 seems to use a different format. The very first sound played
+			Indy 3 uses a different format. The very first sound played
 			in Indy 3 looks as follows:
 			5a 25 00 00 53 4f 54 25  |Z%..SOT%|
 			00 00 53 4f db 0a 00 00  |..SO....|

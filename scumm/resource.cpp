@@ -1182,7 +1182,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 			// before the song end a jump to the song start. More precisely we abuse
 			// a S&M sysex, "maybe_jump" to achieve this effect. We could also
 			// use a set_loop sysex, but it's a bit longer, a little more complicated,
-			// and seemingly has no advantage either.
+			// and has no advantage either.
 
 			// First, find the track end
 			byte *end = ptr + size;
@@ -1192,15 +1192,14 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 			}
 			assert(ptr < end);
 
-			// Now insert the jump. The jump offset is measure in ticks, and 
+			// Now insert the jump. The jump offset is measured in ticks, and 
 			// each instrument definition spans 4 ticks... so we jump to tick
 			// 8*4, although jumping to tick 0 would probably work fine, too.
 			// Note: it's possible that some musics don't loop from the start...
 			// in that case we'll have to figure out how the loop range is specified
 			// and then how to handle it appropriately (if it's specified in
-			// ticks, we are fine; but if it's byte offset, we'll have to work
-			// a bit...).
-			int jump_offset = 8 * 4;
+			// ticks, we are fine; but if it's a byte offset, it'll be nasty).
+			const int jump_offset = 8 * 4;
 			memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
 			memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
 			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
