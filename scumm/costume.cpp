@@ -509,19 +509,27 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 			const CostumeInfo *costumeInfo;
 			int xmoveCur, ymoveCur;
 
-			// FIXME: those are here just in case... you never now...
-			assert(_srcptr[1] == 0);
-			assert(_srcptr[3] == 0);
+			if (_vm->_version == 1) {
+				_width = _srcptr[0];
+				_height = _srcptr[1];
+				xmoveCur = _xmove + _srcptr[2];
+				ymoveCur = _ymove + _srcptr[3];
+				_xmove += _srcptr[4];
+				_ymove -= _srcptr[5];
+			} else {
+				// FIXME: those are here just in case... you never now...
+				assert(_srcptr[1] == 0);
+				assert(_srcptr[3] == 0);
 		
-			costumeInfo = (const CostumeInfo *)_srcptr;
-			_width = READ_LE_UINT16(&costumeInfo->width);
-			_height = READ_LE_UINT16(&costumeInfo->height);
-			xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
-			ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
-			_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
-			_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
-			_srcptr += 12;
-		
+				costumeInfo = (const CostumeInfo *)_srcptr;
+				_width = READ_LE_UINT16(&costumeInfo->width);
+				_height = READ_LE_UINT16(&costumeInfo->height);
+				xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
+				ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
+				_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
+				_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
+				_srcptr += 12;
+			}
 			return mainRoutine(xmoveCur, ymoveCur);
 		}
 	}
