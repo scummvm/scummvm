@@ -201,22 +201,22 @@ void Config::flush() const
 	}
 }
 
-void Config::rename_domain(const String &d)
+void Config::rename_domain(const String &oldD, const String &newD)
 {
-	String domain(d);
-	domain.toLowercase();
+	String oldDomain(oldD);
+	String newDomain(newD);
+	oldDomain.toLowercase();
+	newDomain.toLowercase();
 
-	if (domain == defaultDomain)
+	if (oldDomain == newDomain)
 		return;
 
-	StringMap &oldHash = domains[defaultDomain];
-	StringMap &newHash = domains[domain];
+	StringMap &oldHash = domains[oldDomain];
+	StringMap &newHash = domains[newDomain];
 
 	newHash.merge(oldHash);
 	
-	domains.remove(defaultDomain);
-	
-	defaultDomain = domain;
+	domains.remove(oldDomain);
 }
 
 void Config::delete_domain(const String &d)

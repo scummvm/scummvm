@@ -360,8 +360,8 @@ void GameDetector::setGame(const String &name)
 {
 	_gameFileName = name;
 	g_config->set_domain(name);
-	g_config->rename_domain("game-specific");
-	g_config->rename_domain(name);
+	g_config->rename_domain(name, "game-specific");
+	g_config->rename_domain("game-specific", name);
 	updateconfig();
 }
 

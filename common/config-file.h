@@ -46,7 +46,7 @@ public:
 
 	void set_domain(const String &d);
 	void flush() const;
-	void rename_domain(const String &d);
+	void rename_domain(const String &oldD, const String &newD);
 	void delete_domain(const String &d);
 	bool has_domain(const String &d) const;
 	void set_filename(const String &);

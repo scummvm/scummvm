@@ -80,20 +80,21 @@ protected:
 	Config			&_config;
 	const String	&_domain;
 	EditTextWidget	*_descriptionWidget;
+	EditTextWidget	*_domainWidget;
 };
 
 EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain)
-	: Dialog(gui, 10, 40, 320-2*10, 200-2*40), _config(config), _domain(domain)
+	: Dialog(gui, 8, 50, 320-2*8, 200-2*40), _config(config), _domain(domain)
 {
 	// Determine the description string
-	String name(_config.get("gameid", _domain));
+	String gameid(_config.get("gameid", _domain));
 	String description(_config.get("description", _domain));
-	if (name.isEmpty())
-		name = _domain;
+	if (gameid.isEmpty())
+		gameid = _domain;
 	if (description.isEmpty()) {
 		const VersionSettings *v = version_settings;
 		while (v->filename) {
-			if (!scumm_stricmp(v->filename, name.c_str())) {
+			if (!scumm_stricmp(v->filename, gameid.c_str())) {
 				description = v->gamename;
 				break;
 			}
@@ -101,15 +102,20 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 		}
 	}
 	
+	// Label & edit widget for the game ID
+	new StaticTextWidget(this, 10, 10, 40, kLineHeight, "ID: ", kTextAlignRight);
+	_domainWidget =
+		new EditTextWidget(this, 50, 10, _w-50-10, kLineHeight, _domain);
+	
 	// Label & edit widget for the description
-	new StaticTextWidget(this, 10, 10, 40, kLineHeight, "Name: ", kTextAlignRight);
+	new StaticTextWidget(this, 10, 26, 40, kLineHeight, "Name: ", kTextAlignRight);
 	_descriptionWidget =
-		new EditTextWidget(this, 50, 10, _w-50-10, kLineHeight, description);
+		new EditTextWidget(this, 50, 26, _w-50-10, kLineHeight, description);
 
 	// Path to game data (view only)
 	String path(_config.get("path", _domain));
-	new StaticTextWidget(this, 10, 24, 40, kLineHeight, "Path: ", kTextAlignRight);
-	new StaticTextWidget(this, 50, 24, _w-50-10, kLineHeight, path, kTextAlignLeft);
+	new StaticTextWidget(this, 10, 42, 40, kLineHeight, "Path: ", kTextAlignRight);
+	new StaticTextWidget(this, 50, 42, _w-50-10, kLineHeight, path, kTextAlignLeft);
 	
 	// TODO - insert more widgets here; see comments before the class
 
@@ -121,11 +127,21 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
-	case kOKCmd:
+	case kOKCmd: {
 		// Write back changes made to config object
-		_config.set("description", _descriptionWidget->getLabel(), _domain);
+		String newDomain(_domainWidget->getLabel());
+		if (newDomain != _domain) {
+			if (newDomain.isEmpty() || _config.has_domain(newDomain)) {
+				MessageDialog alert(_gui, "This game ID is already taken. Please choose another one.");
+				alert.runModal();
+				return;
+			}
+			_config.rename_domain(_domain, newDomain);
+		}
+		_config.set("description", _descriptionWidget->getLabel(), newDomain);
 		setResult(1);
 		close();
+		}
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
