@@ -415,7 +415,7 @@ void AkosRenderer::codec1_genericDecode() {
 
 				scaleytab = &v1.scaletable[v1.scaleYindex];
 
-				if (v1.scaletable[v1.scaleXindex] < _scaleX) {
+				if (_scaleX == 255 || v1.scaletable[v1.scaleXindex] < _scaleX) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _outwidth)
 						return;
