@@ -109,6 +109,7 @@ struct Wiz {
 	WizPolygon _polygons[NUM_POLYGONS];
 	
 	Wiz();
+	void imageNumClear();
 
 	void polygonClear();
 	void polygonLoad(const uint8 *polData);

@@ -35,6 +35,10 @@ Wiz::Wiz() {
 	memset(&_polygons, 0, sizeof(_polygons));
 }
 
+void Wiz::imageNumClear() {
+	_imagesNum = 0;
+}
+
 void Wiz::polygonClear() {
 	memset(&_polygons, 0, sizeof(_polygons));
 }
