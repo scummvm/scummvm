@@ -1279,10 +1279,10 @@ void CharsetRendererNut::printChar(int chr) {
 	// details.
 
 	if (_firstChar) {
-		_str.left = shadow.left;
-		_str.top = shadow.top;
-		_str.right = shadow.left;
-		_str.bottom = shadow.top;
+		_str.left = (shadow.left >= 0) ? shadow.left : 0;
+		_str.top = (shadow.top >= 0) ? shadow.top : 0;
+		_str.right = _str.left;
+		_str.bottom = _str.top;
 		_firstChar = false;
 	}
 
