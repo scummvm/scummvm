@@ -37,6 +37,7 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_LOOM256:
 	case GID_MONKEY_EGA:
 	case GID_MONKEY_VGA:
+	case GID_MONKEY_SEGA:
 	case GID_MONKEY:
 	case GID_MONKEY2:
 	case GID_INDY4:
@@ -49,6 +50,7 @@ int ScummHelp::numPages(byte gameId) {
 		break;  
 /*	TODO - I don't know the controls for these games
 	case GID_PUTTDEMO:
+	case GID_PUTTPUTT:
 */	
 	default:
 		return 2;
@@ -59,8 +61,8 @@ int ScummHelp::numPages(byte gameId) {
 #define ADD_TEXT(d) ADD_BIND("",d)
 #define ADD_LINE ADD_BIND("","")
 
-void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title,
-			String *&key, String *&dsc) {
+void ScummHelp::updateStrings(byte gameId, byte version, int page,
+				String &title, String *&key, String *&dsc) {
 	key = new String[HELP_NUM_LINES];
 	dsc = new String[HELP_NUM_LINES];
 	int i = 0;
@@ -75,9 +77,9 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title
 		ADD_BIND("Ctrl 0-9", "Load game state 1-10");
 		ADD_BIND("Alt 0-9", "Save game state 1-10");
 #ifdef MACOSX
-		ADD_BIND("Alt x, Ctrl z", "Quit");
-#else
 		ADD_BIND("Cmd q", "Quit");
+#else
+		ADD_BIND("Alt x, Ctrl z", "Quit");
 #endif
 		ADD_BIND("Alt Enter", "Toggle fullscreen");
 		ADD_BIND("[, ]", "Music volume up / down");
@@ -91,17 +93,18 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title
 		ADD_BIND("~, #", "Show / Hide console");
 		ADD_BIND("Ctrl d", "Start the debugger");
 		ADD_BIND("Ctrl s", "Show memory consumption");
-		ADD_BIND("Ctrl f", "Run in fast mode *");
-		ADD_BIND("Ctrl g", "Run in really fast mode *");
+		ADD_BIND("Ctrl f", "Run in fast mode (*)");
+		ADD_BIND("Ctrl g", "Run in really fast mode (*)");
 		ADD_BIND("Ctrl Alt 0-9", "Set graphics filter");
-		ADD_LINE;
+		ADD_BIND("Ctrl Alt a", "Toggle aspect-ratio correction");
+		ADD_BIND("Ctrl Alt b", "Toggle bilinear filtering [OpenGL]");
 		ADD_LINE;
 		ADD_LINE;
 		ADD_LINE;
 		ADD_TEXT("* Note that using ctrl-f and");
-		ADD_TEXT("ctrl-g are not recommended");
-		ADD_TEXT("since they may cause crashes");
-		ADD_TEXT("or incorrect game behaviour.");
+		ADD_TEXT("   ctrl-g are not recommended");
+		ADD_TEXT("   since they may cause crashes");
+		ADD_TEXT("   or incorrect game behaviour.");
 		break;
 	case 3:
 		if (gameId == GID_LOOM || gameId == GID_LOOM256)
@@ -121,16 +124,20 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title
 			ADD_BIND("e", "Walk to");
 			ADD_BIND("d", "Pick up");
 			ADD_BIND("c", "What is");
-			if (gameId == GID_ZAK || gameId == GID_ZAK256) {
-				ADD_BIND("r", "Put on");
-				ADD_BIND("f", "Take off");
-			} else {
+			if (gameId == GID_MANIAC) {
 				ADD_BIND("r", "New kid");
 				ADD_BIND("f", "Unlock");
+			} else {
+				ADD_BIND("r", "Put on");
+				ADD_BIND("f", "Take off");
 			}
 			ADD_BIND("v", "Use");
 			ADD_BIND("t", "Turn on");
 			ADD_BIND("g", "Turn off");
+			if (gameId == GID_MANIAC)
+				ADD_BIND("b", "Fix");
+			else
+				ADD_BIND("b", "Switch");
 			break;
 		case GID_INDY3:
 		case GID_INDY3_256:
@@ -148,6 +155,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title
 			ADD_BIND("v", "Turn off");
 			ADD_BIND("t", "Talk");
 			ADD_BIND("g", "Travel");
+			ADD_BIND("b", "To Henry / To Indy");
 			break;
 		case GID_LOOM:
 		case GID_LOOM256:
@@ -162,6 +170,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title
 			break;
 		case GID_MONKEY_EGA:
 		case GID_MONKEY_VGA:
+		case GID_MONKEY_SEGA:
 			ADD_BIND("o", "Open");
 			ADD_BIND("c", "Close");
 			ADD_BIND("s", "puSh");
@@ -225,28 +234,32 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title
 		switch (gameId) {
 		case GID_MANIAC:
 		case GID_ZAK:
-		case GID_ZAK256:
-			title = "Main game controls:";
-			if (gameId == GID_ZAK || gameId == GID_ZAK256) {
-				ADD_BIND("b", "Switch");
-			} else {
-				ADD_BIND("b", "Fix");
-			}
-			ADD_LINE;
-			ADD_TEXT("Inventory Controls (not implemented):");
+			title = "Other game controls:";
+			ADD_TEXT("Inventory: (not yet implemented)");
 			ADD_BIND("u", "Scroll list up");
 			ADD_BIND("j", "Scroll list down");
 			ADD_BIND("i", "Upper left item");
 			ADD_BIND("k", "Lower left item");
 			ADD_BIND("o", "Upper right item");
 			ADD_BIND("l", "Lower right item");
+			ADD_LINE;
+			ADD_TEXT("Switching characters:");
+			if (gameId == GID_MANIAC) {
+				ADD_BIND("F1", "Dave");
+				ADD_BIND("F2", "Second kid");
+				ADD_BIND("F3", "Third kid");
+			} else {
+				ADD_BIND("F1", "Zak");
+				ADD_BIND("F2", "Annie");
+				ADD_BIND("F3", "Melissa");
+				ADD_BIND("F4", "Leslie");
+			}
 			break;
 		case GID_INDY3:
+		case GID_ZAK256:
 		case GID_INDY3_256:
-			title = "Main game controls:";
-			ADD_BIND("b", "To Henry / To Indy");
-			ADD_LINE;
-			ADD_TEXT("Inventory Controls:");
+			title = "Other game controls:";
+			ADD_TEXT("Inventory:");
 			ADD_BIND("y", "Upper left item");
 			ADD_BIND("h", "Middle left item");
 			ADD_BIND("n", "Lower left item");
@@ -255,6 +268,14 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title
 			ADD_BIND("m", "Lower right item");
 			ADD_BIND("o", "Scroll list up");
 			ADD_BIND("l", "Scroll list down");
+			if (gameId == GID_ZAK256) {
+				ADD_LINE;
+				ADD_TEXT("Switching characters:");
+				ADD_BIND("F1", "Zak");
+				ADD_BIND("F2", "Annie");
+				ADD_BIND("F3", "Melissa");
+				ADD_BIND("F4", "Leslie");
+			}
 			break;
 		}
 		break;
@@ -272,6 +293,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title
 			ADD_BIND("9", "Punch high");
 			ADD_BIND("6", "Punch middle");
 			ADD_BIND("3", "Punch low");
+			ADD_LINE;
 			ADD_LINE;
 			ADD_TEXT("These are for Indy on left.");
 			ADD_TEXT("When Indy is on the right,");

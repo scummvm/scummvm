@@ -599,26 +599,27 @@ enum {
 };
 
 HelpDialog::HelpDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 15, 10, 290, 184) {
+	: ScummDialog(gui, scumm, 5, 5, 310, 190) {
 
 	_page = 1;
 	_numPages = ScummHelp::numPages(scumm->_gameId);
 
-	_prevButton = addPushButton(10, 160, "Previous", kPrevCmd, 'P');
-	_nextButton = addPushButton(90, 160, "Next", kNextCmd, 'N');
-	addButton(210, 160, "Close", kCloseCmd, 'C');
+	_prevButton = addPushButton(10, 170, "Previous", kPrevCmd, 'P');
+	_nextButton = addPushButton(90, 170, "Next", kNextCmd, 'N');
+	addButton(210, 170, "Close", kCloseCmd, 'C');
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
-	_title = new StaticTextWidget(this, 10, 5, 270, 16, "", kTextAlignCenter);
+	_title = new StaticTextWidget(this, 10, 5, 290, 16, "", kTextAlignCenter);
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i] = new StaticTextWidget(this, 10, 20 + (10 * i), 80, 16, "", kTextAlignLeft);
-		_dsc[i] = new StaticTextWidget(this, 90, 20 + (10 * i), 190, 16, "", kTextAlignLeft);
+		_key[i] = new StaticTextWidget(this, 10, 18 + (10 * i), 80, 16, "", kTextAlignLeft);
+		_dsc[i] = new StaticTextWidget(this, 90, 18 + (10 * i), 210, 16, "", kTextAlignLeft);
 	}
 
 	displayKeyBindings();
 }
 
 void HelpDialog::displayKeyBindings() {
+
 	String titleStr, *keyStr, *dscStr;
 
 	ScummHelp::updateStrings(_scumm->_gameId, _scumm->_version, _page, titleStr, keyStr, dscStr);
@@ -634,6 +635,7 @@ void HelpDialog::displayKeyBindings() {
 }
 
 void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+
 	switch (cmd) {
 	case kNextCmd:
 		_page++;
