@@ -419,7 +419,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 }
 
 void ScummEngine::restoreVerbBG(int verb) {
-	if (_gameId == GID_FT)
+	if (_gameId == GID_FT || _gameId == GID_CMI)
 		return;
 
 	VerbSlot *vs;
