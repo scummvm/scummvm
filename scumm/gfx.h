@@ -248,7 +248,7 @@ protected:
 	void unkDecode11(byte *dst, int dstPitch, const byte *src, int height) const;
 	void drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 
-	void drawStripHE(byte *dst, int dstPitch, const byte *src, int w, int height, const bool transpCheck) const;
+	void drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int height, const bool transpCheck) const;
 
 	/* Mask decompressors */
 	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
@@ -275,7 +275,7 @@ public:
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
 	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
 
-	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width);
+	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
 	void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect);
 	void decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect);

@@ -594,7 +594,7 @@ void ScummEngine::redrawBGAreas() {
 		if (findResource(MKID('BMAP'), room) != NULL) {
 			if (_fullRedraw) {
 				_bgNeedsRedraw = false;
-				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip, virtscr[0].w);
+				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip);
 			}
 			cont = false;
 		} else if (findResource(MKID('SMAP'), room) == NULL) {
@@ -1367,7 +1367,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
  * TODO: This function essentially is a stripped down & special cased version of
  * the generic Gdi::drawBitmap() method. We might consider merging those two.
  */
-void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width) {
+void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 	assert(ptr);
 	const byte *bmap_ptr;
 	byte code;
@@ -1386,13 +1386,12 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 
 	// TODO: The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
-	// in decompressBitmap call drawStripHE(), which use the same algorithm as
-	// drawStripHE() does...
+	// in decompressBitmap call drawStripHE()
 	if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
 		_decomp_shr = code % 10;
 		_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
-		drawStripHE((byte *)vs->backBuf, width, bmap_ptr, vs->w, vs->h, false);
+		drawStripHE((byte *)vs->backBuf, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 	}
 	copyVirtScreenBuffers(Common::Rect(vs->w, vs->h));
 
@@ -2115,52 +2114,53 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 }
 
 #define READ_BIT (shift--, dataBit = data & 1, data >>= 1, dataBit)
-#define FILL_BITS do {               \
-		if (shift <= 16) {           \
-			data |= READ_LE_UINT16(src) << shift; \
-			src += 2;                 \
-			shift += 16;              \
-		}                             \
+#define FILL_BITS(n) do {            \
+		if (shift < n) {             \
+			data |= *src++ << shift; \
+			shift += 8;              \
+		}                            \
 	} while (0)
 
 // NOTE: drawStripHE is actually very similar to drawStripComplex
-void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int w, int height, const bool transpCheck) const {
-	uint32 dataBit, data, shift;
+void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int height, const bool transpCheck) const {
+	static const int delta_color[] = { -4, -3, -2, -1, 1, 2, 3, 4 };
+	uint32 dataBit, data;
 	byte color;
-	int32 iteration;
-
-	color = *src;
-	src++;
+	int shift;
+	
+	color = *src++;
 	data = READ_LE_UINT24(src);
 	src += 3;
 	shift = 24;
-
-	while (height) {
-		for (iteration = 0; iteration < w; iteration++) {
-			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color];
-			dst++;
-			FILL_BITS;
-			
+	
+	int x = width;
+	while (1) {
+		if (!transpCheck || color != _transparentColor)
+			*dst = _roomPalette[color];
+		dst++;
+		--x;
+		if (x == 0) {
+			x = width;
+			dst += dstPitch - width;
+			--height;
+			if (height == 0)
+				return;
+		}
+		FILL_BITS(1);
+		if (READ_BIT) {
+			FILL_BITS(1);
 			if (READ_BIT) {
-				if (!READ_BIT) {
-					color = data & _decomp_mask;
-					shift -= _decomp_shr;
-					data >>= _decomp_shr;
-				} else {
-					dataBit = data & 7;
-					shift -= 3;
-					data >>= 3;
-					// map (0, 1, 2, 3, 4, 5, 6, 7) to (-4, -3, -2, -1, 1, 2, 3, 4)
-					if (dataBit >= 4)
-						color += dataBit - 3;
-					else
-						color += dataBit - 4;
-				}
+				FILL_BITS(3);
+				color += delta_color[data & 7];
+				shift -= 3;
+				data >>= 3;
+			} else {
+				FILL_BITS(_decomp_shr);
+				color = data & _decomp_mask;
+				shift -= _decomp_shr;
+				data >>= _decomp_shr;
 			}
 		}
-		dst += dstPitch - w;
-		height--;
 	}
 }
 
