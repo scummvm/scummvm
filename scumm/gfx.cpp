@@ -2573,7 +2573,7 @@ void ScummEngine::setupAmigaPalette() {
 	setPalColor( 7, 187, 187, 187);
 	setPalColor( 8, 119, 119, 119);
 	setPalColor( 9, 119, 119, 255);
-	setPalColor(10,  0,  255,   0);
+	setPalColor(10,   0, 255,   0);
 	setPalColor(11,   0, 255, 255);
 	setPalColor(12, 255, 136, 136);
 	setPalColor(13, 255,   0, 255);
@@ -2587,7 +2587,7 @@ void ScummEngine::setupEGAPalette() {
 	setPalColor( 2,   0, 168,   0);
 	setPalColor( 3,   0, 168, 168);
 	setPalColor( 4, 168,   0,   0);
-	setPalColor( 5, 168,   0, 168); 
+	setPalColor( 5, 168,   0, 168);
 	setPalColor( 6, 168,  84,   0);
 	setPalColor( 7, 168, 168, 168);
 	setPalColor( 8,  84,  84,  84);
@@ -2601,18 +2601,18 @@ void ScummEngine::setupEGAPalette() {
 }
 
 void ScummEngine::setupV1ManiacPalette() {
-	setPalColor( 0,   0,   0,   0); 
-	setPalColor( 1, 252, 252, 252); 
+	setPalColor( 0,   0,   0,   0);
+	setPalColor( 1, 252, 252, 252);
 	setPalColor( 2, 168,   0,   0);
-	setPalColor( 3,   0, 168, 168); 
-	setPalColor( 4, 168,   0, 168); 
+	setPalColor( 3,   0, 168, 168);
+	setPalColor( 4, 168,   0, 168);
 	setPalColor( 5,   0, 168,   0);
 	setPalColor( 6,   0,   0, 168);
 	setPalColor( 7, 252, 252,  84);
 	setPalColor( 8, 252,  84,  84);
 	setPalColor( 9, 168,  84,   0);
-	setPalColor(10, 252,  84,  84); 
-	setPalColor(11,  84,  84,  84); 
+	setPalColor(10, 252,  84,  84);
+	setPalColor(11,  84,  84,  84);
 	setPalColor(12, 168, 168, 168);
 	setPalColor(13,  84, 252,  84);
 	setPalColor(14,  84,  84, 252);
@@ -2620,18 +2620,18 @@ void ScummEngine::setupV1ManiacPalette() {
 }
 
 void ScummEngine::setupV1ZakPalette() {
-	setPalColor( 0,   0,   0,   0); 
-	setPalColor( 1, 252, 252, 252); 
+	setPalColor( 0,   0,   0,   0);
+	setPalColor( 1, 252, 252, 252);
 	setPalColor( 2, 168,   0,   0);
-	setPalColor( 3,   0, 168, 168); 
-	setPalColor( 4, 168,   0, 168); 
+	setPalColor( 3,   0, 168, 168);
+	setPalColor( 4, 168,   0, 168);
 	setPalColor( 5,   0, 168,   0);
 	setPalColor( 6,   0,   0, 168);
 	setPalColor( 7, 252, 252,  84);
 	setPalColor( 8, 252,  84,  84);
 	setPalColor( 9, 168,  84,   0);
-	setPalColor(10, 252,  84,  84); 
-	setPalColor(11,  84,  84,  84); 
+	setPalColor(10, 252,  84,  84);
+	setPalColor(11,  84,  84,  84);
 	setPalColor(12, 168, 168, 168);
 	setPalColor(13,  84, 252,  84);
 	setPalColor(14,  84,  84, 252);
