@@ -191,33 +191,33 @@ SoundMixer::~SoundMixer() {
 void SoundMixer::appendStream(int index, void *sound, uint32 size) {
 	StackLock lock(_mutex);
 
+	ChannelStream *chan;
 #ifndef _WIN32_WCE
-	ChannelStream *chan = dynamic_cast<ChannelStream *>(_channels[index]);
+	chan = dynamic_cast<ChannelStream *>(_channels[index]);
+#else
+	chan = (ChannelStream*)_channels[index];
+#endif
 	if (!chan) {
 		error("Trying to append to a nonexistant stream %d", index);
 	} else {
 		chan->append(sound, size);
 	}
-#else
-	ChannelStream *chan = (ChannelStream*)_channels[index];
-	chan->append(sound, size);
-#endif
 }
 
 void SoundMixer::endStream(int index) {
 	StackLock lock(_mutex);
 
+	ChannelStream *chan;
 #ifndef _WIN32_WCE
-	ChannelStream *chan = dynamic_cast<ChannelStream *>(_channels[index]);
+	chan = dynamic_cast<ChannelStream *>(_channels[index]);
+#else
+	chan = (ChannelStream*)_channels[index];
+#endif
 	if (!chan) {
 		error("Trying to end a nonexistant streamer : %d", index);
 	} else {
 		chan->finish();
 	}
-#else
-	ChannelStream *chan = (ChannelStream*)_channels[index];
-	chan->finish();
-#endif
 }
 
 int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
