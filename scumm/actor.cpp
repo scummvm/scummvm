@@ -62,7 +62,7 @@ void Actor::initActor(int mode) {
 		frame = 0;
 		_walkbox = 0;
 		animProgress = 0;
-		skipLimb = false;
+		skipLimbs = false;
 		drawToBackBuf = false;
 		memset(animVariable, 0, sizeof(animVariable));
 		memset(palette, 0, sizeof(palette));
@@ -83,14 +83,14 @@ void Actor::initActor(int mode) {
 		_pos.y = 0;
 		facing = 180;
 		condMask = 1;
-		talkUnk = 0;
+		noTalkAnimation = 0;
 		if (_vm->_version >= 7)
 			visible = false;
-		skipLimb = false;
+		skipLimbs = false;
 	} else if (mode == 2) {
 		facing = 180;
 		condMask = 1;
-		skipLimb = false;
+		skipLimbs = false;
 	}
 	_elevation = 0;
 	width = 24;
@@ -1079,10 +1079,10 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_draw_top = 0x7fffffff;
 	bcr->_draw_bottom = 0;
 
-	bcr->_skipLimb = (skipLimb != 0);
+	bcr->_skipLimbs = (skipLimbs != 0);
 	bcr->_paletteNum = paletteNum;
 	
-	if (_vm->_heversion >= 80 && talkUnk == 0) {
+	if (_vm->_heversion >= 80 && noTalkAnimation == 0) {
 		condMask &= 0xFFFFFC00;
 		condMask |= 1;
 		if (_vm->getTalkingActor() == number) {
@@ -1092,7 +1092,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 			setTalkCondition(rnd);
 		} 
 	}
-	talkUnk = 0;
+	noTalkAnimation = 0;
 
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
@@ -1352,7 +1352,7 @@ void Actor::setActorCostume(int c) {
 	int i;
 
 	if ((_vm->_features & GF_HUMONGOUS) && (c == -1  || c == -2)) {
-		skipLimb = (c == -1);
+		skipLimbs = (c == -1);
 		needRedraw = true;
 		return;
 	}
@@ -2017,7 +2017,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, cost.soundCounter, sleByte, VER(8)),
 		MKLINE(Actor, drawToBackBuf, sleByte, VER(32)),
 		MKLINE(Actor, flip, sleByte, VER(32)),
-		MKLINE(Actor, skipLimb, sleByte, VER(32)),
+		MKLINE(Actor, skipLimbs, sleByte, VER(32)),
 
 		// Actor palette grew from 64 to 256 bytes
 		MKARRAY_OLD(Actor, palette[0], sleByte, 64, VER(8), VER(9)),

@@ -636,30 +636,60 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 
 void ScummEngine_v80he::o80_unknownE0() {
 	// wizImage related
-	int a, b, c, d, e, f, type = 1;
+	int b, c, d, num, x1, y1, type = 0;
 
-	a = pop();
 	b = pop();
+	num = pop();
 	c = pop();
 	d = pop();
-	e = pop();
-	f = pop();
+	y1 = pop();
+	x1 = pop();
 
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 55:
+		{
+		Actor *a = derefActorSafe(num, "o80_unknownE0");
+		int top_actor = a->top;
+		int bottom_actor = a->bottom;
+		a->drawToBackBuf = true;
+		a->needRedraw = true;
+		a->drawActorCostume();
+		a->drawToBackBuf = false;
+		a->needRedraw = true;
+		a->drawActorCostume();
+		a->needRedraw = false;
+
+		if (a->top > top_actor)
+			a->top = top_actor;
+		if (a->bottom < bottom_actor)
+			a->bottom = bottom_actor;
+
 		type = 2;
+		}
 		break;
 	case 63:
+		{
+		WizImage wi;
+		wi.flags = 0;
+		wi.y1 = y1;
+		wi.x1 = x1;
+		wi.resNum = num;
+		wi.state = 0;
+		displayWizImage(&wi);
+
 		type = 3;
+		}
 		break;
 	case 66:
 		type = 1;
 		break;
+	default:
+		error("o80_unknownE0: default case %d", subOp);
 	}
 
-	debug(1,"o80_unknownE0 stub: type %d (%d, %d, %d, %d, %d, %d)",subOp, a, b, c, d, e, f);	
+	debug(1,"o80_unknownE0 stub: type %d (%d, num %d, %d, %d, y %d, x %d)", type, b, num, c, d, y1, x1);	
 }
 
 void ScummEngine_v80he::o80_pickVarRandom() {

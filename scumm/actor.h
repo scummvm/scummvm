@@ -126,15 +126,18 @@ public:
 	int16 talkPosX, talkPosY;
 	uint16 talkScript, walkScript;
 	bool ignoreTurns;
-	bool skipLimb;
 	bool drawToBackBuf;
-	bool _talking;
 	int8 _layer;
 	uint16 sound[32];
 	CostumeData cost;
-	uint32 condMask;
-	bool talkUnk;
+
+	/* HE specific */
 	byte paletteNum;
+	bool noTalkAnimation;
+	bool skipLimbs;
+	bool _talking;
+	uint32 condMask;
+
 	AuxBlock auxBlock;
 
 	struct {

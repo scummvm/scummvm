@@ -562,7 +562,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 142:
 		k = pop();
-		a->talkUnk = 1;
+		a->noTalkAnimation = 1;
 		a->setTalkCondition(k);
 		debug(1,"o100_actorOps: case 24 (%d)", k);
 		break;

@@ -63,7 +63,7 @@ public:
 
 	int _draw_top, _draw_bottom;
 	byte _paletteNum;
-	bool _skipLimb;
+	bool _skipLimbs;
 	bool _actorDrawVirScr;
 
 
@@ -116,7 +116,7 @@ public:
 		_xmove = _ymove = 0;
 		_mirror = false;
 		_width = _height = 0;
-		_skipLimb = 0;
+		_skipLimbs = 0;
 		_paletteNum = 0;
 	}
 

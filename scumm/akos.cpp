@@ -358,7 +358,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		seq3Idx[i] = i;
 	}
 
-	if (_skipLimb)
+	if (_skipLimbs)
 		return 0;
 
 	if (_vm->_heversion >= 70 && cost.active[limb] == 8)

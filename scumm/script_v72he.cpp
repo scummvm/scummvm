@@ -1071,7 +1071,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 24: // HE 80+
 		k = pop();
-		a->talkUnk = 1;
+		a->noTalkAnimation = 1;
 		a->setTalkCondition(k);
 		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
