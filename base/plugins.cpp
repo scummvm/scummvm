@@ -107,7 +107,7 @@ class DynamicPlugin : public Plugin {
 
 public:
 	DynamicPlugin(const char *filename)
-		: _dlHandle(0), _filename(filename), _ef(0), _df(0), _games(0) {}
+		: _dlHandle(0), _filename(filename), _ef(0), _df(0), _games() {}
 	
 	const char *getName() const					{ return _name.c_str(); }
 
