@@ -333,7 +333,7 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
-	case kListItemChangedCmd:
+	case kListItemActivatedCmd:
 	case kSaveCmd:
 		if (_savegameList->getSelected() >= 1 && !_savegameList->getSelectedString().isEmpty()) {
 			_scumm->_saveLoadSlot = _savegameList->getSelected();
