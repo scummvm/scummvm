@@ -410,6 +410,8 @@ void Scumm::saveOrLoad(Serializer *s)
 		// MKLINE(Scumm, _palManipEnd, sleByte),
 		// MKLINE(Scumm, _palManipCounter, sleUint16),
 
+		// MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 410),
+		// replace below:
 		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
 		MKLINE(Scumm, gdi._transparency, sleByte),
 		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
@@ -421,6 +423,7 @@ void Scumm::saveOrLoad(Serializer *s)
 
 		MKLINE(Scumm, _egoPositioned, sleByte),
 
+		// FIXME: Should be 5, not 4 :
 		MKARRAY(Scumm, gdi._imgBufOffs[0], sleUint16, 4),
 		MKLINE(Scumm, gdi._numZBuffer, sleByte),
 
@@ -521,6 +524,8 @@ void Scumm::saveOrLoad(Serializer *s)
 		// MKLINE(Scumm, _palManipEnd, sleByte),
 		// MKLINE(Scumm, _palManipCounter, sleUint16),
 
+		// MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 410),
+		// replace below:
 		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
 		MKLINE(Scumm, gdi._transparency, sleByte),
 		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
@@ -532,6 +537,7 @@ void Scumm::saveOrLoad(Serializer *s)
 
 		MKLINE(Scumm, _egoPositioned, sleByte),
 
+		// FIXME: Should be 5, not 4 :
 		MKARRAY(Scumm, gdi._imgBufOffs[0], sleUint16, 4),
 		MKLINE(Scumm, gdi._numZBuffer, sleByte),
 

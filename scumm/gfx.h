@@ -116,7 +116,7 @@ struct Gdi {
 	uint _readOffs;
 
 	int _numZBuffer;
-	int _imgBufOffs[4];
+	int _imgBufOffs[5];
 	byte _disable_zbuffer;
 	int32 _numStrips;
 
