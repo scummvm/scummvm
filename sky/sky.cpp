@@ -75,50 +75,14 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_introTextSave = 0;
 }
 
-void SkyState::showQuitMsg(void) {
-
-	uint8 *textBuf1 = (uint8*)calloc(GAME_SCREEN_WIDTH * 14 + sizeof(struct dataFileHeader),1);
-	uint8 *textBuf2 = (uint8*)calloc(GAME_SCREEN_WIDTH * 14 + sizeof(struct dataFileHeader),1);
-	char *vText1, *vText2;
-	uint8 *screenData = _skyScreen->giveCurrent();
-	switch (_systemVars.language) {
-		case DE_DEU: vText1 = VIG_DE1; vText2 = VIG_DE2; break;
-		case FR_FRA: vText1 = VIG_FR1; vText2 = VIG_FR2; break;
-		case IT_ITA: vText1 = VIG_IT1; vText2 = VIG_IT2; break;
-		case PT_BRA: vText1 = VIG_PT1; vText2 = VIG_PT2; break;
-		default: vText1 = VIG_EN1; vText2 = VIG_EN2; break;
-	}
-	_skyText->displayText(vText1, textBuf1, true, 320, 255);
-	_skyText->displayText(vText2, textBuf2, true, 320, 255);
-	uint8 *curLine1 = textBuf1 + sizeof(struct dataFileHeader);
-	uint8 *curLine2 = textBuf2 + sizeof(struct dataFileHeader);
-	uint8 *targetLine = screenData + GAME_SCREEN_WIDTH * 80;
-	for (uint8 cnty = 0; cnty < 14; cnty++) {
-		for (uint16 cntx = 0; cntx < GAME_SCREEN_WIDTH; cntx++) {
-			if (curLine1[cntx])
-				targetLine[cntx] = curLine1[cntx];
-			if (curLine2[cntx])
-				(targetLine + 24 * GAME_SCREEN_WIDTH)[cntx] = curLine2[cntx];
-		}
-		curLine1 += GAME_SCREEN_WIDTH;
-		curLine2 += GAME_SCREEN_WIDTH;
-		targetLine += GAME_SCREEN_WIDTH;
-	}
-	_skyScreen->halvePalette();
-	_skyScreen->showScreen(screenData);
-	free(textBuf1); free(textBuf2);
-}
-
 SkyState::~SkyState() {
 
 	delete _skyLogic;
 	delete _skySound;
 	delete _skyMusic;
-	showQuitMsg();	
 	delete _skyText;
 	delete _skyMouse;
 	delete _skyScreen;
-	delay(1500);
 }
 
 void SkyState::errorString(const char *buf1, char *buf2) {
@@ -140,7 +104,7 @@ void SkyState::go() {
 	loadBase0();
 
 	while (1) {
-		delay(50);
+		delay(_systemVars.gameSpeed);
 		if ((_key_pressed == 27) || (_key_pressed == 63)) { // 27 = escape, 63 = F5
 			_key_pressed = 0;
 			_skyControl->doControlPanel();
@@ -171,7 +135,13 @@ void SkyState::initialise(void) {
 		else
 			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
 	}
+	if (isCDVersion())
+		_systemVars.systemFlags |= SF_ALLOW_SPEECH;
+	else
+		_systemVars.systemFlags |= SF_ALLOW_TEXT;
+
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
+	_systemVars.gameSpeed = 50;
 
 	_skyText = new SkyText(_skyDisk);
 	_skyMouse = new SkyMouse(_system, _skyDisk);
@@ -302,6 +272,8 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 					break;
 
 				case OSystem::EVENT_QUIT:
+					_skyControl->showGameQuitMsg();
+					delay(1500);
 					_system->quit();
 					break;
 

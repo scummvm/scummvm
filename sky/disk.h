@@ -24,7 +24,7 @@
 
 #include "common/file.h"
 
-#define MAX_FILES_IN_LIST		60
+#define MAX_FILES_IN_LIST 60
 
 struct PrefFile {
 	uint8 *data;
@@ -51,6 +51,8 @@ public:
 	void fnCacheChip(uint32 list);
 	void fnCacheFiles(void);
 	void fnFlushBuffers(void);
+	uint32 *giveLoadedFilesList(void) { return _loadedFilesList; };
+	void refreshFilesList(uint32 *list);
 
 protected:
 

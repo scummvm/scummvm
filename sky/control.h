@@ -71,9 +71,10 @@
 #define MUSIC_SLIDE		11
 #define TOGGLE_FX		12
 #define TOGGLE_MS		13
-#define EXIT			14
-#define RESTART			15
-#define QUIT_TO_DOS		16
+#define TOGGLE_TEXT		14
+#define EXIT			15
+#define RESTART			16
+#define QUIT_TO_DOS		17
 
 // onClick return codes
 #define CANCEL_PRESSED	100
@@ -90,6 +91,17 @@
 
 #define SLOW 0
 #define FAST 1
+
+#define SPEED_MULTIPLY 8
+
+//-
+#define SAVE_EXT	 1
+#define SAVE_MEGA0	 2
+#define SAVE_MEGA1	 4
+#define SAVE_MEGA2	 8
+#define SAVE_MEGA3	16
+
+#define SAVE_HEADER "(C) Revolution Software Ltd 1993.\x00System 2 written by David Sykes and Tony Warriner\x0D\x0APortable implementation done by the ScummVM team\x0D\x0ASave File Revision 1\x00"
 
 class SkyConResource {
 public:
@@ -125,6 +137,7 @@ class SkyControl {
 public:
 	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, OSystem *system, const char *savePath);
 	void doControlPanel(void);
+	void showGameQuitMsg(bool useScreen = true);
     
 private:
 	void initPanel(void);
@@ -136,12 +149,24 @@ private:
 	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum);
 	void showSprites(dataFileHeader **nameSprites);
 	void animClick(SkyConResource *pButton);
+	bool getYesNo(void);
 	uint16 doMusicSlide(void);
+	uint16 doSpeedSlide(void);
 	uint16 handleClick(SkyConResource *pButton);
 	uint16 toggleFx(SkyConResource *pButton);
+	uint16 toggleText(SkyConResource *pButton);
 	uint16 shiftDown(uint8 speed);
 	uint16 shiftUp(uint8 speed);
 	const char *_savePath;
+
+	uint16 saveGameToFile(char *fName);
+	void stosMegaSet(uint8 **destPos, MegaSet *mega);
+	void stosCompact(uint8 **destPos, Compact *cpt);
+	void stosAR(uint8 **destPos, uint8 *arData);
+	uint32 prepareSaveData(uint8 *destBuf);
+	uint16 restoreGameFromFile(char *fName);
+	static Compact *_saveLoadCpts[833]; // \  moved to sky/compacts/savedata.cpp
+	static uint8 *_saveLoadARs[18];     // /
 
 	uint16 saveRestorePanel(bool allowEdit);
 

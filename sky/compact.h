@@ -3214,6 +3214,24 @@ namespace SkyCompact {
 	extern uint16 retina_scan_cdt[];
 	extern Compact forklift_cpt;
 	extern void *data_0[];
+	extern uint8 babs_auto[];
+	extern uint8 burke_auto[];
+	extern uint8 dan_auto[];
+	extern uint8 foreman_auto[];
+	extern uint8 full_ss_auto[];
+	extern uint8 gal_auto[];
+	extern uint8 jobs_auto[];
+	extern uint8 joey_auto[];
+	extern uint8 ken_auto[];
+	extern uint8 lamb_auto[];
+	extern uint8 loader_auto[];
+	extern uint8 medi_auto[];
+	extern uint8 monitor_auto[];
+	extern uint8 radman_auto[];
+	extern uint8 shades_auto[];
+	extern uint8 spu_auto[];
+	extern uint8 ss_auto[];
+	extern uint8 wit_auto[];
 };
 
 #endif

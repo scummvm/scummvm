@@ -25,6 +25,7 @@
 #include "sky/compact.h"
 #include "sky/skydefs.h"
 #include "sky/talks.h"
+#include "common/gameDetector.h"
 
 uint32 SkyLogic::_scriptVariables[838];
 
@@ -1398,13 +1399,11 @@ bool SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	_compact->mode += 4; // next level up
 	Compact *cpt = SkyState::fetchCompact(_compact->place);
 	if (!cpt) { 
-		// FIXME: This should never happen
 		warning("can't find _compact's getToTable. Place compact is NULL");
 		return false; 
 	}
 	uint16 *getToTable = cpt->getToTable;
 	if (!getToTable) { 
-		// FIXME: This should never happen
 		warning("Place compact's getToTable is NULL!");
 		return false; 
 	}
@@ -2338,6 +2337,15 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	// startSpeech returns false if no speech file exists for that text
 	if (SkyState::isCDVersion())
 		speechUsed = _skySound->startSpeech((uint16)textNum);
+
+	// if sky is configured to speech-only return now - except if we're running another
+	// language than english
+	if (speechUsed && (!(SkyState::_systemVars.systemFlags & SF_ALLOW_TEXT)) &&
+		(SkyState::_systemVars.language == EN_USA)) {
+            target->extCompact->spTime = 10;
+			target->logic = L_TALK; 
+			return ;
+	}	
 
 	//now form the text sprite
 	struct lowTextManager_t textInfo;

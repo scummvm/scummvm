@@ -50,6 +50,7 @@ public:
 	void waitMouseNotPressed(void);
 	uint16 giveMouseX(void) { return _aMouseX; };
 	uint16 giveMouseY(void) { return _aMouseY; };
+	uint16 giveCurrentMouseType(void) { return _mouseType2; };
 
 protected:
 

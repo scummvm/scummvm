@@ -45,10 +45,8 @@ struct SystemVars {
 	uint32 gameVersion;
 	uint32 mouseFlag;
 	uint16 language;
-	uint32 currentPalette; // I guess that's for saving.
-	/* uint16 sfxVolume;
-	uint16 musicVolume;
-	uint16 gameSpeed; */
+	uint32 currentPalette;
+	uint16 gameSpeed;
 };
 
 class SkyLogic;
@@ -111,7 +109,6 @@ public:
 	void introFx(uint32 *&cmdPtr);
 	void introVol(uint32 *&cmdPtr); 
 
-
 protected:
 	void logic_engine();
 	void delay(uint amount);
@@ -140,8 +137,6 @@ protected:
 	static int CDECL game_thread_proc(void *param);
 
 	void shutdown();
-
-	void showQuitMsg(void);
 };
 
 #endif

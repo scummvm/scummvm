@@ -45,6 +45,7 @@ public:
 	void fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY);
 	void logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY);
 	void changeTextSpriteColour(uint8 *sprData, uint8 newCol);
+	uint32 giveCurrentCharSet(void) { return _curCharSet; };
 
 protected:
 	bool getTBit();

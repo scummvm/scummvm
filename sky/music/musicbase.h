@@ -50,6 +50,7 @@ public:
 	void startMusic(uint16 param) { _onNextPoll.musicToProcess = param & 0xF; }; // 4
 	virtual void setVolume(uint8 volume) = 0;
 	uint8 giveVolume(void) { return (uint8)_musicVolume; };
+	uint8 giveCurrentMusic(void) { return _currentMusic; };
 	
 protected:
 

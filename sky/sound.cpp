@@ -1148,6 +1148,8 @@ bool SkySound::fnStartFx(uint32 sound) {
 
 bool SkySound::startSpeech(uint16 textNum) {
     
+	if (!(SkyState::_systemVars.systemFlags & SF_ALLOW_SPEECH))
+		return false;
 	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);
 	
 	uint8 *speechData = _skyDisk->loadFile(speechFileNum + 50000, NULL);

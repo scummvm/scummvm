@@ -340,6 +340,24 @@ void SkyDisk::fnCacheFiles(void) {
 	_buildList[0] = 0;
 }
 
+void SkyDisk::refreshFilesList(uint32 *list) {
+
+	uint8 cnt = 0;
+	while (_loadedFilesList[cnt]) {
+		if (SkyState::_itemList[_loadedFilesList[cnt] & 2047])
+			free(SkyState::_itemList[_loadedFilesList[cnt] & 2047]);
+		SkyState::_itemList[_loadedFilesList[cnt] & 2047] = NULL;
+		cnt++;
+	}
+	cnt = 0;
+	while (list[cnt]) {
+		_loadedFilesList[cnt] = list[cnt];
+		SkyState::_itemList[_loadedFilesList[cnt] & 2047] = (void**)loadFile((uint16)(_loadedFilesList[cnt] & 0x7FFF), NULL);
+		cnt++;
+	}
+	_loadedFilesList[cnt] = 0;
+}
+
 void SkyDisk::fnMiniLoad(uint16 fileNum) {
 
 	uint16 cnt = 0;

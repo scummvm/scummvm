@@ -23,6 +23,7 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 #include "common/file.h"
+#include "common/gameDetector.h"
 
 SkyConResource::SkyConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) {
 
@@ -161,6 +162,8 @@ void SkyControl::initPanel(void) {
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 
 	uint16 volY = (127 - _skyMusic->giveVolume()) / 4 + 59 - MPNL_Y; // volume slider's Y coordinate
+	uint16 spdY = 12 - (SkyState::_systemVars.gameSpeed / SPEED_MULTIPLY);
+	spdY += MPNL_Y + 93; // speed slider's initial position
 
 	_sprites.controlPanel	= _skyDisk->loadFile(60500, NULL);
 	_sprites.button			= _skyDisk->loadFile(60501, NULL);
@@ -176,7 +179,7 @@ void SkyControl::initPanel(void) {
 	//Main control panel:                                            X    Y Text       OnClick
 	_controlPanel     = createResource(_sprites.controlPanel, 1, 0,  0,   0,  0,      DO_NOTHING, MAINPANEL);
 	_exitButton       = createResource(      _sprites.button, 3, 0, 16, 125, 50,            EXIT, MAINPANEL);
-	_slide            = createResource(      _sprites.slide2, 1, 0, 19,  99, 95,     SPEED_SLIDE, MAINPANEL);
+	_slide            = createResource(      _sprites.slide2, 1, 0, 19,spdY, 95,     SPEED_SLIDE, MAINPANEL);
 	_slide2           = createResource(      _sprites.slide2, 1, 0, 19,volY, 14,     MUSIC_SLIDE, MAINPANEL);
 	_slode            = createResource(      _sprites.slode2, 1, 0,  9,  49,  0,      DO_NOTHING, MAINPANEL);
 	_restorePanButton = createResource(      _sprites.button, 3, 0, 58,  19, 51, REST_GAME_PANEL, MAINPANEL);
@@ -187,7 +190,15 @@ void SkyControl::initPanel(void) {
 		_fxPanButton  = createResource(      _sprites.button, 3, 0, 58,  99, 86,       TOGGLE_FX, MAINPANEL);
 	else
 		_fxPanButton  = createResource(      _sprites.button, 3, 2, 58,  99, 87,       TOGGLE_FX, MAINPANEL);
-	_musicPanButton   = createResource(      _sprites.button, 3, 0, 58, 119, 35,       TOGGLE_MS, MAINPANEL);
+
+	if (SkyState::isCDVersion()) { // CD Version: Toggle text/speech
+		if (SkyState::_systemVars.systemFlags & SF_ALLOW_TEXT)
+			_musicPanButton = createResource(      _sprites.button, 3, 2, 58, 119, 21,     TOGGLE_TEXT, MAINPANEL);
+		else
+			_musicPanButton = createResource(      _sprites.button, 3, 0, 58, 119, 35,     TOGGLE_TEXT, MAINPANEL);
+	} else {                       // disk version: toggle music on/off
+	  _musicPanButton = createResource(      _sprites.button, 3, 0, 58, 119, 91,       TOGGLE_MS, MAINPANEL);
+	}
 	_bodge            = createResource(  _sprites.musicBodge, 2, 1, 98, 115,  0,      DO_NOTHING, MAINPANEL);
 	_yesNo            = createResource(       _sprites.yesNo, 1, 0, -2,  40,  0,      DO_NOTHING, MAINPANEL);
 
@@ -287,6 +298,8 @@ void SkyControl::doControlPanel(void) {
 	_skyScreen->setPalette(60510);
 	
 	drawMainPanel();
+
+	uint16 savedMouse = _skyMouse->giveCurrentMouseType();
 	
 	_skyMouse->spriteMouse(MOUSE_NORMAL,0,0);
 	bool quitPanel = false;
@@ -328,6 +341,7 @@ void SkyControl::doControlPanel(void) {
 	_skyScreen->forceRefresh();
 	_skyScreen->setPalette((uint8*)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	removePanel();
+	_skyMouse->spriteMouse(savedMouse, 0, 0);
 }
 
 uint16 SkyControl::handleClick(SkyConResource *pButton) {
@@ -373,7 +387,8 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 			return shiftUp(SLOW);
 
 		case SPEED_SLIDE:
-			return 0;
+			_mouseClicked = true;
+            return doSpeedSlide();
 
 		case MUSIC_SLIDE:
 			_mouseClicked = true;
@@ -385,6 +400,9 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 		case TOGGLE_MS:
 			return 0;
 
+		case TOGGLE_TEXT:
+			return toggleText(pButton);
+
 		case EXIT:
 			animClick(pButton);
 			return QUIT_PANEL;
@@ -395,11 +413,46 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 
 		case QUIT_TO_DOS:
 			animClick(pButton);
+			if (getYesNo()) {
+				showGameQuitMsg(false);
+				delay(1500);
+				_system->quit();
+			}
 			return 0;
 
 		default: 
 			error("SkyControl::handleClick: unknown routine: %X\n",pButton->_onClick);
 	}
+}
+
+bool SkyControl::getYesNo(void) {
+
+	_yesNo->drawToScreen(WITH_MASK);
+	bool retVal; bool quitPanel = false;
+	uint8 mouseType = MOUSE_NORMAL;
+	uint8 wantMouse = MOUSE_NORMAL;
+	while (!quitPanel) {
+		if (mouseType != wantMouse) {
+			mouseType = wantMouse;
+			_skyMouse->spriteMouse(mouseType, 0, 0);
+		}
+		_system->update_screen();
+		delay(50);
+		if ((_mouseY >= 83) && (_mouseY <= 110)) {
+			if ((_mouseX >= 77) && (_mouseX <= 114)) { // over 'yes'
+				wantMouse = MOUSE_CROSS;
+				if (_mouseClicked) {
+                    quitPanel = true; retVal = true;
+				}
+			} else if ((_mouseX >= 156) && (_mouseX <= 193)) { // over 'no'
+				wantMouse = MOUSE_CROSS;
+				if (_mouseClicked) {
+                    quitPanel = true; retVal = false;
+				}
+			} else wantMouse = MOUSE_NORMAL;
+		} else wantMouse = MOUSE_NORMAL;
+	}
+	return retVal;
 }
 
 uint16 SkyControl::doMusicSlide(void) {
@@ -428,6 +481,33 @@ uint16 SkyControl::doMusicSlide(void) {
 	return 0;
 }
 
+uint16 SkyControl::doSpeedSlide(void) {
+
+	/*int ofsY = _slide->_y - _mouseY;
+	uint16 speedDelay = 12 - (_slide->_y - (MPNL_Y + 93));
+	speedDelay *= SPEED_MULTIPLY;
+	while (_mouseClicked) {
+		delay(50);
+		int newY = ofsY + _mouseY;
+		if (newY < MPNL_Y + 93) newY = MPNL_Y + 93;
+		if (newY > MPNL_Y + 104) newY = MPNL_Y + 104;
+		if (newY != _slide->_y) {
+			_slode->drawToScreen(NO_MASK);
+			_slide->setXY(_slide->_x, (uint16)newY);
+			_slide->drawToScreen(WITH_MASK);
+			_slide2->drawToScreen(WITH_MASK);
+			speedDelay = 12 - (newY - (MPNL_Y + 93));
+			speedDelay *= SPEED_MULTIPLY;
+		}
+		buttonControl(_slide);
+		_text->drawToScreen(WITH_MASK);
+		_system->update_screen();
+	}
+	SkyState::_systemVars.gameSpeed = speedDelay;
+	printf("New delay: %d\n",speedDelay);*/
+	return SPEED_CHANGED;
+}
+
 uint16 SkyControl::toggleFx(SkyConResource *pButton) {
 
 	SkyState::_systemVars.systemFlags ^= SF_FX_OFF;
@@ -437,6 +517,24 @@ uint16 SkyControl::toggleFx(SkyConResource *pButton) {
 	} else {
 		pButton->_curSprite = 2;
 		pButton->_text = 0x7000 + 87;
+	}
+	pButton->drawToScreen(WITH_MASK);
+	buttonControl(pButton);
+	_system->update_screen();
+	return TOGGLED;
+}
+
+uint16 SkyControl::toggleText(SkyConResource *pButton) {
+
+	SkyState::_systemVars.systemFlags ^= SF_ALLOW_SPEECH;
+	if (SkyState::_systemVars.systemFlags & SF_ALLOW_SPEECH) {
+		pButton->_curSprite = 0;
+		pButton->_text = 0x7000 + 35;
+		SkyState::_systemVars.systemFlags &= ~SF_ALLOW_TEXT;
+	} else {
+		pButton->_curSprite = 2;
+		pButton->_text = 0x7000 + 21;
+		SkyState::_systemVars.systemFlags |= SF_ALLOW_TEXT;
 	}
 	pButton->drawToScreen(WITH_MASK);
 	buttonControl(pButton);
@@ -490,8 +588,6 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 	_quitButton->drawToScreen(NO_MASK);
 	
 	loadSaveDescriptions(saveGameTexts);
-	setUpGameSprites(saveGameTexts, textSprites, _firstText);
-		
 	uint16 selectedGame = 0;
 
 	bool quitPanel = false;
@@ -499,6 +595,7 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 	uint16 clickRes = 0;
 	while (!quitPanel) {
 		if (refreshNames) {
+			setUpGameSprites(saveGameTexts, textSprites, _firstText);
 			showSprites(textSprites);
 			refreshNames = false;
 		}
@@ -512,6 +609,7 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 			clickRes = CANCEL_PRESSED;
 			quitPanel = true;
 		}
+
 		bool haveButton = false;
 		for (cnt = 0; cnt < 6; cnt++)
 			if (lookList[cnt]->isMouseOver(_mouseX, _mouseY)) {
@@ -522,15 +620,15 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 					_mouseClicked = false;
 					
 					clickRes = handleClick(lookList[cnt]);
+
 			        if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_SAVED) || 
 						(clickRes == GAME_RESTORED) || (clickRes == NO_DISK_SPACE))
 						quitPanel = true;
-					if (clickRes == SHIFTED) {
-						setUpGameSprites(saveGameTexts, textSprites, _firstText);
+					if (clickRes == SHIFTED)
 						refreshNames = true;
-					}
 				}
 			}
+
 		if (_mouseClicked) {
 			if ((_mouseX >= GAME_NAME_X) && (_mouseX <= GAME_NAME_X + PAN_LINE_WIDTH) &&
 				(_mouseY >= GAME_NAME_Y) && (_mouseY <= GAME_NAME_Y + PAN_CHAR_HEIGHT * MAX_ON_SCREEN)) {
@@ -539,7 +637,6 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 			}
 		}
 		if (!haveButton) buttonControl(NULL);
-
 	}
 
 	for (cnt = 0; cnt < MAX_ON_SCREEN; cnt++)
@@ -589,6 +686,7 @@ void SkyControl::loadSaveDescriptions(uint8 *destBuf) {
 			while ((destPos[nameCnt + 5] = inPos[nameCnt]))
 				nameCnt++;
 			destPos += MAX_TEXT_LEN;
+			inPos += nameCnt + 1;
 		}
 		free(tmpBuf);
 		inf->close();
@@ -600,6 +698,162 @@ void SkyControl::loadSaveDescriptions(uint8 *destBuf) {
 		}
 	}
 }
+
+uint16 SkyControl::saveGameToFile(char *fName) {
+
+	File *outf = new File();
+	if (!outf->open(fName, _savePath, File::kFileWriteMode)) {
+		delete outf;
+		return NO_DISK_SPACE;
+	}
+
+	uint8 *saveData = (uint8*)malloc(0x20000);
+	uint32 fSize = prepareSaveData(saveData);
+
+	if (outf->write(saveData, fSize) != fSize) {
+		free(saveData);
+		delete outf;
+		return NO_DISK_SPACE;
+	}
+	outf->close();
+	delete outf;
+	free(saveData);
+	return GAME_SAVED;
+}
+
+#define STOSD(ptr, val) { *(uint32*)(ptr) = TO_LE_32(val); (ptr) += 4; }
+#define STOSW(ptr, val) { *(uint16*)(ptr) = TO_LE_16(val); (ptr) += 2; }
+
+void SkyControl::stosMegaSet(uint8 **destPos, MegaSet *mega) {
+	STOSW(*destPos, mega->gridWidth);
+	STOSW(*destPos, mega->colOffset);
+	STOSW(*destPos, mega->colWidth);
+	STOSW(*destPos, mega->lastChr);
+	// anims, stands, turnTable
+}
+
+void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
+	uint16 saveType = 0;
+	if (cpt->extCompact) {
+		saveType |= SAVE_EXT;
+		if (cpt->extCompact->megaSet0) saveType |= SAVE_MEGA0;
+		if (cpt->extCompact->megaSet1) saveType |= SAVE_MEGA1;
+		if (cpt->extCompact->megaSet2) saveType |= SAVE_MEGA2;
+		if (cpt->extCompact->megaSet3) saveType |= SAVE_MEGA3;
+	}
+	STOSW(*destPos, saveType);
+	STOSW(*destPos, cpt->logic);
+	STOSW(*destPos, cpt->status);
+	STOSW(*destPos, cpt->sync);
+	STOSW(*destPos, cpt->screen);
+	STOSW(*destPos, cpt->place);
+	// getToTable
+	STOSW(*destPos, cpt->xcood);
+	STOSW(*destPos, cpt->ycood);
+	STOSW(*destPos, cpt->frame);
+	STOSW(*destPos, cpt->cursorText);
+	STOSW(*destPos, cpt->mouseOn);
+	STOSW(*destPos, cpt->mouseOff);
+	STOSW(*destPos, cpt->mouseClick);
+	STOSW(*destPos, cpt->mouseRelX);
+	STOSW(*destPos, cpt->mouseRelY);
+	STOSW(*destPos, cpt->mouseSizeX);
+	STOSW(*destPos, cpt->mouseSizeY);
+	STOSW(*destPos, cpt->actionScript);
+	STOSW(*destPos, cpt->upFlag);
+	STOSW(*destPos, cpt->downFlag);
+	STOSW(*destPos, cpt->getToFlag);
+	STOSW(*destPos, cpt->flag);
+	STOSW(*destPos, cpt->mood);
+	// grafixProg
+	STOSW(*destPos, cpt->offset);
+	STOSW(*destPos, cpt->mode);
+	STOSW(*destPos, cpt->baseSub);
+	STOSW(*destPos, cpt->baseSub_off);
+	if (cpt->extCompact) {
+		STOSW(*destPos, cpt->extCompact->actionSub);
+		STOSW(*destPos, cpt->extCompact->actionSub_off);
+		STOSW(*destPos, cpt->extCompact->getToSub);
+		STOSW(*destPos, cpt->extCompact->getToSub_off);
+		STOSW(*destPos, cpt->extCompact->extraSub);
+		STOSW(*destPos, cpt->extCompact->extraSub_off);
+		STOSW(*destPos, cpt->extCompact->dir);
+		STOSW(*destPos, cpt->extCompact->stopScript);
+		STOSW(*destPos, cpt->extCompact->miniBump);
+		STOSW(*destPos, cpt->extCompact->leaving);
+		STOSW(*destPos, cpt->extCompact->atWatch);
+		STOSW(*destPos, cpt->extCompact->atWas);
+		STOSW(*destPos, cpt->extCompact->alt);
+		STOSW(*destPos, cpt->extCompact->request);
+		STOSW(*destPos, cpt->extCompact->spWidth_xx);
+		STOSW(*destPos, cpt->extCompact->spColour);
+		STOSW(*destPos, cpt->extCompact->spTextId);
+		STOSW(*destPos, cpt->extCompact->spTime);
+		STOSW(*destPos, cpt->extCompact->arAnimIndex);
+		// turnProg
+		STOSW(*destPos, cpt->extCompact->waitingFor);
+		STOSW(*destPos, cpt->extCompact->arTargetX);
+		STOSW(*destPos, cpt->extCompact->arTargetY);
+		// animScratch
+		STOSW(*destPos, cpt->extCompact->megaSet);
+
+		if (cpt->extCompact->megaSet0)
+			stosMegaSet(destPos, cpt->extCompact->megaSet0);
+		if (cpt->extCompact->megaSet1)
+			stosMegaSet(destPos, cpt->extCompact->megaSet1);
+		if (cpt->extCompact->megaSet2)
+			stosMegaSet(destPos, cpt->extCompact->megaSet2);
+		if (cpt->extCompact->megaSet3)
+			stosMegaSet(destPos, cpt->extCompact->megaSet3);
+	}
+}
+
+void SkyControl::stosAR(uint8 **destPos, uint8 *arData) {
+
+	uint16 *data = (uint16*)arData;
+	for (uint8 cnt = 0; cnt < 32; cnt++)
+		STOSW(*destPos, TO_LE_16(data[cnt]));
+}
+
+uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
+
+	uint32 cnt;
+	memset(destBuf, 0, 4); // space for data size
+	uint8 *destPos = destBuf + 4;
+	memcpy(destPos, SAVE_HEADER, sizeof(SAVE_HEADER));
+	destPos += sizeof(SAVE_HEADER);
+	//STOSD(destPos, SkyLogic::_scriptVariables[CUR_SECTION]);
+	STOSD(destPos, _skyMusic->giveCurrentMusic());
+
+	//TODO: save queued sfx
+	STOSD(destPos, _skyText->giveCurrentCharSet());
+	STOSD(destPos, _skyMouse->giveCurrentMouseType());
+	STOSD(destPos, SkyState::_systemVars.currentPalette);
+	for (cnt = 0; cnt < 838; cnt++)
+		STOSD(destPos, SkyLogic::_scriptVariables[cnt]);
+	uint32 *loadedFilesList = _skyDisk->giveLoadedFilesList();
+
+	for (cnt = 0; cnt < 60; cnt++)
+		STOSD(destPos, loadedFilesList[cnt]);
+
+	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
+		stosCompact(&destPos, _saveLoadCpts[cnt]);
+
+	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadARs); cnt++)
+		stosAR(&destPos, _saveLoadARs[cnt]);
+
+	for (cnt = 0; cnt < 3; cnt++)
+		STOSW(destPos, SkyCompact::park_table[cnt]);
+
+	for (cnt = 0; cnt < 13; cnt++)
+		STOSW(destPos, SkyCompact::high_floor_table[cnt]);
+
+	*(uint32*)destBuf = TO_LE_32(destPos - destBuf); // save size
+	return destPos - destBuf;
+}
+
+#undef STOSD
+#undef STOSW
 
 void SkyControl::delay(unsigned int amount) {
 
@@ -642,6 +896,8 @@ void SkyControl::delay(unsigned int amount) {
 					break;
 
 				case OSystem::EVENT_QUIT:
+					showGameQuitMsg(false);
+					delay(1500);
 					_system->quit();
 					break;
 
@@ -658,4 +914,42 @@ void SkyControl::delay(unsigned int amount) {
 
 		cur = _system->get_msecs();
 	} while (cur < start + amount);
+}
+
+void SkyControl::showGameQuitMsg(bool useScreen) {
+
+	uint8 *textBuf1 = (uint8*)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
+	uint8 *textBuf2 = (uint8*)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
+	char *vText1, *vText2;
+	uint8 *screenData;
+	if (useScreen)
+		screenData = _skyScreen->giveCurrent();
+	else
+		screenData = _screenBuf;
+	switch (SkyState::_systemVars.language) {
+		case DE_DEU: vText1 = VIG_DE1; vText2 = VIG_DE2; break;
+		case FR_FRA: vText1 = VIG_FR1; vText2 = VIG_FR2; break;
+		case IT_ITA: vText1 = VIG_IT1; vText2 = VIG_IT2; break;
+		case PT_BRA: vText1 = VIG_PT1; vText2 = VIG_PT2; break;
+		default: vText1 = VIG_EN1; vText2 = VIG_EN2; break;
+	}
+	_skyText->displayText(vText1, textBuf1, true, 320, 255);
+	_skyText->displayText(vText2, textBuf2, true, 320, 255);
+	uint8 *curLine1 = textBuf1 + sizeof(dataFileHeader);
+	uint8 *curLine2 = textBuf2 + sizeof(dataFileHeader);
+	uint8 *targetLine = screenData + GAME_SCREEN_WIDTH * 80;
+	for (uint8 cnty = 0; cnty < PAN_CHAR_HEIGHT; cnty++) {
+		for (uint16 cntx = 0; cntx < GAME_SCREEN_WIDTH; cntx++) {
+			if (curLine1[cntx])
+				targetLine[cntx] = curLine1[cntx];
+			if (curLine2[cntx])
+				(targetLine + 24 * GAME_SCREEN_WIDTH)[cntx] = curLine2[cntx];
+		}
+		curLine1 += GAME_SCREEN_WIDTH;
+		curLine2 += GAME_SCREEN_WIDTH;
+		targetLine += GAME_SCREEN_WIDTH;
+	}
+	_skyScreen->halvePalette();
+	_skyScreen->showScreen(screenData);
+	free(textBuf1); free(textBuf2);
 }

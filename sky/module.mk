@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	sky/music/gmmusic.o \
 	sky/music/mt32music.o \
 	sky/music/musicbase.o \
+	sky/compacts/savedata.o \
 
 # Include common rules 
 include common.rules
