@@ -875,7 +875,7 @@ protected:
 	uint8 getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags);
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
 	
-	int findSpriteWithClassOf(int x, int y, int spriteGroup, int d, int num, int *args);
+	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
 	int spriteInfoGet_classFlags(int spriteId, int num);
 	int spriteInfoGet_classFlagsAnd(int spriteId, int num, int *args);
 	int spriteInfoGet_flags_13(int spriteId);

@@ -38,16 +38,16 @@ void ScummEngine_v90he::allocateArrays() {
 //
 // spriteInfoGet functions
 //
-int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroup, int d, int num, int *args) {
+int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args) {
 	int classId;
-	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d", x, y, spriteGroup, d, num);
+	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d", x, y, spriteGroupId, d, num);
 
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!spi->field_4C)
 			continue;
 
-		if (spriteGroup && spi->group_num != spi->field_4C)
+		if (spriteGroupId && spi->group_num != spriteGroupId)
 			continue;
 
 		for (int j = 0; j < num; j++) {
