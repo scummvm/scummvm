@@ -272,6 +272,7 @@ struct Part {
 	void silence();
 	void set_instrument(uint b);
 	void set_instrument(byte * data);
+	void load_global_instrument (byte b);
 
 	void set_transpose(int8 transpose);
 	void set_vol(uint8 volume);
@@ -366,6 +367,7 @@ public:
 
 	void on_timer() {}
 	void set_instrument(uint slot, byte *instr);
+	void part_load_global_instrument (Part *part, byte slot);
 	void part_set_param(Part *part, byte param, int value) {}
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
@@ -2073,8 +2075,12 @@ byte *Player::parse_midi(byte *s)
 	case 0xC: // Program Change
 		value = *s++;
 		part = get_part(chan);
-		if (part)
-			part->set_program(value);
+		if (part) {
+			if (_isGM || value >= 32)
+				part->set_program(value);
+			else
+				part->load_global_instrument (value);
+		}
 		break;
 
 	case 0xD: // Channel Pressure
@@ -3277,6 +3283,11 @@ void Part::set_instrument(byte * data)
 	changed(IMuseDriver::pcProgram);
 }
 
+void Part::load_global_instrument (byte slot)
+{
+	_drv->part_load_global_instrument (this, slot);
+}
+
 void Part::key_on(byte note, byte velocity)
 {
 	_drv->part_key_on(this, note, velocity);
@@ -3693,6 +3704,14 @@ void IMuseDriver::set_instrument(uint slot, byte *data)
 		// memcpy(&_glob_instr[slot], data, sizeof(Instrument));
 		_glob_instr[slot].adlib (data);
 	}
+}
+
+void IMuseDriver::part_load_global_instrument (Part *part, byte slot)
+{
+	if (slot >= 32)
+		return;
+	_glob_instr [slot].copy_to (&part->_instrument);
+	part->changed (pcProgram);
 }
 
 void IMuseDriver::part_changed(Part *part, uint16 what)

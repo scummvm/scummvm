@@ -133,6 +133,7 @@ public:
 	Instrument_Program (Serializer *s);
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
+	void copy_to (Instrument *dest) { dest->program (_program, _mt32); }
 };
 
 class Instrument_Adlib : public InstrumentInternal {
@@ -161,6 +162,7 @@ public:
 	Instrument_Adlib (Serializer *s);
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
+	void copy_to (Instrument *dest) { dest->adlib ((byte *) &_instrument); }
 };
 
 class Instrument_Roland : public InstrumentInternal {
@@ -230,6 +232,7 @@ public:
 	Instrument_Roland (Serializer *s);
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
+	void copy_to (Instrument *dest) { dest->roland ((byte *) &_instrument); }
 };
 
 

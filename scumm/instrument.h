@@ -30,10 +30,15 @@
 class Serializer;
 class MidiChannel;
 
+class Instrument;
+
+
+
 class InstrumentInternal {
 public:
 	virtual void saveOrLoad (Serializer *s) = 0;
 	virtual void send (MidiChannel *mc) = 0;
+	virtual void copy_to (Instrument *dest) = 0;
 };
 
 class Instrument {
@@ -52,6 +57,7 @@ public:
 	Instrument() : _type (0), _instrument (0) { }
 
 	void clear();
+	void copy_to (Instrument *dest) { if (_instrument) _instrument->copy_to (dest); else dest->clear(); }
 	void program (byte program, bool mt32);
 	void adlib (byte *instrument);
 	void roland (byte *instrument);
