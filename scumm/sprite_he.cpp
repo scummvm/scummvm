@@ -1216,7 +1216,7 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 		SpriteInfo *spi = &_spriteTable[i];
 
 		if (spi->flags & kSFActive) {
-			if (!spi->flags & kSFXFlipped) {
+			if (!(spi->flags & kSFXFlipped)) {
 				if (!(spi->flags & kSF30))
 					spi->flags |= kSFNeedRedraw;
 				if (!(spi->flags & kSFImageless))
