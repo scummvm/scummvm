@@ -560,9 +560,9 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 	if (_fullscreen != enable) {
 		assert(_hwscreen != 0);
 		_fullscreen ^= true;
-
+		
 		undrawMouse();
-	
+
 #if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
 		// before SDL 1.2.6 it always returned -1 (which would indicate a
@@ -573,14 +573,14 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
 			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
 			hotswapGFXMode();
+		} else {
+			// Blit everything to the screen
+			internUpdateScreen();
+			
+			// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+			_modeChanged = true;
 		}
 #endif
-			
-		// Blit everything to the screen
-		internUpdateScreen();
-		
-		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
-		_modeChanged = true;
 	}
 }
 
@@ -1147,7 +1147,7 @@ void OSystem_SDL::drawMouse() {
 }
 
 void OSystem_SDL::undrawMouse() {
-	assert (_transactionMode == kTransactionNone);
+	assert (_transactionMode == kTransactionNone || _transactionMode == kTransactionCommit);
 
 	if (!_mouseDrawn)
 		return;
