@@ -85,6 +85,7 @@ private:
 	uint8 _selectedSavegame;
 	uint8 _saveNames[64][32];
 	uint8 _oldName[32];
+	uint8 _confirmMode;
 
 	uint8 getClicks(uint8 mode, uint8 *retVal);
 	uint8 handleButtonClick(uint8 id, uint8 mode, uint8 *retVal);
@@ -92,6 +93,7 @@ private:
 	void setupMainPanel(void);
 	void setupSaveRestorePanel(bool saving);
 	void setupVolumePanel(void);
+	bool getConfirm(const uint8 *title);
 
 	void saveNameScroll(uint8 scroll, bool saving);
 	void saveNameSelect(uint8 id, bool saving);

@@ -49,6 +49,7 @@ void SwordMouse::initialize(void) {
 	for (uint8 cnt = 0; cnt < 17; cnt++)	 // force res manager to keep mouse 
 		_resMan->resOpen(MSE_POINTER + cnt); // cursors in memory all the time
 	
+	_system->show_mouse(false);
 	createPointer(0, 0);
 }
 

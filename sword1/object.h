@@ -114,7 +114,7 @@ struct BsObject {
 				// mega size = 12340 bytes (+ 8 byte offset table + 20 byte header = 12368)
 };
 
-struct _collisionData {
+struct CollisionData {
 	BsObject  *compact;
 	int32	w[24];
 	int32	h[24];

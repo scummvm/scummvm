@@ -69,6 +69,7 @@ enum ButtonIds {
 	BUTTON_SPEED,
 	BUTTON_VOLUME_PANEL,
 	BUTTON_TEXT,
+	BUTTON_CONFIRM,
 //-
 	BUTTON_SCROLL_UP_FAST,
 	BUTTON_SCROLL_UP_SLOW,
@@ -83,7 +84,10 @@ enum ButtonIds {
 	BUTTON_SAVE_SELECT7,
 	BUTTON_SAVE_SELECT8,
 	BUTTON_SAVE_RESTORE_OKAY,
-	BUTTON_SAVE_CANCEL
+	BUTTON_SAVE_CANCEL,
+//-
+	CONFIRM_OKAY,
+	CONFIRM_CANCEL
 };
 
 enum TextModes {
@@ -256,6 +260,8 @@ uint8 SwordControl::runPanel(void) {
 				if (fullRefresh)
 					setupVolumePanel();
 				break;
+			default:
+				break;
 		}
 		if (fullRefresh) {
 			fullRefresh = false;
@@ -310,14 +316,24 @@ uint8 SwordControl::getClicks(uint8 mode, uint8 *retVal) {
 uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 	switch(mode) {
 		case BUTTON_MAIN_PANEL:
-			if (id == BUTTON_RESTART)
-				*retVal |= CONTROL_RESTART_GAME;
-			else if ((id == BUTTON_RESTORE_PANEL) || (id == BUTTON_SAVE_PANEL) ||
+			if (id == BUTTON_RESTART) {
+				if (SwordEngine::_systemVars.deathScreenFlag) // if player is dead or has just started, don't ask for confirmation
+					*retVal |= CONTROL_RESTART_GAME;
+				else if (getConfirm(_lStrings[STR_RESTART]))
+					*retVal |= CONTROL_RESTART_GAME;
+				else
+					return mode;
+			} else if ((id == BUTTON_RESTORE_PANEL) || (id == BUTTON_SAVE_PANEL) ||
 				(id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
 				return id;
 			else if (id == BUTTON_TEXT) {
 				SwordEngine::_systemVars.showText ^= 1;
 				_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
+			} else if (id == BUTTON_QUIT) {
+				if (getConfirm(_lStrings[STR_QUIT]))
+					_system->quit();
+				else
+					return mode;
 			}
 			break;
 		case BUTTON_SAVE_PANEL:
@@ -424,6 +440,46 @@ void SwordControl::setupVolumePanel(void) {
 
 	createButtons(_volumeButtons, 1);
 	renderText(_lStrings[STR_DONE], _volumeButtons[0].x - 10, _volumeButtons[0].y, TEXT_RIGHT_ALIGN);
+}
+
+bool SwordControl::getConfirm(const uint8 *title) {
+	ControlButton *panel = new ControlButton( 0, 0, SR_CONFIRM, 0, _resMan, _screenBuf, _system);
+	panel->draw();
+	delete panel;
+	renderText(title, 320, 160, TEXT_CENTER);
+	ControlButton *buttons[2];
+	buttons[0] = new ControlButton( 260, 192 + 40, SR_BUTTON, 0, _resMan, _screenBuf, _system);
+	renderText(_lStrings[STR_OK], 640 - 260, 192 + 40, TEXT_RIGHT_ALIGN);
+	buttons[1] = new ControlButton( 260, 256 + 40, SR_BUTTON, 0, _resMan, _screenBuf, _system);
+	renderText(_lStrings[STR_CANCEL], 640 - 260, 256 + 40, TEXT_RIGHT_ALIGN);
+	uint8 retVal = 0;
+	uint8 clickVal = 0;
+	do {
+		buttons[0]->draw();
+		buttons[1]->draw();
+		_system->update_screen();
+		delay(1000 / 12);
+		if (_mouseState & BS1L_BUTTON_DOWN) {
+			if (buttons[0]->wasClicked(_mouseX, _mouseY))
+				clickVal = 1;
+			else if (buttons[1]->wasClicked(_mouseX, _mouseY))
+				clickVal = 2;
+			else
+				clickVal = 0;
+			if (clickVal)
+				buttons[clickVal - 1]->setSelected(1);
+		}
+		if ((_mouseState & BS1L_BUTTON_UP) && (clickVal)) {
+			if (buttons[clickVal - 1]->wasClicked(_mouseX, _mouseY))
+				retVal = clickVal;
+			else
+				buttons[clickVal - 1]->setSelected(0);
+			clickVal = 0;
+		}
+	} while (!retVal);
+	delete buttons[0];
+	delete buttons[1];
+	return retVal == 1;
 }
 
 bool SwordControl::keyAccepted(uint8 key) {
