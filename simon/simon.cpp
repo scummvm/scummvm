@@ -287,14 +287,32 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		File::addDefaultDirectory(_gameDataPath + "/EXECUTE/");
 	} else if (_game & GF_AMIGA) {
 		gss = PTR(simon1amiga_settings);
-
-		// Add default file directories
-		File::addDefaultDirectory(_gameDataPath + "/voices/");
-		File::addDefaultDirectory(_gameDataPath + "/VOICES/");
 	} else if (_game & GF_DEMO)
 		gss = PTR(simon1demo_settings);
 	else
 		gss = PTR(simon1_settings);
+
+	if (!(_game & GF_SIMON2) && (_game & GF_TALKIE)) {
+		// Add default file directories
+		switch(_language) {
+		case 20:
+			File::addDefaultDirectory(_gameDataPath + "/hebrew/");
+			File::addDefaultDirectory(_gameDataPath + "/HEBREW/");
+			break;
+		case  5:
+			File::addDefaultDirectory(_gameDataPath + "/spanish/");
+			File::addDefaultDirectory(_gameDataPath + "/SPANISH/");
+			break;
+		case  3:
+			File::addDefaultDirectory(_gameDataPath + "/ITALIAN/");
+			File::addDefaultDirectory(_gameDataPath + "/ITALIAN/");
+			break;
+		case  2:
+			File::addDefaultDirectory(_gameDataPath + "/french/");
+			File::addDefaultDirectory(_gameDataPath + "/FRENCH/");
+			break;
+		}
+	}
 
 	_key_pressed = 0;
 
