@@ -78,7 +78,7 @@ static inline Sound *check_sound(int num) {
 static inline int check_int(int num) {
   double val = luaL_check_number(num);
 
-  return int(ROUND(val));
+  return int(round(val));
 }
 
 static inline int check_control(int num) {

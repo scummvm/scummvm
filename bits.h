@@ -40,8 +40,9 @@ template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
 template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }
 template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 
-// Default definition. See _MSVC_VER & FreeBSD for OS specific stuff
-#define ROUND(x) round(x)
+#ifndef round
+#define round(x) ((x > 0.0) ? floor((x) + 0.5) : ceil((x) - 0.5))
+#endif
 
 #if defined(_MSC_VER)
 
@@ -71,9 +72,6 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS	 pack(pop)
 	#define GCC_PACK
-
-	#undef ROUND
-	#define ROUND(x) (x)
 
 #elif defined(__MINGW32__)
 
