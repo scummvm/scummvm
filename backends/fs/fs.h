@@ -146,8 +146,19 @@ public:
 /*
  * A sorted list of multiple file system nodes. E.g. the contents of a given directory.
  */
-class FSList : public Common::List<FilesystemNode *> {
+class FSList : Common::List<FilesystemNode *> {
 public:
+	class ConstIterator {
+		friend class FSList;
+		FilesystemNode **_data;
+		ConstIterator(FilesystemNode **data) : _data(data) { }
+	public:
+		const FilesystemNode &operator *() const { return **_data; }
+        const FilesystemNode *operator->() const { return *_data; }
+        bool operator !=(const ConstIterator &iter) const { return _data != iter._data; }
+		void operator ++() { ++_data; }
+	};
+
 	~FSList() {
 		for (int i = 0; i < _size; i++)
 			delete _data[i];
@@ -172,6 +183,15 @@ public:
 	}
 
 	int size() const	{ return _size; }
+
+	ConstIterator	begin() const {
+		return ConstIterator(_data);
+	}
+
+	ConstIterator	end() const {
+		return ConstIterator(_data + _size);
+	}
+
 };
 
 #endif
