@@ -50,6 +50,7 @@ int Script::reg() {
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
 Script::Script() {
+	GAME_RESOURCEDESC gr_desc;
 	RSCFILE_CONTEXT *s_lut_ctxt;
 	byte *rsc_ptr;
 	size_t rsc_len;
@@ -67,6 +68,8 @@ Script::Script() {
 	_abortEnabled = true;
 	_skipSpeeches = false;
 	memset(_dataBuf, 0, sizeof(_dataBuf));
+
+	GAME_GetResourceInfo(&gr_desc);
 	
 	debug(0, "Initializing scripting subsystem");
 	// Load script resource file context
@@ -81,7 +84,8 @@ Script::Script() {
 		error("Couldn't get resource file context");
 	}
 
-	result = RSC_LoadResource(s_lut_ctxt, ITE_SCRIPT_LUT, &rsc_ptr, &rsc_len);
+	debug(0, "Loading script LUT from resource %u.", gr_desc.script_lut_rn);
+	result = RSC_LoadResource(s_lut_ctxt, gr_desc.script_lut_rn, &rsc_ptr, &rsc_len);
 	if (result != SUCCESS) {
 		error("Error: Couldn't load script resource look-up table");
 	}
