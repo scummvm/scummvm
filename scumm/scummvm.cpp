@@ -124,6 +124,12 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_sound->_sound_volume_sfx = detector->_sfx_volume;	
 	_sound->_sound_volume_music = detector->_music_volume;	
 
+	// Override global scaler with any game-specific define
+	if (g_config->get("gfx_mode")) {
+		prop.gfx_mode = detector->parseGraphicsMode(g_config->get("gfx_mode"));
+		syst->property(OSystem::PROP_SET_GFX_MODE, &prop);
+	}
+
 	/* Initialize backend */
 	syst->init_size(_realWidth, _realHeight);
 	prop.cd_num = detector->_cdrom;
@@ -136,11 +142,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
         		syst->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
  	}
 
-	// Override global scaler with any game-specific define
-	if (g_config->get("gfx_mode")) {
-		prop.gfx_mode = detector->parseGraphicsMode(g_config->get("gfx_mode"));
-		syst->property(OSystem::PROP_SET_GFX_MODE, &prop);
-	}
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked

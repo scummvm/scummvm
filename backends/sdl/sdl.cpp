@@ -191,6 +191,8 @@ void OSystem_SDL::unload_gfx_mode() {
 }
 
 void OSystem_SDL::hotswap_gfx_mode() {
+	if (!_screen)
+		return;
 
 	// Keep around the old _screen & _tmpscreen so we can restore the screen data
 	// after the mode switch.
