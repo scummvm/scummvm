@@ -165,8 +165,8 @@ FSList *WindowsFilesystemNode::listDir() const {
 				entry._isPseudoRoot = false;
 				entry._path = toAscii(current_drive);
 				myList->push_back(entry);
-#endif
 		}
+#endif
 	}
 	else {
 		// Files enumeration
