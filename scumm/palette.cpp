@@ -677,7 +677,7 @@ int ScummEngine::remapPaletteColor(int r, int g, int b, uint threshold) {
 	if (b > 255)
 		b = 255;
 
-	bestsum = (uint) - 1;
+	bestsum = 0x7FFFFFFF;
 
 	r &= ~3;
 	g &= ~3;
