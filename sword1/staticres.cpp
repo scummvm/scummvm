@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "sworddefs.h"
 #include "swordres.h"
 #include "screen.h"
