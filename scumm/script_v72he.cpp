@@ -672,7 +672,8 @@ void ScummEngine_v72he::o72_addMessageToStack() {
 	_stringLength = resStrLen(_scriptPointer) + 1;
 	addMessageToStack(_scriptPointer, _stringBuffer, _stringLength);
 
-	if (strcmp((char *)_stringBuffer, "no trace"))
+	// Filter out pointless trace messages, which often flood
+	if (strcmp((char *)_stringBuffer, "no trace") && strcmp((char *)_stringBuffer, "trace on"))
 		debug(0,"o72_addMessageToStack(\"%s\")", _scriptPointer);
 
 	_scriptPointer += _stringLength;
