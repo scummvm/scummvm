@@ -129,7 +129,7 @@ void Timer::removeTimerProc(TimerProc procedure) {
 		if (_timerSlots[l].procedure == procedure) {
 			_timerSlots[l].procedure = 0;
 			_timerSlots[l].interval = 0;
-			_timerSlots[l].counter = 0;
+			_timerSlots[l].counter = 1;	// Work around a problem when a timer proc removes itself
 			_timerSlots[l].refCon = 0;
 		}
 	}
