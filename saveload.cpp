@@ -524,7 +524,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 
 }
 
-void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
+void Scumm::saveLoadResource(Serializer *ser, int type, int idx) {
 	byte *ptr;
 	uint32 size;
 
@@ -533,7 +533,7 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 		return;
 
 	if (ser->isSaving()) {
-		ptr = res.address[type][index];
+		ptr = res.address[type][idx];
 		if (ptr==NULL) {
 			ser->saveUint32(0);
 			return;
@@ -545,15 +545,15 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 		ser->saveLoadBytes(ptr+sizeof(MemBlkHeader),size);
 
 		if (type==rtInventory) {
-			ser->saveWord(_inventory[index]);
+			ser->saveWord(_inventory[idx]);
 		}
 	} else {
 		size = ser->loadUint32();
 		if (size) {
-			createResource(type, index, size);
-			ser->saveLoadBytes(getResourceAddress(type, index), size);
+			createResource(type, idx, size);
+			ser->saveLoadBytes(getResourceAddress(type, idx), size);
 			if (type==rtInventory) {
-				_inventory[index] = ser->loadWord();
+				_inventory[idx] = ser->loadWord();
 			}
 		}
 	}

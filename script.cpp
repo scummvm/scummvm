@@ -207,7 +207,7 @@ void Scumm::updateScriptPtr() {
 
 void Scumm::getScriptBaseAddress() {
 	ScriptSlot *ss;
-	int index;
+	int idx;
 
 	if (_currentScript == 0xFF)
 		return;
@@ -215,9 +215,9 @@ void Scumm::getScriptBaseAddress() {
 	ss = &vm.slot[_currentScript];
 	switch(ss->where) {
 	case WIO_INVENTORY: /* inventory script **/
-		index = getObjectIndex(ss->number);
-		_scriptOrgPointer = getResourceAddress(rtInventory, index);
-		_lastCodePtr = &_baseInventoryItems[index];
+		idx = getObjectIndex(ss->number);
+		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
+		_lastCodePtr = &_baseInventoryItems[idx];
 		break;
 
 	case 3:
@@ -232,8 +232,8 @@ void Scumm::getScriptBaseAddress() {
 		break;
 
 	case WIO_FLOBJECT: /* flobject script */
-		index = getObjectIndex(ss->number);
-		_scriptOrgPointer = getResourceAddress(rtFlObject,_objs[index].fl_object_index);
+		idx = getObjectIndex(ss->number);
+		_scriptOrgPointer = getResourceAddress(rtFlObject,_objs[idx].fl_object_index);
 		_lastCodePtr = &_baseFLObject[ss->number];
 		break;
 	default:
@@ -881,16 +881,16 @@ bool Scumm::isRoomScriptRunning(int script) {
 
 
 void Scumm::beginOverride() {
-	int index;
+	int idx;
 	uint32 *ptr;
 
-	index = vm.cutSceneStackPointer;
-	ptr = &vm.cutScenePtr[index];
+	idx = vm.cutSceneStackPointer;
+	ptr = &vm.cutScenePtr[idx];
 	if (!*ptr) {
 		vm.slot[_currentScript].cutsceneOverride++;
 	}
 	*ptr = _scriptPointer - _scriptOrgPointer;
-	vm.cutSceneScript[index] = _currentScript;
+	vm.cutSceneScript[idx] = _currentScript;
 
 	fetchScriptByte();
 	fetchScriptWord();
@@ -898,16 +898,16 @@ void Scumm::beginOverride() {
 }
 
 void Scumm::endOverride() {
-	int index;
+	int idx;
 	uint32 *ptr;
 
-	index = vm.cutSceneStackPointer;
-	ptr = &vm.cutScenePtr[index];
+	idx = vm.cutSceneStackPointer;
+	ptr = &vm.cutScenePtr[idx];
 	if (*ptr) {
 		vm.slot[_currentScript].cutsceneOverride--;
 	}
 	*ptr = 0;
-	vm.cutSceneScript[index] = 0;
+	vm.cutSceneScript[idx] = 0;
 	_vars[VAR_OVERRIDE] = 0;
 }
 

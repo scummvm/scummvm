@@ -943,11 +943,11 @@ int Scumm::getObjNewDir(int obj) {
 	}
 }
 
-int Scumm::findInventory(int owner, int index) {
+int Scumm::findInventory(int owner, int idx) {
 	int count = 1, i, obj;
 	for (i=0; i!=_maxInventoryItems; i++) {
 		obj = _inventory[i];
-		if (obj && getOwner(obj)==owner && count++ == index)
+		if (obj && getOwner(obj)==owner && count++ == idx)
 			return obj;
 	}
 	return 0;	
@@ -1130,7 +1130,7 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 	VirtScreen *vs;
 	byte *roomptr,*bomp;
 	byte *ptr;
-	int index;
+	int idx;
 	ObjectData *od;
 
 	BompDrawData bdd;
@@ -1141,9 +1141,9 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 
 	if (eo->l==0) {
 		roomptr = getResourceAddress(1, _roomResource);
-		index = getObjectIndex(eo->a);
-		assert(index != -1);
-		ptr = roomptr + _objs[index].offs_obim_to_room;
+		idx = getObjectIndex(eo->a);
+		assert(idx != -1);
+		ptr = roomptr + _objs[idx].offs_obim_to_room;
 	} else if (eo->a!=0) {
 		od = &_objs[getObjectIndex(eo->a)];
 		ptr = getResourceAddress(rtFlObject, od->fl_object_index);

@@ -943,7 +943,7 @@ void Scumm::setScaleItem(int slot, int a, int b, int c, int d) {
 	}
 }
 
-void Scumm::dumpResource(char *tag, int index, byte *ptr) {
+void Scumm::dumpResource(char *tag, int idx, byte *ptr) {
 	char buf[256];
 	FILE *out;
 	
@@ -953,7 +953,7 @@ void Scumm::dumpResource(char *tag, int index, byte *ptr) {
         else
                 size = READ_BE_UINT32_UNALIGNED(ptr+4);
 
-	sprintf(buf, "dumps/%s%d.dmp", tag,index);
+	sprintf(buf, "dumps/%s%d.dmp", tag,idx);
 
 	out = fopen(buf,"rb");
 	if (!out) {

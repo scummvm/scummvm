@@ -700,14 +700,14 @@ int Scumm::popRoomAndObj(int *room) {
 }
 
 
-int Scumm::readArray(int array, int index, int base) {
+int Scumm::readArray(int array, int idx, int base) {
 	ArrayHeader *ah = (ArrayHeader*)getResourceAddress(rtString, readVar(array));
 
 	if (ah==NULL) {
 		error("readArray: invalid array %d (%d)", array, readVar(array));	
 	}
 
-	base += index*ah->dim1_size;
+	base += idx*ah->dim1_size;
 
 	assert(base>=0 && base < ah->dim1_size*ah->dim2_size);
 
@@ -718,10 +718,10 @@ int Scumm::readArray(int array, int index, int base) {
 	}
 }
 
-void Scumm::writeArray(int array, int index, int base, int value) {
+void Scumm::writeArray(int array, int idx, int base, int value) {
 	ArrayHeader *ah = (ArrayHeader*)getResourceAddress(rtString, readVar(array));
 	assert(ah);
-	base += index*ah->dim1_size;
+	base += idx*ah->dim1_size;
 
 	assert(base>=0 && base < ah->dim1_size*ah->dim2_size);
 
@@ -783,14 +783,14 @@ void Scumm::o6_wordArrayRead() {
 
 void Scumm::o6_byteArrayIndexedRead() {
 	int base = pop();
-	int index = pop();
-	push(readArray(fetchScriptByte(), index, base));
+	int idx = pop();
+	push(readArray(fetchScriptByte(), idx, base));
 }
 
 void Scumm::o6_wordArrayIndexedRead() {
 	int base = pop();
-	int index = pop();
-	push(readArray(fetchScriptWord(), index, base));
+	int idx = pop();
+	push(readArray(fetchScriptWord(), idx, base));
 }
 
 void Scumm::o6_dup() {
@@ -1463,9 +1463,9 @@ void Scumm::o6_getActorCostume() {
 }
 
 void Scumm::o6_findInventory() {
-	int index = pop();
+	int idx = pop();
 	int owner = pop();
-	push(findInventory(owner,index));
+	push(findInventory(owner,idx));
 }
 
 void Scumm::o6_getInventoryCount() {
@@ -1543,100 +1543,100 @@ void Scumm::o6_createBoxMatrix() {
 }
 
 void Scumm::o6_resourceRoutines() {
-	int res;
+	int resid;
 
 	switch(fetchScriptByte()) {
 	case 100: /* load script */
-		res = pop();
+		resid = pop();
 		if(_features & GF_AFTER_V7)
-			if (res >= _numGlobalScripts)
+			if (resid >= _numGlobalScripts)
 				break;
-		ensureResourceLoaded(rtScript, res);
+		ensureResourceLoaded(rtScript, resid);
 		break;
 	case 101: /* load sound */
-		res = pop();
-		ensureResourceLoaded(rtSound, res);
+		resid = pop();
+		ensureResourceLoaded(rtSound, resid);
 		break;
 	case 102: /* load costume */
-		res = pop();
-		ensureResourceLoaded(rtCostume, res);
+		resid = pop();
+		ensureResourceLoaded(rtCostume, resid);
 		break;
 	case 103: /* load room */
-		res = pop();
-		ensureResourceLoaded(rtRoom, res);
+		resid = pop();
+		ensureResourceLoaded(rtRoom, resid);
 		break;
 	case 104: /* nuke script */
-		res = pop();
+		resid = pop();
 		if(_features & GF_AFTER_V7)
-			if (res >= _numGlobalScripts)
+			if (resid >= _numGlobalScripts)
 				break;
-		setResourceCounter(rtScript, res, 0x7F);
-		debug(5, "nuke script %d", res);
+		setResourceCounter(rtScript, resid, 0x7F);
+		debug(5, "nuke script %d", resid);
 		break;
 	case 105: /* nuke sound */
-		res = pop();
-		setResourceCounter(rtSound, res, 0x7F);
+		resid = pop();
+		setResourceCounter(rtSound, resid, 0x7F);
 		break;
 	case 106: /* nuke costume */
-		res = pop();
-		setResourceCounter(rtCostume, res, 0x7F);
+		resid = pop();
+		setResourceCounter(rtCostume, resid, 0x7F);
 		break;
 	case 107: /* nuke room */
-		res = pop();
-		setResourceCounter(rtRoom, res, 0x7F);
+		resid = pop();
+		setResourceCounter(rtRoom, resid, 0x7F);
 		break;
 	case 108:  /* lock script */
-		res = pop();
-		if (res >= _numGlobalScripts)
+		resid = pop();
+		if (resid >= _numGlobalScripts)
 			break;
-		lock(rtScript,res);
+		lock(rtScript,resid);
 		break;
 	case 109:/* lock sound */
-		res = pop();
-		lock(rtSound,res);
+		resid = pop();
+		lock(rtSound,resid);
 		break;
 	case 110:/* lock costume */
-		res = pop();
-		lock(rtCostume,res);
+		resid = pop();
+		lock(rtCostume,resid);
 		break;
 	case 111:/* lock room */
-		res = pop();
-		if (res > 0x7F)
-			res = _resourceMapper[res&0x7F];
-		lock(rtRoom,res);
+		resid = pop();
+		if (resid > 0x7F)
+			resid = _resourceMapper[resid&0x7F];
+		lock(rtRoom,resid);
 		break;
 	case 112:/* unlock script */
-		res = pop();
-		if (res >= _numGlobalScripts)
+		resid = pop();
+		if (resid >= _numGlobalScripts)
 			break;
-		unlock(rtScript,res);
+		unlock(rtScript,resid);
 		break;
 	case 113:/* unlock sound */
-		res = pop();
-		unlock(rtSound,res);
+		resid = pop();
+		unlock(rtSound,resid);
 		break;
 	case 114:/* unlock costume */
-		res = pop();
-		unlock(rtCostume,res);
+		resid = pop();
+		unlock(rtCostume,resid);
 		break;
 	case 115:/* unlock room */
-		res = pop();
-		if (res > 0x7F)
-			res = _resourceMapper[res&0x7F];
-		unlock(rtRoom,res);
+		resid = pop();
+		if (resid > 0x7F)
+			resid = _resourceMapper[resid&0x7F];
+		unlock(rtRoom,resid);
 		break;
 	case 116:/* clear heap */
 		/* this is actually a scumm message */
 		error("clear heap not working yet");
 		break;
 	case 117:/* load charset */
-		res = pop();
-		loadCharset(res);
+		resid = pop();
+		loadCharset(resid);
 		break;
 	case 118:/* nuke charset */
 		warning("popping extra argument in nukeCharset");
-		res = pop();
-		nukeCharset(res);
+		resid = pop();
+		nukeCharset(resid);
 		break;
 	case 119: {/* load fl object */
 		int room,obj = popRoomAndObj(&room);

@@ -1024,7 +1024,7 @@ void Scumm::o5_drawBox() {
 }
 
 void Scumm::o5_drawObject() {
-	int state,obj,index,i;
+	int state,obj,idx,i;
 	ObjectData *od;
 	uint16 x,y,w,h;
 	int xpos, ypos;
@@ -1037,10 +1037,10 @@ void Scumm::o5_drawObject() {
                 int temp = getVarOrDirectWord(0x40);
                 int room = getVarOrDirectWord(0x20);
  
-                index = getObjectIndex(obj);
-                if(index==-1)
+                idx = getObjectIndex(obj);
+                if(idx==-1)
                         return;
-                od = &_objs[index];
+                od = &_objs[idx];
                 xpos = ypos = 255;
                 if (temp!=0xFF) {
                         od->walk_x += (xpos<<3) - od->x_pos;
@@ -1048,7 +1048,7 @@ void Scumm::o5_drawObject() {
                         od->walk_y += (ypos<<3) - od->y_pos;
                         od->y_pos = ypos<<3;
                 }
-                addObjectToDrawQue(index);
+                addObjectToDrawQue(idx);
  
                 x = od->x_pos;
                 y = od->y_pos;
@@ -1079,17 +1079,17 @@ void Scumm::o5_drawObject() {
 		error("o5_drawObject: default case");
 	}
 
-	index = getObjectIndex(obj);
-	if (index==-1)
+	idx = getObjectIndex(obj);
+	if (idx==-1)
 		return;
-	od = &_objs[index];
+	od = &_objs[idx];
 	if (xpos!=0xFF) {
 		od->walk_x += (xpos<<3) - od->x_pos;
 		od->x_pos = xpos<<3;
 		od->walk_y += (ypos<<3) - od->y_pos;
 		od->y_pos = ypos<<3;
 	}
-	addObjectToDrawQue(index);
+	addObjectToDrawQue(idx);
 
 	x = od->x_pos;
 	y = od->y_pos;
@@ -1629,85 +1629,85 @@ void Scumm::o5_quitPauseRestart() {
 }
 
 void Scumm::o5_resourceRoutines() {
-	int res;
+	int resid;
 
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
-		res = getVarOrDirectByte(0x80);
+		resid = getVarOrDirectByte(0x80);
 	if(_features & GF_OLD256) /*FIXME: find a better way to implement this */
 		_opcode&=0x3F;
 	switch(_opcode&0x1F) {
 	case 1: /* load script */
-		ensureResourceLoaded(rtScript, res);
+		ensureResourceLoaded(rtScript, resid);
 		break;
 	case 2: /* load sound */
-		ensureResourceLoaded(rtSound, res);
+		ensureResourceLoaded(rtSound, resid);
 		break;
 	case 3: /* load costume */
-		ensureResourceLoaded(rtCostume, res);
+		ensureResourceLoaded(rtCostume, resid);
 		break;
 	case 4: /* load room */
 		if(_features & GF_OLD256)
-			ensureResourceLoaded(rtScript, res & 0x7F); /*FIXME: missing stuff...*/
+			ensureResourceLoaded(rtScript, resid & 0x7F); /*FIXME: missing stuff...*/
 		else
-			ensureResourceLoaded(rtRoom, res);
+			ensureResourceLoaded(rtRoom, resid);
 		break;
 	case 5: /* nuke script */
-		setResourceCounter(rtScript, res, 0x7F);
+		setResourceCounter(rtScript, resid, 0x7F);
 		break;
 	case 6: /* nuke sound */
-		setResourceCounter(rtSound, res, 0x7F);
+		setResourceCounter(rtSound, resid, 0x7F);
 		break;
 	case 7: /* nuke costume */
-		setResourceCounter(rtCostume, res, 0x7F);
+		setResourceCounter(rtCostume, resid, 0x7F);
 		break;
 	case 8: /* nuke room */
-		setResourceCounter(rtRoom, res, 0x7F);
+		setResourceCounter(rtRoom, resid, 0x7F);
 		break;
 	case 9:  /* lock script */
-		if (res >= _numGlobalScripts)
+		if (resid >= _numGlobalScripts)
 			break;
-		lock(rtScript,res);
+		lock(rtScript,resid);
 		break;
 	case 10:/* lock sound */
-		lock(rtSound,res);
+		lock(rtSound,resid);
 		break;
 	case 11:/* lock costume */
-		lock(rtCostume,res);
+		lock(rtCostume,resid);
 		break;
 	case 12:/* lock room */
-		if (res > 0x7F)
-			res = _resourceMapper[res&0x7F];
-		lock(rtRoom,res);
+		if (resid > 0x7F)
+			resid = _resourceMapper[resid&0x7F];
+		lock(rtRoom,resid);
 		break;
 	case 13:/* unlock script */
-		if (res >= _numGlobalScripts)
+		if (resid >= _numGlobalScripts)
 			break;
-		unlock(rtScript,res);
+		unlock(rtScript,resid);
 		break;
 	case 14:/* unlock sound */
-		unlock(rtSound,res);
+		unlock(rtSound,resid);
 		break;
 	case 15:/* unlock costume */
-		unlock(rtCostume,res);
+		unlock(rtCostume,resid);
 		break;
 	case 16:/* unlock room */
-		if (res > 0x7F)
-			res = _resourceMapper[res&0x7F];
-		unlock(rtRoom,res);
+		if (resid > 0x7F)
+			resid = _resourceMapper[resid&0x7F];
+		unlock(rtRoom,resid);
 		break;
 	case 17:/* clear heap */
 		heapClear(0);
 		unkHeapProc2(0,0);
 		break;
 	case 18:/* load charset */
-		loadCharset(res);
+		loadCharset(resid);
 		break;
 	case 19:/* nuke charset */
-		nukeCharset(res);
+		nukeCharset(resid);
 		break;
 	case 20:/* load fl object */
-		loadFlObject(getVarOrDirectWord(0x40), res);
+		loadFlObject(getVarOrDirectWord(0x40), resid);
 		break;
         default:
                 warning("Unknown o5_resourcesroutine: %d", _opcode&0x1F);

@@ -2018,11 +2018,11 @@ void Gdi::resetBackground(byte top, byte bottom, int strip) {
 	}
 }
 
-void Scumm::setPalColor(int index, int r, int g, int b) {
-	_currentPalette[index*3+0] = r;
-	_currentPalette[index*3+1] = g;
-	_currentPalette[index*3+2] = b;
-	setDirtyColors(index,index);
+void Scumm::setPalColor(int idx, int r, int g, int b) {
+	_currentPalette[idx*3+0] = r;
+	_currentPalette[idx*3+1] = g;
+	_currentPalette[idx*3+2] = b;
+	setDirtyColors(idx,idx);
 }
 
 void Scumm::drawMouse() {
@@ -2088,7 +2088,7 @@ void Scumm::setPalette(int palindex) {
 	setPaletteFromPtr(pals);
 }
 
-byte *Scumm::findPalInPals(byte *pal, int index) {
+byte *Scumm::findPalInPals(byte *pal, int idx) {
 	byte *offs;
 	uint32 size;	
 
@@ -2102,10 +2102,10 @@ byte *Scumm::findPalInPals(byte *pal, int index) {
 
 	size = getResourceDataSize(offs) >> 2;
 	
-	if ((uint32)index >= (uint32)size)
+	if ((uint32)idx >= (uint32)size)
 		return NULL;
 
-	return offs + READ_LE_UINT32(offs + index * sizeof(uint32));
+	return offs + READ_LE_UINT32(offs + idx * sizeof(uint32));
 }
 
 byte *Scumm::getPalettePtr() {
@@ -2252,7 +2252,7 @@ static const byte default_cursor_colors[4] = {
 	15,15,7,8
 };
 
-void Scumm::decompressDefaultCursor(int index) {
+void Scumm::decompressDefaultCursor(int idx) {
 	int i;
 	byte color;
 
@@ -2262,7 +2262,7 @@ void Scumm::decompressDefaultCursor(int index) {
 	_cursorHotspotX = 8;
 	_cursorHotspotY = 7;
 
-	color = default_cursor_colors[index];
+	color = default_cursor_colors[idx];
 	
 	for(i=0; i<16; i++) {
 		_grabbedCursor[16*8+i] = color;

@@ -269,12 +269,12 @@ const GuiWidget save_load_dialog[] = {
 
 	{GUI_TEXT,0x04,GWF_BUTTON,200,45,54,16,8,9}, /* Ok */
 	{GUI_TEXT,0x04,GWF_BUTTON,200,65,54,16,7,7}, /* Cancel */
-	{0}
+	{0,0,0,0,0,0,0,0,0}
 };
 
 const GuiWidget pause_dialog[] = {
 	{GUI_TEXT,0x01,GWF_DEFAULT,50,80,220,16,0,10},
-	{0},
+	{0,0,0,0,0,0,0,0,0}
 };
 
 

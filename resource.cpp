@@ -569,28 +569,28 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 			_vars[VAR_ROOM_FLAG] = 1;
 }
 
-int Scumm::loadResource(int type, int index) {
+int Scumm::loadResource(int type, int idx) {
 	int roomNr, i;
 	uint32 fileOffs;
 	uint32 size, tag;
 	
-//	debug(1, "loadResource(%d,%d)", type,index);
+//	debug(1, "loadResource(%d,%d)", type,idx);
 
         if(type == rtCharset && (_features & GF_SMALL_HEADER)){
-                loadCharset(index);
+                loadCharset(idx);
                 return(1);
         }
 
-	roomNr = getResourceRoomNr(type, index);
-	if (roomNr == 0 || index >= res.num[type]) {
+	roomNr = getResourceRoomNr(type, idx);
+	if (roomNr == 0 || idx >= res.num[type]) {
 		error("%s %d undefined", 
-			res.name[type],index);
+			res.name[type],idx);
 	}
 
 	if (type==rtRoom) {
 		fileOffs = 0;
 	} else {
-		fileOffs = res.roomoffs[type][index];
+		fileOffs = res.roomoffs[type][idx];
 		if (fileOffs==0xFFFFFFFF)
 			return 0;
 	}
@@ -611,7 +611,7 @@ int Scumm::loadResource(int type, int index) {
                                 if (type==rtSound) {
                                         fileReadDwordLE();
                                         fileReadDwordLE();
-                                        return readSoundResource(type, index);
+                                        return readSoundResource(type, idx);
                                 }
 			
                                 tag = fileReadDword();
@@ -624,12 +624,12 @@ int Scumm::loadResource(int type, int index) {
                                 size = fileReadDwordBE();
                                 fileSeek(_fileHandle, -8, SEEK_CUR);
                         }
-			fileRead(_fileHandle, createResource(type, index, size), size);
+			fileRead(_fileHandle, createResource(type, idx, size), size);
 
                  /* dump the resource */
 #ifdef DUMP_SCRIPTS
 			if(type==rtScript) {
-				dumpResource("script-", index, getResourceAddress(rtScript, index));
+				dumpResource("script-", idx, getResourceAddress(rtScript, idx));
 			}
 #endif
 
@@ -637,19 +637,19 @@ int Scumm::loadResource(int type, int index) {
 				return 1;
 			}
 
-			nukeResource(type, index);
+			nukeResource(type, idx);
 		}
 
 		error("Cannot read resource");
 	} while(1);
 }
 
-int Scumm::readSoundResource(int type, int index) {
+int Scumm::readSoundResource(int type, int idx) {
 	uint32 pos, total_size, size, tag,basetag;
 	int pri, best_pri;
 	uint32 best_size, best_offs;
 
-	debug(9, "readSoundResource(%d,%d)", type, index);
+	debug(9, "readSoundResource(%d,%d)", type, idx);
 
 	pos = 0;
 
@@ -659,7 +659,7 @@ int Scumm::readSoundResource(int type, int index) {
 	if (_gameId==GID_SAMNMAX || _features & GF_AFTER_V7) {
 		if (basetag == MKID('MIDI')) {
 			fileSeek(_fileHandle, -8, SEEK_CUR);
-			fileRead(_fileHandle,createResource(type, index, total_size+8), total_size+8);
+			fileRead(_fileHandle,createResource(type, idx, total_size+8), total_size+8);
 			return 1;
         	}
 	} else {
@@ -690,39 +690,39 @@ int Scumm::readSoundResource(int type, int index) {
 
 		if (best_pri != -1) {
 			fileSeek(_fileHandle, best_offs - 8, SEEK_SET);
-			fileRead(_fileHandle,createResource(type, index, best_size), best_size);
+			fileRead(_fileHandle,createResource(type, idx, best_size), best_size);
 			return 1;
 		}
 
 	}
-	res.roomoffs[type][index] = 0xFFFFFFFF;
+	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
 }
 
-int Scumm::getResourceRoomNr(int type, int index) {
+int Scumm::getResourceRoomNr(int type, int idx) {
 	if (type==rtRoom)
-		return index;
-	return res.roomno[type][index];
+		return idx;
+	return res.roomno[type][idx];
 }
 
-byte *Scumm::getResourceAddress(int type, int index) {
+byte *Scumm::getResourceAddress(int type, int idx) {
 	byte *ptr;
 
-	debug(9, "getResourceAddress(%d,%d)", type, index);
+	debug(9, "getResourceAddress(%d,%d)", type, idx);
 
 	CHECK_HEAP
 
-	validateResource("getResourceAddress", type, index);
+	validateResource("getResourceAddress", type, idx);
 	
-	if (res.mode[type] && !res.address[type][index]) {
-		ensureResourceLoaded(type, index);
+	if (res.mode[type] && !res.address[type][idx]) {
+		ensureResourceLoaded(type, idx);
 	}	
 
-	ptr=(byte*)res.address[type][index];
+	ptr=(byte*)res.address[type][idx];
 	if (!ptr)
 		return NULL;
 
-	setResourceCounter(type, index, 1);
+	setResourceCounter(type, idx, 1);
 
 	return ptr + sizeof(MemBlkHeader);
 }
@@ -737,26 +737,26 @@ byte *Scumm::getStringAddress(int i) {
 	return b;
 }
 
-void Scumm::setResourceCounter(int type, int index, byte flag) {
-	res.flags[type][index] &= ~RF_USAGE;
-	res.flags[type][index] |= flag;
+void Scumm::setResourceCounter(int type, int idx, byte flag) {
+	res.flags[type][idx] &= ~RF_USAGE;
+	res.flags[type][idx] |= flag;
 }
 
 /* 2 bytes safety area to make "precaching" of bytes in the gdi drawer easier */
 #define SAFETY_AREA 2
 
-byte *Scumm::createResource(int type, int index, uint32 size) {
+byte *Scumm::createResource(int type, int idx, uint32 size) {
 	byte *ptr;
 
 	CHECK_HEAP
 
-	debug(9, "createResource(%d,%d,%d)", type, index,size);
+	debug(9, "createResource(%d,%d,%d)", type, idx,size);
 
 	if (size > 65536*4+37856)
 		warning("Probably invalid size allocating %d", size);
 
-	validateResource("allocating", type, index);
-	nukeResource(type, index);
+	validateResource("allocating", type, idx);
+	nukeResource(type, idx);
 
 	expireResources(size);
 
@@ -769,30 +769,30 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 
 	_allocatedSize += size;
 
-	res.address[type][index] = ptr;
+	res.address[type][idx] = ptr;
 	((MemBlkHeader*)ptr)->size = size;
-	setResourceCounter(type, index, 1);
+	setResourceCounter(type, idx, 1);
 	return ptr + sizeof(MemBlkHeader); /* skip header */
 }
 
-void Scumm::validateResource(const char *str, int type, int index) {
-	if (type<rtFirst || type>rtLast || (uint)index >= (uint)res.num[type]) {
-		error("%s Illegal Glob type %d num %d", str, type, index);
+void Scumm::validateResource(const char *str, int type, int idx) {
+	if (type<rtFirst || type>rtLast || (uint)idx >= (uint)res.num[type]) {
+		error("%s Illegal Glob type %d num %d", str, type, idx);
 	}
 }
 
-void Scumm::nukeResource(int type, int index) {
+void Scumm::nukeResource(int type, int idx) {
 	byte *ptr;
 
-	debug(9, "nukeResource(%d,%d)", type, index);
+	debug(9, "nukeResource(%d,%d)", type, idx);
 
 	CHECK_HEAP
 	assert( res.address[type] );
-	assert( index>=0 && index < res.num[type]);
+	assert( idx>=0 && idx < res.num[type]);
 
-	if ((ptr = res.address[type][index]) != NULL) {
-		res.address[type][index] = 0;
-		res.flags[type][index] = 0;
+	if ((ptr = res.address[type][idx]) != NULL) {
+		res.address[type][idx] = 0;
+		res.flags[type][idx] = 0;
 		_allocatedSize -= ((MemBlkHeader*)ptr)->size;
 		free(ptr);
 	}
@@ -887,7 +887,7 @@ StartScan:
        return f->ptr;
 }
 
-byte *findResource(uint32 tag, byte *searchin, int index) {
+byte *findResource(uint32 tag, byte *searchin, int idx) {
 	uint32 curpos,totalsize,size;
 
 	assert(searchin);
@@ -898,7 +898,7 @@ byte *findResource(uint32 tag, byte *searchin, int index) {
 	searchin += 4;
 
 	while (curpos<totalsize) {
-		if (READ_UINT32_UNALIGNED(searchin)==tag && !index--)
+		if (READ_UINT32_UNALIGNED(searchin)==tag && !idx--)
 			return searchin;
 
 		size = READ_BE_UINT32_UNALIGNED(searchin+4);
@@ -917,7 +917,7 @@ byte *findResource(uint32 tag, byte *searchin, int index) {
 	return NULL;
 }
 
-byte *findResourceSmall(uint32 tag, byte *searchin, int index) {
+byte *findResourceSmall(uint32 tag, byte *searchin, int idx) {
         uint32 curpos,totalsize,size;
         uint16 smallTag;
 
@@ -932,7 +932,7 @@ byte *findResourceSmall(uint32 tag, byte *searchin, int index) {
         while (curpos<totalsize) {
                 size = READ_LE_UINT32(searchin);
 
-                if (READ_LE_UINT16(searchin+4)==smallTag && !index--)
+                if (READ_LE_UINT16(searchin+4)==smallTag && !idx--)
                        return searchin;
 
                 if ((int32)size <= 0) {
@@ -1076,9 +1076,9 @@ void Scumm::loadPtrToResource(int type, int resindex, byte *source) {
 	}
 }
 
-bool Scumm::isResourceLoaded(int type, int index) {
-	validateResource("isLoaded", type, index);
-	return res.address[type][index] != NULL;
+bool Scumm::isResourceLoaded(int type, int idx) {
+	validateResource("isLoaded", type, idx);
+	return res.address[type][idx] != NULL;
 }
 
 void Scumm::resourceStats() {
