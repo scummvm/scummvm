@@ -877,6 +877,16 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 			ptr += 2;
 		} while (1);
 		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
+	} if (_features & GF_AFTER_V2) {
+		do {
+			if (!*verbptr)
+				return 0;
+			if (*verbptr == entry || *verbptr == 0xFF)
+				break;
+			verbptr += 2;
+		} while (1);
+	
+		return *(verbptr + 1);
 	} else {
 		do {
 			if (!*verbptr)
