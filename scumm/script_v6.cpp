@@ -1557,7 +1557,6 @@ void ScummEngine_v6::o6_roomOps() {
 		_saveLoadCompatible = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
-		warning("o6_roomops:180: partially unimplemented");
 		break;
 
 	case 181:		// SO_ROOM_FADE
