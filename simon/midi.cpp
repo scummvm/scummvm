@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "common/system.h"
+#include "common/file.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 #include "simon/simon.h"

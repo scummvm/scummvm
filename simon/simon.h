@@ -23,10 +23,9 @@
 #define SIMON_H
 
 #include <stdio.h>
-#include "engine.h"
+#include "common/engine.h"
 #include "simon/midi.h"
 #include "sound/mixer.h"
-#include "file.h"
 
 /* Various other settings */
 //#define DUMP_CONTINOUS_MAINSCRIPT
