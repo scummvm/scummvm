@@ -1330,6 +1330,11 @@ void ScummEngine_v60he::scummInit() {
 
 void ScummEngine_v90he::scummInit() {
 	ScummEngine_v80he::scummInit();
+
+	_heObject = 0;
+	_heObjectNum = 0;
+	_hePaletteNum = 0;
+
 	memset(&_wizParams, 0, sizeof(_wizParams));
 }
 

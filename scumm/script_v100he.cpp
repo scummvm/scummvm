@@ -1262,7 +1262,8 @@ void ScummEngine_v100he::o100_startSound() {
 		pop();
 		break;
 	case 92:
-		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
+		debug(0, "o100_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
+		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		break;
 	case 128:
 		_heSndFlags |= 2;
