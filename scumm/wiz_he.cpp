@@ -231,23 +231,44 @@ void Wiz::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int
 }
 
 static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, const Common::Rect *rect, Common::Rect &srcRect, Common::Rect &dstRect) {
+	srcRect = Common::Rect(0, 0, src_w, src_h);
+	dstRect = Common::Rect(src_x, src_y, src_x + src_w, src_y + src_h);
 	Common::Rect r3;
+	int diff;
+
 	if (rect) {
 		r3 = *rect;
-		Common::Rect r4(dst_w, dst_h);
+		Common::Rect r4(0, 0, dst_w, dst_h);
 		if (r3.intersects(r4)) {
 			r3.clip(r4);
 		} else {
 			return false;
 		}
 	} else {
-		r3 = Common::Rect(dst_w, dst_h);
+		r3 = Common::Rect(0, 0, dst_w, dst_h);
 	}
-	dstRect = Common::Rect(src_x, src_y, src_x + src_w, src_y + src_h);
-	dstRect.clip(r3);
-	srcRect = dstRect;
-	srcRect.moveTo(0, 0);
-	return srcRect.isValidRect() && dstRect.isValidRect();
+	diff = dstRect.left - r3.left;
+	if (diff < 0) {
+		srcRect.left -= diff;
+		dstRect.left -= diff;
+	}
+	diff = dstRect.right - r3.right;
+	if (diff > 0) {
+		srcRect.right -= diff;
+		dstRect.right -= diff;
+	}
+	diff = dstRect.top - r3.top;
+	if (diff < 0) {
+		srcRect.top -= diff;
+		dstRect.top -= diff;
+	}
+	diff = dstRect.bottom - r3.bottom;
+	if (diff > 0) {
+		srcRect.bottom -= diff;
+		dstRect.bottom -= diff;
+	}
+
+	return true;
 }
 
 void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
