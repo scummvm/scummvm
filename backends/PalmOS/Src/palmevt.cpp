@@ -204,7 +204,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 					return true;
 
 				case vchrJogPushedUp:
-				case vchrJogPushedDown: // hot swap gfx mode
+				case vchrJogPushedDown: // hot swap gfx mode 
 					if (_initMode == GFX_WIDE)
 						hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
 					else
@@ -336,7 +336,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 						setFeatureState(kFeatureAspectRatioCorrection, 0);
 						return true;
 
-					} else if (keycode == vchrTriggerLeft) {
+					} else if (keycode == vchrTriggerLeft && _screenWidth != 640) {
 						if (_initMode == GFX_WIDE)
 							hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
 						else
