@@ -762,7 +762,7 @@ void Scumm::runExitScript() {
 		// FIXME: the exit script of room 7 in indy3 only seems to have a size
 		// and tag not actual data not even a 00 (stop code). Maybe we should
 		// be limiting ourselves to strictly reading the size from the header?
-		if (_gameId == GID_INDY3) {
+		if (_gameId == GID_INDY3 && !(_features & GF_OLD_BUNDLE)) {
 			byte *roomptr = getResourceAddress(rtRoom, _roomResource);
 			const byte *excd = findResourceData(MKID('EXCD'), roomptr) - _resourceHeaderSize;
 			if (!excd || (getResourceDataSize(excd) < 1)) {
