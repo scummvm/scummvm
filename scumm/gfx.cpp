@@ -2526,12 +2526,12 @@ void Scumm::setupEGAPalette() {
 	setPalColor( 7, 168, 168, 168);
 	setPalColor( 8,  84,  84,  84);
 	setPalColor( 9,  84,  84, 252);
-	setPalColor(10,   0, 252,   0);
-	setPalColor(11,   0, 252, 252);
+	setPalColor(10,  84, 252,  84);
+	setPalColor(11,  84, 252, 252);
 	setPalColor(12, 252,  84,  84); // PC
 //	setPalColor(12, 252, 144, 144); // Amiga value gives nicer skin colour
-	setPalColor(13, 252,   0, 252);
-	setPalColor(14, 252, 252,   0);
+	setPalColor(13, 252,  84, 252);
+	setPalColor(14, 252, 252,  84);
 	setPalColor(15, 252, 252, 252);
 }
 
