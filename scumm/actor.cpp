@@ -1232,7 +1232,6 @@ int ScummEngine::getActorFromPos(int x, int y) {
 void ScummEngine::actorTalk(const byte *msg) {
 	Actor *a;
 
-	_lastStringTag[0] = 0;
 	addMessageToStack(msg, _charsetBuffer, sizeof(_charsetBuffer));
 	
 	// Play associated speech, if any
