@@ -61,6 +61,14 @@ Config
 * Add a way to distinguish if a given key is present at all. That is, it
   would be nice if one could distinguish between an explicit "fullscreen=false"
   and the absence of any fullscreen config.
+* Add a 'notification' system. E.g. the SoundMixer could request to be notified
+  whenever the value of the "volume" config option changes. In other words,
+  instead of a "pull" approach (where each subsystem has to check whether any
+  config option relevant to it has been changed) we use a "push" approach.
+  Of course the current approach is "push", too: whenever e.g. the volume
+  setting is changed, the code doing so has to updated the SoundMixer etc.
+  That's cumbersome, and error prone. Would be much nicer if updating the
+  volume config value automatically notifies the SoundMixer, iMuse etc.
 
 SCUMM
 =====
