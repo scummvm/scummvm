@@ -42,6 +42,10 @@
 #include "gui/message.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
+#ifdef MACOSX
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
 
 #ifdef _WIN32_WCE
 extern void drawError(char*);
@@ -2004,6 +2008,35 @@ int normalizeAngle(int angle) {
 	temp = (angle + 360) % 360;
 
 	return toSimpleDir(1, temp) * 45;
+}
+
+const char *Scumm::getGameDataPath() const {
+#ifdef MACOSX
+	if (_features & GF_AFTER_V8 && !memcmp(_gameDataPath, "/Volumes/MONKEY3_", 17)) {
+		// Special case for COMI on Mac OS X. The mount points on OS X depend
+		// on the volume name. Hence if playing from CD, we'd get a problem.
+		// So if loading of a resource file fails, we fall back to the (fixed)
+		// CD mount points (/Volumes/MONKEY3_1 and /Volumes/MONKEY3_2).
+		//
+		// The check for whether we play from CD or not is very hackish, though.
+		static char buf[256];
+		struct stat st;
+		int disk = (_scummVars && _scummVars[VAR_CURRENTDISK] == 2) ? 2 : 1;
+		sprintf(buf, "/Volumes/MONKEY3_%d", disk);
+		
+		if (!stat(buf, &st)) {
+			return buf;
+		}
+		
+		// Apparently that disk is not inserted. However since many data files
+		// (fonts, comi.la0) are on both disks, we also try the other CD.
+		disk = (disk == 1) ? 2 : 1;
+		sprintf(buf, "/Volumes/MONKEY3_%d", disk);
+		return buf;
+	}
+#endif
+
+	return _gameDataPath;
 }
 
 void Scumm::errorString(const char *buf1, char *buf2) {

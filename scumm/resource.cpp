@@ -205,16 +205,13 @@ void Scumm::readRoomsOffsets() {
 }
 
 bool Scumm::openResourceFile(const char *filename) {
-	char buf[256];
-
 	debug(9, "openResourceFile(%s)", filename);
 
 	if (_fileHandle.isOpen() == true) {
 		_fileHandle.close();
 	}
 
-	strcpy(buf, filename);
-	_fileHandle.open(buf, getGameDataPath(), 1, _encbyte);
+	_fileHandle.open(filename, getGameDataPath(), 1, _encbyte);
 
 	return _fileHandle.isOpen();
 }
@@ -228,7 +225,11 @@ void Scumm::askForDisk(const char *filename, int disknum) {
 		_bundle->closeVoiceFile();
 		_bundle->closeMusicFile();
 
-		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nHit Ok to retry, Cancel to exit", filename, disknum, getGameDataPath());
+#ifdef MACOSX
+		sprintf(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nHit OK to retry, Cancel to exit", filename, disknum);
+#else
+		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nHit OK to retry, Cancel to exit", filename, disknum, getGameDataPath());
+#endif
 
 		result = displayError(true, buf);
 		if (result == 2)

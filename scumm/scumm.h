@@ -331,7 +331,7 @@ public:
 	// Misc utility functions
 	void checkRange(int max, int min, int no, const char *str);
 	const char *getExeName() const { return _exe_name; }
-	const char *getGameDataPath() const { return _gameDataPath; }
+	const char *getGameDataPath() const;
 
 	// Cursor/palette
 	void updateCursor();
@@ -389,7 +389,7 @@ public:
 	// VAR is a wrapper around scummVar, which attempts to include additional
 	// useful information should an illegal var access be detected.
 	#define VAR(x)	scummVar(x, #x, __FILE__, __LINE__)
-	inline int32& scummVar(byte var, const char *varName, const char *file, int line)
+	int32& scummVar(byte var, const char *varName, const char *file, int line)
 	{
 		if (var == 0xFF) {
 			warning("Illegal access to variable %s in file %s, line %d", varName, file, line);
@@ -425,10 +425,12 @@ protected:
 	int _curVerb;
 	int _curVerbSlot;
 	int _curPalIndex;
-public:
-	byte _currentRoom;
 
+public:
+	byte _currentRoom;	// FIXME - should be protected but Actor::isInCurrentRoom uses it
+	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds uses it
 	bool _egoPositioned;	// Used by Actor::putActor, hence public
+
 protected:
 	int _keyPressed;
 	uint16 _lastKeyHit;
@@ -447,8 +449,7 @@ protected:
 	bool _showStack;
 	uint16 _debugMode;
 
-protected:
-	/* Save/Load class - some of this may be GUI */
+	// Save/Load class - some of this may be GUI
 	byte _saveLoadFlag, _saveLoadSlot;
 	uint32 _lastSaveTime;
 	bool _saveLoadCompatible;
@@ -469,11 +470,11 @@ protected:
 		return result;
 	}
 	void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	void saveLoadResource(Serializer *ser, int type, int index);
+	void makeSavegameName(char *out, int slot, bool compatible);
 
 public:
 	bool getSavegameName(int slot, char *desc, SaveFileManager *mgr);
-	void makeSavegameName(char *out, int slot, bool compatible);
-	void saveLoadResource(Serializer *ser, int type, int index);
 	void listSavegames(bool *marks, int num, SaveFileManager *mgr);
 	
 	void requestSave(int slot, const char *name);
@@ -508,13 +509,35 @@ protected:
 public:
 	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr);
 	void stopScript(int script);
+	bool isScriptRunning(int script);	// FIXME - should be protected, used by Sound::startTalkSound
 
 protected:
+	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars);
 	void runScriptNested(int script);
-	void executeScript();	
+	void executeScript();
 	void updateScriptPtr();
+	void runHook(int i);
+	void checkAndRunSentenceScript();
+	void runExitScript();
+	void runEntryScript();
+	void runAllScripts();
+	void freezeScripts(int scr);
+	void unfreezeScripts();
+
+	bool isScriptInUse(int script);
+	bool isRoomScriptRunning(int script);
+
+	void killAllScriptsExceptCurrent();
+	void killScriptsAndResources();
+	void decreaseScriptDelay(int amount);
+
+	void stopObjectCode();
+	void stopObjectScript(int script);
+
 	void getScriptBaseAddress();
 	void getScriptEntryPoint();
+	int getVerbEntrypoint(int obj, int entry);
+
 	byte fetchScriptByte();
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();
@@ -526,36 +549,17 @@ protected:
 	int pop();
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
-	void runHook(int i);
-	bool isScriptInUse(int script);
 	
-	void freezeScripts(int scr);
-	void unfreezeScripts();
-	void runAllScripts();
 	void beginCutscene(int *args);
 	void endCutscene();
 	void abortCutscene();
-	void runExitScript();
-	void runEntryScript();
-
 	void beginOverride();
 	void endOverride();
-	void killAllScriptsExceptCurrent();
-	void killScriptsAndResources();
-	void checkAndRunSentenceScript();
-	void decreaseScriptDelay(int amount);
-public:
-	bool isScriptRunning(int script);	// FIXME - should be protected, used by Sound::startTalkSound
-protected:
-	bool isRoomScriptRunning(int script);
+
 	void copyScriptString(byte *dst);
 	int resStrLen(const byte *src) const;
 	void doSentence(int c, int b, int a);
 	void setStringVars(int i);
-
-	/* Script VM or Object class? */
-	void stopObjectCode();
-	void stopObjectScript(int script);
 
 	/* Should be in Resource class */
 	byte _encbyte;
@@ -578,7 +582,6 @@ protected:
 	void askForDisk(const char *filename, int disknum);
 	bool openResourceFile(const char *filename);
 
-protected:
 	void loadPtrToResource(int type, int i, const byte *ptr);
 	void readResTypeList(int id, uint32 tag, const char *name);
 	char *resTypeFromId(int id);
@@ -617,7 +620,6 @@ protected:
 
 	int _lastLoadedRoom;
 public:
-	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds accesses it
 	byte *findResourceData(uint32 tag, byte *ptr);
 	int getResourceDataSize(byte *ptr);
 	void dumpResource(char *tag, int index, byte *ptr, int length = -1);
@@ -707,10 +709,8 @@ protected:
 	void runInputScript(int a, int cmd, int mode);
 	void restoreVerbBG(int verb);
 	void drawVerbBitmap(int verb, int x, int y);
-	int getVerbEntrypoint(int obj, int entry);
 	int getVerbSlot(int id, int mode);
 	void killVerb(int slot);
-	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars);
 	void setVerbObject(uint room, uint object, uint verb);
 
 	void checkV2Inventory(int x, int y);
@@ -720,15 +720,16 @@ public:
 	/* Should be in Actor class */
 	Actor *derefActor(int id, const char *errmsg = 0);
 	Actor *derefActorSafe(int id, const char *errmsg);
-	void showActors();
 
 	uint32 *_classData;
 
 	int getAngleFromPos(int x, int y);
 
+protected:
 	void walkActors();
 	void playActorSounds();
 	void setActorRedrawFlags(bool fg, bool bg);
+	void showActors();
 	void resetActorBgs();
 	void processActors();
 	void processUpperActors();
@@ -737,6 +738,7 @@ public:
 	
 	bool isCostumeInUse(int i);
 
+public:
 	/* Actor talking stuff */
 	byte _actorToPrintStrFor;
 	int _sentenceNum;
