@@ -22,9 +22,6 @@
 #ifndef ADLIBCHANNEL_H
 #define ADLIBCHANNEL_H
 
-#include "stdafx.h"
-#include "base/engine.h"
-#include "sky/sky.h"
 #include "sky/music/musicbase.h"
 #include "sound/fmopl.h"
 

@@ -25,16 +25,27 @@
 #include "base/plugins.h"
 
 #include "common/file.h"
+#include "common/timer.h"
 
-#include "sky/sky.h"
-#include "sky/skydefs.h" //game specific defines
 #include "sky/compact.h"
-#include "sky/logic.h"
+#include "sky/control.h"
 #include "sky/debug.h"
+#include "sky/disk.h"
+#include "sky/intro.h"
+#include "sky/logic.h"
 #include "sky/mouse.h"
+#include "sky/music/adlibmusic.h"
+#include "sky/music/gmmusic.h"
+#include "sky/music/mt32music.h"
+#include "sky/music/musicbase.h"
+#include "sky/screen.h"
+#include "sky/sky.h"
+#include "sky/skydefs.h"
+#include "sky/sound.h"
+#include "sky/text.h"
 
-#include <errno.h>
-#include <time.h>
+#include "sound/mididrv.h"
+#include "sound/mixer.h"
 
 extern uint16 _debugLevel;
 
@@ -75,16 +86,16 @@ const TargetSettings *Engine_SKY_targetList() {
 }
 
 Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
-	return new SkyState(detector, syst);
+	return new SkyEngine(detector, syst);
 }
 
 REGISTER_PLUGIN("Beneath a Steel Sky", Engine_SKY_targetList, Engine_SKY_create);
 
-void **SkyState::_itemList[300];
+void **SkyEngine::_itemList[300];
 
-SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
+SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
-SkyState::SkyState(GameDetector *detector, OSystem *syst)
+SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
 	
 	_game = detector->_game.id;
@@ -105,7 +116,7 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_system->init_size(320, 200);
 }
 
-SkyState::~SkyState() {
+SkyEngine::~SkyEngine() {
 
 	delete _skyLogic;
 	delete _skySound;
@@ -115,17 +126,17 @@ SkyState::~SkyState() {
 	delete _skyScreen;
 }
 
-void SkyState::errorString(const char *buf1, char *buf2) {
+void SkyEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-void SkyState::initVirgin() {
+void SkyEngine::initVirgin() {
 	
 	_skyScreen->setPalette(60111);
 	_skyScreen->showScreen(60110);
 }
 
-uint8 SkyState::_languageTable[11] = {
+uint8 SkyEngine::_languageTable[11] = {
 	SKY_USA, // EN_USA
 	SKY_GERMAN, // DE_DEU
 	SKY_FRENCH, // FR_FRA
@@ -139,7 +150,7 @@ uint8 SkyState::_languageTable[11] = {
 	SKY_ENGLISH  // EN_GRB
 };
 
-void SkyState::doCheat(uint8 num) {
+void SkyEngine::doCheat(uint8 num) {
 
 	switch(num) {
 	case 1: warning("executed cheat: get jammer");
@@ -163,7 +174,7 @@ void SkyState::doCheat(uint8 num) {
 	}
 }
 
-void SkyState::handleKey(void) {
+void SkyEngine::handleKey(void) {
 
 	if (_key_pressed == 63)
 		_skyControl->doControlPanel();
@@ -184,7 +195,7 @@ void SkyState::handleKey(void) {
 	_key_pressed = 0;
 }
 
-void SkyState::go() {
+void SkyEngine::go() {
 
 	if (!_dump_file)
 		_dump_file = stdout;
@@ -238,7 +249,7 @@ void SkyState::go() {
 	}
 }
 
-void SkyState::initialise(void) {
+void SkyEngine::initialise(void) {
 	_skyDisk = new SkyDisk(_gameDataPath);
 	_skySound = new SkySound(_mixer, _skyDisk, _detector->_sfx_volume);
 	
@@ -290,16 +301,16 @@ void SkyState::initialise(void) {
 	else
 		_systemVars.language = _languageTable[_detector->_language];
 
-	if (!_skyDisk->fileExists(60600 + SkyState::_systemVars.language * 8)) {
+	if (!_skyDisk->fileExists(60600 + SkyEngine::_systemVars.language * 8)) {
 		warning("The language you selected does not exist in your BASS version.");
 		if (_skyDisk->fileExists(60600))
-			SkyState::_systemVars.language = SKY_ENGLISH;
+			SkyEngine::_systemVars.language = SKY_ENGLISH;
 		else if (_skyDisk->fileExists(60600 + SKY_USA * 8))
-			SkyState::_systemVars.language = SKY_USA;
+			SkyEngine::_systemVars.language = SKY_USA;
 		else
 			for (uint8 cnt = SKY_ENGLISH; cnt <= SKY_SPANISH; cnt++)
 				if (_skyDisk->fileExists(60600 + cnt * 8)) {
-					SkyState::_systemVars.language = cnt;
+					SkyEngine::_systemVars.language = cnt;
 					break;
 				}
 	}
@@ -316,7 +327,7 @@ void SkyState::initialise(void) {
 	_skyMusic->setVolume(_detector->_music_volume >> 1);
 }
 
-void SkyState::initItemList() {
+void SkyEngine::initItemList() {
 	
 	//See List.asm for (cryptic) item # descriptions
 
@@ -338,14 +349,14 @@ void SkyState::initItemList() {
 	}
 }
 
-void SkyState::loadBase0(void) {
+void SkyEngine::loadBase0(void) {
 
 	_skyLogic->fnEnterSection(0, 0, 0);
 	_skyMusic->startMusic(2);
 	_systemVars.currentMusic = 2;
 }
 
-void SkyState::loadFixedItems(void) {
+void SkyEngine::loadFixedItems(void) {
 
 	if (!isDemo())
 		_itemList[36] = (void **)_skyDisk->loadFile(36, NULL);
@@ -369,22 +380,22 @@ void SkyState::loadFixedItems(void) {
 		
 }
 
-void **SkyState::fetchItem(uint32 num) {
+void **SkyEngine::fetchItem(uint32 num) {
 
 	return _itemList[num];
 }
 
-void SkyState::timerHandler(void *refCon) {
+void SkyEngine::timerHandler(void *refCon) {
 
-	((SkyState *)refCon)->gotTimerTick();
+	((SkyEngine *)refCon)->gotTimerTick();
 }
 
-void SkyState::gotTimerTick(void) {
+void SkyEngine::gotTimerTick(void) {
 
 	_skyScreen->handleTimer();
 }
 
-Compact *SkyState::fetchCompact(uint32 a) {
+Compact *SkyEngine::fetchCompact(uint32 a) {
 	SkyDebug::fetchCompact(a);
 	uint32 sectionNum = (a & 0xf000) >> 12;
 	uint32 compactNum = (a & 0x0fff);
@@ -392,7 +403,7 @@ Compact *SkyState::fetchCompact(uint32 a) {
 	return (Compact *)(_itemList[119 + sectionNum][compactNum]);
 }
 
-void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
+void SkyEngine::delay(uint amount) { //copied and mutilated from Simon.cpp
 
 	OSystem::Event event;
 
@@ -438,7 +449,7 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 				_skyMouse->buttonPressed(1);
 				break;
 			case OSystem::EVENT_QUIT:
-				if (!SkyState::_systemVars.quitting)
+				if (!SkyEngine::_systemVars.quitting)
 					_skyControl->showGameQuitMsg(); // will call _system->quit()
 				break;
 			default:
@@ -462,7 +473,7 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 	} while (cur < start + amount);
 }
 
-bool SkyState::isDemo(void) {
+bool SkyEngine::isDemo(void) {
 	switch (_systemVars.gameVersion) {
 	case 109: // pc gamer demo
 	case 267: // floppy demo
@@ -480,7 +491,7 @@ bool SkyState::isDemo(void) {
 	}
 }
 
-bool SkyState::isCDVersion(void) {
+bool SkyEngine::isCDVersion(void) {
 
 	switch (_systemVars.gameVersion) {
 	case 109:

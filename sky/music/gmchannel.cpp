@@ -21,6 +21,7 @@
 
 #include "gmchannel.h"
 #include "common/util.h"
+#include "sound/mididrv.h"
 
 SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab) {
 

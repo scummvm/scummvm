@@ -22,6 +22,8 @@
 #ifndef RNC_DECO_H
 #define RNC_DECO_H
 
+#include "stdafx.h"
+
 class RncDecoder {
 
 protected:

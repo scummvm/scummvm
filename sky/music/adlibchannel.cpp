@@ -19,8 +19,9 @@
  *
  */
 
-#include "adlibchannel.h"
-#include "sound/fmopl.h"
+#include "common/util.h"
+#include "sky/music/adlibchannel.h"
+#include "sky/sky.h"
 
 SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData)
 {
@@ -42,7 +43,7 @@ SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfD
 
 	uint16 instrumentDataLoc;
 
-	if (SkyState::_systemVars.gameVersion == 109) {
+	if (SkyEngine::_systemVars.gameVersion == 109) {
 		//instrumentDataLoc = (_musicData[0x11D0] << 8) | _musicData[0x11CF];
 		//_frequenceTable = (uint16*)(_musicData + 0x835);
 		//_registerTable = _musicData + 0xE35;
@@ -54,7 +55,7 @@ SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfD
 		_registerTable = _musicData + 0xE68;
 		_opOutputTable = _musicData + 0xE7A;
 		_adlibRegMirror = _musicData + 0xF7D;
-	} else if (SkyState::_systemVars.gameVersion == 267) {
+	} else if (SkyEngine::_systemVars.gameVersion == 267) {
 		instrumentDataLoc = READ_LE_UINT16(_musicData + 0x11FB);
 		_frequenceTable = (uint16*)(_musicData + 0x7F4);
 		_registerTable = _musicData + 0xDF4;

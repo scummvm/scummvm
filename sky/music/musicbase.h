@@ -23,8 +23,11 @@
 #define MUSICBASE_H
 
 #include "stdafx.h"
-#include "sky/disk.h"
+#include "common/scummsys.h"
 #include "common/system.h"
+
+class SkyDisk;
+class OSystem;
 
 #define FILES_PER_SECTION 4
 

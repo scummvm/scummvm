@@ -22,24 +22,8 @@
 #ifndef SKYMAIN_H
 #define SKYMAIN_H
 
-#include <stdio.h>
+#include "stdafx.h"
 #include "base/engine.h"
-#include "common/util.h"
-#include "common/timer.h"
-#include "sound/mixer.h"
-#include "sky/sound.h"
-#include "sky/text.h"
-#include "sky/disk.h"
-#include "sky/struc.h"
-#include "sky/screen.h"
-#include "sky/music/musicbase.h"
-#include "sky/music/adlibmusic.h"
-#include "sky/music/gmmusic.h"
-#include "sky/music/mt32music.h"
-#include "sky/mouse.h"
-#include "sky/control.h"
-#include "sky/intro.h"
-#include "common/config-file.h"
 
 struct SystemVars {
 	uint32 systemFlags;
@@ -53,12 +37,18 @@ struct SystemVars {
 	bool quitting;
 };
 
+struct Compact;
+class SkySound;
+class SkyDisk;
+class SkyText;
 class SkyLogic;
+class SkyMouse;
 class SkyScreen;
 class SkyControl;
+class SkyMusicBase;
 class SkyIntro;
 
-class SkyState : public Engine {
+class SkyEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
 	byte _game;
@@ -70,8 +60,6 @@ protected:
 	uint16 _debugMode;
 
 	int _numScreenUpdates;
-
-	Timer *_timer;
 
 	FILE *_dump_file;
 
@@ -92,8 +80,8 @@ protected:
 	GameDetector *_detector; // necessary for music
 	
 public:
-	SkyState(GameDetector *detector, OSystem *syst);
-	virtual ~SkyState();
+	SkyEngine(GameDetector *detector, OSystem *syst);
+	virtual ~SkyEngine();
 
 	static bool isDemo(void);
 	static bool isCDVersion(void);

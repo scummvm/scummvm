@@ -22,8 +22,11 @@
 #ifndef SKYTEXT_H
 #define SKYTEXT_H
 
-#include "sky/disk.h"
-#include "sky/struc.h"
+#include "stdafx.h"
+#include "common/scummsys.h"
+
+struct Compact;
+class SkyDisk;
 
 struct HuffTree {
 	unsigned char lChild;

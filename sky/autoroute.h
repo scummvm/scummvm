@@ -23,12 +23,9 @@
 #define AUTOROUTE_H
 
 #include "stdafx.h"
-#include "sky/sky.h"
-#include "struc.h"
-#include "compact.h"
-#include "grid.h"
-#include "skydefs.h"
+#include "common/scummsys.h"
 
+struct Compact;
 class SkyGrid;
 
 class SkyAutoRoute {

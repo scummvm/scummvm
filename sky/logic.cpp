@@ -20,12 +20,25 @@
  */
 
 #include "stdafx.h"
-#include "sky/logic.h"
-#include "sky/debug.h"
+#include "sky/autoroute.h"
 #include "sky/compact.h"
-#include "sky/skydefs.h"
+#include "sky/control.h"
+#include "sky/debug.h"
+#include "sky/disk.h"
+#include "sky/grid.h"
+#include "sky/logic.h"
+#include "sky/mouse.h"
+#include "sky/music/musicbase.h"
+#include "sky/text.h"
+#include "sky/screen.h"
+#include "sky/sky.h"
+#include "sky/sound.h"
+#include "sky/struc.h"
 #include "sky/talks.h"
+/*
+#include "sky/skydefs.h"
 #include "base/gameDetector.h"
+*/
 
 uint32 SkyLogic::_scriptVariables[838];
 
@@ -85,17 +98,17 @@ bool SkyLogic::checkProtection(void) {
 }
 
 void SkyLogic::engine() {
-	uint16 *logicList = (uint16 *)SkyState::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
+	uint16 *logicList = (uint16 *)SkyEngine::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
 
 	while (uint16 id = *logicList++) { // 0 means end of list
 		if (id == 0xffff) {
 			// Change logic data address
-			logicList = (uint16 *)SkyState::fetchCompact(*logicList);
+			logicList = (uint16 *)SkyEngine::fetchCompact(*logicList);
 			continue;
 		}
 
 		_scriptVariables[CUR_ID] = id;
-		_compact = SkyState::fetchCompact(id);
+		_compact = SkyEngine::fetchCompact(id);
 
 		// check the id actually wishes to be processed
 		if (!(_compact->status & (1 << 6)))
@@ -191,7 +204,7 @@ void SkyLogic::arAnim() {
 		// fine because the later collision will almost certainly
 		// take longer to clear than the earlier one.
 
-		if (collide(SkyState::fetchCompact(_compact->extCompact->waitingFor))) {
+		if (collide(SkyEngine::fetchCompact(_compact->extCompact->waitingFor))) {
 			stopAndWait();
 			return;
 		}
@@ -204,13 +217,13 @@ void SkyLogic::arAnim() {
 
 	// ok, our turn to check for collisions
 
-	uint16 *logicList = (uint16 *)SkyState::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
+	uint16 *logicList = (uint16 *)SkyEngine::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
 	Compact *cpt = 0;
 
 	while (uint16 id = *logicList++) { // get an id
 
 		if (id == 0xffff) { // address change?
-			logicList = (uint16 *)SkyState::fetchCompact(*logicList); // get new logic list
+			logicList = (uint16 *)SkyEngine::fetchCompact(*logicList); // get new logic list
 			continue;
 		}
 
@@ -218,7 +231,7 @@ void SkyLogic::arAnim() {
 			continue;
 
 		_scriptVariables[HIT_ID] = id; // save target id for any possible c_mini_bump
-		cpt = SkyState::fetchCompact(id); // let's have a closer look
+		cpt = SkyEngine::fetchCompact(id); // let's have a closer look
 
 		if (!(cpt->status & (1 << ST_COLLISION_BIT))) // can it collide?
 			continue;
@@ -381,7 +394,7 @@ void SkyLogic::anim() {
 		} else if (*grafixProg >= LF_START_FX) { // do sync
 			grafixProg++;
 
-			Compact *cpt = SkyState::fetchCompact(*grafixProg++);
+			Compact *cpt = SkyEngine::fetchCompact(*grafixProg++);
 
 			cpt->sync = *grafixProg++;
 		} else { // put coordinates and frame in
@@ -484,13 +497,13 @@ void SkyLogic::talk() {
 	if (_skyMouse->wasClicked())
 		for (int i = 0; i < ARRAYSIZE(clickTable); i++)
 			if (clickTable[i] == (uint16)_scriptVariables[CUR_ID]) {
-				if ((SkyState::_systemVars.systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
+				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
 					_skySound->stopSpeech();
-				if ((SkyState::_systemVars.systemFlags & SF_ALLOW_TEXT) &&
+				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) &&
 					(_compact->extCompact->spTextId > 0) &&
 					(_compact->extCompact->spTextId < 0xFFFF)) {
 					
-					SkyState::fetchCompact(_compact->extCompact->spTextId)->status = 0;
+					SkyEngine::fetchCompact(_compact->extCompact->spTextId)->status = 0;
 				}
 				if (SkyCompact::getGrafixPtr(_compact)) {
 					_compact->frame = _compact->getToFlag; // set character to stand
@@ -542,7 +555,7 @@ void SkyLogic::talk() {
 		// ok, speech has finished
 
 		if (_compact->extCompact->spTextId) {
-			Compact *cpt = SkyState::fetchCompact(_compact->extCompact->spTextId); // get text id to kill
+			Compact *cpt = SkyEngine::fetchCompact(_compact->extCompact->spTextId); // get text id to kill
 			cpt->status = 0; // kill the text
 		}
 
@@ -554,7 +567,7 @@ void SkyLogic::talk() {
 void SkyLogic::listen() {
 	/// Stay in this mode until id in getToFlag leaves L_TALK mode
 
-	Compact *cpt = SkyState::fetchCompact(_compact->flag);
+	Compact *cpt = SkyEngine::fetchCompact(_compact->flag);
 
 	if (cpt->logic == L_TALK)
 		return;
@@ -570,7 +583,7 @@ void SkyLogic::stopped() {
 	/// that will be one level higher than the script we
 	/// would wish to restart from
 
-	Compact *cpt = SkyState::fetchCompact(_compact->extCompact->waitingFor);
+	Compact *cpt = SkyEngine::fetchCompact(_compact->extCompact->waitingFor);
 
 	if (cpt)
 		if (!cpt->mood && collide(cpt))
@@ -593,7 +606,7 @@ void SkyLogic::choose() {
 
 	fnNoHuman(0, 0, 0); // kill mouse again
 
-	SkyState::_systemVars.systemFlags &= ~SF_CHOOSING; // restore save/restore
+	SkyEngine::_systemVars.systemFlags &= ~SF_CHOOSING; // restore save/restore
 
 	_compact->logic = L_SCRIPT; // and continue script
 	logicScript();
@@ -653,7 +666,7 @@ void SkyLogic::simpleAnim() {
 
 		grafixProg++;
 		// *grafix_prog: id to sync
-		Compact *compact2 = SkyState::fetchCompact(*grafixProg);
+		Compact *compact2 = SkyEngine::fetchCompact(*grafixProg);
 		grafixProg++;
 
 		// *grafix_prog: sync
@@ -1131,7 +1144,7 @@ void SkyLogic::initScriptVariables() {
 	_scriptVariables[820] = 1;
 	_scriptVariables[821] = 1;
 
-	if (SkyState::_systemVars.gameVersion == 288)
+	if (SkyEngine::_systemVars.gameVersion == 288)
 		memcpy(_scriptVariables + 352, forwardList1b288, sizeof(forwardList1b288));
 	else
 		memcpy(_scriptVariables + 352, forwardList1b, sizeof(forwardList1b));
@@ -1350,7 +1363,7 @@ bool SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
 
 bool SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 	debug(5, "Call: fnDrawScreen(%X, %X)",a,b);
-	SkyState::_systemVars.currentPalette = a;
+	SkyEngine::_systemVars.currentPalette = a;
 	_skyScreen->fnDrawScreen(a, b);
 	return true;
 }
@@ -1383,7 +1396,7 @@ bool SkyLogic::fnIdle(uint32 a, uint32 b, uint32 c) {
 bool SkyLogic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
 	_compact->mode += 4; // next level up
 	_compact->logic = L_SCRIPT;
-	Compact *cpt = SkyState::fetchCompact(targetId);
+	Compact *cpt = SkyEngine::fetchCompact(targetId);
 
 	*SkyCompact::getSub(_compact, _compact->mode) = cpt->actionScript;
 	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
@@ -1399,7 +1412,7 @@ bool SkyLogic::fnStartSub(uint32 scr, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(mega);
+	Compact *cpt = SkyEngine::fetchCompact(mega);
 	cpt->mode += 4;
 	*SkyCompact::getSub(cpt, cpt->mode) = (uint16)(scr & 0xffff);
 	*SkyCompact::getSub(cpt, cpt->mode + 2) = (uint16)(scr >> 16);
@@ -1407,7 +1420,7 @@ bool SkyLogic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
 }
 
 bool SkyLogic::fnAssignBase(uint32 id, uint32 scr, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(id);
+	Compact *cpt = SkyEngine::fetchCompact(id);
 	cpt->mode = C_BASE_MODE;
 	cpt->logic = L_SCRIPT;
 	cpt->baseSub     = (uint16)(scr & 0xffff);
@@ -1471,7 +1484,7 @@ bool SkyLogic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
 bool SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
  	_compact->upFlag = (uint16)mode; // save mode for action script
 	_compact->mode += 4; // next level up
-	Compact *cpt = SkyState::fetchCompact(_compact->place);
+	Compact *cpt = SkyEngine::fetchCompact(_compact->place);
 	if (!cpt) { 
 		warning("can't find _compact's getToTable. Place compact is NULL");
 		return false; 
@@ -1552,7 +1565,7 @@ bool SkyLogic::fnSetAlternate(uint32 scr, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnAltSetAlternate(uint32 target, uint32 scr, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(target);
+	Compact *cpt = SkyEngine::fetchCompact(target);
 	cpt->extCompact->alt = (uint16)(scr & 0xffff);
 	cpt->logic = L_ALT;
 	return false;
@@ -1560,7 +1573,7 @@ bool SkyLogic::fnAltSetAlternate(uint32 target, uint32 scr, uint32 c) {
 
 bool SkyLogic::fnKillId(uint32 id, uint32 b, uint32 c) {
 	if (id) {
-		Compact *cpt = SkyState::fetchCompact(id);
+		Compact *cpt = SkyEngine::fetchCompact(id);
 		if (cpt->status & (1 << 7))
 			_skyGrid->removeObjectFromWalk(cpt);
 		cpt->status = 0;
@@ -1613,7 +1626,7 @@ bool SkyLogic::fnQuit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
-	stdSpeak(SkyState::fetchCompact(targetId), mesgNum, animNum, 0);
+	stdSpeak(SkyEngine::fetchCompact(targetId), mesgNum, animNum, 0);
 	return false; 	//drop out of script
 }
 
@@ -1652,7 +1665,7 @@ bool SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
 	_compact->flag = (uint16)a;
 	_compact->logic = L_LISTEN;
 
-	Compact *speaker = SkyState::fetchCompact(a);
+	Compact *speaker = SkyEngine::fetchCompact(a);
 	if (c) {
 		c += speaker->extCompact->dir << 1;
 		stdSpeak(speaker, b, c, speaker->extCompact->dir << 1);
@@ -1667,7 +1680,7 @@ bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	// setup the text questions to be clicked on
 	// read from TEXT1 until 0
 
-	SkyState::_systemVars.systemFlags |= SF_CHOOSING; // can't save/restore while choosing
+	SkyEngine::_systemVars.systemFlags |= SF_CHOOSING; // can't save/restore while choosing
 
 	_scriptVariables[THE_CHOSEN_ONE] = 0; // clear result
 
@@ -1697,7 +1710,7 @@ bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 			index += 2;
 		}
 
-		Compact *textCompact = SkyState::fetchCompact(lowText.compactNum);
+		Compact *textCompact = SkyEngine::fetchCompact(lowText.compactNum);
 
 		textCompact->getToFlag = (uint16)textNum;
 		textCompact->downFlag = (uint16)*p++; // get animation number
@@ -1722,8 +1735,8 @@ bool SkyLogic::fnHighlight(uint32 itemNo, uint32 pen, uint32 c) {
 	pen -= 11;
 	pen ^= 1;
 	pen += 241;
-	Compact *textCompact = SkyState::fetchCompact(itemNo);
-	uint8 *sprData = (uint8 *)SkyState::fetchItem(textCompact->flag);
+	Compact *textCompact = SkyEngine::fetchCompact(itemNo);
+	uint8 *sprData = (uint8 *)SkyEngine::fetchItem(textCompact->flag);
 	_skyText->changeTextSpriteColour(sprData, (uint8)pen);
 	return true;
 }
@@ -1734,7 +1747,7 @@ bool SkyLogic::fnTextKill(uint32 a, uint32 b, uint32 c) {
 	uint32 id = FIRST_TEXT_COMPACT;
 
 	for (int i = 10; i > 0; i--) {
-		Compact *cpt = SkyState::fetchCompact(id);
+		Compact *cpt = SkyEngine::fetchCompact(id);
 		if (cpt->status & (1 << 4))
 			cpt->status = 0;
 		id++;
@@ -1757,25 +1770,25 @@ bool SkyLogic::fnWeWait(uint32 id, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSendSync(uint32 mega, uint32 sync, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(mega);
+	Compact *cpt = SkyEngine::fetchCompact(mega);
 	cpt->sync = (uint16)(sync & 0xffff);
 	return false;
 }
 
 bool SkyLogic::fnSendFastSync(uint32 mega, uint32 sync, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(mega);
+	Compact *cpt = SkyEngine::fetchCompact(mega);
 	cpt->sync = (uint16)(sync & 0xffff);
 	return true;
 }
 
 bool SkyLogic::fnSendRequest(uint32 target, uint32 scr, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(target);
+	Compact *cpt = SkyEngine::fetchCompact(target);
 	cpt->extCompact->request = (uint16)(scr & 0xffff);
 	return false;
 }
 
 bool SkyLogic::fnClearRequest(uint32 target, uint32 b, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(target);
+	Compact *cpt = SkyEngine::fetchCompact(target);
 	cpt->extCompact->request = 0;
 	return true;
 }
@@ -1804,11 +1817,11 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 
 	// (1) FIRST, SET UP THE 2 ARROWS SO THEY APPEAR ON SCREEN
 
-	Compact *cpt = SkyState::fetchCompact(47);
+	Compact *cpt = SkyEngine::fetchCompact(47);
 	cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
 	cpt->screen = (uint16)(_scriptVariables[SCREEN] & 0xffff);
 
-	cpt = SkyState::fetchCompact(48);
+	cpt = SkyEngine::fetchCompact(48);
 	cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
 	cpt->screen = (uint16)(_scriptVariables[SCREEN] & 0xffff);
 
@@ -1834,7 +1847,7 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 
 	for (i = 0; i < ARRAYSIZE(_objectList); i++) {
 		if (_objectList[i])
-			(SkyState::fetchCompact(_objectList[i]))->status = ST_LOGIC;
+			(SkyEngine::fetchCompact(_objectList[i]))->status = ST_LOGIC;
 		else break;
 	}
 
@@ -1849,7 +1862,7 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 
 	uint16 rollingX = TOP_LEFT_X + 28;
 	for (i = 0; i < 11; i++) {
-		cpt = SkyState::fetchCompact(
+		cpt = SkyEngine::fetchCompact(
 				_objectList[_scriptVariables[SCROLL_OFFSET] + i]);
 
 		cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
@@ -1868,7 +1881,7 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnUnhighlight(uint32 item, uint32 b, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(item);
+	Compact *cpt = SkyEngine::fetchCompact(item);
 	cpt->frame--;
 	cpt->getToFlag = 0;
 	return true;
@@ -1878,7 +1891,7 @@ bool SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
 	/// return the direction to turn to face another id
 	/// pass back result in c_just_flag
 
-	Compact *cpt = SkyState::fetchCompact(otherId);
+	Compact *cpt = SkyEngine::fetchCompact(otherId);
 
 	int16 x = _compact->xcood - cpt->xcood;
 
@@ -1911,7 +1924,7 @@ bool SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
 
 bool SkyLogic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
 	/// Make sprite a foreground sprite
-	Compact *cpt = SkyState::fetchCompact(sprite);
+	Compact *cpt = SkyEngine::fetchCompact(sprite);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_FOREGROUND;
 	return true;
@@ -1926,14 +1939,14 @@ bool SkyLogic::fnBackground(uint32 a, uint32 b, uint32 c) {
 
 bool SkyLogic::fnNewBackground(uint32 sprite, uint32 b, uint32 c) {
 	/// Make sprite a background sprite
-	Compact *cpt = SkyState::fetchCompact(sprite);
+	Compact *cpt = SkyEngine::fetchCompact(sprite);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_BACKGROUND;
 	return true;
 }
 
 bool SkyLogic::fnSort(uint32 mega, uint32 b, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(mega);
+	Compact *cpt = SkyEngine::fetchCompact(mega);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_SORT;
 	return true;
@@ -1949,7 +1962,7 @@ bool SkyLogic::fnNoSpriteEngine(uint32 a, uint32 b, uint32 c) {
 bool SkyLogic::fnNoSpritesA6(uint32 us, uint32 b, uint32 c) {
 	/// stop the compact printing
 	/// remove foreground, background & sort
-	Compact *cpt = SkyState::fetchCompact(us);
+	Compact *cpt = SkyEngine::fetchCompact(us);
 	cpt->status &= 0xfff8;
 	return true;	
 }
@@ -1959,8 +1972,8 @@ bool SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 	/// eg - when a smaller mega turn to larger
 	/// - a mega changes rooms...
 
-	Compact *cpt = SkyState::fetchCompact(id);
-	uint16 *rst = (uint16 *)SkyState::fetchCompact(resetBlock);
+	Compact *cpt = SkyEngine::fetchCompact(id);
+	uint16 *rst = (uint16 *)SkyEngine::fetchCompact(resetBlock);
 
 	if (!cpt) {
 		warning("fnResetId(): Compact %d (id) == NULL",id);
@@ -1995,7 +2008,7 @@ bool SkyLogic::fnRunAnimMod(uint32 animNo, uint32 b, uint32 c) {
 	_compact->grafixProg.ptrTarget = animNo;
 	_compact->grafixProg.pos = 0;
 	
-	//uint16 *animation = (uint16 *)SkyState::fetchCompact(animNo);
+	//uint16 *animation = (uint16 *)SkyEngine::fetchCompact(animNo);
 	//uint16 sprite = *animation++; // get sprite set
 	//_compact->offset = sprite;
 	_compact->offset = *SkyCompact::getGrafixPtr(_compact);
@@ -2011,7 +2024,7 @@ bool SkyLogic::fnSimpleMod(uint32 animSeqNo, uint32 b, uint32 c) {
 	_compact->grafixProg.ptrType = COMPACT;
 	_compact->grafixProg.ptrTarget = animSeqNo;
 	_compact->grafixProg.pos = 0;
-	//uint16 *animSeq = (uint16 *)SkyState::fetchCompact(animSeqNo);
+	//uint16 *animSeq = (uint16 *)SkyEngine::fetchCompact(animSeqNo);
 	//_compact->offset = *animSeq++;
 	//assert(*animSeq != 0);
 	_compact->offset = *SkyCompact::getGrafixPtr(_compact);
@@ -2026,7 +2039,7 @@ bool SkyLogic::fnRunFrames(uint32 sequenceNo, uint32 b, uint32 c) {
 	_compact->grafixProg.ptrType = COMPACT;
 	_compact->grafixProg.ptrTarget = sequenceNo;
 	_compact->grafixProg.pos = 0;
-	//uint16 *sequence = (uint16 *)SkyState::fetchCompact(sequenceNo);
+	//uint16 *sequence = (uint16 *)SkyEngine::fetchCompact(sequenceNo);
 
 	_compact->logic = L_FRAMES;
 	//_compact->offset = *sequence++;
@@ -2056,7 +2069,7 @@ bool SkyLogic::fnDecMegaSet(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(mega);
+	Compact *cpt = SkyEngine::fetchCompact(mega);
 	cpt->extCompact->megaSet = (uint16) (setNo * NEXT_MEGA_SET);
 	return true;
 }
@@ -2067,7 +2080,7 @@ bool SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
 	for (int i = 0; i < 2; i++) {
 		if (!*p)
 			return true;
-		Compact *cpt = SkyState::fetchCompact(*p++);
+		Compact *cpt = SkyEngine::fetchCompact(*p++);
 		cpt->screen = (uint16)(screenNo & 0xffff);
 	}
 	return true;
@@ -2096,46 +2109,46 @@ bool SkyLogic::fnRandom(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(id);
+	Compact *cpt = SkyEngine::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->screen == room ? 1 : 0;
 	return true;
 }
 
 bool SkyLogic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
 	
-	SkyState::fetchCompact(a)->status ^= ST_MOUSE;
+	SkyEngine::fetchCompact(a)->status ^= ST_MOUSE;
 	return true;
 }
 
 bool SkyLogic::fnMouseOn(uint32 a, uint32 b, uint32 c) {
 	//switch on the mouse highlight
-	Compact *cpt = SkyState::fetchCompact(a);
+	Compact *cpt = SkyEngine::fetchCompact(a);
 	cpt->status |= ST_MOUSE;
 	return true;
 }
 
 bool SkyLogic::fnMouseOff(uint32 a, uint32 b, uint32 c) {
 	//switch on (off??) the mouse highlight
-	Compact *cpt = SkyState::fetchCompact(a);
+	Compact *cpt = SkyEngine::fetchCompact(a);
 	cpt->status &= ~ST_MOUSE;
 	return true;
 }
 
 bool SkyLogic::fnFetchX(uint32 id, uint32 b, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(id);
+	Compact *cpt = SkyEngine::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->xcood;
 	return true;
 }
 
 bool SkyLogic::fnFetchY(uint32 id, uint32 b, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(id);
+	Compact *cpt = SkyEngine::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->ycood;
 	return true;
 }
 
 bool SkyLogic::fnTestList(uint32 id, uint32 x, uint32 y) {
 	_scriptVariables[RESULT] = 0; // assume fail
-	uint16 *list = (uint16 *)SkyState::fetchCompact(id);
+	uint16 *list = (uint16 *)SkyEngine::fetchCompact(id);
 
 	while (*list) {
 		if ((x >= list[0]) && (x < list[1]) && (y >= list[2]) && (y < list[3]))
@@ -2146,7 +2159,7 @@ bool SkyLogic::fnTestList(uint32 id, uint32 x, uint32 y) {
 }
 
 bool SkyLogic::fnFetchPlace(uint32 id, uint32 b, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(id);
+	Compact *cpt = SkyEngine::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->place;
 	return true;
 }
@@ -2156,7 +2169,7 @@ bool SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 	/// used by Joey-Logic - done in code like this because scripts can't
 	/// get access to another megas compact as easily
 
-	Compact *cpt = SkyState::fetchCompact(id);
+	Compact *cpt = SkyEngine::fetchCompact(id);
 	
 	_scriptVariables[PLAYER_X] = cpt->xcood;
 	_scriptVariables[PLAYER_Y] = cpt->ycood;
@@ -2166,8 +2179,8 @@ bool SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
-	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(a));
-	SkyState::_systemVars.currentPalette = a;
+	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(a));
+	SkyEngine::_systemVars.currentPalette = a;
 	return true;
 }
 
@@ -2177,7 +2190,7 @@ bool SkyLogic::fnTextModule(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(id);
+	Compact *cpt = SkyEngine::fetchCompact(id);
 	cpt->cursorText = (uint16) textNo;
 	return true;
 }
@@ -2216,8 +2229,8 @@ bool SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 	// set 'result' to frame no. pointing to foster, according to table used
 	// eg. FN_eyeball (id_eye_90_table);
 
-	uint16 *eyeTable = (uint16 *)SkyState::fetchCompact(id);
-	Compact *cpt = SkyState::fetchCompact(ID_BLUE_FOSTER);
+	uint16 *eyeTable = (uint16 *)SkyEngine::fetchCompact(id);
+	Compact *cpt = SkyEngine::fetchCompact(ID_BLUE_FOSTER);
 
 	uint32 x = cpt->xcood; // 168 < x < 416
 	x -= 168;
@@ -2232,7 +2245,7 @@ bool SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
-	if (SkyState::isDemo())
+	if (SkyEngine::isDemo())
 		_skyControl->showGameQuitMsg();
 	
 	if (sectionNo == 5) //linc section - has different mouse icons
@@ -2245,23 +2258,23 @@ bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 
 bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 
-	if (SkyState::isDemo() && (sectionNo > 2))
+	if (SkyEngine::isDemo() && (sectionNo > 2))
 		_skyControl->showGameQuitMsg();
 
 	_scriptVariables[CUR_SECTION] = sectionNo;
-	SkyState::_systemVars.currentMusic = 0;
+	SkyEngine::_systemVars.currentMusic = 0;
 
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60302);
 
-	if ((sectionNo != _currentSection) || (SkyState::_systemVars.systemFlags & SF_GAME_RESTORED)) {
+	if ((sectionNo != _currentSection) || (SkyEngine::_systemVars.systemFlags & SF_GAME_RESTORED)) {
 		_currentSection = sectionNo;
 
 		sectionNo++;
 		_skyMusic->loadSection((byte)sectionNo);
 		_skySound->loadSection((byte)sectionNo);
 		_skyGrid->loadGrids();
-		SkyState::_systemVars.systemFlags &= ~SF_GAME_RESTORED;
+		SkyEngine::_systemVars.systemFlags &= ~SF_GAME_RESTORED;
 	}
 			
 	return true;
@@ -2295,7 +2308,7 @@ bool SkyLogic::fnWaitSwingEnd(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSkipIntroCode(uint32 a, uint32 b, uint32 c) {
-	SkyState::_systemVars.pastIntro = true;
+	SkyEngine::_systemVars.pastIntro = true;
 	return true;
 }
 
@@ -2307,7 +2320,7 @@ bool SkyLogic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
 bool SkyLogic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 
 	lowTextManager_t creditText = _skyText->lowTextManager(a , 240, 0, 248, true);
-	Compact *credCompact = SkyState::fetchCompact(creditText.compactNum);
+	Compact *credCompact = SkyEngine::fetchCompact(creditText.compactNum);
 	credCompact->xcood = 168;
 	if ((a == 558) && (c == 215))
 		credCompact->ycood = 211;
@@ -2320,7 +2333,7 @@ bool SkyLogic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 bool SkyLogic::fnLookAt(uint32 a, uint32 b, uint32 c) {
 	
 	struct lowTextManager_t textInfo = _skyText->lowTextManager(a, 240, 0, 248, true);
-	Compact *textCpt = SkyState::fetchCompact(textInfo.compactNum);
+	Compact *textCpt = SkyEngine::fetchCompact(textInfo.compactNum);
 	textCpt->xcood = 168;
 	textCpt->ycood = (uint16)c;
 
@@ -2352,7 +2365,7 @@ bool SkyLogic::fnLincTextModule(uint32 textPos, uint32 textNo, uint32 buttonActi
 
 	lowTextManager_t text = _skyText->lowTextManager(textNo, 220, 0, 215, false);
 
-	Compact *textCpt = SkyState::fetchCompact(text.compactNum);
+	Compact *textCpt = SkyEngine::fetchCompact(text.compactNum);
 
 	if (textPos < 20) { // line number (for text)
 		textCpt->xcood = 152;
@@ -2371,7 +2384,7 @@ bool SkyLogic::fnTextKill2(uint32 a, uint32 b, uint32 c) {
 	uint32 id = FIRST_TEXT_COMPACT;
 
 	for (int i = 10; i > 0; i--) {
-		Compact *cpt = SkyState::fetchCompact(id);
+		Compact *cpt = SkyEngine::fetchCompact(id);
 		cpt->status = 0;
 		id++;
 	}
@@ -2394,15 +2407,15 @@ bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnStartMusic(uint32 a, uint32 b, uint32 c) {
-	if (!(SkyState::_systemVars.systemFlags & SF_MUS_OFF))
+	if (!(SkyEngine::_systemVars.systemFlags & SF_MUS_OFF))
 		_skyMusic->startMusic((uint16)a);
-	SkyState::_systemVars.currentMusic = (uint16)a;
+	SkyEngine::_systemVars.currentMusic = (uint16)a;
 	return true;
 }
 
 bool SkyLogic::fnStopMusic(uint32 a, uint32 b, uint32 c) {
 	_skyMusic->startMusic(0);
-	SkyState::_systemVars.currentMusic = 0;
+	SkyEngine::_systemVars.currentMusic = 0;
 	return true;
 }
 
@@ -2412,7 +2425,7 @@ bool SkyLogic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
-	SkyState::_systemVars.currentPalette = a;
+	SkyEngine::_systemVars.currentPalette = a;
 	_skyScreen->fnFadeUp(a,b);
 	return true;
 }
@@ -2448,7 +2461,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 		target->grafixProg.ptrType = TALKTABLE;
 		target->grafixProg.ptrTarget = animNum;
 	} else {	//then it must be a value
-		//animPtr = (uint16 *)SkyState::fetchCompact(SkyTalkAnims::animTalkTableVal[animNum]);
+		//animPtr = (uint16 *)SkyEngine::fetchCompact(SkyTalkAnims::animTalkTableVal[animNum]);
 		target->grafixProg.ptrType = COMPACT;
 		target->grafixProg.ptrTarget = SkyTalkAnims::animTalkTableVal[animNum];
 	}
@@ -2465,12 +2478,12 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	bool speechUsed = false;
 	// startSpeech returns false if no speech file exists for that text
-	if (SkyState::isCDVersion())
+	if (SkyEngine::isCDVersion())
 		speechUsed = _skySound->startSpeech((uint16)textNum);
 
 	// if sky is configured to speech-only return now - except if we're running another
 	// language than english
-	if (speechUsed && (!(SkyState::_systemVars.systemFlags & SF_ALLOW_TEXT))) {
+	if (speechUsed && (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT))) {
 		target->extCompact->spTime = 10;
 		target->logic = L_TALK; 
 		return ;
@@ -2479,7 +2492,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	//now form the text sprite
 	struct lowTextManager_t textInfo;
 	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->extCompact->spColour, true);
-	Compact *textCompact = SkyState::fetchCompact(textInfo.compactNum);
+	Compact *textCompact = SkyEngine::fetchCompact(textInfo.compactNum);
 	target->extCompact->spTextId = textInfo.compactNum;	//So we know what text to kill
 	byte *textGfx = textInfo.textData;
 
@@ -2489,7 +2502,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen 
 		//talking on-screen
-		byte *targetGfx = (byte *)SkyState::fetchItem(target->frame >> 6);
+		byte *targetGfx = (byte *)SkyEngine::fetchItem(target->frame >> 6);
 		uint16 xPos = target->xcood + ((struct dataFileHeader *)targetGfx)->s_offset_x;
 		uint16 width = (((struct dataFileHeader *)targetGfx)->s_width >> 1);
 

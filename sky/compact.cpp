@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include "common/util.h"
 #include "sky/compact.h"
 #include "sky/compacts/0compact.h"
 #include "sky/compacts/1compact.h"
@@ -65,7 +66,7 @@ uint16 *getGrafixPtr(Compact *cpt) {
 			error("::getGrafixPtr: request for AR pointer, extCompact is NULL, though.");
 		return (cpt->extCompact->animScratch + cpt->grafixProg.pos);
 	case COMPACT:
-		buf = (uint16*)SkyState::fetchCompact(cpt->grafixProg.ptrTarget);
+		buf = (uint16*)SkyEngine::fetchCompact(cpt->grafixProg.ptrTarget);
 		if (buf == NULL)
 			error("::getGrafixPtr: request for cpt %d pointer. It's NULL.", cpt->grafixProg.ptrTarget);
 		return (buf + cpt->grafixProg.pos);

@@ -20,7 +20,9 @@
  */
 
 #include "sky/music/mt32music.h"
+#include "sky/music/gmchannel.h"
 #include "common/util.h"
+#include "sound/mididrv.h"
 
 void SkyMT32Music::passTimerFunc(void *param) {
 

@@ -23,13 +23,14 @@
 #define SKYSCREEN_H
 
 #include "stdafx.h"
-#include <string.h>
-#include "base/engine.h"
 #include "common/scummsys.h"
-#include "sky/disk.h"
 #include "sky/skydefs.h"
-#include "sky/sky.h"
-#include "sky/logic.h"
+
+class OSystem;
+class SkyDisk;
+class SkyEngine;
+struct Compact;
+struct dataFileHeader;
 
 #define SCROLL_JUMP		16
 #define VGA_COLOURS		256
@@ -44,8 +45,6 @@ typedef struct {
 	Compact *compact;
 	dataFileHeader *sprite;
 } StSortList;
-
-class SkyState;
 
 class SkyScreen {
 public:

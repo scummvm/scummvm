@@ -24,16 +24,18 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
-#include "sky/struc.h"
-#include "base/engine.h"
-#include "sky/screen.h"
-#include "sky/disk.h"
-#include "sky/mouse.h"
-#include "sky/logic.h"
 
+class SkyDisk;
 class SkyScreen;
 class SkyLogic;
 class SkyMouse;
+class SkyText;
+class SkyMusicBase;
+class SkySound;
+class OSystem;
+struct Compact;
+struct dataFileHeader;
+struct MegaSet;
 
 #define MAX_SAVE_GAMES 999
 #define MAX_TEXT_LEN 80

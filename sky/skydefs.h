@@ -22,7 +22,7 @@
 #ifndef SKYDEFS_H
 #define SKYDEFS_H
 
-#include "struc.h"
+#include "stdafx.h"
 
 //This file is incomplete, several flags still missing.
 

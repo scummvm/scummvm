@@ -19,12 +19,12 @@
  *
  */
 
-#include "stdafx.h"
-#include "common/scummsys.h"
-#include "sky/skydefs.h"
-#include "sky/sky.h"
-#include "sky/text.h"
+#include "sky/disk.h"
 #include "sky/logic.h"
+#include "sky/text.h"
+#include "sky/sky.h"
+#include "sky/skydefs.h"
+#include "sky/struc.h"
 
 #define FIRST_TEXT_SEC	77
 #define	FIRST_TEXT_BUFFER	274
@@ -45,7 +45,7 @@ SkyText::SkyText(SkyDisk *skyDisk) {
 	
 	fnSetFont(0);
 
-	if (!SkyState::isDemo()) {
+	if (!SkyEngine::isDemo()) {
 		_controlCharacterSet.addr = _skyDisk->loadFile(60520, NULL);
 		_controlCharacterSet.charHeight = 12;
 		_controlCharacterSet.charSpacing = 0;
@@ -60,7 +60,7 @@ SkyText::SkyText(SkyDisk *skyDisk) {
 		_linkCharacterSet.addr = NULL;
 	}
 
-	if (SkyState::isCDVersion()) {
+	if (SkyEngine::isCDVersion()) {
 		_preAfterTableArea = _skyDisk->loadFile(60522, NULL);
 	} else _preAfterTableArea = NULL;
 }
@@ -96,7 +96,7 @@ void SkyText::patchLINCCharset() {
 	// the width for every character by one, except for space which needs
 	// to be one pixel wider than before.
 
-	if (SkyState::_systemVars.gameVersion == 288) {
+	if (SkyEngine::_systemVars.gameVersion == 288) {
 		for (int i = 1; i < CHAR_SET_HEADER; i++)
 			charSetPtr[i]--;
 		charSetPtr[0]++;
@@ -204,7 +204,7 @@ void SkyText::patchLINCCharset() {
 	patchChar(charSetPtr, 5, charHeight, 93, U_umlaut);
 	patchChar(charSetPtr, 5, charHeight, 74, normal_j);
 	patchChar(charSetPtr, 6, charHeight, 17, normal_1);
-	if (SkyState::_systemVars.gameVersion <= 303) {
+	if (SkyEngine::_systemVars.gameVersion <= 303) {
 		patchChar(charSetPtr, 5, charHeight, 10, a_umlaut);
 	} else {
 		patchChar(charSetPtr, 5, charHeight, 94, A_umlaut);
@@ -244,10 +244,10 @@ void SkyText::fnSetFont(uint32 fontNr) {
 void SkyText::fnTextModule(uint32 textInfoId, uint32 textNo) {
 
 	fnSetFont(1);
-	uint16* msgData = (uint16 *)SkyState::fetchCompact(textInfoId);
+	uint16* msgData = (uint16 *)SkyEngine::fetchCompact(textInfoId);
 	lowTextManager_t textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
 	SkyLogic::_scriptVariables[RESULT] = textId.compactNum;
-	Compact *textCompact = SkyState::fetchCompact(textId.compactNum);
+	Compact *textCompact = SkyEngine::fetchCompact(textId.compactNum);
 	textCompact->xcood = msgData[3];
 	textCompact->ycood = msgData[4];
 	fnSetFont(0);
@@ -260,13 +260,13 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 	uint32 sectionNo = (textNr & 0x0F000) >> 12;
 	
-	if (SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
+	if (SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo>>2));
 		
-		uint32 fileNo = sectionNo + ((SkyState::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
-		SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo, NULL);
+		uint32 fileNo = sectionNo + ((SkyEngine::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
+		SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo, NULL);
 	}
-	_textItemPtr = (uint8 *)SkyState::_itemList[FIRST_TEXT_SEC + sectionNo];
+	_textItemPtr = (uint8 *)SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo];
 	
 	uint32 offset = 0; 
 	uint32 nr32MsgBlocks = (textNr & 0x0fe0);
@@ -328,7 +328,7 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 void SkyText::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 
-	Compact *ptrComp = SkyState::fetchCompact(pointedId);
+	Compact *ptrComp = SkyEngine::fetchCompact(pointedId);
 	lowTextManager_t text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, false);
 	SkyLogic::_scriptVariables[CURSOR_ID] = text.compactNum;
 	if (SkyLogic::_scriptVariables[MENU]) {
@@ -340,7 +340,7 @@ void SkyText::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 13;
 		else _mouseOfsX = TOP_LEFT_X - 8 - _lowTextWidth;
 	}
-	Compact *textCompact = SkyState::fetchCompact(text.compactNum);
+	Compact *textCompact = SkyEngine::fetchCompact(text.compactNum);
 	logicCursor(textCompact, mouseX, mouseY);
 }
 
@@ -541,17 +541,17 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 	uint32 compactNum = FIRST_TEXT_COMPACT;
 
-	Compact *cpt = SkyState::fetchCompact(compactNum);
+	Compact *cpt = SkyEngine::fetchCompact(compactNum);
 
 	while (cpt->status != 0) { 
 		compactNum++;
-		cpt = SkyState::fetchCompact(compactNum);
+		cpt = SkyEngine::fetchCompact(compactNum);
 	}
 
 	cpt->flag = (uint16)(compactNum - FIRST_TEXT_COMPACT) + FIRST_TEXT_BUFFER;
 
-	byte *oldText = (byte *)SkyState::_itemList[cpt->flag];
-	SkyState::_itemList[cpt->flag] = (void **)textData; 
+	byte *oldText = (byte *)SkyEngine::_itemList[cpt->flag];
+	SkyEngine::_itemList[cpt->flag] = (void **)textData; 
 
 	if (oldText != NULL)
 		free (oldText);
@@ -576,7 +576,7 @@ void SkyText::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
 }
 
 void SkyText::initHuffTree() {
-	switch (SkyState::_systemVars.gameVersion) {
+	switch (SkyEngine::_systemVars.gameVersion) {
 	case 109:
 		_huffTree = _huffTree_00109;
 		break;
@@ -605,7 +605,7 @@ void SkyText::initHuffTree() {
 		_huffTree = _huffTree_00372;
 		break;
 	default:
-		error("Unknown game version %d", SkyState::_systemVars.gameVersion);
+		error("Unknown game version %d", SkyEngine::_systemVars.gameVersion);
 	}
 }
 
@@ -624,8 +624,8 @@ char SkyText::getTextChar() {
 
 bool SkyText::patchMessage(uint32 textNum) {
 
-	uint16 patchIdx = _patchLangIdx[SkyState::_systemVars.language];
-	uint16 patchNum = _patchLangNum[SkyState::_systemVars.language];
+	uint16 patchIdx = _patchLangIdx[SkyEngine::_systemVars.language];
+	uint16 patchNum = _patchLangNum[SkyEngine::_systemVars.language];
 	for (uint16 cnt = 0; cnt < patchNum; cnt++) {
 		if (_patchedMessages[cnt + patchIdx].textNr == textNum) {
 			strcpy(_textBuffer, _patchedMessages[cnt + patchIdx].text);

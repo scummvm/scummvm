@@ -19,7 +19,11 @@
  *
  */
 
-#include "sky/sky.h"
+#ifndef SKY_DEBUG_H
+#define SKY_DEBUG_H
+
+#include "stdafx.h"
+#include "common/scummsys.h"
 
 class SkyDebug {
 public:
@@ -29,3 +33,4 @@ public:
 	static void mcode(uint32 mcode, uint32 a, uint32 b, uint32 c);
 };
 
+#endif

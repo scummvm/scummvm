@@ -19,7 +19,12 @@
  *
  */
 
-#include "autoroute.h"
+#include "common/util.h"
+#include "sky/autoroute.h"
+#include "sky/compact.h"
+#include "sky/grid.h"
+#include "sky/skydefs.h"
+#include "sky/struc.h"
 
 #define ROUTE_GRID_WIDTH ((GAME_SCREEN_WIDTH/8)+2)
 #define ROUTE_GRID_HEIGHT ((GAME_SCREEN_HEIGHT/8)+2)

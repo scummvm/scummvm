@@ -23,10 +23,10 @@
 #define SKYMOUSE_H
 
 #include "stdafx.h"
-#include "sky/disk.h"
-#include "sky/logic.h"
-#include "sky/struc.h"
+#include "common/scummsys.h"
 
+class OSystem;
+class SkyDisk;
 class SkyLogic;
 
 class SkyMouse {

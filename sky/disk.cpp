@@ -20,12 +20,13 @@
  */
 
 #include "stdafx.h"
+#include "common/file.h"
+#include "common/util.h"
 #include "common/scummsys.h"
-#include "base/engine.h"
 #include "sky/disk.h"
-#include "sky/skydefs.h"
-#include "sky/sky.h"
 #include "sky/rnc_deco.h"
+#include "sky/sky.h"
+#include "sky/struc.h"
 
 static const char *dataFilename = "sky.dsk";
 static const char *dinnerFilename = "sky.dnr";
@@ -138,7 +139,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	_fileOffset &= 0x7FFFFF;
 
 	if (cflag) {
-		if (SkyState::_systemVars.gameVersion == 331)
+		if (SkyEngine::_systemVars.gameVersion == 331)
 			_fileOffset <<= 3;
 		else
 			_fileOffset <<= 4;
@@ -295,7 +296,7 @@ void SkyDisk::fnCacheChip(uint32 list) {
 	// fnCacheChip is called after fnCacheFast
 	uint16 cnt = 0;
 	while (_buildList[cnt]) cnt++;
-	uint16 *fList = (uint16 *)SkyState::fetchCompact(list);
+	uint16 *fList = (uint16 *)SkyEngine::fetchCompact(list);
 	uint16 fCnt = 0;
 	do {
 		_buildList[cnt + fCnt] = fList[fCnt] & 0x7FFFU;
@@ -308,7 +309,7 @@ void SkyDisk::fnCacheFast(uint32 list) {
 
 	if (list == 0) return;
 	uint8 cnt = 0;
-	uint16 *fList = (uint16 *)SkyState::fetchCompact(list);
+	uint16 *fList = (uint16 *)SkyEngine::fetchCompact(list);
 	do {
 		_buildList[cnt] = fList[cnt] & 0x7FFFU;
 		cnt++;
@@ -331,8 +332,8 @@ void SkyDisk::fnCacheFiles(void) {
 			_loadedFilesList[targCnt] = _loadedFilesList[lCnt];
 			targCnt++;
 		} else {
-			free(SkyState::_itemList[_loadedFilesList[lCnt] & 2047]);
-			SkyState::_itemList[_loadedFilesList[lCnt] & 2047] = NULL;		
+			free(SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047]);
+			SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047] = NULL;		
 		}
 		lCnt++;
 	}
@@ -358,8 +359,8 @@ void SkyDisk::fnCacheFiles(void) {
 		_loadedFilesList[targCnt] = _buildList[bCnt] & 0x7FFFU;
 		targCnt++;
 		_loadedFilesList[targCnt] = 0;
-		SkyState::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
-		if (!SkyState::_itemList[_buildList[bCnt] & 2047])
+		SkyEngine::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
+		if (!SkyEngine::_itemList[_buildList[bCnt] & 2047])
 			warning("fnCacheFiles: SkyDisk::loadFile() returned NULL for file %d",_buildList[bCnt] & 0x7FFF);
 		bCnt++;
 	}
@@ -370,15 +371,15 @@ void SkyDisk::refreshFilesList(uint32 *list) {
 
 	uint8 cnt = 0;
 	while (_loadedFilesList[cnt]) {
-		if (SkyState::_itemList[_loadedFilesList[cnt] & 2047])
-			free(SkyState::_itemList[_loadedFilesList[cnt] & 2047]);
-		SkyState::_itemList[_loadedFilesList[cnt] & 2047] = NULL;
+		if (SkyEngine::_itemList[_loadedFilesList[cnt] & 2047])
+			free(SkyEngine::_itemList[_loadedFilesList[cnt] & 2047]);
+		SkyEngine::_itemList[_loadedFilesList[cnt] & 2047] = NULL;
 		cnt++;
 	}
 	cnt = 0;
 	while (list[cnt]) {
 		_loadedFilesList[cnt] = list[cnt];
-		SkyState::_itemList[_loadedFilesList[cnt] & 2047] = (void**)loadFile((uint16)(_loadedFilesList[cnt] & 0x7FFF), NULL);
+		SkyEngine::_itemList[_loadedFilesList[cnt] & 2047] = (void**)loadFile((uint16)(_loadedFilesList[cnt] & 0x7FFF), NULL);
 		cnt++;
 	}
 	_loadedFilesList[cnt] = 0;
@@ -393,7 +394,7 @@ void SkyDisk::fnMiniLoad(uint16 fileNum) {
 	}
 	_loadedFilesList[cnt] = fileNum & 0x7FFFU;
 	_loadedFilesList[cnt + 1] = 0;
-	SkyState::_itemList[fileNum & 2047] = (void**)loadFile(fileNum, NULL);
+	SkyEngine::_itemList[fileNum & 2047] = (void**)loadFile(fileNum, NULL);
 }
 
 void SkyDisk::fnFlushBuffers(void) {
@@ -401,8 +402,8 @@ void SkyDisk::fnFlushBuffers(void) {
 	// dump all loaded sprites
 	uint8 lCnt = 0;
 	while (_loadedFilesList[lCnt]) {
-		free(SkyState::_itemList[_loadedFilesList[lCnt] & 2047]);
-		SkyState::_itemList[_loadedFilesList[lCnt] & 2047] = 0;
+		free(SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047]);
+		SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047] = 0;
 		lCnt++;
 	}
 	_loadedFilesList[0] = 0;

@@ -22,11 +22,9 @@
 #ifndef GMMUSIC_H
 #define GMMUSIC_H
 
-#include "stdafx.h"
-#include "base/engine.h"
-#include "musicbase.h"
-#include "sound/mididrv.h"
-#include "gmchannel.h"
+#include "sky/music/musicbase.h"
+
+class MidiDriver;
 
 class SkyGmMusic : public SkyMusicBase {
 public:

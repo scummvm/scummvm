@@ -22,9 +22,11 @@
 #ifndef SKYSOUND_H
 #define SKYSOUND_H
 
+#include "stdafx.h"
+#include "common/scummsys.h"
 #include "sound/mixer.h"
-#include "sky/disk.h"
-#include "base/engine.h"
+
+class SkyDisk;
 
 enum {
 	SOUND_CH0    = 0,

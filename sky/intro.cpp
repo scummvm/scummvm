@@ -20,8 +20,15 @@
  */
 
 #include "stdafx.h"
+#include "common/util.h"
+#include "sky/disk.h"
 #include "sky/intro.h"
+#include "sky/music/musicbase.h"
+#include "sky/screen.h"
 #include "sky/sky.h"
+#include "sky/sound.h"
+#include "sky/struc.h"
+#include "sky/text.h"
 
 #define SHOWSCREEN		 0
 #define COMMANDEND		 0 // end of COMMANDFLIRT block
@@ -631,7 +638,7 @@ SkyIntro::~SkyIntro(void) {
 
 bool SkyIntro::doIntro(bool floppyIntro) {
 
-	if (!SkyState::isCDVersion())
+	if (!SkyEngine::isCDVersion())
 		floppyIntro = true;
 
 	_skyDisk->prefetchFile(60112);

@@ -23,9 +23,10 @@
 #define SKYGRID_H
 
 #include "stdafx.h"
-#include "disk.h"
-#include "struc.h"
-#include "compact.h"
+#include "common/scummsys.h"
+
+struct Compact;
+class SkyDisk;
 
 class SkyGrid {
 public:

@@ -22,9 +22,9 @@
 #ifndef SKYGMCHANNEL_H
 #define SKYGMCHANNEL_H
 
-#include "stdafx.h"
-#include "sound/mididrv.h"
 #include "sky/music/musicbase.h"
+
+class MidiDriver;
 
 typedef struct {
 	uint16 eventDataPtr;

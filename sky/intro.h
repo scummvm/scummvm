@@ -22,8 +22,15 @@
 #ifndef INTRO_H
 #define INTRO_H
 
-#include "sky/screen.h"
-#include "sky/disk.h"
+#include "stdafx.h"
+#include "common/scummsys.h"
+#include "sound/mixer.h"
+
+class SkyDisk;
+class SkyScreen;
+class SkyMusicBase;
+class SkySound;
+class SkyText;
 
 class SkyIntro {
 public:

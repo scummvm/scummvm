@@ -22,7 +22,10 @@
 #ifndef SKYDISK_H
 #define SKYDISK_H
 
-#include "common/file.h"
+#include "stdafx.h"
+#include "common/scummsys.h"
+
+class File;
 
 #define MAX_FILES_IN_LIST 60
 

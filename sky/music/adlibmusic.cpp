@@ -20,7 +20,9 @@
  */
 
 #include "sky/music/adlibmusic.h"
-#include "sound/fmopl.h"
+#include "sky/music/adlibchannel.h"
+#include "sound/mixer.h"
+#include "sky/sky.h"
 
 void SkyAdlibMusic::passMixerFunc(void *param, int16 *buf, uint len) {
 
@@ -91,14 +93,14 @@ void SkyAdlibMusic::premixerCall(int16 *data, uint len) {
 
 void SkyAdlibMusic::setupPointers(void) {
 
-	if (SkyState::_systemVars.gameVersion == 109) {
+	if (SkyEngine::_systemVars.gameVersion == 109) {
 		// disk demo uses a different adlib driver version, some offsets have changed
 		//_musicDataLoc = (_musicData[0x11CC] << 8) | _musicData[0x11CB];
 		//_initSequence = _musicData + 0xEC8;
 		
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x1200);
 		_initSequence = _musicData + 0xEFB;
-	} else if (SkyState::_systemVars.gameVersion == 267) {
+	} else if (SkyEngine::_systemVars.gameVersion == 267) {
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x11F7);
 		_initSequence = _musicData + 0xE87;
 	} else {

@@ -20,9 +20,12 @@
  */
 
 #include "stdafx.h"
+#include "sky/disk.h"
+#include "sky/logic.h"
+#include "sky/sky.h"
+#include "sky/skydefs.h"
 #include "sky/sound.h"
 #include "sky/struc.h"
-#include "sky/logic.h"
 
 #define SOUND_FILE_BASE 60203
 #define MAX_FX_NUMBER 393
@@ -1065,7 +1068,7 @@ void SkySound::loadSection(uint8 pSection) {
 	if (_soundData) free(_soundData);
 	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE, NULL);
 	uint16 asmOfs;
-	if (SkyState::_systemVars.gameVersion == 109) {
+	if (SkyEngine::_systemVars.gameVersion == 109) {
 		if (pSection == 0)
 			asmOfs = 0x78;
 		else
@@ -1085,7 +1088,7 @@ void SkySound::loadSection(uint8 pSection) {
 	_sampleRates = _soundData + sRateTabOfs;
 	_sfxInfo = _soundData + _sfxBaseOfs;
 	// if we just restored a savegame, the sfxqueue holds the sound we need to restart
-	if (!(SkyState::_systemVars.systemFlags & SF_GAME_RESTORED))
+	if (!(SkyEngine::_systemVars.systemFlags & SF_GAME_RESTORED))
 		for (uint8 cnt = 0; cnt < 4; cnt++)
 			_sfxQueue[cnt].count = 0;
 }
@@ -1137,7 +1140,7 @@ void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 void SkySound::fnStartFx(uint32 sound, uint8 channel) {
 
 	_saveSounds[channel] = 0xFFFF;
-	if (sound < 256 || sound > MAX_FX_NUMBER || (SkyState::_systemVars.systemFlags & SF_FX_OFF))
+	if (sound < 256 || sound > MAX_FX_NUMBER || (SkyEngine::_systemVars.systemFlags & SF_FX_OFF))
 		return;
 
 	uint8 screen = (uint8)(SkyLogic::_scriptVariables[SCREEN] & 0xff);
@@ -1161,9 +1164,9 @@ void SkySound::fnStartFx(uint32 sound, uint8 channel) {
 
 	uint8 volume = _mainSfxVolume; // start with standard vol
 
-	if (SkyState::_systemVars.systemFlags & SF_SBLASTER)
+	if (SkyEngine::_systemVars.systemFlags & SF_SBLASTER)
 		volume = roomList[i].adlibVolume;
-	else if (SkyState::_systemVars.systemFlags & SF_ROLAND)
+	else if (SkyEngine::_systemVars.systemFlags & SF_ROLAND)
 	 	volume = roomList[i].rolandVolume;
 	volume = (volume * _mainSfxVolume) >> 8;
 
@@ -1229,7 +1232,7 @@ void SkySound::stopSpeech(void) {
 
 bool SkySound::startSpeech(uint16 textNum) {
 
-	if (!(SkyState::_systemVars.systemFlags & SF_ALLOW_SPEECH))
+	if (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH))
 		return false;
 	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);
 	

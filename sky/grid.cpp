@@ -19,8 +19,10 @@
  *
  */
 
-#include "grid.h"
-#include "compact.h"
+#include "sky/compact.h"
+#include "sky/disk.h"
+#include "sky/grid.h"
+#include "sky/logic.h"
 
 #define	GRID_FILE_START	60000
 
@@ -141,7 +143,7 @@ void SkyGrid::loadGrids(void) {
 	// no endian conversion necessary as I'm using uint8* instead of uint32*
 	for (uint8 cnt = 0; cnt < TOT_NO_GRIDS; cnt++)
 		_skyDisk->loadFile(GRID_FILE_START + cnt, _gameGrids + (cnt * GRID_SIZE));
-	if (!SkyState::isDemo()) { // single disk demos never get that far
+	if (!SkyEngine::isDemo()) { // single disk demos never get that far
 		// Reloading the grids can sometimes cause problems eg when reichs door is
 		// open the door grid bit gets replaced so you can't get back in (or out)
 		if (SkyLogic::_scriptVariables[REICH_DOOR_FLAG])

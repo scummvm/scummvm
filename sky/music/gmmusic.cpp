@@ -20,7 +20,10 @@
  */
 
 #include "sky/music/gmmusic.h"
+#include "sky/music/gmchannel.h"
 #include "sky/sky.h"
+#include "common/util.h"
+#include "sound/mididrv.h"
 
 void SkyGmMusic::passTimerFunc(void *param) {
 
@@ -34,7 +37,7 @@ SkyGmMusic::SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system)
 	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();
 	if (midiRes != 0) {
-		error("Can't open midi device. Errorcode: %d",midiRes);
+		error("Can't open midi device. Errorcode: %d", midiRes);
 	}
 	_midiDrv->setTimerCallback(this, passTimerFunc);
 	_ignoreNextPoll = false;
@@ -73,7 +76,7 @@ void SkyGmMusic::timerCall(void) {
 
 void SkyGmMusic::setupPointers(void) {
 
-	if (SkyState::_systemVars.gameVersion == 109) {
+	if (SkyEngine::_systemVars.gameVersion == 109) {
 		_musicDataLoc = (_musicData[0x79C] << 8) | _musicData[0x79B];
 		_sysExSequence = _musicData + 0x1EF2;
 	} else {

@@ -22,10 +22,9 @@
 #ifndef MT32MUSIC_H
 #define MT32MUSIC_H
 
-#include "stdafx.h"
-#include "musicbase.h"
-#include "sound/mididrv.h"
-#include "gmchannel.h"
+#include "sky/music/musicbase.h"
+
+class MidiDriver;
 
 class SkyMT32Music : public SkyMusicBase {
 public:

@@ -22,13 +22,10 @@
 #ifndef ADLIBMUSIC_H
 #define ADLIBMUSIC_H
 
-#include "stdafx.h"
-#include "sky/sky.h"
-#include "sound/mixer.h"
-#include "base/engine.h"
-#include "adlibchannel.h"
-#include "musicbase.h"
+#include "sky/music/musicbase.h"
 #include "sound/fmopl.h"
+
+class SoundMixer;
 
 class SkyAdlibMusic : public SkyMusicBase {
 public:

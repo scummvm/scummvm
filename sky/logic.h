@@ -22,14 +22,10 @@
 #ifndef SKYLOGIC_H
 #define SKYLOGIC_H
 
-#include "sky/sky.h"
-#include "sky/disk.h"
-#include "sky/grid.h"
-#include "sky/autoroute.h"
-#include "sky/music/musicbase.h"
-#include "sky/mouse.h"
-#include "sky/screen.h"
-#include "sky/control.h"
+#include "stdafx.h"
+#include "common/util.h"
+
+struct Compact;
 
 enum scriptVariableOffsets {
 	RESULT = 0,
@@ -83,13 +79,24 @@ enum scriptVariableOffsets {
 };
 
 class SkyAutoRoute;
-class SkyScreen;
-class SkyMouse;
 class SkyControl;
+class SkyDisk;
+class SkyGrid;
+class SkyMouse;
+class SkyMusicBase;
+class SkyScreen;
+class SkySound;
+class SkyText;
 
 class SkyLogic {
 public:
-	SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound);
+	SkyLogic(
+		SkyScreen *skyScreen,
+		SkyDisk *skyDisk,
+		SkyText *skyText,
+		SkyMusicBase *skyMusic,
+		SkyMouse *skyMouse,
+		SkySound *skySound);
 	void engine();
 	bool checkProtection(void);
 	void useControlInstance(SkyControl *control) { _skyControl = control; };

@@ -19,8 +19,13 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/system.h"
+#include "sky/disk.h"
+#include "sky/logic.h"
+#include "sky/mouse.h"
 #include "sky/sky.h"
+#include "sky/skydefs.h"
+#include "sky/struc.h"
 
 #define MICE_FILE	60300
 #define NO_MAIN_OBJECTS	24
@@ -137,11 +142,11 @@ void SkyMouse::fnSaveCoods(void) {
 }
 
 void SkyMouse::lockMouse(void) {
-	SkyState::_systemVars.systemFlags |= SF_MOUSE_LOCKED;
+	SkyEngine::_systemVars.systemFlags |= SF_MOUSE_LOCKED;
 }
 
 void SkyMouse::unlockMouse(void) {
-	SkyState::_systemVars.systemFlags &= ~SF_MOUSE_LOCKED;
+	SkyEngine::_systemVars.systemFlags &= ~SF_MOUSE_LOCKED;
 }
 
 void SkyMouse::restoreMouseData(uint16 frameNum) {
@@ -224,10 +229,10 @@ void SkyMouse::pointerEngine(uint16 xPos, uint16 yPos) {
 	uint32 currentListNum = SkyLogic::_scriptVariables[MOUSE_LIST_NO];
 	uint16 *currentList;
 	do {
-		currentList = (uint16 *)SkyState::fetchCompact(currentListNum);
+		currentList = (uint16 *)SkyEngine::fetchCompact(currentListNum);
 		while ((*currentList != 0) && (*currentList != 0xFFFF)) {
 			uint16 itemNum = *currentList;
-			Compact *itemData = SkyState::fetchCompact(itemNum);
+			Compact *itemData = SkyEngine::fetchCompact(itemNum);
 			currentList++;
 			if ((itemData->screen == SkyLogic::_scriptVariables[SCREEN]) &&	(itemData->status & 16)) {
 				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
@@ -270,7 +275,7 @@ void SkyMouse::buttonEngine1(void) {
 	if (_mouseB) {	//anything pressed?
 		SkyLogic::_scriptVariables[BUTTON] = _mouseB;
 		if (SkyLogic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
-			Compact *item = SkyState::fetchCompact(SkyLogic::_scriptVariables[SPECIAL_ITEM]);
+			Compact *item = SkyEngine::fetchCompact(SkyLogic::_scriptVariables[SPECIAL_ITEM]);
 			if (item->mouseClick)
 				_skyLogic->mouseScript(item->mouseClick, item);
 		}
