@@ -292,6 +292,33 @@ void SkyControl::drawMainPanel(void) {
 	_bodge->drawToScreen(WITH_MASK);
 }
 
+void SkyControl::doLoadSavePanel(void) {
+	if (SkyState::isDemo() && (!SkyState::isCDVersion()))
+		return; // I don't think this can even happen
+	initPanel();
+	_skyScreen->clearScreen();
+	if (SkyState::_systemVars.gameVersion < 368)
+		_skyScreen->setPalette(60509);
+	else 
+		_skyScreen->setPalette(60510);
+
+	_savedMouse = _skyMouse->giveCurrentMouseType();
+	_skyMouse->spriteMouse(MOUSE_NORMAL,0,0);
+	_lastButton = -1;
+	_curButtonText = 0;
+	_textSprite = NULL;
+
+	saveRestorePanel(false);
+
+	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
+	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_system->update_screen();
+	_skyScreen->forceRefresh();
+	_skyScreen->setPalette((uint8*)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+	removePanel();
+	_skyMouse->spriteMouse(_savedMouse, 0, 0);
+}
+
 void SkyControl::doControlPanel(void) {
 
 	if (SkyState::isDemo() && (!SkyState::isCDVersion())) {
@@ -335,7 +362,9 @@ void SkyControl::doControlPanel(void) {
 					buttonControl(NULL);
 					_text->drawToScreen(WITH_MASK); // flush text restore buffer
 					drawMainPanel();
-					if (clickRes == QUIT_PANEL) quitPanel = true;
+					if ((clickRes == QUIT_PANEL) || (clickRes == GAME_SAVED) ||
+						(clickRes == GAME_RESTORED))
+						quitPanel = true;
 				}
 				_mouseClicked = false;
 			}
@@ -1126,7 +1155,7 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 
 	LODSD(srcPos, size);
 	LODSD(srcPos, saveRev);
-	if (saveRev != SAVE_FILE_REVISION) {
+	if (saveRev > SAVE_FILE_REVISION) {
 		warning("Unknown save file revision (%d)",saveRev);
 		return RESTORE_FAILED;
 	}

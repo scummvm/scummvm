@@ -147,35 +147,35 @@ class SkyControl {
 public:
 	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, OSystem *system, const char *savePath);
 	void doControlPanel(void);
+	void doLoadSavePanel(void);
 	void showGameQuitMsg(bool useScreen = true);
     
 private:
 	void initPanel(void);
 	void removePanel(void);
-	void drawMainPanel(void);
-	void delay(unsigned int amount);
-	void buttonControl(SkyConResource *pButton);
 
+	void drawMainPanel(void);
+
+	void delay(unsigned int amount);
+	
+    void animClick(SkyConResource *pButton);
+	bool getYesNo(void);
+	void buttonControl(SkyConResource *pButton);
+	uint16 handleClick(SkyConResource *pButton);
+	uint16 doMusicSlide(void);
+	uint16 doSpeedSlide(void);
+	uint16 toggleFx(SkyConResource *pButton);
+	uint16 toggleText(SkyConResource *pButton);
+	uint16 shiftDown(uint8 speed);
+	uint16 shiftUp(uint8 speed);
+
+	uint16 saveRestorePanel(bool allowSave);
 	void loadDescriptions(uint8 *destBuf);
 	void saveDescriptions(uint8 *srcBuf);
 	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame, bool allowSave);
 	void showSprites(dataFileHeader **nameSprites);
 	bool checkKeyList(uint8 key);
 	void handleKeyPress(uint8 key, uint8 *textBuf);
-
-	void animClick(SkyConResource *pButton);
-	bool getYesNo(void);
-	uint16 doMusicSlide(void);
-	uint16 doSpeedSlide(void);
-	uint16 handleClick(SkyConResource *pButton);
-	uint16 toggleFx(SkyConResource *pButton);
-	uint16 toggleText(SkyConResource *pButton);
-	uint16 shiftDown(uint8 speed);
-	uint16 shiftUp(uint8 speed);
-	const char *_savePath;
-
-	void appendMemList(uint16 *pMem);
-	void freeMemList(void);
 
 	uint16 _selectedGame;
 	uint16 saveGameToFile(void);
@@ -190,10 +190,12 @@ private:
 	void lodsStr(uint8 **srcPos, uint16 *src);
 	uint16 parseSaveData(uint8 *srcBuf);
 
-	static Compact *_saveLoadCpts[833]; // \  moved to sky/compacts/savedata.cpp
-	static uint8 *_saveLoadARs[18];     // /
+	static Compact *_saveLoadCpts[833]; // moved to sky/compacts/savedata.cpp
+	const char *_savePath;
 
-	uint16 saveRestorePanel(bool allowSave);
+	AllocedMem *_memListRoot;
+	void appendMemList(uint16 *pMem);
+	void freeMemList(void);
 
 	SkyScreen *_skyScreen;
 	SkyDisk *_skyDisk;
@@ -205,8 +207,6 @@ private:
 	int _mouseX, _mouseY;
 	bool _mouseClicked;
 	byte _keyPressed;
-
-	SkyConResource *createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType);
 
 	struct {
 		uint8 *controlPanel;
@@ -221,14 +221,14 @@ private:
 		uint8 *musicBodge;
 	} _sprites;
 
-	AllocedMem *_memListRoot;
-
 	uint8 *_screenBuf;
 	int _lastButton;
 	uint32 _curButtonText;
 	uint16 _firstText;
 	uint16 _savedMouse;
     
+	SkyConResource *createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType);
+
 	dataFileHeader *_textSprite;
 	SkyTextResource *_text;
 

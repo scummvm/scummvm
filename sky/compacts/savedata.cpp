@@ -957,24 +957,3 @@ Compact *SkyControl::_saveLoadCpts[833] = {
 		&SkyCompact::info_button
 };
 
-uint8 *SkyControl::_saveLoadARs[18] = {
-	SkyCompact::joey_auto,
-	SkyCompact::lamb_auto,
-	SkyCompact::monitor_auto,
-	SkyCompact::ss_auto,
-	SkyCompact::full_ss_auto,
-	SkyCompact::loader_auto,
-	SkyCompact::shades_auto,
-	SkyCompact::jobs_auto,
-	SkyCompact::foreman_auto,
-	SkyCompact::radman_auto,
-	SkyCompact::burke_auto,
-	SkyCompact::babs_auto,
-	SkyCompact::dan_auto,
-	SkyCompact::spu_auto,
-	SkyCompact::medi_auto,
-	SkyCompact::wit_auto,
-	SkyCompact::gal_auto,
-	SkyCompact::ken_auto
-};
-

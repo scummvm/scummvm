@@ -2185,7 +2185,9 @@ bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnRestoreGame(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnRestoreGame");
+	
+	_skyControl->doLoadSavePanel();
+	return false;
 }
 
 bool SkyLogic::fnRestartGame(uint32 a, uint32 b, uint32 c) {
