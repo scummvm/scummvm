@@ -339,10 +339,16 @@ void ScummEngine::cameraMoved() {
 	virtscr[0].xstart = _screenStartStrip * 8;
 #endif
 
-	if (_charset->_hasMask && (_version >= 4 && _gameId != GID_LOOM256)) {
+	if (_charset->_hasMask && _version > 3) {
 		int dx = camera._cur.x - camera._last.x;
 		int dy = camera._cur.y - camera._last.y;
-		if (dx || dy) {
+
+		// Fixes subtitle glitches during room scrolling in two cut scenes
+		// When talking to Rusty for first time
+		// When sleeping in straw at Blacksmith's Guild.
+		if (_gameId == GID_LOOM256 && dx)
+			gdi._mask.left -= 8;
+		else if (dx || dy) {
 			gdi._mask.left -= dx;
 			gdi._mask.right -= dx;
 			gdi._mask.top -= dy;
