@@ -533,10 +533,10 @@ void Scumm::unkVirtScreen4(int a) {
 		unkScreenEffect6();
 		break;
 	case 129:
-		setDirtyRange(0, 0, vs->height);
-		updateDirtyScreen(0);
+		//setDirtyRange(0, 0, vs->height);
+		//updateDirtyScreen(0);
 		/* XXX: EGA_proc4(0); */
-                warning("EGA_proc4"); /* FIXME */
+        warning("EGA_proc4"); /* FIXME */
 		break;
 	case 134:
 		unkScreenEffect5(0);
