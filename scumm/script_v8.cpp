@@ -169,7 +169,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_jump),
 		OPCODE(o6_breakHere),
 		/* 68 */
-		OPCODE(o6_invalid),
+		OPCODE(o8_breakHereVar),
 		OPCODE(o8_wait),
 		OPCODE(o6_delay),			// FIXME - is the delay period right?
 		OPCODE(o6_delayLonger),		// FIXME - is the delay period right?
@@ -202,7 +202,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_stopObjectScript),	// FIXME - is this right?
 		OPCODE(o6_cutscene),
 		OPCODE(o6_endCutscene),
-		OPCODE(o6_invalid),
+		OPCODE(o6_freezeUnfreeze),
 		/* 84 */
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
@@ -211,8 +211,8 @@ void Scumm_v8::setupOpcodes()
 		/* 88 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_setClass),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_setState),
+		OPCODE(o6_setOwner),
 		/* 8C */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -257,9 +257,9 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_actorOps),
 		OPCODE(o8_cameraOps),
 		OPCODE(o8_verbOps),
-		OPCODE(o6_invalid),
+		OPCODE(o6_startSound),
 		/* B0 */
-		OPCODE(o6_invalid),
+		OPCODE(o6_startMusic),
 		OPCODE(o6_stopSound),
 		OPCODE(o8_soundKludge),
 		OPCODE(o8_system),
@@ -526,6 +526,12 @@ void Scumm_v8::o8_mod()
 {
 	int a = pop();
 	push(pop() % a);
+}
+
+void Scumm_v8::o8_breakHereVar()
+{
+	warning("o8_breakHereVar NYI");
+	o6_breakHere();
 }
 
 void Scumm_v8::o8_wait()
@@ -821,8 +827,14 @@ void Scumm_v8::o8_roomOps()
 	case 0x5A:		// SO_ROOM_CYCLE_SPEED Set palette cycling speed
 	case 0x5B:		// SO_ROOM_COPY_PALETTE Copy palette
 	case 0x5C:		// SO_ROOM_NEW_PALETTE Create new palette
+		error("o8_roomOps: default case %d", subOp);
+		break;
 	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
+		warning("V8 Save game opcode not implemented");
+		break;
 	case 0x5E:		// SO_ROOM_LOAD_GAME Load game
+		warning("V8 Load game opcode not implemented");
+		break;
 	case 0x5F:		// SO_ROOM_SATURATION Set saturation of room colors
 	default:
 		error("o8_roomOps: default case %d", subOp);
@@ -1078,9 +1090,11 @@ void Scumm_v8::o8_verbOps()
 
 void Scumm_v8::o8_soundKludge()
 {
-	// TODO
-	int16 args[30];
+	int16 args[16];
 	getStackList(args, sizeof(args) / sizeof(args[0]));
+
+	// FIXME - is this right?
+	_sound->soundKludge(args);
 }
 
 void Scumm_v8::o8_system()
@@ -1108,13 +1122,13 @@ void Scumm_v8::o8_kludge()
 		// not used
 		break;
 	case 22:
-		warning("o8_kludge: BannerSetBannerColor(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+//		warning("o8_kludge: BannerSetBannerColor(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 29:
 		warning("o8_kludge: opcode 29 (%d, %d)", args[1], args[2]);
 		break;
 	case 108:
-		warning("o8_kludge: PaletteBuildRedirection(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+//		warning("o8_kludge: PaletteBuildRedirection(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 12:
 	case 13:

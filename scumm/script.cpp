@@ -247,8 +247,13 @@ void Scumm::getScriptBaseAddress()
 
 	case 3:
 	case WIO_ROOM:								/* room script */
-		_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
-		_lastCodePtr = &_baseRooms[_roomResource];
+		if (_features & GF_AFTER_V8) {
+			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
+			_lastCodePtr = &res.address[rtRoomScripts][_roomResource];
+		} else {
+			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
+			_lastCodePtr = &_baseRooms[_roomResource];
+		}
 		break;
 
 	case WIO_GLOBAL:							/* global script */

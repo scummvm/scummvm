@@ -709,7 +709,7 @@ void Scumm::initRoomSubBlocks()
 {
 	int i, offs;
 	byte *ptr;
-	byte *roomptr, *searchptr;
+	byte *roomptr, *searchptr, *roomResPtr;
 	RoomHeader *rmhd;
 
 	_ENCD_offs = 0;
@@ -723,7 +723,10 @@ void Scumm::initRoomSubBlocks()
 	for (i = 1; i < _maxScaleTable; i++)
 		nukeResource(rtScaleTable, i);
 
-	roomptr = getResourceAddress(rtRoom, _roomResource);
+	// Determine the room and room script base address
+	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
+	if (_features & GF_AFTER_V8)
+		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 
 	rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 
@@ -748,17 +751,19 @@ void Scumm::initRoomSubBlocks()
 			findResource(MKID('IM00'),
 									 findResource(MKID('RMIM'), roomptr)) - roomptr;
 
-	ptr = findResourceData(MKID('EXCD'), roomptr);
+	// Look for an exit script
+	ptr = findResourceData(MKID('EXCD'), roomResPtr);
 	if (ptr) {
-		_EXCD_offs = ptr - roomptr;
+		_EXCD_offs = ptr - roomResPtr;
 #ifdef DUMP_SCRIPTS
 		dumpResource("exit-", _roomResource, ptr - _resourceHeaderSize);
 #endif
 	}
 
-	ptr = findResourceData(MKID('ENCD'), roomptr);
+	// Look for an entry script
+	ptr = findResourceData(MKID('ENCD'), roomResPtr);
 	if (ptr) {
-		_ENCD_offs = ptr - roomptr;
+		_ENCD_offs = ptr - roomResPtr;
 #ifdef DUMP_SCRIPTS
 		dumpResource("entry-", _roomResource, ptr - _resourceHeaderSize);
 #endif
@@ -833,9 +838,19 @@ void Scumm::initRoomSubBlocks()
 			}
 		}
 	}
+
+
+	//
+	// Setup local script
+	//
 	memset(_localScriptList, 0, sizeof(_localScriptList));
 
-	searchptr = roomptr = getResourceAddress(rtRoom, _roomResource);
+	// Determine the room script base address
+	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
+	if (_features & GF_AFTER_V8)
+		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
+	searchptr = roomResPtr;
+
 	if (_features & GF_SMALL_HEADER) {
 		while ((ptr = findResourceSmall(MKID('LSCR'), searchptr)) != NULL) {
 			int id = 0;
@@ -860,14 +875,14 @@ void Scumm::initRoomSubBlocks()
 			if (_features & GF_AFTER_V8) {
 				id = READ_LE_UINT32(ptr);
 				checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
-				_localScriptList[id - _numGlobalScripts] = ptr + 4 - roomptr;
+				_localScriptList[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
 			} else if (_features & GF_AFTER_V7) {
 				id = READ_LE_UINT16(ptr);
 				checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
-				_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomptr;
+				_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomResPtr;
 			} else {
 				id = ptr[0];
-				_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
+				_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
 			}
 #ifdef DUMP_SCRIPTS
 			do {
