@@ -23,21 +23,28 @@
 #ifndef EXTEND_H
 #define EXTEND_H
 
+#include "PNOLoader.h"
+
 extern const Char *SCUMMVM_SAVEPATH;
 
 //#define DISABLE_SCUMM
 #define DISABLE_SKY
 //#define DISABLE_SIMON
+#define DISABLE_SWORD1
 #define DISABLE_SWORD2
 #define DISABLE_QUEEN
 
 // PalmOS
-#define DISABLE_TAPWAVE
+//#define DISABLE_TAPWAVE
+#define DEBUG_ARM
 
 int main(int argc, char **argv);
 
-void WinDrawWarpChars(const Char *chars, Int16 len, Coord x, Coord y, Coord maxWidth);
 UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Char *fndParamStr);
 void PalmFatalError(const Char *err);
+
+UInt32 PceNativeRsrcCall(PnoDescriptor *pno, void *userDataP);
+MemPtr PceNativeCallInit(DmResID resID, PnoDescriptor *pno);
+void PceNativeCallRelease(PnoDescriptor *pno, MemPtr ptr);
 
 #endif

@@ -21,6 +21,7 @@
  */
  
 #include <PalmOS.h>
+
 #include "extend.h"
 #include "string.h"
 #include "globals.h"
@@ -33,6 +34,9 @@ void PalmFatalError(const Char *err) {
 
 	if (gVars->screenLocked)
 		WinScreenUnlock();
+	
+	if (OPTIONS_TST(kOptModeHiDensity))
+		WinSetCoordinateSystem(kCoordinatesStandard);
 
 	WinEraseWindow();
 	FrmCustomAlert(FrmFatalErrorAlert, err, 0,0);
@@ -74,27 +78,39 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 
 	return occurences;
 }
-
-void WinDrawWarpChars(const Char *chars, Int16 len, Coord x, Coord y, Coord maxWidth) {
-	Char *part = (Char *)chars;
-	Coord x2 = x;
-	Int16 next;
+/*
+UInt32 PceNativeRsrcCall(DmResID resID, void *userDataP) {
+	PnoDescriptor pno;
 	
-	if (part[StrLen(part)-1] == '\n')
-		part[StrLen(part)-1] = 0;
+	MemHandle armH = DmGetResource('ARMC', resID);
+	MemPtr pnoPtr = MemHandleLock(armH);
 
-	part = StrTok(part," ");
+//	UInt32 result = PceNativeCall((NativeFuncType*)armP, userDataP);
+	PnoLoad(&pno, pnoPtr);
+	UInt32 result = PnoCall(&pno, userDataP);
+	PnoUnload(&pno);
 
-	while ( part ) 	{
-		next = FntLineWidth (part, StrLen(part)) + FntLineWidth (" ",1);
-		if ((x2 + next - x) > maxWidth) {
-			x2 = x;
-			y += FntLineHeight();
-		}
-		//HRWinDrawTruncChars(gHRrefNum, part, StrLen(part), x2, y, maxWidth - (x2-x));
-		WinDrawTruncChars(part, StrLen(part), x2, y, maxWidth - (x2-x));
-		x2 += next;
+	MemHandleUnlock(armH);
+	DmReleaseResource(armH);
 
-		part = StrTok(NULL," ");
-	}
+	return result;
+}*/
+UInt32 PceNativeRsrcCall(PnoDescriptor *pno, void *userDataP) {
+	return PnoCall(pno, userDataP);;
+}
+
+MemPtr PceNativeCallInit(DmResID resID, PnoDescriptor *pno) {
+	MemHandle armH = DmGetResource('ARMC', resID);
+	MemPtr pnoPtr = MemHandleLock(armH);
+	PnoLoad(pno, pnoPtr);
+
+	return pnoPtr;
+}
+
+void PceNativeCallRelease(PnoDescriptor *pno, MemPtr ptr) {
+	MemHandle h = MemPtrRecoverHandle(ptr);
+
+	PnoUnload(pno);
+	MemPtrUnlock(ptr);
+	DmReleaseResource(h);
 }
