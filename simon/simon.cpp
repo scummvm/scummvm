@@ -4738,6 +4738,12 @@ void SimonEngine::shutdown() {
 		delete _game_file;
 		_game_file = NULL;
 	}
+
+	free(_itemarray_ptr);
+	free(_stringtab_ptr);
+	free(_itemheap_ptr);
+	free(_tablesheap_ptr);
+
 	midi.close();
 	_system->quit();
 }
