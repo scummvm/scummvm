@@ -3818,7 +3818,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint num_1) {
 		if (speech_id == 0xFFFF) {
 			if (_subtitles)
 				return;
-			if (!(_bit_array[0] & 0x4000 || _bit_array[1] & 0x1000)) {
+			if (!(_bit_array[0] & 0x4000) && !(_bit_array[1] & 0x1000)) {
 				_bit_array[0] |= 0x4000;
 				_variableArray[100] = 5;
 				start_vga_code(4, 1, 0x1e, 0, 0, 0);
@@ -3828,7 +3828,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint num_1) {
 		} else {
 			if (_subtitles && _scriptvar_2) {
 				start_vga_code(4, 2, 5, 0, 0, 0);
-				o_wait_for_vga(0xcd);
+				o_wait_for_vga(205);
 				o_kill_sprite_simon2(2, 5);
 			}
 			o_kill_sprite_simon2(2, num_1 + 2);
