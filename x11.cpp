@@ -382,7 +382,7 @@ bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	thread_param.format = format;
 
 	if (format == SOUND_16BIT)
-		pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *) &thread_param);
+	  ; /* pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *) &thread_param); */
 	else
 		warning("Only support 16 bit sound for now. Disabling sound ");
 
@@ -759,6 +759,7 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 				scumm_event->event_code = EVENT_KEYDOWN;
 				scumm_event->kbd.keycode = keycode;
 				scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
+				scumm_event->kbd.flags = 0;
 				return true;
 			}
 		} break;
