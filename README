@@ -4,10 +4,11 @@ http://www.scummvm.org/
 Readme - still needs writing.
 
 What is Residual:
- Residual is a ScummVM sub-project to create an engine to play the remaining (residual)
-LucasArts adventures that ScummVM does not support. This means the 3D titles Grim Fandango
-(and eventually, maybe, perhaps) Escape from Monkey Island. It's a word pun, as 'grime' is
-a residue (as is scum). Get over it.
+ Residual is a ScummVM sub-project to create an engine to play the remaining 
+ (residual) LucasArts adventures that ScummVM does not support. This means the
+ 3D titles Grim Fandango (and eventually, maybe, perhaps) Escape from 
+ Monkey Island. It's a word pun, as 'grime' is a residue (as is scum). 
+ Get over it.
 
 
 Running:
@@ -23,8 +24,8 @@ Notes -
   Windows you must put .exe in the DataDir and set it to '.' in residual.ini
   Windows-style path slashing isn't parsed yet.
 
-  Seems to run in Software GL for several people - need to debug opengl setup/usage and
-figure out why. See TODO for other stuff.
+  Seems to run in Software GL for several people - need to debug opengl 
+  setup/usage and figure out why. See TODO for other stuff.
 
 ScummVM-Residual Team Credits:
  Daniel Schepler         Initial engine codebase & LUA upgrades
