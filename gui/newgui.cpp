@@ -116,7 +116,7 @@ void NewGui::runLoop()
 		didSaveState = true;
 	}
 
-	while (activeDialog == _dialogStack.top()) {
+	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 
 		activeDialog->handleTickle();
 	
