@@ -138,10 +138,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	debug(9, "Actor::Actor()");
 	
 	_actors = NULL;
-	if (_vm->getGameType() == GType_IHNM) {
-		warning("Actors aren't implemented for IHNM yet");
-		return;
-	}
 
 #ifdef ACTOR_DEBUG
 	_debugPoints = NULL;
@@ -156,7 +152,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathDirectionListCount = 0;
 	_pathDirectionListAlloced = 0;
 		
-
 	_centerActor = _protagonist = NULL;
 	_lastTickMsec = 0;
 
@@ -165,25 +160,28 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	_pathCell = (int8*) malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
 	
-
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayWidth();
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
 	_pathRect.bottom = _vm->getSceneHeight();
 
-	// Get actor resource file context
-	_actorContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
-	if (_actorContext == NULL) {
-		error("Actor::Actor(): Couldn't load actor module resource context.");
-	}
+	if (_vm->getGameType() == GType_ITE) {
+		// Get actor resource file context
+		_actorContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+		if (_actorContext == NULL) {
+			error("Actor::Actor(): Couldn't load actor module resource context.");
+		}
 	
-	result = RSC_LoadResource(_actorContext, RID_ITE_ACTOR_NAMES, &stringsPointer, &stringsLength); // fixme: IHNM
-	if ((result != SUCCESS) || (stringsLength == 0)) {
-		error("Error loading strings list resource");
-	}
+		result = RSC_LoadResource(_actorContext, RID_ITE_ACTOR_NAMES, &stringsPointer, &stringsLength); // fixme: IHNM
+		if ((result != SUCCESS) || (stringsLength == 0)) {
+			error("Error loading strings list resource");
+		}
 	
-	_vm->loadStrings(_actorsStrings, stringsPointer, stringsLength);
-	RSC_FreeResource(stringsPointer);
+		_vm->loadStrings(_actorsStrings, stringsPointer, stringsLength);
+		RSC_FreeResource(stringsPointer);
+	} else {
+		// TODO
+	}
 
 	if (_vm->getGameType() == GType_ITE) {
 		_actorsCount = ITE_ACTORCOUNT;
@@ -217,6 +215,15 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 				warning("Disabling actorId=%d index=%d", actor->actorId, actor->index);
 			} 
 		}
+	} else {
+		// TODO.
+		static ActorData dummyActor;
+
+		dummyActor.frames = NULL;
+		dummyActor.walkStepsPoints = NULL;
+
+		_protagonist = &dummyActor;
+		_actorsCount = 0;
 	}
 }
 
@@ -1421,6 +1428,11 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	ActorData *actor;
 	int i;
 
+	if (_vm->getGameType() == GType_IHNM) {
+		warning("Actors aren't implemented for IHNM yet");
+		return;
+	}
+
 	actor = getActor(actorId);
 	for (i = 0; i < stringsCount; i++) {
 		_activeSpeech.strings[i] = strings[i];
@@ -1462,6 +1474,11 @@ void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFla
 void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags) {
 	int i;
 	
+	if (_vm->getGameType() == GType_IHNM) {
+		warning("Actors aren't implemented for IHNM yet");
+		return;
+	}
+
 	for (i = 0; i < actorIdsCount; i++) {
 		ActorData *actor;
 

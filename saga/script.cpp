@@ -63,6 +63,9 @@ Script::Script() {
 	_abortEnabled = true;
 	_skipSpeeches = false;
 
+	_firstObjectSet = false;
+	_secondObjectNeeded = false;
+	_pendingVerb = kVerbNone;
 	_currentVerb = kVerbNone;
 	_stickyVerb = kVerbWalkTo;
 	_leftButtonVerb = kVerbNone;

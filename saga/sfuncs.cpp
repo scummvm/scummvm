@@ -934,6 +934,11 @@ int Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	debug(1, "sfPlaceActor(%d, %d, %d, %d, %d, %d)", actorId, actorLocation.x, 
 		  actorLocation.y, actorDirection, frameType, frameOffset);
 
+	if (_vm->getGameType() == GType_IHNM) {
+		warning("Actors aren't implemented for IHNM yet");
+		return SUCCESS;
+	}
+
 	actor = _vm->_actor->getActor(actorId);
 	actor->location.x = actorLocation.x;
 	actor->location.y = actorLocation.y;
