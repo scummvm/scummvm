@@ -565,14 +565,18 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	if (!(_game & GF_SIMON2) && _language > 1) {
 		if (ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles") == 0)
 			_subtitles = 0;
-	} else if (_speech)
+	} else
 		_subtitles = ConfMan.getBool("subtitles");
+
+	// Make sure either speech or subtitles is enabled
+	if ((_game & GF_TALKIE) && !_speech && !_subtitles)
+		_subtitles = 1;
 
 	if (ConfMan.hasKey("fade") && ConfMan.getBool("fade") == 0)
 		_fade = 0;
+
 	if (ConfMan.hasKey("slow_down") && ConfMan.getInt("slow_down") >= 1)
 		_speed = ConfMan.getInt("slow_down");
-
 
 	_system->init_size(320, 200);
 
@@ -4070,10 +4074,12 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vga_sprite_id) {
 			}
 			_skip_vga_wait = true;
 		} else {
-			if (_subtitles) {
-				_sound->playVoice(speech_id);
-				return;	
+			if (_subtitles && _scriptvar_2) {
+				start_vga_code(4, 2, 5, 0, 0, 0);
+				o_wait_for_vga(205);
+				o_kill_sprite_simon2(2,5);
 			}
+
 			o_kill_sprite_simon2(2, vga_sprite_id + 2);
 			_sound->playVoice(speech_id);
 			start_vga_code(4, 2, vga_sprite_id + 2, 0, 0, 0);
