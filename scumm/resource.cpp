@@ -2090,7 +2090,11 @@ void ScummEngine::readMAXS(int blockSize) {
 			_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_heversion >= 72) { // sputm7.2
+	// check blocksize instead of just >= 72 as some 70 targets have later engine versions
+	// freddi being an example of this
+	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
+		if (_heversion < 72)
+			_heversion = 72;
 		if (blockSize != 32 + 8) {
 			if (blockSize == 44 + 8)
 				error("MAXS blocks from C++ based games not yet supported");
