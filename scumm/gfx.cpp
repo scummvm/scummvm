@@ -1923,23 +1923,23 @@ void Gdi::decodeNESGfx(const byte *room) {
 		_vm->_NESPalette[0][i] = c;
 	}
 	for (i = 0; i < 16; i++) {
-		_NESNametable[i][0] = _NESNametable[i][1] = 0;
+		_NES.nametable[i][0] = _NES.nametable[i][1] = 0;
 		n = 0;
 		while (n < width) {
 			byte data = *gdata++;
 			for (j = 0; j < (data & 0x7F); j++)
-				_NESNametable[i][2 + n++] = (data & 0x80) ? (*gdata++) : (*gdata);
+				_NES.nametable[i][2 + n++] = (data & 0x80) ? (*gdata++) : (*gdata);
 			if (!(data & 0x80))
 				gdata++;
 		}
-		_NESNametable[i][width+2] = _NESNametable[i][width+3] = 0;
+		_NES.nametable[i][width+2] = _NES.nametable[i][width+3] = 0;
 	}
 
 	const byte *adata = room + READ_LE_UINT16(room + 0x0C);
 	for (n = 0; n < 64;) {
 		byte data = *adata++;
 		for (j = 0; j < (data & 0x7F); j++)
-			_NESAttributes[n++] = (data & 0x80) ? (*adata++) : (*adata);
+			_NES.attributes[n++] = (data & 0x80) ? (*adata++) : (*adata);
 		if (!(n & 7) && (width == 0x1C))
 			n += 8;
 		if (!(data & 0x80))
@@ -1949,10 +1949,10 @@ void Gdi::decodeNESGfx(const byte *room) {
 	const byte *mdata = room + READ_LE_UINT16(room + 0x0E);
 	int mask = *mdata++;
 	if (mask == 0) {
-		_NEShasmask = false;
+		_NES.hasmask = false;
 		return;
 	}
-	_NEShasmask = true;
+	_NES.hasmask = true;
 	if (mask != 1)
 		debug(0,"NES room %i has irregular mask count %i!",_vm->_currentRoom,mask);
 	int mwidth = *mdata++;
@@ -1961,7 +1961,7 @@ void Gdi::decodeNESGfx(const byte *room) {
 		while (n < mwidth) {
 			byte data = *mdata++;
 			for (j = 0; j < (data & 0x7F); j++)
-				_NESMasktable[i][n++] = (data & 0x80) ? (*mdata++) : (*mdata);
+				_NES.masktable[i][n++] = (data & 0x80) ? (*mdata++) : (*mdata);
 			if (!(data & 0x80))
 				mdata++;
 		}
@@ -1971,10 +1971,10 @@ void Gdi::decodeNESGfx(const byte *room) {
 void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height) {
 	int x, y;
 
-	_NESObj_x = xpos;
+	_NES.objX = xpos;
 
 	// decode tile update data
-	memcpy(_NESNametableObj,_NESNametable,16*64);
+	memcpy(_NES.nametableObj,_NES.nametable,16*64);
 	ypos /= 8;
 	height /= 8;
 	for (y = ypos; y < ypos + height; y++) {
@@ -1982,7 +1982,7 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 		while (x < xpos + width) {
 			byte len = *ptr++;
 			for (int i = 0; i < (len & 0x7F); i++)
-				_NESNametableObj[y][2 + x++] = (len & 0x80) ? (*ptr++) : (*ptr);
+				_NES.nametableObj[y][2 + x++] = (len & 0x80) ? (*ptr++) : (*ptr);
 			if (!(len & 0x80))
 				ptr++;
 		}
@@ -1990,7 +1990,7 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 
 	int ax, ay;
 	// decode attribute update data
-	memcpy(_NESAttributesObj, _NESAttributes,64);
+	memcpy(_NES.attributesObj, _NES.attributes,64);
 	y = height / 2;
 	ay = ypos;
 	while (y) {
@@ -2000,7 +2000,7 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 		while (x < (width >> 1)) {
 			if (!(x & 3))
 				adata = *ptr++;
-			byte *dest = &_NESAttributesObj[((ay << 2) & 0x30) | ((ax >> 2) & 0xF)];
+			byte *dest = &_NES.attributesObj[((ay << 2) & 0x30) | ((ax >> 2) & 0xF)];
 
 			int aand = 3;
 			int aor = adata & 3;
@@ -2023,9 +2023,9 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 	}
 
 	// decode mask update data
-	if (!_NEShasmask)
+	if (!_NES.hasmask)
 		return;
-	memcpy(_NESMasktableObj, _NESMasktable,16*8);
+	memcpy(_NES.masktableObj, _NES.masktable,16*8);
 	int mx, mwidth;
 	int lmask, rmask;
 	mx = *ptr++;
@@ -2035,7 +2035,7 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 
 	y = 0;
 	do {
-		byte *dest = &_NESMasktableObj[y + ypos][mx];
+		byte *dest = &_NES.masktableObj[y + ypos][mx];
 		*dest++ = (*dest & lmask) | *ptr++;
 		for (x = 1; x < mwidth; x++) {
 			if (x + 1 == mwidth)
@@ -2053,14 +2053,14 @@ void Gdi::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top
 	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
 
 	if (_objectMode)
-		x += _NESObj_x; // for objects, need to start at the left edge of the object, not the screen
+		x += _NES.objX; // for objects, need to start at the left edge of the object, not the screen
 	if (x > 63) {
 		debug(0,"NES tried to render invalid strip %i",stripnr);
 		return;
 	}
 	for (int y = top; y < top + height; y++) {
-		int palette = ((_objectMode ? _NESAttributesObj : _NESAttributes)[((y << 2) & 0x30) | ((x >> 2) & 0xF)] >> (((y & 2) << 1) | (x & 2))) & 0x3;
-		int tile = (_objectMode ? _NESNametableObj : _NESNametable)[y][x];
+		int palette = ((_objectMode ? _NES.attributesObj : _NES.attributes)[((y << 2) & 0x30) | ((x >> 2) & 0xF)] >> (((y & 2) << 1) | (x & 2))) & 0x3;
+		int tile = (_objectMode ? _NES.nametableObj : _NES.nametable)[y][x];
 
 		for (int i = 0; i < 8; i++) {
 			byte c0 = _vm->_NESPatTable[1][tile * 16 + i];
@@ -2075,20 +2075,20 @@ void Gdi::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top
 }
 
 void Gdi::drawStripNESMask(byte *dst, int stripnr, int height) const {
-	if (!_NEShasmask)
+	if (!_NES.hasmask)
 		return;
 	height /= 8;
 	int x = stripnr + 2;
 
 	if (_objectMode)
-		x += _NESObj_x; // for objects, need to start at the left edge of the object, not the screen
+		x += _NES.objX; // for objects, need to start at the left edge of the object, not the screen
 	if (x > 63) {
 		debug(0,"NES tried to mask invalid strip %i",stripnr);
 		return;
 	}
 	for (int y = 0; y < height; y++) {
 		// the ? 0xFF : 0x00 here might be backwards - '1' bits indicate that sprites can get hidden
-		byte c = (((_objectMode ? _NESMasktableObj : _NESMasktable)[y][x >> 3] >> (x & 7)) & 1) ? 0xFF : 0x00;
+		byte c = (((_objectMode ? _NES.masktableObj : _NES.masktable)[y][x >> 3] >> (x & 7)) & 1) ? 0xFF : 0x00;
 		for (int i = 0; i < 8; i++) {
 			*dst = c;
 			dst += _numStrips;

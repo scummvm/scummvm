@@ -231,12 +231,13 @@ protected:
 		byte maskMap[4096], maskChar[4096];
 	} _C64;
 
-	byte _NESBaseTiles;
-	byte _NESNametable[16][64], _NESNametableObj[16][64];
-	byte _NESAttributes[64], _NESAttributesObj[64];
-	byte _NESMasktable[16][8], _NESMasktableObj[16][8];
-	int _NESObj_x;
-	bool _NEShasmask;
+	struct {
+		byte nametable[16][64], nametableObj[16][64];
+		byte attributes[64], attributesObj[64];
+		byte masktable[16][8], masktableObj[16][8];
+		int  objX;
+		bool hasmask;
+	} _NES;
 
 	/** For V2 games, we cache offsets into the room graphics, to speed up things. */
 	StripTable *_roomStrips;
