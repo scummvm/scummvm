@@ -156,7 +156,6 @@ the section on Reporting Bugs.
 
        Beneath a Steel Sky:
                 - Floppy demo does not work at all
-                - Only versions 0.0288, 0.0368 and 0.0372 were tested
                 - Amiga versions aren't supported and probably never will be
                 - Not a bug: CD version is missing speech for some dialog
 
@@ -482,14 +481,14 @@ Curse of Monkey Island
         kr  - Korean
 
 Beneath a Steel Sky:
-	en  - English USA (default)
+        gb  - English (Great Britain) (default)
+	en  - English USA
         de  - German
         fr  - French
         it  - Italian
         pt  - Portuguese
         es  - Spanish
         se  - Swedish
-        gb  - English (Great Britain)
 
 Simon the Sorcerer: 1 & 2
 
