@@ -230,7 +230,7 @@ SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size
 	_to_be_destroyed = false;
 	_realsize = size;
 
-	/* adjust the magnitute to prevent division error */
+	// adjust the magnitude to prevent division error
 	while (size & 0xFFFF0000)
 		size >>= 1, rate = (rate >> 1) + 1;
 
@@ -304,8 +304,11 @@ protected:
 static inline int clamped_add_16(int a, int b)
 {
 	int val = a + b;
-	if (val > 0xFFFF)
-		return 0xFFFF;
+
+	if (val > 32767)
+		return 32767;
+	else if (val < -32768)
+		return -32768;
 	else
 		return val;
 }
@@ -325,9 +328,9 @@ static int16 *mix_signed_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint3
 			result = interp.interpolate(fp_pos);
 			
 			*data = clamped_add_16(*data, result);
-			*data++;
+			data++;
 			*data = clamped_add_16(*data, result);
-			*data++;
+			data++;
 	
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
@@ -364,9 +367,9 @@ static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uin
 			result = interp.interpolate(fp_pos);
 	
 			*data = clamped_add_16(*data, result);
-			*data++;
+			data++;
 			*data = clamped_add_16(*data, result);
-			*data++;
+			data++;
 	
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
@@ -409,9 +412,9 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, u
 	do {
 		do {
 			*data = clamped_add_16(*data, left.interpolate(fp_pos));
-			*data++;
+			data++;
 			*data = clamped_add_16(*data, right.interpolate(fp_pos));
-			*data++;
+			data++;
 
 			fp_pos += fp_speed;
 			inc = (fp_pos >> 16) << 1;
@@ -449,9 +452,9 @@ static int16 *mix_signed_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, uint
 		fp_pos += fp_speed;
 
 		*data = clamped_add_16(*data, sample);
-		*data++;
+		data++;
 		*data = clamped_add_16(*data, sample);
-		*data++;
+		data++;
 
 		s += (fp_pos >> 16) << 1;
 		fp_pos &= 0x0000FFFF;
@@ -482,9 +485,9 @@ static int16 *mix_signed_stereo_16(int16 *data, uint * len_ptr, byte **s_ptr, ui
 		fp_pos += fp_speed;
 
 		*data = clamped_add_16(*data, (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32);
-		*data++;
+		data++;
 		*data = clamped_add_16(*data, (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32);
-		*data++;
+		data++;
 
 		s += (fp_pos >> 16) << 2;
 		fp_pos &= 0x0000FFFF;
@@ -504,7 +507,7 @@ static int16 *mix_unsigned_stereo_16(int16 *data, uint * len_ptr, byte **s_ptr, 
 	return data;
 }
 
-static int16 *(*mixer_helper_table[16]) (int16 *data, uint * len_ptr, byte **s_ptr,
+static int16 *(*mixer_helper_table[8]) (int16 *data, uint * len_ptr, byte **s_ptr,
 																				 uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab,
 																				 byte *s_end) = {
 mix_signed_mono_8, mix_unsigned_mono_8, mix_signed_stereo_8, mix_unsigned_stereo_8,
