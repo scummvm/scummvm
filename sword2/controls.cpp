@@ -1497,7 +1497,6 @@ Gui::Gui(Sword2Engine *vm) : _vm(vm), _baseSlot(0) {
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("gfx_details", 2);
 	ConfMan.registerDefault("subtitles", false);
-	ConfMan.registerDefault("object_labels", true);
 	ConfMan.registerDefault("reverse_stereo", false);
 }
 

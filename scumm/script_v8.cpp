@@ -396,10 +396,7 @@ int ScummEngine_v8::readVar(uint var) {
 
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-		if (var == VAR_CHARINC)
-			return (9 - _scummVars[var]);
-		else
-			return _scummVars[var];
+		return _scummVars[var];
 	}
 
 	if (var & 0x80000000) {
@@ -424,13 +421,10 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
-		if (var == VAR_CHARINC) {
-			if (ConfMan.hasKey("talkspeed")) {
-				uint talkspeed = ConfMan.getInt("talkspeed");
-				if (talkspeed <= 9)
-					VAR(VAR_CHARINC) = talkspeed;
-			} else
-				VAR(VAR_CHARINC) = (_features & GF_DEMO) ? value : (9 - value);
+		if (var == VAR_CHARINC && ConfMan.hasKey("talkspeed")) {
+			uint talkspeed = ConfMan.getInt("talkspeed");
+			if (talkspeed <= 9)
+				VAR(VAR_CHARINC) = talkspeed;
 		} else
 			_scummVars[var] = value;
 
@@ -1337,7 +1331,16 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		warning("o8_kernelSetFunctions: stopAllVideo()");
 		break;
 	case 32:	// writeRegistryValue
-		warning("o8_kernelSetFunctions: writeRegistryValue(%d, %d)", args[1], args[2]);
+		{
+		int array = args[1];
+		int value = args[2];
+		// FIXME - hack: for some reasons the wrong variable ID arrives here, compared to the
+		// scripts. Probably a wrong push/pop somewhere. For now override to correct value.
+		array = 658;
+		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+
+		debug(1,"o8_kernelSetFunctions: writeRegistryValue(%s, %d)", (char *)ah->data, value);
+		}
 		break;
 	case 33:	// paletteSetIntensity
 		warning("o8_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
@@ -1449,12 +1452,21 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		// scripts. Probably a wrong push/pop somewhere. For now override to correct value.
 		array = 658;
 		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
-		if (!strcmp((char *)ah->data, "Text Status"))
+		if (!strcmp((char *)ah->data, "SFX Volume"))
+			push(ConfMan.getInt("sfx_volume") / 2);
+		else if (!strcmp((char *)ah->data, "Voice Volume"))
+			push(ConfMan.getInt("speech_volume") / 2);
+		else if (!strcmp((char *)ah->data, "Music Volume"))
+			push(ConfMan.getInt("music_volume") / 2);
+		else if (!strcmp((char *)ah->data, "Text Status"))
 			push(ConfMan.getBool("subtitles"));
-		else if (!strcmp((char *)ah->data, "Saveload Page") || !strcmp((char *)ah->data, "Object Names"))
-			push(1);
-		else
-			push(0);
+		else if (!strcmp((char *)ah->data, "Object Names"))
+			push(ConfMan.getBool("object_labels"));
+		else if (!strcmp((char *)ah->data, "Saveload Page"))
+			push(14);
+		else 		// Use defaults
+			push(-1);
+		debug(1,"o8_kernelGetFunctions: readRegistryValue(%s)", (char *)ah->data);
 		}
 		break;
 	case 0xE1:		// imGetMusicPosition

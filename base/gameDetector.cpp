@@ -128,6 +128,10 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("boot_param", 0);
 	ConfMan.registerDefault("save_slot", -1);
 
+#if !defined(DISABLE_SCUMM) || !defined(DISABLE_SWORD2)
+	ConfMan.registerDefault("object_labels", true);
+#endif
+
 #ifndef DISABLE_SCUMM
 	ConfMan.registerDefault("copy_protection", false);
 	ConfMan.registerDefault("demo_mode", false);
