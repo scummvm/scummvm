@@ -37,7 +37,6 @@
 
 void Scumm_v8::setupOpcodes()
 {
-	// TODO: any of the o6_ entries are potentially wrong and pure guesses :-)
 	static const OpcodeEntryV8 opcodes[256] = {
 		/* 00 */
 		OPCODE(o6_invalid),
@@ -1154,16 +1153,21 @@ void Scumm_v8::o8_verbOps()
 
 	_verbRedraw = true;
 
-	if (0 <= _curVerbSlot && _curVerbSlot < _maxVerbs)
-		vs = &_verbs[_curVerbSlot];
-	if (subOp != 0x96)
-		assert(vs);
-
-	switch (subOp) {
-	case 0x96:		// SO_VERB_INIT Choose verb number for editing
+	if (subOp == 0x96) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
 		checkRange(_maxVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
+		//printf("Setting current actor to %d\n", _curActor);
+		return;
+	}
+	
+	assert(0 <= _curVerbSlot && _curVerbSlot < _maxVerbs);
+	vs = &_verbs[_curVerbSlot];
+	assert(vs);
+
+	switch (subOp) {
+	case 0x96:		// SO_VERB_INIT Choose verb number for editing
+		// handled above!
 		break;
 	case 0x97:		// SO_VERB_NEW New verb
 		if (_curVerbSlot == 0) {
@@ -1171,9 +1175,8 @@ void Scumm_v8::o8_verbOps()
 				if (_verbs[slot].verbid == 0)
 					break;
 			}
-			if (slot == _maxVerbs) {
-				warning("Too many verbs");
-				break;
+			if (slot >= _maxVerbs) {
+				error("Too many verbs");
 			}
 			_curVerbSlot = slot;
 		}
