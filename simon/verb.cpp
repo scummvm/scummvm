@@ -49,8 +49,8 @@ static const char *const hebrew_verb_prep_names[] = {
 
 static const char *const spanish_verb_prep_names[] = {
 	"", "", "", "",
-	"", "", "", "con qu/ ?",
-	"", "", "", "qui/n ?"
+	"", "", "", "^con qu/?",
+	"", "", "", "^a qui/n?"
 };
 
 static const char *const italian_verb_prep_names[] = {
