@@ -750,15 +750,8 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height)
 {
-	uint16 *r;
-
 	while (height--) {
-		r = (uint16 *)dstPtr;
-		for (int i = 0; i < width; ++i, ++r) {
-			uint16 color = *(((uint16 *)srcPtr) + i);
-
-			*r = color;
-		}
+		memcpy(dstPtr, srcPtr, 2 * width);
 		srcPtr += srcPitch;
 		dstPtr += dstPitch;
 	}
