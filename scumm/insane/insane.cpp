@@ -1070,12 +1070,12 @@ void Insane::escapeKeyHandler(void) {
 
 bool Insane::actor0StateFlags1(int state) {
 	const int spans[] = {0, 2, 34, 35, 39, 69, 98, 100, 117};
-	bool retvalue = 0;
+	bool retvalue = 1;
 	unsigned int i;
 	
 	for (i = 0; i < sizeof(spans); i++) {
 		retvalue = !retvalue;
-		if (spans[i] <= state)
+		if (spans[i] >= state)
 			break;
 	}
 	return retvalue;
@@ -1090,12 +1090,12 @@ bool Insane::actor0StateFlags2(int state) {
 		 593, 601, 604, 629, 634, 680, 682, 685, 688, 689, 693, 695, 712,
 		 716, 718, 748, 753, 787, 788, 804, 807, 808, 812, 814, 831, 863,
 		 866, 867, 872, 920, 922, 923, 926, 927, 931, 933, 950};
-	bool retvalue = 0;
+	bool retvalue = 1;
 	unsigned int i;
 	
 	for (i = 0; i < sizeof(spans); i++) {
 		retvalue = !retvalue;
-		if (spans[i] <= state)
+		if (spans[i] >= state)
 			break;
 	}
 	return retvalue;

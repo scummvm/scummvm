@@ -8,6 +8,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  SCUMM:
    - Added graphics decoders for 3DO Humongous Entertainment games
    - Numerous Humongous Entertainment games fixes
+   - Fixed bug in Full Throttle, so battle difficulty matches original
 
  Queen:
    - ???
