@@ -264,6 +264,8 @@ public:
 	void asmEndGame();
 	void asmPutCameraOnDino();
 	void asmPutCameraOnJoe();
+	void asmAltIntroPanRight();
+	void asmAltIntroPanLeft();
 	void asmSetAzuraInLove();
 	void asmPanRightFromJoe();
 	void asmSetLightsOff();

@@ -598,11 +598,9 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 		break;
 	case ROOM_CAR_CHASE:
 		_vm->bam()->updateCarAnimation();
-//		updateCarBamScene();
 		break;
 	case ROOM_FINAL_FIGHT:
 		_vm->bam()->updateFightAnimation();
-//		updateFightBamScene();
 		break;
 	case ROOM_INTRO_RITA_JOE_HEADS: // CR 2 - CD-Rom pan right while Rita talks...
 		_cameraBob = -1;

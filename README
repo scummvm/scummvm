@@ -850,6 +850,7 @@ Broken Sword II adds the following non-standard keywords:
 
 Flight of the Amazon Queen adds the following non-standard keywords:
 
+        alt_intro       bool     Use alternative version of introduction
         music_mute      bool     If true, music is muted
         sfx_mute        bool     If true, sound effects are muted
         speech_mute     bool     If true, speech is muted

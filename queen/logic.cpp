@@ -2481,13 +2481,17 @@ void Logic::changeRoom() {
 			playCutaway("copy.cut");
 			playCutaway("clogo.cut");
 
-			// TODO enable talking for talkie version
+			// XXX enable talking for talkie version
 
-			playCutaway("cdint.cut");
+			if (ConfMan.getBool("alt_intro")) {
+				_vm->graphics()->loadPanel();
+				playCutaway("cintr.cut");
+			}
+			else {
+				playCutaway("cdint.cut");
+				_vm->graphics()->loadPanel();
+			}
 
-			// restore palette colors ranging from 144 to 256
-			_vm->graphics()->loadPanel();
-			
 			playCutaway("cred.cut");
 		}
 
@@ -2630,8 +2634,8 @@ void Logic::executeSpecialMove(uint16 sm) {
 		&Logic::asmPutCameraOnDino,
 		/* 16 */
 		&Logic::asmPutCameraOnJoe,
-		NULL, // XXX alternative introduction
-		NULL, // XXX alternative introduction
+		&Logic::asmAltIntroPanRight, // cintr.cut
+		&Logic::asmAltIntroPanLeft,  // cintr.cut
 		&Logic::asmSetAzuraInLove,
 		/* 20 */
 		&Logic::asmPanRightFromJoe,
@@ -2824,6 +2828,41 @@ void Logic::asmPutCameraOnDino() {
 void Logic::asmPutCameraOnJoe() {
 
 	_vm->graphics()->cameraBob(0);
+}
+
+
+void Logic::asmAltIntroPanRight() {
+
+	_vm->graphics()->cameraBob(-1);
+	_vm->input()->fastMode(true);
+	update();
+	int16 scrollx = _vm->display()->horizontalScroll();
+	while (scrollx < 285 && !_vm->input()->cutawayQuit()) {
+		++scrollx;
+		if (scrollx > 285) {
+			scrollx = 285;
+		}
+		_vm->display()->horizontalScroll(scrollx);
+		update();
+	}
+	_vm->input()->fastMode(false);
+}
+
+
+void Logic::asmAltIntroPanLeft() {
+
+	_vm->graphics()->cameraBob(-1);
+	_vm->input()->fastMode(true);
+	int16 scrollx = _vm->display()->horizontalScroll();
+	while (scrollx > 0 && !_vm->input()->cutawayQuit()) {
+		scrollx -= 4;
+		if (scrollx < 0) {
+			scrollx = 0;
+		}
+		_vm->display()->horizontalScroll(scrollx);
+		update();
+	}
+	_vm->input()->fastMode(false);
 }
 
 
