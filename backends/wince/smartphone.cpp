@@ -59,6 +59,7 @@ extern TCHAR* getGameName(int);
 extern Engine *engine;
 extern bool is_simon;
 extern bool is_bass;
+extern bool is_queen;
 extern bool sound_activated;
 extern void Cls();
 
@@ -320,6 +321,9 @@ void SmartfonSave(OSystem_WINCE3 *wm, int repeat) {
 			return;
 
 		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
+		if (is_queen)
+			wm->_event.kbd.keycode = 282;
+		else
 		if (is_bass)
 			wm->_event.kbd.ascii = 63;
 		else
@@ -330,7 +334,7 @@ void SmartfonSkip(OSystem_WINCE3 *wm, int repeat) {
 
 
 		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
-		if (is_simon || is_bass) {
+		if (is_simon || is_bass || is_queen) {
 			wm->_event.kbd.ascii = VK_ESCAPE;
 			wm->_event.kbd.keycode = VK_ESCAPE;
 			return;

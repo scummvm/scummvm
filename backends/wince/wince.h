@@ -48,6 +48,7 @@
 //#include "simon/simon.h"
 #include "gapi_keys.h"
 #include "common/config-manager.h"
+#include "base/gameDetector.h"
 
 
 #include "SDL.h"

@@ -41,7 +41,7 @@
 
 #define CURRENT_GAMES_VERSION 7
 
-#define MAX_GAMES 32
+#define MAX_GAMES 34
 int MAX_DIRECTORY = 40;
 
 #define MAX_DISPLAYED_DIRECTORIES 7
@@ -295,6 +295,21 @@ static const ScummGame GameList[] = {
 		 "", "R2CTLNS.OCX", "",
 		 "sword2alt",
 		 0
+	},
+	
+	{
+		"Flight of Amazon Queen",
+		"Completable",
+		"", "queen.tbl", "queen.1",
+		"queen",
+		0
+	},
+	{
+		"Flight of Amazon Queen",
+		"Completable",
+		"", "queen.tbl", "queen.1c",
+		"queen",
+		0
 	},
 	{
 		 NULL, NULL, NULL, NULL, NULL, NULL, 0

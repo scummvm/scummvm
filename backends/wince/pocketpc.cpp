@@ -31,6 +31,7 @@ extern bool freelook;
 extern bool is_simon;
 extern bool is_bass;
 extern bool is_sword2;
+extern bool is_queen;
 extern int num_of_dirty_square;
 extern bool toolbar_drawn;
 extern Engine *engine;
@@ -242,6 +243,8 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						*/
 						/*}*/
 						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
+						if (is_queen)
+							wm->_event.kbd.keycode = 282;
 						if (is_bass)
 							wm->_event.kbd.ascii = 63;
 						else
@@ -258,7 +261,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 							do_quit();
 
 						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
-						if (is_simon || is_bass || is_sword2) {
+						if (is_simon || is_bass || is_sword2 || is_queen) {
 							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
 							wm->_event.kbd.keycode = mapKey(VK_ESCAPE);
 							break;

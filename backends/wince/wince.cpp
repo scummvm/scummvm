@@ -366,6 +366,7 @@ Engine *engine;
 bool is_simon;
 bool is_bass;
 bool is_sword2;
+bool is_queen;
 //extern Scumm *g_scumm;
 //extern SimonEngine *g_simon;
 //OSystem *g_system;
@@ -856,6 +857,12 @@ void runGame(char *game_name) {
 		hide_toolbar = true;
 	*/
 
+	// Special games switches
+	is_simon = (strcmp(game_name, "simon") == 0);
+	is_bass = (strcmp(game_name, "sky") == 0);
+	is_sword2 = (strcmp(game_name, "sword2") == 0);
+	is_queen = (strcmp(game_name, "queen") == 0);
+
 	// Keyboard activated for Monkey Island 2 and Monkey 1 floppy
 	if (strcmp(game_name, "monkey2") == 0 ||
 		strcmp(game_name, "monkeyvga") == 0 ||
@@ -869,7 +876,7 @@ void runGame(char *game_name) {
 	}
 
 	//new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "monkey") == 0);
-	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0 || is_sword2);
+	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0 || is_sword2 || is_queen);
 
 #ifdef USE_VORBIS
 	// Modify the sample rate on the fly if OGG is involved 
@@ -877,6 +884,7 @@ void runGame(char *game_name) {
 	if (!new_audio_rate)
 		new_audio_rate = checkOggSampleRate(_directory);
 #endif
+
 
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
@@ -900,11 +908,7 @@ void runGame(char *game_name) {
 
 	/* Start the engine */
 
-	is_simon = (strcmp(detector._plugin->getName(), "simon") == 0);
-	is_bass = (strcmp(detector._plugin->getName(), "sky") == 0);
-	is_sword2 = (strcmp(detector._plugin->getName(), "sword2") == 0);
-
-	if (smartphone || strcmp(game_name, "samnmax") == 0 || strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0 || is_sword2)
+	if (smartphone || strcmp(game_name, "samnmax") == 0 || strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0 || is_sword2 || is_queen)
 		hide_cursor = FALSE;
 	else
 		hide_cursor = TRUE;	
@@ -916,7 +920,7 @@ void runGame(char *game_name) {
 
     /* See if we need to force a mapping */
 
-    if (!smartphone && (is_bass || strcmp(game_name, "samnmax") || strcmp(game_name, "comi") || is_sword2) && !isRightClickSet()) {
+    if (!smartphone && (is_bass || strcmp(game_name, "samnmax") || strcmp(game_name, "comi") || is_sword2 || is_queen) && !isRightClickSet()) {
        Cls();
        drawWaitSelectKey();
        _force_get_key_mapping = true;
@@ -1191,6 +1195,9 @@ void action_save() {
 	if (is_simon)
 		return;
 	else
+	if (is_queen)
+		mainClass->addEventKeyPressed(282); // "F1"
+	else
 	if (is_bass)
 		mainClass->addEventKeyPressed(63);
 	else
@@ -1241,7 +1248,7 @@ void action_skip() {
 	//OSystem_WINCE3* system;
 	//system = (OSystem_WINCE3*)g_scumm->_system;
 
-	if (is_simon || is_bass || is_sword2) {
+	if (is_simon || is_bass || is_sword2 || is_queen) {
 		//system->addEventKeyPressed(mapKey(VK_ESCAPE));
 		mainClass->addEventKeyPressed(mapKey(VK_ESCAPE));
 		return;
