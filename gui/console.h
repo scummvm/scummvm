@@ -72,10 +72,9 @@ protected:
 	int _historySize;
 	int _historyIndex;
 	int _historyLine;
-	
-	
+
 	float _widthPercent, _heightPercent;
-	
+
 	void reflowLayout();
 
 public:

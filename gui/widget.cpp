@@ -42,7 +42,7 @@ void Widget::draw() {
 
 	if (!isVisible() || !_boss->isVisible())
 		return;
-	
+
 	int oldX = _x, oldY = _y;
 
 	// Account for our relative position in the dialog
@@ -140,8 +140,8 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 void ButtonWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
 	gui->drawString(_label, _x, _y, _w,
-	                !isEnabled() ? gui->_color :
-	                hilite ? gui->_textcolorhi : gui->_textcolor, _align);
+					!isEnabled() ? gui->_color :
+					hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
 
 #pragma mark -
@@ -249,8 +249,8 @@ void SliderWidget::drawWidget(bool hilite) {
 
 	// Draw the 'bar'
 	gui->fillRect(_x + _labelWidth + 2, _y + 2, valueToPos(_value), _h - 4,
-	              !isEnabled() ? gui->_color :
-	              hilite ? gui->_textcolorhi : gui->_textcolor);
+				!isEnabled() ? gui->_color :
+				hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
 int SliderWidget::valueToPos(int value) {

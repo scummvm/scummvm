@@ -66,7 +66,7 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 
 void OptionsDialog::open() {
 	Dialog::open();
-	
+
 	// Reset result value
 	setResult(0);
 	
@@ -74,7 +74,7 @@ void OptionsDialog::open() {
 		// FIXME - disable GFX popup for now
 		_gfxPopUp->setSelected(0);
 		_gfxPopUp->setEnabled(false);
-	
+
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 	
@@ -95,25 +95,25 @@ void OptionsDialog::open() {
 			md++;
 		}
 		_midiPopUp->setSelected(md->name ? i : 0);
-	
+
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
-	
+
 		// Native mt32 setting
 		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
 	}
-	
+
 	if (_masterVolumeSlider) {
 		int vol;
-	
+
 		vol = ConfMan.getInt("master_volume", _domain);
 		_masterVolumeSlider->setValue(vol);
 		_masterVolumeLabel->setValue(vol);
-	
+
 		vol = ConfMan.getInt("music_volume", _domain);
 		_musicVolumeSlider->setValue(vol);
 		_musicVolumeLabel->setValue(vol);
-	
+
 		vol = ConfMan.getInt("sfx_volume", _domain);
 		_sfxVolumeSlider->setValue(vol);
 		_sfxVolumeLabel->setValue(vol);
@@ -148,7 +148,7 @@ void OptionsDialog::close() {
 			if (_enableAudioSettings) {
 				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
 				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
-		
+
 				const MidiDriverDescription *md = getAvailableMidiDrivers();
 				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
 					md++;
@@ -162,7 +162,7 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("music_driver", _domain);
 			}
 		}
-		
+
 		// Save config file
 		ConfMan.flushToDisk();
 	}
@@ -219,7 +219,6 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeSlider->setEnabled(enabled);
 	_sfxVolumeLabel->setEnabled(enabled);
 }
-
 
 int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	const int x = 10;
@@ -291,23 +290,23 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 	// Volume controllers
 	_masterVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12,  "Master volume: ", 100, kMasterVolumeChanged);
-	_masterVolumeLabel = new StaticTextWidget(boss, 200, yoffset+2, 24, kLineHeight, "100%", kTextAlignLeft);
+	_masterVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
 	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
 	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
 	_musicVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12, "Music volume: ", 100, kMusicVolumeChanged);
-	_musicVolumeLabel = new StaticTextWidget(boss, 200, yoffset+2, 24, kLineHeight, "100%", kTextAlignLeft);
+	_musicVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
 	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
 	_sfxVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12, "SFX volume: ", 100, kSfxVolumeChanged);
-	_sfxVolumeLabel = new StaticTextWidget(boss, 200, yoffset+2, 24, kLineHeight, "100%", kTextAlignLeft);
+	_sfxVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
 	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
-	
+
 	_enableVolumeSettings = true;
 
 	return yoffset;
@@ -351,13 +350,13 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// Save game path
-	new StaticTextWidget(tab, 5, yoffset+2, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
-	_savePath = new StaticTextWidget(tab, 105, yoffset+2, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
-	new ButtonWidget(tab, 105, yoffset+14, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
+	new StaticTextWidget(tab, 5, yoffset + 2, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
+	_savePath = new StaticTextWidget(tab, 105, yoffset + 2, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
+	new ButtonWidget(tab, 105, yoffset + 14, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
 #endif
 	// TODO: joystick setting
 
-	
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 

@@ -43,7 +43,7 @@ MessageDialog::MessageDialog(const String &message, const char *defaultButton, c
 	const char *start = str;
 	int lineWidth, maxlineWidth = 0;
 	int lineCount, okButtonPos, cancelButtonPos;
-	
+
 	while (*str) {
 		if (*str == '\n') {
 			lineWidth = addLine(lines, start, str - start);
@@ -58,7 +58,7 @@ MessageDialog::MessageDialog(const String &message, const char *defaultButton, c
 	lineWidth = addLine(lines, start, str - start);
 	if (maxlineWidth < lineWidth)
 		maxlineWidth = lineWidth;
-	
+
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
 	_w = maxlineWidth + 20;
 	lineCount = lines.size();
@@ -72,19 +72,19 @@ MessageDialog::MessageDialog(const String &message, const char *defaultButton, c
 	}
 	_x = (320 - _w) / 2;
 	_y = (200 - _h) / 2;
-	
+
 	for (int i = 0; i < lineCount; i++) {
-		new StaticTextWidget(this, 10, 10+i*kLineHeight, maxlineWidth, kLineHeight,
+		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
 								lines[i], kTextAlignCenter);
 	}
 
 	// FIXME - allow for multiple buttons, and return in runModal() which one
 	// was selected.
 	if (defaultButton && altButton) { 
-		okButtonPos = (_w - (kButtonWidth * 2))/2;
-		cancelButtonPos = ((_w - (kButtonWidth * 2))/2) + kButtonWidth + 10;
+		okButtonPos = (_w - (kButtonWidth * 2)) / 2;
+		cancelButtonPos = ((_w - (kButtonWidth * 2)) / 2) + kButtonWidth + 10;
 	} else {
-		okButtonPos = cancelButtonPos = (_w-kButtonWidth)/2;
+		okButtonPos = cancelButtonPos = (_w-kButtonWidth) / 2;
 	}
 
 	if (defaultButton)
@@ -112,16 +112,16 @@ int MessageDialog::addLine(StringList &lines, const char *line, int size) {
 				newPos--;
 			if (newPos > start)
 				pos = newPos;
-			
+
 			// Add the substring from intervall [start, i-1]
 			tmp = String(start, pos - start);
 			lines.push_back(tmp);
-			
+
 			// Determine the width of the string, and adjust maxWidth accordingly
 			width = gui->getStringWidth(tmp);
 			if (maxWidth < width)
 				maxWidth = width;
-			
+
 			start = pos;
 			width = 0;
 		} else {

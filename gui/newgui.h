@@ -57,7 +57,7 @@ public:
 	
 	bool	empty() const		{ return _size <= 0; }
 	void	push(Dialog *d)		{ _stack[_size++] = d; }
-	Dialog	*top() const		{ return _stack[_size-1]; }
+	Dialog	*top() const		{ return _stack[_size - 1]; }
 	void	pop()				{ if (_size > 0) _stack[--_size] = 0; }
 	int		size() const		{ return _size; }
 	Dialog	*operator [](int i)	{ return _stack[i]; }

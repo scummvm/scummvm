@@ -40,7 +40,7 @@ protected:
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
 	~TabWidget();
-	
+
 	virtual int16	getChildY() const;
 
 // use Dialog::releaseFocus() when changing to another tab

@@ -56,7 +56,7 @@ void Dialog::open() {
 	_result = 0;
 	_visible = true;
 	g_gui.openDialog(this);
-	
+
 	// Search for the first objects that wantsFocus() (if any) and give it the focus
 	while (w && !w->wantsFocus()) {
 		w = w->_next;
@@ -239,7 +239,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 	if (!w || !(w->getFlags() & WIDGET_TRACK_MOUSE)) {
 		return;
 	}
-	
+
 	w->handleMouseMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button);
 }
 

@@ -47,7 +47,7 @@ BrowserDialog::BrowserDialog(const char *title)
 	_choice = NULL;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, 8, _w-2 * 10, kLineHeight, title, kTextAlignCenter);
+	new StaticTextWidget(this, 10, 8, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
 
 	// Current path - TODO: handle long paths ?
 	_currentPath = new StaticTextWidget(this, 10, 20, _w - 2 * 10, kLineHeight,
@@ -59,8 +59,8 @@ BrowserDialog::BrowserDialog(const char *title)
 
 	// Buttons
 	addButton(10, _h - 24, "Go up", kGoUpCmd, 0);
-	addButton(_w-2 * (kButtonWidth+10), _h - 24, "Cancel", kCloseCmd, 0);
-	addButton(_w-(kButtonWidth+10), _h-24, "Choose", kChooseCmd, 0);
+	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
+	addButton(_w - (kButtonWidth+10), _h - 24, "Choose", kChooseCmd, 0);
 }
 
 BrowserDialog::~BrowserDialog() {
@@ -99,7 +99,7 @@ void BrowserDialog::close() {
 
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	FilesystemNode *tmp;
-	
+
 	switch (cmd) {
 	case kChooseCmd: {
 			// If nothing is selected in the list widget, choose the current dir.
@@ -150,7 +150,7 @@ void BrowserDialog::updateListing() {
 	}
 	_fileList->setList(list);
 	_fileList->scrollTo(0);
-	
+
 	// Finally, redraw
 	draw();
 }

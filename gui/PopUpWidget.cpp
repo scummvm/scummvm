@@ -273,7 +273,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const Stri
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
-	
+
 	if (!_label.isEmpty() && _labelWidth == 0)
 		_labelWidth = g_gui.getStringWidth(_label);
 }

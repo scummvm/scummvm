@@ -338,9 +338,9 @@ void NewGui::blendRect(int x, int y, int w, int h, NewGuiColor color, int level)
 	while (h--) {
 		for (int i = 0; i < w; i++) {
 			_system->colorToRGB(ptr[i], ar, ag, ab);
-			ptr[i] = _system->RGBToColor((ar+r)/(level+1),
-										 (ag+g)/(level+1),
-										 (ab+b)/(level+1));
+			ptr[i] = _system->RGBToColor((ar + r) / (level+1),
+										 (ag + g) / (level+1),
+										 (ab + b) / (level+1));
 		}
 		ptr += _screenPitch;
 	}
@@ -481,15 +481,13 @@ void NewGui::drawString(const String &s, int x, int y, int w, NewGuiColor color,
 		for (; i < s.size(); ++i) {
 			str += s[i];
 		}
-		
+
 		width = getStringWidth(str);
-		
+
 	} else {
 		str = s;
 	}
-	
-	
-	
+
 	if (align == kTextAlignCenter)
 		x = x + (w - width - 1)/2;
 	else if (align == kTextAlignRight)
@@ -528,7 +526,7 @@ void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch) {
 
 	assert(buf);
 	while (h--) {
-		memcpy(buf, ptr, w*2);
+		memcpy(buf, ptr, w * 2);
 		ptr += _screenPitch;
 		buf += pitch;
 	}

@@ -52,7 +52,7 @@ protected:
 	int addGraphicControls(GuiObject *boss, int yoffset);
 	int addMIDIControls(GuiObject *boss, int yoffset);
 	int addVolumeControls(GuiObject *boss, int yoffset);
-	
+
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);

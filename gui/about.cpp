@@ -26,8 +26,8 @@
 
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 144) {
-	addButton((_w - kButtonWidth)/2, 120, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
-	
+	addButton((_w - kButtonWidth) / 2, 120, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+
 	Common::String version("ScummVM ");
 	version += gScummVMVersion;
 	new StaticTextWidget(this, 10, 10, _w - 20, kLineHeight, version, kTextAlignCenter);

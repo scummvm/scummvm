@@ -39,7 +39,7 @@ enum {
 class PopUpWidget : public Widget, public CommandSender {
 	friend class PopUpDialog;
 	typedef Common::String String;
-	
+
 	struct Entry {
 		String	name;
 		uint32	tag;

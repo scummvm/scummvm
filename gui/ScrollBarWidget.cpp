@@ -224,24 +224,24 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 	// Up arrow
 	gui->frameRect(_x, _y, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
 	gui->drawBitmap(up_arrow, _x, _y,
-	                isSinglePage ? gui->_color :
-	                (hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
+					isSinglePage ? gui->_color :
+					(hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Down arrow
 	gui->frameRect(_x, bottomY - UP_DOWN_BOX_HEIGHT, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
 	gui->drawBitmap(down_arrow, _x, bottomY - UP_DOWN_BOX_HEIGHT,
-	                isSinglePage ? gui->_color :
-	                (hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
+					isSinglePage ? gui->_color :
+					(hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Slider
 	if (!isSinglePage) {
 		gui->fillRect(_x, _y + _sliderPos, _w, _sliderHeight,
-		              (hilite && _part == kSliderPart) ? gui->_textcolorhi : gui->_textcolor);
+					(hilite && _part == kSliderPart) ? gui->_textcolorhi : gui->_textcolor);
 		gui->frameRect(_x, _y + _sliderPos, _w, _sliderHeight, gui->_color);
-		int y = _y + _sliderPos + _sliderHeight/2;
+		int y = _y + _sliderPos + _sliderHeight / 2;
 		NewGuiColor color = (hilite && _part == kSliderPart) ? gui->_color : gui->_shadowcolor;
-		gui->hLine(_x+2, y-2, _x+_w-3, color);
-		gui->hLine(_x+2, y, _x+_w-3, color);
-		gui->hLine(_x+2, y+2, _x+_w-3, color);
+		gui->hLine(_x + 2, y - 2, _x + _w - 3, color);
+		gui->hLine(_x + 2, y, _x + _w - 3, color);
+		gui->hLine(_x + 2, y + 2, _x + _w-3, color);
 	}
 }

@@ -24,7 +24,7 @@
 #include "newgui.h"
 
 EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
-	: StaticTextWidget(boss, x, y-1, w, h+2, text, kTextAlignLeft), _backupString(text) {
+	: StaticTextWidget(boss, x, y - 1, w, h + 2, text, kTextAlignLeft), _backupString(text) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kEditTextWidget;
 

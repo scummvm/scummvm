@@ -79,7 +79,7 @@ void ConsoleDialog::reflowLayout() {
 //	_w = _w * kCharWidth + kScrollBarWidth + 2;
 	_h = (uint16)((_heightPercent * g_system->get_overlay_height() - 2) / kLineHeight);
 	_h = _h * kLineHeight + 2;
-	
+
 	// Calculate depending values
 	_lineWidth = (_w - kScrollBarWidth - 2) / kCharWidth;
 	_linesPerPage = (_h - 2) / kLineHeight;
@@ -205,7 +205,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			int len = _currentPos - _promptStartPos;
 			assert(len >= 0);
 			char *str = new char[len + 1];
-	
+
 			// Copy the user input to str
 			for (i = 0; i < len; i++)
 				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
@@ -272,7 +272,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		} else if (modifiers == OSystem::KBD_CTRL) {
 			specialKeys(keycode);
 		} else if (isprint((char)ascii)) {
-			for (i = _promptEndPos-1; i >= _currentPos; i--)
+			for (i = _promptEndPos - 1; i >= _currentPos; i--)
 				_buffer[(i + 1) % kBufferSize] = _buffer[i % kBufferSize];
 			_promptEndPos++;
 			putchar((char)ascii);
@@ -284,7 +284,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 void ConsoleDialog::insertIntoPrompt(const char* str)
 {
 	unsigned int l = strlen(str);
-	for (int i = _promptEndPos-1; i >= _currentPos; i--)
+	for (int i = _promptEndPos - 1; i >= _currentPos; i--)
 		_buffer[(i + l) % kBufferSize] = 
 			_buffer[i % kBufferSize];
 	for (unsigned int j = 0; j < l; ++j) {
@@ -334,7 +334,7 @@ void ConsoleDialog::specialKeys(int keycode) {
 
 void ConsoleDialog::killChar() {
 	for (int i = _currentPos; i < _promptEndPos; i++)
-		_buffer[i % kBufferSize] = _buffer[(i+1) % kBufferSize];
+		_buffer[i % kBufferSize] = _buffer[(i + 1) % kBufferSize];
 	_buffer[_promptEndPos % kBufferSize] = ' ';
 	_promptEndPos--;
 }
@@ -361,7 +361,7 @@ void ConsoleDialog::killLastWord() {
 	}
 
 	for (int i = _currentPos; i < _promptEndPos; i++)
-		_buffer[i % kBufferSize] = _buffer[(i+cnt) % kBufferSize];
+		_buffer[i % kBufferSize] = _buffer[(i + cnt) % kBufferSize];
 	_buffer[_promptEndPos % kBufferSize] = ' ';
 	_promptEndPos -= cnt;
 }
@@ -384,7 +384,7 @@ void ConsoleDialog::historyScroll(int direction) {
 			_history[_historyIndex][i] = _buffer[(_promptStartPos + i) % kBufferSize];
 		_history[_historyIndex][i] = '\0';
 	}
-	
+
 	// Advance to the next line in the history
 	int line = _historyLine + direction;
 	if ((direction < 0 && line < 0) || (direction > 0 && line > _historySize))

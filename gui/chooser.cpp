@@ -28,7 +28,7 @@ enum {
 };
 
 ChooserDialog::ChooserDialog(const String &title, const StringList& list, const String &buttonLabel, int height)
-	: Dialog(8, (200 - height) / 2, 320 -2 * 8, height) {
+	: Dialog(8, (200 - height) / 2, 320 - 2 * 8, height) {
 	// Headline
 	new StaticTextWidget(this, 10, 6, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
 

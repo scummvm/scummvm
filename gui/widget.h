@@ -111,7 +111,7 @@ protected:
 
 	virtual void receivedFocusWidget() {}
 	virtual void lostFocusWidget() {}
-	
+
 	virtual Widget *findWidget(int x, int y) { return this; }
 
 	void releaseFocus() { assert(_boss); _boss->releaseFocus(); }

@@ -127,18 +127,18 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset = vBorder;
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, x, yoffset+2, labelWidth, kLineHeight, "ID: ", kTextAlignRight);
-	_domainWidget = new EditTextWidget(tab, x+labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, _domain);
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight);
+	_domainWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, _domain);
 	yoffset += 16;
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, x, yoffset+2, labelWidth, kLineHeight, "Name: ", kTextAlignRight);
-	_descriptionWidget = new EditTextWidget(tab, x+labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, description);
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "Name: ", kTextAlignRight);
+	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, description);
 	yoffset += 16;
 
 	// GUI:  Label for the game path
 	new StaticTextWidget(tab, x, yoffset, labelWidth, kLineHeight, "Path: ", kTextAlignRight);
-	new StaticTextWidget(tab, x+labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, path, kTextAlignLeft);
+	new StaticTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, path, kTextAlignLeft);
 	yoffset += 16;
 
 	// Languag popup
@@ -393,7 +393,7 @@ void LauncherDialog::addGame() {
 	//    an alternate description (to distinguish multiple versions of the
 	//    game, e.g. 'Monkey German' and 'Monkey English') and set default
 	//    options for that game.
-	
+
 	if (_browser->runModal()) {
 		// User made his choice...
 		FilesystemNode *dir = _browser->getResult();
@@ -449,7 +449,7 @@ void LauncherDialog::addGame() {
 				ConfMan.set("description", result.description, domain);
 			}
 			ConfMan.set("path", dir->path(), domain);
-			
+
 			// Display edit dialog for the new entry
 			EditGameDialog editDialog(domain, result);
 			if (editDialog.runModal()) {
@@ -503,7 +503,7 @@ void LauncherDialog::editGame(int item) {
 
 		// Write config to disk
 		ConfMan.flushToDisk();
-		
+
 		// Update the ListWidget and force a redraw
 		updateListing();
 		draw();

@@ -39,7 +39,7 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
 
 	_caretVisible = false;
 	_caretTime = 0;
-	
+
 	// FIXME: This flag should come from widget definition
 	_editable = true;
 
