@@ -277,20 +277,22 @@ MAME.
 
 They are:
         -gnormal     - No filtering, original 320x200 resolution. Fastest.
-        -g2x         - No filtering, double screen/window size to 640x480 (default)
+        -g2x         - No filtering, double screen/window size to 640x400 (default)
         -g3x         - No filtering, triple screen/window size to 800x600
-        -g2xsai      - 2xsai filtering, double screen/window size to 640x480
-        -gsuper2xsai - Enhanced 2xsai filtering. 640x480 screen/window size
-        -gsupereagle - Less blurry than 2xsai, but slower. Also 640x480
-        -gadvmame2x  - 640x480 scaling. Doesn't rely on blurring like 2xSAI.
+        -g2xsai      - 2xsai filtering, double screen/window size to 640x400
+        -gsuper2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
+        -gsupereagle - Less blurry than 2xsai, but slower. Also 640x400
+        -gadvmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
 
 Note that filters are very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
-using any form of anti-aliasing/linear filtering.
+using any form of anti-aliasing/linear filtering. Also note that the FmTowns
+Zak (zak256 target) uses an original resolution of 320x480 - hence for this
+game scalers will be 640x480 and 960x720.
 
-The alternative is to try using the SDL_gl.cpp target. This will allow you to
-use hardware accelerated functions, like bilinear filtering and FSAA, on
-suitable OpenGL capable cards.
+The alternative to these scalers is to try using the SDL_gl.cpp target. This
+will allow you to use hardware accelerated functions, like bilinear filtering
+and FSAA, on suitable OpenGL capable cards.
 
 Autosaves:
 ----------
