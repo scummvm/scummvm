@@ -92,7 +92,6 @@ Smush::Smush() {
 	_height = 0;
 	_speed = 0;
 	_channels = -1;
-	_freq = 0;
 	_freq = 22050;
 }
 
