@@ -690,7 +690,7 @@ class IMuseGM : public IMuseDriver {
 	void midiInit();
 
 public:
-	IMuseGM(MidiDriver *midi) { _md = midi; }
+	IMuseGM(MidiDriver *midi);
 	void uninit();
 	void init(IMuseInternal *eng, OSystem *os);
 	void update_pris();
@@ -4643,6 +4643,28 @@ int IMuseAdlib::part_update_active(Part *part, uint16 *active)
 //********************************************
 //** GENERAL MIDI PART OF IMUSE STARTS HERE **
 //********************************************
+
+IMuseGM::IMuseGM (MidiDriver *midi)
+{
+	int i;
+
+	// Initialize our "last" trackers with impossible
+	// values, so that they don't accidentally match
+	// any changes that are sent (which would cause
+	// the changes to be ignored).
+	for (i = 0; i < 16; ++i) {
+		_midi_program_last [i] =
+		_midi_pitchbend_factor_last [i] =
+		_midi_volume_last [i] =
+		_midi_modwheel_last [i] =
+		_midi_effectlevel_last [i] =
+		_midi_chorus_last [i] = 255;
+		_midi_pan_last [i] = 127;
+		_midi_pitchbend_last [i] = (int16) -1;
+		_midi_pedal_last [i] = false;
+	}
+	_md = midi;
+}
 
 void IMuseGM::midiPitchBend(byte chan, int16 pitchbend)
 {
