@@ -90,7 +90,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 2C */
 		OPCODE(o2_assignVarByte),
 		OPCODE(o5_putActorInRoom),
-		OPCODE(o5_delay),
+		OPCODE(o2_delay),
 		OPCODE(o2_ifNotState04),
 		/* 30 */
 		OPCODE(o2_matrixOps),
@@ -1150,3 +1150,16 @@ void Scumm_v2::o2_getActorWalkBox() {
 void Scumm_v2::o2_drawSentence() {
 	warning("TODO o2_drawSentence()");
 }
+
+void Scumm_v2::o2_delay() {
+	int delay = fetchScriptByte();
+	delay |= fetchScriptByte() << 8;
+	delay |= fetchScriptByte() << 16;
+
+	vm.slot[_currentScript].delay = 1;	// FIXME: Fix conversion
+	vm.slot[_currentScript].status = 1;
+	o5_breakHere();
+
+	warning("TODO: o2_delay(%d)", delay);
+}
+

@@ -270,6 +270,7 @@ protected:
 	void o2_getActorWalkBox();
 	void o2_endCutscene();
 	void o2_drawSentence();
+	void o2_delay();
 };
 
 class Scumm_v4 : public Scumm_v3 {
