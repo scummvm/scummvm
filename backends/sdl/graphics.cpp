@@ -724,6 +724,7 @@ void OSystem_SDL::clearScreen() {
 
 void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
 	assert (_transactionMode == kTransactionNone);
+	assert(src);
 
 	if (_screen == NULL)
 		return;
@@ -857,6 +858,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 
 
 void OSystem_SDL::makeChecksums(const byte *buf) {
+	assert(buf);
 	uint32 *sums = _dirtyChecksums;
 	uint x,y;
 	const uint last_x = (uint)_screenWidth / 8;
@@ -894,6 +896,7 @@ void OSystem_SDL::makeChecksums(const byte *buf) {
 }
 
 void OSystem_SDL::addDirtyRgnAuto(const byte *buf) {
+	assert(buf);
 	assert(((long)buf & 3) == 0);
 
 	/* generate a table of the checksums */
@@ -945,6 +948,7 @@ int16 OSystem_SDL::getWidth() {
 }
 
 void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
+	assert(colors);
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _currentPalette + start;
@@ -967,6 +971,7 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
+	assert(colors);
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _cursorPalette + start;
@@ -1432,6 +1437,7 @@ void OSystem_SDL::drawMouse() {
 #ifdef USE_OSD
 void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	assert (_transactionMode == kTransactionNone);
+	assert(msg);
 
 	uint i;
 	
