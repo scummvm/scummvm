@@ -61,6 +61,8 @@ public:
 	byte _scaleX, _scaleY;
 
 	int _draw_top, _draw_bottom;
+	bool _skipLimb;
+
 
 protected:
 	ScummEngine *_vm;
@@ -113,6 +115,8 @@ public:
 		_xmove = _ymove = 0;
 		_mirror = false;
 		_width = _height = 0;
+		_skipLimb = 0;
+
 		
 		_outptr = 0;
 		_outwidth = _outheight = 0;

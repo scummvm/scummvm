@@ -259,6 +259,9 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 	byte result = 0;
 	int xmoveCur, ymoveCur;
 
+	if (_skipLimb)
+		return 0;
+
 	if (!cost.active[limb] || cost.stopped & (1 << limb))
 		return 0;
 

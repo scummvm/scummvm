@@ -106,6 +106,7 @@ public:
 	int16 talkPosX, talkPosY;
 	uint16 talkScript, walkScript;
 	bool ignoreTurns;
+	bool skipLimb;
 	int8 layer;
 	uint16 sound[8];
 	CostumeData cost;

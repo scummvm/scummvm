@@ -55,6 +55,7 @@ Actor::Actor() {
 	frame = 0;
 	walkbox = 0;
 	animProgress = 0;
+	skipLimb = false;
 	memset(animVariable, 0, sizeof(animVariable));
 	memset(palette, 0, sizeof(palette));
 	memset(sound, 0, sizeof(sound));
@@ -79,6 +80,7 @@ void Actor::initActor(int mode) {
 	}
 
 	elevation = 0;
+	skipLimb = false;
 	width = 24;
 	talkColor = 15;
 	talkPosX = 0;
@@ -989,6 +991,7 @@ void Actor::drawActorCostume() {
 	}
 
 	bcr->_draw_bottom = bottom = 0;
+	bcr->_skipLimb = (skipLimb != 0);
 
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
@@ -1205,6 +1208,12 @@ void ScummEngine::clearMsgQueue() {
 void Actor::setActorCostume(int c) {
 	int i;
 
+	if ((_vm->_features & GF_HUMONGOUS) && (c == -1  || c == -2)) {
+		skipLimb = (c == -1);
+		needRedraw = true;
+		return;
+	}
+
 	costumeNeedsInit = true;
 	
 	if (_vm->_features & GF_NEW_COSTUMES) {
@@ -1248,6 +1257,9 @@ void Actor::setActorCostume(int c) {
 		for (i = 0; i < 32; i++)
 			palette[i] = 0xFF;
 	}
+
+	skipLimb = false;
+
 }
 
 void Actor::startWalkActor(int destX, int destY, int dir) {

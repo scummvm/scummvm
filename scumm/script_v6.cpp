@@ -1784,10 +1784,10 @@ void ScummEngine_v6::o6_actorOps() {
 
 			int top_actor = a->top;
 			int bottom_actor = a->bottom;
-//			a->_zbuf = 1; ???
+			a->forceClip = 1;
 			a->needRedraw = true;
 			a->drawActorCostume();
-//			a->_zbuf = 0; ???
+			a->forceClip = 0;
 			a->needRedraw = true;
 			a->drawActorCostume();
 			a->needRedraw = false;
