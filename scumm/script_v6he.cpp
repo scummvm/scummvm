@@ -979,6 +979,8 @@ void ScummEngine_v6he::o6_openFile() {
 		else
 			error("o6_openFile(): wrong open file mode");
 
+		if (_hFileTable[l].isOpen() == false)
+			slot = -1;
 		debug(1, "%d = o6_openFile(\"%s\", %d)", slot, filename + r, mode);
 	}
 	push(slot);
@@ -986,8 +988,9 @@ void ScummEngine_v6he::o6_openFile() {
 
 void ScummEngine_v6he::o6_closeFile() {
 	int slot = pop();
-	_hFileTable[slot].close();
 	debug(1, "o6_closeFile(%d)", slot);
+	if (slot != -1)
+		_hFileTable[slot].close();
 }
 
 void ScummEngine_v6he::o6_deleteFile() {
@@ -1053,6 +1056,7 @@ int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 void ScummEngine_v6he::o6_readFile() {
 	int32 size = pop();
 	int slot = pop();
+	int val;
 
 	debug(1, "o6_readFile(%d, %d)", slot, size);
 
@@ -1061,12 +1065,16 @@ void ScummEngine_v6he::o6_readFile() {
 		size = -size;
 
 	if (size == -2) {
-		push(_hFileTable[slot].readUint16LE());
+		val = _hFileTable[slot].readUint16LE();
+		push(val);
 	} else if (size == -1) {
-		push(_hFileTable[slot].readByte());
+		val = _hFileTable[slot].readByte();
+		push(val);
 	} else {
-		push(readFileToArray(slot, size));
+		val = readFileToArray(slot, size);
+		push(val);
 	}
+	debug(1, "returned %d", val);
 }
 
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
@@ -1144,23 +1152,20 @@ void ScummEngine_v6he::o6_seekFile() {
 }
 
 void ScummEngine_v6he::o6_redimArray() {
-	int edi, esi, eax;
-	edi = pop();
-	esi = pop();
+	int subcode, newX, newY;
+	newY = pop();
+	newX = pop();
 
-	if (edi ==  0) {
-		eax = esi;
-		esi = edi;
-		edi = eax;
-	}
+	if (newY ==  0)
+		SWAP(newX, newY);
 
-	eax = fetchScriptByte();
-	switch (eax) {
+	subcode = fetchScriptByte();
+	switch (subcode) {
 	case 199:
-		redimArray(fetchScriptWord(), esi, edi, 5);
+		redimArray(fetchScriptWord(), newX, newY, 5);
 		break;
 	case 202:
-		redimArray(fetchScriptWord(), esi, edi, 3);
+		redimArray(fetchScriptWord(), newX, newY, 3);
 		break;
 	default:
 		break;
@@ -1192,12 +1197,12 @@ void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int d) {
 	cx = var_2 * (newX + 1) * (newY + 1);
 	ax = var_4 * READ_LE_UINT16(ptr + 2) * READ_LE_UINT16(ptr + 4);
 
-	if (ax == cx)
+	if (ax != cx)
 		error("redimArray: array %d redim mismatch", readVar(arrayId));
 
 	WRITE_LE_UINT16(ptr, d);
-	WRITE_LE_UINT16(ptr + 2, newX + 1);
-	WRITE_LE_UINT16(ptr + 4, newY + 1);
+	WRITE_LE_UINT16(ptr + 2, newY + 1);
+	WRITE_LE_UINT16(ptr + 4, newX + 1);
 }
 
 void ScummEngine_v6he::o6_unknownEE() {
