@@ -361,7 +361,7 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	initWalkData();
 
 	uint16 bobNum = pp->actor->bobNum;
-	uint16 bankNum = pp->bankNum;
+	uint16 bankNum = pp->actor->bankNum;
 
 	uint16 oldx = _graphics->bob(bobNum)->x;
 	uint16 oldy = _graphics->bob(bobNum)->y;
@@ -390,13 +390,8 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 		can = -1;
 	}
 
-	uint16 standingFrame = 0;
-	if (bobNum <= 3) {
-		standingFrame = 29 + FRAMES_JOE_XTRA + bobNum;
-	}
-	else {
-		warning("Walk::movePerson() - Wrong bob number : %d", bobNum);
-	}
+	uint16 standingFrame = 29 + FRAMES_JOE_XTRA + bobNum;
+
 	// make other person face the right direction
 	BobSlot *pbs = _graphics->bob(bobNum);
 	pbs->endx = endx;

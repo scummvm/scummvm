@@ -88,8 +88,8 @@ struct Area {
 	}
 
 	uint16 calcScale(int16 y) const {
-		uint16 dy = box.y2 - box.y1;
-		int16 ds = (int16)(topScaleFactor - bottomScaleFactor);
+		uint16 dy = box.yDiff();
+		int16 ds = scaleDiff();
 		uint16 scale = 0;
 		
 		if (dy)	// Prevent division-by-zero
@@ -353,8 +353,13 @@ struct ActorData {
 		anim = READ_BE_UINT16(ptr); ptr += 2;
 		bankNum = READ_BE_UINT16(ptr); ptr += 2;
 		actorFile = READ_BE_UINT16(ptr); ptr += 2;
+		// Fix the actor data (see queen.c - l.1518-1519). When there is no 
+		// valid actor file, we must load the data from the objects room bank.
+		// This bank has number 15 (not 10 as in the data files).
+		if (actorFile == 0) {
+			bankNum = 15;
+		}
 	}
-
 };
 
 
@@ -430,12 +435,12 @@ struct CmdArea {
 	//! area to turn off/on (<0: off, >0: on)
 	int16 area;
 	//! room in which the area must be changed
-	int16 room;
+	uint16 room;
 
 	void readFrom(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		area = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		room = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		room = READ_BE_UINT16(ptr); ptr += 2;
 	}
 };
 
@@ -538,14 +543,13 @@ struct AnimFrame {
 
 struct Person {
 	//! actor settings to use
-	const ActorData *actor; // P_ROOM, P_BNUM, P_GAMES, P_VALUE, P_COLOR, P_STAND, P_X, P_Y
-	//! name of the actor
-	const char *name; // P_NAMEstr
-	//! string animation
-	const char *anim; // P_ANIMstr
-	uint16 bobFrame; // SFRAME
-	//! As the bank number may change, we can't re-use actor->bankNum
-	uint16 bankNum; // P_BANK
+	const ActorData *actor;
+	//! actor name
+	const char *name;
+	//! animation string
+	const char *anim;
+	//! current frame
+	uint16 bobFrame;
 };
 
 

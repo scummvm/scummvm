@@ -281,11 +281,11 @@ PERSON_FACE
 PERSON_FACE_MAX
 PERSON_FRAMES				Logic::_personFrames
 P_ANIMstr					Person.anim
-P_BANK						Person.bankNum
 P_NAMEstr					Person.name
 P_STAND,P_BNUM,P_ROOM		Person.actor->*
-P_X,P_Y,P_COLOR				Person.actor->*
+P_BANK,P_X,P_Y,P_COLOR		Person.actor->*
 P_VALUE,P_GAMES				Person.actor->*
+SFRAME						Person.bobFrame
 
 
 RESOURCE

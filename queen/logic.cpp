@@ -1299,36 +1299,29 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 		}
 	}
 
-	if (!actor) {
-		warning("Actor '%s' not found, using default", actorName);
-		actor = 1;
-	}
+	if (actor != 0) {
 
-	pp->actor = &_actorData[actor];
-	pp->bankNum = pp->actor->bankNum;
-	pp->name = _aName[pp->actor->name];
-	if (pp->actor->anim != 0) {
-		pp->anim = _aAnim[pp->actor->anim];
-	}
-	else {
-		pp->anim = NULL;
-	}
-
-	if (loadBank) {
-		const char *actorFile = _aFile[pp->actor->actorFile];
-		if (actorFile) {
-			_graphics->bankLoad(actorFile, pp->bankNum);
+		pp->actor = &_actorData[actor];
+		pp->name = _aName[pp->actor->name];
+		if (pp->actor->anim != 0) {
+			pp->anim = _aAnim[pp->actor->anim];
 		}
 		else {
-			pp->bankNum = 15;
-		}		
-	}
+			pp->anim = NULL;
+		}
 
-	if (pp->actor->bobNum >= 1 && pp->actor->bobNum <= 3) {
+		debug(0, "Logic::personSetData() - name=%s n=%d", pp->name, actor);
+
+		if (loadBank) {
+			const char *actorFile = _aFile[pp->actor->actorFile];
+			if (actorFile) {
+				_graphics->bankLoad(actorFile, pp->actor->bankNum);
+			}
+			// if actorFile is null, the person data is already loaded as
+			// it is contained in objects room bank (.bbk)
+		}
+
 		pp->bobFrame = 29 + FRAMES_JOE_XTRA + pp->actor->bobNum;
-	}
-	else {
-		warning("Logic::personSetData() - The bob number for actor is not in the [1:3] range");
 	}
 }
 
@@ -1351,7 +1344,7 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 		return curImage;
 	}
 
-	_graphics->bankUnpack(pad->bobFrameStanding, p.bobFrame, p.bankNum);
+	_graphics->bankUnpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
 	bool xflip = false;
 	uint16 person = _roomData[_currentRoom] + noun;
 	if (_objectData[person].image == -3) {
@@ -1480,7 +1473,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 	for (i = 1; i <= 255; ++i) {
 		if (allocatedFrames[i] != 0) {
 			++curImage;
-			_graphics->bankUnpack(i, curImage, person->bankNum);
+			_graphics->bankUnpack(i, curImage, person->actor->bankNum);
 		}
 	}
 
