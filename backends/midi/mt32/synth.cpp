@@ -401,7 +401,7 @@ bool Synth::open(SynthProperties &useProp) {
 	mt32ram.system.masterTune = 0x40;
 	mt32ram.system.reverbMode = 0;
 	mt32ram.system.reverbTime = 5;
-	mt32ram.system.reverbTime = 3;
+	mt32ram.system.reverbLevel = 3;
 	memcpy(mt32ram.system.reserveSettings, &controlROMData[0x57E5], 9);
 	for (Bit8u i = 0; i < 9; i++) {
 		// This is the default: {1, 2, 3, 4, 5, 6, 7, 8, 9}
