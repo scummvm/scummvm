@@ -724,7 +724,7 @@ protected:
 	ObjectIDMap _objectIDMap;
 	int _numObjectsInRoom;
 
-	void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 	void markObjectRectAsDirty(int obj);
 	void loadFlObject(uint object, uint room);
 	void nukeFlObjects(int min, int max);

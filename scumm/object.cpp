@@ -725,46 +725,44 @@ void ScummEngine::loadRoomObjectsSmall() {
 	CHECK_HEAP
 }
 
+void ScummEngine_v3::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
+	assert(room);
+	const byte *ptr = room + od->OBCDoffset;
+
+	if (_features & GF_OLD_BUNDLE)
+		ptr -= 2;
+
+	od->obj_nr = READ_LE_UINT16(ptr + 6);
+
+	od->x_pos = *(ptr + 9) * 8;
+	od->y_pos = ((*(ptr + 10)) & 0x7F) * 8;
+
+	od->parentstate = (*(ptr + 10) & 0x80) ? 1 : 0;
+	if (_version <= 2)
+		od->parentstate *= 8;
+
+	od->width = *(ptr + 11) * 8;
+
+	od->parent = *(ptr + 12);
+
+	if (_version <= 2) {
+		od->walk_x = *(ptr + 13) * 8;
+		od->walk_y = (*(ptr + 14) & 0x1f) * 8;
+		od->actordir = (*(ptr + 15)) & 7;
+		od->height = *(ptr + 15) & 0xf8;
+	} else {
+		od->walk_x = READ_LE_UINT16(ptr + 13);
+		od->walk_y = READ_LE_UINT16(ptr + 15);
+		od->actordir = (*(ptr + 17)) & 7;
+		od->height = *(ptr + 17) & 0xf8;
+	}
+}
+
 void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
 	const CodeHeader *cdhd = NULL;
 	const ImageHeader *imhd = NULL;
 
 	assert(room);
-
-	if (_features & GF_SMALL_HEADER) {
-
-		const byte *ptr = room + od->OBCDoffset;
-
-		if (_features & GF_OLD_BUNDLE)
-			ptr -= 2;
-
-		od->obj_nr = READ_LE_UINT16(ptr + 6);
-
-		od->x_pos = *(ptr + 9) * 8;
-		od->y_pos = ((*(ptr + 10)) & 0x7F) * 8;
-
-		od->parentstate = (*(ptr + 10) & 0x80) ? 1 : 0;
-		if (_version <= 2)
-			od->parentstate *= 8;
-
-		od->width = *(ptr + 11) * 8;
-
-		od->parent = *(ptr + 12);
-
-		if (_version <= 2) {
-			od->walk_x = *(ptr + 13) * 8;
-			od->walk_y = (*(ptr + 14) & 0x1f) * 8;
-			od->actordir = (*(ptr + 15)) & 7;
-			od->height = *(ptr + 15) & 0xf8;
-		} else {
-			od->walk_x = READ_LE_UINT16(ptr + 13);
-			od->walk_y = READ_LE_UINT16(ptr + 15);
-			od->actordir = (*(ptr + 17)) & 7;
-			od->height = *(ptr + 17) & 0xf8;
-		}
-
-		return;
-	}
 
 	if (searchptr == NULL) {
 		if (_version == 8)
@@ -791,7 +789,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->y_pos = (int)READ_LE_UINT32(&imhd->v8.y_pos);
 		od->width = (uint)READ_LE_UINT32(&imhd->v8.width);
 		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
-		// HACK: This is done sinec an angle doesn't fit into a byte (360 > 256)
+		// HACK: This is done since an angle doesn't fit into a byte (360 > 256)
 		od->actordir = toSimpleDir(1, READ_LE_UINT32(&imhd->v8.actordir));
 		if (FROM_LE_32(imhd->v8.version) == 801)
 			od->flags = ((((byte)READ_LE_UINT32(&imhd->v8.flags)) & 16) == 0) ? Gdi::dbAllowMaskOr : 0;

@@ -197,6 +197,16 @@ protected:
 	void readMAXS();
 	
 	void readGlobalObjects();
+
+	void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+};
+
+class ScummEngine_v4 : public ScummEngine_v3 {
+public:
+	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v3(detector, syst, gs, md5sum) {}
+
+protected:
+	void loadCharset(int no);
 };
 
 class ScummEngine_v2 : public ScummEngine_v3 {
@@ -324,14 +334,6 @@ protected:
 	byte VAR_SENTENCE_OBJECT2;
 	byte VAR_SENTENCE_PREPOSITION;
 	byte VAR_BACKUP_VERB;
-};
-
-class ScummEngine_v4 : public ScummEngine_v3 {
-public:
-	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v3(detector, syst, gs, md5sum) {}
-
-protected:
-	void loadCharset(int no);
 };
 
 class ScummEngine_v6 : public ScummEngine {
