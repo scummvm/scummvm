@@ -111,7 +111,7 @@ OSystem_WINCE3::OSystem_WINCE3()
 	 : _hwscreen(0), _scaler_proc(0), _orientationLandscape(false), _newOrientation(false),
 	   _panelInitialized(false), _forcePanelInvisible(false), _panelVisible(true),
 	   _panelStateForced(false), _addRightClickDown(false), _addRightClickUp(false),
-	   _forceHideMouse(false), _freeLook(false)
+	   _forceHideMouse(false), _freeLook(false), _toolbarHighDrawn(false)
 {
 	CEDevice::enableHardwareKeyMapping();
 	create_toolbar();
@@ -121,8 +121,11 @@ void OSystem_WINCE3::swap_panel_visibility() {
 	if (!_forcePanelInvisible && !_panelStateForced) {
 		_panelVisible = !_panelVisible;
 		_toolbarHandler.setVisible(_panelVisible);
-		// FIXME
-		add_dirty_rect(0, 200, 320, 40);
+		if (_screenHeight > 240)
+			add_dirty_rect(0, 400, 640, 80);
+		else
+			add_dirty_rect(0, 200, 320, 40);
+			
 		update_screen();
 	}
 }
@@ -162,6 +165,7 @@ void OSystem_WINCE3::create_toolbar() {
 	// Add the keyboard
 	keyboard = new PanelKeyboard(PANEL_KEYBOARD, _keysBuffer);
 	_toolbarHandler.add(NAME_PANEL_KEYBOARD, *keyboard);
+
 }
 
 void OSystem_WINCE3::private_sound_proc(void *param, byte *buf, int len) {
@@ -250,27 +254,11 @@ bool OSystem_WINCE3::set_sound_proc(SoundProc proc, void *param, SoundFormat for
 	return true;
 }
 
-void OSystem_WINCE3::update_game_settings() {
-	// Finish panel initialization
-	if (!_panelInitialized && _gameDetector._targetName.size()) {
-		Panel *panel;
-		_panelInitialized = true;
+void OSystem_WINCE3::check_mappings() {
+		if (!_gameDetector._targetName.size())
+			return;
+		
 		CEActions::init(this, _gameDetector);
-		// Add the main panel
-		panel = new Panel(10, 40);
-		panel->setBackground(IMAGE_PANEL);
-		// Save
-		panel->add(NAME_ITEM_OPTIONS, new ItemAction(ITEM_OPTIONS, ACTION_SAVE));
-		// Skip
-		panel->add(NAME_ITEM_SKIP, new ItemAction(ITEM_SKIP, ACTION_SKIP));
-		// sound
-		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster)); 
-		// portrait/landscape - screen dependant
-		if (_screenWidth <= 320) 
-			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation));
-		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
-		_toolbarHandler.setActive(NAME_MAIN_PANEL);
-	
 		// Load key mapping
 		CEActions::Instance()->loadMapping();
 
@@ -286,12 +274,45 @@ void OSystem_WINCE3::update_game_settings() {
 			}
 		}
 
+		// Map the "hide toolbar" action if needed
+		if (CEActions::Instance()->needsHideToolbarMapping()) {
+			while (!CEActions::Instance()->getMapping(ACTION_HIDE)) {
+				CEKeysDialog *keysDialog = new CEKeysDialog("Map hide toolbar action");
+				keysDialog->runModal();
+				if (!CEActions::Instance()->getMapping(ACTION_HIDE)) {
+					GUI::MessageDialog alert("You must map a key to the 'Hide toolbar' action to play this game");
+					alert.runModal();
+				}
+			}
+		}
+
 		// Extra warning for Zak Mc Kracken
 		if (strncmp(_gameDetector._targetName.c_str(), "zak", 3) == 0 &&  
 			!CEActions::Instance()->getMapping(ACTION_HIDE)) {
 			GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
 			alert.runModal();
 		}
+}
+
+void OSystem_WINCE3::update_game_settings() {
+	// Finish panel initialization
+	if (!_panelInitialized && _gameDetector._targetName.size()) {
+		Panel *panel;
+		_panelInitialized = true;		
+		// Add the main panel
+		panel = new Panel(10, 40);
+		panel->setBackground(IMAGE_PANEL);
+		// Save
+		panel->add(NAME_ITEM_OPTIONS, new ItemAction(ITEM_OPTIONS, ACTION_SAVE));
+		// Skip
+		panel->add(NAME_ITEM_SKIP, new ItemAction(ITEM_SKIP, ACTION_SKIP));
+		// sound
+		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster)); 
+		// portrait/landscape - screen dependant
+		if (_screenWidth <= 320) 
+			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation));
+		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
+		_toolbarHandler.setActive(NAME_MAIN_PANEL);
 
 		// Keyboard is active for Monkey 1 or 2
 		if (_gameDetector._targetName == "monkey2" || _gameDetector._targetName == "monkeyvga" ||
@@ -305,8 +326,18 @@ void OSystem_WINCE3::update_game_settings() {
 void OSystem_WINCE3::init_size(uint w, uint h) {
 	if (w == 320 && h == 200)
 		h = 240; // use the extra 40 pixels height for the toolbar
-	OSystem_SDL_Common::init_size(w, h);
+
+	check_mappings(); // do it here to have a readable dialog
+
+	if (h == 240)
+		_toolbarHandler.setOffset(200);
+	else
+		_toolbarHandler.setOffset(400);	
+
+	OSystem_SDL_Common::init_size(w, h);	
+
 	update_game_settings();
+
 }
 
 void OSystem_WINCE3::load_gfx_mode() {
@@ -486,6 +517,34 @@ void OSystem_WINCE3::load_gfx_mode() {
 	if (_tmpscreen == NULL)
 		error("_tmpscreen failed");
 
+	// Toolbar
+	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));
+	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen,
+						320, 40, 16, 320 * 2,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask
+					);
+	if (_toolbarLow == NULL)
+		error("_toolbarLow failed");
+
+	if (_screenHeight > 240) {
+		uint16 *toolbar_screen = (uint16 *)calloc(640 * 80, sizeof(uint16));
+		_toolbarHigh = SDL_CreateRGBSurfaceFrom(toolbar_screen,
+							640, 80, 16, 640 * 2,
+							_hwscreen->format->Rmask,
+							_hwscreen->format->Gmask,
+							_hwscreen->format->Bmask,
+							_hwscreen->format->Amask
+						);
+		if (_toolbarHigh == NULL)
+			error("_toolbarHigh failed");
+	}
+	else
+		_toolbarHigh = NULL;
+
+
 	// keyboard cursor control, some other better place for it?
 	km.x_max = _screenWidth * _scaleFactorXm / _scaleFactorXd - 1;
 	km.y_max = _screenHeight * _scaleFactorXm / _scaleFactorXd - 1;
@@ -522,6 +581,14 @@ void OSystem_WINCE3::hotswap_gfx_mode() {
 
 	// Release the HW screen surface
 	SDL_FreeSurface(_hwscreen); 
+
+	// Release toolbars
+	free(_toolbarLow->pixels);
+	SDL_FreeSurface(_toolbarLow);
+	if (_toolbarHigh) {
+		free(_toolbarHigh->pixels);
+		SDL_FreeSurface(_toolbarHigh);
+	}
 
 	// Setup the new GFX mode
 	load_gfx_mode();
@@ -612,6 +679,7 @@ void OSystem_WINCE3::update_screen() {
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
 		bool toolbarVisible = _toolbarHandler.visible();
+		int toolbarOffset = _toolbarHandler.getOffset();
 
 		if (_scaler_proc == Normal1x && !_adjustAspectRatio) {
 			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
@@ -619,8 +687,10 @@ void OSystem_WINCE3::update_screen() {
 				dst = *r;
 
 				// Check if the toolbar is overwritten
-				if (!_forceFull && toolbarVisible && r->y + r->h >= 200) 
+				if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset)  {
 					_toolbarHandler.forceRedraw();
+					_toolbarHighDrawn = true;
+				}
 
 				if (_overlayVisible) {
 					// FIXME: I don't understand why this is necessary...
@@ -654,10 +724,11 @@ void OSystem_WINCE3::update_screen() {
 				register int orig_dst_y = 0;
 
 				// Check if the toolbar is overwritten			
-				if (!_forceFull && toolbarVisible && r->y + r->h >= 200) 
+				if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset) {
 					_toolbarHandler.forceRedraw();
+					_toolbarHighDrawn = true;
+				}
 				
-
 				if (dst_y < _screenHeight) {
 					dst_h = r->h;
 					if (dst_h > _screenHeight - dst_y)
@@ -675,11 +746,9 @@ void OSystem_WINCE3::update_screen() {
 						(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
 
-				r->x *= _scaleFactorXm;
-				r->x /= _scaleFactorXd;
+				r->x = r->x * _scaleFactorXm / _scaleFactorXd;
 				r->y = dst_y;
-				r->w *= _scaleFactorXm;
-				r->w /= _scaleFactorXd;
+				r->w = r->w * _scaleFactorXm / _scaleFactorXd;
 				r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
 
 				/*if (_adjustAspectRatio && orig_dst_y / _scaleFactor < _screenHeight)
@@ -697,25 +766,50 @@ void OSystem_WINCE3::update_screen() {
 			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactorYm / _scaleFactorYd;
 		}
 	}
-	// FIXME
 	// Add the toolbar if needed
 	SDL_Rect toolbar_rect[1];
-	//if (_toolbarHandler.draw(_tmpscreen, &toolbar_rect[0]) && !_forceFull) {
-	if (_toolbarHandler.draw(_tmpscreen, &toolbar_rect[0])) {
+	if (_toolbarHandler.draw(_toolbarLow, &toolbar_rect[0])) {
 		// It can be drawn, scale it			
 		uint32 srcPitch, dstPitch;
+		SDL_Surface *toolbarSurface;
 
-		SDL_LockSurface(_tmpscreen);
+		if (_screenHeight > 240) {
+			if (!_toolbarHighDrawn) {
+				// Resize the toolbar
+				SDL_LockSurface(_toolbarLow);
+				SDL_LockSurface(_toolbarHigh);
+				Normal2x((byte*)_toolbarLow->pixels, _toolbarLow->pitch, (byte*)_toolbarHigh->pixels, _toolbarHigh->pitch, toolbar_rect[0].w, toolbar_rect[0].h);
+				SDL_UnlockSurface(_toolbarHigh);
+				SDL_UnlockSurface(_toolbarLow);
+			}
+			else
+				_toolbarHighDrawn = false;
+			toolbar_rect[0].w *= 2;
+			toolbar_rect[0].h *= 2;
+			toolbarSurface = _toolbarHigh;
+		}
+		else
+			toolbarSurface = _toolbarLow;
+
+		// Apply the appropriate scaler
+		SDL_LockSurface(toolbarSurface);
 		SDL_LockSurface(_hwscreen);
-		srcPitch = _tmpscreen->pitch;
-		dstPitch = _hwscreen->pitch;
-		_scaler_proc((byte *)_tmpscreen->pixels + (toolbar_rect[0].x * 2 + 2) + (toolbar_rect[0].y + 1) * srcPitch, srcPitch,
-				(byte *)_hwscreen->pixels + (toolbar_rect[0].x * 2 * _scaleFactorXm / _scaleFactorXd) + toolbar_rect[0].y * dstPitch, dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
-		SDL_UnlockSurface(_tmpscreen);
+		srcPitch = toolbarSurface->pitch;
+		dstPitch = _hwscreen->pitch;		
+		_scaler_proc((byte *)toolbarSurface->pixels, srcPitch, (byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch), dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
+		SDL_UnlockSurface(toolbarSurface);
 		SDL_UnlockSurface(_hwscreen);
+
 		// And blit it
+		toolbar_rect[0].y = _toolbarHandler.getOffset();
+		toolbar_rect[0].x = toolbar_rect[0].x * _scaleFactorXm / _scaleFactorXd;
+		toolbar_rect[0].y = toolbar_rect[0].y * _scaleFactorYm / _scaleFactorYd;
+		toolbar_rect[0].w = toolbar_rect[0].w * _scaleFactorXm / _scaleFactorXd;
+		toolbar_rect[0].h = toolbar_rect[0].h * _scaleFactorYm / _scaleFactorYd;
+
 		SDL_UpdateRects(_hwscreen, 1, toolbar_rect);
 	}
+
 	// Finally, blit all our changes to the screen
 	if (_num_dirty_rects > 0)
 		SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
@@ -833,7 +927,7 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
 
 void OSystem_WINCE3::draw_mouse() {
 	// FIXME
-	if (!(_toolbarHandler.visible() && _mouseCurState.y >= 200) && !_forceHideMouse)
+	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset()) && !_forceHideMouse)
 		OSystem_SDL_Common::draw_mouse();
 }
 
@@ -846,10 +940,8 @@ void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
 	km.y = event.mouse.y;
 
 	// Adjust for the screen scaling
-	event.mouse.x *= _scaleFactorXd;
-	event.mouse.x /= _scaleFactorXm;
-	event.mouse.y *= _scaleFactorYd;
-	event.mouse.x /= _scaleFactorYm;
+	event.mouse.x = event.mouse.x * _scaleFactorXd / _scaleFactorXm;
+	event.mouse.y = event.mouse.y * _scaleFactorYd / _scaleFactorYm;
 }
 
 void OSystem_WINCE3::warp_mouse(int x, int y) {

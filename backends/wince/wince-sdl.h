@@ -93,11 +93,16 @@ private:
 
 	void create_toolbar();
 	void update_game_settings();
+	void check_mappings();
 	void update_keyboard();
-	void get_sample_rate();
+	void get_sample_rate();	
 
 	CEKEYS::KeysBuffer *_keysBuffer;
 	CEGUI::ToolbarHandler _toolbarHandler;
+
+	SDL_Surface *_toolbarLow;	// toolbar 320x40
+	SDL_Surface *_toolbarHigh;  // toolbar 640x80
+	bool _toolbarHighDrawn;		// cache toolbar 640x80
 
 	uint16 _sampleRate;			// current audio sample rate
 
