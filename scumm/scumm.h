@@ -556,6 +556,7 @@ protected:
 	byte _resourceMapper[128];
 	uint32 _allocatedSize;
 	byte _expire_counter;
+	byte *_HEV7RoomOffsets;
 
 	void allocateArrays();
 	void openRoom(int room);

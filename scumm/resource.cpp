@@ -81,6 +81,8 @@ void Scumm::openRoom(int room) {
 					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
 				sprintf(buf, "%s.la%d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 				sprintf(buf2, "%s.%.3d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+			} else if (_features & GF_AFTER_HEV7) {
+				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : 1);
 			} else if (_features & GF_HUMONGOUS)
 				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 			else {
@@ -163,7 +165,8 @@ void Scumm::deleteRoomOffsets() {
 
 /* Read room offsets */
 void Scumm::readRoomsOffsets() {
-	int num, room;
+	int num, room, i;
+	byte *ptr;
 
 	debug(9, "readRoomOffsets()");
 
@@ -171,6 +174,16 @@ void Scumm::readRoomsOffsets() {
 	if (_features & GF_SMALL_NAMES)
 		return;
 
+	if (_features & GF_AFTER_HEV7) {
+		num = READ_LE_UINT16(_HEV7RoomOffsets);
+		ptr = _HEV7RoomOffsets + 2;
+		for (i = 0; i < num; i++) {
+			_roomFileOffsets[i] = READ_LE_UINT32(ptr);	
+			ptr += 4;
+		}
+		return;
+	}
+	
 	if (!(_features & GF_SMALL_HEADER)) {
 		if (!_dynamicRoomOffsets)
 			return;
@@ -289,11 +302,8 @@ void Scumm::readIndexFile() {
 
 		switch (blocktype) {
 		case MKID('DCHR'):
-			readResTypeList(rtCharset, MKID('CHAR'), "charset");
-			break;
-		
 		case MKID('DIRF'):
-			readResTypeList(rtCharset, MKID('DIRF'), "charset");
+			readResTypeList(rtCharset, MKID('CHAR'), "charset");
 			break;
 		
 		case MKID('DOBJ'):
@@ -302,6 +312,7 @@ void Scumm::readIndexFile() {
 			else
 				num = _fileHandle.readUint16LE();
 			assert(num == _numGlobalObjects);
+			
 
 			if (_features & GF_AFTER_V8) {	/* FIXME: Not sure.. */
 				char buffer[40];
@@ -326,6 +337,10 @@ void Scumm::readIndexFile() {
 					_objectStateTable[i] = _objectOwnerTable[i] >> OF_STATE_SHL;
 					_objectOwnerTable[i] &= OF_OWNER_MASK;
 				}
+				if (_features & GF_AFTER_HEV7) {
+					// FIXME nasty nasty hack handle properly...
+					_fileHandle.seek(num * 6000, SEEK_CUR);
+				}
 			}
 			
 			if (!(_features & GF_AFTER_V8)) {
@@ -340,13 +355,17 @@ void Scumm::readIndexFile() {
 			break;
 
 		case MKID('RNAM'):
-		case MKID('DIRI'):
-		case MKID('DLFL'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
 			break;
+		
+		case MKID('DLFL'):
+			_HEV7RoomOffsets = (byte *)calloc(itemsize - 8, 1);
+			_fileHandle.read(_HEV7RoomOffsets, itemsize - 8);
+			break;
 
-		case 0xFFFFFFFF:
-			stop = true;
+		case MKID('DIRI'):
+			num = _fileHandle.readUint16LE();
+			_fileHandle.seek(num + (8 * num), SEEK_CUR);
 			break;
 
 		case MKID('ANAM'):
@@ -360,7 +379,7 @@ void Scumm::readIndexFile() {
 			break;
 
 		case MKID('DIRR'):
-			readResTypeList(rtRoom, MKID('DIRR'), "room");
+			readResTypeList(rtRoom, MKID('RMDA'), "room");
 			break;
 
 		case MKID('DRSC'):					// FIXME: Verify
@@ -368,19 +387,13 @@ void Scumm::readIndexFile() {
 			break;
 
 		case MKID('DSCR'):
+		case MKID('DIRS'):
 			readResTypeList(rtScript, MKID('SCRP'), "script");
 			break;
 
-		case MKID('DIRS'):
-			readResTypeList(rtScript, MKID('DIRS'), "script");
-			break;
-
 		case MKID('DCOS'):
-			readResTypeList(rtCostume, MKID('COST'), "costume");
-			break;
-
 		case MKID('DIRC'):
-			readResTypeList(rtCostume, MKID('DIRC'), "costume");
+			readResTypeList(rtCostume, MKID('COST'), "costume");
 			break;
 
 		case MKID('MAXS'):
@@ -500,6 +513,9 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 		}
 		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle.readUint32LE();
+		}
+		if (_features & GF_AFTER_HEV7) {
+			_fileHandle.seek(4 * num, SEEK_CUR); // FIXME what are these additional offsets
 		}
 	}
 }
