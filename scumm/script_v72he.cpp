@@ -1407,7 +1407,14 @@ void ScummEngine_v72he::o72_arrayOps() {
 		if (id == 0) {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
-		// TODO write array
+		len2 = ((c - b) | dim2end) - dim2end + 1;
+		while (dim2start < dim2end) {
+			len = len2;
+			while (--len >= 0) {
+				writeArray(array, dim2start, len, c);
+			}
+			dim2start++;
+		}
 		break;
 	case 194:			// SO_ASSIGN_STRING
 		decodeScriptString(string);
