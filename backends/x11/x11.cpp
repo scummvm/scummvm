@@ -818,7 +818,7 @@ void OSystem_X11::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 
 	if (_ms_buf)
 		free(_ms_buf);
-	_ms_buf = malloc(w * h);
+	_ms_buf = (byte *) malloc(w * h);
 	memcpy(_ms_buf, buf, w * h);
 
 	if (_mouse_state_changed == false) {
