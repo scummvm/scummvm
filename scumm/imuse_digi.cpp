@@ -999,6 +999,10 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		switch (sub_cmd) {
 		case 0x600: // control volume fade
 			debug(5, "ImuseFadeParam - fading volume sample(%d), to volume(%d) with speed(%d)", sample, d, e);
+			if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
+				stopSound(sample);
+				return 0;
+			}
 			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 				if ((_channel[l]._idSound == sample) && _channel[l]._used) {
 					chan = l;
@@ -1028,6 +1032,15 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		}
 	case 0x1000: // ImuseSetState
 		debug(5, "ImuseSetState (%d)", b);
+		if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
+			if (b == 1)
+				startSound(1);
+			else {
+				if (getSoundStatus(4) == 0)
+					startSound(4);
+			}
+			return 0;
+		}
 		if (_scumm->_gameId == GID_DIG) {
 			if (b == 1000) {		// STATE_NULL
 				_scumm->_sound->stopBundleMusic();
