@@ -281,7 +281,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_talkEgo),
 		/* BC */
 		OPCODE(o72_dimArray),
-		OPCODE(o6_dummy),
+		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_startObjectQuick),
 		OPCODE(o6_startScriptQuick2),
 		/* C0 */
