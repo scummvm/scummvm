@@ -2408,12 +2408,11 @@ void ScummEngine_v72he::o72_unknownFA() {
 }
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {
-	byte b, *ptr;
 	int i, color, size;
 	int args[31];
 	byte name[1024];
 
-	b = fetchScriptByte();
+	byte b = fetchScriptByte();
 
 	switch (b) {
 	case 65:		// SO_AT
@@ -2454,10 +2453,13 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 		printString(m, name);
 		break;
 	case 0xE1:
-		ptr = getResourceAddress(rtTalkie, pop());
-		size = READ_BE_UINT32(ptr + 12);
-		memcpy(name, ptr + 16, size);
+		{
+		const byte *dataPtr = getResourceAddress(rtTalkie, pop());
+		const byte *text = findWrappedBlock(MKID('TEXT'), dataPtr, 0, 0);
+		size = getResourceDataSize(text);
+		memcpy(name, text, size);
 		printString(m, name);
+		}
 		break;
 	case 0xF9:
 		color = pop();
