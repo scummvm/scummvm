@@ -106,6 +106,8 @@ public:
 	WalkOffData *walkOffData(int index) const { return &_walkOffData[index]; }
 	uint16 currentRoomObjMax() const { return _objMax[_currentRoom]; }
 	uint16 currentRoomData() const { return _roomData[_currentRoom]; }
+	GraphicAnim *graphicAnim(int index) const { return &_graphicAnim[index]; }
+	uint16 graphicAnimCount() const { return _numGraphicAnim; }
 	ObjectDescription *objectDescription(uint16 objNum) const { return &_objectDescription[objNum]; }
 	uint16 objectDescriptionCount() const { return _numObjDesc; }
 	uint16 currentRoomSfx() const { return _sfxName[_currentRoom]; }
@@ -170,11 +172,6 @@ public:
 	uint16 personSetup(uint16 noun, uint16 curImage);
 	uint16 personAllocate(uint16 noun, uint16 curImage);
 	uint16 personFrames(uint16 bobNum) const { return _personFrames[bobNum]; }
-
-	uint16 animCreate(uint16 curImage, const Person *person);
-	void animErase(uint16 bobNum);
-	void animReset(uint16 bobNum);
-	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible);
 
 	void joeSetupFromBanks(const char *animBank, const char *standBank);
 
@@ -428,9 +425,6 @@ protected:
 
 	//! Last frame number used for person animation
 	uint16 _personFrames[4];
-
-	//! Describe a string based animation (30 frames maximum, bob number must be < 17)
-	AnimFrame _newAnim[17][30];
 
 	//! Inventory items
 	int16 _inventoryItem[4];

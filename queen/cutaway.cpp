@@ -1023,7 +1023,7 @@ void Cutaway::run(char *nextFilename) {
 			if (object->image == -3 || object->image == -4) {
 				k++;
 				if (object->name > 0) {
-					_vm->logic()->animReset(k);
+					_vm->graphics()->animReset(k);
 				}
 			}
 		}

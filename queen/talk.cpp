@@ -337,7 +337,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		pbs->y = person.actor->y;
 		
 		// Better kick start the persons anim sequence
-		_vm->logic()->animReset(person.actor->bobNum);
+		_vm->graphics()->animReset(person.actor->bobNum);
 	}
 
 	_vm->logic()->joeWalk(JWM_NORMAL);

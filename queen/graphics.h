@@ -179,6 +179,12 @@ public:
 	int textCenterX(const char *text) const; // MIDDLE()
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
 
+	uint16 animCreate(uint16 curImage, const Person *person);
+	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible);
+	void animReset(uint16 bobNum);
+	void animErase(uint16 bobNum);
+	void animEraseAll();
+
 	void loadPanel();
 
 	void putCameraOnBob(int bobNum) { _cameraBob = bobNum; }
@@ -208,6 +214,8 @@ private:
 
 	TextSlot _texts[GAME_SCREEN_HEIGHT];
 	uint8 _curTextColor;
+
+	AnimFrame _newAnim[17][30];
 
 	int _cameraBob;
 

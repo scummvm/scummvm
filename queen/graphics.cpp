@@ -668,6 +668,161 @@ uint16 Graphics::textWidth(const char* text) const {
 }
 
 
+uint16 Graphics::animCreate(uint16 curImage, const Person *person) {
+	AnimFrame *animFrames = _newAnim[person->actor->bobNum];
+
+	uint16 allocatedFrames[256];
+	memset(allocatedFrames, 0, sizeof(allocatedFrames));
+	const char *p = person->anim;
+	int frame = 0;
+	uint16 f1, f2;
+	do {
+		sscanf(p, "%3hu,%3hu", &f1, &f2);
+		animFrames[frame].frame = f1;
+		animFrames[frame].speed = f2;
+
+		if (f1 > 500) {
+			// SFX
+			allocatedFrames[f1 - 500] = 1;
+		} else {
+			allocatedFrames[f1] = 1;
+		}
+		
+		p += 8;
+		++frame;
+	} while(f1 != 0);
+	
+	// ajust frame numbers
+	uint16 n = 1;
+	uint16 i;
+	for (i = 1; i <= 255; ++i) {
+		if (allocatedFrames[i] != 0) {
+			allocatedFrames[i] = n;
+			++n;
+		}
+	}
+	for (i = 0; animFrames[i].frame != 0; ++i) {
+		uint16 frameNum = animFrames[i].frame;
+		if (frameNum > 500) {
+			animFrames[i].frame = curImage + allocatedFrames[frameNum - 500] + 500;
+		} else {
+			animFrames[i].frame = curImage + allocatedFrames[frameNum];
+		}
+	}
+
+	// unpack necessary frames
+	for (i = 1; i <= 255; ++i) {
+		if (allocatedFrames[i] != 0) {
+			++curImage;
+			_vm->bankMan()->unpack(i, curImage, person->actor->bankNum);
+		}
+	}
+
+	// start animation
+	bob(person->actor->bobNum)->animString(animFrames);
+
+	return curImage;
+}
+
+
+void Graphics::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible) {
+	int16 tempFrames[20];
+	memset(tempFrames, 0, sizeof(tempFrames));
+	uint16 numTempFrames = 0;
+	uint16 i, j;
+	for (i = 1; i <= _vm->logic()->graphicAnimCount(); ++i) {
+		const GraphicAnim *pga = _vm->logic()->graphicAnim(i);
+		if (pga->keyFrame == gd->firstFrame) {
+			int16 frame = pga->frame;
+			if (frame > 500) { // SFX
+				frame -= 500;
+			}
+			bool foundMatchingFrame = false;
+			for (j = 0; j < numTempFrames; ++j) {
+				if (tempFrames[j] == frame) {
+					foundMatchingFrame = true;
+					break;
+				}
+			}
+			if (!foundMatchingFrame) {
+				assert(numTempFrames < 20);
+				tempFrames[numTempFrames] = frame;
+				++numTempFrames;
+			}
+		}
+	}
+
+	// sort found frames ascending
+	bool swap = true;
+	while (swap) {
+		swap = false;
+		for (i = 0; i < numTempFrames - 1; ++i) {
+			if (tempFrames[i] > tempFrames[i + 1]) {
+				SWAP(tempFrames[i], tempFrames[i + 1]);
+				swap = true;
+			}
+		}
+	}
+
+	// queen.c l.962-980 / l.1269-1294
+	for (i = 0; i < gd->lastFrame; ++i) {
+		_vm->bankMan()->unpack(ABS(tempFrames[i]), firstImage + i, 15);
+	}
+	BobSlot *pbs = bob(bobNum);
+	pbs->animating = false;
+	if (visible) {
+		pbs->curPos(gd->x, gd->y);
+		if (tempFrames[0] < 0) {
+			pbs->xflip = true;
+		}
+		AnimFrame *paf = _newAnim[bobNum];
+		for (i = 1; i <= _vm->logic()->graphicAnimCount(); ++i) {
+			const GraphicAnim *pga = _vm->logic()->graphicAnim(i);
+			if (pga->keyFrame == gd->firstFrame) {
+				uint16 frameNr = 0;
+				for (j = 1; j <= gd->lastFrame; ++j) {
+					if (pga->frame > 500) {
+						if (pga->frame - 500 == tempFrames[j - 1]) {
+							frameNr = j + firstImage - 1 + 500;
+						}
+					} else if (pga->frame == tempFrames[j - 1]) {
+						frameNr = j + firstImage - 1;
+					}
+				}
+				paf->frame = frameNr;
+				paf->speed = pga->speed;
+				++paf;
+			}
+		}
+		paf->frame = 0;
+		paf->speed = 0;
+		pbs->animString(_newAnim[bobNum]);
+	}
+}
+
+
+void Graphics::animReset(uint16 bobNum) {
+	if (_newAnim[bobNum][0].frame != 0) {
+		bob(bobNum)->animString(_newAnim[bobNum]);
+	}
+}
+
+
+void Graphics::animErase(uint16 bobNum) {
+	_newAnim[bobNum][0].frame = 0;
+	BobSlot *pbs = bob(bobNum);
+	pbs->animating = false;
+	pbs->anim.string.buffer = NULL;
+}
+
+
+void Graphics::animEraseAll() {
+	for (int i = 1; i <= 16; ++i) {
+		_newAnim[i][0].frame = 0;
+	}
+}
+
+
 void Graphics::loadPanel() {
 	uint8 *pcxbuf = _vm->resource()->loadFile("panel.pcx");
 	if (pcxbuf == NULL) {

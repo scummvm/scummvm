@@ -270,7 +270,7 @@ WALK_OFF_MAX				Logic::_numWalkOffs
 PERSONS
 =======
 ALLOCATE_PERSON()			Logic::personAllocate
-CREATE_ANIM()				Logic::animCreate
+CREATE_ANIM()				Graphics::animCreate
 SET_PERSON_DATA()			Logic::personSetData
 SETUP_PERSON()				Logic::personSetup
 OBJ_PERSON()				Logic::objectForPerson
