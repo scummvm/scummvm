@@ -67,7 +67,7 @@ private:
 	snd_seq_t *seq_handle;
 	int seq_client, seq_port;
 	int my_client, my_port;
-	static int parse_addr(char *arg, int *client, int *port);
+	static int parse_addr(const char *arg, int *client, int *port);
 };
 
 MidiDriver_ALSA::MidiDriver_ALSA()
@@ -201,7 +201,7 @@ void MidiDriver_ALSA::sysEx(byte *msg, uint16 length) {
 	send_event(1);
 }
 
-int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port) {
+int MidiDriver_ALSA::parse_addr(const char *arg, int *client, int *port) {
 	char *p;
 
 	if (isdigit(*arg)) {
