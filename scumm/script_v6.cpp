@@ -2827,7 +2827,7 @@ void Scumm_v6::o6_stopTalking() {
 }
 
 void Scumm_v6::o6_openFile() {
-	int mode, len, slot;
+	int mode, len, slot, l, r;
 	byte filename[100];
 
 	_msgPtrToAdd = filename;
@@ -2836,10 +2836,15 @@ void Scumm_v6::o6_openFile() {
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
-
+	
+	for (r = strlen((char*)filename); r != 0; r--) {
+		if (filename[r - 1] == '\\')
+			break;
+	}
+	
 	mode = pop();
 	slot = -1;
-	for (int l = 0; l < 17; l++) {
+	for (l = 0; l < 17; l++) {
 		if (_hFileTable[l].isOpen() == false) {
 			slot = l;
 			break;
@@ -2848,9 +2853,9 @@ void Scumm_v6::o6_openFile() {
 
 	if (slot != -1) {
 		if (mode == 1)
-			_hFileTable[slot].open((char*)filename, this->getGameDataPath(), File::kFileReadMode);
+			_hFileTable[slot].open((char*)filename + r, getGameDataPath(), File::kFileReadMode);
 		else if (mode == 2)
-			_hFileTable[slot].open((char*)filename, this->getGameDataPath(), File::kFileWriteMode);
+			_hFileTable[slot].open((char*)filename + r, getGameDataPath(), File::kFileWriteMode);
 		else
 			error("o6_openFile(): wrong open file mode");
 
@@ -2879,8 +2884,27 @@ void Scumm_v6::o6_deleteFile() {
 	warning("stub o6_deleteFile(\"%s\")", filename);
 }
 
+int Scumm_v6::readFileToArray(int slot, int32 size) {
+	int rest = _hFileTable[slot].size() - _hFileTable[slot].pos();
+	writeVar(0, 0);
+	defineArray(0, 3, 0, rest);
+	byte *ptr = getResourceAddress(rtString, readVar(0));
+	_hFileTable[slot].read(ptr, rest);
+	return readVar(0);
+}
+
 void Scumm_v6::o6_readFile() {
-	error("stub o6_readFile(%d, %d)", pop(), pop());
+	int32 size = pop();
+	int slot = pop();
+
+	if (size == -2) {
+		push(_hFileTable[slot].readUint16LE());
+	} else if (size == -1) {
+		push(_hFileTable[slot].readByte());
+	} else {
+		push(readFileToArray(slot, size));
+	}
+	warning("o6_readFile(%d, %d)", slot, size);
 }
 
 void Scumm_v6::o6_findAllObjects() {

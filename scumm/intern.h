@@ -345,6 +345,7 @@ protected:
 	int popRoomAndObj(int *room);
 	void shuffleArray(int num, int minIdx, int maxIdx);
 	void unknownEA_func(int a, int b, int c, int d, int e);
+	int readFileToArray(int slot, int32 size);
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
