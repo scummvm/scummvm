@@ -111,8 +111,18 @@ enum Language {
 	RU_RUS = 21
 };
 
+struct LanguageDescription {
+	const char *name;
+	const char *description;
+	Common::Language id;
+};
+
+extern const LanguageDescription g_languages[];
+
+
 /** Convert a string containing a language name into a Language enum value. */
 extern Language parseLanguage(const String &str);
+extern const char *getLanguageString(Language id);
 
 /**
  * List of game platforms. Specifying a platform for a target can be used to
@@ -136,6 +146,7 @@ enum Platform {
 
 /** Convert a string containing a platform name into a Platform enum value. */
 extern Platform parsePlatform(const String &str);
+extern const char *getPlatformString(Platform id);
 
 }	// End of namespace Common
 

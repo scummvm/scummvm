@@ -127,14 +127,8 @@ void StackLock::unlock() {
 #pragma mark -
 
 
-struct LanguageDescription {
-	const char *name;
-	const char *description;
-	Common::Language id;
-};
-
-static const struct LanguageDescription languages[] = {
-	{"en", "English", EN_USA},
+const LanguageDescription g_languages[] = {
+	{"en", "English (US)", EN_USA},
 	{"de", "German", DE_DEU},
 	{"fr", "French", FR_FRA},
 	{"it", "Italian", IT_ITA},
@@ -143,7 +137,7 @@ static const struct LanguageDescription languages[] = {
 	{"jp", "Japanese", JA_JPN},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},
 	{"kr", "Korean", KO_KOR},
-	{"gb", "English", EN_GRB},
+	{"gb", "English (GB)", EN_GRB},
 	{"se", "Swedish", SE_SWE},
 	{"hb", "Hebrew", HB_HEB},
  	{"ru", "Russian", RU_RUS},
@@ -155,14 +149,23 @@ Language parseLanguage(const String &str) {
 		return UNK_LANG;
 
 	const char *s = str.c_str();
-	const LanguageDescription *l = languages;
-	while (l->name) {
+	const LanguageDescription *l = g_languages;
+	for (; l->name; ++l) {
 		if (!scumm_stricmp(l->name, s))
 			return l->id;
-		l++;
 	}
 
 	return UNK_LANG;
+}
+
+
+const char *getLanguageString(Language id) {
+	const LanguageDescription *l = g_languages;
+	for (; l->name; ++l) {
+		if (l->id == id)
+			return l->name;
+	}
+	return 0;
 }
 
 
@@ -184,6 +187,17 @@ Platform parsePlatform(const String &str) {
 		return kPlatformMacintosh;
 	else
 		return kPlatformUnknown;
+}
+
+
+const char *getPlatformString(Platform id) {
+	switch (id) {
+	case Common::kPlatformPC:			return "pc";
+	case Common::kPlatformAmiga:		return "amiga";
+	case Common::kPlatformAtariST:		return "atari";
+	case Common::kPlatformMacintosh:	return "macintosh";
+	default:							return 0;
+	}
 }
 
 
