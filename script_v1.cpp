@@ -1391,13 +1391,15 @@ void Scumm::o5_getDist()
 	o2 = getVarOrDirectWord(0x40);
 	r = getObjActToObjActDist(o1, o2);
 
-	/* Fix for monkey 2, dunno what's wrong in scummvm */
+	/* FIXME: Fix for monkey 2, dunno what's wrong in scummvm */
 	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40
 			&& r < 60)
 		r = 60;
 
-	if (r > 0)	// FIXME: Fixes several off-by-one errors (eg,					
-		r--;	//		  zak's tv). Find real cause of bug. 
+	/* FIXME: Patch to allow TV cord to be picked up in Zak256 */
+	if ((_gameId == GID_ZAK256) && (r > 0))
+		r--;	
+
 	setResult(r);
 }
 
