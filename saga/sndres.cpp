@@ -61,22 +61,50 @@ int SndRes::playVoice(uint32 voice_rn) {
 
 	debug(0, "SndRes::playVoice(%ld)", voice_rn);
 
-	// The Wyrmkeep release of Inherit the Earth provides a separate VOC
-	// file, sound/p2_a.voc, to correct voice 4 in the intro. Use that, if
-	// available.
-	// 
-	// FIXME: There's a nasty 'pop' at the beginning of the sound, and a
-	// smaller one at the end. I don't know if that's in the file, or in
-	// our playback code.
+	if (GAME_GetGameType() == GID_ITE && voice_rn == 4) {
+		// The Windows version of the Wyrmkeep release of Inherit the
+		// Earth provides a separate VOC file, sound/p2_a.voc, to
+		// correct voice 4 in the intro. In the Linux version, it's
+		// called P2_A.iaf and appears to be plain raw data.
+		//
+		// In either case, use the file if available.
+		// 
+		// FIXME: In the VOC case there's a nasty 'pop' at the
+		// beginning of the sound, , and a smaller one at the end. In
+		// the IAF case, the next voice will overlap. At least part of
+		// this is because of an obvious bug in playVoice(). See the
+		// FIXME comment there.
 
-	File f;
+		File f;
+		uint32 size;
+		bool voc = false;
 
-	if (GAME_GetGameType() == GID_ITE && voice_rn == 4 && f.open("sound/p2_a.voc")) {
-		uint32 size = f.size();
+		if (f.open("p2_a.voc"))
+			voc = true;
+		else
+			f.open("P2_A.iaf");
+
+		if (!f.isOpen())
+			return R_FAILURE;
+
+		size = f.size();
 		byte *snd_res = (byte *)malloc(size);
 		f.read(snd_res, size);
-		result = loadVocSound(snd_res, size, &snd_buffer);
 		f.close();
+
+		if (!voc) {
+			// FIXME: Verify this!
+			snd_buffer.s_stereo = 0;
+			snd_buffer.s_samplebits = 16;
+			snd_buffer.s_freq = 22050;
+			snd_buffer.res_data = snd_res;
+			snd_buffer.res_len = size;
+			snd_buffer.s_buf = snd_res + 16760;
+			snd_buffer.s_buf_len = size - 16760;
+			snd_buffer.s_signed = 1;
+			result = R_SUCCESS;
+		} else
+			result = loadVocSound(snd_res, size, &snd_buffer);
 	} else
 		result = load(_voice_ctxt, voice_rn, &snd_buffer);
 

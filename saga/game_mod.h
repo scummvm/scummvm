@@ -104,7 +104,6 @@ int GAME_GetDisplayInfo(R_GAME_DISPLAYINFO *);
 int GAME_GetSceneInfo(R_GAME_SCENEDESC *);
 int GAME_GetGame();
 int GAME_GetGameType();
-void GAME_setGameDirectory(const char *gamedir);
 GameList GAME_GameList();
 DetectedGameList GAME_ProbeGame(const FSList &fslist);
 

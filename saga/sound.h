@@ -41,7 +41,7 @@ struct R_SOUNDBUFFER {
 	int s_stereo;
 	int s_signed;
 
-	const byte *s_buf;
+	byte *s_buf;
 	size_t s_buf_len;
 };
 

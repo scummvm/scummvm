@@ -268,27 +268,11 @@ R_GAMEDESC GameDescs[] = {
 
 static R_GAMEMODULE GameModule;
 
-void GAME_setGameDirectory(const char *gamedir) {
-	assert(gamedir != NULL);
-
-	debug(0, "Using game data path: %s", gamedir);
-
-	strcpy(GameModule.game_dir, gamedir);
-}
-
 int GAME_Register() {
 	return R_SUCCESS;
 
-	// Register "gamedir" cfg cvar
-	strncpy(GameModule.game_dir, "./", R_MAXPATH);
-
-	if (CVAR_Register_S(GameModule.game_dir,
-		"gamedir", NULL, R_CVAR_CFG, R_MAXPATH) != R_SUCCESS) {
-		return R_FAILURE;
-	}
-
 	// Register "g_language" cfg cvar
-	strncpy(GameModule.game_dir, "us", R_MAXPATH);
+	strncpy(GameModule.game_language, "us", R_MAXPATH);
 
 	if (CVAR_Register_S(GameModule.game_language, "g_language",
 						NULL, R_CVAR_CFG, R_GAME_LANGSTR_LIMIT) != R_SUCCESS) {
@@ -305,16 +289,13 @@ int GAME_Register() {
 
 int GAME_Init() {
 	uint16 game_n;
-	char *game_dir;
 
-	game_dir = GameModule.game_dir;
-
-	if (DetectGame(game_dir, &game_n) != R_SUCCESS) {
+	if (DetectGame(&game_n) != R_SUCCESS) {
 		warning("No valid games were found in the specified directory.");
 		return R_FAILURE;
 	}
 
-	if (LoadGame(game_dir, game_n) != R_SUCCESS) {
+	if (LoadGame(game_n) != R_SUCCESS) {
 		warning("Error loading game resource files.");
 		return R_FAILURE;
 	}
@@ -432,7 +413,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 	return detectedGames;
 }
 
-int DetectGame(const char *game_dir, uint16 *game_n_p) {
+int DetectGame(uint16 *game_n_p) {
 	uint16 game_count = ARRAYSIZE(GameDescs);
 	uint16 game_n;
 
@@ -442,7 +423,7 @@ int DetectGame(const char *game_dir, uint16 *game_n_p) {
 
 	int file_missing = 0;
 
-	if ((game_dir == NULL) || (game_n_p == NULL)) {
+	if (game_n_p == NULL) {
 		return R_FAILURE;
 	}
 
@@ -473,14 +454,14 @@ int DetectGame(const char *game_dir, uint16 *game_n_p) {
 	return R_FAILURE;
 }
 
-int LoadGame(const char *game_dir, uint16 game_n) {
+int LoadGame(uint16 game_n) {
 	R_RSCFILE_CONTEXT *load_ctxt;
 	uint16 game_count = ARRAYSIZE(GameDescs);
 	const char *game_fname;
 	uint16 game_filect;
 	uint16 i;
 
-	if ((game_dir == NULL) || (game_n >= game_count)) {
+	if (game_n >= game_count) {
 		return R_FAILURE;
 	}
 
@@ -491,7 +472,6 @@ int LoadGame(const char *game_dir, uint16 game_n) {
 		return R_MEM;
 	}
 
-	File::addDefaultDirectory(game_dir);
 	GameModule.gfile_n = game_filect;
 
 	// Load game resource files

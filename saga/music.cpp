@@ -165,32 +165,32 @@ Music::~Music() {
 // reset.mid seems to be unused.
 
 const MUSIC_MIDITABLE Music::_midiTableITECD[26] = {
-	{"cave", R_MUSIC_LOOP},		// 9
-	{"intro", R_MUSIC_LOOP},	// 10
-	{"fvillage", R_MUSIC_LOOP},	// 11
-	{"elkhall", R_MUSIC_LOOP},	// 12
-	{"mouse", 0},				// 13
-	{"darkclaw", R_MUSIC_LOOP},	// 14
-	{"birdchrp", R_MUSIC_LOOP},	// 15
-	{"orbtempl", R_MUSIC_LOOP},	// 16
-	{"spooky", R_MUSIC_LOOP},	// 17
-	{"catfest", R_MUSIC_LOOP},	// 18
-	{"elkfanfare", 0},			// 19
-	{"bcexpl", R_MUSIC_LOOP},	// 20
-	{"boargtnt", R_MUSIC_LOOP},	// 21
-	{"boarking", R_MUSIC_LOOP},	// 22
-	{"explorea", R_MUSIC_LOOP},	// 23
-	{"exploreb", R_MUSIC_LOOP},	// 24
-	{"explorec", R_MUSIC_LOOP},	// 25
-	{"sunstatm", R_MUSIC_LOOP},	// 26
-	{"nitstrlm", R_MUSIC_LOOP},	// 27
-	{"humruinm", R_MUSIC_LOOP},	// 28
-	{"damexplm", R_MUSIC_LOOP},	// 29
-	{"tychom", R_MUSIC_LOOP},	// 30
-	{"kitten", R_MUSIC_LOOP},	// 31
-	{"sweet", R_MUSIC_LOOP},	// 32
-	{"brutalmt", R_MUSIC_LOOP},	// 33
-	{"shiala", R_MUSIC_LOOP}	// 34
+	{"cave.mid", R_MUSIC_LOOP},		// 9
+	{"intro.mid", R_MUSIC_LOOP},	// 10
+	{"fvillage.mid", R_MUSIC_LOOP},	// 11
+	{"elkhall.mid", R_MUSIC_LOOP},	// 12
+	{"mouse.mid", 0},				// 13
+	{"darkclaw.mid", R_MUSIC_LOOP},	// 14
+	{"birdchrp.mid", R_MUSIC_LOOP},	// 15
+	{"orbtempl.mid", R_MUSIC_LOOP},	// 16
+	{"spooky.mid", R_MUSIC_LOOP},	// 17
+	{"catfest.mid", R_MUSIC_LOOP},	// 18
+	{"elkfanfare.mid", 0},			// 19
+	{"bcexpl.mid", R_MUSIC_LOOP},	// 20
+	{"boargtnt.mid", R_MUSIC_LOOP},	// 21
+	{"boarking.mid", R_MUSIC_LOOP},	// 22
+	{"explorea.mid", R_MUSIC_LOOP},	// 23
+	{"exploreb.mid", R_MUSIC_LOOP},	// 24
+	{"explorec.mid", R_MUSIC_LOOP},	// 25
+	{"sunstatm.mid", R_MUSIC_LOOP},	// 26
+	{"nitstrlm.mid", R_MUSIC_LOOP},	// 27
+	{"humruinm.mid", R_MUSIC_LOOP},	// 28
+	{"damexplm.mid", R_MUSIC_LOOP},	// 29
+	{"tychom.mid", R_MUSIC_LOOP},	// 30
+	{"kitten.mid", R_MUSIC_LOOP},	// 31
+	{"sweet.mid", R_MUSIC_LOOP},	// 32
+	{"brutalmt.mid", R_MUSIC_LOOP},	// 33
+	{"shiala.mid", R_MUSIC_LOOP}	// 34
 };
 
 int Music::play(uint32 music_rn, uint16 flags) {
@@ -212,9 +212,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 	if (GAME_GetGameType() == GID_ITE) {
 		if (music_rn >= 9 && music_rn <= 34) {
-			char file_name[20];
-			sprintf(file_name, "music/%s.mid", _midiTableITECD[music_rn - 9].filename);
-			f_midi.open(file_name);
+			f_midi.open(_midiTableITECD[music_rn - 9].filename);
 		}
 	}
 

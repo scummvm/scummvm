@@ -79,7 +79,6 @@ struct R_GAMEMODULE {
 	int game_number;
 	R_GAMEDESC *gamedesc;
 	int g_skipintro;
-	char game_dir[R_MAXPATH];
 	char game_language[R_GAME_LANGSTR_LIMIT];
 	uint16 gfile_n;
 	R_GAME_FILEDATA *gfile_data;
@@ -90,8 +89,8 @@ struct R_GAMEMODULE {
 };
 
 int LoadLanguage();
-int LoadGame(const char *game_dir, uint16 game_n_p);
-int DetectGame(const char *game_dir, uint16 *game_n_p);
+int LoadGame(uint16 game_n_p);
+int DetectGame(uint16 *game_n_p);
 
 } // End of namespace Saga
 
