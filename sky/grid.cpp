@@ -150,7 +150,7 @@ void SkyGrid::loadGrids(void) {
 
 bool SkyGrid::getGridValues(Compact *cpt, uint32 *resBitNum, uint32 *resWidth) {
 
-	uint32 width = *(uint32*)SkyCompact::getCompactElem(cpt,cpt->extCompact->megaSet+C_GRID_WIDTH);
+	uint16 width = *(uint16*)SkyCompact::getCompactElem(cpt,cpt->extCompact->megaSet+C_GRID_WIDTH);
 	return getGridValues(cpt->xcood, cpt->ycood, width, cpt, resBitNum, resWidth);
 }
 
