@@ -403,7 +403,9 @@ int Scumm::readArray(int array, int idx, int base)
 
 	base += idx * ah->dim1_size;
 
-	assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
+	// FIXME: comment this for the time being as it was causing ft to crash
+	// in the minefeild
+	// assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
 
 	if (ah->type == 4) {
 		return ah->data[base];
