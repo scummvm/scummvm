@@ -228,7 +228,7 @@ int Scumm::getObjActToObjActDist(int a, int b)
 		return 0xFF;
 
 	if (acta) {
-		AdjustBoxResult r = acta->adjustXYToBeInBox(_xPos, _yPos, 0);
+		AdjustBoxResult r = acta->adjustXYToBeInBox(_xPos, _yPos, -1);
 		_xPos = r.x;
 		_yPos = r.y;
 	}
