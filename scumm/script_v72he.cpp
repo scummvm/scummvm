@@ -706,7 +706,7 @@ void ScummEngine_v72he::o72_setTimer() {
 void ScummEngine_v72he::o72_unknown5A() {
 	int value = pop();
 	push(4);
-	warning("o72_unknown5A stub (%d)", value);
+	debug(1,"o72_unknown5A stub (%d)", value);
 }
 
 void ScummEngine_v72he::o72_wordArrayDec() {

@@ -801,6 +801,7 @@ protected:
 	
 	/* HE version 90 script opcodes */
 	void o90_unknown1C();
+	void o90_unknown25();
 	void o90_unknown26();
 };
 
