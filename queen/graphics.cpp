@@ -32,6 +32,13 @@
 
 namespace Queen {
 
+#ifdef __PALM_OS__
+static const BamScene::BamDataBlock *_carData;
+static const BamScene::BamDataBlock *_fight1Data;
+static const BamScene::BamDataBlock *_fight2Data;
+static const BamScene::BamDataBlock *_fight3Data;
+#endif
+
 const Box BobSlot::_defaultBox(-1, -1, -1, -1);
 
 void BobSlot::curPos(int16 xx, int16 yy) {
@@ -1229,6 +1236,7 @@ void BamScene::loadState(uint32 ver, byte *&ptr) {
 	_flag = READ_BE_UINT16(ptr); ptr += 2;
 }
 
+#ifndef __PALM_OS__
 const BamScene::BamDataBlock BamScene::_carData[] = {
 	{ { 310, 105, 1 }, { 314, 106, 17 }, { 366, 101,  1 },  0 },
 	{ { 303, 105, 1 }, { 307, 106, 17 }, { 214,   0, 10 },  0 },
@@ -1495,6 +1503,25 @@ const BamScene::BamDataBlock BamScene::_fight3Data[] = {
 	{ {  75, 96,  1 }, { 187,  96, -23 }, { 183,  41, 47 },  0 },
 	{ {  75, 96,  1 }, { 187,  96, -23 }, { 183,  41, 47 }, 99 }
 };
+#endif
 
 } // End of namespace Queen
 
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Queen_Graphics)
+_GSETPTR(Queen::_carData, GBVARS_GRAPHICSCARDATA_INDEX, Queen::BamScene::BamDataBlock, GBVARS_QUEEN)
+_GSETPTR(Queen::_fight1Data, GBVARS_GRAPHICSFIGHT1DATA_INDEX, Queen::BamScene::BamDataBlock, GBVARS_QUEEN)
+_GSETPTR(Queen::_fight2Data, GBVARS_GRAPHICSFIGHT2DATA_INDEX, Queen::BamScene::BamDataBlock, GBVARS_QUEEN)
+_GSETPTR(Queen::_fight3Data, GBVARS_GRAPHICSFIGHT3DATA_INDEX, Queen::BamScene::BamDataBlock, GBVARS_QUEEN)
+_GEND
+
+_GRELEASE(Queen_Graphics)
+_GRELEASEPTR(GBVARS_GRAPHICSCARDATA_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_GRAPHICSFIGHT1DATA_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_GRAPHICSFIGHT2DATA_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_GRAPHICSFIGHT3DATA_INDEX, GBVARS_QUEEN)
+_GEND
+
+#endif

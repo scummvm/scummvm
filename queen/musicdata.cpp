@@ -24,6 +24,16 @@
 
 namespace Queen {
 
+#ifdef __PALM_OS__
+
+const songData *Sound::_songDemo;
+const songData *Sound::_song;
+const tuneData *Sound::_tuneDemo;
+const tuneData *Sound::_tune;
+const char *Sound::_sfxName;
+const int16 *Sound::_jungleList;
+
+#else
 const songData Sound::_songDemo[] = {
 	/* 1 - Hotel Gangsters */
 	{ { 1, 0 }, 128, 128, 128, 1, 0 }, 
@@ -1477,6 +1487,7 @@ const tuneData Sound::_tune[] = {
 	/* 207 - Frank Destroyed */
 	{ { 25, 1044, 0 }, { 0, 0 }, 1, 0 }, 
 
+
 	/* 208 - Jaspar Eats */
 	{ { 0, 0 }, { 134, 0 }, 2, 0 }, 
 
@@ -1904,5 +1915,29 @@ const char *Sound::_sfxName[] = {
 };
 
 const int16 Sound::_jungleList[] = { 15, 16, 17, 18, 7, 8, 9, 10, 11, 12, 13, 14, 0 };
+#endif
 
 } // End of namespace Queen
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Queen_Musicdata)
+_GSETPTR(Queen::Sound::_songDemo, GBVARS_MUSICDATASONGDEMO_INDEX, Queen::songData, GBVARS_QUEEN)
+_GSETPTR(Queen::Sound::_song, GBVARS_MUSICDATASONG_INDEX, Queen::songData, GBVARS_QUEEN)
+_GSETPTR(Queen::Sound::_tuneDemo, GBVARS_MUSICDATATUNEDEMO_INDEX, Queen::tuneData, GBVARS_QUEEN)
+_GSETPTR(Queen::Sound::_tune, GBVARS_MUSICDATATUNE_INDEX, Queen::tuneData, GBVARS_QUEEN)
+_GSETPTR(Queen::Sound::_sfxName, GBVARS_MUSICDATASFXNAME_INDEX, char, GBVARS_QUEEN)
+_GSETPTR(Queen::Sound::_jungleList, GBVARS_MUSICDATAJUNGLELIST_INDEX, int16, GBVARS_QUEEN)
+_GEND
+
+_GRELEASE(Queen_Musicdata)
+_GRELEASEPTR(GBVARS_MUSICDATASONGDEMO_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_MUSICDATASONG_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_MUSICDATATUNEDEMO_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_MUSICDATATUNE_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_MUSICDATASFXNAME_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_MUSICDATAJUNGLELIST_INDEX, GBVARS_QUEEN)
+_GEND
+
+#endif

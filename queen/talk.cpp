@@ -38,6 +38,10 @@
 
 namespace Queen {
 
+#ifdef __PALM_OS__
+static const Talk::SpeechParameters *_speechParameters;
+#endif
+
 void Talk::talk(
 		const char *filename, 
 		int personInRoom,
@@ -892,7 +896,13 @@ void Talk::speakSegment(
 	segment[length] = '\0';
 	
 	char voiceFileName[MAX_STRING_SIZE];
+#ifndef __PALM_OS__
 	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index + 1);
+#else
+	// %(X)x is not supported on PalmOS
+	sprintf(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
+	strncpy(voiceFileName + strlen(voiceFileName) - 8, voiceFileName + strlen(voiceFileName) - 1, 2); 
+#endif
 
 	// debug(6, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
 	//		length, segment, person->name, voiceFileName);
@@ -1415,6 +1425,7 @@ int16 Talk::selectSentence() {
 	return selectedSentence;
 }
 	
+#ifndef __PALM_OS__
 const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE",0,1,1,10,2,3,"",0},
 	{ "JOE",0,3,3,28,2,3,"",0},
@@ -1875,6 +1886,19 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 
 	{ "*",0,0,0,0,0,0,"",0}
 };
-
+#endif
 
 } // End of namespace Queen
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Queen_Talk)
+_GSETPTR(Queen::_speechParameters, GBVARS_SPEECHPARAMETERS_INDEX, Queen::Talk::SpeechParameters, GBVARS_QUEEN)
+_GEND
+
+_GRELEASE(Queen_Talk)
+_GRELEASEPTR(GBVARS_SPEECHPARAMETERS_INDEX, GBVARS_QUEEN)
+_GEND
+
+#endif

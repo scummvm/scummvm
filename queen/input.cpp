@@ -106,7 +106,7 @@ void Input::delay(uint amount) {
 
 				case OSystem::EVENT_LBUTTONDOWN:
 					_mouseButton |= MOUSE_LBUTTON;
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
 					_mouse_x = event.mouse.x;
 					_mouse_y = event.mouse.y;
 #endif
@@ -234,4 +234,3 @@ int Input::checkKeys() {
 
 
 } // End of namespace Queen
-

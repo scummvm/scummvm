@@ -227,12 +227,18 @@ private:
 		int16 frame;
 	};
 
+#ifdef __PALM_OS__
+public:
+#endif
 	struct BamDataBlock {
 		BamDataObj obj1; // truck / Frank
 		BamDataObj obj2; // Rico  / robot
 		BamDataObj fx;
 		int16 sfx;
 	};
+#ifdef __PALM_OS__
+private:
+#endif
 
 	BobSlot *_obj1;
 	BobSlot *_obj2;
@@ -243,10 +249,12 @@ private:
 
 	QueenEngine *_vm;
 
+#ifndef __PALM_OS__
 	static const BamDataBlock _carData[];
 	static const BamDataBlock _fight1Data[];
 	static const BamDataBlock _fight2Data[];
 	static const BamDataBlock _fight3Data[];
+#endif
 };
 
 } // End of namespace Queen

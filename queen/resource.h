@@ -124,10 +124,11 @@ protected:
 
 	static const char *_tableFilename;
 	static const GameVersion _gameVersions[];
+#ifndef __PALM_OS__
 	static ResourceEntry _resourceTablePEM10[];
+#endif
 };
 
 } // End of namespace Queen
 
 #endif
-

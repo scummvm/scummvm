@@ -84,6 +84,7 @@ private:
 		int16 gameStateValue;
 	};
 
+#ifndef __PALM_OS__
 	struct SpeechParameters {
 		const char *name;
 		signed char state,faceDirection;
@@ -91,6 +92,17 @@ private:
 		const char *animation;
 		signed char ff;
 	};
+#else
+public:
+	struct SpeechParameters {
+		const char name[11];
+		signed char state,faceDirection;
+		signed char body,bf,rf,af;
+		const char animation[80];
+		signed char ff;
+	};
+private:
+#endif
 
 	QueenEngine *_vm;
 
@@ -145,7 +157,9 @@ private:
 	char _talkString[5][MAX_STRING_SIZE];
 	char _joeVoiceFilePrefix[5][MAX_STRING_SIZE];
 
+#ifndef __PALM_OS__
 	static const SpeechParameters _speechParameters[];
+#endif
 
 	Talk(QueenEngine *vm);
 	~Talk();

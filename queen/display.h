@@ -175,10 +175,12 @@ private:
 	QueenEngine *_vm;
 
 	const uint8 *_font;
+#ifndef __PALM_OS__
 	static const uint8 _fontRegular[];
 	static const uint8 _fontHebrew[];
 	static const uint8 _palJoeClothes[];
 	static const uint8 _palJoeDress[];
+#endif
 };
 
 

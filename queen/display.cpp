@@ -29,11 +29,18 @@
 
 namespace Queen {
 
+#ifdef __PALM_OS__
+static const uint8 *_fontRegular;
+static const uint8 *_fontHebrew;
+static const uint8 *_palJoeClothes;
+static const uint8 *_palJoeDress;
+#endif
+
 Display::Display(QueenEngine *vm, OSystem *system)
 	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0), 
 	_system(system), _vm(vm) {
 	_dynalum.prevColMask = 0xFF;
-	
+
 	if (vm->resource()->getLanguage() == HEBREW)
 		_font = _fontHebrew;
 	else
@@ -41,12 +48,18 @@ Display::Display(QueenEngine *vm, OSystem *system)
 
 	initFont();
 
+#ifndef __PALM_OS__
 	_screenBuf   = new uint8[SCREEN_W * SCREEN_H];
 	_panelBuf    = new uint8[PANEL_W * PANEL_H];
 	_backdropBuf = new uint8[BACKDROP_W * BACKDROP_H];
 	memset(_screenBuf,   0, SCREEN_W * SCREEN_H);
 	memset(_panelBuf,    0, PANEL_W * PANEL_H);
 	memset(_backdropBuf, 0, BACKDROP_W * BACKDROP_H);
+#else
+	_screenBuf   = (uint8 *)calloc(SCREEN_W * SCREEN_H, sizeof(uint8));
+	_panelBuf    = (uint8 *)calloc(PANEL_W * PANEL_H, sizeof(uint8));
+	_backdropBuf = (uint8 *)calloc(BACKDROP_W * BACKDROP_H, sizeof(uint8));
+#endif
 
 	memset(_mousePtr, 0, sizeof(_mousePtr));
 
@@ -68,9 +81,15 @@ Display::Display(QueenEngine *vm, OSystem *system)
 }
 
 Display::~Display() {
+#ifndef __PALM_OS__
 	delete[] _backdropBuf;
 	delete[] _panelBuf;
 	delete[] _screenBuf;
+#else
+	free(_backdropBuf);
+	free(_panelBuf);
+	free(_screenBuf);
+#endif
 
 	delete[] _pal.room;
 	delete[] _pal.screen;
@@ -991,7 +1010,7 @@ void Display::blankScreenEffect2() {
 			p += SCREEN_W;
 		}
 		_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
-		_system->updateScreen();
+			_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
@@ -1020,11 +1039,12 @@ void Display::blankScreenEffect3() {
 			++i;
 			_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
 		}
-		_system->updateScreen();
+			_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
 
+#ifndef __PALM_OS__
 const uint8 Display::_fontRegular[] = {
 	0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 
 	0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 
@@ -1458,6 +1478,25 @@ const uint8 Display::_palJoeDress[] = {
 	0x80, 0x45, 0x45, 0xA3, 0x5F, 0x5F, 0xC8, 0x7C, 0x7C, 
 	0xEC, 0x9C, 0x9C
 };
-
+#endif
 
 } // End of namespace Queen
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Queen_Display)
+_GSETPTR(Queen::_fontRegular, GBVARS_DISPLAYFONTREGULAR_INDEX, uint8, GBVARS_QUEEN)
+_GSETPTR(Queen::_fontHebrew, GBVARS_DISPLAYFONTHEBREW_INDEX, uint8, GBVARS_QUEEN)
+_GSETPTR(Queen::_palJoeClothes, GBVARS_DISPLAYPALJOECLOTHES_INDEX, uint8, GBVARS_QUEEN)
+_GSETPTR(Queen::_palJoeDress, GBVARS_DISPLAYPALJOEDRESS_INDEX, uint8, GBVARS_QUEEN)
+_GEND
+
+_GRELEASE(Queen_Display)
+_GRELEASEPTR(GBVARS_DISPLAYFONTREGULAR_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_DISPLAYFONTHEBREW_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_DISPLAYPALJOECLOTHES_INDEX, GBVARS_QUEEN)
+_GRELEASEPTR(GBVARS_DISPLAYPALJOEDRESS_INDEX, GBVARS_QUEEN)
+_GEND
+
+#endif

@@ -24,6 +24,9 @@
 
 namespace Queen {
 
+#ifdef __PALM_OS__
+static ResourceEntry *_resourceTablePEM10;
+#endif
 
 const char *Resource::_tableFilename = "queen.tbl";
 
@@ -56,6 +59,7 @@ Resource::Resource(const Common::String &datafilePath)
 Resource::~Resource() {
 	_resourceFile->close();
 	delete _resourceFile;
+
 	if(_resourceTable != _resourceTablePEM10) 
 		delete[] _resourceTable;
 }
@@ -81,6 +85,7 @@ int32 Resource::resourceIndex(const char *filename) const {
 	
 
 	//Use simple binary search to locate file
+#ifndef __PALM_OS__
 	for (;;) {
 		uint32 cur = (low + high) / 2;
 		int32 diff = strcmp(entryName, _resourceTable[cur].filename);
@@ -96,6 +101,14 @@ int32 Resource::resourceIndex(const char *filename) const {
 		else
 			high = cur;
 	}
+#else
+	// Does work for me (????) use this instead
+	uint32 cur = 0;
+	do {
+		if (!strcmp(entryName, _resourceTable[cur].filename))
+			return cur;
+	} while (cur++ <= high);
+#endif
 
 	debug(7, "Couldn't find file '%s'", entryName);
 	return -1;
@@ -113,8 +126,13 @@ uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) 
 	ResourceEntry *re = resourceEntry(filename);
 	assert(re != NULL);
 	uint32 size = re->size - skipBytes;
+#ifndef __PALM_OS__
 	if (dstBuf == NULL)
 		dstBuf = new byte[size];
+#else
+	if (dstBuf == NULL)
+		dstBuf = (byte *)calloc(size, sizeof(byte));
+#endif
 	_resourceFile->seek(re->offset + skipBytes);
 	_resourceFile->read(dstBuf, size);
 	return dstBuf;
@@ -272,3 +290,15 @@ char *LineReader::nextLine() {
 
 } // End of namespace Queen
 
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Queen_Restables)
+_GSETPTR(Queen::_resourceTablePEM10, GBVARS_RESOURCETABLEPM10_INDEX, Queen::ResourceEntry, GBVARS_QUEEN)
+_GEND
+
+_GRELEASE(Queen_Restables)
+_GRELEASEPTR(GBVARS_RESOURCETABLEPM10_INDEX, GBVARS_QUEEN)
+_GEND
+
+#endif
