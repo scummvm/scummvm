@@ -110,7 +110,7 @@ void QueenEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("music_mute", false);
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("talkspeed", Logic::DEFAULT_TALK_SPEED);
-	ConfMan.registerDefault("speech_mute", !_resource->isCD());
+	ConfMan.registerDefault("speech_mute", _resource->isDemo() || _resource->isInterview());
 	ConfMan.registerDefault("subtitles", true);
 }
 
@@ -126,6 +126,11 @@ void QueenEngine::checkOptionSettings() {
 	if (!_sound->speechOn()) {
 		_subtitles = true;
 	}
+	
+	// demo and interview versions don't have speech at all
+	if (_sound->speechOn() && (_resource->isDemo() || _resource->isInterview())) {
+		_sound->speechToggle(false);
+	}
 }
 
 void QueenEngine::readOptionSettings() {
@@ -133,7 +138,7 @@ void QueenEngine::readOptionSettings() {
 	_sound->musicToggle(!ConfMan.getBool("music_mute"));
 	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
 	_talkSpeed = ConfMan.getInt("talkspeed");
-	_sound->speechToggle(_resource->isCD() ? !ConfMan.getBool("speech_mute"): false);
+	_sound->speechToggle(!ConfMan.getBool("speech_mute"));
 	_subtitles = ConfMan.getBool("subtitles");
 	checkOptionSettings();
 }
