@@ -27,12 +27,9 @@
 
 namespace Scumm {
 
-//////////////////////////////////////////////////
-//
-// The FM Towns Euphony version of MidiParser
-//
-//////////////////////////////////////////////////
-
+/**
+ * The FM Towns Euphony version of MidiParser.
+ */
 class MidiParser_EUP : public MidiParser {
 protected:
 	struct {

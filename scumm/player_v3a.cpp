@@ -34,12 +34,6 @@ static const uint16 note_freqs[4][12] = {
 	{0x00D6,0x00CA,0x00BE,0x00B4,0x00A9,0x00A0,0x0097,0x008E,0x0086,0x007F,0x00F0,0x00E2}
 };
 
-////////////////////////////////////////
-//
-// V3 Amiga sound/music driver
-//
-////////////////////////////////////////
-
 Player_V3A::Player_V3A(ScummEngine *scumm) {
 	int i;
 	_scumm = scumm;

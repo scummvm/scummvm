@@ -35,6 +35,9 @@ namespace Scumm {
 
 class ScummEngine;
 
+/**
+ * iMuse Digital Implementation for SCUMM v7 and higher.
+ */
 class IMuseDigital : public MusicEngine {
 private:
 

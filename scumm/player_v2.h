@@ -67,11 +67,9 @@ struct channel_data {
 #endif
 
 
-union ChannelInfo {
-	channel_data d;
-	uint16 array[sizeof(channel_data)/2];
-};
-
+/**
+ * V2 PC-Speaker MIDI driver.
+ */
 class Player_V2 : public MusicEngine {
 public:
 	Player_V2(ScummEngine *scumm);
@@ -112,6 +110,11 @@ protected:
 	byte *_retaddr;
 
 private:
+	union ChannelInfo {
+		channel_data d;
+		uint16 array[sizeof(channel_data)/2];
+	};
+	
 	int _music_timer;
 	int _music_timer_ctr;
 	int _ticks_per_music_timer;

@@ -32,11 +32,12 @@ class SoundMixer;
 
 namespace Scumm {
 
-#define	V2A_MAXSLOTS 8
-
 class ScummEngine;
 class V2A_Sound;
 
+/**
+ * V2 Amiga sound/music driver.
+ */
 class Player_V2A : public MusicEngine {
 public:
 	Player_V2A(ScummEngine *scumm);
@@ -50,17 +51,22 @@ public:
 	virtual int  getSoundStatus(int sound) const;
 
 private:
-	OSystem *_system;
-	ScummEngine *_scumm;
-	Player_MOD *_mod;
+	enum {
+		V2A_MAXSLOTS = 8
+	};
 
 	struct soundSlot
 	{
 		int id;
 		V2A_Sound *sound;
-	} _slot[V2A_MAXSLOTS];
-	int getSoundSlot (int id = 0) const;
+	};
 
+	OSystem *_system;
+	ScummEngine *_scumm;
+	Player_MOD *_mod;
+	soundSlot _slot[V2A_MAXSLOTS];
+
+	int getSoundSlot (int id = 0) const;
 	static void update_proc(void *param);
 	void updateSound();
 };

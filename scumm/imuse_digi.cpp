@@ -28,13 +28,6 @@
 
 namespace Scumm {
 
-////////////////////////////////////////
-//
-// iMuse Digital Implementation
-//   for SCUMM v7 and higher
-//
-////////////////////////////////////////
-
 struct imuse_music_table {
 	int room;
 	int id;

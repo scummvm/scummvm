@@ -24,12 +24,6 @@
 
 namespace Scumm {
 
-////////////////////////////////////////
-//
-// Generic Amiga MOD mixer - provides a 60Hz 'update' routine.
-//
-////////////////////////////////////////
-
 Player_MOD::Player_MOD(ScummEngine *scumm) {
 	int i;
 	_mixer = scumm->_mixer;

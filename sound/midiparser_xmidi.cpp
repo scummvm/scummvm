@@ -25,12 +25,12 @@
 #include "common/util.h"
 
 
-//////////////////////////////////////////////////
-//
-// The XMIDI version of MidiParser
-//
-//////////////////////////////////////////////////
-
+/**
+ * The XMIDI version of MidiParser.
+ * 
+ * Much of this code is adapted from the XMIDI implementation from the exult
+ * project.
+ */
 class MidiParser_XMIDI : public MidiParser {
 protected:
 	NoteTimer _notes_cache[32];
@@ -48,16 +48,6 @@ public:
 	bool loadMusic (byte *data, uint32 size);
 };
 
-
-
-//////////////////////////////////////////////////
-//
-// MidiParser_XMIDI implementation
-//
-// Much of this code is adapted from the XMIDI
-// implementation from the exult project.
-//
-//////////////////////////////////////////////////
 
 // This is a special XMIDI variable length quantity
 uint32 MidiParser_XMIDI::readVLQ2 (byte * &pos) {

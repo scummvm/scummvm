@@ -24,10 +24,9 @@
 #ifndef INCLUDED_MIDIPARSER
 #define INCLUDED_MIDIPARSER
 
-class MidiParser;
-
 #include "common/scummsys.h"
 
+class MidiParser;
 class MidiDriver;
 
 

@@ -340,12 +340,6 @@ static const uint16 pcjr_freq_table[12] = {
 };
 #endif
 
-////////////////////////////////////////
-//
-// V2 PC-Speaker MIDI driver
-//
-////////////////////////////////////////
-
 
 Player_V2::Player_V2(ScummEngine *scumm) {
 	int i;

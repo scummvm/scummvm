@@ -29,12 +29,6 @@ namespace Scumm {
 
 #define BASE_FREQUENCY 3579545
 
-////////////////////////////////////////
-//
-// V2 Amiga sound/music driver
-//
-////////////////////////////////////////
-
 static uint32	CRCtable[256];
 static void	InitCRC (void)
 {
@@ -49,6 +43,7 @@ static void	InitCRC (void)
 		CRCtable[i] = n;
 	}
 }
+
 static uint32 GetCRC (byte *data, int len)
 {
 	uint32 CRC = 0xFFFFFFFF;

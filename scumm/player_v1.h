@@ -27,23 +27,9 @@
 
 namespace Scumm {
 
-#define FB_WNOISE 0x12000       /* feedback for white noise */
-#define FB_PNOISE 0x08000       /* feedback for periodic noise */
-
-struct channel_data_v1 {
-	uint freq;
-	uint volume;
-	byte *cmd_ptr;
-	uint notelen;
-	uint hull_counter;
-	uint attack;
-	uint decay;
-	uint level;
-	uint sustain_1;
-	uint sustain_2;
-	int  sustctr;
-};
-
+/**
+ * V1 PC-Speaker player.
+ */
 class Player_V1 : public Player_V2 {
 public:
 	Player_V1(ScummEngine *scumm);
@@ -63,7 +49,6 @@ protected:
 	virtual void generatePCjrSamples(int16 *data, uint len);
 
 	void restartSound();
-	void next_speaker_cmd(ChannelInfo *channel);
 
 	void set_mplex(uint mplex);
 	void parseSpeakerChunk();
@@ -72,6 +57,20 @@ protected:
 	void nextPCjrCmd();
 
 private:
+	struct channel_data_v1 {
+		uint freq;
+		uint volume;
+		byte *cmd_ptr;
+		uint notelen;
+		uint hull_counter;
+		uint attack;
+		uint decay;
+		uint level;
+		uint sustain_1;
+		uint sustain_2;
+		int  sustctr;
+	};
+
 	channel_data_v1 _channels[4];
 
 	byte *_next_chunk;

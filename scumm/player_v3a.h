@@ -32,11 +32,11 @@ class SoundMixer;
 
 namespace Scumm {
 
-#define	V3A_MAXMUS	8
-#define	V3A_MAXSFX	8
-
 class ScummEngine;
 
+/**
+ * V3 Amiga sound/music driver.
+ */
 class Player_V3A : public MusicEngine {
 public:
 	Player_V3A(ScummEngine *scumm);
@@ -50,31 +50,23 @@ public:
 	virtual int  getSoundStatus(int sound) const;
 
 private:
-	OSystem *_system;
-	ScummEngine *_scumm;
-	Player_MOD *_mod;
+	enum {
+		V3A_MAXMUS = 8,
+		V3A_MAXSFX = 8
+	};
 
 	struct musChan
 	{
 		int id;
 		int dur;
-	} _mus[V3A_MAXMUS];
-	int getMusChan (int id = 0) const;
+	};
 
 	struct sfxChan
 	{
 		int id;
 		int dur;
 		// SFX will eventually have pitch bends
-	} _sfx[V3A_MAXSFX];
-	int getSfxChan (int id = 0) const;
-
-	int _curSong;
-	uint8 *_songData;
-	uint16 _songPtr;
-	uint16 _songDelay;
-	int _music_timer;
-	bool _isinit;
+	};
 
 	struct instData
 	{
@@ -84,8 +76,26 @@ private:
 		uint16 _llen[6];
 		uint16 _oct[6];
 		int16 _pitadjust;
-	} **_wavetable;
+	};
 
+	OSystem *_system;
+	ScummEngine *_scumm;
+	Player_MOD *_mod;
+
+	musChan _mus[V3A_MAXMUS];
+	sfxChan _sfx[V3A_MAXSFX];
+
+	int _curSong;
+	uint8 *_songData;
+	uint16 _songPtr;
+	uint16 _songDelay;
+	int _music_timer;
+	bool _isinit;
+
+	instData **_wavetable;
+
+	int getMusChan (int id = 0) const;
+	int getSfxChan (int id = 0) const;
 	static void update_proc(void *param);
 	void playMusic();
 };

@@ -30,8 +30,9 @@
 
 namespace Scumm {
 
-#define	MOD_MAXCHANS	16
-
+/**
+ * Generic Amiga MOD mixer - provides a 60Hz 'update' routine.
+ */
 class Player_MOD {
 public:
 	Player_MOD(ScummEngine *scumm);
@@ -50,11 +51,9 @@ public:
 	virtual void clearUpdateProc();
 
 private:
-	SoundMixer *_mixer;
-
-	uint32 _mixamt;
-	uint32 _mixpos;
-	int _samplerate;
+	enum {
+		MOD_MAXCHANS = 16
+	};
 
 	struct soundChan
 	{
@@ -66,6 +65,13 @@ private:
 		RateConverter *converter;
 		AudioInputStream *input;
 	};
+
+	SoundMixer *_mixer;
+
+	uint32 _mixamt;
+	uint32 _mixpos;
+	int _samplerate;
+
 	soundChan _channels[MOD_MAXCHANS];
 
 	uint8 _maxvol;

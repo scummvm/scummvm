@@ -27,14 +27,11 @@
 
 namespace Scumm {
 
+#define FB_WNOISE 0x12000       /* feedback for white noise */
+#define FB_PNOISE 0x08000       /* feedback for periodic noise */
+
 #define TIMER_BASE_FREQ 1193000
 #define FIXP_SHIFT  16
-
-////////////////////////////////////////
-//
-// V1 PC-Speaker player
-//
-////////////////////////////////////////
 
 
 Player_V1::Player_V1(ScummEngine *scumm) : Player_V2(scumm) {	

@@ -25,12 +25,9 @@
 #include "common/util.h"
 
 
-//////////////////////////////////////////////////
-//
-// The Standard MIDI File version of MidiParser
-//
-//////////////////////////////////////////////////
-
+/**
+ * The Standard MIDI File version of MidiParser.
+ */
 class MidiParser_SMF : public MidiParser {
 protected:
 	byte *_buffer;
@@ -49,15 +46,8 @@ public:
 };
 
 
-
-//////////////////////////////////////////////////
-//
-// MidiParser_SMF implementation
-//
-//////////////////////////////////////////////////
-
-static byte command_lengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
-static byte special_lengths[16] = { 0, 1, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
+static const byte command_lengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
+static const byte special_lengths[16] = { 0, 1, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
 
 MidiParser_SMF::~MidiParser_SMF() {
 	if (_buffer)

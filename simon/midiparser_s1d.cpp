@@ -28,12 +28,13 @@
 
 namespace Simon {
 
-//////////////////////////////////////////////////
-//
-// Simon 1 Demo version of MidiParser
-//
-//////////////////////////////////////////////////
-
+/**
+ * Simon 1 Demo version of MidiParser.
+ *
+ * This parser is the result of eyeballing the one MUS file that's included
+ * with simon1demo. So there might be some things missing. I've tried to notate
+ * question-mark areas where they occur.
+ */
 class MidiParser_S1D : public MidiParser {
 protected:
 	byte *_data;
@@ -50,19 +51,6 @@ public:
 	bool loadMusic(byte *data, uint32 size);
 };
 
-
-
-//////////////////////////////////////////////////
-//
-// MidiParser_S1D implementation
-//
-// This parser is the result of eyeballing the
-// one MUS file that's included with simon1demo.
-// So there might be some things missing.
-// I've tried to notate question-mark areas
-// where they occur.
-//
-//////////////////////////////////////////////////
 
 // The VLQs for simon1demo seem to be
 // in Little Endian format.
