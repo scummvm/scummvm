@@ -19,9 +19,10 @@
  */
 
 #include "stdafx.h"
-#include "widget.h"
-#include "dialog.h"
-#include "newgui.h"
+#include "common/util.h"
+#include "gui/widget.h"
+#include "gui/dialog.h"
+#include "gui/newgui.h"
 
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
@@ -39,8 +40,8 @@ void Widget::draw() {
 		return;
 
 	// Account for our relative position in the dialog
-	_x += _boss->_x;
-	_y += _boss->_y;
+	_x += _boss->getAbsX();
+	_y += _boss->getAbsY();
 
 	// Clear background (unless alpha blending is enabled)
 	if (_flags & WIDGET_CLEARBG)
@@ -48,7 +49,11 @@ void Widget::draw() {
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
-		gui->box(_x, _y, _w, _h, (_flags & WIDGET_INV_BORDER) == WIDGET_INV_BORDER);
+		NewGuiColor colorA = gui->_color;
+		NewGuiColor colorB = gui->_shadowcolor;
+		if ((_flags & WIDGET_INV_BORDER) == WIDGET_INV_BORDER)
+			SWAP(colorA, colorB);
+		gui->box(_x, _y, _w, _h, colorA, colorB);
 		_x += 4;
 		_y += 4;
 		_w -= 8;
@@ -69,10 +74,21 @@ void Widget::draw() {
 	// Flag the draw area as dirty
 	gui->addDirtyRect(_x, _y, _w, _h);
 
-	_x -= _boss->_x;
-	_y -= _boss->_y;
+	_x -= _boss->getAbsX();
+	_y -= _boss->getAbsY();
 }
 
+Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
+	while (w) {
+		// Stop as soon as we find a widget that contains the point (x,y)
+		if (x >= w->_x && x < w->_x + w->_w && y >= w->_y && y < w->_y + w->_h)
+			break;
+		w = w->_next;
+	}
+	if (w)
+		w = w->findWidget(x - w->_x, y - w->_y);
+	return w;
+}
 
 #pragma mark -
 
@@ -161,7 +177,7 @@ void CheckboxWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
 
 	// Draw the box
-	gui->box(_x, _y, 14, 14);
+	gui->box(_x, _y, 14, 14, gui->_color, gui->_shadowcolor);
 
 	// If checked, draw cross inside the box
 	if (_state)
@@ -218,7 +234,7 @@ void SliderWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
 
 	// Draw the box
-	gui->box(_x, _y, _w, _h);
+	gui->box(_x, _y, _w, _h, gui->_color, gui->_shadowcolor);
 
 	// Draw the 'bar'
 	gui->fillRect(_x + 2, _y + 2, valueToPos(_value), _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);

@@ -285,10 +285,7 @@ NewGuiColor *NewGui::getBasePtr(int x, int y) {
 	return _screen + x + y * _screenPitch;
 }
 
-void NewGui::box(int x, int y, int width, int height, bool inverted) {
-	NewGuiColor colorA = inverted ? _shadowcolor : _color;
-	NewGuiColor colorB = inverted ? _color : _shadowcolor;
-
+void NewGui::box(int x, int y, int width, int height, NewGuiColor colorA, NewGuiColor colorB) {
 	hLine(x + 1, y, x + width - 2, colorA);
 	hLine(x, y + 1, x + width - 1, colorA);
 	vLine(x, y + 1, y + height - 2, colorA);

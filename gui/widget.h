@@ -73,6 +73,9 @@ protected:
 	bool		_hasFocus;
 
 public:
+	static Widget *findWidgetInChain(Widget *start, int x, int y);
+
+public:
 	Widget(GuiObject *boss, int x, int y, int w, int h);
 	virtual ~Widget() {}
 

@@ -103,7 +103,7 @@ void Dialog::drawDialog() {
 		return;
 
 	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
-	g_gui.box(_x, _y, _w, _h);
+	g_gui.box(_x, _y, _w, _h, g_gui._color, g_gui._shadowcolor);
 
 	while (w) {
 		w->draw();
@@ -267,16 +267,7 @@ void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
  * in the local coordinate system, i.e. relative to the top left of the dialog.
  */
 Widget *Dialog::findWidget(int x, int y) {
-	Widget *w = _firstWidget;
-	while (w) {
-		// Stop as soon as we find a widget that contains the point (x,y)
-		if (x >= w->_x && x < w->_x + w->_w && y >= w->_y && y < w->_y + w->_h)
-			break;
-		w = w->_next;
-	}
-	if (w)
-		w = w->findWidget(x - w->_x, y - w->_y);
-	return w;
+	return Widget::findWidgetInChain(_firstWidget, x, y);
 }
 
 ButtonWidget *Dialog::addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey) {

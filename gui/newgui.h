@@ -128,7 +128,7 @@ public:
 
 	// Drawing primitives
 	NewGuiColor *getBasePtr(int x, int y);
-	void box(int x, int y, int width, int height, bool inverted = false);
+	void box(int x, int y, int width, int height, NewGuiColor colorA, NewGuiColor colorB);
 	void line(int x, int y, int x2, int y2, NewGuiColor color);
 	void blendRect(int x, int y, int w, int h, NewGuiColor color, int level = 3);
 	void fillRect(int x, int y, int w, int h, NewGuiColor color);
