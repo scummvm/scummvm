@@ -259,11 +259,9 @@ int ScummEngine_v90he::spriteGroupGet_allocateGroupSpritesList(int spriteGroupId
 	defineArray(0, kDwordArray, 0, 0, 0, sprites);
 	writeArray(0, 0, 0, sprites);
 	
-	i = _varNumSpriteGroups - 1;
-	while (i) {
+	for (i = (_varNumSprites - 1); i > 0; i--) {
 		if (_spriteTable[i].group_num == spriteGroupId)
-			writeArray(0, 0, i, j++);
-		i--;
+			writeArray(0, 0, ++j, i);
 	}
 	
 	return readVar(0);
