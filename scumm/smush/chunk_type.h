@@ -22,36 +22,33 @@
 #ifndef CHUNK_TYPE_H
 #define CHUNK_TYPE_H
 
+#include "common/scummsys.h"
 #include "chunk.h"
 
-#define MAKE_TYPE(a,b,c,d) (Chunk::type)( ((a) << 24) | ((b) << 16) | ((c) << 8) | (d) )
-
-static const Chunk::type TYPE_ANIM = MAKE_TYPE('A', 'N', 'I', 'M');
-static const Chunk::type TYPE_AHDR = MAKE_TYPE('A', 'H', 'D', 'R');
-static const Chunk::type TYPE_FRME = MAKE_TYPE('F', 'R', 'M', 'E');
-static const Chunk::type TYPE_NPAL = MAKE_TYPE('N', 'P', 'A', 'L');
-static const Chunk::type TYPE_FOBJ = MAKE_TYPE('F', 'O', 'B', 'J');
-static const Chunk::type TYPE_PSAD = MAKE_TYPE('P', 'S', 'A', 'D');
-static const Chunk::type TYPE_TRES = MAKE_TYPE('T', 'R', 'E', 'S');
-static const Chunk::type TYPE_XPAL = MAKE_TYPE('X', 'P', 'A', 'L');
-static const Chunk::type TYPE_IACT = MAKE_TYPE('I', 'A', 'C', 'T');
-static const Chunk::type TYPE_STOR = MAKE_TYPE('S', 'T', 'O', 'R');
-static const Chunk::type TYPE_FTCH = MAKE_TYPE('F', 'T', 'C', 'H');
-static const Chunk::type TYPE_SKIP = MAKE_TYPE('S', 'K', 'I', 'P');
-static const Chunk::type TYPE_STRK = MAKE_TYPE('S', 'T', 'R', 'K');
-static const Chunk::type TYPE_SMRK = MAKE_TYPE('S', 'M', 'R', 'K');
-static const Chunk::type TYPE_SHDR = MAKE_TYPE('S', 'H', 'D', 'R');
-static const Chunk::type TYPE_SDAT = MAKE_TYPE('S', 'D', 'A', 'T');
-static const Chunk::type TYPE_SAUD = MAKE_TYPE('S', 'A', 'U', 'D');
-static const Chunk::type TYPE_iMUS = MAKE_TYPE('i', 'M', 'U', 'S');
-static const Chunk::type TYPE_FRMT = MAKE_TYPE('F', 'R', 'M', 'T');
-static const Chunk::type TYPE_TEXT = MAKE_TYPE('T', 'E', 'X', 'T');
-static const Chunk::type TYPE_REGN = MAKE_TYPE('R', 'E', 'G', 'N');
-static const Chunk::type TYPE_STOP = MAKE_TYPE('S', 'T', 'O', 'P');
-static const Chunk::type TYPE_MAP_ = MAKE_TYPE('M', 'A', 'P', ' ');
-static const Chunk::type TYPE_DATA = MAKE_TYPE('D', 'A', 'T', 'A');
-static const Chunk::type TYPE_ETRS = MAKE_TYPE('E', 'T', 'R', 'S');
-
-#undef MAKE_TYPE
+static const Chunk::type TYPE_ANIM = MKID('ANIM');
+static const Chunk::type TYPE_AHDR = MKID('AHDR');
+static const Chunk::type TYPE_FRME = MKID('FRME');
+static const Chunk::type TYPE_NPAL = MKID('NPAL');
+static const Chunk::type TYPE_FOBJ = MKID('FOBJ');
+static const Chunk::type TYPE_PSAD = MKID('PSAD');
+static const Chunk::type TYPE_TRES = MKID('TRES');
+static const Chunk::type TYPE_XPAL = MKID('XPAL');
+static const Chunk::type TYPE_IACT = MKID('IACT');
+static const Chunk::type TYPE_STOR = MKID('STOR');
+static const Chunk::type TYPE_FTCH = MKID('FTCH');
+static const Chunk::type TYPE_SKIP = MKID('SKIP');
+static const Chunk::type TYPE_STRK = MKID('STRK');
+static const Chunk::type TYPE_SMRK = MKID('SMRK');
+static const Chunk::type TYPE_SHDR = MKID('SHDR');
+static const Chunk::type TYPE_SDAT = MKID('SDAT');
+static const Chunk::type TYPE_SAUD = MKID('SAUD');
+static const Chunk::type TYPE_iMUS = MKID('iMUS');
+static const Chunk::type TYPE_FRMT = MKID('FRMT');
+static const Chunk::type TYPE_TEXT = MKID('TEXT');
+static const Chunk::type TYPE_REGN = MKID('REGN');
+static const Chunk::type TYPE_STOP = MKID('STOP');
+static const Chunk::type TYPE_MAP_ = MKID('MAP ');
+static const Chunk::type TYPE_DATA = MKID('DATA');
+static const Chunk::type TYPE_ETRS = MKID('ETRS');
 
 #endif
