@@ -540,6 +540,7 @@ public:
 	void new_current_hitarea(HitArea * ha);
 	bool hitarea_proc_2(uint a);
 	bool hitarea_proc_3(Item *item);
+	void f10_key();
 	void hitarea_stuff();
 
 	void handle_mouse_moved();

@@ -1522,6 +1522,85 @@ uint SimonState::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint
 	return ha - _hit_areas;
 }
 
+void SimonState::f10_key()
+{
+	HitArea *ha;
+	uint count;
+	uint y_, x_;
+	byte *dst;
+	uint b;
+
+	_lock_word |= 0x8000;
+	
+	for (int i = 0; i < 5; i++) {
+		ha = _hit_areas;
+		count = ARRAYSIZE(_hit_areas);
+
+		timer_vga_sprites();
+
+		do {
+			if (ha->id != 0 && ha->flags & 0x20 && !(ha->flags & 0x40)) {
+				if (ha->y >= 0xc8 || ha->y >= _vga_var8)
+					continue;
+
+				y_ = (ha->height >> 1) - 4 + ha->y;
+
+				x_ = (ha->width >> 1) - 4 + ha->x - (_x_scroll << 3);
+
+				if (x_ < 0 || x_ >= 0x137)
+					continue;
+
+				dst = dx_lock_attached();
+
+				dst += (((_dx_surface_pitch >> 2) * y_) << 2) + x_;
+
+				b = _dx_surface_pitch;
+				dst[4] = 0xec;
+				dst[b+1] = 0xec;
+				dst[b+4] = 0xec;
+				dst[b+7] = 0xec;
+				b += _dx_surface_pitch;
+				dst[b+2] = 0xec;
+				dst[b+4] = 0xec;
+				dst[b+6] = 0xec;
+				b += _dx_surface_pitch;
+				dst[b+3] = 0xec;
+				dst[b+5] = 0xec;
+				b += _dx_surface_pitch;
+				dst[b] = 0xec;
+				dst[b+1] = 0xec;
+				dst[b+2] = 0xec;
+				dst[b+6] = 0xec;
+				dst[b+7] = 0xec;
+				dst[b+8] = 0xec;
+				b += _dx_surface_pitch;
+				dst[b+3] = 0xec;
+				dst[b+5] = 0xec;
+				b += _dx_surface_pitch;
+				dst[b+2] = 0xec;
+				dst[b+4] = 0xec;
+				dst[b+6] = 0xec;
+				b += _dx_surface_pitch;
+				dst[b+1] = 0xec;
+				dst[b+4] = 0xec;
+				dst[b+7] = 0xec;
+				b += _dx_surface_pitch;
+				dst[b+4] = 0xec;
+
+				dx_unlock_attached();
+			}
+		} while (ha++, --count);
+
+		dx_update_screen_and_palette();
+		delay(100);
+		timer_vga_sprites();
+		dx_update_screen_and_palette();
+		delay(100);
+	}
+
+	_lock_word &= ~0x8000;
+}
+
 void SimonState::hitarea_stuff()
 {
 	HitArea *ha;
@@ -1540,6 +1619,8 @@ startOver:
 		_last_hitarea = NULL;
 		_last_hitarea_3 = NULL;
 		for (;;) {
+			if (_game & GAME_SIMON2 && _key_pressed == 35)
+				f10_key();
 			processSpecialKeys();
 			if (_last_hitarea_3 == (HitArea *) 0xFFFFFFFF)
 				goto startOver;
