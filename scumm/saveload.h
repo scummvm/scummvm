@@ -22,8 +22,16 @@
 #ifndef SAVELOAD_H
 #define SAVELOAD_H
 
-#define OFFS(type,item) ((int)(&((type*)0)->type::item))
-#define SIZE(type,item) sizeof(((type*)0)->type::item)
+// To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,
+// we use a small trick: instead of 0 we use 42. Why? Well, it seems newer GCC
+// versions hae a heuristic built in to detect "offset-of" patterns - which is exactly
+// what our OFFS macro does. Now, for non-POD types this is not really legal, because
+// member need not be at a fixed offset relative to the variable, even if they are in
+// current reality (many of our complex structs are non-POD; for an explanation of 
+// what POD means refer to http://www-cpd.fnal.gov/personal/wb/boost/ISOcxx/doc/POD.html)
+
+#define OFFS(type,item) (((int)(&((type*)42)->type::item))-42)
+#define SIZE(type,item) sizeof(((type*)42)->type::item)
 #define MKLINE(type,item,saveas) {OFFS(type,item),saveas,SIZE(type,item)}
 #define MKARRAY(type,item,saveas,num) {OFFS(type,item),128|saveas,SIZE(type,item)}, {num,0,0}
 #define MKEND() {0xFFFF,0xFF,0xFF}
