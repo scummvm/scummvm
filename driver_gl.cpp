@@ -49,7 +49,6 @@ void Driver::setupCamera(float fov, float nclip, float fclip, float roll) {
 	// Set perspective transformation
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//gluPerspective(std::atan(std::tan(fov_ / 2 * (M_PI / 180)) * 0.75) * 2 * (180 / M_PI), 4.0f / 3, nclip_, fclip_);
 
 	float right = nclip * std::tan(fov / 2 * (M_PI / 180));
 	glFrustum(-right, right, -right * 0.75, right * 0.75, nclip, fclip);
@@ -99,81 +98,6 @@ void Driver::set3DMode() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Driver::drawModelNodeDebug(const Model::Mesh *model) {
-	// debug
-	// this draw the model node in red
-
-	GLdouble modelView[500];
-	GLdouble projection[500];
-	GLint viewPort[500];
-
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
-	glGetIntegerv(GL_VIEWPORT, viewPort);
-
-	glPushMatrix();
-	glLoadIdentity();
-
-	glDisable(GL_DEPTH_TEST);
-	glPointSize(3.f);
-	glColor4f(1.f, 0.f, 0.f, 1.f);
-	glDisable(GL_TEXTURE_2D);
-
-	glBegin(GL_POINTS);
-	glVertex3f(model->_matrix._pos.x(), model->_matrix._pos.y(), model->_matrix._pos.z());
-	glEnd();
-
-	glEnable(GL_DEPTH_TEST);
-	glPopMatrix();
-	glEnable(GL_TEXTURE_2D);
-}
-
-void Driver::drawModelPolygonPointsDebug(const Model::Mesh *model) {
-	// debug
-	// this draw the poly points
-
-	GLdouble modelView[500];
-	GLdouble projection[500];
-	GLint viewPort[500];
-	int i, j;
-
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
-	glGetIntegerv(GL_VIEWPORT, viewPort);
-
-	glPushMatrix();
-	glLoadIdentity();
-
-	glDisable(GL_DEPTH_TEST);
-	glPointSize(3.f);
-	glColor4f(0.f, 1.f, 0.f, 1.f);
-	glDisable(GL_TEXTURE_2D);
-
-	glBegin(GL_POINTS);
-
-	for (i = 0; i < model->_numFaces; i++) {
-		Vector3d v;
-		Matrix4 tempMatrix = model->_matrix;
-		float *pVertices;
-
-		for (j = 0; j < model->_faces[i]._numVertices; j++) {
-			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
-
-			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
-
-//			tempMatrix._rot.transform(&v);
-			v += tempMatrix._pos;
-
-			glVertex3f(v.x(), v.y(), v.z());
-		}
-	}
-
-	glEnd();
-	glEnable(GL_DEPTH_TEST);
-	glPopMatrix();
-	glEnable(GL_TEXTURE_2D);
-}
-
 void Driver::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
 	glNormal3fv(face->_normal._coords);
 	glBegin(GL_POLYGON);
@@ -215,36 +139,6 @@ void Driver::drawHierachyNode(const Model::HierNode *node) {
 
 	if (node->_sibling != NULL)
 		node->_sibling->draw();
-}
-
-void Driver::updateHierachyNode1(const Model::HierNode *node) {
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-
-	glTranslatef(node->_animPos.x() / node->_totalWeight, node->_animPos.y() / node->_totalWeight, node->_animPos.z() / node->_totalWeight);
-	glRotatef(node->_animYaw / node->_totalWeight, 0, 0, 1);
-	glRotatef(node->_animPitch / node->_totalWeight, 1, 0, 0);
-	glRotatef(node->_animRoll / node->_totalWeight, 0, 1, 0);
-}
-
-void Driver::updateHierachyNode2(const Model::HierNode *node) {
-	if (node->_mesh != NULL) {
-		glPushMatrix();
-		glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
-		node->_mesh->_matrix = node->_pivotMatrix;
-		node->_mesh->update();
-
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
-	}
-
-	if (node->_child != NULL ) {
-		node->_child->setMatrix(node->_matrix);
-		node->_child->update();
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	glPopMatrix();
 }
 
 void Driver::createBitmap(Bitmap *bitmap) {

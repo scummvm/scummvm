@@ -435,8 +435,6 @@ void Model::HierNode::setMatrix(Matrix4 matrix) {
 }
 
 void Model::HierNode::update() {
-	g_driver->updateHierachyNode1(this);
-
 	_localMatrix._pos.set(_animPos.x() / _totalWeight, _animPos.y() / _totalWeight, _animPos.z() / _totalWeight);
 	_localMatrix._rot.buildFromPitchYawRoll(_animPitch / _totalWeight, _animYaw / _totalWeight, _animRoll / _totalWeight);
 
@@ -444,17 +442,21 @@ void Model::HierNode::update() {
 
 	_pivotMatrix = _matrix;
 
-	_pivotMatrix.translate(_pivot.x(), _pivot.y(), _pivot.z() );
+	_pivotMatrix.translate(_pivot.x(), _pivot.y(), _pivot.z());
 
-	g_driver->updateHierachyNode2(this);
+	if (_mesh != NULL ) {
+		_mesh->_matrix = _pivotMatrix;
+	}
+
+	if (_child != NULL) {
+		_child->setMatrix(_matrix);
+		_child->update();
+	}
 }
 
 void Model::Mesh::draw() const {
 	for (int i = 0; i < _numFaces; i++)
 		_faces[i].draw(_vertices, _vertNormals, _textureVerts);
-
-//	g_driver->drawModelNodeDebug(this);
-//	g_driver->drawModelPolygonPointsDebug(this);
 }
 
 void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts) const {
