@@ -124,6 +124,7 @@ public:
 
 	uint16 animCreate(uint16 curImage, const Person *person); // CREATE_ANIM
 	void animErase(uint16 bobNum);
+	int16 animFindAll(const GraphicData *gd, uint16 firstImage, AnimFrame *paf); // FIND_GRAPHIC_ANIMS
 
 	StateDirection findStateDirection(uint16 state); // == FIND_STATE(state, "DIR");
 	StateTalk      findStateTalk     (uint16 state); // == FIND_STATE(state, "TALK");
@@ -221,8 +222,8 @@ protected:
 	uint16 _numFrames; // FRAMES
 	uint16 _personFrames[4];
 
-	//! contains the animation frames (max 60) to use for a bob (whose number must be < 17)
-	uint16 _newAnim[17][60];
+	//! contains the animation frames (max 30) to use for a bob (whose number must be < 17)
+	AnimFrame _newAnim[17][30];
 
 	Resource *_resource;
 	Graphics *_graphics;

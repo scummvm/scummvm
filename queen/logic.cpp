@@ -725,7 +725,7 @@ void Logic::roomErase() {
 		_personFrames[i] = 0;
 	}
 	for (i = 1; i <= 16; ++i) {
-		_newAnim[i][0] = 0;
+		_newAnim[i][0].frame = 0;
 	}
 
 	uint16 cur = _roomData[_oldRoom] + 1;
@@ -889,9 +889,28 @@ void Logic::roomSetupObjects() {
 				rebound = true;
 			}
 			if (pgd->firstFrame < 0) {
-				// FIXME: need GRAPHIC_ANIM stuff
-				// see queen.c l.1251-1296
-				warning("Logic::roomSetupObjects() - Object number %d not handled", pod->image);
+				// FIXME: if(TEMPA[1]<0) bobs[CURRBOB].xflip=1;
+				curBob = 5 + _numFurnitureAnimated;
+				AnimFrame *paf = NULL;
+				if (pod->name > 0) {
+					paf = _newAnim[curBob + numObjectAnimated];
+				}
+				BobSlot *pbs = _graphics->bob(curBob + numObjectAnimated);
+				int16 f = animFindAll(pgd, curImage + 1, paf);
+				curImage += pgd->lastFrame;
+				if (paf != NULL) {
+					if (f < 0) {
+						pbs->xflip = true;
+					}
+					pbs->active = true;
+					pbs->x = pgd->x;
+					pbs->y = pgd->y;
+					_graphics->bobAnimString(curBob + numObjectAnimated, paf);
+				}
+				else {
+					pbs->animating = false;
+				}
+				++numObjectAnimated;
 			}
 			else if (lastFrame != 0) {
 				// animated objects
@@ -1022,50 +1041,65 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 	curImage = findFrame(obj);
 
 	int image = pod->image;
-	if (pod->image > 5000)
+	if (image > 5000) {
 		image -= 5000;
-
-		
-		GraphicData *pgd = &_graphicData[image];
-		bool rebound = false;
-		int16 lastFrame = pgd->lastFrame;
-		if (lastFrame < 0) {
-			lastFrame = -lastFrame;
-			rebound = true;
+	}
+	
+	GraphicData *pgd = &_graphicData[image];
+	bool rebound = false;
+	int16 lastFrame = pgd->lastFrame;
+	if (lastFrame < 0) {
+		lastFrame = -lastFrame;
+		rebound = true;
+	}
+	if (pgd->firstFrame < 0) {
+		AnimFrame *paf = NULL;
+		if (pod->name != 0) {
+			paf = _newAnim[curBob];
 		}
-		if (pgd->firstFrame) {
-			// FIXME: need GRAPHIC_ANIM stuff
-			// see queen.c l.944-981
-			warning("Logic::roomRefreshObject() - Object number %d not handled", obj);
+		int16 f = animFindAll(pgd, curImage, paf);
+		curImage += pgd->lastFrame - 1;
+		if (f < 0) {
+			pbs->xflip = true;
 		}
-		else if (lastFrame != 0) {
-			// turn on an animated bob
-			_graphics->bankUnpack(pgd->firstFrame, 2, 15);
-			pbs->animating = false;
-			uint16 firstFrame = curImage;
-			--curImage;
-			uint16 j;
-			for (j = pgd->firstFrame; j <= lastFrame; ++j) {
-				++curImage;
-				_graphics->bankUnpack(j, curImage, 15);
-			}
+		if (paf != NULL) {
 			pbs->active = true;
 			pbs->x = pgd->x;
 			pbs->y = pgd->y;
-			pbs->frameNum = firstFrame;
-			if (pgd->speed > 0) {
-				_graphics->bobAnimNormal(curBob, firstFrame, curImage, pgd->speed / 4, rebound, false);
-			}
+			_graphics->bobAnimString(curBob, _newAnim[curBob]);
 		}
 		else {
-			// frame 2 is used as a buffer frame to prevent BOB flickering
-			_graphics->bankUnpack(pgd->firstFrame, 2, 15);
-			_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
-			pbs->active = true;
-			pbs->x = pgd->x;
-			pbs->y = pgd->y;
-			pbs->frameNum = curImage;
+			pbs->animating = false;
 		}
+	}
+	else if (lastFrame != 0) {
+		// turn on an animated bob
+		_graphics->bankUnpack(pgd->firstFrame, 2, 15);
+		pbs->animating = false;
+		uint16 firstImage = curImage;
+		--curImage;
+		uint16 j;
+		for (j = pgd->firstFrame; j <= lastFrame; ++j) {
+			++curImage;
+			_graphics->bankUnpack(j, curImage, 15);
+		}
+		pbs->active = true;
+		pbs->x = pgd->x;
+		pbs->y = pgd->y;
+		pbs->frameNum = firstImage;
+		if (pgd->speed > 0) {
+			_graphics->bobAnimNormal(curBob, firstImage, curImage, pgd->speed / 4, rebound, false);
+		}
+	}
+	else {
+		// frame 2 is used as a buffer frame to prevent BOB flickering
+		_graphics->bankUnpack(pgd->firstFrame, 2, 15);
+		_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+		pbs->active = true;
+		pbs->x = pgd->x;
+		pbs->y = pgd->y;
+		pbs->frameNum = curImage;
+	}
 
 	return curImage;
 }
@@ -1289,7 +1323,7 @@ uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
 
 uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 
-	uint16 *animFrames = _newAnim[person->actor->bobNum];
+	AnimFrame *animFrames = _newAnim[person->actor->bobNum];
 
 	uint16 allocatedFrames[256];
 	memset(allocatedFrames, 0, sizeof(allocatedFrames));
@@ -1298,8 +1332,8 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 	uint16 f1, f2;
 	do {
 		sscanf(p, "%3hu,%3hu", &f1, &f2);
-		animFrames[frame + 0] = f1;
-		animFrames[frame + 1] = f2;
+		animFrames[frame].frame = f1;
+		animFrames[frame].speed = f2;
 		
 		if (f1 > 500) {
 			// SFX
@@ -1310,7 +1344,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 		}
 		
 		p += 8;
-		frame += 2;
+		++frame;
 	} while(f1 != 0);
 	
 	// ajust frame numbers
@@ -1322,13 +1356,13 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 			++n;
 		}
 	}
-	for (i = 0; animFrames[i] != 0; i += 2) {
-		uint16 frameNum = animFrames[i];
+	for (i = 0; animFrames[i].frame != 0; ++i) {
+		uint16 frameNum = animFrames[i].frame;
 		if (frameNum > 500) {
-			animFrames[i] = curImage + allocatedFrames[frameNum - 500] + 500;
+			animFrames[i].frame = curImage + allocatedFrames[frameNum - 500] + 500;
 		}
 		else {
-			animFrames[i] = curImage + allocatedFrames[frameNum];
+			animFrames[i].frame = curImage + allocatedFrames[frameNum];
 		}
 	}
 	
@@ -1348,10 +1382,83 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 
 
 void Logic::animErase(uint16 bobNum) {
-	_newAnim[bobNum][0] = 0;
+	_newAnim[bobNum][0].frame = 0;
 	BobSlot *pbs = _graphics->bob(bobNum);
 	pbs->animating = false;
 	pbs->anim.string.buffer = NULL;
+}
+
+
+int16 Logic::animFindAll(const GraphicData *gd, uint16 firstImage, AnimFrame *paf) {
+	
+	int16 tempFrames[20];
+	memset(tempFrames, 0, sizeof(tempFrames));
+	uint16 numTempFrames = 0;
+	uint16 i, j;
+	for (i = 1; i <= _numGraphicAnim; ++i) {
+		const GraphicAnim *pga = &_graphicAnim[i];
+		if (pga->keyFrame == gd->firstFrame) {
+			int16 frame = pga->frame;
+			if (frame > 500) { // SFX
+				frame -= 500;
+			}
+			bool foundMatchingFrame = false;
+			for (j = 0; j < numTempFrames; ++j) {
+				if (tempFrames[j] == frame) {
+					foundMatchingFrame = true;
+					break;
+				}
+			}
+			if (!foundMatchingFrame) {
+				assert(numTempFrames < 20);
+				tempFrames[numTempFrames] = frame;
+				++numTempFrames;
+			}
+		}
+	}
+
+	// sort found frames ascending
+	bool swap = true;
+	while (swap) {
+		swap = false;
+		for (i = 0; i < numTempFrames - 1; ++i) {
+			if (tempFrames[i] > tempFrames[i + 1]) {
+				SWAP(tempFrames[i], tempFrames[i + 1]);
+				swap = true;
+			}
+		}
+	}
+
+	// queen.c l.962-980 / l.1269-1294
+	for (i = 0; i < gd->lastFrame; ++i) {
+		_graphics->bankUnpack(ABS(tempFrames[i]), firstImage + i, 15);
+	}
+	if (paf != NULL) {
+		uint16 frameNr = 0;
+		for (i = 1; i <= _numGraphicAnim; ++i) {
+			const GraphicAnim *pga = &_graphicAnim[i];
+			if (pga->keyFrame == gd->firstFrame) {
+				for (j = 1; j <= gd->lastFrame; ++j) {
+					int16 f = pga->frame;
+					if (f > 500) {
+						f -= 500;
+					}
+					if (f == tempFrames[j - 1]) {
+						frameNr = j + firstImage - 1;
+					}
+					if (pga->frame > 500) {
+						frameNr += 500;
+					}
+				}
+				paf->frame = frameNr;
+				paf->speed = pga->speed;
+				++paf;
+			}
+		}
+		paf->frame = 0;
+		paf->speed = 0;
+	}
+	return tempFrames[0];
 }
 
 

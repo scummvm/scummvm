@@ -387,15 +387,15 @@ void Graphics::bobSetupControl() {
 }
 
 
-void Graphics::bobAnimString(uint32 bobnum, uint16* animBuf) {
+void Graphics::bobAnimString(uint32 bobnum, const AnimFrame *animBuf) {
 
 	BobSlot *pbs = &_bobs[bobnum];
 	pbs->active = true;
 	pbs->animating = true;
 	pbs->anim.string.buffer = animBuf;
 	pbs->anim.string.curPos = animBuf;
-	pbs->frameNum = animBuf[0];
-	pbs->anim.speed = animBuf[1] / 4;
+	pbs->frameNum = animBuf->frame;
+	pbs->anim.speed = animBuf->speed / 4;
 }
 
 
@@ -501,16 +501,17 @@ void BobSlot::animOneStep() {
 	if (anim.string.buffer != NULL) {
 		--anim.speed;
 		if(anim.speed == 0) {
-			anim.string.curPos += 2;
-			uint16 nextFrame = anim.string.curPos[0];
+			// jump to next entry
+			++anim.string.curPos;
+			uint16 nextFrame = anim.string.curPos->frame;
 			if (nextFrame == 0) {
 				anim.string.curPos = anim.string.buffer;
-				frameNum = anim.string.curPos[0];
+				frameNum = anim.string.curPos->frame;
 			}
 			else {
 				frameNum = nextFrame;
 			}
-			anim.speed = anim.string.curPos[1] / 4;
+			anim.speed = anim.string.curPos->speed / 4;
 
 			// FIXME: handle that when QueenSound class is ready
 			// play memory sfx and move on to next frame

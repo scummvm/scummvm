@@ -421,15 +421,21 @@ struct FurnitureData {
 
 
 struct GraphicAnim {
-	int16 frame1;
-	int16 frame2;
-	int16 frame3;
+	int16 keyFrame;
+	int16 frame;
+	uint16 speed;
 
 	void readFrom(byte *&ptr) {
-		frame1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		frame2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		frame3 = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		keyFrame = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		frame = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		speed = READ_BE_UINT16(ptr); ptr += 2;
 	}
+};
+
+
+struct AnimFrame {
+	uint16 frame;
+	uint16 speed;
 };
 
 
