@@ -820,6 +820,7 @@ void ScummEngine_v60he::o60_kernelSetFunctions() {
 	case 3:
 	case 4:
 	case 5:
+	case 6:
 		//Used before mini games in 3DO versions, seems safe to ignore.
 		break;
 	default:
