@@ -885,8 +885,8 @@ int Scumm::scummLoop(int delta) {
 	}
 	VAR(VAR_HAVE_MSG) = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
 	if (_features & GF_AFTER_V2) {
-		VAR(VAR_VIRT_MOUSE_X) = _virtual_mouse_x;
-		VAR(VAR_VIRT_MOUSE_Y) = _virtual_mouse_y;
+		VAR(VAR_VIRT_MOUSE_X) = _virtual_mouse_x / 8;
+		VAR(VAR_VIRT_MOUSE_Y) = _virtual_mouse_y / 2;
 	} else {
 		VAR(VAR_VIRT_MOUSE_X) = _virtual_mouse_x;
 		VAR(VAR_VIRT_MOUSE_Y) = _virtual_mouse_y;

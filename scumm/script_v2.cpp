@@ -99,7 +99,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_roomOps),
 		/* 34 */
 		OPCODE(o5_getDist),
-		OPCODE(o5_findObject),
+		OPCODE(o2_findObject),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_setState01),
 		/* 38 */
@@ -179,7 +179,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_roomOps),
 		/* 74 */
 		OPCODE(o5_getDist),
-		OPCODE(o5_findObject),
+		OPCODE(o2_findObject),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* 78 */
@@ -259,7 +259,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_roomOps),
 		/* B4 */
 		OPCODE(o5_getDist),
-		OPCODE(o5_findObject),
+		OPCODE(o2_findObject),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_setState02),
 		/* B8 */
@@ -339,7 +339,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_roomOps),
 		/* F4 */
 		OPCODE(o5_getDist),
-		OPCODE(o5_findObject),
+		OPCODE(o2_findObject),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* F8 */
@@ -851,6 +851,8 @@ void Scumm_v2::o2_walkActorTo() {
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_walkActorTo");
 	x = getVarOrDirectByte(0x40) * 8;
 	y = getVarOrDirectByte(0x20) * 2;
+
+	assert(a);
 	a->ignoreBoxes = true;			// FIXME: Disabling walkboxes
 	a->startWalkActor(x, y, -1);		// for now, just to debug the intro
 }
@@ -863,8 +865,7 @@ void Scumm_v2::o2_putActor() {
 	x = getVarOrDirectByte(0x40) * 8;
 	y = getVarOrDirectByte(0x20) * 2;
 
-	if (!a)
-		return;
+	assert(a);
 	a->putActor(x, y, a->room);
 }
 
@@ -931,9 +932,16 @@ void Scumm_v2::o2_animateActor() {
 void Scumm_v2::o2_actorFromPos() {
 	int x, y;
 	getResultPos();
-	x = getVarOrDirectByte(0x80);
-	y = getVarOrDirectByte(0x40);
+	x = getVarOrDirectByte(0x80) * 8;
+	y = getVarOrDirectByte(0x40) * 2;
 	setResult(getActorFromPos(x, y));
+}
+
+void Scumm_v2::o2_findObject() {
+	getResultPos();
+	int x = getVarOrDirectByte(0x80) * 8;
+	int y = getVarOrDirectByte(0x40) * 2;
+	setResult(findObject(x, y));
 }
 
 void Scumm_v2::o2_saveLoadGame() {
