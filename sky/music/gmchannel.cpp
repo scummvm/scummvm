@@ -63,6 +63,11 @@ SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pM
 	_musicVolume = 0x100;
 }
 
+bool SkyGmChannel::isActive(void) {
+
+	return _channelData.channelActive != 0;
+}
+
 void SkyGmChannel::updateVolume(uint16 pVolume) {
 
 	_musicVolume = pVolume;

@@ -38,6 +38,7 @@ public:
 	virtual void stopNote(void) = 0;
 	virtual uint8 process(uint16 aktTime) = 0;
 	virtual void updateVolume(uint16 pVolume) = 0;
+	virtual bool isActive(void) = 0;
 private:
 };
 
@@ -48,6 +49,7 @@ public:
 	void loadSection(uint8 pSection);
 	void musicCommand(uint16 command);
 	void startMusic(uint16 param) { _onNextPoll.musicToProcess = param & 0xF; }; // 4
+	bool musicIsPlaying(void);
 	virtual void setVolume(uint8 volume) = 0;
 	uint8 giveVolume(void) { return (uint8)_musicVolume; };
 	uint8 giveCurrentMusic(void) { return _currentMusic; };

@@ -61,6 +61,11 @@ SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData)
 	_musicVolume = 0x100;
 }
 
+bool SkyAdlibChannel::isActive(void) {
+
+	return _channelData.channelActive != 0;
+}
+
 void SkyAdlibChannel::updateVolume(uint16 pVolume) {
 
 	_musicVolume = pVolume;

@@ -64,6 +64,7 @@ public:
 	virtual void stopNote(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
+	virtual bool isActive(void);
 private:
 	uint8 *_musicData;
 	uint16 _musicVolume;

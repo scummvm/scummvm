@@ -57,6 +57,14 @@ void SkyMusicBase::loadSection(uint8 pSection)
 	_system->unlock_mutex(_mutex);
 }
 
+bool SkyMusicBase::musicIsPlaying(void)
+{
+	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
+		if (_channels[cnt]->isActive())
+			return true;
+	return false;
+}
+
 void SkyMusicBase::musicCommand(uint16 command)
 {
 	if (_musicData == NULL) {
@@ -128,10 +136,10 @@ void SkyMusicBase::loadNewMusic(void)
 		error("Music %d requested but doesn't exist in file.\n", _onNextPoll.musicToProcess);
 		return;
 	}
-	if (_currentMusic != 0) stopMusic();
+	if (_currentMusic != 0)
+		stopMusic();
 
 	_currentMusic = _onNextPoll.musicToProcess;
-	_onNextPoll.musicToProcess = 0;
 
 	if (_currentMusic != 0) {
 		musicPos = (_musicData[_musicDataLoc+2]<<8) | _musicData[_musicDataLoc+1];
@@ -153,8 +161,8 @@ void SkyMusicBase::pollMusic(void)
 	uint8 newTempo;
 	if (_onNextPoll.doReInit) startDriver();
 	if (_onNextPoll.doStopMusic) stopMusic();
-	if (_onNextPoll.musicToProcess == _currentMusic) _onNextPoll.musicToProcess = 0;
-	if (_onNextPoll.musicToProcess)	loadNewMusic();
+	if (_onNextPoll.musicToProcess != _currentMusic)
+		loadNewMusic();
 
 	_aktTime += _tempo;
 

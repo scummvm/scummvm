@@ -32,6 +32,7 @@
             _mixer->stopAll();
 #define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); REMOVE_INTRO return false; }
 #define WAIT_SEQUENCE while (_skyScreen->sequenceRunning()) { checkCommands(commandPtr); delay(50); CHECK_ESC }
+#define WAIT_MUSIC while (_skyMusic->musicIsPlaying()) { delay(50); CHECK_ESC }
 
 #define INTRO_TEXT_WIDTH    128
 
@@ -348,10 +349,22 @@ bool SkyState::intro(void) {
 
 		commandPtr = (uint32 *)anim5Commands;
 		
-		WAIT_SEQUENCE;
 		_skyDisk->prefetchFile(FN_6_PAL);
 		_skyDisk->prefetchFile(FN_6_LOG);
 		_skyDisk->prefetchFile(FN_6A);
+		
+		WAIT_SEQUENCE;
+
+		// There is no synchronization mechanism between the music and
+		// the graphics. Which means that there is no guarantee that
+		// they both end at the same time. So just to be safe, wait
+		// for the music to stop before continuing with the final part.
+		//
+		// This part of the intro looks pretty nice even as a static
+		// image, so it makes sense to do the waiting before fading
+		// down the palette.
+
+		WAIT_MUSIC;
 
 		_skyScreen->fnFadeDown(0);
 		_skyScreen->showScreen(FN_6_LOG);
