@@ -90,17 +90,19 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 }
 
 static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
-	if (A != B) {
-		return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask));
+	if (A != B) {	
+		// Non regression test
+		assert ((((A & colorMask) + (B & colorMask)) >> 1) + (A & B & lowPixelMask)==(((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask)));
+		return (((A & colorMask) + (B & colorMask)) >> 1) + (A & B & lowPixelMask);
 	} else
 		return A;
 }
 
 static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
-	register uint32 x = ((A & qcolorMask) >> 2) +
-		((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2);
-	register uint32 y = (A & qlowpixelMask) +
-		(B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask);
+	register uint32 x = ((A & qcolorMask) + (B & qcolorMask) + (C & qcolorMask) + (D & qcolorMask))>>2;
+	// Non regression test
+	assert (x==((A & qcolorMask) >> 2) + ((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2));
+	register uint32 y = (A & qlowpixelMask) + (B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask);
 
 	y = (y >> 2) & qlowpixelMask;
 	return x + y;
