@@ -57,7 +57,7 @@ void Imuse::refreshScripts() {
 	}
 
 	if (!found && (_curMusicSeq != 0)) {
-		setMusicSequence(1000);
+		setMusicSequence(2000);
 	}
 }
 
