@@ -184,6 +184,13 @@ Game Detector
   Broken Sword 1 & 2). This could work by letting the detector proc recurse
   into sub directories...
 
+Graphics
+========
+* The Scale2x folks have an optimized version of the Scale2x (= AdvMame2x)
+  filter, which we might want to adapt - if there is a benefit, that is. Asked
+  the other way around: Are there any systems on which AdvMame2x is too slow?
+  Same goes for AdvMame3x.
+
 GUI
 ===
 * Remove hardcoded 320x200 assumptions, use game screen size
