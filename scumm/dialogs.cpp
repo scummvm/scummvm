@@ -409,8 +409,8 @@ void SaveLoadDialog::fillList()
 	bool avail_saves[81];
 	SaveFileManager *mgr = _scumm->_system->get_savefile_manager();
 
-	_scumm->listSavegames(avail_saves, sizeof(avail_saves), mgr);
-	for (; i < sizeof(avail_saves); i++) {
+	_scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
+	for (; i < ARRAYSIZE(avail_saves); i++) {
 		if(avail_saves[i])
 			_scumm->getSavegameName(i, name, mgr);
 		else
