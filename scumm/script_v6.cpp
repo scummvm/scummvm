@@ -2812,16 +2812,17 @@ void Scumm_v6::shuffleArray(int num, int minIdx, int maxIdx) {
 	int range = maxIdx - minIdx;
 	int count = range * 2;
 
+	// Shuffle the array 'num'
 	while (count--) {
+		// Determine two random elements...
 		int rand1 = _rnd.getRandomNumber(range) + minIdx;
 		int rand2 = _rnd.getRandomNumber(range) + minIdx;
-		_vars[VAR_V6_RANDOM_NR] = rand2;
 		
-		// FIXME - uhm this seems wrong. It replaces item rand1 with itself
-		// It would seem more logical if we first read elements rand1 and rand2,
-		// then swapped them. Assembler analysis, anybody?
-		writeArray(num, 0, rand1, readArray(num, 0, rand1));
-		writeArray(num, 0, rand2, readArray(num, 0, rand2));
+		// ...and swap them
+		int val1 = readArray(num, 0, rand1);
+		int val2 = readArray(num, 0, rand2);
+		writeArray(num, 0, rand1, val2);
+		writeArray(num, 0, rand2, val1));
 	}
 }
 
