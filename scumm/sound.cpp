@@ -978,7 +978,7 @@ void Sound::playBundleMusic(char * song) {
 		_musicBundleToBeRemoved = false;
 		_musicBundleToBeChanged = false;
 		_bundleMusicTrack = -1;
-		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(song, (_scumm->_gameId == GID_CMI));
+		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
 		_scumm->_timer->installProcedure(&music_handler, 1000);
 		return;
@@ -1001,7 +1001,7 @@ void Sound::stopBundleMusic() {
 void Sound::bundleMusicHandler(Scumm * scumm) {
 	byte * ptr;
 	int32 l, num = _numberSamplesBundleMusic, length, k;
-	int32 rate = 22050;
+	int32 rate = 22050, channels;
 	int32 tag, size = -1, header_size = 0;
 	
 	if (_pauseBundleMusic)
@@ -1027,7 +1027,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 
 	if (_musicBundleToBeChanged == true) {
 		_nameBundleMusic = _newNameBundleMusic;
-		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(_nameBundleMusic, (_scumm->_gameId == GID_CMI));
+		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(_nameBundleMusic);
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
@@ -1037,7 +1037,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	ptr = _musicBundleBufOutput;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
-		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)), (_scumm->_gameId == GID_CMI));
+		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)), channels);
 		_offsetSampleBundleMusic += length;
 
 		if (l == 0) {
@@ -1127,14 +1127,25 @@ int Sound::playBundleSound(char *sound) {
 		return -1;
 	}
 
-	ptr = (byte *)malloc(1000000);
-	if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr, (_scumm->_gameId == GID_CMI)) == 0) {
-		delete ptr;
-		return -1;
-	}
+	int32 rate = 22050, channels;
+	int32 tag, size = -1, bits;
 
-	int rate = 22050;
-	int tag, size = -1;
+	if (_scumm->_gameId == GID_CMI) {
+		char name[20];
+		strcpy(name, sound);
+		strcat(name, ".IMX");
+		ptr = (byte *)malloc(1000000);
+		if (_scumm->_bundle->decompressVoiceSampleByName(name, ptr, channels)) {
+			delete ptr;
+			return -1;
+		}
+	} else {
+		ptr = (byte *)malloc(1000000);
+		if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr, channels)) {
+			delete ptr;
+			return -1;
+		}
+	}
 
 	tag = READ_BE_UINT32(ptr); ptr+=4;
 	if (tag != MKID_BE('iMUS')) {
@@ -1145,21 +1156,25 @@ int Sound::playBundleSound(char *sound) {
 
 	ptr += 12;
 	while(tag != MKID_BE('DATA')) {
-		tag = READ_BE_UINT32(ptr);  ptr+=4;
+		tag = READ_BE_UINT32(ptr); ptr += 4;
 		switch(tag) {
 			case MKID_BE('FRMT'):
-				size = READ_BE_UINT32(ptr); ptr+=16;					
-				rate = READ_BE_UINT32(ptr); ptr+=8;
+				ptr += 12;
+				bits = READ_BE_UINT32(ptr); ptr += 4;
+				rate = READ_BE_UINT32(ptr); ptr += 4;
+				channels = READ_BE_UINT32(ptr); ptr += 4;
+				ptr += 16;
 			break;
 			case MKID_BE('TEXT'):
 			case MKID_BE('REGN'):
 			case MKID_BE('STOP'):
 			case MKID_BE('JUMP'):
-				size = READ_BE_UINT32(ptr); ptr+=size+4;
+			case MKID_BE('SYNC'):
+				size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
 
 			case MKID_BE('DATA'):
-				size = READ_BE_UINT32(ptr); ptr+=4;
+				size = READ_BE_UINT32(ptr); ptr += 4;
 			break;
 
 			default:

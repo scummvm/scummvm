@@ -24,15 +24,135 @@
 #include "bundle.h"
 #include "file.h"
 
+uint16 imcTable1[] = {
+	0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x0010, 0x0011,
+	0x0013, 0x0015, 0x0017, 0x0019, 0x001C, 0x001F, 0x0022, 0x0025, 0x0029, 0x002D,
+	0x0032, 0x0037, 0x003C, 0x0042, 0x0049, 0x0050, 0x0058, 0x0061, 0x006B, 0x0076,
+	0x0082, 0x008F, 0x009D, 0x00AD, 0x00BE, 0x00D1, 0x00E6, 0x00FD, 0x0117, 0x0133,
+	0x0151, 0x0173, 0x0198, 0x01C1, 0x01EE, 0x0220, 0x0256, 0x0292, 0x02D4, 0x031C,
+	0x036C, 0x03C3, 0x0424, 0x048E, 0x0502, 0x0583, 0x0610, 0x06AB, 0x0756, 0x0812,
+	0x08E0, 0x09C3, 0x0ABD, 0x0BD0, 0x0CFF, 0x0E4C, 0x0FBA, 0x114C, 0x1307, 0x14EE,
+	0x1706, 0x1954, 0x1BDC, 0x1EA5, 0x21B6, 0x2515, 0x28CA, 0x2CDF, 0x315B, 0x364B,
+	0x3BB9, 0x41B2, 0x4844, 0x4F7E, 0x5771, 0x602F, 0x69CE, 0x7462, 0x7FFF
+};
+
+byte imxOtherTable1[] = {
+	0xFF, 0x04, 0xFF, 0x04
+};
+
+byte imxOtherTable2[] = {
+	0xFF, 0xFF, 0x02, 0x08, 0xFF, 0xFF, 0x02, 0x08
+};
+
+byte imxOtherTable3[] = {
+	0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x02, 0x04, 0x06,
+	0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x02, 0x04, 0x06
+};
+
+byte imxOtherTable4[] = {
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x01, 0x02, 0x04, 0x06, 0x08, 0x0C, 0x10, 0x20,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x01, 0x02, 0x04, 0x06, 0x08, 0x0C, 0x10, 0x20
+};
+
+byte imxOtherTable5[] = {
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x01, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E,
+	0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x20,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x01, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E,
+	0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x20
+};
+
+byte imxOtherTable6[] = {
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+	0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+	0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+	0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+	0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+	0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+	0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20
+};
+
+uint16 imxShortTable[] = {
+	0x0000, 0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F
+};
+
 Bundle::Bundle() {
 	_lastSong = -1;
+	_initializedImcTables = false;
 }
 
 Bundle::~Bundle() {
 }
 
+void Bundle::initializeImcTables() {
+	if (_initializedImcTables == true)
+		return;
+
+	int32 destTablePos = 0;
+	int32 imcTable1Pos = 0;
+	do {
+		int16 put = 1;
+		int32 tableValue = ((imcTable1[imcTable1Pos] << 2) / 7) / 2;
+		if (tableValue != 0) {
+			do {
+				tableValue /= 2;
+				put++;
+			} while (tableValue != 0); 
+		}
+		if (put < 3) {
+			put = 3;
+		}
+		if (put > 8) {
+			put = 8;
+		}
+		put--;
+		imcTable1Pos++;
+		_destImcTable[destTablePos] = (byte)put;
+		destTablePos++;
+	} while (imcTable1Pos <= 88);
+	_destImcTable[89] = 0;
+
+	for (int n = 0; n < 63; n++) {
+		imcTable1Pos = 0;
+		int32 destTable2Pos = n;
+		do {
+			int32 count = 32;
+			int32 putD = 0;
+			int32 tableValue = imcTable1[imcTable1Pos];
+	 		do {
+				if ((count & n) != 0) {
+					putD = putD + tableValue;
+				}
+				count >>= 1;
+				tableValue >>= 1;
+			} while (count != 0);
+			_destImcTable2[destTable2Pos] = putD;
+			destTable2Pos += 64;
+			imcTable1Pos++;
+		} while (imcTable1Pos <= 88);
+	}
+
+	_initializedImcTables = true;
+}
+
 bool Bundle::openVoiceFile(const char *filename, const char *directory) {
 	int32 tag, offset;
+
+	initializeImcTables();
 
 	if (_voiceFile.isOpen() == true)
 		return true;
@@ -74,6 +194,8 @@ bool Bundle::openVoiceFile(const char *filename, const char *directory) {
 bool Bundle::openMusicFile(const char *filename, const char *directory) {
 	int32 tag, offset;
 
+	initializeImcTables();
+
 	if (_musicFile.isOpen() == true)
 		return true;
 
@@ -111,7 +233,7 @@ bool Bundle::openMusicFile(const char *filename, const char *directory) {
 	return true;
 }
 
-int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
+int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 & channels) {
 	int32 i, tag, num, final_size, output_size;
 	byte *comp_input, *comp_output;
 
@@ -142,6 +264,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
 	final_size = 0;
 
 	comp_output = (byte *)malloc(10000);
+
 	for (i = 0; i < num; i++) {
 		comp_input = (byte *)malloc(_compVoiceTable[i].size);
 
@@ -149,7 +272,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
 		_voiceFile.read(comp_input, _compVoiceTable[i].size);
 
 		output_size =
-			decompressCodec(_compVoiceTable[i].codec, comp_input, comp_output, _compVoiceTable[i].size);
+			decompressCodec(_compVoiceTable[i].codec, comp_input, comp_output, _compVoiceTable[i].size, i, channels);
 		memcpy((byte *)&comp_final[final_size], comp_output, output_size);
 		final_size += output_size;
 
@@ -160,7 +283,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final) {
+int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final, int32 & channels) {
 	int32 i, tag, num, final_size;
 	byte *comp_input;
 
@@ -194,8 +317,9 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 
 	_musicFile.seek(_bundleMusicTable[index].offset + _compMusicTable[number].offset, SEEK_SET);
 	_musicFile.read(comp_input, _compMusicTable[number].size);
+
 	final_size =
-		decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size);
+		decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size, i, channels);
 
 	free(comp_input);
 
@@ -204,14 +328,8 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	return final_size;
 }
 
-int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, bool use_extended) {
+int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, int32 & channels) {
 	int32 final_size = 0, i;
-	char realName[255];
-
-	if (use_extended)
-		sprintf(realName, "%s.IMX", name);
-	else
-		strcpy(realName, name);
 
 	if (_voiceFile.isOpen() == false) {
 		warning("Bundle: voice file is not open!");
@@ -219,16 +337,16 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, bool use
 	}
 
 	for (i = 0; i < _numVoiceFiles; i++) {
-		if (!scumm_stricmp(realName, _bundleVoiceTable[i].filename)) {
-			final_size = decompressVoiceSampleByIndex(i, comp_final);
+		if (!scumm_stricmp(name, _bundleVoiceTable[i].filename)) {
+			final_size = decompressVoiceSampleByIndex(i, comp_final, channels);
 			return final_size;
 		}
 	}
-	printf("Failed finding voice %s\n", realName);
+	warning("Failed finding voice %s\n", name);
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final, bool fuzzy) {
+int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final, int32 & channels) {
 	int32 final_size = 0, i;
 
 	if (!name) {
@@ -242,16 +360,10 @@ int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_f
 	}
 
 	for (i = 0; i < _numMusicFiles; i++) {
-		if (fuzzy) // Fuzzy matching, only look at the first part of the song
-			if (strstr(_bundleMusicTable[i].filename, name) == _bundleMusicTable[i].filename) {
-				final_size = decompressMusicSampleByIndex(i, number, comp_final);
-				return final_size;
-			}
-		else
-			if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
-				final_size = decompressMusicSampleByIndex(i, number, comp_final);
-				return final_size;
-			}
+		if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
+			final_size = decompressMusicSampleByIndex(i, number, comp_final, channels);
+			return final_size;
+		}
 	}
 	printf("Couldn't find sample %s\n", name);
 	return final_size;
@@ -268,7 +380,7 @@ int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
 	return _musicFile.readUint32BE();
 }
 
-int32 Bundle::getNumberOfMusicSamplesByName(char *name, bool fuzzy) {
+int32 Bundle::getNumberOfMusicSamplesByName(char *name) {
 	int32 number = 0, i;
 
 	if (_musicFile.isOpen() == false) {
@@ -277,19 +389,12 @@ int32 Bundle::getNumberOfMusicSamplesByName(char *name, bool fuzzy) {
 	}
 
 	for (i = 0; i < _numMusicFiles; i++) {
-		if (fuzzy) // Fuzzy matching, only look at the first part of the song
-			if (strstr(_bundleMusicTable[i].filename, name) == _bundleMusicTable[i].filename) {
-				number = getNumberOfMusicSamplesByIndex(i);
-				return number;
-			}
-		else
-			if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
-				number = getNumberOfMusicSamplesByIndex(i);
-				return number;
-			}
-
+		if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
+			number = getNumberOfMusicSamplesByIndex(i);
+			return number;
+		}
 	}
-	printf("Couldn't find numsample %s\n", name);
+	warning("Couldn't find numsample %s\n", name);
 	return number;
 }
 
@@ -327,7 +432,7 @@ int32 Bundle::compDecode(byte *src, byte *dst) {
 }
 #undef NextBit
 
-int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size) {
+int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size, int32 index, int32 & channels) {
 	int32 output_size = input_size;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
 	byte *src, *t_table, *p, *ptr;
@@ -652,6 +757,132 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		free(t_table);
 		break;
 
+	case 13:
+	case 14:
+	case 15:
+		{
+			uint16 firstWord;
+			byte * src;
+			int32 startPos;
+			byte sByte[4];
+			uint32 sDWord[4];
+			int32 channel;
+			int32 left;
+			int32 tableEntrySum;
+			int32 curTablePos;
+			int32 outputWord;
+			int32 imcTableEntry;
+			int32 destPos;
+			int32 curTableEntry;
+			byte decompTable;
+			uint16 readWord;
+			byte * readPos;
+			byte otherTablePos;
+			int32 esiReg;
+			byte var3b;
+			int32 adder;
+
+			src = comp_input;
+			memset (comp_output, 0, 0x2000);
+			firstWord = READ_BE_UINT16(src);
+			src += 2;
+			if (firstWord != 0) {
+				if (index != 0) {
+					startPos = 0;
+				} else {
+					memcpy(comp_output, src, firstWord);
+					startPos = firstWord;
+					uint32 tag;
+					byte * ptr = src;
+					do {
+						tag = READ_BE_UINT32(ptr); ptr += 4;
+					} while (tag != MKID_BE('FRMT'));
+					channels = READ_BE_UINT32(ptr + 20);
+				}
+				src += firstWord;
+				left = 0x2000 - firstWord;
+			} else {
+				sByte[0] = *src++;
+				sDWord[0] = READ_BE_UINT32(src);
+				src += 4;
+				sDWord[1] = READ_BE_UINT32(src);
+				src += 4;
+				if (channels > 1) {
+					sByte[1] = *src++;
+					sDWord[2] = READ_BE_UINT32(src);
+					src += 4;
+					sDWord[3] = READ_BE_UINT32(src);
+					src += 4;
+				}
+				startPos = 0;
+				left = 0x2000;
+			}
+
+			tableEntrySum = 0;
+			for (channel = 0; channel < channels; channel++) {
+				if (firstWord == 0) {
+					curTablePos = sByte[channel];
+					outputWord = sDWord[channel * 2 + 1];
+					imcTableEntry = sDWord[channel * 2];
+				} else {
+					curTablePos = 0;
+					outputWord = 0;
+					imcTableEntry = 7;
+				}
+				left = ((left / 2) + 1) / channels;
+				destPos = startPos * 2 * channel;
+				do {
+					curTableEntry = _destImcTable[curTablePos];
+					decompTable = curTableEntry - 2;
+					var3b = (1 << decompTable) << 1;
+					readPos = src + (tableEntrySum >> 3);
+					readWord = (uint16)(READ_BE_UINT16(readPos) << (tableEntrySum & 7));
+					otherTablePos = (byte)(readWord << (16 - curTableEntry)) & 0xff;
+					tableEntrySum += curTableEntry;
+					esiReg = imxShortTable[curTableEntry];
+					esiReg = (esiReg & otherTablePos) << (7 - curTableEntry);
+					esiReg += (curTablePos << 6);
+					imcTableEntry >>= (curTableEntry - 1);
+					adder = imcTableEntry + _destImcTable2[esiReg];
+					if ((otherTablePos & var3b) != 0) {
+						adder = -adder;
+					}
+					outputWord += adder;
+					if (outputWord > 0x7fff) 
+						outputWord = 0x7fff;
+					if (outputWord < 0xffff8000)
+						outputWord = 0xffff8000;
+					comp_output[destPos] = (byte)(outputWord) >> 8;
+					comp_output[destPos + 1] = (byte)(outputWord);
+					switch (decompTable) {
+						case 0: curTablePos += imxOtherTable1[otherTablePos];
+							break;
+						case 1: curTablePos += imxOtherTable2[otherTablePos];
+							break;
+						case 2: curTablePos += imxOtherTable3[otherTablePos];
+							break;
+						case 3: curTablePos += imxOtherTable4[otherTablePos];
+							break;
+						case 4: curTablePos += imxOtherTable5[otherTablePos];
+							break;
+						case 5: curTablePos += imxOtherTable6[otherTablePos];
+							break;
+					}
+					if (curTablePos < 0)
+						curTablePos = 0;
+					if (curTablePos > 88)
+						curTablePos = 88;
+					destPos += 2 * channels;
+					imcTableEntry = imcTable1[curTablePos];
+				} while (--left != 0);
+			}
+			if (index == 0) {
+				output_size = 0x2000 - firstWord;
+			} else {
+				output_size = 0x2000;
+			}
+		}
+		break;
 	default:
 		warning("Bundle: Unknown codec %d!", (int)codec);
 		output_size = 0;

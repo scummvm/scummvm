@@ -41,7 +41,7 @@ struct BundleAudioTable {
 };
 
 	int32 compDecode(byte *src, byte *dst);
-	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
+	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size, int32 index, int32 & channels);
 	CompTable _compVoiceTable[50];
 	CompTable _compMusicTable[2500];
 	File _voiceFile;
@@ -52,18 +52,23 @@ struct BundleAudioTable {
 	int32 _numMusicFiles;
 	int32 _lastSong;
 
+	bool _initializedImcTables;
+	byte _destImcTable[93];
+	uint32 _destImcTable2[5697];
+
 public:
 	  Bundle();
 	 ~Bundle();
 
+	void initializeImcTables();
 	bool openVoiceFile(const char *filename, const char *directory);
 	bool openMusicFile(const char *filename, const char *directory);
-	int32 decompressVoiceSampleByName(char *name, byte *comp_final, bool use_extended=false);
-	int32 decompressVoiceSampleByIndex(int32 index, byte *comp_final);
-	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final, bool fuzzy=false);
-	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final);
+	int32 decompressVoiceSampleByName(char *name, byte *comp_final, int32 & channels);
+	int32 decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 & channels);
+	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final, int32 & channels);
+	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final, int32 & channels);
 	int32 getNumberOfMusicSamplesByIndex(int32 index);
-	int32 getNumberOfMusicSamplesByName(char *name, bool fuzzy=false);
+	int32 getNumberOfMusicSamplesByName(char *name);
 };
 
 #endif
