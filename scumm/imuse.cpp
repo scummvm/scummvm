@@ -1226,17 +1226,15 @@ void IMuseInternal::pause(bool paused) {
 	update_volumes();
 	_music_volume = vol;
 
-	// Kill master volume on the MT-32, because for some
-	// reason the MT-32 often fails to respond to the
-	// channel volume update for a single channel.
-	// (Ref Bug #817871. Reportedly happens in the
-	// original distro, too.)
+	// Fix for Bug #817871. The MT-32 apparently fails
+	// sometimes to respond to a channel volume message
+	// (or only uses it for subsequent note events).
+	// The result is hanging notes on pause. Reportedly
+	// happens in the original distro, too. To fix that,
+	// just send AllNotesOff to the channels.
 	if (_midi_native && _native_mt32) {
-		byte buffer[8];
-		memcpy(buffer, "\x41\x10\x16\x10\x00\x16", 6);
-		buffer[6] = paused ? 0 : 100;
-		buffer[7] = (0 - 0x10 - 0x16 - buffer[6]) & 0x7F; // Checksum
-		_midi_native->sysEx (buffer, 8);
+		for (int i = 0; i < 16; ++i)
+			_midi_native->send (123 << 8 | 0xB0 | i);
 	}
 
 	_paused = paused;
