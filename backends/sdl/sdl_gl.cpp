@@ -89,7 +89,7 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	Amask = 0;
 	
 	_forceFull = true;
-	_mode_flags = DF_WANT_RECT_OPTIM | DF_UPDATE_EXPAND_1_PIXEL;
+	_mode_flags = DF_UPDATE_EXPAND_1_PIXEL;
 	_scaleFactor = 2;
 
 	_tmpscreen = NULL;
