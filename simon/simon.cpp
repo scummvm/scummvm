@@ -115,7 +115,7 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			const char *name = file->displayName().c_str();
 
-			if ((0 == scumm_stricmp(detectName, name))  || (!0 == scumm_stricmp(detectName2, name))) {
+			if ((!scumm_stricmp(detectName, name))  || (!scumm_stricmp(detectName2, name))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				detectedGames.push_back(g->toGameSettings());
 				fileSet.addKey(file->path());
