@@ -25,36 +25,36 @@ namespace Graphics {
 
 int NewFont::getCharWidth(byte chr) const {
 	// If no width table is specified, return the maximum width
-	if (!width)
-		return maxwidth;
+	if (!desc.width)
+		return desc.maxwidth;
 	// If this character is not included in the font, use the default char.
-	if (chr < firstchar || firstchar + size < chr) {
+	if (chr < desc.firstchar || desc.firstchar + desc.size < chr) {
 		if (chr == ' ')
-			return maxwidth / 2;
-		chr = defaultchar;
+			return desc.maxwidth / 2;
+		chr = desc.defaultchar;
 	}
-	return width[chr - firstchar];
+	return desc.width[chr - desc.firstchar];
 }
 
 void NewFont::drawChar(const Surface *dst, byte chr, int x, int y, uint32 color) const {
 	assert(dst != 0);
 	byte *ptr = (byte *)dst->pixels + x * dst->bytesPerPixel + y * dst->pitch;
 
-	assert(bits != 0 && maxwidth <= 16);
+	assert(desc.bits != 0 && desc.maxwidth <= 16);
 	assert(dst->bytesPerPixel == 1 || dst->bytesPerPixel == 2);
 
 	// If this character is not included in the font, use the default char.
-	if (chr < firstchar || chr >= firstchar + size) {
+	if (chr < desc.firstchar || chr >= desc.firstchar + desc.size) {
 		if (chr == ' ')
 			return;
-		chr = defaultchar;
+		chr = desc.defaultchar;
 	}
 
 	const int w = getCharWidth(chr);
-	chr -= firstchar;
-	const bitmap_t *tmp = bits + (offset ? offset[chr] : (chr * height));
+	chr -= desc.firstchar;
+	const bitmap_t *tmp = desc.bits + (desc.offset ? desc.offset[chr] : (chr * desc.height));
 
-	for (y = 0; y < height; y++) {
+	for (y = 0; y < desc.height; y++) {
 		const bitmap_t buffer = *tmp++;
 		bitmap_t mask = 0x8000;
 		for (x = 0; x < w; x++) {

@@ -76,8 +76,7 @@ typedef unsigned short bitmap_t; /* bitmap image unit size*/
 
 /* builtin C-based proportional/fixed font structure */
 /* based on The Microwindows Project http://microwindows.org */
-class NewFont : public Font {
-protected:
+struct FontDesc {
 	const char *	name;		/* font name*/
 	int		maxwidth;	/* max width in pixels*/
 	int 	height;		/* height in pixels*/
@@ -89,12 +88,17 @@ protected:
 	const unsigned char* width;	/* character widths or NULL if fixed*/
 	int		defaultchar;	/* default char (not glyph index)*/
 	long	bits_size;	/* # words of bitmap_t bits*/
+};
+
+class NewFont : public Font {
+protected:
+	FontDesc desc;
 
 public:
-	NewFont();
+	NewFont(const FontDesc &d) : desc(d) {}
 	
-	virtual int getFontHeight() const { return height; }
-	virtual int getMaxCharWidth() const { return maxwidth; };
+	virtual int getFontHeight() const { return desc.height; }
+	virtual int getMaxCharWidth() const { return desc.maxwidth; };
 
 	virtual int getCharWidth(byte chr) const;
 	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color) const;
