@@ -1327,6 +1327,10 @@ void CostumeRenderer::setPalette(byte *palette) {
 			memset(_palette, 8, 16);
 			_palette[12] = 0;
 		}
+		// FIXME: is this actually anything more than a guess (i.e. verified by disassmbly) ?
+		// A more "logical" thing would be if any 255 values in _palette are replaced
+		// by this value, at least that would closely parallel the actor palette usage in
+		// newer games (see below).
 		_palette[_loaded._ptr[8]] = _palette[0];
 	} else {
 		for (i = 0; i < _loaded._numColors; i++) {
