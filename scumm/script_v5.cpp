@@ -949,8 +949,12 @@ void Scumm_v5::o5_getActorRoom() {
 }
 
 void Scumm_v5::o5_getActorScale() {
+	// dummy opcode in the loom
+	if (_gameId == GID_LOOM)
+		return;
+
 	// INDY3 uses this opcode as a wait_for_actor();
-	if (_gameId == GID_INDY3_256) {
+	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
 		byte *oldaddr = _scriptPointer - 1;
 		if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving) {
 			_scriptPointer = oldaddr;
@@ -2248,7 +2252,7 @@ void Scumm_v5::o5_wait() {
 
 	oldaddr = _scriptPointer - 1;
 
-	if (_gameId == GID_INDY3_256) {
+	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
