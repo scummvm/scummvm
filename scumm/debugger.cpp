@@ -475,7 +475,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 	uint32 size;
 	int resnum;
 
-	if (argc != 3) {
+	if (argc != 4) {
 		Debug_Printf("Syntax: importres <restype> <filename> <resnum>\n");
 		return true;
 	}
