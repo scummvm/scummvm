@@ -1420,9 +1420,9 @@ void Scumm::initRoomSubBlocks() {
 	//
 	if (_features & GF_AFTER_V1) {
 		_IM00_offs = 0;
-    for(i = 0; i < 4; i++){
-      gdi._C64Colors[i] = roomptr[6 + i];
-    }
+		for(i = 0; i < 4; i++){
+			gdi._C64Colors[i] = roomptr[6 + i];
+		}
 		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64CharMap, 256 * 8);
 		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64PicMap, roomptr[4] * roomptr[5]);
 		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64ColorMap, roomptr[4] * roomptr[5]);
