@@ -774,6 +774,17 @@ void Scumm::o5_actorSet()
 			break;
 		case 15:										/* unk */
 			error("o5_actorset:unk not implemented");
+#if 0
+			int16 args[16] =
+				{
+					0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+					0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+				};
+			getWordVararg(args);
+			for (i = 0; i < 16; i++)
+				if (args[i] != 0xFF)
+					a->palette[i] = args[i] /* & 0x0F */;
+#endif
 			break;
 		case 16:										/* width */
 			a->width = getVarOrDirectByte(0x80);
@@ -1920,7 +1931,7 @@ void Scumm::o5_roomOps()
 				b = getVarOrDirectWord(0x40);
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
-			_currentPalette[a] = b;		/*FIXME: should be shadow palette */
+			_shadowPalette[a] = b;
 			//        _fullRedraw = 1;
 		} else {
 			a = getVarOrDirectWord(0x80);
