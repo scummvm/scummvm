@@ -97,7 +97,7 @@ void SkyState::getText(uint32 textNr) { //load text #"textNr" to _textBuffer
 		
 		uint32 fileNo = (sectionNo >> 2); 
 		fileNo += ((_language * NO_OF_TEXT_SECTIONS) + 60600);
-		_itemList[FIRST_TEXT_SEC + sectionNo] = (void *)loadFile(fileNo, NULL);
+		_itemList[FIRST_TEXT_SEC + sectionNo] = (void *)loadFile((uint16)fileNo, NULL);
 	}
 	uint8 *textItemPtr = (uint8 *)_itemList[FIRST_TEXT_SEC + sectionNo];
 	

@@ -187,6 +187,10 @@ SOURCE=.\sky\struc.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\text.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\timer.cpp
 # End Source File
 # End Group
