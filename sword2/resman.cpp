@@ -447,7 +447,6 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		debug(6, "res len %d", len);
 
 		// Ok, we know the length so try and allocate the memory.
-		// If it can't then old files will be ditched until it works.
 		_resList[res].ptr = _vm->_memory->memAlloc(len, res);
 		_resList[res].size = len;
 		_resList[res].refCount = 0;
