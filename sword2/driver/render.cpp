@@ -64,7 +64,6 @@ int32 renderTooSlow;
 
 uint8 xblocks[MAXLAYERS];
 uint8 yblocks[MAXLAYERS];
-uint8 restoreLayer[MAXLAYERS];
 
 // blockSurfaces stores an array of sub-blocks for each of the parallax layers.
 
@@ -378,15 +377,15 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 {
 	int16 oldLayer = layer;
-	int16 i;
 
 	debug(2, "RestoreBackgroundLayer %d", l);
 
 	layer = l;
 	if (blockSurfaces[l]) {
-		for (i = 0; i < xblocks[l] * yblocks[l]; i++)
+		for (int i = 0; i < xblocks[l] * yblocks[l]; i++) {
 			if (blockSurfaces[l][i])
 				free(blockSurfaces[l][i]);
+		}
 
 		free(blockSurfaces[l]);
 		blockSurfaces[l] = NULL;
@@ -707,7 +706,6 @@ int32 SetLocationMetrics(uint16 w, uint16 h) {
 
 int32 RenderParallax(_parallax *p, int16 l) {
 	int16 x, y;
-	int16 i, j;
 	ScummVM::Rect r;
 
 	if (locationWide == screenWide)
@@ -729,8 +727,8 @@ int32 RenderParallax(_parallax *p, int16 l) {
 	clip_rect.top = MENUDEEP;
 	clip_rect.bottom = screenDeep - MENUDEEP;
 
-	for (j = 0; j < yblocks[l]; j++) {
-		for (i = 0; i < xblocks[l]; i++) {
+	for (int j = 0; j < yblocks[l]; j++) {
+		for (int i = 0; i < xblocks[l]; i++) {
 			if (blockSurfaces[l][i + j * xblocks[l]]) {
 				r.left = i * BLOCKWIDTH - x;
 				r.right = r.left + BLOCKWIDTH;
@@ -988,10 +986,11 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 		} else
 			blockSurfaces[layer][i] = NULL;
 	}
+
 	free(memchunk);
 	layer++;
-	return RD_OK;
 
+	return RD_OK;
 }
 
 /**
@@ -1001,11 +1000,9 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 int32 CloseBackgroundLayer(void) {
 	debug(2, "CloseBackgroundLayer");
 
-	int16 i, j;
-
-	for (j = 0; j < MAXLAYERS; j++) {
+	for (int j = 0; j < MAXLAYERS; j++) {
 		if (blockSurfaces[j]) {
-			for (i = 0; i < xblocks[j] * yblocks[j]; i++)
+			for (int i = 0; i < xblocks[j] * yblocks[j]; i++)
 				if (blockSurfaces[j][i])
 					free(blockSurfaces[j][i]);
 			free(blockSurfaces[j]);
