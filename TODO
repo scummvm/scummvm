@@ -1,16 +1,16 @@
 Residual TODO list (in rough order of priority):
 ------------------------------------------------
- * Figure out why in-memory decompression of SMUSH movies doesn't work
-   (See #define in smush.h)
- * Add LAF font support to replace existing hack 
- * Bounds check the Screenblocks dirty rectangle stuff, so it stops trashing
-   memory and making Residual unusable/unstable.	
- * Implement bitmap costume drawing
- * Implement 2D primitives 
+Assigned tasks:
+ * Add LAF font and text drawing support (aquadran)
+ * Implement drawing 2D objects (ender)
+ * Fix position of overlay SMUSH movies (aquadran)
+
+Unassigned (help wanted):
+ * Add OpenGL lighting (ender, possibly)
+ * Implement iMuse (aquadran, possibly)
  * Save/Load support
- * Fix implementation of overlay SMUSH rendering
- * Fix speed SMUSH frame update
- * Add OpenGL lighting
- * Implement iMuse
+ * Implement 2D primitives 
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
  * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) - original used MFC
+ * Fix the screenblocks zBuffer code
+

@@ -1,26 +1,30 @@
-Residual: A LucasArts 3D game interpreter            Version 0.01-CVS
-(C) 2003-2004 The ScummVM-Residual team                  Last Updated: 14th Mar 2004
---------------------------------------------------------------------------------
+Residual: A LucasArts 3D game interpreter           Version:      0.02-CVS
+(C) 2003-2004 The ScummVM-Residual team             Last Updated: 20th Mar 2004
+-------------------------------------------------------------------------------
 
 What is Residual?
 -----------------
 Residual is a ScummVM (http://www.scummvm.org/) sub-project to play LucasArts'
-LUA-bassed 3D adventures. The 2D adventures based on the SCUMM-engine can be run
-by the main ScummVM software, Residual handles the residual (remaining) games.
-It is also a word pun, as the engine used in the first LUA-based adventure was
-gamed GrimE, which is a residue. Residual is an OpenGL program, and requirs a
-3D card and OpenGL support.
+LUA-bassed 3D adventures, such as Grim Fandango. Residual is an OpenGL program,
+and requires a 3D card with working OpenGL support.
+
+The main ScummVM program can run LucasArts 2D SCUMM adventures (among others).
+Residual is named such as it aims to do the same for the residual (remaining) 
+games. It is also a word pun, as the engine used in these LUA-based adventure
+is called GrimE (as opposed to SCUMM). Grime is a type of residue.
 
 What games does it support?
 ---------------------------
-Residual is a very new project, and still very much in an alpha stage. Currently
-it contains some support for Grim Fandango. We hope to later be able to support 
-the other LucasArts LUA-based title 'Escape from Monkey Island'.
+Residual is a fairly new project and slow developing project, and is still very
+much considered alpha. Currently it contains initial support for Grim Fandango.
+
+It is possible, but far from promised, that we can support the other LucasArts
+LUA-based title 'Escape from Monkey Island' in the distant future.
 
 How do I run Residual?
 ----------------------
-Again, as Residual is still under heavy development, it is not yet stable, easy
-to use, nor complete. However, if you do wish to try it you can do so by:
+As Residual is still under heavy development, it is not yet stable, easy
+to use, nor complete. Some technical ability is required.
 
 UNIX:
      Create a ~/.residualrc file, containing the following lines:
@@ -34,56 +38,58 @@ the lines:
        DataDir=.
        good_times=TRUE
 
-Residual understands two options: '-zbuffer' which enables masking, and '-screenblocks'
-which is a (currently broken) attempt to speed up masking on older cards.
+Residual understands two command-line options: '-zbuffer' which enables masking
+and '-screenblocks' which is a (currently broken) attempt to speed up masking
+on older cards.
 
 It runs really slow when using -zbuffer!
 ----------------------------------------
 A large portion of older cards (Such as 3dfx cards, Radeon 7500 and earlier,
 Matrox G4xx series cards, etc) do not have a fast glDrawPixels implementation.
-Unix users can achieve a usable speed by using Mesa 5.0 or newer, but people
-unable to upgrade or Windows users are stuck.
 
-We do have a possible solution (-screenblocks), however it is experimental
-untested, and currently will thrash memory and potentially crash.
+Unix users may be able to achieve playable framerates by using Mesa 5.0 or
+above, but people unable to upgrade or Windows users are stuck. We do have a
+possible solution (-screenblocks), however it is experimental, untested, and
+currently will thrash memory and crash.
 
 What is the state of Residual? 
 ------------------------------- 
-Many features are not yet supported. 2D graphics are not yet drawn, nor do we
-use the built-in fonts. You can, however, still interact with objects that are
-not drawn (such as the mail tube). It may crash. Walking is not quite right.
-There is no lighting.
+Many features are not yet supported. Cutscenes work, you can interact with
+objects (even if they are invisible, like the mail tube!) and play at least a
+portion of the game.
 
-The game itself is in a fairly decent state, and you can play at least up until
-you retrieve your first customer. 
+HOWEVER: It may crash. There is no lighting, text, some actor animations are 
+missing, and 2D objects are not drawn. Walking is pretty broken and you can get
+stuck frequently.
 
 What are the default keys?
 --------------------------
-Arrow keys : Movement
 e,u,p,i    : Examine, Use, Pickup, Inventory
-Shift      : Hold while moving, to 'Run'
+Arrow keys : Movement
+Shift      : Hold to run
 Enter      : Selects items in inventory, conversation, etc
-Escape     : Exits out of some screens
+Escape     : Skips cutscenes, exits certain screens
 q          : Quit 
 
 How do I report bugs?
 ---------------------
-See above. There is no point yet.
+Don't. Residual is very alpha and we KNOW it doesn't work right.
 
 What else should I know?
 ------------------------
   * Exit with 'q', and don't press f1, as things will go loopy.
-  * Won't compile in MSVC (see TODO), but will on MingW32
   * See TODO for other stuff
 
-ScummVM-Residual Team Credits:
+Credits:
 ------------------------------
-ScummVM-Residual Team Credits:
- Daniel Schepler         Initial engine codebase & LUA upgrades
- James Brown          	 ScummVM project leader, core engine developer
- Vincent Hamm            Some core engine code
+ScummVM-Residual Team:
+ James Brown          	 Core developer. ScummVM co-lead dev.
+ Pawel Kolodziejski      Core developer. SMUSH implemention.
+
+Contributors:
+ Daniel Schepler         Initial engine code and LUA tweaks.
+ Vincent Hamm            Various engine code
  Lionel Ulmer            OpenGL optimisations
- Pawel Kolodziejski      SMUSH implemention
 
 Special Thanks To:
 ------------------ 
