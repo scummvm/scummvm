@@ -1013,7 +1013,7 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 
 			if (objData->entryObj != 0) {
 				// if it's a door, then update door that it links to
-				openOrCloseAssociatedObject(action, objData->entryObj);
+				openOrCloseAssociatedObject(action, ABS(objData->entryObj));
 				objData->entryObj = ABS(objData->entryObj);
 			}
 		}
@@ -1035,7 +1035,7 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 
 			if (objData->entryObj != 0) {
 				// if it's a door, then update door that it links to
-				openOrCloseAssociatedObject(action, objData->entryObj);
+				openOrCloseAssociatedObject(action, ABS(objData->entryObj));
 				objData->entryObj = -ABS(objData->entryObj);
 			}
 		}
@@ -1107,13 +1107,13 @@ void Command::alterDefault(const Verb& def, bool itemType) {
 
 void Command::openOrCloseAssociatedObject(const Verb& action, int16 otherObj) {
 
-	warning("using Command::openOrCloseAssociatedObject()");
 	CmdListData *cmdList = &_cmdList[1];
 	uint16 com = 0;
 	uint16 i;
-	for (i = 1; i <= _numCmdList && com != 0; ++i, ++cmdList) {
+	for (i = 1; i <= _numCmdList; ++i, ++cmdList) {
 		if (cmdList->match(action, otherObj, 0)) {
 			if (cmdList->setConditions) {
+				warning("using Command::openOrCloseAssociatedObject() with setConditions");
 				CmdGameState *cmdGs = _cmdGameState;
 				uint16 j;
 				for (j = 1; j <= _numCmdGameState; ++j) {
@@ -1132,6 +1132,8 @@ void Command::openOrCloseAssociatedObject(const Verb& action, int16 otherObj) {
 			}
 		}
 	}
+
+	debug(0, "Command::openOrCloseAssociatedObject() - com=%X", com);
 
 	if (com != 0) {
 
