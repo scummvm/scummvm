@@ -53,12 +53,22 @@ OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
 
 OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 	OSystem_SDL_Common *syst = OSystem_SDL_Common::create();
-	syst->_mode = gfx_mode;
-	syst->_full_screen = full_screen;
+
+	syst->init_intern(gfx_mode, full_screen);
+
+	return syst;
+}
+
+void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen) {
+
+	_mode = gfx_mode;
+	_full_screen = full_screen;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) ==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
+
+	_mutex = SDL_CreateMutex();
 
 	SDL_ShowCursor(SDL_DISABLE);
 	
@@ -67,7 +77,7 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 
 #ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
 	// Setup the icon
-	syst->setup_icon();
+	setup_icon();
 #endif
 
 #ifndef MACOSX		// Work around a bug in OS X
@@ -79,10 +89,8 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 	// enable joystick
 	if (SDL_NumJoysticks() > 0) {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
-		syst->init_joystick();
+		init_joystick();
 	}
-
-	return syst;
 }
 
 void OSystem_SDL_Common::set_timer(int timer, int (*callback)(int)) {
@@ -105,7 +113,7 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 	// reset mouse state
 	memset(&km, 0, sizeof(km));
 	
-	_mutex = SDL_CreateMutex();
+	_mutex = 0;
 }
 
 OSystem_SDL_Common::~OSystem_SDL_Common() {

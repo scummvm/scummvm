@@ -130,6 +130,10 @@ protected:
 	OSystem_SDL_Common();
 	virtual ~OSystem_SDL_Common();
 
+	static OSystem *create_intern();
+
+	void init_intern(int gfx_mode, bool full_screen);
+
 	// unseen game screen
 	SDL_Surface *_screen;
 	int _screenWidth, _screenHeight;
