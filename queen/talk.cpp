@@ -68,7 +68,7 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 
 	char personName[MAX_STRING_SIZE];
 	// XXX SET_PERSON_DATA(N,NAMEstr,0);
-	int bobNum = 0; // XXX P_BNUM;
+	int bobNum = 1; // XXX P_BNUM;
 	// XXX strcpy(PERstr,P_NAMEstr);
 	personName[0] = '\0';
 
@@ -100,39 +100,39 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 	int16 level=1, retval=0, type=1;
 	int16 head = _dialogueTree[level][0].head;
 
+	// TODO: split this loop in several functions
 	while(retval != -1) {
 		debug(0, "retval = %i", retval);
 		
 		char otherVoiceFilePrefix    [MAX_STRING_SIZE];
 		char joeVoiceFilePrefix   [5][MAX_STRING_SIZE];
-		char talkString           [5][MAX_STRING_SIZE];
 
-		talkString[0][0] = '\0';
+		_talkString[0][0] = '\0';
 
 		if(talkSelected()->hasTalkedTo == 1 && head == 1)
-			strcpy(talkString[0], _person2String);
+			strcpy(_talkString[0], _person2String);
 		else
-			findDialogueString(_person1Ptr, head, talkString[0]);
+			findDialogueString(_person1Ptr, head, _talkString[0]);
 
 		if(talkSelected()->hasTalkedTo == 1 && head == 1)
 			sprintf(otherVoiceFilePrefix, "%2dXXXXP", _talkKey);
 		else
 			sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 
-		if (talkString[0][0] == '\0' && retval > 1) {
-			findDialogueString(_person1Ptr, retval, talkString[0]);
+		if (_talkString[0][0] == '\0' && retval > 1) {
+			findDialogueString(_person1Ptr, retval, _talkString[0]);
 			sprintf(otherVoiceFilePrefix,"%2d%4xP", _talkKey, retval);
 		}
 
 		// Joe dialogue
 
 		for (int i = 1; i <= 4; i++) {
-			findDialogueString(_joePtr, _dialogueTree[level][i].head, talkString[i]);
+			findDialogueString(_joePtr, _dialogueTree[level][i].head, _talkString[i]);
 
 			int16 index = _dialogueTree[level][i].gameStateIndex;
 
 			if (index < 0 && _logic->gameState(abs(index)) != _dialogueTree[level][i].gameStateValue)
-				talkString[i][0] = '\0';
+				_talkString[i][0] = '\0';
 
 			sprintf(joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
 		}
@@ -145,7 +145,7 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 		int selectedSentence = 0;
 
 		for (int i = 1; i <= 4; i++) {
-			if (talkString[i][0] != '\0') {
+			if (_talkString[i][0] != '\0') {
 				choicesLeft++;
 				selectedSentence = i;
 			}
@@ -155,24 +155,23 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 
 		if (1 == choicesLeft) {
 			// Automatically run the final dialogue option
-			if (speak(talkString[0], personName, otherVoiceFilePrefix))
+			if (speak(_talkString[0], personName, otherVoiceFilePrefix))
 				personWalking = true;
 
 			if (_quit)
 				break;
 
-			speak(talkString[selectedSentence], personName, joeVoiceFilePrefix[selectedSentence]);
-
+			speak(_talkString[selectedSentence], personName, joeVoiceFilePrefix[selectedSentence]);
 		}
 		else {
-			// XXX if (bobNum > 0)
-			// XXX 	selectedSentence = bobTalk(personName);
-			for (int i = 1; i <= 4; i++) {
-				if (talkString[i][0] != '\0') {
-					selectedSentence = i;
-					break;
+			if (bobNum > 0) {
+				speak(_talkString[0], personName, otherVoiceFilePrefix);
+				selectedSentence = selectSentence();
 			}
-		}
+			else {
+				warning("bobBum is %i", bobNum);
+				selectedSentence = 0;
+			}
 		}
 
 		if (_quit)
@@ -237,9 +236,14 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 		// if(RETVAL = -1, then before we exit, check to see if(person
 		// has something final to say!
 
-
-		// XXX debug
-		//break;
+		if (-1 == retval) {
+			findDialogueString(_person1Ptr, head, _talkString[0]);
+			if (_talkString[0][0] != '\0') {
+				sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
+				if (speak(_talkString[0], personName, otherVoiceFilePrefix))
+					personWalking = true;
+			}
+		}
 	}
 }
 		
@@ -269,7 +273,7 @@ void Talk::findDialogueString(byte *ptr, int16 id, char *str) {
 		int16 currentId = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		if (id == currentId) {
 			ptr = getString(ptr, str, MAX_STRING_LENGTH, 4);
-			debug(0, "Found string with ID %i: '%s'", id, str);
+			//debug(0, "Found string with ID %i: '%s'", id, str);
 			break;
 		}
 		else
@@ -294,7 +298,7 @@ void Talk::load(const char *filename) {
 
 	_levelMax = (int16)READ_BE_UINT16(ptr); ptr += 2;
 
-	debug(0, "levelMax = %i", _levelMax);
+	//debug(0, "levelMax = %i", _levelMax);
 
 	if (_levelMax < 0) {
 		_levelMax = -_levelMax;
@@ -314,8 +318,8 @@ void Talk::load(const char *filename) {
 	int16 testValue2      = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	int16 itemToInsert2   = (int16)READ_BE_UINT16(ptr); ptr += 2;
 
-	debug(0, "uniqueKey = %i", _uniqueKey);
-	debug(0, "talkKey   = %i", _talkKey);
+	//debug(0, "uniqueKey = %i", _uniqueKey);
+	//debug(0, "talkKey   = %i", _talkKey);
 
 	_person1Ptr      = _fileData + READ_BE_UINT16(ptr); ptr += 2;
 	byte *cutawayPtr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
@@ -356,18 +360,18 @@ void Talk::initialTalk() {
 	char joeString[MAX_STRING_SIZE];
 	if (hasString) {
 		ptr = getString(ptr, joeString, MAX_STRING_LENGTH);
-		debug(0, "joeString = '%s'", joeString);
+		//debug(0, "joeString = '%s'", joeString);
 	}
 	else
 		joeString[0] = '\0';
 
 	ptr = _person2Ptr;
 	ptr = getString(ptr, _person2String, MAX_STRING_LENGTH);
-	debug(0, "person2String = '%s'", _person2String);
+	//debug(0, "person2String = '%s'", _person2String);
 
 	char joe2String[MAX_STRING_SIZE];
 	ptr = getString(ptr, joe2String, MAX_STRING_LENGTH);
-	debug(0, "joe2String = '%s'", joe2String);
+	//debug(0, "joe2String = '%s'", joe2String);
 
 	if (talkSelected()->hasTalkedTo == 0) {
 		
@@ -423,6 +427,24 @@ byte *Talk::getString(byte *ptr, char *str, int maxLength, int align) {
 
 Talk::TalkSelected *Talk::talkSelected() {
 	return _talkSelected + _uniqueKey;
+}
+
+int16 Talk::selectSentence() {
+	int selectedSentence = 0;
+
+	debug(0, "----- Select a sentence of these -----");
+
+	for (int i = 1; i <= 4; i++) {
+		if (_talkString[i][0] != '\0') {
+			debug(0, "%i: %s", i, _talkString[i]);
+			if (!selectedSentence)		// XXX debug
+				selectedSentence = i;		// XXX debug
+		}
+	}
+				
+	debug(0, "Selected sentence %i", selectedSentence);
+	
+	return selectedSentence;
 }
 
 } // End of namespace Queen

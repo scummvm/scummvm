@@ -115,6 +115,7 @@ class Talk {
 		int _oldSelectedSentenceIndex;
 		int _oldSelectedSentenceValue;
 
+		char _talkString[5][MAX_STRING_SIZE];
 
 		Talk(Logic *logic, Resource *resource);
 		~Talk();
@@ -140,6 +141,8 @@ class Talk {
 		//! The sentence will not be displayed again
 		void disableSentence(int oldLevel, int selectedSentence);
 
+		//! Select what to say
+		int16 selectSentence();
 
 };
 
