@@ -313,7 +313,7 @@ void SimonEngine::vc_3_new_sprite() {
 
 		if (vpe->vgaFile1 != NULL)
 			break;
-		if (res != _vga_cur_file_2)
+		if (_vga_cur_file_2 != res)
 			_video_var_7 = _vga_cur_file_2;
 
 		ensureVgaResLoaded(res);
@@ -1607,7 +1607,7 @@ void SimonEngine::vc_59() {
 void SimonEngine::vc_58() {
 	uint sprite = _vga_cur_sprite_id;
 	uint file = _vga_cur_file_id;
-	byte *vc_ptr;
+	byte *vc_ptr_org;
 	uint16 tmp;
 
 	_vga_cur_file_id = vc_read_next_word();
@@ -1615,11 +1615,11 @@ void SimonEngine::vc_58() {
 
 	tmp = TO_BE_16(vc_read_next_word());
 
-	vc_ptr = _vc_ptr;
+	vc_ptr_org = _vc_ptr;
 	_vc_ptr = (byte *)&tmp;
 	vc_23_set_sprite_priority();
 
-	_vc_ptr = vc_ptr;
+	_vc_ptr = vc_ptr_org;
 	_vga_cur_sprite_id = sprite;
 	_vga_cur_file_id = file;
 }
@@ -1633,11 +1633,11 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
 	VgaTimerEntry *vte;
-	byte *vc_org;
+	byte *vc_ptr_org;
 
 	old_sprite_id = _vga_cur_sprite_id;
 	old_cur_file_id = _vga_cur_file_id;
-	vc_org = _vc_ptr;
+	vc_ptr_org = _vc_ptr;
 
 	_vga_cur_file_id = file;
 	_vga_cur_sprite_id = sprite;
@@ -1674,7 +1674,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 
 	_vga_cur_file_id = old_cur_file_id;
 	_vga_cur_sprite_id = old_sprite_id;
-	_vc_ptr = vc_org;
+	_vc_ptr = vc_ptr_org;
 }
 
 void SimonEngine::vc_60_kill_sprite() {
@@ -1730,8 +1730,8 @@ void SimonEngine::vc_62_palette_thing() {
 			vsp = _vga_sprites;
 			while (vsp->id != 0) {
 				if (vsp->id == 128) {
-					byte *f1 = _cur_vga_file_1;
-					byte *f2 = _cur_vga_file_2;
+					byte *old_file_1 = _cur_vga_file_1;
+					byte *old_file_2 = _cur_vga_file_2;
 					uint palmode = _video_palette_mode;
 	
 					vpe = &_vga_buffer_pointers[vsp->unk7];
@@ -1748,8 +1748,8 @@ void SimonEngine::vc_62_palette_thing() {
 					vc_10_draw();
 
 					_video_palette_mode = palmode;
-					_cur_vga_file_1 = f1;
-					_cur_vga_file_2 = f2;
+					_cur_vga_file_1 = old_file_1;
+					_cur_vga_file_2 = old_file_2;
 					break;
 				}
 				vsp++;
