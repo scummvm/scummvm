@@ -2604,23 +2604,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			// minutes of inactivity (no mouse movements) before
 			// starting the screensaver, so setting it to 0 will
 			// help in debugging.
-			{
-				int i;
-				for (i = 0; i < 25; i++) {
-					if (_currentScript != i && vm.slot[i].status != ssDead) {
-						vm.slot[i].status |= 0x80;
-						vm.slot[i].freezeCount++;
-					}
-				}
-
-				for (i = 0; i < 6; i++)
-					_sentence[i].freezeCount++;
-
-				if (vm.cutSceneScriptIndex != 0xFF) {
-					vm.slot[vm.cutSceneScriptIndex].status &= 0x7F;
-					vm.slot[vm.cutSceneScriptIndex].freezeCount = 0;
-				}
-			}
+			freezeScripts(0x80);
 			break;
 		case 119:
 			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
