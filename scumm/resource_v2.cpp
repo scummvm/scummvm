@@ -173,7 +173,7 @@ void ScummEngine_v2::readIndexFile() {
 			break;
 		case 0x4643:
 			if (!(_features & GF_NES))
-				error("Use maniacnes target");
+				error("Use maniac target");
 			printf("NES V1 game detected\n");
 			_version = 1;
 			readClassicIndexFile();

@@ -709,9 +709,9 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 		byte tile = ptr[1];
 		byte palette = (ptr[2] & 0x03) << 2;
 		int8 x = ptr[2];	x >>= 2;
+
 		ptr += 3;
-		if (flipped)
-		{
+		if (flipped) {
 			mask = (mask == 0x80) ? 0x01 : 0x80;
 			x = -x;
 		}
@@ -742,7 +742,11 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 		if (bottom < _actorY + y + 8)
 			bottom = _actorY + y + 8;
 	}
-	_vm->markRectAsDirty(kMainVirtScreen,left,right,top,bottom);
+
+	_draw_top = top;
+	_draw_bottom = bottom;
+
+	_vm->markRectAsDirty(kMainVirtScreen, left, right, top, bottom, _actorID);
 }
 
 byte CostumeRenderer::drawLimb(const Actor *a, int limb) {

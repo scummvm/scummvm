@@ -418,6 +418,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"51305e929e330e24a75a0351c8f9975e", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_HEGAME, 6, 99, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"545432361b874eebe6bb70c5b44db0be", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, 0},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
 	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Demo Alt)", GID_FREDDI4, 6, 98, 61, MDT_NONE,

@@ -1424,10 +1424,11 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		if (_vm->_version == 1) {
 			if (_vm->_features & GF_NES) {
 				//mask_ptr = getMaskBuffer(x, y, 1);
-				for (int ii = 0; ii < height; ii++) {
-				//	*mask_ptr = ?	// what sort of data needs to go into the mask?
-					//mask_ptr += _numStrips;
-				}
+				//for (int ii = 0; ii < height; ii++) {
+				//	for (int jj = 0; jj < width; jj++)
+				//		mask_ptr[jj] = 0xff;
+				//	mask_ptr += _numStrips;
+				//}
 			} else {
 				mask_ptr = getMaskBuffer(x, y, 1);
 				drawStripC64Mask(mask_ptr, stripnr, width, height);
