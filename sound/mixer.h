@@ -145,7 +145,6 @@ public:
 	Channel *_channels[NUM_CHANNELS];
 	PlayingSoundHandle *_handles[NUM_CHANNELS];
 
-	int insert(PlayingSoundHandle *handle, Channel * chan);
 	int insert_at(PlayingSoundHandle *handle, int index, Channel * chan);
 	void append(void *data, uint32 len);
 	void uninsert(Channel * chan);

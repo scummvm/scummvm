@@ -68,25 +68,17 @@ int SoundMixer::insert_at(PlayingSoundHandle *handle, int index, Channel * chan)
 	return index;
 }
 
-int SoundMixer::insert(PlayingSoundHandle *handle, Channel * chan)
-{
-	for (int i = 0; i != NUM_CHANNELS; i++) {
-		if (_channels[i] == NULL) {
-			return insert_at(handle, i, chan);
-		}
-	}
-
-	warning("SoundMixer::insert out of mixer slots");
-	chan->real_destroy();
-
-	return -1;
-}
-
-
 int SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate,
 												 byte flags)
 {
-	return insert(handle, new Channel_RAW(this, sound, size, rate, flags));
+	for (int i = 0; i != NUM_CHANNELS; i++) {
+		if (_channels[i] == NULL) {
+			return insert_at(handle, i, new Channel_RAW(this, sound, size, rate, flags));
+		}
+	}
+
+	warning("SoundMixer::out of mixer slots");
+	return -1;
 }
 
 int SoundMixer::play_stream(PlayingSoundHandle *handle, int idx, void *sound, uint32 size,
@@ -98,12 +90,26 @@ int SoundMixer::play_stream(PlayingSoundHandle *handle, int idx, void *sound, ui
 #ifdef COMPRESSED_SOUND_FILE
 int SoundMixer::play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags)
 {
-	return insert(handle, new Channel_MP3(this, sound, size, flags));
+	for (int i = 0; i != NUM_CHANNELS; i++) {
+		if (_channels[i] == NULL) {
+			return insert_at(handle, i, new Channel_MP3(this, sound, size, flags));
+		}
+	}
+
+	warning("SoundMixer::out of mixer slots");
+	return -1;
 }
 int SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, FILE * file, mad_timer_t duration)
 {
 	/* Stop the previously playing CD track (if any) */
-	return insert(handle, new Channel_MP3_CDMUSIC(this, file, duration));
+	for (int i = 0; i != NUM_CHANNELS; i++) {
+		if (_channels[i] == NULL) {
+			return insert_at(handle, i, new Channel_MP3_CDMUSIC(this, file, duration));
+		}
+	}
+
+	warning("SoundMixer::out of mixer slots");
+	return -1;
 }
 #endif
 
