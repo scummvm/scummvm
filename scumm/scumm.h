@@ -644,7 +644,6 @@ public:
 	void resetActorBgs();
 	void processActors();
 	int getActorFromPos(int x, int y);
-	void faceActorToObj(int act, int obj);
 	void actorFollowCamera(int act);
 	
 	bool isCostumeInUse(int i);

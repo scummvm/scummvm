@@ -27,7 +27,7 @@
 #include "charset.h"
 #include "costume.h"
 #include "resource.h"
-#include "scumm/sound.h"
+#include "sound.h"
 
 #include <math.h>
 
@@ -720,6 +720,20 @@ void Actor::adjustActorPos()
 	if (flags & 7) {
 		turnToDirection(facing);
 	}
+}
+
+void Actor::factToObject(int obj)
+{
+	int x2, y2, dir;
+	
+	if (!isInCurrentRoom())
+		return;
+
+	if (_vm->getObjectOrActorXY(obj, x2, y2) == -1)
+		return;
+
+	dir = (x2 > x) ? 90 : 270;
+	turnToDirection(dir);
 }
 
 void Actor::turnToDirection(int newdir)

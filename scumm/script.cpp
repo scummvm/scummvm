@@ -758,6 +758,43 @@ void Scumm::killAllScriptsExceptCurrent()
 	}
 }
 
+void Scumm::doSentence(int c, int b, int a)
+{
+	SentenceTab *st;
+
+	if (_features & GF_AFTER_V7) {
+
+		if (b == a)
+			return;
+
+		st = &_sentence[_sentenceNum - 1];
+		
+		
+		// Check if this doSentence request is identical to the previous one;
+		// if yes, ignore this invocation.
+		if (_sentenceNum && st->unk5 == c && st->unk4 == b && st->unk3 == a)
+			return;
+
+		_sentenceNum++;
+		st++;
+
+	} else {
+
+		st = &_sentence[_sentenceNum++];
+
+		if (!(st->unk3 & 0xFF00))
+			st->unk2 = 0;
+		else
+			st->unk2 = 1;
+
+	}
+
+	st->unk5 = c;
+	st->unk4 = b;
+	st->unk3 = a;
+	st->freezeCount = 0;
+}
+
 void Scumm::checkAndRunSentenceScript()
 {
 	int i;
@@ -915,62 +952,6 @@ int Scumm::getVerbEntrypoint(int obj, int entry)
 	}
 }
 
-void Scumm::endCutscene()
-{
-	ScriptSlot *ss = &vm.slot[_currentScript];
-	int args[16];
-
-	memset(args, 0, sizeof(args));
-
-	if (ss->cutsceneOverride > 0)	// Only terminate if active
-		ss->cutsceneOverride--;
-
-	args[0] = vm.cutSceneData[vm.cutSceneStackPointer];
-	_vars[VAR_OVERRIDE] = 0;
-
-	if (vm.cutScenePtr[vm.cutSceneStackPointer] && (ss->cutsceneOverride > 0))	// Only terminate if active
-		ss->cutsceneOverride--;
-
-	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;
-	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
-	vm.cutSceneStackPointer--;
-
-	if (_vars[VAR_CUTSCENE_END_SCRIPT])
-		runScript(_vars[VAR_CUTSCENE_END_SCRIPT], 0, 0, args);
-}
-
-void Scumm::cutscene(int *args)
-{
-	int scr = _currentScript;
-	vm.slot[scr].cutsceneOverride++;
-
-	if (++vm.cutSceneStackPointer > sizeof(vm.cutSceneData) / sizeof(vm.cutSceneData[0]))
-		error("Cutscene stack overflow");
-
-	vm.cutSceneData[vm.cutSceneStackPointer] = args[0];
-	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;
-	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
-
-	vm.cutSceneScriptIndex = scr;
-	if (_vars[VAR_CUTSCENE_START_SCRIPT])
-		runScript(_vars[VAR_CUTSCENE_START_SCRIPT], 0, 0, args);
-	vm.cutSceneScriptIndex = 0xFF;
-}
-
-void Scumm::faceActorToObj(int act, int obj)
-{
-	int x, x2, y, dir;
-
-	if (getObjectOrActorXY(act, x, y) == -1)
-		return;
-
-	if (getObjectOrActorXY(obj, x2, y) == -1)
-		return;
-
-	dir = (x2 > x) ? 90 : 270;
-	derefActorSafe(act, "faceActorToObj")->turnToDirection(dir);
-}
-
 bool Scumm::isScriptRunning(int script)
 {
 	int i;
@@ -991,38 +972,6 @@ bool Scumm::isRoomScriptRunning(int script)
 	return false;
 
 }
-
-
-void Scumm::beginOverride()
-{
-	int idx;
-
-	idx = vm.cutSceneStackPointer;
-	assert(idx < 5);
-
-	vm.cutScenePtr[idx] = _scriptPointer - _scriptOrgPointer;
-	vm.cutSceneScript[idx] = _currentScript;
-
-	// Skip the jump instruction following the override instruction
-	// (the jump is responsible for "skipping" cutscenes, and the reason
-	// why we record the current script position in vm.cutScenePtr).
-	fetchScriptByte();
-	fetchScriptWord();
-	_vars[VAR_OVERRIDE] = 0;
-}
-
-void Scumm::endOverride()
-{
-	int idx;
-
-	idx = vm.cutSceneStackPointer;
-	assert(idx < 5);
-
-	vm.cutScenePtr[idx] = 0;
-	vm.cutSceneScript[idx] = 0;
-	_vars[VAR_OVERRIDE] = 0;
-}
-
 
 int Scumm::defineArray(int array, int type, int dim2, int dim1)
 {
@@ -1139,6 +1088,48 @@ int Scumm::resStrLen(const byte *src) const
 	return num;
 }
 
+void Scumm::cutscene(int *args)
+{
+	int scr = _currentScript;
+	vm.slot[scr].cutsceneOverride++;
+
+	if (++vm.cutSceneStackPointer > sizeof(vm.cutSceneData) / sizeof(vm.cutSceneData[0]))
+		error("Cutscene stack overflow");
+
+	vm.cutSceneData[vm.cutSceneStackPointer] = args[0];
+	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;
+	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
+
+	vm.cutSceneScriptIndex = scr;
+	if (_vars[VAR_CUTSCENE_START_SCRIPT])
+		runScript(_vars[VAR_CUTSCENE_START_SCRIPT], 0, 0, args);
+	vm.cutSceneScriptIndex = 0xFF;
+}
+
+void Scumm::endCutscene()
+{
+	ScriptSlot *ss = &vm.slot[_currentScript];
+	int args[16];
+
+	memset(args, 0, sizeof(args));
+
+	if (ss->cutsceneOverride > 0)	// Only terminate if active
+		ss->cutsceneOverride--;
+
+	args[0] = vm.cutSceneData[vm.cutSceneStackPointer];
+	_vars[VAR_OVERRIDE] = 0;
+
+	if (vm.cutScenePtr[vm.cutSceneStackPointer] && (ss->cutsceneOverride > 0))	// Only terminate if active
+		ss->cutsceneOverride--;
+
+	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;
+	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
+	vm.cutSceneStackPointer--;
+
+	if (_vars[VAR_CUTSCENE_END_SCRIPT])
+		runScript(_vars[VAR_CUTSCENE_END_SCRIPT], 0, 0, args);
+}
+
 void Scumm::exitCutscene()
 {
 	uint32 offs = vm.cutScenePtr[vm.cutSceneStackPointer];
@@ -1151,44 +1142,37 @@ void Scumm::exitCutscene()
 		if (ss->cutsceneOverride > 0)
 			ss->cutsceneOverride--;
 
-printf("exitCutscene()\n");
 		_vars[VAR_OVERRIDE] = 1;
 		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 	}
 }
-void Scumm::doSentence(int c, int b, int a)
+
+void Scumm::beginOverride()
 {
-	SentenceTab *st;
+	int idx;
 
-	if (_features & GF_AFTER_V7) {
+	idx = vm.cutSceneStackPointer;
+	assert(idx < 5);
 
-		if (b == a)
-			return;
+	vm.cutScenePtr[idx] = _scriptPointer - _scriptOrgPointer;
+	vm.cutSceneScript[idx] = _currentScript;
 
-		st = &_sentence[_sentenceNum - 1];
-		
-		
-		// Check if this doSentence request is identical to the previous one;
-		// if yes, ignore this invocation.
-		if (_sentenceNum && st->unk5 == c && st->unk4 == b && st->unk3 == a)
-			return;
+	// Skip the jump instruction following the override instruction
+	// (the jump is responsible for "skipping" cutscenes, and the reason
+	// why we record the current script position in vm.cutScenePtr).
+	fetchScriptByte();
+	fetchScriptWord();
+	_vars[VAR_OVERRIDE] = 0;
+}
 
-		_sentenceNum++;
-		st++;
+void Scumm::endOverride()
+{
+	int idx;
 
-	} else {
+	idx = vm.cutSceneStackPointer;
+	assert(idx < 5);
 
-		st = &_sentence[_sentenceNum++];
-
-		if (!(st->unk3 & 0xFF00))
-			st->unk2 = 0;
-		else
-			st->unk2 = 1;
-
-	}
-
-	st->unk5 = c;
-	st->unk4 = b;
-	st->unk3 = a;
-	st->freezeCount = 0;
+	vm.cutScenePtr[idx] = 0;
+	vm.cutSceneScript[idx] = 0;
+	_vars[VAR_OVERRIDE] = 0;
 }

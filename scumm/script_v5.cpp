@@ -866,9 +866,14 @@ void Scumm_v5::o5_expression()
 void Scumm_v5::o5_faceActor()
 {
 	int act, obj;
+	Actor *a;
 	act = getVarOrDirectByte(0x80);
 	obj = getVarOrDirectWord(0x40);
-	faceActorToObj(act, obj);
+
+	a = derefActorSafe(act, "o5_faceActor");
+	assert(a);
+
+	a->factToObject(obj);
 }
 
 void Scumm_v5::o5_findInventory()

@@ -1135,10 +1135,11 @@ void Scumm_v6::o6_putActorAtObject()
 
 void Scumm_v6::o6_faceActor()
 {
-	int act, obj;
-	obj = pop();
-	act = pop();
-	faceActorToObj(act, obj);
+	int obj = pop();
+	Actor *a = derefActorSafe(pop(), "o6_faceActor");
+	assert(a);
+
+	a->factToObject(obj);
 }
 
 void Scumm_v6::o6_animateActor()

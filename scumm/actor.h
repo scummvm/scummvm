@@ -124,23 +124,16 @@ protected:
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
 	void setupActorScale();
-public:
-	void stopActorMoving();
-	void startWalkAnim(int cmd, int angle);
-	void startAnimActor(int frame);
 
-protected:
 	void setBox(int box);
 	int updateActorDirection(bool is_walking);
-
-public:
-	void setDirection(int direction);
-	int getActorXYPos(int &x, int &y);
-
-	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
-protected:
 	void adjustActorPos();
+
 public:
+	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
+
+	void setDirection(int direction);
+	void factToObject(int obj);
 	void turnToDirection(int newdir);
 	void walkActor();
 	void drawActorCostume();
@@ -148,6 +141,9 @@ public:
 	void setActorCostume(int c);
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
+	void stopActorMoving();
+	void startWalkAnim(int cmd, int angle);
+	void startAnimActor(int frame);
 
 	void remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold);
 	void walkActorOld();
@@ -158,6 +154,8 @@ public:
 		return room == _vm->_currentRoom;
 	}
 	
+	int getActorXYPos(int &x, int &y);
+
 	int getRoom() {
 		return room;
 	}
