@@ -689,13 +689,11 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	_vars[VAR_ROOM] = room;
 	_fullRedraw = 1;
 
-	_roomResource = _currentRoom = 0xFF;
-
 	increaseResourceCounter();
 
 	_currentRoom = room;
 	_vars[VAR_ROOM] = room;
-	printf("startscene with room 0x%x", room);
+	// printf("startscene with room 0x%x\n", room);
 	if (room >= 0x80)
 		_roomResource = _resourceMapper[room&0x7F];
 	else
