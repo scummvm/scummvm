@@ -222,8 +222,8 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		debug(0, "Executing thread offset: %lu (%x)", thread->i_offset, in_char);
 
 		switch (in_char) {
-		case 0x01: // Align (ALGN)
-			debug(0, "Stub: ALGN");
+		case 0x01: // nextblock
+			debug(0, "Stub: opcode 0x01(nextblock)");
 			break;
 
 // STACK INSTRUCTIONS
@@ -350,12 +350,10 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			
 			param1 = scriptS.readUint16LE();
 			break;
-			// (?) Unknown
-		case 0x1B:
+		case 0x1B: // Return with value
 			unhandled = 1;
 			break;
-			// (EXIT) End subscript
-		case 0x1C:
+		case 0x1C: // Return with void
 			if (thread->stack->size() == 0) {
 				_vm->_console->print("Script execution complete.");
 				thread->executing = 0;
@@ -403,14 +401,6 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			if (!data) {
 				thread->i_offset = (unsigned long)param1;
 			}
-			break;
-			// (JMPR): Relative jump
-		case 0x57:
-			// ignored?
-			scriptS.readUint16LE();
-			scriptS.readUint16LE();
-			iparam1 = (long)scriptS.readByte();
-			thread->i_offset += iparam1;
 			break;
 			// (SWCH): Switch
 		case 0x22:
@@ -468,7 +458,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			}
 			break;
 
-// MISC. INSTRUCTIONS
+// UNARY INSTRUCTIONS
 
 			// (NEG) Negate stack by 2's complement
 		case 0x25:
@@ -489,29 +479,25 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			data = ~data;
 			thread->stack->push(data);
 			break;
-			// (?)
-		case 0x28:
+		case 0x28: // inc_v increment, don't push
 			unhandled = 1;
 			printf("??? ");
 			scriptS.readByte();
 			scriptS.readUint16LE();
 			break;
-			// (?)
-		case 0x29:
+		case 0x29: // dec_v decrement, don't push
 			unhandled = 1;
 			printf("??? ");
 			scriptS.readByte();
 			scriptS.readUint16LE();
 			break;
-			// (?)
-		case 0x2A:
+		case 0x2A: // postinc
 			unhandled = 1;
 			printf("??? ");
 			scriptS.readByte();
 			scriptS.readUint16LE();
 			break;
-			// (?)
-		case 0x2B:
+		case 0x2B: // postdec
 			unhandled = 1;
 			printf("??? ");
 			scriptS.readByte();
@@ -723,9 +709,11 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 			// (DLGS): Initialize dialogue interface
 		case 0x54:
+			warning("dialog_begin opcode: stub");
 			break;
 			// (DLGX): Run dialogue interface
 		case 0x55:
+			warning("dialog_end opcode: stub");
 			break;
 			// (DLGO): Add a dialogue option to interface
 		case 0x56:
@@ -744,6 +732,12 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					printf("%04X", FIXME_SHADOWED_param3);
 				}
 			}
+			break;
+		case 0x57: // animate
+			scriptS.readUint16LE();
+			scriptS.readUint16LE();
+			iparam1 = (long)scriptS.readByte();
+			thread->i_offset += iparam1;
 			break;
 
 // End instruction list
