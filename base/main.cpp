@@ -204,23 +204,23 @@ int main(int argc, char *argv[]) {
 
 	/* Redirect standard input and standard output */
 	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-	if ( newfp == NULL ) {	/* This happens on NT */
+	if (newfp == NULL) {	/* This happens on NT */
 #if !defined(stdout)
 		stdout = fopen(STDOUT_FILE, "w");
 #else
 		newfp = fopen(STDOUT_FILE, "w");
-		if ( newfp ) {
+		if (newfp) {
 			*stdout = *newfp;
 		}
 #endif
 	}
 	newfp = freopen(STDERR_FILE, "w", stderr);
-	if ( newfp == NULL ) {	/* This happens on NT */
+	if (newfp == NULL) {	/* This happens on NT */
 #if !defined(stderr)
 		stderr = fopen(STDERR_FILE, "w");
 #else
 		newfp = fopen(STDERR_FILE, "w");
-		if ( newfp ) {
+		if (newfp) {
 			*stderr = *newfp;
 		}
 #endif
@@ -238,7 +238,7 @@ int main(int argc, char *argv[]) {
 
 	// Parse the command line information
 	GameDetector detector;
-	detector.parseCommandLine(argc, argv);	
+	detector.parseCommandLine(argc, argv);
 
 	// Create the system object
 	OSystem *system = OSystem::instance();
@@ -259,11 +259,11 @@ int main(int argc, char *argv[]) {
 
 		// Set the window caption to the game name
 		prop.caption = ConfMan.get("description", detector._targetName).c_str();
-		if (prop.caption == NULL)	
+		if (prop.caption == NULL)
 			prop.caption = detector._game.description;
-		if (prop.caption == NULL)	
+		if (prop.caption == NULL)
 			prop.caption = detector._targetName.c_str();
-		if (prop.caption != NULL)	
+		if (prop.caption != NULL)
 			system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
 		// FIXME: It seem not logical that we first might set the gfx mode to
@@ -275,7 +275,7 @@ int main(int argc, char *argv[]) {
 		   (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
 			prop.gfx_mode = GFX_NORMAL;
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
-		} else	
+		} else
 		// Override global scaler with any game-specific define
 		if (ConfMan.hasKey("gfx_mode")) {
 			prop.gfx_mode = detector.parseGraphicsMode(ConfMan.get("gfx_mode"));
