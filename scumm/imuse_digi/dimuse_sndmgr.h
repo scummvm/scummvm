@@ -102,7 +102,7 @@ public:
 	ImuseDigiSndMgr(ScummEngine *scumm);
 	~ImuseDigiSndMgr();
 	
-	void *openSound(int32 soundId, char *soundName, int soundType, int soundGroup);
+	void *openSound(int32 soundId, const char *soundName, int soundType, int soundGroup);
 	void closeSound(void *soundHandle);
 
 	int getFreq(void *soundHandle);

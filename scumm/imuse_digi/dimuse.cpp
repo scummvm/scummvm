@@ -198,7 +198,7 @@ void IMuseDigital::switchToNextRegion(int track) {
 	_track[track].regionOffset = 0;
 }
 
-void IMuseDigital::startSound(int soundId, char *soundName, int soundType, int soundGroup, AudioStream *input) {
+void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input) {
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 	int l;
 
@@ -418,7 +418,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					int music = _digStateMusicMap[l].table_index;
 					debug(5, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
 					if (_digStateMusicTable[music].filename[0] != 0) {
-						startMusic((char *)_digStateMusicTable[music].filename, _digStateMusicTable[music].id);
+						startMusic(_digStateMusicTable[music].filename, _digStateMusicTable[music].id);
 					}
 					break;
 				}
@@ -446,7 +446,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				if ((_comiStateMusicTable[l].id == b)) {
 					debug(5, "Play imuse music: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].title, _comiStateMusicTable[l].filename);
 					if (_comiStateMusicTable[l].filename[0] != 0) {
-						startMusic((char *)_comiStateMusicTable[l].filename, b);
+						startMusic(_comiStateMusicTable[l].filename, b);
 					}
 					break;
 				}
@@ -477,7 +477,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				if (_digSeqMusicTable[l].room == b) {
 					debug(5, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
 					if (_digSeqMusicTable[l].filename[0] != 0) {
-						startMusic((char *)_digSeqMusicTable[l].filename, b);
+						startMusic(_digSeqMusicTable[l].filename, b);
 					}
 					break;
 				}
@@ -487,7 +487,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				if (_comiSeqMusicTable[l].id == b) {
 					debug(5, "Play imuse music: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
 					if (_comiSeqMusicTable[l].filename[0] != 0) {
-						startMusic((char *)_comiSeqMusicTable[l].filename, b);
+						startMusic(_comiSeqMusicTable[l].filename, b);
 					}
 					break;
 				}

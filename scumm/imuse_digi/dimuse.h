@@ -75,7 +75,7 @@ private:
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
-	void startSound(int soundId, char *soundName, int soundType, int soundGroup, AudioStream *input);
+	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
@@ -85,11 +85,11 @@ public:
 		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input); }
 	void startVoice(int soundId)
 		{ debug(5, "startVoiceBundle(%d)", soundId); startSound(soundId, NULL, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
-	void startVoice(int soundId, char *soundName)
+	void startVoice(int soundId, const char *soundName)
 		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
 	void startMusic(int soundId)
 		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL); }
-	void startMusic(char *soundName, int soundId)
+	void startMusic(const char *soundName, int soundId)
 		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL); }
 	void startSfx(int soundId)
 		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL); }
