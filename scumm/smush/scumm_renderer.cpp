@@ -203,7 +203,7 @@ Mixer * ScummRenderer::getMixer() {
 		_smixer = new scumm_mixer(_scumm->_mixer);
 		if(!_smixer) error("unable to allocate a smush mixer");
 		s_renderer = this;
-		_scumm->_timer->installProcedure(&smush_handler, 75);
+		_scumm->_timer->installProcedure(&smush_handler, 83);
 	}
 	return _smixer;
 }
