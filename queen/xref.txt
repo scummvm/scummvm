@@ -85,6 +85,7 @@ invbob()					Graphics::bobDrawInventoryItem
 loadbackdrop()				Graphics::loadBackdrop
 loadfont()					*not needed*
 loadpanel()					Graphics::loadPanel
+MAKE_SPEAK_BOB				Graphics::bobSetText
 makeanim()					Graphics::bobAnimNormal
 movebob()					Graphics::bobMove
 pastebob()					Graphics::bobPaste
@@ -295,7 +296,6 @@ FIND_STATE()				Logic::findState*
 TALK
 ====
 FIND_SACTION()				Talk::findSpeechParameters
-MAKE_SPEAK_BOB				Talk::makeSpeakBob
 MOVE_SPEAK
 SPEAK						Talk::speak
 SPEAK_SUB					Talk::speakSegment

@@ -794,6 +794,120 @@ void Graphics::update() {
 	_display->update(_bobs[0].active, _bobs[0].x, _bobs[0].y);
 }
 
+void Graphics::bobSetText(
+		BobSlot *pbs, 
+		const char *text, 
+		int textX, int textY, 
+		int color, int flags) {
+	// function MAKE_SPEAK_BOB, lines 335-457 in talk.c
 
+	if (text[0] == '\0')
+		return;
+
+	// debug(0, "makeSpeakBob('%s', (%i,%i), %i, %i, %i, %i);", 
+	//		text, bob->x, bob->y, textX, textY, color, flags);
+
+	// Duplicate string and append zero if needed
+
+	char textCopy[MAX_STRING_SIZE];
+
+	int length = strlen(text);
+	memcpy(textCopy, text, length);
+
+	if (textCopy[length - 1] >= 'A')
+		textCopy[length++] = '.';
+
+	textCopy[length] = '\0';
+
+	// Split text into lines
+
+	char lines[8][MAX_STRING_SIZE];
+	int lineCount = 0;
+	int wordCount = 0;
+	int lineLength = 0;
+	int i;
+
+	for (i = 0; i < length; i++) {
+		if (textCopy[i] == ' ')
+			wordCount++;
+
+		lineLength++;
+
+		if ((lineLength > 20 && textCopy[i] == ' ') || i == (length-1)) {
+			memcpy(lines[lineCount], textCopy + i + 1 - lineLength, lineLength);
+			lines[lineCount][lineLength] = '\0';
+			lineCount++;
+			lineLength = 0;
+		}
+	}
+
+
+	// Plan: write each line to Screen 2, put black outline around lines and
+	// pick them up as a BOB.
+
+
+	// Find width of widest line 
+
+	int maxLineWidth = 0;
+
+	for (i = 0; i < lineCount; i++) {
+		int width = textWidth(lines[i]);
+		if (maxLineWidth < width)
+			maxLineWidth = width;
+	}
+
+	// Calc text position
+
+	short x, y, width, height;
+
+	if (flags) {
+		if (flags == 2)
+			x = 160 - maxLineWidth / 2;
+		else
+			x = textX;
+
+		y = textY;
+
+		width = 0;
+	}
+	else {
+		x = pbs->x;
+		y = pbs->y;
+
+		BobFrame *pbf = frame(pbs->frameNum);
+
+		width  = (pbf->width  * pbs->scale) / 100;
+		height = (pbf->height * pbs->scale) / 100;
+
+		y = y - height - 16 - lineCount * 9;
+	}
+
+	// XXX x -= scrollx;
+
+	if (y < 0) {
+		y = 0;
+
+		if (x < 160)
+			x += width / 2;
+		else
+			x -= width / 2 + maxLineWidth;
+	}
+	else if (!flags)
+		x -= maxLineWidth / 2;
+
+	if (x < 0)
+		x = 4;
+	else if ((x + maxLineWidth) > 320)
+		x = 320 - maxLineWidth - 4;
+
+	textCurrentColor(color);
+
+	for (i = 0; i < lineCount; i++) {
+		int lineX = x + (maxLineWidth - textWidth(lines[i])) / 2;
+
+		//debug(0, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
+		textSet(lineX, y + 9 * i, lines[i]);
+	}
+}
 } // End of namespace Queen
 

@@ -137,6 +137,12 @@ public:
 	BobSlot *bob(int index);
 	void bobCustomParallax(uint16 roomNum);
 
+	void bobSetText(
+		BobSlot *bob, 
+		const char *text, 
+		int textX, int textY, 
+		int color, int flags);	// MAKE_SPEAK_BOB
+
 	void textCurrentColor(uint8 color); // ink()
 	void textSet(uint16 x, uint16 y, const char *text, bool outlined = true); // text()
 	void textSetCentered(uint16 y, const char *text, bool outlined = true);
@@ -163,9 +169,11 @@ public:
 private:
 
 	enum {
+		MAX_STRING_LENGTH = 255,
+		MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
 		BOB_SHRINK_BUF_SIZE = 60000
 	};
-	
+
 	struct PackedBank {
 		uint32 indexes[MAX_BANK_SIZE];
 		uint8 *data;

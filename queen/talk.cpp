@@ -704,7 +704,7 @@ void Talk::speakSegment(
 	int startFrame = 0;
 
 	if (_talkHead && isJoe) {
-		makeSpeakBob(segment, bob, textX, textY, color, (_talkHead == 1));
+		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == 1));
 	}
 	else {
 		if (SPEAK_UNKNOWN_6 == command)
@@ -758,7 +758,7 @@ void Talk::speakSegment(
 			warning("Talking heads not yet handled");
 		}
 
-		makeSpeakBob(segment, bob, textX, textY, color, (_talkHead == 1));
+		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == 1));
 
 		if (parameters->animation[0] != '\0') {
 			// talk.c lines 1639-1690
@@ -1175,122 +1175,6 @@ int16 Talk::selectSentence() {
 	_graphics->textClear(151,151);
 
 	return selectedSentence;
-}
-	
-void Talk::makeSpeakBob(
-		const char *text, 
-		BobSlot *bob, 
-		int textX, int textY, 
-		int color, int flags) {
-	// function MAKE_SPEAK_BOB, lines 335-457 in talk.c
-
-	if (text[0] == '\0')
-		return;
-
-	// debug(0, "makeSpeakBob('%s', (%i,%i), %i, %i, %i, %i);", 
-	//		text, bob->x, bob->y, textX, textY, color, flags);
-
-	// Duplicate string and append zero if needed
-
-	char textCopy[MAX_STRING_SIZE];
-
-	int length = strlen(text);
-	memcpy(textCopy, text, length);
-
-	if (textCopy[length - 1] >= 'A')
-		textCopy[length++] = '.';
-
-	textCopy[length] = '\0';
-
-	// Split text into lines
-	
-	char lines[8][MAX_STRING_SIZE];
-	int line_count = 0;
-	int word_count = 0;
-	int line_length = 0;
-	int i;
-
-	for (i = 0; i < length; i++) {
-		if (textCopy[i] == ' ')
-			word_count++;
-
-		line_length++;
-
-		if ((line_length > 20 && textCopy[i] == ' ') || i == (length-1)) {
-			memcpy(lines[line_count], textCopy + i + 1 - line_length, line_length);
-			lines[line_count][line_length] = '\0';
-			line_count++;
-			line_length = 0;
-		}
-	}
-
-
-	// Plan: write each line to Screen 2, put black outline around lines and
-	// pick them up as a BOB.
-	
-
-	// Find width of widest line 
-	
-	int max_line_width = 0;
-
-	for (i = 0; i < line_count; i++) {
-		int width = _graphics->textWidth(lines[i]);
-		if (max_line_width < width)
-			max_line_width = width;
-	}
-
-	// Calc text position
-
-	short x, y, width, height;
-
-	if (flags) {
-		if (flags == 2)
-			x = 160 - max_line_width / 2;
-		else
-			x = textX;
-
-		y = textY;
-
-		width = 0;
-	}
-	else {
-		x = bob->x;
-		y = bob->y;
-
-		BobFrame *frame = _graphics->frame(bob->frameNum);
-
-		width  = (frame->width  * bob->scale) / 100;
-		height = (frame->height * bob->scale) / 100;
-
-		y = y - height - 16 - line_count * 9;
-	}
-
-	// XXX x -= scrollx;
-
-	if (y < 0) {
-		y = 0;
-
-		if (x < 160)
-			x += width / 2;
-		else
-			x -= width / 2 + max_line_width;
-	}
-	else if (!flags)
-		x -= max_line_width / 2;
-
-	if (x < 0)
-		x = 4;
-	else if ((x + max_line_width) > 320)
-		x = 320 - max_line_width - 4;
-
-	_graphics->textCurrentColor(color);
-
-	for (i = 0; i < line_count; i++) {
-		int lineX = x + (max_line_width - _graphics->textWidth(lines[i])) / 2;
-
-		//debug(0, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
-		_graphics->textSet(lineX, y + 9 * i, lines[i]);
-	}
 }
 	
 const Talk::SpeechParameters Talk::_speechParameters[] = {
