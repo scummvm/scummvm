@@ -2061,7 +2061,7 @@ void Scumm::o6_wait()
 			if (camera._cur.x >> 3 != camera._dest.x >> 3)
 				break;
 		} else {
-			if (camera._dest.x != camera._cur.x || camera._dest.y != camera._cur.y)
+			if (camera._dest != camera._cur)
 				break;
 		}
 

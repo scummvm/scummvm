@@ -65,6 +65,14 @@ enum {
 
 struct ScummPoint {
 	int x, y;
+	bool operator ==(const ScummPoint &p) const
+	{
+		return p.x == x && p.y == y;
+	}
+	bool operator !=(const ScummPoint &p) const
+	{
+		return p.x != x || p.y != y;
+	}
 };
 
 #include "gfx.h"
