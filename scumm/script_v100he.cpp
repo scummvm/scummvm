@@ -473,13 +473,16 @@ void ScummEngine_v100he::o100_actorOps() {
 		i = pop();
 		checkRange(255, 0, i, "o100_actorOps: Illegal palette slot %d");
 		a->remapActorPaletteColor(i, j);
+		a->needRedraw = true;
 		break;
 	case 59:
 		// Uses reverse order of layering, so we adjust
 		a->_layer = -pop();
+		a->needRedraw = true;
 		break;
 	case 63:
 		a->hePaletteNum = pop();
+		a->needRedraw = true;
 		break;
 	case 65:		// SO_SCALE
 		i = pop();
@@ -487,6 +490,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 70:		// SO_SHADOW
 		a->_shadowMode = pop();
+		a->needRedraw = true;
 		debug(0, "o100_actorOps: Set actor XMAP idx to %d", a->_shadowMode);
 		break;
 	case 74:		// SO_STEP_DIST

@@ -995,6 +995,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 43: // HE 90+
 		// Uses reverse order of layering, so we adjust
 		a->_layer = -pop();
+		a->needRedraw = true;
 		break;
 	case 64:
 	case 67: // HE 99+
@@ -1059,6 +1060,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
 		a->remapActorPaletteColor(i, j);
+		a->needRedraw = true;
 		break;
 	case 87:		// SO_TALK_COLOR
 		a->talkColor = pop();
@@ -1100,6 +1102,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 98:		// SO_SHADOW
 		a->_shadowMode = pop();
+		a->needRedraw = true;
 		debug(0, "Set actor XMAP idx to %d", a->_shadowMode);
 		break;
 	case 99:		// SO_TEXT_OFFSET

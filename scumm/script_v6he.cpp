@@ -659,6 +659,7 @@ void ScummEngine_v60he::o60_actorOps() {
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
 		a->remapActorPaletteColor(i, j);
+		a->needRedraw = true;
 		break;
 	case 87:		// SO_TALK_COLOR
 		a->talkColor = pop();
@@ -699,6 +700,7 @@ void ScummEngine_v60he::o60_actorOps() {
 		break;
 	case 98:		// SO_SHADOW
 		a->_shadowMode = pop();
+		a->needRedraw = true;
 		break;
 	case 99:		// SO_TEXT_OFFSET
 		a->talkPosY = pop();
