@@ -338,6 +338,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_dump_images = 0;
 	_speech = false;
 	_subtitles = false;
+	_fade = true;
 	_mouse_cursor = 0;
 	_vga_var9 = 0;
 	_script_unk_1 = 0;
@@ -541,8 +542,15 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_language = Common::parseLanguage(ConfMan.get("language"));
-	_subtitles = ConfMan.getBool("subtitles");
 
+	if (!(_game & GF_SIMON2) && _language > 1) {
+		if (ConfMan.hasKey("_subtitles") && ConfMan.getBool("_subtitles") == 0)
+			_subtitles = 0;
+	} else
+		_subtitles = ConfMan.getBool("subtitles");
+
+	if (ConfMan.hasKey("fade") && ConfMan.getBool("fade") == 0)
+		_fade = 0;
 	if (ConfMan.hasKey("slow_down") && ConfMan.getInt("slow_down") >= 1)
 		_speed = ConfMan.getInt("slow_down");
 
@@ -2431,7 +2439,8 @@ void SimonEngine::o_fade_to_black() {
 		palette_fadeout((uint32 *)_video_buf_1 + 32 + 16 + 144 + 16, 48);
 
 		_system->set_palette(_video_buf_1, 0, 256);
-		_system->update_screen();
+		if (_fade)
+			_system->update_screen();
 		delay(5);
 	} while (--i);
 

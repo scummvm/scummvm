@@ -200,6 +200,7 @@ protected:
 	bool _dump_images;
 	bool _speech;
 	bool _subtitles;
+	bool _fade;
 	byte _mouse_cursor;
 	bool _vga_var9;
 	int16 _script_unk_1;
