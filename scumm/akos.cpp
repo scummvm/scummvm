@@ -67,13 +67,13 @@ enum AkosOpcodes {
 	AKC_Ignore = 0xC050,
 	AKC_IncVar = 0xC060,
 	AKC_CmdQue3Quick = 0xC061,
-	AKC_SkipStart = 0xC070,
-	AKC_SkipE = 0xC070,
-	AKC_SkipNE = 0xC071,
-	AKC_SkipL = 0xC072,
-	AKC_SkipLE = 0xC073,
-	AKC_SkipG = 0xC074,
-	AKC_SkipGE = 0xC075,
+	AKC_JumpStart = 0xC070,
+	AKC_JumpE = 0xC070,
+	AKC_JumpNE = 0xC071,
+	AKC_JumpL = 0xC072,
+	AKC_JumpLE = 0xC073,
+	AKC_JumpG = 0xC074,
+	AKC_JumpGE = 0xC075,
 	AKC_StartAnim = 0xC080,
 	AKC_StartVarAnim = 0xC081,
 	AKC_Random = 0xC082,
@@ -88,13 +88,13 @@ enum AkosOpcodes {
 	AKC_Cmd3 = 0xC08B,
 	AKC_Ignore3 = 0xC08C,
 	AKC_Ignore2 = 0xC08D,
-	AKC_JumpStart = 0xC090,
-	AKC_JumpE = 0xC090,
-	AKC_JumpNE = 0xC091,
-	AKC_JumpL = 0xC092,
-	AKC_JumpLE = 0xC093,
-	AKC_JumpG = 0xC094,
-	AKC_JumpGE = 0xC095,
+	AKC_SkipStart = 0xC090,
+	AKC_SkipE = 0xC090,
+	AKC_SkipNE = 0xC091,
+	AKC_SkipL = 0xC092,
+	AKC_SkipLE = 0xC093,
+	AKC_SkipG = 0xC094,
+	AKC_SkipGE = 0xC095,
 	AKC_ClearFlag = 0xC09F,
 	AKC_EndSeq = 0xC0FF
 };
@@ -1415,7 +1415,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 				curpos += 3;
 				break;
 			case AKC_SoundStuff:
-				curpos += 8;
+				curpos += 8;		// in Putt is 6
 				break;
 			case AKC_Cmd3:
 			case AKC_SetVarInActor:
@@ -1424,6 +1424,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 				break;
 			case AKC_ClearFlag:
 			case AKC_HideActor:
+			case AKC_IncVar:
 			case AKC_CmdQue3Quick:
 			case AKC_Return:
 			case AKC_EndSeq:
@@ -1440,6 +1441,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 				break;
 			case AKC_Flip:
 			case AKC_Jump:
+			case AKC_StartAnimInActor:
 				curpos += 4;
 				break;
 			case AKC_ComplexChan:
@@ -1482,14 +1484,16 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 		case AKC_Random:
 			a->setAnimVar(GB(6), _rnd.getRandomNumberRng(GW(2), GW(4)));
 			continue;
-		case AKC_SkipGE:
-		case AKC_SkipG:
-		case AKC_SkipLE:
-		case AKC_SkipL:
-		case AKC_SkipNE:
-		case AKC_SkipE:
-			if (!akos_compare(a->getAnimVar(GB(4)), GW(2), code - AKC_SkipStart))
-				flag_value = true;
+		case AKC_JumpGE:
+		case AKC_JumpG:
+		case AKC_JumpLE:
+		case AKC_JumpL:
+		case AKC_JumpNE:
+		case AKC_JumpE:
+			if (akos_compare(a->getAnimVar(GB(4)), GW(5), code - AKC_JumpStart) != 0) {
+				curpos = GUW(2);
+				break;
+			}
 			continue;
 		case AKC_IncVar:
 			a->setAnimVar(0, a->getAnimVar(0) + 1);
@@ -1573,16 +1577,15 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 		case AKC_Ignore3:
 			continue;
 
-		case AKC_JumpE:
-		case AKC_JumpNE:
-		case AKC_JumpL:
-		case AKC_JumpLE:
-		case AKC_JumpG:
-		case AKC_JumpGE:
-			if (!akos_compare(a->getAnimVar(GB(4)), GW(2), code - AKC_JumpStart))
-				continue;
-			curpos = GUW(2);
-			break;
+		case AKC_SkipE:
+		case AKC_SkipNE:
+		case AKC_SkipL:
+		case AKC_SkipLE:
+		case AKC_SkipG:
+		case AKC_SkipGE:
+			if (akos_compare(a->getAnimVar(GB(4)), GW(2), code - AKC_SkipStart) == 0)
+				flag_value = true;
+			continue;
 
 		default:
 			if ((code & 0xC000) == 0xC000)
