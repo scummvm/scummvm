@@ -91,7 +91,7 @@ protected:
 	byte drawLimb(const Actor *a, int limb);
 
 	byte codec1(int xmoveCur, int ymoveCur);
-	void codec1_genericDecode();
+	void codec1_genericDecode(Codec1 &v1);
 	byte codec5(int xmoveCur, int ymoveCur);
 	byte codec16(int xmoveCur, int ymoveCur);
 	byte codec32(int xmoveCur, int ymoveCur);

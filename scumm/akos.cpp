@@ -500,7 +500,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	return result;
 }
 
-void AkosRenderer::codec1_genericDecode() {
+void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
@@ -736,6 +736,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	Common::Rect rect;
 	int step;
 	byte drawFlag = 1;
+	Codec1 v1;
 
 	const int scaletableSize = (_vm->_features & GF_HUMONGOUS) ? 128 : 384;
 
@@ -886,7 +887,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 			skip = -v1.x;
 		if (skip > 0) {
 			v1.skip_width -= skip;
-			codec1_ignorePakCols(skip);
+			codec1_ignorePakCols(v1, skip);
 			v1.x = 0;
 		} else {
 			skip = rect.right - _out.w;
@@ -901,7 +902,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 			skip = rect.right - _out.w + 1;
 		if (skip > 0) {
 			v1.skip_width -= skip;
-			codec1_ignorePakCols(skip);
+			codec1_ignorePakCols(v1, skip)	;
 			v1.x = _out.w - 1;
 		} else {
 			skip = -1 - rect.left;
@@ -934,7 +935,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x;
 
-	codec1_genericDecode();
+	codec1_genericDecode(v1);
 	
 	return drawFlag;
 }

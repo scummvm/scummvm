@@ -71,10 +71,10 @@ public:
 protected:
 	byte drawLimb(const Actor *a, int limb);
 
-	void proc3();
-	void proc3_ami();
+	void proc3(Codec1 &v1);
+	void proc3_ami(Codec1 &v1);
 
-	void procC64(int actor);
+	void procC64(Codec1 &v1, int actor);
 
 	byte mainRoutine(int xmoveCur, int ymoveCur);
 };

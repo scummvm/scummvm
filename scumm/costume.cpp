@@ -83,6 +83,8 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int ex1, ex2;
 	Common::Rect rect;
 	int step;
+	Codec1 v1;
+
 	
 	const int scaletableSize = 128;
 	const bool newAmiCost = (_vm->_version == 5) && (_vm->_features & GF_AMIGA);
@@ -234,7 +236,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (skip > 0) {
 			if (!newAmiCost && _loaded._format != 0x57) {
 				v1.skip_width -= skip;
-				codec1_ignorePakCols(skip);
+				codec1_ignorePakCols(v1, skip);
 				v1.x = 0;
 			}
 		} else {
@@ -251,7 +253,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (skip > 0) {
 			if (!newAmiCost && _loaded._format != 0x57) {
 				v1.skip_width -= skip;
-				codec1_ignorePakCols(skip);
+				codec1_ignorePakCols(v1, skip);
 				v1.x = _out.w - 1;
 			}
 		} else {
@@ -301,11 +303,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (_loaded._format == 0x57) {
 		// The v1 costume renderer needs the actor number, which is
 		// the same thing as the costume renderer's _actorID.
-		procC64(_actorID);
+		procC64(v1, _actorID);
 	} else if (newAmiCost)
-		proc3_ami();
+		proc3_ami(v1);
 	else
-		proc3();
+		proc3(v1);
 
 	CHECK_HEAP
 	return drawFlag;
@@ -329,7 +331,7 @@ static const int v1MMActorPalatte2[25] = {
 			dst[p + 1] = palette[pcolor]; \
 	}
 
-void CostumeRenderer::procC64(int actor) {
+void CostumeRenderer::procC64(Codec1 &v1, int actor) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len;
@@ -404,7 +406,7 @@ void CostumeRenderer::procC64(int actor) {
 #undef LINE
 #undef MASK_AT
 
-void CostumeRenderer::proc3() {
+void CostumeRenderer::proc3(Codec1 &v1) {
 #ifdef __PALM_OS__
 	ARM_START(CostumeProc3Type)
 		ARM_ADDP(v1)
@@ -499,7 +501,7 @@ void CostumeRenderer::proc3() {
 	} while (1);
 }
 
-void CostumeRenderer::proc3_ami() {
+void CostumeRenderer::proc3_ami(Codec1 &v1) {
 	const byte *mask, *src;
 	byte *dst;
 	byte maskbit, len, height, width;

@@ -86,7 +86,7 @@ protected:
 	// width and height of cel to decode
 	int _width, _height;
 
-	struct {
+	struct Codec1 {
 		// Parameters for the original ("V1") costume codec.
 		const byte *scaletable;
 		byte mask, shr;
@@ -98,8 +98,8 @@ protected:
 		int skip_width;
 		byte *destptr;
 		const byte *mask_ptr;
-	} v1;
-
+	};
+	
 public:
 	BaseCostumeRenderer(ScummEngine *scumm) {
 		_actorID = 0;
@@ -128,10 +128,9 @@ public:
 	byte drawCostume(const VirtScreen &vs, int numStrips, const Actor *a, bool drawToBackBuf);
 
 protected:
-
 	virtual byte drawLimb(const Actor *a, int limb) = 0;
 
-	void codec1_ignorePakCols(int num);
+	void codec1_ignorePakCols(Codec1 &v1, int num);
 };
 
 } // End of namespace Scumm

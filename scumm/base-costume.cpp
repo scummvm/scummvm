@@ -51,7 +51,7 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const
 	return result;
 }
 
-void BaseCostumeRenderer::codec1_ignorePakCols(int num) {
+void BaseCostumeRenderer::codec1_ignorePakCols(Codec1 &v1, int num) {
 	num *= _height;
 
 	do {
