@@ -1362,21 +1362,13 @@ void Scumm::processKbd() {
 	else
 		_virtual_mouse_y = mouse.y;
 
-	if (!(_features & GF_AFTER_V3))
-		_virtual_mouse_y += virtscr[0].topline;
-	else
-		_virtual_mouse_y -= 16;
+	_virtual_mouse_y -= virtscr[0].topline;
 
 	if (_virtual_mouse_y < 0)
 		_virtual_mouse_y = -1;
 
-	if (_features & GF_AFTER_V3) {
-		if (_virtual_mouse_y >= virtscr[0].height + virtscr[0].topline)
-			_virtual_mouse_y = -1;
-	} else {
-		if (_virtual_mouse_y >= virtscr[0].height)
-			_virtual_mouse_y = -1;
-	}
+	if (_virtual_mouse_y >= virtscr[0].height)
+		_virtual_mouse_y = -1;
 
 	if (!_lastKeyHit)
 		return;

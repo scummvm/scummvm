@@ -2546,6 +2546,8 @@ void Scumm_v5::o5_oldRoomEffect() {
 printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 				// No idea what byte_2FCCF is, but it's a globale boolean flag.
 				// I only add it here as a temporary hack to make the pseudo code compile.
+				// Maybe it is just there as a reentry protection guard, given
+				// how it is used?
 				int byte_2FCCF = 0;
 
 				if (byte_2FCCF) {

@@ -3279,10 +3279,6 @@ void Scumm::decompressDefaultCursor(int idx) {
 		_cursor.hotspotX = 0;
 		_cursor.hotspotY = 0;
 		
-		// FIXME - this corrects the cursor hotspot in Loom (EGA)
-		if (_gameId == GID_LOOM)
-			_cursor.hotspotY = 15;
-
 		for (i = 0; i < 8; i++) {
 			w += (i >= 6) ? -2 : 1;
 			for (j = 0; j < w; j++)
