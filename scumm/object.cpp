@@ -633,6 +633,8 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 		od->x_pos = *(ptr + 9) << 3;
 		od->y_pos = ((*(ptr + 10)) & 0x7F) << 3;
 
+		od->parentstate = (*(ptr + 10) & 0x80) ? 16 : 0;
+
 		od->width = *(ptr + 11) << 3;
 
 		od->parent = *(ptr + 12);
@@ -642,18 +644,13 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 			od->walk_y = *(ptr + 14);
 			od->actordir = (*(ptr + 15)) & 7;
 			od->height = *(ptr + 15) & 0xf8;
-			od->parentstate = (*(ptr + 10) & 0x80) >> 4;
 		} else {
 			od->walk_x = READ_LE_UINT16(ptr + 13);
 			od->walk_y = READ_LE_UINT16(ptr + 15);
 			od->actordir = (*(ptr + 17)) & 7;
 			od->height = *(ptr + 17) & 0xf8;
-			if (*(ptr + 10) & 0x80) {
-				od->parentstate = 1;
-			} else {
-				od->parentstate = 0;
-			}
 		}
+
 		return;
 	}
 
