@@ -29,7 +29,6 @@ FILE *File::fopenNoCase(const char *filename, const char * directory, const char
 
 	strcpy(buf, directory);
 	if (directory[0] != 0) {
-		strcpy(buf, directory);
 #ifdef __MORPHOS__
 		if (buf[strlen(buf)-1] != ':' && buf[strlen(buf)-1] != '/')
 #endif
@@ -41,25 +40,25 @@ FILE *File::fopenNoCase(const char *filename, const char * directory, const char
 	if (file)
 		return file;
 
-	struct t_dirs {
-		char dir[20];
-	} dirs[] = {
+	const char *dirs[] = {
 		"",
-		"video/",			"VIDEO/",
-		"data/",			"DATA/",
-		"resource/",	"RESOURCE/"
+		"video/",
+		"VIDEO/",
+		"data/",
+		"DATA/",
+		"resource/",
+		"RESOURCE/"
 	};
 
 	for (uint8 l = 0; l < 7; l++) {
 		strcpy(buf, directory);
 		if (directory[0] != 0) {
-			strcpy(buf, directory);
 #ifdef __MORPHOS__
 			if (buf[strlen(buf)-1] != ':' && buf[strlen(buf)-1] != '/')
 #endif
 			strcat(buf, "/");
 		}
-		strcat(buf, dirs[l].dir);
+		strcat(buf, dirs[l]);
 		int8 len = strlen(buf);
 		strcat(buf, filename);
 
