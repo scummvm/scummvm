@@ -426,8 +426,8 @@ void SkyState::showIntroText(uint32 *&cmdPtr) {
 	uint32 startPos = (yPos * FULL_SCREEN_WIDTH) + xPos;
 	byte *destBuf = _introTextSpace;
 	byte *saveBuf = _introTextSave;
-	uint16 width = FROM_LE_16(((struct dataFileHeader *)destBuf)->s_width);	
-	uint16 height = FROM_LE_16(((struct dataFileHeader *)destBuf)->s_height);	
+	uint16 width = ((struct dataFileHeader *)destBuf)->s_width;
+	uint16 height = ((struct dataFileHeader *)destBuf)->s_height;
 	
 	*(uint32 *)saveBuf = TO_LE_32(startPos); 
 	*(uint32 *)(saveBuf + 4) = TO_LE_32(height);
