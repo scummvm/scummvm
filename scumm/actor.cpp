@@ -104,10 +104,11 @@ void Actor::initActor(int mode) {
 	forceClip = 0;
 	ignoreTurns = false;
 	flip = 0;
-	
+
 	talkFrequency = 256;
 	talkPan = 64;
-	
+	talkVolume = 127;
+
 	if (_vm->_version <= 2) {
 		initFrame = 2;
 		walkFrame = 0;

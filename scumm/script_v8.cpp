@@ -1078,9 +1078,8 @@ void ScummEngine_v8::o8_actorOps() {
 		a->moving &= ~MF_FROZEN;
 		break;
 	case 0x87:		// SO_ACTOR_VOLUME Set volume of actor speech
-		// TODO - implement this!
-		i = pop();
-		warning("o8_actorOps: setActorVolume(%d) not implemented", i);
+		a->talkVolume = pop();
+		_imuseDigital->setVolume(kTalkSoundID, a->talkVolume);
 		break;
 	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
 		a->talkFrequency = pop();
@@ -1088,14 +1087,8 @@ void ScummEngine_v8::o8_actorOps() {
 	case 0x89:		// SO_ACTOR_PAN
 		// 0 = left, 64 = middle, 127 = right.
 		a->talkPan = pop();
-
-		// If the actor is talking at the moment, adjust the panning
-		// on the current talk channel handle. (If the handle is 0,
-		// setChannelPan() won't do anything.)
-
 		if (_actorToPrintStrFor == a->number) {
-			if (_sound->isSoundRunning(kTalkSoundID))
-				_imuseDigital->parseScriptCmds(12, 0x700, kTalkSoundID, a->talkPan, 0, 0, 0, 0);
+			_imuseDigital->setPan(kTalkSoundID, a->talkPan);
 		}
 
 		break;

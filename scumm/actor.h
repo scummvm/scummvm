@@ -26,7 +26,6 @@
 
 #include "common/scummsys.h"
 #include "scumm/scumm.h"
-
 namespace Scumm {
 
 enum MoveFlags {
@@ -92,6 +91,7 @@ public:
 	byte talkColor;
 	int talkFrequency;
 	byte talkPan;
+	byte talkVolume;
 	byte scalex, scaley;
 	byte charset;
 	byte moving;
