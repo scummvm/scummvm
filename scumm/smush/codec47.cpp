@@ -249,9 +249,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 			*ptr = 0;
 			ptr += 388;
 		}
-	}
-
-	if (param == 4) {
+	} else if (param == 4) {
 		table37_1 = &codec37_table[0];
 		table37_2 = &codec37_table[16];
 		ptr = smush_buf_small + 96;
@@ -264,6 +262,8 @@ void Codec47Decoder::makeTables37(int32 param) {
 			*ptr = 0;
 			ptr += 128;
 		}
+	} else {
+		error("makeTables37: unknown param %d", param);
 	}
 
 	s = 0;
@@ -272,45 +272,41 @@ void Codec47Decoder::makeTables37(int32 param) {
 	tmp_table37_1_1 = table37_1;
 	tmp_table37_2_1 = table37_2;
 	count_1 = 16;
-	do {
+	while (count_1--) {
 		tmp_table37_1_2 = table37_1;
 		tmp_table37_2_2 = table37_2;
 		count_2 = 16;
-		do {
+		while(count_2--) {
 			tmp = *(tmp_table37_2_1);
 			tmp_value1 = tmp;
 			if (tmp == 0) {
 				b1 = 0;
-			} else if ((tmp - param) == -1) {
+			} else if (param == tmp + 1) {
 				b1 = 1;
 			} else {
-				b1 = 2;
 				tmp = *(tmp_table37_1_1);
-				if (tmp != 0) {
-					b1 = 0;
-					tmp -= param;
-					if (tmp == -1)
-						b1 = 3;
-					else
-						b1 = 4;
+				if (tmp == 0) {
+					b1 = 2;
+				} else if (param == tmp + 1) {
+					b1 = 3;
+				} else {
+					b1 = 4;
 				}
 			}
 			tmp = *(tmp_table37_2_2);
 			tmp_value2 = tmp;
 			if (tmp == 0) {
 				b2 = 0;
-			} else if ((tmp - param) == -1) {
+			} else if (param == tmp + 1) {
 				b2 = 1;
 			} else {
 				tmp = *(tmp_table37_1_2);
 				if (tmp == 0) {
 					b2 = 2;
+				} else if (param == tmp + 1) {
+					b2 = 3;
 				} else {
-					tmp -= param;
-					if (tmp == -1)
-						b2 = 3;
-					else
-						b2 = 4;
+					b2 = 4;
 				}
 			}
 			tmp_param_tmp = tmp_param - 1;
@@ -347,66 +343,40 @@ void Codec47Decoder::makeTables37(int32 param) {
 					variable4 = value_table37_1_1;
 					tmp_a = tmp_value1;
 				}
-				tmp_c = param;
-				tmp_d = variable4;
-				tmp_c *= tmp_a;
-				tmp_c += tmp_d;
-				table_ptr = &table[tmp_c];
+				table_ptr = &table[param * tmp_a + variable4];
 				*(table_ptr) = 1;
 
-				if ((b1 == 2 && b2 == 3) ||
-				    (b2 == 2 && b1 == 3) ||
-				    (b1 == 0 && b2 != 1) ||
-				    (b2 == 0 && b1 != 1)) {
-					if (tmp_a < 0)
-						continue;
-					tmp_c = param;
-					tmp_c <<= 2;
-					do {
-						*(table_ptr) = 1;
-						table_ptr -= tmp_c / 4;
-					} while (--tmp_a >= 0);
-					continue;
-				}
-				
-				if ((b2 != 0 && b1 == 1) ||
-				    (b1 != 0 && b2 == 1)) {
-					tmp_c = param;
-					if (tmp_c <= tmp_a)
-						continue;
-					tmp_c <<= 2;
-					tmp_d = param;
-					tmp_d -= tmp_a;
-					do {
-						*(table_ptr) = 1;
-						table_ptr += tmp_c / 4;
-					} while (--tmp_d != 0);
-					continue;
-				}
-
-				if ((b1 == 0 && b2 == 1) ||
-				    (b2 == 0 && b1 == 1) ||
-				    (b1 == 3 && b2 != 2) ||
-				    (b2 == 3 && b1 != 2)) {
-					tmp_c = param;
-					if (tmp_c <= variable4)
-						continue;
-					tmp_c -= variable4;
-					d = tmp_c;
-					do {
-						*(table_ptr++) = 1;
-					} while (--d != 0);
-					continue;
-				}
-				
-				if ((b1 == 2 && b2 != 3) ||
-				    (b2 == 2 && b1 != 3)) {
+				if ((b1 == 2 && b2 == 3) || (b2 == 2 && b1 == 3) ||
+				    (b1 == 0 && b2 != 1) || (b2 == 0 && b1 != 1)) {
+					if (tmp_a >= 0) {
+						d = tmp_a + 1;
+						while (d--) {
+							*table_ptr = 1;
+							table_ptr -= param;
+						}
+					}
+				} else if ((b2 != 0 && b1 == 1) || (b1 != 0 && b2 == 1)) {
+					if (param > tmp_a) {
+						d = param - tmp_a;
+						while (d--) {
+							*table_ptr = 1;
+							table_ptr += param;
+						}
+					}
+				} else if ((b1 == 0 && b2 == 1) || (b2 == 0 && b1 == 1) ||
+				           (b1 == 3 && b2 != 2) || (b2 == 3 && b1 != 2)) {
+					if (param > variable4) {
+						d = param - variable4;
+						while(d--) {
+							*(table_ptr++) = 1;
+						}
+					}
+				} else if ((b1 == 2 && b2 != 3) || (b2 == 2 && b1 != 3)) {
 					if (variable4 >= 0) {
-						tmp_c = variable4 + 1;
-						d = tmp_c;
-						do {
+						d = variable4 + 1;
+						while(d--) {
 							*(table_ptr--) = 1;
-						} while (--d != 0);
+						}
 					}
 				}
 			}
@@ -441,10 +411,10 @@ void Codec47Decoder::makeTables37(int32 param) {
 			s += 388;
 			tmp_table37_1_2++;
 			tmp_table37_2_2++;
-		}	while (--count_2 != 0);
+		}
 		tmp_table37_1_1++;
 		tmp_table37_2_1++;
-	} while (--count_1!= 0);
+	}
 }
 
 void Codec47Decoder::makeTables47(int32 width) {
