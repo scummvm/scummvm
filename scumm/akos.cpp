@@ -1223,6 +1223,8 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	Common::Rect clip, src, dst;
 
 	debug(0, "codec32(%d, %d)", xmoveCur, ymoveCur);
+	// Disable for now, crashes too much.
+	return 0;
 
 	if (!_mirror) {
 		dst.left = (_actorX - xmoveCur - _width) + 1;
