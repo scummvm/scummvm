@@ -306,7 +306,6 @@ void SmushPlayer::deinit() {
 	_scumm->_mixer->stopChannel(_IACTchannel);
 
 	_scumm->_insaneState = false;
-	_scumm->abortCutscene();
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->pause(false);
 	}

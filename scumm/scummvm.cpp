@@ -1824,6 +1824,8 @@ void ScummEngine::processKbd() {
 	if (_lastKeyHit == KEY_ALL_SKIP) {
 		// Skip cutscene
 		if (_insaneState) {
+			// Eek this is literally shouting for trouble...
+			// Probably should set _lastKey to VAR_CUTSCENEEXIT_KEY instead!
 			_videoFinished = true;
 			return;
 		}
@@ -1873,7 +1875,8 @@ void ScummEngine::processKbd() {
 #else
 			_videoFinished = true;
 #endif
-		} else
+		}
+		if (!_insaneState || _videoFinished)
 			abortCutscene();
 		if (_version <= 2) {
 			// Ensure that the input script also sees the key press.
