@@ -18,6 +18,7 @@ SCUMM_OBJS = \
 	scumm/imuse_player.o \
 	scumm/instrument.o \
 	scumm/help.o \
+	scumm/midiparser_ro.o \
 	scumm/nut_renderer.o \
 	scumm/object.o \
 	scumm/player_v1.o\

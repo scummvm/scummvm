@@ -343,6 +343,10 @@ SOURCE=.\scumm\intern.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\midiparser_ro.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\nut_renderer.cpp
 # End Source File
 # Begin Source File
