@@ -427,6 +427,7 @@ public:
 	int executeThreads(uint msec);
 	int SThreadDebugStep();
 	void completeThread(void);
+	void abortAllThreads(void);
 
 	void wakeUpActorThread(int waitType, void *threadObj);
 	void wakeUpThreads(int waitType);
@@ -436,7 +437,8 @@ private:
 	void loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
 	void loadModuleVoiceLUT(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
 
-	void runThread(ScriptThread *thread, uint instructionLimit);
+	// runThread returns true if we should break running of other threads
+	bool runThread(ScriptThread *thread, uint instructionLimit);
 	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 public:

@@ -142,13 +142,30 @@ int Script::executeThreads(uint msec) {
 			}
 		}
 
-		if (!(thread->_flags & kTFlagWaiting))
-			runThread(thread, STHREAD_TIMESLICE);
+		if (!(thread->_flags & kTFlagWaiting)) {
+			if (runThread(thread, STHREAD_TIMESLICE)) {
+				break;
+			}
+		}
 
 		++threadIterator;
 	}
 
 	return SUCCESS;
+}
+
+void Script::abortAllThreads(void) {
+	ScriptThread *thread;
+	ScriptThreadList::iterator threadIterator;
+
+	threadIterator = _threadList.begin();
+
+	while (threadIterator != _threadList.end()) {
+		thread = threadIterator.operator->();
+		thread->_flags |= kTFlagAborted;
+		++threadIterator;
+	}
+	executeThreads(0);
 }
 
 void Script::completeThread(void) {
@@ -164,7 +181,7 @@ int Script::SThreadDebugStep() {
 	return SUCCESS;
 }
 
-void Script::runThread(ScriptThread *thread, uint instructionLimit) {
+bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	const char*operandName;
 	uint instructionCount;
 	uint16 savedInstructionOffset;
@@ -191,7 +208,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			instructionLimit = 1;
 			_dbg_dostep = 0;
 		} else {
-			return;
+			return false;
 		}
 	}
 
@@ -320,9 +337,9 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
 			(this->*scriptFunction)(thread, argumentsCount);
 
-			if (functionNumber ==  16) { // SF_gotoScene
-				instructionCount = instructionLimit; // break the loop
-				break;
+			if (scriptFunction == sfScriptGotoScene) {			
+			//if (functionNumber ==  16) { // sfScriptGotoScene
+				return true; // cause abortAllThreads called and _this_ thread destroyed
 			}
 
 			if (operandChar == opCcall) {// CALL function
@@ -344,7 +361,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			thread->_frameIndex = thread->pop();
 			if (thread->pushedSize() == 0) {
 				thread->_flags |= kTFlagFinished;
-				break;
+				return true;
 			} else {
 				thread->_instructionOffset = thread->pop();
 				iparam1 = thread->pop();
@@ -583,7 +600,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 				if (_vm->_actor->isSpeaking()) {
 					thread->wait(kWaitTypeSpeech);
-					return;
+					return false;
 				}
 
 				stringsCount = scriptS.readByte();
@@ -625,7 +642,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		CASEOP(opDialogBegin)
 			if (_conversingThread) {
 				thread->wait(kWaitTypeDialogBegin);
-				return;
+				return false;
 			}
 			_conversingThread = thread;
 			_vm->_interface->converseClear();
@@ -674,23 +691,22 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 		
 		if (thread->_flags & (kTFlagFinished | kTFlagAborted)) {
-			_vm->_console->DebugPrintf("Script finished\n");			
-			break;
+			error("Wrong flags in thread");			
+			
+		} 
+
+		// Set instruction offset only if a previous instruction didn't branch
+		if (savedInstructionOffset == thread->_instructionOffset) {
+			thread->_instructionOffset = scriptS.pos();
 		} else {
-
-			// Set instruction offset only if a previous instruction didn't branch
-			if (savedInstructionOffset == thread->_instructionOffset) {
-				thread->_instructionOffset = scriptS.pos();
-			} else {
-				if (thread->_instructionOffset >= scriptS.size()) {
-					error("Script::runThread() Out of range script execution");
-				}
-
-				scriptS.seek(thread->_instructionOffset);
+			if (thread->_instructionOffset >= scriptS.size()) {
+				error("Script::runThread() Out of range script execution");
 			}
-		}
 
+			scriptS.seek(thread->_instructionOffset);
+		}	
 	}
+	return false;
 }
 
 } // End of namespace Saga

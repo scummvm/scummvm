@@ -934,9 +934,9 @@ int Scene::endScene() {
 
 	_sceneProc(SCENE_END, &scene_info, this);
 
-/*	if (_desc.scriptModuleNumber > 0) {
-		_vm->_script->freeScript();
-	}*/
+	//
+	_vm->_script->abortAllThreads();
+	_vm->_script->_skipSpeeches = false;
 
 	// Free scene background
 	if (_bg.loaded) {
