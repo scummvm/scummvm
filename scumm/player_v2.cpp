@@ -341,11 +341,8 @@ static const uint16 pcjr_freq_table[12] = {
 #endif
 
 
-Player_V2::Player_V2(ScummEngine *scumm) {
+Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 	int i;
-	
-	// This simulates the pc speaker sound, which is driven
-	// by the 8253 (square wave generator) and a low-band filter.
 	
 	_isV3Game = (scumm->_version >= 3);
 	_scumm = scumm;
@@ -376,7 +373,7 @@ Player_V2::Player_V2(ScummEngine *scumm) {
 
 	_RNG = NG_PRESET;
 
-	set_pcjr(scumm->_midiDriver != MD_PCSPK);
+	set_pcjr(pcjr);
 	setMasterVolume(255);
 
 	_mixer->setupPremix(premix_proc, this);

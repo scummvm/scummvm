@@ -36,7 +36,7 @@ class ScummEngine;
 class V2A_Sound;
 
 /**
- * V2 Amiga sound/music driver.
+ * Scumm V2 Amiga sound/music driver.
  */
 class Player_V2A : public MusicEngine {
 public:

@@ -35,7 +35,7 @@ namespace Scumm {
 class ScummEngine;
 
 /**
- * V3 Amiga sound/music driver.
+ * Scumm V3 Amiga sound/music driver.
  */
 class Player_V3A : public MusicEngine {
 public:

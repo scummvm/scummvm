@@ -68,11 +68,13 @@ struct channel_data {
 
 
 /**
- * V2 PC-Speaker MIDI driver.
+ * Scumm V2 PC-Speaker MIDI driver.
+ * This simulates the pc speaker sound, which is driven  by the 8253 (square
+ * wave generator) and a low-band filter.
  */
 class Player_V2 : public MusicEngine {
 public:
-	Player_V2(ScummEngine *scumm);
+	Player_V2(ScummEngine *scumm, bool pcjr);
 	virtual ~Player_V2();
 
 	virtual void setMasterVolume(int vol);

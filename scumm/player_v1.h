@@ -28,11 +28,11 @@
 namespace Scumm {
 
 /**
- * V1 PC-Speaker player.
+ * Scumm V1 PC-Speaker player.
  */
 class Player_V1 : public Player_V2 {
 public:
-	Player_V1(ScummEngine *scumm);
+	Player_V1(ScummEngine *scumm, bool pcjr);
 	~Player_V1();
 
 	virtual void startSound(int sound);

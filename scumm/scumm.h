@@ -955,7 +955,6 @@ public:
 	byte _proc_special_palette[256];
 	byte *_roomPalette;
 	byte *_shadowPalette;
-	int _midiDriver; // Use the MD_ values from mididrv.h
 
 protected:
 	int _shadowPaletteSize;
@@ -969,6 +968,9 @@ protected:
 	int tempMusic;
 	int _saveSound;
 	bool _native_mt32;
+	int _midiDriver; // Use the MD_ values from mididrv.h
+	bool _demoMode;
+	bool _confirmExit;
 public:
 	bool _silentDigitalImuse, _noDigitalSamples;
 
@@ -1022,9 +1024,7 @@ protected:
 	byte _charsetBuffer[512];
 
 public:
-	bool _demo_mode;
 	bool _noSubtitles;	// Whether to skip all subtitles
-	bool _confirmExit;
 protected:
 
 	void initCharset(int charset);

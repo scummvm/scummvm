@@ -65,7 +65,6 @@ extern bool isSmartphone(void);
 
 extern NewGui *g_gui;
 extern uint16 _debugLevel;
-extern uint16 _demo_mode;
 
 namespace Scumm {
 
@@ -453,7 +452,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	memset(_charsetData, 0, sizeof(_charsetData));
 	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
-	_demo_mode = false;
 	_noSubtitles = false;
 	_confirmExit = false;
 	_numInMsgStack = 0;
@@ -606,7 +604,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_version = detector->_game.version;
 	setFeatures(detector->_game.features);
 
-	_demo_mode = detector->_demo_mode;
+	_demoMode = detector->_demo_mode;
 	_noSubtitles = detector->_noSubtitles;
 	_confirmExit = detector->_confirmExit;
 	_defaultTalkDelay = detector->_talkSpeed;
@@ -680,7 +678,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
 		_musicEngine = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
-		_musicEngine = new Player_V2(this);
+		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 	} else if (_version > 2) {
 		MidiDriver *driver = detector->createMidi();
 		if (driver && detector->_native_mt32)
@@ -890,7 +888,7 @@ void ScummEngine::launch() {
 
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
-		if (_gameId == GID_MANIAC && _demo_mode)
+		if (_gameId == GID_MANIAC && _demoMode)
 			runScript(9, 0, 0, &_bootParam);
 		else
 			runScript(1, 0, 0, &_bootParam);
