@@ -87,14 +87,15 @@ void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
 }
 
 DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
+	int i;
 	DetectedGameList detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];
-	for (int i = 0; i < NUM_FILES_TO_CHECK; i++)
+	for (i = 0; i < NUM_FILES_TO_CHECK; i++)
 		filesFound[i] = false;
 
 	Sword1CheckDirectory(fslist, filesFound);
 	bool mainFilesFound = true;
-	for (int i = 0; i < NUM_FILES_TO_CHECK -1; i++)
+	for (i = 0; i < NUM_FILES_TO_CHECK -1; i++)
 		if (!filesFound[i])
 			mainFilesFound = false;
 

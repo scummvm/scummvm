@@ -104,12 +104,13 @@ Menu::Menu(Screen *pScreen, Mouse *pMouse) {
 }
 
 Menu::~Menu(void) {
+	int i;
 	// the menu may be open, so delete the icons
-	for (int i = 0; i < TOTAL_pockets; i++) {
+	for (i = 0; i < TOTAL_pockets; i++) {
 		delete _objects[i];
 		_objects[i] = NULL;
 	}
-	for (int i = 0; i < 16; i++) {
+	for (i = 0; i < 16; i++) {
 		delete _subjects[i];
 		_subjects[i] = NULL;
 	}

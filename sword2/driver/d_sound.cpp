@@ -511,11 +511,12 @@ Sound::~Sound() {
 
 int Sound::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
+	int i;
 
 	if (!_soundOn || _musicPaused)
 		return 0;
 
-	for (int i = 0; i < MAXMUS; i++) {
+	for (i = 0; i < MAXMUS; i++) {
 		if (_music[i] && _music[i]->readyToRemove()) {
 			delete _music[i];
 			_music[i] = NULL;
@@ -536,7 +537,7 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 	if (!_mixBuffer)
 		return 0;
 
-	for (int i = 0; i < MAXMUS; i++) {
+	for (i = 0; i < MAXMUS; i++) {
 		if (!_music[i])
 			continue;
 
