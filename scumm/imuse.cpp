@@ -65,39 +65,27 @@ struct HookDatas {
 	int set(byte cls, byte value, byte chan);
 };
 
-struct ParameterFade {
+struct ParameterFader {
+	enum {
+		pfVolume = 1,
+		pfTranspose = 3,
+		pfSpeed = 4
+	};
+
 	int param;
 	int start;
 	int end;
 	uint32 total_time;
 	uint32 current_time;
+
+	ParameterFader() { param = 0; }
+	void init() { param = 0; }
 };
 
 struct DeferredCommand {
 	MidiDriver *midi;
 	uint32 time_left;
 	int a, b, c, d, e, f;
-};
-
-struct VolumeFader {
-	Player *player;
-	bool active;
-	byte curvol;
-	uint16 speed_lo_max, num_steps;
-	int8 speed_hi;
-	int8 direction;
-	int8 speed_lo;
-	uint16 speed_lo_counter;
-
-	void initialize() {
-		active = false;
-	}
-	void on_timer(bool probe);
-	byte fading_to();
-	
-	VolumeFader() {
-		memset(this,0,sizeof(VolumeFader));
-	}
 };
 
 struct Player {
@@ -137,8 +125,7 @@ struct Player {
 	bool _abort;
 
 	HookDatas _hook;
-	ParameterFade _parameterFades[4];
-	VolumeFader _volumeFader;
+	ParameterFader _parameterFaders[4];
 
 	bool _mt32emulate;
 	bool _isGM;
@@ -173,7 +160,7 @@ struct Player {
 	void play_active_notes();
 	void cancel_volume_fade();
 
-	void addParameterTransition (int param, int target, int time);
+	int addParameterFader (int param, int target, int time);
 	void transitionParameters();
 
 	static void decode_sysex_bytes(byte *src, byte *dst, int len);
@@ -194,7 +181,6 @@ struct Player {
 	int scan(uint totrack, uint tobeat, uint totick);
 	int query_param(int param);
 
-	int fade_vol(byte vol, int time);
 	bool is_fading_out();
 	void sequencer_timer();
 
@@ -758,7 +744,6 @@ void IMuseInternal::init_players() {
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
 		player->_active = false;
 		player->_se = this;
-		player->_volumeFader.initialize();
 	}
 }
 
@@ -938,63 +923,6 @@ void IMuseInternal::expire_sustain_notes (MidiDriver *midi) {
 			_sustain_notes_free = sn;
 		}
 	}
-}
-
-void VolumeFader::on_timer(bool probe) {
-	byte newvol;
-
-	newvol = curvol + speed_hi;
-	speed_lo_counter += speed_lo;
-
-	if (speed_lo_counter >= speed_lo_max) {
-		speed_lo_counter -= speed_lo_max;
-		newvol += direction;
-	}
-
-	if (curvol != newvol) {
-		curvol = newvol;
-		if (!newvol) {
-			if (!probe)
-				player->clear();
-			active = false;
-			return;
-		}
-		if (!probe)
-			player->set_vol(newvol);
-	}
-
-	if (!--num_steps) {
-		active = false;
-	}
-}
-
-byte VolumeFader::fading_to() {
-	byte newvol;
-	byte orig_curvol;
-	uint16 orig_speed_lo_counter, orig_num_steps;
-
-	if (!active)
-		return 127;
-
-	// It would be so much easier to just store the fade-to volume in a
-	// variable, but then we'd have to break savegame compatibility. So
-	// instead we do a "dry run" fade.
-
-	orig_speed_lo_counter = speed_lo_counter;
-	orig_num_steps = num_steps;
-	orig_curvol = curvol;
-
-	while (active)
-		on_timer(true);
-
-	active = true;
-	newvol = curvol;
-
-	speed_lo_counter = orig_speed_lo_counter;
-	num_steps = orig_num_steps;
-	curvol = orig_curvol;
-
-	return newvol;
 }
 
 int IMuseInternal::getSoundStatus(int sound) {
@@ -1281,8 +1209,8 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 			// Sam and Max: Parameter transition
 			player = this->get_player_byid (b);
 			if (player)
-				player->addParameterTransition (d, e, f);
-			return 0;
+				return player->addParameterFader (d, e, f);
+			return -1;
 
 		case 15:
 			// Sam & Max: Set hook for a "maybe" jump
@@ -1397,7 +1325,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 		case 12:
 			return player->_hook.set(c, d, e);
 		case 13:
-			return player->fade_vol(c, d);
+			return player->addParameterFader (ParameterFader::pfVolume, c, d);
 		case 14:
 			return enqueue_trigger(b, c);
 		case 15:
@@ -1724,37 +1652,16 @@ void IMuseInternal::pause(bool paused) {
 //
 ////////////////////////////////////////
 
-int Player::fade_vol(byte vol, int time) {
-	VolumeFader *vf;
-	int i;
-
-	cancel_volume_fade();
-	if (time == 0) {
-		set_vol(vol);
-		return 0;
-	}
-
-	vf = &_volumeFader;
-
-	vf->active = true;
-	vf->player = this;
-	vf->num_steps = vf->speed_lo_max = time;
-	vf->curvol = _volume;
-	i = (vol - vf->curvol);
-	vf->speed_hi = i / time;
-	if (i < 0) {
-		i = -i;
-		vf->direction = -1;
-	} else {
-		vf->direction = 1;
-	}
-	vf->speed_lo = i % time;
-	vf->speed_lo_counter = 0;
-	return 0;
-}
-
 bool Player::is_fading_out() {
-	return (_volumeFader.active && _volumeFader.direction < 0 && _volumeFader.fading_to() == 0);
+	int i;
+	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
+		if (_parameterFaders[i].param == ParameterFader::pfVolume &&
+		    _parameterFaders[i].end == 0)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void Player::clear() {
@@ -1769,6 +1676,7 @@ void Player::clear() {
 
 bool Player::startSound (int sound, MidiDriver *midi) {
 	void *mdhd;
+	int i;
 
 	mdhd = _se->findTag(sound, MDHD_TAG, 0);
 	if (mdhd == NULL) {
@@ -1789,12 +1697,13 @@ bool Player::startSound (int sound, MidiDriver *midi) {
 	_priority = 0x80;
 	_volume = 0x7F;
 	_vol_chan = 0xFFFF;
-
 	_vol_eff = (_se->get_channel_volume(0xFFFF) << 7) >> 7;
-
 	_pan = 0;
 	_transpose = 0;
 	_detune = 0;
+
+	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i)
+		_parameterFaders[i].init();
 
 	hook_clear();
 	if (start_seq_sound(sound) != 0) {
@@ -1861,7 +1770,13 @@ void Player::set_tempo(uint32 b) {
 }
 
 void Player::cancel_volume_fade() {
-	_volumeFader.active = false;
+	int i;
+	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
+		if (_parameterFaders[i].param == ParameterFader::pfVolume) {
+			_parameterFaders[i].param = 0;
+			break;
+		}
+	}
 }
 
 void Player::uninit_parts() {
@@ -2683,8 +2598,6 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	uint32 curpos, topos;
 	uint32 pos;
 
-//	assert(totrack >= 0 && tobeat >= 0 && totick >= 0);	// Those are all unsigned numbers anyway...
-
 	if (!_active)
 		return -1;
 
@@ -2847,6 +2760,12 @@ void Player::sequencer_timer() {
 	// that are occuring.
 	transitionParameters();
 
+	// Since the volume parameter can cause
+	// the player to be deactivated, check
+	// to make sure we're still active.
+	if (!_active)
+		return;
+
 	counter = _timer_counter + _timer_speed;
 	_timer_counter = counter & 0xFFFF;
 	_cur_pos += counter >> 16;
@@ -2878,10 +2797,6 @@ void Player::sequencer_timer() {
 			}
 		}
 	}
-
-	// Now handle any volume fades
-	if (_volumeFader.active)
-		_volumeFader.on_timer (false);
 }
 
 void IMuseInternal::handleDeferredCommands (MidiDriver *midi) {
@@ -2926,16 +2841,16 @@ void IMuseInternal::addDeferredCommand (int time, int a, int b, int c, int d, in
 // "time" is referenced as hundredths of a second.
 // IS THAT CORRECT??
 // We convert it to microseconds before prceeding
-void Player::addParameterTransition (int param, int target, int time) {
+int Player::addParameterFader (int param, int target, int time) {
 	int start;
 
 	switch (param) {
-	case 1:
+	case ParameterFader::pfVolume:
 		// Volume fades are handled differently.
-		fade_vol (target, time);
-		return;
+		start = _volume;
+		break;
 
-	case 3:
+	case ParameterFader::pfTranspose:
 		// FIXME: Is this transpose? And what's the scale?
 		// It's set to fade to -2400 in the tunnel of love.
 		warning ("parameterTransition(3) outside Tunnel of Love?");
@@ -2943,7 +2858,7 @@ void Player::addParameterTransition (int param, int target, int time) {
 		target /= 200;
 		break;
 
-	case 4:
+	case ParameterFader::pfSpeed:
 		// FIXME: Is the speed from 0-100?
 		// Right now I convert it to 0-128.
 		start = _speed;
@@ -2953,17 +2868,17 @@ void Player::addParameterTransition (int param, int target, int time) {
 	case 127:
 		// FIXME: This MIGHT fade ALL supported parameters,
 		// but I'm not sure.
-		return;
+		return 0;
 
 	default:
-		warning ("Unknown transition parameter %d", param);
-		return;
+		warning ("Player::addParameterFader(): Unknown parameter %d", param);
+		return 0; // Should be -1, but we'll let the script think it worked.
 	}
 
-	ParameterFade *ptr = &_parameterFades[0];
-	ParameterFade *best = 0;
+	ParameterFader *ptr = &_parameterFaders[0];
+	ParameterFader *best = 0;
 	int i;
-	for (i = ARRAYSIZE(_parameterFades); i; --i, ++ptr) {
+	for (i = ARRAYSIZE(_parameterFaders); i; --i, ++ptr) {
 		if (ptr->param == param) {
 			best = ptr;
 			start = ptr->end;
@@ -2979,16 +2894,21 @@ void Player::addParameterTransition (int param, int target, int time) {
 		best->end = target;
 		best->total_time = (uint32) time * 10000;
 		best->current_time = 0;
+	} else {
+		warning ("IMuse Player %d: Out of parameter faders", _id);
+		return -1;
 	}
+
+	return 0;
 }
 
 void Player::transitionParameters() {
 	uint32 advance = _midi->getBaseTempo() / 500;
 	int value;
 
-	ParameterFade *ptr = &_parameterFades[0];
+	ParameterFader *ptr = &_parameterFaders[0];
 	int i;
-	for (i = ARRAYSIZE(_parameterFades); i; --i, ++ptr) {
+	for (i = ARRAYSIZE(_parameterFaders); i; --i, ++ptr) {
 		if (!ptr->param)
 			continue;
 
@@ -2998,12 +2918,21 @@ void Player::transitionParameters() {
 		value = (int32) ptr->start + (int32) (ptr->end - ptr->start) * (int32) ptr->current_time / (int32) ptr->total_time;
 
 		switch (ptr->param) {
-		case 4:
+		case ParameterFader::pfVolume:
+			// Volume.
+			if (!value) {
+				clear();
+				return;
+			}
+			set_vol ((byte) value);
+			break;
+
+		case ParameterFader::pfSpeed:
 			// Speed.
 			set_speed ((byte) value);
 			break;
 
-		case 3:
+		case ParameterFader::pfTranspose:
 			// FIXME: Is this really transpose?
 			set_transpose (0, value);
 			break;
@@ -3098,15 +3027,15 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 	};
 
 	const SaveLoadEntry volumeFaderEntries[] = {
-		MKREF(VolumeFader, player, TYPE_PLAYER, VER_V8),
-		MKLINE(VolumeFader, active, sleUint8, VER_V8),
-		MKLINE(VolumeFader, curvol, sleUint8, VER_V8),
-		MKLINE(VolumeFader, speed_lo_max, sleUint16, VER_V8),
-		MKLINE(VolumeFader, num_steps, sleUint16, VER_V8),
-		MKLINE(VolumeFader, speed_hi, sleInt8, VER_V8),
-		MKLINE(VolumeFader, direction, sleInt8, VER_V8),
-		MKLINE(VolumeFader, speed_lo, sleInt8, VER_V8),
-		MKLINE(VolumeFader, speed_lo_counter, sleUint16, VER_V8),
+		MK_OBSOLETE_REF(VolumeFader, player, TYPE_PLAYER, VER_V8, VER_V16),
+		MK_OBSOLETE(VolumeFader, active, sleUint8, VER_V8, VER_V16),
+		MK_OBSOLETE(VolumeFader, curvol, sleUint8, VER_V8, VER_V16),
+		MK_OBSOLETE(VolumeFader, speed_lo_max, sleUint16, VER_V8, VER_V16),
+		MK_OBSOLETE(VolumeFader, num_steps, sleUint16, VER_V8, VER_V16),
+		MK_OBSOLETE(VolumeFader, speed_hi, sleInt8, VER_V8, VER_V16),
+		MK_OBSOLETE(VolumeFader, direction, sleInt8, VER_V8, VER_V16),
+		MK_OBSOLETE(VolumeFader, speed_lo, sleInt8, VER_V8, VER_V16),
+		MK_OBSOLETE(VolumeFader, speed_lo_counter, sleUint16, VER_V8, VER_V16),
 		MKEND()
 	};
 
@@ -3163,13 +3092,11 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		}
 	}
 
-	// Volume faders used to be managed by IMuseInternal, but
-	// they are now maintained by each individual player.
+	// VolumeFader has been replaced with the more generic ParameterFader.
 	{
 		int i;
-		for (i = 0; i < ARRAYSIZE(_players); ++i) {
-			ser->saveLoadEntries (&_players[i]._volumeFader, volumeFaderEntries);
-		}
+		for (i = 0; i < 8; ++i)
+			ser->saveLoadEntries (0, volumeFaderEntries);
 	}
 
 	if (!ser->isSaving()) {
