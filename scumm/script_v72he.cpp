@@ -361,7 +361,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_unknownFA),
 		OPCODE(o72_unknownFB),
 		/* FC */
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownFC),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -502,6 +502,7 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 		a = _fileHandle.readUint16LE();
 		b = _fileHandle.readUint16LE();
 		c = _fileHandle.readUint16LE();
+
 		if (c == 1)
 			defineArray(num, kBitArray, 0, a, 0, b);
 		else
@@ -1072,6 +1073,13 @@ void ScummEngine_v72he::o72_unknownFB() {
 		break;
 	}
 	warning("o72_unknownFB stub");
+}
+
+void ScummEngine_v72he::o72_unknownFC() {
+	int a =	pop();
+	int b =	pop();
+	warning("o7_unknownFB stub (%d, %d)", b, a);
+	push(0);
 }
 
 } // End of namespace Scumm

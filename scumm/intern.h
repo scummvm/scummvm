@@ -709,6 +709,7 @@ protected:
 	void o72_unknownF4();
 	void o72_unknownFA();
 	void o72_unknownFB();
+	void o72_unknownFC();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {
