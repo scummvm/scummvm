@@ -85,7 +85,7 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		"CLUSTERS/",
 		"clusters/",
 		"SPEECH/",
-		"speech/"
+		"speech/",
 		"SWORD2/",
 		"sword2/"
 	};
