@@ -146,8 +146,12 @@ void SkyLogic::logicScript() {
 void SkyLogic::autoRoute() {
 	
 	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
-	if (!_compact->downFlag) // route ok
-		_compact->grafixProg = (uint16*)_compact->extCompact->animScratch;
+	if (!_compact->downFlag) { // route ok
+		_compact->grafixProg.pos = 0;
+		_compact->grafixProg.ptrTarget = 0;
+		_compact->grafixProg.ptrType = AUTOROUTE;
+		//_compact->grafixProg = (uint16*)_compact->extCompact->animScratch;
+	}
 
 	_compact->logic = L_SCRIPT; // continue the script
 
@@ -289,10 +293,12 @@ void SkyLogic::mainAnim() {
 	/// Extension of arAnim()
 	_compact->extCompact->waitingFor = 0; // clear possible zero-zero skip
 
-	uint16 *sequence = _compact->grafixProg;
+	//uint16 *sequence = _compact->grafixProg;
+	uint16 *sequence = SkyCompact::getGrafixPtr(_compact);
 	if (!*sequence) {
 		// ok, move to new anim segment
 		sequence += 2;
+		_compact->grafixProg.pos += 2;
 		if (!*sequence) { // end of route?
 			// ok, sequence has finished
 
@@ -305,7 +311,6 @@ void SkyLogic::mainAnim() {
 			return;
 		}
 
-		_compact->grafixProg = sequence;
 		_compact->extCompact->arAnimIndex = 0; // reset position
 	}
 
@@ -361,9 +366,11 @@ void SkyLogic::alt() {
 void SkyLogic::anim() {
 	/// Follow an animation sequence
 
-	uint16 *grafixProg = _compact->grafixProg;
+	//uint16 *grafixProg = _compact->grafixProg;
+	uint16 *grafixProg = SkyCompact::getGrafixPtr(_compact);
 
 	while (*grafixProg) {
+		_compact->grafixProg.pos += 3; // all types are 3 words.
 		if (*grafixProg == LF_START_FX) { // do fx
 			grafixProg++;
 			uint16 sound = *grafixProg++;
@@ -382,7 +389,6 @@ void SkyLogic::anim() {
 			_compact->ycood = *grafixProg++;
 
 			_compact->frame = *grafixProg++ | _compact->offset;
-			_compact->grafixProg = grafixProg;
 			return;
 		}
 	}
@@ -486,9 +492,9 @@ void SkyLogic::talk() {
 					
 					SkyState::fetchCompact(_compact->extCompact->spTextId)->status = 0;
 				}
-				if (_compact->grafixProg) {
+				if (SkyCompact::getGrafixPtr(_compact)) {
 					_compact->frame = _compact->getToFlag; // set character to stand
-					_compact->grafixProg = NULL;
+					_compact->grafixProg.ptrType = PTR_NULL;
 				}
 
 				_compact->logic = L_SCRIPT;
@@ -503,16 +509,17 @@ void SkyLogic::talk() {
 
 		_compact->logic = L_SCRIPT; // restart character control
 
-		if (_compact->grafixProg) {
+		if (SkyCompact::getGrafixPtr(_compact)) {
 			_compact->frame = _compact->getToFlag; // set character to stand
-			_compact->grafixProg = 0;
+			_compact->grafixProg.ptrType = PTR_NULL;
 		}
 
 		logicScript();
 		return;
 	}
 
-	uint16 *graphixProg = _compact->grafixProg; // no anim file?
+	//uint16 *graphixProg = _compact->grafixProg; // no anim file?
+	uint16 *graphixProg = SkyCompact::getGrafixPtr(_compact);
 	if (graphixProg) {
 		if ((*graphixProg) && ((_compact->extCompact->spTime != 3) || (!_skySound->speechFinished()))) {
 			// we will force the animation to finish 3 game cycles
@@ -520,11 +527,11 @@ void SkyLogic::talk() {
 
 			_compact->frame = *(graphixProg + 2) + _compact->offset;
 			graphixProg += 3;
-			_compact->grafixProg = graphixProg;
+			_compact->grafixProg.pos += 3;
 		} else {
 			// we ran out of frames or finished speech, let actor stand still.
 			_compact->frame = _compact->getToFlag;
-			_compact->grafixProg = 0;
+			_compact->grafixProg.ptrType = PTR_NULL;
 		}
 	}
 
@@ -626,10 +633,11 @@ void SkyLogic::waitSync() {
 void SkyLogic::simpleAnim() {
 	/// follow an animation sequence module whilst ignoring the coordinate data
 
-	uint16 *grafixProg = _compact->grafixProg;
+	uint16 *grafixProg = SkyCompact::getGrafixPtr(_compact);
 
 	// *grafix_prog: command
 	while (*grafixProg) {
+		_compact->grafixProg.pos += 3;
 		if (*grafixProg != SEND_SYNC) {
 			grafixProg++;
 			grafixProg++; // skip coordinates
@@ -640,8 +648,6 @@ void SkyLogic::simpleAnim() {
 			else
 				_compact->frame = *grafixProg + _compact->offset;
 
-			grafixProg++;
-			_compact->grafixProg = grafixProg;
 			return;
 		}
 
@@ -1489,12 +1495,16 @@ bool SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 bool SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 	_compact->mood = 1; // high level stood still
 
-	uint16 *standList = *(uint16 **)SkyCompact::getCompactElem(_compact, C_STAND_UP
-			+ _compact->extCompact->megaSet + _compact->extCompact->dir * 4); 
+	_compact->grafixProg.ptrType = COMPACTELEM;
+	_compact->grafixProg.pos = 0;
+	_compact->grafixProg.ptrTarget = 
+		 C_STAND_UP	+ _compact->extCompact->megaSet + _compact->extCompact->dir * 4;
 
-	_compact->offset = *standList++; // get frames offset
-	_compact->grafixProg = standList;
+	uint16 *standList = SkyCompact::getGrafixPtr(_compact);
+
+	_compact->offset = *standList; // get frames offset
 	_compact->logic = L_SIMPLE_MOD;
+	_compact->grafixProg.pos++;
 	simpleAnim();
 	return false; // drop out of script
 }
@@ -1981,32 +1991,48 @@ bool SkyLogic::fnPause(uint32 cycles, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnRunAnimMod(uint32 animNo, uint32 b, uint32 c) {
-	uint16 *animation = (uint16 *)SkyState::fetchCompact(animNo);
-	uint16 sprite = *animation++; // get sprite set
-	_compact->offset = sprite;
-	_compact->grafixProg = animation;
+	_compact->grafixProg.ptrType = COMPACT;
+	_compact->grafixProg.ptrTarget = animNo;
+	_compact->grafixProg.pos = 0;
+	
+	//uint16 *animation = (uint16 *)SkyState::fetchCompact(animNo);
+	//uint16 sprite = *animation++; // get sprite set
+	//_compact->offset = sprite;
+	_compact->offset = *SkyCompact::getGrafixPtr(_compact);
+	//_compact->grafixProg = animation;
+	_compact->grafixProg.pos++;
 	_compact->logic = L_MOD_ANIMATE;
 	anim();
 	return false; // drop from script
 }
 
 bool SkyLogic::fnSimpleMod(uint32 animSeqNo, uint32 b, uint32 c) {
-	uint16 *animSeq = (uint16 *)SkyState::fetchCompact(animSeqNo);
 
-	_compact->offset = *animSeq++;
-	assert(*animSeq != 0);
-	_compact->grafixProg = animSeq;
+	_compact->grafixProg.ptrType = COMPACT;
+	_compact->grafixProg.ptrTarget = animSeqNo;
+	_compact->grafixProg.pos = 0;
+	//uint16 *animSeq = (uint16 *)SkyState::fetchCompact(animSeqNo);
+	//_compact->offset = *animSeq++;
+	//assert(*animSeq != 0);
+	_compact->offset = *SkyCompact::getGrafixPtr(_compact);
+	//_compact->grafixProg = animSeq;
+	_compact->grafixProg.pos++;
 	_compact->logic = L_SIMPLE_MOD;
 	simpleAnim();
 	return false;
 }
 
 bool SkyLogic::fnRunFrames(uint32 sequenceNo, uint32 b, uint32 c) {
-	uint16 *sequence = (uint16 *)SkyState::fetchCompact(sequenceNo);
+	_compact->grafixProg.ptrType = COMPACT;
+	_compact->grafixProg.ptrTarget = sequenceNo;
+	_compact->grafixProg.pos = 0;
+	//uint16 *sequence = (uint16 *)SkyState::fetchCompact(sequenceNo);
 
 	_compact->logic = L_FRAMES;
-	_compact->offset = *sequence++;
-	_compact->grafixProg = sequence;
+	//_compact->offset = *sequence++;
+	_compact->offset = *SkyCompact::getGrafixPtr(_compact);
+	_compact->grafixProg.pos++;
+	//_compact->grafixProg = sequence;
 	simpleAnim();
 	return false;
 }
@@ -2417,17 +2443,25 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	animNum += target->extCompact->megaSet / NEXT_MEGA_SET;
 	animNum &= 0xFF;
-	if (SkyTalkAnims::animTalkTableIsPointer[animNum]) //is it a pointer? 
-		animPtr = (uint16 *)SkyTalkAnims::animTalkTablePtr[animNum];
-	else 	//then it must be a value
-		animPtr = (uint16 *)SkyState::fetchCompact(SkyTalkAnims::animTalkTableVal[animNum]);
+	if (SkyTalkAnims::animTalkTableIsPointer[animNum]) { //is it a pointer? 
+		//animPtr = (uint16 *)SkyTalkAnims::animTalkTablePtr[animNum];
+		target->grafixProg.ptrType = TALKTABLE;
+		target->grafixProg.ptrTarget = animNum;
+	} else {	//then it must be a value
+		//animPtr = (uint16 *)SkyState::fetchCompact(SkyTalkAnims::animTalkTableVal[animNum]);
+		target->grafixProg.ptrType = COMPACT;
+		target->grafixProg.ptrTarget = SkyTalkAnims::animTalkTableVal[animNum];
+	}
+	target->grafixProg.pos = 0;
+	animPtr = SkyCompact::getGrafixPtr(target);
 	
 	if (animPtr) {
 		target->offset = *animPtr++;
 		target->getToFlag = *animPtr++;
-		target->grafixProg = animPtr;
-	} else
-		target->grafixProg = 0;
+		target->grafixProg.pos += 2;
+	} else {
+		target->grafixProg.ptrType = PTR_NULL;
+	}
 
 	bool speechUsed = false;
 	// startSpeech returns false if no speech file exists for that text
@@ -2477,13 +2511,11 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 			yPos = TOP_LEFT_Y;
 
 		textCompact->ycood = yPos;
-		//_logicTalkButtonRelease = 1;  
 			
 	} else {
 		//talking off-screen
 		target->extCompact->spTextId = 0; 	//don't kill any text 'cos none was made
 		textCompact->status = 0;	//don't display text
-		//_logicTalkButtonRelease = 1; 
 	}
 	// In CD version, we're doing the timing by checking when the VOC has stopped playing.
 	// Setting spTime to 10 thus means that we're doing a pause of 10 gamecycles between

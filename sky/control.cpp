@@ -1128,37 +1128,13 @@ void SkyControl::stosMegaSet(uint8 **destPos, MegaSet *mega) {
 	// anims, stands, turnTable
 }
 
-void SkyControl::stosGrafStr(uint8 **destPos, Compact *cpt) {
-	uint16 strLen = 0;
-	uint16 *src = cpt->grafixProg;
-	if ((cpt->logic == L_AR_ANIM) || (cpt->logic == L_TURNING)) {
-		if ((!src[0]) && (!src[2])) {
-			strLen = 3;
-		} else {
-			if (!src[0])
-		        strLen += 2;
-			while (src[strLen])
-				strLen += 2;
-		}
-	} else if ((cpt->logic == L_MOD_ANIMATE) || (cpt->logic == L_TALK) || 
-		(cpt->logic == L_LISTEN) || (cpt->logic == L_FRAMES)) {
-		while (src[strLen])
-			strLen += 3; // start fx, sendsync and coordinates are all 3 words each.
-	} else {
-		while (src[strLen])  // this *could* lead to problems... but I can't think
-			strLen++;        // of a way to find the end of the graphics data if
-	}                        // the compact isn't in any special graphic mode.
-	strLen++;
-	STOSW(*destPos, strLen);
-	for (uint16 cnt = 0; cnt < strLen; cnt++) {
-		STOSW(*destPos, src[cnt]);
-	}
-}
-
 void SkyControl::stosStr(uint8 **destPos, Compact *cpt, uint16 type) {
 	uint16 strLen = 0;
-	if (type & SAVE_GRAFX)
-		stosGrafStr(destPos, cpt);
+	if (type & SAVE_GRAFX) {
+		STOSW(*destPos, cpt->grafixProg.ptrType);
+		STOSW(*destPos, cpt->grafixProg.ptrTarget);
+		STOSW(*destPos, cpt->grafixProg.pos);
+	}
 
 	if (type & SAVE_TURNP) {
 		uint16 *src = cpt->extCompact->turnProg;
@@ -1169,7 +1145,7 @@ void SkyControl::stosStr(uint8 **destPos, Compact *cpt, uint16 type) {
 		for (uint16 cnt = 0; cnt < strLen; cnt++) {
 			STOSW(*destPos, src[cnt]);
 		}
-	}	
+	}
 }
 
 void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
@@ -1182,7 +1158,8 @@ void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
 		if (cpt->extCompact->megaSet3) saveType |= SAVE_MEGA3;
 		if (cpt->extCompact->turnProg) saveType |= SAVE_TURNP;
 	}
-	if (cpt->grafixProg) saveType |= SAVE_GRAFX;
+	if (cpt->grafixProg.ptrType != PTR_NULL)
+		saveType |= SAVE_GRAFX;
 
 	STOSW(*destPos, saveType);
 
@@ -1279,6 +1256,11 @@ uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
 		stosCompact(&destPos, _saveLoadCpts[cnt]);
 
+	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadARs); cnt++)
+		for (uint8 elemCnt = 0; elemCnt < 32; elemCnt++) {
+			STOSW(destPos, _saveLoadARs[cnt][elemCnt]);
+		}
+
 	for (cnt = 0; cnt < 3; cnt++)
 		STOSW(destPos, SkyCompact::park_table[cnt]);
 
@@ -1339,23 +1321,16 @@ void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt) {
 		error("Can't restore! SaveData is SAVE_MEGA3 for Compact");
 
 	if (saveType & SAVE_GRAFX) {
-		uint16 grafxLen;
-		LODSW(*srcPos, grafxLen);
-		//cpt->grafixProg = (uint16 *)malloc(grafxLen << 1);
-		/* hack: there's a theoretical possibility that the saving routine detected the
-		         end of the string incorrectly and forgot the end of the data.
-		         By adding 10 zero-words, the data should at least be correctly terminated
-				 (as all grafixProg data is 0-terminated), so if this condition really can
-				 occur, it should only lead to small graphic glitches, not to crashes.*/
-
-		cpt->grafixProg = (uint16 *)malloc((grafxLen << 1) + 20);
-		memset(cpt->grafixProg + grafxLen, 0, 20); 
-		appendMemList(cpt->grafixProg);
-		for (cnt = 0; cnt < grafxLen; cnt++) {
-			LODSW(*srcPos, cpt->grafixProg[cnt]);
-		}
-	} else
-		cpt->grafixProg = NULL;
+		uint16 tmp;
+		LODSW(*srcPos, tmp);
+		cpt->grafixProg.ptrType = (uint8)tmp;
+		LODSW(*srcPos, cpt->grafixProg.ptrTarget);
+		LODSW(*srcPos, cpt->grafixProg.pos);
+	} else {
+		cpt->grafixProg.ptrType = PTR_NULL;
+		cpt->grafixProg.ptrTarget = 0;
+		cpt->grafixProg.pos = 0;
+	}
 
 	if (saveType & SAVE_TURNP) {
 		uint16 turnLen;
@@ -1435,7 +1410,6 @@ void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt) {
 
 uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 
-	char loadText[] = "Savegame has an old version. Loading it can lead to errors.";
 	uint32 reloadList[60];
 	uint32 oldSection = SkyLogic::_scriptVariables[CUR_SECTION];
 	
@@ -1451,24 +1425,24 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 		return RESTORE_FAILED;
 	}
 
+	if (saveRev <= OLD_SAVEGAME_TYPE) {
+		warning("This savegame version is unsupported.");
+		return RESTORE_FAILED;
+	}
 	uint32 music, mouseType, palette, gameVersion;
 	
-	if (saveRev >= 3) {
-		LODSD(srcPos, gameVersion);
-		if (gameVersion != SkyState::_systemVars.gameVersion) {
-			if ((!SkyState::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
-				printf("This savegame was created by Beneath a Steel Sky v0.0%03d\n", gameVersion);
-				printf("It cannot be loaded by this version (v0.0%3d)\n", SkyState::_systemVars.gameVersion);
-				return RESTORE_FAILED;
-			}
-		}
-		LODSW(srcPos, _skySound->_saveSounds[0]);
-		LODSW(srcPos, _skySound->_saveSounds[1]);
-		_skySound->restoreSfx();
-	} else {
-		if(!getYesNo(loadText))
+	LODSD(srcPos, gameVersion);
+	if (gameVersion != SkyState::_systemVars.gameVersion) {
+		if ((!SkyState::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
+			printf("This savegame was created by Beneath a Steel Sky v0.0%03d\n", gameVersion);
+			printf("It cannot be loaded by this version (v0.0%3d)\n", SkyState::_systemVars.gameVersion);
 			return RESTORE_FAILED;
+		}
 	}
+	LODSW(srcPos, _skySound->_saveSounds[0]);
+	LODSW(srcPos, _skySound->_saveSounds[1]);
+	_skySound->restoreSfx();
+
 	freeMemList(); // memory from last restore isn't needed anymore
 	LODSD(srcPos, music);
 	LODSD(srcPos, _savedCharSet);
@@ -1483,6 +1457,11 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 
 	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
 		lodsCompact(&srcPos, _saveLoadCpts[cnt]);
+
+	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadARs); cnt++)
+		for (uint8 elemCnt = 0; elemCnt < 32; elemCnt++) {
+			LODSW(srcPos, _saveLoadARs[cnt][elemCnt]);
+		}
 
 	for (cnt = 0; cnt < 3; cnt++)
 		LODSW(srcPos, SkyCompact::park_table[cnt]);
@@ -1630,8 +1609,8 @@ uint16 *SkyControl::lz77decode(uint16 *data) {
 	return outBuf;
 }
 
-void SkyControl::applyDiff(uint16 *data, uint16 *diffData) {
-	for (uint16 cnt = 0; cnt < 206; cnt++) {
+void SkyControl::applyDiff(uint16 *data, uint16 *diffData, uint16 len) {
+	for (uint16 cnt = 0; cnt < len; cnt++) {
 		data += READ_LE_UINT16(diffData);
 		diffData++;
 		*data = *diffData;
@@ -1644,24 +1623,23 @@ void SkyControl::restartGame(void) {
 	if (SkyState::_systemVars.gameVersion <= 267)
 		return; // no restart for floppy demo
 
-	uint16 *resetData;
-	if (SkyState::isCDVersion())
-		resetData = lz77decode((uint16 *)_resetDataCd);
-	else {
-		resetData = lz77decode((uint16 *)_resetData288);
-		switch (SkyState::_systemVars.gameVersion) {
-			case 303:
-                applyDiff(resetData, (uint16*)_resetDiff303);
-				break;
-			case 331:
-				applyDiff(resetData, (uint16*)_resetDiff331);
-				break;
-			case 348:
-				applyDiff(resetData, (uint16*)_resetDiff348);
-				break;
-			default:
-				break;
-		}
+	uint16 *resetData = lz77decode((uint16 *)_resetData288);
+	switch (SkyState::_systemVars.gameVersion) {
+		case 303:
+			applyDiff(resetData, (uint16*)_resetDiff303, 206);
+			break;
+		case 331:
+			applyDiff(resetData, (uint16*)_resetDiff331, 206);
+			break;
+		case 348:
+			applyDiff(resetData, (uint16*)_resetDiff348, 206);
+			break;
+		case 365:
+		case 368:
+		case 372:
+			applyDiff(resetData, (uint16*)_resetDiffCd, 214);
+		default:
+			break;
 	}
 	// ok, we finally have our savedata
 
