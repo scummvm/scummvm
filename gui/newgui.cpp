@@ -47,7 +47,7 @@ enum {
 
 
 // Constructor
-NewGui::NewGui() : _screen(0), _needRedraw(false),
+NewGui::NewGui() : _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	
 	_system = OSystem::instance();
@@ -92,7 +92,7 @@ void NewGui::runLoop() {
 			// Restore the overlay to its initial state, then draw all dialogs.
 			// This is necessary to get the blending right.
 			_system->clear_overlay();
-			_system->grab_overlay(_screen, _screenPitch);
+			_system->grab_overlay((OverlayColor *)_screen.pixels, _screenPitch);
 			for (int i = 0; i < _dialogStack.size(); i++)
 				_dialogStack[i]->drawDialog();
 			_needRedraw = false;
@@ -191,11 +191,14 @@ void NewGui::saveState() {
 
 	// Create a screen buffer for the overlay data, and fill it with
 	// whatever is visible on the screen rught now.
-	int sys_height = _system->get_overlay_height();
-	int sys_width = _system->get_overlay_width();
-	_screen = (OverlayColor*)calloc(sys_width * sys_height, sizeof(OverlayColor));
-	_screenPitch = sys_width;
-	_system->grab_overlay(_screen, _screenPitch);
+	_screen.h = _system->get_overlay_height();
+	_screen.w = _system->get_overlay_width();
+	_screen.bytesPerPixel = sizeof(OverlayColor);
+	_screen.pitch = _screen.w * _screen.bytesPerPixel;
+	_screenPitch = _screen.w;
+	_screen.pixels = (OverlayColor*)calloc(_screen.w * _screen.h, sizeof(OverlayColor));
+
+	_system->grab_overlay((OverlayColor *)_screen.pixels, _screenPitch);
 
 	_currentKeyDown.keycode = 0;
 	_lastClick.x = _lastClick.y = 0;
@@ -209,9 +212,9 @@ void NewGui::restoreState() {
 	_system->show_mouse(_oldCursorMode);
 
 	_system->hide_overlay();
-	if (_screen) {
-		free(_screen);
-		_screen = 0;
+	if (_screen.pixels) {
+		free(_screen.pixels);
+		_screen.pixels = 0;
 	}
 
 	_system->updateScreen();
@@ -237,7 +240,7 @@ void NewGui::closeTopDialog() {
 #pragma mark -
 
 OverlayColor *NewGui::getBasePtr(int x, int y) {
-	return _screen + x + y * _screenPitch;
+	return (OverlayColor *)((byte *)_screen.pixels + x * _screen.bytesPerPixel + y * _screen.pitch);
 }
 
 void NewGui::box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB) {
@@ -356,16 +359,7 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 }
 
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color) {
-	const int sys_height = _system->get_overlay_height();
-	const int sys_width = _system->get_overlay_width();
-	Surface dst = {
-			_screen,
-			sys_width,
-			sys_height,
-			sizeof(OverlayColor) * _screenPitch,
-			sizeof(OverlayColor)
-		};
-	g_guifont.drawChar(&dst, chr, xx, yy, color);
+	g_guifont.drawChar(&_screen, chr, xx, yy, color);
 }
 
 int NewGui::getStringWidth(const String &str) {
@@ -381,16 +375,7 @@ int NewGui::getCharWidth(byte c) {
 }
 
 void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	const int sys_height = _system->get_overlay_height();
-	const int sys_width = _system->get_overlay_width();
-	Surface dst = {
-			_screen,
-			sys_width,
-			sys_height,
-			sizeof(OverlayColor) * _screenPitch,
-			sizeof(OverlayColor)
-		};
-	g_guifont.drawString(&dst, s, x, y, w, color, align, deltax, useEllipsis);
+	g_guifont.drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
 }
 
 //

@@ -43,6 +43,7 @@ struct Surface {
 	uint16 h;
 	uint16 pitch;
 	uint8 bytesPerPixel;
+	Surface() : pixels(0), w(0), h(0), pitch(0), bytesPerPixel(0) {}
 };
 
 class Font {

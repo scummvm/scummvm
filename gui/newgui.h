@@ -84,7 +84,7 @@ public:
 
 protected:
 	OSystem		*_system;
-	OverlayColor	*_screen;
+	Surface		_screen;
 	int			_screenPitch;
 	
 	bool		_needRedraw;
