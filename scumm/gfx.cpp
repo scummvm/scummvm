@@ -2567,7 +2567,7 @@ void Gdi::decodeStripHE(byte *dst, const byte *src, int height, byte transpCheck
 				 }
 			 }
 		 }
-		 dst += 312;
+		 dst += _vm->_screenWidth - 8;;
 		 height--;
 	 }
 }
