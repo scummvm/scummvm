@@ -56,7 +56,9 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_
 	int32 offset = READ_LE_UINT16(ptr + 20);
 	int16 version = READ_LE_UINT16(ptr + 22);
 	int16 code = READ_LE_UINT16(ptr + 24);
-	assert(version == 0x010A || version == 0x0114);
+	// 0x100 is an invalid VOC version used by German version of DOTT (Disk) and
+	// French version of Simon the Sorcerer 2 (CD)
+	assert(version == 0x010A || version == 0x0114 || version == 0x0100);
 	assert(code == ~version + 0x1234);
 	
 	int len;
