@@ -380,7 +380,7 @@ void Scumm_v5::o5_actorFromPos() {
 
 void Scumm_v5::o5_actorSet() {
 	static const byte convertTable[20] =
-		{ 1, 0, 0, 2, 0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
+		{ 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
 	int act = getVarOrDirectByte(0x80);
 	Actor *a;
 	int i, j;
@@ -476,7 +476,7 @@ void Scumm_v5::o5_actorSet() {
 			a->width = getVarOrDirectByte(0x80);
 			break;
 		case 17:										/* scale */
-			if (_gameId == GID_MONKEY_VGA) {
+			if ((_gameId == GID_MONKEY_VGA) || (_gameId == GID_MONKEY_EGA)) {
 				a->scalex = a->scaley = getVarOrDirectByte(0x80);
 			} else {
 				a->scalex = getVarOrDirectByte(0x80);
