@@ -8,14 +8,13 @@ SDL_CFLAGS=-I$(SRC)/sdl/include
 SDL_LIBS=-L$(SRC)/sdl/lib -lSDLmain -lSDL
 
 # If MAD (MPEG Audio Decoder) header and library isn't installed remove -lmad and -DCOMPRESSED_SOUND_FILE
-CC      = gcc
+CC      = g++
 CFLAGS  = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar 
 DEFINES = -DCOMPRESSED_SOUND_FILE
 LDFLAGS :=-mwindows -mconsole
 INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-#If compiling with GCC 2.95.x remove the -lstdc++
-LIBS	= -lmingw32 -lwinmm -lmad -lstdc++ $(SDL_LIBS)
+LIBS	= -lmingw32 -lwinmm -lmad $(SDL_LIBS)
 EXEEXT	:=.exe
 
 # Uncomment this for SDL normal output
