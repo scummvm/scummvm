@@ -943,11 +943,13 @@ void Actor::walkActor()
 #endif
 }
 
+#define DRAW_ORDER(x)	((x)->y - ((x)->layer << 11))
+
 void Scumm::processActors()
 {
 	int i;
-	Actor *actors[MAX_ACTORS], *a, **ac, **ac2, *tmp;
-	int numactors = 0, cnt, cnt2;
+	Actor *actors[MAX_ACTORS], *a, **ac, **ac2, *tmp, **end;
+	int numactors = 0;
 
 	// Make a list of all actors in this room
 	for (i = 1; i < NUM_ACTORS; i++) {
@@ -957,36 +959,31 @@ void Scumm::processActors()
 	}
 	if (!numactors)
 		return;
+	
+	end = actors + numactors;
 
 	// Sort actors by position before we draw them (to ensure that actors in
 	// front are drawn after those "behind" them).
-	ac = actors;
-	cnt = numactors;
-	do {
-		ac2 = actors;
-		cnt2 = numactors;
-		do {
-			if ((*ac2)->y - ((*ac2)->layer << 11) > (*ac)->y - ((*ac)->layer << 11)) {
-				tmp = *ac;
-				*ac = *ac2;
+	for (ac = end-1; ac >= actors; --ac) {
+		for (ac2 = actors; ac2 != ac; ++ac2)
+		{
+			if (DRAW_ORDER(*ac2) > DRAW_ORDER(*(ac2+1))) {
+				tmp = *(ac2+1);
+				*(ac2+1) = *ac2;
 				*ac2 = tmp;
 			}
-		} while (ac2++, --cnt2);
-	} while (ac++, --cnt);
+		}
+	}
 
-	// Finally draw all the actors in this room
-	ac = actors;
-	cnt = numactors;
-	do {
+	// Finally draw the now sorted actors
+	for (ac = actors; ac != end; ++ac) {
 		a = *ac;
 		if (a->costume) {
 			CHECK_HEAP getMaskFromBox(a->walkbox);
-			if (_fullRedraw)
-				a->needRedraw = true;
 			a->drawActorCostume();
 			CHECK_HEAP a->actorAnimate();
 		}
-	} while (ac++, --cnt);
+	}
 }
 
 void Actor::drawActorCostume()
@@ -1119,14 +1116,22 @@ void Scumm::setActorRedrawFlags()
 	int i, j;
 	uint32 bits;
 
-	for (i = 0; i < 40; i++) {
-		bits = gfxUsageBits[_screenStartStrip + i];
-		if (bits & 0x3FFFFFFF) {
-			for (j = 0; j < NUM_ACTORS; j++) {
-				if ((bits & (1 << j)) && bits != (uint32)(1 << j)) {
-					Actor *a = derefActor(j);
-					a->needRedraw = true;
-					a->needBgReset = true;
+	if (_fullRedraw) {
+		for (j = 0; j < NUM_ACTORS; j++) {
+			Actor *a = derefActor(j);
+			a->needRedraw = true;
+			a->needBgReset = true;
+		}
+	} else {
+		for (i = 0; i < 40; i++) {
+			bits = gfxUsageBits[_screenStartStrip + i];
+			if (bits & 0x3FFFFFFF) {
+				for (j = 0; j < NUM_ACTORS; j++) {
+					if ((bits & (1 << j)) && bits != (uint32)(1 << j)) {
+						Actor *a = derefActor(j);
+						a->needRedraw = true;
+						a->needBgReset = true;
+					}
 				}
 			}
 		}
