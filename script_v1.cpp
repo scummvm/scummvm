@@ -1445,7 +1445,7 @@ void Scumm::o5_getVerbEntrypoint()
 
 void Scumm::o5_ifClassOfIs()
 {
-	int act, cls, b;
+	int act, cls, b = 0;
 	bool cond = true;
 
 	act = getVarOrDirectWord(0x80);
@@ -1454,6 +1454,8 @@ void Scumm::o5_ifClassOfIs()
 		cls = getVarOrDirectWord(0x80);
 		if (cls)
 			b = getClass(act, cls);
+		else
+			error("FIXME! Ender forgot why he added this.");
 
 		if (cls & 0x80 && !b || !(cls & 0x80) && b)
 			cond = false;
@@ -1984,6 +1986,7 @@ void Scumm::o5_roomOps()
 		_opcode = fetchScriptByte();
 		e = getVarOrDirectByte(0x40);
 		setScaleItem(e - 1, b, a, d, c);
+		break;
 	case 8:											/* room scale? */
 		if (_features & GF_SMALL_HEADER) {
 			if (!(_features & GF_OLD256)) {

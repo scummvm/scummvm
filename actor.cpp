@@ -1306,7 +1306,7 @@ void Scumm::setupShadowPalette(int slot, int rfact, int gfact, int bfact,
 	curpal = _currentPalette + from * 3;
 	num = to - from + 1;
 	do {
-		*table++ = remapPaletteColor(curpal[0] * rfact >> 8,
+		*table++ = remapPaletteColor((curpal[0] * rfact) >> 8,
 																 curpal[1] * gfact >> 8,
 																 curpal[2] * bfact >> 8, (uint) - 1);
 		curpal += 3;

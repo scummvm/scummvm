@@ -427,6 +427,9 @@ byte *SimonState::readSingleOpcode(FILE *in, byte *ptr) {
 	i = 0;
 
 	string_ptr = table[*ptr++];
+	if (!string_ptr)
+		error("Unable to locate opcode table. Perhaps you are using the wrong game target?");
+
 	for(;;) {
 		if (string_ptr[i] == ' ')
 			return ptr;
