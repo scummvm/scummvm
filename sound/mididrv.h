@@ -25,12 +25,14 @@
 
 #include "scummsys.h"
 
+class MidiChannel;
+
 struct MidiEvent {
 	uint32 delta;
 	uint32 event;
 };
 
-/* Lowlevel Abstract Midi Driver Class */
+// Abstract MIDI Driver Class
 class MidiDriver {
 
 public:
@@ -112,11 +114,44 @@ public:
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) = 0;
 	virtual uint32 getBaseTempo (void) = 0;
+
+	// Channel allocation functions
+	virtual MidiChannel *allocateChannel() = 0;
+	virtual MidiChannel *getPercussionChannel() = 0;
 };
 
 
 
-/* driver types */
+class MidiChannel {
+public:
+	virtual void release() = 0;
+
+	// Regular messages
+	virtual void noteOff (byte note) = 0;
+	virtual void noteOn (byte note, byte velocity) = 0;
+	virtual void programChange (byte program) = 0;
+	virtual void pitchBend (int16 bend) = 0; // -0x2000 to +0x1FFF
+
+	// Control Change messages
+	virtual void controlChange (byte control, byte value) = 0;
+	virtual void modulationWheel (byte value) = 0;
+	virtual void volume (byte value) = 0;
+	virtual void panPosition (byte value) = 0;
+	virtual void pitchBendFactor (byte value) = 0;
+	virtual void detune (byte value) = 0;
+	virtual void priority (byte value) = 0;
+	virtual void sustain (bool value) = 0;
+	virtual void effectLevel (byte value) = 0;
+	virtual void chorusLevel (byte value) = 0;
+	virtual void allNotesOff() = 0;
+
+	// SysEx messages
+	virtual void sysEx_customInstrument (uint32 type, byte *instr) = 0;
+};
+
+
+
+// MIDI Driver Types
 enum {
 	MD_AUTO = 0,
 	MD_NULL = 1,

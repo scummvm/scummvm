@@ -112,8 +112,8 @@ public:
 class IMuseDriver;
 
 struct Part;
-struct MidiChannelAdl;
-struct MidiChannelGM;
+// struct MidiChannelAdl;
+// struct MidiChannelGM;
 struct Instrument;
 
 
@@ -262,7 +262,7 @@ struct IsNoteCmdData {
 };
 
 
-
+/*
 struct MidiChannel {
 	Part *_part;
 	MidiChannel() : _part(0) {}
@@ -273,10 +273,10 @@ struct MidiChannel {
 
 struct MidiChannelGM : MidiChannel {
 	byte _chan;
-	uint16 _actives[8];
-	MidiChannelGM() : _chan(0) { memset(_actives, 0, 16); }
+//	uint16 _actives[8];
+//	MidiChannelGM() : _chan(0) { memset(_actives, 0, 16); }
 };
-
+*/
 
 struct Part {
 	int _slot;
@@ -301,6 +301,9 @@ struct Part {
 	byte _chorus;
 	byte _percussion;
 	byte _bank;
+
+	// Used to be in MidiDriverGM.
+	uint16 _actives[8];
 
 	void key_on(byte note, byte velocity);
 	void key_off(byte note);
@@ -577,7 +580,7 @@ struct MidiChannelAdl : MidiChannel {
 	
 	MidiChannelAdl() : _next(0), _prev(0) {}
 };
-
+/*
 class IMuseAdlib : public IMuseDriver {
 private:
 	FM_OPL *_opl;
@@ -661,7 +664,7 @@ public:
 		return 1;
 	}
 };
-
+*/
 
 /* IMuseGM classes */
 
@@ -669,7 +672,7 @@ class IMuseGM : public IMuseDriver {
 	IMuseInternal *_se;
 	OSystem *_system;
 	MidiDriver *_md;
-	MidiChannelGM _midi_channels[16];
+//	MidiChannelGM _midi_channels[16];
 
 	Instrument _part_instr[32]; // Adlib custom instruments
 	Instrument _glob_instr[32]; // Adlib custom instruments
@@ -1937,7 +1940,8 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer
 	IMuseDriver *driv;
 
 	if (midi == NULL) {
-		driv = new IMuseAdlib(mixer);
+//		driv = new IMuseAdlib(mixer);
+		driv = NULL;
 	} else {
 		driv = new IMuseGM(midi);
 	}
@@ -3559,6 +3563,7 @@ void Part::init(IMuseDriver * driver)
 	_next = NULL;
 	_prev = NULL;
 	_mc = NULL;
+	memset(_actives, 0, sizeof (_actives));
 }
 
 void Part::setup(Player *player)
@@ -3663,7 +3668,7 @@ void Part::set_instrument(uint b)
 //***** ADLIB PART OF IMUSE STARTS HERE ******
 //********************************************
 
-
+/*
 static byte lookup_table[64][32];
 const byte volume_table[] = {
 	0, 4, 7, 11,
@@ -3814,21 +3819,21 @@ static const byte channel_mappings_2[9] = {
 };
 
 static const AdlibSetParams adlib_setparam_table[] = {
-	{0x40, 0, 63, 63},						/* level */
-	{0xE0, 2, 0, 0},							/* unused */
-	{0x40, 6, 192, 0},						/* level key scaling */
-	{0x20, 0, 15, 0},							/* modulator frequency multiple */
-	{0x60, 4, 240, 15},						/* attack rate */
-	{0x60, 0, 15, 15},						/* decay rate */
-	{0x80, 4, 240, 15},						/* sustain level */
-	{0x80, 0, 15, 15},						/* release rate */
-	{0xE0, 0, 3, 0},							/* waveform select */
-	{0x20, 7, 128, 0},						/* amp mod */
-	{0x20, 6, 64, 0},							/* vib */
-	{0x20, 5, 32, 0},							/* eg typ */
-	{0x20, 4, 16, 0},							/* ksr */
-	{0xC0, 0, 1, 0},							/* decay alg */
-	{0xC0, 1, 14, 0}							/* feedback */
+	{0x40, 0, 63, 63}, // level
+	{0xE0, 2, 0, 0}, // unused
+	{0x40, 6, 192, 0}, // level key scaling
+	{0x20, 0, 15, 0}, // modulator frequency multiple
+	{0x60, 4, 240, 15}, // attack rate
+	{0x60, 0, 15, 15}, // decay rate
+	{0x80, 4, 240, 15}, // sustain level
+	{0x80, 0, 15, 15}, // release rate
+	{0xE0, 0, 3, 0}, // waveform select
+	{0x20, 7, 128, 0}, // amp mod
+	{0x20, 6, 64, 0}, // vib
+	{0x20, 5, 32, 0}, // eg typ
+	{0x20, 4, 16, 0}, // ksr
+	{0xC0, 0, 1, 0}, // decay alg
+	{0xC0, 1, 14, 0} // feedback
 };
 
 void IMuseAdlib::adlib_set_param(int channel, byte param, int value)
@@ -4762,7 +4767,7 @@ int IMuseAdlib::part_update_active(Part *part, uint16 *active)
 	}
 	return count;
 }
-
+*/
 //********************************************
 //** GENERAL MIDI PART OF IMUSE STARTS HERE **
 //********************************************
@@ -4889,27 +4894,40 @@ void IMuseGM::midiSilence(byte chan)
 
 void IMuseGM::part_key_on(Part *part, byte note, byte velocity)
 {
-	MidiChannelGM *mc = part->_mc->gm();
+	MidiChannel/*GM*/ *mc = part->_mc;//->gm();
 
+	part->_actives[note >> 4] |= (1 << (note & 0xF));
 	if (mc) {
-		mc->_actives[note >> 4] |= (1 << (note & 0xF));
-		midiNoteOn(mc->_chan, note, velocity);
+//		mc->_actives[note >> 4] |= (1 << (note & 0xF));
+//		midiNoteOn(mc->_chan, note, velocity);
+		mc->noteOn (note, velocity);
 	} else if (part->_percussion) {
-		midiVolume(PERCUSSION_CHANNEL, part->_vol_eff);
-		midiProgram(PERCUSSION_CHANNEL, part->_bank, part->_player->_mt32emulate);
-		midiNoteOn(PERCUSSION_CHANNEL, note, velocity);
+//		midiVolume(PERCUSSION_CHANNEL, part->_vol_eff);
+//		midiProgram(PERCUSSION_CHANNEL, part->_bank, part->_player->_mt32emulate);
+//		midiNoteOn(PERCUSSION_CHANNEL, note, velocity);
+		mc = _md->getPercussionChannel();
+		if (!mc)
+			return;
+		mc->volume (part->_vol_eff);
+		mc->programChange (part->_bank /*, part->_player->_mt32emulate*/);
+		mc->noteOn (note, velocity);
 	}
 }
 
 void IMuseGM::part_key_off(Part *part, byte note)
 {
-	MidiChannelGM *mc = part->_mc->gm();
+	MidiChannel/*GM*/ *mc = part->_mc;//->gm();
 
+	part->_actives[note >> 4] &= ~(1 << (note & 0xF));
 	if (mc) {
-		mc->_actives[note >> 4] &= ~(1 << (note & 0xF));
-		midiNoteOff(mc->_chan, note);
+//		mc->_actives[note >> 4] &= ~(1 << (note & 0xF));
+//		midiNoteOff(mc->_chan, note);
+		mc->noteOff (note);
 	} else if (part->_percussion) {
-		midiNoteOff(PERCUSSION_CHANNEL, note);
+//		midiNoteOff(PERCUSSION_CHANNEL, note);
+		mc = _md->getPercussionChannel();
+		if (mc)
+			mc->noteOff (note);
 	}
 }
 
@@ -4984,22 +5002,22 @@ int IMuseGM::midi_driver_thread(void *param)
 void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 {
 	int i;
-	MidiChannelGM *mc;
+//	MidiChannel/*GM*/ *mc;
 
 	_system = syst;
 
-	/* open midi driver */
+	// Open MIDI driver
 	int result = _md->open(MidiDriver::MO_SIMPLE);
 	if (result)
 		error("IMuseGM::error = %s", MidiDriver::get_error_name(result));
 
-	/* Install the on_timer thread */
+	// Connect to the driver's timer
 	_se = eng;
 //	syst->create_thread(midi_driver_thread, this);
 	_md->setTimerCallback (NULL, &IMuseGM::timer_callback);
 
-	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++) {
-		mc->_chan = i;
+	for (i = 0; i != ARRAYSIZE(_midi_program_last); i++) {
+//		mc->_chan = i;
 		_midi_program_last [i] = 255;
 	}
 }
@@ -5018,7 +5036,8 @@ void IMuseGM::update_pris()
 	Part *part, *hipart;
 	int i;
 	byte hipri, lopri;
-	MidiChannelGM *mc, *lomc;
+//	MidiChannel/*GM*/ *mc, *lomc;
+	Part *lopart;
 
 	while (true) {
 		hipri = 0;
@@ -5033,30 +5052,26 @@ void IMuseGM::update_pris()
 		if (!hipart)
 			return;
 
-		lopri = 255;
-		lomc = NULL;
-		for (i = ARRAYSIZE(_midi_channels), mc = _midi_channels;; mc++) {
-			if (mc->_chan != 9) {
-				if (!mc->_part) {
-					lomc = mc;
-					break;
-				}
-				if (mc->_part->_pri_eff <= lopri) {
-					lopri = mc->_part->_pri_eff;
-					lomc = mc;
-				}
-			}
+		if ((hipart->_mc = _md->allocateChannel()) != NULL) {
+			hipart->changed (pcAll);
+			return;
+		}
 
-			if (!--i) {
-				if (lopri >= hipri)
-					return;
-				lomc->_part->off();
-				break;
+		lopri = 255;
+		lopart = NULL;
+		for (i = 32, part = _se->parts_ptr(); i; i--, part++) {
+			if (part->_mc && part->_pri_eff <= lopri) {
+				lopri = part->_pri_eff;
+				lopart = part;
 			}
 		}
 
-		hipart->_mc = lomc;
-		lomc->_part = hipart;
+		if (lopart == NULL || lopri >= hipri)
+			return;
+		lopart->off();
+
+		if ((hipart->_mc = _md->allocateChannel()) == NULL)
+			return;
 		hipart->changed(pcAll);
 	}
 }
@@ -5069,7 +5084,8 @@ int IMuseGM::part_update_active(Part *part, uint16 *active)
 
 	bits = 1 << part->_chan;
 
-	act = part->_mc->gm()->_actives;
+//	act = part->_mc->gm()->_actives;
+	act = part->_actives;
 
 	for (i = 8; i; i--) {
 		mask = *act++;
@@ -5102,83 +5118,104 @@ void IMuseGM::set_instrument(uint slot, byte *data)
 
 void IMuseGM::part_changed(Part *part, uint16 what)
 {
-	MidiChannelGM *mc;
+	MidiChannel/*GM*/ *mc;
 
-	/* Mark for re-schedule if program changed when in pre-state */
+	// Mark for re-schedule if program changed when in pre-state
 	if (what & pcProgram && !part->_percussion && !part->_mc) {
 		update_pris();
 	}
 
-	if (!(mc = part->_mc->gm()))
+	if (!(mc = part->_mc/*->gm()*/))
 		return;
 
-	if (part->_player == NULL) {	/* No player, so dump phantom channel */
+	if (part->_player == NULL) {	// No player, so dump phantom channel
+		part->_mc->release();
 		part->_mc = NULL;
-		mc->_part = NULL;
-		memset(mc->_actives, 0, sizeof(mc->_actives));
+//		mc->_part = NULL;
+//		memset(mc->_actives, 0, sizeof(mc->_actives));
+		memset(part->_actives, 0, sizeof(part->_actives));
 		return;
 	}
 
 	if (what & pcPitchBendFactor)
-		midiPitchBendFactor (mc->_chan, part->_pitchbend_factor);
+//		midiPitchBendFactor (mc->_chan, part->_pitchbend_factor);
+		mc->pitchBendFactor (part->_pitchbend_factor);
 
 	if (what & pcMod)
-		midiPitchBend(mc->_chan,
-		              clamp(part->_pitchbend +
-					        (part->_detune_eff * 64 / 12) +
-		                    (part->_transpose_eff * 8192 / 12), -8192, 8191));
+//		midiPitchBend(mc->_chan,
+//		              clamp(part->_pitchbend +
+//					        (part->_detune_eff * 64 / 12) +
+//		                    (part->_transpose_eff * 8192 / 12), -8192, 8191));
+		mc->pitchBend (clamp(part->_pitchbend +
+		               (part->_detune_eff * 64 / 12) +
+		               (part->_transpose_eff * 8192 / 12), -8192, 8191));
 
 	if (what & pcVolume)
-		midiVolume(mc->_chan, part->_vol_eff);
+//		midiVolume(mc->_chan, part->_vol_eff);
+		mc->volume (part->_vol_eff);
 
 	if (what & pcPedal)
-		midiPedal(mc->_chan, part->_pedal);
+//		midiPedal(mc->_chan, part->_pedal);
+		mc->sustain (part->_pedal);
 
 	if (what & pcModwheel)
-		midiModWheel(mc->_chan, part->_modwheel);
+//		midiModWheel(mc->_chan, part->_modwheel);
+		mc->modulationWheel (part->_modwheel);
 
 	if (what & pcPan)
-		midiPan(mc->_chan, part->_pan_eff);
+//		midiPan(mc->_chan, part->_pan_eff);
+		mc->panPosition (part->_pan_eff);
 
 	if (what & pcEffectLevel)
-		midiEffectLevel(mc->_chan, part->_effect_level);
+//		midiEffectLevel(mc->_chan, part->_effect_level);
+		mc->effectLevel (part->_effect_level);
 
 	if (what & pcProgram) {
 		if (part->_player->_isGM) {
 			if (part->_program < 128) {
 				_midi_program_last [part->_chan] = part->_program;
 				if (part->_bank) {
-					midiControl0(mc->_chan, part->_bank);
-					midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
-					midiControl0(mc->_chan, 0);
+//					midiControl0(mc->_chan, part->_bank);
+//					midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+//					midiControl0(mc->_chan, 0);
+					mc->controlChange (0, part->_bank);
+					mc->programChange (part->_program /*, part->_player->_mt32emulate*/);
+					mc->controlChange (0, 0);
 				} else {
-					midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+//					midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+					mc->programChange (part->_program /*, part->_player->_mt32emulate*/);
 				}
 			}
 		} else {
 			if (part->_program < 32) {
 				memcpy (&_part_instr [part->_slot], &_glob_instr[part->_program], sizeof (Instrument));
 			}
-			_md->sysEx_customInstrument (mc->_chan, 'ADL ', (byte *) (&_part_instr [part->_slot]));
+//			_md->sysEx_customInstrument (mc->_chan, 'ADL ', (byte *) (&_part_instr [part->_slot]));
+			mc->sysEx_customInstrument ('ADL ', (byte *) (&_part_instr [part->_slot]));
 		}
 	}
 
 	if (what & pcChorus)
-		midiChorus(mc->_chan, part->_effect_level);
+//		midiChorus(mc->_chan, part->_effect_level);
+		mc->chorusLevel (part->_effect_level);
 
 	if (what & pcPriority)
-		_md->send ((part->_pri_eff << 16) | (18 << 8) | 0xB0 | mc->_chan);
+//		_md->send ((part->_pri_eff << 16) | (18 << 8) | 0xB0 | mc->_chan);
+		mc->priority (part->_pri_eff);
 }
 
 
 void IMuseGM::part_off(Part *part)
 {
-	MidiChannelGM *mc = part->_mc->gm();
+	MidiChannel/*GM*/ *mc = part->_mc/*->gm()*/;
 	if (mc) {
+		mc->allNotesOff();
+		mc->release();
 		part->_mc = NULL;
-		mc->_part = NULL;
-		memset(mc->_actives, 0, sizeof(mc->_actives));
-		midiSilence(mc->_chan);
+//		mc->_part = NULL;
+//		memset(mc->_actives, 0, sizeof(mc->_actives));
+		memset(part->_actives, 0, sizeof(part->_actives));
+//		midiSilence(mc->_chan);
 	}
 }
 

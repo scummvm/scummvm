@@ -59,6 +59,9 @@ public:
 
 	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
 	uint32 getBaseTempo (void) { return _target->getBaseTempo(); }
+
+	MidiChannel *allocateChannel() { return NULL; }
+	MidiChannel *getPercussionChannel() { return NULL; }
 };
 
 #endif

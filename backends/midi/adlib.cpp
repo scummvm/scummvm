@@ -61,10 +61,11 @@ struct Instrument {
 	byte duration;
 };
 
-struct AdlibPart {
-	byte _chan;
-	AdlibPart *_prev, *_next;
-	MidiDriver_ADLIB *_drv;
+class AdlibPart : public MidiChannel {
+	friend MidiDriver_ADLIB;
+
+private:
+//	AdlibPart *_prev, *_next;
 	MidiChannelAdl *_mc;
 	int16 _pitchbend;
 	byte _pitchbend_factor;
@@ -76,6 +77,39 @@ struct AdlibPart {
 	byte _program;
 	byte _pri_eff;
 	Instrument _part_instr;
+
+private:
+	MidiDriver_ADLIB *_owner;
+	bool _allocated;
+	byte _channel;
+
+	void init (MidiDriver_ADLIB *owner);
+	void allocate() { _allocated = true; }
+
+public:
+	void release() { _allocated = false; }
+
+	// Regular messages
+	void noteOff (byte note);
+	void noteOn (byte note, byte velocity);
+	void programChange (byte program);
+	void pitchBend (int16 bend);
+
+	// Control Change messages
+	void controlChange (byte control, byte value);
+	void modulationWheel (byte value);
+	void volume (byte value);
+	void panPosition (byte value) { return; } // Not supported
+	void pitchBendFactor (byte value);
+	void detune (byte value);
+	void priority (byte value);
+	void sustain (bool value);
+	void effectLevel (byte value) { return; } // Not supported
+	void chorusLevel (byte value) { return; } // Not supported
+	void allNotesOff();
+
+	// SysEx messages
+	void sysEx_customInstrument (uint32 type, byte *instr);
 };
 
 struct Struct10 {
@@ -459,6 +493,8 @@ typedef void TimerCallback (void *);
 ////////////////////////////////////////
 
 class MidiDriver_ADLIB : public MidiDriver {
+	friend AdlibPart;
+
 public:
 	MidiDriver_ADLIB();
 
@@ -479,6 +515,9 @@ public:
 #endif //_WIN32_WCE
 	}
 
+	MidiChannel *allocateChannel();
+	MidiChannel *getPercussionChannel() { return NULL; } // Percussion currently not supported
+
 private:
 	int _mode;
 
@@ -496,13 +535,15 @@ private:
 	int _next_tick;
 	uint16 curnote_table[9];
 	MidiChannelAdl _midi_channels[9];
-	AdlibPart _parts[16];
+	AdlibPart _parts[32];
+
+	void sysEx_customInstrument (AdlibPart *part, uint32 type, byte *instr);
 
 	void generate_samples(int16 *buf, int len);
 	void on_timer();
 	void part_set_instrument (AdlibPart *part, Instrument * instr);
-	void part_key_on (byte chan, byte note, byte velocity);
-	void part_key_off (byte chan, byte note);
+	void part_key_on (AdlibPart *part, byte note, byte velocity);
+	void part_key_off (AdlibPart *part, byte note);
 
 	void adlib_key_off(int chan);
 	void adlib_note_on(int chan, byte note, int mod);
@@ -523,9 +564,9 @@ private:
 	void mc_off(MidiChannelAdl * mc);
 
 	static void link_mc (AdlibPart *part, MidiChannelAdl *mc);
-	static void mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11);
-	static void mc_init_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11, byte flags,
-	                          InstrumentExtra * ie);
+	void mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11);
+	void mc_init_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11, byte flags,
+	                   InstrumentExtra * ie);
 
 	static void struct10_init(Struct10 * s10, InstrumentExtra * ie);
 	static byte struct10_ontimer(Struct10 * s10, Struct11 * s11);
@@ -538,16 +579,152 @@ private:
 
 
 
+// MidiChannel method implementations
+
+void AdlibPart::init (MidiDriver_ADLIB *owner) {
+	_owner = owner;
+
+}
+
+void AdlibPart::noteOff (byte note)
+{
+	_owner->part_key_off (this, note);
+}
+
+void AdlibPart::noteOn (byte note, byte velocity)
+{
+	_owner->part_key_on (this, note, velocity);
+}
+
+void AdlibPart::programChange (byte program)
+{
+	if (program > 127) return;
+
+	uint i;
+	uint count = 0;
+	for (i = 0; i < ARRAYSIZE(map_gm_to_fm[0]); ++i)
+		count += map_gm_to_fm[program][i];
+	if (!count)
+		warning ("No Adlib instrument defined for GM program %d", (int) program);
+	_program = program;
+	_owner->part_set_instrument (this, (Instrument *) &map_gm_to_fm [program]);
+}
+
+void AdlibPart::pitchBend (int16 bend)
+{
+	MidiChannelAdl *mc;
+
+	_pitchbend = bend;
+	for (mc = _mc; mc; mc = mc->_next) {
+		_owner->adlib_note_on(mc->_channel, mc->_note + _transpose_eff,
+			          (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
+	}
+}
+
+void AdlibPart::controlChange (byte control, byte value)
+{
+	switch (control) {
+	case 1:   modulationWheel (value); break;
+	case 7:   volume (value); break;
+	case 10:  break; // Pan position. Not supported.
+	case 16:  pitchBendFactor (value); break;
+	case 17:  detune (value); break;
+	case 18:  priority (value); break;
+	case 64:  sustain (value > 0); break;
+	case 91:  break; // Effects level. Not supported.
+	case 93:  break; // Chorus level. Not supported.
+	case 123: allNotesOff(); break;
+	default:
+		warning ("Adlib: Unknown control change message %d", (int) control);
+	}
+}
+
+void AdlibPart::modulationWheel (byte value)
+{
+	MidiChannelAdl *mc;
+
+	_modwheel = value;
+	for (mc = _mc; mc; mc = mc->_next) {
+		if (mc->_s10a.active && mc->_s11a.flag0x40)
+			mc->_s10a.modwheel = _modwheel >> 2;
+		if (mc->_s10b.active && mc->_s11b.flag0x40)
+			mc->_s10b.modwheel = _modwheel >> 2;
+	}
+}
+
+void AdlibPart::volume (byte value)
+{
+	MidiChannelAdl *mc;
+
+	_vol_eff = value;
+	for (mc = _mc; mc; mc = mc->_next) {
+		_owner->adlib_set_param(mc->_channel, 0, volume_table[lookup_table[mc->_vol_2][_vol_eff >> 2]]);
+		if (mc->_twochan) {
+			_owner->adlib_set_param(mc->_channel, 13, volume_table[lookup_table[mc->_vol_1][_vol_eff >> 2]]);
+		}
+	}
+}
+
+void AdlibPart::pitchBendFactor (byte value)
+{
+	MidiChannelAdl *mc;
+
+	_pitchbend_factor = value;
+	for (mc = _mc; mc; mc = mc->_next) {
+		_owner->adlib_note_on(mc->_channel, mc->_note + _transpose_eff,
+		                      (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
+	}
+}
+
+void AdlibPart::detune (byte value)
+{
+	MidiChannelAdl *mc;
+
+	_detune_eff = value;
+	for (mc = _mc; mc; mc = mc->_next) {
+		_owner->adlib_note_on(mc->_channel, mc->_note + _transpose_eff,
+		              (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
+	}
+}
+
+void AdlibPart::priority (byte value)
+{
+	_pri_eff = value;
+}
+
+void AdlibPart::sustain (bool value)
+{
+	MidiChannelAdl *mc;
+
+	_pedal = value;
+	if (!value) {
+		for (mc = _mc; mc; mc = mc->_next) {
+			if (mc->_waitforpedal)
+				_owner->mc_off(mc);
+		}
+	}
+}
+
+void AdlibPart::allNotesOff()
+{
+	while (_mc)
+		_owner->mc_off (_mc);
+}
+
+void AdlibPart::sysEx_customInstrument (uint32 type, byte *instr)
+{
+	_owner->sysEx_customInstrument (this, type, instr);
+}
+
+
+
 // MidiDriver method implementations
 
 MidiDriver_ADLIB::MidiDriver_ADLIB()
 {
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_parts); ++i) {
-		_parts [i]._chan = i;
-		_parts [i]._prev = (i ? &_parts[i-1] : 0);
-		_parts [i]._next = ((i < ARRAYSIZE(_parts) - 1) ? &_parts[i+1] : 0);
-		_parts [i]._drv = this;
+		_parts[i].init (this);
 	}
 }
 
@@ -599,8 +776,6 @@ void MidiDriver_ADLIB::send (uint32 b)
 	if (_mode != MO_SIMPLE)
 		error("MidiDriver_ADLIB::send called but driver is not in simple mode");
 
-	MidiChannelAdl *mc;
-
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	byte param2 = (byte) ((b >> 16) & 0xFF);
 	byte param1 = (byte) ((b >>  8) & 0xFF);
@@ -610,112 +785,21 @@ void MidiDriver_ADLIB::send (uint32 b)
 
 	switch (cmd) {
 	case 0x80:// Note Off
-		part_key_off (chan, param1);
-		break;
-
+		part_key_off (part, param1); break;
 	case 0x90: // Note On
-		part_key_on (chan, param1, param2);
-		break;
-
+		part_key_on (part, param1, param2); break;
 	case 0xA0: // Aftertouch
-		// Not supported.
-		break;
-
+		break; // Not supported.
 	case 0xB0: // Control Change
-		switch (param1) {
-		case 01: // Modulation wheel
-			part->_modwheel = param2;
-			for (mc = (MidiChannelAdl *)part->_mc; mc; mc = mc->_next) {
-				if (mc->_s10a.active && mc->_s11a.flag0x40)
-					mc->_s10a.modwheel = part->_modwheel >> 2;
-				if (mc->_s10b.active && mc->_s11b.flag0x40)
-					mc->_s10b.modwheel = part->_modwheel >> 2;
-			}
-			break;
-
-		case 07: // Volume
-			part->_vol_eff = param2;
-			for (mc = part->_mc; mc; mc = mc->_next) {
-				adlib_set_param(mc->_channel, 0, volume_table[lookup_table[mc->_vol_2][part->_vol_eff >> 2]]);
-				if (mc->_twochan) {
-					adlib_set_param(mc->_channel, 13, volume_table[lookup_table[mc->_vol_1][part->_vol_eff >> 2]]);
-				}
-			}
-			break;
-
-		case 10: // Pan position
-			// Not supported in Adlib (OPL2)
-			break;
-
-		case 16: // Pitchbend factor
-			part->_pitchbend_factor = param2;
-			for (mc = part->_mc; mc; mc = mc->_next) {
-				adlib_note_on(mc->_channel, mc->_note + part->_transpose_eff,
-							  (part->_pitchbend * part->_pitchbend_factor >> 6) + part->_detune_eff);
-			}
-			break;
-
-		case 17: // GP slider 2 (detune)
-			part->_detune_eff = param2;
-			for (mc = part->_mc; mc; mc = mc->_next) {
-				adlib_note_on(mc->_channel, mc->_note + part->_transpose_eff,
-							  (part->_pitchbend * part->_pitchbend_factor >> 6) + part->_detune_eff);
-			}
-			break;
-
-		case 18: // GP slider 3 (priority)
-			part->_pri_eff = param2;
-			break;
-
-		case 64: // Sustain pedal
-			part->_pedal = (param2 > 0);
-			if (!part->_pedal) {
-				for (mc = (MidiChannelAdl *)part->_mc; mc; mc = mc->_next) {
-					if (mc->_waitforpedal)
-						mc_off(mc);
-				}
-			}
-			break;
-
-		case 91: // Effects level
-			// Not supported in Adlib (OPL2)
-			break;
-
-		case 93: // Chorus
-			// Not supported in Adlib (OPL2)
-			break;
-
-		case 123: // All Notes Off
-			while (part->_mc)
-				mc_off (part->_mc);
-			break;
-
-		default:
-			warning ("MidiDriver_ADLIB: Unknown control change message %d", param1);
-		}
-		break;
-
+		part->controlChange (param1, param2); break;
 	case 0xC0: // Program Change
-		if (chan != 9) {
-			if (!map_gm_to_fm [part->_program][0])
-				warning ("No Adlib instrument defined for GM program %d", (int) param1);
-			part->_program = param1;
-			part_set_instrument (&_parts[chan], (Instrument *) &map_gm_to_fm[part->_program]);
-		}
+		if (chan != 9)
+			part->programChange (param1);
 		break;
-
 	case 0xD0: // Channel Pressure
-		// Not supported.
-		break;
-
+		break; // Not supported.
 	case 0xE0: // Pitch Bend
-		part->_pitchbend = (param1 | (param2 << 7)) - 0x2000;
-		for (mc = part->_mc; mc; mc = mc->_next) {
-			adlib_note_on(mc->_channel, mc->_note + part->_transpose_eff,
-			              (part->_pitchbend * part->_pitchbend_factor >> 6) + part->_detune_eff);
-		}
-		break;
-
+		part->pitchBend ((param1 | (param2 << 7)) - 0x2000); break;
 	case 0xF0: // SysEx
 		// We should never get here! SysEx information has to be
 		// sent via high-level semantic methods.
@@ -741,8 +825,13 @@ void MidiDriver_ADLIB::setPitchBendRange (byte channel, uint range)
 
 void MidiDriver_ADLIB::sysEx_customInstrument (byte channel, uint32 type, byte *instr)
 {
+	sysEx_customInstrument (&_parts [channel], type, instr);
+}
+
+void MidiDriver_ADLIB::sysEx_customInstrument (AdlibPart *part, uint32 type, byte *instr)
+{
 	if (type == 'ADL ') {
-		Instrument *i = &_parts[channel]._part_instr;
+		Instrument *i = &part->_part_instr;
 		memcpy(i, instr, sizeof(Instrument));
 	}
 }
@@ -751,6 +840,21 @@ void MidiDriver_ADLIB::setTimerCallback (void *timer_param, void (*timer_proc) (
 {
 	_timer_proc = (TimerCallback *) timer_proc;
 	_timer_param = timer_param;
+}
+
+MidiChannel *MidiDriver_ADLIB::allocateChannel()
+{
+	AdlibPart *part;
+	uint i;
+	
+	for (i = 0; i < ARRAYSIZE(_parts); ++i) {
+		part = &_parts[i];
+		if (!part->_allocated) {
+			part->allocate();
+			return (part);
+		}
+	}
+	return NULL;
 }
 
 MidiDriver *MidiDriver_ADLIB_create()
@@ -860,18 +964,18 @@ void MidiDriver_ADLIB::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11
 		switch (s11->param) {
 		case 0:
 			mc->_vol_2 = s10->start_value + s11->modify_val;
-			((MidiDriver_ADLIB *) part->_drv)->adlib_set_param(mc->_channel, 0,
-			                                                   volume_table[lookup_table[mc->_vol_2]
-			                                                   [part->_vol_eff >> 2]]);
+			adlib_set_param(mc->_channel, 0,
+			                volume_table[lookup_table[mc->_vol_2]
+			                [part->_vol_eff >> 2]]);
 			break;
 		case 13:
 			mc->_vol_1 = s10->start_value + s11->modify_val;
 			if (mc->_twochan) {
-				((MidiDriver_ADLIB *) part->_drv)->adlib_set_param(mc->_channel, 13,
-				                                                   volume_table[lookup_table[mc->_vol_1]
-				                                                   [part->_vol_eff >> 2]]);
+				adlib_set_param(mc->_channel, 13,
+				                volume_table[lookup_table[mc->_vol_1]
+				                [part->_vol_eff >> 2]]);
 			} else {
-				((MidiDriver_ADLIB *) part->_drv)->adlib_set_param(mc->_channel, 13, mc->_vol_1);
+				adlib_set_param(mc->_channel, 13, mc->_vol_1);
 			}
 			break;
 		case 30:
@@ -881,14 +985,14 @@ void MidiDriver_ADLIB::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11
 			s11->s10->unk3 = (char)s11->modify_val;
 			break;
 		default:
-			((MidiDriver_ADLIB *) part->_drv)->adlib_set_param(mc->_channel, s11->param,
-			                                                   s10->start_value + s11->modify_val);
+			adlib_set_param(mc->_channel, s11->param,
+			                s10->start_value + s11->modify_val);
 			break;
 		}
 	}
 
 	if (code & 2 && s11->flag0x10)
-		((MidiDriver_ADLIB *) part->_drv)->adlib_key_onoff(mc->_channel);
+		adlib_key_onoff(mc->_channel);
 }
 
 void MidiDriver_ADLIB::adlib_key_off(int chan)
@@ -1081,23 +1185,11 @@ int MidiDriver_ADLIB::random_nr(int a)
 	return _rand_seed * a >> 8;
 }
 
-void MidiDriver_ADLIB::part_key_off (byte chan, byte note)
+void MidiDriver_ADLIB::part_key_off (AdlibPart *part, byte note)
 {
 	MidiChannelAdl *mc;
 
-	// Percussion is not implemented; filter that channel
-	if (chan == 9)
-		return;
-
-	AdlibPart *part;
-	for (part = _parts; part; part = part->_next) {
-		if (part->_chan == chan)
-			break;
-	}
-	if (!part)
-		return;
-
-	for (mc = (MidiChannelAdl *)part->_mc; mc; mc = mc->_next) {
+	for (mc = part->_mc; mc; mc = mc->_next) {
 		if (mc->_note == note) {
 			if (part->_pedal)
 				mc->_waitforpedal = true;
@@ -1107,21 +1199,9 @@ void MidiDriver_ADLIB::part_key_off (byte chan, byte note)
 	}
 }
 
-void MidiDriver_ADLIB::part_key_on (byte chan, byte note, byte velocity)
+void MidiDriver_ADLIB::part_key_on (AdlibPart *part, byte note, byte velocity)
 {
 	MidiChannelAdl *mc;
-
-	// Percussion is not implemented; filter that channel
-	if (chan == 9)
-		return;
-
-	AdlibPart *part;
-	for (part = _parts; part; part = part->_next) {
-		if (part->_chan == chan)
-			break;
-	}
-	if (!part)
-		return;
 
 	mc = allocate_midichan(part->_pri_eff);
 	if (!mc)
@@ -1287,7 +1367,7 @@ void MidiDriver_ADLIB::mc_init_stuff (MidiChannelAdl *mc, Struct10 * s10,
 		s11->s10->unk3 = 0;
 		break;
 	default:
-		s10->start_value = ((MidiDriver_ADLIB *) part->_drv)->adlib_read_param(mc->_channel, s11->param);
+		s10->start_value = adlib_read_param(mc->_channel, s11->param);
 	}
 
 	struct10_init(s10, ie);

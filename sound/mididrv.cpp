@@ -45,8 +45,50 @@
 
 typedef void TimerCallback (void *);
 
+class MidiDriver_MPU401;
+
+class MidiChannel_MPU401 : public MidiChannel {
+	friend MidiDriver_MPU401;
+
+private:
+	MidiDriver_MPU401 *_owner;
+	bool _allocated;
+	byte _channel;
+
+	void init (MidiDriver_MPU401 *owner, byte channel);
+	void allocate() { _allocated = true; }
+
+public:
+	void release() { _allocated = false; }
+
+	// Regular messages
+	void noteOff (byte note);
+	void noteOn (byte note, byte velocity);
+	void programChange (byte program);
+	void pitchBend (int16 bend);
+
+	// Control Change messages
+	void controlChange (byte control, byte value);
+	void modulationWheel (byte value) { controlChange (1, value); }
+	void volume (byte value) { controlChange (7, value); }
+	void panPosition (byte value) { controlChange (10, value); }
+	void pitchBendFactor (byte value) { controlChange (16, value); }
+	void detune (byte value) { controlChange (17, value); }
+	void priority (byte value) { controlChange (18, value); }
+	void sustain (bool value) { controlChange (64, value ? 1 : 0); }
+	void effectLevel (byte value) { controlChange (91, value); }
+	void chorusLevel (byte value) { controlChange (93, value); }
+	void allNotesOff() { controlChange (123, 0); }
+
+	// SysEx messages
+	void sysEx_customInstrument (uint32 type, byte *instr);
+};
+
+
+
 class MidiDriver_MPU401 : public MidiDriver {
 private:
+	MidiChannel_MPU401 _midi_channels [16];
 	bool _started_thread;
 	TimerCallback *_timer_proc;
 	void *_timer_param;
@@ -54,9 +96,59 @@ private:
 	static int midi_driver_thread (void *param);
 
 public:
+	MidiDriver_MPU401();
+
 	virtual void setTimerCallback (void *timer_param, void (*timer_proc) (void *));
 	virtual uint32 getBaseTempo (void) { return 0x4A0000; }
+
+	virtual MidiChannel *allocateChannel();
+	virtual MidiChannel *getPercussionChannel() { return &_midi_channels [9]; }
 };
+
+
+
+void MidiChannel_MPU401::init (MidiDriver_MPU401 *owner, byte channel)
+{
+	_owner = owner;
+	_channel = channel;
+	_allocated = false;
+}
+
+void MidiChannel_MPU401::noteOff (byte note) { _owner->send(note << 8 | 0x80 | _channel); }
+void MidiChannel_MPU401::noteOn (byte note, byte velocity) { _owner->send (velocity << 16 | note << 8 | 0x90 | _channel); }
+void MidiChannel_MPU401::programChange (byte program) { _owner->send(program << 8 | 0xC0 | _channel); }
+void MidiChannel_MPU401::pitchBend (int16 bend) { _owner->send((((bend + 0x2000) >> 7) & 0x7F) << 16 | ((bend + 0x2000) & 0x7F) << 8 | 0xE0 | _channel); }
+void MidiChannel_MPU401::controlChange (byte control, byte value) { _owner->send(value << 16 | control << 8 | 0xB0 | _channel); }
+void MidiChannel_MPU401::sysEx_customInstrument (uint32 type, byte *instr) { _owner->sysEx_customInstrument (_channel, type, instr); }
+
+
+
+MidiDriver_MPU401::MidiDriver_MPU401() : MidiDriver()
+{
+	int i;
+	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
+		_midi_channels [i].init (this, i);
+	}
+}
+
+
+
+MidiChannel *MidiDriver_MPU401::allocateChannel()
+{
+	MidiChannel_MPU401 *chan;
+	uint i;
+	
+	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
+		if (i == 9) continue;
+		chan = &_midi_channels[i];
+		if (!chan->_allocated) {
+			chan->allocate();
+			return (chan);
+		}
+	}
+	return NULL;
+}
+
 
 void MidiDriver_MPU401::setTimerCallback (void *timer_param, void (*timer_proc) (void *))
 {
@@ -92,7 +184,6 @@ int MidiDriver_MPU401::midi_driver_thread(void *param)
 
 	return 0;
 }
-
 
 
 
