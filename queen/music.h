@@ -104,11 +104,13 @@ public:
 	void queueTuneList(int16 tuneList)	{ _player->queueTuneList(tuneList); }
 	void playMusic()			{ _player->playMusic(); }
 	void stopSong()				{ _player->stopMusic(); }
-	
+
+	void toggleVChange();	
 	void setVolume(int vol)			{ _player->setVolume(vol); }
 	int volume()				{ return _player->getVolume(); }
 	
 protected:
+	bool _vToggle;
 	byte *_musicData;
 	uint32 _musicDataSize;
 	MusicPlayer *_player;

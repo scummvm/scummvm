@@ -318,7 +318,7 @@ static const byte mt32_to_gm[128] = {
 		return (_musicDataSize - songOffset(songNum));
 	}
 
-	Music::Music(MidiDriver *driver, QueenEngine *vm) {
+	Music::Music(MidiDriver *driver, QueenEngine *vm) : _vToggle(false) {
 		if (vm->resource()->isDemo()) {
 			_musicData = vm->resource()->loadFile("AQ8.RL", 0, NULL);
 			_musicDataSize = vm->resource()->fileSize("AQ8.RL");
@@ -341,4 +341,9 @@ static const byte mt32_to_gm[128] = {
 		_player->playMusic();				
 	}
 	
+	void Music::toggleVChange() {
+		setVolume(_vToggle ? (volume() * 2) : (volume() / 2));
+		_vToggle ^= true;
+	}
+
 } // End of namespace Queen
