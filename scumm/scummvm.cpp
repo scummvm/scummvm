@@ -294,6 +294,12 @@ static const ScummGameSettings scumm_settings[] = {
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0}
 };
 
+static int compareMD5Table(const void *a, const void *b) {
+	const char *key = (const char *)a;
+	const MD5Table *elem = (const MD5Table *)b;
+	return strcmp(key, elem->md5);
+}
+
 ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
 	: Engine(syst),
 	  _gameId(gs.id),
@@ -649,9 +655,19 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 	
 	if (md5_file(buf, md5sum)) {
+		char md5str[32+1];
 		for (int j = 0; j < 16; j++)
-			printf("%02x", md5sum[j]);
-		printf("  %s\n", buf);
+			sprintf(md5str+j*2, "%02x", md5sum[j]);
+		md5str[32] = 0;
+		printf("%s  %s\n", md5str, buf);
+		const MD5Table *elem;
+		elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
+		if (elem)
+			printf("Match found in database: target %s, language %s, platform %s\n",
+				elem->target, Common::getLanguageDescription(elem->language), Common::getPlatformDescription(elem->platform));
+		else
+			printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
+
 	}
 #endif
 
