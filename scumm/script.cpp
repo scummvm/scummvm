@@ -640,10 +640,18 @@ void Scumm::runExitScript()
 		// not actual data not even a 00 (stop code)
 		// maybe we should be limiting ourselves to strictly reading the size 
 		// described in the header?
-		if ((_currentRoom == 7) && (_gameId == GID_INDY3_256))
-			printf("skipping specific exit script as its empty, fix properly!\n");
-		else
-			runScriptNested(slot);
+		if (_gameId == GID_INDY3_256) {
+			// FIXME: Oddly, Indy3 seems to contain exit scripts with only a size
+			// and a tag - not even a terminating NULL!
+			byte *roomptr = getResourceAddress(rtRoom, _roomResource);
+			byte *excd = findResourceData(MKID('EXCD'), roomptr) - _resourceHeaderSize;
+			if (!excd || (getResourceDataSize(excd) < 1)) {
+				debug(2, "Exit-%d is empty", _roomResource);
+				return;
+			}
+		}
+
+		runScriptNested(slot);
 	}
 	if (_vars[VAR_EXIT_SCRIPT2])
 		runScript(_vars[VAR_EXIT_SCRIPT2], 0, 0, 0);
