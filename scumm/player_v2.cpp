@@ -336,7 +336,7 @@ Player_V2::Player_V2(Scumm *scumm) : _scumm(scumm) {
 	_sample_rate = _system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
 	_mutex = _system->create_mutex();
 
-	_header_len = (scumm->_features & GF_SMALL_HEADER) ? 4 : 6;
+	_header_len = (scumm->_features & GF_OLD_BUNDLE) ? 4 : 6;
 
 	// Initialize sound queue 
 	current_nr = next_nr = 0;
