@@ -662,9 +662,11 @@ int32 Sword2Sound::InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth
 	// Clear the fx id's
 	for (i=0; i<MAXFX; i++)
 		fxId[i] = 0;
-
+	*/
+	
 	soundOn = 1;
-
+	
+	/*
 	//----------------------------------
 	// New initialisers (James19aug97)
 
@@ -973,43 +975,29 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 
 int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan)
 {
-	warning("stub PlayCompSpeech( %s, %d, %d, %d )", filename, speechid, vol, pan);
-/*
+
 	uint32			dwBytes1, dwBytes2;
   	uint32 			i;
 	uint16			*data16;
 	uint8			*data8;
 	uint32			speechIndex[2];
-	void 			*lpv1, *lpv2;
-	HRESULT 		hr;
-	DSBUFFERDESC	dsbd;
-	PCMWAVEFORMAT	wf;
+	void 			*lpv1;
 	FILE		   *fp;
-
+	uint32	bufferSize;
+	
 	if (!speechMuted)
 	{
 		if (GetSpeechStatus() == RDERR_SPEECHPLAYING)
 			return RDERR_SPEECHPLAYING;
 
-		memset(&wf, 0, sizeof(PCMWAVEFORMAT));
-		wf.wf.wFormatTag = WAVE_FORMAT_PCM;
-		wf.wf.nChannels = 1;
-		wf.wf.nSamplesPerSec = 22050;
-		wf.wBitsPerSample = 16;
-		wf.wf.nBlockAlign = 2;
-		wf.wf.nAvgBytesPerSec = 44100;
-   
-		memset(&dsbd, 0, sizeof(DSBUFFERDESC));
-		dsbd.dwSize = sizeof(DSBUFFERDESC);
-//		dsbd.dwFlags = DSBCAPS_CTRLDEFAULT;
-		dsbd.lpwfxFormat = (LPWAVEFORMATEX) &wf;
-	
 	    //  Open the speech cluster and find the data offset & size
 		fp = fopen(filename, "rb");
-		if (fp == NULL)
+		if (fp == NULL) {
+			error("PlayCompSpeech()");
 			return(RDERR_INVALIDFILENAME);
+		}
 
-		if (fseek(fp, (++speechid)*8, SEEK_SET))
+		if (fseek(fp, (++speechid) * 8, SEEK_SET))
 		{
 			fclose(fp);
 			return (RDERR_READERROR);
@@ -1021,17 +1009,16 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 			return (RDERR_READERROR);
 		}
 
-		if (speechIndex[0]==0 || speechIndex[1]==0)
+		if (speechIndex[0] == 0 || speechIndex[1] == 0)
 		{
 			fclose(fp);
 			return (RDERR_INVALIDID);
 		}
 
-
-		dsbd.dwBufferBytes = (speechIndex[1]-1)*2;
+		bufferSize = (speechIndex[1] - 1) * 2;
 
 		// Create tempory buffer for compressed speech
-		if ((data8 = malloc(speechIndex[1])) == NULL)
+		if ((data8 = (uint8 *)malloc(speechIndex[1])) == NULL)
 		{
 			fclose(fp);
 			return(RDERR_OUTOFMEMORY);
@@ -1054,6 +1041,7 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		fclose(fp);
 
 		//	Create the speech sample buffer
+		/*
 		hr = IDirectSound_CreateSoundBuffer(lpDS, &dsbd, &dsbSpeech, NULL);
 		if (hr != DS_OK)
 		{
@@ -1068,8 +1056,12 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 			IDirectSoundBuffer_Restore(dsbSpeech);
 			hr = IDirectSoundBuffer_Lock(dsbSpeech, 0, dsbd.dwBufferBytes, &lpv1, &dwBytes1, &lpv2, &dwBytes2, 0);
 		}
+		*/
 
-		if (hr == DS_OK)
+		lpv1 = malloc(bufferSize);
+		dwBytes1 = dwBytes2 = bufferSize;
+		
+		if (1 /*hr == DS_OK*/)
 		{
 			// decompress data into speech buffer.
 			data16 = (uint16*)lpv1;
@@ -1088,7 +1080,7 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 				i++;
 			}
 
-			if (dwBytes1 != dsbd.dwBufferBytes)
+			if (dwBytes1 != bufferSize)
 			{
 				while (i<(dwBytes1+dwBytes2)/2)
 				{
@@ -1105,31 +1097,46 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 			free(data8);
 
 			//	Unlock the buffer now that we've filled it
-			IDirectSoundBuffer_Unlock(dsbSpeech, lpv1, dwBytes1, lpv2, dwBytes2);
+			//IDirectSoundBuffer_Unlock(dsbSpeech, lpv1, dwBytes1, lpv2, dwBytes2);
 
 			//  Modify the volume according to the master volume
+			/*
 			if (speechMuted)
 				IDirectSoundBuffer_SetVolume(dsbSpeech, volTable[0]);
 			else
 				IDirectSoundBuffer_SetVolume(dsbSpeech, volTable[vol*speechVol]);
 
 			IDirectSoundBuffer_SetPan(dsbSpeech, panTable[pan+16]);
+			*/
 
+			//TODO: Implement volume change + panning
+			
 			//	Start the speech playing
 			speechPaused = 1;
 //			IDirectSoundBuffer_Play(dsbSpeech, 0, 0, 0);
+			
+			uint32 flags = SoundMixer::FLAG_16BITS;
+                        flags |= SoundMixer::FLAG_AUTOFREE;
+
+			//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
+			for (uint j = 0; j < (bufferSize / 2); j++)
+				data16[j] = TO_BE_16(data16[j]);
+
+			PlayingSoundHandle speechHandle = 0;
+			_mixer->playRaw(&speechHandle, data16, bufferSize, 22050, flags);
+			
 			speechStatus = 1;
 		}
 		else
 		{
-			IDirectSoundBuffer_Release(dsbSpeech);
+			//IDirectSoundBuffer_Release(dsbSpeech);
 			free(data8);
 			return(RDERR_LOCKSPEECHBUFFER);
 		}
 	}
 
 	DipMusic();
-*/
+
 	// return read error for now so we get subtitles
 	return (RDERR_READERROR);
 }
