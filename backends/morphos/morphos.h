@@ -152,6 +152,7 @@ class OSystem_MorphOS : public OSystem
 		bool			 *DirtyBlocks;
 		Region 		 *UpdateRegion;
 		Region 		 *NewUpdateRegion;
+		ULONG			  UpdateRects;
 
 		/* Sound-related attributes */
 		Process   *ScummMusicThread;

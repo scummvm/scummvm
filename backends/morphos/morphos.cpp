@@ -115,6 +115,7 @@ OSystem_MorphOS::OSystem_MorphOS(int game_id, SCALERTYPE gfx_mode, bool full_scr
 	ScreenChanged = false;
 	DirtyBlocks = NULL;
 	BlockColors = NULL;
+	UpdateRects = 0;
 	Scaler = NULL;
 	FullScreenMode = full_screen;
 	CDrive = NULL;
@@ -928,6 +929,9 @@ void OSystem_MorphOS::copy_rect(const byte *src, int pitch, int x, int y, int w,
 
 bool OSystem_MorphOS::AddUpdateRect(WORD x, WORD y, WORD w, WORD h)
 {
+	if (UpdateRects > 20)
+		return false;
+
 	if (x < 0) { w+=x; x = 0; }
 	if (y < 0) { h+=y; y = 0; }
 	if (w >= ScummBufferWidth-x) { w = ScummBufferWidth - x; }
@@ -935,6 +939,12 @@ bool OSystem_MorphOS::AddUpdateRect(WORD x, WORD y, WORD w, WORD h)
 
 	if (w <= 0 || h <= 0)
 		return false;
+
+	if (++UpdateRects > 25)
+	{
+		x = 0; y = 0;
+		w = ScummBufferWidth; h = ScummBufferHeight;
+	}
 
 	Rectangle update_rect = { x, y, x+w, y+h };
 	OrRectRegion(NewUpdateRegion, &update_rect);
@@ -1088,6 +1098,7 @@ void OSystem_MorphOS::update_screen()
 
 	ScreenChanged = false;
 	memset(DirtyBlocks, 0, BLOCKS_X*BLOCKS_Y*sizeof (bool));
+	UpdateRects = 0;
 }
 
 void OSystem_MorphOS::DrawMouse()
