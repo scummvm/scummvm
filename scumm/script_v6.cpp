@@ -850,10 +850,7 @@ void ScummEngine_v6::o6_drawObject() {
 	int state = pop();
 	int obj = pop();
 
-	// FIXME: Why is the following here? Is it based on disassembly, or was
-	// it simply added to work around a bug (in ScummVM or scripts) ?
-	// In either case, the answer should be put into a comment (replacing this
-	// one, of course :-)
+	// This is based on disassembly
 	if (state == 0)
 		state = 1;
 
@@ -2601,11 +2598,6 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 		}
 	} else {
 		switch (args[0]) {
-		case 1:
-			// Used to restore images when decorating cake in
-			// Fatty Bear's Birthday Surprise
-			warning("o6_kernelSetFunctions: stub1()");
-			break;
 		case 3:
 			warning("o6_kernelSetFunctions: nothing in 3");
 			break;
@@ -2711,12 +2703,6 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
-	case 1:
-		// Used to store images when decorating cake in
-		// Fatty Bear's Birthday Surprise
-		warning("o6_kernelGetFunctions: stub1()");
-		push(0);
-		break;
 	case 113:
 		// This is used for the Sam & Max paint-by-numbers mini-game
 		// to find out what color to change. I think that what we have
