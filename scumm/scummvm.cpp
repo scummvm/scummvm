@@ -711,7 +711,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	if (_features & GF_FMTOWNS) {	// FmTowns is 320x240
+	if (_features & GF_FMTOWNS) {	// FMTowns V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
 	} else if (_gameId == GID_CMI) {
@@ -774,11 +774,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			_imuse->property(IMuse::PROP_MULTI_MIDI, ConfMan.getBool("multi_midi") &&
 			                 _midiDriver != MD_NULL && (gs.midi & MDT_ADLIB));
 			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
-			if (_features & GF_HUMONGOUS || _features & GF_FMTOWNS) {
+			if (_features & GF_HUMONGOUS || gs.midi == MDT_TOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
-			if (_features & GF_FMTOWNS)
+			if (gs.midi == MDT_TOWNS)
 				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
 			_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 		}
@@ -2893,6 +2893,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	const ScummGameSettings *g;
 	char detectName[128];
 	char detectName2[128];
+	
+	typedef Common::Map<Common::String, bool> StringSet;
+	StringSet fileSet;
 
 	for (g = scumm_settings; g->name; ++g) {
 		// Determine the 'detectname' for this game, that is, the name of a 
@@ -2925,10 +2928,42 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				(0 == scumm_stricmp(detectName2, name))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				detectedGames.push_back(g->toGameSettings());
+				fileSet.addKey(file->path());
 				break;
 			}
 		}
 	}
+	
+	// Now, we check the MD5 sums of the 'candidate' files. If we have an exact match,
+	// only return that.
+	bool exactMatch = false;
+	for (StringSet::const_iterator iter = fileSet.begin(); iter != fileSet.end(); ++iter) {
+		uint8 md5sum[16];
+		const char *name = iter->_key.c_str();
+		if (md5_file(name, md5sum)) {
+			char md5str[32+1];
+			for (int j = 0; j < 16; j++) {
+				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+			}
+
+			const MD5Table *elem;
+			elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
+			if (elem) {
+				if (!exactMatch)
+					detectedGames.clear();	// Clear all the non-exact candidates
+				// Find the GameSettings for that target
+				for (g = scumm_settings; g->name; ++g) {
+					if (0 == scumm_stricmp(g->name, elem->target))
+						break;
+				}
+				assert(g->name);
+				// Insert the 'enhanced' game data into the candidate list
+				detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, elem->platform));
+				exactMatch = true;
+			}
+		}
+	}
+	
 	return detectedGames;
 }
 
@@ -2962,6 +2997,13 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		break;
 	case Common::kPlatformMacintosh:
 		game.features |= GF_MACINTOSH;
+		break;
+	case Common::kPlatformFMTowns:
+		if (game.version == 3) {
+			// The V5 FM-TOWNS games are mostly identical to the PC versions, it seems?
+			game.features |= GF_FMTOWNS;
+			game.midi = MDT_TOWNS;
+		}
 		break;
 	default:
 		if (!(game.features & GF_FMTOWNS))

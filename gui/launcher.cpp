@@ -158,10 +158,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset += 16;
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
-	_platformPopUp->appendEntry("Amiga", Common::kPlatformAmiga);
-	_platformPopUp->appendEntry("Atari ST", Common::kPlatformAtariST);
-	_platformPopUp->appendEntry("Macintosh", Common::kPlatformMacintosh);
-	_platformPopUp->appendEntry("PC", Common::kPlatformPC);
+	const Common::PlatformDescription *p = Common::g_platforms;
+	for (; p->code; ++p) {
+		_platformPopUp->appendEntry(p->description, p->id);
+	}
 
 	//
 	// 2) The graphics tab
@@ -208,8 +208,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 void EditGameDialog::open() {
 	OptionsDialog::open();
 
-	// En-/disable dialog items depending on whether overrides are active or not.
+	int sel, i;
 	bool e;
+
+	// En-/disable dialog items depending on whether overrides are active or not.
 
 	e = ConfMan.hasKey("fullscreen", _domain) ||
 		ConfMan.hasKey("aspect_ratio", _domain);
@@ -225,25 +227,25 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("sfx_volume", _domain);
 	_globalVolumeOverride->setState(e);
 
-	int sel = 0;
-	
 	// TODO: game path
 
+
 	const Common::LanguageDescription *l = Common::g_languages;
-	int lang = Common::parseLanguage(ConfMan.get("language", _domain));
-	for (int i = 0; l->code; ++l, ++i) {
+	const Common::Language lang = Common::parseLanguage(ConfMan.get("language", _domain));
+	sel = 0;
+	for (i = 0; l->code; ++l, ++i) {
 		if (lang == l->id)
 			sel = i + 2;
 	}
 	_langPopUp->setSelected(sel);
 
 
-	switch (Common::parsePlatform(ConfMan.get("platform", _domain))) {
-	case Common::kPlatformPC:			sel = 5; break;
-	case Common::kPlatformAmiga:		sel = 2; break;
-	case Common::kPlatformAtariST:		sel = 3; break;
-	case Common::kPlatformMacintosh:	sel = 4; break;
-	default:							sel = 0; break;
+	const Common::PlatformDescription *p = Common::g_platforms;
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+	sel = 0;
+	for (i = 0; p->code; ++p, ++i) {
+		if (platform == p->id)
+			sel = i + 2;
 	}
 	_platformPopUp->setSelected(sel);
 }
@@ -444,14 +446,32 @@ void LauncherDialog::addGame() {
 				ConfMan.set("description", result.description, domain);
 			}
 			ConfMan.set("path", dir->path(), domain);
+			
+			const bool customLanguage = (result.language != Common::UNK_LANG);
+			const bool customPlatform = (result.platform != Common::kPlatformUnknown);
 
 			// Set language if specified
-			if (result.language != Common::UNK_LANG)
+			if (customLanguage)
 				ConfMan.set("language", Common::getLanguageCode(result.language), domain);
 
 			// Set platform if specified
-			if (result.platform != Common::kPlatformUnknown)
+			if (customPlatform)
 				ConfMan.set("platform", Common::getPlatformCode(result.platform), domain);
+
+			// Adapt the description string if custom platform/language is set
+			if (customLanguage || customPlatform) {
+				String desc = result.description;
+				desc += " (";
+				if (customLanguage)
+					desc += getLanguageDescription(result.language);
+				if (customLanguage && customPlatform)
+					desc += "/";
+				if (customPlatform)
+					desc += getPlatformDescription(result.platform);
+				desc += ")";
+
+				ConfMan.set("description", desc, domain);
+			}
 
 			// Display edit dialog for the new entry
 			EditGameDialog editDialog(domain, result);
