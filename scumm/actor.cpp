@@ -627,7 +627,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 		if (numBoxes < firstValidBox)
 			return abr;
 
-		bestDist = 0xFFFFFF;
+		bestDist = (_vm->_version <= 2) ? 0xFFFFFF : 0xFFFF;
 		bestBox = kInvalidBox;
 
 		// We iterate (backwards) over all boxes, searching the one closest
