@@ -859,7 +859,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
 	
 		if (_vm->_features & GF_OLD256) {
-			zplane_list[1] = smap_ptr + READ_LE_UINT16(smap_ptr);
+			zplane_list[1] = smap_ptr + READ_LE_UINT32(smap_ptr);
 			if (0 == READ_LE_UINT32(zplane_list[1]))
 				zplane_list[1] = 0;
 		} else if (_vm->_features & GF_SMALL_HEADER) {
