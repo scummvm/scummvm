@@ -29,12 +29,7 @@ class DigitalTrackInfo;
 class File;
 class Scumm;
 
-struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
-	int org_offset;
-	int new_offset;
-	int num_tags;
-	int compressed_size;
-};
+struct MP3OffsetTable;
 
 class Sound {
 protected:
@@ -156,7 +151,7 @@ protected:
 	void startSfxSound(File *file, int file_size, PlayingSoundHandle *handle);
 	bool isSfxFinished() const;
 	void playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, PlayingSoundHandle *handle);
-	void playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *handle);
+	void playSfxSound_Vorbis(File *file, uint32 size, PlayingSoundHandle *handle);
 
 	int getCachedTrack(int track);
 };

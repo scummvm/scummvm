@@ -45,6 +45,12 @@ enum {
 	SOUND_HEADER_BIG_SIZE = 26 + 8
 };
 
+struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
+	int org_offset;
+	int new_offset;
+	int num_tags;
+	int compressed_size;
+};
 
 class DigitalTrackInfo {
 public:
@@ -879,15 +885,8 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 		return;
 
 	if (file_size > 0) {
-		int alloc_size = file_size;
 		if (_vorbis_mode) {
-			data = (byte *)calloc(alloc_size, 1);
-	
-			if (file->read(data, file_size) != (uint)file_size) {
-				// no need to free the memory since error will shut down
-				error("startSfxSound: cannot read %d bytes", size);
-			}
-			playSfxSound_Vorbis(data, file_size, handle);
+			playSfxSound_Vorbis(file, file_size, handle);
 		} else {
 #ifdef USE_MAD
 			_scumm->_mixer->playMP3(handle, file, file_size);
@@ -1364,80 +1363,83 @@ void Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, P
 }
 
 #ifdef USE_VORBIS
-// Provide a virtual file to vorbisfile based on preloaded data
-struct data_file_info {
-	char *data;
-	uint32 size;
-	int curr_pos;
+// These are wrapper functions to allow using a File object to
+// provide data to the OggVorbis_File object.
+
+struct file_info {
+	File *file;
+	int start, curr_pos;
+	size_t len;
 };
 
-static size_t read_data(void *ptr, size_t size, size_t nmemb, void *datasource) {
-	data_file_info *f = (data_file_info *) datasource;
+static size_t read_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) {
+	file_info *f = (file_info *) datasource;
+	int result;
 
 	nmemb *= size;
-	if (f->curr_pos < 0)
-		return (size_t) -1;
-	if (f->curr_pos > (int) f->size)
+	if (f->curr_pos > (int) f->len)
 		nmemb = 0;
-	else if (f->curr_pos + nmemb > f->size)
-		nmemb = f->size - f->curr_pos;
-
-	memcpy(ptr, f->data + f->curr_pos, nmemb);
-	f->curr_pos += nmemb;
-	return nmemb / size;
+	else if (nmemb > f->len - f->curr_pos)
+		nmemb = f->len - f->curr_pos;
+	result = f->file->read(ptr, nmemb);
+	if (result == -1) {
+		f->curr_pos = f->file->pos() - f->start;
+		return (size_t) -1;
+	} else {
+		f->curr_pos += result;
+		return result / size;
+	}
 }
 
-static int seek_data(void *datasource, ogg_int64_t offset, int whence) {
-	data_file_info *f = (data_file_info *) datasource;
+static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
+	file_info *f = (file_info *) datasource;
 
-	switch (whence) {
-	case SEEK_SET:
-		f->curr_pos = offset;
-		break;
-	case SEEK_CUR:
-		f->curr_pos += offset;
-		break;
-	case SEEK_END:
-		f->curr_pos = f->size + offset;
-		break;
-	default:
-		return -1;
+	if (whence == SEEK_SET)
+		offset += f->start;
+	else if (whence == SEEK_END) {
+		offset += f->start + f->len;
+		whence = SEEK_SET;
 	}
+
+	f->file->seek(offset, whence);
+	f->curr_pos = f->file->pos() - f->start;
 	return f->curr_pos;
 }
 
-static int close_data(void *datasource) {
-	data_file_info *f = (data_file_info *) datasource;
+static int close_wrap(void *datasource) {
+	file_info *f = (file_info *) datasource;
 
-	free(f->data);
+	f->file->close();
 	delete f;
 	return 0;
 }
 
-static long tell_data(void *datasource) {
-	data_file_info *f = (data_file_info *) datasource;
+static long tell_wrap(void *datasource) {
+	file_info *f = (file_info *) datasource;
 
 	return f->curr_pos;
 }
 
-static ov_callbacks data_wrap = {
-	read_data, seek_data, close_data, tell_data
+static ov_callbacks g_File_wrap = {
+	read_wrap, seek_wrap, close_wrap, tell_wrap
 };
 #endif
 
-void Sound::playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *handle) {
+void Sound::playSfxSound_Vorbis(File *file, uint32 size, PlayingSoundHandle *handle) {
 #ifdef USE_VORBIS
+
 	OggVorbis_File *ov_file = new OggVorbis_File;
-	data_file_info *f = new data_file_info;
-	f->data = (char *) sound;
-	f->size = size;
+	file_info *f = new file_info;
+
+	f->file = file;
+	f->start = file->pos();
+	f->len = size;
 	f->curr_pos = 0;
 
-	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, data_wrap) < 0) {
+	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, g_File_wrap) < 0) {
 		warning("Invalid file format");
 		delete ov_file;
 		delete f;
-		free(sound);
 	} else
 		_scumm->_mixer->playVorbis(handle, ov_file, 0, false);
 #endif
@@ -1706,67 +1708,6 @@ MP3TrackInfo::~MP3TrackInfo() {
 #endif
 
 #ifdef USE_VORBIS
-// These are wrapper functions to allow using a File object to
-// provide data to the OggVorbis_File object.
-
-struct file_info {
-	File *file;
-	int start, curr_pos;
-	size_t len;
-};
-
-static size_t read_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) {
-	file_info *f = (file_info *) datasource;
-	int result;
-
-	nmemb *= size;
-	if (f->curr_pos > (int) f->len)
-		nmemb = 0;
-	else if (nmemb > f->len - f->curr_pos)
-		nmemb = f->len - f->curr_pos;
-	result = f->file->read(ptr, nmemb);
-	if (result == -1) {
-		f->curr_pos = f->file->pos() - f->start;
-		return (size_t) -1;
-	}
-	else {
-		f->curr_pos += result;
-		return result / size;
-	}
-}
-
-static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
-	file_info *f = (file_info *) datasource;
-
-	if (whence == SEEK_SET)
-		offset += f->start;
-	else if (whence == SEEK_END) {
-		offset += f->start + f->len;
-		whence = SEEK_SET;
-	}
-
-	f->file->seek(offset, whence);
-	f->curr_pos = f->file->pos() - f->start;
-	return f->curr_pos;
-}
-
-static int close_wrap(void *datasource) {
-	file_info *f = (file_info *) datasource;
-
-	f->file->close();
-	delete f;
-	return 0;
-}
-
-static long tell_wrap(void *datasource) {
-	file_info *f = (file_info *) datasource;
-
-	return f->file->pos();
-}
-
-static ov_callbacks File_wrap = {
-	read_wrap, seek_wrap, close_wrap, tell_wrap
-};
 
 VorbisTrackInfo::VorbisTrackInfo(File *file) {
 	file_info *f = new file_info;
@@ -1776,7 +1717,7 @@ VorbisTrackInfo::VorbisTrackInfo(File *file) {
 	f->len = file->size();
 	f->curr_pos = file->pos();
 
-	if (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, File_wrap) < 0) {
+	if (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, g_File_wrap) < 0) {
 		warning("Invalid file format");
 		_error_flag = true;
 		delete f;
