@@ -278,8 +278,12 @@ void SwordMenu::buildMenu(void) {
 void SwordMenu::showMenu(uint8 menuType) {
 	if (menuType == MENU_TOP) {
 		if (_objectBarStatus == MENU_OPEN) {
-			for (uint8 cnt = 0; cnt < _inMenu; cnt++)
-				_objects[cnt]->draw();
+			for (uint8 cnt = 0; cnt < 16; cnt++) {
+				if (_objects[cnt])
+					_objects[cnt]->draw();
+				else
+					_screen->showFrame(cnt * 40, 0, 0xffffffff, 0);
+			}
 		} else if (_objectBarStatus == MENU_CLOSED) {
 			_objectBarStatus = MENU_OPENING;
 			_fadeObject = 0;
