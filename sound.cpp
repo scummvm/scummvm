@@ -187,10 +187,8 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 		MP3OffsetTable *result = NULL, key;
 
 		key.org_offset = offset;
-		result =
-			(MP3OffsetTable *) bsearch(&key, offset_table, num_sound_effects,
-																 sizeof(MP3OffsetTable), compar);
-
+		result = (MP3OffsetTable *) bsearch(&key, offset_table, num_sound_effects,
+		                                    sizeof(MP3OffsetTable), compar);
 
 		if (result == NULL) {
 			warning("startTalkSound: did not find sound at offset %d !", offset);
@@ -545,7 +543,7 @@ void *Scumm::openSfxFile()
 		cur = offset_table;
 		while (size > 0) {
 			cur[0].org_offset = get_int(file);
-			cur[0].new_offset = get_int(file) + compressed_offset + 4;	/* The + 4 is to take into accound the 'size' field */
+			cur[0].new_offset = get_int(file) + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
 			cur[0].num_tags = get_int(file);
 			cur[0].compressed_size = get_int(file);
 			size -= 4 * 4;
@@ -584,5 +582,7 @@ void Scumm::playSfxSound(void *sound, uint32 size, uint rate)
 	_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE);
 }
 
-
-
+void Scumm::playSfxSound_MP3(void *sound, uint32 size)
+{
+	_mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
+}

@@ -21,7 +21,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-#ifdef COMPRESSED_SOUND_FILE
+#ifdef COMPRESSED_SOUND_FILE__
 #include "mp3_cd.h"
 #include <SDL.h>
 

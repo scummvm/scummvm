@@ -23,10 +23,6 @@
 #include "system.h"
 #include "mixer.h"
 
-#ifdef COMPRESSED_SOUND_FILE
-#include <mad.h>
-#endif
-
 #define SCUMMVM_VERSION "0.2.0 devel"
 #define SCUMMVM_CVS "031402"
 
