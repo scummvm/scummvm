@@ -40,7 +40,7 @@ public:
 	void quitControl(void);
 	void restartControl(void);
 	void optionControl(void);
-	int32 readOptionSettings(void);
+	void readOptionSettings(void);
 	void updateGraphicsLevel(uint8 newLevel);
 };
 

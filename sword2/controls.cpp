@@ -717,7 +717,7 @@ private:
 	Button *_okButton;
 	Button *_cancelButton;
 
-	int32 writeOptionSettings(void);
+	void writeOptionSettings(void);
 
 public:
 	OptionsDialog() {
@@ -886,7 +886,7 @@ public:
 	}
 };
 
-int32 OptionsDialog::writeOptionSettings(void) {
+void OptionsDialog::writeOptionSettings(void) {
 	uint8 buff[10];
 	char filename[256];
 	SaveFile *fp;
@@ -905,18 +905,13 @@ int32 OptionsDialog::writeOptionSettings(void) {
 	buff[8] = gui._pointerTextSelected;
 	buff[9] = gui._stereoReversed;
 	
-	if (!(fp = mgr->open_savefile(filename, g_sword2->getSavePath(), true)))
-		return 1;
+	fp = mgr->open_savefile(filename, g_sword2->getSavePath(), true);
 
-	if (fp->write(buff, 10) != 10) {
-		delete fp;
-		delete mgr;
-		return 2;
-	}
+	if (fp)
+		fp->write(buff, 10);
 
 	delete fp;
 	delete mgr;
-	return 0;
 }
 
 enum {
@@ -1464,7 +1459,7 @@ void Gui::restartControl(void) {
  	this_screen.new_palette = 99;
 }
 
-int32 Gui::readOptionSettings(void) {
+void Gui::readOptionSettings(void) {
 	// settings file is 9 bytes long:
 	//   1 music volume
 	//   2 speech volume
@@ -1477,20 +1472,16 @@ int32 Gui::readOptionSettings(void) {
 	//   9 object labels
 
 	uint8 buff[10];
+	uint8 default_settings[10] = { 14, 12, 12, 0, 0, 0, 2, 1, 1 };
 	char filename[256];
 	SaveFile *fp;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 	
 	sprintf(filename, "%s-settings.dat", g_sword2->_targetName);
 
-	if (!(fp = mgr->open_savefile(filename, g_sword2->getSavePath(), false)))
-		return 1;
-
-	if (fp->read(buff, 10) != 10) {
-		delete fp;
-		delete mgr;
-		return 2;
-	}
+	fp = mgr->open_savefile(filename, g_sword2->getSavePath(), false);
+	if (!fp || fp->read(buff, 10) != 10)
+		memcpy(buff, default_settings, sizeof(buff));
 
 	delete fp;
 	delete mgr;
@@ -1512,7 +1503,6 @@ int32 Gui::readOptionSettings(void) {
 		g_sound->reverseStereo();
 
 	gui._stereoReversed = buff[9];
-	return 0;
 }
 
 void Gui::optionControl(void) {
