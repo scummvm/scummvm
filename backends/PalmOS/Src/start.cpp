@@ -212,8 +212,8 @@ static void MainFormAbout() {
 	FormLabelType *versionP;
 
 	frmP = FrmInitForm(AboutForm);
-	versionP = FrmNewLabel(&frmP, 1120, gScummVMVersion, 4, 132, stdFont);
-	versionP = FrmNewLabel(&frmP, 1121, gScummVMBuildDate, 4, 142, stdFont);
+	versionP = FrmNewLabel(&frmP, 1120, gScummVMVersion, 4, 126, stdFont);
+	versionP = FrmNewLabel(&frmP, 1121, gScummVMBuildDate, 4, 136, stdFont);
 	FrmDoDialog (frmP);					// Display the About Box.
 	FrmDeleteForm (frmP);
 }
@@ -652,10 +652,17 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 			break;
 
 		case sysNotifyDisplayResizedEvent:
-			EventType ev;
-			MemSet(&ev, sizeof(EventType), 0);
-			ev.eType = (enum eventsEnum)winDisplayChangedEvent;
-			EvtAddUniqueEventToQueue(&ev, 0, true);
+			if (gVars) {
+				if (gVars->pinUpdate) {
+					EventType ev;
+					MemSet(&ev, sizeof(EventType), 0);
+					ev.eType = (enum eventsEnum)winDisplayChangedEvent;
+					EvtAddUniqueEventToQueue(&ev, 0, true);
+
+					PINGetScreenDimensions();
+					WinScreenGetPitch();
+				}
+			}
 			break;
 
 		case sonySysNotifyMsaEnforceOpenEvent:
