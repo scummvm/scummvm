@@ -789,7 +789,7 @@ void Scumm::decompressBundleSound(int index) {
 	COMP_table table[50];
 	unsigned char *CompInput, *CompOutput, *CompFinal, *Final;
 	int outputSize, finalSize;
-	uint32 offset1, offset2, offset3, length, k, c, s, j, r;
+	uint32 offset1, offset2, offset3, length, k, c, s, j, r, t;
 	byte * src, * t_table;
 	byte t_tmp1, t_tmp2;
 
@@ -933,7 +933,35 @@ void Scumm::decompressBundleSound(int index) {
 					*(t_table + offset2 + 1) = *(src + offset3);
 				} while(1);
 			
-				// completed soon
+				src = CompOutput;
+				length = (outputSize * 8) / 12;
+				k = 1;
+				c = 0;
+				s = 12;
+				t_tmp1 = (*(t_table + length)) >> 4;
+				*(src) = t_tmp1;
+				t = length + k;
+				if (t > k) {
+					do {
+						j = length + (k / 2);
+						if (k & 1) {
+							r = c / 8;
+							t_tmp1 = *(t_table + k - 1);
+							t_tmp2 = *(t_table + j);
+							*(src + r + 0) = (*(src + r)) | (t_tmp1 & 0xf0);
+							*(src + r + 1) = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
+						} else {
+							r = s / 8;
+							t_tmp1 = *(t_table + k - 1);
+							t_tmp2 = *(t_table + j);
+							*(src + r + 0) = (t_tmp1 & 0xf0) >> 4;
+							*(src + r - 1) = ((t_tmp1 & 0x0f) << 4) | ((t_tmp2 & 0xf0) >> 4);
+						}
+						s += 12;
+						k++;
+						c += 12;
+					} while (k < t);
+				}
 
 			break;
 
