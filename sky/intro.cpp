@@ -25,38 +25,38 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 
-#define intro_text_width	128
+#define intro_text_width    128
 
-#define	fn_a_pal	60080
-#define	fn_1a_log	60081
-#define	fn_1a	60082
-#define fn_1b	60083
-#define fn_1c	60084
-#define	fn_1d	60085
-#define	fn_1e	60086
-#define	fn_4a	60087
-#define	fn_4b_log	60088
-#define	fn_4b	60089
-#define	fn_4c_log	60090
-#define	fn_4c	60091
-#define	fn_5_pal	60092
-#define	fn_5_log	60093
-#define	fn_5	60094
-#define	fn_6_pal	60095
-#define	fn_6_log	60096
-#define	fn_6a	60097
-#define	fn_6b	60098
+#define fn_a_pal    60080
+#define fn_1a_log   60081
+#define fn_1a   60082
+#define fn_1b   60083
+#define fn_1c   60084
+#define fn_1d   60085
+#define fn_1e   60086
+#define fn_4a   60087
+#define fn_4b_log   60088
+#define fn_4b   60089
+#define fn_4c_log   60090
+#define fn_4c   60091
+#define fn_5_pal    60092
+#define fn_5_log    60093
+#define fn_5    60094
+#define fn_6_pal    60095
+#define fn_6_log    60096
+#define fn_6a   60097
+#define fn_6b   60098
 
 #ifdef short_intro_start
-#define virgin_time_1	3
-#define viring_time_2	3
-#define rev_time	8
-#define gibb_time	6
+#define virgin_time_1   3
+#define viring_time_2   3
+#define rev_time    8
+#define gibb_time   6
 #else
-#define virgin_time_1	(3*50)
-#define virgin_time_2	((3*50)+8)
-#define rev_time	((8*50)+8)
-#define gibb_time	((6*50)+8)
+#define virgin_time_1   (3*50)
+#define virgin_time_2   ((3*50)+8)
+#define rev_time    ((8*50)+8)
+#define gibb_time   ((6*50)+8)
 #endif
 
 void prepare_text(void);
@@ -85,20 +85,20 @@ uint8 *work_base;
 uint8 *work_screen;
 uint8 *work_screen_end;
 
-uint8 *intro_text_space;	//space for storing text messages
-uint8 *intro_text_save;	//save screen data here
+uint8 *intro_text_space;    //space for storing text messages
+uint8 *intro_text_save; //save screen data here
 
 uint8 *vga_pointer;
 uint8 *diff_pointer;
 
-uint32 no_frames;	//number of frames in scrolling intro
+uint32 no_frames;   //number of frames in scrolling intro
 uint32 frame_counter;
 
-#define ic_prepare_text	0
-#define	ic_show_text	1
-#define	ic_remove_text	2
-#define	ic_make_sound	3
-#define	ic_fx_volume	4
+#define ic_prepare_text 0
+#define ic_show_text    1
+#define ic_remove_text  2
+#define ic_make_sound   3
+#define ic_fx_volume    4
 
 
 typedef void (*pfc)(void);
@@ -106,7 +106,7 @@ pfc command_routines[] = { &prepare_text, &show_intro_text, &remove_text, &intro
 
 uint32 cockpit_commands[] = 
 {
-    1000,	//do straight away
+    1000,   //do straight away
     ic_prepare_text,
     77,
     220,
@@ -223,22 +223,22 @@ void SkyState::init_virgin()
 {
     _temp_pal = (uint8 *)load_file(60111, NULL); 
     if (_temp_pal != NULL)
-	    set_palette(_temp_pal);
+        set_palette(_temp_pal);
 
     _work_screen = (uint8 *)load_file(60110, NULL); 
 
     if (_work_screen != NULL)
-	    show_screen();
+        show_screen();
     
-    //free the memory that was malloc'ed indirectly via load_file
-    free (_work_screen);
-    free (_temp_pal);
+    // free the memory that was malloc'ed indirectly via load_file
+    free(_work_screen);
+    free(_temp_pal);
 }
 
 void SkyState::show_screen(void)
 {
-	_system->copy_rect(_work_screen, 320, 0, 0, 320, 200);
-	_system->update_screen();
+    _system->copy_rect(_work_screen, 320, 0, 0, 320, 200);
+    _system->update_screen();
 }
 
 void prepare_text(void)

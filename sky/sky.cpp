@@ -8,7 +8,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -57,7 +57,7 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
- 	_language = detector->_language;
+	_language = detector->_language;
 }
 
 SkyState::~SkyState()
@@ -85,13 +85,13 @@ void SkyState::go()
 
 void SkyState::initialise(void)
 {
-    //initialise_memory();
-    //init_timer();
-    //init_music(); 
-    initialise_disk();
-    initialise_screen();    
-    init_virgin();
-    
+	//initialise_memory();
+	//init_timer();
+	//init_music(); 
+	initialise_disk();
+	initialise_screen();	
+	init_virgin();
+	
 }
 
 void SkyState::delay(uint amount) //copied and mutilated from Simon.cpp
