@@ -27,6 +27,7 @@
 
 SoundMixer::SoundMixer() {
 	_volumeTable = (int16 *)calloc(256 * sizeof(int16), 1);
+	_beginSlots = 0;
 }
 
 SoundMixer::~SoundMixer() {
@@ -67,7 +68,7 @@ int SoundMixer::append(int index, void * sound, uint32 size, uint rate, byte fla
 
 int SoundMixer::insertAt(PlayingSoundHandle * handle, int index, Channel * chan) {
 	if(index == -1) {
-		for (int i = 0; i != NUM_CHANNELS; i++)
+		for (int i = _beginSlots; i != NUM_CHANNELS; i++)
 			if (_channels[i] == NULL) { index = i; break; }
 		if(index == -1) {
 			warning("SoundMixer::out of mixer slots");
@@ -85,7 +86,7 @@ int SoundMixer::insertAt(PlayingSoundHandle * handle, int index, Channel * chan)
 }
 
 int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags) {
-	for (int i = 0; i != NUM_CHANNELS; i++) {
+	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags, -1));
 		}
@@ -96,7 +97,7 @@ int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, 
 }
 
 int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id) {
-	for (int i = 0; i != NUM_CHANNELS; i++) {
+	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags, id));
 		}
@@ -107,24 +108,21 @@ int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, 
 }
 
 int SoundMixer::playStream(PlayingSoundHandle * handle, int idx, void * sound, uint32 size,
-														uint rate, byte flags, int32 timeout) {
-	return insertAt(handle, idx, new ChannelStream(this, sound, size, rate, flags, timeout));
+														uint rate, byte flags, int32 timeout, int32 buffer_size) {
+	return insertAt(handle, idx, new ChannelStream(this, sound, size, rate, flags, timeout, buffer_size));
 }
 
-void SoundMixer::stopChannel(int index) {
-	if ((index < 0) || (index >= NUM_CHANNELS)) {
-		warning("soundMixer::stopChannel has invalid index %d", index);
+void SoundMixer::beginSlots(int index) {
+	if ((index < 0) && (index >= NUM_CHANNELS)) {
+		warning("soundMixer::beginSlots has invalid index %d", index);
 		return;
 	}
-
-	if (_channels[index] != NULL) {
-		_channels[index]->_toBeDestroyed = true;
-	}
+	_beginSlots = index;
 }
 
 #ifdef COMPRESSED_SOUND_FILE
 int SoundMixer::playMP3(PlayingSoundHandle * handle, void *sound, uint32 size, byte flags) {
-	for (int i = 0; i != NUM_CHANNELS; i++) {
+	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelMP3(this, sound, size, flags));
 		}
@@ -135,7 +133,7 @@ int SoundMixer::playMP3(PlayingSoundHandle * handle, void *sound, uint32 size, b
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration) {
 	/* Stop the previously playing CD track (if any) */
-	for (int i = 0; i != NUM_CHANNELS; i++) {
+	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelMP3CDMusic(this, file, duration));
 		}
@@ -201,6 +199,11 @@ void SoundMixer::stop(PlayingSoundHandle psh) {
 }
 
 void SoundMixer::stop(int index) {
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::stop has invalid index %d", index);
+		return;
+	}
+
 	if (_channels[index])
 		_channels[index]->destroy();
 }
@@ -210,7 +213,7 @@ void SoundMixer::pause(bool paused) {
 }
 
 bool SoundMixer::hasActiveChannel() {
-	for (int i = 0; i != NUM_CHANNELS; i++)
+	for (int i = _beginSlots; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			return true;
 	return false;
@@ -624,10 +627,10 @@ void SoundMixer::ChannelRaw::realDestroy() {
 }
 
 SoundMixer::ChannelStream::ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate,
-										 byte flags, int32 timeout) {
+										 byte flags, int32 timeout, int32 buffer_size) {
 	_mixer = mixer;
 	_flags = flags;
-	_bufferSize = 2000000;
+	_bufferSize = buffer_size;
 	_ptr = (byte *)malloc(_bufferSize);
 	memcpy(_ptr, sound, size);
 	_endOfData = _ptr + size;

@@ -85,7 +85,7 @@ private:
 		byte _flags;
 
 	public:
-		ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags, int32 timout);
+		ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags, int32 timout, int32 buffer_size);
 
 		void append(void * sound, uint32 size);
 		void mix(int16 * data, uint len);
@@ -163,12 +163,15 @@ public:
 	Channel * _channels[NUM_CHANNELS];
 	PlayingSoundHandle * _handles[NUM_CHANNELS];
 
+	int _beginSlots;
+
 	SoundMixer();
 	~SoundMixer();
 
 	int insertAt(PlayingSoundHandle * handle, int index, Channel * chan);
 	void append(void * data, uint32 len);
 	void unInsert(Channel * chan);
+	void beginSlots(int index);
 
 	/* start playing a raw sound */
 	enum {
@@ -183,8 +186,7 @@ public:
 	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags);
 	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id);
 	int playStream(PlayingSoundHandle * handle, int index, void * sound, uint32 size, uint rate,
-									byte flags, int32 timeout = 3);
-	void stopChannel(int index);
+									byte flags, int32 timeout = 3, int32 buffer_size = 2000000);
 #ifdef COMPRESSED_SOUND_FILE
 	int playMP3(PlayingSoundHandle * handle, void * sound, uint32 size, byte flags);
 	int playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration);

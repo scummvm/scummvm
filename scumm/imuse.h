@@ -61,7 +61,7 @@ private:
 	IMuseInternal *_imuse;				// Pointer to the real imuse object
 };
 
-#define MAX_DIGITAL_CHANNELS 16
+#define MAX_DIGITAL_CHANNELS 8
 #define MAX_IMUSE_JUMPS 1
 #define MAX_IMUSE_REGIONS 3
 

@@ -4997,11 +4997,18 @@ static void imus_digital_handler(void * engine) {
 IMuseDigital::IMuseDigital(Scumm *scumm) {
 	memset(_channel, 0, sizeof(channel) * MAX_DIGITAL_CHANNELS);
 	_scumm = scumm;
+	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+		_channel[l]._mixerTrack = -1;
+	}
+	_scumm->_mixer->beginSlots(MAX_DIGITAL_CHANNELS + 1);
 	_scumm->_timer->installProcedure(imus_digital_handler, 200);
 	_pause = false;
 }
 
 IMuseDigital::~IMuseDigital() {
+	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+		_scumm->_mixer->stop(l);
+	}
 	_scumm->_timer->releaseProcedure(imus_digital_handler);
 }
 
@@ -5406,7 +5413,6 @@ void IMuseDigital::handler() {
 			if (_channel[l]._toBeRemoved == true) {
 				_channel[l]._used = false;
 				free(_channel[l]._data);
-				memset(&_channel[l], 0, sizeof(channel));
 				continue;
 			}
 
@@ -5507,16 +5513,11 @@ void IMuseDigital::handler() {
 				}
 			}
 
-
 			if (_channel[l]._mixerTrack == -1) {
-				_channel[l]._mixerTrack = _scumm->_mixer->playStream(NULL, -1, buf, mixer_size,
-																				 _channel[l]._freq, _channel[l]._mixerFlags);
-				continue;
-			} else if (_scumm->_mixer->_channels[_channel[l]._mixerTrack] == NULL) {
-				_channel[l]._mixerTrack = _scumm->_mixer->playStream(NULL, -1, buf, mixer_size,
-																				 _channel[l]._freq, _channel[l]._mixerFlags);
+				_channel[l]._mixerTrack = _scumm->_mixer->playStream(NULL, l, buf, mixer_size,
+																				 _channel[l]._freq, _channel[l]._mixerFlags, -1, 800000);
 			} else {
-				_scumm->_mixer->append(_channel[l]._mixerTrack, buf, mixer_size,
+				_scumm->_mixer->append(l, buf, mixer_size,
 															 _channel[l]._freq, _channel[l]._mixerFlags);
 			}
 		}
@@ -5550,7 +5551,6 @@ void IMuseDigital::startSound(int sound) {
 			if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
 				_channel[l]._bits = 8;
 				_channel[l]._channels = 2;
-				_channel[l]._mixerTrack = -1;
 				_channel[l]._mixerSize = (22050 / 5) * 2;
 				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
 				byte * t_ptr= _scumm->_sound->readCreativeVocFile(ptr, size, _channel[l]._freq, _channel[l]._numLoops);
@@ -5624,6 +5624,11 @@ void IMuseDigital::startSound(int sound) {
 					if (tag == MKID_BE('DATA')) break;
 				}
 
+				if ((sound == 123) || (sound == 122)) {
+					_channel[l]._isJump = false;
+					_channel[l]._numJumps = 0;
+				}
+
 				uint32 header_size = ptr - s_ptr;
 				_channel[l]._offsetStop -= header_size;
 				if (_channel[l]._bits == 12) {
@@ -5646,7 +5651,6 @@ void IMuseDigital::startSound(int sound) {
 						}
 					}
 				}
-				_channel[l]._mixerTrack = -1;
 				_channel[l]._mixerSize = (22050 / 5) * 2;
 				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
 				if (_channel[l]._bits == 12) {

@@ -51,8 +51,8 @@ public:
 	bool update();
 };
 
-ScummMixer::ScummMixer(SoundMixer * m) : _mixer(m), _nextIndex(0) {
-	for(int32 i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+ScummMixer::ScummMixer(SoundMixer * m) : _mixer(m), _nextIndex(_mixer->_beginSlots) {
+	for(int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		_channels[i].id = -1;
 		_channels[i].chan = 0;
 		_channels[i].first = true;
@@ -69,7 +69,7 @@ bool ScummMixer::init() {
 
 _Channel * ScummMixer::findChannel(int32 track) {
 	debug(9, "scumm_mixer::findChannel(%d)", track);
-	for(int32 i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for(int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		if(_channels[i].id == track)
 			return _channels[i].chan;
 	}
@@ -82,11 +82,11 @@ bool ScummMixer::addChannel(_Channel * c) {
 
 	debug(9, "ScummMixer::addChannel(%d)", track);
 
-	for(i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for(i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		if(_channels[i].id == track)
 			warning("mixer::addChannel(%d) : channel already exist !", track);
 	}
-	if(_nextIndex >= SoundMixer::NUM_CHANNELS) _nextIndex = 0;
+	if(_nextIndex >= SoundMixer::NUM_CHANNELS) _nextIndex = _mixer->_beginSlots;
 
 	for(i = _nextIndex; i < SoundMixer::NUM_CHANNELS; i++) {
 		if(_channels[i].chan == 0 || _channels[i].id == -1) {
@@ -98,7 +98,7 @@ bool ScummMixer::addChannel(_Channel * c) {
 		}
 	}
 
-	for(i = 0; i < _nextIndex; i++) {
+	for(i = _mixer->_beginSlots; i < _nextIndex; i++) {
 		if(_channels[i].chan == 0 || _channels[i].id == -1)	{
 			_channels[i].chan = c;
 			_channels[i].id = track;
@@ -110,7 +110,7 @@ bool ScummMixer::addChannel(_Channel * c) {
 
 	fprintf(stderr, "_nextIndex == %d\n", _nextIndex);
 
-	for(i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for(i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		fprintf(stderr, "channel %d : %p(%ld, %d) %d %d\n", i, _channels[i].chan, 
 			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1, 
 			_channels[i].chan ? _channels[i].chan->isTerminated() : 1, 
@@ -123,7 +123,7 @@ bool ScummMixer::addChannel(_Channel * c) {
 
 bool ScummMixer::handleFrame() {
 	debug(9, "ScummMixer::handleFrame()");
-	for(int i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for(int i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		if(_channels[i].id != -1) {
 			debug(9, "updating channel %d (%p)", _channels[i].id, _channels[i].chan);
 			if(_channels[i].chan->isTerminated()) {
@@ -181,7 +181,7 @@ bool ScummMixer::handleFrame() {
 
 bool ScummMixer::stop() {
 	debug(9, "ScummMixer::stop()");
-	for(int i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for(int i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		if(_channels[i].id != -1) {
 				delete _channels[i].chan;
 				_channels[i].id = -1;

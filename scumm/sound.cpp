@@ -943,7 +943,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	if (_musicBundleToBeRemoved == true) {
 		_scumm->_timer->releaseProcedure(&music_handler);
 		_nameBundleMusic = NULL;
-		_scumm->_mixer->stopChannel(_bundleMusicTrack);
+		_scumm->_mixer->stop(_bundleMusicTrack);
 		_bundleMusicTrack = -1;
 		if (_musicBundleBufFinal) {
 			free(_musicBundleBufFinal);
@@ -1033,8 +1033,8 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	uint32 final_size = decode12BitsSample(ptr, &buffer, size);
 
 	if (_bundleMusicTrack == -1) {
-		_bundleMusicTrack = _scumm->_mixer->playStream(NULL, -1, buffer, final_size, rate,
-															SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, -1);
+		_bundleMusicTrack = _scumm->_mixer->playStream(NULL, _scumm->_mixer->_beginSlots - 1, buffer, final_size, rate,
+															SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, -1, 800000);
 	} else {
 		_scumm->_mixer->append(_bundleMusicTrack, buffer, final_size, rate,
 														SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
