@@ -824,8 +824,6 @@ void Player_V2::do_mix(int16 *data, uint len) {
 	mutex_up();
 	uint step;
 
-	int16 *origData = data;
-	uint origLen = len;
 	do {
 		step = len;
 		if (step > (_next_tick >> FIXP_SHIFT))
@@ -834,7 +832,7 @@ void Player_V2::do_mix(int16 *data, uint len) {
 			generatePCjrSamples(data, step);
 		else
 			generateSpkSamples(data, step);
-		data += step;
+		data += 2 * step;
 		_next_tick -= step << FIXP_SHIFT;
 
 		if (!(_next_tick >> FIXP_SHIFT)) {
@@ -851,19 +849,15 @@ void Player_V2::do_mix(int16 *data, uint len) {
 		}
 	} while (len -= step);
 
-	// Convert mono data to stereo
-	for (int i = (origLen - 1); i >= 0; i--) {
-		origData[2 * i] = origData[2 * i + 1] = origData[i];
-	}
-
 	mutex_down();
 }
 
 void Player_V2::lowPassFilter(int16 *sample, uint len) {
 	for (uint i = 0; i < len; i++) {
 		_level = (_level * _decay
-			 + (unsigned int)sample[i] * (0x10000-_decay)) >> 16;
-		sample[i] = _level;
+			 + (unsigned int)sample[0] * (0x10000-_decay)) >> 16;
+		sample[0] = sample[1] = _level;
+		sample += 2;
 	}
 }
 
@@ -901,11 +895,14 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 		if (_timer_output & (1 << channel))
 			duration -= _timer_count[channel];
 		
-		sample[i] += (duration * _volumetable[vol]) >> FIXP_SHIFT;
-		if (sample[i] < 0) {
+		sample[0] += (duration * _volumetable[vol]) >> FIXP_SHIFT;
+		if (sample[0] < 0) {
 			/* overflow: clip value */
-			sample[i] = 0x7fff;
+			sample[0] = 0x7fff;
 		}
+		// The following write isn't necessary, because the lowPassFilter does it for us
+		//sample[1] = sample[0];
+		sample += 2;
 	}
 }
 
@@ -919,7 +916,7 @@ void Player_V2::generateSpkSamples(int16 *data, uint len) {
 		}
 	}
 
-	memset(data, 0, sizeof(int16) * len);
+	memset(data, 0, 2 * sizeof(int16) * len);
 	if (winning_channel != -1) {
 		squareGenerator(0, _channels[winning_channel].d.freq, 0, 
 				0, data, len);
@@ -934,7 +931,7 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 	int i, j;
 	int freq, vol;
 
-	memset(data, 0, sizeof(int16) * len);
+	memset(data, 0, 2 * sizeof(int16) * len);
 	bool hasdata = false;
 
 	for (i = 1; i < 3; i++) {
