@@ -27,6 +27,7 @@
 #define memmove			MemMove
 #define memset(a,b,c)	MemSet(a,c,b)
 #define strcat			StrCat
+#define strncat			StrNCat
 #define strchr			StrChr
 #define strcmp			StrCompare
 #define strcpy			StrCopy
