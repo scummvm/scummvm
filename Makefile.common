@@ -1,4 +1,30 @@
 OBJS =\
+	lua/lapi.o \
+	lua/lauxlib.o \
+	lua/lbuffer.o \
+	lua/lbuiltin.o \
+	lua/ldo.o \
+	lua/lfunc.o \
+	lua/lgc.o \
+	lua/lfunc.o \
+	lua/liolib.o \
+	lua/llex.o \
+	lua/lmathlib.o \
+	lua/lmem.o \
+	lua/lobject.o \
+	lua/lparser.o \
+	lua/lstate.o \
+	lua/lstring.o \
+	lua/lstrlib.o \
+	lua/ltable.o \
+	lua/ltask.o \
+	lua/ltm.o \
+	lua/lundump.o \
+	lua/lvm.o \
+	lua/lzio.o
+	mixer/mixer.o \
+	mixer/rate.o \
+	mixer/audiostream.o \
 	actor.o \
 	bitmap.o \
 	blocky16.o \
@@ -8,6 +34,7 @@ OBJS =\
 	engine.o \
 	keyframe.o \
 	lab.o \
+	lipsynch.o \
 	localize.o \
 	lua.o \
 	main.o \
@@ -22,33 +49,21 @@ OBJS =\
 	screen.o \
 	smush.o \
 	sound.o \
-	lipsynch.o \
 	textobject.o \
 	textsplit.o \
 	timer.o \
 	vima.o \
 	walkplane.o \
-	mixer/mixer.o \
-	mixer/rate.o \
-	mixer/audiostream.o
 
 DEPS = $(OBJS:.o=.d)
 
-residual: $(OBJS) lua/lib/liblua.a lua/lib/liblualib.a
+residual: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -MMD -c $(<) -o $*.o
 
-lua/lib/liblua.a lua/lib/liblualib.a: lua-build
-
-lua-build:
-	$(MAKE) -C lua
-
-clean: lua-clean
-	-rm -f residual$(EXEEXT) *.o mixer\*.o *.d mixer\*.d *~
-
-lua-clean:
-	$(MAKE) -C lua clean
+clean: 
+	-rm -f residual$(EXEEXT) *.o *~ mixer\*.o *.d mixer\*.d mixer\*~ lua\*.o *.d lua\*.d lua\*~
 
 -include $(DEPS)
