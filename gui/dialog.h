@@ -52,8 +52,7 @@ public:
 
 	//virtual void handleIdle(); // Called periodically
 	virtual void handleClick(int x, int y, int button);
-	virtual void handleKey(char key, int modifiers) // modifiers = alt/shift/ctrl etc.
-		{ if (key == 27) close(); }
+	virtual void handleKey(char key, int modifiers); // modifiers = alt/shift/ctrl etc.
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(uint32 cmd);
 	
@@ -64,7 +63,7 @@ protected:
 	void close();
 
 	void addResText(int x, int y, int w, int h, int resID);
-	void addButton(int x, int y, int w, int h, char hotkey, const char *label, uint32 cmd);
+	void addButton(int x, int y, int w, int h, const char *label, uint32 cmd, char hotkey);
 };
 
 class SaveLoadDialog : public Dialog {

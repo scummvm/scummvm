@@ -18,6 +18,8 @@
  * $Header$
  */
 
+#include <ctype.h>
+
 #include "stdafx.h"
 #include "dialog.h"
 #include "widget.h"
@@ -42,6 +44,25 @@ void Dialog::handleClick(int x, int y, int button)
 	Widget *w = findWidget(x - _x, y - _y);
 	if (w)
 		w->handleClick(button);
+}
+
+void Dialog::handleKey(char key, int modifiers)
+{
+	// ESC closes all dialogs by default
+	if (key == 27)
+		close();
+	
+	// Hotkey handling
+	Widget *w = _firstWidget;
+	key = toupper(key);
+	while (w) {
+		ButtonWidget *b = dynamic_cast<ButtonWidget *>(w);
+		if (b && key == toupper(b->_hotkey)) {
+			b->handleClick(1);
+			break;
+		}
+		w = w->_next;
+	}
 }
 
 void Dialog::handleMouseMoved(int x, int y, int button)
@@ -96,10 +117,9 @@ void Dialog::addResText(int x, int y, int w, int h, int resID)
 	new StaticTextWidget(this, x, y, w, h, str);
 }
 
-void Dialog::addButton(int x, int y, int w, int h, char hotkey, const char *label, uint32 cmd)
+void Dialog::addButton(int x, int y, int w, int h, const char *label, uint32 cmd, char hotkey)
 {
-	new ButtonWidget(this, x, y, w, h, label, cmd);
-	// TODO - handle hotkey
+	new ButtonWidget(this, x, y, w, h, label, cmd, hotkey);
 }
 
 #pragma mark -
@@ -120,11 +140,11 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 //  addResText(10, 7, 240, 16, 2);
 //  addResText(10, 7, 240, 16, 3);
 
-	addButton(200, 20, 54, 16, 'S', RES_STRING(4), kSaveCmd);	// Save
-	addButton(200, 40, 54, 16, 'L', RES_STRING(5), kLoadCmd);	// Load
-	addButton(200, 60, 54, 16, 'P', RES_STRING(6), kPlayCmd);	// Play
-	addButton(200, 80, 54, 16, 'O', CUSTOM_STRING(17), kOptionsCmd);	// Options
-	addButton(200, 100, 54, 16, 'Q', RES_STRING(8), kQuitCmd);	// Quit
+	addButton(200, 20, 54, 16, RES_STRING(4), kSaveCmd, 'S');	// Save
+	addButton(200, 40, 54, 16, RES_STRING(5), kLoadCmd, 'L');	// Load
+	addButton(200, 60, 54, 16, RES_STRING(6), kPlayCmd, 'P');	// Play
+	addButton(200, 80, 54, 16, CUSTOM_STRING(17), kOptionsCmd, 'O');	// Options
+	addButton(200, 100, 54, 16, RES_STRING(8), kQuitCmd, 'Q');	// Quit
 	
 	// FIXME - test
 	new CheckboxWidget(this, 50, 20, 100, 16, "Toggle me", 0);
@@ -164,11 +184,11 @@ enum {
 OptionsDialog::OptionsDialog(NewGui *gui)
 	: Dialog (gui, 50, 80, 210, 60)
 {
-	addButton( 10, 10, 40, 15, 'S', CUSTOM_STRING(5), kSoundCmd);	// Sound
-	addButton( 80, 10, 40, 15, 'K', CUSTOM_STRING(6), kKeysCmd);	// Keys
-	addButton(150, 10, 40, 15, 'A', CUSTOM_STRING(7), kAboutCmd);	// About
-	addButton( 10, 35, 40, 15, 'M', CUSTOM_STRING(18), kMiscCmd);	// Misc
-	addButton(150, 35, 40, 15, 'C', CUSTOM_STRING(23), kCloseCmd);	// Close dialog - FIXME
+	addButton( 10, 10, 40, 15, CUSTOM_STRING(5), kSoundCmd, 'S');	// Sound
+	addButton( 80, 10, 40, 15, CUSTOM_STRING(6), kKeysCmd, 'K');	// Keys
+	addButton(150, 10, 40, 15, CUSTOM_STRING(7), kAboutCmd, 'A');	// About
+	addButton( 10, 35, 40, 15, CUSTOM_STRING(18), kMiscCmd, 'M');	// Misc
+	addButton(150, 35, 40, 15, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
 }
 
 void OptionsDialog::handleCommand(uint32 cmd)

@@ -31,7 +31,6 @@
 /*
  * TODO list
  * - add more widgets
- * - implement hotkeys
  * - add "close" widget to all dialogs (with a flag to turn it off) ?
  * - make dialogs "moveable" ?
  * - implement the missing / incomplete dialogs

@@ -90,8 +90,8 @@ void StaticTextWidget::drawWidget(bool hilite)
 #pragma mark -
 
 
-ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd)
-	: StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(0)
+ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
+	: StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(hotkey)
 {
 	_flags = WIDGET_ENABLED | WIDGET_BORDER /* | WIDGET_CLEARBG */ ;
 }
@@ -118,8 +118,8 @@ static uint32 checked_img[8] = {
 	0x00000000,
 };
 
-CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd)
-	: ButtonWidget(boss, x, y, w, h, label, cmd), _state(false)
+CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false)
 {
 	_flags = WIDGET_ENABLED;
 }

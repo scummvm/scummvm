@@ -78,11 +78,12 @@ protected:
 
 /* ButtonWidget */
 class ButtonWidget : public StaticTextWidget {
+friend class Dialog;
 protected:
 	uint32	_cmd;
 	uint8	_hotkey;
 public:
-	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd);
+	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setCmd(uint32 cmd)	{ _cmd = cmd; }
 	uint32 getCmd()			{ return _cmd; }
 
@@ -96,7 +97,7 @@ class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd);
+	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setState(bool state)	{ _state = state; }
 	bool getState()				{ return _state; }
 
