@@ -303,7 +303,7 @@ void Scumm::drawObject(int obj, int arg) {
 	xpos = od->x_pos>>3;
 	ypos = od->y_pos;
 	width = od->width>>3;
-	height = od->height;
+	height = od->height &= 0xF8; // Ender
 
 	if (width==0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
 		return;
@@ -316,8 +316,8 @@ void Scumm::drawObject(int obj, int arg) {
 		ptr = ptr + od->offs_obim_to_room;
 	}
 
-        if(_features & GF_SMALL_HEADER) 
-                ptr +=8;
+	if(_features & GF_SMALL_HEADER)
+                ptr +=8;					
         else
                 ptr = findResource(IMxx_tags[getState(od->obj_nr)], ptr);
 	if (!ptr)
