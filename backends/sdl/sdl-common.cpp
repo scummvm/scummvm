@@ -895,6 +895,10 @@ void OSystem_SDL_Common::clear_sound_proc() {
 uint32 OSystem_SDL_Common::property(int param, Property *value) {
 	switch(param) {
 
+	case PROP_WANT_RECT_OPTIM:
+		_mode_flags |= DF_WANT_RECT_OPTIM;
+		break;
+
 	case PROP_GET_FULLSCREEN:
 		return _full_screen;
 

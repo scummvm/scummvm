@@ -95,7 +95,8 @@ public:
 		PROP_GET_FULLSCREEN = 7,
 		PROP_GET_FMOPL_ENV_BITS = 8,
 		PROP_GET_FMOPL_EG_ENT = 9,
-		PROP_TOGGLE_ASPECT_RATIO = 10
+		PROP_TOGGLE_ASPECT_RATIO = 10,
+		PROP_WANT_RECT_OPTIM = 11
 	};
 	union Property {
 		const char *caption;

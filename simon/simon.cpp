@@ -458,6 +458,9 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_language = detector->_language;
 	_noSubtitles = detector->_noSubtitles;
 
+	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
+	_system->property(OSystem::PROP_WANT_RECT_OPTIM,0);
+
 	// Override global scaler with any game-specific define
 	if (g_config->get("gfx_mode")) {
 		prop.gfx_mode = detector->parseGraphicsMode(g_config->get("gfx_mode"));
