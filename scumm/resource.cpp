@@ -1080,7 +1080,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		dw = 0x7300000 / ticks;
 		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
 			
-		// Write a tempo change SysEx
+		// Write a tempo change Meta event
 		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
 		*ptr++ = (byte)((dw >> 16) & 0xFF);
 		*ptr++ = (byte)((dw >> 8) & 0xFF);
@@ -1208,7 +1208,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	int track_ctr = 0;
 	byte chunk_type = 0;
 
-	// Write a tempo change SysEx:
+	// Write a tempo change Meta event
 	// 473 / 4 Hz, 480 pulses per quarternote, convert to micro seconds.
 	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
 	dw = 1000000 * 480 * 4 / 473;
