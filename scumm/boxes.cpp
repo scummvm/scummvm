@@ -374,12 +374,10 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 	// checking at all. All the problems so far have been cases where
 	// the value was exactly one more than what we consider the maximum.
 	// So it's very well possible that all of these are script errors.
-	if ((_gameId == GID_PASS) || ((_features & GF_OLD_BUNDLE)
-	    && (_gameId == GID_INDY3 || _gameId == GID_ZAK))) {
-		checkRange(ptr[0], 0, box, "Illegal box %d");
-	} else
-		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
+	if (_version <= 4 && ptr[0] == box)
+	    box--;
 
+	checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 	if (_version <= 2)
 		return (Box *)(ptr + box * SIZEOF_BOX_V2 + 1);
 	else if (_version == 3)
