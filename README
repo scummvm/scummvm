@@ -53,9 +53,9 @@ SCUMM Games:
      Loom (256 FM Towns)                             [Game: loomtowns]
      Loom (256 color CD version)                     [Game: loomcd]
      Zak McKracken (256 FM Towns)                    [Game: zak256]
-     Monkey Island 1 (EGA version)                   [Game: monkeyega]
-     Monkey Island 1 (VGA version)                   [Game: monkeyvga]
-     Monkey Island 1 (CD version)                    [Game: monkey/monkey1]
+     Monkey Island 1 (EGA)                           [Game: monkeyega]
+     Monkey Island 1 (VGA)                           [Game: monkeyvga]
+     Monkey Island 1 (CD)                            [Game:  monkey/monkey1]
      Monkey Island 2                                 [Game: monkey2]
      Indiana Jones and the Fate of Atlantis          [Game: atlantis]
      Day of the Tentacle                             [Game: tentacle]
@@ -140,8 +140,8 @@ Indiana Jones & the Last Crusade (EGA)
 Indiana Jones & the Last Crusade (256 color FM Towns version)
 Loom (16 color floppy version)
 Maniac Mansion
-Monkey Island 1 (EGA version)
-Monkey Island 1 (VGA version)
+Monkey Island 1 (EGA)
+Monkey Island 1 (VGA)
 Monkey Island 2
 Zak McKracken (256 color FM Towns version)
 
@@ -158,18 +158,13 @@ although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
-       Maniac Mansion (Classic version):
+       Maniac Mansion (Classic):
                 - Actors sometimes cause minor graphical glitches
                 - The last 8 lines of room graphics are sometimes cut off 
                   when changing rooms
 
-       Zak McKracken (Classic version):
+       Zak McKracken (Classic):
                 - Actors sometimes cause minor graphical glitches
-
-       Beneath a Steel Sky:
-                - Floppy demo does not work at all
-                - Amiga versions aren't supported and probably never will be
-                - Not a bug: CD version is missing speech for some dialog
 
        Indiana Jones & the Last Crusade (EGA):
                 - In some rooms Indy may be able to walk to odd places
@@ -186,12 +181,23 @@ the section on Reporting Bugs.
                   way, we don't know where to buy or download a copy of these
                   games. Petition LucasArts to re-release them :)
 
+       Loom (EGA):
+                - MIDI support requires the Roland update from LucasArts
+
+       Monkey Island 1 (EGA):
+                - MIDI support requires the Roland update from LucasArts
+
        Indiana Jones and the Fate of Atlantis:
                 - Keyboard fighting does not work. ScummVM now defaults to
                   using mouse fighting.
 
        Sam and Max:
                 - Highway subgame does not behave correctly.
+
+       Beneath a Steel Sky:
+                - Floppy demo does not work at all
+                - Amiga versions aren't supported and probably never will be
+                - Not a bug: CD version is missing speech for some dialog
 
        Simon the Sorcerer 1:
                 - No inventory scrolling arrows shown in simon1dos and
