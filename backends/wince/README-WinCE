@@ -1,0 +1,296 @@
+ScummVM Windows CE FAQ
+Last updated:    2003-08-02
+Release version: 0.5.0
+------------------------------------------------------------------------
+
+This document is intended to give common answers to specific ScummVM
+ScummVM issues on Windows CE, in 3 sections
+  * "General questions"       : browse this section to get started and see
+    general issues
+  * "Game specific questions" : lists some common game specific issues
+  * "Support"                 : how to get support if you're still puzzled
+
+------------------------------------------------------------------------
+General questions
+------------------------------------------------------------------------
+
+How do I install ScummVM for Windows CE ?
+-----------------------------------------
+
+If the current release includes a .EXE installer, ScummVM for Windows CE
+will be installed without hassle.
+Otherwise, you'll unzip the release on your desktop computer, and copy 
+the EXE file on your device.
+
+If you're using a Pocket PC 2000 operating system, be sure to have GAPI
+installed - it's available on Microsoft website http://www.microsoft.com
+
+How do I install a game ?
+-------------------------
+
+You'll at least need to copy all the data files from your game, in a 
+sub-directory of your game directory. 
+
+You'll need to put the data files in a directory named after ScummVM game
+name (see "Supported Game" section in ScummVM readme) for the games having
+"generic" data files (.LFL files). Recent games can be put in any directory.
+
+You can compress the sound files (.SOU) using the "extract" tool described in 
+the ScummVM readme.
+
+You can compress the audio tracks of Loom or Monkey Island 1 as described in
+the ScummVM readme. If you are running these games on a slow device with Ogg
+Vorbis compression, it's recommended to sample the files to 11 kHz (this sample
+rate is not supported by other versions of ScummVM).
+
+If you need more details, you can check SirDaved mini-manual online available 
+at http://www.pocketmatrix.com/forums/viewtopic.php?t=8606
+
+How do I run a game ?
+---------------------
+
+If it's the first time you're running ScummVM for Windows CE, have installed or
+removed games, you need to rescan your game directory. 
+ * On Pocket PCs and Handheld PCs, tap the "Scan" button, select your upper 
+   game directory, and tap the "Scan" button again.
+ * On Microsoft Smartphone devices, choose the "Scan" option in the "Game" 
+   menu.
+A list of recognized games will be displayed. If your game is not detected 
+check its directory name and your installation.
+
+To play a game
+ * On Pocket PCs and Handheld PCs, tap on its name then tap the "Play" 
+   button
+ * On Microsoft Smartphone devices, choose it from the "Play" sub-menu in the
+   "Game" menu
+
+How do I play a game on a Pocket PC or Handheld PC device ?
+-----------------------------------------------------------
+
+The stylus is your mouse cursor, and a tap is a left mouse button click.
+
+As the Pocket PC lacks some keys, a toolbar is displayed at the bottom of the
+screen to make the most common functions just a tap away
+  * The disk icon opens ScummVM options menu to save your game, or change your
+    current game settings.
+  * The movie icon skips a non interactive sequence, the current dialog or 
+    behaves like the ESC key on a regular keyboard
+  * The sound icon turns all sound effects and music off and on
+  * The monkey icon switches between portrait and landscape mode
+
+You can map additional actions on your device hardware buttons using the 
+"Options" / "Key" menu in the ScummVM options menu. To associate an action to
+a key, tap the action, then the "Map" button and press the hardware key.
+The following actions are available 
+  * Pause       : pause the game
+  * Save        : open ScummVM option menu
+  * Quit        : quit ScummVM (without saving, be careful when using it)
+  * Skip        : skip a non interactive sequence, the current dialog or 
+    behaves like the ESC key on a regular keyboard
+  * Hide        : hide or display the toolbar
+    - YOU MUST HIDE THE TOOLBAR TO SCROLL THROUGH THE INVENTORY IN ZAK -
+  * Keyboard    : hide or display the virtual keyboard
+    - YOU MUST DISPLAY THE KEYBOARD TO FIGHT IN INDIANA JONES 3 -
+  * Sound       : turns all sound effects and music off and on
+  * Right click : acts as a right mouse button click
+    - YOU MUST MAP THIS ACTION TO PLAY THE FOLLOWING GAMES -
+    - SAM & MAX, BENEATH A STEEL SKY, CURSE OF MONKEY ISLAND -
+  * Cursor      : hide or display the mouse cursor
+  * Subtitles   : hide or display the subtitles
+  * Boss        : turn off all sound, blanks the screen, save the game and
+    run the tasks application :)
+  * Free look   : go in or out of free-look mode. In this mode, you can tap 
+    the screen to look for interesting locations without walking.
+
+How do I play a game on a Microsoft Smartphone device ?
+-------------------------------------------------------
+
+You move the cursor with the "Left", "Right", "Up" and "Down" keys, and click
+with the "Left Click" or "Right Click" keys.
+The cursor will move faster if you keep the key down. 
+
+The "Zone" key is a *very* valuable addition allowing you to jump quickly 
+between three screen zones : the game zone, the verbs zone and the inventory 
+zone. When you switch to a zone the cursor will be reset to its former location
+in this zone. 
+
+The "Options" key opens ScummVM action menu.
+
+The "Boss" key turns off all sound, blanks the screen, save the game and run 
+the tasks application :)
+
+You can change the keys mapping in the main screen in the "Options" menu. Select
+an action in the "Keys Mapping" submenu, then press the key you want to map to 
+this action.
+
+Game xxx is too slow on my device
+---------------------------------
+
+Even if it shouldn't happen (this port is running almost correctly on a 
+80 / 120 MHz SPV phone), you can try some things :
+
+  * Disable sound in the engine (add the line "NoMusic = true" to the wince 
+    section of your scummvm.ini file)
+  * Play with the priority of the sound thread (change the SoundThreadPriority
+    value - the higher the lower priority)
+
+And don't forget to report your progress in PocketMatrix ScummVM forum
+
+
+------------------------------------------------------------------------
+Game specific questions 
+------------------------------------------------------------------------
+
+--------------------------
+-- Beneath a Steel Sky --
+--------------------------
+
+Introduction movie is too slow or never ends ...
+-------------------------------------------------
+
+Skip it :)
+
+How can I open the inventory in Beneath a Steel Sky ?
+---------------------------------------------------
+
+Tap the top of the screen. Check your stylus calibration if you still cannot
+open it.
+
+How can I use an item in Beneath a Steel Sky ?
+----------------------------------------------
+
+That one is tricky - you need to map the right click button (see the General
+Questions section), BUT, you can't do it in Beneath a Steel Sky in this 
+release !
+
+I can give you two workarounds :
+  * If you have another Scumm game available, map the key in this game
+  * Edit the scummvm.ini file, and add the following line in the wince
+    section, after running the game once. It should map the right click button
+    to your calendar key
+
+  ActionKeys=0000 0000 0000 0000 0000 0000 0000 0000 00c1 0000 0000 0000 0000
+
+----------------------------
+-- Curse of Monkey Island --
+----------------------------
+
+How can I open the inventory in Curse of Monkey Island ?
+------------------------------------------------------
+
+You need to map the right click button (see the General Questions section).
+
+I'm experiencing random crashes ...
+------------------------------------
+
+This game has high memory requirements, and may crash sometimes on low 
+memory devices. Continue your game with the latest automatically saved
+game and everything should be fine. 
+You can consider removing the music and voice files (VOXDISK.BUN, MUSDISK.BUN)
+to lower these requirements.
+
+Sound synchronization is lost in Curse of Monkey Island videos
+--------------------------------------------------------------
+
+Get a faster device :)
+
+--------------------
+-- Full Throttle --
+--------------------
+
+I'm experiencing random crashes ...
+------------------------------------
+
+This game has high memory requirements, and may crash sometimes on low 
+memory devices. Continue your game with the latest automatically saved
+game and everything should be fine. 
+You can consider removing the voice file (MONSTER.SOU) and disable the 
+music (add the line "NoMusic = true" to the wince section of your scummvm.ini
+file) to lower these requirements.
+
+----------------------------------------
+-- Indiana Jones and the Last Crusade --
+----------------------------------------
+
+How can I fight in Indiana Jones and the Last Crusade ?
+-----------------------------------------------------
+
+You need to map the keyboard button (see the General Questions section).
+
+---------------
+-- Sam & Max --
+---------------
+
+How can I change the current action ?
+-------------------------------------
+
+You need to map the right click button (see the General Questions section).
+
+How can I exit a mini game ?
+----------------------------
+
+Use the skip toolbar icon (see the General Questions section).
+
+-------------------
+-- Simon 1 and 2 --
+--------------------
+
+How can I save or quit in Simon ?
+--------------------------------
+
+"Use" (use the use verb :p) the postcard. The ScummVM option dialog is disabled
+in Simon games.
+
+-------------
+-- The Dig --
+-------------
+
+I'm experiencing random crashes ...
+------------------------------------
+
+This game has high memory requirements, and may crash sometimes on low 
+memory devices. Continue your game with the latest automatically saved
+game and everything should be fine. 
+You can consider removing the music and voice files (VOXDISK.BUN, MUSDISK.BUN)
+to lower these requirements.
+
+--------------------
+-- Zak Mc Kracken --
+--------------------
+
+How can I scroll through my inventory items in Zak Mc Kracken ?
+-------------------------------------------------------------
+
+You need to map the hide toolbar button (see the General Questions section).
+
+
+------------------------------------------------------------------------
+Support
+------------------------------------------------------------------------
+
+Help, I've read everything and ...
+-----------------------------------
+
+Luckily, as there is a huge variety of Windows Mobile devices, a specific forum 
+is dedicated to this ScummVM port. You can ask your question on PocketMatrix
+ScummVM forum, available at http://www.pocketmatrix.com/forums/viewforum.php?f=20
+and will most probably get an answer quickly, as the community is always glad 
+to help and have dealt with all my bugs for more than one year :)
+
+I think I found a bug, ScummVM crashes in ...
+---------------------------------------------
+
+See the "Reporting Bugs" section in ScummVM readme. 
+
+If you have a Pocket PC or Handheld PC, be sure to tap the "PocketScumm" logo
+in the loader screen and include the information displayed on the first line
+in your bug report.
+
+If you cannot reproduce this bug on another ScummVM version, you can cross
+post your bug report on PocketMatrix ScummVM forum.
+
+------------------------------------------------------------------------
+Good Luck and Happy Adventuring!
+The ScummVM team.
+http://www.scummvm.org/
+------------------------------------------------------------------------
