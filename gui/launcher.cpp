@@ -31,6 +31,7 @@ enum {
 	kStartCmd = 'STRT',
 	kOptionsCmd = 'OPTN',
 	kAddGameCmd = 'ADDG',
+	kConfigureGameCmd = 'CONF',
 	kQuitCmd = 'QUIT'
 };
 	
@@ -70,13 +71,16 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	const VersionSettings *v = version_settings;
 	ScummVM::StringList l;
 
-	// TODO - sort by name ?
 	// TODO - maybe only display those games for which settings are known
 	// (i.e. a path to the game data was set and is accesible) ?
 	while (v->filename && v->gamename) {
 		if (g_config->has_domain(v->filename)) {
-			l.push_back(v->gamename);
-			_filenames.push_back(v->filename);
+			String name = v->gamename;
+			int pos = 0, size = l.size();
+			while (pos < size && (name > l[pos]))
+				pos++;
+			l.insert_at(pos, name);
+			_filenames.insert_at(pos, v->filename);
 		}
 		v++;
 	}
@@ -87,7 +91,8 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	// Two more buttons directly below the list box
 	bw = new ButtonWidget(this, 10, 144, 80, 16, "Add Game...", kAddGameCmd, 'A');
 	bw->setEnabled(false);
-//	addButton(20 + 4 + kButtonWidth, 144, "Change Setting...");
+	bw = new ButtonWidget(this, 320-90, 144, 80, 16, "Configure...", kConfigureGameCmd, 'C');
+	bw->setEnabled(false);
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
