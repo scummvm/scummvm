@@ -1810,15 +1810,13 @@ void SimonState::vc_69() {
 	if (_debugMode)
 		warning("vc_69(%d,%d): music stuff?", a, b);
 
-	if (_vc72_var1 == 999) {
+	if (_vc72_var1 == 999 || _vc72_var1 == 0xFFFF) {
 		_vc70_var2 = b;
-		midi_play(a);
-		_vc72_var1 = b;
-	} else if (_vc72_var1 != 0xFFFF) {
-		if (_vc72_var1 != a) {
-			_vc72_var3 = a;
-			_vc72_var2 = a;
-		}
+		midi_play (a);
+		_vc72_var1 = a;
+	} else if (_vc72_var1 != a) {
+		_vc72_var3 = a;
+		_vc72_var2 = (a & 0xFF) << 8 | (a >> 8);
 	}
 
 }
