@@ -198,7 +198,7 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 	}
 
 	byte * src = (byte*)(_dataSrc + _offsets[c] + 14);
-	byte * dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x;
+	byte * dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x + _vm->virtscr[0].xstart;
 	uint32 length = READ_BE_UINT32(_dataSrc + _offsets[c] - 4) - 14;
 
 	decodeCodec44(_tmpCodecBuffer, src, length);
