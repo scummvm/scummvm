@@ -1,7 +1,7 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.5.4(CVS) (2003-??-??)
+0.5.5(CVS) (2003-??-??)
  General:
    - Added Broken Sword 2 engine
    - Added HQ2x and HQ3x scalers
@@ -9,6 +9,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Adlib GM emulation table revamped, providing more accurate software MIDI
    - Default Makefile now uses configure script, old one is Makefile.noconf
    - Rewrote sound mixer from scratch
+   - Greatly improved the launcher and options dialogs (work-in-progress)
    - Many other "under the hood" improvements, like a new config managment
 	 and plugin capabilities
  SCUMM:
@@ -17,6 +18,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added Adlib support for indy3ega and loom (ega)
    - Added sound effects support for indy3/monkeyega/monkeyvga/pass
    - Added FM Towns targets for Loom and Indy3
+   - Rewrote in-game menu (F5) to be easier to use
    - Improved FM Towns SFX support (YM2612 emulation, looping)
    - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
    - Several iMUSE bugs fixed

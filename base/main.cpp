@@ -78,9 +78,9 @@
  * to setup, but I have no idea if/how one can also change files which are not
  * currently being commit'ed.
  */
-const char *gScummVMVersion = "0.5.4cvs";
+const char *gScummVMVersion = "0.5.5cvs";
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
-const char *gScummVMFullVersion = "ScummVM 0.5.4cvs (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFullVersion = "ScummVM 0.5.5cvs (" __DATE__ " " __TIME__ ")";
 
 
 #if defined(WIN32) && defined(NO_CONSOLE)
