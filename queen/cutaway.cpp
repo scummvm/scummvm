@@ -893,12 +893,13 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	anim.scale = (int16)READ_BE_UINT16(ptr);
 	ptr += 2;
 
-#if 1
-	anim.song = (int16)READ_BE_UINT16(ptr);
-	ptr += 2;
-#else
-	anim.song = 0;
-#endif
+	if (_resource->isDemo()) {
+		anim.song = 0;
+	}
+	else {
+		anim.song = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
 
 	// Extract information that depend on the signedness of values
 	if (anim.unpackFrame < 0) {
