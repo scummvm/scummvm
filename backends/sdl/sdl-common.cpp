@@ -682,14 +682,6 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					break;
 				}
 
-				// Ctr-Alt-b changes to bilinear filtering in the OpenGL backend
-				if (ev.key.keysym.sym == 'b') {
-					prop.gfx_mode = GFX_BILINEAR;
-					property(PROP_SET_GFX_MODE, &prop);
-					break;
-				}
-				
-
 				// Increase/decrease the scale factor
 				// TODO: Shall we 'wrap around' here?
 				if (ev.key.keysym.sym == '=' || ev.key.keysym.sym == '+' || ev.key.keysym.sym == '-') {
