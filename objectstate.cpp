@@ -25,7 +25,7 @@ ObjectState::ObjectState(int setupID, ObjectState::Position pos, const char *bit
 
 	int initialImage = 0;
 	if (visible)
-		initialImage = 1;
+		initialImage = 2;
 	_bitmap->setNumber(initialImage);
 	if (_zbitmap)
 		_zbitmap->setNumber(initialImage);

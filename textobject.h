@@ -19,26 +19,31 @@
 #define TEXTOBJECT_H
 
 #include "debug.h"
+#include "font.h"
 #include "color.h"
+#include "driver.h"
 
 #include <string>
 #include <SDL.h>
 
-#include "tinygl/gl.h"
-
 class TextObject {
 public:
-	TextObject(const char *text, const int x, const int y, const Color& fgColor);
-	void setX(int x);
-	void setY(int y);
-	void setColor(Color *newColor);
+	TextObject(const char *text, const int x, const int y, /*const*/ Font *font, const Color& fgColor);
+	~TextObject();
+	void setX(int x) {_x = x; }
+	void setY(int y) {_y = y; }
+	void setColor(Color *newColor) { _fgColor = newColor; }
 
 	const char *name() const { return _textID; }
-void draw();
+	void draw();
 
 protected:
-	char _textID[10];
 	Color _fgColor;
 	int _x, _y;
+	char _textID[10];
+	uint8 *_textBitmap;
+	int _bitmapHeight, _bitmapWidth;
+	Driver::TextObjectHandle *_textObjectHandle;
 };
+
 #endif

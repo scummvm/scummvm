@@ -18,7 +18,6 @@
 #include "debug.h"
 #include "colormap.h"
 #include "material.h"
-#include "font.h"
 #include "driver_gl.h"
 
 DriverGL::DriverGL(int screenW, int screenH, int screenBPP) {
@@ -242,7 +241,7 @@ void DriverGL::createBitmap(Bitmap *bitmap) {
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			}
 
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
 
 			int cur_tex_idx = bitmap->_numTex * pic;
@@ -542,4 +541,114 @@ void DriverGL::drawEmergString(int x, int y, const char *text, const Color &fgCo
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
+}
+
+Driver::TextObjectHandle *DriverGL::prepareToTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
+	TextObjectHandle *handle = new TextObjectHandle();
+	handle->width = width;
+	handle->height = height;
+	handle->bitmapData = NULL;
+	handle->surface = NULL;
+
+	// create texture
+	handle->numTex = ((width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
+		((height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+	handle->texIds = (GLuint *)new GLuint[handle->numTex];
+	glGenTextures(handle->numTex, (GLuint *)handle->texIds);
+
+	// Convert data to 32-bit RGBA format
+	byte *texData = new byte[4 * width * height];
+	byte *texDataPtr = texData;
+	uint8 *bitmapData = data;
+	for (int i = 0; i < width * height; i++, texDataPtr += 4, bitmapData++) {
+		byte pixel = *bitmapData;
+		if (pixel == 0x00) {
+			texDataPtr[0] = 0;
+			texDataPtr[1] = 0;
+			texDataPtr[2] = 0;
+			texDataPtr[3] = 0;
+		} else if (pixel == 0x80) {
+			texDataPtr[0] = 0;
+			texDataPtr[1] = 0;
+			texDataPtr[2] = 0;
+			texDataPtr[3] = 255;
+		} else if (pixel == 0xFF) {
+			texDataPtr[0] = fgColor.red();
+			texDataPtr[1] = fgColor.green();
+			texDataPtr[2] = fgColor.blue();
+			texDataPtr[3] = 255;
+		}
+	}
+
+	for (int i = 0; i < handle->numTex; i++) {
+		glBindTexture(GL_TEXTURE_2D, ((GLuint *)handle->texIds)[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
+
+	int curTexIdx = 0;
+	for (int y = 0; y < height; y += BITMAP_TEXTURE_SIZE) {
+		for (int x = 0; x < width; x += BITMAP_TEXTURE_SIZE) {
+			int t_width = (x + BITMAP_TEXTURE_SIZE >= width) ? (width - x) : BITMAP_TEXTURE_SIZE;
+			int t_height = (y + BITMAP_TEXTURE_SIZE >= height) ? (height - y) : BITMAP_TEXTURE_SIZE;
+			glBindTexture(GL_TEXTURE_2D, ((GLuint *)handle->texIds)[curTexIdx]);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGBA, GL_UNSIGNED_BYTE, texData + (y * 4 * width) + (4 * x));
+			curTexIdx++;
+		}
+	}
+
+	delete [] texData;
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	return handle;
+}
+
+void DriverGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 640, 480, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(x, 480 - (y + handle->height), handle->width, handle->height);
+	int curTexIdx = 0;
+	for (int t_y = 0; t_y < handle->height; t_y += BITMAP_TEXTURE_SIZE) {
+		for (int t_x = 0; t_x < handle->width; t_x += BITMAP_TEXTURE_SIZE) {
+			GLuint *textures = (GLuint *)handle->texIds;
+			glBindTexture(GL_TEXTURE_2D, textures[curTexIdx]);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex2i(t_x + x, t_y + y);
+			glTexCoord2f(1.0, 0.0);
+			glVertex2i(t_x + x + BITMAP_TEXTURE_SIZE, y + t_y);
+			glTexCoord2f(1.0, 1.0);
+			glVertex2i(t_x + x + BITMAP_TEXTURE_SIZE, y + t_y + BITMAP_TEXTURE_SIZE);
+			glTexCoord2f(0.0, 1.0);
+			glVertex2i(t_x + x, t_y + y + BITMAP_TEXTURE_SIZE);
+			glEnd();
+			curTexIdx++;
+		}
+	}
+
+	glDisable(GL_SCISSOR_TEST);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
 }

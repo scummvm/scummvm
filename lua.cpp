@@ -28,6 +28,7 @@
 #include "smush.h"
 #include "textobject.h"
 #include "objectstate.h"
+#include "font.h"
 
 #include "imuse/imuse.h"
 
@@ -90,7 +91,7 @@ static inline Color *check_color(int num) {
 	luaL_argerror(num, "color expected");
 	return NULL;
 }
-/*
+
 static inline Font *check_font(int num) {
 	lua_Object param = lua_getparam(num);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID('FONT'))
@@ -98,7 +99,15 @@ static inline Font *check_font(int num) {
 	luaL_argerror(num, "font expected");
 	return NULL;
 }
-*/
+
+static inline TextObject *check_textobject(int num) {
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('TEXT'))
+		return static_cast<TextObject *>(lua_getuserdata(param));
+	luaL_argerror(num, "textobject expected");
+	return NULL;
+}
+
 static inline int check_int(int num) {
 	double val = luaL_check_number(num);
 
@@ -261,6 +270,31 @@ static void LoadActor() {
 static void SetSelectedActor() {
 	Actor *act = check_actor(1);
 	g_engine->setSelectedActor(act);
+}
+
+static void SetSayLineDefaults() {
+	char *key_text = NULL;
+	lua_Object table_obj = lua_getparam(1);
+	lua_Object key;
+
+	for (;;) {
+		lua_pushobject(table_obj);
+		if (key_text)
+			lua_pushobject(key);
+		else
+			lua_pushnil();
+
+		lua_call("next");
+		key = lua_getresult(1);
+		if (lua_isnil(key)) 
+			break;
+
+		key_text = lua_getstring(key);		
+		if (strstr(key_text, "font"))
+			Actor::setSayLineFont(check_font(2));
+		else
+			error("Unknown SetSayLineDefaults key %s\n", key_text);
+	}
 }
 
 static void SetActorTalkColor() {
@@ -692,9 +726,9 @@ static void GetVisibleThings() {
 // 2 - return '/msgId/'
 int translationMode = 0;
 
-std::string parseMsgText(char *msg, char *msgId) {
+std::string parseMsgText(const char *msg, char *msgId) {
 	std::string translation = g_localizer->localize(msg);
-	char *secondSlash = NULL;
+	const char *secondSlash = NULL;
 
 	if ((msg[0] == '/') && (msgId)) {
 		secondSlash = std::strchr(msg + 1, '/');
@@ -1131,6 +1165,7 @@ static void MakeTextObject() {
 	lua_Object table_obj = lua_getparam(2), key;
 	int x = 0, y = 0, height = 0, width = 0;
 	Color *fgColor = NULL;
+	Font *font = NULL;
 	TextObject *textObject;
 
 	for (;;) {
@@ -1153,24 +1188,29 @@ static void MakeTextObject() {
 			y = atoi(lua_getstring(lua_getresult(2)));
 		else if (strstr(key_text, "fgcolor"))
 			fgColor = check_color(2);
-		else if (strstr(key_text, "height")) // Hm, do these just force clipping?
+		else if (strstr(key_text, "height"))
 			height = atoi(lua_getstring(lua_getresult(2)));
 		else if (strstr(key_text, "width"))
 			width = atoi(lua_getstring(lua_getresult(2)));
 		else if (strstr(key_text, "center"))
 			warning("MakeTextObject key center not implemented");
+		else if (strstr(key_text, "ljustify"))
+			warning("MakeTextObject key ljustify not implemented");
 		else if (strstr(key_text, "font"))
-			warning("MakeTextObject key font not implemented");
+			font = check_font(2);
 		else
 			error("Unknown MakeTextObject key %s\n", key_text);
 	}
 
-	textObject = new TextObject((const char *)line, x, y, *fgColor);
-	lua_pushstring(line);	// FIXME: Register a LUA text object and pass that instead?
+	// Note: The debug func display_setup_name in _sets.LUA creates an empty TextObject,
+	// and fills it with ChangeTextObject
+
+	textObject = new TextObject((const char *)line, x, y, font, *fgColor);
+	lua_pushusertag(textObject, MKID('TEXT'));
 }
 
 static void KillTextObject() {
-	char *textID;
+	TextObject *textObjectParm;
 
 	if (lua_isnil(lua_getparam(1))) { // FIXME: check this.. nil is kill all lines?
 		error("KillTextObject(NULL)");
@@ -1178,12 +1218,12 @@ static void KillTextObject() {
 		return;
 	}
 
-	textID = lua_getstring(lua_getparam(1));
+	textObjectParm = check_textobject(1);
 
 	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 
-		if (strstr(textO->name(), textID)) {
+		if (strstr(textO->name(), textObjectParm->name())) {
 			g_engine->killTextObject(textO);
 			delete textO;
 			return;
@@ -1232,6 +1272,7 @@ static void ChangeTextObject_CB(void) {
 
 // Main CTO handler and LUA interface
 static void ChangeTextObject() {
+	return;
 	char *textID = lua_getstring(lua_getparam(1));
 	lua_Object tableObj = lua_getparam(2);
 	TextObject *modifyObject = NULL;
@@ -1435,7 +1476,7 @@ static void LockFont() {
 	lua_Object param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
 		char *fontName = lua_getstring(param1);
-		void *result = g_resourceloader->loadFont(fontName);
+		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
 			lua_pushusertag(result, MKID('FONT'));
 		}
@@ -1617,7 +1658,6 @@ STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
 STUB_FUNC(ExpireText)
 STUB_FUNC(PrintLine)
-STUB_FUNC(SetSayLineDefaults)
 STUB_FUNC(PurgePrimitiveQueue)
 STUB_FUNC(KillPrimitive)
 STUB_FUNC(ChangePrimitive)

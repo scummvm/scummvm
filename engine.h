@@ -21,6 +21,7 @@
 #include "bits.h"
 #include "scene.h"
 #include "textobject.h"
+#include "font.h"
 #include "lua.h"
 
 #include <cstdlib>

@@ -22,6 +22,7 @@
 #include "lipsynch.h"
 #include "localize.h"
 #include "driver.h"
+#include "smush.h"
 
 #include "mixer/mixer.h"
 
@@ -29,6 +30,8 @@
 
 #include <cmath>
 #include <cstring>
+
+Font *Actor::_sayLineFont = NULL;
 
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
@@ -38,7 +41,7 @@ Actor::Actor(const char *name) :
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
 		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
 		_lastTurnDir(0), _currTurnDir(0),
-		_mumbleCostume(NULL), _mumbleChore(-1) {
+		_mumbleCostume(NULL), _mumbleChore(-1), _sayLineText(NULL) {
 	g_engine->registerActor(this);
 	_lookingMode = false;
 	_constrain = false;
@@ -218,30 +221,40 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	if (msg[0] == '/' || msg[0] == 0 || msgId[0] == 0)
 		return;
 
-	std::string soundName = msgId;
-	std::string soundLip = msgId;
-	soundName += ".wav";
-	soundLip += ".lip";
+	//	_sayLineText = new TextObject(msg, 10, 20, _sayLineFont, _talkColor);
+	// During movies, SayLine is called for text display only
+	if (!g_smush->isPlaying()) {
+		
+		std::string soundName = msgId;
+		std::string soundLip = msgId;
+		soundName += ".wav";
+		soundLip += ".lip";
 
-	if (_talkSoundName == soundName)
-		return;
+		if (_talkSoundName == soundName)
+			return;
 
-	if (g_imuse->getSoundStatus(_talkSoundName.c_str()))
-		shutUp();
+		if (g_imuse->getSoundStatus(_talkSoundName.c_str()))
+			shutUp();
 
-	_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
-	// Sometimes actors speak offscreen before they, including their
-	// talk chores are initialized.
-	// For example, when reading the work order (a LIP file exists for no reason).
-	// Also, some lip synch files have no entries
-	// In these case, revert to using the mumble chore.
-	_talkSoundName = soundName;
-	g_imuse->startVoice(_talkSoundName.c_str());
-	if (g_engine->currScene()) {
-		g_engine->currScene()->setSoundPosition(_talkSoundName.c_str(), pos());
+		// Sometimes actors speak offscreen before they, including their
+		// talk chores are initialized.
+		// For example, when reading the work order (a LIP file exists for no reason).
+		// Also, some lip synch files have no entries
+		// In these cases, revert to using the mumble chore.
+		_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
+
+		_talkSoundName = soundName;
+		g_imuse->startVoice(_talkSoundName.c_str());
+		if (g_engine->currScene()) {
+			g_engine->currScene()->setSoundPosition(_talkSoundName.c_str(), pos());
+		}
+		_talkAnim = -1;
 	}
 
-	_talkAnim = -1;
+	if (_sayLineText != NULL) {
+		g_engine->killTextObject(_sayLineText);
+		delete _sayLineText;
+	}
 }
 
 bool Actor::talking() {
@@ -377,7 +390,7 @@ void Actor::update() {
 		if (_lastTurnDir != 0 && _lastTurnDir != _currTurnDir)
 			_turnCostume->stopChore(getTurnChore(_lastTurnDir));
 		if (_currTurnDir != 0 && _currTurnDir != _lastTurnDir)
-			_turnCostume->playChoreLooping(getTurnChore(_currTurnDir));
+			_turnCostume->playChore(getTurnChore(_currTurnDir));
 	} else
 		_currTurnDir = 0;
 

@@ -43,7 +43,7 @@ Engine::Engine() :
 		_currScene(NULL), _selectedActor(NULL) {
 	for (int i = 0; i < SDLK_EXTRA_LAST; i++)
 		_controlsEnabled[i] = false;
-	_speechMode = 2;
+	_speechMode = 2; // VOICE_ONLY
 }
 
 void Engine::mainLoop() {

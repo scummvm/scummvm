@@ -24,6 +24,7 @@
 #include "model.h"
 #include "scene.h"
 #include "colormap.h"
+#include "font.h"
 
 class Material;
 class Bitmap;
@@ -32,6 +33,15 @@ class Driver {
 public:
 	Driver() { ; }
 	Driver(int screenW, int screenH, int screenBPP) { ; }
+
+	struct TextObjectHandle {
+		uint16 *bitmapData;
+		void *surface;
+		int numTex;
+		void *texIds;
+		int width;
+		int height;
+	};
 
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
 	virtual void positionCamera(Vector3d pos, Vector3d interest) = 0;
@@ -62,6 +72,8 @@ public:
 
 	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
 	virtual void loadEmergFont() = 0;
+	virtual TextObjectHandle *prepareToTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor) = 0;
+	virtual void drawTextBitmap(int x, int y, TextObjectHandle *handle) = 0;
 
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;

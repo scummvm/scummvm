@@ -21,12 +21,14 @@
 #include "color.h"
 #include "vector3d.h"
 #include "resource.h"
+#include "font.h"
 
 #include <string>
 #include <list>
 
 class Costume;
 class LipSynch;
+class TextObject;
 
 class Actor {
 public:
@@ -114,6 +116,8 @@ public:
 	}
 	void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
+	static void setSayLineFont(Font *font) { _sayLineFont = font; }
+
 private:
 	std::string _name;
 	std::string _setName;
@@ -155,6 +159,9 @@ private:
 
 	Costume *_mumbleCostume;
 	int _mumbleChore;
+
+	static Font *_sayLineFont;
+	TextObject *_sayLineText;
 
 	int getTurnChore(int dir) {
 		return (dir > 0 ? _rightTurnChore : _leftTurnChore);

@@ -397,3 +397,47 @@ void DriverTinyGL::loadEmergFont() {
 
 void DriverTinyGL::drawEmergString(int /*x*/, int /*y*/, const char * /*text*/, const Color &/*fgColor*/) {
 }
+
+Driver::TextObjectHandle *DriverTinyGL::prepareToTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
+	TextObjectHandle *handle = new TextObjectHandle();
+	handle->width = width;
+	handle->height = height;
+	handle->numTex = 0;
+	handle->texIds = NULL;
+
+	// Convert data to 16-bit RGB 565 format
+	uint16 *texData = new uint16[width * height];
+	uint16 *texDataPtr = texData;
+	handle->bitmapData = texData;
+	uint8 *bitmapData = data;
+	for (int i = 0; i < width * height; i++, texDataPtr++, bitmapData++) {
+		byte pixel = *bitmapData;
+		if (pixel == 0x00) {
+			WRITE_LE_UINT16(texDataPtr, 0xf81f);
+		} else if (pixel == 0x80) {
+			*texDataPtr = 0;
+		} else if (pixel == 0xFF) {
+			WRITE_LE_UINT16(texDataPtr, ((fgColor.red() & 0x7) << 8) |
+				((fgColor.green() & 0x3) << 3) | ((fgColor.blue() & 0x7) >> 3));
+		}
+	}
+
+	handle->surface = SDL_CreateRGBSurfaceFrom(handle->bitmapData, width, height, 16, width * 2, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
+
+	return handle;
+}
+
+void DriverTinyGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
+	SDL_Rect srcRect, dstRect;
+	srcRect.x = 0;
+	srcRect.y = 0;
+	srcRect.w = handle->width;
+	srcRect.h = handle->height;
+	dstRect.x = x;
+	dstRect.y = y;
+	dstRect.w = handle->width;
+	dstRect.h = handle->height;
+
+	SDL_SetColorKey((SDL_Surface *)handle->surface, SDL_SRCCOLORKEY, 0xf81f);
+	SDL_BlitSurface((SDL_Surface *)handle->surface, &srcRect, _screen, &dstRect);
+}
