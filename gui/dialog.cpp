@@ -29,6 +29,7 @@ void Dialog::draw()
 
 	_gui->clearArea(_x, _y, _w, _h);
 	_gui->box(_x, _y, _w, _h);
+	_gui->setAreaDirty(_x, _y, _w, _h);
 
 	while (w) {
 		w->draw();
@@ -194,5 +195,5 @@ void OptionsDialog::handleCommand(uint32 cmd)
 PauseDialog::PauseDialog(NewGui *gui)
 	: Dialog (gui, 50, 80, 220, 16)
 {
-	addResText(2, 2, 220, 16, 10);
+	addResText(4, 4, 220, 16, 10);
 }

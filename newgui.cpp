@@ -39,31 +39,36 @@
  * - ...
  */
 
-NewGui::NewGui(Scumm *s) : _s(s), _need_redraw(false)
+NewGui::NewGui(Scumm *s) : _s(s), _need_redraw(false), _pauseDialog(0),
+	_saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0)
 {
-	_pauseDialog = new PauseDialog(this);
-	_saveLoadDialog = new SaveLoadDialog(this);
-//	_aboutDialog = new AboutDialog(this);
-	_optionsDialog = new OptionsDialog(this);
 }
 
 void NewGui::pauseDialog()
 {
+	if (!_pauseDialog)
+		_pauseDialog = new PauseDialog(this);
 	openDialog(_pauseDialog);
 }
 
 void NewGui::saveloadDialog()
 {
+	if (!_saveLoadDialog)
+		_saveLoadDialog = new SaveLoadDialog(this);
 	openDialog(_saveLoadDialog);
 }
 
 void NewGui::aboutDialog()
 {
+//	if (!_aboutDialog)
+//		_aboutDialog = new AboutDialog(this);
 //	openDialog(_aboutDialog);
 }
 
 void NewGui::optionsDialog()
 {
+	if (!_optionsDialog)
+		_optionsDialog = new OptionsDialog(this);
 	openDialog(_optionsDialog);
 }
 
@@ -183,10 +188,9 @@ const char *NewGui::queryCustomString(int stringno)
 #pragma mark -
 
 
-byte *NewGui::getBasePtr(int x, int y, VirtScreen *vs)
+byte *NewGui::getBasePtr(int x, int y)
 {
-	if (vs == NULL)
-		vs = _s->findVirtScreen(y);
+	VirtScreen *vs = _s->findVirtScreen(y);
 
 	if (vs == NULL)
 		return NULL;
@@ -239,18 +243,23 @@ void NewGui::line(int x, int y, int x2, int y2, byte color)
 
 void NewGui::clearArea(int x, int y, int w, int h)
 {
-	VirtScreen *vs = _s->findVirtScreen(y);
-	byte *ptr = getBasePtr(x, y, vs);
+	byte *ptr = getBasePtr(x, y);
 	if (ptr == NULL)
 		return;
-
-	_s->setVirtscreenDirty(vs, x, y, x + w, y + h);
 
 	while (h--) {
 		for (int i = 0; i < w; i++)
 			ptr[i] = _bgcolor;
 		ptr += 320;
 	}
+}
+
+void NewGui::setAreaDirty(int x, int y, int w, int h)
+{
+	VirtScreen *vs = _s->findVirtScreen(y);
+
+	if (vs != NULL)
+		_s->setVirtscreenDirty(vs, x, y, x + w, y + h);
 }
 
 void NewGui::drawChar(const char str, int xx, int yy)
@@ -309,8 +318,7 @@ void NewGui::drawString(const char *str, int x, int y, int w, byte color)
  */
 void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, byte color)
 {
-	VirtScreen *vs = _s->findVirtScreen(y);
-	byte *ptr = getBasePtr(x, y, vs);
+	byte *ptr = getBasePtr(x, y);
 	if (ptr == NULL)
 		return;
 
@@ -323,6 +331,4 @@ void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, byte color)
 		}
 		ptr += 320;
 	}
-
-	_s->setVirtscreenDirty(vs, x, y, x + 8, y + 8);
 }

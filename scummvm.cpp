@@ -846,12 +846,14 @@ void Scumm::palManipulate(int palettes, int brightness, int color, int time, int
 
 void Scumm::pauseGame(bool user)
 {
-	_gui->pause();
+	//_gui->pause();
+	_newgui->pauseDialog();
 }
 
 void Scumm::setOptions()
 {
 	_gui->options();
+	//_newgui->optionsDialog();
 }
 
 void Scumm::shutDown(int i)
@@ -954,8 +956,6 @@ void Scumm::processKbd()
 			_defaultTalkDelay = 5;
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
-	} else if (_lastKeyHit == 320) { // F6, display new GUI
-		_newgui->pauseDialog();
 	} else if (_lastKeyHit == 321) { // F7, display new GUI
 		_newgui->saveloadDialog();
 	}

@@ -20,10 +20,10 @@
  *
  */
 
-#include"stdafx.h"
-#include"scumm.h"
-#include"actor.h"
-#include"newgui.h"
+#include "stdafx.h"
+#include "scumm.h"
+#include "actor.h"
+#include "newgui.h"
 
 Scumm::Scumm (void) {
 	_newgui = new NewGui(this);

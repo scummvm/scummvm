@@ -34,6 +34,8 @@ Widget::Widget (Dialog *boss, int x, int y, int w, int h)
 
 void Widget::draw()
 {
+	NewGui *gui = _boss->_gui;
+	
 	if (_flags & WIDGET_INVISIBLE)
 		return;
 
@@ -43,24 +45,26 @@ void Widget::draw()
 
 	// Clear background
 	if (_flags & WIDGET_CLEARBG)
-		_boss->_gui->clearArea(_x, _y, _w, _h);
+		gui->clearArea(_x, _y, _w, _h);
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
-		_boss->_gui->box(_x, _y, _w, _h);
+		gui->box(_x, _y, _w, _h);
 		_x += 4;
 		_y += 4;
 	}
 	
 	// Now perform the actual widget draw
 	drawWidget(_flags & WIDGET_HILITED);
+	
+	// Flag the draw area as dirty
+	gui->setAreaDirty(_x, _y, _w, _h);
 
+	// Restore x/y
 	if (_flags & WIDGET_BORDER) {
 		_x -= 4;
 		_y -= 4;
 	}
-	
-	// Restore x/y
 	_x -= _boss->_x;
 	_y -= _boss->_y;
 }
