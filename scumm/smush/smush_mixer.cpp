@@ -120,7 +120,7 @@ bool SmushMixer::handleFrame() {
 
 				if (_mixer->isReady()) {
 					if (!_channels[i].handle.isActive())
-						_mixer->newStream(&_channels[i].handle, rate, flags, 500000);
+						_mixer->newStream(&_channels[i].handle, rate, flags, 400000);
 					_mixer->appendStream(_channels[i].handle, data, size);
 				}
 				free(data);

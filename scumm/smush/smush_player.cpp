@@ -455,7 +455,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 					} while (--count);
 
 					if (!_IACTchannel.isActive())
-						_scumm->_mixer->newStream(&_IACTchannel, 22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 200000);
+						_scumm->_mixer->newStream(&_IACTchannel, 22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 400000);
 					_scumm->_mixer->appendStream(_IACTchannel, output_data, 0x1000);
 
 					bsize -= len;
