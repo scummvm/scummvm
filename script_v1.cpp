@@ -813,7 +813,7 @@ void Scumm::o5_actorSet()
 			a->forceClip = 0;
 		FixRoom:
 			if (a->isInCurrentRoom())
-				putActor(a, a->x, a->y, a->room);
+				a->putActor(a->x, a->y, a->room);
 			break;
 		case 21:										/* followboxes */
 			a->ignoreBoxes = 0;
@@ -1575,7 +1575,7 @@ void Scumm::o5_loadRoomWithEgo()
 	a = derefActorSafe(_vars[VAR_EGO], "o5_loadRoomWithEgo");
 
 	/* Warning: used previously _xPos, _yPos from a previous update of those */
-	putActor(a, a->x, a->y, room);
+	a->putActor(a->x, a->y, room);
 
 	x = (int16)fetchScriptWord();
 	y = (int16)fetchScriptWord();
@@ -1726,7 +1726,7 @@ void Scumm::o5_putActor()
 	x = getVarOrDirectWord(0x40);
 	y = getVarOrDirectWord(0x20);
 
-	putActor(a, x, y, a->room);
+	a->putActor(x, y, a->room);
 }
 
 
@@ -1743,7 +1743,7 @@ void Scumm::o5_putActorAtObject()
 		x = 240;
 		y = 120;
 	}
-	putActor(a, x, y, a->room);
+	a->putActor(x, y, a->room);
 }
 
 void Scumm::o5_putActorInRoom()
@@ -1758,7 +1758,7 @@ void Scumm::o5_putActorInRoom()
 	}
 	a->room = room;
 	if (!room)
-		putActor(a, 0, 0, 0);
+		a->putActor(0, 0, 0);
 }
 
 void Scumm::o5_quitPauseRestart()

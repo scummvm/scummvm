@@ -119,22 +119,30 @@ public:
 	void showActor();
 
 	void initActor(int mode);
+	void putActor(int x, int y, byte room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
+protected:
 	int calcMovementFactor(int newx, int newy);
 	int actorWalkStep();
 	int remapDirection(int dir);
 	void setupActorScale();
+public:
 	void stopActorMoving();
 	void startWalkAnim(int cmd, int angle);
 	void startAnimActor(int frame);
-	void setActorBox(int box);
 
+protected:
+	void setBox(int box);
 	int updateActorDirection();
-	void setActorDirection(int direction);
+
+public:
+	void setDirection(int direction);
 	int getActorXYPos(int &x, int &y);
 
 	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
+protected:
 	void adjustActorPos();
+public:
 	void turnToDirection(int newdir);
 	void walkActor();
 	void drawActorCostume();

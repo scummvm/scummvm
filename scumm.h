@@ -779,7 +779,6 @@ public:
 	Actor *derefActor(int id);
 	Actor *derefActorSafe(int id, const char *errmsg);
 	Actor *getFirstActor() { return _actors; } 
-	void putActor(Actor *a, int x, int y, byte room);
 	void showActors();
 
 	uint32 *_classData;

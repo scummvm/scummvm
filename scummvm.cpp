@@ -491,8 +491,8 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 						_currentRoom);
 		int x, y, dir;
 		getObjectXYPos(objectNr, x, y, dir);
-		putActor(a, x, y, _currentRoom);
-		a->setActorDirection(dir + 180);
+		a->putActor(x, y, _currentRoom);
+		a->setDirection(dir + 180);
 		a->moving = 0;
 	}
 
@@ -505,7 +505,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 		if (a && !_egoPositioned) {
 			int x, y;
 			getObjectXYPos(objectNr, x, y);
-			putActor(a, x, y, _currentRoom);
+			a->putActor(x, y, _currentRoom);
 			a->moving = 0;
 		}
 	} else {

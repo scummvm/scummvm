@@ -1393,7 +1393,7 @@ void Scumm::o6_putActorInRoom()
 		if (room != 0)
 			a->room = room;
 	}
-	putActor(a, x, y, room);
+	a->putActor(x, y, room);
 }
 
 
@@ -1413,7 +1413,7 @@ void Scumm::o6_putActorAtObject()
 	}
 	if (room == 0xFF)
 		room = a->room;
-	putActor(a, x, y, room);
+	a->putActor(x, y, room);
 }
 
 void Scumm::o6_faceActor()
@@ -1489,7 +1489,7 @@ void Scumm::o6_loadRoomWithEgo()
 
 	a = derefActorSafe(_vars[VAR_EGO], "o_loadRoomWithEgo");
 
-	putActor(a, 0, 0, room);
+	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
 	_vars[VAR_WALKTO_OBJ] = obj;
@@ -1997,7 +1997,7 @@ void Scumm::o6_actorSet()
 			a->forceClip = 0;
 	FixRooms:;
 		if (a->isInCurrentRoom())
-			putActor(a, a->x, a->y, a->room);
+			a->putActor(a->x, a->y, a->room);
 		break;
 	case 96:
 		a->ignoreBoxes = 0;
@@ -2045,7 +2045,7 @@ void Scumm::o6_actorSet()
 		break;
 	case 230:										/* set direction */
 		a->moving &= ~MF_TURN;
-		a->setActorDirection(pop());
+		a->setDirection(pop());
 		break;
 	case 231:										/* turn to direction */
 		a->turnToDirection(pop());

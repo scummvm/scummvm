@@ -271,7 +271,7 @@ int Actor::updateActorDirection()
 	return dir;
 }
 
-void Actor::setActorBox(int box)
+void Actor::setBox(int box)
 {
 	walkbox = box;
 	mask = _vm->getMaskFromBox(box);
@@ -302,7 +302,7 @@ int Actor::actorWalkStep()
 	actorY = y;
 
 	if (walkbox != walkdata.curbox && _vm->checkXYInBoxBounds(walkdata.curbox, actorX, actorY)) {
-		setActorBox(walkdata.curbox);
+		setBox(walkdata.curbox);
 	}
 
 	distX = abs(walkdata.newx - walkdata.x);
@@ -478,7 +478,7 @@ void Actor::animateActor(int anim)
 		break;
 	case 3:
 		moving &= ~MF_TURN;
-		setActorDirection(dir);
+		setDirection(dir);
 		break;
 	case 4:
 		turnToDirection(dir);
@@ -488,7 +488,7 @@ void Actor::animateActor(int anim)
 	}
 }
 
-void Actor::setActorDirection(int direction)
+void Actor::setDirection(int direction)
 {
 	uint aMask;
 	int i;
@@ -517,35 +517,35 @@ void Actor::setActorDirection(int direction)
 	needBgReset = true;
 }
 
-void Scumm::putActor(Actor *a, int dstX, int dstY, byte room)
+void Actor::putActor(int dstX, int dstY, byte newRoom)
 {
-	if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
-		clearMsgQueue();
+	if (visible && _vm->_currentRoom != newRoom && _vm->_vars[_vm->VAR_TALK_ACTOR] == number) {
+		_vm->clearMsgQueue();
 	}
 
-	a->x = dstX;
-	a->y = dstY;
-	a->room = room;
-	a->needRedraw = true;
-	a->needBgReset = true;
+	x = dstX;
+	y = dstY;
+	room = newRoom;
+	needRedraw = true;
+	needBgReset = true;
 
-	if (_vars[VAR_EGO] == a->number) {
-		_egoPositioned = true;
+	if (_vm->_vars[_vm->VAR_EGO] == number) {
+		_vm->_egoPositioned = true;
 	}
 
-	if (a->visible) {
-		if (a->isInCurrentRoom()) {
-			if (a->moving) {
-				a->startAnimActor(a->standFrame);
-				a->moving = 0;
+	if (visible) {
+		if (isInCurrentRoom()) {
+			if (moving) {
+				startAnimActor(standFrame);
+				moving = 0;
 			}
-			a->adjustActorPos();
+			adjustActorPos();
 		} else {
-			a->hideActor();
+			hideActor();
 		}
 	} else {
-		if (a->isInCurrentRoom())
-			a->showActor();
+		if (isInCurrentRoom())
+			showActor();
 	}
 }
 
@@ -606,13 +606,15 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 						if (i == -1)
 							continue;
 						
-						// FIXME - we check here if the box suggested by getPathToDestBox
-						// is locked or not. This prevents us from walking thru
-						// closed doors in some cases in Zak256. However a better fix
-						// would be to recompute the box matrix whenever flags change.
-						flags = _vm->getBoxFlags(i);
-						if (flags & 0x80 && (!(flags & 0x20) || isInClass(0x1F)))
-							continue;
+						if (_vm->_features & GF_OLD256) {
+							// FIXME - we check here if the box suggested by getPathToDestBox
+							// is locked or not. This prevents us from walking thru
+							// closed doors in some cases in Zak256. However a better fix
+							// would be to recompute the box matrix whenever flags change.
+							flags = _vm->getBoxFlags(i);
+							if (flags & 0x80 && (!(flags & 0x20) || isInClass(0x1F)))
+								continue;
+						}
 					}
 
 					if (!_vm->inBoxQuickReject(j, dstX, dstY, threshold))
@@ -663,7 +665,7 @@ void Actor::adjustActorPos()
 	y = abr.y;
 	walkdata.destbox = (byte)abr.dist;
 
-	setActorBox(abr.dist);
+	setBox(abr.dist);
 
 	walkdata.destx = -1;
 
@@ -1077,7 +1079,7 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 		x = abr.x;
 		y = abr.y;
 		if (dir != -1)
-			setActorDirection(dir);
+			setDirection(dir);
 		return;
 	}
 
@@ -1130,11 +1132,11 @@ void Actor::startWalkAnim(int cmd, int angle)
 	} else*/  {
 		switch (cmd) {
 		case 1:										/* start walk */
-			setActorDirection(angle);
+			setDirection(angle);
 			startAnimActor(walkFrame);
 			break;
 		case 2:										/* change dir only */
-			setActorDirection(angle);
+			setDirection(angle);
 			break;
 		case 3:										/* stop walk */
 			turnToDirection(angle);
@@ -1157,7 +1159,7 @@ void Actor::walkActor()
 
 		if (moving & MF_LAST_LEG) {
 			moving = 0;
-			setActorBox(walkdata.destbox);
+			setBox(walkdata.destbox);
 			startWalkAnim(3, walkdata.destdir);
 			return;
 		}
@@ -1165,20 +1167,20 @@ void Actor::walkActor()
 		if (moving & MF_TURN) {
 			j = updateActorDirection();
 			if (facing != j)
-				setActorDirection(j);
+				setDirection(j);
 			else
 				moving = 0;
 			return;
 		}
 
-		setActorBox(walkdata.curbox);
+		setBox(walkdata.curbox);
 		moving &= MF_IN_LEG;
 	}
 
 	do {
 		moving &= ~MF_NEW_LEG;
 		if ((!walkbox && (!(_vm->_features & GF_SMALL_HEADER)))) {
-			setActorBox(walkdata.destbox);
+			setBox(walkdata.destbox);
 			walkdata.curbox = walkdata.destbox;
 			break;
 		}
@@ -1197,7 +1199,7 @@ void Actor::walkActor()
 		if (calcMovementFactor(_vm->_foundPathX, _vm->_foundPathY))
 			return;
 
-		setActorBox(walkdata.curbox);
+		setBox(walkdata.curbox);
 	} while (1);
 
 	moving |= MF_LAST_LEG;
@@ -1277,7 +1279,7 @@ void Actor::walkActorOld()
 	if (moving & MF_TURN) {
 		new_dir = updateActorDirection();
 		if (facing != new_dir) {
-			setActorDirection(new_dir);
+			setDirection(new_dir);
 			return;
 		}
 		moving = 0;
