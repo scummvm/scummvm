@@ -35,6 +35,9 @@
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #endif
 
+/**
+ * Template method which swaps the vaulues of its two parameters.
+ */
 template<class T>
 static inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
@@ -44,11 +47,19 @@ int RGBMatch(byte *palette, int r, int g, int b);
 int Blend(int src, int dst, byte *palette);
 void ClearBlendCache();
 
-/*
- * Print hexdump of the data passed in
+/**
+ * Print a hexdump of the data passed in. The number of bytes per line
+ * is customizable.
+ * @param data	the data to be dumped
+ * @param len	the lenght of that data
+ * @param bytes_per_line	number of bytes to print per line (default: 16)
  */
 void hexdump(const byte * data, int len, int bytes_per_line = 16);
 
+/**
+ * A simple random number generator. Although it is definitely not suitable
+ * for cryptographic purposes, it serves our purposes just fine.
+ */
 class RandomSource {
 private:
 	uint32 _randSeed;
@@ -56,7 +67,19 @@ private:
 public:
 	RandomSource(uint32 seed = 0xA943DE33);
 	void setSeed(uint32 seed);
+	
+	/**
+	 * Generates a random unsigned integer in the interval [0, max].
+	 * @param max	the upper bound
+	 * @return	a random number in the interval [0, max].
+	 */
 	uint getRandomNumber(uint max);
+	/**
+	 * Generates a random unsigned integer in the interval [min, max].
+	 * @param min	the lower bound
+	 * @param max	the upper bound
+	 * @return	a random number in the interval [min, max].
+	 */
 	uint getRandomNumberRng(uint min, uint max);
 };
 
