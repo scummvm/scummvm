@@ -49,7 +49,7 @@ int GFX_Init(OSystem *system, int width, int height) {
 	_system->initSize(width, height);
 
 	debug(0, "Init screen %dx%d", width, height);
-	// Convert sdl surface data to R surface data
+	// Convert surface data to R surface data
 	r_back_buf.buf = (byte *)calloc(1, width * height);
 	r_back_buf.buf_w = width;
 	r_back_buf.buf_h = height;
