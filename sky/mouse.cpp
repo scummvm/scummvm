@@ -171,6 +171,10 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
 	_mouseHeight = ((struct dataFileHeader *)mouseData)->s_height;
 
 	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
+	if (frameNum == MOUSE_BLANK) 
+		_system->show_mouse(false);
+	else
+		_system->show_mouse(true);
 	//drawNewMouse();
 
 	//_mouseFlag ^= (~_mouseFlag | MF_IN_INT);
