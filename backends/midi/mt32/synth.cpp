@@ -56,22 +56,24 @@
 #define NEW_REVERB_TIME   14
 #define NEW_REVERB_LEVEL  15
 
-#pragma pack(1)
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 static union mt32ramFormat {
 	memParams params;
 	memBanks patchabs;
 	memAbsolute memabs;
-
-
 	// System memory 10
-
 	// Display 20
-
 	// Reset 7F
-
-
 } ALIGN_PACKED mt32ram, mt32default;
-#pragma pack()
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
+
+
 // Borrowed from Borland's site
 int axtoi(char *hexStg) {
   unsigned int n = 0;         // position in string
@@ -3410,14 +3412,14 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 	return true;
 }
 
-BOOL RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack) {
+bool RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack) {
 
 #ifdef NOMANSLAND
 
 	File fp;
 	fp.open("waveforms.raw", File::kFileWriteMode);
 
-	if(!fp.isOpen()) return FALSE;
+	if(!fp.isOpen()) return false;
 
 	double ampsize = WGAMP;
 	int f;
@@ -3512,11 +3514,7 @@ BOOL RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack
 	fp.close();
 #endif
 
-	return TRUE;
-
-
-
-
+	return true;
 }
 
 bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __CPARTIALMT32_H__
-#define __CPARTIALMT32_H__
+#ifndef CPARTIALMT32_H
+#define CPARTIALMT32_H
 
 #include "backends/midi/mt32/structures.h"
 

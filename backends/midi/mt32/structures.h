@@ -20,8 +20,8 @@
  *
  */
 
-#if !defined __MT32STRUCTURES_H__
-#define __MT32STRUCTURES_H__
+#ifndef MT32STRUCTURES_H
+#define MT32STRUCTURES_H
 
 #include "stdafx.h"
 #include "common/scummsys.h"
@@ -48,14 +48,11 @@ static inline void LOG_MSG(char *fmt, ...)
 	fflush(stdout);
 }
 
+#define ALIGN_PACKED GCC_PACK
+
 #if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW32__))
 
-#define ALIGN_PACKED
-
 #else
-
-//#define ALIGN_PACKED __attribute__ ((__packed__))
-#define ALIGN_PACKED __attribute__ ((aligned (1)))
 
 #ifdef HAVE_X86
 #define eflag(value) __asm__ __volatile__("pushfl \n popfl \n" : : "a"(value))
@@ -441,10 +438,10 @@ static inline void atti386_PartProductOutput(int quadlen, int16 leftvol, int16 r
 
 #endif
 
-extern bool enabled3DNow;
-extern bool enabledSSE;
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
 
-#pragma pack(1)
 struct timbreParam {
 	struct commonParam {
 		char name[10];
@@ -571,7 +568,9 @@ struct memAbsolute {
 	char mt32memory[sizeof(memBanks)];
 } ALIGN_PACKED;
 
-#pragma pack()
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 struct partialFormat {
 	uint32 addr;

@@ -20,8 +20,8 @@
  *
  */
 
-#if !defined __CSYNTHMT32_H__
-#define __CSYNTHMT32_H__
+#ifndef CSYNTHMT32_H
+#define CSYNTHMT32_H
 
 #ifdef HAVE_X86
 #if defined(_MSC_VER)
@@ -34,8 +34,6 @@
 #else
 #define USE_MMX 0
 #endif
-
-extern const char *rom_path;
 
 #define AMPENV 0
 #define FILTENV 1
@@ -79,16 +77,6 @@ struct SynthProperties {
 	int RevLevel;
 };
 
-#ifndef BOOL
-	#define BOOL bool
-#endif
-#ifndef TRUE
-	#define TRUE true
-#endif
-#ifndef FALSE
-	#define FALSE false
-#endif
-
 // This is the specification of the Callback routine used when calling the RecalcWaveforms
 // function
 typedef void (*recalcStatusCallback)(int percDone);
@@ -97,7 +85,7 @@ typedef void (*recalcStatusCallback)(int percDone);
 // sampling rate.  The callback routine provides interactivity to let the user know what
 // percentage is complete in regenerating the waveforms.  When a NULL pointer is used as the
 // callback routine, no status is reported.
-BOOL RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack);
+bool RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack);
 
 typedef float (*iir_filter_type)(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
 extern iir_filter_type usefilter;
@@ -130,7 +118,7 @@ extern int32 getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly);
 extern int32 getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly);
 extern int32 getFiltEnvelope(int16 wg, dpoly::partialStatus *pStat, dpoly *poly);
 
-class CSynthMT32  {
+class CSynthMT32 {
 private:
 
 	unsigned char initmode;
@@ -155,11 +143,11 @@ public:
 	void PlayMsg(uint32 msg);
 
 	// Sends a string of Sysex commands to the MT-32 for immediate interpretation
-        void PlaySysex(uint8 * sysex, uint32 len);
-        
-        // Save the system state to a sysex file specified by filename 
-        int DumpSysex(char *filename);
-   
+	void PlaySysex(uint8 * sysex, uint32 len);
+
+	// Save the system state to a sysex file specified by filename 
+	int DumpSysex(char *filename);
+
 	// This callback routine is used to have the MT-32 generate samples to the specified
 	// output stream.  The length is in whole samples, not bytes. (I.E. in 16-bit stereo,
 	// one sample is 4 bytes)
