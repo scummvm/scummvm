@@ -598,34 +598,34 @@ void Gui::leftMouseClick(int x, int y)
 
 void Gui::handleSoundDialogCommand(int cmd)
 {
-	if (cmd == 40 || cmd == 50) {
-		if (cmd == 40) {
-			_s->_sound_volume_master = _gui_variables[0];	// Master
-			_s->_sound_volume_music = _gui_variables[1];	// Music
-			_s->_sound_volume_sfx = _gui_variables[2];	// SFX
+	if (cmd == 50) {
+		close();
+	} else if (cmd == 40) {
+		_s->_sound_volume_master = _gui_variables[0];	// Master
+		_s->_sound_volume_music = _gui_variables[1];	// Music
+		_s->_sound_volume_sfx = _gui_variables[2];	// SFX
 
-			IMuse *imuse = _s->_imuse;
-			imuse->set_music_volume(_s->_sound_volume_music);
-			imuse->set_master_volume(_s->_sound_volume_master);
-			_s->_mixer->set_volume(_s->_sound_volume_sfx);
-			scummcfg->set("master_volume", _s->_sound_volume_master);
-			scummcfg->set("music_volume", _s->_sound_volume_music);
-			scummcfg->set("sfx_volume", _s->_sound_volume_sfx);
-			scummcfg->flush();
-		}
+		IMuse *imuse = _s->_imuse;
+		imuse->set_music_volume(_s->_sound_volume_music);
+		imuse->set_master_volume(_s->_sound_volume_master);
+		_s->_mixer->set_volume(_s->_sound_volume_sfx);
+		scummcfg->set("master_volume", _s->_sound_volume_master);
+		scummcfg->set("music_volume", _s->_sound_volume_music);
+		scummcfg->set("sfx_volume", _s->_sound_volume_sfx);
+		scummcfg->flush();
 
 		close();
-		return;
-	}
-	if ((cmd % 10) == 1) {
-		if (_gui_variables[cmd / 10] < 100)
-			_gui_variables[cmd / 10] += 5;
 	} else {
-		if (_gui_variables[cmd / 10] > 0)
-			_gui_variables[cmd / 10] -= 5;
-	}
+		if ((cmd % 10) == 1) {
+			if (_gui_variables[cmd / 10] < 100)
+				_gui_variables[cmd / 10] += 5;
+		} else {
+			if (_gui_variables[cmd / 10] > 0)
+				_gui_variables[cmd / 10] -= 5;
+		}
 
-	draw((cmd / 10) * 10 + 3, (cmd / 10) * 10 + 3);
+		draw((cmd / 10) * 10 + 3, (cmd / 10) * 10 + 3);
+	}
 }
 
 void Gui::handleOptionsDialogCommand(int cmd)
