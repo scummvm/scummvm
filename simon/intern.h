@@ -48,7 +48,6 @@ enum {
 	CHILD2_SIZE = sizeof(Child2) - sizeof(int16)
 };
 
-
 struct Item {
 	uint16 parent;
 	uint16 child;

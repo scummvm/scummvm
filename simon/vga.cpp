@@ -108,17 +108,16 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 };
 
 // Script parser
-void SimonState::run_vga_script()
-{
+void SimonState::run_vga_script() {
 	for (;;) {
 		uint opcode;
 
-if (_continous_vgascript) {
-		if ((void *)_vc_ptr != (void *)&vc_get_out_of_code) {
-			fprintf(_dump_file, "%.5d %.5X: %5d %4d ", _vga_tick_counter, _vc_ptr - _cur_vga_file_1, _vga_cur_sprite_id, _vga_cur_file_id);
-			dump_video_script(_vc_ptr, true);
+		if (_continous_vgascript) {
+			if ((void *)_vc_ptr != (void *)&vc_get_out_of_code) {
+				fprintf(_dump_file, "%.5d %.5X: %5d %4d ", _vga_tick_counter, _vc_ptr - _cur_vga_file_1, _vga_cur_sprite_id, _vga_cur_file_id);
+				dump_video_script(_vc_ptr, true);
+			}
 		}
-}
 
 		if (!(_game & GF_SIMON2)) {
 			opcode = READ_BE_UINT16_UNALIGNED(_vc_ptr);
@@ -137,29 +136,24 @@ if (_continous_vgascript) {
 	}
 }
 
-int SimonState::vc_read_var_or_word()
-{
+int SimonState::vc_read_var_or_word() {
 	int16 var = vc_read_next_word();
 	if (var < 0)
 		var = vc_read_var(-var);
 	return var;
 }
 
-uint SimonState::vc_read_next_word()
-{
+uint SimonState::vc_read_next_word() {
 	uint a = READ_BE_UINT16_UNALIGNED(_vc_ptr);
 	_vc_ptr += 2;
 	return a;
 }
 
-uint SimonState::vc_read_next_byte()
-{
+uint SimonState::vc_read_next_byte() {
 	return *_vc_ptr++;
 }
 
-
-void SimonState::vc_skip_next_instruction()
-{
+void SimonState::vc_skip_next_instruction() {
 	static const byte opcode_param_len_simon1[] = {
 		0, 6, 2, 10, 6, 4, 2, 2,
 		4, 4, 10, 0, 2, 2, 2, 2,
@@ -196,8 +190,8 @@ void SimonState::vc_skip_next_instruction()
 		fprintf(_dump_file, "; skipped\n");
 }
 
-void SimonState::o_read_vgares_23()
-{																// Simon1 Only
+void SimonState::o_read_vgares_23() {
+	// Simon1 Only
 	if (_vga_res_328_loaded == true) {
 		_vga_res_328_loaded = false;
 		_lock_word |= 0x4000;
@@ -206,8 +200,8 @@ void SimonState::o_read_vgares_23()
 	}
 }
 
-void SimonState::o_read_vgares_328()
-{																// Simon1 Only
+void SimonState::o_read_vgares_328() {
+	// Simon1 Only
 	if (_vga_res_328_loaded == false) {
 		_vga_res_328_loaded = true;
 		_lock_word |= 0x4000;
@@ -216,16 +210,13 @@ void SimonState::o_read_vgares_328()
 	}
 }
 
-
 // VGA Script commands
-void SimonState::vc_1_dummy_op()
-{
+void SimonState::vc_1_dummy_op() {
 	/* dummy opcode */
 	_vc_ptr += 6;
 }
 
-void SimonState::vc_2_call()
-{
+void SimonState::vc_2_call() {
 	VgaPointersEntry *vpe;
 	uint num;
 	uint res;
@@ -273,8 +264,7 @@ void SimonState::vc_2_call()
 	_vc_ptr = vc_ptr_org;
 }
 
-void SimonState::vc_3_new_thread()
-{
+void SimonState::vc_3_new_thread() {
 	uint16 a, b, c, d, e, f;
 	uint16 res;
 	VgaSprite *vsp;
@@ -358,50 +348,43 @@ void SimonState::vc_3_new_thread()
 	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs), b, res);
 }
 
-void SimonState::vc_4_dummy_op()
-{
+void SimonState::vc_4_dummy_op() {
 	/* dummy opcode */
 	_vc_ptr += 6;
 }
 
-void SimonState::vc_5_skip_if_neq()
-{
+void SimonState::vc_5_skip_if_neq() {
 	uint var = vc_read_next_word();
 	uint value = vc_read_next_word();
 	if (vc_read_var(var) != value)
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_6_skip_ifn_sib_with_a()			// vc_6_maybe_skip_3_inv
-{
+void SimonState::vc_6_skip_ifn_sib_with_a() {			// vc_6_maybe_skip_3_inv
 	if (!vc_maybe_skip_proc_3(vc_read_next_word()))
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_7_skip_if_sib_with_a()			// vc_7_maybe_skip_3
-{
+void SimonState::vc_7_skip_if_sib_with_a() {			// vc_7_maybe_skip_3
 	if (vc_maybe_skip_proc_3(vc_read_next_word()))
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_8_skip_if_parent_is()			// vc_8_maybe_skip_2			
-{
+void SimonState::vc_8_skip_if_parent_is() {			// vc_8_maybe_skip_2			
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	if (!vc_maybe_skip_proc_2(a, b))
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_9_skip_if_unk3_is()				// vc_9_maybe_skip
-{
+void SimonState::vc_9_skip_if_unk3_is() {				// vc_9_maybe_skip
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	if (!vc_maybe_skip_proc_1(a, b))
 		vc_skip_next_instruction();
 }
 
-byte *vc_10_depack_column(VC10_state * vs)
-{
+byte *vc_10_depack_column(VC10_state * vs) {
 	int8 a = vs->depack_cont;
 	byte *src = vs->depack_src;
 	byte *dst = vs->depack_dest;
@@ -444,8 +427,7 @@ get_out:;
 	return vs->depack_dest + vs->y_skip;
 }
 
-void vc_10_skip_cols(VC10_state * vs)
-{
+void vc_10_skip_cols(VC10_state *vs) {
 	vs->depack_cont = -0x80;
 	while (vs->x_skip) {
 		vc_10_depack_column(vs);
@@ -453,8 +435,7 @@ void vc_10_skip_cols(VC10_state * vs)
 	}
 }
 
-byte *SimonState::vc_10_depack_swap(byte *src, uint w, uint h)
-{
+byte *SimonState::vc_10_depack_swap(byte *src, uint w, uint h) {
 	w <<= 3;
 
 	{
@@ -525,11 +506,9 @@ byte *SimonState::vc_10_depack_swap(byte *src, uint w, uint h)
 	}
 
 	return _video_buf_1;
-
 }
 
-byte *vc_10_no_depack_swap(byte *src)
-{
+byte *vc_10_no_depack_swap(byte *src) {
 	error("vc_10_no_depack_swap unimpl");
 	return NULL;
 }
@@ -544,8 +523,7 @@ static uint16 _video_windows[128] = {
 };
 
 /* simon2 specific */
-void SimonState::vc_10_helper_8(byte *dst, byte *src)
-{
+void SimonState::vc_10_helper_8(byte *dst, byte *src) {
 	const uint pitch = _dx_surface_pitch;
 	int8 reps = (int8)0x80;
 	byte color;
@@ -589,8 +567,7 @@ void SimonState::vc_10_helper_8(byte *dst, byte *src)
 	}
 }
 
-void SimonState::vc_10_draw()
-{
+void SimonState::vc_10_draw() {
 	byte *p2;
 	uint width, height;
 	byte flags;
@@ -669,7 +646,6 @@ void SimonState::vc_10_draw()
 		} while (--w);
 
 		dx_unlock_attached();
-
 
 		return;
 	}
@@ -987,13 +963,11 @@ void SimonState::vc_10_draw()
 
 }
 
-void SimonState::vc_11_clear_pathfind_array()
-{
+void SimonState::vc_11_clear_pathfind_array() {
 	memset(&_pathfind_array, 0, sizeof(_pathfind_array));
 }
 
-void SimonState::vc_12_delay()					//vc_12_sleep_variable
-{
+void SimonState::vc_12_delay() {					//vc_12_sleep_variable
 	uint num;
 
 	if (!(_game & GF_SIMON2)) {
@@ -1006,24 +980,21 @@ void SimonState::vc_12_delay()					//vc_12_sleep_variable
 	_vc_ptr = (byte *)&vc_get_out_of_code;
 }
 
-void SimonState::vc_13_offset_x()
-{
+void SimonState::vc_13_offset_x() {
 	VgaSprite *vsp = find_cur_sprite();
 	int16 a = vc_read_next_word();
 	vsp->x += a;
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_14_offset_y()
-{
+void SimonState::vc_14_offset_y() {
 	VgaSprite *vsp = find_cur_sprite();
 	int16 a = vc_read_next_word();
 	vsp->y += a;
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_15_wakeup_id()				//vc_15_start_funkystruct_by_id
-{
+void SimonState::vc_15_wakeup_id() {				//vc_15_start_funkystruct_by_id
 	VgaSleepStruct *vfs = _vga_sleep_structs, *vfs_tmp;
 	uint16 id = vc_read_next_word();
 	while (vfs->ident != 0) {
@@ -1044,9 +1015,7 @@ void SimonState::vc_15_wakeup_id()				//vc_15_start_funkystruct_by_id
 		_vga_wait_for = 0;
 }
 
-
-void SimonState::vc_16_sleep_on_id()				//vc_16_setup_funkystruct
-{
+void SimonState::vc_16_sleep_on_id() {				//vc_16_setup_funkystruct
 	VgaSleepStruct *vfs = _vga_sleep_structs;
 	while (vfs->ident)
 		vfs++;
@@ -1059,8 +1028,7 @@ void SimonState::vc_16_sleep_on_id()				//vc_16_setup_funkystruct
 	_vc_ptr = (byte *)&vc_get_out_of_code;
 }
 
-void SimonState::vc_17_set_pathfind_item()
-{
+void SimonState::vc_17_set_pathfind_item() {
 	uint a = vc_read_next_word();
 	_pathfind_array[a - 1] = (uint16 *)_vc_ptr;
 	while (READ_BE_UINT16_UNALIGNED(_vc_ptr) != 999)
@@ -1068,46 +1036,39 @@ void SimonState::vc_17_set_pathfind_item()
 	_vc_ptr += 2;
 }
 
-void SimonState::vc_18_jump_rel()
-{
+void SimonState::vc_18_jump_rel() {
 	int16 offs = vc_read_next_word();
 	_vc_ptr += offs;
 }
 
 /* chain to script? */
-void SimonState::vc_19_chain_to_script()
-{
+void SimonState::vc_19_chain_to_script() {
 	/* XXX: not implemented */
 	error("vc_19_chain_to_script: not implemented");
 }
 
-
 /* helper routines */
 
 /* write unaligned 16-bit */
-static void write_16_le(void *p, uint16 a)
-{
+static void write_16_le(void *p, uint16 a) {
 	((byte *)p)[0] = (byte)(a);
 	((byte *)p)[1] = (byte)(a >> 8);
 }
 
 /* read unaligned 16-bit */
-static uint16 read_16_le(void *p)
-{
+static uint16 read_16_le(void *p) {
 	return ((byte *)p)[0] | (((byte *)p)[1] << 8);
 }
 
 /* FIXME: unaligned access */
-void SimonState::vc_20_set_code_word()
-{
+void SimonState::vc_20_set_code_word() {
 	uint16 a = vc_read_next_word();
 	write_16_le(_vc_ptr, a);
 	_vc_ptr += 2;
 }
 
 /* FIXME: unaligned access */
-void SimonState::vc_21_jump_if_code_word()
-{
+void SimonState::vc_21_jump_if_code_word() {
 	if (!(_game & GF_SIMON2)) {
 		int16 a = vc_read_next_word();
 		byte *tmp = _vc_ptr + a;
@@ -1129,8 +1090,7 @@ void SimonState::vc_21_jump_if_code_word()
 	}
 }
 
-void SimonState::vc_22_set_pal()
-{
+void SimonState::vc_22_set_pal() {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	uint num = a == 0 ? 0x20 : 0x10;
@@ -1154,8 +1114,7 @@ void SimonState::vc_22_set_pal()
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_23_set_pri()
-{
+void SimonState::vc_23_set_pri() {
 	VgaSprite *vsp = find_cur_sprite(), *vus2;
 	uint16 pri = vc_read_next_word();
 	VgaSprite bak;
@@ -1194,8 +1153,7 @@ void SimonState::vc_23_set_pri()
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_24_set_image_xy()
-{
+void SimonState::vc_24_set_image_xy() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->image = vc_read_var_or_word();
 
@@ -1215,8 +1173,7 @@ void SimonState::vc_24_set_image_xy()
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_25_halt_thread()				//vc_25_del_sprite_and_get_out
-{
+void SimonState::vc_25_halt_thread() {				//vc_25_del_sprite_and_get_out
 	VgaSprite *vsp = find_cur_sprite();
 	while (vsp->id != 0) {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
@@ -1226,8 +1183,7 @@ void SimonState::vc_25_halt_thread()				//vc_25_del_sprite_and_get_out
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_26_set_window()
-{
+void SimonState::vc_26_set_window() {
 	uint16 *as = &_video_windows[vc_read_next_word() * 4];
 	as[0] = vc_read_next_word();
 	as[1] = vc_read_next_word();
@@ -1235,8 +1191,7 @@ void SimonState::vc_26_set_window()
 	as[3] = vc_read_next_word();
 }
 
-void SimonState::vc_27_reset_simon1()
-{
+void SimonState::vc_27_reset_simon1() {
 	VgaSprite bak, *vsp;
 	VgaSleepStruct *vfs;
 	VgaTimerEntry *vte, *vte2;
@@ -1282,9 +1237,7 @@ void SimonState::vc_27_reset_simon1()
 	_lock_word &= ~8;
 }
 
-
-void SimonState::vc_27_reset_simon2()
-{
+void SimonState::vc_27_reset_simon2() {
 	_lock_word |= 8;
 
 	{
@@ -1319,76 +1272,64 @@ void SimonState::vc_27_reset_simon2()
 	_lock_word &= ~8;
 }
 
-void SimonState::vc_27_reset()
-{
+void SimonState::vc_27_reset() {
 	if (!(_game & GF_SIMON2))
 		vc_27_reset_simon1();
 	else
 		vc_27_reset_simon2();
 }
 
-void SimonState::vc_28_dummy_op()
-{
+void SimonState::vc_28_dummy_op() {
 	/* dummy opcode */
 	_vc_ptr += 8;
 }
 
-void SimonState::vc_29_stop_all_sounds()
-{
+void SimonState::vc_29_stop_all_sounds() {
 	_sound->stopAll();
 }
 
-void SimonState::vc_30_set_base_delay()
-{
+void SimonState::vc_30_set_base_delay() {
 	_vga_base_delay = vc_read_next_word();
 }
 
-void SimonState::vc_31_set_palette_mode()
-{
+void SimonState::vc_31_set_palette_mode() {
 	_video_palette_mode = vc_read_next_word();
 }
 
-uint SimonState::vc_read_var(uint var)
-{
+uint SimonState::vc_read_var(uint var) {
 	assert(var < 255);
 	return (uint16)_variableArray[var];
 }
 
-void SimonState::vc_write_var(uint var, int16 value)
-{
+void SimonState::vc_write_var(uint var, int16 value) {
 	_variableArray[var] = value;
 }
 
-void SimonState::vc_32_copy_var()
-{
+void SimonState::vc_32_copy_var() {
 	uint16 a = vc_read_var(vc_read_next_word());
 	vc_write_var(vc_read_next_word(), a);
 }
 
-void SimonState::vc_33_force_unlock()
-{
+void SimonState::vc_33_force_unlock() {
 	if (_lock_counter != 0) {
 		_lock_counter = 1;
 		unlock();
 	}
 }
 
-void SimonState::vc_34_force_lock()
-{
+void SimonState::vc_34_force_lock() {
 	lock();
 	_lock_counter = 200;
 	_left_button_down = 0;
 }
 
-void SimonState::vc_35()
-{
+void SimonState::vc_35() {
 	/* not used? */
 	_vc_ptr += 4;
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_36_saveload_thing()
-{
+void SimonState::vc_36_saveload_thing() {
 	_video_var_8 = false;
 	uint vga_res = vc_read_next_word();
 	uint mode = vc_read_next_word();
@@ -1404,29 +1345,25 @@ void SimonState::vc_36_saveload_thing()
 	}
 }
 
-void SimonState::vc_37_offset_y_f()				//vc_37_sprite_unk3_add
-{
+void SimonState::vc_37_offset_y_f() {				//vc_37_sprite_unk3_add
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y += vc_read_var(vc_read_next_word());
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_38_skip_if_var_zero()
-{
+void SimonState::vc_38_skip_if_var_zero() {
 	uint var = vc_read_next_word();
 	if (vc_read_var(var) == 0)
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_39_set_var()
-{
+void SimonState::vc_39_set_var() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_next_word();
 	vc_write_var(var, value);
 }
 
-void SimonState::vc_40_var_add()
-{
+void SimonState::vc_40_var_add() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) + vc_read_next_word();
 
@@ -1455,8 +1392,7 @@ no_scroll:;
 	vc_write_var(var, value);
 }
 
-void SimonState::vc_41_var_sub()
-{
+void SimonState::vc_41_var_sub() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) - vc_read_next_word();
 
@@ -1485,8 +1421,7 @@ no_scroll:;
 	vc_write_var(var, value);
 }
 
-void SimonState::vc_42_delay_if_not_eq()
-{
+void SimonState::vc_42_delay_if_not_eq() {
 	uint val = vc_read_var(vc_read_next_word());
 	if (val == vc_read_next_word()) {
 
@@ -1495,42 +1430,36 @@ void SimonState::vc_42_delay_if_not_eq()
 	}
 }
 
-void SimonState::vc_43_skip_if_bit_clear()
-{
+void SimonState::vc_43_skip_if_bit_clear() {
 	if (!vc_get_bit(vc_read_next_word())) {
 		vc_skip_next_instruction();
 	}
 }
 
-void SimonState::vc_44_skip_if_bit_set()
-{
+void SimonState::vc_44_skip_if_bit_set() {
 	if (vc_get_bit(vc_read_next_word())) {
 		vc_skip_next_instruction();
 	}
 }
 
-void SimonState::vc_45_set_x()
-{
+void SimonState::vc_45_set_x() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->x = vc_read_var(vc_read_next_word());
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_46_set_y()
-{
+void SimonState::vc_46_set_y() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y = vc_read_var(vc_read_next_word());
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_47_add_var_f()
-{
+void SimonState::vc_47_add_var_f() {
 	uint var = vc_read_next_word();
 	vc_write_var(var, vc_read_var(var) + vc_read_var(vc_read_next_word()));
 }
 
-void SimonState::vc_48()
-{
+void SimonState::vc_48() {
 	uint a = (uint16)_variableArray[12];
 	uint b = (uint16)_variableArray[13];
 	int c = _variableArray[14];
@@ -1561,38 +1490,31 @@ void SimonState::vc_48()
 
 		vp += 2;
 	} while (--c);
-
 }
 
-void SimonState::vc_set_bit_to(uint bit, bool value)
-{
+void SimonState::vc_set_bit_to(uint bit, bool value) {
 	uint16 *bits = &_bit_array[bit >> 4];
 	*bits = (*bits & ~(1 << (bit & 15))) | (value << (bit & 15));
 }
 
-bool SimonState::vc_get_bit(uint bit)
-{
+bool SimonState::vc_get_bit(uint bit) {
 	uint16 *bits = &_bit_array[bit >> 4];
 	return (*bits & (1 << (bit & 15))) != 0;
 }
 
-void SimonState::vc_49_set_bit()
-{
+void SimonState::vc_49_set_bit() {
 	vc_set_bit_to(vc_read_next_word(), true);
 }
 
-void SimonState::vc_50_clear_bit()
-{
+void SimonState::vc_50_clear_bit() {
 	vc_set_bit_to(vc_read_next_word(), false);
 }
 
-void SimonState::vc_51_clear_hitarea_bit_0x40()
-{
+void SimonState::vc_51_clear_hitarea_bit_0x40() {
 	clear_hitarea_bit_0x40(vc_read_next_word());
 }
 
-void SimonState::vc_52_play_sound()
-{
+void SimonState::vc_52_play_sound() {
 	uint16 a = vc_read_next_word();
 
 	if (_game == GAME_SIMON1DOS) {
@@ -1609,18 +1531,15 @@ void SimonState::vc_52_play_sound()
 	}
 }
 
-void SimonState::vc_53_no_op()
-{
+void SimonState::vc_53_no_op() {
 	/* no op */
 }
 
-void SimonState::vc_54_no_op()
-{
+void SimonState::vc_54_no_op() {
 	/* no op */
 }
 
-void SimonState::vc_55_offset_hit_area()
-{
+void SimonState::vc_55_offset_hit_area() {
 	HitArea *ha = _hit_areas;
 	uint count = ARRAYSIZE(_hit_areas);
 	uint16 id = vc_read_next_word();
@@ -1641,8 +1560,7 @@ void SimonState::vc_55_offset_hit_area()
 	_need_hitarea_recalc++;
 }
 
-void SimonState::vc_56_no_op()
-{
+void SimonState::vc_56_no_op() {
 	/* no op in simon1 */
 	if (_game & GF_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
@@ -1655,8 +1573,7 @@ void SimonState::vc_56_no_op()
 	}
 }
 
-void SimonState::vc_59()
-{
+void SimonState::vc_59() {
 	if (_game & GF_SIMON2) {
 		uint file = vc_read_next_word();
 		uint start = vc_read_next_word();
@@ -1671,8 +1588,7 @@ void SimonState::vc_59()
 	}
 }
 
-void SimonState::vc_58()
-{
+void SimonState::vc_58() {
 	uint sprite = _vga_cur_sprite_id;
 	uint file = _vga_cur_file_id;
 	byte *vc_ptr;
@@ -1692,14 +1608,11 @@ void SimonState::vc_58()
 	_vga_cur_file_id = file;
 }
 
-void SimonState::vc_57_no_op()
-{
+void SimonState::vc_57_no_op() {
 	/* no op */
-
 }
 
-void SimonState::vc_kill_thread(uint file, uint sprite)
-{
+void SimonState::vc_kill_thread(uint file, uint sprite) {
 	uint16 old_sprite_id, old_cur_file_id;
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
@@ -1748,8 +1661,7 @@ void SimonState::vc_kill_thread(uint file, uint sprite)
 	_vc_ptr = vc_org;
 }
 
-void SimonState::vc_60_kill_thread()
-{
+void SimonState::vc_60_kill_thread() {
 	uint file;
 
 	if (_game & GF_SIMON2) {
@@ -1761,8 +1673,7 @@ void SimonState::vc_60_kill_thread()
 	vc_kill_thread(file, sprite);
 }
 
-void SimonState::vc_61_sprite_change()
-{
+void SimonState::vc_61_sprite_change() {
 	VgaSprite *vsp = find_cur_sprite();
 
 	vsp->image = vc_read_var_or_word();
@@ -1774,11 +1685,9 @@ void SimonState::vc_61_sprite_change()
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_62_palette_thing()
-{
+void SimonState::vc_62_palette_thing() {
 	uint i;
 	byte *vc_ptr_org = _vc_ptr;
-
 
 	vc_29_stop_all_sounds();
 
@@ -1842,8 +1751,7 @@ void SimonState::vc_62_palette_thing()
 	_vc_ptr = vc_ptr_org;
 }
 
-void SimonState::vc_63_palette_thing_2()
-{
+void SimonState::vc_63_palette_thing_2() {
 	_palette_color_count = 208;
 	if (_video_palette_mode != 4) {
 		_palette_color_count = 256;
@@ -1851,14 +1759,14 @@ void SimonState::vc_63_palette_thing_2()
 	_video_var_3 = false;
 }
 
-void SimonState::vc_64_skip_if_text()
-{																// Simon2
+void SimonState::vc_64_skip_if_text() {
+	// Simon2
 	if (vc_59_helper())
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_65_palette_thing_3()
-{																// Simon2
+void SimonState::vc_65_palette_thing_3() {
+	// Simon2
 	_palette_color_count = 0x270;
 	_video_num_pal_colors = 0x0D0;
 	if (_video_palette_mode != 4) {
@@ -1869,8 +1777,8 @@ void SimonState::vc_65_palette_thing_3()
 	_video_var_3 = false;
 }
 
-void SimonState::vc_66_skip_if_nz()
-{																// Simon2
+void SimonState::vc_66_skip_if_nz() {
+	// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 
@@ -1878,8 +1786,8 @@ void SimonState::vc_66_skip_if_nz()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_67_skip_if_ge()
-{																// Simon2
+void SimonState::vc_67_skip_if_ge() {
+	// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 
@@ -1887,8 +1795,8 @@ void SimonState::vc_67_skip_if_ge()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_68_skip_if_le()
-{																// Simon2
+void SimonState::vc_68_skip_if_le() {
+	// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 
@@ -1896,8 +1804,8 @@ void SimonState::vc_68_skip_if_le()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_69()
-{																// Simon2
+void SimonState::vc_69() {
+	// Simon2
 	uint16 a = vc_read_next_word();
 	uint16 b = vc_read_next_word();
 
@@ -1920,8 +1828,8 @@ void SimonState::vc_69()
 
 }
 
-void SimonState::vc_70()
-{																// Simon2
+void SimonState::vc_70() {
+	// Simon2
 	uint16 a = vc_read_next_word();
 	uint16 b = vc_read_next_word();
 
@@ -1932,15 +1840,14 @@ void SimonState::vc_70()
 		warning("vc_70(%d,%d): music stuff?", a, b);
 }
 
-
-void SimonState::vc_71()
-{																// Simon2
+void SimonState::vc_71() {
+	// Simon2
 	if (_vc72_var3 == 0xFFFF && _vc72_var1 == 0xFFFF)
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_72()
-{																// Simon2
+void SimonState::vc_72() {
+	// Simon2
 	uint16 a = vc_read_next_word();
 	uint16 b = vc_read_next_word();
 	if (a != _vc72_var1) {
@@ -1952,14 +1859,14 @@ void SimonState::vc_72()
 		warning("vc_72(%d,%d): music stuff?", a, b);
 }
 
-void SimonState::vc_73_set_op189_flag()
-{																// Simon2
+void SimonState::vc_73_set_op189_flag() {
+	// Simon2
 	vc_read_next_byte();
 	_op_189_flags |= 1 << vc_read_next_byte();
 }
 
-void SimonState::vc_74_clear_op189_flag()
-{																// Simon2
+void SimonState::vc_74_clear_op189_flag() {
+	// Simon2
 	vc_read_next_byte();
 	_op_189_flags &= ~(1 << vc_read_next_byte());
 }

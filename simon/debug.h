@@ -1060,7 +1060,6 @@ const char *const simon1_video_opcode_name_table[] = {
 	"|PALETTE_THING_2",
 };
 
-
 const char *const simon2_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",

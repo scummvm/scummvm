@@ -22,8 +22,7 @@
 #include "common/file.h"
 #include "common/engine.h"
 
-SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer)
-{
+SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer) {
 	_game = game;
 	_gameDataPath = gameDataPath;
 	_mixer = mixer;
@@ -111,8 +110,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 	}
 }
 
-void SimonSound::readSfxFile(const char *filename, const char *gameDataPath)
-{
+void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
 	stopAll();
 
 	File *file = new File();
@@ -135,8 +133,7 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath)
 	_effects = new WavSound(_mixer, file);
 }
 
-void SimonSound::loadSfxTable(File *gameFile, uint32 base) 
-{
+void SimonSound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
 
 	if (_game & GF_WIN)
@@ -145,8 +142,7 @@ void SimonSound::loadSfxTable(File *gameFile, uint32 base)
 		_effects = new VocSound(_mixer, gameFile, base);
 }
 
-void SimonSound::playVoice(uint sound)
-{
+void SimonSound::playVoice(uint sound) {
 	if (_game == GAME_SIMON2MAC && _filenums) {
 		char filename[16];
 		sprintf(filename, "voices%d.dat", _filenums[sound]);
@@ -165,8 +161,7 @@ void SimonSound::playVoice(uint sound)
 	_voice_index = _voice->playSound(sound, &_voice_handle);
 }
 
-void SimonSound::playEffects(uint sound)
-{
+void SimonSound::playEffects(uint sound) {
 	if (!_effects)
 		return;
 	
@@ -176,8 +171,7 @@ void SimonSound::playEffects(uint sound)
 	_effects->playSound(sound, &_effects_handle);
 }
 
-void SimonSound::playAmbient(uint sound)
-{
+void SimonSound::playAmbient(uint sound) {
 	if (!_effects)
 		return;
 
@@ -195,29 +189,24 @@ void SimonSound::playAmbient(uint sound)
 	_ambient_index = _effects->playSound(sound, &_ambient_handle, SoundMixer::FLAG_LOOP);
 }
 
-bool SimonSound::hasVoice()
-{
+bool SimonSound::hasVoice() {
 	return _voice_file;
 }
 
-void SimonSound::stopVoice()
-{
+void SimonSound::stopVoice() {
 	_mixer->stop(_voice_index);
 }
 
-void SimonSound::stopAll()
-{
+void SimonSound::stopAll() {
 	_mixer->stopAll();
 	_ambient_playing = 0;
 }
 
-void SimonSound::effectsPause(bool b)
-{
+void SimonSound::effectsPause(bool b) {
 	_effects_paused = b;
 }
 
-void SimonSound::ambientPause(bool b)
-{
+void SimonSound::ambientPause(bool b) {
 	_ambient_paused = b;
 
 	if (_ambient_paused && _ambient_playing) {
@@ -231,8 +220,7 @@ void SimonSound::ambientPause(bool b)
 
 /******************************************************************************/
 
-SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base)
-{
+SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base) {
 	_mixer = mixer;
 	_file = file;
 
@@ -263,8 +251,7 @@ SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base)
 	_offsets[res] = _file->pos();
 }
 
-SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 *offsets)
-{
+SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 *offsets) {
 	_mixer = mixer;
 	_file = file;
 	_offsets = offsets;
@@ -328,8 +315,7 @@ int SimonSound::MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte
 }
 #endif
 
-int SimonSound::VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
-{
+int SimonSound::VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return 0;
 
@@ -367,8 +353,7 @@ int SimonSound::VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte
 	return _mixer->playRaw(handle, buffer, size, samples_per_sec, flags);
 }
 
-int SimonSound::WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
-{
+int SimonSound::WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return 0;
 

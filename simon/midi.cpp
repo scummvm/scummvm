@@ -35,8 +35,7 @@ MidiPlayer::MidiPlayer() {
 	_masterVolume = 255;
 }
 
-void MidiPlayer::read_all_songs(File *in, uint music)
-{
+void MidiPlayer::read_all_songs(File *in, uint music) {
 	uint i, num;
 
 	_currentSong = _songs;
@@ -48,8 +47,7 @@ void MidiPlayer::read_all_songs(File *in, uint music)
 	}
 }
 
-void MidiPlayer::read_all_songs_old(File *in, uint music)
-{
+void MidiPlayer::read_all_songs_old(File *in, uint music) {
 	uint i, num;
 
 	_currentSong = _songs;
@@ -61,8 +59,7 @@ void MidiPlayer::read_all_songs_old(File *in, uint music)
 	}
 }
 
-void MidiPlayer::read_all_songs_old(File *in, uint music, uint16 size)
-{
+void MidiPlayer::read_all_songs_old(File *in, uint music, uint16 size) {
 	_currentSong = _songs;
 
 	_lastDelay = 0;
@@ -70,8 +67,7 @@ void MidiPlayer::read_all_songs_old(File *in, uint music, uint16 size)
 	read_one_song(in, &_songs[0], music, size);
 }
 
-void MidiPlayer::read_mthd(File *in, Song *s, bool old, uint music, uint16 size)
-{
+void MidiPlayer::read_mthd(File *in, Song *s, bool old, uint music, uint16 size) {
 	Track *t;
 	uint i;
 
@@ -135,8 +131,7 @@ void MidiPlayer::read_mthd(File *in, Song *s, bool old, uint music, uint16 size)
 	}
 }
 
-void MidiPlayer::read_one_song(File *in, Song *s, uint music, uint16 size)
-{
+void MidiPlayer::read_one_song(File *in, Song *s, uint music, uint16 size) {
 	_lastDelay = 0;
 
 	s->ppqn = 0;
@@ -161,8 +156,7 @@ void MidiPlayer::read_one_song(File *in, Song *s, uint music, uint16 size)
 
 }
 
-uint32 MidiPlayer::track_read_gamma(Track *t)
-{
+uint32 MidiPlayer::track_read_gamma(Track *t) {
 	uint32 sum;
 	byte b;
 
@@ -175,8 +169,7 @@ uint32 MidiPlayer::track_read_gamma(Track *t)
 	return sum;
 }
 
-byte MidiPlayer::track_read_byte(Track *t)
-{
+byte MidiPlayer::track_read_byte(Track *t) {
 	if (t->a & 1)
 		error("Trying to read byte from MIDI stream when end reached");
 
@@ -187,8 +180,7 @@ byte MidiPlayer::track_read_byte(Track *t)
 	return *t->data_cur_ptr++;
 }
 
-void MidiPlayer::initialize()
-{
+void MidiPlayer::initialize() {
 	int res;
 	int i;
 
@@ -205,8 +197,7 @@ void MidiPlayer::initialize()
 		_midiDriver->pause (true);
 }
 
-int MidiPlayer::fill(MidiEvent *me, int num_event)
-{
+int MidiPlayer::fill(MidiEvent *me, int num_event) {
 	uint32 best, j;
 	Track *best_track, *t;
 	bool did_reset;
@@ -252,14 +243,12 @@ int MidiPlayer::fill(MidiEvent *me, int num_event)
 	return i;
 }
 
-int MidiPlayer::on_fill(void *param, MidiEvent *ev, int num)
-{
+int MidiPlayer::on_fill(void *param, MidiEvent *ev, int num) {
 	MidiPlayer *mp = (MidiPlayer *) param;
 	return mp->fill(ev, num);
 }
 
-bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me)
-{
+bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me) {
 	uint b;
 
 	b = nr->delay - _lastDelay;
@@ -291,8 +280,7 @@ bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me)
 	return true;
 }
 
-void MidiPlayer::reset_tracks()
-{
+void MidiPlayer::reset_tracks() {
 	if (_midi_sfx_toggle)
 		return;
 
@@ -315,8 +303,7 @@ void MidiPlayer::reset_tracks()
 	}
 }
 
-void MidiPlayer::read_next_note(Track *t, NoteRec *nr)
-{
+void MidiPlayer::read_next_note(Track *t, NoteRec *nr) {
 	byte cmd_byte;
 	uint i;
 
@@ -402,14 +389,12 @@ void MidiPlayer::read_next_note(Track *t, NoteRec *nr)
 	}
 }
 
-void MidiPlayer::shutdown()
-{
+void MidiPlayer::shutdown() {
 	_midiDriver->close();
 	unload();
 }
 
-void MidiPlayer::unload()
-{
+void MidiPlayer::unload() {
 	uint i, j;
 	Song *s;
 	Track *t;
@@ -425,14 +410,12 @@ void MidiPlayer::unload()
 	}
 }
 
-void MidiPlayer::play()
-{
+void MidiPlayer::play() {
 	if (!_paused)
 		_midiDriver->pause(false);
 }
 
-void MidiPlayer::pause (bool b)
-{
+void MidiPlayer::pause (bool b) {
 	if (_paused == b)
 		return;
 	_paused = b;
@@ -444,13 +427,11 @@ void MidiPlayer::pause (bool b)
 	
 }
 
-int MidiPlayer::get_volume()
-{
+int MidiPlayer::get_volume() {
 	return _masterVolume;
 }
 
-void MidiPlayer::set_volume (int volume)
-{
+void MidiPlayer::set_volume (int volume) {
 	if (volume < 0)
 		volume = 0;
 	else if (volume > 255)
@@ -469,8 +450,7 @@ void MidiPlayer::set_volume (int volume)
 	}
 }
 
-void MidiPlayer::set_driver(MidiDriver *md)
-{
+void MidiPlayer::set_driver(MidiDriver *md) {
 	// We must always use the MidiStreamer front-end
 	// so we can support user-initiated MIDI events (like volume).
 	_midiDriver = new MidiStreamer (md);

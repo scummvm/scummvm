@@ -30,8 +30,7 @@
 #include <sys/stat.h>
 #endif
 
-byte *SimonState::dumpOpcode(byte *p)
-{
+byte *SimonState::dumpOpcode(byte *p) {
 	byte opcode;
 	const char *s, *st;
 
@@ -114,11 +113,11 @@ byte *SimonState::dumpOpcode(byte *p)
 					fprintf(_dump_file, "<%d> ", n);
 				break;
 			}
+
 		case 'J':{
 				fprintf(_dump_file, "-> ");
 			}
 			break;
-
 
 		case 'T':{
 				uint n = ((p[0] << 8) | p[1]);
@@ -133,10 +132,8 @@ byte *SimonState::dumpOpcode(byte *p)
 	}
 }
 
-void SimonState::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub)
-{
+void SimonState::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 	byte *p;
-
 
 	printf("; ****\n");
 
@@ -153,8 +150,7 @@ void SimonState::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub)
 	}
 }
 
-void SimonState::dumpSubroutine(Subroutine *sub)
-{
+void SimonState::dumpSubroutine(Subroutine *sub) {
 	SubroutineLine *sl;
 
 	fprintf(_dump_file, "\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id, sub->id);
@@ -166,16 +162,14 @@ void SimonState::dumpSubroutine(Subroutine *sub)
 	fflush(_dump_file);
 }
 
-void SimonState::dumpSubroutines()
-{
+void SimonState::dumpSubroutines() {
 	Subroutine *sub = _subroutine_list;
 	for (; sub; sub = sub->next) {
 		dumpSubroutine(sub);
 	}
 }
 
-void SimonState::dump_video_script(byte *src, bool one_opcode_only)
-{
+void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
 	uint opcode;
 	const char *str, *strn;
 
@@ -239,8 +233,7 @@ void SimonState::dump_video_script(byte *src, bool one_opcode_only)
 	} while (!one_opcode_only);
 }
 
-void SimonState::dump_vga_file(byte *vga)
-{
+void SimonState::dump_vga_file(byte *vga) {
 	{
 		byte *pp;
 		byte *p;
@@ -276,8 +269,6 @@ void SimonState::dump_vga_file(byte *vga)
 	}
 }
 
-
-
 const byte bmp_hdr[] = {
 	0x42, 0x4D,
 	0x9E, 0x14, 0x00, 0x00,				/* offset 2, file size */
@@ -297,8 +288,7 @@ const byte bmp_hdr[] = {
 	0x00, 0x01, 0x00, 0x00,
 };
 
-void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint32 *palette)
-{
+void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint32 *palette) {
 	FILE *out = fopen(filename, "wb");
 	byte my_hdr[sizeof(bmp_hdr)];
 	int i;
@@ -361,8 +351,7 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 	free(b);
 }
 
-void SimonState::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base)
-{
+void SimonState::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
 /* Only supported for win32 atm. mkdir doesn't work otherwise. */
 #if defined (WIN32) && !defined(_WIN32_WCE)
 	char buf[255], buf2[255];
@@ -455,16 +444,14 @@ void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 #endif
 }
 
-void SimonState::dump_vga_script_always(byte *ptr, uint res, uint sprite_id)
-{
+void SimonState::dump_vga_script_always(byte *ptr, uint res, uint sprite_id) {
 	fprintf(_dump_file, "; address=%x, vgafile=%d  vgasprite=%d\n",
 					ptr - _vga_buffer_pointers[res].vgaFile1, res, sprite_id);
 	dump_video_script(ptr, false);
 	fprintf(_dump_file, "; end\n");
 }
 
-void SimonState::dump_vga_script(byte *ptr, uint res, uint sprite_id)
-{
+void SimonState::dump_vga_script(byte *ptr, uint res, uint sprite_id) {
 	dump_vga_script_always(ptr, res, sprite_id);
 }
 

@@ -94,8 +94,7 @@ static const char *const opcode_arg_table_simon2dos[256] = {
 	" ", " ", "BT ", " ", "B "
 };
 
-void SimonState::loadGamePcFile(const char *filename)
-{
+void SimonState::loadGamePcFile(const char *filename) {
 	File * in = new File();
 	int num_inited_objects;
 	int i, file_size;
@@ -161,8 +160,7 @@ void SimonState::loadGamePcFile(const char *filename)
 	in->close();
 }
 
-void SimonState::readGamePcText(File *in)
-{
+void SimonState::readGamePcText(File *in) {
 	uint text_size;
 	byte *text_mem;
 
@@ -176,8 +174,7 @@ void SimonState::readGamePcText(File *in)
 	setupStringTable(text_mem, _stringtab_num);
 }
 
-void SimonState::readItemFromGamePc(File *in, Item *item)
-{
+void SimonState::readItemFromGamePc(File *in, Item *item) {
 	uint32 type;
 
 	item->unk2 = in->readUint16BE();
@@ -198,8 +195,7 @@ void SimonState::readItemFromGamePc(File *in, Item *item)
 	}
 }
 
-void SimonState::readItemChildren(File *in, Item *item, uint type)
-{
+void SimonState::readItemChildren(File *in, Item *item, uint type) {
 	if (type == 1) {
 		uint fr1 = in->readUint16BE();
 		uint fr2 = in->readUint16BE();
@@ -246,16 +242,14 @@ void SimonState::readItemChildren(File *in, Item *item, uint type)
 	}
 }
 
-uint fileReadItemID(File *in)
-{
+uint fileReadItemID(File *in) {
 	uint32 val = in->readUint32BE();
 	if (val == 0xFFFFFFFF)
 		return 0;
 	return val + 2;
 }
 
-byte *SimonState::readSingleOpcode(File *in, byte *ptr)
-{
+byte *SimonState::readSingleOpcode(File *in, byte *ptr) {
 	int i, l;
 	const char *string_ptr;
 	uint val;

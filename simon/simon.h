@@ -38,7 +38,7 @@
 
 uint fileReadItemID(File *in);
 
-#define CHECK_BOUNDS(x,y) assert((uint)(x)<ARRAYSIZE(y))
+#define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
 #define NUM_PALETTE_FADEOUT 32
 
 struct Child;
@@ -486,7 +486,6 @@ public:
 	void o_unk_186();
 	void o_fade_to_black();
 
-	
 	ThreeValues *getThreeValues(uint a);
 	void o_print_str();
 	void o_setup_cond_c();
@@ -800,7 +799,6 @@ public:
 
 	RandomSource _rnd;
 };
-
 
 void palette_fadeout(uint32 *pal_values, uint num);
 
