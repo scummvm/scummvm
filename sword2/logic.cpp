@@ -58,10 +58,6 @@ int logic::Process_session(void) {	// Tony6June96 (first run 21Oct96)
 	// point to first object in list
 	pc = 0;
 
-	static uint32 cycle = 1;
-
-	// Zdebug("\n CYCLE %d", cycle);
-
 	// by minusing the pc we can cause an immediate cessation of logic
 	// processing on the current list
 
