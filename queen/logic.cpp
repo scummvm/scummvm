@@ -154,7 +154,7 @@ void Logic::initialise() {
 
 	_numFurniture = READ_BE_UINT16(ptr); ptr += 2;
 	_furnitureData = new FurnitureData[_numFurniture + 1];
-	memset(&_furnitureData[0], 0, sizeof(_furnitureData));
+	memset(&_furnitureData[0], 0, sizeof(FurnitureData));
 	for (i = 1; i <= _numFurniture; i++) {
 		_furnitureData[i].readFromBE(ptr);
 	}
@@ -194,11 +194,11 @@ void Logic::initialise() {
 
 	uint32 size;
 	char *buf = (char *)_vm->resource()->loadFile("QUEEN2.JAS", 0, &size);
-	LineReader *queen2jas = new LineReader(buf, size);
+	LineReader queen2jas(buf, size);
 	
 	_objDescription.push_back("");
 	for (i = 1; i <= _numDescriptions; i++) {
-		_objDescription.push_back(queen2jas->nextLine());
+		_objDescription.push_back(queen2jas.nextLine());
 	}
 
 	// Patch for German text bug
@@ -208,22 +208,22 @@ void Logic::initialise() {
 	
 	_objName.push_back("");
 	for (i = 1; i <= _numNames; i++) {
-		_objName.push_back(queen2jas->nextLine());
+		_objName.push_back(queen2jas.nextLine());
 	}
 
 	_roomName.push_back("");
 	for (i = 1; i <= _numRooms; i++) {
-		_roomName.push_back(queen2jas->nextLine());
+		_roomName.push_back(queen2jas.nextLine());
 	}
 
 	_verbName.push_back("");
 	for (i = 1; i <= 12; i++) {
-		_verbName.push_back(queen2jas->nextLine());
+		_verbName.push_back(queen2jas.nextLine());
 	}
 
 	_joeResponse.push_back("");
 	for (i = 1; i <= JOE_RESPONSE_MAX; i++) {
-		_joeResponse.push_back(queen2jas->nextLine());
+		_joeResponse.push_back(queen2jas.nextLine());
 	}
 	
 	// FIXME - the spanish version adds some space characters (0x20) at the
@@ -237,20 +237,18 @@ void Logic::initialise() {
 
 	_aAnim.push_back("");
 	for (i = 1; i <= _numAAnim; i++) {
-		_aAnim.push_back(queen2jas->nextLine());
+		_aAnim.push_back(queen2jas.nextLine());
 	}
 
 	_aName.push_back("");
 	for (i = 1; i <= _numAName; i++) {
-		_aName.push_back(queen2jas->nextLine());
+		_aName.push_back(queen2jas.nextLine());
 	}
 	
 	_aFile.push_back("");
 	for (i = 1; i <= _numAFile; i++) {
-		_aFile.push_back(queen2jas->nextLine());
+		_aFile.push_back(queen2jas.nextLine());
 	}
-	
-	delete queen2jas;
 
 	_vm->command()->clear(false);
 	_scene = 0;
@@ -730,7 +728,7 @@ uint16 Logic::joeFace() {
 			}
 			frame = 37;
 		} else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT) 
-			|| 	(joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
+			||  (joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
 			pbs->frameNum = 36;
 			_vm->update();
 		}
@@ -1070,7 +1068,7 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 
 	realObject->name = ABS(realObject->name);
 
-	if  (fromState == -1)
+	if (fromState == -1)
 		dummyObject->name = -ABS(dummyObject->name);
 
 	for (int i = 1; i <= _numWalkOffs; i++) {
@@ -1837,7 +1835,7 @@ void Logic::asmShakeScreen() {
 
 void Logic::asmAttemptPuzzle() {
 	++_puzzleAttemptCount;
-	if (_puzzleAttemptCount & 4) {
+	if (_puzzleAttemptCount == 4) {
 		makeJoeSpeak(226, true);
 		_puzzleAttemptCount = 0;
 	}
