@@ -201,14 +201,6 @@ although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
-       Maniac Mansion (Classic):
-                - Actors sometimes cause minor graphical glitches
-                - The last 8 lines of room graphics are sometimes cut off 
-                  when changing rooms
-
-       Zak McKracken (Classic):
-                - Actors sometimes cause minor graphical glitches
-
 // FIXME: Are these two still present? Many walk-related fixes lately...
        Indiana Jones & the Last Crusade (EGA):
                 - In some rooms Indy may be able to walk to odd places
