@@ -203,15 +203,15 @@ void QueenEngine::go() {
 			}
 		}
 		else {
-			if (_logic->joeWalk() == 2) {
-				_logic->joeWalk(0);
+			if (_logic->joeWalk() == JWM_EXECUTE) {
+				_logic->joeWalk(JWM_NORMAL);
 				_logic->command()->executeCurrentAction(true);
 			}
 			else {
 				if (_logic->command()->parse()) {
 					_logic->command()->clear(true);
 				}
-				_logic->joeWalk(0);
+				_logic->joeWalk(JWM_NORMAL);
 				_logic->checkPlayer();
 			}
 		}
