@@ -130,11 +130,11 @@ void Scumm::initializeLocals(int slot, int *vars) {
 			vm.localvar[slot][i] = vars[i];
 	}
 
-#if defined(BYPASS_COPY_PROT)
+#if defined(BYPASS_COPY_PROT) && 0
 	// Loom will set bit 15 of variable 214 to 1 if the user enters the
 	// wrong code. But this bit is also used later in the game to determine
 	// if the user has already learned the fourth note. Therefore any
-	// interfering directly with this variable is risky.
+	// interfering directly with this variable may be risky.
 	//
 	// Let's try an alternative solution instead. The correct code is
 	// stored in variables 82-85. Each time the user selects a symbol,
@@ -146,6 +146,11 @@ void Scumm::initializeLocals(int slot, int *vars) {
 	// regardless of the player's choice. I don't know why, but it does
 	// mean that it's safer to change local variable 0 than to change
 	// variables 82-85.
+	//
+	// Update: It has since occured to me that bit 15 could be set to
+	// indicate that the game is running in "demo" mode. In that case, this
+	// bypassing mechanism is needlessly complicated after all, and we
+	// could just make every read of that bit return zero.
 	if (_gameId == GID_LOOM && _currentRoom == 69 && vm.slot[slot].number == 203)
 		vm.localvar[slot][0] = _scummVars[81 + _scummVars[98]];
 #endif
@@ -509,8 +514,11 @@ int Scumm::readVar(uint var) {
 			var = (var >> 4) & 0xFF;
 
 #if defined(BYPASS_COPY_PROT)
-			// INDY3 checks this during the game...
+			// INDY3, EGA Loom and, apparently, Zak256 check this
+			// during the game...
 			if (_gameId == GID_INDY3 && var == 94 && bit == 4) {
+				return 0;
+			} else if (_gameId == GID_LOOM && var == 214 && bit == 15) {
 				return 0;
 			} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
 				return 0;
