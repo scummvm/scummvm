@@ -45,7 +45,6 @@ public:
 
 	/**
 	 * The types of events backends can generate.
-	 * @todo Add events for quit request, and screen size change.
 	 * @see Event
 	 */
 	enum EventCode {
@@ -111,6 +110,9 @@ public:
 		SOUND_16BIT = 1
 	};
 
+
+	/** Virtual destructor */
+	virtual ~OSystem() {}
 
 
 	/** @name Graphics */
@@ -335,6 +337,8 @@ public:
 	virtual void clear_overlay() = 0;
 	virtual void grab_overlay(NewGuiColor *buf, int pitch) = 0;
 	virtual void copy_rect_overlay(const NewGuiColor *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual int16 get_overlay_height()	{ return get_height(); }
+	virtual int16 get_overlay_width()	{ return get_width(); }
 	//@} 
 
 
