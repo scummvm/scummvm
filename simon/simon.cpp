@@ -2103,6 +2103,9 @@ void SimonEngine::o_print_str() {
 
 	if (_speech && speech_id != 0)
 		talk_with_speech(speech_id, vga_sprite_id);
+	if ((_game & GF_SIMON2) && (_game & GF_TALKIE) && speech_id == 0)
+		o_kill_sprite_simon2(2, vga_sprite_id + 2);
+
 	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
 		talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
 
