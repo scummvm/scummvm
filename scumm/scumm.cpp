@@ -502,6 +502,7 @@ static struct substDataFileNames {
 	{ "puttputt", "Putt-Putt Parade", kGenMacNoParens },
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
 	{ "putttime", "PuttTTT", kGenPC },
+	{ "putttime", "PuttPuttTTT", kGenPC },
 	{ "puttzoo", "PuttZoo", kGenMac },
 	{ "racedemo", "RaceDemo", kGenMac },
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
