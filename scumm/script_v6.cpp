@@ -354,7 +354,7 @@ void Scumm_v6::setupOpcodes() {
 		/* F8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownFA),
 		OPCODE(o6_invalid),
 		/* FC */
 		OPCODE(o6_invalid),
@@ -3003,6 +3003,15 @@ void Scumm_v6::o6_unknownE0() {
 void Scumm_v6::o6_unknownE4() {
 	warning("o6_unknownE4(%d) stub", pop());
 }
+
+void Scumm_v6::o6_unknownFA() {
+	int len, a = fetchScriptByte();
+	
+	len = resStrLen(_scriptPointer);
+	warning("stub o6_unknownFA(%d, \"%s\")", a, _scriptPointer);
+	_scriptPointer += len + 1;
+}
+
 void Scumm_v6::o6_localizeArray() {
 	warning("stub localizeArray(%d)", pop());
 }

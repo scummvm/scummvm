@@ -490,6 +490,7 @@ protected:
 	void o6_unknownE4();
 	void o6_localizeArray();
 	void o6_shuffle();
+	void o6_unknownFA();
 
 	byte VAR_VIDEONAME;
 
