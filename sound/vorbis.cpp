@@ -71,6 +71,9 @@ static size_t read_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) 
 		nmemb = 0;
 	else if (nmemb > f->len - f->curr_pos)
 		nmemb = f->len - f->curr_pos;
+	// There is no guarantee that the Vorbis stream is alone in accessing
+	// the file, so make sure the current position is what we think it is.
+	f->file->seek(f->start + f->curr_pos);
 	result = f->file->read(ptr, nmemb);
 	if (result == -1) {
 		f->curr_pos = f->file->pos() - f->start;
