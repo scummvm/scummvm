@@ -459,8 +459,7 @@ void ScummEngine_v5::o5_actorOps() {
 			i = getVarOrDirectByte(PARAM_1);
 			j = getVarOrDirectByte(PARAM_2);
 			checkRange(31, 0, i, "Illegal palette slot %d");
-			a->palette[i] = j;
-			a->needRedraw = true;
+			a->setPalette(i, j);
 			break;
 		case 12:		// SO_TALK_COLOR
 
@@ -498,13 +497,13 @@ void ScummEngine_v5::o5_actorOps() {
 			break;
 		case 17:		// SO_ACTOR_SCALE
 			if (_version == 4) {
-				a->scalex = a->scaley = getVarOrDirectByte(PARAM_1);
+				i = j = getVarOrDirectByte(PARAM_1);
 			} else {
-				a->scalex = getVarOrDirectByte(PARAM_1);
-				a->scaley = getVarOrDirectByte(PARAM_2);
+				i = getVarOrDirectByte(PARAM_1);
+				j = getVarOrDirectByte(PARAM_2);
 			}
 
-			a->needRedraw = true;
+			a->setScale(i, j);
 			break;
 		case 18:		// SO_NEVER_ZCLIP
 			a->forceClip = 0;

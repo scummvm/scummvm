@@ -1705,8 +1705,7 @@ void ScummEngine_v6::o6_actorOps() {
 		j = pop();
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
-		a->palette[i] = j;
-		a->needRedraw = true;
+		a->setPalette(i, j);
 		break;
 	case 87:		// SO_TALK_COLOR
 		a->talkColor = pop();
@@ -1721,8 +1720,8 @@ void ScummEngine_v6::o6_actorOps() {
 		a->width = pop();
 		break;
 	case 92:		// SO_SCALE
-		a->scalex = a->scaley = pop();
-		a->needRedraw = true;
+		i = pop();
+		a->setScale(i, i);
 		break;
 	case 93:		// SO_NEVER_ZCLIP
 		a->forceClip = 0;
@@ -2546,8 +2545,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 107:
 			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
-			a->scalex = (unsigned char)args[2];
-			a->needRedraw = true;
+			a->setScale((unsigned char)args[2], -1);
 			break;
 		case 108:
 			setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
@@ -2610,8 +2608,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 107:									/* set actor scale */
 			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
-			a->scalex = (unsigned char)args[2];
-			a->needRedraw = true;
+			a->setScale((unsigned char)args[2], -1);
 			break;
 		case 108:									/* create proc_special_palette */
 		case 109:

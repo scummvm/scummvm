@@ -105,12 +105,12 @@ public:
 	byte walkbox;
 	int16 talkPosX, talkPosY;
 	uint16 talkScript, walkScript;
-	bool ignoreTurns;	// TODO - we do not honor this flag at all currently!
+	bool ignoreTurns;
 	int8 layer;
 	uint16 sound[8];
 	CostumeData cost;
-	byte palette[256];
 protected:
+	byte palette[256];
 	int elevation;
 	uint16 facing;
 	uint16 targetFacing;
@@ -206,6 +206,19 @@ public:
 		}
 	}
 	
+	void setPalette(int idx, int val) {
+		palette[idx] = val;
+		needRedraw = true;
+	}
+	
+	void setScale(int sx, int sy) {
+		if (sx != -1)
+			scalex = sx;
+		if (sy != -1)
+			scaley = sy;
+		needRedraw = true;
+	}
+
 	void classChanged(int cls, bool value);
 	
 	// Used by the save/load syste:

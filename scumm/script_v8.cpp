@@ -973,8 +973,7 @@ void ScummEngine_v8::o8_actorOps() {
 		j = pop();
 		i = pop();
 		checkRange(31, 0, i, "Illegal palette slot %d");
-		a->palette[i] = j;
-		a->needRedraw = true;
+		a->setPalette(i, j);
 		break;
 	case 0x70:		// SO_ACTOR_TALK_COLOR Set actor talk color
 		a->talkColor = pop();
@@ -986,8 +985,8 @@ void ScummEngine_v8::o8_actorOps() {
 		a->width = pop();
 		break;
 	case 0x73:		// SO_ACTOR_SCALE Set scaling of actor
-		a->scalex = a->scaley = pop();
-		a->needRedraw = true;
+		i = pop();
+		a->setScale(i, i);
 		break;
 	case 0x74:		// SO_ACTOR_NEVER_ZCLIP
 		a->forceClip = 0;

@@ -691,8 +691,7 @@ void ScummEngine_v2::o2_actorOps() {
 		else
 			i = fetchScriptByte();
 
-		a->palette[i] = arg;
-		a->needRedraw = true;
+		a->setPalette(i, arg);
 		break;
 	case 3:		// SO_ACTOR_NAME
 		loadPtrToResource(rtActorName, a->number, NULL);
