@@ -12,4 +12,4 @@ Unassigned (help wanted):
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
  * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) - original used MFC
  * Fix the screenblocks zBuffer code
-
+ * Lip syncing

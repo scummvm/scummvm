@@ -276,15 +276,46 @@ static void GetActorTalkColor() {
 	lua_pushusertag(c, color_tag);
 }
 
+static void SetActorRestChore() {
+	Actor *act = check_actor(1);
+	int chore = check_int(2);
+	Costume *costume = get_costume(act, 3, "SetActorRestChore");
+
+	act->setRestChore(chore, costume);
+}
+
+static void SetActorWalkChore() {
+	Actor *act = check_actor(1);
+	int chore = check_int(2);
+	Costume *costume = get_costume(act, 3, "SetActorWalkChore");
+
+	act->setWalkChore(chore, costume);
+}
+
+static void SetActorTurnChores() {
+	Actor *act = check_actor(1);
+	int left_chore = check_int(2);
+	int right_chore = check_int(3);
+	Costume *costume = get_costume(act, 4, "SetActorTurnChores");
+
+	act->setTurnChores(left_chore, right_chore, costume);
+}
+
 static void SetActorTalkChore() {
 	Actor *act = check_actor(1);
 	int index = check_int(2);
 	int chore = check_int(3);
 	Costume *costume = get_costume(act, 4, "setActorTalkChore");
 
-	if (!costume)
-		return;
-	costume->setTalkChore(index, chore);
+	act->setTalkChore(index, chore, costume);
+}
+
+static void SetActorMumblechore() {
+	Actor *act = check_actor(1);
+	int chore = check_int(2);
+	Costume *costume = get_costume(act, 3, "SetActorMumblechore");
+
+	act->setMumbleChore(chore, costume);
 }
 
 static void SetActorVisibility() {
@@ -1268,10 +1299,6 @@ static char *stubFuncs[] = {
 	"SetActorReflection",
 	"GetActorPuckVector",
 	"GetActorRect",
-	"SetActorMumblechore",
-	"SetActorRestChore",
-	"SetActorTurnChores",
-	"SetActorWalkChore",
 	"GetActorNodeLocation",
 	"SetActorTimeScale",
 	"GetActorTimeScale",
@@ -1495,7 +1522,11 @@ struct luaL_reg builtins[] = {
 	{ "IsActorMoving", IsActorMoving },
 	{ "TurnActor", TurnActor },
 	{ "PushActorCostume", PushActorCostume },
+	{ "SetActorRestChore", SetActorRestChore },
+	{ "SetActorWalkChore", SetActorWalkChore },
+	{ "SetActorTurnChores", SetActorTurnChores },
 	{ "SetActorTalkChore", SetActorTalkChore },
+	{ "SetActorMumblechore", SetActorMumblechore },
 	{ "SetActorCostume", SetActorCostume },
 	{ "GetActorCostume", GetActorCostume },
 	{ "PopActorCostume", PopActorCostume },

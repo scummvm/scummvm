@@ -71,7 +71,11 @@ public:
 	void shutUp();
 	bool talking();
 
-	void setWalkChore(int choreNumber) { walkChore_ = choreNumber; }
+	void setRestChore(int choreNumber, Costume *cost);
+	void setWalkChore(int choreNumber, Costume *cost);
+	void setTurnChores(int left_chore, int right_chore, Costume *cost);
+	void setTalkChore(int index, int choreNumber, Costume *cost);
+	void setMumbleChore(int choreNumber, Costume *cost);
 
 	void pushCostume(const char *name);
 	void setCostume(const char *name);
@@ -133,7 +137,33 @@ private:
 	Vector3d destPos_;
 
 	// chores
+	Costume *restCostume_;
+	int restChore_;
+
+	Costume *walkCostume_;
 	int walkChore_;
+	int lastWalkTime_;
+
+	Costume *turnCostume_;
+	int leftTurnChore_, rightTurnChore_;
+	int lastTurnDir_, currTurnDir_;
+
+	Costume *talkCostume_[10];
+	int talkChore_[10];
+
+	Costume *mumbleCostume_;
+	int mumbleChore_;
+
+	int getTurnChore(int dir) {
+		return (dir > 0 ? rightTurnChore_ : leftTurnChore_);
+	}
+
+	void freeCostumeChore(Costume *toFree, Costume *&cost, int &chore) {
+		if (cost == toFree) {
+			cost = NULL;
+			chore = -1;
+		}
+	}
 
 	// lookAt
 	Vector3d lookAtVector_;

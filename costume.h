@@ -21,7 +21,6 @@
 #include <string>
 #include "matrix4.h"
 
-#define MAX_TALK_CHORES 10
 class TextSplitter;
 class Actor;
 
@@ -40,10 +39,6 @@ public:
 	void stopChores();
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
-
-	void playTalkChores();
-	void stopTalkChores();
-	void setTalkChore(int index, int chore);
 
 	void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw );
 
@@ -128,7 +123,6 @@ private:
 
 	int numChores_;
 	Chore *chores_;
-	int talkChores_[MAX_TALK_CHORES];
 	Matrix4 matrix_;
 };
 
