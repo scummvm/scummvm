@@ -526,7 +526,7 @@ protected:
 	HitArea *findHitAreaByID(uint hitarea_id);
 
 	void showActionString(uint x, const byte *string);
-	void video_putchar(FillOrCopyStruct *fcs, byte c);
+	void video_putchar(FillOrCopyStruct *fcs, byte c, byte b = 0);
 	void video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs);
 	void video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d);
 
@@ -788,7 +788,7 @@ protected:
 	void save_or_load_dialog(bool load);
 	void o_unk_132_helper_3();
 	int o_unk_132_helper(bool *b, char *buf);
-	void o_unk_132_helper_2(FillOrCopyStruct *fcs, int x);
+	void o_unk_132_helper_2(FillOrCopyStruct *fcs, int x, byte b = 0);
 	void savegame_dialog(char *buf);
 
 	int count_savegames();

@@ -210,7 +210,7 @@ void SimonEngine::showmessage_helper_3(uint a, uint b) {
 	_num_letters_to_print = 0;
 }
 
-void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
+void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 	byte width = 6;
 
 	if (c == 0xC) {
@@ -219,8 +219,8 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 		video_putchar_newline(fcs);
 	} else if ((c == 1 && _language != 20) || (c == 8)) {
 		if (_language == 20) { //Hebrew
-			if (c >= 64 && c < 91)
-				width = _hebrew_char_widths [c-64];
+			if (b >= 64 && b < 91)
+				width = _hebrew_char_widths [b - 64];
 
 			if (fcs->textLength != 0) {
 				fcs->textLength--;			
@@ -252,7 +252,7 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 
 		if (_language == 20) { //Hebrew
 			if (c >= 64 && c < 91)
-				width = _hebrew_char_widths [c-64];
+				width = _hebrew_char_widths [c - 64];
 			fcs->textColumnOffset  -= width;
 			if (fcs->textColumnOffset >= width) {
 				fcs->textColumn++;

@@ -1485,10 +1485,10 @@ void SimonEngine::o_unk_132_helper_3() {
 		set_hitarea_bit_0x40(i);
 }
 
-void SimonEngine::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
+void SimonEngine::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x, byte b) {
 	byte old_text;
 
-	video_putchar(fcs, x);
+	video_putchar(fcs, x, b);
 	old_text = fcs->text_color;
 	fcs->text_color = fcs->fill_color;
 

@@ -2749,7 +2749,7 @@ restart:;
 			if (_language == 20) { //Hebrew
 				byte width = 6;
 				if (name[name_len] >= 64 && name[name_len] < 91)
-					width = _hebrew_char_widths [name[name_len]-64];
+					width = _hebrew_char_widths [name[name_len] - 64];
 				fcs->textLength++;
 				fcs->textColumnOffset -= width;
 				if (fcs->textColumnOffset < width) {
@@ -2806,8 +2806,10 @@ restart:;
 				// do_backspace
 				if (name_len != 0) {
 					int x;
+					byte b;
 
 					name_len--;
+					b = name[name_len];
 
 					if (_language == 20) //Hebrew
 						x = 8;
@@ -2816,7 +2818,7 @@ restart:;
 
 					name[name_len] = 0;
 
-					o_unk_132_helper_2(_fcs_ptr_array_3[5], x);
+					o_unk_132_helper_2(_fcs_ptr_array_3[5], x, b);
 				}
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
