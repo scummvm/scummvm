@@ -39,7 +39,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
 	char cmap_name[256];
 	for (int i = 0; i < _numCmaps; i++) {
 		ts.scanString(" colormap %256s", 1, cmap_name);
-		_cmaps[i] = ResourceLoader::instance()->loadColormap(cmap_name);
+		_cmaps[i] = g_resourceloader->loadColormap(cmap_name);
 	}
 
 	ts.expectString("section: setups");
@@ -104,14 +104,14 @@ void Scene::Setup::load(TextSplitter &ts) {
 	_name = buf;
 
 	ts.scanString(" background %256s", 1, buf);
-	_bkgndBm = ResourceLoader::instance()->loadBitmap(buf);
+	_bkgndBm = g_resourceloader->loadBitmap(buf);
 
 	// ZBuffer is optional
 	if (!ts.checkString("zbuffer")) {
 		_bkgndZBm = NULL;
 	} else {
 		ts.scanString(" zbuffer %256s", 1, buf);
-		_bkgndZBm = ResourceLoader::instance()->loadBitmap(buf);
+		_bkgndZBm = g_resourceloader->loadBitmap(buf);
 	}
 
 	ts.scanString(" position %f %f %f", 3, &_pos.x(), &_pos.y(), &_pos.z());

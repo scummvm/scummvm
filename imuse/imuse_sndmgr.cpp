@@ -166,7 +166,7 @@ ImuseSndMgr::SoundStruct *ImuseSndMgr::openSound(const char *soundName, int volG
 	sound->volGroupId = volGroupId;
 
 	if (strcasecmp(extension, "imu") == 0) {
-		Block *b = ResourceLoader::instance()->getFileBlock(soundName);
+		Block *b = g_resourceloader->getFileBlock(soundName);
 		if (b != NULL) {
 			ptr = (byte *)b->data();
 			delete b;

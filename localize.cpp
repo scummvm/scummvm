@@ -22,13 +22,7 @@
 #include <cstdio>
 #include <cstring>
 
-Localizer *Localizer::_instance = NULL;
-
-Localizer *Localizer::instance() {
-	if (_instance == NULL)
-		_instance = new Localizer;
-	return _instance;
-}
+Localizer *g_localizer = NULL;
 
 Localizer::Localizer() {
 	std::FILE *f;

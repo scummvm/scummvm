@@ -23,18 +23,17 @@
 
 class Localizer {
 public:
-	static Localizer *instance();
-
 	std::string localize(const char *str) const;
 
-private:
 	Localizer();
 	~Localizer() { }
 
-	static Localizer *_instance;
+private:
 
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _entries;
 };
+
+extern Localizer *g_localizer;
 
 #endif

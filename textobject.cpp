@@ -25,7 +25,7 @@
 TextObject::TextObject(const char *text, const int x, const int y, const Color& fgColor) :
 		_fgColor(fgColor), _x(x), _y(y) {
 	strcpy(_textID, text);
-	Engine::instance()->registerTextObject(this);
+	g_engine->registerTextObject(this);
 }
 
 void TextObject::setX(int x) {_x = x; }
@@ -33,7 +33,7 @@ void TextObject::setY(int y) {_y = y; }
 void TextObject::setColor(Color *newcolor) { _fgColor = newcolor; }
 
 void TextObject::draw() {
-	const char *localString = Localizer::instance()->localize(_textID).c_str();
+	const char *localString = g_localizer->localize(_textID).c_str();
 	// This is also used for things like debugging in addition
 	// to dialogue so there aren't always translations
 	if (strrchr(localString, '/') != NULL) {

@@ -165,7 +165,7 @@ void Smush::handleFrame() {
 	_frame++;
 	if (_frame == _nbframes) {
 		_videoFinished = true;
-		Engine::instance()->setMode(ENGINE_MODE_NORMAL);
+		g_engine->setMode(ENGINE_MODE_NORMAL);
 	}
 	
 	_movieTime += _speed / 1000;
@@ -234,7 +234,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 
 void Smush::stop() { 
 	deinit();
- 	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
+ 	g_engine->setMode(ENGINE_MODE_NORMAL);
 }
 
 bool Smush::play(const char *filename, int x, int y) {
@@ -271,14 +271,14 @@ bool zlibFile::open(const char *filename) {
 	if (filename == NULL || *filename == 0)
 		return false;
 
-	_handle = ResourceLoader::instance()->openNewStream(filename);
+	_handle = g_resourceloader->openNewStream(filename);
 	if (!_handle) {
 		warning("zlibFile %s not found", filename);
 		return false;
 	}
-//	int filePos = ftell(_handle);
-//	_handle = fdopen(fileno(_handle), "rb");
-//	fseek(_handle, filePos, SEEK_SET);
+	int filePos = ftell(_handle);
+	_handle = fdopen(fileno(_handle), "rb");
+	fseek(_handle, filePos, SEEK_SET);
 
 	// Read in the GZ header
 	fread(_inBuf, 2, sizeof(char), _handle);				// Header

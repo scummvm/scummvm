@@ -196,7 +196,7 @@ static void FunctionName() {
 
 static void CheckForFile() {
 	char *filename = luaL_check_string(1);
-	pushbool(ResourceLoader::instance()->fileExists(filename));
+	pushbool(g_resourceloader->fileExists(filename));
 }
 
 // Color functions
@@ -248,7 +248,7 @@ static void WriteRegistryValue() {
 
 static void LocalizeString() {
 	char *str = luaL_check_string(1);
-	std::string result = Localizer::instance()->localize(str);
+	std::string result = g_localizer->localize(str);
 	lua_pushstring(const_cast<char *>(result.c_str()));
 }
 
@@ -265,7 +265,7 @@ static void LoadActor() {
 
 static void SetSelectedActor() {
 	Actor *act = check_actor(1);
-	Engine::instance()->setSelectedActor(act);
+	g_engine->setSelectedActor(act);
 }
 
 static void SetActorTalkColor() {
@@ -659,9 +659,9 @@ static void SetActorFollowBoxes() {	// Constrain actor to walkplanes?
 
 static void GetVisibleThings() {
 	lua_Object result = lua_createtable();
-	Actor *sel = Engine::instance()->selectedActor();
-	for (Engine::ActorListType::const_iterator i = Engine::instance()->actorsBegin(); i != Engine::instance()->actorsEnd(); i++) {
-		if (!(*i)->inSet(Engine::instance()->sceneName()))
+	Actor *sel = g_engine->selectedActor();
+	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++) {
+		if (!(*i)->inSet(g_engine->sceneName()))
 			continue;
 		if (sel->angleTo(*(*i)) < 90) {
 			lua_pushobject(result);
@@ -717,7 +717,7 @@ static void GetActorSector(void) {
 	Actor *act = check_actor(1);
 	int sectorType = check_int(2);
 
-	Sector *result = Engine::instance()->currScene()->findPointSector(act->pos(), sectorType);
+	Sector *result = g_engine->currScene()->findPointSector(act->pos(), sectorType);
 	if (result != NULL) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));
@@ -732,10 +732,10 @@ static void GetActorSector(void) {
 static void IsActorInSector(void) {
 	Actor *act = check_actor(1);
 	const char *name = luaL_check_string(2);
-	int i, numSectors = Engine::instance()->currScene()->getSectorCount();
+	int i, numSectors = g_engine->currScene()->getSectorCount();
 
 	for (i=0; i<numSectors; i++) {
-		Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
+		Sector *sector = g_engine->currScene()->getSectorBase(i);
 
 		if (sector->visible() && strstr(sector->name(), name)) {
 			if (sector->isPointInSector(act->pos())) {
@@ -755,18 +755,18 @@ static void MakeSectorActive(void) {
 	int i = 0, numSectors;
 
 	// FIXME: This happens on initial load. Are we initting something in the wrong order?
-	if (!Engine::instance()->currScene()) {
+	if (!g_engine->currScene()) {
 		warning("!!!! Trying to call MakeSectorActive without a scene!");
 		return;
 	}
 
-	numSectors = Engine::instance()->currScene()->getSectorCount();
+	numSectors = g_engine->currScene()->getSectorCount();
 
 	if (lua_isstring(sectorName)) {
 		char *name = luaL_check_string(1);
 
 		for (i=0; i<numSectors; i++) {
-			Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
+			Sector *sector = g_engine->currScene()->getSectorBase(i);
 			if (strstr(sector->name(), name)) {
 				sector->setVisible(visible);
 				return;
@@ -776,7 +776,7 @@ static void MakeSectorActive(void) {
 		int id = check_int(1);
 
 		for (i=0; i<numSectors; i++) {
-			Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
+			Sector *sector = g_engine->currScene()->getSectorBase(i);
 			if (sector->id() == id) {
 				sector->setVisible(visible);
 				return;
@@ -792,14 +792,14 @@ static void MakeSectorActive(void) {
 
 static void MakeCurrentSet() {
 	const char *name = luaL_check_string(1);
-	Engine::instance()->setScene(name);
+	g_engine->setScene(name);
 }
 
 static void MakeCurrentSetup() {
 	int num = check_int(1);
-	int prevSetup = Engine::instance()->currScene()->setup();
+	int prevSetup = g_engine->currScene()->setup();
 
-	Engine::instance()->currScene()->setSetup(num);
+	g_engine->currScene()->setSetup(num);
 
 	lua_beginblock();
 	lua_Object camChangeHandler = getEventHandler("camChangeHandler");
@@ -821,8 +821,8 @@ static void MakeCurrentSetup() {
 
 static void GetCurrentSetup() {
 	const char *name = luaL_check_string(1);
-	if (std::strcmp(name, Engine::instance()->sceneName()) == 0)
-		lua_pushnumber(Engine::instance()->currScene()->setup());
+	if (std::strcmp(name, g_engine->sceneName()) == 0)
+		lua_pushnumber(g_engine->currScene()->setup());
 	else
 		lua_pushnil();
 }
@@ -1006,17 +1006,17 @@ void setMovieTime(float movieTime) {
 
 void PerSecond() {
 	float rate = luaL_check_number(1);
-	lua_pushnumber(Engine::instance()->perSecond(rate));
+	lua_pushnumber(g_engine->perSecond(rate));
 }
 
 void EnableControl() {
 	int num = check_control(1);
-	Engine::instance()->enableControl(num);
+	g_engine->enableControl(num);
 }
 
 void DisableControl() {
 	int num = check_control(1);
-	Engine::instance()->disableControl(num);
+	g_engine->disableControl(num);
 }
 
 void GetControlState() {
@@ -1079,18 +1079,18 @@ static void KillTextObject() {
 
 	if (lua_isnil(lua_getparam(1))) { // FIXME: check this.. nil is kill all lines?
 		error("KillTextObject(NULL)");
-		//Engine::instance()->killTextObjects();
+		//g_engine->killTextObjects();
 		return;
 	}
 
 	textID = lua_getstring(lua_getparam(1));
 
-	for (Engine::TextListType::const_iterator i = Engine::instance()->textsBegin();
-			i != Engine::instance()->textsEnd(); i++) {
+	for (Engine::TextListType::const_iterator i = g_engine->textsBegin();
+			i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 
 		if (strstr(textO->name(), textID)) {
-			Engine::instance()->killTextObject(textO);
+			g_engine->killTextObject(textO);
 			delete textO;
 			return;
 		}
@@ -1142,7 +1142,7 @@ static void ChangeTextObject() {
 	lua_Object tableObj = lua_getparam(2);
 	TextObject *modifyObject = NULL;
 
-	for (Engine::TextListType::const_iterator i = Engine::instance()->textsBegin(); i != Engine::instance()->textsEnd(); i++) {
+	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 
 		if (strstr(textO->name(), textID)) {
@@ -1172,17 +1172,17 @@ static void GetTextObjectDimensions() {
 static void SetSpeechMode() {
 	int mode = check_int(1);
 	if ((mode >= 1) && (mode <= 3))
- 		Engine::instance()->setSpeechMode(mode);
+ 		g_engine->setSpeechMode(mode);
 }
 
 static void GetSpeechMode() {
-	int mode = Engine::instance()->getSpeechMode();
+	int mode = g_engine->getSpeechMode();
  	lua_pushnumber(mode);
 }
 
 static void StartFullscreenMovie() {
 	bool mode = getbool(2);
-	Engine::instance()->setMode(ENGINE_MODE_SMUSH);
+	g_engine->setMode(ENGINE_MODE_SMUSH);
 	pushbool(g_smush->play(luaL_check_string(1), 0, 0));
 }
 
@@ -1197,7 +1197,7 @@ static void StartMovie() {
 	if (!lua_isnil(lua_getparam(4)))
 		y = check_int(4);
 
-	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
+	g_engine->setMode(ENGINE_MODE_NORMAL);
 	pushbool(g_smush->play(luaL_check_string(1), x, y));
 }
 
@@ -1249,7 +1249,7 @@ static void NewObjectState() {
 		zbitmap = luaL_check_string(4);
 
 	object = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
-	Engine::instance()->currScene()->addObjectState(object);
+	g_engine->currScene()->addObjectState(object);
 	lua_pushusertag(object, object_tag);
 }
 
@@ -1266,27 +1266,27 @@ static void GetCurrentScript() {
 static void Load() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
-		Engine::instance()->_savegameFileName = NULL;
+		g_engine->_savegameFileName = NULL;
 	} else if (lua_isstring(fileName)) {
-		Engine::instance()->_savegameFileName = lua_getstring(fileName);
+		g_engine->_savegameFileName = lua_getstring(fileName);
 	} else {
 		warning("Load() fileName is wrong");
 		return;
 	}
-	Engine::instance()->_savegameLoadRequest = true;
+	g_engine->_savegameLoadRequest = true;
 }
 
 static void Save() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
-		Engine::instance()->_savegameFileName = NULL;
+		g_engine->_savegameFileName = NULL;
 	} else if (lua_isstring(fileName)) {
-		Engine::instance()->_savegameFileName = lua_getstring(fileName);
+		g_engine->_savegameFileName = lua_getstring(fileName);
 	} else {
 		warning("Save() fileName is wrong");
 		return;
 	}
-	Engine::instance()->_savegameSaveRequest = true;
+	g_engine->_savegameSaveRequest = true;
 }
 
 static int SaveCallback(int tag, int value, SaveRestoreFunc saveFunc) {
@@ -1378,7 +1378,7 @@ static void BlastText() {
 	}
 
 	warning("STUB: BlastText(\"%s\", x = %d, y = %d)\n", 
-			Localizer::instance()->localize(str).c_str(), x, y);
+			g_localizer->localize(str).c_str(), x, y);
 }
 
 #define STUB_FUNC(name) static void name() { stubWarning(#name); }
@@ -2143,7 +2143,7 @@ void register_lua() {
 }
 
 int bundle_dofile(const char *filename) {
-	Block *b = ResourceLoader::instance()->getFileBlock(filename);
+	Block *b = g_resourceloader->getFileBlock(filename);
 	if (b == NULL) {
 		delete b;
 		// Don't print warnings on Scripts\foo.lua,

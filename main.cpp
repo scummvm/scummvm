@@ -23,6 +23,7 @@
 #include "debug.h"
 #include "lua.h"
 #include "registry.h"
+#include "localize.h"
 #include "engine.h"
 #include "timer.h"
 #include "smush.h"
@@ -78,6 +79,8 @@ static bool parseBoolStr(const char *val) {
 	return false;
 }
 
+void quit();
+
 int main(int argc, char *argv[]) {
 	int i;
 
@@ -112,9 +115,11 @@ int main(int argc, char *argv[]) {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		return 1;
 
-	atexit(SDL_Quit);
-	atexit(saveRegistry);
+	atexit(quit);
 
+	g_engine = new Engine();
+	g_resourceloader = new ResourceLoader();
+	g_localizer = new Localizer();
 	g_mixer = new SoundMixer();
 	g_mixer->setVolume(255);
 	g_timer = new Timer();
@@ -122,7 +127,7 @@ int main(int argc, char *argv[]) {
 	g_driver = new Driver(640, 480, 24);
 	g_imuse = new Imuse(10);
 
-	Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
+	Bitmap *splash_bm = g_resourceloader->loadBitmap("splash.bm");
 
 	SDL_Event event;
 	
@@ -155,18 +160,30 @@ int main(int argc, char *argv[]) {
 //	lua_pushnumber(0);		// bootParam
 	lua_call("BOOT");
 
-	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
-	Engine::instance()->mainLoop();
+	g_engine->setMode(ENGINE_MODE_NORMAL);
+	g_engine->mainLoop();
+
+	quit();
+
+	return 0;
+}
+
+void quit() {
+	saveRegistry();
+
+	delete g_smush;
+	delete g_imuse;
+	delete g_localizer;
+	delete g_resourceloader;
+	delete g_engine;
+	delete g_timer;
+	delete g_mixer;
+	delete g_driver;
 
 	lua_removelibslists();
 	lua_close();
 
-	delete g_imuse;
-	delete g_smush;
-	delete g_timer;
-	delete g_mixer;
-
-	return 0;
+	SDL_Quit();
 }
 
 StackLock::StackLock(MutexRef mutex) :

@@ -89,12 +89,6 @@ public:
 	std::FILE *openNewStream(const char *filename) const;
 	int fileLength(const char *filename) const;
 
-	static ResourceLoader *instance() {
-		if (_instance == NULL)
-			_instance = new ResourceLoader;
-		return _instance;
-	}
-
 	Bitmap *loadBitmap(const char *fname);
 	CMap *loadColormap(const char *fname);
 	Costume *loadCostume(const char *fname, Costume *prevCost);
@@ -104,12 +98,11 @@ public:
 	LipSynch *loadLipSynch(const char *fname);
 	void uncache(const char *fname);
 
-private:
 	ResourceLoader();
 	ResourceLoader(const ResourceLoader &);
-	~ResourceLoader();
+	~ResourceLoader() { }
 
-	static ResourceLoader *_instance;
+private:
 
 	typedef std::list<Lab *> LabList;
 	LabList _labs;
@@ -123,9 +116,11 @@ private:
 	friend class dummy;
 };
 
+extern ResourceLoader *g_resourceloader;
+
 inline void Resource::deref() {
 	if (--_ref == 0) {
-		ResourceLoader::instance()->uncache(_fname.c_str());
+		g_resourceloader->uncache(_fname.c_str());
 		delete this;
 	}
 }

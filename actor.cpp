@@ -37,7 +37,7 @@ Actor::Actor(const char *name) :
 		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
 		_lastTurnDir(0), _currTurnDir(0),
 		_mumbleCostume(NULL), _mumbleChore(-1) {
-	Engine::instance()->registerActor(this);
+	g_engine->registerActor(this);
 	_lookingMode = false;
 	_constrain = false;
 
@@ -87,7 +87,7 @@ bool Actor::isTurning() const {
 }
 
 void Actor::walkForward() {
-	float dist = Engine::instance()->perSecond(_walkRate);
+	float dist = g_engine->perSecond(_walkRate);
 	float yaw_rad = _yaw * (M_PI / 180), pitch_rad = _pitch * (M_PI / 180);
 	Vector3d forwardVec(-std::sin(yaw_rad) * std::cos(pitch_rad),
 		std::cos(yaw_rad) * std::cos(pitch_rad),
@@ -98,7 +98,7 @@ void Actor::walkForward() {
 		_pos = destPos;
 		_walkedCur = true;
 	} else {
-		Sector *sector = Engine::instance()->currScene()->findPointSector(destPos, 0x1000);
+		Sector *sector = g_engine->currScene()->findPointSector(destPos, 0x1000);
 		if (sector != NULL) {
 			_pos = sector->projectToPlane(destPos);
 			_walkedCur = true;
@@ -110,7 +110,7 @@ Vector3d Actor::puckVector() const {
 	float yaw_rad = _yaw * (M_PI / 180);
 	Vector3d forwardVec(-std::sin(yaw_rad), std::cos(yaw_rad), 0);
 
-	Sector *sector = Engine::instance()->currScene()->findPointSector(_pos, 0x1000);
+	Sector *sector = g_engine->currScene()->findPointSector(_pos, 0x1000);
 	if (sector == NULL)
 		return forwardVec;
 	else
@@ -185,7 +185,7 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 }
 
 void Actor::turn(int dir) {
-	float delta = Engine::instance()->perSecond(_turnRate) * dir;
+	float delta = g_engine->perSecond(_turnRate) * dir;
 	_yaw += delta;
 	_currTurnDir = dir;
 }
@@ -223,11 +223,11 @@ void Actor::sayLine(const char *msg) {
 //	if (_talkSound) // Only one line at a time, please :)
 //		shutUp();
 
-	std::string msgText = Localizer::instance()->localize(secondSlash + 1);
+	std::string msgText = g_localizer->localize(secondSlash + 1);
  	std::string msgId(msg + 1, secondSlash);
 
-//	_talkSound = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
-	_lipSynch = ResourceLoader::instance()->loadLipSynch((msgId + ".lip").c_str());
+//	_talkSound = g_resourceloader->loadSound((msgId + ".wav").c_str());
+	_lipSynch = g_resourceloader->loadLipSynch((msgId + ".lip").c_str());
 
 /*	if (_talkSound != NULL) {
 		Mixer::instance()->playVoice(_talkSound);
@@ -270,7 +270,7 @@ void Actor::shutUp() {
 }
 
 void Actor::pushCostume(const char *name) {
-	Costume *newCost = ResourceLoader::instance()->loadCostume(name, currentCostume());
+	Costume *newCost = g_resourceloader->loadCostume(name, currentCostume());
 	_costumeStack.push_back(newCost);
 }
 
@@ -325,11 +325,11 @@ void Actor::update() {
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
 	if (_constrain && !_walking) {
-		Engine::instance()->currScene()->findClosestSector(_pos, NULL, &_pos);
+		g_engine->currScene()->findClosestSector(_pos, NULL, &_pos);
 	}
 
 	if (_turning) {
-		float turnAmt = Engine::instance()->perSecond(_turnRate);
+		float turnAmt = g_engine->perSecond(_turnRate);
 		float dyaw = _destYaw - _yaw;
 		while (dyaw > 180)
 			dyaw -= 360;
@@ -353,7 +353,7 @@ void Actor::update() {
 		if (dist > 0)
 			dir /= dist;
 
-		float walkAmt = Engine::instance()->perSecond(_walkRate);
+		float walkAmt = g_engine->perSecond(_walkRate);
 
 		if (walkAmt >= dist) {
 			_pos = _destPos;
@@ -423,7 +423,7 @@ void Actor::update() {
 	}
 
 	if (_lookingMode) {
-		float lookAtAmt = Engine::instance()->perSecond(_lookAtRate);
+		float lookAtAmt = g_engine->perSecond(_lookAtRate);
 	}
 }
 

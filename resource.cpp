@@ -35,7 +35,7 @@ static void makeLower(std::string& s) {
 	std::transform(s.begin(), s.end(), s.begin(), tolower);
 }
 
-ResourceLoader *ResourceLoader::_instance = NULL;
+ResourceLoader *g_resourceloader = NULL;
 
 ResourceLoader::ResourceLoader() {
 	const char *directory = Registry::instance()->get("DataDir");

@@ -37,24 +37,17 @@ McmpMgr::McmpMgr() {
 }
 
 McmpMgr::~McmpMgr() {
-	if (_file) {
-//		fclose(_file);
-	}
 	free(_compTable);
 	free(_compInput);
 }
 
 bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
-	_file = ResourceLoader::instance()->openNewStream(filename);
+	_file = g_resourceloader->openNewStream(filename);
 
 	if (!_file) {
 		warning("McmpMgr::openFile() Can't open MCMP file: %s", filename);
 		return false;
 	}
-
-//	int filePos = ftell(_file);
-//	_file = fdopen(fileno(_file), "rb");
-//	fseek(_file, filePos, SEEK_SET);
 
 	uint32 tag;
 	fread(&tag, 1, 4, _file);

@@ -31,7 +31,7 @@
 
 #include "driver_gl.h"
 
-Engine *Engine::_instance = NULL;
+Engine *g_engine = NULL;
 
 extern Imuse *g_imuse;
 
@@ -227,11 +227,11 @@ void Engine::mainLoop() {
 }
 
 void Engine::savegameGzread(void *data, int size) {
-	gzread(Engine::instance()->_savegameFileHandle, data, size);
+	gzread(g_engine->_savegameFileHandle, data, size);
 }
 
 void Engine::savegameGzwrite(void *data, int size) {
-	gzwrite(Engine::instance()->_savegameFileHandle, data, size);
+	gzwrite(g_engine->_savegameFileHandle, data, size);
 }
 
 void Engine::savegameRestore() {
@@ -334,7 +334,7 @@ void Engine::savegameSave() {
 }
 
 void Engine::setScene(const char *name) {
-	Block *b = ResourceLoader::instance()->getFileBlock(name);
+	Block *b = g_resourceloader->getFileBlock(name);
 	if (b == NULL)
 		warning("Could not find scene file %s\n", name);
 	delete _currScene;

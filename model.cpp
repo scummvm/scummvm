@@ -41,7 +41,7 @@ void Model::loadBinary(const char *data, const CMap &cmap) {
 	data += 8;
 	_materials = new ResPtr<Material>[_numMaterials];
 	for (int i = 0; i < _numMaterials; i++) {
-		_materials[i] = ResourceLoader::instance()->loadMaterial(data, cmap);
+		_materials[i] = g_resourceloader->loadMaterial(data, cmap);
 		data += 32;
 	}
 	data += 32; // skip name
@@ -246,7 +246,7 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 		int num;
 		char name[32];
 		ts.scanString("%d: %32s", 2, &num, name);
-		_materials[num] = ResourceLoader::instance()->loadMaterial(name, cmap);
+		_materials[num] = g_resourceloader->loadMaterial(name, cmap);
 	}
 
 	ts.expectString("section: geometrydef");

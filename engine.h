@@ -88,11 +88,6 @@ enum {
 
 class Engine {
 public:
-	static Engine *instance() {
-		if (_instance == NULL)
-			_instance = new Engine;
-		return _instance;
-	}
 
 	void setMode(int mode) { _mode = mode; }
 	void setSpeechMode(int mode) { _speechMode = mode; }
@@ -153,11 +148,10 @@ public:
 	char *_savegameFileName;
 	gzFile _savegameFileHandle;
 
-private:
-	static Engine *_instance;
-
 	Engine();
-	~Engine() { }
+	~Engine() {}
+
+private:
 
 	Scene *_currScene;
 	int _mode;
@@ -171,5 +165,7 @@ private:
 	Actor *_selectedActor;
 	TextListType _textObjects;
 };
+
+extern Engine *g_engine;
 
 #endif

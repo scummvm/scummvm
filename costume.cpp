@@ -158,7 +158,7 @@ BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID, const
 }
 
 void BitmapComponent::setKey(int val) {
-	ObjectState *state = Engine::instance()->currScene()->findState(_filename.c_str());
+	ObjectState *state = g_engine->currScene()->findState(_filename.c_str());
 
 	if (state != NULL)
 		state->setNumber(val);
@@ -177,9 +177,9 @@ void ModelComponent::init() {
 		// constructor before
 		if (_cmap == NULL) {
 			warning("No colormap specified for %s\n", _filename.c_str());
-			_cmap = ResourceLoader::instance()->loadColormap("item.cmp");
+			_cmap = g_resourceloader->loadColormap("item.cmp");
 		}
-		_obj = ResourceLoader::instance()->loadModel(_filename.c_str(), *_cmap);
+		_obj = g_resourceloader->loadModel(_filename.c_str(), *_cmap);
 		_hier = _obj->copyHierarchy();
 		_hier->_hierVisible = false;
 	}
@@ -279,7 +279,7 @@ private:
 
 ColormapComponent::ColormapComponent(Costume::Component *parent, int parentID, const char *filename) :
 		Costume::Component(parent, parentID) {
-	_cmap = ResourceLoader::instance()->loadColormap(filename);
+	_cmap = g_resourceloader->loadColormap(filename);
 
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(parent);
 	if (mc != NULL)
@@ -312,10 +312,10 @@ KeyframeComponent::KeyframeComponent(Costume::Component *parent, int parentID, c
 	const char *comma = std::strchr(filename, ',');
 	if (comma != NULL) {
 		std::string realName(filename, comma);
-		_keyf = ResourceLoader::instance()->loadKeyframe(realName.c_str());
+		_keyf = g_resourceloader->loadKeyframe(realName.c_str());
 		std::sscanf(comma + 1, "%d,%d", &_priority1, &_priority2);
 	} else
-		_keyf = ResourceLoader::instance()->loadKeyframe(filename);
+		_keyf = g_resourceloader->loadKeyframe(filename);
 }
 
 void KeyframeComponent::setKey(int val) {
@@ -349,7 +349,7 @@ void KeyframeComponent::update() {
 	if (_currTime < 0)		// For first time through
 		_currTime = 0;
 	else
-		_currTime += Engine::instance()->frameTime();
+		_currTime += g_engine->frameTime();
 
 	int animLength = (int)(_keyf->length() * 1000);
 
@@ -436,8 +436,8 @@ void MaterialComponent::init() {
 	// The parent model and thus all its textures should have been
 	// loaded by now, so passing an arbitrary colormap here
 	// shouldn't cause problems.
-	ResPtr<CMap> cmap = ResourceLoader::instance()->loadColormap("item.cmp");
-	_mat = ResourceLoader::instance()->loadMaterial(_filename.c_str(), *cmap);
+	ResPtr<CMap> cmap = g_resourceloader->loadColormap("item.cmp");
+	_mat = g_resourceloader->loadMaterial(_filename.c_str(), *cmap);
 }
 
 void MaterialComponent::setKey(int val) {
@@ -487,9 +487,9 @@ SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const c
 	const char *comma = std::strchr(filename, ',');
 	if (comma != NULL) {
 		std::string realName(filename, comma);
-//		_sound = ResourceLoader::instance()->loadSound(realName.c_str());
+//		_sound = g_resourceloader->loadSound(realName.c_str());
 	} else {
-//		_sound = ResourceLoader::instance()->loadSound(filename);
+//		_sound = g_resourceloader->loadSound(filename);
 	}
 }
 
@@ -667,7 +667,7 @@ void Costume::Chore::update() {
 	if (_currTime < 0)
 		newTime = 0; // For first time through
 	else
-		newTime = _currTime + Engine::instance()->frameTime();
+		newTime = _currTime + g_engine->frameTime();
 
 	setKeys(_currTime, newTime);
 
