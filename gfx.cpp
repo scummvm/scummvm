@@ -67,6 +67,8 @@ void Scumm::initScreens(int a, int b, int w, int h) {
 void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra) {
 	VirtScreen *vs = &virtscr[slot];
 	int size;
+	int i;
+	byte *ptr;
 
 	assert(height>=0);
 	assert(slot>=0 && slot<4);
@@ -89,6 +91,10 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fou
 
 	vs->screenPtr = _videoBuffer+328*top;
 
+	ptr=vs->screenPtr;
+	for(i=0;i<size;i++) // reset background ?
+		*ptr++=0;
+	
 	if (twobufs) {
 		createResource(rtBuffer, slot+5, size);
 	}

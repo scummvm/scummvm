@@ -6,7 +6,7 @@ DEFINES = -DUNIX -DUSE_ADLIB
 LDFLAGS :=
 INCLUDES:= `sdl-config --cflags` -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= `sdl-config --libs` -lreadline -lncurses -lhistory -lm
+LIBS	= `sdl-config --libs` -lncurses -lm
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm.h scummsys.h stdafx.h
