@@ -1205,12 +1205,13 @@ void LoadedCostume::loadCostume(int id) {
 	default:
 		error("Costume %d is invalid", id);
 	}
+	
+	// In GF_OLD_BUNDLE games, there is no actual palette, just a single color byte. 
+	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
+	if (_vm->_features & GF_OLD_BUNDLE)
+		_numColors = 1;
 
-	if (_vm->_features & GF_OLD_BUNDLE) {
-		_dataptr = _ptr + READ_LE_UINT16(_ptr + 9);
-	}	else {
-		_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
-	}
+	_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
 }
 
 byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
@@ -1222,10 +1223,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 
 	i = cost.curpos[limb] & 0x7FFF;
 
-	if (_vm->_features & GF_OLD_BUNDLE)
-		_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + limb * 2 + 11);
-	else
-		_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + limb * 2 + 10);
+	_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + limb * 2 + 10);
 
 	code = _loaded._dataptr[i] & 0x7F;
 	
@@ -1262,22 +1260,13 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-	if (_features & GF_OLD_BUNDLE) {
-		r = p + READ_LE_UINT16(p + anim * 2 + 43);
-	} else {
-		r = p + READ_LE_UINT16(p + anim * 2 + lc._numColors + 42);
-	}
+	r = p + READ_LE_UINT16(p + anim * 2 + lc._numColors + 42);
 
 	if (r == p) {
 		return;
 	}
 
-	if (_features & GF_OLD_BUNDLE)
-		dataptr = p + READ_LE_UINT16(p + 9);
-	else if (_features & GF_OLD256)
-		dataptr = p + *(p + lc._numColors + 8);
-	else
-		dataptr = p + READ_LE_UINT16(p + lc._numColors + 8);
+	dataptr = lc._dataptr;
 
 	mask = READ_LE_UINT16(r);
 	r += 2;
@@ -1285,9 +1274,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	do {
 		if (mask & 0x8000) {
 			if (_features & GF_AFTER_V3) {
-				j = 0;
-				j = *(r);
-				r++;
+				j = *r++;
 				if (j == 0xFF)
 					j = 0xFFFF;
 			} else {
@@ -1329,8 +1316,14 @@ void CostumeRenderer::setPalette(byte *palette) {
 	int i;
 	byte color;
 
-	if (_vm->_features & GF_OLD_BUNDLE)
-		palette[_loaded._ptr[8]] = palette[0];
+	if (_vm->_features & GF_OLD_BUNDLE) {
+		for (i = 0; i < _loaded._numColors; i++) {
+			_palette[i] = i;
+		}
+		_palette[_loaded._ptr[8]] = palette[0];
+		// TODO / FIXME
+		return;
+	}
 	
 	for (i = 0; i < _loaded._numColors; i++) {
 		if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color) || (_vm->_features & GF_AFTER_V6)) {
