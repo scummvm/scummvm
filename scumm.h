@@ -351,18 +351,31 @@ struct CharsetRenderer {
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 };
 
-struct LoadedCostume {
+class LoadedCostume {
+protected:
+	Scumm *_vm;
+
+public:
 	byte *_ptr;
 	byte *_dataptr;
 	byte _numColors;
-	
+
+	LoadedCostume(Scumm *vm) : _vm(vm), _ptr(0), _dataptr(0), _numColors(0) {}
+
+	void loadCostume(int id);
+	byte increaseAnims(Actor *a);
+
+protected:
+	byte increaseAnim(Actor *a, int slot);
 };
 
-struct CostumeRenderer {
+class CostumeRenderer {
+protected:
 	Scumm *_vm;
 	
 	LoadedCostume _loaded;
-		
+	
+public:
 	byte *_shadow_table;
 
 	byte *_frameptr;
@@ -414,6 +427,9 @@ struct CostumeRenderer {
 	void setPalette(byte *palette);
 	void setFacing(uint16 facing);
 	void setCostume(int costume);
+
+public:
+	CostumeRenderer(Scumm *vm) : _vm(vm), _loaded(vm) {}
 };
 
 #define ARRAY_HDR_SIZE 6
@@ -873,9 +889,6 @@ public:
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
 
 	/* Should be in Costume class */
-	void loadCostume(LoadedCostume *lc, int costume);
-	byte cost_increaseAnims(LoadedCostume *lc, Actor *a);
-	byte cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot);
 	void cost_decodeData(Actor *a, int frame, uint usemask);
 	int cost_frameToAnim(Actor *a, int frame);
 

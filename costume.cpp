@@ -790,8 +790,7 @@ void CostumeRenderer::proc_special(Actor *a, byte mask2)
 
 }
 
-#if 0
-void CostumeRenderer::loadCostume(int id)
+void LoadedCostume::loadCostume(int id)
 {
 	_ptr = _vm->getResourceAddress(rtCostume, id);
 
@@ -820,7 +819,6 @@ void CostumeRenderer::loadCostume(int id)
 
 	_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
 }
-#endif
 
 byte CostumeRenderer::drawOneSlot(Actor *a, int slot)
 {
@@ -867,36 +865,6 @@ int Scumm::cost_frameToAnim(Actor *a, int frame)
 	return newDirToOldDir(a->facing) + frame * 4;
 }
 
-void Scumm::loadCostume(LoadedCostume *lc, int costume)
-{
-	lc->_ptr = getResourceAddress(rtCostume, costume);
-
-	if (_features & GF_AFTER_V6) {
-		lc->_ptr += 8;
-	} else if (!(_features & GF_SMALL_HEADER)) {
-		lc->_ptr += 2;
-	}
-
-	switch (lc->_ptr[7] & 0x7F) {
-	case 0x58:
-		lc->_numColors = 16;
-		break;
-	case 0x59:
-		lc->_numColors = 32;
-		break;
-	case 0x60:										/* New since version 6 */
-		lc->_numColors = 16;
-		break;
-	case 0x61:										/* New since version 6 */
-		lc->_numColors = 32;
-		break;
-	default:
-		error("Costume %d is invalid", costume);
-	}
-
-	lc->_dataptr = lc->_ptr + READ_LE_UINT16(lc->_ptr + lc->_numColors + 8);
-}
-
 void Scumm::cost_decodeData(Actor *a, int frame, uint usemask)
 {
 	byte *p, *r;
@@ -905,9 +873,9 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask)
 	byte extra, cmd;
 	byte *dataptr;
 	int anim;
-	LoadedCostume lc;
+	LoadedCostume lc(this);
 
-	loadCostume(&lc, a->costume);
+	lc.loadCostume(a->costume);
 
 	anim = cost_frameToAnim(a, frame);
 
@@ -992,22 +960,22 @@ void CostumeRenderer::setFacing(uint16 facing)
 
 void CostumeRenderer::setCostume(int costume)
 {
-	_vm->loadCostume(&_loaded, costume);
+	_loaded.loadCostume(costume);
 }
 
-byte Scumm::cost_increaseAnims(LoadedCostume *lc, Actor *a)
+byte LoadedCostume::increaseAnims(Actor *a)
 {
 	int i;
 	byte r = 0;
 
 	for (i = 0; i != 16; i++) {
 		if (a->cost.curpos[i] != 0xFFFF)
-			r += cost_increaseAnim(lc, a, i);
+			r += increaseAnim(a, i);
 	}
 	return r;
 }
 
-byte Scumm::cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot)
+byte LoadedCostume::increaseAnim(Actor *a, int slot)
 {
 	int highflag;
 	int i, end;
@@ -1019,7 +987,7 @@ byte Scumm::cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot)
 	highflag = a->cost.curpos[slot] & 0x8000;
 	i = a->cost.curpos[slot] & 0x7FFF;
 	end = a->cost.end[slot];
-	code = lc->_dataptr[i] & 0x7F;
+	code = _dataptr[i] & 0x7F;
 
 	do {
 		if (!highflag) {
@@ -1029,16 +997,16 @@ byte Scumm::cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot)
 			if (i != end)
 				i++;
 		}
-		nc = lc->_dataptr[i];
+		nc = _dataptr[i];
 
 		if (nc == 0x7C) {
 			a->cost.animCounter1++;
 			if (a->cost.start[slot] != end)
 				continue;
 		} else {
-			if (_features & GF_AFTER_V6) {
+			if (_vm->_features & GF_AFTER_V6) {
 				if (nc >= 0x71 && nc <= 0x78) {
-					addSoundToQueue2(a->sound[nc - 0x71]);
+					_vm->addSoundToQueue2(a->sound[nc - 0x71]);
 					if (a->cost.start[slot] != end)
 						continue;
 				}
@@ -1052,7 +1020,7 @@ byte Scumm::cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot)
 		}
 
 		a->cost.curpos[slot] = i | highflag;
-		return (lc->_dataptr[i] & 0x7F) != code;
+		return (_dataptr[i] & 0x7F) != code;
 	} while (1);
 }
 

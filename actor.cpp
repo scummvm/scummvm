@@ -197,12 +197,12 @@ int Actor::remapDirection(int dir)
 		flipY = (walkdata.YXFactor > 0);
 
 		// Check for X-Flip
-		if ((flags & 0x08) || _vm->getClass(number, 0x1E)) {
+		if ((flags & 0x08) || isInClass(0x1E)) {	// 0x1E = 30
 			dir = 360 - dir;
 			flipX = !flipX;
 		}
 		// Check for Y-Flip
-		if ((flags & 0x10) || _vm->getClass(number, 0x1D)) {
+		if ((flags & 0x10) || isInClass(0x1D)) {	// 0x1E = 29
 			dir = 180 - dir;
 			flipY = !flipY;
 		}
@@ -340,7 +340,7 @@ void Actor::setupActorScale()
 
 	// FIXME: Special 'no scaling' class for MI1 VGA Floppy
 	//        Not totally sure if this is correct.
-	if (_vm->_gameId == GID_MONKEY_VGA && _vm->getClass(number, 0x96))
+	if (_vm->_gameId == GID_MONKEY_VGA && isInClass(0x96))
 		return;
 
 	if (_vm->_features & GF_NO_SCALLING) {
@@ -577,7 +577,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 	abr.y = dstY;
 	abr.dist = 0;
 
-	if ((_vm->_features & GF_SMALL_HEADER) && _vm->getClass(number, 22))
+	if ((_vm->_features & GF_SMALL_HEADER) && isInClass(22))
 		return abr;
 
 	if (ignoreBoxes == 0) {
@@ -598,7 +598,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 					|| !(_vm->_features & GF_SMALL_HEADER))
 				for (j = box; j >= firstValidBox; j--) {
 					flags = _vm->getBoxFlags(j);
-					if (flags & 0x80 && (!(flags & 0x20) || _vm->getClass(number, 0x1F)))
+					if (flags & 0x80 && (!(flags & 0x20) || isInClass(0x1F)))
 						continue;
 
 					if (pathfrom >= firstValidBox && (_vm->getPathToDestBox(pathfrom, j) == -1))
@@ -835,27 +835,24 @@ void Scumm::processActors()
 
 void Actor::drawActorCostume()
 {
+	if (!needRedraw)
+		return;
+
+	// FIXME: ugly fix for samnmax inventory
+	if (_vm->_gameId == GID_SAMNMAX && _vm->getState(995))
+		return;
+
+	needRedraw = false;
+
+	setupActorScale();
+
 	if (!(_vm->_features & GF_AFTER_V7)) {
-		CostumeRenderer cr;
+		CostumeRenderer cr(_vm);
 
-		if (!needRedraw)
-			return;
-
-		if (_vm->getClass(number, 20))
+		if (isInClass(20))
 			mask = 0;
-		else if (_vm->getClass(number, 21))
+		else if (isInClass(21))
 			forceClip = 1;
-
-		// FIXME: ugly fix for samnmax inventory
-		if (_vm->_gameId == GID_SAMNMAX && _vm->getState(995))
-			return;
-
-		needRedraw = false;
-
-		setupActorScale();
-
-		/* First, zero initialize all fields */
-		memset(&cr, 0, sizeof(cr));
 
 		cr._actorX = x - _vm->virtscr->xstart;
 		cr._actorY = y - elevation;
@@ -863,7 +860,6 @@ void Actor::drawActorCostume()
 		cr._scaleY = scaley;
 
 		cr._outheight = _vm->virtscr->height;
-		cr._vm = _vm;
 
 		cr._zbuf = mask;
 		if (cr._zbuf > _vm->gdi._numZBuffer)
@@ -888,13 +884,6 @@ void Actor::drawActorCostume()
 		}
 	} else {
 		AkosRenderer ar(_vm);
-
-		if (!needRedraw)
-			return;
-
-		needRedraw = false;
-
-		setupActorScale();
 
 		ar.x = x - _vm->virtscr->xstart;
 		ar.y = y - elevation;
@@ -948,9 +937,9 @@ void Actor::actorAnimate()
 				needBgReset = true;
 			}
 		} else {
-			LoadedCostume lc;
-			_vm->loadCostume(&lc, costume);
-			if (_vm->cost_increaseAnims(&lc, this)) {
+			LoadedCostume lc(_vm);
+			lc.loadCostume(costume);
+			if (lc.increaseAnims(this)) {
 				needRedraw = true;
 				needBgReset = true;
 			}
@@ -1389,4 +1378,9 @@ void Scumm::resetActorBgs()
 	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
 		a->needBgReset = false;
 	}
+}
+
+bool Actor::isInClass(int cls)
+{
+	return _vm->getClass(number, cls);
 }

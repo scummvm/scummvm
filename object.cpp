@@ -44,7 +44,7 @@ void Scumm::putClass(int obj, int cls, bool set)
 {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putClass");
 	cls &= 0x7F;
-	checkRange(32, 1, cls, "Class %d out of range in getClass");
+	checkRange(32, 1, cls, "Class %d out of range in putClass");
 
 
 	if (_features & GF_SMALL_HEADER) {

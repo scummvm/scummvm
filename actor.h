@@ -161,6 +161,8 @@ public:
 		animVariable[var] = value;
 	}
 
+protected:
+	bool isInClass(int cls);
 };
 
 #endif
