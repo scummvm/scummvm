@@ -105,25 +105,20 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 	
 	int32 l;
 	uint32 offset = READ_BE_UINT32(_dataSrc + 4) + 8;
+	memset(_offsets, 0, 256 * sizeof(int32));
 	for (l = 0; l < 256; l++) {
 		if (READ_BE_UINT32(_dataSrc + offset) == 'FRME') {
 			offset += 8;
 			if (READ_BE_UINT32(_dataSrc + offset) == 'FOBJ') {
 				_offsets[l] = offset + 8;
 				offset += READ_BE_UINT32(_dataSrc + offset + 4) + 8;
+			} else {
+				debug(2, "NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, dir, l, offset);
+				break;
 			}
-			else {
-				debug(2, "NutRenderer::loadFont() there is no FRME chunk");
-				free(_dataSrc);
-				_dataSrc = NULL;
-				return false;
-			}
-		}
-		else {
-			debug(2, "NutRenderer::loadFont() there is no FOBJ chunk in FRME chunk");
-			free(_dataSrc);
-			_dataSrc = NULL;
-			return false;
+		} else {
+			debug(2, "NutRenderer::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, dir, l, offset);
+			break;
 		}
 	}
 
