@@ -67,6 +67,7 @@ void Actor::initActor(int mode)
 	layer = 0;
 
 	setActorWalkSpeed(8, 2);
+	animSpeed = 0;
 
 	ignoreBoxes = 0;
 	forceClip = 0;
