@@ -291,8 +291,8 @@ void Scumm_v8::setupOpcodes()
 		/* C8 */
 		OPCODE(o6_startScript),
 		OPCODE(o6_startObject),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_pickOneOf),
+		OPCODE(o6_pickOneOfDefault),
 		/* CC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_isAnyOf),
@@ -317,27 +317,27 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_findObject),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_findInventory),
 		/* E0 */
+		OPCODE(o6_getInventoryCount),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_getActorRoom),
+		OPCODE(o6_getActorWalkBox),
 		/* E4 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_getActorMoving),
+		OPCODE(o6_getActorCostume),
+		OPCODE(o6_getActorScaleX),
+		OPCODE(o6_getActorLayer),
 		/* E8 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_getActorElevation),
+		OPCODE(o6_getActorWidth),
+		OPCODE(o6_getObjectNewDir),		// FIXME: is this right?
+		OPCODE(o6_getObjectX),
 		/* EC */
+		OPCODE(o6_getObjectY),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_distObjectObject),
+		OPCODE(o6_distPtPt),
 		/* F0 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1004,7 +1004,11 @@ void Scumm_v8::o8_cameraOps()
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 0x32:		// SO_CAMERA_PAUSE
+		warning("freezeCamera NYI");
+		break;
 	case 0x33:		// SO_CAMERA_RESUME
+		warning("unfreezeCamera NYI");
+		break;
 	default:
 		error("o8_cameraOps: default case %d", subOp);
 	}

@@ -337,7 +337,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* EC */
-		OPCODE(o6_getActorPriority),
+		OPCODE(o6_getActorLayer),
 		OPCODE(o6_getObjectNewDir),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1223,7 +1223,11 @@ void Scumm_v6::o6_getRandomNumberRange()
 
 void Scumm_v6::o6_getActorMoving()
 {
-	push(derefActorSafe(pop(), "o6_getActorMoving")->moving);
+	Actor *a = derefActorSafe(pop(), "o6_getActorMoving");
+	if (a)
+		push(a->moving);
+	else
+		push(0);
 }
 
 void Scumm_v6::o6_isScriptRunning()
@@ -1238,7 +1242,11 @@ void Scumm_v6::o6_isRoomScriptRunning()
 
 void Scumm_v6::o6_getActorRoom()
 {
-	push(derefActorSafe(pop(), "o6_getActorRoom")->room);
+	Actor *a = derefActorSafe(pop(), "o6_getActorRoom");
+	if (a)
+		push(a->room);
+	else
+		push(0);
 }
 
 void Scumm_v6::o6_getObjectX()
@@ -2875,11 +2883,11 @@ void Scumm_v6::o6_pickOneOfDefault()
 	push(i);
 }
 
-void Scumm_v6::o6_getActorPriority()
+void Scumm_v6::o6_getActorLayer()
 {
 	Actor *a;
 
-	a = derefActorSafe(pop(), "getActorPriority");
+	a = derefActorSafe(pop(), "getActorLayer");
 
 	push(a->layer);
 }
