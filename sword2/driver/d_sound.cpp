@@ -35,7 +35,11 @@
 #include "common/stdafx.h"
 #include "common/file.h"
 #include "sound/rate.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
 #include "sword2/sword2.h"
+#include "sword2/resman.h"
 #include "sword2/driver/d_draw.h"
 #include "sword2/driver/d_sound.h"
 
@@ -91,6 +95,42 @@ Sound::~Sound() {
 
 	if (_mutex)
 		_vm->_system->deleteMutex(_mutex);
+}
+
+int Sound::openSoundFile(File *fp, const char *base) {
+	struct {
+		const char *ext;
+		int mode;
+	} file_types[] = {
+#ifdef USE_MAD
+		{ "cl3", kMP3Mode },
+#endif
+#ifdef USE_VORBIS
+		{ "clg", kVorbisMode },
+#endif
+#ifdef USE_FLAC
+		{ "clf", kFlacMode },
+#endif
+		{ "clu", kWAVMode }
+	};
+
+	char filename[20];
+	int cd = _vm->_resman->whichCd();
+	int i;
+
+	for (i = 0; i < ARRAYSIZE(file_types); i++) {
+		sprintf(filename, "%s%d.%s", base, cd, file_types[i].ext);
+		if (fp->open(filename))
+			return file_types[i].mode;
+	}
+
+	for (i = 0; i < ARRAYSIZE(file_types); i++) {
+		sprintf(filename, "%s.%s", base, file_types[i].ext);
+		if (fp->open(filename))
+			return file_types[i].mode;
+	}
+
+	return 0;
 }
 
 void Sound::streamMusic(int16 *data, uint len) {
@@ -749,64 +789,97 @@ int32 Sound::amISpeaking(void) {
  * @param filename the file name of the speech cluster file
  * @param speechid the text line id used to reference the speech
  * @param buf a pointer to the buffer that will be allocated for the sound
- */ 
+ */
 
-uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf) {
-	uint32 i;
-	byte *data8;
-	uint32 speechPos, speechLength;
+uint32 Sound::preFetchCompSpeech(uint32 speechid, uint16 **buf) {
+	AudioStream *input = NULL;
 	File fp;
-	uint32 bufferSize;
+	int soundMode = kWAVMode;
 
 	*buf = NULL;
 
 	// Open the speech cluster and find the data offset & size
-	if (!fp.open(filename))
+
+	soundMode = openSoundFile(&fp, "speech");
+	if (!soundMode)
 		return 0;
 
 	fp.seek((speechid + 1) * 8, SEEK_SET);
 
-	speechPos = fp.readUint32LE();
-	speechLength = fp.readUint32LE();
+	uint32 speechPos = fp.readUint32LE();
+	uint32 speechLength = fp.readUint32LE();
 
 	if (!speechPos || !speechLength) {
 		fp.close();
 		return 0;
 	}
 
-	// Create a temporary buffer for compressed speech
-	data8 = (byte *) malloc(speechLength);
-	if (!data8) {
+	fp.seek(speechPos, SEEK_SET);
+
+	switch (soundMode) {
+#ifdef USE_MAD
+	case kMP3Mode:
+		input = makeMP3Stream(&fp, speechLength);
+		break;
+#endif
+#ifdef USE_VORBIS
+	case kVorbisMode:
+		input = makeVorbisStream(&fp, speechLength);
+		break;
+#endif
+#ifdef USE_FLAC
+	case kFlacMode:
+		input = makeFlacStream(&fp, speechLength);
+		break;
+#endif
+	default:
+		break;
+	}
+
+	// Decompress data into speech buffer.
+
+	uint32 bufferSize = speechLength * 2;
+
+	*buf = (uint16 *) malloc(bufferSize);
+	if (!*buf) {
+		delete input;
 		fp.close();
 		return 0;
 	}
 
-	fp.seek(speechPos, SEEK_SET);
+	if (input) {
+		int numSamples = input->readBuffer((int16 *) *buf, speechLength);
+		fp.close();
+		delete input;
+		return numSamples * 2;
+	}
+
+	uint16 *data16 = *buf;
+
+	// Create a temporary buffer for compressed speech
+	byte *data8 = (byte *) malloc(speechLength);
+	if (!data8) {
+		free(data16);
+		fp.close();
+		return 0;
+	}
+
+	// FIXME: Create an AudioStream-based class for this. This could then
+	// also be used by the music code.
 
 	if (fp.read(data8, speechLength) != speechLength) {
 		fp.close();
+		free(data16);
 		free(data8);
 		return 0;
 	}
 
 	fp.close();
 
-	// Decompress data into speech buffer.
-
-	bufferSize = (speechLength - 1) * 2;
-
-	*buf = (uint16 *) malloc(bufferSize);
-	if (!*buf) {
-		free(data8);
-		return 0;
-	}
-
-	uint16 *data16 = *buf;
-
 	// Starting Value
 	data16[0] = READ_LE_UINT16(data8);
 
-	for (i = 1; i < speechLength - 1; i++) {
+	for (uint32 i = 1; i < speechLength; i++) {
 		if (GetCompressedSign(data8[i + 1]))
 			data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
 		else
@@ -826,7 +899,7 @@ uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 *
  * @param pan panning, -16 (full left) to 16 (full right)
  */
 
-int32 Sound::playCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan) {
+int32 Sound::playCompSpeech(uint32 speechid, uint8 vol, int8 pan) {
 	if (_speechMuted)
 		return RD_OK;
 
@@ -836,7 +909,7 @@ int32 Sound::playCompSpeech(const char *filename, uint32 speechid, uint8 vol, in
 	if (getSpeechStatus() == RDERR_SPEECHPLAYING)
 		return RDERR_SPEECHPLAYING;
 
-	bufferSize = preFetchCompSpeech(filename, speechid, &data16);
+	bufferSize = preFetchCompSpeech(speechid, &data16);
 
 	// We don't know exactly what went wrong here.
 	if (bufferSize == 0)

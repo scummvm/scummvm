@@ -31,6 +31,13 @@ namespace Sword2 {
 #define MAXFX 16
 #define MAXMUS 2
 
+enum {
+	kWAVMode = 1,
+	kMP3Mode,
+	kVorbisMode,
+	kFlacMode
+};
+
 extern void sword2_sound_handler(void *refCon);
 
 struct WavInfo {
@@ -108,6 +115,8 @@ private:
 	int32 getFxIndex(int32 id);
 	void stopFxHandle(int i);
 
+	int openSoundFile(File *fp, const char *base);
+
 public:
 	Sound(Sword2Engine *vm);
 	~Sound();
@@ -139,8 +148,8 @@ public:
 	int32 stopSpeech(void);
 	int32 getSpeechStatus(void);
 	int32 amISpeaking(void);
-	uint32 preFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf);
-	int32 playCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
+	uint32 preFetchCompSpeech(uint32 speechid, uint16 **buf);
+	int32 playCompSpeech(uint32 speechid, uint8 vol, int8 pan);
 
 	void muteFx(bool mute);
 	bool isFxMute(void);

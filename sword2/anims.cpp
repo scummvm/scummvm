@@ -341,7 +341,6 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 	byte *text;
 	uint32 wavId;	// ie. offical text number (actor text number)
 	bool speechRunning;
- 	char speechFile[256];
 
 	// for each sequence text line that's been logged
 	for (line = 0; line < _sequenceTextLines; line++) {
@@ -375,22 +374,7 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 		sequenceText[line]->speech = NULL;
 
 		if (!_vm->_sound->isSpeechMute()) {
-			// speech is selected, so try that first
-
-			// set up path to speech cluster
-			// first checking if we have speech1.clu or
-			// speech2.clu in current directory (for translators
-			// to test)
-
-			File fp;
-
-			sprintf(speechFile, "speech%d.clu", _vm->_resman->whichCd());
-			if (fp.open(speechFile))
-				fp.close();
-			else
-				strcpy(speechFile, "speech.clu");
-
-			_sequenceTextList[line].speechBufferSize = _vm->_sound->preFetchCompSpeech(speechFile, wavId, &_sequenceTextList[line].speech_mem);
+			_sequenceTextList[line].speechBufferSize = _vm->_sound->preFetchCompSpeech(wavId, &_sequenceTextList[line].speech_mem);
 			if (_sequenceTextList[line].speechBufferSize) {
 				// ok, we've got speech!
 				speechRunning = true;

@@ -895,19 +895,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			else if (speech_pan > 16)
 				speech_pan = 16;
 
-			char speechFile[20];
-
-			sprintf(speechFile, "speech%d.clu", _vm->_resman->whichCd());
-
-			File fp;
-
-			if (fp.open(speechFile))
-				fp.close();
-			else
-				strcpy(speechFile, "speech.clu");
-
-			// Load speech but don't start playing yet
-			uint32 rv = _vm->_sound->playCompSpeech(speechFile, params[S_WAV], 16, speech_pan);
+			uint32 rv = _vm->_sound->playCompSpeech(params[S_WAV], 16, speech_pan);
 
 			if (rv == RD_OK) {
 				// Ok, we've got something to play. Set it
@@ -917,7 +905,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				speechRunning = true;
 				_vm->_sound->unpauseSpeech();
 			} else {
-				debug(5, "ERROR: PlayCompSpeech(speechFile=\"%s\", wav=%d (res=%d pos=%d)) returned %.8x", speechFile, params[S_WAV], text_res, local_text, rv);
+				debug(5, "ERROR: PlayCompSpeech(wav=%d (res=%d pos=%d)) returned %.8x", params[S_WAV], text_res, local_text, rv);
 			}
 		}
 
