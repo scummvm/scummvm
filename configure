@@ -794,9 +794,7 @@ case $_backend in
     find_sdlconfig
     INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
     LIBS="$LIBS `$_sdlconfig --libs`"
-    OBJS="$OBJS backends/sdl/sdl-common.o backends/sdl/sdl.o"
     MODULES="$MODULES backends/sdl"
-    MODULE_DIRS="$MODULE_DIRS backends/sdl"
     ;;
   x11)
     INCLUDES="$INCLUDES -I/usr/X11R6/include"
