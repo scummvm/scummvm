@@ -1340,7 +1340,6 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 		VAR(VAR_WALKTO_OBJ) = 0;
 
 	if (_version == 6) {
-		setCameraAt(a->_pos.x, a->_pos.y);
 		setCameraFollows(a);
 	}
 
