@@ -336,15 +336,17 @@ void Player::sysEx(byte *p, uint16 len) {
 		return;
 
 #ifdef IMUSE_DEBUG
-	for (a = 0; a < len + 1 && a < 19; ++a) {
-		sprintf((char *)&buf[a*3], " %02X", p[a]);
-	} // next for
-	if (a < len + 1) {
-		buf[a*3] = buf[a*3+1] = buf[a*3+2] = '.';
-		++a;
-	} // end if
-	buf[a*3] = '\0';
-	debug(0, "[%02d] SysEx:%s", _id, buf);
+	if (!_scanning) {
+		for (a = 0; a < len + 1 && a < 19; ++a) {
+			sprintf((char *)&buf[a*3], " %02X", p[a]);
+		} // next for
+		if (a < len + 1) {
+			buf[a*3] = buf[a*3+1] = buf[a*3+2] = '.';
+			++a;
+		} // end if
+		buf[a*3] = '\0';
+		debug(0, "[%02d] SysEx:%s", _id, buf);
+	}
 #endif
 
 	switch (code = *p++) {
@@ -826,6 +828,11 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	clear_active_notes();
 	_scanning = true;
 
+	// If the scan involves a track switch, scan to the end of
+	// the current track so that our state when starting the
+	// new track is fully up to date.
+	if (totrack != _track_index)
+		_parser->jumpToTick (-1, true);
 	_parser->setTrack(totrack);
 	if (!_parser->jumpToTick((tobeat - 1) * TICKS_PER_BEAT + totick, true)) {
 		_scanning = false;

@@ -330,19 +330,14 @@ bool MidiParser::jumpToTick (uint32 tick, bool fireEvents) {
 
 			if (info.event == 0xFF) {
 				if (info.ext.type == 0x2F) { // End of track
-					if (_autoLoop) {
-						_position._play_pos = _tracks[_active_track];
-						parseNextEvent (_next_event);
-					} else {
-						_position = currentPos;
-						_next_event = currentEvent;
-						return false;
-					}
-					break;
-				} else if (info.ext.type == 0x51) { // Tempo
-					if (info.length >= 3) {
+					_position = currentPos;
+					_next_event = currentEvent;
+					return false;
+				} else {
+					if (info.ext.type == 0x51 && info.length >= 3) // Tempo
 						setTempo (info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
-					}
+					if (fireEvents)
+						_driver->metaEvent (info.ext.type, info.ext.data, (uint16) info.length);
 				}
 			} else if (fireEvents) {
 				if (info.event == 0xF0)
