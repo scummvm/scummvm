@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _mixer_h_included
-#define _mixer_h_included
+#ifndef MIXER_H
+#define MIXER_H
 
 #ifdef COMPRESSED_SOUND_FILE
 #include <mad.h>
@@ -206,4 +206,4 @@ struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 	int compressed_size;
 };
 
-#endif /* _mixer_h_included */
+#endif
