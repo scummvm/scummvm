@@ -53,6 +53,7 @@ private:
 		bool used;
 		bool toBeRemoved;
 		bool started;
+		bool waitForEndSeq;
 		int32 regionOffset;
 		int32 trackOffset;
 		int32 dataOffset;
@@ -90,7 +91,7 @@ private:
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
-	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, bool sequence, int hookId, int volume);
+	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, bool sequence, int hookId, int volume, bool wait);
 
 	int32 getPosInMs(int soundId);
 	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
@@ -101,30 +102,30 @@ private:
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
 	void setFtMusicCuePoint(int cueId);
-	void playFtMusic(const char *songName, int opcode, int volume, bool sequence);
+	void playFtMusic(const char *songName, int opcode, int volume, bool sequence, bool wait);
 
 	void setComiMusicState(int stateId);
 	void setComiMusicSequence(int seqId);
-	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence);
+	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence, bool wait);
 
 	void setDigMusicState(int stateId);
 	void setDigMusicSequence(int seqId);
-	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
+	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence, bool wait);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
 	virtual ~IMuseDigital();
 
 	void startVoice(int soundId, AudioStream *input)
-		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input, false, 0, 127); }
+		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input, false, 0, 127, false); }
 	void startVoice(int soundId, const char *soundName)
-		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL, false, 0, 127); }
-	void startMusic(int soundId, bool sequence, int volume)
-		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL, sequence, 0, volume); }
-	void startMusic(const char *soundName, int soundId, bool sequence, int hookId, int volume)
-		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL, sequence, hookId, volume); }
+		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL, false, 0, 127, false); }
+	void startMusic(int soundId, bool sequence, int volume, bool wait)
+		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL, sequence, 0, volume, wait); }
+	void startMusic(const char *soundName, int soundId, bool sequence, int hookId, int volume, bool wait)
+		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL, sequence, hookId, volume, wait); }
 	void startSfx(int soundId)
-		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL, false, 0, 127); }
+		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL, false, 0, 127, false); }
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
