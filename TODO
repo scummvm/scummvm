@@ -1,18 +1,16 @@
 Residual in-progress items (in rough order of priority):
 -------------------------------------------------------0
  * Add SMUSH (low-priority, but important) - Assigned to aquadran
- * Rooms look crap on many Win32 cards. Reconfirm this now bitmaps are textured
-   http://www.enderboi.com/misc/Grim1.jpg - Assigned to Ender
  * Implement limiting actor to walkplane boundries - Assigned to daniel (maybe? :)
 
 Residual TODO list (in rough order of priority):
 ------------------------------------------------ 
  * Implement 2D primitives 
+ * Implement text fonts (conversations, etc)
  * Remove hash_map usage (not implemented on Visual Studio & other compilers)
  * Remove as much other STL stuff as possible (see above)
  * Z-Planes (translate ZBitmap data into OpenGL format?)
  * Add OpenGL lighting
- * Implement text fonts, menus, etc
  * Rewrite sound mixer (volume control, etc)
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
  * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) original used MFC
