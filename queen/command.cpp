@@ -263,9 +263,15 @@ void Command::executeCurrentAction(bool walk) {
 			if (_selCmd.action.value() == VERB_LOOK_AT) {
 				// Look At, do standard look at routine
 				look();
-				cleanupCurrentAction();
-				return;
 			}
+			else {
+				if (com->song < 0) {
+					_sound->playSong(-com->song);
+				}
+				clear(true);
+			}
+			cleanupCurrentAction();
+			return;
 		}
 		else if (cond == -2 && i == comMax) {
 			// only exit on a condition fail if at last command
@@ -424,7 +430,7 @@ void Command::executeCurrentAction(bool walk) {
 
 	// only play song if it's a PLAY AFTER type
 	if (com->song < 0) {
-		_sound->playSong(com->song);
+		_sound->playSong(-com->song);
 	}
 
 	clear(true);

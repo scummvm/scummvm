@@ -400,7 +400,7 @@ void Logic::initialise() {
 
 
 ObjectData* Logic::objectData(int index) {
-	index = abs(index);
+	index = abs(index); // cyx: is that really necessary ?
 	if (index <= _numObjects)
 		return &_objectData[index];
 	else
