@@ -23,6 +23,8 @@ extern "C" {
 }
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <ctype.h>
 #include <iostream>
 #include <sstream>
 #include <map>
@@ -30,6 +32,30 @@ extern "C" {
 #include <stack>
 #include <list>
 #include <set>
+
+#include "localize.h"
+
+// Provide debug.cpp functions which don't call SDL_Quit.
+void warning(const char *fmt, ...) {
+  fprintf(stderr, "WARNING: ");
+  va_list va;
+  va_start(va, fmt);
+  vfprintf(stderr, fmt, va);
+  va_end(va);
+  fprintf(stderr, "\n");
+}
+
+void error(const char *fmt, ...) {
+  fprintf(stderr, "ERROR: ");
+  va_list va;
+  va_start(va, fmt);
+  vfprintf(stderr, fmt, va);
+  va_end(va);
+  fprintf(stderr, "\n");
+  exit(1);
+}
+
+static bool translateStrings = false;
 
 class Expression;
 
@@ -92,12 +118,13 @@ public:
   bool validIdentifier() const {
     if (text->u.s.len == 0)
       return false;
+    if (isdigit(text->str[0]))
+      return false;
     if (text->str[0] >= '0' && text->str[0] <= '9')
       return false;
     for (int i = 0; i < text->u.s.len; i++) {
       char c = text->str[i];
-      if ((c < '0' || c > '9') && (c < 'A' || c > 'Z') &&
-	  (c < 'a' || c > 'z') && c != '_')
+      if ((! isalnum(text->str[0])) && c != '_')
 	return false;
     }
     return true;
@@ -109,13 +136,16 @@ public:
     };
 
     os << "\"";
-    for (int i = 0; i < text->u.s.len; i++) {
-      unsigned char c = text->str[i];
+    std::string str(text->str, text->u.s.len);
+    if (translateStrings)
+      str = Localizer::instance()->localize(str.c_str());
+    for (std::string::iterator i = str.begin(); i != str.end(); i++) {
+      unsigned char c = *i;
       if (strchr(specials, c)) {
 	int i = strchr(specials, c) - specials;
 	os << special_text[i];
       }
-      else if (c < 32 || c > 127)
+      else if (! isprint(c))
 	os << "\\" << int(c >> 6) << int((c >> 3) & 7) << int(c & 7);
       else
 	os << c;
@@ -1250,22 +1280,27 @@ void decompile(std::ostream &os, TProtoFunc *tf, std::string indent_str,
 }
 
 int main(int argc, char *argv[]) {
-  ZIO z;
-  FILE *f;
-  TProtoFunc *tf;
+  int filename_pos = 1;
+
+  if (argc > 1 && strcmp(argv[1], "-t") == 0) {
+    translateStrings = true;
+    filename_pos = 2;
+  }
+  if (argc != filename_pos + 1) {
+    fprintf(stderr, "Usage: delua [-t] file.lua\n");
+    exit(1);
+  }
+  char *filename = argv[filename_pos];
+  FILE *f = fopen(filename, "rb");
+  if (f == NULL) {
+    perror(filename);
+    exit(1);
+  }
 
   lua_open();
-  if (argc != 2) {
-    fprintf(stderr, "Usage: delua file.lua\n");
-    exit(1);
-  }
-  f = fopen(argv[1], "rb");
-  if (f == NULL) {
-    perror(argv[1]);
-    exit(1);
-  }
-  luaZ_Fopen(&z, f, argv[1]);
-  tf = luaU_undump1(&z);
+  ZIO z;
+  luaZ_Fopen(&z, f, filename);
+  TProtoFunc *tf = luaU_undump1(&z);
   fclose(f);
 
   decompile(std::cout, tf, "", NULL, 0);
