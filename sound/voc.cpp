@@ -23,8 +23,23 @@
 #include "stdafx.h"
 #include "common/util.h"
 #include "common/file.h"
+
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
 #include "sound/voc.h"
 
+
+int getSampleRateFromVOCRate(int vocSR) {
+	if (vocSR == 0xa5 || vocSR == 0xa6 || vocSR == 0x83) {
+		return 11025;
+	} else if (vocSR == 0xd2 || vocSR == 0xd3) {
+		return 22050;
+	} else {
+		int sr = 1000000L / (256L - vocSR);
+		warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
+		return sr;
+	}
+}
 
 byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 	
@@ -137,14 +152,17 @@ byte *loadVOCFile(File *file, int &size, int &rate) {
 	return data;
 }
 
-int getSampleRateFromVOCRate(int vocSR) {
-	if (vocSR == 0xa5 || vocSR == 0xa6 || vocSR == 0x83) {
-		return 11025;
-	} else if (vocSR == 0xd2 || vocSR == 0xd3) {
-		return 22050;
-	} else {
-		int sr = 1000000L / (256L - vocSR);
-		warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
-		return sr;
-	}
+AudioInputStream *makeVOCStream(byte *ptr) {
+	int size, rate, loops;
+	byte *data = readVOCFromMemory(ptr, size, rate, loops);
+
+	return makeLinearInputStream(rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, data, size, 0, 0);
 }
+
+AudioInputStream *makeVOCStream(File *file) {
+	int size, rate;
+	byte *data = loadVOCFile(file, size, rate);
+
+	return makeLinearInputStream(rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, data, size, 0, 0);
+}
+
