@@ -598,6 +598,60 @@ void ConfirmDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
 }
 
+#pragma mark -
+
+ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey)
+	: GUI::Dialog(0, 80, 0, 16), _label(label), _min(minVal), _max(maxVal), _value(val), _incKey(incKey), _decKey(decKey) {
+	assert(_min <= _value && _value <= _max);
+
+	int width = g_gui.getStringWidth(label) + 16 + kPercentBarWidth;
+
+	_x = (320 - width) / 2;
+	_w = width;
+	setResult(_value);
+
+	_timer = getMillis() + kDisplayDelay;
+}
+
+void ValueDisplayDialog::drawDialog() {
+	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
+	g_gui.box(_x, _y, _w, _h, g_gui._color, g_gui._shadowcolor);
+	
+	const int labelWidth = _w - 8 - kPercentBarWidth;
+
+	// Draw the label
+	g_gui.drawString(_label, _x + 4, _y + 4, labelWidth, g_gui._textcolor);
+	
+	// Draw the percentage bar
+	g_gui.fillRect(_x + 4 + labelWidth, _y + 4, kPercentBarWidth * (_value - _min) / (_max - _min), 8, g_gui._textcolorhi);
+	g_gui.frameRect(_x + 4 + labelWidth, _y + 4, kPercentBarWidth, 8, g_gui._textcolor);
+
+	// Flag the draw area as dirty
+	g_gui.addDirtyRect(_x, _y, _w, _h);
+}
+
+void ValueDisplayDialog::handleTickle() {
+	if (getMillis() > _timer)
+		close();
+}
+
+void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	if (ascii == _incKey || ascii == _decKey) {
+		if (ascii == _incKey && _value < _max)
+			_value++;
+		else if (ascii == _decKey && _value > _min)
+			_value--;
+		
+		setResult(_value);
+		_timer = getMillis() + kDisplayDelay;
+		draw();
+	} else {
+		close();
+	}
+}
+
+
+
 } // End of namespace Scumm
 
 #ifdef __PALM_OS__

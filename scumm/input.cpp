@@ -26,6 +26,7 @@
 #include "common/system.h"
 
 #include "scumm/debugger.h"
+#include "scumm/dialogs.h"
 #include "scumm/imuse.h"
 #include "scumm/insane/insane.h"
 #include "scumm/scumm.h"
@@ -383,27 +384,37 @@ void ScummEngine::processKbd(bool smushMode) {
 		if (_sound->_sfxMode & 2)
 			stopTalk();
 		return;
-	} else if (_lastKeyHit == '[') { // [ Music volume down
-		int vol = ConfMan.getInt("music_volume");
-		if (!(vol & 0xF) && vol)
-			vol -= 16;
-		vol = vol & 0xF0;
+	} else if (_lastKeyHit == '[' || _lastKeyHit == ']') { // Change music volume
+		int vol = ConfMan.getInt("music_volume") / 16;
+		if (_lastKeyHit == ']' && vol < 16)
+			vol++;
+		else if (_lastKeyHit == '[' && vol > 0)
+			vol--;
+
+		// Display the music volume
+		// FIXME: Should we use runDialog here? It'll pause the sound/music and video
+		// which is both good and bad...
+		ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
+		vol = runDialog(dlg);
+
+		vol *= 16;
+		if (vol > SoundMixer::kMaxMixerVolume)
+			vol = SoundMixer::kMaxMixerVolume;
+
 		ConfMan.set("music_volume", vol);
 		setupVolumes();
-	} else if (_lastKeyHit == ']') { // ] Music volume up
-		int vol = ConfMan.getInt("music_volume");
-		vol = (vol + 16) & 0xFF0;
-		if (vol > 255) vol = 255;
-		ConfMan.set("music_volume", vol);
-		setupVolumes();
-	} else if (_lastKeyHit == '-') { // - text speed down
-		if (_defaultTalkDelay < 9)
+	} else if (_lastKeyHit == '-' || _lastKeyHit == '+') { // Change text speed
+		if (_lastKeyHit == '+' && _defaultTalkDelay < 9)
 			_defaultTalkDelay++;
-		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
-	} else if (_lastKeyHit == '+') { // + text speed up
-		if (_defaultTalkDelay > 0)
+		else if (_lastKeyHit == '-' && _defaultTalkDelay > 0)
 			_defaultTalkDelay--;
+
+		// Display the talk speed
+		// FIXME: Should we use runDialog here? It'll pause the sound/music and video
+		// which is both good and bad...
+		ValueDisplayDialog dlg("Talk speed: ", 0, 10, _defaultTalkDelay, '+', '-');
+		_defaultTalkDelay = runDialog(dlg);
+
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console

@@ -119,6 +119,12 @@ protected:
 	GUI::CheckboxWidget *subtitlesCheckbox;
 };
 
+/**
+ * A dialog which displays an arbitrary message to the user and returns
+ * ther users reply as its result value. More specifically, it returns
+ * the ASCII code of the key used to close the dialog (0 if a mouse
+ * click closed the dialog).
+ */
 class InfoDialog : public ScummDialog {
 public:
 	// arbitrary message
@@ -127,6 +133,7 @@ public:
 	InfoDialog(ScummEngine *scumm, int res);
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) { 
+		setResult(0);
 		close();
 	}
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers) {
@@ -138,16 +145,54 @@ protected:
 	void setInfoText (const String& message);
 };
 
+/**
+ * The pause dialog, visible whenever the user activates pause mode. Goes
+ * away uon any key or mouse button press.
+ */
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(ScummEngine *scumm, int res);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 };
 
+/**
+ * A simple yes/no dialog, used to ask the user whether to really
+ * quit/restart ScummVM.
+ */
 class ConfirmDialog : public InfoDialog {
 public:
 	ConfirmDialog(ScummEngine *scumm, const String& message);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+};
+
+/**
+ * A dialog used to display the music volume / text speed.
+ * Given a label string, and a float value in the range of 0.0 to 1.0,
+ * it will display a corresponding graphic.
+ * Automatically closes after a brief time passed.
+ */
+class ValueDisplayDialog : public GUI::Dialog {
+public:
+	ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
+
+	void drawDialog();
+	void handleTickle();
+
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) { 
+		close();
+	}
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+
+protected:
+	enum {
+		kPercentBarWidth = 50,
+		kDisplayDelay = 1500
+	};
+	Common::String _label;
+	const int _min, _max;
+	const uint16 _incKey, _decKey;
+	int _value;
+	uint32 _timer;
 };
 
 } // End of namespace Scumm
