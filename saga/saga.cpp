@@ -44,7 +44,7 @@
 #include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/game.h"
-#include "saga/interface_mod.h"
+#include "saga/interface.h"
 #include "saga/isomap.h"
 #include "saga/script.h"
 #include "saga/script_mod.h"
@@ -145,7 +145,7 @@ void SagaEngine::go() {
 	_anim = new Anim(this);
 	_script = new Script();
 	_sdata = new SData();
-	INTERFACE_Init(); // requires script module
+	_interface = new Interface(this); // requires script module
 	_actor = new Actor(this);
 	_scene = new Scene(this);
 
@@ -245,6 +245,7 @@ void SagaEngine::shutdown() {
 	CVAR_Shutdown();
 	EVENT_Shutdown();
 
+	delete _interface;
 	delete _render;
 	delete _actionMap;
 	delete _isoMap;

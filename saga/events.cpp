@@ -32,7 +32,7 @@
 #include "saga/animation.h"
 #include "saga/console_mod.h"
 #include "saga/scene.h"
-#include "saga/interface_mod.h"
+#include "saga/interface.h"
 #include "saga/text.h"
 #include "saga/palanim_mod.h"
 #include "saga/render.h"
@@ -300,7 +300,7 @@ static int HandleOneShot(R_EVENT *event) {
 	case R_INTERFACE_EVENT:
 		switch (event->op) {
 		case EVENT_ACTIVATE:
-			INTERFACE_Activate();
+			_vm->_interface->activate();
 			break;
 		default:
 			break;

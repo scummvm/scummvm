@@ -32,7 +32,7 @@
 #include "saga/rscfile_mod.h"
 #include "saga/cvar_mod.h"
 #include "saga/ite_introproc_mod.h"
-#include "saga/interface_mod.h"
+#include "saga/interface.h"
 
 #include "saga/game_mod.h"
 #include "saga/game.h"
@@ -359,7 +359,7 @@ int LoadLanguage() {
 
 		test_file.close();
 
-		if (INTERFACE_RegisterLang() != R_SUCCESS) {
+		if (_vm->_interface->registerLang() != R_SUCCESS) {
 			warning("Error registering interface language cvars");
 			return R_FAILURE;
 		}

@@ -26,7 +26,15 @@
 #ifndef SAGA_INTERFACE_H__
 #define SAGA_INTERFACE_H__
 
+#include "saga/sprite.h"
+#include "saga/script_mod.h"
+
 namespace Saga {
+
+typedef enum INTERFACE_UPDATE_FLAGS_tag {
+	UPDATE_MOUSEMOVE = 1,
+	UPDATE_MOUSECLICK
+} INTERFACE_UPDATE_FLAGS;
 
 #define R_VERB_STRLIMIT 32
 
@@ -122,18 +130,6 @@ struct R_INTERFACE_DESC {
 };
 
 struct R_INTERFACE_MODULE {
-	int init;
-	int active;
-	R_RSCFILE_CONTEXT *i_file_ctxt;
-	R_INTERFACE_DESC i_desc;
-	R_PANEL_MODES panel_mode;
-	R_INTERFACE_PANEL c_panel;
-	R_INTERFACE_PANEL d_panel;
-	char status_txt[R_STATUS_TEXT_LEN];
-	int active_portrait;
-	R_SPRITELIST *def_portraits;
-	int active_verb;
-	R_SCRIPT_THREAD *i_thread;
 };
 
 enum INTERFACE_VERBS {
@@ -154,12 +150,43 @@ struct R_VERB_DATA {
 	int s_verb;
 };
 
-int INTERFACE_HitTest(R_POINT *imouse_pt, int *ibutton);
-int DrawStatusBar(R_SURFACE *ds);
-int HandleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt);
-int HandleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt);
-int HandlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt);
-int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt);
+class Interface {
+ public:
+	Interface(SagaEngine *vm);
+	~Interface(void);
+
+	int registerLang();
+	int activate();
+	int deactivate();
+	int setStatusText(const char *new_txt);
+	int draw();
+	int update(R_POINT *imouse_pt, int update_flag);
+
+
+ private:
+	int hitTest(R_POINT *imouse_pt, int *ibutton);
+	int drawStatusBar(R_SURFACE *ds);
+	int handleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt);
+	int handleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt);
+	int handlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt);
+	int handlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt);
+
+ private:
+	SagaEngine *_vm;
+
+	bool _initialized;
+	int _active;
+	R_RSCFILE_CONTEXT *_interfaceContext;
+	R_INTERFACE_DESC _iDesc;
+	R_PANEL_MODES _panelMode;
+	R_INTERFACE_PANEL _cPanel;
+	R_INTERFACE_PANEL _dPanel;
+	char _statusText[R_STATUS_TEXT_LEN];
+	int _activePortrait;
+	R_SPRITELIST *_defPortraits;
+	int _activeVerb;
+	R_SCRIPT_THREAD *_iThread;
+};
 
 } // End of namespace Saga
 

@@ -30,7 +30,7 @@
 #include "saga/cvar_mod.h"
 #include "saga/font.h"
 #include "saga/game_mod.h"
-#include "saga/interface_mod.h"
+#include "saga/interface.h"
 #include "saga/scene.h"
 #include "saga/text.h"
 
@@ -169,7 +169,7 @@ int Render::drawScene() {
 
 	// Update user interface
 
-	INTERFACE_Update(&mouse_pt, UPDATE_MOUSEMOVE);
+	_vm->_interface->update(&mouse_pt, UPDATE_MOUSEMOVE);
 
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {

@@ -29,7 +29,7 @@
 #include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console_mod.h"
-#include "saga/interface_mod.h"
+#include "saga/interface.h"
 
 #include "saga/script.h"
 #include "saga/sfuncs.h"
@@ -229,9 +229,9 @@ int SF_freezeInterface(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &b_param);
 
 	if (b_param) {
-		INTERFACE_Deactivate();
+		_vm->_interface->deactivate();
 	} else {
-		INTERFACE_Activate();
+		_vm->_interface->activate();
 	}
 
 	return R_SUCCESS;

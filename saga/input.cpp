@@ -25,7 +25,7 @@
 #include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console_mod.h"
-#include "saga/interface_mod.h"
+#include "saga/interface.h"
 #include "saga/render.h"
 #include "saga/scene.h"
 #include "saga/script_mod.h"
@@ -78,7 +78,7 @@ int SYSINPUT_ProcessInput() {
 				CON_Activate();
 				break;
 			case 114: // r
-				INTERFACE_Draw();
+				_vm->_interface->draw();
 				break;
 			case 282: // F1
 				_vm->_render->toggleFlag(RF_SHOW_FPS);
@@ -113,7 +113,7 @@ int SYSINPUT_ProcessInput() {
 			}
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
-			INTERFACE_Update(&imouse_pt, UPDATE_MOUSECLICK);
+			_vm->_interface->update(&imouse_pt, UPDATE_MOUSECLICK);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			_mousePos.x = event.mouse.x;
