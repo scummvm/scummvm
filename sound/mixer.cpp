@@ -261,6 +261,7 @@ static int16 *mix_signed_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint3
 static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																	int fp_speed, const int16 *vol_tab, byte *s_end)
 {
+#if OLD
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -277,6 +278,49 @@ static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uin
 	*len_ptr = len;
 
 	return data;
+#else
+	uint32 fp_pos = *fp_pos_ptr;
+	byte *s = *s_ptr;
+	uint len = *len_ptr;
+	int x0, x1, x2, x3;
+	int a, b, c, d;
+	int inc = 1, result, t;
+	x0 = x1 = vol_tab[*s ^ 0x80];
+	x2 = vol_tab[*(s+1) ^ 0x80];
+	x3 = vol_tab[*(s+2) ^ 0x80];
+	do {
+		a = ((-x0*2)+(x1*5)-(x2*4)+x3);
+		b = ((x0+x2-(2*x1))*6) << 8;
+		c = ((-4*x0)+x1+(x2*4)-x3) << 8;
+		d = (x1*6) << 8;
+		do {
+			t = fp_pos >> 8;
+			result = (a*t + b) >> 8;
+			result = (result * t + c) >> 8;
+			result = (result * t + d) >> 8;
+			result = (result/3 + 1) >> 1;
+	
+			*data++ += result;
+			*data++ += result;
+	
+			fp_pos += fp_speed;
+			inc = fp_pos >> 16;
+			s += inc;
+			fp_pos &= 0x0000FFFF;
+		} while ((--len) && !inc && (s < s_end));
+		x0 = x1;
+		x1 = x2;
+		x2 = x3;
+		if (s+2 < s_end)
+			x3 = vol_tab[*(s+2) ^ 0x80];
+	} while (len && (s < s_end));
+
+	*fp_pos_ptr = fp_pos;
+	*s_ptr = s;
+	*len_ptr = len;
+
+	return data;
+#endif
 }
 static int16 *mix_signed_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																	int fp_speed, const int16 *vol_tab, byte *s_end)
