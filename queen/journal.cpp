@@ -47,7 +47,7 @@ void Journal::use() {
 	_prevJoeY = joe->y;
 	
 	_panelMode = PM_NORMAL;
-	_system = OSystem::instance();
+	_system = &OSystem::instance();
 
 	_panelTextCount = 0;
 	memset(_panelTextY, 0, sizeof(_panelTextY));

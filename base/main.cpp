@@ -187,19 +187,19 @@ static void do_memory_test(void) {
 
 int gDebugLevel = 0;
 
-static bool launcherDialog(GameDetector &detector, OSystem *system) {
+static bool launcherDialog(GameDetector &detector, OSystem &system) {
 
-	system->beginGFXTransaction();
+	system.beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
-		system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 	
 		// GUI is (currently) always running at 320x200
-		system->initSize(320, 200);
-	system->endGFXTransaction();
+		system.initSize(320, 200);
+	system.endGFXTransaction();
 
 	
 	// Clear the main screen
-	system->clearScreen();
+	system.clearScreen();
 
 	// FIXME - mouse cursors are currently always set via 8 bit data.
 	// Thus for now we need to setup a dummy palette. On the long run, we might
@@ -226,7 +226,7 @@ static bool launcherDialog(GameDetector &detector, OSystem *system) {
 		255, 255, 255, 0, 
 	};
 
-	system->setPalette(dummy_palette, 0, 16);
+	system.setPalette(dummy_palette, 0, 16);
 
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg(detector);
@@ -238,7 +238,7 @@ static bool launcherDialog(GameDetector &detector, OSystem *system) {
 	return (dlg.runModal() != -1);
 }
 
-static int runGame(GameDetector &detector, OSystem *system) {
+static int runGame(GameDetector &detector, OSystem &system) {
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
 
@@ -247,11 +247,11 @@ static int runGame(GameDetector &detector, OSystem *system) {
 	if (caption.isEmpty())	
 		caption = detector._targetName;
 	if (!caption.isEmpty())	{
-		system->setWindowCaption(caption.c_str());
+		system.setWindowCaption(caption.c_str());
 	}
 	
 	// Create the game engine
-	Engine *engine = detector.createEngine(system);
+	Engine *engine = detector.createEngine(&system);
 	assert(engine);
 
 	// Add extrapath (if any) to the directory search list
@@ -275,7 +275,7 @@ static int runGame(GameDetector &detector, OSystem *system) {
 	delete engine;
 
 	// Stop all sound processing now (this prevents some race conditions later on)
-	system->clearSoundCallback();
+	system.clearSoundCallback();
 	
 	return result;
 }
@@ -372,13 +372,13 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 
 	// Ensure the system object exists (it may have already been created 
 	// at an earlier point, though!)
-	OSystem *system = OSystem::instance();
+	OSystem &system = OSystem::instance();
 
 	// Create the timer services
-	g_timer = new Timer(system);
+	g_timer = new Timer(&system);
 
 	// Set initial window caption
-	system->setWindowCaption(gScummVMFullVersion);
+	system.setWindowCaption(gScummVMFullVersion);
 
 	// Unless a game was specified, show the launcher dialog
 	if (detector._targetName.isEmpty())
@@ -413,8 +413,10 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 
 	// ...and quit (the return 0 should never be reached)
 	delete g_timer;
-	system->quit();
-	delete system;
+	system.quit();
+	
+	error("If you are seeing this, your OSystem backend is not working properly");
+
 	return 0;
 }
 // allegro needs this for some reason...

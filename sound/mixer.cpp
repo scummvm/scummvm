@@ -99,7 +99,7 @@ public:
 
 
 SoundMixer::SoundMixer() {
-	_syst = OSystem::instance();
+	_syst = &OSystem::instance();
 	_mutex = _syst->createMutex();
 
 	_premixChannel = 0;

@@ -58,10 +58,10 @@ static OSystem *createSystem() {
 #endif
 }
 
-OSystem *OSystem::instance() {
+OSystem &OSystem::instance() {
 	if (!s_system)
 		s_system = createSystem();
-	return s_system;
+	return *s_system;
 }
 
 

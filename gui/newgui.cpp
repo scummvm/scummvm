@@ -57,7 +57,7 @@ enum {
 NewGui::NewGui() : _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	
-	_system = OSystem::instance();
+	_system = &OSystem::instance();
 
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));

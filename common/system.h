@@ -47,7 +47,7 @@ public:
 	 * not a real class (and thus it isn't based on our Singleton template).
 	 * @return	the pointer to the (singleton) OSystem instance
 	 */
-	static OSystem *instance();
+	static OSystem &instance();
 
 public:
 
@@ -687,7 +687,7 @@ public:
 };
 
 /** The global OSystem instance. Inited in main(). */
-#define g_system	(OSystem::instance())
+#define g_system	(&OSystem::instance())
 
 namespace Common {
 
