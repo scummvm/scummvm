@@ -1006,10 +1006,8 @@ void Scumm_v6::o6_walkActorToObj() {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
 		if (a2 == 0) {
 			// FIXME: This is a hack to work around bug #742676 SAM: Fish Farm.
-			// However, that this ever happens seems to be due to a bug in
-			// ScummVM, esp. since even with this hack the behaviour of Sam
-			// is not correct (when using the fish he says "This is a completely
-			// unusable thingamabob", but should say "Wow, he's blowing bubbles".
+			// Note quite sure why it happens, though, if it's normal or due to
+			// a bug in the ScummVM code.
 			warning("o6_walkActorToObj: invalid actor %d\n", obj);
 			return;
 		}
@@ -1094,7 +1092,7 @@ void Scumm_v6::o6_doSentence() {
 
 	objectB = pop();
 	if (!(_features & GF_AFTER_V8))
-		dummy = pop();	// dummy pop
+		dummy = pop();	// dummy pop (in Sam&Max, seems to be always 0 or 130)
 	objectA = pop();
 	verb = pop();
 
