@@ -2502,6 +2502,7 @@ void Scumm::launch() {
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
 		runScript(1, 0, 0, &_bootParam);
 	}
+	_saveLoadFlag = 0;
 }
 
 void Scumm::go() {
