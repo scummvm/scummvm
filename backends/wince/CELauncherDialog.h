@@ -32,6 +32,7 @@
 class CELauncherDialog : public GUI::LauncherDialog {
 public:
 	CELauncherDialog(GameDetector &detector);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 protected:
 	void addGame();
 	void addCandidate(String &path, DetectedGameList &candidates);

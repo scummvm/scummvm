@@ -20,10 +20,15 @@
  */
 
 #include "stdafx.h"
+
+#include "wince-sdl.h"
+
 #include "CELauncherDialog.h"
 
 #include "base/engine.h"
 
+#include "gui/newgui.h"
+#include "gui/widget.h"
 #include "gui/browser.h"
 #include "gui/message.h"
 
@@ -32,8 +37,35 @@
 using namespace GUI;
 using namespace Common;
 
+class CEAboutDialog : public Dialog {
+public:
+	CEAboutDialog::CEAboutDialog()
+	: Dialog(10, 60, 300, 77) {
+		char tempo[100];
+	
+		addButton((_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+
+		Common::String videoDriver("Using SDL driver ");
+		SDL_VideoDriverName(tempo, sizeof(tempo));
+		videoDriver += tempo;
+		new StaticTextWidget(this, 0, 10, _w, kLineHeight, videoDriver, kTextAlignCenter);
+		Common::String displayInfos("Display ");
+		sprintf(tempo, "%dx%d", GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+		displayInfos += tempo;
+		new StaticTextWidget(this, 0, 20, _w, kLineHeight, displayInfos, kTextAlignCenter);
+	}
+};
+
 
 CELauncherDialog::CELauncherDialog(GameDetector &detector) : GUI::LauncherDialog(detector) {
+}
+
+void CELauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	LauncherDialog::handleCommand(sender, cmd, data);
+	if (cmd == 'ABOU') {
+		CEAboutDialog about;
+		about.runModal();
+	}
 }
 
 void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) {
@@ -47,7 +79,7 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 		idx = 0;
 	else {
 			char candidateName[100];
-			int i;
+			unsigned int i;
 			for (i=path.size() - 2; i && path[i] != '\\'; i--);
 			strcpy(candidateName, &path[i + 1]);
 			candidateName[strlen(candidateName) - 1] = '\0';
