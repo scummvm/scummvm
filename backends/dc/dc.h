@@ -68,6 +68,13 @@ class OSystem_Dreamcast : public OSystem {
   // Set a parameter
   uint32 property(int param, Property *value);
 
+  // Overlay
+  void show_overlay();
+  void hide_overlay();
+  void clear_overlay();
+  void grab_overlay(int16 *buf, int pitch);
+  void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+
   // Add a callback timer
   virtual void set_timer(int timer, int (*callback)(int));
 
@@ -85,16 +92,19 @@ class OSystem_Dreamcast : public OSystem {
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
   int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll;
-  int _current_shake_pos, _screen_h;
+  int _current_shake_pos, _screen_w, _screen_h;
   unsigned char *_ms_buf;
   SoundProc *_sound_proc;
   void *_sound_proc_param;
+  bool _overlay_visible, _overlay_dirty, _screen_dirty;
+  int _screen_buffer, _overlay_buffer, _mouse_buffer;
 
   unsigned char *screen;
   unsigned short *mouse;
+  unsigned short *overlay;
   void *screen_tx[NUM_BUFFERS];
   void *mouse_tx[NUM_BUFFERS];
-  int current_buffer;
+  void *ovl_tx[NUM_BUFFERS];
   unsigned short palette[256];
 
   short temp_sound_buffer[RING_BUFFER_SAMPLES];
@@ -110,5 +120,5 @@ extern int handleInput(struct mapledev *pad,
 		       int &mouse_x, int &mouse_y,
 		       byte &shiftFlags);
 extern void initSound();
-extern bool selectGame(GameDetector *d, char *&, char *&, class Icon &);
+extern bool selectGame(char *&, char *&, class Icon &);
 
