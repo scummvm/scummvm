@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter           Version:      0.04-CVS
-(C) 2003-2005 The ScummVM-Residual team             Last Updated: 12 Jan 2005
+(C) 2003-2005 The ScummVM-Residual team             Last Updated: 03 Apr 2005
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -102,13 +102,14 @@ Credits:
 ------------------------------
 ScummVM-Residual Team:
  James 'Ender' Brown          	    Core developer. ScummVM co-lead dev
- Pawel 'aquadran' Kolodziejski      Core developer. SMUSH implemention
+ Pawel 'aquadran' Kolodziejski      Core developer. SMUSH, iMUSE implemention
 
 Contributors:
  Daniel Schepler                    Initial engine codebase, LUA support
  Vincent Hamm                       Various engine code
  Lionel 'bbrox' Ulmer               OpenGL optimisations
- Ori 'salty-horse' Avtalion         Lipsync support
+ Ori 'salty-horse' Avtalion         Lipsync, LAF support
+ Erich Hoover                       x86-64 and subtitles fixes
 
 Special Thanks To:
 ------------------ 
