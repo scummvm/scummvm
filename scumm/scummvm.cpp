@@ -155,6 +155,9 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, VersionSettings::ADLIB_DONT_CARE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
+	{"ftdemo", "Full Throttle", GID_FT, 7, VersionSettings::ADLIB_DONT_CARE,
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
+
 	{"dig", "The Dig", GID_DIG, 7, VersionSettings::ADLIB_DONT_CARE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 
