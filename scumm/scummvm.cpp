@@ -233,7 +233,8 @@ void Scumm::scummInit()
 	
 	// Allocate and Initialize actors
 	_actors = new Actor[NUM_ACTORS];
-	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
+	for (i = 1; i < NUM_ACTORS; i++) {
+		a = derefActor(i);
 		a->number = i;
 		a->initActorClass(this);
 		a->initActor(1);
@@ -620,7 +621,8 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	clearEnqueue();
 	stopCycle(0);
 
-	for (i = 1, at = getFirstActor(); ++at, i < NUM_ACTORS; i++) {
+	for (i = 1; i < NUM_ACTORS; i++) {
+		at = derefActor(i);
 		at->hideActor();
 	}
 

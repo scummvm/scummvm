@@ -2657,7 +2657,7 @@ void Scumm_v6::o6_kernelSetFunctions()
 		case 6:
 			_fullRedraw = 1;
 			redrawBGAreas();
-			for (i = 0; i < NUM_ACTORS; i++)
+			for (i = 1; i < NUM_ACTORS; i++)
 				derefActor(i)->needRedraw = true;
 			processActors();
 			fadeIn(args[1]);

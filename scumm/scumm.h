@@ -630,7 +630,6 @@ public:
 	/* Should be in Actor class */
 	Actor *derefActor(int id);
 	Actor *derefActorSafe(int id, const char *errmsg);
-	Actor *getFirstActor() { return _actors; } 
 	void showActors();
 
 	uint32 *_classData;

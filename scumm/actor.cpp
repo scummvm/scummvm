@@ -1103,7 +1103,7 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg)
 	int i, j;
 
 	if (_fullRedraw) {
-		for (j = 0; j < NUM_ACTORS; j++) {
+		for (j = 1; j < NUM_ACTORS; j++) {
 			Actor *a = derefActor(j);
 			if (fg)
 				a->needRedraw = true;
@@ -1114,7 +1114,7 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg)
 		for (i = 0; i < gdi._numStrips; i++) {
 			int strip = _screenStartStrip + i;
 			if (testGfxAnyUsageBits(strip)) {
-				for (j = 0; j < NUM_ACTORS; j++) {
+				for (j = 1; j < NUM_ACTORS; j++) {
 					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
 						Actor *a = derefActor(j);
 						if (fg)
@@ -1543,18 +1543,18 @@ void Scumm::resetActorBgs()
 
 	for (i = 0; i < gdi._numStrips; i++) {
 		int strip = _screenStartStrip + i;
-		a = getFirstActor();
-		for (j = 0; j < NUM_ACTORS; j++) {
+		for (j = 1; j < NUM_ACTORS; j++) {
+			a = derefActor(j);
 			if (testGfxUsageBit(strip, j) && a->top != 0xFF && a->needBgReset) {
 				clearGfxUsageBit(strip, j);
 				if ((a->bottom - a->top) >= 0)
 					gdi.resetBackground(a->top, a->bottom, i);
 			}
-			a++;
 		}
 	}
 
-	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
+	for (i = 1; i < NUM_ACTORS; i++) {
+		a = derefActor(j);
 		a->needBgReset = false;
 	}
 }
