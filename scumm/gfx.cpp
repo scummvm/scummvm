@@ -484,6 +484,8 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	byte *backbuff_ptr, *bgbak_ptr;
 	int offs, numLinesToProcess;
 
+	assert(0 <= strip && strip < _numStrips);
+
 	if (top < vs->tdirty[strip])
 		vs->tdirty[strip] = top;
 
@@ -626,6 +628,7 @@ void Scumm::drawFlashlight() {
 
 	// Redraw any actors "under" the flashlight
 	for (i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
+		assert(0 <= i && i < gdi._numStrips);
 		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
 		virtscr[0].tdirty[i] = 0;
 		virtscr[0].bdirty[i] = virtscr[0].height;
