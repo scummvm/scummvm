@@ -103,8 +103,8 @@ public:
 	File *_mus_file;
 	uint16 *_mus_offsets;
 
-	bool SimonState::readSting(uint a);
-	void SimonState::playSting(uint a);
+	bool readSting(uint a);
+	void playSting(uint a);
 	
 	byte *_vc_ptr;								/* video code ptr */
 
