@@ -27,7 +27,7 @@
 
 extern "C" {
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 #define hq3x_16 _hq3x_16
 #endif
 

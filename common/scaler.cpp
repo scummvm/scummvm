@@ -33,7 +33,7 @@ extern "C" {
 // NOTE: if your compiler uses different mangled names, add another
 //       condition here
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 #define RGBtoYUV _RGBtoYUV
 #define LUT16to32 _LUT16to32
 #endif
