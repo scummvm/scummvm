@@ -756,11 +756,10 @@ void Scumm::launch() {
 	gdi._vm = this;
 
 #ifdef __PALM_OS__
-	// PALMOS : check if this value is correct with palm,
-	// old value 450000 doesn't work anymore (return _fntPtr = NULL in zak256, not tested with others)
+	// revert to old value (450000) and make ScummVM works again in some devices with same problem as below.
 	// 2500000 is too big and make ScummVM crashes : MemMove to NULL or immediate exit if try to allocate
 	// memory with new operator
-	_maxHeapThreshold = 550000;
+	_maxHeapThreshold = 450000;
 #else
 	// Since the new costumes are very big, we increase the heap limit, to avoid having
 	// to constantly reload stuff from the data files.
@@ -2498,4 +2497,3 @@ int normalizeAngle(int angle) {
 
 	return toSimpleDir(1, temp) * 45;
 }
-
