@@ -748,7 +748,9 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 	int height = READ_LE_UINT16(ptr); ptr += 2;
 
 	if ((height == 242) && (width == 384)) {
-		_dst = _specialBuffer = (byte *)malloc(242 * 384);
+		if (_specialBuffer == 0)
+			_specialBuffer = (byte *)malloc(242 * 384);
+		_dst = _specialBuffer;
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
@@ -812,7 +814,9 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	int height = b.getWord();
 
 	if ((height == 242) && (width == 384)) {
-		_dst = _specialBuffer = (byte *)malloc(242 * 384);
+		if (_specialBuffer == 0)
+			_specialBuffer = (byte *)malloc(242 * 384);
+		_dst = _specialBuffer;
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
