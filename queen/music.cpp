@@ -29,10 +29,23 @@
 
 namespace Queen {
 
+// Instrument mapping for MT32 tracks emulated under GM.
+static const byte mt32_to_gm[128] = {
+//    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
+	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
+	  6,   6,   6,   7,   7,   7,   8, 112,  62,  62,  63,  63,  38,  38,  39,  39, // 1x
+	 88,  95,  52,  98,  97,  99,  14,  54, 102,  96,  53, 102,  81, 100,  14,  80, // 2x
+	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
+	 32,  32,  34,  33,  36,  37,  35,  35,  79,  73,  72,  72,  74,  75,  64,  65, // 4x
+	 66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,  57,  60,  60,  58,  61, // 5x
+	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
+	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
+};
+
 	MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _randomLoop(false), _volume(255), _queuePos(0), _musicData(data), _musicDataSize(size) {
 		memset(_channel, 0, sizeof(_channel));
 		queueClear();
-		_lastSong = 0;
+		_lastSong = _currentSong = 0;
 		_parser = MidiParser::createParser_SMF();
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
@@ -100,6 +113,8 @@ namespace Queen {
 			_channelVolume[channel] = volume;
 			//volume = volume * _masterVolume / 255;
 			b = (b & 0xFF00FFFF) | (volume << 16);
+		} else if ((b & 0xF0) == 0xC0) {
+			b = (b & 0xFFFF00FF) | mt32_to_gm[(b >> 8) & 0xFF] << 8;
 		} 
 		else if ((b & 0xFFF0) == 0x007BB0) {
 			//Only respond to All Notes Off if this channel
@@ -108,6 +123,11 @@ namespace Queen {
 				return;
 		}
 		
+		//Work around annoying loud notes in certain Roland Floda tunes
+		if (channel == 4 && _currentSong == 27)
+			return;
+		if (channel == 5 && _currentSong == 38)
+			return;
 		
 		if (!_channel[channel])
 			_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
@@ -164,7 +184,7 @@ namespace Queen {
 			default:
 				setLoop(false);
 				break;
-	}
+		}
 		
 		int i = 0;
 		while(Sound::_tune[tuneList].tuneNum[i])
@@ -179,6 +199,13 @@ namespace Queen {
 			debug(5, "MusicPlayer::playMusic - Music queue is empty!");
 			return;
 		}
+	
+		//Don't play if there's only 1 song in the queue and it's a bad one
+		if (!_songQueue[1] && isBadSong(_songQueue[_queuePos]))
+			return;
+		
+		while(isBadSong(_songQueue[_queuePos]))
+				queueUpdatePos();
 		
 		uint16 songNum = _songQueue[_queuePos];
 
@@ -196,7 +223,8 @@ namespace Queen {
 				songNum = _songQueue[_queuePos];
 			}
 		}
-		
+	
+		_currentSong = songNum = isBadSong(songNum) ? 0 : songNum;	
 		_parser->loadMusic(_musicData + songOffset(songNum), songLength(songNum));
 		_parser->setTrack(0);	
 		//debug(0, "Playing song %d [queue position: %d]", songNum, _queuePos);
@@ -211,7 +239,8 @@ namespace Queen {
 			if (_queuePos < (MUSIC_QUEUE_SIZE - 1) && _songQueue[_queuePos + 1])
 				_queuePos++;
 			else
-				_queuePos = 0;
+				if (_looping)
+					_queuePos = 0;
 		}
 	}
 	
@@ -220,8 +249,28 @@ namespace Queen {
 		for (int i = 0; i < MUSIC_QUEUE_SIZE; i++)
 			if (_songQueue[i])
 				queueSize++;
-				
-		return (uint8) _rnd.getRandomNumber(queueSize) & 0xFF;
+		
+		if (!queueSize)
+			return 0;
+		
+		return (uint8) _rnd.getRandomNumber(queueSize - 1) & 0xFF;
+	}
+	
+	bool MusicPlayer::isBadSong(uint16 songNum) {
+		//Songs which are (apparently?) bogus
+		//Atleast they don't contain a valid MThd/MTrk
+		switch(songNum) {
+			case  50:
+			case  51:
+			case  53:
+			case  80:
+			case 176:
+				return true;
+				break;
+			default:
+				return false;
+				break;
+		}
 	}
 	
 	void MusicPlayer::stopMusic() {

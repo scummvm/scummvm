@@ -66,6 +66,7 @@ protected:
 	void queueUpdatePos();
 	uint8 randomQueuePos();
 	static void onTimer(void *data);
+	bool isBadSong(uint16 songNum);
 	uint32 songOffset(uint16 songNum);
 	uint32 songLength(uint16 songNum);
 
@@ -81,6 +82,7 @@ protected:
 	bool _randomLoop;
 	byte _volume;
 	uint8 _queuePos;
+	int16 _currentSong;
 	int16 _lastSong;	//first song from previous queue
 	int16 _songQueue[MUSIC_QUEUE_SIZE];
 	

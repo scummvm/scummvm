@@ -27,6 +27,7 @@
 #include "queen/graphics.h"
 #include "queen/grid.h"
 #include "queen/logic.h"
+#include "queen/music.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
@@ -284,6 +285,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 			if (_saveDescriptions[currentSlot][0]) {
 				_vm->graphics()->clearBobs();
 				_vm->display()->palFadeOut(0, 223, JOURNAL_ROOM);
+				_vm->music()->stopSong();
 				_vm->loadGameState(currentSlot);
 				_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 				// XXX panelflag=1;
