@@ -601,6 +601,13 @@ void Scumm::drawBlastTexts()
 		_charset->_nextLeft = _blastTextQueue[i].xpos;
 		_charset->_nextTop = _blastTextQueue[i].ypos;
 
+		// Center text if necessary
+		if (_charset->_center) {
+			_charset->_nextLeft -= _charset->getStringWidth(0, buf) >> 1;
+			if (_charset->_nextLeft < 0)
+				_charset->_nextLeft = 0;
+		}
+
 		do {
 			c = *buf++;
 			if (c != 0 && c != 0xFF) {
