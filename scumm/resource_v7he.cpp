@@ -68,6 +68,7 @@ void Win32ResExtractor::setCursor(int id) {
 
 	_vm->setCursorHotspot(hotspot_x, hotspot_y);
 	_vm->grabCursorFromBuffer(cursor, w, h);
+	free(cursorRes);
 	free(cursor);
 }
 
