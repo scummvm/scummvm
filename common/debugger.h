@@ -47,6 +47,7 @@ protected:
 	typedef bool (T::*DebugProc)(int argc, const char **argv);
 	
 	enum {
+		DVAR_BYTE,
 		DVAR_INT,
 		DVAR_BOOL,
 		DVAR_INTARRAY,
