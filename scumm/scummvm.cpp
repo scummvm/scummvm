@@ -156,6 +156,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 			warning("Adlib music was selected, switching to midi null driver");   
 		}   
 		_silentDigitalImuse = true;
+		_noDigitalSamples = true;
 	} 
 	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
 	_mixer->setMusicVolume(kDefaultMusicVolume);

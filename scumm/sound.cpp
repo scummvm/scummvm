@@ -416,8 +416,8 @@ void Sound::processSfxQueues() {
 
 	if (_scumm->_vars[_scumm->VAR_TALK_ACTOR]) { //_sfxMode & 2) {
 		act = _scumm->_vars[_scumm->VAR_TALK_ACTOR];
-		if (_talkChannel < 0)
-			finished = false;
+		if (_talkChannel < 1)
+			finished = true;
 		else if (_scumm->_mixer->_channels[_talkChannel] == NULL) {
 			finished = true;
 		} else
@@ -771,6 +771,9 @@ int Sound::startSfxSound(File *file, int file_size) {
 	uint size = 0;
 	int rate, comp;
 	byte *data;
+
+	if (_scumm->_noDigitalSamples)
+		return -1;
 
 	if (file_size > 0) {
 		int alloc_size = file_size;
@@ -1136,7 +1139,10 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 int Sound::playBundleSound(char *sound) {
 	byte * ptr;
 	bool result;
-	
+
+	if (_scumm->_noDigitalSamples)
+		return -1;	
+
 	if (_scumm->_gameId == GID_CMI) {
 		char voxfile[20];
 		sprintf(voxfile, "voxdisk%d.bun", _scumm->_vars[_scumm->VAR_CURRENTDISK]);
@@ -1238,7 +1244,7 @@ int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
 
 int Sound::playSfxSound_MP3(void *sound, uint32 size) {
 #ifdef USE_MAD
-	if (_soundsPaused)
+	if (_soundsPaused || _scumm->_noDigitalSamples)
 		return -1;
 	return _scumm->_mixer->playMP3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
 #endif
@@ -1309,7 +1315,7 @@ static ov_callbacks data_wrap = {
 
 int Sound::playSfxSound_Vorbis(void *sound, uint32 size) {
 #ifdef USE_VORBIS
-	if (_soundsPaused)
+	if (_soundsPaused || _scumm->_noDigitalSamples)
 		return -1;
 
 	OggVorbis_File *ov_file = new OggVorbis_File;

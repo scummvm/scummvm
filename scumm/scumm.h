@@ -852,7 +852,7 @@ public:
 	uint16 _defaultTalkDelay;
 	bool _use_adlib;
 	int tempMusic;
-	bool _silentDigitalImuse;
+	bool _silentDigitalImuse, _noDigitalSamples;
 	int _saveSound;
 	int current_cd_sound;
 
