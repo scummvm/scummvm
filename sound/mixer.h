@@ -51,8 +51,6 @@ public:
 	};
 
 private:
-	static void onGenerateSamples(void *s, byte *samples, int len);
-
 	OSystem *_syst;
 	OSystem::MutexRef _mutex;
 
@@ -95,9 +93,6 @@ public:
 	/** Premix procedure, useful when using fmopl adlib */
 	void setupPremix(void * param, PremixProc * proc);
 
-	/** mix */
-	void mix(int16 * buf, uint len);
-
 	/** stop all currently playing sounds */
 	void stopAll();
 
@@ -138,6 +133,11 @@ public:
 
 private:
 	int insertChannel(PlayingSoundHandle *handle, Channel *chan);
+
+	/** mix */
+	void mix(int16 * buf, uint len);
+
+	static void onGenerateSamples(void *s, byte *samples, int len);
 };
 
 #endif

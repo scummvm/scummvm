@@ -356,6 +356,7 @@ bool SoundMixer::isActiveChannel(int index) {
 }
 
 void SoundMixer::setupPremix(void *param, PremixProc *proc) {
+	StackLock lock(_mutex);	
 	_premixParam = param;
 	_premixProc = proc;
 }
