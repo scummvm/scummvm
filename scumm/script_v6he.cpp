@@ -399,8 +399,9 @@ void ScummEngine_v6he::o6_setState() {
 }
 
 void ScummEngine_v6he::o6_startSound() {
+	// Seems to range between 952 - 9000
 	if (_gameId != GID_PUTTDEMO)
-		pop(); // offset which seems to always be zero
+		debug(2, "o6_startSound: unknown value %d", pop());
 
 	_sound->addSoundToQueue(pop());
 }
