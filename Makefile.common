@@ -47,15 +47,15 @@ ifdef BUILD_PLUGINS
 CXXFLAGS += -DDYNAMIC_MODULES
 
 # Uncomment these for Mac OS X
-#PLUGIN_LDFLAGS := -bundle -bundle_loader $(EXECUTABLE)
-#LDFLAGS += -all_load
-#LIBS += -ldl
+#PLUGIN_LDFLAGS += -bundle -bundle_loader $(EXECUTABLE)
+#LDFLAGS        += -all_load
+#LIBS           += -ldl
 
 # Uncomment these for Linux
-CXXFLAGS += -fpic
-PLUGIN_LDFLAGS := -shared
-LDFLAGS += --export-dynamic
-LIBS += -ldl
+CXXFLAGS       += -fpic
+PLUGIN_LDFLAGS += -shared
+LDFLAGS        += -Wl,--export-dynamic
+LIBS           += -ldl
 
 endif
 
