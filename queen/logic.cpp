@@ -345,8 +345,8 @@ uint16 Logic::findBob(uint16 obj) {
 						img -= 5000;
 					}
 
-					if (img >= _numGraphics)
-						warning("img (%i) >= _numGraphics (%i)", img, _numGraphics);
+					if (img > _numGraphics)
+						warning("img (%i) > _numGraphics (%i)", img, _numGraphics);
 					
 					if(_graphicData[img].lastFrame != 0) {
 						++idxAnimated;
