@@ -107,7 +107,8 @@ enum Language {
 	KO_KOR = 8,
 	SE_SWE = 9,
 	EN_GRB = 10,
-	HB_HEB = 20
+	HB_HEB = 20,
+	RU_RUS = 21
 };
 
 /** Convert a string containing a language name into a Language enum value. */
