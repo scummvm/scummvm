@@ -49,6 +49,7 @@ private:
 	Codec47Decoder _codec47;
 	FileChunk *_base;
 	byte *_frameBuffer;
+	byte *_specialBuffer;
 
 	bool _skipNext;
 	bool _subtitles;

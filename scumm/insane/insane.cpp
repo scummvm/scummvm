@@ -437,7 +437,7 @@ void Insane::initvars(void) {
 	init_actStruct(1, 2, 13, 1, 1, 0, 0, 0);
 	init_actStruct(1, 3, 13, 1, 1, 0, 0, 0);
 
-	for (i = 0; i < 9; i++)
+	for (i = 0; i < 10; i++)
 		for (j = 0; j < 10; j++)
 			_enemyState[i][j] = 0;
 }

@@ -464,7 +464,7 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 		memcpy(_deltaBufs[_curtable], src + 16, decoded_size);
 		break;
 	case 1:
-		error("codec37: missing opcode 1");
+		warning("codec37: missing opcode 1");
 		break;
 	case 2:
 		bompDecodeLine(_deltaBufs[_curtable], src + 16, decoded_size);
