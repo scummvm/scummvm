@@ -248,7 +248,10 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// ever add options for using different 16-colour palettes.
 	if (_version == 1) {
 		if (_gameId == GID_MANIAC)
-			setupV1ManiacPalette();
+			if (_features & GF_NES)
+				setupNESPalette();
+			else
+				setupV1ManiacPalette();
 		else
 			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
@@ -296,6 +299,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	// Restore the virtual screens and force a fade to black.
 	initScreens(kMainVirtScreen, _screenHeight);
+
 	VirtScreen *vs = &virtscr[kMainVirtScreen];
 	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
 	vs->setDirtyRange(0, vs->h);
@@ -594,6 +598,8 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ScummEngine, _screenB, sleUint16, VER(8)),
 		MKLINE(ScummEngine, _screenH, sleUint16, VER(8)),
 
+		MKLINE(ScummEngine, _NESCostumeSet, sleUint16, VER(47)),
+
 		MK_OBSOLETE(ScummEngine, _cd_track, sleInt16, VER(9), VER(9)),
 		MK_OBSOLETE(ScummEngine, _cd_loops, sleInt16, VER(9), VER(9)),
 		MK_OBSOLETE(ScummEngine, _cd_frame, sleInt16, VER(9), VER(9)),
@@ -745,6 +751,12 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			vm.slot[i].cycle = 1;
 		}
 	}
+
+	if (_features & GF_NES)
+		if (savegameVersion < VER(47))
+			NES_loadCostumeSet(_NESCostumeSet = 0);
+		else
+			NES_loadCostumeSet(_NESCostumeSet);
 
 	if (_heversion >= 71) {
 		Wiz *wiz = &((ScummEngine_v70he *)this)->_wiz;

@@ -272,7 +272,7 @@ void ScummEngine::initScreens(int b, int h) {
 		}
 	}
 
-	if (_features & GF_NES) {
+	if ((_features & GF_NES) && (h != _screenHeight)) {
 		adj = 16;
 		initVirtScreen(kUnkVirtScreen, 0, 0, _screenWidth, adj, false, false);
 	}

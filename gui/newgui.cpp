@@ -83,7 +83,8 @@ void NewGui::updateScaleFactor() {
 			kDefaultGUIHeight = 200
 		};
 	
-		_scaleFactor = MIN(_system->getOverlayWidth() / kDefaultGUIWidth, _system->getOverlayHeight() / kDefaultGUIHeight);
+		// NES has 256 pixels width which makes MIN() return 0 here.
+		_scaleFactor = MAX(MIN(_system->getOverlayWidth() / kDefaultGUIWidth, _system->getOverlayHeight() / kDefaultGUIHeight), 1);
 	}
 
 	// Pick the font depending on the scale factor.
