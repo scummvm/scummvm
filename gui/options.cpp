@@ -38,13 +38,15 @@ enum {
 };
 
 GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
-	: Dialog(gui, 10, 30, 320-2*10, 200-2*30)
+	: Dialog(gui, 10, 25, 320-2*10, 200-2*30)
 {
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
 	new StaticTextWidget(this, 10, 10+1, 100, kLineHeight, "Graphics: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
 	gfxPopUp = new PopUpWidget(this, 110, 10, 180, kLineHeight);
+	gfxPopUp->appendEntry("<default>");
+	gfxPopUp->appendEntry("-");
 	gfxPopUp->appendEntry("Normal (no scaling)");
 	gfxPopUp->appendEntry("2x");
 	gfxPopUp->appendEntry("3x");
@@ -59,6 +61,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	new StaticTextWidget(this, 10, 26+1, 100, kLineHeight, "MIDI driver: ", kTextAlignRight);
 	PopUpWidget *midiPopUp;
 	midiPopUp = new PopUpWidget(this, 110, 26, 180, kLineHeight);
+	midiPopUp->appendEntry("<default>");
+	midiPopUp->appendEntry("-");
 	midiPopUp->appendEntry("None");
 	midiPopUp->appendEntry("Adlib");
 	midiPopUp->appendEntry("CoreAudio");
