@@ -24,7 +24,6 @@
 #include "scumm.h"
 #include "gui.h"
 #include "string.h"
-#include "sound.h"
 
 extern void launcherLoop();
 void Scumm::initRandSeeds() {

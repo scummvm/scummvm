@@ -25,7 +25,6 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "gui.h"
-#include "sound.h"
 #include "SDL_thread.h"
 
 #include "cdmusic.h"
@@ -883,9 +882,6 @@ void launcherLoop() {
 };
 
 int main(int argc, char* argv[]) {
-	int delta;
-	int last_time, new_time;
-	
 #if defined(MACOS) 
 	/* support for config file on macos */
 	

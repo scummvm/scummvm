@@ -39,12 +39,6 @@
 class Scumm;
 struct Actor;
 
-struct gate_location
-{
-	int     x;
-	int     y;
-};
-
 #include "smush.h"
 
 typedef void (Scumm::*OpcodeProc)();
@@ -61,15 +55,7 @@ enum {
     KEY_SET_OPTIONS = 3456 // WinCE
 };
 
-/* Sound output type - MIDI */
-enum {
-	MIDI_NULL = 0,
-	MIDI_WINDOWS = 1,
-	MIDI_TIMIDITY = 2,
-	MIDI_SEQ = 3,
-	MIDI_QTMUSIC = 4,
-	MIDI_AMIDI = 5
-};
+
 
 /* Script status type (slot.status) */
 enum {
@@ -78,43 +64,8 @@ enum {
 	ssRunning = 2
 };
 
-const uint16 many_direction_tab[18] = {
-	4,
-	8,
-	71,
-	109,
-	251,
-	530,
-	0,
-	0,
-	0,
-	0,
-	22,
-	72,
-	107,
-	157,
-	202,
-	252,
-	287,
-	337 };
-
-const int16 many_direction_tab_2 [16] = {
-	0,
-	90,
-	180,
-	270,
-	-1,
-	-1,
-	-1,
-	-1,
-	0,
-	45,
-	90,
-	135,
-	180,
-	225,
-	270,
-	315 };
+const uint16 many_direction_tab[18] = {4, 8, 71, 109, 251, 530, 0, 0, 0, 0, 22, 72, 107, 157, 202, 252, 287, 337};
+const int16 many_direction_tab_2[16] = {0, 90, 180, 270, -1, -1, -1, -1, 0, 45, 90, 135, 180, 225, 270, 315};
 
 struct ScummPoint {
 	int x,y;
@@ -124,21 +75,9 @@ struct MemBlkHeader {
 	uint32 size;
 };
 
-
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif	
-
-#define SIZEOF_BOX 20
-struct Box { /* file format */
-	int16 ulx,uly;
-	int16 urx,ury;
-	int16 llx,lly;
-	int16 lrx,lry;
-	byte mask;
-	byte flags;
-	uint16 scale;
-} GCC_PACK;
 
 struct ResHdr {
 	uint32 tag, size;
@@ -252,11 +191,6 @@ struct ImageHeader { /* file format */
 	#pragma END_PACK_STRUCTS
 #endif
 
-struct AdjustBoxResult {
-	int16 x,y;
-	uint16 dist;
-};
-
 struct VerbSlot {
 	int16 x,y;
 	int16 right, bottom;
@@ -304,16 +238,6 @@ struct EnqueuedObject {
 	int16 x,y;
 	uint16 width,height;
 	uint16 j,k,l;
-};
-
-struct PathNode {
-	uint index;
-	struct PathNode *left, *right;
-};
-
-struct PathVertex {
-	PathNode *left;
-	PathNode *right;
 };
 
 struct VirtScreen {
@@ -784,36 +708,6 @@ struct Gdi {
 	};
 };
 
-typedef enum {
-  MIXER_STANDARD,
-  MIXER_MP3
-} MixerType;
-
-struct MixerChannel {
-	void *_sfx_sound;
-	MixerType type;
-	union {
-	  struct {
-	    uint32 _sfx_pos;
-	    uint32 _sfx_size;
-	    uint32 _sfx_fp_speed;
-	    uint32 _sfx_fp_pos;
-	  } standard;
-#ifdef COMPRESSED_SOUND_FILE
-	  struct {
-	    struct mad_stream stream;
-	    struct mad_frame frame;
-	    struct mad_synth synth;
-	    uint32 silence_cut;
-	    uint32 pos_in_frame;
-	    uint32 position;
-	    uint32 size;
-	  } mp3;
-#endif
-	} sound_data;
-	void mix(int16 *data, uint32 len);
-	void clear();
-};
 
 enum GameId {
 	GID_TENTACLE = 1,
@@ -876,20 +770,8 @@ enum VideoMode {
 	VIDEO_SUPEREAGLE = 3
 };
 
-struct BoxCoords {
-	ScummPoint ul;
-	ScummPoint ur;
-	ScummPoint ll;
-	ScummPoint lr;
-};
-
-struct OffsetTable {	/* Compressed Sound (.SO3) */
-	int org_offset;
-	int new_offset;
-	int num_tags;
-	int compressed_size;
-};
-
+#include "boxes.h"
+#include "sound.h"
 class Scumm {
 public:
 

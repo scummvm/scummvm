@@ -22,7 +22,6 @@
 #include "stdafx.h"
 
 #include "scumm.h"
-#include "sound.h"
 
 int num_mix;
 

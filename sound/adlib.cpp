@@ -21,7 +21,6 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "sound.h"
 #include "fmopl.h"
 
 #if defined USE_ADLIB

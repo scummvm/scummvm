@@ -33,7 +33,6 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "sound.h"
 #include "gmidi.h"
 
 void MidiSoundDriver::midiSetDriver(int devicetype) {	

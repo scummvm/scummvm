@@ -22,7 +22,6 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "sound.h"
 
 #ifdef _WIN32_WCE
 #define _MANAGE_OLD_SAVE

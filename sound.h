@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.9  2002/03/21 16:12:02  ender
+ * Move some box stuff from scumm.h to new boxes.h
+ * Also move some sound-related items from scumm.h to sound.h
+ *
  * Revision 1.8  2002/03/16 18:58:51  ender
  * MorphOS port (sdl version) + endian fixes for big endian machines.
  *
@@ -48,7 +52,49 @@
  *
  */
 
+#include "gmidi.h"		/* General Midi */
+
+struct OffsetTable {	/* Compressed Sound (.SO3) */
+	int org_offset;
+	int new_offset;
+	int num_tags;
+	int compressed_size;
+};
+
+typedef enum {			/* Mixer types */
+  MIXER_STANDARD,
+  MIXER_MP3
+} MixerType;
+
+struct MixerChannel {	/* Mixer Channel */
+	void *_sfx_sound;
+	MixerType type;
+	union {
+	  struct {
+	    uint32 _sfx_pos;
+	    uint32 _sfx_size;
+	    uint32 _sfx_fp_speed;
+	    uint32 _sfx_fp_pos;
+	  } standard;
+#ifdef COMPRESSED_SOUND_FILE
+	  struct {
+	    struct mad_stream stream;
+	    struct mad_frame frame;
+	    struct mad_synth synth;
+	    uint32 silence_cut;
+	    uint32 pos_in_frame;
+	    uint32 position;
+	    uint32 size;
+	  } mp3;
+#endif
+	} sound_data;
+	void mix(int16 *data, uint32 len);
+	void clear();
+};
+
 int clamp(int val, int min, int max);
+
+
 
 struct FM_OPL;
 struct Part;
@@ -585,8 +631,6 @@ public:
 	void setBase(byte **base) { _base_sounds = base; }	
 
 	SOUND_DRIVER_TYPE *driver() { return _driver; }
-	int  midiGetDriver() {return _s->_midi_driver;}
-	void midiSetDriver(int devicetype);
 	bool _mt32emulate;	
 };
 

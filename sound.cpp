@@ -22,7 +22,6 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "sound.h"
 #include "cdmusic.h"
 
 #ifdef _WIN32_WCE
@@ -370,7 +369,7 @@ void Scumm::setupSound() {
 		_sound_volume_sfx    = 100;
 		_sound_volume_music  = se->get_music_volume();
 		_sound_volume_master = (se->get_master_volume() / 127);
-		driver->midiSetDriver(se->midiGetDriver());
+		driver->midiSetDriver(_midi_driver);
 	}
 	_sfxFile = openSfxFile();
 }
