@@ -520,10 +520,10 @@ void scen_updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		    MAX(scen_toRedrawTop, anim_animAreaTop);
 		scen_toRedrawRight =
 		    MIN(scen_toRedrawRight,
-		    anim_animAreaLeft + anim_animAreaWidth - 1);
+		    (int16)(anim_animAreaLeft + anim_animAreaWidth - 1));
 		scen_toRedrawBottom =
 		    MIN(scen_toRedrawBottom,
-		    anim_animAreaTop + anim_animAreaHeight - 1);
+		    (int16)(anim_animAreaTop + anim_animAreaHeight - 1));
 	}
 
 	transp = layerPtr->transp ? 3 : 0;
@@ -651,10 +651,10 @@ void scen_updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				    MIN(scen_toRedrawTop, destY);
 				scen_toRedrawRight =
 				    MAX(scen_toRedrawRight,
-				    destX + right - left);
+				    (int16)(destX + right - left));
 				scen_toRedrawBottom =
 				    MAX(scen_toRedrawBottom,
-				    destY + bottom - top);
+				    (int16)(destY + bottom - top));
 			}
 		}
 	} while (framePtr->notFinal == 1);
