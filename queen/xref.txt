@@ -15,33 +15,34 @@ unpack()					Graphics::bankUnpack
 COMMAND
 =======
 ALTER_DEFAULT()
-CLEAR_COMMAND()
+CLEAR_COMMAND()				Command::clear
 EXECUTE_ACTION()
-OPEN_CLOSE_OTHER()
-P1_SET_CONDITIONS()
-P2_SET_AREAS()
-P3_SET_OBJECTS()
-P4_SET_ITEMS()
+FIND_DEFAULT()				Command::findDefault
+OPEN_CLOSE_OTHER()			Command::openOrCloseAssociatedObject
+P1_SET_CONDITIONS()			Command::setConditions
+P2_SET_AREAS()				Command::setAreas
+P3_SET_OBJECTS()			Command::setObjects
+P4_SET_ITEMS()				Command::setItems
 SELECT()
 SELECT_ITEM()
 SELECT_NOUN()
 SELECT_VERB()
 -
 ACTION,ACTION2
-CLEVEL
-COM
-COMMANDstr
-COMMAX
-COND
-CURRCOM
+CLEVEL						Command::_commandLevel
+COM							*EXECUTE_ACTION local*
+COMMANDstr					Command::_command
+COMMAX						*EXECUTE_ACTION local*
+COND						*EXECUTE_ACTION local*
+CURRCOM						*EXECUTE_ACTION local*
 DEFCOMM
-GSET
+GSET						*P1_SET_CONDITIONS local*
 OLDVERB,VERB
 OLDNOUN,NOUN,NOUN2
-PARSE
-SUBJ1,SUBJ2,SUBJECT
-TA2
-TEMPI
+PARSE						Command::_parse
+SUBJ1,SUBJ2,SUBJECT			Command::_subject*
+A2							*EXECUTE_ACTION local*
+TEMPI						*P1_SET_CONDITIONS local*
 TEMPstr
 WORDstr
 
@@ -204,7 +205,6 @@ LOGIC
 DISP_OBJECTS()				Logic::roomSetupObjects
 DISP_ROOM()					Logic::roomDisplay
 FIND_BOB()					Logic::findBob
-FIND_DEFAULT()
 FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()				Logic::graphicData
 FIND_SCALE()				Logic::findScale
@@ -348,11 +348,11 @@ VOLUME
 
 STATE
 =====
-ALTER_STATE()				Logic::alterState*
-FIND_STATE()				Logic::findState*
+ALTER_STATE()				State::alterState*
+FIND_STATE()				State::findState*
 -
-Gstr						// grab state
-Pstr						// FIND_STATE result
+Gstr						*no needed* // grab state
+Pstr						*no needed* // FIND_STATE result
 
 
 TALK

@@ -31,6 +31,119 @@
 
 namespace Queen {
 
+
+Direction State::findDirection(uint16 state) {
+	// queen.c l.4014-4021
+	static const Direction sd[] = {
+		DIR_BACK,
+		DIR_RIGHT,
+		DIR_LEFT,
+		DIR_FRONT
+	};
+	return sd[(state >> 2) & 3];
+}
+
+StateTalk State::findTalk(uint16 state) {
+	return (state & (1 << 9)) ? STATE_TALK_TALK : STATE_TALK_MUTE;
+}
+
+StateGrab State::findGrab(uint16 state) {
+	// queen.c l.4022-4029
+	static const StateGrab gd[] = {
+		STATE_GRAB_NONE,
+		STATE_GRAB_DOWN,
+		STATE_GRAB_UP,
+		STATE_GRAB_MID
+	};
+	return gd[state & 3];
+}
+
+StateOn State::findOn(uint16 state) {
+	return (state & (1 << 8)) ? STATE_ON_ON : STATE_ON_OFF;
+}
+
+
+Verb State::findDefaultVerb(uint16 state) {
+	Verb v;
+	switch((state >> 4) & 0xF) {
+	case 1:
+		v = VERB_OPEN;
+		break;
+	case 3:
+		v = VERB_CLOSE;
+		break;
+	case 7:
+		v = VERB_MOVE;
+		break;
+	case 8:
+		v = VERB_GIVE;
+		break;
+    case 12:
+		v = VERB_USE;
+		break;
+    case 14:
+		v = VERB_PICK_UP;
+		break;
+    case 9:
+		v = VERB_TALK_TO;
+		break;
+    case 6:
+		v = VERB_LOOK_AT;
+		break;
+	default:
+		v = VERB_NONE;
+		break;
+	}
+	return v;
+}
+
+
+void State::alterOn(uint16 *objState, StateOn state) {
+	switch (state) {
+	case STATE_ON_ON:
+		*objState |= (1 << 8);
+		break;
+	case STATE_ON_OFF:
+		*objState &= ~(1 << 8);
+		break;
+	}
+}
+
+void State::alterDefaultVerb(uint16 *objState, Verb v) {
+	uint16 val;
+	switch (v) {
+	case VERB_OPEN:
+		val = 0;
+		break;
+	case VERB_CLOSE:
+		val = 3;
+		break;
+	case VERB_MOVE:
+		val = 7;
+		break;
+	case VERB_GIVE:
+		val = 8;
+		break;
+    case VERB_USE:
+		val = 12;
+		break;
+    case VERB_PICK_UP:
+		val = 14;
+		break;
+    case VERB_TALK_TO:
+		val = 9;
+		break;
+    case VERB_LOOK_AT:
+		val = 6;
+		break;
+	default:
+		val = 0;
+		break;
+	}
+	*objState = (*objState & ~0xF0) | (v << 4);
+}
+
+
 Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
 	: _resource(resource), _graphics(graphics), _display(theDisplay), 
 	_input(input), _sound(sound), _talkSpeed(DEFAULT_TALK_SPEED) {
@@ -1457,65 +1570,16 @@ void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, b
 }
 
 
-StateDirection Logic::findStateDirection(uint16 state) const {
-
-	// FIXME: may be we should return a DIR_* constant instead
-	// of a STATE_DIR_*. Some (all ?) calls to FIND_STATE(, "DIR")
-	// are often followed by a DIR_* constant.
-
-	// queen.c l.4014-4021
-	static const StateDirection sd[] = {
-		STATE_DIR_BACK,
-		STATE_DIR_RIGHT,
-		STATE_DIR_LEFT,
-		STATE_DIR_FRONT
-	};
-	return sd[(state >> 2) & 3];
-}
-
-StateTalk Logic::findStateTalk(uint16 state) const {
-	return (state & (1 << 9)) ? STATE_TALK_TALK : STATE_TALK_MUTE;
-}
-
-StateGrab Logic::findStateGrab(uint16 state) const {
-
-	// queen.c l.4022-4029
-	static const StateGrab gd[] = {
-		STATE_GRAB_NONE,
-		STATE_GRAB_DOWN,
-		STATE_GRAB_UP,
-		STATE_GRAB_MID
-	};
-	return gd[state & 3];
-}
-
-StateOn Logic::findStateOn(uint16 state) const {
-	return (state & (1 << 8)) ? STATE_ON_ON : STATE_ON_OFF;
-}
-
-
-void Logic::alterStateOn(uint16 *objState, StateOn state) const {
-	switch (state) {
-	case STATE_ON_ON:
-		*objState |= (1 << 8);
-		break;
-	case STATE_ON_OFF:
-		*objState &= ~(1 << 8);
-		break;
-	}
-}
-
-
-void Logic::joeSetupFromBanks(const char *bank1, const char* bank2) {
+void Logic::joeSetupFromBanks(const char *animBank, const char *standBank) {
 
 	int i;
-	_graphics->bankLoad(bank1, 13);
+	_graphics->bankLoad(animBank, 13);
 	for (i = 11; i <= 28 + FRAMES_JOE_XTRA; ++i) {
 		_graphics->bankUnpack(i - 10, i, 13);
 	}
 	_graphics->bankErase(13);
 
-	_graphics->bankLoad(bank2, 7);
+	_graphics->bankLoad(standBank, 7);
 	_graphics->bankUnpack(1, 33 + FRAMES_JOE_XTRA, 7);
 	_graphics->bankUnpack(3, 34 + FRAMES_JOE_XTRA, 7);
 	_graphics->bankUnpack(5, 35 + FRAMES_JOE_XTRA, 7);
@@ -1577,22 +1641,9 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	// TODO: cutawayJoeFacing
 
     // check to see which way Joe entered room
-	switch (findStateDirection(pod->state)) {
-	case STATE_DIR_FRONT:
-		_joe.facing = DIR_FRONT;
-		break;
-	case STATE_DIR_BACK:
-		_joe.facing = DIR_BACK;
-		break;
-	case STATE_DIR_LEFT:
-		_joe.facing = DIR_LEFT;
-		break;
-	case STATE_DIR_RIGHT:
-		_joe.facing = DIR_RIGHT;
-		break;
-	}
-
+	_joe.facing = State::findDirection(pod->state);
 	_joe.prevFacing = _joe.facing;
+
 	BobSlot *pbs = _graphics->bob(0);
 	pbs->scale = _joe.scale;
 
@@ -1694,21 +1745,7 @@ int16 Logic::joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk) {
 
 
 	// determine which way for Joe to face Object
-	uint16 facing = 0;
-	switch (findStateDirection(objData->state)) {
-	case STATE_DIR_BACK:
-		facing = DIR_BACK;
-		break;
-	case STATE_DIR_FRONT:
-		facing = DIR_FRONT;
-		break;
-	case STATE_DIR_LEFT:
-		facing = DIR_LEFT;
-		break;
-	case STATE_DIR_RIGHT:
-		facing = DIR_RIGHT;
-		break;
-	}
+	uint16 facing = State::findDirection(objData->state);
 
 	int16 p = 0;
 	if (mustWalk) {
@@ -1729,7 +1766,7 @@ int16 Logic::joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk) {
 
 void Logic::joeGrab(uint16 state, uint16 speed) {
 
-	StateGrab sg = findStateGrab(state);
+	StateGrab sg = State::findGrab(state);
 	if (sg != STATE_GRAB_NONE) {
 		joeGrabDirection(sg, speed);
 	}
@@ -1859,6 +1896,7 @@ void Logic::playCutaway(const char* cutFile) {
 	Cutaway::run(cutFile, next, _graphics, _input, this, _resource, _sound);
 }
 
+
 void Logic::update() {
 	_graphics->update(_currentRoom);
 	_input->delay();
@@ -1867,6 +1905,7 @@ void Logic::update() {
 	_display->update(joe->active, joe->x, joe->y);
 	_input->checkKeys();
 }
+
 
 } // End of namespace Queen
 

@@ -138,14 +138,6 @@ enum Verb {
 };
 
 
-enum StateDirection {
-	STATE_DIR_BACK  = 0,
-	STATE_DIR_RIGHT = 1,
-	STATE_DIR_LEFT  = 2,
-	STATE_DIR_FRONT = 3
-};
-
-
 enum StateTalk {
 	STATE_TALK_TALK,
 	STATE_TALK_MUTE

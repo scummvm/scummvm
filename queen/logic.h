@@ -44,10 +44,33 @@ struct ZoneSlot {
 	Box box;
 };
 
-
 struct Command_ {
 	Verb action, action2;
 	uint16 noun, noun2;
+};
+
+struct State {
+
+	//! FIND_STATE(state, "DIR");
+	static Direction findDirection(uint16 state);
+
+	//! FIND_STATE(state, "TALK");
+	static StateTalk findTalk(uint16 state);
+
+	//! FIND_STATE(state, "GRAB");
+	static StateGrab findGrab(uint16 state);
+
+	//! FIND_STATE(state, "ON");
+	static StateOn findOn(uint16 state);
+
+	//! FIND_STATE(state, "DEF");
+	static Verb findDefaultVerb(uint16 state);
+
+	//! ALTER_STATE(state, "ON");
+	static void alterOn(uint16 *objState, StateOn state);
+
+	//! ALTER_STATE(state, verb);
+	static void alterDefaultVerb(uint16 *objState, Verb v);
 };
 
 
@@ -142,17 +165,11 @@ public:
 	void animErase(uint16 bobNum);
 	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible); // FIND_GRAPHIC_ANIMS
 
-	StateDirection findStateDirection(uint16 state) const; // == FIND_STATE(state, "DIR");
-	StateTalk      findStateTalk     (uint16 state) const; // == FIND_STATE(state, "TALK");
-	StateGrab      findStateGrab     (uint16 state) const; // == FIND_STATE(state, "GRAB");
-	StateOn        findStateOn       (uint16 state) const; // == FIND_STATE(state, "ON");
-	void alterStateOn(uint16 *objState, StateOn state) const; // == ALTER_STATE(state, "ON");
-
 	Walk *walk()	{ return _walk; }
 
 	int talkSpeed() { return _talkSpeed; }
 
-	void joeSetupFromBanks(const char *bank1, const char* bank2);
+	void joeSetupFromBanks(const char *animBank, const char *standBank);
 
 	//! SETUP_JOE(), loads the various bobs needed to animate Joe
 	void joeSetup();
