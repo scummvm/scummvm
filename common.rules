@@ -10,7 +10,7 @@ clean-$(MODULE): clean-% :
 	-$(RM) $(MODULE_OBJS-$*) $(MODULE_LIB-$*)
 
 # Convenience library target
-$(MODULE_LIB-$(MODULE)): $(MODULE_OBJS)
+$(MODULE_LIB-$(MODULE)): $(MODULE_OBJS) $(MODULE)/module.mk
 	-$(RM) $@
 	$(AR) $@ $+
 	$(RANLIB) $@ 
