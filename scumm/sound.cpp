@@ -574,8 +574,10 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
-		if (_talkChannel != -1)
+		if (_talkChannel != -1) {
 			_scumm->_mixer->stop(_talkChannel);
+			_talkChannel = -1;
+		}
 		_sfxMode &= ~2;
 	}
 }
@@ -1078,8 +1080,8 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 		_nameBundleMusic = "";
 		if (_bundleMusicTrack != -1) {
 			_scumm->_mixer->stop(_bundleMusicTrack);
+			_bundleMusicTrack = -1;
 		}
-		_bundleMusicTrack = -1;
 		if (_musicBundleBufFinal) {
 			free(_musicBundleBufFinal);
 			_musicBundleBufFinal = NULL;
