@@ -81,6 +81,9 @@ public:
 
 	void spriteEngine(void);
 
+	void paintBox(uint16 x, uint16 y);
+	void showGrid(uint8 *gridBuf);
+
 private:
 	OSystem *_system;
 	SkyDisk *_skyDisk;

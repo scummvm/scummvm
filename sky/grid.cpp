@@ -161,23 +161,25 @@ bool SkyGrid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint
 	if (y < TOP_LEFT_Y) return false; // off screen
 	y -= TOP_LEFT_Y;
 	y >>= 3; // convert to blocks
-	if (y >= GRID_Y) return false; // off screen
+	if (y >= GAME_SCREEN_HEIGHT >> 3) return false; // off screen
 	bitPos = y * 40;
 	width++;
 	x >>= 3; // convert to blocks
 	
-	int32 x_signed = (x - (TOP_LEFT_X >> 3));
-	if (x_signed < 0) { // at least partially off screen
-		if (x_signed + width <= 0) return false; // completely off screen
-		else width += x_signed; // adjust width to visible part and continue
-			                    // x_signed is negative, so it's +=
-	}
-    if ((GAME_SCREEN_WIDTH >> 3) <= x_signed) return false; // off screen
-	if ((GAME_SCREEN_WIDTH >> 3) < x_signed + width) { // at least partially of screen
-		if ((uint32)((GAME_SCREEN_WIDTH >> 3) - x_signed) >= width) return false; // off screen
-		else width -= (GAME_SCREEN_WIDTH >> 3) - x_signed; // adjust width
-	}
-    bitPos += x_signed;
+	if (x < (TOP_LEFT_X >> 3)) { // at least partially off screen
+		if (x + width < (TOP_LEFT_X >> 3)) return false; // completely off screen
+		else {
+			width -= (TOP_LEFT_X >> 3) - x;
+			x = 0;
+		}
+	} else
+		x -= TOP_LEFT_X >> 3;
+
+    if ((GAME_SCREEN_WIDTH >> 3) <= x) return false; // off screen
+	if ((GAME_SCREEN_WIDTH >> 3) < x + width) // partially off screen
+		width = (GAME_SCREEN_WIDTH >> 3) - x;
+
+    bitPos += x;
 	int32 screenGridOfs = _gridConvertTable[cpt->screen] * GRID_SIZE;
 	bitPos += (screenGridOfs << 3); // convert to bits
 	uint32 tmpBits = 0x1F - (bitPos&0x1F);

@@ -2237,8 +2237,29 @@ bool SkyLogic::fnLookAt(uint32 a, uint32 b, uint32 c) {
 	return true;
 }
 
-bool SkyLogic::fnLincTextModule(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnLincTextModule");
+bool SkyLogic::fnLincTextModule(uint32 textPos, uint32 textNo, uint32 buttonAction) {
+
+	uint16 cnt;
+	if (buttonAction & 0x8000)
+		for (cnt = LINC_DIGIT_0; cnt <= LINC_DIGIT_9; cnt++)
+			_scriptVariables[cnt] = 0;
+	buttonAction &= 0x7FFF;
+	if (buttonAction < 10)
+		_scriptVariables[LINC_DIGIT_0 + buttonAction] = textNo;
+
+	lowTextManager_t text = _skyText->lowTextManager(textNo, 220, 0, 215, false);
+
+	Compact *textCpt = SkyState::fetchCompact(text.compactNum);
+
+	if (textPos < 20) { // line number (for text)
+		textCpt->xcood = 152;
+		textCpt->ycood = (uint16)textPos * 13 + 170;
+	} else if (textPos > 20) { // x coordinate (for numbers)
+		textCpt->xcood = (uint16)textPos;
+		textCpt->ycood = 214;
+	} else warning("::fnLincTextModule: textPos == 20");
+	textCpt->getToFlag = (uint16)textNo;
+	return true;
 }
 
 bool SkyLogic::fnTextKill2(uint32 a, uint32 b, uint32 c) {

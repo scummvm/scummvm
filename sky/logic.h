@@ -64,7 +64,17 @@ enum scriptVariableOffsets {
 	MENU = 102,
 	RND = 115,
 	CUR_SECTION = 143,
-	REICH_DOOR_FLAG = 470
+	REICH_DOOR_FLAG = 470,
+	LINC_DIGIT_0 = 646,
+	LINC_DIGIT_1 = 647,
+	LINC_DIGIT_2 = 648,
+	LINC_DIGIT_3 = 649,
+	LINC_DIGIT_4 = 650,
+	LINC_DIGIT_5 = 651,
+	LINC_DIGIT_6 = 651,
+	LINC_DIGIT_7 = 653,
+	LINC_DIGIT_8 = 654,
+	LINC_DIGIT_9 = 655,
 };
 
 class SkyAutoRoute;
@@ -215,6 +225,7 @@ public:
 	void stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base);
 	
 	static uint32 _scriptVariables[838];
+	SkyGrid *_skyGrid;
 	
 protected:
 	void push(uint32);
@@ -241,7 +252,6 @@ protected:
 	
 	SkyScreen *_skyScreen;
 	SkyDisk *_skyDisk;
-	SkyGrid *_skyGrid;
 	SkyText *_skyText;
 	SkyMusicBase *_skyMusic;
 	SkySound *_skySound;

@@ -29,6 +29,7 @@
 #include "sky/screen.h"
 #include "sky/disk.h"
 #include "sky/mouse.h"
+#include "sky/logic.h"
 
 #define MAX_SAVE_GAMES 999
 #define MAX_TEXT_LEN 80
@@ -47,8 +48,6 @@
 #define GAME_NAME_Y (SPNL_Y + SP_TOP_GAP)		// start y coord of game names
 #define MAX_ON_SCREEN ((SP_HEIGHT - SP_TOP_GAP - SP_BOT_GAP) / PAN_CHAR_HEIGHT) // no of save games on screen
 #define CP_PANEL 60400 // main panel sprite
-
-#define CHARACTER_LIST " ,().='-&+!?\"" // list of allowed characters
 
 #define MAINPANEL 0
 #define SAVEPANEL 1
@@ -100,8 +99,15 @@
 #define SAVE_MEGA1	 4
 #define SAVE_MEGA2	 8
 #define SAVE_MEGA3	16
+#define SAVE_GRAFX	32
+#define SAVE_TURNP	64
 
-#define SAVE_HEADER "(C) Revolution Software Ltd 1993.\x00System 2 written by David Sykes and Tony Warriner\x0D\x0APortable implementation done by the ScummVM team\x0D\x0ASave File Revision 1\x00"
+#define SAVE_FILE_REVISION 1
+
+struct AllocedMem {
+	uint16 *mem;
+	AllocedMem *next;
+};
 
 class SkyConResource {
 public:
@@ -135,7 +141,7 @@ private:
 
 class SkyControl {
 public:
-	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, OSystem *system, const char *savePath);
+	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, OSystem *system, const char *savePath);
 	void doControlPanel(void);
 	void showGameQuitMsg(bool useScreen = true);
     
@@ -145,9 +151,14 @@ private:
 	void drawMainPanel(void);
 	void delay(unsigned int amount);
 	void buttonControl(SkyConResource *pButton);
-	void loadSaveDescriptions(uint8 *destBuf);
-	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum);
+
+	void loadDescriptions(uint8 *destBuf);
+	void saveDescriptions(uint8 *srcBuf);
+	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame, bool allowSave);
 	void showSprites(dataFileHeader **nameSprites);
+	bool checkKeyList(uint8 key);
+	void handleKeyPress(uint8 key, uint8 *textBuf);
+
 	void animClick(SkyConResource *pButton);
 	bool getYesNo(void);
 	uint16 doMusicSlide(void);
@@ -159,22 +170,33 @@ private:
 	uint16 shiftUp(uint8 speed);
 	const char *_savePath;
 
-	uint16 saveGameToFile(char *fName);
+	void appendMemList(uint16 *pMem);
+	void freeMemList(void);
+
+	uint16 _selectedGame;
+	uint16 saveGameToFile(void);
 	void stosMegaSet(uint8 **destPos, MegaSet *mega);
 	void stosCompact(uint8 **destPos, Compact *cpt);
-	void stosAR(uint8 **destPos, uint8 *arData);
+	void stosStr(uint8 **destPos, uint16 *src, bool isGraph);
 	uint32 prepareSaveData(uint8 *destBuf);
-	uint16 restoreGameFromFile(char *fName);
+
+	uint16 restoreGameFromFile(void);
+	void lodsMegaSet(uint8 **srcPos, MegaSet *mega);
+	void lodsCompact(uint8 **srcPos, Compact *cpt);
+	void lodsStr(uint8 **srcPos, uint16 *src);
+	uint16 parseSaveData(uint8 *srcBuf);
+
 	static Compact *_saveLoadCpts[833]; // \  moved to sky/compacts/savedata.cpp
 	static uint8 *_saveLoadARs[18];     // /
 
-	uint16 saveRestorePanel(bool allowEdit);
+	uint16 saveRestorePanel(bool allowSave);
 
 	SkyScreen *_skyScreen;
 	SkyDisk *_skyDisk;
 	SkyMouse *_skyMouse;
 	SkyText *_skyText;
 	SkyMusicBase *_skyMusic;
+	SkyLogic *_skyLogic;
 	OSystem *_system;
 	int _mouseX, _mouseY;
 	bool _mouseClicked;
@@ -194,6 +216,8 @@ private:
 		uint8 *slide2;
 		uint8 *musicBodge;
 	} _sprites;
+
+	AllocedMem *_memListRoot;
 
 	uint8 *_screenBuf;
 	int _lastButton;

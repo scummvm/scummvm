@@ -105,15 +105,22 @@ void SkyState::go() {
 
 	while (1) {
 		delay(_systemVars.gameSpeed);
+		/*if (_key_pressed == 'g') {
+			warning("loading grid");
+			_skyLogic->_skyGrid->loadGrids();
+			_key_pressed = 0;
+		}*/
 		if ((_key_pressed == 27) || (_key_pressed == 63)) { // 27 = escape, 63 = F5
 			_key_pressed = 0;
 			_skyControl->doControlPanel();
 		}
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
 		_skyLogic->engine();
+		//_skyScreen->forceRefresh();
 		_skyScreen->recreate();
 		_skyScreen->spriteEngine();
 		_skyScreen->flip();
+		//_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(SkyLogic::_scriptVariables[SCREEN]));
 		_system->update_screen();
 	}
 }
@@ -127,13 +134,13 @@ void SkyState::initialise(void) {
 
 	if (_detector->getMidiDriverType() == MD_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
-		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
+		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk, _system);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
 		if (_detector->_native_mt32)
-			_skyMusic = new SkyMT32Music(_detector->createMidi(), _skyDisk);
+			_skyMusic = new SkyMT32Music(_detector->createMidi(), _skyDisk, _system);
 		else
-			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
+			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _system);
 	}
 	if (isCDVersion())
 		_systemVars.systemFlags |= SF_ALLOW_SPEECH;
@@ -156,7 +163,7 @@ void SkyState::initialise(void) {
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
 
-	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _system, getSavePath());
+	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _system, getSavePath());
 }
 
 void SkyState::initItemList() {

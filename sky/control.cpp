@@ -115,15 +115,17 @@ void SkyTextResource::drawToScreen(bool doMask) {
 	_system->copy_rect(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, PAN_CHAR_HEIGHT);
 }
 
-SkyControl::SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, OSystem *system, const char *savePath) {
+SkyControl::SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, OSystem *system, const char *savePath) {
 
 	_skyScreen = screen;
 	_skyDisk = disk;
 	_skyMouse = mouse;
 	_skyText = text;
 	_skyMusic = music;
+	_skyLogic = logic;
 	_system = system;
 	_savePath = savePath;
+	_memListRoot = NULL;
 }
 
 SkyConResource *SkyControl::createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType) {
@@ -351,20 +353,24 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 			return 0;
 
 		case REST_GAME_PANEL:
+			if (SkyState::_systemVars.systemFlags & SF_CHOOSING)
+				return CANCEL_PRESSED; // can't save/restore while choosing
 			animClick(pButton);
 			return saveRestorePanel(false); // texts can't be edited
 
 		case SAVE_GAME_PANEL:
+			if (SkyState::_systemVars.systemFlags & SF_CHOOSING)
+				return CANCEL_PRESSED; // can't save/restore while choosing
 			animClick(pButton);
 			return saveRestorePanel(true); // texts can be edited
 
 		case SAVE_A_GAME:
 			animClick(pButton);
-			return GAME_SAVED;
+			return saveGameToFile();
 
 		case RESTORE_A_GAME:
 			animClick(pButton);
-			return GAME_RESTORED;
+			return restoreGameFromFile();
 
 		case SP_CANCEL:
 			animClick(pButton);
@@ -577,14 +583,15 @@ uint16 SkyControl::shiftUp(uint8 speed) {
 	return SHIFTED;
 }
 
-uint16 SkyControl::saveRestorePanel(bool allowEdit) {
+uint16 SkyControl::saveRestorePanel(bool allowSave) {
 
+	_keyPressed = 0;
 	buttonControl(NULL);
 	_text->drawToScreen(WITH_MASK); // flush text restore buffer
 
 	SkyConResource **lookList;
 	uint16 cnt;
-	if (allowEdit) lookList = _savePanLookList;
+	if (allowSave) lookList = _savePanLookList;
 	else lookList = _restorePanLookList;
 
 	uint8 *saveGameTexts = (uint8*)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
@@ -594,15 +601,15 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 	_savePanel->drawToScreen(NO_MASK);
 	_quitButton->drawToScreen(NO_MASK);
 	
-	loadSaveDescriptions(saveGameTexts);
-	uint16 selectedGame = 0;
+	loadDescriptions(saveGameTexts);
+	_selectedGame = 0;
 
 	bool quitPanel = false;
 	bool refreshNames = true;
 	uint16 clickRes = 0;
 	while (!quitPanel) {
 		if (refreshNames) {
-			setUpGameSprites(saveGameTexts, textSprites, _firstText);
+			setUpGameSprites(saveGameTexts, textSprites, _firstText, _selectedGame, allowSave);
 			showSprites(textSprites);
 			refreshNames = false;
 		}
@@ -615,6 +622,10 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 			_mouseClicked = false;
 			clickRes = CANCEL_PRESSED;
 			quitPanel = true;
+		} else if (allowSave && _keyPressed) {
+			handleKeyPress(_keyPressed, _selectedGame * MAX_TEXT_LEN + saveGameTexts);
+			refreshNames = true;
+			_keyPressed = 0;
 		}
 
 		bool haveButton = false;
@@ -628,11 +639,19 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 					
 					clickRes = handleClick(lookList[cnt]);
 
-			        if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_SAVED) || 
-						(clickRes == GAME_RESTORED) || (clickRes == NO_DISK_SPACE))
-						quitPanel = true;
-					if (clickRes == SHIFTED)
+			        if (clickRes == SHIFTED) {
+						_selectedGame = _firstText;
 						refreshNames = true;
+					}
+					if ((clickRes == CANCEL_PRESSED) || (clickRes == NO_DISK_SPACE) || 
+						(clickRes == GAME_RESTORED))
+						quitPanel = true;
+
+					if (clickRes == GAME_SAVED) {
+						saveDescriptions(saveGameTexts);
+						quitPanel = true;
+					}
+						 
 				}
 			}
 
@@ -640,7 +659,8 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 			if ((_mouseX >= GAME_NAME_X) && (_mouseX <= GAME_NAME_X + PAN_LINE_WIDTH) &&
 				(_mouseY >= GAME_NAME_Y) && (_mouseY <= GAME_NAME_Y + PAN_CHAR_HEIGHT * MAX_ON_SCREEN)) {
 
-					selectedGame = (_mouseY - GAME_NAME_Y) / PAN_CHAR_HEIGHT + _firstText;
+					_selectedGame = (_mouseY - GAME_NAME_Y) / PAN_CHAR_HEIGHT + _firstText;
+					refreshNames = true;
 			}
 		}
 		if (!haveButton) buttonControl(NULL);
@@ -654,14 +674,59 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
     return clickRes;
 }
 
-void SkyControl::setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum) {
+bool SkyControl::checkKeyList(uint8 key) {
+	static const uint8 charList[14] = " ,().='-&+!?\"";
+	for (uint chCnt = 0; chCnt < ARRAYSIZE(charList); chCnt++)
+		if (charList[chCnt] == key) return true;
+	return false;
+}
+
+void SkyControl::handleKeyPress(uint8 key, uint8 *textBuf) {
+
+	if (key == 8) { // backspace
+		for (uint8 cnt = 0; cnt < 6; cnt++)
+			if (!textBuf[cnt]) return;
+
+		while (textBuf[1])
+			textBuf++;
+		textBuf[0] = 0;
+	} else {
+        if (((key >= 'A') && (key <= 'Z')) || ((key >= 'a') && (key <= 'z')) ||
+			((key >= '0') && (key <= '9')) || checkKeyList(key)) {
+				uint8 strLen = 0;
+				while (textBuf[0]) {
+					textBuf++;
+					strLen++;
+				}
+				if (strLen < MAX_TEXT_LEN) {
+                    textBuf[0] = key;
+					textBuf[1] = 0;
+				}
+		}
+	}
+}
+
+void SkyControl::setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame, bool allowSave) {
 
 	nameBuf += firstNum * MAX_TEXT_LEN;
 
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
-		displayText_t textSpr = _skyText->displayText((char*)nameBuf, NULL, false, PAN_LINE_WIDTH, 37);
+		displayText_t textSpr;
+		if (firstNum + cnt == selectedGame) {
+			char tmpLine[MAX_TEXT_LEN + 2];
+			memcpy(tmpLine, nameBuf, MAX_TEXT_LEN);
+			if (allowSave)
+				strcat(tmpLine,"_");
+			textSpr = _skyText->displayText(tmpLine, NULL, false, PAN_LINE_WIDTH, 0);
+		} else {
+			textSpr = _skyText->displayText((char*)nameBuf, NULL, false, PAN_LINE_WIDTH, 37);
+		}
 		nameBuf += MAX_TEXT_LEN;
 		nameSprites[cnt] = (dataFileHeader*)textSpr.textData;
+		if (firstNum + cnt == selectedGame)
+			nameSprites[cnt]->flag = 1;
+		else
+			nameSprites[cnt]->flag = 0;
 	}
 }
 
@@ -671,17 +736,23 @@ void SkyControl::showSprites(dataFileHeader **nameSprites) {
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
 		drawResource->setSprite(nameSprites[cnt]);
 		drawResource->setXY(GAME_NAME_X, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT);
-		drawResource->drawToScreen(NO_MASK);
+		if (nameSprites[cnt]->flag) { // name is highlighted
+			for (uint16 cnty = GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT; cnty < GAME_NAME_Y + (cnt + 1) * PAN_CHAR_HEIGHT - 1; cnty++)
+				memset(_screenBuf + cnty * GAME_SCREEN_WIDTH + GAME_NAME_X, 37, PAN_LINE_WIDTH);
+			drawResource->drawToScreen(WITH_MASK);
+			_system->copy_rect(_screenBuf + (GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT) * GAME_SCREEN_WIDTH + GAME_NAME_X, GAME_SCREEN_WIDTH, GAME_NAME_X, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT, PAN_LINE_WIDTH, PAN_CHAR_HEIGHT);
+		} else 
+			drawResource->drawToScreen(NO_MASK);
 	}
 	delete drawResource;
 }
 
-void SkyControl::loadSaveDescriptions(uint8 *destBuf) {
+void SkyControl::loadDescriptions(uint8 *destBuf) {
 
 	memset(destBuf, 0, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 
 	File *inf = new File();
-	inf->open("SKY.SAV",_savePath);
+	inf->open("SKY-VM.SAV",_savePath);
 	if (inf->isOpen()) {
 		uint8 *tmpBuf = (uint8*)malloc(inf->size());
 		inf->read(tmpBuf, inf->size());
@@ -706,15 +777,42 @@ void SkyControl::loadSaveDescriptions(uint8 *destBuf) {
 	}
 }
 
-uint16 SkyControl::saveGameToFile(char *fName) {
+void SkyControl::saveDescriptions(uint8 *srcBuf) {
 
+	uint8 *tmpBuf = (uint8*)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
+	uint8 *tmpPos = tmpBuf;
+	uint8 *srcPos = srcBuf;
+	for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
+		uint8 namePos = 5;
+		while (srcPos[namePos]) {
+			if (srcPos[namePos] != '_') {
+				*tmpPos = srcPos[namePos];
+				tmpPos++;
+			}
+			namePos++;
+		}
+		*tmpPos = 0;
+		tmpPos++;
+		srcPos += MAX_TEXT_LEN;
+	}
+	File *outf = new File();
+	outf->open("SKY-VM.SAV", _savePath, File::kFileWriteMode);
+	outf->write(tmpBuf, tmpPos - tmpBuf);
+	outf->close();
+	free(tmpBuf);	
+}
+
+uint16 SkyControl::saveGameToFile(void) {
+
+	char fName[20];
+	sprintf(fName,"SKY-VM.%03d", _selectedGame);
 	File *outf = new File();
 	if (!outf->open(fName, _savePath, File::kFileWriteMode)) {
 		delete outf;
 		return NO_DISK_SPACE;
 	}
 
-	uint8 *saveData = (uint8*)malloc(0x20000);
+	uint8 *saveData = (uint8*)malloc(0x50000);
 	uint32 fSize = prepareSaveData(saveData);
 
 	if (outf->write(saveData, fSize) != fSize) {
@@ -739,6 +837,23 @@ void SkyControl::stosMegaSet(uint8 **destPos, MegaSet *mega) {
 	// anims, stands, turnTable
 }
 
+void SkyControl::stosStr(uint8 **destPos, uint16 *src, bool isGraf) {
+	uint16 strLen = 0;
+	if (isGraf) {
+		while (src[strLen] || src[strLen+2])
+			strLen++;
+		strLen += 3;
+	} else {
+		while (src[strLen])
+			strLen++;
+		strLen++;
+	}
+	STOSW(*destPos, strLen);
+	for (uint16 cnt = 0; cnt < strLen; cnt++) {
+		STOSW(*destPos, src[cnt]);
+	}
+}
+
 void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
 	uint16 saveType = 0;
 	if (cpt->extCompact) {
@@ -747,8 +862,17 @@ void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
 		if (cpt->extCompact->megaSet1) saveType |= SAVE_MEGA1;
 		if (cpt->extCompact->megaSet2) saveType |= SAVE_MEGA2;
 		if (cpt->extCompact->megaSet3) saveType |= SAVE_MEGA3;
+		if (cpt->extCompact->turnProg) saveType |= SAVE_TURNP;
 	}
+	if (cpt->grafixProg) saveType |= SAVE_GRAFX;
+
 	STOSW(*destPos, saveType);
+
+	if (saveType & SAVE_GRAFX)
+		stosStr(destPos, cpt->grafixProg, true);
+	if (saveType & SAVE_TURNP)
+		stosStr(destPos, cpt->extCompact->turnProg, false);
+
 	STOSW(*destPos, cpt->logic);
 	STOSW(*destPos, cpt->status);
 	STOSW(*destPos, cpt->sync);
@@ -815,21 +939,13 @@ void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
 	}
 }
 
-void SkyControl::stosAR(uint8 **destPos, uint8 *arData) {
-
-	uint16 *data = (uint16*)arData;
-	for (uint8 cnt = 0; cnt < 32; cnt++)
-		STOSW(*destPos, TO_LE_16(data[cnt]));
-}
-
 uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 
 	uint32 cnt;
 	memset(destBuf, 0, 4); // space for data size
 	uint8 *destPos = destBuf + 4;
-	memcpy(destPos, SAVE_HEADER, sizeof(SAVE_HEADER));
-	destPos += sizeof(SAVE_HEADER);
-	//STOSD(destPos, SkyLogic::_scriptVariables[CUR_SECTION]);
+	STOSD(destPos, SAVE_FILE_REVISION);
+
 	STOSD(destPos, _skyMusic->giveCurrentMusic());
 
 	//TODO: save queued sfx
@@ -846,9 +962,6 @@ uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
 		stosCompact(&destPos, _saveLoadCpts[cnt]);
 
-	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadARs); cnt++)
-		stosAR(&destPos, _saveLoadARs[cnt]);
-
 	for (cnt = 0; cnt < 3; cnt++)
 		STOSW(destPos, SkyCompact::park_table[cnt]);
 
@@ -861,6 +974,232 @@ uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 
 #undef STOSD
 #undef STOSW
+
+void SkyControl::appendMemList(uint16 *pMem) {
+	AllocedMem *newMem = new AllocedMem;
+	newMem->mem = pMem;
+	newMem->next = _memListRoot;
+	_memListRoot = newMem;
+}
+
+void SkyControl::freeMemList(void) {
+	AllocedMem *block = _memListRoot;
+	AllocedMem *temp;
+	while (block) {
+		temp = block;
+		free(block->mem);
+		block = block->next;
+		delete temp;
+	}
+	_memListRoot = NULL;
+}
+
+
+#define LODSD(strPtr, val) { val = READ_LE_UINT32(strPtr); (strPtr) += 4; }
+#define LODSW(strPtr, val) { val = READ_LE_UINT16(strPtr); (strPtr) += 2; }
+
+void SkyControl::lodsMegaSet(uint8 **srcPos, MegaSet *mega) {
+	LODSW(*srcPos, mega->gridWidth);
+	LODSW(*srcPos, mega->colOffset);
+	LODSW(*srcPos, mega->colWidth);
+	LODSW(*srcPos, mega->lastChr);
+	// anims, stands, turnTable
+}
+
+void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt) {
+
+	uint16 saveType, cnt;
+	LODSW(*srcPos, saveType);
+	if ((saveType & (SAVE_EXT | SAVE_TURNP)) && (cpt->extCompact == NULL))
+		error("Can't restore! SaveData is SAVE_EXT for Compact");
+	if ((saveType & SAVE_MEGA0) && (cpt->extCompact->megaSet0 == NULL))
+		error("Can't restore! SaveData is SAVE_MEGA0 for Compact");
+	if ((saveType & SAVE_MEGA1) && (cpt->extCompact->megaSet1 == NULL))
+		error("Can't restore! SaveData is SAVE_MEGA1 for Compact");
+	if ((saveType & SAVE_MEGA2) && (cpt->extCompact->megaSet2 == NULL))
+		error("Can't restore! SaveData is SAVE_MEGA2 for Compact");
+	if ((saveType & SAVE_MEGA3) && (cpt->extCompact->megaSet3 == NULL))
+		error("Can't restore! SaveData is SAVE_MEGA3 for Compact");
+
+	if (saveType & SAVE_GRAFX) {
+		uint16 grafxLen;
+		LODSW(*srcPos, grafxLen);
+		cpt->grafixProg = (uint16*)malloc(grafxLen << 1);
+		appendMemList(cpt->grafixProg);
+		for (cnt = 0; cnt < grafxLen; cnt++) {
+			LODSW(*srcPos, cpt->grafixProg[cnt]);
+		}
+	} else
+		cpt->grafixProg = NULL;
+
+	if (saveType & SAVE_TURNP) {
+		uint16 turnLen;
+		LODSW(*srcPos, turnLen);
+		cpt->extCompact->turnProg = (uint16*)malloc(turnLen << 1);
+		appendMemList(cpt->extCompact->turnProg);
+		for (cnt = 0; cnt < turnLen; cnt++)
+			LODSW(*srcPos, cpt->extCompact->turnProg[cnt]);
+	} else if (cpt->extCompact)
+		cpt->extCompact->turnProg = NULL;
+
+	LODSW(*srcPos, cpt->logic);
+	LODSW(*srcPos, cpt->status);
+	LODSW(*srcPos, cpt->sync);
+	LODSW(*srcPos, cpt->screen);
+	LODSW(*srcPos, cpt->place);
+	// getToTable
+	LODSW(*srcPos, cpt->xcood);
+	LODSW(*srcPos, cpt->ycood);
+	LODSW(*srcPos, cpt->frame);
+	LODSW(*srcPos, cpt->cursorText);
+	LODSW(*srcPos, cpt->mouseOn);
+	LODSW(*srcPos, cpt->mouseOff);
+	LODSW(*srcPos, cpt->mouseClick);
+	LODSW(*srcPos, cpt->mouseRelX);
+	LODSW(*srcPos, cpt->mouseRelY);
+	LODSW(*srcPos, cpt->mouseSizeX);
+	LODSW(*srcPos, cpt->mouseSizeY);
+	LODSW(*srcPos, cpt->actionScript);
+	LODSW(*srcPos, cpt->upFlag);
+	LODSW(*srcPos, cpt->downFlag);
+	LODSW(*srcPos, cpt->getToFlag);
+	LODSW(*srcPos, cpt->flag);
+	LODSW(*srcPos, cpt->mood);
+	// grafixProg
+	LODSW(*srcPos, cpt->offset);
+	LODSW(*srcPos, cpt->mode);
+	LODSW(*srcPos, cpt->baseSub);
+	LODSW(*srcPos, cpt->baseSub_off);
+	if (saveType & SAVE_EXT) {
+		LODSW(*srcPos, cpt->extCompact->actionSub);
+		LODSW(*srcPos, cpt->extCompact->actionSub_off);
+		LODSW(*srcPos, cpt->extCompact->getToSub);
+		LODSW(*srcPos, cpt->extCompact->getToSub_off);
+		LODSW(*srcPos, cpt->extCompact->extraSub);
+		LODSW(*srcPos, cpt->extCompact->extraSub_off);
+		LODSW(*srcPos, cpt->extCompact->dir);
+		LODSW(*srcPos, cpt->extCompact->stopScript);
+		LODSW(*srcPos, cpt->extCompact->miniBump);
+		LODSW(*srcPos, cpt->extCompact->leaving);
+		LODSW(*srcPos, cpt->extCompact->atWatch);
+		LODSW(*srcPos, cpt->extCompact->atWas);
+		LODSW(*srcPos, cpt->extCompact->alt);
+		LODSW(*srcPos, cpt->extCompact->request);
+		LODSW(*srcPos, cpt->extCompact->spWidth_xx);
+		LODSW(*srcPos, cpt->extCompact->spColour);
+		LODSW(*srcPos, cpt->extCompact->spTextId);
+		LODSW(*srcPos, cpt->extCompact->spTime);
+		LODSW(*srcPos, cpt->extCompact->arAnimIndex);
+		// turnProg
+		LODSW(*srcPos, cpt->extCompact->waitingFor);
+		LODSW(*srcPos, cpt->extCompact->arTargetX);
+		LODSW(*srcPos, cpt->extCompact->arTargetY);
+		// animScratch
+		LODSW(*srcPos, cpt->extCompact->megaSet);
+
+		if (saveType & SAVE_MEGA0)
+			lodsMegaSet(srcPos, cpt->extCompact->megaSet0);
+		if (saveType & SAVE_MEGA1)
+			lodsMegaSet(srcPos, cpt->extCompact->megaSet1);
+		if (saveType & SAVE_MEGA2)
+			lodsMegaSet(srcPos, cpt->extCompact->megaSet2);
+		if (saveType & SAVE_MEGA3)
+			lodsMegaSet(srcPos, cpt->extCompact->megaSet3);
+	}
+}
+
+uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
+
+	uint32 reloadList[60];
+	uint32 oldSection = SkyLogic::_scriptVariables[CUR_SECTION];
+	
+	uint32 cnt;
+	uint8 *srcPos = srcBuf;
+	uint32 size;
+	uint32 saveRev;
+
+	LODSD(srcPos, size);
+	LODSD(srcPos, saveRev);
+	if (saveRev != SAVE_FILE_REVISION) {
+		warning("Unknown save file revision (%d)",saveRev);
+		return RESTORE_FAILED;
+	}
+	
+	freeMemList(); // memory from last restore isn't needed anymore
+
+	uint32 music, charSet, mouseType, palette;
+	LODSD(srcPos, music);
+	LODSD(srcPos, charSet);
+	LODSD(srcPos, mouseType);
+	LODSD(srcPos, palette);
+
+	for (cnt = 0; cnt < 838; cnt++)
+		LODSD(srcPos, SkyLogic::_scriptVariables[cnt]);
+
+	for (cnt = 0; cnt < 60; cnt++)
+		LODSD(srcPos, reloadList[cnt]);
+
+	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
+		lodsCompact(&srcPos, _saveLoadCpts[cnt]);
+
+	for (cnt = 0; cnt < 3; cnt++)
+		LODSW(srcPos, SkyCompact::park_table[cnt]);
+
+	for (cnt = 0; cnt < 13; cnt++)
+		LODSW(srcPos, SkyCompact::high_floor_table[cnt]);
+
+	if (srcPos - srcBuf != size)
+		error("Restore failed! Savegame data = %d bytes. Expected size: %d.\n", srcPos-srcBuf, size);
+
+	_skyLogic->fnLeaveSection(oldSection, 0, 0);
+	_skyLogic->fnEnterSection(SkyLogic::_scriptVariables[CUR_SECTION], 0, 0);
+	_skyDisk->refreshFilesList(reloadList);
+	_skyMusic->startMusic((uint16)music);
+	_skyText->fnSetFont(charSet);
+	_skyMouse->spriteMouse((uint16)mouseType, 0, 0);
+	SkyState::_systemVars.currentPalette = palette; // will be set when doControlPanel ends
+	SkyState::_systemVars.systemFlags |= SF_GAME_RESTORED; // what's that for?
+
+	return GAME_RESTORED;
+}
+
+#undef LODSD
+#undef LODSW
+
+uint16 SkyControl::restoreGameFromFile(void) {
+	
+	char fName[20];
+	sprintf(fName,"SKY-VM.%03d", _selectedGame);
+	File *inf = new File();
+	if (!inf->open(fName, _savePath)) {
+		delete inf;
+		return RESTORE_FAILED;
+	}
+
+	uint32 fSize = inf->size();
+	uint8 *saveData = (uint8*)malloc(fSize);
+	uint32 infSize = inf->readUint32LE();
+	inf->seek(0, SEEK_SET);
+
+	if (fSize != infSize) {
+		warning("File size doesn't match expected data size!");
+		delete inf;
+		free(saveData);
+		return RESTORE_FAILED;
+	}
+	if (inf->read(saveData, fSize) != fSize) {
+		warning("Can't read from file!");
+		delete inf;
+		free(saveData);
+		return RESTORE_FAILED;
+	}
+
+	uint16 res = parseSaveData(saveData);
+	inf->close();
+	delete inf;
+	free(saveData);
+	return res;
+}
 
 void SkyControl::delay(unsigned int amount) {
 

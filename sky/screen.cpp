@@ -300,9 +300,7 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 
 	//_currentScreen points to new screen,
 	//_scrollScreen points to graphic showing old room
-	if (scroll == 13) scroll = 123; // script bug (?) in lower area
-	if ((scroll != 123) && (scroll != 321) && (scroll)) {
-		warning("unknown scroll parameter %d",scroll);
+	if ((scroll != 123) && (scroll != 321)) {
 		scroll = 0;
 	}
 
@@ -726,5 +724,37 @@ void SkyScreen::verticalMask(void) {
 			gridOfs++;
 		}
 	}
+}
+
+void SkyScreen::paintBox(uint16 x, uint16 y) {
+
+	uint8 *screenPos = _currentScreen + y * GAME_SCREEN_WIDTH + x;
+	memset(screenPos, 255, 8);
+	for (uint8 cnt = 1; cnt < 8; cnt++) {
+		*(screenPos + cnt * GAME_SCREEN_WIDTH) = 255;
+		*(screenPos + cnt * GAME_SCREEN_WIDTH + 7) = 255;
+	}
+	memset(screenPos + 7 * GAME_SCREEN_WIDTH, 255, 7);
+}
+
+void SkyScreen::showGrid(uint8 *gridBuf) {
+
+	uint32 gridData = 0;
+	uint8 bitsLeft = 0;
+	for (uint16 cnty = 0; cnty < GAME_SCREEN_HEIGHT >> 3; cnty++) { 
+		for (uint16 cntx = 0; cntx < GAME_SCREEN_WIDTH >> 3; cntx++) {
+			if (!bitsLeft) {
+				bitsLeft = 32;
+				gridData = *(uint32*)gridBuf;
+				gridBuf += 4;
+			}
+			if (gridData & 0x80000000)
+				paintBox(cntx << 3, cnty << 3);
+			bitsLeft--;
+			gridData <<= 1;
+		}
+	}
+	_system->copy_rect(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+
 }
 
