@@ -339,8 +339,6 @@ SAGA
    intro. It could be the meta events we don't handle, but at least the tempo
    event doesn't seem to make any difference. Maybe something in the data
    header instead...?
- * In the dog's castle (scene_change 130) music restarts in each new scene.
-   It should continue
  * In the dog's castle at guards' room (scene_change 177 ang go down) subtitles
    aren't shown. In floppy version there is complete silence both textual and
    audial.
