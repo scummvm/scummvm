@@ -78,177 +78,6 @@ void IMuseDigital::resetState() {
 	_nextSeqToPlay = 0;
 }
 
-#ifdef ENABLE_PULLMETHOD
-
-int IMuseDigital::pullProcCallback(void *refCon, CustomProcInputStream *stream, byte *mixerBuffer, int pullSize) {
-	IMuseDigital *imuseDigital = (IMuseDigital *)refCon;
-	return imuseDigital->pullProc(stream, mixerBuffer, pullSize);
-}
-
-int IMuseDigital::pullProc(CustomProcInputStream *stream, byte *mixerBuffer, int pullSize) {
-	Common::StackLock lock(_mutex, "IMuseDigital::pullProc()");
-	debug(5, "pullProc() pullSize:%d", pullSize);
-	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-		if ((_track[l]->used) && (_track[l]->stream == stream)) {
-			if (_track[l]->toBeRemoved) {
-				debug(5, "IMuseDigital::pullProc() stopped sound: %d", _track[l]->soundId);
-				_track[l]->stream->finish();
-				_track[l]->stream = NULL;
-				_sound->closeSound(_track[l]->soundHandle);
-				_track[l]->soundHandle = NULL;
-				_track[l]->used = false;
-				return 0;
-			}
-			_vm->_mixer->setChannelVolume(_track[l]->handle, _track[l]->mixerVol);
-			_vm->_mixer->setChannelBalance(_track[l]->handle, _track[l]->mixerPan);
-			int32 mixer_size = pullSize;
-			byte *data = NULL;
-			int32 result = 0, pos = 0;
-
-			if (_track[l]->curRegion == -1) {
-				switchToNextRegion(l);
-				if (_track[l]->toBeRemoved) {
-					return 0;
-				}
-			}
-
-			int bits = _sound->getBits(_track[l]->soundHandle);
-			int channels = _sound->getChannels(_track[l]->soundHandle);
-
-			if ((bits == 16) && (channels == 2))
-				assert((pullSize & 3) == 0);
-			else if ((bits == 16) || (channels == 2))
-				assert((pullSize & 1) == 0);
-
-			do {
-				if (bits == 12) {
-					byte *ptr = NULL;
-
-					mixer_size += _track[l]->mod;
-					int mixer_size_12 = (mixer_size * 3) / 4;
-					int length = (mixer_size_12 / 3) * 4;
-					_track[l]->mod = mixer_size - length;
-
-					int32 offset = (_track[l]->regionOffset * 3) / 4;
-					int result2 = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &ptr, offset, mixer_size_12);
-					result = BundleCodecs::decode12BitsSample(ptr, &data, result2);
-
-					free(ptr);
-				} else if (bits == 16) {
-					result = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &data, _track[l]->regionOffset, mixer_size);
-					if (_sound->getChannels(_track[l]->soundHandle) == 1) {
-						result &= ~1;
-					}
-					if (_sound->getChannels(_track[l]->soundHandle) == 2) {
-						if (result & 2)
-							result &= ~2;
-					}
-				} else if (bits == 8) {
-					result = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &data, _track[l]->regionOffset, mixer_size);
-					if (_sound->getChannels(_track[l]->soundHandle) == 2) {
-						result &= ~1;
-					}
-				}
-
-				if (result > mixer_size)
-					result = mixer_size;
-
-				memcpy(mixerBuffer + pos, data, result);
-				pos += result;
-				free(data);
-
-				_track[l]->regionOffset += result;
-				_track[l]->trackOffset += result;
-					
-				if (_sound->isEndOfRegion(_track[l]->soundHandle, _track[l]->curRegion)) {
-					switchToNextRegion(l);
-					if (_track[l]->toBeRemoved) {
-						mixer_size -= result;
-						return pullSize - mixer_size;
-					}
-				}
-				mixer_size -= result;
-				assert(mixer_size >= 0);
-			} while (mixer_size != 0);
-			return pullSize;
-		}
-	}
-	error("IMuseDigital::pullProc() Can't match streams");
-}
-
-void IMuseDigital::callback() {
-	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
-	int l = 0;
-
-	if (_pause || !_vm)
-		return;
-
-	for (l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-		if (_track[l]->used) {
-			if (_track[l]->stream2) {
-				if (!_track[l]->handle.isActive() && _track[l]->started) {
-					debug(5, "IMuseDigital::callback() A: stopped sound: %d", _track[l]->soundId);
-					delete _track[l]->stream2;
-					_track[l]->stream2 = NULL;
-					_track[l]->used = false;
-					continue;
-				}
-			}
-
-			if (_track[l]->volFadeUsed) {
-				if (_track[l]->volFadeStep < 0) {
-					if (_track[l]->vol > _track[l]->volFadeDest) {
-						_track[l]->vol += _track[l]->volFadeStep;
-						if (_track[l]->vol < _track[l]->volFadeDest) {
-							_track[l]->vol = _track[l]->volFadeDest;
-							_track[l]->volFadeUsed = false;
-						}
-						if (_track[l]->vol == 0) {
-							_track[l]->toBeRemoved = true;
-						}
-					}
-				} else if (_track[l]->volFadeStep > 0) {
-					if (_track[l]->vol < _track[l]->volFadeDest) {
-						_track[l]->vol += _track[l]->volFadeStep;
-						if (_track[l]->vol > _track[l]->volFadeDest) {
-							_track[l]->vol = _track[l]->volFadeDest;
-							_track[l]->volFadeUsed = false;
-						}
-					}
-				}
-				debug(5, "Fade: sound(%d), Vol(%d)", _track[l]->soundId, _track[l]->vol / 1000);
-			}
-
-			int pan = (_track[l]->pan != 64) ? 2 * _track[l]->pan - 127 : 0;
-			int vol = _track[l]->vol / 1000;
-
-			if (_track[l]->volGroupId == 1)
-				vol = (vol * _volVoice) / 128;
-			if (_track[l]->volGroupId == 2)
-				vol = (vol * _volSfx) / 128;
-			if (_track[l]->volGroupId == 3)
-				vol = (vol * _volMusic) / 128;
-
-			_track[l]->mixerVol = vol;
-			_track[l]->mixerPan = pan;
-
-			if (_vm->_mixer->isReady()) {
-				if (_track[l]->stream2) {
-					if (!_track[l]->started) {
-						_track[l]->started = true;
-						_vm->_mixer->playInputStream(&_track[l]->handle, _track[l]->stream2, false, _track[l]->vol / 1000, _track[l]->pan, -1, false);
-					} else {
-						_vm->_mixer->setChannelVolume(_track[l]->handle, vol);
-						_vm->_mixer->setChannelBalance(_track[l]->handle, pan);
-					}
-				}
-			}
-		}
-	}
-}
-
-#else
-
 void IMuseDigital::callback() {
 	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
 	int l = 0;
@@ -382,7 +211,7 @@ void IMuseDigital::callback() {
 						_track[l]->trackOffset += result;
 						free(data);
 					}
-					
+
 					if (_sound->isEndOfRegion(_track[l]->soundHandle, _track[l]->curRegion)) {
 						switchToNextRegion(l);
 						if (_track[l]->toBeRemoved)
@@ -395,7 +224,6 @@ void IMuseDigital::callback() {
 		}
 	}
 }
-#endif
 
 void IMuseDigital::switchToNextRegion(int track) {
 	debug(5, "switchToNextRegion(track:%d)", track);

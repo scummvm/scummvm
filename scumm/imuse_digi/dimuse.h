@@ -33,10 +33,6 @@
 
 namespace Scumm {
 
-// enable below for pullmethod data transfer from imuse to sound mixer,
-// it's experimental and buggy
-//#define ENABLE_PULLMETHOD
-
 #define MAX_DIGITAL_TRACKS 8
 #define MAX_DIGITAL_FADETRACKS 8
 
@@ -67,20 +63,14 @@ private:
 		int volGroupId;
 		int iteration;
 		int mod;
-#ifndef ENABLE_PULLMETHOD
 		int32 pullSize;
-#endif
 		int32 mixerFlags;
 		int mixerVol;
 		int mixerPan;
 
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		PlayingSoundHandle handle;
-#ifndef ENABLE_PULLMETHOD
 		AppendableAudioStream *stream;
-#else
-		CustomProcInputStream *stream;
-#endif
 		AudioStream *stream2;
 
 		Track();
@@ -105,10 +95,6 @@ private:
 	int _curMusicCue;
 
 	static void timer_handler(void *refConf);
-#ifdef ENABLE_PULLMETHOD
-	static int pullProcCallback(void *refCon, CustomProcInputStream *stream, byte *mixerBuffer, int pullSize);
-	int pullProc(CustomProcInputStream *stream, byte *mixerBuffer, int pullSize);
-#endif
 	void callback();
 	void switchToNextRegion(int track);
 	void allocSlot(int priority);
