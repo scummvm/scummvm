@@ -200,9 +200,9 @@ Boolean StartScummVM() {
 		}
 
 		// subtitles
-		if (!gameInfoP->subtitles) {
+		if (gameInfoP->subtitles)
 			AddArg(&argvP[argc], "-n", NULL, &argc);
-		}
+
 		// talk speed
 		if (gameInfoP->talkSpeed) {
 			StrIToA(num, gameInfoP->talkValue);
