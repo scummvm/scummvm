@@ -954,6 +954,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	int args[16];
 	int spriteId, tmp[2];
 	static int storedFields[2];
+	int n;
 
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
@@ -1210,7 +1211,27 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_flags23_26(spriteId, args[0]);
 		break;
 	case 91:
-		getStackList(args, ARRAYSIZE(args));
+		n = getStackList(args, ARRAYSIZE(args));
+		if (_curSpriteId != 0 && _curMaxSpriteId != 0 && n != 0) {
+			int *p = &args[n - 1];
+			do {
+				int code = *p;
+				if (code == 0) {
+					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
+						spriteInfoSet_classFlags_2(i);					
+					}
+				} else if (code & 0x80) {
+					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
+						spriteInfoSet_classFlags_1(i, code & 0x7F, 1);
+					}
+				} else {
+					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
+						spriteInfoSet_classFlags_1(i, code & 0x7F, 0);
+					}
+				}
+				--p;
+			} while (--n);
+		}
 		break;
 	case 105: // HE 99+
 		pop();

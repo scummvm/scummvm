@@ -935,6 +935,8 @@ protected:
 	void spriteInfoSet_flags23_26(int spriteId, int value);
 	void spriteInfoSet_flag31(int spriteId, int value);
 	void spriteInfoSet_field_78_64(int spriteId, int value);
+	void spriteInfoSet_classFlags_1(int spriteId, int value1, int value2);
+	void spriteInfoSet_classFlags_2(int spriteId);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
 	void spritesResetTables(bool refreshScreen);

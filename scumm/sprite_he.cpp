@@ -485,6 +485,24 @@ void ScummEngine_v90he::spriteInfoSet_field_78_64(int spriteId, int value) {
 	_spriteTable[spriteId].field_64 = value;
 }
 
+void ScummEngine_v90he::spriteInfoSet_classFlags_1(int spriteId, int classId, int toggle) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	checkRange(32, 1, classId, "class %d out of range in statement");
+	
+	// XXX
+	if (toggle) {
+		_spriteTable[spriteId].flags |= 1 << (classId - 1);
+	} else {
+		_spriteTable[spriteId].flags &= 1 << (classId - 1);
+	}
+}
+
+void ScummEngine_v90he::spriteInfoSet_classFlags_2(int spriteId) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+
+	_spriteTable[spriteId].class_flags = 0;
+}
+
 void ScummEngine_v90he::spriteInfoSet_case183(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
