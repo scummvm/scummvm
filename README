@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter           Version:      0.04-CVS
-(C) 2003-2004 The ScummVM-Residual team             Last Updated: 11 Sept 2004
+(C) 2003-2005 The ScummVM-Residual team             Last Updated: 12 Jan 2005
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -38,7 +38,10 @@ the lines:
        DataDir=.
        good_times=TRUE
 
-Residual understands two command-line options: '-zbuffer' which enables masking.
+Residual understands command-line options: 
+'-zbuffer' enables masking.
+'-shofps' display fps information.
+'-soft' turn on software renderer.
 
 It runs really slow when using -zbuffer!
 ----------------------------------------
@@ -46,9 +49,8 @@ A large portion of older cards (Such as 3dfx cards, Radeon 7500 and earlier,
 Matrox G4xx series cards, etc) do not have a fast glDrawPixels implementation.
 
 Unix users may be able to achieve playable framerates by using Mesa 5.0 or
-above, but people unable to upgrade or Windows users are stuck. We do have a
-possible solution (-screenblocks), however it is experimental, untested, and
-currently will thrash memory and crash.
+above, but people unable to upgrade or Windows users must use software
+renderer (-soft).
 
 What is the state of Residual? 
 ------------------------------- 

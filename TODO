@@ -10,7 +10,7 @@ Assigned tasks:
 Unassigned (help wanted):
  * Add configure script (Custom ala main ScummVM, NOT autoconf)
  * Add OpenGL lighting (ender, possibly)
- * Finish Save/Load support for rest of Engine except Lua
+ * Finish Save/Load support for rest of Engine (Lua and iMuse done)
  * Implement 2D primitives 
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
  * Fix drawEmergString() to work with Mesa
