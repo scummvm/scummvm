@@ -884,6 +884,9 @@ void Scumm::initRoomSubBlocks() {
 	else
 		rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 	
+	//
+	// Determine the room dimensions (width/height)
+	//
 	if (_features & GF_AFTER_V8) {
 		_scrWidth = READ_LE_UINT32(&(rmhd->v8.width));
 		_scrHeight = READ_LE_UINT32(&(rmhd->v8.height));
@@ -895,6 +898,9 @@ void Scumm::initRoomSubBlocks() {
 		_scrHeight = READ_LE_UINT16(&(rmhd->old.height));
 	}
 
+	//
+	// Find the room image data
+	//
 	if (_features & GF_OLD_BUNDLE)
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
 	else if (_features & GF_SMALL_HEADER)
@@ -913,30 +919,35 @@ void Scumm::initRoomSubBlocks() {
 		_IM00_offs =
 			findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
 
+	//
 	// Look for an exit script
+	//
 	if (_features & GF_OLD_BUNDLE)
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x19);
 	else {
 		ptr = findResourceData(MKID('EXCD'), roomResPtr);
-		if (ptr) {
+		if (ptr)
 			_EXCD_offs = ptr - roomResPtr;
-			if (_dumpScripts)
-				dumpResource("exit-", _roomResource, ptr - _resourceHeaderSize);
-		}
 	}
+	if (_dumpScripts && _EXCD_offs)
+		dumpResource("exit-", _roomResource, roomResPtr + _EXCD_offs - _resourceHeaderSize);
 
+	//
 	// Look for an entry script
+	//
 	if (_features & GF_OLD_BUNDLE)
-		_EXCD_offs = READ_LE_UINT16(roomptr + 0x1B);
+		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1B);
 	else {
 		ptr = findResourceData(MKID('ENCD'), roomResPtr);
-		if (ptr) {
+		if (ptr)
 			_ENCD_offs = ptr - roomResPtr;
-			if (_dumpScripts)
-				dumpResource("entry-", _roomResource, ptr - _resourceHeaderSize);
-		}
 	}
+	if (_dumpScripts && _ENCD_offs)
+		dumpResource("entry-", _roomResource, roomResPtr + _ENCD_offs - _resourceHeaderSize);
 
+	//
+	// Load box data
+	//
 	if (_features & GF_SMALL_HEADER) {
 		if (_features & GF_OLD_BUNDLE)
 			ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
