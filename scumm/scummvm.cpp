@@ -766,7 +766,11 @@ void Scumm::scummInit() {
 		initScreens(0, 16, _screenWidth, 144);
 	}
 
-	if (_features & GF_16COLOR) {
+	if (_features & GF_AFTER_V1) {
+		for (i = 0; i < 16; i++)
+			_shadowPalette[i] = i;
+		setupC64Palette();
+	} else if (_features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;
 		setupEGAPalette();
@@ -1397,7 +1401,10 @@ void Scumm::initRoomSubBlocks() {
 	else
 		rmhd = (const RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 	
-	if (_features & GF_AFTER_V8) {
+	if (_features & GF_AFTER_V1) {
+		_roomWidth = roomptr[4] * 8;
+		_roomHeight = roomptr[5] * 8;
+	} else if (_features & GF_AFTER_V8) {
 		_roomWidth = READ_LE_UINT32(&(rmhd->v8.width));
 		_roomHeight = READ_LE_UINT32(&(rmhd->v8.height));
 	} else if (_features & GF_AFTER_V7) {
@@ -1411,7 +1418,17 @@ void Scumm::initRoomSubBlocks() {
 	//
 	// Find the room image data
 	//
-	if (_features & GF_OLD_BUNDLE) {
+	if (_features & GF_AFTER_V1) {
+		_IM00_offs = 0;
+    for(i = 0; i < 4; i++){
+      gdi._C64Colors[i] = roomptr[6 + i];
+    }
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64CharMap, 256 * 8);
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64PicMap, roomptr[4] * roomptr[5]);
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64ColorMap, roomptr[4] * roomptr[5]);
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), gdi._C64MaskMap, roomptr[4] * roomptr[5]);
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18), gdi._C64MaskChar, READ_LE_UINT16(roomptr + 18));
+	} else if (_features & GF_OLD_BUNDLE) {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
 		if (_features & GF_AFTER_V2)
 			_roomStrips = gdi.generateStripTable(roomptr + _IM00_offs, _roomWidth, _roomHeight, _roomStrips);

@@ -122,9 +122,15 @@ protected:
 
 	bool _zbufferDisabled;
 
+	byte _C64Colors[4], _C64CharMap[256 * 8], _C64PicMap[4096], _C64ColorMap[4096];
+	byte _C64MaskMap[4096], _C64MaskChar[4096];
+
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProcess);
 	void decodeStripEGA(byte *dst, const byte *src, int height);
+	void decodeC64Gfx(byte *src, byte *dst, int size);
+	void drawStripC64Background(byte *dst, int stripnr, int height);
+	void drawStripC64Mask(byte *dst, int stripnr, int height);
 	void unkDecodeA(byte *dst, const byte *src, int height);
 	void unkDecodeA_trans(byte *dst, const byte *src, int height);
 	void unkDecodeB(byte *dst, const byte *src, int height);

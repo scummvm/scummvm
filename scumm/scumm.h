@@ -841,6 +841,7 @@ protected:
 
 	const byte *getPalettePtr();
 	void setupEGAPalette();
+	void setupC64Palette();
 	void setPalette(int pal);
 	void setPaletteFromPtr(const byte *ptr);
 	void setPaletteFromRes();

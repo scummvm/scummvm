@@ -66,7 +66,7 @@ struct TransitionEffect {
 #ifdef __PALM_OS__
 static const TransitionEffect *transitionEffects;
 #else
-static const TransitionEffect transitionEffects[5] = {
+static const TransitionEffect transitionEffects[4] = {
 	// Iris effect (looks like an opening/closing camera iris)
 	{
 		13,		// Number of iterations
@@ -133,23 +133,6 @@ static const TransitionEffect transitionEffects[5] = {
 		   39,  0, 39, 24,
 		   38,  0, 38, 24,
 		  255,  0,  0,  0
-		}
-	},
-
-	// Inverse iris effect, specially tailored for V2 games
-	{
-		8,		// Number of iterations
-		{
-			-1, -1,  1, -1,
-			-1,  1,  1,  1,
-			-1, -1, -1,  1,
-			 1, -1,  1,  1
-		},
-		{
-			 7, 7, 32, 7,
-			 7, 8, 32, 8,
-			 7, 8,  7, 8,
-			32, 7, 32, 8
 		}
 	}
 };
@@ -993,7 +976,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	// dificult to draw only parts of a room/object. We handle the V2 graphics
 	// differently from all other (newer) graphic formats for this reason.
 	//
-	if (_vm->_features & GF_AFTER_V2) {
+	if ((_vm->_features & GF_AFTER_V2) && !(_vm->_features & GF_AFTER_V1)) {
 		
 		if (vs->alloctwobuffers)
 			bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
@@ -1138,7 +1121,9 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		else
 			bgbak_ptr = backbuff_ptr;
 
-		if (!(_vm->_features & GF_AFTER_V2)) {
+		if (_vm->_features & GF_AFTER_V1) {
+			drawStripC64Background(bgbak_ptr, stripnr, height);
+		} else if (!(_vm->_features & GF_AFTER_V2)) {
 			if (_vm->_features & GF_16COLOR) {
 				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
 			} else if (_vm->_features & GF_SMALL_HEADER) {
@@ -1166,7 +1151,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		}
 		CHECK_HEAP;
 
-		if (_vm->_features & GF_AFTER_V2) {
+		if (_vm->_features & GF_AFTER_V1) {
+			mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[1];
+//			drawStripC64Mask(mask_ptr, stripnr, height);
+		} else if (_vm->_features & GF_AFTER_V2) {
 			// Do nothing here for V2 games - zplane was handled already.
 		} else if (flag & dbDrawMaskOnAll) {
 			// Sam & Max uses dbDrawMaskOnAll for things like the inventory
@@ -1351,6 +1339,59 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 	return table;
 }
 
+void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
+	for(int y = 0; y < (height >> 3); y++) {
+		_C64Colors[3] = (_C64ColorMap[y + stripnr * (height >> 3)] & 7);
+		for(int i = 0; i < 8; i++) {
+			for(int j = 7; j >= 0; j--) {
+				*(dst + (7 - j) + stripnr * 8 + (y * 8 + i) * _vm->_screenWidth) =
+					_C64Colors[((_C64CharMap[_C64PicMap[y + stripnr * (height >> 3)] * 8 + i] >> (j & 6)) & 3)];
+			}
+		}
+	}
+}
+
+void Gdi::drawStripC64Mask(byte *dst, int stripnr, int height) {
+	for(int y = 0; y < (height / 8); y++) {
+		for(int i = 0; i < 8; i++) {
+			for(int j = 7; j >= 0; j--) {
+				*(dst + (7 - j) + stripnr * 8 + (y * 8 + i) * _vm->_screenWidth) =
+					((_C64MaskChar[_C64MaskMap[y + stripnr * (height >> 3)] * 8 + i] >> (j & 6)) & 3);
+			}
+		}
+	}
+}
+
+void Gdi::decodeC64Gfx(byte *src, byte *dst, int size) {
+	int x, z;
+	byte color, run, common[4];
+
+	for(z = 0; z < 4; z++) {
+		common[z] = *src++;
+	}
+
+	x = 0;
+	while(x < size){
+		color = *src++;
+		if (color < 0x40) {
+			for (z = 0; z <= color; z++) {
+				dst[x++] = *src++;
+			}
+		} else if (color < 0x80) {
+			color &= 0x3F;
+			run = *src++;
+			for (z = 0; z <= color; z++) {
+				dst[x++] = run;
+			}
+		} else {
+			run = common[(color >> 5) & 3];
+			color &= 0x1F;
+			for (z = 0; z <= color; z++) {
+				dst[x++] = run;
+			}
+		}
+	}
+}
 
 void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 	byte color = 0;
@@ -2088,14 +2129,6 @@ void Scumm::fadeIn(int effect) {
 	case 2:
 	case 3:
 	case 4:
-	case 5:
-		// Some of the transition effects won't work properly unless
-		// the screen is marked as clean first. At first I thought I
-		// could safely do this every time fadeIn() was called, but
-		// that broke the FOA intro. Probably other things as well.
-		//
-		// Hopefully it's safe to do it at this point, at least.
-		virtscr[0].setDirtyRange(0, 0);
 		transitionEffect(effect - 1);
 		break;
 	case 128:
@@ -2140,7 +2173,6 @@ void Scumm::fadeOut(int effect) {
 		case 2:
 		case 3:
 		case 4:
-		case 5:
 			transitionEffect(effect - 1);
 			break;
 		case 128:
@@ -2214,8 +2246,6 @@ void Scumm::transitionEffect(int a) {
 					continue;
 				if (b > bottom)
 					b = bottom;
-				if (t < 0)
-					t = 0;
 				virtscr[0].tdirty[l] = t << 3;
 				virtscr[0].bdirty[l] = (b + 1) << 3;
 			}
@@ -2469,6 +2499,25 @@ void Scumm::setupEGAPalette() {
 	setPalColor(13, 252,   0, 252);
 	setPalColor(14, 252, 252,   0);
 	setPalColor(15, 252, 252, 252);
+}
+
+void Scumm::setupC64Palette() {
+	setPalColor( 0,   0,   0,   0);
+	setPalColor( 1, 252, 252, 252);
+	setPalColor( 2, 204,   0,   0);
+	setPalColor( 3,   0, 252, 204);
+	setPalColor( 4, 252,   0, 252);
+	setPalColor( 5,   0, 204,   0);
+	setPalColor( 6,   0,   0, 204);
+	setPalColor( 7, 252, 252, 252);
+	setPalColor( 8, 252, 136,   0);
+	setPalColor( 9, 136,  68,   0);
+	setPalColor(10, 252, 136, 136);
+	setPalColor(11,  68,  68,  68);
+	setPalColor(12, 136, 136, 136);
+	setPalColor(13, 136, 252, 136);
+	setPalColor(14, 136, 136, 252);
+	setPalColor(15, 204, 204, 204);
 }
 
 void Scumm::setPaletteFromPtr(const byte *ptr) {
