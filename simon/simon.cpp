@@ -1761,9 +1761,11 @@ void SimonEngine::f10_key() {
 		timer_vga_sprites();
 
 		do {
-			if (ha->id != 0 && ha->flags & 0x20 && !(ha->flags & 0x40) && ha->flags & 1) {
-				if (_game & GF_SIMON2)
-					if (ha->y >= 0xc8 || ha->y >= _vga_var8)
+			if (ha->id != 0 && ha->flags & 0x20 && !(ha->flags & 0x40)) {
+
+				/* XXX: add code to skip inventory and verbs area */
+
+				if (ha->y >= 0xc8)
 						continue;
 
 				y_ = (ha->height >> 1) - 4 + ha->y;
