@@ -1693,7 +1693,7 @@ void ScummEngine_v72he::o72_getPixel() {
 void ScummEngine_v72he::o72_pickVarRandom() {
 	int num;
 	int args[100];
-	int32 var_A;
+	int32 dim1end;
 
 	num = getStackList(args, ARRAYSIZE(args));
 	int value = fetchScriptWord();
@@ -1716,11 +1716,11 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 	num = readArray(value, 0, 0);
 
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
-	var_A = FROM_LE_32(ah->dim1end);
+	dim1end = FROM_LE_32(ah->dim1end);
 
-	if (var_A-1 <= num) {
+	if (dim1end <= num) {
 		int16 var_2 = readArray(value, 0, num - 1);
-		shuffleArray(value, 1, num - 1);
+		shuffleArray(value, 1, dim1end);
 		if (readArray(value, 0, 1) == var_2) {
 			num = 2;
 		} else {

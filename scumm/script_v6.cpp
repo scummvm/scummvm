@@ -3019,7 +3019,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 	num = readArray(value, 0, 0);
 
 	byte *ptr = getResourceAddress(rtString, readVar(value));
-	if (_version >= 7 || _heversion >= 72) {
+	if (_version >= 7) {
 		var_A = READ_LE_UINT32(ptr + 4);
 		var_C = READ_LE_UINT32(ptr + 8);
 	} else {
@@ -3028,7 +3028,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 	}
 
 	if (var_A-1 <= num) {
-		int16 var_2 = readArray(value, 0, num - 1);
+		int16 var_2 = readArray(value, 0, var_A - 1);
 		shuffleArray(value, 1, num - 1);
 		if (readArray(value, 0, 1) == var_2) {
 			num = 2;

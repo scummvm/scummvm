@@ -1153,13 +1153,16 @@ void ScummEngine_v6he::o6_soundOps() {
 	}
 }
 
-void ScummEngine_v6he::o6_localizeArray() {
-	int slot = pop();
-
+void ScummEngine_v6he::localizeArray(int slot, int script) {
 	if (slot >= _numArray)
 		error("o6_localizeArray(%d): array slot out of range", slot);
 
 	_arraySlot[slot] = vm.slot[_currentScript].number;
+}
+
+void ScummEngine_v6he::o6_localizeArray() {
+	int slot = pop();
+	localizeArray(slot, vm.slot[_currentScript].number);
 }
 
 void ScummEngine_v6he::o6_seekFilePos() {

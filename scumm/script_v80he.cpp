@@ -328,7 +328,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_soundOps),
 		OPCODE(o72_getPixel),
 		OPCODE(o6_localizeArray),
-		OPCODE(o72_pickVarRandom),
+		OPCODE(o80_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
 		OPCODE(o6_invalid),
@@ -424,11 +424,7 @@ void ScummEngine_v80he::o80_unknown49() {
 
 void ScummEngine_v80he::o80_unknown4A() {
 	int slot = pop();
-
-	if (slot >= _numArray)
-		error("o80_unknown4A(%d): array slot out of range", slot);
-
-	_arraySlot[slot] = 0xFFFFFFFF;
+	localizeArray(slot, 0xFFFFFFFF);
 }
 
 void ScummEngine_v80he::o80_readConfigFile() {
@@ -605,6 +601,55 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	} else {
 		drawWizImage(rtImage, resnum, 0, xy1, xy1, 64);
 	}
+}
+
+
+
+void ScummEngine_v80he::o80_pickVarRandom() {
+	int num;
+	int args[100];
+	int32 dim1end;
+
+	num = getStackList(args, ARRAYSIZE(args));
+	int value = fetchScriptWord();
+
+	if (readVar(value) == 0) {
+		defineArray(value, kDwordArray, 0, 0, 0, num + 1);
+		if (value & 0x8000)
+			localizeArray(readVar(value), 0xFFFFFFFF);
+		else if (value & 0x4000)
+			localizeArray(readVar(value), vm.slot[_currentScript].number);
+
+		if (num > 0) {
+			int16 counter = 0;
+			do {
+				writeArray(value, 0, counter + 1, args[counter]);
+			} while (++counter < num);
+		}
+
+		shuffleArray(value, 1, num-1);
+		writeArray(value, 0, 0, 2);
+		push(readArray(value, 0, 1));
+		return;
+	}
+
+	num = readArray(value, 0, 0);
+
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
+	dim1end = FROM_LE_32(ah->dim1end);
+
+	if (dim1end <= num) {
+		int16 var_2 = readArray(value, 0, num - 1);
+		shuffleArray(value, 1, dim1end);
+		if (readArray(value, 0, 1) == var_2 && var_2 >= 3) {
+			int tmp = readArray(value, 0, 2);
+			writeArray(value, 0, num, tmp);
+			writeArray(value, 0, 2, var_2);
+		}
+	}
+
+	writeArray(value, 0, 0, num + 1);
+	push(readArray(value, 0, num));
 }
 
 } // End of namespace Scumm
