@@ -3,11 +3,14 @@
 # common rules, a list of common object files etc.
 
 # List of all sub modules
-MODULES += common gui scumm simon sound scumm/smush
+MODULES += backends/fs/posix common gui scumm simon sound scumm/smush
 
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
+
+BACKEND_OBJS = \
+	backends/fs/posix/posix-fs.o
 
 COMMON_OBJS = \
 	common/config-file.o \
@@ -21,6 +24,7 @@ COMMON_OBJS = \
 	common/util.o
 
 GUI_OBJS = \
+	gui/browser.o \
 	gui/dialog.o \
 	gui/launcher.o \
 	gui/ListWidget.o \
@@ -81,7 +85,7 @@ SMUSH_OBJS = \
 
 SOUND_OBJS = sound/fmopl.o sound/mididrv.o sound/mixer.o
 
-OBJS	+= $(COMMON_OBJS) $(GUI_OBJS) scumm/libscumm.a simon/libsimon.a $(SOUND_OBJS)
+OBJS	+= $(BACKEND_OBJS) $(COMMON_OBJS) $(GUI_OBJS) scumm/libscumm.a simon/libsimon.a $(SOUND_OBJS)
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	debugrl.h NEWS README COPYING \

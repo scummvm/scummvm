@@ -97,6 +97,9 @@ FSList *POSIXFilesystemNode::listDir() const {
 		entry._displayName = dp->d_name;
 		entry._isDirectory = (dp->d_type == DT_DIR);	// TODO - add support for symlinks to dirs?
 
+		// FIXME - skip any non-directories for now
+		if (!entry._isDirectory) continue;
+
 		entry._path = _path;
 		entry._path += dp->d_name;
 		if (entry._isDirectory)

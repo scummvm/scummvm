@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "launcher.h"
+#include "browser.h"
 #include "newgui.h"
 #include "ListWidget.h"
 
@@ -112,7 +113,7 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 
 	// Two more buttons directly below the list box
 	bw = new ButtonWidget(this, 10, 144, 80, 16, "Add Game...", kAddGameCmd, 'A');
-	bw->setEnabled(false);
+//	bw->setEnabled(false);
 	bw = new ButtonWidget(this, 320-90, 144, 80, 16, "Configure...", kConfigureGameCmd, 'C');
 	bw->setEnabled(false);
 }
@@ -122,14 +123,18 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	int item;
 	
 	switch (cmd) {
-	case kAddGameCmd:
+	case kAddGameCmd: {
 		// TODO: Allow user to add a new game to the list.
-		// 1) show a file selection dialog (to be implemented!) which lets 
+		// 1) show a dir selection dialog which lets 
 		// the user pick the directory the game data resides in.
 		// 2) show the user a list of games to pick from. Initially just show
 		// all known games. But ideally, we would refine this list by checking
 		// which choices are possible. E.g. if we don't find atlantis.000 in that
 		// directory, then it's not FOA etc.
+		BrowserDialog *browser = new BrowserDialog(_gui);
+		browser->runModal();
+		delete browser;
+		}
 		break;
 	case kConfigureGameCmd:
 		// Set game specifc options. Most of these should be "optional", i.e. by 
