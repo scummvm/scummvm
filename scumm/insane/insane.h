@@ -51,8 +51,6 @@ namespace Scumm {
 #define EN_TORQUE    8 // Father Torque
 #define EN_BEN       9 // used only with handler
 
-#undef FTDOSDEMO
-
 class Insane {
  public:
 	Insane(ScummEngine_v6 *scumm);
