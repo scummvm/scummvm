@@ -306,30 +306,7 @@ private:
 	OSystem *_system;
 	MidiDriver *_md;
 	Instrument _glob_instr[32]; // Adlib custom instruments
-
 	Instrument _midi_instrument_last[16];
-	int16 _midi_pitchbend_last[16];
-	byte _midi_pitchbend_factor_last[16];
-	uint8 _midi_volume_last[16];
-	bool _midi_pedal_last[16];
-	byte _midi_modwheel_last[16];
-	byte _midi_effectlevel_last[16];
-	byte _midi_chorus_last[16];
-	int8 _midi_pan_last[16];
-
-	void midiPitchBend(byte chan, int16 pitchbend);
-	void midiPitchBendFactor (byte chan, byte factor);
-	void midiVolume(byte chan, byte volume);
-	void midiPedal(byte chan, bool pedal);
-	void midiModWheel(byte chan, byte modwheel);
-	void midiEffectLevel(byte chan, byte level);
-	void midiChorus(byte chan, byte chorus);
-	void midiControl0(byte chan, byte value);
-	void midiPan(byte chan, int8 pan);
-	void midiNoteOn(byte chan, byte note, byte velocity);
-	void midiNoteOff(byte chan, byte note);
-	void midiSilence(byte chan);
-	void midiInit();
 
 	static void timer_callback (void *);
 
@@ -341,16 +318,11 @@ public:
 	void part_off(Part *part);
 	int part_update_active(Part *part, uint16 *active);
 
-	void on_timer() {}
 	void set_instrument(uint slot, byte *instr);
 	void part_load_global_instrument (Part *part, byte slot);
 	void part_set_param(Part *part, byte param, int value) {}
-//	void part_key_on(Part *part, byte note, byte velocity);
-//	void part_key_off(Part *part, byte note);
 	void part_changed(Part *part, uint16 what);
 	void get_channel_instrument (byte channel, Instrument *instrument) { _midi_instrument_last[channel].copy_to (instrument); }
-
-	static int midi_driver_thread(void *param);
 
 	MidiChannel *getPercussionChannel() { return _md->getPercussionChannel(); }
 	uint32 get_base_tempo() { return _md->getBaseTempo(); }
@@ -428,6 +400,7 @@ private:
 
 	int32 ImSetTrigger (int sound, int id, int a, int b, int c, int d);
 	int32 ImClearTrigger (int sound, int id);
+	int32 ImFireAllTriggers (int sound);
 
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
@@ -448,9 +421,6 @@ private:
 
 	static int saveReference(void *me_ref, byte type, void *ref);
 	static void *loadReference(void *me_ref, byte type, int ref);
-
-	void lock();
-	void unlock();
 
 public:
 	IMuseInternal() {
@@ -604,14 +574,6 @@ static int is_note_cmd(byte **a, IsNoteCmdData * isnote) {
 
 IMuseInternal::~IMuseInternal() {
 	terminate();
-}
-
-void IMuseInternal::lock() {
-	_locked++;
-}
-
-void IMuseInternal::unlock() {
-	_locked--;
 }
 
 byte *IMuseInternal::findTag(int sound, char *tag, int index) {
@@ -838,17 +800,12 @@ int IMuseInternal::stop_all_sounds() {
 }
 
 void IMuseInternal::on_timer() {
-	if (_locked || _paused)
+	if (_paused)
 		return;
-
-	lock();
 
 	sequencer_timers();
 	expire_sustain_notes();
 	expire_volume_faders();
-	_driver->on_timer();
-
-	unlock();
 }
 
 void IMuseInternal::sequencer_timers() {
@@ -856,8 +813,9 @@ void IMuseInternal::sequencer_timers() {
 	int i;
 
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
-		if (player->_active)
+		if (player->_active) {
 			player->sequencer_timer();
+		}
 	}
 }
 
@@ -1547,6 +1505,25 @@ int32 IMuseInternal::ImClearTrigger (int sound, int id) {
 	return (count > 0) ? 0 : -1;
 }
 
+int32 IMuseInternal::ImFireAllTriggers (int sound) {
+	if (!sound) return 0;
+	int count = 0;
+	int i;
+	for (i = 0; i < 16; ++i) {
+		if (_snm_triggers [i].sound == sound)
+		{
+			_snm_triggers [i].sound = _snm_triggers [i].id = 0;
+			doCommand (_snm_triggers [i].command [0],
+			           _snm_triggers [i].command [1],
+			           _snm_triggers [i].command [2],
+			           _snm_triggers [i].command [3],
+			           0, 0, 0, 0);
+			++count;
+		}
+	}
+	return (count > 0) ? 0 : -1;
+}
+
 int IMuseInternal::set_channel_volume(uint chan, uint vol)
 {
 	if (chan >= 8 || vol > 127)
@@ -1789,6 +1766,7 @@ void Player::clear() {
 	uninit_seq();
 	cancel_volume_fade();
 	uninit_parts();
+	_se->ImFireAllTriggers (_id);
 	_active = false;
 	_ticks_per_beat = TICKS_PER_BEAT;
 }
@@ -2453,8 +2431,6 @@ bool Player::jump(uint track, uint beat, uint tick) {
 	if (!cur_mtrk)
 		return false;
 
-	_se->lock();
-
 	if (beat == 0)
 		beat = 1;
 
@@ -2470,10 +2446,8 @@ bool Player::jump(uint track, uint beat, uint tick) {
 
 	while (curpos < topos) {
 		skip_midi_cmd(&scanpos);
-		if (!scanpos) {
-			_se->unlock();
+		if (!scanpos)
 			return false;
-		}
 		curpos += get_delta_time(&scanpos);
 	}
 
@@ -2494,7 +2468,6 @@ bool Player::jump(uint track, uint beat, uint tick) {
 		_loop_counter = 0;
 	}
 	_abort = true;
-	_se->unlock();
 	return true;
 }
 
@@ -2717,7 +2690,6 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	if (!mtrk)
 		return -1;
 
-	_se->lock();
 	if (tobeat == 0)
 		tobeat++;
 
@@ -2733,7 +2705,6 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 		scanptr = parse_midi(scanptr);
 		if (!scanptr) {
 			_scanning = false;
-			_se->unlock();
 			return -1;
 		}
 		curpos += get_delta_time(&scanptr);
@@ -2753,7 +2724,6 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 		_track_index = totrack;
 		_loop_counter = 0;
 	}
-	_se->unlock();
 	return 0;
 }
 
@@ -3329,100 +3299,8 @@ void Part::set_instrument(uint b) {
 ////////////////////////////////////////
 
 IMuseDriver::IMuseDriver (MidiDriver *midi) {
-	int i;
-
 	memset(this,0,sizeof(IMuseDriver));	//palmos
-
-	// Initialize our "last" trackers with impossible
-	// values, so that they don't accidentally match
-	// any changes that are sent (which would cause
-	// the changes to be ignored).
-	for (i = 0; i < 16; ++i) {
-		_midi_pitchbend_factor_last [i] =
-		_midi_volume_last [i] =
-		_midi_modwheel_last [i] =
-		_midi_effectlevel_last [i] =
-		_midi_chorus_last [i] = 255;
-		_midi_pan_last [i] = 127;
-		_midi_pitchbend_last [i] = (int16) -1;
-		_midi_pedal_last [i] = false;
-	}
 	_md = midi;
-}
-
-void IMuseDriver::midiPitchBend(byte chan, int16 pitchbend) {
-	uint16 tmp;
-
-	if (_midi_pitchbend_last[chan] != pitchbend) {
-		_midi_pitchbend_last[chan] = pitchbend;
-		tmp = pitchbend + 0x2000;
-		_md->send(((tmp >> 7) & 0x7F) << 16 | (tmp & 0x7F) << 8 | 0xE0 | chan);
-	}
-}
-
-void IMuseDriver::midiPitchBendFactor (byte chan, byte factor) {
-	if (_midi_pitchbend_factor_last[chan] != factor) {
-		_midi_pitchbend_factor_last[chan] = factor;
-		_md->setPitchBendRange (chan, factor);
-	}
-}
-
-void IMuseDriver::midiVolume(byte chan, byte volume) {
-	if (_midi_volume_last[chan] != volume) {
-		_midi_volume_last[chan] = volume;
-		_md->send(volume << 16 | 7 << 8 | 0xB0 | chan);
-	}
-}
-void IMuseDriver::midiPedal(byte chan, bool pedal) {
-	if (_midi_pedal_last[chan] != pedal) {
-		_midi_pedal_last[chan] = pedal;
-		_md->send(pedal << 16 | 64 << 8 | 0xB0 | chan);
-	}
-}
-
-void IMuseDriver::midiModWheel(byte chan, byte modwheel) {
-	if (_midi_modwheel_last[chan] != modwheel) {
-		_midi_modwheel_last[chan] = modwheel;
-		_md->send(modwheel << 16 | 1 << 8 | 0xB0 | chan);
-	}
-}
-
-void IMuseDriver::midiEffectLevel(byte chan, byte level) {
-	if (_midi_effectlevel_last[chan] != level) {
-		_midi_effectlevel_last[chan] = level;
-		_md->send(level << 16 | 91 << 8 | 0xB0 | chan);
-	}
-}
-
-void IMuseDriver::midiChorus(byte chan, byte chorus) {
-	if (_midi_chorus_last[chan] != chorus) {
-		_midi_chorus_last[chan] = chorus;
-		_md->send(chorus << 16 | 93 << 8 | 0xB0 | chan);
-	}
-}
-
-void IMuseDriver::midiControl0(byte chan, byte value) {
-	_md->send(value << 16 | 0 << 8 | 0xB0 | chan);
-}
-
-void IMuseDriver::midiPan(byte chan, int8 pan) {
-	if (_midi_pan_last[chan] != pan) {
-		_midi_pan_last[chan] = pan;
-		_md->send(((pan - 64) & 0x7F) << 16 | 10 << 8 | 0xB0 | chan);
-	}
-}
-
-void IMuseDriver::midiNoteOn(byte chan, byte note, byte velocity) {
-	_md->send(velocity << 16 | note << 8 | 0x90 | chan);
-}
-
-void IMuseDriver::midiNoteOff(byte chan, byte note) {
-	_md->send(note << 8 | 0x80 | chan);
-}
-
-void IMuseDriver::midiSilence(byte chan) {
-	_md->send((64 << 8) | 0xB0 | chan);
-	_md->send((123 << 8) | 0xB0 | chan);
 }
 
 void IMuseDriver::init(IMuseInternal *eng, OSystem *syst) {
