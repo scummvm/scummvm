@@ -608,9 +608,6 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 
 	_x = (320 - width) / 2;
 	_w = width;
-	setResult(_value);
-
-	_timer = getMillis() + kDisplayDelay;
 }
 
 void ValueDisplayDialog::drawDialog() {
@@ -646,9 +643,14 @@ void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		_timer = getMillis() + kDisplayDelay;
 		draw();
 	} else {
-		setResult(_value);
 		close();
 	}
+}
+
+void ValueDisplayDialog::open() {
+	GUI::Dialog::open();
+	setResult(_value);
+	_timer = getMillis() + kDisplayDelay;
 }
 
 

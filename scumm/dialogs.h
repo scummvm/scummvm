@@ -173,9 +173,9 @@ class ValueDisplayDialog : public GUI::Dialog {
 public:
 	ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
 
-	void drawDialog();
-	void handleTickle();
-
+	virtual void open();
+	virtual void drawDialog();
+	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) { 
 		close();
 	}
