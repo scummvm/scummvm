@@ -116,12 +116,14 @@ void Smush::handleFrame() {
 		}
 	} while (pos < size);
 	free(frame);
+
+	memcpy(_buf, _dst, _width * _height * 2);
+	_updateNeeded = true;
+
 	_frame++;
 	if (_frame == _nbframes) {
 		_videoFinished = true;
 	}
-
-	g_driver->drawSMUSHframe(_width, _height, _dst);
 }
 
 void Smush::handleFramesHeader() {
@@ -274,6 +276,8 @@ void Smush::play(const char *filename, const char *directory) {
 
 	SDL_Surface* image;
 	image = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
+	SDL_Surface* buf_image;
+	buf_image = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
 
 	SDL_Rect src;
 	src.x = 0;
@@ -282,13 +286,21 @@ void Smush::play(const char *filename, const char *directory) {
 	src.h = image->h;
 
 	_dst = (byte *)image->pixels;
+	_buf = (byte *)buf_image->pixels;
+
+	_updateNeeded = false;
 
 	init();
 
 	while (!_videoFinished) {
 		
+		if (_updateNeeded) {
+			g_driver->drawSMUSHframe(_width, _height, _dst);
+			_updateNeeded = false;
+		}
+
 		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
+		if (SDL_PollEvent(&event)) {
 			// Skip cutscene?
 			if (event.type == SDL_KEYDOWN)
 				if (event.key.keysym.sym == SDLK_ESCAPE)

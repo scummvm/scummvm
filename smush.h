@@ -105,13 +105,15 @@ private:
 	PlayingSoundHandle _soundHandle;
 
 	int32 _frame;
+	bool _updateNeeded;
 	bool _alreadyInit;
 	int32 _speed;
 	int _channels;
 	int _freq;
 	bool _videoFinished;
 	int _width, _height;
-	uint8 *_dst;
+	byte *_dst;
+	byte *_buf;
 
 public:
 	Smush();
