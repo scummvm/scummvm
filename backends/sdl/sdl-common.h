@@ -236,6 +236,8 @@ protected:
 	virtual void load_gfx_mode() = 0;
 	virtual void unload_gfx_mode() = 0;
 	virtual void hotswap_gfx_mode() = 0;
+	
+	virtual void setFullscreenMode(bool enable) = 0;
 
 	virtual bool save_screenshot(const char *filename) = 0;
 	

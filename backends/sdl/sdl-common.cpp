@@ -1111,22 +1111,7 @@ void OSystem_SDL_Common::setFeatureState(Feature f, bool enable) {
 
 	switch (f) {
 	case kFeatureFullscreenMode:
-		if (_full_screen != enable) {
-			//assert(_hwscreen != 0);
-			_full_screen ^= true;
-#ifdef MACOSX
-			// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
-			// it still always returns -1. So we simply don't call it at all and
-			// use hotswap_gfx_mode() directly to switch to fullscreen mode.
-			hotswap_gfx_mode();
-#else
-			// FIXME: _hwscreen is not currently available from SDL_Common's scope
-			//if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
-				// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
-				hotswap_gfx_mode();
-			//}
-#endif
-		}
+		setFullscreenMode(enable);
 		break;
 	case kFeatureAspectRatioCorrection:
 		if (_screenHeight == 200 && _adjustAspectRatio != enable) {

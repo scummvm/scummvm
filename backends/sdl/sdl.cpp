@@ -40,6 +40,8 @@ protected:
 	virtual void unload_gfx_mode();
 	virtual bool save_screenshot(const char *filename);
 	virtual void hotswap_gfx_mode();
+	
+	virtual void setFullscreenMode(bool enable);
 };
 
 OSystem_SDL_Common *OSystem_SDL_Common::create_intern() {
@@ -366,4 +368,23 @@ bool OSystem_SDL::save_screenshot(const char *filename) {
 	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 	SDL_SaveBMP(_hwscreen, filename);
 	return true;
+}
+
+void OSystem_SDL::setFullscreenMode(bool enable) {
+	if (_full_screen != enable) {
+		assert(_hwscreen != 0);
+		_full_screen ^= true;
+#ifdef MACOSX
+		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
+		// it still always returns -1. So we simply don't call it at all and
+		// use hotswap_gfx_mode() directly to switch to fullscreen mode.
+		hotswap_gfx_mode();
+#else
+		// FIXME: _hwscreen is not currently available from SDL_Common's scope
+		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
+			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
+			hotswap_gfx_mode();
+		}
+#endif
+	}
 }
