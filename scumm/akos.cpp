@@ -548,7 +548,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	v1.scaletable = defaultScaleTable;
 
-	// FIXME - which value for VAR_CUSTOMSCALETABLE in V8 ?
 	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->isGlobInMemory(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
