@@ -83,7 +83,7 @@ void Scumm::setupScummVars() {
 	VAR_SOUNDRESULT = 56;
 	VAR_TALKSTOP_KEY = 57;
 	VAR_59 = 59;
-	VAR_SUBTITLES = 60; // for loomcd
+	VAR_NOSUBTITLES = 60; // for loomcd
 
 	VAR_SOUNDPARAM = 64;
 	VAR_SOUNDPARAM2 = 65;

@@ -475,6 +475,10 @@ int Scumm::readVar(uint var) {
 			var = 266;
 		}
 #endif
+		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES) {
+			return _noSubtitles;	
+		}
+		
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 		return _scummVars[var];
 	}
@@ -528,6 +532,10 @@ void Scumm::writeVar(uint var, int value) {
 			VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
 		else
 			_scummVars[var] = value;
+
+		// stay in sync with loom cd subtitle var
+		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES && (value == 0 || value == 1))
+			_noSubtitles = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
