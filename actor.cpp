@@ -229,7 +229,7 @@ int Actor::remapDirection(int dir)
 		}
 	}
 	/* Or 1024 in to signal direction interpolation should be done */
-	return Scumm::normalizeAngle(dir) | 1024;
+	return Scumm::normalizeAngle(dir)/* | 1024*/;
 }
 
 int Actor::updateActorDirection()
@@ -763,6 +763,12 @@ void Actor::startWalkAnim(int cmd, int angle)
 	if (angle == -1)
 		angle = facing;
 
+/*FIXME: (yazoo): the walk script are buggy in dig causing
+ * troubles while walking. It's disabled until I can
+ * find a proper fix
+ * note: walk scripts aren't required to make the game
+ * work as usual */
+	
 /*	if (walk_script != 0) {
 		args[2] = angle;
 		args[0] = number;

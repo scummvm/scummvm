@@ -1093,7 +1093,32 @@ int Scumm::fromSimpleDir(int dirType, int dir)
 
 int Scumm::normalizeAngle(int angle)
 {
-	return (angle + 360) % 360;
+	int temp;
+
+	temp = (angle + 360) % 360;
+
+/* (yaz0r) there is probably a much better way to do this */
+	
+	if(temp >=0 && temp <22)
+		return(0);
+	if(temp >=22 && temp <72)
+		return(45);
+	if(temp >=72 && temp <107)
+		return(90);
+	if(temp >=107 && temp <157)
+		return(135);
+	if(temp >=157 && temp <202)
+		return(180);
+	if(temp >=202 && temp <252)
+		return(225);
+	if(temp >=252 && temp <287)
+		return(270);
+	if(temp >=287 && temp <337)
+		return(315);
+	if(temp >=337 && temp <=360)
+		return(0);
+
+	return(temp);
 }
 
 void NORETURN CDECL error(const char *s, ...)
