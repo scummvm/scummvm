@@ -23,7 +23,7 @@ DEPDIR := .deps
 # module.mk of their parents. In fact the only reason they are listed here is to ensure the
 # DEPDIRS directive works correctly.
 MODULES += \
-	backends common gui scumm simon sound \
+	scumm simon gui sound common backends  \
 	scumm/smush backends/fs/posix backends/fs/morphos backends/fs/windows
 
 # Include the build instructions for all modules
@@ -50,18 +50,18 @@ clean:
 DEPDIRS = $(patsubst %,%/$(DEPDIR),$(MODULES))
 DEPFILES = $(wildcard $(patsubst %,%/*.d,$(DEPDIRS)))
 
-.cpp.o:
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
+#.cpp.o:
+#	$(MKDIR) $(*D)/$(DEPDIR)
+#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+#	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
+#	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
+#	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
 
 # If you even have GCC 3.x, you can use this build rule, which is safer; the above
 # rule can get you into a bad state if you Ctrl-C it in the wrong moment.
-#.cpp.o:
-#	$(MKDIR) $(*D)/$(DEPDIR)
-#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+.cpp.o:
+	$(MKDIR) $(*D)/$(DEPDIR)
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
 -include $(DEPFILES) /dev/null
 
