@@ -61,8 +61,8 @@ MidiPlayer::MidiPlayer (OSystem *system) {
 	_enable_sfx = true;
 	_current = 0;
 
-	memset(_volumeTable, 127, sizeof(_volumeTable));
 	_masterVolume = 255;
+	resetVolumeTable();
 	_paused = false;
 
 	_currentTrack = 255;
@@ -104,12 +104,11 @@ void MidiPlayer::send (uint32 b) {
 	if (!_current)
 		return;
 
-	byte volume;
-
+	byte channel = (byte) (b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume.
-		volume = (byte) ((b >> 16) & 0x7F);
-		_volumeTable [b & 0xF] = volume;
+		byte volume = (byte) ((b >> 16) & 0x7F);
+		_current->volume [channel] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0 && _map_mt32_to_gm) {
@@ -121,7 +120,6 @@ void MidiPlayer::send (uint32 b) {
 			return;
 	}
 
-	byte channel = (byte) (b & 0x0F);
 	if (!_current->channel [channel])
 		_current->channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 	if (_current->channel [channel])
@@ -233,8 +231,12 @@ void MidiPlayer::pause (bool b) {
 	_paused = b;
 
 	_system->lock_mutex (_mutex);
-	for (int i = ARRAYSIZE (_volumeTable); i; --i)
-		_driver->send (((_paused ? 0 : (_volumeTable[i-1] * _masterVolume / 255)) << 16) | (7 << 8) | 0xB0 | i);
+	for (int i = 0; i < 16; ++i) {
+		if (_music.channel[i])
+			_music.channel[i]->volume (_paused ? 0 : (_music.volume[i] * _masterVolume / 255));
+		if (_sfx.channel[i])
+			_sfx.channel[i]->volume (_paused ? 0 : (_sfx.volume[i] * _masterVolume / 255));
+	}
 	_system->unlock_mutex (_mutex);
 }
 
@@ -246,14 +248,16 @@ void MidiPlayer::set_volume (int volume) {
 
 	if (_masterVolume == volume)
 		return;
-
 	_masterVolume = volume;
 
 	// Now tell all the channels this.
 	_system->lock_mutex (_mutex);
 	if (_driver && !_paused) {
-		for (int i = ARRAYSIZE (_volumeTable); i; --i) {
-			_driver->send (((_volumeTable[i-1] * _masterVolume / 255) << 16) | (7 << 8) | 0xB0 | i);
+		for (int i = 0; i < 16; ++i) {
+			if (_music.channel[i])
+				_music.channel[i]->volume (_music.volume[i] * _masterVolume / 255);
+			if (_sfx.channel[i])
+				_sfx.channel[i]->volume (_sfx.volume[i] * _masterVolume / 255);
 		}
 	}
 	_system->unlock_mutex (_mutex);
@@ -317,12 +321,21 @@ void MidiPlayer::clearConstructs (MusicInfo &info) {
 	if (_driver) {
 		for (i = 0; i < 16; ++i) {
 			if (info.channel[i]) {
-				_driver->send (0x007BB0 | info.channel[i]->getNumber()); // All Notes Off
+				info.channel[i]->allNotesOff();
 				info.channel[i]->release();
 			}
 		}
 	}
 	info.clear();
+}
+
+void MidiPlayer::resetVolumeTable() {
+	int i;
+	for (i = 0; i < 16; ++i) {
+		_music.volume[i] = _sfx.volume[i] = 127;
+		if (_driver)
+			_driver->send (((_masterVolume >> 1) << 16) | 0x7B0 | i);
+	}
 }
 
 static int simon1_gmf_size[] = {
@@ -397,7 +410,7 @@ void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
 
 	if (!sfx) {
 		_currentTrack = 255;
-		memset(_volumeTable, 127, sizeof(_volumeTable));
+		resetVolumeTable();
 	}
 	p->parser = parser; // That plugs the power cord into the wall
 	_system->unlock_mutex (_mutex);
@@ -456,7 +469,7 @@ void MidiPlayer::loadMultipleSMF (File *in, bool sfx) {
 
 	if (!sfx) {
 		_currentTrack = 255;
-		memset(_volumeTable, 127, sizeof(_volumeTable));
+		resetVolumeTable();
 	}
 	_system->unlock_mutex (_mutex);
 }
@@ -505,7 +518,7 @@ void MidiPlayer::loadXMIDI (File *in, bool sfx) {
 
 	if (!sfx) {
 		_currentTrack = 255;
-		memset(_volumeTable, 127, sizeof(_volumeTable));
+		resetVolumeTable();
 	}
 	p->parser = parser; // That plugs the power cord into the wall
 	_system->unlock_mutex (_mutex);
@@ -537,7 +550,7 @@ void MidiPlayer::loadS1D (File *in, bool sfx) {
 
 	if (!sfx) {
 		_currentTrack = 255;
-		memset(_volumeTable, 127, sizeof(_volumeTable));
+		resetVolumeTable();
 	}
 	p->parser = parser; // That plugs the power cord into the wall
 	_system->unlock_mutex (_mutex);

@@ -34,7 +34,9 @@ struct MusicInfo {
 	byte   num_songs;         // For Type 1 SMF resources
 	byte * songs[16];         // For Type 1 SMF resources
 	uint32 song_sizes[16];    // For Type 1 SMF resources
+
 	MidiChannel *channel[16]; // Dynamic remapping of channels to resolve conflicts
+	byte volume[16];          // Current channel volume
 
 	MusicInfo() { clear(); }
 	void clear() {
@@ -57,7 +59,6 @@ protected:
 	MusicInfo *_current; // Allows us to establish current context for operations.
 
 	// These are maintained for both music and SFX
-	byte _volumeTable[16]; // 0-127
 	byte _masterVolume;    // 0-255
 	bool _paused;
 
@@ -67,9 +68,11 @@ protected:
 	byte _queuedTrack;
 	bool _loopQueuedTrack;
 
+protected:
 	static void onTimer (void *data);
 	void clearConstructs();
 	void clearConstructs (MusicInfo &info);
+	void resetVolumeTable();
 
 public:
 	bool _enable_sfx;
