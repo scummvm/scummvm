@@ -293,6 +293,7 @@ void SmushPlayer::handleFetch(Chunk & b) {
 
 void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 track_flags, Chunk & b, int32 bsize) {
 	int32 track = (track_flags << 16) | track_id;
+
 	_Channel * c = _mixer->findChannel(track);
 	if(c == 0) {
 		c = new ImuseChannel(track, _soundFrequency);
@@ -313,6 +314,7 @@ void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int3
 	int32 size = b.getDword();
 	int32 bsize = b.getSize() - 18;
 	handleImuseBuffer(track_id, index, nbframes, size, unknown, track_flags, b, bsize);
+
 }
 
 void SmushPlayer::handleImuseAction(Chunk & b) {
@@ -346,8 +348,8 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	int32 left = b.getShort();
 	int32 top = b.getShort();
 	int32 width = b.getShort();
-	int32 height = b.getShort();
-	int32 unk2 = b.getWord();
+	/*int32 height =*/ b.getShort();
+	/*int32 unk2 =*/ b.getWord();
 	int32 string_id = b.getWord();
 	debug(6, "SmushPlayer::handleTextResource(%d)", string_id);
 	if(!_strings) return;
@@ -716,7 +718,7 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 				_fr[0] = loadFont("scummfnt.nut", directory, true);
 				_fr[2] = loadFont("titlfnt.nut", directory, true);
 			} else {
-				for(int32 i = 0; i < 4; i++) {
+				for(int i = 0; i < 4; i++) {
 					char file_font[20];
 					sprintf((char*)&file_font, "font%d.nut", i);
 					_fr[i] = loadFont(file_font, directory, i != 0);

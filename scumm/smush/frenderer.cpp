@@ -295,7 +295,7 @@ bool FontRenderer::drawStringWrap(const char * str, char * buffer, const Point &
 		left_x = size.getX() - max_width;
 
 	for(i = 0; i < nb_subs; i++) {
-		int32 substr_width = substr_widths[i];
+//		int32 substr_width = substr_widths[i];
 		drawSubstring((const byte *)substrings[i], buffer, size, left_x, y);
 		y += stringHeight(substrings[i]);
 		delete []substrings[i];

@@ -31,7 +31,7 @@
 */
 class DumpDecoder : public Decoder {
 public:
-	virtual ~DumpDecoder();
+	virtual ~DumpDecoder() {}
 	bool decode(Blitter &, Chunk &);
 };
 

@@ -24,14 +24,11 @@
 #include "chunk.h"
 #include "blitter.h"
 
-DumpDecoder::~DumpDecoder() {
-}
-
 bool DumpDecoder::decode(Blitter & dst, Chunk & src) {
 	int32 i = 0;
-	int32 seq = src.getWord();
+	/*int32 seq =*/ src.getWord();
 	int32 codec = src.getByte();
-	int32 flags = src.getByte();
+	/*int32 flags =*/ src.getByte();
 	int32 unknown[22];
 	for(i = 0; i < 0; i++) {
 		unknown[i] = src.getByte();
