@@ -6,7 +6,7 @@ srcdir = ../..
 VPATH = $(srcdir)
 
 CXX     = sh-elf-g++ -ml -m4-single-only
-CXXFLAGS= -O1 -Wno-multichar -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks -fno-exceptions
+CXXFLAGS= -O3 -Wno-multichar -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks -fno-exceptions
 DEFINES = -D__DC__ -DNONSTANDARD_PORT -DNOSERIAL
 LDFLAGS := -Wl,-Ttext,0x8c010000 -nostartfiles $(ronindir)/lib/crt0.o
 INCLUDES:= -I./ -I$(srcdir) -I$(srcdir)/common -I$(ronindir)/include/
