@@ -69,9 +69,9 @@ enum MidiDriverType {
 	MDT_PREFER_NATIVE = 8
 };
 
-struct VersionSettings {
-	const char *filename;
-	const char *gamename;
+struct TargetSettings {
+	const char *targetName;
+	const char *description;
 	byte id, version;
 	int midi; // MidiDriverType values
 	uint32 features;
@@ -95,9 +95,6 @@ struct Language {
 	const char *description;
 	int id;
 };
-
-extern const VersionSettings *version_settings;
-
 
 class GameDetector {
 	typedef ScummVM::String String;
@@ -142,7 +139,7 @@ public:
 	int _midi_driver;
 
 	String _gameFileName;
-	VersionSettings _game;
+	TargetSettings _game;
 
 	int _gfx_mode;
 	bool _default_gfx_mode;
@@ -163,6 +160,8 @@ public:
 
 	int parseGraphicsMode(const char *s);
 	void updateconfig();
+	
+	const TargetSettings *findTarget(const char *targetName) const;
 
 protected:
 	String _gameText;

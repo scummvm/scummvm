@@ -66,7 +66,7 @@ extern NewGui *g_gui;
 extern uint16 _debugLevel;
 extern uint16 _demo_mode;
 
-static const VersionSettings scumm_settings[] = {
+static const TargetSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
@@ -228,7 +228,7 @@ static const VersionSettings scumm_settings[] = {
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
-const VersionSettings *Engine_SCUMM_targetList() {
+const TargetSettings *Engine_SCUMM_targetList() {
 	return scumm_settings;
 }
 
@@ -613,7 +613,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_debugLevel = detector->_debugLevel;
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = detector->_bootParam;
-	_exe_name = strdup(detector->_game.filename);
+	_exe_name = strdup(detector->_game.targetName);
 	_game_name = strdup(detector->_gameFileName.c_str());
 	_gameId = detector->_game.id;
 	_version = detector->_game.version;

@@ -100,7 +100,7 @@ static const char USAGE_STRING[] =
 ;
 #endif
 // This contains a pointer to a list of all supported games.
-const VersionSettings *version_settings = NULL;
+const TargetSettings *version_settings = NULL;
 
 static const struct GraphicsMode gfx_modes[] = {
 	{"normal", "Normal (no scaling)", GFX_NORMAL},
@@ -159,9 +159,9 @@ static const struct MusicDriver music_drivers[] = {
 	{0, 0, 0}
 };
 
-static int countVersions(const VersionSettings *v) {
+static int countVersions(const TargetSettings *v) {
 	int count;
-	for (count = 0; v->filename; v++, count++)
+	for (count = 0; v->targetName; v++, count++)
 		;
 	return count;
 }
@@ -220,49 +220,49 @@ GameDetector::GameDetector() {
 		// Gather & combine the target lists from the modules
 
 #ifndef DISABLE_SCUMM
-		const VersionSettings *scummVersions = Engine_SCUMM_targetList();
+		const TargetSettings *scummVersions = Engine_SCUMM_targetList();
 		int scummCount = countVersions(scummVersions);
 		totalCount += scummCount;
 #endif
 
 #ifndef DISABLE_SIMON
-		const VersionSettings *simonVersions = Engine_SIMON_targetList();
+		const TargetSettings *simonVersions = Engine_SIMON_targetList();
 		int simonCount = countVersions(simonVersions);
 		totalCount += simonCount;
 #endif
 
 #ifndef DISABLE_SKY
-		const VersionSettings *skyVersions = Engine_SKY_targetList();
+		const TargetSettings *skyVersions = Engine_SKY_targetList();
 		int skyCount = countVersions(skyVersions);
 		totalCount += skyCount;
 #endif
 
 #ifndef DISABLE_SWORD2
-		const VersionSettings *sword2Versions = Engine_SWORD2_targetList();
+		const TargetSettings *sword2Versions = Engine_SWORD2_targetList();
 		int sword2Count = countVersions(sword2Versions);
 		totalCount += sword2Count;
 #endif
 		
-		VersionSettings *v = (VersionSettings *)calloc(totalCount + 1, sizeof(VersionSettings));
+		TargetSettings *v = (TargetSettings *)calloc(totalCount + 1, sizeof(TargetSettings));
 		version_settings = v;
 
 #ifndef DISABLE_SCUMM
-		memcpy(v, scummVersions, scummCount * sizeof(VersionSettings));
+		memcpy(v, scummVersions, scummCount * sizeof(TargetSettings));
 		v += scummCount;
 #endif
 
 #ifndef DISABLE_SIMON
-		memcpy(v, simonVersions, simonCount * sizeof(VersionSettings));
+		memcpy(v, simonVersions, simonCount * sizeof(TargetSettings));
 		v += simonCount;
 #endif
 
 #ifndef DISABLE_SKY
-		memcpy(v, skyVersions, skyCount * sizeof(VersionSettings));
+		memcpy(v, skyVersions, skyCount * sizeof(TargetSettings));
 		v += skyCount;
 #endif
 
 #ifndef DISABLE_SWORD2
-		memcpy(v, sword2Versions, sword2Count * sizeof(VersionSettings));
+		memcpy(v, sword2Versions, sword2Count * sizeof(TargetSettings));
 		v += sword2Count;
 #endif
 
@@ -273,7 +273,7 @@ GameDetector::GameDetector() {
 GameDetector::~GameDetector() {
 	// This is a previously allocated chunck (line 224)
 	// so we need to free it to prevent memory leak
-	VersionSettings *v = (VersionSettings *)version_settings;
+	TargetSettings *v = (TargetSettings *)version_settings;
 	free(v);
 }
 #endif
@@ -349,18 +349,31 @@ void GameDetector::updateconfig() {
 }
 
 void GameDetector::list_games() {
-	const VersionSettings *v = version_settings;
+	const TargetSettings *v = version_settings;
 	const char *config;
 
 	printf("Game             Full Title                                             Config\n"
 	       "---------------- ------------------------------------------------------ -------\n");
 
-	while (v->filename && v->gamename) {
-		config = (g_config->has_domain(v->filename)) ? "Yes" : "";
-		printf("%-17s%-56s%s\n", v->filename, v->gamename, config);
+	while (v->targetName && v->description) {
+		config = (g_config->has_domain(v->targetName)) ? "Yes" : "";
+		printf("%-17s%-56s%s\n", v->targetName, v->description, config);
 		v++;
 	}
 		
+}
+
+const TargetSettings *GameDetector::findTarget(const char *targetName) const {
+	// Find the TargetSettings for this target
+	const TargetSettings *target = version_settings;
+	assert(targetName);
+	while (target->targetName) {
+		if (!scumm_stricmp(target->targetName, targetName)) {
+			return target;
+		}
+		target++;
+	}
+	return 0;
 }
 
 void GameDetector::parseCommandLine(int argc, char **argv) {
@@ -678,7 +691,7 @@ bool GameDetector::parseMusicDriver(const char *s) {
 }
 
 bool GameDetector::detectGame() {
-	const VersionSettings *gnl = version_settings;
+	const TargetSettings *target;
 	const char *realGame, *basename;
 	_game.id = 0;
 	_gameText.clear();
@@ -687,23 +700,22 @@ bool GameDetector::detectGame() {
 	if (!realGame)
 		realGame = _gameFileName.c_str();
 	printf("Looking for %s\n", realGame);
-
-	do {
-		if (!scumm_stricmp(realGame, gnl->filename)) {
-			_game = *gnl;
-			if ((basename = g_config->get("basename")))	{
-				// FIXME: What is this good for?
-				_game.filename = basename;
-			}
-			_gameText = gnl->gamename;
-			printf("Trying to start game '%s'\n",gnl->gamename);
-			return true;
+	
+	target = findTarget(realGame);
+	
+	if (target) {
+		_game = *target;
+		if ((basename = g_config->get("basename")))	{
+			// FIXME: What is this good for?
+			_game.targetName = basename;
 		}
-	} while ((++gnl)->filename);
-
-	printf("Failed game detection\n");
-
-	return false;
+		_gameText = _game.description;
+		printf("Trying to start game '%s'\n", _game.description);
+		return true;
+	} else {
+		printf("Failed game detection\n");
+		return false;
+	}
 }
 
 const ScummVM::String& GameDetector::getGameName() {

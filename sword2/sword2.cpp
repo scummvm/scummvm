@@ -78,7 +78,7 @@ uint8 stepOneCycle=0;	// for use while game paused
 
 //------------------------------------------------------------------------------------
 
-static const VersionSettings sword2_settings[] = {
+static const TargetSettings sword2_settings[] = {
 	/* Broken Sword 2 */
 	{"sword2", "Broken Sword II", GID_SWORD2, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
 	{"sword2demo", "Broken Sword II (Demo)", GID_SWORD2_DEMO, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
@@ -87,7 +87,7 @@ static const VersionSettings sword2_settings[] = {
 
 Sword2State *g_sword2 = NULL;
 
-const VersionSettings *Engine_SWORD2_targetList() {
+const TargetSettings *Engine_SWORD2_targetList() {
 	return sword2_settings;
 }
 

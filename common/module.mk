@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	common/file.o \
 	common/gameDetector.o \
 	common/main.o \
+	common/plugins.o \
 	common/scaler.o \
 	common/str.o \
 	common/timer.o \

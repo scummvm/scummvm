@@ -42,7 +42,7 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-typedef ScummVM::List<const VersionSettings *> GameList;
+typedef ScummVM::List<const TargetSettings *> GameList;
 
 /*
  * A dialog that allows the user to edit a config game entry.
@@ -72,7 +72,7 @@ class EditGameDialog : public Dialog {
 	typedef ScummVM::String String;
 	typedef ScummVM::StringList StringList;
 public:
-	EditGameDialog(NewGui *gui, Config &config, const String &domain);
+	EditGameDialog(NewGui *gui, const String &domain, const TargetSettings *target);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
@@ -85,26 +85,18 @@ protected:
 	CheckboxWidget *_amigaCheckbox;
 };
 
-EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain)
-	: Dialog(gui, 8, 50, 320 - 2 * 8, 200 - 2 * 40), _config(config), _domain(domain) {
+EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, const TargetSettings *target)
+	: Dialog(gui, 8, 50, 320 - 2 * 8, 200 - 2 * 40), _config(*g_config), _domain(domain) {
+
 	// Determine the description string
-	String gameid(_config.get("gameid", _domain));
 	String description(_config.get("description", _domain));
-	const VersionSettings *v = version_settings;
-
-	if (gameid.isEmpty())
-		gameid = _domain;
-
-	// Find the VersionSettings for this gameid
-	while (v->filename) {
-		if (!scumm_stricmp(v->filename, gameid.c_str())) {
-			break;
-		}
-		v++;
-	}
 	if (description.isEmpty()) {
-		description = v->gamename;
+		description = target->description;
 	}
+
+	// Determine whether this is a SCUMM game
+	bool isScumm = (GID_SCUMM_FIRST <= target->id && target->id <= GID_SCUMM_LAST);
+
 	
 	// Label & edit widget for the game ID
 	new StaticTextWidget(this, 10, 10, 40, kLineHeight, "ID: ", kTextAlignRight);
@@ -126,7 +118,7 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	_fullscreenCheckbox->setState(_config.getBool("fullscreen", false, _domain));
 
 	// Display 'Amiga' checkbox, but only for Scumm games.
-	if (GID_SCUMM_FIRST <= v->id && v->id <= GID_SCUMM_LAST) {
+	if (isScumm) {
 		_amigaCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Amiga Version", 0, 'A');
 		_amigaCheckbox->setState(_config.getBool("amiga", false, _domain));
 	} else {
@@ -221,9 +213,14 @@ void LauncherDialog::close() {
 	Dialog::close();
 }
 
+// FIXME: EVIL HACK! remove use of version_settings by introducing
+// proper APIs for accessing/searching them
+extern const TargetSettings *version_settings;
+
+
 void LauncherDialog::updateListing() {
 	int i;
-	const VersionSettings *v = version_settings;
+	const TargetSettings *v = version_settings;
 	ScummVM::StringList l;
 
 	// Retrieve a list of all games defined in the config file
@@ -237,9 +234,9 @@ void LauncherDialog::updateListing() {
 			name = domains[i];
 		if (description.isEmpty()) {
 			v = version_settings;
-			while (v->filename) {
-				if (!scumm_stricmp(v->filename, name.c_str())) {
-					description = v->gamename;
+			while (v->targetName) {
+				if (!scumm_stricmp(v->targetName, name.c_str())) {
+					description = v->description;
 					break;
 				}
 				v++;
@@ -276,8 +273,8 @@ GameList findGame(FilesystemNode *dir) {
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	const VersionSettings *v = version_settings;
-	while (v->filename && v->gamename) {
+	const TargetSettings *v = version_settings;
+	while (v->targetName && v->description) {
 
 		// Determine the 'detectname' for this game, that is, the name of a 
 		// file that *must* be presented if the directory contains the data
@@ -288,9 +285,9 @@ GameList findGame(FilesystemNode *dir) {
 			strcat(detectName2, ".");
 			detectName3[0] = '\0';
 		} else {
-			strcpy(detectName, v->filename);
-			strcpy(detectName2, v->filename);
-			strcpy(detectName3, v->filename);
+			strcpy(detectName, v->targetName);
+			strcpy(detectName2, v->targetName);
+			strcpy(detectName3, v->targetName);
 			strcat(detectName, ".000");
 			if (v->version >= 7) {
 				strcat(detectName2, ".la0");
@@ -301,11 +298,11 @@ GameList findGame(FilesystemNode *dir) {
 
 		// Iterate over all files in the given directory
 		for (i = 0; i < size; i++) {
-			const char *filename = (*files)[i].displayName().c_str();
+			const char *targetName = (*files)[i].displayName().c_str();
 
-			if ((0 == scumm_stricmp(detectName, filename))  || 
-			    (0 == scumm_stricmp(detectName2, filename)) ||
-			    (0 == scumm_stricmp(detectName3, filename))) {
+			if ((0 == scumm_stricmp(detectName, targetName))  || 
+			    (0 == scumm_stricmp(detectName2, targetName)) ||
+			    (0 == scumm_stricmp(detectName3, targetName))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				list.push_back(v);
 				break;
@@ -341,7 +338,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// ...so let's determine a list of candidates, games that
 			// could be contained in the specified directory.
 			GameList candidates = findGame(dir);
-			const VersionSettings *v = 0;
+			const TargetSettings *v = 0;
 
 			if (candidates.isEmpty()) {
 				// No game was found in the specified directory
@@ -355,7 +352,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				StringList list;
 				int i;
 				for (i = 0; i < candidates.size(); i++)
-					list.push_back(candidates[i]->gamename);
+					list.push_back(candidates[i]->description);
 				
 				ChooserDialog dialog(_gui, "Pick the game:", list);
 				i = dialog.runModal();
@@ -367,7 +364,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				// The auto detector or the user made a choice.
 				// Pick a domain name which does not yet exist (after all, we
 				// are *adding* a game to the config, not replacing).
-				String domain(v->filename);
+				String domain(v->targetName);
 				if (g_config->has_domain(domain)) {
 					char suffix = 'a';
 					domain += suffix;
@@ -376,13 +373,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 						suffix++;
 						domain += suffix;
 					}
-					g_config->set("gameid", v->filename, domain);
-					g_config->set("description", v->gamename, domain);
+					g_config->set("gameid", v->targetName, domain);
+					g_config->set("description", v->description, domain);
 				}
 				g_config->set("path", dir->path(), domain);
 				
 				// Display edit dialog for the new entry
-				EditGameDialog editDialog(_gui, *g_config, domain);
+				EditGameDialog editDialog(_gui, domain, v);
 				if (editDialog.runModal()) {
 					// User pressed OK, so make changes permanent
 
@@ -419,7 +416,10 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// This is useful because e.g. MonkeyVGA needs Adlib music to have decent
 		// music support etc.
 		assert(item >= 0);
-		EditGameDialog editDialog(_gui, *g_config, _domains[item]);
+		const char *gameId = g_config->get("gameid", _domains[item]);
+		if (!gameId)
+			gameId = _domains[item].c_str();
+		EditGameDialog editDialog(_gui, _domains[item], _detector.findTarget(gameId));
 		if (editDialog.runModal()) {
 			// User pressed OK, so make changes permanent
 

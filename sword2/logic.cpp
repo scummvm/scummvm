@@ -95,7 +95,7 @@ int	logic::Process_session(void)	//Tony6June96 (first run 21Oct96)
 		if	(head->fileType!=GAME_OBJECT)
 			Con_fatal_error("Logic_engine %d not an object", ID);
 
-		cur_object_hub = (_object_hub	*) (head+1);
+		cur_object_hub = (_object_hub *) (head+1);
 
 //		Zdebug(" %d id(%d) pc(%d)", cur_object_hub->logic_level, cur_object_hub->script_id[cur_object_hub->logic_level], cur_object_hub->script_pc[cur_object_hub->logic_level]);
 

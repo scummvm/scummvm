@@ -59,13 +59,13 @@ extern bool draw_keyboard;
 
 #undef WITH_DEBUG_CHEATS
 
-static const VersionSettings sky_settings[] = {
+static const TargetSettings sky_settings[] = {
 	/* Beneath a Steel Sky */
 	{"sky", "Beneath a Steel Sky", GID_SKY_FIRST, 99, MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "sky.dsk" },
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
-const VersionSettings *Engine_SKY_targetList() {
+const TargetSettings *Engine_SKY_targetList() {
 	return sky_settings;
 }
 

@@ -39,7 +39,7 @@ extern bool draw_keyboard;
 
 #endif
 
-static const VersionSettings simon_settings[] = {
+static const TargetSettings simon_settings[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
 	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON1DOS, "GAMEPC"},
 	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GID_SIMON_FIRST, 99, MDT_NONE, GAME_SIMON1AMIGA, "gameamiga"},
@@ -55,7 +55,7 @@ static const VersionSettings simon_settings[] = {
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
-const VersionSettings *Engine_SIMON_targetList() {
+const TargetSettings *Engine_SIMON_targetList() {
 	return simon_settings;
 }
 
