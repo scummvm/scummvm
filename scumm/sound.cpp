@@ -390,7 +390,7 @@ void Sound::playSound(int soundID) {
 	
 	}
 	
-	if (_scumm->_features & GF_OLD_BUNDLE) {
+	if (_scumm->_features & GF_OLD_BUNDLE && !(_scumm->_features & GF_AFTER_V1)) {
 		// FIXME: support amiga sounds
 		uint16 amigatest;
 		amigatest = READ_LE_UINT16(ptr + 12);
