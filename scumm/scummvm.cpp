@@ -585,9 +585,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	VAR_VERB_ALLOWED = 0xFF;
 	VAR_CLICK_AREA = 0xFF;
 
-	// Set the RNG seed
-	_rnd.setSeed(_system->get_msecs());
-
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
 

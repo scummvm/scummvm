@@ -75,8 +75,10 @@ void hexdump(const byte * data, int len, int bytesPerLine) {
 	printf("|\n");
 }
 
-RandomSource::RandomSource(uint32 seed) {
-	_randSeed = seed;
+RandomSource::RandomSource() {
+	// Use system time as RNG seed. Normally not a good idea, if you are using
+	// a RNG for security purposes, but good enough for our purposes.
+	setSeed(time(0));
 }
 
 void RandomSource::setSeed(uint32 seed) {

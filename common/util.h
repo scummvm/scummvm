@@ -55,7 +55,7 @@ private:
 	uint32 _randSeed;
 
 public:
-	RandomSource(uint32 seed = 0xA943DE33);
+	RandomSource();
 	void setSeed(uint32 seed);
 	
 	/**
