@@ -95,8 +95,11 @@ void Engine::mainLoop() {
 					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
 					g_smush->clearUpdateNeeded();
 				}
-				if (g_smush->getFrame() > 0)
+				if (g_smush->getFrame() > 0) {
 					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+					if (SHOWFPS_GLOBAL)
+						g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+				}
 			}
 			g_driver->flipBuffer();
 		} else if (_mode == ENGINE_MODE_NORMAL) {
