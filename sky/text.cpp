@@ -1351,6 +1351,550 @@ e8fb:
 
 }
 
+char SkyText_v00303::getTextChar() {
+
+	//This code is based on disassembly of the v0.0303 binary.
+
+	if (getTBit())
+		goto ec6d;
+	if (getTBit())
+		goto ec2e;
+	if (getTBit())
+		goto ec21;
+	if (getTBit())
+		goto ec1e;
+   
+	return (char)0x20;
+
+ec1e:   
+	return (char)0x65;
+
+ec21:   
+	if (getTBit())
+		goto ec2b;
+   
+	return (char)0x74;
+
+ec2b:   
+	return (char)0x73;
+
+ec2e:   
+	if (getTBit())
+		goto ec56;
+	if (getTBit())
+		goto ec49;
+	if (getTBit())
+		goto ec46;
+   
+	return (char)0x6e;
+
+ec46:   
+	return (char)0x61;
+
+ec49:   
+	if (getTBit())
+		goto ec53;
+   
+	return (char)0x69;
+
+ec53:   
+	return (char)0x2e;
+
+ec56:   
+	if (getTBit())
+		goto ec6a;
+	if (getTBit())
+		goto ec67;
+   
+	return (char)0x6f;
+
+ec67:   
+	return (char)0x0;
+
+ec6a:   
+	return (char)0x45;
+
+ec6d:   
+	if (getTBit())
+		goto ece5;
+	if (getTBit())
+		goto ecb0;
+	if (getTBit())
+		goto ec99;
+	if (getTBit())
+		goto ec96;
+	if (getTBit())
+		goto ec93;
+   
+	return (char)0x72;
+
+ec93:   
+	return (char)0x75;
+
+ec96:   
+	return (char)0x68;
+
+ec99:   
+	if (getTBit())
+		goto ecad;
+	if (getTBit())
+		goto ecaa;
+   
+	return (char)0x49;
+
+ecaa:   
+	return (char)0x6d;
+
+ecad:   
+	return (char)0x6c;
+
+ecb0:   
+	if (getTBit())
+		goto ecce;
+	if (getTBit())
+		goto eccb;
+	if (getTBit())
+		goto ecc8;
+   
+	return (char)0x54;
+
+ecc8:   
+	return (char)0x53;
+
+eccb:   
+	return (char)0x52;
+
+ecce:   
+	if (getTBit())
+		goto ece2;
+	if (getTBit())
+		goto ecdf;
+  
+	return (char)0x64;
+
+ecdf:   
+	return (char)0x4e;
+
+ece2:   
+	return (char)0x41;
+
+ece5:   
+	if (getTBit())
+		goto ed5d;
+	if (getTBit())
+		goto ed28;
+	if (getTBit())
+		goto ed11;
+	if (getTBit())
+		goto ed0e;
+	if (getTBit())
+		goto ed0b;
+   
+	return (char)0x63;
+
+ed0b:   
+	return (char)0x4f;
+
+ed0e:   
+	return (char)0x44;
+
+ed11:   
+	if (getTBit())
+		goto ed25;
+	if (getTBit())
+		goto ed22;
+   
+	return (char)0x4c;
+
+ed22:   
+	return (char)0x43;
+
+ed25:   
+	return (char)0x79;
+
+ed28:   
+	if (getTBit())
+		goto ed46;
+	if (getTBit())
+		goto ed43;
+	if (getTBit())
+		goto ed40;
+   
+	return (char)0x67;
+
+ed40:   
+	return (char)0x27;
+
+ed43:   
+	return (char)0x55;
+
+ed46:   
+	if (getTBit())
+		goto ed5a;
+	if (getTBit())
+		goto ed57;
+   
+	return (char)0x48;
+
+ed57:   
+	return (char)0x21;
+
+ed5a:   
+	return (char)0x70;
+
+ed5d:   
+	if (getTBit())
+		goto edb7;
+	if (getTBit())
+		goto ed96;
+	if (getTBit())
+		goto ed89;
+	if (getTBit())
+		goto ed86;
+	if (getTBit())
+		goto ed83;
+   
+	return (char)0x4d;
+
+ed83:   
+	return (char)0x62;
+
+ed86:   
+	return (char)0x3f;
+
+ed89:   
+	if (getTBit())
+		goto ed93;
+   
+	return (char)0x76;
+
+ed93:   
+	return (char)0x66;
+
+ed96:   
+	if (getTBit())
+		goto edaa;
+	if (getTBit())
+		goto eda7;
+   
+	return (char)0x50;
+
+eda7:   
+	return (char)0x2c;
+
+edaa:   
+	if (getTBit())
+		goto edb4;
+   
+	return (char)0x77;
+
+edb4:   
+	return (char)0x47;
+
+edb7:   
+	if (getTBit())
+		goto edfd;
+	if (getTBit())
+		goto eddc;
+	if (getTBit())
+		goto edd9;
+	if (getTBit())
+		goto edd6;
+   
+	return (char)0x42;
+
+edd6:   
+	return (char)0x57;
+
+edd9:   
+	return (char)0x6b;
+
+eddc:   
+	if (getTBit())
+		goto edf0;
+	if (getTBit())
+		goto eded;
+   
+	return (char)0x46;
+
+eded:   
+	return (char)0x56;
+
+edf0:   
+	if (getTBit())
+		goto edfa;
+   
+	return (char)0x59;
+
+edfa:   
+	return (char)0x4b;
+
+edfd:   
+	if (getTBit())
+		goto ee39;
+	if (getTBit())
+		goto ee22;
+	if (getTBit())
+		goto ee1f;
+	if (getTBit())
+		goto ee1c;
+   
+	return (char)0x2d;
+
+ee1c:   
+	return (char)0x7a;
+
+ee1f:   
+	return (char)0x4a;
+
+ee22:   
+	if (getTBit())
+		goto ee36;
+	if (getTBit())
+		goto ee33;
+   
+	return (char)0x71;
+
+ee33:   
+	return (char)0x2b;
+
+ee36:   
+	return (char)0x6a;
+
+ee39:   
+	if (getTBit())
+		goto ee93;
+	if (getTBit())
+		goto ee68;
+	if (getTBit())
+		goto ee5b;
+	if (getTBit())
+		goto ee58;
+   
+	return (char)0x5a;
+
+ee58:   
+	return (char)0x23;
+
+ee5b:   
+	if (getTBit())
+		goto ee65;
+   
+	return (char)0x51;
+
+ee65:   
+	return (char)0x78;
+
+ee68:   
+	if (getTBit())
+		goto ee86;
+	if (getTBit())
+		goto ee83;
+	if (getTBit())
+		goto ee80;
+   
+	return (char)0x3a;
+
+ee80:   
+	return (char)0x29;
+
+ee83:   
+	return (char)0x28;
+
+ee86:   
+	if (getTBit())
+		goto ee90;
+   
+	return (char)0x3c;
+
+ee90:   
+	return (char)0x58;
+
+ee93:   
+	if (getTBit())
+		goto eee3;
+	if (getTBit())
+		goto eec2;
+	if (getTBit())
+		goto eeb5;
+	if (getTBit())
+		goto eeb2;
+   
+	return (char)0x2a;
+
+eeb2:   
+	return (char)0x60;
+
+eeb5:   
+	if (getTBit())
+		goto eebf;
+   
+	return (char)0x7d;
+
+eebf:   
+	return (char)0x3d;
+
+eec2:   
+	if (getTBit())
+		goto eed6;
+	if (getTBit())
+		goto eed3;
+   
+	return (char)0x32;
+
+eed3:   
+	return (char)0x30;
+
+eed6:   
+	if (getTBit())
+		goto eee0;
+   
+	return (char)0x5d;
+
+eee0:   
+	return (char)0x31;
+
+eee3:   
+	if (getTBit())
+		goto ef1f;
+	if (getTBit())
+		goto ef08;
+	if (getTBit())
+		goto ef05;
+	if (getTBit())
+		goto ef02;
+   
+	return (char)0x7e;
+
+ef02:   
+	return (char)0x33;
+
+ef05:   
+	return (char)0x7f;
+
+ef08:   
+	if (getTBit())
+		goto ef1c;
+	if (getTBit())
+		goto ef19;
+   
+	return (char)0x39;
+
+ef19:   
+	return (char)0x34;
+
+ef1c:   
+	return (char)0x2f;
+
+ef1f:   
+	if (getTBit())
+		goto ef5b;
+	if (getTBit())
+		goto ef44;
+	if (getTBit())
+		goto ef41;
+	if (getTBit())
+		goto ef3e;
+   
+	return (char)0x38;
+
+ef3e:   
+	return (char)0x5e;
+
+ef41:   
+	return (char)0x26;
+
+ef44:   
+	if (getTBit())
+		goto ef58;
+	if (getTBit())
+		goto ef55;
+   
+	return (char)0x35;
+
+ef55:   
+	return (char)0x36;
+
+ef58:   
+	return (char)0x3e;
+
+ef5b:   
+	if (getTBit())
+		goto ef8d;
+	if (getTBit())
+		goto ef80;
+	if (getTBit())
+		goto ef7d;
+	if (getTBit())
+		goto ef7a;
+   
+	return (char)0x40;
+
+ef7a:   
+	return (char)0x37;
+
+ef7d:   
+	return (char)0x5f;
+
+ef80:   
+	if (getTBit())
+		goto ef8a;
+   
+	return (char)0x5c;
+
+ef8a:   
+	return (char)0x24;
+
+ef8d:   
+	if (getTBit())
+		goto efb5;
+	if (getTBit())
+		goto efa8;
+	if (getTBit())
+		goto efa5;
+   
+	return (char)0x5b;
+
+efa5:   
+	return (char)0x80;
+
+efa8:   
+	if (getTBit())
+		goto efb2;
+   
+	return (char)0x81;
+
+efb2:   
+	return (char)0x22;
+
+efb5:   
+	if (getTBit())
+		goto efc9;
+	if (getTBit())
+		goto efc6;
+   
+	return (char)0x25;
+
+efc6:   
+	return (char)0x82;
+
+efc9:   
+	if (getTBit())
+		goto efd3;
+   
+	return (char)0x7b;
+
+efd3:   
+	if (getTBit())
+		goto efdd;
+   
+	return (char)0x9;
+
+efdd:   
+	return (char)0x7c;
+
+}
+
 char SkyText_v00331::getTextChar() {
 
 	//This code is based on disassembly of the v0.0331 binary.
