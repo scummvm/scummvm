@@ -188,8 +188,8 @@ SCUMM
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
 * Document and fix AKOS differences in Humongous Entertainment games
 * Support various newer Humongous Entertainment games
-* Implement file related opcode stubs needed for Humongous games
-* Add support for graphics codecs used in 3DO versions of Humongous games
+* Add support for returning the correct music status for the digital music used 
+  in 3DO versions of Humongous games.
 * Proper handling of .tlk files for Humongous games
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
@@ -210,7 +210,7 @@ SCUMM
   piratehook still on ground after pick up")
 * V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
   increments of 8 pixels). See bug #629417.
-* Implement o6_actorOps case 218 as used in Humongous games
+* Fix bugs in o6_actorOps case 218 implementation as used in Humongous games
 * Add method of setting initial debug channels from command-line
 * COMI (maybe V7 games, too?): "Fix" CHARSET_1 behaviour when the room scrolls.
   In particular, when text is drawn via CHARSET_1 and then scrolling takes
