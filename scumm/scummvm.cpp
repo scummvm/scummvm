@@ -411,6 +411,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_languageIndex = NULL;
 	memset(_transText, 0, sizeof(_transText));
 	_bcr = NULL;
+	_2byteFontPtr = 0;
 
 	//
 	// Init all VARS to 0xFF
