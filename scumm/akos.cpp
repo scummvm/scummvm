@@ -1223,8 +1223,6 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	Common::Rect clip, src, dst;
 
 	debug(0, "codec32(%d, %d)", xmoveCur, ymoveCur);
-	// Disable for now, crashes too much.
-	return 0;
 
 	if (!_mirror) {
 		dst.left = (_actorX - xmoveCur - _width) + 1;
@@ -1249,9 +1247,12 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 
 	_vm->markRectAsDirty(kMainVirtScreen, dst, _actorID);
 
-	byte *dstptr = _outptr + dst.left + dst.top * _outwidth;
+	if (_draw_top > dst.top)
+		_draw_top = dst.top;
+	if (_draw_bottom < dst.bottom)
+		_draw_bottom = dst.bottom;
 
-	_vm->gdi.decompressImageHE(dstptr, _outwidth, &dst, _srcptr, &src);
+	_vm->gdi.decompressImageHE(_outptr, _outwidth, &dst, _srcptr, &src);
 	return 0;
 }
 
