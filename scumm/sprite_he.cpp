@@ -246,10 +246,10 @@ int ScummEngine_v90he::spriteInfoGet_field_14(int spriteId) {
 	return _spriteTable[spriteId].field_14;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_18(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_zorderPriority(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return _spriteTable[spriteId].field_18;
+	return _spriteTable[spriteId].zorderPriority;
 }
 
 int ScummEngine_v90he::spriteInfoGet_grp_tx(int spriteId) {
@@ -294,10 +294,10 @@ int ScummEngine_v90he::spriteInfoGet_zoom(int spriteId) {
 	return _spriteTable[spriteId].zoom;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_78(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_delayAmount(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return _spriteTable[spriteId].field_78;
+	return _spriteTable[spriteId].delayAmount;
 }
 
 int ScummEngine_v90he::spriteInfoGet_field_7C(int spriteId) {
@@ -498,10 +498,10 @@ void ScummEngine_v90he::spriteInfoSet_field_44(int spriteId, int value1, int val
 	_spriteTable[spriteId].field_44 = value2;
 }
 
-void ScummEngine_v90he::spriteInfoSet_field_18(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_zorderPriority(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	_spriteTable[spriteId].field_18 = value;
+	_spriteTable[spriteId].zorderPriority = value;
 }
 
 void ScummEngine_v90he::spriteInfoSet_Inc_tx_ty(int spriteId, int value1, int value2) {
@@ -629,11 +629,11 @@ void ScummEngine_v90he::spriteInfoSet_flagHasImage(int spriteId, int value) {
 		_spriteTable[spriteId].flags &= ~(kSFChanged | kSFImageless);
 }
 
-void ScummEngine_v90he::spriteInfoSet_field_78_64(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_delay(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	_spriteTable[spriteId].field_78 = value;
-	_spriteTable[spriteId].field_64 = value;
+	_spriteTable[spriteId].delayAmount = value;
+	_spriteTable[spriteId].delayCount = value;
 }
 
 void ScummEngine_v90he::spriteInfoSet_setClassFlags(int spriteId, int value) {
@@ -687,14 +687,13 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].dy = 0;
 	_spriteTable[spriteId].field_44 = 0;
 	_spriteTable[spriteId].group_num = 0;
-	_spriteTable[spriteId].field_78 = 0;
-	_spriteTable[spriteId].field_64 = 0;
+	_spriteTable[spriteId].delayAmount = 0;
+	_spriteTable[spriteId].delayCount = 0;
 	_spriteTable[spriteId].class_flags = 0;
 	_spriteTable[spriteId].field_14 = 0;
 	_spriteTable[spriteId].field_7C = 0;
 	_spriteTable[spriteId].field_80 = 0;
-	// freddicove specific
-	//_spriteTable[spriteId].field_18 = 0;
+	_spriteTable[spriteId].zorderPriority = 0;
 	_spriteTable[spriteId].field_88 = 0;
 }
 
@@ -758,7 +757,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_1(int spriteGroupId, int value) {
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId)
-			_spriteTable[i].field_18 = value;
+			_spriteTable[i].zorderPriority = value;
 	}
 }
 
@@ -800,8 +799,8 @@ void ScummEngine_v90he::spriteGroupSet_case0_5(int spriteGroupId, int value) {
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId) {
-			_spriteTable[i].field_78 = value;
-			_spriteTable[i].field_64 = value;
+			_spriteTable[i].delayAmount = value;
+			_spriteTable[i].delayCount = value;
 		}
 	}
 }
@@ -1043,7 +1042,7 @@ void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
-			if ((!unkFlag || spi->field_18 >= 0) && (spi->flags & kSF23)) {
+			if ((!unkFlag || spi->zorderPriority >= 0) && (spi->flags & kSF23)) {
 				bool needRedraw = false;
 				int lp = MIN(79, spi->bbox.left / 8);
 				int rp = MIN(79, (spi->bbox.right + 7) / 8);
@@ -1074,12 +1073,12 @@ void ScummEngine_v90he::spritesUpdateImages() {
 			}			
 		}
 		if (spi->flags & kSF22) {
-			if (spi->field_78) {
-				--spi->field_64;
-				if (spi->field_64) 
+			if (spi->delayAmount) {
+				--spi->delayCount;
+				if (spi->delayCount) 
 					continue;
 
-				spi->field_64 = spi->field_78;
+				spi->delayCount = spi->delayAmount;
 			}
 			int state = spi->res_state;
 			++spi->res_state;
@@ -1130,7 +1129,7 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 				groupZorder = 0;
 
 			spi->id = i;
-			spi->zorder = spi->field_18 + groupZorder;
+			spi->zorder = spi->zorderPriority + groupZorder;
 
 			_activeSpritesTable[_numSpritesToProcess++] = spi;
 		}

@@ -923,14 +923,14 @@ protected:
 	int spriteInfoGet_resState(int spriteId);
 	int spriteInfoGet_groupNum(int spriteId);
 	int spriteInfoGet_field_14(int spriteId);
-	int spriteInfoGet_field_18(int spriteId);
+	int spriteInfoGet_zorderPriority(int spriteId);
 	int spriteInfoGet_grp_tx(int spriteId);
 	int spriteInfoGet_grp_ty(int spriteId);
 	int spriteInfoGet_field_44(int spriteId);
 	int spriteInfoGet_field_54(int spriteId);
 	int spriteInfoGet_wizSize(int spriteId);
 	int spriteInfoGet_zoom(int spriteId);
-	int spriteInfoGet_field_78(int spriteId);
+	int spriteInfoGet_delayAmount(int spriteId);
 	int spriteInfoGet_field_7C(int spriteId);
 	int spriteInfoGet_field_80(int spriteId);
 	int spriteInfoGet_field_88(int spriteId, int type);
@@ -957,7 +957,7 @@ protected:
 	void spriteInfoSet_dx_dy(int spriteId, int value1, int value2);
 	void spriteInfoSet_field_54(int spriteId, int value);
 	void spriteInfoSet_field_44(int spriteId, int value1, int value2);
-	void spriteInfoSet_field_18(int spriteId, int value);
+	void spriteInfoSet_zorderPriority(int spriteId, int value);
 	void spriteInfoSet_Inc_tx_ty(int spriteId, int value1, int value2);
 	void spriteInfoSet_zoom(int spriteId, int value);
 	void spriteInfoSet_rotAngle(int spriteId, int value);
@@ -969,7 +969,7 @@ protected:
 	void spriteInfoSet_flagYFlipped(int spriteId, int value);
 	void spriteInfoSet_flagXFlipped(int spriteId, int value);
 	void spriteInfoSet_flagHasImage(int spriteId, int value);
-	void spriteInfoSet_field_78_64(int spriteId, int value);
+	void spriteInfoSet_delay(int spriteId, int value);
 	void spriteInfoSet_setClassFlags(int spriteId, int value);
 	void spriteInfoSet_setClassFlag(int spriteId, int classId, int toggle);
 	void spriteInfoSet_resetClassFlags(int spriteId);

@@ -73,7 +73,7 @@ struct SpriteInfo {
 	int res_state;
 	int group_num;
 	int field_14;
-	int field_18;
+	int zorderPriority;
 	Common::Rect bbox;
 	int dx;
 	int dy;
@@ -88,12 +88,12 @@ struct SpriteInfo {
 	int res_wiz_states;
 	int rot_angle;
 	int zoom;
-	int field_64;
+	int delayCount;
 	int cur_rot_angle;
 	int cur_zoom;
 	int imgFlags;
 	int field_74;
-	int field_78;
+	int delayAmount;
 	int field_7C;
 	int field_80;
 	int class_flags;

@@ -1770,7 +1770,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_78_64(spriteId, args[0]);
+			spriteInfoSet_delay(spriteId, args[0]);
 		break;
 	case 6:
 		args[1] = pop();
@@ -1912,7 +1912,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_18(spriteId, args[0]);
+			spriteInfoSet_zorderPriority(spriteId, args[0]);
 		break;
 	case 60:
 		args[1] = pop();
@@ -2522,7 +2522,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 4:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_78(spriteId));
+			push(spriteInfoGet_delayAmount(spriteId));
 		else
 			push(1);
 		break;
@@ -2627,7 +2627,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 59:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_18(spriteId));
+			push(spriteInfoGet_zorderPriority(spriteId));
 		else
 			push(0);
 		break;
