@@ -452,7 +452,7 @@ void ScummEngine_v90he::o90_getSegmentAngle() {
 }
 
 void ScummEngine_v90he::o90_startScriptUnk() {
-	int args[16];
+	int args[24];
 	int script, cycle;
 	byte flags;
 
@@ -464,7 +464,7 @@ void ScummEngine_v90he::o90_startScriptUnk() {
 }
 
 void ScummEngine_v90he::o90_jumpToScriptUnk() {
-	int args[16];
+	int args[24];
 	int script, cycle;
 	byte flags;
 
@@ -1119,6 +1119,26 @@ void ScummEngine_v90he::o90_unknown28() {
 	debug(1,"o90_unknown28 stub (%d)", subOp);
 }
 
+int ScummEngine_v90he::getWizImageStates(int resnum) {
+	const uint8 *dataPtr = getResourceAddress(rtImage, resnum);
+	assert(dataPtr);
+	if (READ_UINT32(dataPtr) == MKID('MULT')) {
+		const byte *offs, *wrap;
+
+		wrap = findResource(MKID('WRAP'), dataPtr);
+		if (wrap == NULL)
+			return 1;
+
+		offs = findResourceData(MKID('OFFS'), wrap);
+		if (offs == NULL)
+			return 1;
+
+		return(getResourceDataSize(offs) / 4);
+	} else {
+		return 1;
+	}
+}
+
 void ScummEngine_v90he::o90_unknown29() {
 	int state, resId;
 	uint32 w, h;
@@ -1153,8 +1173,8 @@ void ScummEngine_v90he::o90_unknown29() {
 		push(h);
 		break;
 	case 6:
-		pop();
-		push(0);
+		resId = pop();
+		push(getWizImageStates(resId));
 		break;
 	case 15:
 		pop();

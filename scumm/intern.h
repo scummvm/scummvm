@@ -860,6 +860,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
+	int getWizImageStates(int resnum);
 	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
 	void displayWizComplexImage(const WizParameters *params);
 	void processWizImage(const WizParameters *params);

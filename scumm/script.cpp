@@ -126,10 +126,10 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 void ScummEngine::initializeLocals(int slot, int *vars) {
 	int i;
 	if (!vars) {
-		for (i = 0; i < 16; i++)
+		for (i = 0; i < 25; i++)
 			vm.localvar[slot][i] = 0;
 	} else {
-		for (i = 0; i < 16; i++)
+		for (i = 0; i < 25; i++)
 			vm.localvar[slot][i] = vars[i];
 	}
 }
@@ -549,7 +549,7 @@ int ScummEngine::readVar(uint var) {
 		}
 
 		if (_heversion >= 72)
-			checkRange(24, 0, var, "Local variable %d out of range(r)");
+			checkRange(25, 0, var, "Local variable %d out of range(r)");
 		else
 			checkRange(20, 0, var, "Local variable %d out of range(r)");
 		return vm.localvar[_currentScript][var];
@@ -628,7 +628,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		}
 
 		if (_heversion >= 72)
-			checkRange(24, 0, var, "Local variable %d out of range(w)");
+			checkRange(25, 0, var, "Local variable %d out of range(w)");
 		else
 			checkRange(20, 0, var, "Local variable %d out of range(w)");
 
@@ -706,7 +706,7 @@ void ScummEngine::runInventoryScript(int i) {
 	if (_version <= 2) {
 		redrawV2Inventory();
 	} else {
-		int args[16];
+		int args[24];
 		memset(args, 0, sizeof(args));
 		args[0] = i;
 		if (VAR(VAR_INVENTORY_SCRIPT)) {
@@ -933,7 +933,7 @@ void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 
 void ScummEngine::checkAndRunSentenceScript() {
 	int i;
-	int localParamList[16];
+	int localParamList[24];
 	const ScriptSlot *ss;
 	int sentenceScript;
 	if (_version <= 2)
@@ -974,7 +974,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 }
 
 void ScummEngine::runInputScript(int a, int cmd, int mode) {
-	int args[16];
+	int args[24];
 	int verbScript;
 
 	if (_version <= 2) {

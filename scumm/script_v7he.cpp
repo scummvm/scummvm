@@ -1019,7 +1019,7 @@ void ScummEngine::polygonStore(int id, bool flag, int vert1x, int vert1y, int ve
 	wp->bound.bottom = -10000;
 
 	// compute bounding box
-	for (int j = 0; j < 5; j++) {
+	for (int j = 0; j < wp->numVerts; j++) {
 		Common::Rect r(wp->vert[j].x, wp->vert[j].y, wp->vert[j].x + 1, wp->vert[j].y + 1);
 		wp->bound.extend(r);
 	}
@@ -1060,7 +1060,7 @@ bool ScummEngine_v70he::polygonDefined(int id) {
 }
 
 bool ScummEngine_v70he::polygonContains(const WizPolygon &pol, int x, int y) {
-	int pi = pol.numVerts - 1;
+	int pi = pol.numVerts;
 	bool diry = (y < pol.vert[pi].y);
 	bool curdir;
 	bool r = false;
