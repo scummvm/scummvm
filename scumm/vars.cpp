@@ -62,7 +62,6 @@ void ScummEngine::setupScummVars() {
 	if (!(_gameId == GID_LOOM && _features & GF_MACINTOSH))
 		VAR_SCROLL_SCRIPT = 27;
 
-	VAR_SCROLL_SCRIPT = 27;
 	VAR_ENTRY_SCRIPT = 28;
 	VAR_ENTRY_SCRIPT2 = 29;
 	VAR_EXIT_SCRIPT = 30;
