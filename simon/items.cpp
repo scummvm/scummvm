@@ -1322,7 +1322,7 @@ void SimonState::o_177()
 
 			talk_with_text(a, b, s, tv->a, tv->b, tv->c);
 		}
-	} else if (_game == GAME_SIMON2WIN || _game == GAME_SIMON2DOS) {
+	} else if (_game & GAME_SIMON2) {
 		uint a = getVarOrByte();
 		uint b = getVarOrByte();
 		Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
