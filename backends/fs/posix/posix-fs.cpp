@@ -95,10 +95,11 @@ FSList *POSIXFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 	DIR *dirp = opendir(_path.c_str());
 	struct stat st;
-	assert(dirp != 0);
 
 	struct dirent *dp;
 	FSList *myList = new FSList();
+
+	if (dirp == NULL) return myList;
 	
 	// ... loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
