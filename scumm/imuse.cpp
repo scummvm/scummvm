@@ -1495,8 +1495,13 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			// This should clear a trigger that's been set up
 			// with ImSetTrigger (cmd == 17). Seems to work....
 			return ImClearTrigger (b, d);
-		case 20: // FIXME: Deferred command system? - Sam and Max
-			return 0;
+		case 20:
+			// Sam & Max: Deferred Command
+			// FIXME: Right now this acts as an immediate command.
+			// The significance of parameter b is unknown.
+			warning ("Incomplete support for iMuse::do_command(20)");
+			return do_command (c, d, e, f, g, h, 0, 0);
+			// return 0;
 		case 2:
 		case 3:
 			return 0;
