@@ -408,6 +408,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
+	{"22d07d6c386c9c25aca5dac2a0c0d94b", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (SW).prg"},
 	{"2e85f7aa054930c692a5b1bed1dfc295", "Backyard Football 2002 (Demo Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // Football2002
 	{"32709cbeeb3044b34129950860a83f14", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated)", GID_HEGAME, 6, 99, 61, MDT_NONE, // FIXME: number of actors
@@ -416,18 +418,16 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // PajamaNHD
 	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_PUTTDEMO, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"3905799e081b80a61d4460b7b733c206", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (U).prg"},
 	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"4ce2d5b355964bbcb5e5ce73236ef868", "Freddi Fish 5: The Case of the Creature of Coral Cave (Updated Ru)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // FIXME: number of actors
 	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Freddi Fish and Luther's Maze Madness (Updated)", GID_HEGAME, 6, 100, 60, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"4f101be44a2a2323ae679e34a7c3f634", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (SW).nes"},
 	{"51305e929e330e24a75a0351c8f9975e", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_HEGAME, 6, 99, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"59293b8524faee354f6ce7db9b5460d4", "Maniac Mansion (NES F)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (F).nes"},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
 	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Demo Alt)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
@@ -442,6 +442,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // FIXME: number of actors
 	{"7f45ddd6dbfbf8f80c0c0efea4c295bc", "Maniac Mansion (v1)", GID_MANIAC, 1, 0, 25, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, 0, 0},
+	{"81bbfa181184cb494e7a81dcfa94fbd9", "Maniac Mansion (NES F)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (F).prg"},
 	{"86c9902b7bec1a17926d4dae85beaa45", "Let's Explore the Airport with Buzzy (Demo) (puttputt cd)", GID_HEGAME, 6, 71, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"8e3241ddd6c8dadf64305e8740d45e13", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 100, 60, MDT_NONE,
@@ -452,8 +454,6 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo (Updated)", GID_FREDDI4, 6, 98, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"9a7f9443a7372f09f325c96176d9fec3", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (E).nes"},
 	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
 	{"9c92eeaf517a31b7221ec2546ab669fd", "Putt-Putt Goes To The Moon (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
@@ -476,10 +476,10 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"d7ab7cd6105546016e6a0d46fb36b964", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // PJSamDemo
+	{"d8d07efcb88f396bee0b402b10c3b1c9", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (E).prg"},
 	{"e41de1c2a15abbcdbf9977e2d7e8a340", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated Ru)", GID_HEGAME, 6, 100, 61, MDT_NONE, // FIXME: number of actors
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // FreddiCHSH
-	{"fcd1fb5aaae86dc0d23c624cd66c0aef", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (U).nes"},
 #endif
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0, 0}
 };
@@ -499,10 +499,10 @@ struct SubstResFileNames {
 
 static SubstResFileNames substResFileNameTable[] = {
 	{ "Intentionally/left/blank", "", kGenMacNoParens},
-	{ "00.LFL", "Maniac Mansion (E).nes", kGenAsIs },
-	{ "00.LFL", "Maniac Mansion (F).nes", kGenAsIs },
-	{ "00.LFL", "Maniac Mansion (SW).nes", kGenAsIs },
-	{ "00.LFL", "Maniac Mansion (U).nes", kGenAsIs },
+	{ "00.LFL", "Maniac Mansion (E).prg", kGenAsIs },
+	{ "00.LFL", "Maniac Mansion (F).prg", kGenAsIs },
+	{ "00.LFL", "Maniac Mansion (SW).prg", kGenAsIs },
+	{ "00.LFL", "Maniac Mansion (U).prg", kGenAsIs },
 	{ "racedemo", "500demo", kGenPC},
 	{ "Spydemo", "foxdemo", kGenPC},
 	{ "Spydemo", "FoxDemo", kGenMac },

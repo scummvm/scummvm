@@ -766,7 +766,7 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 	if ((resOffset(res) == 0) && (resLength(res) == 0))
 		return 0;	/* there are 8 scripts that are zero bytes long, so we should skip them */
 
-	File::seek(16 + resOffset(res),SEEK_SET);
+	File::seek(resOffset(res),SEEK_SET);
 
 	switch (res->type) {
 	case NES_GLOBDATA:
@@ -794,8 +794,8 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 					reslen += write_byte(output, FileReadByte());
 		}
 
-		if (File::pos() - resOffset(res) - 16 != resLength(res))
-			error("extract_resource - length mismatch while extracting graphics resource (was %04X, should be %04X)", File::pos() - resOffset(res) - 16, resLength(res));
+		if (File::pos() - resOffset(res) != resLength(res))
+			error("extract_resource - length mismatch while extracting graphics resource (was %04X, should be %04X)", File::pos() - resOffset(res), resLength(res));
 
 		break;
 
@@ -849,8 +849,8 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 		} else
 			error("extract_resource - unknown sound type %d/%d detected",val,cnt);
 
-		if (File::pos() - resOffset(res) - 16 != resLength(res))
-			error("extract_resource - length mismatch while extracting sound resource (was %04X, should be %04X)", File::pos() - resOffset(res) - 16, resLength(res));
+		if (File::pos() - resOffset(res) != resLength(res))
+			error("extract_resource - length mismatch while extracting sound resource (was %04X, should be %04X)", File::pos() - resOffset(res), resLength(res));
 
 		break;
 
@@ -1136,23 +1136,22 @@ bool ScummNESFile::open(const char *filename, AccessMode mode) {
 	uint8 md5sum[16];
 
 	if (_ROMset == kROMsetNum) {
-		// calculate md5 of first 900 bytes which is enough to tell the difference
-		if (md5_file(filename, md5sum, 0, 900)) {
+		if (md5_file(filename, md5sum)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 			}
 
-			if (!strcmp(md5str, "27b1163056a66b16f862345ecb433890")) {
+			if (!strcmp(md5str, "3905799e081b80a61d4460b7b733c206")) {
 				_ROMset = kROMsetUSA;
 				debug(1, "ROM contents verified as Maniac Mansion (USA)");
-			} else if (!strcmp(md5str, "3a831207809d1dc8e6ca323102827ec1")) {
+			} else if (!strcmp(md5str, "d8d07efcb88f396bee0b402b10c3b1c9")) {
 				_ROMset = kROMsetEurope;
 				debug(1, "ROM contents verified as Maniac Mansion (Europe)");
-			} else if (!strcmp(md5str, "96129094b3e09b7e3292b132bf345b17")) {
+			} else if (!strcmp(md5str, "22d07d6c386c9c25aca5dac2a0c0d94b")) {
 				_ROMset = kROMsetSweden;
 				debug(1, "ROM contents verified as Maniac Mansion (Sweden)");
-			} else if (!strcmp(md5str, "95274b9e82c15b1be98ba6e99122196d")) {
+			} else if (!strcmp(md5str, "81bbfa181184cb494e7a81dcfa94fbd9")) {
 				_ROMset = kROMsetFrance;
 				debug(2, "ROM contents verified as Maniac Mansion (France)");
 			} else {
