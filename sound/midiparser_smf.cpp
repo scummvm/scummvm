@@ -54,9 +54,6 @@ public:
 //
 // MidiParser_SMF implementation
 //
-// Much of this code is adapted from the XMIDI
-// implementation from the exult project.
-//
 //////////////////////////////////////////////////
 
 static byte command_lengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
