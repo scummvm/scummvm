@@ -16,8 +16,8 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include <unistd.h>
-#include <fcntl.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 struct lab_header {
   long magic;
@@ -34,35 +34,43 @@ struct lab_entry {
 };
 
 int main(int argc, char **argv) {
-  int infile, outfile;
+  FILE *infile, *outfile;
   struct lab_header head;
   struct lab_entry *entries;
   char *str_table;
   int i;
   off_t offset;
 
-  infile = open(argv[1], O_RDONLY);
-  if (infile < 0)
+  infile = fopen(argv[1], "rb");
+  if (infile == 0)
+  {
+    printf("can't open source file: %s\n", argv[1]);
     exit(1);
-
-  read(infile, &head, sizeof(head));
-  if (head.magic != 'NBAL')
-    exit(1);
-
-  entries = (struct lab_entry *)
-    malloc(head.num_entries * sizeof(struct lab_entry));
-  read(infile, entries, head.num_entries * sizeof(struct lab_entry));
-
-  str_table = (char *) malloc(head.string_table_size);
-  read(infile, str_table, head.string_table_size);
-
-  for (i = 0; i < head.num_entries; i++) {
-    outfile = open(str_table + entries[i].fname_offset,
-		   O_CREAT | O_TRUNC | O_WRONLY, 0666);
-    offset = entries[i].start;
-    sendfile(outfile, infile, &offset, entries[i].size);
-    close(outfile);
   }
 
+  fread(&head, 1, sizeof(head), infile);
+  if (head.magic != 'NBAL')
+  {
+    printf("its not LABN header in source file");
+    exit(1);
+  }
+
+  entries = (struct lab_entry *)malloc(head.num_entries * sizeof(struct lab_entry));
+  fread(entries, 1, head.num_entries * sizeof(struct lab_entry), infile);
+
+  str_table = (char *) malloc(head.string_table_size);
+  fread(str_table, 1, head.string_table_size, infile);
+
+  for (i = 0; i < head.num_entries; i++) {
+    outfile = fopen(str_table + entries[i].fname_offset, "wb");
+    offset = entries[i].start;
+    char *buf = (char *)malloc(entries[i].size);
+    fseek(infile, offset, SEEK_SET);
+    fread(buf, 1, entries[i].size, infile);
+    fwrite(buf, 1, entries[i].size, outfile);
+    fclose(outfile);
+  }
+
+  fclose(infile);
   return 0;
 }
