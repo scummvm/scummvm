@@ -229,6 +229,7 @@ enum MouseButtonStatus {
 };
 
 class Scumm : public Engine {
+	friend void NORETURN CDECL error(const char *s, ...);	// FIXME - ugly but error() accesses g_scumm...
 public:
 	/* Put often used variables at the top.
 	 * That results in a shorter form of the opcode
@@ -433,9 +434,12 @@ public:
 	void heapClear(int mode);
 	void unkHeapProc2(int a, int b);
 
+
+protected:
 	/* Script VM - should be in Script class */
+
 	uint32 _localScriptList[NUM_LOCALSCRIPT];
-	byte *_scriptPointer, *_scriptOrgPointer, *_scriptPointerStart;
+	byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _numNestedScripts, _currentScript;
 	uint16 _curExecScript;
 	byte **_lastCodePtr;
@@ -448,8 +452,12 @@ public:
 
 	void initializeLocals(int slot, int *vars);
 	int	getScriptSlot();
+
+public:
 	void runScript(int script, int a, int b, int *lvarptr);
 	void stopScriptNr(int script);
+
+protected:
 	void runScriptNested(int script);
 	void executeScript();	
 	void updateScriptPtr();
@@ -464,7 +472,9 @@ public:
 	void setResult(int result);
 	void push(int a);
 	int pop();
-	virtual int readVar(uint var);
+public:
+	virtual int readVar(uint var);	// FIXME - should be protected but scumm/dialogs.cpp uses it
+protected:
 	virtual void writeVar(uint var, int value);
 	void runHook(int i);
 	bool isScriptInUse(int script);
@@ -474,7 +484,9 @@ public:
 	void runAllScripts();
 	void cutscene(int *args);
 	void endCutscene();
-	void exitCutscene();
+public:
+	void exitCutscene();	// FIXME - should be protected but ScummRenderer destructor uses it
+protected:
 	void runExitScript();
 	void runEntryScript();
 
@@ -484,13 +496,16 @@ public:
 	void killScriptsAndResources();
 	void checkAndRunSentenceScript();
 	void decreaseScriptDelay(int amount);
-	bool isScriptRunning(int script);
+public:
+	bool isScriptRunning(int script);	// FIXME - should be protected but Sound::startTalkSound uses this
+protected:
 	bool isRoomScriptRunning(int script);
 	void copyScriptString(byte *dst);
 	int resStrLen(const byte *src) const;
 	void doSentence(int c, int b, int a);
 	void setStringVars(int i);
 
+public:
 	/* Script VM or Object class? */
 	void stopObjectCode();
 	void stopObjectScript(int script);
