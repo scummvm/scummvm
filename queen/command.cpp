@@ -95,11 +95,11 @@ void CmdState::init() {
 
 Command::Command(QueenEngine *vm)
 	: _vm(vm) {
-
 	_cmdText._vm = vm;
 }
 
 void Command::clear(bool clearTexts) {
+	debug(6, "Command::clear(%d)", clearTexts);
 	_cmdText.clear();
 	if (clearTexts) {
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
@@ -152,6 +152,7 @@ void Command::executeCurrentAction() {
 
 	if (comMax == 0) {
 		sayInvalidAction(_state.selAction, _state.subject[0], _state.subject[1]);
+		clear(true);
 		cleanupCurrentAction();
 		return;
 	}
@@ -852,7 +853,7 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 		if (subj1 < 0) {
 			_vm->logic()->makeJoeSpeak(14);
 		} else {
-			int16 img = _vm->logic()->objectData(subj2)->image;
+			int16 img = _vm->logic()->objectData(subj1)->image;
 			if (img == -4 || img == -3) {
 				// Trying to get a person
 				_vm->logic()->makeJoeSpeak(20);

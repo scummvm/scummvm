@@ -749,7 +749,7 @@ void Display::horizontalScroll(int16 scroll) {
 }
 
 void Display::setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
-	if (!_fullRefresh) {
+	if (_fullRefresh < 2) {
 		uint16 ex = (x + w - 1) / D_BLOCK_W;
 		uint16 ey = (y + h - 1) / D_BLOCK_H;
 		x /= D_BLOCK_W;

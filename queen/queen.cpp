@@ -316,7 +316,6 @@ void QueenEngine::go() {
 	for (;;) {
 		// queen.c lines 4080-4104
 		if (_logic->newRoom() > 0) {
-			_display->clearTexts(151, 151);
 			_logic->update();
 			_logic->oldRoom(_logic->currentRoom());
 			_logic->currentRoom(_logic->newRoom());

@@ -965,6 +965,9 @@ void Cutaway::run(char *nextFilename) {
 		}
 
 	} // for()
+	
+	_vm->display()->clearTexts(0, 198);
+	// XXX lines 1887-1895 in cutaway.c
 
 	stop();
 
