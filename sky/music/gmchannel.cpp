@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/util.h"
 #include "gmchannel.h"
 
 SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab)
