@@ -8,6 +8,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  SCUMM:
    - Fixed wrong actor animation in Full Throttle INSANE
+ 
+ PocketPC:
+   - Fixed several issues introduced in 0.7.0 [Arisme, feel free to fill in details]
 
 0.7.0 (2004-12-24)
  New Games:
