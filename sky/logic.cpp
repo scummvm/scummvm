@@ -146,7 +146,7 @@ void SkyLogic::logicScript() {
 void SkyLogic::autoRoute() {
 
 	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
-	if (!_compact->downFlag) { // route ok
+	if (_compact->downFlag != 1) { // 0 = route ok, 2 = empty route
 		_compact->grafixProg.pos = 0;
 		_compact->grafixProg.ptrTarget = 0;
 		_compact->grafixProg.ptrType = AUTOROUTE;
