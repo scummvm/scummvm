@@ -144,12 +144,14 @@ void *ResMan::openFetchRes(uint32 id) {
 void ResMan::dumpRes(uint32 id) {
 	char outn[30];
 	sprintf(outn, "DUMP%08X.BIN", id);
-	FILE *outf = fopen( outn, "wb");
-	resOpen(id);
-	MemHandle *memHandle = resHandle(id);
-	fwrite(memHandle->data, 1, memHandle->size, outf);
-	fclose(outf);
-	resClose(id);
+	File outf;
+	if (outf.open(outn, "", File::kFileWriteMode)) {
+		resOpen(id);
+		MemHandle *memHandle = resHandle(id);
+		outf.write(memHandle->data, memHandle->size);
+		outf.close();
+		resClose(id);
+	}
 }
 
 Header *ResMan::lockScript(uint32 scrID) {
