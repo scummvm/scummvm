@@ -86,4 +86,15 @@ typedef	struct {
 
 extern GlobalsPreferencePtr gPrefs;
 
+#define appPrefID				0x00
+#define appVersionNum			0x01
+#define appPrefVersionNum		0x01
+
+
+Err AppStart(void);
+void AppStop(void);
+Boolean CheckVibratorExists();
+Boolean StartScummVM();
+void SavePrefs();
+Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP);
 #endif
