@@ -1117,6 +1117,13 @@ void IMuseInternal::initMidiDriver (MidiDriver *midi) {
 	if (result)
 		error("IMuse initialization - ", MidiDriver::getErrorName(result));
 
+	// Display a welcome message on MT-32 displays.
+	byte welcome[] = {
+		0x41, 0x00, 0x16, 0x11, 0x20, 0x00, 0x00, 0x00, 0x00, 0x14,
+		' ','W','e','l','c','o','m','e',' ','t','o',' ','S','c','u','m','m','V','M',' '
+	};
+	midi->sysEx (welcome, ARRAYSIZE(welcome));
+
 	// Connect to the driver's timer
 	midi->setTimerCallback (midi, &IMuseInternal::midiTimerCallback);
 }
