@@ -170,6 +170,7 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 #ifndef _WIN32_WCE
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
 #else
+	// Limit the active zone on the checkbox for stylus users
 	if (isEnabled() && x >= 0 && x < 14 && y >= 0 && y < 14) {
 #endif
 		toggleState();
