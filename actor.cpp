@@ -176,7 +176,7 @@ int Actor::calcMovementFactor(int newX, int newY)
 	return actorWalkStep();
 }
 
-int Actor::remapDirection(int dir)
+int Actor::remapDirection(int dir, bool is_walking)
 {
 	int specdir;
 	byte flags;
@@ -214,12 +214,12 @@ int Actor::remapDirection(int dir)
 
 		switch (flags & 7) {
 		case 1:
-			if (moving & ~MF_TURN)		// Actor is walking
+			if (is_walking)	                                // Actor is walking
 				return flipX ? 90 : 270;
 			else											// Actor is standing/turning
 				return (dir == 90) ? 90 : 270;
 		case 2:
-			if (moving & ~MF_TURN)		// Actor is walking
+			if (is_walking)                                 // Actor is walking
 				return flipY ? 180 : 0;
 			else											// Actor is standing/turning
 				return (dir == 0) ? 0 : 180;
@@ -237,7 +237,7 @@ int Actor::remapDirection(int dir)
 	return normalizeAngle(dir) | 1024;
 }
 
-int Actor::updateActorDirection()
+int Actor::updateActorDirection(bool is_walking)
 {
 	int from, to;
 	int diff;
@@ -249,27 +249,25 @@ int Actor::updateActorDirection()
 	dirType = _vm->akos_hasManyDirections(this);
 
 	from = toSimpleDir(dirType, facing);
-	dir = remapDirection(newDirection);
+	dir = remapDirection(newDirection, is_walking);
 	shouldInterpolate = (dir & 1024);
 	to = toSimpleDir(dirType, dir & 1023);
-	diff = to - from;
 	num = numSimpleDirDirections(dirType);
 
 	if (shouldInterpolate) {
 		// Turn left or right, depending on which is shorter.
+		diff = to - from;
 		if (abs(diff) > (num >> 1))
 			diff = -diff;
 
-		if (diff == 0) {
-		} else if (diff > 0) {
-			from++;
-		} else {
-			from--;
+		if (diff > 0) {
+			to = from + 1;
+		} else if (diff < 0){
+			to = from - 1;
 		}
-	} else
-		from = to;
+	}
 
-	dir = fromSimpleDir(dirType, from % num);
+	dir = fromSimpleDir(dirType, (to + num) % num);
 
 	return dir;
 }
@@ -292,7 +290,7 @@ int Actor::actorWalkStep()
 	needRedraw = true;
 	needBgReset = true;
 
-	direction = updateActorDirection();
+	direction = updateActorDirection(true);
 	if (!(moving & MF_IN_LEG) || facing != direction) {
 		if (walkFrame != frame || facing != direction) {
 			startWalkAnim(walkFrame == frame ? 2 : 1, direction);
@@ -1168,7 +1166,7 @@ void Actor::walkActor()
 		}
 
 		if (moving & MF_TURN) {
-			j = updateActorDirection();
+			j = updateActorDirection(false);
 			if (facing != j)
 				setDirection(j);
 			else
@@ -1279,7 +1277,7 @@ void Actor::walkActorOld()
 	}
 
 	if (moving & MF_TURN) {
-		new_dir = updateActorDirection();
+		new_dir = updateActorDirection(false);
 		if (facing != new_dir) {
 			setDirection(new_dir);
 			return;

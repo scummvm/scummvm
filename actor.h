@@ -124,7 +124,7 @@ public:
 protected:
 	int calcMovementFactor(int newx, int newy);
 	int actorWalkStep();
-	int remapDirection(int dir);
+	int remapDirection(int dir, bool is_walking);
 	void setupActorScale();
 public:
 	void stopActorMoving();
@@ -133,7 +133,7 @@ public:
 
 protected:
 	void setBox(int box);
-	int updateActorDirection();
+	int updateActorDirection(bool is_walking);
 
 public:
 	void setDirection(int direction);
