@@ -70,7 +70,7 @@ static byte guifont[] = {
 // Constructor
 NewGui::NewGui(Scumm *s) : _s(s), _system(s->_system), _screen(0),
 	_use_alpha_blending(true), _need_redraw(false), _prepare_for_gui(true),
-	_currentKeyDown(0)
+	_currentKeyDown(0), _cursorAnimateCounter(0)
 {
 	// Setup some default GUI colors.
 	// TODO - either use nicer values, or maybe make this configurable?
@@ -79,6 +79,9 @@ NewGui::NewGui(Scumm *s) : _s(s), _system(s->_system), _screen(0),
 	_shadowcolor = RGB_TO_16(64, 64, 64);
 	_textcolor = RGB_TO_16(32, 160, 32);
 	_textcolorhi = RGB_TO_16(0, 255, 0);
+	
+	// Clear the cursor
+	memset(_cursor, 0xFF, sizeof(_cursor));
 }
 
 void NewGui::loop()
@@ -111,7 +114,7 @@ void NewGui::loop()
 		_need_redraw = false;
 	}
 	
-	_s->animateCursor();
+	animateCursor();
 
 	if (_eventList.size() > 0)
 	{
@@ -188,19 +191,12 @@ void NewGui::loop()
 
 void NewGui::saveState()
 {
+	// Pause sound put
 	_old_soundsPaused = _s->_sound->_soundsPaused;
 	_s->_sound->pauseSounds(true);
 
 	// Backup old cursor
-	memcpy(_old_grabbedCursor, _s->_grabbedCursor, sizeof(_old_grabbedCursor));
-	_old_cursorWidth = _s->_cursorWidth;
-	_old_cursorHeight = _s->_cursorHeight;
-	_old_cursorHotspotX = _s->_cursorHotspotX;
-	_old_cursorHotspotY = _s->_cursorHotspotY;
-	_old_cursor_mode = _system->show_mouse(true);
-
-	_s->_cursorAnimate++;
-	_s->gdi._cursorActive = 1;
+	_oldCursorMode = _system->show_mouse(true);
 	
 	// TODO - add getHeight & getWidth methods to OSystem
 	_system->show_overlay();
@@ -211,18 +207,11 @@ void NewGui::saveState()
 
 void NewGui::restoreState()
 {
-	_s->_cursorAnimate--;
-
 	// Restore old cursor
-	memcpy(_s->_grabbedCursor, _old_grabbedCursor, sizeof(_old_grabbedCursor));
-	_s->_cursorWidth = _old_cursorWidth;
-	_s->_cursorHeight = _old_cursorHeight;
-	_s->_cursorHotspotX = _old_cursorHotspotX;
-	_s->_cursorHotspotY = _old_cursorHotspotY;
 	_s->updateCursor();
+	_system->show_mouse(_oldCursorMode);
 
-	_system->show_mouse(_old_cursor_mode);
-
+	// Resume sound output
 	_s->_sound->pauseSounds(_old_soundsPaused);
 
 	_system->hide_overlay();
@@ -439,9 +428,9 @@ void NewGui::drawString(const char *str, int x, int y, int w, int16 color, int a
 	}
 }
 
-/*
- * Draw an 8x8 bitmap at location (x,y)
- */
+//
+// Draw an 8x8 bitmap at location (x,y)
+//
 void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, int16 color)
 {
 	int16 *ptr = getBasePtr(x, y);
@@ -457,4 +446,27 @@ void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, int16 color)
 		}
 		ptr += _screen_pitch;
 	}
+}
+
+//
+// Draw the mouse cursor (animated). This is mostly ripped from the cursor code in gfx.cpp
+// We could plug in a different cursor here if we like to.
+//
+void NewGui::animateCursor()
+{
+	if (0 == (_cursorAnimateCounter & 0x3)) {
+		const byte colors[4] = { 15, 15, 7, 8 };
+		const byte color = colors[(_cursorAnimateCounter >> 2) & 3];
+		int i;
+		
+		for (i = 0; i < 16; i++) {
+			if ((i < 7) || (i > 9)) {
+				_cursor[16 * 8 + i] = color;
+				_cursor[16 * i + 8] = color;
+			}
+		}
+	
+		_system->set_mouse_cursor(_cursor, 16, 16, 8, 8);
+	}
+	_cursorAnimateCounter++;
 }

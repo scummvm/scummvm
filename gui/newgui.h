@@ -94,11 +94,6 @@ protected:
 
 	// sound state
 	bool		_old_soundsPaused;
-
-	// mouse cursor state
-	bool		_old_cursor_mode;
-	int			_old_cursorHotspotX, _old_cursorHotspotY, _old_cursorWidth, _old_cursorHeight;
-	byte		_old_grabbedCursor[2048];
 	
 	// position and time of last mouse click (used to detect double clicks)
 	struct {
@@ -109,12 +104,20 @@ protected:
 	
 	// List of events to be handled
 	EventList	_eventList;
+	
+
+	// mouse cursor state
+	bool		_oldCursorMode;
+	int			_cursorAnimateCounter;
+	byte		_cursor[2048];
 
 	void saveState();
 	void restoreState();
 	
 	void openDialog(Dialog *dialog);
 	void closeTopDialog();
+	
+	void animateCursor();
 
 public:
 	// Drawing

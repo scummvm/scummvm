@@ -1116,19 +1116,6 @@ Actor *Scumm::derefActorSafe(int id, const char *errmsg)
 	return derefActor(id);
 }
 
-void Scumm::makeCursorColorTransparent(int a)
-{
-	int i, size;
-
-	size = _cursorWidth * _cursorHeight;
-
-	for (i = 0; i < size; i++)
-		if (_grabbedCursor[i] == (byte)a)
-			_grabbedCursor[i] = 0xFF;
-
-	updateCursor();
-}
-
 void Scumm::setStringVars(int slot)
 {
 	StringTab *st = &string[slot];

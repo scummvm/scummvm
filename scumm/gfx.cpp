@@ -3001,6 +3001,18 @@ void Scumm::decompressDefaultCursor(int idx)
 	updateCursor();
 }
 
+void Scumm::makeCursorColorTransparent(int a)
+{
+	int i, size;
+
+	size = _cursorWidth * _cursorHeight;
+
+	for (i = 0; i < size; i++)
+		if (_grabbedCursor[i] == (byte)a)
+			_grabbedCursor[i] = 0xFF;
+
+	updateCursor();
+}
 
 int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 {
