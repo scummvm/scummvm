@@ -21,7 +21,7 @@ static UInt32 GetStackSize() {
 	return ((Char *)endPP - (Char *)startPP) / 1024L;
 }
 
-static void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFreeP, UInt32 *dynamicFreeP) {
+void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFreeP, UInt32 *dynamicFreeP) {
 	UInt32		free, max;
 
 	Int16		i;

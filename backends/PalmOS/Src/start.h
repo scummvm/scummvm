@@ -92,7 +92,7 @@ extern GlobalsPreferencePtr gPrefs;
 #define appPrefVersionNum		0x01
 
 #define STACK_DEFAULT			8192
-#define STACK_LARGER			16384
+#define STACK_LARGER			11264
 #define STACK_GET				0
 
 Err AppStart(void);
@@ -100,6 +100,7 @@ void AppStop(void);
 Boolean CheckVibratorExists();
 Boolean StartScummVM();
 void PINGetScreenDimensions();
+void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFreeP, UInt32 *dynamicFreeP);
 void WinScreenGetPitch();
 void SavePrefs();
 Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP);
