@@ -143,7 +143,7 @@ void Sound::processSoundQues() {
 void Sound::playSound(int soundID) {
 	byte *ptr;
 	char *sound;
-	int size;
+	int size = -1;
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	
@@ -240,7 +240,9 @@ void Sound::playSound(int soundID) {
 		// 80 80 80 80 80 80 80 80  |........|
 		// 80 80 80 80 80 80 80 80  |........|
 
-#if 1
+		size = READ_BE_UINT32(ptr + 4) - 27;
+		ptr += 27;
+
 		// Fingolfin says: after eyeballing a single SEGA
 		// SBL resource, it would seem as if the content of the
 		// data subchunk (AUdt) is XORed with 0x16. At least
@@ -248,35 +250,28 @@ void Sound::playSound(int soundID) {
 		// a sampling rate of ~25000 Hz (does that make sense?).
 		// I'll add some code to test that theory for now.
 		if (_vm->_gameId == GID_MONKEY_SEGA)	{
-			size = READ_BE_UINT32(ptr + 4) - 27;
-			for (int i = 0; i < size; i++)
-				ptr[27 + i] ^= 0x16;
+			for (int i = 0; i < size; i++)   {
+				ptr[i] ^= 0x16;
+				if (ptr[i] >= 0x7F)   {
+				  ptr[i] = 0xFE - ptr[i];
+				  ptr[i] ^= 0x80;
+				}
+			}
 		}
+		
+		// TODO: It would be nice if we could use readVOCFromMemory() here.
+		// We'd have to add the 'Creative Voice File' header for this, though,
+		// or make readVOCFromMemory() less strict.
 
-		VocBlockHeader &voc_block_hdr = *(VocBlockHeader *)(ptr + 27);
+		VocBlockHeader &voc_block_hdr = *(VocBlockHeader *)ptr;
 		assert(voc_block_hdr.blocktype == 1);
 		size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
 		rate = getSampleRateFromVOCRate(voc_block_hdr.sr);
 		assert(voc_block_hdr.pack == 0);
-#else
-		// FIXME: SBL resources are apparently horribly
-		// distorted on segacd even though it shares the same
-		// header etc. So don't try to play them for now.
-		if (_vm->_gameId == GID_MONKEY_SEGA)	{
-			return;
-		}
-
-		if (READ_UINT32(ptr + 8) == MKID('WVhd'))
-			rate = 11025;
-		else
-			rate = 8000;
-
-		size = READ_BE_UINT32(ptr + 4) - 27;
-#endif
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
-		memcpy(sound, ptr + 33, size);
+		memcpy(sound, ptr + 6, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if ((_vm->_features & GF_FMTOWNS) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
