@@ -390,7 +390,7 @@ void NewGui::addDirtyRect(int x, int y, int w, int h)
 	_system->copy_rect_overlay(buf, _screenPitch, x, y, w, h);
 }
 
-void NewGui::drawChar(const char chr, int xx, int yy, int16 color)
+void NewGui::drawChar(const byte chr, int xx, int yy, int16 color)
 {
 	unsigned int buffer = 0, mask = 0, x, y;
 	byte *tmp;
@@ -425,7 +425,7 @@ int NewGui::getStringWidth(const String &str)
 	return space;
 }
 
-int NewGui::getCharWidth(char c)
+int NewGui::getCharWidth(byte c)
 {
 	return guifont[c+6];
 }

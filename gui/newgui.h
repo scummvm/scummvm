@@ -126,9 +126,9 @@ public:
 	void checkerRect(int x, int y, int w, int h, int16 color);
 	void frameRect(int x, int y, int w, int h, int16 color);
 	void addDirtyRect(int x, int y, int w, int h);
-	void drawChar(char c, int x, int y, int16 color);
+	void drawChar(byte c, int x, int y, int16 color);
 	int getStringWidth(const String &str);
-	int getCharWidth(char c);
+	int getCharWidth(byte c);
 	void drawString(const String &str, int x, int y, int w, int16 color, int align = kTextAlignLeft);
 
 	void drawBitmap(uint32 bitmap[8], int x, int y, int16 color);
