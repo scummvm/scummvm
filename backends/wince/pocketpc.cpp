@@ -30,11 +30,13 @@ extern int num_of_dirty_square;
 extern bool toolbar_drawn;
 extern Engine *engine;
 extern bool sound_activated;
+extern char is_demo;
 
 extern ToolbarSelected getToolbarSelection(int, int);
 extern void redrawSoundItem();
 extern int mapKey(int key);
 extern void handleSelectGame(int, int);
+extern void do_quit();
 
 const char KEYBOARD_MAPPING_ALPHA_HIGH[] = {"ABCDEFGHIJKLM"};
 const char KEYBOARD_MAPPING_NUMERIC_HIGH[] = {"12345"};
@@ -216,7 +218,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						*/
 						/*}*/
 						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
-						if (g_scumm->_features & GF_OLD256)
+						if (g_scumm->_features & GF_OLD256 || g_scumm->_gameId == GID_CMI)
 							wm->_event.kbd.ascii = 319;
 						else
 							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_SAVELOADDIALOG_KEY];
@@ -228,6 +230,8 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 							toolbar_drawn = false;
 						break;
 					case ToolbarSkip:
+						if (is_demo)
+							do_quit();
 						if (is_simon) {
 							((SimonState*)engine)->_exit_cutscene = true;
 							break;
