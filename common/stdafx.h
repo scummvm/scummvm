@@ -41,6 +41,7 @@
 #pragma warning( disable : 4244 ) // turn off "conversion type" warning
 #pragma warning( disable : 4355 ) // turn off "base member init" warning
 #pragma warning( disable : 4390 ) // turn off "empty statement" warning for BS2 code
+#pragma warning( disable : 4506 ) // turn off "no definition for inline function" warning
 #endif
 
 #if !defined(_WIN32_WCE)
