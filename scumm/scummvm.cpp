@@ -428,29 +428,49 @@ int Scumm::scummLoop(int delta)
 		}
 	}
 
-
-	if (_saveLoadFlag) {
-		if (_saveLoadFlag == 1) {
-			saveState(_saveLoadSlot, _saveLoadCompatible);
-			// Ender: Disabled for small_header games, as
-			// can overwrite game variables (eg, Zak256 cashcards)
-			if (_saveLoadCompatible && !(_features & GF_SMALL_HEADER))
- 				_vars[VAR_GAME_LOADED] = 201;
-		} else {
-			loadState(_saveLoadSlot, _saveLoadCompatible);
-			// Ender: Disabled for small_header games, as
-			// can overwrite game variables (eg, Zak256 cashcards)
- 			if (_saveLoadCompatible && !(_features & GF_SMALL_HEADER))
-				_vars[VAR_GAME_LOADED] = 203;
-		}
-		_saveLoadFlag = 0;
-	}
-
-	if (_doAutosave) {
+	// TODO - A fixed 5 minutes autosave interval seems a bit odd, e.g. if the
+	// user just saved a second ago we should not autosave; i.e. the autosave
+	// timer should be reset after each save/load. In fact, we don't need *any*
+	// real timer object for autosave, we could just use a variable in which we
+	// put the system time, and then check here if that time already passed during
+	// every scummLoop iteration, resetting it whenever a save/load occurs. Of
+	// course, that still leaves a small glitch (which is present now, too):
+	// if you are in the GUI for 10 minutes, it'll autosave immediatly after you
+	// close the GUI. 
+	if (_doAutosave && !_saveLoadFlag) {
 		_saveLoadSlot = 0;
 		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;
 		_saveLoadCompatible = false;
+	}
+
+	if (_saveLoadFlag) {
+		bool success;
+		const char *errMsg = NULL;
+		if (_saveLoadFlag == 1) {
+			success = saveState(_saveLoadSlot, _saveLoadCompatible);
+			if (!success)
+				errMsg = "Failed so save game state to file:\n\n%s";
+			// Ender: Disabled for small_header games, as
+			// can overwrite game variables (eg, Zak256 cashcards)
+			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
+ 				_vars[VAR_GAME_LOADED] = 201;
+		} else {
+			success = loadState(_saveLoadSlot, _saveLoadCompatible);
+			if (!success)
+				errMsg = "Failed so load game state from file:\n\n%s";
+			// Ender: Disabled for small_header games, as
+			// can overwrite game variables (eg, Zak256 cashcards)
+ 			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
+				_vars[VAR_GAME_LOADED] = 203;
+		}
+
+		if (!success) {
+			char filename[256];
+			makeSavegameName(filename, _saveLoadSlot, _saveLoadCompatible);
+			displayError(errMsg, filename);
+		}
+		_saveLoadFlag = 0;
 		_doAutosave = false;
 	}
 
@@ -945,20 +965,23 @@ void Scumm::setOptions()
 	//_newgui->optionsDialog();
 }
 
-void Scumm::runDialog(Dialog *dialog)
+int Scumm::runDialog(Dialog *dialog)
 {
 	// Pause sound put
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
 
 	// Open & run the dialog
-	dialog->runModal();
+	int result = dialog->runModal();
 
 	// Restore old cursor
 	updateCursor();
 
 	// Resume sound output
 	_sound->pauseSounds(old_soundsPaused);
+	
+	// Return the result
+	return result;
 }
 
 void Scumm::pauseDialog()
@@ -982,6 +1005,20 @@ void Scumm::optionsDialog()
 	if (!_optionsDialog)
 		_optionsDialog = new OptionsDialog(_newgui, this);
 	runDialog(_optionsDialog);
+}
+
+void Scumm::displayError(const char *message, ...)
+{
+	char buf[1024];
+	va_list va;
+
+	va_start(va, message);
+	vsprintf(buf, message, va);
+	va_end(va);
+
+	Dialog *dialog = new MessageDialog(_newgui, buf);
+	runDialog(dialog);
+	delete dialog;
 }
 
 void Scumm::shutDown(int i)

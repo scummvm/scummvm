@@ -347,10 +347,11 @@ public:
 	Dialog *_optionsDialog;
 	Dialog *_saveLoadDialog;
 
-	void runDialog(Dialog *dialog);
+	int runDialog(Dialog *dialog);
 	void pauseDialog();
 	void saveloadDialog();
 	void optionsDialog();
+	void displayError(const char *message, ...);
 
 	// Misc startup/event functions
 	void main();
