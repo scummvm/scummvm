@@ -204,7 +204,7 @@ protected:
 	FillOrCopyStruct *_fcs_ptr_1;
 
 	Item *_subject_item, *_object_item;
-	Item *_item_1_ptr, *_item_ptr_B;
+	Item *_item_1_ptr;
 	Item *_item_1;
 
 	Item *_hitarea_object_item;
@@ -360,7 +360,6 @@ public:
 
 protected:
 	int allocGamePcVars(File *in);
-	Item *allocItem1();
 	void loginPlayerHelper(Item *item, int a, int b);
 	void loginPlayer();
 	void allocateStringTable(int num);

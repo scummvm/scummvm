@@ -268,8 +268,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_subject_item = 0;
 	_object_item = 0;
-	_item_1_ptr = 0;
-	_item_ptr_B = 0;
 	_item_1 = 0;
 
 	_hitarea_object_item = 0;
@@ -522,7 +520,7 @@ int SimonEngine::allocGamePcVars(File *in) {
 	_itemarray_size = item_array_size;
 	_itemarray_inited = item_array_inited;
 
-	for (i = 2; i != item_array_inited; i++) {
+	for (i = 1; i < item_array_inited; i++) {
 		_itemarray_ptr[i] = (Item *)allocateItem(sizeof(Item));
 	}
 
@@ -531,12 +529,6 @@ int SimonEngine::allocGamePcVars(File *in) {
 	_stringtab_num = stringtable_num;
 
 	return item_array_inited;
-}
-
-Item *SimonEngine::allocItem1() {
-	Item *item = (Item *)allocateItem(sizeof(Item));
-	_itemarray_ptr[1] = item;
-	return item;
 }
 
 void SimonEngine::loginPlayerHelper(Item *item, int a, int b) {
@@ -552,19 +544,17 @@ void SimonEngine::loginPlayerHelper(Item *item, int a, int b) {
 }
 
 void SimonEngine::loginPlayer() {
-	Item *item;
 	Child *child;
 
-	item = _itemarray_ptr[1];
-	item->unk2 = -1;
-	item->unk1 = 10000;
-	_item_1 = item;
+	_item_1 = _itemarray_ptr[1];
+	_item_1->unk2 = -1;
+	_item_1->unk1 = 10000;
 
-	child = (Child *)allocateChildBlock(item, 3, sizeof(Child));
+	child = (Child *)allocateChildBlock(_item_1, 3, sizeof(Child));
 	if (child == NULL)
 		error("player create failure");
 
-	loginPlayerHelper(item, 0, 0);
+	loginPlayerHelper(_item_1, 0, 0);
 }
 
 void SimonEngine::allocateStringTable(int num) {
@@ -808,15 +798,13 @@ uint SimonEngine::getNextItemID() {
 }
 
 Item *SimonEngine::getItem1Ptr() {
-	if (_item_1_ptr)
-		return _item_1_ptr;
+	if (_item_1)
+		return _item_1;
 	return _dummy_item_1;
 }
 
 Item *SimonEngine::getItemPtrB() {
 	error("getItemPtrB: is this code ever used?");
-	if (_item_ptr_B)
-		return _item_ptr_B;
 	return _dummy_item_1;
 }
 
@@ -1294,11 +1282,9 @@ void SimonEngine::invokeTimeEvent(TimeEvent *te) {
 }
 
 void SimonEngine::o_setup_cond_c() {
-	Item *item = _item_1;
 
 	setup_cond_c_helper();
 
-	_item_1_ptr = item;
 	_object_item = _hitarea_object_item;
 
 	if (_object_item == _dummy_item_2)
@@ -1939,8 +1925,6 @@ void SimonEngine::pollMouseXY() {
 void SimonEngine::handle_verb_clicked(uint verb) {
 	Subroutine *sub;
 	int result;
-
-	_item_1_ptr = _item_1;
 
 	_object_item = _hitarea_object_item;
 	if (_object_item == _dummy_item_2) {

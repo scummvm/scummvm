@@ -1145,7 +1145,6 @@ int SimonEngine::startSubroutine(Subroutine *sub) {
 }
 
 int SimonEngine::startSubroutineEx(Subroutine *sub) {
-	_item_1_ptr = _item_1;
 	return startSubroutine(sub);
 }
 

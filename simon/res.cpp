@@ -114,7 +114,6 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 
 	num_inited_objects = allocGamePcVars(&in);
 
-	allocItem1();
 	loginPlayer();
 	readGamePcText(&in);
 
