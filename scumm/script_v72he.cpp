@@ -1097,7 +1097,7 @@ void ScummEngine_v72he::o72_openFile() {
 	byte filename[100];
 
 	mode = pop();
-	copyScriptString(filename);
+	copyScriptString(filename, true);
 	debug(1,"File %s", filename);
 	
 	for (r = strlen((char*)filename); r != 0; r--) {
@@ -1369,7 +1369,7 @@ void ScummEngine_v72he::o72_unknownED() {
 	}
 
 	writeVar(0, array);
-	while (len <= pos) {
+	while (pos <= len) {
 		letter = readArray(0, 0, pos);
 		if (letter)
 			result += getCharsetOffset(letter);
