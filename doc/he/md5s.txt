@@ -32,7 +32,7 @@ cb6ef7b42f7804834a731826567d4212 airport.he7
 765492059d83bc0ae8c30a4feef50a6a airport.he9
 
 (puttputt cd)
-khalek
+khalek, sev
 7.0.0 (Feb  8 1995 16:33:47)
 a16fc5d8c29efffb65f84f3a42b154f1  airdemo.w32
 86c9902b7bec1a17926d4dae85beaa45  airdemo.he0
@@ -53,7 +53,7 @@ c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
 42161ad979949daf67924b5227b94f2d  airdemo.he4
 765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
 
-(freddi cd)
+(freddi cd) (apparently combination of farm and spyfox versions)
 khalek
 7.0.0 (Jul  5 1995 14:46:05)
 a5459bfe36183cf1f4ced00fe325aa90  airdemo.w32
@@ -106,9 +106,9 @@ dbf4d59d70b826733f379f998354d350 BluesBirthdayDemo.HE0
 0794110b085ee91c2aa4a5fc844ff2f4 BluesBirthdayDemo.he4
 ccca9a823d117afb1a882fd707586bf0 BluesBirthdayDemo.d32
 
-
+(humongous ftp)
 2000-05-01 16:09 bb2demo.W32
-khalek
+khalek, sev
 C:\Dev\Project\SPUTM\Src\*.cpp
 04770d822d0e78cf13bbf1870de3528b  bb2demo.W32
 a194f15f51ee62badab74b9e7da97693  bb2demo.HE0
@@ -238,7 +238,7 @@ f054dd0158bafd59570794397727c882  fbdemo.he2
 76954add1f2c5bd9d967746ab4137d3a  fbdemo.he4
 
 (puttputt cd)
-khalek
+khalek, sev
 7.0.0 (Oct 20 1994 10:00:19)
 0ebc6a8cc24babc41dbfbfb07ee6456f  freddemo.w32
 084ed0fa98a6d1e9368d67fe9cfbd417  freddemo.he0
@@ -267,8 +267,9 @@ faca7509c38beabb37b2347b8b6bb1ea  freddemo.he2
 6daf76c1fe724ce6bf2e4c5175f39352  freddemo.he3
 a8c3ced34ecb16ad1b0eed5b464ad61e  freddemo.he4
 
+(humongous ftp)
 7.0.0 (Jul  5 1995 14:46:05)
-khalek
+khalek, sev
 a5459bfe36183cf1f4ced00fe325aa90  freddemo.w32
 566165a7338fa11029e7c14d94fa70d0  freddemo.he0
 649724a605cb66fef3fac73297ef4259  freddemo.he1
@@ -284,6 +285,17 @@ c8aac5e3e701874e2fa4117896f9e1b1  Freddi Demo (0)
 b4805ccd0841854d6b2f596f0efb5551  Freddi Demo (1)
 faca7509c38beabb37b2347b8b6bb1ea  Freddi Demo (2)
 a8c3ced34ecb16ad1b0eed5b464ad61e  Freddi Demo (4)
+
+(russian freddi)
+sev
+7.0.0 (Jun 23 1995 09:58:48)
+8be6d657bcbda8b4926448e530528d6a FREDDI.W32
+d4cccb5af88f3e77f370896e9ba8c5f9 FREDDI.HE0
+1705aa5c12a2959f1b69abc1fd145f01 FREDDI.HE1
+199c5c38798ddacce5cfbfe7b31267cf FREDDI.HE2
+6daf76c1fe724ce6bf2e4c5175f39352 FREDDI.HE3
+a176fababbf7944a1d4b5d6521b20f4d FREDDI.HE4
+2085ef0c1d1cc64db1ec52901b4856b9 FREDDI.HE5
 
 (freddi cd)
 khalek
@@ -314,6 +326,16 @@ b4805ccd0841854d6b2f596f0efb5551  Freddi Demo (1)
 faca7509c38beabb37b2347b8b6bb1ea  Freddi Demo (2)
 a8c3ced34ecb16ad1b0eed5b464ad61e  Freddi Demo (4)
 
+(russian freddi)
+sev
+D:\Scummsrc.80\Sputm\*.c
+a1a7f76f9de6b74031f4d6c9b8cbb130 FREDDI2.W32
+5057fb0e99e5aa29df1836329232f101 FREDDI2.HE0
+1b6d479d15a7eb4a55c5e90711511b00 FREDDI2.HE1
+53f72ce417e28af51e3b8a60cd6ca5ef FREDDI2.HE2
+52494431dd3f658a8dc1d4348e677e48 FREDDI2.HE4
+
+
 (spyfox cd/pjs cd/puttzoo cd/he classics cd)
 khalek, sev
 1996-10-17 03:54 ff2-demo.w32
@@ -333,6 +355,7 @@ fc8d197a22146e74766e9cb0cfcaf1da  Freddi Fish 2 Demo (0)
 f96261232a8a7ae6bc7478d8c1c5a49c  Freddi Fish 2 Demo (2)
 a97bf54bcae67fabb8d6e4a1e506efef  Freddi Fish 2 Demo (4)
 
+(humongous ftp)
 1997-10-28 12:42 f3-mdemo.w32
 khalek
 D:\Scummsys.90\sputm.90\*.c
@@ -352,8 +375,9 @@ a2fde75fcbd2376f057f4a40f9893cbe  F3-Mdemo (1)
 b90004518ba5bb4dc473170f5c975568  F3-Mdemo (4)
 d41d8cd98f00b204e9800998ecf8427e  F3-Mdemo (r)
 
+(humongous ftp/pj3 cd)
 1999-02-08 19:21 F4-demo.w32
-khalek
+khalek, sev
 D:\scummsys.98\sputm.98\*.c
 24b409ff575c52d385cdc6b7e91b5b79  F4-demo.w32
 7c2e76087027eeee9c8f8985f93a1cc5  f4-demo.HE0
@@ -371,16 +395,7 @@ ebd324dcf06a4c49e1ba5c231eee1060 f4-demo.HE0
 0453fdf42a9aa750ed198bca1d9f8e91 f4-demo.he4
 ccca9a823d117afb1a882fd707586bf0 f4-demo.D32
 
-(pj3 cd)
-sev
-D:\scummsys.98\sputm.98\*.c
-24b409ff575c52d385cdc6b7e91b5b79 F4-demo.exe
-7c2e76087027eeee9c8f8985f93a1cc5 f4-demo.HE0
-53b0e5c820bd264684df59231dbdc031 f4-demo.(a)
-23632be3c8c4e77c3917148c5f8e56ef f4-demo.he2
-0453fdf42a9aa750ed198bca1d9f8e91 f4-demo.he4
-ccca9a823d117afb1a882fd707586bf0 F4-demo.d32
-
+(ftp)
 2002-06-05 15:23 ffhsdemo.exe
 khalek
 c:\Build\SRC\SPUTM\Src\*.cpp
@@ -612,8 +627,9 @@ a2fe82b76e0e3db5d8e2f44ec9772548  pj3-demo.(a)
 e923a8f282ad6900b24beb562894661f  pj3-demo.he2
 d5b1d81d25d3d4850184fdb0ab627bea  pj3-demo.he4
 
+(ftp)
 2002-05-20 15:11 PjSamDemo.exe
-khalek
+khalek, sev
 c:\Build\SRC\SPUTM\Src\SrcPWin\*.cpp
 2c380ca1224d0c83a9de178546028cb5  PjSamDemo.exe
 d7ab7cd6105546016e6a0d46fb36b964  PjSamDemo.he0
@@ -766,7 +782,7 @@ ccca9a823d117afb1a882fd707586bf0 PuttsFunShop.d32
 39c468587c4bdad304be49e8d4041a22 PuttsFunShop.u32
 a38b59ccd74792e348b57e6f07ce2ccc PuttsFunShop.x32
 
-
+########## There is 9.8 version of puttzoo, Kirben has it
 (puttzoo cd)
 khalek
 7.0.0 (Jul 13 1995 18:45:07)
@@ -862,6 +878,17 @@ f378c570abf42d4875d26674a35acd83 SF2-DEMO.EXE
 8634f4ad2f224842364a86ddc57bb072 sf2-demo.he2
 c23f18777b5ad558826493f69749c4c6 SF2-DEMO.HE4
 ccca9a823d117afb1a882fd707586bf0 sf2-demo.D32
+
+(humongous ftp)
+sev
+D:\(vss)scummsys.99\SPUTM\Src\*.cpp
+77179b054447bb7080aff0ec343588c6 sf2-demo.exe
+7222f260253f325c21fcfa68b5bfab67 sf2-demo.he0
+2ee6a9c1c8352d4aca638aeab38a194e sf2-demo.(a)
+8634f4ad2f224842364a86ddc57bb072 sf2-demo.he2
+c23f18777b5ad558826493f69749c4c6 sf2-demo.he4
+ccca9a823d117afb1a882fd707586bf0 sf2-demo.d32
+
 
 7.0.0 (Jul  5 1995 14:45:19)
 khalek
