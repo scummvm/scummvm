@@ -1298,11 +1298,11 @@ void Logic::saveState(byte *&ptr) {
 void Logic::loadState(uint32 ver, byte *&ptr) {
 	uint16 i;
 	for (i = 0; i < 4; i++) {
-		_inventoryItem[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		_inventoryItem[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
 	}
 
-	_joe.x = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	_joe.y = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_joe.x = (int16)READ_BE_INT16(ptr); ptr += 2;
+	_joe.y = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 	_currentRoom = READ_BE_UINT16(ptr); ptr += 2;
 
@@ -1313,7 +1313,7 @@ void Logic::loadState(uint32 ver, byte *&ptr) {
 		_itemData[i].readFromBE(ptr);
 
 	for (i = 0; i < GAME_STATE_COUNT; i++) {
-		_gameState[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		_gameState[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
 	}
 
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)

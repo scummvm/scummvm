@@ -74,9 +74,9 @@ void Cutaway::load(const char *filename) {
 	_comPanel = READ_BE_UINT16(ptr);
 	ptr += 2;
 	debug(6, "_comPanel = %i", _comPanel);
-
-	_cutawayObjectCount = (int16)READ_BE_UINT16(ptr);
+	_cutawayObjectCount = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
+
 	debug(6, "_cutawayObjectCount = %i", _cutawayObjectCount);
 
 	if (_cutawayObjectCount < 0) {
@@ -86,7 +86,7 @@ void Cutaway::load(const char *filename) {
 	else
 		_vm->input()->canQuit(true);
 
-	int16 flags1 = (int16)READ_BE_UINT16(ptr);
+	int16 flags1 = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 	debug(6, "flags1 = %i", flags1);
 
@@ -179,7 +179,7 @@ void Cutaway::loadStrings(byte *ptr) {
 	ptr = Talk::getString(ptr, _talkFile, MAX_FILENAME_LENGTH);
 	debug(6, "Talk file = '%s'", _talkFile);
 
-	_talkTo = (int16)READ_BE_UINT16(ptr);
+	_talkTo = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 	debug(6, "_talkTo = %i", _talkTo);
 }
@@ -188,23 +188,23 @@ byte *Cutaway::getCutawayObject(byte *ptr, CutawayObject &object)
 {
 	byte *oldPtr = ptr;
 
-	object.objectNumber  = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.moveToX      = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.moveToY      = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.bank           = (int16)READ_BE_UINT16(ptr); ptr += 2;      
-	object.animList      = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.execute        = (int16)READ_BE_UINT16(ptr); ptr += 2;    
-	object.limitBobX1   = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.limitBobY1   = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.limitBobX2   = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.limitBobY2   = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.specialMove   = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.animType      = (int16)READ_BE_UINT16(ptr); ptr += 2;   
-	object.fromObject    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.bobStartX    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.bobStartY    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.room           = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	object.scale          = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	object.objectNumber  = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.moveToX      = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.moveToY      = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.bank           = (int16)READ_BE_INT16(ptr); ptr += 2;      
+	object.animList      = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.execute        = (int16)READ_BE_INT16(ptr); ptr += 2;    
+	object.limitBobX1   = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.limitBobY1   = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.limitBobX2   = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.limitBobY2   = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.specialMove   = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.animType      = (int16)READ_BE_INT16(ptr); ptr += 2;   
+	object.fromObject    = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.bobStartX    = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.bobStartY    = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.room           = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.scale          = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 	if ((ptr - oldPtr) != 17*sizeof(int16))
 		error("Wrong number of values read");
@@ -263,14 +263,14 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 
 byte *Cutaway::turnOnPeople(byte *ptr, CutawayObject &object) {
 	// Lines 1248-1259 in cutaway.c
-	object.personCount = (int16)READ_BE_UINT16(ptr);
+	object.personCount = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
 	if (object.personCount > MAX_PERSON_COUNT)
 		error("[Cutaway::turnOnPeople] object.personCount > MAX_PERSON_COUNT");
 
 	for (int i = 0; i < object.personCount; i++) {
-		object.person[i] = (int16)READ_BE_UINT16(ptr);
+		object.person[i] = (int16)READ_BE_INT16(ptr);
 		ptr += 2;
 		//debug(6, "[%i] Turn on person %i", i, object.person[i]);
 	}
@@ -491,13 +491,13 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 		anim.originalFrame = _vm->logic()->findFrame(header);
 	}
 
-	anim.unpackFrame = (int16)READ_BE_UINT16(ptr);
+	anim.unpackFrame = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
-	anim.speed = ((int16)READ_BE_UINT16(ptr)) / 3 + 1;
+	anim.speed = ((int16)READ_BE_INT16(ptr)) / 3 + 1;
 	ptr += 2;
 
-	anim.bank = (int16)READ_BE_UINT16(ptr);
+	anim.bank = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
 	if (anim.bank == 0) {
@@ -514,26 +514,26 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 		}
 	}
 
-	anim.mx = (int16)READ_BE_UINT16(ptr);
+	anim.mx = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
-	anim.my = (int16)READ_BE_UINT16(ptr);
+	anim.my = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
-	anim.cx = (int16)READ_BE_UINT16(ptr);
+	anim.cx = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
-	anim.cy = (int16)READ_BE_UINT16(ptr);
+	anim.cy = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
-	anim.scale = (int16)READ_BE_UINT16(ptr);
+	anim.scale = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
 	if (_vm->resource()->isDemo()) {
 		anim.song = 0;
 	}
 	else {
-		anim.song = (int16)READ_BE_UINT16(ptr);
+		anim.song = (int16)READ_BE_INT16(ptr);
 		ptr += 2;
 	}
 
@@ -575,7 +575,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 	// Read animation frames
 	for (;;) {
 
-		header = (int16)READ_BE_UINT16(ptr);
+		header = (int16)READ_BE_INT16(ptr);
 		ptr += 2;
 
 		if (-2 == header)
@@ -1007,7 +1007,7 @@ void Cutaway::stop() {
 	byte *ptr = _gameStatePtr;
 
 	// Skipping GAMESTATE data
-	int gameStateCount = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	int gameStateCount = (int16)READ_BE_INT16(ptr); ptr += 2;
 	if (gameStateCount > 0)
 		ptr += (gameStateCount * 12);
 
@@ -1051,16 +1051,16 @@ void Cutaway::stop() {
 			}
 		}
 
-		int quitObjectCount = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		int quitObjectCount = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 		for (i = 0; i < quitObjectCount; i++) {
-			int16 objectIndex  = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			int16 fromIndex    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			int16 x       = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			int16 y       = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			int16 room    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			int16 frame   = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			int16 bank    = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			int16 objectIndex  = (int16)READ_BE_INT16(ptr); ptr += 2;
+			int16 fromIndex    = (int16)READ_BE_INT16(ptr); ptr += 2;
+			int16 x       = (int16)READ_BE_INT16(ptr); ptr += 2;
+			int16 y       = (int16)READ_BE_INT16(ptr); ptr += 2;
+			int16 room    = (int16)READ_BE_INT16(ptr); ptr += 2;
+			int16 frame   = (int16)READ_BE_INT16(ptr); ptr += 2;
+			int16 bank    = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 			int bobIndex = _vm->logic()->findBob(objectIndex);
 			ObjectData *object = _vm->logic()->objectData(objectIndex);
@@ -1116,11 +1116,11 @@ void Cutaway::stop() {
 			}
 		} // for()
 		
-		int16 specialMove = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		int16 specialMove = (int16)READ_BE_INT16(ptr); ptr += 2;
 		if (specialMove > 0)
 			_vm->logic()->executeSpecialMove(specialMove);
 
-		_lastSong = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		_lastSong = (int16)READ_BE_INT16(ptr); ptr += 2;
 	}
 
 	if (joeRoom == _temporaryRoom &&
@@ -1141,15 +1141,15 @@ void Cutaway::updateGameState() {
 	// Lines 2047-2115 in cutaway.c
 	byte *ptr = _gameStatePtr;
 
-	int gameStateCount = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	int gameStateCount = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 	for (int i = 0; i < gameStateCount; i++) {
-		int16 stateIndex    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		int16 stateValue    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		int16 objectIndex   = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		int16 areaIndex     = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		int16 areaSubIndex  = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		int16 fromObject    = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		int16 stateIndex    = (int16)READ_BE_INT16(ptr); ptr += 2;
+		int16 stateValue    = (int16)READ_BE_INT16(ptr); ptr += 2;
+		int16 objectIndex   = (int16)READ_BE_INT16(ptr); ptr += 2;
+		int16 areaIndex     = (int16)READ_BE_INT16(ptr); ptr += 2;
+		int16 areaSubIndex  = (int16)READ_BE_INT16(ptr); ptr += 2;
+		int16 fromObject    = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 		bool update = false;
 
