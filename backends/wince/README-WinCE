@@ -102,6 +102,10 @@ The following actions are available
   * Free look   : go in or out of free-look mode. In this mode, you can tap 
     the screen to look for interesting locations without walking.
 
+If you start a game when a Right click mapping is necessary, ScummVM will ask
+you to map one of your hardware key to this action before playing. Just press
+the key you want to map if you see this message.
+
 How do I play a game on a Microsoft Smartphone device ?
 -------------------------------------------------------
 
@@ -159,17 +163,7 @@ open it.
 How can I use an item in Beneath a Steel Sky ?
 ----------------------------------------------
 
-That one is tricky - you need to map the right click button (see the General
-Questions section), BUT, you can't do it in Beneath a Steel Sky in this 
-release !
-
-I can give you two workarounds :
-  * If you have another Scumm game available, map the key in this game
-  * Edit the scummvm.ini file, and add the following line in the wince
-    section, after running the game once. It should map the right click button
-    to your calendar key
-
-  ActionKeys=0000 0000 0000 0000 0000 0000 0000 0000 00c1 0000 0000 0000 0000
+You need to map the right click button (see the General Questions section).
 
 ----------------------------
 -- Curse of Monkey Island --
