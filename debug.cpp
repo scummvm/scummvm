@@ -116,15 +116,16 @@ bool ScummDebugger::do_command() {
 			num = _s->getNumBoxes();			
 
 			printf("Walk matrix:\n");
-			while (*boxm != 0xFF) {
-				printf("%d ", *boxm);
-				i++; *boxm++;
-				if (i >= num) {i = 0; rows++; printf("\n");}				
+			for (i=0;i<num;i++)
+			{
+				while(*boxm != 0xFF) {
+					printf ("[%d] ",*boxm);
+					boxm++;
+				}
+				boxm++;
+				printf("\n");
 			}
-
-			if (rows < num)
-				printf("\nERROR: Box Matrix invalid, missing or incomplete: %d row(s)", num - rows);
-
+				
 			printf("\nWalk boxes:\n");			
 			for (i=0; i<num; i++) {				
 				BoxTest(i);
