@@ -127,9 +127,7 @@ SoundMixer::SoundMixer() {
 
 SoundMixer::~SoundMixer() {
 	_syst->clear_sound_proc();
-	for (int i = 0; i != NUM_CHANNELS; i++) {
-		delete _channels[i];
-	}
+	stopAll();
 	_syst->delete_mutex(_mutex);
 }
 
@@ -164,7 +162,7 @@ void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 siz
 	chan = (ChannelStream*)_channels[index];
 #endif
 	if (!chan) {
-		error("Trying to append to nonexistant streamer : %d", index);
+		error("Trying to append to nonexistant stream : %d", index);
 	} else {
 		chan->append(sound, size);
 	}
