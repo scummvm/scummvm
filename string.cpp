@@ -623,8 +623,10 @@ byte *Scumm::addMessageToStack(byte *msg)
 	if (ptr == NULL)
 		error("Message stack not allocated");
 
-	if (msg == NULL)
-		error("Bad message in addMessageToStack");
+	if (msg == NULL) {
+		warning("Bad message in addMessageToStack, ignoring");
+		return NULL;
+	}
 
 	while ((chr = *msg++) != 0) {
 		if (num > 500)
