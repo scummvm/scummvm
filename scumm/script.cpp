@@ -116,10 +116,6 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 	runScriptNested(slot);
 }
 
-#ifndef BYPASS_COPY_PROT
-#define BYPASS_COPY_PROT
-#endif
-
 void ScummEngine::initializeLocals(int slot, int *vars) {
 	int i;
 	if (!vars) {
@@ -451,9 +447,11 @@ int ScummEngine::fetchScriptWordSigned() {
 
 int ScummEngine::readVar(uint var) {
 	int a;
-#if defined(BYPASS_COPY_PROT)
-	static byte copyprotbypassed = false;
-#endif
+	static byte copyprotbypassed;
+	if (!_copyProtection)
+		copyprotbypassed = false;
+	else
+		copyprotbypassed = true;
 
 	debug(9, "readvar(%d)", var);
 
@@ -467,15 +465,16 @@ int ScummEngine::readVar(uint var) {
 	}
 
 	if (!(var & 0xF000)) {
-#if defined(BYPASS_COPY_PROT)
-		if (var == 490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
-			copyprotbypassed = true;
-			var = 518;
-		} else if (var == 179 && (_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && !copyprotbypassed) {
-			copyprotbypassed = true;
-			var = 266;
+		if (!_copyProtection) {
+			if (var == 490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
+				copyprotbypassed = true;
+				var = 518;
+			} else if (var == 179 && (_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && !copyprotbypassed) {
+				copyprotbypassed = true;
+				var = 266;
+			}
 		}
-#endif
+
 		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES) {
 			return _noSubtitles;	
 		}
@@ -490,27 +489,28 @@ int ScummEngine::readVar(uint var) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 
-#if defined(BYPASS_COPY_PROT)
-			// INDY3, EGA Loom and, apparently, Zak256 check this
-			// during the game...
-			if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && var == 94 && bit == 4) {
-				return 0;
-//			} else if (_gameId == GID_LOOM && var == 221 && bit == 14) {	// For Mac Loom
-			} else if (_gameId == GID_LOOM && var == 214 && bit == 15) {	// For PC Loom
-				return 0;
-			} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
-				return 0;
+			if (!_copyProtection) {
+				// INDY3, EGA Loom and, apparently, Zak256 check this
+				// during the game...
+				if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && var == 94 && bit == 4) {
+					return 0;
+//				} else if (_gameId == GID_LOOM && var == 221 && bit == 14) {	// For Mac Loom
+				} else if (_gameId == GID_LOOM && var == 214 && bit == 15) {	// For PC Loom
+					return 0;
+				} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
+					return 0;
+				}
 			}
-#endif
+
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
 			return (_scummVars[ var ] & ( 1 << bit ) ) ? 1 : 0;
 		} else {
 			var &= 0x7FFF;
-#if defined(BYPASS_COPY_PROT)
-			if (_gameId == GID_INDY3 && (_features & GF_FMTOWNS) && var == 1508) {
-				return 0;
+			if (!_copyProtection) {
+				if (_gameId == GID_INDY3 && (_features & GF_FMTOWNS) && var == 1508)
+					return 0;
 			}
-#endif
+
 			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
 			return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
 		}

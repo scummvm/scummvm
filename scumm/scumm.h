@@ -967,6 +967,7 @@ protected:
 	int _saveSound;
 	bool _native_mt32;
 	int _midiDriver; // Use the MD_ values from mididrv.h
+	bool _copyProtection;
 	bool _demoMode;
 	bool _confirmExit;
 public:

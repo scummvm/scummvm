@@ -81,6 +81,7 @@ static const char USAGE_STRING[] =
 	"  --floppy-intro           Use floppy version intro for Beneath a Steel Sky CD\n"
 #endif
 #ifndef DISABLE_SCUMM
+	"  --copy-protection        Enable the original copy protection in SCUMM games\n"
 	"  --demo-mode              Start demo mode of Maniac Mansion (Classic version)\n"
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
@@ -162,6 +163,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("save_slot", -1);
 
 #ifndef DISABLE_SCUMM
+	ConfMan.registerDefault("copy_protection", false);
 	ConfMan.registerDefault("demo_mode", false);
 	ConfMan.registerDefault("talkspeed", 60);
 	ConfMan.registerDefault("tempo", 0);
@@ -446,6 +448,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_LONG_OPTION("talkspeed")
 				ConfMan.set("talkspeed", (int)strtol(option, 0, 10), kTransientDomain);
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("copy-protection")
+				ConfMan.set("copy_protection", cmdValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("demo-mode")

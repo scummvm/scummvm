@@ -629,6 +629,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	_midiDriver = GameDetector::detectMusicDriver(gs.midi);
 
+	_copyProtection = ConfMan.getBool("copy_protection");
 	_demoMode = ConfMan.getBool("demo_mode");
 	_noSubtitles = ConfMan.getBool("subtitles");
 	_noSubtitles ^=1;

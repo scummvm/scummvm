@@ -124,26 +124,22 @@ void ScummEngine::putOwner(int obj, int owner) {
 	_objectOwnerTable[obj] = owner;
 }
 
-#ifndef BYPASS_COPY_PROT
-#define BYPASS_COPY_PROT
-#endif
-
 int ScummEngine::getState(int obj) {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getState");
 
-#if defined(BYPASS_COPY_PROT)
-	// I knew LucasArts sold cracked copies of the original Maniac Mansion,
-	// at least as part of Day of the Tentacle. Apparently they also sold
-	// cracked versions of the enhanced version. At least in Germany.
-	//
-	// This will keep the security door open at all times. I can only
-	// assume that 182 and 193 each correspond to one particular side of
-	// the it. Fortunately it does not prevent frustrated players from
-	// blowing up the mansion, should they feel the urge to.
+	if (!_copyProtection) {
+		// I knew LucasArts sold cracked copies of the original Maniac Mansion,
+		// at least as part of Day of the Tentacle. Apparently they also sold
+		// cracked versions of the enhanced version. At least in Germany.
+		//
+		// This will keep the security door open at all times. I can only
+		// assume that 182 and 193 each correspond to one particular side of
+		// the it. Fortunately it does not prevent frustrated players from
+		// blowing up the mansion, should they feel the urge to.
 
-	if (_gameId == GID_MANIAC && (obj == 182 || obj == 193))
-		_objectStateTable[obj] |= 0x08;
-#endif
+		if (_gameId == GID_MANIAC && (obj == 182 || obj == 193))
+			_objectStateTable[obj] |= 0x08;
+	}
 
 	return _objectStateTable[obj];
 }
