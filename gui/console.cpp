@@ -34,10 +34,12 @@
  *   to erase a single character, do scrolling etc.
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
-ConsoleDialog::ConsoleDialog(NewGui *gui, int _realWidth)
-	: Dialog(gui, 0, 0, _realWidth, 12 * kLineHeight + 2) {
-	_lineWidth = (_w - kScrollBarWidth - 2) / kCharWidth;
-	_linesPerPage = (_h - 2) / kLineHeight;
+ConsoleDialog::ConsoleDialog(NewGui *gui, float widthPercent, float heightPercent)
+	: Dialog(gui, 0, 0, 1, 1), 
+	_widthPercent(widthPercent), _heightPercent(heightPercent) {
+	
+	// Setup basic layout/dialog size
+	reflowLayout();
 
 	memset(_buffer, ' ', kBufferSize);
 	_linesInBuffer = kBufferSize / _lineWidth;
@@ -52,12 +54,6 @@ ConsoleDialog::ConsoleDialog(NewGui *gui, int _realWidth)
 	_scrollBar = new ScrollBarWidget(this, _w - kScrollBarWidth - 1, 0, kScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	// Display greetings & prompt
-	print(gScummVMFullVersion);
-	print("\nConsole is ready\n");
-
-	_promptStartPos = _promptEndPos = -1;
-
 	// Init callback
 	_callbackProc = 0;
 	_callbackRefCon = 0;
@@ -68,6 +64,25 @@ ConsoleDialog::ConsoleDialog(NewGui *gui, int _realWidth)
 	_historySize = 0;
 	for (int i = 0; i < kHistorySize; i++)
 		_history[i][0] = '\0';
+
+	// Display greetings & prompt
+	print(gScummVMFullVersion);
+	print("\nConsole is ready\n");
+
+	_promptStartPos = _promptEndPos = -1;
+}
+
+void ConsoleDialog::reflowLayout() {
+	// Calculate the real width/height (rounded to char/line multiples
+	_w = (uint16)(_widthPercent * g_system->get_overlay_width());
+//	_w = (_widthPercent * g_system->get_overlay_width() - kScrollBarWidth - 2) / kCharWidth;
+//	_w = _w * kCharWidth + kScrollBarWidth + 2;
+	_h = (uint16)((_heightPercent * g_system->get_overlay_height() - 2) / kLineHeight);
+	_h = _h * kLineHeight + 2;
+	
+	// Calculate depending values
+	_lineWidth = (_w - kScrollBarWidth - 2) / kCharWidth;
+	_linesPerPage = (_h - 2) / kLineHeight;
 }
 
 void ConsoleDialog::open() {

@@ -200,7 +200,7 @@ void ScummDebugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
 void ScummDebugger::enter() {
 #if USE_CONSOLE
 	if (!_s->_debuggerDialog) {
-		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, _s->_screenWidth);
+		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, 1.0, 0.67);
 
 		Debug_Printf("Debugger started, type 'exit' to return to the game.\n");
 		Debug_Printf("Type 'help' to see a little list of commands and variables.\n");

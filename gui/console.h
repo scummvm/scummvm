@@ -72,9 +72,14 @@ protected:
 	int _historySize;
 	int _historyIndex;
 	int _historyLine;
+	
+	
+	float _widthPercent, _heightPercent;
+	
+	void reflowLayout();
 
 public:
-	ConsoleDialog(NewGui *gui, int _realWidth);
+	ConsoleDialog(NewGui *gui, float widthPercent, float heightPercent);
 
 	void open();
 	void drawDialog();
