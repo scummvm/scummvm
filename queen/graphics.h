@@ -89,7 +89,6 @@ struct BobSlot {
 
 	void animString(const AnimFrame *animBuf);
 	void animNormal(uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip);
-	void animReset();
 
 	void clear();
 };

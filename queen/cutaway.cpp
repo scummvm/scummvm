@@ -1444,8 +1444,7 @@ void Cutaway::run(char *nextFilename) {
 			if (object->image == -3 || object->image == -4) {
 				k++;
 				if (object->name > 0) {
-					BobSlot *bs = _graphics->bob(k);
-					bs->animReset();
+					_logic->animReset(k);
 				}
 			}
 		}

@@ -230,6 +230,7 @@ public:
 
 	uint16 animCreate(uint16 curImage, const Person *person); // CREATE_ANIM
 	void animErase(uint16 bobNum);
+	void animReset(uint16 bobNum);
 	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible); // FIND_GRAPHIC_ANIMS
 
 	void joeSetupFromBanks(const char *animBank, const char *standBank);

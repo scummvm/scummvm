@@ -185,23 +185,6 @@ void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool r
 }
 
 
-void BobSlot::animReset() {
-
-	if(active) {
-		const AnimFrame *af = anim.string.buffer;
-		if (af != NULL) {
-			animating = true;
-			anim.string.curPos = af;
-			frameNum = af->frame;
-			anim.speed = af->speed / 4;
-		}
-		else {
-			animating = false;
-		}
-	}
-}
-
-
 void BobSlot::clear() {
 
 	active = false;

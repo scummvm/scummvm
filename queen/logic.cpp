@@ -1505,6 +1505,14 @@ void Logic::animErase(uint16 bobNum) {
 }
 
 
+void Logic::animReset(uint16 bobNum) {
+
+	if (_newAnim[bobNum][0].frame != 0) {
+		_graphics->bob(bobNum)->animString(_newAnim[bobNum]);
+	}
+}
+
+
 void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible) {
 	
 	int16 tempFrames[20];
@@ -1898,7 +1906,9 @@ void Logic::dialogue(const char *dlgFile, int personInRoom, char *cutaway) {
 	}
 	_display->fullscreen(true);
 	Talk::talk(dlgFile, personInRoom, cutaway, _graphics, _input, this, _resource, _sound);
-	_display->fullscreen(false);
+	if (!cutaway[0]) {
+		_display->fullscreen(false);
+	}
 }
 
 
