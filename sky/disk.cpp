@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/engine.h"
 #include "common/file.h"
@@ -29,7 +30,7 @@
 #define no_of_files_cd	5200
 #define max_files_in_list	60
 
-extern uint16 UnpackM1(void *, void *, uint16);
+uint32 UnpackM1(void *, void *, uint16);
 
 const char *data_file_name = "sky.dsk";
 const char *dinner_file_name = "sky.dnr";

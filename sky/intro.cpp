@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include <string.h>
 #include "common/scummsys.h"
 #include "sky/skydefs.h"

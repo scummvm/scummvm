@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "sky/sky.h"
 #include "sky/skydefs.h" //game specific defines
 #include "common/file.h"

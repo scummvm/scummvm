@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include <string.h>
 #include "common/scummsys.h"
 
@@ -110,7 +111,7 @@ uint16 input_bits(uint8 amount)
 {
 	uint16 newBitBuffh = bit_buffh;
 	uint16 newBitBuffl = bit_buffl;
-        int16 newBitCount = bit_count;
+	int8 newBitCount = bit_count;
 	uint16 remBits, returnVal;
 
 	returnVal = ((1 << amount) - 1) & newBitBuffl;	
@@ -195,7 +196,7 @@ uint16 input_value(uint16 *table)
 	return value;
 }
 
-int UnpackM1(void *input, void *output, uint16 key)
+uint32 UnpackM1(void *input, void *output, uint16 key)
 {
  	uint8 cl;
 	uint8 *inputHigh, *outputLow;
