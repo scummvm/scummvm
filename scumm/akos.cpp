@@ -730,7 +730,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 		rect.top = cur_y;
 		rect.bottom = cur_y + _height;
-		rect.bottom = 400;
 
 		startScaleIndexX = value;
 		startScaleIndexY = value;
@@ -1011,7 +1010,6 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	clip.top = _actorY + ymoveCur;
 	clip.right = clip.left + _width;
 	clip.bottom = clip.top + _height;
-	clip.bottom = 400;
 	maxw = _outwidth;
 	maxh = _outheight;
 
