@@ -790,10 +790,13 @@ OSystem *OSystem_WINCE3_create() {
 }
 
 void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {
-	int i;
-
-	for (i=0; i<256; i++)
-		SetPalEntry(i, colors[i*3+0], colors[i*3+1], colors[i*3+2]);
+	const byte *b = colors;
+	uint i;
+	//SDL_Color *base = _cur_pal + start;
+	for(i=0;i!=num;i++) {
+		SetPalEntry(i + start, b[0], b[1], b[2]);
+		b += 4;
+	}
 
 	palette_update();
 }
