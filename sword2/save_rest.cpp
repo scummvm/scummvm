@@ -66,7 +66,7 @@ static uint32 CalcChecksum(uint8 *buffer, uint32 size);	// James04aug97
 
 //------------------------------------------------------------------------------------
 
-typedef	struct		// savegame file g_header		(James06feb97)
+typedef	struct		// savegame file header		(James06feb97)
 {
 	uint32			checksum;							// sum of all bytes in file, excluding this uint32
 	char			description[SAVE_DESCRIPTION_LEN];	// player's description of savegame
@@ -83,7 +83,7 @@ typedef	struct		// savegame file g_header		(James06feb97)
 }
 _savegameHeader;
 
-// savegame consists of g_header & global variables resource
+// savegame consists of header & global variables resource
 
 static _savegameHeader g_header;		// global because easier to copy to/from player object structures
 
@@ -173,7 +173,7 @@ uint32 SaveGame(uint16 slotNo, uint8 *desc)		// (James05feb97)
 
 uint32 FindBufferSize( void )
 {
-	return (sizeof(g_header) + res_man.Res_fetch_len(1));	// size of savegame g_header + size of global variables
+	return (sizeof(g_header) + res_man.Res_fetch_len(1));	// size of savegame header + size of global variables
 }
 
 //------------------------------------------------------------------------------------
@@ -199,21 +199,21 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 	res_man.Res_close(CUR_PLAYER_ID);
 
 	// logic, graphic & mega structures
-	GetPlayerStructures();											// copy the 4 essential player object structures into the g_header
+	GetPlayerStructures();											// copy the 4 essential player object structures into the header
 
 	//------------------------------------------------------
-	// copy the g_header to the buffer
+	// copy the header to the buffer
 
 #ifdef SCUMM_BIG_ENDIAN
 	converHeaderEndian(g_header);
 #endif
-	memcpy( buffer->ad, &g_header, sizeof(g_header) );					// copy the g_header to the savegame buffer
+	memcpy( buffer->ad, &g_header, sizeof(g_header) );					// copy the header to the savegame buffer
 
 	//------------------------------------------------------
 	// copy the global variables to the buffer
 
 	varsRes = res_man.Res_open(1);									// open variables resource
-	memcpy( buffer->ad + sizeof(g_header), varsRes, FROM_LE_32(g_header.varLength) );	// copy that to the buffer, following the g_header
+	memcpy( buffer->ad + sizeof(g_header), varsRes, FROM_LE_32(g_header.varLength) );	// copy that to the buffer, following the header
 #ifdef SCUMM_BIG_ENDIAN
 	uint32 *globalVars = (uint32 *)(buffer->ad + sizeof(g_header));
 	const uint numVars = FROM_LE_32(g_header.varLength)/4;
@@ -227,7 +227,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 	// set the checksum & copy that to the buffer (James05aug97)
 
 	g_header.checksum = TO_LE_32(CalcChecksum((buffer->ad)+sizeof(g_header.checksum), size-sizeof(g_header.checksum)));
- 	memcpy( buffer->ad, &g_header.checksum, sizeof(g_header.checksum) );					// copy the g_header to the savegame buffer
+ 	memcpy( buffer->ad, &g_header.checksum, sizeof(g_header.checksum) );					// copy the header to the savegame buffer
 
 	//------------------------------------------------------
 }
@@ -346,13 +346,13 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 	uint8	*varsRes;
 	int32	pars[2];
 
-	memcpy( &g_header, buffer->ad, sizeof(g_header) );		// get a copy of the g_header from the savegame buffer
+	memcpy( &g_header, buffer->ad, sizeof(g_header) );		// get a copy of the header from the savegame buffer
 #ifdef SCUMM_BIG_ENDIAN
 	converHeaderEndian(g_header);
 #endif
 
   	//------------------------------------------------------
-	// Calc checksum & check that aginst the value stored in the g_header (James05aug97)
+	// Calc checksum & check that aginst the value stored in the header (James05aug97)
 
 	if (g_header.checksum != CalcChecksum((buffer->ad)+sizeof(g_header.checksum), size-sizeof(g_header.checksum)))
 	{
@@ -365,7 +365,7 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 
 	// Note that during development, earlier savegames will often be shorter than the current expected length
 
-	if (g_header.varLength != res_man.Res_fetch_len(1))	// if g_header contradicts actual current size of global variables
+	if (g_header.varLength != res_man.Res_fetch_len(1))	// if header contradicts actual current size of global variables
 	{
 		Free_mem( buffer );
 		return(SR_ERR_INCOMPATIBLE);	// error: incompatible save-data - can't use!
@@ -378,16 +378,16 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 	//----------------------------------
 	// get player character data from savegame buffer
 
-	// object hub is just after the standard g_header 
+	// object hub is just after the standard header 
 	memcpy (res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), &g_header.player_hub, sizeof(_object_hub));
 	res_man.Res_close(CUR_PLAYER_ID);
-	PutPlayerStructures();										// fill in the 4 essential player object structures from the g_header
+	PutPlayerStructures();										// fill in the 4 essential player object structures from the header
 
 	//----------------------------------
 	// get variables resource from the savegame buffer	
 
 	varsRes = res_man.Res_open(1);								// open variables resource
-	memcpy( varsRes, buffer->ad + sizeof(g_header), g_header.varLength );// copy that to the buffer, following the g_header
+	memcpy( varsRes, buffer->ad + sizeof(g_header), g_header.varLength );// copy that to the buffer, following the header
 #ifdef SCUMM_BIG_ENDIAN
 	uint32 *globalVars = (uint32 *)varsRes;
 	const uint numVars = g_header.varLength/4;
@@ -461,7 +461,7 @@ uint32 GetSaveDescription(uint16 slotNo, uint8 *description)		// (James05feb97)
 		return(SR_ERR_FILEOPEN);					// error: couldn't open file
 
 	
-	in->read(&dummy, sizeof(_savegameHeader));	// read g_header
+	in->read(&dummy, sizeof(_savegameHeader));	// read header
 	delete in;
 	delete mgr;
 	sprintf((char*)description, dummy.description);
@@ -542,7 +542,7 @@ void PutPlayerStructures(void)		// James27feb97 (updated by James on 29july97)
 //------------------------------------------------------------------------------------
 int32 FN_pass_player_savedata(int32 *params)	// James27feb97
 {
-	// copies the 4 essential player structures into the savegame g_header
+	// copies the 4 essential player structures into the savegame header
 	// - run script 7 of player object to request this
 
 	// remember, we cannot simply read a compact any longer but instead must request it from the object itself
@@ -551,7 +551,7 @@ int32 FN_pass_player_savedata(int32 *params)	// James27feb97
 	//			1 pointer to object's graphic structure
 	//			2 pointer to object's mega structure
 
-	// copy from player object to savegame g_header
+	// copy from player object to savegame header
 	memcpy( &g_header.logic,		(uint8*)params[0], sizeof(Object_logic)		);
 	memcpy( &g_header.graphic,	(uint8*)params[1], sizeof(Object_graphic)	);
 	memcpy( &g_header.mega,		(uint8*)params[2], sizeof(Object_mega)		);
@@ -575,7 +575,7 @@ int32 FN_get_player_savedata(int32 *params)	// James27feb97
 	int32	pars[3];
 
 
-	// copy from savegame g_header to player object
+	// copy from savegame header to player object
 	memcpy( (uint8*)ob_logic,	&g_header.logic,		sizeof(Object_logic)	);
 	memcpy( (uint8*)ob_graphic,	&g_header.graphic,	sizeof(Object_graphic)	);
 	memcpy( (uint8*)ob_mega,	&g_header.mega,		sizeof(Object_mega)		);
