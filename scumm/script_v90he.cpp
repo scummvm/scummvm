@@ -97,9 +97,9 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown28),
 		OPCODE(o90_unknown29),
 		OPCODE(o6_invalid),
-		OPCODE(o90_startLocalScript),
+		OPCODE(o90_startScriptUnk),
 		/* 2C */
-		OPCODE(o6_invalid),
+		OPCODE(o90_jumpToScriptUnk),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o90_unknown2F),
@@ -136,7 +136,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 48 */
 		OPCODE(o80_unknown48),
 		OPCODE(o80_unknown49),
-		OPCODE(o80_unknown4A),
+		OPCODE(o80_localizeArrayToRoom),
 		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
@@ -326,7 +326,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* E0 */
 		OPCODE(o80_unknownE0),
 		OPCODE(o72_getPixel),
-		OPCODE(o60_localizeArray),
+		OPCODE(o60_localizeArrayToScript),
 		OPCODE(o80_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
@@ -451,14 +451,28 @@ void ScummEngine_v90he::o90_getSegmentAngle() {
 	push(a);
 }
 
-void ScummEngine_v90he::o90_startLocalScript() {
+void ScummEngine_v90he::o90_startScriptUnk() {
 	int args[16];
-	int script, entryp;
-	int flags;
+	int script, cycle;
+	byte flags;
+
 	getStackList(args, ARRAYSIZE(args));
-	entryp = pop();
+	cycle = pop();
 	script = pop();
 	flags = fetchScriptByte();
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+}
+
+void ScummEngine_v90he::o90_jumpToScriptUnk() {
+	int args[16];
+	int script, cycle;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	cycle = pop();
+	script = pop();
+	flags = fetchScriptByte();
+	stopObjectCode();
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 

@@ -136,7 +136,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 48 */
 		OPCODE(o80_unknown48),
 		OPCODE(o80_unknown49),
-		OPCODE(o80_unknown4A),
+		OPCODE(o80_localizeArrayToRoom),
 		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
@@ -326,7 +326,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* E0 */
 		OPCODE(o80_unknownE0),
 		OPCODE(o72_getPixel),
-		OPCODE(o60_localizeArray),
+		OPCODE(o60_localizeArrayToScript),
 		OPCODE(o80_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
@@ -438,7 +438,7 @@ void ScummEngine_v80he::o80_unknown49() {
 	debug(1,"o80_unknown49 stub (%d, %d)", subOp, snd);
 }
 
-void ScummEngine_v80he::o80_unknown4A() {
+void ScummEngine_v80he::o80_localizeArrayToRoom() {
 	int slot = pop();
 	localizeArray(slot, 0xFFFFFFFF);
 }

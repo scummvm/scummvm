@@ -593,7 +593,7 @@ protected:
 	void o60_writeFile();
 	void o60_soundOps();
 	void o60_seekFilePos();
-	void o60_localizeArray();
+	void o60_localizeArrayToScript();
 	void o60_redimArray();
 	void o60_readFilePos();
 };
@@ -805,7 +805,7 @@ protected:
 	void o80_unknown45();
 	void o80_unknown48();
 	void o80_unknown49();
-	void o80_unknown4A();
+	void o80_localizeArrayToRoom();
 	void o80_readConfigFile();
 	void o80_writeConfigFile();
 	void o80_cursorCommand();
@@ -878,7 +878,8 @@ protected:
 	void o90_sqrt();
 	void o90_atan2();
 	void o90_getSegmentAngle();
-	void o90_startLocalScript();
+	void o90_startScriptUnk();
+	void o90_jumpToScriptUnk();
 	void o90_wizImageOps();
 	void o90_unknown25();
 	void o90_unknown26();

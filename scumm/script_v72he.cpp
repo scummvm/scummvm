@@ -327,7 +327,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* E0 */
 		OPCODE(o60_soundOps),
 		OPCODE(o72_getPixel),
-		OPCODE(o60_localizeArray),
+		OPCODE(o60_localizeArrayToScript),
 		OPCODE(o72_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
@@ -825,19 +825,20 @@ void ScummEngine_v72he::o72_unknown5A() {
 
 void ScummEngine_v72he::o72_startScript() {
 	int args[16];
-	int script, flags;
+	int script;
+	byte flags;
 
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = fetchScriptByte();
-	
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
 void ScummEngine_v72he::o72_startObject() {
 	int args[16];
 	int script, entryp;
-	int flags;
+	byte flags;
+
 	getStackList(args, ARRAYSIZE(args));
 	entryp = pop();
 	script = pop();
@@ -1911,7 +1912,8 @@ void ScummEngine_v72he::o72_unknownCF() {
 
 void ScummEngine_v72he::o72_jumpToScript() {
 	int args[16];
-	int script, flags;
+	int script;
+	byte flags;
 
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();

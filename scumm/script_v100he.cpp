@@ -122,7 +122,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o70_kernelSetFunctions),
 		OPCODE(o6_land),
 		OPCODE(o6_le),
-		OPCODE(o60_localizeArray),
+		OPCODE(o60_localizeArrayToScript),
 		/* 40 */
 		OPCODE(o6_wordArrayRead),
 		OPCODE(o6_wordArrayIndexedRead),
@@ -155,9 +155,9 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_printSystem),
 		/* 58 */
 		OPCODE(o6_printCursor),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_jumpToScriptUnk),
+		OPCODE(o90_startScriptUnk),
+		OPCODE(o6_pseudoRoom),
 		/* 5C */
 		OPCODE(o6_pushByte),
 		OPCODE(o72_pushDWord),
@@ -172,7 +172,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o100_redimArray),
 		OPCODE(o60_rename),
 		OPCODE(o6_stopObjectCode),
-		OPCODE(o6_invalid),
+		OPCODE(o80_localizeArrayToRoom),
 		/* 68 */
 		OPCODE(o100_roomOps),
 		OPCODE(o6_printActor),

@@ -350,7 +350,7 @@ void ScummEngine_v60he::setupOpcodes() {
 		/* E0 */
 		OPCODE(o60_soundOps),
 		OPCODE(o6_getPixel),
-		OPCODE(o60_localizeArray),
+		OPCODE(o60_localizeArrayToScript),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
@@ -1174,12 +1174,12 @@ void ScummEngine_v60he::o60_soundOps() {
 
 void ScummEngine_v60he::localizeArray(int slot, byte script) {
 	if (slot >= _numArray)
-		error("o60_localizeArray(%d): array slot out of range", slot);
+		error("o60_localizeArrayToScript(%d): array slot out of range", slot);
 
 	_arraySlot[slot] = script;
 }
 
-void ScummEngine_v60he::o60_localizeArray() {
+void ScummEngine_v60he::o60_localizeArrayToScript() {
 	int slot = pop();
 	localizeArray(slot, vm.slot[_currentScript].number);
 }
