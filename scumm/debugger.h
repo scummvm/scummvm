@@ -20,8 +20,12 @@
 
 #ifndef DEBUG_H
 #define DEBUG_H
+
 #define USE_CONSOLE
+
 class Scumm;
+class ScummDebugger;
+
 typedef bool (ScummDebugger::*DebugProc)();
 
 enum {
@@ -44,21 +48,23 @@ struct DCmd {
 
 class ScummDebugger {
 public:
+	ScummDebugger();
+	
 	void on_frame();
 	void attach(Scumm *s);
 
 protected:
 	Scumm *_s;
-        int _frame_countdown, _dvar_count, _dcmd_count;
-	DVar _dvars[255];
-	DCmd _dcmds[255];
+	int _frame_countdown, _dvar_count, _dcmd_count;
+	DVar _dvars[256];
+	DCmd _dcmds[256];
 	bool _detach_now;
 
 	void enter();
-        void detach();
+	void detach();
 
-	void DVar_Register(char *varname, void *pointer, int type, int optional);
-	void DCmd_Register(char *cmdname, DebugProc pointer);
+	void DVar_Register(const char *varname, void *pointer, int type, int optional);
+	void DCmd_Register(const char *cmdname, DebugProc pointer);
 	bool RunCommand(char *input);
 
 	// Commands

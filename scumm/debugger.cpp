@@ -17,6 +17,15 @@
 	#define Debug_Printf printf
 #endif
 
+ScummDebugger::ScummDebugger()
+{
+	_s = 0;
+	_frame_countdown = 0;
+	_dvar_count = 0;
+	_dcmd_count = 0;
+	_detach_now = false;
+}
+
 // Initialisation Functions
 void ScummDebugger::attach(Scumm *s)
 {
@@ -77,7 +86,7 @@ void ScummDebugger::on_frame() {
 		_s->_sound->pauseSounds(old_soundsPaused);	// Resume previous sound state
 		
 		if (_detach_now)	// Detach if we're finished with the debugger
-		detach();
+			detach();
 	}
 }
 
@@ -95,7 +104,8 @@ bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *in
 // Now the fun stuff:
 
 // Command/Variable registration functions
-void ScummDebugger::DVar_Register(char *varname, void *pointer, int type, int optional) {
+void ScummDebugger::DVar_Register(const char *varname, void *pointer, int type, int optional) {
+	assert(_dvar_count < (int)sizeof(_dvars));
 	strcpy(_dvars[_dvar_count].name, varname);
 	_dvars[_dvar_count].type = type;
 	_dvars[_dvar_count].variable = pointer;
@@ -104,7 +114,8 @@ void ScummDebugger::DVar_Register(char *varname, void *pointer, int type, int op
 	_dvar_count++;
 }
 
-void ScummDebugger::DCmd_Register(char *cmdname, DebugProc pointer) {
+void ScummDebugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
+	assert(_dcmd_count < (int)sizeof(_dcmds));
 	strcpy(_dcmds[_dcmd_count].name, cmdname);
 	_dcmds[_dcmd_count].function = pointer;
 	
