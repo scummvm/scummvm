@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2002-06-26
+Last updated:    2002-07-08
 Release version: 0.2.2 [CVS]
 ------------------------------------------------------------------------
 
@@ -207,10 +207,14 @@ under Windows, you would make a shortcut calling this command:
 
   C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
 
+Under BSD, Linux, or similar, the commandline would be:
+  /path/to/scummvm -f -p/games/LucasArts/monkey/ monkey
+
 Or, if you have, for example, Full Throttle on CD, and your CD drive is D:,
 and you wish to disable subtitles and run in fullscreen:
 
   C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
+  /path/to/scummvm -f -n -p/mnt/cdrom/resource/ ft
 
 Note that if you run the game once this way, and specify the -w commandline
 parameter (or edit the config file manually), ScummVM will remember the
