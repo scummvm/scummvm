@@ -55,7 +55,7 @@ struct VocBlockHeader {
  * return the corresponding sample frequency.
  */
 extern int getSampleRateFromVOCRate(int vocSR);
-extern byte *readCreativeVoc(byte *ptr, int32 &size, int &rate);
+extern byte *readCreativeVoc(byte *ptr, int32 &size, int &rate, int32 &loops);
 extern byte *loadVocSample(File *file, int32 &size, int &rate);
 
 #endif

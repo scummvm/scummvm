@@ -777,7 +777,7 @@ void IMuseDigital::setBundleVoice(byte *src) {
 }
 
 void IMuseDigital::startSound(int sound) {
-	debug(5, "IMuseDigital::startSound(%d)", sound);
+	debug(0, "IMuseDigital::startSound(%d)", sound);
 	int l, r;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
@@ -835,7 +835,8 @@ void IMuseDigital::startSound(int sound) {
 
 				_voiceVocData = NULL;
 			} else if (READ_UINT32(ptr) == MKID('Crea')) {
-				byte *t_ptr= readCreativeVoc(ptr, size, _channel[l].freq);
+				int32 loops = 0;
+				byte *t_ptr= readCreativeVoc(ptr, size, _channel[l].freq, loops);
 				_channel[l].mixerSize = _channel[l].freq * 2;
 				_channel[l].size = size * 2;
 				_channel[l].bits = 8;
@@ -998,7 +999,7 @@ void IMuseDigital::startSound(int sound) {
 }
 
 void IMuseDigital::stopSound(int sound) {
-	debug(5, "IMuseDigital::stopSound(%d)", sound);
+	debug(0, "IMuseDigital::stopSound(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l].idSound == sound) && _channel[l].used) {
 			_channel[l].toBeRemoved = true;
@@ -1233,7 +1234,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 }
 
 int IMuseDigital::getSoundStatus(int sound) const {
-	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
+	debug(0, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l].idSound == sound) && _channel[l].used) {
 			return 1;

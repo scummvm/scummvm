@@ -26,23 +26,27 @@
 #include "sound/voc.h"
 
 
-byte *readCreativeVoc(byte *ptr, int32 &size, int &rate) {
+byte *readCreativeVoc(byte *ptr, int32 &size, int &rate, int32 &loops) {
+	
 	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
 	int32 offset = READ_LE_UINT16(ptr + 20);
 	int16 version = READ_LE_UINT16(ptr + 22);
 	int16 code = READ_LE_UINT16(ptr + 24);
 	assert(version == 0x010A || version == 0x0114);
 	assert(code == ~version + 0x1234);
+	
 	bool quit = 0;
-	byte *ret_sound = 0; size = 0;
-	int loops = 0;
+	byte *ret_sound = 0;
+	size = 0;
+
 	while (!quit) {
 		int len = READ_LE_UINT32(ptr + offset);
 		offset += 4;
 		code = len & 0xFF;
 		len >>= 8;
 		switch(code) {
-		case 0: quit = 1; break;
+		case 0: quit = 1;
+			break;
 		case 1: {
 			int time_constant = ptr[offset++];
 			int packing = ptr[offset++];
@@ -62,7 +66,8 @@ byte *readCreativeVoc(byte *ptr, int32 &size, int &rate) {
 			}
 			} break;
 		case 6:	// begin of loop
-			loops = len + 1;
+			loops = (uint16)READ_LE_UINT16(ptr + offset);
+			warning("voc loops: %d", loops);
 			break;
 		case 7:	// end of loop
 			break;
