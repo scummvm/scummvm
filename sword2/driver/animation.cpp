@@ -21,8 +21,10 @@
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
+#include "sword2/driver/animation.h"
 #include "sword2/driver/menu.h"
 #include "sword2/driver/render.h"
+
 
 #include "common/file.h"
 

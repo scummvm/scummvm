@@ -28,6 +28,7 @@
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
+#include "sword2/driver/animation.h"
 
 namespace Sword2 {
 

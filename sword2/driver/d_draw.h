@@ -22,8 +22,6 @@
 
 #include "common/rect.h"
 
-#include "animation.h"
-
 namespace Sword2 {
 
 // This is the maximum mouse cursor size in the SDL backend

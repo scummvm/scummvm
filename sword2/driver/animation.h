@@ -97,10 +97,11 @@ private:
 	void closeTextObject(MovieTextObject *obj);
 	void drawTextObject(MovieTextObject *obj);
 
+	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
+
 public:
 	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
 	int32 play(const char *filename, MovieTextObject *text[], uint8 *musicOut);
-	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
 };
 
 } // End of namespace Sword2
