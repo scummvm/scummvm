@@ -1,7 +1,7 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.4.0pre (2003-05-05)
+0.4.0 (2003-05-11)
 - Curse of Monkey Island (comi) support (experimental)
 - Added support for the EGA versions of Loom, Monkey Island and Indy3
 - Improved music support in Indy3 and the floppy versions of Monkey Islands
