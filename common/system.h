@@ -282,30 +282,6 @@ public:
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 
 	/**
-	 * Replace the specified range of cursor the palette with new colors.
-	 * The palette entries from 'start' till (start+num-1) will be replaced - so
-	 * a full palette update is accomplished via start=0, num=256.
-	 *
-	 * Backends which implement it should have kFeatureCursorHasPalette flag set
-	 *
-	 * @see setPalette
-	 * @see kFeatureCursorHasPalette
-	 */
-	virtual void setCursorPalette(const byte *colors, uint start, uint num) {};
-
-	/**
-	 * Disable or enable cursor palette.
-	 *
-	 * Backends which implement it should have kFeatureCursorHasPalette flag set
-	 *
-	 * @param disable  True to disable, false to enable.
-	 *
-	 * @see setPalette
-	 * @see kFeatureCursorHasPalette
-	 */
-	virtual void disableCursorPalette(bool disable) {};
-
-	/**
 	 * Blit a bitmap to the virtual screen.
 	 * The real screen will not immediately be updated to reflect the changes.
 	 * Client code has to to call updateScreen to ensure any changes are
@@ -410,6 +386,30 @@ public:
 	 * @param cursorTargetScale	scale factor which cursor is designed for
 	 */
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1) = 0;
+
+	/**
+	 * Replace the specified range of cursor the palette with new colors.
+	 * The palette entries from 'start' till (start+num-1) will be replaced - so
+	 * a full palette update is accomplished via start=0, num=256.
+	 *
+	 * Backends which implement it should have kFeatureCursorHasPalette flag set
+	 *
+	 * @see setPalette
+	 * @see kFeatureCursorHasPalette
+	 */
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) {};
+
+	/**
+	 * Disable or enable cursor palette.
+	 *
+	 * Backends which implement it should have kFeatureCursorHasPalette flag set
+	 *
+	 * @param disable  True to disable, false to enable.
+	 *
+	 * @see setPalette
+	 * @see kFeatureCursorHasPalette
+	 */
+	virtual void disableCursorPalette(bool disable) {};
 
 	//@}
 
