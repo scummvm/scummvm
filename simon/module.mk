@@ -15,5 +15,10 @@ MODULE_OBJS := \
 MODULE_DIRS += \
 	simon
 
+# This module can be built as a plugin
+ifdef BUILD_PLUGINS
+PLUGIN := 1
+endif
+
 # Include common rules 
 include common.rules

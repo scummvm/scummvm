@@ -5,7 +5,7 @@
 ######################################################################
 # The defaul build target: just build the scummvm executable
 ######################################################################
-all: scummvm$(EXEEXT)
+all: $(EXECUTABLE)
 
 
 ######################################################################
@@ -31,15 +31,21 @@ DEPDIR := .deps
 # Plugin settings
 ######################################################################
 
-# For now we only support "static" plugins
-STATIC_PLUGINS := 1
+# Whether to build plugins or now (TODO: should be set by configure script
+#BUILD_PLUGINS := 1
 
 # Plugin prefix. Typically "lib" on Unix, and nothing everywhere else
 PLUGIN_PREFIX := lib
 # Plugin suffix. For static/shared libs this is typically ".so"/".a" on Unix,
 # ".dll"/".lib" on Windows, ".bundle"/".a" on OS X, etc.
-PLUGIN_SUFFIX := .a
+PLUGIN_SUFFIX := .so
 
+ifdef BUILD_PLUGINS
+# FIXME/TODO: The following is OS X specific (and the '-m' is an evil hack
+# to work around the conflict between our operators new/delete and the
+# ones provided by libstdc++.a)
+LDFLAGS += -all_load -m
+endif
 
 ######################################################################
 # Module settings
@@ -96,11 +102,11 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 base/main.o: $(filter-out base/libbase.a,$(OBJS))
 
 # The build rule for the ScummVM executable
-scummvm$(EXEEXT):  $(OBJS)
-	$(CXX) $(LDFLAGS) -o $@ $+ $(LIBS)
+$(EXECUTABLE):  $(OBJS)
+	$(CXX) $(LDFLAGS) $+ $(LIBS) -o $@
 
 clean:
-	$(RM) $(OBJS) scummvm$(EXEEXT)
+	$(RM) $(OBJS) $(EXECUTABLE)
 
 .PHONY: all clean dist distclean
 
