@@ -730,17 +730,17 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 	fadeOut(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;
 
+	ScriptSlot *ss =  &vm.slot[_currentScript];
+
 	if (_currentScript != 0xFF) {
-		if (vm.slot[_currentScript].where == WIO_ROOM ||
-				vm.slot[_currentScript].where == WIO_FLOBJECT) {
-			if (vm.slot[_currentScript].cutsceneOverride != 0)
-				error("Object %d stopped with active cutscene/override in exit",
-							vm.slot[_currentScript].number);
+		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
+			if (ss->cutsceneOverride != 0)
+				error("Object %d stopped with active cutscene/override in exit", ss->number);
 			_currentScript = 0xFF;
-		} else if (vm.slot[_currentScript].where == WIO_LOCAL) {
-			if (vm.slot[_currentScript].cutsceneOverride != 0)
-				error("Script %d stopped with active cutscene/override in exit",
-							vm.slot[_currentScript].number);
+		} else if (ss->where == WIO_LOCAL) {
+			// HACK to make Indy3 Demo work
+			if (ss->cutsceneOverride != 0 && !(_gameId == GID_INDY3 && _roomResource == 3))
+				error("Script %d stopped with active cutscene/override in exit", ss->number);
 			_currentScript = 0xFF;
 		}
 	}
