@@ -1101,7 +1101,7 @@ void Scumm_v6::o6_putActorInRoom()
 	if (!a)
 		return;
 
-	if (room == 0xFF) {
+	if (room == 0xFF || room == 0x7FFFFFFF) {
 		room = a->room;
 	} else {
 		if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
