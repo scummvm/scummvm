@@ -31,7 +31,7 @@
 
 // Unremark this statement to activate some of
 // the most common iMuse diagnostic messages.
-// #define IMUSE_DEBUG
+#define IMUSE_DEBUG
 
 //
 // Some constants
@@ -268,8 +268,8 @@ struct Part {
 	void set_onoff(bool on);
 	void fix_after_load();
 
-	void update_pris();
-	void changed(uint16 what);
+	void sendAll();
+	bool clearToTransmit();
 	
 	Part() {
 		memset(this,0,sizeof(Part));
@@ -316,12 +316,10 @@ public:
 	void init(IMuseInternal *eng, OSystem *os);
 	void update_pris();
 	void part_off(Part *part);
-	int part_update_active(Part *part, uint16 *active);
 
 	void set_instrument(uint slot, byte *instr);
 	void part_load_global_instrument (Part *part, byte slot);
 	void part_set_param(Part *part, byte param, int value) {}
-	void part_changed(Part *part, uint16 what);
 	void get_channel_instrument (byte channel, Instrument *instrument) { _midi_instrument_last[channel].copy_to (instrument); }
 
 	MidiChannel *getPercussionChannel() { return _md->getPercussionChannel(); }
@@ -2042,7 +2040,7 @@ void Player::parse_sysex(byte *p, uint len) {
 			part = get_part (p[0] & 0x0F);
 			if (part) {
 				part->_instrument.roland (p - 1);
-				part->changed (IMuseDriver::pcProgram);
+				if (part->clearToTransmit()) part->_instrument.send (part->_mc);
 			}
 		} else {
 			warning ("Unknown SysEx manufacturer 0x%02X", (int) a);
@@ -2086,10 +2084,10 @@ void Player::parse_sysex(byte *p, uint len) {
 				if (part->_percussion) {
 					if (part->_mc) {
 						part->off();
-						part->update_pris();
+						_se->_driver->update_pris();
 					}
 				} else {
-					part->changed (IMuseDriver::pcAll);
+					part->sendAll();
 				}
 			}
 		} else {
@@ -3071,53 +3069,65 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm) {
 
 void Part::set_detune(int8 detune) {
 	_detune_eff = clamp((_detune = detune) + _player->_detune, -128, 127);
-	changed(IMuseDriver::pcMod);
+	if (clearToTransmit()) {
+		_mc->pitchBend (clamp(_pitchbend +
+						(_detune_eff * 64 / 12) +
+						(_transpose_eff * 8192 / 12), -8192, 8191));
+	}
 }
 
 void Part::set_pitchbend(int value) {
 	_pitchbend = value;
-	changed(IMuseDriver::pcMod);
+	if (clearToTransmit()) {
+		_mc->pitchBend (clamp(_pitchbend +
+						(_detune_eff * 64 / 12) +
+						(_transpose_eff * 8192 / 12), -8192, 8191));
+	}
 }
 
 void Part::set_vol(uint8 vol) {
 	_vol_eff = ((_vol = vol) + 1) * _player->_vol_eff >> 7;
-	changed(IMuseDriver::pcVolume);
+	if (clearToTransmit()) _mc->volume (_vol_eff);
 }
 
 void Part::set_pri(int8 pri) {
 	_pri_eff = clamp((_pri = pri) + _player->_priority, 0, 255);
-	changed(IMuseDriver::pcPriority);
+	if (clearToTransmit()) _mc->priority (_pri_eff);
 }
 
 void Part::set_pan(int8 pan) {
 	_pan_eff = clamp((_pan = pan) + _player->_pan, -64, 63);
-	changed(IMuseDriver::pcPan);
+	if (clearToTransmit()) _mc->panPosition (_pan_eff + 0x40);
 }
 
 void Part::set_transpose(int8 transpose) {
 	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->_transpose, -12, 12);
-	changed(IMuseDriver::pcMod);
+	if (clearToTransmit()) {
+		_mc->pitchBend (clamp(_pitchbend +
+						(_detune_eff * 64 / 12) +
+						(_transpose_eff * 8192 / 12), -8192, 8191));
+	}
 }
 
 void Part::set_pedal(bool value) {
 	_pedal = value;
-	changed(IMuseDriver::pcPedal);
+	if (clearToTransmit()) _mc->sustain (_pedal);
 }
 
 void Part::set_modwheel(uint value) {
 	_modwheel = value;
-	changed(IMuseDriver::pcModwheel);
+	if (clearToTransmit()) _mc->modulationWheel (_modwheel);
 }
 
 void Part::set_chorus(uint chorus) {
 	_chorus = chorus;
-	changed(IMuseDriver::pcChorus);
+	if (clearToTransmit()) _mc->chorusLevel (_effect_level);
 }
 
 void Part::set_effect_level(uint level)
 {
 	_effect_level = level;
-	changed(IMuseDriver::pcEffectLevel);
+	if (clearToTransmit()) _mc->effectLevel (_effect_level);
 }
 
 void Part::fix_after_load() {
@@ -3127,7 +3137,7 @@ void Part::fix_after_load() {
 	set_pri(_pri);
 	set_pan(_pan);
 	if (_program < 128) _instrument.program (_program, _player->_mt32emulate);
-	changed (IMuseDriver::pcAll);
+	sendAll();
 }
 
 void Part::set_pitchbend_factor(uint8 value) {
@@ -3135,7 +3145,7 @@ void Part::set_pitchbend_factor(uint8 value) {
 		return;
 	set_pitchbend(0);
 	_pitchbend_factor = value;
-	changed (IMuseDriver::pcPitchBendFactor);
+	if (clearToTransmit()) _mc->pitchBendFactor (_pitchbend_factor);
 }
 
 void Part::set_onoff(bool on) {
@@ -3144,13 +3154,13 @@ void Part::set_onoff(bool on) {
 		if (!on)
 			off();
 		if (!_percussion)
-			update_pris();
+			_drv->update_pris();
 	}
 }
 
 void Part::set_instrument(byte * data) {
 	_instrument.adlib (data);
-	changed(IMuseDriver::pcProgram);
+	if (clearToTransmit()) _instrument.send (_mc);
 }
 
 void Part::load_global_instrument (byte slot) {
@@ -3163,9 +3173,11 @@ void Part::key_on(byte note, byte velocity) {
 
 	// DEBUG
 	if (_unassigned_instrument && !_percussion) {
-		warning ("[%02d] No instrument specified", (int) _chan);
 		_unassigned_instrument = false;
-		return;
+		if (!_instrument.isValid()) {
+			warning ("[%02d] No instrument specified", (int) _chan);
+			return;
+		}
 	}
 
 	if (mc && _instrument.isValid()) {
@@ -3236,7 +3248,7 @@ void Part::setup(Player *player) {
 	_mc = NULL;
 
 	if (_instrument.isValid())
-		changed (IMuseDriver::pcAll);
+		sendAll();
 }
 
 void Part::uninit() {
@@ -3260,20 +3272,57 @@ void Part::off() {
 	_drv->part_off(this);
 }
 
-void Part::changed(uint16 what) {
-	_drv->part_changed(this, what);
+bool Part::clearToTransmit() {
+	if (_mc) return true;
+	_drv->update_pris();
+	return false;
+}
+
+void Part::sendAll() {
+	if (!clearToTransmit()) return;
+	_mc->pitchBendFactor (_pitchbend_factor);
+	_mc->pitchBend (clamp(_pitchbend +
+	                (_detune_eff * 64 / 12) +
+	                (_transpose_eff * 8192 / 12), -8192, 8191));
+	_mc->volume (_vol_eff);
+	_mc->sustain (_pedal);
+	_mc->modulationWheel (_modwheel);
+	_mc->panPosition (_pan_eff + 0x40);
+	_mc->effectLevel (_effect_level);
+	if (_instrument.isValid()) {
+		_instrument.send (_mc);
+//		part->_instrument.copy_to (&_midi_instrument_last [part->_chan]);
+	}
+	_mc->chorusLevel (_effect_level);
+	_mc->priority (_pri_eff);
 }
 
 void Part::set_param(byte param, int value) {
 	_drv->part_set_param(this, param, value);
 }
 
-void Part::update_pris() {
-	_drv->update_pris();
-}
-
 int Part::update_actives(uint16 *active) {
-	return _drv->part_update_active(this, active);
+	int i, j;
+	uint16 *act, mask, bits;
+	int count = 0;
+
+	bits = 1 << _chan;
+	act = _actives;
+
+	for (i = 8; i; i--) {
+		mask = *act++;
+		if (mask) {
+			for (j = 16; j; j--, mask >>= 1, active++) {
+				if (mask & 1 && !(*active & bits)) {
+					*active |= bits;
+					count++;
+				}
+			}
+		} else {
+			active += 16;
+		}
+	}
+	return count;
 }
 
 void Part::set_program(byte program) {
@@ -3281,7 +3330,7 @@ void Part::set_program(byte program) {
 		_program = program;
 		_bank = 0;
 		_instrument.program (_program, _player->_mt32emulate);
-		changed(IMuseDriver::pcProgram);
+		if (clearToTransmit()) _instrument.send (_mc);
 	}
 }
 
@@ -3289,7 +3338,7 @@ void Part::set_instrument(uint b) {
 	_bank = (byte)(b >> 8);
 	_program = (byte)b;
 	_instrument.program (_program, _player->_mt32emulate);
-	changed(IMuseDriver::pcProgram);
+	if (clearToTransmit()) _instrument.send (_mc);
 }
 
 ////////////////////////////////////////
@@ -3367,32 +3416,8 @@ void IMuseDriver::update_pris() {
 			if ((hipart->_mc = _md->allocateChannel()) == NULL)
 				return;
 		}
-		hipart->changed(pcAll);
+		hipart->sendAll();
 	}
-}
-
-int IMuseDriver::part_update_active(Part *part, uint16 *active) {
-	int i, j;
-	uint16 *act, mask, bits;
-	int count = 0;
-
-	bits = 1 << part->_chan;
-	act = part->_actives;
-
-	for (i = 8; i; i--) {
-		mask = *act++;
-		if (mask) {
-			for (j = 16; j; j--, mask >>= 1, active++) {
-				if (mask & 1 && !(*active & bits)) {
-					*active |= bits;
-					count++;
-				}
-			}
-		} else {
-			active += 16;
-		}
-	}
-	return count;
 }
 
 void IMuseDriver::set_instrument(uint slot, byte *data) {
@@ -3406,62 +3431,8 @@ void IMuseDriver::part_load_global_instrument (Part *part, byte slot) {
 	if (slot >= 32)
 		return;
 	_glob_instr [slot].copy_to (&part->_instrument);
-	part->changed (pcProgram);
+	if (part->clearToTransmit()) part->_instrument.send (part->_mc);
 }
-
-void IMuseDriver::part_changed(Part *part, uint16 what) {
-	MidiChannel *mc;
-
-	// Mark for re-schedule if program changed when in pre-state
-	if (what & pcProgram && !part->_mc && part->_on && !part->_percussion)
-		update_pris();
-
-	if (!(mc = part->_mc))
-		return;
-
-	if (part->_player == NULL) {	// No player, so dump phantom channel
-		part->_mc->release();
-		part->_mc = NULL;
-		memset(part->_actives, 0, sizeof(part->_actives));
-		return;
-	}
-
-	if (what & pcPitchBendFactor)
-		mc->pitchBendFactor (part->_pitchbend_factor);
-
-	if (what & pcMod)
-		mc->pitchBend (clamp(part->_pitchbend +
-		               (part->_detune_eff * 64 / 12) +
-		               (part->_transpose_eff * 8192 / 12), -8192, 8191));
-
-	if (what & pcVolume)
-		mc->volume (part->_vol_eff);
-
-	if (what & pcPedal)
-		mc->sustain (part->_pedal);
-
-	if (what & pcModwheel)
-		mc->modulationWheel (part->_modwheel);
-
-	if (what & pcPan)
-		mc->panPosition (part->_pan_eff + 0x40);
-
-	if (what & pcEffectLevel)
-		mc->effectLevel (part->_effect_level);
-
-	if (what & pcProgram && part->_instrument.isValid()) {
-		part->_instrument.send (mc);
-		part->_unassigned_instrument = false;
-//		part->_instrument.copy_to (&_midi_instrument_last [part->_chan]);
-	}
-
-	if (what & pcChorus)
-		mc->chorusLevel (part->_effect_level);
-
-	if (what & pcPriority)
-		mc->priority (part->_pri_eff);
-}
-
 
 void IMuseDriver::part_off(Part *part) {
 	MidiChannel *mc = part->_mc;
