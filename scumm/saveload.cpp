@@ -111,6 +111,10 @@ bool Scumm::loadState(int slot, bool compat)
 	_current_version = hdr.ver;
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
+	if (_imuseDigital) {
+		_imuseDigital->stopAll();
+	}
+
 	_sound->pauseSounds(true);
 
 	CHECK_HEAP openRoom(-1);

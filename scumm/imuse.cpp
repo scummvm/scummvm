@@ -4862,6 +4862,7 @@ void IMuseDigital::handler() {
 			if (_channel[l]._toBeRemoved == true) {
 				_channel[l]._used = false;
 				free(_channel[l]._data);
+				memset(&_channel[l], 0, sizeof(channel));
 				continue;
 			}
 
@@ -5043,8 +5044,19 @@ void IMuseDigital::startSound(int sound) {
 
 void IMuseDigital::stopSound(int sound) {
 	debug(1, "IMuseDigital::stopSound(%d)", sound);
-	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
+	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l]._idSound == sound) && (_channel[l]._used == true)) {
+			if (_channel[l]._isLoop == false)
+				_channel[l]._toBeRemoved = true;
+			else
+				_channel[l]._isLoop = false;
+		}
+	}
+}
+
+void IMuseDigital::stopAll() {
+	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+		if (_channel[l]._used == true) {
 			_channel[l]._toBeRemoved = true;
 		}
 	}

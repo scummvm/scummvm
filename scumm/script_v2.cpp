@@ -2714,6 +2714,9 @@ void Scumm::o6_miscOps()
 			grabCursor(args[1], args[2], args[3], args[4]);
 			break;
 		case 6: {
+				if (_imuseDigital) {
+					_imuseDigital->stopAll();
+				}
 				uint32 speed;
 				if (strcmp((char*)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
 	 				speed = 71;
