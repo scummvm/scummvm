@@ -1,5 +1,7 @@
 .DS_Store
 .gdb_history
 .deps
+ChangeLog
 build.rules
+config.h
 scummvm
