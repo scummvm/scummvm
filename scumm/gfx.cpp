@@ -522,9 +522,7 @@ void Scumm::initBGBuffers(int height) {
 	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
-	if (_features & GF_AFTER_V3) {
-		// FIXME - maybe this should check for multiple planes like we do
-		// for GF_SMALL_HEADER already.
+	if ((_features & GF_AFTER_V2) || (_features & GF_AFTER_V3)) {
 		gdi._numZBuffer = 2;
 	} else if (_features & GF_SMALL_HEADER) {
 		int off;
@@ -858,7 +856,10 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 	assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
 
-	if (_vm->_features & GF_16COLOR) {
+	if (_vm->_features & GF_OLD_BUNDLE) {
+		zplane_list[1] = smap_ptr + READ_LE_UINT16(smap_ptr);
+	}
+	if (_vm->_gameId == GID_MONKEY_EGA) {
 		byte *ptr_z = smap_ptr;
 		for (i = 0; i < numzbuf; i++) {
 			int off = READ_LE_UINT16(ptr_z);
