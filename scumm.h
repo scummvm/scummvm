@@ -775,7 +775,7 @@ public:
 	void playBundleMusic(int32 song);
 	void pauseBundleMusic(bool state);
 	void stopBundleMusic();
-	int bundleMusicHandler(int t);
+	void bundleMusicHandler(Scumm * scumm);
 	void decompressBundleSound(int index);
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned = false);
  	int playSfxSound_MP3(void *sound, uint32 size);

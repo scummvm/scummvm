@@ -625,7 +625,7 @@ int Scumm::startSfxSound(void *file, int file_size)
 	char ident[8];
 	int block_type;
 	byte work[8];
-	uint size = 0, i;
+	uint size = 0;
 	int rate, comp;
 	byte *data;
 
@@ -775,11 +775,8 @@ bool Scumm::isSfxFinished()
 	return !_mixer->has_active_channel();
 }
 
-static Scumm * h_scumm;
-
-static int music_handler (int t) {
-	h_scumm->bundleMusicHandler(t);
-	return t;
+static void music_handler (Scumm * scumm) {
+	scumm->bundleMusicHandler(scumm);
 }
 
 #define OUTPUT_SIZE 66150 // ((22050 * 2 * 2) / 4) * 3
@@ -791,7 +788,6 @@ void Scumm::playBundleMusic(int32 song) {
 		sprintf(buf, "%s%smusic.bun", _gameDataPath, _exe_name);
 		if (_bundle->openMusicFile((char*)&buf) == false)
 			return;
-		h_scumm = this;
 		_musicBundleBufFinal = (byte*)malloc(OUTPUT_SIZE);
 		_musicBundleBufOutput = (byte*)malloc(10 * 0x2000);
 		_currentSampleBundleMusic = 0;
@@ -829,7 +825,7 @@ void Scumm::stopBundleMusic() {
 	}
 }
 
-int Scumm::bundleMusicHandler(int t) {
+void Scumm::bundleMusicHandler(Scumm * scumm) {
 	byte * ptr;
 	int32 l, num = _numberSamplesBundleMusic, length, k;
 	int32 rate = 22050;
@@ -838,7 +834,7 @@ int Scumm::bundleMusicHandler(int t) {
 	ptr = _musicBundleBufOutput;
 	
 	if (_pauseBundleMusic)
-		return t;
+		return;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
 		length = _bundle->decompressMusicSampleByIndex(_numberBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
@@ -849,7 +845,7 @@ int Scumm::bundleMusicHandler(int t) {
 			if (tag != MKID_BE('iMUS')) {
 				warning("Decompression of bundle sound failed");
 				_numberBundleMusic = -1;
-				return t;
+				return;
 			}
 
 			ptr += 12;
@@ -876,7 +872,7 @@ int Scumm::bundleMusicHandler(int t) {
 			if (size < 0) {
 				warning("Decompression sound failed (no size field)");
 				_numberBundleMusic = -1;
-				return t;
+				return;
 			}
 			header_size = (ptr - _musicBundleBufOutput);
 		}
@@ -916,8 +912,6 @@ int Scumm::bundleMusicHandler(int t) {
 	}
 
 	_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
-
-	return t;
 }
 
 void Scumm::playBundleSound(char *sound)

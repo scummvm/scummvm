@@ -23,6 +23,12 @@
 
 #include "scummsys.h"
 
+class Scumm;
+
+class Bundle {
+
+private:
+
 struct CompTable {
 	int32 offset;
 	int32 size;
@@ -35,12 +41,6 @@ struct BundleAudioTable {
 	int32 offset;
 };
 
-class Scumm;
-
-class Bundle {
-protected:
-
-private:
 	int32 compDecode(byte *src, byte *dst);
 	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
 	CompTable _compVoiceTable[50];

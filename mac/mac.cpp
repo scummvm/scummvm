@@ -195,7 +195,7 @@ private:
 	void blit_to_screen();
 	void update_rects();
 	
-	static uint32 autosave(uint32);
+	static void autosave(Scumm * scumm);
 	
 	UInt8 *buffer[2];
 	CmpSoundHeader header;
@@ -608,9 +608,9 @@ OSystem *OSystem_MAC::create(int gfx_mode, bool full_screen) {
 	return syst;
 }
 
-uint32 OSystem_MAC::autosave(uint32 interval)
+void OSystem_MAC::autosave(Scumm * scumm)
 {
-	g_scumm->_doAutosave = true;
+	scumm->_doAutosave = true;
 
 	return interval;
 }

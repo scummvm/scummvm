@@ -38,10 +38,9 @@
 extern void GraphicsOff(void);
 #endif
 
-int autosave(int interval)	/* Not in class to prevent being bound */
+void autosave(Scumm * scumm)	/* Not in class to prevent being bound */
 {
-	g_scumm->_doAutosave = true;
-	return interval;
+	scumm->_doAutosave = true;
 }
 
 void Scumm::initRandSeeds()

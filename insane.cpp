@@ -41,9 +41,8 @@ SmushPlayer::SmushPlayer(Scumm * parent) {
 SmushPlayer::~SmushPlayer() {
 }
 
-static int smush_handler (int t) {
+static void smush_handler (Scumm * _scumm) {
 	h_sp->update();
-	return t;
 }
 
 byte * SmushPlayer::loadTres() {

@@ -23,9 +23,9 @@
 
 #include "scummsys.h"
 
-#define MAX_TIMERS 3
+#define MAX_TIMERS 5
 
-typedef int (*TimerProc)(int);
+typedef void (*TimerProc)(Scumm *);
 
 #ifdef __MORPHOS__
 #include "morphos/morphos_timer.h"
@@ -43,10 +43,9 @@ private:
 	void *_timerHandler;
 	int32 _thisTime;
 	int32 _lastTime;
-	void *_mutex;
 
 	struct TimerSlots {
-		int ((*procedure) (int));
+		TimerProc procedure;
 		int32 interval;
 		int32 counter;
 	} _timerSlots[MAX_TIMERS];

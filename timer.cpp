@@ -44,8 +44,6 @@ static int timer_handler (int t)
 int Timer::handler(int * t) {
 	uint32 interval, l;
 
-	_osystem->lock_mutex(_mutex);
-
 	if (_timerRunning) {
 		_lastTime = _thisTime;
 		_thisTime = _osystem->get_msecs();
@@ -56,13 +54,11 @@ int Timer::handler(int * t) {
 				_timerSlots[l].counter -= interval;
 				if (_timerSlots[l].counter <= 0) {
 					_timerSlots[l].counter += _timerSlots[l].interval;
-					_timerSlots[l].procedure (0);
+					_timerSlots[l].procedure (_scumm);
 				}
 			}
 		}
 	}
-
-	_osystem->unlock_mutex(_mutex);
 
 	return *t;
 }
@@ -85,7 +81,6 @@ bool Timer::init() {
 		_timerSlots[l].counter = 0;
 	}
 
-	_mutex = _osystem->create_mutex();
 	_thisTime = _osystem->get_msecs();
 	_osystem->set_timer (10, &timer_handler);
 
@@ -101,6 +96,7 @@ void Timer::release() {
 		return;
 
 	_timerRunning = false;
+	_osystem->set_timer (0, NULL);
 	_initialized = false;
 
 	for (l = 0; l < MAX_TIMERS; l++) {
@@ -108,11 +104,9 @@ void Timer::release() {
 		_timerSlots[l].interval = 0;
 		_timerSlots[l].counter = 0;
 	}
-	_osystem->delete_mutex(_mutex);
-
 }
 
-bool Timer::installProcedure (int ((*procedure)(int)), int32 interval) {
+bool Timer::installProcedure (TimerProc procedure, int32 interval) {
 	int32 l;
 	bool found = false;
 
@@ -141,7 +135,7 @@ bool Timer::installProcedure (int ((*procedure)(int)), int32 interval) {
 	return true;
 }
 
-void Timer::releaseProcedure (int ((*procedure)(int))) {
+void Timer::releaseProcedure (TimerProc procedure) {
 	int32 l;
 
 	if (_initialized == false) {
