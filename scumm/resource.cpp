@@ -1426,7 +1426,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 
 	debug(4, "readSoundResourceSmallHeader(%s,%d)", resTypeFromId(type), idx);
 
-	if ((_gameId == GID_LOOM) && VAR_SOUNDCARD == 4) {
+	if ((_gameId == GID_LOOM) && VAR(VAR_SOUNDCARD) == 4) {
 		byte *ptr, *src_ptr;
 		ro_offs = _fileHandle.pos();
 		ro_size = _fileHandle.readUint16LE();
