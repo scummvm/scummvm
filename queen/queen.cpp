@@ -133,7 +133,7 @@ void QueenEngine::readOptionSettings() {
 	_sound->musicToggle(!ConfMan.getBool("music_mute"));
 	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
 	_talkSpeed = ConfMan.getInt("talkspeed");
-	_sound->speechToggle(!ConfMan.getBool("speech_mute"));
+	_sound->speechToggle(_resource->isCD() ? !ConfMan.getBool("speech_mute"): false);
 	_subtitles = ConfMan.getBool("subtitles");
 	checkOptionSettings();
 }
