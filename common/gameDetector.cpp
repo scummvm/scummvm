@@ -487,6 +487,9 @@ void GameDetector::setGame(const String &name) {
 	g_config->rename_domain(name, "game-specific");
 	g_config->rename_domain("game-specific", name);
 	updateconfig();
+	g_config->set_domain ("user-overrides");
+	updateconfig();
+	g_config->delete_domain ("user-overrides");
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {

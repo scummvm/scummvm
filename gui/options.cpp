@@ -205,8 +205,13 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kPopUpItemSelectedCmd:
 		if (sender == _midiPopUp) {
-			_detector._midi_driver = (int)data;
-			printf("Setting _detector._midi_driver to %d\n", _detector._midi_driver);
+			const MusicDriver *md = GameDetector::getMusicDrivers();
+			for (; md->name; md++) {
+				if (md->id == (int) data) {
+					g_config->set ("music_driver", md->name, "user-overrides");
+					break;
+				}
+			}
 		}
 		break;
 	case kOKCmd:
