@@ -429,15 +429,14 @@ void ScummEngine_v90he::wizDraw(const WizParameters *params) {
 		// XXX incomplete
 		displayWizImage(&params->img);
 		break;
-	case 0: // HE98+
 	case 2:
-	case 6:
 	case 3:
 	case 4:
+	case 6:
 		warning("unhandled wizDraw mode %d", params->drawMode);
 		break;
 	default:
-		error("invalid wizDraw mode %d", params->drawMode);
+		warning("invalid wizDraw mode %d", params->drawMode);
 	}
 }
 
