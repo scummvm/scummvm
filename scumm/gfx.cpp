@@ -852,9 +852,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	if (_disable_zbuffer)
 		numzbuf = 0;
-// 	FIXME what is this supposed to do? breaks comi
-//	else if (_numZBuffer <= 1)
-//		numzbuf = _numZBuffer;
+	else if (_numZBuffer <= 1)
+		numzbuf = _numZBuffer;
 	else {
 		numzbuf = _numZBuffer;
 		assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
@@ -887,9 +886,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 			for (i = 1; i < numzbuf; i++) {
 				zplane_list[i] = zplnOffsChunkStart + READ_LE_UINT32(zplnOffsChunkStart + 4 + i*4) + 16;
 			}
-	
-			// A small hack to skip to the BSTR->WRAP->OFFS chunk
-			smap_ptr += 24;
 		} else {
 			const uint32 zplane_tags[] = {
 				MKID('ZP00'),
@@ -903,6 +899,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 				zplane_list[i] = findResource(zplane_tags[i], ptr);
 			}
 		}
+	}
+	
+	if (_vm->_features & GF_AFTER_V8) {	
+		// A small hack to skip to the BSTR->WRAP->OFFS chunk. Note: order matters, we do this
+		// *after* the Z buffer code because that assumes' the orginal value of smap_ptr. 
+		smap_ptr += 24;
 	}
 
 	bottom = y + h;
