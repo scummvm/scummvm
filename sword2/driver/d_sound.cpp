@@ -1156,20 +1156,24 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 						if (v0 > v1) {
 							volume = musicVolTable[v0];
 							pan = (musicVolTable[v1 * 16 / v0] / 2) - 127;
-						} else {
-							if (v1 > v0) {
-								volume = musicVolTable[v1];
-								pan = (musicVolTable[v0 * 16 / v1] / 2) + 127;
-							} else {
-								volume = musicVolTable[v1];
-								pan = 0;
-							}
-							g_engine->_mixer->setChannelVolume(soundHandleMusic[i], volume);
-							g_engine->_mixer->setChannelPan(soundHandleMusic[i], pan);
 						}
+						if (v1 > v0) {
+							volume = musicVolTable[v1];
+							pan = (musicVolTable[v0 * 16 / v1] / 2) + 127;
+						} else {
+							volume = musicVolTable[v1];
+							pan = 0;
+						}
+						g_engine->_mixer->setChannelVolume(soundHandleMusic[i], volume);
+						g_engine->_mixer->setChannelPan(soundHandleMusic[i], pan);
+						// FIXME: hack. this need cleanup. 
+						// originaly it has 3 second buffer ahead enought for fading
+						// that why it's need play music for time while fading is going
+						goto label1;
 					}
 				}
 			} else {
+label1:
 				len = bufferSizeMusic;
 
 				// Reduce length if it requires reading past the end of the music
@@ -1232,7 +1236,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					// be necessary.
 					if (len & 1)
 						len--;
-					
+
 					g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
 					
 					free(data16);
