@@ -395,7 +395,8 @@ void Sound::playSound(int soundID) {
 	}
 	else {
 		
-		if (_vm->_gameId == GID_MONKEY_VGA || _vm->_gameId == GID_MONKEY_EGA) {
+		if (_vm->_gameId == GID_MONKEY_VGA || _vm->_gameId == GID_MONKEY_EGA
+			|| (_vm->_gameId == GID_MONKEY && _vm->_features & GF_MACINTOSH)) {
 			// Sound is currently not supported at all in the amiga versions of these games
 			if (_vm->_features & GF_AMIGA) {
 				int track = -1;
