@@ -1439,15 +1439,9 @@ int ScummEngine::scummLoop(int delta) {
 
 	decreaseScriptDelay(delta);
 
-	// If _talkDelay is -1, that means the text should never time out.
-	// This is used for drawing verb texts, e.g. the Full Throttle
-	// dialogue choices.
-
-	if (_talkDelay != -1) {
-		_talkDelay -= delta;
-		if (_talkDelay < 0)
-			_talkDelay = 0;
-	}
+	_talkDelay -= delta;
+	if (_talkDelay < 0)
+		_talkDelay = 0;
 
 	// Record the current ego actor before any scripts (including input scripts)
 	// get a chance to run.
@@ -2042,15 +2036,9 @@ void ScummEngine::processKbd(bool smushMode) {
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
 		return;
 	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
-		// Some text never times out, and should never be skipped. The
-		// Full Throttle conversation menus is the main - perhaps the
-		// only - example of this.
-
-		if (_talkDelay != -1) {
-			_talkDelay = 0;
-			if (_sound->_sfxMode & 2)
-				stopTalk();
-		}
+		_talkDelay = 0;
+		if (_sound->_sfxMode & 2)
+			stopTalk();
 		return;
 	} else if (_lastKeyHit == '[') { // [ Music volume down
 		int vol = ConfMan.getInt("music_volume");
