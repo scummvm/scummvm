@@ -106,7 +106,7 @@ void SwordMusic::startMusic(int32 tuneId, int32 loopFlag) {
 		if (_musicFile.isOpen())
 			_musicFile.close();
 		char fName[20];
-		sprintf(fName, "MUSIC\\%s.wav", _tuneList[tuneId]);
+		sprintf(fName, "music/%s.wav", _tuneList[tuneId]);
 		_musicFile.open(fName);
 		if (_musicFile.isOpen()) {
 			_musicFile.seek(0x28);
