@@ -59,6 +59,8 @@ SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyText *skyText, Sky
 	_skyGrid = new SkyGrid(_skyDisk);
 	_skyAutoRoute = new SkyAutoRoute(_skyGrid);
 
+	memset(_objectList, 0, 30 * sizeof(uint32));
+
 	for (int i = 0; i < ARRAYSIZE(_moduleList); i++)
 		_moduleList[i] = 0;
 	_stackPtr = 0;
@@ -1713,6 +1715,7 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	for (i = 0; i < ARRAYSIZE(_objectList); i++) {
 		if (_objectList[i])
 			(SkyState::fetchCompact(_objectList[i]))->status = ST_LOGIC;
+		else break;
 	}
 
 	// (5) NOW FIND OUT WHICH OBJECT TO START THE DISPLAY FROM (depending on scroll offset)
@@ -1724,7 +1727,7 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 
 	// (6) AND FINALLY, INITIALISE THE 11 OBJECTS SO THEY APPEAR ON SCREEEN
 
-	uint16 rollingX = 128 + 28;
+	uint16 rollingX = TOP_LEFT_X + 28;
 	for (i = 0; i < 11; i++) {
 		cpt = SkyState::fetchCompact(
 				_objectList[_scriptVariables[SCROLL_OFFSET] + i]);

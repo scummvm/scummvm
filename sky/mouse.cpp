@@ -120,8 +120,10 @@ bool SkyMouse::fnAddHuman(void) {
 		_tMouseX = _newSafeX;
 		_tMouseY = _newSafeY;
 
-		if (_aMouseY < 2)	//stop mouse activating top line
+		if (_aMouseY < 2) {	//stop mouse activating top line
 			_aMouseY = 2;
+			_system->warp_mouse(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+		}
 	
 		//force the pointer engine into running a get-off
 		//even if it's over nothing
