@@ -1644,7 +1644,7 @@ void SimonState::o_unk_120(uint a)
 
 void SimonState::o_unk_163(uint a)
 {
-	playSound(a);
+	playEffects(a);
 }
 
 void SimonState::o_unk_160(uint a)

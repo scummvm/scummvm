@@ -338,6 +338,8 @@ public:
 	PlayingSoundHandle _effects_sound;
 	PlayingSoundHandle _voice_sound;
 	PlayingSoundHandle _ambient_sound;
+	int _ambient_index;
+	uint _ambient_playing;
 
 	int _timer_id;
 
@@ -775,12 +777,12 @@ public:
 
 	void initSound();
 	void playVoice(uint voice);
-	void playSound(uint sound);
+	void playEffects(uint sound);
 	void playAmbient(uint sound);
 
-	void playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
-	void playWav(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
-	void playMP3(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
+	int playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
+	int playWav(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
+	int playMP3(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
 
 	void playMusic(uint music);
 	void checkTimerCallback();

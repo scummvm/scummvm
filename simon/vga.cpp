@@ -1604,13 +1604,13 @@ void SimonState::vc_52()
 	uint16 a = vc_read_next_word();
 
 	if (!(_game & GAME_SIMON2)) {
-		playSound(a);
+		playEffects(a);
 	} else {
 		if (a >= 0x8000) {
 			a = -a;
 			playAmbient(a);
 		} else {
-			playSound(a);
+			playEffects(a);
 		}
 	}
 }
