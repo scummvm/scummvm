@@ -1020,7 +1020,6 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 
 	ptr = createResource(type, idx, total_size);
-	byte *start_ptr = ptr;
 	memcpy(ptr, "ADL ", 4); ptr += 4;
 	uint32 dw = READ_BE_UINT32(&total_size);
 	memcpy(ptr, &dw, 4); ptr += 4;
