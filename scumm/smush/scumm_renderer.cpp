@@ -198,7 +198,7 @@ ScummRenderer::ScummRenderer(Scumm * scumm, uint32 speed) :
 
 static ScummRenderer * s_renderer;
 
-static void smush_handler(Scumm * scumm) {
+static void smush_handler(void * engine) {
 	s_renderer->update();
 }
 

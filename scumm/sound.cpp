@@ -828,8 +828,8 @@ uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size) {
 	return r;
 }
 
-static void music_handler (Scumm * scumm) {
-	scumm->_sound->bundleMusicHandler(scumm);
+static void music_handler (void * engine) {
+	g_scumm->_sound->bundleMusicHandler(g_scumm);
 }
 
 #define OUTPUT_SIZE 66150 // ((22050 * 2 * 2) / 4) * 3

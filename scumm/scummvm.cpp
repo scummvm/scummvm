@@ -44,9 +44,9 @@ extern void GraphicsOff(void);
 Scumm *g_scumm = 0;
 
 
-void autosave(Scumm * scumm)
+void autosave(void * engine)
 {
-	scumm->_doAutosave = true;
+	g_scumm->_doAutosave = true;
 }
 
 void Scumm::initRandSeeds()
@@ -106,8 +106,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	
 	_newgui = new NewGui(this);
 	_bundle = new Bundle();
-	_timer = new Timer(this);
 	_sound = new Sound(this);
+	_timer = Engine::_timer;
 
 	_sound->_sound_volume_master = 0;
 	_sound->_sound_volume_sfx = detector->_sfx_volume;	
@@ -159,7 +159,6 @@ Scumm::~Scumm ()
 	delete _gui;
 	delete _newgui;
 	delete _bundle;
-	delete _timer;
 	delete _sound;
 	delete _imuse;
 	if (_existLanguageFile) delete _languageBuffer;

@@ -25,6 +25,8 @@
 
 #include "scummsys.h"
 
+class Timer;
+
 // Interface to the ScummVM backend
 
 class OSystem {

@@ -23,26 +23,22 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "timer.h"
-#include "scumm/scumm.h"
 
-// FIXME - this shouldn't use Scumm, but rather Engine (so that e.g. we can
-// reuse the code for Simon).
+static Engine * eng;
 
-static Scumm * scumm;
-
-Timer::Timer(Scumm * parent) {
+Timer::Timer(Engine * engine) {
 	_initialized = false;
 	_timerRunning = false;
-	scumm = _scumm = parent;
+	eng = _engine = engine;
 }
 
 Timer::~Timer() {
-	release ();
+	release();
 }
 
 static int timer_handler (int t)
 {
-	scumm->_timer->handler (&t);
+	eng->_timer->handler(&t);
 	return t;
 }
 
@@ -51,7 +47,7 @@ int Timer::handler(int * t) {
 
 	if (_timerRunning) {
 		_lastTime = _thisTime;
-		_thisTime = _osystem->get_msecs();
+		_thisTime = _engine->_system->get_msecs();
 		interval = _thisTime - _lastTime;
 
 		for (l = 0; l < MAX_TIMERS; l++) {
@@ -59,7 +55,7 @@ int Timer::handler(int * t) {
 				_timerSlots[l].counter -= interval;
 				if (_timerSlots[l].counter <= 0) {
 					_timerSlots[l].counter += _timerSlots[l].interval;
-					_timerSlots[l].procedure (_scumm);
+					_timerSlots[l].procedure (_engine);
 				}
 			}
 		}
@@ -71,11 +67,10 @@ int Timer::handler(int * t) {
 bool Timer::init() {
 	int32 l;
 
-	_osystem = _scumm->_system;
-	if (_osystem == NULL) {
-		printf("Timer: OSystem not initialized !\n");
-		return false;
-	}
+	if (_engine->_system == NULL) {
+ 		printf("Timer: OSystem not initialized !\n");
+ 		return false;
+ 	}
 
 	if (_initialized == true) 
 		return true;
@@ -86,8 +81,8 @@ bool Timer::init() {
 		_timerSlots[l].counter = 0;
 	}
 
-	_thisTime = _osystem->get_msecs();
-	_osystem->set_timer (10, &timer_handler);
+	_thisTime = _engine->_system->get_msecs();
+	_engine->_system->set_timer(10, &timer_handler);
 
 	_timerRunning = true;
 	_initialized = true;
@@ -101,7 +96,7 @@ void Timer::release() {
 		return;
 
 	_timerRunning = false;
-	_osystem->set_timer (0, NULL);
+	_engine->_system->set_timer(0, NULL);
 	_initialized = false;
 
 	for (l = 0; l < MAX_TIMERS; l++) {

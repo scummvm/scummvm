@@ -22,24 +22,20 @@
 #define TIMER_H
 
 #include "scummsys.h"
+#include "engine.h"
 
 #define MAX_TIMERS 5
 
-class Scumm;
-
-typedef void (*TimerProc)(Scumm *);
+typedef void (*TimerProc)(void *);
 
 #ifdef __MORPHOS__
 #include "morphos_timer.h"
 #else
 
-class OSystem;
-
 class Timer {
 
 private:
-	OSystem *_osystem;
-	Scumm *_scumm;
+	Engine *_engine;
 	bool _initialized;
 	bool _timerRunning;
 	void *_timerHandler;
@@ -53,7 +49,7 @@ private:
 	} _timerSlots[MAX_TIMERS];
 
 public:
-	  Timer(Scumm *system);
+	  Timer(Engine *engine);
 	 ~Timer();
 
 	int handler(int *t);

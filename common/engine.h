@@ -38,6 +38,7 @@ class Engine {
 public:
 	OSystem *_system;
 	SoundMixer *_mixer;
+	Timer * _timer;
 
 protected:
 	char *_gameDataPath;

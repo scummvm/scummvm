@@ -40,11 +40,13 @@ Engine::Engine(GameDetector *detector, OSystem *syst)
 	/* FIXME - BIG HACK for MidiEmu */
 	g_system = _system;
 	g_mixer = _mixer;
+	_timer = new Timer(this);
 }
 
 Engine::~Engine()
 {
 	delete _mixer;
+	delete _timer;
 }
 
 const char *Engine::getSavePath() const
