@@ -23,6 +23,7 @@
 #include "scumm.h"
 #include "intern.h"
 #include "sound.h"
+#include "verbs.h"
 
 /*
  * NO, we do NOT support CMI yet :-) This file is mostly a placeholder and a place
@@ -878,25 +879,59 @@ void Scumm_v8::o8_verbOps()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
+	VerbSlot *vs = NULL;
+
+	if (0 <= _curVerbSlot && _curVerbSlot < _maxVerbs);
+	vs = &_verbs[_curVerbSlot];
+
 	switch (subOp) {
 	case 0x96:		// SO_VERB_INIT Choose verb number for editing
+		_curVerb = pop();
+		_curVerbSlot = getVerbSlot(_curVerb, 0);
+		checkRange(_maxVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
+		break;
 	case 0x97:		// SO_VERB_NEW New verb
 	case 0x98:		// SO_VERB_DELETE Delete verb
 	case 0x99:		// SO_VERB_NAME Set verb name
 	case 0x9A:		// SO_VERB_AT Set verb (X,Y) placement
+		error("o8_verbops: default case %d", subOp);
+		break;
 	case 0x9B:		// SO_VERB_ON Turn verb on
+		vs->curmode = 1;
+		break;
 	case 0x9C:		// SO_VERB_OFF Turn verb off
+		vs->curmode = 0;
+		break;
 	case 0x9D:		// SO_VERB_COLOR Set verb color
+		vs->color = pop();
+		break;
 	case 0x9E:		// SO_VERB_HICOLOR Set verb highlighted color
-//	case 0x9F:		// SO_415
+		vs->hicolor = pop();
+		break;
 	case 0xA0:		// SO_VERB_DIMCOLOR Set verb dimmed (disabled) color
+		vs->dimcolor = pop();
+		break;
 	case 0xA1:		// SO_VERB_DIM
+		vs->curmode = 2;
+		break;
 	case 0xA2:		// SO_VERB_KEY Set keypress to associate with verb
+		vs->key = pop();
+		break;
 	case 0xA3:		// SO_VERB_IMAGE Set verb image
 	case 0xA4:		// SO_VERB_NAME_STR Set verb name
+		error("o8_verbops: default case %d", subOp);
+		break;
 	case 0xA5:		// SO_VERB_CENTER Center verb
+		vs->center = 1;
+		break;
 	case 0xA6:		// SO_VERB_CHARSET Choose charset for verb
+		// FIXME - TODO
+		pop();
+		break;
 	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
+		// FIXME - TODO
+		pop();
+		break;
 	default:
 		error("o8_verbops: default case %d", subOp);
 	}
