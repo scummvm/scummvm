@@ -504,7 +504,7 @@ void Scumm::initBGBuffers(int height)
 		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	}
-	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 5);
+	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 8);
 
 	if (_features & GF_AFTER_V7)
 		itemsize = _scrHeight * gdi._numStrips + gdi._numStrips * 10;

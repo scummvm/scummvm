@@ -115,7 +115,7 @@ public:
 	Scumm *_vm;
 
 	int _numZBuffer;
-	int _imgBufOffs[5];
+	int _imgBufOffs[8];
 	byte _disable_zbuffer;
 	int32 _numStrips;
 	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
