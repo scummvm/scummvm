@@ -2515,9 +2515,11 @@ void SimonState::o_wait_for_vga(uint a)
 	_vga_wait_for = a;
 	_timer_1 = 0;
 	_exit_cutscene = false;
+	_system->show_mouse(false);
 	while (_vga_wait_for != 0) {
 		if (_exit_cutscene) {
 			if (vc_get_bit(9)) {
+				_system->show_mouse(true);
 				startSubroutine170();
 				break;
 			}
