@@ -396,14 +396,9 @@ void Scumm_v2::decodeParseString() {
 
 	printf("TODO: Scumm_v2::decodeParseString(\"%s\") from %d\n", buffer, vm.slot[_currentScript].number);
 
-	int textSlot;
-
-	if (_actorToPrintStrFor < 128)
-		textSlot = 0;
-	else
-		textSlot = 1;
-
-	textSlot = 0;
+	// For now, always use textSlot 0. Not sure if there are any situations where we might
+	// need to us another one?	
+	int textSlot = 0;
 	
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
@@ -427,16 +422,6 @@ void Scumm_v2::decodeParseString() {
 		unkMessage2();
 		break;
 	}
-
-/*
-	_string[textSlot].t_xpos = _string[textSlot].xpos;
-	_string[textSlot].t_ypos = _string[textSlot].ypos;
-	_string[textSlot].t_center = _string[textSlot].center;
-	_string[textSlot].t_overhead = _string[textSlot].overhead;
-	_string[textSlot].t_right = _string[textSlot].right;
-	_string[textSlot].t_color = _string[textSlot].color;
-	_string[textSlot].t_charset = _string[textSlot].charset;
-*/
 }
 
 int Scumm_v2::readVar(uint var) {
