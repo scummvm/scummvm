@@ -2116,13 +2116,13 @@ void Logic::inventoryScroll(uint16 count, bool up) {
 		return;
 
 	if (up) {
-		for (int i = 0; i < 3; i++)
-			_inventoryItem[i] = _inventoryItem[i + 1];
-		_inventoryItem[3] = nextInventoryItem(_inventoryItem[3]);
-	} else {
 		for (int i = 3; i > 0; i--)
 			_inventoryItem[i] = _inventoryItem[i - 1];
 		_inventoryItem[0] = previousInventoryItem(_inventoryItem[0]);
+	} else {
+		for (int i = 0; i < 3; i++)
+			_inventoryItem[i] = _inventoryItem[i + 1];
+		_inventoryItem[3] = nextInventoryItem(_inventoryItem[3]);		
 	}
 
 	inventoryRefresh();
