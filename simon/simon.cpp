@@ -5307,6 +5307,8 @@ void SimonState::loadMusic (uint music) {
 			// TODO Add music support for simon1demo
 		} else {
 			midi.stop();
+			midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
+
 			if (_game & GF_WIN) {	
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 				midi.loadMultipleSMF (_game_file);
@@ -5326,7 +5328,6 @@ void SimonState::loadMusic (uint music) {
 				delete f;
 			}
 
-			midi.setLoop (true);
 			midi.startTrack (0);
 		}
 	}

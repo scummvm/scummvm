@@ -298,10 +298,15 @@ void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
 	p->data = (byte *) calloc (size + 4, 1);
 	in->read (p->data, size);
 
-	// For GMF files, we're going to have to use
-	// hardcoded size tables.
-	if (!memcmp (p->data, "GMF\x1", 4) && size == 64000)
-		size = simon1_gmf_size [song];
+	if (!memcmp (p->data, "GMF\x1", 4)) {
+		if (!sfx)
+			setLoop (p->data[6] != 0);
+
+		// For GMF files, we're going to have to use
+		// hardcoded size tables.
+		if (size == 64000)
+			size = simon1_gmf_size [song];
+	}
 
 	MidiParser *parser = MidiParser::createParser_SMF();
 	parser->property (MidiParser::mpMalformedPitchBends, 1);
