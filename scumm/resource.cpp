@@ -364,25 +364,16 @@ void Scumm::readIndexFile()
 void Scumm::readArrayFromIndexFile()
 {
 	int num;
-	int a, b, c, d;
+	int a, b, c;
 
 	if (_features & GF_AFTER_V8) {
-		// FIXME - I am not quite sure how to interpret the AARY format of COMI.
-		// Each entry seems to be 12 bytes, while in V7 games it is only 8 bytes.
-		// 2 of the additional bytes seem to be used for num. But what about the
-		// other 2?. Either one of the three fields grew, too (but which). Or there
-		// is a new field, but then what does it mean? Endy or ludde probably know more :-)
+		// FIXME - this is just a guess
 		while ((num = _fileHandle.readUint32LE()) != 0) {
-			a = _fileHandle.readUint16LE();
-			b = _fileHandle.readUint16LE();
-			c = _fileHandle.readUint16LE();
-			d = _fileHandle.readUint16LE();
+			a = _fileHandle.readUint32LE();
+			b = _fileHandle.readUint32LE();
 			
-			printf("Reading array (0x%08x,%d,%d,%d,%d) - (pos = 0x%08x)\n", num, a, b, c, d, _fileHandle.pos());
-			if (c == 1)
-				defineArray(num, 1, a, b);
-			else
-				defineArray(num, 5, a, b);
+			printf("Reading array (0x%08x,%d,%d) - (pos = 0x%08x)\n", num, a, b, _fileHandle.pos());
+			defineArray(num, 0, a, b);
 		}
 	} else {
 		while ((num = _fileHandle.readUint16LE()) != 0) {
