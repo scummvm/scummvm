@@ -219,6 +219,14 @@ int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->queue(&event);
 
 		// Music, maestro
+
+		// As far as I can tell, there are 40 tracks, numbered 0
+		// through 39. This music appears as tracks 1, 7, 13, 19, 25
+		// and 31, and while they all sound the same to me in the GM
+		// music file, track 1 sounds different from the others in the
+		// FM music file. I believe track 1 is the correct one for
+		// this intro.
+
 		event.type = ONESHOT_EVENT;
 		event.code = MUSIC_EVENT;
 		event.param = 1;
@@ -280,6 +288,16 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 
 	switch (param) {
 	case SCENE_BEGIN:
+		// More music
+		event.type = ONESHOT_EVENT;
+		event.code = MUSIC_EVENT;
+		event.param = 32;
+		event.param2 = MUSIC_LOOP;
+		event.op = EVENT_PLAY;
+		event.time = 0;
+
+		q_event = _vm->_events->queue(&event);
+
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
 		event.type = ONESHOT_EVENT;
