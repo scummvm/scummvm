@@ -195,15 +195,6 @@ void Sound::playSound(int soundID) {
 		assert(_scumm->_musicEngine);
 		_scumm->_musicEngine->startSound(soundID);
 	}
-	else if (READ_UINT32(ptr) == MKID('SOUN')) {
-		ptr += 24;
-		int track = ptr[0];
-		int loops = ptr[1];
-		int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
-		playCDTrack(track, loops == 0xff ? -1 : loops, start, 0);
-
-		_currentCDSound = soundID;
-	}
 	// Support for SFX in Monkey Island 1, Mac version
 	// This is rather hackish right now, but works OK. SFX are not sounding
 	// 100% correct, though, not sure right now what is causing this.
@@ -328,16 +319,28 @@ void Sound::playSound(int soundID) {
 		memcpy(sound, ptr + 33, size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
-	else if (_scumm->_features & GF_FMTOWNS) {
-		size = READ_LE_UINT32(ptr);
+	else if ((_scumm->_features & GF_FMTOWNS) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
+		bool tows = READ_UINT32(ptr) == MKID('TOWS');
+		if (_scumm->_features & GF_FMTOWNS)
+			size = READ_LE_UINT32(ptr);
+		else
+		{
+			size = READ_BE_UINT32(ptr + 4) - 2;
+			if (tows)
+				size += 8;
+			ptr += 2;
+		}
 		rate = 11025;
 		int type = *(ptr + 0x0D);
-
 		int numInstruments;
 
-		switch(type) {
+		if (tows)
+			type = 0;
+		switch (type) {
 		case 0:	// Sound effect
 			numInstruments = *(ptr + 0x14);
+			if (tows)
+				numInstruments = 1;
 			ptr += 0x16;
 			size -= 0x16;
 			while (numInstruments--) {
@@ -372,7 +375,7 @@ void Sound::playSound(int soundID) {
 		case 1:
 			// Music (Euphony format)
 			if (_scumm->_musicEngine)
-				_scumm->_musicEngine->startSound (soundID);
+				_scumm->_musicEngine->startSound(soundID);
 			break;
 		case 2: // CD track resource
 			ptr += 0x16;
@@ -387,7 +390,7 @@ void Sound::playSound(int soundID) {
 				int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
 				int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
 
-				playCDTrack(track, loops == 0xff ? -1 : loops, start, end - start);
+				playCDTrack(track, loops == 0xff ? -1 : loops, start, end <= start ? 0 : end - start);
 			}
 
 			_currentCDSound = soundID;

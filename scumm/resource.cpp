@@ -666,8 +666,6 @@ int Scumm::loadResource(int type, int idx) {
 		}
 	} else {
 		if (type == rtSound) {
-			_fileHandle.readUint32LE();
-			_fileHandle.readUint32LE();
 			return readSoundResource(type, idx);
 		}
 
@@ -699,7 +697,7 @@ int Scumm::loadResource(int type, int idx) {
 }
 
 int Scumm::readSoundResource(int type, int idx) {
-	uint32 pos, total_size, size, tag, basetag;
+	uint32 pos, total_size, size, tag, basetag, max_total_size;
 	int pri, best_pri;
 	uint32 best_size = 0, best_offs = 0;
 
@@ -707,6 +705,8 @@ int Scumm::readSoundResource(int type, int idx) {
 
 	pos = 0;
 
+	_fileHandle.readUint32LE();
+	max_total_size = _fileHandle.readUint32BE() - 8;
 	basetag = fileReadDword();
 	total_size = _fileHandle.readUint32BE();
 
@@ -731,6 +731,9 @@ int Scumm::readSoundResource(int type, int idx) {
 			pri = -1;
 
 			switch (tag) {
+			case MKID('TOWS'):
+				pri = 16;
+				break;
 			case MKID('SBL '):
 				pri = 15;
 				break;
@@ -780,12 +783,6 @@ int Scumm::readSoundResource(int type, int idx) {
 			_fileHandle.read(createResource(type, idx, best_size), best_size);
 			return 1;
 		}
-	} else if (FROM_LE_32(basetag) == 24) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.seek(-8, SEEK_CUR);
-		_fileHandle.read(createResource(type, idx, total_size), total_size);
-		return 1;
 	} else if (basetag == MKID('Mac0')) {
 		_fileHandle.seek(-12, SEEK_CUR);
 		total_size = _fileHandle.readUint32BE() - 8;
@@ -850,7 +847,12 @@ int Scumm::readSoundResource(int type, int idx) {
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
-		
+	} else if (FROM_LE_32(basetag) == max_total_size) {
+		_fileHandle.seek(-12, SEEK_CUR);
+		total_size = _fileHandle.readUint32BE();
+		_fileHandle.seek(-8, SEEK_CUR);
+		_fileHandle.read(createResource(type, idx, total_size), total_size);
+		return 1;
 	} else {
 		warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
