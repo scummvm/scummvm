@@ -153,6 +153,7 @@ public:
 	char *getCurMusicSoundName();
 	bool getSoundStatus(const char *soundName) const;
 	int32 getPosIn60HzTicks(const char *soundName);
+	int getCurMusicSeqId() { return _curMusicSeq; }
 };
 
 extern Imuse *g_imuse;
