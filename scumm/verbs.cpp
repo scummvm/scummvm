@@ -137,7 +137,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 				dst += vs->width;
 			}
 
-			markRectAsDirty(kVerbVirtScreen, rect.left, rect.right, rect.top, rect.bottom, 0);
+			markRectAsDirty(kVerbVirtScreen, rect);
 		}
 
 		if (new_box != -1) {
@@ -154,7 +154,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 				dst += vs->width;
 			}
 
-			markRectAsDirty(kVerbVirtScreen, rect.left, rect.right, rect.top, rect.bottom, 0);
+			markRectAsDirty(kVerbVirtScreen, rect);
 		}
 
 		v2_mouseover_box = new_box;

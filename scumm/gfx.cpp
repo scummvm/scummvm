@@ -570,25 +570,19 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if ((vs = findVirtScreen(rect.top)) == NULL)
 		return;
 
+	if (rect.left > vs->width)
+		return;
+
 	topline = vs->topline;
 
 	rect.top -= topline;
 	rect.bottom -= topline;
 
-	if (rect.left < 0)
-		rect.left = 0;
-	if (rect.right < 0)
-		rect.right = 0;
-	if (rect.left > vs->width)
-		return;
-	if (rect.right > vs->width)
-		rect.right = vs->width;
-	if (rect.bottom >= vs->height)
-		rect.bottom = vs->height;
+	rect.clip(vs->width, vs->height);
 
-	markRectAsDirty(vs->number, rect.left, rect.right, rect.top, rect.bottom, USAGE_BIT_RESTORED);
+	markRectAsDirty(vs->number, rect, USAGE_BIT_RESTORED);
 
-	int offset = (rect.top) * vs->width + vs->xstart + rect.left;
+	int offset = rect.top * vs->width + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
 
 	height = rect.height();
@@ -716,7 +710,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	else if (y2 > vs->height)
 		y2 = vs->height;
 	
-	markRectAsDirty(vs->number, x, x2, y, y2, 0);
+	markRectAsDirty(vs->number, x, x2, y, y2);
 
 	backbuff = vs->screenPtr + vs->xstart + y * vs->width + x;
 

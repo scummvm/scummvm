@@ -709,7 +709,7 @@ void ScummDebugger::drawBox(int box) {
 
 	VirtScreen *vs = _vm->findVirtScreen(coords.ul.y);
 	if (vs != NULL)
-		_vm->markRectAsDirty(vs->number, 0, vs->width, 0, vs->height, 0);
+		_vm->markRectAsDirty(vs->number, 0, vs->width, 0, vs->height);
 	_vm->drawDirtyScreenParts();
 	_vm->_system->update_screen();
 }

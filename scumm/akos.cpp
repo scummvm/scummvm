@@ -674,7 +674,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
 			return 0;
 	} else
-		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right, rect.top, rect.bottom, _actorID);
+		_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
 
 	if (rect.top >= (int)_outheight || rect.bottom <= 0)
 		return 0;
@@ -767,21 +767,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 
 	_vm->markRectAsDirty(kMainVirtScreen, clip.left, clip.right + 1, clip.top, clip.bottom + 1, _actorID);
 
-	if (clip.top < 0) {
-		clip.top = 0;
-	}
-
-	if (clip.bottom > maxh) {
-		clip.bottom = maxh;
-	}
-
-	if (clip.left < 0) {
-		clip.left = 0;
-	}
-
-	if (clip.right > maxw) {
-		clip.right = maxw;
-	}
+	clip.clip(maxw, maxh);
 
 	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
 		return 0;
