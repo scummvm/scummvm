@@ -654,7 +654,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 		if (numBoxes < firstValidBox)
 			return abr;
 
-		bestDist = 0xFFFF;
+		bestDist = (_vm->_version >= 7) ? 0x7FFFFFFF : 0xFFFF;
 		if (_vm->_version <= 2)
 			bestDist *= 8*2;	// Adjust for the fact that we multiply x by 8 and y by 2
 		bestBox = kInvalidBox;
