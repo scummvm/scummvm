@@ -282,6 +282,8 @@ void SkyState::initialise(void) {
 		_quickLaunch = true;
 	else
 		_quickLaunch = false;
+
+	_skyMusic->setVolume(_detector->_music_volume >> 1);
 }
 
 void SkyState::initItemList() {
