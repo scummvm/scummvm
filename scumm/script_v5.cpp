@@ -1138,17 +1138,23 @@ void ScummEngine_v5::o5_saveLoadGame() {
 			_opcode = 0x40;
 		else if (a == 2)
 			_opcode = 0x80;
-	} else
+	} else {
 		_opcode = a & 0xE0;
+	}
 
 	switch (_opcode) {
 	case 0x00: // num slots available
 		result = 100;
 		break;
 	case 0x20: // drive
-		// 0 = hard drive
-		// 1 = disk drive
-		result = 0;
+		if (_gameId == GID_INDY3) {
+			// 0 = hard drive
+			// 1 = disk drive
+			result = 0;
+		} else {
+			// set current drive
+			result = 1;
+		}
 		break;
 	case 0x40: // load
 		if (loadState(slot, _saveTemporaryState))
@@ -1173,7 +1179,10 @@ void ScummEngine_v5::o5_saveLoadGame() {
 		else
 			result = 7; // save file does not exist
 		break;
+	default:
+		error("o5_saveLoadGame: unknown subopcode %d", _opcode);
 	}
+
 	setResult(result);
 }
 		
