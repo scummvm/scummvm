@@ -53,7 +53,7 @@ struct Rect {
 	int16 bottom, right;	//!< The point at the bottom right of the rectangle (not part of the rect).
 
 	Rect() : top(0), left(0), bottom(0), right(0) {}
-	Rect(int16 x, int16 y) : top(0), left(0), bottom(x), right(y) {}
+	Rect(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
