@@ -24,7 +24,6 @@
 
 #include "stdafx.h"
 #include "sound/mididrv.h"
-#include "common/engine.h"
 #include "sky/music/musicbase.h"
 
 typedef struct {

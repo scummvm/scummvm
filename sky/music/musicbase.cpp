@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/util.h"
 #include "musicbase.h"
+#include "common/util.h"
 
 SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system) {
 

@@ -23,8 +23,8 @@
 #define MUSICBASE_H
 
 #include "stdafx.h"
-#include "common/engine.h"
 #include "sky/disk.h"
+#include "common/system.h"
 
 #define FILES_PER_SECTION 4
 

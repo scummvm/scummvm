@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/util.h"
 #include "sky/music/mt32music.h"
+#include "common/util.h"
 
 void SkyMT32Music::passTimerFunc(void *param) {
 
