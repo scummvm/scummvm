@@ -644,12 +644,10 @@ void AdlibPart::send (uint32 b) {
 }
 
 void AdlibPart::noteOff(byte note) {
-  debug (4, "%10d: noteOff(%d)", tick, note);
 	_owner->part_key_off(this, note);
 }
 
 void AdlibPart::noteOn(byte note, byte velocity) {
-  debug (4, "%10d: noteOn(%d,%d)", tick, note, velocity);
 	_owner->part_key_on(this, &_part_instr, note, velocity);
 }
 
@@ -984,7 +982,6 @@ void MidiDriver_ADLIB::premix_proc(void *param, int16 *buf, uint len) {
 void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 	if (_adlib_reg_cache[port] == value)
 		return;
-  debug (4, "%10d: adlib_write[%x] = %x", tick, port, value);
 	_adlib_reg_cache[port] = value;
 
 	OPLWriteReg(_opl, port, value);
