@@ -92,6 +92,7 @@ typedef	struct {
 	Boolean saveConfig;
 	Boolean stdPalette;
 	Boolean autoReset;
+	Boolean demoMode;
 
 	struct {
 		UInt16 speaker;
@@ -1725,7 +1726,7 @@ static Boolean SoundFormHandleEvent(EventPtr eventP) {
 static void MiscOptionsFormSave() {
 
 	FieldType *fld1P;
-	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P, *cck6P;	
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P, *cck6P, *cck7P;	
 	FormPtr frmP;
 
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
@@ -1736,6 +1737,7 @@ static void MiscOptionsFormSave() {
 	cck4P = (ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox);
 	cck5P = (ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox);
 	cck6P = (ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox);
+	cck7P = (ControlType *)GetObjectPtr(MiscOptionsDemoCheckbox);
 
 	frmP = FrmGetActiveForm();
 
@@ -1751,6 +1753,7 @@ static void MiscOptionsFormSave() {
 	gPrefs->debug = CtlGetValue(cck4P);
 	gPrefs->saveConfig = CtlGetValue(cck5P);
 	gPrefs->autoReset = CtlGetValue(cck6P);
+	gPrefs->demoMode = CtlGetValue(cck7P);
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
 	
@@ -1771,6 +1774,7 @@ static void MiscOptionsFormInit() {
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox), gPrefs->autoReset);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox), gPrefs->debug);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox), gPrefs->saveConfig);
+	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDemoCheckbox), gPrefs->demoMode);
 
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
 
@@ -2656,6 +2660,9 @@ static void StartScummVM() {
 			StrIToA(num, gPrefs->debugLevel);
 			AddArg(&argvP[argc], "-d", num, &argc);
 		}
+		// demo mode ?
+		if (gPrefs->demoMode)
+			AddArg(&argvP[argc], "--demo-mode", NULL, &argc);
 
 		// multi midi ?
 		if (gPrefs->sound.multiMidi)
@@ -3423,24 +3430,30 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 	{
 		case sysNotifyVolumeMountedEvent:
 			pData->handled = true;	// don't switch
-			CardSlotFormUpdate(); // redraw card list if needed
 
-			if (gPrefs->card.volRefNum == sysInvalidRefNum) {
-				VFSAnyMountParamType *notifyDetailsP = (VFSAnyMountParamType *)pData->notifyDetailsP;
-				gPrefs->card.volRefNum = notifyDetailsP->volRefNum;
+			if (gPrefs) {	// gPrefs exists ? so we are in the palm selector
+				CardSlotFormUpdate(); // redraw card list if needed
 
-				if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
-					if (gPrefs->card.volRefNum != sysInvalidRefNum)
-						FrmUpdateForm(MainForm, frmRedrawUpdateMSImport);
+				if (gPrefs->card.volRefNum == sysInvalidRefNum) {
+					VFSAnyMountParamType *notifyDetailsP = (VFSAnyMountParamType *)pData->notifyDetailsP;
+					gPrefs->card.volRefNum = notifyDetailsP->volRefNum;
+
+					if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
+						if (gPrefs->card.volRefNum != sysInvalidRefNum)
+							FrmUpdateForm(MainForm, frmRedrawUpdateMSImport);
+				}
 			}
 		
 		case sysNotifyVolumeUnmountedEvent:
-			CardSlotFormUpdate();
-			if (gPrefs->card.volRefNum == (UInt16)pData->notifyDetailsP) {
-				gPrefs->card.volRefNum = sysInvalidRefNum;
+			if (gPrefs) {
+				CardSlotFormUpdate();
 
-				if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
-					FrmUpdateForm(MainForm, frmRedrawUpdateMS);
+				if (gPrefs->card.volRefNum == (UInt16)pData->notifyDetailsP) {
+					gPrefs->card.volRefNum = sysInvalidRefNum;
+
+					if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
+						FrmUpdateForm(MainForm, frmRedrawUpdateMS);
+				}
 			}
 			break;
 	}
