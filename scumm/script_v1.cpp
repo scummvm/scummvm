@@ -848,9 +848,6 @@ void Scumm::o5_setClass()
 			continue;
 		}
 
-		if (_gameId == GID_INDY3_256)
-			newClass--;
-
 		putClass(obj, newClass, (newClass & 0x80) ? true : false);
 	}
 }
