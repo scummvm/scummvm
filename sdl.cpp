@@ -77,7 +77,7 @@ private:
 		DF_WANT_RECT_OPTIM = 2,
 		DF_2xSAI = 4,
 		DF_SEPARATE_HWSCREEN = 8,
-
+		DF_UPDATE_EXPAND_1_PIXEL = 16,
 	};
 
 	int _driver;
@@ -247,7 +247,7 @@ void OSystem_SDL::load_gfx_mode() {
 
 	if (_sai_func) {
 		uint16 *tmp_screen = (uint16*)calloc(320*204 + 16,sizeof(uint16));
-		_driver_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN;
+		_driver_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
 
 		Init_2xSaI(565);
 		sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
@@ -396,6 +396,15 @@ void OSystem_SDL::add_dirty_rect(int x, int y, int w, int h) {
 	else {
 		SDL_Rect *r = &dirty_rect_list[num_dirty_rects++];
 		
+		/* Update the dirty region by 1 pixel for graphics drivers
+		 * that "smear" the screen */
+		if (_driver_flags & DF_UPDATE_EXPAND_1_PIXEL) {
+			x--;
+			y--;
+			w+=2;
+			h+=2;
+		}
+
 		/* clip */
 		if (x<0) { w+=x; x=0; }
 		if (y<0) { h+=y; y=0; }
