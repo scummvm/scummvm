@@ -21,6 +21,8 @@
 
 #ifdef _WIN32_WCE
 
+#define POCKETSCUMM_VERSION "alpha build 11.17.02"
+
 /* Original GFX code by Vasyl Tsvirkunov */
 
 #include <windows.h>
@@ -48,6 +50,7 @@ static unsigned short pal[MAX_CLR];
 static UBYTE staticTranslate[20];
 static UBYTE invert = 0;
 static int colorscale = 0;
+unsigned char color_match[500];  // used for paletted issues	
 
 extern UBYTE item_toolbar[];
 extern UBYTE item_toolbar_colors[];
@@ -73,6 +76,9 @@ extern UBYTE item_loading[];
 extern UBYTE item_loading_colors[];
 extern UBYTE item_startup[];
 extern UBYTE item_startup_colors[];
+extern int item_startup_colors_size;
+extern UBYTE item_bomb[];
+extern UBYTE item_bomb_colors[];
 
 
 extern bool sound_activated;
@@ -161,7 +167,8 @@ void NULL_Set_565(INT16*, int, int, int, int, int);
 
 void palette_update();
 
-void printString(const char *, int, int, int, int = -1);
+void printString(const char *, int, int, int, int = -1, int = 220);
+int drawString(const char *, int, int, int, int = -1);
 static byte textfont[] = {0,0,99,1,226,8,4,8,6,8,6,0,0,0,0,0,0,0,0,0,0,0,8,2,1,8,0,0,0,0,0,0,0,0,0,0,0,0,4,3,7,8,7,7,8,4,5,5,8,7,4,7,3,8,7,7,7,7,8,7,7,7,7,7,3,4,7,5,7,7,8,7,7,7,7,7,7,7,7,5,7,7,
 7,8,7,7,7,7,7,7,7,7,7,8,7,7,7,5,8,5,8,8,7,7,7,6,7,7,7,7,7,5,6,7,5,8,7,7,7,7,7,7,7,7,7,8,7,7,7,5,3,5,0,8,7,7,7,7,7,7,0,6,7,7,7,5,5,5,7,0,6,8,8,7,7,7,7,7,0,7,7,0,0,
 0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,0,0,1,3,6,12,
@@ -310,7 +317,7 @@ void LimitScreenGeometry() {
 	if (_geometry_h > 200) {
 		geom[0].lineLimit = _geometry_w*200;
 		geom[1].lineLimit = _geometry_w*200;
-		geom[1].lineLimit = _geometry_w*200;
+		geom[2].lineLimit = _geometry_w*200;
 		_geometry_h = 200;
 	}
 }
@@ -486,17 +493,6 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 	if(gxdp.cyHeight < 320)
 		maxMode = 0; // portrait only!
 
-	/*
-	for(int i = 0; i < MAX_CLR; i++)
-	{
-		SetPalEntry(i,  (colortable[i] >> 16) & 0xff,
-			(colortable[i] >> 8) & 0xff,
-			(colortable[i]) & 0xff);
-	}
-	*/
-
-	//palette_update();
-
 	active = 1;
 	return 0;
 }
@@ -549,6 +545,8 @@ void palette_update()
 
 		for(i=0; i<20; i++) 
           staticTranslate[i] = best_match(palRed[i+236], palGreen[i+236], palBlue[i+236], 236)+10; 
+
+		memset(color_match, 255, sizeof(color_match));
 
 	}
 }
@@ -662,9 +660,43 @@ void drawSoundItem(int x, int y) {
 		pBlt_part(image_expand(item_soundOff), x, y, 32, 32, item_soundOff_colors, 0);
 }
 
+void drawError(char *error) {
+	FILE *file_error;
+
+	file_error=fopen("scummvm_error.txt", "w");
+	if (file_error) {
+		fprintf(file_error, "%s\n", error);
+		fclose(file_error);
+	}
+	int current_y = 80;
+	Cls();
+	pBlt_part(image_expand(item_toolbar), 0, 0, 320, 40, item_toolbar_colors, 0);
+	pBlt_part(image_expand(item_bomb), 0, 0, 64, 67, item_bomb_colors, 0);
+	memset(decomp, 0, sizeof(decomp));
+	current_y = drawString("SCUMMVM ERROR !", 10, current_y, 2, 1);
+	current_y += 10;
+	current_y = drawString(error, 10, current_y, 8, 1);
+	current_y += 10;
+	current_y = drawString("Exiting in 10 seconds", 10, current_y, 8, 1);
+	Sleep(10 * 1000);
+}
+
 void drawWait() {
 	pBlt_part(image_expand(item_toolbar), 0, 0, 320, 40, item_toolbar_colors, 0);
 	pBlt_part(image_expand(item_loading), 28, 10, 100, 25, item_loading_colors, 0);
+}
+
+void setGameSelectionPalette() {
+	int i;
+
+	if (_gfx_option != VIDEO_PALETTED)
+		return;
+
+	for (i=0; i<item_startup_colors_size; i++)
+		SetPalEntry(i, item_startup_colors[3 * i], item_startup_colors[(3 * i) + 1],
+						item_startup_colors[(3 * i) + 2]);
+
+	palette_update();
 }
 
 void drawBlankGameSelection() {
@@ -676,11 +708,15 @@ void drawBlankGameSelection() {
 }
 
 void drawVideoDevice() {
-	char video_device[100];
+	char info[100];
 
-	sprintf(video_device, "Video device : %s %s", gfx_device_name[_gfx_device], gfx_device_options_name[_gfx_option]);
+	sprintf(info, "Video device : %s %s - version %s", gfx_device_name[_gfx_device], gfx_device_options_name[_gfx_option], POCKETSCUMM_VERSION);
+	drawString(info, 10, 0, 2, 1);
+	/*
 	printString(video_device, 10, 270, 2, 0);
-	pBlt_part(decomp + (270 * 220), 0, 5, 220, 8, item_startup_colors, 0);
+	pBlt_part(decomp + (270 * 220), 0, 5, 220, 8, item_startup_colors, 1);
+	*/
+
 }
 
 void drawCommentString(char *comment) {
@@ -821,11 +857,15 @@ void Blt(UBYTE * scr_ptr)
 
 }
 
-void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch) {
-	pBlt_part(src_ptr, x, y, width, height, NULL, pitch);
+void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch, bool check) {
 
 	if (toolbar_available && !toolbar_drawn && !hide_toolbar)
 		drawAllToolbar();
+
+	pBlt_part(src_ptr, x, y, width, height, NULL, pitch);
+
+	if (check && (y > _geometry_h || (y + height) > _geometry_h))
+		toolbar_drawn = false;
 
 }
 
@@ -1312,21 +1352,28 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 /* *************************** PALETTED DISPLAY ********************************* */
 
-void palette_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+void palette_Set_565(INT16 *buffer_param, int pitch, int x, int y, int width, int height) {
 
 	static UBYTE *scraddr;
 	static UBYTE *dst;
 	static long pixelstep;
 	static long linestep;
 	static long skipmask;
-	unsigned char color_match[500];
-	memset(color_match, 255, sizeof(color_match));
+	static unsigned char *color_match_2;
+	static UINT16 *buffer;
+
+	buffer = (UINT16*)buffer_param;
 
 	scraddr = (UBYTE*)dynamicGXBeginDraw();
 
 	pixelstep = geom[useMode].pixelstep;
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
+
+	color_match_2 = (unsigned char*)malloc(0xffff);
+	if (color_match_2) 
+		memset(color_match_2, 0xff, 0xffff);
+
 
 	if(scraddr)
 	{
@@ -1347,13 +1394,25 @@ void palette_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heig
 				for (i=0; i < x; i++)					
 					dst += pixelstep;
 
-				/* HUGE Turtle warning !!! */
+				/* Turtle warning !!! */
 
 				for (i=0; i<width; i++) {
 					if (skipmask == 0xffffffff || (long)i & skipmask) {
-					*dst++ = best_match(RED_FROM_565(*(buffer + i)),
-									    GREEN_FROM_565(*(buffer + i)), 
-									    BLUE_FROM_565(*(buffer + i)), 236) + 10;
+						if (color_match_2) {
+							if (color_match_2[*(buffer + i)] == 255) 
+								color_match_2[*(buffer + i)] = best_match(
+											RED_FROM_565(*(buffer + i)),
+										    GREEN_FROM_565(*(buffer + i)), 
+										    BLUE_FROM_565(*(buffer + i)), 236) + 10;
+							*dst = color_match_2[*(buffer + i)];
+						}
+						else {
+							*dst = best_match(
+										RED_FROM_565(*(buffer + i)),
+										GREEN_FROM_565(*(buffer + i)), 
+										BLUE_FROM_565(*(buffer + i)), 236) + 10;
+						}
+						dst += pixelstep;
 					}
 				}
 
@@ -1363,6 +1422,8 @@ void palette_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heig
 			}
 	}
 
+	if (color_match_2)
+		free(color_match_2);
 	dynamicGXEndDraw();
 }
 
@@ -1382,8 +1443,6 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 	static long pixelstep;
 	static long linestep;
 	static long skipmask;
-	unsigned char color_match[500];
-	memset(color_match, 255, sizeof(color_match));
 
 // Special code is used to deal with packed pixels in monochrome mode
 	static UBYTE bitmask;
@@ -2161,6 +2220,8 @@ void Translate(int* px, int* py)
 	switch(currentScreenMode)
 	{
 	case 0: /* portrait */
+		if (!_gfx_mode_switch)
+			break;
 		*px = *px*4/3;
 		break;
 	case 1: /* landscape left */
@@ -2180,7 +2241,7 @@ void Translate(int* px, int* py)
 
 /* ************************** LAUNCHER FONT STUFF ************************* */
 
-void printChar(const char str, int xx, int yy, int textcolor, int highlight)
+void printChar(const char str, int xx, int yy, int textcolor, int highlight, int width)
 {
 	unsigned int buffer = 0, mask = 0, x, y;
 	byte *tmp;
@@ -2189,7 +2250,7 @@ void printChar(const char str, int xx, int yy, int textcolor, int highlight)
 	tmp = &textfont[0];
 	tmp += 224 + (str + 1) * 8;
 
-	ptr = decomp + (yy * 220) + xx;
+	ptr = decomp + (yy * width) + xx;
 
 	for (y = 0; y < 8; y++) {
 		for (x = 0; x < 8; x++) {
@@ -2206,19 +2267,42 @@ void printChar(const char str, int xx, int yy, int textcolor, int highlight)
 		}
 		if (highlight > 0) {
 			int i;
-			for (i=9; i<220; i++)
+			for (i=9; i<width; i++)
 				ptr[x] = highlight;
 		}
-		ptr += 220;
+		ptr += width;
 	}
 
 }
-void printString(const char *str, int x, int y, int textcolor, int highlight)
+void printString(const char *str, int x, int y, int textcolor, int highlight, int width)
 {
 	for (uint letter = 0; letter < strlen(str); letter++)
-		printChar(str[letter], x + (letter * 8), y, textcolor, highlight);
+		printChar(str[letter], x + (letter * 8), y, textcolor, highlight, width);
 }
 
+#define MAX_CHARS_PER_LINE 29
+
+int drawString(const char *str, int x, int y, int textcolor, int highlight) {
+	int current_y;
+	unsigned int current_pos = 0;
+	char substring[MAX_CHARS_PER_LINE + 1];
+
+	current_y = y;
+
+	while(current_pos < strlen(str)) {
+		memset(substring, 0, sizeof(substring));
+		if (strlen(str + current_pos) > MAX_CHARS_PER_LINE) 
+			memcpy(substring, str + current_pos, MAX_CHARS_PER_LINE);
+		else
+			strcpy(substring, str + current_pos);
+		printString(substring, x, current_y, textcolor, highlight, 320);
+		pBlt_part(decomp + (current_y * 320), 0, current_y, 320, 8, item_startup_colors, 0);
+		current_pos += MAX_CHARS_PER_LINE;
+		current_y += 10;
+	}
+
+	return current_y;
+}
 
 /* ************************** DIRECT BLT IMPLEMENTATION ************************* */
 
