@@ -661,14 +661,23 @@ protected:
 		byte data[1];    //14
 	} GCC_PACK;
 
+	struct WizImage {
+		int resnum;
+		int x1;
+		int y1;
+		int flags;
+	};
+
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS
 #endif
 
 	const OpcodeEntryV72he *_opcodesV72he;
+	WizImage _wizImages[20];
+	uint16 _wizImagesNum;
 
 public:
-	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v7he(detector, syst, gs) {}
+	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v7he(detector, syst, gs), _wizImagesNum(0) {}
 
 protected:
 	virtual void setupScummVars();
@@ -677,6 +686,8 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+	
+	virtual void redrawBGAreas();
 
 	ArrayHeader *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
 	int readArray(int array, int idx2, int idx1);
@@ -686,6 +697,10 @@ protected:
 	void shuffleArray(int num, int minIdx, int maxIdx);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
+
+	void drawWizImage(int restype, int resnum, int x1, int y1, int flags);
+	void flushWizBuffer();
+	void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, Common::Rect *pr);
 
 	/* Version 7 script opcodes */
 	void o72_pushDWord();
@@ -707,14 +722,14 @@ protected:
 	void o72_startScript();
 	void o72_startObject();
 	void o72_drawObject();
-	void o72_unknown62();
+	void o72_printWizImage();
 	void o72_getArrayDimSize();
 	void o72_getNumFreeArrays();
 	void o72_pickupObject();
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
-	void o72_unknownCE();
+	void o72_drawWizImage();
 	void o72_shuffle();
 	void o72_jumpToScript();
 	void o72_openFile();

@@ -274,7 +274,8 @@ public:
 	                int stripnr, int numstrip, StripTable *table);
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table);
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width);
-	void copyVirtScreenBuffers(int x, int y, int w, int h);
+	void decompressImageHE(uint8 *dst, int dstWidth, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect);
+	void copyVirtScreenBuffers(int x1, int y1, int x2, int y2);
 
 	void disableZBuffer() { _zbufferDisabled = true; }
 	void enableZBuffer() { _zbufferDisabled = false; }

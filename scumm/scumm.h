@@ -907,7 +907,7 @@ protected:
 
 	void restoreBG(Common::Rect rect, byte backColor = 0);
 	void redrawBGStrip(int start, int num);	
-	void redrawBGAreas();	
+	virtual void redrawBGAreas();
 	
 	void cameraMoved();
 	void setCameraAtEx(int at);
@@ -924,7 +924,7 @@ protected:
 	void setupV1ManiacPalette();
 	void setupV1ZakPalette();
 	void setPalette(int pal);
-	void setPaletteFromPtr(const byte *ptr);
+	void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 	void setPaletteFromRes();
 	void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);

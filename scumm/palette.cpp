@@ -106,19 +106,20 @@ void ScummEngine::setupV1ZakPalette() {
 	setPalColor(16, 255,  85, 255);
 }
 
-void ScummEngine::setPaletteFromPtr(const byte *ptr) {
+void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	int i;
 	byte *dest, r, g, b;
-	int numcolor;
 
-	if (_features & GF_SMALL_HEADER) {
-		if (_features & GF_OLD256)
-			numcolor = 256;
-		else
-			numcolor = READ_LE_UINT16(ptr + 6) / 3;
-		ptr += 8;
-	} else {
-		numcolor = getResourceDataSize(ptr) / 3;
+	if (numcolor < 0) {
+		if (_features & GF_SMALL_HEADER) {
+			if (_features & GF_OLD256)
+				numcolor = 256;
+			else
+				numcolor = READ_LE_UINT16(ptr + 6) / 3;
+			ptr += 8;
+		} else {
+			numcolor = getResourceDataSize(ptr) / 3;
+		}
 	}
 
 	checkRange(256, 0, numcolor, "Too many colors (%d) in Palette");

@@ -1385,16 +1385,127 @@ void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const 
 	 }
 }
 
-void Gdi::copyVirtScreenBuffers(int x, int y, int w, int h) {
-	int rw = w - x + 1;
-	int rh = h - y + 1;
+void Gdi::decompressImageHE(uint8 *dst, int dstWidth, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect) {
+	const uint8 *dataPtr, *dataPtrNext;
+	uint8 *dstPtr, *dstPtrNext;
+	uint32 code;
+	uint8 databit;
+	int h, w, xoff;
+	uint16 off;
+	
+	dstPtr = dst + dstRect->left + dstRect->top * dstWidth;
+	dataPtr = src;
+	h = srcRect->top;
+	while (h--) {
+		dataPtr += READ_LE_UINT16(dataPtr) + 2;
+	}
+	h = srcRect->bottom - srcRect->top;
+	if (h < 0)
+		return;
+	w = srcRect->right - srcRect->left + 1;
+	if (w <= 0)
+		return;
+		
+	while (1) {
+		xoff = srcRect->left;
+		off = READ_LE_UINT16(dataPtr);
+		w = srcRect->right - srcRect->left + 1;
+		dstPtrNext = dstWidth + dstPtr;
+		dataPtrNext = off + 2 + dataPtr;
+		if (h < 0)
+			break;
+		--h;
+		dataPtr += 2;	
+		if (off == 0) goto dec_next;
+
+		while (xoff > 0) {
+			code = *dataPtr++;
+			databit = code & 1;
+			code >>= 1;
+			if (databit) {
+				xoff -= code;
+				if (xoff < 0) {
+					code = -xoff;
+					goto dec_sub1;
+				}
+			} else {
+				databit = code & 1;
+				code >>= 1;	
+				if (databit) {
+					++code;
+					++dataPtr;
+					xoff -= code;
+					if (xoff < 0) {
+						code = -xoff;
+						--dataPtr;
+						goto dec_sub2;
+					}
+				} else {
+					++code;
+					dataPtr += code;
+					xoff -= code;
+					if (xoff < 0) {
+						dataPtr += xoff;
+						code = -xoff;
+						goto dec_sub3;
+					}
+				}
+			}
+		}
+
+		while (w > 0) {
+			code = *dataPtr++;
+			databit = code & 1;
+			code >>= 1;
+			if (databit) {
+dec_sub1:		dstPtr += code;
+				w -= code;
+			} else {
+				databit = code & 1;
+				code >>= 1;
+				if (databit) {
+					++code;
+dec_sub2:			w -= code;
+					if (w >= 0) {
+						memset(dstPtr, *dataPtr++, code);
+						dstPtr += code;
+					} else {
+						code += w;
+						memset(dstPtr, *dataPtr++, code);
+						dstPtr += code;
+					}
+				} else {
+					++code;
+dec_sub3:			w -= code;
+					if (w >= 0) {
+						memcpy(dstPtr, dataPtr, code);
+						dstPtr += code;
+						dataPtr += code;
+					} else {
+						code += w;
+						memcpy(dstPtr, dataPtr, code);
+						dstPtr += code;
+						dataPtr += code;
+					}
+				}
+			}
+		}
+dec_next:
+		dataPtr = dataPtrNext;
+		dstPtr = dstPtrNext;
+	}
+}
+
+void Gdi::copyVirtScreenBuffers(int x1, int y1, int x2, int y2) {
+	int rw = x2 - x1 + 1;
+	int rh = y2 - y1 + 1;
 	byte *src, *dst;
 
-	src = (byte *)_vm->virtscr[0].backBuf + (_vm->_screenStartStrip + y * _numStrips) * 8 + x;
-	dst = (byte *)_vm->virtscr[0].pixels + (_vm->_screenStartStrip + y * _numStrips) * 8 + x;
+	src = (byte *)_vm->virtscr[0].backBuf + (_vm->_screenStartStrip + y1 * _numStrips) * 8 + x1;
+	dst = (byte *)_vm->virtscr[0].pixels + (_vm->_screenStartStrip + y1 * _numStrips) * 8 + x1;
 	
 	copyBufferBox(dst, src, rw, rh);
-	_vm->markRectAsDirty(kMainVirtScreen, x, w, y, h, 0);
+	_vm->markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2, 0);
 }
 
 /**
