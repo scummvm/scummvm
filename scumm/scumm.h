@@ -337,11 +337,13 @@ public:
 	Dialog *_pauseDialog;
 	Dialog *_optionsDialog;
 	Dialog *_saveLoadDialog;
+	Dialog *_debuggerDialog;
 
 	int runDialog(Dialog *dialog);
 	void pauseDialog();
 	void saveloadDialog();
 	void optionsDialog();
+	void debuggerDialog();
 	void displayError(const char *message, ...);
 
 	// Misc startup/event functions

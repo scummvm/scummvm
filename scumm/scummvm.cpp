@@ -988,10 +988,8 @@ int Scumm::runDialog(Dialog *dialog)
 
 void Scumm::pauseDialog()
 {
-	if (!_pauseDialog) {
+	if (!_pauseDialog)
 		_pauseDialog = new PauseDialog(_newgui, this);
-	}
-
 	runDialog(_pauseDialog);
 }
 
@@ -1000,6 +998,13 @@ void Scumm::saveloadDialog()
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(_newgui, this);
 	runDialog(_saveLoadDialog);
+}
+
+void Scumm::debuggerDialog()
+{
+	if (!_debuggerDialog)
+		_debuggerDialog = new DebuggerDialog(_newgui, this, _realWidth, _realHeight / 5);
+	runDialog(_debuggerDialog);
 }
 
 void Scumm::optionsDialog()
@@ -1130,7 +1135,9 @@ void Scumm::processKbd()
 			_defaultTalkDelay = 5;
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
-	} 
+	} else if (_lastKeyHit == '~') { // Debug console
+		debuggerDialog();
+	}
 
 	_mouseButStat = _lastKeyHit;
 }
