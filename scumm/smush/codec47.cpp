@@ -476,8 +476,8 @@ static void codec47_subgfx_lev4(byte * d_dst, const int32 d_pitch) {
 	} else if (code == 0xFE) {
 		byte t = *d_src++;
 		tmp = t | t << 8;
-		*(uint16*)(d_dst + (d_pitch * 0)) = tmp;
-		*(uint16*)(d_dst + (d_pitch * 1)) = tmp;
+		*(uint16*)(d_dst + (d_pitch * 0)) = (uint16)tmp;
+		*(uint16*)(d_dst + (d_pitch * 1)) = (uint16)tmp;
 	} else if (code == 0xFC) {
 		tmp = codec47_decode2_offset2;
 		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_dst + (d_pitch * 0) + tmp);
@@ -485,8 +485,8 @@ static void codec47_subgfx_lev4(byte * d_dst, const int32 d_pitch) {
 	} else {
 		byte t = codec47_decode2_param_ptr[code];
 		tmp = t | t << 8;
-		*(uint16*)(d_dst + (d_pitch * 0)) = tmp;
-		*(uint16*)(d_dst + (d_pitch * 1)) = tmp;
+		*(uint16*)(d_dst + (d_pitch * 0)) = (uint16)tmp;
+		*(uint16*)(d_dst + (d_pitch * 1)) = (uint16)tmp;
 	}
 }
 
