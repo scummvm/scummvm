@@ -1162,6 +1162,7 @@ void ScummEngine_v2::o2_setActorElevation() {
 
 	Actor *a = derefActor(act, "o2_setActorElevation");
 	a->elevation = elevation * 2;
+	a->needRedraw = true;
 }
 
 void ScummEngine_v2::o2_animateActor() {
