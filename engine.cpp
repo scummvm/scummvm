@@ -129,8 +129,6 @@ void Engine::mainLoop() {
 		} else if (_mode == ENGINE_MODE_NORMAL) {
 			g_driver->clearScreen();
 
-			g_driver->set3DMode();
-
 			if (_currScene != NULL) {
 				_currScene->setupCamera();
 			}
@@ -172,6 +170,10 @@ void Engine::mainLoop() {
 			}
 
 			g_driver->set3DMode();
+
+//			if (_currScene != NULL) {
+//				_currScene->setupLights();
+//			}
 
 			// Draw actors
 			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
