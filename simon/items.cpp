@@ -274,7 +274,12 @@ int SimonState::runScript() {
 				uint var = getVarOrByte();
 				uint value = (uint16)getVarOrWord();
 
-				writeVariable(var, _rnd.getRandomNumber(value - 1));
+				// Disable random in simon1amiga for now
+				// Since copy protection screen is currently unreadable
+				if (_game == GAME_SIMON1AMIGA)
+					writeVariable(var, 4);
+				else
+					writeVariable(var, _rnd.getRandomNumber(value - 1));
 			}
 			break;
 

@@ -39,7 +39,7 @@ extern bool draw_keyboard;
 static const VersionSettings simon_settings[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
 	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DOS, "GAMEPC"},
-//	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1AMIGA, "gameamiga"},
+	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1AMIGA, "gameamiga"},
 	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2DOS, "GAME32"},
 	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1TALKIE, "SIMON.GME"},
 	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30"},
@@ -4081,7 +4081,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id) {
 			sprintf(buf, "0%d.out", vga_id); 
 		} else if (_game == GAME_SIMON1AMIGA) {
 			// TODO Add support for decruncher
-			sprintf(buf, "0%d.pkd", vga_id); 
+			sprintf(buf, "0%d.pkd.out", vga_id); 
 		} else {
 			sprintf(buf, "0%d.VGA", vga_id); 
 		}
@@ -4115,7 +4115,7 @@ byte *SimonState::read_vga_from_datfile_2(uint id) {
 			sprintf(buf, "%.3d%d.out", id >> 1, (id & 1) + 1);
 		} else if (_game == GAME_SIMON1AMIGA) {
 			// TODO Add support for decruncher
-			sprintf(buf, "%.3d%d.pkd", id >> 1, (id & 1) + 1);
+			sprintf(buf, "%.3d%d.pkd.out", id >> 1, (id & 1) + 1);
 		} else {
 			sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
 		}
