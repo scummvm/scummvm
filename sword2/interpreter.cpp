@@ -105,7 +105,6 @@ int32 FN_back_par0_sprite(int32 *params);
 int32 FN_back_par1_sprite(int32 *params);
 int32 FN_fore_par0_sprite(int32 *params);
 int32 FN_fore_par1_sprite(int32 *params);
-int32 FN_fore_par1_sprite(int32 *params);
 int32 FN_set_player_action_event(int32 *params);
 int32 FN_set_scroll_coordinate(int32 *params);
 int32 FN_stand_at_anim(int32 *params);
@@ -299,7 +298,7 @@ void SetGlobalInterpreterVariables(int32 *vars)
 #ifdef INSIDE_LINC			// Are we running in linc?
 int RunScript ( MCBOVirtualSword &engine , const char * scriptData , char * objectData , uint32 *offset )
 #else
-int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
+int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 #endif
 {
 	#define STACK_SIZE		10
@@ -328,16 +327,13 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 	// Get the start of variables and start of code
 	DEBUG3("Enter interpreter data %x, object %x, offset %d",scriptData,objectData,*offset);
 
-	// FIXME: The following is a fundamental (?) flaw in the code.
-	// Both "variables" and "scriptData" are const pointers. However,
-	// later the code actually writes code into "variables". Both can't
-	// be the case at the same time. Either the const qualifiers have
-	// to be removed, or the writes to *variables are bogus.
-	const char *variables = scriptData + sizeof(int);
+	// FIXME: 'scriptData' and 'variables' used to be const. However,
+	// this code writes into 'variables' so it can not be const.
+	char *variables = scriptData + sizeof(int);
 	const char *code = scriptData + *((int *)scriptData) + sizeof(int);
-	uint32 noScripts = *((int32 *)code);
+	uint32 noScripts = *((const int32 *)code);
 	if ( (*offset) < noScripts)
-	{	ip = ((int *)code)[(*offset)+1];
+	{	ip = ((const int *)code)[(*offset)+1];
 		DEBUG2("Start script %d with offset %d",*offset,ip);
 	}
 	else
@@ -355,7 +351,7 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 #else
 
 	// Code should nopw be pointing at an identifier and a checksum
-	int *checksumBlock = (int *)code;
+	const int *checksumBlock = (const int *)code;
 	code += sizeof(int) * 3;
 
 	if (checksumBlock[0] != 12345678)
@@ -428,7 +424,7 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 			{
 				Read16ip(parameter)
 				ASSERT(parameter <= MAX_FN_NUMBER);
-				value = *((int8 *)(code+ip));			// amount to adjust stack by (no of parameters)
+				value = *((const int8 *)(code+ip));			// amount to adjust stack by (no of parameters)
 				ip ++;
 				DEBUG2("Call mcode %d with stack = %x",parameter,stack2+(stackPointer2-value));
 #ifdef INSIDE_LINC
@@ -503,10 +499,10 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 				int foundCase = 0;
 				for (int count = 0 ; (count < caseCount) && (!foundCase) ; count++)
 				{
-					if (value == *((int32 *)(code+ip)))
+					if (value == *((const int32 *)(code+ip)))
 					{	// We have found the case, so lets jump to it
 						foundCase = 1;
-						ip +=  *((int32 *)(code+ip+sizeof(int32)));
+						ip +=  *((const int32 *)(code+ip+sizeof(int32)));
 					}
 					else
 						ip += sizeof(int32) * 2;
@@ -514,7 +510,7 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 				// If we found no matching case then use the default
 				if (!foundCase)
 				{
-					ip += *((int32 *)(code+ip));
+					ip += *((const int32 *)(code+ip));
 				}
 			}
 				break;
@@ -695,15 +691,15 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 
 			case CP_JUMP_ON_RETURNED:	// 29
 			{	// Jump to a part of the script depending on the return value from an mcode routine
-				parameter = *((int8 *)(code+ip));		// Get the maximum value
+				parameter = *((const int8 *)(code+ip));		// Get the maximum value
 				ip++;
 #ifdef INSIDE_LINC
 				TRACE("ip %d: Parameter %d skip %d\r\n",	ip,
 															parameterReturnedFromMcodeFunction,
-															((int32*)(code+ip))[parameterReturnedFromMcodeFunction] );
+															((const int32 *)(code+ip))[parameterReturnedFromMcodeFunction] );
 #endif
 
-				ip += ((int32 *)(code+ip))[parameterReturnedFromMcodeFunction];
+				ip += ((const int32 *)(code+ip))[parameterReturnedFromMcodeFunction];
 			}
 				break;
 
@@ -732,7 +728,7 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 				int foundScript = 0;
 				uint32 count = 0;
 				for (count = 1 ; (count < noScripts) && (!foundScript) ; count++)
-				{	if (ip < ((int *)tempScrPtr)[count+1])
+				{	if (ip < ((const int *)tempScrPtr)[count+1])
 					{	scriptNumber = count - 1 ;
 						foundScript = 1;
 					}
@@ -740,13 +736,13 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 				if (!foundScript)
 					scriptNumber = count - 1 ;
 				// So we know what script we are running, lets restart it
-				ip = ((int *)tempScrPtr)[scriptNumber+1];
+				ip = ((const int *)tempScrPtr)[scriptNumber+1];
 				break;
 			}
 
 			case CP_PUSH_STRING:	// 33
 			{	// Push the address of a string on to the stack
-				parameter = *((int8 *)(code+ip));		// Get the string size
+				parameter = *((const int8 *)(code+ip));		// Get the string size
 				ip += 1;
 				// ip points to the string
 				PUSHONSTACK( (int)(code+ip) );

@@ -70,7 +70,7 @@ void SetGlobalInterpreterVariables(int32 *vars);
 #ifdef INSIDE_LINC			// Are we running in linc?
 int RunScript ( MCBOVirtualSword &engine , const char * scriptData , char * /*objectData*/ , uint32 *offset );
 #else
-int RunScript ( const char * scriptData , char * /*objectData*/ , uint32 *offset );
+int RunScript ( char * scriptData , char * /*objectData*/ , uint32 *offset );
 #endif
 
 
