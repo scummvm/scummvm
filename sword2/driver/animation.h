@@ -1,6 +1,9 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#ifndef _MSC_VER
+#include <inttypes.h>
+#endif
 #ifdef USE_MPEG2
 extern "C" {
 	#include <mpeg2dec/mpeg2.h>
