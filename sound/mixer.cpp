@@ -777,8 +777,9 @@ SoundMixer::ChannelMP3::ChannelMP3(SoundMixer * mixer, void * sound, uint size, 
 
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
-	// 11 kHz on WinCE
-	mad_stream_options(&_stream, MAD_OPTION_HALFSAMPLERATE);
+	// 11 kHz on WinCE if necessary
+	if ((uint)_mixer->_syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0) != 22050)
+		mad_stream_options(&_stream, MAD_OPTION_HALFSAMPLERATE);
 #endif
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
@@ -896,8 +897,9 @@ SoundMixer::ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer * mixer, File * file
 
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
-	// 11 kHz on WinCE
-	mad_stream_options(&_stream, MAD_OPTION_HALFSAMPLERATE);
+	// 11 kHz on WinCE if necessary
+	if ((uint)_mixer->_syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0) != 22050)
+		mad_stream_options(&_stream, MAD_OPTION_HALFSAMPLERATE);
 #endif
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
