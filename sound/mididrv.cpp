@@ -35,6 +35,67 @@
 #include "common/engine.h"	// for warning/error/debug
 #include "common/util.h"
 
+
+
+////////////////////////////////////////
+//
+// Common MPU401 implementation methods
+//
+////////////////////////////////////////
+
+typedef void TimerCallback (void *);
+
+class MidiDriver_MPU401 : public MidiDriver {
+private:
+	bool _started_thread;
+	TimerCallback *_timer_proc;
+	void *_timer_param;
+
+	static int midi_driver_thread (void *param);
+
+public:
+	virtual void setTimerCallback (void *timer_param, void (*timer_proc) (void *));
+	virtual uint32 getBaseTempo (void) { return 0x4A0000; }
+};
+
+void MidiDriver_MPU401::setTimerCallback (void *timer_param, void (*timer_proc) (void *))
+{
+	if (!_timer_proc || !timer_proc) {
+		_timer_proc = (TimerCallback *) timer_proc;
+		_timer_param = timer_param;
+		if (!_started_thread && timer_proc)
+			g_system->create_thread (midi_driver_thread, this);
+		_started_thread = true;
+	}
+}
+
+int MidiDriver_MPU401::midi_driver_thread(void *param)
+{
+	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
+	int old_time, cur_time;
+	
+	old_time = g_system->get_msecs();
+
+	for (;;) {
+		g_system->delay_msecs(10);
+
+		cur_time = g_system->get_msecs();
+		while (old_time < cur_time) {
+			old_time += 10;
+			// Don't use mid->_se_on_timer()
+			// We must come in through IMuseMonitor to protect
+			// against conflicts with script access to IMuse.
+			if (mid->_timer_proc)
+				(*(mid->_timer_proc)) (mid->_timer_param);
+		}
+	}
+
+	return 0;
+}
+
+
+
+
 // FIXME - the following disables reverb support in the QuickTime / CoreAudio
 // midi backends. For some reasons, reverb will suck away a *lot* of CPU time.
 // Until we know for sure what is causing this and if there is a better way to
@@ -44,7 +105,7 @@
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
 /* Windows MIDI driver */
-class MidiDriver_WIN : public MidiDriver {
+class MidiDriver_WIN : public MidiDriver_MPU401 {
 public:
 	int open(int mode);
 	void close();
@@ -304,7 +365,7 @@ MidiDriver *MidiDriver_WIN_create()
 #include "morphos_sound.h"
 
 /* MorphOS MIDI driver */
-class MidiDriver_ETUDE:public MidiDriver {
+class MidiDriver_ETUDE:public MidiDriver_MPU401 {
 public:
 	int open(int mode);
 	void close();
@@ -515,7 +576,7 @@ MidiDriver *MidiDriver_ETUDE_create()
 #define SEQ_MIDIPUTC    5
 #define SPECIAL_CHANNEL 9
 
-class MidiDriver_SEQ:public MidiDriver {
+class MidiDriver_SEQ:public MidiDriver_MPU401 {
 public:
 	MidiDriver_SEQ();
 	int open(int mode);
@@ -655,7 +716,7 @@ MidiDriver *MidiDriver_SEQ_create()
 
 
 /* QuickTime MIDI driver */
-class MidiDriver_QT:public MidiDriver {
+class MidiDriver_QT:public MidiDriver_MPU401 {
 public:
 	int open(int mode);
 	void close();
@@ -872,7 +933,7 @@ MidiDriver *MidiDriver_QT_create()
 
 /* CoreAudio MIDI driver */
 /* Based on code by Benjamin W. Zale */
-class MidiDriver_CORE:public MidiDriver {
+class MidiDriver_CORE:public MidiDriver_MPU401 {
 public:
 	MidiDriver_CORE():au_MusicDevice(NULL), au_output(NULL) {
 	} int open(int mode);
@@ -979,7 +1040,7 @@ MidiDriver *MidiDriver_CORE_create()
 #endif // __APPLE__
 
 /* NULL driver */
-class MidiDriver_NULL:public MidiDriver {
+class MidiDriver_NULL:public MidiDriver_MPU401 {
 public:
 	int open(int mode);
 	void close() { }
@@ -1051,7 +1112,7 @@ const char *MidiDriver::get_error_name(int error_code)
 
 #define ADDR_DELIM      ".:"
 
-class MidiDriver_ALSA:public MidiDriver {
+class MidiDriver_ALSA:public MidiDriver_MPU401 {
 public:
 	MidiDriver_ALSA();
 	int open(int mode);

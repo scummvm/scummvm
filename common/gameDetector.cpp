@@ -408,7 +408,7 @@ bool GameDetector::parseMusicDriver(const char *s) {
 		{"etude",MD_ETUDE},
 		{"midiemu",MD_MIDIEMU},
 		{"alsa", MD_ALSA},
-		{"adlib",-1},
+		{"adlib", MD_ADLIB},
 	};
 
 	const MusicDrivers *md = music_drivers;
@@ -418,7 +418,7 @@ bool GameDetector::parseMusicDriver(const char *s) {
 
 	for(i=0; i!=ARRAYSIZE(music_drivers); i++,md++) {
 		if (!scumm_stricmp(md->name, s)) {
-			if (md->id == -1) {
+			if (md->id == MD_ADLIB) {
 				_use_adlib = true;
 			}
 			_midi_driver = md->id;
@@ -574,6 +574,7 @@ int GameDetector::detectMain()
 	 * and the game is one of those that want adlib as
 	 * default */
 	if (_midi_driver == MD_AUTO && _features & GF_ADLIB_DEFAULT) {
+		_midi_driver = MD_ADLIB;
 		_use_adlib = true;
 	}
 
@@ -649,15 +650,19 @@ MidiDriver *GameDetector::createMidi() {
 	/* FIXME: We should, for the Unix targets, attempt to detect */
 	/*        whether a sequencer is available, and use it in */
 	/*	  preference */	
+/*
 	if (drv == MD_AUTO) {
 		_use_adlib = true;
 		return NULL;
 	}
+*/
+	if (drv == MD_AUTO) drv = MD_ADLIB;
 #endif
 
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL:		return MidiDriver_NULL_create();
+	case MD_ADLIB:		_use_adlib = true; return MidiDriver_ADLIB_create();
 #if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS:	return MidiDriver_WIN_create();
 #endif

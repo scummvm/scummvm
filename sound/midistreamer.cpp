@@ -37,6 +37,7 @@ private:
 	int _event_count;
 	int _event_index;
 
+	long _driver_tempo;
 	long _tempo;
 	uint16 _ticks_per_beat;
 	long _delay;
@@ -44,8 +45,8 @@ private:
 	volatile bool _active;
 
 	uint32 property(int prop, uint32 param);
-	static int timer_thread (void *param);
-	void on_timer (void);
+	static void timer_thread (void *param);
+	void on_timer();
 
 public:
 	MidiStreamer (MidiDriver *target);
@@ -56,6 +57,9 @@ public:
 	void pause(bool p) { _paused = p; }
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { _target->setPitchBendRange (channel, range); }
+
+	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
+	uint32 getBaseTempo (void) { return _target->getBaseTempo(); }
 };
 
 MidiStreamer::MidiStreamer (MidiDriver *target) :
@@ -82,7 +86,7 @@ void MidiStreamer::set_stream_callback (void *param, StreamCallback *sc)
 		_event_index = 0;
 	}
 }
-
+/*
 int MidiStreamer::timer_thread (void *param) {
 	MidiStreamer *mid = (MidiStreamer *) param;
 	int old_time, cur_time;
@@ -109,10 +113,14 @@ int MidiStreamer::timer_thread (void *param) {
 	mid->_active = false;
 	return 0;
 }
+*/
+void MidiStreamer::timer_thread (void *param) {
+	((MidiStreamer *) param)->on_timer();
+}
 
 void MidiStreamer::on_timer()
 {
-	_delay += 10000;
+	_delay += _driver_tempo; // 10000;
 	while (true) {
 		if (_event_index >= _event_count) {
 			_event_count = _stream_proc (_stream_param, _events, ARRAYSIZE (_events));
@@ -145,18 +153,17 @@ int MidiStreamer::open (int mode)
 	if (res && res != MERR_ALREADY_OPEN)
 		return res;
 
-	// Wait for existing timer thread to shut down.
-	while (_active);
-
 	_event_index = _event_count = _delay = 0;
 	_mode = mode;
 	_paused = false;
-	_active = true;
 
 	if (mode == MO_SIMPLE)
 		return 0;
 
-	g_system->create_thread (timer_thread, this);
+//	g_system->create_thread (timer_thread, this);
+	_driver_tempo = _target->getBaseTempo() / 500;
+
+	_target->setTimerCallback (this, &timer_thread);
 	return 0;
 }
 
@@ -164,6 +171,15 @@ void MidiStreamer::close()
 {
 	if (!_mode)
 		return;
+
+	_target->setTimerCallback (NULL, NULL);
+
+	// Turn off all notes on all channels,
+	// just to catch anything still playing.
+	int i;
+	for (i = 0; i < 16; ++i)
+		_target->send ((0x7B << 8) | 0xB0 | i);
+
 	_mode = 0;
 	_paused = true;
 }

@@ -106,6 +106,12 @@ public:
 		send((range << 16) | (  6 << 8) | (0xB0 | channel));
 		send((  0   << 16) | ( 38 << 8) | (0xB0 | channel));
 	}
+
+	virtual void sysEx_customInstrument (byte channel, uint32 type, byte *instr) { }
+
+	// Timing functions - MidiDriver now operates timers
+	virtual void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) = 0;
+	virtual uint32 getBaseTempo (void) = 0;
 };
 
 
@@ -122,12 +128,14 @@ enum {
 	MD_COREAUDIO = 7,
 	MD_MIDIEMU = 8,
 	MD_ALSA = 9,
+	MD_ADLIB = 10
 };
 
 
 /* Factory functions => no need to include the specific classes
  * in this header => faster compile */
 extern MidiDriver *MidiDriver_NULL_create();
+extern MidiDriver *MidiDriver_ADLIB_create();
 extern MidiDriver *MidiDriver_WIN_create();
 extern MidiDriver *MidiDriver_TIMIDITY_create();
 extern MidiDriver *MidiDriver_SEQ_create();

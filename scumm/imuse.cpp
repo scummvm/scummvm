@@ -355,7 +355,8 @@ public:
 		pcProgram = 64,
 		pcChorus = 128,
 		pcPitchBendFactor = 256,
-		pcAll = 511,
+		pcPriority = 512,
+		pcAll = 1023,
 	};
 
 	virtual void on_timer() = 0;
@@ -665,6 +666,8 @@ class IMuseGM : public IMuseDriver {
 	MidiDriver *_md;
 	MidiChannelGM _midi_channels[16];
 
+	Instrument _glob_instr[32]; // Adlib custom instruments
+
 	byte _midi_program_last[16];
 	int16 _midi_pitchbend_last[16];
 	byte _midi_pitchbend_factor_last[16];
@@ -691,6 +694,8 @@ class IMuseGM : public IMuseDriver {
 	void midiSilence(byte chan);
 	void midiInit();
 
+	static void timer_callback (void *);
+
 public:
 	IMuseGM(MidiDriver *midi);
 	void uninit();
@@ -700,8 +705,8 @@ public:
 	int part_update_active(Part *part, uint16 *active);
 
 	void on_timer() {}
-	void set_instrument(uint slot, byte *instr) {}
-	void part_set_instrument(Part *part, Instrument * instr) {}
+	void set_instrument(uint slot, byte *instr);
+	void part_set_instrument(Part *part, Instrument * instr);
 	void part_set_param(Part *part, byte param, int value) {}
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
@@ -710,7 +715,7 @@ public:
 
 	static int midi_driver_thread(void *param);
 
-	uint32 get_base_tempo() { return 0x4A0000; }
+	uint32 get_base_tempo() { return _md->getBaseTempo(); } // 0x4A0000; }
 	byte get_hardware_type() { return 5; }
 };
 
@@ -2199,7 +2204,6 @@ byte *Player::parse_midi(byte *s)
 
 	case 0xC:										/* program change */
 		value = *s++;
-		debug (2, "Player::parse_midi - Setting channel %2d to program %d", chan, value); // Jamieson630: Helps to build the GM-to-FM mapping
 		part = get_part(chan);
 		if (part)
 			part->set_program(value);
@@ -2212,7 +2216,6 @@ byte *Player::parse_midi(byte *s)
 	case 0xE:										/* pitch bend */
 		part = get_part(chan);
 		if (part)
-			// part->set_pitchbend(((s[1] - 0x40) << 7) | s[0]);
 			part->set_pitchbend(((s[1] << 7) | s[0]) - 0x2000);
 		s += 2;
 		break;
@@ -2392,7 +2395,7 @@ void Player::parse_sysex(byte *p, uint len)
 			if (part) {
 				part->set_onoff (p[2] & 0x01);
 				part->set_vol ((p[5] & 0x0F) << 4 | (p[6] & 0x0F));
-				part->_percussion = ((p[9] & 0x08) > 0);
+				part->_percussion = _isGM ? ((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {
 					if (part->_mc)
 						part->off();
@@ -2431,7 +2434,7 @@ void Player::parse_sysex(byte *p, uint len)
 		
 	case 16:											/* set instrument in part */
 		a = *p++ & 0x0F;
-		if (_se->_hardware_type != *p++)
+		if (_se->_hardware_type != *p++ && false)
 			break;
 		decode_sysex_bytes(p, buf, len - 3);
 		part = get_part(a);
@@ -2441,7 +2444,7 @@ void Player::parse_sysex(byte *p, uint len)
 
 	case 17:											/* set global instrument */
 		p++;
-		if (_se->_hardware_type != *p++)
+		if (_se->_hardware_type != *p++ && false)
 			break;
 		a = *p++;
 		decode_sysex_bytes(p, buf, len - 4);
@@ -3422,6 +3425,7 @@ void Part::set_vol(uint8 vol)
 void Part::set_pri(int8 pri)
 {
 	_pri_eff = clamp((_pri = pri) + _player->_priority, 0, 255);
+	changed(IMuseDriver::pcPriority);
 }
 
 void Part::set_pan(int8 pan)
@@ -4947,12 +4951,17 @@ void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 
 	/* Install the on_timer thread */
 	_se = eng;
-	syst->create_thread(midi_driver_thread, this);
+//	syst->create_thread(midi_driver_thread, this);
+	_md->setTimerCallback (NULL, &IMuseGM::timer_callback);
 
 	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++) {
 		mc->_chan = i;
 		_midi_program_last [i] = 255;
 	}
+}
+
+void IMuseGM::timer_callback (void *) {
+	g_scumm->_imuse->on_timer();
 }
 
 void IMuseGM::uninit()
@@ -5034,6 +5043,21 @@ int IMuseGM::part_update_active(Part *part, uint16 *active)
 	return count;
 }
 
+void IMuseGM::part_set_instrument (Part *part, Instrument *instr)
+{
+	if (!part->_mc)
+		update_pris();
+	if (!part->_mc)
+		return;
+	_md->sysEx_customInstrument (part->_mc->gm()->_chan, 'ADL ', (byte *)instr);
+}
+
+void IMuseGM::set_instrument(uint slot, byte *data)
+{
+	if (slot < 32)
+		memcpy(&_glob_instr[slot], data, sizeof(Instrument));
+}
+
 void IMuseGM::part_changed(Part *part, uint16 what)
 {
 	MidiChannelGM *mc;
@@ -5078,18 +5102,25 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 		midiEffectLevel(mc->_chan, part->_effect_level);
 
 	if (what & pcProgram && part->_program < 128) {
-		_midi_program_last [part->_chan] = part->_program;
-		if (part->_bank) {
-			midiControl0(mc->_chan, part->_bank);
-			midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
-			midiControl0(mc->_chan, 0);
-		} else {
-			midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+		if (part->_player->_isGM) {
+			_midi_program_last [part->_chan] = part->_program;
+			if (part->_bank) {
+				midiControl0(mc->_chan, part->_bank);
+				midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+				midiControl0(mc->_chan, 0);
+			} else {
+				midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+			}
+		} else if (part->_program < 32) {
+			part_set_instrument(part, &_glob_instr[part->_program]);
 		}
 	}
 
 	if (what & pcChorus)
 		midiChorus(mc->_chan, part->_effect_level);
+
+	if (what & pcPriority)
+		_md->send ((part->_pri_eff << 16) | (18 << 8) | 0xB0 | mc->_chan);
 }
 
 

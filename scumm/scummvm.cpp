@@ -165,11 +165,11 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuseDigital = new IMuseDigital(this);
 		_imuse = NULL;
 	} else {
-		if (detector->_use_adlib) {
+		if (detector->_use_adlib && false) {
 			_imuse = IMuse::create_adlib(syst, _mixer);
 		} else {
 			void *midiTemp = detector->createMidi();
-			if (!midiTemp) {	// Fallback to adlib/midiemu
+			if (!midiTemp) {	// Fallback to Adlib
 				_imuse = IMuse::create_adlib(syst, _mixer);
 			} else {
 				_imuse = IMuse::create_midi(syst, detector->createMidi());
