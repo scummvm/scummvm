@@ -163,7 +163,7 @@ void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
 uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 	char saveFileName[MAX_FILENAME_LEN];
 
-	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
+	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
 
 	SaveFile *out;
 
@@ -210,7 +210,7 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 	char saveFileName[MAX_FILENAME_LEN];
 
-	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
+	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
 
 	SaveFile *in;
 
@@ -355,7 +355,7 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 	char saveFileName[MAX_FILENAME_LEN];
 
-	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
+	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
 
 	SaveFile *in;
 
@@ -382,7 +382,7 @@ bool Sword2Engine::saveExists(void) {
 bool Sword2Engine::saveExists(uint16 slotNo) {
 	char saveFileName[MAX_FILENAME_LEN];
 
-	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
+	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
 
 	SaveFile *in;
 

@@ -138,28 +138,28 @@ private:
 
 	uint32 _lastPaletteRes;
 
-	void drawBackPar0Frames(void);
-	void drawBackPar1Frames(void);
-	void drawBackFrames(void);
+	void drawBackPar0Frames();
+	void drawBackPar1Frames();
+	void drawBackFrames();
 	void drawSortFrames(byte *file);
-	void drawForeFrames(void);
-	void drawForePar0Frames(void);
-	void drawForePar1Frames(void);
+	void drawForeFrames();
+	void drawForePar0Frames();
+	void drawForePar1Frames();
 
-	void startNewPalette(void);
+	void startNewPalette();
 	void processLayer(byte *file, uint32 layer_number);
 	void processImage(BuildUnit *build_unit);
 
-	void getPlayerStructures(void);
-	void putPlayerStructures(void);
+	void getPlayerStructures();
+	void putPlayerStructures();
 
 	uint32 saveData(uint16 slotNo, byte *buffer, uint32 bufferSize);
 	uint32 restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize);
 
 	uint32 calcChecksum(byte *buffer, uint32 size);
 
-	void pauseGame(void);
-	void unpauseGame(void);
+	void pauseGame();
+	void unpauseGame();
 
 	MenuObject _tempList[TOTAL_engine_pockets];
 	uint32 _totalTemp;
@@ -170,14 +170,16 @@ private:
 public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
 	~Sword2Engine();
-	void go(void);
-	void setupPersistentResources(void);
-	int32 initialiseGame(void);
+	void go();
+	void mainInit();
+	void mainRun();
+
+	void setupPersistentResources();
 
 	bool _quit;
 
 	uint32 _features;
-	char *_targetName; // target name for saves
+	Common::String _targetName; // target name for saves
 
 	MemoryManager *_memory;
 	ResourceManager	*_resman;
@@ -200,14 +202,14 @@ public:
 
 	uint32 setEventFilter(uint32 filter);
 
-	void parseEvents(void);
+	void parseEvents();
 
-	bool checkForMouseEvents(void);
-	MouseEvent *mouseEvent(void);
-	KeyboardEvent *keyboardEvent(void);
+	bool checkForMouseEvents();
+	MouseEvent *mouseEvent();
+	KeyboardEvent *keyboardEvent();
 
-	void resetRenderLists(void);
-	void buildDisplay(void);
+	void resetRenderLists();
+	void buildDisplay();
 	void displayMsg(byte *text, int time);
 	void setFullPalette(int32 palRes);
 
@@ -244,14 +246,14 @@ public:
 	int32 initBackground(int32 res, int32 new_palette);
 
 #if RIGHT_CLICK_CLEARS_LUGGAGE
-	bool heldIsInInventory(void);
+	bool heldIsInInventory();
 #endif
 
 	int menuClick(int menu_items);
 
 	void addMenuObject(MenuObject *obj);
-	void buildMenu(void);
-	void buildSystemMenu(void);
+	void buildMenu();
+	void buildSystemMenu();
 
 	// _thisScreen describes the current back buffer and its in-game scroll
 	// positions, etc.
@@ -287,25 +289,25 @@ public:
 	uint32 _pointerTextBlocNo;
 	uint32 _playerActivityDelay;	// Player activity delay counter
 
-	void resetMouseList(void);
+	void resetMouseList();
 
-	void normalMouse(void);
-	void menuMouse(void);
-	void dragMouse(void);
-	void systemMenuMouse(void);
+	void normalMouse();
+	void menuMouse();
+	void dragMouse();
+	void systemMenuMouse();
 
-	void mouseOnOff(void);
-	uint32 checkMouseList(void);
-	void mouseEngine(void);
+	void mouseOnOff();
+	uint32 checkMouseList();
+	void mouseEngine();
 
 	void setMouse(uint32 res);
 	void setLuggage(uint32 res);
 
-	void clearPointerText(void);
+	void clearPointerText();
 
 	void createPointerText(uint32 text_id, uint32 pointer_res);
-	void monitorPlayerActivity(void);
-	void noHuman(void);
+	void monitorPlayerActivity();
+	void noHuman();
 
 	void registerMouse(ObjectMouse *ob_mouse);
 
@@ -359,32 +361,32 @@ public:
 	uint32 saveGame(uint16 slotNo, byte *description);
 	uint32 restoreGame(uint16 slotNo);
 	uint32 getSaveDescription(uint16 slotNo, byte *description);
-	bool saveExists(void);
+	bool saveExists();
 	bool saveExists(uint16 slotNo);
 	void fillSaveBuffer(byte *buffer, uint32 size, byte *desc);
 	uint32 restoreFromBuffer(byte *buffer, uint32 size);
-	uint32 findBufferSize(void);
+	uint32 findBufferSize();
 
 	uint8 _scrollFraction;
 
-	void setScrolling(void);
+	void setScrolling();
 
 	// used to store id of tunes that loop, for save & restore
 	uint32 _loopingMusicId;
 
 	// to be called during system initialisation
-	void initFxQueue(void);
+	void initFxQueue();
 
 	// to be called from the main loop, once per cycle
-	void processFxQueue(void);
+	void processFxQueue();
 
 	// stops all fx & clears the queue - eg. when leaving a location
-	void clearFxQueue(void);
+	void clearFxQueue();
 
-	void pauseAllSound(void);
-	void unpauseAllSound(void);
+	void pauseAllSound();
+	void unpauseAllSound();
 
-	void killMusic(void);
+	void killMusic();
 
 	void triggerFx(uint8 j);
 
@@ -392,14 +394,14 @@ public:
 	bool _graphicsLevelFudged;
 	bool _stepOneCycle;		// for use while game paused
 
-	void startGame(void);
-	void gameCycle(void);
-	void closeGame(void);
+	void startGame();
+	void gameCycle();
+	void closeGame();
 
 	void sleepUntil(uint32 time);
 
 	void errorString(const char *buf_input, char *buf_output);
-	void initialiseFontResourceFlags(void);
+	void initialiseFontResourceFlags();
 	void initialiseFontResourceFlags(uint8 language);
 };
 

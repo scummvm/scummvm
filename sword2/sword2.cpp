@@ -102,9 +102,7 @@ namespace Sword2 {
 
 Sword2Engine *g_sword2 = NULL;
 
-Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
-	: Engine(syst) {
-
+Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 	// Add default file directories
 	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
 	File::addDefaultDirectory(_gameDataPath + "SWORD2/");
@@ -118,42 +116,14 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_sound = NULL;
 	_graphics = NULL;
 	_features = detector->_game.features;
-	_targetName = strdup(detector->_targetName.c_str());
+	_targetName = detector->_targetName;
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
-
-	// Setup mixer
-	if (!_mixer->isReady())
-		warning("Sound initialization failed");
-
-	// We have our own volume settings panel, so don't let ScummVM's mixer
-	// soften the sound in any way.
-
-	_mixer->setVolume(256);
 
 	_keyboardEvent.pending = false;
 	_mouseEvent.pending = false;
 
 	_mouseX = _mouseY = 0;
-
-	// get some falling RAM and put it in your pocket, never let it slip
-	// away
-
-	_graphics = new Graphics(this, 640, 480);
-
-	// Create the debugger as early as possible (but not before the
-	// graphics object!) so that errors can be displayed in it. In
-	// particular, we want errors about missing files to be clearly
-	// visible to the user.
-
-	_debugger = new Debugger(this);
-
-	_memory = new MemoryManager(this);
-	_resman = new ResourceManager(this);
-	_logic = new Logic(this);
-	_fontRenderer = new FontRenderer(this);
-	_gui = new Gui(this);
-	_sound = new Sound(this);
 
 	_lastPaletteRes = 0;
 
@@ -176,9 +146,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	_totalMasters = 0;
 	memset(_masterMenuList, 0, sizeof(_masterMenuList));
-
 	memset(&_thisScreen, 0, sizeof(_thisScreen));
-
 	memset(_mouseList, 0, sizeof(_mouseList));
 
 	_mouseTouching = 0;
@@ -202,10 +170,20 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_gamePaused = false;
 	_stepOneCycle = false;
 	_graphicsLevelFudged = false;
+
+	_debugger = NULL;
+	_graphics = NULL;
+	_sound = NULL;
+	_gui = NULL;
+	_fontRenderer = NULL;
+	_logic = NULL;
+	_resman = NULL;
+	_memory = NULL;
+
+	_quit = false;
 }
 
 Sword2Engine::~Sword2Engine() {
-	free(_targetName);
 	delete _debugger;
 	delete _graphics;
 	delete _sound;
@@ -239,12 +217,40 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
  * the game, so that they are never expelled by the resource manager.
  */
 
-void Sword2Engine::setupPersistentResources(void) {
+void Sword2Engine::setupPersistentResources() {
 	Logic::_scriptVars = (uint32 *) (_resman->openResource(1) + sizeof(StandardHeader));
 	_resman->openResource(CUR_PLAYER_ID);
 }
     
-int32 Sword2Engine::initialiseGame(void) {
+void Sword2Engine::mainInit() {
+	// get some falling RAM and put it in your pocket, never let it slip
+	// away
+
+	_graphics = new Graphics(this, 640, 480);
+
+	// Create the debugger as early as possible (but not before the
+	// graphics object!) so that errors can be displayed in it. In
+	// particular, we want errors about missing files to be clearly
+	// visible to the user.
+
+	_debugger = new Debugger(this);
+
+	_memory = new MemoryManager(this);
+	_resman = new ResourceManager(this);
+	_logic = new Logic(this);
+	_fontRenderer = new FontRenderer(this);
+	_gui = new Gui(this);
+	_sound = new Sound(this);
+
+	// Setup mixer
+	if (!_mixer->isReady())
+		warning("Sound initialization failed");
+
+	// We have our own volume settings panel, so don't let ScummVM's mixer
+	// soften the sound in any way.
+
+	_mixer->setVolume(256);
+
 	// During normal gameplay, we care neither about mouse button releases
 	// nor the scroll wheel.
 	setEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
@@ -268,148 +274,8 @@ int32 Sword2Engine::initialiseGame(void) {
 	else
 		Logic::_scriptVars[DEMO] = 0;
 
-	return 0;
-}
-
-void Sword2Engine::closeGame(void) {
-	_quit = true;
-}
-
-bool Sword2Engine::checkForMouseEvents(void) {
-	return _mouseEvent.pending;
-}
-
-MouseEvent *Sword2Engine::mouseEvent(void) {
-	if (!_mouseEvent.pending)
-		return NULL;
-
-	_mouseEvent.pending = false;
-	return &_mouseEvent;
-}
-
-KeyboardEvent *Sword2Engine::keyboardEvent(void) {
-	if (!_keyboardEvent.pending)
-		return NULL;
-
-	_keyboardEvent.pending = false;
-	return &_keyboardEvent;
-}
-
-uint32 Sword2Engine::setEventFilter(uint32 filter) {
-	uint32 oldFilter = _eventFilter;
-
-	_eventFilter = filter;
-	return oldFilter;
-}
-
-/**
- * OSystem Event Handler. Full of cross platform goodness and 99% fat free!
- */
-
-void Sword2Engine::parseEvents(void) {
-	OSystem::Event event;
-	
-	while (_system->pollEvent(event)) {
-		switch (event.event_code) {
-		case OSystem::EVENT_KEYDOWN:
-			if (!(_eventFilter & RD_KEYDOWN)) {
-				_keyboardEvent.pending = true;
-				_keyboardEvent.ascii = event.kbd.ascii;
-				_keyboardEvent.keycode = event.kbd.keycode;
-				_keyboardEvent.modifiers = event.kbd.flags;
-			}
-			break;
-		case OSystem::EVENT_MOUSEMOVE:
-			if (!(_eventFilter & RD_KEYDOWN)) {
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y - RDMENU_MENUDEEP;
-			}
-			break;
-		case OSystem::EVENT_LBUTTONDOWN:
-			if (!(_eventFilter & RD_LEFTBUTTONDOWN)) {
-				_mouseEvent.pending = true;
-				_mouseEvent.buttons = RD_LEFTBUTTONDOWN;
-			}
-			break;
-		case OSystem::EVENT_RBUTTONDOWN:
-			if (!(_eventFilter & RD_RIGHTBUTTONDOWN)) {
-				_mouseEvent.pending = true;
-				_mouseEvent.buttons = RD_RIGHTBUTTONDOWN;
-			}
-			break;
-		case OSystem::EVENT_LBUTTONUP:
-			if (!(_eventFilter & RD_LEFTBUTTONUP)) {
-				_mouseEvent.pending = true;
-				_mouseEvent.buttons = RD_LEFTBUTTONUP;
-			}
-			break;
-		case OSystem::EVENT_RBUTTONUP:
-			if (!(_eventFilter & RD_RIGHTBUTTONUP)) {
-				_mouseEvent.pending = true;
-				_mouseEvent.buttons = RD_RIGHTBUTTONUP;
-			}
-			break;
-		case OSystem::EVENT_WHEELUP:
-			if (!(_eventFilter & RD_WHEELUP)) {
-				_mouseEvent.pending = true;
-				_mouseEvent.buttons = RD_WHEELUP;
-			}
-			break;
-		case OSystem::EVENT_WHEELDOWN:
-			if (!(_eventFilter & RD_WHEELDOWN)) {
-				_mouseEvent.pending = true;
-				_mouseEvent.buttons = RD_WHEELDOWN;
-			}
-			break;
-		case OSystem::EVENT_QUIT:
-			closeGame();
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-void Sword2Engine::gameCycle(void) {
-	// do one game cycle
-
-	// got a screen to run?
-	if (_logic->getRunList()) {
-		// run the logic session UNTIL a full loop has been performed
-		do {
-			// reset the graphic 'BuildUnit' list before a new
-			// logic list (see fnRegisterFrame)
-			resetRenderLists();
-
-			// reset the mouse hot-spot list (see fnRegisterMouse
-			// and fnRegisterFrame)
-			resetMouseList();
-
-			// keep going as long as new lists keep getting put in
-			// - i.e. screen changes
-		} while (_logic->processSession());
-	} else {
-		// start the console and print the start options perhaps?
-		_debugger->attach("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
-	}
-
-	// if this screen is wide, recompute the scroll offsets every cycle
-	if (_thisScreen.scroll_flag)
-		setScrolling();
-
-	mouseEngine();
-	processFxQueue();
-}
-
-void Sword2Engine::go() {
-	_quit = false;
-
 	debug(5, "CALLING: readOptionSettings");
 	_gui->readOptionSettings();
-
-	debug(5, "CALLING: initialiseGame");
-	if (initialiseGame())
-		return;
 
 	if (_saveSlot != -1) {
 		if (saveExists(_saveSlot))
@@ -446,7 +312,9 @@ void Sword2Engine::go() {
 					// 1 in 4 frames, to speed up game
 
 	_gameCycle = 0;
+}
 
+void Sword2Engine::mainRun() {
 	while (1) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
@@ -525,12 +393,147 @@ void Sword2Engine::go() {
 		buildDisplay();
 #endif
 	}
+}
+
+void Sword2Engine::go() {
+	mainInit();
+	mainRun();
 
 	// Stop music instantly!
 	killMusic();
 }
 
-void Sword2Engine::startGame(void) {
+void Sword2Engine::closeGame() {
+	_quit = true;
+}
+
+bool Sword2Engine::checkForMouseEvents() {
+	return _mouseEvent.pending;
+}
+
+MouseEvent *Sword2Engine::mouseEvent() {
+	if (!_mouseEvent.pending)
+		return NULL;
+
+	_mouseEvent.pending = false;
+	return &_mouseEvent;
+}
+
+KeyboardEvent *Sword2Engine::keyboardEvent() {
+	if (!_keyboardEvent.pending)
+		return NULL;
+
+	_keyboardEvent.pending = false;
+	return &_keyboardEvent;
+}
+
+uint32 Sword2Engine::setEventFilter(uint32 filter) {
+	uint32 oldFilter = _eventFilter;
+
+	_eventFilter = filter;
+	return oldFilter;
+}
+
+/**
+ * OSystem Event Handler. Full of cross platform goodness and 99% fat free!
+ */
+
+void Sword2Engine::parseEvents() {
+	OSystem::Event event;
+	
+	while (_system->pollEvent(event)) {
+		switch (event.event_code) {
+		case OSystem::EVENT_KEYDOWN:
+			if (!(_eventFilter & RD_KEYDOWN)) {
+				_keyboardEvent.pending = true;
+				_keyboardEvent.ascii = event.kbd.ascii;
+				_keyboardEvent.keycode = event.kbd.keycode;
+				_keyboardEvent.modifiers = event.kbd.flags;
+			}
+			break;
+		case OSystem::EVENT_MOUSEMOVE:
+			if (!(_eventFilter & RD_KEYDOWN)) {
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y - RDMENU_MENUDEEP;
+			}
+			break;
+		case OSystem::EVENT_LBUTTONDOWN:
+			if (!(_eventFilter & RD_LEFTBUTTONDOWN)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_LEFTBUTTONDOWN;
+			}
+			break;
+		case OSystem::EVENT_RBUTTONDOWN:
+			if (!(_eventFilter & RD_RIGHTBUTTONDOWN)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_RIGHTBUTTONDOWN;
+			}
+			break;
+		case OSystem::EVENT_LBUTTONUP:
+			if (!(_eventFilter & RD_LEFTBUTTONUP)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_LEFTBUTTONUP;
+			}
+			break;
+		case OSystem::EVENT_RBUTTONUP:
+			if (!(_eventFilter & RD_RIGHTBUTTONUP)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_RIGHTBUTTONUP;
+			}
+			break;
+		case OSystem::EVENT_WHEELUP:
+			if (!(_eventFilter & RD_WHEELUP)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_WHEELUP;
+			}
+			break;
+		case OSystem::EVENT_WHEELDOWN:
+			if (!(_eventFilter & RD_WHEELDOWN)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_WHEELDOWN;
+			}
+			break;
+		case OSystem::EVENT_QUIT:
+			closeGame();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Sword2Engine::gameCycle() {
+	// do one game cycle
+
+	// got a screen to run?
+	if (_logic->getRunList()) {
+		// run the logic session UNTIL a full loop has been performed
+		do {
+			// reset the graphic 'BuildUnit' list before a new
+			// logic list (see fnRegisterFrame)
+			resetRenderLists();
+
+			// reset the mouse hot-spot list (see fnRegisterMouse
+			// and fnRegisterFrame)
+			resetMouseList();
+
+			// keep going as long as new lists keep getting put in
+			// - i.e. screen changes
+		} while (_logic->processSession());
+	} else {
+		// start the console and print the start options perhaps?
+		_debugger->attach("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
+	}
+
+	// if this screen is wide, recompute the scroll offsets every cycle
+	if (_thisScreen.scroll_flag)
+		setScrolling();
+
+	mouseEngine();
+	processFxQueue();
+}
+
+void Sword2Engine::startGame() {
 	// boot the game straight into a start script
 
 	int screen_manager_id;
@@ -587,7 +590,7 @@ void Sword2Engine::sleepUntil(uint32 time) {
 	}
 }
 
-void Sword2Engine::pauseGame(void) {
+void Sword2Engine::pauseGame() {
 	// don't allow Pause while screen fading or while black
 	if (_graphics->getFadeStatus() != RDFADE_NONE)
 		return;
@@ -623,7 +626,7 @@ void Sword2Engine::pauseGame(void) {
 	_gamePaused = true;
 }
 
-void Sword2Engine::unpauseGame(void) {
+void Sword2Engine::unpauseGame() {
 	if (Logic::_scriptVars[OBJECT_HELD] && _realLuggageItem)
 		setLuggage(_realLuggageItem);
 
