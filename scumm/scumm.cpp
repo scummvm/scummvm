@@ -389,14 +389,14 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _targetName(detector->_targetName) {
 
 	// Add default file directories.
-	// FIXME: Which games use "rooms" or "ROOMS" ???
-	if (_version < 7) {
+	if ((_features & GF_AMIGA) && (_version <= 3)) {
+		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
 		File::addDefaultDirectory(_gameDataPath + "/ROOMS/");
 		File::addDefaultDirectory(_gameDataPath + "/rooms/");
 	}
 
 	if ((_features & GF_MACINTOSH) && (_version == 3)) {
-		// This is the for the Mac version of Indy3/Loom
+		// This is for the Mac version of Indy3/Loom
 		File::addDefaultDirectory(_gameDataPath + "/Rooms 1/");
 		File::addDefaultDirectory(_gameDataPath + "/Rooms 2/");
 		File::addDefaultDirectory(_gameDataPath + "/Rooms 3/");
