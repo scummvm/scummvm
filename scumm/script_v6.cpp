@@ -327,7 +327,7 @@ void Scumm_v6::setupOpcodes() {
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownE4),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1447,8 +1447,11 @@ void Scumm_v6::o6_resourceRoutines() {
 
 void Scumm_v6::o6_roomOps() {
 	int a, b, c, d, e;
+	byte op;
 
-	switch (fetchScriptByte()) {
+	op = fetchScriptByte();
+
+	switch (op) {
 	case 172:										/* room scroll */
 		b = pop();
 		a = pop();
@@ -1567,7 +1570,7 @@ void Scumm_v6::o6_roomOps() {
 		break;
 
 	default:
-		error("o6_roomOps: default case");
+		error("o6_roomOps: default case %d", op);
 	}
 }
 
@@ -1855,7 +1858,7 @@ void Scumm_v6::o6_verbOps() {
 		verbMouseOver(0);
 		break;
 	default:
-		error("o6_verbops: default case");
+		error("o6_verbops: default case %d", op);
 	}
 }
 
@@ -2978,6 +2981,9 @@ void Scumm_v6::o6_unknownE0() {
 	}
 }
 
+void Scumm_v6::o6_unknownE4() {
+	warning("o6_unknownE4(%d) stub", pop());
+}
 void Scumm_v6::o6_localizeArray() {
 	warning("stub localizeArray(%d)", pop());
 }
