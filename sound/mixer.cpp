@@ -106,7 +106,7 @@ SoundMixer::SoundMixer() {
 	int i = 0;
 
 	for (i = 0; i < ARRAYSIZE(_volumeForSoundType); i++)
-		_volumeForSoundType[i] = 256;
+		_volumeForSoundType[i] = kMaxMixerVolume;
 
 	_paused = false;
 	
@@ -406,8 +406,8 @@ void SoundMixer::setVolumeForSoundType(SoundType type, int volume) {
 	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
 
 	// Check range
-	if (volume > 256)
-		volume = 256;
+	if (volume > kMaxMixerVolume)
+		volume = kMaxMixerVolume;
 	else if (volume < 0)
 		volume = 0;
 	
@@ -431,7 +431,7 @@ int SoundMixer::getVolumeForSoundType(SoundType type) const {
 
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, SoundMixer::SoundType type, int id)
 	: _type(type), _mixer(mixer), _handle(handle), _autofreeStream(true),
-	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
+	  _volume(SoundMixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(0) {
 	assert(mixer);
 }
@@ -439,7 +439,7 @@ Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, SoundMixer::Soun
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, SoundMixer::SoundType type, AudioStream *input,
 				bool autofreeStream, bool reverseStereo, int id, bool permanent)
 	: _type(type), _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream),
-	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
+	  _volume(SoundMixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input), _permanent(permanent) {
 	assert(mixer);
 	assert(input);
@@ -480,14 +480,14 @@ void Channel::mix(int16 *data, uint len) {
 		st_volume_t vol_l, vol_r;
 
 		if (_balance == 0) {
-			vol_l = vol / 255;
-			vol_r = vol / 255;
+			vol_l = vol / SoundMixer::kMaxChannelVolume;
+			vol_r = vol / SoundMixer::kMaxChannelVolume;
 		} else if (_balance < 0) {
-			vol_l = vol / 255;
-			vol_r = ((127 + _balance) * vol) / (255 * 127);
+			vol_l = vol / SoundMixer::kMaxChannelVolume;
+			vol_r = ((127 + _balance) * vol) / (SoundMixer::kMaxChannelVolume * 127);
 		} else {
-			vol_l = ((127 - _balance) * vol) / (255 * 127);
-			vol_r = vol / 255;
+			vol_l = ((127 - _balance) * vol) / (SoundMixer::kMaxChannelVolume * 127);
+			vol_r = vol / SoundMixer::kMaxChannelVolume;
 		}
 
 		_samplesConsumed = _samplesDecoded;

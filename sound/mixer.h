@@ -76,6 +76,11 @@ public:
 		kSFXAudioDataType = 2,
 		kSpeechAudioDataType = 3
 	};
+	
+	enum {
+		kMaxChannelVolume = 255,
+		kMaxMixerVolume = 256
+	};
 
 private:
 	enum {
