@@ -86,7 +86,7 @@ void Scumm::CHARSET_1() {
 	if (!_haveMsg)
 		return;
 
-	if (!(_features & GF_NEW_CAMERA) && _version >= 4) {
+	if (!(_features & GF_NEW_CAMERA) && !(_gameId == GID_ZAK256 && VAR(VAR_TALK_ACTOR) == 0xff)) {
 		if ((camera._dest.x >> 3) != (camera._cur.x >> 3) || camera._cur.x != camera._last.x)
 			return;
 	}
