@@ -224,6 +224,8 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	if(_gameId == GID_FT)
 		sprintf((char*)_videoPath,"VIDEO/");
+	if(_gameId == GID_DIG)
+		sprintf((char*)_videoPath,"video/");
 
 	if(_features & GF_AFTER_V7)
 		OF_OWNER_ROOM = 0xFF;

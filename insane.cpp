@@ -156,10 +156,13 @@ void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh, int pitc
 	int i;
 	
 	if (pitch != 320)
-		error("invalid pitch");
+	{
+		warning("invalid pitch");
+		return;
+	}
 
 	do {
-		i = bw;
+	i = bw;
 		do {
 			code = *src++;
 			if (code==0xFF) {
@@ -324,7 +327,10 @@ void codec37(CodecData *cd, PersistentCodecData37 *pcd) {
 	case 2: {
 		size = *(uint32*)(cd->src + 4);
 		curbuf = pcd->deltaBufs[pcd->curtable];
-		codec37_bompdepack(curbuf, cd->src+16, size);
+		if(size==64000)
+			codec37_bompdepack(curbuf, cd->src+16, size);
+		else
+			return;
 		memset(pcd->deltaBuf, 0, curbuf - pcd->deltaBuf);
 		memset(curbuf + size, 0, pcd->deltaBuf + pcd->deltaSize - curbuf - size);
 		break;
@@ -545,6 +551,7 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 			return;
 		
 		parseTag();
+		frameIndex++;
 
 		if (_paletteChanged) {
 			_paletteChanged = false;
