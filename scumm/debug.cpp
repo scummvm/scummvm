@@ -27,6 +27,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "debug.h"
+#include "common/util.h"
 
 #ifdef HAVE_READLINE
 #include "debugrl.h"
