@@ -104,10 +104,10 @@ tools/md5table$(EXEEXT): tools/md5table.o
 #	tools/md5table$(EXEEXT) --c++ < $< > $@
 
 credits:
-	./credits.pl --text > AUTHORS
-	./credits.pl --html > ../web/credits.inc
-	./credits.pl --cpp > gui/credits.h
-	./credits.pl --xml > ../docs/docbook/credits.xml
+	tools/credits.pl --text > AUTHORS
+	tools/credits.pl --html > ../web/credits.inc
+	tools/credits.pl --cpp > gui/credits.h
+	tools/credits.pl --xml > ../docs/docbook/credits.xml
 
 #######################################################################
 # Unit/regression tests                                               #
