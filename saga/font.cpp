@@ -25,8 +25,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "rscfile_mod.h"
 #include "game_mod.h"
 
@@ -103,8 +101,6 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	R_FONT_STYLE *normal_font;
 	byte *fontres_p;
 	size_t fontres_len;
-	size_t remain;
-	const byte *read_p;
 	int nbits;
 	int c;
 
@@ -122,8 +118,7 @@ int FONT_Load(uint32 font_rn, int font_id) {
 		FontModule.err_str = "Invalid font length.";
 	}
 
-	read_p = fontres_p;
-	remain = fontres_len;
+	MemoryReadStream *readS = new MemoryReadStream(fontres_p, fontres_len);
 
 	// Create new font structure
 	font = (R_FONT *)malloc(sizeof *font);
@@ -133,9 +128,9 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	}
 
 	// Read font header
-	fh.c_height = ys_read_u16_le(read_p, &read_p);
-	fh.c_width = ys_read_u16_le(read_p, &read_p);
-	fh.row_length = ys_read_u16_le(read_p, &read_p);
+	fh.c_height = readS->readUint16LE();
+	fh.c_width = readS->readUint16LE();
+	fh.row_length = readS->readUint16LE();
 
 #if R_FONT_DBGLVL >= R_DEBUG_INFO
 	R_printf(R_STDOUT, "FONT_Load(): Reading font resource...\n");
@@ -161,23 +156,23 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	normal_font->hdr.row_length = fh.row_length;
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].index = ys_read_u16_le(read_p, &read_p);
+		normal_font->fce[c].index = readS->readUint16LE();
 	}
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		nbits = normal_font->fce[c].width = ys_read_u8(read_p, &read_p);
+		nbits = normal_font->fce[c].width = readS->readByte();
 		normal_font->fce[c].byte_width = GetByteLen(nbits);
 	}
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].flag = ys_read_u8(read_p, &read_p);
+		normal_font->fce[c].flag = readS->readByte();
 	}
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].tracking = ys_read_u8(read_p, &read_p);
+		normal_font->fce[c].tracking = readS->readByte();
 	}
 
-	if ((read_p - fontres_p) != R_FONT_DESCSIZE) {
+	if (readS->tell() != R_FONT_DESCSIZE) {
 		R_printf(R_STDERR, "Invalid font resource size.\n");
 		return R_FAILURE;
 	}

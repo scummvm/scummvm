@@ -25,8 +25,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "cvar_mod.h"
 #include "console_mod.h"
 #include "gfx_mod.h"
@@ -60,10 +58,10 @@ int ACTIONMAP_Load(const byte * exmap_res, size_t exmap_res_len) {
 	assert(ActmapModule.init);
 	assert(exmap_res != NULL);
 
-	MemoryReadStream *exmapStream = new MemoryReadStream(exmap_res, exmap_res_len);
+	MemoryReadStream *readS = new MemoryReadStream(exmap_res, exmap_res_len);
 
 	// Load exits
-	exit_ct = exmapStream->readSint16LE();
+	exit_ct = readS->readSint16LE();
 	if (exit_ct < 0) {
 		return R_FAILURE;
 	}
@@ -75,12 +73,12 @@ int ACTIONMAP_Load(const byte * exmap_res, size_t exmap_res_len) {
 	}
 
 	for (i = 0; i < exit_ct; i++) {
-		exmap_entry[i].unknown00 = exmapStream->readSint16LE();
-		exmap_entry[i].unknown02 = exmapStream->readSint16LE();
-		exmap_entry[i].exit_scene = exmapStream->readSint16LE();
-		exmap_entry[i].unknown06 = exmapStream->readSint16LE();
+		exmap_entry[i].unknown00 = readS->readSint16LE();
+		exmap_entry[i].unknown02 = readS->readSint16LE();
+		exmap_entry[i].exit_scene = readS->readSint16LE();
+		exmap_entry[i].unknown06 = readS->readSint16LE();
 
-		exmap_entry[i].pt_count = exmapStream->readSint16LE();
+		exmap_entry[i].pt_count = readS->readSint16LE();
 		if (exmap_entry[i].pt_count < 0) {
 			free(exmap_entry);
 			return R_FAILURE;
@@ -93,8 +91,8 @@ int ACTIONMAP_Load(const byte * exmap_res, size_t exmap_res_len) {
 		}
 
 		for (pt = 0; pt < exmap_entry[i].pt_count; pt++) {
-			exmap_pt_tbl[pt].x = exmapStream->readSint16LE();
-			exmap_pt_tbl[pt].y = exmapStream->readSint16LE();
+			exmap_pt_tbl[pt].x = readS->readSint16LE();
+			exmap_pt_tbl[pt].y = readS->readSint16LE();
 		}
 
 		exmap_entry[i].pt_tbl = exmap_pt_tbl;
@@ -167,8 +165,8 @@ void CF_action_info(int argc, char *argv[]) {
 	int i;
 	int pt_i;
 
-	YS_IGNORE_PARAM(argc);
-	YS_IGNORE_PARAM(argv);
+	(void)(argc);
+	(void)(argv);
 
 	if (!ActmapModule.exits_loaded) {
 		return;

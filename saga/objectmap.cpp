@@ -21,16 +21,13 @@
  *
  */
 
-
 // Object map / Object click-area module 
 
 // Polygon Hit Test code ( HitTestPoly() ) adapted from code (C) Eric Haines
 // appearing in Graphics Gems IV, "Point in Polygon Strategies."
 // p. 24-46, code: p. 34-45
-
+#include "saga.h"
 #include "reinherit.h"
-
-#include "yslib.h"
 
 #include "cvar_mod.h"
 #include "console_mod.h"
@@ -79,15 +76,13 @@ int OBJECTMAP_Shutdown() {
 
 // Loads an object map resource ( objects ( clickareas ( points ) ) ) 
 int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
-	const unsigned char *read_p = om_res;
-
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
 	R_POINT *point;
 
 	int i, k, m;
 
-	YS_IGNORE_PARAM(om_res_len);
+	MemoryReadStream *readS = new MemoryReadStream(om_res, om_res_len);
 
 	if (!OMInfo.initialized) {
 		R_printf(R_STDERR, "Error: Object map module not initialized!\n");
@@ -99,7 +94,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 	}
 
 	// Obtain object count N and allocate space for N objects
-	OMInfo.n_objects = ys_read_u16_le(read_p, &read_p);
+	OMInfo.n_objects = readS->readUint16LE();
 
 	OMInfo.object_maps = (R_OBJECTMAP_ENTRY *)malloc(OMInfo.n_objects * sizeof *OMInfo.object_maps);
 
@@ -111,11 +106,11 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 	// Load all N objects
 	for (i = 0; i < OMInfo.n_objects; i++) {
 		object_map = &OMInfo.object_maps[i];
-		object_map->unknown0 = ys_read_u8(read_p, &read_p);
-		object_map->n_clickareas = ys_read_u8(read_p, &read_p);
-		object_map->flags = ys_read_u16_le(read_p, &read_p);
-		object_map->object_num = ys_read_u16_le(read_p, &read_p);
-		object_map->script_num = ys_read_u16_le(read_p, &read_p);
+		object_map->unknown0 = readS->readByte();
+		object_map->n_clickareas = readS->readByte();
+		object_map->flags = readS->readUint16LE();
+		object_map->object_num = readS->readUint16LE();
+		object_map->script_num = readS->readUint16LE();
 		object_map->clickareas = (R_CLICKAREA *)malloc(object_map->n_clickareas * sizeof *(object_map->clickareas));
 
 		if (object_map->clickareas == NULL) {
@@ -126,7 +121,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 		// Load all clickareas for this object
 		for (k = 0; k < object_map->n_clickareas; k++) {
 			clickarea = &object_map->clickareas[k];
-			clickarea->n_points = ys_read_u16_le(read_p, &read_p);
+			clickarea->n_points = readS->readUint16LE();
 			assert(clickarea->n_points != 0);
 
 			clickarea->points = (R_POINT *)malloc(clickarea->n_points * sizeof *(clickarea->points));
@@ -138,8 +133,8 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 			// Load all points for this clickarea
 			for (m = 0; m < clickarea->n_points; m++) {
 				point = &clickarea->points[m];
-				point->x = ys_read_s16_le(read_p, &read_p);
-				point->y = ys_read_s16_le(read_p, &read_p);
+				point->x = readS->readSint16LE();
+				point->y = readS->readSint16LE();
 			}
 #if R_OBJECTMAP_DEBUG >= R_DEBUG_PARANOID
 			R_printf(R_STDOUT, "OBJECTMAP_Load(): Read %d points for clickarea %d in object %d.\n",
@@ -184,21 +179,19 @@ int OBJECTMAP_Free() {
 
 // Loads an object name list resource
 int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len) {
-	const unsigned char *read_p = onl_res;
-
 	int table_len;
 	int n_names;
 	size_t name_offset;
 
 	int i;
 
-	YS_IGNORE_PARAM(onl_res_len);
+	MemoryReadStream *readS = new MemoryReadStream(onl_res, onl_res_len);
 
 	if (OMInfo.names_loaded) {
 		OBJECTMAP_FreeNames();
 	}
 
-	table_len = ys_read_u16_le(read_p, &read_p);
+	table_len = readS->readUint16LE();
 
 	n_names = table_len / 2 - 2;
 	OMInfo.n_names = n_names;
@@ -216,7 +209,7 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len) {
 	}
 
 	for (i = 0; i < n_names; i++) {
-		name_offset = ys_read_u16_le(read_p, &read_p);
+		name_offset = readS->readUint16LE();
 		OMInfo.names[i] = (const char *)(onl_res + name_offset);
 
 #if R_OBJECTMAP_DEBUG >= R_DEBUG_VERBOSE
@@ -446,8 +439,8 @@ int OBJECTMAP_HitTest(R_POINT * imouse_pt, int *object_num) {
 static void CF_object_info(int argc, char *argv[]) {
 	int i;
 
-	YS_IGNORE_PARAM(argc);
-	YS_IGNORE_PARAM(argv);
+	(void)(argc);
+	(void)(argv);
 
 	if (!OMInfo.initialized) {
 		return;

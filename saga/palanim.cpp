@@ -25,8 +25,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "events_mod.h"
 #include "game_mod.h"
 
@@ -38,12 +36,9 @@ namespace Saga {
 static PALANIM_DATA PAnimData;
 
 int PALANIM_Load(const byte *resdata, size_t resdata_len) {
-	const byte *read_p = resdata;
 	void *test_p;
 
 	uint16 i;
-
-	YS_IGNORE_PARAM(resdata_len);
 
 	if (PAnimData.loaded) {
 		PALANIM_Free();
@@ -53,11 +48,13 @@ int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 		return R_FAILURE;
 	}
 
+	MemoryReadStream *readS = new MemoryReadStream(resdata, resdata_len);
+
 	if (GAME_GetGameType() == R_GAMETYPE_IHNM) {
 		return R_SUCCESS;
 	}
 
-	PAnimData.entry_count = ys_read_u16_le(read_p, &read_p);
+	PAnimData.entry_count = readS->readUint16LE();
 
 	R_printf(R_STDOUT, "PALANIM_Load(): Loading %d PALANIM entries.\n", PAnimData.entry_count);
 
@@ -74,8 +71,8 @@ int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 		int pal_count;
 		int p, c;
 
-		color_count = ys_read_u16_le(read_p, &read_p);
-		pal_count = ys_read_u16_le(read_p, &read_p);
+		color_count = readS->readUint16LE();
+		pal_count = readS->readUint16LE();
 
 		PAnimData.entries[i].pal_count = pal_count;
 		PAnimData.entries[i].color_count = color_count;
@@ -105,13 +102,13 @@ int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 		PAnimData.entries[i].colors = (R_COLOR *)test_p;
 
 		for (p = 0; p < pal_count; p++) {
-			PAnimData.entries[i].pal_index[p] = (byte) ys_read_u8(read_p, &read_p);
+			PAnimData.entries[i].pal_index[p] = readS->readByte();
 		}
 
 		for (c = 0; c < color_count; c++) {
-			PAnimData.entries[i].colors[c].red = (byte) ys_read_u8(read_p, &read_p);
-			PAnimData.entries[i].colors[c].green = (byte) ys_read_u8(read_p, &read_p);
-			PAnimData.entries[i].colors[c].blue = (byte) ys_read_u8(read_p, &read_p);
+			PAnimData.entries[i].colors[c].red = readS->readByte();
+			PAnimData.entries[i].colors[c].green = readS->readByte();
+			PAnimData.entries[i].colors[c].blue = readS->readByte();
 		}
 	}
 

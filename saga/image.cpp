@@ -62,17 +62,18 @@ int IMG_DecodeBGImage(const byte * image_data, size_t image_size,
 	size_t decode_buf_len;
 	byte *out_buf;
 	size_t out_buf_len;
-	const byte *read_p = image_data;
 
 	if (image_size <= SAGA_IMAGE_DATA_OFFSET) {
 		/* Image size is way too small */
 		return R_FAILURE;
 	}
 
-	hdr.width = ys_read_u16_le(read_p, &read_p);
-	hdr.height = ys_read_u16_le(read_p, &read_p);
-	hdr.unknown4 = ys_read_u16_le(read_p, &read_p);
-	hdr.unknown6 = ys_read_u16_le(read_p, &read_p);
+	MemoryReadStream *readS = new MemoryReadStream(image_data, image_size);
+
+	hdr.width = readS->readUint16LE();
+	hdr.height = readS->readUint16LE();
+	hdr.unknown4 = readS->readUint16LE();
+	hdr.unknown6 = readS->readUint16LE();
 
 	RLE_data_ptr = image_data + SAGA_IMAGE_DATA_OFFSET;
 	RLE_data_len = image_size - SAGA_IMAGE_DATA_OFFSET;

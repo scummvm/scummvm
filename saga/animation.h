@@ -93,11 +93,11 @@ struct R_ANIMINFO {
 	R_ANIMATION *anim_tbl[R_MAX_ANIMATIONS];
 };
 
-int ANIM_GetNumFrames(const byte *anim_resource, uint16 *n_frames);
-int ITE_DecodeFrame(const byte * anim_resource, size_t frame_offset, byte * buf, size_t buf_len);
-int IHNM_DecodeFrame(byte * decode_buf, size_t decode_buf_len, const byte * thisf_p,
-					size_t thisf_len, const byte ** nextf_p, size_t * nextf_len);
-int ANIM_GetFrameOffset(const byte * anim_resource, uint16 find_frame, size_t * frame_offset);
+int ANIM_GetNumFrames(const byte *anim_resource, size_t anim_resource_len, uint16 *n_frames);
+int ITE_DecodeFrame(const byte *anim_resource, size_t anim_resource_len, size_t frame_offset, byte *buf, size_t buf_len);
+int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
+					size_t thisf_len, const byte **nextf_p, size_t *nextf_len);
+int ANIM_GetFrameOffset(const byte *anim_resource, size_t anim_resource_len, uint16 find_frame, size_t *frame_offset);
 static void CF_anim_info(int argc, char *argv[]);
 
 } // End of namespace Saga

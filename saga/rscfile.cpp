@@ -22,10 +22,8 @@
  */
 
 // RSC Resource file management module
-
+#include "saga.h"
 #include "reinherit.h"
-
-#include "yslib.h"
 
 #include "rscfile_mod.h"
 #include "rscfile.h"
@@ -105,10 +103,6 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 
 	R_RSCFILE_RESOURCE *rsc_restbl;
 
-	const byte *read_p;
-
-	read_p = tblinfo_buf;
-
 	if (rsc->rc_file.size() < RSC_MIN_FILESIZE) {
 		return R_FAILURE;
 	}
@@ -120,8 +114,10 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 		return R_FAILURE;
 	}
 
-	res_tbl_offset = ys_read_u32_le(read_p, &read_p);
-	res_tbl_ct = ys_read_u32_le(read_p, NULL);
+	MemoryReadStream *readS = new MemoryReadStream(tblinfo_buf, RSC_TABLEINFO_SIZE);
+
+	res_tbl_offset = readS->readUint32LE();
+	res_tbl_ct = readS->readUint32LE();
 
 	// Check for sane table offset
 	if (res_tbl_offset != rsc->rc_file.size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * res_tbl_ct) {
@@ -150,11 +146,11 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 		return R_FAILURE;
 	}
 
-	read_p = tbl_buf;
+	readS = new MemoryReadStream(tbl_buf, tbl_len);
 
 	for (i = 0; i < res_tbl_ct; i++) {
-		rsc_restbl[i].res_offset = ys_read_u32_le(read_p, &read_p);
-		rsc_restbl[i].res_size = ys_read_u32_le(read_p, &read_p);
+		rsc_restbl[i].res_offset = readS->readUint32LE();
+		rsc_restbl[i].res_size = readS->readUint32LE();
 		if ((rsc_restbl[i].res_offset > rsc->rc_file.size()) || (rsc_restbl[i].res_size > rsc->rc_file.size())) {
 			free(tbl_buf);
 			free(rsc_restbl);

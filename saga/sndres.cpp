@@ -26,8 +26,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "game_mod.h"
 #include "rscfile_mod.h"
 
@@ -124,58 +122,51 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 	R_VOC_BLOCK1 voc_b1;
 
 	long byte_rate;
+	size_t i;
 
-	const byte *read_p;
-	uint16 read_len;
-
-	read_p = snd_res;
-	read_len = snd_res_len;
-
-	if (read_len < R_VOC_HEADER_BLOCK_LEN) {
+	if (snd_res_len < R_VOC_HEADER_BLOCK_LEN) {
 		return R_FAILURE;
 	}
 
-	memcpy(voc_hb.ft_desc, read_p, R_VOC_FILE_DESC_LEN);
-	read_p += R_VOC_FILE_DESC_LEN;
-	read_len -= R_VOC_FILE_DESC_LEN;
+	MemoryReadStream *readS = new MemoryReadStream(snd_res, snd_res_len);
+
+	for (i = 0; i < R_VOC_FILE_DESC_LEN; i++)
+		voc_hb.ft_desc[i] = readS->readByte();
 
 	if (memcmp(voc_hb.ft_desc, R_VOC_FILE_DESC, R_VOC_FILE_DESC_LEN) != 0) {
 		/* Voc file desc string not found */
 		return R_FAILURE;
 	}
 
-	voc_hb.db_offset = ys_read_u16_le(read_p, &read_p);
-	voc_hb.voc_version = ys_read_u16_le(read_p, &read_p);
-	voc_hb.voc_fileid = ys_read_u16_le(read_p, &read_p);
+	voc_hb.db_offset = readS->readUint16LE();
+	voc_hb.voc_version = readS->readUint16LE();
+	voc_hb.voc_fileid = readS->readUint16LE();
 
-	if (read_len < voc_hb.db_offset + R_VOC_GENBLOCK_LEN) {
+	if (snd_res_len - readS->tell() < voc_hb.db_offset + R_VOC_GENBLOCK_LEN) {
 		return R_FAILURE;
 	}
 
-	read_p = snd_res + voc_hb.db_offset;
-	read_len = snd_res_len - voc_hb.db_offset;
+	while (readS->tell() < voc_hb.db_offset)
+		readS->readByte();
 
 	for (;;) {
 		/* Read generic block header */
-		if (read_len < R_VOC_GENBLOCK_LEN) {
+		if (snd_res_len - readS->tell() < R_VOC_GENBLOCK_LEN) {
 			return R_FAILURE;
 		}
 
-		voc_gb.block_id = ys_read_u8(read_p, &read_p);
+		voc_gb.block_id = readS->readByte();
 		if (voc_gb.block_id == 0) {
 			return R_FAILURE;
 		}
 
-		voc_gb.block_len = ys_read_u24_le(read_p, &read_p);
-
-		read_len -= R_VOC_GENBLOCK_LEN;
+		voc_gb.block_len = readS->readUint24LE();
 
 		/* Process block */
 		switch (voc_gb.block_id) {
 		case 1:	/* Sound data block */
-			voc_b1.time_constant = ys_read_u8(read_p, &read_p);
-			voc_b1.pack_method = ys_read_u8(read_p, &read_p);
-			read_len -= 2;
+			voc_b1.time_constant = readS->readByte();
+			voc_b1.pack_method = readS->readByte();
 
 			if (voc_b1.pack_method != 0) {
 				debug(0, "Packed VOC files not supported");
@@ -191,15 +182,15 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 			snd_buf_i->res_data = snd_res;
 			snd_buf_i->res_len = snd_res_len;
 
-			snd_buf_i->s_buf = read_p;
-			snd_buf_i->s_buf_len = read_len - 1;	/* -1 for end block */
+			snd_buf_i->s_buf = snd_res + readS->tell();
+			snd_buf_i->s_buf_len = snd_res_len - readS->tell() - 1;	/* -1 for end block */
 
 			snd_buf_i->s_signed = 0;
 			return R_SUCCESS;
 			break;
 		default:
-			read_p += voc_gb.block_len;
-			read_len -= voc_gb.block_len;
+			for (i = 0; i < voc_gb.block_len; i++)
+				readS->readByte();
 			break;
 		}
 	}

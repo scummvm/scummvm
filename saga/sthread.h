@@ -55,6 +55,7 @@ int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num);
 int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec);
 unsigned long GetReadOffset(const byte *read_p);
 unsigned char *GetReadPtr(R_SCRIPT_THREAD *thread);
+size_t GetReadLen(R_SCRIPT_THREAD *thread);
 int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread);
 
 }				// End of namespace Saga

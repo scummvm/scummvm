@@ -25,8 +25,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "game_mod.h"
 #include "gfx_mod.h"
 
@@ -49,19 +47,17 @@ int ISOMAP_LoadTileset(const byte *tileres_p, size_t tileres_len) {
 
 	uint16 i;
 
-	const byte *read_p = tileres_p;
-	size_t read_len = tileres_len;
-
 	assert((IsoModule.init) && (!IsoModule.tiles_loaded));
 	assert((tileres_p != NULL) && (tileres_len > 0));
 
-	read_p += 2;
-	first_entry.tile_offset = ys_read_u16_le(read_p, &read_p);
+	MemoryReadStream *readS = new MemoryReadStream(tileres_p, tileres_len);
+
+	readS->readUint16LE(); // skip
+	first_entry.tile_offset = readS->readUint16LE();
 
 	IsoModule.tile_ct = first_entry.tile_offset / SAGA_ISOTILE_ENTRY_LEN;
 
-	read_p = tileres_p;
-	read_len = tileres_len;
+	readS->rewind();
 
 	tile_tbl = (R_ISOTILE_ENTRY *)malloc(IsoModule.tile_ct * sizeof *tile_tbl);
 	if (tile_tbl == NULL) {
@@ -69,11 +65,11 @@ int ISOMAP_LoadTileset(const byte *tileres_p, size_t tileres_len) {
 	}
 
 	for (i = 0; i < IsoModule.tile_ct; i++) {
-		tile_tbl[i].tile_h = ys_read_u8(read_p, &read_p);
-		tile_tbl[i].unknown01 = ys_read_u8(read_p, &read_p);
-		tile_tbl[i].tile_offset = ys_read_u16_le(read_p, &read_p);
-		tile_tbl[i].unknown04 = ys_read_s16_le(read_p, &read_p);
-		tile_tbl[i].unknown06 = ys_read_s16_le(read_p, &read_p);
+		tile_tbl[i].tile_h = readS->readByte();
+		tile_tbl[i].unknown01 = readS->readByte();
+		tile_tbl[i].tile_offset = readS->readUint16LE();
+		tile_tbl[i].unknown04 = readS->readSint16LE();
+		tile_tbl[i].unknown06 = readS->readSint16LE();
 	}
 
 	IsoModule.tiles_loaded = 1;
@@ -86,8 +82,6 @@ int ISOMAP_LoadTileset(const byte *tileres_p, size_t tileres_len) {
 
 int ISOMAP_LoadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 	R_ISO_METATILE_ENTRY *mtile_tbl;
-	const byte *read_p = mtileres_p;
-	size_t read_len = mtileres_len;
 	uint16 mtile_ct;
 	uint16 ct;
 	int i;
@@ -95,7 +89,7 @@ int ISOMAP_LoadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 	assert(IsoModule.init);
 	assert((mtileres_p != NULL) && (mtileres_len > 0));
 
-	(void)read_len;
+	MemoryReadStream *readS = new MemoryReadStream(mtileres_p, mtileres_len);
 
 	mtile_ct = mtileres_len / SAGA_METATILE_ENTRY_LEN;
 	mtile_tbl = (R_ISO_METATILE_ENTRY *)malloc(mtile_ct * sizeof *mtile_tbl);
@@ -104,13 +98,13 @@ int ISOMAP_LoadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 	}
 
 	for (ct = 0; ct < mtile_ct; ct++) {
-		mtile_tbl[ct].mtile_n = ys_read_u16_le(read_p, &read_p);
-		mtile_tbl[ct].unknown02 = ys_read_s16_le(read_p, &read_p);
-		mtile_tbl[ct].unknown04 = ys_read_s16_le(read_p, &read_p);
-		mtile_tbl[ct].unknown06 = ys_read_s16_le(read_p, &read_p);
+		mtile_tbl[ct].mtile_n = readS->readUint16LE();
+		mtile_tbl[ct].unknown02 = readS->readSint16LE();
+		mtile_tbl[ct].unknown04 = readS->readSint16LE();
+		mtile_tbl[ct].unknown06 = readS->readSint16LE();
 
 		for (i = 0; i < SAGA_METATILE_SIZE; i++) {
-			mtile_tbl[ct].tile_tbl[i] = ys_read_u16_le(read_p, &read_p);
+			mtile_tbl[ct].tile_tbl[i] = readS->readUint16LE();
 		}
 	}
 
@@ -125,16 +119,13 @@ int ISOMAP_LoadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 }
 
 int ISOMAP_LoadMetamap(const byte *mm_res_p, size_t mm_res_len) {
-	const byte *read_p = mm_res_p;
-	size_t read_len = mm_res_len;
 	int i;
 
-	(void)read_len;
-
-	IsoModule.metamap_n = ys_read_s16_le(read_p, &read_p);
+	MemoryReadStream *readS = new MemoryReadStream(mm_res_p, mm_res_len);
+	IsoModule.metamap_n = readS->readSint16LE();
 
 	for (i = 0; i < SAGA_METAMAP_SIZE; i++) {
-		IsoModule.metamap_tbl[i] = ys_read_u16_le(read_p, &read_p);
+		IsoModule.metamap_tbl[i] = readS->readUint16LE();
 	}
 
 	IsoModule.mm_res_p = mm_res_p;

@@ -35,8 +35,6 @@ MODULE_OBJS = \
 	saga/sthread.o \
 	saga/text.o \
 	saga/transitions.o \
-	saga/ys_binread.o \
-	saga/ys_binwrite.o \
 	saga/ys_dl_list.o \
 	saga/input.o \
 	saga/timer.o \

@@ -22,10 +22,8 @@
  */
 
 // Scripting module simple thread debugging support
-
+#include "saga.h"
 #include "reinherit.h"
-
-#include "yslib.h"
 
 #include "actor_mod.h"
 #include "console_mod.h"
@@ -43,8 +41,6 @@ namespace Saga {
 
 int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 	R_TEXTLIST_ENTRY tl_e;
-	const byte *start_p;
-	const byte *read_p;
 	char tmp_buf[80] = { 0 };
 	static char disp_buf[SD_DISPLAY_LEN] = { 0 };
 	int in_char;
@@ -71,9 +67,13 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 	tl_e.string = disp_buf;
 	tl_e.display = 1;
 
-	read_p = ScriptModule.current_script->bytecode->bytecode_p + thread->i_offset;
-	start_p = read_p;
-	in_char = ys_read_u8(read_p, &read_p);
+	// XXX
+	MemoryReadStream *readS = 
+		new MemoryReadStream(ScriptModule.current_script->bytecode->bytecode_p 
+							 + thread->i_offset, 
+							 ScriptModule.current_script->bytecode->bytecode_len 
+							 - thread->i_offset);
+	in_char = readS->readByte();
 	sprintf(tmp_buf, "%04lX | %02X | ", thread->i_offset, in_char);
 	strncat(disp_buf, tmp_buf, SD_DISPLAY_LEN);
 
@@ -104,7 +104,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param;
 
 			SD_ADDTXT("PSHD | ");
-			param = ys_read_u16_le(read_p, &read_p);
+			param = readS->readUint16LE();
 			sprintf(tmp_buf, "%02X", param);
 			SD_ADDTXT(tmp_buf);
 /*
@@ -123,7 +123,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param;
 
 			SD_ADDTXT("PUSH | ");
-			param = ys_read_u16_le(read_p, &read_p);
+			param = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X", param);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -135,8 +135,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param2;
 
 			SD_ADDTXT("TSTF | ");
-			param1 = *read_p++;
-			param2 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readByte();
+			param2 = readS->readUint16LE();
 			sprintf(tmp_buf, "%02X %04X", param1, param2);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -148,8 +148,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param2;
 
 			SD_ADDTXT("GETW | ");
-			param1 = *read_p++;
-			param2 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readByte();
+			param2 = readS->readUint16LE();
 			sprintf(tmp_buf, "%02X %04X", param1, param2);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -161,8 +161,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param2;
 
 			SD_ADDTXT("MODF | ");
-			param1 = *read_p++;
-			param2 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readByte();
+			param2 = readS->readUint16LE();
 			sprintf(tmp_buf, "%02X %04X", param1, param2);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -174,8 +174,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param2;
 
 			SD_ADDTXT("PUTW | ");
-			param1 = *read_p++;
-			param2 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readByte();
+			param2 = readS->readUint16LE();
 			sprintf(tmp_buf, "%02X %04X", param1, param2);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -187,8 +187,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param2;
 
 			SD_ADDTXT("MDFP | ");
-			param1 = *read_p++;
-			param2 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readByte();
+			param2 = readS->readUint16LE();
 			sprintf(tmp_buf, "%02X %04X", param1, param2);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -200,8 +200,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param2;
 
 			SD_ADDTXT("PTWP | ");
-			param1 = *read_p++;
-			param2 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readByte();
+			param2 = readS->readUint16LE();
 
 			sprintf(tmp_buf, "%02X %04X", param1, param2);
 			SD_ADDTXT(tmp_buf);
@@ -215,9 +215,9 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param3;
 
 			SD_ADDTXT("GOSB | ");
-			param1 = *read_p++;
-			param2 = *read_p++;
-			param3 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readByte();
+			param2 = readS->readByte();
+			param3 = readS->readUint16LE();
 			sprintf(tmp_buf, "%02X %02X %04X", param1, param2, param3);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -230,10 +230,10 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param;
 
 			SD_ADDTXT("CALL | ");
-			func_num = *read_p++;
+			func_num = readS->readByte();
 			sprintf(tmp_buf, "%02X ", func_num);
 			SD_ADDTXT(tmp_buf);
-			param = ys_read_u16_le(read_p, &read_p);
+			param = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X ", param);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -244,7 +244,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param;
 
 			SD_ADDTXT("ENTR | ");
-			param = ys_read_u16_le(read_p, &read_p);
+			param = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X ", param);
 			SD_ADDTXT(tmp_buf);
 /*
@@ -270,7 +270,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param1;
 
 			SD_ADDTXT("JMP  | ");
-			param1 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X", param1);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -281,7 +281,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param1;
 
 			SD_ADDTXT("JNZP | ");
-			param1 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X", param1);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -292,7 +292,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param1;
 
 			SD_ADDTXT("JZP  | ");
-			param1 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X", param1);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -302,7 +302,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 		{
 			int param1;
 			SD_ADDTXT("JNZ  | ");
-			param1 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X", param1);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -314,7 +314,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param1;
 
 			SD_ADDTXT("JZ   | ");
-			param1 = ys_read_u16_le(read_p, &read_p);
+			param1 = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X", param1);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -327,15 +327,15 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int default_jmp;
 
 			SD_ADDTXT("SWCH | ");
-			n_switch = ys_read_u16_le(read_p, &read_p);
+			n_switch = readS->readUint16LE();
 			sprintf(tmp_buf, "%02X\n", n_switch);
 			SD_ADDTXT(tmp_buf);
 			for (i = 0; i < n_switch; i++) {
-				switch_num = ys_read_u16_le(read_p, &read_p);
-				switch_jmp = ys_read_u16_le(read_p, &read_p);
+				switch_num = readS->readUint16LE();
+				switch_jmp = readS->readUint16LE();
 				// printf( R_TAB "CASE %04X, %04X\n", switch_num, switch_jmp);
 			}
-			default_jmp = ys_read_u16_le(read_p, &read_p);
+			default_jmp = readS->readUint16LE();
 			//printf( R_TAB "DEF %04X", default_jmp);
 		}
 		break;
@@ -348,14 +348,14 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 
 			SD_ADDTXT("RJMP | ");
 			// Ignored?
-			ys_read_u16_le(read_p, &read_p);
-			n_switch2 = ys_read_u16_le(read_p, &read_p);
+			readS->readUint16LE();
+			n_switch2 = readS->readUint16LE();
 			sprintf(tmp_buf, "%04X", n_switch2);
 			SD_ADDTXT(tmp_buf);
 			for (i = 0; i < n_switch2; i++) {
 				//printf("\n");
-				switch_num = ys_read_u16_le(read_p, &read_p);
-				switch_jmp = ys_read_u16_le(read_p, &read_p);
+				switch_num = readS->readUint16LE();
+				switch_jmp = readS->readUint16LE();
 				//printf( R_TAB "WEIGHT %04X, %04X", switch_num, switch_jmp);
 			}
 		}
@@ -371,23 +371,23 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 		break;
 	case 0x28:
 		SD_ADDTXT("??? ");
-		read_p++;
-		ys_read_u16_le(read_p, &read_p);
+		readS->readByte();
+		readS->readUint16LE();
 		break;
 	case 0x29:
 		SD_ADDTXT("??? ");
-		read_p++;
-		ys_read_u16_le(read_p, &read_p);
+		readS->readByte();
+		readS->readUint16LE();
 		break;
 	case 0x2A:
 		SD_ADDTXT("??? ");
-		read_p++;
-		ys_read_u16_le(read_p, &read_p);
+		readS->readByte();
+		readS->readUint16LE();
 		break;
 	case 0x2B:
 		SD_ADDTXT("??? ");
-		read_p++;
-		ys_read_u16_le(read_p, &read_p);
+		readS->readByte();
+		readS->readUint16LE();
 		break;
 		// Addition
 	case 0x2C:
@@ -464,11 +464,11 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param2;
 
 			SD_ADDTXT("DLGP | ");
-			n_voices = *read_p++;
-			param1 = ys_read_u16_le(read_p, &read_p);
-			param2 = *read_p++;
+			n_voices = readS->readByte();
+			param1 = readS->readUint16LE();
+			param2 = readS->readByte();
 			// ignored ?
-			ys_read_u16_le(read_p, &read_p);
+			readS->readUint16LE();
 			sprintf(tmp_buf, "%02X %04X %02X", n_voices, param1, param2);
 			SD_ADDTXT(tmp_buf);
 		}
@@ -486,12 +486,12 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param3;
 
 			SD_ADDTXT("DLGO | ");
-			param1 = *read_p++;
-			param2 = *read_p++;
+			param1 = readS->readByte();
+			param2 = readS->readByte();
 			sprintf(tmp_buf, "%02X %02X ", param1, param2);
 			SD_ADDTXT(tmp_buf);
 			if (param2 > 0) {
-				param3 = ys_read_u16_le(read_p, &read_p);
+				param3 = readS->readUint16LE();
 				sprintf(tmp_buf, "%04X", param3);
 				SD_ADDTXT(tmp_buf);
 			}
@@ -504,9 +504,9 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 			int param3;
 
 			SD_ADDTXT("JMPS | ");
-			param1 = ys_read_u16_le(read_p, &read_p);
-			param2 = ys_read_u16_le(read_p, &read_p);
-			param3 = *read_p++;
+			param1 = readS->readUint16LE();
+			param2 = readS->readUint16LE();
+			param3 = readS->readByte();
 			sprintf(tmp_buf, "%04X %04X %02X", param1, param2, param3);
 			SD_ADDTXT(tmp_buf);
 		}

@@ -25,8 +25,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "game_mod.h"
 #include "gfx_mod.h"
 #include "scene_mod.h"
@@ -85,7 +83,6 @@ int SPRITE_LoadList(int resource_num, R_SPRITELIST **sprite_list_p) {
 	R_SPRITELIST *new_slist;
 	byte *spritelist_data;
 	size_t spritelist_len;
-	const byte *read_p;
 	uint16 sprite_count;
 	uint16 i;
 
@@ -98,9 +95,9 @@ int SPRITE_LoadList(int resource_num, R_SPRITELIST **sprite_list_p) {
 		return R_FAILURE;
 	}
 
-	read_p = spritelist_data;
+	MemoryReadStream *readS = new MemoryReadStream(spritelist_data, spritelist_len);
 
-	sprite_count = ys_read_u16_le(read_p, &read_p);
+	sprite_count = readS->readUint16LE();
 
 	new_slist->sprite_count = sprite_count;
 
@@ -112,7 +109,7 @@ int SPRITE_LoadList(int resource_num, R_SPRITELIST **sprite_list_p) {
 
 	for (i = 0; i < sprite_count; i++) {
 		new_slist->offset_list[i].data_idx = 0;
-		new_slist->offset_list[i].offset = ys_read_u16_le(read_p, &read_p);
+		new_slist->offset_list[i].offset = readS->readUint16LE();
 	}
 
 	new_slist->slist_rn = resource_num;
@@ -127,7 +124,6 @@ int SPRITE_LoadList(int resource_num, R_SPRITELIST **sprite_list_p) {
 int SPRITE_AppendList(int resource_num, R_SPRITELIST *spritelist) {
 	byte *spritelist_data;
 	size_t spritelist_len;
-	const byte *read_p;
 	void *test_p;
 	uint16 old_sprite_count;
 	uint16 new_sprite_count;
@@ -142,9 +138,9 @@ int SPRITE_AppendList(int resource_num, R_SPRITELIST *spritelist) {
 		return R_FAILURE;
 	}
 
-	read_p = spritelist_data;
+	MemoryReadStream *readS = new MemoryReadStream(spritelist_data, spritelist_len);
 
-	sprite_count = ys_read_u16_le(read_p, &read_p);
+	sprite_count = readS->readUint16LE();
 
 	old_sprite_count = spritelist->sprite_count;
 	new_sprite_count = spritelist->sprite_count + sprite_count;
@@ -161,7 +157,7 @@ int SPRITE_AppendList(int resource_num, R_SPRITELIST *spritelist) {
 
 	for (i = old_sprite_count; i < spritelist->sprite_count; i++) {
 		spritelist->offset_list[i].data_idx = spritelist->append_count;
-		spritelist->offset_list[i].offset = ys_read_u16_le(read_p, &read_p);
+		spritelist->offset_list[i].offset = readS->readUint16LE();
 	}
 
 	spritelist->sprite_data[spritelist->append_count] = spritelist_data;
@@ -192,7 +188,6 @@ int SPRITE_Draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int sp
 	int offset_idx;
 	byte *sprite_p;
 	const byte *sprite_data_p;
-	const byte *read_p;
 	int i, j;
 	byte *buf_row_p;
 	byte *src_row_p;
@@ -213,15 +208,15 @@ int SPRITE_Draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int sp
 	sprite_p = sprite_list->sprite_data[offset_idx];
 	sprite_p += offset;
 
-	read_p = (byte *) sprite_p;
+	MemoryReadStream *readS = new MemoryReadStream(sprite_p, 5);
 
-	x_align = ys_read_s8(read_p, &read_p);
-	y_align = ys_read_s8(read_p, &read_p);
+	x_align = readS->readSByte();
+	y_align = readS->readSByte();
 
-	s_width = ys_read_u8(read_p, &read_p);
-	s_height = ys_read_u8(read_p, &read_p);
+	s_width = readS->readByte();
+	s_height = readS->readByte();
 
-	sprite_data_p = read_p;
+	sprite_data_p = sprite_p + readS->tell();
 
 	spr_x += x_align;
 	spr_y += y_align;
@@ -269,7 +264,6 @@ int SPRITE_DrawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num
 	int offset_idx;
 	byte *sprite_p;
 	const byte *sprite_data_p;
-	const byte *read_p;
 	int i;
 	int x, y;
 	byte *dst_row_p;
@@ -322,17 +316,17 @@ int SPRITE_DrawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num
 	sprite_p = sprite_list->sprite_data[offset_idx];
 	sprite_p += offset;
 
-	read_p = sprite_p;
+	MemoryReadStream *readS = new MemoryReadStream(sprite_p, 5);
 
 	// Read sprite dimensions -- should probably cache this stuff in 
 	// sprite list
-	x_align = ys_read_s8(read_p, &read_p);
-	y_align = ys_read_s8(read_p, &read_p);
+	x_align = readS->readSByte();
+	y_align = readS->readSByte();
 
-	s_width = ys_read_u8(read_p, &read_p);
-	s_height = ys_read_u8(read_p, &read_p);
+	s_width = readS->readByte();
+	s_height = readS->readByte();
 
-	sprite_data_p = read_p;
+	sprite_data_p = sprite_p + readS->tell();
 
 	// Create actor Z occlusion LUT
 	SCENE_GetZInfo(&zinfo);

@@ -28,6 +28,7 @@
 
 #include "sstack.h"
 #include "sdata.h"
+#include "yslib.h"
 
 namespace Saga {
 

@@ -47,42 +47,6 @@ typedef int (YS_COMPARE_FUNC) (const void *, const void *);
 
 //#define YS_ASSUME_2S_COMP
 
-// Read a 4CC ( Four characater code )
-void ys_read_4cc(char *fourcc, const unsigned char *data_p, const unsigned char **data_pp);
-
-// Read 8 bit unsigned integer
-unsigned int ys_read_u8(const unsigned char *, const unsigned char **);
-
-// Read 8 bit signed integer
-int ys_read_s8(const unsigned char *, const unsigned char **);
-
-// Read 16 bit unsigned integer, big-endian
-unsigned int ys_read_u16_be(const unsigned char *, const unsigned char **);
-
-// Read 16 bit unsigned integer, little-endian
-unsigned int ys_read_u16_le(const unsigned char *, const unsigned char **);
-
-// Read 16 bit signed integer, 2's complement, big-endian
-int ys_read_s16_be(const unsigned char *, const unsigned char **);
-
-// Read 16 bit signed integer, 2's complement, little-endian
-int ys_read_s16_le(const unsigned char *, const unsigned char **);
-
-// Read 24 bit unsigned integer, little-endian
-unsigned long ys_read_u24_le(const unsigned char *, const unsigned char **);
-
-// Read 32 bit unsigned integer, big-endian
-unsigned long ys_read_u32_be(const unsigned char *, const unsigned char **);
-
-// Read 32 bit unsigned integer, little-endian
-unsigned long ys_read_u32_le(const unsigned char *, const unsigned char **);
-
-// Write 16 bit unsigned integer, big-endian
-void ys_write_u16_be(unsigned int, unsigned char *, unsigned char **);
-
-// Write 32 bit unsigned integer, big-endian
-void ys_write_u32_be(unsigned long, unsigned char *, unsigned char **);
-
 // Shared declarations for list modules
 enum YS_WALK_DIRECTIONS {
 	YS_WALK_BACKWARD = 0,

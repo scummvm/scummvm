@@ -62,7 +62,6 @@ int SCENE_Init() {
 	R_GAME_SCENEDESC gs_desc;
 	byte *scene_lut_p;
 	size_t scene_lut_len;
-	const byte *read_p;
 	int result;
 	int i;
 
@@ -98,10 +97,10 @@ int SCENE_Init() {
 		return R_MEM;
 	}
 
-	read_p = scene_lut_p;
+	MemoryReadStream *readS = new MemoryReadStream(scene_lut_p, scene_lut_len);
 
 	for (i = 0; i < SceneModule.scene_max; i++) {
-		SceneModule.scene_lut[i] = ys_read_u16_le(read_p, &read_p);
+		SceneModule.scene_lut[i] = readS->readUint16LE();
 	}
 
 	free(scene_lut_p);
@@ -496,7 +495,6 @@ int SCENE_Load(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DE
 int LoadSceneDescriptor(uint32 res_number) {
 	byte *scene_desc_data;
 	size_t scene_desc_len;
-	const byte *read_p;
 	int result;
 
 	result = RSC_LoadResource(SceneModule.scene_ctxt, res_number, &scene_desc_data, &scene_desc_len);
@@ -510,16 +508,16 @@ int LoadSceneDescriptor(uint32 res_number) {
 		return R_FAILURE;
 	}
 
-	read_p = scene_desc_data;
+	MemoryReadStream *readS = new MemoryReadStream(scene_desc_data, scene_desc_len);
 
-	SceneModule.desc.unknown0 = ys_read_u16_le(read_p, &read_p);
-	SceneModule.desc.res_list_rn = ys_read_u16_le(read_p, &read_p);
-	SceneModule.desc.end_slope = ys_read_u16_le(read_p, &read_p);
-	SceneModule.desc.begin_slope = ys_read_u16_le(read_p, &read_p);
-	SceneModule.desc.script_num = ys_read_u16_le(read_p, &read_p);
-	SceneModule.desc.scene_scriptnum = ys_read_u16_le(read_p, &read_p);
-	SceneModule.desc.start_scriptnum = ys_read_u16_le(read_p, &read_p);
-	SceneModule.desc.music_rn = ys_read_s16_le(read_p, &read_p);
+	SceneModule.desc.unknown0 = readS->readUint16LE();
+	SceneModule.desc.res_list_rn = readS->readUint16LE();
+	SceneModule.desc.end_slope = readS->readUint16LE();
+	SceneModule.desc.begin_slope = readS->readUint16LE();
+	SceneModule.desc.script_num = readS->readUint16LE();
+	SceneModule.desc.scene_scriptnum = readS->readUint16LE();
+	SceneModule.desc.start_scriptnum = readS->readUint16LE();
+	SceneModule.desc.music_rn = readS->readSint16LE();
 
 	RSC_FreeResource(scene_desc_data);
 
@@ -529,7 +527,6 @@ int LoadSceneDescriptor(uint32 res_number) {
 int LoadSceneResourceList(uint32 reslist_rn) {
 	byte *resource_list;
 	size_t resource_list_len;
-	const byte *read_p;
 	int result;
 	int i;
 
@@ -540,7 +537,7 @@ int LoadSceneResourceList(uint32 reslist_rn) {
 		return R_FAILURE;
 	}
 
-	read_p = resource_list;
+	MemoryReadStream *readS = new MemoryReadStream(resource_list, resource_list_len);
 
 	// Allocate memory for scene resource list 
 	SceneModule.reslist_entries = resource_list_len / SAGA_RESLIST_ENTRY_LEN;
@@ -557,8 +554,8 @@ int LoadSceneResourceList(uint32 reslist_rn) {
 	R_printf(R_STDOUT, "Loading scene resource list...\n");
 
 	for (i = 0; i < SceneModule.reslist_entries; i++) {
-		SceneModule.reslist[i].res_number = ys_read_u16_le(read_p, &read_p);
-		SceneModule.reslist[i].res_type = ys_read_u16_le(read_p, &read_p);
+		SceneModule.reslist[i].res_number = readS->readUint16LE();
+		SceneModule.reslist[i].res_type = readS->readUint16LE();
 	}
 
 	RSC_FreeResource(resource_list);
