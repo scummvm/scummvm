@@ -940,8 +940,7 @@ void Interface::converseSetPos(int key) {
 
 	ct = &_converseText[_conversePos];
 
-	//finishDialog( ct->replyID, ct->replyFlags, ct->replyBit );
-	// FIXME: TODO: finish dialog thread
+	_vm->_script->finishDialog(ct->replyId, ct->replyFlags, ct->replyBit);
 
 	// FIXME: TODO: Puzzle
 

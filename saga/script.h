@@ -344,6 +344,9 @@ private:
 private:
 	ScriptThread *_conversingThread;
 
+public:
+	void finishDialog(int replyID, int flags, int bitOffset);
+
 private:
 	typedef int (Script::*ScriptFunctionType)(SCRIPTFUNC_PARAMS);
 

@@ -1529,4 +1529,21 @@ int Script::SF_playVoice(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+void Script::finishDialog(int replyID, int flags, int bitOffset) {
+	if (_conversingThread) {
+		_vm->_interface->setMode(kPanelNull);
+
+		_conversingThread->flags &= ~kTFlagWaiting;
+
+		_conversingThread->push(replyID);
+
+		if (flags & kReplyOnce) {
+			// TODO:
+		}
+	}
+
+	_conversingThread = NULL;
+	wakeUpThreads(kWaitTypeDialogBegin);
+}
+
 } // End of namespace Saga
