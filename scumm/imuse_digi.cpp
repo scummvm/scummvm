@@ -794,11 +794,9 @@ void IMuseDigital::mixerCallback() {
 				_channel[l].toBeRemoved = true;
 			}
 
-			mixer_size &= ~1;	// Size *must* be even, after all this is stereo data
-
 			if (_scumm->_mixer->isReady()) {
 				if (!_channel[l].handle.isActive())
-					_scumm->_mixer->newStream(&_channel[l].handle, _channel[l].freq, 
+					_scumm->_mixer->newStream(&_channel[l].handle, _channel[l].freq,
 											_channel[l].mixerFlags, 100000);
 				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
 				_scumm->_mixer->setChannelPan(_channel[l].handle, _channel[l].pan);
@@ -837,13 +835,13 @@ void IMuseDigital::startSound(int sound) {
 			if (READ_UINT32(ptr) == MKID('Crea')) {
 				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l].freq);
 				_channel[l].mixerSize = _channel[l].freq * 2;
-				_channel[l].size = size;
+				_channel[l].size = size * 2;
 				_channel[l].bits = 8;
 				_channel[l].channels = 2;
-				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
-				_channel[l].data = (byte *)malloc(size);
+				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
+				_channel[l].data = (byte *)malloc(_channel[l].size);
 
-				for (t = 0; t < size / 2; t++) {
+				for (t = 0; t < _channel[l].size / 2; t++) {
 					*(_channel[l].data + t * 2 + 0) = *(t_ptr + t);
 					*(_channel[l].data + t * 2 + 1) = *(t_ptr + t);
 				}
@@ -933,7 +931,7 @@ void IMuseDigital::startSound(int sound) {
 					}
 				}
 
-				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_AUTOFREE;
+				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
 				_channel[l].mixerSize = _channel[l].freq * 2;
 
 				if (_channel[l].bits == 12) {
