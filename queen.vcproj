@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="simon"
-	ProjectGUID="{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
+	Name="queen"
+	ProjectGUID="{6A55AF61-7CA1-49E0-9385-59C1FE9D4DB7}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="vc7_out/simon_Debug"
-			IntermediateDirectory="vc7_out/simon_Debug"
+			OutputDirectory="vc7_out/queen_Debug"
+			IntermediateDirectory="vc7_out/queen_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/simon.lib"/>
+				OutputFile="$(OutDir)/queen.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -53,10 +53,9 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="vc7_out/simon_Release"
-			IntermediateDirectory="vc7_out/simon_Release"
+			OutputDirectory="vc7_out/queen_Release"
+			IntermediateDirectory="vc7_out/queen_Release"
 			ConfigurationType="4"
-			ATLMinimizesCRunTimeLibraryUsage="TRUE"
 			CharacterSet="2"
 			WholeProgramOptimization="TRUE">
 			<Tool
@@ -80,7 +79,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/simon.lib"/>
+				OutputFile="$(OutDir)/queen.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -97,52 +96,40 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="simon\charset.cpp">
+			RelativePath="queen\cutaway.cpp">
 		</File>
 		<File
-			RelativePath="simon\debug.cpp">
+			RelativePath="queen\cutaway.h">
 		</File>
 		<File
-			RelativePath="simon\debug.h">
+			RelativePath="queen\graphics.cpp">
 		</File>
 		<File
-			RelativePath="simon\intern.h">
+			RelativePath="queen\graphics.h">
 		</File>
 		<File
-			RelativePath="simon\items.cpp">
+			RelativePath="queen\logic.cpp">
 		</File>
 		<File
-			RelativePath="simon\midi.cpp">
+			RelativePath="queen\logic.h">
 		</File>
 		<File
-			RelativePath="simon\midi.h">
+			RelativePath="queen\queen.cpp">
 		</File>
 		<File
-			RelativePath="simon\midiparser_s1d.cpp">
+			RelativePath="queen\queen.h">
 		</File>
 		<File
-			RelativePath="simon\res.cpp">
+			RelativePath="queen\resource.cpp">
 		</File>
 		<File
-			RelativePath="simon\simon.cpp">
+			RelativePath="queen\resource.h">
 		</File>
 		<File
-			RelativePath="simon\simon.h">
+			RelativePath="queen\restables.cpp">
 		</File>
 		<File
-			RelativePath="simon\sound.cpp">
-		</File>
-		<File
-			RelativePath="simon\sound.h">
-		</File>
-		<File
-			RelativePath="simon\verb.cpp">
-		</File>
-		<File
-			RelativePath="simon\vga.cpp">
-		</File>
-		<File
-			RelativePath="simon\vga.h">
+			RelativePath="queen\version.cpp">
 		</File>
 	</Files>
 	<Globals>

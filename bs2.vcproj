@@ -3,94 +3,41 @@
 	ProjectType="Visual C++"
 	Version="7.00"
 	Name="bs2"
-	ProjectGUID="{606ED0B4-C3B1-4C89-859E-29C9C1FA4E76}"
-	SccProjectName=""
-	SccLocalPath="">
+	ProjectGUID="{6CC3E421-779D-4E80-8100-520886A0F9FF}"
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
 			Name="Win32"/>
 	</Platforms>
 	<Configurations>
 		<Configuration
-			Name="mad mp3 Release|Win32"
-			OutputDirectory=".\bs2___mad_mp3_Release"
-			IntermediateDirectory=".\bs2___mad_mp3_Release"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
-			<Tool
-				Name="VCCLCompilerTool"
-				InlineFunctionExpansion="1"
-				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories=".,common"
-				PreprocessorDefinitions="WIN32,NDEBUG,_LIB"
-				StringPooling="TRUE"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="TRUE"
-				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\bs2___mad_mp3_Release/bs2.pch"
-				AssemblerListingLocation=".\bs2___mad_mp3_Release/"
-				ObjectFile=".\bs2___mad_mp3_Release/"
-				ProgramDataBaseFileName=".\bs2___mad_mp3_Release/"
-				WarningLevel="3"
-				WarnAsError="TRUE"
-				SuppressStartupBanner="TRUE"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\bs2___mad_mp3_Release\bs2.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1045"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-		</Configuration>
-		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\bs2___Debug"
-			IntermediateDirectory=".\bs2___Debug"
+			OutputDirectory="vc7_out/bs2_Debug"
+			IntermediateDirectory="vc7_out/bs2_Debug"
 			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,common"
-				PreprocessorDefinitions="WIN32,_DEBUG,_LIB"
+				AdditionalIncludeDirectories="."
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;USE_ADLIB"
+				MinimalRebuild="TRUE"
+				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\bs2___Debug/bs2.pch"
-				AssemblerListingLocation=".\bs2___Debug/"
-				ObjectFile=".\bs2___Debug/"
-				ProgramDataBaseFileName=".\bs2___Debug/"
+				BufferSecurityCheck="TRUE"
+				EnableFunctionLevelLinking="TRUE"
+				ForceConformanceInForLoopScope="TRUE"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				WarnAsError="TRUE"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
+				SuppressStartupBanner="FALSE"
+				DebugInformationFormat="4"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\bs2___Debug\bs2.lib"
-				SuppressStartupBanner="TRUE"/>
+				OutputFile="$(OutDir)/bs2.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -100,92 +47,39 @@
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1045"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-		</Configuration>
-		<Configuration
-			Name="mad mp3 Debug|Win32"
-			OutputDirectory=".\bs2___mad_mp3_Debug"
-			IntermediateDirectory=".\bs2___mad_mp3_Debug"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories=".,common"
-				PreprocessorDefinitions="WIN32,_DEBUG,_LIB"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\bs2___mad_mp3_Debug/bs2.pch"
-				AssemblerListingLocation=".\bs2___mad_mp3_Debug/"
-				ObjectFile=".\bs2___mad_mp3_Debug/"
-				ProgramDataBaseFileName=".\bs2___mad_mp3_Debug/"
-				WarningLevel="3"
-				WarnAsError="TRUE"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\bs2___mad_mp3_Debug\bs2.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1045"/>
+				Name="VCResourceCompilerTool"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\bs2___Release"
-			IntermediateDirectory=".\bs2___Release"
+			OutputDirectory="vc7_out/bs2_Release"
+			IntermediateDirectory="vc7_out/bs2_Release"
 			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="2"
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
 				InlineFunctionExpansion="1"
-				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories=".,common"
-				PreprocessorDefinitions="WIN32,NDEBUG,_LIB"
+				OmitFramePointers="TRUE"
+				AdditionalIncludeDirectories="."
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;USE_ADLIB"
 				StringPooling="TRUE"
+				ExceptionHandling="FALSE"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="TRUE"
-				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\bs2___Release/bs2.pch"
-				AssemblerListingLocation=".\bs2___Release/"
-				ObjectFile=".\bs2___Release/"
-				ProgramDataBaseFileName=".\bs2___Release/"
+				BufferSecurityCheck="FALSE"
+				EnableFunctionLevelLinking="FALSE"
+				ForceConformanceInForLoopScope="TRUE"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				WarnAsError="TRUE"
-				SuppressStartupBanner="TRUE"
-				CompileAs="0"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\bs2___Release\bs2.lib"
-				SuppressStartupBanner="TRUE"/>
+				OutputFile="$(OutDir)/bs2.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -195,268 +89,253 @@
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1045"/>
+				Name="VCResourceCompilerTool"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 	</Configurations>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			Name="driver"
+			Filter="">
 			<File
-				RelativePath="bs2\anims.cpp">
+				RelativePath="bs2\driver\_console.cpp">
 			</File>
 			<File
-				RelativePath="bs2\anims.h">
+				RelativePath="bs2\driver\_console.h">
 			</File>
 			<File
-				RelativePath="bs2\build_display.cpp">
+				RelativePath="bs2\driver\_mouse.cpp">
 			</File>
 			<File
-				RelativePath="bs2\build_display.h">
+				RelativePath="bs2\driver\_mouse.h">
 			</File>
 			<File
-				RelativePath="bs2\console.cpp">
+				RelativePath="bs2\driver\d_draw.cpp">
 			</File>
 			<File
-				RelativePath="bs2\console.h">
+				RelativePath="bs2\driver\d_draw.h">
 			</File>
 			<File
-				RelativePath="bs2\controls.cpp">
+				RelativePath="bs2\driver\d_sound.cpp">
 			</File>
 			<File
-				RelativePath="bs2\controls.h">
+				RelativePath="bs2\driver\d_sound.h">
 			</File>
 			<File
-				RelativePath="bs2\credits.h">
+				RelativePath="bs2\driver\driver96.h">
 			</File>
 			<File
-				RelativePath="bs2\debug.cpp">
+				RelativePath="bs2\driver\keyboard.cpp">
 			</File>
 			<File
-				RelativePath="bs2\debug.h">
+				RelativePath="bs2\driver\keyboard.h">
 			</File>
 			<File
-				RelativePath="bs2\defs.h">
+				RelativePath="bs2\driver\language.cpp">
 			</File>
 			<File
-				RelativePath="bs2\events.cpp">
+				RelativePath="bs2\driver\menu.cpp">
 			</File>
 			<File
-				RelativePath="bs2\events.h">
+				RelativePath="bs2\driver\menu.h">
 			</File>
 			<File
-				RelativePath="bs2\function.cpp">
+				RelativePath="bs2\driver\misc.cpp">
 			</File>
 			<File
-				RelativePath="bs2\function.h">
+				RelativePath="bs2\driver\palette.cpp">
 			</File>
 			<File
-				RelativePath="bs2\header.h">
+				RelativePath="bs2\driver\palette.h">
 			</File>
 			<File
-				RelativePath="bs2\icons.cpp">
+				RelativePath="bs2\driver\rdwin.cpp">
 			</File>
 			<File
-				RelativePath="bs2\icons.h">
+				RelativePath="bs2\driver\rdwin.h">
 			</File>
 			<File
-				RelativePath="bs2\interpreter.cpp">
+				RelativePath="bs2\driver\render.cpp">
 			</File>
 			<File
-				RelativePath="bs2\interpreter.h">
+				RelativePath="bs2\driver\render.h">
 			</File>
 			<File
-				RelativePath="bs2\layers.cpp">
+				RelativePath="bs2\driver\sprite.cpp">
 			</File>
-			<File
-				RelativePath="bs2\layers.h">
-			</File>
-			<File
-				RelativePath="bs2\logic.cpp">
-			</File>
-			<File
-				RelativePath="bs2\logic.h">
-			</File>
-			<File
-				RelativePath="bs2\maketext.cpp">
-			</File>
-			<File
-				RelativePath="bs2\maketext.h">
-			</File>
-			<File
-				RelativePath="bs2\mem_view.cpp">
-			</File>
-			<File
-				RelativePath="bs2\mem_view.h">
-			</File>
-			<File
-				RelativePath="bs2\memory.cpp">
-			</File>
-			<File
-				RelativePath="bs2\memory.h">
-			</File>
-			<File
-				RelativePath="bs2\mouse.cpp">
-			</File>
-			<File
-				RelativePath="bs2\mouse.h">
-			</File>
-			<File
-				RelativePath="bs2\object.h">
-			</File>
-			<File
-				RelativePath="bs2\protocol.cpp">
-			</File>
-			<File
-				RelativePath="bs2\protocol.h">
-			</File>
-			<File
-				RelativePath="bs2\resman.cpp">
-			</File>
-			<File
-				RelativePath="bs2\resman.h">
-			</File>
-			<File
-				RelativePath="bs2\router.cpp">
-			</File>
-			<File
-				RelativePath="bs2\router.h">
-			</File>
-			<File
-				RelativePath="bs2\save_rest.cpp">
-			</File>
-			<File
-				RelativePath="bs2\save_rest.h">
-			</File>
-			<File
-				RelativePath="bs2\scroll.cpp">
-			</File>
-			<File
-				RelativePath="bs2\scroll.h">
-			</File>
-			<File
-				RelativePath="bs2\sound.cpp">
-			</File>
-			<File
-				RelativePath="bs2\sound.h">
-			</File>
-			<File
-				RelativePath="bs2\speech.cpp">
-			</File>
-			<File
-				RelativePath="bs2\speech.h">
-			</File>
-			<File
-				RelativePath="bs2\startup.cpp">
-			</File>
-			<File
-				RelativePath="bs2\startup.h">
-			</File>
-			<File
-				RelativePath="bs2\sword2.cpp">
-			</File>
-			<File
-				RelativePath="bs2\sword2.h">
-			</File>
-			<File
-				RelativePath="bs2\sync.cpp">
-			</File>
-			<File
-				RelativePath="bs2\sync.h">
-			</File>
-			<File
-				RelativePath="bs2\tony_gsdk.cpp">
-			</File>
-			<File
-				RelativePath="bs2\tony_gsdk.h">
-			</File>
-			<File
-				RelativePath="bs2\walker.cpp">
-			</File>
-			<File
-				RelativePath="bs2\walker.h">
-			</File>
-			<Filter
-				Name="drivers"
-				Filter="">
-				<File
-					RelativePath="bs2\driver\_console.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\_console.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\_mouse.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\_mouse.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\d_draw.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\d_draw.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\d_sound.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\d_sound.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\ddutil.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\driver96.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\keyboard.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\keyboard.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\language.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\menu.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\menu.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\misc.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\mouse.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\palette.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\palette.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\rdwin.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\rdwin.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\render.cpp">
-				</File>
-				<File
-					RelativePath="bs2\driver\render.h">
-				</File>
-				<File
-					RelativePath="bs2\driver\sprite.cpp">
-				</File>
-			</Filter>
 		</Filter>
+		<File
+			RelativePath="bs2\anims.cpp">
+		</File>
+		<File
+			RelativePath="bs2\anims.h">
+		</File>
+		<File
+			RelativePath="bs2\build_display.cpp">
+		</File>
+		<File
+			RelativePath="bs2\build_display.h">
+		</File>
+		<File
+			RelativePath="bs2\console.cpp">
+		</File>
+		<File
+			RelativePath="bs2\console.h">
+		</File>
+		<File
+			RelativePath="bs2\controls.cpp">
+		</File>
+		<File
+			RelativePath="bs2\controls.h">
+		</File>
+		<File
+			RelativePath="bs2\credits.h">
+		</File>
+		<File
+			RelativePath="bs2\debug.cpp">
+		</File>
+		<File
+			RelativePath="bs2\debug.h">
+		</File>
+		<File
+			RelativePath="bs2\defs.h">
+		</File>
+		<File
+			RelativePath="bs2\events.cpp">
+		</File>
+		<File
+			RelativePath="bs2\events.h">
+		</File>
+		<File
+			RelativePath="bs2\function.cpp">
+		</File>
+		<File
+			RelativePath="bs2\function.h">
+		</File>
+		<File
+			RelativePath="bs2\header.h">
+		</File>
+		<File
+			RelativePath="bs2\icons.cpp">
+		</File>
+		<File
+			RelativePath="bs2\icons.h">
+		</File>
+		<File
+			RelativePath="bs2\interpreter.cpp">
+		</File>
+		<File
+			RelativePath="bs2\interpreter.h">
+		</File>
+		<File
+			RelativePath="bs2\layers.cpp">
+		</File>
+		<File
+			RelativePath="bs2\layers.h">
+		</File>
+		<File
+			RelativePath="bs2\logic.cpp">
+		</File>
+		<File
+			RelativePath="bs2\logic.h">
+		</File>
+		<File
+			RelativePath="bs2\maketext.cpp">
+		</File>
+		<File
+			RelativePath="bs2\maketext.h">
+		</File>
+		<File
+			RelativePath="bs2\mem_view.cpp">
+		</File>
+		<File
+			RelativePath="bs2\memory.cpp">
+		</File>
+		<File
+			RelativePath="bs2\memory.h">
+		</File>
+		<File
+			RelativePath="bs2\mouse.cpp">
+		</File>
+		<File
+			RelativePath="bs2\mouse.h">
+		</File>
+		<File
+			RelativePath="bs2\object.h">
+		</File>
+		<File
+			RelativePath="bs2\protocol.cpp">
+		</File>
+		<File
+			RelativePath="bs2\protocol.h">
+		</File>
+		<File
+			RelativePath="bs2\resman.cpp">
+		</File>
+		<File
+			RelativePath="bs2\resman.h">
+		</File>
+		<File
+			RelativePath="bs2\router.cpp">
+		</File>
+		<File
+			RelativePath="bs2\router.h">
+		</File>
+		<File
+			RelativePath="bs2\save_rest.cpp">
+		</File>
+		<File
+			RelativePath="bs2\save_rest.h">
+		</File>
+		<File
+			RelativePath="bs2\scroll.cpp">
+		</File>
+		<File
+			RelativePath="bs2\scroll.h">
+		</File>
+		<File
+			RelativePath="bs2\sound.cpp">
+		</File>
+		<File
+			RelativePath="bs2\sound.h">
+		</File>
+		<File
+			RelativePath="bs2\speech.cpp">
+		</File>
+		<File
+			RelativePath="bs2\speech.h">
+		</File>
+		<File
+			RelativePath="bs2\startup.cpp">
+		</File>
+		<File
+			RelativePath="bs2\startup.h">
+		</File>
+		<File
+			RelativePath="bs2\sword2.cpp">
+		</File>
+		<File
+			RelativePath="bs2\sword2.h">
+		</File>
+		<File
+			RelativePath="bs2\sync.cpp">
+		</File>
+		<File
+			RelativePath="bs2\sync.h">
+		</File>
+		<File
+			RelativePath="bs2\tony_gsdk.cpp">
+		</File>
+		<File
+			RelativePath="bs2\tony_gsdk.h">
+		</File>
+		<File
+			RelativePath="bs2\walker.cpp">
+		</File>
+		<File
+			RelativePath="bs2\walker.h">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
