@@ -127,13 +127,6 @@ void QueenEngine::go() {
 
 	initialise();
 
-_input->fastMode(true);
-
-//_logic->currentRoom(69);
-//_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_JOE, 100, 2, true);
-//_graphics->initFightBamScene();
-//_logic->playCutaway("c69g.CUT");
-
 	_logic->oldRoom(0);
 	_logic->newRoom(_logic->currentRoom());
 
