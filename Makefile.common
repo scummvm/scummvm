@@ -34,7 +34,7 @@ scummvm$(EXEEXT): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $+ $(LIBS)
 
 clean:
-	$(RM) scummvm$(EXEEXT)
+	$(RM) $(OBJS) scummvm$(EXEEXT)
 
 .PHONY: all clean dist distclean
 
