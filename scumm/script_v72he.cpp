@@ -148,7 +148,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 50 */
 		OPCODE(o72_unknown50),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_findObject),
 		OPCODE(o72_wordArrayInc),
 		/* 54 */
 		OPCODE(o72_objectX),
@@ -639,6 +639,16 @@ void ScummEngine_v72he::o72_unknown50() {
 	vm.cutSceneScript[idx] = 0;
 
 	VAR(VAR_OVERRIDE) = 0;
+}
+
+void ScummEngine_v72he::o72_findObject() {
+	int args[16];
+
+	getStackList(args, ARRAYSIZE(args));
+	int y = pop();
+	int x = pop();
+	int r = findObject(x, y);
+	push(r);
 }
 
 void ScummEngine_v72he::o72_wordArrayInc() {

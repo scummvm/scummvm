@@ -712,12 +712,13 @@ protected:
 	void o72_compareStackList();
 	void o72_unknown1C();
 	void o72_unknown50();
-	void o72_unknown5A();
+	void o72_findObject();
 	void o72_wordArrayInc();
 	void o72_objectX();
 	void o72_objectY();
 	void o72_getTimer();
 	void o72_setTimer();
+	void o72_unknown5A();
 	void o72_wordArrayDec();
 	void o72_startScript();
 	void o72_startObject();
