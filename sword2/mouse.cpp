@@ -235,7 +235,7 @@ void	System_menu(void)	//Tony19Mar97
 						}
 
 					//------------------------
-					rv = g_bs2->_sound->PauseFx();
+					rv = g_sword2->_sound->PauseFx();
 					if (rv != RD_OK)
 						Zdebug("ERROR: PauseFx() returned %.8x in SystemMenu()", rv);
   					//------------------------
@@ -309,7 +309,7 @@ void	System_menu(void)	//Tony19Mar97
 						this_screen.new_palette=1;
 
 					//------------------------
-					rv = g_bs2->_sound->UnpauseFx();
+					rv = g_sword2->_sound->UnpauseFx();
 					if (rv != RD_OK)
 						Zdebug("ERROR: UnpauseFx() returned %.8x in SystemMenu()", rv);
 					//------------------------
@@ -392,7 +392,7 @@ void	Drag_mouse(void)	//Tony21Nov96
 
 			//--------------------------------------
 			// Write to walkthrough file (zebug0.txt)
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			Zdebug(0,"USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
 			#endif
 			//--------------------------------------
@@ -429,7 +429,7 @@ void	Drag_mouse(void)	//Tony21Nov96
 
 						//--------------------------------------
 						// Write to walkthrough file (zebug0.txt)
-						#ifdef _BS2_DEBUG
+						#ifdef _SWORD2_DEBUG
 						Zdebug(0,"USED \"%s\" ICON ON \"%s\" ICON", FetchObjectName(OBJECT_HELD), FetchObjectName(COMBINE_BASE));
 						#endif
 						//--------------------------------------
@@ -488,7 +488,7 @@ void	Top_menu_mouse(void)	//Tony3Oct96
 
 					//--------------------------------------
 					// Write to walkthrough file (zebug0.txt)
-					#ifdef _BS2_DEBUG
+					#ifdef _SWORD2_DEBUG
 					Zdebug(0,"RIGHT-CLICKED ON \"%s\" ICON", FetchObjectName(OBJECT_HELD));
 					#endif
  					//--------------------------------------
@@ -600,7 +600,7 @@ void	Normal_mouse(void)	//Tony30Sept96
 	me = MouseEvent();	//get mouse event
 
 	//-----------------------------------------------------
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (definingRectangles)
 	{
 		if (draggingRectangle==0)	// not yet dragging a rectangle, so need click to start
@@ -633,7 +633,7 @@ void	Normal_mouse(void)	//Tony30Sept96
 		}
 	}
 	else
-#endif	// _BS2_DEBUG
+#endif	// _SWORD2_DEBUG
 	//-----------------------------------------------------
 	{
 
@@ -697,7 +697,7 @@ void	Normal_mouse(void)	//Tony30Sept96
 
 				//--------------------------------------
 				// Write to walkthrough file (zebug0.txt)
-				#ifdef _BS2_DEBUG
+				#ifdef _SWORD2_DEBUG
 				if (OBJECT_HELD)
 					Zdebug(0,"USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
 				else if (LEFT_BUTTON)
@@ -1170,7 +1170,7 @@ void	No_human(void)	//Tony4June97
 int32 FN_add_human(int32 *params)	//Tony30Sept96
 {
 	//param	none
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	uint8 black[4]	= {0,0,0,0};
 	uint8 white[4]	= {255,255,255,0};
 #endif									// ('0' means don't print to console, but console isn't up anyway)
@@ -1215,7 +1215,7 @@ int32 FN_add_human(int32 *params)	//Tony30Sept96
 
 	//----------------------------------------------------------------------------------------------
 	// enabled/disabled from console; status printed with on-screen debug info
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (testingSnR)						// testing logic scripts by simulating an instant Save & Restore
 	{
 		SetPalette(0, 1, white, RDPAL_INSTANT);
@@ -1249,7 +1249,7 @@ int32 FN_register_mouse(int32 *params)	//Tony29Oct96
 
 	if (ob_mouse->pointer)	// only if 'pointer' isn't NULL
 	{
-		#ifdef _BS2_DEBUG
+		#ifdef _SWORD2_DEBUG
 		if	(cur_mouse==TOTAL_mouse_list)
 			Con_fatal_error("ERROR: mouse_list full [%s line %u]",__FILE__,__LINE__);
 		#endif
@@ -1290,7 +1290,7 @@ int32 FN_register_pointer_text(int32 *params)	// James16jun97
 {
 //	param 0 local id of text line to use as pointer text
 
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	if	(cur_mouse==TOTAL_mouse_list)
 		Con_fatal_error("ERROR: mouse_list full [%s line %u]",__FILE__,__LINE__);
 	#endif

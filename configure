@@ -282,9 +282,9 @@ else
 fi
 
 if test "$_build_bs2" = no ; then
-	_def_bs2='#define DISABLE_BS2'
+	_def_bs2='#define DISABLE_SWORD2'
 else
-	_def_bs2='#undef DISABLE_BS2'
+	_def_bs2='#undef DISABLE_SWORD2'
 fi
 
 #

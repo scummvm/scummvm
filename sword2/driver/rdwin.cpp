@@ -149,7 +149,7 @@ void Message(LPSTR fmt, ...)
 //-----------------------------------------------------------------------------
 //	OSystem Event Handler. Full of cross platform goodness and 99% fat free!
 //-----------------------------------------------------------------------------
-void BS2State::parseEvents() {
+void Sword2State::parseEvents() {
 	OSystem::Event event;
 	
 	while (_system->poll_event(&event)) {
@@ -537,7 +537,7 @@ int32 CloseAppWindow(void)
 	DestroyWindow(hwnd);
 */
 	// just quit for now
-	g_bs2->_syst->quit();
+	g_sword2->_syst->quit();
 	return(RD_OK);
 
 }
@@ -547,7 +547,7 @@ int32 CloseAppWindow(void)
 int32 ServiceWindows(void)
 
 {
-	g_bs2->parseEvents();
+	g_sword2->parseEvents();
 //	warning("stub ServiceWindows");  // too noisy
 /*
 	MSG msg;

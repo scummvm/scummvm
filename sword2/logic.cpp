@@ -401,7 +401,7 @@ int32 FN_add_to_kill_list(int32 *params)	//James9jan97
 
 		if (entry == kills)	// if this ID isn't already in the list, then add it, (otherwise finish) (05mar97 James)
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if (kills == OBJECT_KILL_LIST_SIZE)	// no room at the inn
 				Con_fatal_error("List full in FN_add_to_kill_list(%u) (%s line %u)",ID,__FILE__,__LINE__);
 			#endif

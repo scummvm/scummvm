@@ -70,7 +70,7 @@ uint32	cur_fore;
 uint32	cur_fgp0;
 uint32	cur_fgp1;
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 uint32 largest_layer_area=0;	// should be reset to zero at start of each screen change
 uint32 largest_sprite_area=0;	// - " -
 char largest_layer_info[128]	= {"largest layer:  none registered"};
@@ -119,13 +119,13 @@ void	Send_fore_par1_frames(void);	//James23Jan97
 void	Build_display(void)	//Tony21Sept96
 {
 	BOOL		end;
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	uint8		pal[12]={0,0,0,0,0,0,0,0,0,255,0,0};
 #endif
 	uint8		*file;
 	_multiScreenHeader *screenLayerTable;
 
-#ifdef _BS2_DEBUG	// only used by console
+#ifdef _SWORD2_DEBUG	// only used by console
 	_spriteInfo	spriteInfo;
 	uint32		rv;	// drivers error return value
 #endif
@@ -136,7 +136,7 @@ void	Build_display(void)	//Tony21Sept96
 	{
 		Start_new_palette();										// start the layer palette fading up
 
-		#ifdef _BS2_DEBUG			// (James23jun97)
+		#ifdef _SWORD2_DEBUG			// (James23jun97)
 		largest_layer_area=0;	// should be reset to zero at start of each screen change
 		largest_sprite_area=0;	// - " -
 		#endif
@@ -283,7 +283,7 @@ void	Build_display(void)	//Tony21Sept96
 
 
 	}
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	else if (console_status)
 	{
 		spriteInfo.x			= 0;
@@ -312,7 +312,7 @@ void	Build_display(void)	//Tony21Sept96
 		SetPalette(0, 3, pal, RDPAL_INSTANT);	//force the palette
 		Print_to_console("no valid screen?");
 	}
-#endif	// _BS2_DEBUG
+#endif	// _SWORD2_DEBUG
 
 }
 
@@ -585,7 +585,7 @@ void	Process_layer(uint32	layer_number)	//Tony24Sept96
  	_spriteInfo		spriteInfo;
 	uint32 rv;
 
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	uint32 current_layer_area=0;
 	#endif
 
@@ -610,7 +610,7 @@ void	Process_layer(uint32	layer_number)	//Tony24Sept96
 
 	//------------------------------------------
 	// check for largest layer for debug info
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	current_layer_area = layer_head->width * layer_head->height;
 
 	if (current_layer_area > largest_layer_area)
@@ -640,7 +640,7 @@ void	Process_image(buildit *build_unit)	// (5nov96 JEL)
 	uint32			spriteType;
 	uint32			rv;
 
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	uint32 current_sprite_area=0;
 	#endif
 
@@ -702,7 +702,7 @@ void	Process_image(buildit *build_unit)	// (5nov96 JEL)
 
 	//------------------------------------------
 	// check for largest layer for debug info
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	current_sprite_area = frame_head->width * frame_head->height;
 
 	if (current_sprite_area > largest_sprite_area)
@@ -715,7 +715,7 @@ void	Process_image(buildit *build_unit)	// (5nov96 JEL)
 
 
 	//-----------------------------------------------------------
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	if (SYSTEM_TESTING_ANIMS)	// see anims.cpp
 	{
 		if ((spriteInfo.x + spriteInfo.scaledWidth) >= 639)		// bring the anim into the visible screen
@@ -739,7 +739,7 @@ void	Process_image(buildit *build_unit)	// (5nov96 JEL)
 	//-----------------------------------------------------------
 
 	//--------------------------------------------------
-//	#ifdef _BS2_DEBUG
+//	#ifdef _SWORD2_DEBUG
 //	if (frame_head->width <= 1)
 //	{
 //		Zdebug(8,"WARNING: 1-pixel-wide frame found in %s (%d)", FetchObjectName(build_unit->anim_resource), build_unit->anim_resource);
@@ -817,7 +817,7 @@ void Register_frame(int32 *params, buildit *build_unit)	// (1nov96JEL)
 
 	ob_graph	= (Object_graphic *) params[1];
 
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	if (ob_graph->anim_resource == 0)
 		Con_fatal_error("ERROR: %s(%d) has no anim resource in Register_frame [line=%d file=%s]", FetchObjectName(ID), ID, __LINE__, __FILE__);
 	#endif
@@ -829,7 +829,7 @@ void Register_frame(int32 *params, buildit *build_unit)	// (1nov96JEL)
 	frame_head	= FetchFrameHeader( file, ob_graph->anim_pc );
 
 
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	if (ID == CUR_PLAYER_ID)	// update player graphic details for on-screen debug info
 	{
 		playerGraphic.type			= ob_graph->type;
@@ -891,7 +891,7 @@ void Register_frame(int32 *params, buildit *build_unit)	// (1nov96JEL)
 
 		if (ob_mouse->pointer)	// only if 'pointer' isn't NULL (James13feb97)
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if	(cur_mouse==TOTAL_mouse_list)
 				Con_fatal_error("ERROR: mouse_list full [%s line %u]",__FILE__,__LINE__);
 			#endif
@@ -942,7 +942,7 @@ int32 FN_register_frame(int32 *params)	// (27nov96 JEL)
 		//---------------
 		case BGP0_SPRITE:
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if (cur_bgp0==MAX_bgp0_sprites)
 				Con_fatal_error("ERROR: bgp0_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
 			#endif
@@ -954,7 +954,7 @@ int32 FN_register_frame(int32 *params)	// (27nov96 JEL)
 		//---------------
 		case BGP1_SPRITE:
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if (cur_bgp1==MAX_bgp1_sprites)
 				Con_fatal_error("ERROR: bgp1_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
 			#endif
@@ -966,7 +966,7 @@ int32 FN_register_frame(int32 *params)	// (27nov96 JEL)
 		//---------------
 		case BACK_SPRITE:
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if (cur_back==MAX_back_sprites)
 				Con_fatal_error("ERROR: back_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
 			#endif
@@ -978,7 +978,7 @@ int32 FN_register_frame(int32 *params)	// (27nov96 JEL)
 		//---------------
 		case SORT_SPRITE:
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if (cur_sort==MAX_sort_sprites)
 				Con_fatal_error("ERROR: sort_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
 			#endif
@@ -992,7 +992,7 @@ int32 FN_register_frame(int32 *params)	// (27nov96 JEL)
 		//---------------
 		case FORE_SPRITE:
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if (cur_fore==MAX_fore_sprites)
 				Con_fatal_error("ERROR: fore_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
 			#endif
@@ -1004,7 +1004,7 @@ int32 FN_register_frame(int32 *params)	// (27nov96 JEL)
 		//---------------
 		case FGP0_SPRITE:
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if (cur_fgp0==MAX_fgp0_sprites)
 				Con_fatal_error("ERROR: fgp0_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
 			#endif
@@ -1016,7 +1016,7 @@ int32 FN_register_frame(int32 *params)	// (27nov96 JEL)
 		//---------------
 		case FGP1_SPRITE:
 		{
-			#ifdef _BS2_DEBUG
+			#ifdef _SWORD2_DEBUG
 			if (cur_fgp1==MAX_fgp1_sprites)
 				Con_fatal_error("ERROR: fgp1_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
 			#endif
@@ -1178,7 +1178,7 @@ void SetFullPalette(int32 palRes)		// James17jun97
 	{
 		head	= (_standardHeader*)res_man.Res_open(palRes);	// open the palette file
 
-		#ifdef _BS2_DEBUG
+		#ifdef _SWORD2_DEBUG
 		if (head->fileType != PALETTE_FILE)
  			Con_fatal_error("FN_set_palette() called with invalid resource! (%s line %u)",__FILE__,__LINE__);
 		#endif

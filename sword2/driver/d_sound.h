@@ -40,9 +40,9 @@
 
 #include "sound/mixer.h"
 
-class BS2Sound {
+class Sword2Sound {
 	public:
-		BS2Sound(void);
+		Sword2Sound(void);
 		void FxServer(void);
 		int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth);
 		int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
@@ -50,7 +50,7 @@ class BS2Sound {
 		int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem);
 		int32 GetCompSpeechSize(const char *filename, uint32 speechid);
 		int32 AmISpeaking();
-		int32 StopSpeechBS2(void);
+		int32 StopSpeechSword2(void);
 		int32 GetSpeechStatus(void);
 		int32 PauseSpeech(void);
 		int32 UnpauseSpeech(void);

@@ -44,7 +44,7 @@ int32 FN_add_menu_object(int32 *params)	//Tony1Oct96
 
 //	Zdebug("FN_add_menu_object icon res");
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (total_temp == TOTAL_engine_pockets)
 		Con_fatal_error("TOTAL_engine_pockets exceeded! (%s line %u)",__FILE__,__LINE__);
 #endif

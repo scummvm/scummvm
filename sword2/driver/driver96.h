@@ -824,7 +824,7 @@
 //
 //	--------------------------------------------------------------------------
 //
-//	int32 StopSpeechBS2(void)
+//	int32 StopSpeechSword2(void)
 //
 //	Stops the speech from playing.
 //
@@ -1582,7 +1582,7 @@ extern void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 //-----------------------------------------------------------------------------
 // Macro for reporting a non-fatal driver error
 //-----------------------------------------------------------------------------
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 static  int32	rderror;
 #define Driver(f)							\
 	if (rderror = f)						\

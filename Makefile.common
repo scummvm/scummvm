@@ -42,8 +42,8 @@ else
 MODULES += sky
 endif
 
-ifdef DISABLE_BS2
-DEFINES += -DDISABLE_BS2
+ifdef DISABLE_SWORD
+DEFINES += -DDISABLE_SWORD2
 else
 MODULES += bs2
 endif

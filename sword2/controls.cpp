@@ -1566,7 +1566,7 @@ void	Restart_control(void)	//Tony4Apr97
 
 	FreeAllRouteMem();	// free all the route memory blocks from previous game
 
-	g_bs2->Start_game();	// call the same function that first started us up
+	g_sword2->Start_game();	// call the same function that first started us up
 
 
 //prime system with a game cycle
@@ -1929,12 +1929,12 @@ int32	ReadOptionSettings(void)	//pete10Jun97
 
 	fclose(fp);
 
-	g_bs2->_sound->SetMusicVolume(buff[0]);
-	g_bs2->_sound->SetSpeechVolume(buff[1]);
-	g_bs2->_sound->SetFxVolume(buff[2]);
-	g_bs2->_sound->MuteMusic(buff[3]);
-	g_bs2->_sound->MuteSpeech(buff[4]);
-	g_bs2->_sound->MuteFx(buff[5]);
+	g_sword2->_sound->SetMusicVolume(buff[0]);
+	g_sword2->_sound->SetSpeechVolume(buff[1]);
+	g_sword2->_sound->SetFxVolume(buff[2]);
+	g_sword2->_sound->MuteMusic(buff[3]);
+	g_sword2->_sound->MuteSpeech(buff[4]);
+	g_sword2->_sound->MuteFx(buff[5]);
 
 
 	UpdateGraphicsLevel(GetRenderType(), buff[6]);	// (James13jun97)
@@ -1944,7 +1944,7 @@ int32	ReadOptionSettings(void)	//pete10Jun97
 	pointerTextSelected = buff[8];
 
 	if (buff[9] != stereoReversed)
-		g_bs2->_sound->ReverseStereo();
+		g_sword2->_sound->ReverseStereo();
 
 	stereoReversed = buff[9];
 
@@ -1956,12 +1956,12 @@ int32	WriteOptionSettings(void)	//pete10Jun97
 	uint8 buff[10];
 	FILE *fp;
 
-	buff[0] = g_bs2->_sound->GetMusicVolume();
-	buff[1] = g_bs2->_sound->GetSpeechVolume();
-	buff[2] = g_bs2->_sound->GetFxVolume();
-	buff[3] = g_bs2->_sound->IsMusicMute();
-	buff[4] = g_bs2->_sound->IsSpeechMute();
-	buff[5] = g_bs2->_sound->IsFxMute();
+	buff[0] = g_sword2->_sound->GetMusicVolume();
+	buff[1] = g_sword2->_sound->GetSpeechVolume();
+	buff[2] = g_sword2->_sound->GetFxVolume();
+	buff[3] = g_sword2->_sound->IsMusicMute();
+	buff[4] = g_sword2->_sound->IsSpeechMute();
+	buff[5] = g_sword2->_sound->IsFxMute();
 	buff[6] = GetRenderType();
 	buff[7] = subtitles;
 	buff[8] = pointerTextSelected;
@@ -2094,9 +2094,9 @@ void	Option_control(void)	//Pete6Jun97
 	int		title_len, subtitle_len, ok_len, cancel_len, left_align, test_len;
 
 // slider values
-	uint8   musicVolume  = g_bs2->_sound->GetMusicVolume();
-	uint8	speechVolume = g_bs2->_sound->GetSpeechVolume();
-	uint8	fxVolume	 = g_bs2->_sound->GetFxVolume();
+	uint8   musicVolume  = g_sword2->_sound->GetMusicVolume();
+	uint8	speechVolume = g_sword2->_sound->GetSpeechVolume();
+	uint8	fxVolume	 = g_sword2->_sound->GetFxVolume();
 	uint8	grfxLevel    = GetRenderType();
 
 // safe slider values for restoring on cancel
@@ -2197,9 +2197,9 @@ void	Option_control(void)	//Pete6Jun97
 	uint8 subtitle_state = subtitles;
 	uint8 stereo_state   = stereoReversed;
 
-	uint8 music_mute_state   = g_bs2->_sound->IsMusicMute();
-	uint8 speech_mute_state  = g_bs2->_sound->IsSpeechMute();
-	uint8 fx_mute_state	     = g_bs2->_sound->IsFxMute();
+	uint8 music_mute_state   = g_sword2->_sound->IsMusicMute();
+	uint8 speech_mute_state  = g_sword2->_sound->IsSpeechMute();
+	uint8 fx_mute_state	     = g_sword2->_sound->IsFxMute();
 
 
 //build the button surfaces surfaces
@@ -2359,19 +2359,19 @@ void	Option_control(void)	//Pete6Jun97
 		}
 
 		if (!music_mute_state)
-			g_bs2->_sound->SetMusicVolume(musicVolume);
+			g_sword2->_sound->SetMusicVolume(musicVolume);
 		else
-			g_bs2->_sound->SetMusicVolume(0);
+			g_sword2->_sound->SetMusicVolume(0);
 
 		if (!fx_mute_state)
-			g_bs2->_sound->SetFxVolume(fxVolume);
+			g_sword2->_sound->SetFxVolume(fxVolume);
 		else
-			g_bs2->_sound->SetFxVolume(0);
+			g_sword2->_sound->SetFxVolume(0);
 
 		if (!speech_mute_state)
-			g_bs2->_sound->SetSpeechVolume(speechVolume);
+			g_sword2->_sound->SetSpeechVolume(speechVolume);
 		else
-			g_bs2->_sound->SetSpeechVolume(0);
+			g_sword2->_sound->SetSpeechVolume(0);
 
 		//--------------------------------------------------
  		// Service windows
@@ -2555,19 +2555,19 @@ void	Option_control(void)	//Pete6Jun97
 				{
 					UpdateGraphicsLevel(safe_grfxLevel, grfxLevel);	// (James13jun97)
 
-					g_bs2->_sound->MuteMusic(music_mute_state);					// Ensure all the levels are recorded correctly (Pete21Aug97)
-					g_bs2->_sound->MuteSpeech(speech_mute_state);
-					g_bs2->_sound->MuteFx(fx_mute_state);
-					g_bs2->_sound->SetMusicVolume(music_target);
-					g_bs2->_sound->SetSpeechVolume(speech_target);
-					g_bs2->_sound->SetFxVolume(fx_target);
+					g_sword2->_sound->MuteMusic(music_mute_state);					// Ensure all the levels are recorded correctly (Pete21Aug97)
+					g_sword2->_sound->MuteSpeech(speech_mute_state);
+					g_sword2->_sound->MuteFx(fx_mute_state);
+					g_sword2->_sound->SetMusicVolume(music_target);
+					g_sword2->_sound->SetSpeechVolume(speech_target);
+					g_sword2->_sound->SetFxVolume(fx_target);
 
 					subtitles = subtitle_state;    // Save object label and subtitle settings
 					pointerTextSelected = object_state;
 					speechSelected      = !speech_mute_state;
 
 					if (stereo_state != stereoReversed)
-						g_bs2->_sound->ReverseStereo();
+						g_sword2->_sound->ReverseStereo();
 
 					stereoReversed      = stereo_state;
 					WriteOptionSettings();
@@ -2591,17 +2591,17 @@ void	Option_control(void)	//Pete6Jun97
 
 				if (touching_music_mute && dmusic_mute_state) {
 					music_mute_state = dmusic_mute_state = 0;  // if the button was in now let it out
-					g_bs2->_sound->MuteMusic(0);
+					g_sword2->_sound->MuteMusic(0);
 				}
 
 				if (touching_fx_mute && dfx_mute_state) {
 					fx_mute_state = dfx_mute_state = 0;  // if the button was in now let it out
-					g_bs2->_sound->MuteFx(0);
+					g_sword2->_sound->MuteFx(0);
 				}
 
 				if (touching_speech_mute && dspeech_mute_state) {
 					speech_mute_state = dspeech_mute_state = 0;  // if the button was in now let it out
-					g_bs2->_sound->MuteSpeech(0);
+					g_sword2->_sound->MuteSpeech(0);
 				}
 
 				// Stop tracking any sliders
@@ -2649,7 +2649,7 @@ void	Option_control(void)	//Pete6Jun97
 					else
 					{
 						music_mute_state = 1;
-						g_bs2->_sound->MuteMusic(1);
+						g_sword2->_sound->MuteMusic(1);
 					}
 				}
 
@@ -2660,7 +2660,7 @@ void	Option_control(void)	//Pete6Jun97
 					else
 					{
 						fx_mute_state=1;
-						g_bs2->_sound->MuteFx(1);
+						g_sword2->_sound->MuteFx(1);
 					}
 				}
 
@@ -2671,7 +2671,7 @@ void	Option_control(void)	//Pete6Jun97
 					else
 					{
 						speech_mute_state=1;
-						g_bs2->_sound->MuteSpeech(1);
+						g_sword2->_sound->MuteSpeech(1);
 					}
 				}
 
@@ -2680,7 +2680,7 @@ void	Option_control(void)	//Pete6Jun97
 					if (music_mute_state)
 					{
 						music_mute_state = 0;
-						g_bs2->_sound->MuteMusic(0);
+						g_sword2->_sound->MuteMusic(0);
 					}
 
 					if (mousex>(slab_sprite[0].x+SLIDER_W))
@@ -2707,7 +2707,7 @@ void	Option_control(void)	//Pete6Jun97
 					if (speech_mute_state)
 					{
 						speech_mute_state = 0;
-						g_bs2->_sound->MuteSpeech(0);
+						g_sword2->_sound->MuteSpeech(0);
 					}
 
 					if (mousex>(slab_sprite[1].x+SLIDER_W))
@@ -2734,7 +2734,7 @@ void	Option_control(void)	//Pete6Jun97
 					if (fx_mute_state)
 					{
 						fx_mute_state = 0;
-						g_bs2->_sound->MuteFx(0);
+						g_sword2->_sound->MuteFx(0);
 					}
 
 					if (mousex>(slab_sprite[2].x+SLIDER_W))

@@ -82,7 +82,7 @@ _layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo)	//Chris 04Oct9
 
 	screenHead = FetchScreenHeader(screenFile);
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (layerNo > (screenHead->noLayers-1))	// layer number too large!
 		Con_fatal_error("FetchLayerHeader(%d) invalid layer number! (%s line %u)",layerNo,__FILE__,__LINE__);
 #endif
@@ -123,7 +123,7 @@ _cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo)	// Chris 09Oct96
 
 	animHead = FetchAnimHeader(animFile);
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (frameNo > (animHead->noAnimFrames-1))	// frame number too large!
 		Con_fatal_error("FetchCdtEntry(animFile,%d) - anim only %d frames (%s line %u)",frameNo,animHead->noAnimFrames,__FILE__,__LINE__);
 #endif
@@ -147,7 +147,7 @@ _parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) // Chris 0
 {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (mscreenHeader->bg_parallax[layer] == 0)
 		Con_fatal_error("FetchBackgroundParallaxLayer(%d) - No parallax layer exists (%s line %u)",layer,__FILE__,__LINE__);
 #endif
@@ -159,7 +159,7 @@ _parallax *FetchBackgroundLayer(uint8 *screenFile) // Chris 04Oct96
 {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (mscreenHeader->screen == 0)
 		Con_fatal_error("FetchBackgroundLayer (%d) - No background layer exists (%s line %u)",__FILE__,__LINE__);
 #endif
@@ -171,7 +171,7 @@ _parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) // Chris 0
 {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if (mscreenHeader->fg_parallax[layer] == 0)
 		Con_fatal_error("FetchForegroundParallaxLayer(%d) - No parallax layer exists (%s line %u)",layer,__FILE__,__LINE__);
 #endif

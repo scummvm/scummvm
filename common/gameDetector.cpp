@@ -231,10 +231,10 @@ GameDetector::GameDetector() {
 		totalCount += skyCount;
 #endif
 
-#ifndef DISABLE_BS2
-		const VersionSettings *bs2Versions = Engine_BS2_targetList();
-		int bs2Count = countVersions(bs2Versions);
-		totalCount += bs2Count;
+#ifndef DISABLE_SWORD2
+		const VersionSettings *sword2Versions = Engine_SWORD2_targetList();
+		int sword2Count = countVersions(sword2Versions);
+		totalCount += sword2Count;
 #endif
 		
 		VersionSettings *v = (VersionSettings *)calloc(totalCount + 1, sizeof(VersionSettings));
@@ -255,9 +255,9 @@ GameDetector::GameDetector() {
 		v += skyCount;
 #endif
 
-#ifndef DISABLE_BS2
-		memcpy(v, bs2Versions, bs2Count * sizeof(VersionSettings));
-		v += bs2Count;
+#ifndef DISABLE_SWORD2
+		memcpy(v, sword2Versions, sword2Count * sizeof(VersionSettings));
+		v += sword2Count;
 #endif
 
 	}

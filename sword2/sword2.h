@@ -44,15 +44,15 @@ extern uint8 version_string[];		// for displaying from the console
 extern uint8 unencoded_name[];
 
 enum BSGameId {
-	GID_BS2 = GID_BS2_FIRST,
-	GID_BS2_DEMO
+	GID_SWORD2 = GID_SWORD2_FIRST,
+	GID_SWORD2_DEMO
 };
 
 // TODO move stuff into class
-class BS2State : public Engine {
+class Sword2State : public Engine {
 		void errorString(const char *buf_input, char *buf_output);
 	public:
-		BS2State(GameDetector *detector, OSystem *syst);
+		Sword2State(GameDetector *detector, OSystem *syst);
 		void go(void);
 		void parseEvents(void);
 		void Start_game(void);
@@ -61,11 +61,11 @@ class BS2State : public Engine {
 		GameDetector *_detector;
 		uint32 _features;
 		byte _gameId;
-		BS2Sound *_sound;
+		Sword2Sound *_sound;
 	private:
 		bool _quit;
 };
 
-extern BS2State *g_bs2;
+extern Sword2State *g_sword2;
 
 #endif

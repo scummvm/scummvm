@@ -80,39 +80,39 @@ uint8 stepOneCycle=0;	// for use while game paused
 
 //------------------------------------------------------------------------------------
 
-static const VersionSettings bs2_settings[] = {
+static const VersionSettings sword2_settings[] = {
 	/* Broken Sword 2 */
-	{"bs2", "Broken Sword II", GID_BS2, 99, VersionSettings::ADLIB_DONT_CARE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
-	{"bs2demo", "Broken Sword II (Demo)", GID_BS2_DEMO, 99, VersionSettings::ADLIB_DONT_CARE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
+	{"sword2", "Broken Sword II", GID_SWORD2, 99, VersionSettings::ADLIB_DONT_CARE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
+	{"sword2demo", "Broken Sword II (Demo)", GID_SWORD2_DEMO, 99, VersionSettings::ADLIB_DONT_CARE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
 	{NULL, NULL, 0, 0, VersionSettings::ADLIB_DONT_CARE, 0, NULL}
 };
 
-BS2State *g_bs2 = NULL;
+Sword2State *g_sword2 = NULL;
 
-const VersionSettings *Engine_BS2_targetList() {
-	return bs2_settings;
+const VersionSettings *Engine_SWORD2_targetList() {
+	return sword2_settings;
 }
 
-Engine *Engine_BS2_create(GameDetector *detector, OSystem *syst) {
-	return new BS2State(detector, syst);
+Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst) {
+	return new Sword2State(detector, syst);
 }
 
-BS2State::BS2State(GameDetector *detector, OSystem *syst)
+Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
 	
 	_detector = detector;
 	_syst = syst;
-	g_bs2 = this;
+	g_sword2 = this;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
 }
 
 
-void BS2State::errorString(const char *buf1, char *buf2) {
+void Sword2State::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-int32 BS2State::InitialiseGame(void)
+int32 Sword2State::InitialiseGame(void)
 {
 //init engine drivers
 
@@ -146,11 +146,11 @@ int32 BS2State::InitialiseGame(void)
 	Init_console();				// set up the console system
 	Zdebug("RETURNED.");
 
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 		Zdebug("CALLING: Init_start_menu");
 		Init_start_menu();			// read in all the startup information
 		Zdebug("RETURNED from Init_start_menu");
-	#endif	// _BS2_DEBUG
+	#endif	// _SWORD2_DEBUG
 
 
 
@@ -166,14 +166,14 @@ int32 BS2State::InitialiseGame(void)
 	Init_event_system();
 	Zdebug("RETURNED.");
 	
-	_sound = new BS2Sound;
+	_sound = new Sword2Sound;
 	
 	Zdebug("CALLING: Init_fx_queue");
 	Init_fx_queue();			// initialise the sound fx queue
 	Zdebug("RETURNED.");
 
 	// all demos (not just web)
-	if (_gameId == GID_BS2_DEMO)
+	if (_gameId == GID_SWORD2_DEMO)
 		DEMO=1;		// set script variable
 
 	return(0);
@@ -234,7 +234,7 @@ int32 GameCycle(void)
 //------------------------------------------------------------------------------------
 // int main(int argc, char *argv[])
 // int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-void BS2State::go()
+void Sword2State::go()
 {
 	uint32 rv;
 	uint8  breakOut = 0;
@@ -243,7 +243,7 @@ void BS2State::go()
 //	Zdebug("[%s]", lpCmdLine);
 
 
-	#ifndef _BS2_DEBUG
+	#ifndef _SWORD2_DEBUG
 	DisableQuitKey();	// so cannot use Ctrl-Q from the release versions (full game or demo)
 	#endif
 
@@ -344,7 +344,7 @@ void BS2State::go()
 		
 		// check for events
 		parseEvents();
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 		if (grabbingSequences && (!console_status))
 			GrabScreenShot();
 #endif
@@ -363,7 +363,7 @@ void BS2State::go()
 
 //-----
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 		if	(console_status)
 		{
 			if	(One_console())
@@ -376,7 +376,7 @@ void BS2State::go()
 
 		if	(!console_status)	//not in console mode - if the console is quit we want to get a logic cycle in before
 		{							//the screen is build. Mostly because of first scroll cycle stuff
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 			if (stepOneCycle)	// if we've just stepped forward one cycle while the game was paused
 			{
 				PauseGame();
@@ -386,7 +386,7 @@ void BS2State::go()
 			if (KeyWaiting())
 			{
 				ReadKey(&c);
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 				if (c==27)					// ESC whether paused or not
 				{
 					PauseAllSound();					// see sound.cpp
@@ -400,29 +400,29 @@ void BS2State::go()
 						{
 							UnpauseGame();
 						}
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 						else if (toupper(c)==' ')			// SPACE bar while paused = step one frame!
 						{
 							stepOneCycle=1;					// step through one game cycle
 							UnpauseGame();
 						}
-#endif	// _BS2_DEBUG
+#endif	// _SWORD2_DEBUG
 					}
 				else if (toupper(c)=='P')	// 'P' while not paused = pause!
 				{
 					PauseGame();
 				}
-#ifdef _BS2_DEBUG	// frame-skipping only allowed on debug version
+#ifdef _SWORD2_DEBUG	// frame-skipping only allowed on debug version
 				else if (toupper(c)=='S')	// 'S' toggles speed up (by skipping display rendering)
 				{
 					renderSkip = 1 - renderSkip;
 				}
-#endif	// _BS2_DEBUG
+#endif	// _SWORD2_DEBUG
 			}
 
 			if (gamePaused==0)	// skip GameCycle if we're paused
 			{
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 				gameCycle += 1;
 #endif
 
@@ -430,20 +430,20 @@ void BS2State::go()
 					break;		// break out of main game loop
 			}
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 			Build_debug_text();			// creates the debug text blocks
-#endif	// _BS2_DEBUG
+#endif	// _SWORD2_DEBUG
 		}
 //-----
 
 		// James (24mar97)
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 		if ((console_status)||(renderSkip==0)||(gameCycle%4 == 0))	// if not in console & 'renderSkip' is set, only render display once every 4 game-cycles
 			Build_display();	// create and flip the screen
 #else
 		Build_display();	// create and flip the screen
-#endif	// _BS2_DEBUG
+#endif	// _SWORD2_DEBUG
 
 	}
 
@@ -478,7 +478,7 @@ int RunningFromCd()
 
 
 //------------------------------------------------------------------------------------
-void	BS2State::Start_game(void)	//Tony29May97
+void	Sword2State::Start_game(void)	//Tony29May97
 {
 //boot the game straight into a start script
 	int screen_manager_id;
@@ -486,7 +486,7 @@ void	BS2State::Start_game(void)	//Tony29May97
 	Zdebug("Start_game() STARTING:");
 
 	// all demos not just web
-	if (_gameId == GID_BS2_DEMO)
+	if (_gameId == GID_SWORD2_DEMO)
 		screen_manager_id = 19;		// DOCKS SECTION START
 	else
 		screen_manager_id = 949;	// INTRO & PARIS START

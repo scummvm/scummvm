@@ -100,7 +100,7 @@ void	resMan::InitResMan(void)	//Tony29May96
 	total_clusters=0;
 
 
-	if (file.open("resource.inf", g_bs2->getGameDataPath()) == false) {
+	if (file.open("resource.inf", g_sword2->getGameDataPath()) == false) {
 		Zdebug("InitResMan cannot *OPEN* resource.inf");
 		ExitWithReport("InitResMan cannot *OPEN* resource.inf [file=%s line=%u]",__FILE__,__LINE__);
 	}
@@ -150,7 +150,7 @@ void	resMan::InitResMan(void)	//Tony29May96
 
 
 //now load in the binary id to res conversion table
-	if (file.open("resource.tab", g_bs2->getGameDataPath()) == false) {
+	if (file.open("resource.tab", g_sword2->getGameDataPath()) == false) {
 		Zdebug("InitResMan cannot *OPEN* resource.tab");
 		ExitWithReport("InitResMan cannot *OPEN* resource.tab [file=%s line=%u]",__FILE__,__LINE__);
 	}
@@ -175,7 +175,7 @@ void	resMan::InitResMan(void)	//Tony29May96
 	file.close();
 
 
-	if (file.open("cd.inf", g_bs2->getGameDataPath()) == false) {
+	if (file.open("cd.inf", g_sword2->getGameDataPath()) == false) {
 		Zdebug("InitResMan cannot *OPEN* cd.inf");
 		ExitWithReport("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]",__FILE__,__LINE__);
 	}
@@ -242,7 +242,7 @@ void	resMan::InitResMan(void)	//Tony29May96
 */
 
 
-	if (file.open("revcd1.id", g_bs2->getGameDataPath()) == false) {
+	if (file.open("revcd1.id", g_sword2->getGameDataPath()) == false) {
 		int index = 0;
 /*
 		// Scan for CD drives.
@@ -306,7 +306,7 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 	uint32	table_offset;
 
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if	(res>=total_res_files)
 		Con_fatal_error("Res_open illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files-1);
 #endif
@@ -319,7 +319,7 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 
 		parent_res_file = res_conv_table[res*2];	//points to the number of the ascii filename
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 		if	(parent_res_file==0xffff)
 			Con_fatal_error("Res_open tried to open null & void resource number %d", res);
 #endif
@@ -344,7 +344,7 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 		}
 
 		//open the cluster file
-		if (file.open(resource_files[parent_res_file], g_bs2->getGameDataPath()) == false) 
+		if (file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()) == false) 
 			Con_fatal_error("Res_open cannot *OPEN* %s", resource_files[parent_res_file]);
 
 
@@ -420,13 +420,13 @@ void	resMan::Res_next_cycle( void )	//Tony8Feb97
 {
 //increment the cycle and calculate actual per-cycle memory useage
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	uint32	j;
 #endif
 
 
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	current_memory_useage=0;
 
 	for	(j=1;j<total_res_files;j++)
@@ -460,7 +460,7 @@ void	resMan::Res_close( uint32 res )	//Tony30May96
 //resource floats when count=0
 
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 	if	(res>=total_res_files)
 		Con_fatal_error("Res_closeing illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files-1);
 
@@ -742,7 +742,7 @@ void	resMan::Kill_res(uint8 *input)	//Tony23Oct96
 		res = atoi((char*)input);
 
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 		if	(!res)
 			Print_to_console("illegal resource");
 
@@ -1372,7 +1372,7 @@ void resMan::GetCd(int cd)
 	uint8		 *textRes;
 
 	//----------------------------------------------------------------------------------------
-	if (g_bs2->_gameId == GID_BS2_DEMO)
+	if (g_sword2->_gameId == GID_SWORD2_DEMO)
 		return;		// don't ask for CD's in the playable demo downloaded from our web-site!
 
 	#ifdef _PCGUIDE

@@ -21,7 +21,7 @@
 #define D_DEBUG
 
 //--------------------------------------------------------------------------------------
-#ifdef _BS2_DEBUG	// this whole file only included on debug versions
+#ifdef _SWORD2_DEBUG	// this whole file only included on debug versions
 
 
 //#include "src\driver96.h"
@@ -69,7 +69,7 @@ void Draw_debug_graphics(void);	// James's debug graphics display
 void Print_current_info(void);	//Tony30Oct96
 
 
-#else	// ie. not _BS2_DEBUG
+#else	// ie. not _SWORD2_DEBUG
 
 /* gcc doesn't like this - khalek
 #define Zdebug				NULL
@@ -82,7 +82,7 @@ void Zdebug(const char * ,...);		// Tony's special debug logging file March96
 void Build_debug_text(void);	// James's debug text display
 void Draw_debug_graphics(void);	// James's debug graphics display
 
-#endif	// _BS2_DEBUG	// this whole file only included on debug versions
+#endif	// _SWORD2_DEBUG	// this whole file only included on debug versions
 //--------------------------------------------------------------------------------------
 
 void ExitWithReport(const char *format,...);	// (6dec96 JEL) IN BOTH DEBUG & RELEASE VERSIONS

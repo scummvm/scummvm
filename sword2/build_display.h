@@ -58,7 +58,7 @@ extern	uint32	cur_fore;
 extern	uint32	cur_fgp0;
 extern	uint32	cur_fgp1;
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 extern char largest_layer_info[128];
 extern char largest_sprite_info[128];
 #endif

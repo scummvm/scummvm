@@ -30,19 +30,19 @@
 
 extern int g_debugFlag;
 
-#ifdef _BS2_DEBUG
+#ifdef _SWORD2_DEBUG
 
 #define DEBUG1(x,y)		if(g_debugFlag){engine.AddTextLine(CVString(x,y),VS_COL_DEBUG);}
 #define DEBUG2(x,y,z)	if(g_debugFlag){engine.AddTextLine(CVString(x,y,z),VS_COL_DEBUG);}
 #define DEBUG3(x,y,z,a)	if(g_debugFlag){engine.AddTextLine(CVString(x,y,z,a),VS_COL_DEBUG);}
 
-#else //_BS2_DEBUG
+#else //_SWORD2_DEBUG
 
 #define DEBUG1
 #define DEBUG2
 #define DEBUG3
 
-#endif //_BS2_DEBUG
+#endif //_SWORD2_DEBUG
 
 #else //INSIDE_LINC
 

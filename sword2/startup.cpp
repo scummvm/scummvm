@@ -163,7 +163,7 @@ int32 FN_register_start_point(int32 *params)	//Tony14Oct96
 
 //	Zdebug(" FN_register_start_point %d %s", params[0], params[1]);
 
-	#ifdef _BS2_DEBUG
+	#ifdef _SWORD2_DEBUG
 	if (total_startups==MAX_starts)
 		Con_fatal_error("ERROR: start_list full [%s line %u]",__FILE__,__LINE__);
 
@@ -290,8 +290,8 @@ uint32	Con_start(uint8 *input)	//Tony15Oct96
 			FN_stop_music(NULL);	// fade out any music that is currently playing
 			//---------------------------------------------
 
-			g_bs2->_sound->UnpauseSpeech();
-			g_bs2->_sound->StopSpeechBS2();							// halt the sample prematurely
+			g_sword2->_sound->UnpauseSpeech();
+			g_sword2->_sound->StopSpeechSword2();							// halt the sample prematurely
 
 			//--------------------------------------------------------------
 			// clean out all resources & flags, ready for a total restart (James24mar97)
