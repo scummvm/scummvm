@@ -1459,9 +1459,9 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 		}
 		if (_heversion >= 80)
-			VAR(VAR_WINDOWS_VERSION) = 40;
 			// Enable built-in debug mode keys
 			VAR(85) = 1;
+			VAR(VAR_WINDOWS_VERSION) = 40;
 		if (_heversion >= 90)
 			VAR(VAR_NUM_SPRITES) = _numSprites - 1;
 	} else {
@@ -1751,6 +1751,36 @@ load_game:
 		_completeScreenRedraw = false;
 		_charset->clearCharsetMask();
 		_charset->_hasMask = false;
+
+		// HACK as in game save stuff isn't supported currently
+		if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
+			int args[16];
+			uint value;
+			memset(args, 0, sizeof(args));
+			args[0] = 2;
+
+			if (_features & GF_MACINTOSH)
+				value = 105;
+			else
+ 				value = (_gameId == GID_LOOM256) ? 150 : 100;
+			byte restoreScript = (_features & GF_FMTOWNS) ? 17 : 18;
+			// if verbs should be shown restore them
+			if (VAR(value) == 2)
+				runScript(restoreScript, 0, 0, args);
+		} else if (_version > 3) {
+			for (int i = 0; i < _numVerbs; i++)
+				drawVerb(i, 0);
+		} else {
+			redrawVerbs();
+		}
+
+		verbMouseOver(0);
+
+		if (_version <= 2) {
+			redrawV2Inventory();
+			checkV2MouseOver(_mouse);
+		}
+
 		_fullRedraw = true;
 	}
 
