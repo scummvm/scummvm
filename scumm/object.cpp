@@ -217,7 +217,10 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir)
 		x = od->walk_x;
 		y = od->walk_y;
 	}
-	dir = oldDirToNewDir(od->actordir & 3);
+	if (_features & GF_AFTER_V8)
+		dir = od->actordir;
+	else
+		dir = oldDirToNewDir(od->actordir & 3);
 }
 
 int Scumm::getObjActToObjActDist(int a, int b)
@@ -654,7 +657,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr)
 		od->y_pos = (int)READ_LE_UINT32(&imhd->v8.y_pos);
 		od->width = (uint)READ_LE_UINT32(&imhd->v8.width);
 		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
-		od->actordir = (byte)READ_LE_UINT32(&imhd->v8.actordir);
+		od->actordir = READ_LE_UINT32(&imhd->v8.actordir);
 
 	} else if (_features & GF_AFTER_V7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
