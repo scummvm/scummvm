@@ -99,6 +99,7 @@ void Cutaway::load(const char *filename) {
 
 	_comPanel = READ_BE_UINT16(ptr);
 	ptr += 2;
+	debug(0, "_comPanel = %i", _comPanel);
 
 	_cutawayObjectCount = (int16)READ_BE_UINT16(ptr);
 	ptr += 2;
@@ -1305,7 +1306,10 @@ void Cutaway::run(char *nextFilename) {
 
 	talk(nextFilename);
 
-	if (_comPanel == 0 || (_comPanel == 2 && !_anotherCutaway)) {
+	// XXX removed the condition because otherwise sceneStop is not always
+	// executed in pair with sceneStart. */
+	
+	if (_comPanel == 0 || (_comPanel == 2 /*&& !_anotherCutaway*/)) {
 		_logic->sceneStop(true);
 		_comPanel = 0;
 	}

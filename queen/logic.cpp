@@ -2496,6 +2496,7 @@ bool Logic::gameLoad(uint16 slot) {
 }
 
 void Logic::sceneStart(bool showMouseCursor) {
+	debug(0, "[Logic::sceneStart] _scene = %i", _scene);
 	_scene++;
 
 	_display->mouseCursorShow(showMouseCursor);
@@ -2509,6 +2510,7 @@ void Logic::sceneStart(bool showMouseCursor) {
 }
 
 void Logic::sceneStop(bool showMouseCursor) {
+	debug(0, "[Logic::sceneStop] _scene = %i", _scene);
 	_scene--;
 
 	if (_scene > 0)
