@@ -271,7 +271,7 @@ int Scumm::scummLoop(int delta) {
 	_vars[VAR_MOUSE_Y] = mouse.y;
 	_vars[VAR_DEBUGMODE] = _debugMode;
 
-	if (_gameId==GID_MONKEY)
+	if (_features & GF_AUDIOTRACKS)
 		_vars[VAR_MI1_TIMER]+=40;
 
 	if (_saveLoadFlag) {
@@ -443,8 +443,8 @@ static const VersionSettings version_settings[] = {
         {"monkeyEGA",   "Monkey Island 1 (EGA)",                        GID_MONKEY_EGA, 4, 0, 67, GF_SMALL_HEADER|GF_USE_KEY|GF_16COLOR}, // EGA version
 
         /* Scumm version 5 */
-        {"loomcd",      "Loom (256 color CD version)",                  GID_LOOM256,    5, 1, 42, GF_SMALL_HEADER|GF_USE_KEY},
-        {"monkey",      "Monkey Island 1",                              GID_MONKEY,     5, 2, 2,  GF_USE_KEY},
+        {"loomcd",      "Loom (256 color CD version)",                  GID_LOOM256,    5, 1, 42, GF_SMALL_HEADER|GF_USE_KEY|GF_AUDIOTRACKS},
+        {"monkey",      "Monkey Island 1",                              GID_MONKEY,     5, 2, 2,  GF_USE_KEY|GF_AUDIOTRACKS},
         {"monkey2",     "Monkey Island 2: LeChuck's revenge",           GID_MONKEY2,    5, 2, 2,  GF_USE_KEY},
         {"atlantis",    "Indiana Jones 4 and the Fate of Atlantis",     GID_INDY4,      5, 5, 0,  GF_USE_KEY},
         {"playfate",    "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4,   5, 5, 0,  GF_USE_KEY},

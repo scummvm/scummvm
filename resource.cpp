@@ -67,11 +67,12 @@ void Scumm::openRoom(int room) {
                 _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
 #else
                 if (!(_features & GF_SMALL_HEADER)) {
-                        sprintf(buf, "%s.%.3d", _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
+                        sprintf(buf, "%s//%s.%.3d", _exe_name, _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
+			
                         _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
                 } else if(!(_features & GF_SMALL_NAMES)) {
 			if(room==0 || room>=900) {
-				sprintf(buf, "%s\\%.3d.lfl",_exe_name,room);	
+				sprintf(buf, "%s//%.3d.lfl",_exe_name,room);	
 				_encbyte = 0;
 				if (openResourceFile(buf)) {
 					return;
@@ -79,11 +80,11 @@ void Scumm::openRoom(int room) {
 				askForDisk(buf);
 
 			} else {
-				sprintf(buf, "%s\\disk%.2d.lec",_exe_name,res.roomno[rtRoom][room]);
+				sprintf(buf, "%s//disk%.2d.lec",_exe_name,res.roomno[rtRoom][room]);
 				_encbyte = 0x69;
 			}
 		} else {
-				sprintf(buf, "%s\\%.2d.lfl",_exe_name,room);	
+				sprintf(buf, "%s//%.2d.lfl",_exe_name,room);	
 				if(_features & GF_OLD_BUNDLE)
 					_encbyte = 0xFF;
 				else
