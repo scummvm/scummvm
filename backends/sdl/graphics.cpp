@@ -1059,10 +1059,8 @@ void OSystem_SDL::toggleMouseGrab() {
 }
 
 void OSystem_SDL::drawMouse() {
-	if (_mouseDrawn || !_mouseVisible)
+	if (_mouseDrawn || !_mouseVisible || !_mouseData)
 		return;
-
-	assert(_mouseData);
 
 	int x = _mouseCurState.x - _mouseHotspotX;
 	int y = _mouseCurState.y - _mouseHotspotY;
