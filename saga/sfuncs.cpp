@@ -26,11 +26,12 @@
 #include "reinherit.h"
 
 #include "actor_mod.h"
-#include "animation_mod.h"
+#include "animation.h"
 #include "console_mod.h"
 #include "interface_mod.h"
 #include "text_mod.h"
 
+#include "saga.h"
 #include "script.h"
 #include "sfuncs.h"
 
@@ -272,8 +273,8 @@ int SF_startAnim(R_SCRIPTFUNC_PARAMS) {
 	frame_count = SDATA_ReadWordS(frame_parm);
 	anim_id = SDATA_ReadWordS(anim_id_parm);
 
-	if (ANIM_Play(anim_id, 0) != R_SUCCESS) {
-		CON_Print(S_WARN_PREFIX "SF.26: ANIM_Play() failed. Anim id: %u\n", anim_id);
+	if (_vm->_anim->play(anim_id, 0) != R_SUCCESS) {
+		CON_Print(S_WARN_PREFIX "SF.26: Anim::play() failed. Anim id: %u\n", anim_id);
 		return R_FAILURE;
 	}
 
@@ -487,8 +488,8 @@ int SF_linkAnim(R_SCRIPTFUNC_PARAMS) {
 	anim_id1 = SDATA_ReadWordU(anim1_parm);
 	anim_id2 = SDATA_ReadWordU(anim2_parm);
 
-	if (ANIM_Link(anim_id1, anim_id2) != R_SUCCESS) {
-		CON_Print(S_WARN_PREFIX "SF.41: ANIM_Link() failed. (%u->%u)\n", anim_id1, anim_id2);
+	if (_vm->_anim->link(anim_id1, anim_id2) != R_SUCCESS) {
+		CON_Print(S_WARN_PREFIX "SF.41: Anim::link() failed. (%u->%u)\n", anim_id1, anim_id2);
 		return R_FAILURE;
 	}
 

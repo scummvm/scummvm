@@ -39,7 +39,7 @@
 #include "rscfile_mod.h"
 #include "render_mod.h"
 #include "actor_mod.h"
-#include "animation_mod.h"
+#include "animation.h"
 #include "console_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
@@ -120,7 +120,7 @@ void SagaEngine::go() {
 	RENDER_Register();
 	GAME_Register();
 
-	ANIM_Register();
+	_anim->reg();
 	ACTIONMAP_Register();
 	OBJECTMAP_Register();
 	SCRIPT_Register();
@@ -159,7 +159,7 @@ void SagaEngine::go() {
 	EVENT_Init();
 	FONT_Init();
 	SPRITE_Init();
-	ANIM_Init();
+	_anim = new Anim();
 	ACTIONMAP_Init();
 	OBJECTMAP_Init();
 	ISOMAP_Init();
@@ -235,7 +235,6 @@ void SagaEngine::shutdown() {
 	SCENE_Shutdown();
 	ACTOR_Shutdown();
 	SCRIPT_Shutdown();
-	ANIM_Shutdown();
 	SPRITE_Shutdown();
 	OBJECTMAP_Shutdown();
 	FONT_Shutdown();
@@ -247,6 +246,7 @@ void SagaEngine::shutdown() {
 	// Shutdown system modules */
 	delete _music;
 	delete _sound;
+	delete _anim;
 
 	_system->quit();
 }

@@ -28,7 +28,7 @@
 #include "yslib.h"
 
 #include "game_mod.h"
-#include "animation_mod.h"
+#include "animation.h"
 #include "console_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
@@ -692,7 +692,7 @@ int ProcessSceneResources() {
 					return R_MEM;
 				}
 
-				if (ANIM_Load(SceneModule.reslist[i].res_data,
+				if (_vm->_anim->load(SceneModule.reslist[i].res_data,
 					SceneModule.reslist[i].res_data_len,
 					&new_anim_id) == R_SUCCESS) {
 				} else {
@@ -789,7 +789,7 @@ int SCENE_End() {
 	}
 
 	// Free animation info list
-	ANIM_Reset();
+	_vm->_anim->reset();
 
 	PALANIM_Free();
 	OBJECTMAP_Free();

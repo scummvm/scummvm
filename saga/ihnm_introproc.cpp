@@ -28,7 +28,7 @@
 
 #include "reinherit.h"
 
-#include "animation_mod.h"
+#include "animation.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
 #include "font_mod.h"
@@ -119,9 +119,9 @@ int IHNM_IntroMovieProc1(int param, R_SCENE_INFO *scene_info) {
 		event.param = SET_PALETTE;
 		event.time = 0;
 		EVENT_Queue(&event);
-		ANIM_SetFrameTime(0, R_IHNM_INTRO_FRAMETIME);
-		ANIM_SetFlag(0, ANIM_ENDSCENE);
-		ANIM_Play(0, 0);
+		_vm->_anim->setFrameTime(0, R_IHNM_INTRO_FRAMETIME);
+		_vm->_anim->setFlag(0, ANIM_ENDSCENE);
+		_vm->_anim->play(0, 0);
 		break;
 	default:
 		break;
@@ -173,8 +173,8 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		ANIM_SetFlag(0, ANIM_LOOP);
-		ANIM_Play(0, R_IHNM_PALFADE_TIME * 2);
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, R_IHNM_PALFADE_TIME * 2);
 
 		// Queue end of scene after looping animation for a while
 		event.type = R_ONESHOT_EVENT;
@@ -233,7 +233,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		ANIM_Play(0, 0);
+		_vm->_anim->play(0, 0);
 
 		// Queue end of scene after a while
 		event.type = R_ONESHOT_EVENT;
@@ -266,8 +266,8 @@ int IHNM_HateProc(int param, R_SCENE_INFO *scene_info) {
 
 		q_event = EVENT_Queue(&event);
 
-		ANIM_SetFlag(0, ANIM_LOOP);
-		ANIM_Play(0, 0);
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, 0);
 		break;
 	default:
 		break;

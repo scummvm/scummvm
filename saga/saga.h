@@ -41,6 +41,7 @@ namespace Saga {
 class SndRes;
 class Sound;
 class Music;
+class Anim;
 
 using Common::MemoryReadStream;
 
@@ -67,6 +68,7 @@ public:
 	SndRes *_sndRes;
 	Sound *_sound;
 	Music *_music;
+	Anim *_anim;
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects

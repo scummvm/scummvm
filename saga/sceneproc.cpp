@@ -28,7 +28,7 @@
 
 #include "yslib.h"
 
-#include "animation_mod.h"
+#include "animation.h"
 #include "events_mod.h"
 #include "scene_mod.h"
 #include "palanim_mod.h"
@@ -101,8 +101,8 @@ int InitialSceneProc(int param, R_SCENE_INFO *scene_info) {
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		ANIM_SetFlag(0, ANIM_LOOP);
-		ANIM_Play(0, delay_time);
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, delay_time);
 
 		debug(0, "InitialSceneproc(): Scene started");
 		break;

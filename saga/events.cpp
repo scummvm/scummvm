@@ -29,7 +29,7 @@
 
 #include "yslib.h"
 
-#include "animation_mod.h"
+#include "animation.h"
 #include "console_mod.h"
 #include "scene_mod.h"
 #include "gfx_mod.h"
@@ -270,7 +270,7 @@ static int HandleOneShot(R_EVENT *event) {
 	case R_ANIM_EVENT:
 		switch (event->op) {
 		case EVENT_FRAME:
-			ANIM_Play(event->param, event->time);
+			_vm->_anim->play(event->param, event->time);
 			break;
 		default:
 			break;

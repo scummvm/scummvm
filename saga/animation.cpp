@@ -31,26 +31,24 @@
 #include "events_mod.h"
 #include "render_mod.h"
 
-#include "animation_mod.h"
 #include "animation.h"
 
 namespace Saga {
 
 static R_ANIMINFO AnimInfo;
 
-int ANIM_Register() {
+int Anim::reg() {
 	CVAR_RegisterFunc(CF_anim_info, "anim_info", NULL, R_CVAR_NONE, 0, 0);
 	return R_SUCCESS;
 }
 
-int ANIM_Init() {
+Anim::Anim(void) {
 	AnimInfo.anim_limit = R_MAX_ANIMATIONS;
 	AnimInfo.anim_count = 0;
 	AnimInfo.initialized = 1;
-	return R_SUCCESS;
 }
 
-int ANIM_Shutdown(void) {
+Anim::~Anim(void) {
 	uint16 i;
 
 	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
@@ -58,10 +56,9 @@ int ANIM_Shutdown(void) {
 	}
 
 	AnimInfo.initialized = 0;
-	return R_SUCCESS;
 }
 
-int ANIM_Load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p) {
+int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p) {
 	R_ANIMATION *new_anim;
 
 	uint16 anim_id = 0;
@@ -93,7 +90,7 @@ int ANIM_Load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id
 	new_anim->resdata_len = anim_resdata_len;
 
 	if (GAME_GetGameType() == R_GAMETYPE_ITE) {
-		if (ANIM_GetNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != R_SUCCESS) {
+		if (getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != R_SUCCESS) {
 			warning("Error: Couldn't get animation frame count");
 			return R_FAILURE;
 		}
@@ -106,12 +103,12 @@ int ANIM_Load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id
 		}
 
 		for (i = 0; i < new_anim->n_frames; i++) {
-			ANIM_GetFrameOffset(anim_resdata, anim_resdata_len, i + 1, &new_anim->frame_offsets[i]);
+			getFrameOffset(anim_resdata, anim_resdata_len, i + 1, &new_anim->frame_offsets[i]);
 		}
 	} else {
 		new_anim->cur_frame_p = anim_resdata + SAGA_FRAME_HEADER_LEN;
 		new_anim->cur_frame_len = anim_resdata_len - SAGA_FRAME_HEADER_LEN;
-		ANIM_GetNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames);
+		getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames);
 	}
 
 	// Set animation data
@@ -134,7 +131,7 @@ int ANIM_Load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id
 	return R_SUCCESS;
 }
 
-int ANIM_Link(uint16 anim_id1, uint16 anim_id2) {
+int Anim::link(uint16 anim_id1, uint16 anim_id2) {
 	R_ANIMATION *anim1;
 	R_ANIMATION *anim2;
 
@@ -157,7 +154,7 @@ int ANIM_Link(uint16 anim_id1, uint16 anim_id2) {
 	return R_SUCCESS;
 }
 
-int ANIM_Play(uint16 anim_id, int vector_time) {
+int Anim::play(uint16 anim_id, int vector_time) {
 	R_EVENT event;
 	R_ANIMATION *anim;
 	R_ANIMATION *link_anim;
@@ -195,20 +192,20 @@ int ANIM_Play(uint16 anim_id, int vector_time) {
 			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame - 1], display_buf,
 									disp_info.logical_w * disp_info.logical_h);
 			if (result != R_SUCCESS) {
-				warning("ANIM_Play: Error decoding frame %u", anim->current_frame);
+				warning("ANIM::play: Error decoding frame %u", anim->current_frame);
 				anim->play_flag = 0;
 				return R_FAILURE;
 			}
 		} else {
 			if (anim->cur_frame_p == NULL) {
-				warning("ANIM_Play: Frames exhausted");
+				warning("ANIM::play: Frames exhausted");
 				return R_FAILURE;
 			}
 
 			result = IHNM_DecodeFrame(display_buf,  disp_info.logical_w * disp_info.logical_h,
 									anim->cur_frame_p, anim->cur_frame_len, &nextf_p, &nextf_len);
 			if (result != R_SUCCESS) {
-				warning("ANIM_Play: Error decoding frame %u", anim->current_frame);
+				warning("ANIM::play: Error decoding frame %u", anim->current_frame);
 				anim->play_flag = 0;
 				return R_FAILURE;
 			}
@@ -270,12 +267,12 @@ int ANIM_Play(uint16 anim_id, int vector_time) {
 	return R_SUCCESS;
 }
 
-int ANIM_Reset() {
+int Anim::reset() {
 	uint16 i;
 
 	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
 
-		ANIM_Free(i);
+		freeId(i);
 	}
 
 	AnimInfo.anim_count = 0;
@@ -283,7 +280,7 @@ int ANIM_Reset() {
 	return R_SUCCESS;
 }
 
-int ANIM_SetFlag(uint16 anim_id, uint16 flag) {
+int Anim::setFlag(uint16 anim_id, uint16 flag) {
 	R_ANIMATION *anim;
 
 	if (anim_id > AnimInfo.anim_count) {
@@ -300,7 +297,7 @@ int ANIM_SetFlag(uint16 anim_id, uint16 flag) {
 	return R_SUCCESS;
 }
 
-int ANIM_SetFrameTime(uint16 anim_id, int time) {
+int Anim::setFrameTime(uint16 anim_id, int time) {
 	R_ANIMATION *anim;
 
 	if (anim_id > AnimInfo.anim_count) {
@@ -317,7 +314,7 @@ int ANIM_SetFrameTime(uint16 anim_id, int time) {
 	return R_SUCCESS;
 }
 
-int ANIM_Free(uint16 anim_id) {
+int Anim::freeId(uint16 anim_id) {
 	R_ANIMATION *anim;
 
 	if (anim_id > AnimInfo.anim_count) {
@@ -345,7 +342,7 @@ int ANIM_Free(uint16 anim_id) {
 // sometimes less than number present in the .nframes member of the
 // animation header. For this reason, the function attempts to find
 // the last valid frame number, which it returns via 'n_frames'
-int ANIM_GetNumFrames(const byte *anim_resource, size_t anim_resource_len, uint16 *n_frames) {
+int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint16 *n_frames) {
 	R_ANIMATION_HEADER ah;
 
 	size_t offset;
@@ -373,7 +370,7 @@ int ANIM_GetNumFrames(const byte *anim_resource, size_t anim_resource_len, uint1
 
 	if (ah.magic == 68) {
 		for (x = ah.nframes; x > 0; x--) {
-			if (ANIM_GetFrameOffset(anim_resource, anim_resource_len, x, &offset) != R_SUCCESS) {
+			if (getFrameOffset(anim_resource, anim_resource_len, x, &offset) != R_SUCCESS) {
 				return R_FAILURE;
 			}
 
@@ -390,7 +387,7 @@ int ANIM_GetNumFrames(const byte *anim_resource, size_t anim_resource_len, uint1
 	return R_FAILURE;
 }
 
-int ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_offset, byte *buf, size_t buf_len) {
+int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_offset, byte *buf, size_t buf_len) {
 	R_ANIMATION_HEADER ah;
 	R_FRAME_HEADER fh;
 
@@ -552,7 +549,7 @@ int ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_offset
 	return R_SUCCESS;
 }
 
-int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
+int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
 					size_t thisf_len, const byte **nextf_p, size_t *nextf_len) {
 	int in_ch;
 	int decoded_data = 0;
@@ -776,7 +773,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 	return R_SUCCESS;
 }
 
-int ANIM_GetFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_frame, size_t *frame_offset_p) {
+int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_frame, size_t *frame_offset_p) {
 	R_ANIMATION_HEADER ah;
 
 	uint16 num_frames;

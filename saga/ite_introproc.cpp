@@ -29,7 +29,7 @@
 
 #include "yslib.h"
 
-#include "animation_mod.h"
+#include "animation.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
 #include "font_mod.h"
@@ -186,23 +186,23 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 		debug(0, "Intro animation procedure started.");
 		debug(0, "Linking animation resources...");
 
-		ANIM_SetFrameTime(0, ITE_INTRO_FRAMETIME);
+		_vm->_anim->setFrameTime(0, ITE_INTRO_FRAMETIME);
 
 		// Link this scene's animation resources for continuous
 		// playback
-		ANIM_Link(0, 1);
-		ANIM_Link(1, 2);
-		ANIM_Link(2, 3);
-		ANIM_Link(3, 4);
-		ANIM_Link(4, 5);
-		ANIM_Link(5, 6);
+		_vm->_anim->link(0, 1);
+		_vm->_anim->link(1, 2);
+		_vm->_anim->link(2, 3);
+		_vm->_anim->link(3, 4);
+		_vm->_anim->link(4, 5);
+		_vm->_anim->link(5, 6);
 
 		// Scene should end on display of last animation frame
-		ANIM_SetFlag(6, ANIM_ENDSCENE);
+		_vm->_anim->setFlag(6, ANIM_ENDSCENE);
 
 		debug(0, "Beginning animation playback.");
 
-		ANIM_Play(0, 0);
+		_vm->_anim->play(0, 0);
 
 		// Queue intro music playback
 		event.type = R_ONESHOT_EVENT;
@@ -674,8 +674,8 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		debug(0, "Beginning animation playback.");
 
 		// Begin title screen background animation 
-		ANIM_SetFlag(0, ANIM_LOOP);
-		ANIM_Play(0, 0);
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, 0);
 
 		// Begin ITE title theme music
 		_vm->_music->stop();
@@ -791,8 +791,8 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 		event_delay = DISSOLVE_DURATION;
 
 		// Begin title screen background animation 
-		ANIM_SetFrameTime(0, 100);
-		ANIM_Play(0, event_delay);
+		_vm->_anim->setFrameTime(0, 100);
+		_vm->_anim->play(0, event_delay);
 
 		// Queue game credits list
 		text_entry.color = 255;
@@ -900,8 +900,8 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 		event_delay = DISSOLVE_DURATION;
 
 		// Begin title screen background animation 
-		ANIM_SetFlag(0, ANIM_LOOP);
-		ANIM_Play(0, event_delay);
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, event_delay);
 
 		// Queue game credits list
 		text_entry.color = 255;
