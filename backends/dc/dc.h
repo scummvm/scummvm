@@ -85,7 +85,7 @@ class OSystem_Dreamcast : public OSystem {
   void warpMouse(int x, int y);
 
   // Set the bitmap that's used when drawing the cursor.
-  void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor);
+  void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale);
   
   // Shaking is used in SCUMM. Set current shake position.
   void setShakePos(int shake_pos);
