@@ -230,6 +230,8 @@ enum MouseButtonStatus {
 
 class Scumm : public Engine {
 	friend void NORETURN CDECL error(const char *s, ...);	// FIXME - ugly but error() accesses g_scumm...
+	friend class ScummDebugger;
+	friend class ScummRenderer;	// FIXME - this is mostly for the destructor
 public:
 	/* Put often used variables at the top.
 	 * That results in a shorter form of the opcode
@@ -300,6 +302,7 @@ public:
 	bool _insaneState;
 	bool _videoFinished;
 	
+	const char *getExeName() const { return _exe_name; }
 	const char *getGameDataPath() const { return _gameDataPath; }
 
 	void pauseGame(bool user);
@@ -331,24 +334,28 @@ public:
 	int checkKeyHit();
 	void convertKeysToClicks();
 
+protected:
 	int keyScriptKey, keyScriptNo;
 
 	/* Random number generation */
 	RandomSource _rnd;
 
-
+public:
 	/* Core variable definitions */
 	byte _gameId;
 
 	/* Core class/array definitions */
 	Gdi gdi;
 
+protected:
 	Actor *_actors;	// Has NUM_ACTORS elements
 	
 	uint16 *_inventory;
 	byte *_arrays;
 	uint16 *_newNames;
+public:
 	int32 *_vars;
+protected:
 	int16 _varwatch;
 	byte *_bitVars;
 
@@ -356,20 +363,25 @@ public:
 	int _numVariables, _numBitVariables, _numLocalObjects;
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
 	int _numInventory, _numRooms, _numScripts, _numSounds;
-	int _numCharsets, _numCostumes, _numNewNames, _numGlobalScripts;
+	int _numCharsets, _numNewNames, _numGlobalScripts;
 	int NUM_ACTORS;
-
+public:
+	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
+	
 	char *_audioNames;
 	int32 _numAudioNames;
 
+protected:
 	/* Current objects - can go in their respective classes */
 	byte _curActor;
 	int _curVerb;
 	int _curVerbSlot;
 	int _curPalIndex;
+public:
 	byte _currentRoom;
 
-	bool _egoPositioned;
+	bool _egoPositioned;	// Used by Actor::putActor, hence public
+protected:
 	int _keyPressed;
 	uint16 _lastKeyHit;
 	uint16 _mouseButStat;
@@ -380,6 +392,7 @@ public:
 	bool _dumpScripts;
 	uint16 _debugMode, _soundCardType;
 
+public:
 	/* Not sure where this stuff goes */
 	uint16 _language;
 	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
@@ -473,7 +486,7 @@ protected:
 	void push(int a);
 	int pop();
 public:
-	virtual int readVar(uint var);	// FIXME - should be protected but scumm/dialogs.cpp uses it
+	virtual int readVar(uint var);	// FIXME - should be protected, used in scumm/dialogs.cpp
 protected:
 	virtual void writeVar(uint var, int value);
 	void runHook(int i);
@@ -484,9 +497,7 @@ protected:
 	void runAllScripts();
 	void cutscene(int *args);
 	void endCutscene();
-public:
-	void exitCutscene();	// FIXME - should be protected but ScummRenderer destructor uses it
-protected:
+	void exitCutscene();
 	void runExitScript();
 	void runEntryScript();
 
@@ -497,7 +508,7 @@ protected:
 	void checkAndRunSentenceScript();
 	void decreaseScriptDelay(int amount);
 public:
-	bool isScriptRunning(int script);	// FIXME - should be protected but Sound::startTalkSound uses this
+	bool isScriptRunning(int script);	// FIXME - should be protected, used by Sound::startTalkSound
 protected:
 	bool isRoomScriptRunning(int script);
 	void copyScriptString(byte *dst);
@@ -505,7 +516,6 @@ protected:
 	void doSentence(int c, int b, int a);
 	void setStringVars(int i);
 
-public:
 	/* Script VM or Object class? */
 	void stopObjectCode();
 	void stopObjectScript(int script);
@@ -528,6 +538,8 @@ public:
 	void readRoomsOffsets();
 	void askForDisk(const char *filename, int disknum);
 	bool openResourceFile(const char *filename);
+
+public:
 	void loadPtrToResource(int type, int i, byte *ptr);
 	void readResTypeList(int id, uint32 tag, const char *name);
 	char *resTypeFromId(int id);
@@ -627,6 +639,7 @@ public:
 	int cost_frameToAnim(Actor *a, int frame);
 
 
+protected:
 	/* Should be in Verb class */
 	uint16 _verbMouseOver;
 	int _inventoryOffset;	
@@ -644,6 +657,7 @@ public:
 	void runVerbCode(int script, int entry, int a, int b, int *vars);
 	void setVerbObject(uint room, uint object, uint verb);
 
+public:
 	/* Should be in Actor class */
 	Actor *derefActor(int id);
 	Actor *derefActorSafe(int id, const char *errmsg);

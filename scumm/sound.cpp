@@ -853,7 +853,7 @@ File * Sound::openSfxFile() {
 	offset_table = NULL;
 
 #ifdef USE_MAD
-	sprintf(buf, "%s.so3", _scumm->_exe_name);
+	sprintf(buf, "%s.so3", _scumm->getExeName());
 	if (!file->open(buf, _scumm->getGameDataPath())) {
 		file->open("monster.so3", _scumm->getGameDataPath());
 	}
@@ -863,7 +863,7 @@ File * Sound::openSfxFile() {
 
 #ifdef USE_VORBIS
 	if (!file->isOpen()) {
-		sprintf(buf, "%s.sog", _scumm->_exe_name);
+		sprintf(buf, "%s.sog", _scumm->getExeName());
 		if (!file->open(buf, _scumm->getGameDataPath()))
 			file->open("monster.sog", _scumm->getGameDataPath());
 		if (file->isOpen())
@@ -905,7 +905,7 @@ File * Sound::openSfxFile() {
 		return file;
 	}
 
-	sprintf(buf, "%s.sou", _scumm->_exe_name);
+	sprintf(buf, "%s.sou", _scumm->getExeName());
 	if (!file->open(buf, _scumm->getGameDataPath())) {
 		file->open("monster.sou", _scumm->getGameDataPath());
 	}
