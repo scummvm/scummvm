@@ -1176,7 +1176,7 @@ void action_skip() {
 	system = (OSystem_WINCE3*)g_scumm->_system;
 
 	if (is_simon) {
-		((SimonState*)engine)->_exit_cutscene = true;
+		((SimonEngine*)engine)->_exit_cutscene = true;
 		return;
 	}
 
