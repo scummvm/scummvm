@@ -938,6 +938,8 @@ protected:
 	void o100_quitPauseRestart();
 	void o100_cursorCommand();
 	void o100_wait();
+	void o100_unknown27();
+	void o100_getPaletteData();
 	void o100_unknown25();
 };
 

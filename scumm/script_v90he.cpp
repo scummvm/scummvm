@@ -629,7 +629,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 
 void ScummEngine_v90he::o90_wizImageOps() {
 	int a, b;
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 46;
 
 	switch (subOp) {
@@ -811,7 +811,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 
 void ScummEngine_v90he::o90_unknown25() {
 	int args[16];
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
 	debug(1,"o90_unknown25 stub (%d)", subOp);
@@ -914,7 +914,7 @@ void ScummEngine_v90he::o90_unknown25() {
 void ScummEngine_v90he::o90_unknown26() {
 	// Incomplete
 	int args[16];
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 34;
 
 	switch (subOp) {
@@ -1006,7 +1006,7 @@ void ScummEngine_v90he::o90_unknown26() {
 }
 
 void ScummEngine_v90he::o90_unknown27() {
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 8: // HE 99+
 		pop();
@@ -1041,7 +1041,7 @@ void ScummEngine_v90he::o90_unknown27() {
 
 void ScummEngine_v90he::o90_unknown28() {
 	// Incomplete
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 37;
 
 	switch (subOp) {
@@ -1078,7 +1078,7 @@ void ScummEngine_v90he::o90_unknown29() {
 	uint32 w, h;
 	int16 x, y;
 
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
 	switch (subOp) {
@@ -1141,7 +1141,7 @@ void ScummEngine_v90he::o90_unknown29() {
 }
 
 void ScummEngine_v90he::o90_unknown2F() {
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 54;
 
 	switch (subOp) {
@@ -1351,7 +1351,7 @@ void ScummEngine_v90he::o90_dim2dim2Array() {
 
 void ScummEngine_v90he::o90_sortArray() {
 	// Sorts array via qsort
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 129:
@@ -1370,7 +1370,7 @@ void ScummEngine_v90he::o90_sortArray() {
 
 void ScummEngine_v90he::o90_getObjectData() {
 	// Object releated
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 32;
 
 	switch (subOp) {
@@ -1420,7 +1420,7 @@ void ScummEngine_v90he::o90_getObjectData() {
 }
 
 void ScummEngine_v90he::o90_getPaletteData() {
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 45;
 
 	switch (subOp) {
@@ -1515,7 +1515,7 @@ void ScummEngine_v90he::o90_unknownA5() {
 	byte string[80];
 	int a;
 
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 42:

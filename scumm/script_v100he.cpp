@@ -221,8 +221,8 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 8C */
 		OPCODE(o6_invalid),
 		OPCODE(o100_wait),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_walkActorToObj),
+		OPCODE(o6_walkActorTo),
 		/* 90 */
 		OPCODE(o60_writeFile),
 		OPCODE(o72_writeINI),
@@ -274,7 +274,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_getResourceSize),
 		/* B8 */
-		OPCODE(o6_invalid),
+		OPCODE(o100_unknown27),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_isActorInBox),
@@ -294,7 +294,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_getOwner),
 		/* C8 */
-		OPCODE(o90_getPaletteData),
+		OPCODE(o100_getPaletteData),
 		OPCODE(o6_pickOneOf),
 		OPCODE(o6_pickOneOfDefault),
 		OPCODE(o80_pickVarRandom),
@@ -980,6 +980,15 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.processFlags |= 0x10000;
 		pop();
 		break;
+	case 138:
+		_wizParams.processFlags |= 0x60000;
+		_wizParams.processMode = 9;
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
 	default:
 		error("o100_wizImageOps: Unknown case %d", subOp);
 	}
@@ -1174,7 +1183,6 @@ void ScummEngine_v100he::o100_startSound() {
 	byte op;
 	op = fetchScriptByte();
 
-	debug(0, "o100_startSound invalid case %d", op);
 	switch (op) {
 	case 6:
 		_heSndLoop |= 16;
@@ -1220,8 +1228,9 @@ void ScummEngine_v100he::o100_startSound() {
 }
 
 void ScummEngine_v100he::o100_unknown26() {
-	// Incomplete
 	int args[16];
+	byte string[80];
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -1229,15 +1238,27 @@ void ScummEngine_v100he::o100_unknown26() {
 		pop();
 		pop();
 		break;
+	case 2:
+		pop();
+		break;
 	case 3:
+		pop();
+		break;
+	case 4:
 		pop();
 		break;
 	case 6:
 		pop();
 		pop();
 		break;
+	case 7:
+		pop();
+		break;
 	case 16:
 		getStackList(args, ARRAYSIZE(args));
+		break;
+	case 32:
+		pop();
 		break;
 	case 38:
 		pop();
@@ -1245,7 +1266,21 @@ void ScummEngine_v100he::o100_unknown26() {
 	case 40:
 		pop();
 		break;
+	case 48:
+		pop();
+		break;
+	case 49:
+		pop();
+		pop();
+		break;
+	case 52:
+		copyScriptString(string);
+		break;
 	case 53:
+		break;
+	case 54:
+		pop();
+		pop();
 		break;
 	case 57:
 		pop();
@@ -1259,11 +1294,36 @@ void ScummEngine_v100he::o100_unknown26() {
 		break;
 	case 61:
 		break;
+	case 65:
+		pop();
+		break;
+	case 70:
+		pop();
+		break;
 	case 73:
+		pop();
+		break;
+	case 74:
+		pop();
+		pop();
+		break;
+	case 75:
+		pop();
+		break;
+	case 76:
 		pop();
 		break;
 	case 82:
 		pop();
+		break;
+	case 83:
+		pop();
+		pop();
+		break;
+	case 88:
+		pop();
+		break;
+	case 89:
 		break;
 	default:
 		error("o100_unknown26: Unknown case %d", subOp);
@@ -1387,6 +1447,77 @@ void ScummEngine_v100he::o100_wait() {
 
 	_scriptPointer += offs;
 	o6_breakHere();
+}
+
+void ScummEngine_v100he::o100_unknown27() {
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 5:
+		pop();
+		break;
+	case 48:
+		pop();
+		break;
+	case 54:
+		pop();
+		pop();
+		break;
+	case 59:
+		pop();
+		break;
+	case 60:
+		pop();
+		pop();
+		break;
+	case 85:
+		pop();
+		break;
+	case 86:
+		pop();
+		break;
+	default:
+		error("o100_unknown27: Unknown case %d", subOp);
+	}
+	push(0);
+
+	debug(1,"o100_unknown27 stub (%d)", subOp);
+}
+
+void ScummEngine_v100he::o100_getPaletteData() {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 13:
+		pop();
+		pop();
+		break;
+	case 20:
+		pop();
+		pop();
+		break;
+	case 33:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 53:
+		pop();
+		pop();
+		pop();
+		break;
+	case 73:
+		pop();
+		pop();
+		pop();
+		break;
+	default:
+		error("o100_getPaletteData: Unknown case %d", subOp);
+	}
+	push(0);
+	debug(1,"o100_getPaletteData stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_unknown25() {
