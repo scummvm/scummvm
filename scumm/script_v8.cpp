@@ -194,7 +194,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_invalid),
 		/* 78 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_startScript),
+		OPCODE(o6_startScriptEx),
 		OPCODE(o6_startScriptQuick),
 		OPCODE(o6_stopObjectCode),
 		/* 7C */
