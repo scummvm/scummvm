@@ -315,6 +315,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_smushFrameRate = 0;
 	_insaneState = false;
 	_videoFinished = false;
+	_smushPaused = false;
 	_quit = false;
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;
@@ -2533,9 +2534,11 @@ void ScummEngine::startManiac() {
 #pragma mark -
 
 int ScummEngine::runDialog(Dialog &dialog) {
-	// Pause sound put
+	// Pause sound & video
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
+	bool oldSmushPaused = _smushPaused;
+	_smushPaused = true;
 
 	// Open & run the dialog
 	int result = dialog.runModal();
@@ -2543,8 +2546,9 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	// Restore old cursor
 	updateCursor();
 
-	// Resume sound output
+	// Resume sound & video
 	_sound->pauseSounds(old_soundsPaused);
+	_smushPaused = oldSmushPaused;
 	
 	// Return the result
 	return result;

@@ -865,6 +865,9 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 }
 
 void SmushPlayer::parseNextFrame() {
+	if (_scumm->_smushPaused)
+		return;
+
 	if (_base->eof()) {
 		_scumm->_videoFinished = true;
 		return;
