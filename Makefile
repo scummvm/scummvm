@@ -1,6 +1,9 @@
 # $Id$
 #
 # $Log$
+# Revision 1.10  2001/11/07 10:28:33  cmatsuoka
+# Using `sdl-config --libs` as LIBS, will override for cross-build.
+#
 # Revision 1.9  2001/11/06 22:59:59  cmatsuoka
 # Re-added changes to allow cygwin and beos cross-compilation.
 #
@@ -11,7 +14,7 @@ DEFINES	= -DUNIX
 LDFLAGS := 
 INCLUDES:= `sdl-config --cflags`
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= -lSDL
+LIBS	= `sdl-config --libs`
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm.h scummsys.h stdafx.h
