@@ -389,7 +389,7 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 	return NULL;
 }
 
-#if _WIN32_WCE < 300
+#if _WIN32_WCE < 300 || defined(_TEST_HPC_STDIO)
 
 void *calloc(size_t n, size_t s) {
 	void *result = malloc(n * s);
@@ -399,8 +399,134 @@ void *calloc(size_t n, size_t s) {
 	return result;
 }
 
+#ifndef _TEST_HPC_STDIO
+
 int isdigit(int c) {
 	return (c >='0' && c <= '9');
+}
+
+int isprint(int c) {
+	return (c >= ' ' && c <= '~');
+}
+
+int isspace(int c) {
+	return (c == ' ');
+}
+
+#endif
+
+int printf(const char *format, ...) {
+	// useless anyway :)
+	return 0;
+}
+
+FILE *fopen(const char *path, const char *mode) {
+	TCHAR tempo[MAX_PATH];
+	HANDLE result;
+	bool writeAccess = (mode[0] == 'W' || mode[0] == 'w');
+
+	MultiByteToWideChar(CP_ACP, 0, path, strlen(path) + 1, tempo, sizeof(tempo));
+
+	result = CreateFile(tempo, ( writeAccess ? GENERIC_WRITE : GENERIC_READ), 0, NULL, (writeAccess ? CREATE_ALWAYS : OPEN_EXISTING), FILE_ATTRIBUTE_NORMAL, NULL);
+	if (result == INVALID_HANDLE_VALUE)
+		return NULL;
+	else
+		return (FILE*)result;
+}
+
+int fclose(FILE *stream) {
+	CloseHandle((HANDLE)stream);
+	return 1;
+}
+
+int fseek(FILE *stream, long offset, int whence) {
+	SetFilePointer((HANDLE)stream, offset, NULL, (whence == SEEK_CUR ? FILE_CURRENT : whence == SEEK_END ? FILE_END : FILE_BEGIN));
+	return 0;
+}
+
+long ftell(FILE *stream) {
+	return (SetFilePointer((HANDLE)stream, 0, NULL, FILE_CURRENT));
+}
+
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
+	DWORD sizeWritten;
+
+	WriteFile((HANDLE)stream, ptr, size * nmemb, &sizeWritten, NULL);
+
+	if (size != 0)
+		return sizeWritten / size;
+	else
+		return 0;
+}
+
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+	DWORD sizeRead;
+
+	ReadFile((HANDLE)stream, ptr, size * nmemb, &sizeRead, NULL);
+
+	if (size != 0)
+		return sizeRead / size;
+	else
+		return 0;
+}
+
+char *fgets(char *s, int size, FILE *stream) {
+	int i = 0;
+	char tempo[1];
+
+	memset(s, 0, size);
+	while (fread(tempo, 1, 1, stream)) {
+		//if (tempo[0] == '\r')
+		//	break;
+		if (tempo[0] == '\r')
+			continue;
+		s[i++] = tempo[0];
+		if (tempo[0] == '\n')
+			break;
+		if (i == size)
+			break;
+	}
+	if (!i)
+		return NULL;
+	else
+		return s;
+}
+
+int feof(FILE *stream) {
+	DWORD fileSize;
+	DWORD filePos;
+	fileSize = GetFileSize((HANDLE)stream, NULL);
+	filePos = SetFilePointer((HANDLE)stream, 0, 0, FILE_CURRENT);
+	return (filePos == 0xFFFFFFFF || filePos > (fileSize - 1));
+}
+
+int fprintf(FILE *stream, const char *format, ...) {
+	char buf[1024];
+	va_list va;
+
+	va_start(va, format);
+	vsprintf(buf, format, va);
+	va_end(va);
+
+	if (buf[strlen(buf) - 1] == '\n') {
+		int i = strlen(buf) - 1;
+		buf[i] = '\r';
+		buf[i + 1] = '\n';
+		buf[i + 2] = 0;
+	}
+
+	return fwrite(buf, 1, strlen(buf), stream);
+}
+
+FILE* _getstdfilex(int) {
+	return NULL;
+}
+
+void clearerr(FILE *stream) {
+}
+
+int fflush(FILE *stream) {
+	return 0;
 }
 
 void assert (int expression) {
