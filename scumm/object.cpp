@@ -1268,7 +1268,41 @@ void Scumm::removeBlastObjects()
 
 void Scumm::removeBlastObject(BlastObject *eo)
 {
-	restoreBG(eo->posX, eo->posY, eo->posX + eo->width, eo->posY + eo->height);
+	VirtScreen *vs = &virtscr[0];
+
+	int top, bottom, left, right;
+	int left_strip, right_strip;
+	int i;
+
+	top = eo->posY;
+	bottom = eo->posY + eo->height;
+	left = eo->posX;
+	right = eo->posX + eo->width;
+
+	if (bottom < 0 || right < 0 || top > vs->height || left > vs->width)
+		return;
+
+	if (top < 0)
+		top = 0;
+	if (bottom > vs->height)
+		bottom = vs->height;
+	if (left < 0)
+		left = 0;
+	if (right > vs->width)
+		right = vs->width;
+
+	left_strip = left >> 3;
+	right_strip = (right >> 3) + 1;
+
+	if (left_strip < 0)
+		left_strip = 0;
+	if (right_strip >= 200)
+		right_strip = 200;
+
+	for (i = left_strip; i <= right_strip; i++)
+		gdi.resetBackground(top, bottom, i);
+
+	updateDirtyRect(0, left, right, top, bottom, 0x40000000);
 }
 
 int Scumm::findFlObjectSlot()

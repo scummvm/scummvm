@@ -1838,8 +1838,8 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		lp = (left >> 3) + _screenStartStrip;
 		if (lp < 0)
 			lp = 0;
-		if (rp >= _realHeight)
-			rp = _realHeight;
+		if (rp >= 200)
+			rp = 200;
 		if (lp <= rp) {
 			num = rp - lp + 1;
 			sp = &gfxUsageBits[lp];
@@ -3194,6 +3194,7 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 	int src_x, src_y, dst_x, dst_y;
 	uint scaled_width, scaled_height;
 	int h = bd->srcheight;
+	byte *mask = NULL;
 	uint i;
 
 	if (h == 0 || bd->srcwidth == 0)
@@ -3217,6 +3218,11 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 		}
 	}
 
+	// We take charset masking into consideration, because otherwise the
+	// inventory window in The Dig may overwrite text.
+
+	mask = getResourceAddress(rtBuffer, 9) + _screenStartStrip;
+	
 	// Select which rows and columns from the original to show in the
 	// scaled version of the image. This is a pretty stupid way of scaling
 	// images, but it will have to do for now.
@@ -3267,8 +3273,11 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 				color = *src++;
 				for (i = 0; i < num; i++) {
 					if (bd->scale_x == 255 || scale_cols[src_x]) {
-						if (dst_x >= 0 && dst_x < bd->outwidth)
-							*d = blend(_currentPalette, color, *d);
+						if (dst_x >= 0 && dst_x < bd->outwidth) {
+							if (!(*(mask + dst_y * 40 + (dst_x >> 3)) & revBitMask[dst_x & 7]))
+							
+								*d = blend(_currentPalette, color, *d);
+						}
 						d++;
 						dst_x++;
 					}
@@ -3278,7 +3287,8 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 				for (i = 0; i < num; i++) {
 					if (bd->scale_x == 255 || scale_cols[src_x]) {
 						if (dst_x >= 0 && dst_x < bd->outwidth)
-							*d = blend(_currentPalette, src[i], *d);
+							if (!(*(mask + dst_y * 40 + (dst_x >> 3)) & revBitMask[dst_x & 7]))
+								*d = blend(_currentPalette, src[i], *d);
 						d++;
 						dst_x++;
 					}
