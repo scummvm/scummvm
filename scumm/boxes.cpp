@@ -1028,7 +1028,7 @@ void ScummEngine::createBoxMatrix() {
 
 /** Check if two boxes are neighbours. */
 bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
-	int tmp_x, tmp_y;
+	Common::Point tmp;
 	BoxCoords box;
 	BoxCoords box2;
 
@@ -1105,29 +1105,19 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 			}
 
 			// "Rotate" the box coordinates
-			tmp_x = box2.ul.x;
-			tmp_y = box2.ul.y;
-			box2.ul.x = box2.ur.x;
-			box2.ul.y = box2.ur.y;
-			box2.ur.x = box2.lr.x;
-			box2.ur.y = box2.lr.y;
-			box2.lr.x = box2.ll.x;
-			box2.lr.y = box2.ll.y;
-			box2.ll.x = tmp_x;
-			box2.ll.y = tmp_y;
+			tmp = box2.ul;
+			box2.ul = box2.ur;
+			box2.ur = box2.lr;
+			box2.lr = box2.ll;
+			box2.ll = tmp;
 		}
 
 		// "Rotate" the box coordinates
-		tmp_x = box.ul.x;
-		tmp_y = box.ul.y;
-		box.ul.x = box.ur.x;
-		box.ul.y = box.ur.y;
-		box.ur.x = box.lr.x;
-		box.ur.y = box.lr.y;
-		box.lr.x = box.ll.x;
-		box.lr.y = box.ll.y;
-		box.ll.x = tmp_x;
-		box.ll.y = tmp_y;
+		tmp = box.ul;
+		box.ul = box.ur;
+		box.ur = box.lr;
+		box.lr = box.ll;
+		box.ll = tmp;
 	}
 
 	return false;
@@ -1158,15 +1148,12 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
 		}
 	}
 
-	pt = closestPtOnLine(gateA[1].x, gateA[1].y, gateB[1].x, gateB[1].y, _pos.x, _pos.y);
-	p3.x = pt.x;
-	p3.y = pt.y;
+	p3 = pt = closestPtOnLine(gateA[1].x, gateA[1].y, gateB[1].x, gateB[1].y, _pos.x, _pos.y);
 
 	if (compareSlope(_pos.x, _pos.y, p3.x, p3.y, gateA[0].x, gateA[0].y) ==
 			compareSlope(_pos.x, _pos.y, p3.x, p3.y, gateB[0].x, gateB[0].y)) {
 		closestPtOnLine(gateA[0].x, gateA[0].y, gateB[0].x, gateB[0].y, _pos.x, _pos.y);
-		p2.x = pt.x;				/* if point 2 between gates, ignore! */
-		p2.y = pt.y;
+		p2 = pt;	// if point 2 between gates, ignore!
 	}
 }
 
