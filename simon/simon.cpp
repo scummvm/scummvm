@@ -203,8 +203,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {
 	OSystem::Property prop;
 
-	MidiDriver *driver = detector->createMidi();
-	
 	_vc_ptr = 0;
 	_game_offsets_ptr = 0;
 	
@@ -476,8 +474,11 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	set_volume(detector->_sfx_volume);
 
 	// Setup midi driver
+	MidiDriver *driver = detector->createMidi();
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
+	else if (detector->_native_mt32)
+		driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	midi.mapMT32toGM (!(_game & GF_SIMON2) && !detector->_native_mt32);
 	midi.set_driver(driver);
