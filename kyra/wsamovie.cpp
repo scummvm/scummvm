@@ -45,8 +45,14 @@ WSAMovieV1::WSAMovieV1(uint8* data, uint32 size, uint8 gameid) {
 	// I like these Streams .... =)
 	Common::MemoryReadStream datastream(data, size);
 		
-	datastream.read(&_wsaHeader, sizeof(_wsaHeader));
-
+	_wsaHeader._numFrames = datastream.readUint16LE();
+	_wsaHeader._width = datastream.readUint16LE();
+	_wsaHeader._height = datastream.readUint16LE();
+	_wsaHeader._xPos = datastream.readByte();
+	_wsaHeader._yPos = datastream.readByte();
+	_wsaHeader._delta = datastream.readUint16LE();
+	_wsaHeader._type = datastream.readUint16LE();
+	
 #ifdef DUMP_FILES
 	// TODO: make Linux/BSD conform
 	FILE* wsaheader = fopen("dumps/wsaheader.txt", "w+");

@@ -41,8 +41,18 @@ Font::Font(uint8* buffer, uint32 size) {
 	_buffer = buffer;
 	
 	Common::MemoryReadStream bufferstream(buffer, size);
-	
-	bufferstream.read(&_fontHeader, sizeof(_fontHeader));
+
+	_fontHeader._size = bufferstream.readUint16LE();
+	_fontHeader._magic1 = bufferstream.readUint16LE();
+	_fontHeader._magic2 = bufferstream.readUint16LE();
+	_fontHeader._magic3 = bufferstream.readUint16LE();
+	_fontHeader._charWidthOffset = bufferstream.readUint16LE();
+	_fontHeader._charBitsOffset = bufferstream.readUint16LE();
+	_fontHeader._charHeightOffset = bufferstream.readUint16LE();
+	_fontHeader._version = bufferstream.readUint16LE();
+	_fontHeader._countChars = bufferstream.readUint16LE();
+	_fontHeader._width = bufferstream.readByte();
+	_fontHeader._height = bufferstream.readByte();	
 	
 	// tests for the magic values
 	if(_fontHeader._magic1 != FontHeader_Magic1 || _fontHeader._magic2 != FontHeader_Magic2 ||
@@ -236,14 +246,14 @@ void Font::preRenderAllChars(uint16 offsetTableOffset) {
 		
 		PreRenderedChar newChar;
 		
-		newChar.c = new uint8[(_charHeight[currentChar] >> 8) * _charWidth[currentChar]];
-		assert(newChar.c);
-		memset(newChar.c, 0, sizeof(uint8) * (_charHeight[currentChar] >> 8) * _charWidth[currentChar]);
-		newChar.height = (_charHeight[currentChar] >> 8);
+		newChar.height = READ_LE_UINT16(&_charHeight[currentChar]) >> 8;
 		newChar.width = _charWidth[currentChar];
-		newChar.heightadd = _charHeight[currentChar] & 0xFF;
+		newChar.heightadd = READ_LE_UINT16(&_charHeight[currentChar]) & 0xFF;
+		newChar.c = new uint8[newChar.height * newChar.width];
+		assert(newChar.c);
+		memset(newChar.c, 0, sizeof(uint8) * newChar.height * newChar.width);
 		
-		uint8* src = _buffer + _offsetTable[currentChar];
+		uint8* src = _buffer + READ_LE_UINT16(&_offsetTable[currentChar]);
 		uint8* dst = &newChar.c[0];
 		uint8 index = 0;
 		
