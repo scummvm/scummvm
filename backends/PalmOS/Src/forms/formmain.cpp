@@ -200,13 +200,6 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 			handled = true;
 			break;
 		}
-		case winDisplayChangedEvent:
-			if (gVars) {
-				if (gVars->skinSet)
-					SknApplySkin();
-			}
-			break;
-
 		case menuEvent:
 			handled = MainFormDoCommand(eventP->data.menu.itemID);
 			break;
