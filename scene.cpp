@@ -23,7 +23,6 @@
 #include "bitmap.h"
 #include "colormap.h"
 #include "vector3d.h"
-#include "screen.h"
 #include "driver_gl.h"
 
 #include "imuse/imuse.h"
@@ -167,14 +166,6 @@ void Scene::Setup::setupCamera() const {
 
 void Scene::setSetup(int num) {
 	_currSetup = _setups + num;
-
-	if (!SCREENBLOCKS_GLOBAL)
-		return;
-
-	if (_currSetup->_bkgndZBm)
-		screenBlocksInit(_currSetup->_bkgndZBm->getZbufferData());
-	else
-		screenBlocksInitEmpty();
 }
 
 void Scene::drawBitmaps(ObjectState::Position stage) {

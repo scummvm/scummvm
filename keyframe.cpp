@@ -158,8 +158,7 @@ KeyframeAnim::KeyframeNode::~KeyframeNode() {
 	delete[] _entries;
 }
 
-void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node,
-	float frame, int priority) const {
+void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int priority) const {
 	if (_numEntries == 0)
 		return;
 	if (priority < node._priority)

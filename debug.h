@@ -21,7 +21,7 @@
 #define DEBUG_H
 
 // Hacky toggles for experimental / debug code (defined/set in main.cpp)
-extern bool ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL, SHOWFPS_GLOBAL;
+extern bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL;
 
 void warning(const char *fmt, ...);
 void error(const char *fmt, ...);

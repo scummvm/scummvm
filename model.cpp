@@ -20,7 +20,6 @@
 #include "debug.h"
 #include "model.h"
 #include "resource.h"
-#include "screen.h"
 #include "material.h"
 #include "textsplit.h"
 #include "driver_gl.h"
@@ -126,7 +125,6 @@ Model::Mesh::~Mesh() {
 }
 
 void Model::Mesh::update() {
-	g_driver->updateMesh(this);
 }
 
 void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
@@ -377,8 +375,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		if (ts.eof())
 			error("Expected face data, got EOF\n");
 
-		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n",
-				&num, &material, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
+		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &material, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
 			error("Expected face data, got `%s'\n", ts.currentLine());
 
 		_faces[num]._material = materials[material];
@@ -393,8 +390,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		for (int j = 0; j < verts; j++) {
 			int readlen2;
 
-			if (std::sscanf(ts.currentLine() + readlen, " %d, %d%n",
-					_faces[num]._vertices + j, _faces[num]._texVertices + j, &readlen2) < 2)
+			if (std::sscanf(ts.currentLine() + readlen, " %d, %d%n", _faces[num]._vertices + j, _faces[num]._texVertices + j, &readlen2) < 2)
 				error("Could not read vertex indices in line `%s'\n",
 
 			ts.currentLine());
@@ -439,6 +435,8 @@ void Model::HierNode::setMatrix(Matrix4 matrix) {
 }
 
 void Model::HierNode::update() {
+	g_driver->updateHierachyNode1(this);
+
 	_localMatrix._pos.set(_animPos.x() / _totalWeight, _animPos.y() / _totalWeight, _animPos.z() / _totalWeight);
 	_localMatrix._rot.buildFromPitchYawRoll(_animPitch / _totalWeight, _animYaw / _totalWeight, _animRoll / _totalWeight);
 
@@ -448,14 +446,15 @@ void Model::HierNode::update() {
 
 	_pivotMatrix.translate(_pivot.x(), _pivot.y(), _pivot.z() );
 
-	g_driver->updateHierachyNode(this);
+	g_driver->updateHierachyNode2(this);
 }
 
 void Model::Mesh::draw() const {
 	for (int i = 0; i < _numFaces; i++)
 		_faces[i].draw(_vertices, _vertNormals, _textureVerts);
 
-	g_driver->drawModel(this);
+//	g_driver->drawModelNodeDebug(this);
+//	g_driver->drawModelPolygonPointsDebug(this);
 }
 
 void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts) const {

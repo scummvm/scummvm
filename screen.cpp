@@ -15,11 +15,14 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+#include "stdafx.h"
+#include "bits.h"
 #include "screen.h"
 
 #include <string.h>
 
 unsigned short int dataTemp[640 * 480];
+unsigned short int dataTemp2[640 * 480];
 
 screenBlockDataStruct screenBlockData[NUM_SCREEN_BLOCK_WIDTH][NUM_SCREEN_BLOCK_HEIGHT];
 
@@ -56,11 +59,22 @@ float getZbufferBlockDepth(char *zbuffer, int x, int y) {
 
 void screenBlocksInit(char* zbuffer) {
 	memcpy(dataTemp, zbuffer, 640 * 480 * 2);
+	memcpy(dataTemp2, zbuffer, 640 * 480 * 2);
+	uint16 *zbufPtr = reinterpret_cast<uint16 *>(dataTemp);
+	for (int y = 0; y < 480 / 2; y++) {
+		uint16 *ptr1 = zbufPtr + y * 640;
+		uint16 *ptr2 = zbufPtr + (479 - y) * 640;
+		for (int x = 0; x < 640; x++, ptr1++, ptr2++) {
+			uint16 tmp = *ptr1;
+			*ptr1 = *ptr2;
+			*ptr2 = tmp;
+		}
+	}
 
 	for (int i = 0; i < NUM_SCREEN_BLOCK_WIDTH; i++) {
 		for(int j = 0; j < NUM_SCREEN_BLOCK_HEIGHT; j++) {
 			screenBlockData[i][j].isDirty = false;
-			screenBlockData[i][j].depth = getZbufferBlockDepth(zbuffer, i, j);
+			screenBlockData[i][j].depth = getZbufferBlockDepth((char *)dataTemp, i, j);
 		}
 	}
 }
@@ -181,10 +195,10 @@ void screenBlocksBlitDirtyBlocks() {
 					i++;
 					width++;
 				}
-				for (int y = 0; y < 16; y++) {
-					glRasterPos2i(start * 16, j * 16 + y + 1);
-					glDrawPixels(16 * width, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp + ((j * 16 + y) * 640) + (start * 16));
-				}
+				glRasterPos2i(start * 16, 479 - (j * 16));
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+				glDrawPixels(16 * width, 16, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp2 + (j * 16 * 640) + (start * 16));
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 			}
 		}
 	}

@@ -108,8 +108,9 @@ private:
 	Sector *_sectors;
 	Light *_lights;
 	Setup *_setups;
+public:
 	Setup *_currSetup;
-
+private:
 	typedef std::list<ObjectState*> StateList;
 	StateList _states;
 };

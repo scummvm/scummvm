@@ -16,7 +16,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "debug.h"
-#include "screen.h"
 #include "colormap.h"
 #include "material.h"
 #include "driver_gl.h"
@@ -68,10 +67,7 @@ void Driver::positionCamera(Vector3d pos, Vector3d interest) {
 	if (pos.x() == interest.x() && pos.y() == interest.y())
 		up_vec = Vector3d(0, 1, 0);
 
-	gluLookAt(pos.x(), pos.y(), pos.z(), 
-		interest.x(), interest.y(), interest.z(),
-		up_vec.x(), up_vec.y(), up_vec.z());
-
+	gluLookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
 
 void Driver::clearScreen() {
@@ -103,7 +99,39 @@ void Driver::set3DMode() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Driver::drawModel(const Model::Mesh *model) {
+void Driver::drawModelNodeDebug(const Model::Mesh *model) {
+	// debug
+	// this draw the model node in red
+
+	GLdouble modelView[500];
+	GLdouble projection[500];
+	GLint viewPort[500];
+
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewPort);
+
+	glPushMatrix();
+	glLoadIdentity();
+
+	glDisable(GL_DEPTH_TEST);
+	glPointSize(3.f);
+	glColor4f(1.f, 0.f, 0.f, 1.f);
+	glDisable(GL_TEXTURE_2D);
+
+	glBegin(GL_POINTS);
+	glVertex3f(model->_matrix._pos.x(), model->_matrix._pos.y(), model->_matrix._pos.z());
+	glEnd();
+
+	glEnable(GL_DEPTH_TEST);
+	glPopMatrix();
+	glEnable(GL_TEXTURE_2D);
+}
+
+void Driver::drawModelPolygonPointsDebug(const Model::Mesh *model) {
+	// debug
+	// this draw the poly points
+
 	GLdouble modelView[500];
 	GLdouble projection[500];
 	GLint viewPort[500];
@@ -113,39 +141,13 @@ void Driver::drawModel(const Model::Mesh *model) {
 	glGetDoublev(GL_PROJECTION_MATRIX, projection);
 	glGetIntegerv(GL_VIEWPORT, viewPort);
 
-	// Yaz: debug
-	// this draw the model node in red
-/*
 	glPushMatrix();
 	glLoadIdentity();
-
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
-	glGetIntegerv(GL_VIEWPORT, viewPort);
 
 	glDisable(GL_DEPTH_TEST);
 	glPointSize(3.f);
-	glColor4f(1.f, 0.f, 0.f, 1.f);
-	glDisable(GL_TEXTURE_2D );
-	glBegin(GL_POINTS);
-	glVertex3f(model->_matrix._pos.x(), model->_matrix._pos.y(), model->_matrix._pos.z());
-	glEnd();
-	glEnable(GL_DEPTH_TEST);
-	glPopMatrix();
-	glEnable(GL_TEXTURE_2D);
-*/
-	// Yaz: debug
-	// this draw the poly points
-/*
-	glPushMatrix();
-	glLoadIdentity();
-	glPointSize(3.f);
 	glColor4f(0.f, 1.f, 0.f, 1.f);
 	glDisable(GL_TEXTURE_2D);
-
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
-	glGetIntegerv(GL_VIEWPORT, viewPort);
 
 	glBegin(GL_POINTS);
 
@@ -159,7 +161,7 @@ void Driver::drawModel(const Model::Mesh *model) {
 
 			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
-			tempMatrix._rot.transform(&v);
+//			tempMatrix._rot.transform(&v);
 			v += tempMatrix._pos;
 
 			glVertex3f(v.x(), v.y(), v.z());
@@ -169,170 +171,7 @@ void Driver::drawModel(const Model::Mesh *model) {
 	glEnd();
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
-	glEnable(GL_TEXTURE_2D );
-*/
-
-	// Ender: HACK HACK HACK
-	// Mannys head isn't computed correctly, so bail out to prevent memory corruption.
-	// at least until it IS computed, or the DirtyScreen code has bounds checking :)
-	//if (strstr(_name, "m_head_1"))
-	//	return;
-
-	// Yaz: debug
-	// this compute the dirty rect for the mesh
-	glPushMatrix();
-	glLoadIdentity();
-
-	GLdouble top = 1000;
-	GLdouble right = -1000;
-	GLdouble left = 1000;
-	GLdouble bottom = -1000;
-
-	for (i = 0; i < model->_numFaces; i++) {
-		Vector3d v;
-		Matrix4 tempMatrix = model->_matrix;
-		float* pVertices;
-		float bestDepth = 0;
-
-		for (j = 0; j < model->_faces[i]._numVertices; j++) {
-			GLdouble modelView[500];
-			GLdouble projection[500];
-			GLint viewPort[500];
-
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
-			glGetDoublev(GL_PROJECTION_MATRIX, projection);
-			glGetIntegerv(GL_VIEWPORT, viewPort);
-
-			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
-
-			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
-
-			tempMatrix._rot.transform(&v);
-			v += tempMatrix._pos;
-
-			GLdouble winX;
-			GLdouble winY;
-			GLdouble winZ;
-
-			gluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
-
-			if (winX > right)
-				right = winX;
-			if (winX < left)
-				left = winX;
-			if (winY < top)
-				top = winY;
-			if (winY > bottom)
-				bottom = winY;
-
-			if (winZ > bestDepth )
-				bestDepth = winZ;
-		}
-
-		if (SCREENBLOCKS_GLOBAL)
-			screenBlocksAddRectangle((int)top, (int)right, (int)left, (int)bottom, (int)bestDepth);
-	}
-
-/*
-	glDisable(GL_DEPTH_TEST);
-	glPointSize(3.f);
-	glColor4f(1.f, 1.f, 0.f, 1.f);
-	glDisable(GL_TEXTURE_2D);
-
-	glBegin(GL_LINES);
-
-	GLdouble objx;
-	GLdouble objy;
-	GLdouble objz;
-
-	// top
-	gluUnProject(left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
-	glVertex3f(objx, objy, objz);
-	gluUnProject(right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
-	glVertex3f(objx, objy, objz);
-
-	// bottom
-	gluUnProject(left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
-	glVertex3f(objx, objy, objz);
-	gluUnProject(right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
-	glVertex3f(objx, objy, objz);
-
-	// left
-	gluUnProject(left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
-	glVertex3f(objx, objy, objz);
-	gluUnProject(left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
-	glVertex3f(objx, objy, objz);
-
-	// right
-	gluUnProject(right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
-	glVertex3f(objx, objy, objz);
-	gluUnProject(right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
-	glVertex3f(objx, objy, objz);
-
-	glEnd(); 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D); 
-*/
-
-	glPopMatrix();
-}
-
-void Driver::updateMesh(const Model::Mesh *mesh) {
-	GLdouble modelView[500];
-	GLdouble projection[500];
-	GLint viewPort[500];
-
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
-	glGetIntegerv(GL_VIEWPORT, viewPort);
-
-	GLdouble top = 1000;
-	GLdouble right = -1000;
-	GLdouble left = 1000;
-	GLdouble bottom = -1000;
-
-	for (int i = 0; i < mesh->_numFaces; i++) {
-		Vector3d v;
-		Matrix4 tempMatrix = mesh->_matrix;
-		float *pVertices;
-		int j;
-		float bestDepth = 0;
-
-		for (j = 0; j < mesh->_faces[i]._numVertices; j++) {
-			pVertices = mesh->_vertices + 3 * mesh->_faces[i]._vertices[j];
-
-			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
-
-			tempMatrix._rot.transform(&v);
-			v += tempMatrix._pos;
-
-			GLdouble winX;
-			GLdouble winY;
-			GLdouble winZ;
-
-			gluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
-
-			if(winX > right)
-				right = winX;
-			if(winX < left)
-				left = winX;
-			if(winY < top)
-				top = winY;
-			if(winY > bottom)
-				bottom = winY;
-
-			if(winZ > bestDepth)
-				bestDepth = winZ;
-		}
-
-//		if (SCREENBLOCKS_GLOBAL)
-//			screenBlocksAddRectangle(top, right, left, bottom, bestDepth);
-	}
-
-	glDisable(GL_DEPTH_TEST);
-	glPointSize(3.f);
-	glColor4f(1.f, 1.f, 0.f, 1.f);
-	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 }
 
 void Driver::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
@@ -375,7 +214,7 @@ void Driver::drawHierachyNode(const Model::HierNode *node) {
 		node->_sibling->draw();
 }
 
-void Driver::updateHierachyNode(const Model::HierNode *node) {
+void Driver::updateHierachyNode1(const Model::HierNode *node) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
@@ -383,7 +222,9 @@ void Driver::updateHierachyNode(const Model::HierNode *node) {
 	glRotatef(node->_animYaw / node->_totalWeight, 0, 0, 1);
 	glRotatef(node->_animPitch / node->_totalWeight, 1, 0, 0);
 	glRotatef(node->_animRoll / node->_totalWeight, 0, 1, 0);
+}
 
+void Driver::updateHierachyNode2(const Model::HierNode *node) {
 	if (node->_mesh != NULL) {
 		glPushMatrix();
 		glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
@@ -531,11 +372,9 @@ void Driver::drawBitmap(const Bitmap *bitmap) {
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
 	} else if (bitmap->_format == 5) {	// ZBuffer image
-		// Only draw the manual zbuffer when we are not using screenblocks, and when enabled
-		if ((!ZBUFFER_GLOBAL) || SCREENBLOCKS_GLOBAL)
-			return;
-
-		g_driver->drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
+		// Only draw the manual zbuffer when enabled
+		if (ZBUFFER_GLOBAL)
+			g_driver->drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
 	}
 }
 
@@ -744,6 +583,6 @@ void Driver::drawEmergString(int x, int y, const char *text, const Color &fgColo
 	//glCallLists(strlen(strrchr(text, '/')) - 1, GL_UNSIGNED_BYTE, strrchr(text, '/') + 1);
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *) text);
 
-	glMatrixMode( GL_PROJECTION );
+	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 }

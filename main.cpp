@@ -35,7 +35,7 @@
 #include <SDL_video.h>
 
 // Hacky global toggles for experimental/debug code
-bool ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL, SHOWFPS_GLOBAL;
+bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL;
 
 #ifdef __MINGW32__
 int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
@@ -98,17 +98,12 @@ int main(int argc, char *argv[]) {
 
 	// Parse command line
 	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer"));
-	SCREENBLOCKS_GLOBAL = parseBoolStr(g_registry->get("screenblocks"));
 	SHOWFPS_GLOBAL = parseBoolStr(g_registry->get("fps"));
 	for (i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
 			ZBUFFER_GLOBAL = true;
 		else if (strcmp(argv[i], "-nozbuffer") == 0)
 			ZBUFFER_GLOBAL = false;
-		else if (strcmp(argv[i], "-screenblocks") == 0)
-			SCREENBLOCKS_GLOBAL = true;
-		else if (strcmp(argv[i], "-noscreenblocks") == 0)
-			SCREENBLOCKS_GLOBAL = false;
 		else if (strcmp(argv[i], "-fps") == 0)
 			SHOWFPS_GLOBAL = true;
 		else if (strcmp(argv[i], "-nofps") == 0)
@@ -118,7 +113,6 @@ int main(int argc, char *argv[]) {
 			printf("--------------------\n");
 			printf("Recognised options:\n");
 			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
-			printf("\t-[no]screenblocks\t\tEnable/disable Screenblocks (Experimental zbuffer speedup on older cards - BROKEN!!\n");
 			printf("\t-[no]fps\t\tEnable/disable fps display in upper right corner\n");
 			exit(-1);
 		}

@@ -38,9 +38,7 @@ the lines:
        DataDir=.
        good_times=TRUE
 
-Residual understands two command-line options: '-zbuffer' which enables masking
-and '-screenblocks' which is a (currently broken) attempt to speed up masking
-on older cards.
+Residual understands two command-line options: '-zbuffer' which enables masking.
 
 It runs really slow when using -zbuffer!
 ----------------------------------------

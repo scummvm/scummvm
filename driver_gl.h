@@ -44,11 +44,11 @@ public:
 
 	void drawHierachyNode(const Model::HierNode *node);
 	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);
-	void drawModel(const Model::Mesh *model);
+	void drawModelNodeDebug(const Model::Mesh *model);
+	void drawModelPolygonPointsDebug(const Model::Mesh *model);
 
-	void updateMesh(const Model::Mesh *mesh);
-	void updateHierachyNode(const Model::HierNode *node);
-
+	void updateHierachyNode1(const Model::HierNode *node);
+	void updateHierachyNode2(const Model::HierNode *node);
 
 	void createMaterial(Material *material, const char *data, const CMap *cmap);
 	void selectMaterial(const Material *material);

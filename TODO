@@ -14,7 +14,6 @@ Unassigned (help wanted):
  * Finish Save/Load support for rest of Engine except Lua
  * Implement 2D primitives 
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
- * Fix the screenblocks zBuffer code
  * Abstract rendering code and implement software renderer (partianly done)
  * Fix drawEmergString() to work with Mesa
  * Make SMUSH work on Linux/PPC (whats wrong with it, exactly? - ender :)

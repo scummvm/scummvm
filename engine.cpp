@@ -22,7 +22,6 @@
 #include "colormap.h"
 #include "actor.h"
 #include "textobject.h"
-#include "screen.h"
 #include "smush.h"
 #include "driver_gl.h"
 
@@ -125,22 +124,20 @@ void Engine::mainLoop() {
 				}
 			}
 		} else if (_mode == ENGINE_MODE_NORMAL) {
-			if (_currScene != NULL) {
-				// Update actor costumes
-				for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
-					Actor *a = *i;
-					if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
-						a->update();
-				}
-			}
-
-			if (SCREENBLOCKS_GLOBAL)
-				screenBlocksReset();
-
 			g_driver->clearScreen();
 
-			if (SCREENBLOCKS_GLOBAL)
-				screenBlocksBlitDirtyBlocks();
+			g_driver->set3DMode();
+
+			if (_currScene != NULL) {
+				_currScene->setupCamera();
+			}
+
+			// Update actor costumes
+			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+				Actor *a = *i;
+				if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
+					a->update();
+			}
 
 			if (_currScene != NULL) {
 				_currScene->drawBackground();
@@ -165,27 +162,23 @@ void Engine::mainLoop() {
 			if (SHOWFPS_GLOBAL)
 				g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
 
-			g_driver->set3DMode();
-
 			if (_currScene != NULL) {
 				_currScene->setupCamera();
-
-				// Draw actors
-				for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
-					Actor *a = *i;
-					if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
-						a->draw();
-				}
-
-				if (SCREENBLOCKS_GLOBAL)
-					screenBlocksDrawDebug();
 			}
 
-			// Draw text
-			for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
-				(*i)->draw();
-			}
+			g_driver->set3DMode();
 
+			// Draw actors
+			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+				Actor *a = *i;
+				if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
+					a->draw();
+			}
+		}
+
+		// Draw text
+		for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
+			(*i)->draw();
 		}
 
 		g_imuse->flushTracks();
