@@ -46,6 +46,8 @@ void Scumm::scummInit() {
 
 	debug(9, "scummInit");
 
+	_resourceHeaderSize = 8;
+
 	loadCharset(1);
 	initScreens(0, 16, 320, 144);
 
@@ -80,9 +82,11 @@ void Scumm::scummInit() {
 		_verbs[i].key = 0;
 	}
 
+#if !defined(FULL_THROTTLE)
 	camera._leftTrigger = 10;
 	camera._rightTrigger = 30;
 	camera._mode = 0;
+#endif
 	camera._follows = 0;
 
 	virtscr[0].xstart = 0;
@@ -172,7 +176,6 @@ void Scumm::scummMain(int argc, char **argv) {
 	Actor *a;
 
 	charset._vm = this;
-	cost._vm = this;
 	gdi._vm = this;
 
 	_fileHandle = NULL;
@@ -247,7 +250,12 @@ int Scumm::scummLoop(int delta) {
 
 	processKbd();
 
-	_vars[VAR_CAMERA_POS_X] = camera._curPos;
+#if defined(FULL_THROTTLE)
+	_vars[VAR_CAMERA_POS_X] = camera._cur.x;
+	_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
+#else
+	_vars[VAR_CAMERA_POS_X] = camera._cur.x;
+#endif
 	_vars[VAR_HAVE_MSG] = _haveMsg;
 	_vars[VAR_VIRT_MOUSE_X] = _virtual_mouse_x;
 	_vars[VAR_VIRT_MOUSE_Y] = _virtual_mouse_y;
@@ -293,13 +301,19 @@ int Scumm::scummLoop(int delta) {
 		CHARSET_1();
 		drawDirtyScreenParts();
 		processSoundQues();
-		camera._lastPos = camera._curPos;
+		camera._last = camera._cur;
 	} else {
 		walkActors();
 		moveCamera();
 		fixObjectFlags();
 		CHARSET_1();
-		if (camera._curPos != camera._lastPos || _BgNeedsRedraw || _fullRedraw) {
+#if !defined(FULL_THROTTLE)
+		if (camera._cur.x != camera._last.x || _BgNeedsRedraw || _fullRedraw) {
+#else
+		if (camera._cur.x != camera._last.x || 
+			  camera._cur.y != camera._last.y || _BgNeedsRedraw || 
+				_fullRedraw) {
+#endif
 			redrawBGAreas();
 		}
 		processDrawQue();
@@ -335,7 +349,7 @@ int Scumm::scummLoop(int delta) {
 			playActorSounds();
 
 		processSoundQues();
-		camera._lastPos = camera._curPos;
+		camera._last = camera._cur;
 	}
 
 	if (!(++_expire_counter)) {
@@ -479,15 +493,18 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	_vars[VAR_NEW_ROOM] = room;
 	runExitScript();
 	killScriptsAndResources();
+	clearEnqueue();
 	stopCycle(0);
-	
+
 	for(i=1,at=getFirstActor(); ++at,i<NUM_ACTORS; i++) {
 		if (at->visible)
 			hideActor(at);
 	}
-
-	for (i=0; i<0x100; i++)
-		cost._transEffect[i] = i;
+	
+	if (!(_features & GF_AFTER_V7)) {
+		for (i=0; i<0x100; i++)
+			_shadowPalette[i] = i;
+	}
 
 	clearDrawObjectQueue();
 
@@ -518,22 +535,32 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	}
 
 	initRoomSubBlocks();
-
 	loadRoomObjects();
 
+#if !defined(FULL_THROTTLE)
 	camera._mode = CM_NORMAL;
-	camera._curPos = camera._destPos = 160;
+	camera._cur.x = camera._dest.x = 160;
+#endif
 
 	if (_features&GF_AFTER_V6) {
-		_vars[VAR_V6_SCREEN_WIDTH] = _scrWidthIn8Unit<<3;
+		_vars[VAR_V6_SCREEN_WIDTH] = _scrWidth;
 		_vars[VAR_V6_SCREEN_HEIGHT] = _scrHeight;
 	}
+
+#if defined(FULL_THROTTLE)
+	_vars[VAR_CAMERA_MIN_X] = 160;
+	_vars[VAR_CAMERA_MAX_X] = _scrWidth - 160;
+	_vars[VAR_CAMERA_MIN_Y] = 100;
+	_vars[VAR_CAMERA_MAX_Y] = _scrHeight - 100;
+	setCameraAt(160, 100);
+#else
+	_vars[VAR_CAMERA_MAX_X] = _scrWidth - 160;
+	_vars[VAR_CAMERA_MIN_X] = 160;
+#endif
 
 	if (_roomResource == 0)
 		return;
 
-	_vars[VAR_CAMERA_MAX_X] = (_scrWidthIn8Unit<<3) - 160;
-	_vars[VAR_CAMERA_MIN_X] = 160;
 
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
@@ -551,11 +578,19 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	_egoPositioned = false;
 	runEntryScript();
+
+#if !defined(FULL_THROTTLE)
 	if (a && !_egoPositioned) {
 		getObjectXYPos(objectNr);
 		putActor(a, _xPos, _yPos, _currentRoom);
 		a->moving = 0;
 	}
+#else
+	if (camera._follows) {
+		Actor *a = derefActorSafe(camera._follows, "startScene: follows");
+		setCameraAt(a->x, a->y);
+	}
+#endif
 
 	_doEffect = true;
 
@@ -566,6 +601,7 @@ void Scumm::initRoomSubBlocks() {
 	int i,offs;
 	byte *ptr;
 	byte *roomptr,*searchptr;
+	RoomHeader *rmhd;
 
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
@@ -580,55 +616,55 @@ void Scumm::initRoomSubBlocks() {
 
 	roomptr = getResourceAddress(rtRoom, _roomResource);
 	
-	ptr = findResource(MKID('RMHD'), roomptr);
-	_scrWidthIn8Unit = READ_LE_UINT16(&((RoomHeader*)ptr)->width) >> 3;
-	_scrHeight = READ_LE_UINT16(&((RoomHeader*)ptr)->height);
+	rmhd = (RoomHeader*)findResourceData(MKID('RMHD'), roomptr);
+	_scrWidth = READ_LE_UINT16(&rmhd->width);
+	_scrHeight = READ_LE_UINT16(&rmhd->height);
 
 	_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr))
 		- roomptr;
 	
-	ptr = findResource(MKID('EXCD'), roomptr);
+	ptr = findResourceData(MKID('EXCD'), roomptr);
 	if (ptr) {
 		_EXCD_offs = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
-		dumpResource("exit-", _roomResource, ptr);
+		dumpResource("exit-", _roomResource, ptr - 8);
 #endif
 	}
 
-	ptr = findResource(MKID('ENCD'), roomptr);
+	ptr = findResourceData(MKID('ENCD'), roomptr);
 	if (ptr) {
 		_ENCD_offs = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
-		dumpResource("entry-", _roomResource, ptr);
+		dumpResource("entry-", _roomResource, ptr - 8);
 #endif
 	}
 	
-	ptr = findResource(MKID('BOXD'), roomptr);
+	ptr = findResourceData(MKID('BOXD'), roomptr);
 	if (ptr) {
-		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
-		createResource(rtMatrix, 2, size);
+		int size = getResourceDataSize(ptr);
+			createResource(rtMatrix, 2, size);
 		roomptr = getResourceAddress(rtRoom, _roomResource);
-		ptr = findResource(MKID('BOXD'), roomptr);
+		ptr = findResourceData(MKID('BOXD'), roomptr);
 		memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 	}
 
-	ptr = findResource(MKID('BOXM'), roomptr);
+	ptr = findResourceData(MKID('BOXM'), roomptr);
 	if (ptr) {
-		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
+		int size = getResourceDataSize(ptr);
 		createResource(rtMatrix, 1, size);
 		roomptr = getResourceAddress(rtRoom, _roomResource);
-		ptr = findResource(MKID('BOXM'), roomptr);
+		ptr = findResourceData(MKID('BOXM'), roomptr);
 		memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
 	}
 
-	ptr = findResource(MKID('SCAL'), roomptr);
+	ptr = findResourceData(MKID('SCAL'), roomptr);
 	if (ptr) {
 		offs = ptr - roomptr;
 		for (i=1; i<_maxScaleTable; i++, offs+=8) {
-			int a = READ_LE_UINT16(roomptr + offs + 8);
-			int b = READ_LE_UINT16(roomptr + offs + 10);
-			int c = READ_LE_UINT16(roomptr + offs + 12);
-			int d = READ_LE_UINT16(roomptr + offs + 14);
+			int a = READ_LE_UINT16(roomptr + offs);
+			int b = READ_LE_UINT16(roomptr + offs + 2);
+			int c = READ_LE_UINT16(roomptr + offs + 4);
+			int d = READ_LE_UINT16(roomptr + offs + 6);
 			if (a || b || c || d) {
 				setScaleItem(i, b, a, d, c);
 				roomptr = getResourceAddress(rtRoom, _roomResource);
@@ -640,19 +676,21 @@ void Scumm::initRoomSubBlocks() {
 	searchptr = roomptr = getResourceAddress(rtRoom, _roomResource);
 	while( (ptr = findResource(MKID('LSCR'), searchptr)) != NULL ) {
 		int id;
+
+		ptr += _resourceHeaderSize; /* skip tag & size */
 #ifdef FULL_THROTTLE
-		id = READ_LE_UINT16(ptr + 8);
+		id = READ_LE_UINT16(ptr);
 		checkRange(2050, 2000, id, "Invalid local script %d");
-		_localScriptList[id - _numGlobalScripts] = ptr + 10 - roomptr;
+		_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomptr;
 #else
-		id = ptr[8];
-		_localScriptList[id - _numGlobalScripts] = ptr + 9 - roomptr;
+		id = ptr[0];
+		_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
 #endif
 #ifdef DUMP_SCRIPTS
 		do {
 			char buf[32];
 			sprintf(buf,"room-%d-",_roomResource);
-			dumpResource(buf, id, ptr);
+			dumpResource(buf, id, ptr - 8);
 		} while (0);
 #endif
 		searchptr = NULL;
@@ -663,7 +701,7 @@ void Scumm::initRoomSubBlocks() {
 	if (ptr)
 		_EPAL_offs = ptr - roomptr;
 	
-	ptr = findResource(MKID('CLUT'), roomptr);
+	ptr = findResourceData(MKID('CLUT'), roomptr);
 	if (ptr) {
 		_CLUT_offs = ptr - roomptr;
 		setPaletteFromRes();
@@ -677,11 +715,11 @@ void Scumm::initRoomSubBlocks() {
 		}
 	}
 	
-	initCycl(findResource(MKID('CYCL'), roomptr) + 8);
+	initCycl(findResourceData(MKID('CYCL'), roomptr));
 
-	ptr = findResource(MKID('TRNS'), roomptr);
+	ptr = findResourceData(MKID('TRNS'), roomptr);
 	if (ptr)
-		gdi._transparency = ptr[8];
+		gdi._transparency = ptr[0];
 	else
 		gdi._transparency = 255;
 
@@ -817,17 +855,24 @@ int Scumm::getKeyInput(int a) {
 	if (mouse.y<0) mouse.y=0;
 	if (mouse.y>199) mouse.y=199;
 
-	if (_leftBtnPressed&1 && _rightBtnPressed&1) {
+	if (_leftBtnPressed&msClicked && _rightBtnPressed&msClicked) {
 		_mouseButStat = 0;
 		_lastKeyHit = _vars[VAR_CUTSCENEEXIT_KEY];
-	} else if (_leftBtnPressed&1) {
+	} else if (_leftBtnPressed&msClicked) {
 		_mouseButStat = MBS_LEFT_CLICK;
-	} else if (_rightBtnPressed&1) {
+	} else if (_rightBtnPressed&msClicked) {
 		_mouseButStat = MBS_RIGHT_CLICK;
 	}
-	
-	_leftBtnPressed &= ~1;
-	_rightBtnPressed &= ~1;
+
+#if defined(FULL_THROTTLE)
+//	_vars[VAR_LEFTBTN_DOWN] = (_leftBtnPressed&msClicked) != 0;
+	_vars[VAR_LEFTBTN_HOLD] = (_leftBtnPressed&msDown) != 0;
+//	_vars[VAR_RIGHTBTN_DOWN] = (_rightBtnPressed&msClicked) != 0;
+	_vars[VAR_RIGHTBTN_HOLD] = (_rightBtnPressed&msDown) != 0;
+#endif
+
+	_leftBtnPressed &= ~msClicked;
+	_rightBtnPressed &= ~msClicked;
 
 	return _lastKeyHit;
 }
@@ -917,18 +962,42 @@ int Scumm::oldDirToNewDir(int dir) {
 	return new_dir_table[dir];
 }
 
-int Scumm::toSimpleDir(int dir) {
-	if (dir>=71 && dir<=109)
-		return 1;
-	if (dir>=109 && dir<=251)
-		return 2;
-	if (dir>=251 && dir<=289)
-		return 3;
-	return 0;
+
+const uint16 many_direction_tab[18] = {
+	71,	109,	251,	530,
+	0,
+	0,
+	0,
+	0,
+	22,72,107,
+	157,
+	202,
+	252,
+	287,
+	337
+};
+
+
+int Scumm::numSimpleDirDirections(int dirType) {
+	return dirType ? 8 : 4;
 }
 
-int Scumm::fromSimpleDir(int dir) {
-	return dir * 90;
+/* Convert an angle to a simple direction */
+int Scumm::toSimpleDir(int dirType, int dir) {
+	int num = dirType ? 8 : 4, i;
+	const uint16 *dirtab = &many_direction_tab[dirType*8];
+	for(i=1;i<num;i++,dirtab++) {
+		if (dir >= dirtab[0] && dir <= dirtab[1])
+			return i;
+	}
+	return 0;
+
+}
+
+/* Convert a simple direction to an angle */
+int Scumm::fromSimpleDir(int dirType, int dir) {
+	if (!dirType)dir+=dir;
+	return dir * 45;
 }
 
 

@@ -22,19 +22,12 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-#define NO_SOUND_HACK
-
 void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	byte *scriptPtr;
 	uint32 scriptOffs;
 	byte scriptType;
 	int slot;
 	ScriptSlot *s;
-
-#ifdef NO_SOUND_HACK
-	if (script==212 && _currentRoom==50)
-		return;
-#endif
 
 	if (script==0)
 		return;
@@ -526,7 +519,7 @@ void Scumm::runExitScript() {
 		vm.slot[slot].status = 2;
 		vm.slot[slot].number = 10001;
 		vm.slot[slot].where = WIO_ROOM;
-		vm.slot[slot].offs = _EXCD_offs + 8;
+		vm.slot[slot].offs = _EXCD_offs;
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
 		vm.slot[slot].freezeCount = 0;
@@ -544,7 +537,7 @@ void Scumm::runEntryScript() {
 		vm.slot[slot].status = 2;
 		vm.slot[slot].number = 10002;
 		vm.slot[slot].where = WIO_ROOM;
-		vm.slot[slot].offs = _ENCD_offs + 8;
+		vm.slot[slot].offs = _ENCD_offs;
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
 		vm.slot[slot].freezeCount = 0;
@@ -700,7 +693,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 	if (whereIsObject(obj)==WIO_NOT_FOUND)
 		return 0;
 
-	objptr = getObjectAddress(obj);
+	objptr = getOBCDFromObject(obj);
 	assert(objptr);
 
 	verbptr = findResource(MKID('VERB'), objptr);
@@ -709,7 +702,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 
 	verboffs = verbptr - objptr;
 
-	verbptr += 8;
+	verbptr += _resourceHeaderSize;
 	do {
 		if (!*verbptr)
 			return 0;

@@ -139,10 +139,17 @@ void waitForTimer(Scumm *s, int msec_delay) {
 				}
 			case SDL_MOUSEBUTTONDOWN:
 				if (event.button.button==SDL_BUTTON_LEFT)
-					s->_leftBtnPressed |= 1;
+					s->_leftBtnPressed |= msClicked|msDown;
 				else if (event.button.button==SDL_BUTTON_RIGHT)
-					s->_rightBtnPressed |= 1;
+					s->_rightBtnPressed |= msClicked|msDown;
 				break;
+			case SDL_MOUSEBUTTONUP:
+				if (event.button.button==SDL_BUTTON_LEFT)
+					s->_leftBtnPressed &= ~msDown;
+				else if (event.button.button==SDL_BUTTON_RIGHT)
+					s->_rightBtnPressed &= ~msDown;
+				break;
+
 			case SDL_QUIT:
 				exit(1);
 				break;
@@ -165,7 +172,7 @@ int old_mouse_h, old_mouse_w;
 bool has_mouse,hide_mouse;
 
 #define BAK_WIDTH 40
-#define BAK_HEIGHT 24
+#define BAK_HEIGHT 40
 byte old_backup[BAK_WIDTH*BAK_HEIGHT*2];
 
 
@@ -252,6 +259,7 @@ void updateScreen(Scumm *s) {
 	}
 	if (fullRedraw) {
 		SDL_UpdateRect(screen, 0,0,0,0);
+		fullRedraw = false;
 #if defined(SHOW_AREA)
 		debug(2,"update area 100 %%");
 #endif
@@ -276,6 +284,8 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 
 	if (hide_mouse)
 		visible = false;
+
+	assert(w<=BAK_WIDTH && h<=BAK_HEIGHT);
 
 	if (SDL_LockSurface(screen)==-1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());

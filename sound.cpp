@@ -320,6 +320,8 @@ void Scumm::startSfxSound(void *file) {
 	int rate,comp;
 	byte *data;
 
+	/* Full throttle audio fix HERE */
+
 	if (fread(&hdr, sizeof(hdr), 1, (FILE*)file) != 1 || 
 		memcmp(hdr.id, VALID_VOC_ID, sizeof(hdr.id)) != 0) {
 		warning("startSfxSound: invalid header");

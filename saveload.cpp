@@ -30,7 +30,7 @@ struct SaveGameHeader {
 	char name[32];
 };
 
-#define CURRENT_VER 5
+#define CURRENT_VER 7
 
 bool Scumm::saveState(int slot, bool compat) {
 	char filename[256];
@@ -131,6 +131,10 @@ bool Scumm::loadState(int slot, bool compat) {
  
 	_drawObjectQueNr = 0;
 	_verbMouseOver = 0;
+
+#if defined(FULL_THROTTLE)
+	cameraMoved();
+#endif
 
 	initBGBuffers();
 
@@ -235,7 +239,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Actor,cost.animCounter2,sleByte),
 		MKARRAY(Actor,palette[0],sleByte,64),
 		MKLINE(Actor,mask,sleByte),
-		MKLINE(Actor,unk1,sleByte),
+		MKLINE(Actor,shadow_mode,sleByte),
 		MKLINE(Actor,visible,sleByte),
 		MKLINE(Actor,frame,sleByte),
 		MKLINE(Actor,animSpeed,sleByte),
@@ -248,6 +252,8 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Actor,new_1,sleInt16),
 		MKLINE(Actor,new_2,sleInt16),
 		MKLINE(Actor,new_3,sleByte),
+
+		MKLINE(Actor,layer,sleByte),
 
 		MKLINE(Actor,talk_script,sleUint16),
 		MKLINE(Actor,walk_script,sleUint16),
@@ -301,7 +307,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 	};
 	
 	const SaveLoadEntry mainEntries[] = {
-		MKLINE(Scumm,_scrWidthIn8Unit,sleUint16),
+		MKLINE(Scumm,_scrWidth,sleUint16),
 		MKLINE(Scumm,_scrHeight,sleUint16),
 		MKLINE(Scumm,_ENCD_offs,sleUint32),
 		MKLINE(Scumm,_EXCD_offs,sleUint32),
@@ -321,9 +327,21 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKARRAY(Scumm,_charsetData[0][0],sleByte,10*16),
 		MKLINE(Scumm,_curExecScript,sleUint16),
 
-		MKLINE(Scumm,camera._destPos,sleInt16),
-		MKLINE(Scumm,camera._curPos,sleInt16),
-		MKLINE(Scumm,camera._lastPos,sleInt16),
+#if defined(FULL_THROTTLE)
+		MKLINE(Scumm,camera._dest.x,sleInt16),
+		MKLINE(Scumm,camera._dest.y,sleInt16),
+		MKLINE(Scumm,camera._cur.x,sleInt16),
+		MKLINE(Scumm,camera._cur.y,sleInt16),
+		MKLINE(Scumm,camera._last.x,sleInt16),
+		MKLINE(Scumm,camera._last.y,sleInt16),
+		MKLINE(Scumm,camera._accel.x,sleInt16),
+		MKLINE(Scumm,camera._accel.y,sleInt16),
+		MKLINE(Scumm,camera._follows,sleByte),
+		MKLINE(Scumm,camera._movingToActor,sleUint16),
+#else
+		MKLINE(Scumm,camera._dest.x,sleInt16),
+		MKLINE(Scumm,camera._cur.x,sleInt16),
+		MKLINE(Scumm,camera._last.x,sleInt16),
 		MKLINE(Scumm,_screenStartStrip,sleInt16),
 		MKLINE(Scumm,_screenEndStrip,sleInt16),
 		MKLINE(Scumm,camera._mode,sleByte),
@@ -331,7 +349,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,camera._leftTrigger,sleInt16),
 		MKLINE(Scumm,camera._rightTrigger,sleInt16),
 		MKLINE(Scumm,camera._movingToActor,sleUint16),
-
+#endif
 		MKLINE(Scumm,_actorToPrintStrFor,sleByte),
 		MKLINE(Scumm,_charsetColor,sleByte),
 		MKLINE(Scumm,charset._bufPos,sleByte),
@@ -385,8 +403,6 @@ void Scumm::saveOrLoad(Serializer *s) {
 
 		MKLINE(Scumm,_screenB,sleUint16),
 		MKLINE(Scumm,_screenH,sleUint16),
-
-		MKARRAY(Scumm,cost._transEffect[0],sleByte,256),
 
 		MKEND()
 	};
@@ -475,8 +491,8 @@ void Scumm::saveOrLoad(Serializer *s) {
 	if (_objectRoomTable)
 		s->saveLoadArrayOf(_objectRoomTable, _numGlobalObjects, sizeof(_objectRoomTable[0]), sleByte);
 
-	if (_shadowPalette)
-		s->saveLoadArrayOf(_shadowPalette, NUM_SHADOW_PALETTE * 256, 1, sleByte);
+	if (_shadowPaletteSize)
+		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 
 	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 	s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);

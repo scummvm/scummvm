@@ -177,17 +177,21 @@ void Scumm::CHARSET_1() {
 	Actor *a;
 	byte *buffer;
 
-	if (!_haveMsg || (camera._destPos>>3) != (camera._curPos>>3) ||
-			camera._curPos != camera._lastPos 
+#if !defined(FULL_THROTTLE)
+	if (!_haveMsg || (camera._dest.x>>3) != (camera._cur.x>>3) ||
+			camera._cur.x != camera._last.x 
 		) return;
-
+#else
+	if (!_haveMsg)
+		return;
+#endif
 	a = NULL;
 	if (_vars[VAR_TALK_ACTOR] != 0xFF)
 		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "CHARSET_1");
 
 	if (a && string[0].overhead!=0) {
 		if (!(_features & GF_AFTER_V6)) {
-			string[0].xpos = a->x - camera._curPos + 160;
+			string[0].xpos = a->x - camera._cur.x + 160;
 
 			if (_vars[VAR_V5_TALK_STRING_Y] < 0) {
 				s = (a->scaley * (int)_vars[VAR_V5_TALK_STRING_Y]) / 0xFF;
@@ -209,7 +213,7 @@ void Scumm::CHARSET_1() {
 				string[0].ypos = 1;
 			
 			s = a->scalex * a->new_2 / 0xFF;
-			string[0].xpos = ((a->new_2 - s)>>1) + s + a->x - camera._curPos + 160;
+			string[0].xpos = ((a->new_2 - s)>>1) + s + a->x - camera._cur.x + 160;
 			if (string[0].xpos < 80)
 				string[0].xpos = 80;
 			if (string[0].xpos > 240)

@@ -21,16 +21,18 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-#if defined(FULL_THROTTLE)
-
 bool Scumm::akos_hasManyDirections(Actor *a) {
-	byte *akos;
-	AkosHeader *akhd;
+	if (_features & GF_NEW_COSTUMES) {	
+		byte *akos;
+		AkosHeader *akhd;
 
-	akos = getResourceAddress(rtCostume, a->costume);
-	assert(akos);
-	akhd = (AkosHeader*)findResource(MKID('AKHD'), akos);
-	return (akhd->flags&2) != 0;
+		akos = getResourceAddress(rtCostume, a->costume);
+		assert(akos);
+
+		akhd = (AkosHeader*)findResourceData(MKID('AKHD'), akos);
+		return (akhd->flags&2) != 0;
+	}
+	return 0;
 }
 
 
@@ -60,7 +62,7 @@ void Scumm::akos_decodeData(Actor *a, int frame, uint usemask) {
 	akos = getResourceAddress(rtCostume, a->costume);
 	assert(akos);
 
-	akhd = (AkosHeader*)findResource(MKID('AKHD'), akos);
+	akhd = (AkosHeader*)findResourceData(MKID('AKHD'), akos);
 
 	if (anim>=READ_LE_UINT16(&akhd->num_anims))
 		return;
@@ -121,9 +123,8 @@ void Scumm::akos_setPalette(AkosRenderer *ar, byte *palette) {
 	byte *akos, *akpl;
 	uint size, i;
 
-	akpl = findResource(MKID('AKPL'), ar->akos);
-	size = READ_BE_UINT32_UNALIGNED(akpl+4) - 8;
-	akpl += 8;
+	akpl = findResourceData(MKID('AKPL'), ar->akos);
+	size = getResourceDataSize(akpl);
 
 	if (size > 256)
 		error("akos_setPalette: %d is too many colors", size);
@@ -137,12 +138,12 @@ void Scumm::akos_setCostume(AkosRenderer *ar, int costume) {
 	ar->akos = getResourceAddress(rtCostume, costume);
 	assert(ar->akos);
 
-	ar->akhd = (AkosHeader*)findResource(MKID('AKHD'), ar->akos);
-	ar->akof = (AkosOffset*)(findResource(MKID('AKOF'), ar->akos)+8);
-	ar->akci = (findResource(MKID('AKCI'), ar->akos)+8);
-	ar->aksq = (findResource(MKID('AKSQ'), ar->akos)+8);
-	ar->akcd = (findResource(MKID('AKCD'), ar->akos)+8);
-	ar->akpl = (findResource(MKID('AKPL'), ar->akos)+8);
+	ar->akhd = (AkosHeader*)findResourceData(MKID('AKHD'), ar->akos);
+	ar->akof = (AkosOffset*)findResourceData(MKID('AKOF'), ar->akos);
+	ar->akci = findResourceData(MKID('AKCI'), ar->akos);
+	ar->aksq = findResourceData(MKID('AKSQ'), ar->akos);
+	ar->akcd = findResourceData(MKID('AKCD'), ar->akos);
+	ar->akpl = findResourceData(MKID('AKPL'), ar->akos);
 	ar->codec = READ_LE_UINT16(&ar->akhd->codec);
 }
 
@@ -188,7 +189,7 @@ bool Scumm::akos_drawCostumeChannel(AkosRenderer *ar, int chan) {
 		assert( (code&0x7000) == 0);
 
 		ar->srcptr = ar->akcd + READ_LE_UINT32(&off->akcd);
-		akci = (AkosCI*)ar->akci + READ_LE_UINT16(&off->akci);
+		akci = (AkosCI*)(ar->akci + READ_LE_UINT16(&off->akci));
 
 		ar->move_x_cur = ar->move_x + (int16)READ_LE_UINT16(&akci->rel_x);
 		ar->move_y_cur = ar->move_y + (int16)READ_LE_UINT16(&akci->rel_y);
@@ -264,7 +265,7 @@ void akos_c1_0y_decode(AkosRenderer *ar) {
 	height = ar->height;
 	y = ar->v1.y;
 
-	if (ar->v1.doContinue) goto StartPos;
+	if (len) goto StartPos;
 
 	do {
 		len = *src++;
@@ -291,65 +292,133 @@ StartPos:;
 	} while (1);
 }
 
-#if 0
-void akos_c1_spec1(AkosRenderer *ar) {
-	byte *mask,*src,*dst,*dstorg;
-	byte maskbit,len,height,pcolor,width;
-	uint y;
-	int color;
+void akos_generic_decode(AkosRenderer *ar) {
+	byte *src,*dst;
+	byte len,height,pcolor, maskbit;
+	uint y,scrheight;
+	uint color;
 	int t;
+	const byte *scaleytab, *mask;
 
-	mask = _mask_ptr = ar->v1.mask_ptr_dest;
-	maskbit = revBitMask[ar_xpos&7];
-	y = _ypos;
 
-	dstorg = dst = _backbuff_ptr;
-	height = _height2;
-	width = _width2;
-	len = _replen;
-	color = _repcolor;
-	src = _srcptr;
+	y = ar->v1.y;
 
-	if (_docontinue) goto StartPos;
+	len = ar->v1.replen;
+	src = ar->srcptr;
+	dst = ar->v1.destptr;
+	color = ar->v1.repcolor;
+	height = ar->height;
+
+	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+	maskbit = revBitMask[ar->v1.x&7];
+	mask = ar->v1.mask_ptr + (ar->v1.x>>3);
+
+	if (len) goto StartPos;
 
 	do {
 		len = *src++;
-		color = len>>_shrval;
-		len &= _maskval;
+		color = len>>ar->v1.shl;
+		len &= ar->v1.mask;
 		if (!len) len = *src++;
 		
 		do {
-			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
-				if (color && y < _vscreenheight) {
-					pcolor = _palette[color];
-					if (pcolor==13)
-						pcolor = _transEffect[*dst];
-					*dst = pcolor;
+			if (*scaleytab++ < ar->scale_y) {
+				if (color && y < ar->outheight && (!ar->v1.mask_ptr || !((mask[0]|mask[ar->v1.imgbufoffs]) & maskbit)) ) {
+					*dst = ar->palette[color];
 				}
-				dst += 320;
+				mask += 40;
+				dst += ar->outwidth;
 				y++;
 			}
 			if (!--height) {
-				if(!--width)
+				if(!--ar->v1.skip_width)
 					return;
-				height = _height;
-				y = _ypostop;
-				_scaleIndexY = _scaleIndexYTop;
-				t = _scaleIndexX;
-				_scaleIndexX = t + _scaleIndexXStep;
-				if (cost_scaleTable[t] < _scaleX) {
-					_xpos += _scaleIndexXStep;
-					if (_xpos >= 320)
+				height = ar->height;
+				y = ar->v1.y;
+
+				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+								
+				if (ar->v1.scaletable[ar->v1.tmp_x] < ar->scale_x) {
+					ar->v1.x += ar->v1.scaleXstep;
+					if ((uint)ar->v1.x >= 320)
 						return;
-					_backbuff_ptr += _scaleIndexXStep;
+					maskbit = revBitMask[ar->v1.x&7];
+					ar->v1.destptr += ar->v1.scaleXstep;
 				}
-				dst = _backbuff_ptr;
+				mask = ar->v1.mask_ptr + (ar->v1.x>>3);
+				ar->v1.tmp_x += ar->v1.scaleXstep;
+				dst = ar->v1.destptr;
 			}
 StartPos:;
 		} while (--len);
 	} while(1);
 }
-#endif
+
+
+void akos_c1_spec1(AkosRenderer *ar) {
+	byte *src,*dst;
+	byte len,height,pcolor, maskbit;
+	uint y,scrheight;
+	uint color;
+	int t;
+	const byte *scaleytab, *mask;
+
+
+	y = ar->v1.y;
+
+	len = ar->v1.replen;
+	src = ar->srcptr;
+	dst = ar->v1.destptr;
+	color = ar->v1.repcolor;
+	height = ar->height;
+
+	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+	maskbit = revBitMask[ar->v1.x&7];
+	mask = ar->v1.mask_ptr + (ar->v1.x>>3);
+
+	if (len) goto StartPos;
+
+	do {
+		len = *src++;
+		color = len>>ar->v1.shl;
+		len &= ar->v1.mask;
+		if (!len) len = *src++;
+		
+		do {
+			if (*scaleytab++ < ar->scale_y) {
+				if (color && y < ar->outheight && (!ar->v1.mask_ptr || !((mask[0]|mask[ar->v1.imgbufoffs]) & maskbit)) ) {
+					pcolor = ar->palette[color];
+					if (pcolor==13)
+						pcolor = ar->shadow_table[*dst];
+					*dst = pcolor;
+				}
+				mask += 40;
+				dst += ar->outwidth;
+				y++;
+			}
+			if (!--height) {
+				if(!--ar->v1.skip_width)
+					return;
+				height = ar->height;
+				y = ar->v1.y;
+
+				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+								
+				if (ar->v1.scaletable[ar->v1.tmp_x] < ar->scale_x) {
+					ar->v1.x += ar->v1.scaleXstep;
+					if ((uint)ar->v1.x >= 320)
+						return;
+					maskbit = revBitMask[ar->v1.x&7];
+					ar->v1.destptr += ar->v1.scaleXstep;
+				}
+				mask = ar->v1.mask_ptr + (ar->v1.x>>3);
+				ar->v1.tmp_x += ar->v1.scaleXstep;
+				dst = ar->v1.destptr;
+			}
+StartPos:;
+		} while (--len);
+	} while(1);
+}
 
 const byte default_scale_table[768] = {
 0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
@@ -469,7 +538,7 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 	ar->v1.scaletable = default_scale_table;
 
 	/* Setup color decoding variables */
-	num_colors = READ_BE_UINT32_UNALIGNED(ar->akpl-4)-8;
+	num_colors = getResourceDataSize(ar->akpl);
 	if (num_colors == 32) {
 		ar->v1.mask = (1<<3)-1;
 		ar->v1.shl = 3;
@@ -482,8 +551,6 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 	}
 
 	use_scaling = (ar->scale_x!=0xFF) || (ar->scale_y!=0xFF);
-
-	use_scaling = false;
 
 	x = ar->x;
 	y = ar->y;
@@ -531,7 +598,7 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 
 			j = tmp_x;
 			for(i=0,skip=0; i<ar->width; i++) {
-				if (x_left >= ar->outwidth) {
+				if (x_left >= (int)ar->outwidth) {
 					tmp_x = j;
 					skip++;
 					
@@ -596,13 +663,10 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 	if ((uint)y_top >= (uint)ar->outheight || y_bottom <= 0)
 		return;
 
-	if ((uint)x_left >= (uint)ar->outwidth || x_right <= 0)
+	if ((int)x_left >= (int)ar->outwidth || x_right <= 0)
 		return;
 
-	updateDirtyRect(0, x_left, x_right, y_top, y_bottom, 1<<ar->dirty_id);
-
-	ar->v1.doContinue = false;
-
+	ar->v1.replen = 0;
 	ar->v1.y_pitch = ar->height * ar->outwidth;
 	
 	if (ar->mirror) {
@@ -613,7 +677,6 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 			ar->v1.skip_width -= skip;
 			akos_codec1_ignorePakCols(ar, skip);
 			x = 0;
-			ar->v1.doContinue = true;
 		} else {
 			skip = x_right - ar->outwidth;
 			if (skip > 0)
@@ -628,7 +691,6 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 			ar->v1.skip_width -= skip;
 			akos_codec1_ignorePakCols(ar, skip);
 			x = ar->outwidth - 1;
-			ar->v1.doContinue = true;
 		} else {
 			skip = -1 - x_left;
 			if (skip > 0)
@@ -642,8 +704,9 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 	if (ar->v1.skip_width <= 0 || ar->height<=0)
 		return;
 
+	updateDirtyRect(0, x_left, x_right, y_top, y_bottom, 1<<ar->dirty_id);
 
-	y_clipping = (y_bottom > ar->outheight || y_top < 0);
+	y_clipping = ((uint)y_bottom > ar->outheight || y_top < 0);
 
 	if ( (uint)y_top > (uint)ar->outheight)
 		y_top = 0;
@@ -660,8 +723,7 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 
 	ar->v1.destptr = ar->outptr + x + y * ar->outwidth;
 
-	charsetmask = false;
-
+	charsetmask = ar->charsetmask;
 	masking = false;
 	if (ar->clipping) {
 		masking = isMaskActiveAt(x_left, y_top, x_right, y_bottom,
@@ -669,34 +731,34 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 		) != 0;
 	}
 	
-	if (masking || charsetmask || ar->actor_unk1) {
+	ar->v1.mask_ptr = NULL;
+
+	if (masking || charsetmask || ar->shadow_mode) {
 		ar->v1.mask_ptr = getResourceAddress(rtBuffer, 9) + y*40 + _screenStartStrip;
 		ar->v1.imgbufoffs = gdi._imgBufOffs[ar->clipping];
 		if (!charsetmask && masking) {
 			ar->v1.mask_ptr += ar->v1.imgbufoffs;
 			ar->v1.imgbufoffs = 0;
 		}
-		ar->v1.mask_ptr_dest = ar->v1.mask_ptr + (x >> 3);
 	}
 
-	ar->actor_unk1 = 0;
-
-	if(ar->actor_unk1==0)
-		akos_c1_0y_decode(ar);
-
-#if 0
-
-	switch(ar->actor_unk1) {
+	switch(ar->shadow_mode) {
 	case 1:
 		akos_c1_spec1(ar);
 		return;
 	case 2:
-		akos_c1_spec2(ar);
+//		akos_c1_spec2(ar);
 		return;
 	case 3:
-		akos_c1_spec3(ar);
+//		akos_c1_spec3(ar);
 		return;
 	}
+
+	akos_generic_decode(ar);
+	
+	//	akos_c1_0y_decode(ar);
+
+#if 0
 
 	switch(((byte)y_clipping<<3) | ((byte)use_scaling<<2) | ((byte)masking<<1) | (byte)charsetmask) {
 	case 0: akos_c1_0_decode(ar); break;
@@ -762,14 +824,10 @@ bool Scumm::akos_increaseAnims(byte *akos, Actor *a) {
 	uint size;
 	bool result;
 
-	aksq = findResource(MKID('AKSQ'), akos) + 8;
-	akfo = findResource(MKID('AKFO'), akos);
+	aksq = findResourceData(MKID('AKSQ'), akos);
+	akfo = findResourceData(MKID('AKFO'), akos);
 	
-	size = 0;
-	if (akfo) {
-		size = (READ_BE_UINT32_UNALIGNED(akfo)-8)>>1;
-		akfo += 8;
-	}	
+	size = getResourceDataSize(akfo)>>1;
 	
 	result = false;
 	for(i=0;i!=0x10;i++) {
@@ -1037,6 +1095,3 @@ void Scumm::setAnimVar(Actor *a, byte var, int value) {
 	assert(var>=0 && var<=15);
 	a->animVariable[var] = value;
 }
-
-
-#endif

@@ -149,7 +149,7 @@ void Scumm::setupOpcodes2() {
 	&Scumm::o6_startObject,
 	&Scumm::o6_setObjectState,
 	&Scumm::o6_setObjectXY,
-	&Scumm::o6_invalid,
+	&Scumm::o6_drawBlastObject,
 	/* 64 */
 	&Scumm::o6_invalid,
 	&Scumm::o6_stopObjectCode,
@@ -204,7 +204,7 @@ void Scumm::setupOpcodes2() {
 	&Scumm::o6_getActorRoom,
 	&Scumm::o6_getObjectX,
 	&Scumm::o6_getObjectY,
-	&Scumm::o6_getObjectDir,
+	&Scumm::o6_getObjectOldDir,
 	/* 90 */
 	&Scumm::o6_getActorWalkBox,
 	&Scumm::o6_getActorCostume,
@@ -288,7 +288,7 @@ void Scumm::setupOpcodes2() {
 	/* D0 */	
 	&Scumm::o6_invalid,
 	&Scumm::o6_invalid,
-	&Scumm::o6_invalid,
+	&Scumm::o6_getAnimateVariable,
 	&Scumm::o6_invalid,
 	/* D4 */	
 	&Scumm::o6_invalid,
@@ -322,7 +322,7 @@ void Scumm::setupOpcodes2() {
 	&Scumm::o6_invalid,
 	/* EC */	
 	&Scumm::o6_invalid,
-	&Scumm::o6_invalid,
+	&Scumm::o6_getObjectNewDir,
 	&Scumm::o6_invalid,
 	&Scumm::o6_invalid,
 	/* F0 */	
@@ -349,6 +349,21 @@ void Scumm::setupOpcodes2() {
 
 	_opcodes = opcode_list;
 }
+
+int Scumm::popRoomAndObj(int *room) {
+	int obj;
+
+	if (_features & GF_HAS_ROOMTABLE) {
+		obj = pop();
+		*room = getObjectRoom(obj);
+	} else {
+		*room = pop();
+		obj = pop();
+	}
+
+	return obj;
+}
+
 
 int Scumm::readArray(int array, int index, int base) {
 	ArrayHeader *ah = (ArrayHeader*)getResourceAddress(rtString, readVar(array));
@@ -727,10 +742,11 @@ void Scumm::o6_cursorCommand() {
 	case 0x97:
 		_userPut--;
 		break;
-	case 0x99:
-		a = pop();
-		setCursorImg(pop(), a, 1);
+	case 0x99: {
+		int room,obj = popRoomAndObj(&room);
+		setCursorImg(obj,room, 1);
 		break;
+	}
 	case 0x9A:
 		a = pop();
 		setCursorHotspot2(pop(),a);
@@ -839,15 +855,36 @@ void Scumm::o6_stopObjectScript() {
 }
 
 void Scumm::o6_panCameraTo() {
-	panCameraTo(pop());
+#if defined(FULL_THROTTLE)
+	int y = pop();
+	int x = pop();
+	panCameraTo(x,y);
+#else
+	panCameraTo(pop(), 0);
+#endif
 }
 
 void Scumm::o6_actorFollowCamera() {
+#if defined(FULL_THROTTLE)
+	setCameraFollows(derefActorSafe(pop(), "actorFollowCamera"));
+#else
 	actorFollowCamera(pop());
+#endif
 }
 
 void Scumm::o6_setCameraAt() {
+#if defined(FULL_THROTTLE)
+	int x,y;
+
+	camera._follows = 0;
+
+	y = pop();
+	x = pop();
+
+	setCameraAt(x,y);
+#else
 	setCameraAtEx(pop());
+#endif
 }
 
 void Scumm::o6_loadRoom() {
@@ -924,17 +961,12 @@ void Scumm::o6_putActorInRoom() {
 	putActor(a, x, y, room);
 }
 
+
 void Scumm::o6_putActorAtObject() {
 	int room,obj,x,y;
 	Actor *a;
 
-	if (_features & GF_HAS_ROOMTABLE) {
-		obj = pop();
-		room = getObjectRoom(obj);
-	} else {
-		room = pop();
-		obj = pop();
-	}
+	obj=popRoomAndObj(&room);
 
 	a = derefActorSafe(pop(), "o6_putActorAtObject");
 	if (whereIsObject(obj)!=WIO_NOT_FOUND) {
@@ -984,15 +1016,9 @@ void Scumm::o6_pickupObject() {
 	int obj, room;
 	int i;
 
-	if (_features & GF_HAS_ROOMTABLE) {
-		obj = pop();
-		room = getObjectRoom(obj);
-	} else {
-		room = pop();
-		obj = pop();
-		if (room==0)
-			room = _roomResource;
-	}
+	obj=popRoomAndObj(&room);
+	if (room==0)
+		room = _roomResource;
 
 	for(i=1; i<_maxInventoryItems; i++) {
 		if (_inventory[i] == (uint16)obj) {
@@ -1018,14 +1044,8 @@ void Scumm::o6_loadRoomWithEgo() {
 	y = pop();
 	x = pop();
 	
-	if (_features & GF_HAS_ROOMTABLE) {
-		obj = pop();
-		room = getObjectRoom(obj);
-	} else {
-		room = pop();
-		obj = pop();
-	}
-	
+	obj=popRoomAndObj(&room);
+
 	a = derefActorSafe(_vars[VAR_EGO], "o_loadRoomWithEgo");
 
 	putActor(a, 0, 0, room);
@@ -1036,8 +1056,10 @@ void Scumm::o6_loadRoomWithEgo() {
 	_vars[VAR_WALKTO_OBJ] = 0;
 
 	/* startScene maybe modifies VAR_EGO, i hope not */
-	camera._destPos = camera._curPos = a->x;
+#if !defined(FULL_THROTTLE)
+	camera._dest.x = camera._cur.x = a->x;
 	setCameraFollows(a);
+#endif
 	_fullRedraw=1;
 	if (x != -1) {
 		startWalkActor(a, x, y, -1);
@@ -1083,14 +1105,12 @@ void Scumm::o6_getObjectY() {
 	push(getObjY(pop()));
 }
 
-void Scumm::o6_getObjectDir() {
-	int dir = getObjDir(pop());
+void Scumm::o6_getObjectOldDir() {
+	push(getObjOldDir(pop()));
+}
 
-	if (_features & GF_USE_ANGLES) {
-		dir = oldDirToNewDir(dir);
-	}
-
-	push(dir);
+void Scumm::o6_getObjectNewDir() {
+	push(getObjNewDir(pop()));
 }
 
 void Scumm::o6_getActorWalkBox() {
@@ -1136,7 +1156,7 @@ void Scumm::o6_setObjectName() {
 	if (obj < NUM_ACTORS)
 		error("Can't set actor %d name with new-name-of", obj);
 
-	if (!getObjectAddress(obj))
+	if (!getOBCDFromObject(obj))
 		error("Can't set name of object %d", obj);
 
 	for (i=1; i<50; i++) {
@@ -1189,6 +1209,10 @@ void Scumm::o6_resourceRoutines() {
 	switch(fetchScriptByte()) {
 	case 100: /* load script */
 		res = pop();
+#if defined(FULL_THROTTLE)
+		if (res >= _numGlobalScripts)
+			break;
+#endif
 		ensureResourceLoaded(rtScript, res);
 		break;
 	case 101: /* load sound */
@@ -1205,6 +1229,10 @@ void Scumm::o6_resourceRoutines() {
 		break;
 	case 104: /* nuke script */
 		res = pop();
+#if defined(FULL_THROTTLE)
+		if (res >= _numGlobalScripts)
+			break;
+#endif
 		setResourceCounter(rtScript, res, 0x7F);
 		debug(5, "nuke script %d", res);
 		break;
@@ -1273,10 +1301,11 @@ void Scumm::o6_resourceRoutines() {
 		res = pop();
 		nukeCharset(res);
 		break;
-	case 119:/* load fl object */
-		res = (_features & GF_HAS_ROOMTABLE) ? -1 : pop();
-		loadFlObject(pop(), res);
+	case 119: {/* load fl object */
+		int room,obj = popRoomAndObj(&room);
+		loadFlObject(obj,room);
 		break;
+	}
 	default:
 		error("o6_resourceRoutines: default case");
 	}
@@ -1290,9 +1319,9 @@ void Scumm::o6_roomOps() {
 		b = pop();
 		a = pop();
 		if (a < 160) a=160;
-		if (a > ((_scrWidthIn8Unit-20)<<3)) a=((_scrWidthIn8Unit-20)<<3);
+		if (a > _scrWidth) a=_scrWidth;
 		if (b < 160) b=160;
-		if (b > ((_scrWidthIn8Unit-20)<<3)) b=((_scrWidthIn8Unit-20)<<3);
+		if (b > _scrHeight) b=_scrHeight;
 		_vars[VAR_CAMERA_MIN_X] = a;
 		_vars[VAR_CAMERA_MAX_X] = b;
 		break;
@@ -1498,11 +1527,15 @@ FixRooms:;
 		a->animProgress = 0;
 		break;
 	case 98:
-		a->unk1 = pop();
+		a->shadow_mode = pop();
 		break;
 	case 99:
 		a->new_1 = pop();
 		a->new_2 = pop();
+		break;
+	case 198: /* set anim variable */
+		i = pop(); /* value */
+		setAnimVar(a, pop(), i);
 		break;
 	case 215:
 		a->new_3 = 1;
@@ -1513,19 +1546,32 @@ FixRooms:;
 	case 217:
 		initActor(a, 2);
 		break;
+	case 227: /* actor_layer */
+		a->layer = pop();
+		break;
+	case 228: /* walk script */
+		a->walk_script = pop();
+		break;
 	case 235: /* talk_script */
 		a->talk_script = pop();
 		break;
-	
-	case 198: /* set anim variable */
-	case 227: /* actor_unk2 */
-	case 228: /* actor script */
 	case 229: /* stand */
-	case 230: /* turn? */
-	case 231: /* turn? */
-	case 233: /* ? */
-	case 234: /* ? */
-
+		stopActorMoving(a);
+		startAnimActor(a, a->standFrame);
+		break;
+	case 230: /* set direction */
+		a->moving&=~4;
+		fixActorDirection(a, pop());
+		break;
+	case 231: /* turn to direction */
+		turnToDirection(a, pop());
+		break;
+	case 233: /* freeze actor */
+		a->moving|=0x80;
+		break;
+	case 234: /* unfreeze actor */
+		a->moving&=~0x7f;
+		break;
 	default:
 		error("o6_actorset: default case %d", b);
 	}
@@ -1787,21 +1833,27 @@ void Scumm::o6_wait() {
 	byte oldaddr;
 	
 	switch(fetchScriptByte()) {
-	case 168:
+	case 168: {
+		int offs = (int16)fetchScriptWord();
 		if (derefActorSafe(pop(), "o6_wait")->moving) {
-			_scriptPointer += (int16)fetchScriptWord();
+			_scriptPointer += offs;
 			o6_breakHere();
-		} else {
-			fetchScriptWord();
 		}
 		return;
+	}
 	case 169:
 		if (_vars[VAR_HAVE_MSG])
 			break;
 		return;
 	case 170:
-		if (camera._curPos>>3 != camera._destPos>>3)
+#if !defined(FULL_THROTTLE)
+		if (camera._cur.x>>3 != camera._dest.x>>3)
 			break;
+#else
+		if (camera._dest.x != camera._cur.x ||
+			  camera._dest.y != camera._cur.y)
+				break;
+#endif
 		return;
 	case 171:
 		if (_sentenceNum) {
@@ -1813,6 +1865,24 @@ void Scumm::o6_wait() {
 		if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 			return;
 		break;
+	case 226: { /* wait until actor drawn */
+		Actor *a = derefActorSafe(pop(), "o6_wait:226");
+		int offs = (int16)fetchScriptWord();
+		if (a->room==_currentRoom && a->needRedraw) {
+			_scriptPointer += offs;
+			o6_breakHere();
+		}
+		return;
+	}
+	case 232: { /* wait until actor stops turning */
+		Actor *a = derefActorSafe(pop(), "o6_wait:226");
+		int offs = (int16)fetchScriptWord();
+		if (a->room==_currentRoom && a->moving&4) {
+			_scriptPointer += offs;
+			o6_breakHere();
+		}
+		return;
+	}
 	default:
 		error("o6_wait: default case");
 	}
@@ -1827,6 +1897,11 @@ void Scumm::o6_getActorScaleX() {
 
 void Scumm::o6_getActorAnimCounter1() {
 	push(derefActorSafe(pop(),"o6_getActorAnimCounter")->cost.animCounter1);
+}
+
+void Scumm::o6_getAnimateVariable() {
+	int var = pop();
+	push(getAnimVar(derefActorSafe(pop(),"o6_getAnimateVariable"), var));
 }
 
 void Scumm::o6_soundKludge() {
@@ -2048,6 +2123,19 @@ void Scumm::o6_dummy_stacklist() {
 	error("opcode o6_dummy_stacklist invalid");
 }
 
+void Scumm::o6_drawBlastObject() {
+	int16 args[16];
+	int a,b,c,d,e;
+
+	getStackList(args,sizeof(args)/sizeof(args[0]));
+	e = pop();
+	d = pop();
+	c = pop();
+	b = pop();
+	a = pop();
+	enqueueObject(a, b, c, d, e, 0xFF, 0xFF, 1, 0);
+}
+
 void Scumm::o6_miscOps() {
 	int16 args[30];
 	int i;
@@ -2084,9 +2172,13 @@ void Scumm::o6_miscOps() {
 	case 15:
 		warning("o6_miscOps: stub15(%d)", args[1]);
 		break;
-	case 16:
-		warning("o6_miscOps: stub16(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
+	case 16: {
+		byte buf[200];
+		_msgPtrToAdd = buf;
+		addMessageToStack(getStringAddress(_vars[VAR_STRING2DRAW]));
+		warning("o6_miscOps: drawString(%s,charset=%d,color=%d,x=%d,y=%d)",buf, args[1],args[2],args[3],args[4]);
 		break;
+	}
 	case 17:
 		warning("o6_miscOps: stub17(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
 		break;
@@ -2109,13 +2201,13 @@ void Scumm::o6_miscOps() {
 		warning("o6_miscOps: stub114()");
 		break;
 	case 117:
-		warning("o6_miscOps: stub117()");
+		freezeScripts(2);
 		break;
 	case 118:
-		warning("o6_miscOps: stub118(%d,%d,%d,%d,%d,%d,%d,%d)",args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8]);
+		enqueueObject(args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8], 3);
 		break;
 	case 119:
-		warning("o6_miscOps: stub119(%d,%d,%d,%d,%d,%d,%d,%d)",args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8]);
+		enqueueObject(args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8], 0);
 		break;
 	case 120:
 		warning("o6_miscOps: stub120(%d,%d)", args[1], args[2]);
@@ -2183,7 +2275,7 @@ void Scumm::o6_miscOps() {
 
 	case 111:
 		a = derefActorSafe(args[1], "o6_miscops: 111");
-		a->unk1 = args[2] + args[3];
+		a->shadow_mode = args[2] + args[3];
 		break;
 
 	case 112:
@@ -2208,7 +2300,7 @@ void Scumm::o6_miscOps() {
 
 	case 119:
 		enqueueObject(args[1], args[2], args[3], args[4], args[5],
-			args[6], args[7], args[8]);
+			args[6], args[7], args[8], 0);
 		break;
 
 	case 120:

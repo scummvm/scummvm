@@ -29,8 +29,10 @@ void Scumm::initActor(Actor *a, int mode) {
 		a->x = 0;
 		a->y = 0;
 		a->facing = 180;
+		a->newDirection = 180;
 	} else if (mode==2) {
 		a->facing = 180;
+		a->newDirection = 180;
 	}
 
 	a->elevation = 0;
@@ -49,8 +51,11 @@ void Scumm::initActor(Actor *a, int mode) {
 	a->sound[6] = 0;
 	a->sound[7] = 0;
 	a->newDirection = 0;
-	a->moving = 0;
-	a->unk1 = 0;
+	
+	stopActorMoving(a);
+
+	a->shadow_mode = 0;
+	a->layer = 0;
 
 	setActorWalkSpeed(a, 8, 2);
 
@@ -63,7 +68,19 @@ void Scumm::initActor(Actor *a, int mode) {
 	a->talkFrame1 = 4;
 	a->talkFrame2 = 5;
 
-	_classData[a->number] = 0;
+	a->walk_script = 0;
+	a->talk_script = 0;
+
+	if (_features & GF_AFTER_V7) {
+		_classData[a->number] = _classData[0];
+	} else {
+		_classData[a->number] = 0;
+	}
+}
+
+void Scumm::stopActorMoving(Actor *a) {
+	stopScriptNr(a->walk_script);
+	a->moving = 0;
 }
 
 void Scumm::setActorWalkSpeed(Actor *a, uint speedx, uint speedy) {
@@ -183,12 +200,18 @@ int Scumm::remapDirection(Actor *a, int dir) {
 int Scumm::updateActorDirection(Actor *a) {
 	int from,to;
 	int diff;
+	int dirType;
+	int num;
 
-	from = toSimpleDir(a->facing);
-	to = toSimpleDir(remapDirection(a, a->newDirection));
+	dirType = akos_hasManyDirections(a);
+
+	from = toSimpleDir(dirType, a->facing);
+	to = toSimpleDir(dirType, remapDirection(a, a->newDirection));
 	diff = to - from;
 
-	if (abs(diff) > 2)
+	num = numSimpleDirDirections(dirType);
+
+	if (abs(diff) > (num>>1))
 		diff = -diff;
 
 	if (diff==0) {
@@ -198,7 +221,7 @@ int Scumm::updateActorDirection(Actor *a) {
 		from--;
 	}
 
-	return fromSimpleDir(from&3);
+	return fromSimpleDir(dirType, from & (num-1));
 }
 
 void Scumm::setActorBox(Actor *a, int box) {
@@ -271,6 +294,7 @@ int Scumm::actorWalkStep(Actor *a) {
 void Scumm::setupActorScale(Actor *a) {
 	uint16 scale;
 	byte *resptr;
+	int y;
 
 	if (a->ignoreBoxes != 0)
 		return;
@@ -282,9 +306,12 @@ void Scumm::setupActorScale(Actor *a) {
 		resptr = getResourceAddress(rtScaleTable, scale);
 		if (resptr==NULL)
 			error("Scale table %d not defined",scale);
-		if (a->y >= 0)
-			resptr += a->y;
-		scale = *resptr;
+		y = a->y;
+		if (y>=200)
+			y=199;
+		if (y<0)
+			y=0;
+		scale = resptr[y];
 	}
 
 	if (scale>255)
@@ -294,60 +321,57 @@ void Scumm::setupActorScale(Actor *a) {
 	a->scaley = (byte)scale;
 }
 
-#if defined(FULL_THROTTLE)
 void Scumm::startAnimActor(Actor *a, int frame) {
-	switch(frame) {
-	case 1001: frame = a->initFrame; break;
-	case 1002: frame = a->walkFrame; break;
-	case 1003: frame = a->standFrame; break;
-	case 1004: frame = a->talkFrame1; break;
-	case 1005: frame = a->talkFrame2; break;
-	}
-
-	if (a->costume != 0) {
-		a->animProgress = 0;
-		a->needRedraw = true;
-		a->needBgReset = true;
-		if (frame == a->initFrame)
-			initActorCostumeData(a);
-		akos_decodeData(a, frame, (uint)-1);
-	}
-}
-#else
-void Scumm::startAnimActor(Actor *a, int frame) {
-	if (frame==0x38)
-		frame = a->initFrame;
-
-	if (frame==0x39)
-		frame = a->walkFrame;
-
-	if (frame==0x3A)
-		frame = a->standFrame;
-
-	if (frame==0x3B)
-		frame = a->talkFrame1;
-
-	if (frame==0x3C)
-		frame = a->talkFrame2;
-
-	if (a->room == _currentRoom && a->costume) {
-		a->animProgress = 0;
-		a->cost.animCounter1 = 0;
-		a->needRedraw = true;
-	
-		cost.loadCostume(a->costume);
-		
-		if (a->initFrame==frame)
-			initActorCostumeData(a);
-
-		if (frame!=0x3E) {
-			decodeCostData(a, frame, -1);
+	if (_features & GF_NEW_COSTUMES) {
+		switch(frame) {
+		case 1001: frame = a->initFrame; break;
+		case 1002: frame = a->walkFrame; break;
+		case 1003: frame = a->standFrame; break;
+		case 1004: frame = a->talkFrame1; break;
+		case 1005: frame = a->talkFrame2; break;
 		}
-	}
 
-	a->needBgReset = true;
+		if (a->costume != 0) {
+			a->animProgress = 0;
+			a->needRedraw = true;
+			a->needBgReset = true;
+			if (frame == a->initFrame)
+				initActorCostumeData(a);
+			akos_decodeData(a, frame, (uint)-1);
+		}
+
+	} else {
+		if (frame==0x38)
+			frame = a->initFrame;
+
+		if (frame==0x39)
+			frame = a->walkFrame;
+
+		if (frame==0x3A)
+			frame = a->standFrame;
+
+		if (frame==0x3B)
+			frame = a->talkFrame1;
+
+		if (frame==0x3C)
+			frame = a->talkFrame2;
+
+		if (a->room == _currentRoom && a->costume) {
+			a->animProgress = 0;
+			a->cost.animCounter1 = 0;
+			a->needRedraw = true;
+		
+			if (a->initFrame==frame)
+				initActorCostumeData(a);
+
+			if (frame!=0x3E) {
+				cost_decodeData(a, frame, -1);
+			}
+		}
+
+		a->needBgReset = true;
+	}
 }
-#endif
 
 void Scumm::fixActorDirection(Actor *a, int direction) {
 	uint mask;
@@ -362,17 +386,13 @@ void Scumm::fixActorDirection(Actor *a, int direction) {
 	if (a->costume==0)
 		return;
 
-#if !defined(FULL_THROTTLE)
-	cost.loadCostume(a->costume);
-#endif
-
 	mask = 0x8000;
 	for (i=0; i<16; i++,mask>>=1) {
 		vald = a->cost.frame[i];
 		if (vald==0xFFFF)
 			continue;
 #if !defined(FULL_THROTTLE)
-		decodeCostData(a, vald, mask);
+		cost_decodeData(a, vald, mask);
 #else
 		akos_decodeData(a, vald, mask);
 #endif
@@ -755,7 +775,7 @@ void Scumm::processActors() {
 		ac2 = actors;
 		cnt2 = numactors;
 		do {
-			if ( (*ac2)->y > (*ac)->y ) {
+			if ( (*ac2)->y - ((*ac2)->layer<<11) > (*ac)->y - ((*ac)->layer<<11) ) {
 				tmp = *ac;
 				*ac = *ac2;
 				*ac2 = tmp;
@@ -777,49 +797,46 @@ void Scumm::processActors() {
 	} while (ac++,--cnt);
 }
 
-void Scumm::setupCostumeRenderer(CostumeRenderer *c, Actor *a) {
-	c->_actorX = a->x - virtscr->xstart;
-	c->_actorY = a->y - a->elevation;
-	c->_zbuf = a->mask;
-	if (c->_zbuf > gdi._numZBuffer)
-		c->_zbuf = (byte)gdi._numZBuffer;
-	if (a->forceClip)
-		c->_zbuf = a->forceClip;
-	
-	c->_scaleX = a->scalex;
-	c->_scaleY = a->scaley;
-}
-
-void Scumm::setActorCostPalette(Actor *a) {
-	int i;
-	byte color;
-
-	cost.loadCostume(a->costume);
-	
-	for (i=0; i<cost._numColors; i++) {
-		color = a->palette[i];
-		if (color==255)
-			color = cost._ptr[8+i];
-		cost._palette[i] = color;
-	}
-}
-
 #if !defined(FULL_THROTTLE)
 void Scumm::drawActorCostume(Actor *a) {
+	CostumeRenderer cr;
+
 	if (a==NULL || !a->needRedraw)
 		return;
 
+	a->needRedraw = false;
+
 	setupActorScale(a);
-	setupCostumeRenderer(&cost, a);
-	setActorCostPalette(a);
+
+	cr._actorX = a->x - virtscr->xstart;
+	cr._actorY = a->y - a->elevation;
+	cr._scaleX = a->scalex;
+	cr._scaleY = a->scaley;
+
+	cr._outheight = virtscr->height;
+	cr._vm = this;
+
+	cr._zbuf = a->mask;
+	if (cr._zbuf > gdi._numZBuffer)
+		cr._zbuf = (byte)gdi._numZBuffer;
+	if (a->forceClip)
+		cr._zbuf = a->forceClip;
+	
+	cr._shadow_table = _shadowPalette;
+
+	cost_setCostume(&cr, a->costume);
+	cost_setPalette(&cr, a->palette);
+	cost_setFacing(&cr, a);
 
 	a->top = 0xFF;
-	a->needRedraw = 0;
+	
 	a->bottom = 0;
-	cost.loadCostume(a->costume);
-	cost._mirror = newDirToOldDir(a->facing)!=0 || (cost._ptr[7]&0x80);
 
-	cost.drawCostume(a);
+	/* if the actor is partially hidden, redraw it next frame */
+	if(cr.drawCostume(a)&1) {
+		a->needBgReset = true;
+		a->needRedraw = true;
+	}
 }
 #else
 void Scumm::drawActorCostume(Actor *a) {
@@ -842,10 +859,14 @@ void Scumm::drawActorCostume(Actor *a) {
 		if (ar.clipping > (byte)gdi._numZBuffer)
 			ar.clipping = gdi._numZBuffer;
 	}
+	ar.charsetmask = _vars[VAR_CHARSET_MASK]!=0;
 
 	ar.outptr = getResourceAddress(rtBuffer, 1) + virtscr->xstart;
 	ar.outwidth = virtscr->width;
 	ar.outheight = virtscr->height;
+
+	ar.shadow_mode = a->shadow_mode;
+	ar.shadow_table = _shadowPalette;
 
 	akos_setCostume(&ar, a->costume);
 	akos_setPalette(&ar, a->palette);
@@ -864,7 +885,11 @@ void Scumm::drawActorCostume(Actor *a) {
 #endif
 
 void Scumm::actorAnimate(Actor *a) {
+#if defined(FULL_THROTTLE)
 	byte *akos;
+#else
+	LoadedCostume lc;
+#endif
 
 	if (a==NULL || a->costume == 0)
 		return;
@@ -878,8 +903,8 @@ void Scumm::actorAnimate(Actor *a) {
 		assert(akos);
 		if (akos_increaseAnims(akos, a)) {
 #else
-		cost.loadCostume(a->costume);
-		if (cost.animate(a)) {
+		loadCostume(&lc, a->costume);
+		if (cost_increaseAnims(&lc, a)) {
 #endif
 			a->needRedraw = true;
 			a->needBgReset = true;
@@ -1087,7 +1112,7 @@ void Scumm::remapActor(Actor *a, int r_fact, int g_fact, int b_fact, int thresho
 		akpl_color=*akpl++;
 
 		// allow remap of generic palette entry?
-		if (!a->unk1 || akpl_color>=16) {
+		if (!a->shadow_mode || akpl_color>=16) {
 			if (r_fact!=256) r = (r*r_fact) >> 8;
 			if (g_fact!=256) g = (g*g_fact) >> 8;
 			if (b_fact!=256) b = (b*b_fact) >> 8;
@@ -1097,5 +1122,29 @@ void Scumm::remapActor(Actor *a, int r_fact, int g_fact, int b_fact, int thresho
 }
 
 void Scumm::setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to) {
-	warning("stub setupShadowPalette(%d,%d,%d,%d,%d,%d)", slot,rfact,gfact,bfact,from,to);
+	byte *table;
+	int i,num;
+	byte *curpal;
+
+	if (slot<0 || slot > 7)
+		error("setupShadowPalette: invalid slot %d", slot);
+
+	if (from<0 || from>255 || to<0 || from>255 || to < from)
+		error("setupShadowPalette: invalid range from %d to %d", from, to);
+
+	table = _shadowPalette + slot * 256;
+	for(i=0; i<256; i++)
+		table[i] = i;
+
+	table += from;
+	curpal = _currentPalette + from*3;
+	num = to - from + 1;
+	do {
+		*table++ = remapPaletteColor(
+			curpal[0] * rfact >> 8,
+			curpal[1] * gfact >> 8,
+			curpal[2] * bfact >> 8,
+			(uint)-1);
+		curpal+=3;
+	} while (--num);
 }

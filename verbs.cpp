@@ -167,8 +167,8 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	int ydiff, xstrip;
 	int imgw, imgh;
 	int i,tmp;
-	byte *IMHD_ptr;
 	byte *obim;
+	ImageHeader *imhd;
 
 	if ((vs=findVirtScreen(y)) == NULL)
 		return;
@@ -183,12 +183,11 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	xstrip = x>>3;
 	ydiff = y - vs->topline;
 
-
 	obim = getResourceAddress(rtVerb, vrb);
-	IMHD_ptr = findResource(MKID('IMHD'), obim);
 
-	imgw = READ_LE_UINT16(IMHD_ptr+0x14) >> 3;
-	imgh = READ_LE_UINT16(IMHD_ptr+0x16) >> 3;
+	imhd = (ImageHeader*)findResourceData(MKID('IMHD'), obim);
+	imgw = READ_LE_UINT16(&imhd->width) >> 3;
+	imgh = READ_LE_UINT16(&imhd->height) >> 3;
 	
 	imptr = findResource(MKID('IM01'), obim);
 	if (!imptr)

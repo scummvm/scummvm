@@ -39,13 +39,13 @@ int Scumm::getBoxScale(int box) {
 
 byte Scumm::getNumBoxes() {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
-	return ptr[8];
+	return ptr[0];
 }
 
 Box *Scumm::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
-	checkRange(ptr[8]-1, 0, box, "Illegal box %d");
-	return (Box*)(ptr + box*SIZEOF_BOX + 10);
+	checkRange(ptr[0]-1, 0, box, "Illegal box %d");
+	return (Box*)(ptr + box*SIZEOF_BOX + 2);
 }
 
 bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
@@ -290,7 +290,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 }
 
 byte *Scumm::getBoxMatrixBaseAddr() {
-	byte *ptr = getResourceAddress(rtMatrix, 1) + 8;
+	byte *ptr = getResourceAddress(rtMatrix, 1);
 	if (*ptr==0xFF) ptr++;
 	return ptr;
 }
@@ -491,16 +491,12 @@ void Scumm::createBoxMatrix() {
 
 	createResource(rtMatrix, 4, 1000);
 	createResource(rtMatrix, 3, 4160); //65 items of something of size 64
-	createResource(rtMatrix, 1, BOX_MATRIX_SIZE+8);
+	createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 
 	matrix_ptr = getResourceAddress(rtMatrix, 1);
 
-	/* endian & alignment safe */
-	((uint32*)matrix_ptr)[1] = TO_BE_32(BOX_MATRIX_SIZE+8);
-	((uint32*)matrix_ptr)[0] = MKID('BOXM');
-
 	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
-	_boxMatrixPtr1 = getResourceAddress(rtMatrix, 1) + 8;
+	_boxMatrixPtr1 = getResourceAddress(rtMatrix, 1);
 	_boxMatrixPtr3 = getResourceAddress(rtMatrix, 3);
 
 	_boxPathVertexHeapIndex = _boxMatrixItem = 0;

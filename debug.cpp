@@ -37,6 +37,7 @@ enum {
 	CMD_GO,
 	CMD_ACTOR,
 	CMD_SCRIPTS,
+	CMD_LOAD_ROOM,
 	CMD_EXIT
 };
 
@@ -65,6 +66,7 @@ bool ScummDebugger::do_command() {
 				"(q)uit -> quit the debugger\n"
 				"(g)o [numframes] -> increase frame\n"
 				"(a)ctor [actornum] -> show actor information\n"
+				"(r)oom roomnum -> load room\n"
 				"(s)cripts -> show running scripts\n"
 				"(e)xit -> exit game\n"
 			   );
@@ -89,6 +91,17 @@ bool ScummDebugger::do_command() {
 	case CMD_SCRIPTS:
 		printScripts();
 		return true;
+	case CMD_LOAD_ROOM:
+		if (!_parameters[0]) {
+			printf("Enter a room number...\n");
+		} else {	
+			int room=atoi(_parameters);
+			_s->actor[_s->_vars[VAR_EGO]].room=room;
+			_s->startScene(room, 0, 0);
+			_s->_fullRedraw = 1;
+		}
+		return true;
+
 	case CMD_EXIT:
 		exit(1);
 	}
@@ -130,6 +143,7 @@ static const DebuggerCommands debugger_commands[] = {
 	{ "g", 1, CMD_GO },
 	{ "a", 1, CMD_ACTOR },
 	{ "s", 1, CMD_SCRIPTS },
+	{ "r", 1, CMD_LOAD_ROOM },
 	{ "e", 1, CMD_EXIT },
 	{ 0, 0, 0 },
 };

@@ -18,17 +18,8 @@
  * $Header$
  */
 
-#if USE_DIRECTX
-#define INITGUID
-#include <ddraw.h>
-#endif
-
 #include "stdafx.h"
 #include <assert.h>
-
-#if USE_DRAWDIB
-#include <vfw.h>
-#endif
 
 #include "scumm.h"
 #include "sound.h"
@@ -73,31 +64,15 @@ class WndMan {
 	bool terminated;	
 
 #if USE_GDI
-//	BITMAPINFO *biHeader;
-//	byte *BmpBG;
 public:
 	DIB dib;
 private:
-#endif
-
-#if USE_DRAWDIB
-	BITMAPINFOHEADER *biHeader;
-	HDRAWDIB hdb;
 #endif
 
 public:
 	byte *_vgabuf;
 
 	Scumm *_scumm;
-
-#if USE_DIRECTX
-	IDirectDrawSurface4 *MainSurf,*Surf2;
-	IDirectDraw *DxObject;
-	IDirectDraw4 *Dx4Object;
-	IDirectDrawPalette *DxPal;
-	bool OutOfGame;
-	void InitDirectX();
-#endif
 
 	HANDLE _event;
 	DWORD _threadId;
@@ -153,8 +128,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	{
 		case WM_DESTROY:
 		case WM_CLOSE:
-//			TerminateThread((void*)wm->_threadId, 0);
-//			wm->_scumm->destroy();
 			exit(0);
 			break;
 
@@ -195,10 +168,16 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			wm->_scumm->mouse.y = ((int16*)&lParam)[1];
 			break;
 		case WM_LBUTTONDOWN:
-			wm->_scumm->_leftBtnPressed |= 1;
+			wm->_scumm->_leftBtnPressed |= msClicked|msDown;
+			break;
+		case WM_LBUTTONUP:
+			wm->_scumm->_leftBtnPressed &= ~msDown;
 			break;
 		case WM_RBUTTONDOWN:
-			wm->_scumm->_rightBtnPressed |= 1;
+			wm->_scumm->_rightBtnPressed |= msClicked|msDown;
+			break;
+		case WM_RBUTTONUP:
+			wm->_scumm->_rightBtnPressed &= ~msDown;
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
@@ -207,49 +186,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 }
 
 #if USE_GDI
-
-void copy_320x200_to_640x400(byte *s, byte *d) {
-	_asm {
-		push ebp
-
-		mov esi,s
-		mov edi,d
-		
-		mov ebp,SRC_HEIGHT
-		againouter:
-
-		mov ebx,320/4
-		againinner:
-			mov eax,[esi]
-			mov dl,ah
-			mov dh,ah
-			shl edx,16
-			mov dl,al
-			mov dh,al
-			shr eax,16
-			mov cl,ah
-			mov	ch,ah
-			shl ecx,16
-			mov cl,al
-			mov ch,al
-
-			mov [edi],edx
-			mov [edi+4],ecx
-			mov [edi+640],edx
-			mov [edi+644],ecx
-
-			add esi,4
-			add edi,8
-
-			dec ebx
-		jnz againinner
-//		add esi,15
-		add edi,640
-		dec ebp
-		jnz againouter
-		pop ebp
-	}
-}
 
 bool WndMan::allocateDIB(int w, int h) {
 	struct {
@@ -281,11 +217,6 @@ void WndMan::writeToScreen() {
 	RECT r;
 	HDC dc,bmpdc;
 	HBITMAP bmpOld;
-//	if (!BmpBG)
-//		BmpBG = (byte*)LocalAlloc(LMEM_FIXED, DEST_WIDTH*DEST_HEIGHT);
-#if DEST_WIDTH==640
-	copy_320x200_to_640x400(_vgabuf, dib.buf);
-#endif
 #if DEST_WIDTH==320
 	if (_vgabuf) {
 		for (int y=0; y<200; y++) {
@@ -293,8 +224,6 @@ void WndMan::writeToScreen() {
 		}
 	}
 #endif
-
-//	setsel(dib.buf);
 
 	r.left = r.top = 0;
 	r.right = DEST_WIDTH;
@@ -311,14 +240,10 @@ void WndMan::writeToScreen() {
 	}
 
 	SetStretchBltMode(dc, BLACKONWHITE);
-#if DEST_WIDTH==640
-	StretchBlt(dc, r.left, r.top, r.right-r.left, r.bottom-r.top, bmpdc, 0, 0, 640,480, SRCCOPY);
-#endif
 
 #if DEST_WIDTH==320
 	StretchBlt(dc, r.left, r.top, r.right-r.left, r.bottom-r.top, bmpdc, 0, 0, 320,200, SRCCOPY);
 #endif
-//	//StretchDIBits(dc, r.left, r.top, r.right - r.left, r.bottom - r.top, 0, 0, DEST_WIDTH, DEST_HEIGHT, BmpBG, biHeader, DIB_RGB_COLORS, SRCCOPY);
 
 
 	SelectObject(bmpdc, bmpOld);
@@ -329,288 +254,17 @@ void WndMan::writeToScreen() {
 void WndMan::setPalette(byte *ctab, int first, int num) {
 	int i;
 
-#if 1
 	for (i=0; i<256; i++) {
 		dib.pal[i].rgbRed = ctab[i*3+0];
 		dib.pal[i].rgbGreen = ctab[i*3+1];
 		dib.pal[i].rgbBlue = ctab[i*3+2];
 	}
-#else
-	for (i=0; i<256; i++) {
-		dib.pal[i].rgbRed = i;
-		dib.pal[i].rgbGreen = i;
-		dib.pal[i].rgbBlue = i;
-	}
-#endif
 
 	dib.new_pal = true;
 }
 
 #endif
 
-#if USE_DIRECTX
-
-void WndMan::writeToScreen() {
-	RECT r;
-	DDSURFACEDESC2 dd;
-
-	r.left = r.top = 0;
-	r.right = SRC_WIDTH;
-	r.bottom = SRC_HEIGHT;
-
-	if (OutOfGame) {
-		if (GetForegroundWindow() != hWnd) return;
-		OutOfGame = false;
-	}
-	
-	dd.dwSize = sizeof(dd);
-	
-	int j;
-	do {
-		j = MainSurf->Lock(NULL, &dd, DDLOCK_WRITEONLY, NULL);
-		if (j!=DDERR_SURFACELOST) break;
-		if (MainSurf->Restore() != DD_OK) {
-			OutOfGame = true;
-			return;
-		}
-	} while (1);
-	
-	if (j == DD_OK) {
-		byte *d = (byte*)dd.lpSurface;
-		byte *s = _vgabuf;
-
-		for(int h=SRC_HEIGHT;--h>=0; ) {
-			memcpy(d, s, SRC_WIDTH);
-			d+=dd.lPitch;
-			s+=SRC_PITCH;
-		}
-
-		MainSurf->Unlock(NULL);
-	}
-}
-
-void WndMan::setPalette(byte *ctab, int first, int num) {
-	PALETTEENTRY pal[256];
-
-	for (int i=0; i<256; i++) {
-		pal[i].peFlags = 0;
-		pal[i].peRed = *ctab++;
-		pal[i].peGreen = *ctab++;
-		pal[i].peBlue = *ctab++;
-	}
-
-	DxPal->SetEntries(0, 0, 256, (PALETTEENTRY*)&pal);
-}
-
-IDirectDrawSurface4 *CreateMainSurface(IDirectDraw4 *dd);
-
-void WndMan::InitDirectX() {
-	
-	if (DirectDrawCreate(NULL, &DxObject, NULL) != DD_OK) Error("DirectDrawCreate failed!");
-	if (DxObject->QueryInterface(IID_IDirectDraw4, (void**)&Dx4Object) != DD_OK) Error("QueryInterface failed!");
-
-if (Dx4Object->SetCooperativeLevel(hWnd,DDSCL_NORMAL) != DD_OK) Error("SetCooperativeLevel failed!");
-
-	DDCAPS ddcaps;
-	BOOL bHasOverlay, bHasColorKey, bCanStretch;
-	ddcaps.dwSize = sizeof( ddcaps );
-	if (Dx4Object->GetCaps(&ddcaps, NULL ) != DD_OK) Error("GetCaps failed!");
-
-	/* Determine if the hardware supports overlay surfaces */
-	bHasOverlay = ddcaps.dwCaps & DDCAPS_OVERLAY;
-
-	/* Determine if the hardware supports colorkeying */
-	bHasColorKey = ((ddcaps.dwCaps & DDCAPS_COLORKEY) == DDCAPS_COLORKEY) ? TRUE : FALSE;
-
-	/* Determine if the hardware supports scaling of the overlay surface */
-	bCanStretch = ((ddcaps.dwCaps & DDCAPS_OVERLAYSTRETCH) == DDCAPS_OVERLAYSTRETCH) ? TRUE : FALSE;
-
-   if ( ( ddcaps.dwCaps & DDCAPS_ALIGNBOUNDARYDEST ) ||
-        ( ddcaps.dwCaps & DDCAPS_ALIGNBOUNDARYSRC ) ||
-        ( ddcaps.dwCaps & DDCAPS_ALIGNSIZEDEST ) ||
-        ( ddcaps.dwCaps & DDCAPS_ALIGNSIZESRC ) ) {
-
-			Error("Alignment restriction!");
-	}
-
-    // Are any overlays available for use?
-  if ( ddcaps.dwMaxVisibleOverlays == 
-				ddcaps.dwCurrVisibleOverlays )
-	{
-		Error("No overlay free");
-
-	}
-
-
-	if (!bHasOverlay || !bHasColorKey || !bCanStretch) {
-		Error("Bad hardware!");
-	}
-
-	/* Create primary surface */
-		
-	DDSURFACEDESC2 ddsd;
-	DDSCAPS ddscaps;
-	LPDIRECTDRAWSURFACE4 lpFrontBuffer;
-	LPDIRECTDRAWSURFACE4 lpBackBuffer;
-	LPDIRECTDRAWSURFACE4 lpPrimary;
-	HRESULT LastError;
-	RECT rectOverlaySource, rectOverlayDest;
-	DDOVERLAYFX ddofx;
-
-	
-
-//	if (!CreateMainSurface(Dx4Object))
-//		Error("sad");
-
-	/* Create the primary surface */
-	memset(&ddsd, 0, sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_CAPS  | DDSD_BACKBUFFERCOUNT;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE|DDSCAPS_FLIP |
-                              DDSCAPS_COMPLEX |
-                              DDSCAPS_VIDEOMEMORY;
-	ddsd.dwBackBufferCount = 1;
-
-	if (Dx4Object->CreateSurface(&ddsd, &lpPrimary, NULL) != DD_OK)
-		Error("Main surface creation failed!");
-	
-	/* Create a flippable scaleable overlay surface */
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_BACKBUFFERCOUNT | DDSD_PIXELFORMAT;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_OVERLAY | DDSCAPS_FLIP | DDSCAPS_COMPLEX | DDSCAPS_VIDEOMEMORY;
-	ddsd.dwBackBufferCount = 1; /* One back buffer for triple buffering, set to 2 */
-	ddsd.dwWidth = 320;
-	ddsd.dwHeight = 240; 
-//	ddsd.ddckCKDestOverlay.dwColorSpaceLowValue = 0x123456;
-//	ddsd.ddckCKDestOverlay.dwColorSpaceHighValue = 0x123456;
-
-
-	ddsd.ddpfPixelFormat.dwSize = sizeof(ddsd.ddpfPixelFormat);
-
-  ddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
-  ddsd.ddpfPixelFormat.dwFourCC = 0;
-  ddsd.ddpfPixelFormat.dwRGBBitCount = 16;
-  ddsd.ddpfPixelFormat.dwRBitMask = 0x7C00;	//0x7C00 is a hexadecimal memory address
-  ddsd.ddpfPixelFormat.dwGBitMask = 0x03e0;
-  ddsd.ddpfPixelFormat.dwBBitMask = 0x001F;
-  ddsd.ddpfPixelFormat.dwRGBAlphaBitMask = 0;
-
-//	ddsd.ddpfPixelFormat.dwFlags = DDPF_RGB | DDPF_PALETTEINDEXED8;
-//	ddsd.ddpfPixelFormat.dwRGBBitCount = 8;
-
-	if ((LastError = Dx4Object->CreateSurface(&ddsd, &lpFrontBuffer, NULL)) != DD_OK) {
-		if (LastError==DDERR_NOOVERLAYHW )
-			Error("No hardware!");
-		else
-			Error("2nd surface failed");
-	}
-
-#if 0
-	if (Dx4Object->SetCooperativeLevel(hWnd, DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE) != DD_OK) Error("SetCooperativeLevel failed!");
-	//	if (Dx4Object->SetDisplayMode(SRC_WIDTH,SRC_HEIGHT,8,0,DDSDM_STANDARDVGAMODE) != DD_OK) Error("SetDisplayMode failed!");
-	if (!(MainSurf = CreateMainSurface(Dx4Object))) Error("CreateMainSurface failed!");
-	if (!(Surf2 = Create2ndSurface(Dx4Object, _vgabuf))) Error("Create 2ndSurface failed!");
-	if (!(DxPal = CreateGamePalette(Dx4Object))) Error("CreateGamePalette failed!");
-	if (MainSurf->SetPalette(DxPal) != DD_OK) Error("SetPalette Failed!");
-#endif
-
-}
-
-
-IDirectDrawSurface4 *CreateMainSurface(IDirectDraw4 *dd) {
-	DDSURFACEDESC2 d;
-	IDirectDrawSurface4 *ds;
-
-//	if(dd->GetGDISurface(&ds) != DD_OK)
-//		return NULL;
-
-	memset(&d, 0, sizeof(d));
-
-	d.dwSize = sizeof(d);
-	d.dwFlags = DDSD_CAPS;
-	d.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-	
-	int i;
-	if ((i = dd->CreateSurface(&d, &ds, NULL)) != DD_OK)
-		return NULL;	
-	
-	return ds;
-}
-
-
-IDirectDrawSurface4 *Create2ndSurface(IDirectDraw4 *dd, byte *surfmem) {
-	DDSURFACEDESC2 d;
-	IDirectDrawSurface4 *ds;
-
-	memset(&d, 0, sizeof(d));
-
-	d.dwSize = sizeof(d);
-	d.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH | /*DDSD_LPSURFACE |*/ DDSD_PIXELFORMAT;
-	d.dwWidth = 640/*SRC_WIDTH*/;
-	d.dwHeight = 480/*SRC_HEIGHT*/;
-	d.lPitch = 640;
-	d.lpSurface = surfmem;
-
-	d.ddpfPixelFormat.dwSize  = sizeof(DDPIXELFORMAT);
-	d.ddpfPixelFormat.dwFlags = DDPF_RGB | DDPF_PALETTEINDEXED8;
-	d.ddpfPixelFormat.dwRGBBitCount = 8;
-
-	d.ddsCaps.dwCaps = DDSCAPS_OVERLAY;
-
-	int i;
-	if ((i = dd->CreateSurface(&d, &ds, NULL)) != DD_OK)
-		return NULL;
-	return ds;
-}
-
-IDirectDrawPalette *CreateGamePalette(IDirectDraw4 *dd) {
-	PALETTEENTRY pal[256];
-	int i;
-	IDirectDrawPalette *p;
-
-	memset(&pal, 0, sizeof(pal));
-	if ((i=dd->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256, pal, &p, NULL)) != DD_OK)
-		return NULL;
-
-	return p;
-}
-
-#endif
-
-#if USE_DRAWDIB
-void WndMan::writeToScreen() {
-	RECT r;
-	HDC dc;
-
-	r.left = r.top = 0;
-	r.right = DEST_WIDTH/2;
-	r.bottom = DEST_HEIGHT/2;
-
-	dc = GetDC(hWnd);
-	
-	DrawDibRealize(hdb, dc, TRUE);
-	DrawDibDraw(hdb, dc, r.left, r.top, r.right-r.left, r.bottom-r.top, biHeader, _vgabuf, 0, 0, 320, 240, 0);
-	
-//		StretchDIBits(dc, r.left, r.top, r.right - r.left, r.bottom - r.top, 0, 0, DEST_WIDTH, DEST_HEIGHT, BmpBG, biHeader, DIB_RGB_COLORS, SRCCOPY);
-	ReleaseDC(hWnd, dc);
-}
-
-void WndMan::setPalette(byte *ctab, int first, int num) {
-	PALETTEENTRY pal[256];
-	for (int i=0; i < num; i++,ctab+=3) {
-		pal[i].peFlags = 0;
-		pal[i].peRed = ctab[0];
-		pal[i].peGreen = ctab[1];
-		pal[i].peBlue = ctab[2];
-	}
-
-	DrawDibChangePalette(hdb, 0, 16, pal);
-
-	GetLastError();
-}
-
-
-#endif
 HWND globWnd;
 
 void WndMan::init() {
@@ -635,25 +289,10 @@ void WndMan::init() {
 	if (!RegisterClassEx(&wcex))
 		Error("Cannot register window class!");
 
-#if USE_DIRECTX
-	hWnd = CreateWindow("ScummVM", "ScummVM", 0,
-      CW_USEDEFAULT, CW_USEDEFAULT, SRC_WIDTH, SRC_HEIGHT, NULL, NULL, hInst, NULL);
-
-	SetWindowLong(hWnd, GWL_USERDATA, (long)this);
-	SetWindowLong(hWnd, GWL_STYLE, 0);
-	ShowCursor(false);
-
-	
-	InitDirectX();
-
-	ShowWindow(hWnd, SW_SHOW);
-#endif
-
 #if USE_GDI
 	globWnd = hWnd = CreateWindow("ScummVM", "ScummVM", WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, CW_USEDEFAULT, DEST_WIDTH+10, DEST_HEIGHT+30, NULL, NULL, hInst, NULL);
 	SetWindowLong(hWnd, GWL_USERDATA, (long)this);
-//	ShowCursor(false);
 
 	dib.pal = (RGBQUAD*)calloc(sizeof(RGBQUAD),256);
 	dib.new_pal = false;
@@ -661,46 +300,9 @@ void WndMan::init() {
 	if (!allocateDIB(DEST_WIDTH, DEST_HEIGHT))
 		Error("allocateDIB failed!");
 
-#if 0
-	biHeader = (BITMAPINFO*)LocalAlloc(LMEM_FIXED, sizeof(BITMAPINFOHEADER) + 1024 );
-	memset(biHeader, 0, sizeof(BITMAPINFOHEADER) + 1024);
-
-	biHeader->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	biHeader->bmiHeader.biWidth = DEST_WIDTH;
-	biHeader->bmiHeader.biHeight = -DEST_HEIGHT;	/* top down */
-	biHeader->bmiHeader.biPlanes = 1;
-	biHeader->bmiHeader.biBitCount = 8;	/* 256 colors */
-	biHeader->bmiHeader.biCompression = BI_RGB;	/* uncompressed */
-#endif
-
 	ShowWindow(hWnd, SW_SHOW);
 #endif
 
-#if USE_DRAWDIB
-	hdb = DrawDibOpen();
-
-	hWnd = CreateWindow("ScummVM", "ScummVM", WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, CW_USEDEFAULT, DEST_WIDTH+10, DEST_HEIGHT+30, NULL, NULL, hInst, NULL);
-	SetWindowLong(hWnd, GWL_USERDATA, (long)this);
-	ShowCursor(false);
-
-	biHeader = (BITMAPINFOHEADER*)LocalAlloc(LMEM_FIXED, sizeof(BITMAPINFOHEADER));
-	memset(biHeader, 0, sizeof(BITMAPINFOHEADER));
-
-	biHeader->biSize = sizeof(BITMAPINFOHEADER);
-	biHeader->biWidth = SRC_PITCH;
-	biHeader->biHeight = SRC_HEIGHT;	/* top down */
-	biHeader->biPlanes = 1;
-	biHeader->biBitCount = 8;	/* 256 colors */
-	biHeader->biCompression = BI_RGB;	/* uncompressed */
-
-	ShowWindow(hWnd, SW_SHOW);
-
-//	int k = DrawDibProfileDisplay(biHeader);
-//	printf("%d\n", k&PD_CAN_STRETCHDIB);
-		
-
-#endif
 }
 
 
@@ -742,24 +344,31 @@ int _declspec(naked) endpentiumtest() {
 }
 
 
-
-
-void decompressMask(byte *d, byte *s) {
+void decompressMask(byte *d, byte *s, int w=320, int h=144) {
 	int x,y;
-	byte bits = 0x80, bdata = *s++;
-
-	for (y=0; y<144; y++)
-		for (x=0; x<320; x++) {
-			*d++ = (bdata & bits) ? 128 : 0;
+	
+	for (y=0; y<h; y++) {
+		byte *p = s+y*40;
+		byte *pd = d + y*320;
+		byte bits = 0x80, bdata = *p++;
+		for (x=0; x<w; x++) {
+			*pd++ = (bdata & bits) ? 128 : 0;
 			bits>>=1;
 			if (!bits) {
-				bdata = *s++;
+				bdata = *p++;
 				bits=0x80;
 			}
 		}
+	}
 }
 
-
+void outputlittlemask(byte *mask, int w, int h) {
+	byte *old = wm->_vgabuf;
+	wm->_vgabuf = NULL;
+	decompressMask(wm->dib.buf, mask, w, h);
+	wm->writeToScreen();	
+	wm->_vgabuf = old;
+}
 
 void outputdisplay2(Scumm *s, int disp) {
 	byte *old = wm->_vgabuf;
@@ -770,12 +379,12 @@ void outputdisplay2(Scumm *s, int disp) {
 	case 0:
 		wm->_vgabuf = buf;
 		memcpy(buf, wm->_vgabuf, 64000);
-		memcpy(buf,s->getResourceAddress(rtBuffer, 5),320*144);
+		memcpy(buf,s->getResourceAddress(rtBuffer, 5),320*200);
 		break;
 	case 1:
 		wm->_vgabuf = buf;
 		memcpy(buf, wm->_vgabuf, 64000);
-		memcpy(buf,s->getResourceAddress(rtBuffer, 1),320*144);
+		memcpy(buf,s->getResourceAddress(rtBuffer, 1),320*200);
 		break;
 	case 2:
 		wm->_vgabuf = NULL;

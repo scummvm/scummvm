@@ -461,7 +461,7 @@ FixRoom:
 			a->animProgress = 0;
 			break;
 		case 23: /* unk2 */
-			a->unk1 = getVarOrDirectByte(0x80); /* unused? */
+			a->shadow_mode = getVarOrDirectByte(0x80); /* shadow mode */
 			break;
 		default:
 			error("o5_actorSet: default case");
@@ -584,7 +584,7 @@ void Scumm::o5_cursorCommand() {
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
 		k = getVarOrDirectByte(0x20);
-		setCursorHotspot(i, j, k);
+		setCursorHotspot2(j, k);
 		break;
 
 	case 12: /* init cursor */
@@ -895,10 +895,16 @@ void Scumm::o5_getClosestObjActor() {
 
 void Scumm::o5_getDist() {
 	int o1,o2;
+	int r;
 	getResultPos();
 	o1 = getVarOrDirectWord(0x80);
 	o2 = getVarOrDirectWord(0x40);
-	setResult(getObjActToObjActDist(o1,o2));
+	r = getObjActToObjActDist(o1,o2);
+	
+	/* Fix for monkey 2, dunno what's wrong in scummvm */
+	if (_gameId==GID_MONKEY2 && vm.slot[_currentScript].number==40 && r<60)
+		r=60;
+	setResult(r);
 }
 
 void Scumm::o5_getInventoryCount() {
@@ -1077,12 +1083,14 @@ void Scumm::o5_loadRoomWithEgo() {
 	_egoPositioned = false;
 
 	_vars[VAR_WALKTO_OBJ] = obj;
-
 	startScene(a->room, a, obj);
-
 	_vars[VAR_WALKTO_OBJ] = 0;
-	camera._destPos = camera._curPos = a->x;
+
+#if !defined(FULL_THROTTLE)
+	camera._dest.x = camera._cur.x = a->x;
 	setCameraFollows(a);
+#endif
+
 	_fullRedraw=1;
 
 	if (x != -1) {
@@ -1144,7 +1152,7 @@ void Scumm::o5_overRide() {
 }
 
 void Scumm::o5_panCameraTo() {
-	panCameraTo(getVarOrDirectWord(0x80));
+	panCameraTo(getVarOrDirectWord(0x80), 0);
 }
 
 void Scumm::o5_pickupObject() {
@@ -1323,9 +1331,9 @@ void Scumm::o5_roomOps() {
 		a = getVarOrDirectWord(0x80);
 		b = getVarOrDirectWord(0x40);
 		if (a < 160) a=160;
-		if (a > ((_scrWidthIn8Unit-20)<<3)) a=((_scrWidthIn8Unit-20)<<3);
 		if (b < 160) b=160;
-		if (b > ((_scrWidthIn8Unit-20)<<3)) b=((_scrWidthIn8Unit-20)<<3);
+		if (a > _scrWidth-160) a=_scrWidth-160;
+		if (b > _scrWidth-160) b=_scrWidth-160;
 		_vars[VAR_CAMERA_MIN_X] = a;
 		_vars[VAR_CAMERA_MAX_X] = b;
 		break;
@@ -1480,34 +1488,36 @@ void Scumm::o5_setCameraAt() {
 }
 
 void Scumm::o5_setObjectName() {
-	int act = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(0x80);
 	int size;
 	int a;
 	int i;
+	byte *name;
 
-	if (act < NUM_ACTORS)
-		error("Can't set actor %d name with new-name-of", act);
+	if (obj < NUM_ACTORS)
+		error("Can't set actor %d name with new-name-of", obj);
 
-	if (!getObjectAddress(act))
-		error("Can't set name of object %d", act);
+	if (!getOBCDFromObject(obj))
+		error("Can't set name of object %d", obj);
 
-	size = READ_BE_UINT32_UNALIGNED(getObjOrActorName(act) - 4)-9;
+	name = getObjOrActorName(obj);
+	size = getResourceDataSize(name);
 	i = 0;
 
 	while ((a = fetchScriptByte()) != 0) {
-		 getObjOrActorName(act)[i++] = a;
+		 name[i++] = a;
 
 		if (a==0xFF) {
-			getObjOrActorName(act)[i++] = fetchScriptByte();
-			getObjOrActorName(act)[i++] = fetchScriptByte();
-			getObjOrActorName(act)[i++] = fetchScriptByte();
+			name[i++] = fetchScriptByte();
+			name[i++] = fetchScriptByte();
+			name[i++] = fetchScriptByte();
 		}
 
-		if (i > size)
-			error("New name of object %d too long", act);
+		if (i >= size)
+			error("New name of object %d too long", obj);
 	}
 
-	getObjOrActorName(act)[i] = 0;
+	name[i] = 0;
 	runHook(0);
 }
 
@@ -1807,7 +1817,7 @@ void Scumm::o5_wait() {
 			break;
 		return;
 	case 3: /* wait for camera */
-		if (camera._curPos>>3 != camera._destPos>>3)
+		if (camera._cur.x>>3 != camera._dest.x>>3)
 			break;
 		return;
 	case 4: /* wait for sentence */

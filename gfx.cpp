@@ -107,7 +107,12 @@ void Scumm::drawDirtyScreenParts() {
 
 	updateDirtyScreen(2);
 
-	if (camera._lastPos == camera._curPos) {
+#if defined(FULL_THROTTLE)
+	if (camera._last.x==camera._cur.x &&
+		  camera._last.y==camera._cur.y) {
+#else
+	if (camera._last.x == camera._cur.x) {
+#endif
 		updateDirtyScreen(0);
 	} else {
 		vs = &virtscr[0];
@@ -182,99 +187,86 @@ void blit(byte *dst, byte *src, int w, int h) {
 	} while (--h);
 }
 
-/* TODO: writes are being done to this data */
-MouseCursor mouse_cursors[4] = {
-	8,7,{15,15,7,8},
-	{
-	0x00,0x80,0x00,0x80,0x00,0x80,0x00,0x80,
-	0x00,0x80,0x00,0x80,0x00,0x00,0x7E,0x3F,
-	0x00,0x00,0x00,0x80,0x00,0x80,0x00,0x80,
-	0x00,0x80,0x00,0x80,0x00,0x80,0x00,0x00,
-	},
-	8,7,{15,15,7,8},
-	{
-	0x00,0x00,0x7F,0xFE,0x60,0x06,0x30,0x0C,
-	0x18,0x18,0x0C,0x30,0x06,0x60,0x03,0xC0,
-	0x06,0x60,0x0C,0x30,0x19,0x98,0x33,0xCC,
-	0x67,0xE6,0x7F,0xFE,0x00,0x00,0x00,0x00,
-	},
-
-	8,7,{15,15,7,8},
-	{
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	},
-	8,7,{15,15,7,8},
-	{
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	},
-
-};
-
 void Scumm::setCursor(int cursor) {
-	MouseCursor *cur = &mouse_cursors[cursor];
-	int i,j;
-	byte *mask;
-	const byte *src;
-	byte shramount;
-	uint32 data;
-
-	debug(1,"Loading cursor %d", cursor);
-	gdi._hotspot_x = cur->hotspot_x;
-	gdi._hotspot_y = cur->hotspot_y;
-	gdi._currentCursor = cursor;
-
-	for (i=0; i<4; i++)
-		gdi._mouseColors[i] = cur->colors[i];
-	
-	mask = gdi._mouseMask;
-	shramount = 0;
-
-	for(j=0; j<8; j++) {
-		src = cur->data;	
-		i=16;
-		do {
-			data = ((src[0]<<16) | (src[1]<<8))>>shramount;
-			src += 2;
-			mask[0] = (byte)(data>>24);
-			mask[1] = (byte)(data>>16);
-			mask[2] = (byte)(data>>8);
-			mask[3] = (byte)(data);
-			mask += 4;
-		} while (--i);
-		shramount++;
-	}
+	warning("setCursor(%d)", cursor);
 }
 
-void Scumm::setCameraAt(int dest) {
+#if defined(FULL_THROTTLE)
+
+void Scumm::setCameraAt(int pos_x, int pos_y) {
+	CameraData *cd = &camera;
+	Point old;
+
+	old = cd->_cur;
+
+	cd->_cur.x = pos_x;
+	cd->_cur.y = pos_y;
+
+	clampCameraPos(&cd->_cur);
+
+	cd->_dest = cd->_cur;
+
+	assert(cd->_cur.x>=160 && cd->_cur.y>=100);
+
+	if ((cd->_cur.x != old.x || cd->_cur.y != old.y) && _vars[VAR_SCROLL_SCRIPT]) {
+		_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
+		_vars[VAR_CAMERA_POS_Y] = cd->_cur.y;
+		runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
+	}
+}
+#else
+void Scumm::setCameraAt(int pos_x, int pos_y) {
 	int t;
 	CameraData *cd = &camera;
 
-	if (cd->_mode!=CM_FOLLOW_ACTOR || abs(dest - cd->_curPos) > 160) {
-		cd->_curPos = dest;
+	if (cd->_mode!=CM_FOLLOW_ACTOR || abs(pos_x - cd->_cur.x) > 160) {
+		cd->_cur.x = pos_x;
 	}
-	cd->_destPos = dest;
+	cd->_dest.x = pos_x;
 
 	t = _vars[VAR_CAMERA_MIN_X];
-	if (cd->_curPos < t) cd->_curPos = t;
+	if (cd->_cur.x < t) cd->_cur.x = t;
 
 	t = _vars[VAR_CAMERA_MAX_X];
-	if (cd->_curPos > t) cd->_curPos = t;
+	if (cd->_cur.x > t) cd->_cur.x = t;
 
 	if (_vars[VAR_SCROLL_SCRIPT]) {
-		_vars[VAR_CAMERA_POS_X] = cd->_curPos;
+		_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
 		runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 	}
 
-	if (cd->_curPos != cd->_lastPos && charset._hasMask)
+	if (cd->_cur.x != cd->_last.x && charset._hasMask)
 		stopTalk();
 }
+#endif
 
+#if defined(FULL_THROTTLE)
+void Scumm::setCameraFollows(Actor *a) {
+	CameraData *cd = &camera;
+	byte oldfollow = cd->_follows;
+	int ax,ay;
+
+	cd->_follows = a->number;
+
+	if (a->room != _currentRoom) {
+		startScene(a->room, 0, 0);
+	}
+	
+	ax = abs(a->x - cd->_cur.x);
+	ay = abs(a->y - cd->_cur.y);
+
+	if ( ax > _vars[VAR_CAMERA_THRESHOLD_X] ||
+		   ay > _vars[VAR_CAMERA_THRESHOLD_Y] ||
+			 ax > 160 ||
+			 ay > 100) {
+		setCameraAt(a->x, a->y);
+	}
+
+	if (a->number != oldfollow)
+		runHook(0);
+}
+
+#else
 void Scumm::setCameraFollows(Actor *a) {
 	int t,i;
 	CameraData *cd = &camera;
@@ -285,15 +277,15 @@ void Scumm::setCameraFollows(Actor *a) {
 	if (a->room != _currentRoom) {
 		startScene(a->room, 0, 0);
 		cd->_mode = CM_FOLLOW_ACTOR;
-		cd->_curPos = a->x;
-		setCameraAt(cd->_curPos);
+		cd->_cur.x = a->x;
+		setCameraAt(cd->_cur.x, 0);
 	}
 
 	t = (a->x >> 3);
 
 	if (t-_screenStartStrip < cd->_leftTrigger ||
 		  t-_screenStartStrip > cd->_rightTrigger)
-		setCameraAt(a->x);
+		setCameraAt(a->x, 0);
 
 	for (i=1,a=getFirstActor(); ++a,i<NUM_ACTORS; i++) {
 		if (a->room==_currentRoom)
@@ -301,6 +293,7 @@ void Scumm::setCameraFollows(Actor *a) {
 	}
 	runHook(0);
 }
+#endif
 
 void Scumm::initBGBuffers() {
 	byte *ptr;
@@ -325,14 +318,11 @@ void Scumm::initBGBuffers() {
 }
 
 void Scumm::setPaletteFromPtr(byte *ptr) {
-	uint32 size = READ_BE_UINT32_UNALIGNED(ptr+4);
 	int i, r, g, b;
 	byte *dest, *epal;
 	int numcolor;
 
-	numcolor = (size-8) / 3;
-
-	ptr += 8;
+	numcolor = getResourceDataSize(ptr) / 3;
 
 	checkRange(256, 0, numcolor, "Too many colors (%d) in Palette");
 
@@ -481,7 +471,9 @@ void Scumm::unkVirtScreen4(int a) {
 	VirtScreen *vs;
 
 	setDirtyRange(0, 0, 0);
-	camera._lastPos = camera._curPos;
+#if !defined(FULL_THROTTLE)
+	camera._last.x = camera._cur.x;
+#endif
 	if (!_screenEffectFlag)
 		return;
 	_screenEffectFlag = false;
@@ -520,30 +512,49 @@ void Scumm::redrawBGAreas() {
 	int i;
 	int val;
 	CameraData *cd = &camera;
+	int diff;
 
-	if (cd->_curPos!=cd->_lastPos && charset._hasMask)
+#if !defined(FULL_THROTTLE)
+	if (cd->_cur.x!=cd->_last.x && charset._hasMask)
 		stopTalk();
+#endif
 
 	val = 0;
 
 	if (!_fullRedraw && _BgNeedsRedraw) {
-		for (i=0; i<40; i++) {
+		for (i=0; i!=40; i++) {
 			if (gfxUsageBits[_screenStartStrip + i]&0x80000000) {
 				redrawBGStrip(i, 1);
 			}
 		}
 	}
 
-	if (_fullRedraw==0 && cd->_curPos - cd->_lastPos == 8) {
+#if defined(FULL_THROTTLE)
+	diff = (cd->_cur.x>>3) - (cd->_last.x>>3);
+	if (_fullRedraw==0 && diff==1) {
 		val = 2;
 		redrawBGStrip(39, 1);
-	} else if (_fullRedraw==0 && cd->_curPos - cd->_lastPos == -8) {
+	} else if (_fullRedraw==0 && diff==-1) {
 		val = 1;
 		redrawBGStrip(0, 1);
-	} else if (_fullRedraw!=0 || cd->_curPos != cd->_lastPos) {
+	} else if (_fullRedraw!=0 || diff!=0) {
+		_BgNeedsRedraw = false;
+		_fullRedraw = false;
+		redrawBGStrip(0, 40);
+	}
+
+#else
+	if (_fullRedraw==0 && cd->_cur.x - cd->_last.x == 8) {
+		val = 2;
+		redrawBGStrip(39, 1);
+	} else if (_fullRedraw==0 && cd->_cur.x - cd->_last.x == -8) {
+		val = 1;
+		redrawBGStrip(0, 1);
+	} else if (_fullRedraw!=0 || cd->_cur.x != cd->_last.x) {
 		_BgNeedsRedraw = false;
 		redrawBGStrip(0, 40);
 	}
+#endif
 
 	drawRoomObjects(val);
 	_BgNeedsRedraw = false;
@@ -553,7 +564,8 @@ const uint32 zplane_tags[] = {
 	MKID('ZP00'),
 	MKID('ZP01'),
 	MKID('ZP02'),
-	MKID('ZP03')
+	MKID('ZP03'),
+	MKID('ZP04')
 };
 
 void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag) {
@@ -1245,13 +1257,17 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 	uint32 *sp;
 	int num;
 
-	if (top > vs->height || bottom < 0)
+	if (top > vs->height || left > vs->width || right < 0 || bottom < 0)
 		return;
 	
 	if (top<0)
 		top=0;
+	if (left<0)
+		left=0;
 	if (bottom > vs->height)
 		bottom = vs->height;
+	if (right > vs->width)
+		right = vs->width;
 
 	if (virt==0 && dirtybits) {
 		rp = (right >> 3) + _screenStartStrip;
@@ -1425,28 +1441,130 @@ void Gdi::clearUpperMask() {
 	);
 }
 
+#if defined(FULL_THROTTLE)
+
+void Scumm::clampCameraPos(Point *pt) {
+	if (pt->x < _vars[VAR_CAMERA_MIN_X])
+		pt->x = _vars[VAR_CAMERA_MIN_X];
+
+	if (pt->x > _vars[VAR_CAMERA_MAX_X])
+		pt->x = _vars[VAR_CAMERA_MAX_X];
+
+	if (pt->y < _vars[VAR_CAMERA_MIN_Y])
+		pt->y = _vars[VAR_CAMERA_MIN_Y];
+
+	if (pt->y > _vars[VAR_CAMERA_MAX_Y])
+		pt->y = _vars[VAR_CAMERA_MAX_Y];
+}
+
+
 void Scumm::moveCamera() {
 	CameraData *cd = &camera;
-	int pos = cd->_curPos;
+	Point old = cd->_cur;
+	Actor *a;
+
+	if (cd->_follows) {
+		a = derefActorSafe(cd->_follows, "moveCamera");
+		if (abs(cd->_cur.x - a->x) > _vars[VAR_CAMERA_THRESHOLD_X] ||
+				abs(cd->_cur.y - a->y) > _vars[VAR_CAMERA_THRESHOLD_Y]) {
+			cd->_movingToActor = true;
+			if (_vars[VAR_CAMERA_THRESHOLD_X] == 0)
+				cd->_cur.x = a->x;
+			if (_vars[VAR_CAMERA_THRESHOLD_Y] == 0)
+				cd->_cur.y = a->y;
+			clampCameraPos(&cd->_cur);
+		}
+	} else {
+		cd->_movingToActor = false;
+	}
+
+	if (cd->_movingToActor) {
+		cd->_dest.x = a->x;
+		cd->_dest.y = a->y;
+	}
+
+	assert(cd->_cur.x>=160 && cd->_cur.y>=100);
+
+	clampCameraPos(&cd->_dest);
+
+	if (cd->_cur.x < cd->_dest.x) {
+		cd->_cur.x += _vars[VAR_CAMERA_SPEED_X];
+		if (cd->_cur.x > cd->_dest.x)
+			cd->_cur.x = cd->_dest.x;
+	}
+
+	if (cd->_cur.x > cd->_dest.x) {
+		cd->_cur.x -= _vars[VAR_CAMERA_SPEED_X];
+		if (cd->_cur.x < cd->_dest.x)
+			cd->_cur.x = cd->_dest.x;
+	}
+
+	if (cd->_cur.y < cd->_dest.y) {
+		cd->_cur.y += _vars[VAR_CAMERA_SPEED_Y];
+		if (cd->_cur.y > cd->_dest.y)
+			cd->_cur.y = cd->_dest.y;
+	}
+
+	if (cd->_cur.y > cd->_dest.y) {
+		cd->_cur.y -= _vars[VAR_CAMERA_SPEED_Y];
+		if (cd->_cur.y < cd->_dest.y)
+			cd->_cur.y = cd->_dest.y;
+	}
+	
+	if (cd->_cur.x == cd->_dest.x &&
+		  cd->_cur.y == cd->_dest.y) {
+		
+		cd->_movingToActor = false;
+		cd->_accel.x = cd->_accel.y = 0;
+		_vars[VAR_CAMERA_SPEED_X] = _vars[VAR_CAMERA_SPEED_Y] = 0;
+	} else {
+		
+		cd->_accel.x += _vars[VAR_CAMERA_ACCEL_X];
+		cd->_accel.y += _vars[VAR_CAMERA_ACCEL_Y];
+		
+		_vars[VAR_CAMERA_SPEED_X] += cd->_accel.x / 100;
+		_vars[VAR_CAMERA_SPEED_Y] += cd->_accel.y / 100;
+
+		if (_vars[VAR_CAMERA_SPEED_X] < 8)
+			_vars[VAR_CAMERA_SPEED_X] = 8;
+
+		if (_vars[VAR_CAMERA_SPEED_Y] < 8)
+			_vars[VAR_CAMERA_SPEED_Y] = 8;
+
+	}
+	
+	cameraMoved();
+
+	if (cd->_cur.x != old.x || cd->_cur.y != old.y) {
+		_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
+		_vars[VAR_CAMERA_POS_Y] = cd->_cur.y;
+		runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
+	}
+}
+
+#else
+void Scumm::moveCamera() {
+	CameraData *cd = &camera;
+	int pos = cd->_cur.x;
 	int actorx, t;
 	Actor *a;
 
-	cd->_curPos &= 0xFFF8;
+	cd->_cur.x &= 0xFFF8;
 
-	if (cd->_curPos < _vars[VAR_CAMERA_MIN_X]) {
+	if (cd->_cur.x < _vars[VAR_CAMERA_MIN_X]) {
 		if (_vars[VAR_CAMERA_FAST_X])
-			cd->_curPos = _vars[VAR_CAMERA_MIN_X];
+			cd->_cur.x = _vars[VAR_CAMERA_MIN_X];
 		else
-			cd->_curPos += 8;
+			cd->_cur.x += 8;
 		cameraMoved();
 		return;
 	}
 
-	if (cd->_curPos > _vars[VAR_CAMERA_MAX_X]) {
+	if (cd->_cur.x > _vars[VAR_CAMERA_MAX_X]) {
 		if (_vars[VAR_CAMERA_FAST_X])
-			cd->_curPos = _vars[VAR_CAMERA_MAX_X];
+			cd->_cur.x = _vars[VAR_CAMERA_MAX_X];
 		else
-			cd->_curPos-=8;
+			cd->_cur.x-=8;
 		cameraMoved();
 		return;
 	}
@@ -1460,9 +1578,9 @@ void Scumm::moveCamera() {
 		if (t < cd->_leftTrigger || t > cd->_rightTrigger) {
 			if (_vars[VAR_CAMERA_FAST_X]) {
 				if (t > 35)
-					cd->_destPos = actorx + 80;
+					cd->_dest.x = actorx + 80;
 				if (t < 5)
-					cd->_destPos = actorx - 80;
+					cd->_dest.x = actorx - 80;
 			} else 
 				cd->_movingToActor = 1;
 		}
@@ -1470,59 +1588,88 @@ void Scumm::moveCamera() {
 
 	if (cd->_movingToActor) {
 		a = derefActorSafe(cd->_follows, "moveCamera(2)");
-		cd->_destPos = a->x;
+		cd->_dest.x = a->x;
 	}
 
-	if (cd->_destPos < _vars[VAR_CAMERA_MIN_X])
-		cd->_destPos = _vars[VAR_CAMERA_MIN_X];
+	if (cd->_dest.x < _vars[VAR_CAMERA_MIN_X])
+		cd->_dest.x = _vars[VAR_CAMERA_MIN_X];
 
-	if (cd->_destPos > _vars[VAR_CAMERA_MAX_X])
-		cd->_destPos = _vars[VAR_CAMERA_MAX_X];
+	if (cd->_dest.x > _vars[VAR_CAMERA_MAX_X])
+		cd->_dest.x = _vars[VAR_CAMERA_MAX_X];
 
 	if (_vars[VAR_CAMERA_FAST_X]) {
-		cd->_curPos = cd->_destPos;
+		cd->_cur.x = cd->_dest.x;
 	} else {
-		if (cd->_curPos < cd->_destPos)
-			cd->_curPos+=8;
-		if (cd->_curPos > cd->_destPos)
-			cd->_curPos-=8;
+		if (cd->_cur.x < cd->_dest.x)
+			cd->_cur.x+=8;
+		if (cd->_cur.x > cd->_dest.x)
+			cd->_cur.x-=8;
 	}
 
 	/* a is set a bit above */
-	if (cd->_movingToActor && cd->_curPos>>3 == a->x>>3) {
+	if (cd->_movingToActor && cd->_cur.x>>3 == a->x>>3) {
 		cd->_movingToActor = 0;
 	}
 
 	cameraMoved();
 
-	if (pos != cd->_curPos && _vars[VAR_SCROLL_SCRIPT]) {
-		_vars[VAR_CAMERA_POS_X] = cd->_curPos;
+	if (pos != cd->_cur.x && _vars[VAR_SCROLL_SCRIPT]) {
+		_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
 		runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 	}
 }
+#endif
 
+#if defined(FULL_THROTTLE)
 void Scumm::cameraMoved() {
 	CameraData *cd = &camera;
 
-	if (cd->_curPos < 160) {
-		cd->_curPos = 160;
-	} else if (cd->_curPos + 160 >= _scrWidthIn8Unit<<3) {
-		cd->_curPos = (_scrWidthIn8Unit-20)<<3;
+	assert(cd->_cur.x>=160 && cd->_cur.y>=100);
+
+	_screenStartStrip = (cd->_cur.x-160) >> 3;
+	_screenEndStrip = _screenStartStrip + 39;
+	virtscr[0].xstart = _screenStartStrip << 3;
+	
+	_screenLeft = cd->_cur.x - 160;
+	_screenTop = cd->_cur.y - 100;
+}
+
+
+#else
+void Scumm::cameraMoved() {
+	CameraData *cd = &camera;
+
+	if (cd->_cur.x < 160) {
+		cd->_cur.x = 160;
+	} else if (cd->_cur.x + 160 >= _scrWidth) {
+		cd->_cur.x = _scrWidth-160;
 	}
 
-	_screenStartStrip = (cd->_curPos >> 3) - 20;
+	_screenStartStrip = (cd->_cur.x >> 3) - 20;
 	_screenEndStrip = _screenStartStrip + 39;
 	virtscr[0].xstart = _screenStartStrip << 3;
 }
+#endif
 
-void Scumm::panCameraTo(int x) {
+#if defined(FULL_THROTTLE)
+void Scumm::panCameraTo(int x, int y) {
 	CameraData *cd = &camera;
-	cd->_destPos = x;
+	cd->_follows = 0;
+	cd->_dest.x = x;
+	cd->_dest.y = y;
+}
+
+#else
+void Scumm::panCameraTo(int x, int y) {
+	CameraData *cd = &camera;
+	cd->_dest.x = x;
 	cd->_mode = CM_PANNING;
 	cd->_movingToActor = 0;
 }
+#endif
 
 void Scumm::actorFollowCamera(int act) {
+#if !defined(FULL_THROTTLE)
 	int old;
 	CameraData *cd = &camera;
 
@@ -1540,14 +1687,17 @@ void Scumm::actorFollowCamera(int act) {
 		runHook(0);
 
 	cd->_movingToActor = 0;
+#endif
 }
 
 void Scumm::setCameraAtEx(int at) {
+#if !defined(FULL_THROTTLE)
 	CameraData *cd = &camera;
 	cd->_mode = CM_NORMAL;
-	cd->_curPos = at;
-	setCameraAt(at);
+	cd->_cur.x = at;
+	setCameraAt(at, 0);
 	cd->_movingToActor = 0;
+#endif
 }
 
 void Scumm::palManipulate() {
@@ -1705,12 +1855,6 @@ void Scumm::drawMouse() {
 	);
 }
 
-void Scumm::setCursorHotspot(int cursor, int x, int y) {
-	MouseCursor *cur = &mouse_cursors[cursor];
-	cur->hotspot_x = x;
-	cur->hotspot_y = y;
-}
-
 void Scumm::setCursorHotspot2(int x,int y) {
 	_cursorHotspotX = x;
 	_cursorHotspotY = y;
@@ -1759,16 +1903,16 @@ byte *Scumm::findPalInPals(byte *pal, int index) {
 	if (pal==NULL)
 		return NULL;
 
-	offs = findResource(MKID('OFFS'),pal);
+	offs = findResourceData(MKID('OFFS'),pal);
 	if (offs==NULL)
 		return NULL;
 
-	size = (READ_BE_UINT32_UNALIGNED(offs+4)-8) >> 2;
+	size = getResourceDataSize(offs) >> 2;
 	
 	if ((uint32)index >= (uint32)size)
 		return NULL;
 
-	return offs + READ_LE_UINT32(offs + 8 + index * sizeof(uint32));
+	return offs + READ_LE_UINT32(offs + index * sizeof(uint32));
 }
 
 byte *Scumm::getPalettePtr() {
@@ -1788,8 +1932,7 @@ void Scumm::darkenPalette(int a, int b, int c, int d, int e) {
 	int num;
 	int color;
 
-	cptr = getPalettePtr();
-	cptr += 8 + a*3;
+	cptr = getPalettePtr() + a*3;
 	cur = _currentPalette + a*3;
 	if (a <= b) {
 		num = b - a + 1;
@@ -1995,7 +2138,7 @@ void Scumm::drawBomp(BompDrawData *bd) {
 	inside = (bd->x>=0) && (bd->y>=0) &&
 		(bd->x <= bd->outwidth - bd->srcwidth) &&
 		(bd->y <= bd->outheight - bd->srcheight);
-	assert(_objs[2].obj_nr == 36);
+
 
 	if (1 || bd->scale_x==255 && bd->scale_y==255) {
 		/* Routine used when no scaling is needed */
@@ -2072,5 +2215,5 @@ void Scumm::drawBomp(BompDrawData *bd) {
 		/* scaling of bomp images not supported yet */
 	}
 	CHECK_HEAP
-	assert(_objs[2].obj_nr == 36);
+
 }

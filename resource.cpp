@@ -566,7 +566,7 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 	debug(9, "createResource(%d,%d,%d)", type, index,size);
 
 	if (size > 65536*4+37856)
-		warning("Probably invalid size allocating");
+		warning("Probably invalid size allocating %d", size);
 
 	validateResource("allocating", type, index);
 	nukeResource(type, index);
@@ -612,10 +612,16 @@ void Scumm::nukeResource(int type, int index) {
 }
 
 byte *Scumm::findResourceData(uint32 tag, byte *ptr) {
-	ptr = findResource(tag,ptr);
+	ptr = findResource(tag,ptr,0);
 	if (ptr==NULL)
 		return NULL;
 	return ptr + 8;
+}
+
+int Scumm::getResourceDataSize(byte *ptr) {
+	if (ptr==NULL)
+		return 0;
+	return READ_BE_UINT32(ptr-4)-8;
 }
 
 struct FindResourceState {
@@ -861,6 +867,8 @@ void Scumm::readMAXS() {
 
 		_objectRoomTable = (byte*)alloc(_numGlobalObjects);
 		_numGlobalScripts = 2000;
+
+		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	} else if (_features & GF_AFTER_V6) {
 		_numVariables = fileReadWordLE();
 		fileReadWordLE();
@@ -881,6 +889,8 @@ void Scumm::readMAXS() {
 
 		_objectRoomTable = NULL;
 		_numGlobalScripts = 200;
+
+		_shadowPaletteSize = 256;
 	} else {
 		_numVariables = fileReadWordLE(); /* 800 */
 		fileReadWordLE(); /* 16 */
@@ -897,8 +907,14 @@ void Scumm::readMAXS() {
 		fileReadWordLE(); /* 50 */
 		_numInventory = fileReadWordLE(); /* 80 */
 		_numGlobalScripts = 200;
+
+		_shadowPaletteSize = 256;
+
+		_numFlObject = 50;
 	}
 
+	if (_shadowPaletteSize)
+		_shadowPalette = (byte*)alloc(_shadowPaletteSize);
 	
 	allocateArrays();
 	_dynamicRoomOffsets = 1;
@@ -917,11 +933,10 @@ void Scumm::allocateArrays() {
 	_vars = (int16*)alloc(_numVariables * sizeof(int16));
 	_bitVars = (byte*)alloc(_numBitVariables >> 3);
 
-#if defined(FULL_THROTTLE)
-	allocResTypeData(rtCostume, MKID('AKOS'), _numCostumes, "costume", 1);
-#else
-	allocResTypeData(rtCostume, MKID('COST'), _numCostumes, "costume", 1);
-#endif
+	allocResTypeData(rtCostume, 
+		(_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
+		_numCostumes, "costume", 1);
+
 	allocResTypeData(rtRoom, MKID('ROOM'), _numRooms, "room", 1);
 	allocResTypeData(rtSound, MKID('SOUN'), _numSounds, "sound", 1);
 	allocResTypeData(rtScript, MKID('SCRP'), _numScripts, "script", 1);
@@ -930,7 +945,7 @@ void Scumm::allocateArrays() {
 	allocResTypeData(rtInventory, MKID('NONE'),	_numInventory, "inventory", 0);
 	allocResTypeData(rtTemp,MKID('NONE'),10, "temp", 0);
 	allocResTypeData(rtScaleTable,MKID('NONE'),5, "scale table", 0);
-	allocResTypeData(rtActorName, MKID('NONE'),13,"actor name", 0);
+	allocResTypeData(rtActorName, MKID('NONE'),NUM_ACTORS,"actor name", 0);
 	allocResTypeData(rtBuffer, MKID('NONE'),10,"buffer", 0);
  	allocResTypeData(rtVerb, MKID('NONE'),_numVerbs,"verb", 0);
 	allocResTypeData(rtString, MKID('NONE'),_numArray,"array", 0);
