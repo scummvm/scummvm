@@ -217,8 +217,6 @@ void SmushPlayer::timerCallback(void *refCon) {
 
 SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_vm = scumm;
-	_mutex = g_system->createMutex();
-
 	_version = -1;
 	_nbframes = 0;
 	_smixer = 0;
@@ -248,11 +246,9 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 
 SmushPlayer::~SmushPlayer() {
 	release();
-	g_system->deleteMutex(_mutex);
 }
 
 void SmushPlayer::init() {
-	Common::StackLock lock(_mutex, "SmushPlayer::init()");
 	_frame = 0;
 	_vm->_videoFinished = false;
 	_vm->setDirtyColors(0, 255);
@@ -264,7 +260,6 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::release() {
-	Common::StackLock lock(_mutex, "SmushPlayer::release()");
 	_vm->_timer->removeTimerProc(&timerCallback);
 
 	_vm->_videoFinished = true;
@@ -959,7 +954,6 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 }
 
 void SmushPlayer::parseNextFrame() {
-	Common::StackLock lock(_mutex, "SmushPlayer::parseNextFrame()");
 	if (_vm->_smushPaused)
 		return;
 
