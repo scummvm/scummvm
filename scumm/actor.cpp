@@ -492,8 +492,10 @@ void Actor::startAnimActor(int f) {
 			needRedraw = true;
 			// V1 - V2 games don't seem to need a cost.reset() at this point.
 			// Causes Zak to lose his body in several scenes, see bug #771508
-			if (_vm->_version >= 3 && f == initFrame)
+			if (_vm->_version >= 3 && f == initFrame) {
 				cost.reset();
+				auxBlock.visible = false;
+			}
 			if (_vm->_features & GF_NEW_COSTUMES)
 				_vm->akos_decodeData(this, f, (uint) - 1);
 			else
@@ -1358,6 +1360,7 @@ void Actor::setActorCostume(int c) {
 	
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		cost.reset();
+		auxBlock.visible = false;
 		memset(animVariable, 0, sizeof(animVariable));
 		costume = c;
 		
