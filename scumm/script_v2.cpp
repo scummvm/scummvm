@@ -950,15 +950,15 @@ void Scumm_v2::o2_drawSentence() {
 			strcat(sentence, (const char*)temp);
 		}
 	
+		// For V1 games, the engine must compute the preposition.
+		// In all other Scumm versions, this is done by the sentence script.
 		if ((_version == 1) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
-			byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1)) + 12;
-			int prep = (*ptr >> 5);
-			VerbSlot *vs = &_verbs[slot];
-	
-			if (vs->prep == 0xFF)
-				VAR(VAR_SENTENCE_PREPOSITION) = (*ptr >> 5);
-			else
-				VAR(VAR_SENTENCE_PREPOSITION) = vs->prep;
+			if (_verbs[slot].prep == 0xFF) {
+				byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1));
+				assert(ptr);
+				VAR(VAR_SENTENCE_PREPOSITION) = (*(ptr+12) >> 5);
+			} else
+				VAR(VAR_SENTENCE_PREPOSITION) = _verbs[slot].prep;
 		}
 	}
 
