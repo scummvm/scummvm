@@ -269,9 +269,8 @@ int GameDetector::detectMain(int argc, char **argv)
         if (!detectGame()) {
             warning("Game detection failed. Using default settings");
             _features = GF_DEFAULT;
-        } else {
-          _gameText = "Please choose a game";
-        }
+			_gameText = "Please choose a game";
+        } 
 
         if (!_gameDataPath) {
                 warning("No path was provided. Assuming that data file are in the current directory");
