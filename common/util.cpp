@@ -189,10 +189,6 @@ Platform parsePlatform(const String &str) {
 		return kPlatformAtariST;
 	else if (!strcmp(s, "3"))
 		return kPlatformMacintosh;
-	else if (!strcmp(s, "4"))
-		return kPlatformFMTowns;
-	else if (!strcmp(s, "5"))
-		return kPlatformWindows;
 
 	const PlatformDescription *l = g_platforms;
 	for (; l->code; ++l) {
