@@ -517,7 +517,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 + iparam2;
-			thread->push( iresult);
+			thread->push(iresult);
 			break;
 			// (SUB): Subtraction
 		case 0x2D:
@@ -526,7 +526,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 - iparam2;
-			thread->push( iresult);
+			thread->push(iresult);
 			break;
 			// (MULT): Integer multiplication
 		case 0x2E:
@@ -535,7 +535,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 * iparam2;
-			thread->push( iresult);
+			thread->push(iresult);
 			break;
 			// (DIV): Integer division
 		case 0x2F:
@@ -544,7 +544,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 / iparam2;
-			thread->push( iresult);
+			thread->push(iresult);
 			break;
 			// (MOD) Modulus
 		case 0x30:
@@ -553,7 +553,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 % iparam2;
-			thread->push( iresult);
+			thread->push(iresult);
 			break;
 			// (EQU) Test equality
 		case 0x33:

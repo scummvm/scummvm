@@ -233,19 +233,19 @@ public:
 
 public:
 	byte *baseAddress(byte addrMode) {
-		switch(addrMode) {
-			case kAddressCommon:
-				return _commonBase;
-			case kAddressStatic:
-				return _staticBase;
-			case kAddressModule:
-				return _moduleBase;
-			case kAddressStack:
-				return (byte*)&_stackBuf[_frameIndex];
-			case kAddressThread:
-				return (byte*)_threadVars;
-			default:
-				return _commonBase;
+		switch (addrMode) {
+		case kAddressCommon:
+			return _commonBase;
+		case kAddressStatic:
+			return _staticBase;
+		case kAddressModule:
+			return _moduleBase;
+		case kAddressStack:
+			return (byte*)&_stackBuf[_frameIndex];
+		case kAddressThread:
+			return (byte*)_threadVars;
+		default:
+			return _commonBase;
 		}
 	}
 
