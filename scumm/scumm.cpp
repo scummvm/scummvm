@@ -896,54 +896,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_screenHeight = 200;
 	}
 
-	// Initialize backend
-	_system->initSize(_screenWidth, _screenHeight);
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0 && (_features & GF_AUDIOTRACKS))
-		_system->openCD(cd_num);
-
-	// Create the sound manager
-	_sound = new Sound(this);
-	
-	// Setup the music engine
-	setupMusic(gs.midi);
-
-	// TODO: We shouldn't rely on the global Language values matching those COMI etc. expect.
-	// Rather we should explicitly translate them.
-	_language = Common::parseLanguage(ConfMan.get("language"));
-
-	// Load localization data, if present
-	loadLanguageBundle();
-
-	// Load CJK font, if present
-	loadCJKFont();
-
-	// Create the charset renderer
-	if (_version <= 2)
-		_charset = new CharsetRendererV2(this, _language);
-	else if (_version == 3)
-		_charset = new CharsetRendererV3(this);
-	else if (_version == 8)
-		_charset = new CharsetRendererNut(this);
-	else
-		_charset = new CharsetRendererClassic(this);
-
-	// Create the costume renderer
-	if (_features & GF_NEW_COSTUMES)
-		_costumeRenderer = new AkosRenderer(this);
-	else
-		_costumeRenderer = new CostumeRenderer(this);
-
-	// Create FT INSANE object
-	if (_gameId == GID_FT)
-		_insane = new Insane((ScummEngine_v6 *)this);
-	else
-		_insane = 0;
-
-	// Load game from specified slot, if any
-	if (ConfMan.hasKey("save_slot")) {
-		requestLoad(ConfMan.getInt("save_slot"));
-	}
+	_midi = gs.midi;
 }
 
 ScummEngine::~ScummEngine() {
@@ -1029,6 +982,56 @@ void ScummEngine::go() {
 #pragma mark -
 
 void ScummEngine::mainInit() {
+
+	// Initialize backend
+	_system->initSize(_screenWidth, _screenHeight);
+
+	int cd_num = ConfMan.getInt("cdrom");
+	if (cd_num >= 0 && (_features & GF_AUDIOTRACKS))
+		_system->openCD(cd_num);
+
+	// Create the sound manager
+	_sound = new Sound(this);
+	
+	// Setup the music engine
+	setupMusic(_midi);
+
+	// TODO: We shouldn't rely on the global Language values matching those COMI etc. expect.
+	// Rather we should explicitly translate them.
+	_language = Common::parseLanguage(ConfMan.get("language"));
+
+	// Load localization data, if present
+	loadLanguageBundle();
+
+	// Load CJK font, if present
+	loadCJKFont();
+
+	// Create the charset renderer
+	if (_version <= 2)
+		_charset = new CharsetRendererV2(this, _language);
+	else if (_version == 3)
+		_charset = new CharsetRendererV3(this);
+	else if (_version == 8)
+		_charset = new CharsetRendererNut(this);
+	else
+		_charset = new CharsetRendererClassic(this);
+
+	// Create the costume renderer
+	if (_features & GF_NEW_COSTUMES)
+		_costumeRenderer = new AkosRenderer(this);
+	else
+		_costumeRenderer = new CostumeRenderer(this);
+
+	// Create FT INSANE object
+	if (_gameId == GID_FT)
+		_insane = new Insane((ScummEngine_v6 *)this);
+	else
+		_insane = 0;
+
+	// Load game from specified slot, if any
+	if (ConfMan.hasKey("save_slot")) {
+		requestLoad(ConfMan.getInt("save_slot"));
+	}
 
 #ifdef __PALM_OS__
 	if (_features & GF_NEW_COSTUMES)
