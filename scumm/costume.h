@@ -82,7 +82,7 @@ public:
 	int _imgbufoffs;
 	byte _repcolor;
 	byte _replen;
-	byte _palette[32];
+	byte _palette[256];
 
 	void proc6();
 	void proc5();

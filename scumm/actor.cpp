@@ -1144,8 +1144,14 @@ void Actor::setActorCostume(int c)
 		cost.reset();
 	}
 
-	for (i = 0; i < 32; i++)
-		palette[i] = 0xFF;
+	if (_features & GF_AFTER_V7) {
+		for (i = 0; i < 256; i++)
+			palette[i] = 0xFF;
+	} else {
+		for (i = 0; i < 32; i++)
+			palette[i] = 0xFF;
+	}
+
 }
 
 void Actor::startWalkActor(int destX, int destY, int dir)

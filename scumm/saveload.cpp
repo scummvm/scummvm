@@ -265,6 +265,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Actor, speedy, sleUint16),
 		MKLINE(Actor, cost.animCounter1, sleUint16),
 		MKLINE(Actor, cost.animCounter2, sleByte),
+		// TODO: increase actor palette to 256
 		MKARRAY(Actor, palette[0], sleByte, 64),
 		MKLINE(Actor, mask, sleByte), // FIXME: see actor.h comment
 		MKLINE(Actor, shadow_mode, sleByte),

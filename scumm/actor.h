@@ -111,7 +111,7 @@ public:
 	int16 animVariable[16];
 	uint16 sound[8];
 	CostumeData cost;
-	byte palette[64];
+	byte palette[256];
 
 protected:
 	Scumm *_vm;
