@@ -131,9 +131,8 @@ void Scumm::stopObjectScript(int script)
 	ss = &vm.slot[1];
 
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (script == ss->number && (ss->where == WIO_ROOM ||
-																 ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)
-				&& ss->status != ssDead) {
+		if (script == ss->number && ss->status != ssDead &&
+		    (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;

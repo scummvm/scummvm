@@ -106,7 +106,6 @@ void Scumm::openRoom(int room)
 				return;
 			if (_features & GF_EXTERNAL_CHARSET && room >= roomlimit)
 				return;
-			printf("Reading room offsets from '%s'\n", buf);
 			readRoomsOffsets();
 			_fileOffset = _roomFileOffsets[room];
 

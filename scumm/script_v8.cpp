@@ -288,7 +288,7 @@ void Scumm_v8::setupOpcodes()
 		/* B8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o8_kludge),
+		OPCODE(o6_kernelSetFunctions),
 		OPCODE(o6_invalid),
 		/* BC */
 		OPCODE(o6_invalid),
@@ -326,7 +326,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_abs),
 		OPCODE(o6_invalid),
 		/* D8 */
-		OPCODE(o8_kludge2),
+		OPCODE(o6_kernelGetFunctions),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getVerbEntrypoint),
 		OPCODE(o6_getActorFromXY),
@@ -1164,78 +1164,84 @@ void Scumm_v8::o8_system()
 //	}
 }
 
-void Scumm_v8::o8_kludge()
+void Scumm_v8::o6_kernelSetFunctions()
 {
 	// TODO
 	int args[30];
 	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
 
 	switch (args[0]) {
-	case 11:
-		warning("o8_kludge: ObjectsFindObjectRelNum(%d)", args[1]);
+	case 11:	// lockObject
+		warning("o6_kernelSetFunctions: lockObject(%d)", args[1]);
 		break;
-	case 12:
-		warning("o8_kludge: ObjectsFindObjectRelNum(%d)", args[1]);
+	case 12:	// unlockObject
+		warning("o6_kernelSetFunctions: unlockObject(%d)", args[1]);
 		break;
-	case 13:
-			derefActorSafe(args[1], "o8_kludge:13")->remapActorPalette(args[2], args[3], args[4], -1);
+	case 13:	// remapCostume
+		derefActorSafe(args[1], "o6_kernelSetFunctions:remapCostume")->remapActorPalette(args[2], args[3], args[4], -1);
 		break;
-	case 14:
-			derefActorSafe(args[1], "o8_kludge:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
+	case 14:	// remapCostumeInsert
+		derefActorSafe(args[1], "o6_kernelSetFunctions:remapCostumeInsert")->remapActorPalette(args[2], args[3], args[4], args[5]);
 		break;
-	case 15:
+	case 15:	// setVideoFrameRate
 		// not used anymore (was smush frame rate)
 		break;
-	case 20:
+	case 20:	// setBoxSlot
 		setBoxScale(args[1], args[2]);
 		break;
-	case 21:
-		warning("o8_kludge: WalkboxSetScaleSlot(%d, %d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+	case 21:	// setScaleSlot
+		warning("o6_kernelSetFunctions: setScaleSlot(%d, %d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 		break;
-	case 22:
-//		warning("o8_kludge: BannerSetBannerColor(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+	case 22:	// setBannerColors
+//		warning("o6_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
-	case 23:
-		warning("o8_kludge: ChoreSetActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+	case 23:	// setActorChoreLimbFrame
+		warning("o6_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
-	case 24:
-		warning("o8_kludge: opcode 24 ()");
+	case 24:	// clearTextQueue
+		warning("o6_kernelSetFunctions: clearTextQueue()");
 		break;
-	case 25:
-		warning("o8_kludge: opcode 25 (%d, %d)", args[1], args[2]);
+	case 25:	// saveGameWrite
+		warning("o6_kernelSetFunctions: saveGameWrite(%d, %d)", args[1], args[2]);
 		break;
-	case 26:
-		warning("o8_kludge: opcode 26 (%d, %d)", args[1], args[2]);
+	case 26:	// saveGameRead
+		warning("o6_kernelSetFunctions: saveGameRead(%d, %d)", args[1], args[2]);
 		break;
-	case 27:
-		warning("o8_kludge: opcode 27 (%d)", args[1]);
+	case 27:	// saveGameReadName
+		warning("o6_kernelSetFunctions: saveGameReadName(%d)", args[1]);
 		break;
-	case 28:
-		warning("o8_kludge: StampShotEnqueue(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+	case 28:	// saveGameStampScreenshot
+		warning("o6_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
-	case 29:
-		warning("o8_kludge: opcode 29 (%d, %d)", args[1], args[2]);
+	case 29:	// setKeyScript
+		warning("o6_kernelSetFunctions: setKeyScript(%d, %d)", args[1], args[2]);
 		break;
-	case 30:
-		warning("o8_kludge: opcode 30 ()");
+	case 30:	// killAllScriptsButMe
+		warning("o6_kernelSetFunctions: killAllScriptsButMe()");
 		break;
-	case 31:
-		warning("o8_kludge: opcode 31 ()");
+	case 31:	// stopAllVideo
+		warning("o6_kernelSetFunctions: stopAllVideo()");
 		break;
-	case 32:
-		warning("o8_kludge: opcode 32 (%d, %d)", args[1], args[2]);
+	case 32:	// writeRegistryValue
+		warning("o6_kernelSetFunctions: writeRegistryValue(%d, %d)", args[1], args[2]);
 		break;
-	case 33:
-		warning("o8_kludge: opcode 33 (%d, %d)", args[1], args[2]);
+	case 33:	// paletteSetIntensity
+		warning("o6_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
 		break;
-	case 34:
-		warning("o8_kludge: opcode 34 ()");
+	case 34:	// queryQuit
+		warning("o6_kernelSetFunctions: queryQuit()");
 		break;
 	case 108:
 		setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 109:
 		setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
+		break;
+	case 115:	// getWalkBoxAt
+		// TODO
+		break;
+	case 116:	// isPointInBox
+		// TODO
 		break;
 	case 118:
 		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
@@ -1245,11 +1251,11 @@ void Scumm_v8::o8_kludge()
 		break;
 
 	default:
-		warning("o8_kludge: default case (len = %d)", len);
+		warning("o6_kernelSetFunctions: default case (len = %d)", len);
 	}
 }
 
-void Scumm_v8::o8_kludge2()
+void Scumm_v8::o6_kernelGetFunctions()
 {
 	// TODO
 	int args[30];
@@ -1291,7 +1297,7 @@ void Scumm_v8::o8_kludge2()
 		}
 		break;
 	default:
-		error("o8_kludge2: default case (len = %d)", len);
+		error("o6_kernelGetFunctions: default case (len = %d)", len);
 	}
 
 }

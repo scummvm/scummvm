@@ -432,8 +432,8 @@ protected:
 	
 	void o8_soundKludge();
 	void o8_system();
-	void o8_kludge();
-	void o8_kludge2();
+	void o6_kernelSetFunctions();
+	void o6_kernelGetFunctions();
 
 	void o8_getObjectImageX();
 	void o8_getObjectImageY();
