@@ -309,25 +309,17 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 			break;
 
 		case sysNotifyDisplayResizedEvent:
-			// FIXME : What the purpose of this code ??? it seems to be the part
-			// that make Zodiac silkarea be mad
-	/*		if (gVars) {
-				static Boolean resized = false;
-				
-				if (gVars->pinUpdate && !resized) {
-		//			resized = true;
+			// This code allow redifinition of the screen pitch rotating the screen in the frontend
+			if (gVars) {
+				static Boolean resizing = false;
 
-					EventType ev;
-					MemSet(&ev, sizeof(EventType), 0);
-					ev.eType = (enum eventsEnum)winDisplayChangedEvent;
-					EvtAddUniqueEventToQueue(&ev, 0, true);
-
+				if (!resizing) {
+					resizing = true;
 					PINGetScreenDimensions();
 					WinScreenGetPitch();
-				} else {
-		//			resized = false;
+					resizing = false;
 				}
-			}*/
+			}
 			break;
 
 		case sonySysNotifyMsaEnforceOpenEvent:
