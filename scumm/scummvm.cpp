@@ -151,21 +151,13 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuseDigital = new IMuseDigital(this);
 		_imuse = NULL;
 	} else {
-		if (detector->_use_adlib && false) {
-			_imuse = IMuse::create_adlib(syst, _mixer);
-		} else {
-			void *midiTemp = detector->createMidi();
-			if (!midiTemp) {	// Fallback to Adlib
-				_imuse = IMuse::create_adlib(syst, _mixer);
-			} else {
-				_imuse = IMuse::create_midi(syst, detector->createMidi());
-			}
-		}
-
 		_imuseDigital = NULL;
-		if (detector->_gameTempo != 0)
-			_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
-		_imuse->set_music_volume(_sound->_sound_volume_music);
+		_imuse = IMuse::create_midi(syst, detector->createMidi());
+		if (_imuse) {
+			if (detector->_gameTempo != 0)
+				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
+			_imuse->set_music_volume(_sound->_sound_volume_music);
+		}
 	}
 #endif // ph0x-hack
 
