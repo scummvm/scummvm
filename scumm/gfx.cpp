@@ -1446,11 +1446,6 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		rect1.top -= rect2.top;
 		rect1.bottom -= rect2.top;
 		
-		// FIXME: The following two duplicate the old behaviour of this code
-		// but I am not sure that this was right to start with... ?
-		rect1.right++;
-		rect1.bottom++;
-
 		copyVirtScreenBuffers(rect1);
 	}
 }
