@@ -290,10 +290,8 @@ SCUMM
   - Document and fix AKOS differences in Humongous Entertainment games
   - Support various newer Humongous Entertainment games
 * Humongous entertainment >= v7 titles:
-  - Fix palette for AKOS (seems to be codec 1 only?)
-  - Fix inventory flashing at times
   - Add support for PCM music
-  - Add variables for _heversion > 70
+  - Add variables for _heversion > 72
   - Add support for Scummsys.9x and C++ engine MAXS blocks
   
 Broken Sword 1 & 2
