@@ -1281,10 +1281,11 @@ void Scumm_v2::o2_cursorCommand() {
 	}
 
 	if (a2 & 4) {
-		if (_userPut == 1)
-			_userPut = 0;
-		else
+		if (a2 & 32) {
 			_userPut = 1;
+			printf("sentence\n");
+		} else
+			_userPut = 0;
 
 		warning("TODO: o2_cursorCommand(userface) -> %d", _userPut);
 	} // Toggle verbs on/off, etc
