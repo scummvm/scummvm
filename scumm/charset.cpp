@@ -927,7 +927,10 @@ int CharsetRendererV3::getCharWidth(byte chr) {
 void CharsetRendererV3::setColor(byte color)
 {
 	_color = color;
-	if (_vm->_features & GF_16COLOR) {
+	if (_vm->_gameId == GID_ZAK256) {
+		_dropShadow = ((_color & 0x80) != 0);
+		_color &= 0x7f;
+	} else if (_vm->_features & GF_16COLOR) {
 		_dropShadow = ((_color & 0xF0) != 0);
 		_color &= 0x0f;
 	} else
