@@ -238,3 +238,28 @@ void Config::set_writing(bool w)
 {
 	willwrite = w;
 }
+
+const int Config::count_domains() {
+	int count = 0;
+	DomainMap::Iterator d, end(domains.end());
+	for (d = domains.begin(); d != end; ++d)
+		count++;
+
+	return 0;
+}
+
+int Config::get_domains(char (*ptr)[100]) {
+	  int index = 0;
+          DomainMap::Iterator d, end(domains.end());
+          for (d = domains.begin(); d != end; ++d) {
+		//printf("Key %d is %s\n", index, d->_key.c_str());
+		strcpy(ptr[index], d->_key.c_str());
+		index++;
+
+		if (index>99)
+			return 99;
+          }
+
+	return index;
+}
+

@@ -181,7 +181,7 @@ void Scumm::makeSavegameName(char *out, int slot, bool compatible)
 	const char *dir = getSavePath();
 
 	// snprintf should be used here, but it's not portable enough
-	sprintf(out, "%s%s.%c%.2d", dir, _exe_name, compatible ? 'c' : 's', slot);
+	sprintf(out, "%s%s.%c%.2d", dir, _game_name, compatible ? 'c' : 's', slot);
 }
 
 bool Scumm::getSavegameName(int slot, char *desc)

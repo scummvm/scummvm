@@ -123,11 +123,6 @@ the section on Reporting Bugs.
                   way, we do not know where to buy or download a copy of this
                   game. Petition LucasArts to re-release it :)
 
-
-       The Dig:
-                - Walking around the Nexus room may leave trails of Boston
-                  at the 'seam' of the circular room
-
        All CD games:
                - If you are experiencing random crashes, and your game
                  plays music from CD, you have encountered a Windows bug.
@@ -491,6 +486,11 @@ An example config file is as follows:
         gfx_mode=supereagle
         fullscreen=true
         savepath=C:\saves\
+
+        [germandott]
+        gameid=tentacle
+        path=C:\german\tentacle\
+        description=German version of DOTT
 
         [tentacle]
         path=C:\tentacle\

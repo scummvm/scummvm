@@ -571,7 +571,8 @@ public:
 	File _fileHandle;
 	char *_resFilePrefix, *_resFilePath;
 	uint32 _fileOffset;
-	char *_exe_name;
+	char *_exe_name;	// This is the name we use for opening resource files
+	char *_game_name;	// This is the game the user calls it, so use for saving
 	bool _dynamicRoomOffsets;
 	byte _resourceMapper[128];
 	uint32 _allocatedSize;

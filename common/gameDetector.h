@@ -72,6 +72,7 @@ public:
 	int _midi_driver;
 	String _gameFileName;
 	String _gameText;
+	String _gameRealName;
 	uint32 _features;
 
 	int _gfx_driver;

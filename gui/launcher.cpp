@@ -70,13 +70,25 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	
 	const VersionSettings *v = version_settings;
 	ScummVM::StringList l;
-
 	// TODO - maybe only display those games for which settings are known
 	// (i.e. a path to the game data was set and is accesible) ?
+
+
+	char domains[255][100];
+	int count = g_config->get_domains(domains);
+	//printf("First domain is %s, out of %d\n", domains[0], count);
 	while (v->filename && v->gamename) {
 		if (g_config->has_domain(v->filename)) {
-			String name = v->gamename;
+			String name;
+			char *txtname;
 			int pos = 0, size = l.size();
+
+		        if ((txtname = (char*)g_config->get("description", v->filename))) {
+				name = txtname;
+			} else {
+		                name  = v->gamename;
+			}
+
 			while (pos < size && (name > l[pos]))
 				pos++;
 			l.insert_at(pos, name);

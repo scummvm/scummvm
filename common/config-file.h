@@ -30,6 +30,8 @@
 class Config {
 public:
 	typedef ScummVM::String String;
+	typedef ScummVM::StringMap StringMap;
+	typedef ScummVM::Map<String, StringMap> DomainMap;
 
 	Config (const String & = String("config.cfg"), const String & = String("default"));
 	const char *get(const String &key, const String &dom = String()) const;
@@ -49,10 +51,9 @@ public:
 	void merge_config(const Config &);
 	void set_writing(bool);
 
+	const int count_domains();
+	int Config::get_domains(char (*ptr)[100]);
 protected:
-	typedef ScummVM::StringMap StringMap;
-	typedef ScummVM::Map<String, StringMap> DomainMap;
-
 	DomainMap domains;
 	String filename;
 	String defaultDomain;
