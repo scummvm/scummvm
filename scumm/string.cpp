@@ -1026,8 +1026,8 @@ int CharsetRenderer::getSpacing(char chr)
 	if (_curId == 1) { 
 		switch (chr) {
 		case '.':
-			space = 1;
-			break;
+		case ':':
+		case ';':
 		case 'i':
 		case '\'':
 		case 'I':
@@ -1039,6 +1039,10 @@ int CharsetRenderer::getSpacing(char chr)
 			break;
 		case ' ':
 			space = 4;
+			break;
+		case '(':
+		case ')':
+			space = 5;
 			break;
 		case 'W':
 		case 'w':
