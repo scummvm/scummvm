@@ -179,6 +179,7 @@ void Player_V1::parseSpeakerChunk() {
 		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
 		_channels[0].freq = 0;
 		_next_chunk += 6;
+		_forced_level = -1;
 		debug(6, "chunk 2: %d -> %d step %d", 
 			  _start, _end, _delta);
 		break;
@@ -188,6 +189,7 @@ void Player_V1::parseSpeakerChunk() {
 		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
 		_channels[0].freq = 0;
 		_next_chunk += 6;
+		_forced_level = -1;
 		debug(6, "chunk 3: %d -> %d step %d", 
 			  _start, _end, _delta);
 		break;
@@ -237,7 +239,7 @@ void Player_V1::nextSpeakerCmd() {
 			return;
 		}
 		set_mplex(_start);
-		_forced_level ^= 1;
+		_forced_level = -_forced_level;
 		break;
 	case 3:
 		_start = (_start + _delta) & 0xffff;
@@ -249,7 +251,7 @@ void Player_V1::nextSpeakerCmd() {
 		lsr = (lsr >> 3) | (lsr << 13);
 		_random_lsr = lsr;
 		set_mplex((_start & lsr) | 0x180);
-		_forced_level ^= 1;
+		_forced_level = -_forced_level;
 		break;
 	}
 }
@@ -310,7 +312,8 @@ void Player_V1::parsePCjrChunk() {
 			_channels[i].cmd_ptr   = _current_data + tmp + 10;
 		}
 		break;
-	case 1: /* FIXME: implement! */
+
+	case 1:
 		set_mplex(READ_LE_UINT16(_next_chunk));
 		tmp = READ_LE_UINT16(_next_chunk + 2);
 		_channels[0].cmd_ptr = tmp != 0xffff ? _current_data + tmp : NULL;
@@ -360,6 +363,7 @@ void Player_V1::parsePCjrChunk() {
 		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
 		_channels[0].freq = 0;
 		_next_chunk += 6;
+		_forced_level = -1;
 		debug(6, "chunk 2: %d -> %d step %d", 
 			  _start, _end, _delta);
 		break;
@@ -481,7 +485,7 @@ void Player_V1::nextPCjrCmd() {
 		}
 		set_mplex(_start);
 		debug(7, "chunk 2: mplex %d  curve %d", _start, _forced_level);
-		_forced_level ^= 1;
+		_forced_level = -_forced_level;
 		break;
 	case 3:
 		dummy = _channels[3].volume + _delta;
@@ -526,8 +530,9 @@ void Player_V1::generateSpkSamples(int16 *data, uint len) {
 	memset(data, 0, 2 * sizeof(int16) * len);
 	if (_channels[0].freq == 0) {
 		if (_forced_level) {
+			int sample = _forced_level * _volumetable[0];
 			for (i = 0; i < len; i++)
-				data[2*i] = data[2*i+1] = _volumetable[0];
+				data[2*i] = data[2*i+1] = sample;
 			debug(9, "speaker: %8x: forced one", _tick_len);
 		} else if (!_level) {
 			return;
@@ -548,8 +553,9 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 	memset(data, 0, 2 * sizeof(int16) * len);
 
 	if (_forced_level) {
+		int sample = _forced_level * _volumetable[0];
 		for (i = 0; i < len; i++)
-			data[2*i] = data[2*i+1] = _volumetable[0];
+			data[2*i] = data[2*i+1] = sample;
 		hasdata = true;
 		debug(9, "channel[4]: %8x: forced one", _tick_len);
 	}

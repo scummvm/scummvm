@@ -79,7 +79,7 @@ private:
 	uint  _mplex;
 	uint  _repeat_ctr;
 	uint  _freq_current;
-	uint  _forced_level;
+	int   _forced_level;
 	uint16 _random_lsr;
 	uint  *_value_ptr;
 	uint  _time_left;

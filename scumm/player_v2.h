@@ -98,7 +98,7 @@ protected:
 	uint32 _tick_len;
 	unsigned int _update_step;
 	unsigned int _decay;
-	unsigned int _level;
+	int _level;
 	unsigned int _RNG;
 	unsigned int _volumetable[16];
 

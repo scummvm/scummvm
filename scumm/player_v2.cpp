@@ -433,8 +433,8 @@ void Player_V2::setMasterVolume (int vol) {
 	/* build volume table (2dB per step) */
 	for (int i = 0; i < 15; i++) {
 		/* limit volume to avoid clipping */
-		if (out > 0x7fff)
-			_volumetable[i] = 0x7fff;
+		if (out > 0xffff)
+			_volumetable[i] = 0xffff;
 		else
 			_volumetable[i] = (int) out;
 
@@ -860,8 +860,8 @@ void Player_V2::nextTick() {
 
 void Player_V2::lowPassFilter(int16 *sample, uint len) {
 	for (uint i = 0; i < len; i++) {
-		_level = (_level * _decay
-			 + (unsigned int)sample[0] * (0x10000-_decay)) >> 16;
+		_level = (int) (_level * _decay
+				+ sample[0] * (0x10000-_decay)) >> 16;
 		sample[0] = sample[1] = _level;
 		sample += 2;
 	}
@@ -870,6 +870,7 @@ void Player_V2::lowPassFilter(int16 *sample, uint len) {
 void Player_V2::squareGenerator(int channel, int freq, int vol,
                                 int noiseFeedback, int16 *sample, uint len) {
 	int period = _update_step * freq;
+	long nsample;
 	if (period == 0)
 		period = _update_step;
 
@@ -901,11 +902,15 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 		if (_timer_output & (1 << channel))
 			duration -= _timer_count[channel];
 		
-		sample[0] += (duration * _volumetable[vol]) >> FIXP_SHIFT;
-		if (sample[0] < 0) {
-			/* overflow: clip value */
-			sample[0] = 0x7fff;
-		}
+		nsample = *sample + 
+			(((signed long) (duration - (1 << (FIXP_SHIFT-1)))
+			  * (signed long) _volumetable[vol]) >> FIXP_SHIFT);
+		/* overflow: clip value */
+		if (nsample > 0x7fff)
+			nsample = 0x7fff;
+		if (nsample < -0x8000)
+			nsample = -0x8000;
+		*sample = nsample;
 		// The following write isn't necessary, because the lowPassFilter does it for us
 		//sample[1] = sample[0];
 		sample += 2;
