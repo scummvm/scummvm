@@ -111,8 +111,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("show", &ScummDebugger::Cmd_Show);
 		DCmd_Register("hide", &ScummDebugger::Cmd_Hide);
 
-		DCmd_Register("imuse_multimidi", &ScummDebugger::Cmd_ImuseMultiMidi);
-		DCmd_Register("imuse_panic", &ScummDebugger::Cmd_ImusePanic);
+		DCmd_Register("imuse", &ScummDebugger::Cmd_IMuse);
 	}
 }
 
@@ -364,22 +363,61 @@ bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 	return false;
 }
 
-bool ScummDebugger::Cmd_ImuseMultiMidi (int argc, const char **argv) {
-	if (argc > 1) {
-		if (_s->_imuse)
-			_s->_imuse->property (IMuse::PROP_MULTI_MIDI, !strcmp (argv[1], "1") || !strcmp (argv[1], "on") || !strcmp (argv[1], "true"));
-		return false;
-	} else {
-		Debug_Printf("Use 'imuse_multimidi on|off' to switch\n");
+bool ScummDebugger::Cmd_IMuse (int argc, const char **argv) {
+	if (!_s->_imuse) {
+		Debug_Printf ("No iMuse engine is active.\n");
 		return true;
 	}
-}
 
-bool ScummDebugger::Cmd_ImusePanic (int argc, const char **argv) {
-	Debug_Printf ("AAAIIIEEEEEE!\n");
-	Debug_Printf ("Shutting down all music tracks\n");
-	if (_s->_imuse)
-		_s->_imuse->stop_all_sounds();
+	if (argc > 1) {
+		if (!strcmp (argv[1], "panic")) {
+			_s->_imuse->stop_all_sounds();
+			Debug_Printf ("AAAIIIEEEEEE!\n");
+			Debug_Printf ("Shutting down all music tracks\n");
+			return true;
+		} else if (!strcmp (argv[1], "multimidi")) {
+			if (argc > 2 && (!strcmp (argv[2], "on") || !strcmp (argv[2], "off"))) {
+				_s->_imuse->property (IMuse::PROP_MULTI_MIDI, !strcmp (argv[2], "on"));
+				Debug_Printf ("MultiMidi mode switched %s.\n", argv[2]);
+			} else {
+				Debug_Printf ("Specify \"on\" or \"off\" to switch.\n");
+			}
+			return true;
+		} else if (!strcmp (argv[1], "play")) {
+			if (argc > 2 && (!strcmp (argv[2], "random") || atoi (argv[2]) != 0)) {
+				int sound = atoi (argv[2]);
+				if (!strcmp (argv[2], "random")) {
+					Debug_Printf ("Selecting from %d songs...\n", _s->getNumSounds());
+					sound = _s->_rnd.getRandomNumber (_s->getNumSounds());
+				}
+				_s->ensureResourceLoaded (rtSound, sound);
+				_s->_imuse->startSound (sound);
+				Debug_Printf ("Attempted to start music %d.\n", sound);
+			} else {
+				Debug_Printf ("Specify a music resource # from 1-255.\n");
+			}
+			return true;
+		} else if (!strcmp (argv[1], "stop")) {
+			if (argc > 2 && (!strcmp (argv[2], "all") || atoi (argv[2]) != 0)) {
+				if (!strcmp (argv[2], "all")) {
+					_s->_imuse->stop_all_sounds();
+					Debug_Printf ("Shutting down all music tracks.\n");
+				} else {
+					_s->_imuse->stopSound (atoi (argv[2]));
+					Debug_Printf ("Attempted to stop music %d.\n", atoi (argv[2]));
+				}
+			} else {
+				Debug_Printf ("Specify a music resource # or \"all\".\n");
+			}
+			return true;
+		}
+	}
+
+	Debug_Printf ("Available iMuse commands:\n");
+	Debug_Printf ("  panic - Stop all music tracks\n");
+	Debug_Printf ("  multimidi on/off - Toggle dual MIDI drivers\n");
+	Debug_Printf ("  play # - Play a music resource\n");
+	Debug_Printf ("  stop # - Stop a music resource\n");
 	return true;
 }
 

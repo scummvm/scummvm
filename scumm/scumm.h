@@ -407,10 +407,10 @@ protected:
 protected:
 	byte _fastMode;
 
+public:
 	/* Random number generation */
 	RandomSource _rnd;
 
-public:
 	/* Core variable definitions */
 	byte _gameId;
 
@@ -453,6 +453,7 @@ protected:
 public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 
+	int getNumSounds() const { return _numSounds; }
 	BaseCostumeRenderer* _costumeRenderer;
 	
 	char *_audioNames;
