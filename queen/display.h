@@ -92,12 +92,9 @@ public:
 	void blit(RenderingBuffer dstBuf, uint16 dstX, uint16 dstY, const uint8 *srcBuf, uint16 srcW, uint16 srcH, uint16 srcPitch, bool xflip, bool masked);
 	void fill(RenderingBuffer dstBuf, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color);
 
-	void pcxRead(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h);
-	void pcxReadBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal);
-	void pcxReadPanel(const uint8 *pcxBuf, uint32 size);
-
-	void textDraw(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
-	uint16 textWidth(const char *text) const;
+	void readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h);
+	void readPCXBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal);
+	void readPCXPanel(const uint8 *pcxBuf, uint32 size);
 
 	void horizontalScrollUpdate(int16 xCamera);
 	void horizontalScroll(int16 scroll);
@@ -112,6 +109,8 @@ public:
 	void setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
 	void showMouseCursor(bool show);
 
+	uint16 textWidth(const char *text) const;
+	void drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col);
 	void drawScreen();
 

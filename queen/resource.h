@@ -53,7 +53,6 @@ struct ResourceEntry {
 
 struct GameVersion {
 	char versionString[6];
-	bool isFloppy;   
 	bool isDemo;
 	uint32 tableOffset;
 	uint32 dataFileSize;
@@ -69,19 +68,20 @@ public:
 	uint8 *loadFileMalloc(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
 	char *getJAS2Line();
 	bool exists(const char *filename);
-	bool isDemo();
-	bool isFloppy();
+	bool isDemo() const;
+	bool isFloppy() const;
 	uint8 compression()	{ return _compression; }
 	uint32 fileSize(const char *filename);
 	uint32 fileOffset(const char *filename);
 	File *giveCompressedSound(const char *filename);
-	Language getLanguage();
+	Language getLanguage() const;
 	const char *JASVersion();
 	bool writeSave(uint16 slot, const byte *saveData, uint32 size);
 	bool readSave(uint16 slot, byte *&ptr);
 
 	enum {
-		DEMO_JAS_VERSION_OFFSET	= 0x119A8,
+		JAS_VERSION_OFFSET_DEMO = 0x119A8,
+		JAS_VERSION_OFFSET_INTV = 0xCF8,
 		JAS_VERSION_OFFSET	    = 0x12484
 	};
 

@@ -753,7 +753,7 @@ void Display::fill(RenderingBuffer dst, uint16 x, uint16 y, uint16 w, uint16 h, 
 }
 
 
-void Display::pcxRead(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h) {
+void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h) {
 
 	while (h--) {
 		uint8 *p = dst;
@@ -773,38 +773,20 @@ void Display::pcxRead(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, u
 }
 
 
-void Display::pcxReadBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal) {
+void Display::readPCXBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal) {
 
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
-	pcxRead(_buffer[RB_BACKDROP], _bufPitch[RB_BACKDROP], pcxBuf + 128, _bdWidth, _bdHeight);
+	readPCX(_buffer[RB_BACKDROP], _bufPitch[RB_BACKDROP], pcxBuf + 128, _bdWidth, _bdHeight);
 	memcpy(_pal.room, pcxBuf + size - 768, useFullPal ? 256 * 3 : 144 * 3);
 }
 
 
-void Display::pcxReadPanel(const uint8 *pcxBuf, uint32 size) {
+void Display::readPCXPanel(const uint8 *pcxBuf, uint32 size) {
 
 	uint8 *dst = _buffer[RB_PANEL] + PANEL_W * 10;
-	pcxRead(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
+	readPCX(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
 	memcpy(_pal.room + 144 * 3, pcxBuf + size - 768 + 144 * 3, (256 - 144) * 3);
-}
-
-
-void Display::textDraw(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
-
-	debug(9, "Display::textDraw(%s)", text);
-	_textRenderer.drawString(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], x, y, color, text, outlined);
-}
-
-
-uint16 Display::textWidth(const char *text) const {
-
-	uint16 len = 0;
-	while (*text) {
-		len += _textRenderer._charWidth[ (uint8)*text ];
-		++text;
-	}
-	return len;
 }
 
 
@@ -868,6 +850,24 @@ void Display::showMouseCursor(bool show) {
 }
 
 
+uint16 Display::textWidth(const char *text) const {
+
+	uint16 len = 0;
+	while (*text) {
+		len += _textRenderer._charWidth[ (uint8)*text ];
+		++text;
+	}
+	return len;
+}
+
+
+void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
+
+	debug(9, "Display::drawText(%s)", text);
+	_textRenderer.drawString(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], x, y, color, text, outlined);
+}
+
+
 void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 
 	uint8 *p = _buffer[RB_SCREEN];
@@ -913,12 +913,12 @@ void Display::blankScreenEffect1() {
 			uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - MINI_H - 2) + 1;
 			uint8 *p = _buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * y + x;
 			blit(RB_MINI, 0, 0, p, MINI_W, MINI_H, _bufPitch[RB_SCREEN], false, false);
-			if (_vm->randomizer.getRandomNumber(1) & 1) {
+			if (_vm->randomizer.getRandomNumber(1)) {
 				--x;
 			} else {
 				++x;
 			}
-			if (_vm->randomizer.getRandomNumber(1) & 1) {
+			if (_vm->randomizer.getRandomNumber(1)) {
 				--y;
 			} else {
 				++y;

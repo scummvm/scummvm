@@ -659,7 +659,7 @@ void Graphics::textDrawAll() {
 	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
 		const TextSlot *pts = &_texts[y];
 		if (!pts->text.isEmpty()) {
-			_vm->display()->textDraw(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
+			_vm->display()->drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
 		}
 	}
 }
@@ -715,7 +715,7 @@ void Graphics::loadBackdrop(const char* name, uint16 room) {
 		error("Unable to load backdrop : '%s'", name);
 	}
 	uint32 size = _vm->resource()->fileSize(name);
-	_vm->display()->pcxReadBackdrop(pcxbuf, size, room > 114);
+	_vm->display()->readPCXBackdrop(pcxbuf, size, room > 114);
 	delete[] pcxbuf;
 
 	if (room >= 90) {
@@ -731,7 +731,7 @@ void Graphics::loadPanel() {
 		error("Unable to open panel file");
 	}
 	uint32 size = _vm->resource()->fileSize("panel.pcx");
-	_vm->display()->pcxReadPanel(pcxbuf, size);
+	_vm->display()->readPCXPanel(pcxbuf, size);
 	delete[] pcxbuf;
 }
 

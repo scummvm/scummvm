@@ -28,17 +28,17 @@ namespace Queen {
 const char *Resource::_tableFilename = "queen.tbl";
 
 const GameVersion Resource::_gameVersions[] = {
-	{ "PEM10", true,  false, 0x00000008,  22677657 },
-	{ "CEM10", false, false, 0x0000584E, 190787021 },
-	{ "PFM10", true,  false, 0x0002CD93,  22157304 },
-	{ "CFM10", false, false, 0x00032585, 186689095 },
-	{ "PGM10", true,  false, 0x00059ACA,  22240013 },
-	{ "CGM10", false, false, 0x0005F2A7, 217648975 },
-	{ "PIM10", true,  false, 0x000866B1,  22461366 },
-	{ "CIM10", false, false, 0x0008BEE2, 190795582 },
-	{ "CSM10", false, false, 0x000B343C, 190730602 },
-	{ "PE100", true,  true,  0x000DA981,   3724538 },
-	{ "PE100", true,  true,  0x000DB63A,   3732177 }
+	{ "PEM10", false, 0x00000008,  22677657 },
+	{ "CEM10", false, 0x0000584E, 190787021 },
+	{ "PFM10", false, 0x0002CD93,  22157304 },
+	{ "CFM10", false, 0x00032585, 186689095 },
+	{ "PGM10", false, 0x00059ACA,  22240013 },
+	{ "CGM10", false, 0x0005F2A7, 217648975 },
+	{ "PIM10", false, 0x000866B1,  22461366 },
+	{ "CIM10", false, 0x0008BEE2, 190795582 },
+	{ "CSM10", false, 0x000B343C, 190730602 },
+	{ "PE100", true,  0x000DA981,   3724538 },
+	{ "PE100", true,  0x000DB63A,   3732177 }
 };
 
 
@@ -164,36 +164,36 @@ bool Resource::exists(const char *filename) {
 
 const char *Resource::JASVersion() {
 	static char versionStr[6];
-	if (_gameVersion->isDemo)
-		_resourceFile->seek(fileOffset("QUEEN.JAS") + DEMO_JAS_VERSION_OFFSET, SEEK_SET );
+	if (isDemo())
+		_resourceFile->seek(fileOffset("QUEEN.JAS") + JAS_VERSION_OFFSET_DEMO, SEEK_SET);
 	else
 		_resourceFile->seek(fileOffset("QUEEN.JAS") + JAS_VERSION_OFFSET, SEEK_SET);
 	_resourceFile->read(versionStr, 6);
 	return versionStr;
 }
 
-bool Resource::isDemo() {
+bool Resource::isDemo() const {
 	return _gameVersion->isDemo;
 }
 
-bool Resource::isFloppy() {
-	return _gameVersion->isFloppy;
+bool Resource::isFloppy() const {
+	return _gameVersion->versionString[0] == 'P';
 }
 
-Language Resource::getLanguage() {
+Language Resource::getLanguage() const {
 	switch (_gameVersion->versionString[1]) {
-		case 'E':
-			return ENGLISH;
-		case 'G':
-			return GERMAN;
-		case 'F':
-			return FRENCH;
-		case 'I':
-			return ITALIAN;
-		case 'S':
-			return SPANISH;
-		default:
-			return ENGLISH;
+	case 'E':
+		return ENGLISH;
+	case 'G':
+		return GERMAN;
+	case 'F':
+		return FRENCH;
+	case 'I':
+		return ITALIAN;
+	case 'S':
+		return SPANISH;
+	default:
+		return ENGLISH;
 	}
 }
 
@@ -236,7 +236,7 @@ bool Resource::readTableFile() {
 void Resource::readTableCompResource() {
 	GameVersion *gv = new GameVersion;
 	_resourceFile->read(gv->versionString, 6);
-	gv->isFloppy = _resourceFile->readByte() != 0;
+	_resourceFile->readByte();
 	gv->isDemo = _resourceFile->readByte() != 0;
 	_compression = _resourceFile->readByte();
 	_resourceEntries = _resourceFile->readUint16BE();
