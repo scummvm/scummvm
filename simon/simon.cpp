@@ -307,7 +307,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_need_hitarea_recalc = 0;
 	_verb_hitarea = 0;
 	_hitarea_unk_4 = 0;
-	_lock_counter = 200;
+	_lock_counter = 0;
 
 	_video_palette_mode = 0;
 
@@ -4171,6 +4171,8 @@ void SimonEngine::openGameFile() {
 
 	_system->init_size(320, 200);
 
+	vc_34_force_lock();
+	
 	startUp(1);
 }
 
@@ -4438,9 +4440,9 @@ void SimonEngine::delay(uint amount) {
 	if (_fast_mode)
 	 	vga_period = 10;
 	else if (_game & GF_SIMON2)
-		vga_period = 40;
-	else
 		vga_period = 45;
+	else
+		vga_period = 50;
 
 	_rnd.getRandomNumber(2);
 
