@@ -44,7 +44,7 @@ void NutRenderer::decodeCodec44(byte *dst, byte *src, uint32 length) {
 		src += 2;
 		length -= 2;
 
-		for (; size_line != 0;) {
+		while (size_line != 0) {
 			num = *src++;
 			val = *src++;
 			memset(dst, val, num);
@@ -210,6 +210,18 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 	for (int32 ty = 0; ty < height; ty++) {
 		for (int32 tx = 0; tx < width; tx++) {
 			byte pixel = *src++;
+#if 1
+			// FIXME: This way, at least the actor speech colors are done right.
+			// However, we still don't draw any "shadows" behind the text, and indeed
+			// the character data doesn't seem to contain it. So how does CMI draw the
+			// font shadows? Either they are stored seperatly and we have to render them
+			// in addition to the normal font. Or maybe the created the shadows dynamically
+			// on the fly: if we draw the character several times in black, moved a bit
+			// each time, that would mostly create the shadow effect. But why would they
+			// do this, as it would increase the char drawing time by factor 5-6 ?
+			if (pixel != 0)
+				dst[tx] = color;
+#else
 			if (pixel != 0) {
 				if (pixel == 0x01)
 					pixel = (color == 0) ? 0xf : color;
@@ -217,6 +229,7 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 					pixel = 0x0;
 				dst[tx] = pixel;
 			}
+#endif
 		}
 		dst += _vm->_realWidth;
 	}
