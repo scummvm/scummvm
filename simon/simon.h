@@ -198,8 +198,8 @@ public:
 	int _x_scroll, _vga_var1, _vga_var2, _vga_var3, _vga_var5;
 	byte _vga_var8;
 
-	uint16 _vc72_var1, _vc72_var2, _vc72_var3;
-	uint16 _vc70_var1, _vc70_var2;
+	int16 _vc72_var1, _vc72_var2, _vc72_var3;
+	int16 _vc70_var1, _vc70_var2;
 	byte *_vga_var7;
 
 	int16 _script_cond_a, _script_cond_b, _script_cond_c;
@@ -257,8 +257,8 @@ public:
 	byte _video_var_9;
 
 	uint _midi_sfx;
-	uint16 _last_music_played;
-	uint16 _next_music_to_play;
+	int16 _last_music_played;
+	int16 _next_music_to_play;
 
 	bool _show_preposition;
 	bool _showmessage_flag;

@@ -1432,8 +1432,8 @@ void SimonState::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
 }
 
 void SimonState::o_unk_127() {
-	uint a = getVarOrWord();
-	uint b = getVarOrWord();
+	int a = getVarOrWord();
+	int b = getVarOrWord();
 	if (_game & GF_SIMON2) {
 		uint c = getVarOrByte();
 
