@@ -26,7 +26,7 @@
 class Scumm;
 class ScummDebugger;
 
-typedef bool (ScummDebugger::*DebugProc)();
+typedef bool (ScummDebugger::*DebugProc)(char parm[255][255]);
 
 enum {
 	DVAR_INT,
@@ -68,7 +68,8 @@ protected:
 	bool RunCommand(char *input);
 
 	// Commands
-	bool Cmd_Exit();
+	bool Cmd_Exit(char _parameter[255][255]);
+	bool Cmd_Room(char _parameter[255][255]);
 	
 #ifdef USE_CONSOLE
 	static bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);

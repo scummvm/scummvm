@@ -53,6 +53,7 @@ void ScummDebugger::attach(Scumm *s)
 	if (_dcmd_count < 1) {	// We need to register our commands
 		DCmd_Register("exit", &ScummDebugger::Cmd_Exit);
 		DCmd_Register("quit", &ScummDebugger::Cmd_Exit);
+		DCmd_Register("room", &ScummDebugger::Cmd_Room);
 	}
 }
 
@@ -160,7 +161,7 @@ bool ScummDebugger::RunCommand(char *input) {
 			DebugProc cmd;
 
 			cmd = _dcmds[i].function;
-			return (this->*cmd)();
+			return (this->*cmd)(parm);
 		}
 	}
 
@@ -245,7 +246,16 @@ bool ScummDebugger::RunCommand(char *input) {
 }
 
 // Commands
-bool ScummDebugger::Cmd_Exit() {
+bool ScummDebugger::Cmd_Exit(char _parameter[255][255]) {
 	_detach_now = true;
 	return false;
+}
+
+bool ScummDebugger::Cmd_Room(char _parameter[255][255]) {
+        int room = atoi(_parameter[1]);
+        _s->_actors[_s->_vars[_s->VAR_EGO]].room = room;
+        _s->startScene(room, 0, 0);
+        _s->_fullRedraw = 1;
+
+	return true;
 }
