@@ -1554,25 +1554,27 @@ void Scumm::unkHeapProc2(int a, int b)
 
 void Scumm::readMAXS()
 {
-	if (_features & GF_AFTER_V8) {										// CMI
-		_fileHandle.seek(50 + 50, SEEK_CUR);						// 176 - 8
-		_numVariables = _fileHandle.readUint32LE();			// 1500
-		_numBitVariables = _fileHandle.readUint32LE();	// 2048
-		_fileHandle.readUint32LE();											// 40
-		_numScripts = _fileHandle.readUint32LE();				// 458
-		_numSounds = _fileHandle.readUint32LE();				// 789
-		_numCharsets = _fileHandle.readUint32LE();			// 1
-		_numCostumes = _fileHandle.readUint32LE();			// 446
-		_numRooms = _fileHandle.readUint32LE();					// 95
-		_fileHandle.readUint32LE();											// 80
-		_numGlobalObjects = _fileHandle.readUint32LE();	// 1401
-		_fileHandle.readUint32LE();											// 60
-		_numLocalObjects = _fileHandle.readUint32LE();	// 200
-		_numNewNames = _fileHandle.readUint32LE();			// 100
-		_numFlObject = _fileHandle.readUint32LE();			// 128
-		_numInventory = _fileHandle.readUint32LE();			// 80
-		_numArray = _fileHandle.readUint32LE();				// 200
-		_numVerbs = _fileHandle.readUint32LE();					// 50
+	int foo;
+	
+	if (_features & GF_AFTER_V8) {                      // CMI
+		_fileHandle.seek(50 + 50, SEEK_CUR);            // 176 - 8
+		_numVariables = _fileHandle.readUint32LE();     // 1500
+		_numBitVariables = _fileHandle.readUint32LE();  // 2048
+		_fileHandle.readUint32LE();                     // 40
+		_numScripts = _fileHandle.readUint32LE();       // 458
+		_numSounds = _fileHandle.readUint32LE();        // 789
+		_numCharsets = _fileHandle.readUint32LE();      // 1
+		_numCostumes = _fileHandle.readUint32LE();      // 446
+		_numRooms = _fileHandle.readUint32LE();         // 95
+		_fileHandle.readUint32LE();                     // 80
+		_numGlobalObjects = _fileHandle.readUint32LE(); // 1401
+		_fileHandle.readUint32LE();                     // 60
+		_numLocalObjects = _fileHandle.readUint32LE();  // 200
+		_numNewNames = _fileHandle.readUint32LE();      // 100
+		_numFlObject = _fileHandle.readUint32LE();      // 128
+		_numInventory = _fileHandle.readUint32LE();     // 80
+		_numArray = _fileHandle.readUint32LE();         // 200
+		_numVerbs = _fileHandle.readUint32LE();         // 50
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numGlobalScripts = 2000;
@@ -1582,7 +1584,7 @@ void Scumm::readMAXS()
 		_fileHandle.seek(50 + 50, SEEK_CUR);
 		_numVariables = _fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();                      // 40 in FT; 16 in Dig
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_numLocalObjects = _fileHandle.readUint16LE();
 		_numNewNames = _fileHandle.readUint16LE();
@@ -1602,11 +1604,11 @@ void Scumm::readMAXS()
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	} else if (_features & GF_AFTER_V6) {
 		_numVariables = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();                      // 16 in Sam/DOTT
 		_numBitVariables = _fileHandle.readUint16LE();
 		_numLocalObjects = _fileHandle.readUint16LE();
 		_numArray = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();                      // 0 in Sam/DOTT
 		_numVerbs = _fileHandle.readUint16LE();
 		_numFlObject = _fileHandle.readUint16LE();
 		_numInventory = _fileHandle.readUint16LE();
@@ -1623,20 +1625,20 @@ void Scumm::readMAXS()
 
 		_shadowPaletteSize = 256;
 	} else {
-		_numVariables = _fileHandle.readUint16LE();	/* 800 */
-		_fileHandle.readUint16LE();						/* 16 */
-		_numBitVariables = _fileHandle.readUint16LE();	/* 2048 */
-		_numLocalObjects = _fileHandle.readUint16LE();	/* 200 */
+		_numVariables = _fileHandle.readUint16LE();      // 800
+		_fileHandle.readUint16LE();                      // 16
+		_numBitVariables = _fileHandle.readUint16LE();   // 2048
+		_numLocalObjects = _fileHandle.readUint16LE();   // 200
 		_numArray = 50;
 		_numVerbs = 100;
 		_numNewNames = 0;
 		_objectRoomTable = NULL;
 
-		_fileHandle.readUint16LE();						/* 50 */
-		_numCharsets = _fileHandle.readUint16LE();	/* 9 */
-		_fileHandle.readUint16LE();						/* 100 */
-		_fileHandle.readUint16LE();						/* 50 */
-		_numInventory = _fileHandle.readUint16LE();	/* 80 */
+		_fileHandle.readUint16LE();                      // 50
+		_numCharsets = _fileHandle.readUint16LE();       // 9
+		_fileHandle.readUint16LE();                      // 100
+		_fileHandle.readUint16LE();                      // 50
+		_numInventory = _fileHandle.readUint16LE();      // 80
 		_numGlobalScripts = 200;
 
 		_shadowPaletteSize = 256;
