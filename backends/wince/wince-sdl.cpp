@@ -1096,19 +1096,16 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 	else
 	if (_scaler_proc == PocketPCHalf || _scaler_proc == PocketPCHalfZoom) {
 		// Align on a 2x2 square
-		if (x != 0) {
-			while (x % 2) {
-				x--;
-				w++;
-			}
-			while (y % 2) {
-				y--;
-				h++;
-			}
-			while (w % 2) w++;
-			while (h % 2) h++;
+		while (x % 2) {
+			x--;
+			w++;
 		}
-
+		while (y % 2) {
+			y--;
+			h++;
+		}
+		while (w % 2) w++;
+		while (h % 2) h++;
 
 		// Restrict rect if we're zooming
 
