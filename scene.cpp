@@ -77,6 +77,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
 	}
 
 	ts.scanString(" id %d", 1, &numSectors_);
+	numSectors_++;
 	sectors_ = new Sector[numSectors_];
 	// FIXME: This would be nicer if we could rewind the textsplitter
 	// stream
