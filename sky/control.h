@@ -227,6 +227,7 @@ private:
 	int _lastButton;
 	uint32 _curButtonText;
 	uint16 _firstText;
+	uint16 _savedMouse;
     
 	dataFileHeader *_textSprite;
 	SkyTextResource *_text;

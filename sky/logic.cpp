@@ -583,8 +583,9 @@ void SkyLogic::stopped() {
 
 	Compact *cpt = SkyState::fetchCompact(_compact->extCompact->waitingFor);
 
-	if (!cpt->mood && collide(cpt))
-		return;
+	if (cpt)
+		if (!cpt->mood && collide(cpt))
+			return;
 
 	// we are free, continue processing the script
 
@@ -1346,8 +1347,8 @@ bool SkyLogic::fnStartSub(uint32 scr, uint32 b, uint32 c) {
 bool SkyLogic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(mega);
 	cpt->mode += 4;
-	*SkyCompact::getSub(cpt, _compact->mode) = (uint16)(scr & 0xffff);
-	*SkyCompact::getSub(cpt, _compact->mode + 2) = (uint16)(scr >> 16);
+	*SkyCompact::getSub(cpt, cpt->mode) = (uint16)(scr & 0xffff);
+	*SkyCompact::getSub(cpt, cpt->mode + 2) = (uint16)(scr >> 16);
 	return true;
 }
 
@@ -1830,7 +1831,7 @@ bool SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
 	// sprite offsets can ruin the formula - instead we
 	// will use the bottom of the mouse collision area
 
-	int16 y = _compact->ycood - (cpt->ycood - cpt->mouseRelY - cpt->mouseSizeY);
+	int16 y = _compact->ycood - (cpt->ycood + cpt->mouseRelY + cpt->mouseSizeY);
 
 	if (y < 0) { // it's below
 		y = -y;

@@ -301,7 +301,7 @@ void SkyControl::doControlPanel(void) {
 	
 	drawMainPanel();
 
-	uint16 savedMouse = _skyMouse->giveCurrentMouseType();
+	_savedMouse = _skyMouse->giveCurrentMouseType();
 	
 	_skyMouse->spriteMouse(MOUSE_NORMAL,0,0);
 	bool quitPanel = false;
@@ -343,7 +343,7 @@ void SkyControl::doControlPanel(void) {
 	_skyScreen->forceRefresh();
 	_skyScreen->setPalette((uint8*)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	removePanel();
-	_skyMouse->spriteMouse(savedMouse, 0, 0);
+	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 }
 
 uint16 SkyControl::handleClick(SkyConResource *pButton) {
@@ -950,7 +950,7 @@ uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 
 	//TODO: save queued sfx
 	STOSD(destPos, _skyText->giveCurrentCharSet());
-	STOSD(destPos, _skyMouse->giveCurrentMouseType());
+	STOSD(destPos, _savedMouse);
 	STOSD(destPos, SkyState::_systemVars.currentPalette);
 	for (cnt = 0; cnt < 838; cnt++)
 		STOSD(destPos, SkyLogic::_scriptVariables[cnt]);
@@ -1156,7 +1156,7 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 	_skyDisk->refreshFilesList(reloadList);
 	_skyMusic->startMusic((uint16)music);
 	_skyText->fnSetFont(charSet);
-	_skyMouse->spriteMouse((uint16)mouseType, 0, 0);
+	_savedMouse = (uint16)mouseType;
 	SkyState::_systemVars.currentPalette = palette; // will be set when doControlPanel ends
 	SkyState::_systemVars.systemFlags |= SF_GAME_RESTORED; // what's that for?
 
