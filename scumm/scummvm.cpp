@@ -1103,6 +1103,11 @@ load_game:
 		_lastSaveTime = _system->get_msecs();
 	}
 
+	int oldEgo = 0;
+	
+	if (VAR_EGO != 0xFF)
+		oldEgo = VAR(VAR_EGO);
+
 	if (_completeScreenRedraw) {
 		_completeScreenRedraw = false;
 		gdi.clearCharsetMask();
@@ -1184,8 +1189,14 @@ load_game:
 		}
 		_verbRedraw = false;
 
-		if (_version <= 2)
+		if (_version <= 2) {
+			if (oldEgo != VAR(VAR_EGO)) {
+				// FIXME: Reset and redraw the sentence line
+				oldEgo = VAR(VAR_EGO);
+				redrawV2Inventory();
+			}
 			checkV2MouseOver(_mouse);
+		}
 
 		drawBlastTexts();
 		drawBlastObjects();
