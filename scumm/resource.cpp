@@ -1127,7 +1127,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		memcpy(ptr, "MDhd", 4); ptr += 4;
 		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
 		ptr += 4;
-		memset(ptr, 0, 8), ptr += 8;
+		memset(ptr, 0, 8); ptr += 8;
 		memcpy(ptr, "MThd", 4); ptr += 4;
 		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
 		ptr += 4;
