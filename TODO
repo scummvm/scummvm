@@ -56,15 +56,11 @@ Config
 SCUMM
 =====
 * Fix C64 costume code
-* Add a common base class "MusicEngine" or so for Player_V2, IMuse, IMuseDigital
-  -> their API is similar in many ways, and this could be used to simplify
-     some code in scumm/sound.cpp and other places which right now has to duplicate
-     code to cope with those three different music engine types.
 * Make it possible to restart games properly
 * Add support for handling Kanji in FM Towns games (foreground is rendered on a
   second plane at 640x480)
 * Figure out how to extract resources from Apple II and Commodore 64 versions
-* Document and Fix AKOS differences in Humongous Entertainment games
+* Document and fix AKOS differences in Humongous Entertainment games
 * Support various newer Humongous Entertainment games
 * Implement file related opcode stubs needed for Humongous games
 * Add support for graphics codecs used in 3DO versions of Humongous games
