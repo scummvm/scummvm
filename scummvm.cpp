@@ -483,8 +483,9 @@ void Scumm::parseCommandLine(int argc, char **argv) {
                 	if (*(s+1) == '\0')
                 		goto ShowHelpAndExit;
 					SoundEngine *se = (SoundEngine*)_soundEngine;
-					if (se) 
-						se->set_music_volume(atoi(s+1));
+					
+					if (se)						
+						se->set_music_volume(atoi(s+1));					
                     goto NextArg;
 				}
 				default:

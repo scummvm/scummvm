@@ -327,9 +327,10 @@ void Scumm::talkSound(uint32 a, uint32 b, int mode) {
 
 void Scumm::setupSound() {
 	SoundEngine *se = (SoundEngine*)_soundEngine;
-	if (se)
+	if (se) {
 		se->setBase(res.address[rtSound]);
-
+		se->set_master_volume(100);
+	}
 	_sfxFile = openSfxFile();
 }
 
