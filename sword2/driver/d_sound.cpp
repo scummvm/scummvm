@@ -17,20 +17,11 @@
  * $Header$
  */
 
-// FIXME: One feature still missing is the original's DipMusic() function
-// which, as far as I can understand, softened the music volume when someone
-// was speaking, but only if the music was playing loudly at the time.
+// One feature still missing is the original's DipMusic() function which, as
+// far as I can understand, softened the music volume when someone was
+// speaking, but only (?) if the music was playing loudly at the time.
 //
-// I'm not sure if we can implement this in any sensible fashion - I don't
-// think we have that fine-grained control over the mixer - or if we really
-// want it anyway.
-//
-// Simply adjusting the volume paramters to flow() is not enough. If you
-// only adjust them a little you won't hear the difference anyway, and if you
-// adjust them a lot it will sound really bad.
-//
-// Does anyone who can run the original interpreter have any
-// opinions on this?
+// All things considered, I think this is more bother than it's worth.
 
 #include "common/stdafx.h"
 #include "common/file.h"
@@ -47,14 +38,22 @@ namespace Sword2 {
 
 static File fpMus;
 
-// Decompression macros
+static void premix_proc(void *param, int16 *data, uint len) {
+	((Sound *) param)->streamMusic(data, len);
+}
+
+// ----------------------------------------------------------------------------
+// Custom AudioStream class to handle Broken Sword II's audio compression.
+// ----------------------------------------------------------------------------
+
+#define BUFFER_SIZE 4096
+
 #define GetCompressedShift(n)      ((n) >> 4)
 #define GetCompressedSign(n)       (((n) >> 3) & 1)
 #define GetCompressedAmplitude(n)  ((n) & 7)
 
-#define BUFFER_SIZE 4096
-
 class CLUInputStream : public AudioStream {
+private:
 	File *_file;
 	uint32 _end_pos;
 	int16 _outbuf[BUFFER_SIZE];
@@ -153,9 +152,9 @@ AudioStream *makeCLUStream(File *file, int size) {
 	return new CLUInputStream(file, size);
 }
 
-static void premix_proc(void *param, int16 *data, uint len) {
-	((Sound *) param)->streamMusic(data, len);
-}
+// ----------------------------------------------------------------------------
+// Main sound class
+// ----------------------------------------------------------------------------
 
 Sound::Sound(Sword2Engine *vm) {
 	_vm = vm;
@@ -223,18 +222,33 @@ int Sound::openSoundFile(File *fp, const char *base) {
 	int i;
 
 	for (i = 0; i < ARRAYSIZE(file_types); i++) {
+		File f;
+
 		sprintf(filename, "%s%d.%s", base, cd, file_types[i].ext);
-		if (fp->open(filename))
-			return file_types[i].mode;
-	}
+		if (f.open(filename))
+			break;
 
-	for (i = 0; i < ARRAYSIZE(file_types); i++) {
 		sprintf(filename, "%s.%s", base, file_types[i].ext);
-		if (fp->open(filename))
-			return file_types[i].mode;
+		if (f.open(filename))
+			break;
 	}
 
-	return 0;
+	if (i == ARRAYSIZE(file_types))
+		return 0;
+
+	// The assumption here is that a sound file is closed when the sound
+	// finishes, and we never play sounds from two different files at the
+	// same time. Thus, if the file is already open it's the correct file,
+	// and the loop above was just needed to figure out the compression.
+	//
+	// This is to avoid having two file handles open to the same file at
+	// the same time. There was some speculation that some of our target
+	// systems may have trouble with that.
+
+	if (!fp->isOpen())
+		fp->open(filename);
+
+	return file_types[i].mode;
 }
 
 AudioStream *Sound::getAudioStream(File *fp, const char *base, uint32 id, uint32 *numSamples) {
@@ -299,8 +313,6 @@ void Sound::streamMusic(int16 *data, uint len) {
 		fpMus.seek(_music[i]._filePos, SEEK_SET);
 		_music[i]._converter->flow(_music[i], data, len, volume, volume);
 	}
-
-	// DipMusic();
 
 	if (!_music[0]._streaming && !_music[1]._streaming && fpMus.isOpen())
 		fpMus.close();
@@ -712,94 +724,17 @@ int32 Sound::streamCompMusic(uint32 musicId, bool looping) {
 	if (secondaryStream != -1)
 		_music[secondaryStream].fadeDown();
 
-	// The assumption here is that we are never playing music from two
-	// different files at the same time.
-
-	if (!fpMus.isOpen()) {
-		// TODO: We don't support compressed music yet. Patience.
-		if (openSoundFile(&fpMus, "music") != kCLUMode)
-			return RD_OK;
-	}
-
-	if (!fpMus.isOpen())
+	switch (openSoundFile(&fpMus, "music")) {
+	case 0:
 		return RDERR_INVALIDFILENAME;
+	case kCLUMode:
+		break;
+	default:
+		warning("Compressed music is not yet supported");
+		return RDERR_INVALIDFILENAME;
+	}
 
 	return _music[primaryStream].play(musicId, looping);
-}
-
-int32 Sound::dipMusic(void) {
-	// disable this func for now
-	return RD_OK;
-
-/*
-	int32				 len;
-	int32 				 readCursor, writeCursor;
-	int32				 dwBytes1, dwBytes2;
-	int16				*sample;
-	int32				 total = 0;
-	int32				 i;
-	int32				 status;
-	LPVOID 				 lpv1, lpv2;
-	HRESULT				 hr = DS_OK;
-	LPDIRECTSOUNDBUFFER  dsbMusic = NULL;
-
-	int32				 currentMusicVol = musicVolTable[musicVol];
-	int32				 minMusicVol;
-
-	// Find which music buffer is currently playing
-	for (i = 0; i<MAXMUS && !dsbMusic; i++)
-	{
-		if (musStreaming[i] && musFading[i] == 0)
-			dsbMusic = lpDsbMus[i];
-	}
-
-	if ((!_musicMuted) && dsbMusic && (!_speechMuted) && (musicVol>2))
-	{
-		minMusicVol = musicVolTable[musicVol - 3];
-
-		if (_speechStatus)
-		{
-			IDirectSoundBuffer_GetStatus(dsbSpeech, &status);
-			if ((hr = IDirectSoundBuffer_GetCurrentPosition(dsbMusic, &readCursor, &writeCursor)) != DS_OK)
-				return hr;
-
-			len = 44100 / 12 ;//  12th of a second
-
-			if ((hr = IDirectSoundBuffer_Lock(dsbMusic, readCursor, len, &lpv1, &dwBytes1, &lpv2, &dwBytes2, 0)) != DS_OK)
-				return hr;
-
-			for (i = 0, sample = (int16*)lpv1; sample<(int16*)((int8*)lpv1+dwBytes1); sample+= 30, i++)  // 60 samples
-			{
-				if (*sample>0)
-					total += *sample;
-				else
-					total -= *sample;
-			}
-
-			total /= i;
-
-			total = minMusicVol + ( ( (currentMusicVol - minMusicVol) * total ) / 8000);
-
-			if (total > currentMusicVol)
-				total = currentMusicVol;
-
-			IDirectSoundBuffer_SetVolume(dsbMusic, total);
-
-			IDirectSoundBuffer_Unlock(dsbMusic,lpv1,dwBytes1,lpv2,dwBytes2);
-		}
-		else
-		{
-			IDirectSoundBuffer_GetVolume(dsbMusic, &total);
-			total += 50;
-			if (total > currentMusicVol)
-				total = currentMusicVol;
-
-			IDirectSoundBuffer_SetVolume(dsbMusic, total);
-		}
-	}
-	
-	return hr;
-*/
 }
 
 /**
@@ -1006,8 +941,6 @@ int32 Sound::playCompSpeech(uint32 speechid, uint8 vol, int8 pan) {
 
 	_vm->_mixer->playInputStream(&_soundHandleSpeech, input, false, volume, p);
 	_speechStatus = true;
-
-	// DipMusic();
 
 	return RD_OK;
 }

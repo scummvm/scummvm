@@ -100,8 +100,6 @@ private:
 	bool _musicMuted;
 	uint8 _musicVol;
 
-	int32 dipMusic(void);
-
 	PlayingSoundHandle _soundHandleSpeech;
 	bool _speechStatus;
 	bool _speechPaused;
