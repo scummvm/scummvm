@@ -683,6 +683,15 @@ void Scumm_v2::o2_actorSet() {
 	switch (_opcode) {
 		case 1: 	// Actor Sound
 			a->sound[0] = arg;
+			
+#if 0
+			// FIXME: This hack would make costume draw. However, until
+			// we have added support for the V1 costume format, this hurts
+			// more than it helps.
+			if (_features & GF_AFTER_V1 && vm.slot[_currentScript].number == 1) {
+				a->setActorCostume(act);
+			}
+#endif
 			break;
 
 		case 2:		// Actor Set Color
