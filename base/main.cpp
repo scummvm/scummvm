@@ -34,6 +34,7 @@
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/scaler.h"	// For GFX_NORMAL
 #include "common/timer.h"
 #include "gui/newgui.h"
@@ -258,6 +259,10 @@ static void runGame(GameDetector &detector, OSystem *system) {
 	// Create the game engine
 	Engine *engine = detector.createEngine(system);
 	assert(engine);
+
+	// Add extrapath (if any) to the directory search list
+	if (ConfMan.hasKey("extrapath"))
+		File::addDefaultDirectory(ConfMan.get("extrapath"));
 
 	// Run the game engine
 	engine->go();

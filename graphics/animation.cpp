@@ -47,8 +47,6 @@ BaseAnimationState::~BaseAnimationState() {
 
 
 bool BaseAnimationState::init(const char *name) {
-	const Common::String ePath = ConfMan.get("extrapath");
-
 #ifdef USE_MPEG2
 	char tempFile[512];
 
@@ -65,7 +63,7 @@ bool BaseAnimationState::init(const char *name) {
 
 	File f;
 
-	if (!f.open(tempFile) && !f.open(tempFile, File::kFileReadMode, ePath.c_str())) {
+	if (!f.open(tempFile)) {
 		warning("Cutscene: %s palette missing", tempFile);
 		return false;
 	}
@@ -114,8 +112,7 @@ bool BaseAnimationState::init(const char *name) {
 	// Open MPEG2 stream
 	mpgfile = new File();
 	sprintf(tempFile, "%s.mp2", name);
-	if (!mpgfile->open(tempFile) && 
-	    !mpgfile->open(tempFile, File::kFileReadMode, ePath.c_str())) {
+	if (!mpgfile->open(tempFile)) {
 		warning("Cutscene: Could not open %s", tempFile);
 		return false;
 	}
@@ -134,8 +131,6 @@ bool BaseAnimationState::init(const char *name) {
 
 	// Play audio
 	bgSoundStream = AudioStream::openStreamFile(name);
-	if (bgSoundStream == NULL)
-		bgSoundStream = AudioStream::openStreamFile(name, ePath.c_str());
 
 	if (bgSoundStream != NULL) {
 		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);

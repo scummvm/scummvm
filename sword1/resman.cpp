@@ -58,12 +58,6 @@ ResMan::~ResMan(void) {
 void ResMan::loadCluDescript(const char *fileName) {
 	File resFile;
 	resFile.open(fileName);
-	if (!resFile.isOpen()) {
-		// Uh-uh, file not found. Perhaps we're playing straight from CD2?
-		// Check the Extra Path.
-		const Common::String ePath = ConfMan.get("extrapath");
-		resFile.open(fileName, File::kFileReadMode, ePath.c_str());
-	}
 
 	if (!resFile.isOpen()) {
 		char msg[512];
