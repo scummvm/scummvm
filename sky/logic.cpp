@@ -1187,7 +1187,7 @@ bool SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnBlankMouse(uint32 a, uint32 b, uint32 c) {
-	return _skyMouse->fnBlankMouse();
+	return (_skyMouse->fnBlankMouse() != 0);
 }
 
 bool SkyLogic::fnCrossMouse(uint32 a, uint32 b, uint32 c) {
@@ -1441,7 +1441,7 @@ bool SkyLogic::fnWeWait(uint32 id, uint32 b, uint32 c) {
 	// We have hit another mega
 	// we are going to wait for it to move
 
-	_compact->extCompact->waitingFor = id;
+	_compact->extCompact->waitingFor = (uint16) id;
 	stopAndWait();
 	return true; // not sure about this
 }
@@ -1486,6 +1486,8 @@ bool SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
+	uint i;
+
 	// initialise the top menu bar
 	// firstObject is o0 for game menu, k0 for linc
 
@@ -1504,7 +1506,7 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	// sort the objects and pad with blanks
 
 	uint32 menuLength = 0;
-	for (uint i = firstObject; i < firstObject + ARRAYSIZE(_objectList); i++) {
+	for (i = firstObject; i < firstObject + ARRAYSIZE(_objectList); i++) {
 		if ( _scriptVariables[i] )
 			_objectList[menuLength++] = _scriptVariables[i];
 	}
@@ -1513,13 +1515,13 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	// (3) OK, NOW TOP UP THE LIST WITH THE REQUIRED NO. OF BLANK OBJECTS (for min display length 11)
 
 	uint32 blankID = 51;
-	for (uint i = menuLength; i < 11; i++)
+	for (i = menuLength; i < 11; i++)
 		_objectList[i] = blankID++;
 
 	// (4) KILL ID's OF ALL 20 OBJECTS SO UNWANTED ICONS (SCROLLED OFF) DON'T REMAIN ON SCREEN
 	// (There should be a better way of doing this - only kill id of 12th item when menu has scrolled right)
 
-	for (int i = 0; i < ARRAYSIZE(_objectList); i++) {
+	for (i = 0; i < ARRAYSIZE(_objectList); i++) {
 		if (_objectList[i])
 			(SkyState::fetchCompact(_objectList[i]))->status = ST_LOGIC;
 	}
@@ -1534,7 +1536,7 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	// (6) AND FINALLY, INITIALISE THE 11 OBJECTS SO THEY APPEAR ON SCREEEN
 
 	uint16 rollingX = 128 + 28;
-	for (int i = 0; i < 11; i++) {
+	for (i = 0; i < 11; i++) {
 		cpt = SkyState::fetchCompact(
 				_objectList[_scriptVariables[SCROLL_OFFSET] + i]);
 
