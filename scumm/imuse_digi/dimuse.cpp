@@ -330,7 +330,7 @@ void IMuseDigital::callback() {
 				if (_track[l]->curRegion == -1) {
 					switchToNextRegion(l);
 					if (_track[l]->toBeRemoved)
-						break;
+						continue;
 				}
 
 				int bits = _sound->getBits(_track[l]->soundHandle);
