@@ -1617,7 +1617,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flag22(spriteId, args[0]);
+			spriteInfoSet_flagYFlipped(spriteId, args[0]);
 		break;
 	case 4:
 		args[0] = pop();
@@ -1887,7 +1887,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flags23_26(spriteId, args[0]);
+			spriteInfoSet_flagXFlipped(spriteId, args[0]);
 		break;
 	case 83:
 		args[1] = pop();
@@ -2361,7 +2361,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 3:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flags_22(spriteId));
+			push(spriteInfoGet_flagYFlipped(spriteId));
 		else
 			push(0);
 		break;
@@ -2546,7 +2546,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 82:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flags_23(spriteId));
+			push(spriteInfoGet_flagXFlipped(spriteId));
 		else
 			push(0);
 		break;

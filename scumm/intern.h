@@ -883,8 +883,8 @@ protected:
 	int spriteInfoGet_flags_15(int spriteId);
 	int spriteInfoGet_flagActive(int spriteId);
 	int spriteInfoGet_flags_20(int spriteId);
-	int spriteInfoGet_flags_22(int spriteId);
-	int spriteInfoGet_flags_23(int spriteId);	
+	int spriteInfoGet_flagYFlipped(int spriteId);
+	int spriteInfoGet_flagXFlipped(int spriteId);	
 	int spriteInfoGet_flags_31(int spriteId);
 	int spriteInfoGet_resId(int spriteId);
 	int spriteInfoGet_resState(int spriteId);
@@ -933,8 +933,8 @@ protected:
 	void spriteInfoSet_flag15(int spriteId, int value);
 	void spriteInfoSet_flagActive(int spriteId, int value);
 	void spriteInfoSet_flag20(int spriteId, int value);
-	void spriteInfoSet_flag22(int spriteId, int value);
-	void spriteInfoSet_flags23_26(int spriteId, int value);
+	void spriteInfoSet_flagYFlipped(int spriteId, int value);
+	void spriteInfoSet_flagXFlipped(int spriteId, int value);
 	void spriteInfoSet_flag31(int spriteId, int value);
 	void spriteInfoSet_field_78_64(int spriteId, int value);
 	void spriteInfoSet_setClassFlags(int spriteId, int value);
