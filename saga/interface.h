@@ -112,7 +112,8 @@ enum PANEL_MODES {
 	kPanelConverse,
 	kPanelProtect,
 	kPanelPlacard,
-	kPanelMap
+	kPanelMap,
+	kPanelInventory
 };
 
 enum BUTTON_FLAGS {

@@ -278,8 +278,10 @@ int Interface::setMode(int mode) {
 
 	if (_panelMode == kPanelConverse)
 		_inMainMode = false;
-	//else if (_panelMode == kPanelInventory)
-	//	_inMainMode = true;
+	else if (_panelMode == kPanelInventory) {
+		_inMainMode = true;
+		_panelMode = kPanelMain;
+	}
 
 	draw();
 
@@ -398,7 +400,7 @@ int Interface::update(const Point& imousePt, int update_flag) {
 	// Get game display info
 	_vm->getDisplayInfo(&g_di);
 
-	if (_panelMode == kPanelMain) {
+	if (_panelMode == kPanelMain) { // FIXME: HACK
 		// Update playfield space ( only if cursor is inside )
 		if (imouse_y < g_di.scene_h) {
 			// Mouse is in playfield space

@@ -196,7 +196,7 @@ int Script::SF_mainMode(SCRIPTFUNC_PARAMS) {
 	; // center actor
 	; // show verb
 	_vm->_interface->activate();
-	//_vm->_interface->setMode(kPanelInventory);
+	_vm->_interface->setMode(kPanelInventory);
 	; // set pointer verb
 
 	return SUCCESS;
