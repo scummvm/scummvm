@@ -24,7 +24,6 @@ MODULE_OBJS := \
 	saga/saga.o \
 	saga/scene.o \
 	saga/script.o \
-	saga/sdata.o \
 	saga/sdebug.o \
 	saga/sfuncs.o \
 	saga/sndres.o \
