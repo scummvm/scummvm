@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-11-22
-Release version: 0.2.83 [CVS]
+Last updated:    2002-12-01
+Release version: 0.3.0
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -232,6 +232,17 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
           and/or the ALSA sequencer.
         * Run 'make deb'.
         * Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
+        
+        Mac OS X
+        * Make sure you have the developer tools installed.
+        * Edit backends/sdl/build.rules, and enable the Mac OS X specific line(s).
+        * Depending on where you have installed SDL, you have to add the location
+          of its headers to the INCLUDES variables. For example if you installed SDL
+          via Fink, you can add this at the end of build.rules:
+          INCLUDES+= -I/sw/include
+        * You can now 'make' to create a command line binary.
+        * To get a version you can run from Finder, type 'make bundle' which will
+          create ScummVM.app.
 
 
 Running:
