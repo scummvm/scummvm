@@ -69,7 +69,7 @@ static const char USAGE_STRING[] =
 	"\n"
 	"  --cdrom=NUM              CD drive to play CD audio from (default: 0 = first\n"
 	"                           drive)\n"
-	"  --joytick[=NUM]          Enable input with joystick (default: 0 = first\n"
+	"  --joystick[=NUM]         Enable input with joystick (default: 0 = first\n"
 	"                           joystick)\n"
 	"  --platform=WORD          Specify version of game (allowed values: amiga,\n"
 	"                           atari, mac, pc)\n"
