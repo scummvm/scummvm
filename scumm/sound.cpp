@@ -341,7 +341,7 @@ void Sound::playSound(int soundID, int offset) {
 		memcpy(sound, ptr + 6, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
-	else if ((_vm->_features & GF_FMTOWNS) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
+	else if ((_vm->_features & GF_FMTOWNS && _vm->_version == 3) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
 
 		bool tows = READ_UINT32(ptr) == MKID('TOWS');
 		if (_vm->_version == 3) {
