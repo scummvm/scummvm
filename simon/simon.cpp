@@ -638,7 +638,7 @@ void SimonState::unlinkItem(Item *item)
 {
 	Item *first, *parent, *next;
 
-	/* cannot unlink item without parent */
+	/* can't unlink item without parent */
 	if (item->parent == 0)
 		return;
 
@@ -889,7 +889,7 @@ uint SimonState::loadTextFile_simon1(const char *filename, byte *dst)
 	uint32 size;
 
 	if (fo.isOpen() == false)
-		error("loadTextFile: Cannot open '%s'", filename);
+		error("loadTextFile: Can't open '%s'", filename);
 
 	size = fo.size();
 
@@ -906,7 +906,7 @@ File *SimonState::openTablesFile_simon1(const char *filename)
 	File *fo = new File();
 	fo->open(filename, _gameDataPath);
 	if (fo->isOpen() == false)
-		error("openTablesFile: Cannot open '%s'", filename);
+		error("openTablesFile: Can't open '%s'", filename);
 	return fo;
 }
 
@@ -1429,7 +1429,7 @@ void SimonState::loadIconFile()
 	uint size;
 
 	if (in.isOpen() == false)
-		error("Cannot open icon.dat");
+		error("Can't open icons file 'ICON.DAT'");
 
 	size = in.size();
 
@@ -4219,7 +4219,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 
 		in.open(buf, _gameDataPath);
 		if (in.isOpen() == false)
-			error("read_vga_from_datfile_1: cannot open %s", buf);
+			error("read_vga_from_datfile_1: can't open %s", buf);
 
 		size = in.size();
 
@@ -4247,7 +4247,7 @@ byte *SimonState::read_vga_from_datfile_2(uint id)
 
 		in.open(buf, _gameDataPath);
 		if (in.isOpen() == false)
-			error("read_vga_from_datfile_2: cannot open %s", buf);
+			error("read_vga_from_datfile_2: can't open %s", buf);
 
 		size = in.size();
 
@@ -4286,7 +4286,7 @@ void SimonState::openGameFile()
 		_game_file->open(gss->gme_filename, _gameDataPath);
 
 		if (_game_file->isOpen() == false)
-			error("cannot open game file '%s'", gss->gme_filename);
+			error("Can't open game file '%s'", gss->gme_filename);
 
 		uint32 size = _game_file->readUint32LE();
 
@@ -4478,9 +4478,7 @@ void SimonState::go()
 
 	_sound = new SimonSound(_game, gss, _gameDataPath, _mixer);
 
-	if (!loadGamePcFile(gss->gamepc_filename))
-		error("Error loading gamepc file '%s' (or one of the files it depends on)",
-					gss->gamepc_filename);
+	loadGamePcFile(gss->gamepc_filename);
 
 	addTimeEvent(0, 1);
 	openGameFile();
@@ -4839,7 +4837,7 @@ void SimonState::playMusic(uint music_unk, uint music)
 			sprintf(buf, "MOD%d.MUS", music);
 			f->open(buf, _gameDataPath);
 			if (f->isOpen() == false) {
-				warning("Cannot load music from '%s'", buf);
+				warning("Can't load music from '%s'", buf);
 				return;
 			}
 			midi.read_all_songs_old(f, music);

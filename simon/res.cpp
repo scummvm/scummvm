@@ -110,7 +110,7 @@ bool SimonState::loadGamePcFile(const char *filename)
 		in->open(filename2, _gameDataPath);
 		free(filename2);
 		if (in->isOpen() == false)
-			return false;
+			error("Can't open gamepc file '%s' or '%s.'", gss->gamepc_filename, gss->gamepc_filename);
 	}
 
 	num_inited_objects = allocGamePcVars(in);
@@ -132,7 +132,7 @@ bool SimonState::loadGamePcFile(const char *filename)
 	if (in->isOpen() == false) {
 		in->open("TBLLIST.", _gameDataPath);
 		if (in->isOpen() == false)
-			return false;
+			error("Can't open table resources file 'TBLLIST' or 'TBLLIST.'");
 	}
 
 	file_size = in->size();
@@ -151,7 +151,7 @@ bool SimonState::loadGamePcFile(const char *filename)
 	/* Read list of TEXT resources */
 	in->open("STRIPPED.TXT", _gameDataPath);
 	if (in->isOpen() == false)
-		return false;
+		error("Can't open text resources file 'STRIPPED.TXT'");
 
 	file_size = in->size();
 	_stripped_txt_mem = (byte *)malloc(file_size);
