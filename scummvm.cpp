@@ -423,14 +423,14 @@ NextArg:;
 struct VersionSettings {
 	char *filename;
 	char *gamename;
-	byte id,major,minor,middle;
+	byte id,major,middle,minor;
 };
 
 static const VersionSettings version_settings[] = {
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2},
 	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis", GID_INDY4, 5, 5, 0},
-	{"fate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0},
+	{"playfate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0},
 	{"tentacle", "Day Of The Tenctacle", GID_TENTACLE, 6, 4, 2},
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2},
 	{NULL,NULL}
@@ -448,9 +448,13 @@ bool Scumm::detectGame() {
 			_middleScummVersion = gnl->middle;
 			_minorScummVersion = gnl->minor;
 			_gameText = gnl->gamename;
+			debug(1, "Detected game '%s', version %d.%d.%d", 
+				gnl->gamename, gnl->major, gnl->middle, gnl->minor);
 			return true;
 		}
 	} while ((++gnl)->filename);
+
+	debug(1, "Failed game detection");
 
 	return true;
 }
