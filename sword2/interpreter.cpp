@@ -417,7 +417,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
 				DEBUG2("Pop %d into var %d",value,parameter);
-				*((int *)(variables+parameter)) = value;
+				*((int32 *)(variables+parameter)) = value;
 				break;
 
 			case CP_CALL_MCODE:			// 4	Call an mcode routine
@@ -518,14 +518,14 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 			case CP_ADDNPOP_LOCAL_VAR32:						// 10
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
-				*((int *)(variables+parameter)) = *(int32 *)(variables+parameter) + value;
+				*((int32 *)(variables+parameter)) += value;
 				DEBUG3("+= %d into var %d->%d",value,parameter,*(int32 *)(variables+parameter));
 				break;
 
 			case CP_SUBNPOP_LOCAL_VAR32:						// 11
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
-				*((int *)(variables+parameter)) = *(int32 *)(variables+parameter) - value;
+				*((int32 *)(variables+parameter)) -= value;
 				DEBUG3("-= %d into var %d->%d",value,parameter,*(int32 *)(variables+parameter));
 				break;
 
