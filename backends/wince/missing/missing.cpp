@@ -442,7 +442,7 @@ int _stricmp( const char *string1, const char *string2 ) {
 char *strrchr(const char *s, int c) {
 	int i;
 
-	for (i = strlen(s) - 1; i > 0; i++)
+	for (i = strlen(s) - 1; i > 0; i--)
 		if (s[i] == c)
 			return (char*)(s + i);
 
