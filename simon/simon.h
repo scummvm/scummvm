@@ -808,7 +808,7 @@ protected:
 
 	void set_dummy_cursor();
 
-	void set_volume(byte volume);
+	void set_volume(int volume);
 
 	void save_or_load_dialog(bool load);
 	void o_unk_132_helper_3();

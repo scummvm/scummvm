@@ -665,7 +665,7 @@ int SimonEngine::init(GameDetector &detector) {
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
-	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
+	set_volume(ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
 
 	_system->beginGFXTransaction();
@@ -4225,7 +4225,7 @@ byte *SimonEngine::dx_lock_attached() {
 void SimonEngine::dx_unlock_attached() {
 }
 
-void SimonEngine::set_volume(byte volume) {
+void SimonEngine::set_volume(int volume) {
 	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, volume);
 }
 
