@@ -782,7 +782,15 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			handleDeltaPalette(*sub);
 			break;
 		case TYPE_IACT:
+#ifdef INSANE
+			// FIXME: check parameters
+			if (_insanity)
+				_scumm->_insane->procIACT(_dst, 0, 0, 0, *sub, 0, 0);
+			else
+				handleImuseAction(*sub);
+#else
 			handleImuseAction(*sub);
+#endif
 			break;
 		case TYPE_STOR:
 			handleStore(*sub);
@@ -791,7 +799,14 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			handleFetch(*sub);
 			break;
 		case TYPE_SKIP:
+#ifdef INSANE
+			if (_insanity)
+				_scumm->_insane->procSKIP(*sub);
+			else
+				handleSkip(*sub);
+#else
 			handleSkip(*sub);
+#endif
 			break;
 		case TYPE_TEXT:
 			handleTextResource(*sub);
@@ -975,8 +990,6 @@ void SmushPlayer::insanity(bool flag) {
 void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
 	Chunk *sub;
 	
-	debug(0, "seekSan(%s, %s, %d)", file, directory, pos);
-
 	if (file) {
 		if (_base)
 			delete _base;
@@ -993,7 +1006,7 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
 	if (pos != 8)
 		_base->seek(pos, FileChunk::seek_start);
 
-	// FIXME: is this really applicable? HACK
+	// FIXME: is this really applicable for FLU files? HACK
 	_frame = 0;
 }
 

@@ -27,6 +27,7 @@
 #include "scumm/nut_renderer.h"
 
 #include "scumm/smush/smush_player.h"
+#include "scumm/smush/chunk.h"
 
 #ifdef INSANE
 
@@ -63,6 +64,9 @@ class Insane {
 	void procPreRendering(void);
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+				  int32 setupsan13, Chunk &b, int32 size, int32 flags);
+	void procSKIP(Chunk &b);
 	void escapeKeyHandler(void);
 
  private:
@@ -253,15 +257,6 @@ class Insane {
   
 	struct enemy _enemy[9];
   
-	struct act {
-		int32 actor;
-		byte  state;
-		int32 room;
-		int32 facing;
-		int32 tilt;
-		int32 frame;
-	};
-  
 	struct fluConf {
 		int sceneId;
 		byte *fluPtr;
@@ -286,27 +281,36 @@ class Insane {
 
 	struct sceneProp _sceneProp[139];
 
+	struct act {
+		int32 actor;
+		byte  state;
+		int32 room;
+		int32 animTilt;
+		int32 tilt;
+		int32 frame;
+	};
+  
 	struct actor {
 		int32 damage;
 		int32 maxdamage;
 		int32 field_8;
-		int32 field_C;
+		int32 frame;
+		int32 tilt;
+		int32 cursorX;
 		int32 speed;
-		int32 field_14;
-		int32 field_18;
 		int32 x;
 		int32 y;
 		int32 y1;
 		int32 x1;
-		int32 field_2C;
-		int32 field_30;
+		int32 weaponClass;
+		int32 animWeaponClass;
 		int32 field_34;
 		int32 field_38;
 		bool  lost;
 		bool  kicking;
 		bool  field_44;
 		int32 field_48;
-		int32 field_4C;
+		bool  defunct;
 		int32 scenePropSubIdx;
 		int32 field_54;
 		int32 runningSound;
@@ -395,7 +399,7 @@ class Insane {
 	void switchSceneIfNeeded(void);
 	int smush_changeState(int state);
 	void init_actStruct(int actornum, int actnum, int32 actorval, byte state, 
-						  int32 room, int32 facing, int32 tilt, int32 frame);
+						  int32 room, int32 animtilt, int32 tilt, int32 frame);
 	void init_enemyStruct(int n, int32 handler, int32 initializer,
 							   int32 field_8, int32 maxdamage, int32 field_10,
 							   int32 field_14, int32 sound, const char *filename,
@@ -498,9 +502,19 @@ class Insane {
 	int32 calcEnemyDamage(bool arg_0, bool arg_4);
 	void ouchSoundEnemy(void);
 	bool weaponEnemyIsEffective(void);
-
-	void blah(void);
-
+	void iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+				  int32 setupsan13, Chunk &b, int32 size, int32 flags);
+	void iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+				  int32 setupsan13, Chunk &b, int32 size, int32 flags);
+	void iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+				  int32 setupsan13, Chunk &b, int32 size, int32 flags);
+	void iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+				  int32 setupsan13, Chunk &b, int32 size, int32 flags);
+	void iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+				  int32 setupsan13, Chunk &b, int32 size, int32 flags);
+	void iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+				  int32 setupsan13, Chunk &b, int32 size, int32 flags);
+	bool isBitSet(int n);
 };
 } // End of namespace Insane
 
