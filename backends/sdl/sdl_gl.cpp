@@ -102,7 +102,6 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	switch(_mode) {
 	case GFX_BILINEAR:
 		_usingOpenGL = true;
-		_mode_flags |= DF_REVERSE_Y;
 		_mode = GFX_NORMAL;
 		break;
 
@@ -162,7 +161,6 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	
 	if (_mode != GFX_NORMAL) {
 		_usingOpenGL = false;
-		_mode_flags &= ~DF_REVERSE_Y;
 	}
 
 	//
@@ -642,7 +640,6 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 			if (!_usingOpenGL) {
 				_usingOpenGL = true;
 				_mode = GFX_NORMAL;
-				_mode_flags |= DF_REVERSE_Y;
 				_scaleFactor = 1;
 				_scaler_proc = Normal1x;
 				hotswap_gfx_mode();
@@ -663,7 +660,6 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 				if (_usingOpenGL) {
 					_glBilinearFilter = false;
 					_usingOpenGL = false;
-					_mode_flags &= ~DF_REVERSE_Y;
 				}
 				
 				hotswap_gfx_mode();

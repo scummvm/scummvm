@@ -145,8 +145,7 @@ protected:
 
 	enum {
 		DF_WANT_RECT_OPTIM			= 1 << 0,
-		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1,
-		DF_REVERSE_Y				= 1 << 2
+		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1
 	};
 
 	bool _forceFull; // Force full redraw on next update_screen
