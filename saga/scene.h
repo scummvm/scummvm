@@ -170,20 +170,6 @@ typedef Common::List<SCENE_QUEUE> SceneQueueList;
 
 #define CREDIT_DURATION1 4000
 
-enum INTRO_SCENE_DIALOGUE_INFO {
-	INTRO_CAVE1_START = 0,
-	INTRO_CAVE1_END = 4,
-
-	INTRO_CAVE2_START = 4,
-	INTRO_CAVE2_END = 7,
-
-	INTRO_CAVE3_START = 7,
-	INTRO_CAVE3_END = 10,
-
-	INTRO_CAVE4_START = 10,
-	INTRO_CAVE4_END = 14
-};
-
 struct INTRO_DIALOGUE {
 	uint32 i_voice_rn;
 	const char *i_cvar_name;
@@ -315,6 +301,7 @@ class Scene {
 	static int SC_ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info, void *refCon);
 
  private:
+	EVENT *ITEQueueDialogue(EVENT *q_event, SCENE_INFO *scene_info, int n_dialogues, const INTRO_DIALOGUE dialogue[]);
 	EVENT *ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]);
 	int ITEIntroAnimProc(int param, SCENE_INFO *scene_info);
 	int ITEIntroCave1Proc(int param, SCENE_INFO *scene_info);

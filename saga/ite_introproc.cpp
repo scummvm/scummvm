@@ -40,138 +40,6 @@
 
 namespace Saga {
 
-static INTRO_DIALOGUE IntroDiag[][14] = {
-	{ {
-		RID_CAVE_VOICE_0, "intro1a",
-		"We see the sky, we see the land, we see the water, "
-		"and we wonder: Are we the only ones?"
-	},
-	{
-		RID_CAVE_VOICE_1, "intro2a",
-		"Long before we came to exist, the humans ruled "
-		"the Earth."
-	},
-	{
-		RID_CAVE_VOICE_2, "intro3a",
-		"They made marvelous things, and moved whole " "mountains."
-	},
-	{
-		RID_CAVE_VOICE_3, "intro4a",
-		"They knew the Secret of Flight, the Secret of "
-		"Happiness, and other secrets beyond our imagining."
-	},
-	{
-		RID_CAVE_VOICE_4, "intro1b",
-		"The humans also knew the Secret of Life, "
-		"and they used it to give us the Four Great Gifts:"
-	},
-	{
-		RID_CAVE_VOICE_5, "intro2b",
-		"Thinking minds, feeling hearts, speaking "
-		"mouths, and reaching hands."
-	},
-	{
-		RID_CAVE_VOICE_6, "intro3b",
-		"We are their children."
-	},
-	{
-		RID_CAVE_VOICE_7, "intro1c",
-		"They taught us how to use our hands, and how " "to speak."
-	},
-	{
-		RID_CAVE_VOICE_8, "intro2c",
-		"They showed us the joy of using our minds."
-	},
-	{
-		RID_CAVE_VOICE_9, "intro3c",
-		"They loved us, and when we were ready, they "
-		"surely would have given us the Secret of Happiness."
-	},
-	{
-		RID_CAVE_VOICE_10, "intro1d",
-		"And now we see the sky, the land, and the water "
-		"that we are heirs to, and we wonder: why did "
-		"they leave?"
-	},
-	{
-		RID_CAVE_VOICE_11, "intro2d",
-		"Do they live still, in the stars? In the oceans "
-		"depths? In the wind?"
-	},
-	{
-		RID_CAVE_VOICE_12, "intro3d",
-		"We wonder, was their fate good or evil?"
-	},
-	{
-		RID_CAVE_VOICE_13, "intro4d",
-		"And will we also share the same fate one day?"
-	} },
-
-	// German
-    { {
-		RID_CAVE_VOICE_0, "intro1a",
-		"Um uns sind der Himmel, das Land und die Seen; und wir "
-		"fragen uns - sind wir die einzigen?"
-	},
-	{
-		RID_CAVE_VOICE_1, "intro2a",
-		"Lange vor unserer Zeit herrschten die Menschen \201ber die Erde."
-	},
-	{
-		RID_CAVE_VOICE_2, "intro3a",
-		"Sie taten wundersame Dinge und versetzten ganze Berge."
-	},
-	{
-		RID_CAVE_VOICE_3, "intro4a",
-		"Sie kannten das Geheimnis des Fluges, das Geheimnis der Fr\224hlichkeit "
-		"und andere Geheimnisse, die unsere Vorstellungskraft \201bersteigen."
-	},
-	{
-		RID_CAVE_VOICE_4, "intro1b",
-		"Au$erdem kannten die Menschen das Geheimnis des Lebens. Und sie nutzten "
-		"es, um uns die vier gro$en Geschenke zu geben -"
-	},
-	{
-		RID_CAVE_VOICE_5, "intro2b",
-		"den denkenden Geist, das f\201hlende Herz, den sprechenden Mund und die "
-		"greifende Hand."
-	},
-	{
-		RID_CAVE_VOICE_6, "intro3b",
-		"Wir sind ihre Kinder."
-	},
-	{
-		RID_CAVE_VOICE_7, "intro1c",
-		"Sie lehrten uns zu sprechen und unsere H\204nde zu benutzen."
-	},
-	{
-		RID_CAVE_VOICE_8, "intro2c",
-		"Sie zeigten uns die Freude am Denken."
-	},
-	{
-		RID_CAVE_VOICE_9, "intro3c",
-		"Sie liebten uns, und w\204ren wir bereit gewesen, h\204tten sie "
-		"uns sicherlich das Geheimnis der Fr\224hlichkeit offenbart."
-	},
-	{
-		RID_CAVE_VOICE_10, "intro1d",
-		"Und nun sehen wir den Himmel, das Land und die Seen - unser Erbe. "
-		"Und wir fragen uns - warum verschwanden sie?"
-	},
-	{
-		RID_CAVE_VOICE_11, "intro2d",
-		"Leben sie noch in den Sternen? In den Tiefen des Ozeans? Im Wind?"
-	},
-	{
-		RID_CAVE_VOICE_12, "intro3d",
-		"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
-	},
-	{
-		RID_CAVE_VOICE_13, "intro4d",
-		"Und wird uns eines Tages das gleiche Schicksal ereilen?"
-	} }
-};
-
 SCENE_QUEUE ITE_IntroList[] = {
 	{RID_ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroAnimProc, 0, SCENE_NOFADE},
 	{RID_ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave1Proc, 0, SCENE_FADE_NO_INTERFACE},
@@ -211,6 +79,61 @@ int Scene::ITEStartProc() {
 	return SUCCESS;
 }
 
+EVENT *Scene::ITEQueueDialogue(EVENT *q_event, SCENE_INFO *scene_info, int n_dialogues, const INTRO_DIALOGUE dialogue[]) {
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
+	EVENT event;
+	int voice_len;
+	int i;
+
+	// Queue narrator dialogue list
+	text_entry.color = 255;
+	text_entry.effect_color = 0;
+	text_entry.text_x = 320 / 2;
+	text_entry.text_y = (_vm->getFeatures() & GF_LANG_DE) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
+	text_entry.font_id = MEDIUM_FONT_ID;
+	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
+
+	for (i = 0; i < n_dialogues; i++) {
+		text_entry.string = dialogue[i].i_str;
+		entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
+
+		// Display text
+		event.type = ONESHOT_EVENT;
+		event.code = TEXT_EVENT;
+		event.op = EVENT_DISPLAY;
+		event.data = entry_p;
+		event.time = (i == 0) ? 0 : VOICE_PAD;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
+		// Play voice
+		event.type = ONESHOT_EVENT;
+		event.code = VOICE_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = dialogue[i].i_voice_rn;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
+		voice_len = _vm->_sndRes->getVoiceLength(dialogue[i].i_voice_rn);
+		if (voice_len < 0) {
+			voice_len = strlen(dialogue[i].i_str) * VOICE_LETTERLEN;
+		}
+
+		// Remove text
+		event.type = ONESHOT_EVENT;
+		event.code = TEXT_EVENT;
+		event.op = EVENT_REMOVE;
+		event.data = entry_p;
+		event.time = voice_len;
+
+		q_event = _vm->_events->chain(q_event, &event);
+	}
+
+	return q_event;
+}
+
 enum {
 	kCHeader,
 	kCText
@@ -227,8 +150,6 @@ enum {
 	kITENotDe        = kITEAny & ~kITEDe,
 	kITENotDeNotWyrm = kITENotWyrmKeep & ~kITEDe
 };
-
-#define INV(n) (kITEAny & ~(n))
 
 // Queue a page of credits text. The original interpreter did word-wrapping
 // automatically. We currently don't.
@@ -434,14 +355,53 @@ int Scene::SC_ITEIntroCave1Proc(int param, SCENE_INFO *scene_info, void *refCon)
 int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
-	int event_time = 0;
-	int voice_len;
-	int voice_pad = 50;
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
-	int i;
-	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+
+	static const INTRO_DIALOGUE dialogue[][4] = {
+		{ { // English
+			RID_CAVE_VOICE_0, "intro1a",
+			"We see the sky, we see the land, we see the water, "
+			"and we wonder: Are we the only ones?"
+		},
+		{
+			RID_CAVE_VOICE_1, "intro2a",
+			"Long before we came to exist, the humans ruled the"
+			"Earth."
+		},
+		{
+			RID_CAVE_VOICE_2, "intro3a",
+			"They made marvelous things, and moved whole "
+			"mountains."
+		},
+		{
+			RID_CAVE_VOICE_3, "intro4a",
+			"They knew the Secret of Flight, the Secret of "
+			"Happiness, and other secrets beyond our imagining."
+		} },
+		{ { // German
+			RID_CAVE_VOICE_0, "intro1a",
+			"Um uns sind der Himmel, das Land und die Seen; und "
+			"wir fragen uns - sind wir die einzigen?"
+		},
+		{
+			RID_CAVE_VOICE_1, "intro2a",
+			"Lange vor unserer Zeit herrschten die Menschen "
+			"\201ber die Erde."
+		},
+		{
+			RID_CAVE_VOICE_2, "intro3a",
+			"Sie taten wundersame Dinge und versetzten ganze "
+			"Berge."
+		},
+		{
+			RID_CAVE_VOICE_3, "intro4a",
+			"Sie kannten das Geheimnis des Fluges, das Geheimnis "
+			"der Fr\224hlichkeit und andere Geheimnisse, die "
+			"unsere Vorstellungskraft \201bersteigen."
+		} }
+	};
+
+	int n_dialogues = ARRAYSIZE(dialogue[lang]);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -454,58 +414,13 @@ int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->queue(&event);
 
 		// Queue narrator dialogue list
-		text_entry.color = 255;
-		text_entry.effect_color = 0;
-		text_entry.text_x = 320 / 2;
-		text_entry.text_y = _vm->getFeatures() & GF_LANG_DE ? INTRO_DE_CAPTION_Y :
-			INTRO_CAPTION_Y;
-		text_entry.font_id = MEDIUM_FONT_ID;
-		text_entry.flags = font_flags;
-
-		for (i = INTRO_CAVE1_START; i < INTRO_CAVE1_END; i++) {
-			text_entry.string = IntroDiag[lang][i].i_str;
-			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
-
-			// Display text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_DISPLAY;
-			event.data = entry_p;
-			event.time = event_time;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			// Play voice
-			event.type = ONESHOT_EVENT;
-			event.code = VOICE_EVENT;
-			event.op = EVENT_PLAY;
-			event.param = IntroDiag[lang][i].i_voice_rn;
-			event.time = event_time;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[lang][i].i_voice_rn);
-			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[lang][i].i_str) * VOICE_LETTERLEN;
-			}
-
-			// Remove text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_REMOVE;
-			event.data = entry_p;
-			event.time = voice_len;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			event_time = voice_pad;
-		}
+		q_event = ITEQueueDialogue(q_event, scene_info, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = 0;
+		event.time = VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;
@@ -528,14 +443,41 @@ int Scene::SC_ITEIntroCave2Proc(int param, SCENE_INFO *scene_info, void *refCon)
 int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
-	int event_time = 0;
-	int voice_len;
-	int voice_pad = 50;
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
-	int i;
-	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+
+	static const INTRO_DIALOGUE dialogue[][3] = {
+		{ { // English
+			RID_CAVE_VOICE_4, "intro1b",
+			"The humans also knew the Secret of Life, and they "
+			"used it to give us the Four Great Gifts:"
+		},
+		{
+			RID_CAVE_VOICE_5, "intro2b",
+			"Thinking minds, feeling hearts, speaking mouths, and "
+			"reaching hands."
+		},
+		{
+			RID_CAVE_VOICE_6, "intro3b",
+			"We are their children."
+		} },
+		{ { // German
+			RID_CAVE_VOICE_4, "intro1b",
+			"Au$erdem kannten die Menschen das Geheimnis des "
+			"Lebens. Und sie nutzten es, um uns die vier gro$en "
+			"Geschenke zu geben -"
+		},
+		{
+			RID_CAVE_VOICE_5, "intro2b",
+			"den denkenden Geist, das f\201hlende Herz, den "
+			"sprechenden Mund und die greifende Hand."
+		},
+		{
+			RID_CAVE_VOICE_6, "intro3b",
+			"Wir sind ihre Kinder."
+		} }
+	};
+
+	int n_dialogues = ARRAYSIZE(dialogue[lang]);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -557,58 +499,13 @@ int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
-		text_entry.color = 255;
-		text_entry.effect_color = 0;
-		text_entry.text_x = 320 / 2;
-		text_entry.text_y = _vm->getFeatures() & GF_LANG_DE ? INTRO_DE_CAPTION_Y :
-			INTRO_CAPTION_Y;
-		text_entry.font_id = MEDIUM_FONT_ID;
-		text_entry.flags = font_flags;
-
-		for (i = INTRO_CAVE2_START; i < INTRO_CAVE2_END; i++) {
-			text_entry.string = IntroDiag[lang][i].i_str;
-			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
-
-			// Display text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_DISPLAY;
-			event.data = entry_p;
-			event.time = event_time;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			// Play voice
-			event.type = ONESHOT_EVENT;
-			event.code = VOICE_EVENT;
-			event.op = EVENT_PLAY;
-			event.param = IntroDiag[lang][i].i_voice_rn;
-			event.time = event_time;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[lang][i].i_voice_rn);
-			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[lang][i].i_str) * VOICE_LETTERLEN;
-			}
-
-			// Remove text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_REMOVE;
-			event.data = entry_p;
-			event.time = voice_len;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			event_time = voice_pad;
-		}
+		q_event = ITEQueueDialogue(q_event, scene_info, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = event_time;
+		event.time = VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;
@@ -630,15 +527,42 @@ int Scene::SC_ITEIntroCave3Proc(int param, SCENE_INFO *scene_info, void *refCon)
 int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
-	int event_time = 0;
-	int voice_len;
-	int voice_pad = 50;
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
-	int i;
-	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
+	static const INTRO_DIALOGUE dialogue[][3] = {
+		{ { // English
+			RID_CAVE_VOICE_7, "intro1c",
+			"They taught us how to use our hands, and how to "
+			"speak."
+		},
+		{
+			RID_CAVE_VOICE_8, "intro2c",
+			"They showed us the joy of using our minds."
+		},
+		{
+			RID_CAVE_VOICE_9, "intro3c",
+			"They loved us, and when we were ready, they surely "
+			"would have given us the Secret of Happiness."
+		} },
+		{ { // German
+			RID_CAVE_VOICE_7, "intro1c",
+			"Sie lehrten uns zu sprechen und unsere H\204nde zu "
+			"benutzen."
+		},
+		{
+			RID_CAVE_VOICE_8, "intro2c",
+			"Sie zeigten uns die Freude am Denken."
+		},
+		{
+			RID_CAVE_VOICE_9, "intro3c",
+			"Sie liebten uns, und w\204ren wir bereit gewesen, "
+			"h\204tten sie uns sicherlich das Geheimnis der "
+			"Fr\224hlichkeit offenbart."
+		} }
+	};
+
+	int n_dialogues = ARRAYSIZE(dialogue[lang]);
+ 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
@@ -659,61 +583,15 @@ int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
-		text_entry.color = 255;
-		text_entry.effect_color = 0;
-		text_entry.text_x = 320 / 2;
-		text_entry.text_y = _vm->getFeatures() & GF_LANG_DE ? INTRO_DE_CAPTION_Y :
-			INTRO_CAPTION_Y;
-		text_entry.font_id = MEDIUM_FONT_ID;
-		text_entry.flags = font_flags;
-
-		for (i = INTRO_CAVE3_START; i < INTRO_CAVE3_END; i++) {
-			text_entry.string = IntroDiag[lang][i].i_str;
-			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
-
-			// Display text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_DISPLAY;
-			event.data = entry_p;
-			event.time = event_time;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			// Play voice
-			event.type = ONESHOT_EVENT;
-			event.code = VOICE_EVENT;
-			event.op = EVENT_PLAY;
-			event.param = IntroDiag[lang][i].i_voice_rn;
-			event.time = event_time;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[lang][i].i_voice_rn);
-			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[lang][i].i_str) * VOICE_LETTERLEN;
-			}
-
-			// Remove text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_REMOVE;
-			event.data = entry_p;
-			event.time = voice_len;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			event_time = voice_pad;
-		}
+		q_event = ITEQueueDialogue(q_event, scene_info, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = event_time;
+		event.time = VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
-
 		break;
 	case SCENE_END:
 		break;
@@ -733,15 +611,51 @@ int Scene::SC_ITEIntroCave4Proc(int param, SCENE_INFO *scene_info, void *refCon)
 int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
-	int event_time = 0;
-	int voice_len;
-	int voice_pad = 50;
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
-	int i;
-	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
+	static const INTRO_DIALOGUE dialogue[][4] = {
+		{ { // English
+			RID_CAVE_VOICE_10, "intro1d",
+			"And now we see the sky, the land, and the water that "
+			"we are heirs to, and we wonder: why did they leave?"
+		},
+		{
+			RID_CAVE_VOICE_11, "intro2d",
+			"Do they live still, in the stars? In the oceans "
+			"depths? In the wind?"
+		},
+		{
+			RID_CAVE_VOICE_12, "intro3d",
+			"We wonder, was their fate good or evil?"
+		},
+		{
+			RID_CAVE_VOICE_13, "intro4d",
+			"And will we also share the same fate one day?"
+		} },
+		{ { // German
+			RID_CAVE_VOICE_10, "intro1d",
+			"Und nun sehen wir den Himmel, das Land und die "
+			"Seen - unser Erbe. Und wir fragen uns - warum "
+			"verschwanden sie?"
+		},
+		{
+			RID_CAVE_VOICE_11, "intro2d",
+			"Leben sie noch in den Sternen? In den Tiefen des "
+			"Ozeans? Im Wind?"
+		},
+		{
+			RID_CAVE_VOICE_12, "intro3d",
+			"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
+		},
+		{
+			RID_CAVE_VOICE_13, "intro4d",
+			"Und wird uns eines Tages das gleiche Schicksal "
+			"ereilen?"
+		} }
+	};
+
+	int n_dialogues = ARRAYSIZE(dialogue[lang]);
+ 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
@@ -762,61 +676,15 @@ int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
-		text_entry.color = 255;
-		text_entry.effect_color = 0;
-		text_entry.text_x = 320 / 2;
-		text_entry.text_y = _vm->getFeatures() & GF_LANG_DE ? INTRO_DE_CAPTION_Y :
-			INTRO_CAPTION_Y;
-		text_entry.font_id = MEDIUM_FONT_ID;
-		text_entry.flags = font_flags;
-
-		for (i = INTRO_CAVE4_START; i < INTRO_CAVE4_END; i++) {
-			text_entry.string = IntroDiag[lang][i].i_str;
-			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
-
-			// Display text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_DISPLAY;
-			event.data = entry_p;
-			event.time = event_time;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			// Play voice
-			event.type = ONESHOT_EVENT;
-			event.code = VOICE_EVENT;
-			event.op = EVENT_PLAY;
-			event.param = IntroDiag[lang][i].i_voice_rn;
-			event.time = event_time;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[lang][i].i_voice_rn);
-			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[lang][i].i_str) * VOICE_LETTERLEN;
-			}
-
-			// Remove text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_REMOVE;
-			event.data = entry_p;
-			event.time = voice_len;
-
-			q_event = _vm->_events->chain(q_event, &event);
-
-			event_time = voice_pad;
-		}
+		q_event = ITEQueueDialogue(q_event, scene_info, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = event_time;
+		event.time = VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
-
 		break;
 	case SCENE_END:
 		break;
@@ -837,7 +705,7 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
 
-	const INTRO_CREDIT credits[] = {
+	static const INTRO_CREDIT credits[] = {
 		{kITENotDe, kCHeader, "Producer"},
 		{kITEDe, kCHeader, "Produzent"},
 		{kITEAny, kCText, "Walter Hochbrueckner"},
@@ -943,7 +811,7 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
 
-	const INTRO_CREDIT credits1[] = {
+	static const INTRO_CREDIT credits1[] = {
 		{kITENotDe, kCHeader, "Game Design"},
 		{kITEDe, kCHeader, "Spielentwurf"},
 		{kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
@@ -957,7 +825,7 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 
 	int n_credits1 = ARRAYSIZE(credits1);
 
-	const INTRO_CREDIT credits2[] = {
+	static const INTRO_CREDIT credits2[] = {
 		{kITEWyrmKeep, kCHeader, "Art Direction"},
 		{kITEWyrmKeep, kCText, "Allison Hershey"},
 		{kITENotDe, kCHeader, "Art"},
@@ -1028,7 +896,7 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
 
-	const INTRO_CREDIT credits1[] = {
+	static const INTRO_CREDIT credits1[] = {
 		{kITENotDe, kCHeader, "Programming"},
 		{kITEDe, kCHeader, "Programmiert von"},
 		{kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
@@ -1045,7 +913,7 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 
 	int n_credits1 = ARRAYSIZE(credits1);
 
-	const INTRO_CREDIT credits2[] = {
+	static const INTRO_CREDIT credits2[] = {
 		{kITENotDe, kCHeader, "Directed by"},
 		{kITEDe, kCHeader, "Regie"},
 		{kITEAny, kCText, "Talin"}
