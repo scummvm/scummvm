@@ -328,6 +328,15 @@ d4cccb5af88f3e77f370896e9ba8c5f9 FREDDI.HE0
 a176fababbf7944a1d4b5d6521b20f4d FREDDI.HE4
 2085ef0c1d1cc64db1ec52901b4856b9 FREDDI.HE5
 
+(russian freddi updated)
+sev
+D:\Scummsys.90\sputm.90\*.c
+02b964d6d7a3fcace1bc89ae2a2c9db7 FREDDI.HE1
+14a1058745c609eefa08f1591cc5d4df FREDDI.HE2
+58d117ae89707c7360f403186641e87f FREDDI.W32
+746e88c172a5b7a1ae89ac0ee3ee681a Freddi.HE0
+2b219196f0cc74d626a3216932d3ea54 Freddi.he4
+
 (freddi cd)
 khalek
 1998-01-21 02:13 freddi.w32
@@ -402,6 +411,15 @@ ba7fe7de583c9b7a1e9173afc5d75b42 FREDDI3.HE2
 ef0df7bdc61977f783dbe1e37f6a15fe FREDDI3.HE4
 88d57485970d3e801364812c82dec001 FREDDI3.W32
 
+(freddi3 russian updated)
+sev
+d:\dev\SPUTM\Src\*.cpp
+b2b8622d2a1d954fedf526043fc185eb FreddiSCS.(a)
+fff20670a77450240918f8315fcfb33d FreddiSCS.HE4
+75bff95816b84672b877d22a911ab811 FreddiSCS.he0
+39b5ea82513c799a6dba899b950c2977 FreddiSCS.he2
+199a34d9dd51e79e2a5022c778321af8 freddiSCS.w32
+
 (freddi3 cd)
 sev
 D:\Scummsys.90\sputm.90\*.c
@@ -419,6 +437,15 @@ D:\scummsys.98\sputm.98\*.c
 02d4dba3fedc64e24c1baa9523035701 freddi4.he2
 a2e2010e75a1fd164ef6fc58eae7238d freddi4.he4
 24b409ff575c52d385cdc6b7e91b5b79 freddi4.w32
+
+(russian freddi4 updated}
+sev
+C:\HESystems\SPUTM\Src\*.cpp
+658d27fdb9219f5c62468314cf0007ff FreddiHRBG.(a)
+78bd5f036ea35a878b74e4f47941f784 FreddiHRBG.he0
+1d4023e93ffde7dae77426d293dab95b FreddiHRBG.he2
+ae8defe36ebe7d46f7b1796f3e95b139 FreddiHRBG.he4
+74b50dcbd98cd9bb3560be9a918c37db FreddiHRBG.w32
 
 (russian freddicove alt)
 sev
@@ -439,6 +466,16 @@ b4c292854d70ff6cf89e20030630c5e0 FREDDICOVE.EXE
 62c6daba6da11b26e259e49c092cb08f FREDDICOVE.HE2
 a9f9f4a7ad25a3efda4626d4b6c80ffb FREDDICOVE.HE3
 dfbd9adb0d406184383dd069a64c8757 FREDDICOVE.HE4
+
+(russian freddicove updated)
+sev
+C:\HE_dev\SPUTM\Src\*.cpp
+50211d918df60b69d78c03962a5b09ed FreddiCCC.(a)
+b3d5a75a35d165c5750ab84fdc6fd638 FreddiCCC.EXE
+4ce2d5b355964bbcb5e5ce73236ef868 FreddiCCC.HE0
+2890b42997816aae1bcaa618e77444bf FreddiCCC.he2
+2f238b51cfad1b8b5c179468a19aa29b FreddiCCC.he3
+29ef3472e3675c4a0e6ea440e0df4ffd FreddiCCC.he4
 
 (freddi5 cd)
 sev
@@ -548,6 +585,16 @@ D:\scummsys\sputm80\*.c
 3d5f7153500339e05815cfa9c3e9369e WATER.HE4
 2856fa0e0e74484f9c55dc58b2e9203c WATER.HE7
 214d0ece69f444cc2ced3fd7bc0738dc Water.a32
+
+(russian water updated)
+sev
+D:\scummsys\sputm80\*.c
+c2e40b953f90ed35926a958cc8cb6a52 WATER.HE2
+3d5f7153500339e05815cfa9c3e9369e WATER.HE4
+2856fa0e0e74484f9c55dc58b2e9203c WATER.HE7
+0be4193477036d3b1c57b5aaa0f4a709 WATER.W32
+6271130f440066830eca9056c1d7926f water.he0
+96a30e55cb95fc0611e4353637d6e5a7 water.he1
 
 6.1.1 (Feb 15 1993 20:31:55)
 khalek
