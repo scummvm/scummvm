@@ -790,16 +790,7 @@ void resMan::Kill_all_res(uint8 wantInfo) {	//Tony29Nov96
 						Build_display();
 
 						do {
-							// if we pressed Ctrl-Q
-				  			if (ServiceWindows() == RDERR_APPCLOSED) {
-								Close_game();	//close engine systems down
-								CloseAppWindow();
-								exit(0);	//quit the game
-							}
-
- 							while (!gotTheFocus)
-								if (ServiceWindows() == RDERR_APPCLOSED)
-									break;
+							ServiceWindows();
 						} while(!KeyWaiting());
 
 						ReadKey(&c);	//kill the key we just pressed
@@ -871,16 +862,7 @@ void resMan::Kill_all_objects(uint8 wantInfo) {		// James17jan97
 							Build_display();
 
 							do {
-								// if we pressed Ctrl-Q
-				  				if (ServiceWindows() == RDERR_APPCLOSED) {
-									Close_game();	//close engine systems down
-									CloseAppWindow();
-									exit(0);	//quit the game
-								}
-
-								while (!gotTheFocus)
-									if (ServiceWindows() == RDERR_APPCLOSED)
-										break;
+								ServiceWindows();
 							} while(!KeyWaiting());
 
 
@@ -1105,14 +1087,8 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 
 		//--------------------------------------------------
 		// Service windows
-		// NOTE: Carry on even when not got the focus!!!
 
-		// if we pressed Ctrl-Q
-		if (ServiceWindows() == RDERR_APPCLOSED) {
-			Close_game();	//close engine systems down
-			CloseAppWindow();
-			exit(0);	//quit the game
-		}
+		ServiceWindows();
  		//--------------------------------------------------
 	} while ((read % BUFFERSIZE) == 0);
 
@@ -1312,27 +1288,16 @@ void resMan::GetCd(int cd) {
 		//--------------------------------------------------
 		// Service windows
 
-		// if we pressed Ctrl-Q
-		if (ServiceWindows() == RDERR_APPCLOSED) {
-			Close_game();	//close engine systems down
-			CloseAppWindow();
-			exit(0);	//quit the game
-		}
-
- 		while (!gotTheFocus)
-			if (ServiceWindows() == RDERR_APPCLOSED)
-				break;
+		ServiceWindows();
 
 		//--------------------------------------------------
 	
-		if (gotTheFocus) {
-			EraseBackBuffer();		// for hardware rendering
-			EraseSoftwareScreenBuffer();	// for software rendering
-			DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
-			spriteInfo.y = oldY;		// Drivers change the y co-ordinate, don't know why...
-			spriteInfo.x = oldX;
-			CopyScreenBuffer();
-		}
+		EraseBackBuffer();		// for hardware rendering
+		EraseSoftwareScreenBuffer();	// for software rendering
+		DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
+		spriteInfo.y = oldY;		// Drivers change the y co-ordinate, don't know why...
+		spriteInfo.x = oldX;
+		CopyScreenBuffer();
 	} while (!done);
 
 	Free_mem(text_spr);

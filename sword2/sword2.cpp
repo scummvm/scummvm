@@ -336,11 +336,7 @@ void Sword2State::go()
 
 	while (TRUE)
 	{
-		if (ServiceWindows() == RDERR_APPCLOSED)
-		{
-			break;		// break out of main game loop
-		}
-
+		ServiceWindows();
 		
 		// check for events
 		parseEvents();
@@ -348,15 +344,6 @@ void Sword2State::go()
 		if (grabbingSequences && (!console_status))
 			GrabScreenShot();
 #endif
-
-		while (!gotTheFocus)
-		{
-			if (ServiceWindows() == RDERR_APPCLOSED)
-			{
-				breakOut = 1;
-				break;	// break out of this while-loop
-			}
-		}
 
 		if (breakOut)	// if we are closing down the game
 			break;		// break out of main game loop

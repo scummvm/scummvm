@@ -213,19 +213,9 @@ uint32	Con_print_start_menu(void)	//Tony14Oct96
 
 				do
 				{
-			 		//--------------------------------------------------
 					// Service windows
-					while (!gotTheFocus)
-						if (ServiceWindows() == RDERR_APPCLOSED)
-							break;
 
-					if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-					{
-						Close_game();	//close engine systems down
-						CloseAppWindow();
-						exit(0);	//quit the game
-					}
- 					//--------------------------------------------------
+					ServiceWindows();
 				}
 				while(!KeyWaiting());
 

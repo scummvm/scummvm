@@ -272,9 +272,7 @@ void Build_display(void) {	//Tony21Sept96
  			// ---------------------------------------------------
 			// ready - blit to screen
 
-			// if the game is being shut down, drop out
-			if (ServiceWindows() == RDERR_APPCLOSED)
-				break;
+			ServiceWindows();
 
  			//----------------------------------------------------
 			// update our fps reading
@@ -406,19 +404,7 @@ void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
 	uint32 targetTime = SVM_timeGetTime() + (time * 1000);
 
 	while (SVM_timeGetTime() < targetTime) {
-		//--------------------------------------------------
-		// Service windows
-		while (!gotTheFocus)
-			if (ServiceWindows() == RDERR_APPCLOSED)
-				break;
-
-		// if we pressed Ctrl-Q
-		if (ServiceWindows() == RDERR_APPCLOSED) {
-			Close_game();	//close engine systems down
-			CloseAppWindow();
-			exit(0);	//quit the game
-		}
- 		//--------------------------------------------------
+		ServiceWindows();
 
 		EraseBackBuffer();		// for hardware rendering
 		EraseSoftwareScreenBuffer();	// for software rendering

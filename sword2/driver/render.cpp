@@ -1027,8 +1027,7 @@ void sleepUntil(int32 time) {
 
 		// Make sure menu animations and fades don't suffer
 		ProcessMenu();
-		if (ServiceWindows() == RDERR_APPCLOSED)
-			break;
+		ServiceWindows();
 
 		g_system->delay_msecs(10);
 	}

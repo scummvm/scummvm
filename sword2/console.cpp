@@ -252,20 +252,8 @@ uint32	Tconsole(uint32	mode)	//Tony9Oct96
 
 	while (TRUE)
 	{
-		if (ServiceWindows() == RDERR_APPCLOSED)
-		{
-			break;
-		}
+		ServiceWindows();
 
-		while (!gotTheFocus)
-		{
-			if (ServiceWindows() == RDERR_APPCLOSED)
-			{
-				breakOut = 1;
-				break;
-			}
-
-		}
 		if (breakOut)
 		{
 			break;
@@ -903,19 +891,9 @@ void	Con_help(void)	//Tony13Aug96
 
 				do
 				{
-			 		//--------------------------------------------------
 					// Service windows
-					while (!gotTheFocus)
-						if (ServiceWindows() == RDERR_APPCLOSED)
-							break;
 
-				  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-					{
-						Close_game();	//close engine systems down
-						CloseAppWindow();
-						exit(0);	//quit the game
-					}
- 					//--------------------------------------------------
+				  	ServiceWindows();
 				}
 				while(!KeyWaiting());
 
@@ -1133,19 +1111,9 @@ void	Con_list_savegames(void)	// (James05feb97)	Tony1Apr97
 
 				do
 				{
-			 		//--------------------------------------------------
 					// Service windows
-					while (!gotTheFocus)
-						if (ServiceWindows() == RDERR_APPCLOSED)
-							break;
 
-				  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-					{
-						Close_game();	//close engine systems down
-						CloseAppWindow();
-						exit(0);	//quit the game
-					}
- 					//--------------------------------------------------
+					ServiceWindows();
 				}
 				while(!KeyWaiting());
 
