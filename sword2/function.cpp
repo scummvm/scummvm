@@ -41,13 +41,11 @@ int32 Logic::fnTestFlags(int32 *params) {
 }
 
 int32 Logic::fnGosub(int32 *params) {
-	// hurray, script subroutines
-
 	// params:	0 id of script
 
+	// Hurray, script subroutines. Logic goes up - pc is saved for current
+	// level.
 	logicUp(params[0]);
-
-	// logic goes up - pc is saved for current level
 	return IR_GOSUB;
 }
 
@@ -57,34 +55,27 @@ int32 Logic::fnNewScript(int32 *params) {
 
 	// params:	0 id of script
 
-	// must clear this
-	_scriptVars[PLAYER_ACTION] = 0;
-
+	_scriptVars[PLAYER_ACTION] = 0;		// must clear this
 	logicReplace(params[0]);
 	return IR_TERMINATE;
 }
 
 int32 Logic::fnInteract(int32 *params) {
-	// run targets action on a subroutine
-	// called by player on his base level 0 idle, for example
+	// Run targets action on a subroutine. Called by player on his base
+	// level 0 idle, for example.
 
 	// params:	0 id of target from which we derive action script
 	//		  reference
 
-	// must clear this
-	_scriptVars[PLAYER_ACTION] = 0;
+	_scriptVars[PLAYER_ACTION] = 0;		// must clear this
+	logicUp((params[0] < 16) + 2);		// 3rd script of clicked on id
 
-	// 3rd script of clicked on id
-	logicUp((params[0] < 16) + 2);
-
-	// out, up and around again - pc is saved for current level to be
-	// returned to
+	// Out, up and around again - pc is saved for current level to be
+	// returned to.
 	return IR_GOSUB;
 }
 
 int32 Logic::fnPreLoad(int32 *params) {
-	// Open & close a resource.
-
 	// Forces a resource into memory before it's "officially" opened for
 	// use. eg. if an anim needs to run on smoothly from another,
 	// "preloading" gets it into memory in advance to avoid the cacheing
@@ -126,9 +117,6 @@ int32 Logic::fnRelease(int32 *params) {
 }
 
 int32 Logic::fnRandom(int32 *params) {
-	// Generates a random number between 'min' & 'max' inclusive, and
-	// sticks it in _scriptVars[RESULT]
-
 	// params:	0 min
 	//		1 max
 
@@ -146,21 +134,17 @@ int32 Logic::fnPause(int32 *params) {
 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
-		// start the pause
 		ob_logic->looping = 1;
-
-		// no. of game cycles
 		ob_logic->pause = params[1];
 	}
 
 	if (ob_logic->pause) {
-		// decrement the pause count
 		ob_logic->pause--;
 		return IR_REPEAT;
-	} else {
-		ob_logic->looping = 0;
-		return IR_CONT;
 	}
+
+	ob_logic->looping = 0;
+	return IR_CONT;
 }
 
 int32 Logic::fnRandomPause(int32 *params) {
@@ -174,7 +158,6 @@ int32 Logic::fnRandomPause(int32 *params) {
 	if (ob_logic->looping == 0) {
 		pars[0] = params[1];
 		pars[1] = params[2];
-
 		fnRandom(pars);
 		pars[1] = _scriptVars[RESULT];
 	}
@@ -193,8 +176,6 @@ int32 Logic::fnPassGraph(int32 *params) {
 	// params:	0 pointer to an ObjectGraphic structure
 
 	warning("fnPassGraph() is a no-op now");
-
-	// makes no odds
 	return IR_CONT;
 }
 
@@ -209,8 +190,6 @@ int32 Logic::fnPassMega(int32 *params) {
 	// params: 	0 pointer to a mega structure
 
 	memcpy(&_vm->_engineMega, _vm->_memory->intToPtr(params[0]), sizeof(ObjectMega));
-
-	// makes no odds
 	return IR_CONT;
 }
 

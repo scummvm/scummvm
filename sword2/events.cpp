@@ -159,18 +159,7 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 		return IR_TERMINATE;
 	}
 
-	if (ob_logic->looping == 0) {
-		ob_logic->looping = 1;
-		ob_logic->pause = params[1];
-	}
-
-	if (ob_logic->pause) {
-		ob_logic->pause--;
-		return IR_REPEAT;
-	}
-
-	ob_logic->looping = 0;
-	return IR_CONT;
+	return fnPause(params);
 }
 
 int32 Logic::fnClearEvent(int32 *params) {
