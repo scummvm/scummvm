@@ -509,7 +509,8 @@ byte *SimonState::vc_10_depack_swap(byte *src, uint w, uint h) {
 }
 
 byte *vc_10_no_depack_swap(byte *src) {
-	error("vc_10_no_depack_swap unimpl");
+	// TODO Add vc_10_no_depack_swap support, should be very similar to 
+	// vc_10_depack_swap but without the depacking
 	return NULL;
 }
 
@@ -649,12 +650,14 @@ void SimonState::vc_10_draw() {
 		return;
 	}
 
-	if (state.e & 0x10)
+	if (state.e & 0x10) {
 		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
-	else if (state.e & 1)
-		// FIXME: vc_10_no_depack_swap support needs to be added.
+	} else if (state.e & 1) {
+		// FIXME: vc_10_no_depack_swap should be called but is currently not supported
 		//state.depack_src = vc_10_no_depack_swap(state.depack_src);
+		warning("vc_10_no_depack_swap unimpl");
 		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
+	}
 
 	vlut = &_video_windows[_video_palette_mode * 4];
 

@@ -1041,10 +1041,12 @@ void SimonState::loadTablesIntoMem(uint subr_id) {
 				readSubroutineBlock(in);
 				closeTablesFile(in);
 
-				memcpy(filename, "SFXXXX", 6);
-				if (_game == GAME_SIMON1WIN)
+				if (_game == GAME_SIMON1WIN) {
+					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename, _gameDataPath);
-				else if (_game & GF_SIMON2) {
+				} else if (_game == GAME_SIMON1CD32) {
+					//TODO Add loading of simon1cd32 sound effects and voice files.
+				} else if (_game & GF_SIMON2) {
 					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + gss->SOUND_INDEX_BASE]);
 				}
 
@@ -5296,6 +5298,7 @@ void SimonState::loadMusic (uint music) {
 				// TODO Add support for decruncher
 			}
 			// TODO Add Protracker support for simon1amiga/cd32
+			warning("playMusic - Load %dtune attempt", music);
 		} else if (_game & GF_DEMO) {
 			// TODO Add music support for simon1demo
 		} else {
