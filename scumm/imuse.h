@@ -80,8 +80,9 @@ private:
 	};
 
 	struct channel {
-		int8 _volumeLeft;
 		int8 _volumeRight;
+		int8 _volume;
+		int8 _volumeFade;
 		bool _isLoop;
 		uint32 _offsetStop;
 		jump _jump[MAX_IMUSE_JUMPS];

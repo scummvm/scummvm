@@ -4887,14 +4887,21 @@ void IMuseDigital::handler() {
 				memcpy(buf + new_size, _channel[l]._data + _channel[l]._jump[0]._dest, _channel[l]._mixerSize - new_size);
 			}
 
+			if (_channel[l]._volumeFade != -1) {
+				if (_channel[l]._volume > _channel[l]._volumeFade) {
+					_channel[l]._volume -= 10;
+					_channel[l]._volumeRight -= 10;
+				}
+			}
+
 			if (_channel[l]._bits == 12) {
 				for(i = 0; i < (mixer_size / 4); i++) {
 					byte sample1 = buf[i * 4 + 0];
 					byte sample2 = buf[i * 4 + 1];
 					byte sample3 = buf[i * 4 + 2];
 					byte sample4 = buf[i * 4 + 3];
-					uint16 sample_a = (uint16)(((int16)((sample1 << 8) | sample2) * _channel[l]._volumeLeft) >> 8);
-					uint16 sample_b = (uint16)(((int16)((sample3 << 8) | sample4) * _channel[l]._volumeRight) >> 8);
+					uint16 sample_a = (uint16)(((int16)((sample1 << 8) | sample2) * _channel[l]._volumeRight) >> 8);
+					uint16 sample_b = (uint16)(((int16)((sample3 << 8) | sample4) * _channel[l]._volume) >> 8);
 					buf[i * 4 + 0] = (byte)(sample_a >> 8);
 					buf[i * 4 + 1] = (byte)(sample_a & 0xff);
 					buf[i * 4 + 2] = (byte)(sample_b >> 8);
@@ -4902,8 +4909,8 @@ void IMuseDigital::handler() {
 				}
 			} else if (_channel[l]._bits == 8) {
 				for(i = 0; i < (mixer_size / 2); i++) {
-					buf[i * 2 + 0] = (byte)(((int16)(buf[i * 2 + 0] * _channel[l]._volumeLeft)) >> 8);
-					buf[i * 2 + 1] = (byte)(((int16)(buf[i * 2 + 1] * _channel[l]._volumeRight)) >> 8);
+					buf[i * 2 + 0] = (byte)(((int16)(buf[i * 2 + 0] * _channel[l]._volumeRight)) >> 8);
+					buf[i * 2 + 1] = (byte)(((int16)(buf[i * 2 + 1] * _channel[l]._volume)) >> 8);
 				}
 			}
 
@@ -4957,8 +4964,9 @@ void IMuseDigital::startSound(int sound) {
 			_channel[l]._offset = 0;
 			_channel[l]._numRegions = 0;
 			_channel[l]._numJumps = 0;
-			_channel[l]._volumeLeft = 127;
 			_channel[l]._volumeRight = 127;
+			_channel[l]._volume = 127;
+			_channel[l]._volumeFade = -1;
 			ptr += 16;
 
 			uint32 tag, size = 0;
@@ -5104,11 +5112,11 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		switch (cmd) {
 		case 12:
 			switch (sub_cmd) {
-			case 5: // param seems always set 0 (maybe reset)
+			case 5: // params seems always to be set 0
 				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
 				return 0;
-			case 6: // right pan control (0-127) i think
-				debug(1, "IMuseDigital::doCommand setting right sample(%d), volume(%d)", sample, d);
+			case 6: // volume control (0-127)
+				debug(1, "IMuseDigital::doCommand setting volume sample(%d), volume(%d)", sample, d);
 				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
 						channel = l;
@@ -5116,39 +5124,55 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 				if (channel == -1) {
-					warning("IMuseDigital::doCommand Sample %d not exist", sample);
+					warning("IMuseDigital::doCommand Sample %d not exist in channels", sample);
+					return 1;
+				}
+				_channel[channel]._volume = d;
+				_channel[channel]._volumeRight = d;
+				return 0;
+			case 7: // right volume control (0-127) i think
+				debug(1, "IMuseDigital::doCommand setting right volume sample(%d),volume(%d)", sample, d);
+				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
+						channel = l;
+						break;
+					}
+				}
+				if (channel == -1) {
+					warning("IMuseDigital::doCommand Sample %d not exist in channels", sample);
 					return 1;
 				}
 				_channel[channel]._volumeRight = d;
-				return 0;
-			case 7: // left pan control (0-127) i think
-				debug(1, "IMuseDigital::doCommand setting left sample(%d), volume(%d)", sample, d);
-				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
-						channel = l;
-						break;
-					}
-				}
-				if (channel == -1) {
-					warning("IMuseDigital::doCommand Sample %d not exist", sample);
-					return 1;
-				}
-				_channel[channel]._volumeLeft = d;
 				return 0;
 			default:
 				warning("IMuseDigital::doCommand (param=0, cmd=12) default sub command %d", sub_cmd);
 				return 1;
 			}
-
-			return 0;
-		case 14: // maybe volume fading
-			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
-			return 0;
+		case 14:
+			switch (sub_cmd) {
+			case 6: // fade volume control
+				debug(1, "IMuseDigital::doCommand fading right volume sample(%d),volume(%d)", sample, e);
+				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
+						channel = l;
+						break;
+					}
+				}
+				if (channel == -1) {
+						warning("IMuseDigital::doCommand Sample %d not exist in channels", sample);
+					return 1;
+				}
+				_channel[channel]._volumeFade = e;
+				return 0;
+			default:
+				warning("IMuseDigital::doCommand (param=0, cmd=14) default sub command %d", sub_cmd);
+				return 1;
+			}
 		default:
 			warning("IMuseDigital::doCommand (param=0) default command %d", cmd);
 			return 1;
 		}
-	} else if (param == 16) { // maybe music related
+	} else if (param == 16) {
 		switch (cmd) {
 		case 0:
 			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
