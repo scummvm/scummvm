@@ -4001,7 +4001,7 @@ void SimonEngine::talk_with_text(uint num_1, uint num_2, const char *string_ptr,
 		while (strlen(string_ptr) > letters_per_row) {
 			m = letters_per_row;
 			string_ptr_2 += m;
-			while (*string_ptr_2-- != ' ')
+			while (*string_ptr_2-- != ' ' && m)
 				m--;
 			string_ptr_2 += 2;
 			n = (letters_per_row - m + 1) >> 1;
