@@ -5067,7 +5067,10 @@ void SimonState::playMusic(uint music_unk, uint music) {
 			// TODO Add music support for simon1demo
 		} else {
 			midi.stop();
-			if (_game & GF_TALKIE) {	
+			if (_game & GF_WIN) {	
+				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+				midi.playMultipleSMF (_game_file);
+			} else if (_game & GF_TALKIE) {	
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 				midi.playSMF (_game_file);
 			} else {
