@@ -680,7 +680,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_skipProcessActors = 0;
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
-	_heSndTimer = 0;
+	_heSndChannel = 0;
 	_heSndLoop = 0;
 	_heSndSoundFreq = 0;
 	memset(_timers, 0, sizeof(_timers));
@@ -1417,7 +1417,7 @@ void ScummEngine::initScummVars() {
 	} else if (_version >= 7) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
 		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
-	} else if (_heversion >= 71) {
+	} else if (_heversion >= 70) {
 		VAR(VAR_NUM_SOUND_CHANNELS) = 3;
 		VAR(VAR_MUSIC_CHANNEL) = 1;
 		VAR(VAR_SOUND_CHANNEL) = 2;
