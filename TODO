@@ -140,6 +140,15 @@ SCUMM
   increments of 8 pixels). See bug #629417.
 * Implement o6_actorOps case 218 as used in Humongous games
 * Add method of setting initial debug channels from command-line
+* COMI (maybe V7 games, too?): "Fix" CHARSET_1 behaviour when the room scrolls.
+  In particular, when text is drawn via CHARSET_1 and then scrolling takes
+  place, the text scrolls, too - but it really should stay fixed. There are
+  several ways to do this that I can think of. One would be to use an overlay
+  screen (i.e. use virtscreen 3, which isn't used at all currently) to draw
+  the text; then "compose" that screen over the main screen.
+  Or constantly (well, at least whenever the camera moves) redraw the text.
+  That would require buffering the text; maybe the blast text code could be
+  reused for this...
 
 Broken Sword 2
 ==============
