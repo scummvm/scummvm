@@ -1201,7 +1201,7 @@ void Actor::setActorCostume(int c) {
 
 	costumeNeedsInit = true;
 	
-	if (_vm->_version >= 7) {
+	if (_vm->_features & GF_NEW_COSTUMES) {
 		cost.reset();
 		memset(animVariable, 0, sizeof(animVariable));
 		costume = c;
