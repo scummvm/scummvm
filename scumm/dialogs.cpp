@@ -486,7 +486,7 @@ void ConfigDialog::close() {
 	_scumm->_mixer->setMusicVolume(soundVolumeMusic);
 	
 	// Subtitles?
-	_scumm->_noSubtitles = ConfMan.getBool("nosubtitles");
+	_scumm->_noSubtitles = !ConfMan.getBool("subtitles");
 }
 
 
