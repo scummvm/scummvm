@@ -149,6 +149,7 @@ static bool isGame(const char *fn, char *base)
   int l = strlen(fn);
   if(l>4 && (!strcasecmp(fn+l-4, ".000") ||
 	     !strcasecmp(fn+l-4, ".SM0") ||
+	     !strcasecmp(fn+l-4, ".HE0") ||
 	     !strcasecmp(fn+l-4, ".LA0"))) {
     strcpy(base, fn);
     base[l-4]='\0';
