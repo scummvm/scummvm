@@ -2554,7 +2554,6 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 108:									/* create proc_special_palette */
 		case 109:
-			// FIXME: are 108 and 109 really identical?! That seems unlikely.
 			if (num != 6)
 				warning("o6_kernelSetFunctions sub op %d: expected 6 params but got %d", args[0], num);
 			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], 0, 256);
