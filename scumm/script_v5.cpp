@@ -1060,7 +1060,7 @@ void ScummEngine_v5::o5_getActorScale() {
 	if (_gameId == GID_LOOM)
 		return;
 
-	// INDY3 uses this opcode as a wait_for_actor();
+	// INDY3 uses this opcode for waitForActor
 	if (_gameId == GID_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
 		a = derefActor(getVarOrDirectByte(0x80), "o5_getActorScale (wait)");
