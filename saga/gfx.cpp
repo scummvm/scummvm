@@ -355,49 +355,25 @@ int bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 // Fills a rectangle in the surface ds from point 'p1' to point 'p2' using
 // the specified color.
-int drawRect(SURFACE *ds, Rect *dst_rect, int color) {
-	byte *write_p;
-
-	int w;
-	int h;
-	int row;
-	int left, top, right, bottom;
+int drawRect(SURFACE *ds, const Rect *dst_rect, int color) {
+	Rect r(ds->w, ds->h);
 
 	if (dst_rect != NULL) {
-		dst_rect->clip(ds->w, ds->h);
+		r = *dst_rect;
+		r.clip(ds->w, ds->h);
 
-		left = dst_rect->left;
-		top = dst_rect->top;
-		right = dst_rect->right;
-		bottom = dst_rect->bottom;
-
-		if ((left >= right) || (top >= bottom)) {
+		if (!r.isValidRect()) {
 			// Empty or negative region
 			return FAILURE;
 		}
-	} else {
-		left = 0;
-		top = 0;
-		right = ds->w;
-		bottom = ds->h;
 	}
-
-	w = right - left;
-	h = bottom - top;
-
-	write_p = (byte *)ds->pixels + (ds->pitch * top) + left;
-
-	for (row = 0; row < h; row++) {
-		memset(write_p, color, w);
-		write_p += ds->pitch;
-	}
+	
+	ds->fillRect(r, color);
 
 	return SUCCESS;
 }
 
 int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color) {
-	int left, top, right, bottom;
-
 	int min_x;
 	int max_x;
 	int min_y;
@@ -410,29 +386,7 @@ int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 
 	assert((ds != NULL) && (p1 != NULL) && (p2 != NULL));
 
-	left = p1->x;
-	top = p1->y;
-	right = p2->x;
-	bottom = p2->y;
-
-	min_x = MIN(left, right);
-	min_y = MIN(top, bottom);
-	max_x = MAX(left, right);
-	max_y = MAX(top, bottom);
-
-	n_p1.x = min_x;
-	n_p1.y = min_y;
-	n_p2.x = max_x;
-	n_p2.y = min_y;
-	n_p3.x = max_x;
-	n_p3.y = max_y;
-	n_p4.x = min_x;
-	n_p4.y = max_y;
-
-	drawLine(ds, &n_p1, &n_p2, color);
-	drawLine(ds, &n_p2, &n_p3, color);
-	drawLine(ds, &n_p3, &n_p4, color);
-	drawLine(ds, &n_p4, &n_p1, color);
+	ds->frameRect(Common::Rect(min_x, min_y, max_x+1, max_y+1), color);
 
 	return SUCCESS;
 }
