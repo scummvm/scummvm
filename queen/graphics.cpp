@@ -155,69 +155,61 @@ void Graphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame,
 }
 
 
-void Graphics::bobAnimReset(uint32 bobnum) {
-
-	BobSlot *pbs = &_bobs[bobnum];
-	if(pbs->active && pbs->animating) {
-		const AnimFrame *anim = pbs->anim.string.buffer;
-		if (anim != NULL) {
-			pbs->anim.string.curPos = anim;
-			pbs->frameNum = anim->frame;
-			pbs->anim.speed = anim->speed / 4;
-		}
-		else {
-			pbs->anim.speed = pbs->anim.speedBak;
-			pbs->frameNum = pbs->anim.normal.firstFrame;
-			pbs->frameDir = 1;
-		}
-	}
-}
-
-
 void Graphics::bobMove(uint32 bobnum, int16 endx, int16 endy, int16 speed) {
 
 	debug(9, "Graphics::bobMove(%d, %d, %d, %d)", bobnum, endx, endy, speed);
+	_bobs[bobnum].move(endx, endy, speed);
+}
 
-	BobSlot *pbs = &_bobs[bobnum];
 
-	pbs->active = true;
-	pbs->moving = true;
+void BobSlot::curPos(int16 xx, int16 yy) {
 
-	pbs->endx = endx;
-	pbs->endy = endy;
+	active = true;
+	x = xx;
+	y = yy;
+}
 
-	pbs->speed = (speed < 1) ? 1 : speed;
 
-	int16 dx = endx - pbs->x;
-	if (dx < 0) {
-		pbs->dx   = -dx;
-		pbs->xdir = -1;
+void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
+
+	active = true;
+	moving = true;
+
+	endx = dstx;
+	endy = dsty;
+
+	speed = (spd < 1) ? 1 : spd;
+
+	int16 deltax = endx - x;
+	if (deltax < 0) {
+		dx   = -deltax;
+		xdir = -1;
 	}
 	else {
-		pbs->dx   = dx;
-		pbs->xdir = 1;
+		dx   = deltax;
+		xdir = 1;
 	}
-	int16 dy = endy - pbs->y;
-	if (dy < 0) {
-		pbs->dy   = -dy;
-		pbs->ydir = -1;
+	int16 deltay = endy - y;
+	if (deltay < 0) {
+		dy   = -deltay;
+		ydir = -1;
 	}
 	else {
-		pbs->dy   = dy;
-		pbs->ydir = 1;
+		dy   = deltay;
+		ydir = 1;
 	}
 
-	if (pbs->dx > pbs->dy) {
-		pbs->total = pbs->dy / 2;
-		pbs->xmajor = true;
+	if (dx > dy) {
+		total = dy / 2;
+		xmajor = true;
 	}
 	else {
-		pbs->total = pbs->dx / 2;
-		pbs->xmajor = false;
+		total = dx / 2;
+		xmajor = false;
 	}
 
 	// move one step along line to avoid glitching
-	pbs->moveOneStep();
+	moveOneStep();
 }
 
 
@@ -271,11 +263,10 @@ void BobSlot::animOneStep() {
 			}
 			anim.speed = anim.string.curPos->speed / 4;
 
-			// FIXME: handle that when QueenSound class is ready
 			// play memory sfx and move on to next frame
 			if(frameNum > 500) {
 				frameNum -= 500;
-				// _sound->sfxplay(NULLstr);
+				// XXX _sound->sfxplay(NULLstr);
 			}
 		}
 	}
@@ -324,6 +315,24 @@ void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool r
 	anim.normal.rebound = rebound;
 	frameDir = 1;
 	xflip = flip;
+}
+
+
+void BobSlot::animReset() {
+
+	if(active && animating) {
+		const AnimFrame *af = anim.string.buffer;
+		if (af != NULL) {
+			anim.string.curPos = af;
+			frameNum = af->frame;
+			anim.speed = af->speed / 4;
+		}
+		else {
+			anim.speed = anim.speedBak;
+			frameNum = anim.normal.firstFrame;
+			frameDir = 1;
+		}
+	}
 }
 
 
@@ -397,11 +406,11 @@ void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 }
 
 
-void Graphics::bobPaste(uint32 bobnum, int16 x, int16 y) {
+void Graphics::bobPaste(uint32 frameNum, int16 x, int16 y) {
 
-	BobFrame *pbf = &_frames[bobnum];
+	BobFrame *pbf = &_frames[frameNum];
 	_display->blit(RB_BACKDROP, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
-	frameErase(bobnum);
+	frameErase(frameNum);
 }
 
 
@@ -489,7 +498,8 @@ void Graphics::bobSortAll() {
 				pbs->animOneStep();
 			}
 			if (pbs->moving) {
-				for (uint32 j = 0; pbs->moving && j < pbs->speed; ++j) {
+				int16 j;
+				for (j = 0; pbs->moving && j < pbs->speed; ++j) {
 					pbs->moveOneStep();
 				}
 			}
@@ -603,7 +613,7 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 		break;
 	case 94 :
 		for(i = 0; i < 3; ++i) {
-			_bobs[i].box.y2=199;
+			_bobs[i].box.y2 = 199;
 		}
 		break;
 	case 74 : // Carbam
@@ -634,11 +644,13 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 
 
 void Graphics::textCurrentColor(uint8 color) {
+
 	_curTextColor = color;
 }
 
 
 void Graphics::textSet(uint16 x, uint16 y, const char *text, bool outlined) {
+
 	if (y < GAME_SCREEN_HEIGHT) {
 		if (x == 0) x = 1;
 		if (y == 0) y = 1;
@@ -660,6 +672,7 @@ void Graphics::textSetCentered(uint16 y, const char *text, bool outlined) {
 
 
 void Graphics::textDrawAll() {
+
 	int y;
 	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
 		const TextSlot *pts = &_texts[y];
@@ -742,9 +755,7 @@ void Graphics::loadPanel() {
 }
 
 
-void Graphics::useJournal() { // GameSettings* pgs
-
-	int i;
+void Graphics::useJournal(GameSettings *settings) {
 
 	bobClearAll();
 	loadBackdrop("journal.pcx", 160);
@@ -753,6 +764,7 @@ void Graphics::useJournal() { // GameSettings* pgs
 	// load and unpack journal frames
 	frameEraseAll(false);
 	bankLoad("journal.BBK", 8);
+	int i;
 	for(i = 1; i <= 20; ++i) {
 		bankUnpack(i, FRAMES_JOURNAL + i, 8);
 		// set hot spots to zero
@@ -763,10 +775,12 @@ void Graphics::useJournal() { // GameSettings* pgs
 	_frames[FRAMES_JOURNAL + 20].yhotspot = 200;
 	bankErase(8);
 
-	// TODO: setup zones
+	// XXX setup zones
 
-	journalBobPreDraw();
+	journalBobPreDraw(settings);
 	_display->palFadeIn(0, 255, 160);
+
+	// XXX l.1191-1509
 }
 
 
@@ -781,32 +795,27 @@ void Graphics::journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frameNu
 }
 
 
-void Graphics::journalBobPreDraw() { // GameSettings* pgs
+void Graphics::journalBobPreDraw(GameSettings *settings) {
 
 	journalBobSetup(1, 32, 8, 1); // Review entry
 	journalBobSetup(2, 32, 56, 2); // Make entry
 	journalBobSetup(3, 32, 104, 1); // Close book
 	journalBobSetup(4, 32, 152, 3); // Give up
-//	journalBobSetup(5, 136 + pgs->talkSpeed * 4 - 4, 164, 18); // Text speed
+	journalBobSetup(5, 136 + settings->talkSpeed * 4 - 4, 164, 18); // Text speed
 	journalBobSetup(6, 221, 155, 16); // SFX on/off
-//	_bobs[6].active = pgs->sfxToggle;
-//	journalBobSetup(7, 136 + (pgs->volume * 130) / 100 - 4, 177, 19); // Music volume
+	_bobs[6].active = settings->sfxToggle;
+	journalBobSetup(7, 136 + settings->musicVolume * 130 / 100 - 4, 177, 19); // Music volume
 	journalBobSetup(10, 158, 155, 16); // Voice on/off
-//	_bobs[10].active = pgs->voiceToggle;
+	_bobs[10].active = settings->speechToggle;
 	journalBobSetup(11, 125, 167, 16); // Text on/off
-//	_bobs[11].active = pgs->textToggle;
+	_bobs[11].active = settings->textToggle;
 	journalBobSetup(12, 125, 181, 16); // Music on/off
-//	_bobs[12].active = pgs->musicToggle;
-}
-
-
-void Graphics::cameraBob(int bobNum) {
-	_cameraBob = bobNum;
+	_bobs[12].active = settings->musicToggle;
 }
 
 
 void Graphics::update(uint16 room) {
-	// FIXME: temporary code, move to Logic::update()
+
 	bobSortAll();
 	if (_cameraBob >= 0) {
 		_display->horizontalScrollUpdate(_bobs[_cameraBob].x);

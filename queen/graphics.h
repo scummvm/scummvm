@@ -47,7 +47,7 @@ struct BobFrame {
 struct BobSlot {
 	bool active;
 	//! current position
-	uint16 x, y;
+	int16 x, y;
 	//! bounding box
 	Box box;
 	bool xflip;
@@ -79,21 +79,24 @@ struct BobSlot {
 
 	bool moving;
 	//! moving speed
-	uint16 speed;
+	int16 speed;
 	//! move along x axis instead of y
 	bool xmajor;
 	//! moving direction
 	int8 xdir, ydir;
 	//! destination point
-	uint16 endx, endy;
+	int16 endx, endy;
 	uint16 dx, dy;
 	uint16 total;
 
+	void curPos(int16 xx, int16 yy);
+	void move(int16 dstx, int16 dsty, int16 spd);
 	void moveOneStep();
 	void animOneStep();
 
 	void animString(const AnimFrame *animBuf);
 	void animNormal(uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip);
+	void animReset();
 };
 
 
@@ -122,11 +125,10 @@ public:
 	void bobSetupControl();
 	void bobAnimString(uint32 bobnum, const AnimFrame *buf); // stringanim()
 	void bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip); // makeanim()
-	void bobAnimReset(uint32 bobnum);
 	void bobMove(uint32 bobnum, int16 endx, int16 endy, int16 speed); // movebob()
 	void bobDraw(uint32 bobnum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box); // bob()
 	void bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y); // invbob()
-	void bobPaste(uint32 bobnum, int16 x, int16 y); // bobpaste()
+	void bobPaste(uint32 frameNum, int16 x, int16 y); // bobpaste()
 	void bobShrink(const BobFrame* pbf, uint16 percentage); // shrinkbob()
 	void bobClear(uint32 bobnum); // clearbob()
 	void bobSortAll(); // sortbobs()
@@ -156,12 +158,12 @@ public:
 	void loadBackdrop(const char *name, uint16 room);
 	void loadPanel();
 
-	void useJournal();
+	void useJournal(GameSettings *settings);
 	void journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame);
-	void journalBobPreDraw();
+	void journalBobPreDraw(GameSettings *settings);
 
-	void cameraBob(int bobNum);
-	int cameraBob() { return _cameraBob; }
+	void cameraBob(int bobNum) { _cameraBob = bobNum; }
+	int cameraBob() const { return _cameraBob; }
 
 	void update(uint16 room);
 
