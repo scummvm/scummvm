@@ -335,8 +335,8 @@ int Scene::getMode() {
 int Scene::getZInfo(SCENE_ZINFO *zinfo) {
 	assert(_initialized);
 
-	zinfo->begin_slope = _desc.begin_slope;
-	zinfo->end_slope = _desc.end_slope;
+	zinfo->beginSlope = _desc.beginSlope;
+	zinfo->endSlope = _desc.endSlope;
 
 	return R_SUCCESS;
 }
@@ -436,11 +436,11 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 		break;
 	case BY_DESC:
 		assert(scene_desc_param != NULL);
-		assert(scene_desc_param->res_list != NULL);
+		assert(scene_desc_param->resList != NULL);
 		_loadDesc = false;
 		_desc = *scene_desc_param;
-		_resList = scene_desc_param->res_list;
-		_resListEntries = scene_desc_param->res_list_ct;
+		_resList = scene_desc_param->resList;
+		_resListEntries = scene_desc_param->resListCnt;
 		break;
 	default:
 		warning("Scene::loadScene(): Error: Invalid scene load flag");
@@ -460,7 +460,7 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 			return R_FAILURE;
 		}
 
-		if (loadSceneResourceList(_desc.res_list_rn) != R_SUCCESS) {
+		if (loadSceneResourceList(_desc.resListRN) != R_SUCCESS) {
 			warning("Scene::loadScene(): Error reading scene resource list");
 			return R_FAILURE;
 		}
@@ -485,8 +485,8 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 	}
 
 	// Load scene script data
-	if (_desc.script_num > 0) {
-		if (_vm->_script->loadScript(_desc.script_num) != R_SUCCESS) {
+	if (_desc.scriptNum > 0) {
+		if (_vm->_script->loadScript(_desc.scriptNum) != R_SUCCESS) {
 			warning("Scene::loadScene(): Error loading scene script");
 			return R_FAILURE;
 		}
@@ -525,14 +525,14 @@ int Scene::loadSceneDescriptor(uint32 res_number) {
 
 	MemoryReadStream readS(scene_desc_data, scene_desc_len);
 
-	_desc.unknown0 = readS.readUint16LE();
-	_desc.res_list_rn = readS.readUint16LE();
-	_desc.end_slope = readS.readUint16LE();
-	_desc.begin_slope = readS.readUint16LE();
-	_desc.script_num = readS.readUint16LE();
-	_desc.scene_scriptnum = readS.readUint16LE();
-	_desc.start_scriptnum = readS.readUint16LE();
-	_desc.music_rn = readS.readSint16LE();
+	_desc.flags = readS.readSint16LE();
+	_desc.resListRN = readS.readSint16LE();
+	_desc.endSlope = readS.readSint16LE();
+	_desc.beginSlope = readS.readSint16LE();
+	_desc.scriptNum = readS.readUint16LE();
+	_desc.sceneScriptNum = readS.readUint16LE();
+	_desc.startScriptNum = readS.readUint16LE();
+	_desc.musicRN = readS.readSint16LE();
 
 	RSC_FreeResource(scene_desc_data);
 
@@ -779,7 +779,7 @@ int Scene::endScene() {
 
 	_sceneProc(SCENE_END, &scene_info);
 
-	if (_desc.script_num > 0) {
+	if (_desc.scriptNum > 0) {
 		_vm->_script->freeScript();
 	}
 
@@ -853,14 +853,14 @@ void Scene::sceneInfoCmd(int argc, char *argv[]) {
 	_vm->_console->print(fmt, "Scene number:", _sceneNumber);
 	_vm->_console->print(fmt, "Descriptor R#:", _sceneResNum);
 	_vm->_console->print("-------------------------");
-	_vm->_console->print(fmt, "Unknown:", _desc.unknown0);
-	_vm->_console->print(fmt, "Resource list R#:", _desc.res_list_rn);
-	_vm->_console->print(fmt, "End slope:", _desc.end_slope);
-	_vm->_console->print(fmt, "Begin slope:", _desc.begin_slope);
-	_vm->_console->print(fmt, "Script resource:", _desc.script_num);
-	_vm->_console->print(fmt, "Scene script:", _desc.scene_scriptnum);
-	_vm->_console->print(fmt, "Start script:", _desc.start_scriptnum);
-	_vm->_console->print(fmt, "Music R#", _desc.music_rn);
+	_vm->_console->print(fmt, "Flags:", _desc.flags);
+	_vm->_console->print(fmt, "Resource list R#:", _desc.resListRN);
+	_vm->_console->print(fmt, "End slope:", _desc.endSlope);
+	_vm->_console->print(fmt, "Begin slope:", _desc.beginSlope);
+	_vm->_console->print(fmt, "Script resource:", _desc.scriptNum);
+	_vm->_console->print(fmt, "Scene script:", _desc.sceneScriptNum);
+	_vm->_console->print(fmt, "Start script:", _desc.startScriptNum);
+	_vm->_console->print(fmt, "Music R#", _desc.musicRN);
 }
 
 static void CF_sceneinfo(int argc, char *argv[], void *refCon) {

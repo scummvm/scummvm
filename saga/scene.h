@@ -37,9 +37,8 @@ enum R_SCENE_MODES {
 };
 
 struct SCENE_ZINFO {
-	int begin_slope;
-	int end_slope;
-
+	int beginSlope;
+	int endSlope;
 };
 
 struct SCENE_BGINFO {
@@ -105,16 +104,16 @@ struct R_SCENE_RESLIST {
 #define SAGA_SCENE_DESC_LEN 16
 
 struct R_SCENE_DESC {
-	int unknown0;
-	int res_list_rn;
-	int end_slope;
-	int begin_slope;
-	int script_num;
-	int scene_scriptnum;
-	int start_scriptnum;
-	int music_rn;
-	R_SCENE_RESLIST *res_list;
-	size_t res_list_ct;
+	int16 flags;
+	int16 resListRN;
+	int16 endSlope;
+	int16 beginSlope;
+	uint16 scriptNum;
+	uint16 sceneScriptNum;
+	uint16 startScriptNum;
+	int16 musicRN;
+	R_SCENE_RESLIST *resList;
+	size_t resListCnt;
 };
 
 struct SCENE_IMAGE {

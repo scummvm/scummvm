@@ -38,3 +38,11 @@ Sceneres.h
 Scene.c
 =======
  ResToImage()              _vm->decodeBGImage()
+ resInfo->sceneFlags       _desc.flags
+ resInfo->loadList         _desc.resListRN
+ resInfo->horizon          _desc.endSlope
+ resInfo->nearFigureLimit  _desc.beginSlope
+ resInfo->scriptModule     _desc.scriptNum
+ resInfo->entryScript      _desc.sceneScriptNum
+ resInfo->preScript        _desc.startScriptNum
+ resInfo->backgroundMusic  _desc.musicRN

@@ -319,7 +319,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 	// Create actor Z occlusion LUT
 	_vm->_scene->getZInfo(&zinfo);
 
-	e_slope = zinfo.end_slope;
+	e_slope = zinfo.endSlope;
 
 	for (i = 0; i < R_SPRITE_ZMAX; i++) {
 		z_lut[i] = (int)(e_slope + ((137.0 - e_slope) / 14.0) * (15.0 - i));
