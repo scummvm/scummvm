@@ -21,6 +21,7 @@
 #ifndef COSTUME_H
 #define COSTUME_H
 
+class Scumm;
 
 class LoadedCostume {
 protected:
@@ -107,7 +108,7 @@ public:
 	void setCostume(int costume);
 
 public:
-	CostumeRenderer(Scumm *vm) : _vm(vm), _loaded(vm), _numStrips(vm->gdi._numStrips) {}
+	CostumeRenderer(Scumm *vm) : _vm(vm), _numStrips(vm->gdi._numStrips), _loaded(vm) {}
 };
 
 #endif
