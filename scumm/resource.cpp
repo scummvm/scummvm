@@ -2101,7 +2101,7 @@ void ScummEngine::readMAXS() {
 		_numLocalObjects = _fileHandle.readUint16LE();   // 200
 		_numArray = 50;
 		_numVerbs = 100;
-		_numNewNames = 0;
+		_numNewNames = 50;
 		_objectRoomTable = NULL;
 
 		_fileHandle.readUint16LE();                      // 50

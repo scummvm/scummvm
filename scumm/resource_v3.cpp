@@ -199,7 +199,7 @@ void ScummEngine_v3::readMAXS() {
 	_numLocalObjects = 200;				// 200
 	_numArray = 50;
 	_numVerbs = 100;
-	_numNewNames = 0;
+	_numNewNames = 50;
 	_objectRoomTable = NULL;
 	_numCharsets = 9;					// 9
 	_numInventory = 80;					// 80

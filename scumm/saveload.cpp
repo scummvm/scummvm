@@ -706,11 +706,16 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		// Old, fragile resource save/load system. Doesn't save resources
 		// with index 0, and breaks whenever we change the limit on a given
 		// resource type.
-		for (type = rtFirst; type <= rtLast; type++)
-			if (res.mode[type] != 1)
-				for (idx = 1; idx < res.num[type]; idx++)
-					if (type != rtTemp && type != rtBuffer)
-						saveLoadResource(s, type, idx);
+ 		for (type = rtFirst; type <= rtLast; type++)
+ 			if (res.mode[type] != 1 && type != rtTemp && type != rtBuffer) {
+ 				// For V1-V5 games, there used to be no object name resources.
+ 				// At some point this changed. But since old savegames rely on
+ 				// unchanged resource counts, we have to hard code the following check
+ 				if (_version < 6 && type == rtObjectName)
+ 					continue;
+ 				for (idx = 1; idx < res.num[type]; idx++)
+ 					saveLoadResource(s, type, idx);
+ 			}
 	}
 
 	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);

@@ -700,6 +700,7 @@ public:
 protected:
 	int getObjActToObjActDist(int a, int b); // Not sure how to handle
 	const byte *getObjOrActorName(int obj);		 // these three..
+	void setObjectName(int obj);
 
 	void addObjectToDrawQue(int object);
 	void clearDrawObjectQueue();

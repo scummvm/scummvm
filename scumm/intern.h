@@ -281,7 +281,6 @@ protected:
 	void o2_setActorElevation();
 	void o2_setBitVar();
 	void o2_setCameraAt();
-	void o2_setObjectName();
 	void o2_setObjPreposition();
 	void o2_setOwnerOf();
 	void o2_setState01();

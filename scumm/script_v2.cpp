@@ -141,7 +141,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o5_actorFollowCamera),
 		OPCODE(o2_actorOps),
 		/* 54 */
-		OPCODE(o2_setObjectName),
+		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
 		OPCODE(o2_setState02),
@@ -301,7 +301,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o5_actorFollowCamera),
 		OPCODE(o2_actorOps),
 		/* D4 */
-		OPCODE(o2_setObjectName),
+		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
 		OPCODE(o2_setState02),
@@ -1482,54 +1482,6 @@ void ScummEngine_v2::o2_pickupObject() {
 	clearDrawObjectQueue();
 
 	runInventoryScript(1);
-}
-
-void ScummEngine_v2::o2_setObjectName() {
-	int obj = getVarOrDirectWord(PARAM_1);
-	int size = 0;
-	int a;
-	int i = 0;
-	byte *name = NULL;
-	byte work[256];
-	
-	// Read in new name
-	do {
-		a = fetchScriptByte();
-		work[i++] = a;
-	} while (a);
-
-	if (obj < _numActors)
-		error("Can't set actor %d name with new-name-of", obj);
-
-	// TODO: Would be nice if we used rtObjectName resource for pre-V6
-	// games, too. The only problem with that which I can see is that this
-	// would break savegames. I.e. it would require yet another change to
-	// the save/load system.
-
-	// FIXME: This is rather nasty code.
-	// Find the object name in the OBCD resource.
-	byte *objptr;
-	objptr = getOBCDFromObject(obj);
-	if (objptr == NULL)
-		return;	// Silently fail for now
-	name = objptr + *(objptr + 14);
-
-	while (name[size++])
-		;
-
-	if (i > size) {
-		warning("New name of object %d too long (old *%s* new *%s*)", obj, name, work);
-		i = size;
-	}
-
-	while (i < size) {
-		work[i - 1] = '@';
-		i++;
-	}
-	work[i - 1] = 0;
-	
-	memcpy(name, work, i);
-	runInventoryScript(0);
 }
 
 void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers

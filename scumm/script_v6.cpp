@@ -1427,32 +1427,7 @@ void ScummEngine_v6::o6_endOverride() {
 
 void ScummEngine_v6::o6_setObjectName() {
 	int obj = pop();
-	int i;
-
-	if (obj < _numActors)
-		error("Can't set actor %d name with new-name-of", obj);
-
-	if (_version < 7 && !getOBCDFromObject(obj))
-		error("Can't set name of object %d", obj);
-
-	for (i = 0; i < _numNewNames; i++) {
-		if (_newNames[i] == obj) {
-			nukeResource(rtObjectName, i);
-			_newNames[i] = 0;
-			break;
-		}
-	}
-
-	for (i = 0; i < _numNewNames; i++) {
-		if (_newNames[i] == 0) {
-			loadPtrToResource(rtObjectName, i, NULL);
-			_newNames[i] = obj;
-			runInventoryScript(0);
-			return;
-		}
-	}
-
-	error("New name of %d overflows name table (max = %d)", obj, _numNewNames);
+	setObjectName(obj);
 }
 
 void ScummEngine_v6::o6_isSoundRunning() {

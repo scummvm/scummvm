@@ -892,13 +892,10 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	if (obj < _numActors)
 		return derefActor(obj, "getObjOrActorName")->getActorName();
 
-	if (_version >= 6) {
-		for (i = 0; i < _numNewNames; i++) {
-			if (_newNames[i] == obj) {
-				debug(5, "Found new name for object %d at _newNames[%d]", obj, i);
-				return getResourceAddress(rtObjectName, i);
-				break;
-			}
+	for (i = 0; i < _numNewNames; i++) {
+		if (_newNames[i] == obj) {
+			debug(5, "Found new name for object %d at _newNames[%d]", obj, i);
+			return getResourceAddress(rtObjectName, i);
 		}
 	}
 
@@ -920,6 +917,41 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	}
 
 	return findResourceData(MKID('OBNA'), objptr);
+}
+
+void ScummEngine::setObjectName(int obj) {
+	int i;
+
+	if (obj < _numActors)
+		error("Can't set actor %d name with new-name-of", obj);
+
+	const byte *objptr = getOBCDFromObject(obj);
+	if (_version <= 5 && !objptr) {
+		// WORKAROUND bug #587553 and possibly other related script bug.
+		// We do not error out but rather just generate a warning.
+		debug(2, "Can't find OBCD to rename object %d", obj);
+		return;
+	} else if (_version == 6 && !objptr)
+		error("Can't set name of object %d", obj);
+
+	for (i = 0; i < _numNewNames; i++) {
+		if (_newNames[i] == obj) {
+			nukeResource(rtObjectName, i);
+			_newNames[i] = 0;
+			break;
+		}
+	}
+
+	for (i = 0; i < _numNewNames; i++) {
+		if (_newNames[i] == 0) {
+			loadPtrToResource(rtObjectName, i, NULL);
+			_newNames[i] = obj;
+			runInventoryScript(0);
+			return;
+		}
+	}
+
+	error("New name of %d overflows name table (max = %d)", obj, _numNewNames);
 }
 
 uint32 ScummEngine::getOBCDOffs(int object) const {
