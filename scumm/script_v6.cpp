@@ -2479,13 +2479,15 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 		case 16:
 		case 17:{
-			const byte *message = getStringAddressVar(VAR_STRING2DRAW);
+			const byte *message;
+			byte buf_input[300];
+			_messagePtr = getStringAddressVar(VAR_STRING2DRAW);
+			message = _msgPtrToAdd = buf_input;
+			addMessageToStack(_messagePtr);
 			if (_gameId == GID_DIG) {
-				byte buf_input[300], buf_output[300], buf_trans[300], *ptr = buf_input;
+				byte buf_output[300], buf_trans[300], *ptr = buf_input;
 				char *t_ptr = (char *)ptr;
-				_msgPtrToAdd = buf_input;
 				buf_output[0] = 0;
-				addMessageToStack(message);
 				while (t_ptr != NULL) {
 					if (*t_ptr == '/') {
 						translateText((byte *)t_ptr, buf_trans);
@@ -2502,28 +2504,8 @@ void Scumm_v6::o6_kernelSetFunctions() {
 					t_ptr = strchr((char *)t_ptr + 1, '/');
 				}
 				message = buf_output;
-#if 0
-				setStringVars(0);
-				_string[0].charset = (byte)args[1];
-				_string[0].color = (byte)args[2];
-				_string[0].xpos = args[3];
-				_string[0].ypos = args[4];
-				drawDescString(message);
-#else
-				enqueueText(message, args[3], args[4] + camera._cur.y - (_screenHeight / 2), args[2], args[1], true);
-#endif
-			} else { 
-#if 1
-				setStringVars(0);
-				_string[0].charset = (byte)args[1];
-				_string[0].color = (byte)args[2];
-				_string[0].xpos = args[3];
-				_string[0].ypos = args[4];
-				drawDescString(message);
-#else
-				enqueueText(message + camera._cur.y - (_screenHeight / 2), args[3], args[4], args[2], args[1], true);
-#endif
 			}
+			enqueueText(message, args[3], args[4] + camera._cur.y - (_screenHeight / 2), args[2], args[1], true);
 			break;}
 		case 20:
 			// Occurs in The Dig, at the alien pyramid. See bug #742979.

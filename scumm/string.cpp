@@ -336,57 +336,6 @@ void Scumm::CHARSET_1() {
 	gdi._mask.extend(_charset->_str);
 }
 
-void Scumm::drawDescString(const byte *msg) {
-	byte c, *buf, buffer[256];
-
-	buf = _msgPtrToAdd = buffer;
-	addMessageToStack(msg);
-
-	_charsetBufPos = 0;
-	_string[0].ypos += camera._cur.y - (_screenHeight / 2);
-	_charset->_top = _string[0].ypos;
-	_charset->_startLeft = _charset->_left = _string[0].xpos;
-	_charset->_right = _screenWidth - 1;
-	_charset->_center = _string[0].center;
-	_charset->setColor(_string[0].color);
-	_charset->_disableOffsX = _charset->_firstChar = true;
-	_charset->setCurID(_string[0].charset);
-	_charset->_nextLeft = _string[0].xpos;
-	_charset->_nextTop = _string[0].ypos;
-
-	// Center text
-	_string[0].xpos -= _charset->getStringWidth(0, buffer) >> 1;
-	if (_string[0].xpos < 0) {
-		_string[0].xpos = 0;
-	}
-
-	_talkDelay = 1;
-
-	if (_string[0].ypos + _charset->getFontHeight() > 0)
-		restoreBG(ScummVM::Rect(0, _string[0].ypos, _screenWidth - 1, _string[0].ypos + _charset->getFontHeight()));
-
-	_charset->_nextLeft = _string[0].xpos;
-	_charset->_nextTop = _string[0].ypos;
-
-	do {
-		c = *buf++;
-		if (c != 0 && c != 0xFF) {
-			_charset->_left = _charset->_nextLeft;
-			_charset->_top = _charset->_nextTop;
-			_charset->printChar(c);
-			_charset->_nextLeft = _charset->_left;
-			_charset->_nextTop = _charset->_top;
-		}
-	} while (c);
-	_haveMsg = 1;
-
-	// hack: more 8 pixels at width and height while redraw
-	// for proper description redraw while scrolling room
-	ScummVM::Rect r(_charset->_str);
-	r.grow(8);
-	gdi._mask.extend(r);
-}
-
 void Scumm::drawString(int a) {
 	byte buf[256];
 	byte *space;

@@ -539,7 +539,7 @@ void Scumm_v8::decodeParseString(int m, int n) {
 		case 5:{
 			byte buffer[256];
 			_msgPtrToAdd = buffer;
-			_messagePtr = addMessageToStack(_messagePtr);
+			addMessageToStack(_messagePtr);
 			enqueueText(buffer, _string[m].xpos, _string[m].ypos, _string[m].color, _string[m].charset, _string[m].center);
 			}
 			break;

@@ -1038,7 +1038,6 @@ public:
 protected:
 	void CHARSET_1();
 	void drawString(int a);
-	void drawDescString(const byte *msg);
 	const byte *addMessageToStack(const byte *msg);
 	void addIntToStack(int var);
 	void addVerbToStack(int var);
