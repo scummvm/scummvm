@@ -4738,12 +4738,8 @@ void SimonEngine::shutdown() {
 
 	free(_stringtab_ptr);
 	free(_itemarray_ptr);
-#ifndef __PALM_OS__
-	// FIXME : These pointers may vary during the game.
-	// for these two calls i have an invalid chunk pointer error
-	free(_itemheap_ptr);
-	free(_tablesheap_ptr);
-#endif
+	free(_itemheap_ptr - _itemheap_curpos);
+	free(_tablesheap_ptr - _tablesheap_curpos);
 	midi.close();
 	_system->quit();
 }
