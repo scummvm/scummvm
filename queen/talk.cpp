@@ -482,6 +482,13 @@ int Talk::getSpeakCommand(const char *sentence, unsigned &index) {
 			}
 			commandCode = SPEAK_NONE;
 			break;
+
+		case 'W':
+			if (sentence[index + 1] == 'T')
+				commandCode = SPEAK_PAUSE;
+			else
+				warning("Unknown command string: '%2s'", sentence + index);
+			break;
 			
 		case 'X':
 			// For example *XY00(237,112)
@@ -1177,8 +1184,8 @@ void Talk::makeSpeakBob(
 	if (text[0] == '\0')
 		return;
 
-	debug(0, "makeSpeakBob('%s', (%i,%i), %i, %i, %i, %i);", 
-			text, bob->x, bob->y, textX, textY, color, flags);
+	// debug(0, "makeSpeakBob('%s', (%i,%i), %i, %i, %i, %i);", 
+	//		text, bob->x, bob->y, textX, textY, color, flags);
 
 	// Duplicate string and append zero if needed
 
@@ -1277,7 +1284,7 @@ void Talk::makeSpeakBob(
 	for (int i = 0; i < line_count; i++) {
 		int lineX = x + (max_line_width - _graphics->textWidth(lines[i])) / 2;
 
-		debug(0, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
+		//debug(0, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
 		_graphics->textSet(lineX, y + 9 * i, lines[i]);
 	}
 }
