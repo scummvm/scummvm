@@ -254,8 +254,8 @@ uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 			else if (id == BUTTON_TEXT) {
 				SwordEngine::_systemVars.showText ^= 1;
 				_buttons[6]->setSelected(SwordEngine::_systemVars.showText);
-			} else
-				return 0;
+			}
+			break;
 		case BUTTON_SAVE_PANEL:
 		case BUTTON_RESTORE_PANEL:
 			if ((id >= BUTTON_SCROLL_UP_FAST) && (id <= BUTTON_SCROLL_DOWN_FAST))
@@ -274,6 +274,7 @@ uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 				}
 			} else if (id == BUTTON_SAVE_CANCEL)
 				return BUTTON_MAIN_PANEL; // mode down to main panel
+            break;
 		case BUTTON_VOLUME_PANEL:
 			return id;
    	}
