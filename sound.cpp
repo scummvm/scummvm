@@ -40,8 +40,8 @@ void Scumm::addSoundToQueue(int sound)
 		addSoundToQueue2(sound);
 	}
 
-	if (_features & GF_AUDIOTRACKS)
-		warning("Requesting audio track: %d", sound);
+//	if (_features & GF_AUDIOTRACKS)
+//		warning("Requesting audio track: %d", sound);
 }
 
 void Scumm::addSoundToQueue2(int sound)
