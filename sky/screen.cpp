@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include <string.h>
 #include "common/scummsys.h"
 #include "sky/skydefs.h"
@@ -61,7 +62,7 @@ void SkyState::initialise_screen(void)
     _work_palette = (uint8 *)malloc(vga_colours*3);
 
     //blank the first 240 colors of the palette 
-    bzero(tmp_pal, game_colours*4);   
+    memset(tmp_pal, 0, game_colours * 4);   
 
     //set the remaining colors
     for (i=0; i<(vga_colours-game_colours); i++) {
