@@ -1,0 +1,28 @@
+This package was debianized by Bastien Nocera <hadess@hadess.net> on
+Fri,  5 Apr 2002 16:37:09 +0100
+
+It was adopted by Tore Anderson <tore@linpro.no> on the 4th Oct 2002.
+
+It was downloaded from http://scummvm.sourceforge.net/ .
+
+Upstream Authors:
+
+ James Brown
+ Vincent Hamm
+ Max Horn
+ Jeremy Newman
+ Ludvig Strigeus
+ ..and lots of other contributors.
+
+To contact any of these, or see a more comprehensive list over
+contributors, see http://scummvm.sourceforge.net/contact.php .
+
+Copyright:
+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the
+ Free Software Foundation; either version 2, or (at your option) any
+ later version.
+
+ On Debian GNU/Linux systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL'.

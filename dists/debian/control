@@ -1,0 +1,32 @@
+Source: scummvm-cvs
+Section: contrib/games
+Priority: optional
+Maintainer: Tore Anderson <tore@linpro.no>
+Build-Depends: debhelper (>> 3.0.0), libsdl1.2-dev, libreadline4-dev, libncurses5-dev, libmad0-dev
+Standards-Version: 3.5.7.1
+
+Package: scummvm-cvs
+Architecture: any
+Depends: ${shlibs:Depends}
+Suggests: timidity
+Conflicts: scummvm
+Description: SDL implementation of LucasArts' S.C.U.M.M. interpreter
+ S.C.U.M.M. (Script Creation Utility for Maniac Mansion) is the engine
+ used to a lot of classic LucasArts adventure games, such as Sam & Max
+ and The Secret of Monkey Island.
+ .
+ ScummVM lets you play your old adventure games in Debian, using SDL
+ for the graphic presentation.
+ .
+ In addition to the various LucasArts-games ScummVM can play, it is also
+ possible to use ScummVM with AdventureSoft's Simon the Sorcerer. For
+ a full list of compatible games; see the official compatibility list at
+ http://scummvm.sf.net/compatibility.php .
+ .
+ The data files belonging to the various games is not included in this
+ package due to licensing issues; you have to obtain them somewhere else
+ if you want ScummVM to be of any use.
+ .
+ NOTE: This is a unofficial package, which is not supported by the Debian
+ Project. Please report problems to SourceForge's bug tracker;
+ http://sourceforge.net/tracker/?group_id=37116.
