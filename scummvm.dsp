@@ -327,6 +327,10 @@ SOURCE=.\insane.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\gui\ListWidget.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\main.cpp
 # End Source File
 # Begin Source File
@@ -558,6 +562,10 @@ SOURCE=.\gui.h
 # Begin Source File
 
 SOURCE=.\guimaps.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\ListWidget.h
 # End Source File
 # Begin Source File
 
