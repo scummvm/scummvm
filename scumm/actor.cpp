@@ -257,7 +257,7 @@ int Actor::updateActorDirection(bool is_walking)
 	int num;
 	bool shouldInterpolate;
 
-	dirType = _vm->akos_hasManyDirections(this);
+	dirType = (_vm->_features & GF_AFTER_V7) ? _vm->akos_hasManyDirections(this) : false;
 
 	from = toSimpleDir(dirType, facing);
 	dir = remapDirection(newDirection, is_walking);
