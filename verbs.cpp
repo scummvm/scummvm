@@ -40,7 +40,7 @@ void Scumm::checkExecVerbs() {
 		/* Check keypresses */
 		vs = &_verbs[1];
 		for (i=1; i<_maxVerbs; i++,vs++) {
-			if (vs->verbid && vs->saveid && vs->curmode==1) {
+			if (vs->verbid && vs->saveid==0 && vs->curmode==1) {
 				if (_mouseButStat == vs->key) {
 					runInputScript(1, vs->verbid, 1);
 					return;
