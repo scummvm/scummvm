@@ -574,11 +574,15 @@ int Scumm::readSoundResource(int type, int idx)
 				break;
 			case MKID('ROL '):
 				if (!_use_adlib)
-					pri = 1;
+					pri = 2;
 				break;
 			case MKID('GMD '):
 				if (!_use_adlib)
-					pri = 2;
+					pri = 3;
+				break;
+			case MKID('MAC '):
+				if (!_use_adlib)
+					pri = 1;
 				break;
 			}
 
@@ -602,6 +606,60 @@ int Scumm::readSoundResource(int type, int idx)
 		fileSeek(_fileHandle, -8, SEEK_CUR);
 		fileRead(_fileHandle, createResource(type, idx, total_size), total_size);
 		return 1;
+	} else if (basetag == MKID('Mac0')) {
+		debug(1, "Ignoring base tag Mac0 in sound %d, size %d", idx, total_size);
+		debug(1, "It was at position %d", filePos(_fileHandle));
+		
+		/* Offset
+		   0x14, 0x1C, 0x20, 0x24 - offsets of channel 1/2/3/4 chunk-
+		   Each channel has tag "Chan", followed by its length. At the end
+		   of each chan follows either an empty "Done" chunk (length 0) or an
+		   empty "Loop" chunk. Maybe "Loop" indicates the song should be
+		   played forever?!?.
+		   
+		   For Mac1, it follows a chunk "Inst" contains the same data as a
+		   MacOS 'snd ' resource, i.e. sampled sound data (8bit). This is
+		   used for sound effects (like the sea gull in Monkey Island).
+		
+		   For Mac0, there can be various different subchunks it seems. The
+		   following combinations appear in MI
+		     ORGA, SHAK, BASS (ID 101)
+		     ORGA, MARI, BASS (ID 108)
+		     VIBE, WHIS, BASS (ID 104)
+		     ORGA, SHAK, VIBE (ID 110)
+		   Guess is that these are instrument names: Organ, Marimba, Whistle...
+		   Maybe there is a mapping table someplace?
+		   
+		   What follows are four byte "commands" it seems, like this (hex):
+		     01 68 4F 49
+		     01 68 00 40
+		     01 68 4F 49
+		     ...
+		     01 68 00 40
+		     02 1C 5B 40
+		     00 B4 00 40
+		     ...
+		     01 68 37 3C
+		     00 18 37 38
+		     04 20 3E 34
+		     01 68 4A 3C
+		   
+		   More data:
+		     00 09 3E 10
+		     01 5F 00 40
+		     00 9C 36 40
+		     00 CC 00 40
+		     00 18 42 49
+		     00 18 45 3C
+		     01 29 4A 3C
+		     00 0F 00 40
+		     
+		   Maybe I am mistaken when I think it's four byte, some other parts
+		   seem to suggest it's 2 byte oriented, or even variable lenght...
+		 */
+	} else if (basetag == MKID('Mac1')) {
+		debug(1, "Ignoring base tag Mac1 in sound %d, size %d", idx, total_size);
+		debug(1, "It was at position %d", filePos(_fileHandle));
 	} else {
 		error("Unrecognized base tag %c%c%c%c in sound %d",
 					basetag & 0xff, basetag >> 8, basetag >> 16, basetag >> 24, idx);
