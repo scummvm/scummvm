@@ -20,8 +20,8 @@
  *
  */
 
-#include <common/scummsys.h>
 #include <common/stdafx.h>
+#include <common/scummsys.h>
 #include <common/engine.h>
 #include <common/gameDetector.h>
 #include "dc.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#include <common/scummsys.h>
 #include <common/stdafx.h>
+#include <common/scummsys.h>
 #include <common/engine.h>
 #include "dc.h"
 #include "icon.h"

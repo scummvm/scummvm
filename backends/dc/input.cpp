@@ -22,8 +22,8 @@
 
 #define RONIN_TIMER_ACCESS
 
-#include <common/scummsys.h>
 #include <common/stdafx.h>
+#include <common/scummsys.h>
 #include "dc.h"
 
 int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
