@@ -553,6 +553,12 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_VIDEOMODE) = 50;
 		else if (_gameId == GID_MONKEY2 && (_features & GF_AMIGA))
 			VAR(VAR_VIDEOMODE) = 82;
+		else if (_renderMode == Common::kRenderCGA)
+			VAR(VAR_VIDEOMODE) = 4;
+		else if (_renderMode == Common::kRenderHerc)
+			VAR(VAR_VIDEOMODE) = 30;
+		else if (_renderMode == Common::kRenderEGA)
+			VAR(VAR_VIDEOMODE) = 13;
 		else
 			VAR(VAR_VIDEOMODE) = 19;
 		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {

@@ -75,7 +75,7 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h),
 	_domain(domain),
 	_enableGraphicSettings(false),
-	_gfxPopUp(0), _fullscreenCheckbox(0), _aspectCheckbox(0),
+	_gfxPopUp(0), _renderModePopUp(0), _fullscreenCheckbox(0), _aspectCheckbox(0),
 	_enableAudioSettings(false),
 	_multiMidiCheckbox(0), _mt32Checkbox(0), _subCheckbox(0),
 	_enableVolumeSettings(false),
@@ -106,6 +106,19 @@ void OptionsDialog::open() {
 
 				gm++;
 			}
+		}
+
+		_renderModePopUp->setSelected(0);
+
+		if (ConfMan.hasKey("render_mode", _domain)) {
+			const Common::RenderModeDescription *p = Common::g_renderModes;
+			const Common::RenderMode renderMode = Common::parseRenderMode(ConfMan.get("render_mode", _domain));
+			int sel = 0;
+			for (int i = 0; p->code; ++p, ++i) {
+				if (renderMode == p->id)
+					sel = i + 2;
+			}
+			_renderModePopUp->setSelected(sel);
 		}
 
 #ifndef _WIN32_WCE
@@ -167,10 +180,14 @@ void OptionsDialog::close() {
 
 				if ((int32)_gfxPopUp->getSelectedTag() >= 0)
 					ConfMan.set("gfx_mode", _gfxPopUp->getSelectedString(), _domain);
+
+				if ((int32)_renderModePopUp->getSelectedTag() >= 0)
+					ConfMan.set("render_mode", _renderModePopUp->getSelectedString(), _domain);
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
 				ConfMan.removeKey("gfx_mode", _domain);
+				ConfMan.removeKey("render_mode", _domain);
 			}
 		}
 
@@ -240,6 +257,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
 	_gfxPopUp->setEnabled(enabled);
+	_renderModePopUp->setEnabled(enabled);
 #ifndef _WIN32_WCE
 	_fullscreenCheckbox->setEnabled(enabled);
 	_aspectCheckbox->setEnabled(enabled);
@@ -280,6 +298,16 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	while (gm->name) {
 		_gfxPopUp->appendEntry(gm->name, gm->id);
 		gm++;
+	}
+
+	// RenderMode popup
+	_renderModePopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Render mode: ", 100);
+	yoffset += 16;
+	_renderModePopUp->appendEntry("<default>");
+	_renderModePopUp->appendEntry("");
+	const Common::RenderModeDescription *rm = Common::g_renderModes;
+	for (; rm->code; ++rm) {
+		_renderModePopUp->appendEntry(rm->description, rm->id);
 	}
 
 	// Fullscreen checkbox

@@ -998,6 +998,32 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 	_confirmExit = ConfMan.getBool("confirm_exit");
 
+	if (ConfMan.hasKey("render_mode")) {
+		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
+	} else {
+		_renderMode = Common::kRenderDefault;
+	}
+
+	// Do some render mode restirctions
+	switch (_renderMode) {
+	case Common::kRenderHerc:
+		if (_version > 2 && _gameId != GID_MONKEY_EGA)
+			_renderMode = Common::kRenderDefault;
+		break;
+
+	case Common::kRenderCGA:
+		if (!(_features & GF_16COLOR))
+			_renderMode = Common::kRenderDefault;
+		break;
+
+	case Common::kRenderEGA:
+			_renderMode = Common::kRenderDefault;
+		break;
+
+	default:
+		break;
+	}
+
 	_hexdumpScripts = false;
 	_showStack = false;
 
@@ -1019,6 +1045,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	} else if (_features & GF_NES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
+	} else if (_renderMode == Common::kRenderHerc) {
+		_system->setGraphicsMode("1x");
+		_features |= GF_DEFAULT_TO_1X_SCALER;
+		_screenWidth = 320;
+		_screenHeight = 200;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
@@ -1109,7 +1140,13 @@ int ScummEngine::init(GameDetector &detector) {
 	// Initialize backend
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
-		_system->initSize(_screenWidth, _screenHeight);
+		if (_renderMode == Common::kRenderHerc) {
+			_system->initSize(Common::kHercW, Common::kHercH);
+			_features |= GF_DEFAULT_TO_1X_SCALER;
+			_system->setGraphicsMode("1x");
+		} else {
+			_system->initSize(_screenWidth, _screenHeight);
+		}
 
 		// FIXME: All this seems a dirty hack to me. We already
 		// have this check in constructor
@@ -1268,6 +1305,10 @@ void ScummEngine::scummInit() {
 			_shadowPalette[i] = i;
 		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
 			setupAmigaPalette();
+		else if (_renderMode == Common::kRenderHerc)
+			setupHercPalette();
+		else if (_renderMode == Common::kRenderCGA)
+			setupCGAPalette();
 		else
 			setupEGAPalette();
 	}

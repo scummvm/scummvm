@@ -188,6 +188,7 @@ Gdi::Gdi(ScummEngine *vm) {
 	
 	_compositeBuf = 0;
 	_textSurface.pixels = 0;
+	_herculesBuf = 0;
 }
 
 void ScummEngine::initScreens(int b, int h) {
@@ -225,10 +226,16 @@ void Gdi::init() {
 	const int size = _vm->_screenWidth * _vm->_screenHeight;
 	free(_compositeBuf);
 	free(_textSurface.pixels);
+	free(_herculesBuf);
 	_compositeBuf = (byte *)malloc(size);
 	_textSurface.pixels = malloc(size);
 	memset(_compositeBuf, CHARSET_MASK_TRANSPARENCY, size);
 	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, size);
+
+	if (_vm->_renderMode == Common::kRenderHerc) {
+		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
+		memset(_herculesBuf, CHARSET_MASK_TRANSPARENCY, Common::kHercW * Common::kHercH);
+	}
 
 	_textSurface.w = _vm->_screenWidth;
 	_textSurface.h = _vm->_screenHeight;
@@ -474,8 +481,8 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		bottom = _vm->_screenTop + _vm->_screenHeight;
 
 	// Convert the vertical coordinates to real screen coords
-	const int y = vs->topline + top - _vm->_screenTop;
-	const int height = bottom - top;
+	int y = vs->topline + top - _vm->_screenTop;
+	int height = bottom - top;
 	
 	// Compute screen etc. buffer pointers
 	const byte *src = vs->getPixels(x, top);
@@ -508,10 +515,104 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		dst += _vm->_screenWidth;
 		text += _textSurface.pitch;
 	}
-	
-	// Finally blit the whole thing to the screen
-	_vm->_system->copyRectToScreen(_compositeBuf + x + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
+
+	if (_vm->_renderMode == Common::kRenderCGA)
+		ditherCGA(_compositeBuf + x + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
+
+	if (_vm->_renderMode == Common::kRenderHerc) {
+		ditherHerc(_compositeBuf + x + y * _vm->_screenWidth, _herculesBuf, _vm->_screenWidth, &x, &y, &width, &height);
+		// center image on the screen
+		_vm->_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, 
+			Common::kHercW, x + (Common::kHercW - _vm->_screenWidth * 2) / 2, y, width, height);
+	} else {
+		// Finally blit the whole thing to the screen
+		_vm->_system->copyRectToScreen(_compositeBuf + x + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
+	}
 }
+
+// CGA
+// indy3 loom maniac monkey1 zak
+//
+// Herc (720x350)
+// maniac monkey1 zak
+//
+// EGA
+// monkey2 loom maniac monkey1 atlantis indy3 zak loomcd
+
+// CGA dithers 4x4 square with direct substitutes
+// Odd lines have colors swapped, so there will be checkered patterns.
+// But apparently there is a mistake for 10th color.
+void Gdi::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
+	byte *ptr;
+	int idx1, idx2;
+	static byte cgaDither[2][2][16] = {
+		{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
+		 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
+		{{0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3},
+		 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
+
+	for (int y1 = 0; y1 < height; y1++) {
+		ptr = dst + y1 * dstPitch;
+
+		idx1 = (y + y1) % 2;
+		for (int x1 = 0; x1 < width; x1++) {
+			idx2 = (x + x1) % 2;
+			*ptr++ = cgaDither[idx1][idx2][*ptr & 0xF];
+		}
+	}
+}
+
+// Hercules dithering. It uses same dithering tables but output is 1bpp and
+// it stretches in this way:
+//         aaaa0
+// aa      aaaa1
+// bb      bbbb0      Here 0 and 1 mean dithering table row number
+// cc -->  bbbb1
+// dd      cccc0
+//         cccc1
+//         dddd0
+void Gdi::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
+	byte *srcptr, *dstptr;
+	int xo = *x, yo = *y, widtho = *width, heighto = *height;
+	int idx1, idx2, dsty = 0;
+	static byte cgaDither[2][2][16] = {
+		{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
+		 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
+		{{0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3},
+		 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
+
+	// calculate dsty
+	for (int y1 = 0; y1 < yo; y1++) {
+		dsty += 2;
+		if (y1 % 4 == 3)
+			dsty--;
+	}
+	*y = dsty;
+	*x *= 2;
+	*width *= 2;
+	*height = 0;
+
+	for (int y1 = 0; y1 < heighto;) {
+		srcptr = src + y1 * srcPitch;
+		dstptr = hercbuf + dsty * Common::kHercW + xo * 2;
+
+		if (dstptr >= hercbuf + Common::kHercW * Common::kHercH + widtho * 2)
+			debug("Gnaa");
+
+		idx1 = (dsty % 7) % 2;
+		for (int x1 = 0; x1 < widtho; x1++) {
+			idx2 = (xo + x1) % 2;
+			*dstptr++ = cgaDither[idx1][idx2][*srcptr & 0xF] >> 1;
+			*dstptr++ = cgaDither[idx1][idx2][*srcptr & 0xF] & 0x1;
+			srcptr++;
+		}
+		if (idx1 || dsty % 7 == 6)
+			y1++;
+		dsty++;
+		(*height)++;
+	}
+}
+
 
 #pragma mark -
 #pragma mark --- Background buffers & charset mask ---

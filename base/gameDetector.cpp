@@ -96,6 +96,7 @@ static const char USAGE_STRING[] =
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
+	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercules)\n"
 	"\n"
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
@@ -122,6 +123,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "normal");
+	ConfMan.registerDefault("render_mode", "default");
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);
@@ -476,6 +478,14 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_LONG_OPTION_BOOL("aspect-ratio")
 				ConfMan.set("aspect_ratio", cmdValue, kTransientDomain);
+			END_OPTION
+
+			DO_LONG_OPTION("render-mode")
+				int renderMode = Common::parseRenderMode(option);
+				if (renderMode == Common::kRenderDefault)
+					goto ShowHelpAndExit;
+
+				ConfMan.set("render_mode", option, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")

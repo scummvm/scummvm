@@ -71,6 +71,7 @@ private:
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_aspectCheckbox;
+	PopUpWidget *_renderModePopUp;
 
 	//
 	// Audio controls

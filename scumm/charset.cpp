@@ -1160,6 +1160,8 @@ void CharsetRendererV3::setColor(byte color)
 		_color &= 0x7f;
 	} else
 		_dropShadow = false;
+
+	translateColor();
 }
 
 void CharsetRendererV3::printChar(int chr) {
@@ -1253,6 +1255,21 @@ void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int
 	drawBits1(s, dst, charPtr, y, width, height);
 }
 
+void CharsetRenderer::translateColor() {
+	// Based on disassembly
+	if (_vm->_renderMode == Common::kRenderCGA) {
+		static byte CGAtextColorMap[16] = {0,  3, 3, 3, 5, 5, 5,  15, 
+										   15, 3, 3, 3, 5, 5, 15, 15};
+		_color = CGAtextColorMap[_color & 0x0f];
+	}
+
+	if (_vm->_renderMode == Common::kRenderHerc) {
+		static byte HercTextColorMap[16] = {0, 15,  2, 15, 15,  5, 15,  15, 
+										   8, 15, 15, 15, 15, 15, 15, 15};
+		_color = HercTextColorMap[_color & 0x0f];
+	}
+}
+
 
 void CharsetRendererClassic::printChar(int chr) {
 	int width, height, origWidth, origHeight;
@@ -1268,6 +1285,8 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	if (chr == '@')
 		return;
+
+	translateColor();
 
 	_vm->_charsetColorMap[1] = _color;
 

@@ -868,6 +868,8 @@ public:
 	int _screenStartStrip, _screenEndStrip;
 	int _screenTop;
 
+	Common::RenderMode _renderMode;
+
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
 
@@ -930,6 +932,8 @@ protected:
 
 	const byte *getPalettePtr(int palindex, int room);
 	void setupAmigaPalette();
+	void setupHercPalette();
+	void setupCGAPalette();
 	void setupEGAPalette();
 	void setupV1ManiacPalette();
 	void setupV1ZakPalette();

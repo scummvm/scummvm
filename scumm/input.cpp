@@ -130,6 +130,12 @@ void ScummEngine::parseEvents() {
 		case OSystem::EVENT_MOUSEMOVE:
 			_mouse.x = event.mouse.x;
 			_mouse.y = event.mouse.y;
+
+			if (_renderMode == Common::kRenderHerc) {
+				_mouse.x -= (Common::kHercW - _screenWidth * 2) / 2;
+				_mouse.x /= 2;
+				_mouse.y = _mouse.y * 4 / 7;
+			}
 			break;
 
 		case OSystem::EVENT_LBUTTONDOWN:

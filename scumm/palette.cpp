@@ -48,6 +48,28 @@ void ScummEngine::setupAmigaPalette() {
 	setPalColor(15, 255, 255, 255);
 }
 
+void ScummEngine::setupHercPalette() {
+	setPalColor( 0,   0,   0,   0);
+	setPalColor( 1, 0xAE, 0x69, 0x38);
+
+	// Setup cursor palette
+	setPalColor( 7, 170, 170, 170);
+	setPalColor( 8,  85,  85,  85);
+	setPalColor(15, 255, 255, 255);
+}
+
+void ScummEngine::setupCGAPalette() {
+	setPalColor( 0,   0,   0,   0);
+	setPalColor( 1,   0, 168, 168);
+	setPalColor( 2, 168,   0, 168);
+	setPalColor( 3, 168, 168, 168);
+
+	// Setup cursor palette
+	setPalColor( 7, 170, 170, 170);
+	setPalColor( 8,  85,  85,  85);
+	setPalColor(15, 255, 255, 255);
+}
+
 void ScummEngine::setupEGAPalette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1,   0,   0, 170);

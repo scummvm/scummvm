@@ -219,5 +219,47 @@ const char *getPlatformDescription(Platform id) {
 }
 
 
+#pragma mark -
+
+
+const RenderModeDescription g_renderModes[] = {
+	{"hercules", "Hercules", kRenderHerc},
+	{"cga", "CGA", kRenderCGA},
+	{"ega", "EGA", kRenderEGA},
+	{0, 0, kRenderDefault}
+};
+
+RenderMode parseRenderMode(const String &str) {
+	if (str.isEmpty())
+		return kRenderDefault;
+
+	const char *s = str.c_str();
+	const RenderModeDescription *l = g_renderModes;
+	for (; l->code; ++l) {
+		if (!scumm_stricmp(l->code, s))
+			return l->id;
+	}
+
+	return kRenderDefault;
+}
+
+const char *getRenderModeCode(RenderMode id) {
+	const RenderModeDescription *l = g_renderModes;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->code;
+	}
+	return 0;
+}
+
+const char *getRenderModeDescription(RenderMode id) {
+	const RenderModeDescription *l = g_renderModes;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->description;
+	}
+	return 0;
+}
+
 
 }	// End of namespace Common

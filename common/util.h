@@ -147,11 +147,41 @@ struct PlatformDescription {
 
 extern const PlatformDescription g_platforms[];
 
-
 /** Convert a string containing a platform name into a Platform enum value. */
 extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformDescription(Platform id);
+
+/** 
+ * List of render modes. It specifies which original graphics mode
+ * to use. Some targets used postprocessing dithering routines for
+ * reducing color depth of final image which let it to be rendered on
+ * such low-level adapters as CGA or Hercules.
+ */
+enum RenderMode {
+	kRenderDefault = -1,
+	kRenderEGA = 1,
+	kRenderCGA = 2,
+	kRenderHerc = 3
+};
+
+enum HerculesDimesnions {
+	kHercW = 720,
+	kHercH = 350
+};
+
+struct RenderModeDescription {
+	const char *code;
+	const char *description;
+	Common::RenderMode id;
+};
+
+extern const RenderModeDescription g_renderModes[];
+
+/** Convert a string containing a render mode name into a RenderingMode enum value. */
+extern RenderMode parseRenderMode(const String &str);
+extern const char *getRenderModeCode(RenderMode id);
+extern const char *getRenderModeDescription(RenderMode id);
 
 }	// End of namespace Common
 

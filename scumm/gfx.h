@@ -216,6 +216,7 @@ public:
 
 protected:
 	byte *_compositeBuf;
+	byte *_herculesBuf;
 
 	byte *_roomPalette;
 	byte _decomp_shr, _decomp_mask;
@@ -256,7 +257,9 @@ protected:
 	/* Misc */
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void updateDirtyScreen(VirtScreen *vs);
-	
+	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
+	void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const;
+
 	byte *getMaskBuffer(int x, int y, int z);
 	
 	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9], bool bmapImage) const;

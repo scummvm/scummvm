@@ -92,6 +92,7 @@ public:
 
 	int getStringWidth(int a, const byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
+	void translateColor();
 	
 	virtual void setCurID(byte id) = 0;
 	int getCurID() { return _curId; }
@@ -99,7 +100,7 @@ public:
 	virtual int getFontHeight() = 0;
 	virtual int getCharWidth(byte chr) = 0;
 	
-	virtual void setColor(byte color) { _color = color; }
+	virtual void setColor(byte color) { _color = color; translateColor(); }
 };
 
 class CharsetRendererCommon : public CharsetRenderer {

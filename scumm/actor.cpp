@@ -1400,6 +1400,12 @@ void Actor::setActorCostume(int c) {
 	} else if (_vm->_features & GF_OLD_BUNDLE) {
 		for (i = 0; i < 16; i++)
 			palette[i] = i;
+
+		// Make stuff more visible on CGA. Based on disassembly
+		if (_vm->_renderMode == Common::kRenderCGA) {
+			palette[6] = 5;
+			palette[7] = 15;
+		}
 	} else {
 		for (i = 0; i < 32; i++)
 			palette[i] = 0xFF;
