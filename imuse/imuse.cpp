@@ -82,6 +82,7 @@ void Imuse::resetState() {
 
 void Imuse::restoreState(SaveRestoreFunc) {
 	StackLock lock(_mutex);
+	printf("Imuse::restoreState() started.\n");
 
 	g_engine->savegameGzread(&_volVoice, sizeof(int32));
 	g_engine->savegameGzread(&_volSfx, sizeof(int32));
@@ -135,10 +136,12 @@ void Imuse::restoreState(SaveRestoreFunc) {
 		track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
 		g_mixer->playInputStream(&track->handle, track->stream, false, -1, track->mixerVol, track->mixerPan, false);
 	}
+	printf("Imuse::restoreState() finished\n.");
 }
 
 void Imuse::saveState(SaveRestoreFunc) {
 	StackLock lock(_mutex);
+	printf("Imuse::saveState() started.\n");
 
 	g_engine->savegameGzwrite(&_volVoice, sizeof(int32));
 	g_engine->savegameGzwrite(&_volSfx, sizeof(int32));
@@ -173,6 +176,7 @@ void Imuse::saveState(SaveRestoreFunc) {
 		g_engine->savegameGzwrite(&track->mixerVol, sizeof(int32));
 		g_engine->savegameGzwrite(&track->mixerPan, sizeof(int32));
 	}
+	printf("Imuse::saveState() finished.\n");
 }
 
 void Imuse::callback() {

@@ -167,9 +167,9 @@ void Engine::mainLoop() {
 
 			g_driver->set3DMode();
 
-//			if (_currScene != NULL) {
-//				_currScene->setupLights();
-//			}
+			if (_currScene != NULL) {
+				_currScene->setupLights();
+			}
 
 			// Draw actors
 			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
@@ -240,6 +240,7 @@ void Engine::savegameGzwrite(void *data, int size) {
 }
 
 void Engine::savegameRestore() {
+	printf("Engine::savegameRestore() started.\n");
 	_savegameLoadRequest = false;
 	char filename[200];
 	if (_savegameFileName == NULL) {
@@ -280,6 +281,7 @@ void Engine::savegameRestore() {
 	gzclose(_savegameFileHandle);
 
 	//bundle_dofile("patch05.bin");
+	printf("Engine::savegameRestore() finished.\n");
 }
 
 void Engine::savegameCallback() {
@@ -320,6 +322,7 @@ void Engine::savegameCallback() {
 }
 
 void Engine::savegameSave() {
+	printf("Engine::savegameSave() started.\n");
 	_savegameSaveRequest = false;
 	char filename[200];
 	if (_savegameFileName == NULL) {
@@ -332,6 +335,9 @@ void Engine::savegameSave() {
 		warning("savegameSave() Error creating savegame file");
 		return;
 	}
+
+	g_imuse->pause(true);
+	g_smush->pause(true);
 
 	uint32 tag = 'RSAV';
 	uint32 version = 1;
@@ -352,6 +358,10 @@ void Engine::savegameSave() {
 	lua_Save(savegameGzwrite);
 
 	gzclose(_savegameFileHandle);
+
+	g_imuse->pause(false);
+	g_smush->pause(false);
+	printf("Engine::savegameSave() finished.\n");
 }
 
 void Engine::setScene(const char *name) {

@@ -108,7 +108,7 @@ static void recreateObj(TObject *obj) {
 }
 
 void lua_Restore(SaveRestoreFunc restoreFunc) {
-	printf("lua_Restore() start.\n");
+	printf("lua_Restore() started.\n");
 
 	lua_close();
 	L = luaM_new(lua_State);
@@ -441,5 +441,5 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 	arrayProtoFuncs = NULL;
 	arrayStrings = NULL;
 
-	printf("lua_Restore() end.\n");
+	printf("lua_Restore() finished.\n");
 }

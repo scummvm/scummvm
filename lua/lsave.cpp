@@ -54,7 +54,7 @@ static int opcodeSizeTable[] = {
 };
 
 void lua_Save(SaveRestoreFunc saveFunc) {
-	printf("lua_Save() start.\n");
+	printf("lua_Save() started.\n");
 
 	lua_collectgarbage(0);
 	int i, l;
@@ -293,5 +293,5 @@ void lua_Save(SaveRestoreFunc saveFunc) {
 		tempTask = tempTask->next;
 	}
 
-	printf("lua_Save() end.\n");
+	printf("lua_Save() finished.\n");
 }
