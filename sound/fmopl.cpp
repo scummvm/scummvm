@@ -93,8 +93,6 @@ static const int slot_array[32]=
 	-1,-1,-1,-1,-1,-1,-1,-1
 };
 
-#pragma warning (disable: 4244)
-
 /* key scale level */
 /* table is 3dB/OCT , DV converts this in TL step at 6dB/OCT */
 

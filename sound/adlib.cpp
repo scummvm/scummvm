@@ -544,7 +544,7 @@ byte AdlibSoundDriver::struct10_ontimer(Struct10 *s10, Struct11 *s11) {
 			result = 1;
 		}
 	}
-	assert(s10->num_steps>=0);
+
 	if (!--s10->num_steps) {
 		s10->active++;
 		if (s10->active > 4) {
