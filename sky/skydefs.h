@@ -23,10 +23,25 @@
 
 //This file is incomplete, several flags still missing.
 
+#define ST_COLLISION_BIT	5
+
+#define S_COUNT	0
+#define S_FRAME	2
+#define S_AR_X	4
+#define S_AR_Y	6
+#define S_LENGTH	8
+
 #define KEY_BUFFER_SIZE	80
 #define SEQUENCE_COUNT	3
 
 #define	FIRST_TEXT_COMPACT	23
+
+// scriptVariable offsets
+#define RESULT 1
+#define CUR_ID 13
+#define HIT_ID 38
+#define THE_CHOSEN_ONE 52
+#define TEXT1 54
 
 //screen/grid defines
 #define GAME_SCREEN_WIDTH	320
@@ -59,7 +74,9 @@
 #define C_SP_COLOUR	90
 #define C_MEGA_SET	112
 #define C_GRID_WIDTH	114
+#define C_ANIM_UP	122
 #define C_STAND_UP	138
+#define C_TURN_TABLE	158
 
 #define SECTION_0_ITEM 119 //item number of first item section
 #define NEXT_MEGA_SET (258 - C_GRID_WIDTH)

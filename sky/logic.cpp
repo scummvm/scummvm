@@ -71,7 +71,7 @@ void SkyLogic::engine() {
 			continue;
 		}
 
-		//cur_id = compact2->logic;
+		_scriptVariables[CUR_ID] = compact2->logic;
 		_compact = SkyState::fetchCompact(compact2->logic);
 
 		// check the id actually wishes to be processed
@@ -110,10 +110,6 @@ void SkyLogic::logicScript() {
 		uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode);
 		uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode + 2);
 
-		// FIXME: HACK ALERT!!!!
-		if (*scriptNo == 0x27 && *offset == 0)
-			*offset = 0x9fa;
-
 		uint32 scr = script(_compact, *scriptNo, *offset);
 		*scriptNo = (uint16)(scr & 0xffff);
 		*offset   = (uint16)(scr >> 16);
@@ -145,7 +141,187 @@ void SkyLogic::autoRoute() {
 }
 
 void SkyLogic::arAnim() {
-	error("Stub: SkyLogic::arAnim");
+	// Follow a route
+	// Mega should be in getToMode
+
+	// only check collisions on character boundaries
+	if ((_compact->xcood & 7) || (_compact->ycood & 7)) {
+		mainAnim();
+		return;
+	}
+
+	// On character boundary. Have we been told to wait?
+	// if not - are WE colliding?
+
+	if (_compact->extCompact->waitingFor == 0xffff) { // 1st cycle of re-route does
+		mainAnim();
+		return;
+	}
+
+	if (_compact->extCompact->waitingFor) {
+		// ok, we've been told we've hit someone
+		// we will wait until we are no longer colliding
+		// with them. here we check to see if we are (still) colliding.
+		// if we are then run the stop script. if not clear the flag
+		// and continue.
+
+		// remember - this could be the first ar cycle for some time,
+		// we might have been told to wait months ago. if we are
+		// waiting for one person then another hits us then
+		// c_waiting_for will be replaced by the new mega - this is
+		// fine because the later collision will almost certainly
+		// take longer to clear than the earlier one.
+
+		if (!collide(SkyState::fetchCompact(_compact->extCompact->waitingFor)))
+			error("stop_and_wait not implemented\n");
+
+		// we are not in fact hitting this person so clr & continue
+		// it must have registered some time ago
+
+		_compact->extCompact->waitingFor = 0; // clear id flag
+	}
+
+	// ok, our turn to check for collisions
+
+#define logic_list_no 141
+	uint16 *logicList = (uint16 *)SkyState::fetchCompact(logic_list_no);
+	Compact *cpt = 0;
+
+	for (;;) {
+		uint16 id = *logicList++; // get an id
+		if (!id) // 0 is list end
+			break;
+
+		if (id == 0xffff) { // address change?
+			logicList = (uint16 *)SkyState::fetchCompact(*logicList); // get new logic list
+			continue;
+		}
+
+		if (id == (uint16)(_scriptVariables[CUR_ID] & 0xffff)) // is it us?
+			continue;
+
+		_scriptVariables[HIT_ID] = id; // save target id for any possible c_mini_bump
+		cpt = SkyState::fetchCompact(id); // let's have a closer look
+
+		if (!(cpt->status & (1 << ST_COLLISION_BIT))) // can it collide?
+			continue;
+
+		if (cpt->screen != _compact->screen) // is it on our screen?
+			continue;
+
+		if (collide(cpt)) { // check for a hit
+			// ok, we've hit a mega
+			// is it moving... or something else?
+
+			if (cpt->logic != L_AR_ANIM) { // check for following route
+				// it is doing something else
+				// we restart our get-to script
+				// first tell it to wait for us - in case it starts moving
+				// ( *it may have already hit us and stopped to wait )
+
+				_compact->extCompact->waitingFor = 0xffff; // effect 1 cycle collision skip
+				// tell it it is waiting for us
+				cpt->extCompact->waitingFor = (uint16)(_scriptVariables[CUR_ID] & 0xffff);
+				// restart current script
+				*(uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2) = 0;
+				_compact->logic = L_SCRIPT;
+				logicScript();
+				return;
+			}
+
+			script(_compact, _compact->extCompact->miniBump, 0);
+			return;
+		}
+	}
+
+	// ok, there was no collisions
+	// now check for interaction request
+	// *note: the interaction is always set up as an action script
+
+	if (_compact->extCompact->request) {
+		_compact->mode = C_ACTION_MODE; // put into action mode
+		_compact->extCompact->actionSub = _compact->extCompact->request;
+		_compact->extCompact->request = 0; // trash request
+		_compact->logic = L_SCRIPT;
+		logicScript();
+		return;
+	}
+
+	// any flag? - or any change?
+	// if change then re-run the current script, which must be
+	// a position independent get-to		 ----
+
+	if (_compact->extCompact->atWatch) { // any flag set?
+		mainAnim();
+		return;
+	}
+
+	// ok, there is an at watch - see if it's changed
+
+	if (_compact->extCompact->atWas == _scriptVariables[_compact->extCompact->atWatch/4]) { // still the same?
+		mainAnim();
+		return;
+	}
+
+	// changed so restart the current script
+	// *not suitable for base initiated ARing
+	*(uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2) = 0;
+
+	_compact->logic = L_SCRIPT;
+	logicScript();
+}
+
+void SkyLogic::mainAnim() {
+	_compact->extCompact->waitingFor = 0; // clear possible zero-zero skip
+
+	uint16 *sequence = _compact->grafixProg;
+	if (!*sequence) {
+		// ok, move to new anim segment
+		sequence += 2;
+		if (!*sequence) { // end of route?
+			// ok, sequence has finished
+
+			_compact->extCompact->arAnimIndex = 0; // will start afresh if new sequence continues in last direction
+			_compact->downFlag = 0; // pass back ok to script
+			_compact->logic = L_SCRIPT;
+			logicScript();
+			return;
+		}
+
+		_compact->grafixProg = sequence;
+		_compact->extCompact->arAnimIndex = 0; // reset position
+	}
+
+	uint16 dir = 0;
+	while ((dir = _compact->extCompact->dir) != *(sequence + 1)) {
+		// ok, setup turning
+		_compact->extCompact->dir = *(sequence + 1);
+
+		uint16 **tt = (uint16 **)SkyCompact::getCompactElem(_compact,
+				C_TURN_TABLE + _compact->extCompact->megaSet + dir * 20);
+		if (tt[_compact->extCompact->dir]) {
+			_compact->extCompact->turnProg = tt[_compact->extCompact->dir];
+			_compact->logic = L_AR_TURNING;
+			arTurn();
+			return;
+		}
+	};
+
+	uint16 *animUp = (uint16 *)SkyCompact::getCompactElem(_compact,
+			C_ANIM_UP + _compact->extCompact->megaSet + (dir << 4));
+
+	uint16 arAnimIndex = _compact->extCompact->arAnimIndex;
+	if (!animUp[arAnimIndex/2]) {
+		 arAnimIndex = 0;
+		_compact->extCompact->arAnimIndex = 0; // reset
+	}
+
+	_compact->extCompact->arAnimIndex += S_LENGTH;
+
+	*sequence       -= animUp[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
+	_compact->frame  = animUp[(S_FRAME + arAnimIndex)/2]; // new graphic frame
+	_compact->xcood += animUp[(S_AR_X  + arAnimIndex)/2]; // update x coordinate
+	_compact->ycood += animUp[(S_AR_Y  + arAnimIndex)/2]; // update y coordinate
 }
 
 void SkyLogic::arTurn() {
@@ -181,7 +357,6 @@ void SkyLogic::turn() {
 	}
 
 	// turn_to_script:
-
 	_compact->extCompact->arAnimIndex = 0;
 	_compact->logic = L_SCRIPT;
 
@@ -213,7 +388,12 @@ void SkyLogic::frames() {
 }
 
 void SkyLogic::pause() {
-	error("Stub: SkyLogic::pause");
+	if (--_compact->flag)
+		return;
+
+	_compact->logic = L_SCRIPT;
+	logicScript();
+	return;
 }
 
 void SkyLogic::waitSync() {
@@ -256,6 +436,90 @@ void SkyLogic::simpleAnim() {
 	_compact->downFlag = 0; // return 'ok' to script
 	_compact->logic = L_SCRIPT;
 	logicScript();
+}
+
+bool SkyLogic::collide(Compact *cpt) {
+	MegaSet *m1 = (MegaSet *)SkyCompact::getCompactElem(_compact, C_GRID_WIDTH + _compact->extCompact->megaSet);
+	MegaSet *m2 = (MegaSet *)SkyCompact::getCompactElem(cpt, C_GRID_WIDTH + cpt->extCompact->megaSet);
+
+	uint16 x = cpt->xcood; // target's base coordinates
+	x &= 0xfff8;
+	uint16 y = cpt->ycood;
+	y &= 0xfff8;
+
+	// The collision is direction dependant
+	switch (_compact->extCompact->dir) {
+	case 0: // looking up
+		x -= m1->colOffset; // compensate for inner x offsets
+		x += m2->colOffset;
+
+		if ((x + m2->colWidth) < _compact->xcood) // their rightmost
+			return false;
+
+		x -= m1->colWidth; // our left, their right
+		if (x >= _compact->xcood)
+			return false;
+
+		y += 8; // bring them down a line
+		if (y == _compact->ycood)
+			return true;
+
+		y += 8; // bring them down a line
+		if (y == _compact->ycood)
+			return true;
+
+		return false;
+	case 1: // looking down
+		x -= m1->colOffset; // compensate for inner x offsets
+		x += m2->colOffset;
+
+		if ((x + m2->colWidth) >= _compact->xcood) // their rightmoast
+			return false;
+
+		x -= m1->colWidth; // our left, their right
+		if (x >= _compact->xcood)
+			return false;
+
+		y -= 8; // bring them up a line
+		if (y == _compact->ycood)
+			return true;
+
+		y -= 8; // bring them up a line
+		if (y == _compact->ycood)
+			return true;
+		
+		return false;
+	case 2: // looking left
+
+		if (y != _compact->ycood)
+			return false;
+
+		x += m2->lastChr;
+		if (x == _compact->xcood)
+			return true;
+
+		x -= 8; // out another one
+		if (x == _compact->xcood)
+			return true;
+
+		return false;
+	case 3: // looking right
+
+		if (y != _compact->ycood)
+			return false;
+
+		x -= m1->lastChr; // last block
+		if (x == _compact->xcood)
+			return true;
+
+		x -= 8; // out another block
+		if (x != _compact->xcood)
+			return false;
+
+		return true;
+	default:
+		error("Unknown Direction: %d", _compact->extCompact->dir);
+	}
 }
 
 void SkyLogic::checkModuleLoaded(uint16 moduleNo) {
@@ -520,8 +784,6 @@ static const uint32 forwardList5b[] = {
 	RIGHT_MOUSE,
 };
 
-#define RESULT 1
-#define TEXT1 54
 void SkyLogic::initScriptVariables() {
 	for (uint i = 0; i < sizeof(_scriptVariables)/sizeof(uint32); i++)
 		_scriptVariables[i] = 0;
@@ -571,7 +833,7 @@ script:
 	// Bit 12-15 - Module number
 
 	uint16 moduleNo = (uint16)((scriptNo & 0xff00) >> 12);
-	printf("scriptNo: %d, moduleNo: %d, offset: %d\n", scriptNo, moduleNo, offset);
+	printf("Doing Script %x\n", (offset << 16) | scriptNo);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
 	printf("File: %d\n", moduleNo + F_MODULE_0);
@@ -684,7 +946,7 @@ script:
 
 			a = (this->*mcodeTable[mcode]) (a, b, c);
 
-			if (!(a & 0xffff))
+			if (!a)
 				return (((scriptData - moduleStart) << 16) | scriptNo);
 			break;
 		case 12: // more_than
@@ -717,7 +979,6 @@ script:
 			// Push a compact access
 			s = READ_LE_UINT16(scriptData++);
 			tmp = (uint16 *)SkyCompact::getCompactElem(compact, s);
-			printf("push_offset: %d\n", *tmp);
 			push(*tmp);
 			break;
 		case 16: // pop_offset
@@ -752,15 +1013,18 @@ script:
 }
 
 uint32 SkyLogic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCacheChip");
+	warning("Stub: fnCacheChip");
+	return 1;
 }
 
 uint32 SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCacheFast");
+	warning("Stub: fnCacheFast");
+	return 1;
 }
 
 uint32 SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnDrawScreen");
+	warning("Stub: fnDrawScreen");
+	return 1;
 }
 
 uint32 SkyLogic::fnAr(uint32 x, uint32 y, uint32 c) {
@@ -843,8 +1107,8 @@ uint32 SkyLogic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
 uint32 SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	_compact->upFlag = (uint16)mode; // save mode for action script
 	_compact->mode += 4; // next level up
-	Compact *compact2 = SkyState::fetchCompact(_compact->place);
-	uint16 *getToTable = compact2->getToTable;
+	Compact *cpt = SkyState::fetchCompact(_compact->place);
+	uint16 *getToTable = cpt->getToTable;
 
 	while (*getToTable != targetPlaceId)
 		getToTable += 2;
@@ -870,8 +1134,24 @@ uint32 SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 	return 0; // drop out of script
 }
 
-uint32 SkyLogic::fnTurnTo(uint32 direction, uint32 b, uint32 c) {
-	error("Stub: fnTurnTo");
+uint32 SkyLogic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
+	// turn compact to direction dir
+
+	uint16 curDir = _compact->extCompact->dir * 20; // get current direction
+	_compact->extCompact->dir = (uint16)(dir & 0xffff); // set new direction
+
+	uint16 **tt = (uint16 **)SkyCompact::getCompactElem(_compact,
+			C_TURN_TABLE + _compact->extCompact->megaSet + curDir);
+
+	if (!tt[dir])
+		return 1; // keep going
+
+	_compact->extCompact->turnProg = tt[dir]; // put turn program in
+	_compact->logic = L_TURNING;
+
+	turn();
+
+	return 0; // drop out of script
 }
 
 uint32 SkyLogic::fnArrived(uint32 a, uint32 b, uint32 c) {
@@ -920,7 +1200,8 @@ uint32 SkyLogic::fnNoButtons(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnSetStop(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSetStop");
+	warning("Stub: fnSetStop");
+	return 1;
 }
 
 uint32 SkyLogic::fnClearStop(uint32 a, uint32 b, uint32 c) {
@@ -932,7 +1213,7 @@ uint32 SkyLogic::fnPointerText(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnQuit(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnQuit");
+	return 0;
 }
 
 uint32 SkyLogic::fnSpeakMe(uint32 a, uint32 b, uint32 c) {
@@ -959,7 +1240,7 @@ uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 
 //	systemFlags |= 1 << SF_CHOOSING; // can't save/restore while choosing
 
-//	theChosenOne = 0; // clear result
+	_scriptVariables[THE_CHOSEN_ONE] = 0; // clear result
 
 	uint32 *p = _scriptVariables + TEXT1;
 	uint16 ycood = TOP_LEFT_Y; // rolling coordinate
@@ -1066,8 +1347,12 @@ uint32 SkyLogic::fnFaceId(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnFaceId");
 }
 
-uint32 SkyLogic::fnForeground(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnForeground");
+uint32 SkyLogic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
+	// Make sprite a foreground sprite
+	Compact *cpt = SkyState::fetchCompact(sprite);
+	cpt->status &= 0xfff8;
+	cpt->status |= ST_FOREGROUND;
+	return 1;
 }
 
 uint32 SkyLogic::fnBackground(uint32 a, uint32 b, uint32 c) {
@@ -1098,8 +1383,11 @@ uint32 SkyLogic::fnToggleGrid(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnToggleGrid");
 }
 
-uint32 SkyLogic::fnPause(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnPause");
+uint32 SkyLogic::fnPause(uint32 cycles, uint32 b, uint32 c) {
+	// Set mega to l_pause
+	_compact->flag = (uint16)(cycles & 0xffff);
+	_compact->logic = L_PAUSE;
+	return 0; // drop out of script
 }
 
 uint32 SkyLogic::fnRunAnimMod(uint32 a, uint32 b, uint32 c) {

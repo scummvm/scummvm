@@ -174,7 +174,9 @@ protected:
 	uint32 pop();
 	void checkModuleLoaded(uint16 moduleNo);
 	uint32 script(Compact *compact, uint16 scriptNo, uint16 offset);
+	bool collide(Compact *cpt);
 	void initScriptVariables();
+	void mainAnim();
 
 	uint16 *_moduleList[16];
 	uint32 _stack[20];
