@@ -2749,15 +2749,15 @@ void Scumm_v5::decodeParseString() {
 				int delay = (uint16)getVarOrDirectWord(0x40);
 
 				if (_gameId == GID_LOOM256) {
-					VAR(VAR_MUSIC_TIMER) = 0;
 					if (offset == 0 && delay == 0) {
+						VAR(VAR_MUSIC_TIMER) = 0;
 						_sound->stopCD();
 					} else {
 						// Loom specified the offset from the start of the CD;
 						// thus we have to subtract the length of the first track
 						// (22500 frames) plus the 2 second = 150 frame leadin.
 						// I.e. in total 22650 frames.
-						offset = (int)(offset * 7.5 - 22650);
+						offset = (int)(offset * 7.5 - 22500 - 2*75);
 
 						// Slightly increase the delay (5 frames = 1/25 of a second).
 						// This noticably improves the experience in Loom CD.
