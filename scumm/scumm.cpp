@@ -1147,14 +1147,12 @@ void ScummEngine::launch() {
 
 	if (_version == 8)
 		_numActors = 80;
-	else if ((_version == 7) || (_gameId == GID_SAMNMAX))
+	else if ((_version == 7) || (_heversion == 72) || (_gameId == GID_SAMNMAX))
 		_numActors = 30;
 	else if (_gameId == GID_MANIAC)
 		_numActors = 25;
 	else if (_heversion >= 80)
 		_numActors = 62;
-	else if (_heversion == 72)
-		_numActors = 29;
 	else 
 		_numActors = 13;
 
