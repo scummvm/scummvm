@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "resource.h"
+#include "bundle.h"
 #include "verbs.h"
 #include "scumm/sound.h"
 #include "common/map.h"
@@ -201,7 +202,10 @@ void Scumm::askForDisk(const char *filename, int disknum) {
 	if (_features & GF_AFTER_V8) {
 		char result;
 
-		sprintf(buf, "Cannot find file: '%s'\nInsert disk %d into drive %s\nHit Ok to retry, Cancel to exit", filename, disknum, getGameDataPath());
+		_bundle->_voiceFile.close();
+		_bundle->_musicFile.close();
+
+		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nHit Ok to retry, Cancel to exit", filename, disknum, getGameDataPath());
 
 		result = displayError(true, buf);
 		if (result == 2)
