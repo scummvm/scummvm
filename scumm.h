@@ -1851,8 +1851,6 @@ void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
 //void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
 
-extern Config * scummcfg;
-
 #if defined(__GNUC__)
 void CDECL error(const char *s, ...) NORETURN;
 #else
