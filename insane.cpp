@@ -4,8 +4,9 @@
 
 
 
+#if !defined(__APPLE__CW)
 #define NEED_SDL_HEADERS
-
+#endif
 
 
 #include "stdafx.h"
