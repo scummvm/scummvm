@@ -57,7 +57,7 @@ Actor::Actor() {
 	walkbox = 0;
 	animProgress = 0;
 	skipLimb = false;
-	actor_draw_to_bg = false;
+	actorDrawVirScr = false;
 	memset(animVariable, 0, sizeof(animVariable));
 	memset(palette, 0, sizeof(palette));
 	memset(sound, 0, sizeof(sound));
@@ -1018,7 +1018,7 @@ void Actor::drawActorCostume() {
 
 	bcr->_draw_bottom = bottom = 0;
 	bcr->_skipLimb = (skipLimb != 0);
-	bcr->_actor_draw_to_bg = (actor_draw_to_bg != 0);
+	bcr->_actorDrawVirScr = (actorDrawVirScr != 0);
 
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.

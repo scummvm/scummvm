@@ -2921,9 +2921,9 @@ void ScummEngine_v6::o6_stampObject() {
 		a->scalex = state;
 		a->scaley = state;
 		a->putActor(x, y, _currentRoom);
-		a->actor_draw_to_bg = true;
+		a->actorDrawVirScr = true;
 		a->drawActorCostume();
-		a->actor_draw_to_bg = false;
+		a->actorDrawVirScr = false;
 		a->drawActorCostume();
 		return;
 	}

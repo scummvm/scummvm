@@ -677,10 +677,10 @@ void ScummEngine_v6he::o6_actorOps() {
 		{
 			int top_actor = a->top;
 			int bottom_actor = a->bottom;
-			a->actor_draw_to_bg = true;
+			a->actorDrawVirScr = true;
 			a->needRedraw = true;
 			a->drawActorCostume();
-			a->actor_draw_to_bg = false;
+			a->actorDrawVirScr = false;
 			a->needRedraw = true;
 			a->drawActorCostume();
 			a->needRedraw = false;
@@ -693,7 +693,7 @@ void ScummEngine_v6he::o6_actorOps() {
 		}
 		break;
 	case 219:
-		a->actor_draw_to_bg = false;
+		a->actorDrawVirScr = false;
 		a->needRedraw = true;
 		a->needBgReset = true;
 		break;
