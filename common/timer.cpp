@@ -46,12 +46,12 @@ Timer::Timer(OSystem *system) :
 	_thisTime = _system->get_msecs();
 
 	// Set the timer last, after everything has been initialised
-	_system->set_timer(&timer_handler, 10);
+	_system->setTimerCallback(&timer_handler, 10);
 
 }
 
 Timer::~Timer() {
-	_system->set_timer(0, 0);
+	_system->setTimerCallback(0, 0);
 
 	{
 		Common::StackLock lock(_mutex);
@@ -64,8 +64,8 @@ Timer::~Timer() {
 
 
 	// FIXME: There is still a potential race condition here, depending on how
-	// the system backend implements set_timer: If timers are done using
-	// threads, and if set_timer does *not* gurantee that after it terminates
+	// the system backend implements setTimerCallback: If timers are done using
+	// threads, and if setTimerCallback does *not* gurantee that after it terminates
 	// that timer thread is not run anymore, we are fine. However, if the timer
 	// is still running in parallel to this destructor, then it might be that
 	// it is still waiting for the _mutex. So, again depending on the backend,

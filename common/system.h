@@ -339,10 +339,11 @@ public:
 	 * can be passed to poll_event. 
 	 */
 	struct Event {
+		/** The type of the event. */
 		EventCode event_code;
 		/**
-		  * Keyboard data; only valid for keyboard events (i.e. EVENT_KEYDOWN
-		  * and EVENT_KEYUP). For all other event types, content is undefined.
+		  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
+		  * EVENT_KEYUP). For all other event types, content is undefined.
 		  */
 		struct {
 			/**
@@ -367,6 +368,12 @@ public:
 			 */
 			byte flags;
 		} kbd;
+		/**
+		 * The mouse coordinates, in virtual screen coordinates. Only valid
+		 * for mouse events.
+		 * Virtual screen coordinatest means: the coordinate system of the
+		 * screen area as defined by the most recent call to initSize().
+		 */
 		Common::Point mouse;
 	};
 
@@ -384,10 +391,19 @@ public:
 	virtual void delay_msecs(uint msecs) = 0;
 
 	/**
-	 * Set the timer callback.
+	 * Set the timer callback, a function which is periodically invoked by the
+	 * backend. This can for example be done via a background thread.
+	 * There is at most one active timer; if this method is called while there
+	 * is already an active timer, then the new timer callback should replace
+	 * the previous one. In particular, passing a callback pointer value of 0
+	 * is legal and can be used to clear the current timer callback.
 	 * @see Common::Timer
+	 *
+	 * @param callback	pointer to the callback. May be 0 to reset the timer
+	 * @param interval	the intervall (in milliseconds) between invocations
+	 *                  of the callback
 	 */
-	virtual void set_timer(TimerProc callback, int interval) = 0;
+	virtual void setTimerCallback(TimerProc callback, int interval) = 0;
 
 	//@}
 

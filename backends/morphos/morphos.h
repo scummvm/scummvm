@@ -85,7 +85,7 @@ class OSystem_MorphOS : public OSystem
 		virtual void delay_msecs(uint msecs);
 
 		// Add a new callback timer
-		virtual void set_timer(TimerProc callback, int timer);
+		virtual void setTimerCallback(TimerProc callback, int timer);
 
 		// Mutex handling
 		virtual MutexRef createMutex();

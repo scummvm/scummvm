@@ -123,7 +123,7 @@ public:
 	uint32 property(int param, Property *value);
 
 	// Add a callback timer
-	void set_timer(TimerProc callback, int interval);
+	void setTimerCallback(TimerProc callback, int interval);
 
 	// Mutex handling
 	MutexRef createMutex();
@@ -1033,7 +1033,7 @@ bool OSystem_X11::poll_event(Event *scumm_event)
 	return false;
 }
 
-void OSystem_X11::set_timer(TimerProc callback, int interval)
+void OSystem_X11::setTimerCallback(TimerProc callback, int interval)
 {
 	if (callback != NULL) {
 		_timer_duration = interval;

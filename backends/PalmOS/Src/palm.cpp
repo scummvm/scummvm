@@ -739,7 +739,7 @@ void OSystem_PALMOS::delay_msecs(uint msecs) {
 	} while (current < last);
 }
 
-void OSystem_PALMOS::set_timer(TimerProc callback, int timer) {
+void OSystem_PALMOS::setTimerCallback(TimerProc callback, int timer) {
 	if (callback != NULL) {
 		_timer.duration = timer;
 		_timer.nextExpiry = get_msecs() + timer;

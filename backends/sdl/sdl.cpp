@@ -122,7 +122,7 @@ void OSystem_SDL::delay_msecs(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-void OSystem_SDL::set_timer(TimerProc callback, int timer) {
+void OSystem_SDL::setTimerCallback(TimerProc callback, int timer) {
 	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
 }
 

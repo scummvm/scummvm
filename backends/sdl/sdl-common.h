@@ -102,7 +102,7 @@ public:
 
 
 	// Add a callback timer
-	void set_timer(TimerProc callback, int timer);
+	void setTimerCallback(TimerProc callback, int timer);
 
 	// Mutex handling
 	MutexRef createMutex();

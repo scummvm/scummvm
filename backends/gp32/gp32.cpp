@@ -1069,7 +1069,7 @@ void OSystem_GP32::stop_cdrom() { }
 void OSystem_GP32::update_cdrom() { }
 
 // Add a new callback timer
-void OSystem_GP32::set_timer(TimerProc callback, int timer) { }
+void OSystem_GP32::setTimerCallback(TimerProc callback, int timer) { }
 
 // Mutex handling
 OSystem::MutexRef OSystem_GP32::createMutex() {

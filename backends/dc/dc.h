@@ -135,7 +135,7 @@ class OSystem_Dreamcast : public OSystem {
   void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 
   // Add a callback timer
-  void set_timer(TimerProc callback, int timer);
+  void setTimerCallback(TimerProc callback, int timer);
 
   // Mutex handling
   MutexRef createMutex();

@@ -322,9 +322,9 @@ void OSystem_MorphOS::delay_msecs(uint msecs)
    TimeDelay(UNIT_MICROHZ, 0, msecs*1000);
 }
 
-void OSystem_MorphOS::set_timer(TimerProc callback, int timer)
+void OSystem_MorphOS::setTimerCallback(TimerProc callback, int timer)
 {
-	warning("set_timer() unexpectedly called");
+	warning("setTimerCallback() unexpectedly called");
 }
 
 OSystem::MutexRef OSystem_MorphOS::createMutex()
