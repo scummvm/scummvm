@@ -40,6 +40,9 @@ Sound::~Sound() {
 }
 
 Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
+	if (!mixer->isReady())
+		return new SilentSound(mixer, vm);
+	
 	switch(compression) {
 		case COMPRESSION_NONE:
 				return new SBSound(mixer, vm);
