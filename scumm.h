@@ -1194,6 +1194,7 @@ struct Scumm {
 	int getOwner(int obj);
 	void putOwner(int obj, int owner);
 	int getObjectRoom(int obj);
+	void SamInventoryHack(int obj);	// FIXME: Sam and Max hack
 
 	void main();
 
