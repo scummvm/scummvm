@@ -21,7 +21,7 @@ AR = sh-elf-ar cru
 RANLIB = sh-elf-ranlib
 
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
-	label.o vmsave.o dc-fs.o
+	label.o vmsave.o backends/fs/posix/posix-fs.o
 
 include ../../Makefile.common
 

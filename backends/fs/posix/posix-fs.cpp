@@ -18,7 +18,9 @@
  * $Header$
  */
 
-#if defined(UNIX) || defined (__GP32__) //ph0x
+#if defined(UNIX) || defined(__DC__) || defined (__GP32__) //ph0x
+
+#include "stdafx.h"
 
 #include "../fs.h"
 
@@ -27,7 +29,9 @@
 #endif
 #include <sys/param.h>
 #include <sys/stat.h>
+#ifndef __DC__
 #include <dirent.h>
+#endif
 #include <stdio.h>
 #include <unistd.h>
 
@@ -80,7 +84,7 @@ FilesystemNode *FilesystemNode::getRoot() {
 }
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
-#if 1
+#ifndef __DC__
 	char buf[MAXPATHLEN];
 	getcwd(buf, MAXPATHLEN);
 	
@@ -134,9 +138,13 @@ FSList *POSIXFilesystemNode::listDir(ListMode mode) const {
 		entry._path = _path;
 		entry._path += dp->d_name;
 
+#ifdef __DC__
+		entry._isDirectory = dp->d_size < 0;
+#else
 		if (stat(entry._path.c_str(), &st))
 			continue;
 		entry._isDirectory = S_ISDIR(st.st_mode);
+#endif
 
 		// Honor the chosen mode
 		if ((mode == kListFilesOnly && entry._isDirectory) ||
