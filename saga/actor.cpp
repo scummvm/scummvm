@@ -942,7 +942,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 	bool extraEndNode;
 
 	actor = getActor(actorId);
-
+	
 	if (actor == _protagonist) {
 		_vm->_scene->setDoorState(2, 0xff);
 		_vm->_scene->setDoorState(3, 0);
@@ -950,7 +950,8 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 		_vm->_scene->setDoorState(2, 0);
 		_vm->_scene->setDoorState(3, 0xff);
 	}
-
+	if (actorId == 2002)
+		debug("eah");
 	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
 		//todo: it
 	} else {
@@ -1417,7 +1418,7 @@ void Actor::setActorPath(ActorData * actor, const Point &fromPoint, const Point 
 	removePathPoints();
 
 	_pathNodeIndex++;
-	last = min(_pathNodeIndex, PATH_NODE_MAX);
+	last = MIN(_pathNodeIndex, PATH_NODE_MAX);
 	for (i = 0, node = _pathNodeList; i < last; i++, node++) {
 		actor->addWalkPath(node->x, node->y);
 	}
@@ -1428,13 +1429,12 @@ void Actor::pathToNode() {
 	Point point1, point2, delta;
 	int direction;
 	int i;
-	WORD 	nodeindex = 0;
 	Point *point;
 	PathNode *nodeList;
 
 	_pathNodeIndex = 0;
 	point= &_pathList[_pathListIndex];	
-	direction = 0,
+	direction = 0;
 
 	_pathNodeList->x = point->x;
 	_pathNodeList->y = point->y;
