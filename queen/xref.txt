@@ -332,11 +332,6 @@ sfxplay()					Sound::playSfx()
 -
 song[]						Sound::_song[]
 tunelist[]					Sound::_tune[]
-lastmerge					Sound::_lastMerge
-altmrgpri					Sound::_altMrgPri
-oldsn						Sound::_previousSongNum
-LASTSONG					Sound::_previousSong
-CURRSONG					Sound::_currentSong
 SFXNAME						Sound::_sfxName
 VOLUME
 

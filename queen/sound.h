@@ -58,21 +58,22 @@ public:
 	void playSfx(uint16 sfx, bool isSpeech);
 	void playSfx(const char *base, bool isSpeech);
 	void playSong(int16 songNum);
+	void playLastSong() 		{ playSong(_lastOverride); }
 	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
 	
-	bool sfxOn()			{ return _sfxToggle; }
+	bool sfxOn() const		{ return _sfxToggle; }
 	void sfxToggle(bool val)	{ _sfxToggle = val; }
 	void toggleSfx()		{ _sfxToggle ^= true; }
 
-	bool speechOn()			{ return _speechToggle; }
+	bool speechOn()	const		{ return _speechToggle; }
 	void speechToggle(bool val)	{ _speechToggle = val; }
 	void toggleSpeech()		{ _speechToggle ^= true; }
 	
-	bool musicOn()			{ return _musicToggle; }
+	bool musicOn() const		{ return _musicToggle; }
 	void musicToggle(bool val)	{ _musicToggle = val; }
 	void toggleMusic()		{ _musicToggle ^= true; }
 
-	int16 lastOverride()		{ return _lastOverride; }
+	int16 lastOverride() const	{ return _lastOverride; }
 
 	void saveState(byte *&ptr);
 	void loadState(uint32 ver, byte *&ptr);
@@ -95,11 +96,6 @@ protected:
 	bool _musicToggle;
 	
 	int16 _lastOverride;
-	int16 _lastMerge;
-	int16 _altMrgPri;
-	int16 _currentSong;
-	int16 _previousSong;
-	int16 _previousSongNum;
 	PlayingSoundHandle _sfxHandle;
 	PlayingSoundHandle _speechHandle;
 };

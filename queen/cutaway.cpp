@@ -66,7 +66,7 @@ void Cutaway::load(const char *filename) {
 	ptr = _fileData = _vm->resource()->loadFile(filename, 20);
 
 	if (0 == scumm_stricmp(filename, "comic.cut"))
-		/* XXX _songBeforeComic = CURRSONG */; 
+		_songBeforeComic = _vm->sound()->lastOverride(); 
 
 	strcpy(_basename, filename);
 	_basename[strlen(_basename)-4] = '\0';
