@@ -1210,10 +1210,11 @@ void LoadedCostume::loadCostume(int id) {
 		error("Costume %d is invalid", id);
 	}
 
-	if (_vm->_features & GF_OLD_BUNDLE)
-		_dataptr = _ptr + *(_ptr + 11);
-	else
+	if (_vm->_features & GF_OLD_BUNDLE) {
+		_dataptr = _ptr + _ptr[9];
+	}	else {
 		_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
+	}
 }
 
 byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
@@ -1226,7 +1227,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	i = cost.curpos[limb] & 0x7FFF;
 
 	if (_vm->_features & GF_OLD_BUNDLE)
-		_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + limb * 2 + 13);
+		_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + limb * 2 + 11);
 	else
 		_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + limb * 2 + 10);
 
@@ -1261,18 +1262,12 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	anim = cost_frameToAnim(a, frame);
 
 	p = lc._ptr;
-	if (_features & GF_OLD_BUNDLE) {
-		if (anim > p[8]) {
-			return;
-		}
-	} else {
-		if (anim > p[6]) {
-			return;
-		}
+	if (anim > p[6]) {
+		return;
 	}
 
 	if (_features & GF_OLD_BUNDLE) {
-		r = p + READ_LE_UINT16(p + anim * 2 + 45);
+		r = p + READ_LE_UINT16(p + anim * 2 + 43);
 	} else {
 		r = p + READ_LE_UINT16(p + anim * 2 + lc._numColors + 42);
 	}
@@ -1282,7 +1277,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	}
 
 	if (_features & GF_OLD_BUNDLE)
-		dataptr = p + *(p + 11);
+		dataptr = p + p[9];
 	else if (_features & GF_OLD256)
 		dataptr = p + *(p + lc._numColors + 8);
 	else
