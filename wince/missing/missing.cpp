@@ -366,3 +366,12 @@ char* getenv(char* name)
 		return "";
 }
 
+void *bsearch(const void *key, const void *base, size_t nmemb, 
+			  size_t size, int (*compar)(const void *, const void *)) {
+	size_t i;
+
+	for (i=0; i<nmemb; i++) 
+		if (compar(key, (void*)((size_t)base + size * i)) == 0)
+			return (void*)((size_t)base + size * i);
+	return NULL;
+}

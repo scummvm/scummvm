@@ -23,6 +23,11 @@
 #include "scumm.h"
 #include "sound.h"
 
+#ifdef _WIN32_WCE
+extern void *bsearch(const void *, const void *, size_t, 
+			  size_t, int (*x)(const void *, const void *));
+#endif
+
 void Scumm::addSoundToQueue(int sound) {
 	if(!(_features & GF_AFTER_V7)) {
 		_vars[VAR_LAST_SOUND] = sound;
@@ -161,10 +166,11 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode) {
 
 #ifdef COMPRESSED_SOUND_FILE
 	if (offset_table != NULL) {
-	  OffsetTable *result, key;
+	  OffsetTable *result = NULL, key;
 	  
 	  key.org_offset = offset;
 	  result = (OffsetTable *) bsearch(&key, offset_table, num_sound_effects, sizeof(OffsetTable), compar);
+
 	  if (result == NULL) {
 	    warning("startTalkSound: did not find sound at offset %d !", offset);
 	    return;
@@ -358,7 +364,7 @@ void Scumm::startSfxSound(void *file, int file_size) {
 	char ident[8];
 	int block_type;
 	byte work[8];
-	uint size,i;
+	uint size = 0,i;
 	int rate,comp;
 	byte *data;
 
@@ -543,6 +549,12 @@ void Scumm::playSfxSound_MP3(void *sound, uint32 size) {
   mc->_sfx_sound = sound;
 
   mad_stream_init(&mc->sound_data.mp3.stream);
+
+#ifdef _WIN32_WCE  
+  // 11 kHz on WinCE
+  mad_stream_options((mad_stream*)&mc->sound_data.mp3.stream, MAD_OPTION_HALFSAMPLERATE);
+#endif
+  
   mad_frame_init(&mc->sound_data.mp3.frame);
   mad_synth_init(&mc->sound_data.mp3.synth);
   mc->sound_data.mp3.position = 0;
