@@ -304,6 +304,7 @@ arguments - see the next section.
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
 
+  -c, --config=CONFIG      Use alternate configuration file
   -p, --path=PATH          Path to where the game is installed
   -x, --save-slot[=NUM]    Save game slot to load (default: autosave)
   -f, --fullscreen         Force full-screen mode
@@ -314,7 +315,7 @@ arguments - see the next section.
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
   -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)
   -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)
-  -r, --voice-volume=NUM   Set the voice volume, 0-255 (default: 192)
+  -r, --speech-volume=NUM   Set the voice volume, 0-255 (default: 192)
   -n, --subtitles          Enable subtitles (use with games that have voice)
   -b, --boot-param=NUM     Pass number to the boot script (boot param)
   -d, --debuglevel=NUM     Set debug verbosity level
