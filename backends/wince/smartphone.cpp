@@ -30,7 +30,7 @@
 
 #define IDM_SMARTFON_MAP_BASE 99200
 
-#define SMARTFON_VERSION "Smartphone build 0.4.0"
+#define SMARTFON_VERSION "Smartphone build 0.4.2cvs"
 
 #define SCAN_LOCATION "\\Storage Card"
 

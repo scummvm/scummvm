@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2003-05-16
-Release version: 0.4.1cvs
+Last updated:    2003-05-25
+Release version: 0.4.2cvs
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -336,8 +336,8 @@ Command Line Options:
         -b<num>       - Start in room <num>.
         -d[<num>]     - Set debug verbosity to <num>
         -u            - Dump scripts if a directory called 'dumps' exists in current directory
-		--multi-midi  - enable combination Adlib and native MIDI
-		--native-mt32 - true Roland MT-32 (disable GM emulation)
+        --multi-midi  - enable combination Adlib and native MIDI
+        --native-mt32 - true Roland MT-32 (disable GM emulation)
 
 
 Hot Keys:
@@ -679,7 +679,7 @@ Credits:
         Nicolas Bacca        - Port:   PocketPC/WinCE port
         Marcus Comstedt      - Port:   DreamCast
         Ruediger Hanke       - Port:   MorphOS
-	Travis Howell	     - Port:   Win32, Engine: Simon
+        Travis Howell        - Port:   Win32, Engine: Simon
         Peter Moraliyski     - Port:   GP32
         Lionel Ulmer         - Port:   X11
 
