@@ -52,7 +52,7 @@ OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
 }
 
 OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
-	OSystem_SDL_Common *syst = OSystem_SDL_Common::create();
+	OSystem_SDL_Common *syst = OSystem_SDL_Common::create_intern();
 
 	syst->init_intern(gfx_mode, full_screen);
 

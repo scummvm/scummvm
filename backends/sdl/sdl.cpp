@@ -48,7 +48,7 @@ protected:
 	void hotswap_gfx_mode();
 };
 
-OSystem *OSystem_SDL_Common::create_intern() {
+OSystem_SDL_Common *OSystem_SDL_Common::create_intern() {
 	return new OSystem_SDL();
 }
 

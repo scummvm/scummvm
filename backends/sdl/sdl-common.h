@@ -130,7 +130,7 @@ protected:
 	OSystem_SDL_Common();
 	virtual ~OSystem_SDL_Common();
 
-	static OSystem *create_intern();
+	static OSystem_SDL_Common *create_intern();
 
 	void init_intern(int gfx_mode, bool full_screen);
 
@@ -226,8 +226,6 @@ protected:
 	void setup_icon();
 	void kbd_mouse();
 	void init_joystick() { _joystick = SDL_JoystickOpen(0); }
-
-	static OSystem_SDL_Common *create();
 };
 
 // Auxillary class to (un)lock a mutex on the stack
