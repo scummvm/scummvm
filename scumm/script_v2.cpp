@@ -873,26 +873,37 @@ void Scumm_v2::o2_doSentence() {
 }
 
 void Scumm_v2::o2_drawSentence() {
+	ScummVM::Rect sentenceline;
+
+	static char sentence[80];
 	int slot = getVerbSlot(_scummVars[VAR_SENTENCE_VERB],0);
-	byte *verb_bit = getResourceAddress(rtVerb, slot);
-	byte *name_bit, *name2_bit;
+
+	strcpy(sentence, (char*)getResourceAddress(rtVerb, slot));
 
 	if (_scummVars[27] > 0) {
-		name_bit = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT1]);
-	} else {
-		name_bit = NULL;
-//(byte*)strdup("");
+		strcat(sentence, " ");
+		strcat(sentence, (char*)getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT1]));
 	}
 
 	if (_scummVars[28] > 0) {
-		name2_bit = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT2]);
-	} else {
-		name2_bit = NULL;
-//(byte*)strdup("");
+		strcat(sentence, " ");
+		strcat(sentence, (char*)getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT2]));
 	}
 
-	warning("TODO o2_drawSentence(%s, %s, %s)", 
-		verb_bit, name_bit, name2_bit);
+	_string[2].charset = 1;
+	_string[2].ypos = virtscr[2].topline;
+	_string[2].xpos = 0;
+	_string[2].color = 5;
+
+	_messagePtr = (byte*)sentence;
+
+	sentenceline.top = virtscr[2].topline;
+	sentenceline.bottom = virtscr[2].topline + 8;
+	sentenceline.left = 0;
+	sentenceline.right = 200;
+	restoreBG(sentenceline);
+
+	drawString(2);
 }
 
 void Scumm_v2::o2_ifClassOfIs() {
@@ -1172,6 +1183,52 @@ void Scumm_v2::o2_pickupObject() {
 	putState(obj, getState(obj) | 0xA);
 	clearDrawObjectQueue();
 	runHook(1);
+
+	// FIXME: Ender Quick Hack to allow further Zak testing.
+	// In reality, we should probably stuff the inventory into verbs
+	// as later games do. Easier hotspot tracking :)
+{
+        int i, items = 0, curInventoryCount = 0;
+	bool alternate = false;
+
+        if (curInventoryCount > _maxInventoryItems)
+                curInventoryCount = _maxInventoryItems;
+
+        for (i = curInventoryCount + 1; i <= _maxInventoryItems; i++) {
+                if (_inventory[i] != 0) {
+			_string[1].charset = 1;
+			_string[1].ypos = virtscr[2].topline + 34 + (8*(items / 2));
+			_string[1].color = 5;
+			_messagePtr = getObjOrActorName(_inventory[i]);
+
+			if (alternate)
+				_string[1].xpos = 200;
+			else
+				_string[1].xpos = 0;
+			drawString(1);
+
+			items++;
+			alternate = !alternate;
+		}
+		if (items == 4)
+			break;
+        }
+
+	//if (curInventoryCount > 0) { // Draw Up Arrow
+		_string[1].xpos = 145;
+		_string[1].ypos = virtscr[2].topline + 32;
+		_messagePtr = (byte*)strdup("U");
+		drawString(1);
+	//}
+
+	//if (items == 4) {	// Draw Down Arrow
+		_string[1].xpos = 145;
+		_string[1].ypos = virtscr[2].topline + 47;
+		_messagePtr = (byte*)strdup("D");
+		drawString(1);
+	//}
+
+}
 }
 
 void Scumm_v2::o2_setObjectName() {
