@@ -235,7 +235,6 @@ void NewGui::saveState() {
 	_lastClick.count = 0;
 
 	_stateIsSaved = true;
-	_scaleEnable = true;
 }
 
 void NewGui::restoreState() {

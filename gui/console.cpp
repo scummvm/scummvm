@@ -186,6 +186,7 @@ void ConsoleDialog::handleTickle() {
 		} else if (_slideMode == kUpSlideMode && _y <= -_h) {
 			// End the slide
 			_slideMode = kNoSlideMode;
+			g_gui.enableScaling(true);
 			close();
 		} else
 			draw();
