@@ -28,7 +28,8 @@
 #define FREE_IF_NOT_0(ptr)	if (ptr != NULL) { free (ptr); ptr = 0; }
 #define REMOVE_INTRO	commandPtr = (uint32 *)zeroCommands; \
 			FREE_IF_NOT_0(_introTextSpace) \
-			FREE_IF_NOT_0(_introTextSave)
+			FREE_IF_NOT_0(_introTextSave) \
+            _mixer->stopAll();
 #define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); REMOVE_INTRO return; }
 #define WAIT_SEQUENCE while (_skyScreen->sequenceRunning()) { checkCommands(commandPtr); delay(50); CHECK_ESC }
 

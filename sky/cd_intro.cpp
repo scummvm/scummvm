@@ -195,7 +195,7 @@
 #define LOAD_NEW_VOICE(num)	( free (vocBuffer), vocBuffer = _skyDisk->loadFile(num, NULL), loadedVocSize = _skyDisk->_lastLoadedFileSize ) 
 #define LOAD_NEW_BG(num)	( free (bgVocBuffer), bgVocBuffer = _skyDisk->loadFile(num, NULL), bgVocSize = _skyDisk->_lastLoadedFileSize )
 #define WAIT_VOICE	while (_skySound->_voiceHandle != 0) { delay(50); CHECK_ESC }
-#define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); return; }
+#define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); _mixer->stopAll(); return; }
 #define WAIT_SEQUENCE while (_skyScreen->sequenceRunning()) { delay(50); CHECK_ESC }
 #define WAIT_RELATIVE(x)	( delay(20 * (x)) )
 
