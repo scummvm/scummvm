@@ -724,12 +724,8 @@ void Actor::turnToDirection(int newdir)
 	moving &= ~MF_TURN;
 
 	if (newdir != facing) {
-		moving = MF_TURN;
+		moving |= MF_TURN;
 		newDirection = newdir;
-
-		// FIXME - workaround for bug #558236
-		if (_vm->_gameId == GID_INDY4 && room == 39 && x == 617 && y == 125 && newdir == 180)
-			startAnimActor(standFrame);
 	}
 }
 
