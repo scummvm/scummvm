@@ -2787,9 +2787,6 @@ void Scumm_v6::o6_stampObject() {
 	int object, x, y, state;
 
 	state = pop();
-	if (state == 0) {
-		state = 1;
-	}
 	y = pop();
 	x = pop();
 	object = pop();
@@ -2806,10 +2803,16 @@ void Scumm_v6::o6_stampObject() {
 //		drawActor(object, mainBufferPtr, x_y, scale_x_y);
 		return;
 	}
+	
+	if (object == 0) {
+		state = 1;
+	}
 
-	warning("o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
-	setObjectState(object, state, x, y);
-	drawObject(getObjectIndex(object), 0);
+	if (x != -1) {
+		setObjectState(object, state, x, y);
+		drawObject(getObjectIndex(object), 0);
+		warning("o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
+	}
 }
 
 void Scumm_v6::o6_stopTalking() {
