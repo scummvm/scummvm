@@ -304,7 +304,7 @@ enum {
 
 SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 30, 18, 260, 162) {
-	const int x = 196;
+	const int x = _w - kButtonWidth - 8;
 
 	// The headline
 	addResText(0, 7, 260, 16, 1);
@@ -317,7 +317,7 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 	addButton(x, 100, queryResString(8), kQuitCmd, 'Q');	// Quit
 
 	// The save game list
-	_savegameList = new ListWidget(this, 8, 20, 182, 134);
+	_savegameList = new ListWidget(this, 8, 20, x - 14, 134);
 }
 
 void SaveLoadDialog::open() {
