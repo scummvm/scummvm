@@ -975,7 +975,10 @@ void Actor::drawActorCostume() {
 			cr._zbuf = (byte)_vm->gdi._numZBuffer;
 
 		cr._shadow_mode = shadow_mode;
-		cr._shadow_table = _vm->_shadowPalette;
+		if (_vm->_features & GF_SMALL_HEADER)
+			cr._shadow_table = NULL;
+		else
+			cr._shadow_table = _vm->_shadowPalette;
 
 		cr.setCostume(costume);
 		cr.setPalette(palette);

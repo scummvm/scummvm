@@ -806,6 +806,7 @@ public:
 	void clampCameraPos(ScummPoint *pt);
 
 	byte *getPalettePtr();
+	void setupEGAPalette();
 	void setPalette(int pal);
 	void setPaletteFromPtr(byte *ptr);
 	void setPaletteFromRes();

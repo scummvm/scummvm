@@ -1672,8 +1672,7 @@ void Scumm_v5::o5_roomOps() {
 //			printf("copyPalColor(%d, %d)\n", a, b);
 //			copyPalColor(a, b);
 			_shadowPalette[b] = a;
-			if (!(_features & GF_16COLOR))
-				setDirtyColors(b, b);
+			setDirtyColors(b, b);
 		} else {
 			error("room-color is no longer a valid command");
 		}
@@ -1694,8 +1693,7 @@ void Scumm_v5::o5_roomOps() {
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
 			_shadowPalette[b] = a;
-			if (!(_features & GF_16COLOR))
-				setDirtyColors(b, b);
+			setDirtyColors(b, b);
 		} else {
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);

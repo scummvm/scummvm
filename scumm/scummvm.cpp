@@ -544,13 +544,9 @@ void Scumm::scummInit() {
 	}
 
 	if (_features & GF_16COLOR) {
-		byte pal16[16 * 4] = {
-			0,   0,  0,  0,   0,   0,  168, 0,   0,   168, 0,  0,   0,   168, 168, 0,
-			168, 0,  0,  0,   168, 0,  168, 0,   168, 84,  0,  0,   168, 168, 168, 0,
-			84,  84, 84, 0,   84,  84, 168, 0,   0,   252, 0,  0,   0,   252, 252, 0,
-			252, 84, 84, 0,   252, 0,  252, 0,   252, 252, 0,  0,   252, 252, 252, 0
-		};
-		_system->set_palette(pal16, 0, 16);
+		for (i = 0; i < 16; i++)
+			_shadowPalette[i] = i;
+		setupEGAPalette();
 	}
 	
 	if (_features & GF_AFTER_V3)
@@ -981,8 +977,10 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 	}
 
 	if (!(_features & GF_AFTER_V7)) {
-		for (i = 0; i < 0x100; i++)
+		for (i = 0; i < 256; i++)
 			_shadowPalette[i] = i;
+		if (_features & GF_SMALL_HEADER)
+			setDirtyColors(0, 255);
 	}
 
 	clearDrawObjectQueue();

@@ -385,9 +385,8 @@ void CostumeRenderer::proc6() {
 		do {
 			if (color && y < scrheight) {
 				pcolor = _palette[color];
-				if (pcolor == 13) {
+				if (pcolor == 13 && _shadow_table)
 					pcolor = _shadow_table[*dst];
-				}
 				*dst = pcolor;
 			}
 
@@ -434,7 +433,7 @@ void CostumeRenderer::proc5() {
 		do {
 			if (color && y < scrheight && !(*mask & maskbit)) {
 				pcolor = _palette[color];
-				if (pcolor == 13)
+				if (pcolor == 13 && _shadow_table)
 					pcolor = _shadow_table[*dst];
 				*dst = pcolor;
 			}
@@ -496,7 +495,7 @@ void CostumeRenderer::proc4() {
 		do {
 			if (color && y < scrheight && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 				pcolor = _palette[color];
-				if (pcolor == 13)
+				if (pcolor == 13 && _shadow_table)
 					pcolor = _shadow_table[*dst];
 				*dst = pcolor;
 			}
@@ -559,7 +558,7 @@ void CostumeRenderer::proc3() {
 			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
 				if (color && y < _outheight && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 					pcolor = _palette[color];
-					if (pcolor == 13)
+					if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
@@ -620,7 +619,7 @@ void CostumeRenderer::proc2() {
 			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
 				if (color && y < _outheight && !(*mask & maskbit)) {
 					pcolor = _palette[color];
-					if (pcolor == 13)
+					if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
@@ -681,7 +680,7 @@ void CostumeRenderer::proc1() {
 			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
 				if (color && y < _outheight) {
 					pcolor = _palette[color];
-					if (pcolor == 13)
+					if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
@@ -737,9 +736,8 @@ void CostumeRenderer::proc6_ami() {
 		do {
 			if (color && x >= 0 && x < _vm->_realWidth) {
 				pcolor = _palette[color];
-/*				  if (pcolor == 13) {
-					pcolor = _shadow_table[*dst];
-				}*/
+/*				  if (pcolor == 13 && _shadow_table)
+					pcolor = _shadow_table[*dst];*/
 				*dst = pcolor;
 			}
 
@@ -786,7 +784,7 @@ void CostumeRenderer::proc5_ami() {
 		do {
 			if (color && x >=0 && x < _vm->_realWidth && !(*mask & maskbit)) {
 				pcolor = _palette[color];
-/*				  if (pcolor == 13)
+/*				  if (pcolor == 13 && _shadow_table)
 					pcolor = _shadow_table[*dst];*/
 				*dst = pcolor;
 			}
@@ -851,7 +849,7 @@ void CostumeRenderer::proc4_ami() {
 		do {
 			if (color && x >= 0 && x < _vm->_realWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 				pcolor = _palette[color];
-/*				  if (pcolor == 13)
+/*				  if (pcolor == 13 && _shadow_table)
 					pcolor = _shadow_table[*dst];*/
 				*dst = pcolor;
 			}
@@ -914,7 +912,7 @@ void CostumeRenderer::proc3_ami() {
 			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
 				if (color && _xpos >= 0 && _xpos < _vm->_realWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 					pcolor = _palette[color];
-/*					  if (pcolor == 13)
+/*					  if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];*/
 					*dst = pcolor;
 				}
@@ -978,7 +976,7 @@ void CostumeRenderer::proc2_ami() {
 			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
 				if (color && _xpos >= 0 && _xpos < _vm->_realWidth && !(*mask & maskbit)) {
 					pcolor = _palette[color];
-/*					  if (pcolor == 13)
+/*					  if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];*/
 					*dst = pcolor;
 				}
@@ -1046,7 +1044,7 @@ void CostumeRenderer::proc1_ami() {
 			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
 				if (color && _xpos >= 0 && _xpos < _vm->_realWidth) {
 					pcolor = _palette[color];
-/*					  if (pcolor == 13)
+/*					  if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];*/
 					*dst = pcolor;
 				}

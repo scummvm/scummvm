@@ -174,8 +174,15 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	initScreens(0, sb, _realWidth, sh);
 
 	_completeScreenRedraw = true;
-	
-	if (!(_features & GF_16COLOR))
+
+	if (_features & GF_16COLOR) {
+		// HACK: There was a time when ScummVM didn't store the
+		// palette in _currentPalette for 16-color games. To avoid
+		// breaking savegame compatibility, always set up the default
+		// palette after loading a game.
+		setupEGAPalette();
+		setDirtyColors(0, 15);
+	} else
 		setDirtyColors(0, 255);
 
 	_lastCodePtr = NULL;

@@ -1085,8 +1085,7 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 				}
 				const register byte colors[2] = { color >> 4, color & 0xf };
 				for(z = 0; z < run; z++) {
-
-					*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[ colors[z&1] ];
+					*(dst + y * _vm->_realWidth + x) = colors[z&1];
 
 					y++;
 					if(y >= height) {
@@ -1116,7 +1115,7 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 			}
 			
 			for(z = 0; z < run; z++) {
-				*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[color & 0xf];
+				*(dst + y * _vm->_realWidth + x) = color & 0xf;
 
 				y++;
 				if(y >= height) {
@@ -1222,7 +1221,7 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 				if (run == 0) {
 					run = *src++;
 				}
-				color = _vm->_shadowPalette[data & 0x0f];
+				color = data & 0x0f;
 			}
 			if (!dither) {
 				*ptr_dither_table = color;
@@ -1247,7 +1246,7 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 				if (run == 0) {
 					run = *src++;
 				}
-				color = _vm->_shadowPalette[data & 0x0f];
+				color = data & 0x0f;
 			}
 			if (!dither) {
 				*ptr_dither_table = color;
@@ -2664,6 +2663,25 @@ void Scumm::setShake(int mode) {
 #pragma mark -
 #pragma mark --- Palette ---
 #pragma mark -
+
+void Scumm::setupEGAPalette() {
+	setPalColor( 0,   0,   0,   0);
+	setPalColor( 1,   0,   0, 168);
+	setPalColor( 2,   0, 168,   0);
+	setPalColor( 3,   0, 168, 168);
+	setPalColor( 4, 168,   0,   0);
+	setPalColor( 5, 168,   0, 168);
+	setPalColor( 6, 168,  84,   0);
+	setPalColor( 7, 168, 168, 168);
+	setPalColor( 8,  84,  84,  84);
+	setPalColor( 9,  84,  84, 168);
+	setPalColor(10,   0, 252,   0);
+	setPalColor(11,   0, 252, 252);
+	setPalColor(12, 252,  84,  84);
+	setPalColor(13, 252,   0, 252);
+	setPalColor(14, 252, 252,   0);
+	setPalColor(15, 252, 252, 252);
+}
 
 void Scumm::setPaletteFromPtr(byte *ptr) {
 	int i;
