@@ -44,22 +44,26 @@ struct ColorMasks {
 
 template<>
 struct ColorMasks<565> {
-	static const int highBits = 0xF7DEF7DE;
-	static const int lowBits = 0x08210821;
-	static const int qhighBits = 0xE79CE79C;
-	static const int qlowBits = 0x18631863;
-	static const int redblueMask = 0xF81F;
-	static const int greenMask = 0x07E0;
+	enum {
+		highBits = 0xF7DEF7DE,
+		lowBits = 0x08210821,
+		qhighBits = 0xE79CE79C,
+		qlowBits = 0x18631863,
+		redblueMask = 0xF81F,
+		greenMask = 0x07E0
+	};
 };
 
 template<>
 struct ColorMasks<555> {
-	static const int highBits = 0x04210421;
-	static const int lowBits = 0x04210421;
-	static const int qhighBits = 0x739C739C;
-	static const int qlowBits = 0x0C630C63;
-	static const int redblueMask = 0x7C1F;
-	static const int greenMask = 0x03E0;
+	enum {
+		highBits = 0x7BDE7BDE,
+		lowBits = 0x04210421,
+		qhighBits = 0x739C739C,
+		qlowBits = 0x0C630C63,
+		redblueMask = 0x7C1F,
+		greenMask = 0x03E0
+	};
 };
 
 #define highBits	ColorMasks<bitFormat>::highBits
