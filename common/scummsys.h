@@ -315,12 +315,12 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 
-	#define PROTO_MKID(a) \
-			((a >> 24) & 0x000000FF) | \
-			((a >>  8) & 0x0000FF00) | \
-			((a <<  8) & 0x00FF0000) | \
-			((a << 24) & 0xFF000000)
-	#define PROTO_MKID_BE(a) (a & 0xFFFFFFFFUL)
+	#define PROTO_MKID(a) ((uint32) \
+			(((a) >> 24) & 0x000000FF) | \
+			(((a) >>  8) & 0x0000FF00) | \
+			(((a) <<  8) & 0x00FF0000) | \
+			(((a) << 24) & 0xFF000000))
+	#define PROTO_MKID_BE(a) ((uint32)(a))
 
 	#if defined(INVERSE_MKID)
 	#  define MKID(a) PROTO_MKID_BE(a)
@@ -386,7 +386,8 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 
 #if defined(SCUMM_NEED_ALIGNMENT) || defined(SCUMM_LITTLE_ENDIAN)
 	FORCEINLINE uint16 READ_BE_UINT16(const void *ptr) {
-		return (((const byte *)ptr)[0] << 8)|((const byte *)ptr)[1];
+		const byte *b = (const byte *)ptr;
+		return (b[0] << 8) + b[1];
 	}
 	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
 		const byte *b = (const byte*)ptr;
