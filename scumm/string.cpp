@@ -309,7 +309,7 @@ void ScummEngine::CHARSET_1() {
 
 	// FIXME: Remove this and the next two lines eventually!
 	if (_charset->_hasMask != (_charset->_str.left != -1))
-		warning("_hasMask mismatch (case A %d) - please report to Fingolfin", _charset->_hasMask);
+		warning("_hasMask mismatch (case A %d) - please report to Fingolfin if you notice any text/graphics glitches related to this!", _charset->_hasMask);
 }
 
 
@@ -413,10 +413,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				// A better name for _blitAlso might be _imprintOnBackground
 
 				if (_string[a].no_talk_anim == false) {
-					// Sam and Max seems to blitAlso 32 a lot, which does
-					// nothing anyway. So just hide that one for brevity.
-					if (c != 32) 
-						warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
+					//warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
 					_charset->_blitAlso = true;
 				}
 			}
@@ -440,7 +437,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	if (_version >= 7) {
 		// FIXME: Remove this and the next two lines eventually!
 		if (!_charset->_hasMask)
-			warning("_hasMask mismatch (case B %d) - please report to Fingolfin", _charset->_hasMask);
+			warning("_hasMask mismatch (case B %d) - please report to Fingolfin if you notice any text/graphics glitches related to this!", _charset->_hasMask);
 	}
 }
 
