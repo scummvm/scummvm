@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH SCUMMVM 6 "April 24, 2002"
+.TH SCUMMVM 6 "June 17, 2003"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,82 +16,162 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-scummvm \- SCUMM graphic adventure game interpreter
+scummvm \- graphic adventure game interpreter
 .SH SYNOPSIS
 .B scummvm
-.RI [ options ] " game" ...
+[\fIoptions\fR] [\fIgame\fR]
 .SH DESCRIPTION
-\fBscummvm\fP is an interpreter that will play graphic adventure games written
-for LucasArts' SCUMM virtual machine. Some other adventure games using similar
-engines may be supported - for example \fBSimon The Sorcerer\fP
-.P
-The following games have been reported to work:
-.P
-\fBLoom\fP (CD Talkie)
-.br
-\fBMonkey Island I\fP (CD version)
-.br
-\fBMonkey Island II\fP
-.br
-\fBIndiana Jones and the Fate of Atlantis\fP
-.br
-\fBDay of the Tentacle\fP
-.br
-\fBSam & Max Hit the Road\fP
+.PP
+\fBscummvm\fP is an interpreter that will play graphic adventure games 
+written for LucasArts' SCUMM virtual machine. Some other adventure
+games using similar engines may be supported - for example
+\fBSimon The Sorcerer\fP
+.
 .P
 Please be aware that the engine may contains bugs and non-implemented features
-that may make it impossible to finish the game. Check the website for the
-latest compatability information.
-.SH OPTIONS
-The interpreter expects to find the game's data files in the current directory.
+that may make it impossible to finish the game. Check 
+.B http://www.scummvm.org/compatibility.php
+for the latest compatability information.
+.SS OPTIONS
+If you don't pass ScummVM options it will start the graphical game launcher.
+The interpreter expects to find the game's data files in the current directory,
+if a path isn't specified in a config file.
 You may supply a different path using -p on the command line. The name of the
 game is then supplied on the command line.
-.P
 .TP
-.B simon1win or simon1dos
-Simon the Sorcerer
+.B \-a
+Specify game is amiga version.
 .TP
-.B loomcd
-Loom CD Talkie
+.BI \-b <param>
+Specify parameter to pass to first game script default is 0.
 .TP
-.B monkey or monkey1
-Monkey Island I
+.BI \-c <num>
+Use cdrom number \fI<num>\fP for cd audio.
 .TP
-.B monkey2
-Monkey Island II
+.BI \-d [num]
+Set debug level (default level 1)
 .TP
-.B atlantis
-Indiana Jones and the Fate of Atlantis
+.BI \-e <mode>
+Specify music output where \fI<mode>\fP can be one of:
+.br
+.br
+\fBadlib\fP      Uses internal Adlib Emulation (default)
+.br
+\fBwindows\fP    Windows MIDI. Uses built-in sequencer.
+.br
+\fBseq\fP        Uses /dev/sequencer for MIDI, *nix users.
+.br
+\fBqt\fP         Quicktime sound, for Macintosh users.
+.br
+\fBcore\fP       CoreAudio sound, for MacOS X users.
+.br
+\fBamidi\fP      Uses the MorphOS MIDI system, for MorphOS users
+.br
+\fBalsa\fP       Output using ALSA sequencer device.
+.br
+\fBnull\fP       Null output. Don't play any music.
 .TP
-.B playfate
-Indiana Jones and the Fate of Atlantis (demo)
-.TP
-.B tentacle
-Day of the Tentacle
-.TP
-.B dottdemo
-Day of the Tentacle (demo)
-.TP
-.B samnmax
-Sam & Max Hit the Road
-.TP
-.B snmdemo
-Sam & Max Hit the Road (demo)
-.P
-Additionally, the following options are supported.
-.TP
-.BI \-b <room>
-Starts the game in the specified room. The default is 0.
-.TP
-.B \-f
+.BI \-f
 Runs in full-screen mode.
 .TP
+.BI \-g <mode>
+Graphics Filter. Note that resolutions listed assume the game was originally 320x200.
+\fI<mode>\fP can be one of:
+.br
+\fBnormal\fP     No filtering, original 320x200 resolution. Fastest.
+.br
+\fB2x\fP         No filtering, double screen/window size to 640x400
+.br
+\fB3x\fP         No filtering, triple screen/window size to 960x600
+.br
+\fB2xsai\fP      2xsai filtering, double screen/window size to 640x400
+.br
+\fBsuper2xsai\fP Enhanced 2xsai filtering. 640x400 screen/window size
+.br
+\fBsupereagle\fP Less blurry than 2xsai, but slower. Also 640x400
+.br
+\fBadvmame2x\fP  640x400 scaling. Doesn't rely on blurring like 2xSAI.
+.br
+\fBadvmame3x\fP  960x600 scaling. Doesn't rely on blurring like 2xSAI.
+.br
+\fBtv2x\fP       640x400 scaling. Horizontal scanlines.
+.br
+\fBdotmatrix\fP  640x400 scaling. Dot matrix effect.
+.br
+.TP
+.BI \-h
+Show options.
+.TP
+.BI \-l <file>
+Load config file \fI<file>\fP instead of default.
+.TP
+.B \-m <num>
+Set music volume to number \fI<num>\fP (0-255)
+.TP
+.BI \-\-multi\-midi
+Enable combination Adlib and native MIDI.
+.TP
+.B \-n
+No subtitles for speech
+.TP
+.BI \-\-native\-mt32
+True Roland MT-32 (disable GM emulation)
+.TP
+.BI \-o <num>
+Set master volume to number \fI<num>\fP (0-255)
+.TP
 .BI \-p <path>
-Set a different path to search for game data
+Specify the path to the game.
 .TP
-More options are available, see the README file for more information.
+.BI \-q <lang>
+Specify language where \fI<lang>\fP can be one of:
+.br
+\fBen\fP English (default)
+.br
+\fBde\fP German
+.br
+\fBfr\fP French
+.br
+\fBit\fP Italian
+.br
+\fBpt\fP Portuguese
+.br
+\fBes\fP Spanish
+.br
+\fBjp\fP Japanese
+.br
+\fBzh\fP Chinese
+.br
+\fBkr\fP Korean
+.br
+\fBhb\fP Hebrew
+.br
 .TP
-.SH RUNNING THE PROGRAM
+.BI \-s <num>
+set sfx volume to number num (0-255)
+.TP
+.BI \-t <num>
+Set music tempo (50-200, default 100)
+.TP
+.BI \-u
+Dump scripts if a dumps directory is in the current directory.
+.TP
+.BI \-v
+Show version info and exit.
+.TP
+.BI \-w [file]
+Write to config file [~/.scummvmrc]
+.TP
+.BI \-x [num]
+Load savegame slot number num (default: 0 - autosave)
+.TP
+.BI \-y <num>
+Set text speed (default: 60)
+.TP
+.BI \-z
+Display list of recognised games.
+
+.SH "INGAME KEYS"
 While the game is running, the following keys can be used (in addition to any
 keys used by the game):
 .TP
@@ -108,16 +188,129 @@ Save a game state.
 Quit the game.
 .TP
 .B Ctrl+F
-Run in fast mode (process frames as fast as possible).
+Run in fast mode (process frames faster).
+.TP
+.B Ctrl+G
+Run in REALLY fast mode
 .TP
 .B Ctrl+D
 Starts the debugger.
 .TP
 .B Ctrl+S
 Shows memory consumption.
+.P
+
+.SH SUPPORTED GAMES
+.P
+The following games should be finishable with ScummVM, for a complete list
+of all supported targets use the \fB\-z\fP option.
+
+.TP
+.B maniac
+Maniac Mansion (enhanced version)
+.TP
+.B zak
+Zak McKracken and the Alien Mindbenders (enhanced version)
+.TP
+.B indy3ega
+Indiana Jones and the Last Crusade (16 colour)
+.TP
+.B indy3
+Indiana Jones and the Last Crusade (256 colour)
+.TP
+.B zak256
+Zak McKracken and the Alien Mindbenders (256 colour)
+.TP
+.B loom
+Loom (16 colour)
+.TP
+.B loomcd
+Loom CD Talkie
+.TP
+.B monkeyega
+The Secret of Monkey Island (16 colour)
+.TP
+.B monkeyvga
+The Secret of Monkey Island (256 colour, disk version)
+.TP
+.B monkey/monkey1
+The Secret of Monkey Island (256 colour, cd version)
+.TP
+.B monkey2
+Monkey Island 2: LeChuck's revenge
+.TP
+.B atlantis
+Indiana Jones and the Fate of Atlantis
+.TP
+.B playfate
+Indiana Jones and the Fate of Atlantis (demo)
+.TP
+.B tentacle
+Day of the Tentacle
+.TP
+.B samnmax
+Sam & Max Hit the Road
+.TP
+.B ft
+Full Throttle
+.TP
+.B dig
+The Dig
+.TP
+.B comi
+The Curse of Monkey Island
+.P
+.TP
+.B simon1dos
+Simon the Sorcerer (DOS)
+.TP
+.B simon1win
+Simon the Sorcerer Talkie (WIN)
+.TP
+.B simon1talkie
+Simon the Sorcerer Talkie (DOS)
+.TP
+.B simon2dos
+Simon the Sorcerer 2 (DOS)
+.TP
+.B simon2win
+Simon the Sorcerer 2 Talkie (WIN)
+.TP
+.B simon2talkie
+Simon the Sorcerer 2 Talkie (DOS)
+.TP
+.B simon2mac
+Simon the Sorcerer 2 Talkie (Amiga or Mac)
+
+.SH FILES
+.TP
+~/.scummvmrc
+ScummVM config file on Unix
+.TP
+~/Library/Preferences/ScummVM Preferences
+ScummVM config file on Mac OS X
+.TP
+<windows dir>\\scummvm.ini
+ScummVM config file on Windows
+.TP
+scummvm.ini in the current directory
+Others.
+
+.SH EXAMPLES
+.TP
+.B Running Day of the Tentacle specifying the path
+scummvm -p /usr/local/share/games/tentacle/ tentacle
+.TP
+.B Running The Dig with advmame2x graphics filter with no subtitles
+scummvm -g advmame2x -n dig
+.TP
+.B Running The Italian version of Maniac Mansion fullscreen
+scummvm -q it -f maniac
+
 .SH AUTHOR
 This manual page was written by David Given <dg@cowlark.com>,
 for the Debian GNU/Linux system (but may be used by others).
+Heavily Updated and maintained by Jonathan Gray <khalek@scummvm.org>.
 .P
 \fBScummVM\fP was written by Ludvig Strigeus <strigeus@users.sourceforge.net>
 and the ScummVM team. See
