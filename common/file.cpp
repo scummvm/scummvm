@@ -318,8 +318,10 @@ char *File::gets(void *ptr, uint32 len) {
 
 		if (c == CR) {
 			c = getc(_handle);
-			if (c != LF)
-				ungetc(c, _handle);
+			// Don't use ungetc() here. It might be slightly more
+			// elegant, but PalmOS doesn't have it.
+			if (c != LF && c != EOF)
+				fseek(_handle, -1, SEEK_CUR);
 			break;
 		}
 
