@@ -33,26 +33,18 @@
 #include "morphos.h"
 #include "timer.h"
 
-static TagItem TimerServiceTags[] = { { NP_Entry,    0 },
-									  { NP_Name, 	 (ULONG)"ScummVM Timer Service" },
-									  { NP_Priority, 20 },
-									  { TAG_DONE,    0 }
-									};
-
 Timer::Timer(Engine * engine)
 {
-	static EmulFunc ThreadEmulFunc;
-
 	InitSemaphore(&TimerServiceSemaphore);
 
-	ThreadEmulFunc.Trap = TRAP_FUNC;
-	ThreadEmulFunc.Address = (ULONG) &TimerService;
-	ThreadEmulFunc.StackSize = 16000;
-	ThreadEmulFunc.Extension = 0;
-	ThreadEmulFunc.Arg1 = (ULONG) this;
-	ThreadEmulFunc.Arg2 = (ULONG) engine;
-	TimerServiceTags[0].ti_Data = (ULONG) &ThreadEmulFunc;
-	TimerServiceThread = CreateNewProc(TimerServiceTags);
+	TimerServiceThread = CreateNewProcTags(NP_Entry, 	 (ULONG) TimerService,
+														NP_CodeType, CODETYPE_PPC,
+														NP_Name,  	 (ULONG) "ScummVM Timer Service",
+														NP_Priority, 50,
+														NP_PPC_Arg1, (ULONG) this,
+														NP_PPC_Arg2, (ULONG) engine,
+														TAG_DONE
+													  );
 }
 
 Timer::~Timer()
@@ -93,25 +85,13 @@ bool Timer::SendMsg(ULONG msg_id, TimerProc procedure, LONG interval)
 	if (tmsg == NULL)
 		return false;
 
-	MsgPort *reply_port = CreateMsgPort();
-	if (reply_port == NULL)
-	{
-		FreeVec(tmsg);
-		return false;
-	}
-
 	tmsg->tsm_Message.mn_Node.ln_Type = NT_MESSAGE;
-	tmsg->tsm_Message.mn_ReplyPort = reply_port;
+	tmsg->tsm_Message.mn_ReplyPort = NULL;
 	tmsg->tsm_Message.mn_Length = sizeof (TimerServiceMessage);
 	tmsg->tsm_MsgID = msg_id;
 	tmsg->tsm_Callback = procedure;
 	tmsg->tsm_Interval = interval;
 	PutMsg(&TimerServiceThread->pr_MsgPort, (Message*) tmsg);
-	WaitPort(reply_port);
-	GetMsg(reply_port);
-	
-	FreeVec(tmsg);
-	DeleteMsgPort(reply_port);
 
 	return true;
 }
@@ -151,7 +131,7 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 							{
 								ULONG unit = UNIT_MICROHZ;
 
-								if (tmsg->tsm_Interval > 1000)
+								if (tmsg->tsm_Interval >= 1000000)
 									unit = UNIT_VBLANK;
 								if (OSystem_MorphOS::OpenATimer(&timer_slots[timers].ts_Port, (IORequest **) &timer_slots[timers].ts_IORequest, unit))
 								{
@@ -165,8 +145,8 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 									timerequest *req = timer_slots[timers].ts_IORequest;
 									interval = timer_slots[timers].ts_Interval;
 									req->tr_node.io_Command  = TR_ADDREQUEST;
-									req->tr_time.tv_secs  = interval/1000;
-									req->tr_time.tv_micro = (interval%1000)*1000;
+									req->tr_time.tv_secs  = interval/1000000;
+									req->tr_time.tv_micro = interval%1000000;
 									SendIO((IORequest*) req);
 
 									timers++;
@@ -201,7 +181,10 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 					}
 				}
 
-				ReplyMsg((Message *) tmsg);
+				if (tmsg->tsm_Message.mn_ReplyPort)
+					ReplyMsg((Message *) tmsg);
+				else
+					FreeVec((Message *) tmsg);
 			}
 		}
 
@@ -220,11 +203,13 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 					(*timer_slots[t].ts_Callback)(engine);
 					GetSysTime(&end_callback);
 					SubTime(&end_callback, &start_callback);
-					interval -= end_callback.tv_sec*1000+end_callback.tv_micro/1000+40;
+					interval -= end_callback.tv_sec*1000000+end_callback.tv_micro/1000000+40000;
+					if (interval < 0)
+						interval = 0;
 
 					req->tr_node.io_Command  = TR_ADDREQUEST;
-					req->tr_time.tv_secs  = interval/1000;
-					req->tr_time.tv_micro = (interval%1000)*1000;
+					req->tr_time.tv_secs  = interval/1000000;
+					req->tr_time.tv_micro = interval%1000000;
 					SendIO((IORequest*) req);
 				}
 			}
