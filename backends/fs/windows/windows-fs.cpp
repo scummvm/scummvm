@@ -89,7 +89,7 @@ void WindowsFilesystemNode::addFile(FSList &list, ListMode mode, const char *bas
 	// Skip local directory (.) and parent (..)
 	if (!strcmp(asciiName, ".") || !strcmp(asciiName, ".."))
 		return;
-	
+
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
 
 	if ((!isDirectory && mode == kListDirectoriesOnly) ||
@@ -112,6 +112,10 @@ AbstractFilesystemNode *FilesystemNode::getRoot() {
 	return new WindowsFilesystemNode();
 }
 
+AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
+	return new WindowsFilesystemNode(path);
+}
+
 WindowsFilesystemNode::WindowsFilesystemNode() {
 	_isDirectory = true;
 #ifndef _WIN32_WCE
@@ -126,6 +130,35 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 	_path = "\\";
 	_isPseudoRoot = false;
 #endif	
+}
+
+WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
+	int len = 0, offset = p.size();
+
+	assert(offset > 0);
+
+	_path = p;
+
+	// Extract last component from path
+	const char *str = p.c_str();
+	while (offset > 0 && str[offset-1] == '\\')
+		offset--;
+	while (offset > 0 && str[offset-1] != '\\') {
+		len++;
+		offset--;
+	}
+	_displayName = String(str + offset, len);
+
+	// Check whether it is a directory, and whether the file actually exists
+	DWORD fileAttribs = GetFileAttributes(_path.c_str());
+
+	if (fileAttribs == INVALID_FILE_ATTRIBUTES) {
+		_isValid = false;
+		_isDirectory = false;
+	} else {
+		_isValid = true;
+		_isDirectory = ((fileAttribs & FILE_ATTRIBUTE_DIRECTORY) != 0);
+	}
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode(const WindowsFilesystemNode *node) {
