@@ -1930,7 +1930,7 @@ void ScummEngine_v72he::o72_unknownFA() {
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {
 	byte b;
-	int i, color;
+	int i, id, color;
 	int args[31];
 	byte name[1024];
 
@@ -2000,6 +2000,10 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 			unkMessage2(name);
 			break;
 		}
+		break;
+	case 0xE1:
+		id = pop();
+		// Load and display talkie resource.
 		break;
 	case 0xF9:
 		color = pop();
