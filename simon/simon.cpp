@@ -1913,6 +1913,7 @@ startOver:
 	for (;;) {
 		_last_hitarea = NULL;
 		_last_hitarea_3 = NULL;
+
 		for (;;) {
 			if (_key_pressed == 35)
 				f10_key();
@@ -1922,7 +1923,7 @@ startOver:
 			if (_last_hitarea_3 != 0)
 				break;
 			hitarea_stuff_helper();
-			delay(100);
+			delay(100);	
 		}
 
 		ha = _last_hitarea;
@@ -3511,7 +3512,6 @@ void SimonEngine::processSpecialKeys() {
 
 #ifdef __PALM_OS__
 static const byte *_simon1_cursor;
-static const byte **_simon2_cursors;
 #else
 static const byte _simon1_cursor[256] = {
 	0xe1,0xe0,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -3531,6 +3531,7 @@ static const byte _simon1_cursor[256] = {
 	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 };
+#endif
 
 static const byte _simon2_cursors[10][256] = {
 	// cross hair
@@ -3704,7 +3705,6 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xff,0xe5,0xe8,0xe9,0xe8,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
 };
-#endif
 
 void SimonEngine::draw_mouse_pointer() {
 	if (_game & GF_SIMON2)
@@ -4808,7 +4808,7 @@ void SimonEngine::delay(uint amount) {
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				_left_button_down++;
-#ifdef _WIN32_WCE
+#if defined (_WIN32_WCE) || defined(__PALM_OS__)
 				_sdl_mouse_x = event.mouse.x;
 				_sdl_mouse_y = event.mouse.y;
 #endif
@@ -5159,7 +5159,6 @@ _GSETPTR(Simon::simon2win_settings, GBVARS_SIMON2WINSETTINGS_INDEX, Simon::GameS
 _GSETPTR(Simon::simon2mac_settings, GBVARS_SIMON2MACSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::simon2dos_settings, GBVARS_SIMON2DOSSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_SIMON)
-_GSETPTR(Simon::_simon2_cursors, GBVARS_SIMON2CURSORS_INDEX, const byte*, GBVARS_SIMON)
 _GEND
 
 _GRELEASE(Simon_Simon)
@@ -5171,7 +5170,6 @@ _GRELEASEPTR(GBVARS_SIMON2WINSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON2MACSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON2DOSSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON1CURSOR_INDEX, GBVARS_SIMON)
-_GRELEASEPTR(GBVARS_SIMON2CURSORS_INDEX, GBVARS_SIMON)
 _GEND
 
 #endif
