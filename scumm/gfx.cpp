@@ -294,8 +294,6 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		left = 0;
 	if (bottom > vs->height)
 		bottom = vs->height;
-	if (right > vs->width)
-		right = vs->width;
 
 	if (virt == 0 && dirtybit) {
 		lp = (left >> 3) + _screenStartStrip;
