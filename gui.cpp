@@ -42,6 +42,7 @@ extern bool get_key_mapping;
 extern struct keyops keyMapping;
 extern void save_key_mapping(void);
 extern void do_hide(bool);
+extern void do_quit();
 uint16 _key_mapping_required;
 uint16 _current_page;
 bool keyboard_override;
@@ -851,6 +852,9 @@ void Gui::handleCommand(int cmd)
 		close();
 		return;
 	case 6:											/* quit button */
+#ifdef _WIN32_WCE
+		do_quit();
+#endif
 		exit(1);
 		return;
 	case 7:											/* cancel button */
