@@ -136,7 +136,7 @@ bool SoundMixer::isPaused() {
 	return _paused;
 }
 
-void SoundMixer::setupPremix(AudioStream *stream) {
+void SoundMixer::setupPremix(AudioStream *stream, SoundType type) {
 	Common::StackLock lock(_mutex);
 
 	delete _premixChannel;
@@ -146,7 +146,7 @@ void SoundMixer::setupPremix(AudioStream *stream) {
 		return;
 
 	// Create the channel
-	_premixChannel = new Channel(this, 0, kPlainAudioDataType, stream, false);
+	_premixChannel = new Channel(this, 0, type, stream, false);
 }
 
 void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {

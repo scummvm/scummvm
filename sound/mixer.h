@@ -120,7 +120,7 @@ public:
 	 * is not limited to it. The premix stream is invoked by the mixer whenever
 	 * it needs to generate any data, before any other mixing takes place.
 	 */
-	void setupPremix(AudioStream *stream);
+	void setupPremix(AudioStream *stream, SoundType type = kPlainAudioDataType);
 
 
 
