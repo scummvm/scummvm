@@ -274,10 +274,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_track[l].iteration = 1; // ?
 				// Do nothing here, we already have an audio stream
 			} else {
-				if (soundName == NULL)
-					_track[l].soundHandle = _sound->openSound(soundId, NULL, soundType, soundGroup);
-				else
-					_track[l].soundHandle = _sound->openSound(soundId, soundName, soundType, soundGroup);
+				_track[l].soundHandle = _sound->openSound(soundId, soundName, soundType, soundGroup);
 
 				if (_track[l].soundHandle == NULL)
 					return;
@@ -338,7 +335,7 @@ void IMuseDigital::stopSound(int soundId) {
 
 void IMuseDigital::setVolume(int soundId, int volume) {
 	Common::StackLock lock(_mutex);
-	debug(5, "IMuseDigital::setVolumeSound(%d)", soundId);
+	debug(5, "IMuseDigital::setVolumeSound(%d, %d)", soundId, volume);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
 			_track[l].vol = volume * 1000;
@@ -348,7 +345,7 @@ void IMuseDigital::setVolume(int soundId, int volume) {
 
 void IMuseDigital::setPan(int soundId, int pan) {
 	Common::StackLock lock(_mutex);
-	debug(5, "IMuseDigital::setVolumeSound(%d)", soundId);
+	debug(5, "IMuseDigital::setVolumeSound(%d, %d)", soundId, pan);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
 			_track[l].pan = pan;
