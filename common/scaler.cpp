@@ -24,7 +24,14 @@
 #include "scummsys.h"
 #include "scaler.h"
 
-/********** 2XSAI Filter *****************/
+// TODO: get rid of the colorMask etc. variables and instead use templates.
+// This should give a respectable boost, since variable access (i.e. memory reads)
+// in the innermost loops of our operations would work with constant data instead.
+// That should help the inliner; reduce memory access; thus improve cache efficeny
+// etc. The drawback will be that each scaler will exist twice, once for 555 and
+// once for 555, resulting in the object file being twice as big (but thanks to
+// templates, no source code would be duplicated.
+
 static uint32 colorMask = 0xF7DEF7DE;
 static uint32 lowPixelMask = 0x08210821;
 static uint32 qcolorMask = 0xE79CE79C;
@@ -649,8 +656,16 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 	}
 }
 
+#define	kVeryFastAndUglyAspectMode	0	// No interpolation at all, but super-fast
+#define	kFastAndNiceAspectMode		1	// Quite good quality with good speed
+#define	kSlowAndPerfectAspectMode	2	// Accurate but slow code
 
-static inline uint16 interpolate5(uint16 A, uint16 B, int scale) {
+#define ASPECT_MODE	kFastAndNiceAspectMode
+
+
+#if ASPECT_MODE == kSlowAndPerfectAspectMode
+template<int scale>
+static inline uint16 interpolate5(uint16 A, uint16 B) {
 	uint16 r = (uint16)(((A & redMask) * scale + (B & redMask) * (5 - scale)) / 5);
 	uint16 g = (uint16)(((A & greenMask) * scale + (B & greenMask) * (5 - scale)) / 5);
 	uint16 b = (uint16)(((A & blueMask) * scale + (B & blueMask) * (5 - scale)) / 5);
@@ -658,14 +673,30 @@ static inline uint16 interpolate5(uint16 A, uint16 B, int scale) {
 	return (uint16)((r & redMask) | (g & greenMask) | (b & blueMask));
 }
 
-static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int scale, int width) {
-#if 0
+template<int scale>
+static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	// Accurate but slightly slower code
 	while (width--) {
-		*dst++ = interpolate5(*srcA++, *srcB++, scale);
+		*dst++ = interpolate5<scale>(*srcA++, *srcB++);
 	}
-#else
-	// Not fully accurate, but a bit faster
+}
+#endif
+
+#if ASPECT_MODE == kFastAndNiceAspectMode
+template<int scale>
+static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
+
+	// TODO: This code may not work correctly on architectures that require alignment.
+	// And even on those which accept it, reading/writing 32 bits words from odd memory
+	// locations usually has a speed penalty. Hence, it might be wise to first check
+	// if the dst address is odd, in which case we blit one pixel first; then we
+	// blit pixel pairs, till we get to the end, at which point we may have to blit
+	// again a single seperate pixel. This would of course cause additional overhead
+	// for each blitted line. Some of that overhead can be avoid by moving
+	// this logic into stretch200To240, since whether dst is at an odd position, and
+	// whether the last pixel has to be blitted seperately or not, is identical for
+	// each blitted line.
+	// 
 	
 	if (width & 1) {
 		// For efficency reasons we normally blit two pixels at a time; but if the 
@@ -693,8 +724,8 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 			*d++ = INTERPOLATE(*sA++, *sB++);
 		}
 	}
-#endif
 }
+#endif
 
 void makeRectStretchable(int &x, int &y, int &w, int &h) {
 	int m = real2Aspect(y) % 6;
@@ -726,20 +757,16 @@ void makeRectStretchable(int &x, int &y, int &w, int &h) {
  */
 int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
-	int off = srcY - origSrcY;
 	int y;
-
+	const uint8 *startSrcPtr = buf + srcX * 2 + (srcY - origSrcY) * pitch;
 	uint8 *dstPtr = buf + srcX * 2 + maxDstY * pitch;
 
 	for (y = maxDstY; y >= srcY; y--) {
-		uint8 *srcPtr = buf + srcX * 2 + (aspect2Real(y) + off) * pitch;
+		const uint8 *srcPtr = startSrcPtr + aspect2Real(y) * pitch;
 
-#if 0
-		// Don't use bilinear filtering, rather just duplicate pixel lines:
-		// a little bit faster, but looks ugly
+#if ASPECT_MODE == kVeryFastAndUglyAspectMode
 		if (srcPtr == dstPtr)
 			break;
-		
 		memcpy(dstPtr, srcPtr, width * 2);
 #else
 		// Bilinear filter
@@ -751,11 +778,11 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 			break;
 		case 1:
 		case 4:
-			interpolate5Line((uint16 *)dstPtr, (uint16 *)(srcPtr - pitch), (uint16 *)srcPtr, 1, width);
+			interpolate5Line<1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
 			break;
 		case 2:
 		case 3:
-			interpolate5Line((uint16 *)dstPtr, (uint16 *)(srcPtr - pitch), (uint16 *)srcPtr, 2, width);
+			interpolate5Line<2>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
 			break;
 		}
 #endif
