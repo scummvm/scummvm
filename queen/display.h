@@ -97,7 +97,7 @@ public:
 	void readPCXPanel(const uint8 *pcxBuf, uint32 size);
 
 	void horizontalScrollUpdate(int16 xCamera);
-	void horizontalScroll(int16 scroll);
+	void horizontalScroll(int16 scroll) { _horizontalScroll = scroll; }
 	int16 horizontalScroll() const { return _horizontalScroll; }
 
 	void fullscreen(bool fs) { debug(6, "Display::fullscreen(%d)", fs); _fullscreen = fs; }
@@ -131,9 +131,7 @@ private:
 		SCREEN_W   = 320,
 		SCREEN_H   = 200,
 		PANEL_W    = 320,
-		PANEL_H    =  50,
-		MINI_W     =  32,
-		MINI_H     =  32
+		PANEL_H    =  50
 	};
 
 	TextRenderer _textRenderer;
@@ -145,8 +143,8 @@ private:
 		bool scrollable;
 	} _pal;
 
-	uint8 *_buffer[4];
-	uint16 _bufPitch[4];
+	uint8 *_buffer[3];
+	uint16 _bufPitch[3];
 
 	bool _fullscreen;
 

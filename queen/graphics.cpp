@@ -335,14 +335,12 @@ void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 		src += w * y_skip;
 		if (!bs->xflip) {
 			src += x_skip;
-			_vm->display()->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
 		} else {
 			src += w - w_new - x_skip;
 			x += w_new - 1;
-			_vm->display()->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
 		}
+		_vm->display()->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
 	}
-
 }
 
 
@@ -567,7 +565,6 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 		break;
 	case ROOM_INTRO_RITA_JOE_HEADS: // CR 2 - CD-Rom pan right while Rita talks...
 		_cameraBob = -1;
-		debug(9, "Graphics::bobCustomParallax() - %d", screenScroll);
 		if (screenScroll < 80) {
 			_vm->display()->horizontalScroll(screenScroll + 4);
 			// Joe's body and head
