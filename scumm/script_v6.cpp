@@ -1711,6 +1711,7 @@ void Scumm_v6::o6_actorOps() {
 		a->setAnimVar(pop(), i);
 		break;
 	case 215:
+		warning("ignoreTurns not yet implemented");
 		a->ignoreTurns = true;
 		break;
 	case 216:
