@@ -660,6 +660,9 @@ void ScummEngine_v6he::o6_actorOps() {
 		a->talkPosY = pop();
 		a->talkPosX = pop();
 		break;
+	case 156:		// HE 7.2
+		a->charset = pop();
+		break;
 	case 198:		// SO_ACTOR_VARIABLE
 		i = pop();
 		a->setAnimVar(pop(), i);
