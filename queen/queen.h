@@ -32,6 +32,7 @@
 
 namespace Queen {
 
+class Graphics;
 class Logic;
 
 class QueenEngine : public Engine {
@@ -49,6 +50,7 @@ protected:
 
 	FILE *_dump_file;
 	
+	Graphics *_graphics;
 	Resource *_resource;
 	Logic *_logic;
 
