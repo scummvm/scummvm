@@ -161,18 +161,18 @@ public:
 
 struct imuseRoomMap {
 	int8 roomId;
-	byte musicTableIndex;
-	byte unk1;
-	byte unk2;
-	byte unk3;
-	byte unk4;
+	byte stateIndex1;
+	byte offset;
+	byte stateIndex2;
+	byte atribPos;
+	byte stateIndex3;
 };
 
 struct imuseDigTable {
 	byte opcode;
 	int16 soundId;
 	char name[20];
-	byte param;
+	byte atribPos;
 	byte hookId;
 	char filename[13];
 };
@@ -181,7 +181,7 @@ struct imuseComiTable {
 	byte opcode;
 	int16 soundId;
 	char name[20];
-	byte param;
+	byte atribPos;
 	byte hookId;
 	int16 fadeOut60TicksDelay;
 	char filename[13];
