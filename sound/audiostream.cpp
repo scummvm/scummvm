@@ -302,42 +302,6 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byt
 	}
 }
 
-#pragma mark -
-#pragma mark --- Procedural stream ---
-#pragma mark -
-
-
-#if 0
-// Work in progress!!! Not yet usable/finished/working/anything :-)
-
-class ProcInputStream : public AudioStream {
-public:
-	typedef void InputProc (void *refCon, int16 *data, uint len);
-
-private:
-	const int _rate;
-	const bool _isStereo;
-	InputProc *_proc;
-	void *_refCon;
-
-public:
-	ProcInputStream(int rate, bool stereo, InputProc *proc, void *refCon)
-		: _rate(rate), _isStereo(stereo), _proc(proc), _refCon(refCon) { }
-	int readBuffer(int16 *buffer, const int numSamples) {
-		(_proc)(_refCon, buffer, numSamples);
-		return numSamples;
-	}
-	int16 read() {
-		int16 sample;
-		(_proc)(_refCon, &sample, 1);
-		return sample;
-	}
-	bool isStereo() const { return _isStereo; }
-	bool endOfData() const { return false; }
-	
-	int getRate() const { return _rate; }
-};
-#endif
 
 #pragma mark -
 #pragma mark --- Input stream factories ---

@@ -98,6 +98,43 @@ public:
 	void finish();
 };
 
+
+#pragma mark -
+#pragma mark --- Procedural stream ---
+#pragma mark -
+
+
+class ProcInputStream : public AudioStream {
+public:
+	typedef void (*InputProc)(void *refCon, int16 *data, uint len);
+
+private:
+	const int _rate;
+	const bool _isStereo;
+	InputProc _proc;
+	void *_refCon;
+
+public:
+	ProcInputStream(int rate, bool stereo, InputProc proc, void *refCon)
+		: _rate(rate), _isStereo(stereo), _proc(proc), _refCon(refCon) { }
+	int readBuffer(int16 *buffer, const int numSamples) {
+		memset(buffer, 0, 2 * numSamples);	// FIXME
+		(_proc)(_refCon, buffer, _isStereo ? (numSamples / 2) : numSamples);
+		return numSamples;
+	}
+	int16 read() {
+		error("ProcInputStream::read not supported");
+		int16 sample[2] = { 0, 0 };
+		(_proc)(_refCon, sample, 1);
+		return sample[0];
+	}
+	bool isStereo() const { return _isStereo; }
+	bool endOfData() const { return false; }
+	
+	int getRate() const { return _rate; }
+};
+
+
 #pragma mark -
 #pragma mark --- SoundMixer ---
 #pragma mark -
@@ -107,8 +144,7 @@ SoundMixer::SoundMixer() {
 	_syst = OSystem::instance();
 	_mutex = _syst->createMutex();
 
-	_premixParam = 0;
-	_premixProc = 0;
+	_premixChannel = 0;
 	int i = 0;
 
 	_globalVolume = 0;
@@ -131,6 +167,10 @@ SoundMixer::SoundMixer() {
 SoundMixer::~SoundMixer() {
 	_syst->clearSoundCallback();
 	stopAll();
+
+	delete _premixChannel;
+	_premixChannel = 0;
+
 	_syst->deleteMutex(_mutex);
 }
 
@@ -140,8 +180,31 @@ bool SoundMixer::isPaused() {
 
 void SoundMixer::setupPremix(PremixProc *proc, void *param) {
 	Common::StackLock lock(_mutex);
-	_premixParam = param;
-	_premixProc = proc;
+
+	delete _premixChannel;
+	_premixChannel = 0;
+	
+	if (proc == 0)
+		return;
+
+	// Create an input stream
+	AudioStream *input = new ProcInputStream(_outputRate, true, proc, param);
+
+	// Create the channel
+	_premixChannel = new Channel(this, 0, input, true, false);
+}
+
+void SoundMixer::setupPremix(AudioStream *stream) {
+	Common::StackLock lock(_mutex);
+
+	delete _premixChannel;
+	_premixChannel = 0;
+	
+	if (stream == 0)
+		return;
+
+	// Create the channel
+	_premixChannel = new Channel(this, 0, stream, false, false);
 }
 
 void SoundMixer::newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume, int8 balance) {
@@ -315,8 +378,8 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	memset(buf, 0, 2 * len * sizeof(int16));
 
 	if (!_paused) {
-		if (_premixProc)
-			_premixProc(_premixParam, buf, len);
+		if (_premixChannel)
+			_premixChannel->mix(buf, len);
 
 		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)

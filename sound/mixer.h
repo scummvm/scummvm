@@ -66,8 +66,7 @@ private:
 	OSystem *_syst;
 	OSystem::MutexRef _mutex;
 
-	void *_premixParam;
-	PremixProc *_premixProc;
+	Channel *_premixChannel;
 
 	uint _outputRate;
 
@@ -96,12 +95,23 @@ public:
 	 * Set the premix procedure. This is mainly used for the adlib music, but
 	 * is not limited to it. The premix proc is invoked by the mixer whenever
 	 * it needs to generate any data, before any other mixing takes place. The
-	 * premixer than has a chanve to fill the mix buffer with data (usually
+	 * premixer than has a chance to fill the mix buffer with data (usually
 	 * music samples). It should generate the specified number of 16bit stereo
 	 * samples (i.e. len * 4 bytes). The endianness of these samples shall be
 	 * the native endianness.
+	 *
+	 * @obsolete Instead of this, use the other setupPremix method which
+	 *           takes an AudioStream.
 	 */
 	void setupPremix(PremixProc *proc, void *param);
+
+	/**
+	 * Set the premix stream. This is mainly used for the adlib music, but
+	 * is not limited to it. The premix stream is invoked by the mixer whenever
+	 * it needs to generate any data, before any other mixing takes place.
+	 */
+	void setupPremix(AudioStream *stream);
+
 
 	// start playing a raw sound
 	void playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
