@@ -200,6 +200,11 @@ int main(int argc, char *argv[]) {
 	// Create the game engine
 	Engine *engine = Engine::createFromDetector(&detector, system);
 
+	// print a message if gameid is invalid
+	if (engine == NULL)
+		error("%s is an invalid target. Use the -z parameter to list targets\n", 
+				detector._gameFileName.c_str());
+
 	// Run the game engine
 	engine->go();
 
