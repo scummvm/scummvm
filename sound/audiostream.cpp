@@ -68,27 +68,32 @@ public:
 		if (stereo)	// Stereo requires even sized data
 			assert(len % 2 == 0);
 	}
-	int readBuffer(int16 *buffer, int numSamples) {
-		int samples = 0;
-		while (samples < numSamples && !eosIntern()) {
-			const int len = MIN(numSamples, (_end - _ptr) / (is16Bit ? 2 : 1));
-			while (samples < len) {
-				*buffer++ = readSample<is16Bit, isUnsigned>(_ptr);
-				_ptr += (is16Bit ? 2 : 1);
-				samples++;
-			}
-			if (_loopPtr && _ptr == _end) {
-				_ptr = _loopPtr;
-				_end = _loopEnd;
-			}
-		}
-		return samples;
-	}
+	int readBuffer(int16 *buffer, int numSamples);
 
 	int16 read()				{ return readIntern(); }
 	bool eos() const			{ return eosIntern(); }
 	bool isStereo() const		{ return stereo; }
 };
+
+template<bool stereo, bool is16Bit, bool isUnsigned>
+int LinearMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, int numSamples) {
+	int samples = 0;
+	while (samples < numSamples && !eosIntern()) {
+		const int len = MIN(numSamples, (_end - _ptr) / (is16Bit ? 2 : 1));
+		while (samples < len) {
+			*buffer++ = readSample<is16Bit, isUnsigned>(_ptr);
+			_ptr += (is16Bit ? 2 : 1);
+			samples++;
+		}
+		// Loop, if looping was specified
+		if (_loopPtr && _ptr == _end) {
+			_ptr = _loopPtr;
+			_end = _loopEnd;
+		}
+	}
+	return samples;
+}
+
 
 
 #pragma mark -
@@ -149,7 +154,6 @@ int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, 
 	while (samples < numSamples && !eosIntern()) {
 		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
 		const int len = MIN(numSamples, (endMarker - _pos) / (is16Bit ? 2 : 1));
-
 		while (samples < len) {
 			*buffer++ = readSample<is16Bit, isUnsigned>(_pos);
 			_pos += (is16Bit ? 2 : 1);
@@ -386,9 +390,7 @@ static inline int scale_sample(mad_fixed_t sample) {
 }
 
 inline int16 MP3InputStream::readIntern() {
-	if (_size < 0 || _posInFrame >= _synth.pcm.length) {	// EOF
-		return 0;
-	}
+	assert(!eosIntern());
 
 	int16 sample;
 	if (_isStereo) {
@@ -412,10 +414,30 @@ inline int16 MP3InputStream::readIntern() {
 }
 
 int MP3InputStream::readBuffer(int16 *buffer, int numSamples) {
-	int samples;
+	int samples = 0;
+#if 1
+	if (_isStereo)
+		assert(_curChannel == 0);
+	while (samples < numSamples && !eosIntern()) {
+		const int len = MIN(numSamples, (int)(_synth.pcm.length - _posInFrame) * (_isStereo ? 2 : 1));
+		while (samples < len) {
+			*buffer++ = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame]);
+			samples++;
+			if (_isStereo) {
+				*buffer++ = (int16)scale_sample(_synth.pcm.samples[1][_posInFrame]);
+				samples++;
+			}
+			_posInFrame++;
+		}
+		if (_posInFrame >= _synth.pcm.length) {
+			refill();
+		}
+	}
+#else
 	for (samples = 0; samples < numSamples && !eosIntern(); samples++) {
 		*buffer++ = readIntern();
 	}
+#endif
 	return samples;
 }
 
