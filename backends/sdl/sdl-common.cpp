@@ -42,7 +42,7 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 	syst->_mode = gfx_mode;
 	syst->_full_screen = full_screen;
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) ==-1) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) ==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
 
@@ -61,6 +61,12 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 	atexit_proc_installed = true;
  	atexit(atexit_proc);
 #endif
+
+	// enable joystick
+	if (SDL_NumJoysticks() > 0) {
+		printf("Using joystick: %s\n", SDL_JoystickName(0));
+		syst->init_joystick();
+	}
 
 	return syst;
 }
@@ -85,6 +91,7 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 	
 	// reset mouse state
 	memset(&km, 0, sizeof(km));
+
 }
 
 OSystem_SDL_Common::~OSystem_SDL_Common()
@@ -639,6 +646,52 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			event->mouse.x /= _scaleFactor;
 			event->mouse.y /= _scaleFactor;
 			return true;
+
+		case SDL_JOYBUTTONDOWN:
+			if (ev.jbutton.button == 0) {
+				event->event_code = EVENT_LBUTTONDOWN;
+			}
+			if (ev.jbutton.button == 1) {
+				event->event_code = EVENT_RBUTTONDOWN;
+			}
+			return true;
+
+		case SDL_JOYBUTTONUP:
+			if (ev.jbutton.button == 0) {
+				event->event_code = EVENT_LBUTTONUP;
+			}
+			if (ev.jbutton.button == 1) {
+				event->event_code = EVENT_RBUTTONUP;
+			}
+			return true;
+			
+		case SDL_JOYAXISMOTION:
+			 if ( ev.jaxis.axis == 0) { 
+				if (ev.jaxis.value < -3200) { 		// left
+					km.x_vel = -1;
+					km.x_down_count = 1;
+				} else if (ev.jaxis.value > 3200) {	// right
+					km.x_vel = 1;
+					km.x_down_count = 1;
+				} else {				// neither
+					km.x_vel = 0;
+					km.x_down_count = 0;
+				}
+
+
+			} else if (ev.jaxis.axis == 1) { 
+				if (ev.jaxis.value < -3200) { 		// up
+					km.y_vel = -1;
+					km.y_down_count = 1;
+				} else if (ev.jaxis.value > 3200) {	// down
+					km.y_vel = 1;
+					km.y_down_count = 1;
+				} else {
+					km.y_vel = 0;
+					km.y_down_count = 0;
+				}
+			}
+			return true;	
 
 		case SDL_QUIT:
 			quit();

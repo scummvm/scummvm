@@ -181,6 +181,9 @@ protected:
 		MousePos() : x(0), y(0), w(0), h(0) {}
 	};
 
+	// joystick
+	SDL_Joystick *_joystick;
+	
 	bool _mouseVisible;
 	bool _mouseDrawn;
 	byte *_mouseData;
@@ -214,6 +217,7 @@ protected:
 
 	void setup_icon();
 	void kbd_mouse();
+	void init_joystick() { _joystick = SDL_JoystickOpen(0); }
 
 	static OSystem_SDL_Common *create();
 };
