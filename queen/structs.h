@@ -132,6 +132,7 @@ struct CmdListData {
 	int16 verb;
 	int16 nounObj1;
 	int16 nounObj2;
+	int16 song; // >0: playbefore, <0: playafter
 	bool setAreas;
 	bool setObjects;
 	bool setItems;
@@ -157,8 +158,8 @@ struct CmdObject {
 
 struct CmdInventory {
 	int16 id;
-	int16 dstItem; // <0 : delete, >0 : add
-	int16 srcItem; // >0 : valid
+	int16 dstItem; // <0: delete, >0: add
+	int16 srcItem; // >0: valid
 };
 
 

@@ -26,13 +26,37 @@
 
 namespace Queen {
 
+MovePersonData Walk::_moveData[] = {
+   {"COMPY",-1,-6,1,6,0,0,0,0,12,12,1,14},
+   {"DEINO",-1,-8,1,8,0,0,0,0,11,11,1,10},
+   {"FAYE",-1,-6,1,6,13,18,7,12,19,22,2,5},
+   {"GUARDS",-1,-6,1,6,0,0,0,0,7,7,2,5},
+   {"PRINCESS1",-1,-6,1,6,13,18,7,12,19,21,2,5},
+   {"PRINCESS2",-1,-6,1,6,13,18,7,12,19,21,2,5},
+   {"AMGUARD",-1,-6,1,6,13,18,7,12,19,21,2,5},
+   {"SPARKY",-1,-6,1,6,13,18,7,12,21,20,2,5},
+   {"LOLA_SHOWER",-1,-6,55,60,0,0,0,0,7,7,2,5},
+   {"LOLA",-24,-29,24,29,0,0,0,0,30,30,2,5},
+   {"BOB",-15,-20,15,20,21,26,0,0,27,29,2,5},
+   {"CHEF",-1,-4,1,4,0,0,0,0,1,5,2,4},
+   {"HENRY",-1,-6,1,6,0,0,0,0,7,7,2,6},
+   {"ANDERSON",-1,-6,1,6,0,0,0,0,7,7,2,5},
+   {"JASPAR",-4,-9,4,9,16,21,10,15,1,3,1,10},
+   {"PYGMY",-7,-12,7,12,0,0,0,0,27,27,2,5},
+   {"FRANK",7,12,1,6,0,0,0,0,13,13,2,4},
+   {"WEDGEWOOD",-20,-25,20,25,0,0,0,0,1,1,1,5},
+   {"TMPD",-1,-6,1,6,13,18,7,12,19,21,2,5},
+   {"IAN",-1,-6,1,6,0,0,0,0,7,7,2,6},
+   {"*",0,0,0,0,0,0,0,0,0,0,0}
+};
+
 
 Walk::Walk(Logic *logic, Graphics *graphics)
 	: _logic(logic), _graphics(graphics) {
 }
 
 
-uint16 Walk::joeFace(uint16 prevFacing, uint16 scale) {
+uint16 Walk::joeFace(uint16 prevFacing) {
 	BobSlot *pbs = _graphics->bob(0);
 	uint16 frame;
 	if (_logic->currentRoom() == 108) {
@@ -48,7 +72,7 @@ uint16 Walk::joeFace(uint16 prevFacing, uint16 scale) {
 		}
 		// FIXME: handle prevFacing
 		pbs->frameNum = frame + FRAMES_JOE_XTRA;
-		pbs->scale = scale;
+		pbs->scale = _logic->joeScale();
 		pbs->xflip = (_logic->joeFacing() == DIR_LEFT);
 		_graphics->update();
 		// joePrevFacing = joeFacing;
@@ -78,7 +102,7 @@ void Walk::animatePersonPrepare() {
 		WalkData *pwd = &_walkData[i];
 		mpa->wx = pwd->dx;
 		mpa->wy = pwd->dy;
-		mpa->walkingArea = &_roomAreas[ pwd->area ];
+		mpa->walkingArea = _logic->currentRoomArea(pwd->area); // &_roomAreas[ pwd->area ];
 
 		if (mpa->wx < 0) {
 			mpa->setFrames(11, 16 + FRAMES_JOE_XTRA, DIR_LEFT);
@@ -111,7 +135,8 @@ void Walk::animatePerson() {
 	uint16 i;
 	BobSlot *pbs = _graphics->bob(0);
 	_logic->joeFacing(_moveAnim[1].facing);
-	joeFace(_logic->joeFacing(), _moveAnim[1].walkingArea->calcScale(pbs->y));
+	_logic->joeScale(_moveAnim[1].walkingArea->calcScale(pbs->y));
+	joeFace(_logic->joeFacing());
 	bool interrupted = false;
 	for (i = 1; i <= _walkDataCount && !interrupted; ++i) {
 		MovePersonAnim *mpa = &_moveAnim[i];
@@ -128,6 +153,7 @@ void Walk::animatePerson() {
 		while (pbs->moving) {
 			// adjust Joe's movespeed according to scale
 			pbs->scale = mpa->walkingArea->calcScale(pbs->y);
+			_logic->joeScale(pbs->scale);
 			if (pbs->xmajor) {
 				pbs->speed = pbs->scale * 6 / 100;
 			}
@@ -172,7 +198,6 @@ void Walk::joeSetup() {
 
 void Walk::joeMove(int direction, uint16 oldx, uint16 oldy, uint16 newx, uint16 newy, bool inCutaway) {
 
-
 //   CAN=0
 	initWalkData();
 
@@ -200,13 +225,16 @@ void Walk::joeMove(int direction, uint16 oldx, uint16 oldy, uint16 newx, uint16 
 //		SPEAK(JOE_RESPstr[4],"JOE",find_cd_desc(4))
 	}
 //MOVE_JOE_EXIT:
+	if (direction > 0) {
+		_logic->joeFacing(direction);
+	}
+//	joePrevFacing = _logic->joeFacing();
+	joeFace(0);
 }
 
 
-void Walk::setCurrentRoomAreas(const Area* roomAreas, uint16 roomAreasCount) {
-
-	_roomAreas = roomAreas;
-	_roomAreasCount = roomAreasCount;
+void Walk::personMove(const char* name, uint16 endx, uint16 endy, uint16 image, int dir) {
+	warning("Walk::personMove() unimplemented");
 }
 
 
@@ -233,8 +261,8 @@ void Walk::calc(uint16 oldPos, uint16 newPos, uint16 oldx, uint16 oldy, uint16 x
 		for (i = 2; i <= _areaListCount; ++i) {
 			uint16 a1 = _areaList[i - 1];
 			uint16 a2 = _areaList[i];
-			const Area *pa1 = &_roomAreas[ a1 ];
-			const Area *pa2 = &_roomAreas[ a2 ];
+			const Area *pa1 = _logic->currentRoomArea(a1); //&_roomAreas[ a1 ];
+			const Area *pa2 = _logic->currentRoomArea(a2);
 			uint16 x1 = calcC(pa1->box.x1, pa1->box.x2, pa2->box.x1, pa2->box.x2, px);
 			uint16 y1 = calcC(pa1->box.y1, pa1->box.y2, pa2->box.y1, pa2->box.y2, py);
 			incWalkData(px, py, x1, y1, a1);
@@ -260,14 +288,14 @@ uint16 Walk::calcC(uint16 c1, uint16 c2, uint16 c3, uint16 c4, uint16 lastc) {
 int16 Walk::findAreaPosition(uint16 *x, uint16 *y, bool recalibrate) {
 	uint16 i;
 	uint16 pos = 1;
-	const Box *b = &_roomAreas[1].box;
+	const Box *b = &_logic->currentRoomArea(1)->box;
 	uint16 tx = b->x1;
 	uint16 bx = b->x2;
 	uint16 ty = b->y1;
 	uint16 by = b->y2;
 	uint16 prevClosestFace = 640;
-	for (i = 1; i <= _roomAreasCount; ++i) {
-		b = &_roomAreas[i].box;
+	for (i = 1; i <= _logic->currentRoomAreaMax(); ++i) {
+		b = &_logic->currentRoomArea(i)->box;
 		uint16 dx1 = ABS(b->x1 - *x);
 		uint16 dx2 = ABS(b->x2 - *x);
 		uint16 dy1 = ABS(b->y1 - *y);
@@ -296,7 +324,7 @@ int16 Walk::findAreaPosition(uint16 *x, uint16 *y, bool recalibrate) {
  	// we now have the closest area near X,Y, so we can recalibrate
  	// the X,Y coord to be in this area
 	if (recalibrate) {
-		b = &_roomAreas[pos].box;
+		b = &_logic->currentRoomArea(pos)->box;
 		if(*x < b->x1) *x = b->x1;
 		if(*x > b->x2) *x = b->x2;
 		if(*y < b->y1) *y = b->y1;
@@ -310,9 +338,9 @@ uint16 Walk::findFreeArea(uint16 area) const {
 
 	uint16 testArea;
 	uint16 freeArea = 0;
-	uint16 map = ABS(_roomAreas[area].mapNeighbours);
-	for (testArea = 1; testArea <= _roomAreasCount; ++testArea) {
-		int b = _roomAreasCount - testArea;
+	uint16 map = ABS(_logic->currentRoomArea(area)->mapNeighbours);
+	for (testArea = 1; testArea <= _logic->currentRoomAreaMax(); ++testArea) {
+		int b = _logic->currentRoomAreaMax() - testArea;
 		if (map & (1 << b)) {
 			// connecting area, check if it's been struck off
 			if(!isAreaStruck(testArea)) {

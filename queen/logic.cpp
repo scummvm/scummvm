@@ -240,8 +240,20 @@ uint16 Logic::objMax(int room) {
 	return _objMax[room];
 }
 
-Area *Logic::area(int index, int subIndex) {
-	return &_area[index][subIndex];
+Area *Logic::area(int room, int num) {
+	return &_area[room][num];
+}
+
+Area *Logic::currentRoomArea(int num) {
+	return &_area[_currentRoom][num];
+}
+
+uint16 Logic::areaMax(int room) {
+	return _areaMax[room];
+}
+
+uint16 Logic::currentRoomAreaMax() {
+	return _areaMax[_currentRoom];
 }
 
 uint16 Logic::walkOffCount() {
@@ -442,6 +454,10 @@ void Logic::joeY(uint16 y) {
 
 void Logic::joeWalk(uint16 walk) {
 	_joe.walk = walk;
+}
+
+void Logic::joeScale(uint16 scale) {
+	_joe.scale = scale;
 }
 
 int16 Logic::gameState(int index) {

@@ -65,6 +65,13 @@ enum {
 };
 
 
+//! GameState vars
+enum {
+	VAR_DRESSING_MODE = 19, // 0=normal clothes, 1=underwear, 2=dress
+	VAR_INTRO_PLAYED = 117
+};
+
+
 } // End of namespace Queen
 
 #endif

@@ -53,6 +53,19 @@ struct MovePersonAnim {
 };
 
 
+struct MovePersonData {
+	const char *name;
+	int16 walkLeft1, walkLeft2;
+	int16 walkRight1, walkRight2;
+	int16 walkBack1, walkBack2;
+	int16 walkFront1, walkFront2;
+	uint16 frontStandingFrame;
+	uint16 backStandingFrame;
+	uint16 animSpeed;
+	uint16 moveSpeed;
+};
+
+
 class Logic;
 class Graphics;
 
@@ -62,18 +75,18 @@ public:
 	Walk(Logic* logic, Graphics* graphics);
 
 	void joeSetup();
-
-	void setCurrentRoomAreas(const Area* roomAreas, uint16 roomAreasCount);
 	
 	//! MOVE_JOE()
 	void joeMove(int dir, uint16 oldx, uint16 oldy, uint16 newx, uint16 newy, bool inCutaway);
 	
 	//! FACE_JOE()
-	uint16 joeFace(uint16 prevFacing, uint16 scale);
+	uint16 joeFace(uint16 prevFacing);
+
+	//! MOVE_OTHER
+	void personMove(const char* name, uint16 endx, uint16 endy, uint16 image, int dir);
 
 
 private:
-
 
 	void joeMoveBlock();
 
@@ -107,12 +120,11 @@ private:
 
 
 	MovePersonAnim _moveAnim[15];
+	static MovePersonData _moveData[];
 
 	uint16 _walkDataCount;
 	WalkData _walkData[16];	
 	
-	uint16 _roomAreasCount;
-	const Area* _roomAreas;
 	uint16 _areaStrikeCount;
 	uint16 _areaStrike[MAX_AREAS + 1];
 	uint16 _areaListCount;

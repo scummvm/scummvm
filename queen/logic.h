@@ -62,19 +62,24 @@ public:
 	uint16 findBob(uint16 obj); // FIXME: move that to QueenDisplay ?
 	uint16 findFrame(uint16 obj); // FIXME: move that to QueenDisplay ?
 
-	Area *area(int index, int subIndex);
+	Area *area(int room, int num);
+	Area *currentRoomArea(int num);
+	uint16 areaMax(int room);
+	uint16 currentRoomAreaMax();
 	uint16 walkOffCount();
 	WalkOffData *walkOffData(int index);
 
 	uint16 joeFacing()	{ return _joe.facing; }
 	uint16 joeX()		{ return _joe.x; }
 	uint16 joeY()		{ return _joe.y; }
-	uint16 joeWalk()    { return _joe.walk; }
+	uint16 joeWalk()	{ return _joe.walk; }
+	uint16 joeScale()	{ return _joe.scale; }
 
 	void joeFacing(uint16 dir);
 	void joeX(uint16 x);
 	void joeY(uint16 y);
 	void joeWalk(uint16 walk);
+	void joeScale(uint16 scale);
 	
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
@@ -129,6 +134,7 @@ protected:
 		uint16	x, y;
 		uint16	facing;
 		uint16  walk;
+		uint16  scale;
 	} _joe;
 	
 	int16 _gameState[GAME_STATE_COUNT];
