@@ -577,7 +577,6 @@ int IMuseDigital::getSoundStatus(int sound) const {
 }
 
 void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height) {
-	int32 param1 = 0, param2 = 0;
 	int32 sync_size;
 	byte *sync_ptr;
 
