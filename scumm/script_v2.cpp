@@ -836,8 +836,31 @@ void Scumm_v2::o2_printEgo() {
 	//_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
 	//_messagePtr = _scriptPointer;
 
-	printf("o2_printEgo(%s)\n", _scriptPointer);
-	_scriptPointer += resStrLen(_scriptPointer) + 1;
+	char buffer[256];	// FIXME
+	char *ptr = buffer;
+	char c;
+	while ((c = *_scriptPointer++)) {
+		if (c & 0x80) {
+			*ptr++ = c & 0x7f;
+			*ptr++ = ' ';
+		} else if (c < 8) {
+			// Special codes as seen in CHARSET_1 etc. My guess is that they
+			// have a similar function as the corresponding embedded stuff in modern
+			// games. Hence for now we convert them to the modern format.
+			// This might allow us to reuse the existing code.
+			*ptr++ = 0xFF;
+			*ptr++ = c;
+			if (c > 3) {
+				*ptr++ = 0;
+				*ptr++ = *_scriptPointer++;
+			}
+		} else
+			*ptr++ = c;
+	}
+	*ptr = 0;
+
+	printf("o2_printEgo(%s)\n", buffer);
+	
 	//_messagePtr = addMessageToStack(_messagePtr);
 	//_scriptPointer = _messagePtr;
 }
