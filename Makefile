@@ -8,15 +8,14 @@ INCLUDES:= -I./ -I./sound
 LIBS	 = -lncurses
 
 # Uncomment this to activate the MAD lib for compressed sound files
-# DEFINES += -DCOMPRESSED_SOUND_FILE
-# LIBS    += -lmad
+DEFINES += -DCOMPRESSED_SOUND_FILE
+LIBS    += -lmad
 
 # Uncomment this to activate the ALSA lib for midi
 # DEFINES += -DUSE_ALSA
 # LIBS    += -lasound
 
-
-# Now, please choose a graphical output system between SDL and X11.
+# Now, please choose a graphical output system between SDL, SDL/GL and X11.
 # Beware, only define one of them, otherwise the compilation will blow up.
 
 # Comment this if you want to disable SDL output
@@ -24,6 +23,12 @@ OBJS	 = sdl.o
 INCLUDES += `sdl-config --cflags`
 LIBS    += `sdl-config --libs`
 DEFINES += -DUNIX
+
+# Uncomment this (instead of the above) to activate the SDL with OpenGL output
+#OBJS	 = sdl_gl.o
+#INCLUDES += `sdl-config --cflags`
+#LIBS    += `sdl-config --libs` -lGL
+#DEFINES += -DUNIX
 
 # Uncomment this in addition to the above if you compile on Mac OS X
 # LIBS	+= -framework QuickTime -framework AudioUnit

@@ -18,7 +18,11 @@ CPPFLAGS= $(DEFINES) $(INCLUDES)
 LIBS	= -lmingw32 -lwinmm -lmad -lstdc++ $(SDL_LIBS)
 EXEEXT	:=.exe
 
+# Uncomment this for SDL normal output
 OBJS	= sdl.o scummvmico.o
+# Or uncomment this for SDL with OpenGL output
+#OBJS	= sdl_gl.o scummvmico.o
+#LIBS += -lopengl32
 
 include Makefile.common
 
