@@ -393,7 +393,7 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 	Point drawPoint;
 	int height;
 	int widthCount = 0;
-	int row, col, lowBound;
+	int row, col, count, lowBound;
 	int bgRunCount;
 	int fgRunCount;
 
@@ -403,13 +403,11 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 	}
 
 
-	/* temporary x clip */
-	if (point.x < 0) {
+	if (point.x + SAGA_ISOTILE_WIDTH < _tileClip.left) {
 		return;
 	}
 
-	/* temporary x clip */
-	if (point.x >= _tileClip.right - 32) {
+	if (point.x - SAGA_ISOTILE_WIDTH >= _tileClip.right) {
 		return;
 	}
 
@@ -430,7 +428,7 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 	}
 
 	readPointer = tilePointer;
-	lowBound = min(drawPoint.y + height, _tileClip.bottom);
+	lowBound = MIN((int)(drawPoint.y + height), (int)_tileClip.bottom);
 	for (row = drawPoint.y; row < lowBound; row++) {
 		widthCount = 0;
 		if (row >= _tileClip.top) {
@@ -448,12 +446,18 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 				fgRunCount = *readPointer++;
 				widthCount += fgRunCount;
 				
-				
-				while(fgRunCount-- > 0) {
-					*drawPointer++ = *readPointer++;
+				count = 0;
+				while ((col < _tileClip.left) && (count < fgRunCount)) {
+					count++;
+					col++;
 				}
-//				readPointer += fgRunCount;
-//				drawPointer += fgRunCount;
+				while ((col < _tileClip.right) && (count < fgRunCount)) {
+					drawPointer[count] = readPointer[count];
+					count++;
+					col++;
+				}
+				readPointer += fgRunCount;
+				drawPointer += fgRunCount;
 			}
 		} else {
 			for (;;) {
