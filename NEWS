@@ -17,6 +17,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed several annoying bugs
    - Fixed crash on 64 bit architectures (like AMD64)
    - Old zak256 target removed, use zakTowns instead
+   - Numerous Humongous Entertainment games fixes
 
  Queen:
    - Various fixes [TODO: Somebody of the Queen team please fill this in]
