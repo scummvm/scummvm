@@ -834,6 +834,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 	
 	/* HE version 90 script opcodes */
+	void o90_dup();
 	void o90_getLT();
 	void o90_getGT();
 	void o90_startLocalScript();

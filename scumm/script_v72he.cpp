@@ -2109,6 +2109,7 @@ void ScummEngine_v72he::o72_unknownF0() {
 
 void ScummEngine_v72he::o72_unknownF1() {
 	byte *addr, *addr2;
+	int i = 0;
 
 	int id = pop();
 	int id2 = pop();
@@ -2122,16 +2123,17 @@ void ScummEngine_v72he::o72_unknownF1() {
 		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
 
 	while (*addr == *addr2) {
-		if (addr == 0) {
+		if (*addr == 0) {
 			push(0);
 			return;
 		}
 		addr++;
 		addr2++;
+		i++;
 	}
 
-	push (1);
-	debug(1,"o70_unknownF1 stub (%d, %d)", id, id2);
+	push (i);
+	debug(1,"o70_unknownF1 stub (%d, %d, %d)", id, id2, i);
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {

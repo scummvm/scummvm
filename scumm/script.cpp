@@ -354,10 +354,6 @@ void ScummEngine::nukeArrays(byte script) {
 	if (_heversion < 60 || script == 0)
 		return;
 
-	//FIXME Nukes wrong arrays
-	if (_gameId == GID_FBEAR)
-		return;
-
 	for (i = 1; i < _numArray; i++) {
 		if (_arraySlot[i] == script) {
 			nukeResource(rtString, i);
@@ -705,9 +701,9 @@ void ScummEngine::stopObjectCode() {
 			ss->cutsceneOverride = 0;
 		}
 	}
+	nukeArrays(ss->number);
 	ss->number = 0;
 	ss->status = ssDead;
-	nukeArrays(_currentScript);
 	_currentScript = 0xFF;
 }
 
