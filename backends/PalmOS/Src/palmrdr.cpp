@@ -22,66 +22,133 @@
 #include "stdafx.h"
 #include "palm.h"
 
-#include "vibrate.h"
+#include "rumble.h"
 #include "shared.h"
 
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+#include "tapwave.h"
+#include "i_zodiac.h"
 #endif
+
+#include "arm/native.h"
+#include "arm/macros.h"
+
+void OSystem_PALMOS::rumblePack(Boolean active) {
+	if (!gVars->vibrator)
+		return;
+
+	RumbleRun(active);
+}
+
 
 void OSystem_PALMOS::set_shake_pos(int shake_pos) {
 	_new_shake_pos = shake_pos;
-	
-	if (shake_pos == 0 && _vibrate) {
-		Boolean active = false;
-		HwrVibrateAttributes(1, kHwrVibrateActive, &active);
-	}
+
+	if (shake_pos == 0)
+		rumblePack(false);
 }
 
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
-#endif
+void OSystem_PALMOS::updateScreen_wideZodiac() {
+	Err e;
+	TwGfxRectType destRect, srcRect;
+	TwGfxPointType destPoint = {0,0};
+	Int32 h;
 
-void OSystem_PALMOS::updateScreen__wide_portrait() {
-	UInt8 *dst = _screenP + _screenOffset.y;
-	UInt8 *src1 = _offScreenP + WIDE_PITCH - 1;
+	if (_screenHeight == 200)
+		h = (_adjustAspectRatio ? 300 : 320);	// 320x200
+	else
+		h = (_adjustAspectRatio ? 360 : 320);	// 640x480, 320x240
 
-#ifndef DISABLE_ARM
-	if (OPTIONS_TST(kOptDeviceARM)) {
-		OSysWideType userData = { dst, src1 };
-		_PnoCall(&_arm[PNO_WIDE].pnoDesc, &userData);
+	srcRect.x = 0;
+	srcRect.y = 0;
+	srcRect.w = _screenWidth;
+	srcRect.h = _screenHeight;
+
+	destRect.w = 480;
+	destRect.h = h;
+	destRect.x = 0;
+	destRect.y = ((gVars->screenFullHeight - destRect.h) / 2);
+
+	_screenOffset.y = destRect.y;
+
+	// shake screen
+	if (_current_shake_pos != _new_shake_pos) {
+		RectangleType r;
+
+		WinSetBackColor(0);
+		// clear top
+		RctSetRectangle(&r, 0, _screenOffset.y, 480, _new_shake_pos);
+		WinFillRectangle(&r, 0);
+		// clear bottom
+		RctSetRectangle(&r, 0, _screenOffset.y + h, 480, _current_shake_pos);
+		WinFillRectangle(&r, 0);
 		
-#ifdef DEBUG_ARM
-	} else if (OPTIONS_TST(kOptDeviceProcX86)) {
-		DataOSysWideType userData = { kOSysWidePortrait, dst, src1 };
-		UInt32 result = PceNativeCall((NativeFuncType*)"ARMlet.dll\0ARMlet_Main", &userData);		
+		destRect.y += _new_shake_pos;
+		_screenOffset.y += _new_shake_pos;
+		
+		rumblePack(_new_shake_pos >= 3);
+		_current_shake_pos = _new_shake_pos;
+	}
+
+	// update screen
+	WinSetDrawWindow(WinGetDisplayWindow());
+	e = TwGfxDrawPalmBitmap((TwGfxSurfaceType *)_twSrc, &destPoint, (BitmapPtr)_twBmpV3);
+	e = TwGfxStretchBlt2((TwGfxSurfaceType *)_twDst, &destRect, (TwGfxSurfaceType *)_twSrc, &srcRect, twGfxStretchFast| (gVars->filter ? twGfxStretchSmooth : 0)); 
+}
 #endif
 
-	} else
-#endif	
+void OSystem_PALMOS::updateScreen_widePortrait() {
+	UInt8 *dst = _screenP + _screenOffset.y;
+	UInt8 *src = _offScreenP + WIDE_PITCH - 1;
+
+	// shake screen
+	if (_current_shake_pos != _new_shake_pos) {
+		RectangleType r;
+
+		WinSetBackColor(0);
+		// clear top
+		RctSetRectangle(&r, _screenOffset.y, 0, _new_shake_pos, 480);
+		WinFillRectangle(&r, 0);
+		// clear bottom
+		RctSetRectangle(&r, _screenOffset.y + 300, 0, _current_shake_pos, 480);
+		WinFillRectangle(&r, 0);
+		
+		dst += _new_shake_pos;
+
+		rumblePack(_new_shake_pos >= 3);
+		_current_shake_pos = _new_shake_pos;
+	}
+	
+	// update screen
+	ARM_START(WideType)
+		ARM_ADDM(dst)
+		ARM_ADDM(src)
+		PNO_CALL(PNO_WIDE, ARM_DATA())
+	ARM_CONTINUE()
 	{
 		Coord x, y;
-		UInt8 *src2 = src1;
+		UInt8 *src2 = src;
 
 		for (x = 0; x < WIDE_HALF_WIDTH; x++) {
 			for (y = 0; y < WIDE_HALF_HEIGHT; y++) {
-				*dst++ = *src1;
-				src1 += WIDE_PITCH;
-				*dst++ = *src1;
-				*dst++ = *src1;
-				src1 += WIDE_PITCH;
+				*dst++ = *src;
+				src += WIDE_PITCH;
+				*dst++ = *src;
+				*dst++ = *src;
+				src += WIDE_PITCH;
 			}
-			src1 = --src2;
+			src = --src2;
 			dst += 20; // we draw 200pix scaled to 1.5 = 300, screen width=320, so next is 20
 
 			for (y = 0; y < WIDE_HALF_HEIGHT; y++) {
-				*dst++ = *src1;
-				src1 += WIDE_PITCH;
-				*dst++ = *src1;
-				*dst++ = *src1;
-				src1 += WIDE_PITCH;
+				*dst++ = *src;
+				src += WIDE_PITCH;
+				*dst++ = *src;
+				*dst++ = *src;
+				src += WIDE_PITCH;
 			}
-			src1 = --src2;
+			src = --src2;
 			dst += 20;
 
 			MemMove(dst, dst - WIDE_PITCH, 300);	// 300 = 200 x 1.5
@@ -93,22 +160,34 @@ void OSystem_PALMOS::updateScreen__wide_portrait() {
 	_screenP = WinScreenLock(winLockCopy) + _screenOffset.addr;
 }
 
-void OSystem_PALMOS::updateScreen__wide_landscape() {
+void OSystem_PALMOS::updateScreen_wideLandscape() {
 	UInt8 *dst = _screenP;
 	UInt8 *src = _offScreenP;
 
-#ifndef DISABLE_ARM
-	if (OPTIONS_TST(kOptDeviceARM)) {
-		OSysWideType userData = { dst, src };
-		_PnoCall(&_arm[PNO_WIDE].pnoDesc, &userData);
+	// shake screen
+	if (_current_shake_pos != _new_shake_pos) {
+		RectangleType r;
 
-#ifdef DEBUG_ARM
-	} else if (OPTIONS_TST(kOptDeviceProcX86)) {
-		DataOSysWideType userData = { kOSysWideLandscape, dst, src };
-		UInt32 result = PceNativeCall((NativeFuncType*)"ARMlet.dll\0ARMlet_Main", &userData);		
-#endif
-	} else
-#endif	
+		WinSetBackColor(0);
+		// clear top
+		RctSetRectangle(&r, 0, _screenOffset.y, 480, _new_shake_pos);
+		WinFillRectangle(&r, 0);
+		// clear bottom
+		RctSetRectangle(&r, 0, _screenOffset.y + 300, 480, _current_shake_pos);
+		WinFillRectangle(&r, 0);
+		
+		dst += _new_shake_pos * 480;
+
+		rumblePack(_new_shake_pos >= 3);
+		_current_shake_pos = _new_shake_pos;
+	}
+	
+	// update screen
+	ARM_START(WideType)
+		ARM_ADDM(dst)
+		ARM_ADDM(src)
+		PNO_CALL(PNO_WIDE, ARM_DATA())
+	ARM_CONTINUE()
 	{
 		Coord x, y;
 
@@ -129,7 +208,7 @@ void OSystem_PALMOS::updateScreen__wide_landscape() {
 	_screenP = WinScreenLock(winLockCopy) + _screenOffset.addr;
 }
 
-void OSystem_PALMOS::updateScreen__flipping() {
+void OSystem_PALMOS::updateScreen_flipping() {
 	RectangleType r, dummy;
 	Boolean shaked = false;
 
@@ -142,11 +221,7 @@ void OSystem_PALMOS::updateScreen__flipping() {
 		else
 			WinScrollRectangle(&r, winDown, _new_shake_pos, &dummy);
 
-		if (_vibrate) {
-			Boolean active = (_new_shake_pos >= 3);
-			HwrVibrateAttributes(1, kHwrVibrateActive, &active);
-		}
-
+		rumblePack(_new_shake_pos >= 3);
 		_current_shake_pos = _new_shake_pos;
 		shaked = true;
 	}
@@ -165,7 +240,7 @@ void OSystem_PALMOS::updateScreen__flipping() {
 
 }
 
-void OSystem_PALMOS::updateScreen__buffered() {
+void OSystem_PALMOS::updateScreen_buffered() {
 	RectangleType r;
 
 	// shake screen
@@ -179,11 +254,7 @@ void OSystem_PALMOS::updateScreen__buffered() {
 				HRWinCopyRectangle(gVars->HRrefNum, _screenH, _screenH, &r, _screenOffset.x, _screenOffset.y, winPaint);
 		}
 
-		if (_vibrate) {
-			Boolean active = (_new_shake_pos >= 3);
-			HwrVibrateAttributes(1, kHwrVibrateActive, &active);
-		}
-
+		rumblePack(_new_shake_pos >= 3);
 		_current_shake_pos = _new_shake_pos;
 	}
 
@@ -196,12 +267,9 @@ void OSystem_PALMOS::updateScreen__buffered() {
 		HRWinCopyRectangle(gVars->HRrefNum, _offScreenH, _screenH, &r, _screenOffset.x, _screenOffset.y + _current_shake_pos, winPaint);
 }
 
-void OSystem_PALMOS::updateScreen__direct() {
+void OSystem_PALMOS::updateScreen_direct() {
 	if (_current_shake_pos != _new_shake_pos) {
-		if (_vibrate) {
-			Boolean active = (_new_shake_pos >= 3);
-			HwrVibrateAttributes(1, kHwrVibrateActive, &active);
-		}	
+		rumblePack(_new_shake_pos >= 3);
 		_current_shake_pos = _new_shake_pos;
 	}
 }
