@@ -197,7 +197,6 @@ void Gui::drawWidget(const GuiWidget * w)
 			}
 
 			if (*text) {
-				printf("drawString(%s)\n", text);
 				drawString(text, x + _parentX, y + _parentY, w->_w,
 									 (_clickWidget
 										&& _clickWidget == w->_id) ? _textcolorhi : _textcolor,
