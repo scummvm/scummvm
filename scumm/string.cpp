@@ -310,10 +310,6 @@ void ScummEngine::CHARSET_1() {
 	// TODO Verify this is correct spot
 	if (_version == 8)
 		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
-
-	// FIXME: Remove this and the next two lines eventually!
-	if (_charset->_hasMask != (_charset->_str.left != -1))
-		warning("_hasMask mismatch (case A %d) - please report to Fingolfin if you notice any text/graphics glitches related to this!", _charset->_hasMask);
 }
 
 void ScummEngine::drawString(int a, const byte *msg) {
@@ -427,14 +423,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_charset->_nextTop = _charset->_top;
 	}
 
-
 	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
-
-	if (_version >= 7) {
-		// FIXME: Remove this and the next two lines eventually!
-		if (!_charset->_hasMask)
-			warning("_hasMask mismatch (case B %d) - please report to Fingolfin if you notice any text/graphics glitches related to this!", _charset->_hasMask);
-	}
 }
 
 int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
