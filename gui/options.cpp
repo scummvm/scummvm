@@ -29,7 +29,7 @@
 #include "common/config-file.h"
 #include "common/gameDetector.h"
 
-#if !( defined(__DC__) || defined(__GP32__) )
+#if (!( defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
 #include <unistd.h>
 #endif
 
