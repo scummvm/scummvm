@@ -152,6 +152,27 @@ enum OpCodes {
 	opDecV = 0x29,
 	opPostInc = 0x2A,
 	opPostDec = 0x2B,
+	opAdd = 0x2C,
+	opSub = 0x2D,
+	opMul = 0x2E,
+	opDiv = 0x2F,
+	opMod = 0x30,
+//...	
+	opEq = 0x33,
+	opNe = 0x34,
+	opGt = 0x35,
+	opLt = 0x36,
+	opGe = 0x37,
+	opLe = 0x38,
+//...	
+	opRsh = 0x3F,
+	opLsh = 0x40,
+	opAnd = 0x41,
+	opOr = 0x42,
+	opXor = 0x43,
+	opLAnd = 0x44,
+	opLOr = 0x45,
+	opLXor = 0x46,
 
 //...
 	opSpeak = 0x53,
@@ -332,12 +353,6 @@ public:
 
 	bool isInitialized() const { return _initialized;  }
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
-/*	ScriptData *currentScript() { return _currentScript; }
-	int getWord(int bufNumber, int wordNumber, ScriptDataWord *data);
-	int putWord(int bufNumber, int wordNumber, ScriptDataWord data);
-	int setBit(int bufNumber, ScriptDataWord bitNumber, int bitState);
-	int getBit(int bufNumber, ScriptDataWord bitNumber, int *bitState);	*/
-//	const char * getScriptString(int index) const { return _currentScript->strings.getString(index); }
 
 	void doVerb();
 	void showVerb(int statuscolor = -1);
@@ -520,24 +535,6 @@ private:
 	int SF_fadeMusic(SCRIPTFUNC_PARAMS);
 	int SF_playVoice(SCRIPTFUNC_PARAMS);
 };
-
-/*inline int getSWord(ScriptDataWord word) {
-	uint16 uInt = word;
-	int sInt;
-
-	if (uInt & 0x8000U) {
-		sInt = (int)(uInt - 0x8000U) - 0x7FFF - 1;
-	} else {
-		sInt = uInt;
-	}
-
-	return sInt;
-}
-
-inline uint getUWord(ScriptDataWord word) {
-	return (uint16) word;
-}
-*/
 
 } // End of namespace Saga
 

@@ -174,7 +174,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	uint16 param2;
 	int16 iparam1;
 	int16 iparam2;
-	long iresult;
+//	long iresult;
 
 	byte argumentsCount;
 	uint16 functionNumber;
@@ -294,7 +294,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			*(uint16*)addr =  thread->pop();
 			break;
 
-// CONTROL INSTRUCTIONS    
+// FUNCTION CALL INSTRUCTIONS    
 		CASEOP(opCall)
 			argumentsCount = scriptS.readByte();
 			param1 = scriptS.readByte();
@@ -467,173 +467,118 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 
 // ARITHMETIC INSTRUCTIONS    
+		CASEOP(opAdd)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 += iparam2;
+			thread->push(iparam1);
+			break;
+		CASEOP(opSub)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 -= iparam2;
+			thread->push(iparam1);
+			break;
+		CASEOP(opMul)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 *= iparam2;
+			thread->push(iparam1);
+			break;
+		CASEOP(opDiv)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 /= iparam2;
+			thread->push(iparam1);
+			break;
+		CASEOP(opMod)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 %= iparam2;
+			thread->push(iparam1);
+			break;
 
-			// (ADD): Addition
-		case 0x2C:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			iresult = iparam1 + iparam2;
-			thread->push(iresult);
+// COMPARISION INSTRUCTIONS    
+		CASEOP(opEq)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			thread->push((iparam1 == iparam2) ? 1 : 0);
 			break;
-			// (SUB): Subtraction
-		case 0x2D:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			iresult = iparam1 - iparam2;
-			thread->push(iresult);
+		CASEOP(opNe)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			thread->push((iparam1 != iparam2) ? 1 : 0);
 			break;
-			// (MULT): Integer multiplication
-		case 0x2E:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			iresult = iparam1 * iparam2;
-			thread->push(iresult);
+		CASEOP(opGt)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			thread->push((iparam1 > iparam2) ? 1 : 0);
 			break;
-			// (DIV): Integer division
-		case 0x2F:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			iresult = iparam1 / iparam2;
-			thread->push(iresult);
+		CASEOP(opLt)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			thread->push((iparam1 < iparam2) ? 1 : 0);
 			break;
-			// (MOD) Modulus
-		case 0x30:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			iresult = iparam1 % iparam2;
-			thread->push(iresult);
+		CASEOP(opGe)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			thread->push((iparam1 >= iparam2) ? 1 : 0);
 			break;
-			// (EQU) Test equality
-		case 0x33:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			data = (iparam1 == iparam2) ? 1 : 0;
-			thread->push(data);
+		CASEOP(opLe)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			thread->push((iparam1 <= iparam2) ? 1 : 0);
 			break;
-			// (NEQU) Test inequality
-		case 0x34:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			data = (iparam1 != iparam2) ? 1 : 0;
-			thread->push(data);
+
+// SHIFT INSTRUCTIONS    
+		CASEOP(opRsh)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 >>= iparam2;
+			thread->push(iparam1);
 			break;
-			// (GRT) Test Greater-than
-		case 0x35:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			data = (iparam1 > iparam2) ? 1 : 0;
-			thread->push(data);
-			break;
-			// (LST) Test Less-than
-		case 0x36:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			data = (iparam1 < iparam2) ? 1 : 0;
-			thread->push(data);
-			break;
-			// (GRTE) Test Greater-than or Equal to
-		case 0x37:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			data = (iparam1 >= iparam2) ? 1 : 0;
-			thread->push(data);
-			break;
-			// (LSTE) Test Less-than or Equal to
-		case 0x38:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			iparam1 = (long)param1;
-			data = (iparam1 <= iparam2) ? 1 : 0;
-			thread->push(data);
+		CASEOP(opLsh)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 <<= iparam2;
+			thread->push(iparam1);
 			break;
 
 // BITWISE INSTRUCTIONS   
-
-			// (SHR): Arithmetic binary shift right
-		case 0x3F:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			iparam2 = (long)param2;
-			// Preserve most significant bit
-			data = (0x01 << ((sizeof(param1) * CHAR_BIT) - 1)) & param1;
-			for (i = 0; i < (int)iparam2; i++) {
-				param1 >>= 1;
-				param1 |= data;
-			}
-			thread->push(param1);
+		CASEOP(opAnd)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 &= iparam2;
+			thread->push(iparam1);
 			break;
-			// (SHL) Binary shift left
-		case 0x40:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			param1 <<= param2;
-			thread->push(param1);
+		CASEOP(opOr)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 |= iparam2;
+			thread->push(iparam1);
 			break;
-			// (AND) Binary AND
-		case 0x41:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			param1 &= param2;
-			thread->push(param1);
-			break;
-			// (OR) Binary OR
-		case 0x42:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			param1 |= param2;
-			thread->push(param1);
-			break;
-			// (XOR) Binary XOR
-		case 0x43:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			param1 ^= param2;
-			thread->push(param1);
+		CASEOP(opXor)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			iparam1 ^= iparam2;
+			thread->push(iparam1);
 			break;
 
-// BOOLEAN LOGIC INSTRUCTIONS     
-
-			// (LAND): Logical AND
-		case 0x44:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			data = (param1 && param2) ? 1 : 0;
-			thread->push(data);
+// LOGICAL INSTRUCTIONS     
+		CASEOP(opLAnd)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			thread->push((iparam1 && iparam2) ? 1 : 0);
 			break;
-			// (LOR): Logical OR
-		case 0x45:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			data = (param1 || param2) ? 1 : 0;
-			thread->push(data);
+		CASEOP(opLOr)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();
+			thread->push((iparam1 || iparam2) ? 1 : 0);
 			break;
-			// (LXOR): Logical XOR
-		case 0x46:
-			param2 = thread->pop();
-			param1 = thread->pop();
-			data = ((param1) ? !(param2) : !!(param2));
-			thread->push(data);
+		CASEOP(opLXor)
+			iparam2 = thread->pop();
+			iparam1 = thread->pop();			
+			thread->push(((iparam1 && !iparam2) || (!iparam1 && iparam2)) ? 1 : 0);
 			break;
 
 // GAME INSTRUCTIONS  
