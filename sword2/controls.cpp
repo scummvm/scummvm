@@ -33,7 +33,7 @@
 #include "resman.h"
 #include "router.h"
 #include "save_rest.h"
-#include "sound.h"			// for FN_stop_music()
+#include "sound.h"
 #include "sword2.h"
 
 #define	MAX_STRING_LEN		64	// 20 was too low; better to be safe ;)
