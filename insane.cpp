@@ -33,6 +33,8 @@ void invalidblock(uint32 tag) {
 	error("Encountered invalid block %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
 }
 
+int _frameChanged;
+
 uint32 SmushPlayer::nextBE32() {
 	uint32 a = *((uint32*)_cur);
 	_cur += sizeof(uint32);
@@ -354,13 +356,15 @@ void codec37_maketable(PersistentCodecData37 *pcd, int pitch, byte idx) {
 
 
 
-void codec37(CodecData *cd, PersistentCodecData37 *pcd) {
+int codec37(CodecData *cd, PersistentCodecData37 *pcd) {
 	int width_in_blocks, height_in_blocks;
 	int src_pitch;
 	byte *curbuf;
 	uint size;
 	bool result = false;
 
+	_frameChanged=1;
+	
 	width_in_blocks = (cd->w + 3) >> 2;
 	height_in_blocks = (cd->h + 3) >> 2;
 	src_pitch = width_in_blocks * 4;
@@ -383,7 +387,7 @@ void codec37(CodecData *cd, PersistentCodecData37 *pcd) {
 		if(size==64000)
 			codec37_bompdepack(curbuf, cd->src+16, size);
 		else
-			return;
+			return(1);
 
 		memset(pcd->deltaBuf, 0, curbuf - pcd->deltaBuf);
 		memset(curbuf + size, 0, pcd->deltaBuf + pcd->deltaSize - curbuf - size);
@@ -397,6 +401,7 @@ void codec37(CodecData *cd, PersistentCodecData37 *pcd) {
 			break;
 
 		if (number&1 && cd->src[12]&1 && cd->flags&0x10) {
+			_frameChanged = 0;
 			result=true;
 			break;
 		}
@@ -415,7 +420,7 @@ void codec37(CodecData *cd, PersistentCodecData37 *pcd) {
 	case 1:
 	case 4:
 		warning("code %d", cd->src[0]);
-		return;
+		return(1);
 
 	default:
 		error("codec37 default case");
@@ -428,6 +433,8 @@ void codec37(CodecData *cd, PersistentCodecData37 *pcd) {
 	} else {
 		memcpy(cd->out, pcd->deltaBufs[pcd->curtable], 320*200);
 	}
+
+	return(_frameChanged);
 }
 
 void codec37_init(PersistentCodecData37 *pcd, int width, int height) {
@@ -461,7 +468,7 @@ void SmushPlayer::parseFOBJ() {
 		codec1(&cd);
 		break;
 	case 37:
-		codec37(&cd, &pcd37);
+		_frameChanged = codec37(&cd, &pcd37);
 		break;
 	default:
 		error("invalid codec %d", codec);
@@ -599,7 +606,11 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 	sm->videoFinished = 0;
 	sm->_insaneState = 1;
 
+	sm->delta = 5;
+
 	do {
+		_frameChanged = 1;
+		
 		if(ftell(_in)>=fileSize )
 			return;
 #ifdef INSANE_DEBUG
@@ -615,16 +626,23 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 			sm->setDirtyColors(0, 255);
 		}
 
-		blitToScreen(sm,sm->_videoBuffer, 0, 0, 320 ,200);
-		updateScreen(sm);
+		if ( _frameChanged)
+		{
+			blitToScreen(sm,sm->_videoBuffer, 0, 0, 320 ,200);
+			updateScreen(sm);
 
-		sm->delta = sm->_system->waitTick(sm->delta);
+			sm->delta = sm->_system->waitTick(sm->delta);
+		}
 	
 		sm->processKbd();
 		
 	} while (!sm->videoFinished);
 
 	sm->_insaneState = 0;
+
+//	if (sm->_lastKeyHit==sm->_vars[sm->VAR_CUTSCENEEXIT_KEY])
+		sm->exitCutscene();
+											
 }
 
 

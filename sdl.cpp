@@ -953,6 +953,7 @@ int main(int argc, char* argv[]) {
 	scumm->_features = detector._features;
 	scumm->_soundCardType = detector._soundCardType;
 
+	scumm->delta=6;
 	
 	scumm->_gui = &gui;
 //	gui.init(scumm);
@@ -961,11 +962,9 @@ int main(int argc, char* argv[]) {
 	scumm->delta=0;
 	scumm->_system = &_system;
 
-	_system.last_time = SDL_GetTicks();
-	
-	scumm->launch();
+	_system.last_time=0;
 
-	_system.last_time = SDL_GetTicks();
+	scumm->launch();
 
 //	scumm->runScript(1,0,0,&scumm->_bootParam);
 	
@@ -2009,4 +2008,8 @@ int OSystem::waitTick(int delta)
 	}while(gui._active);
 
 	return(delta);
+}
+
+OSystem::OSystem(){
+	last_time = SDL_GetTicks();
 }

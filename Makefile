@@ -15,7 +15,8 @@ OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
 	saveload.o script.o scummvm.o sound.o string.o \
 	sys.o verbs.o sdl.o script_v1.o script_v2.o debug.o gui.o \
 	sound/imuse.o sound/fmopl.o sound/adlib.o sound/gmidi.o debugrl.o \
-	akos.o vars.o insane.o gameDetector.o init.o v3/resource_v3.o v4/resource_v4.o
+	akos.o vars.o insane.o gameDetector.o init.o \
+	v3/resource_v3.o v4/resource_v4.o
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \

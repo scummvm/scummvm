@@ -74,4 +74,6 @@ struct SmushPlayer {
 
 	Scumm *sm;
 
+	int _frameChanged;
+
 };
