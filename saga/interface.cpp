@@ -32,7 +32,7 @@
 #include "saga/font.h"
 #include "saga/objectmap.h"
 #include "saga/rscfile_mod.h"
-#include "saga/script_mod.h"
+#include "saga/script.h"
 #include "saga/sprite.h"
 
 #include "saga/interface.h"
@@ -142,7 +142,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
-	_iThread = STHREAD_Create();
+	_iThread = _vm->_script->SThreadCreate();
 	if (_iThread == NULL) {
 		warning("Interface::Interface(): Error creating script thread for game interface module");
 		return;
@@ -504,7 +504,7 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 
 			// Execute object script if present
 			if (script_num != 0) {
-				STHREAD_Execute(_iThread, script_num);
+				_vm->_script->SThreadExecute(_iThread, script_num);
 			}
 		}
 	} else {

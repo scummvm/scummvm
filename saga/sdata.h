@@ -28,9 +28,6 @@
 
 namespace Saga {
 
-#define R_SCRIPT_DATABUF_NUM 5
-#define R_SCRIPT_DATABUF_LEN 1024
-
 class SData {
 public:	
 	SData();

@@ -33,7 +33,6 @@
 #include "saga/events.h"
 #include "saga/actionmap.h"
 #include "saga/isomap.h"
-#include "saga/script_mod.h"
 #include "saga/objectmap.h"
 #include "saga/palanim.h"
 #include "saga/render.h"
@@ -953,13 +952,13 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 
 			debug(0, "Starting start script #%d", _desc.startScriptNum);
 
-			_startScriptThread= STHREAD_Create();
+			_startScriptThread = _vm->_script->SThreadCreate();
 			if (_startScriptThread == NULL) {
 				_vm->_console->print("Thread creation failed.");
 				break;
 			}
-			STHREAD_Execute(_startScriptThread, _desc.startScriptNum);
-			STHREAD_completeThread();
+			_vm->_script->SThreadExecute(_startScriptThread, _desc.startScriptNum);
+			_vm->_script->SThreadCompleteThread();
 		}
 
 		debug(0, "Scene started");

@@ -29,16 +29,14 @@
 #include "saga/scene.h"
 #include "saga/font.h"
 
-#include "saga/script_mod.h"
 #include "saga/script.h"
-#include "saga/sthread.h"
 
 namespace Saga {
 
 #define SD_DISPLAY_LEN 128
 #define SD_ADDTXT( x ) strncat( disp_buf, x, SD_DISPLAY_LEN );
 
-int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
+int Script::SDebugPrintInstr(R_SCRIPT_THREAD *thread) {
 	R_TEXTLIST_ENTRY tl_e;
 	char tmp_buf[80] = { 0 };
 	static char disp_buf[SD_DISPLAY_LEN] = { 0 };
@@ -52,9 +50,9 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 
 	disp_buf[0] = 0;
 
-	if (_vm->_script->_dbg_txtentry != NULL) {
-		_vm->textDeleteEntry(si.text_list, _vm->_script->_dbg_txtentry);
-		_vm->_script->_dbg_txtentry = NULL;
+	if (_dbg_txtentry != NULL) {
+		_vm->textDeleteEntry(si.text_list, _dbg_txtentry);
+		_dbg_txtentry = NULL;
 	}
 
 	tl_e.color = 1;
@@ -66,9 +64,9 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 	tl_e.string = disp_buf;
 	tl_e.display = 1;
 
-	MemoryReadStream readS(_vm->_script->currentScript()->bytecode->bytecode_p 
+	MemoryReadStream readS(currentScript()->bytecode->bytecode_p 
 							 + thread->i_offset, 
-							 _vm->_script->currentScript()->bytecode->bytecode_len 
+							 currentScript()->bytecode->bytecode_len 
 							 - thread->i_offset);
 	in_char = readS.readByte();
 	sprintf(tmp_buf, "%04lX | %02X | ", thread->i_offset, in_char);
@@ -514,8 +512,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 		break;
 	}
 
-	_vm->_script->_dbg_txtentry = _vm->textAddEntry(si.text_list, &tl_e);
-	_vm->textSetDisplay(_vm->_script->_dbg_txtentry, 1);
+	_dbg_txtentry = _vm->textAddEntry(si.text_list, &tl_e);
+	_vm->textSetDisplay(_dbg_txtentry, 1);
 
 	return R_SUCCESS;
 }

@@ -28,6 +28,7 @@
 #include "saga/interface.h"
 #include "saga/render.h"
 #include "saga/scene.h"
+#include "saga/script.h"
 
 namespace Saga {
 
@@ -90,7 +91,7 @@ int SagaEngine::processInput() {
 				_vm->_render->toggleFlag(RF_OBJECTMAP_TEST);
 				break;
 			case 9: // Tab
-				STHREAD_DebugStep();
+				_vm->_script->SThreadDebugStep();
 				break;
 
 			// Actual game keys

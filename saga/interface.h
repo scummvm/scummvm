@@ -27,7 +27,7 @@
 #define SAGA_INTERFACE_H__
 
 #include "saga/sprite.h"
-#include "saga/script_mod.h"
+#include "saga/script.h"
 
 namespace Saga {
 

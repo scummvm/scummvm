@@ -31,9 +31,7 @@
 #include "saga/console.h"
 #include "saga/cvar_mod.h"
 
-#include "saga/script_mod.h"
 #include "saga/script.h"
-#include "saga/sthread.h"
 
 namespace Saga {
 
@@ -129,6 +127,8 @@ Script::Script() {
 	// Initialize script submodules
 	_threadList = ys_dll_create();
 
+	setupScriptFuncList();
+
 	_initialized = true;
 }
 
@@ -151,7 +151,7 @@ Script::~Script() {
 	for (thread_node = ys_dll_head(_threadList); thread_node != NULL;
 				thread_node = ys_dll_next(thread_node)) {
 		thread = (R_SCRIPT_THREAD *)ys_dll_get_data(thread_node);
-		STHREAD_Destroy(thread);
+		SThreadDestroy(thread);
 	}
 
 	_initialized = false;
@@ -520,7 +520,7 @@ void Script::scriptExec(int argc, char *argv[]) {
 
 	if (_dbg_thread == NULL) {
 		_vm->_console->print("Creating debug thread...");
-		_dbg_thread = STHREAD_Create();
+		_dbg_thread = SThreadCreate();
 		if (_dbg_thread == NULL) {
 			_vm->_console->print("Thread creation failed.");
 			return;
@@ -532,7 +532,7 @@ void Script::scriptExec(int argc, char *argv[]) {
 		return;
 	}
 
-	STHREAD_Execute(_dbg_thread, ep_num);
+	SThreadExecute(_dbg_thread, ep_num);
 }
 
 void CF_script_info(int argc, char *argv[], void *refCon) {

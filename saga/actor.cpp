@@ -29,7 +29,7 @@
 #include "saga/cvar_mod.h"
 #include "saga/console.h"
 #include "saga/rscfile_mod.h"
-#include "saga/script_mod.h"
+#include "saga/script.h"
 #include "saga/sndres.h"
 #include "saga/sprite.h"
 #include "saga/font.h"
@@ -282,7 +282,7 @@ int Actor::skipDialogue() {
 				if (a_dnode != NULL) {
 					a_dialogue = (R_ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
 					if (a_dialogue->d_sem != NULL) {
-						STHREAD_ReleaseSem(a_dialogue->d_sem);
+						_vm->_script->SThreadReleaseSem(a_dialogue->d_sem);
 					}
 					ys_dll_delete(a_dnode);
 					// And stop any currently playing voices
@@ -471,7 +471,7 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE
 	}
 
 	if (sem != NULL) {
-		STHREAD_HoldSem(sem);
+		_vm->_script->SThreadHoldSem(sem);
 	}
 
 	return R_SUCCESS;
@@ -513,7 +513,7 @@ int Actor::handleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *com
 			//actor->action = ACTION_IDLE;
 
 			if (a_dialogue->d_sem != NULL) {
-				STHREAD_ReleaseSem(a_dialogue->d_sem);
+				_vm->_script->SThreadReleaseSem(a_dialogue->d_sem);
 			}
 
 			carry_time = a_dialogue->d_time;
@@ -770,7 +770,7 @@ int Actor::walkTo(int id, R_POINT *walk_pt, uint16 flags, R_SEMAPHORE *sem) {
 	ys_dll_add_tail(actor->a_intentlist, &actor_intent, sizeof actor_intent);
 
 	if (sem != NULL) {
-		STHREAD_HoldSem(sem);
+		_vm->_script->SThreadHoldSem(sem);
 	}
 
 	return R_SUCCESS;
@@ -848,7 +848,7 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 
 			// Release path semaphore
 			if ((a_walkint->sem != NULL) && a_walkint->sem_held) {
-				STHREAD_ReleaseSem(a_walkint->sem);
+				_vm->_script->SThreadReleaseSem(a_walkint->sem);
 			}
 
 			*complete_p = 1;
@@ -915,7 +915,7 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 
 			// Release path semaphore
 			if (a_walkint->sem != NULL) {
-				STHREAD_ReleaseSem(a_walkint->sem);
+				_vm->_script->SThreadReleaseSem(a_walkint->sem);
 			}
 
 			actor->action_frame = 0;
@@ -931,7 +931,7 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 
 			// Release path semaphore
 			if (a_walkint->sem != NULL) {
-				STHREAD_ReleaseSem(a_walkint->sem);
+				_vm->_script->SThreadReleaseSem(a_walkint->sem);
 			}
 
 			actor->action_frame = 0;

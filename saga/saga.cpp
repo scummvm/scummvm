@@ -47,7 +47,6 @@
 #include "saga/interface.h"
 #include "saga/isomap.h"
 #include "saga/script.h"
-#include "saga/script_mod.h"
 #include "saga/scene.h"
 #include "saga/sdata.h"
 #include "saga/sndres.h"
@@ -228,8 +227,8 @@ void SagaEngine::go() {
 				msec = R_MAX_TIME_DELTA;
 			}
 			_actor->direct(msec);
-			_vm->_events->handleEvents(msec);
-			STHREAD_ExecThreads(msec);
+			_events->handleEvents(msec);
+			_script->SThreadExecThreads(msec);
 		}
 		// Per frame processing
 		_render->drawScene();

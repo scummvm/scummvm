@@ -29,22 +29,19 @@
 #include "saga/actor.h"
 #include "saga/console.h"
 
-#include "saga/script_mod.h"
 #include "saga/script.h"
 
 #include "saga/sdata.h"
-#include "saga/sthread.h"
-#include "saga/sfuncs.h"
 
 #include "common/stack.h"
 
 namespace Saga {
 
-R_SCRIPT_THREAD *STHREAD_Create() {
+R_SCRIPT_THREAD *Script::SThreadCreate() {
 	YS_DL_NODE *new_node;
 	R_SCRIPT_THREAD *new_thread;
 
-	if (!_vm->_script->isInitialized()) {
+	if (!isInitialized()) {
 		return NULL;
 	}
 
@@ -55,14 +52,14 @@ R_SCRIPT_THREAD *STHREAD_Create() {
 
 	new_thread->stack = new Common::Stack<SDataWord_T>();
 
-	new_node = ys_dll_add_head(_vm->_script->threadList(), new_thread, sizeof *new_thread);
+	new_node = ys_dll_add_head(threadList(), new_thread, sizeof *new_thread);
 
 	free(new_thread);
 
 	return (R_SCRIPT_THREAD *)ys_dll_get_data(new_node);
 }
 
-int STHREAD_Destroy(R_SCRIPT_THREAD *thread) {
+int Script::SThreadDestroy(R_SCRIPT_THREAD *thread) {
 	if (thread == NULL) {
 		return R_FAILURE;
 	}
@@ -72,36 +69,36 @@ int STHREAD_Destroy(R_SCRIPT_THREAD *thread) {
 	return R_SUCCESS;
 }
 
-int STHREAD_ExecThreads(int msec) {
+int Script::SThreadExecThreads(int msec) {
 	YS_DL_NODE *walk_p;
 	R_SCRIPT_THREAD *thread;
 
-	if (!_vm->_script->isInitialized()) {
+	if (!isInitialized()) {
 		return R_FAILURE;
 	}
 
-	for (walk_p = ys_dll_head(_vm->_script->threadList()); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
+	for (walk_p = ys_dll_head(threadList()); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
 		thread = (R_SCRIPT_THREAD *)ys_dll_get_data(walk_p);
 		if (thread->executing) {
-			STHREAD_Run(thread, STHREAD_DEF_INSTR_COUNT, msec);
+			SThreadRun(thread, STHREAD_DEF_INSTR_COUNT, msec);
 		}
 	}
 
 	return R_SUCCESS;
 }
 
-void STHREAD_completeThread(void) {
-	for (int i = 0; i < 40 && (ys_dll_head(_vm->_script->threadList()) != NULL); i++)
-		STHREAD_ExecThreads(0);
+void Script::SThreadCompleteThread(void) {
+	for (int i = 0; i < 40 && (ys_dll_head(threadList()) != NULL); i++)
+		SThreadExecThreads(0);
 }
 
-int STHREAD_SetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num) {
+int Script::SThreadSetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num) {
 	R_SCRIPT_BYTECODE *bytecode;
 	int max_entrypoint;
 
-	assert(_vm->_script->isInitialized());
+	assert(isInitialized());
 
-	bytecode = _vm->_script->currentScript()->bytecode;
+	bytecode = currentScript()->bytecode;
 	max_entrypoint = bytecode->n_entrypoints;
 
 	if ((ep_num < 0) || (ep_num >= max_entrypoint)) {
@@ -114,14 +111,14 @@ int STHREAD_SetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num) {
 	return R_SUCCESS;
 }
 
-int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num) {
-	assert(_vm->_script->isInitialized());
+int Script::SThreadExecute(R_SCRIPT_THREAD *thread, int ep_num) {
+	assert(isInitialized());
 
-	if ((_vm->_script->currentScript() == NULL) || (!_vm->_script->currentScript()->loaded)) {
+	if ((currentScript() == NULL) || (!currentScript()->loaded)) {
 		return R_FAILURE;
 	}
 
-	STHREAD_SetEntrypoint(thread, ep_num);
+	SThreadSetEntrypoint(thread, ep_num);
 
 	thread->i_offset = thread->ep_offset;
 	thread->executing = 1;
@@ -129,20 +126,20 @@ int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num) {
 	return R_SUCCESS;
 }
 
-unsigned char *GetReadPtr(R_SCRIPT_THREAD *thread) {
-	return _vm->_script->currentScript()->bytecode->bytecode_p + thread->i_offset;
+unsigned char *Script::SThreadGetReadPtr(R_SCRIPT_THREAD *thread) {
+	return currentScript()->bytecode->bytecode_p + thread->i_offset;
 }
 
-unsigned long GetReadOffset(const byte *read_p) {
-	return (unsigned long)(read_p - (unsigned char *)_vm->_script->currentScript()->bytecode->bytecode_p);
+unsigned long Script::SThreadGetReadOffset(const byte *read_p) {
+	return (unsigned long)(read_p - (unsigned char *)currentScript()->bytecode->bytecode_p);
 }
 
-size_t GetReadLen(R_SCRIPT_THREAD *thread) {
-	return _vm->_script->currentScript()->bytecode->bytecode_len - thread->i_offset;
+size_t Script::SThreadGetReadLen(R_SCRIPT_THREAD *thread) {
+	return currentScript()->bytecode->bytecode_len - thread->i_offset;
 }
 
 
-int STHREAD_HoldSem(R_SEMAPHORE *sem) {
+int Script::SThreadHoldSem(R_SEMAPHORE *sem) {
 	if (sem == NULL) {
 		return R_FAILURE;
 	}
@@ -152,7 +149,7 @@ int STHREAD_HoldSem(R_SEMAPHORE *sem) {
 	return R_SUCCESS;
 }
 
-int STHREAD_ReleaseSem(R_SEMAPHORE *sem) {
+int Script::SThreadReleaseSem(R_SEMAPHORE *sem) {
 	if (sem == NULL) {
 		return R_FAILURE;
 	}
@@ -165,15 +162,15 @@ int STHREAD_ReleaseSem(R_SEMAPHORE *sem) {
 	return R_SUCCESS;
 }
 
-int STHREAD_DebugStep() {
-	if (_vm->_script->_dbg_singlestep) {
-		_vm->_script->_dbg_dostep = 1;
+int Script::SThreadDebugStep() {
+	if (_dbg_singlestep) {
+		_dbg_dostep = 1;
 	}
 
 	return R_SUCCESS;
 }
 
-int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
+int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 	int instr_count;
 	uint32 saved_offset;
 	SDataWord_T param1;
@@ -191,12 +188,12 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 	int unhandled = 0;
 
 	// Handle debug single-stepping
-	if ((thread == _vm->_script->_dbg_thread) && _vm->_script->_dbg_singlestep) {
-		if (_vm->_script->_dbg_dostep) {
+	if ((thread == _dbg_thread) && _dbg_singlestep) {
+		if (_dbg_dostep) {
 			debug_print = 1;
 			thread->sleep_time = 0;
 			instr_limit = 1;
-			_vm->_script->_dbg_dostep = 0;
+			_dbg_dostep = 0;
 		} else {
 			return R_SUCCESS;
 		}
@@ -218,7 +215,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 		saved_offset = thread->i_offset;
 
-		MemoryReadStream readS(GetReadPtr(thread), GetReadLen(thread));
+		MemoryReadStream readS(SThreadGetReadPtr(thread), SThreadGetReadLen(thread));
 
 		in_char = readS.readByte();
 
@@ -347,7 +344,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					break;
 				}
 
-				sfunc = SFuncList[func_num].sfunc_fp;
+				sfunc = _SFuncList[func_num].sfunc_fp;
 				if (sfunc == NULL) {
 					_vm->_console->print(S_WARN_PREFIX "%X: Undefined script function number: (%X)\n",
 							thread->i_offset, func_num);
@@ -356,7 +353,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 						thread->stack->pop();
 					}
 				} else {
-					FIXME_SHADOWED_result = sfunc(thread);
+					FIXME_SHADOWED_result = (this->*sfunc)(thread);
 					if (FIXME_SHADOWED_result != R_SUCCESS) {
 						_vm->_console->print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
 					}
@@ -732,12 +729,12 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					data = thread->stack->pop();
 					if (a_index < 0)
 						continue;
-					if (!_vm->_script->isVoiceLUTPresent()) {
+					if (!isVoiceLUTPresent()) {
 						voice_rn = -1;
 					} else {
-						voice_rn = _vm->_script->currentScript()->voice->voices[data];
+						voice_rn = currentScript()->voice->voices[data];
 					}
-					_vm->_actor->speak(a_index, _vm->_script->currentScript()->diag-> str[data], voice_rn, &thread->sem);
+					_vm->_actor->speak(a_index, currentScript()->diag-> str[data], voice_rn, &thread->sem);
 				}
 			}
 			break;
@@ -784,7 +781,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			thread->executing = 0;
 		}
 		if (thread->executing && debug_print) {
-			SDEBUG_PrintInstr(thread);
+			SDebugPrintInstr(thread);
 		}
 	}
 
