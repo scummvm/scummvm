@@ -104,7 +104,7 @@ void Player_MOD::stopChannel(int id) {
 		error("player_mod - attempted to stop channel id 0");
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (_channels[i].id == id) {
-			delete _channels[i].ptr;
+			free(_channels[i].ptr);
 			_channels[i].ptr = NULL;
 			delete _channels[i].converter;
 			_channels[i].converter = NULL;
