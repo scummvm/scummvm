@@ -267,7 +267,7 @@ void CDECL debug(int level, const char *s, ...) {
 }
 
 void checkHeap() {
-#if defined(WIN32)
+#if defined(_MSC_VER)
 	if (_heapchk() != _HEAPOK) {
 		error("Heap is invalid!");
 	}
