@@ -87,7 +87,6 @@ private:
 	void insertOverlay(OverlayColor *buf, uint8 *ovl, OverlayColor *pal);
 	void processFrame(uint32 animId, AnimationState *anim, uint32 frameNo);
 	bool initOverlays(uint32 id);
-	void decompressRle(uint8 *src, uint8 *dest, uint32 srcSize);
 	Screen *_scr;
 	SoundMixer *_snd;
 	OSystem *_sys;

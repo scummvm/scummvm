@@ -31,7 +31,6 @@
 #include "sword1/objectman.h"
 #include "sword1/menu.h"
 #include "sword1/sword1.h"
-#include "sword1/animation.h"
 
 namespace Sword1 {
 
