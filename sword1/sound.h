@@ -72,7 +72,7 @@ public:
 	void engine(void);
 
 private:
-	void playSample(QueueElement elem);
+	void playSample(QueueElement *elem);
 	void initCowSystem(void);
 	void closeCowSysten(void);
 	uint32 uncompressedSize(uint8 *data);

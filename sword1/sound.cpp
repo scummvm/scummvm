@@ -76,7 +76,7 @@ void SwordSound::engine(void) {
 		if (_fxQueue[cnt].delay > 0) {
 			_fxQueue[cnt].delay--;
 			if (_fxQueue[cnt].delay == 0)
-				playSample(_fxQueue[cnt]);
+				playSample(&_fxQueue[cnt]);
 		} else {
 			if (!_fxQueue[cnt].handle) { // sound finished
 				_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
@@ -128,16 +128,15 @@ void SwordSound::newScreen(uint16 screen) {
 	// I don't think that we even have to start SFX here.
 }
 
-void SwordSound::playSample(QueueElement elem) {
-
-	uint8 *sampleData = (uint8*)_resMan->fetchRes(_fxList[elem.id].sampleId);
+void SwordSound::playSample(QueueElement *elem) {
+	uint8 *sampleData = (uint8*)_resMan->fetchRes(_fxList[elem->id].sampleId);
 	for (uint16 cnt = 0; cnt < MAX_ROOMS_PER_FX; cnt++) {
-		if (_fxList[elem.id].roomVolList[cnt].roomNo) {
-			if ((_fxList[elem.id].roomVolList[cnt].roomNo == (int)SwordLogic::_scriptVars[SCREEN]) ||
-				(_fxList[elem.id].roomVolList[cnt].roomNo == -1)) {
+		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
+			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)SwordLogic::_scriptVars[SCREEN]) ||
+				(_fxList[elem->id].roomVolList[cnt].roomNo == -1)) {
 
-					uint8 volL = _fxList[elem.id].roomVolList[cnt].leftVol * 10;
-					uint8 volR = _fxList[elem.id].roomVolList[cnt].rightVol * 10;
+					uint8 volL = _fxList[elem->id].roomVolList[cnt].leftVol * 10;
+					uint8 volR = _fxList[elem->id].roomVolList[cnt].rightVol * 10;
 					int8 pan = (volR - volL) / 2;
 					uint8 volume = (volR + volL) / 2;
 					uint32 size = READ_LE_UINT32(sampleData + 0x28);
@@ -146,7 +145,7 @@ void SwordSound::playSample(QueueElement elem) {
 						flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN;
 					else
 						flags = SoundMixer::FLAG_UNSIGNED;
-					_mixer->playRaw(&elem.handle, sampleData + 0x2C, size, 11025, flags, elem.id, volume, pan);
+					_mixer->playRaw(&elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
 			}
 		} else
 			break;
