@@ -24,6 +24,7 @@
 
 #include "stdafx.h"
 #include "common/util.h"
+#include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
@@ -157,7 +158,7 @@ public:
 	void sysEx_customInstrument(uint32 type, byte *instr);
 };
 
-class MidiDriver_YM2612 : public MidiDriver {
+class MidiDriver_YM2612 : public AudioStream, public MidiDriver {
 protected:
 	MidiChannel_YM2612 *_channel[16];
 
@@ -178,7 +179,6 @@ protected:
 	void rate(uint16 r);
 
 	void generate_samples(int16 *buf, int len);
-	static void premix_proc(void *param, int16 *buf, uint len);
 
 public:
 	MidiDriver_YM2612(SoundMixer *mixer);
@@ -198,6 +198,21 @@ public:
 
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
+
+
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples) {
+		memset(buffer, 0, 2 * numSamples);	// FIXME
+		generate_samples(buffer, numSamples / 2);
+		return numSamples;
+	}
+	int16 read() {
+		error("ProcInputStream::read not supported");
+	}
+	bool isStereo() const { return true; }
+	bool endOfData() const { return false; }
+	
+	int getRate() const { return _mixer->getOutputRate(); }
 };
 
 ////////////////////////////////////////
@@ -754,7 +769,7 @@ MidiDriver_YM2612::~MidiDriver_YM2612() {
 int MidiDriver_YM2612::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
-	_mixer->setupPremix(premix_proc, this);
+	_mixer->setupPremix(this);
 	_isOpen = true;
 	return 0;
 }
@@ -765,7 +780,7 @@ void MidiDriver_YM2612::close() {
 	_isOpen = false;
 
 	// Detach the premix callback handler
-	_mixer->setupPremix(0, 0);
+	_mixer->setupPremix(0);
 }
 
 void MidiDriver_YM2612::setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
@@ -820,10 +835,6 @@ void MidiDriver_YM2612::sysEx(byte *msg, uint16 length) {
 	if (msg[0] != 0x7C || msg[1] >= ARRAYSIZE(_channel))
 		return;
 	_channel[msg[1]]->sysEx_customInstrument('EUP ', &msg[2]);
-}
-
-void MidiDriver_YM2612::premix_proc(void *param, int16 *buf, uint len) {
-	((MidiDriver_YM2612 *) param)->generate_samples(buf, len);
 }
 
 void MidiDriver_YM2612::generate_samples(int16 *data, int len) {

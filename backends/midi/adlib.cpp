@@ -19,6 +19,7 @@
  */
 
 #include "stdafx.h"
+#include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/fmopl.h"
 #include "sound/mixer.h"
@@ -543,7 +544,7 @@ static void create_lookup_table() {
 //
 ////////////////////////////////////////
 
-class MidiDriver_ADLIB : public MidiDriver {
+class MidiDriver_ADLIB : public AudioStream, public MidiDriver {
 	friend class AdlibPart;
 	friend class AdlibPercussionChannel;
 
@@ -566,6 +567,20 @@ public:
 
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_percussion; } // Percussion partially supported
+
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples) {
+		memset(buffer, 0, 2 * numSamples);	// FIXME
+		generate_samples(buffer, numSamples);
+		return numSamples;
+	}
+	int16 read() {
+		error("ProcInputStream::read not supported");
+	}
+	bool isStereo() const { return false; }
+	bool endOfData() const { return false; }
+	
+	int getRate() const { return _mixer->getOutputRate(); }
 
 private:
 	bool _isOpen;
@@ -624,8 +639,6 @@ private:
 	static void struct10_setup(Struct10 * s10);
 	static int random_nr(int a);
 	void mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte note, byte velocity);
-
-	static void premix_proc(void *param, int16 *buf, uint len);
 };
 
 // MidiChannel method implementations
@@ -859,7 +872,7 @@ int MidiDriver_ADLIB::open() {
 
 	_samples_per_tick = (_mixer->getOutputRate() << FIXP_SHIFT) / BASE_FREQ;
 
-	_mixer->setupPremix(premix_proc, this);
+	_mixer->setupPremix(this);
 
 	return 0;
 }
@@ -875,7 +888,7 @@ void MidiDriver_ADLIB::close() {
 	}
 
 	// Detach the premix callback handler
-	_mixer->setupPremix(0, 0);
+	_mixer->setupPremix(0);
 
 	// Turn off the OPL emulation
 //	YM3812Shutdown();
@@ -989,10 +1002,6 @@ MidiDriver *MidiDriver_ADLIB_create(SoundMixer *mixer) {
 
 // All the code brought over from IMuseAdlib
 
-void MidiDriver_ADLIB::premix_proc(void *param, int16 *buf, uint len) {
-	((MidiDriver_ADLIB *) param)->generate_samples(buf, len);
-}
-
 void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 	if (_adlib_reg_cache[port] == value)
 		return;
@@ -1006,9 +1015,6 @@ void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 
 void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 	int step;
-
-	int16 *origData = data;
-	uint origLen = len;
 
 	do {
 		step = len;
@@ -1026,11 +1032,6 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 		data += step;
 		len -= step;
 	} while (len);
-
-	// Convert mono data to stereo
-	for (int i = (origLen - 1); i >= 0; i--) {
-		origData[2 * i] = origData[2 * i + 1] = origData[i];
-	}
 }
 
 void MidiDriver_ADLIB::reset_tick() {
