@@ -488,14 +488,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_copyProtection = false;
 	_demoMode = false;
 	_confirmExit = false;
-	_msgPtrToAdd = NULL;
-	_messagePtr = NULL;
 	_talkDelay = 0;
 	_keepText = false;
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
-	memset(_transText, 0, sizeof(_transText));
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
 	_V1_talkingActor = 0;
@@ -1971,7 +1968,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	CHECK_HEAP;
 	debugC(DEBUG_GENERAL, "Loading room %d", room);
 
-	clearMsgQueue();
+	stopTalk();
 
 	fadeOut(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;

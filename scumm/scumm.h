@@ -396,19 +396,14 @@ public:
 	int32& scummVar(byte var, const char *varName, const char *file, int line)
 	{
 		if (var == 0xFF) {
-			warning("Illegal access to variable %s in file %s, line %d", varName, file, line);
-			// Return a fake memory location, so that at least no innocent variable
-			// gets overwritten.
-			static int32 fake;
-			fake = 0;
-			return fake;
+			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
 		return _scummVars[var];
 	}
 	int32 scummVar(byte var, const char *varName, const char *file, int line) const
 	{
 		if (var == 0xFF) {
-			warning("Illegal access to variable %s in file %s, line %d", varName, file, line);
+			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
 		return _scummVars[var];
 	}
@@ -514,7 +509,7 @@ protected:
 	const byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _currentScript;
 	uint16 _curExecScript;
-	byte **_lastCodePtr;
+	const byte * const *_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
 	int _vmStack[150];
 	int _keyScriptKey, _keyScriptNo;
@@ -772,7 +767,7 @@ public:
 	SentenceTab _sentence[NUM_SENTENCE];
 	StringTab _string[6];
 	int16 _talkDelay;
-	void actorTalk();
+	void actorTalk(const byte *msg);
 	void stopTalk();
 	int getTalkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac
 	void setTalkingActor(int variable);
@@ -1056,24 +1051,21 @@ protected:
 	int _charsetBufPos;
 	byte _charsetBuffer[512];
 
-protected:
+	bool _keepText;
+
 	void initCharset(int charset);
 
 	void CHARSET_1();
-	void drawString(int a);
-	const byte *addMessageToStack(const byte *msg);
-	void addIntToStack(int var);
-	void addVerbToStack(int var);
-	void addNameToStack(int var);
-	void addStringToStack(int var);
-	void unkMessage1();
-	void unkMessage2();
-public:
-	void clearMsgQueue();	// Used by Actor::putActor
-protected:
-	byte *_msgPtrToAdd;
-	const byte *_messagePtr;
-	bool _keepText;
+	void drawString(int a, const byte *msg);
+	void unkMessage1(const byte *msg);
+	void unkMessage2(const byte *msg);
+
+	int addMessageToStack(const byte *msg, byte *dst, int dstSize);
+	int addIntToStack(byte *dst, int dstSize, int var);
+	int addVerbToStack(byte *dst, int dstSize, int var);
+	int addNameToStack(byte *dst, int dstSize, int var);
+	int addStringToStack(byte *dst, int dstSize, int var);
+
 public:
 	Common::Language _language;
 protected:
@@ -1081,10 +1073,10 @@ protected:
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;
 	int _languageIndexSize;
-	byte _transText[500];
+	char _lastStringTag[12+1];
 
 	void loadLanguageBundle();
-	const byte *translateTextAndPlaySpeech(const byte *ptr);
+	void playSpeech(const byte *ptr);
 public:
 	void translateText(const byte *text, byte *trans_buff);	// Used by class ScummDialog
 

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header
+ * $Header$
  *
  */
 
@@ -1086,9 +1086,7 @@ void ScummEngine_v6he::o6_openFile() {
 	int mode, len, slot, l, r;
 	byte filename[100];
 
-	_msgPtrToAdd = filename;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_scriptPointer, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1133,9 +1131,7 @@ void ScummEngine_v6he::o6_deleteFile() {
 	int len, r;
 	byte filename[100];
 
-	_msgPtrToAdd = filename;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_scriptPointer, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1152,9 +1148,7 @@ void ScummEngine_v6he::o6_rename() {
 	int len, r1, r2;
 	byte filename[100],filename2[100];
 
-	_msgPtrToAdd = filename;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_scriptPointer, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1164,9 +1158,7 @@ void ScummEngine_v6he::o6_rename() {
 			break;
 	}
 
-	_msgPtrToAdd = filename2;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_scriptPointer, filename2, sizeof(filename2));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1403,9 +1395,7 @@ void ScummEngine_v6he::o6_unknownF9() {
 	int len, r;
 	byte filename[100];
 
-	_msgPtrToAdd = filename;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_scriptPointer, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1455,24 +1445,23 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
-		_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
-		_scriptPointer += resStrLen(_scriptPointer)+ 1;
-
 		switch (m) {
 		case 0:
-			actorTalk();
+			actorTalk(_scriptPointer);
 			break;
 		case 1:
-			drawString(1);
+			drawString(1, _scriptPointer);
 			break;
 		case 2:
-			unkMessage1();
+			unkMessage1(_scriptPointer);
 			break;
 		case 3:
-			unkMessage2();
+			unkMessage2(_scriptPointer);
 			break;
 		}
-		return;
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
+
+		break;
 	case 0xF9:
 		c = pop();
 		if (c == 1) {
@@ -1483,12 +1472,12 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 			getStackList(args, ARRAYSIZE(args));
 		}
 		warning("decodeParseString case 0xF9 stub");
-		return;
+		break;
 	case 0xFE:
 		setStringVars(m);
 		if (n)
 			_actorToPrintStrFor = pop();
-		return;
+		break;
 	case 0xFF:
 		_string[m].t_xpos = _string[m].xpos;
 		_string[m].t_ypos = _string[m].ypos;
@@ -1498,7 +1487,7 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		_string[m].t_right = _string[m].right;
 		_string[m].t_color = _string[m].color;
 		_string[m].t_charset = _string[m].charset;
-		return;
+		break;
 	default:
 		error("decodeParseString: default case 0x%x", b);
 	}

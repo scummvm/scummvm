@@ -1155,12 +1155,14 @@ int ScummEngine::getActorFromPos(int x, int y) {
 	return 0;
 }
 
-void ScummEngine::actorTalk() {
+void ScummEngine::actorTalk(const byte *msg) {
 	Actor *a;
 
-	_msgPtrToAdd = _charsetBuffer;
-	_messagePtr = addMessageToStack(_messagePtr);
-	assert((int)(_msgPtrToAdd - _charsetBuffer) < (int)(sizeof(_charsetBuffer)));
+	_lastStringTag[0] = 0;
+	addMessageToStack(msg, _charsetBuffer, sizeof(_charsetBuffer));
+	
+	// Play associated speech, if any
+	playSpeech((byte *)_lastStringTag);
 
 	// FIXME: Workaround for bugs #770039 and #770049 
 	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
@@ -1258,11 +1260,6 @@ void ScummEngine::stopTalk() {
 		VAR(VAR_HAVE_MSG) = 0;
 	_keepText = false;
 	_charset->restoreCharsetBg();
-}
-
-void ScummEngine::clearMsgQueue() {
-	_messagePtr = (const byte *)" ";
-	stopTalk();
 }
 
 void Actor::setActorCostume(int c) {

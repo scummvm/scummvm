@@ -46,10 +46,9 @@ void ScummEngine::setStringVars(int slot) {
 	st->charset = st->t_charset;
 }
 
-void ScummEngine::unkMessage1() {
+void ScummEngine::unkMessage1(const byte *msg) {
 	byte buffer[100];
-	_msgPtrToAdd = buffer;
-	_messagePtr = addMessageToStack(_messagePtr);
+	addMessageToStack(msg, buffer, sizeof(buffer));
 
 //	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
 	if ((buffer[0] != 0xFF) && _debugMode) {
@@ -72,22 +71,18 @@ void ScummEngine::unkMessage1() {
 	}
 }
 
-void ScummEngine::unkMessage2() {
+void ScummEngine::unkMessage2(const byte *msg) {
+	// Original COMI used different code at this point.
+	// Seemed to use blastText for the messages
 	byte buf[100];
-	const byte *tmp;
 
-	_msgPtrToAdd = buf;
-	tmp = _messagePtr = addMessageToStack(_messagePtr);
+	addMessageToStack(msg, buf, sizeof(buf));
 
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	// FIXME: I know this is the right thing to do for MI1 and MI2. For
-	// all other games it's just a guess.
 	InfoDialog dialog(this, (char*)buf);
 	VAR(VAR_KEYPRESS) = runDialog(dialog);
-
-	_messagePtr = tmp;
 }
 
 void ScummEngine::CHARSET_1() {
@@ -345,15 +340,14 @@ void ScummEngine::CHARSET_1() {
 	_charset->_mask = _charset->_str;
 }
 
-void ScummEngine::drawString(int a) {
+void ScummEngine::drawString(int a, const byte *msg) {
 	byte buf[256];
 	byte *space;
 	int i, c;
 	byte fontHeight = 0;
 	uint color;
 
-	_msgPtrToAdd = buf;
-	_messagePtr = addMessageToStack(_messagePtr);
+	addMessageToStack(msg, buf, sizeof(buf));
 
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
@@ -370,18 +364,18 @@ void ScummEngine::drawString(int a) {
 
 	fontHeight = _charset->getFontHeight();
 
-	_msgPtrToAdd = buf;
 
 	// trim from the right
+	byte *tmp = buf;
 	space = NULL;
-	while (*_msgPtrToAdd) {
-		if (*_msgPtrToAdd == ' ') {
+	while (*tmp) {
+		if (*tmp == ' ') {
 			if (!space)
-				space = _msgPtrToAdd;
+				space = tmp;
 		} else {
 			space = NULL;
 		}
-		_msgPtrToAdd++;
+		tmp++;
 	}
 	if (space)
 		*space = '\0';
@@ -391,6 +385,7 @@ void ScummEngine::drawString(int a) {
 
 	if (_version < 7)
 		_charset->_ignoreCharsetMask = true;
+
 
 	if (!buf[0]) {
 		buf[0] = ' ';
@@ -468,67 +463,55 @@ void ScummEngine::drawString(int a) {
 	}
 }
 
-const byte *ScummEngine::addMessageToStack(const byte *msg) {
+int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 	uint num = 0;
 	uint32 val;
 	byte chr;
-	byte buf[512];
+	const byte *src;
+	byte *end;
+	byte transBuf[384];
+
+	assert(dst);
+	end = dst + dstSize;
 
 	if (msg == NULL) {
 		warning("Bad message in addMessageToStack, ignoring");
-		return NULL;
+		return 0;
 	}
 
-	while ((buf[num++] = chr = *msg++) != 0) {
-		if (num >= sizeof(buf))
-			error("Message stack overflow");
-
-		if (chr == 0xff) {	// 0xff is an escape character
-			buf[num++] = chr = *msg++;	// followed by a "command" code
-			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
-				buf[num++] = *msg++;	// and some commands are followed by parameters to the functions below
-				buf[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
-				if (_version == 8) {
-					buf[num++] = *msg++;
-					buf[num++] = *msg++;
-				}
-			}
-		}
+	if (_version >= 7 && msg[0] == '/') {
+		translateText(msg, transBuf);
+		src = transBuf;
+	} else {
+		src = msg;
 	}
 
 	num = 0;
 
 	while (1) {
-		chr = buf[num++];
+		chr = src[num++];
 		if (chr == 0)
 			break;
 		if (chr == 0xFF) {
-			chr = buf[num++];
+			chr = src[num++];
 			if (chr == 1 || chr == 2 || chr == 3 || chr == 8) {
 				// Simply copy these special codes
-				*_msgPtrToAdd++ = 0xFF;
-				*_msgPtrToAdd++ = chr;
+				*dst++ = 0xFF;
+				*dst++ = chr;
 			} else {
-				val = (_version == 8) ? READ_LE_UINT32(buf + num) : READ_LE_UINT16(buf + num);
+				val = (_version == 8) ? READ_LE_UINT32(src + num) : READ_LE_UINT16(src + num);
 				switch (chr) {
 				case 4:
-					addIntToStack(val);
+					dst += addIntToStack(dst, end - dst, val);
 					break;
 				case 5:
-					addVerbToStack(val);
+					dst += addVerbToStack(dst, end - dst, val);
 					break;
 				case 6:
-					addNameToStack(val);
+					dst += addNameToStack(dst, end - dst, val);
 					break;
 				case 7:
-					if (_version <= 2) {
-						while ((chr = (byte) _scummVars[val++])) {
-							if (chr != '@')
-								*_msgPtrToAdd++ = chr;
-						}
-					} else {
-						addStringToStack(val);
-					}
+					dst += addStringToStack(dst, end - dst, val);
 					break;
 				case 9:
 				case 10:
@@ -536,13 +519,13 @@ const byte *ScummEngine::addMessageToStack(const byte *msg) {
 				case 13:
 				case 14:
 					// Simply copy these special codes
-					*_msgPtrToAdd++ = 0xFF;
-					*_msgPtrToAdd++ = chr;
-					*_msgPtrToAdd++ = buf[num+0];
-					*_msgPtrToAdd++ = buf[num+1];
+					*dst++ = 0xFF;
+					*dst++ = chr;
+					*dst++ = src[num+0];
+					*dst++ = src[num+1];
 					if (_version == 8) {
-						*_msgPtrToAdd++ = buf[num+2];
-						*_msgPtrToAdd++ = buf[num+3];
+						*dst++ = src[num+2];
+						*dst++ = src[num+3];
 					}
 					break;
 				default:
@@ -553,23 +536,27 @@ const byte *ScummEngine::addMessageToStack(const byte *msg) {
 			}
 		} else {
 			if (chr != '@') {
-				*_msgPtrToAdd++ = chr;
+				*dst++ = chr;
 			}
 		}
+	
+		// Check for a buffer overflow
+		if (dst >= end)
+			error("addMessageToStack: buffer overflow!");
 	}
-	*_msgPtrToAdd = 0;
-
-	return msg;
+	*dst = 0;
+	
+	return dstSize - (end - dst);
 }
 
-void ScummEngine::addIntToStack(int var) {
+int ScummEngine::addIntToStack(byte *dst, int dstSize, int var) {
 	int num;
 
 	num = readVar(var);
-	_msgPtrToAdd += sprintf((char *)_msgPtrToAdd, "%d", num);
+	return snprintf((char *)dst, dstSize, "%d", num);
 }
 
-void ScummEngine::addVerbToStack(int var) {
+int ScummEngine::addVerbToStack(byte *dst, int dstSize, int var) {
 	int num, k;
 
 	num = readVar(var);
@@ -577,33 +564,41 @@ void ScummEngine::addVerbToStack(int var) {
 		for (k = 1; k < _numVerbs; k++) {
 			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
 				const byte *ptr = getResourceAddress(rtVerb, k);
-				ptr = translateTextAndPlaySpeech(ptr);
-				addMessageToStack(ptr);
-				break;
+				return addMessageToStack(ptr, dst, dstSize);
 			}
 		}
 	}
+	return 0;
 }
 
-void ScummEngine::addNameToStack(int var) {
+int ScummEngine::addNameToStack(byte *dst, int dstSize, int var) {
 	int num;
-	const byte *ptr = 0;
 
 	num = readVar(var);
-	if (num)
-		ptr = getObjOrActorName(num);
-	if (ptr) {
-		if ((_version == 8) && (ptr[0] == '/')) {
-			translateText(ptr, _transText);
-			addMessageToStack(_transText);
-		} else {
-			addMessageToStack(ptr);
+	if (num) {
+		const byte *ptr = getObjOrActorName(num);
+		if (ptr) {
+			return addMessageToStack(ptr, dst, dstSize);
 		}
 	}
+	return 0;
 }
 
-void ScummEngine::addStringToStack(int var) {
+int ScummEngine::addStringToStack(byte *dst, int dstSize, int var) {
 	const byte *ptr;
+
+	if (_version <= 2) {
+		byte chr;
+		int i = 0;
+		while ((chr = (byte)_scummVars[var++])) {
+			if (chr != '@') {
+				*dst++ = chr;
+				i++;
+			}
+		}
+
+		return i;
+	}
 
 	if (_version == 3 || _version >= 6)
 		var = readVar(var);
@@ -611,14 +606,10 @@ void ScummEngine::addStringToStack(int var) {
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-			if ((_version == 8) && (ptr[0] == '/')) {
-				translateText(ptr, _transText);
-				addMessageToStack(_transText);
-			} else {
-				addMessageToStack(ptr);
-			}
+			return addMessageToStack(ptr, dst, dstSize);
 		}
 	}
+	return 0;
 }
 
 void ScummEngine::initCharset(int charsetno) {
@@ -724,6 +715,7 @@ int indexCompare(const void *p1, const void *p2) {
 	return strcmp(i1->tag, i2->tag);
 }
 
+// Create an index of the language file.
 void ScummEngine::loadLanguageBundle() {
 	File file;
 	int32 size;
@@ -747,23 +739,16 @@ void ScummEngine::loadLanguageBundle() {
 	file.read(_languageBuffer, size);
 	file.close();
 
-	// Create an index of the language file.
-	// FIXME: Extend this mechanism to also cover The Dig?
-
 	int32 i;
 	char *ptr = _languageBuffer;
 
 	// Count the number of lines in the language file.
-
-	_languageIndexSize = 0;
-
-	for (;;) {
+	for (_languageIndexSize = 0; ; _languageIndexSize++) {
 		ptr = strpbrk(ptr, "\n\r");
 		if (ptr == NULL)
 			break;
 		while (*ptr == '\n' || *ptr == '\r')
 			ptr++;
-		_languageIndexSize++;
 	}
 
 	// Fill the language file index. This is just an array of
@@ -858,75 +843,75 @@ void ScummEngine::loadLanguageBundle() {
 	qsort(_languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 }
 
-const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
-	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (ptr[0] == '/')) {
+void ScummEngine::playSpeech(const byte *ptr) {
+	if ((_gameId == GID_DIG || _gameId == GID_CMI) && ptr[0]) {
 		char pointer[20];
-		int i, j;
-
-		translateText(ptr, _transText);
-		for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
-			if (ptr[i] != '/')
-				pointer[j++] = ptr[i];
-		}
-		pointer[j] = 0;
+		strcpy(pointer, (const char *)ptr);
 
 		// Play speech
 		if (!(_features & GF_DEMO) && (_gameId == GID_CMI)) // CMI demo does not have .IMX for voice
 			strcat(pointer, ".IMX");
-		// FIXME: This is a hack to distinguish between 'real' actor speech and
-		// some odd (?) other strings... there is probably a better way to do this.
-		// I just don't know which (yet).
-		if ((_gameId == GID_DIG) || (_gameId == GID_CMI && ptr[i+1] != 0 && ptr[i+1] != 255)) {
+
 			_sound->stopTalkSound();
 			_imuseDigital->startVoice(kTalkSoundID, pointer);
 			_sound->talkSound(0, 0, 2, -1);
 		}
-
-		ptr = _transText;
-	}
-	return ptr;
 }
 
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
-	int l;
+	LangIndexNode target;
+	LangIndexNode *found = NULL;
+	int i;
 	
-	if ((text[0] == '/') && _existLanguageFile) {
-		LangIndexNode target;
-		LangIndexNode *found = NULL;
+	if (_version >= 7 && text[0] == '/') {
+		// Extract the string tag from the text: /..../
+		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
+			_lastStringTag[i] = target.tag[i] = toupper(text[i + 1]);
+		_lastStringTag[i] = target.tag[i] = 0;
+		text += i + 2;
 
-		// copy name from text /..../
-		for (l = 0; (l < 12) && (text[l + 1] != '/'); l++)
-			target.tag[l] = toupper(text[l + 1]);
-		target.tag[l] = 0;
-
-		// HACK: These are used for the object line when
-		// using one object on another. I don't know if the
-		// text in the language file is a placeholder or if
-		// we're supposed to use it, but at least in the
-		// English version things will work so much better if
-		// we can't find translations for these.
-
-		if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
-			found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
-		if (found != NULL) {
-			strcpy((char *)trans_buff, _languageBuffer + found->offset);
-			return;
+		// If a language file was loaded, try to find a translated version
+		// by doing a lookup on the string tag.
+		if (_existLanguageFile) {
+			// HACK: These are used for the object line when
+			// using one object on another. I don't know if the
+			// text in the language file is a placeholder or if
+			// we're supposed to use it, but at least in the
+			// English version things will work so much better if
+			// we can't find translations for these.
+	
+			if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
+				found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 		}
 	}
-	
-	byte *pointer = (byte *)strchr((const char *)text + 1, '/');
-	if (pointer != NULL) {
-		pointer++;
-		if (_gameId == GID_CMI) {
-			memcpy(trans_buff, pointer, resStrLen(pointer) + 1);
-		} else if (_gameId == GID_DIG) {
-			l = 0;
-			while (*pointer != '/' && *pointer != 0xff && *pointer != 0) {
-				trans_buff[l++] = *pointer++;
+
+	if (found != NULL) {
+		strcpy((char *)trans_buff, _languageBuffer + found->offset);
+
+		// FIXME / TODO: Maybe this should be enabled for Full Throttle, too?
+		if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
+			// Replace any '%___' by the corresponding special codes in the source text
+			const byte *src = text;
+			char *dst = (char *)trans_buff;
+
+			while ((dst = strstr(dst, "%___"))) {
+				// Search for a special code in the message.
+				while (*src && *src != 0xFF) {
+					src++;
+				}
+				
+				// Replace the %___ by the special code. Luckily, we can do
+				// that in-place.
+				if (*src == 0xFF) {
+					memcpy(dst, src, 4);
+					src += 4;
+					dst += 4;
+				} else
+					break;
 			}
-			trans_buff[l] = '\0';
 		}
 	} else {
+		// Default: just copy the string
 		memcpy(trans_buff, text, resStrLen(text) + 1);
 	}
 }
