@@ -23,7 +23,7 @@
 #include "driver/driver96.h"
 #include "memory.h"
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 
 void	Init_console(void);	//Tony9Sept96
 uint32	One_console(void);	//Tony12Aug96
@@ -45,7 +45,7 @@ extern uint8 grabbingSequences;
 extern uint8 wantSfxDebug;	// sfx debug file enabled/disabled from console
 
 
-#else	// _DEBUG
+#else	// _BS2_DEBUG
 /*
 #define	Init_console	NULL
 #define	One_console		NULL
@@ -73,7 +73,7 @@ void	Scroll_console(void);
 //#define	Var_check			NULL
 //#define	Var_set				NULL
 
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 
 extern	uint32	console_status;
 

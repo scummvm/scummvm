@@ -284,7 +284,7 @@ int32 FN_flash(int32 *params)	// (James14feb97)
 {
 	// params	0: colour to flash
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 
 	uint32 count;
 
@@ -315,7 +315,7 @@ int32 FN_flash(int32 *params)	// (James14feb97)
 
 	SetPalette(0, 1, black, RDPAL_INSTANT);
 
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 
 	return(IR_CONT);
 }
@@ -327,7 +327,7 @@ int32 FN_colour(int32 *params)	// (James14feb97)
 {
 	// params	0: colour (see defines above)
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 
 	switch (params[0])	// what colour?
 	{
@@ -352,7 +352,7 @@ int32 FN_colour(int32 *params)	// (James14feb97)
 			break;
 	}
 
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 
 	return(IR_CONT);
 }

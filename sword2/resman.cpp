@@ -306,7 +306,7 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 	uint32	table_offset;
 
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	if	(res>=total_res_files)
 		Con_fatal_error("Res_open illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files-1);
 #endif
@@ -319,7 +319,7 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 
 		parent_res_file = res_conv_table[res*2];	//points to the number of the ascii filename
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 		if	(parent_res_file==0xffff)
 			Con_fatal_error("Res_open tried to open null & void resource number %d", res);
 #endif
@@ -420,13 +420,13 @@ void	resMan::Res_next_cycle( void )	//Tony8Feb97
 {
 //increment the cycle and calculate actual per-cycle memory useage
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	uint32	j;
 #endif
 
 
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	current_memory_useage=0;
 
 	for	(j=1;j<total_res_files;j++)
@@ -460,7 +460,7 @@ void	resMan::Res_close( uint32 res )	//Tony30May96
 //resource floats when count=0
 
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	if	(res>=total_res_files)
 		Con_fatal_error("Res_closeing illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files-1);
 
@@ -742,7 +742,7 @@ void	resMan::Kill_res(uint8 *input)	//Tony23Oct96
 		res = atoi((char*)input);
 
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 		if	(!res)
 			Print_to_console("illegal resource");
 

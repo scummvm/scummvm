@@ -65,7 +65,7 @@ int32 FN_init_background(int32 *params)	//Tony11Sept96
 
 	//--------------------------------------
 	// Write to walkthrough file (zebug0.txt)
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	Zdebug(0,"=====================================");
 	Zdebug(0,"CHANGED TO LOCATION \"%s\"", FetchObjectName(*params));
 	Zdebug(0,"=====================================");
@@ -80,14 +80,14 @@ int32 FN_init_background(int32 *params)	//Tony11Sept96
 	Clear_fx_queue();		// stops all fx & clears the queue (James22july97)
 
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	Zdebug("FN_init_background(%d)", *params);
 
 	if	(!*params)
 	{
 		Con_fatal_error("ERROR: FN_set_background cannot have 0 for background layer id! (%s line=%u)",__FILE__,__LINE__);
 	}
-#endif // _DEBUG
+#endif // _BS2_DEBUG
 
 
 	//-------------------------------------------------------

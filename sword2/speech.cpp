@@ -94,7 +94,7 @@ void	Form_text(int32	*params);		//Tony18Oct96
 BOOL	Is_anim_boxed(uint32 res);		//Tony20Oct96
 uint8 WantSpeechForLine(uint32 wavId);	// James (29july97)
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 void GetCorrectCdForSpeech(int32 wavId);	// for testing speech & text
 #endif
 
@@ -257,7 +257,7 @@ int32 FN_choose(int32 *params)	//Tony19Nov96
 				{
 		   			//--------------------------------------
 					// Write to walkthrough file (zebug0.txt)
-					#ifdef _DEBUG
+					#ifdef _BS2_DEBUG
  					Zdebug(0,"----------------------");
 					Zdebug(0,"Icons available:");
 					#endif
@@ -267,7 +267,7 @@ int32 FN_choose(int32 *params)	//Tony19Nov96
 					{
 				   		//--------------------------------------
 						// Write to walkthrough file (zebug0.txt)
-						#ifdef _DEBUG
+						#ifdef _BS2_DEBUG
 						Zdebug(0,"%s", FetchObjectName(subject_list[j].res));
 						#endif
 	 		   			//--------------------------------------
@@ -282,7 +282,7 @@ int32 FN_choose(int32 *params)	//Tony19Nov96
 
 		   			//--------------------------------------
 					// Write to walkthrough file (zebug0.txt)
-					#ifdef _DEBUG
+					#ifdef _BS2_DEBUG
 					Zdebug(0,"Selected: %s", FetchObjectName(subject_list[hit].res));
 					Zdebug(0,"----------------------");
    					#endif
@@ -1350,7 +1350,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 	char			speechFile[256];
 	static uint8	cycle_skip=0;
 
-	#ifdef _DEBUG			// (James26jun97)
+	#ifdef _BS2_DEBUG			// (James26jun97)
 	_standardHeader	*head;	// for text/speech testing & checking for correct file type
 	static	uint32	currentTextResource=0;	// for text/speech testing - keeping track of text resource currently being tested
 	#endif
@@ -1396,7 +1396,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 	 	//-------------------------
 
 		//-----------------------------------------------------------
-		#ifdef _DEBUG			// (James26jun97)
+		#ifdef _BS2_DEBUG			// (James26jun97)
 
  		textNumber	= params[S_TEXT];	// for debug info
 
@@ -1437,10 +1437,10 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 			}
 		}
 
-		#endif	// _DEBUG
+		#endif	// _BS2_DEBUG
  		//-----------------------------------------------------------
 		// pull out the text line to get the official text number (for wav id)
-		// Once the wav id's go into all script text commands, we'll only need this for _DEBUG
+		// Once the wav id's go into all script text commands, we'll only need this for _BS2_DEBUG
 
 		text_res	= params[S_TEXT]/SIZE;
 		local_text	= params[S_TEXT]&0xffff;
@@ -1452,7 +1452,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 		res_man.Res_close(text_res);	// now ok to close the text file
 
 		//--------------------------------------
-		#ifdef _DEBUG			// (James09jul97)
+		#ifdef _BS2_DEBUG			// (James09jul97)
 
 		// prevent dud lines from appearing while testing text & speech
 		// since these will not occur in the game anyway
@@ -1466,7 +1466,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 			}
 		}
 
-		#endif	// _DEBUG
+		#endif	// _BS2_DEBUG
 		//--------------------------------------
 		// set the 'looping_flag' & the text-click-delay
  
@@ -1477,7 +1477,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 		//----------------------------------------------------------
 		// Write to walkthrough file (zebug0.txt)
 
-		#ifdef _DEBUG
+		#ifdef _BS2_DEBUG
 		if (PLAYER_ID!=CUR_PLAYER_ID)	// if (player_id != george), then player is controlling Nico
 			Zdebug(0,"(%d) Nico: %s", officialTextNumber, text+2);	// so write 'Nico' instead of George
 		else	// ok, it's George anyway
@@ -1547,7 +1547,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 			else if (speech_pan>16)
 				speech_pan=16;
 
-			#ifdef _DEBUG
+			#ifdef _BS2_DEBUG
 			if (SYSTEM_TESTING_TEXT)	// if we're testing text & speech
 			{
 				// if we've moved onto a new text resource, we will want to check
@@ -1569,13 +1569,13 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 				strcpy(speechFile,"SPEECH.CLU");
 			else {
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 				if ((res_man.WhichCd()==1) && (!access("speech1.clu",0))) {	// if 0 ie. if it's there
 				strcpy(speechFile,"speech1.clu");
 				} else if ((res_man.WhichCd()==2) && (!access("speech2.clu",0))) {	// if 0 ie. if it's there
 					strcpy(speechFile,"speech2.clu");
 				} else
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 				{
 					strcpy(speechFile,res_man.GetCdPath());
 					strcat(speechFile,"CLUSTERS\\SPEECH.CLU");
@@ -1590,7 +1590,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 				speechRunning=1;	// ok, we've got something to play	(2 means not playing yet - see below)
 				UnpauseSpeech();	// set it playing now (we might want to do this next cycle, don't know yet)
 			}
-			#ifdef _DEBUG
+			#ifdef _BS2_DEBUG
 			else
 			{
 				Zdebug("ERROR: PlayCompSpeech(speechFile=\"%s\", wav=%d (res=%d pos=%d)) returned %.8x", speechFile, params[S_WAV], text_res, local_text, rv);
@@ -1672,7 +1672,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
   	//-----------------------------------------------------------------------
 	// ok, all is running along smoothly - but a click means stop unnaturally
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	if ((SYSTEM_TESTING_TEXT==0)||(mousey>0))	// so that we can go to the options panel while text & speech is being tested
 	#endif
 	{
@@ -1685,7 +1685,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 	 		// we ignore mouse releases
 
 			//-----------------------------------------------------------
-			#ifdef _DEBUG	// (James26jun97)
+			#ifdef _BS2_DEBUG	// (James26jun97)
 			if (SYSTEM_TESTING_TEXT)	// if testing text & speech
 			{
 				if (me->buttons&RD_RIGHTBUTTONDOWN)	// and RB used to click past text
@@ -1730,9 +1730,9 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 
 		ob_logic->looping=0;						// no longer in a script function loop
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 		textNumber			= 0;					// reset for debug info
-#endif // _DEBUG
+#endif // _BS2_DEBUG
 		officialTextNumber	= 0;					// reset to zero, in case text line not even extracted (since this number comes from the text line)
 
 		RESULT=0;	// ok (James09july97)
@@ -1909,7 +1909,7 @@ void	Form_text(int32	*params)	//Tony18Oct96
 	}
 }
 //------------------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 
 void GetCorrectCdForSpeech(int32 wavId)
 {

@@ -146,11 +146,11 @@ int32 BS2State::InitialiseGame(void)
 	Init_console();				// set up the console system
 	Zdebug("RETURNED.");
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 		Zdebug("CALLING: Init_start_menu");
 		Init_start_menu();			// read in all the startup information
 		Zdebug("RETURNED from Init_start_menu");
-	#endif	// _DEBUG
+	#endif	// _BS2_DEBUG
 
 
 
@@ -241,7 +241,7 @@ void BS2State::go()
 //	Zdebug("[%s]", lpCmdLine);
 
 
-	#ifndef _DEBUG
+	#ifndef _BS2_DEBUG
 	DisableQuitKey();	// so cannot use Ctrl-Q from the release versions (full game or demo)
 	#endif
 
@@ -342,7 +342,7 @@ void BS2State::go()
 		
 		// check for events
 		parseEvents();
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 		if (grabbingSequences && (!console_status))
 			GrabScreenShot();
 #endif
@@ -361,7 +361,7 @@ void BS2State::go()
 
 //-----
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 		if	(console_status)
 		{
 			if	(One_console())
@@ -374,7 +374,7 @@ void BS2State::go()
 
 		if	(!console_status)	//not in console mode - if the console is quit we want to get a logic cycle in before
 		{							//the screen is build. Mostly because of first scroll cycle stuff
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 			if (stepOneCycle)	// if we've just stepped forward one cycle while the game was paused
 			{
 				PauseGame();
@@ -384,7 +384,7 @@ void BS2State::go()
 			if (KeyWaiting())
 			{
 				ReadKey(&c);
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 				if (c==27)					// ESC whether paused or not
 				{
 					PauseAllSound();					// see sound.cpp
@@ -398,29 +398,29 @@ void BS2State::go()
 						{
 							UnpauseGame();
 						}
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 						else if (toupper(c)==' ')			// SPACE bar while paused = step one frame!
 						{
 							stepOneCycle=1;					// step through one game cycle
 							UnpauseGame();
 						}
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 					}
 				else if (toupper(c)=='P')	// 'P' while not paused = pause!
 				{
 					PauseGame();
 				}
-#ifdef _DEBUG	// frame-skipping only allowed on debug version
+#ifdef _BS2_DEBUG	// frame-skipping only allowed on debug version
 				else if (toupper(c)=='S')	// 'S' toggles speed up (by skipping display rendering)
 				{
 					renderSkip = 1 - renderSkip;
 				}
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 			}
 
 			if (gamePaused==0)	// skip GameCycle if we're paused
 			{
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 				gameCycle += 1;
 #endif
 
@@ -428,20 +428,20 @@ void BS2State::go()
 					break;		// break out of main game loop
 			}
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 			Build_debug_text();			// creates the debug text blocks
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 		}
 //-----
 
 		// James (24mar97)
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 		if ((console_status)||(renderSkip==0)||(gameCycle%4 == 0))	// if not in console & 'renderSkip' is set, only render display once every 4 game-cycles
 			Build_display();	// create and flip the screen
 #else
 		Build_display();	// create and flip the screen
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 
 	}
 

@@ -284,7 +284,7 @@ mem* BuildTextSprite( uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *lin
 		{
 			charPtr = FindChar( sentence[pos++], charSet );
 
-			#ifdef _DEBUG			
+			#ifdef _BS2_DEBUG			
 			if ((charPtr->height) != charHeight)
 				Con_fatal_error("FONT ERROR: '%c' is not same height as the space (%s line %u)",sentence[pos-1],__FILE__,__LINE__);
 			#endif
@@ -425,11 +425,11 @@ void CopyChar( _frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 #define	MAX_text_blocs	MAX_DEBUG_TEXT_BLOCKS+1	// allow enough for all the debug text blocks (see debug.cpp)
 #else
 #define	MAX_text_blocs	2	// only need one for speech, and possibly one for "PAUSED"
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 
 typedef	struct
 {
@@ -469,7 +469,7 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 	while((j<MAX_text_blocs)&&(text_sprite_list[j].text_mem))
 		j++;
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	if	(j==MAX_text_blocs)	//we've run out
 		Con_fatal_error("Build_new_block ran out of blocks! (%s line %u)",__FILE__,__LINE__);	//might as well stop the system
 #endif

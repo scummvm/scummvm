@@ -26,7 +26,7 @@
 #include "debug.h"
 //--------------------------------------------------------------------------------------
 
-#ifdef _DEBUG  // this whole file (except ExitWithReport) only included on debug versions
+#ifdef _BS2_DEBUG  // this whole file (except ExitWithReport) only included on debug versions
 
 #include <stdlib.h>
 
@@ -86,7 +86,7 @@ void Make_debug_text_block( char *text, int16 x, int16 y );
 void Plot_cross_hair( int16 x, int16 y, uint8 pen );
 void DrawRect( int16 x, int16 y, int16 x2, int16 y2, uint8 pen );
 //--------------------------------------------------------------------------------------
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 
 // THIS FUNCTION STAYS IN THE RELEASE VERSION
 // IN FACT, CON_FATAL_ERROR IS MAPPED TO THIS AS WELL, SO WE HAVE A MORE PRESENTABLE ERROR REPORT
@@ -113,7 +113,7 @@ void ExitWithReport(const char *format,...)	// (6dec96 JEL)
 	exit(0);
 }
 
-#ifdef _DEBUG	// all other functions only for _DEBUG version
+#ifdef _BS2_DEBUG	// all other functions only for _BS2_DEBUG version
 //--------------------------------------------------------------------------------------
 void Zdebug(const char *format,...)	//Tony's special debug logging file March96
 {
@@ -550,5 +550,5 @@ void Print_current_info(void)	//Tony30Oct96
 
 void Draw_debug_graphics(void) {};
 
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG
 //--------------------------------------------------------------------------------------

@@ -144,7 +144,7 @@ void Trigger_fx(uint8 j)	// called from Process_fx_queue only
 			rv = PlayFx( id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXLOOP );	// looped
 	}
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	if (rv)
 		Zdebug("SFX ERROR: PlayFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
 	#endif
@@ -172,7 +172,7 @@ int32 FN_play_fx(int32 *params)		// called from script only
 	uint32 rv;
 
 	//----------------------------------
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 
 	_standardHeader *header;
 	char type[10];
@@ -201,7 +201,7 @@ int32 FN_play_fx(int32 *params)		// called from script only
 		Zdebug("SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);
 	}
 
-	#endif	//_DEBUG
+	#endif	//_BS2_DEBUG
 	//----------------------------------
 
 	while ((j < FXQ_LENGTH) && (fxq[j].resource != 0))
@@ -228,7 +228,7 @@ int32 FN_play_fx(int32 *params)		// called from script only
 
 		if (fxq[j].type == FX_SPOT)						// spot fx
 		{
-			#ifdef _DEBUG
+			#ifdef _BS2_DEBUG
  			data = res_man.Res_open(fxq[j].resource);	// "pre-load" the sample; this gets it into memory
 			header = (_standardHeader*)data;
 			if (header->fileType != WAV_FILE)
@@ -244,7 +244,7 @@ int32 FN_play_fx(int32 *params)		// called from script only
 
 			data = res_man.Res_open(fxq[j].resource);	// load in the sample
 
-			#ifdef _DEBUG
+			#ifdef _BS2_DEBUG
 			header = (_standardHeader*)data;
 			if (header->fileType != WAV_FILE)
 				Con_fatal_error("FN_play_fx given invalid resource (%s line %u)",__FILE__,__LINE__);
@@ -253,7 +253,7 @@ int32 FN_play_fx(int32 *params)		// called from script only
 			data += sizeof(_standardHeader);
 			rv = OpenFx(id,data);							// copy it to sound memory, using position in queue as 'id'
 
-			#ifdef _DEBUG
+			#ifdef _BS2_DEBUG
 			if (rv)
 				Zdebug("SFX ERROR: OpenFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
 			#endif
@@ -323,7 +323,7 @@ int32 FN_stop_fx(int32 *params)		// called from script only
 		id = (uint32)j+1;	// because 0 is not a valid id
 		rv = CloseFx(id);		// stop fx & remove sample from sound memory
 
-		#ifdef _DEBUG
+		#ifdef _BS2_DEBUG
 		if (rv)
 			Zdebug("SFX ERROR: CloseFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
 		#endif
@@ -417,7 +417,7 @@ int32 FN_play_music(int32 *params)		// updated by James on 10apr97
 
 	rv = StreamCompMusic(filename, params[0], loopFlag);
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 		if (rv)
 	 		Zdebug("ERROR: StreamCompMusic(%s, %d, %d) returned error 0x%.8x", filename, params[0], loopFlag, rv);
 	#endif

@@ -23,7 +23,7 @@
 uint32	console_status=0;	//0 off		// LEFT IN RELEASE VERSION
 
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 
 //-----------------------------------------------------------------------------------------------------------------------
 //its the console! <great>
@@ -1339,4 +1339,4 @@ void	Scroll_console(void) {};
 void	Init_console(void) {};
 void	StartConsole(void) {};
 
-#endif	// _DEBUG
+#endif	// _BS2_DEBUG

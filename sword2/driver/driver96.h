@@ -1627,7 +1627,7 @@ extern void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 //-----------------------------------------------------------------------------
 // Macro for reporting a non-fatal driver error
 //-----------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 static  int32	rderror;
 #define Driver(f)							\
 	if (rderror = f)						\

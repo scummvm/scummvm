@@ -163,7 +163,7 @@ int32 FN_register_start_point(int32 *params)	//Tony14Oct96
 
 //	Zdebug(" FN_register_start_point %d %s", params[0], params[1]);
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	if (total_startups==MAX_starts)
 		Con_fatal_error("ERROR: start_list full [%s line %u]",__FILE__,__LINE__);
 

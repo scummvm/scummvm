@@ -319,7 +319,7 @@ void AllocateRouteMem(void)
 	{
 		slotNo++;
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 		if (slotNo == TOTAL_ROUTE_SLOTS)
 			Con_fatal_error("ERROR: route_slots[] full in AllocateRouteMem() (%s line %u)",__FILE__,__LINE__);
 	#endif
@@ -722,7 +722,7 @@ int32 SmoothestPath()
 
 		options = NewCheck(1, route[p].x, route[p].y, route[p + 1].x, route[p + 1].y);
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 		if (options == 0)
 		{
 			Zdebug("BestTurns fail %d %d %d %d",route[p].x, route[p].y, route[p + 1].x, route[p + 1].y);
@@ -756,7 +756,7 @@ int32 SmoothestPath()
 #endif
 
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 		if (steps == 0)
 		{
 			Zdebug("BestTurns failed %d %d %d %d",route[p].x, route[p].y, route[p + 1].x, route[p + 1].y);
@@ -1459,7 +1459,7 @@ void SlidyWalkAnimator(_walkData *walkAnim)
 
 
 
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	if (lastRealDir == 99)
 	{
 		Con_fatal_error("SlidyWalkAnimatorlast direction error (%s line %u)",__FILE__,__LINE__);
@@ -2988,7 +2988,7 @@ void LoadWalkGrid(void)
 			//-------------------------------
 			// check that we're not going to exceed the max allowed in the complete walkgrid arrays
 
-			#ifdef _DEBUG
+			#ifdef _BS2_DEBUG
 			if ((nbars+theseBars) >= O_GRID_SIZE)
 				Con_fatal_error("Adding walkgrid(%d): %d+%d bars exceeds max %d (%s line %u)", walkGridList[entry], nbars, theseBars, O_GRID_SIZE, __FILE__, __LINE__);
 

@@ -107,7 +107,7 @@ int32 Animate(int32 *params, uint8 reverse_flag)
 	_animHeader		*anim_head;
  	int32	res = params[2];
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	_standardHeader	*head;	// for animation testing & checking for correct file type
 	#endif
 
@@ -123,7 +123,7 @@ int32 Animate(int32 *params, uint8 reverse_flag)
 	if (ob_logic->looping==0)
 	{
 		//-----------------------------------------------------------
-		#ifdef _DEBUG
+		#ifdef _BS2_DEBUG
 		// For testing all anims!	(James18apr97)
 		// A script loop can send every resource number to the anim function
 		// & it will only run the valid ones
@@ -153,7 +153,7 @@ int32 Animate(int32 *params, uint8 reverse_flag)
 		//-----------------------------------------------------------
 
 		//---------------------
-		#ifdef _DEBUG
+		#ifdef _BS2_DEBUG
 		// check that we haven't been passed a zero resource number
 		if (res==0)
 			Con_fatal_error("Animate: %s (id %d) passed zero anim resource (%s line %u)", FetchObjectName(ID), ID, __FILE__, __LINE__);
@@ -163,7 +163,7 @@ int32 Animate(int32 *params, uint8 reverse_flag)
 		anim_file = res_man.Res_open(res);	// open anim file
 
 		//---------------------
-		#ifdef _DEBUG
+		#ifdef _BS2_DEBUG
 		// check this this resource is actually an animation file!
 		head = (_standardHeader*) anim_file;
 		if (head->fileType!=ANIMATION_FILE)	// if it's not an animation file
@@ -175,7 +175,7 @@ int32 Animate(int32 *params, uint8 reverse_flag)
 
 		//---------------------
 		/*
-		#ifdef _DEBUG
+		#ifdef _BS2_DEBUG
 		// check there's at least one frame
 		if (anim_head->noAnimFrames==0)
  			Con_fatal_error("Animate: %s (%d) has zero frame count! (%s line %u)", FetchObjectName(res), res, __FILE__, __LINE__);
@@ -289,12 +289,12 @@ int32 FN_set_frame(int32 *params)
 	_animHeader		*anim_head;
 	int32	res = params[1];
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	_standardHeader	*head;	// for checking for correct file type
 	#endif
 
 	//---------------------
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	// check that we haven't been passed a zero resource number
 	if (res==0)
 		Con_fatal_error("FN_set_frame: %s (id %d) passed zero anim resource (%s line %u)", FetchObjectName(ID), ID, __FILE__, __LINE__);
@@ -307,7 +307,7 @@ int32 FN_set_frame(int32 *params)
 	anim_file = res_man.Res_open(res);	// open anim file
 
 	//---------------------
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	// check this this resource is actually an animation file!
 	head = (_standardHeader*) anim_file;
 	if (head->fileType!=ANIMATION_FILE)	// if it's not an animation file
@@ -319,7 +319,7 @@ int32 FN_set_frame(int32 *params)
 
 	//---------------------
 	/*
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	// check there's at least one frame
 	if (anim_head->noAnimFrames==0)
 		Con_fatal_error("FN_set_frame: %s (%d) has zero frame count! (%s line %u)", FetchObjectName(res), res, __FILE__, __LINE__);
@@ -515,7 +515,7 @@ int32 FN_add_sequence_text(int32 *params)	// (James22may97)
 //			1	frame number to start the text displaying
 //			2	frame number to stop the text dispalying
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	if (sequenceTextLines == MAX_SEQUENCE_TEXT_LINES)
 		Con_fatal_error("FN_add_sequence_text ran out of lines (%s line %u)",__FILE__,__LINE__);
 	#endif
@@ -563,7 +563,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 
 		//--------------------------------------
 		// Write to walkthrough file (zebug0.txt)
-		#ifdef _DEBUG
+		#ifdef _BS2_DEBUG
 		Zdebug(0,"(%d) SEQUENCE TEXT: %s", *(uint16*)text, text+2);	// 1st word of text line is the official line number
 		#endif
 		//--------------------------------------
@@ -583,7 +583,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 				strcpy(speechFile,"SPEECH.CLU");
 			} else {
 
-				#ifdef _DEBUG
+				#ifdef _BS2_DEBUG
 					if ((res_man.WhichCd()==1) && (!access("speech1.clu",0)))	// if 0 ie. if it's there
 					{
 						strcpy(speechFile,"speech1.clu");
@@ -593,7 +593,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 						strcpy(speechFile,"speech2.clu");
 					}
 					else
-					#endif	// _DEBUG
+					#endif	// _BS2_DEBUG
 					{
 						strcpy(speechFile,res_man.GetCdPath());
 						strcat(speechFile,"CLUSTERS\\SPEECH.CLU");
@@ -706,7 +706,7 @@ int32 FN_smacker_lead_in(int32 *params)	// James(21july97)
 {
 	uint8 *leadIn;
 	uint32 rv;
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	_standardHeader *header;
 #endif
 
@@ -714,7 +714,7 @@ int32 FN_smacker_lead_in(int32 *params)	// James(21july97)
 	leadIn = res_man.Res_open(params[0]);
 
 	//-----------------------------------------
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	header = (_standardHeader*)leadIn;
 	if (header->fileType != WAV_FILE)
 		Con_fatal_error("FN_smacker_lead_in() given invalid resource (%s line %u)",__FILE__,__LINE__);
@@ -725,7 +725,7 @@ int32 FN_smacker_lead_in(int32 *params)	// James(21july97)
 	rv = PlayFx( 0, leadIn, 0, 0, RDSE_FXLEADIN );		// wav data gets copied to sound memory
 
 	//-----------------------------------------
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	if (rv)
 		Zdebug("SFX ERROR: PlayFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
 	#endif
@@ -755,7 +755,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
  	uint32	rv;	// drivers return value
 	_movieTextObject *sequenceSpeechArray[MAX_SEQUENCE_TEXT_LINES+1];
 	uint8 *leadOut = NULL;
-#ifdef _DEBUG
+#ifdef _BS2_DEBUG
 	_standardHeader *header;
 #endif
 
@@ -794,7 +794,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 
 	//--------------------------------------------------
 	// check that the name paseed from script is 8 chars or less
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	if (strlen((char *)params[0]) > 8)
 		Con_fatal_error("Sequence filename too long (%s line %u)",__FILE__,__LINE__);
 	#endif
@@ -809,7 +809,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 	//--------------------------------------
 	// Write to walkthrough file (zebug0.txt)
 
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
  	Zdebug(0,"PLAYING SEQUENCE \"%s\"", filename);
 	#endif
    	//--------------------------------------
@@ -826,7 +826,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 		leadOut = res_man.Res_open(smackerLeadOut);
 
 	 	//---------------------------
-		#ifdef _DEBUG
+		#ifdef _BS2_DEBUG
 		header = (_standardHeader*)leadOut;
 		if (header->fileType != WAV_FILE)
 			Con_fatal_error("FN_smacker_lead_out() given invalid resource (%s line %u)",__FILE__,__LINE__);
@@ -869,7 +869,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 	}
 	//--------------------------
 	// check the error return-value
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	if (rv)
 		Zdebug("PlaySmacker(\"%s\") returned 0x%.8x", filename, rv);
 	#endif

@@ -367,7 +367,7 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 
 	//--------------------------------------
 	// Write to walkthrough file (zebug0.txt)
-	#ifdef _DEBUG
+	#ifdef _BS2_DEBUG
 	Zdebug(0,"*************************************");
 	Zdebug(0,"RESTORED GAME \"%s\"", header.description);
 	Zdebug(0,"*************************************");
