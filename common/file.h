@@ -40,17 +40,18 @@ public:
 	~File();
 	bool open(const char *filename, int mode = 1, byte encbyte = 0);
 	void close();
+	bool isOpen();
 	bool readFailed();
 	void clearReadFailed();
 	bool eof();
 	uint32 pos();
 	void seek(uint32 offs, int whence);
 	void read(void *ptr, uint32 size);
-	byte fileReadByte();
-	uint16 fileReadWordLE();
-	uint32 fileReadDwordLE();
-	uint16 fileReadWordBE();
-	uint32 fileReadDwordBE();
+	byte readByte();
+	uint16 readWordLE();
+	uint32 readDwordLE();
+	uint16 readWordBE();
+	uint32 readDwordBE();
 
 };
 

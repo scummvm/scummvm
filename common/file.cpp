@@ -77,6 +77,11 @@ bool File::open(const char *filename, int mode, byte encbyte) {
 void File::close() {
 	if (_handle)
 		fclose(_handle);
+	_handle = NULL;
+}
+
+bool File::isOpen() {
+	return _handle != NULL;
 }
 
 bool File::readFailed() {
@@ -136,7 +141,7 @@ void File::read(void *ptr, uint32 size) {
 	} while (--size);
 }
 
-byte File::fileReadByte() {
+byte File::readByte() {
 	byte b;
 
 	if (fread(&b, 1, 1, _handle) != 1) {
@@ -146,26 +151,26 @@ byte File::fileReadByte() {
 	return b ^ _encbyte;
 }
 
-uint16 File::fileReadWordLE() {
-	uint a = fileReadByte();
-	uint b = fileReadByte();
+uint16 File::readWordLE() {
+	uint16 a = readByte();
+	uint16 b = readByte();
 	return a | (b << 8);
 }
 
-uint32 File::fileReadDwordLE() {
-	uint a = fileReadWordLE();
-	uint b = fileReadWordLE();
+uint32 File::readDwordLE() {
+	uint32 a = readWordLE();
+	uint32 b = readWordLE();
 	return (b << 16) | a;
 }
 
-uint16 File::fileReadWordBE() {
-	uint b = fileReadByte();
-	uint a = fileReadByte();
+uint16 File::readWordBE() {
+	uint16 b = readByte();
+	uint16 a = readByte();
 	return a | (b << 8);
 }
 
-uint32 File::fileReadDwordBE() {
-	uint b = fileReadWordBE();
-	uint a = fileReadWordBE();
+uint32 File::readDwordBE() {
+	uint32 b = readWordBE();
+	uint32 a = readWordBE();
 	return (b << 16) | a;
 }
