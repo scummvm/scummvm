@@ -555,8 +555,8 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		// NES can address negative number sprites and that poses problem for
 		// our code. So instead adding zillions of fixes and potentially break
 		// other games we shift it right on rendering stage
-		if (_vm->_features & GF_NES && _vm->_NESStartStrip > 0) {
-			x += _vm->_NESStartStrip * 8;
+		if (_vm->_features & GF_NES && ((_vm->_NESStartStrip > 0) || (vs->number != kMainVirtScreen))) {
+			x += 16;
 		}
 
 		_vm->_system->copyRectToScreen(_compositeBuf + x1 + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);

@@ -818,10 +818,8 @@ void ScummEngine_v2::o2_verbOps() {
 		slot = getVarOrDirectByte(PARAM_1) + 1;
 		int prep = fetchScriptByte(); // Only used in V1?
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
-		if (_features & GF_NES) {
-			y -= 16;
-			x += 8;
-		}
+		if (_features & GF_NES)
+			x -= 8;
 		else if ((_gameId == GID_MANIAC) && (_version == 1))
 			y += 8;
 
@@ -976,7 +974,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
 
-	if (!(_userState & 32))
+	if (!((_userState & 32) || (_features & GF_NES && _userState & 0xe0)))
 		return;
 
 	if (getResourceAddress(rtVerb, slot))

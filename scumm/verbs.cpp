@@ -233,6 +233,10 @@ void ScummEngine::checkV2Inventory(int x, int y) {
 	if ((y < inventoryArea) || !(_mouseButStat & MBS_LEFT_CLICK)) 
 		return;
 
+	// Inventory is shifted right
+	if (_features & GF_NES)
+		x -= 16;
+
 	if (v2_mouseover_boxes[kInventoryUpArrow].rect.contains(x, y)) {
 		if (_inventoryOffset >= 2) {
 			_inventoryOffset -= 2;
@@ -255,6 +259,7 @@ void ScummEngine::checkV2Inventory(int x, int y) {
 		return;
 
 	object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
+
 	if (object > 0) {
 		runInputScript(3, object, 0);
 	}
@@ -435,6 +440,10 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 
 	VerbSlot *vs;
 	int i = _numVerbs - 1;
+
+	// Verbs are shifted right
+	if (_features & GF_NES)
+		x -= 16;
 
 	vs = &_verbs[i];
 	do {

@@ -1112,7 +1112,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else if (_features & GF_NES) {
-		_screenWidth = 256; // 224
+		_screenWidth = 256;
 		_screenHeight = 240;
 	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_features |= GF_DEFAULT_TO_1X_SCALER;
@@ -1790,8 +1790,8 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
 
 		// Adjust mouse coordinates as narrow rooms in NES are centered
-		if (_features & GF_NES && _virtualMouse.y >= 16 && _virtualMouse.y < 144) {
-			VAR(VAR_VIRT_MOUSE_X) -= _NESStartStrip;
+		if (_features & GF_NES && _NESStartStrip > 0) {
+			VAR(VAR_VIRT_MOUSE_X) -= 2;
 			if (VAR(VAR_VIRT_MOUSE_X) < 0)
 				VAR(VAR_VIRT_MOUSE_X) = 0;
 		}
