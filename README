@@ -94,7 +94,7 @@ Please include the following information:
 ---- ----------------
 At the moment the following games have been reported to work, and should
 be playable to the end. However, this list generally applies to PC versions.
-Mac versions should work after being "ReSCUMM'ed" (see later in this document),
+Mac versions usually should work, too (with some exceptions for older games),
 and Amiga versions of games may work with the 'Amiga' flag turned on - but
 this is not always true.
 
@@ -463,8 +463,8 @@ Note #3: The FM-TOWNS version of Zak (zaktowns target) uses an original
 resolution of 320x240 - hence for this game scalers will scale to 
 640x480 or 960x720.
 
-5.4 Hot Keys:
---- ---------
+5.4) Hot Keys:
+---- ---------
 ScummVM supports various in game hotkeys. They differ between the SCUMM and
 simon games.
 
@@ -543,23 +543,20 @@ being ran faster than their normal speed, as scripts will lose synchronisation.
 
 Ctrl-f is not supported by the Broken Sword games.
 
-5.5 Using data files from Macintosh game versions:
---- ----------------------------------------------
+5.5) Using data files from Macintosh game versions:
+---- ----------------------------------------------
 All LucasArts SCUMM based adventures except CMI also exist in versions for the
 Macintosh. ScummVM can use most (all?) of them, however, in some case some
 additional work is required. First off, if you are not using a Macintosh for
-this, accessing the CD/floppy data might be tricky. There are various tools on
-the net for this, though.
+this, accessing the CD/floppy data might be tricky, since the mac uses a 
+special disk format called HFS which other systems usually do not support.
+However, there are various free tools on the net which allow reading such HFS
+volumes (for example "HFVExplorer" for Windows and "hfsutils" for Linux and
+other Unix-like operating systems).
 
 Secondly, most of the newer games shipped only with a  single data file on the
-Macintosh. You first have to run the 'rescumm' tool from the scummvm-tools
-package to extract the data files ScummVM expects. You invoke rescumm like
-this (where DATAFILE is the path to the single big data file):
-
-   rescumm DATAFILE
-
-It will extract the data into the current directory, so make sure to run it from
-a writable directory.
+Macintosh. You used to have to manually convert that data file, but this is no
+longer necessary, as ScummVM can now open and understand the format natively.
 
 5.6) Multi-CD Games:
 ---- ---------------
@@ -704,8 +701,8 @@ select your preferred MIDI device. For example, if you wish to use the
 Windows MIDI driver, use the -ewindows option.
 
 
-7.4.0 Playing sound with Sequencer MIDI:                        [UNIX ONLY]
------ ----------------------------------
+7.4.0) Playing sound with Sequencer MIDI:                        [UNIX ONLY]
+------ ----------------------------------
 If your soundcard driver supports a sequencer, you may set the environment
 variable "SCUMMVM_MIDI" to your sequencer device - e.g., /dev/sequencer
 
@@ -717,8 +714,8 @@ performance and quality than Adlib emulation. However, for those systems where
 sequencer support does not work, you can always fall back on Adlib emulation.
 
 
-7.4.1 Playing sound with ALSA sequencer:                        [UNIX ONLY]
------ ----------------------------------
+7.4.1) Playing sound with ALSA sequencer:                        [UNIX ONLY]
+------ ----------------------------------
 If you have installed the ALSA driver with the sequencer support, then
 set the environment variable SCUMMVM_PORT or the config file parameter
 alsa_port to your sequencer port. The default is "65:0".
@@ -1025,8 +1022,8 @@ Simon the Sorcerer 1 & 2 add the following non-standard keywords:
         speech_mute     bool     If true, speech is muted
                                  [Simon the Sorcerer 2 only]
 
-9.0 Compiling:
---- ----------
+9.0) Compiling:
+---- ----------
 You need SDL-1.2.2 or newer (older versions may work, but are unsupported), and
 a supported compiler. Several compilers, including GCC, mingw and Microsoft
 Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
@@ -1090,8 +1087,8 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
           etc. via Fink and into /sw. If you have installed SDL
           in another way, you'll have to edit the Makefile).
 
-X.X Credits:
---- --------
+X.X) Credits:
+---- --------
  The ScummVM team:
         James Brown          - Lead developer
         Max Horn             - Lead developer

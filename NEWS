@@ -14,6 +14,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  SCUMM:
    - Old zak256 target removed, use zakTowns instead
+   - Added support for the special container file format used in mac version
+     (thus you do not have to use rescumm anymore)
 
  Queen:
    - Various fixes [TODO: Somebody of the Queen team please fill this in]
