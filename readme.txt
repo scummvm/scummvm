@@ -1,13 +1,20 @@
 ScummVM README
-last updated: 2002-03-07
+last updated: 2002-03-08
 ------------------------------------------------------------------------
 
 For more info, please visit the ScummVM home page at:
-http://scummvm.sourceforge.net
+http://scummvm.sourceforge.net/
 
-ScummVM is an implementation of the SCUMM engine used in various Lucas
-Arts games such as Monkey Island and Day of the Tentacle. At this time
-ScummVM should be considered ALPHA software. 
+About:
+------
+
+ScummVM is an implementation of the SCUMM (Script Creation Utility for
+Maniac Mansion) engine used in various Lucas Arts games such as Monkey
+Island and Day of the Tentacle. At this time ScummVM should be considered
+ALPHA software, as it's still under heavy development.
+
+Supported Games:
+----------------
 
 At the moment the following games have been reported to work, and should
 be playable to the end:
@@ -26,13 +33,21 @@ The following games should load, but are not yet in a playable form.
         Full Throttle
         The Dig
 
+The following games are SCUMM engine, but NOT supported by ScummVM (yet).
+
+	Maniac Mansion
+	Zak McKraken (16 color floppy version)
+	Monkey Island (16 color floppy version)
+	Loom (16 color floppy version)
+	Curse of Monkey Island
+
 Please be aware that the engine may contains bugs and non-implemented-
 features that sometimes make it impossible to finish the game. Please file a
 bug report (follow the link on the homepage) if you discover such a bug. Attach
 a saved game if possible.
 
 Known Bugs:
-----------
+-----------
 This release has the following known bugs. There is no need to report them,
 although patches to fix them are welcome.
 
@@ -53,21 +68,17 @@ You need SDL-1.2.2 (maybe older versions will work), and a supported
 compiler. At the moment only GCC and Microsoft Visual C++ are
 supported.
 
-GCC:
-----
+	GCC:
+	* Type make (or gmake if that's what GNU make is called on your
+	  system) and hopefully ScummVM will compile for you.
 
-* Type make (or gmake if that's what GNU make is called on your system)
-and hopefully ScummVM will compile for you.
-
-Microsoft Visual C++:
----------------------
-
-* Open the workspace, scummwm.dsw
-* If you want to compile the GDI version, remove sdl.cpp from the
-  project and add windows.cpp. for the SDL version, remove windows.cpp
-  from the project and add sdl.cpp.
-* Enter the path to the SDL include files in Tools|Options|Directories
-* Now it should compile successfully.
+	Microsoft Visual C++:
+	* Open the workspace, scummwm.dsw
+	* If you want to compile the GDI version, remove sdl.cpp from the
+	  project and add windows.cpp. for the SDL version, remove
+	  windows.cpp from the project and add sdl.cpp.
+	* Enter the path to the SDL include files in Tools|Options|Directories
+	* Now it should compile successfully.
 
 Running:
 --------
@@ -90,16 +101,21 @@ Here is a good example installation directory structure.
 +-- samnmax/
 
 In this installation, <root> is either C: for Windows user, or /usr/
-for *nix systems. To run samnmax from this install as a Windows user
+for *nix systems. To run Monkey Island from this install as a Windows user
 you would make a shortcut with this command:
 
-  C:\Games\LucasArts\scummvm.exe -f -p C:\Games\LucasArts\monkey\ monkey
+  C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
+
+Or, if you have, for example, Full Throttle on CD, and you CD drive is D:.
+
+  C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
 
 The short game name you see at the end of the command line is very
 important. You can get the current list of games and game names at:
 http://scummvm.sourceforge.net/compatibility.php
 
 Command Line Options:
+---------------------
 
         scummvm [-f] [-n] [-p<path>] [-s<n>] [-m<n>] [-t<n>] [-b<n>] game
 
@@ -111,7 +127,8 @@ Command Line Options:
 	-f        - fullscreen mode
         -n        - disable subtitles
 
-In game Keys:
+In game Hot Keys:
+-----------------
 
 	Ctrl 0-9 and Shift 0-9 to load and save states.
 	Ctrl-z quits
@@ -150,5 +167,7 @@ emulated and ScummVM will output the music as sampled waves.
 (doesn't work with Sam&Max)
 
 ------------------------------------------------------------------------
-Good Luck,
+Good Luck and Happy Adventuring!
 The ScummVM team.
+http://scummvm.sourceforge.net/
+------------------------------------------------------------------------
