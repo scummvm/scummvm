@@ -417,6 +417,21 @@ void MidiPlayer::play()
 	_midiDriver->pause(false);
 }
 
+void MidiPlayer::pause(bool b)
+{
+	_midiDriver->pause(b);
+}
+
+uint MidiPlayer::get_volume()
+{
+	// TODO: implement me 
+	return 0;
+}
+
+void MidiPlayer::set_volume(uint volume)
+{
+	// TODO: implement me 
+}
 
 void MidiPlayer::set_driver(MidiDriver *md)
 {

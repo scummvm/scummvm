@@ -153,6 +153,8 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_effects_sound = 0;
 	_voice_sound = 0;
 	_ambient_sound = 0;
+
+	_music_playing = false;
 }
 
 SimonState::~SimonState()
@@ -4608,6 +4610,12 @@ void SimonState::delay(uint amount)
 				case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 't') {
 					_vk_t_toggle ^= 1;
+				} else if (event.kbd.keycode == '+') {
+					midi.set_volume(midi.get_volume() + 10);
+				} else if (event.kbd.keycode == '-') {
+					midi.set_volume(midi.get_volume() - 10);
+				} else if (event.kbd.keycode == 'm') {
+					midi.pause(_music_playing ^= 1);
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'f') {
 						_fast_mode ^= 1;

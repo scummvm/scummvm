@@ -341,6 +341,8 @@ public:
 	int _ambient_index;
 	uint _ambient_playing;
 
+	bool _music_playing;
+
 	int _timer_id;
 
 	FILE *_dump_file;

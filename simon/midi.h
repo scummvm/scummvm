@@ -33,6 +33,9 @@ public:
 	void initialize();
 	void shutdown();
 	void play();
+	void pause(bool b);
+	uint get_volume();
+	void set_volume(uint volume);
 	void set_driver(MidiDriver *md);
 
 private:
