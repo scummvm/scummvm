@@ -898,7 +898,7 @@ void Sound::setupSound() {
 	delete _sfxFile;
 	_sfxFile = openSfxFile();
 
-	if (_vm->VAR_VOICE_BUNDLE_LOADED != 0xFF)
+	if (_vm->_gameId == GID_FT)
 		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = _sfxFile->isOpen();
 }
 
