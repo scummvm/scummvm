@@ -111,8 +111,6 @@ int main(int argc, char *argv[]) {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		return 1;
 
-	g_driver = new Driver(640, 480, 24);
-
 	atexit(SDL_Quit);
 	atexit(saveRegistry);
 
@@ -120,6 +118,8 @@ int main(int argc, char *argv[]) {
 	g_timer = new Timer();
 	g_smush = new Smush();
 
+	g_driver = new Driver(640, 480, 24);
+	
 	Mixer::instance()->start();
 
 	Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
