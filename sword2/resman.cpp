@@ -463,6 +463,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		// If it can't then old files will be ditched until it works.
 		_resList[res].ptr = _vm->_memory->memAlloc(len, res);
 		_resList[res].size = len;
+		_resList[res].refCount = 0;
 
 		file.read(_resList[res].ptr, len);
 
@@ -746,6 +747,7 @@ void ResourceManager::remove(int res) {
 	if (_resList[res].ptr) {
 		_vm->_memory->memFree(_resList[res].ptr);
 		_resList[res].ptr = NULL;
+		_resList[res].refCount = 0;
 	}
 }
 
