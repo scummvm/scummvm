@@ -381,7 +381,6 @@ void Blocky16::level2(byte *d_dst) {
 		}
 		tmp2 += _offset1;
 		for (i = 0; i < 4; i++) {
-			assert(d_dst + tmp2 < _deltaBufs[1] + _frameSize && d_dst + tmp2 >= _deltaBufs[1]);
 			*(uint32 *)(d_dst +  0) = *(uint32 *)(d_dst + tmp2 +  0);
 			*(uint32 *)(d_dst +  4) = *(uint32 *)(d_dst + tmp2 +  4);
 			d_dst += _d_pitch;
@@ -561,8 +560,13 @@ void Blocky16::init(int width, int height) {
 	makeTablesInterpolation(8);
 
 	_frameSize = _width * _height * 2;
-	_deltaSize = _frameSize * 3;
+	// workaround for read over buffer by increasing buffer
+	// 200 bytes is enough for smush anims:
+	// lol, byeruba, crushed, eldepot, heltrain, hostage
+	// but for tb_kitty.snm 5700 bytes is needed
+	_deltaSize = _frameSize * 3 + 5700;
 	_deltaBuf = (byte *)malloc(_deltaSize);
+	memset(_deltaBuf, 0, _deltaSize);
 	_deltaBufs[0] = _deltaBuf;
 	_deltaBufs[1] = _deltaBuf + _frameSize;
 	_curBuf = _deltaBuf + _frameSize * 2;
