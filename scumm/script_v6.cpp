@@ -1816,7 +1816,7 @@ void ScummEngine_v6::o6_actorOps() {
 		a->standFrame = pop();
 		break;
 	case 82:		// SO_ANIMATION
-		// FIXME: what does this opcode do ???
+		// dummy case in scumm6
 		pop();
 		pop();
 		pop();
