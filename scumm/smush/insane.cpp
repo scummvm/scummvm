@@ -8054,7 +8054,7 @@ void Insane::clearBit(int n) {
 	if (n >= 0x80)
 		return;
 
-	_iactBits[n / 8] &= !(0x80 >> (n % 8));
+	_iactBits[n / 8] &= ~(0x80 >> (n % 8));
 }
 
 void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int direction) {
