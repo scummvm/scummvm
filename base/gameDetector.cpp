@@ -48,6 +48,9 @@
 
 extern int gDebugLevel;
 
+// For convenience, we alias kTransientDomain here
+static const Common::String &kTransientDomain = Common::ConfigManager::kTransientDomain;
+
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #ifdef __PALM_OS__
@@ -187,6 +190,16 @@ GameDetector::GameDetector() {
 #endif
 #endif
 
+	// The user can override the savepath with the SCUMMVM_SAVEPATH 
+	// environment variable.
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE)
+	const char *dir = getenv("SCUMMVM_SAVEPATH");
+	if (dir && *dir) {
+		// TODO: Verify whether the path is valid
+		ConfMan.set("savepath", dir, kTransientDomain);
+	}
+#endif
+
 	_dumpScripts = false;
 
 	memset(&_game, 0, sizeof(_game));
@@ -290,8 +303,6 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 		continue; \
 	}
 
-
-static const Common::String &kTransientDomain = Common::ConfigManager::kTransientDomain;
 
 void GameDetector::parseCommandLine(int argc, char **argv) {
 	int i;

@@ -39,21 +39,15 @@ const char *SaveFileManager::getSavePath() const {
 
 	const char *dir = NULL;
 
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE)
-	dir = getenv("SCUMMVM_SAVEPATH");
-#endif
-
-	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
-	if (!dir || dir[0] == 0) {
+	// Try to use game specific savepath from config
+	dir = ConfMan.get("savepath").c_str();
+	
+	// Work around a bug (#999122) in the original 0.6.1 release of
+	// ScummVM, which would insert a bad savepath value into config files.
+	if (0 == strcmp(dir, "None")) {
+		ConfMan.removeKey("savepath", ConfMan.getActiveDomain());
+		ConfMan.flushToDisk();
 		dir = ConfMan.get("savepath").c_str();
-		
-		// Work around a bug (#999122) in the original 0.6.1 release of
-		// ScummVM, which would insert a bad savepath value into config files.
-		if (0 == strcmp(dir, "None")) {
-			ConfMan.removeKey("savepath", ConfMan.getActiveDomain());
-			ConfMan.flushToDisk();
-			dir = ConfMan.get("savepath").c_str();
-		}
 	}
 
 #ifdef _WIN32_WCE
