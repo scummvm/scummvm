@@ -755,7 +755,8 @@ public:
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
 	bool _doEffect;
 	
-	uint16 _lightDx, _lightDy;
+	uint16 _flashlightXStrips, _flashlightYStrips;
+	bool _flashlightIsDrawn;
 
 	void getGraphicsPerformance();
 	void initScreens(int a, int b, int w, int h);

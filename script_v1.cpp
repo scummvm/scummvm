@@ -1545,13 +1545,11 @@ void Scumm::o5_lights()
 	b = fetchScriptByte();
 	c = fetchScriptByte();
 
-	warning("o5_lights(%d,%d,%d): lights not implemented", a, b, c);
-
 	if (c == 0)
 		_vars[VAR_CURRENT_LIGHTS] = a;
 	else if (c == 1) {
-		_lightDx = a;
-		_lightDy = b;
+		_flashlightXStrips = a;
+		_flashlightYStrips = b;
 	}
 	_fullRedraw = 1;
 }

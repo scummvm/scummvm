@@ -23,6 +23,9 @@
 #ifndef GFX_H
 #define GFX_H
 
+enum {
+	NUM_STRIPS = 40
+};
 
 enum VideoMode {		/* Video scalers */
 	VIDEO_SCALE = 0,
@@ -52,7 +55,7 @@ struct VirtScreen {		/* Virtual screen areas */
 	int number;
 	uint16 unk1;
 	uint16 topline;
-	uint16 width,height;
+	uint16 width, height;
 	uint16 size;
 	byte alloctwobuffers;
 	byte scrollable;
@@ -78,10 +81,10 @@ struct ColorCycle {		/* Palette cycles */
 };
 
 struct BlastObject {		/* BlastObjects to draw */
-	uint16 number,areaX,areaY,areaWidth,areaHeight;
-	int16 posX,posY;
-	uint16 width,height;
-	uint16 unk3,unk4,image;
+	uint16 number, areaX, areaY, areaWidth, areaHeight;
+	int16 posX, posY;
+	uint16 width, height;
+	uint16 unk3, unk4, image;
 
 	uint16 mode;
 };
@@ -92,7 +95,7 @@ struct BlastObject {		/* BlastObjects to draw */
 
 struct BompHeader {			/* Bomp header */
 	uint16 unk;
-	uint16 width,height;
+	uint16 width, height;
 } GCC_PACK;
 
 #if !defined(__GNUC__)
@@ -102,7 +105,7 @@ struct BompHeader {			/* Bomp header */
 struct BompDrawData {		/* Bomp graphics data */
 	byte *out;
 	int outwidth, outheight;
-	int x,y;
+	int x, y;
 	byte scale_x, scale_y;
 	byte *dataptr;
 	int srcwidth, srcheight;
