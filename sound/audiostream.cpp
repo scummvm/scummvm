@@ -259,40 +259,18 @@ private:
 	const bool _isStereo;
 	InputProc *_proc;
 	void *_refCon;
-	int16 _buffer[2048];
-	const int16 *_pos;
-	int _len;
-
-	void refill() {
-		// Fill the buffer
-		(_proc)(_refCon, _buffer, 2048);
-		_pos = _buffer;
-		_len = 2048;
-	}
 
 public:
 	ProcInputStream(int rate, bool stereo, InputProc *proc, void *refCon)
-		: _rate(rate), _isStereo(stereo), _proc(proc), _refCon(refCon), _len(0) { }
+		: _rate(rate), _isStereo(stereo), _proc(proc), _refCon(refCon) { }
 	int readBuffer(int16 *buffer, const int numSamples) {
-		int remSamples = numSamples;
-		while (remSamples > 0) {
-			if (_len == 0)
-				refill();
-			// Copy data to the output
-			int samples = MIN(_len, remSamples);
-			memcpy(buffer, _pos, samples * sizeof(int16));
-			_pos += samples;
-			_len -= samples;
-			buffer += samples;
-			remSamples -= samples;
-		}
+		(_proc)(_refCon, buffer, numSamples);
 		return numSamples;
 	}
 	int16 read() {
-		if (_len == 0)
-			refill();
-		_len--;
-		return *_pos++;
+		int16 sample;
+		(_proc)(_refCon, &sample, 1);
+		return sample;
 	}
 	bool isStereo() const { return _isStereo; }
 	bool endOfData() const { return false; }
