@@ -653,7 +653,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 
 void CharsetRenderer::restoreCharsetBg() {
 	_nextLeft = _vm->_string[0].xpos;
-	_nextTop = _vm->_string[0].ypos;
+	_nextTop = _vm->_string[0].ypos + _vm->_screenTop;
 
 	if (_hasMask) {
 		_hasMask = false;
