@@ -493,7 +493,7 @@ void SmushPlayer::parseIACT() {
 
 	if (idx == MAX_STREAMER) {
 		for (idx = 0; idx < MAX_STREAMER; idx++) {
-			if (_imusTrk[idx] == 0 && g_mixer->_channels[idx] == NULL) {
+			if (_imusTrk[idx] == 0 && _scumm->_mixer->_channels[idx] == NULL) {
 				_imusTrk[idx] = trk;
 				_imusSize[idx] = 0;
 				new_mixer = true;
@@ -1198,7 +1198,7 @@ void SmushPlayer::parsePSAD() {		// FIXME: Needs to append to a sound buffer
 
 	if (idx == MAX_STREAMER) {
 		for (idx = 0; idx < MAX_STREAMER; idx++) {
-			if (_psadTrk[idx] == 0 && g_mixer->_channels[idx] == NULL) {
+			if (_psadTrk[idx] == 0 && _scumm->_mixer->_channels[idx] == NULL) {
 				_psadTrk[idx] = trk;
 				_saudSize[idx] = 0;
 				new_mixer = true;
@@ -1467,9 +1467,9 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 			for (idx = 0; idx < MAX_STREAMER; idx++) {
 				if (_imusTrk[idx] != 0) {
 					if (_imusNewMixer[idx]) {
-						g_mixer->play_stream(NULL, idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
+						_scumm->_mixer->play_stream(NULL, idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
 					} else {
-						g_mixer->append(idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
+						_scumm->_mixer->append(idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
 					}
         		}
 			}
@@ -1479,9 +1479,9 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 			for (idx = 0; idx < MAX_STREAMER; idx++) {
 				if (_psadTrk[idx] != 0) {
 					if (_strkNewMixer[idx]) {
-						g_mixer->play_stream(NULL, idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+						_scumm->_mixer->play_stream(NULL, idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 					} else {
-						g_mixer->append(idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+						_scumm->_mixer->append(idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 					}
 				}
 			}
