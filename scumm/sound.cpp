@@ -229,18 +229,18 @@ void Sound::playSound(int soundID) {
 	else if (READ_UINT32(ptr) == MKID('DIGI')) {
 		// TODO - discover what data the first chunk, HSHD, contains
 		// it might be useful here.
+		rate = READ_LE_UINT16(ptr + 22);
+
 		ptr += 8 + READ_BE_UINT32(ptr+12);
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;	// abort
 
 		size = READ_BE_UINT32(ptr+4) - 8;
-		// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
 		if (_overrideFreq) {
 			// Used by the piano in Fatty Bear's Birthday Surprise
 			rate = _overrideFreq;
 			_overrideFreq = 0;
-		} else
-			rate = 11025;
+		}
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
@@ -249,7 +249,6 @@ void Sound::playSound(int soundID) {
 	}
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
 		// pcm music in 3DO humongous games
-		// TODO play via imuse so isSoundRunning can properly report music value?
 		ptr += 8 + READ_BE_UINT32(ptr+12);
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;
