@@ -34,6 +34,7 @@
 #include <dos/dostags.h>
 #include <intuition/screens.h>
 #include <cybergraphics/cybergraphics.h>
+#include <devices/input.h>
 #include <devices/inputevent.h>
 #include <intuition/intuition.h>
 
@@ -112,8 +113,32 @@ OSystem_MorphOS::OSystem_MorphOS(int game_id, SCALERTYPE gfx_mode, bool full_scr
 	strcpy(ScummWndTitle, "ScummVM MorphOS");
 	TimerMsgPort = NULL;
 	TimerIORequest = NULL;
+	InputMsgPort = NULL;
+	InputIORequest = NULL;
 
 	OpenATimer(&TimerMsgPort, (IORequest **) &TimerIORequest, UNIT_MICROHZ);
+
+	if ((InputMsgPort = CreateMsgPort()))
+	{
+		if ((InputIORequest = (IOStdReq*) CreateIORequest(InputMsgPort, sizeof (IOStdReq))))
+		{
+			if ((OpenDevice("input.device", NULL, (IORequest *) InputIORequest, NULL)))
+			{
+				DeleteIORequest(InputIORequest);
+				DeleteMsgPort(InputMsgPort);
+				InputIORequest = NULL;
+				InputMsgPort = NULL;
+			}
+		}
+		else
+		{
+			DeleteMsgPort(InputMsgPort);
+			InputMsgPort = NULL;
+		}
+	}
+
+	if (!InputIORequest)
+		warning("input.device could not be opened");
 
 	OvlCMap = GetColorMap(256);
 	OvlBitMap = NULL;
@@ -162,6 +187,15 @@ OSystem_MorphOS::~OSystem_MorphOS()
 		CDDA_Stop(CDrive);
 		CDDA_ReleaseDrive(CDrive);
 	}
+
+	if (InputIORequest)
+	{
+		CloseDevice((IORequest *) InputIORequest);
+		DeleteIORequest((IORequest *) InputIORequest);
+	}
+
+	if (InputMsgPort)
+		DeleteMsgPort(InputMsgPort);
 
 	if (TimerIORequest)
 	{
@@ -862,6 +896,43 @@ bool OSystem_MorphOS::poll_event(Event *event)
 	return false;
 }
 
+void OSystem_MorphOS::warp_mouse(int x, int y)
+{
+	if (InputIORequest)
+	{
+		InputEvent* 	 FakeIE;
+		IEPointerPixel* NewPixel;
+	
+		/*
+		 * Fake a mousemove input event
+		 */
+		if ((FakeIE = (InputEvent*) AllocVec(sizeof (InputEvent), MEMF_PUBLIC)))
+		{
+			if ((NewPixel = (IEPointerPixel*) AllocVec(sizeof (IEPointerPixel), MEMF_PUBLIC)))
+			{
+				NewPixel->iepp_Screen = ScummWindow->WScreen;
+				NewPixel->iepp_Position.X = x + ScummWindow->LeftEdge + ScummWindow->BorderLeft;
+				NewPixel->iepp_Position.Y = x+ScummWindow->TopEdge + ScummWindow->BorderTop;
+
+				FakeIE->ie_EventAddress = NewPixel;
+				FakeIE->ie_NextEvent = NULL;
+				FakeIE->ie_Class = IECLASS_NEWPOINTERPOS;
+				FakeIE->ie_SubClass = IESUBCLASS_PIXEL;
+				FakeIE->ie_Code = IECODE_NOBUTTON;
+				FakeIE->ie_Qualifier = NULL;
+
+				InputIORequest->io_Data = FakeIE;
+				InputIORequest->io_Length = sizeof (InputEvent);
+				InputIORequest->io_Command = IND_WRITEEVENT;
+				DoIO((IORequest *) InputIORequest);
+
+				FreeVec(NewPixel);
+			}
+			FreeVec(FakeIE);
+		}
+	}
+}
+
 void OSystem_MorphOS::set_shake_pos(int shake_pos)
 {
 	ScummShakePos = shake_pos;
@@ -1435,11 +1506,17 @@ void OSystem_MorphOS::grab_overlay(int16 *buf, int pitch)
 
 	do
 	{
-		for (x = 0; x < ScummBufferWidth; x++)
+/*		  for (x = 0; x < ScummBufferWidth; x++)
+		{
+			*buf++ = (src[0]*31/255 << 11) | (src[1]*63/255 << 5) | src[2]*31/255;
+			src += 3;
+		}*/
+		for (x = 0; x < pitch; x++)
 		{
 			*buf++ = (src[0]*31/255 << 11) | (src[1]*63/255 << 5) | src[2]*31/255;
 			src += 3;
 		}
+		src += (ScummBufferWidth-pitch)*3;
 	} while (--h);
 }
 
@@ -1451,6 +1528,8 @@ void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int 
 	LONG last_col[2] = { -1, -1 };
 	LONG last_pen[2] = { -1, -1 };
 
+	printf("copy_rect_overlay(%d, %d, %d, %d, %d)\n", pitch, x, y, w, h);
+	if (w > pitch) w = pitch;
 	bmap = (UBYTE*) AllocVec(w*h, MEMF_ANY);
 	if (bmap)
 	{
@@ -1481,7 +1560,7 @@ void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int 
 					*bmap_dest++ = last_pen[0];
 				}
 			}
-			dest += ScummBufferWidth*3-w*3;
+			dest += (ScummBufferWidth-w)*3;
 			ovl += pitch-w;
 		}
 		copy_rect(bmap, w, x, y, w, h);

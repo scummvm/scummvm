@@ -94,6 +94,9 @@ class OSystem_MorphOS : public OSystem
 		// Returns true if an event was retrieved.
 		virtual bool poll_event(Event *event);
 
+		// Moves mouse pointer to specified position
+		virtual void warp_mouse(int x, int y);
+
 		// Set the function to be invoked whenever samples need to be generated
 		virtual bool set_sound_proc(void *param, SoundProc *proc, byte format);
 				  void fill_sound    (byte * stream, int len);
@@ -191,6 +194,8 @@ class OSystem_MorphOS : public OSystem
 		int   MouseOldWidth, MouseOldHeight;
 		int   MouseHotspotX, MouseHotspotY;
 		byte *MouseImage, MouseBackup[MAX_MOUSE_W*MAX_MOUSE_H];
+		MsgPort* InputMsgPort;
+		IOStdReq*InputIORequest;
 
 		/* Timer-related attributes */
 		MsgPort 	   *TimerMsgPort;
