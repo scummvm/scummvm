@@ -429,6 +429,7 @@ void ScummEngine_v90he::wizDraw(const WizParameters *params) {
 		// XXX incomplete
 		displayWizImage(&params->img);
 		break;
+	case 0: // HE98+
 	case 2:
 	case 6:
 	case 3:
