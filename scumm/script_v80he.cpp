@@ -78,7 +78,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_land),
 		OPCODE(o6_lor),
 		OPCODE(o6_pop),
-		OPCODE(o72_compareStackList),
+		OPCODE(o72_isAnyOf),
 		/* 1C */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),

@@ -78,7 +78,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_land),
 		OPCODE(o6_lor),
 		OPCODE(o6_pop),
-		OPCODE(o72_compareStackList),
+		OPCODE(o72_isAnyOf),
 		/* 1C */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -664,18 +664,17 @@ void ScummEngine_v72he::o72_wordArrayIndexedRead() {
 	push(readArray(fetchScriptWord(), idx, base));
 }
 
-void ScummEngine_v72he::o72_compareStackList() {
-	int args[128], i;
+void ScummEngine_v72he::o72_isAnyOf() {
+	int args[128], i = 0;
 	int num = getStackList(args, ARRAYSIZE(args));
 	int value = pop();
 
-	if (num) {
-		for (i = 1; i < num; i++) {
-			if (args[i] == value) {
-				push(1);
-				return;
-			}
+	while (i < num) {
+		if (args[i] == value) {
+			push(1);
+			return;
 		}
+		i++;
 	}
 
 	push(0);

@@ -721,7 +721,7 @@ protected:
 	void o72_wordArrayIndexedRead();
 	void o72_wordArrayWrite();
 	void o72_wordArrayIndexedWrite();
-	void o72_compareStackList();
+	void o72_isAnyOf();
 	void o72_unknown50();
 	void o72_findObjectWithClassOf();
 	void o72_wordArrayInc();
