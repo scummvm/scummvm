@@ -1148,10 +1148,10 @@ void AkosRenderer::akos16SkipData(int32 numskip) {
 					akos16_numbits += 8;
 				}
 				bits = akos16_bits & 3;
-				if (bits != 1) {
+				if (bits & 1) {
 					akos16_bits >>= 2;
 					akos16_numbits -= 2;
-					if (bits != 2) {
+					if (bits & 2) {
 						tmp_bits = akos16_bits & 7;
 						akos16_numbits -= 3;
 						akos16_bits >>= 3;
@@ -1215,10 +1215,10 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 					akos16_numbits += 8;
 				}
 				bits = akos16_bits & 3;
-				if (bits != 1) {
+				if (bits & 1) {
 					akos16_bits >>= 2;
 					akos16_numbits -= 2;
-					if (bits != 2) {
+					if (bits & 2) {
 						tmp_bits = akos16_bits & 7;
 						akos16_numbits -= 3;
 						akos16_bits >>= 3;
@@ -1298,7 +1298,7 @@ void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 
 
 	if (dir < 0) {
 		dest -= (t_width - 1);
-		tmp_buf += (t_height - 1);
+		tmp_buf += (t_width - 1);
 	}
 
 	akos16SetupBitReader(src);
@@ -1375,11 +1375,7 @@ void AkosRenderer::codec16() {
 	int32 tmp_x, tmp_y;
 
 	tmp_x = clip_left;
-	if(tmp_x < 0) {
-		tmp_x = -tmp_x;
-		clip_left -= tmp_x;
-		skip_x = tmp_x;
-	}
+	if (clip_left < 0) { skip_x = -clip_left; clip_left = 0; }
 
 	tmp_x = clip_right - maxw;
 	if(tmp_x > 0) {
