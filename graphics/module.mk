@@ -3,8 +3,9 @@ MODULE := graphics
 MODULE_OBJS := \
 	graphics/animation.o \
 	graphics/font.o \
+	graphics/newfont.o \
 	graphics/scummfont.o \
-	graphics/newfont.o
+	graphics/surface.o
 
 MODULE_DIRS += \
 	graphics

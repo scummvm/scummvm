@@ -22,6 +22,7 @@
 #define GRAPHICS_SURFACE_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Graphics {
 
@@ -37,6 +38,15 @@ struct Surface {
 	uint16 pitch;
 	uint8 bytesPerPixel;
 	Surface() : pixels(0), w(0), h(0), pitch(0), bytesPerPixel(0) {}
+
+	inline void *getBasePtr(int x, int y) const {
+		return (void *)((byte *)pixels + y * pitch + x * bytesPerPixel);
+	}
+	
+	void hLine(int x, int y, int x2, uint32 color) const;
+	void vLine(int x, int y, int y2, uint32 color) const;
+	void fillRect(const Common::Rect &r, uint32 color) const;
+	void frameRect(const Common::Rect &r, uint32 color) const;
 };
 
 
