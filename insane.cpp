@@ -145,18 +145,19 @@ byte * SmushPlayer::getStringTRES(int32 number)
 	return txt;
 }
 
-void SmushPlayer::drawStringTRES(uint32 x, uint32 y, uint8 color, byte * txt)
+void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt)
 {
 	char buf[4];
 	uint32 c_line = 0, l = 0, i, tmp_x;
+	uint8 c_font = 0, c_color = 0;
 
 	if ((txt[l] == '^') && (txt[l + 1] == 'f')) {
 		buf[0] = txt[l + 2];
 		buf[1] = txt[l + 3];
 		buf[2] = 0;
 		l += 4;
-		_c_font = atoi(buf);
-		if (_c_font >= SP_MAX_FONTS)
+		c_font = atoi(buf);
+		if (c_font >= SP_MAX_FONTS)
 			error ("SP: number font out of range");
 	}
 	if ((txt[l] == '^') && (txt[l + 1] == 'c')) {
@@ -165,7 +166,7 @@ void SmushPlayer::drawStringTRES(uint32 x, uint32 y, uint8 color, byte * txt)
 		buf[2] = txt[l + 4];
 		buf[3] = 0;
 		l += 5;
-		_c_color = atoi(buf);
+		c_color = atoi(buf);
 	}
 
 	for (;;) {
@@ -177,7 +178,7 @@ void SmushPlayer::drawStringTRES(uint32 x, uint32 y, uint8 color, byte * txt)
 				l += i + 2;
 				break;
 			}
-			drawCharTRES (&tmp_x, y, c_line, color, txt[l + i]);
+			drawCharTRES (&tmp_x, y, c_line, c_font, c_color, txt[l + i]);
 			
 			// this is hack
 			if (y + c_line * 0xe > 170) continue;
@@ -193,14 +194,13 @@ exit_loop: ;
 
 }
 
-void codec44_depack(byte *dst, byte *src, uint32 len, uint8 color)
+void codec44_depack(byte *dst, byte *src, uint32 len)
 {
 	byte val;
 	uint16 size_line;
 	uint16 num;
 
 	do {
-		if (len <= 0) break;
 		size_line = READ_LE_UINT16(src);
 		src += 2;
 		len -= 2;
@@ -216,11 +216,9 @@ void codec44_depack(byte *dst, byte *src, uint32 len, uint8 color)
 
 			num = READ_LE_UINT16(src) + 1;
 			src += 2;
-			for (uint16 l = 0; l < num; l++) {
-				uint8 tmp = *src++;
-//				tmp -= 2;
-				*dst++ = tmp;
-			}
+			memcpy(dst, src, num);
+			dst += num;
+			src += num;
 			len -= num + 2;
 			size_line -= num + 2;
 
@@ -230,9 +228,9 @@ void codec44_depack(byte *dst, byte *src, uint32 len, uint8 color)
 	} while (len > 1);
 }
 
-void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 color, uint8 txt)
+void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 c_font, uint8 color, uint8 txt)
 {
-	byte * font = _fonts[_c_font];
+	byte * font = _fonts[c_font];
 	uint32 offset = 0, t_offset = 0, l, width, height, length = 0;
 	
 	if (font == NULL)
@@ -262,7 +260,7 @@ void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 color,
 
 	memset (dst, 0, 1000);
 	
-	codec44_depack (dst, src, length, color);
+	codec44_depack (dst, src, length);
 
 	width = *(uint16*)(font + t_offset + 6);
 	height = *(uint16*)(font + t_offset + 8);
@@ -272,7 +270,17 @@ void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 color,
 		for (uint32 tx = 0; tx < width; tx++) {
 			byte pixel = *(dst + ty * width + tx);
 			if (pixel != 0) {
-				 *(_renderBitmap + ((ty + y) * 320 + *x + tx)) = pixel;
+				if (color == 0) {
+					if (pixel == 0x01)
+						pixel = 0xf;
+				}
+				else {
+					if (pixel == 0x01)
+						pixel = color;
+				}
+				if (pixel == 0xff)
+					pixel = 0x0;
+				*(_renderBitmap + ((ty + y) * 320 + *x + tx)) = pixel;
 			}
 		}
 	}
@@ -1121,7 +1129,7 @@ void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
 void SmushPlayer::parseTRES()
 {
 	byte * txt = getStringTRES (READ_LE_UINT16(_cur + 16));
-	drawStringTRES (READ_LE_UINT16(_cur), READ_LE_UINT16(_cur + 2), *(_cur + 4), txt);
+	drawStringTRES (READ_LE_UINT16(_cur), READ_LE_UINT16(_cur + 2), txt);
 	if (txt != NULL)
 		free (txt);
 }
@@ -1214,8 +1222,6 @@ void SmushPlayer::init()
 			_fonts[l] = NULL;
 		}
 		_buffer_tres = NULL;
-		_c_font = 0;
-		_c_color = 0;
 		loadTres();
 		loadFonts();
 	}
