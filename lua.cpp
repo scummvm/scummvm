@@ -27,6 +27,7 @@
 #include "engine.h"
 #include "mixer.h"
 #include "sound.h"
+#include "smush.h"
 #include "textobject.h"
 #include <SDL_keysym.h>
 #include <SDL_keyboard.h>
@@ -1020,6 +1021,16 @@ static void GetTextObjectDimensions() {
  lua_pushnumber(100);	// Dummy Y
 }
 
+static void StartMovie() {
+	Smush player;
+	player.play("intro.snm", "");
+}
+
+static void StartFullscreenMovie() {
+	Smush player;
+	player.play("intro.snm", "");
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning() {
@@ -1163,9 +1174,7 @@ static char *stubFuncs[] = {
   "IsMoviePlaying",
   "PauseMovie",
   "StopMovie",
-  "StartMovie",
   "IsFullscreenMoviePlaying",
-  "StartFullscreenMovie",
   "PreviousSetup",
   "NextSetup",
   "UnLockSet",
@@ -1454,6 +1463,8 @@ struct luaL_reg builtins[] = {
   { "SetActorLookRate", SetActorLookRate },
   { "GetActorLookRate", GetActorLookRate },
   { "SetActorHead", SetActorHead },
+  { "StartMovie", StartMovie },
+  { "StartFullscreenMovie", StartFullscreenMovie },
 };
 
 void register_lua() {

@@ -34,13 +34,13 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
   if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0)
     error("Invalid magic loading bitmap\n");
 
-  int codec = get_LE_uint32(data + 8);
-  num_images_ = get_LE_uint32(data + 16);
-  x_ = get_LE_uint32(data + 20);
-  y_ = get_LE_uint32(data + 24);
-  format_ = get_LE_uint32(data + 32);
-  width_ = get_LE_uint32(data + 128);
-  height_ = get_LE_uint32(data + 132);
+  int codec = READ_LE_UINT32(data + 8);
+  num_images_ = READ_LE_UINT32(data + 16);
+  x_ = READ_LE_UINT32(data + 20);
+  y_ = READ_LE_UINT32(data + 24);
+  format_ = READ_LE_UINT32(data + 32);
+  width_ = READ_LE_UINT32(data + 128);
+  height_ = READ_LE_UINT32(data + 132);
   curr_image_ = 0;
 
   data_ = new char*[num_images_];
@@ -52,7 +52,7 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
       pos += 2 * width_ * height_ + 8;
     }
     else if (codec == 3) {
-      int compressed_len = get_LE_uint32(data + pos);
+      int compressed_len = READ_LE_UINT32(data + pos);
       decompress_codec3(data + pos + 4, data_[i]);
       pos += compressed_len + 12;
     }
@@ -97,9 +97,9 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
   } else {
     for (int i = 0; i < (width_ * height_); i++) {
-      uint16_t val = get_LE_uint16(data_[curr_image_] + 2 * i);
-      ((uint16_t *) data_[curr_image_])[i] =
-	0xffff - ((uint32_t) val) * 0x10000 / 100 / (0x10000 - val);
+      uint16 val = READ_LE_UINT16(data_[curr_image_] + 2 * i);
+      ((uint16 *) data_[curr_image_])[i] =
+	0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
     }
     tex_ids_ = NULL;
   }
@@ -190,14 +190,14 @@ Bitmap::~Bitmap() {
   bitstr_len--; \
   bitstr_value >>= 1; \
   if (bitstr_len == 0) { \
-    bitstr_value = get_LE_uint16(compressed); \
+    bitstr_value = READ_LE_UINT16(compressed); \
     bitstr_len = 16; \
     compressed += 2; \
   } \
   do {} while (0)
 
 static void decompress_codec3(const char *compressed, char *result) {
-  int bitstr_value = get_LE_uint16(compressed);
+  int bitstr_value = READ_LE_UINT16(compressed);
   int bitstr_len = 16;
   compressed += 2;
   bool bit;
@@ -214,15 +214,15 @@ static void decompress_codec3(const char *compressed, char *result) {
 	copy_len = 2 * bit;
 	GET_BIT;
 	copy_len += bit + 3;
-	copy_offset = get_uint8(compressed++) - 0x100;
+	copy_offset = *(uint8 *)(compressed++) - 0x100;
       }
       else {
-	copy_offset = (get_uint8(compressed) |
-		       (get_uint8(compressed + 1) & 0xf0) << 4) - 0x1000;
-	copy_len = (get_uint8(compressed + 1) & 0xf) + 3;
+	copy_offset = (*(uint8 *)(compressed) |
+		       (*(uint8 *)(compressed + 1) & 0xf0) << 4) - 0x1000;
+	copy_len = (*(uint8 *)(compressed + 1) & 0xf) + 3;
 	compressed += 2;
 	if (copy_len == 3) {
-	  copy_len = get_uint8(compressed++) + 1;
+	  copy_len = *(uint8 *)(compressed++) + 1;
 	  if (copy_len == 1)
 	    return;
 	}

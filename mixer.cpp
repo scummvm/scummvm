@@ -264,7 +264,7 @@ Mixer *Mixer::instance() {
 
 void mixerCallback(void *userdata, Uint8 *stream, int len) {
   Mixer *m = static_cast<Mixer *>(userdata);
-  int16_t *samples = reinterpret_cast<int16_t *>(stream);
+  int16 *samples = reinterpret_cast<int16 *>(stream);
   m->getAudio(samples, len / 2);
 }
 
@@ -409,7 +409,7 @@ bool Mixer::voicePlaying() const {
   return ! voiceSounds_.empty();
 }
 
-void Mixer::getAudio(int16_t *data, int numSamples) {
+void Mixer::getAudio(int16 *data, int numSamples) {
   memset(data, 0, numSamples * 2);
   for (sound_list::iterator i = voiceSounds_.begin();
        i != voiceSounds_.end(); ) {

@@ -39,7 +39,7 @@ Model::Model(const char *filename, const char *data, int len,
 }
 
 void Model::loadBinary(const char *data, const CMap &cmap) {
-  numMaterials_ = get_LE_uint32(data + 4);
+  numMaterials_ = READ_LE_UINT32(data + 4);
   data += 8;
   materials_ = new ResPtr<Material>[numMaterials_];
   for (int i = 0; i < numMaterials_; i++) {
@@ -47,12 +47,12 @@ void Model::loadBinary(const char *data, const CMap &cmap) {
     data += 32;
   }
   data += 32;			// skip name
-  numGeosets_ = get_LE_uint32(data + 4);
+  numGeosets_ = READ_LE_UINT32(data + 4);
   data += 8;
   geosets_ = new Geoset[numGeosets_];
   for (int i = 0; i < numGeosets_; i++)
     geosets_[i].loadBinary(data, materials_);
-  numHierNodes_ = get_LE_uint32(data + 4);
+  numHierNodes_ = READ_LE_UINT32(data + 4);
   data += 8;
   rootHierNode_ = new HierNode[numHierNodes_];
   for (int i = 0; i < numHierNodes_; i++)
@@ -69,7 +69,7 @@ Model::~Model() {
 
 void Model::Geoset::loadBinary(const char *&data,
 			       ResPtr<Material> *materials) {
-  numMeshes_ = get_LE_uint32(data);
+  numMeshes_ = READ_LE_UINT32(data);
   data += 4;
   meshes_ = new Mesh[numMeshes_];
   for (int i = 0; i < numMeshes_; i++)
@@ -83,12 +83,12 @@ Model::Geoset::~Geoset() {
 void Model::Mesh::loadBinary(const char *&data,
 			     ResPtr<Material> *materials) {
   memcpy(name_, data, 32);
-  geometryMode_ = get_LE_uint32(data + 36);
-  lightingMode_ = get_LE_uint32(data + 40);
-  textureMode_ = get_LE_uint32(data + 44);
-  numVertices_ = get_LE_uint32(data + 48);
-  numTextureVerts_ = get_LE_uint32(data + 52);
-  numFaces_ = get_LE_uint32(data + 56);
+  geometryMode_ = READ_LE_UINT32(data + 36);
+  lightingMode_ = READ_LE_UINT32(data + 40);
+  textureMode_ = READ_LE_UINT32(data + 44);
+  numVertices_ = READ_LE_UINT32(data + 48);
+  numTextureVerts_ = READ_LE_UINT32(data + 52);
+  numFaces_ = READ_LE_UINT32(data + 56);
   vertices_ = new float[3 * numVertices_];
   verticesI_ = new float[numVertices_];
   vertNormals_ = new float[3 * numVertices_];
@@ -115,7 +115,7 @@ void Model::Mesh::loadBinary(const char *&data,
     vertNormals_[i] = get_float(data);
     data += 4;
   }
-  shadow_ = get_LE_uint32(data);
+  shadow_ = READ_LE_UINT32(data);
   radius_ = get_float(data + 8);
   data += 36;
 }
@@ -189,20 +189,20 @@ void Model::Mesh::update() {
 }
 
 void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
-  type_ = get_LE_uint32(data + 4);
-  geo_ = get_LE_uint32(data + 8);
-  light_ = get_LE_uint32(data + 12);
-  tex_ = get_LE_uint32(data + 16);
-  numVertices_ = get_LE_uint32(data + 20);
-  int texPtr = get_LE_uint32(data + 28);
-  int materialPtr = get_LE_uint32(data + 32);
+  type_ = READ_LE_UINT32(data + 4);
+  geo_ = READ_LE_UINT32(data + 8);
+  light_ = READ_LE_UINT32(data + 12);
+  tex_ = READ_LE_UINT32(data + 16);
+  numVertices_ = READ_LE_UINT32(data + 20);
+  int texPtr = READ_LE_UINT32(data + 28);
+  int materialPtr = READ_LE_UINT32(data + 32);
   extraLight_ = get_float(data + 48);
   normal_ = get_vector3d(data + 64);
   data += 76;
 
   vertices_ = new int[numVertices_];
   for (int i = 0; i < numVertices_; i++) {
-    vertices_[i] = get_LE_uint32(data);
+    vertices_[i] = READ_LE_UINT32(data);
     data += 4;
   }
   if (texPtr == 0)
@@ -210,14 +210,14 @@ void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
   else {
     texVertices_ = new int[numVertices_];
     for (int i = 0; i < numVertices_; i++) {
-      texVertices_[i] = get_LE_uint32(data);
+      texVertices_[i] = READ_LE_UINT32(data);
       data += 4;
     }
   }
   if (materialPtr == 0)
     material_ = 0;
   else {
-    material_ = materials[get_LE_uint32(data)];
+    material_ = materials[READ_LE_UINT32(data)];
     data += 4;
   }
 }
@@ -231,18 +231,18 @@ void Model::HierNode::loadBinary(const char *&data,
 				 Model::HierNode *hierNodes,
 				 const Geoset &g) {
   memcpy(name_, data, 64);
-  flags_ = get_LE_uint32(data + 64);
-  type_ = get_LE_uint32(data + 72);
-  int meshNum = get_LE_uint32(data + 76);
+  flags_ = READ_LE_UINT32(data + 64);
+  type_ = READ_LE_UINT32(data + 72);
+  int meshNum = READ_LE_UINT32(data + 76);
   if (meshNum < 0)
     mesh_ = NULL;
   else
     mesh_ = g.meshes_ + meshNum;
-  depth_ = get_LE_uint32(data + 80);
-  int parentPtr = get_LE_uint32(data + 84);
-  numChildren_ = get_LE_uint32(data + 88);
-  int childPtr = get_LE_uint32(data + 92);
-  int siblingPtr = get_LE_uint32(data + 96);
+  depth_ = READ_LE_UINT32(data + 80);
+  int parentPtr = READ_LE_UINT32(data + 84);
+  numChildren_ = READ_LE_UINT32(data + 88);
+  int childPtr = READ_LE_UINT32(data + 92);
+  int siblingPtr = READ_LE_UINT32(data + 96);
   pivot_ = get_vector3d(data + 100);
   pos_ = get_vector3d(data + 112);
   pitch_ = get_float(data + 124);
@@ -251,19 +251,19 @@ void Model::HierNode::loadBinary(const char *&data,
   data += 184;
 
   if (parentPtr != 0) {
-    parent_ = hierNodes + get_LE_uint32(data);
+    parent_ = hierNodes + READ_LE_UINT32(data);
     data += 4;
   }
   else
     parent_ = NULL;
   if (childPtr != 0) {
-    child_ = hierNodes + get_LE_uint32(data);
+    child_ = hierNodes + READ_LE_UINT32(data);
     data += 4;
   }
   else
     child_ = NULL;
   if (siblingPtr != 0) {
-    sibling_ = hierNodes + get_LE_uint32(data);
+    sibling_ = hierNodes + READ_LE_UINT32(data);
     data += 4;
   }
   else

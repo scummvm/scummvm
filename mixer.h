@@ -43,14 +43,14 @@ public:
 
 private:
   Mixer();
-  void getAudio(int16_t *data, int numSamples);
+  void getAudio(int16 *data, int numSamples);
 
   static Mixer *instance_;
   typedef std::list<ResPtr<Sound> > sound_list;
   sound_list voiceSounds_, sfxSounds_;
   ResPtr<Sound> musicSound_, seqSound_;
 
-  friend void mixerCallback(void *userdata, Uint8 *stream, int len);
+  friend void mixerCallback(void *userdata, uint8 *stream, int len);
 };
 
 #endif

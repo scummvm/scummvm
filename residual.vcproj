@@ -126,6 +126,12 @@
 				RelativePath="bits.h">
 			</File>
 			<File
+				RelativePath="blocky16.cpp">
+			</File>
+			<File
+				RelativePath="blocky16.h">
+			</File>
+			<File
 				RelativePath="color.h">
 			</File>
 			<File
@@ -222,6 +228,12 @@
 				RelativePath="screen.h">
 			</File>
 			<File
+				RelativePath="smush.cpp">
+			</File>
+			<File
+				RelativePath="smush.h">
+			</File>
+			<File
 				RelativePath="sound.cpp">
 			</File>
 			<File
@@ -241,6 +253,9 @@
 			</File>
 			<File
 				RelativePath="textsplit.h">
+			</File>
+			<File
+				RelativePath="vima.cpp">
 			</File>
 			<File
 				RelativePath="walkplane.cpp">

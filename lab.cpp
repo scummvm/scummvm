@@ -38,8 +38,8 @@ bool Lab::open(const char *filename) {
     return false;
   }
 
-  int num_entries = get_LE_uint32(header + 8);
-  int string_table_size = get_LE_uint32(header + 12);
+  int num_entries = READ_LE_UINT32(header + 8);
+  int string_table_size = READ_LE_UINT32(header + 12);
 
   char *string_table = new char[string_table_size];
   std::fseek(f_, 16 * (num_entries + 1), SEEK_SET);
@@ -52,9 +52,9 @@ bool Lab::open(const char *filename) {
 #endif
   for (int i = 0; i < num_entries; i++) {
     std::fread(binary_entry, 1, 16, f_);
-    int fname_offset = get_LE_uint32(binary_entry);
-    int start = get_LE_uint32(binary_entry + 4);
-    int size = get_LE_uint32(binary_entry + 8);
+    int fname_offset = READ_LE_UINT32(binary_entry);
+    int start = READ_LE_UINT32(binary_entry + 4);
+    int size = READ_LE_UINT32(binary_entry + 8);
 
     std::string fname = string_table + fname_offset;
     std::transform(fname.begin(), fname.end(), fname.begin(), tolower);

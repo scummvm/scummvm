@@ -18,17 +18,8 @@
 #ifndef _STDAFX_H
 #define _STDAFX_H
 
-#if defined(_WIN32_WCE) && _WIN32_WCE < 300
 
-#define NONSTANDARD_PORT
-
-#endif
-
-#if defined(NONSTANDARD_PORT)
-
-#include <portdefs.h>
-
-#elif defined(WIN32)
+#if defined(WIN32)
 
 #ifdef _MSC_VER
 #pragma once

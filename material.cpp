@@ -28,12 +28,12 @@ Material::Material(const char *filename, const char *data, int len,
   if (len < 4 || memcmp(data, "MAT ", 4) != 0)
     error("invalid magic loading texture\n");
 
-  num_images_ = get_LE_uint32(data + 12);
+  num_images_ = READ_LE_UINT32(data + 12);
   curr_image_ = 0;
   textures_ = new GLuint[num_images_];
   glGenTextures(num_images_, textures_);
-  width_ = get_LE_uint32(data + 76 + num_images_ * 40);
-  height_ = get_LE_uint32(data + 80 + num_images_ * 40);
+  width_ = READ_LE_UINT32(data + 76 + num_images_ * 40);
+  height_ = READ_LE_UINT32(data + 80 + num_images_ * 40);
 
   if ((width_ == 0) || (height_ == 0)) {
     warning("bad texture size (%dx%d) for texture %s\n", width_, height_, filename);
@@ -45,11 +45,11 @@ Material::Material(const char *filename, const char *data, int len,
     char *texdatapos = texdata;
     for (int y = 0; y < height_; y++) {
       for (int x = 0; x < width_; x++) {
-	int col = get_uint8(data);
+	int col = *(uint8 *)(data);
 	if (col == 0)
 	  memset(texdatapos, 0, 4); // transparent
 	else {
-	  memcpy(texdatapos, cmap.colors + 3 * get_uint8(data), 3);
+	  memcpy(texdatapos, cmap.colors + 3 * *(uint8 *)(data), 3);
 	  texdatapos[3] = '\xff'; // fully opaque
 	}
 	texdatapos += 4;

@@ -33,16 +33,16 @@ KeyframeAnim::KeyframeAnim(const char *filename, const char *data, int len) :
 }
 
 void KeyframeAnim::loadBinary(const char *data, int len) {
-  flags_ = get_LE_uint32(data + 40);
-  type_ = get_LE_uint32(data + 48);
+  flags_ = READ_LE_UINT32(data + 40);
+  type_ = READ_LE_UINT32(data + 48);
   fps_ = get_float(data + 52);
-  numFrames_ = get_LE_uint32(data + 56);
-  numJoints_ = get_LE_uint32(data + 60);
-  numMarkers_ = get_LE_uint32(data + 68);
+  numFrames_ = READ_LE_UINT32(data + 56);
+  numJoints_ = READ_LE_UINT32(data + 60);
+  numMarkers_ = READ_LE_UINT32(data + 68);
   markers_ = new Marker[numMarkers_];
   for (int i = 0; i < numMarkers_; i++) {
     markers_[i].frame_ = get_float(data + 72 + 4 * i);
-    markers_[i].val_ = get_LE_uint32(data + 104 + 4 * i);
+    markers_[i].val_ = READ_LE_UINT32(data + 104 + 4 * i);
   }
 
   nodes_ = new KeyframeNode*[numJoints_];
@@ -51,7 +51,7 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
   const char *dataEnd = data + len;
   data += 180;
   while (data < dataEnd) {
-    int nodeNum = get_LE_uint32(data + 32);
+    int nodeNum = READ_LE_UINT32(data + 32);
     nodes_[nodeNum] = new KeyframeNode;
     nodes_[nodeNum]->loadBinary(data);
   }
@@ -111,7 +111,7 @@ void KeyframeAnim::animate(Model::HierNode *nodes, float time,
 
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
   frame_ = get_float(data);
-  flags_ = get_LE_uint32(data + 4);
+  flags_ = READ_LE_UINT32(data + 4);
   pos_ = get_vector3d(data + 8);
   pitch_ = get_float(data + 20);
   yaw_ = get_float(data + 24);
@@ -125,7 +125,7 @@ void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
 
 void KeyframeAnim::KeyframeNode::loadBinary(const char *&data) {
   std::memcpy(meshName_, data, 32);
-  numEntries_ = get_LE_uint32(data + 36);
+  numEntries_ = READ_LE_UINT32(data + 36);
   data += 44;
   entries_ = new KeyframeEntry[numEntries_];
   for (int i = 0; i < numEntries_; i++)
