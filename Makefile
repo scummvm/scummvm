@@ -55,6 +55,14 @@ config.mak: $(srcdir)/configure
 	@echo "Either you haven't run it before or it has changed."
 	@exit 1
 
+install: all
+	$(INSTALL) -m 755 scummvm$(EXEEXT) $(BINDIR)/scummvm$(EXEEXT)
+	$(INSTALL) -m 644 scummvm.6 $(MANDIR)/man6/scummvm.6
+
+uninstall:
+	rm -f $(BINDIR)/scummvm$(EXEEXT)
+	rm -f $(MANDIR)/man6/scummvm.6
+
 scummvmico.o: scummvm.ico
 	windres scummvm.rc scummvmico.o
 

@@ -45,8 +45,10 @@ _build_plugins=no
 # more defaults
 _backend=sdl
 _ranlib=ranlib
+_install=install
 _sdlconfig=sdl-config
 _sdlpath="$PATH"
+_prefix=/usr/local
 
 _srcdir=`dirname $0`
 
@@ -201,6 +203,11 @@ Configuration:
   -h, --help             display this help and exit
   --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32) [sdl]
 
+Installation directories:
+  --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
+  --bindir=DIR           directory to install the scummvm binary in [PREFIX/bin]
+  --mandir=DIR           directory to install the manpage in [PREFIX/man]
+
 Special configuration feature:
   --host=HOST            cross-compile to target HOST (arm-linux, ...)
                          special targets: linupy for Yopy PDA
@@ -219,26 +226,26 @@ Optional Features:
                            static linking them
 
 Optional Libraries:
-  --with-alsa-prefix=PFX   Prefix where alsa is installed (optional)
+  --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
   --disable-alsa           disable ALSA midi sound support [autodetect]
 
-  --with-ogg-prefix=PFX    Prefix where libogg is installed (optional)
-  --with-vorbis-prefix=PFX Prefix where libvorbis is installed (optional)
+  --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
+  --with-vorbis-prefix=DIR Prefix where libvorbis is installed (optional)
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
 
-  --with-mad-prefix=PFX    Prefix where libmad is installed (optional)
+  --with-mad-prefix=DIR    Prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
   
-  --with-flac-prefix=PFX   Prefix where libFLAC is installed (optional)
+  --with-flac-prefix=DIR   Prefix where libFLAC is installed (optional)
   --disable-flac           disable FLAC support [autodetect]
 
-  --with-zlib-prefix=PFX   Prefix where zlib is installed (optional)
+  --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
   --disable-zlib           disable zlib (compression) support [autodetect]
 
-  --with-mpeg2-prefix=PFX  Prefix where libmpeg2 is installed (optional)
+  --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
 
-  --with-sdl-prefix=PFX    Prefix where the sdl-config script is installed
+  --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed
 
 Some influential environment variables:
   LDFLAGS	linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -327,6 +334,15 @@ for ac_option in $@; do
 	;;
       --host=*)
 	_host=`echo $ac_option | cut -d '=' -f 2`
+	;;
+      --prefix=*)
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+	;;
+      --bindir=*)
+        _bindir=`echo $ac_option | cut -d '=' -f 2`
+	;;
+      --mandir=*)
+        _mandir=`echo $ac_option | cut -d '=' -f 2`
 	;;
       *)
         echo "error: unrecognised option: $ac_option
@@ -822,6 +838,12 @@ echo "$_mpeg2"
 rm -f $TMPC $TMPO
 
 #
+# figure out installation directories
+#
+test -z "$_bindir" && _bindir="$_prefix/bin"
+test -z "$_mandir" && _mandir="$_prefix/man"
+
+#
 # Check which engines ("frontends") are to be built
 #
 echo
@@ -933,10 +955,15 @@ CXX := $CXX
 CXXFLAGS += $CXXFLAGS
 LIBS += $LIBS
 RANLIB := $_ranlib
+INSTALL := $_install
 BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
 EXEEXT := $EXEEXT
+
+PREFIX := $_prefix
+BINDIR := $_bindir
+MANDIR := $_mandir
 
 $_mak_plugins
 $_make_def_HAVE_GCC3
