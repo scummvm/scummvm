@@ -126,6 +126,8 @@ static const TargetSettings scumm_settings[] = {
 	 GF_USE_KEY, 0},
 	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
+	{"indy", "Indiana Jones and the Fate of Atlantis (FM Towns)", GID_INDY4, 5, MDT_ADLIB | MDT_NATIVE,
+	 GF_USE_KEY, 0},
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
 	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
