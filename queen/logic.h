@@ -293,6 +293,8 @@ public:
 	void asmPanRightToJoeAndRita();
 	void asmPanLeftToBomb();
 	void asmEndDemo();
+	void asmInterviewIntro();
+	void asmEndInterview();
 
 	typedef bool (Logic::*ExecuteSpecialMoveProc)(uint16);
 	typedef bool (Logic::*PreChangeRoomProc)();

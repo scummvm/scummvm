@@ -188,11 +188,15 @@ void Logic::initialise() {
 	}
 
 	_numGraphicAnim = READ_BE_UINT16(ptr); ptr += 2;
-	
+
 	_graphicAnim = new GraphicAnim[_numGraphicAnim + 1];
-	memset(&_graphicAnim[0], 0, sizeof(GraphicAnim));
-	for (i = 1; i <= _numGraphicAnim; i++) {
-		_graphicAnim[i].readFromBE(ptr);
+	if (_numGraphicAnim == 0) {
+		_graphicAnim[0].readFromBE(ptr);
+	} else {
+		memset(&_graphicAnim[0], 0, sizeof(GraphicAnim));
+		for (i = 1; i <= _numGraphicAnim; i++) {
+			_graphicAnim[i].readFromBE(ptr);
+		}
 	}
 
 	_currentRoom = _objectData[_entryObj].room;
@@ -1674,10 +1678,17 @@ uint16 Logic::findInventoryItem(int invSlot) const {
 
 void Logic::inventorySetup() {
 	_vm->graphics()->bankLoad("objects.BBK", 14);
-	_inventoryItem[0] = ITEM_BAT;
-	_inventoryItem[1] = ITEM_JOURNAL;
-	_inventoryItem[2] = ITEM_NONE;
-	_inventoryItem[3] = ITEM_NONE;
+	if (_vm->resource()->isInterview()) {
+		_inventoryItem[0] = 1;
+		_inventoryItem[1] = 2;
+		_inventoryItem[2] = 3;
+		_inventoryItem[3] = 4;
+	} else {
+		_inventoryItem[0] = ITEM_BAT;
+		_inventoryItem[1] = ITEM_JOURNAL;
+		_inventoryItem[2] = ITEM_NONE;
+		_inventoryItem[3] = ITEM_NONE;
+	}
 }
 
 void Logic::inventoryRefresh() {
@@ -2079,7 +2090,9 @@ void Logic::update() {
 
 	_vm->input()->delay();
 
-	_vm->display()->palCustomScroll(_currentRoom);
+	if (!_vm->resource()->isInterview()) {
+		_vm->display()->palCustomScroll(_currentRoom);
+	}
 	if (_vm->debugger()->_drawAreas) {
 		for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
 			const ZoneSlot *pzs = &_zones[ZONE_ROOM][i];
@@ -2312,7 +2325,7 @@ void Logic::changeRoom() {
 void Logic::useJournal() {
 	if (_vm->resource()->isDemo()) {
 		makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
-	} else {
+	} else if (!_vm->resource()->isInterview()) {
 		_vm->command()->clear(false);
 		Journal j(_vm);
 		j.use();
@@ -2398,7 +2411,15 @@ bool Logic::preChangeRoom_Demo() {
 
 
 bool Logic::preChangeRoom_Interview() {
-	// XXX
+	if (currentRoom() == 2 && gameState(2) == 0) {
+		currentRoom(6);
+		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
+		playCutaway("start.cut");
+		gameState(2, 1);
+		inventorySetup();
+		inventoryRefresh();
+		return true;
+	}
 	return false;
 }
 
@@ -2456,8 +2477,17 @@ bool Logic::executeSpecialMove_Demo(uint16 sm) {
 
 
 bool Logic::executeSpecialMove_Interview(uint16 sm) {
-	// XXX
-	return false;
+	switch (sm) {
+	case 1:
+		asmInterviewIntro();
+		break;
+	case 2:
+		asmEndInterview();
+		break;
+	default:
+		return false;
+	}
+	return true;
 }
 
 
@@ -3092,8 +3122,56 @@ void Logic::asmPanLeftToBomb() {
 
 void Logic::asmEndDemo() {
 	debug(0, "Flight of the Amazon Queen, released January 95");
-	OSystem::instance()->quit();	
+	OSystem::instance()->quit();
 }
+
+
+void Logic::asmInterviewIntro() {
+	// put camera on zeppelin
+	_vm->graphics()->cameraBob(5);
+	BobSlot *bzep = _vm->graphics()->bob(5);
+
+	bzep->curPos(-30, 40);
+
+	bzep->move(700, 10, 3);
+	int scale = 450;
+	while (bzep->moving && !_vm->input()->cutawayQuit()) {
+		bzep->scale = 256 * 100 / scale;
+		--scale;
+		if (scale < 256) {
+			scale = 256;
+		}
+		update();
+	}
+
+	bzep->scale = 90;
+	bzep->xflip = true;
+
+	bzep->move(560, 25, 4);
+	while (bzep->moving && !_vm->input()->cutawayQuit()) {
+		update();
+	}
+
+	bzep->move(545, 65, 2);
+	while (bzep->moving && !_vm->input()->cutawayQuit()) {
+		update();
+	}
+
+	bzep->move(540, 75, 2);
+	while (bzep->moving && !_vm->input()->cutawayQuit()) {
+		update();
+	}
+
+	// put camera on Joe
+	_vm->graphics()->cameraBob(0);
+}
+
+
+void Logic::asmEndInterview() {
+	debug(0, "Interactive Interview copyright (c) 1995, IBI.");
+	OSystem::instance()->quit();
+}
+
 
 
 } // End of namespace Queen

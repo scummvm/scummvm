@@ -43,9 +43,9 @@ enum Version {
 	// VER_HEB_TALKIE
 	VER_DEMO_PCGAMES = 9,
 	VER_DEMO         = 10,
-	// VER_INTERVIEW
+	VER_INTERVIEW    = 11,
 
-	VER_COUNT        = 11
+	VER_COUNT        = 12
 };
 
 struct ResourceEntry {

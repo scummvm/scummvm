@@ -1043,6 +1043,11 @@ void Cutaway::run(char *nextFilename) {
 
 	joeBob->animating = 0;
 	joeBob->moving    = 0;
+	if (_vm->resource()->isInterview()) {
+		_vm->graphics()->bob(20)->box.y2 = 149;
+		_vm->graphics()->bob(21)->box.y2 = 149;
+		_vm->graphics()->bob(22)->box.y2 = 149;
+	}
 	// Make sure Joe is clipped!
 	joeBob->box.y2    = 149;
 

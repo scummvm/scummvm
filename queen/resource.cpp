@@ -38,7 +38,8 @@ const GameVersion Resource::_gameVersions[] = {
 	{ "CIM10", 0x0008BEE2, 190795582 },
 	{ "CSM10", 0x000B343C, 190730602 },
 	{ "PE100", 0x000DA981,   3724538 },
-	{ "PE100", 0x000DB63A,   3732177 }
+	{ "PE100", 0x000DB63A,   3732177 },
+	{ "PEint", 0x000DC2F3,   1915913 }
 };
 
 
@@ -112,6 +113,7 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 }
 
 char *Resource::getJAS2Line() {
+	assert(_JAS2Pos < resourceEntry("QUEEN2.JAS")->size);
 	char *startOfLine = _JAS2Ptr + _JAS2Pos;
 	char *curPos = startOfLine;
 	while (*curPos++ != 0xd) ;
