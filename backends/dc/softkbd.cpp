@@ -60,7 +60,8 @@ static const short key_codes[] =
     ~OSystem::KBD_SHIFT, ~OSystem::KBD_CTRL, ~OSystem::KBD_ALT, ' ', 8, 13
   };
 
-SoftKeyboard::SoftKeyboard() : shiftState(0), keySel(0)
+SoftKeyboard::SoftKeyboard(const OSystem_Dreamcast *_os)
+  : os(_os), shiftState(0), keySel(0)
 {
   assert((sizeof(key_codes)/sizeof(key_codes[0])) == SK_NUM_KEYS);
 
@@ -154,4 +155,14 @@ int SoftKeyboard::key(int k, byte &shiftFlags)
     break;
   }
   return 0;
+}
+
+void SoftKeyboard::mouse(int x, int y)
+{
+  os->mouseToSoftKbd(x, y, x, y);
+  if(x >= 0 && x < 11*28 && y >= 0 && y < 6*28 &&
+     x%28 >= 4 && y%28 >= 4)
+    if((keySel = 11*(y/28)+(x/28)) > 58)
+      if((keySel -= 5) < 59)
+	keySel = 58;
 }

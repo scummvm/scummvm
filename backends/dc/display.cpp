@@ -478,6 +478,17 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   ta_commit_list(&myvertex);
 }
 
+void OSystem_Dreamcast::mouseToSoftKbd(int x, int y, int &rx, int &ry) const
+{
+  if(_softkbd_motion) {
+    rx = (int)(x*_xscale - (330.0*sin(0.013*_softkbd_motion) - 320.0));
+    ry = (int)(y*_yscale + TOP_OFFSET - 200.0);
+  } else {
+    rx = -1;
+    ry = -1;
+  }
+}
+
 
 void OSystem_Dreamcast::showOverlay()
 {

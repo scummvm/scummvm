@@ -68,6 +68,10 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       
       mouse_x += pad->cond.mouse.axis1;
       mouse_y += pad->cond.mouse.axis2;
+
+      if(inter)
+	inter->mouse(mouse_x, mouse_y);
+
       pad->cond.mouse.axis1 = 0;
       pad->cond.mouse.axis2 = 0;
     } else if(pad->func & MAPLE_FUNC_KEYBOARD) {

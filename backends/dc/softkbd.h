@@ -27,19 +27,23 @@
 
 #define SK_NUM_KEYS 61
 
+class OSystem_Dreamcast;
+
 class SoftKeyboard : public Interactive
 {
  private:
-  
+ 
+  const OSystem_Dreamcast *os;
   Label labels[2][SK_NUM_KEYS];
   byte shiftState;
   int8 keySel;
 
  public:
-  SoftKeyboard();
+  SoftKeyboard(const OSystem_Dreamcast *os);
 
   void draw(float x, float y, int transp = 0);
   int key(int k, byte &shiftFlags);
+  void mouse(int x, int y);
 };
 
 #endif /* DC_SOFTKBD_H */

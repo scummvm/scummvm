@@ -30,6 +30,7 @@ class Interactive
 {
  public:
   virtual int key(int k, byte &shiftFlags) = 0;
+  virtual void mouse(int x, int y) = 0;
 };
 
 #include "softkbd.h"
@@ -148,6 +149,10 @@ class OSystem_Dreamcast : public OSystem {
 
   // Savefile handling
   SaveFileManager *getSavefileManager();
+
+
+  // Extra SoftKbd support
+  void mouseToSoftKbd(int x, int y, int &rx, int &ry) const;
 
 
   static OSystem *create();
