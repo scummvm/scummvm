@@ -1345,12 +1345,13 @@ void ScummEngine_v72he::o72_findObject() {
 void ScummEngine_v72he::o72_arrayOps() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	int b, c, offs;
+	int offs, tmp, tmp2, tmp3;
 	int dim1end, dim1start, dim2end, dim2start;
-	int id, len, len2;
+	int id, len, b, c;
 	ArrayHeader *ah;
 	int list[128];
 	byte string[2048];
+
 
 	debug(1,"o72_arrayOps: case %d", subOp);
 	switch (subOp) {
@@ -1362,7 +1363,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 
 	case 126:
-		len2 = getStackList(list, ARRAYSIZE(list));
+		len = getStackList(list, ARRAYSIZE(list));
 		dim1end = pop();
 		dim1start = pop();
 		dim2end = pop();
@@ -1371,10 +1372,14 @@ void ScummEngine_v72he::o72_arrayOps() {
 		if (id == 0) {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
-		while (dim2start < dim2end) {
-			len = len2;
-			while (--len >= 0) {
-				writeArray(array, dim2start, len, list[len]);
+		tmp2 = len;
+		while (dim2start <= dim2end) {
+			tmp = dim1start;
+			while (tmp <= dim1end) {
+				writeArray(array, dim2start, tmp, list[--tmp2]);
+				if (tmp2 == 0)
+					tmp2 = len;
+				tmp++;
 			}
 			dim2start++;
 		}
@@ -1407,14 +1412,23 @@ void ScummEngine_v72he::o72_arrayOps() {
 		if (id == 0) {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
-		len2 = ((c - b) | dim2end) - dim2end + 1;
+
+		len = c - b;
+		len |= dim2end;
+		len = len - dim2end + 1;
 		offs = (b >= c) ? 1 : -1;
-		while (dim2start < dim2end) {
-			len = len2;
-			while (--len >= 0) {
-				writeArray(array, dim2start, len, c);
+		while (dim2start <= dim2end) {
+			tmp = dim1start;
+			tmp2 = c;
+			tmp3 = len;
+			while (tmp <= dim1end) {
+				writeArray(array, dim2start, tmp, tmp2);
+				if (--tmp3 == 0)
+					tmp2 = c;
+				else
+					tmp2 += offs;
+				tmp++;
 			}
-			c += offs;
 			dim2start++;
 		}
 		break;
@@ -1853,6 +1867,12 @@ void ScummEngine_v72he::o72_openFile() {
 
 	mode = pop();
 	copyScriptString(filename);
+
+	// HACK bb2demo uses incorrect filename
+	if (!strcmp((char *)filename,".HE9")) {
+		memset(filename, 0, sizeof(filename));
+		sprintf((char *)filename, "%s.he9", _gameName.c_str());
+	}
 
 	for (r = strlen((char*)filename); r != 0; r--) {
 		if (filename[r - 1] == '\\')

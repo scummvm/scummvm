@@ -849,6 +849,9 @@ void ScummEngine_v90he::o90_unknown26() {
 	case 52: // HE 98+
 		pop();
 		break;
+	case 58: // HE 99+
+		pop();
+		break;
 	case 63: // HE 98+
 		pop();
 		break;
