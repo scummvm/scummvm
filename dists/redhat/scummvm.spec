@@ -8,7 +8,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.5.0
+Version		: 0.5.1
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -62,6 +62,17 @@ rm -Rf %{buildroot}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Wed Aug 06 (0.5.1)
+  - Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs')
+  - Fixed dialog skipping, music volume and several crashes/freezes in Steel Sky
+  - Fixed dialog skipping in V7 games
+  - Fixed glitch when quitting ScummVM in fullscreen mode on Mac OS X
+  - Fixed various COMI bugs related to actor placement/scaling
+  - Added complete Hebrew support for Simon the Sorcerer 1 and 2
+  - Several MorphOS and DreamCast port fixes
+  - DreamCast now runs Simon the Sorcerer 1 & 2
+  - Fixed a fullscreen problem on Mac OS X were you couldn't use the mouse in
+    the top part of the screen by linking to a bugfixed version of SDL
 * Sat Aug 02 2003 (0.5.0)
   - Enhanced versions of Maniac Mansion and Zak McKracken are now supported and completable
   - Beneath A Steel Sky is now supported and completable
