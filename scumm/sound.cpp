@@ -732,8 +732,44 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		_mouthSyncMode = true;
 	}
 
-	if (!_soundsPaused && _vm->_mixer->isReady())
-		startSfxSound(_sfxFile, size, handle, id);
+	if (!_soundsPaused && _vm->_mixer->isReady()) {
+		AudioStream *input = NULL;
+		
+		switch (_soundMode) {
+		case kMP3Mode:
+	#ifdef USE_MAD
+			assert(size > 0);
+			input = makeMP3Stream(_sfxFile, size);
+	#endif
+			break;
+		case kVorbisMode:
+	#ifdef USE_VORBIS
+			assert(size > 0);
+			input = makeVorbisStream(_sfxFile, size);
+	#endif
+			break;
+		case kFlacMode:
+	#ifdef USE_FLAC
+			assert(size > 0);
+			input = makeFlacStream(_sfxFile, size);
+	#endif
+			break;
+		default:
+			input = makeVOCStream(*_sfxFile);
+		}
+		
+		if (!input) {
+			warning("startSfxSound failed to load sound");
+			return;
+		}
+	
+		if (_vm->_imuseDigital) {
+			//_vm->_imuseDigital->stopSound(kTalkSoundID);
+			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
+		} else {
+			_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, input, id);
+		}
+	}
 }
 
 void Sound::stopTalkSound() {
@@ -990,46 +1026,6 @@ void Sound::pauseSounds(bool pause) {
 			stopCDTimer();
 		else
 			startCDTimer();
-	}
-}
-
-void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id) {
-
-	AudioStream *input = NULL;
-	
-	switch (_soundMode) {
-	case kMP3Mode:
-#ifdef USE_MAD
-		assert(file_size > 0);
-		input = makeMP3Stream(file, file_size);
-#endif
-		break;
-	case kVorbisMode:
-#ifdef USE_VORBIS
-		assert(file_size > 0);
-		input = makeVorbisStream(file, file_size);
-#endif
-		break;
-	case kFlacMode:
-#ifdef USE_FLAC
-		assert(file_size > 0);
-		input = makeFlacStream(file, file_size);
-#endif
-		break;
-	default:
-		input = makeVOCStream(*_sfxFile);
-	}
-	
-	if (!input) {
-		warning("startSfxSound failed to load sound");
-		return;
-	}
-
-	if (_vm->_imuseDigital) {
-		//_vm->_imuseDigital->stopSound(kTalkSoundID);
-		_vm->_imuseDigital->startVoice(kTalkSoundID, input);
-	} else {
-		_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, input, id);
 	}
 }
 
