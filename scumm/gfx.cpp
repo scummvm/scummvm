@@ -156,6 +156,44 @@ static const TransitionEffect transitionEffects[5] = {
 };
 #endif
 
+static inline void copy8PixelsWithMasking(byte *dst, const byte *src, byte maskbits) {
+	if (!(maskbits & 0x80))
+		dst[0] = src[0];
+	if (!(maskbits & 0x40))
+		dst[1] = src[1];
+	if (!(maskbits & 0x20))
+		dst[2] = src[2];
+	if (!(maskbits & 0x10))
+		dst[3] = src[3];
+	if (!(maskbits & 0x08))
+		dst[4] = src[4];
+	if (!(maskbits & 0x04))
+		dst[5] = src[5];
+	if (!(maskbits & 0x02))
+		dst[6] = src[6];
+	if (!(maskbits & 0x01))
+		dst[7] = src[7];
+}
+
+static inline void clear8PixelsWithMasking(byte *dst, const byte color, byte maskbits) {
+	if (!(maskbits & 0x80))
+		dst[0] = color;
+	if (!(maskbits & 0x40))
+		dst[1] = color;
+	if (!(maskbits & 0x20))
+		dst[2] = color;
+	if (!(maskbits & 0x10))
+		dst[3] = color;
+	if (!(maskbits & 0x08))
+		dst[4] = color;
+	if (!(maskbits & 0x04))
+		dst[5] = color;
+	if (!(maskbits & 0x02))
+		dst[6] = color;
+	if (!(maskbits & 0x01))
+		dst[7] = color;
+}
+
 #pragma mark -
 #pragma mark --- Virtual Screens ---
 #pragma mark -
@@ -544,7 +582,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 
 void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	VirtScreen *vs;
-	byte *backbuff;
+	byte *screenBuf;
 
 	if (rect.top < 0)
 		rect.top = 0;
@@ -557,41 +595,33 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if (rect.left > vs->width)
 		return;
 
-	const int topline = vs->topline;
-
-	// Move rect up
-	rect.top -= topline;
-	rect.bottom -= topline;
+	// Convert 'rect' to local (virtual screen) coordinates
+	rect.top -= vs->topline;
+	rect.bottom -= vs->topline;
 
 	rect.clip(vs->width, vs->height);
 
 	markRectAsDirty(vs->number, rect, USAGE_BIT_RESTORED);
 
-	int offset = rect.top * vs->width + vs->xstart + rect.left;
-	backbuff = vs->screenPtr + offset;
+	const int offset = rect.top * vs->width + vs->xstart + rect.left;
+	screenBuf = vs->screenPtr + offset;
 
 	int height = rect.height();
 	int width = rect.width();
+	
+	if (!height)
+		return;
 
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
-		blit(backbuff, vs->backBuf + offset, width, height);
-		if (vs->number == kMainVirtScreen && _charset->_hasMask && height) {
-			byte *mask;
-
-			// Move rect back
-			rect.top += topline;
-			rect.bottom += topline;
-
+		blit(screenBuf, vs->backBuf + offset, width, height);
+		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
 			// Note: At first sight it may look as if this could
 			// be optimized to (rect.right - rect.left) / 8 and
 			// thus to width / 8, but that's not the case since
 			// we are dealing with integer math here.
-			int mask_width = (rect.right / 8) - (rect.left / 8);
+			const int mask_width = ((rect.right + 7) / 8) - (rect.left / 8);
 
-			if (rect.right & 0x07)
-				mask_width++;
-
-			mask = getMaskBuffer(rect.left, rect.top + topline, 0);
+			byte *mask = getMaskBuffer(rect.left, rect.top, 0);
 
 			do {
 				memset(mask, 0, mask_width);
@@ -600,34 +630,69 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 		}
 	} else {
 		while (height--) {
-			memset(backbuff, backColor, width);
-			backbuff += vs->width;
+			memset(screenBuf, backColor, width);
+			screenBuf += vs->width;
 		}
 	}
 }
 
 void CharsetRenderer::restoreCharsetBg() {
+	_nextLeft = _vm->_string[0].xpos;
+	_nextTop = _vm->_string[0].ypos;
+
 	if (_hasMask) {
-		// Restore background on the whole text area. To do this, we simply
-		// pass a large rect to restoreBG, and then rely on it clipping that
-		// rect. Also, restoreBG() will use findVirtScreen(rect.top) to
-		// determine the virtual screen on which to operate. This is fine
-		// for us, since we pass in rect.top, so in older games, the text
-		// display area is used; in newer games, the main virtscreen gets
-		// restored. That's exactly what we need.
-		//
-		// Of course this will break down if one of the older games (with
-		// multiple virtual screens in use) draw text outside the text virtual
-		// screen (verbs are excluded, they are handled in a special fashion).
-		// But I have no indication that this does ever happen.
-		_vm->restoreBG(Common::Rect(5000, 5000));
 		_hasMask = false;
 		_str.left = -1;
 		_left = -1;
-	}
 
-	_nextLeft = _vm->_string[0].xpos;
-	_nextTop = _vm->_string[0].ypos;
+		// Restore background on the whole text area. This code is based on
+		// restoreBG(), but was changed to only restore those parts which are
+		// currently covered by the charset mask.
+
+		// Loop over first three virtual screens
+		VirtScreen *vs = &_vm->virtscr[_textScreenID];
+		
+		if (!vs->height)
+			return;
+
+		_vm->markRectAsDirty(vs->number, Common::Rect(vs->width, vs->height), USAGE_BIT_RESTORED);
+	
+		byte *screenBuf = vs->screenPtr + vs->xstart;
+
+		if (vs->hasTwoBuffers && _vm->_currentRoom != 0 && _vm->isLightOn()) {
+			const byte *backBuf = vs->backBuf + vs->xstart;
+
+			if (vs->number == kMainVirtScreen) {
+				// Restore from back buffer, but only those parts which are
+				// currently covered by the charset mask. In addition, we
+				// clean out the charset mask
+
+				const int mask_width = _vm->gdi._numStrips;
+				byte *mask = _vm->getMaskBuffer(0, vs->topline, 0);
+				assert(vs->width == 8 * _vm->gdi._numStrips);
+				
+				int height = vs->height;
+				while (height--) {
+					for (int w = 0; w < mask_width; ++w) {
+						const byte maskbits = mask[w];
+						if (maskbits) {
+							copy8PixelsWithMasking(screenBuf + w*8, backBuf + w*8, ~maskbits);
+							mask[w] = 0;
+						}
+					}
+					screenBuf += vs->width;
+					backBuf += vs->width;
+					mask += _vm->gdi._numStrips;
+				}
+			} else {
+				// Restore from back buffer
+				_vm->blit(screenBuf, backBuf, vs->width, vs->height);
+			}
+		} else {
+			// Clear area
+			memset(screenBuf, 0, vs->height * vs->width);
+		}
+	}
 }
 
 void CharsetRenderer::clearCharsetMask() {
@@ -639,8 +704,7 @@ bool CharsetRenderer::hasCharsetMask(int left, int top, int right, int bottom) {
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
-	return getResourceAddress(rtBuffer, 9)
-			+ _screenStartStrip + (x / 8) + y * gdi._numStrips + gdi._imgBufOffs[z];
+	return gdi.getMaskBuffer(x / 8, y, z) + _screenStartStrip;
 }
 
 byte *Gdi::getMaskBuffer(int x, int y, int z) {
@@ -1581,22 +1645,7 @@ void Gdi::draw8ColWithMasking(byte *dst, const byte *src, int height, byte *mask
 	do {
 		maskbits = *mask;
 		if (maskbits) {
-			if (!(maskbits & 0x80))
-				dst[0] = src[0];
-			if (!(maskbits & 0x40))
-				dst[1] = src[1];
-			if (!(maskbits & 0x20))
-				dst[2] = src[2];
-			if (!(maskbits & 0x10))
-				dst[3] = src[3];
-			if (!(maskbits & 0x08))
-				dst[4] = src[4];
-			if (!(maskbits & 0x04))
-				dst[5] = src[5];
-			if (!(maskbits & 0x02))
-				dst[6] = src[6];
-			if (!(maskbits & 0x01))
-				dst[7] = src[7];
+			copy8PixelsWithMasking(dst, src, maskbits);
 		} else {
 #if defined(SCUMM_NEED_ALIGNMENT)
 			memcpy(dst, src, 8);
@@ -1617,22 +1666,7 @@ void Gdi::clear8ColWithMasking(byte *dst, int height, byte *mask) {
 	do {
 		maskbits = *mask;
 		if (maskbits) {
-			if (!(maskbits & 0x80))
-				dst[0] = 0;
-			if (!(maskbits & 0x40))
-				dst[1] = 0;
-			if (!(maskbits & 0x20))
-				dst[2] = 0;
-			if (!(maskbits & 0x10))
-				dst[3] = 0;
-			if (!(maskbits & 0x08))
-				dst[4] = 0;
-			if (!(maskbits & 0x04))
-				dst[5] = 0;
-			if (!(maskbits & 0x02))
-				dst[6] = 0;
-			if (!(maskbits & 0x01))
-				dst[7] = 0;
+			clear8PixelsWithMasking(dst, 0, maskbits);
 		} else {
 #if defined(SCUMM_NEED_ALIGNMENT)
 			memset(dst, 0, 8);
