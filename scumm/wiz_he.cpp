@@ -773,14 +773,14 @@ static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	return size;
 }
 
-void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType) {
+void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, int compType) {
 	debug(1, "ScummEngine_v72he::captureWizImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	uint8 *src = NULL;
 	VirtScreen *pvs = &virtscr[kMainVirtScreen];
-	if (frontBuffer) {
-		src = pvs->getPixels(0, 0);
-	} else {
+	if (backBuffer) {
 		src = pvs->getBackPixels(0, 0);
+	} else {
+		src = pvs->getPixels(0, 0);
 	}
 	Common::Rect rCapt(pvs->w, pvs->h);
 	if (rCapt.intersects(r)) {
@@ -1461,7 +1461,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		displayWizComplexImage(params);
 		break;
 	case 2:
- 		captureWizImage(params->img.resNum, params->box, (params->img.flags & kWIFBlitToFrontVideoBuffer) == kWIFBlitToFrontVideoBuffer, params->compType);
+ 		captureWizImage(params->img.resNum, params->box, (params->img.flags & kWIFBlitToFrontVideoBuffer), params->compType);
 		break;
 	case 3:
 		if (params->processFlags & kWPFUseFile) {
