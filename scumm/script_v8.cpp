@@ -736,7 +736,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 		break;
 	case 0xE7: {	// SO_CHARSET_SET
 		int charset = pop();
-		warning("Set userface charset to %d", charset);
+		debugC(DEBUG_GENERAL, "Set userface charset to %d", charset);
 //		loadCharset(charset);
 		break;
 	}
@@ -1302,8 +1302,9 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 //		warning("o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 23:	// setActorChoreLimbFrame
-		// FIXME: This is critical, and is the cause of the Cannon "too many scripts" crash
+		// FIXME: This still isn't quite working correctly. See bug #754419
 		// This opcode is used a lot in script 28.
+
 //		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		a = derefActor(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
 

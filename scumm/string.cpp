@@ -453,7 +453,10 @@ void ScummEngine::drawString(int a) {
 				// Note #2: If triggered "accidentaly", this code could also
 				// cause code to be left printed when it shouldn't...
 				if (_string[a].no_talk_anim == false) {
-warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
+					// Sam and Max seems to blitAlso 32 a lot, which does
+					// nothing anyway. So just hide that one for brevity.
+					if (c != '32') 
+						warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
 //					_charset->_blitAlso = true;
 				}
 			}
