@@ -134,7 +134,7 @@ void Scumm::drawVerb(int vrb, int mode)
 		_string[4].charset = vs->charset_nr;
 		_string[4].xpos = vs->x;
 		_string[4].ypos = vs->y;
-		_string[4].right = 319;
+		_string[4].right = _realWidth - 1;
 		_string[4].center = vs->center;
 
 		if (vs->curmode == 2)

@@ -1333,7 +1333,7 @@ void Gdi::unkDecode1()
 					do {
 						if (!--_currentX) {
 							_currentX = 8;
-							dst += 312;
+							dst += _vm->_realWidth - 8;
 							if (!--_tempNumLines)
 								return;
 						}
@@ -1351,7 +1351,7 @@ void Gdi::unkDecode1()
 				bits >>= _decomp_shr;
 			}
 		} while (--_currentX);
-		dst += 312;
+		dst += _vm->_realWidth - 8;
 	} while (--_tempNumLines);
 }
 
@@ -1386,7 +1386,7 @@ void Gdi::unkDecode2()
 				color += inc;
 			}
 		} while (--_currentX);
-		dst += 312;
+		dst += _vm->_realWidth - 8;
 	} while (--_tempNumLines);
 }
 
@@ -1424,7 +1424,7 @@ void Gdi::unkDecode3()
 						do {
 							if (!--_currentX) {
 								_currentX = 8;
-								dst += 312;
+								dst += _vm->_realWidth - 8;
 								if (!--_tempNumLines)
 									return;
 							}
@@ -1434,7 +1434,7 @@ void Gdi::unkDecode3()
 						do {
 							if (!--_currentX) {
 								_currentX = 8;
-								dst += 312;
+								dst += _vm->_realWidth - 8;
 								if (!--_tempNumLines)
 									return;
 							}
@@ -1451,7 +1451,7 @@ void Gdi::unkDecode3()
 				bits >>= _decomp_shr;
 			}
 		} while (--_currentX);
-		dst += 312;
+		dst += _vm->_realWidth - 8;
 	} while (--_tempNumLines);
 }
 
@@ -1518,7 +1518,7 @@ void Gdi::unkDecode5()
 				color += inc;
 			}
 		} while (--_currentX);
-		dst += 312;
+		dst += _vm->_realWidth - 8;
 	} while (--_tempNumLines);
 }
 
@@ -1800,6 +1800,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + height;
 	mask = getResourceAddress(rtBuffer, 9) + top * gdi._numStrips + (left >> 3) + _screenStartStrip;
 	if (vs->number == 0) {
+		// FIXME: hardcoded value
 		mask += vs->topline * 216;
 	}
 
@@ -3246,7 +3247,7 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 				for (i = 0; i < num; i++) {
 					if (bd->scale_x == 255 || scale_cols[src_x]) {
 						if (dst_x >= 0 && dst_x < bd->outwidth) {
-							if (!(*(mask + dst_y * 40 + (dst_x >> 3)) & revBitMask[dst_x & 7]))
+							if (!(*(mask + dst_y * gdi._numStrips + (dst_x >> 3)) & revBitMask[dst_x & 7]))
 							
 								*d = blend(_currentPalette, color, *d);
 						}
@@ -3259,7 +3260,7 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 				for (i = 0; i < num; i++) {
 					if (bd->scale_x == 255 || scale_cols[src_x]) {
 						if (dst_x >= 0 && dst_x < bd->outwidth)
-							if (!(*(mask + dst_y * 40 + (dst_x >> 3)) & revBitMask[dst_x & 7]))
+							if (!(*(mask + dst_y * gdi._numStrips + (dst_x >> 3)) & revBitMask[dst_x & 7]))
 								*d = blend(_currentPalette, src[i], *d);
 						d++;
 						dst_x++;
