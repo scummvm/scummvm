@@ -201,8 +201,12 @@ void SoundMixer::set_volume(int volume)
 	else if (volume < 0)
 		volume = 0;
 
-	for (int i = 0; i < 256; i++)
-		_volume_table[i] = (i + 1) * volume - 1;
+	// The volume table takes 8 bit unsigned data as index and returns 16 bit signed
+	for (int i = 0; i < 128; i++)
+		_volume_table[i] = i * volume ;
+
+	for (int i = -128; i < 0; i++)
+		_volume_table[i+256] = i * volume ;
 }
 
 void SoundMixer::set_music_volume(int volume)
@@ -317,11 +321,11 @@ static inline int clamped_add_16(int a, int b)
 {
 	int val = a + b;
 
-	if (val > 32767)
+	if (val > 32767) {
 		return 32767;
-	else if (val < -32768)
+	} else if (val < -32768) {
 		return -32768;
-	else
+	} else
 		return val;
 }
 
@@ -454,9 +458,8 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, u
 static int16 *mix_signed_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																 int fp_speed, const int16 *vol_tab, byte *s_end)
 {
-	printf("mix_signed_mono_16\n");
 	uint32 fp_pos = *fp_pos_ptr;
-	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
+	unsigned char volume = ((int)vol_tab[1]) / 8;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
 	do {
@@ -488,9 +491,8 @@ static int16 *mix_unsigned_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, ui
 static int16 *mix_signed_stereo_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																	 int fp_speed, const int16 *vol_tab, byte *s_end)
 {
-	printf("mix_signed_stereo_16\n");
 	uint32 fp_pos = *fp_pos_ptr;
-	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
+	unsigned char volume = ((int)vol_tab[1]) / 8;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
 	do {
@@ -736,7 +738,8 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len)
 {
 	mad_fixed_t const *ch;
 	const int16 *vol_tab = _mixer->_volume_table;
-	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
+//	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
+	unsigned char volume = ((int)vol_tab[1]) / 8;
 
 	if (_to_be_destroyed) {
 		real_destroy();
@@ -831,7 +834,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len)
 	mad_fixed_t const *ch;
 	mad_timer_t frame_duration;
 //	unsigned char volume = _mixer->_music_volume * 32 / 255;
-	unsigned char volume = _mixer->_music_volume >> 3;
+	unsigned char volume = _mixer->_music_volume / 8;
 
 	if (_to_be_destroyed) {
 		real_destroy();
