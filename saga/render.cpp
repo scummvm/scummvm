@@ -88,6 +88,7 @@ Render::Render(SagaEngine *vm, OSystem *system) : _vm(vm), _system(system), _ini
 	_tmp_buf_h = tmp_h;
 
 	_backbuf_surface = GFX_GetBackBuffer();
+	_flags = 0;
 
 	_initialized = true;
 }

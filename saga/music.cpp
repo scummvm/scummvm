@@ -47,6 +47,7 @@ static const byte mt32_to_gm[128] = {
 
 MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false)  {
 	memset(_channel, 0, sizeof(_channel));
+	_masterVolume = 0;
 	this->open();
 }
 
