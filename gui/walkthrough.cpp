@@ -94,6 +94,7 @@ bool WalkthroughDialog::loadWalkthroughText() {
 				if ((currentLinePos + 1) < _lineWidth) {
 					lineBuffer[currentLinePos] = ' ';
 					currentLinePos++;
+					currentBuffer++;
 				}
 			}
 		} else {
