@@ -4880,7 +4880,10 @@ void SimonState::playMusic(uint music)
 
 	/* FIXME: not properly implemented */
 	if (_game & GAME_WIN) {
-		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music] - 1, SEEK_SET);
+		int32 offset = _game_offsets_ptr[gss->MUSIC_INDEX_BASE + music];
+		if (_game & GAME_SIMON2)
+			offset--;
+		_game_file->seek(offset, SEEK_SET);
 		File *f = _game_file;
 		midi.read_all_songs(f);
 	} else {
