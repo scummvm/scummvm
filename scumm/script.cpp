@@ -692,40 +692,31 @@ void Scumm::killAllScriptsExceptCurrent() {
 	}
 }
 
-void Scumm::doSentence(int c, int b, int a) {
+void Scumm::doSentence(int verb, int objectA, int objectB) {
 	SentenceTab *st;
 
 	if (_features & GF_AFTER_V7) {
 
-		if (b == a)
+		if (objectA == objectB)
 			return;
 
-		st = &_sentence[_sentenceNum - 1];
-		
-		
-		// Check if this doSentence request is identical to the previous one;
-		// if yes, ignore this invocation.
-		if (_sentenceNum && st->verb == c && st->objectA == b && st->objectB == a)
-			return;
-
-		_sentenceNum++;
-		st++;
-
-	} else {
-
-		st = &_sentence[_sentenceNum++];
-
-		// FIXME: this seems wrong, it accesses objectB before we ever set it!
-		if (!(st->objectB & 0xFF00))
-			st->unk2 = 0;
-		else
-			st->unk2 = 1;
+		if (_sentenceNum) {
+			st = &_sentence[_sentenceNum - 1];
+			
+			// Check if this doSentence request is identical to the previous one;
+			// if yes, ignore this invocation.
+			if (_sentenceNum && st->verb == verb && st->objectA == objectA && st->objectB == objectB)
+				return;
+		}
 
 	}
 
-	st->verb = c;
-	st->objectA = b;
-	st->objectB = a;
+	st = &_sentence[_sentenceNum++];
+
+	st->verb = verb;
+	st->objectA = objectA;
+	st->objectB = objectB;
+	st->unk2 = (objectB & 0xFF00) != 0;
 	st->freezeCount = 0;
 }
 
