@@ -334,7 +334,7 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
-		OPCODE(o6_unknownE4),
+		OPCODE(o6_setBoxSet),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -3112,7 +3112,7 @@ void ScummEngine_v6::o6_unknownE1() {
 	push(area);
 }
 
-void ScummEngine_v6::o6_unknownE4() {
+void ScummEngine_v6::o6_setBoxSet() {
 	int arg = pop();
 	const byte *room = getResourceAddress(rtRoom, _roomResource);
 	const byte *boxd = NULL, *boxm = NULL;
@@ -3123,7 +3123,7 @@ void ScummEngine_v6::o6_unknownE4() {
 		boxd = boxds.findNext(MKID('BOXD'));
 
 	if (!boxd)
-		error("ScummEngine_v6::o6_unknownE4: Can't find dboxes for set %d", arg);
+		error("ScummEngine_v6::o6_setBoxSet: Can't find dboxes for set %d", arg);
 
 	dboxSize = READ_BE_UINT32(boxd + 4);
 	byte *matrix = createResource(rtMatrix, 2, dboxSize);
@@ -3136,9 +3136,9 @@ void ScummEngine_v6::o6_unknownE4() {
 		boxm = boxms.findNext(MKID('BOXM'));
 
 	if (!boxm)
-		error("ScummEngine_v6::o6_unknownE4: Can't find mboxes for set %d", arg);
+		error("ScummEngine_v6::o6_setBoxSet: Can't find mboxes for set %d", arg);
 
-	mboxSize = READ_BE_UINT32(boxd + 4);
+	mboxSize = READ_BE_UINT32(boxm + 4);
 	matrix = createResource(rtMatrix, 1, mboxSize);
 
 	assert(matrix);

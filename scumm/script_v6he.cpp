@@ -332,7 +332,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
-		OPCODE(o6_unknownE4),
+		OPCODE(o6_setBoxSet),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1031,6 +1031,10 @@ void ScummEngine_v6he::o6_readFile() {
 	int32 size = pop();
 	int slot = pop();
 
+	// Fatty Bear uses positive values
+	if (_gameId == GID_FBEAR)
+		size = -size;
+
 	if (size == -2) {
 		push(_hFileTable[slot].readUint16LE());
 	} else if (size == -1) {
@@ -1052,6 +1056,10 @@ void ScummEngine_v6he::o6_writeFile() {
 	int32 size = pop();
 	int16 resID = pop();
 	int slot = pop();
+
+	// Fatty Bear uses positive values
+	if (_gameId == GID_FBEAR)
+		size = -size;
 
 	if (size == -2) {
 		_hFileTable[slot].writeUint16LE(resID);
