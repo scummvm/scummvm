@@ -120,7 +120,7 @@ if (_continous_vgascript) {
 		}
 }
 
-		if (!(_game & GAME_SIMON2)) {
+		if (!(_game & GF_SIMON2)) {
 			opcode = READ_BE_UINT16_UNALIGNED(_vc_ptr);
 			_vc_ptr += 2;
 		} else {
@@ -184,7 +184,7 @@ void SimonState::vc_skip_next_instruction()
 		4, 2, 2
 	};
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		uint opcode = vc_read_next_byte();
 		_vc_ptr += opcode_param_len_simon2[opcode];
 	} else {
@@ -283,7 +283,7 @@ void SimonState::vc_3_new_thread()
 
 	a = vc_read_next_word();			/* 0 */
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		f = vc_read_next_word();		/* 0 */
 		b = vc_read_next_word();		/* 2 */
 	} else {
@@ -606,12 +606,12 @@ void SimonState::vc_10_draw()
 	state.base_color = (_vc_ptr[1] << 4);
 	_vc_ptr += 2;
 	state.x = (int16)vc_read_next_word();
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		state.x -= _x_scroll;
 	}
 	state.y = (int16)vc_read_next_word();
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		state.e = vc_read_next_word();
 	} else {
 		state.e = vc_read_next_byte();
@@ -644,7 +644,7 @@ void SimonState::vc_10_draw()
 		}
 	}
 
-	if (_game & GAME_SIMON2 && width >= 21) {
+	if (_game & GF_SIMON2 && width >= 21) {
 		byte *src, *dst;
 		uint w;
 
@@ -885,7 +885,7 @@ void SimonState::vc_10_draw()
 		}
 		/* vc_10_helper_4 */
 	} else {
-		if (_game & GAME_SIMON2 && state.e & 0x4 && _bit_array[10] & 0x800) {
+		if (_game & GF_SIMON2 && state.e & 0x4 && _bit_array[10] & 0x800) {
 			state.surf_addr = state.surf2_addr;
 			state.surf_pitch = state.surf2_pitch;
 			if (_debugMode)
@@ -996,7 +996,7 @@ void SimonState::vc_12_delay()					//vc_12_sleep_variable
 {
 	uint num;
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		num = vc_read_var_or_word();
 	} else {
 		num = vc_read_next_byte() * _vga_base_delay;
@@ -1108,7 +1108,7 @@ void SimonState::vc_20_set_code_word()
 /* FIXME: unaligned access */
 void SimonState::vc_21_jump_if_code_word()
 {
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		int16 a = vc_read_next_word();
 		byte *tmp = _vc_ptr + a;
 		uint16 val = read_16_le(tmp + 4);
@@ -1206,7 +1206,7 @@ void SimonState::vc_24_set_image_xy()
 
 	vsp->x += (int16)vc_read_next_word();
 	vsp->y += (int16)vc_read_next_word();
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		vsp->unk4 = vc_read_next_word();
 	} else {
 		vsp->unk4 = vc_read_next_byte();
@@ -1321,7 +1321,7 @@ void SimonState::vc_27_reset_simon2()
 
 void SimonState::vc_27_reset()
 {
-	if (!(_game & GAME_SIMON2))
+	if (!(_game & GF_SIMON2))
 		vc_27_reset_simon1();
 	else
 		vc_27_reset_simon2();
@@ -1393,7 +1393,7 @@ void SimonState::vc_36_saveload_thing()
 	uint vga_res = vc_read_next_word();
 	uint mode = vc_read_next_word();
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		if (mode == 16) {
 			_copy_partial_mode = 2;
 		} else {
@@ -1430,7 +1430,7 @@ void SimonState::vc_40_var_add()
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) + vc_read_next_word();
 
-	if (_game & GAME_SIMON2 && var == 0xF && !(_bit_array[5] & 1)) {
+	if (_game & GF_SIMON2 && var == 0xF && !(_bit_array[5] & 1)) {
 		int16 tmp;
 
 		if (_vga_var2 != 0) {
@@ -1460,7 +1460,7 @@ void SimonState::vc_41_var_sub()
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) - vc_read_next_word();
 
-	if (_game & GAME_SIMON2 && var == 0xF && !(_bit_array[5] & 1)) {
+	if (_game & GF_SIMON2 && var == 0xF && !(_bit_array[5] & 1)) {
 		int16 tmp;
 
 		if (_vga_var2 != 0) {
@@ -1597,7 +1597,7 @@ void SimonState::vc_52_play_sound()
 
 	if (_game == GAME_SIMON1DOS) {
 			playSting(a);
-	} else if (!(_game & GAME_SIMON2)) {
+	} else if (!(_game & GF_SIMON2)) {
 		_sound->playEffects(a);
 	} else {
 		if (a >= 0x8000) {
@@ -1644,7 +1644,7 @@ void SimonState::vc_55_offset_hit_area()
 void SimonState::vc_56_no_op()
 {
 	/* no op in simon1 */
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
 
 		if (_continous_vgascript)
@@ -1657,7 +1657,7 @@ void SimonState::vc_56_no_op()
 
 void SimonState::vc_59()
 {
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		uint file = vc_read_next_word();
 		uint start = vc_read_next_word();
 		uint end = vc_read_next_word() + 1;
@@ -1716,7 +1716,7 @@ void SimonState::vc_kill_thread(uint file, uint sprite)
 	vfs = _vga_sleep_structs;
 	while (vfs->ident != 0) {
 		if (vfs->sprite_id == _vga_cur_sprite_id
-				&& (vfs->cur_vga_file == _vga_cur_file_id || !(_game & GAME_SIMON2))
+				&& (vfs->cur_vga_file == _vga_cur_file_id || !(_game & GF_SIMON2))
 			) {
 			while (vfs->ident != 0) {
 				memcpy(vfs, vfs + 1, sizeof(VgaSleepStruct));
@@ -1734,7 +1734,7 @@ void SimonState::vc_kill_thread(uint file, uint sprite)
 		vte = _vga_timer_list;
 		while (vte->delay != 0) {
 			if (vte->sprite_id == _vga_cur_sprite_id
-					&& (vte->cur_vga_file == _vga_cur_file_id || !(_game & GAME_SIMON2))
+					&& (vte->cur_vga_file == _vga_cur_file_id || !(_game & GF_SIMON2))
 				) {
 				delete_vga_timer(vte);
 				break;
@@ -1752,7 +1752,7 @@ void SimonState::vc_60_kill_thread()
 {
 	uint file;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		file = vc_read_next_word();
 	} else {
 		file = _vga_cur_file_id;
@@ -1783,7 +1783,7 @@ void SimonState::vc_62_palette_thing()
 	vc_29_stop_all_sounds();
 
 	if (!_video_var_3) {
-		if (_game & GAME_SIMON2) {
+		if (_game & GF_SIMON2) {
 			if (_midi_unk2 != 0xffff) {
 				playMusic(999, _midi_unk2);
 			}
@@ -1803,7 +1803,7 @@ void SimonState::vc_62_palette_thing()
 		delay(5);
 	}
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		uint16 params[5];						/* parameters to vc_10_draw */
 		VgaSprite *vsp;
 		VgaPointersEntry *vpe;
@@ -1906,7 +1906,7 @@ void SimonState::vc_69()
 
 	if (_vc72_var1 == 999) {
 		_vc70_var2 = b;
-		if (_game & GAME_WIN) {
+		if (_game & GF_WIN) {
 			midi.initialize();
 			midi.play();
 		}

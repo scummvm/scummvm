@@ -66,7 +66,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 		file->open(gss->mp3_filename, gameDataPath);
 		if (file->isOpen() == false) {
 #endif
-			if (_game & GAME_WIN) {
+			if (_game & GF_WIN) {
 				s = gss->wav_filename;
 				file->open(s, gameDataPath);
 				if (file->isOpen() == false) {
@@ -75,7 +75,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 					_voice_file = true;
 					_voice = new WavSound(_mixer, file);
 				}
-			} else if (_game & GAME_TALKIE) {
+			} else if (_game & GF_TALKIE) {
 				s = gss->voc_filename;
 				file->open(s, gameDataPath);
 				if (file->isOpen() == false) {
@@ -141,7 +141,7 @@ void SimonSound::loadSfxTable(File *gameFile, uint32 base)
 {
 	stopAll();
 
-	if (_game & GAME_WIN)
+	if (_game & GF_WIN)
 		_effects = new WavSound(_mixer, gameFile, base);
 	else
 		_effects = new VocSound(_mixer, gameFile, base);

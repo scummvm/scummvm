@@ -82,7 +82,7 @@ void SimonState::defocusHitarea()
 	HitArea *last;
 	HitArea *ha;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		if (_bit_array[4] & 0x8000) {
 			o_unk_120(202);
 			_last_hitarea_2_ptr = NULL;
@@ -151,7 +151,7 @@ void SimonState::hitareaChangedHelper()
 {
 	FillOrCopyStruct *fcs;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		if (_bit_array[4] & 0x8000)
 			return;
 	}
@@ -258,7 +258,7 @@ void SimonState::hitarea_proc_1()
 	uint id;
 	HitArea *ha;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		id = 2;
 		if (!(_bit_array[4] & 0x8000))
 			id = (_mouse_y >= 136) ? 102 : 101;
@@ -289,7 +289,7 @@ void SimonState::handle_verb_hitarea(HitArea * ha)
 	if (ha == tmp)
 		return;
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		if (tmp != NULL) {
 			tmp->flags |= 8;
 			video_toggle_colors(tmp, 0xd5, 0xd0, 0xd5, 0xA);
@@ -315,7 +315,7 @@ void SimonState::handle_verb_hitarea(HitArea * ha)
 
 void SimonState::hitarea_leave(HitArea * ha)
 {
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		video_toggle_colors(ha, 0xdf, 0xd5, 0xda, 5);
 	} else {
 		video_toggle_colors(ha, 0xe7, 0xe5, 0xe6, 1);
@@ -363,7 +363,7 @@ void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode)
 	uint16 x_ = x;
 	const uint16 y_ = y;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		if (_bit_array[4] & 0x8000 || y < 134) {
 			x_ += _x_scroll * 8;
 		}
@@ -435,7 +435,7 @@ bool SimonState::hitarea_proc_2(uint a)
 	uint x;
 	const byte *string_ptr;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		if (_bit_array[4] & 0x8000) {
 			Subroutine *sub;
 			_variableArray[84] = a;

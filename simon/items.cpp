@@ -371,7 +371,7 @@ int SimonState::runScript()
 				uint string_id = getNextStringID();
 				if (var < 20) {
 					_stringid_array_3[var] = string_id;
-					if (_game & GAME_TALKIE)
+					if (_game & GF_TALKIE)
 						_array_4[var] = getNextWord();
 				}
 			}
@@ -389,7 +389,7 @@ int SimonState::runScript()
 		case 70:{									/* show string from array */
 				const char *str = (const char *)getStringPtrByID(_stringid_array_3[getVarOrByte()]);
 
-				if (_game & GAME_SIMON2) {
+				if (_game & GF_SIMON2) {
 					writeVariable(51, strlen(str) / 53 * 8 + 8);
 				}
 
@@ -438,7 +438,7 @@ int SimonState::runScript()
 			break;
 
 		case 83:{									/* restart subroutine */
-				if (_game & GAME_SIMON2)
+				if (_game & GF_SIMON2)
 					o_83_helper();
 				return -10;
 			}
@@ -515,7 +515,7 @@ int SimonState::runScript()
 			break;
 
 		case 98:{									/* start vga */
-				if (!(_game & GAME_SIMON2)) {
+				if (!(_game & GF_SIMON2)) {
 					uint b = getVarOrWord();
 					uint c = getVarOrByte();
 					uint d = getVarOrWord();
@@ -535,7 +535,7 @@ int SimonState::runScript()
 			break;
 
 		case 99:{									/* kill thread */
-				if (!(_game & GAME_SIMON2)) {
+				if (!(_game & GF_SIMON2)) {
 					o_unk_99_simon1(getVarOrWord());
 				} else {
 					uint a = getVarOrWord();
@@ -990,7 +990,7 @@ int SimonState::runScript()
 
 				const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
 				ThreeValues *tv = getThreeValues(b);
-				if (_game & GAME_TALKIE) 
+				if (_game & GF_TALKIE) 
 					d = _array_4[a];
 
 				if (d != 0 && !_vk_t_toggle) {
@@ -1008,7 +1008,7 @@ int SimonState::runScript()
 
 		case 181:{									/* force lock */
 				o_force_lock();
-				if (_game & GAME_SIMON2) {
+				if (_game & GF_SIMON2) {
 					fcs_unk_2(1);
 					showMessageFormat("\xC");
 				}
@@ -1016,14 +1016,14 @@ int SimonState::runScript()
 			break;
 
 		case 182:{									/* read vgares 328 */
-				if (_game & GAME_SIMON2)
+				if (_game & GF_SIMON2)
 					goto invalid_opcode;
 				o_read_vgares_328();
 			}
 			break;
 
 		case 183:{									/* read vgares 23 */
-				if (_game & GAME_SIMON2)
+				if (_game & GF_SIMON2)
 					goto invalid_opcode;
 				o_read_vgares_23();
 			}
@@ -1035,7 +1035,7 @@ int SimonState::runScript()
 			break;
 
 		case 185:{
-				if (_game & GAME_SIMON2)
+				if (_game & GF_SIMON2)
 					goto invalid_opcode;
 				_midi_sfx = getVarOrWord();
 			}
@@ -1047,14 +1047,14 @@ int SimonState::runScript()
 			break;
 
 		case 187:{									/* fade to black */
-				if (_game & GAME_SIMON2)
+				if (_game & GF_SIMON2)
 					goto invalid_opcode;
 				o_fade_to_black();
 			}
 			break;
 
 		case 188:									/* string2 is */
-			if (!(_game & GAME_SIMON2))
+			if (!(_game & GF_SIMON2))
 				goto invalid_opcode;
 			{
 				uint i = getVarOrByte();
@@ -1064,7 +1064,7 @@ int SimonState::runScript()
 			break;
 
 		case 189:{
-				if (!(_game & GAME_SIMON2))
+				if (!(_game & GF_SIMON2))
 					goto invalid_opcode;
 				_op_189_flags = 0;
 			}
@@ -1072,7 +1072,7 @@ int SimonState::runScript()
 
 		case 190:{
 				uint i;
-				if (!(_game & GAME_SIMON2))
+				if (!(_game & GF_SIMON2))
 					goto invalid_opcode;
 				i = getVarOrByte();
 				if (!(_op_189_flags & (1 << i)))
@@ -1246,7 +1246,7 @@ void SimonState::o_177()
 			if (!_vk_t_toggle)
 				talk_with_speech(child->array[offs] + 3550, a);
 		}
-	} else if (_game == GAME_SIMON2TALKIE || _game & GAME_SIMON2WIN) {
+	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint var200 = child->array[getOffsetOfChild2Param(child, 0x200)];
 
@@ -1456,7 +1456,7 @@ void SimonState::o_unk_127()
 {
 	uint a = getVarOrWord();
 	uint b = getVarOrWord();
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		uint c = getVarOrByte();
 
 		if (_debugMode)
@@ -1471,7 +1471,7 @@ void SimonState::o_unk_127()
 				_vc70_var1 = 0xffff;
 				_vc72_var3 = 0xffff;
 				_midi_unk2 = 0xffff;
-				if (_game & GAME_WIN) {
+				if (_game & GF_WIN) {
 					midi.initialize();
 					midi.play();
 				}
@@ -1494,7 +1494,7 @@ void SimonState::o_unk_127()
 void SimonState::o_unk_120(uint a)
 {
 	uint16 id = TO_BE_16(a);
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		_lock_word |= 0x8000;
 		_vc_ptr = (byte *)&id;
 		vc_15_wakeup_id();

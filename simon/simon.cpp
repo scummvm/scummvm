@@ -38,20 +38,20 @@ extern bool draw_keyboard;
 
 static const VersionSettings simon_settings[] = {
 	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
-	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0, "GAMEPC"},
-	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST+GAME_SIMON1AMIGA, 99, 99, 99, 0, "gameamiga"},
-	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST+GAME_SIMON2DOS, 99, 99, 99, 0, "GAME32"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON1TALKIE, 99, 99, 99, 0, "SIMON.GME"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30."},
-	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON1WIN, 99, 99, 99, 0, "SIMON.GME"},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie for Amiga CD32", GID_SIMON_FIRST+GAME_SIMON1CD32, 99, 99, 99, 0, "gameamiga"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON2WIN, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON2WIN, 99, 99, 99, 0, "GSPTR30."},
-	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST+GAME_SIMON2MAC, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST+GAME_SIMON2MAC, 99, 99, 99, 0, "GSPTR30"},
-	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST+GAME_SIMON1DEMO, 99, 99, 99, 0, "GDEMO"}, 
-	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30"}, 
+	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DOS, "GAMEPC"},
+	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1AMIGA, "gameamiga"},
+	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2DOS, "GAME32"},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1TALKIE, "SIMON.GME"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30."},
+	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1WIN, "SIMON.GME"},
+	{"simon1cd32", "Simon the Sorcerer 1 Talkie for Amiga CD32", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1CD32, "gameamiga"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2WIN, "GSPTR30"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2WIN, "GSPTR30."},
+	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2MAC, "GSPTR30"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2MAC, "GSPTR30"},
+	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DEMO, "GDEMO"}, 
+	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30"}, 
 
 	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
 };
@@ -191,7 +191,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 		driver = MidiDriver_NULL_create();
 	midi.set_driver(driver);
 
-	_game = detector->_gameId - GID_SIMON_FIRST;
+	_game = detector->_features;
 
 	/* Setup mixer */
 	if (!_mixer->bindToSystem(syst))
@@ -870,7 +870,7 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 				memcpy(filename, "SFXXXX", 6);
 				if (_game == GAME_SIMON1WIN)
 					_sound->readSfxFile(filename, _gameDataPath);
-				else if (_game & GAME_SIMON2) {
+				else if (_game & GF_SIMON2) {
 					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + gss->SOUND_INDEX_BASE]);
 				}
 
@@ -1009,7 +1009,7 @@ void SimonState::closeTablesFile_simon1(File *in)
 
 uint SimonState::loadTextFile(const char *filename, byte *dst)
 {
-	if (_game & GAME_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return loadTextFile_simon1(filename, dst);
 	else
 		return loadTextFile_gme(filename, dst);
@@ -1017,7 +1017,7 @@ uint SimonState::loadTextFile(const char *filename, byte *dst)
 
 File *SimonState::openTablesFile(const char *filename)
 {
-	if (_game & GAME_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
@@ -1025,7 +1025,7 @@ File *SimonState::openTablesFile(const char *filename)
 
 void SimonState::closeTablesFile(File *in)
 {
-	if (_game & GAME_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		closeTablesFile_simon1(in);
 	else
 		closeTablesFile_gme(in);
@@ -1167,7 +1167,7 @@ void SimonState::setup_cond_c_helper()
 {
 	HitArea *last;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		_mouse_cursor = 0;
 		if (_hitarea_unk_4 != 999) {
 			_mouse_cursor = 9;
@@ -1285,7 +1285,7 @@ void SimonState::handle_mouse_moved()
 			hitarea_proc_1();
 	}
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		if (_bit_array[4] & 0x8000) {
 			if (!_vga_var9) {
 				if (_mouse_x >= 630 / 2 || _mouse_x < 9)
@@ -1341,7 +1341,7 @@ void SimonState::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int un
 
 	fcs_ptr = _fcs_ptr_array_3[fcs_index & 7];
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		width_div_3 = fcs_ptr->width / 3;
 		height_div_3 = fcs_ptr->height / 3;
 	} else {
@@ -1370,7 +1370,7 @@ void SimonState::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int un
 		num_sibs_with_flag = 0;
 		while (item_ptr && width_div_3 > num_sibs_with_flag) {
 			if ((unk2 == 0 || item_ptr->unk4 & unk2) && has_item_childflag_0x10(item_ptr))
-				if (!(_game & GAME_SIMON2)) {
+				if (!(_game & GF_SIMON2)) {
 					num_sibs_with_flag++;
 				} else {
 					num_sibs_with_flag += 20;
@@ -1394,7 +1394,7 @@ void SimonState::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int un
 		if ((unk2 == 0 || item_ptr->unk4 & unk2) && has_item_childflag_0x10(item_ptr)) {
 			if (item_again == false) {
 				fcs_ptr->fcs_data->e[k].item = item_ptr;
-				if (!(_game & GAME_SIMON2)) {
+				if (!(_game & GF_SIMON2)) {
 					draw_icon_c(fcs_ptr, item_get_icon_number(item_ptr), x_pos * 3, y_pos);
 					fcs_ptr->fcs_data->e[k].hit_area =
 						setup_icon_hit_area(fcs_ptr, x_pos * 3, y_pos,
@@ -1409,12 +1409,12 @@ void SimonState::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int un
 				fcs_ptr->fcs_data->e[k].item = NULL;
 				j = 1;
 			}
-			x_pos += (_game & GAME_SIMON2) ? 20 : 1;
+			x_pos += (_game & GF_SIMON2) ? 20 : 1;
 
 			if (x_pos >= width_div_3) {
 				x_pos = 0;
 
-				y_pos += (_game & GAME_SIMON2) ? 20 : 1;
+				y_pos += (_game & GF_SIMON2) ? 20 : 1;
 				if (y_pos >= height_div_3)
 					item_again = true;
 			}
@@ -1443,7 +1443,7 @@ void SimonState::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index)
 
 	ha = findEmptyHitArea();
 	_scroll_up_hit_area = ha - _hit_areas;
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		ha->x = 308;
 		ha->y = 149;
 		ha->width = 12;
@@ -1468,7 +1468,7 @@ void SimonState::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index)
 	ha = findEmptyHitArea();
 	_scroll_down_hit_area = ha - _hit_areas;
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		ha->x = 308;
 		ha->y = 176;
 		ha->width = 12;
@@ -1517,7 +1517,7 @@ uint SimonState::item_get_icon_number(Item *item)
 void SimonState::loadIconFile()
 {
 	File in;
-	if (_game & GAME_AMIGA)
+	if (_game & GF_AMIGAS)
 		in.open("icon.pkd", _gameDataPath);
 	else
 		in.open("ICON.DAT", _gameDataPath);
@@ -1544,7 +1544,7 @@ uint SimonState::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint
 
 	ha = findEmptyHitArea();
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		ha->x = (x + fcs->x) << 3;
 		ha->y = y * 25 + fcs->y;
 		ha->item_ptr = item_ptr;
@@ -1666,7 +1666,7 @@ startOver:
 		_last_hitarea = NULL;
 		_last_hitarea_3 = NULL;
 		for (;;) {
-			if (_game & GAME_SIMON2 && _key_pressed == 35)
+			if (_game & GF_SIMON2 && _key_pressed == 35)
 				f10_key();
 			processSpecialKeys();
 			if (_last_hitarea_3 == (HitArea *) 0xFFFFFFFF)
@@ -1725,7 +1725,7 @@ void SimonState::hitarea_stuff_helper()
 {
 	time_t cur_time;
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		uint subr_id = _variableArray[0x1FC / 2];
 		if (subr_id != 0) {
 			Subroutine *sub = getSubroutineByID(subr_id);
@@ -1866,7 +1866,7 @@ void SimonState::handle_verb_clicked(uint verb)
 	if (sub)
 		startSubroutine(sub);
 
-	if (_game & GAME_SIMON2)
+	if (_game & GF_SIMON2)
 		_run_script_return_1 = false;
 
 	startUp_helper_2();
@@ -1899,7 +1899,7 @@ void SimonState::o_print_str()
 	uint speech_id = 0;
 	ThreeValues *tv;
 
-	if (_game & GAME_TALKIE) {
+	if (_game & GF_TALKIE) {
 		if (string_id != 0xFFFF)
 			string_ptr = getStringPtrByID(string_id);
 
@@ -2115,7 +2115,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id)
 
 	if (vga_res_id == 0) {
 
-		if (!(_game & GAME_SIMON2)) {
+		if (!(_game & GF_SIMON2)) {
 			_unk_pal_flag = true;
 		} else {
 			_dx_use_3_or_4_for_lock = true;
@@ -2147,7 +2147,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id)
 	while (READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->id) != vga_res_id)
 		b += sizeof(VgaFile1Struct0x8);
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		if (num == 16300) {
 			dx_clear_attached_from_top(134);
 			_use_palette_delay = true;
@@ -2170,7 +2170,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id)
 	_vc_ptr = vc_ptr_org;
 
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		if (!_dx_use_3_or_4_for_lock) {
 			uint num_lines = _video_palette_mode == 4 ? 134 : 200;
 			_vga_var8 = num_lines;
@@ -2191,7 +2191,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id)
 	/* XXX: fix */
 
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		if (_unk_pal_flag) {
 			_unk_pal_flag = false;
 			while (*(volatile int *)&_palette_color_count != 0) {
@@ -2269,7 +2269,7 @@ void SimonState::delete_vga_timer(VgaTimerEntry * vte)
 
 void SimonState::expire_vga_timers()
 {
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		VgaTimerEntry *vte = _vga_timer_list;
 
 		_vga_tick_counter++;
@@ -2381,14 +2381,14 @@ void SimonState::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint c
 
 void SimonState::o_force_unlock()
 {
-	if (_game & GAME_SIMON2 && _bit_array[4] & 0x8000)
+	if (_game & GF_SIMON2 && _bit_array[4] & 0x8000)
 		_mouse_cursor = 0;
 	_lock_counter = 0;
 }
 
 void SimonState::o_force_lock()
 {
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		_lock_word |= 0x8000;
 		vc_34_force_lock();
 		_lock_word &= ~0x8000;
@@ -2653,7 +2653,7 @@ void SimonState::o_wait_for_vga(uint a)
 	_system->show_mouse(false);
 	while (_vga_wait_for != 0) {
 		if (_skip_speech) {
-			if (_game & GAME_SIMON2) {
+			if (_game & GF_SIMON2) {
 				if (_vga_wait_for == 200 && !vc_get_bit(14)) {
 					skip_speech();
 					break;
@@ -2671,7 +2671,7 @@ void SimonState::o_wait_for_vga(uint a)
 
 		delay(10);
 
-		if (_game & GAME_SIMON2) {
+		if (_game & GF_SIMON2) {
 			if (_timer_1 >= 1000) {
 				warning("wait timed out");
 				break;
@@ -2711,7 +2711,7 @@ void SimonState::timer_vga_sprites()
 	fprintf(_dump_file, "***\n");
 #endif
 
-	if (_game & GAME_SIMON2 && _vga_var3) {
+	if (_game & GF_SIMON2 && _vga_var3) {
 		timer_vga_sprites_helper();
 	}
 
@@ -2730,7 +2730,7 @@ void SimonState::timer_vga_sprites()
 		params[2] = READ_BE_UINT16_UNALIGNED(&vsp->x);
 		params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
 
-		if (_game & GAME_SIMON2) {
+		if (_game & GF_SIMON2) {
 			*(byte *)(&params[4]) = (byte)vsp->unk4;
 		} else {
 			params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
@@ -2832,10 +2832,10 @@ void SimonState::timer_proc1()
 {
 	_timer_4++;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		if (_lock_word & 0x80E9 || _lock_word & 2)
 		return;
-	} else if (_game & GAME_TALKIE) {
+	} else if (_game & GF_TALKIE) {
 		if (_lock_word & 0xC0E9 || _lock_word & 2)
 		return;
 	} else 	if (_lock_word & 0x8000 || _lock_word & 0xE9 || _lock_word & 2)
@@ -2846,7 +2846,7 @@ void SimonState::timer_proc1()
 	_lock_word |= 2;
 
 	if (!(_lock_word & 0x10)) {
-		if (!(_game & GAME_SIMON2)) {
+		if (!(_game & GF_SIMON2)) {
 			expire_vga_timers();
 			expire_vga_timers();
 			_sync_flag_2 ^= 1;
@@ -2932,7 +2932,7 @@ void SimonState::fcs_setTextColor(FillOrCopyStruct *fcs, uint value)
 
 void SimonState::o_vga_reset()
 {
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		_lock_word |= 0x8000;
 		vc_27_reset();
 		_lock_word &= ~0x8000;
@@ -3064,7 +3064,7 @@ void SimonState::o_pathfind(int x, int y, uint var_1, uint var_2)
 	uint x_diff, y_diff;
 	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		x += _x_scroll * 8;
 	}
 
@@ -3136,7 +3136,7 @@ void SimonState::fcs_unk1(uint fcs_index)
 /* ok */
 void SimonState::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index)
 {
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		o_unk_99_simon1(0x80);
 	}
 }
@@ -3173,7 +3173,7 @@ void SimonState::copy_img_from_3_to_2(FillOrCopyStruct *fcs)
 {
 	_lock_word |= 0x8000;
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _fcs_ptr_array_3[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	} else {
 		if (_vga_var6 && _fcs_ptr_array_3[2] == fcs) {
@@ -3209,7 +3209,7 @@ void SimonState::video_erase(FillOrCopyStruct *fcs)
 
 VgaSprite *SimonState::find_cur_sprite()
 {
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		VgaSprite *vsp = _vga_sprites;
 		while (vsp->id) {
 			if (vsp->id == _vga_cur_sprite_id && vsp->unk7 == _vga_cur_file_id)
@@ -3230,7 +3230,7 @@ VgaSprite *SimonState::find_cur_sprite()
 
 bool SimonState::has_vgastruct_with_id(uint16 id, uint16 file)
 {
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 		VgaSprite *vsp = _vga_sprites;
 		while (vsp->id) {
 			if (vsp->id == id && vsp->unk7 == file)
@@ -3257,12 +3257,12 @@ void SimonState::processSpecialKeys()
 			break;
 
 		case 63: // F5
-			if (_game & GAME_SIMON2)
+			if (_game & GF_SIMON2)
 				_exit_cutscene = true;
 			break;
 
 		case 't':
-			if (_game & GAME_SIMON2)
+			if (_game & GF_SIMON2)
 				_vk_t_toggle ^= 1;
 			break;
 
@@ -3505,7 +3505,7 @@ static const byte _simon2_cursors[10][256] = {
 
 void SimonState::draw_mouse_pointer()
 {
-	if (_game & GAME_SIMON2)
+	if (_game & GF_SIMON2)
 		_system->set_mouse_cursor(_simon2_cursors[_mouse_cursor], 16, 16, 7, 7);
 	else
 		_system->set_mouse_cursor(_simon1_cursor, 16, 16, 0, 0);
@@ -3578,7 +3578,7 @@ void SimonState::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y)
 	byte *dst;
 	byte *src;
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		_lock_word |= 0x8000;
 
 		dst = dx_lock_2();
@@ -4045,7 +4045,7 @@ void SimonState::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c
 
 void SimonState::talk_with_speech(uint speech_id, uint num_1)
 {
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		if (speech_id == 9999) {
 			if (!(_bit_array[0] & 0x4000) && !(_bit_array[1] & 0x1000)) {
 				_bit_array[0] |= 0x4000;
@@ -4114,7 +4114,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 
 	len_div_3 = (strlen(string_ptr) + 3) / 3;
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
 		_variableArray[85] = _variableArray[141] * len_div_3;
@@ -4331,7 +4331,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	}
 
 	strcpy(char_buf, string_ptr_2);
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		o_unk_99_simon1(199 + num_1);
 	} else {
 		o_unk_99_simon2(2, num_1);
@@ -4346,7 +4346,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	if (threeval_b < 2)
 		threeval_b = 2;
 
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GF_SIMON2)) {
 		start_vga_code(num_of_rows, 2, 199 + num_1, threeval_a >> 3, threeval_b, 12);
 	} else {
 		start_vga_code(num_of_rows, 2, num_1, threeval_a >> 3, threeval_b, 12);
@@ -4496,7 +4496,7 @@ void SimonState::print_char_helper_6(uint i)
 
 void SimonState::read_vga_from_datfile_1(uint vga_id)
 {
-	if (_game & GAME_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
 		uint32 size;
@@ -4533,7 +4533,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 
 byte *SimonState::read_vga_from_datfile_2(uint id)
 {
-	if (_game & GAME_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
 		uint32 size;
@@ -4583,7 +4583,7 @@ void SimonState::resfile_read(void *dst, uint32 offs, uint32 size)
 
 void SimonState::openGameFile()
 {
-	if (!(_game & GAME_AMIGA) && _game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
+	if (!(_game & GF_AMIGAS) && _game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
 		_game_file = new File();
 		_game_file->open(gss->gme_filename, _gameDataPath);
 
@@ -4727,7 +4727,7 @@ void SimonState::dx_update_screen_and_palette()
 	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);
 
 	if (_palette_color_count != 0) {
-		if (!(_game & GAME_SIMON2) && _use_palette_delay) {
+		if (!(_game & GF_SIMON2) && _use_palette_delay) {
 			delay(100);
 			_use_palette_delay = false;
 		}
@@ -4798,7 +4798,7 @@ void SimonState::go()
 		gss = &simon2win_settings;
 	} else if (_game == GAME_SIMON2DOS) {
 		gss = &simon2dos_settings;
-	} else if (_game & GAME_AMIGA) {
+	} else if (_game & GF_AMIGAS) {
 		gss = &simon1amiga_settings;
 	} else if (_game == GAME_SIMON1DEMO) {
 		gss = &simon1demo_settings;
@@ -4910,7 +4910,7 @@ void SimonState::delay(uint amount)
 					break;
 
 				case OSystem::EVENT_RBUTTONDOWN:
-					if (_game & GAME_SIMON2)
+					if (_game & GF_SIMON2)
 					_skip_speech = true;
 					else
 					_exit_cutscene = true;
@@ -5026,7 +5026,7 @@ char *SimonState::gen_savename(int slot)
 {
 	static char buf[256];
 
-	if (_game & GAME_SIMON2) {
+	if (_game & GF_SIMON2) {
 	sprintf(buf, "simon2.%.3d", slot);
 	} else {
 	sprintf(buf, "simon1.%.3d", slot);
@@ -5153,8 +5153,8 @@ void SimonState::playMusic(uint music_unk, uint music)
 	if (midi._midi_sfx_toggle)
 		return;
 
-	if (_game & GAME_SIMON2) {        // Simon 2 music
-		if (_game & GAME_WIN) {	
+	if (_game & GF_SIMON2) {        // Simon 2 music
+		if (_game & GF_WIN) {	
 			midi.shutdown();
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 			midi.read_all_songs(_game_file, music);
@@ -5169,12 +5169,12 @@ void SimonState::playMusic(uint music_unk, uint music)
 		_vc70_var1 = 0xFFFF;
 		_vc72_var3 = 0xFFFF;
 		_midi_unk2 = 0xFFFF;
-	} else if (!(_game & GAME_DEMO) && !(_game & GAME_AMIGA)){ // Simon 1 music
+	} else if (!(_game & GF_DEMO) && !(_game & GF_AMIGAS)){ // Simon 1 music
 		midi.shutdown();
-		if (_game & GAME_WIN) {	
+		if (_game & GF_WIN) {	
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs(_game_file, music);
-		} else if (_game & GAME_TALKIE) {
+		} else if (_game & GF_TALKIE) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs_old(_game_file, music);
 		} else {
