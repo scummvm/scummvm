@@ -25,6 +25,7 @@
 #include "scumm.h"
 #include "gui.h"
 #include "sound.h"
+#include "cdmusic.h"
 
 #include <sys/time.h>
 #include <unistd.h>
@@ -67,6 +68,8 @@ static int old_mouse_h, old_mouse_w;
 static bool has_mouse, hide_mouse;
 
 static unsigned int scale;
+static int fake_right_mouse = 0;
+static int report_presses = 1;
 
 #define MAX_NUMBER_OF_DIRTY_SQUARES 32
 typedef struct {
@@ -181,12 +184,19 @@ static void create_empty_cursor(Display *display,
   XDefineCursor(display, window, cursor);
 }
 
+/* No CD on the iPAQ => stub functions */
 void cd_playtrack(int track, int offset, int delay) {
-  /* No CD on the iPAQ => stub function */
+}
+void cd_play(int track, int num_loops, int start_frame) {
+}
+int cd_is_running(void) {
+  return 1;
+}
+void cd_stop(void) {
 }
 
+/* No debugger on the iPAQ => stub function */
 void BoxTest(int num) {
-  /* No debugger on the iPAQ => stub function */
 }
 
 /* Initialize the graphics sub-system */
@@ -269,7 +279,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 }
 
 void setShakePos(Scumm *s, int shake_pos) {
-
+  warning("Unimplemented shaking !");
 }
 
 #define AddDirtyRec(xi,yi,wi,hi) 				\
@@ -469,6 +479,28 @@ void updateScreen(Scumm *s) {
   }
 }
 
+void launcherLoop() {
+  int last_time, new_time;
+  int delta = 0;
+  last_time = get_ms_from_start();
+  
+  gui.launcher();
+  while (1) {
+    updateScreen(&scumm);
+    
+    new_time = get_ms_from_start();
+    waitForTimer(&scumm, delta * 15 + last_time - new_time);
+    last_time = get_ms_from_start();
+    
+    if (gui._active) {
+      gui.loop();
+      delta = 5;
+    } else {
+      error("gui closed!");
+    }
+  }
+}
+
 /* This function waits for 'msec_delay' miliseconds and handles external events */
 void waitForTimer(Scumm *s, int msec_delay) {
   int start_time = get_ms_from_start();
@@ -535,7 +567,15 @@ void waitForTimer(Scumm *s, int msec_delay) {
       } break;
 
       case KeyPress:
-	/* Do nothing for now... Will be useful to implement 'pixel hunting mode' */
+	switch (event.xkey.keycode) {
+	case 132:
+	  report_presses = 0;
+	  break;
+	  
+	case 133:
+	  fake_right_mouse = 1;
+	  break;
+	}
 	break;
 
       case KeyRelease:
@@ -558,6 +598,14 @@ void waitForTimer(Scumm *s, int msec_delay) {
 	  s->_keyPressed = 32;
 	  break;
 
+	case 132: /* 'Q' on the iPAQ */
+	  report_presses = 1;
+	  break;
+	  
+	case 133: /* Arrow on the iPAQ */
+	  fake_right_mouse = 0;
+	  break;
+
 	default: {
 	    KeySym xsym;
 	    xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
@@ -568,17 +616,29 @@ void waitForTimer(Scumm *s, int msec_delay) {
 	break;
 	
       case ButtonPress:
-	if (event.xbutton.button == 1)
-	  s->_leftBtnPressed |= msClicked|msDown;
-	else if (event.xbutton.button == 3)
-	  s->_rightBtnPressed |= msClicked|msDown;
+	if (report_presses != 0) {
+	  if (event.xbutton.button == 1) {
+	    if (fake_right_mouse == 0) {
+	      s->_leftBtnPressed |= msClicked|msDown;
+	    } else {
+	      s->_rightBtnPressed |= msClicked|msDown;
+	    }
+	  } else if (event.xbutton.button == 3)
+	    s->_rightBtnPressed |= msClicked|msDown;
+	}
 	break;
 
       case ButtonRelease:
-	if (event.xbutton.button == 1)
-	  s->_leftBtnPressed &= ~msDown;
-	else if (event.xbutton.button == 3)
-	  s->_rightBtnPressed &= ~msDown;
+	if (report_presses != 0) {
+	  if (event.xbutton.button == 1) {
+	    if (fake_right_mouse == 0) {
+	      s->_leftBtnPressed &= ~msDown;
+	    } else {
+	      s->_rightBtnPressed &= ~msDown;
+	    }
+	  } else if (event.xbutton.button == 3)
+	    s->_rightBtnPressed &= ~msDown;
+	}
 	break;	
 
       case MotionNotify: {
@@ -621,13 +681,12 @@ int main(int argc, char* argv[]) {
   int delta;
   int last_time, new_time;
   
-  sound.initialize(&scumm, &snd_driv);
-  
   scumm._gui = &gui;
+  gui.init(&scumm);
+  sound.initialize(&scumm, &snd_driv);  
   scumm.scummMain(argc, argv);
+  gui.init(&scumm);  /* Reinit GUI after loading a game */
   
-  if (!(scumm._features & GF_SMALL_HEADER))
-    gui.init(&scumm);
   num_of_dirty_square = 0;
 
   /* Start the milisecond counter */
