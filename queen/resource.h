@@ -67,6 +67,7 @@ public:
 	bool isFloppy();
 	uint32 fileSize(const char *filename);
 	Language getLanguage();
+	const char *JASVersion();
 
 protected:
 	File *_resourceFile;
@@ -81,7 +82,6 @@ protected:
 
 	int32 resourceIndex(const char *filename);
 	uint32 fileOffset(const char *filename);
-	const char *JASVersion();
 	bool readTableFile();
 	static const GameVersion *detectGameVersion(uint32 dataFilesize);
 };

@@ -48,322 +48,179 @@ void Logic::initialise() {
 
 	//_display->loadFont();
 	
-	_numRooms = READ_BE_UINT16(ptr);
-	ptr += 2;
-	_numNames = READ_BE_UINT16(ptr);
-	ptr += 2;
-	_numObjects = READ_BE_UINT16(ptr);
-	ptr += 2;
-	_numDescriptions = READ_BE_UINT16(ptr);
-	ptr += 2;
+	_numRooms = READ_BE_UINT16(ptr); ptr += 2;
+	_numNames = READ_BE_UINT16(ptr); ptr += 2;
+	_numObjects = READ_BE_UINT16(ptr); ptr += 2;
+	_numDescriptions = READ_BE_UINT16(ptr); ptr += 2;
 	
-	//Object data
+	// Object data
 	_objectData = new ObjectData[_numObjects + 1];
-	//clear first object
-	_objectData[0].name = 0;
-	_objectData[0].x = 0;
-	_objectData[0].y = 0;
-	_objectData[0].description = 0;
-	_objectData[0].entryObj = 0;
-	_objectData[0].room = 0;
-	_objectData[0].state = 0;
-	_objectData[0].image = 0;	
+	memset(&_objectData[0], 0, sizeof(ObjectData));
 	for (i = 1; i <= _numObjects; i++) {
-		_objectData[i].name = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectData[i].x = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectData[i].y = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectData[i].description = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectData[i].entryObj = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectData[i].room = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectData[i].state = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectData[i].image = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
+		_objectData[i].readFrom(ptr);
 	}
 	
-	//Room data
+	// Room data
 	_roomData = new uint16[_numRooms + 2];
+	_roomData[0] = 0;
 	for (i = 1; i <= (_numRooms + 1); i++) {
-		_roomData[i] = READ_BE_UINT16(ptr);
-		ptr += 2;
+		_roomData[i] = READ_BE_UINT16(ptr);	ptr += 2;
 	}
-
 	_roomData[_numRooms + 1] = _numObjects;
 
-	//SFX Name
+	// SFX Name
 	// the following table isn't available in demo version
 	if (_resource->isDemo()) {
 		_sfxName = NULL;
 	}
 	else {
 		_sfxName = new uint16[_numRooms + 1];
-
+		_sfxName[0] = 0;
 		for (i = 1; i <= _numRooms; i++) {
-			_sfxName[i] = READ_BE_UINT16(ptr);
-			ptr += 2;
+			_sfxName[i] = READ_BE_UINT16(ptr); ptr += 2;
 		}	
 	}
 
-	//Item information
-	_numItems = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Item information
+	_numItems = READ_BE_UINT16(ptr); ptr += 2;
 
 	_itemData = new ItemData[_numItems + 1];
-
+	memset(&_itemData[0], 0, sizeof(ItemData));
 	for (i = 1; i <= _numItems; i++) {
-		_itemData[i].item = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_itemData[i].description = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_itemData[i].state = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_itemData[i].bobFrame = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_itemData[i].sfxDescription = READ_BE_UINT16(ptr);
-		ptr += 2;
+		_itemData[i].readFrom(ptr);
 	}
 		
-	//Graphic Image Data
-
-	_numGraphics = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Graphic Image Data
+	_numGraphics = READ_BE_UINT16(ptr); ptr += 2;
 
 	_graphicData = new GraphicData[_numGraphics + 1];
-
+	memset(&_graphicData[0], 0, sizeof(GraphicData));
 	for (i = 1; i <= _numGraphics; i++) {
-		_graphicData[i].x = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_graphicData[i].y = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_graphicData[i].firstFrame = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_graphicData[i].lastFrame = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_graphicData[i].speed = READ_BE_UINT16(ptr);
-		ptr += 2;
+		_graphicData[i].readFrom(ptr);
 	}
 	
 	_objMax   = new int16[_numRooms + 1];
 	_areaMax  = new int16[_numRooms + 1];
-	_area     = new Area[_numRooms + 1][11];
+	_area     = new Area[_numRooms + 1][MAX_AREAS_NUMBER];
 
+	_objMax[0] = 0;
+	_areaMax[0] = 0;
+	memset(&_area[0], 0, sizeof(Area) * MAX_AREAS_NUMBER);
 	for (i = 1; i <= _numRooms; i++) {
-		_objMax[i] = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_areaMax[i] = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		
+		_objMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		_areaMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		memset(&_area[i][0], 0, sizeof(Area));
 		for (j = 1; j <= _areaMax[i]; j++) {
-			assert(j < 11);
-			_area[i][j].mapNeighbours = READ_BE_UINT16(ptr); ptr += 2;
-			_area[i][j].box.x1 = READ_BE_UINT16(ptr); ptr += 2;
-			_area[i][j].box.y1 = READ_BE_UINT16(ptr); ptr += 2;
-			_area[i][j].box.x2 = READ_BE_UINT16(ptr); ptr += 2;
-			_area[i][j].box.y2 = READ_BE_UINT16(ptr); ptr += 2;
-			_area[i][j].bottomScaleFactor = READ_BE_UINT16(ptr); ptr += 2;
-			_area[i][j].topScaleFactor = READ_BE_UINT16(ptr); ptr += 2;
-			_area[i][j].object = READ_BE_UINT16(ptr); ptr += 2;
+			assert(j < MAX_AREAS_NUMBER);
+			_area[i][j].readFrom(ptr);
 		}
 	}
 
 	_objectBox = new Box[_numObjects + 1];
+	memset(&_objectBox[0], 0, sizeof(Box));
 	for (i = 1; i <= _numObjects; i++) {
-		_objectBox[i].x1 = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectBox[i].y1 = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectBox[i].x2 = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectBox[i].y2 = READ_BE_UINT16(ptr);
-		ptr += 2;
+		_objectBox[i].readFrom(ptr);
 	}
 
-	//Walk OFF Data
-
-	_numWalkOffs = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Walk OFF Data
+	_numWalkOffs = READ_BE_UINT16(ptr);	ptr += 2;
 
 	_walkOffData = new WalkOffData[_numWalkOffs + 1];
+	memset(&_walkOffData[0], 0, sizeof(WalkOffData));
 	for (i = 1; i <= _numWalkOffs; i++) {
-		_walkOffData[i].entryObj = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_walkOffData[i].x = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_walkOffData[i].y = READ_BE_UINT16(ptr);
-		ptr += 2;
+		_walkOffData[i].readFrom(ptr);
 	}
 
-	//Special Object Descriptions
-
-	_numObjDesc = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Special Object Descriptions
+	_numObjDesc = READ_BE_UINT16(ptr); ptr += 2;
 
 	_objectDescription = new ObjectDescription[_numObjDesc + 1];
+	memset(&_objectDescription[0], 0, sizeof(ObjectDescription));
 	for (i = 1; i <= _numObjDesc; i++) {
-		_objectDescription[i].object = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectDescription[i].type = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectDescription[i].lastDescription = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_objectDescription[i].seenCount = READ_BE_UINT16(ptr);
-		ptr += 2;
+		_objectDescription[i].readFrom(ptr);
 	}
 
-	//Command List Data
-	_numCmdList = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Command List Data
+	_numCmdList = READ_BE_UINT16(ptr); ptr += 2;
+
 	_cmdList = new CmdListData[_numCmdList + 1];
+	memset(&_cmdList[0], 0, sizeof(CmdListData));
 	for (i = 1; i <= _numCmdList; i++) {
-		_cmdList[i].verb = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_cmdList[i].nounObj1 = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_cmdList[i].nounObj2 = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_cmdList[i].song = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_cmdList[i].setAreas = READ_BE_UINT16(ptr) != 0;
-		ptr += 2;
-		_cmdList[i].setObjects = READ_BE_UINT16(ptr) != 0;
-		ptr += 2;
-		_cmdList[i].setItems = READ_BE_UINT16(ptr) != 0;
-		ptr += 2;
-		_cmdList[i].setConditions = READ_BE_UINT16(ptr) != 0;
-		ptr += 2;
-		_cmdList[i].image = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_cmdList[i].specialSection = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
+		_cmdList[i].readFrom(ptr);
 	}
 	
-	//Command AREA
-	_numCmdArea = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Command AREA
+	_numCmdArea = READ_BE_UINT16(ptr); ptr += 2;
+
 	_cmdArea = new CmdArea[_numCmdArea + 1];
+	memset(&_cmdArea[0], 0, sizeof(CmdArea));
 	for (i = 1; i <= _numCmdArea; i++) {
-		_cmdArea[i].id = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_cmdArea[i].area = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_cmdArea[i].room = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
+		_cmdArea[i].readFrom(ptr);
 	}
 	
-	//Command OBJECT
-	_numCmdObject = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Command OBJECT
+	_numCmdObject = READ_BE_UINT16(ptr); ptr += 2;
+
 	_cmdObject = new CmdObject[_numCmdObject + 1];
+	memset(&_cmdObject[0], 0, sizeof(CmdObject));
 	for (i = 1; i <= _numCmdObject; i++) {
-		_cmdObject[i].id = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
-		_cmdObject[i].dstObj = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
-		_cmdObject[i].srcObj = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
+		_cmdObject[i].readFrom(ptr);
 	}
 
-	//Command INVENTORY
-	_numCmdInventory = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Command INVENTORY
+	_numCmdInventory = READ_BE_UINT16(ptr);	ptr += 2;
+
 	_cmdInventory = new CmdInventory[_numCmdInventory + 1];
+	memset(&_cmdInventory[0], 0, sizeof(CmdInventory));
 	for (i = 1; i <= _numCmdInventory; i++) {
-		_cmdInventory[i].id = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
-		_cmdInventory[i].dstItem = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
-		_cmdInventory[i].srcItem = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
+		_cmdInventory[i].readFrom(ptr);
 	}
 	
-	//Command GAMESTATE
-	_numCmdGameState = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Command GAMESTATE
+	_numCmdGameState = READ_BE_UINT16(ptr);	ptr += 2;
 	_cmdGameState = new CmdGameState[_numCmdGameState + 1];
+	memset(&_cmdGameState[0], 0, sizeof(CmdGameState));
 	for (i = 1; i <= _numCmdGameState; i++) {
-		_cmdGameState[i].id = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
-		_cmdGameState[i].gameStateSlot = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
-		_cmdGameState[i].gameStateValue = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
-		_cmdGameState[i].speakValue = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;		
+		_cmdGameState[i].readFrom(ptr);
 	}
 
-	_entryObj = READ_BE_UINT16(ptr);
-	ptr += 2;
+	_entryObj = READ_BE_UINT16(ptr); ptr += 2;
 
-	//Furniture DATA
-	_numFurniture = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Furniture DATA
+	_numFurniture = READ_BE_UINT16(ptr); ptr += 2;
 
 	_furnitureData = new FurnitureData[_numFurniture + 1];
+	memset(&_furnitureData[0], 0, sizeof(_furnitureData));
 	for (i = 1; i <= _numFurniture; i++) {
-		_furnitureData[i].room = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_furnitureData[i].gameStateValue = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
+		_furnitureData[i].readFrom(ptr);
 	}
 
-	_numActors = READ_BE_UINT16(ptr);
-	ptr += 2;
-	_numAAnim = READ_BE_UINT16(ptr);
-	ptr += 2;
-	_numAName = READ_BE_UINT16(ptr);
-	ptr += 2;
-	_numAFile = READ_BE_UINT16(ptr);
-	ptr += 2;
+	// Actors
+	_numActors = READ_BE_UINT16(ptr); ptr += 2;
+	_numAAnim = READ_BE_UINT16(ptr); ptr += 2;
+	_numAName = READ_BE_UINT16(ptr); ptr += 2;
+	_numAFile = READ_BE_UINT16(ptr); ptr += 2;
 
 	_actorData = new ActorData[_numActors + 1];
+	memset(&_actorData[0], 0, sizeof(ActorData));
 	for (i = 1; i <= _numActors; i++) {
-		_actorData[i].room = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].bobNum = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].name = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].gameStateSlot = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].gameStateValue = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].color = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].bobFrameStanding = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].x = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].y = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].anim = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].bankNum = READ_BE_UINT16(ptr);
-		ptr += 2;
-		_actorData[i].actorFile = READ_BE_UINT16(ptr);
-		ptr += 2;
+		_actorData[i].readFrom(ptr);
 	}
 
-	_numGraphicAnim = READ_BE_UINT16(ptr);
-	ptr += 2;
+	_numGraphicAnim = READ_BE_UINT16(ptr); ptr += 2;
 	
 	_graphicAnim = new GraphicAnim[_numGraphicAnim + 1];
+	memset(&_graphicAnim[0], 0, sizeof(GraphicAnim));
 	for (i = 1; i <= _numGraphicAnim; i++) {
-		_graphicAnim[i].frame1 = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_graphicAnim[i].frame2 = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
-		_graphicAnim[i].frame3 = (int16)READ_BE_UINT16(ptr);
-		ptr += 2;
+		_graphicAnim[i].readFrom(ptr);
 	}
 
 	_currentRoom = _objectData[_entryObj].room;
 	_entryObj = 0;
+
+	if(memcmp(ptr, _resource->JASVersion(), 5) != 0) {
+		warning("Unexpected queen.jas file format");
+	}
 	
 	/*
 		switch (_resource->getLanguage()) {

@@ -28,6 +28,7 @@
 namespace Queen {
 
 #define MAX_ZONES_NUMBER	32
+#define MAX_AREAS_NUMBER    11
 #define JOE_RESPONSE_MAX	40
 
 enum RoomDisplayMode {
@@ -163,7 +164,7 @@ protected:
 	ObjectData *_objectData;
 	ObjectDescription *_objectDescription;
 	ActorData *_actorData;
-	Area (*_area)[11];
+	Area (*_area)[MAX_AREAS_NUMBER];
 	WalkOffData *_walkOffData;
 	CmdListData *_cmdList;
 	CmdArea *_cmdArea;
