@@ -79,7 +79,7 @@ void Actor::initActor(int mode) {
 
 	if (_vm) {
 		if (_vm->_features & GF_AFTER_V2) {
-			initFrame = 1;
+			initFrame = 2;
 			walkFrame = 0;
 			standFrame = 1;
 			talkFrame1 = 5;
@@ -769,6 +769,8 @@ void Actor::showActor() {
 
 	if (costumeNeedsInit) {
 		startAnimActor(initFrame);
+		if (_vm->_features & GF_AFTER_V2)
+			startAnimActor(standFrame);
 		costumeNeedsInit = false;
 	}
 	moving = 0;
