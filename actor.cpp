@@ -322,6 +322,7 @@ void Scumm::setupActorScale(Actor * a)
 	byte *resptr;
 	int y;
 
+
 	if (_features & GF_NO_SCALLING) {
 		a->scalex = 0xFF;
 		a->scaley = 0xFF;
@@ -329,6 +330,9 @@ void Scumm::setupActorScale(Actor * a)
 	}
 
 	if (a->ignoreBoxes != 0)
+		return;
+
+	if(getBoxFlags(a->walkbox) & 0x20)
 		return;
 
 	scale = getBoxScale(a->walkbox);
@@ -913,9 +917,9 @@ void Scumm::drawActorCostume(Actor * a)
 		if (a == NULL || !a->needRedraw)
 			return;
 		
-		if (g_scumm->getClass(a->number, 20))
+		if (getClass(a->number, 20))
 			a->mask = 0;
-		else if (g_scumm->getClass(a->number, 21))
+		else if (getClass(a->number, 21))
 			a->forceClip = 1;
 
 		if (_gameId==GID_SAMNMAX && getState(995)) // FIXME: ugly fix for samnmax inventory
