@@ -108,6 +108,12 @@
 			RelativePath="..\..\simon\debug.h">
 		</File>
 		<File
+			RelativePath="..\..\simon\debugger.cpp">
+		</File>
+		<File
+			RelativePath="..\..\simon\debugger.h">
+		</File>
+		<File
 			RelativePath="..\..\simon\intern.h">
 		</File>
 		<File
