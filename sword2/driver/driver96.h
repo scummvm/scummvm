@@ -1265,15 +1265,15 @@ public:
 		_width = width;
 		_height = height;
 		_pixels = (byte *) calloc(_width, _height);
-	};
-
-	~Surface() {
-		free(_pixels);
-	};
+	}
 
 	void clear();
 	void blit(Surface *s, ScummVM::Rect *r);
 	void blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect);
+
+	~Surface() {
+		free(_pixels);
+	}
 };
 
 //
