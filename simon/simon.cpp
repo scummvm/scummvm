@@ -4289,7 +4289,12 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 	}
 	color = color * 3 + 192;
 
-	render_string(vga_sprite_id, color, width, height, print_str_buf);
+	if (_game & GF_AMIGA)
+		render_string_amiga(vga_sprite_id, color, width, height, print_str_buf);
+	else
+		render_string(vga_sprite_id, color, width, height, print_str_buf);
+		
+
 	num_of_rows = 4;
 	if (!(_bit_array[8] & 0x20))
 		num_of_rows = 3;

@@ -596,6 +596,7 @@ protected:
 	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width);
 	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint unk4);
 
+	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
 	void setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index);

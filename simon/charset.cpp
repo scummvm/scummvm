@@ -61,6 +61,97 @@ void SimonEngine::print_char_helper_6(uint i) {
 	}
 }
 
+void SimonEngine::render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
+	VgaPointersEntry *vpe = &_vga_buffer_pointers[2];
+	byte *src, *dst, *dst_org, chr;
+	uint count;
+
+	if (vga_sprite_id >= 100) {
+		vga_sprite_id -= 100;
+		vpe++;
+	}
+
+	src = dst = vpe->vgaFile2;
+
+	count = 499;
+	if (vga_sprite_id == 1)
+		count *= 2;
+
+	src += vga_sprite_id * 8;
+	dst += READ_BE_UINT32(src);
+	*(uint16 *)(dst + 4) = TO_BE_16(height);
+	*(uint16 *)(dst + 6) = TO_BE_16(width);
+
+	uint charsize = width/8 * height;
+	memset(dst, 0, count);
+	dst_org = dst;
+	int delta = 0;
+	while ((chr = *txt++) != 0) {
+		int tmp = chr;
+		if (chr == 10) {
+			dst_org += width * 10;
+			dst = dst_org;
+			delta = 0;
+		} else if ((tmp -= '!') < 0) {
+			delta += 6;
+			if (delta > 8)
+			{
+				delta -= 8;
+				dst_org++;
+			}
+		} else {
+			byte *img = src + chr * 41;
+			int CTR = img[40];
+			int D3 = 8 - delta;
+			for (int D2 = 9; D2 != 0; D2--)
+			{
+				byte *cur_dst = dst_org;
+				for (int D7 = 2; D7 != 0; D7--)
+				{
+					chr = *img >> delta;
+					if (chr)
+					{
+						if (color & 1) *(cur_dst + charsize * 0) |= chr;
+						if (color & 2) *(cur_dst + charsize * 1) |= chr;
+						if (color & 4) *(cur_dst + charsize * 2) |= chr;
+						if (color & 8) *(cur_dst + charsize * 3) |= chr;
+					}
+					if ((D3 >= CTR) && (chr = *img++ << (D3)))
+					{
+						if (color & 1) *(cur_dst + charsize * 0) |= chr;
+						if (color & 2) *(cur_dst + charsize * 1) |= chr;
+						if (color & 4) *(cur_dst + charsize * 2) |= chr;
+						if (color & 8) *(cur_dst + charsize * 3) |= chr;
+					}
+					color++;
+				}
+				chr = *img >> delta;
+				if (chr)
+				{
+					*(cur_dst + charsize * 0) |= chr;
+					*(cur_dst + charsize * 1) |= chr;
+					*(cur_dst + charsize * 2) |= chr;
+					*(cur_dst + charsize * 3) |= chr;
+				}
+				if ((D3 >= CTR) && (chr = *img++ << (D3)))
+				{
+					*(cur_dst + charsize * 0) |= chr;
+					*(cur_dst + charsize * 1) |= chr;
+					*(cur_dst + charsize * 2) |= chr;
+					*(cur_dst + charsize * 3) |= chr;
+				}
+				cur_dst += width/8;
+			}
+			delta += CTR;
+			if (delta > 8)
+			{
+				delta -= 8;
+				dst_org++;
+			}
+		}
+	}
+}
+
 void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vga_buffer_pointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
