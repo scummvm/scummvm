@@ -3384,7 +3384,7 @@ VgaSprite *SimonEngine::find_cur_sprite() {
 	return vsp;
 }
 
-bool SimonEngine::has_vgastruct_with_id(uint16 id, uint16 file) {
+bool SimonEngine::has_vga_sprite_with_id(uint16 id, uint16 file) {
 	VgaSprite *vsp = _vga_sprites;
 	while (vsp->id) {
 		if (_game & GF_SIMON2) {
@@ -3857,7 +3857,7 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint 
 
 	_lock_word |= 0x40;
 
-	if (has_vgastruct_with_id(vga_sprite_id, vga_res)) {
+	if (has_vga_sprite_with_id(vga_sprite_id, vga_res)) {
 		_lock_word &= ~0x40;
 		return;
 	}

@@ -289,7 +289,7 @@ void SimonEngine::vc_3_new_sprite() {
 	base_color = vc_read_next_word();		/* 8 */
 
 	/* 2nd param ignored with simon1 */
-	if (has_vgastruct_with_id(vga_sprite_id, f))
+	if (has_vga_sprite_with_id(vga_sprite_id, f))
 		return;
 
 	vsp = _vga_sprites;

@@ -693,7 +693,7 @@ protected:
 
 	void expire_vga_timers();
 
-	bool has_vgastruct_with_id(uint16 id, uint16 file);
+	bool has_vga_sprite_with_id(uint16 id, uint16 file);
 
 	bool vc_get_bit(uint bit);
 
