@@ -980,7 +980,7 @@ void Sound::updateCompSampleStreaming(int16 *data, uint len) {
 		if (!_music[i]._streaming || _music[i]._paused)
 			continue;
 
-		st_sample_t volume = _musicMuted ? 0 : musicVolTable[_musicVol];
+		st_volume_t volume = _musicMuted ? 0 : musicVolTable[_musicVol];
 
 		fpMus.seek(_music[i]._filePos, SEEK_SET);
 		_converter->flow(_music[i], data, len, volume, volume);
