@@ -475,7 +475,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	}
 
 	if (numstrip != 0) {
-		byte flags = Gdi::dbAllowMaskOr;
+		byte flags = (_features & GF_HUMONGOUS) ? 0 : Gdi::dbAllowMaskOr;
 		if (_version == 1) {
 			gdi._C64ObjectMode = true;
 			gdi.decodeC64Gfx(ptr, gdi._C64ObjectMap, width * (height / 8) * 3);
