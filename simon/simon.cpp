@@ -441,6 +441,12 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
 
 
+	// Setup mixer
+	if (!_mixer->bindToSystem(syst))
+		warning("Sound initialization failed. "
+						"Features of the game that depend on sound synchronization will most likely break");
+	set_volume(detector->_sfx_volume);
+
 	// Setup midi driver
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
@@ -450,13 +456,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	int ret = midi.open();
 	if (ret)
 		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
-
-	// Setup mixer
-	if (!_mixer->bindToSystem(syst))
-		warning("Sound initialization failed. "
-						"Features of the game that depend on sound synchronization will most likely break");
 	midi.set_volume(detector->_music_volume);
-	set_volume(detector->_sfx_volume);
 
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
