@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 
+/* Start executing script 'script' with parameters 'a' and 'b' */
 void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	byte *scriptPtr;
 	uint32 scriptOffs;
@@ -65,6 +66,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	runScriptNested(slot);
 }
 
+/* Stop script 'script' */
 void Scumm::stopScriptNr(int script) {
 	ScriptSlot *ss;
 	NestedScript *nest;
@@ -83,7 +85,7 @@ void Scumm::stopScriptNr(int script) {
 		if (ss->cutsceneOverride)
 			error("Script %d stopped with active cutscene/override", script);
 		ss->number = 0;
-		ss->status = 0;
+		ss->status = ssDead;
 		if (_currentScript == i)
 			_currentScript = 0xFF;
 	}
@@ -103,6 +105,7 @@ void Scumm::stopScriptNr(int script) {
 	} while(nest++,--num);
 }
 
+/* Stop an object script 'script'*/
 void Scumm::stopObjectScript(int script) {
 	ScriptSlot *ss;
 	NestedScript *nest;
@@ -119,7 +122,7 @@ void Scumm::stopObjectScript(int script) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;
-			ss->status = 0;
+			ss->status = ssDead;
 			if (_currentScript == i)
 				_currentScript = 0xFF;
 		}
@@ -142,6 +145,7 @@ void Scumm::stopObjectScript(int script) {
 	} while(nest++,--num);
 }
 
+/* Return a free script slot */
 int Scumm::getScriptSlot() {
 	ScriptSlot *ss;
 	int i;
@@ -154,6 +158,7 @@ int Scumm::getScriptSlot() {
 	error("Too many scripts running, %d max", NUM_SCRIPT_SLOT);
 }
 
+/* Run script 'script' nested - eg, within the parent script.*/
 void Scumm::runScriptNested(int script) {
 	NestedScript *nest;
 	ScriptSlot *slot;
@@ -205,6 +210,7 @@ void Scumm::updateScriptPtr() {
 	vm.slot[_currentScript].offs = _scriptPointer - _scriptOrgPointer;
 }
 
+/* Get the code pointer to a script */
 void Scumm::getScriptBaseAddress() {
 	ScriptSlot *ss;
 	int idx;
@@ -248,6 +254,7 @@ void Scumm::getScriptEntryPoint() {
 	_scriptPointer = _scriptOrgPointer + vm.slot[_currentScript].offs;
 }
 
+/* Execute a script - Read opcode, and execute it from the table */
 void Scumm::executeScript() {
 	OpcodeProc op;
 	while (_currentScript != 0xFF) {
@@ -438,7 +445,11 @@ void Scumm::stopObjectCode() {
  	   * stopObjectScript(ss->number); */
 	} else {
 		if (ss->cutsceneOverride)
-			error("Script %d ending with active cutscene/override", ss->number);
+			// FIXME: Loom workaround, fix properly :) - khalek
+			if ((_gameId == GID_LOOM256) && (ss->number==44))
+				this->exitCutscene();
+			else
+				error("Script %d ending with active cutscene/override", ss->number);
 	}
 	ss->number = 0;
 	ss->status = 0;
@@ -470,7 +481,7 @@ void Scumm::freezeScripts(int flag) {
 	int i;
 
 	for(i=1; i<NUM_SCRIPT_SLOT; i++) {
-		if (_currentScript!=i && vm.slot[i].status!=0 && (vm.slot[i].unk1==0 || flag>=0x80)) {
+		if (_currentScript!=i && vm.slot[i].status!=ssDead && (vm.slot[i].unk1==0 || flag>=0x80)) {
 			vm.slot[i].status |= 0x80;
 			vm.slot[i].freezeCount++;
 		}
@@ -509,7 +520,7 @@ void Scumm::runAllScripts() {
 	
 	_currentScript = 0xFF;
 	for(_curExecScript = 0; _curExecScript<NUM_SCRIPT_SLOT; _curExecScript++) {
-		if (vm.slot[_curExecScript].status == 2 &&
+		if (vm.slot[_curExecScript].status == ssRunning &&
 			vm.slot[_curExecScript].didexec == 0) {
 			_currentScript = (char)_curExecScript;
 			getScriptBaseAddress();
@@ -524,7 +535,7 @@ void Scumm::runExitScript() {
 		runScript(_vars[VAR_EXIT_SCRIPT], 0, 0, 0);
 	if (_EXCD_offs) {
 		int slot = getScriptSlot();
-		vm.slot[slot].status = 2;
+		vm.slot[slot].status = ssRunning;
 		vm.slot[slot].number = 10001;
 		vm.slot[slot].where = WIO_ROOM;
 		vm.slot[slot].offs = _EXCD_offs;
@@ -542,7 +553,7 @@ void Scumm::runEntryScript() {
 		runScript(_vars[VAR_ENTRY_SCRIPT], 0, 0, 0);
 	if (_ENCD_offs) {
 		int slot = getScriptSlot();
-		vm.slot[slot].status = 2;
+		vm.slot[slot].status = ssRunning;
 		vm.slot[slot].number = 10002;
 		vm.slot[slot].where = WIO_ROOM;
 		vm.slot[slot].offs = _ENCD_offs;
@@ -670,7 +681,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 
 	vm.slot[slot].number = object;
 	vm.slot[slot].offs = obcd + offs;
-	vm.slot[slot].status = 2;
+	vm.slot[slot].status = ssRunning;
 	vm.slot[slot].where = where;
 	vm.slot[slot].unk1 = a;
 	vm.slot[slot].unk2 = b;

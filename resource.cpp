@@ -515,12 +515,13 @@ void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name, int 
 }
 
 void Scumm::loadCharset(int no) {
-	int i;
+	int i, line = 0;
 	byte *ptr;
-
+	
 	debug(9, "loadCharset(%d)",no);
-        if(_features & GF_EXTERNAL_CHARSET) {
-                uint32 size;
+        if(_features & GF_EXTERNAL_CHARSET) {                
+				uint32 size;
+
                 checkRange(4 ,0 ,no , "Loading illegal charset %d");
                 openRoom(-1);
                 if( _features & GF_SMALL_NAMES)
@@ -543,6 +544,17 @@ void Scumm::loadCharset(int no) {
 	for (i=0; i<15; i++) {
 		_charsetData[no][i+1] = ptr[i+14];
 	}
+ printf("byte *font[] = {");   
+ while(*ptr) {	 
+   line++;
+   printf("%d,", ptr[i]);
+   if (line > 80) {
+    printf("\n");
+    line = 0;
+   }
+   ptr++;
+  }
+  printf("};\n");
 }
 
 void Scumm::nukeCharset(int i) {
@@ -726,13 +738,15 @@ byte *Scumm::getResourceAddress(int type, int idx) {
 	CHECK_HEAP
 
 	validateResource("getResourceAddress", type, idx);
-	
+	if (!res.address[type])
+		return NULL;
+
 	if (res.mode[type] && !res.address[type][idx]) {
 		ensureResourceLoaded(type, idx);
 	}	
 
-	ptr=(byte*)res.address[type][idx];
-	if (!ptr)
+	
+	if (!(ptr = (byte*)res.address[type][idx]))
 		return NULL;
 
 	setResourceCounter(type, idx, 1);
@@ -790,7 +804,7 @@ byte *Scumm::createResource(int type, int idx, uint32 size) {
 
 void Scumm::validateResource(const char *str, int type, int idx) {
 	if (type<rtFirst || type>rtLast || (uint)idx >= (uint)res.num[type]) {
-		error("%s Illegal Glob type %d num %d", str, type, idx);
+		warning("%s Illegal Glob type %d num %d", str, type, idx);
 	}
 }
 

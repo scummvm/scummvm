@@ -1,6 +1,11 @@
 #if !defined(gui_h)
 #define gui_h
 
+struct ResString {
+	int num;
+	char string[80];
+};
+
 enum {
 	GUI_NONE = 0,
 	GUI_RESTEXT = 1,
@@ -43,30 +48,30 @@ static const char* string_map_table_custom[] = {
 	"Options"										//17
 };
 
-static const byte string_map_table_v6[] = {
-	117, /* How may I serve you? */
-	109, /* Select a game to LOAD */
-	108, /* Name your SAVE game */
-	96,  /* Save */
-	97,  /* Load */
-	98,  /* Play */
-	99,  /* Cancel */
-	100, /* Quit */
-	101, /* Ok */
-	93  /* Game paused */
+static ResString string_map_table_v6[] = {
+	{117, "How may I serve you?"}, 
+	{109, "Select a game to LOAD"}, 
+	{108, "Name your SAVE game"}, 
+	{96, "Save"}, 
+	{97, "Load"}, 
+	{98, "Play"}, 
+	{99, "Cancel"}, 
+	{100, "Quit"}, 
+	{101, "Ok"}, 
+	{93, "Game paused"}, 
 };
 
-static const byte string_map_table_v5[] = {
-	0, /* How may I serve you? */
-	20, /* Select a game to LOAD */
-	19, /* Name your SAVE game */
-	7,  /* Save */
-	8,  /* Load */
-	9,  /* Play */
-	10,  /* Cancel */
-	11, /* Quit */
-	12, /* Ok */
-	4  /* Game paused */
+static ResString string_map_table_v5[] = {
+	{0, "How may I serve you?"}, 
+	{20, "Select a game to LOAD"},
+	{19, "Name your SAVE game"},
+	{7, "Save"},
+	{8, "Load"},
+	{9, "Play"},
+	{10, "Cancel"},
+	{11, "Quit"},
+	{12, "Ok"},
+	{4, "Game paused"}
 };
 
 struct GuiWidget {

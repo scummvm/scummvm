@@ -53,12 +53,20 @@ enum {
     KEY_SET_OPTIONS = 3456 // WinCE
 };
 
+/* Sound output type - MIDI */
 enum {
 	MIDI_NULL = 0,
 	MIDI_WINDOWS = 1,
 	MIDI_TIMIDITY = 2,
 	MIDI_SEQ = 3,
-	MIDI_QTMUSIC = 4
+	MIDI_QTMUSIC = 4,	
+};
+
+/* Script status type (slot.status) */
+enum {
+	ssDead = 0,
+	ssPaused = 1,
+	ssRunning = 2
 };
 
 const uint16 many_direction_tab[18] = {
@@ -2282,6 +2290,8 @@ struct Serializer {
 	uint32 loadUint32();
 
 	bool isSaving() { return _saveOrLoad; }
+
+
 
 	bool Serializer::checkEOFLoadStream();
 

@@ -660,26 +660,32 @@ void Gui::getSavegameNames(int start) {
 	}
 }
 
-const char *Gui::queryString(int string, int id) {
+const char *Gui::queryString(int stringno, int id) {
 	static char namebuf[64];
-	if (!_s->_gameId)
-		return "blah!";
-
+	char *result;
+	int  string;
 	if (id>=20 && id<=28) {
 		sprintf(namebuf, "%2d. %s", id-20+_slotIndex, game_names[id-20]);
 		return namebuf;
 	}
 
-	if (string == 0)
+	if (stringno == 0)
 		return NULL;
 
-	if (_s->_features&GF_AFTER_V6) {
-		string = _s->_vars[string_map_table_v6[string-1]];
-	} else {
-		string = string_map_table_v5[string-1];
-	}
+	if (_s->_features&GF_AFTER_V6)
+		string = _s->_vars[string_map_table_v6[stringno-1].num];
+	else
+		string = string_map_table_v5[stringno-1].num;
 	
-	return (char*)_s->getStringAddress(string);
+	result = (char*)_s->getStringAddress(string);
+
+	if (!result)	// Gracelessly degrade to english :)
+		if (_s->_features&GF_AFTER_V6)
+			return string_map_table_v6[stringno-1].string;
+		else
+			return string_map_table_v5[stringno-1].string;
+
+	return result;
 }
 
 void Gui::showCaret(bool show) {
