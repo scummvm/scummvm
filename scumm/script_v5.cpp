@@ -771,7 +771,8 @@ void Scumm_v5::o5_drawObject() {
 		xpos = getVarOrDirectWord(0x40);
 		ypos = getVarOrDirectWord(0x20);
 	} else {
-		switch ((_opcode = fetchScriptByte()) & 0x1F) {
+		_opcode = fetchScriptByte();
+		switch (_opcode & 0x1F) {
 		case 1:										/* draw at */
 			xpos = getVarOrDirectWord(0x80);
 			ypos = getVarOrDirectWord(0x40);
@@ -782,7 +783,7 @@ void Scumm_v5::o5_drawObject() {
 		case 0x1F:									/* neither */
 			break;
 		default:
-			error("o5_drawObject: default case");
+			error("o5_drawObject: unknown subopcode %d", _opcode & 0x1F);
 		}
 	}
 
@@ -1623,7 +1624,7 @@ void Scumm_v5::o5_quitPauseRestart() {
 		shutDown();
 		break;
 	default:
-		error("o5_quitPauseRestart invalid case %d", subOp);
+		error("o5_quitPauseRestart: unknown subopcode %d", subOp);
 	}
 }
 
@@ -2000,7 +2001,7 @@ void Scumm_v5::o5_saveRestoreVerbs() {
 		}
 		break;
 	default:
-		error("o5_saveRestoreVerbs: invalid opcode");
+		error("o5_saveRestoreVerbs: unknown subopcode %d", _opcode);
 	}
 }
 
@@ -2467,14 +2468,6 @@ void Scumm_v5::o5_verbOps() {
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
-		case 21:										/* unk in loomcd */
-			warning("VerbOps case 21, please report where this occured");
-			// TODO Work out exactly which vars are set.
-			fetchScriptByte();
-			fetchScriptByte();
-			fetchScriptByte();
-			fetchScriptByte();
-			break;
 		case 22:										/* assign object */
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectByte(0x40);
@@ -2487,6 +2480,8 @@ void Scumm_v5::o5_verbOps() {
 		case 23:										/* set back color */
 			vs->bkcolor = getVarOrDirectByte(0x80);
 			break;
+		default:
+			error("o5_verbOps: unknown subopcode %d", _opcode & 0x1F);
 		}
 	}
 	drawVerb(slot, 0);
@@ -2526,7 +2521,7 @@ void Scumm_v5::o5_wait() {
 			return;
 		break;
 	default:
-		error("o5_wait: default case");
+		error("o5_wait: unknown subopcode %d", _opcode & 0x1F);
 		return;
 	}
 
