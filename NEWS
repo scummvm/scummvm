@@ -25,6 +25,18 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - ...which led to simplified sound effects handling
    - Various minor bugfixes.
 
+0.6.1b (2004-08-03)
+ General:
+   - Fixed copy/paste bug in launcher that may corrupt the Savegame Path 
+   - Fixed crashes on 64-bit architectures
+
+ SCUMM:
+   - Fixed VOC crash when playing DOTT Floppy
+   - Fixed palette issues in Amiga version of MI2
+
+ Simon:
+   - Fixed VOC crash
+
 0.6.1 (2004-07-25)
  General:
    - Fixed sound glitch when streaming two or more Ogg Vorbis sounds from the
