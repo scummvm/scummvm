@@ -589,7 +589,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.unk_178  = pop();
 		break;
 	case 19:
-		_wizParams.processFlags |= 1;
+		_wizParams.processFlags |= kWPFSetPos;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		break;
@@ -597,7 +597,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case 203: // HE98+
 		b = pop();
 		a = pop();
-		_wizParams.processFlags |= 0x40;
+		_wizParams.processFlags |= kWPFRemapPalette;
 		_wizParams.processMode = 6;
 		if (_wizParams.remapNum == 0) {
 			memset(_wizParams.remapIndex, 0, sizeof(_wizParams.remapIndex));
@@ -635,7 +635,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.compType = pop();
 		break;
 	case 87: // HE99+
-		_wizParams.processFlags |= 0x60000;
+		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
 		_wizParams.processMode = 9;
 		_wizParams.fillColor = pop();
 		_wizParams.box2.bottom = pop();
@@ -644,7 +644,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.left = pop();
 		break;
 	case 88: // HE99+
-		_wizParams.processFlags |= 0x60000;
+		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
 		_wizParams.processMode = 10;
 		_wizParams.fillColor = pop();
 		_wizParams.box2.bottom = pop();
@@ -653,14 +653,14 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.left = pop();
 		break;
 	case 89: // HE99+
-		_wizParams.processFlags |= 0x60000;
+		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
 		_wizParams.processMode = 11;
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
 	case 90: // HE99+
-		_wizParams.processFlags |= 0x60000;
+		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
 		_wizParams.processMode = 12;
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
