@@ -69,6 +69,27 @@ enum {
 };
 
 /*
+ * TODO: Clean up this ugly design: we subclass EditTextWidget to perform
+ * input validation. It would be much more elegant to use a decorator pattern,
+ * or a validation callback, or something like that.
+ */
+class DomainEditTextWidget : public EditTextWidget {
+public:
+	DomainEditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
+		: EditTextWidget(boss, x, y, w, h, text) {
+	}
+	
+protected:
+	bool tryInsertChar(char c, int pos) {
+		if (isalnum(c) || c == '-' || c == '_') {
+			_label.insertChar(c, pos);
+			return true;
+		}
+		return false;
+	}
+};
+
+/*
  * A dialog that allows the user to edit a config game entry.
  * TODO: add widgets for some/all of the following
  * - Maybe scaler/graphics mode. But there are two problems:
@@ -96,7 +117,7 @@ public:
 
 protected:
 	EditTextWidget *_descriptionWidget;
-	EditTextWidget *_domainWidget;
+	DomainEditTextWidget *_domainWidget;
 
 	StaticTextWidget *_gamePathWidget;
 	StaticTextWidget *_extraPathWidget;
@@ -141,7 +162,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// GUI:  Label & edit widget for the game ID
 	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight);
-	_domainWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, _domain);
+	_domainWidget = new DomainEditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, _domain);
 	yoffset += 16;
 
 	// GUI:  Label & edit widget for the description

@@ -71,6 +71,14 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount){
 		draw();
 }
 
+bool EditTextWidget::tryInsertChar(char c, int pos) {
+	if (isprint(c)) {
+		_label.insertChar(c, pos);
+		return true;
+	}
+	return false;
+}
+
 bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	bool handled = true;
 	bool dirty = false;
@@ -126,9 +134,8 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		dirty = adjustOffset();
 		break;
 	default:
-		if (isprint((char)ascii)) {
-			_label.insertChar((char)ascii, _pos++);
-			//_label += (char)ascii;
+		if (tryInsertChar((char)ascii, _pos)) {
+			_pos++;
 			dirty = true;
 		} else {
 			handled = false;

@@ -28,6 +28,7 @@ namespace GUI {
 
 /* EditTextWidget */
 class EditTextWidget : public StaticTextWidget {
+public:
 	typedef Common::StringList StringList;
 	typedef Common::String String;
 protected:
@@ -52,6 +53,8 @@ protected:
 
 	int getCaretPos() const;
 	bool adjustOffset();
+	
+	virtual bool tryInsertChar(char c, int pos);
 };
 
 } // End of namespace GUI
