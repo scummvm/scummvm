@@ -349,18 +349,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	int argc = 3;
 	char* argv[3];
 	char argdir[MAX_PATH];
+	char *game_name;
 
 	sound_activated = true;
 	hide_toolbar = false;
 
 	scummcfg = new Config("scummvm.ini", "scummvm");
 
-	argv[0] = NULL;
-	argv[1] = GameSelector();
-	sprintf(argdir, "-p%s", _directory);
-	argv[2] = argdir;
+	game_name = GameSelector();
+	if (!game_name)
+		return 0;
 
-	if (!argv[1])
+	argv[0] = NULL;	
+	sprintf(argdir, "-p%s", _directory);
+	argv[1] = argdir;
+	argv[2] = game_name;
+
+	if (!argv[2])
 		return 0;
 
 	if (detector.detectMain(argc, argv))
