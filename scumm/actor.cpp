@@ -1274,9 +1274,6 @@ void Actor::setActorCostume(int c) {
 		for (i = 0; i < 32; i++)
 			palette[i] = 0xFF;
 	}
-
-	skipLimb = false;
-
 }
 
 void Actor::startWalkActor(int destX, int destY, int dir) {
