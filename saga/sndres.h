@@ -40,52 +40,39 @@ namespace Saga {
 #define R_VOC_FILE_DESC "Creative Voice File\x1A"
 
 struct R_VOC_HEADER_BLOCK {
-
 	char ft_desc[20];	/* BYTE [20] */
 	uint db_offset;		/* WORD */
 	uint voc_version;	/* WORD */
 	uint voc_fileid;	/* WORD */
-
 };
 
 #define R_VOC_HEADER_BLOCK_LEN 26
 
 struct R_VOC_GENBLOCK {
-
 	int block_id;		/* BYTE */
 	ulong block_len;	/* BYTE[3] */
-
 };
 
 #define R_VOC_GENBLOCK_LEN 4
 
 struct R_VOC_BLOCK1 {
-
 	int block_id;		/* BYTE */
 	ulong block_len;	/* BYTE[3] */
 	uint time_constant;	/* BYTE */
 	int pack_method;	/* BYTE */
-
 };
 
 struct R_SNDRES_MODULE {
-
 	int init;
 
 	R_RSCFILE_CONTEXT *sfx_ctxt;
 	R_RSCFILE_CONTEXT *voice_ctxt;
 
 	R_GAME_SOUNDINFO snd_info;
-
 };
 
-int
-SND_Load(R_RSCFILE_CONTEXT * snd_ctxt,
-    ulong snd_rn, R_SOUNDBUFFER * snd_buf_i);
-
-int
-LoadVocSound(const uchar * snd_res,
-    size_t snd_res_len, R_SOUNDBUFFER * snd_buf_i);
+int SND_Load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i);
+int LoadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i);
 
 } // End of namespace Saga
 

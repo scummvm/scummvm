@@ -50,12 +50,10 @@ namespace Saga {
 
 R_SNDRES_MODULE SndModule;
 
-int SND_Init(void)
-{
+int SND_Init(void) {
 	int result;
 
-	/* Load sound module resource file contexts
-	 * \*------------------------------------------------------------- */
+	/* Load sound module resource file contexts */
 	result = GAME_GetFileContext(&SndModule.sfx_ctxt, R_GAME_SOUNDFILE, 0);
 	if (result != R_SUCCESS) {
 		return R_FAILURE;
@@ -67,8 +65,7 @@ int SND_Init(void)
 		return R_FAILURE;
 	}
 
-	/* Grab sound resource information for the current game
-	 * \*------------------------------------------------------------- */
+	/* Grab sound resource information for the current game */
 	GAME_GetSoundInfo(&SndModule.snd_info);
 
 	SndModule.init = 1;
@@ -76,8 +73,7 @@ int SND_Init(void)
 	return R_SUCCESS;
 }
 
-int SND_PlayVoice(ulong voice_rn)
-{
+int SND_PlayVoice(ulong voice_rn) {
 	R_SOUNDBUFFER snd_buffer;
 	int result;
 
@@ -91,10 +87,7 @@ int SND_PlayVoice(ulong voice_rn)
 	return R_SUCCESS;
 }
 
-int
-SND_Load(R_RSCFILE_CONTEXT * snd_ctxt, ulong snd_rn, R_SOUNDBUFFER * snd_buf_i)
-{
-
+int SND_Load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i) {
 	uchar *snd_res;
 	size_t snd_res_len;
 
@@ -108,9 +101,7 @@ SND_Load(R_RSCFILE_CONTEXT * snd_ctxt, ulong snd_rn, R_SOUNDBUFFER * snd_buf_i)
 	}
 
 	switch (SndModule.snd_info.res_type) {
-
 	case R_GAME_SOUND_PCM:
-
 		snd_buf_i->s_freq = SndModule.snd_info.freq;
 		snd_buf_i->s_samplebits = SndModule.snd_info.sample_size;
 		snd_buf_i->s_stereo = SndModule.snd_info.stereo;
@@ -126,7 +117,6 @@ SND_Load(R_RSCFILE_CONTEXT * snd_ctxt, ulong snd_rn, R_SOUNDBUFFER * snd_buf_i)
 		break;
 
 	case R_GAME_SOUND_VOC:
-
 		if (LoadVocSound(snd_res, snd_res_len, snd_buf_i) != R_SUCCESS) {
 
 			RSC_FreeResource(snd_res);
@@ -138,7 +128,6 @@ SND_Load(R_RSCFILE_CONTEXT * snd_ctxt, ulong snd_rn, R_SOUNDBUFFER * snd_buf_i)
 
 	default:
 		/* Unknown sound type */
-
 		RSC_FreeResource(snd_res);
 
 		return R_FAILURE;
@@ -148,11 +137,7 @@ SND_Load(R_RSCFILE_CONTEXT * snd_ctxt, ulong snd_rn, R_SOUNDBUFFER * snd_buf_i)
 	return R_SUCCESS;
 }
 
-int
-LoadVocSound(const uchar * snd_res,
-    size_t snd_res_len, R_SOUNDBUFFER * snd_buf_i)
-{
-
+int LoadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i) {
 	R_VOC_HEADER_BLOCK voc_hb;
 	R_VOC_GENBLOCK voc_gb;
 	R_VOC_BLOCK1 voc_b1;
@@ -174,7 +159,6 @@ LoadVocSound(const uchar * snd_res,
 	read_len -= R_VOC_FILE_DESC_LEN;
 
 	if (memcmp(voc_hb.ft_desc, R_VOC_FILE_DESC, R_VOC_FILE_DESC_LEN) != 0) {
-
 		/* Voc file desc string not found */
 		return R_FAILURE;
 	}
@@ -184,7 +168,6 @@ LoadVocSound(const uchar * snd_res,
 	voc_hb.voc_fileid = ys_read_u16_le(read_p, &read_p);
 
 	if (read_len < voc_hb.db_offset + R_VOC_GENBLOCK_LEN) {
-
 		return R_FAILURE;
 	}
 
@@ -192,9 +175,7 @@ LoadVocSound(const uchar * snd_res,
 	read_len = snd_res_len - voc_hb.db_offset;
 
 	for (;;) {
-
-		/* Read generic block header
-		 * \*--------------------------------------------------------- */
+		/* Read generic block header */
 		if (read_len < R_VOC_GENBLOCK_LEN) {
 			return R_FAILURE;
 		}
@@ -208,12 +189,9 @@ LoadVocSound(const uchar * snd_res,
 
 		read_len -= R_VOC_GENBLOCK_LEN;
 
-		/* Process block
-		 * \*--------------------------------------------------------- */
+		/* Process block */
 		switch (voc_gb.block_id) {
-
 		case 1:	/* Sound data block */
-
 			voc_b1.time_constant = ys_read_u8(read_p, &read_p);
 			voc_b1.pack_method = ys_read_u8(read_p, &read_p);
 			read_len -= 2;
@@ -243,7 +221,6 @@ LoadVocSound(const uchar * snd_res,
 			break;
 
 		default:
-
 			read_p += voc_gb.block_len;
 			read_len -= voc_gb.block_len;
 			break;
@@ -253,9 +230,7 @@ LoadVocSound(const uchar * snd_res,
 	return R_SUCCESS;
 }
 
-int SND_GetVoiceLength(ulong voice_rn)
-{
-
+int SND_GetVoiceLength(ulong voice_rn) {
 	ulong length;
 
 	double ms_f;
@@ -271,16 +246,13 @@ int SND_GetVoiceLength(ulong voice_rn)
 	}
 
 	if (SndModule.snd_info.res_type == R_GAME_SOUND_PCM) {
-
 		ms_f = (double)length /
 		    (SndModule.snd_info.sample_size / CHAR_BIT) /
 		    (SndModule.snd_info.freq) * 1000.0;
 
 		ms_i = (int)ms_f;
 	} else if (SndModule.snd_info.res_type == R_GAME_SOUND_VOC) {
-
 		/* Rough hack, fix this to be accurate */
-
 		ms_f = (double)length / 14705 * 1000.0;
 		ms_i = (int)ms_f;
 	} else {
@@ -290,12 +262,8 @@ int SND_GetVoiceLength(ulong voice_rn)
 	return ms_i;
 }
 
-int
-SND_ITEVOC_Resample(long src_freq,
-    long dst_freq,
-    uchar * src_buf,
-    size_t src_buf_len, uchar ** dst_buf, size_t * dst_buf_len)
-{
+int SND_ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf, 
+						size_t src_buf_len, uchar **dst_buf, size_t *dst_buf_len) {
 	uchar *resamp_buf;
 	size_t resamp_len;
 
@@ -328,7 +296,6 @@ SND_ITEVOC_Resample(long src_freq,
 	write_pc = resamp_buf + 2;
 
 	for (src_i = 0; src_i < src_buf_len / 2; src_i++) {
-
 		src_samp_a = *read_pa;
 		src_samp_b = *read_pb;
 

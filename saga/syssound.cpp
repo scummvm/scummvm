@@ -41,12 +41,8 @@ static int SoundInitialized = 0;
 static R_RSCFILE_CONTEXT *SoundContext;
 static R_RSCFILE_CONTEXT *VoiceContext;
 
-int SYSSOUND_Init(int enabled)
-{
-
+int SYSSOUND_Init(int enabled) {
 	int result;
-
-	YS_IGNORE_PARAM(enabled);
 
 	if (SoundInitialized) {
 		return R_FAILURE;
@@ -64,12 +60,15 @@ int SYSSOUND_Init(int enabled)
 		return R_FAILURE;
 	}
 
+    /* Grab sound resource information for the current game
+    \*-------------------------------------------------------------*/
+    //GAME_GetSoundInfo(&SoundModule.snd_info);
+
 	SoundInitialized = 1;
 	return R_SUCCESS;
 }
 
-int SYSSOUND_Shutdown()
-{
+int SYSSOUND_Shutdown() {
 	if (!SoundInitialized) {
 		return R_FAILURE;
 	}
@@ -79,10 +78,22 @@ int SYSSOUND_Shutdown()
 	return R_SUCCESS;
 }
 
-int SYSSOUND_Play(int sound_rn, int channel)
-{
+int SYSSOUND_Play(int sound_rn, int channel) {
+	int resource_size;
+	char *resource_data;
 
-	(void)sound_rn;
+	if (!SoundInitialized) {
+		return R_FAILURE;
+	}
+
+	if (channel > 3) {
+		return R_FAILURE;
+	}
+	
+	return R_SUCCESS;
+}
+
+int SYSSOUND_Pause(int channel) {
 	(void)channel;
 
 	if (!SoundInitialized) {
@@ -92,9 +103,7 @@ int SYSSOUND_Play(int sound_rn, int channel)
 	return R_SUCCESS;
 }
 
-int SYSSOUND_Pause(int channel)
-{
-
+int SYSSOUND_Resume(int channel) {
 	(void)channel;
 
 	if (!SoundInitialized) {
@@ -104,9 +113,7 @@ int SYSSOUND_Pause(int channel)
 	return R_SUCCESS;
 }
 
-int SYSSOUND_Resume(int channel)
-{
-
+int SYSSOUND_Stop(int channel) {
 	(void)channel;
 
 	if (!SoundInitialized) {
@@ -116,21 +123,7 @@ int SYSSOUND_Resume(int channel)
 	return R_SUCCESS;
 }
 
-int SYSSOUND_Stop(int channel)
-{
-
-	(void)channel;
-
-	if (!SoundInitialized) {
-		return R_FAILURE;
-	}
-
-	return R_SUCCESS;
-}
-
-int SYSSOUND_PlayVoice(R_SOUNDBUFFER * buf)
-{
-
+int SYSSOUND_PlayVoice(R_SOUNDBUFFER *buf) {
 	(void)buf;
 
 	if (!SoundInitialized) {
@@ -140,9 +133,7 @@ int SYSSOUND_PlayVoice(R_SOUNDBUFFER * buf)
 	return R_SUCCESS;
 }
 
-int SYSSOUND_PauseVoice(void)
-{
-
+int SYSSOUND_PauseVoice(void) {
 	if (!SoundInitialized) {
 		return R_FAILURE;
 	}
@@ -150,9 +141,7 @@ int SYSSOUND_PauseVoice(void)
 	return R_SUCCESS;
 }
 
-int SYSSOUND_ResumeVoice(void)
-{
-
+int SYSSOUND_ResumeVoice(void) {
 	if (!SoundInitialized) {
 		return R_FAILURE;
 	}
@@ -160,9 +149,7 @@ int SYSSOUND_ResumeVoice(void)
 	return R_SUCCESS;
 }
 
-int SYSSOUND_StopVoice(void)
-{
-
+int SYSSOUND_StopVoice(void) {
 	if (!SoundInitialized) {
 		return R_FAILURE;
 	}
