@@ -25,12 +25,13 @@
 // Support for "old" savegames (made with 2501 CVS build)
 // Can be useful for other ports too :)
 
+#define VER_V11 11
 #define VER_V10 10
 #define VER_V9 9
 #define VER_V8 8
 #define VER_V7 7
 
-#define CURRENT_VER VER_V10
+#define CURRENT_VER VER_V11
 
 
 // To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,
@@ -105,6 +106,7 @@ public:
 	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
 
 	bool isSaving() { return _saveOrLoad; }
+	uint32 getVersion() { return _savegameVersion; }
 
 	bool checkEOFLoadStream();
 

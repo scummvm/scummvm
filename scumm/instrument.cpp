@@ -330,8 +330,13 @@ Instrument_Program::Instrument_Program (Serializer *s)
 
 void Instrument_Program::saveOrLoad (Serializer *s)
 {
-	_program = s->loadByte();
-	_mt32 = (s->loadByte() > 0);
+	if (s->isSaving()) {
+		s->saveByte (_program);
+		s->saveByte (_mt32 ? 1 : 0);
+	} else {
+		_program = s->loadByte();
+		_mt32 = (s->loadByte() > 0);
+	}
 }
 
 void Instrument_Program::send (MidiChannel *mc)

@@ -3127,6 +3127,17 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 	ser->saveLoadEntries(this, mainEntries);
 	ser->saveLoadArrayOf(_players, ARRAYSIZE(_players), sizeof(_players[0]), playerEntries);
 	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]), partEntries);
+
+	// Load/save the instrument definitions, which were revamped with V11.
+	if (ser->getVersion() >= VER_V11) {
+		int i;
+		Part *part = &_parts[0];
+		for (i = ARRAYSIZE(_parts); i; --i, ++part) {
+			part->_program = 255;
+			part->_instrument.saveOrLoad (ser);
+		}
+	}
+
 	ser->saveLoadArrayOf(_volume_fader, ARRAYSIZE(_volume_fader),
 		                 sizeof(_volume_fader[0]), volumeFaderEntries);
 
@@ -3170,18 +3181,6 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm)
 			scumm->getResourceAddress(rtSound, player->_id);
 			player->_mt32emulate = isMT32(player->_id);
 			player->_isGM = isGM(player->_id);
-			if (scumm->_use_adlib) {
-				// FIXME - This should make sure the right
-				// instruments are loaded, but it does not
-				// even try to move to the right position in
-				// the track. Using scan() gives a marginally
-				// better result, but not good enough.
-				//
-				// The correct fix is probably to store the
-				// Adlib instruments, or information on where
-				// to find them, in the savegame.
-				player->jump(player->_track_index, 0, 0);
-			}
 		}
 	}
 }
