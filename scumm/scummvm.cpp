@@ -695,6 +695,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this);
+		_mixer->setVolume(ConfMan.getInt("master_volume"));
+		_imuseDigital->setGroupMusicVolume(ConfMan.getInt("music_volume") / 2);
+		_imuseDigital->setGroupSfxVolume(ConfMan.getInt("sfx_volume") / 2);
+		_imuseDigital->setGroupVoiceVolume(ConfMan.getInt("speech_volume") / 2);
 	} else if ((_features & GF_AMIGA) && (_version == 2)) {
 		_musicEngine = new Player_V2A(this);
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
@@ -1548,6 +1552,10 @@ load_game:
 	}
 
 	_sound->processSoundQues();
+	if (_imuseDigital &&
+			( ((_gameId == GID_DIG) && (!(_features & GF_DEMO))) || (_gameId == GID_CMI) ))
+		_imuseDigital->refreshScripts();
+
 	camera._last = camera._cur;
 
 	if (!(++_expire_counter)) {

@@ -1338,7 +1338,7 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	case 3:
 		if (param_1 != 0) {
 			if (_features & GF_DIGI_IMUSE)
-				_imuseDigital->startSfx(param_1);
+				_imuseDigital->startSfx(param_1, 63);
 			else
 				_sound->addSoundToQueue(param_1);
 		}
@@ -1358,21 +1358,21 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	case 7:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x600, param_2, 0, 0, 0, 0);
+				_imuseDigital->setVolume(param_1, param_2);
 			}
 		}
 		break;
 	case 8:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x700, param_2, 0, 0, 0, 0);
+				_imuseDigital->setPan(param_1, param_2);
 			}
 		}
 		break;
 	case 9:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x500, param_2, 0, 0, 0, 0);
+				_imuseDigital->setPriority(param_1, param_2);
 			}
 		}
 		break;

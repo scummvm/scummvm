@@ -34,16 +34,14 @@ class BundleMgr;
 class ImuseDigiSndMgr {
 public:
 
-#define MAX_IMUSE_SOUNDS 16
-#define MAX_IMUSE_JUMPS 80
-#define MAX_IMUSE_REGIONS 85
-#define MAX_IMUSE_SYNCS 4
+#define MAX_IMUSE_SOUNDS 10
 
 #define IMUSE_RESOURCE 1
 #define IMUSE_BUNDLE 2
-#define IMUSE_VOICE 1
-#define IMUSE_SFX 2
-#define IMUSE_MUSIC 3
+
+#define IMUSE_VOLGRP_VOICE 1
+#define IMUSE_VOLGRP_SFX 2
+#define IMUSE_VOLGRP_MUSIC 3
 
 private:
 	struct _region {
@@ -54,25 +52,27 @@ private:
 	struct _jump {
 		int32 offset;		// jump offset position
 		int32 dest;			// jump to dest position
-		byte hookId;			// id of hook
-		int16 fadeDelay;		// fade delay in ms
+		byte hookId;		// id of hook
+		int16 fadeDelay;	// fade delay in ms
 	};
 
 	struct _sync {
-		int32 size;		// size of sync
-		byte *ptr;		// pointer to sync
+		int32 size;			// size of sync
+		byte *ptr;			// pointer to sync
 	};
 	
 public:
 
 	struct soundStruct {
-		uint16 freq;			// frequency
+		uint16 freq;		// frequency
 		byte channels;		// stereo or mono
 		byte bits;			// 8, 12, 16
-		int8 numJumps;		// number of Jumps
-		int8 numRegions;		// number of Regions
-		int8 numSyncs;		// number of Syncs
-		int32 offsetStop;	// end offset in source data
+		int numJumps;		// number of Jumps
+		int numRegions;		// number of Regions
+		int numSyncs;		// number of Syncs
+		_region *region;
+		_jump *jump;
+		_sync *sync;
 		bool endFlag;
 		bool inUse;
 		byte *allData;
@@ -80,11 +80,9 @@ public:
 		byte *resPtr;
 		char name[15];
 		int16 soundId;
-		bool freeResPtr;
-		BundleMgr *_bundle;
-		_region region[MAX_IMUSE_REGIONS];
-		_jump jump[MAX_IMUSE_JUMPS];
-		_sync sync[MAX_IMUSE_SYNCS];
+		BundleMgr *bundle;
+		int type;
+		int volGroupId;
 	};
 
 private:
@@ -102,13 +100,16 @@ private:
 	bool openMusicBundle(int slot);
 	bool openVoiceBundle(int slot);
 
+	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs);
+
 public:
 
 	ImuseDigiSndMgr(ScummEngine *scumm);
 	~ImuseDigiSndMgr();
-	
-	soundStruct * openSound(int32 soundId, const char *soundName, int soundType, int soundGroup);
+
+	soundStruct *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId);
 	void closeSound(soundStruct *soundHandle);
+	soundStruct *cloneSound(soundStruct *soundHandle);
 
 	int getFreq(soundStruct *soundHandle);
 	int getBits(soundStruct *soundHandle);

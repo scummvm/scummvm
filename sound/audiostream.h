@@ -80,6 +80,7 @@ class AppendableAudioStream : public AudioStream {
 public:
 	virtual void append(const byte *data, uint32 len) = 0;
 	virtual void finish() = 0;
+	virtual uint32 getFreeSpace() = 0;
 };
 
 class ZeroInputStream : public AudioStream {

@@ -1459,14 +1459,14 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		push(a->talkStartFrame);
 		}
 		break;
-	case 0xDD:		// getMasterSFXVol
-		push(ConfMan.getInt("sfx_volume") / 2);
+	case 0xDD:		// getGroupSfxVol
+		push(_imuseDigital->getGroupSfxVolume());
 		break;
-	case 0xDE:		// getMasterVoiceVol
-		push(ConfMan.getInt("sfx_volume") / 2);
+	case 0xDE:		// getGroupVoiceVol
+		push(_imuseDigital->getGroupVoiceVolume());
 		break;
-	case 0xDF:		// getMasterMusicVol
-		push(ConfMan.getInt("music_volume") / 2);
+	case 0xDF:		// getGroupMusicVol
+		push(_imuseDigital->getGroupMusicVolume());
 		break;
 	case 0xE0:		// readRegistryValue
 		{

@@ -30,6 +30,7 @@
 #include "scumm/sound.h"
 #include "scumm/scumm.h"
 #include "scumm/imuse.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/player_v2.h"
 #include "scumm/verbs.h"
 #include "sound/mididrv.h"
@@ -435,7 +436,7 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	//
 	// Some misc options
 	//
-	subtitlesCheckbox = new GUI::CheckboxWidget(this, 15, 62, 200, 16, "Show subtitles", 0, 'S');
+	subtitlesCheckbox = new GUI::CheckboxWidget(this, 15, 78, 200, 16, "Show subtitles", 0, 'S');
 
 	//
 	// Create the sub dialog(s)
@@ -471,6 +472,15 @@ void ConfigDialog::close() {
 	int soundVolumeMaster = ConfMan.getInt("master_volume");
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+
+	if (_vm->_imuseDigital) {
+		_vm->_mixer->setVolume(soundVolumeMaster);
+		_vm->_imuseDigital->setGroupMusicVolume(soundVolumeMusic / 2);
+		_vm->_imuseDigital->setGroupSfxVolume(soundVolumeSfx / 2);
+		_vm->_imuseDigital->setGroupVoiceVolume(soundVolumeSpeech / 2);
+		return;
+	}
 
 	if (_vm->_imuse) {
 		_vm->_imuse->set_music_volume(soundVolumeMusic);

@@ -233,7 +233,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 	if (_version == 8) {
 		char result;
 
-		_imuseDigital->stopAllSounds(true);
+		_imuseDigital->stopAllSounds();
 
 #ifdef MACOSX
 		sprintf(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);

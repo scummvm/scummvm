@@ -501,11 +501,13 @@ public:
 	void requestSave(int slot, const char *name, bool compatible = false);
 	void requestLoad(int slot);
 
+public:
+	void lock(int type, int i);
+	void unlock(int type, int i);
+
 protected:
 	/* Heap and memory management */
 	uint32 _maxHeapThreshold, _minHeapThreshold;
-	void lock(int type, int i);
-	void unlock(int type, int i);
 
 	/* Script VM - should be in Script class */
 	uint32 _localScriptList[NUM_LOCALSCRIPT];

@@ -956,6 +956,7 @@ The following keywords are recognized:
         native_mt32     bool     If true, disable GM emulation and assume that
                                  there is a true Roland MT-32 available.
         sfx_volume      number   The sfx volume setting (0-255)
+        speech_volume   number   The speech volume setting (0-255)
         tempo           number   The music tempo (50-200) (default: 100)
 
         copy_protection bool     Enable copy protection in SCUMM games ,when

@@ -27,13 +27,15 @@
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
 #include "scumm/music.h"
+#include "scumm/saveload.h"
 
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
 namespace Scumm {
 
-#define MAX_DIGITAL_TRACKS 16
+#define MAX_DIGITAL_TRACKS 8
+#define MAX_DIGITAL_FADETRACKS 8
 
 struct imuseDigTable;
 struct imuseComiTable;
@@ -49,21 +51,26 @@ private:
 		int32 volFadeDelay;	//
 		bool volFadeUsed;	//
 
-		int soundId;
+		int32 soundId;
+		char soundName[15];
 		bool used;
 		bool toBeRemoved;
 		bool started;
-		bool waitForEndSeq;
+		bool souStream;
+		int32 priority;
 		int32 regionOffset;
 		int32 trackOffset;
 		int32 dataOffset;
-		bool sequence;
-		int curRegion;
-		int curHookId;
-		int soundGroup;
-		int iteration;
-		int mod;
-		int32 pullSize;
+		int32 curRegion;
+		int32 curHookId;
+		int32 volGroupId;
+		int32 soundType;
+		int32 iteration;
+		int32 mod;
+		int32 mixerFlags;
+		int32 mixerVol;
+		int32 mixerPan;
+
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		PlayingSoundHandle handle;
 		AppendableAudioStream *stream;
@@ -72,72 +79,83 @@ private:
 		Track();
 	};
 
-	Track _track[MAX_DIGITAL_TRACKS];
+	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
 	OSystem::MutexRef _mutex;
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
+
+	int32 _volVoice;
+	int32 _volSfx;
+	int32 _volMusic;
+
 	bool _pause;
 
-	int _attributesTable[11];
-	int _attributesState[97];
-	int _attributesSeq[91];
-	int _curSeqAtribPos;
-
-	int _curMusicState;
-	int _curMusicSeq;
-	int _curMusicCue;
+	int32 _attributes[188];
+	int32 _nextSeqToPlay;
+	int32 _curMusicState;
+	int32 _curMusicSeq;
+	int32 _curMusicCue;
 
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
-	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, bool sequence, int hookId, int volume, bool wait);
+	bool allocSlot(int priority);
+	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
+	void selectVolumeGroup(int soundId, int volGroupId);
 
 	int32 getPosInMs(int soundId);
 	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
+	int cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTrack);
 
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
 	void setFtMusicCuePoint(int cueId);
-	void playFtMusic(const char *songName, int opcode, int volume, bool sequence, bool wait);
+	void playFtMusic(const char *songName, int opcode, int volume);
 
 	void setComiMusicState(int stateId);
 	void setComiMusicSequence(int seqId);
-	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence, bool wait);
+	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence);
 
 	void setDigMusicState(int stateId);
 	void setDigMusicSequence(int seqId);
-	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence, bool wait);
+	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
 	virtual ~IMuseDigital();
 
-	void startVoice(int soundId, AudioStream *input)
-		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input, false, 0, 127, false); }
-	void startVoice(int soundId, const char *soundName)
-		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL, false, 0, 127, false); }
-	void startMusic(int soundId, bool sequence, int volume, bool wait)
-		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL, sequence, 0, volume, wait); }
-	void startMusic(const char *soundName, int soundId, bool sequence, int hookId, int volume, bool wait)
-		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL, sequence, hookId, volume, wait); }
-	void startSfx(int soundId)
-		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL, false, 0, 127, false); }
+	void startVoice(int soundId, AudioStream *input);
+	void startVoice(int soundId, const char *soundName);
+	void startMusic(int soundId, int volume);
+	void startMusic(const char *soundName, int soundId, int hookId, int volume);
+	void startSfx(int soundId, int priority);
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
+	void saveOrLoad(Serializer *ser);
+	void resetState();
+
+	void setGroupVoiceVolume(int volume) { _volVoice = volume; }
+	void setGroupSfxVolume(int volume) { _volSfx = volume; }
+	void setGroupMusicVolume(int volume) { _volMusic = volume; }
+	int getGroupVoiceVolume() { return _volVoice; }
+	int getGroupSfxVolume() { return _volSfx; }
+	int getGroupMusicVolume() { return _volMusic; }
+
+	void setPriority(int soundId, int priority);
 	void setVolume(int soundId, int volume);
 	void setPan(int soundId, int pan);
 	void setFade(int soundId, int destVolume, int delay60HzTicks);
 	void setMasterVolume(int vol) {}
 	void stopSound(int soundId);
-	void stopAllSounds() { stopAllSounds(false); }
-	void stopAllSounds(bool waitForStop);
+	void stopAllSounds();
 	void pause(bool pause);
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
+	void refreshScripts();
 	int getSoundStatus(int sound) const;
 	int32 getCurMusicPosInMs();
 	int32 getCurVoiceLipSyncWidth();
@@ -148,18 +166,19 @@ public:
 
 struct imuseRoomMap {
 	int8 roomId;
-	byte musicTableIndex;
-	byte unk1;
-	byte unk2;
-	byte unk3;
-	byte unk4;
+	byte stateIndex1;
+	byte offset;
+	byte stateIndex2;
+	byte atribPos;
+	byte stateIndex3;
 };
 
 struct imuseDigTable {
 	byte opcode;
 	int16 soundId;
 	char name[20];
-	byte param;
+	byte atribPos;
+	byte hookId;
 	char filename[13];
 };
 
@@ -167,9 +186,9 @@ struct imuseComiTable {
 	byte opcode;
 	int16 soundId;
 	char name[20];
-	byte param;
+	byte atribPos;
 	byte hookId;
-	int16 fadeDelay;
+	int16 fadeOut60TicksDelay;
 	char filename[13];
 };
 

@@ -141,8 +141,10 @@ protected:
 	byte *_end;
 	bool _finalized;
 	const int _rate;
+	uint32 _freeSpace;
 
 	inline bool eosIntern() const { return _end == _pos; };
+	void updateFreeSpace();
 public:
 	AppendableMemoryStream(int rate, uint bufferSize);
 	~AppendableMemoryStream()		{ free(_bufferStart); }
@@ -157,8 +159,19 @@ public:
 
 	void append(const byte *data, uint32 len);
 	void finish()				{ _finalized = true; }
+	uint32 getFreeSpace();
 };
 
+template<bool stereo, bool is16Bit, bool isUnsigned>
+void AppendableMemoryStream<stereo, is16Bit, isUnsigned>::updateFreeSpace() {
+	if (_pos <= _end) {
+		uint32 free_from_end = _bufferEnd - _end;
+		uint32 free_to_pos = _pos - _bufferStart;
+		_freeSpace = free_from_end + free_to_pos;
+	} else {
+		_freeSpace = _pos - _end;
+	}
+}
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
 AppendableMemoryStream<stereo, is16Bit, isUnsigned>::AppendableMemoryStream(int rate, uint bufferSize)
@@ -173,6 +186,8 @@ AppendableMemoryStream<stereo, is16Bit, isUnsigned>::AppendableMemoryStream(int 
 	_bufferStart = (byte *)malloc(bufferSize);
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
+
+	updateFreeSpace();
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
@@ -185,6 +200,8 @@ inline int16 AppendableMemoryStream<stereo, is16Bit, isUnsigned>::read() {
 
 	int16 val = READSAMPLE(is16Bit, isUnsigned, _pos);
 	_pos += (is16Bit ? 2 : 1);
+
+	updateFreeSpace();
 
 	return val;
 }
@@ -205,6 +222,9 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffe
 			samples++;
 		}
 	}
+
+	updateFreeSpace();
+
 	return samples;
 }
 
@@ -239,8 +259,14 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *dat
 		memcpy(_end, data, len);
 		_end += len;
 	}
+
+	updateFreeSpace();
 }
 
+template<bool stereo, bool is16Bit, bool isUnsigned>
+uint32 AppendableMemoryStream<stereo, is16Bit, isUnsigned>::getFreeSpace() {
+	return _freeSpace;
+}
 
 #pragma mark -
 #pragma mark --- Procedural stream ---
