@@ -831,7 +831,73 @@ void Scumm_v5::o5_getStringWidth() {
 
 void Scumm_v5::o5_saveLoadVars() {
 	// TODO
-	error("o5_saveLoadVars not yet implemented");
+	if (fetchScriptByte() == 1) 
+		saveVars();
+	else
+		loadVars();
+}
+
+void Scumm_v5::saveVars() {
+	int a, b;
+
+	while ((_opcode = fetchScriptByte()) != 0) {
+		switch (_opcode & 0x1F) {
+			case 0x01: // write a range of variables
+				getResultPos();
+			        a = _resultVarNumber;
+				getResultPos();
+			        b = _resultVarNumber;
+				warning("stub saveVars: vars %d -> %d", a, b);
+				break;
+
+			case 0x02: // write a range of string variables
+				a = getVarOrDirectByte(0x80);
+				b = getVarOrDirectByte(0x40);
+				warning("stub saveVars: strings %d -> %d", a, b);
+				break;
+			case 0x03: // open file
+				a = resStrLen(_scriptPointer);
+				warning("stub saveVars to %s", _scriptPointer);
+				_scriptPointer += a + 1;
+				break;
+			case 0x1F: // close file
+				warning("stub saveVars close file");
+				break;
+		}
+
+	}
+}
+
+void Scumm_v5::loadVars() {
+	int a, b;
+
+	hexdump(_scriptPointer, 64);
+	while ((_opcode = fetchScriptByte()) != 0) {
+		switch (_opcode & 0x1F) {
+			case 0x01: // read a range of variables
+				getResultPos();
+			        a = _resultVarNumber;
+				getResultPos();
+			        b = _resultVarNumber;
+				warning("stub loadVars: vars %d -> %d", a, b);
+				break;
+			case 0x02: // read a range of string variables
+				a = getVarOrDirectByte(0x80);
+				b = getVarOrDirectByte(0x40);
+				warning("stub loadVars: strings %d -> %d", a, b);
+				break;
+			case 0x03: // open file
+				a = resStrLen(_scriptPointer);
+				warning("stub loadVars from %s", _scriptPointer);
+				_scriptPointer += a + 1;
+				break;
+			case 0x1F: // close file
+				warning("stub loadVars close file");
+				break;
+		}
+				
+	}
+
 }
 
 void Scumm_v5::o5_expression() {
@@ -1020,10 +1086,42 @@ void Scumm_v5::o5_getActorY() {
 void Scumm_v5::o5_getAnimCounter() {
 	getResultPos();
 	// Loom uses this opcode in its load/save screen.
-	if (_gameId == GID_LOOM) {
+	//if (_gameId == GID_LOOM) {
+	if (_version <= 3) {
 		byte a = getVarOrDirectByte(0x80);
-		warning("TODO: Loom saveLoad(%d)", a);
-		setResult(0);
+		byte slot = a & 0x1F;
+		byte result = 0;
+		
+		switch(a & 0xE0) {
+			case 0x00: // num slots available
+				result = 100;
+				break;
+			case 0x20: // dos drive?
+				result = 0;
+				break;
+			case 0x40: // load 
+				if (loadState(slot, _saveLoadCompatible))
+					result = 3; // sucess
+				else
+					result = 5; // failed to load
+				break;
+			case 0x80: // save
+				if (saveState(slot, _saveLoadCompatible))
+					result = 0;
+				else
+					result = 2;
+			case 0xC0: // test if save exists
+				bool avail_saves[100];
+				SaveFileManager *mgr = _system->get_savefile_manager();
+				listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
+				delete mgr;
+				if (avail_saves[slot])
+					result = 6; // save file exists
+				else
+					result = 7; // save file does not exist
+				break;
+		}
+		setResult(result);
 	} else {
 		int act = getVarOrDirectByte(0x80);
 		Actor *a = derefActor(act, "o5_getAnimCounter");

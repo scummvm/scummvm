@@ -46,6 +46,8 @@ protected:
 
 	virtual void decodeParseString();
 	int getWordVararg(int *ptr);
+	void saveVars();
+	void loadVars();
 
 	virtual int getVar();
 	virtual int getVarOrDirectByte(byte mask);
