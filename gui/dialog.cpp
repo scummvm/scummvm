@@ -67,8 +67,6 @@ void Dialog::handleKey(char key, int modifiers)
 void Dialog::handleMouseMoved(int x, int y, int button)
 {
 	Widget *w = findWidget(x - _x, y - _y);
-	if (!w)
-		return;
 
 	if (_mouseWidget != w) {
 		if (_mouseWidget)
@@ -76,7 +74,12 @@ void Dialog::handleMouseMoved(int x, int y, int button)
 		if (w)
 			w->handleMouseEntered(button);
 		_mouseWidget = w;
-	} else if (w->getFlags() & WIDGET_TRACK_MOUSE) {
+	} 
+
+	if (!w)
+		return;
+	
+	if (w->getFlags() & WIDGET_TRACK_MOUSE) {
 		w->handleMouseMoved(x - _x - w->_x, y - _y - w->_y, button);
 	}
 }
