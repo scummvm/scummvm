@@ -119,7 +119,7 @@ void StaticTextWidget::setValue(int value) {
 
 void StaticTextWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	gui->drawString(_label, _x, _y, _w, gui->_textcolor, _align);
+	gui->drawString(_label, _x, _y, _w, isEnabled() ? gui->_textcolor : gui->_color, _align);
 }
 
 #pragma mark -
