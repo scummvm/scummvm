@@ -54,26 +54,16 @@ public:
 	private:
 		StringMap _keyValueComments;
 		String _domainComment;
+
 	public:
+		const String &get(const String &key) const;
 
-		const String &get(const String &key) const {
-			Node *node = findNode(_root, key);
-			return node ? node->_value : String::emptyString;
-		}
+		void setDomainComment(const String &comment);
+		const String &getDomainComment() const;
 
-		void setDomainComment(const String &comment) {
-			_domainComment = comment;
-		}
-		const String &getDomainComment() const {
-			return _domainComment;
-		}
-
-		void setKVComment(const String &key, const String &comment) {
-			_keyValueComments[key] = comment;
-		}
-		const String &getKVComment(const String &key) const {
-			return _keyValueComments[key];
-		}
+		void setKVComment(const String &key, const String &comment);
+		const String &getKVComment(const String &key) const;
+		bool hasKVComment(const String &key) const;
 	};
 
 	typedef Map<String, Domain, IgnoreCaseComparator> DomainMap;

@@ -240,9 +240,10 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 		const String &value = x->_value;
 		if (!value.isEmpty()) {
 			// Write comment (if any)
-			comment = domain.getKVComment(x->_key);
-			if (!comment.isEmpty())
+			if (domain.hasKVComment(x->_key)) {
+				comment = domain.getKVComment(x->_key);
 				fprintf(file, "%s", comment.c_str());
+			}
 			// Write the key/value pair
 			fprintf(file, "%s=%s\n", x->_key.c_str(), value.c_str());
 		}
@@ -449,6 +450,32 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 bool ConfigManager::hasGameDomain(const String &domain) const {
 	assert(!domain.isEmpty());
 	return _gameDomains.contains(domain);
+}
+
+
+#pragma mark -
+
+
+const String &ConfigManager::Domain::get(const String &key) const {
+	Node *node = findNode(_root, key);
+	return node ? node->_value : String::emptyString;
+}
+
+void ConfigManager::Domain::setDomainComment(const String &comment) {
+	_domainComment = comment;
+}
+const String &ConfigManager::Domain::getDomainComment() const {
+	return _domainComment;
+}
+
+void ConfigManager::Domain::setKVComment(const String &key, const String &comment) {
+	_keyValueComments[key] = comment;
+}
+const String &ConfigManager::Domain::getKVComment(const String &key) const {
+	return _keyValueComments[key];
+}
+bool ConfigManager::Domain::hasKVComment(const String &key) const {
+	return _keyValueComments.contains(key);
 }
 
 }	// End of namespace Common
