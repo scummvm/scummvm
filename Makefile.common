@@ -109,7 +109,7 @@ base/main.o: $(filter-out base/libbase.a,$(OBJS))
 
 # The build rule for the ScummVM executable
 $(EXECUTABLE):  $(OBJS)
-	$(CXX) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
+	$(CXX) $(LDFLAGS) $(LIBS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) -o $@
 
 distclean: clean
 	$(RM_REC) $(DEPDIRS)
