@@ -221,12 +221,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 }
 
 void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
-
-#ifndef __PALM_OS__
 	sprintf(out, "%s.%c%.2d", _game_name, compatible ? 'c' : 's', slot);
-#else
-	sprintf(out, "%s.%s%.2d", _game_name, compatible ? "c" : "s", slot);
-#endif
 }
 
 void Scumm::listSavegames(bool *marks, int num, SaveFileManager *mgr) {
