@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2002/03/05 23:37:31  ender
+ * Adding music volume control.
+ *
  * Revision 1.3  2001/12/01 17:25:36  strigeus
  * fixed to compile on unix
  *
@@ -469,6 +472,7 @@ private:
 	byte _queue_marker;
 	byte _queue_cleared;
 	byte _master_volume;
+	byte _music_volume;	/* Global music volume. Percantage */
 
 	uint16 _trigger_count;
 	
@@ -531,6 +535,8 @@ public:
 	int initialize(Scumm *scumm, SoundDriver *driver);
 	int terminate();
 	int save_or_load(Serializer *ser);
+	int set_music_volume(uint vol);
+	int get_music_volume();
 	int set_master_volume(uint vol);
 	int get_master_volume();
 	bool start_sound(int sound);

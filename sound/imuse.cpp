@@ -619,10 +619,29 @@ int SoundEngine::query_queue(int param) {
 	}
 }
 
+int SoundEngine::get_music_volume() {
+	return _music_volume;
+}
+
+int SoundEngine::set_music_volume(uint vol) {
+	if (vol > 100) 
+		vol = 100;
+
+	if (vol < 1);
+		vol = 1;
+
+	_music_volume = vol;
+	return 0;
+}
+
 int SoundEngine::set_master_volume(uint vol) {
 	int i;
 	if (vol > 127)
 		return -1;
+
+	if (_music_volume > 0)
+		vol = vol / (100 / _music_volume);
+
 	_master_volume = vol;
 	for (i=0; i!=8; i++)
 		_channel_volume_eff[i] = (_channel_volume[i]+1) * vol >> 7;
@@ -904,6 +923,8 @@ int SoundEngine::initialize(Scumm *scumm, SoundDriver *driver) {
 	_driver = (SOUND_DRIVER_TYPE*)driver;
 
 	_master_volume = 127;
+	_music_volume = 60;
+
 	for (i=0; i!=8; i++)
 		_channel_volume[i] = _channel_volume_eff[i] = _volchan_table[i] = 127;
 
