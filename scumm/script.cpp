@@ -488,7 +488,7 @@ void Scumm::push(int a)
 int Scumm::pop()
 {
 	if ((_scummStackPos < 1) || ((unsigned int)_scummStackPos > ARRAYSIZE(_scummStack))) {
-		error("No items on stack to pop() for %s (0x%X) at [%d-%d]\n", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
+		error("No items on stack to pop() for %s (0x%X) at [%d-%d]", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
 	}
 
 	return _scummStack[--_scummStackPos];

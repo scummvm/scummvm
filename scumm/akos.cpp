@@ -595,11 +595,11 @@ void AkosRenderer::codec1()
 	/* implement custom scale table */
 
 
+	v1.scaletable = default_scale_table;
 
+	// FIXME - which value for VAR_CUSTOMSCALETABLE in V8 ?
 	if (_vm->isGlobInMemory(rtString, _vm->_vars[_vm->VAR_CUSTOMSCALETABLE])) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
-	} else {
-		v1.scaletable = default_scale_table;
 	}
 
 	/* Setup color decoding variables */
@@ -1239,10 +1239,10 @@ void AkosRenderer::codec16() {
 	if (!mirror) {
 		dir = -1;
 
-    int tmp_skip_x = skip_x;
-    skip_x = _width-1-cur_x;
-    cur_x = _width-1-tmp_skip_x;
-    width_unk = clip_right;
+		int tmp_skip_x = skip_x;
+		skip_x = _width - 1 - cur_x;
+		cur_x = _width - 1 - tmp_skip_x;
+		width_unk = clip_right;
 /*
 		tmp1 = width - 1;
 		tmp2 = cur_x;
@@ -1252,7 +1252,8 @@ void AkosRenderer::codec16() {
 		tmp1 -= cur_x;
 		width_unk = clip_right;
 		skip_x = tmp3;
-		cur_x = tmp1;*/
+		cur_x = tmp1;
+*/
 	}	else {
 		dir = 1;
 		width_unk = clip_left;
@@ -1415,8 +1416,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 
 		switch (code) {
 		case AKC_StartAnimInActor:
-			akos_queCommand(4, derefActorSafe(a->getAnimVar(GB(2)),
-																				"akos_increaseAnim:29"), a->getAnimVar(GB(3)), 0);
+			akos_queCommand(4, derefActorSafe(a->getAnimVar(GB(2)), "akos_increaseAnim:29"), a->getAnimVar(GB(3)), 0);
 			continue;
 
 		case AKC_Random:
@@ -1460,8 +1460,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 			akos_queCommand(4, a, a->getAnimVar(GB(2)), 0);
 			continue;
 		case AKC_SetVarInActor:
-			derefActorSafe(a->getAnimVar(GB(2)), "akos_increaseAnim:9")->setAnimVar(GB(3), GW(4)
-				);
+			derefActorSafe(a->getAnimVar(GB(2)), "akos_increaseAnim:9")->setAnimVar(GB(3), GW(4));
 			continue;
 		case AKC_HideActor:
 			akos_queCommand(1, a, 0, 0);

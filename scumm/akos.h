@@ -29,11 +29,11 @@
 struct CostumeData;
 
 struct AkosHeader {
-	byte x_1[2];
+	byte unk_1[2];
 	byte flags;
-	byte x_2;
+	byte unk_2;
 	uint16 num_anims;
-	uint16 x_3;
+	uint16 unk_3;
 	uint16 codec;
 } GCC_PACK;
 

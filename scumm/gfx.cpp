@@ -2680,9 +2680,9 @@ void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueS
 	curpal = _currentPalette + startColor * 3;
 	for (i = startColor; i <= endColor; i++) {
 		*table++ = remapPaletteColor((curpal[0] * redScale) >> 8,
-									  curpal[1] * greenScale >> 8,
-									  curpal[2] * blueScale >> 8,
-									  (uint) - 1);
+									 (curpal[1] * greenScale) >> 8,
+									 (curpal[2] * blueScale) >> 8,
+									 (uint) - 1);
 		curpal += 3;
 	}
 }
