@@ -611,7 +611,7 @@ void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, 
 }
 
 void Graphics::fillAnimBuffer(const char *anim, AnimFrame *af) {
-	while (true) {
+	for (;;) {
 		sscanf(anim, "%3hu,%3hu", &af->frame, &af->speed);
 		if (af->frame == 0)
 			break;
