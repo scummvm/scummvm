@@ -83,7 +83,8 @@ void SkyState::go() {
 		_dump_file = stdout;
 
 	initialise();
-	intro();
+	if (!_isDemo)
+		intro();
 	
 	while (1) {
 		delay(100);
