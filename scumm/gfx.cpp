@@ -678,7 +678,7 @@ void Scumm::fadeIn(int effect)
 		transitionEffect(effect - 1);
 		break;
 	case 128:
-		dissolveEffect(8, 8);
+		unkScreenEffect6();
 		break;
 	case 130:
 		unkScreenEffect1();
@@ -735,7 +735,7 @@ void Scumm::fadeOut(int a)
 		transitionEffect(a - 1);
 		break;
 	case 128:
-		dissolveEffect(8, 8);
+		unkScreenEffect6();
 		break;
 	case 129:
 		// Just blit screen 0 to the display (i.e. display will be black)
@@ -2090,6 +2090,13 @@ void Scumm::dissolveEffect(int width, int height) {
 		_system->update_screen();
 		waitForTimer(30);
 	}
+}
+
+void Scumm::unkScreenEffect6() {
+	if (_gameId == GID_LOOM256)
+		dissolveEffect(1, 1);
+	else
+		dissolveEffect(8, 4);
 }
 
 void Scumm::unkScreenEffect5(int a) {

@@ -835,6 +835,7 @@ public:
 	void unkScreenEffect3();
 	void unkScreenEffect4();
 	void unkScreenEffect5(int a);
+	void unkScreenEffect6();
 	void transitionEffect(int a);
 	void dissolveEffect(int width, int height);
 	void scrollEffect(int dir);
