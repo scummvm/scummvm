@@ -7,7 +7,7 @@ Residual TODO list (in rough order of priority):
  * Implement walkboxes and related functions (MakeSectorActive/GetActorSector/isActorInSector, etc)
  * Z-Planes (translate ZBitmap data into OpenGL format?)
  * Implement text fonts and other primitives
- * Check sound decoder - it clips.. possible uint vs int casting issue, perhaps?
+ * Rewrite sound mixer - often clips when music + audio are playing
  * Add OpenGL lighting
  * Add SMUSH (aquadran is looking, Grim seems to uses CMI codecs + 2 new ones)
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
@@ -29,7 +29,6 @@ MSVC notes:
         typedef signed char int8_t;^M
         typedef signed short int16_t;^M
         typedef signed long int32_t;^M
- Do something about the i386 ifdef around bits.hh's get_float
  GL_UNSIGNED_SHORT_5_6_5 in bitmap.cc does not exist in MSVC
  round() function in lua.cpp's check_int does not exist in MSVC
  vsscanf function does not exist in MSVC (already worked around)
