@@ -463,23 +463,18 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 	do {
 		if (_dtCentre) {
 
-			uint32 width = _dtLineWidth;
-			width -= READ_LE_UINT32(centerTblPtr); 
+			uint32 width = (_dtLineWidth - READ_LE_UINT32(centerTblPtr)) >> 1; 
 			centerTblPtr += 4;
-			width >>=1;
 			curDest += width;
 		}
 
 		textChar = (uint8)*curPos++;
 		while (textChar >= 0x20) {
-			textChar -= 0x20;
-			makeGameCharacter(textChar, _characterSet, curDest, color);
+			makeGameCharacter(textChar - 0x20, _characterSet, curDest, color);
 			textChar = *curPos++;
 		}
 
-		curDest = prevDest;	//start of last line
-		curDest += _dtLineSize;	//start of next
-		prevDest = curDest;
+		prevDest = curDest = prevDest + _dtLineSize;	//start of last line + start of next
 
 	} while (textChar >= 10);
 
@@ -517,19 +512,17 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 				if (dataBit) 
 					*curPos = color;
 				else
-					//black edge
-					*curPos = 240; 
+					*curPos = 240; //black edge 
 
 			curPos++;
 		}
 
 		//advance a line
-		curPos = prevPos;
-		curPos += _dtLineWidth;
+		curPos = prevPos + _dtLineWidth;
 	}
 
 	//update position
-	dest = startPos + charWidth + _dtCharSpacing*2 - 1; 
+	dest = startPos + charWidth + _dtCharSpacing * 2 - 1; 
 
 }
 

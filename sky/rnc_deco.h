@@ -32,7 +32,6 @@ protected:
 	uint16 _rawTable[64];
 	uint16 _posTable[64];
 	uint16 _lenTable[64];
-
 	uint16 _crcTable[256];
 	
 	uint16 _bitBuffl;

@@ -115,10 +115,6 @@ uint8 *Disk::loadFile(uint16 fileNr, uint8 *dest) {
 		}
 	}
 
-	#ifdef file_order_chk
-		warning("File order checking not implemented yet");
-	#endif
-
 	_compFile = fileNr;
 	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr); 
 
@@ -152,10 +148,6 @@ uint8 *Disk::loadFile(uint16 fileNr, uint8 *dest) {
 		_fileDest = (uint8 *)malloc(_fileSize + 4);
 
 	_dataDiskHandle->seek(_fileOffset, SEEK_SET);
-
-	#ifdef file_order_chk
-		warning("File order checking not implemented yet");
-	#endif
 
 	//now read in the data
 	bytesRead = _dataDiskHandle->read(_fileDest, 1 * _fileSize);
@@ -286,8 +278,7 @@ uint8 *Disk::getFileInfo(uint16 fileNr) {
 		dnrTbl16Ptr += 4;
 	}
 
-	// if file not found return 0
-	return 0;
+	return 0; //not found
 }
 
 void Disk::fnCacheChip(uint32 list) {

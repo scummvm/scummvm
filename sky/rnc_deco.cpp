@@ -75,8 +75,7 @@ uint16 RncDecoder::crcBlock(const uint8 *block, uint32 size) {
 		crc ^= tmp; 
 		tmp = (uint8)((crc >> 8) & 0x00FF); 
 		crc &= 0x00FF;  
-		crc = crc << 1; 
-		crc = *(uint16 *)&crcTable8[crc];
+		crc = *(uint16 *)&crcTable8[crc << 1];
 		crc ^= tmp;
 	}
 
