@@ -38,14 +38,14 @@ int autosave(int interval)	/* Not in class to prevent being bound */
 
 void Scumm::initRandSeeds()
 {
-	_randSeed1 = 0xA943DE35;
-	_randSeed2 = 0x37A9ED27;
+	_randSeed1 = 0xA943DE33;
+	_randSeed2 = 0x37A9ED29;
 }
 
 uint Scumm::getRandomNumber(uint max)
 {
 	/* TODO: my own random number generator */
-	_randSeed1 = 0xDEADBEEF * (_randSeed1 + 1);
+	_randSeed1 = 0xDEADBF03 * (_randSeed1 + 1);
 	_randSeed1 = (_randSeed1 >> 13) | (_randSeed1 << 19);
 	return _randSeed1 % (max + 1);
 }
