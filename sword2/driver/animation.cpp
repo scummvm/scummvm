@@ -361,6 +361,11 @@ bool AnimationState::decodeFrame() {
 				 * frames if we run behind and delaying if we are too fast
 				 */
 
+				/* Avoid deadlock is sound was too far ahead */
+				if (bgSoundStream && !bgSound.isActive())
+					return false;
+
+
 #ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
 					((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1)) {
