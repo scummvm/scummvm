@@ -51,17 +51,19 @@ private:
 	EntryList _linesArray;
 
 	ScrollBarWidget *_scrollBar;
+	char _gameName[30];
 
 	float _widthPercent, _heightPercent;
 
+	bool loadWalkthroughText();
 	void reflowLayout();
-	bool loadWalkthroughText(const char *gameName);
 
 public:
 	WalkthroughDialog(float widthPercent, float heightPercent);
 	~WalkthroughDialog();
 
-	void create(const char *gameName);
+	void setGameName(const char *gameName);
+	void create();
 	void destroy();
 	void open();
 	void drawDialog();

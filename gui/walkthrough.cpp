@@ -38,7 +38,8 @@ extern const Graphics::NewFont g_consolefont;
 
 WalkthroughDialog::WalkthroughDialog(float widthPercent, float heightPercent)
 	: Dialog(0, 0, 1, 1),
-	_initialized(false), _widthPercent(widthPercent), _heightPercent(heightPercent) {
+		_initialized(false), _widthPercent(widthPercent), _heightPercent(heightPercent) {
+	_gameName[0] = 0;
 }
 
 WalkthroughDialog::~WalkthroughDialog() {
@@ -57,11 +58,11 @@ static int getNextWordLength(byte *src, int maxLength) {
 	return l;
 }
 
-bool WalkthroughDialog::loadWalkthroughText(const char *gameName) {
+bool WalkthroughDialog::loadWalkthroughText() {
 	char filename[MAX_PATH];
 	File file;
 
-	sprintf(filename, "%s.wkt", gameName);
+	sprintf(filename, "%s.wkt", _gameName);
 	file.open(filename);
 	if (!file.isOpen())
 		return false;
@@ -69,6 +70,8 @@ bool WalkthroughDialog::loadWalkthroughText(const char *gameName) {
 	byte *buffer = (byte *)malloc(bufferSize);
 	file.read(buffer, bufferSize);
 	file.close();
+
+	_linesArray.clear();
 
 	int currentLinePos = 0;
 	byte *currentBuffer = buffer;
@@ -117,7 +120,14 @@ bool WalkthroughDialog::loadWalkthroughText(const char *gameName) {
 	return true;
 }
 
-void WalkthroughDialog::create(const char *gameName) {
+void WalkthroughDialog::setGameName(const char *gameName) {
+	strcpy(_gameName, gameName);
+}
+
+void WalkthroughDialog::create() {
+	if (_initialized)
+		destroy();
+
 	// Setup basic layout/dialog size
 	reflowLayout();
 
@@ -128,7 +138,9 @@ void WalkthroughDialog::create(const char *gameName) {
 	_currentPos = 0;
 	_scrollLine = _linesPerPage - 1;
 
-	loadWalkthroughText(gameName);
+	_linesArray.clear();
+
+	loadWalkthroughText();
 
 	_initialized = true;
 }
