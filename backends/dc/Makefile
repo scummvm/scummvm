@@ -15,17 +15,15 @@ LIBS	= -L$(ronindir)/lib -lronin -lz -lm
 EXEEXT = .elf
 EXECUTABLE:= scummvm$(EXEEXT)
 MKDIR = mkdir -p
-ECHO = /usr/ucb/echo -n
 CAT = cat
 RM = rm -f
 RM_REC = rm -rf
 AR = sh-elf-ar cru
 RANLIB = sh-elf-ranlib
+HAVE_GCC3 = true
 
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
 	label.o vmsave.o backends/fs/posix/posix-fs.o
 
 include $(srcdir)/Makefile.common
-
-INCS	+= portdefs.h dc.h
 
