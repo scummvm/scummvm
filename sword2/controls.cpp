@@ -1395,6 +1395,8 @@ void Gui::writeOptionSettings(void) {
 	ConfMan.set("nosubtitles", !gui._subtitles);
 	ConfMan.set("object_labels", gui._pointerTextSelected);
 	ConfMan.set("reverse_stereo", gui._stereoReversed);
+
+	ConfMan.flushToDisk();
 }
 
 uint32 Gui::restoreControl(void) {
