@@ -186,7 +186,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 				openTextObject(text[textCounter]);
 				drawTextObject(text[textCounter]);
 				if (text[textCounter]->speech) {
-					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, SoundMixer::FLAG_16BITS);
+					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
 				}
 			}
 

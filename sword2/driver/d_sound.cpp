@@ -363,14 +363,6 @@ uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 *
 	}
 
 	free(data8);
-
-#ifndef SCUMM_BIG_ENDIAN
-	// Until the mixer supports LE samples natively, we need to convert
-	// our LE ones to BE
-	for (uint j = 0; j < bufferSize / 2; j++)
-		data16[j] = SWAP_BYTES_16(data16[j]);
-#endif
-
 	return bufferSize;
 }
 
@@ -406,7 +398,7 @@ int32 Sound::playCompSpeech(const char *filename, uint32 speechid, uint8 vol, in
 
 		_speechPaused = true;
 			
-		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
+		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN | SoundMixer::FLAG_AUTOFREE;
 
 		_vm->_mixer->playRaw(&_soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, p);
 
@@ -596,17 +588,11 @@ int32 Sound::openFx(int32 id, uint8 *data) {
 			free(_fx[fxi]._buf);
 		_fx[fxi]._buf = (uint16 *) malloc(_fx[fxi]._bufSize);
 		memcpy(_fx[fxi]._buf, (uint8 *) (data32 + 2), _fx[fxi]._bufSize);
-		_fx[fxi]._flags = SoundMixer::FLAG_16BITS;
+		_fx[fxi]._flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN;
 		if (FROM_LE_16(wav->channels) == 2)
 			_fx[fxi]._flags |= SoundMixer::FLAG_STEREO;
 
 		_fx[fxi]._rate = FROM_LE_16(wav->samplesPerSec);
-
-		// Until the mixer supports LE samples natively, we need to
-		// convert our LE ones to BE
-		for (int32 j = 0; j < _fx[fxi]._bufSize / 2; j++)
-			_fx[fxi]._buf[j] = SWAP_BYTES_16(_fx[fxi]._buf[j]);
-
 		_fx[fxi]._id = id;
 	}
 	return RD_OK;
