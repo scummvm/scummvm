@@ -17,8 +17,10 @@
  * $Header$
  */
 
-// The new memory manager, now only used by the resource manager. Unlike the
-// original, this one does not allocate a 12 MB memory pool at startup.
+// The new memory manager, now only used by the resource manager. The original
+// one would allocated a 12 MB memory pool at startup, which may have been
+// appropriate for the original Playstation version but didn't work very well
+// with our PocketPC version.
 //
 // There is one thing that prevents us from replacing the whole memory manager
 // with the standard memory allocation functions: Broken Sword II absolutely,
@@ -26,17 +28,15 @@
 // original engine did this simply by casting between pointers and integers,
 // but as far as I know that's not a very portable thing to do.
 //
-// For a while I was hopeing that the engine only needed pointers as function
-// parameters, in which case I could have extended the stack to use a struct or
-// a union instead, but no such luck. There is code in walker.cpp that
-// obviously violates that assumption, and there are probably other, more
-// well-hidden places, as well.
+// If it had only used pointers as opcode parameters it would have been
+// possible, albeit messy, to extend the stack data type. However, there is
+// code in walker.cpp that obviously violates that assumption, and there are
+// probably other cases as well.
 //
-// This attacks the problem from the direction of another limitation in the
-// original memory manager: it could only handle up to 999 blocks of memory.
-// This memory manager has the same limitation, although it's probably way too
-// large now, which means that a pointer can be encoded as 10 bits to store the
-// block id, and another 22 bits to store an index into that block.
+// Instead, we take advantage of the fact that the original memory manager
+// could only handle up to 999 blocks of memory. That means we can encode a
+// pointer as a 10-bit id and a 22-bit offset into the block. Judging by early
+// testing, both should be plenty.
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
@@ -49,9 +49,27 @@ namespace Sword2 {
 #define Debug_Printf _vm->_debugger->DebugPrintf
 
 MemoryManager::MemoryManager(Sword2Engine *vm) : _vm(vm) {
+	// The id stack contains all the possible ids for the memory blocks.
+	// We use this to ensure that no two blocks ever have the same id.
+
+	// The memory blocks are stored in an array, indexed on the block's
+	// id. This means that given a block id we can find the pointer with a
+	// simple array lookup.
+
+	// The memory block index is an array of pointers to the memory block
+	// array, sorted on the memory block's pointer. This means that given
+	// a pointer into a memory block we can find its id with binary
+	// searching.
+	//
+	// A balanced tree might have been more efficient - the index has to
+	// be re-sorted every time a block is allocated or freed - but such
+	// beasts are tricky to implement. Anyway, it wouldn't have made
+	// encoding or decoding pointers any faster, and these are by far the
+	// most common operations.
+
+	_idStack = (int16 *) malloc(MAX_BLOCKS * sizeof(int16));
 	_memBlocks = (MemBlock *) malloc(MAX_BLOCKS * sizeof(MemBlock));
 	_memBlockIndex = (MemBlock **) malloc(MAX_BLOCKS * sizeof(MemBlock *));
-	_idStack = (int16 *) malloc(MAX_BLOCKS * sizeof(int16));
 
 	_totAlloc = 0;
 	_numBlocks = 0;
@@ -76,17 +94,23 @@ MemoryManager::~MemoryManager() {
 int32 MemoryManager::encodePtr(byte *ptr) {
 	int idx = findPointerInIndex(ptr);
 
-	if (idx == -1)
-		error("Encoding non-allocated pointer %p", ptr);
+	assert(idx != -1);
 
-	int id = _memBlockIndex[idx]->id;
+	uint32 id = _memBlockIndex[idx]->id;
+	uint32 offset = ptr - _memBlocks[id].ptr;
+
+	assert(id <= 0x03ff);
+	assert(offset <= 0x003fffff);
 
 	return (id << 22) | (ptr - _memBlocks[id].ptr);
 }
 
 byte *MemoryManager::decodePtr(int32 n) {
 	int16 id = (n >> 22) & 0x03ff;
-	int32 offset = n & 0x003fffff;
+	uint32 offset = n & 0x003fffff;
+
+	assert(_memBlocks[id].ptr);
+	assert(offset < _memBlocks[id].size);
 
 	return _memBlocks[id].ptr + offset;
 }
@@ -156,23 +180,22 @@ int16 MemoryManager::findInsertionPointInIndex(byte *ptr) {
 }
 
 byte *MemoryManager::memAlloc(uint32 size, int16 uid) {
-	byte *ptr = (byte *) malloc(size);
-
-	assert(ptr);
 	assert(_idStackPtr > 0);
 
 	// Get the new block's id from the stack.
 	int16 id = _idStack[--_idStackPtr];
+
+	// Allocate the new memory block
+	byte *ptr = (byte *) malloc(size);
+
+	assert(ptr);
 
 	_memBlocks[id].id = id;
 	_memBlocks[id].uid = uid;
 	_memBlocks[id].ptr = ptr;
 	_memBlocks[id].size = size;
 
-	// The memory index provides a method for figuring out which memory
-	// block an arbitrary pointer points to. A balanced tree might be more
-	// efficient, but such beasts are tricky to implement.
-
+	// Update the memory block index.
 	int16 idx = findInsertionPointInIndex(ptr);
 
 	assert(idx != -1);
@@ -198,12 +221,13 @@ void MemoryManager::memFree(byte *ptr) {
 	// Put back the id on the stack
 	_idStack[_idStackPtr++] = _memBlockIndex[idx]->id;
 
+	// Release the memory block
 	free(_memBlockIndex[idx]->ptr);
 	_memBlockIndex[idx]->ptr = NULL;
 
 	_totAlloc -= _memBlockIndex[idx]->size;
 	
-	// Remove the pointer from the index
+	// Remove the memory block from the index
 	_numBlocks--;
 
 	for (int i = idx; i < _numBlocks; i++)
@@ -218,7 +242,7 @@ void MemoryManager::memDisplay() {
 void MemoryManager::memStatusStr(char *buf) {
 	if (_totAlloc < 1024)
 		sprintf(buf, "%u bytes in %d memory blocks", _totAlloc, _numBlocks);
-	else if (_totAlloc < 1048576)
+	else if (_totAlloc < 1024 * 1024)
 		sprintf(buf, "%uK in %d memory blocks", _totAlloc / 1024, _numBlocks);
 	else
 		sprintf(buf, "%.02fM in %d memory blocks", _totAlloc / 1048576., _numBlocks);
