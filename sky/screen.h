@@ -51,7 +51,6 @@ class SkyScreen {
 public:
 	SkyScreen(OSystem *pSystem, SkyDisk *pDisk);
 	~SkyScreen(void);
-//	void takeScriptVars(uint32 *pScriptVars) { _scriptVariables = pScriptVars; };
 	void setPalette(uint8 *pal);
 	void setPalette(uint16 fileNum);
 	void paletteFadeUp(uint8 *pal);

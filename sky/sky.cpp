@@ -147,6 +147,7 @@ void SkyState::go() {
 		_skyLogic->engine();
 		_skyScreen->spriteEngine();
 		_skyScreen->flip();
+		_skyScreen->showScreen(_skyScreen->giveCurrent());
 	}
 }
 
@@ -336,7 +337,7 @@ bool SkyState::isDemo(uint32 version) {
 }
 
 bool SkyState::isCDVersion(uint32 version) {
-return false;
+
 	switch (version) {
 	case 267:
 		return false;
