@@ -786,6 +786,7 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 		break;
 	case 23:
 		_charset->clearCharsetMask();
+		_fullRedraw = 1;
 		break;
 	default:
 		warning("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
