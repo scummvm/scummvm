@@ -862,7 +862,11 @@ void Scumm_v2::o2_doSentence() {
 		VAR(VAR_ACTIVE_VERB) = st->verb;
 		VAR(VAR_ACTIVE_OBJECT1) = st->objectA;
 		VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
-		runObjectScript(st->objectA, st->verb, 0, 0, NULL);
+		
+		if (st->verb == 250)
+			runObjectScript(st->objectA, 253, false, true, NULL);
+		else
+			runObjectScript(st->objectA, st->verb, false, false, NULL);
 
 		break;
 	case 2:
