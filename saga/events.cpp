@@ -29,6 +29,7 @@
  Notes: 
 */
 
+#include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"
@@ -44,7 +45,8 @@
 #include "text_mod.h"
 #include "palanim_mod.h"
 #include "render_mod.h"
-#include "sndres_mod.h"
+#include "game_mod.h"
+#include "sndres.h"
 
 /*
  * Begin module
@@ -308,7 +310,7 @@ static int HandleOneShot(R_EVENT * event)
 
 	case R_VOICE_EVENT:
 
-		SND_PlayVoice(event->param);
+		_vm->_snd->playVoice(event->param);
 		break;
 
 	case R_MUSIC_EVENT:

@@ -43,41 +43,36 @@
 /*
  * Begin module component
 \*--------------------------------------------------------------------------*/
-#include "sndres_mod.h"
 #include "sndres.h"
 
 namespace Saga {
 
-R_SNDRES_MODULE SndModule;
-
-int SND_Init(void) {
+Snd::Snd(void) {
 	int result;
 
 	/* Load sound module resource file contexts */
-	result = GAME_GetFileContext(&SndModule.sfx_ctxt, R_GAME_SOUNDFILE, 0);
+	result = GAME_GetFileContext(&_sfx_ctxt, R_GAME_SOUNDFILE, 0);
 	if (result != R_SUCCESS) {
-		return R_FAILURE;
+		return;
 	}
 
-	result = GAME_GetFileContext(&SndModule.voice_ctxt,
+	result = GAME_GetFileContext(&_voice_ctxt,
 	    R_GAME_VOICEFILE, 0);
 	if (result != R_SUCCESS) {
-		return R_FAILURE;
+		return;
 	}
 
 	/* Grab sound resource information for the current game */
-	GAME_GetSoundInfo(&SndModule.snd_info);
+	GAME_GetSoundInfo(&_snd_info);
 
-	SndModule.init = 1;
-
-	return R_SUCCESS;
+	_init = 1;
 }
 
-int SND_PlayVoice(ulong voice_rn) {
+int Snd::playVoice(ulong voice_rn) {
 	R_SOUNDBUFFER snd_buffer;
 	int result;
 
-	result = SND_Load(SndModule.voice_ctxt, voice_rn, &snd_buffer);
+	result = load(_voice_ctxt, voice_rn, &snd_buffer);
 	if (result != R_SUCCESS) {
 		return R_FAILURE;
 	}
@@ -87,7 +82,7 @@ int SND_PlayVoice(ulong voice_rn) {
 	return R_SUCCESS;
 }
 
-int SND_Load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i) {
+int Snd::load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i) {
 	uchar *snd_res;
 	size_t snd_res_len;
 
@@ -100,11 +95,11 @@ int SND_Load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i
 		return R_FAILURE;
 	}
 
-	switch (SndModule.snd_info.res_type) {
+	switch (_snd_info.res_type) {
 	case R_GAME_SOUND_PCM:
-		snd_buf_i->s_freq = SndModule.snd_info.freq;
-		snd_buf_i->s_samplebits = SndModule.snd_info.sample_size;
-		snd_buf_i->s_stereo = SndModule.snd_info.stereo;
+		snd_buf_i->s_freq = _snd_info.freq;
+		snd_buf_i->s_samplebits = _snd_info.sample_size;
+		snd_buf_i->s_stereo = _snd_info.stereo;
 
 		snd_buf_i->res_data = snd_res;
 		snd_buf_i->res_len = snd_res_len;
@@ -117,7 +112,7 @@ int SND_Load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i
 		break;
 
 	case R_GAME_SOUND_VOC:
-		if (LoadVocSound(snd_res, snd_res_len, snd_buf_i) != R_SUCCESS) {
+		if (loadVocSound(snd_res, snd_res_len, snd_buf_i) != R_SUCCESS) {
 
 			RSC_FreeResource(snd_res);
 
@@ -137,7 +132,7 @@ int SND_Load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i
 	return R_SUCCESS;
 }
 
-int LoadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i) {
+int Snd::loadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i) {
 	R_VOC_HEADER_BLOCK voc_hb;
 	R_VOC_GENBLOCK voc_gb;
 	R_VOC_BLOCK1 voc_b1;
@@ -197,7 +192,7 @@ int LoadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_bu
 			read_len -= 2;
 
 			if (voc_b1.pack_method != 0) {
-				/* Packed VOC files not supported */
+				debug(0, "Packed VOC files not supported");
 				return R_FAILURE;
 			}
 
@@ -230,7 +225,7 @@ int LoadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_bu
 	return R_SUCCESS;
 }
 
-int SND_GetVoiceLength(ulong voice_rn) {
+int Snd::getVoiceLength(ulong voice_rn) {
 	ulong length;
 
 	double ms_f;
@@ -238,20 +233,20 @@ int SND_GetVoiceLength(ulong voice_rn) {
 
 	int result;
 
-	assert(SndModule.init);
+	assert(_init);
 
-	result = RSC_GetResourceSize(SndModule.voice_ctxt, voice_rn, &length);
+	result = RSC_GetResourceSize(_voice_ctxt, voice_rn, &length);
 	if (result != R_SUCCESS) {
 		return -1;
 	}
 
-	if (SndModule.snd_info.res_type == R_GAME_SOUND_PCM) {
+	if (_snd_info.res_type == R_GAME_SOUND_PCM) {
 		ms_f = (double)length /
-		    (SndModule.snd_info.sample_size / CHAR_BIT) /
-		    (SndModule.snd_info.freq) * 1000.0;
+		    (_snd_info.sample_size / CHAR_BIT) /
+		    (_snd_info.freq) * 1000.0;
 
 		ms_i = (int)ms_f;
-	} else if (SndModule.snd_info.res_type == R_GAME_SOUND_VOC) {
+	} else if (_snd_info.res_type == R_GAME_SOUND_VOC) {
 		/* Rough hack, fix this to be accurate */
 		ms_f = (double)length / 14705 * 1000.0;
 		ms_i = (int)ms_f;
@@ -262,7 +257,7 @@ int SND_GetVoiceLength(ulong voice_rn) {
 	return ms_i;
 }
 
-int SND_ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf, 
+int Snd::ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf, 
 						size_t src_buf_len, uchar **dst_buf, size_t *dst_buf_len) {
 	uchar *resamp_buf;
 	size_t resamp_len;

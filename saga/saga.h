@@ -24,6 +24,7 @@
 #ifndef SAGA_H
 #define SAGA_H
 
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "base/engine.h"
 #include "base/gameDetector.h"
@@ -32,6 +33,8 @@
 //#include "gamedesc.h"
 
 namespace Saga {
+
+class Snd;
 
 #define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 
@@ -50,9 +53,12 @@ class SagaEngine:public Engine {
 
  public:
 	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
+	virtual ~SagaEngine();
+	Snd *_snd;
 };
+
+// FIXME: Global var. We use it until everything will be turned into objects
+extern SagaEngine *_vm;
 
 } // End of namespace Saga
 

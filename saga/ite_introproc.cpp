@@ -27,14 +27,10 @@
 
  Notes: 
 */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "saga.h"
+#include "reinherit.h"
 
 #include "yslib.h"
-
-#include "reinherit.h"
 
 /*
  * Uses the following modules:
@@ -46,7 +42,7 @@
 #include "game_mod.h"
 #include "rscfile_mod.h"
 #include "scene_mod.h"
-#include "sndres_mod.h"
+#include "sndres.h"
 #include "text_mod.h"
 #include "palanim_mod.h"
 
@@ -354,7 +350,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			voice_len =
-			    SND_GetVoiceLength(IntroDiag[i].i_voice_rn);
+			    _vm->_snd->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
 				voice_len = strlen(IntroDiag[i].i_str) *
 				    VOICE_LETTERLEN;
@@ -474,7 +470,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			voice_len =
-			    SND_GetVoiceLength(IntroDiag[i].i_voice_rn);
+			    _vm->_snd->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
 				voice_len = strlen(IntroDiag[i].i_str) *
 				    VOICE_LETTERLEN;
@@ -592,7 +588,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			voice_len =
-			    SND_GetVoiceLength(IntroDiag[i].i_voice_rn);
+			    _vm->_snd->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
 				voice_len = strlen(IntroDiag[i].i_str) *
 				    VOICE_LETTERLEN;
@@ -709,7 +705,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			voice_len =
-			    SND_GetVoiceLength(IntroDiag[i].i_voice_rn);
+			    _vm->_snd->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
 				voice_len = strlen(IntroDiag[i].i_str) *
 				    VOICE_LETTERLEN;

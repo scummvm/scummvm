@@ -50,7 +50,7 @@
 #include "isomap_mod.h"
 #include "script_mod.h"
 #include "scene_mod.h"
-#include "sndres_mod.h"
+#include "sndres.h"
 #include "sprite_mod.h"
 #include "text_mod.h"
 #include "objectmap_mod.h"
@@ -132,6 +132,8 @@ static void CF_testfunc(int argc, char *argv[]);
 
 static R_MAIN_DATA MainData;
 
+SagaEngine *_vm = NULL;
+
 SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
@@ -144,8 +146,7 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
 
-	// Initialize backend
-	//syst->initSize(320, 240);
+	_vm = this;
 }
 
 SagaEngine::~SagaEngine() {
@@ -210,7 +211,7 @@ void SagaEngine::go() {
 
 	/* Initialize engine modules
 	 * \*------------------------------------------------------------- */
-	SND_Init();
+	_snd = new Snd();
 	EVENT_Init();
 	FONT_Init();
 	SPRITE_Init();

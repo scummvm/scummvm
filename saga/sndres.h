@@ -62,17 +62,28 @@ struct R_VOC_BLOCK1 {
 	int pack_method;	/* BYTE */
 };
 
-struct R_SNDRES_MODULE {
-	int init;
+class Snd {
+ public:
 
-	R_RSCFILE_CONTEXT *sfx_ctxt;
-	R_RSCFILE_CONTEXT *voice_ctxt;
+	Snd(void);
 
-	R_GAME_SOUNDINFO snd_info;
-};
+	int loadSound(ulong sound_rn);
+	int playVoice(ulong voice_rn);
+	int getVoiceLength(ulong voice_rn);
+	int ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf,
+						size_t src_buf_len, uchar **dst_buf, size_t *dst_buf_len);
 
-int SND_Load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i);
-int LoadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i);
+ private:
+	int load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i);
+	int loadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i);
+
+	int _init;
+
+	R_RSCFILE_CONTEXT *_sfx_ctxt;
+	R_RSCFILE_CONTEXT *_voice_ctxt;
+
+	R_GAME_SOUNDINFO _snd_info;
+ };
 
 } // End of namespace Saga
 
