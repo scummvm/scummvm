@@ -100,11 +100,26 @@ struct Rect {
 		bottom = MAX(bottom, r.bottom);
 	}
 	
+	/*!	@brief extend this rectangle in all four directions by the given number of pixels
+		
+		@param offset the size to grow by
+	*/
 	void grow(int16 offset) {
 		top -= offset;
 		left -= offset;
 		bottom += offset;
 		right += offset;
+	}
+	
+	void clip(const Rect & r) {
+		if (top < r.top) top = r.top;
+		if (left < r.left) left = r.left;
+		if (bottom > r.bottom) bottom = r.bottom;
+		if (right > r.right) right = r.right;
+	}
+	
+	void clip(int maxw, int maxh) {
+		clip(Rect(0, 0, maxw, maxh));
 	}
 };
 
