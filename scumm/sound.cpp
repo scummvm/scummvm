@@ -825,7 +825,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 	}
 
 	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->stopSound(kTalkSoundID);
+		//_scumm->_imuseDigital->stopSound(kTalkSoundID);
 		_scumm->_imuseDigital->startVoice(kTalkSoundID, input);
 	} else {
 		_scumm->_mixer->playInputStream(handle, input, false, 255, 0, id);

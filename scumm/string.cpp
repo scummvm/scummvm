@@ -923,7 +923,7 @@ const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
 		// Play speech
 		if (!(_features & GF_DEMO) && (_gameId == GID_CMI)) // CMI demo does not have .IMX for voice
 			strcat(pointer, ".IMX");
-		_imuseDigital->stopSound(kTalkSoundID);
+//		_imuseDigital->stopSound(kTalkSoundID);
 		_imuseDigital->startVoice(kTalkSoundID, pointer);
 
 		ptr = _transText;
