@@ -107,6 +107,8 @@ public:
 	int getCurrentPal(PALENTRY *src_pal);
 	int palToBlack(SURFACE *surface, PALENTRY *src_pal, double percent);
 	int blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent);
+	void updateCursor() { setCursor(getWhite()); }
+	void showCursor(bool state);
 
 private:
 	void setCursor(int best_white);

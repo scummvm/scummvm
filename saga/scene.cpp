@@ -174,6 +174,7 @@ int Scene::clearSceneQueue() {
 int Scene::startScene() {
 	YS_DL_NODE *node;
 	SCENE_QUEUE *scene_qdat;
+	EVENT event;
 
 	assert(_initialized);
 
@@ -186,6 +187,12 @@ int Scene::startScene() {
 		warning("Scene::start(): Error: Can't start game...game already started");
 		return FAILURE;
 	}
+
+	// Hide cursor during intro
+	event.type = ONESHOT_EVENT;
+	event.code = CURSOR_EVENT;
+	event.op = EVENT_HIDE;
+	_vm->_events->queue(&event);
 
 	switch (GAME_GetGameType()) {
 	case GID_ITE:
@@ -965,6 +972,7 @@ static void CF_objectinfo(int argc, char *argv[], void *refCon) {
 
 int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 	EVENT event;
+	EVENT *q_event;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -1011,8 +1019,14 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
-		_vm->_events->queue(&event);
+		q_event = _vm->_events->queue(&event);
 		
+		// Show cursor
+		event.type = ONESHOT_EVENT;
+		event.code = CURSOR_EVENT;
+		event.op = EVENT_SHOW;
+		_vm->_events->chain(q_event, &event);
+
 		// Start scene animations
 		_vm->_anim->setFlag(0, ANIM_LOOP);
 		_vm->_anim->play(0, 0);

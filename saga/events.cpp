@@ -408,6 +408,17 @@ int Events::handleOneShot(EVENT *event) {
 			_vm->_script->SThreadCompleteThread();
 
 		break;
+	case CURSOR_EVENT:
+		switch (event->op) {
+		case EVENT_SHOW:
+			_vm->_gfx->showCursor(true);
+			break;
+		case EVENT_HIDE:
+			_vm->_gfx->showCursor(false);
+			break;
+		default:
+			break;
+		}
 	default:
 		break;
 	}

@@ -1029,6 +1029,11 @@ int Gfx::blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent) {
 	return SUCCESS;
 }
 
+void Gfx::showCursor(bool state) {
+	updateCursor();
+	g_system->showMouse(state);
+}
+
 void Gfx::setCursor(int best_white) {
 	int i;
 	byte keycolor = (best_white == 0) ? 1 : 0;
