@@ -252,6 +252,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_speed = speed;
 	_insanity = false;
 	_middleAudio = false;
+	_IACTstream = NULL;
 #ifdef _WIN32_WCE
 	_inTimer = false;
 	_inTimerCount = 0;
