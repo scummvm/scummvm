@@ -558,7 +558,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 	Object_speech *ob_speech;
 	int32 pars[9];
-	int32 ret;
 
 	ob_speech = (Object_speech *) _vm->_memory->intToPtr(params[1]);
 
@@ -766,7 +765,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[0] = params[0];		// ob_graphic
 			pars[1] = ob_speech->ins1;	// anim_resource
 			pars[2] = ob_speech->ins2;	// FIRST_FRAME or LAST_FRAME
-			ret = fnSetFrame(pars);
+			fnSetFrame(pars);
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
 			return IR_REPEAT;		// come back again next cycle
@@ -861,13 +860,13 @@ int32 Logic::fnISpeak(int32 *params) {
 	uint32 local_text;
 	uint32 text_res;
 	uint8 *text;
-	static uint8 textRunning, speechRunning;
+	static bool speechRunning;
 	int32 *anim_table;
-	uint8 speechFinished = 0;
+	bool speechFinished = false;
 	int8 speech_pan;
 	char speechFile[256];
-	static uint8 cycle_skip = 0;
-  	uint32	rv;
+	static bool cycle_skip = false;
+  	uint32 rv;
 
 	// for text/speech testing & checking for correct file type
 	_standardHeader	*head;
@@ -892,18 +891,18 @@ int32 Logic::fnISpeak(int32 *params) {
 		// for this line either, then just quit back to script right
 		// now!
 
-		if (_vm->_gui->_subtitles == 0 && wantSpeechForLine(params[S_WAV]) == 0)
+		if (!_vm->_gui->_subtitles && !wantSpeechForLine(params[S_WAV]))
 			return IR_CONT;
 
-		if (cycle_skip == 0) {
+		if (!cycle_skip) {
 			// drop out for 1st cycle to allow walks/anims to end
 			// & display last frame/ before system locks while
 			// speech loaded
 
-			cycle_skip = 1;
+			cycle_skip = true;
 			return IR_REPEAT;
 		} else
-			cycle_skip = 0;
+			cycle_skip = false;
 
 		_vm->_debugger->_textNumber = params[S_TEXT];	// for debug info
 
@@ -932,7 +931,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				if (head->fileType == TEXT_FILE) {
 					// if it's not an animation file
 					// if line number is out of range
-					if (_vm->checkTextLine((uint8 *) head, local_text) == 0) {
+					if (!_vm->checkTextLine((uint8 *) head, local_text)) {
 						// line number out of range
 						RESULT = 2;
 					}
@@ -1049,7 +1048,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// is it to be speech or subtitles or both?
 
 		// assume not running until know otherwise
-		speechRunning = 0;
+		speechRunning = false;
 
 		// New fudge for 'fx' subtitles
 		// if speech is selected, and this line is allowed speech
@@ -1097,8 +1096,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			rv = _vm->_sound->playCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);
 			if (rv == RD_OK) {
 				// ok, we've got something to play
-				// (2 means not playing yet - see below)
-				speechRunning = 1;
+				speechRunning = true;
 
 				// set it playing now (we might want to do
 				// this next cycle, don't know yet)
@@ -1109,15 +1107,10 @@ int32 Logic::fnISpeak(int32 *params) {
 		}
 
 		// if we want subtitles, or speech failed to load
-		if (_vm->_gui->_subtitles || speechRunning == 0) {
+		if (_vm->_gui->_subtitles || !speechRunning) {
 			// then we're going to show the text
-			textRunning = 1;
-
 			// so create the text sprite
 			formText(params);
-		} else {
-			// otherwise don't want text
-			textRunning = 0;
 		}
 	}
 
@@ -1170,16 +1163,16 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// if there is a wav then we're using that to end the speech naturally
 
-	// if playing a sample (note that value of '2' means about to play!)
+	// if playing a sample
 
-	if (speechRunning == 1) {
+	if (speechRunning) {
 		if (!_unpauseZone) {
 			// has it finished?
 			if (_vm->_sound->getSpeechStatus() == RDSE_SAMPLEFINISHED)
-				speechFinished = 1;
+				speechFinished = true;
 		} else
 			_unpauseZone--;
-	} else if (speechRunning == 0 && _speechTime) {
+	} else if (!speechRunning && _speechTime) {
 		// counting down text time because there is no sample - this
 		// ends the speech
 
@@ -1188,7 +1181,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 		_speechTime--;
 		if (!_speechTime)
-			speechFinished = 1;
+			speechFinished = true;
 	}
 
 	// ok, all is running along smoothly - but a click means stop
@@ -1219,12 +1212,11 @@ int32 Logic::fnISpeak(int32 *params) {
 				}
 			}
 
-			do {
-				// trash anything thats buffered
-				me = _vm->_input->mouseEvent();
-			} while (me);
+			// Trash anything that's buffered
+			while (_vm->_input->mouseEvent())
+				;
 
-			speechFinished = 1;
+			speechFinished = true;
 
 			// if speech sample playing
 			if (speechRunning) {
@@ -1254,8 +1246,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			ob_graphic->anim_pc = 0;
 		}
 
-		textRunning = 0;
-		speechRunning = 0;
+		speechRunning = false;
 
 		// no longer in a script function loop
 		ob_logic->looping = 0;

@@ -203,15 +203,10 @@ uint8 *Sword2Engine::fetchTextLine(uint8 *file, uint32 text_line) {
 
 // Used for testing text & speech (see fnISpeak in speech.cpp)
 
-uint8 Sword2Engine::checkTextLine(uint8 *file, uint32 text_line) {
+bool Sword2Engine::checkTextLine(uint8 *file, uint32 text_line) {
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
-	// out of range => invalid
-	if (text_line >= text_header->noOfLines)
-		return 0;
-
-	// valid
-	return 1;
+	return text_line < text_header->noOfLines;
 }
 
 uint8 *Sword2Engine::fetchObjectName(int32 resourceId) {

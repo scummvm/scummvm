@@ -274,7 +274,7 @@ public:
 	_parallax *fetchBackgroundLayer(uint8 *screenFile);
 	_parallax *fetchForegroundParallaxLayer(uint8 *screenFile, int layer);
 	uint8 *fetchTextLine(uint8 *file, uint32 text_line);
-	uint8 checkTextLine(uint8 *file, uint32	text_line);
+	bool checkTextLine(uint8 *file, uint32 text_line);
 	uint8 *fetchPaletteMatchTable(uint8 *screenFile);
 	uint8 *fetchObjectName(int32 resourceId);
 
