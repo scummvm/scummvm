@@ -29,7 +29,7 @@
 
 void Scumm::redrawVerbs() {
 	int i;
-	int verb = checkMouseOver(mouse.x, mouse.y);
+	int verb = (_cursor.state > 0 ? checkMouseOver(mouse.x, mouse.y) : 0);
 	for (i = _maxVerbs-1; i >= 0; i--) {
 		if (i == verb && _verbs[verb].hicolor)
 			drawVerb(i, 1);
