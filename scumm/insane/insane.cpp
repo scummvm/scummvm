@@ -754,7 +754,7 @@ int32 Insane::idx2Tweak(void) {
 }
 
 void Insane::smush_setToFinish(void) {
-	debug(INSANE_DBG, "Video is set to finish");
+	debugC(DEBUG_INSANE, "Video is set to finish");
 	_vm->_videoFinished = 1;
 }
 
@@ -798,7 +798,7 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 
 	int tmp, idx = scenePropIdx[scenePropNum];
 
-	debug(INSANE_DBG, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
+	debugC(DEBUG_INSANE, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
 
 	if (!loadScenePropSounds(idx))
 		return;
@@ -840,7 +840,7 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 							  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames) {
 	int32 tmp;
 	
-	debug(INSANE_DBG, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, arg_C, arg_10,
+	debugC(DEBUG_INSANE, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, arg_C, arg_10,
 		  startFrame, numFrames);
 	if (_needSceneSwitch || _sceneData1Loaded)
 		return;
@@ -859,7 +859,7 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 }
 
 void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
-	debug(INSANE_DBG, "smush_rewindCurrentSan(%d, %d, %d)", arg_0, arg_4, arg_8);
+	debugC(DEBUG_INSANE, "smush_rewindCurrentSan(%d, %d, %d)", arg_0, arg_4, arg_8);
 	_smush_setupsan2 = arg_0;
 	
 	smush_setupSanFile(0, 8, 0);
@@ -955,7 +955,7 @@ void Insane::escapeKeyHandler(void) {
 	if (_needSceneSwitch || _keyboardDisable)
 		return;
 
-	debug(INSANE_DBG, "scene: %d", _currSceneId);
+	debugC(DEBUG_INSANE, "scene: %d", _currSceneId);
 	switch (_currSceneId) {
 	case 1:
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
@@ -1338,7 +1338,7 @@ void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int dir
 }
 
 const char *Insane::handleTrsTag(int32 trsId) {
-	debug(INSANE_DBG, "Insane::handleTrsTag(%d)", trsId);
+	debugC(DEBUG_INSANE, "Insane::handleTrsTag(%d)", trsId);
 	return _player->getString(trsId);
 }
 
@@ -1390,7 +1390,7 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 	byte *tmp = fluPtr;
 	int32 offset;
 	
-	debug(INSANE_DBG, "smush_setupSanWithFlu(%s, %d, %d, %d, %d, %lx, %d)", filename, setupsan2,
+	debugC(DEBUG_INSANE, "smush_setupSanWithFlu(%s, %d, %d, %d, %d, %lx, %d)", filename, setupsan2,
 		  step1, step2, setupsan1, fluPtr, numFrames);
 
 	_smush_setupsan1 = setupsan1;
@@ -1428,7 +1428,7 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 
 void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1, 
 									 int32 step2, int32 setupsan1) {
-	debug(INSANE_DBG, "Insane::smush_setupFromStart(%s)", filename);
+	debugC(DEBUG_INSANE, "Insane::smush_setupFromStart(%s)", filename);
 	_smush_setupsan1 = setupsan1;
 	_smush_setupsan2 = setupsan2;
 	smush_setupSanFile(filename, 8, 0);
@@ -1444,7 +1444,7 @@ void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
 }
 
 void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFrame) {
-	debug(INSANE_DBG, "Insane::smush_setupSanFile(%s, %x, %d)", filename, offset, contFrame);
+	debugC(DEBUG_INSANE, "Insane::smush_setupSanFile(%s, %x, %d)", filename, offset, contFrame);
 
 	_player->seekSan(filename, _vm->getGameDataPath(), offset, contFrame);
 

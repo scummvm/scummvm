@@ -60,7 +60,7 @@ void Insane::runScene(int arraynum) {
 	putActors();
 	readState();
 
-	debug(INSANE_DBG, "INSANE Arg: %d", readArray(0));
+	debugC(DEBUG_INSANE, "INSANE Arg: %d", readArray(0));
 
 	switch (readArray(0)) {
 	case 1:
@@ -169,7 +169,7 @@ void Insane::runScene(int arraynum) {
 }
 
 int Insane::initScene(int sceneId) {
-	debug(INSANE_DBG, "initScene(%d)", sceneId);
+	debugC(DEBUG_INSANE, "initScene(%d)", sceneId);
 
 	if (_needSceneSwitch)
 		return 1;
@@ -191,7 +191,7 @@ int Insane::initScene(int sceneId) {
 void Insane::stopSceneSounds(int sceneId) {
 	int flag = 0;
 
-	debug(INSANE_DBG, "stopSceneSounds(%d)", sceneId);
+	debugC(DEBUG_INSANE, "stopSceneSounds(%d)", sceneId);
 
 	switch (sceneId) {
 	case 1:
@@ -283,7 +283,7 @@ void Insane::stopSceneSounds(int sceneId) {
 }
 
 void Insane::shutCurrentScene(void) {
-	debug(INSANE_DBG, "shutCurrentScene()");
+	debugC(DEBUG_INSANE, "shutCurrentScene()");
 
 	_currScenePropIdx = 0;
 	_currTrsMsg = 0;
@@ -312,7 +312,7 @@ void Insane::shutCurrentScene(void) {
 int Insane::loadSceneData(int scene, int flag, int phase) {
 	int retvalue = 1;
 
-	debug(INSANE_DBG, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
+	debugC(DEBUG_INSANE, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
 	//if (phase == 1) /// FIXME
 	//	insane_unlock();
 	switch (scene) {
@@ -606,7 +606,7 @@ int Insane::loadSceneData(int scene, int flag, int phase) {
 }
 
 void Insane::setSceneCostumes(int sceneId) {
-	debug(INSANE_DBG, "Insane::setSceneCostumes(%d)", sceneId);
+	debugC(DEBUG_INSANE, "Insane::setSceneCostumes(%d)", sceneId);
 
 	switch (sceneId) {
 	case 1:
@@ -656,7 +656,7 @@ void Insane::setSceneCostumes(int sceneId) {
 void Insane::setEnemyCostumes(void) {
 	int i;
 
-	debug(INSANE_DBG, "setEnemyCostumes(%d)", _currEnemy);
+	debugC(DEBUG_INSANE, "setEnemyCostumes(%d)", _currEnemy);
 
 	smlayer_setActorCostume(0, 2, readArray(12));
 	smlayer_setActorCostume(0, 0, readArray(14));
