@@ -33,7 +33,7 @@ namespace Common {
  *       balanced. Ultimately this template should be reimplemented, e.g. using
  *       a red-black tree. Or if one day using Std C++ lib becomes acceptable,
  *       we can use that.
- * @todo Having unit tests for class map would be very desirable. There are a 
+ * @todo Having unit tests for this class would be very desirable. There are a 
  *       big number of things which can go wrong in this code.
  */
 template <class Key, class Value>
@@ -51,14 +51,9 @@ protected:
 	Node *_root;
 	Node *_header;
 
-	Map<Key, Value>(const Map<Key, Value> &map) {
-		error("No copy constructor!");
-		return 0;
-	}
-	Map<Key, Value> &operator =(const Map<Key, Value> &map) {
-		error("No copy operator!");
-		return 0;
-	}
+private:
+	Map<Key, Value>(const Map<Key, Value> &map);
+	Map<Key, Value> &operator =(const Map<Key, Value> &map);
 
 public:
 	class ConstIterator {
