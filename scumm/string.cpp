@@ -589,8 +589,15 @@ void ScummEngine::addNameToStack(int var) {
 	num = readVar(var);
 	if (num) {
 		const byte *ptr = getObjOrActorName(num);
-		if (ptr)
-			addMessageToStack(ptr, 0, 0);
+		if (ptr) {
+			if ((_version >= 7) && (ptr[0] == '/')) {
+				byte buf[128];
+				translateText(ptr, buf);
+				addMessageToStack(buf, 0, 0);
+			} else {
+				addMessageToStack(ptr, 0, 0);
+			}
+		}
 	}
 }
 
@@ -613,9 +620,10 @@ void ScummEngine::addStringToStack(int var) {
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-			if ((_version == 8) && (ptr[0] == '/')) {
-				translateText(ptr, _transText);
-				addMessageToStack(_transText, 0, 0);
+			if ((_version >= 7) && (ptr[0] == '/')) {
+				byte buf[128];
+				translateText(ptr, buf);
+				addMessageToStack(buf, 0, 0);
 			} else {
 				addMessageToStack(ptr, 0, 0);
 			}
@@ -898,6 +906,30 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 			found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 		if (found != NULL) {
 			strcpy((char *)trans_buff, _languageBuffer + found->offset);
+
+			// FIXME / TODO: Maybe this should be enabled for Full Throttle, too?
+			if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
+				// Replace any '%___' by the corresponding special codes in the source text
+				const byte *src = text;
+				char *dst = (char *)trans_buff;
+
+				while ((dst = strstr(dst, "%___"))) {
+					// Search for a special code in the message. They have
+					// the form:  255-byte OP-byte ARG-int16
+					while (*src && *src != 0xFF) {
+						src++;
+					}
+					
+					// Replace the %___ by the special code
+					if (*src == 0xFF) {
+						memcpy(dst, src, 4);
+						src += 4;
+						dst += 4;
+					} else
+						break;
+				}
+			}
+
 			return;
 		}
 	}

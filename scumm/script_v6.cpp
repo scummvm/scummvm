@@ -2479,32 +2479,16 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 16:
 		case 17:{
-			const byte *message;
-			byte buf_input[300], buf_output[300];
-			message = buf_input;
-			addMessageToStack(getStringAddressVar(VAR_STRING2DRAW), buf_input, sizeof(buf_input));
+			byte buf_input[300];
+			const byte *message = getStringAddressVar(VAR_STRING2DRAW);
+
 			if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
-				byte buf_trans[300];
-				char *t_ptr = (char *)buf_input;
-				buf_output[0] = 0;
-				while (t_ptr != NULL) {
-					if (*t_ptr == '/') {
-						translateText((byte *)t_ptr, buf_trans);
-						// hack 
-						if (strstr((char *)buf_trans, "%___") != 0) {
-							strcat((char *)buf_output, " ");
-						} else {
-							strcat((char *)buf_output, (char *)buf_trans);
-						}
-					}
-					t_ptr = strchr((char *)t_ptr + 1, '/');
-					if (t_ptr == NULL)
-						break;
-					t_ptr = strchr((char *)t_ptr + 1, '/');
-				}
-				message = buf_output;
+				translateText(message, _transText);
+				message = _transText;
 			}
-			enqueueText(message, args[3], args[4], args[2], args[1], true);
+
+			addMessageToStack(message, buf_input, sizeof(buf_input));
+			enqueueText(buf_input, args[3], args[4], args[2], args[1], true);
 			break;}
 		case 20:
 			// it's used for turn on/off 'RadioChatter' effect for voice in the dig, but i's not needed
