@@ -225,12 +225,9 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
 		if (selItem >= 0) {
-			if (!getResultString().isEmpty()) {
+			if (_saveMode || !getResultString().isEmpty()) {
 				setResult(selItem);
 				close();
-			} else if (_saveMode) {
-				// Start editing the selected item, for saving
-				_list->startEditMode();
 			}
 		}
 		break;
@@ -238,7 +235,10 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		if (_saveMode) {
 			_list->startEditMode();
 		}
-		_chooseButton->setEnabled(selItem >= 0);
+		// Disable button if nothing is selected, or (in load mode) if an empty
+		// list item is selected. We allow choosing an empty item in save mode
+		// because we then just assign a default name.
+		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().isEmpty()));
 		_chooseButton->draw();
 		break;
 	default:
@@ -365,7 +365,16 @@ void MainMenuDialog::save() {
 	SaveLoadChooser dialog("Save game:", generateSavegameList(_scumm, true), "Save", true);
 	idx = dialog.runModal();
 	if (idx >= 0) {
-		_scumm->requestSave(idx + 1, dialog.getResultString().c_str());
+		const String &result = dialog.getResultString();
+		char buffer[20];
+		const char *str;
+		if (result.isEmpty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			sprintf(buffer, "Save %d", idx + 1);
+			str = buffer;
+		} else
+			str = result.c_str();
+		_scumm->requestSave(idx + 1, str);
 		close();
 	}
 }
