@@ -613,7 +613,7 @@ void Scumm::redrawBGAreas()
 	int diff;
 
 	if (!(_features & GF_AFTER_V7))
-		if (camera._cur.x != camera._last.x && charset._hasMask)
+		if (camera._cur.x != camera._last.x && _charset._hasMask)
 			stopTalk();
 
 	val = 0;
@@ -675,14 +675,14 @@ void Scumm::restoreCharsetBg()
 {
 	if (gdi._mask_left != -1) {
 		restoreBG(gdi._mask_left, gdi._mask_top, gdi._mask_right, gdi._mask_bottom);
-		charset._hasMask = false;
+		_charset._hasMask = false;
 		gdi._mask_left = -1;
-		charset._strLeft = -1;
-		charset._left = -1;
+		_charset._strLeft = -1;
+		_charset._left = -1;
 	}
 
-	charset._nextLeft = _string[0].xpos;
-	charset._nextTop = _string[0].ypos;
+	_charset._nextLeft = _string[0].xpos;
+	_charset._nextTop = _string[0].ypos;
 }
 
 void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
@@ -725,7 +725,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
 
 	if (vs->alloctwobuffers && _currentRoom != 0 /*&& _vars[VAR_V5_DRAWFLAGS]&2 */ ) {
 		blit(backbuff, bgbak, width, height);
-		if (vs->number == 0 && charset._hasMask && height) {
+		if (vs->number == 0 && _charset._hasMask && height) {
 			byte *mask;
 			int mask_width = (width >> 3);
 
@@ -751,7 +751,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
 
 int Scumm::hasCharsetMask(int x, int y, int x2, int y2)
 {
-	if (!charset._hasMask || y > gdi._mask_bottom || x > gdi._mask_right ||
+	if (!_charset._hasMask || y > gdi._mask_bottom || x > gdi._mask_right ||
 			y2 < gdi._mask_top || x2 < gdi._mask_left)
 		return 0;
 	return 1;
@@ -1737,7 +1737,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 			runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 
-		if (camera._cur.x != camera._last.x && charset._hasMask)
+		if (camera._cur.x != camera._last.x && _charset._hasMask)
 			stopTalk();
 	}
 }

@@ -289,7 +289,7 @@ void Scumm::scummInit()
 	_numObjectsInRoom = 0;
 	_actorToPrintStrFor = 0;
 
-	charset._bufPos = 0;
+	_charset._bufPos = 0;
 	_haveMsg = 0;
 
 	_varwatch = -1;
@@ -487,7 +487,7 @@ int Scumm::scummLoop(int delta)
 	if (_completeScreenRedraw) {
 		_completeScreenRedraw = false;
 		gdi.clearUpperMask();
-		charset._hasMask = false;
+		_charset._hasMask = false;
 		redrawVerbs();
 		_fullRedraw = true;
 	}
@@ -1557,7 +1557,7 @@ void Scumm::mainRun()
 
 void Scumm::launch()
 {
-	charset._vm = this;
+	_charset._vm = this;
 	gdi._vm = this;
 
 	_maxHeapThreshold = 450000;

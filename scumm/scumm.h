@@ -908,7 +908,7 @@ public:
 
 
 	/* String class */
-	CharsetRenderer charset;
+	CharsetRenderer _charset;
 	byte _charsetColor;
 	bool _noSubtitles;	// Skip all subtitles?
 	byte _charsetData[15][16];

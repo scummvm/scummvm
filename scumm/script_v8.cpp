@@ -35,8 +35,10 @@
  * might even be wrong... so don't hold your breath.
  */
 
-#define OPCODE(x)	{ &Scumm_v8::x, #x }
 
+// #define FONT_HACK
+
+#ifdef FONT_HACK
 // FIXME: Copied from smush/player.cpp - this should probably go somewhere sensible :)
 static FontRenderer *loadFont(const char * file, const char * directory, bool original = false) {
 #ifdef DEBUG
@@ -47,6 +49,11 @@ static FontRenderer *loadFont(const char * file, const char * directory, bool or
         p.play(file, directory);
         return fr;
 }
+#endif
+
+
+
+#define OPCODE(x)	{ &Scumm_v8::x, #x }
 
 void Scumm_v8::setupOpcodes()
 {
@@ -759,7 +766,9 @@ void Scumm_v8::o8_cursorCommand()
 			char fontname[255];
 			sprintf(fontname, "resource/font%d.nut", charset);
 
-//			_fr[charset] = loadFont(fontname, getGameDataPath(), true);
+#ifdef FONT_HACK
+			_fr[charset] = loadFont(fontname, getGameDataPath(), true);
+#endif
 
 			if (!_fr[charset])
 				warning("Failed to load font %d from %s%s\n", charset, getGameDataPath(), fontname);
@@ -769,7 +778,7 @@ void Scumm_v8::o8_cursorCommand()
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, sizeof(args) / sizeof(args[0]));
 		for (i = 0; i < 16; i++)
-			charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
+			_charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9:		// SO_CURSOR_PUT
 	default:

@@ -864,7 +864,7 @@ void Scumm_v6::o6_cursorCommand()
 	case 0x9D:										/* set charset colors */
 		getStackList(args, sizeof(args) / sizeof(args[0]));
 		for (i = 0; i < 16; i++)
-			charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
+			_charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xD6:
 		makeCursorColorTransparent(pop());
@@ -2582,10 +2582,10 @@ void Scumm_v6::o6_miscOps()
 				setStringVars(0);
 				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
 				if (strncmp("/SYSTEM.007/ /", (char *)buf, 14) == 0) {
-					translateText(buf + 13, charset._buffer);
+					translateText(buf + 13, _charset._buffer);
 					//description();
 				}	else if (strncmp("/SYSTEM.007/ ", (char *)buf, 13) == 0) {
-					strcpy((char *)charset._buffer, (char *)buf + 13);
+					strcpy((char *)_charset._buffer, (char *)buf + 13);
 					//description();
 				}
 			} else { 

@@ -494,28 +494,28 @@ void Scumm::CHARSET_1()
 		}
 	}
 
-	charset._top = _string[0].ypos;
-	charset._startLeft = charset._left = _string[0].xpos;
+	_charset._top = _string[0].ypos;
+	_charset._startLeft = _charset._left = _string[0].xpos;
 
 	if (a && a->charset)
-		charset.setCurID(a->charset);
+		_charset.setCurID(a->charset);
 	else
-		charset.setCurID(_string[0].charset);
+		_charset.setCurID(_string[0].charset);
 
 
-	charset._center = _string[0].center;
-	charset._right = _string[0].right;
-	charset._color = _charsetColor;
+	_charset._center = _string[0].center;
+	_charset._right = _string[0].right;
+	_charset._color = _charsetColor;
 
 	if (!(_features & GF_OLD256))	// FIXME
 		for (i = 0; i < 4; i++)
-			charset._colorMap[i] = _charsetData[charset.getCurID()][i];
+			_charset._colorMap[i] = _charsetData[_charset.getCurID()][i];
 
 	if (_keepText) {
-		charset._strLeft = gdi._mask_left;
-		charset._strRight = gdi._mask_right;
-		charset._strTop = gdi._mask_top;
-		charset._strBottom = gdi._mask_bottom;
+		_charset._strLeft = gdi._mask_left;
+		_charset._strRight = gdi._mask_right;
+		_charset._strTop = gdi._mask_top;
+		_charset._strBottom = gdi._mask_bottom;
 	}
 
 	if (_talkDelay)
@@ -555,23 +555,23 @@ void Scumm::CHARSET_1()
 		restoreCharsetBg();
 	}
 
-	t = charset._right - _string[0].xpos - 1;
-	if (charset._center) {
-		if (t > charset._nextLeft)
-			t = charset._nextLeft;
+	t = _charset._right - _string[0].xpos - 1;
+	if (_charset._center) {
+		if (t > _charset._nextLeft)
+			t = _charset._nextLeft;
 		t <<= 1;
 	}
 
-	buffer = charset._buffer + charset._bufPos;
-	charset.addLinebreaks(0, buffer, 0, t);
+	buffer = _charset._buffer + _charset._bufPos;
+	_charset.addLinebreaks(0, buffer, 0, t);
 
-	if (charset._center) {
-		charset._nextLeft -= charset.getStringWidth(0, buffer, 0) >> 1;
-		if (charset._nextLeft < 0)
-			charset._nextLeft = 0;
+	if (_charset._center) {
+		_charset._nextLeft -= _charset.getStringWidth(0, buffer, 0) >> 1;
+		if (_charset._nextLeft < 0)
+			_charset._nextLeft = 0;
 	}
 
-	charset._disableOffsX = charset._firstChar = !_keepText;
+	_charset._disableOffsX = _charset._firstChar = !_keepText;
 
 	do {
 		c = *buffer++;
@@ -585,16 +585,16 @@ void Scumm::CHARSET_1()
 		if (c == 13) {
 		newLine:;
 			if (_features & GF_OLD256) {
-				charset._nextTop = 8;
-				charset._nextLeft = 0;
+				_charset._nextTop = 8;
+				_charset._nextLeft = 0;
 				continue;
 			} else {
-				charset._nextLeft = _string[0].xpos;
-				if (charset._center) {
-					charset._nextLeft -= charset.getStringWidth(0, buffer, 0) >> 1;
+				_charset._nextLeft = _string[0].xpos;
+				if (_charset._center) {
+					_charset._nextLeft -= _charset.getStringWidth(0, buffer, 0) >> 1;
 				}
-				charset._nextTop += charset.getFontPtr()[1];
-				charset._disableOffsX = true;
+				_charset._nextTop += _charset.getFontPtr()[1];
+				_charset._disableOffsX = true;
 				continue;
 			}
 		}
@@ -603,20 +603,20 @@ void Scumm::CHARSET_1()
 			c = 0xFF;
 
 		if (c != 0xFF) {
-			charset._left = charset._nextLeft;
-			charset._top = charset._nextTop;
+			_charset._left = _charset._nextLeft;
+			_charset._top = _charset._nextTop;
 			if (_features & GF_OLD256)
-				charset.printCharOld(c);
+				_charset.printCharOld(c);
 			else if (!(_features & GF_AFTER_V6)) {
 				if (!(_haveMsg == 0xFE && _noSubtitles))
-					charset.printChar(c);
+					_charset.printChar(c);
 			} else {
 				if (!((_haveMsg == 0xFE || _haveMsg == 0xFF) && _noSubtitles))
-					charset.printChar(c);
+					_charset.printChar(c);
 			}
 
-			charset._nextLeft = charset._left;
-			charset._nextTop = charset._top;
+			_charset._nextLeft = _charset._left;
+			_charset._nextTop = _charset._top;
 			_talkDelay += _vars[VAR_CHARINC];
 			continue;
 		}
@@ -654,21 +654,21 @@ void Scumm::CHARSET_1()
 			color = *buffer++;
 			color |= *buffer++ << 8;
 			if (color == 0xFF)
-				charset._color = _charsetColor;
+				_charset._color = _charsetColor;
 			else
-				charset._color = color;
+				_charset._color = color;
 			break;
 		case 13:
 			buffer += 2;
 			break;
 		case 14: {
-			int oldy = charset.getFontPtr()[1];
+			int oldy = _charset.getFontPtr()[1];
 
-			charset.setCurID(*buffer++);
+			_charset.setCurID(*buffer++);
 			buffer += 2;
 			for (i = 0; i < 4; i++)
-				charset._colorMap[i] = _charsetData[charset.getCurID()][i];
-			charset._nextTop -= charset.getFontPtr()[1] - oldy;
+				_charset._colorMap[i] = _charsetData[_charset.getCurID()][i];
+			_charset._nextTop -= _charset.getFontPtr()[1] - oldy;
 			break;
 			}
 		default:
@@ -689,12 +689,12 @@ void Scumm::CHARSET_1()
 	if (a && has_anim)
 		a->startAnimActor(frme != -1 ? frme : a->talkFrame1);
 
-	charset._bufPos = buffer - charset._buffer;
+	_charset._bufPos = buffer - _charset._buffer;
 
-	gdi._mask_left = charset._strLeft;
-	gdi._mask_right = charset._strRight;
-	gdi._mask_top = charset._strTop;
-	gdi._mask_bottom = charset._strBottom;
+	gdi._mask_left = _charset._strLeft;
+	gdi._mask_right = _charset._strRight;
+	gdi._mask_top = _charset._strTop;
+	gdi._mask_bottom = _charset._strBottom;
 }
 
 void Scumm::description()
@@ -702,22 +702,22 @@ void Scumm::description()
 	int c;
 	byte *buffer;
 
-	buffer = charset._buffer;
+	buffer = _charset._buffer;
 	_string[0].ypos = camera._cur.y + 88;
-	_string[0].xpos = (_realWidth / 2) - (charset.getStringWidth(0, buffer, 0) >> 1);
+	_string[0].xpos = (_realWidth / 2) - (_charset.getStringWidth(0, buffer, 0) >> 1);
 	if (_string[0].xpos < 0)
 		_string[0].xpos = 0;
 
-	charset._bufPos = 0;
-	charset._top = _string[0].ypos;
-	charset._startLeft = charset._left = _string[0].xpos;
-	charset._right = _realWidth - 1;
-	charset._center = false;
-	charset._color = 15;
-	charset._disableOffsX = charset._firstChar = true;
-	charset.setCurID(3);
-	charset._nextLeft = _string[0].xpos;
-	charset._nextTop = _string[0].ypos;
+	_charset._bufPos = 0;
+	_charset._top = _string[0].ypos;
+	_charset._startLeft = _charset._left = _string[0].xpos;
+	_charset._right = _realWidth - 1;
+	_charset._center = false;
+	_charset._color = 15;
+	_charset._disableOffsX = _charset._firstChar = true;
+	_charset.setCurID(3);
+	_charset._nextLeft = _string[0].xpos;
+	_charset._nextTop = _string[0].ypos;
 	// FIXME: _talkdelay = 1 - display description, not correct ego actor talking,
 	// 0 - no display, correct ego actor talking
 	_talkDelay = 0;
@@ -731,19 +731,19 @@ void Scumm::description()
 			break;
 		}
 		if (c != 0xFF) {
-			charset._left = charset._nextLeft;
-			charset._top = charset._nextTop;
-			charset.printChar(c);
-			charset._nextLeft = charset._left;
-			charset._nextTop = charset._top;
+			_charset._left = _charset._nextLeft;
+			_charset._top = _charset._nextTop;
+			_charset.printChar(c);
+			_charset._nextLeft = _charset._left;
+			_charset._nextTop = _charset._top;
 			continue;
 		}
 	} while (1);
 
-	gdi._mask_left = charset._strLeft;
-	gdi._mask_right = charset._strRight;
-	gdi._mask_top = charset._strTop;
-	gdi._mask_bottom = charset._strBottom;
+	gdi._mask_left = _charset._strLeft;
+	gdi._mask_right = _charset._strRight;
+	gdi._mask_top = _charset._strTop;
+	gdi._mask_bottom = _charset._strBottom;
 }
 
 void Scumm::drawDescString(byte *msg)
@@ -753,21 +753,21 @@ void Scumm::drawDescString(byte *msg)
 	buf = _msgPtrToAdd = buffer;
 	addMessageToStack(msg);
 
-	charset._bufPos = 0;
-	charset._top = _string[0].ypos;
-	charset._startLeft = charset._left = _string[0].xpos;
-	charset._right = _realWidth - 1;
-	charset._center = _string[0].center;
-	charset._color = _string[0].color;
-	charset._disableOffsX = charset._firstChar = true;
-	charset.setCurID(_string[0].charset);
-	charset._nextLeft = _string[0].xpos;
-	charset._nextTop = _string[0].ypos;
+	_charset._bufPos = 0;
+	_charset._top = _string[0].ypos;
+	_charset._startLeft = _charset._left = _string[0].xpos;
+	_charset._right = _realWidth - 1;
+	_charset._center = _string[0].center;
+	_charset._color = _string[0].color;
+	_charset._disableOffsX = _charset._firstChar = true;
+	_charset.setCurID(_string[0].charset);
+	_charset._nextLeft = _string[0].xpos;
+	_charset._nextTop = _string[0].ypos;
 
 	// Center text
-	charset._nextLeft -= charset.getStringWidth(0, buffer, 0) >> 1;
-	if (charset._nextLeft < 0)
-		charset._nextLeft = 0;
+	_charset._nextLeft -= _charset.getStringWidth(0, buffer, 0) >> 1;
+	if (_charset._nextLeft < 0)
+		_charset._nextLeft = 0;
 
 	_talkDelay = 1;
 
@@ -780,19 +780,19 @@ void Scumm::drawDescString(byte *msg)
 			break;
 		}
 		if (c != 0xFF) {
-			charset._left = charset._nextLeft;
-			charset._top = charset._nextTop;
-			charset.printChar(c);
-			charset._nextLeft = charset._left;
-			charset._nextTop = charset._top;
+			_charset._left = _charset._nextLeft;
+			_charset._top = _charset._nextTop;
+			_charset.printChar(c);
+			_charset._nextLeft = _charset._left;
+			_charset._nextTop = _charset._top;
 			continue;
 		}
 	} while (1);
 
-	gdi._mask_left = charset._strLeft;
-	gdi._mask_right = charset._strRight;
-	gdi._mask_top = charset._strTop;
-	gdi._mask_bottom = charset._strBottom;
+	gdi._mask_left = _charset._strLeft;
+	gdi._mask_right = _charset._strRight;
+	gdi._mask_top = _charset._strTop;
+	gdi._mask_bottom = _charset._strBottom;
 }
 
 void Scumm::drawString(int a)
@@ -806,19 +806,19 @@ void Scumm::drawString(int a)
 	_msgPtrToAdd = buf;
 	_messagePtr = addMessageToStack(_messagePtr);
 
-	charset._top = _string[a].ypos;
-	charset._startLeft = charset._left = _string[a].xpos;
-	charset._right = _string[a].right;
-	charset._center = _string[a].center;
-	charset._color = _string[a].color;
-	charset._disableOffsX = charset._firstChar = true;
-	charset.setCurID(_string[a].charset);
+	_charset._top = _string[a].ypos;
+	_charset._startLeft = _charset._left = _string[a].xpos;
+	_charset._right = _string[a].right;
+	_charset._center = _string[a].center;
+	_charset._color = _string[a].color;
+	_charset._disableOffsX = _charset._firstChar = true;
+	_charset.setCurID(_string[a].charset);
 
 	if (!(_features & GF_OLD256)) {
 		for (i = 0; i < 4; i++)
-			charset._colorMap[i] = _charsetData[charset.getCurID()][i];
+			_charset._colorMap[i] = _charsetData[_charset.getCurID()][i];
 
-		fontHeight = charset.getFontPtr()[1];
+		fontHeight = _charset.getFontPtr()[1];
 	}
 
 	_msgPtrToAdd = buf;
@@ -836,12 +836,12 @@ void Scumm::drawString(int a)
 	}
 	if (space)
 		*space = '\0';
-	if (charset._center) {
-		charset._left -= charset.getStringWidth(a, buf, 0) >> 1;
+	if (_charset._center) {
+		_charset._left -= _charset.getStringWidth(a, buf, 0) >> 1;
 	}
 
 	if (!(_features & GF_AFTER_V7))
-		charset._ignoreCharsetMask = true;
+		_charset._ignoreCharsetMask = true;
 
 
 	// In Full Throttle (and other games?), verb text should always mask
@@ -868,55 +868,55 @@ void Scumm::drawString(int a)
 				break;
 			case 1:
 			case 8:
-				if (charset._center) {
-					charset._left = charset._startLeft - charset.getStringWidth(a, buf, i);
+				if (_charset._center) {
+					_charset._left = _charset._startLeft - _charset.getStringWidth(a, buf, i);
 				} else {
-					charset._left = charset._startLeft;
+					_charset._left = _charset._startLeft;
 				}
-				charset._top += fontHeight;
+				_charset._top += fontHeight;
 				break;
 			case 12:
 				color = buf[i] + (buf[i + 1] << 8);
 				i += 2;
 				if (color == 0xFF)
-					charset._color = _string[a].color;
+					_charset._color = _string[a].color;
 				else
-					charset._color = color;
+					_charset._color = color;
 				break;
 			}
 		} else {
 			if (a == 1 && (_features & GF_AFTER_V6)) {
 				if (_string[a].no_talk_anim == 0)
-					charset._blitAlso = true;
+					_charset._blitAlso = true;
 			}
 			if (_features & GF_OLD256)
-				charset.printCharOld(chr);
+				_charset.printCharOld(chr);
 			else
-				charset.printChar(chr);
-			charset._blitAlso = false;
+				_charset.printChar(chr);
+			_charset._blitAlso = false;
 		}
 	}
 
-	charset._ignoreCharsetMask = false;
+	_charset._ignoreCharsetMask = false;
 
 	if (a == 0) {
-		charset._nextLeft = charset._left;
-		charset._nextTop = charset._top;
+		_charset._nextLeft = _charset._left;
+		_charset._nextTop = _charset._top;
 	} 
 
 
-	_string[a].xpos = charset._strRight + 8;	// Indy3: Fixes Grail Diary text positioning
+	_string[a].xpos = _charset._strRight + 8;	// Indy3: Fixes Grail Diary text positioning
 
 	if (_features & GF_AFTER_V7) {
-		charset._hasMask = true;
-		if (charset._strLeft < gdi._mask_left)
-			gdi._mask_left = charset._strLeft;
-		if (charset._strRight > gdi._mask_right)
-			gdi._mask_right = charset._strRight;
-		if (charset._strTop < gdi._mask_top)
-			gdi._mask_top = charset._strTop;
-		if (charset._strBottom > gdi._mask_bottom)
-			gdi._mask_bottom = charset._strBottom;
+		_charset._hasMask = true;
+		if (_charset._strLeft < gdi._mask_left)
+			gdi._mask_left = _charset._strLeft;
+		if (_charset._strRight > gdi._mask_right)
+			gdi._mask_right = _charset._strRight;
+		if (_charset._strTop < gdi._mask_top)
+			gdi._mask_top = _charset._strTop;
+		if (_charset._strBottom > gdi._mask_bottom)
+			gdi._mask_bottom = _charset._strBottom;
 	} 
 }
 
@@ -1118,7 +1118,7 @@ void Scumm::initCharset(int charsetno)
 	_string[1].t_charset = charsetno;
 
 	for (i = 0; i < 16; i++)
-		charset._colorMap[i] = _charsetData[charset.getCurID()][i];
+		_charset._colorMap[i] = _charsetData[_charset.getCurID()][i];
 }
 void Scumm::loadLanguageBundle() {
 	File file;

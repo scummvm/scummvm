@@ -655,7 +655,7 @@ void Scumm_v5::o5_cursorCommand()
 	case 14:											/* unk */
 		getWordVararg(table);
 		for (i = 0; i < 16; i++)
-			charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)table[i];
+			_charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)table[i];
 		break;
 	}
 
