@@ -418,7 +418,9 @@ void Cutaway::actionSpecialMove(int index) {
 			
 		// c74a.cut - Wait for car to reach correct position before pouring oil
 		case 31:
-			// XXX while(bamindex!=60) update();
+			while (_graphics->bamData()->index != 60) {
+				_logic->update();
+			}
 			break;
 
 		// c75b.cut - Screen shake
