@@ -1745,13 +1745,7 @@ void SimonState::o_print_str()
 		break;
 
 	case GAME_SIMON1DEMO:
-		talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
-		break;
-
 	case GAME_SIMON1DOS:
-		talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
-		break;
-
 	case GAME_SIMON2DOS:
 		talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
