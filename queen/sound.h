@@ -80,6 +80,7 @@ public:
 
 	static const songData _songDemo[];
 	static const songData _song[];
+	static const tuneData _tuneDemo[];
 	static const tuneData _tune[];
 	static const char *_sfxName[];
 	static const int16 _jungleList[];
