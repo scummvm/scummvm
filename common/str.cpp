@@ -129,58 +129,6 @@ String& String::operator +=(char c)
 	return *this;
 }
 
-bool String::operator ==(const String& x) const
-{
-	return (_len == x._len) && ((_len == 0) || (0 == strcmp(_str, x._str)));
-}
-
-bool String::operator ==(const char* x) const
-{
-	if (_str == 0)
-		return (x == 0) || (*x == 0);
-	if (x == 0)
-		return (_len == 0);
-	return (0 != strcmp(_str, x));
-}
-
-bool String::operator !=(const String& x) const
-{
-	return (_len != x._len) || ((_len != 0) && (0 != strcmp(_str, x._str)));
-}
-
-bool String::operator !=(const char* x) const
-{
-	if (_str == 0)
-		return (x != 0) && (*x != 0);
-	if (x == 0)
-		return (_len != 0);
-	return (0 == strcmp(_str, x));
-}
-
-bool String::operator < (const String& x) const
-{
-	if (!_len || !x._len)	// Any or both particpants are empty?
-		return !_len && x._len;	// Less only if this string is empty and the other isn't
-	return strcmp(_str, x._str) < 0;
-}
-
-bool String::operator <= (const String& x) const
-{
-	if (!_len || !x._len)	// Any or both particpants are empty?
-		return !_len;	// Less or equal unless the other string is empty and this one isn't
-	return strcmp(_str, x._str) <= 0;
-}
-
-bool String::operator > (const String& x) const
-{
-	return (x < *this);
-}
-
-bool String::operator >= (const String& x) const
-{
-	return (x <= *this);
-}
-
 void String::deleteLastChar() {
 	if (_len > 0) {
 		ensureCapacity(_len - 1, true);
@@ -222,12 +170,68 @@ void String::ensureCapacity(int new_len, bool keep_old)
 	_str = newStr;
 }
 
-bool operator == (const char* y, const String& x)
+
+#pragma mark -
+
+
+bool ConstString::operator ==(const ConstString& x) const
+{
+	return (_len == x._len) && ((_len == 0) || (0 == strcmp(_str, x._str)));
+}
+
+bool ConstString::operator ==(const char* x) const
+{
+	if (_str == 0)
+		return (x == 0) || (*x == 0);
+	if (x == 0)
+		return (_len == 0);
+	return (0 != strcmp(_str, x));
+}
+
+bool ConstString::operator !=(const ConstString& x) const
+{
+	return (_len != x._len) || ((_len != 0) && (0 != strcmp(_str, x._str)));
+}
+
+bool ConstString::operator !=(const char* x) const
+{
+	if (_str == 0)
+		return (x != 0) && (*x != 0);
+	if (x == 0)
+		return (_len != 0);
+	return (0 == strcmp(_str, x));
+}
+
+bool ConstString::operator < (const ConstString& x) const
+{
+	if (!_len || !x._len)	// Any or both particpants are empty?
+		return !_len && x._len;	// Less only if this string is empty and the other isn't
+	return strcmp(_str, x._str) < 0;
+}
+
+bool ConstString::operator <= (const ConstString& x) const
+{
+	if (!_len || !x._len)	// Any or both particpants are empty?
+		return !_len;	// Less or equal unless the other string is empty and this one isn't
+	return strcmp(_str, x._str) <= 0;
+}
+
+bool ConstString::operator > (const ConstString& x) const
+{
+	return (x < *this);
+}
+
+bool ConstString::operator >= (const ConstString& x) const
+{
+	return (x <= *this);
+}
+
+bool operator == (const char* y, const ConstString& x)
 {
 	return (x == y);
 }
 
-bool operator != (const char* y, const String& x)
+bool operator != (const char* y, const ConstString& x)
 {
 	return x != y;
 }

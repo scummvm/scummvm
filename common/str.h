@@ -37,17 +37,42 @@ namespace ScummVM {
  real String object, will a malloc be issued (to this end, make String aware of
  ConstString ?!?
 */
-class String {
+
+class ConstString {
+protected:
+	char	*_str;
+	int		_len;
+
+public:
+	ConstString() : _str(0), _len(0) {}
+	ConstString(const char *str) : _str((char*)str) { _len = str ? strlen(str) : 0;}
+	virtual ~ConstString() {}
+	
+	bool operator ==(const ConstString& x) const;
+	bool operator ==(const char* x) const;
+	bool operator !=(const ConstString& x) const;
+	bool operator !=(const char* x) const;
+	bool operator <(const ConstString& x) const;
+	bool operator <=(const ConstString& x) const;
+	bool operator >(const ConstString& x) const;
+	bool operator >=(const ConstString& x) const;
+
+	const char *c_str() const		{ return _str; }
+	int size() const				{ return _len; }
+
+	bool isEmpty() const	{ return (_len == 0); }
+};
+
+class String : public ConstString {
 protected:
 	int		*_refCount;
 	int		_capacity;
-	int		_len;
-	char	*_str;
+
 public:
-	String() : _capacity(0), _len(0), _str(0) { _refCount = new int(1); }
+	String() : _capacity(0) { _refCount = new int(1); }
 	String(const char *str);
 	String(const String &str);
-	~String();
+	virtual ~String();
 	
 	String& operator  =(const char* str);
 	String& operator  =(const String& str);
@@ -55,22 +80,8 @@ public:
 	String& operator +=(const String& str);
 	String& operator +=(char c);
 
-	bool operator ==(const String& x) const;
-	bool operator ==(const char* x) const;
-	bool operator !=(const String& x) const;
-	bool operator !=(const char* x) const;
-	bool operator <(const String& x) const;
-	bool operator <=(const String& x) const;
-	bool operator >(const String& x) const;
-	bool operator >=(const String& x) const;
-
-	const char *c_str() const		{ return _str; }
-	int size() const				{ return _len; }
-	
 	void deleteLastChar();
 	void clear();
-
-	bool isEmpty() const	{ return (_len == 0); }
 
 protected:
 	void ensureCapacity(int new_len, bool keep_old);
@@ -78,8 +89,8 @@ protected:
 };
 
 // Some useful additional comparision operators for Strings
-bool operator == (const char* x, const String& y);
-bool operator != (const char* x, const String& y);
+bool operator == (const char* x, const ConstString& y);
+bool operator != (const char* x, const ConstString& y);
 
 class StringList : public List<String> {
 public:
