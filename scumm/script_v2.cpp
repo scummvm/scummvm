@@ -38,7 +38,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 04 */
-		OPCODE(o5_isGreaterEqual),
+		OPCODE(o2_isGreaterEqual),
 		OPCODE(o2_drawObject),
 		OPCODE(o2_getActorElevation),
 		OPCODE(o2_setState08),
@@ -103,7 +103,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_setState01),
 		/* 38 */
-		OPCODE(o5_lessOrEqual),
+		OPCODE(o2_isLessEqual),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_subtract),
 		OPCODE(o2_waitForActor),
@@ -118,7 +118,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_startScript),
 		OPCODE(o2_getActorX),
 		/* 44 */
-		OPCODE(o5_isLess),
+		OPCODE(o2_isLess),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_increment),
 		OPCODE(o2_clearState08),
@@ -183,7 +183,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* 78 */
-		OPCODE(o5_isGreater),
+		OPCODE(o2_isGreater),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_verbOps),
 		OPCODE(o2_getActorWalkBox),
@@ -198,7 +198,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 84 */
-		OPCODE(o5_isGreaterEqual),
+		OPCODE(o2_isGreaterEqual),
 		OPCODE(o2_drawObject),
 		OPCODE(o2_getActorElevation),
 		OPCODE(o2_setState08),
@@ -263,7 +263,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_setState01),
 		/* B8 */
-		OPCODE(o5_lessOrEqual),
+		OPCODE(o2_isLessEqual),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_subtract),
 		OPCODE(o2_waitForActor),
@@ -278,7 +278,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_startScript),
 		OPCODE(o2_getActorX),
 		/* C4 */
-		OPCODE(o5_isLess),
+		OPCODE(o2_isLess),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_decrement),
 		OPCODE(o2_clearState08),
@@ -343,7 +343,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* F8 */
-		OPCODE(o5_isGreater),
+		OPCODE(o2_isGreater),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_verbOps),
 		OPCODE(o2_getActorWalkBox),
@@ -1140,6 +1140,43 @@ void Scumm_v2::o2_getActorY() {
 
 	a = getVarOrDirectByte(0x80);
 	setResult(getObjY(a) / 2);
+}
+
+void Scumm_v2::o2_isGreater() {
+	uint16 a = getVar();
+	uint16 b = getVarOrDirectWord(0x80);
+	if (b > a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_isGreaterEqual() {
+	uint16 a = getVar();
+	uint16 b = getVarOrDirectWord(0x80);
+	if (b >= a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_isLess() {
+	uint16 a = getVar();
+	uint16 b = getVarOrDirectWord(0x80);
+
+	if (b < a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_isLessEqual() {
+	uint16 a = getVar();
+	uint16 b = getVarOrDirectWord(0x80);
+	if (b <= a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
 }
 
 void Scumm_v2::o2_loadRoomWithEgo() {

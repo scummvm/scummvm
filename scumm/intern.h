@@ -254,6 +254,10 @@ protected:
 	void o2_ifState02();
 	void o2_ifState04();
 	void o2_ifState08();
+	void o2_isGreater();
+	void o2_isGreaterEqual();
+	void o2_isLess();
+	void o2_isLessEqual();
 	void o2_loadRoomWithEgo();
 	void o2_setBoxFlags();
 	void o2_panCameraTo();
