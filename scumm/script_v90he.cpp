@@ -178,7 +178,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_cutscene),
 		OPCODE(o6_stopMusic),
 		OPCODE(o6_freezeUnfreeze),
-		OPCODE(o7_cursorCommand),
+		OPCODE(o80_cursorCommand),
 		/* 6C */
 		OPCODE(o6_breakHere),
 		OPCODE(o6_ifClassOfIs),
@@ -423,7 +423,7 @@ void ScummEngine_v90he::o90_unknown1C() {
 		case 10:
 		{
 			int flags = pop();
-			pop();
+			int state = pop();
 			int y1 = pop();
 			int x1 = pop();
 			int resnum = pop();
@@ -436,7 +436,7 @@ void ScummEngine_v90he::o90_unknown1C() {
 				pwi->flags = flags;
 				++_wizImagesNum;
 			} else {
-				drawWizImage(rtImage, resnum, x1, y1, flags);
+				drawWizImage(rtImage, resnum, state, x1, y1, flags);
 			}
 		}
 			break;

@@ -697,12 +697,14 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
-	void drawWizImage(int restype, int resnum, int x1, int y1, int flags);
+	void drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags);
 	void flushWizBuffer();
 
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	int copyScriptString(byte *dst);
+
+	const byte *findWrappedBlock(uint32 tag, const byte *ptr, int state, bool flagError);
 
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();
@@ -777,10 +779,15 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+
+	void loadImgSpot(int resId, int state, Common::Point spot);
+	void loadWizCursor(int resId, int resType, bool state);
+
 	
 	/* HE version 80 script opcodes */
 	void o80_unknown49();
 	void o80_unknown4D();
+	void o80_cursorCommand();
 	void o80_setState();
 };
 

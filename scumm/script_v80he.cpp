@@ -178,7 +178,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_cutscene),
 		OPCODE(o6_stopMusic),
 		OPCODE(o6_freezeUnfreeze),
-		OPCODE(o7_cursorCommand),
+		OPCODE(o80_cursorCommand),
 		/* 6C */
 		OPCODE(o6_breakHere),
 		OPCODE(o6_ifClassOfIs),
@@ -411,6 +411,107 @@ void ScummEngine_v80he::o80_unknown4D() {
 		error("o80_unknown4D: default type %d", type);
 	}
 	debug(1, "o80_unknown4D (%d) %s %s %s", type, option, option2, option3);
+}
+
+void ScummEngine_v80he::o80_cursorCommand() {
+	int a, i;
+	int args[16];
+	int subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 0x13: // Loads cursors from another resource
+		a = pop();
+		loadWizCursor(a, rtInventory, 0);
+		break;
+	case 0x14:
+		a = pop();
+		loadWizCursor(a, rtInventory, 1);
+		break;
+	case 0x90:		// SO_CURSOR_ON Turn cursor on
+		_cursor.state = 1;
+		verbMouseOver(0);
+		break;
+	case 0x91:		// SO_CURSOR_OFF Turn cursor off
+		_cursor.state = 0;
+		verbMouseOver(0);
+		break;
+	case 0x92:		// SO_USERPUT_ON
+		_userPut = 1;
+		break;
+	case 0x93:		// SO_USERPUT_OFF
+		_userPut = 0;
+		break;
+	case 0x94:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+		_cursor.state++;
+		if (_cursor.state > 1)
+			error("Cursor state greater than 1 in script");
+		break;
+	case 0x95:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+		_cursor.state--;
+		break;
+	case 0x96:		// SO_USERPUT_SOFT_ON
+		_userPut++;
+		break;
+	case 0x97:		// SO_USERPUT_SOFT_OFF
+		_userPut--;
+		break;
+	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
+		warning("o80_cursorCommand: Can't set cursors to ID. Use images.");
+		break;
+	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
+	case 0x9B:
+		a = pop();
+		setCursorHotspot(pop(), a);
+		break;
+	case 0x9C:		// SO_CHARSET_SET
+		initCharset(pop());
+		break;
+	case 0x9D:		// SO_CHARSET_COLOR
+		getStackList(args, ARRAYSIZE(args));
+		for (i = 0; i < 16; i++)
+			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
+		break;
+	default:
+		error("o80_cursorCommand: default case %x", subOp);
+	}
+
+	VAR(VAR_CURSORSTATE) = _cursor.state;
+	VAR(VAR_USERPUT) = _userPut;
+}
+
+void ScummEngine_v80he::loadImgSpot(int resId, int state, Common::Point spot) {
+	const uint8 *dataPtr = getResourceAddress(rtImage, resId);
+	if (!dataPtr)
+		error("loadImgSpot: unknown Image %d", resId);
+
+	const uint8 *spotPtr = findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
+
+	if (!spotPtr) {
+		spot.x = spot.y = 0;
+	} else {
+		spot.x = (int16)READ_LE_UINT32(spotPtr + 8);
+		spot.y = (int16)READ_LE_UINT32(spotPtr + 12);
+	}
+}
+
+void ScummEngine_v80he::loadWizCursor(int resId, int resType, bool state) {
+	Common::Rect rc;
+	Common::Point spot;
+
+	loadImgSpot(resId, 0, spot);
+
+	rc.top = spot.x;
+	rc.right = spot.y;
+
+	rc.top = MAX((int)rc.top, 0);
+	rc.right = MAX((int)rc.right, 0);
+	rc.top = MIN((int)rc.top, 32);
+	rc.right = MIN((int)rc.right, 32);
+
+	// FIXME: dirty hack. Cursor is set in drawWizImage, though should be set from here
+	// it is unclear how height and width are passed from drawWizImage
+	drawWizImage(rtImage, resId, 0, 0, 0, 0x20);
+	setCursorHotspot(rc.top, rc.right);
 }
 
 void ScummEngine_v80he::o80_setState() {

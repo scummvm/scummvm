@@ -566,6 +566,14 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	*dst = 0;
 }
 
+const byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, const byte *ptr, int state, bool errorFlag) {
+	if (READ_UINT32(ptr) == MKID('MULT')) {
+		error("findWrappedBlock: multi blocks aren't implemented");
+	} else {
+		return findResourceData(tag, ptr);
+	}
+}
+
 void ScummEngine_v72he::o72_pushDWord() {
 	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
@@ -779,7 +787,7 @@ void ScummEngine_v72he::o72_drawObject() {
 
 void ScummEngine_v72he::o72_printWizImage() {
 	int resnum = pop();
-	drawWizImage(rtImage, resnum, 0, 0, 4);
+	drawWizImage(rtImage, resnum, 0, 0, 0, 4);
 }
 
 void ScummEngine_v72he::o72_getArrayDimSize() {
@@ -1261,10 +1269,10 @@ void ScummEngine_v72he::o72_unknownC1() {
 	debug(1, "stub o72_unknownC1(%s)", string);
 }
 
-void ScummEngine_v72he::drawWizImage(int restype, int resnum, int x1, int y1, int flags) {
+void ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags) {
 	const uint8 *dataPtr = getResourceAddress(restype, resnum);
 	if (dataPtr) {
-		const uint8 *wizh = findResourceData(MKID('WIZH'), dataPtr);
+		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 		assert(wizh);
 		uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 		uint32 width  = READ_LE_UINT32(wizh + 0x4);
@@ -1272,10 +1280,10 @@ void ScummEngine_v72he::drawWizImage(int restype, int resnum, int x1, int y1, in
 		if (comp != 1) {
 			warning("%d has invalid compression type %d", resnum, comp);
 		}
-		const uint8 *wizd = findResourceData(MKID('WIZD'), dataPtr);
+		const uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
 		assert(wizd);
 		if (flags & 1) {
-			const uint8 *pal = findResourceData(MKID('RGBS'), dataPtr);
+			const uint8 *pal = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
 			assert(pal);
 			setPaletteFromPtr(pal, 256);
 		}
@@ -1287,11 +1295,27 @@ void ScummEngine_v72he::drawWizImage(int restype, int resnum, int x1, int y1, in
 			return;
 		}
 
-		uint8 *dst;
+		uint8 *dst = 0;
+		if (flags & 0x24) { // printing (0x4) or rendering to memory (0x20)
+			dst = (uint8 *)malloc(width * height);
+			memset(dst, 255, width * height); // make transparent
+
+			if (flags & 0x20) {
+				// copy width * height bytes from VAR_117 to dst
+
+				// FIXME: dirty hack until missing bits are implemented
+				Common::Rect rScreen(0, 0, width-1, height-1);
+				gdi.copyWizImage(dst, wizd, width, height, 0, 0, width, height, &rScreen);
+				setCursorFromBuffer(dst, width, height, width);
+				free(dst);
+				return;
+			}
+		}
+
 		VirtScreen *pvs = &virtscr[kMainVirtScreen];
 		if (flags & 0x10) {
 			dst = pvs->getPixels(0, pvs->topline);
-		} else {
+		} else if (!(flags & 0x20)) {
 			dst = pvs->getBackPixels(0, pvs->topline);
 		}
 		Common::Rect rScreen(0, 0, pvs->w, pvs->h);
@@ -1324,7 +1348,7 @@ void ScummEngine_v72he::redrawBGAreas() {
 void ScummEngine_v72he::flushWizBuffer() {
 	for (int i = 0; i < _wizImagesNum; ++i) {
 		WizImage *pwi = &_wizImages[i];
-		drawWizImage(rtImage, pwi->resnum, pwi->x1, pwi->y1, pwi->flags);
+		drawWizImage(rtImage, pwi->resnum, 0, pwi->x1, pwi->y1, pwi->flags);
 	}
 	_wizImagesNum = 0;
 }
@@ -1343,7 +1367,7 @@ void ScummEngine_v72he::o72_drawWizImage() {
 		pwi->flags = flags;
 		++_wizImagesNum;
 	} else {
-		drawWizImage(rtImage, resnum, x1, y1, flags);
+		drawWizImage(rtImage, resnum, 0, x1, y1, flags);
 	}
 }
 
