@@ -743,6 +743,9 @@ void CostumeRenderer::setPalette(byte *palette) {
 		for (i = 0; i < 14; i++) {
 			_palette[i] = palette[i];
 		}
+		warning("palette[12] is %d", palette[12]);
+		warning("_palette[12] is %d", _palette[12]);
+
 	} else if (_vm->_features & GF_OLD_BUNDLE) {
 		if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 			memcpy(_palette, palette, 16);
