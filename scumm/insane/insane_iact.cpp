@@ -138,7 +138,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_iactSceneId = par4;
 			break;
 		case 7:
-			if (readArray(_numberArray, 4) != 0)
+			if (readArray(4) != 0)
 				return;
 
 			_val120_ = true;
@@ -146,11 +146,11 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 8:
-			if (readArray(_numberArray, 4) == 0 || readArray(_numberArray, 6) == 0)
+			if (readArray(4) == 0 || readArray(6) == 0)
 				return;
 
-			setWordInString(_numberArray, 1, _val55d);
-			setWordInString(_numberArray, 3, _val57d);
+			writeArray(1, _val55d);
+			writeArray(3, _val57d);
 			smush_setToFinish();
 
 			break;
@@ -192,7 +192,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	}
 
 	if (_val32d < 0 || _val32d > 4)
-		if (readArray(_numberArray, 8)) {
+		if (readArray(8)) {
 			smlayer_drawSomething(renderBitmap, codecparam, 270, 20, 3, 
 								  _smush_icons2Nut, 20, 0, 0);
 			_val122_ = true;
@@ -200,7 +200,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::proc62(void) {
-	if (readArray(_numberArray, 58) == 0)
+	if (readArray(58) == 0)
 		_enemy[EN_TORQUE].field_10 = 1;
 
 	if (_enemy[EN_TORQUE].field_8 == 0) {
@@ -403,19 +403,19 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		switch (par3) {
 		case 1:
 			if (par4 == 1) {
-				if (readArray(_numberArray, 6))
+				if (readArray(6))
 					setBit(par5);
 				else
 					clearBit(par5);
 			} else {
-				if (readArray(_numberArray, 6))
+				if (readArray(6))
 					clearBit(par5);
 				else
 					setBit(par5);
 			}
 			break;
 		case 2:
-			if (readArray(_numberArray, 5))
+			if (readArray(5))
 				clearBit(par5);
 			else
 				setBit(par5);
@@ -431,7 +431,7 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_iactSceneId = par4;
 			break;
 		case 7:
-			if (readArray(_numberArray, 4) != 0)
+			if (readArray(4) != 0)
 				return;
 
 			_val120_ = true;
@@ -439,16 +439,16 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 8:
-			if (readArray(_numberArray, 4) == 0 || readArray(_numberArray, 6) == 0)
+			if (readArray(4) == 0 || readArray(6) == 0)
 				return;
 
-			setWordInString(_numberArray, 1, _val55d);
-			setWordInString(_numberArray, 3, _val57d);
+			writeArray(1, _val55d);
+			writeArray(3, _val57d);
 			smush_setToFinish();
 
 			break;
 		case 25:				
-			if (readArray(_numberArray, 5) == 0)
+			if (readArray(5) == 0)
 				return;
 			
 			_val212_ = true;
@@ -484,19 +484,19 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		switch (par3) {
 		case 1:
 			if (par4 == 1) {
-				if (readArray(_numberArray, 6))
+				if (readArray(6))
 					setBit(par5);
 				else
 					clearBit(par5);
 			} else {
-				if (readArray(_numberArray, 6))
+				if (readArray(6))
 					clearBit(par5);
 				else
 					setBit(par5);
 			}
 			break;
 		case 2:
-			if (readArray(_numberArray, 5))
+			if (readArray(5))
 				clearBit(par5);
 			else
 				setBit(par5);
@@ -512,7 +512,7 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_iactSceneId = par4;
 			break;
 		case 7:
-			if (readArray(_numberArray, 4) != 0)
+			if (readArray(4) != 0)
 				return;
 
 			_val120_ = true;
@@ -520,16 +520,16 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 8:
-			if (readArray(_numberArray, 4) == 0 || readArray(_numberArray, 6) == 0)
+			if (readArray(4) == 0 || readArray(6) == 0)
 				return;
 
-			setWordInString(_numberArray, 1, _val55d);
-			setWordInString(_numberArray, 3, _val53d);
+			writeArray(1, _val55d);
+			writeArray(3, _val53d);
 			smush_setToFinish();
 
 			break;
 		case 25:				
-			if (readArray(_numberArray, 5) == 0)
+			if (readArray(5) == 0)
 				return;
 			
 			_val212_ = true;

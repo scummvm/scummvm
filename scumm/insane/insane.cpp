@@ -666,36 +666,36 @@ void Insane::putActors(void) {
 }
 
 void Insane::readState(void) {
-	_actor[0].inventory[INV_CHAIN] = readArray(_numberArray, 50) != 0;
-	_actor[0].inventory[INV_CHAINSAW] = readArray(_numberArray, 51) != 0;
-	_actor[0].inventory[INV_MACE] = readArray(_numberArray, 52) != 0;
-	_actor[0].inventory[INV_2X4] = readArray(_numberArray, 53) != 0;
-	_actor[0].inventory[INV_WRENCH] = readArray(_numberArray, 54) != 0;
-	_actor[0].inventory[INV_DUST] = readArray(_numberArray, 55) != 0;
+	_actor[0].inventory[INV_CHAIN] = readArray(50) != 0;
+	_actor[0].inventory[INV_CHAINSAW] = readArray(51) != 0;
+	_actor[0].inventory[INV_MACE] = readArray(52) != 0;
+	_actor[0].inventory[INV_2X4] = readArray(53) != 0;
+	_actor[0].inventory[INV_WRENCH] = readArray(54) != 0;
+	_actor[0].inventory[INV_DUST] = readArray(55) != 0;
 	_actor[0].inventory[INV_HAND] = 1; // Boot
 	_actor[0].inventory[INV_BOOT] = 1; // Hand
 
-	_smlayer_room = readArray(_numberArray, 320);
-	_smlayer_room2 = readArray(_numberArray, 321);
-	_val55d = readArray(_numberArray, 322);
-	_val53d = readArray(_numberArray, 323);
-	_val57d = readArray(_numberArray, 324);
-	_val52d = readArray(_numberArray, 325);
-	_val56d = readArray(_numberArray, 326);
-	_val54d = readArray(_numberArray, 327);
-	_val51d = readArray(_numberArray, 328);
-	_enemy[EN_TORQUE].field_8 = readArray(_numberArray, 337);
-	_enemy[EN_ROTT1].field_8 = readArray(_numberArray, 329);
-	_enemy[EN_ROTT2].field_8 = readArray(_numberArray, 330);
-	_enemy[EN_ROTT3].field_8 = readArray(_numberArray, 331);
-	_enemy[EN_VULTF1].field_8 = readArray(_numberArray, 332);
-	_enemy[EN_VULTM1].field_8 = readArray(_numberArray, 333);
-	_enemy[EN_VULTF2].field_8 = readArray(_numberArray, 334);
-	_enemy[EN_VULTM2].field_8 = readArray(_numberArray, 335);
-	_enemy[EN_CAVEFISH].field_8 = readArray(_numberArray, 336);
-	_enemy[EN_VULTM2].field_10 = readArray(_numberArray, 340);
-	_enemy[EN_CAVEFISH].field_10 = readArray(_numberArray, 56);
-	_enemy[EN_VULTF2].field_10 = readArray(_numberArray, 339);
+	_smlayer_room = readArray(320);
+	_smlayer_room2 = readArray(321);
+	_val55d = readArray(322);
+	_val53d = readArray(323);
+	_val57d = readArray(324);
+	_val52d = readArray(325);
+	_val56d = readArray(326);
+	_val54d = readArray(327);
+	_val51d = readArray(328);
+	_enemy[EN_TORQUE].field_8 = readArray(337);
+	_enemy[EN_ROTT1].field_8 = readArray(329);
+	_enemy[EN_ROTT2].field_8 = readArray(330);
+	_enemy[EN_ROTT3].field_8 = readArray(331);
+	_enemy[EN_VULTF1].field_8 = readArray(332);
+	_enemy[EN_VULTM1].field_8 = readArray(333);
+	_enemy[EN_VULTF2].field_8 = readArray(334);
+	_enemy[EN_VULTM2].field_8 = readArray(335);
+	_enemy[EN_CAVEFISH].field_8 = readArray(336);
+	_enemy[EN_VULTM2].field_10 = readArray(340);
+	_enemy[EN_CAVEFISH].field_10 = readArray(56);
+	_enemy[EN_VULTF2].field_10 = readArray(339);
 }
 
 void Insane::setTrsFile(int file) {
@@ -804,7 +804,7 @@ void Insane::smush_setToFinish(void) {
 
 // smlayer_stopSound
 void Insane::smlayer_stopSound(int idx) {
-	_vm->_sound->stopSound(readArray(_numberArray, idx));
+	_vm->_sound->stopSound(readArray(idx));
 }
 
 void Insane::switchSceneIfNeeded(void) {
@@ -939,9 +939,9 @@ int32 Insane::weaponDamage(int32 actornum) {
 }
 
 void Insane::reinitActors(void) {
-	smlayer_setActorCostume(0, 2, readArray(_numberArray, 12));
-	smlayer_setActorCostume(0, 0, readArray(_numberArray, 14));
-	smlayer_setActorCostume(0, 1, readArray(_numberArray, 13));
+	smlayer_setActorCostume(0, 2, readArray(12));
+	smlayer_setActorCostume(0, 0, readArray(14));
+	smlayer_setActorCostume(0, 1, readArray(13));
 	smlayer_setActorLayer(0, 1, 1);
 	smlayer_setActorLayer(0, 2, 5);
 	smlayer_setActorLayer(0, 0, 10);
@@ -1002,11 +1002,11 @@ void Insane::escapeKeyHandler(void) {
 	switch (_currSceneId) {
 	case 1:
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
-		setWordInString(_numberArray, 9, 0);
+		writeArray(9, 0);
 		break;
 	case 18:
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
-		setWordInString(_numberArray, 9, 1);
+		writeArray(9, 1);
 		break;
 	case 2:
 		flu = &_fluConf[14 + _iactSceneId2];
@@ -1020,14 +1020,14 @@ void Insane::escapeKeyHandler(void) {
 		if (_needSceneSwitch)
 			return;
 		
-		if (readArray(_numberArray, 6)) {
-			if (readArray(_numberArray, 4)) {
+		if (readArray(6)) {
+			if (readArray(4)) {
 				queueSceneSwitch(14, 0, "hitdust2.san", 64, 0, 0, 0);
 			} else {
 				queueSceneSwitch(14, 0, "hitdust4.san", 64, 0, 0, 0);
 			}
 		} else {
-			if (readArray(_numberArray, 4)) {
+			if (readArray(4)) {
 				queueSceneSwitch(14, 0, "hitdust1.san", 64, 0, 0, 0);
 			} else {
 				queueSceneSwitch(14, 0, "hitdust3.san", 64, 0, 0, 0);
@@ -1035,26 +1035,26 @@ void Insane::escapeKeyHandler(void) {
 		}
 		break;
 	case 5:
-		if (readArray(_numberArray, 4)) {
+		if (readArray(4)) {
 			if (_needSceneSwitch)
 				return;
 			queueSceneSwitch(15, 0, "vistthru.san", 64, 0, 0, 0);
 		} else {
-			setWordInString(_numberArray, 1, _val53d);
+			writeArray(1, _val53d);
 			smush_setToFinish();
 		}
 		break;
 	case 6:
-		if (readArray(_numberArray, 4)) {
+		if (readArray(4)) {
 			if (_needSceneSwitch)
 				return;
 			queueSceneSwitch(15, 0, "chasthru.san", 64, 0, 0, 0);
 		} else {
-			if (readArray(_numberArray, 5)) {
-				setWordInString(_numberArray, 1, _val57d);
+			if (readArray(5)) {
+				writeArray(1, _val57d);
 				smush_setToFinish();
 			} else {
-				setWordInString(_numberArray, 4, 1);
+				writeArray(4, 1);
 				queueSceneSwitch(15, 0, "chasout.san", 64, 0, 0, 0);
 			}
 		}
@@ -1088,10 +1088,10 @@ void Insane::escapeKeyHandler(void) {
 		queueSceneSwitch(21, 0, "rottfite.san", 64, 0, 0, 0);
 		break;
 	case 16:
-		setWordInString(_numberArray, 4, 0);
-		setWordInString(_numberArray, 5, 1);
-		setWordInString(_numberArray, 1, _val56d);
-		setWordInString(_numberArray, 3, _val55d);
+		writeArray(4, 0);
+		writeArray(5, 1);
+		writeArray(1, _val56d);
+		writeArray(3, _val55d);
 		smush_setToFinish();
 		break;
 	case 15:
@@ -1153,7 +1153,7 @@ int Insane::smlayer_loadSound(int id, int flag, int phase) {
 			if (_objArray2Idx >= _objArray2Idx2)
 				return 0;
 	}
-	resid = readArray(_numberArray, id);
+	resid = readArray(id);
 	
 	if (!resid && phase == 2)
 		return 0;
@@ -1187,7 +1187,7 @@ void Insane::IMUSE_restoreVolume(void) {
 // smlayer_loadCostume1 && smlayer_loadCostume2
 int Insane::smlayer_loadCostume(int id, int phase) {
 	int resid;
-	resid = readArray(_numberArray, id);
+	resid = readArray(id);
 	
 	if (!resid)
 		return 0;
@@ -1235,12 +1235,12 @@ void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
 }
 
 bool Insane::smlayer_isSoundRunning(int32 sound) {
-	return _vm->_sound->isSoundRunning(readArray(_numberArray, sound)) != 0;
+	return _vm->_sound->isSoundRunning(readArray(sound)) != 0;
 }
 
 bool Insane::smlayer_startSfx(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_vm->_imuseDigital->startSfx(readArray(_numberArray, sound));
+		_vm->_imuseDigital->startSfx(readArray(sound));
 		return true;
 	} else
 		return false;
@@ -1248,7 +1248,7 @@ bool Insane::smlayer_startSfx(int32 sound) {
 
 bool Insane::smlayer_startVoice(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_vm->_imuseDigital->startSfx(readArray(_numberArray, sound));
+		_vm->_imuseDigital->startSfx(readArray(sound));
 		return true;
 	} else
 		return false;
@@ -1375,12 +1375,12 @@ void Insane::smush_setPaletteValue(int where, int r, int g, int b) {
 	warning("stub Insane::smlayer_setPaletteValue(%d, %d, %d, %d)", where, r, g, b);
 }
 
-int32 Insane::readArray (int number, int item) {
-	return _vm->readArray (number, 0, item);
+int32 Insane::readArray (int item) {
+	return _vm->readArray(_numberArray, 0, item);
 }
 
-void Insane::setWordInString(int number, int item, int value) {
-	_vm->writeArray(number, 0, item, value);
+void Insane::writeArray(int item, int value) {
+	_vm->writeArray(_numberArray, 0, item, value);
 }
 
 void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 

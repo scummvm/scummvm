@@ -2565,8 +2565,8 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 
 					// PC demo uses different INSANE
 					if (!(_features & GF_DEMO)) {
-					_insane->setSmushParams(speed);
-					_insane->runScene(insaneVarNum);
+						_insane->setSmushParams(speed);
+						_insane->runScene(insaneVarNum);
 					}
 				}
 				delete sp;

@@ -1149,7 +1149,7 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[0].act[1].room = 0;
 		_actor[0].act[0].room = 0;
 		smlayer_setActorLayer(1, 2, 25);
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, 45));
+		smlayer_setActorCostume(1, 2, readArray(45));
 		smlayer_setActorFacing(1, 2, 6, 180);
 		_actor[1].act[2].state = 97;
 		_actor[1].act[2].room = 1;
@@ -1562,7 +1562,7 @@ void Insane::switchEnemyWeapon(void) {
 	case INV_MACE:
 	case INV_2X4:
 	case INV_WRENCH:
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costume4));
+		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
 		smlayer_setActorFacing(1, 2, 18, 180);
 		_actor[1].weaponClass = 1;
 		_actor[1].act[2].state = 34;
@@ -1572,7 +1572,7 @@ void Insane::switchEnemyWeapon(void) {
 		_actor[1].act[2].state = 1;
 		break;
 	case INV_HAND:
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costume4));
+		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
 		_actor[1].weaponClass = 2;
 		_actor[1].act[2].state = 1;
 		break;
@@ -2206,7 +2206,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].weaponClass = 1;
 		_actor[1].kicking = 0;
 		if (_actor[1].act[2].frame >= 15) {
-			smlayer_setActorCostume(1, 2, readArray(_numberArray, 44));
+			smlayer_setActorCostume(1, 2, readArray(44));
 			smlayer_setActorFacing(1, 2, 6, 180);
 			_actor[1].act[2].state = 95;
 			_actor[1].act[0].room = 0;
@@ -2231,7 +2231,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorLayer(1, 2, 25);
 		_actor[1].lost = true;
 		if (_actor[1].act[2].frame >= 18) {
-			setWordInString(_numberArray, 7, 1);
+			writeArray(7, 1);
 			_enemy[EN_VULTM2].field_10 = 1;
 			queueSceneSwitch(12, 0, "getnitro.san", 0, 0, 0, 0);
 		}
@@ -2273,7 +2273,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].field_54 = 1;
 		_actor[1].cursorX = 0;
 		_actor[1].kicking = 0;
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costumevar));
+		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costumevar));
 		smlayer_setActorFacing(1, 2, 6, 180);
 		smlayer_setActorLayer(1, 2, 25);
 		smlayer_startSfx(96);
@@ -2318,7 +2318,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].lost = 1;
 		_actor[1].cursorX = 0;
 		_actor[1].kicking = 0;
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, 40));
+		smlayer_setActorCostume(1, 2, readArray(40));
 		smlayer_setActorFacing(1, 2, 6, 180);
 		smlayer_setActorLayer(1, 2, 25);
 		_actor[1].act[2].state = 103;
@@ -2335,7 +2335,7 @@ void Insane::actor12Reaction(int32 buttons) {
 	case 113:
 		_actor[1].lost = 1;
 		_actor[1].kicking = 0;
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, 46));
+		smlayer_setActorCostume(1, 2, readArray(46));
 		smlayer_setActorFacing(1, 2, 6, 180);
 		smlayer_setActorLayer(1, 2, 25);
 		_actor[1].act[1].room = 0;
@@ -2363,7 +2363,7 @@ void Insane::actor12Reaction(int32 buttons) {
 	case 115:
 		_actor[1].lost = 1;
 		_actor[1].kicking = 0;
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, 47));
+		smlayer_setActorCostume(1, 2, readArray(47));
 		smlayer_setActorFacing(1, 2, 6, 180);
 		smlayer_setActorLayer(1, 2, 25);
 		_actor[1].act[1].room = 0;

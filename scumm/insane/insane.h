@@ -303,8 +303,10 @@ class Insane {
 	void smlayer_putActor(int actornum, int act, int x, int y, byte room);
 	void smlayer_setActorLayer(int actornum, int act, int layer);
 	void smlayer_setFluPalette(byte *pal, int shut_flag);
-	int32 readArray (int field, int number);
-	void setWordInString(int field, int number, int value);
+
+	int32 readArray(int item);
+	void writeArray(int item, int value);
+
 	int smlayer_mainLoop(void);
 	void mainLoop(void);
 	bool idx1Compare(void);

@@ -70,21 +70,21 @@ void Insane::runScene(int arraynum) {
 	_val10b = _val50d; // FIXME: seems to be unused
 	setTrsFile(_trsFilePtr); // FIXME: we don't need it
 
-	debug(0, "INSANE Arg: %d", readArray(_numberArray, 0));
+	debug(0, "INSANE Arg: %d", readArray(0));
 
-	switch (readArray(_numberArray, 0)) {
+	switch (readArray(0)) {
 	case 1:
 		initScene(1);
 		setupValues();
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 10));
+		smlayer_setActorCostume(0, 2, readArray(10));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
 		startVideo("minedriv.san", 1, 32, 12, 0);
 		break;
 	case 2:
 		setupValues();
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 11));
+		smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
-		_val8d = readArray(_numberArray, 2);
+		_val8d = readArray(2);
 		if (_val55d) {
 			initScene(5);
 			startVideo("tovista2.san", 1, 32, 12, 0);
@@ -98,9 +98,9 @@ void Insane::runScene(int arraynum) {
 		break;
 	case 3:
 		setupValues();
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 11));
+		smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
-		_val8d = readArray(_numberArray, 2);
+		_val8d = readArray(2);
 		if (_val55d) {
 			initScene(6);
 			startVideo("toranch.san", 1, 32, 12, 0, _smush_toranchFlu, 300);
@@ -119,7 +119,7 @@ void Insane::runScene(int arraynum) {
 		startVideo("minefite.san", 1, 32, 12, 0);
 		break;
 	case 5:
-		setWordInString(_numberArray, 1, _val54d);
+		writeArray(1, _val54d);
 		initScene(24);
 		startVideo("rottopen.san", 1, 32, 12, 0);
 		break;
@@ -127,7 +127,7 @@ void Insane::runScene(int arraynum) {
 		initScene(1);
 		setupValues();
 		smlayer_setFluPalette(_smush_roadrashRip, 1);
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 10));
+		smlayer_setActorCostume(0, 2, readArray(10));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
 		startVideo("minedriv.san", 1, 32, 12, 0, _smush_minedrivFlu, 420);
 		break;
@@ -137,10 +137,10 @@ void Insane::runScene(int arraynum) {
 		break;
 	case 10:
 		initScene(26);
-		setWordInString(_numberArray, 1, _val54d);
+		writeArray(1, _val54d);
 		startVideo("credits.san", 1, 32, 12, 0);
 	default:
-		warning("Unknown FT_INSANE mode %d", readArray(_numberArray, 0));
+		warning("Unknown FT_INSANE mode %d", readArray(0));
 		break;
 	}
 
@@ -153,24 +153,24 @@ void Insane::runScene(int arraynum) {
 
 	_insaneIsRunning = false;
 
-	setWordInString(_numberArray, 50, _actor[0].inventory[INV_CHAIN]);
-	setWordInString(_numberArray, 51, _actor[0].inventory[INV_CHAINSAW]);
-	setWordInString(_numberArray, 52, _actor[0].inventory[INV_MACE]);
-	setWordInString(_numberArray, 53, _actor[0].inventory[INV_2X4]);
-	setWordInString(_numberArray, 54, _actor[0].inventory[INV_WRENCH]);
-	setWordInString(_numberArray, 55, _actor[0].inventory[INV_DUST]);
-	setWordInString(_numberArray, 337, _enemy[EN_TORQUE].field_8);
-	setWordInString(_numberArray, 329, _enemy[EN_ROTT1].field_8);
-	setWordInString(_numberArray, 330, _enemy[EN_ROTT2].field_8);
-	setWordInString(_numberArray, 331, _enemy[EN_ROTT3].field_8);
-	setWordInString(_numberArray, 332, _enemy[EN_VULTF1].field_8);
-	setWordInString(_numberArray, 333, _enemy[EN_VULTM1].field_8);
-	setWordInString(_numberArray, 334, _enemy[EN_VULTF2].field_8);
-	setWordInString(_numberArray, 335, _enemy[EN_VULTM2].field_8);
-	setWordInString(_numberArray, 336, _enemy[EN_CAVEFISH].field_8);
-	setWordInString(_numberArray, 339, _enemy[EN_VULTF2].field_10);
-	setWordInString(_numberArray, 56, _enemy[EN_CAVEFISH].field_10);
-	setWordInString(_numberArray, 340, _enemy[EN_VULTM2].field_10);
+	writeArray(50, _actor[0].inventory[INV_CHAIN]);
+	writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
+	writeArray(52, _actor[0].inventory[INV_MACE]);
+	writeArray(53, _actor[0].inventory[INV_2X4]);
+	writeArray(54, _actor[0].inventory[INV_WRENCH]);
+	writeArray(55, _actor[0].inventory[INV_DUST]);
+	writeArray(337, _enemy[EN_TORQUE].field_8);
+	writeArray(329, _enemy[EN_ROTT1].field_8);
+	writeArray(330, _enemy[EN_ROTT2].field_8);
+	writeArray(331, _enemy[EN_ROTT3].field_8);
+	writeArray(332, _enemy[EN_VULTF1].field_8);
+	writeArray(333, _enemy[EN_VULTM1].field_8);
+	writeArray(334, _enemy[EN_VULTF2].field_8);
+	writeArray(335, _enemy[EN_VULTM2].field_8);
+	writeArray(336, _enemy[EN_CAVEFISH].field_8);
+	writeArray(339, _enemy[EN_VULTF2].field_10);
+	writeArray(56, _enemy[EN_CAVEFISH].field_10);
+	writeArray(340, _enemy[EN_VULTM2].field_10);
 	// insane_unlock(); // FIXME
 	_vm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
 	if (_memoryAllocatedNotOK) {
@@ -623,7 +623,7 @@ void Insane::setSceneCostumes(int sceneId) {
 
 	switch (sceneId) {
 	case 1:
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 10));
+		smlayer_setActorCostume(0, 2, readArray(10));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
 		setupValues();
@@ -635,7 +635,7 @@ void Insane::setSceneCostumes(int sceneId) {
 		return;
 		break;
 	case 2:
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 10));
+		smlayer_setActorCostume(0, 2, readArray(10));
 		setupValues();
 		return;
 		break;
@@ -654,14 +654,14 @@ void Insane::setSceneCostumes(int sceneId) {
 	case 4:
 	case 5:
 	case 6:
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 11));
+		smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
 		setupValues();
 		return;
 		break;
 	case 7:
 	case 8:
-		setWordInString(_numberArray, 4, 0);
+		writeArray(4, 0);
 		return;
 	}
 }
@@ -671,9 +671,9 @@ void Insane::setEnemyCostumes(void) {
 
 	debug(0, "setEnemyCostumes(%d)", _currEnemy);
 
-	smlayer_setActorCostume(0, 2, readArray(_numberArray, 12));
-	smlayer_setActorCostume(0, 0, readArray(_numberArray, 14));
-	smlayer_setActorCostume(0, 1, readArray(_numberArray, 13));
+	smlayer_setActorCostume(0, 2, readArray(12));
+	smlayer_setActorCostume(0, 0, readArray(14));
+	smlayer_setActorCostume(0, 1, readArray(13));
 	smlayer_setActorLayer(0, 1, 1);
 	smlayer_setActorLayer(0, 2, 5);
 	smlayer_setActorLayer(0, 0, 10);
@@ -682,7 +682,7 @@ void Insane::setEnemyCostumes(void) {
 	smlayer_putActor(0, 0, _actor[0].x, _actor[0].y1+200, _smlayer_room2);
 	
 	if (_currEnemy == EN_CAVEFISH) {
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costume4));
+		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
 		_actor[1].act[2].room = 1;
 		_actor[1].act[1].room = 0;
 		_actor[1].act[0].room = 0;
@@ -695,7 +695,7 @@ void Insane::setEnemyCostumes(void) {
 		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17, 
 						 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
 	} else if (_currEnemy == EN_TORQUE) {
-		smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costume4));
+		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
 		_actor[1].act[2].room = 1;
 		_actor[1].act[1].room = 0;
 		_actor[1].act[0].room = 0;
@@ -711,13 +711,13 @@ void Insane::setEnemyCostumes(void) {
 		_actor[1].act[0].room = 1;
 	
 		if (_enemy[_currEnemy].costume4)
-			smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costume4));
+			smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
 	
 		if (_enemy[_currEnemy].costume5)
-			smlayer_setActorCostume(1, 0, readArray(_numberArray, _enemy[_currEnemy].costume5));
+			smlayer_setActorCostume(1, 0, readArray(_enemy[_currEnemy].costume5));
 	
 		if (_enemy[_currEnemy].costume6)
-			smlayer_setActorCostume(1, 1, readArray(_numberArray, _enemy[_currEnemy].costume6));
+			smlayer_setActorCostume(1, 1, readArray(_enemy[_currEnemy].costume6));
 	
 		_actor[1].field_8 = 1;
 		_actor[1].act[2].state = 1;
@@ -1031,11 +1031,11 @@ void Insane::postCase17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (_currSceneId == 18) {
 			queueSceneSwitch(17, _smush_minedrivFlu, "minedriv.san", 64, 0, 
 							 _continueFrame1, 1300);
-			setWordInString(_numberArray, 9, 1);
+			writeArray(9, 1);
 		} else {
 			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
 							 _continueFrame1, 1300);
-			setWordInString(_numberArray, 9, 0);
+			writeArray(9, 0);
 		}
 	}
 	_val119_ = false;
@@ -1145,24 +1145,24 @@ void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	if (curFrame >= maxFrame) {
 		if (_currSceneId == 4) {
 			if (!_needSceneSwitch) {
-				if (readArray(_numberArray, 6)) {
-					if (readArray(_numberArray, 4))
+				if (readArray(6)) {
+					if (readArray(4))
 						queueSceneSwitch(14, 0, "hitdust2.san", 64, 0, 0, 0);
 					else
 						queueSceneSwitch(14, 0, "hitdust4.san", 64, 0, 0, 0);
 				} else {
-					if (readArray(_numberArray, 4))
+					if (readArray(4))
 						queueSceneSwitch(14, 0, "hitdust1.san", 64, 0, 0, 0);
 					else
 						queueSceneSwitch(14, 0, "hitdust3.san", 64, 0, 0, 0);
 				}
 			}
 		} else {
-			if (readArray(_numberArray, 4)) {
+			if (readArray(4)) {
 				if (!_needSceneSwitch)
 					queueSceneSwitch(15, 0, "vistthru.san", 64, 0, 0, 0);
 			} else {
-				setWordInString(_numberArray, 1, _val53d);
+				writeArray(1, _val53d);
 				smush_setToFinish();
 			}
 		}
@@ -1187,12 +1187,12 @@ void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	}
 
 	if (curFrame >= maxFrame) {
-		if (readArray(_numberArray, 4)) {
+		if (readArray(4)) {
 			if (!_needSceneSwitch)
 				queueSceneSwitch(15, 0, "chasthru.san", 64, 0, 0, 0);
 		} else {
-			if (readArray(_numberArray, 5)) {
-				setWordInString(_numberArray, 1, _val57d);
+			if (readArray(5)) {
+				writeArray(1, _val57d);
 				smush_setToFinish();
 			} else {
 				queueSceneSwitch(15, 0, "chasout.san", 64, 0, 0, 0);
@@ -1263,11 +1263,11 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 		switch (_currSceneId) {
 		case 20:
-			setWordInString(_numberArray, 8, 1);
+			writeArray(8, 1);
 			queueSceneSwitch(12, 0, "liftgog.san", 0, 0, 0, 0);
 			break;
 		case 22:
-			setWordInString(_numberArray, 1, _val54d);
+			writeArray(1, _val54d);
 			smush_setToFinish();
 			break;
 		default:
@@ -1349,7 +1349,7 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			break;
 		case EN_TORQUE:
 			turnBen(false);
-			setWordInString(_numberArray, 1, _val51d);
+			writeArray(1, _val51d);
 			smush_setToFinish();
 			break;
 		case EN_ROTT1:
@@ -1397,7 +1397,7 @@ void Insane::postCase23(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (_currSceneId == 24)
 			queueSceneSwitch(21, 0, "rottfite.san", 64, 0, 0, 0);
 	
-		if (readArray(_numberArray, 6) && readArray(_numberArray, 4))
+		if (readArray(6) && readArray(4))
 			queueSceneSwitch(16, 0, "limocrsh.san", 64, 0, 0, 0);
 	
 		queueSceneSwitch(5, 0, "tovista2.san", 64, 0, 0, 290);
@@ -1410,10 +1410,10 @@ void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame) {
 		if (_currSceneId == 16) {
-			setWordInString(_numberArray, 4, 0);
-			setWordInString(_numberArray, 5, 1);
-			setWordInString(_numberArray, 1, _val56d);
-			setWordInString(_numberArray, 3, _val55d);
+			writeArray(4, 0);
+			writeArray(5, 1);
+			writeArray(1, _val56d);
+			writeArray(3, _val55d);
 			smush_setToFinish();
 		} else {
 			switch (_tempSceneId) {

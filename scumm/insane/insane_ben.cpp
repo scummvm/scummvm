@@ -250,7 +250,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 		case 17:
 			if (buttons & 1) {
 				if (_val123_) {
-					setWordInString(_numberArray, 1, _val52d);
+					writeArray(1, _val52d);
 					smush_setToFinish();
 				}
 
@@ -303,7 +303,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 			if (_val119_ && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 
-				if (readArray(_numberArray, 4) && _val211d < 3) {
+				if (readArray(4) && _val211d < 3) {
 					_val211d++;
 					queueSceneSwitch(8, 0, "fishfear.san", 64, 0, 0, 0);
 				} else {
@@ -312,16 +312,16 @@ void Insane::mineChooseRoad(int32 buttons) {
 			}
 			
 			if (_val120_) {
-				setWordInString(_numberArray, 1, _val55d);
-				setWordInString(_numberArray, 3, _val57d);
+				writeArray(1, _val55d);
+				writeArray(3, _val57d);
 				smush_setToFinish();
 			}
 
 			if (!_val212_)
 				return;
 
-			setWordInString(_numberArray, 1, _val56d);
-			setWordInString(_numberArray, 3, _val57d);
+			writeArray(1, _val56d);
+			writeArray(3, _val57d);
 			smush_setToFinish();
 			break;
 		case 6:
@@ -340,7 +340,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 			if (_val119_ && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 
-				if (readArray(_numberArray, 4) && _val211d < 3) {
+				if (readArray(4) && _val211d < 3) {
 					_val211d++;
 					queueSceneSwitch(7, 0, "fishfear.san", 64, 0, 0, 0);
 				} else {
@@ -349,16 +349,16 @@ void Insane::mineChooseRoad(int32 buttons) {
 			}
 			
 			if (_val120_) {
-				setWordInString(_numberArray, 1, _val55d);
-				setWordInString(_numberArray, 3, _val53d);
+				writeArray(1, _val55d);
+				writeArray(3, _val53d);
 				smush_setToFinish();
 			}
 
 			if (!_val212_)
 				return;
 
-			setWordInString(_numberArray, 1, _val56d);
-			setWordInString(_numberArray, 3, _val53d);
+			writeArray(1, _val56d);
+			writeArray(3, _val53d);
 			smush_setToFinish();
 			break;
 		default:
@@ -769,7 +769,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					_actor[0].act[1].room = 0;
 					_actor[0].act[0].room = 0;
 					smlayer_setActorLayer(0, 2, 25);
-					smlayer_setActorCostume(1, 2, readArray(_numberArray, 45));
+					smlayer_setActorCostume(1, 2, readArray(45));
 					smlayer_setActorFacing(1, 2, 6, 180);
 					smlayer_startSfx(101);
 					_actor[1].act[2].state = 97;
@@ -854,7 +854,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].weaponClass = 2;
 		_actor[0].field_34 = 1;
 		_actor[0].kicking = 0;
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 22));
+		smlayer_setActorCostume(0, 2, readArray(22));
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 7;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
@@ -893,7 +893,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].field_34 = 1;
 		_actor[0].kicking = 0;
 		if (_actor[0].act[2].frame >= 3) {
-			smlayer_setActorCostume(0, 2, readArray(_numberArray, 12));
+			smlayer_setActorCostume(0, 2, readArray(12));
 			_actor[0].field_34 = 2;
 			_actor[0].act[2].state = 1;
 		}
@@ -1264,7 +1264,7 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 30:
 		smlayer_setActorLayer(0, 2, 4);
 		_actor[0].weaponClass = 1;
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 21));
+		smlayer_setActorCostume(0, 2, readArray(21));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].act[2].state = 31;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
@@ -1310,7 +1310,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].weaponClass = 1;
 		_actor[0].kicking = 0;
 		if (_actor[0].act[2].frame >= 5) {
-			smlayer_setActorCostume(0, 2, readArray(_numberArray, 12));
+			smlayer_setActorCostume(0, 2, readArray(12));
 			_actor[0].act[2].state = 1;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
@@ -1318,7 +1318,7 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 36:
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].kicking = 0;
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 18));
+		smlayer_setActorCostume(0, 2, readArray(18));
 		smlayer_setActorFacing(0, 2, 6, 180);
 		smlayer_startSfx(96);
 		switch (_currEnemy) {
@@ -1876,35 +1876,35 @@ void Insane::switchBenWeapon(void) {
 
 	switch (_actor[0].weapon) {
 	case INV_CHAIN:
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 20));
+		smlayer_setActorCostume(0, 2, readArray(20));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 0;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_CHAINSAW:
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 24));
+		smlayer_setActorCostume(0, 2, readArray(24));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 0;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_MACE:
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 23));
+		smlayer_setActorCostume(0, 2, readArray(23));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 0;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_2X4:
 		if (_currEnemy == EN_CAVEFISH)
-			smlayer_setActorCostume(0, 2, readArray(_numberArray, 38));
+			smlayer_setActorCostume(0, 2, readArray(38));
 		else
-			smlayer_setActorCostume(0, 2, readArray(_numberArray, 19));
+			smlayer_setActorCostume(0, 2, readArray(19));
 
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 0;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_WRENCH:
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 25));
+		smlayer_setActorCostume(0, 2, readArray(25));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 0;
 		_actor[0].act[2].state = 34;
@@ -1912,7 +1912,7 @@ void Insane::switchBenWeapon(void) {
 	case INV_BOOT:
 	case INV_HAND:
 	case INV_DUST:
-		smlayer_setActorCostume(0, 2, readArray(_numberArray, 12));
+		smlayer_setActorCostume(0, 2, readArray(12));
 		_actor[0].weaponClass = 2;
 		_actor[0].act[2].state = 1;
 		break;
