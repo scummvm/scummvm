@@ -105,12 +105,6 @@ listed here, nor in the compatibility table on the web site, please see below.
        Sam and Max:
                 - Subgames are not all fully functional.
 
-                - The Wak-A-Rat game will appear to freeze at the end.
-                  However, it hasn't really. Just hit Escape and wait.
-
-                - The intro credits will not play correctly if you let the
-                  previous cutscene run (the Mad Doctor scene).
-
 
        Zak McKracken Fm Towns:
                 - The Fm Towns 256 color version of Zak McKracken is rare,
