@@ -47,7 +47,11 @@ enum {
 	GFX_SUPEREAGLE = 5,
 	GFX_ADVMAME2X = 6,
 	GFX_TV2X = 7,
-	GFX_DOTMATRIX = 8
+	GFX_DOTMATRIX = 8,
+	
+	GFX_FLIPPING = 100,	// Palmos
+	GFX_DOUBLEBUFFER = 101	// Palmos
+	
 };
 
 
