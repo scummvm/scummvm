@@ -52,11 +52,11 @@ static File fpMus;
 #define GetCompressedSign(n)       (((n) >> 3) & 1)
 #define GetCompressedAmplitude(n)  ((n) & 7)
 
-#define BUFFER_SIZE 4096U
+#define BUFFER_SIZE 4096
 
 class CLUInputStream : public AudioStream {
 	File *_file;
-	uint _end_pos;
+	uint32 _end_pos;
 	int16 _outbuf[BUFFER_SIZE];
 	byte _inbuf[BUFFER_SIZE];
 	const int16 *_bufferEnd;
@@ -128,7 +128,7 @@ int CLUInputStream::readBuffer(int16 *buffer, const int numSamples) {
 void CLUInputStream::refill() {
 	byte *in = _inbuf;
 	int16 *out = _outbuf;
-	uint len_left = _file->read(in, MIN(BUFFER_SIZE, _end_pos - _file->pos()));
+	uint len_left = _file->read(in, MIN((uint32) BUFFER_SIZE, _end_pos - _file->pos()));
 
 	while (len_left > 0) {
 		uint16 delta = GetCompressedAmplitude(*in) << GetCompressedShift(*in);
