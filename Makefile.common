@@ -119,7 +119,10 @@ DEPFILES = $(wildcard $(patsubst %,%/$(DEPDIR)/*.d,$(MODULES)))
 
 .cpp.o:
 	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
+	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
+	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
 
 -include $(DEPFILES) /dev/null
 
