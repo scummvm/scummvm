@@ -135,7 +135,7 @@ bool SkyMouse::fnAddHuman(void) {
 		//surely this script should be run just in case
 		//I am going to try it anyway
 		if (SkyLogic::_scriptVariables[GET_OFF])
-			_skyLogic->script(SkyLogic::_scriptVariables[GET_OFF]);
+			_skyLogic->script((uint16)SkyLogic::_scriptVariables[GET_OFF],(uint16)(SkyLogic::_scriptVariables[GET_OFF] >> 16));
 	
 		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;
 		SkyLogic::_scriptVariables[GET_OFF] = RESET_MOUSE;
@@ -239,18 +239,19 @@ void SkyMouse::pointerEngine(void) {
 			Compact *itemData = SkyState::fetchCompact(itemNum);
 			currentList++;
 			if ((itemData->screen == SkyLogic::_scriptVariables[SCREEN]) &&	(itemData->status & 16)) {
-				if (itemData->xcood + itemData->mouseRelX > _tMouseX) continue;
-				if (itemData->xcood + itemData->mouseRelX + itemData->mouseSizeX < _tMouseX) continue;
-				if (itemData->ycood + itemData->mouseRelY > _tMouseY) continue;
-				if (itemData->ycood + itemData->mouseRelY + itemData->mouseSizeY < _tMouseY) continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) > _tMouseX) continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < _tMouseX) continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) > _tMouseY) continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < _tMouseY) continue;
 				// we've hit the item
 				if (SkyLogic::_scriptVariables[SPECIAL_ITEM] == itemNum)
 					return;
 				SkyLogic::_scriptVariables[SPECIAL_ITEM] = itemNum;
 				if (SkyLogic::_scriptVariables[GET_OFF])
-					_skyLogic->script(SkyLogic::_scriptVariables[GET_OFF]);
+					_skyLogic->mouseScript(SkyLogic::_scriptVariables[GET_OFF], itemData);
 				SkyLogic::_scriptVariables[GET_OFF] = itemData->mouseOff;
-				if (itemData->mouseOn) _skyLogic->script(itemData->mouseOn);
+				if (itemData->mouseOn)
+					_skyLogic->mouseScript(itemData->mouseOn, itemData);
 				return;
 			}
 		}
@@ -259,8 +260,9 @@ void SkyMouse::pointerEngine(void) {
 	} while (*currentList != 0);
 	if (SkyLogic::_scriptVariables[SPECIAL_ITEM] != 0) {
 		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0;
+		
 		if (SkyLogic::_scriptVariables[GET_OFF])
-			_skyLogic->script(SkyLogic::_scriptVariables[GET_OFF]);
+			_skyLogic->script((uint16)SkyLogic::_scriptVariables[GET_OFF],(uint16)(SkyLogic::_scriptVariables[GET_OFF] >> 16));
 		SkyLogic::_scriptVariables[GET_OFF] = 0;
 	}
 }
@@ -275,7 +277,7 @@ void SkyMouse::buttonEngine1(void) {
 		if (SkyLogic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
 			Compact *item = SkyState::fetchCompact(SkyLogic::_scriptVariables[SPECIAL_ITEM]);
 			if (item->mouseClick)
-				_skyLogic->script(item->mouseClick, 0);
+				_skyLogic->mouseScript(item->mouseClick, item);
 		}
 	}
 }

@@ -92,7 +92,7 @@ public:
 	void pause();
 	void waitSync();
 	void simpleAnim();
-	uint16 script(uint32 num) { return script((uint16)(num & 0xFFFF), (uint16)(num >> 16)); };
+	uint16 mouseScript(uint32 scrNum, Compact *scriptComp);
 	uint16 script(uint16 scriptNo, uint16 offset);
 
 	bool fnCacheChip(uint32 a, uint32 b, uint32 c);

@@ -1044,7 +1044,7 @@ void SkyLogic::initScriptVariables() {
 	_scriptVariables[709] = 1;
 	_scriptVariables[710] = 1;
 	_scriptVariables[711] = 1;
-	_scriptVariables[79] = 1;
+	_scriptVariables[719] = 1;
 	_scriptVariables[720] = 1;
 	_scriptVariables[793] = 1;
 	_scriptVariables[797] = 1;
@@ -1066,6 +1066,15 @@ void SkyLogic::initScriptVariables() {
 	memcpy(_scriptVariables + 663, forwardList4b, sizeof(forwardList4b));
 	memcpy(_scriptVariables + 505, forwardList5b, sizeof(forwardList5b));
 }
+
+uint16 SkyLogic::mouseScript(uint32 scrNum, Compact *scriptComp) {
+
+	Compact *tmpComp = _compact;
+	_compact = scriptComp;
+	uint16 retVal = script((uint16)(scrNum & 0xFFFF), (uint16)(scrNum >> 16)); 
+	_compact = tmpComp;
+	return retVal;
+};
 
 /**
  * \fn uint32 SkyLogic::script(uint16 scriptNo, uint16 offset)
@@ -1374,11 +1383,13 @@ bool SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnOpenHand(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnOpenHand");
+	warning("Stub: fnOpenHand");
+	return true;
 }
 
 bool SkyLogic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCloseHand");
+	warning("Stub: fnCloseHand");
+	return true;
 }
 
 bool SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
@@ -1740,10 +1751,10 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 		cpt->xcood = rollingX;
 		rollingX += 24;
 
-		if (_scriptVariables[MENU] == 2)
+		//if (_scriptVariables[MENU] == 2)
 			cpt->ycood = 136;
-		else
-			cpt->ycood = 112;
+		/*else
+			cpt->ycood = 112;*/
 	}
 
 	return true;
@@ -1958,7 +1969,9 @@ bool SkyLogic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
 }
 
 bool SkyLogic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnToggleMouse");
+	
+	SkyState::fetchCompact(a)->status ^= ST_MOUSE;
+	return true;
 }
 
 bool SkyLogic::fnMouseOn(uint32 a, uint32 b, uint32 c) {
@@ -2233,12 +2246,12 @@ bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnPauseFx");
+	//warning("Stub: fnPauseFx");
 	return true;
 }
 
 bool SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnUnPauseFx");
+	//warning("Stub: fnUnPauseFx");
 	return true;
 }
 
