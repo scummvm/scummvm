@@ -140,7 +140,7 @@ bool ScummDebugger::do_command()
 		}
 		return true;
 	case CMD_QUIT:
-		exit(1);
+		_s->_system->quit();
 
 	default:											/* this line is never reached */
 		error("Unknown debug command");

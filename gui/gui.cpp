@@ -862,7 +862,7 @@ void Gui::handleCommand(int cmd)
 #ifdef _WIN32_WCE
 		do_quit();
 #endif
-		exit(1);
+		_s->_system->quit();
 		return;
 	case 7:											/* cancel button */
 		_cur_page = 0;

@@ -1261,7 +1261,7 @@ void NORETURN CDECL error(const char *s, ...)
 #endif
 	}
 	// Doesn't wait for any keypress!! Is it intended to?
-	exit(1);
+	g_scumm->_system->quit();
 }
 
 void CDECL warning(const char *s, ...)
