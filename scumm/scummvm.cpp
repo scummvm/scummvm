@@ -1213,7 +1213,15 @@ int Scumm::getKeyInput(int a)
 		_mouseButStat = MBS_RIGHT_CLICK;
 	}
 
-	if (_features & GF_AFTER_V7) {
+	if (_features & GF_AFTER_V8) {
+		_vars[VAR_MOUSE_BUTTONS] = 0;
+		if (_leftBtnPressed & msClicked)
+			_vars[VAR_MOUSE_BUTTONS] =+ 1;
+
+		if (_rightBtnPressed & msClicked)
+			_vars[VAR_MOUSE_BUTTONS] =+ 2;
+
+	} else if (_features & GF_AFTER_V7) {
 //    _vars[VAR_LEFTBTN_DOWN] = (_leftBtnPressed&msClicked) != 0;
 		_vars[VAR_LEFTBTN_HOLD] = (_leftBtnPressed & msDown) != 0;
 //    _vars[VAR_RIGHTBTN_DOWN] = (_rightBtnPressed&msClicked) != 0;

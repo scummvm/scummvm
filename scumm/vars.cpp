@@ -225,10 +225,7 @@ void Scumm_v8::setupScummVars()
 
 	VAR_TALK_ACTOR = 14;
 	VAR_HAVE_MSG = 15;
-	VAR_LEFTBTN_HOLD = 16;	// FIXME: This is actually some kind of bitfield
-	VAR_RIGHTBTN_HOLD = 17;
-	VAR_LEFTBTN_DOWN = 18;
-	VAR_RIGHTBTN_DOWN = 19;
+	VAR_MOUSE_BUTTONS = 16;
 
 	// VAR_TIMEDATE_YEAR = 24;
 	// VAR_TIMEDATE_MONTH = 25;
@@ -237,7 +234,7 @@ void Scumm_v8::setupScummVars()
 	// VAR_TIMEDATE_MINUTE = 28;
 	// VAR_TIMEDATE_SECOND = 29;
 
-	VAR_OVERRIDE = 30;
+	//VAR_OVERRIDE = 30;	// Oops. 30 has something to do with overrides, but this isn't it..
 	VAR_ROOM = 31;
 
 	//VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
