@@ -116,7 +116,9 @@ public:
 
 	enum {
 		SAVESTATE_CUR_VER = 1,
-		SAVESTATE_MAX     = 100
+		SAVESTATE_MAX     = 100,
+		AUTOSAVE_INTERVAL = 5 * 60 * 1000,
+		AUTOSAVE_SLOT     = 0xFF
 	};
 
 protected:
@@ -130,6 +132,7 @@ protected:
 	int _talkSpeed;
 	bool _subtitles;
 	bool _quit;
+	uint32 _lastSaveTime;
 
 	BamScene *_bam;
 	BankManager *_bankMan;

@@ -69,7 +69,6 @@ Logic::Logic(QueenEngine *vm)
 	_puzzleAttemptCount = 0;
 	_journal = new Journal(vm);
 	_scene = 0;
-	memset(_gameState, 0, sizeof(_gameState));	
 	initialise();
 }
 

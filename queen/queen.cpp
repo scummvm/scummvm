@@ -182,6 +182,10 @@ void QueenEngine::update(bool checkPlayerInput) {
 			_input->quickLoadReset();
 			loadGameState(0);
 		}
+		if (_system->getMillis() - _lastSaveTime > AUTOSAVE_INTERVAL) {
+			saveGameState(AUTOSAVE_SLOT, "Autosave");
+			_lastSaveTime = _system->getMillis();
+		}
 		if (checkPlayerInput) {
 			_command->updatePlayer();
 		}
@@ -265,7 +269,11 @@ SaveFile *QueenEngine::readGameStateHeader(uint16 slot, GameStateHeader *gsh) {
 }
 
 void QueenEngine::makeGameStateName(uint16 slot, char *buf) {
-	sprintf(buf, "queen.s%02d", slot);
+	if (slot == AUTOSAVE_SLOT) {
+		strcpy(buf, "queen.asd");
+	} else {
+		sprintf(buf, "queen.s%02d", slot);
+	}
 }
 
 void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
@@ -293,6 +301,7 @@ int QueenEngine::go() {
 	if (ConfMan.hasKey("save_slot") && !(_resource->isDemo() || _resource->isInterview())) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
+	_lastSaveTime = _system->getMillis();
 	_quit = false;
 	while (!_quit) {
 		// queen.c lines 4080-4104
