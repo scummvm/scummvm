@@ -163,6 +163,7 @@ protected:
 	uint _tablesheap_curpos_new;
 
 	Subroutine *_subroutine_list, *_subroutine_list_org;
+	uint _subroutine;
 
 	uint _dx_surface_pitch;
 
@@ -274,7 +275,6 @@ protected:
 	uint _video_num_pal_colors;
 
 	uint _invoke_timer_callback;
-
 
 	uint _vga_sprite_changed;
 

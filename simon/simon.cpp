@@ -314,6 +314,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_subroutine_list = 0;
 	_subroutine_list_org = 0;
+	_subroutine = 0;
 
 	_dx_surface_pitch = 0;
 
@@ -1237,16 +1238,20 @@ void SimonEngine::playSting(uint a) {
 Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
 	Subroutine *cur;
 
+	_subroutine = subroutine_id;
+
 	for (cur = _subroutine_list; cur; cur = cur->next) {
-		if (cur->id == subroutine_id)
+		if (cur->id == subroutine_id) {
 			return cur;
+		}
 	}
 
 	loadTablesIntoMem(subroutine_id);
 
 	for (cur = _subroutine_list; cur; cur = cur->next) {
-		if (cur->id == subroutine_id)
+		if (cur->id == subroutine_id) {
 			return cur;
+		}
 	}
 
 	debug(1,"getSubroutineByID: subroutine %d not found", subroutine_id);
@@ -2335,7 +2340,7 @@ void SimonEngine::o_set_video_mode(uint mode, uint vga_res) {
 }
 
 void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
-	uint num;
+	uint num, num_lines;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
 	uint16 c;
@@ -2403,7 +2408,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	if (_game & GF_SIMON2) {
 		if (!_dx_use_3_or_4_for_lock) {
-			uint num_lines = _video_palette_mode == 4 ? 134 : 200;
+			num_lines = _video_palette_mode == 4 ? 134 : 200;
 			_vga_var8 = num_lines;
 			dx_copy_from_attached_to_2(0, 0, 320, num_lines);
 			dx_copy_from_attached_to_3(num_lines);
@@ -2411,7 +2416,12 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		}
 		_dx_use_3_or_4_for_lock = false;
 	} else {
-		uint num_lines = _video_palette_mode == 4 ? 134 : 200;
+		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
+		// in lower half of screen
+		if (_subroutine == 2926)
+			num_lines = 200;
+		else
+			num_lines = _video_palette_mode == 4 ? 134 : 200;
 		_vga_var8 = num_lines;
 		dx_copy_from_attached_to_2(0, 0, 320, num_lines);
 		dx_copy_from_attached_to_3(num_lines);

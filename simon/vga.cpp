@@ -731,8 +731,16 @@ void SimonEngine::vc_10_draw() {
 	state.surf_pitch = _dx_surface_pitch;
 
 	{
-		uint offs = ((vlut[0] - _video_windows[16]) * 2 + state.x) * 8;
-		uint offs2 = (vlut[1] - _video_windows[17] + state.y);
+		uint offs, offs2;
+		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
+		// in lower half of screen
+		if (!(_game & GF_SIMON2) && _subroutine == 2926) {
+			offs = ((vlut[0]) * 2 + state.x) * 8;
+			offs2 = (vlut[1] + state.y);
+		} else {
+			offs = ((vlut[0] - _video_windows[16]) * 2 + state.x) * 8;
+			offs2 = (vlut[1] - _video_windows[17] + state.y);
+		}
 
 		state.surf2_addr += offs + offs2 * state.surf2_pitch;
 		state.surf_addr += offs + offs2 * state.surf_pitch;
@@ -1766,7 +1774,12 @@ void SimonEngine::vc_62_palette_thing() {
 			_vc_ptr = vc_ptr_org;
 		}
 
-		dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
+		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
+		// in lower half of screen
+		if (!(_game & GF_SIMON2) && _subroutine == 2926)
+			dx_clear_surfaces(200);
+		else
+			dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
 	}
 	if (_game & GF_SIMON2) {
 		if (_next_music_to_play != -1)
