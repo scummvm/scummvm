@@ -27,6 +27,8 @@
 #include "scumm.h"
 #include "verbs.h"
 
+int egoVar;	// TODO: Put this in V2 class?
+
 enum {
 	kInventoryUpArrow = 4,
 	kInventoryDownArrow = 5,
@@ -150,7 +152,6 @@ void Scumm::checkV2MouseOver(ScummVM::Point pos) {
 
 void Scumm::checkV2Inventory(int x, int y) {
 	int object = 0;
-	static int egoVar;
 
 	y -= virtscr[2].topline;
 
@@ -207,6 +208,11 @@ void Scumm::redrawV2Inventory() {
 		return;
 
 	_string[1].charset = 1;
+
+	if (_scummVars[VAR_EGO] != egoVar) {
+		egoVar = _scummVars[VAR_EGO];
+		_inventoryOffset = 0;
+	}
 
 	max_inv = getInventoryCount(_scummVars[VAR_EGO]) - _inventoryOffset;
 	if (max_inv > 4)
