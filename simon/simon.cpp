@@ -667,7 +667,7 @@ int SimonEngine::init(GameDetector &detector) {
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
 	set_volume(ConfMan.getInt("sfx_volume"));
-	_mixer->setMusicVolume(256);
+	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
 
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
