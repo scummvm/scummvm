@@ -21,14 +21,15 @@
 
 #include "queen/logic.h"
 #include "queen/defs.h"
+#include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/walk.h"
 #include "common/str.h"
 
 namespace Queen {
 
-Logic::Logic(Resource *resource, Graphics *graphics) 
-	: _resource(resource), _graphics(graphics), _talkSpeed(DEFAULT_TALK_SPEED) {
+Logic::Logic(Resource *resource, Graphics *graphics, Display *display)
+	: _resource(resource), _graphics(graphics), _display(display), _talkSpeed(DEFAULT_TALK_SPEED) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_walk = new Walk(this, _graphics);
@@ -39,14 +40,11 @@ Logic::Logic(Resource *resource, Graphics *graphics)
 Logic::~Logic() {
 	delete[] _jas;
 	delete _walk;
-	//free(_graphicData);
 }
 
 void Logic::initialise() {
 	int16 i, j;
 	uint8 *ptr = _jas;
-
-	//_display->loadFont();
 	
 	_numRooms = READ_BE_UINT16(ptr); ptr += 2;
 	_numNames = READ_BE_UINT16(ptr); ptr += 2;
@@ -293,7 +291,7 @@ void Logic::initialise() {
 	else
 		_speechToggle = true;
 
-	_graphics->panelLoad();
+	_graphics->loadPanel();
 	_graphics->bobSetupControl();
 	joeSetup();
 	zoneSetupPanel();
@@ -680,7 +678,6 @@ void Logic::zoneSetup() {
 	uint16 maxAreaRoom = _areaMax[_currentRoom];
 	for (zoneNum = 1; zoneNum <= maxAreaRoom; ++zoneNum) {
 		zoneSet(ZONE_ROOM, maxObjRoom + zoneNum, _area[_currentRoom][zoneNum].box);
-		_graphics->boxDraw(_area[_currentRoom][zoneNum].box, 18);
 	}
 }
 
@@ -716,7 +713,14 @@ void Logic::roomErase() {
 	_graphics->bankErase(12);
 
 	// TODO: TALKHEAD=0;
-	// TODO: _display->fadeOut();
+
+	if (_currentRoom >= 114) {
+		_display->palFadeOut(0, 255, _currentRoom);
+	}
+	else {
+		_display->palFadeOut(0, 223, _currentRoom);
+	}
+	
 	// TODO: credits system
 
 	// invalidates all persons animations
@@ -1110,16 +1114,15 @@ void Logic::roomSetup(const char* room, int comPanel, bool inCutaway) {
 	// loads background image
 	Common::String bdFile(room);
 	bdFile += ".PCX";
-	_graphics->backdropLoad(bdFile.c_str(), _currentRoom);
+	_graphics->loadBackdrop(bdFile.c_str(), _currentRoom);
 
 	// setup graphics to enter fullscreen/panel mode
-	_graphics->setScreenMode(comPanel, inCutaway);
+	_display->screenMode(comPanel, inCutaway);
 
 	// reset sprites table (bounding box...)
 	_graphics->bobClearAll();
 
-	// setup any hard-coded palette effect
-	// TODO: graphics->check_colors(_currentRoom);
+	_display->palCustomColors(_currentRoom);
 
 	// load/setup objects associated to this room
 	Common::String bkFile(room);
@@ -1145,7 +1148,12 @@ void Logic::roomDisplay(const char* room, RoomDisplayMode mode, uint16 scale, in
 	}
 	if (mode != RDM_NOFADE_JOE) {
 		_graphics->update();
-		// TODO: _display->fadeIn();
+		if (_currentRoom >= 114) {
+			_display->palFadeIn(0, 255, _currentRoom);
+		}
+		else {
+			_display->palFadeOut(0, 223, _currentRoom);
+		}
 	}
 	if (pod != NULL) {
 		_walk->joeMove(0, pod->x, pod->y, inCutaway);

@@ -46,12 +46,13 @@ struct ZoneSlot {
 
 class Graphics;
 class Resource;
+class Display;
 class Walk;
 
 class Logic {
 
 public:
-	Logic(Resource *resource, Graphics *graphics);
+	Logic(Resource *resource, Graphics *graphics, Display *display);
 	~Logic();
 
 	uint16 currentRoom();
@@ -227,6 +228,7 @@ protected:
 
 	Resource *_resource;
 	Graphics *_graphics;
+	Display *_display;
 	Walk *_walk;
 
 	int _talkSpeed;	// TALKSPD

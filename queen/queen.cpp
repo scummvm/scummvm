@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+#include "queen/display.h"
 #include "queen/graphics.h"
 
 extern uint16 _debugLevel;
@@ -74,10 +75,10 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 }
 
 QueenEngine::~QueenEngine() {
+	delete _resource;
+	delete _display;
 	delete _graphics;
 	delete _logic;
-	delete _resource;
-	//delete _queenDisplay;
 }
 
 void QueenEngine::errorString(const char *buf1, char *buf2) {
@@ -98,8 +99,9 @@ void QueenEngine::go() {
 
 void QueenEngine::initialise(void) {
 	_resource = new Resource(_gameDataPath);
-	_graphics = new Graphics(_resource);
-	_logic = new Logic(_resource, _graphics);
+	_display = new Display(_system);
+	_graphics = new Graphics(_display, _resource);
+	_logic = new Logic(_resource, _graphics, _display);
 	//_sound = new Sound(_mixer, _detector->_sfx_volume);
 }
 

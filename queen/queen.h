@@ -34,6 +34,7 @@ namespace Queen {
 
 class Graphics;
 class Logic;
+class Display;
 
 class QueenEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -53,6 +54,7 @@ protected:
 	Graphics *_graphics;
 	Resource *_resource;
 	Logic *_logic;
+	Display *_display;
 
 	GameDetector *_detector; // necessary for music
 	

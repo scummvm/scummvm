@@ -101,20 +101,20 @@ struct TextSlot {
 };
 
 
-struct Dynalum {
-	uint8 msk[50 * 160]; // mask
-	int8 lum[8 * 3]; // rgb
-	int8 oldColMask;
-	Dynalum(): oldColMask(-1) {}
-};
+//struct Dynalum {
+//	uint8 msk[50 * 160]; // mask
+//	int8 lum[8 * 3]; // rgb
+//	int8 oldColMask;
+//	Dynalum(): oldColMask(-1) {}
+//};
 
 
-//class Display;
+class Display;
 
 class Graphics {
 public:
 
-	Graphics(Resource *resource);
+	Graphics(Display *display, Resource *resource);
 	~Graphics();
 
 	void bankLoad(const char *bankname, uint32 bankslot); // loadbank()
@@ -145,42 +145,19 @@ public:
 	void frameErase(uint32 fslot);
 	void frameEraseAll(bool joe); // freeframes, freeallframes
 
-	void backdropLoad(const char *name, uint16 room); // loadbackdrop
-	void backdropDraw();
-
-	void panelLoad(); // loadpanel
-	void panelDraw();
-	void panelClear();
-
-	void boxDraw(const Box &b, uint8 color);
+	void loadBackdrop(const char *name, uint16 room);
+	void loadPanel();
 
 	void useJournal();
 	void journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame);
 	void journalBobPreDraw();
 
 	void update();
- 
-	void displayText(const TextSlot *pts, uint16 y); // FIXME: move to Display class
-	void displayChar(uint16 x, uint16 y, uint8 color, const uint8 *chr); // FIXME: move to Display class
-	static void displayBlit(uint8 *dst_buf, uint16 dst_x, uint16 dst_y, uint16 dst_pitch, const uint8 *src_buf, uint16 src_w, uint16 src_h, uint16 src_pitch, bool xflip, bool masked); // FIXME: move to Display class
-	void displayScreen();
-
-	void setScreenMode(int comPanel, bool inCutaway);
-	void setRoomPal(const uint8 *pal, int start, int end);
-
-	void dynalumInit(const char* roomPrefix, uint16 room);
-	void dynalumUpdate(uint16 x, uint16 y); // dynalum()
 
 
 private:
 
 	enum {
-		BACKDROP_W = 640,
-		BACKDROP_H = 200,
-		SCREEN_W = 320,
-		SCREEN_H = 200,
-		PANEL_W = 320,
-		PANEL_H = 50,
 		BOB_SHRINK_BUF_SIZE = 60000
 	};
 	
@@ -211,38 +188,8 @@ private:
 
 	uint16 _cameraBob; // cambob
 
-	//! current room dimensions
-	uint16 _backdropWidth, _backdropHeight; // BDxres, BDyres
-
-	 //! current room bitmap
-	uint8 *_backdrop;
-
-	uint8 *_screen;
-
-	bool _fullscreen;
-
-	bool _panelFlag;
-
-	uint16 _horizontalScroll;
-
-	uint8 *_paletteRoom; // palette
-	uint8 *_paletteScreen; // tpal
-
-	//! panel storage area
-	uint8 *_panel;
-
+	Display *_display;
 	Resource *_resource;
-//	Display *_display;
-
-	Dynalum _dynalum;
-
-	//! font used to render the text
-	static const uint8 FONT[]; // FIXME: move to Display class
-
-	//! font justification values
-	static const uint8 FONT_SIZES[]; // FIXME: move to Display class
-
-	void readPCX(const uint8 *src, uint8 *dst, uint16 dstPitch, uint16 w, uint16 h);
 
 };
 
