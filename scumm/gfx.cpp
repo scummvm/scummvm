@@ -2484,6 +2484,19 @@ void Scumm::palManipulateInit(int start, int end, int string_id, int time)
 	byte *string1, *string2, *string3;
 	int i;
 
+	string1 = getStringAddress(string_id);
+	string2 = getStringAddress(string_id + 1);
+	string3 = getStringAddress(string_id + 2);
+	if (!string1 || !string2 || !string3) {
+		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d\n",
+		        start, end, string_id, time, string_id, string_id + 1, string_id + 2);
+		return;
+	}
+
+	string1+=start;
+	string2+=start;
+	string3+=start;
+
 	_palManipStart = start;
 	_palManipEnd = end;
 	_palManipCounter = 0;
@@ -2496,15 +2509,6 @@ void Scumm::palManipulateInit(int start, int end, int string_id, int time)
 	pal = _currentPalette + start * 3;
 	target = _palManipPalette + start * 3;
 	between = _palManipIntermediatePal + start * 6;
-
-	string1 = getStringAddress(string_id) + start;
-	string2 = getStringAddress(string_id + 1) + start;
-	string3 = getStringAddress(string_id + 2) + start;
-	if (!string1 || !string2 || !string3) {
-		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d\n",
-		        start, end, string_id, time, string_id, string_id + 1, string_id + 2);
-		return;
-	}
 
 	for (i = start; i < end; ++i) {
 		*target++ = *string1++;
