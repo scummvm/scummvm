@@ -49,6 +49,7 @@ Gfx::Gfx(OSystem *system, int width, int height, GameDetector &detector) : _syst
 	back_buf.w = width;
 	back_buf.h = height;
 	back_buf.pitch = width;
+	back_buf.bytesPerPixel = 1;
 
 	back_buf.clip_rect.left = 0;
 	back_buf.clip_rect.top = 0;
