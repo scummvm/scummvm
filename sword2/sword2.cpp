@@ -235,7 +235,7 @@ int Sword2Engine::init(GameDetector &detector) {
 	_system->endGFXTransaction();
 
 	// Create the debugger as early as possible (but not before the
-	// graphics object!) so that errors can be displayed in it. In
+	// screen object!) so that errors can be displayed in it. In
 	// particular, we want errors about missing files to be clearly
 	// visible to the user.
 
@@ -273,10 +273,7 @@ int Sword2Engine::init(GameDetector &detector) {
 		if (saveExists(_saveSlot))
 			restoreGame(_saveSlot);
 		else {
-			SaveLoadDialog dialog(this, kLoadDialog);
-
-			_mouse->setMouse(NORMAL_MOUSE_ID);
-
+			RestoreDialog dialog(this);
 			if (!dialog.runModal())
 				startGame();
 		}

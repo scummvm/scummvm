@@ -38,7 +38,7 @@ class Slot;
 
 enum {
 	kSaveDialog,
-	kLoadDialog
+	kRestoreDialog
 };
 
 /**
@@ -96,7 +96,7 @@ public:
 	virtual void onAction(Widget *widget, int result = 0);
 };
 
-class SaveLoadDialog : public Dialog {
+class SaveRestoreDialog : public Dialog {
 private:
 	int _mode, _selectedSlot;
 	byte _editBuffer[SAVE_DESCRIPTION_LEN];
@@ -115,8 +115,8 @@ private:
 	Button *_cancelButton;
 
 public:
-	SaveLoadDialog(Sword2Engine *vm, int mode);
-	~SaveLoadDialog();
+	SaveRestoreDialog(Sword2Engine *vm, int mode);
+	~SaveRestoreDialog();
 
 	void updateSlots();
 	void drawEditBuffer(Slot *slot);
@@ -165,6 +165,16 @@ class QuitDialog : public MiniDialog {
 public:
 	QuitDialog(Sword2Engine *vm);
 	virtual int runModal();
+};
+
+class SaveDialog : public SaveRestoreDialog {
+public:
+	SaveDialog(Sword2Engine *vm) : SaveRestoreDialog(vm, kSaveDialog) {}
+};
+
+class RestoreDialog : public SaveRestoreDialog {
+public:
+	RestoreDialog(Sword2Engine *vm) : SaveRestoreDialog(vm, kRestoreDialog) {}
 };
  
 } // End of namespace Sword2

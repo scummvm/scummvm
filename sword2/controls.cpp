@@ -251,6 +251,9 @@ Dialog::Dialog(Sword2Engine *vm)
 	_vm->_screen->setFullPalette(CONTROL_PANEL_PALETTE);
 	_vm->_screen->clearScene();
 
+	// Usually the mouse pointer will already be "normal", but not always.
+	_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
+
 	// HACK: Since the dialogs don't do normal scene updates we need to
 	// trigger a full redraw manually.
 
@@ -829,9 +832,9 @@ int StartDialog::runModal() {
 		if (_vm->_quit)
 			return 0;
 
-		SaveLoadDialog loadDialog(_vm, kLoadDialog);
+		RestoreDialog restoreDialog(_vm);
 
-		if (loadDialog.runModal())
+		if (restoreDialog.runModal())
 			return 0;
 
 		if (_vm->_quit)
@@ -1097,7 +1100,7 @@ public:
 				_parent->onAction(this, kSelectSlot);
 				if (_mode == kSaveDialog)
 					_parent->onAction(this, kStartEditing);
-			} else if (_mode == kLoadDialog) {
+			} else if (_mode == kRestoreDialog) {
 				setState(0);
 				_parent->onAction(this, kDeselectSlot);
 			}
@@ -1141,7 +1144,7 @@ public:
 	}
 };
 
-SaveLoadDialog::SaveLoadDialog(Sword2Engine *vm, int mode) : Dialog(vm) {
+SaveRestoreDialog::SaveRestoreDialog(Sword2Engine *vm, int mode) : Dialog(vm) {
 	int i;
 
 	_mode = mode;
@@ -1198,7 +1201,7 @@ SaveLoadDialog::SaveLoadDialog(Sword2Engine *vm, int mode) : Dialog(vm) {
 	registerWidget(_cancelButton);
 }
 
-SaveLoadDialog::~SaveLoadDialog() {
+SaveRestoreDialog::~SaveRestoreDialog() {
 	delete _fr1;
 	delete _fr2;
 }
@@ -1206,7 +1209,7 @@ SaveLoadDialog::~SaveLoadDialog() {
 // There aren't really a hundred different button objects of course, there are
 // only eight. Re-arrange them to simulate scrolling.
 
-void SaveLoadDialog::updateSlots() {
+void SaveRestoreDialog::updateSlots() {
 	for (int i = 0; i < 8; i++) {
 		Slot *slot = _slotButton[(baseSlot + i) % 8];
 		FontRendererGui *fr;
@@ -1239,7 +1242,7 @@ void SaveLoadDialog::updateSlots() {
 	}
 }
 
-void SaveLoadDialog::drawEditBuffer(Slot *slot) {
+void SaveRestoreDialog::drawEditBuffer(Slot *slot) {
 	if (_selectedSlot == -1)
 		return;
 
@@ -1250,7 +1253,7 @@ void SaveLoadDialog::drawEditBuffer(Slot *slot) {
 	_fr2->drawText(_editBuffer, 130, 78 + (_selectedSlot - baseSlot) * 36);
 }
 
-void SaveLoadDialog::onAction(Widget *widget, int result) {
+void SaveRestoreDialog::onAction(Widget *widget, int result) {
 	if (widget == _zupButton) {
 		if (baseSlot > 0) {
 			if (baseSlot >= 8)
@@ -1362,14 +1365,14 @@ void SaveLoadDialog::onAction(Widget *widget, int result) {
 	}
 }
 
-void SaveLoadDialog::paint() {
+void SaveRestoreDialog::paint() {
 	Dialog::paint();
 
-	_fr1->drawText((_mode == kLoadDialog) ? TEXT_RESTORE : TEXT_SAVE, 165, 377);
+	_fr1->drawText((_mode == kRestoreDialog) ? TEXT_RESTORE : TEXT_SAVE, 165, 377);
 	_fr1->drawText(TEXT_CANCEL, 382, 377);
 }
 
-void SaveLoadDialog::setResult(int result) {
+void SaveRestoreDialog::setResult(int result) {
 	if (result) {
 		if (_selectedSlot == -1)
 			return;
@@ -1385,7 +1388,7 @@ void SaveLoadDialog::setResult(int result) {
 	Dialog::setResult(result);
 }
 
-int SaveLoadDialog::runModal() {
+int SaveRestoreDialog::runModal() {
 	if (_mode == kSaveDialog)
 		_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
@@ -1400,7 +1403,7 @@ int SaveLoadDialog::runModal() {
 			if (_vm->saveGame(_selectedSlot, (byte *) &_editBuffer[_firstPos]) != SR_OK)
 				result = 0;
 			break;
-		case kLoadDialog:
+		case kRestoreDialog:
 			if (_vm->restoreGame(_selectedSlot) != SR_OK)
 				result = 0;
 			break;

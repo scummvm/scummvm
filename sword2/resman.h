@@ -26,7 +26,7 @@ class File;
 namespace Sword2 {
 
 #define MAX_MEM_CACHE (8 * 1024 * 1024) // we keep up to 8 megs of resource data files in memory
-#define	MAX_res_files	20
+#define	MAX_res_files 20
 
 class Sword2Engine;
 
@@ -90,7 +90,7 @@ private:
 	ResourceFile _resFiles[MAX_res_files];
 	Resource *_resList;
 
-    Resource *_cacheStart, *_cacheEnd;
+	Resource *_cacheStart, *_cacheEnd;
 	uint32 _usedMem; // amount of used memory in bytes
 };
 

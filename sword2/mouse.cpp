@@ -339,13 +339,13 @@ void Mouse::systemMenuMouse(void) {
 		break;
 	case 2:
 		{
-			SaveLoadDialog dialog(_vm, kSaveDialog);
+			SaveDialog dialog(_vm);
 			dialog.runModal();
 		}
 		break;
 	case 3:
 		{
-			SaveLoadDialog dialog(_vm, kLoadDialog);
+			RestoreDialog dialog(_vm);
 			dialog.runModal();
 		}
 		break;
