@@ -1448,7 +1448,7 @@ no_scroll:;
 
 void SimonEngine::vc_42_delay_if_not_eq() {
 	uint val = vc_read_var(vc_read_next_word());
-	if (val == vc_read_next_word()) {
+	if (val != vc_read_next_word()) {
 
 		add_vga_timer(_vga_base_delay + 1, _vc_ptr - 4, _vga_cur_sprite_id, _vga_cur_file_id);
 		_vc_ptr = (byte *)&vc_get_out_of_code;
