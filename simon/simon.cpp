@@ -688,8 +688,6 @@ int SimonEngine::init(GameDetector &detector) {
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	midi.mapMT32toGM (!(_game & GF_SIMON2) && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
-	if (_midiDriver == MD_MT32)
-		midi.setPassThrough(true);
 
 	midi.set_driver(driver);
 	int ret = midi.open();
