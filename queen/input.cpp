@@ -104,8 +104,6 @@ void Input::delay(uint amount) {
 						_debugger = true;
 					} else if (event.kbd.keycode == 'f') {
 						_fastMode = !_fastMode;
-					} else if (event.kbd.keycode == 'w') {
-//						_walkthroughDialog->runModal(); // FIXME
 					}
 				} else {
 					_inKey = event.kbd.keycode;

@@ -109,8 +109,6 @@ SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
 
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");
-
-	_walkthroughDialog->setGameName(detector->_game.name);
 }
 
 SwordEngine::~SwordEngine() {
@@ -123,8 +121,6 @@ SwordEngine::~SwordEngine() {
 	delete _mouse;
 	delete _objectMan;
 	delete _resMan;
-
-	_walkthroughDialog->destroy();
 }
 
 void SwordEngine::initialize(void) {
@@ -202,8 +198,6 @@ void SwordEngine::initialize(void) {
 	_objectMan->initialize();
 	_mouse->initialize();
 	_control = new Control(_saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music, getSavePath());
-
-	_walkthroughDialog->create();
 }
 
 void SwordEngine::reinitialize(void) {
@@ -1289,8 +1283,6 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 					_keyPressed = 8;
 				else
 					_keyPressed = (uint8)event.kbd.ascii;
-				if (event.kbd.keycode == 'w')
-					_walkthroughDialog->runModal();
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;

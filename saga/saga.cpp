@@ -115,12 +115,9 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
 
 	_vm = this;
-
-	_walkthroughDialog->setGameName(detector->_game.name);
 }
 
 SagaEngine::~SagaEngine() {
-	_walkthroughDialog->destroy();
 }
 
 void SagaEngine::errorString(const char *buf1, char *buf2) {
@@ -219,8 +216,6 @@ void SagaEngine::go() {
 	if (!_render->initialized()) {
 		return;
 	}
-
-	_walkthroughDialog->create();
 
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer, _soundEnabled);

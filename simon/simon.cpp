@@ -718,9 +718,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
-
-	_walkthroughDialog->setGameName(detector->_game.name);
-	_walkthroughDialog->create();
 }
 
 SimonEngine::~SimonEngine() {
@@ -732,8 +729,6 @@ SimonEngine::~SimonEngine() {
 	
 	delete _sound;
 	delete _debugger;
-
-	_walkthroughDialog->destroy();
 }
 
 void SimonEngine::errorString(const char *buf1, char *buf2) {
@@ -4853,8 +4848,6 @@ void SimonEngine::delay(uint amount) {
 						_aboutDialog->runModal();
 					} else if (event.kbd.keycode == 'f')
 						_fast_mode ^= 1;
-					else if (event.kbd.keycode == 'w')
-						_walkthroughDialog->runModal();
 					else if (event.kbd.keycode == 'd')
 						_debugger->attach();
 				}

@@ -91,7 +91,6 @@ namespace Queen {
 
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
-	_walkthroughDialog->setGameName(detector->_game.name);
 }
 
 QueenEngine::~QueenEngine() {
@@ -108,8 +107,6 @@ QueenEngine::~QueenEngine() {
 	delete _music;
 	delete _sound;
 	delete _walk;
-
-	_walkthroughDialog->destroy();
 }
 
 void QueenEngine::registerDefaultSettings() {

@@ -47,8 +47,6 @@ Engine::Engine(OSystem *syst)
 	g_debugLevel = ConfMan.getInt("debuglevel");
 
 	_saveFileMan = _system->getSavefileManager();
-
-	_walkthroughDialog = new GUI::WalkthroughDialog(1.0, 1.0);
 }
 
 Engine::~Engine() {
@@ -56,7 +54,6 @@ Engine::~Engine() {
 
 	delete _mixer;
 	delete _saveFileMan;
-	delete _walkthroughDialog;
 
 	g_engine = NULL;
 }

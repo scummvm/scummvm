@@ -42,10 +42,6 @@ int SagaEngine::processInput() {
 
 		switch (event.event_code) {
 		case OSystem::EVENT_KEYDOWN:
-			if ((event.kbd.flags == OSystem::KBD_CTRL) && (event.kbd.keycode == 'w')) {
-				_walkthroughDialog->runModal();
-				_gfx->updateCursor();
-			}
 			if (_vm->_console->isActive()) {
 				in_char = event.kbd.ascii;
 				switch (event.kbd.keycode) {
