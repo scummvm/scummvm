@@ -3,8 +3,10 @@ gui
 scumm
 simon
 sky
-bs2
+sword2
+queen
 sound
 common
+base
 backends
 scummvm.elf
