@@ -3094,7 +3094,7 @@ void SimonState::processSpecialKeys() {
 			break;
 
 		case 't':
-			if (_game & GF_SIMON2 && _game & GF_TALKIE)
+			if (_game & GF_SIMON2 && _game & GF_TALKIE || _game & GF_TALKIE && _language > 1)
 				_subtitles ^= 1;
 			break;
 
