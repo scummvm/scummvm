@@ -109,7 +109,11 @@ int SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, FILE * file, mad_ti
 
 void SoundMixer::mix(int16 *buf, uint len)
 {
-
+	if (_paused) {
+		memset(buf, 0, 2 * len * sizeof(int16));
+		return;
+	}
+	
 	if (_premix_proc) {
 		int i;
 		_premix_proc(_premix_param, buf, len);
@@ -117,14 +121,8 @@ void SoundMixer::mix(int16 *buf, uint len)
 			buf[2 * i] = buf[2 * i + 1] = buf[i];
 		}
 	} else {
-		/* no premixer available, zero the buf out */
+		// no premixer available, zero the buf out
 		memset(buf, 0, 2 * len * sizeof(int16));
-	}
-
-	/* Arisme : moved to let iMUSE generate the events */
-	if (_paused) {
-		memset(buf, 0, 2 * len * sizeof(int16));
-		return;
 	}
 
 	_syst->lock_mutex(_mutex);
