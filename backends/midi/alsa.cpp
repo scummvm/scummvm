@@ -58,6 +58,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
+	void sysEx(byte *msg, uint16 length);
 
 private:
 	void send_event(int do_flush);
@@ -183,6 +184,10 @@ void MidiDriver_ALSA::send(uint32 b) {
 		send_event(1);
 		break;
 	}
+}
+
+void MidiDriver_ALSA::sysEx(byte *msg, uint16 length) {
+	snd_seq_ev_set_sysex(&ev, length, msg);
 }
 
 int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port) {
