@@ -41,29 +41,6 @@ struct ZoneSlot {
 	Box box;
 };
 
-// Temporary class
-struct Command_ {
-	Verb action, action2;
-	uint16 noun, noun2;
-
-	CmdListData *_cmdList;
-	uint16 _numCmdList;	//COM_LIST_MAX
-
-	CmdArea *_cmdArea;
-	uint16 _numCmdArea;	//COM_A_MAX
-
-	CmdObject *_cmdObject;
-	uint16 _numCmdObject;	//COM_O_MAX
-
-	CmdInventory *_cmdInventory;
-	uint16 _numCmdInventory;	//COM_I_MAX
-
-	CmdGameState *_cmdGameState;
-	uint16 _numCmdGameState;	//COM_G_MAX
-
-	void readAllCommandsFrom(byte *&ptr);
-};
-
 struct GameSettings {
 	int musicVolume;
 	bool musicToggle;
@@ -130,10 +107,11 @@ struct State {
 };
 
 
-class Graphics;
-class Resource;
+class Command;
 class Display;
 class Input;
+class Graphics;
+class Resource;
 class Sound;
 class Walk;
 
@@ -172,7 +150,7 @@ public:
 	uint16 currentRoomObjMax() const { return _objMax[_currentRoom]; }
 	uint16 currentRoomData() const { return _roomData[_currentRoom]; }
 	ObjectDescription *objectDescription(uint16 objNum) const { return &_objectDescription[objNum]; }
-	uint16 objectDescriptionCount() const { return _numDescriptions; }
+	uint16 objectDescriptionCount() const { return _numObjDesc; }
 
 	uint16 joeFacing()	{ return _joe.facing; }
 	uint16 joeX()		{ return _joe.x; }
@@ -240,7 +218,7 @@ public:
 	uint16 joeFace();
 
 	//! WALK()
-	int16 joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk);
+	int16 joeWalkTo(int16 x, int16 y, bool mustWalk);
 
 	//! GRAB_JOE()
 	void joeGrab(uint16 state, uint16 speed);
@@ -266,13 +244,26 @@ public:
 	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;
 	uint16 findObjectUnderCursor(int16 cursorx, int16 cursory) const;
 
-	Walk *walk() { return _walk; }
-	Display *display() { return _display; }
+	Walk *walk() const { return _walk; }
+	Display *display() const { return _display; }
+	Command *command() const { return _cmd; }
 
 	uint16 findObjectRoomNumber(uint16 zoneNum) const;
 	uint16 findObjectGlobalNumber(uint16 zoneNum) const;
 
 	const char *lockedVerbPrefix() const { return _joeResponse[39]; }
+
+	void inventorySetup();
+	uint16 findInventoryItem(int invSlot) const;
+	void inventoryRefresh();
+	void inventoryInsertItem(uint16 itemNum, bool refresh = true);
+	void inventoryDeleteItem(uint16 itemNum, bool refresh = true);
+	void inventoryScroll(uint16 count, bool up);
+
+	//! Copy data from dummy object to object
+	void objectCopy(int dummyObjectIndex, int objectIndex);
+
+	void checkPlayer();
 
 	void update();
 
@@ -324,7 +315,7 @@ protected:
 	uint16 _numObjects;
 
 	ObjectDescription *_objectDescription;
-	uint16 _numDescriptions;
+	uint16 _numObjDesc;
 
 	ActorData *_actorData;
 	uint16 _numActors;	//ACTOR_DATA_MAX
@@ -353,7 +344,7 @@ protected:
 
 	//! Object description (Look At)
 	char **_objDescription;	//OBJECT_DESCRstr
-	uint16 _numObjDesc;
+	uint16 _numDescriptions;
 
 	char **_objName;	//OBJECT_NAMEstr
 	uint16 _numNames;
@@ -404,12 +395,16 @@ protected:
 
 	GameSettings _settings;
 
+	//! Inventory items
+	int16 _inventoryItem[4];
+
 	Resource *_resource;
 	Graphics *_graphics;
 	Display *_display;
 	Input *_input;
 	Sound *_sound;
 	Walk *_walk;
+	Command *_cmd;
 
 	//! Verbs (in order) available in panel
 	static const VerbEnum PANEL_VERBS[];

@@ -647,7 +647,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 		/* Copy FROM_OBJECT into OBJECT */
 
 		if(object.objectNumber != object.fromObject) {
-			objectCopy(object.fromObject, object.objectNumber);
+			_logic->objectCopy(object.fromObject, object.objectNumber);
 		}
 		else {
 			// Same object, so just turn it on!
@@ -1190,65 +1190,6 @@ void Cutaway::run(char *nextFilename) {
 		/* XXX playsong(_lastSong) */ ;
 }
 
-void Cutaway::objectCopy(int dummyObjectIndex, int realObjectIndex) {
-	// P3_COPY_FROM function in cutaway.c
-	/* Copy data from Dummy (D) object to object (K)
-		 If COPY_FROM Object images are greater than COPY_TO Object
-		 images then swap the objects around. */
-
-	ObjectData *dummyObject = _logic->objectData(dummyObjectIndex);
-	ObjectData *realObject  = _logic->objectData(realObjectIndex);
-	
-	int fromState = (dummyObject->name < 0) ? -1 : 0;
-
-	int frameCountReal  = 1;
-	int frameCountDummy = 1;
-
-	int graphic = realObject->image;
-	if (graphic > 0) {
-		if (graphic > 5000)
-			graphic -= 5000;
-
-		GraphicData *data = _logic->graphicData(graphic);
-
-		if (data->lastFrame > 0) 
-			frameCountReal = data->lastFrame - data->firstFrame + 1;
-
-		graphic = dummyObject->image;
-		if (graphic > 0) {
-			if (graphic > 5000)
-				graphic -= 5000;
-
-			data = _logic->graphicData(graphic);
-
-			if (data->lastFrame > 0) 
-				frameCountDummy = data->lastFrame - data->firstFrame + 1;
-		}
-	}
-
-	ObjectData temp = *realObject;
-	*realObject = *dummyObject;
-
-	if (frameCountDummy > frameCountReal)
-		*dummyObject = temp;
-
-	realObject->name = abs(realObject->name);
-
-	if  (fromState == -1)
-		dummyObject->name = -abs(dummyObject->name);
-
-	//  Make sure that WALK_OFF_DATA is copied too!
-
-	for (int i = 1; i <= _logic->walkOffCount(); i++) {
-		WalkOffData *walkOffData = _logic->walkOffData(i);
-		if (walkOffData->entryObj == (int16)dummyObjectIndex) {
-			walkOffData->entryObj = (int16)realObjectIndex;
-			break;
-		}
-	}
-
-}
-
 void Cutaway::goToFinalRoom() {
 	// Lines 1901-2032 in cutaway.c
 	byte *ptr = _gameStatePtr;
@@ -1361,7 +1302,7 @@ void Cutaway::updateGameState() {
 				ObjectData *objectData  = _logic->objectData(objectIndex);
 				objectData->name        = abs(objectData->name);
 				if (fromObject > 0)
-					objectCopy(fromObject, objectIndex);
+					_logic->objectCopy(fromObject, objectIndex);
 				_logic->roomRefreshObject(objectIndex);
 			}
 			else if (objectIndex < 0) {               // Hide the object

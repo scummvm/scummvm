@@ -25,6 +25,7 @@
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "queen/command.h"
 #include "queen/cutaway.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
@@ -158,13 +159,13 @@ void QueenEngine::roomChanged() {
 
 		_logic->gameState(VAR_INTRO_PLAYED, 1);
 
-		// XXX setupItems();
-		// XXX inventory();
+		_logic->inventorySetup();
+		_logic->inventoryRefresh();
 	}
 	else {
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 1, false);
 	}
-	// XXX _drawMouseFlag = 1;
+	_display->mouseCursorShow(true); // _drawMouseFlag = 1;
 }
 
 
@@ -187,22 +188,23 @@ void QueenEngine::go() {
 			_logic->currentRoom(_logic->newRoom());
 			roomChanged();
 			// XXX _logic->fullScreen(false);
-			if (_logic->currentRoom() == _logic->newRoom())
+			if (_logic->currentRoom() == _logic->newRoom()) {
 				_logic->newRoom(0);
+			}
 		}
 		else {
 			if (_logic->joeWalk() == 2) {
 				_logic->joeWalk(0);
-				// XXX executeAction(yes);
+				_logic->command()->executeCurrentAction(true);
 			}
 			else {
-				// XXX if (_parse == 1)
-				// XXX 	clearCommand(1);
+				if (_logic->command()->parse()) {
+					_logic->command()->clear(true);
+				}
 				_logic->joeWalk(0);
-				// XXX checkPlayer();
+				_logic->checkPlayer();
 			}
 		}
-
 		break; // XXX don't loop yet
 	}
 }

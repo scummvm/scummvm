@@ -16,7 +16,6 @@ COMMAND
 =======
 ALTER_DEFAULT()				Command::alterDefault
 CLEAR_COMMAND()				Command::clear
-CHECK_PLAYER()				Command::checkPlayer
 EXECUTE_ACTION()			Command::executeCurrentAction
 FIND_DEFAULT()				Command::findDefault
 LOOK()						Command::look
@@ -33,7 +32,8 @@ SELECT_ITEM()				Command::grabSelectedItem
 SELECT_NOUN()				Command::grabSelectedNoun
 SELECT_VERB()				Command::grabSelectedVerb
 -
-ACTION,ACTION2				Command::_action*
+ACTION						Command::_currentAction
+ACTION2						Command::_selectedAction
 CLEVEL						Command::_commandLevel
 COM_A						Command::_cmdArea
 COM_A_MAX					Command::_numCmdArea
@@ -49,7 +49,8 @@ COMMANDstr					Command::_command
 DEFCOMM						Command::_defaultVerb
 MKEY						Command::_mouseKey
 OLDVERB,VERB				Command::_*verb*
-OLDNOUN,NOUN,NOUN2			Command::_*noun*
+OLDNOUN,NOUN				Command::_*noun*
+NOUN2						Command::_selectedNoun
 PARSE						Command::_parse
 SUBJ1,SUBJ2,SUBJECT			Command::_subject*
 
@@ -163,14 +164,14 @@ no_check_keys				Input::_noCheckKeys
 
 INVENTORY
 =========
-DEL_ITEM_NUM()
-INS_ITEM_NUM()
-INVDWN()
-INVENTORY()
-INVUP()
-SETUP_ITEMS()
+DEL_ITEM_NUM()				Logic::inventoryDeleteItem // TODO
+INS_ITEM_NUM()				Logic::inventoryInsertItem // TODO
+INVDWN()					Logic::inventoryScroll // TODO
+INVENTORY()					Logic::inventoryRefresh
+INVUP()						Logic::inventoryScroll // TODO
+SETUP_ITEMS()				Logic::inventorySetup
 -
-INV1,INV2,INV3,INV4
+INV1,INV2,INV3,INV4			Logic::_inventoryItem
 
 
 JOE
@@ -202,6 +203,7 @@ in_journal
 
 LOGIC
 =====
+CHECK_PLAYER()				Logic::checkPlayer
 DISP_OBJECTS()				Logic::roomSetupObjects
 DISP_ROOM()					Logic::roomDisplay
 FIND_BOB()					Logic::findBob
@@ -209,7 +211,7 @@ FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()				Logic::graphicData
 FIND_SCALE()				Logic::findScale
 FIND_VERB()					Logic::findVerb
-P3_COPY_FROM()				Cutaway::objectCopy
+P3_COPY_FROM()				Logic::objectCopy
 R_MAP()						(handle map 'm1')
 REDISP_OBJECT()				Logic::roomRefreshObject
 restart_game()
@@ -217,8 +219,8 @@ SETUP_BOBS()				Graphics::bobSetupControl
 SETUP_FURNITURE()			Logic::roomSetupFurniture
 SETUP_ROOM()				QueenEngine::roomChanged
 SETUP_SCREENS()				*not needed* (only calls Graphics::loadPanel)
-SETUP_VARS()
-update() 					Graphics::update
+SETUP_VARS()				*not needed* (equivalent to Command::clear(), SCENE=0, clear(gamestate))
+update() 					Logic::update
 -
 A_ANIMstr 					Logic::_aAnim
 A_ANIM_MAX					Logic::_numAAnim

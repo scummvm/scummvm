@@ -156,7 +156,7 @@ bool Walk::animateJoe() {
 			if (pbs->speed == 0) {
 				pbs->speed = 1;
 			}
-			_logic->update(); // CHECK_PLAYER();
+			_logic->checkPlayer();
 			if (_logic->joeWalk() == 2) { // || cutQuit 
 				// we are about to do something else, so stop walking
 				interrupted = true;

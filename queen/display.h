@@ -142,8 +142,6 @@ private:
 
 	bool _gotTick;
 
-	uint8 _mouseCursor[14 * 14];
-
 	Dynalum _dynalum;
 	OSystem *_system;
 

@@ -30,7 +30,7 @@ namespace Queen {
 Input::Input(OSystem *system) : 
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE), 
 	_cutawayRunning(false), _cutawayQuit(false), _talkQuit(false),
-   _inKey(0)	{
+   _inKey(0), _mouseButton(0), _mouse_x(0), _mouse_y(0)	{
 }
 
 void Input::delay() {
@@ -58,7 +58,6 @@ void Input::delay(uint amount) {
 				case OSystem::EVENT_MOUSEMOVE:
 					_mouse_x = event.mouse.x;
 					_mouse_y = event.mouse.y;
-					
 					break;
 
 				case OSystem::EVENT_LBUTTONDOWN:

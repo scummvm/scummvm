@@ -259,9 +259,6 @@ class Cutaway {
 		//! Restore QueenLogic::_objectData from _personData
 		void restorePersonData();
 
-		//! Copy data from dummy object to object
-		void objectCopy(int dummyObjectIndex, int objectIndex);
-
 		//! Go to the final room
 		void goToFinalRoom();
 

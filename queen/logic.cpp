@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "queen/logic.h"
+#include "queen/command.h"
 #include "queen/cutaway.h"
 #include "queen/defs.h"
 #include "queen/display.h"
@@ -169,7 +170,7 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 	*objState = (*objState & ~0xF0) | (val << 4);
 }
 
-
+/*
 void Command_::readAllCommandsFrom(byte *&ptr) {
 
 	uint16 i;
@@ -218,7 +219,7 @@ void Command_::readAllCommandsFrom(byte *&ptr) {
 		_cmdGameState[i].readFrom(ptr);
 	}
 }
-
+*/
 
 
 Common::RandomSource Logic::randomizer;
@@ -232,6 +233,7 @@ Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input 
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
 	_walk = new Walk(this, _graphics);
+	_cmd = new Command(this, _graphics, _input, _walk);
 	memset(_gameState, 0, sizeof(_gameState));
 	initialise();
 }
@@ -239,6 +241,7 @@ Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input 
 Logic::~Logic() {
 	delete[] _jas;
 	delete _walk;
+	delete _cmd;
 }
 
 void Logic::initialise() {
@@ -337,7 +340,7 @@ void Logic::initialise() {
 		_objectDescription[i].readFrom(ptr);
 	}
 
-	Command_ cmd; cmd.readAllCommandsFrom(ptr); // TEMP
+	_cmd->readCommandsFrom(ptr);
 
 	_entryObj = READ_BE_UINT16(ptr); ptr += 2;
 
@@ -449,12 +452,14 @@ void Logic::initialise() {
 	else
 		_settings.speechToggle = true;
 
+	_cmd->clear(false);
+	// XXX SCENE = 0
+	memset(_gameState, 0, sizeof(_gameState));
 	_graphics->loadPanel();
 	_graphics->bobSetupControl();
 	joeSetup();
 	zoneSetupPanel();
 
-	memset(_zones, 0, sizeof(_zones));
 	_oldRoom = 0;
 }
 
@@ -771,6 +776,7 @@ void Logic::zoneSet(uint16 screen, uint16 zone, const Box& box) {
 
 uint16 Logic::zoneIn(uint16 screen, uint16 x, uint16 y) const {
 
+	debug(9, "Logic::zoneIn(%d, (%d,%d))", screen, x, y);
 	int i;
 	if (screen == ZONE_PANEL) {
 		y -= ROOM_ZONE_HEIGHT;
@@ -800,6 +806,7 @@ uint16 Logic::zoneInArea(uint16 screen, uint16 x, uint16 y) const {
 
 void Logic::zoneClearAll(uint16 screen) {
 
+	debug(9, "Logic::zoneClearAll(%d)", screen);
 	int i;
 	for(i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		_zones[screen][i].valid = false;
@@ -1740,20 +1747,20 @@ uint16 Logic::joeFace() {
 }
 
 
-int16 Logic::joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk) {
+int16 Logic::joeWalkTo(int16 x, int16 y, bool mustWalk) {
 
 	// Check to see if object is actually an exit to another
 	// room. If so, then set up new room
 
 	uint16 k = _roomData[_currentRoom];
 
-	ObjectData *objData = &_objectData[k + cmd->noun2];
+	ObjectData *objData = &_objectData[k + _cmd->selectedNoun()];
 	if (objData->x != 0 || objData->y != 0) {
 		x = objData->x;
 		y = objData->y;
 	}
 
-	if (cmd->action2.value() == VERB_WALK_TO) {
+	if (_cmd->selectedAction().value() == VERB_WALK_TO) {
 		_entryObj = objData->entryObj;
 	}
 	else {
@@ -1762,16 +1769,15 @@ int16 Logic::joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk) {
 
 	_newRoom = 0;
 
-	if (_entryObj != 0 && cmd->action2.value() != VERB_CLOSE) {
+	if (_entryObj != 0 && _cmd->selectedAction().value() != VERB_CLOSE) {
 		// because this is an exit object, see if there is
 		// a walk off point and set (x,y) accordingly
-		WalkOffData *wod = walkOffPointForObject(k + cmd->noun2);
+		WalkOffData *wod = walkOffPointForObject(k + _cmd->selectedNoun());
 		if (wod != NULL) {
 			x = wod->x;
 			y = wod->y;
 		}
 	}
-
 
 	// determine which way for Joe to face Object
 	uint16 facing = State::findDirection(objData->state);
@@ -1881,7 +1887,7 @@ void Logic::joeUseDress(bool showCut) {
 		joeFace();
 		if (gameState(VAR_DRESSING_MODE) == 0) {
 			playCutaway("cdres.CUT");
-			// XXX INS_ITEM_NUM(58);
+			inventoryInsertItem(58);
 		}
 		else {
 			playCutaway("cudrs.CUT");
@@ -1889,8 +1895,7 @@ void Logic::joeUseDress(bool showCut) {
 	}
 	_display->palSetJoe(JP_DRESS);
 	joeSetupFromBanks("JoeD_A.BBK", "JoeD_B.BBK");
-	// XXX DEL_ITEM_NUM(56, 0);
-	// XXX INVENTORY();
+	inventoryDeleteItem(56);
 	gameState(VAR_DRESSING_MODE, 2);
 }
 
@@ -1901,12 +1906,11 @@ void Logic::joeUseClothes(bool showCut) {
 		joeFacing(DIR_FRONT);
 		joeFace();
 		playCutaway("cdclo.CUT");
-		// XXX INS_ITEM_NUM(56);
+		inventoryInsertItem(56);
 	}
 	_display->palSetJoe(JP_CLOTHES);
 	joeSetupFromBanks("Joe_A.BBK", "Joe_B.BBK");
-	// XXX DEL_ITEM_NUM(58,0);
-	// XXX INVENTORY();
+	inventoryDeleteItem(58);
 	gameState(VAR_DRESSING_MODE, 0);
 }
 
@@ -1991,6 +1995,130 @@ uint16 Logic::findObjectRoomNumber(uint16 zoneNum) const {
 uint16 Logic::findObjectGlobalNumber(uint16 zoneNum) const {
 
 	return _roomData[_currentRoom] + findObjectRoomNumber(zoneNum);
+}
+
+
+uint16 Logic::findInventoryItem(int invSlot) const {
+	// queen.c l.3894-3898
+	if (invSlot >= 0 && invSlot < 4) {
+		return _inventoryItem[invSlot];
+	}
+	return 0;
+}
+
+
+void Logic::inventorySetup() {
+	
+	_graphics->bankLoad("objects.BBK", 14);
+	_inventoryItem[0] = 1; // Bat
+	_inventoryItem[1] = _resource->isDemo() ? 7 : 2; // Journal
+	_inventoryItem[2] = 0;
+	_inventoryItem[3] = 0;
+}
+
+void Logic::inventoryRefresh() {
+	
+	int16 i;
+	uint16 x = 182;
+	for (i = 0; i < 4; ++i) {
+		uint16 itemNum = _inventoryItem[i];
+		if (itemNum != 0) {
+			// 1st object in inventory uses frame 8, 
+			// whereas 2nd, 3rd and 4th uses frame 9
+			uint16 dstFrame = (itemNum != 0) ? 8 : 9;
+			// unpack frame for object and draw it
+			_graphics->bankUnpack(_itemData[itemNum].frame, dstFrame, 14);
+			_graphics->bobDrawInventoryItem(dstFrame, x, 14);
+		}
+		else {
+			// no object, clear the panel 
+			_graphics->bobDrawInventoryItem(0, x, 14);
+		}
+		x += 35;
+	}
+	// XXX OLDVERB=VERB;
+	update();
+}
+
+
+void Logic::inventoryInsertItem(uint16 itemNum, bool refresh) {
+	warning("Logic::inventoryInsertItem() unimplemented");
+}
+
+
+void Logic::inventoryDeleteItem(uint16 itemNum, bool refresh) {
+	warning("Logic::inventoryDeleteItem() unimplemented");
+}
+
+
+void Logic::inventoryScroll(uint16 count, bool up) {
+	warning("Logic::inventoryScroll() unimplemented");
+}
+
+
+void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
+	// P3_COPY_FROM function in cutaway.c
+	/* Copy data from Dummy (D) object to object (K)
+		 If COPY_FROM Object images are greater than COPY_TO Object
+		 images then swap the objects around. */
+
+	ObjectData *dummyObject = objectData(dummyObjectIndex);
+	ObjectData *realObject  = objectData(realObjectIndex);
+	
+	int fromState = (dummyObject->name < 0) ? -1 : 0;
+
+	int frameCountReal  = 1;
+	int frameCountDummy = 1;
+
+	int graphic = realObject->image;
+	if (graphic > 0) {
+		if (graphic > 5000)
+			graphic -= 5000;
+
+		GraphicData *data = graphicData(graphic);
+
+		if (data->lastFrame > 0) 
+			frameCountReal = data->lastFrame - data->firstFrame + 1;
+
+		graphic = dummyObject->image;
+		if (graphic > 0) {
+			if (graphic > 5000)
+				graphic -= 5000;
+
+			data = graphicData(graphic);
+
+			if (data->lastFrame > 0) 
+				frameCountDummy = data->lastFrame - data->firstFrame + 1;
+		}
+	}
+
+	ObjectData temp = *realObject;
+	*realObject = *dummyObject;
+
+	if (frameCountDummy > frameCountReal)
+		*dummyObject = temp;
+
+	realObject->name = abs(realObject->name);
+
+	if  (fromState == -1)
+		dummyObject->name = -abs(dummyObject->name);
+
+	//  Make sure that WALK_OFF_DATA is copied too!
+
+	for (int i = 1; i <= _numWalkOffs; i++) {
+		WalkOffData *walkOff = &_walkOffData[i];
+		if (walkOff->entryObj == (int16)dummyObjectIndex) {
+			walkOff->entryObj = (int16)realObjectIndex;
+			break;
+		}
+	}
+
+}
+
+
+void Logic::checkPlayer() {
+	update();
+	_cmd->updatePlayer();
 }
 
 

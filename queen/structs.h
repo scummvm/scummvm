@@ -265,7 +265,7 @@ struct ItemData {
 	//! state of the object
 	uint16 state;
 	//! bank bobframe 
-	uint16 bobFrame;
+	uint16 frame;
 	//! entry in OBJECT_DESCR (>0 if available)
 	int16 sfxDescription;
 
@@ -273,7 +273,7 @@ struct ItemData {
 		name = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		description = READ_BE_UINT16(ptr); ptr += 2;
 		state = READ_BE_UINT16(ptr); ptr += 2;
-		bobFrame = READ_BE_UINT16(ptr); ptr += 2;
+		frame = READ_BE_UINT16(ptr); ptr += 2;
 		sfxDescription = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 };
