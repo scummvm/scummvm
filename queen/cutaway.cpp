@@ -868,9 +868,9 @@ void Cutaway::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 	//  Make sure that WALK_OFF_DATA is copied too!
 
 	for (int i = 1; i <= _logic->walkOffCount(); i++) {
-		uint16* walkOffData = _logic->walkOffData(i);
-		if (walkOffData[0] == dummyObjectIndex) {
-			walkOffData[0] = realObjectIndex;
+		WalkOffData *walkOffData = _logic->walkOffData(i);
+		if (walkOffData->entryObj == (int16)dummyObjectIndex) {
+			walkOffData->entryObj = (int16)realObjectIndex;
 			break;
 		}
 	}
