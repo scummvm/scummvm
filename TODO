@@ -63,6 +63,15 @@ GUI
 * Remove hardcoded 320x200 assumptions, use game screen size
 * Add ability to scale GUI (ie. to make the GUI less tiny in COMI)
 
+Game Detector
+=============
+* Make use of MD5 sums for improved game detection
+  -> in particular, a detector should be allowed to return detected
+  values for language and platform
+* Improve the detector for games with all datafiles in subdirs (i.e.
+  Broken Sword 1 & 2). This could work by letting the detector proc recurse
+  into sub directories...
+
 Audio
 =====
 * Get the high quality resample code to work
@@ -74,8 +83,6 @@ Audio
   a "callback channel" or something like this. This removes special cases from
   the code, and it also makes it possible to apply sound rate conversion to
   premixers, which makes it easier to write and maintain a premixer proc.
-* Add "direct" support for little endian 16bit audio data (useful for Broken
-  Sword 1/2).
 
 Config
 ======
@@ -176,8 +183,6 @@ SDL backend
 ===========
 * Fix the "auto dirty rect" computing code - in particular, use a proper
   checksum algorithm, this should solve many of the problems with some luck
-* OpenGL code: either fix it (see open bug tracker items and various hacks in
-  the code), or remove it. Does anybody really need this???
 
 X11 backend
 ===========
