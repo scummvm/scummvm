@@ -123,7 +123,7 @@ enum HitZoneFlags {
 	kHitZoneTerminus = (1 << 3)
 };
 
-struct StringsList {
+struct StringsTable {
 	byte *stringsPointer;
 	int stringsCount;
 	const char **strings;
@@ -140,7 +140,7 @@ struct StringsList {
 		memset(this, 0, sizeof(*this));
 	}
 
-	StringsList() {
+	StringsTable() {
 		memset(this, 0, sizeof(*this));
 	}
 };
@@ -323,7 +323,7 @@ public:
 	int decodeBGImage(const byte *image_data, size_t image_size,
 						byte **output_buf, size_t *output_buf_len, int *w, int *h);
 	const byte *getImagePal(const byte *image_data, size_t image_size);
-	void loadStrings(StringsList &stringsList, const byte *stringsPointer, size_t stringsLength);
+	void loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength);
 	const char *getObjectName(uint16 objectId);
 
 public:

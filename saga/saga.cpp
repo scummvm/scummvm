@@ -283,16 +283,16 @@ void SagaEngine::shutdown() {
 	_system->quit();
 }
 
-void SagaEngine::loadStrings(StringsList &stringsList, const byte *stringsPointer, size_t stringsLength) {
+void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {
 	uint16 stringsCount;
 	uint16 i;
 	size_t offset;
 	
 
-	stringsList.stringsPointer = (byte*)malloc(stringsLength);
-	memcpy(stringsList.stringsPointer, stringsPointer, stringsLength);
+	stringsTable.stringsPointer = (byte*)malloc(stringsLength);
+	memcpy(stringsTable.stringsPointer, stringsPointer, stringsLength);
 
-	MemoryReadStreamEndian scriptS(stringsList.stringsPointer, stringsLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian scriptS(stringsTable.stringsPointer, stringsLength, IS_BIG_ENDIAN);
 
 	offset = scriptS.readUint16();
 	if (offset > stringsLength) {
@@ -300,11 +300,11 @@ void SagaEngine::loadStrings(StringsList &stringsList, const byte *stringsPointe
 	}
 
 	stringsCount = offset / 2;
-	stringsList.stringsCount = stringsCount;
+	stringsTable.stringsCount = stringsCount;
 
-	stringsList.strings = (const char **)malloc(stringsCount * sizeof(const char *));
-	if (stringsList.strings == NULL) {
-		error("No enough memory for strings list");
+	stringsTable.strings = (const char **)malloc(stringsCount * sizeof(const char *));
+	if (stringsTable.strings == NULL) {
+		error("No enough memory for strings Table");
 	}
 
 	scriptS.seek(0);
@@ -313,7 +313,7 @@ void SagaEngine::loadStrings(StringsList &stringsList, const byte *stringsPointe
 		if (offset > stringsLength) {
 			error("invalid string offset");
 		}
-		stringsList.strings[i] = (const char *)stringsList.stringsPointer + offset;
+		stringsTable.strings[i] = (const char *)stringsTable.stringsPointer + offset;
 	}
 }
 

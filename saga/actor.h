@@ -343,7 +343,7 @@ private:
 	ActorOrderList _drawOrderList;
 	ActorData _actors[ACTORCOUNT];
 	SpeechData _activeSpeech;
-	StringsList _actorsStrings;
+	StringsTable _actorsStrings;
 
 //path stuff
 	Rect _barrierList[ACTOR_BARRIERS_MAX];

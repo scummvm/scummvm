@@ -207,7 +207,7 @@ struct VOICE_LUT {
 struct ScriptData {
 	int loaded;
 	SCRIPT_BYTECODE *bytecode;
-	StringsList strings;
+	StringsTable strings;
 	VOICE_LUT *voice;
 };
 
@@ -235,7 +235,6 @@ public:
 	int freeScript();
 	SCRIPT_BYTECODE *loadBytecode(byte *bytecode_p, size_t bytecode_len);
 	VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, ScriptData *script);
-	int disassemble(SCRIPT_BYTECODE *script_list, StringsList *strings);
 
 	bool isInitialized() const { return _initialized;  }
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
@@ -265,7 +264,7 @@ protected:
 	ScriptData *_currentScript;
 	ScriptDataBuf _dataBuf[SCRIPT_DATABUF_NUM];
 	ScriptThreadList _threadList;
-	StringsList _mainStrings;
+	StringsTable _mainStrings;
 
 //verb	
 	bool _firstObjectSet;
