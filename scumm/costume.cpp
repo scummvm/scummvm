@@ -711,10 +711,16 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 		int8 x = ptr[2];	x >>= 2;
 
 		ptr += 3;
+
 		if (flipped) {
 			mask = (mask == 0x80) ? 0x01 : 0x80;
 			x = -x;
 		}
+
+		if ((_actorX + x < 0) || (_actorX + x + 8 >= _out.w))
+			continue;
+		if ((_actorY + y < 0) || (_actorY + y + 8 >= _out.h))
+			continue;
 
 		for (int ty = 0; ty < 8; ty++) {
 			byte c1 = _vm->_NESCostumeGfx[_vm->_NESCostumeSet][tile * 16 + ty];

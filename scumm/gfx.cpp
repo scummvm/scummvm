@@ -1438,15 +1438,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			useOrDecompress = true;
 
 		if (_vm->_version == 1) {
+			mask_ptr = getMaskBuffer(x, y, 1);
 			if (_vm->_features & GF_NES) {
-				//mask_ptr = getMaskBuffer(x, y, 1);
-				//for (int ii = 0; ii < height; ii++) {
-				//	for (int jj = 0; jj < width; jj++)
-				//		mask_ptr[jj] = 0xff;
-				//	mask_ptr += _numStrips;
-				//}
+				drawStripNESMask(mask_ptr, stripnr, height);
 			} else {
-				mask_ptr = getMaskBuffer(x, y, 1);
 				drawStripC64Mask(mask_ptr, stripnr, width, height);
 			}
 		} else if (_vm->_version == 2) {
@@ -1889,7 +1884,25 @@ void Gdi::decodeNESGfx(const byte *room) {
 			adata++;
 	}
 
-	// there's another pointer at room + 0x0E, but I don't know what data it points at
+	const byte *mdata = room + READ_LE_UINT16(room + 0x0E);
+	int mask = *mdata++;
+	if (mask == 0)
+		return;
+	if (mask != 1) {
+		debug(0,"NES room %i has irregular mask count %i!",_vm->_currentRoom,mask);
+		return;
+	}
+	int mwidth = *mdata++;
+	for (i = 0; i < 16; i++) {
+		n = 0;
+		while (n < mwidth) {
+			byte data = *mdata++;
+			for (j = 0; j < (data & 0x7F); j++)
+				_NESMasktable[i][n++] = (data & 0x80) ? (*mdata++) : (*mdata);
+			if (!(data & 0x80))
+				mdata++;
+		}
+	}
 }
 
 void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height) {
@@ -1933,6 +1946,22 @@ void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height
 			for (int j = 0; j < 8; j++)
 				dst[j] = _vm->_NESPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
 			dst += dstPitch;
+		}
+	}
+}
+
+void Gdi::drawStripNESMask(byte *dst, int stripnr, int height) const {
+	height /= 8;
+	int x = stripnr;
+	if (x > 63) {
+		debug(0,"NES tried to mask invalid strip %i",stripnr);
+		return;
+	}
+	for (int y = 0; y < height; y++) {
+		byte c = ((_NESMasktable[y][x >> 3] >> (x & 7)) & 1) ? 0xFF : 0x00;
+		for (int i = 0; i < 8; i++) {
+			*dst = c;
+			dst += _numStrips;
 		}
 	}
 }

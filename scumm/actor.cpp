@@ -798,15 +798,16 @@ void Actor::showActor() {
 
 // V1 Maniac doesn't have a ScummVar for VAR_TALK_ACTOR, and just uses
 // an internal variable. Emulate this to prevent overwriting script vars...
+// Maniac NES (V1), however, DOES have a ScummVar for VAR_TALK_ACTOR
 int ScummEngine::getTalkingActor() {
-	if (_gameId == GID_MANIAC && _version == 1)
+	if (_gameId == GID_MANIAC && _version == 1 && !(_features & GF_NES))
 		return _V1TalkingActor;
 	else
 		return VAR(VAR_TALK_ACTOR);
 }
 
 void ScummEngine::setTalkingActor(int value) {
-	if (_gameId == GID_MANIAC && _version == 1)
+	if (_gameId == GID_MANIAC && _version == 1 && !(_features & GF_NES))
 		_V1TalkingActor = value;
 	else
 		VAR(VAR_TALK_ACTOR) = value;
@@ -1012,7 +1013,12 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_actorX = _pos.x + _offsX - _vm->virtscr[0].xstart;
 	bcr->_actorY = _pos.y + _offsY - _elevation;
 
-	if ((_vm->_version <= 2) && !(_vm->_features & GF_NES)) {
+	if (_vm->_features & GF_NES) {
+		// In the NES version, when the actor is facing right,
+		// we need to shift it 8 pixels to the left
+		if (_facing == 90)
+			bcr->_actorX -= 8;
+	} else if (_vm->_version <= 2) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in
 		// V2 games. However, it is not quite clear to me why. And to fully
 		// match the original, it seems we have to offset by 2 strips if the
@@ -1280,6 +1286,13 @@ void ScummEngine::actorTalk(const byte *msg) {
 
 	if (_heversion >= 72 || getTalkingActor() > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
+	} else if (_features & GF_NES) {
+		static int NES_lastActor = 0;
+		static int NES_color = 0;
+		if (NES_lastActor != getTalkingActor())
+			NES_color ^= 1;
+		NES_lastActor = getTalkingActor();
+		_charsetColor = NES_color;
 	} else {
 		a = derefActor(getTalkingActor(), "actorTalk(2)");
 		_charsetColor = a->_talkColor;

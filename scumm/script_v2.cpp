@@ -818,8 +818,10 @@ void ScummEngine_v2::o2_verbOps() {
 		slot = getVarOrDirectByte(PARAM_1) + 1;
 		int prep = fetchScriptByte(); // Only used in V1?
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
-		if (_features & GF_NES)
+		if (_features & GF_NES) {
 			y -= 16;
+			x -= 8;
+		}
 		else if ((_gameId == GID_MANIAC) && (_version == 1))
 			y += 8;
 
@@ -831,7 +833,11 @@ void ScummEngine_v2::o2_verbOps() {
 
 		vs = &_verbs[slot];
 		vs->verbid = verb;
-		if (_version == 1) {
+		if (_features & GF_NES) {
+			vs->color = 1;
+			vs->hicolor = 1;
+			vs->dimcolor = 1;
+		} else if (_version == 1) {
 			vs->color = (_gameId == GID_MANIAC && _demoMode) ? 16 : 5;
 			vs->hicolor = 7;
 			vs->dimcolor = 11;
@@ -851,7 +857,7 @@ void ScummEngine_v2::o2_verbOps() {
 		
 		vs->curRect.left = x;
 		vs->curRect.top = y;
-		
+
 		// FIXME: again, this map depends on the language of the game.
 		// E.g. a german keyboard has 'z' and 'y' swapped, while a french
 		// keyboard starts with "awert", etc.
@@ -1029,7 +1035,9 @@ void ScummEngine_v2::o2_drawSentence() {
 	_string[2].charset = 1;
 	_string[2].ypos = virtscr[2].topline;
 	_string[2].xpos = 0;
-	if (_version == 1)
+	if (_features & GF_NES)
+		_string[2].color = 0;
+	else if (_version == 1)
 		_string[2].color = 16;
 	else 
 		_string[2].color = 13;

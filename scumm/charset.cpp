@@ -1732,12 +1732,6 @@ static byte trNESSwedishTable[] = {
 	0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5e
 };
 
-static byte NESColorTransition[] = {
-	0x00, 0x02, 0x02, 0x03, 0x02, 0x01, 0x02, 0x03,
-	0x00, 0x01, 0x02, 0x01, 0x00, 0x01, 0x00, 0x03
-};
-
-
 CharsetRendererNES::CharsetRendererNES(ScummEngine *vm, Common::Language language)
 	: CharsetRendererCommon(vm) {
 	switch (language) {
@@ -1823,7 +1817,7 @@ void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const 
 		byte c1 = src[i + 8];
 		for (int j = 0; j < 8; j++)
 			dst[j] = _vm->_NESPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) |
-				(NESColorTransition[_color] << 2)];
+			(_color ? 12 : 8)];
 		dst += s.pitch;
 	}
 }

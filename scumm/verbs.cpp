@@ -40,7 +40,11 @@ void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
 
-	if (_version == 1) {
+	if (_features & GF_NES) {
+		color = 0;
+		hi_color = 0;
+		arrow_color = 0;
+	} else if (_version == 1) {
 		color = 16;
 		hi_color = 7;
 		arrow_color = 6;
@@ -57,7 +61,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	for (i = 0; i < 2; i++) {
 		if (_features & GF_NES) {
 			v2_mouseover_boxes[2 * i].rect.left = 0;
-			v2_mouseover_boxes[2 * i].rect.right = 96;
+			v2_mouseover_boxes[2 * i].rect.right = 104;
 			v2_mouseover_boxes[2 * i].rect.top = 48 + 8 * i;
 			v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
 		} else {
@@ -71,7 +75,7 @@ void ScummEngine_v2::initV2MouseOver() {
 		v2_mouseover_boxes[2 * i].hicolor = hi_color;
 
 		if (_features & GF_NES) {
-			v2_mouseover_boxes[2 * i + 1].rect.left = 128;
+			v2_mouseover_boxes[2 * i + 1].rect.left = 120;
 			v2_mouseover_boxes[2 * i + 1].rect.right = 224;
 			v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
 			v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
@@ -89,8 +93,8 @@ void ScummEngine_v2::initV2MouseOver() {
 	// Inventory arrows
 
 	if (_features & GF_NES) {
-		v2_mouseover_boxes[kInventoryUpArrow].rect.left = 96;
-		v2_mouseover_boxes[kInventoryUpArrow].rect.right = 128;
+		v2_mouseover_boxes[kInventoryUpArrow].rect.left = 104;
+		v2_mouseover_boxes[kInventoryUpArrow].rect.right = 112;
 		v2_mouseover_boxes[kInventoryUpArrow].rect.top = 48;
 		v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 56;
 	} else {
@@ -104,10 +108,10 @@ void ScummEngine_v2::initV2MouseOver() {
 	v2_mouseover_boxes[kInventoryUpArrow].hicolor = hi_color;
 
 	if (_features & GF_NES) {
-		v2_mouseover_boxes[kInventoryDownArrow].rect.left = 96;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.right = 128;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.top = 56;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 64;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.left = 112;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.right = 120;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.top = 48;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 56;
 	} else {
 		v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
 		v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
@@ -265,14 +269,25 @@ void ScummEngine::redrawV2Inventory() {
 		const byte *tmp = getObjOrActorName(obj);
 		assert(tmp);
 
-		// Prevent inventory entries from overflowing by truncating the text
-		// after 144/8 = 18 chars
-		byte msg[18 + 1];
-		msg[18] = 0;
-		strncpy((char *)msg, (const char *)tmp, 18);
-		
-		// Draw it
-		drawString(1, msg);
+		if (_features & GF_NES) {
+			// Prevent inventory entries from overflowing by truncating the text
+			// after 104/8 = 13 chars
+			byte msg[13 + 1];
+			msg[13] = 0;
+			strncpy((char *)msg, (const char *)tmp, 13);
+			
+			// Draw it
+			drawString(1, msg);
+		} else {
+			// Prevent inventory entries from overflowing by truncating the text
+			// after 144/8 = 18 chars
+			byte msg[18 + 1];
+			msg[18] = 0;
+			strncpy((char *)msg, (const char *)tmp, 18);
+			
+			// Draw it
+			drawString(1, msg);
+		}
 	}
 
 
@@ -281,7 +296,10 @@ void ScummEngine::redrawV2Inventory() {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].rect.left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].rect.top + vs->topline;
 		_string[1].color = v2_mouseover_boxes[kInventoryUpArrow].color;
-		drawString(1, (const byte *)" \1\2");
+		if (_features & GF_NES)
+			drawString(1, (const byte *)"\x7E");
+		else
+			drawString(1, (const byte *)" \1\2");
 	}
 
 	// If necessary, draw "down" arrow
@@ -289,7 +307,10 @@ void ScummEngine::redrawV2Inventory() {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].rect.left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].rect.top + vs->topline;
 		_string[1].color = v2_mouseover_boxes[kInventoryDownArrow].color;
-		drawString(1, (const byte *)" \3\4");
+		if (_features & GF_NES)
+			drawString(1, (const byte *)"\x7F");
+		else
+			drawString(1, (const byte *)" \3\4");
 	}
 }
 

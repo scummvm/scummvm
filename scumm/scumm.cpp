@@ -1451,8 +1451,8 @@ void ScummEngine::scummInit() {
 		VAR(VAR_CAMERA_ACCEL_Y) = 100;
 	} else if (!(_features & GF_NEW_CAMERA)) {
 		if (_features & GF_NES) {
-			camera._leftTrigger = 4;
-			camera._rightTrigger = 24;
+			camera._leftTrigger = 6;	// 6
+			camera._rightTrigger = 21;	// 25
 		} else {
 			camera._leftTrigger = 10;
 			camera._rightTrigger = (_heversion >= 71) ? 70 : 30;
