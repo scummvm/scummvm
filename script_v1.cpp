@@ -1722,11 +1722,13 @@ void Scumm::o5_roomOps() {
 	{
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
-		if(_gameId == GID_INDY3_256 && a == 16 && b == 0) /* FIXME*/
-		{
-			fetchScriptByte();
-			fetchScriptByte();
-			fetchScriptByte();
+		if(_gameId == GID_INDY3_256 && a == 16 && b == 0) /* FIXME */
+		{			
+			// Set screen height
+			c = fetchScriptByte();
+			d = fetchScriptByte();
+			e = fetchScriptByte();			
+			initScreens(0,a,320,c);
 			return;
 		}
 	}
