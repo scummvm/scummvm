@@ -1199,7 +1199,7 @@ void Actor::setActorCostume(int c) {
 
 	costumeNeedsInit = true;
 	
-	if (_vm->_version == 8) {
+	if (_vm->_version >= 7) {
 		cost.reset();
 		memset(animVariable, 0, sizeof(animVariable));
 		costume = c;
