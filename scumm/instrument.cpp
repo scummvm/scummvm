@@ -46,26 +46,26 @@ static struct {
 roland_to_gm_map [] = {
 	// Monkey Island 2 instruments
 	// TODO: Complete
-//	{ "badspit   ", ??? },
+	{ "badspit   ",  62 },
 	{ "Big Drum  ", 116 },
-//	{ "burp      ", ??? },
+	{ "burp      ",  58 },
 //	{ "dinkfall  ", ??? },
 //	{ "Fire Pit  ", ??? },
-//	{ "foghorn   ", ??? },
+	{ "foghorn   ",  60 },
 	{ "glop      ",  39 },
 //	{ "jacob's la", ??? },
 	{ "LeshBass  ",  33 }, 
 //	{ "lowsnort  ", ??? },
-//	{ "ML explosn", ??? },
+	{ "ML explosn", 127 },
 	{ "ReggaeBass",  32 },
 //	{ "rope fall ", ??? },
-//	{ "rumble    ", ??? },
-//	{ "SdTrk Bend", ??? },
+	{ "rumble    ",  89 },
+	{ "SdTrk Bend",  97 },
 //	{ "snort     ", ??? },
-//	{ "spitting  ", ??? },
+	{ "spitting  ",  62 },
 	{ "Swell 1   ",  95 },
-	{ "Swell 2   ",  95 }
-//	{ "thnderclap", ??? },
+	{ "Swell 2   ",  95 },
+	{ "thnderclap", 127 }
 
 	// Fate of Atlantis instruments
 	// TODO: Build
