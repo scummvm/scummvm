@@ -1167,10 +1167,8 @@ void Scumm::readMAXS()
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	} else if (_features & GF_AFTER_V6) {
 		_numVariables = fileReadWordLE();
-		printf("Read word numvariables as %d\n", _numVariables);
 		fileReadWordLE();
 		_numBitVariables = fileReadWordLE();
-		printf("Read word numbitvariables as %d\n", _numBitVariables);
 		_numLocalObjects = fileReadWordLE();
 		_numArray = fileReadWordLE();
 		fileReadWordLE();
