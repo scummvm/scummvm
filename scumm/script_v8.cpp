@@ -319,7 +319,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_getActorFromXY),
 		/* DC */
 		OPCODE(o6_findObject),
-		OPCODE(o6_invalid),
+		OPCODE(o6_getVerbFromXY),
 		OPCODE(o6_invalid),
 		OPCODE(o6_findInventory),
 		/* E0 */
