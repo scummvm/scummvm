@@ -30,6 +30,18 @@
 //#include "common/engine.h"
 #include "common/gameDetector.h"
 
+/*
+ _____ _     _       _                   _                                 _ 
+|_   _| |__ (_)___  (_)___    __ _    __| |_   _ _ __ ___  _ __ ___  _   _| |
+  | | | '_ \| / __| | / __|  / _` |  / _` | | | | '_ ` _ \| '_ ` _ \| | | | |
+  | | | | | | \__ \ | \__ \ | (_| | | (_| | |_| | | | | | | | | | | | |_| |_|
+  |_| |_| |_|_|___/ |_|___/  \__,_|  \__,_|\__,_|_| |_| |_|_| |_| |_|\__, (_)
+                                                                     |___/   
+
+This just looks like an option dialog, butit doesn't change any actual settings currently!
+
+*/
+
 // TODO - allow changing options for:
 // - the save path (use _browser!)
 // - music & graphics driver (but see also the comments on EditGameDialog
