@@ -3372,7 +3372,8 @@ void SimonEngine::fcs_unk1(uint fcs_index) {
 
 // ok
 void SimonEngine::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
-	o_kill_sprite_simon1(0x80);
+	if (_game & GF_WIN)
+		o_kill_sprite_simon1(0x80);
 }
 
 void SimonEngine::delete_hitarea_by_index(uint index) {
