@@ -192,9 +192,24 @@ Graphics::~Graphics() {
 void Graphics::unpackControlBank() {
 	_vm->bankMan()->load("control.BBK",17);
 	_vm->bankMan()->unpack(1, 1, 17); // Mouse pointer
-	_vm->bankMan()->unpack(3, 3, 17); // Up arrow dialogue
-	_vm->bankMan()->unpack(4, 4, 17); // Down arrow dialogue
+	// unpack arrows frames and change hotspot to be always on top
+	for (int i = 3; i <= 4; ++i) {
+		_vm->bankMan()->unpack(i, i, 17);
+		BobFrame *bf = _vm->bankMan()->fetchFrame(i);
+		bf->yhotspot += 200;
+	}
 	_vm->bankMan()->close(17);
+}
+
+void Graphics::setupArrows() {
+	int scrollX = _vm->display()->horizontalScroll();
+	BobSlot *arrow;
+	arrow = bob(ARROW_BOB_UP);
+	arrow->curPos(303 + 8 + scrollX, 150 + 1 + 200);
+	arrow->frameNum = 3;
+	arrow = bob(ARROW_BOB_DOWN);
+	arrow->curPos(303 + scrollX, 175 + 200);
+	arrow->frameNum = 4;
 }
 
 void Graphics::setupMouseCursor() {

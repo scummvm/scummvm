@@ -1279,7 +1279,6 @@ int16 Talk::selectSentence() {
 	// Function TALK_BOB (lines 577-739) in talk.c
 	int selectedSentence = 0;
 
-	int scrollX = _vm->display()->horizontalScroll();
 	int startOption = 1;
 	int optionLines = 0;
 	char optionText[5][MAX_STRING_SIZE];
@@ -1290,20 +1289,11 @@ int16 Talk::selectSentence() {
 
 	_vm->display()->textCurrentColor(INK_TALK_NORMAL);
 
-	// These bobs are up and down arrows
-
-	BobSlot *arrowBobUp 	= _vm->graphics()->bob(ARROW_BOB_UP);
-	BobSlot *arrowBobDown = _vm->graphics()->bob(ARROW_BOB_DOWN);
-
-	arrowBobUp->x         = 303 + 8 + scrollX;
-	arrowBobUp->y         = 150 + 1;
-	arrowBobUp->frameNum  = 3;
+	_vm->graphics()->setupArrows();
+	BobSlot *arrowBobUp   = _vm->graphics()->bob(Graphics::ARROW_BOB_UP);
 	arrowBobUp->active    = false;
-
-	arrowBobDown->x         = 303 + scrollX;
-	arrowBobDown->y         = 175;
-	arrowBobDown->frameNum  = 4;
-	arrowBobDown->active    = false;
+	BobSlot *arrowBobDown = _vm->graphics()->bob(Graphics::ARROW_BOB_DOWN);
+	arrowBobDown->active  = false;
 
 	bool rezone = true;
 

@@ -836,7 +836,7 @@ void Display::drawTexts() {
 	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
 		const TextSlot *pts = &_texts[y];
 		if (!pts->text.isEmpty()) {
-			_vm->display()->drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
+			drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
 		}
 	}
 }

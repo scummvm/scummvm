@@ -467,14 +467,20 @@ void Journal::showInformationBox() {
 	case 'E':
 		_vm->display()->setTextCentered(144, "English", false);
 		break;
+	case 'F' :
+		_vm->display()->setTextCentered(144, "Fran\x87""ais", false);
+		break;
 	case 'G':
 		_vm->display()->setTextCentered(144, "Deutsch", false);
+		break;
+	case 'H':
+		_vm->display()->setTextCentered(144, "Hebrew", false);
 		break;
 	case 'I':
 		_vm->display()->setTextCentered(144, "Italiano", false);
 		break;
-	case 'F' :
-		_vm->display()->setTextCentered(144, "Fran\x87""ais", false);
+	case 'S':
+		_vm->display()->setTextCentered(144, "Espa\xA4""ol", false);
 		break;
 	}
 	char versionId[13];
