@@ -210,11 +210,6 @@ void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 	int scrollY;
 	int height;
 
-	height = b - t;
-
-	if(height > 200)
-		height = 200;
-
 	if (b <= t)
 		return;
 
@@ -223,6 +218,10 @@ void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 
 	if (b > vs->height)
 		b = vs->height;
+
+	height = b - t;
+	if(height > 200)
+		height = 200;
 
 	scrollY = _vm->camera._cur.y - 100;
 	if(scrollY == -100)
