@@ -46,8 +46,8 @@ void TextRenderer::init() {
 		}
 		charWidth[i] += 2;
 	}
-    charWidth[' '] = 4;
-    --charWidth['^'];
+    charWidth[(int)' '] = 4;
+    --charWidth[(int)'^'];
 }
 
 
