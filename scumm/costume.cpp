@@ -815,7 +815,7 @@ void ScummEngine::cost_decodeNESCostumeGfx() {
 		int len = READ_LE_UINT16(patTable);
 
 		if (maxSprites == 0)
-			maxSprites = 256;
+			maxSprites = 257;
 
 		_v1MMNESCostumeGfx[n] = (byte *)calloc(maxSprites * 16, 1);
 
