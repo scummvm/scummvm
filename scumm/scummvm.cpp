@@ -98,10 +98,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_dynamicRoomOffsets = 0;
 	_shakeEnabled = 0;
 
-	// FIXME: remove when new savegame system is implemented
-	_randSeed1 = 0xA943DE33;
-	_randSeed2 = 0x37A9ED29;
-
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_realWidth = 320;
 		_realHeight = 240;
@@ -1149,11 +1145,6 @@ void Scumm::processKbd()
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
 	} 
 
-	// FIXME: Preparing to remove
-//	else if (_lastKeyHit == 321) { // F7, display new GUI
-//		saveloadDialog();
-//	}
-			
 	_mouseButStat = _lastKeyHit;
 }
 
@@ -1596,19 +1587,4 @@ void Scumm::launch()
 void Scumm::go() {
 	launch();
 	mainRun();
-}
-
-
-byte Scumm::getDefaultGUIColor(int color)
-{
-	/* FIXME: strange IF line? */
-	if ((_features & GF_AFTER_V7) || (_features & GF_SMALL_HEADER))
-		return 0;
-	if (_features & GF_AFTER_V6) {
-		if (color == 8)
-			color = 1;
-		return readArray(110, 0, color);
-	} else {
-		return getStringAddress(21)[color];
-	}
 }

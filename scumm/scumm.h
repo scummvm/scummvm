@@ -1316,7 +1316,6 @@ public:
 
 	void go();
 
-	byte getDefaultGUIColor(int color);
 	void waitForTimer(int msec_delay);
 
 	void updateCursor();
