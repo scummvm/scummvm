@@ -58,12 +58,18 @@ enum AkosOpcodes {
 	AKC_Return = 0xC001,
 	AKC_SetVar = 0xC010,
 	AKC_CmdQue3 = 0xC015,
+	AKC_C016 = 0xC016,
+	AKC_C017 = 0xC017,
+	AKC_C018 = 0xC018,
+	AKC_C019 = 0xC019,
 	AKC_ComplexChan = 0xC020,
 	AKC_C021 = 0xC021,
 	AKC_ComplexChan2 = 0xC025,
 	AKC_Jump = 0xC030,
 	AKC_JumpIfSet = 0xC031,
 	AKC_AddVar = 0xC040,
+	AKC_C042 = 0xC042,
+	AKC_C044 = 0xC044,
 	AKC_Ignore = 0xC050,
 	AKC_IncVar = 0xC060,
 	AKC_CmdQue3Quick = 0xC061,
@@ -1130,6 +1136,10 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 
 			case AKC_SkipNE:
 			case AKC_SkipE:
+			case AKC_C016:
+			case AKC_C017:
+			case AKC_C018:
+			case AKC_C019:
 				curpos += 5;
 				break;
 			case AKC_JumpTable:
@@ -1140,6 +1150,8 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			case AKC_StartAnim:
 			case AKC_StartVarAnim:
 			case AKC_CmdQue3:
+			case AKC_C042:
+			case AKC_C044:
 			case AKC_C0A3:
 				curpos += 3;
 				break;
@@ -1250,6 +1262,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			a->flip = GW(2) != 0;
 			continue;
 		case AKC_CmdQue3:
+		case AKC_C042:
 			if (_features & GF_HUMONGOUS)
 				tmp = GB(2);
 			else
@@ -1352,6 +1365,33 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			continue;
 		case AKC_C0A3:
 			//akos_queCommand(8, a, a->getAnimVar(GB(2), 0);
+			continue;
+		case AKC_C016:
+			if (_sound->isSoundRunning( a->sound[a->getAnimVar(GB(4))]))  {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C017:
+			if (!_sound->isSoundRunning(a->sound[a->getAnimVar(GB(4))])) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C018:
+			if (_sound->isSoundRunning(a->sound[GB(4)])) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C019:
+			if (!_sound->isSoundRunning(a->sound[GB(4)])) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C044:
+			akos_queCommand(3, a, a->sound[a->getAnimVar(GB(2))], 0);
 			continue;
 		default:
 			if ((code & 0xC000) == 0xC000)
