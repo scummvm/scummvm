@@ -29,123 +29,6 @@
 namespace Queen {
 
 
-Graphics::Graphics(Display *display, Input *input, Resource *resource)
-	: _cameraBob(0), _display(display), _input(input), _resource(resource) {
-		
-	memset(_frames, 0, sizeof(_frames));
-	memset(_banks, 0, sizeof(_banks));
-	memset(_bobs, 0, sizeof(_bobs));
-	memset(_sortedBobs, 0, sizeof(_sortedBobs));
-	_sortedBobsCount = 0;
-	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
-}
-
-
-Graphics::~Graphics() {
-	uint32 i;
-	for(i = 0; i < ARRAYSIZE(_banks); ++i) {
-		delete[] _banks[i].data;
-	}
-	frameEraseAll(true);
-	delete[] _shrinkBuffer.data;
-}
-
-
-void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
-	
-	int16 i;
-	
-	bankErase(bankslot);
-	_banks[bankslot].data = _resource->loadFile(bankname);
-	if (!_banks[bankslot].data) {
-	  error("Unable to open bank '%s'", bankname);	
-	}
-
-	int16 entries = (int16)READ_LE_UINT16(_banks[bankslot].data);
-	if (entries < 0 || entries >= MAX_BANK_SIZE) {
-	  error("Maximum bank size exceeded or negative bank size : %d", entries);
-	}
-	
-	debug(9, "Graphics::bankLoad(%s, %d) - entries = %d", bankname, bankslot, entries); 
-
-	uint32 offset = 2;
-	uint8 *p = _banks[bankslot].data;
-	for (i = 1; i <= entries; ++i) {
-		_banks[bankslot].indexes[i] = offset;
-		uint16 w = READ_LE_UINT16(p + offset + 0);
-		uint16 h = READ_LE_UINT16(p + offset + 2);
-		// jump to next entry, skipping data & header
-		offset += w * h + 8; 
-	}
-	
-}
-
-
-void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
-	
-	debug(9, "Graphics::bankUnpack(%d, %d, %d)", srcframe, dstframe, bankslot);
-
-	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
-
-	if (!_banks[bankslot].data)
-		error("Graphics::bankUnpack(%i, %i, %i) called but _banks[bankslot].data is NULL!", 
-				srcframe, dstframe, bankslot);
-		
-	BobFrame *pbf = &_frames[dstframe];
-	delete[] pbf->data;
-
-	pbf->width    = READ_LE_UINT16(p + 0);
-	pbf->height   = READ_LE_UINT16(p + 2);
-	pbf->xhotspot = READ_LE_UINT16(p + 4);
-	pbf->yhotspot = READ_LE_UINT16(p + 6);
-
-	uint32 size = pbf->width * pbf->height;
-	pbf->data = new uint8[ size ];
-	memcpy(pbf->data, p + 8, size);
-	
-}
-
-
-void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
-	
-	debug(9, "Graphics::bankOverpack(%d, %d, %d)", srcframe, dstframe, bankslot);
-
-	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
-	uint16 src_w = READ_LE_UINT16(p + 0);
-	uint16 src_h = READ_LE_UINT16(p + 2);
-
-	// unpack if destination frame is smaller than source one
-	if (_frames[dstframe].width < src_w || _frames[dstframe].height < src_h) {
-		bankUnpack(srcframe, dstframe, bankslot);
-	}
-	else {
-		// copy data 'over' destination frame (without changing frame header)
-		memcpy(_frames[dstframe].data, p + 8, src_w * src_h);
-	}
-}
-
-
-void Graphics::bankErase(uint32 bankslot) {
-
-	debug(9, "Graphics::bankErase(%d)", bankslot);
-	delete[] _banks[bankslot].data;
-	_banks[bankslot].data = 0;	
-}
-
-
-void Graphics::bobSetupControl() {
-
-	bankLoad("control.BBK",17);
-	bankUnpack(1, 1, 17); // Mouse pointer
-	bankUnpack(3, 3, 17); // Up arrow dialogue
-	bankUnpack(4, 4, 17); // Down arrow dialogue
-	bankErase(17);
-
-	BobFrame *bf = &_frames[1];
-	_display->setMouseCursor(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
-}
-
-
 void BobSlot::curPos(int16 xx, int16 yy) {
 
 	active = true;
@@ -319,21 +202,154 @@ void BobSlot::animReset() {
 }
 
 
-void Graphics::bobDraw(uint32 frameNum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box) {
+void BobSlot::clear() {
+
+	active = false;
+	xflip  = false;
+	animating = false;
+	anim.string.buffer = NULL;
+	moving = false;
+	scale  = 100;
+	box.x1 = 0;
+	box.y1 = 0;
+	box.x2 = GAME_SCREEN_WIDTH - 1;
+	box.y2 = ROOM_ZONE_HEIGHT - 1;
+}
+
+
+Graphics::Graphics(Display *display, Input *input, Resource *resource)
+	: _cameraBob(0), _display(display), _input(input), _resource(resource) {
+		
+	memset(_frames, 0, sizeof(_frames));
+	memset(_banks, 0, sizeof(_banks));
+	memset(_bobs, 0, sizeof(_bobs));
+	memset(_sortedBobs, 0, sizeof(_sortedBobs));
+	_sortedBobsCount = 0;
+	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
+}
+
+
+Graphics::~Graphics() {
+
+	uint32 i;
+	for(i = 0; i < ARRAYSIZE(_banks); ++i) {
+		delete[] _banks[i].data;
+	}
+	frameEraseAll(true);
+	delete[] _shrinkBuffer.data;
+}
+
+
+void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
+		
+	bankErase(bankslot);
+	_banks[bankslot].data = _resource->loadFile(bankname);
+	if (!_banks[bankslot].data) {
+	  error("Unable to open bank '%s'", bankname);	
+	}
+
+	int16 entries = (int16)READ_LE_UINT16(_banks[bankslot].data);
+	if (entries < 0 || entries >= MAX_BANK_SIZE) {
+	  error("Maximum bank size exceeded or negative bank size : %d", entries);
+	}
+	
+	debug(9, "Graphics::bankLoad(%s, %d) - entries = %d", bankname, bankslot, entries); 
+
+	uint32 offset = 2;
+	uint8 *p = _banks[bankslot].data;
+	int16 i;
+	for (i = 1; i <= entries; ++i) {
+		_banks[bankslot].indexes[i] = offset;
+		uint16 w = READ_LE_UINT16(p + offset + 0);
+		uint16 h = READ_LE_UINT16(p + offset + 2);
+		// jump to next entry, skipping data & header
+		offset += w * h + 8; 
+	}
+}
+
+
+void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
+	
+	debug(9, "Graphics::bankUnpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+
+	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
+
+	if (!_banks[bankslot].data)
+		error("Graphics::bankUnpack(%i, %i, %i) called but _banks[bankslot].data is NULL!", 
+				srcframe, dstframe, bankslot);
+		
+	BobFrame *pbf = &_frames[dstframe];
+	delete[] pbf->data;
+
+	pbf->width    = READ_LE_UINT16(p + 0);
+	pbf->height   = READ_LE_UINT16(p + 2);
+	pbf->xhotspot = READ_LE_UINT16(p + 4);
+	pbf->yhotspot = READ_LE_UINT16(p + 6);
+
+	uint32 size = pbf->width * pbf->height;
+	pbf->data = new uint8[ size ];
+	memcpy(pbf->data, p + 8, size);
+	
+}
+
+
+void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
+	
+	debug(9, "Graphics::bankOverpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+
+	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
+	uint16 src_w = READ_LE_UINT16(p + 0);
+	uint16 src_h = READ_LE_UINT16(p + 2);
+
+	// unpack if destination frame is smaller than source one
+	if (_frames[dstframe].width < src_w || _frames[dstframe].height < src_h) {
+		bankUnpack(srcframe, dstframe, bankslot);
+	}
+	else {
+		// copy data 'over' destination frame (without changing frame header)
+		memcpy(_frames[dstframe].data, p + 8, src_w * src_h);
+	}
+}
+
+
+void Graphics::bankErase(uint32 bankslot) {
+
+	debug(9, "Graphics::bankErase(%d)", bankslot);
+	delete[] _banks[bankslot].data;
+	_banks[bankslot].data = 0;	
+}
+
+
+void Graphics::bobSetupControl() {
+
+	bankLoad("control.BBK",17);
+	bankUnpack(1, 1, 17); // Mouse pointer
+	bankUnpack(3, 3, 17); // Up arrow dialogue
+	bankUnpack(4, 4, 17); // Down arrow dialogue
+	bankErase(17);
+
+	BobFrame *bf = &_frames[1];
+	_display->setMouseCursor(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
+}
+
+
+void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 
 	uint16 w, h;
 
-	debug(9, "Graphics::bobDraw(%d, %d, %d, %d)", frameNum, x, y, scale);
+	debug(9, "Graphics::bobDraw(%d, %d, %d)", bs->frameNum, x, y);
 
-	BobFrame *pbf = &_frames[frameNum];
-	if (scale < 100) {
-		bobShrink(pbf, scale);
+	BobFrame *pbf = &_frames[bs->frameNum];
+	if (bs->scale < 100) {
+		bobShrink(pbf, bs->scale);
 		pbf = &_shrinkBuffer;
 	}
 	w = pbf->width;
 	h = pbf->height;
 
-	if(w != 0 && h != 0 && box.intersects(x, y, w, h)) {
+	const Box *box = &bs->box;
+
+	if(w != 0 && h != 0 && box->intersects(x, y, w, h)) {
 
 		uint8 *src = pbf->data;
 		uint16 x_skip = 0;
@@ -342,35 +358,35 @@ void Graphics::bobDraw(uint32 frameNum, int16 x, int16 y, uint16 scale, bool xfl
 		uint16 h_new = h;
 
 		// compute bounding box intersection with frame
-		if (x < box.x1) {
-			x_skip = box.x1 - x;
+		if (x < box->x1) {
+			x_skip = box->x1 - x;
 			w_new -= x_skip;
-			x = box.x1;
+			x = box->x1;
 		}
 
-		if (y < box.y1) {
-			y_skip = box.y1 - y;
+		if (y < box->y1) {
+			y_skip = box->y1 - y;
 			h_new -= y_skip;
-			y = box.y1;
+			y = box->y1;
 		}
 
-		if (x + w_new > box.x2 + 1) {
-			w_new = box.x2 - x + 1;
+		if (x + w_new > box->x2 + 1) {
+			w_new = box->x2 - x + 1;
 		}
 
-		if (y + h_new > box.y2 + 1) {
-			h_new = box.y2 - y + 1;
+		if (y + h_new > box->y2 + 1) {
+			h_new = box->y2 - y + 1;
 		}
 
 		src += w * y_skip;
-		if (!xflip) {
+		if (!bs->xflip) {
 			src += x_skip;
-			_display->blit(RB_SCREEN, x, y, src, w_new, h_new, w, xflip, true);
+			_display->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
 		}
 		else {
 			src += w - w_new - x_skip;
 			x += w_new - 1;
-			_display->blit(RB_SCREEN, x, y, src, w_new, h_new, w, xflip, true);
+			_display->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
 		}
 	}
 
@@ -447,21 +463,9 @@ void Graphics::bobShrink(const BobFrame *bf, uint16 percentage) {
 void Graphics::bobClear(uint32 bobnum) {
 
 	BobSlot *pbs = &_bobs[bobnum];
-
-	pbs->active = false;
-	pbs->xflip  = false;
-	pbs->animating = false;
-	pbs->anim.string.buffer = NULL;
-	pbs->moving = false;
-	pbs->scale  = 100;
-	pbs->box.x1 = 0;
-	pbs->box.y1 = 0;
-	pbs->box.x2 = GAME_SCREEN_WIDTH - 1;
+	pbs->clear();
 	if (_display->fullscreen() || bobnum == 16) { // FIXME: does bob number 16 really used ?
 		pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
-	}
-	else {
-		pbs->box.y2 = ROOM_ZONE_HEIGHT - 1; 
 	}
 }
 
@@ -533,7 +537,7 @@ void Graphics::bobDrawAll() {
 			x = pbs->x - xh - _display->horizontalScroll();
 			y = pbs->y - yh;
 
-			bobDraw(pbs->frameNum, x, y, pbs->scale, pbs->xflip, pbs->box);
+			bobDraw(pbs, x, y);
 		}
 	}
 }
@@ -548,6 +552,7 @@ void Graphics::bobClearAll() {
 
 
 void Graphics::bobStopAll() {
+
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		_bobs[i].moving = false;
 	}

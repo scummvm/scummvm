@@ -90,6 +90,8 @@ struct BobSlot {
 	void animString(const AnimFrame *animBuf);
 	void animNormal(uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip);
 	void animReset();
+
+	void clear();
 };
 
 
@@ -145,7 +147,7 @@ public:
 	void bankErase(uint32 bankslot); // erase()
 
 	void bobSetupControl();
-	void bobDraw(uint32 frameNum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box); // bob()
+	void bobDraw(const BobSlot *bs, int16 x, int16 y);
 	void bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y); // invbob()
 	void bobPaste(uint32 frameNum, int16 x, int16 y); // bobpaste()
 	void bobShrink(const BobFrame *bf, uint16 percentage);
@@ -155,6 +157,7 @@ public:
 	void bobClearAll(); // clearallbobs()
 	void bobStopAll();
 	BobSlot *bob(int index);
+
 	void bobCustomParallax(uint16 roomNum); // CHECK_PARALLAX()
 
 	void bobSetText(
