@@ -262,14 +262,9 @@ private:
 
 	struct NoteRec {
 		uint32 delay;
-		union {
-			struct {
-				byte cmd;
-				byte param_1;
-				byte param_2;
-			};
-			uint32 big_cmd;
-		};
+		byte cmd;
+		byte param_1;
+		byte param_2;
 		uint cmd_length;
 		byte *sysex_data;
 	};

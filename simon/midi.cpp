@@ -309,7 +309,9 @@ void MidiPlayer::read_next_note(Track *t, NoteRec *nr) {
 	uint i;
 
 	nr->delay = 0;
-	nr->big_cmd = 0;
+	nr->cmd = 0;
+	nr->param_1 = 0;
+	nr->param_2 = 0;
 	nr->cmd_length = 0;
 	nr->sysex_data = NULL;
 	
