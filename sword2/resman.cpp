@@ -731,8 +731,23 @@ uint32 ResourceManager::helpTheAgedOut(void) {
 
 void ResourceManager::printConsoleClusters(void) {
 	if (_totalClusters) {
-		for (uint i = 0; i < _totalClusters; i++)
-			Debug_Printf("%s\n", _resourceFiles[i]);
+		for (uint i = 0; i < _totalClusters; i++) {
+			Debug_Printf("%-20s ", _resourceFiles[i]);
+			if (!(_cdTab[i] & LOCAL_PERM)) {
+				switch (_cdTab[i] & 3) {
+				case BOTH:
+					Debug_Printf("CD 1 & 2\n");
+					break;
+				case CD1:
+					Debug_Printf("CD 1\n");
+					break;
+				case CD2:
+					Debug_Printf("CD 2\n");
+					break;
+				}
+			} else
+				Debug_Printf("HD\n");
+		}
 		Debug_Printf("%d resources\n", _totalResFiles);
 	} else
 		Debug_Printf("Argh! No resources!\n");
@@ -982,7 +997,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	g_logic->fnStopMusic(NULL);
 
-	_vm->clearFxQueue();	// stops all fx & clears the queue (James22july97)
+	_vm->clearFxQueue();	// stops all fx & clears the queue
 	getCd(_cdTab[newCluster] & 3);
 
 	// Kick out old cached cluster and load the new one.
