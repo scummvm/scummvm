@@ -186,7 +186,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 70 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_setBoxSet),
-		OPCODE(o72_unknownFA),
+		OPCODE(o72_setWindowCaption),
 		OPCODE(o6_shuffle),
 		/* 74 */
 		OPCODE(o6_delay),

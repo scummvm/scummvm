@@ -357,7 +357,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* F8 */
 		OPCODE(o72_getResourceSize),
 		OPCODE(o72_setFilePath),
-		OPCODE(o72_unknownFA),
+		OPCODE(o72_setWindowCaption),
 		OPCODE(o70_polygonOps),
 		/* FC */
 		OPCODE(o70_polygonHit),
@@ -2514,12 +2514,12 @@ void ScummEngine_v72he::o72_setFilePath() {
 	debug(1,"o72_setFilePath: %s", filename);
 }
 
-void ScummEngine_v72he::o72_unknownFA() {
+void ScummEngine_v72he::o72_setWindowCaption() {
 	byte name[100];
 	copyScriptString(name);
 	int id = fetchScriptByte();
 
-	debug(1,"o72_unknownFA: (%d) %s", id, name);
+	debug(1,"o72_setWindowCaption: (%d) %s", id, name);
 }
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {

@@ -646,7 +646,7 @@ protected:
 	void o70_unknownF5();
 	void o70_unknownF6();
 	void o70_setFilePath();
-	void o70_unknownFA();
+	void o70_setWindowCaption();
 	void o70_polygonOps();
 	void o70_polygonHit();
 };
@@ -777,7 +777,7 @@ protected:
 	void o72_unknownF6();
 	void o72_getResourceSize();
 	void o72_setFilePath();
-	void o72_unknownFA();
+	void o72_setWindowCaption();
 };
 
 class ScummEngine_v80he : public ScummEngine_v72he {

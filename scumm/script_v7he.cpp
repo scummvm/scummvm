@@ -358,7 +358,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		/* F8 */
 		OPCODE(o6_invalid),
 		OPCODE(o70_setFilePath),
-		OPCODE(o70_unknownFA),
+		OPCODE(o70_setWindowCaption),
 		OPCODE(o70_polygonOps),
 		/* FC */
 		OPCODE(o70_polygonHit),
@@ -899,10 +899,10 @@ void ScummEngine_v70he::o70_setFilePath() {
 	debug(1,"stub o70_setFilePath(%s)", filename);
 }
 
-void ScummEngine_v70he::o70_unknownFA() {
+void ScummEngine_v70he::o70_setWindowCaption() {
 	int num = fetchScriptByte();
 	int len = resStrLen(_scriptPointer);
-	debug(1,"stub o70_unknownFA(%d, \"%s\")", num, _scriptPointer);
+	debug(1,"stub o70_setWindowCaption(%d, \"%s\")", num, _scriptPointer);
 	_scriptPointer += len + 1;
 }
 
