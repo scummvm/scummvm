@@ -1381,7 +1381,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 		_decomp_shr = code % 10;
 		_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
-		drawStripHE((byte *)vs->backBuf, vs->pitch, bmap_ptr, vs->w, vs->h, false);
+		drawStripHE((byte *)vs->backBuf, vs->pitch, bmap_ptr, vs->w, vs->h, true);
 	}
 	copyVirtScreenBuffers(Common::Rect(vs->w, vs->h));
 
