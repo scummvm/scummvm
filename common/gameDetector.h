@@ -53,6 +53,7 @@ enum GameId {
 	GID_ZAK = 16,
 	//GID_MANIAC64 = 17,
 	//GID_ZAK64 = 18,
+	GID_PUTTDEMO = 19,
 
 	/* Simon the Sorcerer */
 	GID_SIMON_FIRST = 20,
