@@ -1110,7 +1110,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 		else
 			searchptr = roomptr;
 		assert(searchptr);
-		ResourceIterator	obcds(searchptr, _features & GF_SMALL_HEADER);
+		ResourceIterator	obcds(searchptr, (_features & GF_SMALL_HEADER) != 0);
 		for (i = 0;;) {
 			obcdptr = obcds.findNext(MKID('OBCD'));
 			if (obcdptr == NULL)
@@ -1138,7 +1138,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 
 	roomptr = fo->roomptr;
 	if (findWhat & foImageHeader) {
-		ResourceIterator	obims(roomptr, _features & GF_SMALL_HEADER);
+		ResourceIterator	obims(roomptr, (_features & GF_SMALL_HEADER) != 0);
 		for (i = 0;;) {
 			obimptr = obims.findNext(MKID('OBIM'));
 			if (obimptr == NULL)

@@ -848,7 +848,7 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags)
 	_position = 0;
 	_size = size;
 	_ptr = (byte *)sound;
-	_releasePtr = (flags & SoundMixer::FLAG_AUTOFREE);
+	_releasePtr = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
 
 	/* This variable is the number of samples to cut at the start of the MP3
 	   file. This is needed to have lip-sync as the MP3 file have some miliseconds
