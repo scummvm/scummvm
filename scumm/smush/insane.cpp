@@ -7780,12 +7780,10 @@ void Insane::proc63(void) {
 }
 
 void Insane::proc64(int32 enemy1) {
-	int en = _val215d;
+	_val215d--;
 
-	for (en = _val215d; enemy1 < en; en++)
+	for (int en = enemy1; en < _val215d; en++)
 		_val216d[en] = _val216d[en + 1];
-
-	_val215d = en - 1;
 }
 
 void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
