@@ -39,6 +39,17 @@ static const byte mt32_to_gm[128] = {
 	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
 };
 
+static const byte gm_to_mt32[128] = {
+	  5,   1,   2,   7,   3,   5,  16,  21,  22, 101, 101,  97, 104, 103, 102,  20,
+	  8,   9,  11,  12,  14,  15,  87,  15,  59,  60,  61,  62,  67,  44,  79,  23,
+	 64,  67,  66,  70,  68,  69,  28,  31,  52,  54,  55,  56,  49,  51,  57, 112,
+	 48,  50,  45,  26,  34,  35,  45, 122,  89,  90,  94,  81,  92,  95,  24,  25,
+	 80,  78,  79,  78,  84,  85,  86,  82,  74,  72,  76,  77, 110, 107, 108,  76,
+	 47,  44, 111,  45,  44,  34,  44,  30,  32,  33,  88,  34,  35,  35,  38,  33,
+	 41,  36, 100,  37,  40,  34,  43,  40,  63,  21,  99, 105, 103,  86,  55,  84,
+	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128,
+};
+
 static struct {
 	const char *name;
 	byte program;
@@ -135,7 +146,7 @@ public:
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
 	void copy_to (Instrument *dest) { dest->program (_program, _mt32); }
-	bool is_valid() { return (_program < 128); }
+	bool is_valid() { return (_program < 128) && ((_native_mt32 == _mt32) || _native_mt32 ? (gm_to_mt32[_program] < 128) : (mt32_to_gm[_program] < 128)); }
 	operator int() { return (_program < 128) ? _program : 255; }
 };
 
@@ -345,10 +356,11 @@ void Instrument_Program::send (MidiChannel *mc) {
 	if (_program > 127)
 		return;
 
-	if (_native_mt32) // if (mc->device()->mt32device())
-		mc->programChange (_mt32 ? _program : _program /*gm_to_mt32 [_program]*/);
-	else
-		mc->programChange (_mt32 ? mt32_to_gm [_program] : _program);
+	byte program = _program;
+	if (_native_mt32 != _mt32)
+		program = _native_mt32 ? gm_to_mt32 [program] : mt32_to_gm [program];
+	if (program < 128)
+		mc->programChange (program);
 }
 
 ////////////////////////////////////////
