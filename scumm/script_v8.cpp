@@ -266,7 +266,7 @@ void Scumm_v8::setupOpcodes()
 		/* B4 */
 		OPCODE(o6_saveRestoreVerbs),
 		OPCODE(o6_setObjectName),
-		OPCODE(o8_getDateTime),
+		OPCODE(o6_getDateTime),
 		OPCODE(o6_drawBox),
 		/* B8 */
 		OPCODE(o6_invalid),
@@ -1358,20 +1358,6 @@ void Scumm_v8::o8_system()
 	}
 }
 
-void Scumm_v8::o8_getDateTime()
-{
-	struct tm *t;
-	time_t now = time(NULL);
-	
-	t = localtime(&now);
-
-	_vars[VAR_TIMEDATE_YEAR] = t->tm_year;
-	_vars[VAR_TIMEDATE_MONTH] = t->tm_mon;
-	_vars[VAR_TIMEDATE_DAY] = t->tm_mday;
-	_vars[VAR_TIMEDATE_HOUR] = t->tm_hour;
-	_vars[VAR_TIMEDATE_MINUTE] = t->tm_min;
-	_vars[VAR_TIMEDATE_SECOND] = t->tm_sec;
-}
 
 void Scumm_v8::o8_startVideo()
 {

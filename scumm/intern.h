@@ -371,6 +371,7 @@ protected:
 	void o6_deleteFile();
 	void o6_findAllObjects();
 	void o6_pickVarRandom();
+	void o6_getDateTime();
 };
 
 class Scumm_v7 : public Scumm_v6
@@ -434,7 +435,6 @@ protected:
 	void o8_startVideo();
 	void o8_kernelSetFunctions();
 	void o8_kernelGetFunctions();
-	void o8_getDateTime();
 
 	void o8_getActorChore();
 
@@ -446,13 +446,6 @@ protected:
 	
 	void o8_getStringWidth();
 
-	/* V8 Scumm Vars */
-	byte VAR_TIMEDATE_YEAR;
-	byte VAR_TIMEDATE_MONTH;
-	byte VAR_TIMEDATE_DAY;
-	byte VAR_TIMEDATE_HOUR;
-	byte VAR_TIMEDATE_MINUTE;
-	byte VAR_TIMEDATE_SECOND;
 };
 
 

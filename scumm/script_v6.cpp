@@ -29,6 +29,7 @@
 #include "intern.h"
 #include "sound.h"
 #include "verbs.h"
+#include <time.h>
 #include "smush/player.h"
 #include "smush/scumm_renderer.h"
 
@@ -303,7 +304,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* D0 */
-		OPCODE(o6_invalid),
+		OPCODE(o6_getDateTime),
 		OPCODE(o6_stopTalking),
 		OPCODE(o6_getAnimateVariable),
 		OPCODE(o6_invalid),
@@ -2962,6 +2963,23 @@ void Scumm_v6::o6_pickVarRandom() {
 
 	// readArray(a, 0, ?);
 	push(2);
+}
+
+void Scumm_v6::o6_getDateTime()
+{
+	struct tm *t;
+	time_t now = time(NULL);
+	
+	t = localtime(&now);
+
+	_vars[VAR_TIMEDATE_YEAR] = t->tm_year;
+	_vars[VAR_TIMEDATE_MONTH] = t->tm_mon;
+	_vars[VAR_TIMEDATE_DAY] = t->tm_mday;
+	_vars[VAR_TIMEDATE_HOUR] = t->tm_hour;
+	_vars[VAR_TIMEDATE_MINUTE] = t->tm_min;
+	
+	if (_features & GF_AFTER_V8)
+	_vars[VAR_TIMEDATE_SECOND] = t->tm_sec;
 }
 
 void Scumm_v6::decodeParseString(int m, int n)
