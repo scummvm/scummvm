@@ -361,7 +361,7 @@ int NewGui::getCharWidth(byte c) {
 }
 
 void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis, _scaleEnable);
+	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis, _scaleFactor);
 }
 
 //
