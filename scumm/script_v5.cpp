@@ -1661,18 +1661,7 @@ void Scumm_v5::o5_roomOps() {
 				b = getVarOrDirectWord(0x40);
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
-			// FIXME - fingolfin thinks our whole _shadowPalette usage is weird.
-			// It seems very suspicious that subopcode 2 is identical to subopcode 4
-			// for GF_SMALL_HEADER games. Needs investigation.
-//			printf("copyPalColor(%d, %d)\n", a, b);
-//			copyPalColor(a, b);
-			if (_features & GF_16COLOR) {
-				_roomPalette[b] = a;
-			} else {
-				_shadowPalette[b] = a;
-				setDirtyColors(b, b);
-			}
-		} else {
+			_roomPalette[b] = a;
 			error("room-color is no longer a valid command");
 		}
 		break;
