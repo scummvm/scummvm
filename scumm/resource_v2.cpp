@@ -32,7 +32,8 @@ void Scumm_v2::readIndexFile()
 	openRoom(-1);
 	openRoom(0);
 
-	if (magic = _fileHandle.readUint16LE() != 0x0100)
+	magic = _fileHandle.readUint16LE();
+	if (magic != 0x0100)
 		warning("The magic id doesn't match (0x%X)\n", magic);
 
 	_numGlobalObjects = _fileHandle.readUint16LE();
