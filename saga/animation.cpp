@@ -91,18 +91,18 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	MemoryReadStreamEndian headerReadS(anim_resdata, anim_resdata_len, IS_BIG_ENDIAN);
 
 	readAnimHeader(headerReadS, ah);
-	new_anim->n_frames = ah.nframes;
+	new_anim->maxframe = ah.maxframe;
 	new_anim->loopframe = ah.loopframe;
 
 	if (_vm->_gameType == GType_ITE) {
 		// Cache frame offsets
-		new_anim->frame_offsets = (size_t *)malloc(new_anim->n_frames * sizeof(*new_anim->frame_offsets));
+		new_anim->frame_offsets = (size_t *)malloc((new_anim->maxframe + 1) * sizeof(*new_anim->frame_offsets));
 		if (new_anim->frame_offsets == NULL) {
 			warning("Anim::load Allocation failure");
 			return MEM;
 		}
 
-		for (i = 0; i < new_anim->n_frames; i++) {
+		for (i = 0; i <= new_anim->maxframe; i++) {
 			getFrameOffset(anim_resdata, anim_resdata_len, i, &new_anim->frame_offsets[i]);
 		}
 	} else {
@@ -113,7 +113,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	// Set animation data
 	new_anim->current_frame = 0;
 	new_anim->completed = 0;
-	new_anim->cycles = new_anim->n_frames;
+	new_anim->cycles = new_anim->maxframe;
 
 	new_anim->frame_time = DEFAULT_FRAME_TIME;
 	new_anim->flags = 0;
@@ -233,7 +233,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 		anim->current_frame++;
 		anim->completed++;
 
-		if (anim->current_frame >= anim->n_frames) {
+		if (anim->current_frame > anim->maxframe) {
 			anim->current_frame = anim->loopframe;
 			
 			// FIXME: HACK. probably needs more testing for IHNM
@@ -262,7 +262,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 			anim_id = link_anim_id;
 		} else {
 			// No link, stop playing
-			anim->current_frame = anim->n_frames - 1;
+			anim->current_frame = anim->maxframe;
 			anim->state = ANIM_PAUSE;
 
 			if (anim->flags & ANIM_ENDSCENE) {
@@ -424,7 +424,7 @@ void Anim::readAnimHeader(MemoryReadStreamEndian &readS, ANIMATION_HEADER &ah) {
 
 	ah.unknown06 = readS.readByte();
 	ah.unknown07 = readS.readByte();
-	ah.nframes = readS.readByte() - 1;
+	ah.maxframe = readS.readByte() - 1;
 	ah.loopframe = readS.readByte() - 1;
 	ah.start = readS.readUint16BE();
 
@@ -836,7 +836,6 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_frame, size_t *frame_offset_p) {
 	ANIMATION_HEADER ah;
 
-	uint16 num_frames;
 	uint16 current_frame;
 
 	byte mark_byte;
@@ -850,9 +849,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 
 	readAnimHeader(readS, ah);
 
-	num_frames = ah.nframes;
-
-	if (find_frame >= num_frames) {
+	if (find_frame > ah.maxframe) {
 		return FAILURE;
 	}
 
@@ -954,7 +951,7 @@ void Anim::animInfo() {
 			idx++;
 		}
 
-		_vm->_console->DebugPrintf("%02d: Frames: %u Flags: %u\n", i, _anim_tbl[idx]->n_frames, _anim_tbl[idx]->flags);
+		_vm->_console->DebugPrintf("%02d: Frames: %u Flags: %u\n", i, _anim_tbl[idx]->maxframe, _anim_tbl[idx]->flags);
 	}
 }
 

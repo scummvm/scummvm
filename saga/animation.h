@@ -57,7 +57,7 @@ struct ANIMATION_HEADER {
 	byte unknown06;
 	byte unknown07;
 
-	byte nframes;
+	byte maxframe;
 	byte loopframe;
 
 	uint16 start;
@@ -80,7 +80,7 @@ struct ANIMATION {
 	const byte *resdata;
 	size_t resdata_len;
 
-	uint16 n_frames;
+	uint16 maxframe;
 	size_t *frame_offsets;
 	int16 current_frame;
 	uint16 completed;
