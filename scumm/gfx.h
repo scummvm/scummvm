@@ -277,10 +277,10 @@ public:
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table);
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
-	void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, Common::Rect *rect);
-	void decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect);
-	void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, Common::Rect *rect);
-	void decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect);
+	void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect);
+	void decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect);
+	void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect);
+	void decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect);
 	void copyVirtScreenBuffers(const Common::Rect &rect);
 
 	void disableZBuffer() { _zbufferDisabled = true; }

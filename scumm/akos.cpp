@@ -1239,7 +1239,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	if (_draw_bottom < dst.bottom)
 		_draw_bottom = dst.bottom;
 
-	_vm->gdi.decompressWizImage(_outptr, _outwidth, &dst, _srcptr, &src);
+	_vm->gdi.decompressWizImage(_outptr, _outwidth, dst, _srcptr, src);
 	return 0;
 }
 

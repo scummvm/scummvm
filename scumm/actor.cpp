@@ -1918,16 +1918,16 @@ void ScummEngine::postProcessAuxQueue() {
 				} else {
 					uint16 comp = READ_LE_UINT16(axfd);
 					if (comp != 0) {
-						int x1 = (int16)READ_LE_UINT16(axfd + 2) + dx;
-						int y1 = (int16)READ_LE_UINT16(axfd + 4) + dy;
-						int x2 = (int16)READ_LE_UINT16(axfd + 6);
-						int y2 = (int16)READ_LE_UINT16(axfd + 8);
+						int x = (int16)READ_LE_UINT16(axfd + 2) + dx;
+						int y = (int16)READ_LE_UINT16(axfd + 4) + dy;
+						int w = (int16)READ_LE_UINT16(axfd + 6);
+						int h = (int16)READ_LE_UINT16(axfd + 8);
 						VirtScreen *pvs = &virtscr[kMainVirtScreen];
-						uint8 *dst1 = pvs->getPixels(0, 0);
-						uint8 *dst2 = pvs->getBackPixels(0, 0);
+						uint8 *dst1 = pvs->getPixels(0, pvs->topline);
+						uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
 						switch (comp) {
 						case 1:
-							gdi.copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x1, y1, x2, y2, 0);
+							gdi.copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h, NULL);
 							break;
 						default:
 							warning("unimplemented compression type %d", comp);
@@ -1939,11 +1939,11 @@ void ScummEngine::postProcessAuxQueue() {
 				if (axur) {
 					uint16 n = READ_LE_UINT16(axur); axur += 2;
 					while (n--) {
-						int x = (int16)READ_LE_UINT16(axur + 0) + dx;
-						int y = (int16)READ_LE_UINT16(axur + 2) + dy;
-						int w = (int16)READ_LE_UINT16(axur + 4) + dx;
-						int h = (int16)READ_LE_UINT16(axur + 6) + dy;
-						markRectAsDirty(kMainVirtScreen, x, w, y, h);
+						int x1 = (int16)READ_LE_UINT16(axur + 0) + dx;
+						int y1 = (int16)READ_LE_UINT16(axur + 2) + dy;
+						int x2 = (int16)READ_LE_UINT16(axur + 4) + dx;
+						int y2 = (int16)READ_LE_UINT16(axur + 6) + dy;
+						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2);
 						axur += 8;
 					}
 				}

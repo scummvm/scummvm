@@ -1401,53 +1401,61 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	}
 }
 
-void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, Common::Rect *rect) {
-	Common::Rect r1(0, 0, src_w, src_h), r2(src_x, src_y, src_x + src_w, src_y + src_h);
+static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, const Common::Rect *rect, Common::Rect &srcRect, Common::Rect &dstRect) {
+	srcRect = Common::Rect(0, 0, src_w, src_h);
+	dstRect = Common::Rect(src_x, src_y, src_x + src_w, src_y + src_h);
 	Common::Rect r3;
 	int diff;
 
 	if (rect) {
 		r3 = *rect;
 		Common::Rect r4(0, 0, dst_w, dst_h);
-		if (!r3.intersects(r4)) {
-			return;
-		} else {
+		if (r3.intersects(r4)) {
 			r3.clip(r4);
+		} else {
+			return false;
 		}
 	} else {
 		r3 = Common::Rect(0, 0, dst_w, dst_h);
 	}
-	diff = r2.left - r3.left;
+	diff = dstRect.left - r3.left;
 	if (diff < 0) {
-		r1.left -= diff;
-		r2.left -= diff;
+		srcRect.left -= diff;
+		dstRect.left -= diff;
 	}
-	diff = r2.right - r3.right;
+	diff = dstRect.right - r3.right;
 	if (diff > 0) {
-		r1.right -= diff;
-		r2.right -= diff;
+		srcRect.right -= diff;
+		dstRect.right -= diff;
 	}
-	diff = r2.top - r3.top;
+	diff = dstRect.top - r3.top;
 	if (diff < 0) {
-		r1.top -= diff;
-		r2.top -= diff;
+		srcRect.top -= diff;
+		dstRect.top -= diff;
 	}
-	diff = r2.bottom - r3.bottom;
+	diff = dstRect.bottom - r3.bottom;
 	if (diff > 0) {
-		r1.bottom -= diff;
-		r2.bottom -= diff;
+		srcRect.bottom -= diff;
+		dstRect.bottom -= diff;
 	}
-	// TODO/FIXME: At this point, unless I am mistaken, r1 == r2.moveTo(0, 0)
-	// As such the code above could be simplified (i.e. r1 could be removed,
+	// TODO/FIXME: At this point, unless I am mistaken, srcRect == dstRect.moveTo(0, 0)
+	// As such the code above could be simplified (i.e. srcRect could be removed,
 	// and then the uses of the diff variables can be folded in).
 	// In fact it looks to me as if the code above just does some simple clipping...
 	// Since I don't have the HE games in questions, I can't test this, though.
-	if (r1.isValidRect() && r2.isValidRect()) {
-		decompressWizImage(dst, dst_w, &r2, src, &r1);
+	return true;
+}
+
+void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
+	Common::Rect r1, r2;
+	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
+		if (r1.isValidRect() && r2.isValidRect()) {
+			decompressWizImage(dst, dstw, r2, src, r1);
+		}
 	}
 }
 
-void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect) {
+void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 *dstPtr, *dstPtrNext;
 	uint32 code;
@@ -1455,25 +1463,25 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRe
 	int h, w, xoff;
 	uint16 off;
 	
-	dstPtr = dst + dstRect->left + dstRect->top * dstPitch;
+	dstPtr = dst + dstRect.left + dstRect.top * dstPitch;
 	dataPtr = src;
 	
 	// Skip over the first 'srcRect->top' lines in the data
-	h = srcRect->top;
+	h = srcRect.top;
 	while (h--) {
 		dataPtr += READ_LE_UINT16(dataPtr) + 2;
 	}
-	h = srcRect->bottom - srcRect->top + 1;
+	h = srcRect.bottom - srcRect.top + 1;
 	if (h <= 0)
 		return;
-	w = srcRect->right - srcRect->left + 1;
+	w = srcRect.right - srcRect.left + 1;
 	if (w <= 0)
 		return;
 		
 	while (h--) {
-		xoff = srcRect->left;
+		xoff = srcRect.left;
 		off = READ_LE_UINT16(dataPtr);
-		w = srcRect->right - srcRect->left + 1;
+		w = srcRect.right - srcRect.left + 1;
 		dstPtrNext = dstPitch + dstPtr;
 		dataPtrNext = off + 2 + dataPtr;
 		dataPtr += 2;
@@ -1550,78 +1558,44 @@ dec_next:
 	}
 }
 
-void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, Common::Rect *rect) {
-	Common::Rect r1(0, 0, srcw - 1, srch - 1);
-	Common::Rect r2(srcx, srcy, srcx + srcw - 1, srcy + srch - 1);
-	Common::Rect r3;
-	int diff;
-
-	if (rect) {
-		r3 = *rect;
-		Common::Rect r4(0, 0, dstw - 1, dsth - 1);
-		if (!r3.intersects(r4)) {
-			return;
+void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
+	Common::Rect r1, r2;
+	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
+		if (r1.isValidRect() && r2.isValidRect()) {
+			--r1.right;
+			--r1.bottom;
+			decompressAuxImage(dst1, dst2, dstw, r2, src, r1);
 		}
-	} else {
-		r3 = Common::Rect(0, 0, dstw - 1, dsth - 1);
-	}
-	diff = r2.left - r3.left;
-	if (diff < 0) {
-		r1.left -= diff;
-		r2.left -= diff;
-	}
-	diff = r2.right - r3.right;
-	if (diff > 0) {
-		r1.right -= diff;
-		r2.right -= diff;
-	}
-	diff = r2.top - r3.top;
-	if (diff < 0) {
-		r1.top -= diff;
-		r2.top -= diff;
-	}
-	diff = r2.bottom - r3.bottom;
-	if (diff > 0) {
-		r1.bottom -= diff;
-		r2.bottom -= diff;
-	}
-	// TODO/FIXME: At this point, unless I am mistaken, r1 == r2.moveTo(0, 0)
-	// As such the code above could be simplified (i.e. r1 could be removed,
-	// and then the uses of the diff variables can be folded in).
-	// In fact it looks to me as if the code above just does some simple clipping...
-	// Since I don't have the HE games in questions, I can't test this, though.
-	if (r1.isValidRect() && r2.isValidRect()) {
-		decompressAuxImage(dst1, dst2, dstw, &r2, src, &r1);
 	}
 }
 
-void Gdi::decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect) {
+void Gdi::decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 *dst1Ptr, *dst2Ptr, *dst1PtrNext, *dst2PtrNext;
 	int h, w, xoff;
 	uint16 off;
   	uint8 code;
-  
-	dst1Ptr = dst1 + dstRect->left + dstRect->top * dstPitch;
-	dst2Ptr = dst2 + dstRect->left + dstRect->top * dstPitch;
+
+	dst1Ptr = dst1 + dstRect.left + dstRect.top * dstPitch;
+	dst2Ptr = dst2 + dstRect.left + dstRect.top * dstPitch;
 	dataPtr = src;
-	
+
 	// Skip over the first 'srcRect->top' lines in the data
-	h = srcRect->top;
+	h = srcRect.top;
 	while (h--) {
 		dataPtr += READ_LE_UINT16(dataPtr) + 2;
 	}
-	h = srcRect->bottom - srcRect->top + 1;
+	h = srcRect.bottom - srcRect.top + 1;
 	if (h <= 0)
 		return;
-	w = srcRect->right - srcRect->left + 1;
+	w = srcRect.right - srcRect.left + 1;
 	if (w <= 0)
 		return;
 
   	while (h--) {
-		xoff = srcRect->left;
+		xoff = srcRect.left;
  		off = READ_LE_UINT16(dataPtr);
-		w = srcRect->right - srcRect->left + 1;
+		w = srcRect.right - srcRect.left + 1;
 		dst1PtrNext = dstPitch + dst1Ptr;
 		dst2PtrNext = dstPitch + dst2Ptr;
 		dataPtrNext = off + 2 + dataPtr;
