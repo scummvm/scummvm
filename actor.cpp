@@ -199,12 +199,12 @@ int Actor::remapDirection(int dir)
 		flipY = (walkdata.YXFactor > 0);
 
 		// Check for X-Flip
-		if ((flags & 0x08) || isInClass(30)) {
+		if ((flags & kBoxXFlip) || isInClass(30)) {
 			dir = 360 - dir;
 			flipX = !flipX;
 		}
 		// Check for Y-Flip
-		if ((flags & 0x10) || isInClass(29)) {
+		if ((flags & kBoxYFlip) || isInClass(29)) {
 			dir = 180 - dir;
 			flipY = !flipY;
 		}
@@ -348,7 +348,7 @@ void Actor::setupActorScale()
 	if (ignoreBoxes != 0)
 		return;
 
-	if (_vm->getBoxFlags(walkbox) & 0x20)
+	if (_vm->getBoxFlags(walkbox) & kBoxPlayerOnly)
 		return;
 
 	scale = _vm->getBoxScale(walkbox);
@@ -587,22 +587,29 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 
 			if (!(_vm->_features & GF_OLD256) || box)
 			for (j = box; j >= firstValidBox; j--) {
+				flags = _vm->getBoxFlags(j);
+
+				if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
+					continue;
+
+				if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
+					continue;
+				
 				if (pathfrom >= firstValidBox) {
-					flags = _vm->getBoxFlags(j);
-					if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
-						continue;
-	
+
 					i = _vm->getPathToDestBox(pathfrom, j);
 					if (i == -1)
 						continue;
-					
+
 					if (_vm->_features & GF_OLD256) {
 						// FIXME - we check here if the box suggested by getPathToDestBox
 						// is locked or not. This prevents us from walking thru
 						// closed doors in some cases in Zak256. However a better fix
 						// would be to recompute the box matrix whenever flags change.
 						flags = _vm->getBoxFlags(i);
-						if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
+						if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
+							continue;
+						if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
 							continue;
 					}
 				}

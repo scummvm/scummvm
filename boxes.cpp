@@ -54,6 +54,8 @@ struct PathVertex {		/* Linked list of walkpath nodes */
 	PathNode *right;
 };
 
+#define BOX_MATRIX_SIZE 2000
+
 
 PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
 
@@ -67,12 +69,32 @@ byte Scumm::getMaskFromBox(int box)
 	return ptr->mask;
 }
 
+void Scumm::setBoxFlags(int box, int val)
+{
+	debug(1, "setBoxFlags(%d, 0x%02x)", box, val);
+
+	/* FULL_THROTTLE stuff */
+	if (val & 0xC000) {
+		assert(box >= 0 && box < 65);
+		_extraBoxFlags[box] = val;
+	} else {
+		Box *b = getBoxBaseAddr(box);
+		b->flags = val;
+	}
+}
+
 byte Scumm::getBoxFlags(int box)
 {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
 	return ptr->flags;
+}
+
+void Scumm::setBoxScale(int box, int scale)
+{
+	Box *b = getBoxBaseAddr(box);
+	b->scale = scale;
 }
 
 int Scumm::getBoxScale(int box)
@@ -119,7 +141,7 @@ int Scumm::getSpecialBox(int param1, int param2)
 	for (i = numOfBoxes; i >= 0; i--) {
 		flag = getBoxFlags(i);
 
-		if (!(flag & 0x80) && (flag & 0x20))
+		if (!(flag & kBoxInvisible) && (flag & kBoxPlayerOnly))
 			return (-1);
 
 		if (checkXYInBoxBounds(i, param1, param2))
@@ -541,26 +563,6 @@ bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int
 	return false;
 }
 
-void Scumm::setBoxFlags(int box, int val)
-{
-	/* FULL_THROTTLE stuff */
-	if (val & 0xC000) {
-		assert(box >= 0 && box < 65);
-		_extraBoxFlags[box] = val;
-	} else {
-		Box *b = getBoxBaseAddr(box);
-		b->flags = val;
-	}
-}
-
-void Scumm::setBoxScale(int box, int scale)
-{
-	Box *b = getBoxBaseAddr(box);
-	b->scale = scale;
-}
-
-#define BOX_MATRIX_SIZE 2000
-
 void Scumm::createBoxMatrix()
 {
 	byte *matrix_ptr;
@@ -603,7 +605,7 @@ void Scumm::createBoxMatrix()
 
 	for (j = 0; j < num; j++) {
 		flags = getBoxFlags(j);
-		if (flags & 0x80) {
+		if (flags & kBoxInvisible) {
 			addToBoxMatrix(0xFF);
 			addToBoxMatrix(j);
 			addToBoxMatrix(j);
@@ -612,7 +614,7 @@ void Scumm::createBoxMatrix()
 			vtx = addPathVertex();
 			for (i = 0; i < num; i++) {
 				flags = getBoxFlags(j);
-				if (!(flags & 0x80)) {
+				if (!(flags & kBoxInvisible)) {
 					node = unkMatrixProc2(vtx, i);
 					if (i == j)
 						node2 = node;
@@ -752,7 +754,7 @@ bool Scumm::areBoxesNeighbours(int box1nr, int box2nr)
 	BoxCoords box;
 	BoxCoords box2;
 
-	if (getBoxFlags(box1nr) & 0x80 || getBoxFlags(box2nr) & 0x80)
+	if (getBoxFlags(box1nr) & kBoxInvisible || getBoxFlags(box2nr) & kBoxInvisible)
 		return false;
 
 	getBoxCoordinates(box1nr, &box2);

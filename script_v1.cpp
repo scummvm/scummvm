@@ -1608,12 +1608,6 @@ void Scumm::o5_matrixOps()
 	if (_features & GF_OLD256) {
 		a = getVarOrDirectByte(0x80);
 		b = fetchScriptByte();
-
-		if (b & 0x40) {							// We don't use the locked 
-			b &= ~0x40;								// flag, so convert it to
-			b |= 0x80;								// invisible
-		}
-
 		setBoxFlags(a, b);
 		return;
 	}

@@ -25,8 +25,16 @@
 
 #define SIZEOF_BOX 20
 
+typedef enum {
+	kBoxXFlip		= 0x08,
+	kBoxYFlip		= 0x10,
+	kBoxPlayerOnly	= 0x20,
+	kBoxLocked		= 0x40,
+	kBoxInvisible	= 0x80,
+} BoxFlags;
+
 struct AdjustBoxResult {	/* Result type of AdjustBox functions */
-	int16 x,y;
+	int16 x, y;
 	uint16 dist;
 };
 
