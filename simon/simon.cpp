@@ -4428,13 +4428,15 @@ void SimonState::dx_update_screen_and_palette()
 void SimonState::realizePalette()
 {
 	if (_palette_color_count & 0x8000) {
-		error("_palette_color_count&0x8000");
-	}
+		warning("realizePalette subroutine unimplemented");
+		_palette_color_count = 0;
+	} else {
 	_video_var_9 = false;
 	memcpy(_palette_backup, _palette, 256 * 4);
 
 	_system->set_palette(_palette, 0, _palette_color_count);
 	_palette_color_count = 0;
+	}
 
 }
 

@@ -1864,15 +1864,14 @@ void SimonState::vc_64()
 
 void SimonState::vc_65()
 {																// Simon2
-	warning("vc_65 unimplemented");
-	//_palette_color_count = 0x270;
-	//_video_num_pal_colors = 0x0D0;
-	//if (_video_palette_mode != 4) {
-		//_palette_color_count = 0x300;
-		//_video_num_pal_colors = 0x100;
-	//}
-	//_palette_color_count |= 0x8000;
-	//_video_var_3 = false;
+	_palette_color_count = 0x270;
+	_video_num_pal_colors = 0x0D0;
+	if (_video_palette_mode != 4) {
+		_palette_color_count = 0x300;
+		_video_num_pal_colors = 0x100;
+	}
+	_palette_color_count |= 0x8000;
+	_video_var_3 = false;
 }
 
 void SimonState::vc_66()
