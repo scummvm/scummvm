@@ -54,53 +54,48 @@ public:
 	virtual int size() { return _len; }
 };
 
+template<int channels, int sampleSize>
 class MemoryAudioInputStream : public AudioInputStream {
 protected:
 	const byte *_ptr;
 	const byte *_end;
+	void advance() { _ptr += channels * sampleSize; }
 public:
 	MemoryAudioInputStream(const byte *ptr, uint len) : _ptr(ptr), _end(ptr+len) { }
+	virtual int size() { return (_end - _ptr) / (channels * sampleSize); }
 };
 
 
 template<int channels>
-class Input8bitSignedStream : public MemoryAudioInputStream {
+class Input8bitSignedStream : public MemoryAudioInputStream<channels, 1> {
 protected:
 	int16 readIntern() { int8 v = (int8)*_ptr; return v << 8; }
-	void advance() { _ptr += channels; }
 public:
-	Input8bitSignedStream(const byte *ptr, int len) : MemoryAudioInputStream(ptr, len) { }
-	virtual int size() { return (_end - _ptr) / channels; }
+	Input8bitSignedStream(const byte *ptr, int len) : MemoryAudioInputStream<channels, 1>(ptr, len) { }
 };
 
 template<int channels>
-class Input8bitUnsignedStream : public MemoryAudioInputStream {
+class Input8bitUnsignedStream : public MemoryAudioInputStream<channels, 1> {
 protected:
 	int16 readIntern() { int8 v = (int8)(*_ptr ^ 0x80); return v << 8; }
-	void advance() { _ptr += channels; }
 public:
-	Input8bitUnsignedStream(const byte *ptr, int len) : MemoryAudioInputStream(ptr, len) { }
-	virtual int size() { return (_end - _ptr) / channels; }
+	Input8bitUnsignedStream(const byte *ptr, int len) : MemoryAudioInputStream<channels, 1>(ptr, len) { }
 };
 
 template<int channels>
-class Input16bitSignedStream : public MemoryAudioInputStream {
+class Input16bitSignedStream : public MemoryAudioInputStream<channels, 2> {
 protected:
 	int16 readIntern() { return (int16)READ_BE_UINT16(_ptr); }
-	void advance() { _ptr += 2*channels; }
 public:
-	Input16bitSignedStream(const byte *ptr, int len) : MemoryAudioInputStream(ptr, len) { }
-	virtual int size() { return (_end - _ptr) / (2 * channels); }
+	Input16bitSignedStream(const byte *ptr, int len) : MemoryAudioInputStream<channels, 2>(ptr, len) { }
 };
 
 template<int channels>
-class Input16bitUnsignedStream : public MemoryAudioInputStream {
+class Input16bitUnsignedStream : public MemoryAudioInputStream<channels, 2> {
 protected:
 	int16 readIntern() { return (int16)(READ_BE_UINT16(_ptr) ^ 0x8000); }
-	void advance() { _ptr += 2*channels; }
 public:
-	Input16bitUnsignedStream(const byte *ptr, int len) : MemoryAudioInputStream(ptr, len) { }
-	virtual int size() { return (_end - _ptr) / (2 * channels); }
+	Input16bitUnsignedStream(const byte *ptr, int len) : MemoryAudioInputStream<channels, 2>(ptr, len) { }
 };
 
 
