@@ -26,6 +26,20 @@
 
 #include "scummvm.xpm"
 
+// FIXME move joystick defines out and replace with confile file options
+// we should really allow users to map any key to a joystick button
+#define JOY_DEADZONE 3200
+#define JOY_ANALOG
+// #define JOY_INVERT_Y
+#define JOY_XAXIS 0
+#define JOY_YAXIS 1
+// buttons
+#define JOY_BUT_LMOUSE 0
+#define JOY_BUT_RMOUSE 2
+#define JOY_BUT_ESCAPE 3
+#define JOY_BUT_PERIOD 1
+#define JOY_BUT_SPACE 4
+#define JOY_BUT_F5 5
 
 bool atexit_proc_installed = false;
 void atexit_proc() {
@@ -461,6 +475,7 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 	
 bool OSystem_SDL_Common::poll_event(Event *event) {
 	SDL_Event ev;
+	int axis;
 	kbd_mouse();
 
 	for(;;) {
@@ -648,50 +663,102 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			return true;
 
 		case SDL_JOYBUTTONDOWN:
-			if (ev.jbutton.button == 0) {
+			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 				event->event_code = EVENT_LBUTTONDOWN;
-			}
-			if (ev.jbutton.button == 1) {
+			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 				event->event_code = EVENT_RBUTTONDOWN;
+			} else {
+				event->event_code = EVENT_KEYDOWN;
+				switch (ev.jbutton.button) {
+					case JOY_BUT_ESCAPE:
+						event->kbd.keycode = SDLK_ESCAPE;
+						event->kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+						break;
+					case JOY_BUT_PERIOD:
+						event->kbd.keycode = SDLK_PERIOD;
+						event->kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+						break;
+					case JOY_BUT_SPACE:
+						event->kbd.keycode = SDLK_SPACE;
+						event->kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+						break;
+					case JOY_BUT_F5:
+						event->kbd.keycode = SDLK_F5;
+						event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+						break; 
+				}
 			}
 			return true;
 
 		case SDL_JOYBUTTONUP:
-			if (ev.jbutton.button == 0) {
+			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 				event->event_code = EVENT_LBUTTONUP;
-			}
-			if (ev.jbutton.button == 1) {
+			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 				event->event_code = EVENT_RBUTTONUP;
+			} else {
+				event->event_code = EVENT_KEYUP;
+				switch (ev.jbutton.button) {
+					case JOY_BUT_ESCAPE:
+						event->kbd.keycode = SDLK_ESCAPE;
+						event->kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+						break;
+					case JOY_BUT_PERIOD:
+						event->kbd.keycode = SDLK_PERIOD;
+						event->kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+						break;
+					case JOY_BUT_SPACE:
+						event->kbd.keycode = SDLK_SPACE;
+						event->kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+						break;
+					case JOY_BUT_F5:
+						event->kbd.keycode = SDLK_F5;
+						event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+						break;
+				} 
 			}
 			return true;
 			
 		case SDL_JOYAXISMOTION:
-			event->event_code = EVENT_MOUSEMOVE;
+			axis = ev.jaxis.value;
+			if ( axis > JOY_DEADZONE) {
+				axis -= JOY_DEADZONE;
+				event->event_code = EVENT_MOUSEMOVE;
+			} else if ( axis < -JOY_DEADZONE ) {
+				axis += JOY_DEADZONE;
+				event->event_code = EVENT_MOUSEMOVE;
+			} else
+				axis = 0;
 			
-			if ( ev.jaxis.axis == 0) { 
-				if (ev.jaxis.value < -3200) { 		// left
-					km.x_vel = -1;
+			if ( ev.jaxis.axis == JOY_XAXIS) { 
+#ifdef JOY_ANALOG
+				km.x_vel = axis/2000;
+				km.x_down_count = 0;
+#else
+				if (axis != 0) {
+					km.x_vel = (axis > 0) ? 1:-1;
 					km.x_down_count = 1;
-				} else if (ev.jaxis.value > 3200) {	// right
-					km.x_vel = 1;
-					km.x_down_count = 1;
-				} else {				// neither
+				} else {
 					km.x_vel = 0;
 					km.x_down_count = 0;
 				}
+#endif
 
-
-			} else if (ev.jaxis.axis == 1) { 
-				if (ev.jaxis.value < -3200) { 		// up
-					km.y_vel = -1;
-					km.y_down_count = 1;
-				} else if (ev.jaxis.value > 3200) {	// down
-					km.y_vel = 1;
+			} else if (ev.jaxis.axis == JOY_YAXIS) { 
+#ifndef JOY_INVERT_Y
+				axis = -axis;
+#endif
+#ifdef JOY_ANALOG
+				km.y_vel = -axis/2000;
+				km.y_down_count = 0;
+#else
+				if (axis != 0) {
+					km.y_vel = (-axis > 0) ? 1:-1;
 					km.y_down_count = 1;
 				} else {
 					km.y_vel = 0;
 					km.y_down_count = 0;
 				}
+#endif
 			}
 			return true;	
 
