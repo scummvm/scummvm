@@ -22,12 +22,8 @@
 
 #include "sdl-common.h"
 #include "common/scaler.h"
+#include "common/util.h"
 #include "common/engine.h"	// Only #included for error() and warning()
-
-// FIXME - this macro assumes that we use 565 mode. But what if we are in 555 mode?
-#define RGB_TO_16(r,g,b)	((((r>>3)&0x1F) << 11) | (((g>>2)&0x3F) << 5) | ((b>>3)&0x1F))
-//#define RGB_TO_16(r,g,b)	((((r>>3)&0x1F) << 10) | (((g>>3)&0x1F) << 5) | ((b>>3)&0x1F))
-
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {
 public:

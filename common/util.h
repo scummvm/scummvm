@@ -38,6 +38,20 @@
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
+#if USE_555_FORMAT
+// Assume the 16 bit graphics data is in 5-5-5 format
+#define RGB_TO_16(r,g,b)	(((((r)>>3)&0x1F) << 10) | ((((g)>>3)&0x1F) << 5) | (((b)>>3)&0x1F))
+#define RED_FROM_16(x)		((((x)>>10)&0x1F) << 3)
+#define GREEN_FROM_16(x)	((((x)>>5)&0x1F) << 3)
+#define BLUE_FROM_16(x)		(((x)&0x1F) << 3)
+
+#else
+// Assume the 16 bit graphics data is in 5-6-5 format
+#define RGB_TO_16(r,g,b)	(((((r)>>3)&0x1F) << 11) | ((((g)>>2)&0x3F) << 5) | (((b)>>3)&0x1F))
+#define RED_FROM_16(x)		((((x)>>11)&0x1F) << 3)
+#define GREEN_FROM_16(x)	((((x)>>5)&0x3F) << 2)
+#define BLUE_FROM_16(x)		(((x)&0x1F) << 3)
+#endif
 
 int RGBMatch(byte *palette, int r, int g, int b);
 int Blend(int src, int dst, byte *palette);

@@ -28,6 +28,7 @@
 
 /*
  * TODO list
+ * - use a nice font
  * - implement the missing / incomplete dialogs
  * - add more widgets
  * - allow multi line (l/c/r aligned) text via StaticTextWidget ?
@@ -36,18 +37,6 @@
  * - come up with a new look&feel / theme for the GUI 
  * - ...
  */
-
-// FIXME - this macro assumes that we use 565 mode. But what if we are in 555 mode?
-#define RGB_TO_16(r,g,b)	(((((r)>>3)&0x1F) << 11) | ((((g)>>2)&0x3F) << 5) | (((b)>>3)&0x1F))
-//#define RGB_TO_16(r,g,b)	(((((r)>>3)&0x1F) << 10) | ((((g)>>3)&0x1F) << 5) | (((b)>>3)&0x1F))
-
-#define RED_FROM_16(x)		((((x)>>11)&0x1F) << 3)
-#define GREEN_FROM_16(x)	((((x)>>5)&0x3F) << 2)
-#define BLUE_FROM_16(x)		(((x)&0x1F) << 3)
-
-//#define RED_FROM_16(x)	((((x)>>10)&0x1F) << 3)
-//#define GREEN_FROM_16(x)	((((x)>>5)&0x1F) << 3)
-//#define BLUE_FROM_16(x)	(((x)&0x1F) << 3)
 
 
 NewGui::NewGui(Scumm *s) : _s(s), _system(s->_system), _screen(0),
@@ -368,18 +357,18 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 
 void NewGui::blendRect(int x, int y, int w, int h, int16 color)
 {
-	int r = RED_FROM_16(color);
-	int g = GREEN_FROM_16(color);
-	int b = BLUE_FROM_16(color);
+	int r = RED_FROM_16(color) * 2;
+	int g = GREEN_FROM_16(color) * 2;
+	int b = BLUE_FROM_16(color) * 2;
 	int16 *ptr = getBasePtr(x, y);
 	if (ptr == NULL)
 		return;
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
-			ptr[i] = RGB_TO_16((RED_FROM_16(ptr[i])+r)/2,
-			                   (GREEN_FROM_16(ptr[i])+g)/2,
-			                   (BLUE_FROM_16(ptr[i])+b)/2);
+			ptr[i] = RGB_TO_16((RED_FROM_16(ptr[i])+r)/3,
+			                   (GREEN_FROM_16(ptr[i])+g)/3,
+			                   (BLUE_FROM_16(ptr[i])+b)/3);
 //			ptr[i] = color;
 		}
 		ptr += _screen_pitch;
@@ -474,37 +463,66 @@ void NewGui::drawChar(const char str, int xx, int yy, int16 color)
 	}
 }
 
+int NewGui::getStringWidth(const char *str)
+{
+	int space = 0;
+	while (*str)
+		space += getCharWidth(*str++);
+	return space;
+}
+
+int NewGui::getCharWidth(char c)
+{
+	int space;
+
+	switch (c) {
+	case '.':
+	case ':':
+	case '\'':
+	case '!':
+		space = 3;
+		break;
+	case 'I':
+	case 'i':
+	case 'l':
+		space = 5;
+		break;
+	case ';':
+	case ' ':
+		space = 4;
+		break;
+	case '(':
+	case ')':
+		space = 5;
+		break;
+	case 'c':
+		space = 6;
+		break;
+	case '4':
+	case '/':
+	case 'W':
+	case 'w':
+	case 'M':
+	case 'm':
+		space = 8;
+		break;
+	default:
+		space = 7;
+	}
+	return space;
+}
+
 void NewGui::drawString(const char *str, int x, int y, int w, int16 color, int align)
 {
-#if 1
-	if (0) {
-#else
-	if (_s->_gameId) {						/* If a game is active.. */
-		StringTab *st = &_s->string[5];
-		st->charset = 1;
-		st->center = (align == kTextAlignCenter);
-		st->color = color;
-
-		if (align == kTextAlignLeft)
-			st->xpos = x;
-		else if (align == kTextAlignCenter)
-			st->xpos = x + w/2;
-		else if (align == kTextAlignRight)
-			st->xpos = x + w - _s->charset.getStringWidth(0, (byte *)str, 0);
-
-		st->ypos = y;
-		st->right = x + w;
-	
-		_s->_messagePtr = (byte *)str;
-		_s->drawString(5);
-#endif
-	} else {
-		// FIXME - support center/right align, use nicer custom font.
-		// Ultimately, we might want to *always* draw our messages this way,
-		// but only if we have a nice font.
-		uint len = strlen(str);
-		for (uint letter = 0; letter < len; letter++)
-			drawChar(str[letter], x + (letter * 8), y, color);
+	int width = getStringWidth(str);
+	if (align == kTextAlignCenter)
+		x = x + (w - width - 1)/2;
+	else if (align == kTextAlignRight)
+		x = x + w - width;
+	while (*str) {
+		drawChar(*str, x, y, color);
+		x += getCharWidth(*str);
+		str++;
 	}
 }
 
