@@ -92,9 +92,9 @@ public:
 	byte frame;
 	byte walkbox;
 	byte animProgress, animSpeed;
-	int16 new_1, new_2;
+	int16 talkPosX, talkPosY;
 	uint16 talk_script, walk_script;
-	byte new_3;
+	bool ignoreTurns;	// TODO - we do not honor this flag at all currently!
 	int8 layer;
 	ActorWalkData walkdata;
 	int16 animVariable[16];

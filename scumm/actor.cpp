@@ -47,8 +47,8 @@ void Actor::initActor(int mode)
 	elevation = 0;
 	width = 24;
 	talkColor = 15;
-	new_2 = 0;
-	new_1 = -80;
+	talkPosX = -80;
+	talkPosY = 0;
 	scaley = scalex = 0xFF;
 	charset = 0;
 	sound[0] = 0;
@@ -71,7 +71,7 @@ void Actor::initActor(int mode)
 
 	ignoreBoxes = 0;
 	forceClip = 0;
-	new_3 = 0;
+	ignoreTurns = false;
 	initFrame = 1;
 	walkFrame = 2;
 	standFrame = 3;

@@ -477,16 +477,16 @@ void Scumm::CHARSET_1()
 			if (_string[0].xpos > _realWidth - 80)
 				_string[0].xpos = _realWidth - 80;
 		} else {
-			s = a->scaley * a->new_1 / 0xFF;
-			_string[0].ypos = ((a->new_1 - s) >> 1) + s - a->elevation + a->y;
+			s = a->scaley * a->talkPosX / 0xFF;
+			_string[0].ypos = ((a->talkPosX - s) >> 1) + s - a->elevation + a->y;
 			if (_string[0].ypos < 1)
 				_string[0].ypos = 1;
 
 			if (_string[0].ypos < camera._cur.y - (_realHeight / 2))
 				_string[0].ypos = camera._cur.y - (_realHeight / 2);
 
-			s = a->scalex * a->new_2 / 0xFF;
-			_string[0].xpos = ((a->new_2 - s) >> 1) + s + a->x - camera._cur.x + (_realWidth / 2);
+			s = a->scalex * a->talkPosY / 0xFF;
+			_string[0].xpos = ((a->talkPosY - s) >> 1) + s + a->x - camera._cur.x + (_realWidth / 2);
 			if (_string[0].xpos < 80)
 				_string[0].xpos = 80;
 			if (_string[0].xpos > _realWidth - 80)

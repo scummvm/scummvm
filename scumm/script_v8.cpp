@@ -161,8 +161,8 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 64 */
-		OPCODE(o6_jumpFalse),	// Not sure about which of these two is which (false==if or true==if ?!?)...
-		OPCODE(o6_jumpTrue),	// ... since "if" could mean 'jump "if"' or 'execute following code "if", otherwise jump'.
+		OPCODE(o6_jumpFalse),
+		OPCODE(o6_jumpTrue),
 		OPCODE(o6_jump),
 		OPCODE(o6_breakHere),
 		/* 68 */

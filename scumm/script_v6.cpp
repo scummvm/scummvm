@@ -1659,6 +1659,7 @@ void Scumm_v6::o6_actorSet()
 		a->standFrame = pop();
 		break;
 	case 82:
+		// FIXME: what does this opcode do ???
 		pop();
 		pop();
 		pop();
@@ -1734,18 +1735,18 @@ void Scumm_v6::o6_actorSet()
 		a->shadow_mode = pop();
 		break;
 	case 99:
-		a->new_1 = pop();
-		a->new_2 = pop();
+		a->talkPosX = pop();
+		a->talkPosY = pop();
 		break;
 	case 198:										/* set anim variable */
 		i = pop();									/* value */
 		a->setAnimVar(pop(), i);
 		break;
 	case 215:
-		a->new_3 = 1;
+		a->ignoreTurns = true;
 		break;
 	case 216:
-		a->new_3 = 0;
+		a->ignoreTurns = false;
 		break;
 	case 217:
 		a->initActor(2);

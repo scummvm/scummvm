@@ -280,9 +280,9 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MKLINE(Actor, needBgReset, sleByte, VER_V8),
 		MKLINE(Actor, costumeNeedsInit, sleByte, VER_V8),
 
-		MKLINE(Actor, new_1, sleInt16, VER_V8),
-		MKLINE(Actor, new_2, sleInt16, VER_V8),
-		MKLINE(Actor, new_3, sleByte, VER_V8),
+		MKLINE(Actor, talkPosX, sleInt16, VER_V8),
+		MKLINE(Actor, talkPosY, sleInt16, VER_V8),
+		MKLINE(Actor, ignoreTurns, sleByte, VER_V8),
 
 		MKLINE(Actor, layer, sleByte, VER_V8),
 
