@@ -30,7 +30,7 @@
 
 const MenuObject SwordMenu::_objectDefs[TOTAL_pockets + 1] = {
 	{	// 0 can't use
-		0,
+		0, 0, 0, 0, 0
 	},
 	{	// 1 NEWSPAPER
 		menu_newspaper,							// text_desc
