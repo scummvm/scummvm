@@ -33,6 +33,7 @@ include config.mak
 # Uncomment this for stricter compile time code verification
 # CXXFLAGS+= -Wshadow -Werror
 
+CXXFLAGS += $(OPTFLAGS)
 
 #######################################################################
 # Misc stuff - you should normally never have to edit this            #
