@@ -179,7 +179,7 @@ int Render::drawScene() {
 
 	// Display palette test, if applicable
 	if (_flags & RF_PALETTE_TEST) {
-		_vm->_gfx->drawPalette(backbuf_surface);
+		drawPalette(backbuf_surface);
 	}
 
 	// Draw console

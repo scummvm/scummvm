@@ -822,7 +822,7 @@ int Scene::draw(SURFACE *dst_s) {
 	switch (_sceneMode) {
 
 	case SCENE_MODE_NORMAL:
-		_vm->_gfx->bufToSurface(dst_s, buf_info.bg_buf, disp_info.logical_w,
+		bufToSurface(dst_s, buf_info.bg_buf, disp_info.logical_w,
 						MAX(disp_info.scene_h, _bg.h), NULL, &bg_pt);
 		break;
 	case SCENE_MODE_ISO:

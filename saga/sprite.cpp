@@ -349,7 +349,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 	ci.src_rect = &spr_src_rect;
 	ci.dst_pt = &spr_pt;
 
-	_vm->_gfx->getClipInfo(&ci);
+	getClipInfo(&ci);
 
 	if (ci.nodraw) {
 		return SUCCESS;

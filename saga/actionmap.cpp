@@ -147,7 +147,7 @@ int ActionMap::hitTest(const Point& imouse) {
 				}
 			} else if (n_points > 2) {
 				// Hit-test a polygon
-				if (_vm->_gfx->hitTestPoly(points, n_points, imouse)) {
+				if (hitTestPoly(points, n_points, imouse)) {
 					return i;
 				}
 			}
@@ -170,10 +170,10 @@ int ActionMap::draw(SURFACE *ds, int color) {
 			clickarea = &exmap_entry->clickareas[k];
 			if (clickarea->n_points == 2) {
 				// 2 points represent a box
-				_vm->_gfx->drawFrame(ds, &clickarea->points[0], &clickarea->points[1], color);
+				drawFrame(ds, &clickarea->points[0], &clickarea->points[1], color);
 			} else if (clickarea->n_points > 2) {
 				// Otherwise draw a polyline
-				_vm->_gfx->drawPolyLine(ds, clickarea->points, clickarea->n_points, color);
+				drawPolyLine(ds, clickarea->points, clickarea->n_points, color);
 			}
 		}
 	}

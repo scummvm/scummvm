@@ -135,7 +135,7 @@ int IsoMap::draw(SURFACE *dst_s) {
 	GAME_DISPLAYINFO disp_info;
 	GAME_GetDisplayInfo(&disp_info);
 	Rect iso_rect(disp_info.logical_w, disp_info.scene_h);
-	_gfx->drawRect(dst_s, &iso_rect, 0);
+	drawRect(dst_s, &iso_rect, 0);
 	drawMetamap(dst_s, -1000, -500);
 
 	return SUCCESS;

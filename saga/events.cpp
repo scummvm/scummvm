@@ -332,7 +332,7 @@ int Events::handleOneShot(EVENT *event) {
 				bg_pt.x = bginfo.bg_x;
 				bg_pt.y = bginfo.bg_y;
 
-				_vm->_gfx->bufToBuffer(rbuf_info.bg_buf, rbuf_info.bg_buf_w, rbuf_info.bg_buf_h,
+				bufToBuffer(rbuf_info.bg_buf, rbuf_info.bg_buf_w, rbuf_info.bg_buf_h,
 								bginfo.bg_buf, bginfo.bg_w, bginfo.bg_h, NULL, &bg_pt);
 				if (event->param == SET_PALETTE) {
 					PALENTRY *pal_p;

@@ -285,10 +285,10 @@ int ObjectMap::draw(SURFACE *ds, const Point& imousePt, int color, int color2) {
 			clickarea = &object_map->clickareas[k];
 			if (clickarea->n_points == 2) {
 				// 2 points represent a box
-				_vm->_gfx->drawFrame(ds, &clickarea->points[0], &clickarea->points[1], draw_color);
+				drawFrame(ds, &clickarea->points[0], &clickarea->points[1], draw_color);
 			} else if (clickarea->n_points > 2) {
 				// Otherwise draw a polyline
-				_vm->_gfx->drawPolyLine(ds, clickarea->points, clickarea->n_points, draw_color);
+				drawPolyLine(ds, clickarea->points, clickarea->n_points, draw_color);
 			}
 		}
 	}
@@ -332,7 +332,7 @@ int ObjectMap::hitTest(const Point& imousePt) {
 				}
 			} else if (n_points > 2) {
 				// Hit-test a polygon
-				if (_vm->_gfx->hitTestPoly(points, n_points, imouse)) {
+				if (hitTestPoly(points, n_points, imouse)) {
 					return object_map->objectNum;
 				}
 			}

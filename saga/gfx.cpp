@@ -70,7 +70,7 @@ Gfx::Gfx(OSystem *system, int width, int height) {
 }
  */
 
-int Gfx::drawPalette(SURFACE *dst_s) {
+int drawPalette(SURFACE *dst_s) {
 	int x;
 	int y;
 	int color = 0;
@@ -93,31 +93,6 @@ int Gfx::drawPalette(SURFACE *dst_s) {
 	return 0;
 }
 
-int Gfx::simpleBlit(SURFACE *dst_s, SURFACE *src_s) {
-	byte *src_p;
-	byte *dst_p;
-	int y, w, p;
-
-	assert((dst_s != NULL) && (src_s != NULL));
-	assert(dst_s->w == src_s->w);
-	assert(dst_s->h == src_s->h);
-
-	src_p = (byte *)src_s->pixels;
-	dst_p = (byte *)dst_s->pixels;
-
-	w = src_s->w;
-	p = src_s->pitch;
-
-	for (y = 0; y < src_s->h; y++) {
-		memcpy(dst_p, src_p, w);
-
-		dst_p += p;
-		src_p += p;
-	}
-
-	return SUCCESS;
-}
-
 // TODO: I've fixed at least one clipping bug here, but I have a feeling there
 //       are several more. 
 
@@ -130,7 +105,7 @@ int Gfx::simpleBlit(SURFACE *dst_s, SURFACE *src_s) {
 // - If src_rect is NULL, the entire buffer is copied./
 // - The surface must match the logical dimensions of the buffer exactly.
 // - Returns FAILURE on error
-int Gfx::bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h, 
+int bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h, 
 					 Rect *src_rect, Point *dst_pt) {
 	const byte *read_p;
 	byte *write_p;
@@ -256,7 +231,7 @@ int Gfx::bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h,
 	return SUCCESS;
 }
 
-int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
+int bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 					int src_w, int src_h, Rect *src_rect, Point *dst_pt) {
 	const byte *read_p;
 	byte *write_p;
@@ -378,7 +353,7 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 // Fills a rectangle in the surface ds from point 'p1' to point 'p2' using
 // the specified color.
-int Gfx::drawRect(SURFACE *ds, Rect *dst_rect, int color) {
+int drawRect(SURFACE *ds, Rect *dst_rect, int color) {
 	byte *write_p;
 
 	int w;
@@ -418,7 +393,7 @@ int Gfx::drawRect(SURFACE *ds, Rect *dst_rect, int color) {
 	return SUCCESS;
 }
 
-int Gfx::drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color) {
+int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	int left, top, right, bottom;
 
 	int min_x;
@@ -460,7 +435,7 @@ int Gfx::drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	return SUCCESS;
 }
 
-int Gfx::drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color) {
+int drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color) {
 	const Point *first_pt = pts;
 	int last_i = 1;
 	int i;
@@ -481,7 +456,7 @@ int Gfx::drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color) 
 	return SUCCESS;
 }
 
-int Gfx::getClipInfo(CLIPINFO *clipinfo) {
+int getClipInfo(CLIPINFO *clipinfo) {
 	Common::Rect s;
 	int d_x, d_y;
 
@@ -565,7 +540,7 @@ int Gfx::getClipInfo(CLIPINFO *clipinfo) {
 	return SUCCESS;
 }
 
-int Gfx::clipLine(SURFACE *ds, const Point *src_p1, const Point *src_p2, 
+int clipLine(SURFACE *ds, const Point *src_p1, const Point *src_p2, 
 				 Point *dst_p1, Point *dst_p2) {
 	const Point *n_p1;
 	const Point *n_p2;
@@ -637,7 +612,7 @@ int Gfx::clipLine(SURFACE *ds, const Point *src_p1, const Point *src_p2,
 // Coriolis Group Books, 1997
 //
 // Performs no clipping
-void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
+void drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	byte *write_p;
 	int clip_result;
 	int temp;
@@ -1079,7 +1054,7 @@ void Gfx::setCursor(int best_white) {
 	_system->setMouseCursor(cursor_img, CURSOR_W, CURSOR_H, 4, 4, keycolor);
 }
 
-bool Gfx::hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point) {
+bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point) {
 	int yflag0;
 	int yflag1;
 	bool inside_flag = false;

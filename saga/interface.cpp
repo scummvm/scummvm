@@ -308,7 +308,7 @@ int Interface::draw() {
 	rect.right = g_di.logical_w;
 	rect.bottom = _iDesc.status_y + _iDesc.status_h;
 
-	_vm->_gfx->drawRect(back_buf, &rect, _iDesc.status_bgcol);
+	drawRect(back_buf, &rect, _iDesc.status_bgcol);
 
 	// Draw command panel background
 	if (_panelMode == kPanelCommand) {
@@ -318,7 +318,7 @@ int Interface::draw() {
 		origin.x = 0;
 		origin.y = g_di.logical_h - _cPanel.img_h;
 
-		_vm->_gfx->bufToSurface(back_buf, _cPanel.img, _cPanel.img_w,
+		bufToSurface(back_buf, _cPanel.img, _cPanel.img_w,
 						_cPanel.img_h, NULL, &origin);
 	} else {
 		xbase = _dPanel.x;
@@ -327,7 +327,7 @@ int Interface::draw() {
 		origin.x = 0;
 		origin.y = g_di.logical_h - _cPanel.img_h;
 
-		_vm->_gfx->bufToSurface(back_buf, _dPanel.img, _dPanel.img_w,
+		bufToSurface(back_buf, _dPanel.img, _dPanel.img_w,
 						_dPanel.img_h, NULL, &origin);
 	}
 
@@ -405,7 +405,7 @@ int Interface::drawStatusBar(SURFACE *ds) {
 	rect.right = g_di.logical_w;
 	rect.bottom = _iDesc.status_y + _iDesc.status_h;
 
-	_vm->_gfx->drawRect(ds, &rect, _iDesc.status_bgcol);
+	drawRect(ds, &rect, _iDesc.status_bgcol);
 
 	string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, _statusText, 0, 0);
 
