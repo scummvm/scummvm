@@ -12,7 +12,8 @@ enum ActionType {
 	ACTION_KEYBOARD = 6,
 	ACTION_SOUND = 7,
 	ACTION_RIGHTCLICK = 8,
-	ACTION_CURSOR = 9
+	ACTION_CURSOR = 9,
+	ACTION_SUBTITLES = 10
 };
 
 struct oneAction {
@@ -22,7 +23,7 @@ struct oneAction {
 
 
 #define NUMBER_ACTIONS 10
-#define TOTAL_ACTIONS 9
+#define TOTAL_ACTIONS 10
 
 #define GAPI_KEY_BASE 1000
 #define GAPI_KEY_VKA 1

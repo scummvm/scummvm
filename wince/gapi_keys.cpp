@@ -27,7 +27,8 @@ const char* ActionsText[] = {
 	"Keyboard",
 	"Sound",
 	"Right click",
-	"Cursor on/off"
+	"Cursor on/off",
+	"Subtitles on/off"
 };
 
 bool _typeExists(int x) {
@@ -65,11 +66,15 @@ void GAPIKeysInit(pAction *functions) {
 }
 
 void GAPIKeysGetReference() {
+	/*
 	if(GetScreenMode()) {
 		_keys = GXGetDefaultKeys(GX_LANDSCAPEKEYS);
 	} else {
 		_keys = GXGetDefaultKeys(GX_NORMALKEYS);
 	}
+	*/
+
+	_keys = GXGetDefaultKeys(GX_LANDSCAPEKEYS);
 }
 
 const unsigned char getGAPIKeyMapping(short key) {
@@ -86,7 +91,7 @@ const unsigned char getGAPIKeyMapping(short key) {
 	if (key == _keys.vkStart)
 			return GAPI_KEY_VKSTART;
 
-	if (key == _keys.vkUp)
+	if (key == _keys.vkUp) 
 			return GAPI_KEY_VKUP;
 
 	if (key == _keys.vkDown)
