@@ -102,12 +102,19 @@ typedef signed long int32;
 #define START_PACK_STRUCTS pack (push,1)
 #define END_PACK_STRUCTS   pack(pop)
 
-#elif (defined(UNIX) || defined(__APPLE__))
+#elif (defined(UNIX) || defined(__APPLE__) || defined(UNIX_X11))
 
 #define scumm_stricmp strcasecmp
 
 #define CHECK_HEAP
 
+#ifdef UNIX_X11
+
+/* You need to set those manually */
+#define SCUMM_LITTLE_ENDIAN
+/* #define SCUMM_NEED_ALIGNMENT */
+
+#else
 /* need this for the SDL_BYTEORDER define */
 #include <SDL_byteorder.h>
 
@@ -118,6 +125,7 @@ typedef signed long int32;
 #define SCUMM_NEED_ALIGNMENT
 #else
 #error Neither SDL_BIG_ENDIAN nor SDL_LITTLE_ENDIAN is set.
+#endif
 #endif
 
 #define FORCEINLINE inline

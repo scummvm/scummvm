@@ -340,12 +340,21 @@ int GameDetector::detectMain(int argc, char **argv)
 	_noSubtitles = 0;							// use by default - should this depend on soundtrack?        
 
 	_gfx_mode = GFX_DOUBLESIZE;
-	_gfx_driver = GD_AUTO;
-
 	_sfx_volume = 100;
 
-#ifdef USE_NULL_DRIVER
+#if defined(USE_NULL_DRIVER)
 	_gfx_driver = GD_NULL;
+#elif defined(__DC__)
+	_gfx_driver = GD_DC;
+#elif defined(UNIX_X11)
+	_gfx_driver = GD_X;
+#elif defined(__MORPHOS__)
+	_gfx_driver = GD_MORPHOS;
+#elif defined(WIN32_WCE)
+	_gfx_driver = GD_WINCE;
+#else
+	/* SDL is the default driver for now */
+	_gfx_driver = GD_SDL;
 #endif
 
 	_gameDataPath = NULL;
@@ -396,41 +405,26 @@ int GameDetector::detectMain(int argc, char **argv)
 }
 
 OSystem *GameDetector::createSystem() {
-#ifdef __MORPHOS__
-	_gfx_driver = GD_MORPHOS;
-#endif
 	/* auto is to use SDL */
 	switch(_gfx_driver) {
-#ifdef __DC__
-	case GD_AUTO:
-		return OSystem_Dreamcast_create();
-#else
-	case GD_SDL:
-	case GD_AUTO:
-#ifdef _WIN32_WCE
-		return OSystem_WINCE3_create();
-#endif
-#if !defined(__MORPHOS__)
-		return OSystem_SDL_create(_gfx_mode, _fullScreen);
-#endif
-	case GD_WIN32:
-		/* not implemented yet */
-		break;
-
+#if defined(UNIX_X11)
 	case GD_X:
-		/* not implemented yet */
-		break;
-
+		return OSystem_X11_create();
+#elif defined(__DC__)
+	case GD_DC:
+		return OSystem_Dreamcast_create();
+#elif defined(WIN32_WCE)
+	case GD_WINCE:
+		return OSystem_WINCE3_create();
+#elif defined(__MORPHOS__)
 	case GD_MORPHOS:
-#if defined(__MORPHOS__)
 		return OSystem_MorphOS_create(_gameId, _gfx_mode, _fullScreen);
-#endif
-		break;
-
-#ifdef USE_NULL_DRIVER
+#elif defined(USE_NULL_DRIVER)
 	case GD_NULL:
 		return OSystem_NULL_create();
-#endif
+#else
+	case GD_SDL:
+		return OSystem_SDL_create(_gfx_mode, _fullScreen);
 #endif
 	}
 

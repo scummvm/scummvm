@@ -781,7 +781,7 @@ void MidiDriver::midiInitNull()
 
 #ifdef WIN32
 	#include <winsock.h>
-#elif defined(UNIX)
+#elif (defined(UNIX) || defined(UNIX_X11))
 	#include <sys/time.h>
 	#include <unistd.h>
 	#include <sys/types.h>

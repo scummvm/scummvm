@@ -911,7 +911,6 @@ void Scumm::o5_cursorCommand()
 {
 	int i, j, k;
 	int16 table[16];
-	byte origop = _opcode;
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
 	case 1:											/* cursor show */
 		_cursorState = 1;

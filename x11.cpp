@@ -23,8 +23,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "gui.h"
-#include "cdmusic.h"
+#include "mididrv.h"
+#include "gameDetector.h"
 
 #include <sys/time.h>
 #include <unistd.h>
@@ -45,52 +45,127 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
-Scumm scumm;
-ScummDebugger debugger;
-Gui gui;
-IMuse sound;
-SOUND_DRIVER_TYPE snd_driv;
-static unsigned char *local_fb;
+class OSystem_X11 : public OSystem {
+public:
+	// Set colors of the palette
+	void set_palette(const byte *colors, uint start, uint num);
 
-static int window_width, window_height;
-static int scumm_x, scumm_y;
+	// Set the size of the video bitmap.
+	// Typically, 320x200
+	void init_size(uint w, uint h);
 
-static int x11_socket = -1;
-static Display *display;
-static int screen;
-static Window window;
-static GC black_gc;
-static XImage *image;
-static pthread_t sound_thread;
-static int old_mouse_x, old_mouse_y;
-static int old_mouse_h, old_mouse_w;
-static bool has_mouse, hide_mouse;
+	// Draw a bitmap to screen.
+	// The screen will not be updated to reflect the new bitmap
+	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
 
-static unsigned int scale;
-static int fake_right_mouse = 0;
-static int report_presses = 1;
-static int current_shake_pos = 0;
+	// Update the dirty areas of the screen
+	void update_screen();
 
-#define MAX_NUMBER_OF_DIRTY_SQUARES 32
+	// Either show or hide the mouse cursor
+	bool show_mouse(bool visible);
+	
+	// Set the position of the mouse cursor
+	void set_mouse_pos(int x, int y);
+	
+	// Set the bitmap that's used when drawing the cursor.
+	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	
+	// Shaking is used in SCUMM. Set current shake position.
+	void set_shake_pos(int shake_pos);
+		
+	// Get the number of milliseconds since the program was started.
+	uint32 get_msecs();
+	
+	// Delay for a specified amount of milliseconds
+	void delay_msecs(uint msecs);
+	
+	// Create a thread
+	void *create_thread(ThreadProc *proc, void *param);
+	
+	// Get the next event.
+	// Returns true if an event was retrieved.	
+	bool poll_event(Event *event);
+	
+	// Set function that generates samples 
+	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
+		
+	// Poll cdrom status
+	// Returns true if cd audio is playing
+	bool poll_cdrom();
+
+	// Play cdrom audio track
+	void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+
+	// Stop cdrom audio track
+	void stop_cdrom();
+
+	// Update cdrom audio status
+	void update_cdrom();
+
+	// Quit
+	void quit();
+
+	// Set a parameter
+	uint32 property(int param, uint32 value);
+
+	static OSystem *create(int gfx_mode, bool full_screen);
+
+private:
+	OSystem_X11();
+
+	typedef struct {
+		int x, y, w, h;
+	} dirty_square;
+
+	void create_empty_cursor();
+	void undraw_mouse();
+	void draw_mouse();
+	void update_screen_helper(const dirty_square * d, dirty_square * dout);
+
+	unsigned char *local_fb;
+
+	int window_width, window_height;
+	int scumm_x, scumm_y;
+
+	unsigned short palette[256];
+	bool _palette_changed;
+	Display *display;
+	int screen;
+	Window window;
+	GC black_gc;
+	XImage *image;
+	pthread_t sound_thread;
+
+	int fake_right_mouse;
+	int report_presses;
+	int current_shake_pos;
+	struct timeval start_time;
+
+	enum {
+		MAX_NUMBER_OF_DIRTY_SQUARES = 32,
+		BAK_WIDTH = 40,
+		BAK_HEIGHT = 40
+	};
+	dirty_square ds[MAX_NUMBER_OF_DIRTY_SQUARES];
+	int num_of_dirty_square;
+
+	typedef struct {
+		int x, y;
+		int w, h;
+		int hot_x, hot_y;
+	} mouse_state;
+	mouse_state old_state, cur_state;
+	const byte *_ms_buf;
+	byte _ms_backup[BAK_WIDTH * BAK_HEIGHT];
+	bool _mouse_drawn;
+	bool _mouse_visible;
+};
+
 typedef struct {
-	int x, y, w, h;
-} dirty_square;
-static dirty_square ds[MAX_NUMBER_OF_DIRTY_SQUARES];
-static int num_of_dirty_square;
-
-/* Milisecond-based timer management */
-static struct timeval start_time;
-static void init_timer(void)
-{
-	gettimeofday(&start_time, NULL);
-}
-static unsigned int get_ms_from_start(void)
-{
-	struct timeval current_time;
-	gettimeofday(&current_time, NULL);
-	return (((current_time.tv_sec - start_time.tv_sec) * 1000) +
-					((current_time.tv_usec - start_time.tv_usec) / 1000));
-}
+	OSystem::SoundProc *sound_proc;
+	void *param;
+	byte format;
+} THREAD_PARAM;
 
 #define FRAG_SIZE 4096
 static void *sound_and_music_thread(void *params)
@@ -98,6 +173,8 @@ static void *sound_and_music_thread(void *params)
 	/* Init sound */
 	int sound_fd, param, frag_size;
 	unsigned char sound_buffer[FRAG_SIZE];
+	OSystem::SoundProc *sound_proc = ((THREAD_PARAM *) params)->sound_proc;
+	void *proc_param = ((THREAD_PARAM *) params)->param;
 
 	sound_fd = open("/dev/dsp", O_WRONLY);
 	audio_buf_info info;
@@ -153,7 +230,7 @@ static void *sound_and_music_thread(void *params)
 		unsigned short *buf = (unsigned short *)sound_buffer;
 		int size, written;
 
-		scumm.mixWaves((short *)sound_buffer, FRAG_SIZE >> 2);
+		sound_proc(proc_param, (byte *)sound_buffer, FRAG_SIZE >> 1);
 		/* Now convert to stereo */
 		for (int i = ((FRAG_SIZE >> 2) - 1); i >= 0; i--) {
 			buf[2 * i + 1] = buf[2 * i] = buf[i];
@@ -169,7 +246,7 @@ static void *sound_and_music_thread(void *params)
 }
 
 /* Function used to hide the mouse cursor */
-static void create_empty_cursor(Display * display, int screen, Window window)
+void OSystem_X11::create_empty_cursor()
 {
 	XColor bg;
 	Pixmap pixmapBits;
@@ -177,53 +254,43 @@ static void create_empty_cursor(Display * display, int screen, Window window)
 	static const char data[] = { 0 };
 
 	bg.red = bg.green = bg.blue = 0x0000;
-	pixmapBits =
-		XCreateBitmapFromData(display, XRootWindow(display, screen), data, 1, 1);
+	pixmapBits = XCreateBitmapFromData(display, XRootWindow(display, screen), data, 1, 1);
 	if (pixmapBits) {
-		cursor = XCreatePixmapCursor(display, pixmapBits, pixmapBits,
-																 &bg, &bg, 0, 0);
+		cursor = XCreatePixmapCursor(display, pixmapBits, pixmapBits, &bg, &bg, 0, 0);
 		XFreePixmap(display, pixmapBits);
 	}
 	XDefineCursor(display, window, cursor);
 }
 
-/* No CD on the iPAQ => stub functions */
-void cd_play(Scumm *s, int track, int num_loops, int start_frame,
-						 int end_frame)
+OSystem *OSystem_X11_create(void)
 {
-
-#ifdef COMPRESSED_SOUND_FILE
-	mp3_cd_play(s, track, num_loops, start_frame, end_frame);
-#endif
-}
-int cd_is_running(void)
-{
-	return 1;
-}
-void cd_stop(void)
-{
+	return OSystem_X11::create(0, 0);
 }
 
-/* No debugger on the iPAQ => stub function */
-void BoxTest(int num)
+OSystem *OSystem_X11::create(int gfx_mode, bool full_screen)
 {
+	OSystem_X11 *syst = new OSystem_X11();
+	return syst;
 }
 
-/* Initialize the graphics sub-system */
-void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor)
+OSystem_X11::OSystem_X11()
 {
-	char buf[512], *gameName;
+	char buf[512];
 	static XShmSegmentInfo shminfo;
 	XWMHints *wm_hints;
 	XGCValues values;
 	XTextProperty window_name;
 	char *name = (char *)&buf;
 
-	scale = scaleFactor;					// not implemented yet! ignored.
+	/* Some members initialization */
+	fake_right_mouse = 0;
+	report_presses = 1;
+	current_shake_pos = 0;
+	_palette_changed = false;
+	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 
 	/* For the window title */
-	sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
-	free(gameName);
+	sprintf(buf, "ScummVM");
 
 	display = XOpenDisplay(NULL);
 	if (display == NULL) {
@@ -231,7 +298,6 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor)
 		exit(1);
 	}
 	screen = DefaultScreen(display);
-	x11_socket = ConnectionNumber(display);
 
 	window_width = 320;
 	window_height = 200;
@@ -284,108 +350,56 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor)
 		}
 	}
 out_of_loop:
-	create_empty_cursor(display, screen, window);
-
-	/* And finally start the music thread */
-	pthread_create(&sound_thread, NULL, sound_and_music_thread, NULL);
+	create_empty_cursor();
 
 	/* Initialize the 'local' frame buffer */
 	local_fb = (unsigned char *)malloc(320 * 200 * sizeof(unsigned char));
+
+	/* And finally start the local timer */
+	gettimeofday(&start_time, NULL);
 }
 
-void setWindowName(Scumm *s)
-{
-	char buf[512], *gameName;
-	XTextProperty window_name;
-	char *name = (char *)&buf;
-
-	/* For the window title */
-	sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
-	free(gameName);
-
-	XStringListToTextProperty(&name, 1, &window_name);
-	XSetWMProperties(display, window, &window_name, &window_name,
-									 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
-									 NULL /* WM hints */ , NULL /* class hints */ );
+uint32 OSystem_X11::get_msecs() {
+	struct timeval current_time;
+	gettimeofday(&current_time, NULL);
+	return (uint32) (((current_time.tv_sec - start_time.tv_sec) * 1000) +
+	                 ((current_time.tv_usec - start_time.tv_usec) / 1000));
 }
 
-/* This simply shifts up or down the screen by 'shake pos' */
-void setShakePos(Scumm *s, int shake_pos)
-{
-	if (shake_pos != current_shake_pos) {
-		int dirty_top = 0, dirty_height = 0;
-		int line;
+void OSystem_X11::init_size(uint w, uint h) {
+	if ((w != 320) || (h != 200))
+		error("320x200 is the only game resolution supported");
 
-		/* This is to provoke a full redraw */
-		num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
+	/* Do nothing more for now... */
+}
 
-		/* Update the mouse to prevent 'mouse droppings' */
-		old_mouse_y += shake_pos - current_shake_pos;
+bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format) {
+	THREAD_PARAM thread_param;
 
-		/* Handle the 'dirty part' of the screen */
-		if (shake_pos > current_shake_pos) {
-			for (line = 199 + shake_pos; line >= -shake_pos; line--) {
-				int cur_pos, new_pos;
-				int cur_OK, new_OK;
+	/* And finally start the music thread */
+	thread_param.param = param;
+	thread_param.sound_proc = proc;
+	thread_param.format = format;
 
-				cur_pos = line + current_shake_pos;
-				new_pos = line + shake_pos;
+	if (format == SOUND_16BIT)
+		pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *) &thread_param);
+	else
+		warning("Only support 16 bit sound for now. Disabling sound ");
 
-				cur_OK = (cur_pos >= 0) && (cur_pos < 200);
-				new_OK = (new_pos >= 0) && (new_pos < 200);
-				if (cur_OK && new_OK)
-					memcpy(local_fb + new_pos * 320, local_fb + cur_pos * 320, 320);
-				else if (cur_OK)
-					memset(local_fb + cur_pos * 320, 0, 320);
-				else if (new_OK)
-					memset(local_fb + new_pos * 320, 0, 320);
-			}
+	return true;
+}
 
-			if (current_shake_pos < 0) {
-				dirty_top = -shake_pos;
-				dirty_height = shake_pos - current_shake_pos;
-				if (dirty_top < 0) {
-					dirty_height += dirty_top;
-					dirty_top = 0;
-				}
-				if ((dirty_height + dirty_top) > 200)
-					dirty_height = 200 - dirty_top;
-			} else {
-				dirty_height = 0;
-			}
-		} else {
-			for (line = -current_shake_pos; line < 200 + current_shake_pos; line++) {
-				int cur_pos, new_pos;
-				int cur_OK, new_OK;
+void OSystem_X11::set_palette(const byte *colors, uint start, uint num) {
+	const byte *data = colors;
+	unsigned short *pal = &(palette[start]);
+	
+	do {
+		*pal++ = ((data[0] & 0xF8) << 8) | ((data[1] & 0xFC) << 3) | (data[2] >> 3);
+		data += 4;
+		num--;
+	} while (num > 0);
 
-				cur_pos = line + current_shake_pos;
-				new_pos = line + shake_pos;
-				cur_OK = (cur_pos >= 0) && (cur_pos < 200);
-				new_OK = (new_pos >= 0) && (new_pos < 200);
-
-				if (cur_OK && new_OK)
-					memcpy(local_fb + new_pos * 320, local_fb + cur_pos * 320, 320);
-				else if (cur_OK)
-					memset(local_fb + cur_pos * 320, 0, 320);
-				else if (new_OK)
-					memset(local_fb + new_pos * 320, 0, 320);
-			}
-
-			if (current_shake_pos <= 0) {
-				dirty_height = 0;
-			} else {
-				dirty_top = 200 - current_shake_pos;
-				dirty_height = current_shake_pos - shake_pos;
-				if ((dirty_height + dirty_top) > 200)
-					dirty_height = 200 - dirty_top;
-			}
-		}
-
-		/* And save the new shake position */
-		current_shake_pos = shake_pos;
-		if (dirty_height > 0)
-			s->redrawLines(dirty_top, dirty_top + dirty_height);
-	}
+	_palette_changed = true;
 }
 
 #define AddDirtyRec(xi,yi,wi,hi) 				\
@@ -396,14 +410,13 @@ void setShakePos(Scumm *s, int shake_pos)
     ds[num_of_dirty_square].h = hi;				\
     num_of_dirty_square++;					\
   }
-void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h)
-{
+
+void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
 	unsigned char *dst;
 
-	y += current_shake_pos;
 	if (y < 0) {
 		h += y;
-		src -= y * 320;
+		buf -= y * pitch;
 		y = 0;
 	}
 	if (h > (200 - y)) {
@@ -415,146 +428,21 @@ void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h)
 	if (h <= 0)
 		return;
 
-	hide_mouse = true;
-	if (has_mouse) {
-		s->drawMouse();
-	}
+	if (_mouse_drawn)
+		undraw_mouse();
 
 	AddDirtyRec(x, y, w, h);
 	while (h-- > 0) {
-		memcpy(dst, src, w);
+		memcpy(dst, buf, w);
 		dst += 320;
-		src += 320;
+		buf += pitch;
 	}
 }
 
-#define BAK_WIDTH 40
-#define BAK_HEIGHT 40
-unsigned char old_backup[BAK_WIDTH * BAK_HEIGHT];
-
-void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf,
-							 bool visible)
-{
-	unsigned char *dst, *bak;
-
-	ydraw += current_shake_pos;
-
-	if ((xdraw >= 320) || ((xdraw + w) <= 0) ||
-			(ydraw >= 200) || ((ydraw + h) <= 0)) {
-		if (hide_mouse)
-			visible = false;
-		if (has_mouse)
-			has_mouse = false;
-		if (visible)
-			has_mouse = true;
-		return;
-	}
-
-	if (hide_mouse)
-		visible = false;
-
-	assert(w <= BAK_WIDTH && h <= BAK_HEIGHT);
-
-	if (has_mouse) {
-		int old_h = old_mouse_h;
-
-		has_mouse = false;
-		AddDirtyRec(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
-
-		dst = local_fb + (old_mouse_y * 320) + old_mouse_x;
-		bak = old_backup;
-
-		while (old_h > 0) {
-			memcpy(dst, bak, old_mouse_w);
-			bak += BAK_WIDTH;
-			dst += 320;
-			old_h--;
-		}
-	}
-
-	if (visible) {
-		int real_w;
-		int real_h;
-		int real_h_2;
-		unsigned char *dst2;
-
-		if (ydraw < 0) {
-			real_h = h + ydraw;
-			buf += (-ydraw) * w;
-			ydraw = 0;
-		} else {
-			real_h = (ydraw + h) > 200 ? (200 - ydraw) : h;
-		}
-		if (xdraw < 0) {
-			real_w = w + xdraw;
-			buf += (-xdraw);
-			xdraw = 0;
-		} else {
-			real_w = (xdraw + w) > 320 ? (320 - xdraw) : w;
-		}
-
-		dst = local_fb + (ydraw * 320) + xdraw;
-		dst2 = dst;
-		bak = old_backup;
-
-		has_mouse = true;
-
-		AddDirtyRec(xdraw, ydraw, real_w, real_h);
-		old_mouse_x = xdraw;
-		old_mouse_y = ydraw;
-		old_mouse_w = real_w;
-		old_mouse_h = real_h;
-
-		real_h_2 = real_h;
-		while (real_h_2 > 0) {
-			memcpy(bak, dst, real_w);
-			bak += BAK_WIDTH;
-			dst += 320;
-			real_h_2--;
-		}
-		while (real_h > 0) {
-			int width = real_w;
-			while (width > 0) {
-				unsigned char color = *buf;
-				if (color != 0xFF) {
-					*dst2 = color;
-				}
-				buf++;
-				dst2++;
-				width--;
-			}
-			buf += w - real_w;
-			dst2 += 320 - real_w;
-			real_h--;
-		}
-	}
-}
-
-static unsigned short palette[256];
-static void update_palette(Scumm *s)
-{
-	int first = s->_palDirtyMin;
-	int num = s->_palDirtyMax - first + 1;
-	int i;
-	unsigned char *data = s->_currentPalette;
-	unsigned short *pal = &(palette[first]);
-
-	data += first * 3;
-	for (i = 0; i < num; i++, data += 3) {
-		*pal++ =
-			((data[0] & 0xF8) << 8) | ((data[1] & 0xFC) << 3) | (data[2] >> 3);
-	}
-	s->_palDirtyMax = -1;
-	s->_palDirtyMin = 0x3E8;
-}
-
-static void update_screen(Scumm *s, const dirty_square * d,
-													dirty_square * dout)
-{
+void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout) {
 	int x, y;
 	unsigned char *ptr_src = local_fb + (320 * d->y) + d->x;
-	unsigned short *ptr_dst =
-		((unsigned short *)image->data) + (320 * d->y) + d->x;
+	unsigned short *ptr_dst = ((unsigned short *)image->data) + (320 * d->y) + d->x;
 	for (y = 0; y < d->h; y++) {
 		for (x = 0; x < d->w; x++) {
 			*ptr_dst++ = palette[*ptr_src++];
@@ -572,143 +460,251 @@ static void update_screen(Scumm *s, const dirty_square * d,
 		dout->h = d->y + d->h;
 }
 
-void updateScreen(Scumm *s)
-{
+void OSystem_X11::update_screen() {
 	bool full_redraw = false;
 	bool need_redraw = false;
 	static const dirty_square ds_full = { 0, 0, 320, 200 };
 	dirty_square dout = { 320, 200, 0, 0 };
+	
+	/* First make sure the mouse is drawn, if it should be drawn. */
+	draw_mouse();
 
-	if (s->_fastMode & 2)
-		return;
-
-	if (hide_mouse) {
-		hide_mouse = false;
-		s->drawMouse();
-	}
-
-	if (s->_palDirtyMax != -1) {
-		update_palette(s);
+	if (_palette_changed) {
 		full_redraw = true;
 		num_of_dirty_square = 0;
+		_palette_changed = false;
 	} else if (num_of_dirty_square >= MAX_NUMBER_OF_DIRTY_SQUARES) {
 		full_redraw = true;
 		num_of_dirty_square = 0;
 	}
 
 	if (full_redraw) {
-		update_screen(s, &ds_full, &dout);
+		update_screen_helper(&ds_full, &dout);
 		need_redraw = true;
 	} else if (num_of_dirty_square > 0) {
 		need_redraw = true;
 		while (num_of_dirty_square > 0) {
 			num_of_dirty_square--;
-			update_screen(s, &(ds[num_of_dirty_square]), &dout);
+			update_screen_helper(&(ds[num_of_dirty_square]), &dout);
 		}
 	}
 	if (need_redraw == true) {
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
-								 dout.x, dout.y,
-								 scumm_x + dout.x, scumm_y + dout.y,
-								 dout.w - dout.x, dout.h - dout.y, 0);
+		             dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y,
+		             dout.w - dout.x, dout.h - dout.y, 0);
 		XFlush(display);
 	}
 }
 
-void launcherLoop()
-{
-	int last_time, new_time;
-	int delta = 0;
-	last_time = get_ms_from_start();
+bool OSystem_X11::show_mouse(bool visible) {
+	if (_mouse_visible == visible)
+		return visible;
+	
+	bool last = _mouse_visible;
+	_mouse_visible = visible;
 
-	gui.launcher();
-	while (1) {
-		updateScreen(&scumm);
+	if (visible)
+		draw_mouse();
+	else
+		undraw_mouse();
 
-		new_time = get_ms_from_start();
-		waitForTimer(&scumm, delta * 15 + last_time - new_time);
-		last_time = get_ms_from_start();
+	return last;
+}
 
-		if (gui._active) {
-			gui.loop();
-			delta = 5;
-		} else {
-			error("gui closed!");
+void OSystem_X11::quit() {
+	exit(1);
+}
+
+void OSystem_X11::draw_mouse() {
+	if (_mouse_drawn || !_mouse_visible)
+		return;
+	_mouse_drawn = true;
+
+	int xdraw = cur_state.x - cur_state.hot_x;
+	int ydraw = cur_state.y - cur_state.hot_y;
+	int w = cur_state.w;
+	int h = cur_state.h;
+	int real_w;
+	int real_h;
+	int real_h_2;
+
+	byte *dst;
+	byte *dst2;
+	const byte *buf = _ms_buf;
+	byte *bak = _ms_backup;
+
+	assert(w <= BAK_WIDTH && h <= BAK_HEIGHT);
+
+	if (ydraw < 0) {
+		real_h = h + ydraw;
+		buf += (-ydraw) * w;
+		ydraw = 0;
+	} else {
+		real_h = (ydraw + h) > 200 ? (200 - ydraw) : h;
+	}
+	if (xdraw < 0) {
+		real_w = w + xdraw;
+		buf += (-xdraw);
+		xdraw = 0;
+	} else {
+		real_w = (xdraw + w) > 320 ? (320 - xdraw) : w;
+	}
+
+	dst = local_fb + (ydraw * 320) + xdraw;
+	dst2 = dst;
+
+	if ((real_h == 0) || (real_w == 0)) {
+		_mouse_drawn = false;
+		return;
+	}
+
+	AddDirtyRec(xdraw, ydraw, real_w, real_h);
+	old_state.x = xdraw;
+	old_state.y = ydraw;
+	old_state.w = real_w;
+	old_state.h = real_h;
+
+	real_h_2 = real_h;
+	while (real_h_2 > 0) {
+		memcpy(bak, dst, real_w);
+		bak += BAK_WIDTH;
+		dst += 320;
+		real_h_2--;
+	}
+	while (real_h > 0) {
+		int width = real_w;
+		while (width > 0) {
+			byte color = *buf;
+			if (color != 0xFF) {
+				*dst2 = color;
+			}
+			buf++;
+			dst2++;
+			width--;
 		}
+		buf += w - real_w;
+		dst2 += 320 - real_w;
+		real_h--;
 	}
 }
 
-/* This function waits for 'msec_delay' miliseconds and handles external events */
-void waitForTimer(Scumm *s, int msec_delay)
-{
-	int start_time = get_ms_from_start();
-	int end_time;
-	fd_set rfds;
-	struct timeval tv;
-	XEvent event;
+void OSystem_X11::undraw_mouse() {
+	if (!_mouse_drawn)
+		return;
+	_mouse_drawn = false;
 
-	if (s->_fastMode & 2)
-		msec_delay = 0;
-	else if (s->_fastMode & 1)
-		msec_delay = 10;
-	end_time = start_time + msec_delay;
+	int old_h = old_state.h;
 
+	AddDirtyRec(old_state.x, old_state.y, old_state.w, old_state.h);
 
-	while (1) {
-		FD_ZERO(&rfds);
-		FD_SET(x11_socket, &rfds);
+	byte *dst = local_fb + (old_state.y * 320) + old_state.x;
+	byte *bak = _ms_backup;
 
-		msec_delay = end_time - get_ms_from_start();
-		tv.tv_sec = 0;
-		if (msec_delay <= 0) {
-			tv.tv_usec = 0;
-		} else {
-			tv.tv_usec = msec_delay * 1000;
-		}
-		if (select(x11_socket + 1, &rfds, NULL, NULL, &tv) == 0)
-			break;										/* This is the timeout */
-		while (XPending(display)) {
-			XNextEvent(display, &event);
-			switch (event.type) {
-			case Expose:{
-					int real_w, real_h;
-					int real_x, real_y;
-					real_x = event.xexpose.x;
-					real_y = event.xexpose.y;
-					real_w = event.xexpose.width;
-					real_h = event.xexpose.height;
+	while (old_h > 0) {
+		memcpy(dst, bak, old_state.w);
+		bak += BAK_WIDTH;
+		dst += 320;
+		old_h--;
+	}
+}
 
-					if (real_x < scumm_x) {
-						real_w -= scumm_x - real_x;
-						real_x = 0;
-					} else {
-						real_x -= scumm_x;
-					}
-					if (real_y < scumm_y) {
-						real_h -= scumm_y - real_y;
-						real_y = 0;
-					} else {
-						real_y -= scumm_y;
-					}
-					if ((real_h <= 0) || (real_w <= 0))
-						break;
-					if ((real_x >= 320) || (real_y >= 200))
-						break;
+void OSystem_X11::set_mouse_pos(int x, int y) {
+	if ((x != cur_state.x) || (y != cur_state.y)) {
+		cur_state.x = x;
+		cur_state.y = y;
+		undraw_mouse();
+	}
+}
+	
+void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+	cur_state.w = w;
+	cur_state.h = h;
+	cur_state.hot_x = hotspot_x;
+	cur_state.hot_y = hotspot_y;
+	_ms_buf = (byte*)buf;
 
-					if ((real_x + real_w) >= 320) {
-						real_w = 320 - real_x;
-					}
-					if ((real_y + real_h) >= 200) {
-						real_h = 200 - real_y;
-					}
+	undraw_mouse();
+}
+	
+void OSystem_X11::set_shake_pos(int shake_pos) {
+	warning("Shaking not implemented yet (%d) ", shake_pos);
+}
 
-					/* Compute the intersection of the expose event with the real ScummVM display zone */
-					AddDirtyRec(real_x, real_y, real_w, real_h);
-				}
+void *OSystem_X11::create_thread(ThreadProc *proc, void *param) {
+	error("Create_thread Should never be called ");
+}
+
+uint32 OSystem_X11::property(int param, uint32 value) {
+	switch (param) 
+	{
+		case PROP_GET_SAMPLE_RATE:
+			return 22050;
+	}
+	warning("Property not implemented yet (%d, 0x%08X) ", param, value);
+	return 0;
+}
+
+bool OSystem_X11::poll_cdrom() {
+	return false;
+}
+
+void OSystem_X11::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
+}
+
+void OSystem_X11::stop_cdrom() {
+}
+
+void OSystem_X11::update_cdrom() {
+}
+
+void OSystem_X11::delay_msecs(uint msecs) {
+	usleep(msecs * 1000);
+}
+
+bool OSystem_X11::poll_event(Event *scumm_event) {
+	while (XPending(display)) {
+		XEvent event;
+
+		XNextEvent(display, &event);
+		switch (event.type) {
+		case Expose:{
+			int real_w, real_h;
+			int real_x, real_y;
+			real_x = event.xexpose.x;
+			real_y = event.xexpose.y;
+			real_w = event.xexpose.width;
+			real_h = event.xexpose.height;
+			if (real_x < scumm_x) {
+				real_w -= scumm_x - real_x;
+				real_x = 0;
+			} else {
+				real_x -= scumm_x;
+			}
+			if (real_y < scumm_y) {
+				real_h -= scumm_y - real_y;
+				real_y = 0;
+			} else {
+				real_y -= scumm_y;
+			}
+			if ((real_h <= 0) || (real_w <= 0))
+				break;
+			if ((real_x >= 320) || (real_y >= 200))
 				break;
 
-			case KeyPress:
-				switch (event.xkey.keycode) {
+			if ((real_x + real_w) >= 320) {
+				real_w = 320 - real_x;
+			}
+			if ((real_y + real_h) >= 200) {
+				real_h = 200 - real_y;
+			}
+
+			/* Compute the intersection of the expose event with the real ScummVM display zone */
+			AddDirtyRec(real_x, real_y, real_w, real_h);
+		}
+		break;
+
+		case KeyPress:
+			switch (event.xkey.keycode) {
 				case 132:
 					report_presses = 0;
 					break;
@@ -717,26 +713,28 @@ void waitForTimer(Scumm *s, int msec_delay)
 					fake_right_mouse = 1;
 					break;
 				}
-				break;
+			break;
 
-			case KeyRelease:
-				/* I am using keycodes here and NOT keysyms to be sure that even if the user
-				   remaps his iPAQ's keyboard, it will still work.
-				 */
-				switch (event.xkey.keycode) {
+		case KeyRelease: {
+			/* I am using keycodes here and NOT keysyms to be sure that even if the user
+			   remaps his iPAQ's keyboard, it will still work.
+			 */
+			int keycode = -1;
+			int ascii = -1;
+			switch (event.xkey.keycode) {
 				case 9:								/* Escape on my PC */
 				case 130:							/* Calendar on the iPAQ */
-					s->_keyPressed = 27;
+					keycode = 27;
 					break;
 
-				case 71:								/* F5 on my PC */
+				case 71:							/* F5 on my PC */
 				case 128:							/* Record on the iPAQ */
-					s->_keyPressed = 319;
+					keycode = 319;
 					break;
 
-				case 65:								/* Space on my PC */
+				case 65:							/* Space on my PC */
 				case 131:							/* Schedule on the iPAQ */
-					s->_keyPressed = 32;
+					keycode = 32;
 					break;
 
 				case 132:							/* 'Q' on the iPAQ */
@@ -748,111 +746,78 @@ void waitForTimer(Scumm *s, int msec_delay)
 					break;
 
 				default:{
-						KeySym xsym;
-						xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
-						if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01))
-							xsym &= ~0x20;		/* Handle shifted keys */
-						s->_keyPressed = xsym;
+					KeySym xsym;
+					xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
+					keycode = xsym;
+					if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01))
+						xsym &= ~0x20;		/* Handle shifted keys */
+					ascii = xsym;
+				}
+			}
+			if (keycode != -1)
+			{
+				scumm_event->event_code = EVENT_KEYDOWN;
+				scumm_event->kbd.keycode = keycode;
+				scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
+				return true;
+			}
+		} break;
+
+		case ButtonPress:
+			if (report_presses != 0) {
+				if (event.xbutton.button == 1) {
+					if (fake_right_mouse == 0) {
+						scumm_event->event_code = EVENT_LBUTTONDOWN;
+					} else {
+						scumm_event->event_code = EVENT_RBUTTONDOWN;
 					}
-				}
-				break;
+				} else if (event.xbutton.button == 3)
+					scumm_event->event_code = EVENT_RBUTTONDOWN;
+				scumm_event->mouse.x = event.xbutton.x - scumm_x;
+				scumm_event->mouse.y = event.xbutton.y - scumm_y;
+				return true;
+			}
+		break;
 
-			case ButtonPress:
-				if (report_presses != 0) {
-					if (event.xbutton.button == 1) {
-						if (fake_right_mouse == 0) {
-							s->_leftBtnPressed |= msClicked | msDown;
-						} else {
-							s->_rightBtnPressed |= msClicked | msDown;
-						}
-					} else if (event.xbutton.button == 3)
-						s->_rightBtnPressed |= msClicked | msDown;
-				}
-				break;
-
-			case ButtonRelease:
-				if (report_presses != 0) {
-					if (event.xbutton.button == 1) {
-						if (fake_right_mouse == 0) {
-							s->_leftBtnPressed &= ~msDown;
-						} else {
-							s->_rightBtnPressed &= ~msDown;
-						}
-					} else if (event.xbutton.button == 3)
-						s->_rightBtnPressed &= ~msDown;
-				}
-				break;
-
-			case MotionNotify:{
-					int newx, newy;
-					newx = event.xmotion.x - scumm_x;
-					newy = event.xmotion.y - scumm_y;
-					if ((newx != s->mouse.x) || (newy != s->mouse.y)) {
-						s->mouse.x = newx;
-						s->mouse.y = newy;
-						s->drawMouse();
-						updateScreen(s);
+		case ButtonRelease:
+			if (report_presses != 0) {
+				if (event.xbutton.button == 1) {
+					if (fake_right_mouse == 0) {
+						scumm_event->event_code = EVENT_LBUTTONUP;
+					} else {
+						scumm_event->event_code = EVENT_RBUTTONUP;
 					}
-				}
-				break;
+				} else if (event.xbutton.button == 3)
+					scumm_event->event_code = EVENT_RBUTTONUP;
+				scumm_event->mouse.x = event.xbutton.x - scumm_x;
+				scumm_event->mouse.y = event.xbutton.y - scumm_y;
+				return true;					
+			}
+		break;
 
-			case ConfigureNotify:{
-					if ((window_width != event.xconfigure.width) ||
-							(window_height != event.xconfigure.height)) {
-						window_width = event.xconfigure.width;
-						window_height = event.xconfigure.height;
-						scumm_x = (window_width - 320) / 2;
-						scumm_y = (window_height - 200) / 2;
-						XFillRectangle(display, window, black_gc, 0, 0, window_width,
-													 window_height);
-					}
-				}
-				break;
+		case MotionNotify:
+			scumm_event->event_code = EVENT_MOUSEMOVE;
+			scumm_event->mouse.x = event.xmotion.x - scumm_x;
+			scumm_event->mouse.y = event.xmotion.y - scumm_y;
+			return true;
 
-			default:
-				printf("%d\n", event.type);
-				break;
+		case ConfigureNotify:{
+			if ((window_width != event.xconfigure.width) ||
+			    (window_height != event.xconfigure.height)) {
+				window_width = event.xconfigure.width;
+				window_height = event.xconfigure.height;
+				scumm_x = (window_width - 320) / 2;
+				scumm_y = (window_height - 200) / 2;
+				XFillRectangle(display, window, black_gc, 0, 0, window_width, window_height);
 			}
 		}
-	}
-}
+		break;
 
-/* Main function for the system-dependent part. Needs to handle :
-    - handle command line arguments
-    - initialize all the 'globals' (sound driver, Scumm object, ...)
-    - do the main loop of the game
-*/
-int main(int argc, char *argv[])
-{
-	int delta;
-	int last_time, new_time;
-
-	scumm._gui = &gui;
-	gui.init(&scumm);
-	sound.initialize(&scumm, &snd_driv);
-	scumm.scummMain(argc, argv);
-	gui.init(&scumm);							/* Reinit GUI after loading a game */
-
-	num_of_dirty_square = 0;
-
-	/* Start the milisecond counter */
-	init_timer();
-	last_time = 0;
-	delta = 0;
-	while (1) {
-		updateScreen(&scumm);
-
-		new_time = get_ms_from_start();
-		waitForTimer(&scumm, delta * 15 + last_time - new_time);
-		last_time = get_ms_from_start();
-
-		if (gui._active) {
-			gui.loop();
-			delta = 5;
-		} else {
-			delta = scumm.scummLoop(delta);
+		default:
+			printf("Unhandled event : %d\n", event.type);
+			break;
 		}
 	}
 
-	return 0;
+	return false;
 }

@@ -122,6 +122,7 @@ OSystem *OSystem_NULL_create();
 OSystem *OSystem_MorphOS_create(int game_id, int gfx_driver, bool full_screen);
 OSystem *OSystem_Dreamcast_create();
 OSystem *OSystem_WINCE3_create();
+OSystem *OSystem_X11_create();
 
 enum {
 	GFX_NORMAL = 0,
@@ -135,13 +136,12 @@ enum {
 
 /* Graphics drivers */
 enum {
-	GD_AUTO = 0,
-	GD_SDL = 1,
-	GD_WIN32 = 2,
-	GD_X = 3,
-	GD_NULL = 4,
-	GD_MORPHOS = 5,
-	GD_WINCE = 6
+	GD_NULL = 0,
+	GD_SDL,
+	GD_X,
+	GD_MORPHOS,
+	GD_WINCE,
+	GD_DC
 };
 
 
