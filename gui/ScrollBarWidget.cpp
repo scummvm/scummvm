@@ -212,7 +212,7 @@ void ScrollBarWidget::recalc() {
 }
 
 void ScrollBarWidget::drawWidget(bool hilite) {
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 	int bottomY = _y + _h;
 	bool isSinglePage = (_numEntries <= _entriesPerPage);
 

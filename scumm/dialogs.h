@@ -37,8 +37,8 @@ class ScummEngine;
 
 class ScummDialog : public Dialog {
 public:
-	ScummDialog(NewGui *gui, ScummEngine *scumm, int x, int y, int w, int h)
-		: Dialog(gui, x, y, w, h), _scumm(scumm) {}
+	ScummDialog(ScummEngine *scumm, int x, int y, int w, int h)
+		: Dialog(x, y, w, h), _scumm(scumm) {}
 	
 protected:
 	typedef Common::String String;
@@ -53,7 +53,7 @@ protected:
 
 class SaveLoadDialog : public ScummDialog {
 public:
-	SaveLoadDialog(NewGui *gui, ScummEngine *scumm);
+	SaveLoadDialog(ScummEngine *scumm);
 	~SaveLoadDialog();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void open();	
@@ -83,7 +83,7 @@ protected:
 
 class HelpDialog : public ScummDialog {
 public:
-	HelpDialog(NewGui *gui, ScummEngine *scumm);
+	HelpDialog(ScummEngine *scumm);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
@@ -111,7 +111,7 @@ protected:
 #endif
 
 public:
-	OptionsDialog(NewGui *gui, ScummEngine *scumm);
+	OptionsDialog(ScummEngine *scumm);
 	~OptionsDialog();
 
 	virtual void open();
@@ -137,9 +137,9 @@ protected:
 class InfoDialog : public ScummDialog {
 public:
 	// arbitrary message
-	InfoDialog(NewGui *gui, ScummEngine *scumm, const String& message);
+	InfoDialog(ScummEngine *scumm, const String& message);
 	// from resources
-	InfoDialog(NewGui *gui, ScummEngine *scumm, int res);
+	InfoDialog(ScummEngine *scumm, int res);
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) { 
 		close();
@@ -155,7 +155,7 @@ protected:
 
 class PauseDialog : public InfoDialog {
 public:
-	PauseDialog(NewGui *gui, ScummEngine *scumm);
+	PauseDialog(ScummEngine *scumm);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		{
 			if (ascii == ' ')  // Close pause dialog if space key is pressed
@@ -167,7 +167,7 @@ public:
 
 class ConfirmExitDialog : public InfoDialog {
 public:
-	ConfirmExitDialog(NewGui *gui, ScummEngine *scumm);
+	ConfirmExitDialog(ScummEngine *scumm);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 };
 
@@ -175,7 +175,7 @@ public:
 
 class KeysDialog : public ScummDialog {
 public:
-	KeysDialog(NewGui *gui, ScummEngine *scumm);
+	KeysDialog(ScummEngine *scumm);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);

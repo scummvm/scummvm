@@ -34,8 +34,8 @@
  *   to erase a single character, do scrolling etc.
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
-ConsoleDialog::ConsoleDialog(NewGui *gui, float widthPercent, float heightPercent)
-	: Dialog(gui, 0, 0, 1, 1), 
+ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
+	: Dialog(0, 0, 1, 1), 
 	_widthPercent(widthPercent), _heightPercent(heightPercent) {
 	
 	// Setup basic layout/dialog size
@@ -95,10 +95,10 @@ void ConsoleDialog::open() {
 
 void ConsoleDialog::drawDialog() {
 	// Blend over the background
-	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor, 2);
+	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor, 2);
 
 	// Draw a border
-	_gui->hLine(_x, _y + _h - 1, _x + _w - 1, _gui->_color);
+	g_gui.hLine(_x, _y + _h - 1, _x + _w - 1, g_gui._color);
 
 	// Draw text
 	int start = _scrollLine - _linesPerPage + 1;
@@ -108,7 +108,7 @@ void ConsoleDialog::drawDialog() {
 		for (int column = 0; column < _lineWidth; column++) {
 			int l = (start + line) % _linesInBuffer;
 			byte c = _buffer[l * _lineWidth + column];
-			_gui->drawChar(c, x, y, _gui->_textcolor);
+			g_gui.drawChar(c, x, y, g_gui._textcolor);
 			x += kCharWidth;
 		}
 		y += kLineHeight;
@@ -118,11 +118,11 @@ void ConsoleDialog::drawDialog() {
 	_scrollBar->draw();
 
 	// Finally blit it all to the screen
-	_gui->addDirtyRect(_x, _y, _w, _h);
+	g_gui.addDirtyRect(_x, _y, _w, _h);
 }
 
 void ConsoleDialog::handleTickle() {
-	uint32 time = _gui->get_time();
+	uint32 time = g_system->get_msecs();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
 		if (_caretVisible) {
@@ -506,13 +506,13 @@ void ConsoleDialog::drawCaret(bool erase) {
 
 	char c = _buffer[getBufferPos()];
 	if (erase) {
-		_gui->fillRect(x, y, kCharWidth, kLineHeight, _gui->_bgcolor);
-		_gui->drawChar(c, x, y + 2, _gui->_textcolor);
+		g_gui.fillRect(x, y, kCharWidth, kLineHeight, g_gui._bgcolor);
+		g_gui.drawChar(c, x, y + 2, g_gui._textcolor);
 	} else {
-		_gui->fillRect(x, y, kCharWidth, kLineHeight, _gui->_textcolor);
-		_gui->drawChar(c, x, y + 2, _gui->_bgcolor);
+		g_gui.fillRect(x, y, kCharWidth, kLineHeight, g_gui._textcolor);
+		g_gui.drawChar(c, x, y + 2, g_gui._bgcolor);
 	}
-	_gui->addDirtyRect(x, y, kCharWidth, kLineHeight);
+	g_gui.addDirtyRect(x, y, kCharWidth, kLineHeight);
 
 	_caretVisible = !erase;
 }

@@ -83,9 +83,6 @@ const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMFullVersion = "ScummVM 0.5.4cvs (" __DATE__ " " __TIME__ ")";
 
 
-NewGui	*g_gui = 0;
-OSystem *g_system = 0;
-
 #if defined(WIN32) && defined(NO_CONSOLE)
 #include <cstdio>
 #define STDOUT_FILE	TEXT("stdout.txt")
@@ -186,7 +183,7 @@ static void launcherDialog(GameDetector &detector, OSystem *system) {
 
 	system->set_palette(dummy_palette, 0, 16);
 
-	LauncherDialog dlg(g_gui, detector);
+	LauncherDialog dlg(detector);
 	dlg.runModal();
 }
 
@@ -244,8 +241,7 @@ int main(int argc, char *argv[]) {
 	detector.parseCommandLine(argc, argv);	
 
 	// Create the system object
-	OSystem *system = detector.createSystem();
-	g_system = system;
+	OSystem *system = OSystem::instance();
 	
 	// Create the timer services
 	g_timer = new Timer(system);
@@ -253,9 +249,6 @@ int main(int argc, char *argv[]) {
 	// Set initial window caption
 	prop.caption = gScummVMFullVersion;
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
-
-	// Create the GUI manager
-	g_gui = new NewGui(system);
 
 	// Unless a game was specified, show the launcher dialog
 	if (detector._targetName.isEmpty())
@@ -306,8 +299,6 @@ int main(int argc, char *argv[]) {
 		// Free up memory
 		delete engine;
 	}
-
-	delete g_gui;
 
 	// ...and quit (the return 0 should never be reached)
 	system->quit();

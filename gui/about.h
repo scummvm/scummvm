@@ -25,7 +25,7 @@
 
 class AboutDialog : public Dialog {
 public:
-	AboutDialog(NewGui *gui);
+	AboutDialog();
 };
 
 #endif

@@ -78,7 +78,7 @@ class EditGameDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	EditGameDialog(NewGui *gui, const String &domain, GameSettings target);
+	EditGameDialog(const String &domain, GameSettings target);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
@@ -89,8 +89,8 @@ protected:
 	CheckboxWidget *_fullscreenCheckbox;
 };
 
-EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, GameSettings target)
-	: Dialog(gui, 8, 50, 320 - 2 * 8, 200 - 2 * 40),
+EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
+	: Dialog(8, 50, 320 - 2 * 8, 200 - 2 * 40),
 	  _domain(domain) {
 
 	// Determine the description string
@@ -130,7 +130,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		String newDomain(_domainWidget->getLabel());
 		if (newDomain != _domain) {
 			if (newDomain.isEmpty() || ConfMan.hasGameDomain(newDomain)) {
-				MessageDialog alert(_gui, "This game ID is already taken. Please choose another one.");
+				MessageDialog alert("This game ID is already taken. Please choose another one.");
 				alert.runModal();
 				return;
 			}
@@ -156,8 +156,8 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
  * - ...
  */
 
-LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
-	: Dialog(gui, 0, 0, 320, 200), _detector(detector) {
+LauncherDialog::LauncherDialog(GameDetector &detector)
+	: Dialog(0, 0, 320, 200), _detector(detector) {
 	// Show game name
 	new StaticTextWidget(this, 10, 8, 300, kLineHeight, gScummVMFullVersion, kTextAlignCenter);
 
@@ -194,7 +194,7 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	updateButtons();
 
 	// Create file browser dialog
-	_browser = new BrowserDialog(_gui, "Select directory with game data");
+	_browser = new BrowserDialog("Select directory with game data");
 }
 
 LauncherDialog::~LauncherDialog() {
@@ -286,7 +286,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			int idx;
 			if (candidates.isEmpty()) {
 				// No game was found in the specified directory
-				MessageDialog alert(_gui, "ScummVM could not find any game in the specified directory!");
+				MessageDialog alert("ScummVM could not find any game in the specified directory!");
 				alert.runModal();
 				idx = -1;
 			} else if (candidates.size() == 1) {
@@ -298,7 +298,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				for (idx = 0; idx < candidates.size(); idx++)
 					list.push_back(candidates[idx].description);
 				
-				ChooserDialog dialog(_gui, "Pick the game:", list);
+				ChooserDialog dialog("Pick the game:", list);
 				idx = dialog.runModal();
 			}
 			if (0 <= idx && idx < candidates.size()) {
@@ -323,7 +323,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				ConfMan.set("path", dir->path(), domain);
 				
 				// Display edit dialog for the new entry
-				EditGameDialog editDialog(_gui, domain, result);
+				EditGameDialog editDialog(domain, result);
 				if (editDialog.runModal()) {
 					// User pressed OK, so make changes permanent
 
@@ -363,7 +363,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		String gameId(ConfMan.get("gameid", _domains[item]));
 		if (gameId.isEmpty())
 			gameId = _domains[item];
-		EditGameDialog editDialog(_gui, _domains[item], GameDetector::findGame(gameId));
+		EditGameDialog editDialog(_domains[item], GameDetector::findGame(gameId));
 		if (editDialog.runModal()) {
 			// User pressed OK, so make changes permanent
 
@@ -382,12 +382,12 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// - music & graphics driver (but see also the comments on EditGameDialog
 		//   for some techincal difficulties with this)
 		// - default volumes (sfx/master/music)
-		GlobalOptionsDialog options(_gui, _detector);
+		GlobalOptionsDialog options(_detector);
 		options.runModal();
 		}
 		break;
 	case kAboutCmd: {
-		AboutDialog about(_gui);
+		AboutDialog about;
 		about.runModal();
 		}
 		break;

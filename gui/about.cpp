@@ -24,8 +24,8 @@
 #include "base/engine.h"
 #include "common/str.h"
 
-AboutDialog::AboutDialog(NewGui *gui)
-	: Dialog(gui, 10, 20, 300, 124) {
+AboutDialog::AboutDialog()
+	: Dialog(10, 20, 300, 124) {
 	addButton((_w - kButtonWidth)/2, 100, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 	
 	Common::String version("ScummVM ");

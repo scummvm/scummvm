@@ -23,7 +23,7 @@
 #include "dialog.h"
 #include "newgui.h"
 
-Widget::Widget (Dialog *boss, int x, int y, int w, int h)
+Widget::Widget(Dialog *boss, int x, int y, int w, int h)
 	: _type(0), _boss(boss), _x(x), _y(y), _w(w), _h(h),
 	  _id(0), _flags(0), _hasFocus(false) {
 	// Insert into the widget list of the boss
@@ -32,7 +32,7 @@ Widget::Widget (Dialog *boss, int x, int y, int w, int h)
 }
 
 void Widget::draw() {
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 
 	if (!isVisible() || !_boss->isVisible())
 		return;
@@ -75,7 +75,7 @@ void Widget::draw() {
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text, int align)
-	: Widget (boss, x, y, w, h), _align(align) {
+	: Widget(boss, x, y, w, h), _align(align) {
 	_type = kStaticTextWidget;
 	setLabel(text);
 }
@@ -87,7 +87,7 @@ void StaticTextWidget::setValue(int value) {
 }
 
 void StaticTextWidget::drawWidget(bool hilite) {
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 	gui->drawString(_label, _x, _y, _w, gui->_textcolor, _align);
 }
 
@@ -106,7 +106,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ButtonWidget::drawWidget(bool hilite) {
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 	gui->drawString(_label, _x, _y, _w,
 									!isEnabled() ? gui->_color :
 									hilite ? gui->_textcolorhi : gui->_textcolor, _align);
@@ -156,7 +156,7 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void CheckboxWidget::drawWidget(bool hilite) {
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 
 	// Draw the box
 	gui->box(_x, _y, 14, 14);
@@ -213,7 +213,7 @@ void SliderWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void SliderWidget::drawWidget(bool hilite) {
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 
 	// Draw the box
 	gui->box(_x, _y, _w, _h);

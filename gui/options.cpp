@@ -61,8 +61,8 @@ enum {
 	kOKCmd					= 'ok  '
 };
 
-GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
-	: Dialog(gui, 10, 15, 320 - 2 * 10, 200 - 2 * 15) {
+GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
+	: Dialog(10, 15, 320 - 2 * 10, 200 - 2 * 15) {
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
 	new StaticTextWidget(this, 5, 10+1, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
@@ -156,7 +156,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
 
 	// Create file browser dialog
-	_browser = new BrowserDialog(_gui, "Select directory for savegames");
+	_browser = new BrowserDialog("Select directory for savegames");
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {

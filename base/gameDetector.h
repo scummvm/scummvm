@@ -74,7 +74,6 @@ public:
 
 	Engine *createEngine(OSystem *system);
 
-	static OSystem *createSystem();
 	static SoundMixer *createMixer();
 	static MidiDriver *createMidi(int midiDriver);
 

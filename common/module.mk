@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	common/timer.o \
 	common/util.o \
 	common/savefile.o \
+	common/system.o \
 	common/scaler/2xsai.o \
 	common/scaler/aspect.o \
 	common/scaler/hq2x.o \

@@ -21,8 +21,8 @@
 #ifndef CONSOLE_DIALOG_H
 #define CONSOLE_DIALOG_H
 
-#include "dialog.h"
-#include "newgui.h"
+#include "gui/dialog.h"
+#include "gui/newgui.h"
 
 #include <stdarg.h>
 
@@ -79,7 +79,7 @@ protected:
 	void reflowLayout();
 
 public:
-	ConsoleDialog(NewGui *gui, float widthPercent, float heightPercent);
+	ConsoleDialog(float widthPercent, float heightPercent);
 
 	void open();
 	void drawDialog();

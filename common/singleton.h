@@ -48,8 +48,8 @@ protected:
 	~Singleton<T>()		{ }
 
 private:
-	Singleton(const Singleton&);
-	Singleton& operator= (const Singleton&);
+	Singleton<T>(const Singleton<T>&);
+	Singleton<T>& operator= (const Singleton<T>&);
 }; 
 
 }	// End of namespace Common

@@ -48,7 +48,6 @@ static int lastvm=-1;
 
 static void displaySaveResult(vmsaveResult res)
 {
-  extern NewGui *g_gui;
   char buf[1024];
 
   switch(res) {
@@ -69,7 +68,7 @@ static void displaySaveResult(vmsaveResult res)
     break;
   }
 
-  MessageDialog dialog(g_gui, buf);
+  MessageDialog dialog(buf);
   dialog.runModal();
 }
 

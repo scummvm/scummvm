@@ -80,7 +80,7 @@ void ScummEngine::unkMessage2() {
 
 	// FIXME: I know this is the right thing to do for MI1 and MI2. For
 	// all other games it's just a guess.
-	InfoDialog dialog(_newgui, this, (char*)buf);
+	InfoDialog dialog(this, (char*)buf);
 	VAR(VAR_KEYPRESS) = runDialog(dialog);
 
 	_messagePtr = tmp;

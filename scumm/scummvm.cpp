@@ -64,7 +64,6 @@
 extern bool isSmartphone(void);
 #endif
 
-extern NewGui *g_gui;
 extern uint16 _debugLevel;
 
 namespace Scumm {
@@ -307,7 +306,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_videoFinished = false;
 	_smushPlay = false;
 	_quit = false;
-	_newgui = NULL;
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;
 	_saveLoadDialog = NULL;
@@ -649,8 +647,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// Setup GDI object
 	gdi._numStrips = _screenWidth / 8;
-
-	_newgui = g_gui;
 
 	// Create debugger
 	_debugger = new ScummDebugger(this);
@@ -1366,7 +1362,7 @@ load_game:
 #endif
 			sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
 	
-			TimedMessageDialog dialog(_newgui, buf, 1500);
+			TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);
 		}
 		if (success && _saveLoadFlag != 1)
@@ -2459,25 +2455,25 @@ int ScummEngine::runDialog(Dialog &dialog) {
 
 void ScummEngine::pauseDialog() {
 	if (!_pauseDialog)
-		_pauseDialog = new PauseDialog(_newgui, this);
+		_pauseDialog = new PauseDialog(this);
 	runDialog(*_pauseDialog);
 }
 
 void ScummEngine::saveloadDialog() {
 	if (!_saveLoadDialog)
-		_saveLoadDialog = new SaveLoadDialog(_newgui, this);
+		_saveLoadDialog = new SaveLoadDialog(this);
 	runDialog(*_saveLoadDialog);
 }
 
 void ScummEngine::optionsDialog() {
 	if (!_optionsDialog)
-		_optionsDialog = new OptionsDialog(_newgui, this);
+		_optionsDialog = new OptionsDialog(this);
 	runDialog(*_optionsDialog);
 }
 
 void ScummEngine::confirmexitDialog() {
 	if (!_confirmExitDialog)
-		_confirmExitDialog = new ConfirmExitDialog(_newgui, this);
+		_confirmExitDialog = new ConfirmExitDialog(this);
 
 	if (runDialog(*_confirmExitDialog)) {
 		_quit = true;
@@ -2496,7 +2492,7 @@ char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 	vsprintf(buf, message, va);
 	va_end(va);
 
-	MessageDialog dialog(_newgui, buf, "OK", "Cancel");
+	MessageDialog dialog(buf, "OK", "Cancel");
 	return runDialog(dialog);
 }
 

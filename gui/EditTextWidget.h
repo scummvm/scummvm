@@ -31,10 +31,10 @@ class EditTextWidget : public StaticTextWidget {
 	typedef Common::String String;
 protected:
 	String		_backupString;
-	bool			_caretVisible;
+	bool		_caretVisible;
 	uint32		_caretTime;
-	int				_pos;
-	int				_labelOffset;
+	int			_pos;
+	int			_labelOffset;
 public:
 	EditTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text);
 

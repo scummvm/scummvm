@@ -22,13 +22,17 @@
 #define NEWGUI_H
 
 #include "common/scummsys.h"
-#include "common/system.h"	// For events
+#include "common/singleton.h"
 #include "common/str.h"
+#include "common/system.h"	// For events
 
 class Dialog;
 
 #define hLine(x, y, x2, color) line(x, y, x2, y, color);
 #define vLine(x, y, y2, color) line(x, y, x, y2, color);
+
+#define g_gui	(NewGui::instance())
+
 
 // Height of a single text line
 enum {
@@ -60,9 +64,11 @@ public:
 };
 
 // This class hopefully will replace the old Gui class completly one day 
-class NewGui {
-	friend class Dialog;
+class NewGui : public Common::Singleton<NewGui> {
 	typedef Common::String String;
+	friend class Dialog;
+	friend class Common::Singleton<NewGui>;
+	NewGui();
 public:
 
 	// Main entry for the GUI: this will start an event loop that keeps running
@@ -70,8 +76,6 @@ public:
 	void runLoop();
 
 	bool isActive()	{ return ! _dialogStack.empty(); }
-
-	NewGui(OSystem *system);
 
 protected:
 	OSystem		*_system;
@@ -121,9 +125,6 @@ public:
 	NewGuiColor _bgcolor;
 	NewGuiColor _textcolor;
 	NewGuiColor _textcolorhi;
-
-	// Misc util
-	uint32 get_time() const { return _system->get_msecs(); }
 
 	// Drawing primitives
 	NewGuiColor *getBasePtr(int x, int y);

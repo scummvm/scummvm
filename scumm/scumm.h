@@ -34,7 +34,6 @@
 
 class Dialog;
 class GameDetector;
-class NewGui;
 
 namespace Scumm {
 
@@ -340,9 +339,6 @@ public:
 
 	/** We keep running until this is set to true. */
 	bool _quit;
-
-	// GUI
-	NewGui *_newgui;
 
 protected:
 	Dialog *_pauseDialog;

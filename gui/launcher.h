@@ -33,7 +33,7 @@ class LauncherDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	LauncherDialog(NewGui *gui, GameDetector &detector);
+	LauncherDialog(GameDetector &detector);
 	~LauncherDialog();
 
 	virtual void open();

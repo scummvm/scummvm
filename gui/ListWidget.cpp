@@ -84,7 +84,7 @@ void ListWidget::scrollBarRecalc() {
 }
 
 void ListWidget::handleTickle() {
-	uint32 time = _boss->getGui()->get_time();
+	uint32 time = g_system->get_msecs();
 	if (_editMode && _caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
 		if (_caretVisible) {
@@ -253,7 +253,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 }
 
 void ListWidget::drawWidget(bool hilite) {
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 	int i, pos, len = _list.size();
 	Common::String buffer;
 
@@ -290,7 +290,7 @@ void ListWidget::drawCaret(bool erase) {
 	if (!isVisible() || !_boss->isVisible())
 		return;
 
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 
 	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
 	int16 color = erase ? gui->_textcolorhi : gui->_bgcolor;

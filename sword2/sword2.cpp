@@ -52,7 +52,6 @@
 extern bool isSmartphone(void);
 #endif
 
-extern NewGui *g_gui;
 extern uint16 _debugLevel;
 
 static const GameSettings sword2_settings[] = {
@@ -117,7 +116,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	_detector = detector;
 	g_sword2 = this;
-	_newgui = NULL;
 	_debugger = NULL;
 	_features = detector->_game.features;
 	_targetName = strdup(detector->_targetName.c_str());
@@ -139,7 +137,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	g_display = _display = new Display(640, 480);
 	gui = new Gui();
 
-	_newgui = g_gui;
 	_debugger = new Debugger(this);
 
 	_lastPaletteRes = 0;

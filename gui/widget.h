@@ -87,7 +87,7 @@ public:
 
 /* Widget */
 class Widget {
-friend class Dialog;
+	friend class Dialog;
 protected:
 	uint32		_type;
 	Dialog		*_boss;
@@ -129,6 +129,8 @@ protected:
 
 	virtual void receivedFocusWidget() {}
 	virtual void lostFocusWidget() {}
+	
+	virtual Widget *findWidget(int x, int y) { return this; }
 };
 
 /* StaticTextWidget */

@@ -22,7 +22,6 @@
 
 #include "stdafx.h"
 
-#include "backends/intern.h"
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
@@ -585,31 +584,6 @@ bool GameDetector::detectMain() {
 	}
 
 	return true;
-}
-
-OSystem *GameDetector::createSystem() {
-	int gfx_mode = parseGraphicsMode(ConfMan.get("gfx_mode"));	// FIXME: Get rid of this again!
-	
-#if defined(USE_NULL_DRIVER)
-	return OSystem_NULL_create();
-#elif defined(__DC__)
-	return OSystem_Dreamcast_create();
-#elif defined(X11_BACKEND)
-	return OSystem_X11_create();
-#elif defined(__MORPHOS__)
-	return OSystem_MorphOS_create(gfx_mode, ConfMan.getBool("fullscreen"));
-#elif defined(_WIN32_WCE)
-	return OSystem_WINCE3_create();
-#elif defined(MACOS_CARBON)
-	return OSystem_MAC_create(gfx_mode, ConfMan.getBool("fullscreen"));
-#elif defined(__GP32__)	// ph0x
-	return OSystem_GP32_create(GFX_NORMAL, true);
-#elif defined(__PALM_OS__) //chrilith
-	return OSystem_PALMOS_create(gfx_mode, ConfMan.getBool("fullscreen"));
-#else
-	/* SDL is the default driver for now */
-	return OSystem_SDL_create(gfx_mode);
-#endif
 }
 
 Engine *GameDetector::createEngine(OSystem *sys) {

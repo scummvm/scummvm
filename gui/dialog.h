@@ -37,7 +37,6 @@ class Dialog : public CommandReceiver {
 	friend class Widget;
 	friend class NewGui;
 protected:
-	NewGui	*_gui;
 	int16	_x, _y;
 	uint16	_w, _h;
 	Widget	*_firstWidget;
@@ -49,15 +48,14 @@ private:
 	int		_result;
 
 public:
-	Dialog(NewGui *gui, int x, int y, int w, int h)
-		: _gui(gui), _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
+	Dialog(int x, int y, int w, int h)
+		: _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
 		  _mouseWidget(0), _focusedWidget(0), _visible(false) {
 	}
 	virtual ~Dialog();
 
 	virtual int runModal();
 
-	NewGui	*getGui()			{ return _gui; }
 	bool 	isVisible() const	{ return _visible; }
 	int16	getX() const		{ return _x; }
 	int16	getY() const		{ return _y; }

@@ -2425,7 +2425,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 							break;
 						case 3:
 							if (readArray(233,0,50) == 0) {
-								InfoDialog info(_newgui, this, "Set MineRoad - You can now jump the gorge.");
+								InfoDialog info(this, "Set MineRoad - You can now jump the gorge.");
 								runDialog(info);
 
 								writeArray(233, 0, 50, 1); // INSANE callback: Chain

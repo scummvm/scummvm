@@ -40,7 +40,7 @@ extern uint16 _debugLevel;
 namespace Scumm {
 
 ScummDebugger::ScummDebugger(ScummEngine *s)
-	: Common::Debugger<ScummDebugger>(s->_newgui) {
+	: Common::Debugger<ScummDebugger>() {
 	_vm = s;
 
 	// Register variables

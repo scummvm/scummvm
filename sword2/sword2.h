@@ -34,8 +34,6 @@ enum {
 	GF_DEMO	= 1 << 0
 };
 
-class NewGui;
-
 namespace Sword2 {
 
 // Bodge for PCF76 version so that their demo CD can be labelled "PCF76"
@@ -140,7 +138,6 @@ public:
 	Sound *_sound;
 	Display *_display;
 
-	NewGui *_newgui;
 	Debugger *_debugger;
 
 	Common::RandomSource _rnd;

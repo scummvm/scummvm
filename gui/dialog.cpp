@@ -54,7 +54,7 @@ int Dialog::runModal() {
 	open();
 
 	// Start processing events
-	_gui->runLoop();
+	g_gui.runLoop();
 
 	// Return the result code
 	return _result;
@@ -65,7 +65,7 @@ void Dialog::open() {
 
 	_result = 0;
 	_visible = true;
-	_gui->openDialog(this);
+	g_gui.openDialog(this);
 	
 	// Search for the first objects that wantsFocus() (if any) and give it the focus
 	while (w && !w->wantsFocus()) {
@@ -80,7 +80,7 @@ void Dialog::open() {
 
 void Dialog::close() {
 	_visible = false;
-	_gui->closeTopDialog();
+	g_gui.closeTopDialog();
 
 	if (_mouseWidget) {
 		_mouseWidget->handleMouseLeft(0);
@@ -97,7 +97,7 @@ void Dialog::releaseFocus() {
 }
 
 void Dialog::draw() {
-	_gui->_needRedraw = true;
+	g_gui._needRedraw = true;
 }
 
 void Dialog::drawDialog() {
@@ -106,15 +106,15 @@ void Dialog::drawDialog() {
 	if (!isVisible())
 		return;
 
-	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor);
-	_gui->box(_x, _y, _w, _h);
+	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
+	g_gui.box(_x, _y, _w, _h);
 
 	while (w) {
 		w->draw();
 		w = w->_next;
 	}
 
-	_gui->addDirtyRect(_x, _y, _w, _h);
+	g_gui.addDirtyRect(_x, _y, _w, _h);
 }
 
 void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -276,6 +276,8 @@ Widget *Dialog::findWidget(int x, int y) {
 			break;
 		w = w->_next;
 	}
+	if (w)
+		w = w->findWidget(x - w->_x, y - w->_y);
 	return w;
 }
 

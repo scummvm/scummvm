@@ -82,8 +82,11 @@ static byte guifont[] = {
 #endif
 
 // Constructor
-NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false),
+NewGui::NewGui() : _screen(0), _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+	
+	_system = OSystem::instance();
+
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
@@ -144,7 +147,7 @@ void NewGui::runLoop() {
 		_system->update_screen();		
 
 		OSystem::Event event;
-		uint32 time = get_time();
+		uint32 time = _system->get_msecs();
 
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
@@ -504,7 +507,7 @@ void NewGui::drawBitmap(uint32 *bitmap, int x, int y, NewGuiColor color, int h) 
 // We could plug in a different cursor here if we like to.
 //
 void NewGui::animateCursor() {
-	int time = get_time(); 
+	int time = _system->get_msecs(); 
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		const byte colors[4] = { 15, 15, 7, 8 };
 		const byte color = colors[_cursorAnimateCounter];

@@ -33,7 +33,7 @@ extern void force_keyboard(bool);
 namespace Common {
 
 template <class T>
-Debugger<T>::Debugger(NewGui *gui) {
+Debugger<T>::Debugger() {
 	_frame_countdown = 0;
 	_dvar_count = 0;
 	_dcmd_count = 0;
@@ -41,7 +41,7 @@ Debugger<T>::Debugger(NewGui *gui) {
 	_isAttached = false;
 	_errStr = NULL;
 	_firstTime = true;
-	_debuggerDialog = new ConsoleDialog(gui, 1.0, 0.67F);
+	_debuggerDialog = new ConsoleDialog(1.0, 0.67F);
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
 }

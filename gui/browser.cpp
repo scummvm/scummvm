@@ -19,9 +19,9 @@
  */
 
 #include "stdafx.h"
-#include "browser.h"
-#include "newgui.h"
-#include "ListWidget.h"
+#include "gui/browser.h"
+#include "gui/newgui.h"
+#include "gui/ListWidget.h"
 
 #include "backends/fs/fs.h"
 
@@ -36,8 +36,8 @@ enum {
 	kGoUpCmd = 'GoUp'
 };
 
-BrowserDialog::BrowserDialog(NewGui *gui, const char *title)
-	: Dialog(gui, 20, 10, 320 -2 * 20, 200 - 2 * 10),
+BrowserDialog::BrowserDialog(const char *title)
+	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10),
 	  _node(0), _nodeContent(0) {
 
 	_fileList = NULL;

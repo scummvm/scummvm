@@ -192,8 +192,8 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-SaveLoadDialog::SaveLoadDialog(NewGui *gui, ScummEngine *scumm)
-	: ScummDialog(gui, scumm, 20, 8, 280, 184) {
+SaveLoadDialog::SaveLoadDialog(ScummEngine *scumm)
+	: ScummDialog(scumm, 20, 8, 280, 184) {
 	const int x = _w - kButtonWidth - 8;
 	int y = 20;
 
@@ -218,9 +218,9 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui, ScummEngine *scumm)
 	//
 	// Create the sub dialog(s)
 	//
-	_aboutDialog = new AboutDialog(gui);
+	_aboutDialog = new AboutDialog();
 #ifndef DISABLE_HELP
-	_helpDialog = new HelpDialog(gui, scumm);
+	_helpDialog = new HelpDialog(scumm);
 #endif
 
 	// The save game list
@@ -388,11 +388,11 @@ enum {
 };
 
 #ifndef _WIN32_WCE
-OptionsDialog::OptionsDialog(NewGui *gui, ScummEngine *scumm)
-	: ScummDialog(gui, scumm, 40, 30, 240, 124) {
+OptionsDialog::OptionsDialog(ScummEngine *scumm)
+	: ScummDialog(scumm, 40, 30, 240, 124) {
 #else
-OptionsDialog::OptionsDialog(NewGui *gui, ScummEngine *scumm)
-	: ScummDialog(gui, scumm, 40, 30, 240, 124 + kButtonHeight + 4) {
+OptionsDialog::OptionsDialog(ScummEngine *scumm)
+	: ScummDialog(scumm, 40, 30, 240, 124 + kButtonHeight + 4) {
 #endif
 	//
 	// Add the buttons
@@ -442,7 +442,7 @@ OptionsDialog::OptionsDialog(NewGui *gui, ScummEngine *scumm)
 	// Create the sub dialog(s)
 	//
 #ifdef _WIN32_WCE
-	_keysDialog = new KeysDialog(gui, scumm);
+	_keysDialog = new KeysDialog(scumm);
 #endif
 }
 
@@ -538,8 +538,8 @@ enum {
 	kPrevCmd = 'PREV'
 };
 
-HelpDialog::HelpDialog(NewGui *gui, ScummEngine *scumm)
-	: ScummDialog(gui, scumm, 5, 5, 310, 190) {
+HelpDialog::HelpDialog(ScummEngine *scumm)
+	: ScummDialog(scumm, 5, 5, 310, 190) {
 
 	_page = 1;
 	_numPages = ScummHelp::numPages(scumm->_gameId);
@@ -608,18 +608,18 @@ void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 #pragma mark -
 
-InfoDialog::InfoDialog(NewGui *gui, ScummEngine *scumm, int res)
-: ScummDialog(gui, scumm, 0, 80, 0, 16) { // dummy x and w
+InfoDialog::InfoDialog(ScummEngine *scumm, int res)
+: ScummDialog(scumm, 0, 80, 0, 16) { // dummy x and w
 	setInfoText(queryResString (res));
 }
 
-InfoDialog::InfoDialog(NewGui *gui, ScummEngine *scumm, const String& message)
-: ScummDialog(gui, scumm, 0, 80, 0, 16) { // dummy x and w
+InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
+: ScummDialog(scumm, 0, 80, 0, 16) { // dummy x and w
 	setInfoText(message);
 }
 
 void InfoDialog::setInfoText(const String& message) {
-	int width = _gui->getStringWidth(message.c_str()) + 16;
+	int width = g_gui.getStringWidth(message) + 16;
 
 	_x = (_scumm->_screenWidth - width) >> 1;
 	_w = width;
@@ -629,12 +629,12 @@ void InfoDialog::setInfoText(const String& message) {
 
 #pragma mark -
 
-PauseDialog::PauseDialog(NewGui *gui, ScummEngine *scumm)
-	: InfoDialog(gui, scumm, 10) {
+PauseDialog::PauseDialog(ScummEngine *scumm)
+	: InfoDialog(scumm, 10) {
 }
 
-ConfirmExitDialog::ConfirmExitDialog(NewGui *gui, ScummEngine *scumm)
-	: InfoDialog(gui, scumm, "Do you really want to quit (y/n)?") {
+ConfirmExitDialog::ConfirmExitDialog(ScummEngine *scumm)
+	: InfoDialog(scumm, "Do you really want to quit (y/n)?") {
 }
 
 void ConfirmExitDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
@@ -657,8 +657,8 @@ enum {
 };
 
 
-KeysDialog::KeysDialog(NewGui *gui, ScummEngine *scumm)
-	: ScummDialog(gui, scumm, 30, 20, 260, 160) {
+KeysDialog::KeysDialog(ScummEngine *scumm)
+	: ScummDialog(scumm, 30, 20, 260, 160) {
 	addButton(160, 20, "Map", kMapCmd, 'M');	// Map
 	addButton(160, 40, "OK", kOKCmd, 'O');						// OK
 	addButton(160, 60, "Cancel", kCancelCmd, 'C');				// Cancel

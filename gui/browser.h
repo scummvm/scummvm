@@ -35,7 +35,7 @@ class BrowserDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	BrowserDialog(NewGui *gui, const char *title);
+	BrowserDialog(const char *title);
 	virtual ~BrowserDialog();
 
 	virtual void open();

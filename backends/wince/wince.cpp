@@ -362,7 +362,6 @@ GameDetector detector;
 Engine *engine;
 bool is_simon;
 bool is_bass;
-NewGui *g_gui;
 extern Scumm *g_scumm;
 //extern SimonEngine *g_simon;
 //OSystem *g_system;
@@ -850,9 +849,6 @@ void runGame(char *game_name) {
 	OSystem *system = detector.createSystem();
 
 	mainClass = (OSystem_WINCE3*)system;
-
-	//g_system = system;
-	g_gui = new NewGui(system);
 
 	/* Start the engine */
 

@@ -33,14 +33,13 @@ EditTextWidget::EditTextWidget(Dialog *boss, int x, int y, int w, int h, const S
 
 	_pos = _label.size();
 
-	NewGui *gui = _boss->getGui();
-	_labelOffset = (gui->getStringWidth(_label) - (_w - 6));
+	_labelOffset = (g_gui.getStringWidth(_label) - (_w - 6));
 	if (_labelOffset < 0)
 		_labelOffset = 0;
 }
 
 void EditTextWidget::handleTickle() {
-	uint32 time = _boss->getGui()->get_time();
+	uint32 time = g_system->get_msecs();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
 		if (_caretVisible) {
@@ -56,7 +55,7 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount){
 	if (_caretVisible)
 		drawCaret(true);
 
-	NewGui *gui = _boss->getGui();
+	NewGui *gui = &g_gui;
 
 	x += _labelOffset;
 
@@ -90,7 +89,7 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	case 27:	// escape
 		_label = _backupString;
 		_pos = _label.size() - 1;
-		_labelOffset = (_boss->getGui()->getStringWidth(_label) - (_w-6));
+		_labelOffset = (g_gui.getStringWidth(_label) - (_w-6));
 		if (_labelOffset < 0)
 			_labelOffset = 0;
 		_boss->releaseFocus();
@@ -144,24 +143,21 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 }
 
 void EditTextWidget::drawWidget(bool hilite) {
-	NewGui *gui = _boss->getGui();
-
 	// Draw a thin frame around us.
-	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
-	gui->hLine(_x, _y + _h - 1, _x +_w - 1, gui->_shadowcolor);
-	gui->vLine(_x, _y, _y + _h - 1, gui->_color);
-	gui->vLine(_x + _w - 1, _y, _y + _h - 1, gui->_shadowcolor);
+	g_gui.hLine(_x, _y, _x + _w - 1, g_gui._color);
+	g_gui.hLine(_x, _y + _h - 1, _x +_w - 1, g_gui._shadowcolor);
+	g_gui.vLine(_x, _y, _y + _h - 1, g_gui._color);
+	g_gui.vLine(_x + _w - 1, _y, _y + _h - 1, g_gui._shadowcolor);
 
 	// Draw the text
 	adjustOffset();
-	gui->drawString(_label, _x + 2, _y + 3, _w - 6, gui->_textcolor, kTextAlignLeft, -_labelOffset);
+	g_gui.drawString(_label, _x + 2, _y + 3, _w - 6, g_gui._textcolor, kTextAlignLeft, -_labelOffset);
 }
 
 int EditTextWidget::getCaretPos() {
-	NewGui *gui = _boss->getGui();
 	int caretpos = 0;
 	for (int i = 0; i < _pos; i++)
-		caretpos += gui->getCharWidth(_label[i]);
+		caretpos += g_gui.getCharWidth(_label[i]);
 
 	caretpos -= _labelOffset;
 
@@ -173,17 +169,15 @@ void EditTextWidget::drawCaret(bool erase) {
 	if (!isVisible() || !_boss->isVisible())
 		return;
 
-	NewGui *gui = _boss->getGui();
-
-	int16 color = erase ? gui->_bgcolor : gui->_textcolorhi;
+	int16 color = erase ? g_gui._bgcolor : g_gui._textcolorhi;
 	int x = _x + _boss->getX() + 2;
 	int y = _y + _boss->getY() + 1;
 
 	int width = getCaretPos();
 	x += width;
 
-	gui->vLine(x, y, y + kLineHeight, color);
-	gui->addDirtyRect(x, y, 2, kLineHeight);
+	g_gui.vLine(x, y, y + kLineHeight, color);
+	g_gui.addDirtyRect(x, y, 2, kLineHeight);
 
 	_caretVisible = !erase;
 }
@@ -209,7 +203,7 @@ bool EditTextWidget::adjustOffset() {
 	}
 	else if (_labelOffset > 0)
 	{
-		int width = _boss->getGui()->getStringWidth(_label);
+		int width = g_gui.getStringWidth(_label);
 		if (width - _labelOffset < (_w - 6)) {
 			// scroll right
 			_labelOffset = (width - (_w - 6));

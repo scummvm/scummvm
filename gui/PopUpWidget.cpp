@@ -75,7 +75,7 @@ protected:
 };
 
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
-	: Dialog(boss->_boss->getGui(), 0, 0, 16, 16),
+	: Dialog(0, 0, 16, 16),
 	_popUpBoss(boss) {
 	// Copy the selection index
 	_selection = _popUpBoss->_selectedItem;
@@ -104,15 +104,15 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	_clickY = clickY - _y;
 
 	// Time the popup was opened
-	_openTime = _gui->get_time();
+	_openTime = g_system->get_msecs();
 }
 
 void PopUpDialog::drawDialog() {
 	// Draw the menu border
-	_gui->hLine(_x, _y, _x+_w - 1, _gui->_color);
-	_gui->hLine(_x, _y + _h - 1, _x + _w - 1, _gui->_shadowcolor);
-	_gui->vLine(_x, _y, _y+_h - 1, _gui->_color);
-	_gui->vLine(_x + _w - 1, _y, _y + _h - 1, _gui->_shadowcolor);
+	g_gui.hLine(_x, _y, _x+_w - 1, g_gui._color);
+	g_gui.hLine(_x, _y + _h - 1, _x + _w - 1, g_gui._shadowcolor);
+	g_gui.vLine(_x, _y, _y+_h - 1, g_gui._color);
+	g_gui.vLine(_x + _w - 1, _y, _y + _h - 1, g_gui._shadowcolor);
 
 	// Draw the entries
 	int count = _popUpBoss->_entries.size();
@@ -120,14 +120,14 @@ void PopUpDialog::drawDialog() {
 		drawMenuEntry(i, i == _selection);
 	}
 
-	_gui->addDirtyRect(_x, _y, _w, _h);
+	g_gui.addDirtyRect(_x, _y, _w, _h);
 }
 
 void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	// Mouse was released. If it wasn't moved much since the original mouse down, 
 	// let the popup stay open. If it did move, assume the user made his selection.
 	int dist = (_clickX - x) * (_clickX - x) + (_clickY - y) * (_clickY - y);
-	if (dist > 3 * 3 || _gui->get_time() - _openTime > 300) {
+	if (dist > 3 * 3 || g_system->get_msecs() - _openTime > 300) {
 		setResult(_selection);
 		close();
 	}
@@ -253,15 +253,15 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	int w = _w - 2;
 	Common::String &name = _popUpBoss->_entries[entry].name;
 
-	_gui->fillRect(x, y, w, kLineHeight, hilite ? _gui->_textcolorhi : _gui->_bgcolor);
+	g_gui.fillRect(x, y, w, kLineHeight, hilite ? g_gui._textcolorhi : g_gui._bgcolor);
 	if (name.size() == 0) {
 		// Draw a seperator
-		_gui->hLine(x, y + kLineHeight / 2, x + w - 1, _gui->_color);
-		_gui->hLine(x + 1, y + 1 + kLineHeight / 2, x + w - 1, _gui->_shadowcolor);
+		g_gui.hLine(x, y + kLineHeight / 2, x + w - 1, g_gui._color);
+		g_gui.hLine(x + 1, y + 1 + kLineHeight / 2, x + w - 1, g_gui._shadowcolor);
 	} else {
-		_gui->drawString(name, x + 1, y + 2, w - 2, hilite ? _gui->_bgcolor : _gui->_textcolor);
+		g_gui.drawString(name, x + 1, y + 2, w - 2, hilite ? g_gui._bgcolor : g_gui._textcolor);
 	}
-	_gui->addDirtyRect(x, y, w, kLineHeight);
+	g_gui.addDirtyRect(x, y, w, kLineHeight);
 }
 
 
@@ -315,7 +315,7 @@ void PopUpWidget::setSelected(int item) {
 }
 
 void PopUpWidget::drawWidget(bool hilite) {
-	NewGui	*gui = _boss->getGui();
+	NewGui	*gui = &g_gui;
 
 	// Draw a thin frame around us.
 	// TODO - should look different than the EditTextWidget fram

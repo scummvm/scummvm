@@ -32,7 +32,7 @@ class PopUpWidget;
 class GlobalOptionsDialog : public Dialog {
 	typedef Common::String String;
 public:
-	GlobalOptionsDialog(NewGui *gui, GameDetector &detector);
+	GlobalOptionsDialog(GameDetector &detector);
 	~GlobalOptionsDialog();
 
 	void open();

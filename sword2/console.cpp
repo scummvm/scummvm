@@ -48,7 +48,7 @@ static void Var_set(int var, int val) {
 }
 
 Debugger::Debugger(Sword2Engine *s)
-	: Common::Debugger<Debugger>(s->_newgui) {
+	: Common::Debugger<Debugger>() {
 	_vm = s;
 
 	// Register commands

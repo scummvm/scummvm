@@ -22,7 +22,6 @@
 #define COMMON_DEBUGGER_H
 
 class ConsoleDialog;
-class NewGui;
 
 namespace Common {
 
@@ -32,7 +31,7 @@ namespace Common {
 template <class T>
 class Debugger {
 public:
-	Debugger(NewGui *gui);
+	Debugger();
 	virtual ~Debugger();
 	
 	int DebugPrintf(const char *format, ...);

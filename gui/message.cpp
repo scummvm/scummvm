@@ -29,8 +29,8 @@ enum {
 	kCancelCmd = 'CNCL'
 };
 
-MessageDialog::MessageDialog(NewGui *gui, const String &message, const char *defaultButton, const char *altButton)
-	: Dialog(gui, 30, 20, 260, 124) {
+MessageDialog::MessageDialog(const String &message, const char *defaultButton, const char *altButton)
+	: Dialog(30, 20, 260, 124) {
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
@@ -95,9 +95,10 @@ int MessageDialog::addLine(StringList &lines, const char *line, int size) {
 	int width = 0, maxWidth = 0;
 	const char *start = line, *pos = line, *end = start + size;
 	String tmp;
+	NewGui *gui = &g_gui;
 
 	while (pos < end) {
-		int w = _gui->getCharWidth(*pos);
+		int w = gui->getCharWidth(*pos);
 
 		// Check if we exceed the maximum line width, if so, split the line.
 		// If possible we split at whitespaces.
@@ -114,7 +115,7 @@ int MessageDialog::addLine(StringList &lines, const char *line, int size) {
 			lines.push_back(tmp);
 			
 			// Determine the width of the string, and adjust maxWidth accordingly
-			width = _gui->getStringWidth(tmp);
+			width = gui->getStringWidth(tmp);
 			if (maxWidth < width)
 				maxWidth = width;
 			
@@ -148,13 +149,13 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
-TimedMessageDialog::TimedMessageDialog(NewGui *gui, const Common::String &message, uint32 duration)
-	: MessageDialog(gui, message, 0, 0) {
-	_timer = _gui->get_time() + duration;
+TimedMessageDialog::TimedMessageDialog(const Common::String &message, uint32 duration)
+	: MessageDialog(message, 0, 0) {
+	_timer = g_system->get_msecs() + duration;
 }
 
 void TimedMessageDialog::handleTickle() {
 	MessageDialog::handleTickle();
-	if (_gui->get_time() > _timer)
+	if (g_system->get_msecs() > _timer)
 		close();
 }
