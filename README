@@ -917,15 +917,16 @@ X.X Credits:
  The ScummVM team:
         James Brown          - Lead developer
         Max Horn             - Lead developer
+        Torbjorn Andersson   - Engine: SCUMM, Broken Sword II
         David Eriksson       - Engine: Flight of the Amazon Queen
         Robert Goeffringmann - Engine: Beneath a Steel Sky (maintainer)
-        Jonathan Gray        - Engine: SCUMM
+        Jonathan Gray        - Engine: SCUMM, Broken Sword II
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
         Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
         Gregory Montoir      - Engine: Flight of the Amazon Queen
         Joost Peters         - Engine: Beneath a Steel Sky,
                                        Flight of the Amazon Queen
-	Eugene Sandulenko    - Engine: SCUMM (FT INSANE, bugfixes)
+        Eugene Sandulenko    - Engine: SCUMM (FT INSANE, bugfixes)
         Chris Apers          - Port: PalmOS
         Nicolas Bacca        - Port: PocketPC/WinCE port
         Marcus Comstedt      - Port: Dreamcast
@@ -933,7 +934,6 @@ X.X Credits:
         Travis Howell        - Port: Win32, Engine: Simon (maintainer)
         Peter Moraliyski     - Port: GP32
         Lionel Ulmer         - Port: X11
-        Torbjorn Andersson   - Generic bugfixer and patch submitter
         Jamieson Christian   - iMUSE, MIDI, all things musical.
         Jochen Hoenicke      - Speaker & PCjr sound support, Adlib work
         Jeremy Newman        - Webmaster
