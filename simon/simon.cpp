@@ -5781,7 +5781,7 @@ void SimonState::o_unk_127() {
 }
 
 void SimonState::o_unk_120(uint a) {
-	uint16 id = READ_BE_UINT16_UNALIGNED(&a);
+	uint16 id = TO_BE_16(a);
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte*)&id;
 	vc_15_start_funkystruct_by_id();
@@ -6055,7 +6055,7 @@ void SimonState::o_vga_reset() {
 }
 
 void SimonState::o_unk_99_simon1(uint a) {
-	uint16 b = READ_BE_UINT16_UNALIGNED(&a);
+	uint16 b = TO_BE_16(a);
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte*)&b;
 	vc_60();
@@ -6065,8 +6065,8 @@ void SimonState::o_unk_99_simon1(uint a) {
 void SimonState::o_unk_99_simon2(uint a, uint b) {
 	uint16 items[2];
 	
-	items[0] = READ_BE_UINT16_UNALIGNED(&a);
-	items[1] = READ_BE_UINT16_UNALIGNED(&b);
+	items[0] = TO_BE_16(a);
+	items[1] = TO_BE_16(a);
 
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte*)&items;
@@ -7178,9 +7178,9 @@ void SimonState::render_string(uint num_1, uint color, uint width, uint height, 
 
 	p = dst + num_1 * 8;
 
-	*(uint16*)(p+4) = READ_BE_UINT16_UNALIGNED(&height);
-	*(uint16*)(p+6) = READ_BE_UINT16_UNALIGNED(&width);
-	dst += READ_BE_UINT32_UNALIGNED(&*(uint32*)p);
+	*(uint16*)(p+4) = TO_BE_16(height);
+	*(uint16*)(p+6) = TO_BE_16(width);
+	dst += READ_BE_UINT32_UNALIGNED(p);
 
 	memset(dst, 0, count);
 
@@ -8596,7 +8596,7 @@ void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
 
 	do {
 		if (!(_game & GAME_SIMON2)) {
-			opcode = READ_BE_UINT16_UNALIGNED(&*(uint16*)src);
+			opcode = READ_BE_UINT16_UNALIGNED((uint16*)src);
 			src+=2;
 		} else {
 			opcode = *src++;
@@ -8615,12 +8615,12 @@ void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
 			switch(*str) {
 			case 'x': fprintf(_dump_file,"\n"); return;
 			case 'b':	fprintf(_dump_file,"%d ", *src++); break;
-			case 'd':	fprintf(_dump_file,"%d ", READ_BE_UINT16_UNALIGNED(&*(uint16*)src)); src+=2; break;
-			case 'v':	fprintf(_dump_file,"[%d] ", READ_BE_UINT16_UNALIGNED(&*(uint16*)src)); src+=2; break;
-			case 'i':	fprintf(_dump_file,"%d ", (int16)READ_BE_UINT16_UNALIGNED(&*(uint16*)src)); src+=2; break;
+			case 'd':	fprintf(_dump_file,"%d ", READ_BE_UINT16_UNALIGNED(src)); src+=2; break;
+			case 'v':	fprintf(_dump_file,"[%d] ", READ_BE_UINT16_UNALIGNED(src)); src+=2; break;
+			case 'i':	fprintf(_dump_file,"%d ", (int16)READ_BE_UINT16_UNALIGNED(src)); src+=2; break;
 			case 'q': 
 				while (*(uint16*)src != 0xE703) {
-					fprintf(_dump_file,"(%d,%d) ", READ_BE_UINT16_UNALIGNED(&((uint16*)src)[0]), READ_BE_UINT16_UNALIGNED(&((uint16*)src)[1]));
+					fprintf(_dump_file,"(%d,%d) ", READ_BE_UINT16_UNALIGNED(src), READ_BE_UINT16_UNALIGNED(src+2));
 					src += 4;
 				}
 				src++;
