@@ -1,0 +1,111 @@
+/*
+** Gobliiins 1
+** Original game by CoktelVision
+**
+** Reverse engineered by Ivan Dubrov <WFrag@yandex.ru>
+**
+*/
+#ifndef __DRAW_H
+#define __DRAW_H
+
+#include "gob/video.h"
+
+namespace Gob {
+
+#define RENDERFLAG_NOINVALIDATE	1
+#define RENDERFLAG_CAPTUREPUSH	2
+#define RENDERFLAG_CAPTUREPOP	8
+#define RENDERFLAG_USEDELTAS 	0x10
+
+typedef struct Draw_FontToSprite {
+	char sprite;
+	char base;
+	char width;
+	char height;
+} Draw_FontToSprite;
+
+extern int16 draw_fontIndex;
+extern int16 draw_spriteLeft;
+extern int16 draw_spriteTop;
+extern int16 draw_spriteRight;
+extern int16 draw_spriteBottom;
+extern int16 draw_destSpriteX;
+extern int16 draw_destSpriteY;
+extern int16 draw_backColor;
+extern int16 draw_frontColor;
+extern char draw_letterToPrint;
+extern Draw_FontToSprite draw_fontToSprite[4];
+extern int16 draw_destSurface;
+extern int16 draw_sourceSurface;
+extern int16 draw_renderFlags;
+extern int16 draw_backDeltaX;
+extern int16 draw_backDeltaY;
+extern FontDesc *draw_fonts[4];
+extern char *draw_textToPrint;
+extern int16 draw_transparency;
+extern SurfaceDesc *draw_spritesArray[50];
+
+extern int16 draw_invalidatedCount;
+extern int16 draw_invalidatedTops[30];
+extern int16 draw_invalidatedLefts[30];
+extern int16 draw_invalidatedRights[30];
+extern int16 draw_invalidatedBottoms[30];
+
+extern char draw_noInvalidated;
+extern char draw_doFullFlip;
+extern char draw_paletteCleared;
+
+extern int16 draw_cursorIndex;
+extern int16 draw_transparentCursor;
+
+extern SurfaceDesc *draw_backSurface;
+extern SurfaceDesc *draw_frontSurface;
+
+extern int16 draw_unusedPalette1[18];
+extern int16 draw_unusedPalette2[16];
+extern Color draw_vgaPalette[256];
+extern Color draw_vgaSmallPalette[16];
+
+extern int16 draw_cursorX;
+extern int16 draw_cursorY;
+extern int16 draw_cursorWidth;
+extern int16 draw_cursorHeight;
+
+extern int16 draw_cursorXDeltaVar;
+extern int16 draw_cursorYDeltaVar;
+
+extern SurfaceDesc *draw_cursorSprites;
+extern SurfaceDesc *draw_cursorBack;
+extern int16 draw_cursorAnim;
+extern char draw_cursorAnimLow[40];
+extern char draw_cursorAnimHigh[40];
+extern char draw_cursorAnimDelays[40];
+extern char draw_applyPal;
+
+void draw_invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
+void draw_blitInvalidated(void);
+void draw_setPalette(void);
+void draw_clearPalette(void);
+void draw_blitCursor(void);
+
+void draw_spriteOperation(int16 operation);
+void draw_animateCursor(int16 cursor);
+void draw_interPalLoad(void);
+void draw_printText(void);
+// Draw operations
+
+#define DRAW_BLITSURF	0
+#define DRAW_PUTPIXEL	1
+#define DRAW_FILLRECT	2
+#define DRAW_DRAWLINE	3
+#define DRAW_INVALIDATE	4
+#define DRAW_LOADSPRITE	5
+#define DRAW_PRINTTEXT	6
+#define DRAW_DRAWBAR 7
+#define DRAW_CLEARRECT	8
+#define DRAW_FILLRECTABS 9
+#define DRAW_DRAWLETTER	10
+
+}				// End of namespace Gob
+
+#endif	/* __DRAW_H */

@@ -155,5 +155,4 @@ public:
 	DetectedGameList detectGames(const FSList &fslist) const;
 };
 
-
 #endif

@@ -81,6 +81,12 @@ else
 MODULES += kyra
 endif
 
+ifdef DISABLE_GOB
+DEFINES += -DDISABLE_GOB
+else 
+MODULES += gob
+endif
+
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \

@@ -278,9 +278,11 @@ void PluginManager::loadPlugins() {
 	#ifndef DISABLE_KYRA
 	LINK_PLUGIN(KYRA)
 	#endif
+	#ifndef DISABLE_GOB
+	LINK_PLUGIN(GOB)
+	#endif
 
 #endif
-
 }
 
 void PluginManager::unloadPlugins() {
