@@ -220,7 +220,8 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_DEST_Y = 12;
 	VAR_CAMERA_FOLLOWED_ACTOR = 13;
 
-	VAR_TALK_ACTOR = 15;	// FIXME: I think this is wrong also, but it works for the moment
+	VAR_TALK_ACTOR = 14;
+	VAR_HAVE_MSG = 15;
 	VAR_LEFTBTN_HOLD = 16;
 	VAR_RIGHTBTN_HOLD = 17;
 	VAR_LEFTBTN_DOWN = 18;
