@@ -150,6 +150,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_saveLoadFlag = 2;
 		_saveLoadCompatible = false;
 	}
+	loadLanguageBundle();
 }
 
 Scumm::~Scumm ()
@@ -300,7 +301,6 @@ void Scumm::scummInit()
 #endif
 
 	_timer->installProcedure(&autosave, 5 * 60 * 1000);
-	loadLanguageBundle();
 }
 
 

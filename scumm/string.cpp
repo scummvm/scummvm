@@ -474,7 +474,8 @@ void Scumm::description()
 	int c;
 	byte *buffer;
 
-	buffer = charset._buffer + charset._bufPos;
+	buffer = charset._buffer;
+	charset._bufPos = 0;
 	string[0].ypos = camera._cur.y + 88;
 	string[0].xpos = (_realWidth / 2) - (charset.getStringWidth(0, buffer, 0) >> 1);
 	if (string[0].xpos < 0)
@@ -1096,7 +1097,7 @@ void Scumm::loadLanguageBundle() {
 }
 
 void Scumm::translateText(char * text, char * trans_buff) {
-	if ((_existLanguageFile == true) && (text[0] == '/')) {
+	if ((_existLanguageFile == true) && (text[0] == '/') && (text[1] != ' ')) {
 		char name[20], tmp[20], tmp2[20], num_s[20];
 		int32 num, l, j, k, r, pos;
 		char enc;
@@ -1176,10 +1177,14 @@ void Scumm::translateText(char * text, char * trans_buff) {
 	}
 
 	if (text[0] == '/') {
-		char *pointer = strtok((char*)text, "/");
-		int offset = strlen(pointer) + 2;
-		strcpy (trans_buff, text + offset);
+		char *pointer = strchr((char*)text + 1, '/');
+		if (pointer != NULL)
+			strcpy(trans_buff, pointer + 1);
+		else
+			strcpy(trans_buff, "");
+
+		return;
 	}
-	strcpy (trans_buff, text);
+	strcpy(trans_buff, text);
 }
 

@@ -933,6 +933,7 @@ public:
 	char *_languageBuffer;
 	void loadLanguageBundle();
 	void translateText(char * text, char * trans_buff);
+	char transText[200];
 
 	bool checkFixedDisk();
 	int _cdrom;

@@ -2534,17 +2534,19 @@ void Scumm::o6_talkActor()
 	_actorToPrintStrFor = pop();
 	_messagePtr = _scriptPointer;
 
-	if (_scriptPointer[0] == '/') {
-		char *pointer = strtok((char *)_scriptPointer, "/");
-		int bunsize = strlen(pointer) + 2;
+	if ((_gameId == GID_DIG) && (_messagePtr[0] == '/')) {
+		_scriptPointer += strlen((char*)_scriptPointer) + 1;
+		translateText((char*)_messagePtr, (char*)&transText);
+		char *pointer = strtok((char *)_messagePtr, "/");
 		_sound->playBundleSound(pointer);
-		_scriptPointer += bunsize;
-		_messagePtr = _scriptPointer;
+		_messagePtr = (byte*)&transText;
+		setStringVars(0);
+		actorTalk();
+	} else {
+		setStringVars(0);
+		actorTalk();
+		_scriptPointer = _messagePtr;
 	}
-
-	setStringVars(0);
-	actorTalk();
-	_scriptPointer = _messagePtr;
 }
 
 void Scumm::o6_talkEgo()
@@ -2552,17 +2554,19 @@ void Scumm::o6_talkEgo()
 	_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
 	_messagePtr = _scriptPointer;
 
-	if (_scriptPointer[0] == '/') {
-		char *pointer = strtok((char *)_scriptPointer, "/");
-		int bunsize = strlen(pointer) + 2;
+	if ((_gameId == GID_DIG) && (_messagePtr[0] == '/')) {
+		_scriptPointer += strlen((char*)_scriptPointer) + 1;
+		translateText((char*)_messagePtr, (char*)&transText);
+		char *pointer = strtok((char *)_messagePtr, "/");
 		_sound->playBundleSound(pointer);
-		_scriptPointer += bunsize;
-		_messagePtr = _scriptPointer;
+		_messagePtr = (byte*)&transText;
+		setStringVars(0);
+		actorTalk();
+	} else {
+		setStringVars(0);
+		actorTalk();
+		_scriptPointer = _messagePtr;
 	}
-
-	setStringVars(0);
-	actorTalk();
-	_scriptPointer = _messagePtr;
 }
 
 void Scumm::o6_dim()
@@ -2743,16 +2747,17 @@ void Scumm::o6_miscOps()
 			break;
 		case 16:
 			if (_gameId == GID_DIG) {
-				_msgPtrToAdd = charset._buffer;
+				byte buf[200];
+				_msgPtrToAdd = buf;
+				setStringVars(0);
 				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
-				i = 0;
-				while (charset._buffer[i] != 0) {
-					if (charset._buffer[i] == '/') {
-						charset._bufPos = i + 1;
-					}
-					i++;
+				if (strncmp("/SYSTEM.007/ /", (char*)&buf, 14) == 0) {
+					translateText((char*)&buf + 13, (char*)&charset._buffer);
+					description();
+				}	else if (strncmp("/SYSTEM.007/ ", (char*)&buf, 13) == 0) {
+					strcpy((char*)&charset._buffer, (char*)&buf + 13);
+					description();
 				}
-				description();
 			}
 			break;
 		case 17:
@@ -3076,30 +3081,43 @@ void Scumm::decodeParseString2(int m, int n)
 	case 75:{
 			_messagePtr = _scriptPointer;
 
-			if (_scriptPointer[0] == '/') {
-				char *pointer = strtok((char *)_scriptPointer, "/");
-				int bunsize = strlen(pointer) + 2;
-				_sound->playBundleSound(pointer);
-				_scriptPointer += bunsize;
-				_messagePtr = _scriptPointer;
+			if ((_messagePtr[0] == '/') && (_gameId == GID_DIG)) {
+				translateText((char*)_messagePtr, (char*)&transText);
+				_messagePtr = (byte*)&transText;
+				_scriptPointer += strlen((char*)_scriptPointer) + 1;
+				switch (m) {
+				case 0:
+					actorTalk();
+					break;
+				case 1:
+					drawString(1);
+					break;
+				case 2:
+					unkMessage1();
+					break;
+				case 3:
+					unkMessage2();
+					break;
+				}
+				return;
+			} else {
+				switch (m) {
+				case 0:
+					actorTalk();
+					break;
+				case 1:
+					drawString(1);
+					break;
+				case 2:
+					unkMessage1();
+					break;
+				case 3:
+					unkMessage2();
+					break;
+				}
+				_scriptPointer = _messagePtr;
+				return;
 			}
-
-			switch (m) {
-			case 0:
-				actorTalk();
-				break;
-			case 1:
-				drawString(1);
-				break;
-			case 2:
-				unkMessage1();
-				break;
-			case 3:
-				unkMessage2();
-				break;
-			}
-			_scriptPointer = _messagePtr;
-			return;
 		}
 	case 0xFE:
 		setStringVars(m);
