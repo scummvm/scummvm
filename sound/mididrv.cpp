@@ -109,19 +109,6 @@ int MidiDriver_WIN::open(int mode)
 		MMRESULT res = midiOutOpen((HMIDIOUT *) & _mo, MIDI_MAPPER, NULL, NULL, 0);
 		if (res != MMSYSERR_NOERROR)
 			check_error(res);
-
-		// Send initial pitch bend sensitivity values for +/- 12 semitones.
-		// For information on control change registered parameters,
-		// which includes the Pitch Bend sensitivity settings,
-		// visit http://www.midi.org/about-midi/table3.htm,
-		// Table 3a.
-		int chan;
-		for (chan = 0; chan < 16; ++chan) {
-			send(( 0 << 16) | (101 << 8) | (0xB0 | chan));
-			send(( 0 << 16) | (100 << 8) | (0xB0 | chan));
-			send((12 << 16) | (  6 << 8) | (0xB0 | chan));
-			send(( 0 << 16) | ( 38 << 8) | (0xB0 | chan));
-		} // next for
 	} else {
 		/* streaming mode */
 		MIDIPROPTIMEDIV mptd;
@@ -816,7 +803,7 @@ void MidiDriver_QT::send(uint32 b)
 
 	case 0xE0:{									// Pitch bend
 			// QuickTime specifies pitchbend in semitones, using 8.8 fixed point values;
-			// but iMuse sends us the pitch bend data as 0-32768. which has to be mapped
+			// but iMuse sends us the pitch bend data as 0-16383. which has to be mapped
 			// to +/- 12 semitones. Based on this, we first center the input data, then
 			// multiply it by a factor. If all was right, the factor would be 3/8, but for
 			// mysterious reasons the actual factor we have to use is more like 1/32 or 3/64.
