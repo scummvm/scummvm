@@ -85,6 +85,7 @@ SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 	_mouseHeight = 6;
 	_maskWidth = 6;
 	_maskHeight = 6;
+	_mouseB = 0;
 	
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
 	fixMouseTransparency(_miceData, _skyDisk->_lastLoadedFileSize);
@@ -168,6 +169,11 @@ void SkyMouse::drawNewMouse() {
 	//calculateMouseValues();
 	//saveMouseData();
 	//drawMouse();
+}
+
+void SkyMouse::waitMouseNotPressed(void) {
+	while (_mouseB != 0) ;
+	_bMouseB = 0;
 }
 
 //original sky uses different colors for transparency than our backends do,

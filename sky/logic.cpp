@@ -2206,7 +2206,28 @@ bool SkyLogic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnLookAt(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnLookAt");
+	
+	struct lowTextManager_t textInfo = _skyText->lowTextManager(a, 240, 0, 248, true);
+	Compact *textCpt = SkyState::fetchCompact(textInfo.compactNum);
+	textCpt->xcood = 168;
+	textCpt->ycood = (uint16)c;
+
+	_skyScreen->recreate();
+	_skyScreen->spriteEngine();
+	_skyScreen->flip();
+
+	fnNoHuman(0, 0, 0); 
+	_skyMouse->lockMouse();
+
+	//waitRelative(0);
+	_skyMouse->waitMouseNotPressed();
+	//waitRelative(40);
+	
+	_skyMouse->unlockMouse();
+	fnAddHuman(0, 0, 0);
+	textCpt->status = 0;
+
+	return true;
 }
 
 bool SkyLogic::fnLincTextModule(uint32 a, uint32 b, uint32 c) {

@@ -47,6 +47,7 @@ public:
 	void spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY);
 	void useLogicInstance(SkyLogic *skyLogic) { _skyLogic = skyLogic; };
 	void buttonPressed(uint8 button) { _bMouseB = button; };
+	void waitMouseNotPressed(void);
 	uint16 giveMouseX(void) { return _aMouseX; };
 	uint16 giveMouseY(void) { return _aMouseY; };
 
@@ -56,6 +57,7 @@ protected:
 	void buttonEngine1(void);
 	void fixMouseTransparency(byte *mouseData, uint32 size);
 	
+	uint16 _mouseB;		//used to check for repeat presses
 	uint16 _eMouseB;
 	uint16 _bMouseB;
 	
