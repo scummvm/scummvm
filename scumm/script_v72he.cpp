@@ -1111,6 +1111,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 175:		// HE 99+
 		a->hePaletteNum = pop();
+		a->needRedraw = true;
 		break;
 	case 198:		// SO_ACTOR_VARIABLE
 		i = pop();
