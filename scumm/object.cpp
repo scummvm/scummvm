@@ -255,6 +255,8 @@ int Scumm::findObject(int x, int y) {
 	for (i = 1; i < _numLocalObjects; i++) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, 32))
 			continue;
+		if (_features & GF_AFTER_V2 && _objs[i].state & 0x2)
+			continue;
 		b = i;
 		do {
 			a = _objs[b].parentstate;
