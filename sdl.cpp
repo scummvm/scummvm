@@ -64,7 +64,7 @@ void updateScreen(Scumm *s);
 void updatePalette(Scumm *s) {
 	SDL_Color colors[256];
 	int first = s->_palDirtyMin;
-	int num = (s->_palDirtyMax) - first + 1;
+	int num = s->_palDirtyMax - first + 1;
 	int i;
 	byte *data = s->_currentPalette;
 	
@@ -1058,10 +1058,14 @@ int main(int argc, char* argv[]) {
 	scumm->_palManipEnd = 0;
 
 	memset(scumm->_colorCycle, 0, sizeof(scumm->_colorCycle));
+
+	scumm->_CLUT_offs = 0;
+	scumm->_ENCD_offs = 0;
+	scumm->_EPAL_offs = 0;
+	scumm->_IM00_offs = 0;
+	scumm->_PALS_offs = 0;
+	
 /* */
-
-
-
 
 	scumm->_fullScreen = detecter._fullScreen;
 	scumm->_debugMode = detecter._debugMode;
