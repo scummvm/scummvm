@@ -219,12 +219,12 @@ for ac_option in $@; do
       --with-mpeg2-prefix=*)
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	MPEG2_CFLAGS="-I$_prefix/include"
-	MPEG2_LIBS="-L$_prefix/libs"
+	MPEG2_LIBS="-L$_prefix/lib"
         ;;
       --with-alsa-prefix=*)
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	ALSA_CFLAGS="-I$_prefix/include"
-	ALSA_LIBS="-L$_prefix/libs"
+	ALSA_LIBS="-L$_prefix/lib"
 	;;
       --with-ogg-prefix=*)
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
