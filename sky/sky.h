@@ -112,8 +112,6 @@ protected:
 	void doCheat(uint8 num);
 	void handleKey(void);
 
-	static uint8 fosterImg[297 * 143];
-	static uint8 fosterPal[256 * 3];
 	uint32 _lastSaveTime;
 
 	SkyText *getSkyText();
