@@ -2392,6 +2392,16 @@ void Scumm_v5::o5_walkActorToActor() {
 		return;
 	}
 
+	if (_gameId == GID_INDY4 && nr == 1 && nr2 == 106 &&
+		dist == 255 && vm.slot[_currentScript].number == 210) {
+		// FIXME: Work around an invalid actor bug when using the
+		// camel in Fate of Atlantis, the "wits" path. The room-65-210
+		// script contains this: walkActorToActor(1,106,255)
+		// Once more this is either a script bug, or there is
+		// some hidden meaning in this odd walk request?
+		return;
+	}
+
 	a = derefActor(nr, "o5_walkActorToActor");
 	if (!a->isInCurrentRoom())
 		return;
