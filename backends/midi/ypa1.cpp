@@ -29,6 +29,7 @@ int MidiDriver_YamahaPa1::open() {
 }
 
 void MidiDriver_YamahaPa1::close() {
+	MidiDriver_MPU401::close();
 	if (_isOpen) {
 		for (UInt8 channel = 0; channel < 16; channel++) {
 			Pa1Lib_midiControlChange(_midiHandle, channel, 120,0); // all sound off
