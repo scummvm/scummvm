@@ -2,6 +2,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.5.3(CVS) (2003-??-??)
+- Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
 - Added Broken Sword 2 engine
 - Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
 - Added Adlib support for indy3ega and loom (ega)

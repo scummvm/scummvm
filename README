@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-09-10
+Last updated:    2003-09-12
 Release version: 0.5.3-cvs
 ------------------------------------------------------------------------
 
@@ -129,6 +129,7 @@ prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
      Full Throttle                                 [Game: ft]
+     Broken Sword II                               [Game: sword2]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
@@ -139,7 +140,6 @@ compatibility chart.
      Putt-Putt's Fun Pack                          [Game: funpack]
      Fatty Bear's Birthday Surprise                [Game: fbear]
      Fatty Bear's Fun Pack                         [Game: fbpack]
-     Broken Sword II                               [Game: sword2]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
@@ -207,6 +207,7 @@ the section on Reporting Bugs.
        Zak McKracken (Classic):
                 - Actors sometimes cause minor graphical glitches
 
+// FIXME: Are these two still present? Many walk-related fixes lately...
        Indiana Jones & the Last Crusade (EGA):
                 - In some rooms Indy may be able to walk to odd places
 
@@ -274,8 +275,8 @@ Google search. Many thanks to the effort of porters. If you have a port of
 ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
         Windows         - SDL
-        Windows CE      - SDL           (iPaq and other handheld devices)
-        Linux           - X11 & OSS audio (includes iPaqs running Linux)
+        Windows CE      - SDL            (iPaq and other handheld devices)
+        Linux           - X11/OSS audio  (includes iPaqs running Linux)
         Mac OS X        - SDL
         AmigaOS         - SDL
         MorphOS         - Custom backend
@@ -284,7 +285,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         Dreamcast       - Custom backend 
         GP32            - Custom backend
         PalmOS          - Custom backend
-        UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
+        UNIX            - SDL            (Linux, Solaris, IRIX, *BSD)
 
 The Dreamcast port does not support Curse of Monkey Island, nor The Dig.
 The PalmOS port does not support Curse of Monkey Island, Beneath a Steel
@@ -298,6 +299,11 @@ directory. The filenames must not be in mixed case on *nix systems
 (for example, these are valid names: "monkey2.000", "MONKEY2.000", while
 this is a bad one: "Monkey2.000"). If you use a game with speech, the file
 monster.sou must reside in the same directory as the datafiles.
+
+Please note that by default, ScummVM will save games in the directory
+it is executed from, so you should refrain from running it from more than
+one location. Further information, including how to specify a specific save
+directory to avoid this issue, are in section 6.0.
 
 ScummVM can be launched directly by running the executable. In this case,
 the in-built launcher will activate. From this, you can add games (click
@@ -632,23 +638,22 @@ If you have a WaveTable capable sound card, you have to load a sbk or sf2
 soundfont using the sfxload software. Example:
   sfxload /path/to/8mbgmsfx.sf2
 
-If you don't have a MIDI capable soundcard, or if you want to take advantage of
-your TiMidity samples, then you can ask TiMidity to become an ALSA sequencer
-output. Here is a quick way to do so:
+If you don't have a MIDI capable soundcard, there are two options: FluidSynth
+and TiMidity. We recommend FluidSynth, as on many systems TiMidity will 'lag'
+behind music. This is very noticable in iMUSE-enabled games, which use fast
+and dynamic music transitions. Running TiMidity as root will allow it to
+setup real time priority, which may reduce music lag.
+
+Asking TiMidity to become an ALSA sequencer:
   timidity -iAqqq -B2,8 -Os1S -s 44100 &
-If you get distorted output with this setting try dropping the -B2,8 or
-changing the value.
+(If you get distorted output with this setting, you can try dropping the 
+-B2,8 or changing the value. To reduce the possibility of )
 
-Then the TiMidity port will be visible from the 'aconnect -o -l' list. You
-should launch it as root, since it will try to set up some real time
-priority.
-
-You can also use FluidSynth for a software synth that supports sound fonts,
-if you don't have any MIDI hardware.
-
-An example usage of FluidSynth might look like this:
+Asking FluidSynth to become an ALSA sequencer (using SoundFonts):
   fluidsynth -m alsa_seq /path/to/8mbgmsfx.sf2
-Then use 'aconnect -o -l' as above to find what port its on.
+
+Once either TiMidity or FluidSynth are running, use the 'aconnect -o -l' 
+command as described earlier in this section.
 
 7.5.0) Using MP3 files for CD audio:
 ------ -----------------------------
@@ -689,12 +694,13 @@ file.
 
 7.5.3) Compressing MONSTER.SOU with Ogg Vorbis:
 ------ ----------------------------------------
-As above but run:
+As above, but ScummVM must be compiled with OGG support. Run:
 
   extract --vorbis monster.sou
 
 This should produce a smaller monster.sog file, which you should copy to your
-game directory.
+game directory. Ogg encoding may take a considerable longer amount of time
+than MP3, so have a good book handy.
 
 
 7.5.4) Compressing sfx/speech in Simon the Sorcerer 1 and 2
@@ -732,6 +738,15 @@ An example config file looks as follows:
         fullscreen=true
         savepath=C:\saves\
 
+	[sky]
+	path=C:\games\SteelSky\
+
+	[germansky]
+	gameid=sky
+	language=de
+	path=C:\games\SteelSky\
+	description=Beneath a Steel Sky w/ German subtitles
+	
         [germandott]
         gameid=tentacle
         path=C:\german\tentacle\
@@ -748,6 +763,7 @@ An example config file looks as follows:
         cdrom=1
         path=C:\loom\
         talkspeed=55
+	savepath=C:\loom\saves\
         
         [monkey2]
         path=C:\amiga_mi2\
