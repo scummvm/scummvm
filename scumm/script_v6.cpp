@@ -1300,8 +1300,10 @@ void Scumm_v6::o6_getActorWidth()
 void Scumm_v6::o6_getActorScaleX()
 {
 	Actor *a = derefActorSafe(pop(), "o6_getActorScale");
-	assert(a);
-	push(a->scalex);
+	if(!a)
+		push(0); // FIXME: DIG seems to call this with an invalid actor id
+	else
+		push(a->scalex);
 }
 
 void Scumm_v6::o6_getActorAnimCounter1()
@@ -1315,8 +1317,10 @@ void Scumm_v6::o6_getAnimateVariable()
 {
 	int var = pop();
 	Actor *a = derefActorSafe(pop(), "o6_getAnimateVariable");
-	assert(a);
-	push(a->getAnimVar(var));
+	if(!a)
+		push(0); // FIXME: DIG seems to call this with an invalid actor id
+	else
+		push(a->getAnimVar(var));
 }
 
 void Scumm_v6::o6_isActorInBox()
