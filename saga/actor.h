@@ -251,7 +251,7 @@ struct ACTOR {
 		action_frame = 0;
 		action_time = 0;
 		act_tbl = NULL;
-		action_ct = NULL;
+		action_ct = 0;
 	}
 };
 
