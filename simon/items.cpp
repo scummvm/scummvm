@@ -1676,7 +1676,7 @@ void SimonState::o_unk_99_simon1(uint a)
 	uint16 b = TO_BE_16(a);
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte *)&b;
-	vc_60();
+	vc_60_kill_thread();
 	_lock_word &= ~0x4000;
 }
 
@@ -1689,7 +1689,7 @@ void SimonState::o_unk_99_simon2(uint a, uint b)
 
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte *)&items;
-	vc_60();
+	vc_60_kill_thread();
 	_lock_word &= ~0x4000;
 }
 

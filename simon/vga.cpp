@@ -31,16 +31,16 @@ static const uint16 vc_get_out_of_code = 0;
 // Opcode tables
 static const VgaOpcodeProc vga_opcode_table[] = {
 	NULL,
-	&SimonState::vc_1,
-	&SimonState::vc_2,
-	&SimonState::vc_3,
-	&SimonState::vc_4,
-	&SimonState::vc_5,
+	&SimonState::vc_1_dummy_op,
+	&SimonState::vc_2_call,
+	&SimonState::vc_3_new_thread,
+	&SimonState::vc_4_dummy_op,
+	&SimonState::vc_5_skip_if_neq,
 	&SimonState::vc_6_maybe_skip_3_inv,
 	&SimonState::vc_7_maybe_skip_3,
 	&SimonState::vc_8_maybe_skip_2,
 	&SimonState::vc_9_maybe_skip,
-	&SimonState::vc_10,
+	&SimonState::vc_10_draw,
 	&SimonState::vc_11_clear_pathfind_array,
 	&SimonState::vc_12_sleep_variable,
 	&SimonState::vc_13_offset_x,
@@ -49,22 +49,22 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_16_setup_funkystruct,
 	&SimonState::vc_17_set_pathfind_item,
 	&SimonState::vc_18_jump_rel,
-	&SimonState::vc_19,
-	&SimonState::vc_20,
-	&SimonState::vc_21,
-	&SimonState::vc_22,
+	&SimonState::vc_19_chain_to_script,
+	&SimonState::vc_20_set_code_word,
+	&SimonState::vc_21_jump_if_code_word,
+	&SimonState::vc_22_set_pal,
 	&SimonState::vc_23_set_pri,
 	&SimonState::vc_24_set_image_xy,
 	&SimonState::vc_25_del_sprite_and_get_out,
-	&SimonState::vc_26,
+	&SimonState::vc_26_set_window,
 	&SimonState::vc_27_reset,
-	&SimonState::vc_28,
+	&SimonState::vc_28_dummy_op,
 	&SimonState::vc_29_stop_all_sounds,
 	&SimonState::vc_30_set_base_delay,
 	&SimonState::vc_31_set_palette_mode,
 	&SimonState::vc_32_copy_var,
-	&SimonState::vc_33,
-	&SimonState::vc_34,
+	&SimonState::vc_33_force_unlock,
+	&SimonState::vc_34_force_lock,
 	&SimonState::vc_35,
 	&SimonState::vc_36,
 	&SimonState::vc_37_sprite_unk3_add,
@@ -90,10 +90,10 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_57_no_op,
 	&SimonState::vc_58,
 	&SimonState::vc_59,
-	&SimonState::vc_60,
+	&SimonState::vc_60_kill_thread,
 	&SimonState::vc_61_sprite_change,
-	&SimonState::vc_62,
-	&SimonState::vc_63,
+	&SimonState::vc_62_palette_thing,
+	&SimonState::vc_63_palette_thing_2,
 	&SimonState::vc_64,
 	&SimonState::vc_65,
 	&SimonState::vc_66,
@@ -222,13 +222,13 @@ void SimonState::o_read_vgares_328()
 
 
 // VGA Script commands
-void SimonState::vc_1()
+void SimonState::vc_1_dummy_op()
 {
 	/* dummy opcode */
 	_vc_ptr += 6;
 }
 
-void SimonState::vc_2()
+void SimonState::vc_2_call()
 {
 	VgaPointersEntry *vpe;
 	uint num;
@@ -277,7 +277,7 @@ void SimonState::vc_2()
 	_vc_ptr = vc_ptr_org;
 }
 
-void SimonState::vc_3()
+void SimonState::vc_3_new_thread()
 {
 	uint16 a, b, c, d, e, f;
 	uint16 res;
@@ -362,13 +362,13 @@ void SimonState::vc_3()
 	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs), b, res);
 }
 
-void SimonState::vc_4()
+void SimonState::vc_4_dummy_op()
 {
 	/* dummy opcode */
 	_vc_ptr += 6;
 }
 
-void SimonState::vc_5()
+void SimonState::vc_5_skip_if_neq()
 {
 	uint var = vc_read_next_word();
 	uint value = vc_read_next_word();
@@ -593,7 +593,7 @@ void SimonState::vc_10_helper_8(byte *dst, byte *src)
 	}
 }
 
-void SimonState::vc_10()
+void SimonState::vc_10_draw()
 {
 	byte *p2;
 	uint width, height;
@@ -894,7 +894,7 @@ void SimonState::vc_10()
 		if (_game & GAME_SIMON2 && state.e & 0x4 && _bit_array[10] & 0x800) {
 			state.surf_addr = state.surf2_addr;
 			state.surf_pitch = state.surf2_pitch;
-			warning("vc_10: (state.e&0x4)");
+			warning("vc_10_draw: (state.e&0x4)");
 		}
 
 		if (state.e & 0x8) {
@@ -1082,10 +1082,10 @@ void SimonState::vc_18_jump_rel()
 }
 
 /* chain to script? */
-void SimonState::vc_19()
+void SimonState::vc_19_chain_to_script()
 {
 	/* XXX: not implemented */
-	error("vc_19: chain to script not implemented");
+	error("vc_19_chain_to_script: not implemented");
 }
 
 
@@ -1105,7 +1105,7 @@ static uint16 read_16_le(void *p)
 }
 
 /* FIXME: unaligned access */
-void SimonState::vc_20()
+void SimonState::vc_20_set_code_word()
 {
 	uint16 a = vc_read_next_word();
 	write_16_le(_vc_ptr, a);
@@ -1113,7 +1113,7 @@ void SimonState::vc_20()
 }
 
 /* FIXME: unaligned access */
-void SimonState::vc_21()
+void SimonState::vc_21_jump_if_code_word()
 {
 	if (!(_game & GAME_SIMON2)) {
 		int16 a = vc_read_next_word();
@@ -1136,7 +1136,7 @@ void SimonState::vc_21()
 	}
 }
 
-void SimonState::vc_22()
+void SimonState::vc_22_set_pal()
 {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
@@ -1231,7 +1231,7 @@ void SimonState::vc_25_del_sprite_and_get_out()
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_26()
+void SimonState::vc_26_set_window()
 {
 	uint16 *as = &_video_windows[vc_read_next_word() * 4];
 	as[0] = vc_read_next_word();
@@ -1332,7 +1332,7 @@ void SimonState::vc_27_reset()
 		vc_27_reset_simon2();
 }
 
-void SimonState::vc_28()
+void SimonState::vc_28_dummy_op()
 {
 	/* dummy opcode */
 	_vc_ptr += 8;
@@ -1370,7 +1370,7 @@ void SimonState::vc_32_copy_var()
 	vc_write_var(vc_read_next_word(), a);
 }
 
-void SimonState::vc_33()
+void SimonState::vc_33_force_unlock()
 {
 	if (_lock_counter != 0) {
 		_lock_counter = 1;
@@ -1378,7 +1378,7 @@ void SimonState::vc_33()
 	}
 }
 
-void SimonState::vc_34()
+void SimonState::vc_34_force_lock()
 {
 	lock();
 	_lock_counter = 200;
@@ -1645,7 +1645,7 @@ void SimonState::vc_55_offset_hit_area()
 
 void SimonState::vc_56_no_op()
 {
-	/* No-Op in simon1 */
+	/* no op in simon1 */
 	if (_game & GAME_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
 
@@ -1750,9 +1750,7 @@ void SimonState::vc_kill_thread(uint file, uint sprite)
 	_vc_ptr = vc_org;
 }
 
-
-/* kill thread */
-void SimonState::vc_60()
+void SimonState::vc_60_kill_thread()
 {
 	uint file;
 
@@ -1778,7 +1776,7 @@ void SimonState::vc_61_sprite_change()
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_62()
+void SimonState::vc_62_palette_thing()
 {
 	uint i;
 	byte *vc_ptr_org = _vc_ptr;
@@ -1787,7 +1785,7 @@ void SimonState::vc_62()
 	vc_29_stop_all_sounds();
 
 	if ((_game & GAME_SIMON2) && (!_video_var_3)) {
-		warning("vc_62: music stuff?");
+		warning("vc_62_palette_thing: music stuff?");
 	}
 
 	_video_var_3 = true;
@@ -1804,7 +1802,7 @@ void SimonState::vc_62()
 	}
 
 	if (!(_game & GAME_SIMON2)) {
-		uint16 params[5];						/* parameters to vc_10 */
+		uint16 params[5];						/* parameters to vc_10_draw */
 		VgaSprite *vsp;
 		VgaPointersEntry *vpe;
 
@@ -1826,7 +1824,7 @@ void SimonState::vc_62()
 				params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
 				params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
 				_vc_ptr = (byte *)params;
-				vc_10();
+				vc_10_draw();
 
 				_video_palette_mode = palmode;
 				_cur_vga_file_1 = f1;
@@ -1842,7 +1840,7 @@ void SimonState::vc_62()
 	_vc_ptr = vc_ptr_org;
 }
 
-void SimonState::vc_63()
+void SimonState::vc_63_palette_thing_2()
 {
 	_palette_color_count = 208;
 	if (_video_palette_mode != 4) {

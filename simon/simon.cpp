@@ -2243,7 +2243,7 @@ void SimonState::o_force_unlock()
 void SimonState::o_force_lock()
 {
 	_lock_word |= 0x4000;
-	vc_34();
+	vc_34_force_lock();
 	_lock_word &= ~0x4000;
 }
 
@@ -2513,11 +2513,16 @@ void SimonState::o_wait_for_vga(uint a)
 
 		delay(10);
 
-//    if (_timer_1 >= 500) {
-//      warning("wait timed out");
-//      break;
-//    }
-
+		if (_game  & GAME_SIMON2)
+			if (_timer_1 > 1000) {
+				warning("wait timed out");
+				break;
+			} else {
+			if (_timer_1 > 500) {
+				warning("wait timed out");
+				break;
+			}
+		}
 	}
 //  warning("waiting on %d done", a);
 	_system->show_mouse(true);
@@ -2563,7 +2568,7 @@ void SimonState::timer_vga_sprites()
 		}
 
 		_vc_ptr = (byte *)params;
-		vc_10();
+		vc_10_draw();
 
 		vsp++;
 	}
@@ -2616,7 +2621,7 @@ void SimonState::timer_vga_sprites_2()
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *vc_ptr_org = _vc_ptr;
-	uint16 params[5];							/* parameters to vc_10 */
+	uint16 params[5];							/* parameters to vc_10_draw */
 
 	if (_video_var_9 == 2)
 		_video_var_9 = 1;
@@ -2640,7 +2645,7 @@ void SimonState::timer_vga_sprites_2()
 		params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
 		params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
 		_vc_ptr = (byte *)params;
-		vc_10();
+		vc_10_draw();
 
 		vsp++;
 	}

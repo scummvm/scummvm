@@ -578,16 +578,16 @@ public:
 	void run_vga_script();
 
 	// Simon1/Simon2 video script opcodes
-	void vc_1();
-	void vc_2();
-	void vc_3();
-	void vc_4();
-	void vc_5();
+	void vc_1_dummy_op();
+	void vc_2_call();
+	void vc_3_new_thread();
+	void vc_4_dummy_op();
+	void vc_5_skip_if_neq();
 	void vc_6_maybe_skip_3_inv();
 	void vc_7_maybe_skip_3();
 	void vc_8_maybe_skip_2();
 	void vc_9_maybe_skip();
-	void vc_10();
+	void vc_10_draw();
 	void vc_11_clear_pathfind_array();
 	void vc_12_sleep_variable();
 	void vc_13_offset_x();
@@ -596,24 +596,24 @@ public:
 	void vc_16_setup_funkystruct();
 	void vc_17_set_pathfind_item();
 	void vc_18_jump_rel();
-	void vc_19();
-	void vc_20();
-	void vc_21();
-	void vc_22();
+	void vc_19_chain_to_script();
+	void vc_20_set_code_word();
+	void vc_21_jump_if_code_word();
+	void vc_22_set_pal();
 	void vc_23_set_pri();
 	void vc_24_set_image_xy();
 	void vc_25_del_sprite_and_get_out();
-	void vc_26();
+	void vc_26_set_window();
 	void vc_27_reset();
 	void vc_27_reset_simon1();
 	void vc_27_reset_simon2();
-	void vc_28();
+	void vc_28_dummy_op();
 	void vc_29_stop_all_sounds();
 	void vc_30_set_base_delay();
 	void vc_31_set_palette_mode();
 	void vc_32_copy_var();
-	void vc_33();
-	void vc_34();
+	void vc_33_force_unlock();
+	void vc_34_force_lock();
 	void vc_35();
 	void vc_36();
 	void vc_37_sprite_unk3_add();
@@ -638,10 +638,10 @@ public:
 	void vc_56_no_op();
 	void vc_57_no_op();
 	void vc_59();
-	void vc_60();
+	void vc_60_kill_thread();
 	void vc_61_sprite_change();
-	void vc_62();
-	void vc_63();
+	void vc_62_palette_thing();
+	void vc_63_palette_thing_2();
 
 	// Simon2 specific Video Script Opcodes
 	void vc_64();
