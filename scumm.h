@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.13  2001/10/24 20:12:52  strigeus
+ * fixed some bugs related to string handling
+ *
  * Revision 1.12  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -521,6 +524,7 @@ enum GameId {
 	GID_MONKEY2 = 2,
 	GID_INDY4 = 3,
 	GID_MONKEY = 4,
+	GID_SAMNMAX = 5,
 };
 
 struct ScummDebugger;
@@ -940,6 +944,7 @@ struct Scumm {
 
 	void nukeResource(int type, int i);
 	byte *getResourceAddress(int type, int i);
+	byte *getStringAddress(int i);
 	void ensureResourceLoaded(int type, int i);
 	int loadResource(int type, int i);
 	int getResourceRoomNr(int type, int index);

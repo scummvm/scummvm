@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.12  2001/10/24 20:12:52  strigeus
+ * fixed some bugs related to string handling
+ *
  * Revision 1.11  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -443,6 +446,7 @@ static const VersionSettings version_settings[] = {
 	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis", GID_INDY4, 5, 5, 0},
 	{"fate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0},
 	{"tentacle", "Day Of The Tenctacle", GID_TENTACLE, 6, 4, 2},
+	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2},
 	{NULL,NULL}
 };
 

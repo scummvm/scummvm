@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/24 20:12:52  strigeus
+ * fixed some bugs related to string handling
+ *
  * Revision 1.2  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -1557,7 +1560,7 @@ void Scumm::o6_verbOps() {
 		if (a==0) {
 			ptr = (byte*)"";
 		} else {
-			ptr = getResourceAddress(7, a);
+			ptr = getStringAddress(a);
 		}
 		loadPtrToResource(8, slot, ptr);
 		vs->type = 0;

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/24 20:12:52  strigeus
+ * fixed some bugs related to string handling
+ *
  * Revision 1.3  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -568,8 +571,12 @@ void Scumm::unkAddMsgToStack4(int var) {
 
 void Scumm::unkAddMsgToStack5(int var) {
 	byte *ptr;
+
+	if (_majorScummVersion==6)
+		var = readVar(var);
+	
 	if (var) {
-		ptr = getResourceAddress(7, var);
+		ptr = getStringAddress(var);
 		if (ptr) {
 			addMessageToStack(ptr);
 			return;

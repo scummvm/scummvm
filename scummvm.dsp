@@ -136,10 +136,6 @@ SOURCE=.\scummvm.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\sdl.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\sound.cpp
 # End Source File
 # Begin Source File

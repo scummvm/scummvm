@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/24 20:12:52  strigeus
+ * fixed some bugs related to string handling
+ *
  * Revision 1.5  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
  * debugger skeleton implemented
@@ -573,6 +576,16 @@ byte *Scumm::getResourceAddress(int type, int index) {
 		return NULL;
 
 	return ptr + sizeof(ResHeader);
+}
+
+byte *Scumm::getStringAddress(int i) {
+	byte *b = getResourceAddress(7, i);
+	if (!b)
+		return b;
+	
+	if (_majorScummVersion==6)
+		return ((ArrayHeader*)b)->data;
+	return b;
 }
 
 void Scumm::setResourceFlags(int type, int index, byte flag) {
