@@ -227,8 +227,10 @@ byte *Cutaway::getCutawayObject(byte *ptr, CutawayObject &object)
 		error("Wrong number of values read");
 
 	// Make ugly reuse of data less ugly
-	if (object.limitBobX1 < 0)
+	if (object.limitBobX1 < 0) {
 		object.song = -object.limitBobX1;
+		object.limitBobX1 = 0;
+	}
 	else
 		object.song = 0;
 
@@ -244,9 +246,9 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 	switch (object.objectNumber) {
 		case -1:  objectNumberStr = "MESSAGE";  break;
 		case 0:   objectNumberStr = "Joe";      break;
-		case 196: objectNumberStr = "Chef";      break;
-		case 548: objectNumberStr = "Anderson"; break;
-		default:  objectNumberStr = "unknown";  break;
+		default:  
+		  objectNumberStr = _logic->objectName(_logic->objectData(object.objectNumber)->name);  
+		  break;
 	}
 
 	debug(0, "objectNumber = %i (%s)", object.objectNumber, objectNumberStr);
@@ -455,8 +457,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 			objectData->name = abs(objectData->name);
 		}
 
-		// XXX REDISP_OBJECT(OBJECT);
-		debug(0, "REDISP_OBJECT needed for object %i", object.objectNumber);
+		_logic->roomRefreshObject(object.objectNumber);
 
 		// Skip doing any anim stuff
 		objectType = OBJECT_TYPE_NO_ANIMATION;
@@ -1002,15 +1003,13 @@ void Cutaway::updateGameState() {
 				objectData->name        = abs(objectData->name);
 				if (fromObject > 0)
 					objectCopy(fromObject, objectIndex);
-				// XXX REDISP_OBJECT(objectIndex);
-				debug(0, "REDISP_OBJECT needed for object %i", objectIndex);
+				_logic->roomRefreshObject(objectIndex);
 			}
 			else if (objectIndex < 0) {               // Hide the object
 				objectIndex             = -objectIndex;
 				ObjectData *objectData  = _logic->objectData(objectIndex);
 				objectData->name        = -abs(objectData->name);
-				// XXX REDISP_OBJECT(objectIndex);
-				debug(0, "REDISP_OBJECT needed for object %i", objectIndex);
+				_logic->roomRefreshObject(objectIndex);
 			}
 
 			if (areaIndex > 0) {

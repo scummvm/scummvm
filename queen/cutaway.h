@@ -263,7 +263,7 @@ class Cutaway {
 		static byte *getCutawayObject(byte *ptr, CutawayObject &object);
 
 		//! Dump a CutawayObject with debug()
-		static void dumpCutawayObject(int index, CutawayObject &object);
+		void dumpCutawayObject(int index, CutawayObject &object);
 
 		//! Dump CutawayAnum data with debug()
 		static void dumpCutawayAnim(CutawayAnim &anim);

@@ -968,7 +968,7 @@ void Logic::roomSetupObjects() {
 
 
 uint16 Logic::roomRefreshObject(uint16 obj) {
-	warning("Logic::roomSetupObjects() not fully implemented");
+	warning("Logic::roomRefreshObject() not fully implemented");
 	uint16 curImage = _numFrames;
 
 	ObjectData *pod = &_objectData[obj];
@@ -978,7 +978,8 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 	// check the object is in the current room
 	if (pod->room != _currentRoom) {
-		warning("Logic::roomRefreshObject() - Trying to display an object that is not in room");
+		warning("Logic::roomRefreshObject() - Trying to display an object (%i=%s) that is not in room (object room=%i, current room=%i)",
+				obj, _objName[obj], pod->room, _currentRoom);
 		return curImage;
 	}
 
@@ -1020,8 +1021,12 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 	// find frame used for object
 	curImage = findFrame(obj);
 
-	if (pod->image > 5000) {
-		GraphicData *pgd = &_graphicData[pod->image - 5000];
+	int image = pod->image;
+	if (pod->image > 5000)
+		image -= 5000;
+
+		
+		GraphicData *pgd = &_graphicData[image];
 		bool rebound = false;
 		int16 lastFrame = pgd->lastFrame;
 		if (lastFrame < 0) {
@@ -1061,7 +1066,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 			pbs->y = pgd->y;
 			pbs->frameNum = curImage;
 		}
-	}
+
 	return curImage;
 }
 
