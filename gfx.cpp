@@ -2511,8 +2511,10 @@ void Scumm::decompressDefaultCursor(int idx)
 	color = default_cursor_colors[idx];
 
 	for (i = 0; i < 16; i++) {
-		_grabbedCursor[16 * 8 + i] = color;
-		_grabbedCursor[16 * i + 8] = color;
+		if ((i<7) || (i>9)) {
+			_grabbedCursor[16 * 8 + i] = color;
+			_grabbedCursor[16 * i + 8] = color;
+		}
 	}
 
 	updateCursor();

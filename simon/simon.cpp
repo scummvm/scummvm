@@ -78,37 +78,61 @@ static const GameSpecificSettings simon2_settings = {
 	1660/4,			/* SOUND_INDEX_BASE */
 	"SIMON2.GME", /* gme_filename */
 	"SIMON2.WAV",	/* wav_filename */
-	"",
+	NULL,
 	"",
 	"GSPTR30",		/* gamepc_filename */
 };
 
-//#ifdef USE_2xSAI
-//#define NUM_PALETTE_FADEOUT 32
-//#else
+static const GameSpecificSettings simon2win_settings = {
+	5, /* VGA_DELAY_BASE */
+	1580/4, /* TABLE_INDEX_BASE */
+	1500/4, /* TEXT_INDEX_BASE */
+	2116/4, /* NUM_GAME_OFFSETS */
+	75, /* NUM_VIDEO_OP_CODES */
+	2000000, /* VGA_MEM_SIZE */
+	100000, /* TABLES_MEM_SIZE */
+	12256, /* NUM_VOICE_RESOURCES */
+	0,
+	1128/4, /* MUSIC_INDEX_BASE */
+	1660/4,			/* SOUND_INDEX_BASE */
+	"SIMON2.GME", /* gme_filename */
+	"SIMON2.WAV",	/* wav_filename */
+	NULL,
+	"",
+	"GSPTR30",		/* gamepc_filename */
+};
+
+static const GameSpecificSettings simon2dos_settings = {
+	5, /* VGA_DELAY_BASE */
+	1580/4, /* TABLE_INDEX_BASE */
+	1500/4, /* TEXT_INDEX_BASE */
+	2116/4, /* NUM_GAME_OFFSETS */
+	75, /* NUM_VIDEO_OP_CODES */
+	2000000, /* VGA_MEM_SIZE */
+	100000, /* TABLES_MEM_SIZE */
+	12256, /* NUM_VOICE_RESOURCES */
+	0,
+	1128/4, /* MUSIC_INDEX_BASE */
+	1660/4,			/* SOUND_INDEX_BASE */
+	"SIMON2.GME", /* gme_filename */
+	"SIMON2.WAV",	/* wav_filename */
+	NULL,
+	"",
+	"GAME32",		/* gamepc_filename */
+};
+
+
 #define NUM_PALETTE_FADEOUT 32
-//#endif
 
 void palette_fadeout(uint32 *pal_values,uint num) {
 	byte *p = (byte*)pal_values;
 
-//#ifdef USE_2xSAI
 	do {
 		if (p[0]>=8) p[0] -= 8; else p[0] = 0;
 		if (p[1]>=8) p[1] -= 8; else p[1] = 0;
 		if (p[2]>=8) p[2] -= 8; else p[2] = 0;
 		p += sizeof(uint32);
 	} while (--num);
-//#else
-//	do {
-//		if (p[0]) p[0] -= 4;
-//		if (p[1]) p[1] -= 4;
-//		if (p[2]) p[2] -= 4;
-//		p += sizeof(uint32);
-//	} while (--num);
-
-//#endif
-
 }
 
 
@@ -421,6 +445,21 @@ static const char * const opcode_arg_table_simon2win[256] = {
 "B ","BNBN ","BBTS ","N "," ","Ian ","B ","B ","B ","B ","T ","T ","B "," ","I "," ",
 " ","BBI ","NNBB ","BBB "," "," "," "," ","N ","N "," "," ","BT "," ","B "};
 
+static const char * const opcode_arg_table_simon2dos[256] = {
+" ","I ","I ","I ","I ","I ","I ","II ","II ","II ","II ","B ","B ","BN ","BN ","BN ",
+"BN ","BB ","BB ","BB ","BB ","II ","II ","N ","I ","I ","I ","IN ","IB ","II ","I ","I ",
+"II ","II ","IBB ","BIB ","BB ","B ","BI ","IB ","B ","B ","BN ","BN ","BN ","BB ","BB ","BN ",
+"BN ","BB ","BB ","BN ","BB ","BN ","B ","I ","IB ","IB ","II ","I ","I ","IN ","B ","T ",
+"T ","NNNNNB ","BT ","BT ","T "," ","B ","N ","IBN ","I ","I ","I ","NN "," "," ","IT ",
+"II ","I ","B "," ","IB ","IBB ","IIB ","T "," "," ","IB ","IB ","IB ","B ","BB ","IBB ",
+"NB ","N ","NNBNNN ","NN "," ","BNNNNNN ","B "," ","B ","B ","BB ","NNNNNIN ","N ","N ","N ","NNN ",
+"NBNN ","IBNN ","IB ","IB ","IB ","IB ","N ","N ","N ","BI "," "," ","N ","I ","IBB ","NNB ",
+"N ","N ","Ban ","BB "," "," "," "," ","IB ","B "," ","II "," ","BI ","N ","I ",
+"IB ","IB ","IB ","IB ","IB ","IB ","IB ","BI ","BB ","B ","B ","B ","B ","IBB ","IBN ","IB ",
+"B ","BNBN ","BBT ","N "," ","Ian ","B ","B ","B ","B ","T ","T ","B "," ","I "," ",
+" ","BBI ","NNBB ","BBB "," "," "," "," ","N ","N "," "," ","BT "," ","B "};
+
+
 /* read_single_opcode */
 byte *SimonState::readSingleOpcode(FILE *in, byte *ptr) {
 	int i,l;
@@ -431,6 +470,7 @@ byte *SimonState::readSingleOpcode(FILE *in, byte *ptr) {
 
 	switch(_game) {
 	case GAME_SIMON1WIN: table = opcode_arg_table_simon1win; break;
+	case GAME_SIMON2DOS: table = opcode_arg_table_simon2win; printf("right opcode table\n"); break;
 	case GAME_SIMON2WIN: table = opcode_arg_table_simon2win; break;
 	case GAME_SIMON1DOS: table = opcode_arg_table_simon1dos; break;
 	default:
@@ -1636,7 +1676,7 @@ int SimonState::runScript() {
 			}
 
 			talk_with_text(b, c, s, tv->a, tv->b, tv->c);
-		} else if (_game == GAME_SIMON2WIN) {
+		} else if (_game == GAME_SIMON2WIN || _game == GAME_SIMON2DOS) {
 			uint b = getVarOrByte();
 			uint c = getVarOrByte();
 			uint a = getVarOrByte();
@@ -1668,7 +1708,7 @@ int SimonState::runScript() {
 
 	case 181: {
 		o_force_lock();
-		if (_game == GAME_SIMON2WIN) {
+		if (_game == GAME_SIMON2WIN || _game == GAME_SIMON2DOS) {
 			fcs_unk_2(1);
 			showMessageFormat("\xC");		
 		}
@@ -1805,7 +1845,7 @@ void SimonState::o_177() {
 
 			talk_with_text(a,b,s,tv->a, tv->b,tv->c);
 		}
-	} else if (_game == GAME_SIMON2WIN) {
+	} else if (_game == GAME_SIMON2WIN || _game == GAME_SIMON2DOS) {
 		uint a = getVarOrByte();
 		uint b = getVarOrByte();
 		Child2 *child = findChildOfType2(getNextItemPtr());
@@ -2431,7 +2471,7 @@ void SimonState::o_setup_cond_c() {
 void SimonState::setup_cond_c_helper() {
 	HitArea *last;
 
-	if (_game == GAME_SIMON2WIN) {
+	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2DOS)) {
 		_mouse_cursor = 0;
 		if (_hitarea_unk_4!=999) {
 			_mouse_cursor = 9;
@@ -2497,7 +2537,7 @@ void SimonState::defocusHitarea() {
 	HitArea *last;
 	HitArea *ha;
 
-	if (_game == GAME_SIMON2WIN) {
+	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2DOS)) {
 		if (_bit_array[4]&0x8000) {
 			o_unk_120(202);
 			_last_hitarea_2_ptr = NULL;
@@ -2578,7 +2618,7 @@ void SimonState::showActionString(uint x, const byte *string) {
 void SimonState::hitareaChangedHelper() {
 	FillOrCopyStruct *fcs;
 
-	if (_game == GAME_SIMON2WIN) {
+	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2WIN)) {
 		if (_bit_array[4]&0x8000)
 			return;
 	}
@@ -3474,6 +3514,13 @@ void SimonState::o_print_str() {
 		speech_id = (uint16)getNextWord();
 		break;
 
+	case GAME_SIMON2DOS:
+		if (string_id != 0xFFFF)
+			string_ptr = getStringPtrByID(string_id);
+
+		speech_id = (uint16)getNextWord();
+		break;
+
 	case GAME_SIMON1DOS:
 		string_ptr = getStringPtrByID(string_id);
 		break;
@@ -3514,6 +3561,20 @@ void SimonState::o_print_str() {
 	case GAME_SIMON1DOS:
 		talk_with_text(num_1, num_2, (char*)string_ptr, tv->a, tv->b, tv->c);	
 		break;
+
+	case GAME_SIMON2DOS:
+		if (speech_id!=0 && num_1 == 1 && !_vk_t_toggle)
+			talk_with_speech(speech_id, num_1);
+
+		if (speech_id != 0 && !_vk_t_toggle)
+			return;
+
+		if (speech_id == 0)
+			o_unk_99_simon2(2, num_1+2);
+
+		talk_with_text(num_1, num_2, (char*)string_ptr, tv->a, tv->b, tv->c);	
+		break;		
+	
 
 	case GAME_SIMON2WIN:
 		if (speech_id!=0 && num_1 == 1 && !_vk_t_toggle)
@@ -3877,30 +3938,18 @@ void SimonState::run_vga_script() {
 		&SimonState::vc_50_clear_bit,
 		&SimonState::vc_51_clear_hitarea_bit_0x40,
 		&SimonState::vc_52,
-//#ifdef SIMON2
-//		NULL,
-//		NULL,
-//#endif
-//#ifdef SIMON1
 		&SimonState::vc_53_no_op,
 		&SimonState::vc_54_no_op,
-//#endif
 		&SimonState::vc_55_offset_hit_area,
 		&SimonState::vc_56_no_op,
 		&SimonState::vc_57_no_op,
-//#ifdef SIMON2
 		&SimonState::vc_58,
-//#endif
-//#ifdef SIMON1
-//		NULL,
-//#endif
 		&SimonState::vc_59,
 		&SimonState::vc_60,
 		&SimonState::vc_61_sprite_change,
 		&SimonState::vc_62,
 		&SimonState::vc_63,
 
-//#ifdef SIMON2
 		&SimonState::vc_64,
 		&SimonState::vc_65,
 		&SimonState::vc_66,
@@ -3912,7 +3961,6 @@ void SimonState::run_vga_script() {
 		&SimonState::vc_72,
 		&SimonState::vc_73,
 		&SimonState::vc_74,
-//#endif
 	};
 
 
@@ -5079,9 +5127,6 @@ void SimonState::vc_28() {
 }
 
 void SimonState::vc_29_stop_all_sounds() {
-	/* XXX: implement */
-//	warning("vc_29_stop_all_sounds unimplemented");
-	
 	_mixer->stop_all();
 }
 
@@ -7919,8 +7964,10 @@ void SimonState::go() {
 	sdl_buf = (byte*)calloc(320*200,1);
 	sdl_buf_attached = (byte*)calloc(320*200,1);
 
-	if (_game & GAME_SIMON2) {
-		gss = &simon2_settings;
+	if (_game == GAME_SIMON2WIN) {
+		gss = &simon2win_settings;
+	} else 	if (_game == GAME_SIMON2DOS) {
+		gss = &simon2dos_settings;	
 	} else {
 		gss = &simon1_settings;
 	}
@@ -8262,12 +8309,14 @@ void SimonState::initSound() {
 		_voice_file = fopen_maybe_lowercase(s);
 		if (_voice_file == NULL) {
 			warning("Cannot open voice file %s, trying %s",s,s2);
-
-			_voice_file = fopen_maybe_lowercase(s2);
-			if (_voice_file == NULL) {
-				warning("Cannot open voice file %s",s2);
+			if (s2) {
+				_voice_file = fopen_maybe_lowercase(s2);
+				if (_voice_file == NULL) {
+					warning("Cannot open voice file %s",s2);
+					return;
+				}
+			} else
 				return;
-			}
 		}
 
 		_voice_offsets = (uint32*)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
