@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "resource.h"
 
 
 void Scumm_v3::readIndexFile()
@@ -43,22 +44,22 @@ void Scumm_v3::readIndexFile()
 			break;
 
 		switch (blocktype) {
-		case 0x4E52:
+		case 0x4E52:	// 'NR'
 			fileReadWordLE();
 			break;
-		case 0x5230:
+		case 0x5230:	// 'R0'
 			_numRooms = fileReadWordLE();
 			break;
-		case 0x5330:
+		case 0x5330:	// 'S0'
 			_numScripts = fileReadWordLE();
 			break;
-		case 0x4E30:
+		case 0x4E30:	// 'N0'
 			_numSounds = fileReadWordLE();
 			break;
-		case 0x4330:
+		case 0x4330:	// 'C0'
 			_numCostumes = fileReadWordLE();
 			break;
-		case 0x4F30:
+		case 0x4F30:	// 'O0'
 			_numGlobalObjects = fileReadWordLE();
 			break;
 		}
@@ -98,27 +99,27 @@ void Scumm_v3::readIndexFile()
 
 		switch (blocktype) {
 
-		case 0x4E52:
+		case 0x4E52:	// 'NR'
 			fileSeek(_fileHandle, itemsize - 6, SEEK_CUR);
 			break;
 
-		case 0x5230:
+		case 0x5230:	// 'R0'
 			readResTypeList(rtRoom, MKID('ROOM'), "room");
 			break;
 
-		case 0x5330:
+		case 0x5330:	// 'S0'
 			readResTypeList(rtScript, MKID('SCRP'), "script");
 			break;
 
-		case 0x4E30:
+		case 0x4E30:	// 'N0'
 			readResTypeList(rtSound, MKID('SOUN'), "sound");
 			break;
 
-		case 0x4330:
+		case 0x4330:	// 'C0'
 			readResTypeList(rtCostume, MKID('COST'), "costume");
 			break;
 
-		case 0x4F30:
+		case 0x4F30:	// 'O0'
 			num = fileReadWordLE();
 			assert(num == _numGlobalObjects);
 			for (i = 0; i != num; i++) {

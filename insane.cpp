@@ -23,9 +23,9 @@
 #define NEED_SDL_HEADERS
 #endif
 
-
 #include "stdafx.h"
 #include "scumm.h"
+#include "smush.h"
 
 //#define SWAP2(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 #define MAX_STREAMER 10

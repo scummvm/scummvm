@@ -24,6 +24,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "smush.h"
 
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
@@ -1398,7 +1399,7 @@ void Scumm::o6_putActorInRoom()
 
 void Scumm::o6_putActorAtObject()
 {
-	int room, obj, x, y, dir;
+	int room, obj, x, y;
 	Actor *a;
 
 	obj = popRoomAndObj(&room);

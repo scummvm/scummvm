@@ -201,17 +201,6 @@ uint32 Scumm::fileReadDwordBE(void *handle)
 	return (b << 16) | a;
 }
 
-char *Scumm::Strdup(const char *s)
-{
-	if (s) {
-		int l = strlen(s) + 1;
-		char *r = (char *)malloc(l);
-		memcpy(r, s, l);
-		return r;
-	}
-	return NULL;
-}
-
 bool Scumm::checkFixedDisk()
 {
 	return true;
@@ -221,11 +210,14 @@ bool Scumm::checkFixedDisk()
 #ifdef NEED_STRDUP
 char *strdup(const char *s)
 {
-	int len = strlen(s) + 1;
-	char *d = (char *)malloc(len);
-	if (d)
-		memcpy(d, s, len);
-	return d;
+	if (s) {
+		int len = strlen(s) + 1;
+		char *d = (char *)malloc(len);
+		if (d)
+			memcpy(d, s, len);
+		return d;
+	}
+	return NULL;
 }
 #endif /* NEED_STRDUP */
 

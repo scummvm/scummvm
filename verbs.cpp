@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "object.h"
+#include "resource.h"
 
 void Scumm::redrawVerbs()
 {

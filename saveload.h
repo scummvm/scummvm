@@ -22,6 +22,16 @@
 #ifndef SAVELOAD_H
 #define SAVELOAD_H
 
+enum {
+	sleByte = 1,
+	sleUint8 = 1,
+	sleInt8 = 1,
+	sleInt16 = 2,
+	sleUint16 = 3,
+	sleInt32 = 4,
+	sleUint32 = 5
+};
+
 struct SaveLoadEntry {
 	uint32 offs;
 	uint8 type;

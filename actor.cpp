@@ -25,6 +25,7 @@
 #include "actor.h"
 #include "akos.h"
 #include "costume.h"
+#include "resource.h"
 
 #include <math.h>
 

@@ -21,8 +21,9 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "gui.h"
 #include "actor.h"
+#include "gui.h"
+#include "resource.h"
 
 void Scumm::getGraphicsPerformance()
 {

@@ -109,7 +109,7 @@ void GameDetector::updateconfig()
 			_noSubtitles = false;
 
 	if ((val = scummcfg->get("path")))
-		_gameDataPath = Scumm::Strdup(val);
+		_gameDataPath = strdup(val);
 
 	if ((val = scummcfg->get("sfx_volume")))
 		_sfx_volume = atoi(val);
@@ -459,9 +459,9 @@ char *GameDetector::getGameName()
 	if (_gameText == NULL) {
 		char buf[256];
 		sprintf(buf, "Unknown game: \"%s\"", _exe_name);
-		return Scumm::Strdup(buf);
+		return strdup(buf);
 	}
-	return Scumm::Strdup(_gameText);
+	return strdup(_gameText);
 }
 
 int GameDetector::detectMain(int argc, char **argv)
@@ -541,7 +541,7 @@ int GameDetector::detectMain(int argc, char **argv)
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming the data files are in the current directory");
-		_gameDataPath = Scumm::Strdup("");
+		_gameDataPath = strdup("");
 	} else if (_gameDataPath[strlen(_gameDataPath)-1] != '/'
 #ifdef __MORPHOS__
 					&& _gameDataPath[strlen(_gameDataPath)-1] != ':'

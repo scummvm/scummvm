@@ -482,7 +482,7 @@ An example config file is as follows:
         [scummvm]
         gfx_mode=supereagle
         fullscreen=true
-		savepath=C:\saves\
+        savepath=C:\saves\
 
         [tentacle]
         path=C:\tentacle\

@@ -23,6 +23,15 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "resource.h"
+
+/* Script status type (slot.status) */
+enum {
+	ssDead = 0,
+	ssPaused = 1,
+	ssRunning = 2
+};
+
 
 /* Start executing script 'script' with parameters 'a' and 'b' */
 void Scumm::runScript(int script, int a, int b, int16 *lvarptr)

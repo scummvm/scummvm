@@ -68,7 +68,7 @@ private:
 	int nkeys;
 };
 
-hashconfig::hashconfig (const char *dom):domain(dom ? Scumm::Strdup(dom) : 0),
+hashconfig::hashconfig (const char *dom):domain(dom ? strdup(dom) : 0),
 keys(0), values(0), nkeys(0)
 {
 }
@@ -102,15 +102,15 @@ const char *hashconfig::set(const char *key, const char *value)
 	for (i = 0; i < nkeys; i++) {
 		if (!strcmp(key, keys[i])) {
 			xfree(values[i]);
-			return values[i] = value ? Scumm::Strdup(value) : 0;
+			return values[i] = value ? strdup(value) : 0;
 		}
 	}
 
 	nkeys++;
 	keys = (char **)realloc(keys, nkeys * sizeof(char *));
 	values = (char **)realloc(values, nkeys * sizeof(char *));
-	keys[nkeys - 1] = Scumm::Strdup(key);
-	return values[nkeys - 1] = value ? Scumm::Strdup(value) : 0;
+	keys[nkeys - 1] = strdup(key);
+	return values[nkeys - 1] = value ? strdup(value) : 0;
 }
 
 const char *hashconfig::getdomain() const
@@ -138,7 +138,7 @@ void hashconfig::flush(FILE *cfg_file) const
 void hashconfig::rename(const char *d)
 {
 	xfree(domain);
-	domain = d ? Scumm::Strdup(d) : 0;
+	domain = d ? strdup(d) : 0;
 }
 
 void hashconfig::merge(const hashconfig *h)
@@ -153,7 +153,7 @@ void hashconfig::merge(const hashconfig *h)
 // The config-class itself.
 
 Config::Config (const char *cfg, const char *d)
-: filename(Scumm::Strdup(cfg)), domain(d ? Scumm::Strdup(d) : 0), hash(0), ndomains(0), willwrite(false)
+: filename(strdup(cfg)), domain(d ? strdup(d) : 0), hash(0), ndomains(0), willwrite(false)
 {
 	FILE *cfg_file;
 	char t[MAXLINELEN];
@@ -279,7 +279,7 @@ void Config::set_domain(const char *d)
 {
 	int i;
 	xfree(domain);
-	domain = d ? Scumm::Strdup(d) : 0;
+	domain = d ? strdup(d) : 0;
 
 	for (i = 0; i < ndomains; i++) {
 		if (hash[i]->is_domain(domain))
@@ -346,7 +346,7 @@ void Config::delete_domain(const char *d)
 void Config::change_filename(const char *f)
 {
 	xfree(filename);
-	filename = f ? Scumm::Strdup(f) : 0;
+	filename = f ? strdup(f) : 0;
 }
 
 void Config::merge_config(const Config *c)

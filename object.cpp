@@ -23,6 +23,8 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "object.h"
+#include "resource.h"
 
 bool Scumm::getClass(int obj, int cls)
 {
@@ -807,7 +809,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	if (findWhat & foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
 		fo->obcd = obcdptr = getOBCDFromObject(id);
 		assert((byte *)obcdptr > (byte *)256);
-		fo->obim = obimptr = obcdptr + READ_BE_UINT32_UNALIGNED(&((ResHdr *)obcdptr)->size);
+		fo->obim = obimptr = obcdptr + RES_SIZE(obcdptr);
 		fo->cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
 		fo->imhd = (ImageHeader *)findResourceData(MKID('IMHD'), obimptr);
 		return;

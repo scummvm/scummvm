@@ -102,7 +102,7 @@ bool ScummDebugger::do_command()
 			printf("Current room: %d [%d]\n", _s->_currentRoom, _s->_roomResource);
 		} else {
 			int room = atoi(_parameters);
-			_s->actor[_s->_vars[_s->VAR_EGO]].room = room;
+			_s->_actors[_s->_vars[_s->VAR_EGO]].room = room;
 			_s->startScene(room, 0, 0);
 			_s->_fullRedraw = 1;
 		}
@@ -286,7 +286,7 @@ void ScummDebugger::printActors(int act)
 	printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
 	for (i = 1; i < _s->NUM_ACTORS; i++) {
 		if (act == -1 || act == i) {
-			a = &_s->actor[i];
+			a = &_s->_actors[i];
 			if (a->visible)
 				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|\n",
 							 i, a->room, a->x, a->y, a->elevation, a->costume, a->width,

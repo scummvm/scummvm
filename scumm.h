@@ -41,6 +41,7 @@ class IMuse;
 class Actor;
 struct ScummDebugger;
 struct Serializer;
+struct FindObjectInRoom;
 
 typedef void (Scumm::*OpcodeProc)();
 
@@ -66,13 +67,6 @@ enum {
     KEY_SET_OPTIONS = 3456 // WinCE
 };
 
-/* Script status type (slot.status) */
-enum {
-	ssDead = 0,
-	ssPaused = 1,
-	ssRunning = 2
-};
-
 struct ScummPoint {
 	int x, y;
 };
@@ -80,97 +74,6 @@ struct ScummPoint {
 struct MemBlkHeader {
 	uint32 size;
 };
-
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif	
-
-struct ResHdr {
-	uint32 tag, size;
-} GCC_PACK;
-
-#define RES_DATA(x) (((byte*)x) + sizeof(ResHdr))
-#define RES_SIZE(x) ( READ_BE_UINT32_UNALIGNED(&((ResHdr*)x)->size) )
-
-
-struct RoomHeader {
-	union {
-		struct {
-			uint32 version;
-			uint16 width, height;
-			uint16 numObjects;
-		} GCC_PACK v7;
-		struct {
-			uint16 width, height;
-			uint16 numObjects;
-		} GCC_PACK old;
-	} GCC_PACK;
-} GCC_PACK;
-
-struct CodeHeader {
-	union {
-		struct {
-			uint16 obj_id;
-			byte x, y, w, h;
-			byte flags;
-			byte parent;
-			int16 walk_x;
-			int16 walk_y;
-			byte actordir;
-		} GCC_PACK v5;
-
-		struct {
-			uint16 obj_id;
-			int16 x, y;
-			uint16 w, h;
-			byte flags, parent;
-			uint16 unk1;
-			uint16 unk2;
-			byte actordir;
-		} GCC_PACK v6;
-
-		struct {
-			uint32 version;
-			uint16 obj_id;
-			byte parent;
-			byte parentstate;
-		} GCC_PACK v7;
-							
-	} GCC_PACK;
-} GCC_PACK;
-
-struct ImageHeader { /* file format */
-	union {
-		struct {
-			uint16 obj_id;
-			uint16 unk[5];
-			uint16 width;
-			uint16 height;
-			uint16 unk_2;
-			struct {
-				int16 x, y;
-			} GCC_PACK hotspot[15];
-		} GCC_PACK old;
-
-		struct {
-			uint32 version;
-			uint16 obj_id;
-			uint16 unk[1];
-			int16 x_pos, y_pos;
-			uint16 width, height;
-			byte unk2[3];
-			byte actordir;
-			uint16 unk_2;
-			struct {
-				int16 x, y;
-			} GCC_PACK hotspot[15];
-		} GCC_PACK v7;
-	} GCC_PACK;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
 
 struct VerbSlot {
 	int16 x, y;
@@ -221,16 +124,6 @@ struct NestedScript {
 	uint8 slot;
 };
  
-enum {
-	sleByte = 1,
-	sleUint8 = 1,
-	sleInt8 = 1,
-	sleInt16 = 2,
-	sleUint16 = 3,
-	sleInt32 = 4,
-	sleUint32 = 5
-};
-
 enum ResTypes {
 	rtFirst = 1,
 	rtRoom = 1,
@@ -263,23 +156,10 @@ enum {
 };
 
 enum {
-	OF_OWNER_MASK = 0x0F,
-	OF_STATE_MASK = 0xF0,
-	
-	OF_STATE_SHL = 4
-};
-
-enum {
 	MBS_LEFT_CLICK = 0x8000,
 	MBS_RIGHT_CLICK = 0x4000,
 	MBS_MOUSE_MASK = (MBS_LEFT_CLICK | MBS_RIGHT_CLICK),
 	MBS_MAX_KEY	= 0x0200
-};
-
-enum {
-	RF_LOCK = 0x80,
-	RF_USAGE = 0x7F,
-	RF_USAGE_MAX = RF_USAGE
 };
 
 #define _maxRooms res.num[rtRoom]
@@ -443,7 +323,6 @@ enum MouseButtonStatus {
 
 #include "gfx.h"
 #include "boxes.h"
-#include "smush.h"
 
 class Scumm {
 public:
@@ -540,7 +419,7 @@ public:
 	/* Core class/array definitions */
 	Gdi gdi;
 
-	Actor *actor;	// Has MAX_ACTORS elements, see init.cpp
+	Actor *_actors;	// Has MAX_ACTORS elements, see init.cpp
 	
 	uint16 *_inventory;
 	byte *_arrays;
@@ -750,19 +629,6 @@ public:
 
 	/* Should be in Object class */
 	byte OF_OWNER_ROOM;
-	struct FindObjectInRoom {
-		CodeHeader *cdhd;
-		byte *obcd;
-		ImageHeader *imhd;
-		byte *obim;
-		byte *roomptr;
-	};
-
-	enum FindObjectWhat {
-		foCodeHeader = 1,
-		foImageHeader = 2,
-		foCheckAlreadyLoaded = 4
-	};
 	int getInventorySlot();
 	void SamInventoryHack(int obj);	// FIXME: Sam and Max hack
 	int findInventory(int owner, int index);
@@ -918,7 +784,7 @@ public:
 	/* Should be in Actor class */
 	Actor *derefActor(int id);
 	Actor *derefActorSafe(int id, const char *errmsg);
-	Actor *getFirstActor() {return actor;} 
+	Actor *getFirstActor() { return _actors; } 
 	void putActor(Actor *a, int x, int y, byte room);
 	void showActors();
 
@@ -1185,8 +1051,6 @@ public:
 	uint fileReadWordBE();
 	uint fileReadWordLE(void *handle);
 	uint fileReadWordBE(void *handle);
-
-	static char *Strdup(const char *);
 
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
@@ -1621,11 +1485,8 @@ struct ScummDebugger {
 	void printScripts();
 };
 
-extern const uint32 IMxx_tags[];
-extern const byte default_scale_table[768];
 extern uint16 _debugLevel;
 
-void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
 //void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
 
@@ -1639,11 +1500,5 @@ void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
 void blit(byte *dst, byte *src, int w, int h);
-byte *findResource(uint32 tag, byte *searchin, int index);
-byte *findResourceSmall(uint32 tag, byte *searchin, int index);
-byte *findResource(uint32 tag, byte *searchin);
-byte *findResourceSmall(uint32 tag, byte *searchin);
-void setWindowName(Scumm *s);
-uint16 newTag2Old(uint32 oldTag);
 
 #endif

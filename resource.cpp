@@ -22,7 +22,13 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "resource.h"
+
 #include <stdio.h>
+
+
+uint16 newTag2Old(uint32 oldTag);
+
 
 /* Open a room */
 void Scumm::openRoom(int room)

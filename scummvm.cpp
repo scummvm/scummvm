@@ -24,11 +24,13 @@
 #include "scumm.h"
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
-#include "gui.h"
-#include "string.h"
-#include "gameDetector.h"
 #include "actor.h"
-#include"newgui.h"
+#include "gameDetector.h"
+#include "gui.h"
+#include "newgui.h"
+#include "object.h"
+#include "resource.h"
+#include "string.h"
 
 int autosave(int interval)	/* Not in class to prevent being bound */
 {
@@ -78,7 +80,7 @@ void Scumm::scummInit()
 	setupCursor();
 
 	/* Allocate and initilise actors */
-	actor = new Actor[MAX_ACTORS];
+	_actors = new Actor[MAX_ACTORS];
 	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
 		a->number = i;
 		a->initActorClass(this);
@@ -260,9 +262,7 @@ int Scumm::scummLoop(int delta)
 				_vars[VAR_MI1_TIMER] += 6;
 			}				
 		}
-	} else if (_features & GF_OLD256)
-
-	{
+	} else if (_features & GF_OLD256) {
 
 		if(tempMusic == 3) {
 			tempMusic = 0;
@@ -1027,7 +1027,7 @@ void Scumm::convertKeysToClicks()
 
 Actor *Scumm::derefActor(int id)
 {
-	return &actor[id];
+	return &_actors[id];
 }
 
 Actor *Scumm::derefActorSafe(int id, const char *errmsg)

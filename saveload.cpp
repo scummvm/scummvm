@@ -26,6 +26,7 @@
 #include "sound/imuse.h"
 #include "actor.h"
 #include "config-file.h"
+#include "resource.h"
 #include "saveload.h"
 
 struct SaveGameHeader {
@@ -622,7 +623,7 @@ void Scumm::saveOrLoad(Serializer *s)
 	else
 		s->saveLoadEntries(this, mainEntriesV8);
 
-	s->saveLoadArrayOf(actor, NUM_ACTORS, sizeof(actor[0]), actorEntries);
+	s->saveLoadArrayOf(_actors, NUM_ACTORS, sizeof(_actors[0]), actorEntries);
 
 	if (_current_version < VER_V9)
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
