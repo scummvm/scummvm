@@ -49,7 +49,7 @@ static const char USAGE_STRING[] =
 	"\t-p<path>   - look for game in <path>\n"
 	"\t-x[<num>]  - load this savegame (default: 0 - autosave)\n"
 	"\t-f         - fullscreen mode\n"
-	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,tv2x,dotmatrix)\n"
+	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,advmame3x,tv2x,dotmatrix)\n"
 	"\t-e<mode>   - set music engine (see README for details)\n"
 	"\t-a         - specify game is amiga version\n"
 	"\t-q<lang>   - specify language (en,de,fr,it,pt,es,ja,zh,ko,hb)\n"
@@ -90,6 +90,7 @@ static const struct GraphicsMode gfx_modes[] = {
 	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
 	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
+	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
 #else
@@ -553,12 +554,12 @@ bool GameDetector::parseMusicDriver(const char *s) {
 
 bool GameDetector::detectGame() {
 	const VersionSettings *gnl = version_settings;
-	char *realGame;
+	const char *realGame;
 	_gameId = 0;
 	_gameText.clear();
 
-	if (!(realGame = (char *)g_config->get("gameid")))
-		realGame = (char *)_gameFileName.c_str();
+	if (!(realGame = g_config->get("gameid")))
+		realGame = _gameFileName.c_str();
 	printf("Looking for %s\n", realGame);
 
 	do {
