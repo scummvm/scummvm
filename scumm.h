@@ -26,7 +26,6 @@
 #include "scummsys.h"
 #include "system.h"
 #include "sound/mixer.h"
-#include "config-file.h"
 
 #define SCUMMVM_VERSION "0.2.0 Release"
 #define SCUMMVM_CVS "051302"

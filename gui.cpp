@@ -25,6 +25,7 @@
 #include "sound/imuse.h"
 #include "gui.h"
 #include "guimaps.h"
+#include "config-file.h"
 
 #ifdef _WIN32_WCE
 // Additional variables for WinCE specific GUI

@@ -26,6 +26,7 @@
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
 #include "gameDetector.h"
+#include "config-file.h"
 
 
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
