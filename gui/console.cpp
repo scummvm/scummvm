@@ -49,9 +49,9 @@ enum {
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
 ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
-	: Dialog(0, 0, 1, 1), 
+	: Dialog(0, 0, 1, 1),
 	_widthPercent(widthPercent), _heightPercent(heightPercent) {
-	
+
 	// Setup basic layout/dialog size
 	reflowLayout();
 
@@ -111,10 +111,13 @@ void ConsoleDialog::slideUpAndClose() {
 }
 
 void ConsoleDialog::open() {
+	// disable scaling because the console is using non fixed positions
+	g_gui.enableScaling(false);
+
 	// Initiate sliding the console down. We do a very simple trick to achieve
 	// this effect: we simply move the console dialog just above (outside) the
 	// visible screen area, then shift it down in handleTickle() over a
-	// certain period of time. 
+	// certain period of time.
 	_y = -_h;
 	_slideTime = g_system->getMillis();
 	_slideMode = kDownSlideMode;
@@ -165,7 +168,7 @@ void ConsoleDialog::handleTickle() {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
 	}
-	
+
 	// Perform the "slide animation".
 	if (_slideMode != kNoSlideMode) {
 		const float tmp = (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration;
@@ -174,7 +177,7 @@ void ConsoleDialog::handleTickle() {
 		} else {
 			_y = (int)(_h * (tmp - 1.0));
 		}
-		
+
 		if (_slideMode == kDownSlideMode && _y > 0) {
 			// End the slide
 			_slideMode = kNoSlideMode;
@@ -195,7 +198,7 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
 
 void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	int i;
-	
+
 	if (_slideMode != kNoSlideMode)
 		return;
 
@@ -204,7 +207,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	case '\r': {
 		if (_caretVisible)
 			drawCaret(true);
-			
+
 		nextLine();
 
 		assert(_promptEndPos >= _promptStartPos);
@@ -217,7 +220,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			// We have to allocate the string buffer with new, since VC++ sadly does not
 			// comply to the C++ standard, so we can't use a dynamic sized stack array.
 			char *str = new char[len + 1];
-	
+
 			// Copy the user input to str
 			for (i = 0; i < len; i++)
 				str[i] = buffer(_promptStartPos + i);

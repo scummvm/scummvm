@@ -35,7 +35,7 @@ enum TextAlignment {
 
 /**
  * Instances of this class represent a distinct font, with a built-in renderer.
- * @todo Maybe move the high-level methods (drawString etc.) to a separate 
+ * @todo Maybe move the high-level methods (drawString etc.) to a separate
  *       FontRenderer class? That way, we could have different variants... ?
  * @todo Add more parameters to drawString, or additional similar methods,
  *       featuring abilities like
@@ -52,9 +52,9 @@ public:
 	virtual int getMaxCharWidth() const = 0;
 
 	virtual int getCharWidth(byte chr) const = 0;
-	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color) const = 0;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, bool scale = false) const = 0;
 
-	void drawString(const Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(const Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true, bool scale = false) const;
 	int getStringWidth(const Common::String &str) const;
 };
 
@@ -65,7 +65,7 @@ public:
 	virtual int getMaxCharWidth() const { return 8; };
 
 	virtual int getCharWidth(byte chr) const;
-	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color) const;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, bool scale) const;
 };
 
 extern const ScummFont g_scummfont;
@@ -96,12 +96,12 @@ protected:
 
 public:
 	NewFont(const FontDesc &d) : desc(d) {}
-	
+
 	virtual int getFontHeight() const { return desc.height; }
 	virtual int getMaxCharWidth() const { return desc.maxwidth; };
 
 	virtual int getCharWidth(byte chr) const;
-	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color) const;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, bool scale) const;
 };
 
 extern const NewFont g_sysfont;

@@ -20,6 +20,7 @@
 
 #include "common/stdafx.h"
 #include "graphics/font.h"
+#include "gui/newgui.h"
 
 namespace Graphics {
 
@@ -36,8 +37,11 @@ int NewFont::getCharWidth(byte chr) const {
 	return desc.width[chr - desc.firstchar];
 }
 
-void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color) const {
+void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color, bool scale) const {
 	assert(dst != 0);
+	const int scaleFactor = scale ? g_gui.getScaleFactor() : 1;
+	tx *= scaleFactor; ty *= scaleFactor;
+
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
 
 	assert(desc.bits != 0 && desc.maxwidth <= 16);
@@ -54,16 +58,30 @@ void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 colo
 	chr -= desc.firstchar;
 	const bitmap_t *tmp = desc.bits + (desc.offset ? desc.offset[chr] : (chr * desc.height));
 
-	for (int y = 0; y < desc.height; y++, ptr += dst->pitch) {
-		const bitmap_t buffer = *tmp++;
+	for (int y = 0; y < desc.height * scaleFactor; y++, ptr += dst->pitch) {
+		const bitmap_t *buffer = 0;
+		if(scaleFactor != 1) {
+			if(!(y % 2))
+				buffer = tmp++;
+			else
+				buffer = tmp;
+		} else
+			buffer = tmp++;
 		bitmap_t mask = 0x8000;
 		if (ty + y < 0 || ty + y >= dst->h)
 			continue;
-		
-		for (int x = 0; x < w; x++, mask >>= 1) {
+
+		for (int x = 0; x < w * scaleFactor; x++) {
+			if(scaleFactor != 1) {
+				if(!(x % 2) && x != 0)
+					mask >>= 1;
+			} else if(x != 0) {
+				mask >>= 1;
+			}
+
 			if (tx + x < 0 || tx + x >= dst->w)
 				continue;
-			if ((buffer & mask) != 0) {
+			if ((*buffer & mask) != 0) {
 				if (dst->bytesPerPixel == 1)
 					ptr[x] = color;
 				else if (dst->bytesPerPixel == 2)
@@ -85,13 +103,13 @@ int Font::getStringWidth(const Common::String &str) const {
 	return space;
 }
 
-void Font::drawString(const Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis) const {
+void Font::drawString(const Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis, bool scale) const {
 	assert(dst != 0);
 	const int leftX = x, rightX = x + w;
 	uint i;
 	int width = getStringWidth(s);
 	Common::String str;
-	
+
 	if (useEllipsis && width > w) {
 		// String is too wide. So we shorten it "intellegently", by replacing
 		// parts of it by an ellipsis ("..."). There are three possibilities
@@ -100,12 +118,12 @@ void Font::drawString(const Surface *dst, const Common::String &s, int x, int y,
 		// make this configurable, replacing the middle probably is a good
 		// compromise.
 		const int ellipsisWidth = getStringWidth("...");
-		
+
 		// SLOW algorithm to remove enough of the middle. But it is good enough
 		// for now.
 		const int halfWidth = (w - ellipsisWidth) / 2;
 		int w2 = 0;
-		
+
 		for (i = 0; i < s.size(); ++i) {
 			int charWidth = getCharWidth(s[i]);
 			if (w2 + charWidth > halfWidth)
@@ -116,7 +134,7 @@ void Font::drawString(const Surface *dst, const Common::String &s, int x, int y,
 		// At this point we know that the first 'i' chars are together 'w2'
 		// pixels wide. We took the first i-1, and add "..." to them.
 		str += "...";
-		
+
 		// The original string is width wide. Of those we already skipped past
 		// w2 pixels, which means (width - w2) remain.
 		// The new str is (w2+ellipsisWidth) wide, so we can accomodate about
@@ -150,7 +168,7 @@ void Font::drawString(const Surface *dst, const Common::String &s, int x, int y,
 		if (x+w > rightX)
 			break;
 		if (x >= leftX)
-			drawChar(dst, str[i], x, y, color);
+			drawChar(dst, str[i], x, y, color, scale);
 		x += w;
 	}
 }

@@ -52,7 +52,7 @@ typedef Common::FixedStack<Dialog *> DialogStack;
 
 /**
  * GUI manager singleton.
- */ 
+ */
 class NewGui : public Common::Singleton<NewGui> {
 	typedef Common::String String;
 	friend class Dialog;
@@ -66,16 +66,22 @@ public:
 
 	bool isActive()	{ return ! _dialogStack.empty(); }
 
+	int getScaleFactor() { return _scaleFactor; }
+	void enableScaling(bool enable) { _scaleEnable = enable; updateScaleFactor(); }
+
 protected:
-	OSystem		*_system;
-	Graphics::Surface		_screen;
+	OSystem			*_system;
+	Graphics::Surface	_screen;
 	int			_screenPitch;
-	
+
+	int			_scaleFactor;
+	bool			_scaleEnable;
+
 	bool		_needRedraw;
 	DialogStack	_dialogStack;
-	
+
 	bool		_stateIsSaved;
-	
+
 	// for continuous events (keyDown)
 	struct {
 		uint16 ascii;
@@ -83,30 +89,31 @@ protected:
 		int keycode;
 	} _currentKeyDown;
 	uint32		_keyRepeatTime;
-	
+
 	// position and time of last mouse click (used to detect double clicks)
 	struct {
 		int16 x, y;	// Position of mouse when the click occured
 		uint32 time;	// Time
 		int count;	// How often was it already pressed?
 	} _lastClick;
-	
+
 	// mouse cursor state
 	bool		_oldCursorMode;
-	int			_cursorAnimateCounter;
-	int			_cursorAnimateTimer;
+	int		_cursorAnimateCounter;
+	int		_cursorAnimateTimer;
 	byte		_cursor[2048];
 
 	void saveState();
 	void restoreState();
-	
+
 	void openDialog(Dialog *dialog);
 	void closeTopDialog();
-	
+
 	void loop();
 
 	void animateCursor();
 	void updateColors();
+	void updateScaleFactor();
 
 	OverlayColor *getBasePtr(int x, int y);
 
@@ -116,7 +123,7 @@ public:
 	OverlayColor _bgcolor;
 	OverlayColor _textcolor;
 	OverlayColor _textcolorhi;
-	
+
 	// Font
 	const Graphics::Font &getFont() const;
 

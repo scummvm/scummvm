@@ -29,7 +29,7 @@ namespace GUI {
 
 /*
  * TODO list
- * - add some sense of the window being "active" (i.e. in front) or not. If it 
+ * - add some sense of the window being "active" (i.e. in front) or not. If it
  *   was inactive and just became active, reset certain vars (like who is focused).
  *   Maybe we should just add lostFocus and receivedFocus methods to Dialog, just
  *   like we have for class Widget?
@@ -98,7 +98,7 @@ void Dialog::draw() {
 }
 
 void Dialog::drawDialog() {
-	
+
 	if (!isVisible())
 		return;
 
@@ -117,9 +117,12 @@ void Dialog::drawDialog() {
 }
 
 void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
+	x /= g_gui.getScaleFactor(); y /= g_gui.getScaleFactor();
+
 	Widget *w;
+
 	w = findWidget(x, y);
-	
+
 	_dragWidget = w;
 
 	// If the click occured inside a widget which is not the currently
@@ -141,11 +144,13 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
+	x /= g_gui.getScaleFactor(); y /= g_gui.getScaleFactor();
+
 	Widget *w;
 
 	if (_focusedWidget) {
 		//w = _focusedWidget;
-		
+
 		// Lose focus on mouseup unless the widget requested to retain the focus
 		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS )) {
 			releaseFocus();
@@ -161,6 +166,8 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void Dialog::handleMouseWheel(int x, int y, int direction) {
+	x /= g_gui.getScaleFactor(); y /= g_gui.getScaleFactor();
+
 	Widget *w;
 
 	// This may look a bit backwards, but I think it makes more sense for
@@ -212,16 +219,18 @@ void Dialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 }
 
 void Dialog::handleMouseMoved(int x, int y, int button) {
+	x /= g_gui.getScaleFactor(); y /= g_gui.getScaleFactor();
+
 	Widget *w;
-	
+
 	//if (!button)
 	//	_dragWidget = 0;
-	
+
 	if (_focusedWidget && !_dragWidget) {
 		w = _focusedWidget;
 		int wx = w->getAbsX() - _x;
 		int wy = w->getAbsY() - _y;
-		
+
 		// We still send mouseEntered/Left messages to the focused item
 		// (but to no other items).
 		bool mouseInFocusedWidget = (x >= wx && x < wx + w->_w && y >= wy && y < wy + w->_h);
@@ -237,7 +246,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 
 		w->handleMouseMoved(x - wx, y - wy, button);
 	}
-	
+
 	// While a "drag" is in process (i.e. mouse is moved while a button is pressed),
 	// only deal with the widget in which the click originated.
 	if (_dragWidget)
@@ -251,7 +260,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 		if (w)
 			w->handleMouseEntered(button);
 		_mouseWidget = w;
-	} 
+	}
 
 	if (w && (w->getFlags() & WIDGET_TRACK_MOUSE)) {
 		w->handleMouseMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button);

@@ -41,7 +41,7 @@ namespace GUI {
  * - allow multi line (l/c/r aligned) text via StaticTextWidget ?
  * - add "close" widget to all dialogs (with a flag to turn it off) ?
  * - make dialogs "moveable" ?
- * - come up with a new look & feel / theme for the GUI 
+ * - come up with a new look & feel / theme for the GUI
  * - ...
  */
 
@@ -54,9 +54,9 @@ enum {
 
 
 // Constructor
-NewGui::NewGui() : _needRedraw(false),
+NewGui::NewGui() : _scaleEnable(true), _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
-	
+
 	_system = &OSystem::instance();
 
 	// Clear the cursor
@@ -64,6 +64,9 @@ NewGui::NewGui() : _needRedraw(false),
 
 	// Reset key repeat
 	_currentKeyDown.keycode = 0;
+
+	// updates the scaling factor
+	updateScaleFactor();
 }
 
 void NewGui::updateColors() {
@@ -75,17 +78,32 @@ void NewGui::updateColors() {
 	_textcolorhi = _system->RGBToColor(0, 255, 0);
 }
 
+void NewGui::updateScaleFactor() {
+	if(!_scaleEnable) {
+		_scaleFactor = 1;
+		return;
+	}
+
+	enum {
+		kDefaultGUIWidth = 320,
+		kDefaultGUIHeight = 200
+	};
+
+	_scaleFactor = MIN(_system->getWidth() / kDefaultGUIWidth, _system->getHeight() / kDefaultGUIHeight);
+}
+
 void NewGui::runLoop() {
 	Dialog *activeDialog = _dialogStack.top();
 	bool didSaveState = false;
 
 	if (activeDialog == 0)
 		return;
-	
+
 	// Setup some default GUI colors. Normally this will be done whenever an
 	// EVENT_SCREEN_CHANGED is received. However, not yet all backends support
 	// that event, so we also do it "manually" whenever a run loop is entered.
 	updateColors();
+	updateScaleFactor();
 
 	if (!_stateIsSaved) {
 		saveState();
@@ -106,7 +124,7 @@ void NewGui::runLoop() {
 		}
 
 		animateCursor();
-		_system->updateScreen();		
+		_system->updateScreen();
 
 		OSystem::Event event;
 		uint32 time = _system->getMillis();
@@ -131,7 +149,7 @@ void NewGui::runLoop() {
 					_currentKeyDown.keycode = 0;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
-				activeDialog->handleMouseMoved(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 0);
+				activeDialog->handleMouseMoved(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), 0);
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
 			case OSystem::EVENT_LBUTTONDOWN:
@@ -146,23 +164,24 @@ void NewGui::runLoop() {
 					_lastClick.count = 1;
 				}
 				_lastClick.time = time;
-				activeDialog->handleMouseDown(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
+				activeDialog->handleMouseDown(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), 1, _lastClick.count);
 				break;
 			case OSystem::EVENT_LBUTTONUP:
 			case OSystem::EVENT_RBUTTONUP:
-				activeDialog->handleMouseUp(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
+				activeDialog->handleMouseUp(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), 1, _lastClick.count);
 				break;
 			case OSystem::EVENT_WHEELUP:
-				activeDialog->handleMouseWheel(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, -1);
+				activeDialog->handleMouseWheel(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), -1);
 				break;
 			case OSystem::EVENT_WHEELDOWN:
-				activeDialog->handleMouseWheel(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1);
+				activeDialog->handleMouseWheel(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), 1);
 				break;
 			case OSystem::EVENT_QUIT:
 				_system->quit();
 				return;
 			case OSystem::EVENT_SCREEN_CHANGED:
 				updateColors();
+				updateScaleFactor();
 				activeDialog->handleScreenChanged();
 				break;
 			}
@@ -180,7 +199,7 @@ void NewGui::runLoop() {
 		// Delay for a moment
 		_system->delayMillis(10);
 	}
-	
+
 	if (didSaveState)
 		restoreState();
 }
@@ -212,6 +231,7 @@ void NewGui::saveState() {
 	_lastClick.count = 0;
 
 	_stateIsSaved = true;
+	_scaleEnable = true;
 }
 
 void NewGui::restoreState() {
@@ -224,7 +244,7 @@ void NewGui::restoreState() {
 	}
 
 	_system->updateScreen();
-	
+
 	_stateIsSaved = false;
 }
 
@@ -270,20 +290,20 @@ void NewGui::box(int x, int y, int width, int height, OverlayColor colorA, Overl
 }
 
 void NewGui::hLine(int x, int y, int x2, OverlayColor color) {
-	_screen.hLine(x, y, x2, color);
+	_screen.hLine(x * _scaleFactor, y * _scaleFactor, x2 * _scaleFactor, color);
 }
 
 void NewGui::vLine(int x, int y, int y2, OverlayColor color) {
-	_screen.vLine(x, y, y2, color);
+	_screen.vLine(x * _scaleFactor, y * _scaleFactor, y2 * _scaleFactor, color);
 }
 
 void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level) {
 #ifdef NEWGUI_256
 	fillRect(x, y, w, h, color);
 #else
-	Common::Rect rect(x, y, x + w, y + h);
+	Common::Rect rect(x * _scaleFactor, y * _scaleFactor, (x + w) * _scaleFactor, (y + h) * _scaleFactor);
 	rect.clip(_screen.w, _screen.h);
-	
+
 	if (!rect.isValidRect())
 		return;
 
@@ -311,17 +331,17 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 }
 
 void NewGui::fillRect(int x, int y, int w, int h, OverlayColor color) {
-	_screen.fillRect(Common::Rect(x, y, x+w, y+h), color);
+	_screen.fillRect(Common::Rect(x * _scaleFactor, y * _scaleFactor, (x+w) * _scaleFactor, (y+h) * _scaleFactor), color);
 }
 
 void NewGui::frameRect(int x, int y, int w, int h, OverlayColor color) {
-	_screen.frameRect(Common::Rect(x, y, x+w, y+h), color);
+	_screen.frameRect(Common::Rect(x * _scaleFactor, y * _scaleFactor, (x+w) * _scaleFactor, (y+h) * _scaleFactor), color);
 }
 
 void NewGui::addDirtyRect(int x, int y, int w, int h) {
-	Common::Rect rect(x, y, x + w, y + h);
+	Common::Rect rect(x * _scaleFactor, y * _scaleFactor, (x + w) * _scaleFactor, (y + h) * _scaleFactor);
 	rect.clip(_screen.w, _screen.h);
-	
+
 	if (!rect.isValidRect())
 		return;
 
@@ -335,7 +355,7 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color, const Graphics::Font *font) {
 	if (font == 0)
 		font = &getFont();
-	font->drawChar(&_screen, chr, xx, yy, color);
+	font->drawChar(&_screen, chr, xx, yy, color, _scaleEnable);
 }
 
 int NewGui::getStringWidth(const String &str) {
@@ -347,24 +367,31 @@ int NewGui::getCharWidth(byte c) {
 }
 
 void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
+	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis, _scaleEnable);
 }
 
 //
 // Draw an 8x8 bitmap at location (x,y)
 //
 void NewGui::drawBitmap(uint32 *bitmap, int tx, int ty, OverlayColor color, int h) {
+	tx *= _scaleFactor; ty *= _scaleFactor;
+	h *= _scaleFactor;
 	OverlayColor *ptr = getBasePtr(tx, ty);
 
 	for (int y = 0; y < h; y++, ptr += _screenPitch) {
 		uint32 mask = 0xF0000000;
 		if (ty + y < 0 || ty + y >= _screen.h)
 			continue;
-		for (int x = 0; x < 8; x++, mask >>= 4) {
+		for (int x = 0; x < 8 * _scaleFactor; x++) {
+			if(!(x % 2) && _scaleFactor != 1 && x != 0)
+				mask >>= 4;
+			else if(_scaleFactor == 1)
+				mask >>= 4;
+
 			if (tx + x < 0 || tx + x >= _screen.w)
 				continue;
-			if (bitmap[y] & mask)
-				ptr[x] = color;
+			if (bitmap[y / _scaleFactor] & mask)
+					ptr[x] = color;
 		}
 	}
 }
@@ -374,19 +401,19 @@ void NewGui::drawBitmap(uint32 *bitmap, int tx, int ty, OverlayColor color, int 
 // We could plug in a different cursor here if we like to.
 //
 void NewGui::animateCursor() {
-	int time = _system->getMillis(); 
+	int time = _system->getMillis();
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		const byte colors[4] = { 15, 15, 7, 8 };
 		const byte color = colors[_cursorAnimateCounter];
 		int i;
-		
+
 		for (i = 0; i < 15; i++) {
 			if ((i < 6) || (i > 8)) {
 				_cursor[16 * 7 + i] = color;
 				_cursor[16 * i + 7] = color;
 			}
 		}
-	
+
 		_system->setMouseCursor(_cursor, 16, 16, 7, 7);
 
 		_cursorAnimateTimer = time;
