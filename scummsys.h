@@ -115,11 +115,25 @@ typedef signed long int32;
 typedef unsigned char byte;
 typedef unsigned char uint8;
 typedef unsigned short uint16;
-typedef unsigned long uint32;
 typedef unsigned int uint;
 typedef signed char int8;
 typedef signed short int16;
+
+#  if defined(__DECCXX) // Assume alpha architecture
+
+#    define INVERSE_MKID
+#    define SCUMM_NEED_ALIGNMENT
+
+typedef unsigned int uint32;
+typedef signed int int32;
+
+#  else
+
+typedef unsigned long uint32;
 typedef signed long int32;
+
+#  endif
+
 
 #if defined(__GNUC__)
 #define START_PACK_STRUCTS
@@ -229,8 +243,18 @@ typedef signed long int32;
 //#error Little endian processors that need alignment is not implemented
 //#endif
 
-#define MKID(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
-#define MKID_BE(a) (a)
+
+#define PROTO_MKID(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
+#define PROTO_MKID_BE(a) (a & 0xffffffff)
+
+#if defined(INVERSE_MKID)
+#  define MKID(a) PROTO_MKID_BE(a)
+#  define MKID_BE(a) PROTO_MKID(a)
+#else
+#  define MKID(a) PROTO_MKID(a)
+#  define MKID_BE(a) PROTO_MKID_BE(a)
+#endif
+
 
 #if defined(SCUMM_NEED_ALIGNMENT)
 	FORCEINLINE uint READ_LE_UINT16(void *ptr) {
