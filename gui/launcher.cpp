@@ -149,7 +149,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
-	for (; l->name; ++l) {
+	for (; l->code; ++l) {
 		_langPopUp->appendEntry(l->description, l->id);
 	}
 
@@ -231,7 +231,7 @@ void EditGameDialog::open() {
 
 	const Common::LanguageDescription *l = Common::g_languages;
 	int lang = Common::parseLanguage(ConfMan.get("language", _domain));
-	for (int i = 0; l->name; ++l, ++i) {
+	for (int i = 0; l->code; ++l, ++i) {
 		if (lang == l->id)
 			sel = i + 2;
 	}
@@ -257,13 +257,13 @@ void EditGameDialog::close() {
 		if (lang < 0)
 			ConfMan.removeKey("language", _domain);
 		else
-			ConfMan.set("language", Common::getLanguageString(lang), _domain);
+			ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 
 		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
 		if (platform < 0)
 			ConfMan.removeKey("platform", _domain);
 		else
-			ConfMan.set("platform", Common::getPlatformString(platform), _domain);
+			ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
 	}
 	OptionsDialog::close();
 }
@@ -447,11 +447,11 @@ void LauncherDialog::addGame() {
 
 			// Set language if specified
 			if (result.language != Common::UNK_LANG)
-				ConfMan.set("language", Common::getLanguageString(result.language), domain);
+				ConfMan.set("language", Common::getLanguageCode(result.language), domain);
 
 			// Set platform if specified
 			if (result.platform != Common::kPlatformUnknown)
-				ConfMan.set("platform", Common::getPlatformString(result.platform), domain);
+				ConfMan.set("platform", Common::getPlatformCode(result.platform), domain);
 
 			// Display edit dialog for the new entry
 			EditGameDialog editDialog(domain, result);

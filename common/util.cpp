@@ -151,20 +151,28 @@ Language parseLanguage(const String &str) {
 
 	const char *s = str.c_str();
 	const LanguageDescription *l = g_languages;
-	for (; l->name; ++l) {
-		if (!scumm_stricmp(l->name, s))
+	for (; l->code; ++l) {
+		if (!scumm_stricmp(l->code, s))
 			return l->id;
 	}
 
 	return UNK_LANG;
 }
 
-
-const char *getLanguageString(Language id) {
+const char *getLanguageCode(Language id) {
 	const LanguageDescription *l = g_languages;
-	for (; l->name; ++l) {
+	for (; l->code; ++l) {
 		if (l->id == id)
-			return l->name;
+			return l->code;
+	}
+	return 0;
+}
+
+const char *getLanguageDescription(Language id) {
+	const LanguageDescription *l = g_languages;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->description;
 	}
 	return 0;
 }
@@ -173,33 +181,63 @@ const char *getLanguageString(Language id) {
 #pragma mark -
 
 
+struct PlatformDescription {
+	const char *code;
+	const char *description;
+	Common::Platform id;
+};
+
+static const PlatformDescription g_platforms[] = {
+	{"pc", "PC", kPlatformPC},
+	{"amiga", "Amiga", kPlatformAmiga},
+	{"atari", "Atari ST", kPlatformAtariST},
+	{"macintosh", "Macintosh", kPlatformMacintosh},
+	{0, 0, kPlatformUnknown}
+};
+
 Platform parsePlatform(const String &str) {
 	if (str.isEmpty())
 		return kPlatformUnknown;
 
 	const char *s = str.c_str();
-	if (!scumm_stricmp(s, "pc"))
-		return kPlatformPC;
-	else if (!scumm_stricmp(s, "amiga") || !scumm_stricmp(s, "1"))
+	
+	// Handle some special case separately, for compatibility with old config
+	// files.
+	if (!scumm_stricmp(s, "amiga") || !scumm_stricmp(s, "1"))
 		return kPlatformAmiga;
-	else if (!scumm_stricmp(s, "atari-st") || !scumm_stricmp(s, "atari") || !scumm_stricmp(s, "2"))
+	else if (!scumm_stricmp(s, "atari-st") || !scumm_stricmp(s, "2"))
 		return kPlatformAtariST;
-	else if (!scumm_stricmp(s, "macintosh") || !scumm_stricmp(s, "mac") || !scumm_stricmp(s, "3"))
+	else if (!scumm_stricmp(s, "mac") || !scumm_stricmp(s, "3"))
 		return kPlatformMacintosh;
-	else
-		return kPlatformUnknown;
-}
 
-
-const char *getPlatformString(Platform id) {
-	switch (id) {
-	case Common::kPlatformPC:			return "pc";
-	case Common::kPlatformAmiga:		return "amiga";
-	case Common::kPlatformAtariST:		return "atari";
-	case Common::kPlatformMacintosh:	return "macintosh";
-	default:							return 0;
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (!scumm_stricmp(l->code, s))
+			return l->id;
 	}
+
+	return kPlatformUnknown;
 }
+
+
+const char *getPlatformCode(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->code;
+	}
+	return 0;
+}
+
+const char *getPlatformDescription(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->description;
+	}
+	return 0;
+}
+
 
 
 }	// End of namespace Common

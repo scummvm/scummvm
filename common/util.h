@@ -112,7 +112,7 @@ enum Language {
 };
 
 struct LanguageDescription {
-	const char *name;
+	const char *code;
 	const char *description;
 	Common::Language id;
 };
@@ -122,7 +122,8 @@ extern const LanguageDescription g_languages[];
 
 /** Convert a string containing a language name into a Language enum value. */
 extern Language parseLanguage(const String &str);
-extern const char *getLanguageString(Language id);
+extern const char *getLanguageCode(Language id);
+extern const char *getLanguageDescription(Language id);
 
 /**
  * List of game platforms. Specifying a platform for a target can be used to
@@ -146,7 +147,8 @@ enum Platform {
 
 /** Convert a string containing a platform name into a Platform enum value. */
 extern Platform parsePlatform(const String &str);
-extern const char *getPlatformString(Platform id);
+extern const char *getPlatformCode(Platform id);
+extern const char *getPlatformDescription(Platform id);
 
 }	// End of namespace Common
 
