@@ -39,7 +39,7 @@ QueenGraphics::~QueenGraphics() {
 		delete _banks[i].data;
 	}
 //	frameClearAll();
-	delete _shrinkBuffer.data;
+	delete[] _shrinkBuffer.data;
 }
 
 
@@ -492,6 +492,14 @@ void QueenGraphics::bobClearAll() {
 	}
 }
 
+BobSlot *QueenGraphics::bob(int index) {
+	if (index < MAX_BOBS_NUMBER)
+		return _bobs + index;
+	else {
+		error("QueenGraphics::bob called with index = %i but MAX_BOBS_NUMBER = %i", 
+				index, MAX_BOBS_NUMBER);
+	}
+}
 
 void QueenGraphics::frameErase(uint32 fslot) {
 

@@ -113,6 +113,8 @@ public:
 	void bobDrawAll(); // drawbobs()
 	void bobClearAll(); // clearallbobs()
 
+	BobSlot *bob(int index);
+
 	void frameErase(uint32 fslot);
 
 private:
