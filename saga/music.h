@@ -37,6 +37,11 @@ enum MUSIC_FLAGS {
 	R_MUSIC_LOOP = 0x01
 };
 
+struct MUSIC_MIDITABLE {
+	const char *filename;
+	int flags;
+};
+
 class MusicPlayer : public MidiDriver {
 public:
 	MusicPlayer(MidiDriver *driver);
@@ -106,7 +111,7 @@ private:
 
 	MusicPlayer *_player;
 
-	static const char *_midiTableITECD[26];
+	static const MUSIC_MIDITABLE _midiTableITECD[26];
 
 	int _musicInitialized;
 	int _enabled;
