@@ -28,10 +28,6 @@
 #include "common/system.h"	// For events
 #include "graphics/font.h"
 
-// Uncomment the following to enable the new font code:
-//#define NEW_FONT_CODE
-
-
 namespace GUI {
 
 class Dialog;
@@ -40,12 +36,7 @@ class Dialog;
 
 
 // Height of a single text line
-#ifdef NEW_FONT_CODE
-#define		g_guifont		Graphics::g_sysfont
-#else
-#define		g_guifont		Graphics::g_scummfont
-#endif
-#define kLineHeight	(g_guifont.getFontHeight() + 2)
+#define kLineHeight	(g_gui.getFont().getFontHeight() + 2)
 
 
 using Graphics::TextAlignment;
@@ -117,15 +108,19 @@ protected:
 	void animateCursor();
 	void updateColors();
 
+	OverlayColor *getBasePtr(int x, int y);
+
 public:
 	// Theme colors
 	OverlayColor _color, _shadowcolor;
 	OverlayColor _bgcolor;
 	OverlayColor _textcolor;
 	OverlayColor _textcolorhi;
+	
+	// Font
+	const Graphics::Font &getFont() const;
 
 	// Drawing primitives
-	OverlayColor *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
 	void hLine(int x, int y, int x2, OverlayColor color);
 	void vLine(int x, int y, int y2, OverlayColor color);
@@ -137,9 +132,6 @@ public:
 	int getStringWidth(const String &str);
 	int getCharWidth(byte c);
 	void drawString(const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment align = Graphics::kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
-
-	void blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch);
-	void blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch);
 
 	void drawBitmap(uint32 *bitmap, int x, int y, OverlayColor color, int h = 8);
 

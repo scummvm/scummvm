@@ -24,6 +24,11 @@
 #include "gui/dialog.h"
 
 
+// Uncomment the following to enable the new font code:
+//#define NEW_FONT_CODE
+
+
+
 namespace GUI {
 
 /*
@@ -239,6 +244,14 @@ void NewGui::closeTopDialog() {
 
 #pragma mark -
 
+const Graphics::Font &NewGui::getFont() const {
+#ifdef NEW_FONT_CODE
+	return Graphics::g_sysfont;
+#else
+	return Graphics::g_scummfont;
+#endif
+}
+
 OverlayColor *NewGui::getBasePtr(int x, int y) {
 	return (OverlayColor *)((byte *)_screen.pixels + x * _screen.bytesPerPixel + y * _screen.pitch);
 }
@@ -361,47 +374,19 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 }
 
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color) {
-	g_guifont.drawChar(&_screen, chr, xx, yy, color);
+	getFont().drawChar(&_screen, chr, xx, yy, color);
 }
 
 int NewGui::getStringWidth(const String &str) {
-	return g_guifont.getStringWidth(str);
+	return getFont().getStringWidth(str);
 }
 
 int NewGui::getCharWidth(byte c) {
-	return g_guifont.getCharWidth(c);
+	return getFont().getCharWidth(c);
 }
 
 void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	g_guifont.drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
-}
-
-//
-// Blit from a buffer to the display
-//
-void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch) {
-	OverlayColor *ptr = getBasePtr(x, y);
-
-	assert(buf);
-	while (h--) {
-		memcpy(ptr, buf, w*2);
-		ptr += _screenPitch;
-		buf += pitch;
-	}
-}
-
-//
-// Blit from the display to a buffer
-//
-void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch) {
-	OverlayColor *ptr = getBasePtr(x, y);
-
-	assert(buf);
-	while (h--) {
-		memcpy(buf, ptr, w * 2);
-		ptr += _screenPitch;
-		buf += pitch;
-	}
+	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
 }
 
 //

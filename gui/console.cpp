@@ -26,7 +26,8 @@
 #include "base/version.h"
 
 #include "graphics/font.h"
-#define kCharWidth	g_guifont.getMaxCharWidth()
+
+#define kCharWidth	g_gui.getFont().getMaxCharWidth()
 
 
 namespace GUI {
