@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-09-12
+Last updated:    2003-09-21
 Release version: 0.5.3-cvs
 ------------------------------------------------------------------------
 
@@ -312,7 +312,7 @@ the in-built launcher will activate. From this, you can add games (click
 ScummVM can also be launched into a game directly using Command Line
 arguments - see the next section.
 
-5,1) Command Line Options:
+5.1) Command Line Options:
 ---- ---------------------
         scummvm [OPTIONS] [GAME]
 
@@ -371,7 +371,7 @@ Examples:
   Running Full Throttle from CD, fullscreen and with subtitles disabled:
    /path/to/scummvm -f -n -p/cdrom/resource/ ft
 
-5.1) Language options:
+5.2) Language options:
 ---- -----------------
 ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
 Curse of Monkey Island, Beneath a Steel Sky. and Simon the Sorcerer 1 & 2.
