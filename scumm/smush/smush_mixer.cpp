@@ -35,85 +35,68 @@ namespace Scumm {
 
 SmushMixer::SmushMixer(SoundMixer *m) :
 	_mixer(m),
-	_nextIndex(0),
 	_soundFrequency(22050) {
-	for (int32 i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (int32 i = 0; i < NUM_CHANNELS; i++) {
 		_channels[i].id = -1;
 		_channels[i].chan = NULL;
-		_channels[i].mixer_index = 0;
+		_channels[i].handle = 0;
 	}
 }
 
 SmushMixer::~SmushMixer() {
-	for (int32 i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
-		_mixer->stopChannel(_channels[i].mixer_index);
+	for (int32 i = 0; i < NUM_CHANNELS; i++) {
+		_mixer->stopChannel(_channels[i].handle);
 	}
 }
 
 SmushChannel *SmushMixer::findChannel(int32 track) {
 	debug(9, "SmushMixer::findChannel(%d)", track);
-	for (int32 i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (int32 i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id == track)
 			return _channels[i].chan;
 	}
 	return NULL;
 }
 
-bool SmushMixer::addChannel(SmushChannel *c) {
+void SmushMixer::addChannel(SmushChannel *c) {
 	int32 track = c->getTrackIdentifier();
 	int i;
 
 	debug(9, "SmushMixer::addChannel(%d)", track);
 
-	for (i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id == track)
-			warning("SmushMixer::addChannel(%d) : channel already exists", track);
+			warning("SmushMixer::addChannel(%d): channel already exists", track);
 	}
-	if (_nextIndex >= SoundMixer::NUM_CHANNELS)
-		_nextIndex = 0;
 
-	for (i = _nextIndex; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].chan == NULL || _channels[i].id == -1) {
 			_channels[i].chan = c;
 			_channels[i].id = track;
-			_channels[i].mixer_index = 0;
-			_nextIndex = i + 1;
-			return true;
+			_channels[i].handle = 0;
+			return;
 		}
 	}
 
-	for (i = 0; i < _nextIndex; i++) {
-		if (_channels[i].chan == NULL || _channels[i].id == -1)	{
-			_channels[i].chan = c;
-			_channels[i].id = track;
-			_channels[i].mixer_index = 0;
-			_nextIndex = i + 1;
-			return true;
-		}
-	}
-
-	warning("_nextIndex == %d", _nextIndex);
-
-	for (i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (i = 0; i < NUM_CHANNELS; i++) {
 		warning("channel %d : %p(%d, %d) %d %d", i, (void *)_channels[i].chan, 
 			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1, 
 			_channels[i].chan ? _channels[i].chan->isTerminated() : 1, 
-			_channels[i].mixer_index);
+			_channels[i].handle);
 	}
 
-	error("SmushMixer::add_channel() : no more channel available");
-	return false;
+	error("SmushMixer::addChannel(%d): no channel available", track);
 }
 
 bool SmushMixer::handleFrame() {
 	debug(9, "SmushMixer::handleFrame()");
-	for (int i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id != -1) {
 			if (_channels[i].chan->isTerminated()) {
 				delete _channels[i].chan;
 				_channels[i].id = -1;
 				_channels[i].chan = NULL;
-				_mixer->endStream(_channels[i].mixer_index);
+				_mixer->endStream(_channels[i].handle);
 			} else {
 				int32 rate;
 				bool stereo, is_short;
@@ -139,10 +122,10 @@ bool SmushMixer::handleFrame() {
 				}
 
 				if (_silentMixer == false) {
-					if (_channels[i].mixer_index == 0) {
-						_mixer->newStream(&_channels[i].mixer_index, data, size, rate, flags, 500000, 255, 0);
+					if (_channels[i].handle == 0) {
+						_mixer->newStream(&_channels[i].handle, data, size, rate, flags, 500000, 255, 0);
 					} else {
-						_mixer->appendStream(_channels[i].mixer_index, data, size);
+						_mixer->appendStream(_channels[i].handle, data, size);
 					}
 				}
 				free(data);
@@ -154,7 +137,7 @@ bool SmushMixer::handleFrame() {
 
 bool SmushMixer::stop() {
 	debug(9, "SmushMixer::stop()");
-	for (int i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id != -1) {
 			delete _channels[i].chan;
 			_channels[i].id = -1;

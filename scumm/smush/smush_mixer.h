@@ -30,16 +30,18 @@ namespace Scumm {
 class SmushChannel;
 
 class SmushMixer {
+	enum {
+		NUM_CHANNELS = 16
+	};
 private:
 
 	SoundMixer *_mixer;
 	struct {
 		int id;
 		SmushChannel *chan;
-		PlayingSoundHandle mixer_index;
-	} _channels[SoundMixer::NUM_CHANNELS];
+		PlayingSoundHandle handle;
+	} _channels[NUM_CHANNELS];
 
-	int _nextIndex;
 	int _soundFrequency;
 
 public:
@@ -47,7 +49,7 @@ public:
 	SmushMixer(SoundMixer *);
 	virtual ~SmushMixer();
 	SmushChannel *findChannel(int32 track);
-	bool addChannel(SmushChannel *c);
+	void addChannel(SmushChannel *c);
 	bool handleFrame();
 	bool stop();
 	bool update();

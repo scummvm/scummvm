@@ -546,7 +546,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	int talkChannel = (_talkChannelHandle - 1);
 	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
 		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
-		for (i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
+		for (i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
 			if (i != talkChannel) {
 				_scumm->_mixer->stopChannel(i);
 			}
