@@ -474,10 +474,14 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	// Some games frequently assume that starting one sound effect will
 	// automatically stop any other that may be playing at that time. So
 	// that is what we do here, but we make an exception for speech.
-	// 
+	//
 	// Do any other games than these need this hack?
+	//
+	// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
+	// from being interrupted.
 
-	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE || _scumm->_gameId == GID_SAMNMAX)) {
+	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
+		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
 		for (int i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
 			if (i != _talkChannel)
 				_scumm->_mixer->stop(i);
