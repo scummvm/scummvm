@@ -112,7 +112,7 @@ void MidiPlayer::onTimer (void *data) {
 }
 
 void MidiPlayer::jump (uint16 track, uint16 tick) {
-	if (track == _currentTrack || !_parser)
+	if (track == _currentTrack)
 		return;
 
 	if (_num_songs > 0) {
@@ -137,18 +137,16 @@ void MidiPlayer::jump (uint16 track, uint16 tick) {
 		}
 
 		_currentTrack = (byte) track;
-		for (int i = ARRAYSIZE (_volumeTable); i; --i)
-			_volumeTable[i-1] = 127;
 		_parser = parser; // That plugs the power cord into the wall
 	} else if (_parser) {
 		_system->lock_mutex (_mutex);
 		_currentTrack = (byte) track;
-		_parser->setTrack ((byte) track);
 	}
 
+	_parser->setTrack ((byte) track);
 	_parser->jumpToTick (tick ? tick - 1 : 0);
-	pause (false);
 	_system->unlock_mutex (_mutex);
+	pause (false);
 }
 
 void MidiPlayer::stop() {
