@@ -97,7 +97,8 @@ bundle: scummvm-static
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/scummvm.icns $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/scummvm-static $(bundle_name)/Contents/MacOS/scummvm
+	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
+	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	strip $(bundle_name)/Contents/MacOS/scummvm
 
 # location of additional libs for OS X usually /sw/ for fink or
