@@ -248,14 +248,15 @@ bool Actor::talking() {
 }
 
 void Actor::shutUp() {
+	g_imuse->stopSound(_talkSoundName.c_str());
+	_talkSoundName = "";
 	if (_lipSynch != NULL) {
-		g_imuse->stopSound(_talkSoundName.c_str());
 		if ((_talkAnim != -1) && (_talkChore[_talkAnim] >= 0))
 			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 		_lipSynch = NULL;
-	} else if (_mumbleChore >= 0)
+	} else if (_mumbleChore >= 0) {
 		_mumbleCostume->stopChore(_mumbleChore);
-	_talkSoundName = "";
+	}
 }
 
 void Actor::pushCostume(const char *name) {
