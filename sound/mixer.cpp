@@ -242,19 +242,95 @@ SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size
 		_size = _size >> 1;
 }
 
+
+/*
+ * Class that performs cubic interpolation on integer data.
+ * It is expected that the data is equidistant, i.e. all have the same
+ * horizontal distance. This is obviously the case for sampled audio.
+ */
+class CubicInterpolator {
+protected:
+	int x0, x1, x2, x3;
+	int a, b, c, d;
+	
+public:
+	CubicInterpolator(int a, int b, int c) : x0(2*a-b), x1(a), x2(b), x3(c)
+	{
+		// We use a simple linear interpolation for x0
+		updateCoefficients();
+	}
+	
+	inline void feedData()
+	{
+		x0 = x1;
+		x1 = x2;
+		x2 = x3;
+		x3 = 2*x2-x1;	// Simple linear interpolation
+		updateCoefficients();
+	}
+
+	inline void feedData(int xNew)
+	{
+		x0 = x1;
+		x1 = x2;
+		x2 = x3;
+		x3 = xNew;
+		updateCoefficients();
+	}
+	
+	/* t must be a 16.16 fixed point number between 0 and 1 */
+	inline int interpolate(uint32 fp_pos)
+	{
+		int result = 0;
+		int t = fp_pos >> 8;
+		result = (a*t + b) >> 8;
+		result = (result * t + c) >> 8;
+		result = (result * t + d) >> 8;
+		result = (result/3 + 1) >> 1;
+		
+		return result;
+	}
+		
+protected:
+	inline void updateCoefficients()
+	{
+		a = ((-x0*2)+(x1*5)-(x2*4)+x3);
+		b = ((x0+x2-(2*x1))*6) << 8;
+		c = ((-4*x0)+x1+(x2*4)-x3) << 8;
+		d = (x1*6) << 8;
+	}
+};
+
 static int16 *mix_signed_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																int fp_speed, const int16 *vol_tab, byte *s_end)
 {
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
+	
+	int inc = 1, result;
+	CubicInterpolator	interp(vol_tab[*s], vol_tab[*(s+1)], vol_tab[*(s+2)]);
+
 	do {
-		fp_pos += fp_speed;
-		*data++ += vol_tab[*s];
-		*data++ += vol_tab[*s];
-		s += fp_pos >> 16;
-		fp_pos &= 0x0000FFFF;
-	} while ((--len) && (s < s_end));
+		do {
+			result = interp.interpolate(fp_pos);
+	
+			*data++ += result;
+			*data++ += result;
+	
+			fp_pos += fp_speed;
+			inc = fp_pos >> 16;
+			s += inc;
+			len--;
+			fp_pos &= 0x0000FFFF;
+		} while (!inc && len && (s < s_end));
+		
+		if (s+2 < s_end)
+			interp.feedData(vol_tab[*(s+2)]);
+		else
+			interp.feedData();
+
+	} while (len && (s < s_end));
 
 	*fp_pos_ptr = fp_pos;
 	*s_ptr = s;
@@ -286,23 +362,13 @@ static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uin
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
-	int x0, x1, x2, x3;
-	int a, b, c, d;
-	int inc = 1, result, t;
-	x0 = x1 = vol_tab[*s ^ 0x80];
-	x2 = vol_tab[*(s+1) ^ 0x80];
-	x3 = vol_tab[*(s+2) ^ 0x80];
+	
+	int inc = 1, result;
+	CubicInterpolator	interp(vol_tab[*s ^ 0x80], vol_tab[*(s+1) ^ 0x80], vol_tab[*(s+2) ^ 0x80]);
+
 	do {
-		a = ((-x0*2)+(x1*5)-(x2*4)+x3);
-		b = ((x0+x2-(2*x1))*6) << 8;
-		c = ((-4*x0)+x1+(x2*4)-x3) << 8;
-		d = (x1*6) << 8;
 		do {
-			t = fp_pos >> 8;
-			result = (a*t + b) >> 8;
-			result = (result * t + c) >> 8;
-			result = (result * t + d) >> 8;
-			result = (result/3 + 1) >> 1;
+			result = interp.interpolate(fp_pos);
 	
 			*data++ += result;
 			*data++ += result;
@@ -310,13 +376,15 @@ static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uin
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
 			s += inc;
+			len--;
 			fp_pos &= 0x0000FFFF;
-		} while ((--len) && !inc && (s < s_end));
-		x0 = x1;
-		x1 = x2;
-		x2 = x3;
+		} while (!inc && len && (s < s_end));
+
 		if (s+2 < s_end)
-			x3 = vol_tab[*(s+2) ^ 0x80];
+			interp.feedData(vol_tab[*(s+2) ^ 0x80]);
+		else
+			interp.feedData();
+
 	} while (len && (s < s_end));
 
 	*fp_pos_ptr = fp_pos;
@@ -336,6 +404,7 @@ static int16 *mix_signed_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, uin
 static int16 *mix_unsigned_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																		int fp_speed, const int16 *vol_tab, byte *s_end)
 {
+#if OLD
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -352,10 +421,48 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, u
 	*len_ptr = len;
 
 	return data;
+#else
+	uint32 fp_pos = *fp_pos_ptr;
+	byte *s = *s_ptr;
+	uint len = *len_ptr;
+	
+	int inc = 1;
+	CubicInterpolator	left(vol_tab[*s ^ 0x80], vol_tab[*(s+2) ^ 0x80], vol_tab[*(s+4) ^ 0x80]);
+	CubicInterpolator	right(vol_tab[*(s+1) ^ 0x80], vol_tab[*(s+3) ^ 0x80], vol_tab[*(s+5) ^ 0x80]);
+
+	do {
+		do {
+			*data++ += left.interpolate(fp_pos);
+			*data++ += right.interpolate(fp_pos);
+	
+			fp_pos += fp_speed;
+			inc = (fp_pos >> 16) << 1;
+			s += inc;
+			len--;
+			fp_pos &= 0x0000FFFF;
+		} while (!inc && len && (s < s_end));
+
+		if (s+5 < s_end) {
+			left.feedData(vol_tab[*(s+4) ^ 0x80]);
+			right.feedData(vol_tab[*(s+5) ^ 0x80]);
+		} else {
+			left.feedData();
+			right.feedData();
+		}
+
+	} while (len && (s < s_end));
+
+	*fp_pos_ptr = fp_pos;
+	*s_ptr = s;
+	*len_ptr = len;
+
+	return data;
+#endif
 }
 static int16 *mix_signed_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																 int fp_speed, const int16 *vol_tab, byte *s_end)
 {
+	printf("mix_signed_mono_16\n");
 	uint32 fp_pos = *fp_pos_ptr;
 	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
 	byte *s = *s_ptr;
@@ -385,6 +492,7 @@ static int16 *mix_unsigned_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, ui
 static int16 *mix_signed_stereo_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																	 int fp_speed, const int16 *vol_tab, byte *s_end)
 {
+	printf("mix_signed_stereo_16\n");
 	uint32 fp_pos = *fp_pos_ptr;
 	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
 	byte *s = *s_ptr;
@@ -604,9 +712,9 @@ SoundMixer::Channel_MP3::Channel_MP3(SoundMixer *mixer, void *sound, uint size, 
 	   .SO3 file, you may have to change this value.
 
 	   When using Lame, it seems that the sound starts to have some volume about 50 ms
-	   from the start of the sound => we skip about 1024 samples.
+	   from the start of the sound => we skip about 2 frames (at 22.05 khz).
 	 */
-	_silence_cut = 1024;
+	_silence_cut = 576 * 2;
 }
 
 static inline int scale_sample(mad_fixed_t sample)
@@ -634,18 +742,27 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len)
 		real_destroy();
 		return;
 	}
-
+	
 	while (1) {
 		ch = _synth.pcm.samples[0] + _pos_in_frame;
+
+		/* Skip _silence_cut a the start */
+		if ((_pos_in_frame < _synth.pcm.length) && (_silence_cut > 0)) {
+			int diff = _synth.pcm.length - _pos_in_frame;
+			
+			if (diff > _silence_cut)
+				diff = _silence_cut;
+			_silence_cut -= diff;
+			ch += diff;
+			_pos_in_frame += diff;
+		}
+
 		while ((_pos_in_frame < _synth.pcm.length) && (len > 0)) {
-			if (_silence_cut > 0) {
-				_silence_cut--;
-			} else {
-				int16 sample = (int16)((scale_sample(*ch++) * volume) / 32);
-				*data++ += sample;
-				*data++ += sample;
-				len--;
-			}
+			int16 sample = (int16)((scale_sample(*ch) * volume) / 32);
+			*data++ += sample;
+			*data++ += sample;
+			len--;
+			ch++;
 			_pos_in_frame++;
 		}
 		if (len == 0)
