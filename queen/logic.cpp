@@ -1103,8 +1103,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 	// check the object is in the current room
 	if (pod->room != _currentRoom) {
-		warning("Logic::roomRefreshObject() - Trying to display an object (%i=%s) that is not in room (object room=%i, current room=%i)",
-			obj, _objName[ABS(pod->name)], pod->room, _currentRoom);
+		debug(0, "Trying to display an object (%i=%s) that is not in room (object room=%i, current room=%i)", obj, _objName[ABS(pod->name)], pod->room, _currentRoom);
 		return curImage;
 	}
 
@@ -2600,6 +2599,655 @@ void Logic::useJournal() {
 
 	}
 }
+
+
+void Logic::executeSpecialMove(uint16 sm) {
+	// FIXME: for now, we initialise the various 'asm' procs here but,
+	// in order to support the 'interview' mini-game', we will have to do
+	// that in a proper setupAsmForGame() or setupAsmForInterview() function.
+	static const SpecialMoveProc proc[40] = {
+		/* 00 */
+		NULL,
+		NULL,
+		&Logic::asmMakeJoeUseDress,
+		&Logic::asmMakeJoeUseNormalClothes,
+		/* 04 */
+		&Logic::asmMakeJoeUseUnderwear,
+		&Logic::asmSwitchToDressPalette,
+		&Logic::asmSwitchToNormalPalette,
+		&Logic::asmStartCarAnimation,
+		/* 08 */
+		&Logic::asmStopCarAnimation,
+		&Logic::asmStartFightAnimation,
+		&Logic::asmWaitForFrankPosition,
+		&Logic::asmMakeFrankGrowing,
+		/* 12 */
+		&Logic::asmMakeRobotGrowing,
+		&Logic::asmShrinkRobot,
+		&Logic::asmEndGame,
+		&Logic::asmPutCameraOnDino,
+		/* 16 */
+		&Logic::asmPutCameraOnJoe,
+		NULL, // XXX alternative introduction
+		NULL, // XXX alternative introduction
+		&Logic::asmSetAzuraInLove,
+		/* 20 */
+		&Logic::asmPanRightFromJoe,
+		&Logic::asmSetLightsOff,
+		&Logic::asmSetLightsOn,
+		&Logic::asmSetManequinAreaOn,
+		/* 24 */
+		&Logic::asmPanToJoe,
+		&Logic::asmTurnGuardOn,
+		&Logic::asmPanLeft320To144,
+		&Logic::asmSmooch,
+		/* 28 */
+		&Logic::asmMakeLightningHitPlane,
+		&Logic::asmScaleBlimp,
+		&Logic::asmScaleEnding,
+		&Logic::asmWaitForCarPosition,
+		/* 32 */
+		&Logic::asmShakeScreen,
+		&Logic::asmAttemptPuzzle,
+		&Logic::asmScaleTitle,
+		NULL, // XXX PC Demo ?
+		/* 36 */
+		&Logic::asmPanRightToHugh,
+		&Logic::asmMakeWhiteFlash,
+		&Logic::asmPanRightToJoeAndRita,
+		&Logic::asmPanLeftToBomb
+	};
+
+	if (sm >= ARRAYSIZE(proc) || proc[sm] == NULL) {
+		warning("unhandled / invalid special move : %d", sm);
+	}
+	else {
+		debug(0, "Special move: %d", sm);
+		(this->*proc[sm])();
+	}
+}
+
+
+void Logic::asmMakeJoeUseDress() {
+	
+	joeUseDress(false);
+}
+
+
+void Logic::asmMakeJoeUseNormalClothes() {
+	
+	joeUseClothes(false);
+}
+
+
+void Logic::asmMakeJoeUseUnderwear() {
+	
+	joeUseUnderwear();
+}
+
+
+void Logic::asmSwitchToDressPalette() {
+
+	_display->palSetJoe(JP_DRESS);
+}
+
+
+void Logic::asmSwitchToNormalPalette() {
+
+	_display->palSetJoe(JP_CLOTHES);
+}
+
+
+void Logic::asmStartCarAnimation() {
+
+	// Carbam background animation - room 74
+	_graphics->initCarBamScene();
+}
+
+
+void Logic::asmStopCarAnimation() {
+
+	// CR 2 - Turn off big oil splat and gun shots!
+	_graphics->cleanupCarBamScene(findBob(594)); // Oil object
+}
+
+
+void Logic::asmStartFightAnimation() {
+	
+	// Fight1 background animation - room 69
+	_graphics->initFightBamScene();
+	gameState(148, 1);
+}
+
+
+void Logic::asmWaitForFrankPosition() {
+
+	// c69e.cut
+	_graphics->bamData()->flag = 2;
+	while (_graphics->bamData()->flag) {
+		update();
+	}
+}
+
+
+void Logic::asmMakeFrankGrowing() {
+
+	// c69z.cut
+	_graphics->bankUnpack(1, 38, 15);
+	BobSlot *bobFrank = _graphics->bob(5);
+	bobFrank->frameNum = 38;
+	bobFrank->curPos(160, 200);
+	bobFrank->box.y2 = GAME_SCREEN_HEIGHT - 1;
+
+	int i;
+	for (i = 10; i <= 100; i += 4) {
+		bobFrank->scale = i;
+		update();
+	}
+	for (i = 0; i <= 20; ++i) {
+		update();
+	}
+
+	objectData(521)->name =  ABS(objectData(521)->name); // Dinoray
+	objectData(526)->name =  ABS(objectData(526)->name); // Frank obj
+	objectData(522)->name = -ABS(objectData(522)->name); // TMPD object off
+	objectData(525)->name = -ABS(objectData(525)->name); // Floda guards off
+	objectData(523)->name = -ABS(objectData(523)->name); // Sparky object off
+	gameState(157, 1); // No more Ironstein
+}
+
+
+void Logic::asmMakeRobotGrowing() { 
+
+	// c69z.cut
+	_graphics->bankUnpack(1, 38, 15);
+	BobSlot *bobRobot = _graphics->bob(5);
+	bobRobot->frameNum = 38;
+	bobRobot->curPos(160, 200);
+	bobRobot->box.y2 = GAME_SCREEN_HEIGHT - 1;
+
+	int i;
+	for (i = 10; i <= 100; i += 4) {
+		bobRobot->scale = i;
+		update();
+	}
+	for (i = 0; i <= 20; ++i) {
+		update();
+	}
+	
+	objectData(524)->name = -ABS(objectData(524)->name); // Azura object off
+	objectData(526)->name = -ABS(objectData(526)->name); // Frank object off
+}
+
+
+void Logic::asmShrinkRobot() {
+	
+	int i;
+	for (i = 100; i >= 35; i -= 5) {
+		_graphics->bob(6)->scale = i;
+		update();
+	}
+}
+
+
+void Logic::asmEndGame() {
+	
+	int i;
+	for (i = 0; i < 40; ++i) {
+		update();
+	}
+	OSystem::instance()->quit();
+	debug(0, "Game completed");
+}
+
+
+void Logic::asmPutCameraOnDino() {
+
+	_graphics->cameraBob(-1);
+	while (_display->horizontalScroll() < 320) {
+		_display->horizontalScroll(_display->horizontalScroll() + 16);
+		if (_display->horizontalScroll() > 320) {
+			_display->horizontalScroll(320);
+		}
+		update();
+	}
+	_graphics->cameraBob(1);
+}
+
+
+void Logic::asmPutCameraOnJoe() {
+
+	_graphics->cameraBob(0);
+}
+
+
+void Logic::asmSetAzuraInLove() {
+
+	gameState(VAR_AZURA_IN_LOVE, 1);
+}
+
+
+void Logic::asmPanRightFromJoe() {
+
+	_graphics->cameraBob(-1);
+	while (_display->horizontalScroll() < 320) {
+		_display->horizontalScroll(_display->horizontalScroll() + 16);
+		if (_display->horizontalScroll() > 320) {
+			_display->horizontalScroll(320);
+		}
+		update();
+	}
+}
+
+
+void Logic::asmSetLightsOff() {
+
+	_display->palCustomLightsOff(currentRoom());
+}
+
+
+void Logic::asmSetLightsOn() {
+
+	_display->palCustomLightsOn(currentRoom());
+}
+
+
+void Logic::asmSetManequinAreaOn() {
+
+	area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours = ABS(area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours);
+}
+
+
+void Logic::asmPanToJoe() {
+
+	int i = _graphics->bob(0)->x - 160;
+	if (i < 0) {
+		i = 0;
+	}
+	else if (i > 320) {
+		i = 320;
+	}
+	_graphics->cameraBob(-1);
+	if (i < _display->horizontalScroll()) {
+		while (_display->horizontalScroll() > i) {
+			_display->horizontalScroll(_display->horizontalScroll() - 16);
+			if (_display->horizontalScroll() < i) {
+				_display->horizontalScroll(i);
+			}
+			update();
+		}
+	}
+	else {
+		while (_display->horizontalScroll() < i) {
+			_display->horizontalScroll(_display->horizontalScroll() + 16);
+			if (_display->horizontalScroll() > i ) {
+				_display->horizontalScroll(i);
+			}
+		}
+		update();
+	}
+	_graphics->cameraBob(0);
+}
+
+
+void Logic::asmTurnGuardOn() {
+
+	gameState(85, 1);
+}
+
+
+void Logic::asmPanLeft320To144() {
+	
+	_graphics->cameraBob(-1);
+	while (_display->horizontalScroll() > 144) {
+		_display->horizontalScroll(_display->horizontalScroll() - 8);
+		if (_display->horizontalScroll() < 144) {
+			_display->horizontalScroll(144);
+		}
+		update();
+	}
+}
+
+
+void Logic::asmSmooch() {
+			
+	_graphics->cameraBob(-1);
+	BobSlot *bobAzura = _graphics->bob(5);
+	BobSlot *bobJoe = _graphics->bob(6);
+	while (_display->horizontalScroll() < 320) {
+		_display->horizontalScroll(_display->horizontalScroll() + 8);
+		if (bobJoe->x - bobAzura->x > 128) {
+			bobAzura->x += 10;
+			bobJoe->x += 6;
+		}
+		else {
+			bobAzura->x += 8;
+			bobJoe->x += 8;
+		}
+		update();
+	}
+}
+
+
+void Logic::asmMakeLightningHitPlane() {
+
+	_graphics->cameraBob(-1);
+	short iy = 0, x, ydir = -1, j, k;
+				
+	BobSlot *planeBob     = _graphics->bob(5);
+	BobSlot *lightningBob = _graphics->bob(20);
+
+	planeBob->box.y2 = lightningBob->box.y2 = 199;
+	planeBob->y = 135;
+
+	planeBob->scale = 20;
+
+	for (x = 660; x > 163; x -= 6) {
+		planeBob->x = x;
+		planeBob->y = 135 + iy;
+
+		iy -= ydir;
+		if (iy < -9 || iy > 9)
+			ydir = -ydir;
+
+		planeBob->scale++;
+		if (planeBob->scale > 100)
+			planeBob->scale = 100;
+
+		int scrollX = x - 163;
+		if (scrollX > 320)
+			scrollX = 320;
+		_display->horizontalScroll(scrollX);
+		update();
+	}
+
+	planeBob->scale = 100;
+	_display->horizontalScroll(0);
+
+	planeBob->x -= -8;
+	planeBob->y += 6;
+
+	lightningBob->x = 160;
+	lightningBob->y = 0;
+
+	// 23/2/95 - Play lightning SFX
+	// XXX sfxplay(NULLstr);
+
+	_graphics->bankUnpack(18, lightningBob->frameNum, 15);
+	_graphics->bankUnpack(4,  planeBob    ->frameNum, 15);
+
+	// Plane plunges into the jungle!
+	BobSlot *fireBob = _graphics->bob(6);
+
+	fireBob->animating = true;
+	fireBob->x = planeBob->x;
+	fireBob->y = planeBob->y + 10;
+				
+	_graphics->bankUnpack(19, fireBob->frameNum, 15);
+	update();
+
+	k = 20;
+	j = 1;
+
+	for (x = 163; x > -30; x -= 10) {
+		planeBob->y += 4;
+		fireBob->y += 4;
+		planeBob->x = fireBob->x = x;
+
+		if (k < 40) {
+			_graphics->bankUnpack(j, planeBob->frameNum, 15);
+			_graphics->bankUnpack(k, fireBob ->frameNum, 15);
+			k++;
+			j++;
+
+			if (j == 4)
+				j = 1;
+		}
+					
+		update();
+	}
+
+	_graphics->cameraBob(0);
+}
+
+
+void Logic::asmScaleBlimp() {
+
+	int16 z = 256;
+	BobSlot *bob = _graphics->bob(7);
+	int16 x = bob->x;
+	int16 y = bob->y;
+	while (bob->x > 150) {
+		bob->x = x * 256 / z + 150;
+		bob->x = y * 256 / z + 112;
+		bob->scale = 100 * 256 / z;
+
+		++z;
+		if (z % 6 == 0) {
+			--x;
+		}
+
+		update();
+	}
+}
+
+
+void Logic::asmScaleEnding() {
+
+	_graphics->bob(7)->active = false; // Turn off blimp
+	BobSlot *b = _graphics->bob(20);
+	b->x = 160;
+	b->y = 100;
+	int i;
+	for (i = 5; i <= 100; i += 5) {
+		b->scale = i;
+		update();
+	}
+	for (i = 0; i < 50; ++i) {
+		update();
+	}
+	_display->palFadeOut(0, 255, currentRoom());
+}
+
+
+void Logic::asmWaitForCarPosition() {
+
+	// Wait for car to reach correct position before pouring oil
+	while (_graphics->bamData()->index != 60) {
+		update();
+	}
+}
+
+
+void Logic::asmShakeScreen() {
+
+	OSystem::instance()->set_shake_pos(3);
+	update();
+	OSystem::instance()->set_shake_pos(0);
+	update();
+}
+
+
+void Logic::asmAttemptPuzzle() {
+	
+	static short n = 0;
+	++n;
+	if (n & 4) {
+		joeSpeak(226, true);
+	}
+}
+
+
+void Logic::asmScaleTitle() {
+
+	BobSlot *bob = _graphics->bob(5);
+	bob->animating = false;
+	bob->x = 161;
+	bob->y = 200;
+	bob->scale = 100;
+
+	int i;
+	for (i = 5; i <= 100; i +=5) {
+		bob->scale = i;
+		bob->y -= 4;
+		update();
+	}
+}
+
+
+void Logic::asmPanRightToHugh() {
+	
+	BobSlot *bob_thugA1 = _graphics->bob(20);
+	BobSlot *bob_thugA2 = _graphics->bob(21);
+	BobSlot *bob_thugA3 = _graphics->bob(22);
+	BobSlot *bob_hugh1  = _graphics->bob(1);
+	BobSlot *bob_hugh2  = _graphics->bob(23);
+	BobSlot *bob_hugh3  = _graphics->bob(24);
+	BobSlot *bob_thugB1 = _graphics->bob(25);
+	BobSlot *bob_thugB2 = _graphics->bob(26);
+
+	_graphics->cameraBob(-1);
+	_input->fastMode(true);
+	update();
+				
+	int i = 4, k = 160;
+
+	// Adjust thug1 gun so it matches rest of body
+	bob_thugA1->x += (k / 2) * 2 - 45; 
+	bob_thugA2->x += (k / 2) * 2; 
+	bob_thugA3->x += (k / 2) * 2;
+
+	bob_hugh1->x += (k / 2) * 3 + (k / 2);
+	bob_hugh2->x += (k / 2) * 3 + (k / 2);
+	bob_hugh3->x += (k / 2) * 3 + (k / 2);
+
+	bob_thugB1->x += (k / 2) * 4 + k; 
+	bob_thugB2->x += (k / 2) * 4 + k; 
+
+	if (i == 3) {
+		bob_thugB1->x += 10;
+		bob_thugB2->x += 10;
+	}
+
+	i *= 2;
+
+	int horizontalScroll = 0;
+	while (horizontalScroll < k) {
+
+		horizontalScroll = horizontalScroll + i;
+		if (horizontalScroll > k)
+			horizontalScroll = k;
+
+		//debug(0, "horizontalScroll = %i", horizontalScroll);
+
+		_display->horizontalScroll(horizontalScroll);
+
+		bob_thugA1->x -= i * 2; 
+		bob_thugA2->x -= i * 2; 
+		bob_thugA3->x -= i * 2;
+
+		bob_hugh1->x -= i * 3;
+		bob_hugh2->x -= i * 3;
+		bob_hugh3->x -= i * 3;
+
+		bob_thugB1->x -= i * 4;
+		bob_thugB2->x -= i * 4;
+
+		update();
+
+		if (_input->cutawayQuit())
+			return;
+	}
+
+	_input->fastMode(false);
+}
+
+
+void Logic::asmMakeWhiteFlash() {
+
+	_display->palCustomFlash();
+}
+
+
+void Logic::asmPanRightToJoeAndRita() { // cdint.cut
+
+	BobSlot *bob_box   = _graphics->bob(20);
+	BobSlot *bob_beam  = _graphics->bob(21);
+	BobSlot *bob_crate = _graphics->bob(22);
+	BobSlot *bob_clock = _graphics->bob(23);
+	BobSlot *bob_hands = _graphics->bob(24);
+
+	_graphics->cameraBob(-1);
+	_input->fastMode(true);
+					
+	update();
+
+	bob_box  ->x += 280 * 2;
+	bob_beam ->x += 30;
+	bob_crate->x += 180 * 3;
+
+	int horizontalScroll = _display->horizontalScroll();
+
+	int i = 1;
+	while (horizontalScroll < 290) {
+
+		horizontalScroll = horizontalScroll + i;
+		if (horizontalScroll > 290)
+			horizontalScroll = 290;
+
+		//debug(0, "horizontalScroll = %i", horizontalScroll);
+
+		_display->horizontalScroll(horizontalScroll);
+
+		bob_box  ->x -= i * 2;
+		bob_beam ->x -= i;
+		bob_crate->x -= i * 3;
+		bob_clock->x -= i * 2;
+		bob_hands->x -= i * 2;
+
+		update();
+
+		if (_input->cutawayQuit())
+			return;
+	}
+	_input->fastMode(false);
+}
+
+
+void Logic::asmPanLeftToBomb() { // cdint.cut
+		
+	BobSlot *bob21 = _graphics->bob(21);
+	BobSlot *bob22 = _graphics->bob(22);
+
+	_graphics->cameraBob(-1);
+	_input->fastMode(true);
+				
+	int horizontalScroll = _display->horizontalScroll();
+
+	int i = 5;
+	while (horizontalScroll > 0 || bob21->x < 136) {
+
+		horizontalScroll -= i;
+		if (horizontalScroll < 0)
+			horizontalScroll = 0;
+
+		//debug(0, "horizontalScroll = %i", horizontalScroll);
+		_display->horizontalScroll(horizontalScroll);
+
+		if (horizontalScroll < 272 && bob21->x < 136)
+			bob21->x += (i/2);
+
+		bob22->x += i;
+
+		update();
+
+		if (_input->cutawayQuit())
+			return;
+	}
+
+	_input->fastMode(false);
+}
+
 
 
 } // End of namespace Queen

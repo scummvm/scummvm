@@ -229,9 +229,6 @@ class Cutaway {
 		//! Used by load to read string data
 		void loadStrings(byte *ptr);
 
-		//! Do something special
-		void actionSpecialMove(int index);
-
 		//! Get persons
 		byte *turnOnPeople(byte *ptr, CutawayObject &object);
 

@@ -273,15 +273,6 @@ public:
 	void inventoryDeleteItem(uint16 itemNum, bool refresh = true);
 	void inventoryScroll(uint16 count, bool up);
 
-	//! Ugly hack from original code
-	void sceneReset() { _scene = 0; }
-
-	//! Make a scene
-	void sceneStart();
-
-	//! Stop making a scene
-	void sceneStop();
-
 	//! Copy data from dummy object to object
 	void objectCopy(int dummyObjectIndex, int objectIndex);
 
@@ -293,15 +284,65 @@ public:
 
 	void update();
 
-	void useJournal();
-
 	bool gameSave(uint16 slot, const char *desc);
 	bool gameLoad(uint16 slot);
+
+	//! Ugly hack from original code
+	void sceneReset() { _scene = 0; }
+
+	//! Make a scene
+	void sceneStart();
+
+	//! Stop making a scene
+	void sceneStop();
+
+	void useJournal();
+
+	void executeSpecialMove(uint16 sm);
+
+	void asmMakeJoeUseDress();
+	void asmMakeJoeUseNormalClothes();
+	void asmMakeJoeUseUnderwear();
+	void asmSwitchToDressPalette();
+	void asmSwitchToNormalPalette();
+	void asmStartCarAnimation();
+	void asmStopCarAnimation();
+	void asmStartFightAnimation();
+	void asmWaitForFrankPosition();
+	void asmMakeFrankGrowing();
+	void asmMakeRobotGrowing();
+	void asmShrinkRobot();
+	void asmEndGame();
+	void asmPutCameraOnDino();
+	void asmPutCameraOnJoe();
+	void asmSetAzuraInLove();
+	void asmPanRightFromJoe();
+	void asmSetLightsOff();
+	void asmSetLightsOn();
+	void asmSetManequinAreaOn();
+	void asmPanToJoe();
+	void asmTurnGuardOn();
+	void asmPanLeft320To144();
+	void asmSmooch();
+	void asmMakeLightningHitPlane();
+	void asmScaleBlimp();
+	void asmScaleEnding();
+	void asmWaitForCarPosition();
+	void asmShakeScreen();
+	void asmAttemptPuzzle();
+	void asmScaleTitle();
+	void asmPanRightToHugh();
+	void asmMakeWhiteFlash();
+	void asmPanRightToJoeAndRita();
+	void asmPanLeftToBomb();
 
 	Walk *walk() const { return _walk; }
 	Display *display() const { return _display; }
 	Command *command() const { return _cmd; }
 	Resource *resource() const { return _resource; }
+
+
+	typedef void (Logic::*SpecialMoveProc)();
 
 	enum {
 		MAX_ZONES_NUMBER   = 32,
