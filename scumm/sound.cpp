@@ -773,14 +773,14 @@ int Sound::isSoundRunning(int sound) const {
 		}
 	}
 
+	if (_vm->_mixer->isSoundIDActive(sound))
+		return 1;
+
 	if (isSoundInQueue(sound))
 		return 1;
 
 	if (!_vm->isResourceLoaded(rtSound, sound))
 		return 0;
-
-	if (_vm->_mixer->isSoundIDActive(sound))
-		return 1;
 
 	if (_vm->_musicEngine)
 		return _vm->_musicEngine->getSoundStatus(sound);
