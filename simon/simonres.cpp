@@ -98,11 +98,14 @@ FILE *SimonState::fopen_maybe_lowercase(const char *filename)
 	char buf[256], dotbuf[256], *e;
 	const char *s = _game_path;
 
+	if (filename == NULL || *filename == '\0')
+		return NULL;
+
 	strcpy(buf, s);
 	strcat(buf, filename);
 	strcpy(dotbuf, buf);
 	strcat(dotbuf, ".");					// '.' appended version
-	// for dumb vfat drivers 
+								// for dumb vfat drivers 
 
 	/* original filename */
 	in = fopen(buf, "rb");
