@@ -132,7 +132,9 @@ void Scumm::drawVerb(int verb, int mode)
 			return;
 		}
 		
-		if (_gameId != GID_CMI)
+		// FIXME: Commenting this out fixes some drawing glitches,
+		// but TOTALLY screws up scrolling conversation items.
+		//if (_gameId != GID_CMI)
 			restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
