@@ -30,7 +30,7 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 
 	strcpy(buf, directory);
 
-#ifdef _MSC_VER	// FIXME: is there a better check to detect Windows ?!
+#ifndef WIN32
 	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
 	if ((buf[0] != 0) && (buf[1] == ':') && (buf[2] == '\\') && (buf[3] == 0)) {
 		buf[2] = 0;
