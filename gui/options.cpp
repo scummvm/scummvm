@@ -19,10 +19,13 @@
  */
 
 #include "stdafx.h"
-#include "options.h"
+#include "browser.h"
+#include "chooser.h"
 #include "newgui.h"
+#include "options.h"
 #include "PopUpWidget.h"
 
+//#include "backends/fs/fs.h"
 #include "common/config-file.h"
 //#include "common/engine.h"
 #include "common/gameDetector.h"
@@ -38,13 +41,13 @@ enum {
 };
 
 GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
-	: Dialog(gui, 10, 25, 320-2*10, 200-2*30)
+	: Dialog(gui, 10, 15, 320-2*10, 200-2*15)
 {
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
-	new StaticTextWidget(this, 10, 10+1, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
+	new StaticTextWidget(this, 5, 10+1, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
-	gfxPopUp = new PopUpWidget(this, 110, 10, 180, kLineHeight);
+	gfxPopUp = new PopUpWidget(this, 105, 10, 180, kLineHeight);
 	gfxPopUp->appendEntry("<default>");
 	gfxPopUp->appendEntry("-");
 	gfxPopUp->appendEntry("Normal (no scaling)");
@@ -57,9 +60,9 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	gfxPopUp->setSelected(0);
 
 	// The MIDI mode popup & a label
-	new StaticTextWidget(this, 10, 26+1, 100, kLineHeight, "Music driver: ", kTextAlignRight);
+	new StaticTextWidget(this, 5, 26+1, 100, kLineHeight, "Music driver: ", kTextAlignRight);
 	PopUpWidget *midiPopUp;
-	midiPopUp = new PopUpWidget(this, 110, 26, 180, kLineHeight);
+	midiPopUp = new PopUpWidget(this, 105, 26, 180, kLineHeight);
 	
 	// Populate it
 	const MusicDrivers *md = GameDetector::getMusicDrivers();
@@ -74,16 +77,16 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	//
 	// Sound controllers
 	//
-	const int yoffset = 45;
-	new StaticTextWidget(this, 10, yoffset+10, 100, 16, "Master volume: ", kTextAlignRight);
-	new StaticTextWidget(this, 10, yoffset+26, 100, 16, "Music volume: ", kTextAlignRight);
-	new StaticTextWidget(this, 10, yoffset+42, 100, 16, "SFX volume: ", kTextAlignRight);
+	const int yoffset = 40;
+	new StaticTextWidget(this, 5, yoffset+10, 100, 16, "Master volume: ", kTextAlignRight);
+	new StaticTextWidget(this, 5, yoffset+26, 100, 16, "Music volume: ", kTextAlignRight);
+	new StaticTextWidget(this, 5, yoffset+42, 100, 16, "SFX volume: ", kTextAlignRight);
 
 	SliderWidget *masterVolumeSlider, *musicVolumeSlider, *sfxVolumeSlider;
 
-	masterVolumeSlider = new SliderWidget(this, 110, yoffset+8, 85, 12, "Volume1", 0);
-	musicVolumeSlider  = new SliderWidget(this, 110, yoffset+24, 85, 12, "Volume2", 0);
-	sfxVolumeSlider    = new SliderWidget(this, 110, yoffset+40, 85, 12, "Volume3", 0);
+	masterVolumeSlider = new SliderWidget(this, 105, yoffset+8, 85, 12, "Volume1", 0);
+	musicVolumeSlider  = new SliderWidget(this, 105, yoffset+24, 85, 12, "Volume2", 0);
+	sfxVolumeSlider    = new SliderWidget(this, 105, yoffset+40, 85, 12, "Volume3", 0);
 
 	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
 	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
@@ -100,7 +103,17 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 
+	//
+	// Save game path
+	//
+	new StaticTextWidget(this, 5, 106, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
+	new StaticTextWidget(this, 105, 106, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
+	new ButtonWidget(this, 105, 120, 64, 16, "Choose...", 0, 0);
+	
+
+	//
 	// Add OK & Cancel buttons
+	//
 	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
 	addButton(_w-(kButtonWidth+10), _h-24, "OK", kOKCmd, 0);
 }
