@@ -60,7 +60,9 @@ void Scumm_v2::readIndexFile() {
 	int num = _fileHandle.readUint16LE();
 	assert(num == _numGlobalObjects);
 	for (int i = 0; i != num; i++) {
-		_objectStateTable[i] = _fileHandle.readByte();
+		byte tmp = _fileHandle.readByte();
+		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+		_objectStateTable[i] = tmp >> OF_STATE_SHL;
 	}
 	readResTypeList(rtRoom, MKID('ROOM'), "room");
 	readResTypeList(rtCostume, MKID('COST'), "costume");
