@@ -2467,6 +2467,14 @@ void Scumm_v5::o5_verbOps() {
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
+		case 21:										/* unk in loomcd */
+			warning("VerbOps case 21, please report where this occured");
+			// TODO Work out exactly which vars are set.
+			fetchScriptByte();
+			fetchScriptByte();
+			fetchScriptByte();
+			fetchScriptByte();
+			break;
 		case 22:										/* assign object */
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectByte(0x40);
