@@ -38,14 +38,16 @@
 #include <errno.h>
 #include <time.h>
 
-extern uint16 _debugLevel;
+#ifdef __PALM_OS__
+#include "globals.h"
+#endif
 
 #ifdef _WIN32_WCE
-
 extern bool toolbar_drawn;
 extern bool draw_keyboard;
-
 #endif
+
+extern uint16 _debugLevel;
 
 static const GameSettings simon_settings[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
@@ -201,7 +203,11 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		TABLE_INDEX_BASE = 1580 / 4;
 		TEXT_INDEX_BASE = 1500 / 4;
 		NUM_VIDEO_OP_CODES = 75;
+#ifndef __PALM_OS__
 		VGA_MEM_SIZE = 2000000;
+#else
+		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
+#endif
 		TABLES_MEM_SIZE = 100000;
 		MUSIC_INDEX_BASE = 1128 / 4;
 		SOUND_INDEX_BASE = 1660 / 4;
@@ -210,7 +216,11 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		TABLE_INDEX_BASE = 1576 / 4;
 		TEXT_INDEX_BASE = 1460 / 4;
 		NUM_VIDEO_OP_CODES = 64;
+#ifndef __PALM_OS__
 		VGA_MEM_SIZE = 1000000;
+#else
+		VGA_MEM_SIZE = gVars->memory[kMemSimon1Games];
+#endif
 		TABLES_MEM_SIZE = 50000;
 		MUSIC_INDEX_BASE = 1316 / 4;
 		SOUND_INDEX_BASE = 0;

@@ -55,6 +55,10 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+#ifndef __PALM_OS__
+#include "globals.h"
+#endif
+
 #ifdef MACOSX
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -856,10 +860,10 @@ void ScummEngine::go() {
 void ScummEngine::launch() {
 
 #ifdef __PALM_OS__
-	// revert to old value (450000) and make ScummVM works again in some devices with same problem as below.
-	// 2500000 is too big and make ScummVM crashes : MemMove to NULL or immediate exit if try to allocate
-	// memory with new operator
-	_maxHeapThreshold = 450000;
+	if (_features & GF_NEW_COSTUMES)
+		_maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
+	else
+		_maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
 #else
 	// Since the new costumes are very big, we increase the heap limit, to avoid having
 	// to constantly reload stuff from the data files.
