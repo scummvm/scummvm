@@ -35,7 +35,8 @@ namespace Saga {
 #define ACTOR_BASE_SPEED 0.25
 #define ACTOR_BASE_ZMOD 0.5
 
-#define ACTOR_DEFAULT_ORIENT 2
+#define ACTOR_STEPS_COUNT 32
+#define ACTOR_STEPS_MAX (ACTOR_STEPS_COUNT*2)
 
 #define ACTOR_ACTIONTIME 80
 
@@ -106,7 +107,7 @@ enum ActorFlagsEx {
 	kActorFinishRight = ((1 << 5) | (kDirRight << 6)),
 	kActorFinishUp = ((1 << 5) | (kDirUp << 6)),
 	kActorFinishDown = ((1 << 5) | (kDirDown << 6)),
-	kActorFacing = (0xf << 5),
+	kActorFacingMask = (0xf << 5),
 	kActorRandom = (1 << 10)
 };
 
@@ -124,6 +125,9 @@ struct ActorLocation {
 	int x;					// Actor's logical coordinates
 	int y;					// 
 	int z;					// 
+	int distance(const ActorLocation &location) {
+		return max(abs(x - location.x), abs(y - location.y));
+	}
 };
 struct ActorData {
 	bool disabled;				// Actor disabled in init section
@@ -149,7 +153,7 @@ struct ActorData {
 	int frameNumber;			// current actor frame number
 	uint16 targetObject;		
 	
-	int cycleFrameNumber;
+	int cycleFrameSequence;
 	uint8 cycleDelay;
 	uint8 cycleTimeCount;
 	uint8 cycleFlags;
@@ -160,7 +164,13 @@ struct ActorData {
 	ActorFrameSequence *frames;	// Actor's frames
 	int framesCount;			// Actor's frames count
 	int frameListResourceId;	// Actor's frame list resource id
-
+	
+	int walkPath[ACTOR_STEPS_MAX];
+	int walkStepsCount;
+	int walkStepIndex;
+	ActorLocation finalTarget;
+	ActorLocation partialTarget;
+	int walkFrameSequence;
 	
 	void cycleWrap(int cycleLimit) {
 		if (actionCycle >= cycleLimit)
@@ -168,39 +178,7 @@ struct ActorData {
 	}
 
 	ActorData() {
-		disabled = false;
-		index = 0;
-		actorId = 0;
-
-		nameIndex = 0;
-		speechColor = 0;
-		
-		frames = NULL;
-		framesCount = 0;
-		frameListResourceId = 0;
-		
-		spriteList = NULL;
-		spriteListResourceId = 0;
-
-		flags = 0;
-		sceneNumber = 0;
-		location.x = 0;
-		location.y = 0;
-		location.z = 0;
-		screenDepth = 0;
-		
-		actorFlags = 0;
-		currentAction = 0;
-		facingDirection = 0;
-		actionDirection = 0;
-		actionCycle = 0;
-		targetObject = ID_NOTHING;
-
-		cycleFrameNumber = 0;
-		cycleDelay = 0;
-		cycleTimeCount = 0;
-		cycleFlags = 0;
-
+		memset(this, 0xFE, sizeof(*this)); 
 	}
 };
 
@@ -245,7 +223,8 @@ public:
 	void StoA(Point &actorPoint, const Point &screenPoint);
 
 	
-	bool actorWalkTo(uint16 actorId, const ActorLocation &actorLocation);
+	bool actorEndWalk(uint16 actorId, bool recurse);
+	bool actorWalkTo(uint16 actorId, const ActorLocation &toLocation);
 	ActorData *getActor(uint16 actorId);
 	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
 
@@ -267,6 +246,8 @@ private:
 	bool loadActorResources(ActorData * actor);
 	
 	void createDrawOrderList();
+	void calcActorScreenPosition(ActorData * actor);
+	bool followProtagonist(ActorData * actor);
 	void handleSpeech(int msec);
 	void handleActions(int msec, bool setup);
 	

@@ -51,15 +51,23 @@ namespace Saga {
 
 typedef unsigned int ScriptDataWord;
 
-enum SCRIPT_VERBS {
-	S_VERB_WALKTO = 0,
-	S_VERB_LOOKAT = 2,
-	S_VERB_PICKUP = 1,
-	S_VERB_TALKTO,
-	S_VERB_OPEN = 5,
-	S_VERB_CLOSE = 6,
-	S_VERB_USE = 8,
-	S_VERB_GIVE
+enum VerbTypes {
+//todo: LUT for drawing
+	kVerbNone = 0,
+	kVerbPickup = 1,
+	kVerbLookAt = 2,
+	kVerbWalkTo = 3,
+	kVerbSpeakTo = 4,
+	kVerbOpen = 5,
+	kVerbClose = 6,
+	kVerbGive = 7,
+	kVerbUse = 8,
+	kVerbOptions = 9,
+	kVerbEnter = 10,
+	kVerbLeave = 11,
+	kVerbBegin = 12,
+	kVerbWalkOnly = 13,
+	kVerbLookOnly = 14
 };
 
 #define STHREAD_TIMESLICE 8

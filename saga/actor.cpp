@@ -218,7 +218,7 @@ void Actor::updateActorsScene() {
 		if (actor->flags & (kProtagonist | kFollower)) {
 			actor->sceneNumber = _vm->_scene->currentSceneNumber();
 			if (actor->flags & kProtagonist) {
-//				actor->finalTarget = a->obj.loc;
+//todo:				actor->finalTarget = a->obj.loc;
 				_centerActor = _protagonist = actor;
 			}
 
@@ -436,7 +436,7 @@ void Actor::handleActions(int msec, bool setup) {
 				actor->cycleTimeCount = actor->cycleDelay;
 				actor->actionCycle++;
 
-				frameRange = getActorFrameRange( actor->actorId, actor->cycleFrameNumber);
+				frameRange = getActorFrameRange( actor->actorId, actor->cycleFrameSequence);
 				
 				if (actor->currentAction == kActionPongFrames) {
 					if (actor->actionCycle >= frameRange->frameCount * 2 - 2) {
@@ -505,9 +505,37 @@ int Actor::direct(int msec) {
 	return SUCCESS;
 }
 
+void Actor::calcActorScreenPosition(ActorData * actor) {
+	int	beginSlope, endSlope, middle;
+	// tiled stuff
+	{
+	}
+	{
+		middle = ITE_STATUS_Y - actor->location.y / ACTOR_LMULT;
+
+		_vm->_scene->getSlopes(beginSlope, endSlope);
+
+		actor->screenDepth = (14 * middle) / endSlope + 1;
+
+		if (middle <= beginSlope) {
+			actor->screenScale = 256;
+		} else {
+			if (middle >= endSlope) {
+				actor->screenScale = 1;
+			} else {
+				middle -= beginSlope;
+				endSlope -= beginSlope;
+				actor->screenScale = 256 - (middle * 256) / endSlope;
+			}
+		}
+
+		actor->screenPosition.x = (actor->location.x / ACTOR_LMULT);
+		actor->screenPosition.y = (actor->location.y / ACTOR_LMULT) - actor->location.z;
+	}
+}
+
 void Actor::createDrawOrderList() {
 	int i;
-	int	beginSlope, endSlope, middle;
 	ActorData *actor;
 
 	_drawOrderList.clear();
@@ -518,31 +546,7 @@ void Actor::createDrawOrderList() {
 
 		_drawOrderList.pushBack(actor, actorCompare);
 
-		// tiled stuff
-		{
-		}
-		{
-			middle = ITE_STATUS_Y - actor->location.y / ACTOR_LMULT,
-
-				_vm->_scene->getSlopes(beginSlope, endSlope);
-
-			actor->screenDepth = (14 * middle) / endSlope + 1;
-
-			if (middle <= beginSlope) {
-				actor->screenScale = 256;
-			} else {
-				if (middle >= endSlope) {
-					actor->screenScale = 1;
-				} else {
-					middle -= beginSlope;
-					endSlope -= beginSlope;
-					actor->screenScale = 256 - (middle * 256) / endSlope;
-				}
-			}
-
-			actor->screenPosition.x = (actor->location.x / ACTOR_LMULT);
-			actor->screenPosition.y = (actor->location.y / ACTOR_LMULT) - actor->location.z;
-		}
+		calcActorScreenPosition(actor);
 	}
 }
 
@@ -635,26 +639,90 @@ void Actor::StoA(Point &actorPoint, const Point &screenPoint) {
 	actorPoint.y = (screenPoint.y * ACTOR_LMULT);
 }
 
-bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &actorLocation) {
+bool Actor::followProtagonist(ActorData * actor) {
+	return false;
+}
+
+bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
+	bool walkMore = false;
+	ActorData *actor;
+
+	actor = getActor(actorId);
+	actor->actorFlags &= ~kActorBackwards;
+
+	if (actor->location.distance(actor->finalTarget) > 8) {
+		if ((actor->flags & kProtagonist) && recurse && !(actor->actorFlags & kActorNoCollide)) {
+			actor->actorFlags |= kActorNoCollide;
+			return actorWalkTo(actorId, actor->finalTarget);
+		}
+	}
+
+	actor->currentAction = kActionWait;
+	if (actor->actorFlags & kActorFinalFace) {
+		actor->facingDirection = actor->actionDirection = (actor->actorFlags >> 6) & 0x07; //?
+	}
+
+	actor->actorFlags &= ~(kActorNoCollide | kActorCollided | kActorFinalFace | kActorFacingMask);
+	actor->flags &= ~(kFaster | kFastest);
+
+	if (actor == _protagonist) {
+		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
+		//todo: it
+
+	} else {
+		if (recurse && (actor->flags & kFollower))
+			walkMore = followProtagonist(actor);
+
+		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
+	}
+	return walkMore;
+}
+
+bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 	ActorData *actor;
 
 	actor = getActor(actorId);
 
-/*	if (a == protag)
-	{
-		sceneDoors[ 2 ] = 0xff;				// closed
-		sceneDoors[ 3 ] = 0;				// open
-	}
-	else
-	{
-		sceneDoors[ 2 ] = 0;				// open
-		sceneDoors[ 3 ] = 0xff;				// closed
-	}*/
 
 	// tiled stuff
 	{
+		//todo: it
 	}
 	{
+		Point pointFrom, pointTo, pointBest;
+
+		pointFrom.x = actor->location.x / ACTOR_LMULT;
+		pointFrom.y = actor->location.y / ACTOR_LMULT;
+
+
+		pointTo.x = toLocation.x / ACTOR_LMULT;
+		pointTo.y = toLocation.y / ACTOR_LMULT;
+
+
+		if (_vm->_scene->isBGMaskPresent()) {
+			//todo: it
+		} else {
+			actor->walkPath[0] = pointTo.x / 2;
+			actor->walkPath[1] = pointTo.y;
+			actor->walkStepsCount = 2;
+			actor->walkStepIndex = 0;
+		}
+
+		actor->partialTarget = actor->location;
+		actor->finalTarget = toLocation;
+		if (actor->walkStepsCount == 0) {
+			actorEndWalk(actorId, false);
+			return false;
+		} else {
+			if (actor->flags & kProtagonist) {
+				_actors[1].actorFlags &= ~kActorNoFollow;
+				_actors[2].actorFlags &= ~kActorNoFollow;
+			}
+			
+			actor->currentAction = (actor->walkStepsCount == ACTOR_STEPS_COUNT) ? kActionWalkToLink : kActionWalkToPoint;
+			actor->walkFrameSequence = kFrameWalk;
+		}
+
 	}
 	return false;
 

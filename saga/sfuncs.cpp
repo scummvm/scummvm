@@ -694,13 +694,13 @@ int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 int Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
 	int flags;
-	int cycleFrameNumber;
+	int cycleFrameSequence;
 	int cycleDelay;
 	ActorData *actor;
 
 	actorId = getSWord(thread->pop());
 	flags = getUWord(thread->pop());
-	cycleFrameNumber = getUWord(thread->pop());
+	cycleFrameSequence = getUWord(thread->pop());
 	cycleDelay =  getUWord(thread->pop());
 
 	actor = _vm->_actor->getActor(actorId);
@@ -723,7 +723,7 @@ int Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 		actor->actorFlags |= kActorBackwards;
 	}
 
-	actor->cycleFrameNumber	= cycleFrameNumber;
+	actor->cycleFrameSequence	= cycleFrameSequence;
 	actor->cycleTimeCount = 0;
 	actor->cycleDelay = cycleDelay;
 	actor->actionCycle = 0;

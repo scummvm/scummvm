@@ -40,14 +40,14 @@
 namespace Saga {
 
 static VERB_DATA I_VerbData[] = {
-	{I_VERB_WALKTO, "verb_walkto", "Walk to", S_VERB_WALKTO},
-	{I_VERB_LOOKAT, "verb_lookat", "Look at", S_VERB_LOOKAT},
-	{I_VERB_PICKUP, "verb_pickup", "Pick up", S_VERB_PICKUP},
-	{I_VERB_TALKTO, "verb_talkto", "Talk to", S_VERB_TALKTO},
-	{I_VERB_OPEN, "verb_open", "Open", S_VERB_OPEN},
-	{I_VERB_CLOSE, "verb_close", "Close", S_VERB_CLOSE},
-	{I_VERB_USE, "verb_use", "Use", S_VERB_USE},
-	{I_VERB_GIVE, "verb_give", "Give", S_VERB_GIVE}
+	{I_VERB_WALKTO, "verb_walkto", "Walk to", kVerbWalkTo},
+	{I_VERB_LOOKAT, "verb_lookat", "Look at", kVerbLookAt},
+	{I_VERB_PICKUP, "verb_pickup", "Pick up", kVerbPickup},
+	{I_VERB_TALKTO, "verb_talkto", "Talk to", kVerbSpeakTo},
+	{I_VERB_OPEN, "verb_open", "Open", kVerbOpen},
+	{I_VERB_CLOSE, "verb_close", "Close", kVerbClose},
+	{I_VERB_USE, "verb_use", "Use", kVerbUse},
+	{I_VERB_GIVE, "verb_give", "Give", kVerbGive}
 };
 
 static INTERFACE_DESC ITE_interface = {
