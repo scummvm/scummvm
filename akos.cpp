@@ -900,23 +900,64 @@ void Scumm::akos_codec5(AkosRenderer * ar)
 	VirtScreen *vs;
 	BompDrawData bdd;
 	
-	vs = &virtscr[1];
+	int mirror;
+	int moveX;
+	int moveY;
+	int left;
+	int var_20;
+	int max_width;
+	int right;
+	int top;
+	int bottom;
+
+	vs = &virtscr[0];
+
+	//setBlastObjectMode(ar->shadow_mode); // not implemented yet
+
+	mirror = ar->mirror;
+
+	moveX=ar->move_x_cur;
+	moveY=ar->move_y_cur;
+
+	if (!mirror)
+	{
+		left = (ar->x - moveX - ar->width) + 1;
+	}
+	else
+	{
+		left = ar->x + moveX -1;
+	}
+
+	var_20=0;
+	max_width = ar->outwidth;
+
+	right = left + ar->width - 1;
+	top = ar->y + moveY;
+	bottom = top + ar->height;
+
+	if(left < 0)
+		left = 0;
+
+	if(left > max_width)
+		left -= left - max_width;
+
+	ar->draw_top = top;
+	ar->draw_bottom = bottom;
+
+	updateDirtyRect(0, left, right+1, top, bottom+1, 1 << ar->dirty_id);
 
 	bdd.dataptr = ar->srcptr;
-	bdd.out = ar->outptr - (ar->width/2) - (ar->height * ar->outwidth);
+	bdd.out = vs->screenPtr;
 	bdd.outheight = ar->outheight;
 	bdd.outwidth = ar->outwidth;
 	bdd.scale_x = 0xFF;
 	bdd.scale_y = 0xFF;
 	bdd.srcheight = ar->height;
 	bdd.srcwidth = ar->width;
-	bdd.x = ar->x;
-	bdd.y = ar->y;
+	bdd.x = left+1;
+	bdd.y = top;
 
 	drawBomp(&bdd,0,bdd.dataptr,0,0);
-	updateDirtyRect(0, ar->x - ar->width /2, ar->x - ar->width/2+ar->width, ar->y -ar->height, ar->y, 0);
-
-
 }
 
 void Scumm::akos_codec16(AkosRenderer * ar)

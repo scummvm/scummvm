@@ -1083,7 +1083,7 @@ void Scumm::actorTalk()
 		oldact = 0;
 	} else {
 		a = derefActorSafe(_actorToPrintStrFor, "actorTalk");
-		if (a->room != _currentRoom) {
+		if (a->room != _currentRoom && !(_features & GF_AFTER_V7)) {
 			oldact = 0xFF;
 		} else {
 			if (!_keepText)

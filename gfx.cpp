@@ -2544,8 +2544,8 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 	return bestitem;
 }
 
-// param3=clipping ?
-// param2=scalling or not ?
+// param3= clipping
+// param2= mirror
 // param1= never used ?
 void Scumm::drawBomp(BompDrawData *bd, int param1, byte* dataPtr, int param2, int param3)
 {
