@@ -214,10 +214,7 @@ void ScummEngine::initScreens(int b, int h) {
 		}
 	}
 
-	if (_features & GF_NES) // FIXME: is it really one-buffer?
-		initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, false, true);
-	else
-		initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, true, true);
+	initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, true, true);
 	initVirtScreen(kTextVirtScreen, 0, 0, _screenWidth, b, false, false);
 	initVirtScreen(kVerbVirtScreen, 0, h, _screenWidth, _screenHeight - h, false, false);
 
@@ -1884,8 +1881,7 @@ void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int height) {
 //		debug(0,"NES room data %i (not 128) pixels high!\n",height);
 		height = 16;
 	}
-	if (x > 63)
-	{
+	if (x > 63) {
 		debug(0,"NES tried to render invalid strip %i",stripnr);
 		return;
 	}

@@ -1274,9 +1274,10 @@ void ScummEngine_v2::o2_lights() {
 			// 0 Darkness
 			// 1 Flashlight
 			// 2 Lighted area
-			if (a == 2)
+			// 11 and 12 are used by NES version
+			if (a == 2 || a == 11)
 				VAR(VAR_CURRENT_LIGHTS) = 11; 
-			else if (a == 1) 
+			else if (a == 1 || a == 12)
 				VAR(VAR_CURRENT_LIGHTS) = 4;
 			else 
 				VAR(VAR_CURRENT_LIGHTS) = 0;
