@@ -179,8 +179,13 @@ void Sound::playSound(int soundID) {
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (ptr) {
 		if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')){
-			if (_scumm->_imuseDigital)
-				_scumm->_imuseDigital->startSound(soundID);
+			assert(_scumm->_imuseDigital);
+			_scumm->_imuseDigital->startSound(soundID);
+			return;
+		}
+		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
+			assert(_scumm->_imuseDigital);
+			_scumm->_imuseDigital->startSound(soundID);
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
@@ -257,10 +262,6 @@ void Sound::playSound(int soundID) {
 				out.close();
 			}
 
-			return;
-		}
-		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
-			_scumm->_imuseDigital->startSound(soundID);
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('ADL ')) {
