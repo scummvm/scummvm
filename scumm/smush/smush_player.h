@@ -62,8 +62,6 @@ private:
 	bool _alreadyInit;
 	int _speed;
 	bool _outputSound;
-	
-	void *_mutex;
 
 public:
 

@@ -104,6 +104,8 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 
 	// reset mouse state
 	memset(&km, 0, sizeof(km));
+	
+	_mutex = SDL_CreateMutex();
 }
 
 OSystem_SDL_Common::~OSystem_SDL_Common() {
@@ -111,6 +113,7 @@ OSystem_SDL_Common::~OSystem_SDL_Common() {
 		free(_dirty_checksums);
 	free(_currentPalette);
 	free(_mouseBackup);
+	SDL_DestroyMutex(_mutex);
 }
 
 void OSystem_SDL_Common::init_size(uint w, uint h) {
@@ -140,6 +143,8 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 	if (_screen == NULL)
 		return;
 
+	StackLock lock(_mutex);	// Lock the mutex until this function ends
+	
 	if (((uint32)buf & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
 			w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
@@ -208,8 +213,10 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 	if (_mouseDrawn)
 		undraw_mouse();
 
-	// FIXME - calling copy rect repeatedly is horribly inefficient, as it (un)locks the surface repeatedly
+	// FIXME - calling copy_rect repeatedly is horribly inefficient, as it (un)locks the surface repeatedly
 	// and it performs unneeded clipping checks etc.
+	// Furthermore, this code is not correct, techincally: the pixels members of an SDLSource may be 0
+	// while it is not locked (e.g. for HW surfaces which are stored in the graphic card's VRAM).
 	
 	// vertical movement
 	if (dy > 0) {
@@ -218,7 +225,7 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 			copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 	} else if (dy < 0) {
 		// move up - copy from top to bottom
-		for (y = 0; y < height + dx; y++)
+		for (y = dy; y < height; y++)
 			copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 	}
 
@@ -229,7 +236,7 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 			copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
 	} else if (dx < 0)  {
 		// move left - copy from left to right
-		for (x = 0; x < _screenWidth; x++)
+		for (x = dx; x < _screenWidth; x++)
 			copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
 	}
 }
@@ -1149,6 +1156,8 @@ void OSystem_SDL_Common::hide_overlay() {
 void OSystem_SDL_Common::clear_overlay() {
 	if (!_overlayVisible)
 		return;
+	
+	StackLock lock(_mutex);	// Lock the mutex until this function ends
 	
 	// hide the mouse
 	undraw_mouse();

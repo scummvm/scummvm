@@ -200,6 +200,10 @@ protected:
 	// Palette data
 	SDL_Color *_currentPalette;
 	uint _paletteDirtyStart, _paletteDirtyEnd;
+	
+	// Mutex that prevents multiple threads interferring with each other
+	// when accessing the screen.
+	SDL_mutex *_mutex;
 
 
 	void add_dirty_rgn_auto(const byte *buf);
@@ -220,6 +224,16 @@ protected:
 	void init_joystick() { _joystick = SDL_JoystickOpen(0); }
 
 	static OSystem_SDL_Common *create();
+};
+
+// Auxillary class to (un)lock a mutex on the stack
+class StackLock {
+	SDL_mutex *_mutex;
+public:
+	StackLock(SDL_mutex *mutex) : _mutex(mutex) { lock(); }
+	~StackLock() { unlock(); }
+	void lock() { SDL_mutexP(_mutex); }
+	void unlock() { SDL_mutexV(_mutex); }
 };
 
 
