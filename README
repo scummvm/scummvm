@@ -638,7 +638,7 @@ preset directories on others.  You can specify the save in the config file by
 setting the savepath parameter. See the example config file later in this readme.
 
 The platforms that currently have a different default directory are:
-        MacOS X:      $HOME/Documents/ScummVM Savegames/
+        Mac OS X:     $HOME/Documents/ScummVM Savegames/
         Other unices: $HOME/.scummvm/
 
 You can also use the environment variable SCUMMVM_SAVEPATH to specify where to
