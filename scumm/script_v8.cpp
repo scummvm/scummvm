@@ -214,9 +214,9 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_setState),
 		OPCODE(o6_setOwner),
 		/* 8C */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_panCameraTo),
+		OPCODE(o6_actorFollowCamera),
+		OPCODE(o6_setCameraAt),
 		OPCODE(o6_invalid),
 		/* 90 */
 		OPCODE(o6_invalid),
@@ -227,7 +227,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_printCursor),
 		OPCODE(o8_printDebug),
 		OPCODE(o8_printSystem),
-		OPCODE(o6_invalid),
+		OPCODE(o8_blastText),
 		/* 98 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -339,10 +339,10 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_distObjectObject),
 		OPCODE(o6_distPtPt),
 		/* F0 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o8_getObjectImageX),
+		OPCODE(o8_getObjectImageY),
+		OPCODE(o8_getObjectImageWidth),
+		OPCODE(o8_getObjectImageHeight),
 		/* F4 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -645,22 +645,32 @@ void Scumm_v8::o8_arrayOps()
 
 void Scumm_v8::o8_printLine()
 {
+	// FIXME
 	decodeParseString(0, 0);
 }
 
 void Scumm_v8::o8_printCursor()
 {
+	// FIXME
 	decodeParseString(1, 0);
 }
 
 void Scumm_v8::o8_printDebug()
 {
+	// FIXME
 	decodeParseString(2, 0);
 }
 
 void Scumm_v8::o8_printSystem()
 {
+	// FIXME
 	decodeParseString(3, 0);
+}
+
+void Scumm_v8::o8_blastText()
+{
+	// FIXME
+	decodeParseString(2, 0);
 }
 
 void Scumm_v8::o8_cursorCommand()
@@ -1169,6 +1179,31 @@ void Scumm_v8::o8_kludge2()
 		warning("o8_kludge2: default case %d", args[0]);
 	}
 }
+
+void Scumm_v8::o8_getObjectImageX()
+{
+	int i = getObjectIndex(pop());
+	push(_objs[i].x_pos);
+}
+
+void Scumm_v8::o8_getObjectImageY()
+{
+	int i = getObjectIndex(pop());
+	push(_objs[i].y_pos);
+}
+
+void Scumm_v8::o8_getObjectImageWidth()
+{
+	int i = getObjectIndex(pop());
+	push(_objs[i].width);
+}
+
+void Scumm_v8::o8_getObjectImageHeight()
+{
+	int i = getObjectIndex(pop());
+	push(_objs[i].height);
+}
+
 
 /*
 

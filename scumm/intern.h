@@ -418,6 +418,7 @@ protected:
 	void o8_printCursor();
 	void o8_printDebug();
 	void o8_printSystem();
+	void o8_blastText();
 
 	void o8_cursorCommand();
 	void o8_resourceRoutines();
@@ -430,6 +431,11 @@ protected:
 	void o8_system();
 	void o8_kludge();
 	void o8_kludge2();
+
+	void o8_getObjectImageX();
+	void o8_getObjectImageY();
+	void o8_getObjectImageWidth();
+	void o8_getObjectImageHeight();
 };
 
 
