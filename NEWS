@@ -7,6 +7,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added an 'On Screen Display' to the SDL backend
    - Rewrote the backend API partially
    - Comments in config files are preserved now
+   - Updated AdvMame scalers based on scale2x 2.0 - AdvMame3x looks nicer now
    - Added MMX i386 assembler HQ2x and HQ3x scalers
 
  SCUMM:
@@ -172,5 +173,3 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
 0.0.1 (2001-10-08):
 - initial version
-
-
