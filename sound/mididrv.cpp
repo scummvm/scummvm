@@ -105,7 +105,7 @@ int MidiDriver::detectMusicDriver(int midiFlags) {
 				#elif defined(MACOSX)
 					musicDriver = MD_COREAUDIO;
 				#elif defined(__PALM_OS__)	// must be before mac
-					musicDriver = MD_YPA1;	// TODO : cahnge this and use Zodiac driver when needed
+					musicDriver = MD_YPA1;	// TODO : change this and use Zodiac driver when needed
 				#elif defined(__MORPHOS__)
 					musicDriver = MD_ETUDE;
 				#elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
