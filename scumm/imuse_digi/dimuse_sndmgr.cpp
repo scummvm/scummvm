@@ -38,8 +38,7 @@ ImuseDigiSndMgr::ImuseDigiSndMgr(ScummEngine *scumm) {
 
 ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
-		if (&_sounds[l])
-			closeSound(&_sounds[l]);
+		closeSound(&_sounds[l]);
 	}
 #ifdef __PALM_OS__
 	BundleCodecs::releaseImcTables();
@@ -281,7 +280,8 @@ void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 			if (_sounds[l]._bundle)
 				delete _sounds[l]._bundle;
 			for (int r = 0; r < _sounds[l].numSyncs; r++)
-				free(_sounds[l].sync[r].ptr);
+				if (_sounds[l].sync[r].ptr)
+					free(_sounds[l].sync[r].ptr);
 			memset(&_sounds[l], 0, sizeof(soundStruct));
 		}
 	}
