@@ -22,6 +22,39 @@
 #include "common/file.h"
 #include "common/engine.h"
 
+class Sound {
+protected:
+	File *_file;
+	uint32 *_offsets;
+	SoundMixer *_mixer;
+
+public:
+	Sound(SoundMixer *mixer, File *file, uint32 base = 0);
+	Sound(SoundMixer *mixer, File *file, uint32 *offsets);
+	virtual ~Sound() { delete _file; }
+	virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0) = 0;
+};
+
+class WavSound : public Sound {
+public:
+	WavSound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+	WavSound(SoundMixer *mixer, File *file, uint32 *offsets) : Sound(mixer, file, offsets) {};
+	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
+};
+
+class VocSound : public Sound {
+public:
+	VocSound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
+};
+
+class MP3Sound : public Sound {
+public:
+	MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
+};
+
+
 SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer) {
 	_game = game;
 	_gameDataPath = gameDataPath;
@@ -47,7 +80,6 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 	_ambient_playing = 0;
 
 	File *file = new File();
-	File *file2 = new File();
 	const char *s;
 
 #ifdef USE_MAD
@@ -59,6 +91,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 			file->open("voices.idx", gameDataPath);
 			if (file->isOpen() == false) {
 				warning("Can't open voice index file 'voices.idx'");
+				delete file;
 			} else {
 				file->seek(0, SEEK_END);
 				int end = file->pos();
@@ -99,6 +132,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 #endif
 
 	if (_game == GAME_SIMON1TALKIE) {
+		File *file2 = new File();
 #ifdef USE_MAD
 		file2->open(gss->mp3_effects_filename, gameDataPath);
 		if (file2->isOpen() == false) {
@@ -229,7 +263,7 @@ void SimonSound::ambientPause(bool b) {
 
 /******************************************************************************/
 
-SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base) {
+Sound::Sound(SoundMixer *mixer, File *file, uint32 base) {
 	_mixer = mixer;
 	_file = file;
 
@@ -260,16 +294,11 @@ SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base) {
 	_offsets[res] = _file->pos();
 }
 
-SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 *offsets) {
+Sound::Sound(SoundMixer *mixer, File *file, uint32 *offsets) {
 	_mixer = mixer;
 	_file = file;
 	_offsets = offsets;
 }
-
-SimonSound::Sound::~Sound() { delete _file; }
-SimonSound::WavSound::~WavSound() { delete _file; }
-SimonSound::VocSound::~VocSound() { delete _file; }
-SimonSound::MP3Sound::~MP3Sound() { delete _file; }
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS
@@ -311,7 +340,7 @@ struct VocBlockHeader {
 #endif
 	
 #ifdef USE_MAD
-int SimonSound::MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
+int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 {
 	if (_offsets == NULL)
 		return 0;
@@ -329,7 +358,7 @@ int SimonSound::MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte
 }
 #endif
 
-int SimonSound::VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
+int VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return 0;
 
@@ -367,7 +396,7 @@ int SimonSound::VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte
 	return _mixer->playRaw(handle, buffer, size, samples_per_sec, flags);
 }
 
-int SimonSound::WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
+int WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return 0;
 
