@@ -42,7 +42,6 @@
 #include "morphos_sound.h"
 
 extern "C" WBStartup *_WBenchMsg;
-struct Library* CyberGfxBase;
 
 // For command line parsing
 static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,MUSICVOL/K/N,SFXVOL/K/N,TEMPO/K/N,TALKSPEED/K/N,NOSUBTITLES=NST/S";
@@ -65,6 +64,7 @@ static BPTR OrigDirLock = 0;
 
 Library *CDDABase = NULL;
 Library *TimerBase = NULL;
+struct Library* CyberGfxBase = NULL;
 
 OSystem_MorphOS *TheSystem = NULL;
 
@@ -118,6 +118,9 @@ void close_resources()
 
 	if (CDDABase)
 		CloseLibrary(CDDABase);
+
+	if (CyberGfxBase)
+		CloseLibrary(CyberGfxBase);
 }
 
 static STRPTR FindMusicDriver(STRPTR argval)
@@ -251,7 +254,10 @@ int main()
 	char *argv[20];
 	char musicvol[6], sfxvol[6], talkspeed[12], tempo[12], scaler[14];
 	int argc = 0;
+
 	CyberGfxBase = OpenLibrary("cybergraphics.library",50);
+	if (CyberGfxBase == NULL)
+		exit(1);
 
 	InitSemaphore(&ScummSoundThreadRunning);
 	InitSemaphore(&ScummMusicThreadRunning);
