@@ -128,7 +128,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroup, int 
 				y += h / 2;
 			}
 
-			if(isWizPixelNonTransparent(rtImage, resId, state, x, y, spi->imgFlags));
+			if(isWizPixelNonTransparent(rtImage, resId, state, x, y, spi->imgFlags))
 				return i;
 		}
 	}
