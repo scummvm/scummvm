@@ -22,9 +22,11 @@
 
 #include <PalmOS.h>
 #include <VFSMgr.h>
+#include <ctype.h>
 
 #include "start.h"
 #include "games.h"
+#include "skin.h"
 
 #include "extend.h"
 #include "StarterRsc.h"
@@ -247,7 +249,6 @@ Err GamSortList() {
 }
 
 void GamUnselect() {
-	GameInfoType modGame;
 	GameInfoType *game;
 
 	MemHandle recordH;
@@ -256,12 +257,13 @@ void GamUnselect() {
 	index = GamGetSelected();
 	
 	if (index != dmMaxRecordIndex) {
+		Boolean newValue;
+		
 		recordH = DmGetRecord(gameDB, index);
 		game = (GameInfoType *)MemHandleLock(recordH);
-
-		MemMove(&modGame, game, sizeof(GameInfoType));	
-		modGame.selected = !modGame.selected;
-		DmWrite(game, 0, &modGame, sizeof(GameInfoType));
+		
+		newValue = false;
+		DmWrite(game, OffsetOf(GameInfoType,selected), &newValue, sizeof(Boolean));
 
 		MemHandleUnlock(recordH);
 		DmReleaseRecord (gameDB, index, 0);
@@ -288,3 +290,47 @@ UInt16 GamGetSelected() {
 
 	return dmMaxRecordIndex;
 }
+
+Boolean GamJumpTo(Char letter) {
+	MemHandle record;
+	GameInfoType *game;
+	Boolean found = false;
+	UInt16 index = 0;
+	UInt16 maxIndex = DmNumRecords(gameDB);
+	UInt16 active = GamGetSelected();
+
+	while (index < maxIndex) {
+		record = DmGetRecord(gameDB, index);
+		game = (GameInfoType *)MemHandleLock(record);
+		
+		if (tolower(game->nameP[0]) == tolower(letter)) {
+			found = true;
+
+			if (index != active) {
+				RectangleType rArea;
+				UInt16 maxView;
+				Boolean newValue = true;
+
+				SknGetListBounds(&rArea, NULL);
+				maxView = rArea.extent.y / sknInfoListItemSize;
+
+				GamUnselect();
+				DmWrite(game, OffsetOf(GameInfoType,selected), &newValue, sizeof(Boolean));
+				
+				if (index < gPrefs->listPosition || index >= (gPrefs->listPosition + maxView))
+					gPrefs->listPosition = index;
+			}
+		}
+
+		MemHandleUnlock(record);
+		DmReleaseRecord (gameDB, index, 0);
+
+		index++;
+		
+		if (found)
+			return found;
+	}
+
+	return found;
+}
+

@@ -102,6 +102,7 @@ void	GamCloseDatabase	(Boolean ignoreCardParams);
 Err		GamSortList			();
 UInt16	GamGetSelected		();
 void	GamUnselect			();
+Boolean GamJumpTo			(Char letter);
 
 extern DmOpenRef gameDB;
 
