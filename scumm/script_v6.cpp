@@ -1747,11 +1747,6 @@ void ScummEngine_v6::o6_roomOps() {
 		else
 			setPalette(a);
 		break;
-	case 220:
-		a = pop();
-		b = pop();
-		warning("o6_roomops:220 (%d, %d): unimplemented", a, b);
-		break;
 	default:
 		error("o6_roomOps: default case %d", op);
 	}
