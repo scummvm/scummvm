@@ -62,7 +62,7 @@ struct RoomHeader {
 			uint32 width, height;
 			uint32 numObjects;
 			uint32 numZBuffer;
-			uint32 unk2;
+			uint32 transparency;
 		} GCC_PACK v8;
 	} GCC_PACK;
 } GCC_PACK;

@@ -1385,7 +1385,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 	byte *mask_ptr;
 	const byte *zplane_list[9];
 
-	bmap_ptr = _vm->findResource(MKID('BMAP'), ptr) + 8;
+	bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
 
 	if (bmap_ptr == NULL) {
 		error("Gdi::drawBMAPBg: Room %d has no compressed bitmap?", _vm->_roomResource);
@@ -1430,7 +1430,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 
 	warning("drawBMAPObject() called");
 
-	bmap_ptr = _vm->findResource(MKID('BMAP'), ptr) + 8;
+	bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
 	if (bmap_ptr == NULL) {
 		error("Gdi::drawBMAPObject: No image for item %d?", obj);
 		return;

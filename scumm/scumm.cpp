@@ -2287,14 +2287,14 @@ void ScummEngine::initRoomSubBlocks() {
 	}
 
 	// Transparent color
-	if (_features & GF_OLD_BUNDLE)
+	if (_version == 8)
+		gdi._transparentColor = (byte)READ_LE_UINT32(&(rmhd->v8.transparency));
+	else if (_features & GF_OLD_BUNDLE)
 		gdi._transparentColor = 255;
 	else {
 		ptr = findResourceData(MKID('TRNS'), roomptr);
 		if (ptr)
 			gdi._transparentColor = ptr[0];
-		else if (_version == 8)
-			gdi._transparentColor = 5;
 		else
 			gdi._transparentColor = 255;
 	}
