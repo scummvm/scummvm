@@ -19,6 +19,10 @@ General
 * Remove various parts from GameSettings struct: "id", "version", "detectname".
   Those are only needed internally by the plugins, and hence shouldn't be
   exported. On the long run, "midi" and "features" might be removed, too.
+* Enhance the Makefile-based build system to support VPATH and stuff, so that
+  one can compile scummvm in a directory tree seperate from the source tree.
+  That would make it possible to build ScummVM with different build options,
+  e.g. have one debug build and one optimized build.
 
 Documentation
 =============
@@ -28,6 +32,13 @@ Documentation
   and lists and tables etc.)
 * Ideally, maybe we can convert the README to some meta format, and then from 
   that generate the text README, as well as a HTML one (and maybe also PDF?)
+  Some candidates:
+  - DocBook
+  - texinfo
+  - nroff/troff + PolyglotMan  (http://polyglotman.sourceforge.net/)
+  - tbook (http://tbookdtd.sourceforge.net/)
+  - xml2doc (http://xml2doc.sourceforge.net/)
+  - ...
 * Some parts of the README probably could stand a workover. Right now the
   README is trying to be brief (it's "just" a README after all), but it really
   is the closest thing we have to a proper ScummVM manual. So either we just
