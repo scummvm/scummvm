@@ -84,11 +84,13 @@ public:
 	bool bindToSystem(OSystem *syst);
 
 	/**
-	 * Set the premix procedure. This is mainly used for the adlib music, but is not limited
-	 * to it. The premix proc is invoked by the mixer whenever it needs to generate any
-	 * data, before any other mixing takes place. The premixer than has a chanve to fill
-	 * the mix buffer with data (usually music samples). It should generate the specified
-	 * number of 16bit stereo samples (i.e. len * 4 bytes).
+	 * Set the premix procedure. This is mainly used for the adlib music, but
+	 * is not limited to it. The premix proc is invoked by the mixer whenever
+	 * it needs to generate any data, before any other mixing takes place. The
+	 * premixer than has a chanve to fill the mix buffer with data (usually
+	 * music samples). It should generate the specified number of 16bit stereo
+	 * samples (i.e. len * 4 bytes). The endianess of these samples shall be
+	 * the native endianess.
 	 */
 	void setupPremix(PremixProc *proc, void *param);
 
