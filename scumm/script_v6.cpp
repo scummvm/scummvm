@@ -2508,6 +2508,10 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 18:
 			warning("o6_kernelSetFunctions: stub18(%d,%d)", args[1], args[2]);
 			break;
+		case 20:
+			// Occurs in The Dig, at the alien pyramid. See bug #742979.
+			warning("o6_kernelSetFunctions: stub20(%d, %d)", args[1], args[2]);
+			break;
 		case 107:
 			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
 			a->scalex = (unsigned char)args[2];
@@ -2540,7 +2544,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			_saveSound = args[1];
 			break;
 		default:
-			error("o6_kernelSetFunctions: default case %d (paramg count %d)", args[0], num);
+			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 			break;
 		}
 	} else {
@@ -2565,7 +2569,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			startManiac();
 			break;
 		case 9:
-			warning("stub unkMiscOp9()");
+			warning("o6_kernelSetFunctions: stub9()");
 			break;
 		case 104:									/* samnmax */
 			nukeFlObjects(args[2], args[3]);
@@ -2630,7 +2634,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			_saveSound = args[1];
 			break;
 		default:
-			error("o6_kernelSetFunctions: default case %d (paramg count %d)", args[0], num);
+			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 			break;
 		}
 	}
