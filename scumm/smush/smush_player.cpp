@@ -785,7 +785,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		warning("SmushPlayer: skipping update frame %d", _frame);
 	}
 	end_update = _scumm->_system->get_msecs();
-	debug(0, "Smush stats: FRME( %03d ),GFX_update( %03d ),FRME+GFX+SFX( %03d ),Limit(%d)",
+	debug(4, "Smush stats: FRME( %03d ),GFX_update( %03d ),FRME+GFX+SFX( %03d ),Limit(%d)",
 		curr_time - start_time, end_update - start_update,
 		end_update - start_time, _speed / 1000);
 
