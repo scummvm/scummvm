@@ -635,8 +635,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_sound = new Sound(this);
 
 	_sound->_sound_volume_master = ConfMan.getInt("master_volume");
-	_sound->_sound_volume_sfx = ConfMan.getInt("music_volume");
-	_sound->_sound_volume_music = ConfMan.getInt("sfx_volume");
+	_sound->_sound_volume_sfx = ConfMan.getInt("sfx_volume");
+	_sound->_sound_volume_music = ConfMan.getInt("music_volume");
 
 	/* Initialize backend */
 	syst->init_size(_screenWidth, _screenHeight);
