@@ -123,7 +123,7 @@ int MidiDriver_ALSA::open()
 		}
 	}
 
-	printf("ALSA client initialised [%d:%d]\n", my_client, my_port);
+	printf("ALSA client initialised [%d:%d]\n", seq_client, seq_port);
 
 	return 0;
 }
