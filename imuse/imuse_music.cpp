@@ -110,5 +110,3 @@ void Imuse::playMusic(const imuseComiTable *table, int atribPos, bool sequence) 
 		}
 	}
 }
-
-} // End of namespace Scumm
