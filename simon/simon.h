@@ -174,7 +174,7 @@ public:
 	bool _dx_use_3_or_4_for_lock;
 
 	bool _mouse_pos_changed;
-	bool _debugMode;
+	uint16 _debugMode;
 	bool _start_mainscript;
 	bool _continous_mainscript;
 	bool _continous_vgascript;
