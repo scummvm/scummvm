@@ -38,7 +38,14 @@ void ScummEngine_v2::readClassicIndexFile() {
 
 		_numGlobalObjects = 800;
 		_numRooms = 55;
-		_numCostumes = 35;
+
+		if (_features & GF_NES)
+			// costumes 25-37 are special. see v1MMNEScostTables[] in costume.cpp
+			// costumes 38-77 are room graphics resources, to be referenced in 
+			_numCostumes = 77;
+		else
+			_numCostumes = 35;
+
 		_numScripts = 200;
 		_numSounds = 100;
 	} else if (_gameId == GID_ZAK) {
@@ -165,7 +172,6 @@ void ScummEngine_v2::readIndexFile() {
 			readClassicIndexFile();
 			break;
 		case 0x4643:
-			error("No support for NES version");
 			if (!(_features & GF_NES))
 				error("Use maniacnes target");
 			printf("NES V1 game detected\n");

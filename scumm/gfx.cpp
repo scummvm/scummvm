@@ -184,6 +184,8 @@ Gdi::Gdi(ScummEngine *vm) {
 	_roomPalette = vm->_roomPalette;
 	if ((vm->_features & GF_AMIGA) && (vm->_version >= 4))
 		_roomPalette += 16;
+	if (vm->_features & GF_NES)
+		_NESBaseTiles = 0;
 	
 	_compositeBuf = 0;
 	_textSurface.pixels = 0;
@@ -211,7 +213,11 @@ void ScummEngine::initScreens(int b, int h) {
 			initVirtScreen(kUnkVirtScreen, 0, 80, _screenWidth, 13, false, false);
 		}
 	}
-	initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, true, true);
+
+	if (_features & GF_NES) // FIXME: is it really one-buffer?
+		initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, false, true);
+	else
+		initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, true, true);
 	initVirtScreen(kTextVirtScreen, 0, 0, _screenWidth, b, false, false);
 	initVirtScreen(kVerbVirtScreen, 0, h, _screenWidth, _screenHeight - h, false, false);
 
@@ -1367,7 +1373,9 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			dstPtr = (byte *)vs->pixels + y * vs->pitch + x * 8;
 
 		if (_vm->_version == 1) {
-			if (_C64ObjectMode)
+			if (_vm->_features & GF_NES)
+				drawStripNES(dstPtr, vs->pitch, stripnr, height);
+			else if (_C64ObjectMode)
 				drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
 			else
 				drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
@@ -1414,8 +1422,16 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			useOrDecompress = true;
 
 		if (_vm->_version == 1) {
-			mask_ptr = getMaskBuffer(x, y, 1);
-			drawStripC64Mask(mask_ptr, stripnr, width, height);
+			if (_vm->_features & GF_NES) {
+				//mask_ptr = getMaskBuffer(x, y, 1);
+				for (int ii = 0; ii < height; ii++) {
+				//	*mask_ptr = ?	// what sort of data needs to go into the mask?
+					//mask_ptr += _numStrips;
+				}
+			} else {
+				mask_ptr = getMaskBuffer(x, y, 1);
+				drawStripC64Mask(mask_ptr, stripnr, width, height);
+			}
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - zplane was already handled.
 		} else if (flag & dbDrawMaskOnAll) {
@@ -1798,6 +1814,83 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 				dst += _numStrips;
 				--height;
 			} while (--b && height);
+		}
+	}
+}
+
+void DecodeNESTileData(const byte *src, byte *dest) {
+	int len = READ_LE_UINT16(src);	src += 2;
+	const byte *end = src + len;
+	int numtiles = *src++;
+	while (src < end) {
+		byte data = *src++;
+		for (int j = 0; j < (data & 0x7F); j++)
+			*dest++ = (data & 0x80) ? (*src++) : (*src);
+		if (!(data & 0x80))
+			src++;
+	}
+}
+
+void Gdi::decodeNESGfx(const byte *room) {
+	if (_NESBaseTiles == 0) {
+		byte *basetiles = _vm->getResourceAddress(rtCostume,37);
+		_NESBaseTiles = basetiles[2];
+		DecodeNESTileData(basetiles,_NESPatTable);
+	}
+	const byte *gdata = room + READ_LE_UINT16(room + 0x0A);
+	int tileset = *gdata++;
+	int width = READ_LE_UINT16(room + 0x04);
+	int height = READ_LE_UINT16(room + 0x06);
+
+	DecodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _NESPatTable + _NESBaseTiles * 16);
+	for (int i = 0; i < 16; i++)
+		_NESPalette[i] = *gdata++;
+	for (int i = 0; i < 16; i++) {
+		int n = 0;
+		_NESNametable[i][0] = _NESNametable[i][1] = 0;
+		while (n < width) {
+			byte data = *gdata++;
+			for (int j = 0; j < (data & 0x7F); j++)
+				_NESNametable[i][2 + n++] = (data & 0x80) ? (*gdata++) : (*gdata);
+			if (!(data & 0x80))
+				gdata++;
+		}
+		_NESNametable[i][width+2] = _NESNametable[i][width+3] = 0;
+	}
+
+	const byte *adata = room + READ_LE_UINT16(room + 0x0C);
+	for (int n = 0; n < 64;) {
+		byte data = *adata++;
+		for (int j = 0; j < (data & 0x7F); j++)
+			_NESAttributes[n++] = (data & 0x80) ? (*adata++) : (*adata);
+		if (!(n & 7) && (width == 0x1C))
+			n += 8;
+		if (!(data & 0x80))
+			adata++;
+	}
+
+	// there's another pointer at room + 0x0E, but I don't know what data it points at
+}
+
+void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int height) {
+//	printf("drawStripNES, pitch=%i, strip=%i, height=%i\n",dstPitch,stripnr,height);
+	if (height != 128)
+	{
+//		debug(0,"NES room data %i (not 128) pixels high!\n",height);
+		height = 128;
+	}
+	height /= 8;
+	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
+	for (int y = 0; y < height; y++) {
+		int palette = (_NESAttributes[((y << 2) & 0x30) | ((x >> 2) & 0xF)] >> (((y & 2) << 1) | (x & 2))) & 0x3;
+		int tile = _NESNametable[y][x];
+
+		for (int i = 0; i < 8; i++) {
+			byte c0 = _NESPatTable[tile * 16 + i];
+			byte c1 = _NESPatTable[tile * 16 + i + 8];
+			for (int j = 0; j < 8; j++)
+				dst[j] = _NESPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
+			dst += dstPitch;
 		}
 	}
 }

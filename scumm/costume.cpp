@@ -564,6 +564,185 @@ void CostumeRenderer::proc3_ami(Codec1 &v1) {
 	} while (1);
 }
 
+static const int v1MMNESLookup[25] = {
+	0x00, 0x03, 0x01, 0x06, 0x08,
+	0x02, 0x00, 0x07, 0x0C, 0x04,
+	0x09, 0x0A, 0x12, 0x0B, 0x14,
+	0x0D, 0x11, 0x0F, 0x0E, 0x10,
+	0x17, 0x00, 0x01, 0x05, 0x16 
+};
+
+static const int v1MMNEScostTables[2][6] = {
+     /* desc lens offs data  gfx  pal */
+	{ 25,  27,  29,  31,  33,  35},
+	{ 26,  28,  30,  32,  34,  36}
+};
+/**
+ * costume ID -> v1MMNESLookup[] -> desc -> lens & offs -> data -> Gfx & pal
+ */
+void LoadedCostume::loadNEScostume(void) {
+	const byte *src;
+	int frameset, framenum;
+	int offset, numSprites, spritesOffset, maxSprites, numAnims;
+	byte *table, *ptr, *patTable, *spritesDefs, *spritesOffsetTab, *numSpritesTab;
+	bool flip;
+	int palette, tile;
+	byte patData[16 * 256];
+	int len;
+	int i, j;
+	byte x, y;
+	int8 x1, y1;
+
+	_format = 0x01;
+	_mirror = 0;
+	_dataOffsets = _baseptr + 4;
+
+	frameset = 0;
+	framenum = 0;
+
+	src = _baseptr + 4;
+	// Cost(a)
+	offset = src[(frameset * 4 + framenum) * 2];
+	numAnims = src[(frameset * 4 + framenum) * 2 + 1];
+
+	// Lookup & desc
+	table = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][0]);
+	offset = READ_LE_UINT16(table + v1MMNESLookup[_id] * 2 + 2);
+
+	if (v1MMNESLookup[_id] * 2 >= READ_LE_UINT16(table)) {
+		_numAnim = (READ_LE_UINT16(table) - v1MMNESLookup[_id] * 2) / 2; // should never happen
+	} else {
+		_numAnim = (READ_LE_UINT16(table + v1MMNESLookup[_id] * 2 + 4) - offset) / 2;
+	}
+
+	// lens
+	numSpritesTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][1]);
+
+	// offs
+	spritesOffsetTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][2]);
+
+	// data
+	spritesDefs = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][3]);
+
+	// gfx
+	patTable = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][4]);
+
+	for (int frameNum = 0; frameNum < _numAnim; frameNum++) {
+		offset = READ_LE_UINT16(table + v1MMNESLookup[_id] * 2 + 2 + frameNum * 2);
+		numSprites = numSpritesTab[offset + 2] + 1;
+		spritesOffset = READ_LE_UINT16(spritesOffsetTab + offset * 2 + 2);
+
+
+		//printf("spritesOffset: %x", spritesOffset);
+		ptr = spritesDefs + spritesOffset + 2;
+
+		byte mask;
+		// decode costumegfx and get data
+		maxSprites = patTable[3];
+		len = READ_LE_UINT16(patTable);
+
+		j = 0;
+		i = 3;
+		while (i < len) {
+			if (patTable[i] > 0x80) {
+				for (int cnt = (patTable[i++] & ~0x80); cnt > 0; cnt--)
+					patData[j++] = patTable[i++];
+			} else {
+				for (int cnt = patTable[i++]; cnt > 0; cnt--)
+					patData[j++] = patTable[i];
+				i++;
+			}
+		}
+		/*
+		printf("extracted len: %d", j);
+
+		for (j = 0; j < 5; j++) {
+			for (i = 0; i < 16; i++)
+				printf("%02x ", patData[j * 16 + i]);
+			printf("\n");
+		}
+		*/
+
+		byte pic[256][256];
+		for (i = 0; i < 256; i++)
+			for(j = 0; j < 256; j++)
+				pic[i][j] = ' ';
+
+		for (int spr = 0; spr < numSprites; spr++) {
+			flip = ((*ptr & 0x80) != 0);
+			
+			y1 = *ptr++;
+			y1 |= (int8)0x80;
+			y1 += (int8)0x80;
+			y = y1;
+
+			tile = *ptr++;
+
+			x1 = *ptr >> 2;
+
+			if (*ptr & 0x80)
+				x1 |= (int8)0xc0;
+			x1 += (int8)0x80;
+			x = x1;
+
+			palette = *ptr++ & 0x3;
+
+			mask = flip ? 0x01 : 0x80;
+
+#define SHIFT 0
+
+			for (i = 0; i < 8; i++) {
+				byte c = patData[tile * 16 + i];
+				for (j = 0; j < 8; j++) {
+					pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? '.' : ' ';
+					if (flip)
+						c >>= 1;
+					else
+						c <<= 1;
+				}
+			}
+			for (i = 0; i < 8; i++) {
+				byte c = patData[tile * 16 + i + 8];
+				for (j = 0; j < 8; j++) {
+					if (pic[SHIFT + j + x][SHIFT + i + y] == '.')
+						pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? '#' : '.';
+					else
+						pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? '*' : ' ';
+					if (flip)
+						c >>= 1;
+					else
+						c <<= 1;
+				}
+			}
+			//printf("flip: %d (%d), tile: %x, x: %d, y: %d, pal: %d", flip, (tile % 1) ? flip : !flip, tile, x, y, palette);
+		}
+	
+		int left = 256, top = 256, right = 0, bottom = 0;
+		
+		for (i = 0; i < 256; i++)
+			for(j = 0; j < 256; j++)
+				if (pic[j][i] != ' ') {
+					if (left > j)
+						left = j;
+					if (right < j)
+						right = j;
+					if (top > i)
+						top = i;
+					if (bottom < i)
+						bottom = i;
+			}
+
+		/*	
+		for (i = top; i <= bottom; i++) {
+			for(j = left; j <= right; j++)
+				printf("%c", pic[j][i]);
+			printf("\n");
+		}
+		*/
+	}
+		
+}
+
 void LoadedCostume::loadCostume(int id) {
 	_id = id;
 	byte *ptr = _vm->getResourceAddress(rtCostume, id);
@@ -579,6 +758,10 @@ void LoadedCostume::loadCostume(int id) {
 
 	_baseptr = ptr;
 
+	if (_vm->_features & GF_NES) {
+		loadNEScostume();
+		return;
+	}
 	_numAnim = ptr[6];
 	_format = ptr[7] & 0x7F;
 	_mirror = (ptr[7] & 0x80) != 0;
@@ -697,6 +880,13 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
+	if (_features & GF_NES) {
+		a->_cost.curpos[0] = 0xFFFF;
+		a->_cost.start[0] = 0;
+		a->_cost.frame[0] = frame;
+		return;
+	}
+
 	r = lc._baseptr + READ_LE_UINT16(lc._dataOffsets + anim * 2);
 
 	if (r == lc._baseptr) {
@@ -756,7 +946,9 @@ void CostumeRenderer::setPalette(byte *palette) {
 	int i;
 	byte color;
 
-	if (_loaded._format == 0x57) {
+	if (_vm->_features & GF_NES) {
+		// TODO
+	} else if (_loaded._format == 0x57) {
 		memcpy(_palette, palette, 13);
 	} else if (_vm->_features & GF_OLD_BUNDLE) {
 		if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {

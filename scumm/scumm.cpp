@@ -108,8 +108,6 @@ static const ScummGameSettings scumm_settings[] = {
 
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 25, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_MULTIPLE_VERSIONS, 0, 0},
-	//{"maniacnes", "Maniac Mansion (NES)", GID_MANIAC, 2, 0, 25, MDT_NONE,
-	// GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, 0},
 	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, 0, 13, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_MULTIPLE_VERSIONS, 0, 0},
 
@@ -460,6 +458,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"d37c55388294b66e53e7ced3af88fa68", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo Updated)", GID_HEGAME, 6, 100, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // FFHSDemo
+	{"c4dfc67ef4a841ec99e07bedb4667f3b", "Maniac Mansion (NES)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, 0},
 	{"d4b8ee426b1afd3e53bc0cf020418cf6", "Putt-Putt and Pep's Dog on a Stick (Updated)", GID_HEGAME, 6, 98, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"d4cccb5af88f3e77f370896e9ba8c5f9", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, 30, MDT_NONE,
@@ -1090,7 +1090,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else if (_features & GF_NES) {
-		_screenWidth = 256;
+		_screenWidth = 224;
 		_screenHeight = 240;
 	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_features |= GF_DEFAULT_TO_1X_SCALER;
@@ -1345,9 +1345,12 @@ void ScummEngine::scummInit() {
 		// line
 		// Original games used some kind of dynamic
 		// color table remapping between rooms
-		if (_gameId == GID_MANIAC)
-			setupV1ManiacPalette();
-		else
+		if (_gameId == GID_MANIAC) {
+			if (_features & GF_NES)
+				setupNESPalette();
+			else
+				setupV1ManiacPalette();
+		} else
 			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
@@ -2229,8 +2232,13 @@ void ScummEngine::initRoomSubBlocks() {
 		rmhd = (const RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 	
 	if (_version == 1) {
-		_roomWidth = roomptr[4] * 8;
-		_roomHeight = roomptr[5] * 8;
+		if (_features & GF_NES) {
+			_roomWidth = READ_LE_UINT16(roomptr + 4) * 8;
+			_roomHeight = READ_LE_UINT16(roomptr + 6) * 8;
+		} else {
+			_roomWidth = roomptr[4] * 8;
+			_roomHeight = roomptr[5] * 8;
+		}
 	} else if (_version == 8) {
 		_roomWidth = READ_LE_UINT32(&(rmhd->v8.width));
 		_roomHeight = READ_LE_UINT32(&(rmhd->v8.height));
@@ -2246,16 +2254,20 @@ void ScummEngine::initRoomSubBlocks() {
 	// Find the room image data
 	//
 	if (_version == 1) {
-		_IM00_offs = 0;
-		for (i = 0; i < 4; i++){
-			gdi._C64Colors[i] = roomptr[6 + i];
+		if (_features & GF_NES) {
+			gdi.decodeNESGfx(roomptr);
+		} else {
+			_IM00_offs = 0;
+			for (i = 0; i < 4; i++){
+				gdi._C64Colors[i] = roomptr[6 + i];
+			}
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64CharMap, 2048);
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64PicMap, roomptr[4] * roomptr[5]);
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64ColorMap, roomptr[4] * roomptr[5]);
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), gdi._C64MaskMap, roomptr[4] * roomptr[5]);
+			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, gdi._C64MaskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
+			gdi._C64ObjectMode = true;
 		}
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64CharMap, 2048);
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64PicMap, roomptr[4] * roomptr[5]);
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64ColorMap, roomptr[4] * roomptr[5]);
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), gdi._C64MaskMap, roomptr[4] * roomptr[5]);
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, gdi._C64MaskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
-		gdi._C64ObjectMode = true;
 	} else if (_features & GF_OLD_BUNDLE) {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
 		if (_version == 2)

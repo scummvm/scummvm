@@ -47,6 +47,7 @@ public:
 
 	void loadCostume(int id);
 	byte increaseAnims(Actor *a);
+	void loadNEScostume(void);
 
 protected:
 	byte increaseAnim(Actor *a, int slot);

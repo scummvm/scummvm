@@ -470,6 +470,8 @@ public:
 	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
 
 	BaseCostumeRenderer* _costumeRenderer;
+
+	int _v1MMNESCostumeSet;
 	
 	char *_audioNames;
 	int32 _numAudioNames;
@@ -931,6 +933,7 @@ protected:
 	void actorFollowCamera(int act);
 
 	const byte *getPalettePtr(int palindex, int room);
+	void setupNESPalette();
 	void setupAmigaPalette();
 	void setupHercPalette();
 	void setupCGAPalette();
