@@ -108,15 +108,14 @@ static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
 
 void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
-	uint8 *dP;
-	const uint32 inc_bP = 1;
-	const uint32 Nextline = srcPitch >> 1;
+	uint16 *dP;
+	const uint32 nextlineSrc = srcPitch >> 1;
 
 	while (height--) {
 		bP = (const uint16 *)srcPtr;
-		dP = (uint8 *)dstPtr;
+		dP = (uint16 *)dstPtr;
 
-		for (uint32 finish = width; finish; finish -= inc_bP) {
+		for (int i = 0; i < width; ++i) {
 			uint32 color4, color5, color6;
 			uint32 color1, color2, color3;
 			uint32 colorA0, colorA1, colorA2, colorA3;
@@ -129,25 +128,25 @@ void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 //                                         1  2  3 S1
 //                                           A1 A2
 
-			colorB0 = *(bP - Nextline - 1);
-			colorB1 = *(bP - Nextline);
-			colorB2 = *(bP - Nextline + 1);
-			colorB3 = *(bP - Nextline + 2);
+			colorB0 = *(bP - nextlineSrc - 1);
+			colorB1 = *(bP - nextlineSrc);
+			colorB2 = *(bP - nextlineSrc + 1);
+			colorB3 = *(bP - nextlineSrc + 2);
 
 			color4 = *(bP - 1);
 			color5 = *(bP);
 			color6 = *(bP + 1);
 			colorS2 = *(bP + 2);
 
-			color1 = *(bP + Nextline - 1);
-			color2 = *(bP + Nextline);
-			color3 = *(bP + Nextline + 1);
-			colorS1 = *(bP + Nextline + 2);
+			color1 = *(bP + nextlineSrc - 1);
+			color2 = *(bP + nextlineSrc);
+			color3 = *(bP + nextlineSrc + 1);
+			colorS1 = *(bP + nextlineSrc + 2);
 
-			colorA0 = *(bP + Nextline + Nextline - 1);
-			colorA1 = *(bP + Nextline + Nextline);
-			colorA2 = *(bP + Nextline + Nextline + 1);
-			colorA3 = *(bP + Nextline + Nextline + 2);
+			colorA0 = *(bP + 2 * nextlineSrc - 1);
+			colorA1 = *(bP + 2 * nextlineSrc);
+			colorA2 = *(bP + 2 * nextlineSrc + 1);
+			colorA3 = *(bP + 2 * nextlineSrc + 2);
 
 //--------------------------------------
 			if (color2 == color6 && color5 != color3) {
@@ -199,57 +198,49 @@ void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 			else
 				product1a = color5;
 
-#ifdef SCUMM_LITTLE_ENDIAN
-			product1a = product1a | (product1b << 16);
-			product2a = product2a | (product2b << 16);
-#endif
+			*(dP + 0) = product1a;
+			*(dP + 1) = product1b;
+			*(dP + dstPitch/2 + 0) = product2a;
+			*(dP + dstPitch/2 + 1) = product2b;
 
-#ifdef SCUMM_BIG_ENDIAN
-			product1a = product1b | (product1a << 16);
-			product2a = product2b | (product2a << 16);
-#endif
-			*((uint32 *)dP) = product1a;
-			*((uint32 *)(dP + dstPitch)) = product2a;
-
-			bP += inc_bP;
-			dP += sizeof(uint32);
-		}													// end of for ( finish= width etc..)
+			bP += 1;
+			dP += 2;
+		}
 
 		srcPtr += srcPitch;
 		dstPtr += dstPitch * 2;
-	}														// while (height--)
+	}
 }
 
 void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	uint8 *dP;
 	const uint16 *bP;
-	const uint32 inc_bP = 1;
-	const uint32 Nextline = srcPitch >> 1;
+	uint16 *dP;
+	const uint32 nextlineSrc = srcPitch >> 1;
 
 	while (height--) {
 		bP = (const uint16 *)srcPtr;
-		dP = dstPtr;
-		for (uint32 finish = width; finish; finish -= inc_bP) {
+		dP = (uint16 *)dstPtr;
+		for (int i = 0; i < width; ++i) {
 			uint32 color4, color5, color6;
 			uint32 color1, color2, color3;
 			uint32 colorA1, colorA2, colorB1, colorB2, colorS1, colorS2;
 			uint32 product1a, product1b, product2a, product2b;
 
-			colorB1 = *(bP - Nextline);
-			colorB2 = *(bP - Nextline + 1);
+			colorB1 = *(bP - nextlineSrc);
+			colorB2 = *(bP - nextlineSrc + 1);
 
 			color4 = *(bP - 1);
 			color5 = *(bP);
 			color6 = *(bP + 1);
 			colorS2 = *(bP + 2);
 
-			color1 = *(bP + Nextline - 1);
-			color2 = *(bP + Nextline);
-			color3 = *(bP + Nextline + 1);
-			colorS1 = *(bP + Nextline + 2);
+			color1 = *(bP + nextlineSrc - 1);
+			color2 = *(bP + nextlineSrc);
+			color3 = *(bP + nextlineSrc + 1);
+			colorS1 = *(bP + nextlineSrc + 2);
 
-			colorA1 = *(bP + Nextline + Nextline);
-			colorA2 = *(bP + Nextline + Nextline + 1);
+			colorA1 = *(bP + 2 * nextlineSrc);
+			colorA2 = *(bP + 2 * nextlineSrc + 1);
 
 			// --------------------------------------
 			if (color2 == color6 && color5 != color3) {
@@ -311,38 +302,31 @@ void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 				product2a = Q_INTERPOLATE(color2, color2, color2, product2a);
 				product1b = Q_INTERPOLATE(color6, color6, color6, product1b);
 			}
-#ifdef SCUMM_LITTLE_ENDIAN
-			product1a = product1a | (product1b << 16);
-			product2a = product2a | (product2b << 16);
-#endif
 
-#ifdef SCUMM_BIG_ENDIAN
-			product1a = product1b | (product1a << 16);
-			product2a = product2b | (product2a << 16);
-#endif
-			*((uint32 *)dP) = product1a;
-			*((uint32 *)(dP + dstPitch)) = product2a;
+			*(dP + 0) = product1a;
+			*(dP + 1) = product1b;
+			*(dP + dstPitch/2 + 0) = product2a;
+			*(dP + dstPitch/2 + 1) = product2b;
 
-			bP += inc_bP;
-			dP += sizeof(uint32);
-		}													// end of for ( finish= width etc..)
+			bP += 1;
+			dP += 2;
+		}
 
 		srcPtr += srcPitch;
 		dstPtr += dstPitch * 2;
-	}														// endof: while (height--)
+	}
 }
 
 void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	uint8 *dP;
 	const uint16 *bP;
-	const uint32 inc_bP = 1;
-	const uint32 Nextline = srcPitch >> 1;
+	uint16 *dP;
+	const uint32 nextlineSrc = srcPitch >> 1;
 
 	while (height--) {
 		bP = (const uint16 *)srcPtr;
-		dP = dstPtr;
+		dP = (uint16 *)dstPtr;
 
-		for (uint32 finish = width; finish; finish -= inc_bP) {
+		for (int i = 0; i < width; ++i) {
 
 			register uint32 colorA, colorB;
 			uint32 colorC, colorD,
@@ -354,25 +338,25 @@ void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch
 //                                       G|A B|K
 //                                       H|C D|L
 //                                       M|N O|P
-			colorI = *(bP - Nextline - 1);
-			colorE = *(bP - Nextline);
-			colorF = *(bP - Nextline + 1);
-			colorJ = *(bP - Nextline + 2);
+			colorI = *(bP - nextlineSrc - 1);
+			colorE = *(bP - nextlineSrc);
+			colorF = *(bP - nextlineSrc + 1);
+			colorJ = *(bP - nextlineSrc + 2);
 
 			colorG = *(bP - 1);
 			colorA = *(bP);
 			colorB = *(bP + 1);
 			colorK = *(bP + 2);
 
-			colorH = *(bP + Nextline - 1);
-			colorC = *(bP + Nextline);
-			colorD = *(bP + Nextline + 1);
-			colorL = *(bP + Nextline + 2);
+			colorH = *(bP + nextlineSrc - 1);
+			colorC = *(bP + nextlineSrc);
+			colorD = *(bP + nextlineSrc + 1);
+			colorL = *(bP + nextlineSrc + 2);
 
-			colorM = *(bP + Nextline + Nextline - 1);
-			colorN = *(bP + Nextline + Nextline);
-			colorO = *(bP + Nextline + Nextline + 1);
-			colorP = *(bP + Nextline + Nextline + 2);
+			colorM = *(bP + 2 * nextlineSrc - 1);
+			colorN = *(bP + 2 * nextlineSrc);
+			colorO = *(bP + 2 * nextlineSrc + 1);
+			colorP = *(bP + 2 * nextlineSrc + 2);
 
 			if ((colorA == colorD) && (colorB != colorC)) {
 				if (((colorA == colorE) && (colorB == colorL)) || ((colorA == colorC) && (colorA == colorF)
@@ -456,25 +440,18 @@ void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch
 				}
 			}
 
-#ifdef SCUMM_LITTLE_ENDIAN
-			product = colorA | (product << 16);
-			product1 = product1 | (product2 << 16);
-#endif
+			*(dP + 0) = colorA;
+			*(dP + 1) = product;
+			*(dP + dstPitch/2 + 0) = product1;
+			*(dP + dstPitch/2 + 1) = product2;
 
-#ifdef SCUMM_BIG_ENDIAN
-			product = (colorA << 16) | product;
-			product1 = (product1 << 16) | product2;
-#endif
-			*((int32 *)dP) = product;
-			*((uint32 *)(dP + dstPitch)) = product1;
-
-			bP += inc_bP;
-			dP += sizeof(uint32);
-		}													// end of for ( finish= width etc..)
+			bP += 1;
+			dP += 2;
+		}
 
 		srcPtr += srcPitch;
 		dstPtr += dstPitch * 2;
-	}														// endof: while (height--)
+	}
 }
 
 void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
