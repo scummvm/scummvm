@@ -350,44 +350,6 @@ int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int n
 	return 1;
 }
 
-// Moves the screen content around by the given amount of pixels
-// but only the top height pixel rows, the rest stays untouched
-void OSystem_GP32::move_screen(int dx, int dy, int height) { 
-	if ((dx == 0) && (dy == 0))
-		return;
-
-	if (dx == 0) {
-		// vertical movement
-		if (dy > 0) {
-			// move down
-			// copy from bottom to top
-			for (int y = height - 1; y >= dy; y--)
-				copyRectToScreen((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
-		} else {
-			// move up
-			// copy from top to bottom
-			for (int y = 0; y < height + dx; y++)
-				copyRectToScreen((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
-		}
-	} else if (dy == 0) {
-		// horizontal movement
-		if (dx > 0) {
-			// move right
-			// copy from right to left
-			for (int x = _screenWidth - 1; x >= dx; x--)
-				copyRectToScreen((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
-		} else {
-			// move left
-			// copy from left to right
-			for (int x = 0; x < _screenWidth; x++)
-				copyRectToScreen((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
-		}
-	} else {
-		// free movement
-		// not necessary for now
-	}
-}
-
 void OSystem_GP32::load_gfx_mode() {
 
 	GpRectFill(NULL,&gpDraw[GAME_SURFACE], 0, 0, 320, 240, 0); //black border

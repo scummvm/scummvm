@@ -90,8 +90,6 @@ public:
 	// The screen will not be updated to reflect the new bitmap
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 
-	void move_screen(int dx, int dy, int height);
-
 	// Update the dirty areas of the screen
 	void updateScreen();
 
@@ -574,43 +572,6 @@ void OSystem_X11::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 		memcpy(dst, buf, w);
 		dst += fb_width;
 		buf += pitch;
-	}
-}
-
-void OSystem_X11::move_screen(int dx, int dy, int height) {
-
-	if ((dx == 0) && (dy == 0))
-		return;
-
-	if (dx == 0) {
-		// vertical movement
-		if (dy > 0) {
-			// move down
-			// copy from bottom to top
-			for (int y = height - 1; y >= dy; y--)
-				copyRectToScreen(local_fb + fb_width * (y - dy), fb_width, 0, y, fb_width, 1);
-		} else {
-			// move up
-			// copy from top to bottom
-			for (int y = 0; y < height + dx; y++)
-				copyRectToScreen(local_fb + fb_width * (y - dy), fb_width, 0, y, fb_width, 1);
-		}
-	} else if (dy == 0) {
-		// horizontal movement
-		if (dx > 0) {
-			// move right
-			// copy from right to left
-			for (int x = fb_width - 1; x >= dx; x--)
-				copyRectToScreen(local_fb + x - dx, fb_width, x, 0, 1, height);
-		} else {
-			// move left
-			// copy from left to right
-			for (int x = 0; x < fb_width; x++)
-				copyRectToScreen(local_fb + x - dx, fb_width, x, 0, 1, height);
-		}
-	} else {
-		// free movement
-		// not necessary for now
 	}
 }
 

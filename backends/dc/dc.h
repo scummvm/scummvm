@@ -73,7 +73,6 @@ class OSystem_Dreamcast : public OSystem {
   // Draw a bitmap to screen.
   // The screen will not be updated to reflect the new bitmap
   void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
-  void move_screen(int dx, int dy, int height);
 
   // Update the dirty areas of the screen
   void updateScreen();

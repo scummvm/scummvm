@@ -583,65 +583,6 @@ void OSystem_PALMOS::updateScreen() {
 	((this)->*(_renderer_proc))();
 }
 
-void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
-	// Short circuit check - do we have to do anything anyway?
-	if ((dx == 0 && dy == 0) || height <= 0)
-		return;
-
-	// Hide the mouse
-	if (_mouseDrawn)
-		undraw_mouse();
-
-	RectangleType r, dummy;
-	WinSetDrawWindow(_offScreenH);
-	RctSetRectangle(&r, ((_offScreenH != _screenH) ? 0 : _screenOffset.x), ((_offScreenH != _screenH) ? 0 : _screenOffset.y), _screenWidth, _screenHeight);
-
-	// vertical movement
-	if (dy > 0) {
-		// move down - copy from bottom to top
-		if (_useHRmode) {
-			// need to set the draw window
-			HRWinScrollRectangle(gVars->HRrefNum, &r, winDown, dy, &dummy);
-		} else {
-			WinScrollRectangle(&r, winDown, dy, &dummy);
-		}
-	} else if (dy < 0) {
-		// move up - copy from top to bottom
-		dy = -dy;
-		if (_useHRmode) {
-			// need to set the draw window
-			HRWinScrollRectangle(gVars->HRrefNum, &r, winUp, dy, &dummy);
-		} else {
-			WinScrollRectangle(&r, winUp, dy, &dummy);
-		}
-	}
-
-	// horizontal movement
-	if (dx > 0) {
-		// move right - copy from right to left
-		if (_useHRmode) {
-			// need to set the draw window
-			HRWinScrollRectangle(gVars->HRrefNum, &r, winRight, dx, &dummy);
-		} else {
-			WinScrollRectangle(&r, winRight, dx, &dummy);
-		}
-	} else if (dx < 0)  {
-		// move left - copy from left to right
-		dx = -dx;
-		if (_useHRmode) {
-			// need to set the draw window
-			HRWinScrollRectangle(gVars->HRrefNum, &r, winLeft, dx, &dummy);
-		} else {
-			WinScrollRectangle(&r, winLeft, dx, &dummy);
-		}
-	}
-
-
-	WinSetDrawWindow(_screenH);
-	// Prevent crash on Clie device using successive [HR]WinScrollRectangle !
-	SysTaskDelay(1);
-}
-
 void OSystem_PALMOS::draw1BitGfx(UInt16 id, Int32 x, Int32 y, Boolean show) {
 	if (OPTIONS_TST(kOptDisableOnScrDisp))
 		return;

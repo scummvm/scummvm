@@ -265,19 +265,6 @@ public:
 	virtual void updateScreen() = 0;
 
 	/**
-	 * Moves the screen content by the offset specified via dx/dy.
-	 * Only the region from x=0 till x=height-1 is affected.
-	 * @param dx	the horizontal offset.
-	 * @param dy	the vertical offset.
-	 * @param height	the number of lines which in which the move will be done.
-	 *
-	 * @todo This is a rather special screen effect, only used by the SCUMM
-	 *       frontend - we should consider removing it from the backend API
-	 *       and instead implement the functionality in the frontend.
-	 */
-	virtual void move_screen(int dx, int dy, int height) = 0;
-
-	/**
 	 * Set current shake position, a feature needed for some SCUMM screen effects.
 	 * The effect causes the displayed graphics to be shifted upwards by the specified 
 	 * (always positive) offset. The area at the bottom of the screen which is moved

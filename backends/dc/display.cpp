@@ -206,46 +206,6 @@ void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int 
   _screen_dirty = true;
 }
 
-void OSystem_Dreamcast::move_screen(int dx, int dy, int height) {
-
-	if ((dx == 0) && (dy == 0))
-		return;
-
-	if (dx == 0) {
-		// vertical movement
-		if (dy > 0) {
-			// move down
-			// copy from bottom to top
-			for (int y = height - 1; y >= dy; y--)
-				copyRectToScreen(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, _screen_w, 1);
-		} else {
-			// move up
-			// copy from top to bottom
-			for (int y = 0; y < height + dx; y++)
-				copyRectToScreen(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, _screen_w, 1);
-		}
-	} else if (dy == 0) {
-		// horizontal movement
-		if (dx > 0) {
-			// move right
-			// copy from right to left
-			for (int x = _screen_w - 1; x >= dx; x--)
-				copyRectToScreen(screen + x - dx, SCREEN_W, x, 0, 1, height);
-		} else {
-			// move left
-			// copy from left to right
-			for (int x = 0; x < _screen_w; x++)
-				copyRectToScreen(screen + x - dx, SCREEN_W, x, 0, 1, height);
-		}
-	} else {
-		// free movement
-		// not necessary for now
-	}
-
-	_screen_dirty = true;
-}
-
-
 bool OSystem_Dreamcast::showMouse(bool visible)
 {	
   bool last = _ms_visible;

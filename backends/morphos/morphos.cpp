@@ -1103,48 +1103,6 @@ void OSystem_MorphOS::copyRectToScreen(const byte *src, int pitch, int x, int y,
 	}
 }
 
-void OSystem_MorphOS::move_screen(int dx, int dy, int height) {
-
-	if ((dx == 0) && (dy == 0))
-		return;
-
-	UpdateRects = 26;
-	Rectangle update_rect = { 0, 0, ScummBufferWidth, ScummBufferHeight };
-	OrRectRegion(NewUpdateRegion, &update_rect);
-	ScreenChanged = true;
-
-	UndrawMouse();
-
-	// vertical movement
-	if (dy > 0) {
-		// move down
-		// copy from bottom to top
-		for (int y = height - 1; y >= dy; y--)
-			copyRectToScreen((byte *)ScummBuffer + ScummBufferWidth * (y - dy), ScummBufferWidth, 0, y, ScummBufferWidth, 1);
-	} else if (dy < 0) {
-		// move up
-		// copy from top to bottom
-		dy = -dy;
-		for (int y = dy; y < height; y++)
-			copyRectToScreen((byte *)ScummBuffer + ScummBufferWidth * y, ScummBufferWidth, 0, y - dy, ScummBufferWidth, 1);
-	}
-
-	// horizontal movement
-	if (dx > 0) {
-		// move right
-		// copy from right to left
-		for (int x = ScummBufferWidth - 1; x >= dx; x--)
-			copyRectToScreen((byte *)ScummBuffer + x - dx, ScummBufferWidth, x, 0, 1, height);
-	} else if (dx < 0) {
-		// move left
-		// copy from left to right
-		dx = -dx;
-		for (int x = dx; x < ScummBufferWidth; x++)
-			copyRectToScreen((byte *)ScummBuffer + x, ScummBufferWidth, x, 0, 1, height);
-	}
-}
-
-
 bool OSystem_MorphOS::AddUpdateRect(WORD x, WORD y, WORD w, WORD h)
 {
 	if (UpdateRects > 25)

@@ -372,7 +372,7 @@ void ScummEngine::drawDirtyScreenParts() {
 		_system->set_shake_pos(shake_positions[_shakeFrame]);
 	} else if (!_shakeEnabled &&_shakeFrame != 0) {
 		_shakeFrame = 0;
-		_system->set_shake_pos(shake_positions[_shakeFrame]);
+		_system->set_shake_pos(0);
 	}
 }
 
@@ -2790,13 +2790,12 @@ void ScummEngine::scrollEffect(int dir) {
 	switch (dir) {
 	case 0:
 		//up
-		y = 1 + step;
+		y = step;
 		while (y < vs->h) {
-			_system->move_screen(0, -step, vs->h);
-			_system->copyRectToScreen(vs->getPixels(0, y - step),
+			_system->copyRectToScreen(vs->getPixels(0, 0),
 				vs->pitch,
-				0, vs->h - step,
-				vs->w, step);
+				0, vs->h - y,
+				vs->w, y);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2805,13 +2804,12 @@ void ScummEngine::scrollEffect(int dir) {
 		break;
 	case 1:
 		// down
-		y = 1 + step;
+		y = step;
 		while (y < vs->h) {
-			_system->move_screen(0, step, vs->h);
 			_system->copyRectToScreen(vs->getPixels(0, vs->h - y),
 				vs->pitch,
 				0, 0,
-				vs->w, step);
+				vs->w, y);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2820,13 +2818,12 @@ void ScummEngine::scrollEffect(int dir) {
 		break;
 	case 2:
 		// left
-		x = 1 + step;
+		x = step;
 		while (x < vs->w) {
-			_system->move_screen(-step, 0, vs->h);
-			_system->copyRectToScreen(vs->getPixels(x - step, 0),
+			_system->copyRectToScreen(vs->getPixels(0, 0),
 				vs->pitch,
-				vs->w - step, 0,
-				step, vs->h);
+				vs->w - x, 0,
+				x, vs->h);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2835,13 +2832,12 @@ void ScummEngine::scrollEffect(int dir) {
 		break;
 	case 3:
 		// right
-		x = 1 + step;
+		x = step;
 		while (x < vs->w) {
-			_system->move_screen(step, 0, vs->h);
 			_system->copyRectToScreen(vs->getPixels(vs->w - x, 0),
 				vs->pitch,
 				0, 0,
-				step, vs->h);
+				x, vs->h);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 

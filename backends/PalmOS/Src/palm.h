@@ -74,10 +74,6 @@ public:
 	// The screen will not be updated to reflect the new bitmap
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 
-	// Moves the screen content around by the given amount of pixels
-	// but only the top height pixel rows, the rest stays untouched
-	void move_screen(int dx, int dy, int height);
-
 	// Update the dirty areas of the screen
 	void updateScreen();
 
