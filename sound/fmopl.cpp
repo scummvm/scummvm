@@ -174,7 +174,11 @@ static int *VIB_TABLE;
 /* envelope output curve table */
 /* attack + decay + OFF */
 //static int ENV_CURVE[2*EG_ENT+1];
+#ifndef __PALM_OS__
 static int ENV_CURVE[2 * 4096 + 1];   // to keep it static ...
+#else
+static int *ENV_CURVE;   // to keep it static ...
+#endif
 
 /* multiple table */
 #define ML(a) (int)(a * 2)
@@ -476,7 +480,7 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 inline void OPL_CALC_RH(OPL_CH *CH) {
 	uint env_tam, env_sd, env_top, env_hh;
 	int whitenoise = int(oplRnd.getRandomNumber(1) * (WHITE_NOISE_db / EG_STEP));
-
+	
 	int tone8;
 
 	OPL_SLOT *SLOT;
@@ -593,6 +597,10 @@ static int OPLOpenTable(void) {
 	int i,j;
 	double pom;
 
+#ifdef __PALM_OS__
+	ENV_CURVE = (int *)calloc(2 * 4096 + 1, sizeof(int));
+#endif
+
 	/* allocate dynamic tables */
 	if((TL_TABLE = (int *)malloc(TL_MAX * 2 * sizeof(int))) == NULL)
 		return 0;
@@ -673,6 +681,9 @@ static void OPLCloseTable(void) {
 	free(SIN_TABLE);
 	free(AMS_TABLE);
 	free(VIB_TABLE);
+#ifdef __PALM_OS__
+	free(ENV_CURVE);
+#endif
 }
 
 /* CSM Key Controll */
