@@ -768,19 +768,18 @@ static void LocalizeString() {
 }
 
 static void SayLine() {
-	char msgId[32];
+	char msgId[32], *str;
 	int pan = 64;
 
 	Actor *act = check_actor(1);
 
 	int param_number = 2;
 	lua_Object param2 = lua_getparam(param_number++);
-	std::string msg;
 	if (!lua_isnil(param2)) {
 		do {
 			if (lua_isstring(param2)) {
-				char *str = lua_getstring(param2);
-				msg = parseMsgText(str, msgId);
+				str = lua_getstring(param2);
+				parseMsgText(str, msgId);
 			} else if (lua_isnumber(param2)) {
 				pan = 64;
 			} else if (lua_istable(param2)) {
@@ -789,7 +788,7 @@ static void SayLine() {
 			}
 			param2 = lua_getparam(param_number++);
 		} while (!lua_isnil(param2));
-		act->sayLine(msg.c_str(), msgId);
+		act->sayLine(str, msgId);
 	}
 }
 
@@ -1252,8 +1251,8 @@ static void KillTextObject() {
 static void ChangeTextObject() {
 	TextObject *textObject = check_textobject(1);
 	lua_Object tableObj = lua_getparam(2);
-
 	TextObject *modifyObject = NULL;
+
 	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 
@@ -1262,18 +1261,16 @@ static void ChangeTextObject() {
 			break;
 		}
 	}
-
 	if (!modifyObject)
 		error("ChangeTextObject(): Cannot find active text object");
 
 	modifyObject->destroyBitmap();
 
-	textObject->setDefaults(&textObjectDefaults);
+//	textObject->setDefaults(&textObjectDefaults);
 	if (lua_istable(tableObj))
 		getTextObjectParams(modifyObject, tableObj);
 
 	modifyObject->createBitmap();
-	g_engine->registerTextObject(modifyObject);
 
 	lua_pushnumber(modifyObject->getBitmapWidth());
 	lua_pushnumber(modifyObject->getBitmapHeight());

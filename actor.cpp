@@ -266,8 +266,16 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	assert(msg);
 	assert(msgId);
 
-	if (msg[0] == '/' || msg[0] == 0 || msgId[0] == 0)
+	std::string textName = msgId;
+	textName += ".txt";
+
+	if (msg[0] != '/')
+		warning("Actor::sayLine: Invalid source message (should be an ID)!");
+
+	if (msgId[0] == 0) {
+		error("Actor::sayLine: No message ID for text!");
 		return;
+	}
 
 	// During movies, SayLine is called for text display only
 	if (!g_smush->isPlaying()) {
@@ -283,19 +291,23 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		if (g_imuse->getSoundStatus(_talkSoundName.c_str()))
 			shutUp();
 
-		// Sometimes actors speak offscreen before they, including their
-		// talk chores are initialized.
-		// For example, when reading the work order (a LIP file exists for no reason).
-		// Also, some lip synch files have no entries
-		// In these cases, revert to using the mumble chore.
-		_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
-
 		_talkSoundName = soundName;
 		g_imuse->startVoice(_talkSoundName.c_str());
 		if (g_engine->currScene()) {
 			g_engine->currScene()->setSoundPosition(_talkSoundName.c_str(), pos());
 		}
-		_talkAnim = -1;
+
+		// If the actor is clearly not visible then don't try to play the lip synch
+		if (visible()) {
+			// Sometimes actors speak offscreen before they, including their
+			// talk chores are initialized.
+			// For example, when reading the work order (a LIP file exists for no reason).
+			// Also, some lip synch files have no entries
+			// In these cases, revert to using the mumble chore.
+			_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
+
+			_talkAnim = -1;
+		}
 	}
 
 	if (_sayLineText) {
@@ -478,12 +490,6 @@ void Actor::update() {
 		}
 	}
 
-	if (!talking())
-		shutUp();
-
-	if (!g_imuse->isVoicePlaying())
-		shutUp();
-
 	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++) {
 		(*i)->setPosRotate(_pos, _pitch, _yaw, _roll);
 		(*i)->update();
@@ -503,4 +509,10 @@ void Actor::draw() {
 		_costumeStack.back()->draw();
 		g_driver->finishActorDraw();
 	}
+}
+
+// "Undraw objects" (handle objects for actors that may not be on screen)
+void Actor::undraw(bool visible) {
+	if (!talking() || !g_imuse->isVoicePlaying())
+		shutUp();
 }

@@ -29,9 +29,9 @@ TextObjectDefaults textObjectDefaults;
 
 TextObject::TextObject() :
 		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
-		_font(NULL), _text(NULL), _textBitmap(NULL), _bitmapWidth(0),
+		_font(NULL), _textBitmap(NULL), _bitmapWidth(0),
 		_bitmapHeight(0), _textObjectHandle(NULL) {
-	memset(_textID, 0, 10);
+	memset(_textID, 0, sizeof(_textID));
 	_fgColor._vals[0] = 0;
 	_fgColor._vals[1] = 0;
 	_fgColor._vals[2] = 0;
@@ -55,9 +55,7 @@ void TextObject::createBitmap() {
 	if (_created)
 		destroyBitmap();
 
-	strcpy(_textID, _text);
-	char msgId[32];
-	std::string msg = parseMsgText(_textID, msgId);
+	std::string msg = parseMsgText(_textID, NULL);
 
 	_bitmapWidth = 0;
 	_bitmapHeight = 0;
@@ -85,7 +83,7 @@ void TextObject::createBitmap() {
 			uint8 startingLine = _font->getCharStartingLine(msg[c]);
 
 			if (startingLine < line + 1 && _font->getCharHeight(msg[c]) + startingLine > line) {
-				memcpy(_textBitmap + offset + startingCol,
+				memcpy(&_textBitmap[offset + startingCol],
 					_font->getCharData(msg[c]) + charWidth * (line - startingLine), charWidth);
 			}
 

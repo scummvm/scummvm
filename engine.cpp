@@ -210,6 +210,8 @@ void Engine::mainLoop() {
 				Actor *a = *i;
 				if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
 					a->draw();
+				if (_currScene != NULL)
+					a->undraw(a->inSet(_currScene->name()) && a->visible());
 			}
 		}
 

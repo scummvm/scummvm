@@ -1,7 +1,7 @@
 Residual TODO list (in rough order of priority):
 ------------------------------------------------
 Assigned tasks:
- * Add LAF font and text drawing support (ender)
+ * Finish text drawing support (salty-horse, aquadran)
  * Cross platform GUI for debug input dialogs and path selection (ender)
  * Improved walk box code (frob)
  * Implement FadeInChore and FadeOutChore (frob)
@@ -11,8 +11,7 @@ Unassigned (help wanted):
  * Add configure script (Custom ala main ScummVM, NOT autoconf)
  * Proper light setup in drivers
  * Finish Save/Load support for rest of Engine (Lua and iMuse done)
- * Implement 2D primitives 
+ * Implement 2D primitives
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
- * Fix drawEmergString() to work with Mesa
  * Make SMUSH work on Linux/PPC (whats wrong with it, exactly? - ender :)
  * Finish panning in 3d position code

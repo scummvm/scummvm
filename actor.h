@@ -99,6 +99,7 @@ public:
 	}
 	void update();
 	void draw();
+	void undraw(bool);
 
 	bool isLookAtVectorZero() {
 		return _lookAtVector.isZero();

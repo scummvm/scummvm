@@ -37,8 +37,10 @@ Localizer::Localizer() {
 		if (f != NULL)
 			break;
 	}
-	if (f == NULL)
+	if (f == NULL) {
+		error("Localizer::Localizer: Unable to find localization information (grim.tab)!");
 		return;
+	}
 
 	// Get the file size
 	std::fseek(f, 0, SEEK_END);

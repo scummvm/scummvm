@@ -45,7 +45,7 @@ public:
 	void createBitmap();
 	void destroyBitmap();
 	void setDefaults(TextObjectDefaults *defaults);
-	void setText(char *text) { _text = text; }
+	void setText(char *text) { strcpy(_textID, text); }
 	void setX(int x) { _x = x; }
 	void setY(int y) { _y = y; }
 	void setWidth(int width) { _width = width; }
@@ -72,7 +72,6 @@ protected:
 	uint _width, _height;
 	int _justify;
 	Font *_font;
-	char *_text;
 	char _textID[32];
 	uint8 *_textBitmap;
 	uint _bitmapWidth, _bitmapHeight;
