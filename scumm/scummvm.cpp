@@ -628,9 +628,9 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuseDigital = new IMuseDigital(this);
 		_imuse = NULL;
 		_playerV2 = NULL;
-	} else if ((_features & GF_OLD_BUNDLE) && !(_features & GF_AMIGA) && _version != 1) {
+	} else if (_features & GF_OLD_BUNDLE) {
 		_playerV2 = NULL;
-		if (!(_features & GF_AMIGA))
+		if (!(_features & GF_AMIGA) && _version != 1)
 			_playerV2 = new Player_V2(this);
 		_imuse = NULL;
 		_imuseDigital = NULL;
