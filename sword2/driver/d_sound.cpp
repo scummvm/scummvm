@@ -627,13 +627,13 @@ void Sword2Sound::MuteSpeech(uint8 mute) {
 }
 
 uint8 Sword2Sound::IsSpeechMute(void) {
-	return (speechMuted);
+	return speechMuted;
 }
 
 int32 Sword2Sound::PauseSpeech(void) {
 	if (GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
 		speechPaused = 1;
-		g_engine->_mixer->pauseChannels(true);
+		g_engine->_mixer->pauseHandle(soundHandleSpeech, true);
 	}
 	return(RD_OK);
 }
@@ -641,7 +641,7 @@ int32 Sword2Sound::PauseSpeech(void) {
 int32 Sword2Sound::UnpauseSpeech(void) {
 	if (speechPaused) {
 		speechPaused = 0;
-		g_engine->_mixer->pauseChannels(false);
+		g_engine->_mixer->pauseHandle(soundHandleSpeech, false);
 	}
 	return(RD_OK);
 }
@@ -1122,7 +1122,7 @@ int32 Sword2Sound::PauseFx(void) {
 	if (!fxPaused) {
 		for (i = 0; i < MAXFX; i++) {
 			if (fxId[i]) {
-				g_engine->_mixer->pauseChannels(true);
+				g_engine->_mixer->pauseHandle(soundHandleFx[i], true);
 				fxiPaused[i] = 1;
 			} else {
 				fxiPaused[i] = 0;
@@ -1139,7 +1139,7 @@ int32 Sword2Sound::PauseFxForSequence(void) {
 	if (!fxPaused) {
 		for (i = 0; i<MAXFX; i++) {
 			if ((fxId[i]) && (fxId[i] != (int32) 0xfffffffe)) {
-				g_engine->_mixer->stopHandle(soundHandleFx[i]);
+				g_engine->_mixer->pauseHandle(soundHandleFx[i], true);
 				fxiPaused[i] = 1;
 			} else {
 				fxiPaused[i] = 0;
@@ -1156,7 +1156,7 @@ int32 Sword2Sound::UnpauseFx(void) {
 	if (fxPaused) {
 		for (i = 0; i < MAXFX; i++) {
 			if (fxiPaused[i] && fxId[i]) {
-				g_engine->_mixer->pauseChannels(false);
+				g_engine->_mixer->pauseHandle(soundHandleFx[i], false);
 			}
 		}
 		fxPaused = 0;
@@ -2256,7 +2256,7 @@ int32 Sword2Sound::PauseMusic(void) {
 		for (i = 0; i < 2; i++) {
 			if (musStreaming[i]) {
 				musicPaused[i] = TRUE;
-				g_engine->_mixer->pauseChannels(true);
+				g_engine->_mixer->pauseHandle(soundHandleMusic[i], true);
 			} else {
 				musicPaused[i] = FALSE;
 			}
@@ -2271,7 +2271,7 @@ int32 Sword2Sound::UnpauseMusic(void) {
 	if (soundOn) {
 		for (i = 0; i < 2; i++) {
 			if (musicPaused[i]) {
-				g_engine->_mixer->pauseChannels(false);
+				g_engine->_mixer->pauseHandle(soundHandleMusic[i], false);
 				musicPaused[i] = FALSE;
 			}
 		}
