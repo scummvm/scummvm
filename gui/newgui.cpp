@@ -32,7 +32,6 @@ namespace GUI {
 
 /*
  * TODO list
- * - get a nicer font which contains diacrits (ŠšŸ§Žˆ etc.)
  * - add more widgets: edit field, popup, radio buttons, ...
  *
  * Other ideas:
