@@ -1051,7 +1051,6 @@ public:
 	int getBoxScale(int box);
 
 	int getScale(int box, int x, int y);
-	void setScaleItem(int slot, int a, int b, int c, int d);
 
 protected:
 	// Scaling slots/items

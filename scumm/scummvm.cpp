@@ -1996,7 +1996,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 }
 
 void Scumm::initRoomSubBlocks() {
-	int i, offs;
+	int i;
 	const byte *ptr;
 	byte *roomptr, *searchptr, *roomResPtr;
 	const RoomHeader *rmhd;
@@ -2178,29 +2178,27 @@ void Scumm::initRoomSubBlocks() {
 	// Load scale data
 	//
 	if (_features & GF_OLD_BUNDLE)
-		ptr = 0;	// TODO ?
+		ptr = 0;
 	else
 		ptr = findResourceData(MKID('SCAL'), roomptr);
 	if (ptr) {
-		offs = ptr - roomptr;
 		int s1, s2, y1, y2;
 		if (_version == 8) {
-			for (i = 1; i < _maxScaleTable; i++, offs += 16) {
-				s1 = READ_LE_UINT32(roomptr + offs);
-				y1 = READ_LE_UINT32(roomptr + offs + 4);
-				s2 = READ_LE_UINT32(roomptr + offs + 8);
-				y2 = READ_LE_UINT32(roomptr + offs + 12);
+			for (i = 1; i < _maxScaleTable; i++, ptr += 16) {
+				s1 = READ_LE_UINT32(ptr);
+				y1 = READ_LE_UINT32(ptr + 4);
+				s2 = READ_LE_UINT32(ptr + 8);
+				y2 = READ_LE_UINT32(ptr + 12);
 				setScaleSlot(i, 0, y1, s1, 0, y2, s2);
 			}
 		} else {
-			for (i = 1; i < _maxScaleTable; i++, offs += 8) {
-				s1 = READ_LE_UINT16(roomptr + offs);
-				y1 = READ_LE_UINT16(roomptr + offs + 2);
-				s2 = READ_LE_UINT16(roomptr + offs + 4);
-				y2 = READ_LE_UINT16(roomptr + offs + 6);
+			for (i = 1; i < _maxScaleTable; i++, ptr += 8) {
+				s1 = READ_LE_UINT16(ptr);
+				y1 = READ_LE_UINT16(ptr + 2);
+				s2 = READ_LE_UINT16(ptr + 4);
+				y2 = READ_LE_UINT16(ptr + 6);
 				if (s1 || y1 || s2 || y2) {
-					setScaleItem(i, y1, s1, y2, s2);
-					roomptr = getResourceAddress(rtRoom, _roomResource);
+					setScaleSlot(i, 0, y1, s1, 0, y2, s2);
 				}
 			}
 		}

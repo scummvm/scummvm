@@ -155,53 +155,58 @@ int Scumm::getScale(int box, int x, int y) {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 255;
+		
+	int slot , scale;
 
 	if (_version == 8) {
-		int slot = FROM_LE_32(ptr->v8.scaleSlot);
-		if (slot) {
-			assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
-			int scaleX = 0, scaleY = 0;
-			ScaleSlot &s = _scaleSlots[slot-1];
+		// COMI has a separate field for the scale slot...
+		slot = FROM_LE_32(ptr->v8.scaleSlot);
+		scale = FROM_LE_32(ptr->v8.scale);
+	} else {
+		scale = READ_LE_UINT16(&ptr->old.scale);
+		if (scale & 0x8000)
+			slot = (scale & 0x7FFF) + 1;
+		else
+			slot = 0;
+	}
 
-			if (s.y1 == s.y2 && s.x1 == s.x2)
-				error("Invalid scale slot %d", slot);
+	// Was a scale slot specified? If so, we compute the effective scale
+	// from it, ignoring the box scale.
+	if (slot) {
+		assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
+		int scaleX = 0, scaleY = 0;
+		ScaleSlot &s = _scaleSlots[slot-1];
 
-			if (s.y1 != s.y2) {
-				if (y < 0)
-					y = 0;
+		if (s.y1 == s.y2 && s.x1 == s.x2)
+			error("Invalid scale slot %d", slot);
 
-				scaleY = (s.scale2 - s.scale1) * (y - s.y1) / (s.y2 - s.y1) + s.scale1;
-				if (s.x1 == s.x2) {
-					return scaleY;
-				}
-			}
+		if (s.y1 != s.y2) {
+			if (y < 0)
+				y = 0;
 
+			scaleY = (s.scale2 - s.scale1) * (y - s.y1) / (s.y2 - s.y1) + s.scale1;
+		}
+		if (s.x1 == s.x2) {
+			scale = scaleY;
+		} else {
 			scaleX = (s.scale2 - s.scale1) * (x - s.x1) / (s.x2 - s.x1) + s.scale1;
 
 			if (s.y1 == s.y2) {
-				return scaleX;
+				scale = scaleX;
 			} else {
-				return (scaleX + scaleY - s.x1) / 2;
+				scale = (scaleX + scaleY - s.x1) / 2;
 			}
-		} else
-			return FROM_LE_32(ptr->v8.scale);
-	} else {
-		uint16 scale = READ_LE_UINT16(&ptr->old.scale);
-
-		if (scale & 0x8000) {
-			scale = (scale & 0x7FFF) + 1;
-			byte *resptr = getResourceAddress(rtScaleTable, scale);
-			if (resptr == NULL)
-				error("Scale table %d not defined", scale);
-			if (y >= _screenHeight)
-				y = _screenHeight - 1;
-			else if (y < 0)
-				y = 0;
-			scale = resptr[y];
 		}
-		
-		return scale;
+
+		// Clip the scale to range 1-255
+		if (scale < 1)
+			scale = 1;
+		else if (scale > 255)
+			scale = 255;
 	}
+	
+	// Finally return the scale
+	return scale;
 }
 
 int Scumm::getBoxScale(int box) {
@@ -216,60 +221,36 @@ int Scumm::getBoxScale(int box) {
 		return READ_LE_UINT16(&ptr->old.scale);
 }
 
-/*
- FIXME: It seems that scale items and scale slots are the same thing after
- all - they only differ in some details (scale item is used to precompute
- a scale table, while for the scale slots the computations are done on the
- fly; also for scale slots, the scale along the x axis can vary, too).
- 
- Now, there are various known scale glitches in FT (and apparently also
- in The Dig, see FIXME comments in Actor::setupActorScale). In this context
- it is very interesting that for V5, there is an opcode which invokes
- setScaleItem, and for V8 one that invokes setScaleSlot. But there is no
- such opcode to be found for V6/V7 games.
- 
- Hypothesis: we simple are missing this opcode, and implementing it might
- fix some or all of the Dig/FT scaling issues.
-*/
-void Scumm::setScaleItem(int slot, int y1, int scale1, int y2, int scale2) {
-	byte *ptr;
-	int y, tmp;
-
-	if (y1 == y2)
-		return;
-
-	ptr = createResource(rtScaleTable, slot, 200);
-
-	for (y = 0; y < 200; y++) {
-		tmp = ((scale2 - scale1) * (y - y1)) / (y2 - y1) + scale1;
-		if (tmp < 1)
-			tmp = 1;
-		if (tmp > 255)
-			tmp = 255;
-		*ptr++ = tmp;
-	}
-/*	
-	// TEST!
-	printf("setScaleItem(%d, %d, %d, %d, %d)\n", slot, y1, scale1, y2, scale2);
-	convertScaleTableToScaleSlot(slot);
-*/
-}
-
+/**
+ * Convert a rtScaleTable resource to a corresponding scale slot entry.
+ *
+ * At some point, we discovered that the old scale items (stored in rtScaleTable
+ * resources) are in fact the same as (or rather, a predecessor of) the
+ * scale slots used in COMI. While not being precomputed (and thus slightly
+ * slower), they are more flexible, and most importantly, can cope with
+ * rooms higher than 200 pixels. That's an essential feature for DIG and FT
+ * and in fact the lack of it caused various bugs in the past.
+ *
+ * Hence, we decided to switch all games to use the more powerful scale slots.
+ * To accomodate old savegames, we attempt here to convert rtScaleTable
+ * resources to scale slots.
+ */
 void Scumm::convertScaleTableToScaleSlot(int slot) {
 	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
 
 	byte *resptr = getResourceAddress(rtScaleTable, slot);
 	ScaleSlot &s = _scaleSlots[slot-1];
-
 	int lowerIdx, upperIdx;
 	float m, oldM;
+	
+	// Do nothing if the given scale table doesn't exist
+	if (resptr == 0)
+		return;
 	
 	if (resptr[0] == resptr[199]) {
 		// The scale is constant This usually means we encountered one of the
 		// "broken" cases. We set pseudo scale item values which lead to a 
 		// constant scale of 255.
-		// TODO
-		printf("Broken case!\n");
 		s.y1 = 0;
 		s.y2 = 199;
 		s.scale1 = s.scale2 = 255;

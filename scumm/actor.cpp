@@ -412,47 +412,10 @@ void Actor::setupActorScale() {
 		return;
 
 	scale = _vm->getScale(walkbox, x, y);
-	if (_vm->_version == 8) {
-		// At least in COMI, scale values are clipped to range 1-255
-		if (scale < 1)
-			scale = 1;
-		else if (scale > 255)
-			scale = 255;
-	}
-
-	// FIXME - Hack for The Dig 'Tomb' (room 88)
-	// Otherwise walking to the far-left door causes the actor
-	// to shrink to a one-pixel dot. The reason for this is that
-	// scale items (as handled in setScaleItem etc.) are only
-	// working as long as the room height is <= 200!!! That's a
-	// serious problem for DIG/FT, and causes the FIXME below, too.
-	// A way to properly fix the problem would be to use the
-	// V8 "scale slots" instead. This would be almost perfect, the
-	// only problem being that it might render some old savegames
-	// partially broken...
-	if (_vm->_gameId == GID_DIG && _vm->_currentRoom == 88) {
-		scale = 0xFF;
-	}
-
-
-	// FIXME - Quick fix to ft's fuel tower bug (by yazoo)
-	//
-	// Ben's Y position can be anything between 272 and 398 inclusive
-	// (which by the way means that we're always looking at the same
-	// element in the scale table... hmmm...)
-	//
-	// When standing at the bottom of the ladder, Ben's Y position is
-	// 356, and by the looks of it he ought to be unscaled there.
-
-	if (_vm->_gameId == GID_FT && scale == 1 && _vm->_currentRoom == 76) {
-		scale = 0xff;
-		if (y < 356)
-			scale -= 2 * (356 - y);
-	}
-
 	if (scale > 255) {
-			warning("Actor %d at %d, scale %d out of range", number, y, scale);
+		warning("Actor %d at %d, scale %d out of range", number, y, scale);
 	}
+
 	scalex = (byte)scale;
 	scaley = (byte)scale;
 }

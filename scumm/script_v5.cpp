@@ -1867,7 +1867,7 @@ void Scumm_v5::o5_roomOps() {
 		d = getVarOrDirectByte(0x40);
 		_opcode = fetchScriptByte();
 		e = getVarOrDirectByte(0x40);
-		setScaleItem(e - 1, b, a, d, c);
+		setScaleSlot(e - 1, 0, b, a, 0, d, c);
 		break;
 	case 8:											/* room scale? */
 		if (_features & GF_SMALL_HEADER) {

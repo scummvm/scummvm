@@ -658,6 +658,15 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 	}
 	
+	// With version 22, we replace the scale items with scale slots
+	if (savegameVersion < VER(22) && !s->isSaving()) {
+		// Convert all rtScaleTable resources to matching scale items
+		for (i = 1; i < res.num[rtScaleTable]; i++) {
+			convertScaleTableToScaleSlot(i);
+		}
+	}
+
+	
 	if (_imuse && (_saveSound || !_saveLoadCompatible)) {
 		_imuse->save_or_load(s, this);
 		_imuse->setMasterVolume(_sound->_sound_volume_master);
