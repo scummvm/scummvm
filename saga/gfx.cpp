@@ -35,11 +35,6 @@
 
 namespace Saga {
 
-static R_GFX_MODULE GfxModule;
-static OSystem *_system;
-
-static byte cur_pal[R_PAL_ENTRIES * 4];
-
 Gfx::Gfx(OSystem *system, int width, int height) {
 	R_SURFACE r_back_buf;
 
@@ -59,10 +54,10 @@ Gfx::Gfx(OSystem *system, int width, int height) {
 	r_back_buf.clip_rect.bottom = height - 1;
 
 	// Set module data
-	GfxModule.r_back_buf = r_back_buf;
-	GfxModule.init = 1;
-	GfxModule.white_index = -1;
-	GfxModule.black_index = -1;
+	_back_buf = r_back_buf;
+	_init = 1;
+	_white_index = -1;
+	_black_index = -1;
 
 	// For now, always show the mouse cursor.
 	setCursor(1);
@@ -815,15 +810,15 @@ void Gfx::drawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 }
 
 R_SURFACE *Gfx::getBackBuffer() {
-	return &GfxModule.r_back_buf;
+	return &_back_buf;
 }
 
 int Gfx::getWhite(void) {
-	return GfxModule.white_index;
+	return _white_index;
 }
 
 int Gfx::getBlack(void) {
-	return GfxModule.black_index;
+	return _black_index;
 }
 
 int Gfx::matchColor(unsigned long colormask) {
@@ -839,7 +834,7 @@ int Gfx::matchColor(unsigned long colormask) {
 	int best_index = 0;
 	byte *ppal;
 
-	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
 		dr = ppal[0] - red;
 		dr = ABS(dr);
 		dg = ppal[1] - green;
@@ -875,7 +870,7 @@ int Gfx::setPalette(R_SURFACE *surface, PALENTRY *pal) {
 	int i;
 	byte *ppal;
 
-	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
 		red = pal[i].red;
 		ppal[0] = red;
 		color_delta = red;
@@ -901,15 +896,15 @@ int Gfx::setPalette(R_SURFACE *surface, PALENTRY *pal) {
 	// When the palette changes, make sure the cursor colours are still
 	// correct. We may have to reconsider this code later, but for now
 	// there is only one cursor image.
-	if (GfxModule.white_index != best_windex) {
+	if (_white_index != best_windex) {
 		setCursor(best_windex);
 	}
 
 	// Set whitest and blackest color indices
-	GfxModule.white_index = best_windex;
-	GfxModule.black_index = best_bindex;
+	_white_index = best_windex;
+	_black_index = best_bindex;
 
-	_system->setPalette(cur_pal, 0, R_PAL_ENTRIES);
+	_system->setPalette(_cur_pal, 0, R_PAL_ENTRIES);
 
 	return R_SUCCESS;
 }
@@ -918,7 +913,7 @@ int Gfx::getCurrentPal(PALENTRY *src_pal) {
 	int i;
 	byte *ppal;
 
-	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
 		src_pal[i].red = ppal[0];
 		src_pal[i].green = ppal[1];
 		src_pal[i].blue = ppal[2];
@@ -945,7 +940,7 @@ int Gfx::palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	fpercent = 1.0 - fpercent;
 
 	// Use the correct percentage change per frame for each palette entry 
-	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
 		new_entry = (int)(src_pal[i].red * fpercent);
 
 		if (new_entry < 0) {
@@ -972,7 +967,7 @@ int Gfx::palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		ppal[3] = 0;
 	}
 
-	_system->setPalette(cur_pal, 0, R_PAL_ENTRIES);
+	_system->setPalette(_cur_pal, 0, R_PAL_ENTRIES);
 
 	return R_SUCCESS;
 }
@@ -998,7 +993,7 @@ int Gfx::blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	fpercent = 1.0 - fpercent;
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
 		new_entry = (int)(src_pal[i].red - src_pal[i].red * fpercent);
 
 		if (new_entry < 0) {
@@ -1027,7 +1022,7 @@ int Gfx::blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 
 	// Find the best white and black color indices again
 	if (percent >= 1.0) {
-		for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+		for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
 			color_delta = ppal[0];
 			color_delta += ppal[1];
 			color_delta += ppal[2];
@@ -1047,11 +1042,11 @@ int Gfx::blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	// When the palette changes, make sure the cursor colours are still
 	// correct. We may have to reconsider this code later, but for now
 	// there is only one cursor image.
-	if (GfxModule.white_index != best_windex) {
+	if (_white_index != best_windex) {
 		setCursor(best_windex);
 	}
 
-	_system->setPalette(cur_pal, 0, R_PAL_ENTRIES);
+	_system->setPalette(_cur_pal, 0, R_PAL_ENTRIES);
 
 	return R_SUCCESS;
 }

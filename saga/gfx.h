@@ -81,15 +81,6 @@ struct R_SURFACE {
 #define R_GREEN_WEIGHT 0.587
 #define R_BLUE_WEIGHT 0.114
 
-struct R_GFX_MODULE {
-	int init;
-
-	R_SURFACE r_back_buf;
-
-	int white_index;
-	int black_index;
-};
-
 class Gfx {
 public:
 	int simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s);
@@ -115,6 +106,12 @@ public:
 	int blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 private:
 	void setCursor(int best_white);
+	int _init;
+	R_SURFACE _back_buf;
+	int _white_index;
+	int _black_index;
+	byte _cur_pal[R_PAL_ENTRIES * 4];
+	OSystem *_system;
 };
 
 } // End of namespace Saga
