@@ -778,6 +778,12 @@ void ScummEngine_v7he::o7_kernelSetFunctions() {
 		a = derefActor(args[1], "o7_kernelSetFunctions: 30");
 		a->clipOverride.bottom = args[2];
 		break;
+	case 42:
+		// drawWizImage related
+		break;
+	case 43:
+		// drawWizImage related
+		break;
 	case 714:
 		break;
 	default:
