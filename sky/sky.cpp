@@ -177,7 +177,7 @@ void SkyState::go() {
 
 	bool introSkipped = false;
 	if (!_quickLaunch) {
-		if (_systemVars.gameVersion <= 267) // don't do intro for floppydemos
+		if (_systemVars.gameVersion > 267) // don't do intro for floppydemos
 			introSkipped = !intro();
 
 		_skyDisk->flushPrefetched();
