@@ -248,7 +248,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_addDirect),
 		OPCODE(o5_dummy),
 		/* AC */
-		OPCODE(o5_expression), //?
+		OPCODE(o5_delay),
 		OPCODE(o5_putActorInRoom),
 		OPCODE(o2_waitForSentence),
 		OPCODE(o2_ifNotState40),
@@ -261,7 +261,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getDist),
 		OPCODE(o5_findObject),
 		OPCODE(o5_walkActorToObject),
-		OPCODE(o5_startObject), //?
+		OPCODE(o2_setState20),
 		/* B8 */
 		OPCODE(o5_lessOrEqual),
 		OPCODE(o5_doSentence),
