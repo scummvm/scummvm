@@ -35,6 +35,7 @@
 
 #include "stdafx.h"
 #include "scumm/scumm.h"
+#include "common/gameDetector.h"
 #include "common/scaler.h"
 #include "sound/mididrv.h"
 #include "morphos.h"
@@ -91,32 +92,47 @@ OSystem *OSystem_MorphOS_create(int game_id, int gfx_mode, bool full_screen)
 			break;
 	}
 
-	TheSystem = OSystem_MorphOS::create(game_id, gfx_scaler, full_screen);
+	TheSystem = OSystem_MorphOS::create(gfx_scaler, full_screen);
 	return TheSystem;
 }
 
 void close_resources()
 {
 	if (TheSystem)
+	{
 		delete TheSystem;
-
-	if (g_engine)
-		delete g_engine;
+		TheSystem = NULL;
+	}
 
 	if (ScummPath)
+	{
 		FreeVec(ScummPath);
+		ScummPath = NULL;
+	}
 
 	if (ScummStory)
+	{
 		FreeVec(ScummStory);
+		ScummStory = NULL;
+	}
 
 	if (ScummArgs)
+	{
 		FreeArgs(ScummArgs);
+		ScummArgs = NULL;
+	}
 
 	if (OrigDirLock)
+	{
 		CurrentDir(OrigDirLock);
+		OrigDirLock = NULL;
+	}
 
 	if (CDDABase)
+	{
 		CloseLibrary(CDDABase);
+		CDDABase = NULL;
+	}
 }
 
 static STRPTR FindMusicDriver(STRPTR argval)
@@ -389,6 +405,13 @@ int main()
 	if (args[USG_NOSUBTITLES]) argv[argc++] = "-n";
 	if (args[USG_AMIGA]) 		argv[argc++] = "-a";
 	if (args[USG_MUSIC]) 		argv[argc++] = ScummMusicDriver;
+	else
+	{
+		if (etude_available())
+			argv[argc++] = "-eetude";
+		else
+			argv[argc++] = "-eadlib";
+	}
 	if (ScummGfxScaler != ST_INVALID)
 	{
 		sprintf(scaler, "-g%s", MorphOSScaler::GetParamName(ScummGfxScaler));

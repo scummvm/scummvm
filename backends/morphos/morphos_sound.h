@@ -32,6 +32,7 @@ class OSystem_MorphOS;
 int morphos_sound_thread(OSystem_MorphOS *syst, ULONG SampleType);
 bool init_morphos_music(ULONG MidiUnit, ULONG DevFlags);
 void exit_morphos_music();
+bool etude_available();
 
 extern SignalSemaphore ScummMusicThreadRunning;
 extern SignalSemaphore ScummSoundThreadRunning;

@@ -60,7 +60,7 @@ int MidiDriver_ETUDE::open()
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 	_isOpen = true;
-	if (!init_morphos_music(0, ETUDEF_DIRECT))
+	if (!init_morphos_music(ScummMidiUnit, ETUDEF_DIRECT))
 		return MERR_DEVICE_NOT_AVAILABLE;
 
 	return 0;

@@ -37,7 +37,7 @@
 class OSystem_MorphOS : public OSystem
 {
 	public:
-					OSystem_MorphOS(int game_id, SCALERTYPE gfx_mode, bool full_screen);
+					OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen);
 		virtual ~OSystem_MorphOS();
 
 		// Set colors of the palette
@@ -124,7 +124,7 @@ class OSystem_MorphOS : public OSystem
 		// Quit
 		virtual void quit();
 
-		static OSystem_MorphOS *create(int game_id, SCALERTYPE gfx_scaler, bool full_screen);
+		static OSystem_MorphOS *create(SCALERTYPE gfx_scaler, bool full_screen);
 
 		static bool OpenATimer(MsgPort **port, IORequest **req, ULONG unit, bool required = true);
 
