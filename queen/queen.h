@@ -33,6 +33,7 @@ class Display;
 class Graphics;
 class Input;
 class Logic;
+class Music;
 class Resource;
 class Sound;
 class Walk;
@@ -48,6 +49,7 @@ public:
 	Graphics *graphics() const { return _graphics; }
 	Input *input() const { return _input; }
 	Logic *logic() const { return _logic; }
+	Music *music() const { return _music; }
 	Resource *resource() const { return _resource; }
 	Sound *sound() const { return _sound; }
 	Walk *walk() const { return _walk; }
@@ -70,6 +72,7 @@ protected:
 	Graphics *_graphics;
 	Input *_input;
 	Logic *_logic;
+	Music *_music;
 	Resource *_resource;
 	Sound *_sound;
 	Walk *_walk;

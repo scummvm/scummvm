@@ -37,6 +37,7 @@
 #include "queen/graphics.h"
 #include "queen/input.h"
 #include "queen/logic.h"
+#include "queen/music.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/talk.h"
@@ -107,6 +108,7 @@ QueenEngine::~QueenEngine() {
 	delete _graphics;
 	delete _input;
 	delete _logic;
+	delete _music;
 	delete _sound;
 	delete _walk;	
 }
@@ -119,7 +121,7 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 void QueenEngine::go() {
 
 	initialise();
-
+	
 	_logic->registerDefaultSettings();
 	_logic->readOptionSettings();
 
@@ -163,6 +165,7 @@ void QueenEngine::initialise(void) {
 	_graphics = new Graphics(this);
 	_input = new Input(_resource->getLanguage(), _system);
 	_logic = new Logic(this);
+	_music = new Music(GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE)), this);
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second

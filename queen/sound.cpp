@@ -23,6 +23,7 @@
 #include "queen/sound.h"
 
 #include "queen/input.h"
+#include "queen/music.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
 
@@ -135,10 +136,36 @@ void Sound::waitSfxFinished() {
 }
 
 void Sound::playSong(int16 songNum) {
+	if (songNum == STOP_MUSIC) {
+		_vm->music()->stopSong();
+		return;
+	}
+	
 	int16 newTune = _song[songNum - 1].tuneList[0];
 
-	if (_tune[newTune - 1].sfx[0] && sfxOn())
+	if (_tune[newTune - 1].sfx[0] && sfxOn()) {
 		sfxPlay(_sfxName[_tune[newTune - 1].sfx[0] - 1]);
+		return;
+	}
+
+	//TODO: Record onto song stack for saving/loading
+	
+	switch (_tune[newTune - 1].mode) {
+		//Random loop
+		case  0:
+			warning("Music: Random loop not yet supported (doing sequential loop instead)");
+		//Sequential loop
+		case  1:
+			_vm->music()->loop(true);
+			break;
+		//Play once
+		case  2:
+		default:
+			_vm->music()->loop(false);
+			break;
+	}
+
+	_vm->music()->playSong(_tune[newTune - 1].tuneNum[0] - 1);
 }
 
 
