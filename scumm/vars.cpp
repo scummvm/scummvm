@@ -286,7 +286,7 @@ void ScummEngine_v8::setupScummVars() {
 	
 	VAR_CURRENTDISK = 42;
 
-	VAR_SCROLL_SCRIPT = 50;	// FIXME - guess based on where this is in V7
+	VAR_SCROLL_SCRIPT = 50;
 	VAR_ENTRY_SCRIPT = 51;
 	VAR_ENTRY_SCRIPT2 = 52;
 	VAR_EXIT_SCRIPT = 53;
@@ -297,7 +297,7 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_CUTSCENE_START_SCRIPT = 58;
 	VAR_CUTSCENE_END_SCRIPT = 59;
 
-	VAR_CUTSCENEEXIT_KEY = 62;	// FIXME -  guess based on script-1 (could also be 68)
+	VAR_CUTSCENEEXIT_KEY = 62;
 
 	VAR_PAUSE_KEY = 64;
 	VAR_MAINMENU_KEY = 65;
@@ -314,7 +314,7 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_CAMERA_THRESHOLD_X = 124;
 	VAR_CAMERA_THRESHOLD_Y = 125;
 
-	VAR_CUSTOMSCALETABLE = 111;	// FIXME - guess
+	VAR_CUSTOMSCALETABLE = 111;
 
 	VAR_TIMER_NEXT = 112;
 	VAR_TMR_1 = 113;
