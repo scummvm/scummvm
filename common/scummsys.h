@@ -166,7 +166,6 @@
 
 #elif defined(__PALMOS_TRAPS__)	// PALMOS
 	#include <PalmOS.h>
-	#include "compile.h"
 	#include "globals.h"
 	#include "extend.h"
 	
