@@ -719,23 +719,20 @@ static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo
 
 void IMuseDigital::timer_handler(void *refCon) {
 	IMuseDigital *imuseDigital = (IMuseDigital *)refCon;
-	imuseDigital->musicTimer();
+	imuseDigital->mixerCallback();
 }
 
 IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	: _scumm(scumm) {
 	memset(_channel, 0, sizeof(Channel) * MAX_DIGITAL_CHANNELS);
-	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_channel[l]._handle = 0;
-	}
-	_scumm->_timer->installTimerProc(timer_handler, 200000, this);
+	_scumm->_timer->installTimerProc(timer_handler, 40000, this);
 	_pause = false;
-
+	
 	_nameBundleMusic = "";
 	_musicBundleBufFinal = NULL;
 	_musicBundleBufOutput = NULL;
 	_musicDisk = 0;
-	
+
 	_bundle = new Bundle();
 }
 
@@ -743,141 +740,121 @@ IMuseDigital::~IMuseDigital() {
 	_scumm->_timer->removeTimerProc(timer_handler);
 
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_scumm->_mixer->stopHandle(_channel[l]._handle);
+		_scumm->_mixer->stopHandle(_channel[l].handle);
 	}
 
 	delete _bundle;
 }
 
-void IMuseDigital::musicTimer() {
+void IMuseDigital::mixerCallback() {
 	int l = 0;
 
 	if (_pause || !_scumm)
 		return;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
-		if (_channel[l]._used) {
-			if (_channel[l]._toBeRemoved) {
-				_scumm->_mixer->endStream(_channel[l]._handle);
+		if (_channel[l].used) {
+			if (_channel[l].toBeRemoved) {
+				_scumm->_mixer->endStream(_channel[l].handle);
+				debug(5, "IMuseDigital::mixerCallback(): stop sound: %d", _channel[l].idSound);
 
-				free(_channel[l]._data);
-				_channel[l]._used = false;
+				free(_channel[l].data);
+				_channel[l].used = false;
 				continue;
 			}
 
-			if (_channel[l]._delay > 0) {
-				_channel[l]._delay--;
-				continue;
-			}
-
-			if (_channel[l]._volumeFade != -1) {
-				if (_channel[l]._volumeFadeStep < 0) {
-					if (_channel[l]._volume > _channel[l]._volumeFade) {
-						_channel[l]._volume += _channel[l]._volumeFadeStep;
-						_channel[l]._volumeRight += _channel[l]._volumeFadeStep;
-						if (_channel[l]._volume < _channel[l]._volumeFade) {
-							_channel[l]._volume = _channel[l]._volumeFade;
+			if (_channel[l].volFadeUsed == true) {
+				if (_channel[l].volFadeStep < 0) {
+					if (_channel[l].vol > _channel[l].volFadeDest) {
+						_channel[l].vol += _channel[l].volFadeStep;
+						if (_channel[l].vol < _channel[l].volFadeDest) {
+							_channel[l].vol = _channel[l].volFadeDest;
+							_channel[l].volFadeUsed = false;
 						}
-						if (_channel[l]._volumeRight < _channel[l]._volumeFade) {
-							_channel[l]._volumeRight = _channel[l]._volumeFade;
-						}
-						if ((_channel[l]._volume == 0) && (_channel[l]._volumeRight == 0)) {
-							_channel[l]._toBeRemoved = true;
+						if (_channel[l].vol == 0) {
+							_channel[l].toBeRemoved = true;
 						}
 					}
-				} else if (_channel[l]._volumeFadeStep > 0) {
-					if (_channel[l]._volume < _channel[l]._volumeFade) {
-						_channel[l]._volume += _channel[l]._volumeFadeStep;
-						_channel[l]._volumeRight += _channel[l]._volumeFadeStep;
-						if (_channel[l]._volume > _channel[l]._volumeFade) {
-							_channel[l]._volume = _channel[l]._volumeFade;
-						}
-						if (_channel[l]._volumeRight > _channel[l]._volumeFade) {
-							_channel[l]._volumeRight = _channel[l]._volumeFade;
+				} else if (_channel[l].volFadeStep > 0) {
+					if (_channel[l].vol < _channel[l].volFadeDest) {
+						_channel[l].vol += _channel[l].volFadeStep;
+						if (_channel[l].vol > _channel[l].volFadeDest) {
+							_channel[l].vol = _channel[l].volFadeDest;
+							_channel[l].volFadeUsed = false;
 						}
 					}
 				}
+				debug(5, "Fade: sound(%d), Vol(%d)", _channel[l].idSound, _channel[l].vol / 1000);
 			}
 
-			int32 new_size = _channel[l]._mixerSize;
+			int32 new_size = _channel[l].mixerSize;
 			int32 mixer_size = new_size;
 
-			if (_channel[l]._handle == 0) {
-				mixer_size *= 2;
-				new_size *= 2;
+			if (_channel[l].offset + mixer_size > _channel[l].size) {
+				new_size = _channel[l].size - _channel[l].offset;
 			}
 
-			if (_channel[l]._offset + mixer_size > _channel[l]._size) {
-				new_size = _channel[l]._size - _channel[l]._offset;
-			}
-
-			if (_channel[l]._offset + mixer_size > _channel[l]._size) {
-				new_size = _channel[l]._size - _channel[l]._offset;
-				_channel[l]._toBeRemoved = true;
+			if (_channel[l].offset + mixer_size > _channel[l].size) {
+				new_size = _channel[l].size - _channel[l].offset;
+				_channel[l].toBeRemoved = true;
 				mixer_size = new_size;
 			}
 
-			byte *buf = (byte*)malloc(mixer_size);
-			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
-			_channel[l]._offset += mixer_size;
+			byte *buf = (byte *)malloc(mixer_size);
+			memcpy(buf, _channel[l].data + _channel[l].offset, new_size);
+			_channel[l].offset += mixer_size;
 
 			if (_scumm->_silentDigitalImuse == false) {
-				if (_channel[l]._handle == 0)
-					_scumm->_mixer->newStream(&_channel[l]._handle,
-											_channel[l]._freq, _channel[l]._mixerFlags, 100000);
-
-				_scumm->_mixer->setChannelVolume(_channel[l]._handle, _channel[l]._volume);
-				_scumm->_mixer->setChannelPan(_channel[l]._handle, _channel[l]._volumeRight - _channel[l]._volume);
-				_scumm->_mixer->appendStream(_channel[l]._handle, buf, mixer_size);
+				if (_channel[l].handle == 0)
+					_scumm->_mixer->newStream(&_channel[l].handle, _channel[l].freq, 
+											_channel[l].mixerFlags, 100000);
+				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
+				_scumm->_mixer->setChannelPan(_channel[l].handle, _channel[l].pan);
+				_scumm->_mixer->appendStream(_channel[l].handle, buf, mixer_size);
 			}
-			free(buf);
 		}
 	}
 }
 
 void IMuseDigital::startSound(int sound) {
 	debug(5, "IMuseDigital::startSound(%d)", sound);
-	int l;
+	int l, r;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		if (_channel[l]._used == false) {
+		if (!_channel[l].used && !_channel[l].handle) {
 			byte *ptr = _scumm->getResourceAddress(rtSound, sound);
 			byte *s_ptr = ptr;
 			if (ptr == NULL) {
 				warning("IMuseDigital::startSound(%d) NULL resource pointer", sound);
 				return;
 			}
-			_channel[l]._idSound = sound;
-			_channel[l]._offset = 0;
-			_channel[l]._volumeRight = 127;
-			_channel[l]._volume = 127;
-			_channel[l]._volumeFade = -1;
-			_channel[l]._volumeFadeParam = 0;
-			_channel[l]._delay = 1;
+			_channel[l].idSound = sound;
+			_channel[l].offset = 0;
+			_channel[l].pan = 0;
+			_channel[l].vol = 127 * 1000;
+			_channel[l].volFadeUsed = false;
+			_channel[l].volFadeDest = 0;
+			_channel[l].volFadeStep = 0;
+			_channel[l].volFadeDelay = 0;
 
 			uint32 tag;
 			int32 size = 0;
 			int t;
 
 			if (READ_UINT32(ptr) == MKID('Crea')) {
-				_channel[l]._bits = 8;
-				// Always output stereo, because in IMuseDigital::handler the data is expected to be in stereo, and
-				// different volumes for the left and right channel are being applied.
-				// That might also be the justification for specifying FLAG_REVERSE_STEREO here. Not sure.
-				_channel[l]._channels = 2;
-				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
-				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l]._freq);
-				
-				_channel[l]._mixerSize = (_channel[l]._freq / 5) * 2;
+				_channel[l].bits = 8;
+				_channel[l].channels = 2;
+				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
+				_channel[l].mixerSize = _channel[l].freq * 2;
 
-				size *= 2;
-				_channel[l]._data = (byte *)malloc(size);
+				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l].freq);
+				_channel[l].data = (byte *)malloc(size);
 				for (t = 0; t < size / 2; t++) {
-					*(_channel[l]._data + t * 2 + 0) = *(t_ptr + t);
-					*(_channel[l]._data + t * 2 + 1) = *(t_ptr + t);
+					*(_channel[l].data + t * 2 + 0) = *(t_ptr + t);
+					*(_channel[l].data + t * 2 + 1) = *(t_ptr + t);
 				}
 				free(t_ptr);
-				_channel[l]._size = size;
+				_channel[l].size = size;
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 				ptr += 16;
 				for (;;) {
@@ -885,22 +862,48 @@ void IMuseDigital::startSound(int sound) {
 					switch(tag) {
 					case MKID_BE('FRMT'):
 						ptr += 12;
-						_channel[l]._bits = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._freq = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._channels = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].bits = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].freq = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].channels = READ_BE_UINT32(ptr); ptr += 4;
 					break;
 					case MKID_BE('TEXT'):
-						size = READ_BE_UINT32(ptr); ptr += size + 4;
+						size = READ_BE_UINT32(ptr); ptr += 4;
+						if (_channel[l].numRegions >= MAX_IMUSE_MARKERS) {
+							warning("IMuseDigital::startSound() Not enough space for Marker");
+							ptr += size;
+							break;
+						}
+						strcpy(_channel[l].marker[_channel[l].numMarkers].name, (char *)ptr + 4);
+						_channel[l].numMarkers++;
+						ptr += size;
 						break;
 					case MKID_BE('REGN'):
-						ptr += 12;
+						size = READ_BE_UINT32(ptr); ptr += 4;
+						if (_channel[l].numRegions >= MAX_IMUSE_REGIONS) {
+							warning("IMuseDigital::startSound() Not enough space for Region");
+							ptr += 8;
+							break;
+						}
+						_channel[l].region[_channel[l].numRegions].start = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].region[_channel[l].numRegions].length = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].numRegions++;
 						break;
 					case MKID_BE('STOP'):
 						ptr += 4;
-						_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].offsetStop = READ_BE_UINT32(ptr); ptr += 4;
 						break;
 					case MKID_BE('JUMP'):
-						ptr += 20;
+						size = READ_BE_UINT32(ptr); ptr += 4;
+						if (_channel[l].numJumps >= MAX_IMUSE_JUMPS) {
+							warning("IMuseDigital::startSound() Not enough space for Jump");
+							ptr += size;
+							break;
+						}
+						_channel[l].jump[_channel[l].numJumps].start = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].jump[_channel[l].numJumps].dest = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].jump[_channel[l].numJumps].hookId = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].jump[_channel[l].numJumps].fadeDelay = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l].numJumps++;
 						break;
 					case MKID_BE('DATA'):
 						size = READ_BE_UINT32(ptr); ptr += 4;
@@ -908,44 +911,62 @@ void IMuseDigital::startSound(int sound) {
 					default:
 						error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", sound, (byte)(tag >> 24), (byte)(tag >> 16), (byte)(tag >> 8), (byte)tag);
 					}
-					if (tag == MKID_BE('DATA')) break;
+					if (tag == MKID_BE('DATA'))
+						break;
 				}
 
 				uint32 header_size = ptr - s_ptr;
-				_channel[l]._offsetStop -= header_size;
-				if (_channel[l]._bits == 12) {
-					_channel[l]._offsetStop = (_channel[l]._offsetStop / 3) * 4;
+
+				_channel[l].offsetStop -= header_size;
+				if (_channel[l].bits == 12) {
+					_channel[l].offsetStop = (_channel[l].offsetStop / 3) * 4;
+				}
+				for (r = 0; r < _channel[l].numRegions; r++) {
+					_channel[l].region[r].start -= header_size;
+					if (_channel[l].bits == 12) {
+						_channel[l].region[r].start = (_channel[l].region[r].start / 3) * 4;
+						_channel[l].region[r].length = (_channel[l].region[r].length / 3) * 4;
+					}
+				}
+				if (_channel[l].numJumps > 0) {
+					for (r = 0; r < _channel[l].numJumps; r++) {
+						_channel[l].jump[r].start -= header_size;
+						_channel[l].jump[r].dest -= header_size;
+						if (_channel[l].bits == 12) {
+							_channel[l].jump[r].start = (_channel[l].jump[r].start / 3) * 4;
+							_channel[l].jump[r].dest = (_channel[l].jump[r].dest / 3) * 4;
+						}
+					}
 				}
 
-				// Always output stereo, because in IMuseDigital::handler the data is expected to be in stereo, and
-				// different volumes for the left and right channel are being applied.
-				// That might also be the justification for specifying FLAG_REVERSE_STEREO here. Not sure.
-				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-				_channel[l]._mixerSize = (_channel[l]._freq / 5) * 2;
-				if (_channel[l]._bits == 12) {
-					_channel[l]._mixerSize *= 2;
-					_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;
-					_channel[l]._size = decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 2) ? false : true);
-				} else if (_channel[l]._bits == 8) {
-					_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
-					if (_channel[l]._channels == 1) {
+				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_AUTOFREE;
+				_channel[l].mixerSize = _channel[l].freq * 2;
+
+				if (_channel[l].bits == 12) {
+					_channel[l].mixerSize *= 2;
+					_channel[l].mixerFlags |= SoundMixer::FLAG_16BITS;
+					_channel[l].size = decode12BitsSample(ptr, &_channel[l].data, size, (_channel[l].channels == 2) ? false : true);
+				} else if (_channel[l].bits == 8) {
+					_channel[l].mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+					if (_channel[l].channels == 1) {
 						size *= 2;
-						_channel[l]._channels = 2;
-						_channel[l]._data = (byte *)malloc(size);
+						_channel[l].channels = 2;
+						_channel[l].data = (byte *)malloc(size);
 						for (t = 0; t < size / 2; t++) {
-							*(_channel[l]._data + t * 2 + 0) = *(ptr + t);
-							*(_channel[l]._data + t * 2 + 1) = *(ptr + t);
+							*(_channel[l].data + t * 2 + 0) = *(ptr + t);
+							*(_channel[l].data + t * 2 + 1) = *(ptr + t);
 						}
 					} else {
-						_channel[l]._data = (byte *)malloc(size);
-						memcpy(_channel[l]._data, ptr, size);
+						_channel[l].data = (byte *)malloc(size);
+						memcpy(_channel[l].data, ptr, size);
 					}
-					_channel[l]._size = size;
+					_channel[l].size = size;
 				} else
-					error("Can't handle %d bit samples in iMuseDigital", _channel[l]._bits);
+					error("Can't handle %d bit samples in iMuseDigital", _channel[l].bits);
 			}
-			_channel[l]._toBeRemoved = false;
-			_channel[l]._used = true;
+			_channel[l].mixerSize /= 25;
+			_channel[l].toBeRemoved = false;
+			_channel[l].used = true;
 			break;
 		}
 	}
@@ -954,21 +975,27 @@ void IMuseDigital::startSound(int sound) {
 void IMuseDigital::stopSound(int sound) {
 	debug(5, "IMuseDigital::stopSound(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		if ((_channel[l]._idSound == sound) && _channel[l]._used) {
-			_channel[l]._toBeRemoved = true;
+		if ((_channel[l].idSound == sound) && _channel[l].used) {
+			_channel[l].toBeRemoved = true;
 		}
 	}
 }
 
 void IMuseDigital::stopAllSounds() {
+	debug(5, "IMuseDigital::stopAllSounds");
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		if (_channel[l]._used) {
-			_channel[l]._toBeRemoved = true;
+		if (_channel[l].used) {
+			_channel[l].toBeRemoved = true;
 		}
 	}
 }
 
 void IMuseDigital::pause(bool p) {
+	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+		if (_channel[l].used) {
+			_scumm->_mixer->pauseID(_channel[l].handle, p);
+		}
+	}
 	_pause = p;
 	pauseBundleMusic(p);
 }
@@ -978,50 +1005,40 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 	int sample = b;
 	int sub_cmd = c;
 	int chan = -1;
-	int tmp, l, r;
+	int l, r;
 
 	if (!cmd)
 		return 1;
 
 	switch (cmd) {
-	case 10:
+	case 10: // ImuseStopAllSounds
 		debug(5, "ImuseStopAllSounds()");
 		stopAllSounds();
 		return 0;
 	case 12: // ImuseSetParam
 		switch (sub_cmd) {
-		case 0x500: // volume control (0-127)
-		case 0x600: // volume control (0-127) with pan
-			debug(5, "ImuseSetParam (%x), setting volume sample(%d), volume(%d)", sub_cmd, sample, d);
+		case 0x500: // set priority - could be ignored
+			return 0;
+		case 0x600: // set volume
+			debug(5, "ImuseSetParam (%x), sample(%d), volume(%d)", sub_cmd, sample, d);
 			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-				if ((_channel[l]._idSound == sample) && _channel[l]._used) {
+				if ((_channel[l].idSound == sample) && _channel[l].used) {
 					chan = l;
 					break;
 				}
 			}
 			if (chan == -1) {
-				debug(5, "ImuseSetParam (%x), sample(%d) not exist in channels", sub_cmd, sample);
+				debug(0, "ImuseSetParam (%x), sample(%d) not exist in channels", sub_cmd, sample);
 				return 1;
 			}
-			_channel[chan]._volume = d;
-			_channel[chan]._volumeRight = d;
-			if (_channel[chan]._volumeFade != -1) {
-				tmp = ((_channel[chan]._volumeFade - _channel[chan]._volume) * 2) / _channel[chan]._volumeFadeParam;
-				if ((tmp < 0) && (tmp > -2)) {
-					tmp = -1;
-				} else if ((tmp > 0) && (tmp < 2)) {
-					tmp = 1;
-				} else {
-					tmp /= 2;
-				}
-			_channel[chan]._volumeFadeStep = tmp;
-			debug(5, "ImuseSetParam: to volume %d, step is %d", d, tmp);
-			}
+			_channel[chan].vol = d * 1000;
+			if (_channel[chan].volFadeUsed)
+				_channel[chan].volFadeStep = (_channel[chan].volFadeDest - _channel[chan].vol) / (((1000 * _channel[chan].volFadeDelay) / 60) / 40);
 			return 0;
-		case 0x700: // right volume control (0-127)
-			debug(5, "ImuseSetParam (0x700), setting right volume sample(%d), volume(%d)", sample, d);
+		case 0x700: // set pan
+			debug(5, "ImuseSetParam (0x700), sample(%d), pan(%d)", sample, d);
 			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-				if ((_channel[l]._idSound == sample) && _channel[l]._used) {
+				if ((_channel[l].idSound == sample) && _channel[l].used) {
 					chan = l;
 					break;
 				}
@@ -1030,7 +1047,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				debug(5, "ImuseSetParam (0x700), sample(%d) not exist in channels", sample);
 				return 1;
 			}
-			_channel[chan]._volumeRight = d;
+			_channel[chan].pan = d;
 			return 0;
 		default:
 			warning("IMuseDigital::doCommand SetParam DEFAULT command %d", sub_cmd);
@@ -1038,34 +1055,27 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		}
 	case 14: // ImuseFadeParam
 		switch (sub_cmd) {
-		case 0x600: // control volume fade
-			debug(5, "ImuseFadeParam - fading volume sample(%d), to volume(%d) with speed(%d)", sample, d, e);
+		case 0x600: // set new volume with fading
+			debug(5, "ImuseFadeParam - fade sample(%d), to volume(%d) with 60hz ticks(%d)", sample, d, e);
 			if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
 				stopSound(sample);
 				return 0;
 			}
 			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-				if ((_channel[l]._idSound == sample) && _channel[l]._used) {
+				if ((_channel[l].idSound == sample) && _channel[l].used) {
 					chan = l;
 					break;
 				}
 			}
 			if (chan == -1) {
-					debug(5, "ImuseFadeParam (0x600), sample %d not exist in channels", sample);
+				debug(5, "ImuseFadeParam (0x600), sample %d not exist in channels", sample);
 				return 1;
 			}
-			_channel[chan]._volumeFade = d;
-			_channel[chan]._volumeFadeParam = e;
-			tmp = ((_channel[chan]._volumeFade - _channel[chan]._volume) * 2) / _channel[chan]._volumeFadeParam;
-			if ((tmp < 0) && (tmp > -2)) {
-				tmp = -1;
-			} else if ((tmp > 0) && (tmp < 2)) {
-				tmp = 1;
-			} else {
-				tmp /= 2;
-			}
-			_channel[chan]._volumeFadeStep = tmp;
-			debug(5, "ImuseFadeParam: to volume %d, step is %d", d, tmp);
+			_channel[chan].volFadeDelay = e;
+			_channel[chan].volFadeDest = d * 1000;
+			_channel[chan].volFadeStep = (_channel[chan].volFadeDest - _channel[chan].vol) / (((1000 * e) / 60) / 40);
+			_channel[chan].volFadeUsed = true;
+			debug(5, "ImuseFadeParam: vol %d, volDest %d, step %d", _channel[chan].vol, d * 1000, _channel[chan].volFadeStep);
 			return 0;
 		default:
 			warning("IMuseDigital::doCommand FadeParam DEFAULT sub command %d", sub_cmd);
@@ -1223,15 +1233,13 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 int IMuseDigital::getSoundStatus(int sound) const {
 	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		if ((_channel[l]._idSound == sound) && _channel[l]._used) {
+		if ((_channel[l].idSound == sound) && _channel[l].used) {
 			return 1;
 		}
 	}
 
 	return 0;
 }
-
-#pragma mark -
 
 void IMuseDigital::music_handler(void *refCon) {
 	((IMuseDigital *)refCon)->bundleMusicHandler();
@@ -1540,8 +1548,6 @@ void IMuseDigital::playBundleSound(const char *sound, PlayingSoundHandle *handle
 bail:
 	free(orig_ptr);
 }
-
-
 
 } // End of namespace Scumm
 

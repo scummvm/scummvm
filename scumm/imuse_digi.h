@@ -30,8 +30,9 @@
 namespace Scumm {
 
 #define MAX_DIGITAL_CHANNELS 8
-#define MAX_IMUSE_JUMPS 1
-#define MAX_IMUSE_REGIONS 3
+#define MAX_IMUSE_JUMPS 50
+#define MAX_IMUSE_REGIONS 50
+#define MAX_IMUSE_MARKERS 50
 
 class ScummEngine;
 class Bundle;
@@ -42,35 +43,59 @@ class Bundle;
 class IMuseDigital : public MusicEngine {
 private:
 
-	struct Channel {
-		int8 _volumeRight;
-		int8 _volume;
-		int8 _volumeFade;
-		int8 _volumeFadeParam;
-		int8 _volumeFadeStep;
-		int _delay;
-		int32 _offsetStop;
-		int32 _offset;
-		byte *_data;
-		int _freq;
-		int _channels;
-		int _bits;
-		int32 _size;
-		int _idSound;
-		int32 _mixerSize;
-		int _mixerFlags;
-		PlayingSoundHandle _handle;
-		bool _used;
-		bool _toBeRemoved;
+	struct _region {
+		uint32 start;		// begin of region
+		uint32 length;		// lenght of region
 	};
-	
+
+	struct _jump {
+		uint32 start;		// jump start position
+		uint32 dest;		// jump to dest position
+		uint32 hookId;		// id of hook
+		uint32 fadeDelay;	// fade delay in ms
+	};
+
+	struct _marker {
+		char name[256];		// name of marker
+	};
+
+	struct Channel {
+		int8 pan;			// pan
+		int32 vol;			// volume
+		int32 volFadeDest;	//
+		int32 volFadeStep;	//
+		int32 volFadeDelay;	//
+		bool volFadeUsed;	//
+
+		_region region[MAX_IMUSE_REGIONS];
+		_marker marker[MAX_IMUSE_MARKERS];
+		_jump jump[MAX_IMUSE_JUMPS];
+		int32 offsetStop;
+		int32 numJumps;
+		int32 numRegions;
+		int32 numMarkers;
+
+		int32 offset;
+		byte *data;
+		int freq;
+		int channels;
+		int bits;
+		int32 size;
+		int idSound;
+		int32 mixerSize;
+		int mixerFlags;
+		PlayingSoundHandle handle;
+		bool used;
+		bool toBeRemoved;
+	};
+
 	Channel _channel[MAX_DIGITAL_CHANNELS];
 
 	ScummEngine *_scumm;
 	bool _pause;
 
 	static void timer_handler(void *refConf);
-	void musicTimer();
+	void mixerCallback();
 
 	//
 	// Bundle music
@@ -97,15 +122,15 @@ private:
 	void bundleMusicHandler();
 
 	void playBundleMusic(const char *song);
-	void pauseBundleMusic(bool state);
 
 public:
 	int32 _bundleSongPosInMs;
 	Bundle *_bundle;	// FIXME: should be protected but is used by ScummEngine::askForDisk
 
+	void pauseBundleMusic(bool state);
 	void stopBundleMusic();
 	void playBundleSound(const char *sound, PlayingSoundHandle *handle);
-
+ 
 public:
 	IMuseDigital(ScummEngine *scumm);
 	~IMuseDigital();
