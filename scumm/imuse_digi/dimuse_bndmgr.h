@@ -72,6 +72,8 @@ private:
 	byte *_compInput;
 	int _outputSize;
 	int _lastBlock;
+	
+	bool loadCompTable(int32 index);
 
 public:
 
