@@ -1198,9 +1198,11 @@ void ScummEngine_v6he::o6_rename() {
 int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 	if (size == 0)
 		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
+
 	writeVar(0, 0);
 
-	ArrayHeader *ah = defineArray(0, rtCostume, 0, size);
+	// define size as size-1 because in defineArray it gets incremented
+	ArrayHeader *ah = defineArray(0, rtCostume, 0, size-1);
 	_hFileTable[slot].read(ah->data, size);
 
 	return readVar(0);
@@ -1231,9 +1233,8 @@ void ScummEngine_v6he::o6_readFile() {
 
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resID);
-	// FIXME: hack for proper size: / 2 - 5
-	// does it really needed? Needs checking
-	int32 size = getResourceSize(rtString, resID) / 2 - 5;
+	int32 size = FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2);
+
 	_hFileTable[slot].write(ah->data, size);
 }
 
@@ -1262,10 +1263,10 @@ void ScummEngine_v6he::o6_setVolume() {
 	int soundVolumeMaster;
 	int volume = pop();
 	switch (subOp) {
-	case 222:
+	case 0xde:
 		_mixer->setMusicVolume(volume);
 		break;
-	case 224:
+	case 0xe0:
 		soundVolumeMaster = ConfMan.getInt("master_volume");
 		_mixer->setVolume(volume * soundVolumeMaster / 255);
 		break;
