@@ -45,8 +45,14 @@ _build_plugins=no
 _backend=sdl
 _ranlib=ranlib
 _sdlconfig=sdl-config
-_host=""
 _sdlpath="$PATH"
+
+# For cross compiling
+_host=""
+_host_cpu=""
+_host_vendor=""
+_host_os=""
+
 # config.h defaults
 _def_linupy="#undef LINUPY"
 
@@ -97,7 +103,7 @@ fi
 # TODO: small bit of code to test sdl useability
 find_sdlconfig()
 {
-	printf "Looking for sdl-config... "
+	echo_n "Looking for sdl-config... "
 	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
 	
@@ -328,16 +334,21 @@ done;
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 
 if test "$_host" = "linupy"; then
-    _host=arm-linux
-    def_linupy="#define DLINUPY"
+    _host_os=linux
+    _host_cpu=arm
+else
+	guessed_host=`./config.guess`
+    _host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+    _host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+    _host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 fi
 
 #
 # Determine the C++ compiler
 #
-printf "Looking for C++ compiler... "
+echo_n "Looking for C++ compiler... "
 if test -n "$_host"; then
-    compilers="$CXX $_host-g++ $_host-c++"
+    compilers="$CXX $_host_cpu-$_host_os-g++ $_host_cpu-$_host_os-c++"
 else
     compilers="$CXX g++ c++"
 fi
@@ -403,9 +414,8 @@ fi
 #
 
 if test "$_cxx_major" -ge "3" ; then
-    hosttype=`uname -s`
-    case $hosttype in
-	MINGW32* | CYGWIN*)
+    case $_host_os in
+	mingw* | cygwin*)
 	CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 	    ;;
 	*)
@@ -464,11 +474,12 @@ fi
 if test -n "$_host"; then
     # Cross-compiling mode - add your target here if needed
     case "$_host" in
-	arm-linux)
+	linupy)
 	    echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 	    DEFINES="$DEFINES -DUNIX"
 	    _def_endianess='#define SCUMM_LITTLE_ENDIAN'
 	    _def_align='#define SCUMM_NEED_ALIGNMENT'
+	    _def_linupy="#define DLINUPY"
 	    type_1_byte='char'
 	    type_2_byte='short'
 	    type_4_byte='int'
@@ -481,34 +492,32 @@ if test -n "$_host"; then
 	    
 else
     #
-    # Determine hosttype
+    # Determine build settings
     #
     # TODO - also add an command line option to override this?!?
-    # TODO - recognize more systems, e.g. *BSD
-    printf "Checking hosttype... "
-    hosttype=`uname -s`
-    echo $hosttype
-    case $hosttype in
-	Linux | OpenBSD | FreeBSD | NetBSD | BSD/OS | SunOS | HP-UX | BeOS)
+    echo_n "Checking hosttype... "
+    echo $_host_os
+    case $_host_os in
+	linux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux* | beos*)
 	    DEFINES="$DEFINES -DUNIX"
 	    ;;
-	IRIX)
+	irix*)
 	    DEFINES="$DEFINES -DUNIX"
 	    ranlib=ar -r
 	    ;;
-	Darwin)
+	darwin*)
 	    DEFINES="$DEFINES -DUNIX -DMACOSX"
 	    LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework Carbon"
 	    # TODO: Add proper check for Altivec support in the compiler...
 	    DEFINES="$DEFINES -DHAS_ALTIVEC"
 	    CXXFLAGS="$CXXFLAGS -faltivec"
 	    ;;
-	MINGW32*)
+	mingw*)
 	    DEFINES="$DEFINES -DWIN32"
 	    LIBS="$LIBS -lmingw32 -lwinmm"
 	    OBJS="$OBJS scummvmico.o"
 	    ;;
-	CYGWIN*)
+	cygwin*)
 	    DEFINES="$DEFINES -mno-cygwin -DWIN32"
 	    LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
 	    OBJS="$OBJS scummvmico.o"
@@ -523,7 +532,7 @@ else
     #
     # Check for endianess
     #
-    printf "Checking endianess... "
+    echo_n "Checking endianess... "
     cat <<EOF >tmp_endianess_check.cpp
 #include <stdio.h>
 #include <stdlib.h>
@@ -560,7 +569,14 @@ EOF
     # Check whether memory alignment is required
     #
     echo_n "Alignment required... "
-    cat > $TMPC << EOF
+    case $_host_cpu in
+        alpha*)
+            # Hardcode alignment requirements for Alpha processsors
+            _need_memalign=yes
+            ;;
+        *)
+            # Try to auto-detect....
+            cat > $TMPC << EOF
 #include <stdlib.h>
 #include <signal.h>
 int main(int argc, char **argv)
@@ -575,8 +591,11 @@ int main(int argc, char **argv)
     return 0;
 }
 EOF
-    _need_memalign=yes
-    cc_check && $TMPO && _need_memalign=no
+            _need_memalign=yes
+            cc_check && $TMPO && _need_memalign=no
+            ;;
+    esac
+
     if test "$_need_memalign" = yes ; then
 	_def_align='#define SCUMM_NEED_ALIGNMENT'
     else
@@ -587,16 +606,21 @@ EOF
     #
     # Determine data type sizes
     # TODO: proper error checking
+    # TODO: Actually, we should check individually for both signed & unsigned
+    # data types - there are systems on which the size of an unsigned int
+    # differs from that of a signed int!
+    # However, so far we haven't encountered one of those, so we can live with
+    # the limited check for now.
     #
-    printf "Type with 1 byte... "
+    echo_n "Type with 1 byte... "
     type_1_byte=`find_type_with_size 1`
     echo "$type_1_byte"
     
-    printf "Type with 2 bytes... "
+    echo_n "Type with 2 bytes... "
     type_2_byte=`find_type_with_size 2`
     echo "$type_2_byte"
     
-    printf "Type with 4 bytes... "
+    echo_n "Type with 4 bytes... "
     type_4_byte=`find_type_with_size 4`
     echo "$type_4_byte"
     
@@ -608,8 +632,8 @@ fi
 echocheck "Plugin support"
 _mak_plugins=
 if test "$_build_plugins" = yes ; then
-    case $hosttype in
-	Linux)
+    case $_host_os in
+	linux)
 _mak_plugins='
 BUILD_PLUGINS := 1
 CXXFLAGS      += -DDYNAMIC_MODULES
@@ -620,7 +644,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 	    ;;
-	Darwin)
+	darwin)
 _mak_plugins='
 BUILD_PLUGINS := 1
 CXXFLAGS      += -DDYNAMIC_MODULES
