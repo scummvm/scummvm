@@ -1653,9 +1653,9 @@ void Scumm_v6::o6_actorOps() {
 		a->initActor(0);
 		break;
 	case 84:											/* actor-elevation */
-		k = pop();
-		if (k != a->elevation) {
-			a->elevation = k;
+		i = pop();
+		if (i != a->elevation) {
+			a->elevation = i;
 			a->needRedraw = true;
 		}
 		break;
