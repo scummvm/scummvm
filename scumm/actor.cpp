@@ -975,7 +975,7 @@ void Actor::drawActorCostume() {
 	} else {
 
 		bcr->_zbuf = forceClip;
-		if (bcr->_zbuf == 100) {
+		if ((bcr->_zbuf == 100) || ((_vm->_features & GF_HUMONGOUS) && (bcr->_zbuf == 0))) {
 			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
 			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
 				bcr->_zbuf = _vm->gdi._numZBuffer-1;
