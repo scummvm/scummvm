@@ -551,7 +551,7 @@ int GameDetector::detectMain(int argc, char **argv)
 		
 		// need to allocate 2 extra bytes, one for the "/" and one for the NULL terminator
 		_gameDataPath = (char *)malloc((strlen(slashless) + 2) * sizeof(char));
-		snprintf(_gameDataPath, strlen(_gameDataPath), "%s/", slashless);
+		sprintf(_gameDataPath, "%s/", slashless);
 	}
 
 	if (_amiga)
