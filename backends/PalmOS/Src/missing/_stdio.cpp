@@ -25,8 +25,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 //FileRef gLogFile;
 
-static void DrawStatus(Boolean show)
-{
+// WARNING :	printf functions must only be used if you compile your code with
+// 				4byte int option, use standard functions if 2byte int mode
+// TODO : enable use of 2byte or 4byte (ifdef PRINTF_4BYTE ...)
+
+
+static void DrawStatus(Boolean show) {
 	UInt8 x,y;
 	UInt8 *screen = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
 	UInt8 color = (show? gVars->indicator.on : gVars->indicator.off);
@@ -46,8 +50,7 @@ static void DrawStatus(Boolean show)
 	}
 }
 ///////////////////////////////////////////////////////////////////////////////
-UInt16 fclose(FileRef *stream)
-{
+UInt16 fclose(FileRef *stream) {
 	Err error = VFSFileClose(*stream);
 	
 	if (error == errNone)
@@ -59,8 +62,7 @@ UInt16 fclose(FileRef *stream)
 	return error;
 }
 ///////////////////////////////////////////////////////////////////////////////
-UInt16 feof(FileRef *stream)
-{
+UInt16 feof(FileRef *stream) {
 	Err error = VFSFileEOF(*stream);
 
 #ifdef DEBUG
@@ -87,8 +89,7 @@ UInt16 feof(FileRef *stream)
 	return error;
 }
 ///////////////////////////////////////////////////////////////////////////////
-Char *fgets(Char *s, UInt32 n, FileRef *stream)
-{
+Char *fgets(Char *s, UInt32 n, FileRef *stream) {
 	UInt32 numBytesRead;
 	DrawStatus(true);
 	Err error = VFSFileRead(*stream, n, s, &numBytesRead);
@@ -133,8 +134,7 @@ Char *fgets(Char *s, UInt32 n, FileRef *stream)
 	return NULL;
 }
 ///////////////////////////////////////////////////////////////////////////////
-FileRef *fopen(const Char *filename, const Char *type)
-{
+FileRef *fopen(const Char *filename, const Char *type) {
 	Err err;
 	UInt16 openMode;
 	FileRef *fileRefP = (FileRef *)MemPtrNew(sizeof(FileRef *));
@@ -218,8 +218,7 @@ FileRef *fopen(const Char *filename, const Char *type)
 	return NULL;
 }
 ///////////////////////////////////////////////////////////////////////////////
-UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream)
-{
+UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 	UInt32 numBytesRead;
 	DrawStatus(true);
 	Err error = VFSFileRead(*stream, size*nitems, ptr, &numBytesRead);
@@ -253,8 +252,7 @@ UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream)
 	return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////
-UInt32 fwrite(const void *ptr, UInt32 size, UInt32 nitems, FileRef *stream)
-{
+UInt32 fwrite(const void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 	UInt32 numBytesWritten;
 	DrawStatus(true);
 	Err error = VFSFileWrite(*stream, size*nitems, ptr, &numBytesWritten);
@@ -266,14 +264,12 @@ UInt32 fwrite(const void *ptr, UInt32 size, UInt32 nitems, FileRef *stream)
 	return NULL;
 }
 ///////////////////////////////////////////////////////////////////////////////
-Int32 fseek(FileRef *stream, Int32 offset, Int32 whence)
-{
+Int32 fseek(FileRef *stream, Int32 offset, Int32 whence) {
 	Err error = VFSFileSeek(*stream, whence, offset);
 	return error;
 }
 ///////////////////////////////////////////////////////////////////////////////
-UInt32 ftell(FileRef *stream)
-{
+UInt32 ftell(FileRef *stream) {
 	Err e;
 	UInt32 filePos;
 
@@ -284,8 +280,7 @@ UInt32 ftell(FileRef *stream)
 	return filePos;
 }
 ///////////////////////////////////////////////////////////////////////////////
-UInt16 fprintf(FileRef *stream, const Char *format, ...)
-{
+UInt16 fprintf(FileRef *stream, const Char *format, ...) {
 	if (!*stream)
 		return 0;
 
@@ -301,14 +296,12 @@ UInt16 fprintf(FileRef *stream, const Char *format, ...)
 	return numBytesWritten;
 }
 ///////////////////////////////////////////////////////////////////////////////
-Int16 printf(const Char *format, ...)
-{
+Int16 printf(const Char *format, ...) {
 	if (!*stdout)
 		return 0;
 
 	UInt32 numBytesWritten;
 	Char buf[256];
-//	Char *buf = (Char *)MemPtrNew(256);
 	va_list va;
 
 	va_start(va, format);
@@ -316,14 +309,11 @@ Int16 printf(const Char *format, ...)
 	va_end(va);
 
 	VFSFileWrite (*stdout, StrLen(buf), buf, &numBytesWritten);
-//	MemPtrFree(buf);
 	return numBytesWritten;
 }
 ///////////////////////////////////////////////////////////////////////////////
-Int16 sprintf(Char* s, const Char* formatStr, ...)
-{
+Int16 sprintf(Char* s, const Char* formatStr, ...) {
 	Char buf[256];
-//	Char *buf = (Char *)MemPtrNew(256);
 	Int16 count;
 	va_list va;
 
@@ -332,16 +322,25 @@ Int16 sprintf(Char* s, const Char* formatStr, ...)
 	va_end(va);
 	
 	StrCopy(s,buf);
-//	MemPtrFree(buf);
 	return count;
 }
 ///////////////////////////////////////////////////////////////////////////////
-Int16 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam)
-{
-//	Char buf[10];
-//	StrPrintF(buf,"%c%c%c%c",'A' << 16 | 'B', 'C' << 16 | 'D');
+static void StrProcessCModifier(Char *ioStr, UInt16 maxLen) {
+	Char *found;
+	UInt16 length;
+	
+	while (found = StrChr(ioStr, '`')) {
+		if (found[1] == 0) { // if next char is NULL
+			length = maxLen - (found - ioStr);
+			MemMove(found, found + 2, length);
+			maxLen -= 2;
+		}
+	}
+}
 
+Int16 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 	Char format[256];
+	Int16 retval;
 	// TODO : need a better modifier
 	StrCopy(format,formatStr);
 	StrReplace(format, 256, "%ld",	"%d");
@@ -360,8 +359,12 @@ Int16 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam)
 	StrReplace(format, 256, "%5ld","%5d");
 	StrReplace(format, 256, "%6ld","%6d");
 	StrReplace(format, 256, "%02lx","%02x");
+	StrReplace(format, 256, "`%c%c","%c");
 
-	return StrVPrintF(s, format, argParam);;
+	retval = StrVPrintF(s, format, argParam);	// wrong value may be return due to %c%c
+	StrProcessCModifier(s, 256);
+	
+	return retval;
 }
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
