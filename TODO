@@ -103,8 +103,10 @@ SCUMM
   Ideally, only code in sound/ should access these libs. This will
   become important for loadable module support
 * Add support for TFMX music format in Amiga version of Monkey Island 1
-  Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format details
-* Add support for sound effects format found in Sega CD version of Monkey Island
+  Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
+  details
+* Add support for sound effects format found in Sega CD version of Monkey
+  Island
 * Rename scummvm.cpp to scumm.cpp for consistency. [Fingolfin is working on
   this, please don't do anything about this before talking to him].
   1) Try to get scummvm.cpp fixed for ViewCVS [in progress!]
@@ -120,14 +122,12 @@ SCUMM
 
 Broken Sword 2
 ==============
-* Replace all uses of std C file I/O (fopen, fread, fwrite, fclose) by
-  the File class (excluding that in SWORD2_DEBUG). This is probably mostly
-  done. I only find a few such calls in resMan::CacheNewCluster(), and that
-  one needs to be rewritten anyway.
-* Enforce ScummVM code formatting guidelines.
-* Encapsulate the code into sensible objects.
-* Enable the CD swapping code.
+* Enforce ScummVM code formatting guidelines. (Mostly done?)
+* Encapsulate the code into sensible objects. (Partly done.)
+* Enable the CD swapping code. (Partly done.)
 * Support cutscenes in some kind of open video format.
+* Implement the credits. At the moment we only play the music. The original
+  seems to use a separate program. Did we ever get the source code for that?
 
 SIMON
 =====
@@ -159,8 +159,8 @@ Backends
 * Add API to query backend for a list of available music engines
   Useful for Options dialog
 * Add API to query backend for a list of available scalers/screenmodes
-  (that is, a list of user presentable names, and corresponding PROP_SET_GFX_MODE
-  values). This is useful for the options dialog
+  (that is, a list of user presentable names, and corresponding
+  PROP_SET_GFX_MODE values). This is useful for the options dialog
 * Add PROP_GET_GFX_MODE (mirroring PROP_SET_GFX_MODE)
 * Consider replacing the PROP_TOGGLE_* properties with GET/SET ones -> 
   this allows more control over these properties (like, it allows the GUI to
@@ -168,10 +168,10 @@ Backends
 
 SDL backend
 ===========
-* Fix the "auto dirty rect" computing code - in particular, use a proper checksum
-  algorithm, this should solve many of the problems with some luck
-* OpenGL code: either fix it (see open bug tracker items and various hacks in the code),
-  or remove it. Does anybody really need this???
+* Fix the "auto dirty rect" computing code - in particular, use a proper
+  checksum algorithm, this should solve many of the problems with some luck
+* OpenGL code: either fix it (see open bug tracker items and various hacks in
+  the code), or remove it. Does anybody really need this???
 
 X11 backend
 ===========
