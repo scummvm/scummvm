@@ -668,11 +668,11 @@ Credits:
         Max Horn             - Lead Developer
         Jeremy Newman        - Webmaster
 
-        Jonathan Gray        - Engine: SCUMM, Simon
+        Jonathan Gray        - Engine: SCUMM
         Robert Goeffringmann - Engine: Beneath a Steel Sky
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
-        Joost Peters         - Engine: Beneath a Steel Sky
         Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
+        Joost Peters         - Engine: Beneath a Steel Sky
         Chris Apers          - Port:   PalmOS
         Nicolas Bacca        - Port:   PocketPC/WinCE port
         Marcus Comstedt      - Port:   DreamCast
@@ -685,11 +685,11 @@ Credits:
         Jamieson Christian   - iMuse, MIDI, all things musical.
 
  Retired Team Members:
-        Ludvig Strigeus      - Original ScummVM and SimonVM Author
+        Ralph Brorsen        - Help with GUI Implementation
         Vincent Hamm         - Co-Founder
-        Mutwin Kraus         - Original MacOS Porter
         Felix Jakschitsch    - Zak256 reverse engineering
-        Ralph Brorsen        - GUI Implementation
+        Mutwin Kraus         - Original MacOS Porter
+        Ludvig Strigeus      - Original ScummVM and SimonVM Author
 
  Contributors:
         Janne Huttunen       - V3 actor mask support, Dig/FT SMUSH audio
@@ -709,8 +709,8 @@ Credits:
 
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
-        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codecs
+        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
         Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
         LucasFilm/LucasArts who made SCUMM the insane mess to reimplement
