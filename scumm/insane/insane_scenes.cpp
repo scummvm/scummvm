@@ -75,7 +75,7 @@ void Insane::runScene(int arraynum) {
 
 		_mainRoadPos = readArray(2);
 		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
-			initScene(4);
+			initScene(5);
 			startVideo("tovista.san", 1, 32, 12, 0);
 		} else if (_mainRoadPos == _posBrokenTruck) {
 			initScene(5);

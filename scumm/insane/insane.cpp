@@ -1302,13 +1302,22 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 }
 
 void Insane::procSKIP(Chunk &b) {
-	_player->checkBlock(b, TYPE_SKIP, 4);
 	int16 par1, par2;
+	_player->_skipNext = false;
+
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		_player->checkBlock(b, TYPE_SKIP, 2);
+		par1 = b.getWord();
+		if (isBitSet(par1))
+			_player->_skipNext = true;
+		return;
+	}
+
+	_player->checkBlock(b, TYPE_SKIP, 4);
 
 	par1 = b.getWord();
 	par2 = b.getWord();
 
-	_player->_skipNext = false;
 
 	if (!par2) {
 		if (isBitSet(par1))
