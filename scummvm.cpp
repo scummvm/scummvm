@@ -25,6 +25,7 @@
 #include "string.h"
 #include "sound.h"
 
+extern void launcherLoop();
 void Scumm::initRandSeeds() {
 	_randSeed1 = 0xA943DE35;
 	_randSeed2 = 0x37A9ED27;
@@ -209,9 +210,15 @@ void Scumm::scummMain(int argc, char **argv) {
 		_midi_driver = MIDI_NULL;
 	#endif
 	parseCommandLine(argc, argv);
+	
+	/* Init graphics and create a primary virtual screen */
+	initGraphics(this, _fullScreen, _scale);
+	allocResTypeData(rtBuffer, MKID('NONE'),10,"buffer", 0);
+	initVirtScreen(0, 0, 200, false, false);	
 
 	if (_exe_name==NULL)
-		error("Specify the name of the game to start on the command line");
+		//error("Specify the name of the game to start on the command line");
+		launcherLoop();
 
 	if (!detectGame()) {
 		warning("Game detection failed. Using default settings");
@@ -247,9 +254,7 @@ void Scumm::scummMain(int argc, char **argv) {
 
 //	if (_gameId==GID_MONKEY2 && _bootParam==0) {
 //		_bootParam = 10001;
-//	}
-
-	initGraphics(this, _fullScreen, _scale);
+//	}	
 
     if (_features & GF_SMALL_HEADER)
         readIndexFileSmall();
@@ -439,7 +444,7 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 	if (argc < 2)
 	{
 		printf( USAGE_STRING );
-		exit(1);
+		//exit(1);
 	}
 
 	/* Parse the arguments */

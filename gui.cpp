@@ -27,6 +27,7 @@ enum {
 	PAUSE_DIALOG
 };
 
+
 void Gui::draw(int start,int end) {
 	int i;
 
@@ -73,6 +74,24 @@ const GuiWidget *Gui::widgetFromPos(int x, int y) {
 	return NULL;
 }
 
+void Gui::drawChar(const char str, int xx, int yy) { 
+  unsigned int buffer, mask = 0, x, y;    
+  byte *tmp;
+  
+  tmp = &guifont[0];
+  tmp += 224 + (str + 1)*8;
+
+  for(y=0;y<8;y++){
+    for(x=0;x<8;x++){
+		unsigned char color;
+    	if ((mask >>= 1) == 0) {buffer = *tmp++;  mask = 0x80;}
+        color = ((buffer & mask) != 0);
+        if (color)
+				hline(xx + x, yy + y, yy + y + 1);
+      }
+  }
+
+}
 void Gui::drawString(const char *str, int x, int y, int w, byte color, bool center) {
 	StringTab *st = &_s->string[5];
 	st->charset = 1;
@@ -81,8 +100,14 @@ void Gui::drawString(const char *str, int x, int y, int w, byte color, bool cent
 	st->xpos = x;
 	st->ypos = y;
 	st->right = x + w;
-	_s->_messagePtr = (byte*)str;
-	_s->drawString(5);
+
+	if (_s->_gameId) {		/* If a game is active.. */
+		_s->_messagePtr = (byte*)str;
+		_s->drawString(5);
+	} else {		
+		for (uint letter = 0; letter < strlen(str); letter++)
+			drawChar(str[letter], st->xpos + (letter * 8), st->ypos);		
+	}
 }
 
 void Gui::drawWidget(const GuiWidget *w) {
@@ -181,8 +206,10 @@ byte *Gui::getBasePtr(int x, int y) {
 	x += _parentX;
 	y += _parentY;
 	_vs = _s->findVirtScreen(y);
+	
 	if (_vs==NULL)
 		return NULL;
+	
 	return _s->getResourceAddress(rtBuffer, _vs->number+1) + x + (y-_vs->topline)*320 + _s->_screenStartStrip*8;
 }
 
@@ -201,6 +228,7 @@ void Gui::lineto(int x, int y) {
 		y2^=y^=y2^=y;
 
 	ptr = getBasePtr(x, y);
+	
 	if (ptr==NULL)
 		return;
 
@@ -355,7 +383,7 @@ const byte string_map_table_v6[] = {
 	117, /* How may I serve you? */
 	109, /* Select a game to LOAD */
 	108, /* Name your SAVE game */
-  96,  /* Save */
+	96,  /* Save */
 	97,  /* Load */
 	98,  /* Play */
 	99,  /* Cancel */
@@ -368,7 +396,7 @@ const byte string_map_table_v5[] = {
 	0, /* How may I serve you? */
 	20, /* Select a game to LOAD */
 	19, /* Name your SAVE game */
-  7,  /* Save */
+	7,  /* Save */
 	8,  /* Load */
 	9,  /* Play */
 	10,  /* Cancel */
@@ -379,6 +407,9 @@ const byte string_map_table_v5[] = {
 
 const char *Gui::queryString(int string, int id) {
 	static char namebuf[64];
+	if (!_s->_gameId)
+		return "blah!";
+
 	if (id>=20 && id<=28) {
 		sprintf(namebuf, "%2d. %s", id-20+_slotIndex, game_names[id-20]);
 		return namebuf;
@@ -470,11 +501,19 @@ byte Gui::getDefaultColor(int color) {
 
 void Gui::init(Scumm *s) {
 	_s = s;
-	_bgcolor = getDefaultColor(0);
-	_color = getDefaultColor(1);
-	_textcolor = getDefaultColor(2);
-	_textcolorhi = getDefaultColor(6);
-	_shadowcolor = getDefaultColor(8);
+	if (_s->_gameId) {
+		_bgcolor = getDefaultColor(0);
+		_color = getDefaultColor(1);
+		_textcolor = getDefaultColor(2);
+		_textcolorhi = getDefaultColor(6);
+		_shadowcolor = getDefaultColor(8);
+	} else {
+		_bgcolor = 0;
+		_color = 2;
+		_textcolor = 6;
+		_textcolorhi = 3;
+		_shadowcolor = 2;
+	}
 }
 
 void Gui::loop() {

@@ -80,9 +80,9 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fou
 	vs->xstart = 0;
 	size = vs->width * vs->height;
 	vs->size = size;
+
 	if (vs->scrollable)
 		size += 320*4;
-
 	createResource(rtBuffer, slot+1, size);
 
 	if (twobufs) {

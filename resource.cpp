@@ -790,7 +790,9 @@ void Scumm::nukeResource(int type, int idx) {
 	debug(9, "nukeResource(%d,%d)", type, idx);
 
 	CHECK_HEAP
-	assert( res.address[type] );
+	if (!res.address[type])
+		return;
+
 	assert( idx>=0 && idx < res.num[type]);
 
 	if ((ptr = res.address[type][idx]) != NULL) {
@@ -1185,6 +1187,9 @@ void Scumm::readMAXS() {
 }
 
 void Scumm::allocateArrays() {
+	// Note: Buffers are now allocated in scummMain to allow for
+	//		 early GUI init.
+
 	_objectOwnerTable = (byte*)alloc(_numGlobalObjects);
 	_objectStateTable = (byte*)alloc(_numGlobalObjects);
 	_classData = (uint32*)alloc(_numGlobalObjects * sizeof(uint32));
@@ -1210,7 +1215,6 @@ void Scumm::allocateArrays() {
 	allocResTypeData(rtTemp,MKID('NONE'),10, "temp", 0);
 	allocResTypeData(rtScaleTable,MKID('NONE'),5, "scale table", 0);
 	allocResTypeData(rtActorName, MKID('NONE'),NUM_ACTORS,"actor name", 0);
-	allocResTypeData(rtBuffer, MKID('NONE'),10,"buffer", 0);
  	allocResTypeData(rtVerb, MKID('NONE'),_numVerbs,"verb", 0);
 	allocResTypeData(rtString, MKID('NONE'),_numArray,"array", 0);
 	allocResTypeData(rtFlObject, MKID('NONE'),_numFlObject,"flobject", 0);

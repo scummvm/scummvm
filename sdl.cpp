@@ -62,7 +62,7 @@ void updatePalette(Scumm *s) {
 	int num = s->_palDirtyMax - first + 1;
 	int i;
 	byte *data = s->_currentPalette;
-
+	
 	data += first*3;
 	for (i=0; i<num; i++,data+=3) {
 		colors[i].r = data[0];
@@ -771,6 +771,29 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 #undef main
 #endif
 
+
+void launcherLoop() {
+	int last_time, new_time;
+	int delta = 0;
+	last_time = SDL_GetTicks();
+
+	gui.saveLoadDialog();
+	do {
+		updateScreen(&scumm);
+
+		new_time = SDL_GetTicks();
+		waitForTimer(&scumm, delta * 15 + last_time - new_time);
+		last_time = SDL_GetTicks();
+
+		if (gui._active) {
+			gui.loop();
+			delta = 5;
+		} else
+			error("gui closed!");
+	} while(1);
+
+};
+
 int main(int argc, char* argv[]) {
 	int delta;
 	int last_time, new_time;
@@ -810,11 +833,10 @@ int main(int argc, char* argv[]) {
 #endif
 
 	scumm._gui = &gui;
+	gui.init(&scumm);
 	sound.initialize(&scumm, &snd_driv);
     scumm.scummMain(argc, argv);
-	
-    if (!(scumm._features & GF_SMALL_HEADER))
-       gui.init(&scumm);
+	gui.init(&scumm);	/* Reinit GUI after loading a game */
 
 	last_time = SDL_GetTicks();
 	delta = 0;
