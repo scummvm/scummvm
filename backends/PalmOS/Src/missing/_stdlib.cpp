@@ -21,17 +21,31 @@
  */
 
 #include "stdlib.h"
-///////////////////////////////////////////////////////////////////////////////
-void *bsearch(const void *key, const void *base, UInt32 nmemb, 
-				UInt32 size, int (*compar)(const void *, const void *)) {
-	UInt32 i;
 
-	for (i=0; i<nmemb; i++) 
-		if (compar(key, (void*)((UInt32)base + size * i)) == 0)
-			return (void*)((UInt32)base + size * i);
+void *bsearch(const void *key, const void *base, UInt32 nmemb, UInt32 size, int (*compar)(const void *, const void *)) {
+	Int32 position;
+	
+	if (SysBinarySearch(base, nmemb, size, (SearchFuncPtr)compar, key, 0, &position, true))
+		return (void *)((UInt32)base + size * position);
+	
 	return NULL;
 }
-///////////////////////////////////////////////////////////////////////////////
+
+long strtol(const char *s, char **endptr, int base) {
+	// WARNING : only base = 10 supported
+	long val = StrAToI(s);
+	
+	if (endptr) {
+		Char str[maxStrIToALen];
+		StrIToA(str, val);
+		
+		if (StrNCompare(s, str, StrLen(str)) == 0)
+			*endptr = (char *)s + StrLen(str);
+	}
+
+	return val;
+}
+
 MemPtr calloc(UInt32 nelem, UInt32 elsize) {
 	MemPtr newP;
 	UInt32 size = nelem*elsize;
@@ -43,15 +57,14 @@ MemPtr calloc(UInt32 nelem, UInt32 elsize) {
 
 	return newP;
 }
-///////////////////////////////////////////////////////////////////////////////
+
 Err free(MemPtr memP) {
 	if (memP)
 		return MemPtrFree(memP);
 	return memErrInvalidParam;
 }
-///////////////////////////////////////////////////////////////////////////////
-MemPtr realloc(MemPtr oldP, UInt32 size)
-{
+
+MemPtr realloc(MemPtr oldP, UInt32 size) {
 	
 	if (oldP != NULL)
 		if (MemPtrResize(oldP,size) == 0)
@@ -66,9 +79,8 @@ MemPtr realloc(MemPtr oldP, UInt32 size)
 	}	
 	return newP;
 }
-///////////////////////////////////////////////////////////////////////////////
-void exit(Int16 status)
-{
+
+void exit(Int16 status) {
 	// need to change this
 	EventType event;
 	event.eType = keyDownEvent;

@@ -25,7 +25,6 @@
 
 #include <PalmOS.h>
 #include "MemGlue.h"
-#include "mathlib.h"
 
 #define atoi				StrAToI
 #define atol				StrAToI
@@ -33,17 +32,17 @@
 //#define abs					fabs
 #define	malloc(a)			MemGluePtrNew(a)
 //#define free				MemPtrFree
-#define strtol(a,b,c)		StrAToI(a)
+//#define strtol(a,b,c)		StrAToI(a)
 #define qsort(a,b,c,d)		SysQSort((a), (b), (c), (CmpFuncPtr)(&d), 0);
 #define rand()				SysRandom(0)
 #define abort()
+#define strtoul(a,b,c)		((unsigned long)strtol(a,b,c))
 
-MemPtr realloc(MemPtr oldP, UInt32 size);
-MemPtr calloc(UInt32 nelem, UInt32 elsize);
-Err free(MemPtr memP);
-void exit(Int16 status);
-void *bsearch(const void *key, const void *base, UInt32 nmemb, 
-				UInt32 size, int (*compar)(const void *, const void *));
-
+void	*bsearch	(const void *key, const void *base, UInt32 nmemb, UInt32 size, int (*compar)(const void *, const void *));
+MemPtr	 calloc		(UInt32 nelem, UInt32 elsize);
+void	 exit		(Int16 status);
+Err		 free		(MemPtr memP);
+MemPtr	 realloc	(MemPtr oldP, UInt32 size);
+long	 strtol		(const char *s, char **endptr, int base);
 
 #endif
