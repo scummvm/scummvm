@@ -707,7 +707,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 		} else {
 			getWordVararg(table);
 			for (i = 0; i < 16; i++)
-				_charsetColorMap[i] = _charsetData[_string[1].backup.charset][i] = (unsigned char)table[i];
+				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)table[i];
 		}
 		break;
 	}
@@ -2405,7 +2405,7 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->hicolor = (_version == 3) ? 14 : 0;
 			vs->dimcolor = 8;
 			vs->type = kTextVerbType;
-			vs->charset_nr = _string[0].backup.charset;
+			vs->charset_nr = _string[0]._default.charset;
 			vs->curmode = 0;
 			vs->saveid = 0;
 			vs->key = 0;
@@ -2616,7 +2616,7 @@ void ScummEngine_v5::decodeParseString() {
 		textSlot = 0;
 	}
 
-	_string[textSlot].restoreString();
+	_string[textSlot].loadDefault();
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0xF) {
@@ -2709,9 +2709,9 @@ void ScummEngine_v5::decodeParseString() {
  			// speaks during the intro are put at position 0,0.
  			// In addition, Loom needs to remember the text colour.
 			if (_gameId == GID_LOOM || _gameId == GID_INDY3) {
-				_string[textSlot].backup.xpos = _string[textSlot].xpos;
-				_string[textSlot].backup.ypos = _string[textSlot].ypos;
- 				_string[textSlot].backup.color = _string[textSlot].color;
+				_string[textSlot]._default.xpos = _string[textSlot].xpos;
+				_string[textSlot]._default.ypos = _string[textSlot].ypos;
+ 				_string[textSlot]._default.color = _string[textSlot].color;
 			}
 			return;
 		default:
@@ -2720,7 +2720,7 @@ void ScummEngine_v5::decodeParseString() {
 		}
 	}
 
-	_string[textSlot].backupString();
+	_string[textSlot].saveDefault();
 }
 
 void ScummEngine_v5::o5_oldRoomEffect() {

@@ -1132,16 +1132,16 @@ void ScummEngine::scummInit() {
 
 	for (i = 0; i < 6; i++) {
 		if (_version == 3) { // FIXME - what is this?
-			_string[i].backup.xpos = 0;
-			_string[i].backup.ypos = 0;
+			_string[i]._default.xpos = 0;
+			_string[i]._default.ypos = 0;
 		} else {
-			_string[i].backup.xpos = 2;
-			_string[i].backup.ypos = 5;
+			_string[i]._default.xpos = 2;
+			_string[i]._default.ypos = 5;
 		}
-		_string[i].backup.right = _screenWidth - 1;
-		_string[i].backup.color = 0xF;
-		_string[i].backup.center = 0;
-		_string[i].backup.charset = 0;
+		_string[i]._default.right = _screenWidth - 1;
+		_string[i]._default.color = 0xF;
+		_string[i]._default.center = 0;
+		_string[i]._default.charset = 0;
 	}
 
 	// all keys are released

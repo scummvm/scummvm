@@ -571,23 +571,23 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	};
 
 	const SaveLoadEntry stringTabEntries[] = {
-		// Then backup/restore of a StringTab entry becomes a one liner.
+		// Then _default/restore of a StringTab entry becomes a one liner.
 		MKLINE(StringTab, xpos, sleInt16, VER(8)),
-		MKLINE(StringTab, backup.xpos, sleInt16, VER(8)),
+		MKLINE(StringTab, _default.xpos, sleInt16, VER(8)),
 		MKLINE(StringTab, ypos, sleInt16, VER(8)),
-		MKLINE(StringTab, backup.ypos, sleInt16, VER(8)),
+		MKLINE(StringTab, _default.ypos, sleInt16, VER(8)),
 		MKLINE(StringTab, right, sleInt16, VER(8)),
-		MKLINE(StringTab, backup.right, sleInt16, VER(8)),
+		MKLINE(StringTab, _default.right, sleInt16, VER(8)),
 		MKLINE(StringTab, color, sleInt8, VER(8)),
-		MKLINE(StringTab, backup.color, sleInt8, VER(8)),
+		MKLINE(StringTab, _default.color, sleInt8, VER(8)),
 		MKLINE(StringTab, charset, sleInt8, VER(8)),
-		MKLINE(StringTab, backup.charset, sleInt8, VER(8)),
+		MKLINE(StringTab, _default.charset, sleInt8, VER(8)),
 		MKLINE(StringTab, center, sleByte, VER(8)),
-		MKLINE(StringTab, backup.center, sleByte, VER(8)),
+		MKLINE(StringTab, _default.center, sleByte, VER(8)),
 		MKLINE(StringTab, overhead, sleByte, VER(8)),
-		MKLINE(StringTab, backup.overhead, sleByte, VER(8)),
+		MKLINE(StringTab, _default.overhead, sleByte, VER(8)),
 		MKLINE(StringTab, no_talk_anim, sleByte, VER(8)),
-		MKLINE(StringTab, backup.no_talk_anim, sleByte, VER(8)),
+		MKLINE(StringTab, _default.no_talk_anim, sleByte, VER(8)),
 		MKEND()
 	};
 

@@ -472,12 +472,12 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 
 	switch (b) {
 	case 0xC8:		// SO_PRINT_BASEOP
-		_string[m].restoreString();
+		_string[m].loadDefault();
 		if (n)
 			_actorToPrintStrFor = pop();
 		break;
 	case 0xC9:		// SO_PRINT_END
-		_string[m].backupString();
+		_string[m].saveDefault();
 		break;
 	case 0xCA:		// SO_PRINT_AT
 		_string[m].ypos = pop();
@@ -762,7 +762,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
-			_charsetColorMap[i] = _charsetData[_string[1].backup.charset][i] = (unsigned char)args[i];
+			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9: 		// SO_CURSOR_PUT
 		{
@@ -1144,7 +1144,7 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->hicolor = 0;
 		vs->dimcolor = 8;
 		vs->type = kTextVerbType;
-		vs->charset_nr = _string[0].backup.charset;
+		vs->charset_nr = _string[0]._default.charset;
 		vs->curmode = 0;
 		vs->saveid = 0;
 		vs->key = 0;

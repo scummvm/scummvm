@@ -598,8 +598,8 @@ void ScummEngine::initCharset(int charsetno) {
 	if (!getResourceAddress(rtCharset, charsetno))
 		loadCharset(charsetno);
 
-	_string[0].backup.charset = charsetno;
-	_string[1].backup.charset = charsetno;
+	_string[0]._default.charset = charsetno;
+	_string[1]._default.charset = charsetno;
 
 	for (i = 0; i < 16; i++)
 		_charsetColorMap[i] = _charsetData[charsetno][i];

@@ -847,7 +847,7 @@ void ScummEngine_v2::o2_verbOps() {
 			vs->dimcolor = 8;
 		}
 		vs->type = kTextVerbType;
-		vs->charset_nr = _string[0].backup.charset;
+		vs->charset_nr = _string[0]._default.charset;
 		vs->curmode = 1;
 		vs->saveid = 0;
 		vs->key = 0;

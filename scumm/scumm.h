@@ -264,16 +264,19 @@ struct StringSlot {
 };
 
 struct StringTab : StringSlot {
-	StringSlot backup;
+	// The 'default' values for this string slot. This is used so that the
+	// string slot can temporarily be set to different values, and then be
+	// easily reset to a previously set default.
+	StringSlot _default;
 
-	void backupString() {
+	void saveDefault() {
 		StringSlot &s = *this;
-		backup = s;
+		_default = s;
 	}
 
-	void restoreString() {
+	void loadDefault() {
 		StringSlot &s = *this;
-		s = backup;
+		s = _default;
 	}
 };
 
