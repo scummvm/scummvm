@@ -2778,7 +2778,7 @@ int32 Insane::actionEnemy(void) {
 
 	if (_actor[1].x > 250)
 		_actor[1].x--;
-	else
+	else if (_actor[1].x < 250)
 		_actor[1].x++;
 
 	if (_actor[1].x > 320) {
