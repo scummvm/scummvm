@@ -2302,10 +2302,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	_sound->processSoundQues();
 
 	// Clear the room variables
-	if (_heversion >= 80) {
-		for (i = 0; i < _numRoomVariables; i++)
-			_roomVars[i] = 0;
-	}
+	for (i = 0; i < _numRoomVariables; i++)
+		_roomVars[i] = 0;
 
 	for (i = 1; i < _numActors; i++) {
 		_actors[i].hideActor();
@@ -2820,7 +2818,7 @@ void ScummEngine::restart() {
 	_sound->stopAllSounds();
 
 	// Clear the script variables
-	for (i = 0; i < 255; i++)
+	for (i = 0; i < _numVariables; i++)
 		_scummVars[i] = 0;
 
 	// Empty inventory
