@@ -2518,9 +2518,10 @@ void Scumm::setupEGAPalette() {
 	setPalColor( 1,   0,   0, 168);
 	setPalColor( 2,   0, 168,   0);
 	setPalColor( 3,   0, 168, 168);
-	setPalColor( 4, 168,   0,   0);
+//	setPalColor( 4, 168,   0,   0); // prev value
+	setPalColor( 4, 189,   0,   0);
 //	setPalColor( 5, 168,   0, 168); // prev value
-	setPalColor( 5, 252,  84, 252);
+	setPalColor( 5, 189,   0, 189); // Amiga value
 	setPalColor( 6, 168,  84,   0);
 	setPalColor( 7, 168, 168, 168);
 	setPalColor( 8,  84,  84,  84);
