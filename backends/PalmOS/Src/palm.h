@@ -121,10 +121,10 @@ public:
 	void set_timer(int timer, int (*callback)(int));
 
 	// Mutex handling
-	void *create_mutex();
-	void lock_mutex(void *mutex);
-	void unlock_mutex(void *mutex);
-	void delete_mutex(void *mutex);
+	MutexRef create_mutex();
+	void lock_mutex(MutexRef mutex);
+	void unlock_mutex(MutexRef mutex);
+	void delete_mutex(MutexRef mutex);
 
 	// Quit
 	void quit();

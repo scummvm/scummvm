@@ -85,10 +85,10 @@ class OSystem_Dreamcast : public OSystem {
   virtual void set_timer(int timer, int (*callback)(int));
 
   // Mutex handling
-  virtual void *create_mutex();
-  virtual void lock_mutex(void *mutex);
-  virtual void unlock_mutex(void *mutex);
-  virtual void delete_mutex(void *mutex);
+  virtual MutexRef create_mutex();
+  virtual void lock_mutex(MutexRef mutex);
+  virtual void unlock_mutex(MutexRef mutex);
+  virtual void delete_mutex(MutexRef mutex);
 
   // Savefile handling
   virtual SaveFileManager *get_savefile_manager();

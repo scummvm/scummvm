@@ -134,20 +134,20 @@ void OSystem_Dreamcast::create_thread(ThreadProc *proc, void *param) {
 
 
 /* Mutex handling */
-void *OSystem_Dreamcast::create_mutex()
+MutexRef OSystem_Dreamcast::create_mutex()
 {
   return NULL;
 }
 
-void OSystem_Dreamcast::lock_mutex(void *mutex)
+void OSystem_Dreamcast::lock_mutex(MutexRef mutex)
 {
 }
  
-void OSystem_Dreamcast::unlock_mutex(void *mutex)
+void OSystem_Dreamcast::unlock_mutex(MutexRef mutex)
 {
 }
 
-void OSystem_Dreamcast::delete_mutex(void *mutex)
+void OSystem_Dreamcast::delete_mutex(MutexRef mutex)
 {
 }
 

@@ -1744,18 +1744,18 @@ void OSystem_WINCE3::update_cdrom() {;}
 //void ScummDebugger::attach(Scumm *s) {;}
 
 /* Mutex stuff */
-void* OSystem_WINCE3::create_mutex() {
-	return (void*)CreateMutex(NULL, FALSE, NULL);
+MutexRefOSystem_WINCE3::create_mutex() {
+	return (MutexRef)CreateMutex(NULL, FALSE, NULL);
 }
-void OSystem_WINCE3::lock_mutex(void *handle) {
+void OSystem_WINCE3::lock_mutex(MutexRefhandle) {
 	WaitForSingleObject((HANDLE)handle, INFINITE);
 }
 
-void OSystem_WINCE3::unlock_mutex(void *handle) {
+void OSystem_WINCE3::unlock_mutex(MutexRefhandle) {
 	ReleaseMutex((HANDLE)handle);
 }
 
-void OSystem_WINCE3::delete_mutex(void *handle) {
+void OSystem_WINCE3::delete_mutex(MutexRefhandle) {
 	CloseHandle((HANDLE)handle);
 }
 

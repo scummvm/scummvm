@@ -159,10 +159,10 @@ public:
 
 	// Mutex functions
 
-	void* create_mutex();
-	void lock_mutex(void*);
-	void unlock_mutex(void*);
-	void delete_mutex(void*);
+	MutexRef create_mutex();
+	void lock_mutex(MutexRef);
+	void unlock_mutex(MutexRef);
+	void delete_mutex(MutexRef);
 
 	// Windows callbacks & stuff
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

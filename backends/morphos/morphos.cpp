@@ -316,27 +316,27 @@ void OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 													 NP_PPC_Arg1, (ULONG) param, TAG_DONE);
 }
 
-void *OSystem_MorphOS::create_mutex()
+MutexRef OSystem_MorphOS::create_mutex()
 {
 	SignalSemaphore *sem = (SignalSemaphore *) AllocVec(sizeof (SignalSemaphore), MEMF_PUBLIC);
 
 	if (sem)
 		InitSemaphore(sem);
 
-	return sem;
+	return (MutexRef)sem;
 }
 
-void OSystem_MorphOS::lock_mutex(void *mutex)
+void OSystem_MorphOS::lock_mutex(MutexRef mutex)
 {
 	ObtainSemaphore((SignalSemaphore *) mutex);
 }
 
-void OSystem_MorphOS::unlock_mutex(void *mutex)
+void OSystem_MorphOS::unlock_mutex(MutexRef mutex)
 {
 	ReleaseSemaphore((SignalSemaphore *)mutex);
 }
 
-void OSystem_MorphOS::delete_mutex(void *mutex)
+void OSystem_MorphOS::delete_mutex(MutexRef mutex)
 {
 	FreeVec(mutex);
 }

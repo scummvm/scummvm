@@ -1075,10 +1075,10 @@ void OSystem_GP32::update_cdrom() { }
 void OSystem_GP32::set_timer(int timer, int (*callback)(int)) { }
 
 // Mutex handling
-void* OSystem_GP32::create_mutex() { }
-void OSystem_GP32::lock_mutex(void *mutex) { }
-void OSystem_GP32::unlock_mutex(void *mutex) { }
-void OSystem_GP32::delete_mutex(void *mutex) { }
+MutexRef OSystem_GP32::create_mutex() { }
+void OSystem_GP32::lock_mutex(MutexRef mutex) { }
+void OSystem_GP32::unlock_mutex(MutexRef mutex) { }
+void OSystem_GP32::delete_mutex(MutexRef mutex) { }
 
 // Quit
 void gphalt(int);

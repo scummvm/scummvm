@@ -23,6 +23,7 @@
 #include "sound/mididrv.h"
 #include "common/scaler.h"
 #include "common/engine.h"	// Only #included for error() and warning()
+#include "common/util.h"
 
 #include "scummvm.xpm"
 
@@ -63,7 +64,7 @@ void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
 
-	_graphicsMutex = SDL_CreateMutex();
+	_graphicsMutex = create_mutex();
 
 	SDL_ShowCursor(SDL_DISABLE);
 	
@@ -113,7 +114,7 @@ OSystem_SDL_Common::~OSystem_SDL_Common() {
 		free(_dirty_checksums);
 	free(_currentPalette);
 	free(_mouseBackup);
-	SDL_DestroyMutex(_graphicsMutex);
+	delete_mutex(_graphicsMutex);
 
 	SDL_ShowCursor(SDL_ENABLE);
 #ifdef MACOSX
@@ -1192,19 +1193,19 @@ void OSystem_SDL_Common::setup_icon() {
 	SDL_FreeSurface(sdl_surf);
 }
 
-void *OSystem_SDL_Common::create_mutex(void) {
-	return (void *) SDL_CreateMutex();
+OSystem::MutexRef OSystem_SDL_Common::create_mutex(void) {
+	return (MutexRef) SDL_CreateMutex();
 }
 
-void OSystem_SDL_Common::lock_mutex(void *mutex) {
+void OSystem_SDL_Common::lock_mutex(MutexRef mutex) {
 	SDL_mutexP((SDL_mutex *) mutex);
 }
 
-void OSystem_SDL_Common::unlock_mutex(void *mutex) {
+void OSystem_SDL_Common::unlock_mutex(MutexRef mutex) {
 	SDL_mutexV((SDL_mutex *) mutex);
 }
 
-void OSystem_SDL_Common::delete_mutex(void *mutex) {
+void OSystem_SDL_Common::delete_mutex(MutexRef mutex) {
 	SDL_DestroyMutex((SDL_mutex *) mutex);
 }
 

@@ -105,10 +105,10 @@ public:
 	void set_timer(int timer, int (*callback)(int));
 
 	// Mutex handling
-	void *create_mutex();
-	void lock_mutex(void *mutex);
-	void unlock_mutex(void *mutex);
-	void delete_mutex(void *mutex);
+	MutexRef create_mutex();
+	void lock_mutex(MutexRef mutex);
+	void unlock_mutex(MutexRef mutex);
+	void delete_mutex(MutexRef mutex);
 
 	// Overlay
 	virtual void show_overlay();
@@ -208,7 +208,7 @@ protected:
 	
 	// Mutex that prevents multiple threads interferring with each other
 	// when accessing the screen.
-	SDL_mutex *_graphicsMutex;
+	MutexRef _graphicsMutex;
 
 
 	void add_dirty_rgn_auto(const byte *buf);
@@ -228,16 +228,5 @@ protected:
 	void kbd_mouse();
 	void init_joystick() { _joystick = SDL_JoystickOpen(0); }
 };
-
-// Auxillary class to (un)lock a mutex on the stack
-class StackLock {
-	SDL_mutex *_mutex;
-public:
-	StackLock(SDL_mutex *mutex) : _mutex(mutex) { lock(); }
-	~StackLock() { unlock(); }
-	void lock() { SDL_mutexP(_mutex); }
-	void unlock() { SDL_mutexV(_mutex); }
-};
-
 
 #endif

@@ -562,20 +562,20 @@ void OSystem_PALMOS::set_timer(int timer, int (*callback)(int))
 }
 
 /* Mutex handling */
-void *OSystem_PALMOS::create_mutex()
+MutexRef OSystem_PALMOS::create_mutex()
 {
   return NULL;
 }
 
-void OSystem_PALMOS::lock_mutex(void *mutex)
+void OSystem_PALMOS::lock_mutex(MutexRef mutex)
 {
 }
  
-void OSystem_PALMOS::unlock_mutex(void *mutex)
+void OSystem_PALMOS::unlock_mutex(MutexRef mutex)
 {
 }
 
-void OSystem_PALMOS::delete_mutex(void *mutex)
+void OSystem_PALMOS::delete_mutex(MutexRef mutex)
 {
 }
 

@@ -121,10 +121,10 @@ public:
 	void set_timer(int timer, int (*callback) (int));
 
 	// Mutex handling
-	void *create_mutex();
-	void lock_mutex(void *mutex);
-	void unlock_mutex(void *mutex);
-	void delete_mutex(void *mutex);
+	MutexRef create_mutex();
+	void lock_mutex(MutexRef mutex);
+	void unlock_mutex(MutexRef mutex);
+	void delete_mutex(MutexRef mutex);
 
         // Overlay handling for the new menu system
 	void show_overlay();
@@ -1029,24 +1029,24 @@ void OSystem_X11::set_timer(int timer, int (*callback) (int))
 	}
 }
 
-void *OSystem_X11::create_mutex()
+MutexRef OSystem_X11::create_mutex()
 {
 	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(mutex, NULL);
-	return (void *)mutex;
+	return (MutexRef)mutex;
 }
 
-void OSystem_X11::lock_mutex(void *mutex)
+void OSystem_X11::lock_mutex(MutexRef mutex)
 {
 	pthread_mutex_lock((pthread_mutex_t *) mutex);
 }
 
-void OSystem_X11::unlock_mutex(void *mutex)
+void OSystem_X11::unlock_mutex(MutexRef mutex)
 {
 	pthread_mutex_unlock((pthread_mutex_t *) mutex);
 }
 
-void OSystem_X11::delete_mutex(void *mutex)
+void OSystem_X11::delete_mutex(MutexRef mutex)
 {
 	pthread_mutex_destroy((pthread_mutex_t *) mutex);
 	free(mutex);
