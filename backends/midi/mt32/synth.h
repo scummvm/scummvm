@@ -52,8 +52,8 @@ enum ReportType {
 	// HW spec
 	ReportType_availableSSE    = 6,
 	ReportType_available3DNow  = 7,
-	ReportType_asingSSE        = 8,
-	ReportType_asing3DNow      = 9,
+	ReportType_usingSSE        = 8,
+	ReportType_using3DNow      = 9,
 
 	// General info
 	ReportType_lcdMessage      = 10,

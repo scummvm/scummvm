@@ -118,7 +118,30 @@ MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Emu::File
 //
 ////////////////////////////////////////
 
-void report(int type, ...) {}
+static void report(void *userData, MT32Emu::ReportType type, void *reportData) {
+	switch(type) {
+	case MT32Emu::ReportType_lcdMessage:
+		g_system->displayMessageOnOSD((char *)reportData);
+		break;
+	case MT32Emu::ReportType_errorPreset1:
+		error("Couldn't open Preset1.syx file");
+		break;
+	case MT32Emu::ReportType_errorPreset2:
+		error("Couldn't open Preset2.syx file");
+		break;
+	case MT32Emu::ReportType_errorDrumpat:
+		error("Couldn't open drumpat.rom file");
+		break;
+	case MT32Emu::ReportType_errorPatchlog:
+		error("Couldn't open patchlog.cfg file");
+		break;
+	case MT32Emu::ReportType_errorMT32ROM:
+		error("Couldn't open MT32_PCM.ROM file");
+		break;
+	default:
+		break;
+	}
+}
 
 MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer) : MidiDriver_Emulated(mixer) {
 	_channel_mask = 0xFFFF; // Permit all 16 channels by default
@@ -159,6 +182,7 @@ int MidiDriver_MT32::open() {
 	prop.RevLevel = 3;
 	prop.userData = (void *)1;
 	prop.printDebug = &vdebug;
+	prop.report = &report;
 	prop.openFile = MT32_OpenFile;
 	_synth = new MT32Emu::Synth();
 	if (!_synth->open(prop))
