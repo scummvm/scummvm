@@ -54,7 +54,7 @@ void Dialog::setupScreenBuf()
 {
 	// Create _screenBuf if it doesn't already exist
 	if (!_screenBuf)
-		_screenBuf = new byte[320*200];
+		_screenBuf = new byte[g_scumm->_realWidth * g_scumm->_realHeight];
 	
 	// Draw the fixed parts of the dialog: background and border.
 	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor);

@@ -307,8 +307,8 @@ byte *NewGui::getBasePtr(int x, int y)
 	if (vs == NULL)
 		return NULL;
 
-	return vs->screenPtr + x + (y - vs->topline) * 320 +
-		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100) * 320;
+	return vs->screenPtr + x + (y - vs->topline) * _s->_realWidth +
+		_s->_screenStartStrip * 8 + (_s->camera._cur.y - (_s->_realHeight / 2)) * _s->_realWidth;
 }
 
 void NewGui::box(int x, int y, int width, int height)
@@ -343,7 +343,7 @@ void NewGui::line(int x, int y, int x2, int y2, byte color)
 		/* vertical line */
 		while (y++ <= y2) {
 			*ptr = color;
-			ptr += 320;
+			ptr += _s->_realWidth;
 		}
 	} else if (y == y2) {
 		/* horizontal line */
@@ -363,7 +363,7 @@ void NewGui::blendRect(int x, int y, int w, int h, byte color)
 		for (int i = 0; i < w; i++) {
 			ptr[i] = Blend(ptr[i], color, _s->_currentPalette);
 		}
-		ptr += 320;
+		ptr += _s->_realWidth;
 	}
 }
 
@@ -377,7 +377,7 @@ void NewGui::fillRect(int x, int y, int w, int h, byte color)
 		for (int i = 0; i < w; i++) {
 			ptr[i] = color;
 		}
-		ptr += 320;
+		ptr += _s->_realWidth;
 	}
 }
 
@@ -392,7 +392,7 @@ void NewGui::checkerRect(int x, int y, int w, int h, byte color)
 			if ((h ^ i) & 1)
 				ptr[i] = color;
 		}
-		ptr += 320;
+		ptr += _s->_realWidth;
 	}
 }
 
@@ -407,12 +407,12 @@ void NewGui::frameRect(int x, int y, int w, int h, byte color)
 	for (i = 0; i < w; i++, ptr++)
 		*ptr = color;
 	ptr--;
-	for (i = 0; i < h; i++, ptr += 320)
+	for (i = 0; i < h; i++, ptr += _s->_realWidth)
 		*ptr = color;
 	ptr = basePtr;
-	for (i = 0; i < h; i++, ptr += 320)
+	for (i = 0; i < h; i++, ptr += _s->_realWidth)
 		*ptr = color;
-	ptr -= 320;
+	ptr -= _s->_realWidth;
 	for (i = 0; i < w; i++, ptr++)
 		*ptr = color;
 }
@@ -450,7 +450,7 @@ void NewGui::drawChar(const char str, int xx, int yy)
 			if (color)
 				ptr[x] = _color;
 		}
-		ptr += 320;
+		ptr += _s->_realWidth;
 	}
 	_color = tempc;
 
@@ -502,13 +502,13 @@ void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, byte color)
 				ptr[x2] = color;
 			mask >>= 4;
 		}
-		ptr += 320;
+		ptr += _s->_realWidth;
 	}
 }
 
 void NewGui::blitTo(byte buffer[320*200], int x, int y, int w, int h)
 {
-	byte *dstPtr = buffer + x + y*320;
+	byte *dstPtr = buffer + x + y * _s->_realWidth;
 	byte *srcPtr = getBasePtr(x, y);
 	if (srcPtr == NULL)
 		return;
@@ -517,14 +517,14 @@ void NewGui::blitTo(byte buffer[320*200], int x, int y, int w, int h)
 		for (int i = 0; i < w; i++) {
 			*dstPtr++ = *srcPtr++;
 		}
-		dstPtr += 320 - w;
-		srcPtr += 320 - w;
+		dstPtr += _s->_realWidth - w;
+		srcPtr += _s->_realWidth - w;
 	}
 }
 
 void NewGui::blitFrom(byte buffer[320*200], int x, int y, int w, int h)
 {
-	byte *srcPtr = buffer + x + y*320;
+	byte *srcPtr = buffer + x + y * _s->_realWidth;
 	byte *dstPtr = getBasePtr(x, y);
 	if (dstPtr == NULL)
 		return;
@@ -533,8 +533,8 @@ void NewGui::blitFrom(byte buffer[320*200], int x, int y, int w, int h)
 		for (int i = 0; i < w; i++) {
 			*dstPtr++ = *srcPtr++;
 		}
-		dstPtr += 320 - w;
-		srcPtr += 320 - w;
+		dstPtr += _s->_realWidth - w;
+		srcPtr += _s->_realWidth - w;
 	}
 }
 

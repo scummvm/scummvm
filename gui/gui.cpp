@@ -361,7 +361,7 @@ void Gui::drawChar(const char str, int xx, int yy)
 			if (color)
 				ptr[x] = _color;
 		}
-		ptr += 320;
+		ptr += _s->_realWidth;
 	}
 	_color = tempc;
 
@@ -491,7 +491,7 @@ void Gui::drawWidget(const GuiWidget *w)
 							ptr[x2] = color;
 						mask >>= 4;
 					}
-					ptr += 320;
+					ptr += _s->_realWidth;
 				}
 			}
 		}
@@ -515,7 +515,7 @@ void Gui::widgetClear(const GuiWidget *wid)
 
 	if (wid->_flags & GWF_BORDER) {
 		// Inset by 1 pixel in all directions
-		ptr += 320 + 1;
+		ptr += _s->_realWidth + 1;
 		w -= 2;
 		h -= 2;
 	}
@@ -523,7 +523,7 @@ void Gui::widgetClear(const GuiWidget *wid)
 	while (h--) {
 		for (i = 0; i < w; i++)
 			ptr[i] = _bgcolor;
-		ptr += 320;
+		ptr += _s->_realWidth;
 	}
 }
 
@@ -554,8 +554,8 @@ byte *Gui::getBasePtr(int x, int y)
 	if (_vs == NULL)
 		return NULL;
 
-	return _vs->screenPtr + x + (y - _vs->topline) * 320 +
-		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100) * 320;
+	return _vs->screenPtr + x + (y - _vs->topline) * _s->_realWidth +
+		_s->_screenStartStrip * 8 + (_s->camera._cur.y - (_s->_realHeight / 2)) * _s->_realWidth;
 }
 
 void Gui::line(int x, int y, int x2, int y2, byte color)
@@ -577,7 +577,7 @@ void Gui::line(int x, int y, int x2, int y2, byte color)
 		/* vertical line */
 		while (y++ <= y2) {
 			*ptr = color;
-			ptr += 320;
+			ptr += _s->_realWidth;
 		}
 	} else if (y == y2) {
 		/* horizontal line */
