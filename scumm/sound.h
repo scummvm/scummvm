@@ -159,7 +159,6 @@ protected:
 	void stopSfxSound();
 	bool isSfxFinished() const;
 	void playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, PlayingSoundHandle *handle);
-	void playSfxSound_MP3(void *sound, uint32 size, PlayingSoundHandle *handle);
 	void playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *handle);
 
 	int getCachedTrack(int track);

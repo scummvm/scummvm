@@ -166,7 +166,11 @@ class MP3InputStream : public AudioInputStream {
 	uint32 _posInFrame;
 public:
 	// TODO
+	MP3InputStream();
 };
+
+MP3InputStream::MP3InputStream() {
+}
 #endif
 
 

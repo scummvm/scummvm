@@ -122,7 +122,6 @@ public:
 class ChannelMP3Common : public Channel {
 protected:
 	byte *_ptr;
-	bool _releasePtr;
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
@@ -139,7 +138,7 @@ class ChannelMP3 : public ChannelMP3Common {
 	uint32 _position;
 
 public:
-	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint size, byte flags);
+	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size);
 
 	void mix(int16 *data, uint len);
 	bool isMusicChannel() { return false; }
@@ -283,9 +282,9 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 }
 
 #ifdef USE_MAD
-int SoundMixer::playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
+int SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size) {
 	StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelMP3(this, handle, sound, size, flags));
+	return insertChannel(handle, new ChannelMP3(this, handle, file, size));
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration) {
 	StackLock lock(_mutex);
@@ -924,8 +923,7 @@ ChannelMP3Common::ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle
 }
 
 ChannelMP3Common::~ChannelMP3Common() {
-	if (_releasePtr)
-		free(_ptr);
+	free(_ptr);
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
@@ -945,17 +943,23 @@ static inline int scale_sample(mad_fixed_t sample) {
 	return sample >> (MAD_F_FRACBITS + 1 - 16);
 }
 
-ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint size, byte flags)
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size)
 	: ChannelMP3Common(mixer, handle) {
 	_posInFrame = 0xFFFFFFFF;
 	_position = 0;
-	_size = size;
-	_ptr = (byte *)sound;
-	_releasePtr = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
+	_ptr = (byte *)malloc(size + MAD_BUFFER_GUARD);
+
+	_size = file->read(_ptr, size);
 }
 
 void ChannelMP3::mix(int16 *data, uint len) {
 	const int volume = _mixer->getVolume();
+
+	// Exit if all data is used up (this also covers the case were reading from the file failed).
+	if (_position >= _size) {
+		destroy();
+		return;
+	}
 
 	while (1) {
 
@@ -1003,7 +1007,6 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 	_duration = duration;
 	_bufferSize = MP3CD_BUFFERING_SIZE;
 	_ptr = (byte *)malloc(MP3CD_BUFFERING_SIZE);
-	_releasePtr = true;
 }
 
 void ChannelMP3CDMusic::mix(int16 *data, uint len) {

@@ -23,7 +23,6 @@
 #include "common/engine.h"
 
 #define SOUND_BIG_ENDIAN true
-#define FLAG_SIGNED 0
 
 class BaseSound {
 protected:
@@ -35,25 +34,25 @@ public:
 	BaseSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false);
 	BaseSound(SoundMixer *mixer, File *file, uint32 *offsets, bool bigendian = false);
 	virtual ~BaseSound();
-	virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags = SoundMixer::FLAG_UNSIGNED) = 0;
+	virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags) = 0;
 };
 
 class WavSound : public BaseSound {
 public:
 	WavSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
 	WavSound(SoundMixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = SoundMixer::FLAG_UNSIGNED);
+	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 
 class VocSound : public BaseSound {
 public:
 	VocSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = SoundMixer::FLAG_UNSIGNED);
+	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 class RawSound : public BaseSound {
 public:
 	RawSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = SoundMixer::FLAG_UNSIGNED);
+	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 
 
@@ -234,7 +233,7 @@ int RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 class MP3Sound : public BaseSound {
 public:
 	MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = SoundMixer::FLAG_UNSIGNED);
+	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 
 int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
@@ -242,16 +241,11 @@ int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 	if (_offsets == NULL)
 		return 0;
 
-	flags |= SoundMixer::FLAG_AUTOFREE;
-
 	_file->seek(_offsets[sound], SEEK_SET);
 
 	uint32 size = _offsets[sound+1] - _offsets[sound];
 
-	byte *buffer = (byte *)malloc(size);
-	_file->read(buffer, size);
-
-	return _mixer->playMP3(handle, buffer, size, flags);
+	return _mixer->playMP3(handle, _file, size);
 }
 #endif
 
@@ -449,10 +443,7 @@ void SimonSound::playVoice(uint sound) {
 	if (_voice_handle)
 		_mixer->stop(_voice_index);
 
-	if (_game == GAME_SIMON1CD32)
-		_voice_index = _voice->playSound(sound, &_voice_handle, FLAG_SIGNED);
-	else	
-		_voice_index = _voice->playSound(sound, &_voice_handle);
+	_voice_index = _voice->playSound(sound, &_voice_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
 }
 
 void SimonSound::playEffects(uint sound) {
@@ -462,10 +453,7 @@ void SimonSound::playEffects(uint sound) {
 	if (_effects_paused)
 		return;
 
-	if (_game == GAME_SIMON1CD32)
-		_effects->playSound(sound, &_effects_handle, FLAG_SIGNED);
-	else
-		_effects->playSound(sound, &_effects_handle);
+	_effects->playSound(sound, &_effects_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
 }
 
 void SimonSound::playAmbient(uint sound) {

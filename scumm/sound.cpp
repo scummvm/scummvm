@@ -943,25 +943,24 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 	int rate, comp;
 	byte *data;
 
-	if (_scumm->_noDigitalSamples)
+	if (_soundsPaused || _scumm->_noDigitalSamples)
 		return;
 
 	if (file_size > 0) {
 		int alloc_size = file_size;
-#ifdef USE_MAD
-		if (!_vorbis_mode)
-			alloc_size += MAD_BUFFER_GUARD;
-#endif
-		data = (byte *)calloc(alloc_size, 1);
-
-		if (file->read(data, file_size) != (uint)file_size) {
-			/* no need to free the memory since error will shut down */
-			error("startSfxSound: cannot read %d bytes", size);
-		}
-		if (_vorbis_mode)
+		if (_vorbis_mode) {
+			data = (byte *)calloc(alloc_size, 1);
+	
+			if (file->read(data, file_size) != (uint)file_size) {
+				// no need to free the memory since error will shut down
+				error("startSfxSound: cannot read %d bytes", size);
+			}
 			playSfxSound_Vorbis(data, file_size, handle);
-		else
-			playSfxSound_MP3(data, file_size, handle);
+		} else {
+#ifdef USE_MAD
+			_scumm->_mixer->playMP3(handle, file, file_size);
+#endif
+		}
 		return;
 	}
 
@@ -1429,19 +1428,10 @@ bail:
 }
 
 void Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, PlayingSoundHandle *handle) {
-	if (_soundsPaused)
-		return;
 	byte flags = SoundMixer::FLAG_AUTOFREE;
 	if (isUnsigned)
 		flags |= SoundMixer::FLAG_UNSIGNED;
 	_scumm->_mixer->playRaw(handle, sound, size, rate, flags);
-}
-
-void Sound::playSfxSound_MP3(void *sound, uint32 size, PlayingSoundHandle *handle) {
-#ifdef USE_MAD
-	if (!_soundsPaused && !_scumm->_noDigitalSamples)
-		_scumm->_mixer->playMP3(handle, sound, size, SoundMixer::FLAG_AUTOFREE);
-#endif
 }
 
 #ifdef USE_VORBIS
@@ -1508,20 +1498,19 @@ static ov_callbacks data_wrap = {
 
 void Sound::playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *handle) {
 #ifdef USE_VORBIS
-	if (!_soundsPaused && !_scumm->_noDigitalSamples) {
-		OggVorbis_File *ov_file = new OggVorbis_File;
-		data_file_info *f = new data_file_info;
-		f->data = (char *) sound;
-		f->size = size;
-		f->curr_pos = 0;
-	
-		if (ov_open_callbacks((void *) f, ov_file, NULL, 0, data_wrap) < 0) {
-			warning("Invalid file format");
-			delete ov_file;
-			delete f;
-		} else
-			_scumm->_mixer->playVorbis(handle, ov_file, 0, false);
-	}
+	OggVorbis_File *ov_file = new OggVorbis_File;
+	data_file_info *f = new data_file_info;
+	f->data = (char *) sound;
+	f->size = size;
+	f->curr_pos = 0;
+
+	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, data_wrap) < 0) {
+		warning("Invalid file format");
+		delete ov_file;
+		delete f;
+		free(sound);
+	} else
+		_scumm->_mixer->playVorbis(handle, ov_file, 0, false);
 #endif
 }
 

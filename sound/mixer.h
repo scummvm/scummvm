@@ -84,7 +84,7 @@ public:
 	// start playing a raw sound
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id = -1);
 #ifdef USE_MAD
-	int playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
+	int playMP3(PlayingSoundHandle *handle, File *file, uint32 size);
 	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration);
 #endif
 #ifdef USE_VORBIS
