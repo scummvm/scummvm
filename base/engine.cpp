@@ -41,8 +41,8 @@ Engine::Engine(OSystem *syst)
 
 	_timer = g_timer;
 
-	// Set default file directory
-	File::setDefaultDirectory(_gameDataPath);
+	// Add default file directory
+	File::addDefaultDirectory(_gameDataPath);
 
 	g_debugLevel = ConfMan.getInt("debuglevel");
 
@@ -50,6 +50,8 @@ Engine::Engine(OSystem *syst)
 }
 
 Engine::~Engine() {
+	File::resetDefaultDirectories();
+
 	delete _mixer;
 	delete _timer;
 	delete _saveFileMan;

@@ -36,7 +36,7 @@ private:
 
 	static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
 	
-	static Common::String _defaultDirectory;
+	static Common::StringList _defaultDirectories;
 
 public:
 	enum AccessMode {
@@ -44,7 +44,8 @@ public:
 		kFileWriteMode = 2
 	};
 	
-	static void setDefaultDirectory(const Common::String &directory);
+	static void addDefaultDirectory(const Common::String &directory);
+	static void resetDefaultDirectories();
 	
 	File();
 	virtual ~File();

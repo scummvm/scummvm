@@ -22,6 +22,7 @@
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "sword2/sword2.h"
 #include "sword2/console.h"
 #include "sword2/controls.h"
@@ -100,6 +101,14 @@ Sword2Engine *g_sword2 = NULL;
 
 Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
+
+	// Add default file directories
+	File::addDefaultDirectory(_gameDataPath + "/CLUSTERS/");
+	File::addDefaultDirectory(_gameDataPath + "/SWORD2/");
+	File::addDefaultDirectory(_gameDataPath + "/VIDEO/");
+	File::addDefaultDirectory(_gameDataPath + "/clusters/");
+	File::addDefaultDirectory(_gameDataPath + "/sword2/");
+	File::addDefaultDirectory(_gameDataPath + "/video/");
 
 	g_sword2 = this;
 	_debugger = NULL;

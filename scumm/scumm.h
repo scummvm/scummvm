@@ -387,7 +387,6 @@ public:
 	// Misc utility functions
 	uint32 _debugFlags;
 	const char *getGameName() const { return _gameName.c_str(); }
-	const char *getGameDataPath() const;
 
 	// Cursor/palette
 	void updateCursor();

@@ -269,17 +269,29 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		SOUND_INDEX_BASE = 0;
 	}
 
-	if (_game & GF_MAC)
+	if (_game & GF_MAC) {
 		gss = PTR(simon2mac_settings);
-	else if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
+
+		// Add default file directories
+		File::addDefaultDirectory(_gameDataPath + "/voices/");
+		File::addDefaultDirectory(_gameDataPath + "/VOICES/");
+	} else if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
 		gss = PTR(simon2win_settings);
 	else if (_game & GF_SIMON2)
 		gss = PTR(simon2dos_settings);
-	else if (_game & GF_ACORN)
+	else if (_game & GF_ACORN) {
 		gss = PTR(simon1acorn_settings);
-	else if (_game & GF_AMIGA)
+
+		// Add default file directories
+		File::addDefaultDirectory(_gameDataPath + "/execute/");
+		File::addDefaultDirectory(_gameDataPath + "/EXECUTE/");
+	} else if (_game & GF_AMIGA) {
 		gss = PTR(simon1amiga_settings);
-	else if (_game & GF_DEMO)
+
+		// Add default file directories
+		File::addDefaultDirectory(_gameDataPath + "/voices/");
+		File::addDefaultDirectory(_gameDataPath + "/VOICES/");
+	} else if (_game & GF_DEMO)
 		gss = PTR(simon1demo_settings);
 	else
 		gss = PTR(simon1_settings);

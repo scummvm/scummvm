@@ -352,6 +352,50 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0),
 	  _targetName(detector->_targetName) {
 
+	// Add default file directories.
+	// FIXME: Which games use "rooms" or "ROOMS" ???
+	if (_version < 7) {
+		File::addDefaultDirectory(_gameDataPath + "/ROOMS/");
+		File::addDefaultDirectory(_gameDataPath + "/rooms/");
+	}
+
+	if ((_features & GF_MACINTOSH) && (_version == 3)) {
+		// This is the for the Mac version of Indy3/Loom
+		File::addDefaultDirectory(_gameDataPath + "/Rooms 1/");
+		File::addDefaultDirectory(_gameDataPath + "/Rooms 2/");
+		File::addDefaultDirectory(_gameDataPath + "/Rooms 3/");
+	}
+
+#ifdef MACOSX
+	if (_version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
+		// Special case for COMI on Mac OS X. The mount points on OS X depend
+		// on the volume name. Hence if playing from CD, we'd get a problem.
+		// So if loading of a resource file fails, we fall back to the (fixed)
+		// CD mount points (/Volumes/MONKEY3_1 and /Volumes/MONKEY3_2).
+		//
+		// This check for whether we play from CD is very crude, though.
+
+		File::addDefaultDirectory("/Volumes/MONKEY3_1/RESOURCE/");
+		File::addDefaultDirectory("/Volumes/MONKEY3_1/resource/");
+		File::addDefaultDirectory("/Volumes/MONKEY3_2/");
+		File::addDefaultDirectory("/Volumes/MONKEY3_2/RESOURCE/");
+		File::addDefaultDirectory("/Volumes/MONKEY3_2/resource/");
+	} else
+#endif
+	if (_version == 8) {
+		// This is for COMI
+		File::addDefaultDirectory(_gameDataPath + "/RESOURCE/");
+		File::addDefaultDirectory(_gameDataPath + "/resource/");
+	}
+
+	if (_version == 7) {
+		// This is for Full Throttle & The Dig
+		File::addDefaultDirectory(_gameDataPath + "/VIDEO/");
+		File::addDefaultDirectory(_gameDataPath + "/video/");
+		File::addDefaultDirectory(_gameDataPath + "/DATA/");
+		File::addDefaultDirectory(_gameDataPath + "/data/");
+	}
+
 	// Init all vars - maybe now we can get rid of our custom new/delete operators?
 	_imuse = NULL;
 	_imuseDigital = NULL;
@@ -2768,42 +2812,6 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 		idx = 0;
 	}
 	return 	_2byteFontPtr + ((_2byteWidth + 7) / 8) * _2byteHeight * idx;
-}
-
-
-const char *ScummEngine::getGameDataPath() const {
-#ifdef MACOSX
-	if (_version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
-		// TODO: The following hack is currently inactive, since Fingolfin
-		// removed most calls to getGameDataPath(). This will soon be put 
-		// back into place once the File::setDefaultDirectory() method is
-		// replaced by a more flexible system...
-
-	
-		// Special case for COMI on Mac OS X. The mount points on OS X depend
-		// on the volume name. Hence if playing from CD, we'd get a problem.
-		// So if loading of a resource file fails, we fall back to the (fixed)
-		// CD mount points (/Volumes/MONKEY3_1 and /Volumes/MONKEY3_2).
-		//
-		// The check for whether we play from CD or not is very hackish, though.
-		static char buf[256];
-		struct stat st;
-		int disk = (_scummVars && _scummVars[VAR_CURRENTDISK] == 2) ? 2 : 1;
-		sprintf(buf, "/Volumes/MONKEY3_%d", disk);
-	
-		if (!stat(buf, &st)) {
-			return buf;
-		}
-	
-		// Apparently that disk is not inserted. However since many data files
-		// (fonts, comi.la0) are on both disks, we also try the other CD.
-		disk = (disk == 1) ? 2 : 1;
-		sprintf(buf, "/Volumes/MONKEY3_%d", disk);
-		return buf;
-	}
-#endif
-
-	return _gameDataPath.c_str();
 }
 
 void ScummEngine::errorString(const char *buf1, char *buf2) {

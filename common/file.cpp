@@ -23,7 +23,7 @@
 #include "common/util.h"
 
 
-Common::String File::_defaultDirectory;
+Common::StringList File::_defaultDirectories;
 
 
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
@@ -41,17 +41,16 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	}
 #endif
 
-	// Record the length of the dir name (so we can cut of anything trailing it
-	// later, when we try with different file names).
+	// Determine the length of the dir name.
 	const int dirLen = strlen(buf);
 
 	if (dirLen > 0) {
 #ifdef __MORPHOS__
-		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
+		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/') // prevent double /
 #endif
 
 #if !defined(__GP32__) && !defined(__PALM_OS__)
-		strcat(buf, "/");	// prevent double /
+		strcat(buf, "/");
 #endif
 	}
 	strcat(buf, filename);
@@ -60,73 +59,49 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	if (file)
 		return file;
 
-	// FIXME this should probably be engine specific...
-	const char *dirs[] = {
-		"",
-		"rooms/",
-		"ROOMS/",
-		"Rooms 1/",
-		"Rooms 2/",
-		"Rooms 3/",
-		"video/",
-		"VIDEO/",
-		"data/",
-		"DATA/",
-		"resource/",
-		"RESOURCE/",
-		// Simon the Sorcerer 1 Acorn
-		"execute/",
-		"EXECUTE/",
-		// Simon the Sorcerer 2 Amiga/Mac
-		"../",
-		"voices/",
-		"VOICES/",
-		// sword1/2 stuff if user just copied files without putting
-		// them all into the same dir like original installer did
-		"CLUSTERS/",
-		"clusters/",
-		"SPEECH/",
-		"speech/",
-		"SWORD2/",
-		"sword2/"
-	};
-
-	for (int dirIdx = 0; dirIdx < ARRAYSIZE(dirs); dirIdx++) {
-		buf[dirLen] = 0;
-		if (buf[0] != 0) {
+	buf[dirLen] = 0;
+	if (buf[0] != 0) {
 #ifdef __MORPHOS__
-			if (buf[strlen(buf) - 1] != ':' && buf[strlen(buf) - 1] != '/')
+		if (buf[strlen(buf) - 1] != ':' && buf[strlen(buf) - 1] != '/')
 #endif
 #ifndef __PALM_OS__
-			strcat(buf, "/");	// PALMOS
+		strcat(buf, "/");	// PALMOS
 #endif
-		}
-		strcat(buf, dirs[dirIdx]);
-		int8 len = strlen(buf);
-		strcat(buf, filename);
-
-		ptr = buf + len;
-		do
-			*ptr = toupper(*ptr);
-		while (*ptr++);
-		file = fopen(buf, mode);
-		if (file)
-			return file;
-
-		ptr = buf + len;
-		do
-			*ptr = tolower(*ptr);
-		while (*ptr++);
-		file = fopen(buf, mode);
-		if (file)
-			return file;
 	}
+	const int8 len = strlen(buf);
+	strcat(buf, filename);
+
+	//
+	// Try again, with file name converted to upper case
+	//
+	ptr = buf + len;
+	while (*ptr) {
+		*ptr = toupper(*ptr);
+		ptr++;
+	}
+	file = fopen(buf, mode);
+	if (file)
+		return file;
+
+	//
+	// Try again, with file name converted to lower case
+	//
+	ptr = buf + len;
+	while (*ptr) {
+		*ptr = tolower(*ptr);
+		ptr++;
+	}
+	file = fopen(buf, mode);
 
 	return NULL;
 }
 
-void File::setDefaultDirectory(const Common::String &directory) {
-	_defaultDirectory = directory;
+void File::addDefaultDirectory(const Common::String &directory) {
+	_defaultDirectories.push_back(directory);
+}
+
+void File::resetDefaultDirectories() {
+	_defaultDirectories.clear();
 }
 
 File::File() {
@@ -146,30 +121,32 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 		return false;
 	}
 
-	if (filename == NULL || *filename == 0)
+	if (filename == NULL || *filename == 0) {
 		return false;
-	
-	// If no directory was specified, use the default directory (if any).
-	if (directory == NULL)
-		directory = _defaultDirectory.isEmpty() ? "" : _defaultDirectory.c_str();
+	}
+
+	if (mode != kFileReadMode && mode != kFileWriteMode) {
+		warning("Only read/write mode supported!");
+		return false;
+	}
 
 	clearIOFailed();
 
-	if (mode == kFileReadMode) {
-		_handle = fopenNoCase(filename, directory, "rb");
-		if (_handle == NULL) {
-			debug(2, "File %s not found", filename);
-			return false;
+	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
+	if (directory) {
+		_handle = fopenNoCase(filename, directory, modeStr);
+	} else {
+		Common::StringList::const_iterator x;
+		for (x = _defaultDirectories.begin(); _handle == NULL && x != _defaultDirectories.end(); ++x) {
+			_handle = fopenNoCase(filename, x->c_str(), modeStr);
 		}
 	}
-	else if (mode == kFileWriteMode) {
-		_handle = fopenNoCase(filename, directory, "wb");
-		if (_handle == NULL) {
+
+	if (_handle == NULL) {
+		if (mode == kFileReadMode)
+			debug(2, "File %s not found", filename);
+		else
 			debug(2, "File %s not opened", filename);
-			return false;
-		}
-	}	else {
-		warning("Only read/write mode supported!");
 		return false;
 	}
 
