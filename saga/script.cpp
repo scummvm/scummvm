@@ -83,7 +83,7 @@ Script::Script() {
 	} else if (rsc_len % S_LUT_ENTRYLEN_ITEDISK == 0) {
 		_scriptLUTEntryLen = S_LUT_ENTRYLEN_ITEDISK;
 	} else {
-		error("Error: Invalid script lookup table length");
+		error("Error: Invalid script lookup table length (%d)", rsc_len);
 	}
 
 	// Calculate number of entries
