@@ -66,7 +66,6 @@ _snm_trigger_index(0)
 	memset(_channel_volume,0,sizeof(_channel_volume));
 	memset(_channel_volume_eff,0,sizeof(_channel_volume_eff));
 	memset(_volchan_table,0,sizeof(_volchan_table));
-	memset(_active_notes,0,sizeof(_active_notes));
 }
 
 byte *IMuseInternal::findStartOfSound(int sound) {
@@ -865,7 +864,7 @@ int32 IMuseInternal::doCommand (int numargs, int a[]) {
 		case 21:
 			return -1;
 		case 22:
-			((Part *)player)->setVolume(a[3]);
+			((Part *)player)->volume(a[3]);
 			return 0;
 		case 23:
 			return query_queue(a[1]);
@@ -1425,7 +1424,7 @@ void Part::set_detune(int8 detune) {
 	}
 }
 
-void Part::set_pitchbend(int value) {
+void Part::pitchBend(int16 value) {
 	_pitchbend = value;
 	if (_mc) {
 		_mc->pitchBend(clamp(_pitchbend +
@@ -1434,8 +1433,8 @@ void Part::set_pitchbend(int value) {
 	}
 }
 
-void Part::setVolume(uint8 vol) {
-	_vol_eff = ((_vol = vol) + 1) * _player->getEffectiveVolume() >> 7;
+void Part::volume (byte value) {
+	_vol_eff = ((_vol = value) + 1) * _player->getEffectiveVolume() >> 7;
 	if (_mc)
 		_mc->volume(_vol_eff);
 }
@@ -1461,47 +1460,47 @@ void Part::set_transpose(int8 transpose) {
 	}
 }
 
-void Part::set_pedal(bool value) {
+void Part::sustain(bool value) {
 	_pedal = value;
 	if (_mc)
-		_mc->sustain(_pedal);
+		_mc->sustain(value);
 }
 
-void Part::set_modwheel(uint value) {
+void Part::modulationWheel(byte value) {
 	_modwheel = value;
 	if (_mc)
-		_mc->modulationWheel(_modwheel);
+		_mc->modulationWheel(value);
 }
 
-void Part::set_chorus(uint chorus) {
-	_chorus = chorus;
+void Part::chorusLevel(byte value) {
+	_chorus = value;
 	if (_mc)
-		_mc->chorusLevel(_effect_level);
+		_mc->chorusLevel(value);
 }
 
-void Part::set_effect_level(uint level)
+void Part::effectLevel(byte value)
 {
-	_effect_level = level;
+	_effect_level = value;
 	if (_mc)
-		_mc->effectLevel(_effect_level);
+		_mc->effectLevel(value);
 }
 
 void Part::fix_after_load() {
 	set_transpose(_transpose);
-	setVolume(_vol);
+	volume(_vol);
 	set_detune(_detune);
 	set_pri(_pri);
 	set_pan(_pan);
 	sendAll();
 }
 
-void Part::set_pitchbend_factor(uint8 value) {
+void Part::pitchBendFactor(byte value) {
 	if (value > 12)
 		return;
-	set_pitchbend(0);
+	pitchBend(0);
 	_pitchbend_factor = value;
 	if (_mc)
-		_mc->pitchBendFactor(_pitchbend_factor);
+		_mc->pitchBendFactor(value);
 }
 
 void Part::set_onoff(bool on) {
@@ -1526,9 +1525,11 @@ void Part::load_global_instrument(byte slot) {
 		_instrument.send(_mc);
 }
 
-void Part::key_on(byte note, byte velocity) {
+void Part::noteOn(byte note, byte velocity) {
+	if (!_on)
+		return;
+
 	MidiChannel *mc = _mc;
-	_actives[note >> 4] |= (1 <<(note & 0xF));
 
 	// DEBUG
 	if (_unassigned_instrument && !_percussion) {
@@ -1551,9 +1552,11 @@ void Part::key_on(byte note, byte velocity) {
 	}
 }
 
-void Part::key_off(byte note) {
+void Part::noteOff(byte note) {
+	if (!_on)
+		return;
+
 	MidiChannel *mc = _mc;
-	_actives[note >> 4] &= ~(1 <<(note & 0xF));
 	if (mc) {
 		mc->noteOff(note);
 	} else if (_percussion) {
@@ -1568,7 +1571,6 @@ void Part::init() {
 	_next = NULL;
 	_prev = NULL;
 	_mc = NULL;
-	memset(_actives, 0, sizeof(_actives));
 }
 
 void Part::setup(Player *player) {
@@ -1611,7 +1613,6 @@ void Part::off() {
 		_mc->release();
 		_mc = NULL;
 	}
-	memset(_actives, 0, sizeof(_actives));
 }
 
 bool Part::clearToTransmit() {
@@ -1637,33 +1638,9 @@ void Part::sendAll() {
 	_mc->priority(_pri_eff);
 }
 
-int Part::update_actives(uint16 *active) {
-	int i, j;
-	uint16 *act, mask, bits;
-	int count = 0;
-
-	bits = 1 << _chan;
-	act = _actives;
-
-	for (i = 8; i; i--) {
-		mask = *act++;
-		if (mask) {
-			for (j = 16; j; j--, mask >>= 1, active++) {
-				if (mask & 1 && !(*active & bits)) {
-					*active |= bits;
-					count++;
-				}
-			}
-		} else {
-			active += 16;
-		}
-	}
-	return count;
-}
-
-void Part::set_program(byte program) {
+void Part::programChange(byte value) {
 	_bank = 0;
-	_instrument.program(program, _player->isMT32());
+	_instrument.program(value, _player->isMT32());
 	if (clearToTransmit())
 		_instrument.send(_mc);
 }
@@ -1677,11 +1654,10 @@ void Part::set_instrument(uint b) {
 		_instrument.send(_mc);
 }
 
-void Part::silence() {
+void Part::allNotesOff() {
 	if (!_mc)
 		return;
 	_mc->allNotesOff();
-	memset(_actives, 0, sizeof(_actives));
 }
 
 ////////////////////////////////////////

@@ -34,16 +34,14 @@
 
 ////////////////////////////////////////
 //
-//  Helper functions
+//  Miscellaneous
 //
 ////////////////////////////////////////
 
 extern MidiParser *MidiParser_createRO();
 extern MidiParser *MidiParser_createEUP();
 
-static uint read_word(byte *a) {
-	return (a[0] << 8) + a[1];
-}
+uint16 Player::_active_notes[128];
 
 
 
@@ -233,17 +231,21 @@ void Player::send(uint32 b) {
 
 	switch (cmd >> 4) {
 	case 0x8: // Key Off
-		if (!_scanning)
-			key_off(chan, param1);
-		else
-			clear_active_note(chan, param1);
+		if (!_scanning) {
+			if ((part = getPart(chan)) != 0)
+				part->noteOff(param1);
+		} else {
+			_active_notes[param1] &= ~(1 << chan);
+		}
 		break;
 
 	case 0x9: // Key On
-		if (!_scanning)
-			key_on(chan, param1, param2);
-		else
-			set_active_note(chan, param1);
+		if (!_scanning) {
+			if ((part = getPart(chan)) != 0)
+				part->noteOn(param1, param2);
+		} else {
+			_active_notes[param1] |= (1 << chan);
+		}
 		break;
 
 	case 0xB: // Control Change
@@ -253,16 +255,16 @@ void Player::send(uint32 b) {
 
 		switch (param1) {
 		case 1: // Modulation Wheel
-			part->set_modwheel(param2);
+			part->modulationWheel(param2);
 			break;
 		case 7: // Volume
-			part->setVolume(param2);
+			part->volume(param2);
 			break;
 		case 10: // Pan Position
 			part->set_pan(param2 - 0x40);
 			break;
 		case 16: // Pitchbend Factor(non-standard)
-			part->set_pitchbend_factor(param2);
+			part->pitchBendFactor(param2);
 			break;
 		case 17: // GP Slider 2
 			part->set_detune(param2 - 0x40);
@@ -272,16 +274,16 @@ void Player::send(uint32 b) {
 			_se->reallocateMidiChannels(_midi);
 			break;
 		case 64: // Sustain Pedal
-			part->set_pedal(param2 != 0);
+			part->sustain(param2 != 0);
 			break;
 		case 91: // Effects Level
-			part->set_effect_level(param2);
+			part->effectLevel(param2);
 			break;
 		case 93: // Chorus Level
-			part->set_chorus(param2);
+			part->chorusLevel(param2);
 			break;
 		case 123: // All Notes Off
-			part->silence();
+			part->allNotesOff();
 			break;
 		default:
 			warning("Player::send(): Invalid control change %d", param1);
@@ -293,7 +295,7 @@ void Player::send(uint32 b) {
 		if (part) {
 			if (_isGM) {
 				if (param1 < 128)
-					part->set_program(param1);
+					part->programChange(param1);
 			} else {
 				if (param1 < 32)
 					part->load_global_instrument(param1);
@@ -304,7 +306,7 @@ void Player::send(uint32 b) {
 	case 0xE: // Pitch Bend
 		part = getPart(chan);
 		if (part)
-			part->set_pitchbend(((param2 << 7) | param1) - 0x2000);
+			part->pitchBend(((param2 << 7) | param1) - 0x2000);
 		break;
 
 	case 0xA: // Aftertouch
@@ -384,7 +386,7 @@ void Player::sysEx(byte *p, uint16 len) {
 			if (part) {
 				part->set_onoff(p[2] & 0x01);
 				part->set_pri (p[4]);
-				part->setVolume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
+				part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
 				part->_percussion = _isGM ?((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {
 					if (part->_mc) {
@@ -424,7 +426,7 @@ void Player::sysEx(byte *p, uint16 len) {
 		// This SysEx is used in Sam & Max for maybe_jump.
 		if (_scanning)
 			break;
-		maybe_jump(p[0], p[1] - 1, (read_word(p + 2) - 1) * 4 + p[4], ((p[5] * TICKS_PER_BEAT) >> 2) + p[6]);
+		maybe_jump(p[0], p[1] - 1, (READ_BE_UINT16(p + 2) - 1) * 4 + p[4], ((p[5] * TICKS_PER_BEAT) >> 2) + p[6]);
 		break;
 
 	case 2: // Start of song. Ignore for now.
@@ -440,7 +442,7 @@ void Player::sysEx(byte *p, uint16 len) {
 				part->set_instrument((byte *) buf);
 			} else {
 				// SPK tracks have len == 49 here, and are not supported
-				part->set_program(254); // Must be invalid, but not 255(which is reserved)
+				part->programChange(254); // Must be invalid, but not 255(which is reserved)
 			}
 		}
 		break;
@@ -458,14 +460,14 @@ void Player::sysEx(byte *p, uint16 len) {
 		decode_sysex_bytes(p, buf, len - 3);
 		part = getPart(a);
 		if (part)
-			part->set_param(read_word(buf), read_word(buf + 2));
+			part->set_param(READ_BE_UINT16(buf), READ_BE_UINT16(buf + 2));
 		break;
 
 	case 48: // Hook - jump
 		if (_scanning)
 			break;
 		decode_sysex_bytes(p + 1, buf, len - 2);
-		maybe_jump(buf[0], read_word(buf + 1), read_word(buf + 3), read_word(buf + 5));
+		maybe_jump(buf[0], READ_BE_UINT16(buf + 1), READ_BE_UINT16(buf + 3), READ_BE_UINT16(buf + 5));
 		break;
 
 	case 49: // Hook - global transpose
@@ -507,9 +509,9 @@ void Player::sysEx(byte *p, uint16 len) {
 
 	case 80: // Loop
 		decode_sysex_bytes(p + 1, buf, len - 2);
-		setLoop(read_word(buf),
-						 read_word(buf + 2), read_word(buf + 4), read_word(buf + 6), read_word(buf + 8)
-			);
+		setLoop(READ_BE_UINT16(buf), READ_BE_UINT16(buf + 2),
+		        READ_BE_UINT16(buf + 4), READ_BE_UINT16(buf + 6),
+		        READ_BE_UINT16(buf + 8));
 		break;
 
 	case 81: // End loop
@@ -609,7 +611,7 @@ void Player::maybe_set_volume(byte *data) {
 
 	part = getPart(chan);
 	if (part)
-		part->setVolume(data[2]);
+		part->volume(data[2]);
 }
 
 void Player::maybe_set_program(byte *data) {
@@ -632,7 +634,7 @@ void Player::maybe_set_program(byte *data) {
 
 	part = getPart(chan);
 	if (part)
-		part->set_program(data[2]);
+		part->programChange(data[2]);
 }
 
 void Player::maybe_set_transpose_part(byte *data) {
@@ -673,18 +675,6 @@ int Player::setTranspose(byte relative, int b) {
 	return 0;
 }
 
-void Player::clear_active_notes() {
-	memset(_se->_active_notes, 0, sizeof(_se->_active_notes));
-}
-
-void Player::clear_active_note(int chan, byte note) {
-	_se->_active_notes[note] &= ~(1 << chan);
-}
-
-void Player::set_active_note(int chan, byte note) {
-	_se->_active_notes[note] |= (1 << chan);
-}
-
 void Player::part_set_transpose(uint8 chan, byte relative, int8 b) {
 	Part *part;
 
@@ -697,25 +687,6 @@ void Player::part_set_transpose(uint8 chan, byte relative, int8 b) {
 	if (relative)
 		b = transpose_clamp(b + part->_transpose, -7, 7);
 	part->set_transpose(b);
-}
-
-void Player::key_on(uint8 chan, byte note, uint8 velocity) {
-	Part *part;
-
-	part = getPart(chan);
-	if (!part || !part->_on)
-		return;
-
-	part->key_on(note, velocity);
-}
-
-void Player::key_off(uint8 chan, byte note) {
-	Part *part;
-
-	for (part = _parts; part; part = part->_next) {
-		if (part->_chan == (byte)chan && part->_on)
-			part->key_off(note);
-	}
 }
 
 bool Player::jump(uint track, uint beat, uint tick) {
@@ -755,7 +726,7 @@ void Player::turn_off_pedals() {
 
 	for (part = _parts; part; part = part->_next) {
 		if (part->_pedal)
-			part->set_pedal(false);
+			part->sustain(false);
 	}
 }
 
@@ -794,20 +765,6 @@ Part *Player::getPart(uint8 chan) {
 	return part;
 }
 
-uint Player::update_actives() {
-	Part *part;
-	uint16 *active;
-	int count = 0;
-
-	clear_active_notes();
-	active = _se->_active_notes;
-	for (part = _parts; part; part = part->_next) {
-		if (part->_mc)
-			count += part->update_actives(active);
-	}
-	return count;
-}
-
 void Player::setPriority(int pri) {
 	Part *part;
 
@@ -844,7 +801,7 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 		tobeat++;
 
 	turn_off_parts();
-	clear_active_notes();
+	memset(_active_notes, 0, sizeof(_active_notes));
 	_scanning = true;
 
 	// If the scan involves a track switch, scan to the end of
@@ -880,13 +837,14 @@ void Player::turn_off_parts() {
 void Player::play_active_notes() {
 	int i, j;
 	uint mask;
+	Part *part;
 
-	for (i = 0; i != 128; i++) {
-		mask = _se->_active_notes[i];
-		for (j = 0; j != 16; j++, mask >>= 1) {
-			if (mask & 1) {
-				key_on(j, i, 80);
-			}
+	for (i = 0; i < 16; ++i) {
+		part = getPart (i);
+		mask = 1 << i;
+		for (j = 0; j < 128; ++j) {
+			if (_active_notes[j] & mask)
+				part->noteOn (j, 80);
 		}
 	}
 }
@@ -901,7 +859,7 @@ int Player::setVolume(byte vol) {
 	_vol_eff = _se->get_channel_volume(_vol_chan) *(vol + 1) >> 7;
 
 	for (part = _parts; part; part = part->_next) {
-		part->setVolume(part->_vol);
+		part->volume(part->_vol);
 	}
 
 	return 0;

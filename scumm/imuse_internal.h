@@ -148,6 +148,11 @@ struct CommandQueue {
 
 class Player : public MidiDriver {
 protected:
+	// Moved from IMuseInternal.
+	// This is only used by one player at a time.
+	static uint16 _active_notes[128];
+
+protected:
 	MidiDriver *_midi;
 	MidiParser *_parser;
 
@@ -188,8 +193,6 @@ protected:
 	void hook_clear();
 	void uninit_parts();
 	byte *parse_midi(byte *s);
-	void key_off(uint8 chan, byte data);
-	void key_on(uint8 chan, byte data, byte velocity);
 	void part_set_transpose(uint8 chan, byte relative, int8 b);
 	void parse_sysex(byte *p, uint len);
 	void maybe_jump(byte cmd, uint track, uint beat, uint tick);
@@ -198,7 +201,6 @@ protected:
 	void maybe_set_volume(byte *data);
 	void maybe_set_program(byte *data);
 	void maybe_set_transpose_part(byte *data);
-	uint update_actives();
 	void turn_off_pedals();
 	int  query_part_param(int param, byte chan);
 	void turn_off_parts();
@@ -207,10 +209,6 @@ protected:
 	void transitionParameters();
 
 	static void decode_sysex_bytes(const byte *src, byte *dst, int len);
-
-	void clear_active_note(int chan, byte note);
-	void set_active_note(int chan, byte note);
-	void clear_active_notes();
 
 	// Sequencer part
 	int start_seq_sound(int sound, bool reset_vars = true);
@@ -301,36 +299,35 @@ struct Part {
 	Instrument _instrument;
 	bool _unassigned_instrument; // For diagnostic reporting purposes only
 
-	// Used to be in MidiDriver
-	uint16 _actives[8];
+	// MidiChannel interface
+	// (We don't currently derive from MidiChannel,
+	//  but if we ever do, this will make it easy.)
+	void noteOff(byte note);
+	void noteOn(byte note, byte velocity);
+	void programChange(byte value);
+	void pitchBend(int16 value);
+	void modulationWheel(byte value);
+	void volume(byte value);
+	void pitchBendFactor(byte value);
+	void sustain(bool value);
+	void effectLevel(byte value);
+	void chorusLevel(byte value);
+	void allNotesOff();
 
-	void key_on(byte note, byte velocity);
-	void key_off(byte note);
 	void set_param(byte param, int value) { }
 	void init();
 	void setup(Player *player);
 	void uninit();
 	void off();
-	void silence();
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
 	void load_global_instrument(byte b);
 
 	void set_transpose(int8 transpose);
-	void setVolume(uint8 volume);
 	void set_detune(int8 detune);
 	void set_pri(int8 pri);
 	void set_pan(int8 pan);
-	void set_modwheel(uint value);
-	void set_pedal(bool value);
-	void set_pitchbend(int value);
-	void release_pedal();
-	void set_program(byte program);
-	void set_chorus(uint chorus);
-	void set_effect_level(uint level);
 
-	int update_actives(uint16 *active);
-	void set_pitchbend_factor(uint8 value);
 	void set_onoff(bool on);
 	void fix_after_load();
 
@@ -386,7 +383,6 @@ protected:
 	Player _players[8];
 	Part _parts[32];
 
-	uint16 _active_notes[128];
 	Instrument _global_adlib_instruments[32];
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
