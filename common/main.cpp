@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 	{
 		OSystem::Property prop;
 
-		prop.caption = detector.getGameName();
+		prop.caption = (char *)detector.getGameName();
 		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 	}
 

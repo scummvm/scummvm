@@ -225,15 +225,15 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 		b = vs->height;
 
 	height = b - t;
-	if (height > _realHeight)
-		height = _realHeight;
+	if (height > _vm->_realHeight)
+		height = _vm->_realHeight;
 
-	scrollY = _vm->camera._cur.y - (_realHeight / 2);
-	if (scrollY == -(_realHeight / 2))
+	scrollY = _vm->camera._cur.y - (_vm->_realHeight / 2);
+	if (scrollY == -(_vm->_realHeight / 2))
 		scrollY = 0;
 
-	ptr = vs->screenPtr + (t * NUM_STRIPS + x) * 8 + _readOffs + scrollY * _realWidth;
-	_vm->_system->copy_rect(ptr, _realWidth, x * 8, vs->topline + t, w, height);
+	ptr = vs->screenPtr + (t * NUM_STRIPS + x) * 8 + _readOffs + scrollY * _vm->_realWidth;
+	_vm->_system->copy_rect(ptr, _vm->_realWidth, x * 8, vs->topline + t, w, height);
 }
 
 void blit(byte *dst, byte *src, int w, int h)
@@ -872,7 +872,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 
 	twobufs = vs->alloctwobuffers;
 
-	_vertStripNextInc = h * _realWidth - 1;
+	_vertStripNextInc = h * _vm->_realWidth - 1;
 
 	_numLinesToProcess = h;
 
@@ -1138,8 +1138,8 @@ void Gdi::draw8ColWithMasking()
 			((uint32 *)dst)[0] = ((uint32 *)src)[0];
 			((uint32 *)dst)[1] = ((uint32 *)src)[1];
 		}
-		src += _realWidth;
-		dst += _realWidth;
+		src += _vm->_realWidth;
+		dst += _vm->_realWidth;
 		mask += NUM_STRIPS;
 	} while (--height);
 }
@@ -1187,7 +1187,7 @@ void Gdi::clear8Col()
 	do {
 		((uint32 *)dst)[0] = 0;
 		((uint32 *)dst)[1] = 0;
-		dst += _realWidth;
+		dst += _vm->_realWidth;
 	} while (--height);
 }
 
@@ -1508,7 +1508,7 @@ void Gdi::unkDecode6()
 		_tempNumLines = _numLinesToProcess;
 		do {
 			FILL_BITS *dst = color + _palette_mod;
-			dst += _realWidth;
+			dst += _vm->_realWidth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS color = bits & _decomp_mask;
@@ -1532,7 +1532,7 @@ void Gdi::unkDecode6()
  bits = ((buffer & mask) != 0);
 
 #define NEXT_ROW                                               \
-                dst += _realWidth;                              \
+                dst += _vm->_realWidth;                         \
                 if (--h == 0) {                                 \
                         if (!--_currentX)                       \
                                 return;                         \
@@ -1565,7 +1565,7 @@ void Gdi::unkDecode7()
 		((uint32 *)dst)[0] = ((uint32 *)src)[0];
 		((uint32 *)dst)[1] = ((uint32 *)src)[1];
 #endif
-		dst += _realWidth;
+		dst += _vm->_realWidth;
 		src += 8;
 	} while (--height);
 }

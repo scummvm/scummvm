@@ -813,7 +813,7 @@ void CharsetRenderer::printCharOld(int chr)
 		_unk12 = 0;
 	}
 	char_ptr = _vm->getResourceAddress(rtCharset, _curId) + 224 + (chr + 1) * 8;
-	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _realWidth + _left;
+	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_realWidth + _left;
 	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
 
 	for (y = 0; y < 8; y++) {
@@ -824,7 +824,7 @@ void CharsetRenderer::printCharOld(int chr)
 			}
 			color = ((buffer & mask) != 0);
 			if (color)
-				*(dest_ptr + y * _realWidth + x) = _color;
+				*(dest_ptr + y * _vm->_realWidth + x) = _color;
 		}
 	}
 
@@ -937,7 +937,7 @@ void CharsetRenderer::printChar(int chr)
 		_hasMask = true;
 #endif
 
-	_dest_ptr = _backbuff_ptr = vs->screenPtr + vs->xstart + _drawTop * _realWidth + _left;
+	_dest_ptr = _backbuff_ptr = vs->screenPtr + vs->xstart + _drawTop * _vm->_realWidth + _left;
 
 #if !defined(OLD)
 	if (_blitAlso) {
@@ -945,7 +945,7 @@ void CharsetRenderer::printChar(int chr)
 	if (1) {
 #endif
 		_dest_ptr = _bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5)
-			+ vs->xstart + _drawTop * _realWidth + _left;
+			+ vs->xstart + _drawTop * _vm->_realWidth + _left;
 	}
 
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9)
@@ -1012,7 +1012,7 @@ void CharsetRenderer::drawBits()
 				maskpos++;
 			}
 		}
-		dst = (_dest_ptr += _realWidth);
+		dst = (_dest_ptr += _vm->_realWidth);
 		mask += 40;
 		y++;
 	}
