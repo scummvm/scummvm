@@ -164,15 +164,18 @@ void IMuseDigital::flushTracks() {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && (track->readyToRemove || (_vm->_insaneRunning && track->toBeRemoved))) {
-			if ((track->stream) && (!track->stream->endOfStream())) {
-	 			track->stream->finish();
-			} else if ((track->stream) && (track->stream->endOfStream())) {
-				_vm->_mixer->stopHandle(track->handle);
-				delete track->stream;
-				track->stream = NULL;
-				_sound->closeSound(track->soundHandle);
-				track->soundHandle = NULL;
-				track->used = false;
+			if (track->stream) {
+				if (!track->stream->endOfStream()) {
+	 				track->stream->finish();
+	 			}
+				if (track->stream->endOfStream() || _vm->_insaneRunning) {
+					_vm->_mixer->stopHandle(track->handle);
+					delete track->stream;
+					track->stream = NULL;
+					_sound->closeSound(track->soundHandle);
+					track->soundHandle = NULL;
+					track->used = false;
+				}
 			} else if (track->stream2) {
 				_vm->_mixer->stopHandle(track->handle);
 				delete track->stream2;
