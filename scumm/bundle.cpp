@@ -799,7 +799,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			memset (comp_output, 0, 0x2000);
 			firstWord = READ_BE_UINT16(src);
 			src += 2;
-printf("firstWord = %d, index = %d\n", firstWord, index);
+
 			if (firstWord != 0) {
 				if (index != 0) {
 					startPos = 0;
