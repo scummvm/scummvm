@@ -373,30 +373,31 @@ is kept standard:
 Credits:
 --------
   The core ScummVM team:
-        Ludvig Strigeus   - Original developer, lead developer 'simon' module
-        Vincent Hamm      - Current lead developer, ScummVM
-        James Brown       - Co-lead developer, ScummVM
-        Jeremy Newman     - Webmaster
+        Ludvig Strigeus    - Original developer, lead developer 'simon' module
+        Vincent Hamm       - Current lead developer, ScummVM
+        James Brown        - Co-lead developer, ScummVM
+        Jeremy Newman      - Webmaster
 
  Porters:
-        Lionel Ulmer      - X11/Linux port
-        Nicolas Bacca     - PocketPC/WinCE port
-        Mutwin Kraus      - Macintosh port
-        Max Horn          - Macintosh port
-        Marcus Comstedt   - DreamCast port
-        Ruediger Hanke    - MorphOS port
+        Lionel Ulmer       - X11/Linux port
+        Nicolas Bacca      - PocketPC/WinCE port
+        Mutwin Kraus       - Macintosh port
+        Max Horn           - Macintosh port
+        Marcus Comstedt    - DreamCast port
+        Ruediger Hanke     - MorphOS port
 
  Contributors:
-        Claudio Matsuoka  - Daily builds (http://scummvm.sf.net/daily/)
-        Janne Huttunen    - Zak256/Indy256/LoomCD actor mask support
-        Jeroen Janssen    - Numerous readability and bugfix patches
-        Gregory Montoir   - AdvanceMAME Scale-2X implementation
-        Mikesch Nepomuk   - MI1 VGA Floppy patches.
-        Edward Rudd       - Fixes for playing MP3 versions of MI1/Loom Audio
-        Daniel Schepler   - Final MI1 CD music support
-        Tim 'realmz'      - Initial MI1 CD music support
-        Jonathan 'khalek' - Expert weaver in the Loom
-        Nicolas Noble     - Config file support
+        Claudio Matsuoka   - Daily builds (http://scummvm.sf.net/daily/)
+        Janne Huttunen     - Zak256/Indy256/LoomCD actor mask support
+        Jeroen Janssen     - Numerous readability and bugfix patches
+        Gregory Montoir    - AdvanceMAME Scale-2X implementation
+        Mikesch Nepomuk    - MI1 VGA Floppy patches.
+        Edward Rudd        - Fixes for playing MP3 versions of MI1/Loom Audio
+        Daniel Schepler    - Final MI1 CD music support
+        Tim 'realmz'       - Initial MI1 CD music support
+        Jonathan 'khalek'  - Expert weaver in the Loom
+        Nicolas Noble      - Config file support
+        Pawe3 Ko3odziejski - Added missing Dig SMUSH codecs
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!

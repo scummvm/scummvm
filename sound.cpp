@@ -680,7 +680,8 @@ typedef struct {int offset, size, codec;} COMP_table;
 void Scumm::decompressBundleSound(int index) {
 	int i, z;
 	COMP_table table[50];
-	unsigned char *CompInput, *CompOutput, *CompFinal;
+	static unsigned char *CompInput, *CompOutput, *CompFinal;
+	static bool initted;
 	int outputSize, finalSize;
 
 	fileSeek(_sfxFile, bundle_table[index].offset, SEEK_SET);
@@ -702,7 +703,11 @@ void Scumm::decompressBundleSound(int index) {
 		fileReadDwordBE(_sfxFile);
 	}
 	
-	CompFinal = (unsigned char *)alloc(1000000);
+	if (!initted) {
+		CompFinal = (unsigned char *)alloc(1000000);
+		initted = true;
+	}
+
 	finalSize = 0;
 
 	/* Decompress data */
@@ -755,11 +760,16 @@ void Scumm::decompressBundleSound(int index) {
 	/* FIXME: This is nasty. We are actually sending the whole
 			  decompressed packet to the mixer.. but the packet
 			  actually contains further subblocks! (eg, sync) */
-	_mixer->play_raw(NULL, CompFinal, finalSize,22050, SoundMixer::FLAG_AUTOFREE|SoundMixer::FLAG_UNSIGNED);
+	_mixer->play_raw(NULL, CompFinal, finalSize,22050, SoundMixer::FLAG_UNSIGNED);
 }
 
 void Scumm::playBundleSound(char *sound)
 {
+	if (!_sfxFile) {
+		warning("playBundleSound: SFX file is not open");
+		return;
+	}
+
 	for (int i=0; i < num_sound_effects; i++) {
 		if (!scumm_stricmp(sound, bundle_table[i].filename)) {
 			decompressBundleSound(i);

@@ -224,6 +224,7 @@ void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh,
 {
 	byte code, *tmp;
 	int i;
+	uint32 t;
 
 	if (pitch != 320) {
 		warning("invalid pitch");
@@ -235,11 +236,27 @@ void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh,
 		do {
 			code = *src++;
 			if (code == 0xFD) {
-				// FIXME: Not implemented yet        
+ 				t = src[0];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 0) = t;
+ 				*(uint32 *)(dst + 320) = t;
+ 				*(uint32 *)(dst + 320 * 2) = t;
+ 				*(uint32 *)(dst + 320 * 3) = t;
 				 src += 1;
 				 dst += 4;
 			} else if (code == 0xFE) {
-				// FIXME: Not implemented yet
+ 				t = src[0];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 0) = t;
+ 				t = src[1];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 320) = t;
+ 				t = src[2];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 320 * 2) = t;
+ 				t = src[3];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 320 * 3) = t;	
 				src += 4;
 				dst += 4;
 			} else if (code == 0xFF) {			
