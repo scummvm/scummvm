@@ -87,8 +87,7 @@ void Insane::turnBen(bool controllable) {
 				_actor[0].act[1].state, _actor[0].act[2].state, _actor[0].act[3].state);
 		actor01Reaction(buttons);
 		actor02Reaction(buttons);
-		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)))
-			actor03Reaction(buttons);
+		actor03Reaction(buttons);
 		actor00Reaction(buttons);
 		break;
 	case 17:
