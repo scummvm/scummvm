@@ -147,7 +147,6 @@ FIND_BOB()					Logic::findBob
 FIND_DEFAULT()
 FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()
-FIND_SACTION()				Talk::findSpeechParameters
 FIND_SCALE()				Logic::findScale
 FIND_VERB()
 LOOK()
@@ -292,7 +291,8 @@ FIND_STATE()				Logic::findState*
 
 TALK
 ====
-MAKE_SPEAK_BOB
+FIND_SACTION()				Talk::findSpeechParameters
+MAKE_SPEAK_BOB				Talk::makeSpeakBob
 MOVE_SPEAK
 SPEAK						Talk::speak
 SPEAK_SUB					Talk::speakSegment
