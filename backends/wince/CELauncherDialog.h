@@ -36,7 +36,7 @@ public:
 protected:
 	void addGame();
 	void addCandidate(String &path, DetectedGameList &candidates);
-	void automaticScanDirectory(const FilesystemNode *node);
+	void automaticScanDirectory(const FilesystemNode &node);
 };
 
 typedef GUI::LauncherDialog GUILauncherDialog;
