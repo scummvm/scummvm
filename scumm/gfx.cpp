@@ -1172,7 +1172,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 					int stripnr, int numstrip, byte flag, StripTable *table) {
 	assert(ptr);
 	assert(height > 0);
-	byte *backbuff_ptr, *bgbak_ptr;
+	byte *dstPtr;
 	const byte *smap_ptr;
 	const byte *z_plane_ptr;
 	byte *mask_ptr;
@@ -1236,35 +1236,37 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		if (bottom > vs->bdirty[sx])
 			vs->bdirty[sx] = bottom;
 
-		backbuff_ptr = (byte *)vs->pixels + y * vs->pitch + x * 8;
+		// In the case of a double buffered virtual screen, we draw to
+		// the backbuffer, otherwise to the primary surface memory.
 		if (vs->hasTwoBuffers)
-			bgbak_ptr = vs->backBuf + y * vs->pitch + x * 8;
+			dstPtr = vs->backBuf + y * vs->pitch + x * 8;
 		else
-			bgbak_ptr = backbuff_ptr;
+			dstPtr = (byte *)vs->pixels + y * vs->pitch + x * 8;
 
 		if (_vm->_version == 1) {
 			if (_C64ObjectMode)
-				drawStripC64Object(bgbak_ptr, vs->pitch, stripnr, width, height);
+				drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
 			else
-				drawStripC64Background(bgbak_ptr, vs->pitch, stripnr, height);
+				drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - drawing was already handled.
 		} else {
 			if (_vm->_features & GF_16COLOR) {
-				drawStripEGA(bgbak_ptr, vs->pitch, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
+				drawStripEGA(dstPtr, vs->pitch, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
 			} else if (_vm->_features & GF_SMALL_HEADER) {
-				useOrDecompress = decompressBitmap(bgbak_ptr, vs->pitch, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
+				useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
 			} else {
-				useOrDecompress = decompressBitmap(bgbak_ptr, vs->pitch, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
+				useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
 			}
 		}
 
 		CHECK_HEAP;
 		if (vs->hasTwoBuffers) {
+			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + x * 8;
 			if (lightsOn)
-				copy8Col(backbuff_ptr, vs->pitch, bgbak_ptr, height);
+				copy8Col(frontBuf, vs->pitch, dstPtr, height);
 			else
-				clear8Col(backbuff_ptr, vs->pitch, height);
+				clear8Col(frontBuf, vs->pitch, height);
 		}
 		CHECK_HEAP;
 
@@ -1343,25 +1345,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		}
 		
-#if 0
-		// HACK: blit mask(s) onto normal screen. Useful to debug masking
-		for (i = 0; i < numzbuf; i++) {
-			mask_ptr = getMaskBuffer(x, y, i);
-			byte *dst = backbuff_ptr;
-			byte *dst2 = bgbak_ptr;
-			for (int h = 0; h < height; h++) {
-				int maskbits = *mask_ptr;
-				for (int j = 0; j < 8; j++) {
-					if (maskbits & 0x80)
-						dst[j] = dst2[j] = 12+i;
-					maskbits <<= 1;
-				}
-				dst += vs->pitch;
-				dst2 += vs->pitch;
-				mask_ptr += _numStrips;
-			}
-		}
-#endif
 		numstrip--;
 		x++;
 		sx++;
