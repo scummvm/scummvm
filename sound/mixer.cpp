@@ -130,7 +130,7 @@ protected:
 	uint32 _size;
 
 public:
-	ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle, uint32 rate);
+	ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle);
 	~ChannelMP3Common();
 };
 
@@ -139,7 +139,7 @@ class ChannelMP3 : public ChannelMP3Common {
 	uint32 _position;
 
 public:
-	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, uint32 rate, void *sound, uint size, byte flags);
+	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint size, byte flags);
 
 	void mix(int16 *data, uint len);
 	bool isMusicChannel() { return false; }
@@ -151,9 +151,8 @@ class ChannelMP3CDMusic : public ChannelMP3Common {
 	File *_file;
 	bool _initialized;
 
-
 public:
-	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, uint32 rate, File *file, mad_timer_t duration);
+	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration);
 
 	void mix(int16 *data, uint len);
 	bool isActive();
@@ -280,11 +279,11 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 #ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
 	StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelMP3(this, handle, _syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0), sound, size, flags));
+	return insertChannel(handle, new ChannelMP3(this, handle, sound, size, flags));
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration) {
 	StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelMP3CDMusic(this, handle, _syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0), file, duration));
+	return insertChannel(handle, new ChannelMP3CDMusic(this, handle, file, duration));
 }
 #endif
 
@@ -919,12 +918,12 @@ void ChannelStream::mix(int16 *data, uint len) {
 
 #ifdef USE_MAD
 
-ChannelMP3Common::ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle, uint32 rate)
+ChannelMP3Common::ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle)
 	: Channel(mixer, handle) {
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
 	// Lower sample rate to 11 kHz on WinCE if necessary
-	if (rate != 22050)
+	if (_syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0) != 22050)
 		mad_stream_options(&_stream, MAD_OPTION_HALFSAMPLERATE);
 #endif
 	mad_frame_init(&_frame);
@@ -939,8 +938,8 @@ ChannelMP3Common::~ChannelMP3Common() {
 	mad_stream_finish(&_stream);
 }
 
-ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, uint32 rate, void *sound, uint size, byte flags)
-	: ChannelMP3Common(mixer, handle, rate) {
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint size, byte flags)
+	: ChannelMP3Common(mixer, handle) {
 	_posInFrame = 0xFFFFFFFF;
 	_position = 0;
 	_size = size;
@@ -967,7 +966,7 @@ static inline int scale_sample(mad_fixed_t sample) {
 	sample += (1L << (MAD_F_FRACBITS - 16));
 
 	/* clip */
-	if (sample >= MAD_F_ONE)
+	if (sample > MAD_F_ONE - 1)
 		sample = MAD_F_ONE - 1;
 	else if (sample < -MAD_F_ONE)
 		sample = -MAD_F_ONE;
@@ -1029,8 +1028,8 @@ void ChannelMP3::mix(int16 *data, uint len) {
 
 #define MP3CD_BUFFERING_SIZE 131072
 
-ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, uint32 rate, File *file, mad_timer_t duration)
-	: ChannelMP3Common(mixer, handle, rate) {
+ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration)
+	: ChannelMP3Common(mixer, handle) {
 	_file = file;
 	_duration = duration;
 	_initialized = false;
