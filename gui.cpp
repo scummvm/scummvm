@@ -323,12 +323,11 @@ void Gui::drawWidget(const GuiWidget * w)
 
 void Gui::widgetClear(const GuiWidget * wid)
 {
-	int x, y, w, h, i;
-
-	x = wid->_x;
-	y = wid->_y;
-	w = wid->_w;
-	h = wid->_h;
+	int x = wid->_x;
+	int y = wid->_y;
+	int w = wid->_w;
+	int h = wid->_h;
+	int i;
 
 	byte *ptr = getBasePtr(x, y);
 	if (ptr == NULL)
@@ -338,12 +337,13 @@ void Gui::widgetClear(const GuiWidget * wid)
 												 y + _parentY + h);
 
 	if (wid->_flags & GWF_BORDER) {
+		// Inset by 1 pixel in all directions
 		ptr += 320 + 1;
 		w -= 2;
 		h -= 2;
 	}
 
-	while (--h >= 0) {
+	while (h--) {
 		for (i = 0; i < w; i++)
 			ptr[i] = _bgcolor;
 		ptr += 320;
@@ -543,37 +543,37 @@ const GuiWidget sound_dialog[] = {
 };
 
 const GuiWidget save_load_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT | GWF_PARENT, 30, 20, 260, 125, 0, 0},
-	{GUI_RESTEXT, 0x01, 0, 40, 5, 128, 16, 0, 1},	/* How may I serve you? */
-	{GUI_RESTEXT, 0x02, 0, 40, 5, 128, 16, 0, 2},	/* Select a game to LOAD */
-	{GUI_RESTEXT, 0x04, 0, 40, 5, 128, 16, 0, 3},	/* Name your SAVE game */
+	{GUI_STAT, 0xFF, GWF_DEFAULT | GWF_PARENT, 30, 20, 260, 124, 0, 0},
+	{GUI_RESTEXT, 0x01, 0, 40, 7, 128, 16, 0, 1},	/* How may I serve you? */
+	{GUI_RESTEXT, 0x02, 0, 40, 7, 128, 16, 0, 2},	/* Select a game to LOAD */
+	{GUI_RESTEXT, 0x04, 0, 40, 7, 128, 16, 0, 3},	/* Name your SAVE game */
 
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 6, 16, 170, 96, 0, 0},
-	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 20, 16, 40, 0, 0}, /* Up (dummy) */
-	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 66, 16, 40, 0, 1}, /* Down (dummy) */
-	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 20, 16, 40, 1, 0}, /* Up */
-	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 66, 16, 40, 2, 1}, /* Down */
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 6, 20, 170, 96, 0, 0},
+	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 24, 16, 40, 0, 0}, /* Up (dummy) */
+	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 72, 16, 40, 0, 1}, /* Down (dummy) */
+	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 24, 16, 40, 1, 0}, /* Up */
+	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 72, 16, 40, 2, 1}, /* Down */
 
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 20, 160, 10, 20, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 30, 160, 10, 21, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 40, 160, 10, 22, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 50, 160, 10, 23, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 60, 160, 10, 24, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 70, 160, 10, 25, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 80, 160, 10, 26, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 90, 160, 10, 27, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 100, 160, 10, 28, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 24, 160, 10, 20, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 34, 160, 10, 21, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 44, 160, 10, 22, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 54, 160, 10, 23, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 64, 160, 10, 24, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 74, 160, 10, 25, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 84, 160, 10, 26, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 94, 160, 10, 27, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 104, 160, 10, 28, 0},
 
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 25, 54, 16, 3, 4},	/* Save */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 45, 54, 16, 4, 5},	/* Load */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 65, 54, 16, 5, 6},	/* Play */
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 200, 85, 54, 16, 9, 17},	/* Options */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 105, 54, 16, 6, 8},	/* Quit */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 20, 54, 16, 3, 4},	/* Save */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 40, 54, 16, 4, 5},	/* Load */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 60, 54, 16, 5, 6},	/* Play */
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 200, 80, 54, 16, 9, 17},	/* Options */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 100, 54, 16, 6, 8},	/* Quit */
 
-	{GUI_RESTEXT, 0x02, GWF_BUTTON, 200, 50, 54, 16, 7, 7},	/* Cancel */
+	{GUI_RESTEXT, 0x02, GWF_BUTTON, 200, 60, 54, 16, 7, 7},	/* Cancel */
 
-	{GUI_RESTEXT, 0x04, GWF_BUTTON, 200, 45, 54, 16, 8, 9},	/* Ok */
-	{GUI_RESTEXT, 0x04, GWF_BUTTON, 200, 65, 54, 16, 7, 7},	/* Cancel */
+	{GUI_RESTEXT, 0x04, GWF_BUTTON, 200, 40, 54, 16, 8, 9},	/* Ok */
+	{GUI_RESTEXT, 0x04, GWF_BUTTON, 200, 60, 54, 16, 7, 7},	/* Cancel */
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
