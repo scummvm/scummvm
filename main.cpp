@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 			printf("Recognised options:\n");
 			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
 			printf("\t-[no]screenblocks\t\tEnable/disable Screenblocks (Experimental zbuffer speedup on older cards - BROKEN!!\n");
-			printf("\t-[no]showfps\t\tEnable/disable fps display in upper right corner\n");
+			printf("\t-[no]fps\t\tEnable/disable fps display in upper right corner\n");
 			exit(-1);
 		}
 	}
