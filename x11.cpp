@@ -133,9 +133,9 @@ private:
 	int scumm_x, scumm_y;
 
 #ifdef USE_XV_SCALING
-	unsigned int palette[256];
+	unsigned int *palette;
 #else
-	unsigned short palette[256];
+	unsigned short *palette;
 #endif
 	bool _palette_changed;
 	Display *display;
@@ -380,8 +380,13 @@ OSystem_X11::OSystem_X11()
 out_of_loop:
 	create_empty_cursor();
 
-	/* Initialize the 'local' frame buffer */
-	local_fb = (unsigned char *)malloc(320 * 200 * sizeof(unsigned char));
+	/* Initialize the 'local' frame buffer and the palette */
+	local_fb = (unsigned char *)calloc(320 * 200, sizeof(unsigned char));
+#ifdef USE_XV_SCALING
+	palette = (unsigned int *)calloc(256, sizeof(unsigned int));
+#else
+	palette = (unsigned short *)calloc(256, sizeof(unsigned short));
+#endif
 
 	/* And finally start the local timer */
 	gettimeofday(&start_time, NULL);
@@ -483,6 +488,7 @@ void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * do
 #else
 	unsigned short *ptr_dst = ((unsigned short *)image->data) + (320 * d->y) + d->x;
 #endif
+	
 	for (y = 0; y < d->h; y++) {
 		for (x = 0; x < d->w; x++) {
 			*ptr_dst++ = palette[*ptr_src++];
