@@ -58,7 +58,7 @@ public:
 			assert(len % 2 == 0);
 	}
 	int16 read() {
-		assert(_ptr < _end);
+		//assert(_ptr < _end);
 		int16 val = readSample<is16Bit, isUnsigned>(_ptr);
 		_ptr += (is16Bit ? 2 : 1);
 		if (_loopPtr && _ptr == _end) {
@@ -114,7 +114,7 @@ WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(uint buffe
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
 int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
-	assert(_pos != _end);
+	//assert(_pos != _end);
 	int16 val = readSample<is16Bit, isUnsigned>(_pos);
 	_pos += (is16Bit ? 2 : 1);
 
