@@ -2393,8 +2393,7 @@ void Scumm::o5_walkActorToObject() {
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj)!=WIO_NOT_FOUND) {
 		getObjectXYPos(obj);
-		if(_xPos !=0 && _yPos !=0) // fix while the early objects flags arent correct
-			startWalkActor(a, _xPos, _yPos, _dir);
+		startWalkActor(a, _xPos, _yPos, _dir);
 	}
 }
 
