@@ -1138,10 +1138,10 @@ void Scumm_v8::o8_cameraOps()
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 0x32:		// SO_CAMERA_PAUSE
-		warning("freezeCamera NYI");
+		//warning("freezeCamera NYI");
 		break;
 	case 0x33:		// SO_CAMERA_RESUME
-		warning("unfreezeCamera NYI");
+		//warning("unfreezeCamera NYI");
 		break;
 	default:
 		error("o8_cameraOps: default case %d", subOp);
@@ -1301,7 +1301,7 @@ void Scumm_v8::o6_kernelSetFunctions()
 
 	switch (args[0]) {
 	case 11:	// lockObject
-		warning("o6_kernelSetFunctions: lockObject(%d)", args[1]);
+//		warning("o6_kernelSetFunctions: lockObject(%d)", args[1]);
 		lock(rtFlObject, args[1]);	// FIXME - no idea if this is right?
 //		getObjectIndex(args[1]);
 //		if (ObjData.field28 != 0) {

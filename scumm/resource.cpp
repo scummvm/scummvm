@@ -524,7 +524,7 @@ int Scumm::loadResource(int type, int idx)
 	uint32 fileOffs;
 	uint32 size, tag;
 
-	debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
+	debug(2, "loadResource(%s,%d)", resTypeFromId(type),idx);
 
 	if (type == rtCharset && (_features & GF_SMALL_HEADER)) {
 		loadCharset(idx);

@@ -1247,7 +1247,7 @@ Actor *Scumm::derefActor(int id)
 Actor *Scumm::derefActorSafe(int id, const char *errmsg)
 {
 	if (id < 1 || id >= NUM_ACTORS) {
-		if (_debugMode)
+		if (_debugLevel > 1)
 		warning
 			("Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
 			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
