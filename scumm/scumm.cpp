@@ -69,6 +69,8 @@
 extern bool isSmartphone(void);
 #endif
 
+static int generateMacFileName(const char *filename, char *buf, int bufsize, int cont = 0);
+
 namespace Scumm {
 
 // Use g_scumm from error() ONLY
@@ -433,6 +435,28 @@ static const ScummGameSettings he_md5_settings[] = {
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0, 0}
 };
 
+static struct heMacFileNames {
+	const char *winName;
+	const char *macName;
+	bool hasParens;
+} heMacFileNameTable[] = {
+	{ "Intentionally/left/blank", "", false},
+	{ "airdemo", "Airport Demo", true},
+	{ "f4-demo", "Freddi 4 Demo", true },
+	{ "farmdemo", "Farm Demo", true},
+	{ "fbdemo", "Fatty Bear Demo", false },
+	{ "footdemo", "FoorBall Demo", true },
+	{ "freddemo", "Freddi Demo", true },
+	{ "moondemo", "Putt-Putt Moon Demo", false },
+	{ "pajama", "Pajama Sam", true},
+	{ "pj3-demo", "Pajama Sam 3-Demo", true },
+	{ "circdemo", "Putt Circus Demo", true },
+	{ "puttdemo", "Putt-Putt's Demo", false },
+	{ "sf2-demo", "Spy Fox 2 - Demo", true },
+	{ "spyozon", "SpyOzon", true },
+	{ "zoodemo", "Puttzoo Demo", true },
+	{ "zoodemo", "Zoo Demo", true}
+};
 
 static int compareMD5Table(const void *a, const void *b) {
 	const char *key = (const char *)a;
@@ -2560,6 +2584,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	const ScummGameSettings *g;
 	char detectName[128];
+	char tempName[128];
+	bool heOver;
+	int heLastName = 0;
 
 	typedef Common::Map<Common::String, bool> StringSet;
 	StringSet fileSet;
@@ -2583,22 +2610,44 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		} else if (g->features & GF_HUMONGOUS) {
 			strcpy(detectName, base);
 			strcat(detectName, ".he0");
+			strcpy(tempName, base);
+			strcat(tempName, ".he0");
 		} else {
 			strcpy(detectName, base);
 			strcat(detectName, ".000");
 		}
 
-		// Iterate over all files in the given directory
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			if (!file->isDirectory()) {
-				const char *name = file->displayName().c_str();
+		heOver = false;
+		heLastName = 0;
 
-				if (0 == scumm_stricmp(detectName, name)) {
-					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(g->toGameSettings());
-					fileSet.addKey(file->path());
-					break;
+		while (!heOver) {
+			// Iterate over all files in the given directory
+			for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+				if (!file->isDirectory()) {
+					const char *name = file->displayName().c_str();
+
+					if (0 == scumm_stricmp(detectName, name)) {
+						// Match found, add to list of candidates, then abort inner loop.
+						if (heLastName > 0) { // HE Mac versions.
+							detectedGames.push_back(DetectedGame(g->toGameSettings(), 
+																 Common::UNK_LANG, 
+																 Common::kPlatformMacintosh));
+							fileSet[file->path()] = true;
+						} else {
+							detectedGames.push_back(g->toGameSettings());
+							fileSet[file->path()] = false;
+						}
+						break;
+					}
 				}
+			}
+
+			if (g->features & GF_HUMONGOUS) {
+				if ((heLastName = generateMacFileName(tempName, detectName, 128, 
+													  heLastName)) == -1)
+					heOver = true;
+			} else {
+				heOver = true;
 			}
 		}
 	}
@@ -2609,6 +2658,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	for (StringSet::const_iterator iter = fileSet.begin(); iter != fileSet.end(); ++iter) {
 		uint8 md5sum[16];
 		const char *name = iter->_key.c_str();
+
 		if (md5_file(name, md5sum, 0, kMD5FileSizeLimit)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
@@ -2639,17 +2689,44 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				// Find the GameSettings for that target
 				for (g = scumm_settings; g->name; ++g) {
 					if (0 == scumm_stricmp(g->name, target))
-						break;
+							break;
 				}
 				assert(g->name);
 				// Insert the 'enhanced' game data into the candidate list
-				detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, elem->platform));
+				if (iter->_value == true) // This was HE Mac game
+					detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, Common::kPlatformMacintosh));
+				else
+					detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, elem->platform));
 				exactMatch = true;
 			}
 		}
 	}
 	
 	return detectedGames;
+}
+
+static int generateMacFileName(const char *filename, char *buf, int bufsize, int cont) {
+	if (cont == -1)
+		return -1;
+
+	if (cont >= 0)
+		cont++;
+
+	char num = filename[strlen(filename) - 1];
+	char *n = strrchr(filename, '.');
+	int len = n - filename;
+
+	for (int i = cont; i < ARRAYSIZE(heMacFileNameTable); i++) {
+		if (!scumm_strnicmp(filename, heMacFileNameTable[i].winName, len)) {
+			if (heMacFileNameTable[i].hasParens)
+				snprintf(buf, bufsize, "%s (%c)", heMacFileNameTable[i].macName, num);
+			else 
+				snprintf(buf, bufsize, "%s %c", heMacFileNameTable[i].macName, num);
+
+			return i;
+		}
+	}
+	return -1;
 }
 
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
