@@ -498,6 +498,8 @@ void MidiDriver_QT::set_stream_callback(void *param, StreamCallback *sc) {
 
 int MidiDriver_QT::open(int mode) {
 	ComponentResult qtErr = noErr;
+	int i;
+
 	qtNoteAllocator = NULL;
 
 	if (mode == MO_STREAMING)
@@ -505,7 +507,7 @@ int MidiDriver_QT::open(int mode) {
 
 	_mode = mode;
 
-	for (int i = 0; i < 15; i++)
+	for (i = 0; i < 15; i++)
 		qtNoteChannel[i] = NULL;
 
 	qtNoteAllocator = OpenDefaultComponent(kNoteAllocatorComponentType, 0);
@@ -521,7 +523,7 @@ int MidiDriver_QT::open(int mode) {
 	if (qtErr != noErr)
 		goto bail;
 
-	for (int i = 0; i < 15; i++) {
+	for (i = 0; i < 15; i++) {
 		qtErr =
 			NANewNoteChannel(qtNoteAllocator, &simpleNoteRequest,
 											 &(qtNoteChannel[i]));
@@ -533,7 +535,7 @@ int MidiDriver_QT::open(int mode) {
 bail:
 	error("Init QT failed %x %x %d\n", (int)qtNoteAllocator, (int)qtNoteChannel,
 					(int)qtErr);
-	for (int i = 0; i < 15; i++) {
+	for (i = 0; i < 15; i++) {
 		if (qtNoteChannel[i] != NULL)
 			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
 		qtNoteChannel[i] = NULL;
@@ -646,7 +648,7 @@ void MidiDriver_QT::send(uint32 b) {
 	}
 }
 
-void MidiDriver_QT::pause(bool pause) {
+void MidiDriver_QT::pause(bool) {
 }
 
 MidiDriver *MidiDriver_QT_create() {
@@ -750,7 +752,7 @@ void MidiDriver_CORE::send(uint32 b) {
 	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, 0);
 }
 
-void MidiDriver_CORE::pause(bool pause) {
+void MidiDriver_CORE::pause(bool) {
 }
 
 MidiDriver *MidiDriver_CORE_create() {
