@@ -514,11 +514,9 @@ public:
 
 	uint loadTextFile_simon1(const char *filename, byte *dst);
 	File *openTablesFile_simon1(const char *filename);
-	void closeTablesFile_simon1(File *in);
 
 	uint loadTextFile_gme(const char *filename, byte *dst);
 	File *openTablesFile_gme(const char *filename);
-	void closeTablesFile_gme(File *in);
 
 	void invokeTimeEvent(TimeEvent *te);
 	bool kickoffTimeEvents();

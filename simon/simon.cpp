@@ -1140,10 +1140,6 @@ File *SimonEngine::openTablesFile_gme(const char *filename) {
 	return _game_file;
 }
 
-void SimonEngine::closeTablesFile_gme(File *in) {
-	// not needed
-}
-
 uint SimonEngine::loadTextFile_simon1(const char *filename, byte *dst) {
 	File fo;
 	fo.open(filename, _gameDataPath);
@@ -1169,10 +1165,6 @@ File *SimonEngine::openTablesFile_simon1(const char *filename) {
 	return fo;
 }
 
-void SimonEngine::closeTablesFile_simon1(File *in) {
-	in->close();
-}
-
 uint SimonEngine::loadTextFile(const char *filename, byte *dst) {
 	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return loadTextFile_simon1(filename, dst);
@@ -1188,10 +1180,10 @@ File *SimonEngine::openTablesFile(const char *filename) {
 }
 
 void SimonEngine::closeTablesFile(File *in) {
-	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
-		closeTablesFile_simon1(in);
-	else
-		closeTablesFile_gme(in);
+	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+		in->close();
+		delete in;
+	}
 }
 
 void SimonEngine::addTimeEvent(uint timeout, uint subroutine_id) {
