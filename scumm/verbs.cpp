@@ -359,9 +359,6 @@ int Scumm::checkMouseOver(int x, int y) const {
 }
 
 void Scumm::drawVerb(int verb, int mode) {
-	//if (_version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
-	//	return;
-
 	VerbSlot *vs;
 	bool tmp;
 
