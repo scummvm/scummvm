@@ -157,6 +157,8 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 6 */
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0, 0},
+	{"tentacleMac", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY, "tentacle", "Day Of The Tentacle Data"},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0, 0},
 
