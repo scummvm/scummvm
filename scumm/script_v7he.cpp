@@ -811,7 +811,7 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 	case 714:
 		break;
 	case 2001:
-		// Used in SoccerMLS
+		// Used in SoccerMLS/Soccer2004
 		warning("o70_kernelSetFunctions: unhandled case 2001");
 		break;
 	default:
