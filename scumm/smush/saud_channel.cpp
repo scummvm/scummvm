@@ -178,14 +178,14 @@ bool SaudChannel::isTerminated() const {
 }
 
 void SaudChannel::recalcVolumeTable() {
-	const int32 MAX_BALANCE = 100;
-	int32 volume_left, volume_right;
+	const int MAX_BALANCE = 100;
+	int volume_left, volume_right;
 	if (_balance < -MAX_BALANCE || _balance > MAX_BALANCE) {
 		warning("balance is out of range ! : %d", _balance);
 		return;
 	}
-	int32 left_multiplier = MAX_BALANCE - _balance;
-	int32 right_multiplier = MAX_BALANCE + _balance;
+	int left_multiplier = MAX_BALANCE - _balance;
+	int right_multiplier = MAX_BALANCE + _balance;
 	volume_left = _volume * left_multiplier / (MAX_BALANCE * 2);
 	volume_right = _volume * right_multiplier / (MAX_BALANCE * 2);
 	if (volume_left < 0)
@@ -196,10 +196,10 @@ void SaudChannel::recalcVolumeTable() {
 		volume_right = 0;
 	if (volume_right > 128)
 		volume_right = 128;
-	for (int32 i = 0; i < 256; i++) {
-		int16 value = volume_left * (int8)i;
+	for (int i = 0; i < 256; i++) {
+		int16 value = volume_left * i;
 		_voltable[0][i] = TO_BE_16(value);
-		value = volume_right * (int8)i;
+		value = volume_right * i;
 		_voltable[1][i] = TO_BE_16(value);
 	}
 }

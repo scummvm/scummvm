@@ -101,7 +101,7 @@ void Scumm::CHARSET_1() {
 
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
 				s = (a->scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
-				_string[0].ypos = ((VAR(VAR_V5_TALK_STRING_Y) - s) >> 1) + s - a->elevation + a->y;
+				_string[0].ypos = (int)(((VAR(VAR_V5_TALK_STRING_Y) - s) >> 1) + s - a->elevation + a->y);
 			} else {
 				_string[0].ypos = (int)VAR(VAR_V5_TALK_STRING_Y);
 			}

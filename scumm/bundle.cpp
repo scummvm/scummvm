@@ -874,7 +874,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 
 				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
-					decompTable = curTableEntry - 2;
+					decompTable = (byte)(curTableEntry - 2);
 					bitMask = 2 << decompTable;
 					readPos = src + (tableEntrySum >> 3);
 					

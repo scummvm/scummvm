@@ -1141,10 +1141,10 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		*ptr++ = 480 & 0xFF;
 
 		memcpy(ptr, "MTrk", 4); ptr += 4;
-		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7) >> 24) & 0xFF;
-		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7) >> 16) & 0xFF;
-		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7) >>  8) & 0xFF;
-		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7)      ) & 0xFF;
+		*ptr++ = (byte)(((sizeof(OLD256_MIDI_HACK) + size + 7) >> 24) & 0xFF);
+		*ptr++ = (byte)(((sizeof(OLD256_MIDI_HACK) + size + 7) >> 16) & 0xFF);
+		*ptr++ = (byte)(((sizeof(OLD256_MIDI_HACK) + size + 7) >>  8) & 0xFF);
+		*ptr++ = (byte)(((sizeof(OLD256_MIDI_HACK) + size + 7)      ) & 0xFF);
 
 		// Conver the ticks into a MIDI tempo. 
 		dw = (500000 * 256) / ticks;

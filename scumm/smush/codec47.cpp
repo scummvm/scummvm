@@ -437,7 +437,7 @@ void Codec47Decoder::makeTables47(int32 width) {
 	int16 *tmp_ptr = _table;
 	int16 *ptr_table = codec47_table;
 	do {
-		*tmp_ptr++ = ptr_table[1] * width + ptr_table[0];
+		*tmp_ptr++ = (int16)(ptr_table[1] * width + ptr_table[0]);
 		ptr_table += 2;
 	} while (tmp_ptr < &_table[255]);
 	a = 0;
@@ -445,25 +445,25 @@ void Codec47Decoder::makeTables47(int32 width) {
 	do {
 		for (d = 0; d < _tableSmall[96 + c]; d++) {
 			tmp = _tableSmall[64 + c + d];
-			tmp = (byte)(tmp >> 2) * width + (tmp & 3);
+			tmp = (int16)((byte)(tmp >> 2) * width + (tmp & 3));
 			_tableSmall[c + d * 2] = (byte)tmp;
 			_tableSmall[c + d * 2 + 1] = tmp >> 8;
 		}
 		for (d = 0; d < _tableSmall[97 + c]; d++) {
 			tmp = _tableSmall[80 + c + d];
-			tmp = (byte)(tmp >> 2) * width + (tmp & 3);
+			tmp = (int16)((byte)(tmp >> 2) * width + (tmp & 3));
 			_tableSmall[32 + c + d * 2] = (byte)tmp;
 			_tableSmall[32 + c + d * 2 + 1] = tmp >> 8;
 		}
 		for (d = 0; d < _tableBig[384 + a]; d++) {
 			tmp = _tableBig[256 + a + d];
-			tmp = (byte)(tmp >> 3) * width + (tmp & 7);
+			tmp = (int16)((byte)(tmp >> 3) * width + (tmp & 7));
 			_tableBig[a + d * 2] = (byte)tmp;
 			_tableBig[a + d * 2 + 1] = tmp >> 8;
 		}
 		for (d = 0; d < _tableBig[385 + a]; d++) {
 			tmp = _tableBig[320 + a + d];
-			tmp = (byte)(tmp >> 3) * width + (tmp & 7);
+			tmp = (int16)((byte)(tmp >> 3) * width + (tmp & 7));
 			_tableBig[128 + a + d * 2] = (byte)tmp;
 			_tableBig[128 + a + d * 2 + 1] = tmp >> 8;
 		}
