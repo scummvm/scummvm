@@ -4,6 +4,5 @@ The changes made from the original version of TinyGL 0.4 are:
 * Changed files extensions from *.c to *.cpp to compile as C++.
 * Included only files needed by Residual.
 * Changed includes paths in source files.
-* Added needed type cast after malloc funcs and one fix for proper
-   compile.
+* Added needed type cast and fixes for proper compile.
 * Added 't/T' prefix to prevent OpenGl names duplication.

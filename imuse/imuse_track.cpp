@@ -108,16 +108,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	bits = _sound->getBits(track->soundHandle);
 	channels = _sound->getChannels(track->soundHandle);
 	freq = _sound->getFreq(track->soundHandle);
-/*
-	if (soundId == kTalkSoundID) {
-		if (_vm->_actorToPrintStrFor != 0xFF && _vm->_actorToPrintStrFor != 0) {
-			Actor *a = _vm->derefActor(_vm->_actorToPrintStrFor, "Imuse::startSound");
-			freq = (freq * a->talkFrequency) / 256;
-			track->pan = a->talkPan;
-			track->vol = a->talkVolume * 1000;
-		}
-	}
-*/
+
 	assert(bits == 8 || bits == 12 || bits == 16);
 	assert(channels == 1 || channels == 2);
 	assert(0 < freq && freq <= 65535);
