@@ -280,6 +280,10 @@ const char *NewGui::queryResString(int stringno)
 		string = string_map_table_v5[stringno - 1].num;
 
 	result = (char *)_s->getStringAddress(string);
+	if (result && *result == '/') {
+		_s->translateText((char*)result, (char*)&_s->transText);
+		strcpy((char*)result, (char*)&_s->transText);
+	}
 
 	if (!result) {								// Gracelessly degrade to english :)
 		if (_s->_features & GF_AFTER_V6)

@@ -935,6 +935,11 @@ const char *Gui::queryString(int stringno, int id)
 
 	result = (char *)_s->getStringAddress(string);
 
+	if (result && *result == '/') {
+		_s->translateText((char*)result, (char*)&_s->transText);
+		strcpy((char*)result, (char*)&_s->transText);
+	}
+
 	if (!result) {									// Gracelessly degrade to english :)
 		if (_s->_features & GF_AFTER_V6)
 			return string_map_table_v6[stringno - 1].string;
