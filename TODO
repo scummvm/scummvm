@@ -130,8 +130,6 @@ General
   some kind of main loop, which, besides many other things, also polls and
   dispatches events. The idea is to turn this around: the event loop
   frequently gives the engine time to do these "other things".
-* Default to saving games in $HOME if in savepath is not defined maybe something
-  like ~/Library/ScummVM/ for OS X and ~/.scummvm/ for everything else
 
 Build System
 ============
