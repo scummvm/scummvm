@@ -871,8 +871,6 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// for text/speech testing & checking for correct file type
 	_standardHeader	*head;
-	// for text/speech testing - keeping track of text resource currently being tested
-	static uint32 currentTextResource = 0;
 
 	// set up the pointers which we know we'll always need
 
@@ -1080,21 +1078,6 @@ int32 Logic::fnISpeak(int32 *params) {
 				speech_pan = -16;
 			else if (speech_pan > 16)
 				speech_pan = 16;
-
-			// if we're testing text & speech
-			if (SYSTEM_TESTING_TEXT) {
-				// if we've moved onto a new text resource,
-				// we will want to check if the CD needs
-				// changing again - can only know which CD to
-				// get if the wavID is non-zero
-
-				if (text_res != currentTextResource && params[S_WAV]) {
-					// ensure correct CD is in for this
-					// wavId
-					// getCorrectCdForSpeech(params[S_WAV]);
-					currentTextResource = text_res;
-				}
-			}
 
 			// set up path to speech cluster
 			// first checking if we have speech1.clu or
@@ -1467,28 +1450,6 @@ void Logic::formText(int32 *params) {
 		debug(5, "no text line for speech wav %d", params[S_WAV]);
 	}
 }
-
-#ifdef _SWORD2_DEBUG
-void Logic::getCorrectCdForSpeech(int32 wavId) {
-	File fp;
-
-	// 1, 2 or 0 (if speech on both cd's, ie. no need to change)
-	uint8 cd;
-
-	if (!fp.open("cd.bin"))
-		error("Need cd.bin file for testing speech!");
-
-	fp.seek(wavId, SEEK_SET);
-	fp.read(&cd, 1);
-
-	fp.close();
-
-	// if we specifically need CD1 or CD2 (ie. it's not on both)
-	// then check it's there (& ask for it if it's not there)
-	if (cd == 1 || cd == 2)
-		_vm->_resman->getCd(cd);
-}
-#endif
 
 // For preventing sfx subtitles from trying to load speech samples
 // - since the sfx are implemented as normal sfx, so we don't want them as

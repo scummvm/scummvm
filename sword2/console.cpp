@@ -123,19 +123,25 @@ void Debugger::varSet(int var, int val) {
 
 void Debugger::preEnter() {
 	// Pause sound output
-	_vm->_sound->pauseFx();
-	_vm->_sound->pauseSpeech();
-	_vm->_sound->pauseMusic();
+	if (_vm->_sound) {
+		_vm->_sound->pauseFx();
+		_vm->_sound->pauseSpeech();
+		_vm->_sound->pauseMusic();
+	}
 }
 
 void Debugger::postEnter() {
-	// Resume previous sound state
-	_vm->_sound->unpauseFx();
-	_vm->_sound->unpauseSpeech();
-	_vm->_sound->unpauseMusic();
+	if (_vm->_sound) {
+		// Resume previous sound state
+		_vm->_sound->unpauseFx();
+		_vm->_sound->unpauseSpeech();
+		_vm->_sound->unpauseMusic();
+	}
 
-	// Restore old mouse cursor
-	_vm->_graphics->drawMouse();
+	if (_vm->_graphics) {
+		// Restore old mouse cursor
+		_vm->_graphics->drawMouse();
+	}
 }
 
 ///////////////////////////////////////////////////

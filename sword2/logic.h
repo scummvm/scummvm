@@ -141,11 +141,6 @@ private:
 	void formText(int32 *params);
 	bool wantSpeechForLine(uint32 wavId);
 
-#ifdef _SWORD2_DEBUG
-	// for testing speech & text
-	void getCorrectCdForSpeech(int32 wavId);
-#endif
-
 	uint32 _totalStartups;
 	uint32 _totalScreenManagers;
 	uint32 _startRes;
@@ -156,7 +151,7 @@ private:
 		// id of screen manager object
 		uint32 start_res_id;
 
-		//tell the manager which startup you want (if there are more
+		// tell the manager which startup you want (if there are more
 		// than 1) (i.e more than 1 entrance to a screen and/or
 		// separate game boots)
 		uint32 key;

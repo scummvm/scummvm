@@ -51,9 +51,9 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	GameList detectedGames;
 	const GameSettings *g;
 	
-	// TODO: It would be nice if we had code here which distinguishes between
-	// the 'sword2' and 'sword2demo' targets. The current code can't do that
-	// since they use the same detectname.
+	// TODO: It would be nice if we had code here which distinguishes
+	// between the 'sword2' and 'sword2demo' targets. The current code
+	// can't do that since they use the same detectname.
 
 	for (g = sword2_settings; g->gameName; ++g) {
 		// Iterate over all files in the given directory
@@ -85,6 +85,8 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	g_sword2 = this;
 	_debugger = NULL;
+	_sound = NULL;
+	_graphics = NULL;
 	_features = detector->_game.features;
 	_targetName = strdup(detector->_targetName.c_str());
 	_bootParam = ConfMan.getInt("boot_param");
@@ -104,6 +106,15 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	// get some falling RAM and put it in your pocket, never let it slip
 	// away
 
+	_graphics = new Graphics(this, 640, 480);
+
+	// Create the debugger as early as possible (but not before the
+	// graphics object!) so that errors can be displayed in it. In
+	// particular, we want errors about missing files to be clearly
+	// visible to the user.
+
+	_debugger = new Debugger(this);
+
 	_memory = new MemoryManager(this);
 	_resman = new ResourceManager(this);
 	_logic = new Logic(this);
@@ -111,8 +122,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_gui = new Gui(this);
 	_input = new Input(this);
 	_sound = new Sound(this);
-	_graphics = new Graphics(this, 640, 480);
-	_debugger = new Debugger(this);
 
 	_lastPaletteRes = 0;
 
@@ -185,10 +194,11 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
 		return;
 #endif
 
-	// Unless an error -originated- within the debugger, spawn the debugger. Otherwise
-	// exit out normally.
+	// Unless an error -originated- within the debugger, spawn the
+	// debugger. Otherwise exit out normally.
 	if (_debugger && !_debugger->isAttached()) {
-		printf("%s\n", buf2);	// (Print it again in case debugger segfaults)
+		// (Print it again in case debugger segfaults)
+		printf("%s\n", buf2);
 		_debugger->attach(buf2);
 		_debugger->onFrame();
 	}
@@ -243,7 +253,7 @@ void Sword2Engine::gameCycle(void) {
 
 	// got a screen to run?
 	if (_logic->getRunList()) {
-		//run the logic session UNTIL a full loop has been performed
+		// run the logic session UNTIL a full loop has been performed
 		do {
 			// reset the graphic 'buildit' list before a new
 			// logic list (see fnRegisterFrame)
@@ -274,14 +284,6 @@ void Sword2Engine::gameCycle(void) {
 
 void Sword2Engine::go() {
 	_keyboardEvent ke;
-
-	// Call the application "Revolution" until the resource manager is
-	// ready to dig the name out of a text file. See initialiseGame()
-	// which calls InitialiseFontResourceFlags() in maketext.cpp
-	//
-	// Have to do it like this since we cannot really fire up the resource
-	// manager until a window has been created as any errors are displayed
-	// via a window, thus time becomes a loop.
 
 	debug(5, "CALLING: readOptionSettings");
 	_gui->readOptionSettings();
@@ -342,14 +344,9 @@ void Sword2Engine::go() {
 
 			char c = toupper(ke.ascii);
 
-			if (ke.modifiers == OSystem::KBD_CTRL) {
-				if (ke.keycode == 'd') {
-					_debugger->attach();
-				}
-			}
-
-			if (c == '~' || c == '#')
+			if ((ke.modifiers == OSystem::KBD_CTRL && ke.keycode == 'd') || c == '~' || c == '#') {
 				_debugger->attach();
+			}
 
 			if (_gamePaused) {	// if currently paused
 				if (c == 'P') {
@@ -466,14 +463,6 @@ void Sword2Engine::sleepUntil(uint32 time) {
 }
 
 void Sword2Engine::pauseGame(void) {
-	// uint8 *text;
-
-	// open text file & get the line "PAUSED"
-	// text = fetchTextLine(_resman->openResource(3258), 449);
-	// pause_text_bloc_no = _fontRenderer->buildNewBloc(text + 2, 320, 210, 640, 184, RDSPR_TRANS | RDSPR_DISPLAYALIGN, SPEECH_FONT_ID, POSITION_AT_CENTRE_OF_BASE);
-	// now ok to close the text file
-	// _resman->closeResource(3258);
-
 	// don't allow Pause while screen fading or while black
 	if (_graphics->getFadeStatus() != RDFADE_NONE)
 		return;
@@ -482,8 +471,6 @@ void Sword2Engine::pauseGame(void) {
 
 	// make a normal mouse
 	clearPointerText();
-
-	// mouse_mode=MOUSE_normal;
 
 	// this is the only place allowed to do it this way
 	_graphics->setLuggageAnim(NULL, 0);
@@ -512,9 +499,6 @@ void Sword2Engine::pauseGame(void) {
 }
 
 void Sword2Engine::unpauseGame(void) {
-	// removed "PAUSED" from screen
-	// _fontRenderer->killTextBloc(pause_text_bloc_no);
-
 	if (OBJECT_HELD && _realLuggageItem)
 		setLuggage(_realLuggageItem);
 
