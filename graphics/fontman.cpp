@@ -46,7 +46,7 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	case kConsoleFont:
 		return &GUI::g_consolefont;
 	case kGUIFont:
-		return &g_sysfont;
+		return &g_scummfont;
 	}
 	return 0;
 }
