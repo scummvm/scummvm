@@ -102,6 +102,7 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 QueenEngine::~QueenEngine() {
 
 	_timer->removeTimerProc(&timerHandler);
+	delete _bam;
 	delete _resource;
 	delete _command;
 	delete _display;
@@ -159,6 +160,7 @@ void QueenEngine::go() {
 
 void QueenEngine::initialise(void) {
 
+	_bam = new BamScene(this);
 	_resource = new Resource(_gameDataPath, _system->get_savefile_manager(), getSavePath());
 	_command = new Command(this);
 	_display = new Display(this, _resource->getLanguage(), _system);

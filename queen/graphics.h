@@ -102,34 +102,6 @@ struct TextSlot {
 };
 
 
-struct BamDataObj {
-	int16 x, y;
-	int16 frame;
-};
-
-struct BamDataBlock {
-	BamDataObj obj1; // truck / Frank
-	BamDataObj obj2; // Rico  / robot
-	BamDataObj fx;
-	int16 sfx;
-};
-
-struct BamData {
-
-	BamData() : flag(0), index(0) {}
-
-	int16 flag;
-	int16 index;
-
-	bool _screenShaked;
-	const BamDataBlock *_fightData;
-	static const BamDataBlock _carData[];
-	static const BamDataBlock _fight1Data[];
-	static const BamDataBlock _fight2Data[];
-	static const BamDataBlock _fight3Data[];
-};
-
-
 class QueenEngine;
 
 class Graphics {
@@ -182,15 +154,6 @@ public:
 	void cameraBob(int bobNum) { _cameraBob = bobNum; }
 	int cameraBob() const { return _cameraBob; }
 
-	BamData *bamData() { return &_bam; }
-
-	void initCarBamScene();
-	void updateCarBamScene();
-	void cleanupCarBamScene(uint16 i);
-
-	void initFightBamScene();
-	void updateFightBamScene();
-
 	void update(uint16 room);
 
 	enum {
@@ -233,9 +196,59 @@ private:
 
 	int _cameraBob;
 
-	BamData _bam;
+	QueenEngine *_vm;
+};
+
+
+struct BamDataObj {
+	int16 x, y;
+	int16 frame;
+};
+
+struct BamDataBlock {
+	BamDataObj obj1; // truck / Frank
+	BamDataObj obj2; // Rico  / robot
+	BamDataObj fx;
+	int16 sfx;
+};
+
+class BamScene {
+public:
+
+	BamScene(QueenEngine *vm);
+	
+	void prepareAnimation();
+	void updateCarAnimation();
+	void updateFightAnimation();
+
+	enum {
+		BOB_OBJ1 = 5,
+		BOB_OBJ2 = 6,
+		BOB_FX   = 7
+	};
+
+	enum {
+		F_STOP     = 0,
+		F_PLAY     = 1,
+		F_REQ_STOP = 2
+	};
+
+	uint16 _flag, _index;
+
+private:
+
+	BobSlot *_obj1;
+	BobSlot *_obj2;
+	BobSlot *_objfx;
+	bool _screenShaked;
+	const BamDataBlock *_fightData;
 
 	QueenEngine *_vm;
+
+	static const BamDataBlock _carData[];
+	static const BamDataBlock _fight1Data[];
+	static const BamDataBlock _fight2Data[];
+	static const BamDataBlock _fight3Data[];
 };
 
 } // End of namespace Queen

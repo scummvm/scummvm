@@ -28,6 +28,7 @@ class GameDetector;
 
 namespace Queen {
 
+class BamScene;
 class Command;
 class Display;
 class Graphics;
@@ -44,6 +45,7 @@ public:
 	QueenEngine(GameDetector *detector, OSystem *syst);
 	virtual ~QueenEngine();
 
+	BamScene *bam() const { return _bam; }
 	Command *command() const { return _command; }
 	Display *display() const { return _display; }
 	Graphics *graphics() const { return _graphics; }
@@ -67,6 +69,7 @@ protected:
 	static void timerHandler(void *ptr);
 	void gotTimerTick();
 
+	BamScene *_bam;
 	Command *_command;
 	Display *_display;
 	Graphics *_graphics;

@@ -26,6 +26,7 @@
 #include "queen/logic.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
+#include "queen/sound.h"
 
 namespace Queen {
 
@@ -598,10 +599,12 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 		}
 		break;
 	case ROOM_CAR_CHASE:
-		updateCarBamScene();
+		_vm->bam()->updateCarAnimation();
+//		updateCarBamScene();
 		break;
 	case ROOM_FINAL_FIGHT:
-		updateFightBamScene();
+		_vm->bam()->updateFightAnimation();
+//		updateFightBamScene();
 		break;
 	case ROOM_INTRO_RITA_JOE_HEADS: // CR 2 - CD-Rom pan right while Rita talks...
 		_cameraBob = -1;
@@ -735,49 +738,32 @@ void Graphics::loadPanel() {
 }
 
 
-void Graphics::initCarBamScene() {
+void BamScene::updateCarAnimation() {
 
-	bobClear(5);
-	_bobs[5].active = true;
-	bobClear(6);
-	_bobs[6].active = true;
-	bobClear(7);
-	_bobs[7].active = true;
-	_bam.flag = 1;
-	_bam.index = 0;
-}
-
-
-void Graphics::updateCarBamScene() {
-
-	if (_bam.flag) {
-		const BamDataBlock *bdb = &_bam._carData[_bam.index];
-		BobSlot *pbob;
+	if (_flag != F_STOP) {
+		const BamDataBlock *bdb = &_carData[_index];
 
 		// Truck
-		pbob = &_bobs[5];
-		pbob->curPos(bdb->obj1.x, bdb->obj1.y);
-		pbob->frameNum = 40 + bdb->obj1.frame;
+		_obj1->curPos(bdb->obj1.x, bdb->obj1.y);
+		_obj1->frameNum = 40 + bdb->obj1.frame;
 
 		// Rico
-		pbob = &_bobs[6];
-		pbob->curPos(bdb->obj2.x, bdb->obj2.y);
-		pbob->frameNum = 30 + bdb->obj2.frame;
+		_obj2->curPos(bdb->obj2.x, bdb->obj2.y);
+		_obj2->frameNum = 30 + bdb->obj2.frame;
 
 		// FX
-		pbob = &_bobs[7];
-		pbob->curPos(bdb->fx.x, bdb->fx.y);
-		pbob->frameNum = 41 + bdb->fx.frame;
+		_objfx->curPos(bdb->fx.x, bdb->fx.y);
+		_objfx->frameNum = 41 + bdb->fx.frame;
 
 		if (bdb->sfx < 0) {
-			// XXX playsong(-bdb->sfx);
+			_vm->sound()->playSong(-bdb->sfx);
 		}
 
 		if (bdb->sfx == 99) {
-			_bam.index = 0;
+			_index = 0;
 		}
 		else {
-			++_bam.index;
+			++_index;
 		}
 		// Play BKG SFX
 		// XXX if(bamsfx==2 && SFXTOGGLE) sfxplay(NULLstr);
@@ -785,69 +771,41 @@ void Graphics::updateCarBamScene() {
 }
 
 
-void Graphics::cleanupCarBamScene(uint16 oilBobNum) {
+void BamScene::updateFightAnimation() {
 
-	_bam.flag = 0;
-	//CR 2 - Turn off big oil splat and gun shots!
-	_bobs[oilBobNum].active = false;
-	_bobs[7].active = false;
-}
-
-
-void Graphics::initFightBamScene() {
-
-	bobClear(5);
-	_bobs[5].active = true;
-	bobClear(6);
-	_bobs[6].active = true;
-	bobClear(7);
-	_bobs[7].active = true;
-	_bam.flag = 1;
-	_bam.index = 0;
-	_bam._screenShaked = false;
-	_bam._fightData = _bam._fight1Data;
-}
-
-
-void Graphics::updateFightBamScene() {
-
-	if (_bam.flag) {
-		const BamDataBlock *bdb = &_bam._fightData[_bam.index];
-		BobSlot *pbob;
+	if (_flag != F_STOP) {
+		const BamDataBlock *bdb = &_fightData[_index];
 
 		// Frank
-		pbob = &_bobs[5];
-		pbob->curPos(bdb->obj1.x, bdb->obj1.y);
-		pbob->frameNum = 40 + ABS(bdb->obj1.frame);
-		pbob->xflip = (bdb->obj1.frame < 0);
+		_obj1->curPos(bdb->obj1.x, bdb->obj1.y);
+		_obj1->frameNum = 40 + ABS(bdb->obj1.frame);
+		_obj1->xflip = (bdb->obj1.frame < 0);
 
 		// Robot
-		pbob = &_bobs[6];
-		pbob->curPos(bdb->obj2.x, bdb->obj2.y);
-		pbob->frameNum = 40 + ABS(bdb->obj2.frame);
-		pbob->xflip = (bdb->obj2.frame < 0);
-
+		_obj2->curPos(bdb->obj2.x, bdb->obj2.y);
+		_obj2->frameNum = 40 + ABS(bdb->obj2.frame);
+		_obj2->xflip = (bdb->obj2.frame < 0);
+	
 		// FX
-		pbob = &_bobs[7];
-		pbob->curPos(bdb->fx.x, bdb->fx.y);
-		pbob->frameNum = 40 + ABS(bdb->fx.frame);
-		pbob->xflip = (bdb->fx.frame < 0);
+		_objfx->curPos(bdb->fx.x, bdb->fx.y);
+		_objfx->frameNum = 40 + ABS(bdb->fx.frame);
+		_objfx->xflip = (bdb->fx.frame < 0);
 
 		if (bdb->sfx < 0) {
-			// XXX playsong(-bdb->sfx);
+			_vm->sound()->playSong(-bdb->sfx);
 		}
 
-		++_bam.index;
+		++_index;
 		switch (bdb->sfx) {
 		case 0: // nothing, so reset shaked screen if necessary
-			if (_bam._screenShaked) {
+			if (_screenShaked) {
 				OSystem::instance()->set_shake_pos(0);
-				_bam._screenShaked = false;
+				_screenShaked = false;
 			}
 			break;
 		case 1: // shake screen
 			OSystem::instance()->set_shake_pos(3);
-			_bam._screenShaked = true;
+			_screenShaked = true;
 			break;
 		case 2: // play background sfx
 			// XXX if(SFXTOGGLE) sfxplay(NULLstr);
@@ -855,18 +813,18 @@ void Graphics::updateFightBamScene() {
 		case 3: // play background sfx and shake screen
 			// XXX if(SFXTOGGLE) sfxplay(NULLstr);
 			OSystem::instance()->set_shake_pos(3);
-			_bam._screenShaked = true;
+			_screenShaked = true;
 			break;
 		case 99: // end of BAM data
-			_bam.index = 0;
+			_index = 0;
 			const BamDataBlock *data[] = {
-				_bam._fight1Data, 
-				_bam._fight2Data,
-				_bam._fight3Data
+				_fight1Data, 
+				_fight2Data,
+				_fight3Data
 			};
-			_bam._fightData = data[_vm->randomizer.getRandomNumber(2)];
-			if (_bam.flag == 2) {
-				_bam.flag = 0;
+			_fightData = data[_vm->randomizer.getRandomNumber(2)];
+			if (_flag == F_REQ_STOP) {
+				_flag = F_STOP;
 			}
 			break;
 		}
@@ -1008,7 +966,30 @@ int Graphics::textCenterX(const char *text) const {
 
 
 
-const BamDataBlock BamData::_carData[] = {
+BamScene::BamScene(QueenEngine *vm)
+	: _flag(F_STOP), _screenShaked(false), _fightData(_fight1Data), _vm(vm) {
+}
+
+
+void BamScene::prepareAnimation() {
+	
+	_obj1 = _vm->graphics()->bob(BOB_OBJ1);
+	_vm->graphics()->bobClear(BOB_OBJ1);
+	_obj1->active = true;
+
+	_obj2 = _vm->graphics()->bob(BOB_OBJ2);
+	_vm->graphics()->bobClear(BOB_OBJ2);
+	_obj2->active = true;
+
+	_objfx = _vm->graphics()->bob(BOB_FX);
+	_vm->graphics()->bobClear(BOB_FX);
+	_objfx->active = true;
+
+	_index = 0;
+}
+
+
+const BamDataBlock BamScene::_carData[] = {
 	{ { 310, 105, 1 }, { 314, 106, 17 }, { 366, 101,  1 },  0 },
 	{ { 303, 105, 1 }, { 307, 106, 17 }, { 214,   0, 10 },  0 },
 	{ { 297, 104, 1 }, { 301, 105, 17 }, { 214,   0, 10 },  0 },
@@ -1086,7 +1067,7 @@ const BamDataBlock BamData::_carData[] = {
 	{ { 310, 110, 1 }, { 314, 111, 17 }, { 214,   0, 10 }, 99 }
 };
 
-const BamDataBlock BamData::_fight1Data[] = {
+const BamDataBlock BamScene::_fight1Data[] = {
 	{ {  75,  96,  1 }, { 187, 96, -23 }, {  58,  37, 46 },  0 },
 	{ {  75,  96,  2 }, { 187, 96, -23 }, {  58,  37, 46 },  0 },
 	{ {  75,  96,  3 }, { 187, 96, -23 }, {  58,  37, 46 },  0 },
@@ -1135,7 +1116,7 @@ const BamDataBlock BamData::_fight1Data[] = {
 	{ {  75,  96,  1 }, { 187, 96, -23 }, {   0,   0,  0 }, 99 }
 };
 
-const BamDataBlock BamData::_fight2Data[] = {
+const BamDataBlock BamScene::_fight2Data[] = {
 	{ {  75, 96,  1 }, { 187, 96, -23 }, { 150,  45, 35 },  0 },
 	{ {  78, 96,  2 }, { 187, 96, -23 }, { 150,  45, 35 },  0 },
 	{ {  81, 96,  3 }, { 189, 96, -18 }, { 150,  45, 35 },  0 },
@@ -1193,7 +1174,7 @@ const BamDataBlock BamData::_fight2Data[] = {
 	{ {  75, 96,  5 }, { 187, 96, -23 }, { 224,  53, 53 }, 99 }
 };
 
-const BamDataBlock BamData::_fight3Data[] = {
+const BamDataBlock BamScene::_fight3Data[] = {
 	{ {  75, 96,  1 }, { 187,  96, -23 }, { 150,  45, 35 },  0 },
 	{ {  77, 96,  2 }, { 187,  96, -22 }, { 150,  45, 35 },  0 },
 	{ {  80, 96,  3 }, { 185,  96, -17 }, { 150,  45, 35 },  0 },

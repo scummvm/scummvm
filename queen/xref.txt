@@ -232,8 +232,8 @@ A_FILE_MAX					Logic::_numAFile
 ACTOR_DATA_MAX				Logic::_numActors
 AREA						Logic::_area
 AREAMAX						Logic::_areaMax
-bamflag						Graphics::_bam.flag
-bamindex					Graphics::_bam.index
+bamflag						BamScene::_flag
+bamindex					BamScene::_index
 DESCTOT						Logic::_numDescriptions
 ENTRY_OBJ					Logic::_entryObj
 FMAX						Logic::_numFurnitureStatic
@@ -343,7 +343,6 @@ oldsn						Sound::_previousSongNum
 LASTSONG					Sound::_previousSong
 CURRSONG					Sound::_currentSong
 SFXNAME						Sound::_sfxName
-tmpbamflag
 VOLUME
 
 
@@ -497,3 +496,4 @@ TEMPstr
 WORDstr 
 JOE2str,PERSON2str // locals in Talk::initialTalk
 SUBJECT
+tmpbamflag

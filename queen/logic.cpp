@@ -2297,7 +2297,7 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 		_walkOffData[i].writeTo(ptr);
 
 	WRITE_BE_UINT16(ptr, _joe.facing); ptr += 2;
-	WRITE_BE_UINT16(ptr, 0); ptr += 2; //TODO: tmpbamflag
+	WRITE_BE_UINT16(ptr, _vm->bam()->_flag); ptr += 2;
 	WRITE_BE_UINT16(ptr, 0); ptr += 2; //TODO: lastoverride
 	
 	//TODO: lastmerge, lastalter, altmrgpri
@@ -2365,7 +2365,7 @@ bool Logic::gameLoad(uint16 slot) {
 		_walkOffData[i].readFrom(ptr);
 
 	joeFacing(READ_BE_UINT16(ptr));  ptr += 2;
-	READ_BE_UINT16(ptr); ptr += 2;	//TODO: tmpbamflag
+	_vm->bam()->_flag = READ_BE_UINT16(ptr); ptr += 2;
 	READ_BE_UINT16(ptr); ptr += 2; //TODO: lastoverride
 	//_vm->sound()->playSound(_vm->sound()->lastOverride())
 	
@@ -2379,6 +2379,10 @@ bool Logic::gameLoad(uint16 slot) {
 		return false;
 	}
 	
+	if (_vm->bam()->_flag != BamScene::F_STOP) {
+		_vm->bam()->prepareAnimation();
+	}
+
 	joeCutFacing(joeFacing());
 	joeFace();
 	
@@ -2389,19 +2393,19 @@ bool Logic::gameLoad(uint16 slot) {
 	_entryObj = 0;
 
 	switch (gameState(VAR_DRESSING_MODE)) {
-		case  0: 
-			joeUseClothes(false);
-			break;
-		case  1:
-			joeUseUnderwear();
-			break;
-		case  2:
-			joeUseDress(false);
-			break;
+	case 0: 
+		joeUseClothes(false);
+		break;
+	case 1:
+		joeUseUnderwear();
+		break;
+	case 2:
+		joeUseDress(false);
+		break;
 	}
+
 	inventoryRefresh();
-	//bamflag = ..
-	
+
 	delete[] saveData;
 	return true;
 }
@@ -2680,21 +2684,25 @@ void Logic::asmSwitchToNormalPalette() {
 void Logic::asmStartCarAnimation() {
 
 	// Carbam background animation - room 74
-	_vm->graphics()->initCarBamScene();
+	_vm->bam()->_flag = BamScene::F_PLAY;
+	_vm->bam()->prepareAnimation();
 }
 
 
 void Logic::asmStopCarAnimation() {
 
-	// CR 2 - Turn off big oil splat and gun shots!
-	_vm->graphics()->cleanupCarBamScene(findBob(594)); // Oil object
+	_vm->bam()->_flag = BamScene::F_STOP;
+	//CR 2 - Turn off big oil splat and gun shots!
+	_vm->graphics()->bob(findBob(594))->active = false; // Oil object
+	_vm->graphics()->bob(7)->active = false;
 }
 
 
 void Logic::asmStartFightAnimation() {
 	
 	// Fight1 background animation - room 69
-	_vm->graphics()->initFightBamScene();
+	_vm->bam()->_flag = BamScene::F_PLAY;
+	_vm->bam()->prepareAnimation();
 	gameState(148, 1);
 }
 
@@ -2702,8 +2710,8 @@ void Logic::asmStartFightAnimation() {
 void Logic::asmWaitForFrankPosition() {
 
 	// c69e.cut
-	_vm->graphics()->bamData()->flag = 2;
-	while (_vm->graphics()->bamData()->flag) {
+	_vm->bam()->_flag = BamScene::F_REQ_STOP;
+	while (_vm->bam()->_flag != BamScene::F_STOP) {
 		update();
 	}
 }
@@ -2775,8 +2783,8 @@ void Logic::asmEndGame() {
 	for (i = 0; i < 40; ++i) {
 		update();
 	}
-	OSystem::instance()->quit();
 	debug(0, "Game completed");
+	OSystem::instance()->quit();
 }
 
 
@@ -3032,7 +3040,7 @@ void Logic::asmScaleEnding() {
 void Logic::asmWaitForCarPosition() {
 
 	// Wait for car to reach correct position before pouring oil
-	while (_vm->graphics()->bamData()->index != 60) {
+	while (_vm->bam()->_index != 60) {
 		update();
 	}
 }
