@@ -591,7 +591,7 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		case MKID('DIRI'):
-			readResTypeList(rtRoom, MKID('RMIM'), "room image");
+			readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
 			break;
 
 		case MKID('ANAM'):
@@ -606,7 +606,7 @@ void ScummEngine::readIndexFile() {
 			readResTypeList(rtRoom, MKID('ROOM'), "room");
 			break;
 
-		case MKID('DRSC'):					// FIXME: Verify
+		case MKID('DRSC'):
 			readResTypeList(rtRoomScripts, MKID('RMSC'), "room script");
 			break;
 
@@ -2454,6 +2454,7 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtCostume, (_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
 								_numCostumes, "costume", 1);
 	allocResTypeData(rtRoom, MKID('ROOM'), _numRooms, "room", 1);
+	allocResTypeData(rtRoomImage, MKID('RMIM'), _numRooms, "room image", 1);
 	allocResTypeData(rtRoomScripts, MKID('RMSC'), _numRooms, "room script", 1);
 	allocResTypeData(rtSound, MKID('SOUN'), _numSounds, "sound", 2);
 	allocResTypeData(rtScript, MKID('SCRP'), _numScripts, "script", 1);
@@ -2468,7 +2469,6 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtFlObject, MKID('NONE'), _numFlObject, "flobject", 0);
 	allocResTypeData(rtMatrix, MKID('NONE'), 10, "boxes", 0);
 	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
-	allocResTypeData(rtRoomImage, MKID('RMIM'), _numRooms, "room image", 1);
 	allocResTypeData(rtTalkie, MKID('TLKE'), _numTalkies, "talkie", 1);
 
 }

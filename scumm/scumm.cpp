@@ -1905,7 +1905,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 void ScummEngine::initRoomSubBlocks() {
 	int i;
 	const byte *ptr;
-	byte *roomptr, *searchptr, *roomResPtr, *roomStartPtr = 0;
+	byte *roomptr, *searchptr, *roomResPtr, *roomImagePtr = 0;
 	const RoomHeader *rmhd;
 
 	_ENCD_offs = 0;
@@ -1927,7 +1927,7 @@ void ScummEngine::initRoomSubBlocks() {
 	// Determine the room and room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
 	if (_heversion >= 70)
-		roomStartPtr = getResourceAddress(rtRoomImage, _roomResource);
+		roomImagePtr = getResourceAddress(rtRoomImage, _roomResource);
 	else if (_version == 8)
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 	if (!roomptr || !roomResPtr)
@@ -1982,7 +1982,7 @@ void ScummEngine::initRoomSubBlocks() {
 	} else if (_features & GF_SMALL_HEADER) {
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
 	} else if (_heversion >= 70) {
-		_IM00_offs = findResource(MKID('IM00'), roomStartPtr) - roomStartPtr;
+		_IM00_offs = findResource(MKID('IM00'), roomImagePtr) - roomImagePtr;
 	} else {
 		_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
 	}
