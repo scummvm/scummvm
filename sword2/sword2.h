@@ -27,6 +27,9 @@
 #include "common/str.h"
 #include "sword2/build_display.h"
 #include "sword2/console.h"
+#include "sword2/events.h"
+#include "sword2/icons.h"
+#include "sword2/object.h"
 #include "sword2/driver/d_sound.h"
 #include "sword2/driver/d_draw.h"
 
@@ -181,7 +184,40 @@ public:
 	uint32 _cycleTime;
 	uint32 _frameCount;
 
+	bool _wantSfxDebug;
+	bool _grabbingSequences;
+
+	int32 _gameCycle;
+	bool _renderSkip;
+
 	int32 initBackground(int32 res, int32 new_palette);
+
+	_event_unit _eventList[MAX_events];
+
+	void initEventSystem(void);
+	void sendEvent(uint32 id, uint32 interact_id);
+	void setPlayerActionEvent(uint32 id, uint32 interact_id);
+	void startEvent(void);
+	bool checkEventWaiting(void);
+	void clearEvent(uint32 id);
+	void killAllIdsEvents(uint32 id);
+
+	uint32 countEvents(void);
+
+	// These two are set by fnPassGraph() and fnPassMega().
+	// FIXME: _engineGraph isn't used at all, is it?
+
+	Object_graphic _engineGraph;
+	Object_mega _engineMega;
+
+	menu_object _tempList[TOTAL_engine_pockets];
+	uint32 _totalTemp;
+
+	menu_object _masterMenuList[TOTAL_engine_pockets];
+	uint32 _totalMasters;
+
+	void buildMenu(void);
+	void buildSystemMenu(void);
 
 	void errorString(const char *buf_input, char *buf_output);
 	void initialiseFontResourceFlags(void);

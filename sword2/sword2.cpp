@@ -150,6 +150,17 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_fps = 0;
 	_cycleTime = 0;
 	_frameCount = 0;
+
+	_wantSfxDebug = false;
+	_grabbingSequences = false;
+
+	// For the menus
+
+	_totalTemp = 0;
+	memset(_tempList, 0, sizeof(_tempList));
+
+	_totalMasters = 0;
+	memset(_masterMenuList, 0, sizeof(_masterMenuList));
 }
 
 Sword2Engine::~Sword2Engine() {
@@ -220,7 +231,7 @@ int32 Sword2Engine::InitialiseGame(void) {
 	Init_sync_system();
 
 	debug(5, "CALLING: Init_event_system");
-	Init_event_system();
+	initEventSystem();
 	
 	// initialise the sound fx queue
 
@@ -322,6 +333,11 @@ void Sword2Engine::go() {
 	debug(5, "CALLING: initialiseRenderCycle");
 	g_display->initialiseRenderCycle();
 
+	_renderSkip = false;		// Toggled on 'S' key, to render only
+					// 1 in 4 frames, to speed up game
+
+	_gameCycle = 0;
+
 	while (1) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
@@ -331,7 +347,7 @@ void Sword2Engine::go() {
 #ifdef _SWORD2_DEBUG
 // FIXME: If we want this, we should re-work it to use the backend's
 // screenshot functionality.
-//		if (grabbingSequences && !console_status)
+//		if (_debugger->_grabbingSequences && !console_status)
 //			GrabScreenShot();
 #endif
 
@@ -388,7 +404,7 @@ void Sword2Engine::go() {
 			else if (c == 'S') {
 				// 'S' toggles speed up (by skipping
 				// display rendering)
-				renderSkip = 1 - renderSkip;
+				_renderSkip = !_renderSkip;
 			}
 #endif
 		}
@@ -396,7 +412,7 @@ void Sword2Engine::go() {
 		// skip GameCycle if we're paused
 		if (gamePaused == 0) {
 #ifdef _SWORD2_DEBUG
-			gameCycle++;
+			_gameCycle++;
 #endif
 
 			if (GameCycle()) {
@@ -406,13 +422,13 @@ void Sword2Engine::go() {
 		}
 
 		// creates the debug text blocks
-		Build_debug_text();
+		_debugger->buildDebugText();
 
 #ifdef _SWORD2_DEBUG
-		// if not in console & 'renderSkip' is set, only render
+		// if not in console & '_renderSkip' is set, only render
 		// display once every 4 game-cycles
 
-		if (console_status || renderSkip == 0 || (gameCycle % 4) == 0)
+		if (console_status || !_renderSkip || (_gameCycle % 4) == 0)
 			g_sword2->buildDisplay();	// create and flip the screen
 #else
 		// create and flip the screen

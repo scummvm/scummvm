@@ -23,6 +23,7 @@
 #define _LOGIC
 
 #include "sword2/header.h"
+#include "sword2/memory.h"
 #include "sword2/driver/driver96.h"
 
 namespace Sword2 {

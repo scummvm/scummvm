@@ -35,9 +35,6 @@
 
 namespace Sword2 {
 
-Object_graphic engine_graph;	// global for engine
-Object_mega engine_mega;	// global for engine
-
 int32 Logic::fnTestFunction(int32 *params) {
 	// params:	0 address of a flag
 	return IR_CONT;
@@ -85,7 +82,7 @@ int32 Logic::fnInteract(int32 *params) {
 	PLAYER_ACTION = 0;
 
 	// 3rd script of clicked on id
-	logicUp((params[0] * 65536) + 2);
+	logicUp((params[0] < 16) | 2);
 
 	// out, up and around again - pc is saved for current level to be
 	// returned to
@@ -207,7 +204,7 @@ int32 Logic::fnPassGraph(int32 *params) {
 
 	// params:	0 pointer to a graphic structure (might not need this?)
 
-	memcpy(&engine_graph, (uint8 *) params[0], sizeof(Object_graphic));
+	memcpy(&g_sword2->_engineGraph, (uint8 *) params[0], sizeof(Object_graphic));
 
 	// makes no odds
 	return IR_CONT;
@@ -223,7 +220,7 @@ int32 Logic::fnPassMega(int32 *params) {
 
 	// params: 	0 pointer to a mega structure
 
-	memcpy(&engine_mega, (uint8 *) params[0], sizeof(Object_mega));
+	memcpy(&g_sword2->_engineMega, (uint8 *) params[0], sizeof(Object_mega));
 
 	// makes no odds
 	return IR_CONT;
@@ -246,17 +243,19 @@ int32 Logic::fnSetValue(int32 *params) {
 	return IR_CONT;
 }
 
+#ifdef _SWORD2_DEBUG
 #define BLACK	0
 #define WHITE	1
 #define RED	2
 #define GREEN	3
 #define BLUE	4
 
-uint8 black[4]	= {  0,    0,   0,   0 };
-uint8 white[4]	= { 255, 255, 255,   0 };
-uint8 red[4]	= { 255,   0,   0,   0 };
-uint8 green[4]	= {   0, 255,   0,   0 };
-uint8 blue[4]	= {   0,   0, 255,   0 };
+static uint8 black[4]	= {  0,    0,   0,   0 };
+static uint8 white[4]	= { 255, 255, 255,   0 };
+static uint8 red[4]	= { 255,   0,   0,   0 };
+static uint8 green[4]	= {   0, 255,   0,   0 };
+static uint8 blue[4]	= {   0,   0, 255,   0 };
+#endif
 
 int32 Logic::fnFlash(int32 *params) {
 	// flash colour 0 (ie. border) - useful during script development

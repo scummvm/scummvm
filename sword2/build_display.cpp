@@ -155,7 +155,7 @@ void Sword2Engine::buildDisplay(void) {
 			// walkgrid, mouse & player markers & mouse area
 			// rectangle
 
-			Draw_debug_graphics();
+			_debugger->drawDebugGraphics();
 
 			// text blocks
 
@@ -205,7 +205,7 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 	_palEntry oldPal[256];
 	uint32 rv;	// drivers error return value
 
-	warning("DisplayMsg: %s", (char *) text);
+	debug(2, "DisplayMsg: %s", (char *) text);
 	
 	if (g_display->getFadeStatus() != RDFADE_BLACK) {
 		g_display->fadeDown();
@@ -499,10 +499,10 @@ void Sword2Engine::processImage(buildit *build_unit) {
 			spriteInfo.y = 1;
 
 		// create box to surround sprite - just outside sprite box
-		rect_x1 = spriteInfo.x - 1;
-		rect_y1 = spriteInfo.y - 1;
-		rect_x2 = spriteInfo.x + spriteInfo.scaledWidth;
-		rect_y2 = spriteInfo.y + spriteInfo.scaledHeight;
+		_debugger->_rectX1 = spriteInfo.x - 1;
+		_debugger->_rectY1 = spriteInfo.y - 1;
+		_debugger->_rectX2 = spriteInfo.x + spriteInfo.scaledWidth;
+		_debugger->_rectY2 = spriteInfo.y + spriteInfo.scaledHeight;
 	}
 
 // #ifdef _SWORD2_DEBUG
@@ -588,11 +588,11 @@ void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 
 	// update player graphic details for on-screen debug info
 	if (ID == CUR_PLAYER_ID) {
-		playerGraphic.type = ob_graph->type;
-		playerGraphic.anim_resource = ob_graph->anim_resource;
+		_debugger->_playerGraphic.type = ob_graph->type;
+		_debugger->_playerGraphic.anim_resource = ob_graph->anim_resource;
 		// counting 1st frame as 'frame 1'
-		playerGraphic.anim_pc = ob_graph->anim_pc + 1;
-		player_graphic_no_frames = anim_head->noAnimFrames;
+		_debugger->_playerGraphic.anim_pc = ob_graph->anim_pc + 1;
+		_debugger->_playerGraphicNoFrames = anim_head->noAnimFrames;
 	}
 
 	// fill in the buildit structure for this frame

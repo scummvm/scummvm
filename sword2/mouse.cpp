@@ -133,7 +133,7 @@ void Mouse_engine(void) {
 			}
 
 			Set_mouse(NORMAL_MOUSE_ID);
-			Build_system_menu();
+			g_sword2->buildSystemMenu();
 		}
 		System_menu_mouse();
 		return;
@@ -265,7 +265,7 @@ void System_menu_mouse(void) {
 					g_display->hideMenu(RDMENU_TOP);
 				} else {
 					Set_mouse(NORMAL_MOUSE_ID);
-					Build_system_menu();
+					g_sword2->buildSystemMenu();
 				}
 
 				// clear the screen & restore the location
@@ -368,7 +368,7 @@ void Drag_mouse(void) {
 
 			CLICKED_ID = mouse_touching;
 
-			Set_player_action_event(CUR_PLAYER_ID, mouse_touching);
+			g_sword2->setPlayerActionEvent(CUR_PLAYER_ID, mouse_touching);
 
 			debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
 
@@ -384,7 +384,7 @@ void Drag_mouse(void) {
 				pos = (g_display->_mouseX - 24) / 40;
 
 				//clicked on something - what button?
-				if (master_menu_list[pos].icon_resource) {
+				if (g_sword2->_masterMenuList[pos].icon_resource) {
 					// always back into menu mode
 					mouse_mode = MOUSE_menu;
 
@@ -405,8 +405,8 @@ void Drag_mouse(void) {
 						//what we clicked on, not what
 						// we're dragging
 
-						COMBINE_BASE = master_menu_list[pos].icon_resource;
-						Set_player_action_event(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
+						COMBINE_BASE = g_sword2->_masterMenuList[pos].icon_resource;
+						g_sword2->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 						// turn off mouse now, to
 						// prevent player trying to
@@ -419,7 +419,7 @@ void Drag_mouse(void) {
 					}
 
 					// refresh the menu
-					Build_menu();
+					g_sword2->buildMenu();
 					debug(5, "switch to menu mode");
 				}
 			}
@@ -454,13 +454,13 @@ void Menu_mouse(void) {
 			pos = (g_display->_mouseX - 24) / 40;
 
 			// clicked on something - what button?
-			if (master_menu_list[pos].icon_resource) {
+			if (g_sword2->_masterMenuList[pos].icon_resource) {
 				if (me->buttons & RD_RIGHTBUTTONDOWN) {
 					// right button look
 					examining_menu_icon = 1;
 
 					// id the object via its graphic
-					OBJECT_HELD = master_menu_list[pos].icon_resource;
+					OBJECT_HELD = g_sword2->_masterMenuList[pos].icon_resource;
 
 					// Must clear this so next click on
 					// exit becomes 1st click again
@@ -469,10 +469,10 @@ void Menu_mouse(void) {
 
 					debug(5, "RIGHT-CLICKED ON \"%s\" ICON", FetchObjectName(OBJECT_HELD));
 
-					Set_player_action_event(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
+					g_sword2->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 					// refresh the menu
-					Build_menu();
+					g_sword2->buildMenu();
 
 					// turn off mouse now, to prevent
 					// player trying to click elsewhere
@@ -488,13 +488,13 @@ void Menu_mouse(void) {
 					// mouse_on_off()
 
 					menu_selected_pos = pos;
-					current_luggage_resource = master_menu_list[pos].luggage_resource;
+					current_luggage_resource = g_sword2->_masterMenuList[pos].luggage_resource;
 
 					mouse_mode = MOUSE_drag;
 					debug(5, "setting OH in menu");
 
 					// id the object via its graphic
-					OBJECT_HELD = master_menu_list[pos].icon_resource;
+					OBJECT_HELD = g_sword2->_masterMenuList[pos].icon_resource;
 
 					// must clear this so next click on
 					// exit becomes 1st click again
@@ -502,9 +502,9 @@ void Menu_mouse(void) {
 					EXIT_CLICK_ID = 0;
 
 					// refresh the menu
-					Build_menu();
+					g_sword2->buildMenu();
 
-					Set_luggage(master_menu_list[pos].luggage_resource);
+					Set_luggage(g_sword2->_masterMenuList[pos].luggage_resource);
 					debug(5, "switch to drag mode");
 				}
 			}
@@ -530,7 +530,7 @@ void Normal_mouse(void) {
 
 		// reset mouse cursor - in case we're between mice
 		Set_mouse(NORMAL_MOUSE_ID);
-		Build_system_menu();
+		g_sword2->buildSystemMenu();
 		return;
 	}
 
@@ -560,7 +560,7 @@ void Normal_mouse(void) {
 
 		// reset mouse cursor
 		Set_mouse(NORMAL_MOUSE_ID);
-		Build_menu();
+		g_sword2->buildMenu();
 		return;
 	}
 
@@ -572,27 +572,27 @@ void Normal_mouse(void) {
 
 	me = MouseEvent();
 
-	if (definingRectangles)	{
-		if (draggingRectangle == 0) {
+	if (g_sword2->_debugger->_definingRectangles) {
+		if (g_sword2->_debugger->_draggingRectangle == 0) {
 			// not yet dragging a rectangle, so need click to start
 
 			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
 				// set both (x1,y1) and (x2,y2) to this point
-				rect_x1 = rect_x2 = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
-				rect_y1 = rect_y2 = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
-				draggingRectangle = 1;
+				g_sword2->_debugger->_rectX1 = g_sword2->_debugger->_rectX2 = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
+				g_sword2->_debugger->_rectY1 = g_sword2->_debugger->_rectY2 = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
+				g_sword2->_debugger->_draggingRectangle = 1;
 			}
-		} else if (draggingRectangle == 1) {
+		} else if (g_sword2->_debugger->_draggingRectangle == 1) {
 			// currently dragging a rectangle - click means reset
 
 			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
 				// lock rectangle, so you can let go of mouse
 				// to type in the coords
-				draggingRectangle = 2;
+				g_sword2->_debugger->_draggingRectangle = 2;
 			} else {
 				// drag rectangle
-				rect_x2 = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
-				rect_y2 = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
+				g_sword2->_debugger->_rectX2 = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
+				g_sword2->_debugger->_rectY2 = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
 			}
 		} else {
 			// currently locked to avoid knocking out of place
@@ -600,7 +600,7 @@ void Normal_mouse(void) {
 
 			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
 				// click means reset - back to start again
-				draggingRectangle = 0;
+				g_sword2->_debugger->_draggingRectangle = 0;
 			}
 		}
 	} else {
@@ -673,7 +673,7 @@ void Normal_mouse(void) {
 				EXIT_CLICK_ID = 0;
 				EXIT_FADING = 0;
 
-				Set_player_action_event(CUR_PLAYER_ID, mouse_touching);
+				g_sword2->setPlayerActionEvent(CUR_PLAYER_ID, mouse_touching);
 
 				if (OBJECT_HELD)
 					debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
@@ -738,7 +738,6 @@ void Mouse_on_off(void) {
 
 			// setup luggage icon
 			if (OBJECT_HELD) {
-				// Set_luggage(master_menu_list[menu_selected_pos].luggage_resource);
 				Set_luggage(current_luggage_resource);
 			}
 		} else
@@ -1127,7 +1126,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 	// enabled/disabled from console; status printed with on-screen debug
 	// info
 
-	if (testingSnR) {
+	if (g_sword2->_debugger->_testingSnR) {
 		uint8 black[4] = {   0,  0,    0,   0 };
 		uint8 white[4] = { 255, 255, 255,   0 };
 

@@ -174,7 +174,7 @@ int32 Logic::fnWalk(int32 *params) {
 	// if stopping the walk early, overwrite the next step with a
 	// slow-out, then finish
 
-	if (Check_event_waiting()) {
+	if (g_sword2->checkEventWaiting()) {
 		if (walkAnim[walk_pc].step == 0 && walkAnim[walk_pc + 1].step == 1) {
 			// at the beginning of a step
 			ob_walkdata = (Object_walkdata *) params[3];
@@ -213,8 +213,8 @@ int32 Logic::fnWalk(int32 *params) {
 		// was only run if a function that always returned zero
 		// returned non-zero.
 
-		if (Check_event_waiting()) {
-			Start_event();
+		if (g_sword2->checkEventWaiting()) {
+			g_sword2->startEvent();
 			RESULT = 1;		// 1 means didn't finish walk
 			return IR_TERMINATE;
 		} else {
@@ -615,13 +615,13 @@ int32 Logic::fnFaceMega(int32 *params) {
 
 		res_man.close(params[4]);
 
-		// engine_mega is now the Object_mega of mega we want to turn
+		// engineMega is now the Object_mega of mega we want to turn
 		// to face
 
 		pars[3] = params[3];
 		pars[4] = ob_mega->feet_x;
 		pars[5] = ob_mega->feet_y;
-		pars[6] = What_target(ob_mega->feet_x, ob_mega->feet_y, engine_mega.feet_x, engine_mega.feet_y);
+		pars[6] = What_target(ob_mega->feet_x, ob_mega->feet_y, g_sword2->_engineMega.feet_x, g_sword2->_engineMega.feet_y);
 	}
 
 	pars[0] = params[0];
@@ -678,11 +678,11 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 
 		res_man.close(params[4]);
 
-		// engine_mega is now the Object_mega of mega we want to
+		// engineMega is now the Object_mega of mega we want to
 		// route to
 
 		// stand exactly beside the mega, ie. at same y-coord
-		pars[5] = engine_mega.feet_y;
+		pars[5] = g_sword2->_engineMega.feet_y;
 
 		// apply scale factor to walk distance
 		// Ay+B gives 256 * scale ie. 256 * 256 * true_scale for even
@@ -693,20 +693,20 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 		mega_seperation= (mega_seperation * scale) / 256;
 
 		debug(5, "seperation %d", mega_seperation);
-		debug(5, " target x %d, y %d", engine_mega.feet_x, engine_mega.feet_y);
+		debug(5, " target x %d, y %d", g_sword2->_engineMega.feet_x, g_sword2->_engineMega.feet_y);
 
-		if (engine_mega.feet_x < ob_mega->feet_x)
+		if (g_sword2->_engineMega.feet_x < ob_mega->feet_x)
 		{
 			// Target is left of us, so aim to stand to their
 			// right. Face down_left
 
-			pars[4] = engine_mega.feet_x + mega_seperation;
+			pars[4] = g_sword2->_engineMega.feet_x + mega_seperation;
 			pars[6] = 5;
 		} else {
 			// Ok, must be right of us so aim to stand to their
 			// left. Face down_right.
 
-			pars[4] = engine_mega.feet_x - mega_seperation;
+			pars[4] = g_sword2->_engineMega.feet_x - mega_seperation;
 			pars[6] = 3;
 		}
 	}

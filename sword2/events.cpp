@@ -25,30 +25,97 @@
 #include "sword2/events.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
-#include "sword2/memory.h"
 #include "sword2/object.h"
-#include "sword2/sync.h"
 
 namespace Sword2 {
 
-_event_unit event_list[MAX_events];
-
-void Init_event_system(void) {
-	for (int i = 0; i < MAX_events; i++) {
-		//denotes free slot
-		event_list[i].id = 0;
-	}
+void Sword2Engine::initEventSystem(void) {
+	memset(_eventList, 0, sizeof(_eventList));
 }
 
-uint32 CountEvents(void) {
+uint32 Sword2Engine::countEvents(void) {
 	uint32 count = 0;
 
 	for (int i = 0; i < MAX_events; i++) {
-		if (event_list[i].id)
+		if (_eventList[i].id)
 			count++;
 	}
 
 	return count;
+}
+
+void Sword2Engine::sendEvent(uint32 id, uint32 interact_id) {
+	int i;
+
+	for (i = 0; i < MAX_events; i++) {
+		if (_eventList[i].id == id)
+			break;
+
+		if (!_eventList[i].id)
+			break;
+	}
+
+	assert(i < MAX_events);
+
+	// found that slot
+
+	// id of person to stop
+	_eventList[i].id = id;
+
+	// full script id
+	_eventList[i].interact_id = interact_id;
+}
+
+void Sword2Engine::setPlayerActionEvent(uint32 id, uint32 interact_id) {
+	// Full script id of action script number 2
+	sendEvent(id, (interact_id << 16) | 2);
+}
+
+bool Sword2Engine::checkEventWaiting(void) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (_eventList[i].id == ID)
+			return true;
+	}
+
+	return false;
+}
+
+void Sword2Engine::startEvent(void) {
+	// call this from stuff like fnWalk
+	// you must follow with a return IR_TERMINATE
+
+	for (int i = 0; i < MAX_events; i++) {
+		if (_eventList[i].id == ID) {
+			// run 3rd script of target object on level 1
+			g_logic.logicOne(_eventList[i].interact_id);
+
+			// clear the slot
+			_eventList[i].id = 0;
+			return;
+		}
+	}
+
+	// oh dear - stop the system
+	error("Start_event can't find event for id %d", ID);
+}
+
+void Sword2Engine::clearEvent(uint32 id) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (_eventList[i].id == id) {
+			// clear the slot
+			_eventList[i].id = 0;
+			return;
+		}
+	}
+}
+
+void Sword2Engine::killAllIdsEvents(uint32 id) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (_eventList[i].id == id) {
+			// clear the slot
+			_eventList[i].id = 0;
+		}
+	}
 }
 
 int32 Logic::fnRequestSpeech(int32 *params) {
@@ -58,51 +125,9 @@ int32 Logic::fnRequestSpeech(int32 *params) {
 	// params:	0 id of target to catch the event and startup speech
 	//		  servicing
 
-	int i;
-
-	for (i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == (uint32) params[0])
-			break;
-
-		if (!event_list[i].id)
-			break;
-	}
-
-	if (i == MAX_events)
-		error("fnSetEvent out of event slots");
-
-	// found that slot
-
-	// id of person to stop
-	event_list[i].id = params[0];
-
-	// full script id to interact with - megas run their own 7th script
-	event_list[i].interact_id = (params[0] * 65536) + 6;
-
+	// Full script id to interact with - megas run their own 7th script
+	g_sword2->sendEvent(params[0], (params[0] << 16) | 6);
 	return IR_CONT;
-}
-
-void Set_player_action_event(uint32 id, uint32 interact_id) {
-	int i;
-
-	for (i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == id)
-			break;
-
-		if (!event_list[i].id)
-			break;
-	}
-
-	if (i == MAX_events)
-		error("Set_event out of event slots");
-
-	// found that slot
-
-	// id of person to stop
-	event_list[i].id = id;
-
-	// full script id of action script number 2
-	event_list[i].interact_id = (interact_id * 65536) + 2;
 }
 
 int32 Logic::fnSetPlayerActionEvent(int32 *params) {
@@ -115,29 +140,7 @@ int32 Logic::fnSetPlayerActionEvent(int32 *params) {
 
 	// params:	0 id to interact with
 
-	// search for an existing event or a slot
-
-	int i;
-
-	for (i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == CUR_PLAYER_ID)
-			break;
-
-		if (!event_list[i].id)
-			break;
-	}
-
-	if (i == MAX_events)
-		error("Set_event out of event slots");
-
-	// found that slot
-
-	// id of person to stop
-	event_list[i].id = CUR_PLAYER_ID;
-
-	// full script id of action script number 2
-	event_list[i].interact_id = (params[0] * 65536) + 2;
-
+	g_sword2->setPlayerActionEvent(CUR_PLAYER_ID, params[0]);
 	return IR_CONT;
 }
 
@@ -148,29 +151,7 @@ int32 Logic::fnSendEvent(int32 *params) {
 	// params:	0 id to recieve event
 	//		1 script to run
 
-	// search for an existing event or a slot
-
-	int i;
-
-	for (i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == (uint32) params[0])
-			break;
-
-		if (!event_list[i].id)
-			break;
-	}
-
-	if (i == MAX_events)
-		error("fnSendEvent out of event slots");
-
-	// found that slot
-
-	// id of person to stop
-	event_list[i].id = params[0];
-
-	//full script id
-	event_list[i].interact_id = params[1];
-
+	g_sword2->sendEvent(params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -179,14 +160,10 @@ int32 Logic::fnCheckEventWaiting(int32 *params) {
 
 	// params:	none
 
-	RESULT = 0;
-
-	for (int i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == ID) {
-			RESULT = 1;
-			break;
-		}
-	}
+	if (g_sword2->checkEventWaiting())
+		RESULT = 1;
+	else
+		RESULT = 0;
 
 	return IR_CONT;
 }
@@ -197,18 +174,11 @@ int32 Logic::fnCheckEventWaiting(int32 *params) {
 int32 Logic::fnCheckForEvent(int32 *params) {
 	// params:	none
 
-	for (int i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == ID) {
-			// start the event
-			// run 3rd script of target object on level 1
-			logicOne(event_list[i].interact_id);
-			// clear the event slot
-			event_list[i].id = 0;
-			return IR_TERMINATE;
-		}
-	}
+	if (!g_sword2->checkEventWaiting())
+		return IR_CONT;
 
-	return IR_CONT;
+	g_sword2->startEvent();
+	return IR_TERMINATE;
 }
 
 // combination of fnPause and fnCheckForEvent
@@ -220,23 +190,17 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 number of game-cycles to pause
 
-	Object_logic *ob_logic = (Object_logic *)params[0];
+	Object_logic *ob_logic = (Object_logic *) params[0];
 
 	// first, check for an event
 
-	for (int i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == ID) {
-			// reset the 'looping' flag
-			ob_logic->looping = 0;
+	if (g_sword2->checkEventWaiting()) {
+		// reset the 'looping' flag
+		ob_logic->looping = 0;
 
-			// start the event
-			// run 3rd script of target object on level 1
-			logicOne(event_list[i].interact_id);
-
-			// clear the event slot
-			event_list[i].id = 0;
-			return IR_TERMINATE;
-		}
+		// start the event - run 3rd script of target object on level 1
+		g_sword2->startEvent();
+		return IR_TERMINATE;
 	}
 
 	// no event, so do the fnPause bit
@@ -264,73 +228,18 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 	}
 }
 
-bool Check_event_waiting(void) {
-	for (int i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == ID)
-			return true;
-	}
-
-	return false;
-}
-
 int32 Logic::fnClearEvent(int32 *params) {
 	// params:	none
 
-	for (int i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == ID) {
-			//clear the slot
-			event_list[i].id = 0;
-			return IR_CONT;
-		}
-	}
-
+	g_sword2->clearEvent(ID);
 	return IR_CONT;
-}
-
-void Start_event(void) {
-	// call this from stuff like fnWalk
-	// you must follow with a return IR_TERMINATE
-
-	for (int i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == ID) {
-			// run 3rd script of target object on level 1
-			g_logic.logicOne(event_list[i].interact_id);
-
-			//clear the slot
-			event_list[i].id = 0;
-			return;
-		}
-	}
-
-	// oh dear - stop the system
-	error("Start_event can't find event for id %d", ID);
 }
 
 int32 Logic::fnStartEvent(int32 *params) {
 	// params:	none
 
-	for (int i = 0; i < MAX_events; i++)
-		if (event_list[i].id == ID) {
-			// run 3rd script of target object on level 1
-			logicOne(event_list[i].interact_id);
-
-			// clear the slot
-			event_list[i].id = 0;
-			return IR_TERMINATE;
-		}
-
-	// oh dear - stop the system
-	error("fnStartEvent can't find event for id %d", ID);
-	return 0;	// never called - but lets stop them bloody errors
-}
-
-void Kill_all_ids_events(uint32 id) {
-	for (int i = 0; i < MAX_events; i++) {
-		if (event_list[i].id == id) {
-			// clear the slot
-			event_list[i].id = 0;
-		}
-	}
+	g_sword2->startEvent();
+	return IR_TERMINATE;
 }
 
 } // End of namespace Sword2

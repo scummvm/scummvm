@@ -160,7 +160,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 	_standardHeader *header;
 #endif
 
-	if (wantSfxDebug) {
+	if (g_sword2->_wantSfxDebug) {
 		char type[10];
 
 		switch (params[1]) {	// 'type'

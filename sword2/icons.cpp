@@ -28,24 +28,14 @@
 
 namespace Sword2 {
 
-// tempory list
-menu_object temp_list[TOTAL_engine_pockets];
-uint32 total_temp = 0;
-
-menu_object master_menu_list[TOTAL_engine_pockets];
-uint32 total_masters=0;
-
 int32 Logic::fnAddMenuObject(int32 *params) {
 	// params:	0 pointer to a menu_object structure to copy down
 
-#ifdef _SWORD2_DEBUG
-	if (total_temp == TOTAL_engine_pockets)
-		error("TOTAL_engine_pockets exceeded!");
-#endif
+	assert(g_sword2->_totalTemp < TOTAL_engine_pockets);
 
 	// copy the structure to our in-the-engine list
-	memcpy(&temp_list[total_temp], (uint8 *) params[0], sizeof(menu_object));
-	total_temp++;
+	memcpy(&g_sword2->_tempList[g_sword2->_totalTemp], (uint8 *) params[0], sizeof(menu_object));
+	g_sword2->_totalTemp++;
 
 	// script continue
 	return IR_CONT;
@@ -65,14 +55,14 @@ int32 Logic::fnRefreshInventory(int32 *params) {
 	// so that the icon in 'object_held' is coloured while the rest are
 	// grey
 	examining_menu_icon = 1;
-	Build_menu();
+	g_sword2->buildMenu();
  	examining_menu_icon = 0;
 
 	// script continue
 	return IR_CONT;
 }
 
-void Build_menu(void) {
+void Sword2Engine::buildMenu(void) {
 	// create and start the inventory menu - NOW AT THE BOTTOM OF THE
 	// SCREEN!
 
@@ -84,15 +74,15 @@ void Build_menu(void) {
 	uint32 res;
 
 	// reset temp list which will be totally rebuilt
-	total_temp = 0;
+	_totalTemp = 0;
 
-	debug(5, "build top menu %d", total_masters);
+	debug(5, "build top menu %d", _totalMasters);
 
 	// clear the temp list before building a new temp list in-case list
 	// gets smaller. check each master
 
 	for (j = 0; j < TOTAL_engine_pockets; j++)
-		temp_list[j].icon_resource = 0;
+		_tempList[j].icon_resource = 0;
 
 	// Call menu builder script which will register all carried menu
 	// objects. Run the 'build_menu' script in the 'menu_master' object
@@ -104,23 +94,23 @@ void Build_menu(void) {
 	// Compare new with old. Anything in master thats not in new gets
 	// removed from master - if found in new too, remove from temp
 
-	if (total_masters) {
+	if (_totalMasters) {
 		// check each master
 
-		for (j = 0; j < total_masters; j++) {
+		for (j = 0; j < _totalMasters; j++) {
 			for (k = 0; k < TOTAL_engine_pockets; k++) {
 				res = 0;
 				// if master is in temp
-				if (master_menu_list[j].icon_resource == temp_list[k].icon_resource) {
+				if (_masterMenuList[j].icon_resource == _tempList[k].icon_resource) {
 					// kill it in the temp
-					temp_list[k].icon_resource = 0;
+					_tempList[k].icon_resource = 0;
 					res = 1;
 					break;
 				}
 			}
 			if (!res) {
 				// otherwise not in temp so kill in main
-				master_menu_list[j].icon_resource = 0;
+				_masterMenuList[j].icon_resource = 0;
 				debug(5, "Killed menu %d", j);
 			}
 		}
@@ -128,20 +118,20 @@ void Build_menu(void) {
 
 	// merge master downwards
 
-	total_masters = 0;
+	_totalMasters = 0;
 
 	//check each master slot
 
 	for (j = 0; j < TOTAL_engine_pockets; j++) {
 		// not current end - meaning out over the end so move down
-		if (master_menu_list[j].icon_resource && j != total_masters) {
-			memcpy(&master_menu_list[total_masters++], &master_menu_list[j], sizeof(menu_object));
+		if (_masterMenuList[j].icon_resource && j != _totalMasters) {
+			memcpy(&_masterMenuList[_totalMasters++], &_masterMenuList[j], sizeof(menu_object));
 
 			// moved down now so kill here
-			master_menu_list[j].icon_resource = 0;
-		} else if (master_menu_list[j].icon_resource) {
+			_masterMenuList[j].icon_resource = 0;
+		} else if (_masterMenuList[j].icon_resource) {
 			// skip full slots
-			total_masters++;
+			_totalMasters++;
 		}
 	}
 
@@ -151,18 +141,18 @@ void Build_menu(void) {
 	// check each master slot
 
 	for (j = 0; j < TOTAL_engine_pockets; j++) {
-		if (temp_list[j].icon_resource) {
+		if (_tempList[j].icon_resource) {
 			// here's a new temp
-			memcpy(&master_menu_list[total_masters++], &temp_list[j], sizeof(menu_object));
+			memcpy(&_masterMenuList[_totalMasters++], &_tempList[j], sizeof(menu_object));
 		}
 	}
 
 	// init top menu from master list
 
 	for (j = 0; j < 15; j++) {
-		if (master_menu_list[j].icon_resource) {
+		if (_masterMenuList[j].icon_resource) {
 			// 'res' is now the resource id of the icon
-			res = master_menu_list[j].icon_resource;
+			res = _masterMenuList[j].icon_resource;
 
 			if (examining_menu_icon) {
 				// WHEN AN ICON HAS BEEN RIGHT-CLICKED FOR
@@ -201,7 +191,7 @@ void Build_menu(void) {
 					icon_coloured = 1;
 			}
 
-			icon = res_man.open(master_menu_list[j].icon_resource) + sizeof(_standardHeader);
+			icon = res_man.open(_masterMenuList[j].icon_resource) + sizeof(_standardHeader);
 
 			// The coloured icon is stored directly after the
 			// greyed out one.
@@ -221,7 +211,7 @@ void Build_menu(void) {
 	g_display->showMenu(RDMENU_BOTTOM);
 }
 
-void Build_system_menu(void) {
+void Sword2Engine::buildSystemMenu(void) {
 	// start a fresh top system menu
 
 	uint8 *icon;

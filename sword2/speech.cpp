@@ -582,9 +582,9 @@ int32 Logic::fnTimedWait(int32 *params) {
 		// not ok
 		RESULT = 1;
 
-		//clear the event that hasn't been picked up - in theory,
+		// clear the event that hasn't been picked up - in theory,
 		// none of this should ever happen
-		Kill_all_ids_events(target);
+		g_sword2->killAllIdsEvents(target);
 
 		debug(5, "EVENT timed out");
 
@@ -972,7 +972,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		} else
 			cycle_skip = 0;
 
- 		textNumber = params[S_TEXT];	// for debug info
+		g_sword2->_debugger->_textNumber = params[S_TEXT];	// for debug info
 
 		// For testing all text & speech!
 		// A script loop can send any text number to fnISpeak and it
@@ -1343,7 +1343,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		ob_logic->looping = 0;
 
 		// reset for debug info
-		textNumber = 0;
+		g_sword2->_debugger->_textNumber = 0;
 
 		// reset to zero, in case text line not even extracted (since
 		// this number comes from the text line)

@@ -21,20 +21,61 @@
 #define	C_ONSOLE_H
 
 #include "common/debugger.h"
-#include "sword2/memory.h"
+#include "sword2/debug.h"
+#include "sword2/object.h"
 
 #define Debug_Printf g_sword2->_debugger->DebugPrintf
 
 namespace Sword2 {
 
-extern bool grabbingSequences;
-extern bool wantSfxDebug;	// sfx debug file enabled/disabled from console
-
 class Sword2Engine;
 
 class Debugger : public Common::Debugger<Debugger> {
+private:
+	void varGet(int var);
+	void varSet(int var, int val);
+
+	bool _displayDebugText;
+	bool _displayWalkGrid;
+	bool _displayMouseMarker;
+	bool _displayTime;
+	bool _displayPlayerMarker;
+	bool _displayTextNumbers;
+
+	bool _rectFlicker;
+
+	int32 _startTime;
+
+	int32 _showVar[MAX_SHOWVARS];
+
+	uint8 _debugTextBlocks[MAX_DEBUG_TEXT_BLOCKS];
+
+	void clearDebugTextBlocks(void);
+	void makeDebugTextBlock(char *text, int16 x, int16 y);
+
+	void printCurrentInfo(void);
+
+	void plotCrossHair(int16 x, int16 y, uint8 pen);
+	void drawRect(int16 x, int16 y, int16 x2, int16 y2, uint8 pen);
+
 public:
 	Debugger(Sword2Engine *s);
+
+	int16 _rectX1, _rectY1;
+	int16 _rectX2, _rectY2;
+
+	uint8 _draggingRectangle;
+	bool _definingRectangles;
+
+	bool _testingSnR;
+
+	int32 _textNumber;
+
+	Object_graphic _playerGraphic;
+	uint32 _playerGraphicNoFrames;
+
+	void buildDebugText(void);
+	void drawDebugGraphics(void);
 
 protected:
 	Sword2Engine *_vm;

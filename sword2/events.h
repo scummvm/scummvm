@@ -20,7 +20,7 @@
 #ifndef	_EVENTS
 #define	_EVENTS
 
-#include "sword2/object.h"
+#define	MAX_events 10
 
 namespace Sword2 {
 
@@ -28,18 +28,6 @@ struct _event_unit {
 	uint32 id;
 	uint32 interact_id;
 };
-
-#define	MAX_events 10
-
-extern _event_unit event_list[MAX_events];
-
-void Init_event_system(void);
-void Set_player_action_event(uint32 id, uint32 interact_id);
-void Start_event(void);
-bool Check_event_waiting(void);
-void Kill_all_ids_events(uint32 id);
-
-uint32 CountEvents(void);
 
 } // End of namespace Sword2
 

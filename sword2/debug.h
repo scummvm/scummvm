@@ -20,46 +20,12 @@
 #ifndef	D_DEBUG
 #define D_DEBUG
 
-#include "sword2/object.h"
-
 // FIXME: I don't know how large this constant used to be
 #define MAX_DEBUG_TEXT_BLOCKS 50
 
-namespace Sword2 {
-
-extern bool displayDebugText;
-extern bool displayWalkGrid;
-extern bool displayMouseMarker;
-extern bool displayPlayerMarker;
-extern bool displayTime;
-extern bool displayTextNumbers;
-extern bool definingRectangles;
-extern uint8 draggingRectangle;
-extern int32 startTime;
-extern int32 gameCycle;
-extern uint8 renderSkip;
-
-extern int16 rect_x1;
-extern int16 rect_y1;
-extern int16 rect_x2;
-extern int16 rect_y2;
-
-extern bool testingSnR;
-
-extern int32 textNumber;
-
-extern Object_graphic playerGraphic;
-extern uint32 player_graphic_no_frames;
-
 #define MAX_SHOWVARS 15
 
-extern int32 showVar[MAX_SHOWVARS];
-
-void Build_debug_text(void);
-void Draw_debug_graphics(void);
-
-void Print_current_info(void);
-
+namespace Sword2 {
 } // End of namespace Sword2
 
 #endif

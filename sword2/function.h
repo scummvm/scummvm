@@ -20,12 +20,7 @@
 #ifndef	_FUNCTION
 #define	_FUNCTION
 
-#include "sword2/object.h"
-
 namespace Sword2 {
-
-extern Object_graphic engine_graph;	// global for engine
-extern Object_mega engine_mega;		// global for engine
 
 } // End of namespace Sword2
 

@@ -35,13 +35,11 @@
 
 namespace Sword2 {
 
-bool wantSfxDebug = false;	// sfx debug enabled/disabled from console
-
-static void Var_check(int var) {
+void Debugger::varGet(int var) {
 	Debug_Printf("%d\n", VAR(var));
 }
 
-static void Var_set(int var, int val) {
+void Debugger::varSet(int var, int val) {
 	Debug_Printf("was %d, ", VAR(var));
 	VAR(var) = val;
 	Debug_Printf("now %d\n", VAR(var));
@@ -50,6 +48,36 @@ static void Var_set(int var, int val) {
 Debugger::Debugger(Sword2Engine *s)
 	: Common::Debugger<Debugger>() {
 	_vm = s;
+
+	memset(_debugTextBlocks, 0, sizeof(_debugTextBlocks));
+	memset(_showVar, 0, sizeof(_showVar));
+
+	_displayDebugText = false;	// "INFO"
+	_displayWalkGrid = false;	// "WALKGRID"
+	_displayMouseMarker = false;	// "MOUSE"
+	_displayTime = false;		// "TIME"
+	_displayPlayerMarker = false;	// "PLAYER"
+	_displayTextNumbers = false;	// "TEXT"
+
+	_definingRectangles = false;	// "RECT"
+	_draggingRectangle = 0;		// 0 = waiting to start new rect
+					// 1 = currently dragging a rectangle
+
+	_rectX1 = _rectY1 = 0;
+	_rectX2 = _rectY2 = 0;
+	_rectFlicker = false;
+
+	_testingSnR = false;		// "SAVEREST" - for system to kill all
+					// object resources (except player) in
+					// fnAddHuman()
+
+	_startTime = 0;			// "TIMEON" & "TIMEOFF" - system start
+					// time
+
+	_textNumber = 0;		// Current system text line number
+
+	_playerGraphicNoFrames = 0;	// No. of frames in currently displayed
+					// anim
 
 	// Register commands
 
@@ -121,7 +149,6 @@ void Debugger::postEnter() {
 
 }
 
-
 ///////////////////////////////////////////////////
 // Now the fun stuff:
 
@@ -188,9 +215,9 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Info(int argc, const char **argv) {
-	displayDebugText = !displayDebugText;
+	_displayDebugText = !_displayDebugText;
 
-	if (displayDebugText)
+	if (_displayDebugText)
 		DebugPrintf("Info text on\n");
 	else
 		DebugPrintf("Info Text off\n");
@@ -199,9 +226,9 @@ bool Debugger::Cmd_Info(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_WalkGrid(int argc, const char **argv) {
-	displayWalkGrid = !displayWalkGrid;
+	_displayWalkGrid = !_displayWalkGrid;
 
-	if (displayWalkGrid)
+	if (_displayWalkGrid)
 		DebugPrintf("Walk-grid display on\n");
 	else
 		DebugPrintf("Walk-grid display off\n");
@@ -210,9 +237,9 @@ bool Debugger::Cmd_WalkGrid(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Mouse(int argc, const char **argv) {
-	displayMouseMarker = !displayMouseMarker;
+	_displayMouseMarker = !_displayMouseMarker;
 
-	if (displayMouseMarker)
+	if (_displayMouseMarker)
 		DebugPrintf("Mouse marker on\n");
 	else
 		DebugPrintf("Mouse marker off\n");
@@ -221,9 +248,9 @@ bool Debugger::Cmd_Mouse(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Player(int argc, const char **argv) {
-	displayPlayerMarker = !displayPlayerMarker;
+	_displayPlayerMarker = !_displayPlayerMarker;
 
-	if (displayPlayerMarker)
+	if (_displayPlayerMarker)
 		DebugPrintf("Player feet marker on\n");
 	else
 		DebugPrintf("Player feet marker off\n");
@@ -240,7 +267,7 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_CurrentInfo(int argc, const char **argv) {
-	Print_current_info();
+	printCurrentInfo();
 	return true;
 }
 
@@ -266,10 +293,10 @@ bool Debugger::Cmd_Nuke(int argc, const char **argv) {
 bool Debugger::Cmd_Var(int argc, const char **argv) {
 	switch (argc) {
 	case 2:
-		Var_check(atoi(argv[1]));
+		varGet(atoi(argv[1]));
 		break;
 	case 3:
-		Var_set(atoi(argv[1]), atoi(argv[2]));
+		varSet(atoi(argv[1]), atoi(argv[2]));
 		break;
 	default:
 		DebugPrintf("Usage: %s number value\n", argv[0]);
@@ -280,14 +307,14 @@ bool Debugger::Cmd_Var(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Rect(int argc, const char **argv) {
-	definingRectangles = !definingRectangles;
+	_definingRectangles = !_definingRectangles;
 
-	if (definingRectangles)
+	if (_definingRectangles)
 		DebugPrintf("Mouse rectangles enabled\n");
 	else
 		DebugPrintf("Mouse rectangles disabled\n");
 
-	draggingRectangle = 0;
+	_draggingRectangle = 0;
 	return true;
 }
 
@@ -297,29 +324,29 @@ bool Debugger::Cmd_Clear(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_DebugOn(int argc, const char **argv) {
-	displayDebugText = true;
-	displayWalkGrid = true;
-	displayMouseMarker = true;
-	displayPlayerMarker = true;
-	displayTextNumbers = true;
+	_displayDebugText = true;
+	_displayWalkGrid = true;
+	_displayMouseMarker = true;
+	_displayPlayerMarker = true;
+	_displayTextNumbers = true;
 	DebugPrintf("Enabled all on-screen debug info\n");
 	return true;
 }
 
 bool Debugger::Cmd_DebugOff(int argc, const char **argv) {
-	displayDebugText = false;
-	displayWalkGrid = false;
-	displayMouseMarker = false;
-	displayPlayerMarker = false;
-	displayTextNumbers = false;
+	_displayDebugText = false;
+	_displayWalkGrid = false;
+	_displayMouseMarker = false;
+	_displayPlayerMarker = false;
+	_displayTextNumbers = false;
 	DebugPrintf("Disabled all on-screen debug info\n");
 	return true;
 }
 
 bool Debugger::Cmd_SaveRest(int argc, const char **argv) {
-	testingSnR = !testingSnR;
+	_testingSnR = !_testingSnR;
 
-	if (testingSnR)
+	if (_testingSnR)
 		DebugPrintf("Enabled S&R logic_script stability checking\n");
 	else
 		DebugPrintf("Disabled S&R logic_script stability checking\n");
@@ -440,24 +467,24 @@ bool Debugger::Cmd_BltFxOff(int argc, const char **argv) {
 
 bool Debugger::Cmd_TimeOn(int argc, const char **argv) {
 	if (argc == 2)
-		startTime = SVM_timeGetTime() - atoi(argv[1]) * 1000;
-	else if (startTime == 0)
-		startTime = SVM_timeGetTime();
-	displayTime = true;
+		_startTime = SVM_timeGetTime() - atoi(argv[1]) * 1000;
+	else if (_startTime == 0)
+		_startTime = SVM_timeGetTime();
+	_displayTime = true;
 	DebugPrintf("Timer display on\n");
 	return true;
 }
 
 bool Debugger::Cmd_TimeOff(int argc, const char **argv) {
-	displayTime = false;
+	_displayTime = false;
 	DebugPrintf("Timer display off\n");
 	return true;
 }
 
 bool Debugger::Cmd_Text(int argc, const char **argv) {
-	displayTextNumbers = !displayTextNumbers;
+	_displayTextNumbers = !_displayTextNumbers;
 
-	if (displayTextNumbers)
+	if (_displayTextNumbers)
 		DebugPrintf("Text numbers on\n");
 	else
 		DebugPrintf("Text numbers off\n");
@@ -479,14 +506,14 @@ bool Debugger::Cmd_ShowVar(int argc, const char **argv) {
 	// search for a spare slot in the watch-list, but also watch out for
 	// this variable already being in the list
 
-	while (showVarNo < MAX_SHOWVARS && showVar[showVarNo] != 0 && showVar[showVarNo] != varNo)
+	while (showVarNo < MAX_SHOWVARS && _showVar[showVarNo] != 0 && _showVar[showVarNo] != varNo)
 		showVarNo++;
 
 	// if we've found a spare slot or the variable's already there
 	if (showVarNo < MAX_SHOWVARS) {
-		if (showVar[showVarNo] == 0) {
+		if (_showVar[showVarNo] == 0) {
 			// empty slot - add it to the list at this slot
-			showVar[showVarNo] = varNo;
+			_showVar[showVarNo] = varNo;
 			DebugPrintf("var(%d) added to the watch-list\n", varNo);
 		} else
 			DebugPrintf("var(%d) already in the watch-list!\n", varNo);
@@ -508,12 +535,12 @@ bool Debugger::Cmd_HideVar(int argc, const char **argv) {
 	varNo = atoi(argv[1]);
 	
 	// search for 'varNo' in the watch-list
-	while (showVarNo < MAX_SHOWVARS && showVar[showVarNo] != varNo)
+	while (showVarNo < MAX_SHOWVARS && _showVar[showVarNo] != varNo)
 		showVarNo++;
 
 	if (showVarNo < MAX_SHOWVARS) {
 		// We've found 'varNo' in the list - clear this slot
-		showVar[showVarNo] = 0;
+		_showVar[showVarNo] = 0;
 		DebugPrintf("var(%d) removed from watch-list\n", varNo);
 	} else
 		DebugPrintf("Sorry - can't find var(%d) in the list\n", varNo);
@@ -588,7 +615,7 @@ bool Debugger::Cmd_AnimTest(int argc, const char **argv) {
 	Con_start(32);
 
 	// Same as typing "VAR 912 <value>" at the console
-	Var_set(912, atoi(argv[1]));
+	varSet(912, atoi(argv[1]));
 
 	DebugPrintf("Setting flag 'system_testing_anims'\n");
 	return true;
@@ -604,9 +631,9 @@ bool Debugger::Cmd_TextTest(int argc, const char **argv) {
 	Con_start(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
-	Var_set(1230, atoi(argv[1]));
+	varSet(1230, atoi(argv[1]));
 
-	displayTextNumbers = true;
+	_displayTextNumbers = true;
 
 	DebugPrintf("Setting flag 'system_testing_text'\n");
 	DebugPrintf("Text numbers on\n");
@@ -623,12 +650,12 @@ bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 	Con_start(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
-	Var_set(1230, atoi(argv[1]));
+	varSet(1230, atoi(argv[1]));
 
 	// Same as typing "VAR 1264 <value>" at the console
-	Var_set(1264, atoi(argv[2]));
+	varSet(1264, atoi(argv[2]));
 
-	displayTextNumbers = true;
+	_displayTextNumbers = true;
 
 	DebugPrintf("Setting flag 'system_testing_text'\n");
 	DebugPrintf("Setting flag 'system_test_line_no'\n");
@@ -640,9 +667,9 @@ bool Debugger::Cmd_Grab(int argc, const char **argv) {
 	DebugPrintf("FIXME: Continuous screen-grabbing not implemented\n");
 
 #if 0
-	grabbingSequences = !grabbingSequences;
+	g_sword2->_grabbingSequences = !g_sword2->_grabbingSequences;
 
-	if (grabbingSequences)
+	if (g_sword2->_grabbingSequences)
 		DebugPrintf("PCX-grabbing enabled\n");
 	else
 		DebugPrintf("PCX-grabbing disabled\n");
@@ -655,9 +682,9 @@ bool Debugger::Cmd_Events(int argc, const char **argv) {
 	DebugPrintf("EVENT LIST:\n");
 
 	for (uint32 i = 0; i < MAX_events; i++) {
-		if (event_list[i].id) {
-			uint32 target = event_list[i].id;
-			uint32 script = event_list[i].interact_id;
+		if (g_sword2->_eventList[i].id) {
+			uint32 target = g_sword2->_eventList[i].id;
+			uint32 script = g_sword2->_eventList[i].interact_id;
 
 			DebugPrintf("slot %d: id = %s (%d)\n", i, FetchObjectName(target), target);
 			DebugPrintf("         script = %s (%d) pos %d\n", FetchObjectName(script / 65536), script / 65536, script % 65536);
@@ -668,9 +695,9 @@ bool Debugger::Cmd_Events(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Sfx(int argc, const char **argv) {
-	wantSfxDebug = !wantSfxDebug;
+	g_sword2->_wantSfxDebug = !g_sword2->_wantSfxDebug;
 
-	if (wantSfxDebug)
+	if (g_sword2->_wantSfxDebug)
 		DebugPrintf("SFX logging activated\n");
 	else
 		DebugPrintf("SFX logging deactivated\n");
