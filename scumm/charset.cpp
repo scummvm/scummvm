@@ -1213,7 +1213,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->_charsetColorMap[1] = _color;
 
-	int charUnk = *_fontPtr;
+	int type = *_fontPtr;
 	if (is2byte) {
 		_dropShadow = true;
 		charPtr = _vm->get2byteCharPtr(chr);
@@ -1312,19 +1312,20 @@ void CharsetRendererClassic::printChar(int chr) {
 		drawTop = _top - _vm->_screenTop;
 	}
 
-	if ((_vm->_heversion >= 71 && charUnk >= 8) || (_vm->_heversion >= 90 && charUnk == 0)) {
-		Common::Rect clip, src, dst;
-
-		clip.top = clip.left = 0;
-		clip.right = vs->w - 1;
-		clip.bottom = vs->h - 1;
+	if ((_vm->_heversion >= 71 && type >= 8) || (_vm->_heversion >= 90 && type == 0)) {
+		Common::Rect src, dst;
 
 		dst.left = _left;
 		dst.top = _top;
 		dst.right = dst.left + width;
 		dst.bottom = dst.top + height;
 
-		dst.clip(clip);
+		if (dst.left < 0)
+			dst.left = 0;
+
+		if (dst.top < 0)
+			dst.top = 0;
+
 		if ((dst.left >= dst.right) || (dst.top >= dst.bottom))
 			return;
 
