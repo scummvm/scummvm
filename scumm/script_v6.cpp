@@ -2537,13 +2537,9 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			_smushFrameRate = args[1];
 			break;
 		case 16:
-		case 17:{
-			byte buf_input[300];
-			const byte *message = getStringAddressVar(VAR_STRING2DRAW);
-
-			addMessageToStack(message, buf_input, sizeof(buf_input));
-			enqueueText(buf_input, args[3], args[4], args[2], args[1], true);
-			break;}
+		case 17:
+			enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], true);
+			break;
 		case 20:
 			// it's used for turn on/off 'RadioChatter' effect for voice in the dig, but i's not needed
 			break;
@@ -3152,22 +3148,8 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
-		switch (m) {
-		case 0:
-			actorTalk(_scriptPointer);
-			break;
-		case 1:
-			drawString(1, _scriptPointer);
-			break;
-		case 2:
-			unkMessage1(_scriptPointer);
-			break;
-		case 3:
-			unkMessage2(_scriptPointer);
-			break;
-		}
+		printString(m, _scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
-
 		break;
 	case 0xFE:
 		_string[m].loadDefault();

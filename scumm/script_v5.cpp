@@ -2608,7 +2608,6 @@ int ScummEngine_v5::getWordVararg(int *ptr) {
 
 void ScummEngine_v5::decodeParseString() {
 	int textSlot;
-	const byte *msg;
 
 	switch (_actorToPrintStrFor) {
 	case 252:
@@ -2691,23 +2690,9 @@ void ScummEngine_v5::decodeParseString() {
 			}
 			break;
 		case 15:	// SO_TEXTSTRING
-			msg = _scriptPointer;
+			printString(textSlot, _scriptPointer);
 			_scriptPointer += resStrLen(_scriptPointer) + 1;
 
-			switch (textSlot) {
-			case 0:
-				actorTalk(msg);
-				break;
-			case 1:
-				drawString(1, msg);
-				break;
-			case 2:
-				unkMessage1(msg);
-				break;
-			case 3:
-				unkMessage2(msg);
-				break;
-			}
 
  			// In SCUMM V1-V3, there were no 'default' values for the text slot
  			// values. Hence to achieve correct behaviour, we have to keep the

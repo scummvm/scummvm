@@ -567,7 +567,7 @@ void ScummEngine_v6he::swapObjects(int object1, int object2) {
 	stopObjectScript(object1);
 	stopObjectScript(object2);
 
-	struct ObjectData tmpOd;
+	ObjectData tmpOd;
 
 	memcpy(&tmpOd, &_objs[idx1], sizeof(tmpOd));
 	memcpy(&_objs[idx1], &_objs[idx2], sizeof(tmpOd));
@@ -1150,6 +1150,8 @@ void ScummEngine_v6he::o6_soundOps() {
 		// See also o6_startSound().
 		_sound->setOverrideFreq(arg);
 		break;
+	default:
+		error("o6_soundOps: default case 0x%x", subOp);
 	}
 }
 
@@ -1171,19 +1173,7 @@ void ScummEngine_v6he::o6_seekFilePos() {
 	offset = pop();
 	slot = pop();
 
-	switch (mode) {
-	case 1:
-		seekFilePos(slot, offset, 0);
-		break;
-	case 2:
-		seekFilePos(slot, offset, 1);
-		break;
-	case 3:
-		seekFilePos(slot, offset, 2);
-		break;
-	default:
-		break;
-	}
+	seekFilePos(slot, offset, mode - 1);
 }
 
 void ScummEngine_v6he::seekFilePos(int slot, int offset, int mode) {
@@ -1200,6 +1190,8 @@ void ScummEngine_v6he::seekFilePos(int slot, int offset, int mode) {
 	case 2:
 		_hFileTable[slot].seek(offset, SEEK_END);
 		break;
+	default:
+		error("seekFilePos: default case 0x%x", mode);
 	}
 }
 
@@ -1299,22 +1291,8 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
-		switch (m) {
-		case 0:
-			actorTalk(_scriptPointer);
-			break;
-		case 1:
-			drawString(1, _scriptPointer);
-			break;
-		case 2:
-			unkMessage1(_scriptPointer);
-			break;
-		case 3:
-			unkMessage2(_scriptPointer);
-			break;
-		}
+		printString(m, _scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
-
 		break;
 	case 0xF9:
 		color = pop();

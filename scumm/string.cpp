@@ -34,6 +34,24 @@
 
 namespace Scumm {
 
+void ScummEngine::printString(int m, const byte *msg) {
+	switch (m) {
+	case 0:
+		actorTalk(msg);
+		break;
+	case 1:
+		drawString(1, msg);
+		break;
+	case 2:
+		unkMessage1(msg);
+		break;
+	case 3:
+		unkMessage2(msg);
+		break;
+	}
+}
+
+
 void ScummEngine::unkMessage1(const byte *msg) {
 	byte buffer[100];
 	addMessageToStack(msg, buffer, sizeof(buffer));
@@ -660,8 +678,8 @@ void ScummEngine::initCharset(int charsetno) {
 void ScummEngine::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
 	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
-	
-	strcpy((char *)bt.text, (const char *)text);
+
+	addMessageToStack(text, bt.text, sizeof(bt.text));
 	bt.xpos = x;
 	bt.ypos = y;
 	bt.color = color;

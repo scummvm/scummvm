@@ -1162,6 +1162,8 @@ protected:
 
 	void initCharset(int charset);
 
+	void printString(int m, const byte *msg);
+
 	void CHARSET_1();
 	void drawString(int a, const byte *msg);
 	void unkMessage1(const byte *msg);
