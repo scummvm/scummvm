@@ -267,7 +267,7 @@ static void runGame(GameDetector &detector, OSystem *system) {
 
 	// Free up memory
 	delete engine;
-};
+}
 
 #ifndef _WIN32_WCE
 extern "C" int main(int argc, char *argv[]) {
