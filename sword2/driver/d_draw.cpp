@@ -554,7 +554,6 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 		EraseBackBuffer();
 
-/*
 		// HACK: Draw instructions
 		//
 		// I'm using the the menu area, because that's unlikely to be
@@ -573,13 +572,13 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		msgSprite.w = frame->width;
 		msgSprite.h = frame->height;
 		msgSprite.h = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
+		msgSprite.type = RDSPR_NOCOMPRESSION;
 		msgSprite.data = data->ad + sizeof(_frameHeader);
 
 		CreateSurface(&msgSprite, &msgSurface);
 		DrawSurface(&msgSprite, msgSurface);
 		DeleteSurface(msgSurface);
 		Free_mem(data);
-*/
 
 		// In case the cutscene has a long lead-in, start just before
 		// the first line of text.
