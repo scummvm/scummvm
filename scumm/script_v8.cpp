@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "akos.h"
 #include "charset.h"
 #include "intern.h"
 #include "sound.h"
@@ -1469,52 +1470,21 @@ void Scumm_v8::o8_kernelGetFunctions() {
 	}
 	case 0xD9: {   // actorHit - used, for example, to detect ship collision
 	               // during ship-to-ship combat.
-#if 0
 		Actor *a = derefActor(args[1], "actorHit");
-		int x = args[2];
-		int y = args[3];
-		
-		// TODO: this should perform a collision test, i.e. check if
-		// point (x,y) lies on the given actor or not.
-		// To achieve this, one needs to consider the current costume
-		// etc. What the original code seems to do is to draw the
-		// actor/costume (but maybe in a custom buffer?), and let the
-		// draw code perform the hit test.
-		// But I am not 100% clear on this. For example, it probably
-		// shouldn't touch the gfx usage bits, and some other things...
-		// So maybe we need dedicated code for this after all?
+		AkosRenderer *ar = (AkosRenderer *) _costumeRenderer;
+		bool old_need_redraw = a->needRedraw;
 
-		warning("actorHit(%d, %d, %d) NYI", args[1], x, y);
+		ar->_actorHitX = args[2];
+		ar->_actorHitY = args[3] + _screenTop;
+		ar->_actorHitMode = true;
+		ar->_actorHitResult = false;
 
-#endif
+		a->needRedraw = true;
+		a->drawActorCostume();
+		a->needRedraw = old_need_redraw;
 
-		push(1);	// FIXME - for now always return 1
-/*		
-		// Rough sketch, thanks to DanielFox and ludde
-		struct SomeStruct {
-			int RoomHeight, RoomWidth;
-			byte *ScreenBuffer;
-		}
-
-		dword_4FC150 = args[3];			// X 
-		dword_4FC154 = args[2];			// Y
-		Actor &a = pActors[args[1]];	
-		Point rel = GetScreenCoordsRelativeToRoom(), pt, scale;
-		SomeStruct tmp;
-
-		pt.x = a.x + a.field_18 - rel.x;	// 18/1C are some kind of 
-		pt.y = a.y + a.field_1C - rel.y;	// X/Y offsets...
-		scale.x = a.scale_x;
-		scale.y = a.scale_y;
-
-		dword_4FC148 = 2;
-		graphics_getBuffer1Info(&tmp);		// Some kind of get_virtscreen?
-		chore_drawActor(tmp, actor_nr, &pt, &scale);
-
-		if (dword_4FC148 != 1)			// Guess this is changed by
-			dword_4FC148 = 0;		// chore_drawActor
-		push(dword_4FC148);
-*/
+		ar->_actorHitMode = false;
+		push(ar->_actorHitResult);
 		break;
 	}
 	case 0xDA:		// lipSyncWidth

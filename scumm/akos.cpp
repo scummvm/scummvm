@@ -353,22 +353,29 @@ void AkosRenderer::codec1_genericDecode() {
 
 		do {
 			if (*scaleytab++ < _scaleY) {
-				masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
-
-				if (color && y < _outheight && !masked && !skip_column) {
-					pcolor = palette[color];
-					if (_shadow_mode == 1) {
-						if (pcolor == 13)
-							pcolor = _shadow_table[*dst];
-					} else if (_shadow_mode == 2) {
-						warning("codec1_spec2"); // TODO
-					} else if (_shadow_mode == 3) {
-						if (pcolor < 8) {
-							pcolor = (pcolor << 8) + *dst;
-							pcolor = _shadow_table[pcolor];
-						}
+				if (_actorHitMode) {
+					if (color && (int16) y == _actorHitY && v1.x == _actorHitX) {
+						_actorHitResult = true;
+						return;
 					}
-					*dst = pcolor;
+				} else {
+					masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
+
+					if (color && y < _outheight && !masked && !skip_column) {
+						pcolor = palette[color];
+						if (_shadow_mode == 1) {
+							if (pcolor == 13)	
+								pcolor = _shadow_table[*dst];
+						} else if (_shadow_mode == 2) {
+							warning("codec1_spec2"); // TODO
+						} else if (_shadow_mode == 3) {
+							if (pcolor < 8) {
+								pcolor = (pcolor << 8) + *dst;
+								pcolor = _shadow_table[pcolor];
+							}
+						}
+						*dst = pcolor;
+					}
 				}
 				dst += _outwidth;
 				mask += _numStrips;
@@ -644,7 +651,11 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.skip_width = _width;
 	v1.scaleXstep = _mirror ? 1 : -1;
 
-	_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, _dirty_id);
+	if (_actorHitMode) {
+		if (_actorHitX < x_left || _actorHitX >= x_right || _actorHitY < y_top || _actorHitY >= y_bottom)
+			return 0;
+	} else
+		_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, _dirty_id);
 
 	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
@@ -716,6 +727,11 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh;
+
+	if (_actorHitMode) {
+		warning("codec5: _actorHitMode not yet implemented");
+		return 0;
+	}
 
 	if (!_mirror) {
 		clip_left = (_actorX - xmoveCur - _width) + 1;
@@ -923,6 +939,11 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh;
 	int32 skip_x, skip_y, cur_x, cur_y;
 	const byte transparency = (_vm->_features & GF_HUMONGOUS) ? 0 : 255;
+
+	if (_actorHitMode) {
+		warning("codec16: _actorHitMode not yet implemented");
+		return 0;
+	}
 	
 	if (!_mirror) {
 		clip_left = (_actorX - xmoveCur - _width) + 1;

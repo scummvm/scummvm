@@ -65,7 +65,12 @@ public:
 		aksq = 0;
 		akof = 0;
 		akcd = 0;
+		_actorHitMode = false;
 	}
+
+	bool _actorHitMode;
+	int16 _actorHitX, _actorHitY;
+	bool _actorHitResult;
 
 	void setPalette(byte *palette);
 	void setFacing(Actor *a);
