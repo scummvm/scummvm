@@ -119,11 +119,11 @@ uint32 File::read(void *ptr, uint32 size) {
 
 	if (_handle == NULL) {
 		error("File is not open!");
-		return;
+		return 0;
 	}
 
 	if (size == 0)
-		return;
+		return 0;
 
 	if ((uint32)fread(ptr2, 1, size, _handle) != size) {
 		clearerr(_handle);

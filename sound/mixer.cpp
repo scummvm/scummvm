@@ -873,7 +873,7 @@ void SoundMixer::ChannelMP3CDMusic::mix(int16 * data, uint len) {
 
 				if (!_stream.next_frame) {
 					memset(_ptr, 0, _bufferSize + MAD_BUFFER_GUARD);
-					_size = fread(_ptr, 1, _bufferSize, _file);
+					_size = _file->read(_ptr, _bufferSize);
 					not_decoded = 0;
 				} else {
 					not_decoded = _stream.bufend - _stream.next_frame;
