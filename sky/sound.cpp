@@ -1067,6 +1067,7 @@ int SkySound::playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle 
 void SkySound::loadSection(uint8 pSection) {
 
 	fnStopFx();
+	_mixer->stopAll();
 
 	if (_soundData) free(_soundData);
 	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE, NULL);

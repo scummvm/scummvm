@@ -2215,7 +2215,7 @@ bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60301);
 
-	_currentSection = 0xFF; // force music-, sound- and gridreload
+	//_currentSection = 0xFF; // force music-, sound- and gridreload
 
 	return true;
 }
@@ -2231,13 +2231,14 @@ bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60302);
 
-	if (sectionNo != _currentSection) {
+	if ((sectionNo != _currentSection) || (SkyState::_systemVars.systemFlags & SF_GAME_RESTORED)) {
 		_currentSection = sectionNo;
 
 		sectionNo++;
 		_skyMusic->loadSection((byte)sectionNo);
 		_skySound->loadSection((byte)sectionNo);
 		_skyGrid->loadGrids();
+		SkyState::_systemVars.systemFlags &= ~SF_GAME_RESTORED;
 	}
 			
 	return true;

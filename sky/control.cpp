@@ -1447,6 +1447,7 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 	if (srcPos - srcBuf != (int32)size)
 		error("Restore failed! Savegame data = %d bytes. Expected size: %d", srcPos-srcBuf, size);
 
+	SkyState::_systemVars.systemFlags |= SF_GAME_RESTORED;
 	if (!SkyState::isDemo()) {
 		_skyLogic->fnLeaveSection(oldSection, 0, 0);
 		_skyLogic->fnEnterSection(SkyLogic::_scriptVariables[CUR_SECTION], 0, 0);
@@ -1457,7 +1458,6 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 		_skyMusic->startMusic((uint16)music);
 	_savedMouse = (uint16)mouseType;
 	SkyState::_systemVars.currentPalette = palette; // will be set when doControlPanel ends
-	SkyState::_systemVars.systemFlags |= SF_GAME_RESTORED; // what's that for?
 
 	return GAME_RESTORED;
 }
