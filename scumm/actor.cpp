@@ -1227,6 +1227,7 @@ void Actor::setActorCostume(int c) {
 	}
 
 
+	// V1 zak uses palette[] as a dynamic costume color array.
 	if (_vm->_version == 1)
 		return;
 
