@@ -3566,7 +3566,7 @@ void IMuseDriver::part_changed(Part *part, uint16 what) {
 		mc->modulationWheel (part->_modwheel);
 
 	if (what & pcPan)
-		mc->panPosition (part->_pan_eff);
+		mc->panPosition (part->_pan_eff + 0x40);
 
 	if (what & pcEffectLevel)
 		mc->effectLevel (part->_effect_level);
