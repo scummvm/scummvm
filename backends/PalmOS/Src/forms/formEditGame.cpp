@@ -122,7 +122,7 @@ static void EditGameFormSave(UInt16 index) {
 	newGameInfo.bootParam = CtlGetValue(cck2P);
 	newGameInfo.bootValue = StrAToI(FldGetTextPtr(fld5P));
 	newGameInfo.setPlatform = CtlGetValue(cck3P);
-	newGameInfo.subtitles = !(CtlGetValue(cck4P));
+	newGameInfo.subtitles = (CtlGetValue(cck4P));
 	newGameInfo.talkValue = StrAToI(FldGetTextPtr(fld6P));
 	newGameInfo.talkSpeed = CtlGetValue(cck5P);
 
@@ -209,7 +209,7 @@ static void EditGameFormInit(UInt16 index) {
 		CtlSetValue((ControlType *)GetObjectPtr(EditGameLoadSlotCheckbox), game->autoLoad);
 		CtlSetValue((ControlType *)GetObjectPtr(EditGameStartRoomCheckbox), game->bootParam);
 		CtlSetValue((ControlType *)GetObjectPtr(EditGameAmigaCheckbox), game->setPlatform);
-		CtlSetValue((ControlType *)GetObjectPtr(EditGameSubtitlesCheckbox), !game->subtitles);
+		CtlSetValue((ControlType *)GetObjectPtr(EditGameSubtitlesCheckbox), game->subtitles);
 		CtlSetValue((ControlType *)GetObjectPtr(EditGameTalkSpeedCheckbox), game->talkSpeed);
 		
 		MemHandleUnlock(recordH);
