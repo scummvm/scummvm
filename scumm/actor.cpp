@@ -448,14 +448,13 @@ void Actor::startAnimActor(int f) {
 			break;
 		}
 
-		frame = f;
-
 		if (costume != 0) {
 			animProgress = 0;
 			needRedraw = true;
 			if (f == initFrame)
 				cost.reset();
 			_vm->akos_decodeData(this, f, (uint) - 1);
+			frame = f;
 		}
 	} else {
 		switch (f) {
@@ -477,7 +476,6 @@ void Actor::startAnimActor(int f) {
 		}
 
 		assert(f != 0x3E);
-		frame = f;
 
 		if (isInCurrentRoom() && costume != 0) {
 			animProgress = 0;
@@ -491,6 +489,7 @@ void Actor::startAnimActor(int f) {
 				_vm->akos_decodeData(this, f, (uint) - 1);
 			else
 				_vm->cost_decodeData(this, f, (uint) - 1);
+			frame = f;
 		}
 	}
 }
