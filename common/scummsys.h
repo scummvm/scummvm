@@ -319,31 +319,31 @@
 
 	#if defined(SCUMM_NEED_ALIGNMENT)
 		FORCEINLINE uint READ_LE_UINT16(const void *ptr) {
-			return (((byte *)ptr)[1] << 8)|((byte *)ptr)[0];
+			return (((const byte *)ptr)[1] << 8)|((const byte *)ptr)[0];
 		}
 	#else
 		FORCEINLINE uint READ_LE_UINT16(const void *ptr) {
-			return *(uint16 *)(ptr);
+			return *(const uint16 *)(ptr);
 		}
 	#endif
 
 	FORCEINLINE uint READ_BE_UINT16(const void *ptr) {
-		return (((byte *)ptr)[0] << 8)|((byte *)ptr)[1];
+		return (((const byte *)ptr)[0] << 8)|((const byte *)ptr)[1];
 	}
 
 	#if defined(SCUMM_NEED_ALIGNMENT)
 		FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
-			byte *b = (byte *)ptr;
+			const byte *b = (const byte *)ptr;
 			return (b[3] << 24) + (b[2] <<16) + (b[1] << 8) + (b[0]);
 		}
 	#else
 		FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
-			return *(uint32 *)(ptr);
+			return *(const uint32 *)(ptr);
 		}
 	#endif
 	
 	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
-		byte *b = (byte *)ptr;
+		const byte *b = (const byte *)ptr;
 		return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + (b[3]);
 	}
 
