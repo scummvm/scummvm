@@ -70,8 +70,10 @@ resource 'MENU'(999) {
 		"Zak McKracken and the Alien Mindbenders (256)", noIcon, noKey, noMark, plain,
 		"Loom", noIcon, noKey, noMark, plain,
 		"Monkey Island 1 (EGA)", noIcon, noKey, noMark, plain,
+		"Monkey Island 1 (256 color Floppy version)", noIcon, noKey, noMark, plain,
 		"Loom (256 color CD version)", noIcon, noKey, noMark, plain,
 		"Monkey Island 1", noIcon, noKey, noMark, plain,
+		"Monkey Island 1 (alt)", noIcon, noKey, noMark, plain,
 		"Monkey Island 2: LeChuck's revenge", noIcon, noKey, noMark, plain,
 		"Indiana Jones 4 and the Fate of Atlantis", noIcon, noKey, noMark, plain,
 		"Indiana Jones 4 and the Fate of Atlantis (Demo)", noIcon, noKey, noMark, plain,
@@ -81,7 +83,11 @@ resource 'MENU'(999) {
 		"Sam & Max (Demo)", noIcon, noKey, noMark, plain,
 		"Full Throttle", noIcon, noKey, noMark, plain,
 		"The Dig", noIcon, noKey, noMark, plain,
-		"The Curse of Monkey Island", noIcon, noKey, noMark, plain
+		"The Curse of Monkey Island", noIcon, noKey, noMark, plain,
+		"-", noIcon, noKey, noMark, plain,
+		"Simon the Sorcerer 1 (DOS)", noIcon, noKey, noMark, plain,
+		"Simon the Sorcerer 1 (Windows)", noIcon, noKey, noMark, plain,
+		"Simon the Sorcerer 2 (Windows)", noIcon, noKey, noMark, plain
 	}		
 };
 
