@@ -454,7 +454,6 @@ public:
 	int terminate2();
 	int save_or_load(Serializer *ser, ScummEngine *scumm);
 	int set_music_volume(uint vol);
-	int get_music_volume();
 	int setMasterVolume(uint vol);
 	bool startSound(int sound);
 	int stopSound(int sound);
