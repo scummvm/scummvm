@@ -456,7 +456,8 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	/*int32 unk2 =*/ b.getWord();
 
 	const char * str;
-	char * string = NULL;
+	char *string = NULL;
+	char *string2 = NULL;
 	if (b.getType() == TYPE_TEXT) {
 		string = (char*)malloc(b.getSize() - 16);
 		str = string;
@@ -482,7 +483,9 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	}
 
 	if (g_scumm->_gameId == GID_CMI) {
-		while(*str++ != '/'); // Skip CMI translations stuff
+		g_scumm->translateText((byte*)str - 1, g_scumm->_transText);
+		while(*str++ != '/');
+		string2 = (char*)g_scumm->_transText;
 	}
 
 	while(str[0] == '^') {
@@ -510,6 +513,16 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 		_curBuffer = _renderer->lockFrame(_frame);
 	}
 
+	if (g_scumm->_gameId != GID_CMI) {
+		string2 = (char*)str;
+	}
+	if (g_scumm->_gameId == GID_CMI) {
+		if (string2[0] == 0) {
+			string2 = (char*)str;
+		}
+	}
+
+
 	// flags:
 	// bit 0 - center				1
 	// bit 1 - not used			2
@@ -517,28 +530,28 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	// bit 3 - wrap around	8
 	switch (flags) {
 		case 0: 
-			fr->drawStringAbsolute(str, _curBuffer, _frameSize, pos_x, pos_y);
+			fr->drawStringAbsolute(string2, _curBuffer, _frameSize, pos_x, pos_y);
 			break;
 		case 1:
-			fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
+			fr->drawStringCentered(string2, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
 			break;
 		case 4:
-			fr->drawStringAbsolute(str, _curBuffer, _frameSize, pos_x, pos_y);
+			fr->drawStringAbsolute(string2, _curBuffer, _frameSize, pos_x, pos_y);
 			break;
 		case 5:
-			fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
+			fr->drawStringCentered(string2, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
 			break;
 		case 8:
-			fr->drawStringWrap(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
+			fr->drawStringWrap(string2, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
 			break;
 		case 9:
-			fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
+			fr->drawStringCentered(string2, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
 			break;
 		case 12:
-			fr->drawStringWrap(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
+			fr->drawStringWrap(string2, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
 			break;
 		case 13:
-			fr->drawStringWrapCentered(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
+			fr->drawStringWrapCentered(string2, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
 			break;
 		default:
 			warning("SmushPlayer::handleTextResource. Not handled flags: %d\n", flags);

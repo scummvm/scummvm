@@ -815,11 +815,19 @@ void Scumm::initCharset(int charsetno)
 void Scumm::loadLanguageBundle() {
 	File file;
 
-	file.open("language.bnd", _gameDataPath);
+	if (_gameId == GID_DIG) {
+		file.open("language.bnd", _gameDataPath);
+	} else if (_gameId == GID_CMI) {
+		file.open("language.tab", _gameDataPath);
+	} else {
+		return;
+	}
+
 	if(file.isOpen() == false) {
 		_existLanguageFile = false;
 		return;
 	}
+
 	_languageBuffer = (char*)malloc(file.size());
 	file.read(_languageBuffer, file.size());
 	file.close();
@@ -828,91 +836,120 @@ void Scumm::loadLanguageBundle() {
 
 void Scumm::translateText(byte *text, byte *trans_buff) {
 	if ((_existLanguageFile == true) && (text[0] == '/') && (text[1] != ' ')) {
-		char name[20], tmp[20], tmp2[20], num_s[20];
+		char name[20], tmp[200], tmp2[20], num_s[20], number[4];
 		int32 num, l, j, k, r, pos;
 		char enc;
 
-		// copy name from text /..../
-		for (l = 0; (l < 20) && (*(text + l + 1) != '.'); l++) {
-			name[l] = *(text + l + 1);
-		}
-		name[l] = 0;
-		l++;
-
-		// get number from text /..../
-		char number[4];
-		number[0] = *(text + l + 1);
-		number[1] = *(text + l + 2);
-		number[2] = *(text + l + 3);
-		number[3] = 0;
-		num = atol(number);
-		sprintf(num_s, "%d", num);
-
-		char * buf = _languageBuffer;
+		char *buf = _languageBuffer;
 		pos = 0;
-		// determine is file encoded
-		if (*buf == 'e') {
-			enc = 0x13;
-			pos += 3;
-		} else {
-			enc = 0;
-		}
 
-		// skip translation if flag 'h' exist
-		if (*(buf + pos) == 'h') {
-			pos += 3;
-			byte *pointer = (byte *)strchr((char*)text + 1, '/');
-			if (pointer != NULL)
-				memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
-			else
-				trans_buff[0] = '\0';
-			return;
-		}
-
-		for(;;) {
-			// search char @
-			if (*(buf + pos++) == '@') {
-				// copy name after @ to endline
+		if (_gameId == GID_CMI) {
+			// copy name from text /..../
+			for (l = 0; (l < 20) && (text[l + 1] != '/'); l++) {
+				name[l] = text[l + 1];
+			}
+			name[l] = 0;
+			for (;;) {
+				if(buf[pos] == 0) {
+					trans_buff[0] = '\0';
+					return;
+				}
 				l = 0;
 				do {
-					tmp[l++] = *(buf + pos++);
-				} while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a) && (l < 19));
+					tmp[l++] = buf[pos++];
+				} while((buf[pos] != 0) && (buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a) && (l < 199));
 				tmp[l] = 0;
 				pos += 2;
-				// compare 'name' with above name
-				if (strcmp(tmp, name) == 0) {
-					// get number lines of 'name' after '#'
+				l = 0;
+				do {
+					tmp2[l] = tmp[l];
+					l++;
+				} while((tmp[l] != 0) && (tmp[l] != 9) && (l < 19));
+				tmp2[l] = 0;
+				if (stricmp(tmp2, name) == 0) {
+					strcpy((char*)trans_buff, &tmp[l + 1]);
+					return;
+				}
+			}
+		} else if (_gameId == GID_DIG) {
+			// copy name from text /..../
+			for (l = 0; (l < 20) && (text[l + 1] != '.'); l++) {
+				name[l] = text[l + 1];
+			}
+			name[l] = 0;
+			l++;
+			// get number from text /..../
+			number[0] = text[l + 1];
+			number[1] = text[l + 2];
+			number[2] = text[l + 3];
+			number[3] = 0;
+			num = atol(number);
+			sprintf(num_s, "%d", num);
+
+			// determine is file encoded
+			if (buf[pos] == 'e') {
+				enc = 0x13;
+				pos += 3;
+			} else {
+				enc = 0;
+			}
+
+			// skip translation if flag 'h' exist
+			if (buf[pos] == 'h') {
+				pos += 3;
+				byte *pointer = (byte *)strchr((char*)text + 1, '/');
+				if (pointer != NULL)
+					memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
+				else
+					trans_buff[0] = '\0';
+				return;
+			}
+
+			for(;;) {
+				// search char @
+				if (buf[pos++] == '@') {
+					// copy name after @ to endline
 					l = 0;
-					if (*(buf + pos++) == '#') {
-						do {
-							tmp[l++] = *(buf + pos++);
-						} while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a) && (l < 19));
-						tmp[l] = 0;
-						pos += 2;
-						l = atol(tmp);
-						// get number of line
-						for(r = 0; r < l; r++) {
-							j = 0;
+					do {
+						tmp[l++] = buf[pos++];
+					} while((buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a) && (l < 19));
+					tmp[l] = 0;
+					pos += 2;
+					// compare 'name' with above name
+					if (strcmp(tmp, name) == 0) {
+						// get number lines of 'name' after '#'
+						l = 0;
+						if (buf[pos++] == '#') {
 							do {
-								tmp2[j++] = *(buf + pos++);
-							} while(*(buf + pos) != '/');
-							tmp2[j] = 0;
-							// compare if is right line
-							if (strcmp(tmp2, num_s) == 0) {
-								k = 0;
-								pos++;
-								// copy translated text to tran_buffer
-								do {
-									*(trans_buff + k++) = (*(buf + pos++)) ^ enc;
-								} while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a));
-								*(trans_buff + k) = 0;
-								return;
-							}
-							// goto next line
-							do { 
-								pos++;
-							}	while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a));
+								tmp[l++] = buf[pos++];
+							} while((buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a) && (l < 19));
+							tmp[l] = 0;
 							pos += 2;
+							l = atol(tmp);
+							// get number of line
+							for(r = 0; r < l; r++) {
+								j = 0;
+								do {
+									tmp2[j++] = buf[pos++];
+								} while(buf[pos] != '/');
+								tmp2[j] = 0;
+								// compare if is right line
+								if (strcmp(tmp2, num_s) == 0) {
+									k = 0;
+									pos++;
+									// copy translated text to tran_buffer
+									do {
+										trans_buff[k++] = (buf[pos++]) ^ enc;
+									} while((buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a));
+									trans_buff[k] = 0;
+									return;
+								}
+								// goto next line
+								do { 
+									pos++;
+								}	while((buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a));
+								pos += 2;
+							}
 						}
 					}
 				}
