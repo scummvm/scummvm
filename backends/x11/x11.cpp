@@ -458,7 +458,11 @@ bool OSystem_X11::set_sound_proc(SoundProc *proc, void *param, SoundFormat forma
 }
 
 void OSystem_X11::clear_sound_proc() {
-	// FIXME implement...
+	// TODO implement this...
+	// The sound_thread has to be stopped in a nice way. In particular,
+	// using pthread_kill would be a bad idea. Rather, use pthread_cancel,
+	// or maybe a global variable, to achieve this.
+	// This method shouldn't return until the sound thread really has stopped.
 }
 
 
@@ -755,7 +759,7 @@ void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_
 	cur_state.h = h;
 	cur_state.hot_x = hotspot_x;
 	cur_state.hot_y = hotspot_y;
-	_ms_buf = (byte *)buf;
+	_ms_buf = buf;
 
 	if (_mouse_state_changed == false) {
 		undraw_mouse();
@@ -778,11 +782,6 @@ void OSystem_X11::create_thread(ThreadProc *proc, void *param)
 {
 	pthread_t *thread = (pthread_t *) malloc(sizeof(pthread_t));
 	pthread_create(thread, NULL, (void *(*)(void *))proc, param);
-	/* if (pthread_create(thread, NULL, (void *(*)(void *))proc, param))
-		return NULL;
-	else
-		return thread;
-	*/
 }
 
 uint32 OSystem_X11::property(int param, Property *value)
