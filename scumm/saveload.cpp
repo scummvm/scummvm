@@ -176,7 +176,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 		else
 			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
-		if (_features & GF_AMIGA)
+		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
 			setupAmigaPalette();
 		else
 			setupEGAPalette();

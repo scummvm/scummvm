@@ -86,6 +86,8 @@ enum GameFeatures {
 	GF_FMTOWNS             = 1 << 16,
 	GF_FEW_LOCALS          = 1 << 17,
 	GF_NES                 = 1 << 18,
+	GF_ATARI_ST            = 1 << 19,
+	GF_MACINTOSH           = 1 << 20,
 
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };

@@ -234,6 +234,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	if (detector->_amiga)
 		detector->_game.features |= GF_AMIGA;
+	if (detector->_atari_st)
+		detector->_game.features |= GF_ATARI_ST;
+	if (detector->_macintosh) {
+		detector->_game.features |= GF_MACINTOSH;
+	}
 
 	switch (detector->_game.version) {
 	case 1:
@@ -943,7 +948,7 @@ void Scumm::scummInit() {
 			_roomPalette[i] = i;
 			_shadowPalette[i] = i;
 		}
-		if (_features & GF_AMIGA)
+		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
 			setupAmigaPalette();
 		else
 			setupEGAPalette();

@@ -174,6 +174,8 @@ GameDetector::GameDetector() {
 	_music_volume = kDefaultMusicVolume;
 	_sfx_volume = kDefaultSFXVolume;
 	_amiga = false;
+	_atari_st = false;
+	_macintosh = false;
 	_language = 0;
 
 #ifndef DISABLE_SCUMM
@@ -281,6 +283,8 @@ void GameDetector::updateconfig() {
 	const char *val;
 
 	_amiga = g_config->getBool("amiga", _amiga);
+	_atari_st = g_config->getBool("atari_st", _atari_st);
+	_macintosh = g_config->getBool("macintosh", _macintosh);
 
 	_save_slot = g_config->getInt("save_slot", _save_slot);
 
@@ -513,7 +517,13 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				} else
 					long_option_value = true;
 
-				if (!strcmp (s, "multi-midi")) {
+				if (!strcmp (s, "atari-st")) {
+					_atari_st = long_option_value;
+					g_config->setBool ("atari_st", _atari_st);
+				} else if (!strcmp (s, "macintosh")) {
+					_macintosh = long_option_value;
+					g_config->setBool ("macintosh", _macintosh);
+				} else if (!strcmp (s, "multi-midi")) {
 					_multi_midi = long_option_value;
 					g_config->setBool ("multi_midi", _multi_midi);
 				} else if (!strcmp (s, "native-mt32")) {

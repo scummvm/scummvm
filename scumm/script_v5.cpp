@@ -1057,7 +1057,7 @@ void Scumm_v5::o5_getActorX() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3)
+	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH))
 		a = getVarOrDirectByte(0x80);
 	else
 		a = getVarOrDirectWord(0x80);
@@ -1069,7 +1069,7 @@ void Scumm_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3) {
+	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH)) {
 		a = getVarOrDirectByte(0x80);
 
 		// WORKAROUND bug #636433 (can't get into Zeppelin) 
@@ -2496,7 +2496,7 @@ void Scumm_v5::o5_verbOps() {
 void Scumm_v5::o5_wait() {
 	const byte *oldaddr = _scriptPointer - 1;
 
-	if (_gameId == GID_INDY3) {
+	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH)) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();

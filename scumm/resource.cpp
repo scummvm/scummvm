@@ -1487,8 +1487,8 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		wa_size = _fileHandle.readUint16LE();
 		_fileHandle.seek(wa_size - 2, SEEK_CUR);
 
-		//FIXME AD resources don't exist in Atari ST and Mac versions
-		if (_midiDriver == MD_ADLIB) {
+		if (!(_features & GF_ATARI_ST || _features & GF_MACINTOSH)) {
+			warning("Loader");
 			ad_offs = _fileHandle.pos();
 			ad_size = _fileHandle.readUint16LE();
 		}

@@ -436,7 +436,7 @@ void Sound::playSound(int soundID) {
 
 	// Used in Amiga verisons of indy3ega and loom
 	// Used in Mac. version of indy3ega
-	if (((_scumm->_features & GF_OLD_BUNDLE) && (_scumm->_gameId == GID_INDY3)) || ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))) {
+	if (((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3)) || ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))) {
 		if (ptr[26] == 00) {
 			size = READ_BE_UINT16(ptr + 12);
 			rate = 3579545 / READ_BE_UINT16(ptr + 20);
