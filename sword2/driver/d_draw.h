@@ -193,6 +193,7 @@ public:
 	int32 setMenuIcon(uint8 menu, uint8 pocket, byte *icon);
 	void closeMenuImmediately(void);
 
+	void markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1);
 	void updateDisplay(bool redrawScene = true);
 	void setWindowName(const char *windowName);
 	void setNeedFullRedraw(void);

@@ -613,17 +613,7 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 	if (freeSprite)
 		free(sprite);
 
-	// Mark the approximate area of the sprite as "dirty", first generation
-
-	int16 gridX1 = rd.left / CELLWIDE;
-	int16 gridY1 = rd.top / CELLDEEP;
-	int16 gridX2 = (rd.right - 1) / CELLWIDE;
-	int16 gridY2 = (rd.bottom - 1) / CELLDEEP;
-
-	for (i = gridY1; i <= gridY2; i++)
-		for (j = gridX1; j <= gridX2; j++)
-			_dirtyGrid[i * _gridWide + j] = 2;
-	
+	markAsDirty(rd.left, rd.top, rd.right - 1, rd.bottom - 1);
 	return RD_OK;
 }
 

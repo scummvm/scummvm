@@ -338,8 +338,10 @@ void Graphics::plotPoint(uint16 x, uint16 y, uint8 colour) {
 	newx = x - _scrollX;
 	newy = y - _scrollY;
 
-	if (newx >= 0 && newx < RENDERWIDE && newy >= 0 && newy < RENDERDEEP)
+	if (newx >= 0 && newx < RENDERWIDE && newy >= 0 && newy < RENDERDEEP) {
 		buf[newy * RENDERWIDE + newx] = colour;
+		markAsDirty(newx, newy + 40, newx, newy + 40);
+	}
 }
 
 /**
@@ -366,17 +368,13 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 	x0 -= _scrollX;
 	y0 -= _scrollY;
 
-	// Lock the surface if we're rendering to the back buffer.
+	markAsDirty(MIN(x0, x1), MIN(y0, y1) + 40, MAX(x0, x1), MAX(y0, y1) + 40);
 
-	//Make sure we're going from left to right
+	// Make sure we're going from left to right
 
 	if (x1 < x0) {
-		x = x1;
-		x1 = x0;
-		x0 = x;
-		y = y1;
-		y1 = y0;
-		y0 = y;
+		SWAP(x0, x1);
+		SWAP(y0, y1);
 	}
 
 	dx = x1 - x0;
@@ -443,15 +441,11 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 			}
 		}
 	} else {
-		//OK, y is now going to be the single increment.
+		// OK, y is now going to be the single increment.
 		//	Ensure the line is going top to bottom
 		if (y1 < y0) {
-			x = x1;
-			x1 = x0;
-			x0 = x;
-			y = y1;
-			y1 = y0;
-			y0 = y;
+			SWAP(x0, x1);
+			SWAP(y0, y1);
 		}
 		dx = x1 - x0;
 		dy = y1 - y0;

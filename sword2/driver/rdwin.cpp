@@ -76,6 +76,21 @@ void Graphics::setNeedFullRedraw(void) {
 }
 
 /**
+ * Mark an area of the screen as dirty, first generation.
+ */
+
+void Graphics::markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1) {
+	int16 gridX0 = x0 / CELLWIDE;
+	int16 gridY0 = y0 / CELLDEEP;
+	int16 gridX1 = x1 / CELLWIDE;
+	int16 gridY1 = y1 / CELLDEEP;
+
+	for (int16 i = gridY0; i <= gridY1; i++)
+		for (int16 j = gridX0; j <= gridX1; j++)
+			_dirtyGrid[i * _gridWide + j] = 2;
+}
+
+/**
  * This function has two purposes: It redraws the scene, and it handles input
  * events, palette fading, etc. It should be called at a high rate (> 20 per
  * second), but the scene is usually only redrawn about 12 times per second,
