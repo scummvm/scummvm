@@ -14,21 +14,24 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Updated AdvMame scalers based on scale2x 2.0 - AdvMame3x looks nicer now,
      and AdvMame2x is MMX accelerated
    - Added MMX i386 assembler versions of the HQ2x and HQ3x scalers
+   - New 'Extra Path' option allows for a searching an additional datafile
+     location (for reencoded cutscenes and the like)
    - Alt-x and Ctrl-z quit keys disabled in favour of Ctrl-q on unix like
      operating systems, like Linux (exception: Mac OS X still uses Cmd-q)
 
  SCUMM:
    - Old zak256 target removed, use zakTowns instead
-   - Added support for the special container file format used in the macintosh
-     versions of some games (thus you do not have to use rescumm anymore)
+   - Added native support for Macintosh versions using a special container
+     file. This removes the need for using the 'RESCUMM' program
    - Partially rewrote the text engine, fixing various bugs
+   - Corrected actor drawing glitches in V1 Maniac and Zak
 
  Queen:
    - Various fixes [TODO: Somebody of the Queen team please fill this in]
 
  Sword2:
-   - Simplified the memory/resource management...
-   - ...which led to simplified sound effects handling
+   - Simplified memory/resource management
+   - Simplified sound effects handling
    - Various minor bugfixes.
 
 0.6.1b (2004-08-03)
