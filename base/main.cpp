@@ -234,7 +234,7 @@ int main(int argc, char *argv[]) {
 #endif //defined(WIN32) && defined(USE_CONSOLE)
 
 	// Update the config file
-	ConfMan.set("versioninfo", gScummVMVersion, "scummvm");
+	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 	
 	// Load the plugins
 	PluginManager::instance().loadPlugins();
@@ -252,7 +252,7 @@ int main(int argc, char *argv[]) {
 	g_timer = new Timer(system);
 
 	// Set initial window caption
-	prop.caption = "ScummVM";
+	prop.caption = gScummVMFullVersion;
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
 	// Create the GUI manager
