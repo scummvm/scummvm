@@ -422,13 +422,13 @@ void Scumm::initBGBuffers(int height)
 	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 5);
 
 	if (_features & GF_AFTER_V7)
-		itemsize = (virtscr[0].height + 4) * gdi._numStrips;
+		itemsize = _scrHeight * gdi._numStrips + gdi._numStrips * 10;
 	else
 		itemsize = (_scrHeight + 4) * gdi._numStrips;
 
 
 	size = itemsize * gdi._numZBuffer;
-	createResource(rtBuffer, 9, size);
+	memset(createResource(rtBuffer, 9, size), 0, size);
 
 	for (i = 0; i < 4; i++)
 		gdi._imgBufOffs[i] = i * itemsize;
@@ -1227,11 +1227,6 @@ void Gdi::decompressMaskImg()
 	int height = _numLinesToProcess;
 	byte b, c;
 	
-	if ((_vm->_gameId == GID_DIG) && (_vm->_currentRoom == 23))
-		height--;
-				// FIXME: This seems to fix The Dig nexus wrapping corrupting memory..
-				//	  and doesn't break any other games.. but is it correct? If so,
-				//	  do we need to mirror this change anywhere else?
 	while (1) {
 		b = *src++;
 
