@@ -1212,7 +1212,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 			return;
 	}
 
-	if (((_gameId == GID_MANIAC) && (_version == 1)) || getTalkingActor() > 0x7F) {
+	if (getTalkingActor() > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
 	} else {
 		a = derefActor(getTalkingActor(), "actorTalk(2)");

@@ -342,10 +342,10 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 	}
 }
 
-static const int v1_mm_actor_palatte_1[25] = {
+static const int v1MMActorPalatte1[25] = {
 	8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
 };
-static const int v1_mm_actor_palatte_2[25] = {
+static const int v1MMActorPalatte2[25] = {
 	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
 };
 
@@ -384,8 +384,8 @@ void CostumeRenderer::procC64(int actor) {
 		palette[2] = 11;
 		palette[3] = 11;
 	} else if (_vm->_gameId == GID_MANIAC) {
-		palette[1] = v1_mm_actor_palatte_1[actor];
-		palette[2] = v1_mm_actor_palatte_2[actor];
+		palette[1] = v1MMActorPalatte1[actor];
+		palette[2] = v1MMActorPalatte2[actor];
 	} else {
 		palette[1] = 8;
 		palette[2] = _palette[actor];

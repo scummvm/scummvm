@@ -379,8 +379,6 @@ int ScummEngine_v2::getVar() {
 	return readVar(fetchScriptByte());
 }
 
-int v1_mm_actor_speech_color[] = {1, 7, 2, 14, 8, 1, 3, 7, 7, 12, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 7, 7, 0};
-
 void ScummEngine_v2::decodeParseString() {
 	byte buffer[512];
 	byte *ptr = buffer;
@@ -423,9 +421,6 @@ void ScummEngine_v2::decodeParseString() {
 		// Demos don't set subtitle color before display first subtitle.
 		if (_demoMode && _actorToPrintStrFor == 0xFF)
 			_string[textSlot].color = (_version == 2) ? 15 : 1;
-		// V1 Mansion Mansion uses dynamic color table for subtitles
-		else if (_version == 1 && _actorToPrintStrFor != 0xFF) 
-			_string[textSlot].color = v1_mm_actor_speech_color[_actorToPrintStrFor];
 	}
 
 	actorTalk(buffer);
@@ -709,9 +704,7 @@ void ScummEngine_v2::o2_actorOps() {
 		a->setActorCostume(arg);
 		break;
 	case 5:		// SO_TALK_COLOR
-		if ((_gameId == GID_MANIAC) && (_version == 1))
-			v1_mm_actor_speech_color[act] = arg;
-		else if (_gameId == GID_MANIAC && _demoMode && arg == 1)
+		if (_gameId == GID_MANIAC && _version == 2 && _demoMode && arg == 1)
 			a->talkColor = 15;
 		else
 			a->talkColor = arg;
