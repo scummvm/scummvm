@@ -1203,6 +1203,12 @@ void Scumm_v6::o6_getActorRoom() {
 		return;
 	}
 
+	if (act == 255) {
+		// This case also occurs in COMI...
+		push(0);
+		return;
+	}
+
 	Actor *a = derefActor(act, "o6_getActorRoom");
 	push(a->room);
 }
