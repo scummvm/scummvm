@@ -24,6 +24,7 @@
 #include "mixer.h"
 #include "common/engine.h"	// for warning/error/debug
 #include "common/file.h"
+#include "common/util.h"
 
 
 class Channel {
@@ -182,7 +183,7 @@ SoundMixer::~SoundMixer() {
 }
 
 void SoundMixer::appendStream(int index, void *sound, uint32 size) {
-	_syst->lock_mutex(_mutex);
+	StackLock lock(_mutex);
 
 	ChannelStream *chan = dynamic_cast<ChannelStream *>(_channels[index]);
 	if (!chan) {
@@ -190,12 +191,10 @@ void SoundMixer::appendStream(int index, void *sound, uint32 size) {
 	} else {
 		chan->append(sound, size);
 	}
-
-	_syst->unlock_mutex(_mutex);
 }
 
 void SoundMixer::endStream(int index) {
-	_syst->lock_mutex(_mutex);
+	StackLock lock(_mutex);
 
 	ChannelStream *chan = dynamic_cast<ChannelStream *>(_channels[index]);
 	if (!chan) {
@@ -203,8 +202,6 @@ void SoundMixer::endStream(int index) {
 	} else {
 		chan->finish();
 	}
-
-	_syst->unlock_mutex(_mutex);
 }
 
 int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
@@ -229,41 +226,43 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 }
 
 int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id) {
+	StackLock lock(_mutex);	
+
 	// Prevent duplicate sounds
 	if (id != -1) {
-		_syst->lock_mutex(_mutex);	
-		    for (int i = 0; i != NUM_CHANNELS; i++)
-			        if (_channels[i] != NULL && _channels[i]->_id == id) {
-						_syst->unlock_mutex(_mutex);
-						return -1;
-					}
-		_syst->unlock_mutex(_mutex);
+		for (int i = 0; i != NUM_CHANNELS; i++)
+			if (_channels[i]->_id == id && _channels[i] != NULL)
+				return -1;
 	}
 
 	return insertChannel(handle, new ChannelRaw(this, sound, size, rate, flags, id));
 }
 
 int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size) {
+	StackLock lock(_mutex);	
 	return insertChannel(NULL, new ChannelStream(this, sound, size, rate, flags, buffer_size));
 }
 
 #ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
+	StackLock lock(_mutex);	
 	return insertChannel(handle, new ChannelMP3(this, sound, size, flags));
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration) {
+	StackLock lock(_mutex);	
 	return insertChannel(handle, new ChannelMP3CDMusic(this, file, duration));
 }
 #endif
 
 #ifdef USE_VORBIS
 int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
+	StackLock lock(_mutex);	
 	return insertChannel(handle, new ChannelVorbis(this, ov_file, duration, is_cd_track));
 }
 #endif
 
 void SoundMixer::mix(int16 *buf, uint len) {
-	_syst->lock_mutex(_mutex);
+	StackLock lock(_mutex);
 	
 	if (_premixProc && !_paused) {
 		int i;
@@ -291,8 +290,6 @@ void SoundMixer::mix(int16 *buf, uint len) {
 					_channels[i]->mix(buf, len);
 			}
 	}
-	
-	_syst->unlock_mutex(_mutex);
 }
 
 void SoundMixer::onGenerateSamples(void *s, byte *samples, int len) {
