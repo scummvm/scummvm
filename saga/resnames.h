@@ -20,36 +20,30 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Descriptive names for game resource numbers
-
- Notes: 
-*/
+// Descriptive names for game resource numbers
 
 #ifndef SAGA_RESOURCENAMES_H_
 #define SAGA_RESOURCENAMES_H_
 
 namespace Saga {
 
-/* Lookup tables */
+// Lookup tables
 #define ITE_SCENE_LUT  1806
 #define ITE_SCRIPT_LUT 216
 
 #define IHNM_SCENE_LUT  1272
 #define IHNM_SCRIPT_LUT 0
 
-/* SCENES */
+// SCENES
 #define ITE_DEFAULT_SCENE 32
 
-/* FONTS */
+// FONTS
 #define RN_MEDIUM_FONT 0
 #define RN_BIG_FONT 1
 #define RN_SMALL_FONT 2
 
-/* INTERFACE IMAGES */
+// INTERFACE IMAGES
 #define ITE_COMMAND_PANEL 3
 #define ITE_DIALOGUE_PANEL 4
 
@@ -60,7 +54,7 @@ namespace Saga {
 #define ITE_COMMAND_BUTTONSPRITES 7
 #define ITE_DEFAULT_PORTRAITS 125
 
-/* ITE Scene resource numbers */
+// ITE Scene resource numbers
 #define ITE_INTRO_ANIM_SCENE 1538
 #define ITE_CAVE_SCENE_1 1542
 #define ITE_CAVE_SCENE_2 1545
@@ -92,7 +86,7 @@ namespace Saga {
 #define INTRO_IMG_3 1561
 #define INTRO_IMG_4 1565
 
-/* ITE_VOICES */
+// ITE_VOICES
 #define CAVE_VOICE_0 0
 #define CAVE_VOICE_1 1
 #define CAVE_VOICE_2 2
@@ -108,7 +102,7 @@ namespace Saga {
 #define CAVE_VOICE_12 12
 #define CAVE_VOICE_13 13
 
-/* MUSIC */
+// MUSIC
 #define MUSIC_1 9
 #define MUSIC_2 10
 #define MUSIC_3 11
@@ -138,4 +132,4 @@ namespace Saga {
 
 } // End of namespace Saga
 
-#endif				/* SAGA_RESOURCENAMES_H_ */
+#endif

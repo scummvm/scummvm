@@ -49,18 +49,18 @@ enum SAGAGameId {
 class SagaEngine:public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
- protected:
+protected:
 	void go();
 
- public:
+public:
 	SagaEngine(GameDetector * detector, OSystem * syst);
 	virtual ~SagaEngine();
 
 	void shutdown();
 
 	SndRes *_sndRes;
-	Sound  *_sound;
-	Music  *_music;
+	Sound *_sound;
+	Music *_music;
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects

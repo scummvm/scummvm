@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Palette animation module header file
 
- Notes: 
-*/
+// Palette animation module header file
 
 #ifndef SAGA_PALANIM_H
 #define SAGA_PALANIM_H
@@ -38,23 +33,17 @@ namespace Saga {
 #define PALANIM_CYCLETIME 100
 
 struct PALANIM_ENTRY {
-
 	uint16 pal_count;
 	uint16 color_count;
 	uint16 cycle;
-
 	byte *pal_index;
 	R_COLOR *colors;
-
 };
 
 struct PALANIM_DATA {
-
 	int loaded;
 	uint16 entry_count;
-
 	PALANIM_ENTRY *entries;
-
 };
 
 } // End of namespace Saga

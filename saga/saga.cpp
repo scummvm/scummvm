@@ -71,7 +71,7 @@ struct SAGAGameSettings {
 
 static const SAGAGameSettings saga_settings[] = {
 	/* Inherit the Earth - Original floppy version */
-  	{ "ite", "Inherit the Earth (DOS)", Saga::GID_ITE,
+	{ "ite", "Inherit the Earth (DOS)", Saga::GID_ITE,
 	 MDT_ADLIB, "ite.rsc" },
 	/* Inherit the Earth - CD version */
 	{ "itecd", "Inherit the Earth (DOS CD Version)", Saga::GID_ITECD,
@@ -96,7 +96,7 @@ GameList Engine_SAGA_gameList() {
 DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	const SAGAGameSettings *g;
-	
+
 	for (g = saga_settings; g->name; ++g) {
 		// Iterate over all files in the given directory
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -123,10 +123,8 @@ namespace Saga {
 #define R_MAX_TIME_DELTA 100
 
 struct R_MAIN_DATA {
-
 	int sound_enabled;
 	int music_enabled;
-
 };
 
 static void CF_quitfunc(int argc, char *argv[]);
@@ -152,7 +150,6 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 }
 
 SagaEngine::~SagaEngine() {
-
 }
 
 void SagaEngine::errorString(const char *buf1, char *buf2) {
@@ -162,9 +159,8 @@ void SagaEngine::errorString(const char *buf1, char *buf2) {
 void SagaEngine::go() {
 	int msec = 0;
 
-	/* Register engine modules
-	 * \*------------------------------------------------------------- */
-	CON_Register();		/* Register console cvars first */
+	// Register engine modules
+	CON_Register(); // Register console cvars first
 
 	RENDER_Register();
 	GAME_Register();
@@ -179,19 +175,15 @@ void SagaEngine::go() {
 	MainData.sound_enabled = 1;
 	MainData.music_enabled = 1;
 
-	CVAR_RegisterFunc(CF_testfunc,
-	    "testfunc", "foo [ optional foo ]", R_CVAR_NONE, 0, -1);
+	CVAR_RegisterFunc(CF_testfunc, "testfunc", "foo [ optional foo ]", R_CVAR_NONE, 0, -1);
 
-	CVAR_Register_I(&MainData.sound_enabled,
-	    "sound", NULL, R_CVAR_CFG, 0, 1);
+	CVAR_Register_I(&MainData.sound_enabled, "sound", NULL, R_CVAR_CFG, 0, 1);
 
-	CVAR_Register_I(&MainData.music_enabled,
-	    "music", NULL, R_CVAR_CFG, 0, 1);
+	CVAR_Register_I(&MainData.music_enabled, "music", NULL, R_CVAR_CFG, 0, 1);
 
 	CVAR_RegisterFunc(CF_quitfunc, "quit", NULL, R_CVAR_NONE, 0, 0);
 
-	/* Process config file
-	 * \*------------------------------------------------------------- */
+	// Process config file
 	// FIXME
 	/*
 	if (CFG_Read(NULL) != R_SUCCESS) {
@@ -199,21 +191,15 @@ void SagaEngine::go() {
 	}
 	*/
 
-	/* Process command line
-	 * \*------------------------------------------------------------- */
+	// Process command line
 
-	/* Detect game and open resource files
-	 * \*------------------------------------------------------------- */
+	// Detect game and open resource files
 	if (GAME_Init() != R_SUCCESS) {
-
-		R_printf(R_STDERR,
-		    "Couldn't start the game: %s\n", GAME_GetErrS());
-
+		R_printf(R_STDERR, "Couldn't start the game: %s\n", GAME_GetErrS());
 		return;
 	}
 
-	/* Initialize engine modules
-	 * \*------------------------------------------------------------- */
+	// Initialize engine modules
 	_sndRes = new SndRes(this);
 	EVENT_Init();
 	FONT_Init();
@@ -223,27 +209,24 @@ void SagaEngine::go() {
 	OBJECTMAP_Init();
 	ISOMAP_Init();
 	SCRIPT_Init();
-	INTERFACE_Init();	/* requires script module */
+	INTERFACE_Init(); // requires script module
 	ACTOR_Init();
 
 	if (SCENE_Init() != R_SUCCESS) {
-
 		R_printf(R_STDERR, "Couldn't initialize scene module.\n");
 		return;
 	}
 
-	/* System initialization
-	 * \*------------------------------------------------------------- */
+	// System initialization
 
-	/* Must initialize system timer module first */
+	// Must initialize system timer module first
 	if (SYSTIMER_InitMSCounter() != R_SUCCESS) {
-
 		return;
 	}
 
-	/* On some platforms, graphics initialization also initializes sound
-	 * ( Win32 DirectX )... Music must be initialized before sound for 
-	 * native midi support */
+	// On some platforms, graphics initialization also initializes sound
+	// ( Win32 DirectX )... Music must be initialized before sound for 
+	// native midi support
 	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE));
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
@@ -257,12 +240,12 @@ void SagaEngine::go() {
 		R_printf(R_STDOUT, "Music disabled.\n");
 	}
 
-	/* Initialize graphics */
+	// Initialize graphics
 	if (RENDER_Init() != R_SUCCESS) {
 		return;
 	}
 
-	/* Initialize system specific sound */
+	// Initialize system specific sound
 	_sound = new Sound(this, _mixer, MainData.sound_enabled);
 	if (!MainData.sound_enabled) {
 		R_printf(R_STDOUT, "Sound disabled.\n");
@@ -272,44 +255,32 @@ void SagaEngine::go() {
 
 	SYSTIMER_ResetMSCounter();
 
-	/* Begin Main Engine Loop
-	 * \*------------------------------------------------------------- */
+	// Begin Main Engine Loop
 
 	SCENE_Start();
 
 	for (;;) {
-
 #ifdef R_USE_CUSTOM_WININIT
-
 		if (ITESYS_CheckSignal()) {
 			break;
 		}
 #endif
-
 		if (RENDER_GetFlags() & RF_RENDERPAUSE) {
-			/* Freeze time while paused */
+			// Freeze time while paused
 			SYSTIMER_ResetMSCounter();
 		} else {
 			msec = SYSTIMER_ReadMSCounter();
-
 			if (msec > R_MAX_TIME_DELTA) {
 				msec = R_MAX_TIME_DELTA;
 			}
-
 			ACTOR_Direct(msec);
 			EVENT_HandleEvents(msec);
 			STHREAD_ExecThreads(msec);
 		}
-
-		/* Per frame processing
-		 * \*--------------------------------------------------------- */
+		// Per frame processing
 		RENDER_DrawScene();
-
 		SYSTIMER_Sleep(0);
-
-	}			/* end main game engine loop */
-
-	return;
+	}
 }
 
 void SagaEngine::shutdown() {
@@ -319,30 +290,25 @@ void SagaEngine::shutdown() {
 	ANIM_Shutdown();
 	SPRITE_Shutdown();
 	OBJECTMAP_Shutdown();
-
 	FONT_Shutdown();
-
 	CON_Shutdown();
 	CVAR_Shutdown();
 	EVENT_Shutdown();
 
 	delete _sndRes;
-
-	/* Shutdown system modules */
+	// Shutdown system modules */
 	delete _music;
 	delete _sound;
 
 	_system->quit();
 }
 
-static void CF_quitfunc(int argc, char *argv[])
-{
+static void CF_quitfunc(int argc, char *argv[]) {
 	_vm->shutdown();
 	exit(0);
 }
 
-static void CF_testfunc(int argc, char *argv[])
-{
+static void CF_testfunc(int argc, char *argv[]) {
 	int i;
 
 	CON_Print("Test function invoked: Got %d arguments.", argc);
@@ -350,8 +316,6 @@ static void CF_testfunc(int argc, char *argv[])
 	for (i = 0; i < argc; i++) {
 		CON_Print("Arg %d: %s", i, argv[i]);
 	}
-
-	return;
 }
 
 } // End of namespace Saga

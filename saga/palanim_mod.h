@@ -20,13 +20,9 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Palette animation module public header file
 
- Notes: 
-*/
+// Palette animation module public header file
+
 
 #ifndef SAGA_PALANIM_MOD_H__
 #define SAGA_PALANIM_MOD_H__
@@ -34,13 +30,10 @@
 namespace Saga {
 
 int PALANIM_Load(const byte *, size_t);
-
-int PALANIM_CycleStart(void);
-
+int PALANIM_CycleStart();
 int PALANIM_CycleStep(int vectortime);
-
-int PALANIM_Free(void);
+int PALANIM_Free();
 
 } // End of namespace Saga
 
-#endif				/* SAGA_PALANIM_MOD_H__ */
+#endif

@@ -20,33 +20,19 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    RSC Resource file management module
-
- Notes: 
-*/
+// RSC Resource file management module
 
 #include "reinherit.h"
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
-
-/*
- * Begin module
-\*--------------------------------------------------------------------------*/
 #include "rscfile_mod.h"
 #include "rscfile.h"
 
 namespace Saga {
 
-R_RSCFILE_CONTEXT *RSC_CreateContext(void)
-{
+R_RSCFILE_CONTEXT *RSC_CreateContext() {
 	R_RSCFILE_CONTEXT empty_context;
 	empty_context.rc_file_fspec = NULL;
 	empty_context.rc_file_loaded = 0;
@@ -64,14 +50,12 @@ R_RSCFILE_CONTEXT *RSC_CreateContext(void)
 	return new_context;
 }
 
-int RSC_OpenContext(R_RSCFILE_CONTEXT *rsc_context, const char *fspec)
-{
+int RSC_OpenContext(R_RSCFILE_CONTEXT *rsc_context, const char *fspec) {
 	if (rsc_context->rc_file.isOpen()) {
 		return R_FAILURE;
 	}
 
 	if (!rsc_context->rc_file.open(fspec)) {
-
 		return R_FAILURE;
 	}
 
@@ -86,8 +70,7 @@ int RSC_OpenContext(R_RSCFILE_CONTEXT *rsc_context, const char *fspec)
 	return R_SUCCESS;
 }
 
-int RSC_CloseContext(R_RSCFILE_CONTEXT * rsc_context)
-{
+int RSC_CloseContext(R_RSCFILE_CONTEXT *rsc_context) {
 	if (rsc_context->rc_file.isOpen()) {
 		rsc_context->rc_file.close();
 	}
@@ -99,8 +82,7 @@ int RSC_CloseContext(R_RSCFILE_CONTEXT * rsc_context)
 	return R_SUCCESS;
 }
 
-int RSC_DestroyContext(R_RSCFILE_CONTEXT * rsc_context)
-{
+int RSC_DestroyContext(R_RSCFILE_CONTEXT *rsc_context) {
 	RSC_CloseContext(rsc_context);
 
 	if (rsc_context->rc_file_loaded) {
@@ -112,8 +94,7 @@ int RSC_DestroyContext(R_RSCFILE_CONTEXT * rsc_context)
 	return R_SUCCESS;
 }
 
-int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
-{
+int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 	uint32 res_tbl_ct;
 	uint32 res_tbl_offset;
 
@@ -132,8 +113,7 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 		return R_FAILURE;
 	}
 
-	/* Read resource table info from the rear end of file
-	 * \*------------------------------------------------------------- */
+	// Read resource table info from the rear end of file
 	rsc->rc_file.seek((long)(rsc->rc_file.size() - 8), SEEK_SET);
 
 	if (rsc->rc_file.read(tblinfo_buf, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
@@ -143,16 +123,13 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 	res_tbl_offset = ys_read_u32_le(read_p, &read_p);
 	res_tbl_ct = ys_read_u32_le(read_p, NULL);
 
-	/* Check for sane table offset
-	 * \*------------------------------------------------------------- */
-	if (res_tbl_offset != rsc->rc_file.size() - RSC_TABLEINFO_SIZE -
-	    RSC_TABLEENTRY_SIZE * res_tbl_ct) {
+	// Check for sane table offset
+	if (res_tbl_offset != rsc->rc_file.size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * res_tbl_ct) {
 
 		return R_FAILURE;
 	}
 
-	/* Load resource table
-	 * \*------------------------------------------------------------- */
+	// Load resource table
 	tbl_len = RSC_TABLEENTRY_SIZE * res_tbl_ct;
 
 	tbl_buf = (byte *)malloc(tbl_len);
@@ -176,13 +153,9 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 	read_p = tbl_buf;
 
 	for (i = 0; i < res_tbl_ct; i++) {
-
 		rsc_restbl[i].res_offset = ys_read_u32_le(read_p, &read_p);
 		rsc_restbl[i].res_size = ys_read_u32_le(read_p, &read_p);
-
-		if ((rsc_restbl[i].res_offset > rsc->rc_file.size()) ||
-		    (rsc_restbl[i].res_size > rsc->rc_file.size())) {
-
+		if ((rsc_restbl[i].res_offset > rsc->rc_file.size()) || (rsc_restbl[i].res_size > rsc->rc_file.size())) {
 			free(tbl_buf);
 			free(rsc_restbl);
 			return R_FAILURE;
@@ -197,8 +170,7 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 	return R_SUCCESS;
 }
 
-int RSC_FreeRSC(R_RSCFILE_CONTEXT * rsc)
-{
+int RSC_FreeRSC(R_RSCFILE_CONTEXT *rsc) {
 	if (!rsc->rc_file_loaded) {
 		return R_FAILURE;
 	}
@@ -208,14 +180,11 @@ int RSC_FreeRSC(R_RSCFILE_CONTEXT * rsc)
 	return R_SUCCESS;
 }
 
-uint32 RSC_GetResourceCount(R_RSCFILE_CONTEXT * rsc)
-{
+uint32 RSC_GetResourceCount(R_RSCFILE_CONTEXT *rsc) {
 	return (rsc == NULL) ? 0 : rsc->rc_res_ct;
 }
 
-int
-RSC_GetResourceSize(R_RSCFILE_CONTEXT * rsc, uint32 res_num, uint32 * res_size)
-{
+int RSC_GetResourceSize(R_RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_size) {
 	if ((rsc == NULL) || (res_size == NULL)) {
 		return R_FAILURE;
 	}
@@ -229,10 +198,7 @@ RSC_GetResourceSize(R_RSCFILE_CONTEXT * rsc, uint32 res_num, uint32 * res_size)
 	return R_SUCCESS;
 }
 
-int
-RSC_GetResourceOffset(R_RSCFILE_CONTEXT * rsc,
-    uint32 res_num, uint32 * res_offset)
-{
+int RSC_GetResourceOffset(R_RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_offset) {
 	if ((rsc == NULL) || (res_offset == NULL)) {
 		return R_FAILURE;
 	}
@@ -246,10 +212,7 @@ RSC_GetResourceOffset(R_RSCFILE_CONTEXT * rsc,
 	return R_SUCCESS;
 }
 
-int
-RSC_LoadResource(R_RSCFILE_CONTEXT * rsc,
-    uint32 res_num, byte ** res_p, size_t * res_size_p)
-{
+int RSC_LoadResource(R_RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t *res_size_p) {
 	uint32 res_offset;
 	size_t res_size;
 	byte *res_buf;
@@ -286,9 +249,7 @@ RSC_LoadResource(R_RSCFILE_CONTEXT * rsc,
 	return R_SUCCESS;
 }
 
-int RSC_FreeResource(byte * resource_ptr)
-{
-
+int RSC_FreeResource(byte *resource_ptr) {
 	free(resource_ptr);
 
 	return R_SUCCESS;

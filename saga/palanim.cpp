@@ -20,27 +20,16 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Palette animation module
 
- Notes: 
-*/
+// Palette animation module
 
 #include "reinherit.h"
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "events_mod.h"
 #include "game_mod.h"
 
-/*
- * Begin module:
-\*--------------------------------------------------------------------------*/
 #include "palanim_mod.h"
 #include "palanim.h"
 
@@ -48,8 +37,7 @@ namespace Saga {
 
 static PALANIM_DATA PAnimData;
 
-int PALANIM_Load(const byte * resdata, size_t resdata_len)
-{
+int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 	const byte *read_p = resdata;
 	void *test_p;
 
@@ -71,9 +59,7 @@ int PALANIM_Load(const byte * resdata, size_t resdata_len)
 
 	PAnimData.entry_count = ys_read_u16_le(read_p, &read_p);
 
-	R_printf(R_STDOUT,
-	    "PALANIM_Load(): Loading %d PALANIM entries.\n",
-	    PAnimData.entry_count);
+	R_printf(R_STDOUT, "PALANIM_Load(): Loading %d PALANIM entries.\n", PAnimData.entry_count);
 
 	test_p = calloc(PAnimData.entry_count, sizeof(PALANIM_ENTRY));
 	if (test_p == NULL) {
@@ -84,7 +70,6 @@ int PALANIM_Load(const byte * resdata, size_t resdata_len)
 	PAnimData.entries = (PALANIM_ENTRY *)test_p;
 
 	for (i = 0; i < PAnimData.entry_count; i++) {
-
 		int color_count;
 		int pal_count;
 		int p, c;
@@ -95,61 +80,46 @@ int PALANIM_Load(const byte * resdata, size_t resdata_len)
 		PAnimData.entries[i].pal_count = pal_count;
 		PAnimData.entries[i].color_count = color_count;
 
-#       if 0
-		R_printf(R_STDOUT,
-		    "PALANIM_Load(): Entry %d: Loading %d palette indices.\n",
-		    i, pal_count);
+#if 0
+		R_printf(R_STDOUT, "PALANIM_Load(): Entry %d: Loading %d palette indices.\n", i, pal_count);
 #endif
 
 		test_p = calloc(1, sizeof(char) * pal_count);
 		if (test_p == NULL) {
-			R_printf(R_STDERR,
-			    "PALANIM_Load(): Allocation failure.\n");
+			R_printf(R_STDERR, "PALANIM_Load(): Allocation failure.\n");
 			return R_MEM;
 		}
 
 		PAnimData.entries[i].pal_index = (byte *)test_p;
 
-#       if 0
-		R_printf(R_STDOUT,
-		    "PALANIM_Load(): Entry %d: Loading %d SAGA_COLOR "
-		    "structures.\n", i, color_count);
-#       endif
+#if 0
+		R_printf(R_STDOUT, "PALANIM_Load(): Entry %d: Loading %d SAGA_COLOR structures.\n", i, color_count);
+#endif
 
 		test_p = calloc(1, sizeof(R_COLOR) * color_count);
 		if (test_p == NULL) {
-			R_printf(R_STDERR,
-			    "PALANIM_Load(): Allocation failure.\n");
+			R_printf(R_STDERR, "PALANIM_Load(): Allocation failure.\n");
 			return R_MEM;
 		}
 
 		PAnimData.entries[i].colors = (R_COLOR *)test_p;
 
 		for (p = 0; p < pal_count; p++) {
-			PAnimData.entries[i].pal_index[p] =
-			    (byte) ys_read_u8(read_p, &read_p);
+			PAnimData.entries[i].pal_index[p] = (byte) ys_read_u8(read_p, &read_p);
 		}
 
 		for (c = 0; c < color_count; c++) {
-			PAnimData.entries[i].colors[c].red =
-			    (byte) ys_read_u8(read_p, &read_p);
-
-			PAnimData.entries[i].colors[c].green =
-			    (byte) ys_read_u8(read_p, &read_p);
-
-			PAnimData.entries[i].colors[c].blue =
-			    (byte) ys_read_u8(read_p, &read_p);
+			PAnimData.entries[i].colors[c].red = (byte) ys_read_u8(read_p, &read_p);
+			PAnimData.entries[i].colors[c].green = (byte) ys_read_u8(read_p, &read_p);
+			PAnimData.entries[i].colors[c].blue = (byte) ys_read_u8(read_p, &read_p);
 		}
 	}
 
 	PAnimData.loaded = 1;
 	return R_SUCCESS;
-
 }
 
-int PALANIM_CycleStart(void)
-{
-
+int PALANIM_CycleStart() {
 	R_EVENT event;
 
 	if (!PAnimData.loaded) {
@@ -164,11 +134,9 @@ int PALANIM_CycleStart(void)
 	EVENT_Queue(&event);
 
 	return R_SUCCESS;
-
 }
 
-int PALANIM_CycleStep(int vectortime)
-{
+int PALANIM_CycleStep(int vectortime) {
 	R_SURFACE *back_buf;
 
 	static PALENTRY pal[256];
@@ -189,26 +157,14 @@ int PALANIM_CycleStep(int vectortime)
 	back_buf = SYSGFX_GetBackBuffer();
 
 	for (i = 0; i < PAnimData.entry_count; i++) {
-
 		cycle = PAnimData.entries[i].cycle;
 		cycle_limit = PAnimData.entries[i].color_count;
-
 		for (j = 0; j < PAnimData.entries[i].pal_count; j++) {
-
-			pal_index =
-			    (unsigned char)PAnimData.entries[i].pal_index[j];
+			pal_index = (unsigned char)PAnimData.entries[i].pal_index[j];
 			col_index = (cycle + j) % cycle_limit;
-
-			pal[pal_index].red =
-			    (byte) PAnimData.entries[i].colors[col_index].red;
-
-			pal[pal_index].green =
-			    (byte) PAnimData.entries[i].colors[col_index].
-			    green;
-
-			pal[pal_index].blue =
-			    (byte) PAnimData.entries[i].colors[col_index].
-			    blue;
+			pal[pal_index].red = (byte) PAnimData.entries[i].colors[col_index].red;
+			pal[pal_index].green = (byte) PAnimData.entries[i].colors[col_index].green;
+			pal[pal_index].blue = (byte) PAnimData.entries[i].colors[col_index].blue;
 		}
 
 		PAnimData.entries[i].cycle++;
@@ -228,12 +184,9 @@ int PALANIM_CycleStep(int vectortime)
 	EVENT_Queue(&event);
 
 	return R_SUCCESS;
-
 }
 
-int PALANIM_Free(void)
-{
-
+int PALANIM_Free() {
 	uint16 i;
 
 	if (!PAnimData.loaded) {
@@ -242,16 +195,13 @@ int PALANIM_Free(void)
 
 	for (i = 0; i < PAnimData.entry_count; i++) {
 #if 0
-		R_printf(R_STDOUT,
-		    "PALANIM_Free(): Entry %d: Freeing colors.\n", i);
+		R_printf(R_STDOUT, "PALANIM_Free(): Entry %d: Freeing colors.\n", i);
 #endif
 		free(PAnimData.entries[i].colors);
 #if 0
-		R_printf(R_STDOUT,
-		    "PALANIM_Free(): Entry %d: Freeing indices.\n", i);
+		R_printf(R_STDOUT, "PALANIM_Free(): Entry %d: Freeing indices.\n", i);
 #endif
 		free(PAnimData.entries[i].pal_index);
-
 	}
 
 	R_printf(R_STDOUT, "PALANIM_Free(): Freeing entries.\n");

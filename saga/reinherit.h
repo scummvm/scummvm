@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Main Header File
 
- Notes: 
-*/
+// Main Header File
 
 #ifndef SAGA_REINHERIT_H_
 #define SAGA_REINHERIT_H_
@@ -37,9 +32,6 @@
 
 #include "base/engine.h"
 
-/*
- * Implementation conditionals
-\*--------------------------------------------------------------------------*/
 #define R_ENV_LINUX
 #include "sys_interface.h"
 
@@ -47,7 +39,7 @@ namespace Saga {
 
 #define R_MAXPATH 512
 
-/* For debug message processing */
+// For debug message processing
 #define R_DEBUG_NONE 0
 #define R_DEBUG_INFO 1
 #define R_DEBUG_VERBOSE 2
@@ -55,23 +47,18 @@ namespace Saga {
 
 #define R_MEMFAIL_MSG "Memory allocation error."
 
-/*
- * Define opaque types
-\*--------------------------------------------------------------------------*/
+// Define opaque types
 
-/* r_rscfile */
+// r_rscfile
 typedef struct R_RSCFILE_CONTEXT_tag R_RSCFILE_CONTEXT;
 
-/* r_script */
+// r_script
 typedef struct R_SEMAPHORE_tag R_SEMAPHORE;
 
-/*
- * Define common data types
-\*--------------------------------------------------------------------------*/
+// Define common data types
 
 typedef Common::Point R_POINT;
 typedef Common::Rect R_RECT;
-
 
 struct R_COLOR {
 	int red;
@@ -85,11 +72,8 @@ struct R_SURFACE {
 	int buf_w;
 	int buf_h;
 	int buf_pitch;
-
 	int bpp;
-
 	R_RECT clip_rect;
-
 	void *impl_src;
 };
 
@@ -118,64 +102,47 @@ enum R_ERRORCODE {
 	R_SUCCESS = 0
 };
 
+// r_transitions.c
+int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h,
+						int dst_p, const byte *src_img, int src_p, int flags, double percent);
 
-/*
- * r_transitions.c
-\*--------------------------------------------------------------------------*/
-int TRANSITION_Dissolve(byte *dst_img,
-    int dst_w,
-    int dst_h,
-    int dst_p, const byte *src_img, int src_p, int flags, double percent);
+// System specific routines
 
-/*--------------------------------------------------------------------------*\
- * System specific routines
-\*--------------------------------------------------------------------------*/
-
-/*
- * System : Graphics
-\*--------------------------------------------------------------------------*/
+// System : Graphics
 #define R_PAL_ENTRIES 256
 
 struct R_SYSGFX_INIT {
 	int backbuf_w;
 	int backbuf_h;
 	int backbuf_bpp;
-
 	int screen_w;
 	int screen_h;
 	int screen_bpp;
 };
 
 int SYSGFX_Init(R_SYSGFX_INIT *);
-
-R_SURFACE *SYSGFX_GetScreenSurface(void);
-R_SURFACE *SYSGFX_GetBackBuffer(void);
-
+R_SURFACE *SYSGFX_GetScreenSurface();
+R_SURFACE *SYSGFX_GetBackBuffer();
 int SYSGFX_LockSurface(R_SURFACE *surface);
 int SYSGFX_UnlockSurface(R_SURFACE *surface);
-
-int SYSGFX_GetWhite(void);
-int SYSGFX_GetBlack(void);
+int SYSGFX_GetWhite();
+int SYSGFX_GetBlack();
 int SYSGFX_MatchColor(unsigned long colormask);
 int SYSGFX_SetPalette(R_SURFACE *surface, PALENTRY *pal);
 int SYSGFX_GetCurrentPal(PALENTRY *src_pal);
-
 int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
-
 int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 
-/*
- * System : Input 
-\*--------------------------------------------------------------------------*/
+// System : Input 
 int SYSINPUT_Init(void);
 int SYSINPUT_ProcessInput(void);
 int SYSINPUT_GetMousePos(int *mouse_x, int *mouse_y);
 int SYSINPUT_HideMouse(void);
 int SYSINPUT_ShowMouse(void);
 
-/*** sys_signal.c ***/
+// sys_signal.c
 int ITESYS_CheckSignal(void);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_REINHERIT_H_ */
+#endif
