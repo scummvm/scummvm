@@ -1636,7 +1636,7 @@ bool SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
 	c is base of mini table within anim_talk_table */
 
 #ifdef __DC__
-	__builtin_alloca(4); // Works around a gcc bug
+	__builtin_alloca(4); // Works around a gcc bug (wrong-code/11736)
 #endif
 
 	_compact->flag = (uint16)a;
