@@ -318,7 +318,7 @@ SAGA
    be provided by ScummVM if they aren't already.
  * OO'ify (blah_mod.h contains public stuff, blah.h private stuff) [almost done]
 
-- bugs -
+- bugs/misfeatures -
  * Make actor animation Event-driven. See FIXME in actor.cpp. Maybe it
    should be INTERVAL_EVENT
  * No script func should use ScriptDataWord directly. All of them should
@@ -326,6 +326,7 @@ SAGA
  * Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
    e.g. a rectangle covering the entire ITE screen should have right=320 and
    bottom=200. (eriktorbjorn, partly - mostly? - done)
+ * Inspect Font module - free memory, GameFontIds <-> FONT_ID
  * Walk bug. When announcer puts medallion on Rif he should go backwards instead
    of turning and walking faced to screen
  * In many places RSC_LoadResource() is called but memory is not freed afterwards,
@@ -342,13 +343,12 @@ SAGA
 - plans -
  * Implement unimplemented/proofread unchecked opcodes
  * Remove use of floating point, especially doubles.
- * inspect Font module - free memory, GameFontIds <-> FONT_ID
  * Implement Verbs (h00ligan)
  * Implement ShowSaveReminder(), that is that diskette
  * Implement Save/Load
  * Finish inventory code
  * Implement ISO path finder
- * Implement conversations
+ * Hook conversations to scripts
  * Change script buffer so that its point to the appropriate data.
    (eriktorbjorn - mostly done)
  * ISO - tile scene implementation
