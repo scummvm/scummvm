@@ -42,6 +42,7 @@ credits:
 	$(srcdir)/tools/credits.pl --html > ../web/credits.inc
 	$(srcdir)/tools/credits.pl --cpp > gui/credits.h
 	$(srcdir)/tools/credits.pl --xml > ../docs/docbook/credits.xml
+	$(srcdir)/tools/credits.pl --tex > doc/10.tex
 
 md5scumm: tools/md5table$(EXEEXT)
 	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > scumm/scumm-md5.h
