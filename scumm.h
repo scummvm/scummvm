@@ -1719,7 +1719,7 @@ struct ScummDebugger {
 };
 
 struct SaveLoadEntry {
-	uint16 offs;
+	uint32 offs;
 	uint8 type;
 	uint8 size;
 };
