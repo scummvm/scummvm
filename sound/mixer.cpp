@@ -90,14 +90,6 @@ public:
 	uint32 getElapsedTime();
 };
 
-class ChannelStream : public Channel {
-public:
-	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size);
-	void append(void *sound, uint32 size);
-
-	void finish();
-};
-
 
 #pragma mark -
 #pragma mark --- SoundMixer ---
@@ -153,68 +145,6 @@ void SoundMixer::setupPremix(AudioStream *stream) {
 
 	// Create the channel
 	_premixChannel = new Channel(this, 0, stream, false, false);
-}
-
-void SoundMixer::newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume, int8 balance) {
-	Common::StackLock lock(_mutex);
-
-	Channel *chan = new ChannelStream(this, handle, rate, flags, buffer_size);
-	chan->setVolume(volume);
-	chan->setBalance(balance);
-	insertChannel(handle, chan);
-}
-
-void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 size) {
-	Common::StackLock lock(_mutex);
-	
-	if (!handle.isActive())
-		return;
-
-	int index = handle.getIndex();
-
-	if ((index < 0) || (index >= NUM_CHANNELS)) {
-		warning("soundMixer::appendStream has invalid index %d", index);
-		return;
-	}
-
-	ChannelStream *chan;
-#if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
-	chan = dynamic_cast<ChannelStream *>(_channels[index]);
-#else
-	chan = (ChannelStream*)_channels[index];
-#endif
-	if (!chan) {
-		error("Trying to append to nonexistant stream : %d", index);
-	} else {
-		chan->append(sound, size);
-	}
-}
-
-void SoundMixer::endStream(PlayingSoundHandle handle) {
-	Common::StackLock lock(_mutex);
-
-	// Simply ignore stop requests for handles of sounds that already terminated
-	if (!handle.isActive())
-		return;
-
-	int index = handle.getIndex();
-
-	if ((index < 0) || (index >= NUM_CHANNELS)) {
-		warning("soundMixer::endStream has invalid index %d", index);
-		return;
-	}
-
-	ChannelStream *chan;
-#if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
-	chan = dynamic_cast<ChannelStream *>(_channels[index]);
-#else
-	chan = (ChannelStream*)_channels[index];
-#endif
-	if (!chan) {
-		error("Trying to end a nonexistant streamer : %d", index);
-	} else {
-		chan->finish();
-	}
 }
 
 void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
@@ -585,22 +515,4 @@ uint32 Channel::getElapsedTime() {
 
 	// FIXME: This won't work very well if the sound is paused.
 	return 1000 * seconds + milliseconds + delta;
-}
-
-ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
-							uint rate, byte flags, uint32 buffer_size)
-	: Channel(mixer, handle, false) {
-	// Create the input stream
-	_input = makeAppendableAudioStream(rate, flags, buffer_size);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
-}
-
-void ChannelStream::finish() {
-	((AppendableAudioStream *)_input)->finish();
-}
-
-void ChannelStream::append(void *data, uint32 len) {
-	((AppendableAudioStream *)_input)->append((const byte *)data, len);
 }

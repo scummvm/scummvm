@@ -26,6 +26,7 @@
 #include "scumm/smush/chunk.h"
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Scumm {
@@ -57,6 +58,8 @@ private:
 	int32 _frame;
 
 	PlayingSoundHandle _IACTchannel;
+	AppendableAudioStream *_IACTstream;
+
 	PlayingSoundHandle _compressedFileSoundHandle;
 	bool _compressedFileMode;
 	File _compressedFile;

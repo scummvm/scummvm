@@ -135,22 +135,6 @@ public:
 
 
 
-	/** Start a new stream. */
-	void newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 balance = 0);
-
-	/** Append to an existing stream. */
-	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
-
-	/**
-	 * Mark a stream as finished.
-	 * Where stopHandle() would stop the sound immediately, when using this
-	 * method, the stream will first finish playing all its data before it
-	 * finally stops.
-	 */
-	void endStream(PlayingSoundHandle handle);
-
-
-
 	/**
 	 * Stop all currently playing sounds.
 	 */

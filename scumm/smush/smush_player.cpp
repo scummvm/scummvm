@@ -314,6 +314,7 @@ void SmushPlayer::release() {
 	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
 
 	_vm->_mixer->stopHandle(_IACTchannel);
+	_IACTstream = 0;
 
 	_vm->_fullRedraw = true;
 
@@ -494,9 +495,11 @@ void SmushPlayer::handleIACT(Chunk &b) {
 						}
 					} while (--count);
 
-					if (!_IACTchannel.isActive())
-						_vm->_mixer->newStream(&_IACTchannel, 22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 400000);
-					_vm->_mixer->appendStream(_IACTchannel, output_data, 0x1000);
+					if (!_IACTchannel.isActive()) {
+						_IACTstream = makeAppendableAudioStream(22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 400000);
+						_vm->_mixer->playInputStream(&_IACTchannel, _IACTstream, false);
+					}
+					_IACTstream->append(output_data, 0x1000);
 
 					bsize -= len;
 					d_src += len;

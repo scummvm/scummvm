@@ -93,7 +93,8 @@ bool SmushMixer::handleFrame() {
 				delete _channels[i].chan;
 				_channels[i].id = -1;
 				_channels[i].chan = NULL;
-				_mixer->endStream(_channels[i].handle);
+				_channels[i].stream->finish();
+				_channels[i].stream = 0;
 			} else {
 				int32 rate, vol, pan;
 				bool stereo, is_16bit;
@@ -119,11 +120,13 @@ bool SmushMixer::handleFrame() {
 				}
 
 				if (_mixer->isReady()) {
-					if (!_channels[i].handle.isActive())
-						_mixer->newStream(&_channels[i].handle, rate, flags, 500000);
+					if (!_channels[i].handle.isActive()) {
+						_channels[i].stream = makeAppendableAudioStream(rate, flags, 500000);
+						_mixer->playInputStream(&_channels[i].handle, _channels[i].stream, false);
+					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);
-					_mixer->appendStream(_channels[i].handle, data, size);
+					_channels[i].stream->append((byte *)data, size);
 				}
 				free(data);
 			}
@@ -139,7 +142,8 @@ bool SmushMixer::stop() {
 			delete _channels[i].chan;
 			_channels[i].id = -1;
 			_channels[i].chan = NULL;
-			_mixer->endStream(_channels[i].handle);
+			_channels[i].stream->finish();
+			_channels[i].stream = 0;
 		}
 	}
 	return true;

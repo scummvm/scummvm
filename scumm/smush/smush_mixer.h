@@ -23,6 +23,7 @@
 #define SMUSH_MIXER_H
 
 #include "stdafx.h"
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Scumm {
@@ -40,6 +41,7 @@ private:
 		int id;
 		SmushChannel *chan;
 		PlayingSoundHandle handle;
+		AppendableAudioStream *stream;
 	} _channels[NUM_CHANNELS];
 
 	int _soundFrequency;

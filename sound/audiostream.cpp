@@ -186,6 +186,8 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 class AppendableMemoryStream : public AppendableAudioStream {
 protected:
+	OSystem::MutexRef _mutex;
+
 	byte *_bufferStart;
 	byte *_bufferEnd;
 	byte *_pos;
@@ -196,7 +198,7 @@ protected:
 	inline bool eosIntern() const { return _end == _pos; };
 public:
 	AppendableMemoryStream(int rate, uint bufferSize);
-	~AppendableMemoryStream()		{ free(_bufferStart); }
+	~AppendableMemoryStream();
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool isStereo() const		{ return stereo; }
@@ -222,10 +224,20 @@ AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStrea
 	_bufferStart = (byte *)malloc(bufferSize);
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
+
+	_mutex = g_system->createMutex();
+}
+
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
+	free(_bufferStart);
+	g_system->deleteMutex(_mutex);
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock lock(_mutex);
+
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		// Wrap around?
@@ -246,6 +258,7 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byte *data, uint32 len) {
+	Common::StackLock lock(_mutex);
 
 	// Verify the buffer size is sane
 	if (is16Bit && stereo)
