@@ -1275,10 +1275,14 @@ void Scumm::o5_getDist() {
 	o1 = getVarOrDirectWord(0x80);
 	o2 = getVarOrDirectWord(0x40);
 	r = getObjActToObjActDist(o1,o2);
-	
+
+	if ((_gameId==GID_INDY4) && (o2 == 1212))	/* Fix for FOA, another odd bug */
+		r =  r - 20;
+
 	/* Fix for monkey 2, dunno what's wrong in scummvm */
 	if (_gameId==GID_MONKEY2 && vm.slot[_currentScript].number==40 && r<60)
-		r=60;
+		r=60;	
+
 	setResult(r);
 }
 
