@@ -99,6 +99,11 @@ public:
 			_blocList[i].text_mem = NULL;
 	}
 
+	~FontRenderer() {
+		for (int i = 0; i < MAX_text_blocs; i++)
+			free(_blocList[i].text_mem);
+	}
+
 	byte *makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
 
 	void killTextBloc(uint32 bloc_number);
