@@ -109,6 +109,10 @@ void SwordScreen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeU
 		_system->set_palette(_targetPalette, start, length);
 }
 
+void SwordScreen::refreshPalette(void) {
+	_system->set_palette(_targetPalette, 0, 256);
+}
+
 bool SwordScreen::stillFading(void) {
 	return !_isBlack;
 }

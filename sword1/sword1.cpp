@@ -148,6 +148,7 @@ void SwordEngine::initialize(void) {
 	_logic->initialize();
 	_objectMan->initialize();
 	_mouse->initialize();
+	_control = new SwordControl(_resMan, _objectMan, _system, _mouse, getSavePath());
 }
 
 void SwordEngine::reinitialize(void) {
@@ -903,10 +904,14 @@ void SwordEngine::startPositions(int32 startNumber) {
 			//---------------------------
 			case 63:	// train_one
 			{
-				SwordLogic::_scriptVars[CHANGE_X] = 1288;
-				SwordLogic::_scriptVars[CHANGE_Y] = 264;
-				SwordLogic::_scriptVars[CHANGE_DIR] = RIGHT;
+				SwordLogic::_scriptVars[CHANGE_X] = 710;
+				SwordLogic::_scriptVars[CHANGE_Y] = 450;
+				SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
 				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_63;
+				SwordLogic::_scriptVars[DOOR_SC65_FLAG] = 2;
+				SwordLogic::_scriptVars[DOOR_ONE_63_OPEN] = 0;
+				SwordLogic::_scriptVars[DOOR_65_OPEN] = 1;
+				SwordLogic::_scriptVars[VAIL_TEXT] = 1;
 			}
 			break;
 			//---------------------------
@@ -1029,8 +1034,6 @@ void SwordEngine::go(void) {
 		   1 = dead
 		   2 = game won
 		   3 = game was just started */
-	SwordControl *control = new SwordControl(_resMan, _objectMan, _system, _mouse, getSavePath());
-	uint8 controlRes = 0;
 
 	uint8 startPos = ConfMan.getInt("boot_param");
 	if (startPos) {
@@ -1045,20 +1048,13 @@ void SwordEngine::go(void) {
 	}
 
 	do {
-        mainLoop();
+        uint8 action = mainLoop();
 
-		// the mainloop was left, either because the player pressed F5 or because the logic
-		// wants to restart the game.
-		if (!_systemVars.forceRestart)
-			controlRes = control->runPanel();
-		if ((controlRes == CONTROL_RESTART_GAME) || (_systemVars.forceRestart)) {
-			_music->fadeDown();
-			startPositions(1);
-			_systemVars.forceRestart = false;
-		} else if (controlRes == CONTROL_GAME_RESTORED) {
-			reinitialize();  // first clear anything which was loaded
-			control->doRestore(); // then actually load the savegame data.
-		}
+		// the mainloop was left, we have to reinitialize.
+		reinitialize();
+		if (action == CONTROL_GAME_RESTORED)
+			_control->doRestore();
+		_systemVars.forceRestart = false;
 		_systemVars.deathScreenFlag = 0;
 	} while (true);
 }
@@ -1072,10 +1068,10 @@ void SwordEngine::checkCd(void) {
 		_systemVars.currentCD = needCd;
 }
 
-void SwordEngine::mainLoop(void) {
-	uint32 newTime, frameTime;
-	bool wantControlPanel = false;
-	do {
+uint8 SwordEngine::mainLoop(void) {
+	uint8 retCode = 0;
+
+	while (retCode == 0) {
 		// do we need the section45-hack from sword.c here?
 		checkCd();
 
@@ -1086,61 +1082,55 @@ void SwordEngine::mainLoop(void) {
 		
 		do {
 			_music->stream();
-			frameTime = _system->get_msecs();
+			uint32 frameTime = _system->get_msecs();
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
 
 			_screen->draw();
 			_mouse->animate();
 
-			newTime = _system->get_msecs();
-			/*if ((newTime - frameTime < 50) && (!SwordLogic::_scriptVars[NEW_PALETTE])) {
-				RenderScreenGDK();
-				BlitMenusGDK();
-				BlitMousePm();
-				if (newTime - frameTime < 40)
-					_system->delay_msecs(40 - (newTime - frameTime));
-				FlipScreens();
-			}*/
+			uint32 newTime = _system->get_msecs();
 
 			_sound->engine();
 			_screen->updateScreen();
-		//-
+
 			_menu->refresh(MENU_TOP);
 			_menu->refresh(MENU_BOT);
 
-			newTime = _system->get_msecs();
 			if (newTime - frameTime < 80)
 				delay(80 - (newTime - frameTime));
 			else
 				delay(0);
 
-			/*FlipScreens(); this is done in SwordScreen::updateScreen() now.
-			if (SwordLogic::_scriptVars[NEW_PALETTE]) {
-				SwordLogic::_scriptVars[NEW_PALETTE] = 0;
-				startFadePaletteUp();
-			}*/
-
 			_mouse->engine( _mouseX, _mouseY, _mouseState);
 			_mouseState = 0;
-			if (_keyPressed == 63)
-				wantControlPanel = true;
+
+			if (_systemVars.forceRestart)
+				retCode = CONTROL_RESTART_GAME;
+			else if (_keyPressed == 63) {
+				retCode = _control->runPanel();
+				if (!retCode)
+					_screen->refreshPalette();
+			}
+
 			// do something smart here to implement pausing the game. If we even want that, that is.
-		} while ((SwordLogic::_scriptVars[SCREEN] == SwordLogic::_scriptVars[NEW_SCREEN]) &&
-			(!_systemVars.forceRestart) && (!wantControlPanel));
+		} while ((SwordLogic::_scriptVars[SCREEN] == SwordLogic::_scriptVars[NEW_SCREEN]) && (retCode == 0));
         
-		if (SwordLogic::_scriptVars[SCREEN] != 53) // we don't fade down after syria pan (53).
-			_screen->fadeDownPalette();
-		while (_screen->stillFading()) {
-			_music->stream();
-			_screen->updateScreen();
-			delay(1000/12);
+		if (retCode == 0) {
+			if (SwordLogic::_scriptVars[SCREEN] != 53) // we don't fade down after syria pan (53).
+				_screen->fadeDownPalette();
+			while (_screen->stillFading()) {
+				_music->stream();
+				_screen->updateScreen();
+				delay(1000/12);
+			}
 		}
 
 		_sound->quitScreen();
 		_screen->quitScreen(); // close graphic resources
 		_objectMan->closeSection(SwordLogic::_scriptVars[SCREEN]); // close the section that PLAYER has just left, if it's empty now
-	} while ((!_systemVars.forceRestart) && (!wantControlPanel));
+	}
+	return retCode;
 }
 
 void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp

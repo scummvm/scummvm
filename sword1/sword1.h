@@ -35,6 +35,7 @@ class MemMan;
 class ObjectMan;
 class SwordMenu;
 class SwordMusic;
+class SwordControl;
 
 struct SystemVars {
 	// todo: move these to a better place
@@ -64,7 +65,7 @@ private:
 	void initialize(void);
 
 	void checkCd(void);
-	void mainLoop(void);
+	uint8 mainLoop(void);
 	void startPositions(int32 startNumber);
 
 	uint16 _mouseX, _mouseY, _mouseState;
@@ -82,5 +83,6 @@ private:
 	SwordSound	*_sound;
 	SwordMenu	*_menu;
 	SwordMusic  *_music;
+	SwordControl *_control;
 	static const uint8 _cdList[TOTAL_SECTIONS];
 };

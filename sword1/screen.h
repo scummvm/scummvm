@@ -66,21 +66,19 @@ public:
 	SwordScreen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
 	void useTextManager(SwordText *pTextMan);
 	~SwordScreen(void);
-	void flushSprites(void) { _backLength = _sortLength = _foreLength = 0; };
+	void draw(void);
 
 	void quitScreen(void);
 	void newScreen(uint32 screen);
 
 	void setScrolling(int16 offsetX, int16 offsetY);
-
 	void addToGraphicList(uint8 listId, uint32 objId);
-
-	void draw(void);
 
 	void fadeDownPalette(void);
 	void fadeUpPalette(void);
 	void fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp);
 	bool stillFading(void);
+	void refreshPalette(void);
 
 	void updateScreen(void);
 	void showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask = NULL, int8 fadeStatus = 0);
