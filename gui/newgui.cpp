@@ -317,7 +317,7 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 
 void NewGui::blendRect(int x, int y, int w, int h, int16 color)
 {
-	#define ALPHA_LEVEL	2
+	#define ALPHA_LEVEL	3
 	uint8 r, g, b;
 	uint8 ar, ag, ab;
 	_system->colorToRBG(color, r, g, b);
