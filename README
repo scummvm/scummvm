@@ -123,6 +123,7 @@ SCUMM Games:
 
      Fatty Bear's Birthday Surprise                  [Game: fbear]
      Fatty Bear's Fun Pack                           [Game: fbpack]
+     Putt-Putt's Fun Pack                            [Game: funpack]
      Putt-Putt Goes To The Moon                      [Game: puttmoon]
      Putt-Putt Joins the Parade                      [Game: puttputt]
 
@@ -142,7 +143,11 @@ your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-     Putt-Putt's Fun Pack                          [Game: funpack]
+     Freddi Fish 1: The Case of the Missing Kelp Seeds  [Game: freddi]
+     Let's Explore the Airport with Buzzy               [Game: airport]
+     Let's Explore the Farm with Buzzy                  [Game: farm]
+     Let's Explore the Jungle with Buzzy                [Game: jungle]
+     Putt-Putt Saves the Zoo                            [Game: puttzoo]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
