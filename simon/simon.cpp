@@ -173,7 +173,29 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {
 	MidiDriver *driver = detector->createMidi();
 	
+	_vc_ptr = 0;
+	_game_offsets_ptr = 0;
+	
+	_game = (byte)detector->_game.features;
+
+	if (_game == GAME_SIMON2MAC) {
+		gss = &simon2mac_settings;
+	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
+		gss = &simon2win_settings;
+	} else if (_game == GAME_SIMON2DOS) {
+		gss = &simon2dos_settings;
+	} else if (_game & GF_AMIGA) {
+		gss = &simon1amiga_settings;
+	} else if (_game == GAME_SIMON1DEMO) {
+		gss = &simon1demo_settings;
+	} else {
+		gss = &simon1_settings;
+	}
+
+	_key_pressed = 0;
+
 	_game_file = 0;
+	
 	_stripped_txt_mem = 0;
 	_text_size = 0;
 	_stringtab_num = 0;
@@ -415,8 +437,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	int ret = midi.open();
 	if (ret)
 		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
-
-	_game = (byte)detector->_game.features;
 
 	// Setup mixer
 	if (!_mixer->bindToSystem(syst))
@@ -4329,20 +4349,6 @@ void SimonEngine::go() {
 	_sdl_buf_3 = (byte *)calloc(320 * 200, 1);
 	_sdl_buf = (byte *)calloc(320 * 200, 1);
 	_sdl_buf_attached = (byte *)calloc(320 * 200, 1);
-
-	if (_game == GAME_SIMON2MAC) {
-		gss = &simon2mac_settings;
-	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
-		gss = &simon2win_settings;
-	} else if (_game == GAME_SIMON2DOS) {
-		gss = &simon2dos_settings;
-	} else if (_game & GF_AMIGA) {
-		gss = &simon1amiga_settings;
-	} else if (_game == GAME_SIMON1DEMO) {
-		gss = &simon1demo_settings;
-	} else {
-		gss = &simon1_settings;
-	}
 
 	allocItemHeap();
 	allocTablesHeap();
