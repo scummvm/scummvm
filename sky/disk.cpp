@@ -156,57 +156,51 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 
 	//if cflag == 0 then file is compressed, 1 == uncompressed
 
-	if (!cflag) {
-		debug(2, "File is compressed...");
+	if ((!cflag) && ((FROM_LE_16(((dataFileHeader*)_fileDest)->flag) >> 7)&1)) {
+		debug(2, "File is RNC compressed.");
 
 		memcpy(&fileHeader, _fileDest, sizeof(struct dataFileHeader));
-		if ( (uint8)((FROM_LE_16(fileHeader.flag) >> 7) & 0x1)	 ) {
-			debug(2, "with RNC!");
+		_decompSize = (FROM_LE_16(fileHeader.flag) & 0xFFFFFF00) << 8;
+		_decompSize |= FROM_LE_16((uint16)fileHeader.s_tot_size);
 
-			_decompSize = (FROM_LE_16(fileHeader.flag) & 0xFFFFFF00) << 8;
-			_decompSize |= FROM_LE_16((uint16)fileHeader.s_tot_size);
+		if (_fixedDest == NULL) // is this valid?
+			_compDest = (uint8 *)malloc(_decompSize);
 
-			if (_fixedDest == NULL) // is this valid?
-				_compDest = (uint8 *)malloc(_decompSize);
+		inputPtr = _fileDest;
+		outputPtr = _compDest;
 
-			inputPtr = _fileDest;
-			outputPtr = _compDest;
+		if ( (uint8)(_fileFlags >> (22) & 0x1) ) //do we include the header?
+			inputPtr += sizeof(struct dataFileHeader);
+		else {
+			memcpy(outputPtr, inputPtr, sizeof(struct dataFileHeader));
+			inputPtr += sizeof(struct dataFileHeader);
+			outputPtr += sizeof(struct dataFileHeader);
+		}
 
-			if ( (uint8)(_fileFlags >> (22) & 0x1) ) //do we include the header?
-				inputPtr += sizeof(struct dataFileHeader);
-			else {
-				memcpy(outputPtr, inputPtr, sizeof(struct dataFileHeader));
-				inputPtr += sizeof(struct dataFileHeader);
-				outputPtr += sizeof(struct dataFileHeader);
-			}
+		RncDecoder rncDecoder;
+		int32 unPackLen = rncDecoder.unpackM1(inputPtr, outputPtr, 0);
 
-			RncDecoder rncDecoder;
-			int32 unPackLen = rncDecoder.unpackM1(inputPtr, outputPtr, 0);
+		debug(3, "UnpackM1 returned: %d", unPackLen);
 
-			debug(3, "UnpackM1 returned: %d", unPackLen);
-
-			if (unPackLen == 0) { //Unpack returned 0: file was probably not packed.
-				if (_fixedDest == NULL)
-					free(_compDest);
-			
-				return _fileDest;
-			}
-
-			if (! (uint8)(_fileFlags >> (22) & 0x1) ) { // include header?
-				unPackLen += sizeof(struct dataFileHeader);
-
-				if (unPackLen != (int32)_decompSize) {
-					debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unPackLen, _decompSize);
-				}
-			}
-
-			_lastLoadedFileSize = _decompSize; //including header
-			
+		if (unPackLen == 0) { //Unpack returned 0: file was probably not packed.
 			if (_fixedDest == NULL)
-				free(_fileDest);
+				free(_compDest);
+			
+			return _fileDest;
+		}
 
-		} else
-			debug(2, "but not with RNC! (?!)");
+		if (! (uint8)(_fileFlags >> (22) & 0x1) ) { // include header?
+			unPackLen += sizeof(struct dataFileHeader);
+
+			if (unPackLen != (int32)_decompSize) {
+				debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unPackLen, _decompSize);
+			}
+		}
+
+		_lastLoadedFileSize = _decompSize; //including header
+			
+		if (_fixedDest == NULL)
+			free(_fileDest);
 	} else
 		return _fileDest;
 
@@ -289,7 +283,7 @@ void SkyDisk::fnCacheFast(uint32 list) {
 	uint8 cnt = 0;
 	uint16 *fList = (uint16*)SkyState::fetchCompact(list);
 	do {
-		_buildList[cnt] = fList[cnt];
+		_buildList[cnt] = fList[cnt] & 0x7FFFU;
 		cnt++;
 	} while (fList[cnt-1]);
 }
@@ -312,7 +306,7 @@ void SkyDisk::fnCacheFiles(void) {
 			targCnt++;
 		} else {
 			free(SkyState::_itemList[_loadedFilesList[lCnt] & 2047]);
-			SkyState::_itemList[_loadedFilesList[lCnt] & 2047] = NULL;
+			SkyState::_itemList[_loadedFilesList[lCnt] & 2047] = NULL;		
 		}
 		lCnt++;
 	}
@@ -339,6 +333,8 @@ void SkyDisk::fnCacheFiles(void) {
 		targCnt++;
 		_loadedFilesList[targCnt] = 0;
 		SkyState::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
+		if (!SkyState::_itemList[_buildList[bCnt] & 2047])
+			warning("fnCacheFiles: SkyDisk::loadFile() returned NULL for file %d\n",_buildList[bCnt] & 0x7FFF);
 		bCnt++;
 	}
 	_buildList[0] = 0;

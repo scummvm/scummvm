@@ -1403,6 +1403,11 @@ bool SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 		return false; 
 	}
 	uint16 *getToTable = cpt->getToTable;
+	if (!getToTable) { 
+		// FIXME: This should never happen
+		warning("Place compact's getToTable is NULL!");
+		return false; 
+	}
 
 	while (*getToTable != targetPlaceId)
 		getToTable += 2;
@@ -1500,7 +1505,8 @@ bool SkyLogic::fnAddHuman(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnAddButtons(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnAddButtons");
+	_scriptVariables[MOUSE_STATUS] |= 4;
+	return true;
 }
 
 bool SkyLogic::fnNoButtons(uint32 a, uint32 b, uint32 c) {
@@ -1871,6 +1877,15 @@ bool SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 
 	Compact *cpt = SkyState::fetchCompact(id);
 	uint16 *rst = (uint16 *)SkyState::fetchCompact(resetBlock);
+	SkyCompact::jobsworth;
+	if (!cpt) {
+		warning("fnResetId(): Compact %d (id) == NULL\n",id);
+		return true;
+	}
+	if (!rst) {
+		warning("fnResetId(): Compact %d (resetBlock) == NULL\n",resetBlock);
+		return true;
+	}
 
 	uint16 off;
 	while ((off = *rst++) != 0xffff)
