@@ -59,7 +59,7 @@ bool AnimationState::init(const char *basename) {
 
 #ifdef BACKEND_8BIT
 
-	int i, p;
+	uint i, p;
 
 	// Load lookup palettes
 	// TODO: Binary format so we can use File class
@@ -301,29 +301,18 @@ bool AnimationState::decodeFrame() {
 		case STATE_END:
 			if (info->display_fbuf) {
 				/* simple audio video sync code:
-				 * we calculate the actual frame by taking the delivered audio samples
-				 * we add 2 frames as the number of samples delivered is higher than the
-				 * number actually played due to buffering
-				 *
-				 * we then try to stay inside +- 1 frame of this calculated frame number by
-				 * dropping frames if we run behind and delaying if we are too fast
-				 */
-
-				/* FIXME: We shouldn't use delay_msecs() here.
-				 * We should use something like the delay()
-				 * function in SwordEngine, so that events are
-				 * handled properly. For now, at least call the
-				 * backend's event handler so that redraw
-				 * events are processed.
+				 * we calculate the actual frame by taking the elapsed audio time and try
+				 * to stay inside +- 1 frame of this calculated frame number by dropping
+				 * frames if we run behind and delaying if we are too fast
 				 */
 
 #ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-                                    (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+                                    ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1)) {
 					_scr->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1)
+						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
 							_sys->delay_msecs(10);
 					} else {
 						ticks += 83;
@@ -338,11 +327,11 @@ bool AnimationState::decodeFrame() {
 
 #else
 
-				if ((bgSoundStream == NULL) || (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+				if ((bgSoundStream == NULL) || ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1)) {
 					plotYUV(lookup, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1)
+						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
 							_sys->delay_msecs(10);
 					} else {
 						ticks += 83;

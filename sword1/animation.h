@@ -76,7 +76,7 @@ private:
 	SoundMixer *_snd;
 	OSystem *_sys;
 
-	int framenum;
+	uint framenum;
 	uint32 ticks;
 
 #ifdef USE_MPEG2
@@ -106,8 +106,8 @@ private:
 	int pos;
 
 	struct {
-		int cnt;
-		int end;
+		uint cnt;
+		uint end;
 		byte pal[4 * 256];
 	} palettes[50];
 #else
