@@ -47,22 +47,22 @@ public:
 protected:
 
 	int getCharWidth(byte c);
-	int getStringWidth(char *str);
+	int getStringWidth(const char *str);
 	int getCharHeight(byte c);
-	int getStringHeight(char *str);
+	int getStringHeight(const char *str);
 	int draw2byte(byte *buffer, int dst_width, int x, int y, int idx);
 	int drawChar(byte *buffer, int dst_width, int x, int y, byte chr);
-	void drawSubstring(char *str, byte *buffer, int dst_width, int x, int y);
-	void decodeCodec(byte *dst, byte *src, int length);
+	void drawSubstring(const char *str, byte *buffer, int dst_width, int x, int y);
+	void decodeCodec(byte *dst, const byte *src, int length);
 
 public:
 
 	bool loadFont(const char *filename, const char *directory);
 	void setColor(byte c) { _color = c; }
-	void drawStringCentered(char *str, byte *buffer, int dst_width, int dst_height, int y, int xmin, int width, int offset);
-	void drawStringWrap(char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
-	void drawStringWrapCentered(char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
-	void drawStringAbsolute(char *str, byte *buffer, int dst_width, int x, int y);
+	void drawStringCentered(const char *str, byte *buffer, int dst_width, int dst_height, int y, int xmin, int width, int offset);
+	void drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
+	void drawStringWrapCentered(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
+	void drawStringAbsolute(const char *str, byte *buffer, int dst_width, int x, int y);
 };
 
 #endif

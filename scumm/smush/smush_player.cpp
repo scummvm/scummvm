@@ -43,12 +43,12 @@ private:
 
 	struct {
 		int id;
-		char *string;
+		const char *string;
 	} _strings[MAX_STRINGS];
 
 	int _nbStrings;
 	int _lastId;
-	char *_lastString;
+	const char *_lastString;
 
 public:
 
@@ -129,7 +129,7 @@ public:
 		return true;
 	}
 
-	char *get(int id) {
+	const char *get(int id) {
 		if(id == _lastId) {
 			return _lastString;
 		}
@@ -488,7 +488,8 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	/*int32 height =*/ b.getShort();
 	/*int32 unk2 =*/ b.getWord();
 
-	char *str, *string = NULL, *string2 = NULL;
+	const char *str;
+	char *string = NULL, *string2 = NULL;
 	if (b.getType() == TYPE_TEXT) {
 		string = (char *)malloc(b.getSize() - 16);
 		str = string;
@@ -511,8 +512,9 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	}
 
 	if (_scumm->_gameId == GID_CMI) {
-		_scumm->translateText((byte*)str - 1, _scumm->_transText);
-		while(*str++ != '/');
+		_scumm->translateText((const byte *)str - 1, _scumm->_transText);
+		while(*str++ != '/')
+			;
 		string2 = (char *)_scumm->_transText;
 
 		// If string2 contains formatting information there probably
@@ -545,44 +547,39 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	assert(sf != NULL);
 	sf->setColor(color);
 
-	if (_scumm->_gameId != GID_CMI) {
-		string2 = str;
-	}
-	if (_scumm->_gameId == GID_CMI) {
-		if (string2[0] == 0) {
-			string2 = str;
-		}
+	if (_scumm->_gameId == GID_CMI && string2[0] != 0) {
+		str = string2;
 	}
 
 	// flags:
-	// bit 0 - center				1
-	// bit 1 - not used			2
-	// bit 2 - ???					4
-	// bit 3 - wrap around	8
+	// bit 0 - center       1
+	// bit 1 - not used     2
+	// bit 2 - ???          4
+	// bit 3 - wrap around  8
 	switch (flags) {
 		case 0: 
-			sf->drawStringAbsolute(string2, _data, _width, pos_x, pos_y);
+			sf->drawStringAbsolute(str, _data, _width, pos_x, pos_y);
 			break;
 		case 1:
-			sf->drawStringCentered(string2, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
+			sf->drawStringCentered(str, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
 			break;
 		case 4:
-			sf->drawStringAbsolute(string2, _data, _width, pos_x, pos_y);
+			sf->drawStringAbsolute(str, _data, _width, pos_x, pos_y);
 			break;
 		case 5:
-			sf->drawStringCentered(string2, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
+			sf->drawStringCentered(str, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
 			break;
 		case 8:
-			sf->drawStringWrap(string2, _data, _width, _height, pos_x, MAX(pos_y, top), width);
+			sf->drawStringWrap(str, _data, _width, _height, pos_x, MAX(pos_y, top), width);
 			break;
 		case 9:
-			sf->drawStringCentered(string2, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
+			sf->drawStringCentered(str, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
 			break;
 		case 12:
-			sf->drawStringWrap(string2, _data, _width, _height, pos_x, MAX(pos_y, top), width);
+			sf->drawStringWrap(str, _data, _width, _height, pos_x, MAX(pos_y, top), width);
 			break;
 		case 13:
-			sf->drawStringWrapCentered(string2, _data, _width, _height, pos_x, MAX(pos_y, top), width);
+			sf->drawStringWrapCentered(str, _data, _width, _height, pos_x, MAX(pos_y, top), width);
 			break;
 		default:
 			warning("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
