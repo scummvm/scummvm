@@ -113,16 +113,14 @@ public:
 	/** changing the channel pan for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
 	void setChannelPan(PlayingSoundHandle handle, int8 pan);
 
-	bool isChannelActive(PlayingSoundHandle handle);
-
 	/** Start a new stream. */
-	int newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
+	int newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
 
 	/** Append to an existing stream. */
-	void appendStream(int index, void *sound, uint32 size);
+	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
 
 	/** Mark a stream as finished - it will play all its remaining data, then stop. */
-	void endStream(int index);
+	void endStream(PlayingSoundHandle handle);
 
 	/** Check whether any SFX channel is active.*/
 	bool hasActiveSFXChannel();

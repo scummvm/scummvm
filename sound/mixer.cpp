@@ -144,13 +144,23 @@ SoundMixer::~SoundMixer() {
 	_syst->delete_mutex(_mutex);
 }
 
-int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
+int SoundMixer::newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
 	StackLock lock(_mutex);
-	return insertChannel(NULL, new ChannelStream(this, 0, sound, size, rate, flags, buffer_size, volume, pan));
+	return insertChannel(handle, new ChannelStream(this, handle, sound, size, rate, flags, buffer_size, volume, pan));
 }
 
-void SoundMixer::appendStream(int index, void *sound, uint32 size) {
+void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 size) {
 	StackLock lock(_mutex);
+	
+	if (handle == 0)
+		return;
+
+	int index = handle - 1;
+
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::appendStream has invalid index %d", index);
+		return;
+	}
 
 	ChannelStream *chan;
 #if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
@@ -159,17 +169,25 @@ void SoundMixer::appendStream(int index, void *sound, uint32 size) {
 	chan = (ChannelStream*)_channels[index];
 #endif
 	if (!chan) {
-		error("Trying to append to a nonexistant stream %d", index);
+		error("Trying to append to nonexistant streamer : %d", index);
 	} else {
 		chan->append(sound, size);
 	}
 }
 
-void SoundMixer::endStream(int index) {
+void SoundMixer::endStream(PlayingSoundHandle handle) {
 	StackLock lock(_mutex);
-
-	if (index == 0)
+	
+	// Simply ignore stop requests for handles of sounds that already terminated
+	if (handle == 0)
 		return;
+
+	int index = handle - 1;
+
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::endStream has invalid index %d", index);
+		return;
+	}
 
 	ChannelStream *chan;
 #if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
@@ -355,24 +373,6 @@ void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
 
 	if (_channels[index])
 		_channels[index]->setChannelPan(pan);
-}
-
-bool SoundMixer::isChannelActive(PlayingSoundHandle handle) {
-	StackLock lock(_mutex);
-	
-	if (handle == 0)
-		return false;
-
-	int index = handle - 1;
-	if ((index < 0) || (index >= NUM_CHANNELS)) {
-		warning("soundMixer::isChannelActive has invalid index %d", index);
-		return false;
-	}
-	
-	if (_channels[index])
-		return _channels[index] != NULL;
-	else
-		return false;
 }
 
 void SoundMixer::pause(bool paused) {
