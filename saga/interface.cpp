@@ -31,6 +31,7 @@
 #include "saga/console.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
+#include "saga/objectdata.h"
 #include "saga/rscfile_mod.h"
 #include "saga/scene.h"
 #include "saga/script.h"
@@ -69,7 +70,18 @@ static INTERFACE_DESC ITE_interface = {
 	ITE_LPORTRAIT_X,
 	ITE_LPORTRAIT_Y,
 	ITE_RPORTRAIT_X,
-	ITE_RPORTRAIT_Y
+	ITE_RPORTRAIT_Y,
+
+	ITE_INVENTORY_XSTART,
+	ITE_INVENTORY_YSTART,
+	ITE_INVENTORY_ROWS,
+	ITE_INVENTORY_COLUMNS,
+	ITE_INVENTORY_ICON_WIDTH,
+	ITE_INVENTORY_ICON_HEIGHT,
+	ITE_INVENTORY_ICON_XOFFSET,
+	ITE_INVENTORY_ICON_YOFFSET,
+	ITE_INVENTORY_XSPACING,
+	ITE_INVENTORY_YSPACING
 };
 
 static INTERFACE_BUTTON ITE_c_buttons[] = {
@@ -113,7 +125,18 @@ static INTERFACE_DESC IHNM_interface = {
 	IHNM_LPORTRAIT_X,
 	IHNM_LPORTRAIT_Y,
 	IHNM_RPORTRAIT_X,
-	IHNM_RPORTRAIT_Y
+	IHNM_RPORTRAIT_Y,
+
+	IHNM_INVENTORY_XSTART,
+	IHNM_INVENTORY_YSTART,
+	IHNM_INVENTORY_ROWS,
+	IHNM_INVENTORY_COLUMNS,
+	IHNM_INVENTORY_ICON_WIDTH,
+	IHNM_INVENTORY_ICON_HEIGHT,
+	IHNM_INVENTORY_ICON_XOFFSET,
+	IHNM_INVENTORY_ICON_YOFFSET,
+	IHNM_INVENTORY_XSPACING,
+	IHNM_INVENTORY_YSPACING
 };
 
 static INTERFACE_BUTTON IHNM_c_buttons[] = {
@@ -221,10 +244,19 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_panelMode = kPanelNone;
 	*_statusText = 0;
 
+	_inventoryCount = 0;
+	_inventorySize = ITE_INVENTORY_SIZE;
+
+	_inventory = (uint16 *)calloc(_inventorySize, sizeof(uint16));
+	if (_inventory == NULL) {
+		return;
+	}
+
 	_initialized = true;
 }
 
 Interface::~Interface(void) {
+	free(_inventory);
 	_initialized = false;
 }
 
@@ -343,6 +375,8 @@ int Interface::draw() {
 
 		_vm->_sprite->draw(back_buf, _scenePortraits, _rightPortrait, rportrait_x, rportrait_y);
 	}
+
+	drawInventory();
 
 	return SUCCESS;
 }
@@ -480,6 +514,13 @@ int Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePt) {
 	int color;
 	int i;
 
+	hit_button = inventoryTest(imousePt, &ibutton_num);
+
+	if (hit_button == SUCCESS) {
+		// Hovering over an inventory object
+		return SUCCESS;
+	}
+
 	hit_button = hitTest(imousePt, &ibutton_num);
 
 	if (hit_button == SUCCESS) {
@@ -575,7 +616,6 @@ int Interface::handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt) {
 	}
 
 	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
-
 	object_name = _vm->_scene->_objectMap->getName(objectNum);
 
 	if (object_flags & OBJECT_EXIT) { // FIXME. This is wrong
@@ -616,6 +656,98 @@ int Interface::hitTest(const Point& imousePt, int *ibutton) {
 	}
 
 	*ibutton = -1;
+	return FAILURE;
+}
+
+void Interface::addToInventory(int sprite) {
+	if (_inventoryCount < _inventorySize) {
+		for (int i = _inventoryCount; i > 0; i--) {
+			_inventory[i] = _inventory[i - 1];
+		}
+
+		_inventory[0] = sprite;
+		_inventoryCount++;
+		draw();
+	}
+}
+
+void Interface::removeFromInventory(int sprite) {
+	for (int i = 0; i < _inventoryCount; i++) {
+		if (_inventory[i] == sprite) {
+			int j;
+
+			for (j = i; i < _inventoryCount; j++) {
+				_inventory[j] = _inventory[j + 1];
+			}
+
+			_inventory[j] = 0;
+			_inventoryCount--;
+			draw();
+			return;
+		}
+	}
+}
+
+void Interface::drawInventory() {
+	if (_panelMode != kPanelCommand)
+		return;
+
+	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
+
+	// TODO: Inventory scrolling
+
+	int row = 0;
+	int col = 0;
+
+	int x = _iDesc.inv_xstart + _iDesc.inv_icon_xoffset;
+	int y = _iDesc.inv_ystart + _iDesc.inv_icon_yoffset;
+	int width = _iDesc.inv_icon_width + _iDesc.inv_xspacing;
+	int height = _iDesc.inv_icon_height + _iDesc.inv_yspacing;
+
+	for (int i = 0; i < _inventoryCount; i++) {
+		if (_inventory[i] >= ARRAYSIZE(ObjectTable)) {
+			continue;
+		}
+
+		_vm->_sprite->draw(back_buf, _vm->_mainSprites,
+			ObjectTable[_inventory[i]].spritelistRn,
+			x + col * width, y + row * height);
+
+		if (++col >= _iDesc.inv_columns) {
+			if (++row >= _iDesc.inv_rows) {
+				break;
+			}
+			col = 0;
+		}
+	}
+}
+
+int Interface::inventoryTest(const Point& imousePt, int *ibutton) {
+	int row = 0;
+	int col = 0;
+
+	int xbase = _iDesc.inv_xstart;
+	int ybase = _iDesc.inv_ystart;
+	int width = _iDesc.inv_icon_width + _iDesc.inv_xspacing;
+	int height = _iDesc.inv_icon_height + _iDesc.inv_yspacing;
+
+	for (int i = 0; i < _inventoryCount; i++) {
+		int x = xbase + col * width;
+		int y = ybase + row * height;
+
+		if (imousePt.x >= x && imousePt.x < x + _iDesc.inv_icon_width && imousePt.y >= y && imousePt.y < y + _iDesc.inv_icon_height) {
+			*ibutton = i;
+			return SUCCESS;
+		}
+
+		if (++col >= _iDesc.inv_columns) {
+			if (++row >= _iDesc.inv_rows) {
+				break;
+			}
+			col = 0;
+		}
+	}
+
 	return FAILURE;
 }
 

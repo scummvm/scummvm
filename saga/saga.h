@@ -65,6 +65,7 @@ using Common::MemoryReadStream;
 
 struct RSCFILE_CONTEXT;
 struct SEMAPHORE;
+struct SPRITELIST;
 
 enum ERRORCODE {
 	MEM = -2,
@@ -115,7 +116,9 @@ public:
 	Console *_console;
 	Events *_events;
 	PalAnim *_palanim;
-	
+
+	SPRITELIST *_mainSprites;
+
 	/** Random number generator */
 	Common::RandomSource _rnd;
 

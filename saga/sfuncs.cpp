@@ -31,6 +31,7 @@
 #include "saga/console.h"
 #include "saga/interface.h"
 #include "saga/music.h"
+#include "saga/objectdata.h"
 #include "saga/sound.h"
 #include "saga/sndres.h"
 
@@ -155,23 +156,28 @@ int Script::SF_sleep(SCRIPTFUNC_PARAMS) {
 // Script function #2 (0x02)
 int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
+	int index = param & 0x1FFF;
 
-	debug(1, "stub: SF_takeObject(%d)", param);
+	if (ObjectTable[index].sceneIndex != -1) {
+		ObjectTable[index].sceneIndex = -1;
+		_vm->_interface->addToInventory(index);
+	}
+
 	return SUCCESS;
 }
 
 // Script function #3 (0x03)
 // Check if an object is carried.
 int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
-	// INCOMPLETE
-	SDataWord_T param1;
-	param1 = thread->pop();
+	SDataWord_T param = thread->pop();
+	int index = param & 0x1FFF;
 
-	// FIXME: Incomplete, but returning 0 assures that the fair start
-	// script will run completely.
+	if (index >= ARRAYSIZE(ObjectTable)) {
+		thread->retVal = 0;
+		return FAILURE;
+	}
 
-	thread->retVal = 0;
-
+	thread->retVal = (ObjectTable[index].sceneIndex == -1) ? 1 : 0;
 	return SUCCESS;
 }
 

@@ -210,6 +210,8 @@ void SagaEngine::go() {
 
 	_previousTicks = _system->getMillis();
 
+	_sprite->loadList(ITE_MAIN_SPRITES, &_mainSprites);
+
 	// Begin Main Engine Loop
 
 	_scene->startScene();

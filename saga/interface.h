@@ -36,6 +36,8 @@ enum INTERFACE_UPDATE_FLAGS {
 	UPDATE_MOUSECLICK
 };
 
+#define ITE_INVENTORY_SIZE 24
+
 #define VERB_STRLIMIT 32
 
 #define STATUS_TEXT_LEN 128
@@ -59,6 +61,17 @@ enum INTERFACE_UPDATE_FLAGS {
 #define ITE_RPORTRAIT_X 274
 #define ITE_RPORTRAIT_Y 4
 
+#define ITE_INVENTORY_XSTART 181
+#define ITE_INVENTORY_YSTART 155
+#define ITE_INVENTORY_ROWS 2
+#define ITE_INVENTORY_COLUMNS 4
+#define ITE_INVENTORY_ICON_WIDTH 29
+#define ITE_INVENTORY_ICON_HEIGHT 20
+#define ITE_INVENTORY_ICON_XOFFSET 1
+#define ITE_INVENTORY_ICON_YOFFSET 0
+#define ITE_INVENTORY_XSPACING 3
+#define ITE_INVENTORY_YSPACING 1
+
 // IHNMAIMS interface values
 #define IHNM_STATUS_Y      304
 #define IHNM_STATUS_W      640
@@ -76,6 +89,18 @@ enum INTERFACE_UPDATE_FLAGS {
 #define IHNM_RPORTRAIT_X -1
 #define IHNM_RPORTRAIT_Y -1
 
+// TODO
+#define IHNM_INVENTORY_XSTART 0
+#define IHNM_INVENTORY_YSTART 0
+#define IHNM_INVENTORY_ROWS 0
+#define IHNM_INVENTORY_COLUMNS 0
+#define IHNM_INVENTORY_ICON_WIDTH 0
+#define IHNM_INVENTORY_ICON_HEIGHT 0
+#define IHNM_INVENTORY_ICON_XOFFSET 0
+#define IHNM_INVENTORY_ICON_YOFFSET 0
+#define IHNM_INVENTORY_XSPACING 0
+#define IHNM_INVENTORY_YSPACING 0
+
 enum PANEL_MODES {
 	kPanelNone,
 	kPanelCommand,
@@ -87,7 +112,6 @@ enum BUTTON_FLAGS {
 	BUTTON_LABEL = 0x01,
 	BUTTON_BITMAP = 0x02,
 	BUTTON_SET = 0x04
-
 };
 
 #define BUTTON_VERB ( BUTTON_LABEL | BUTTON_BITMAP | BUTTON_SET )
@@ -134,6 +158,16 @@ struct INTERFACE_DESC {
 	int lportrait_y;
 	int rportrait_x;
 	int rportrait_y;
+	int inv_xstart;
+	int inv_ystart;
+	int inv_rows;
+	int inv_columns;
+	int inv_icon_width;
+	int inv_icon_height;
+	int inv_icon_xoffset;
+	int inv_icon_yoffset;
+	int inv_xspacing;
+	int inv_yspacing;
 };
 
 struct INTERFACE_MODULE {
@@ -158,7 +192,7 @@ struct VERB_DATA {
 };
 
 class Interface {
- public:
+public:
 	Interface(SagaEngine *vm);
 	~Interface(void);
 
@@ -174,8 +208,11 @@ class Interface {
 	int draw();
 	int update(const Point& imousePt, int update_flag);
 
-
- private:
+	void addToInventory(int sprite);
+	void removeFromInventory(int sprite);
+	void drawInventory();
+	int inventoryTest(const Point& imousePt, int *ibutton);
+private:
 	int hitTest(const Point& imousePt, int *ibutton);
 	int drawStatusBar(SURFACE *ds);
 	int handleCommandUpdate(SURFACE *ds, const Point& imousePt);
@@ -183,7 +220,7 @@ class Interface {
 	int handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt);
 	int handlePlayfieldClick(SURFACE *ds, const Point& imousePt);
 
- private:
+private:
 	SagaEngine *_vm;
 
 	bool _initialized;
@@ -200,6 +237,10 @@ class Interface {
 	SPRITELIST *_scenePortraits;
 	int _activeVerb;
 	SCRIPT_THREAD *_iThread;
+
+	uint16 *_inventory;
+	int _inventorySize;
+	byte _inventoryCount;
 };
 
 } // End of namespace Saga
