@@ -183,7 +183,8 @@ void ScummDebugger::enter() {
 	if (!_s->_debuggerDialog) {
 		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, _s->_screenWidth);
 
-		Debug_Printf("Debugger started, type 'exit' to return to the game\n");
+		Debug_Printf("Debugger started, type 'exit' to return to the game.\n");
+		Debug_Printf("Type 'help' to see a little list of commands and variables.\n");
 	}
 
 	if (errStr) {
@@ -356,7 +357,7 @@ bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 
 	// Re-run bootscript
 	_s->runScript(1, 0, 0, &_s->_bootParam);
-	
+
 	_detach_now = true;
 	return false;
 }
@@ -384,15 +385,15 @@ bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 		return true;
 	}
 }
-	
+
 bool ScummDebugger::Cmd_LoadGame(int argc, const char **argv) {
 	if (argc > 1) {
 		int slot = atoi(argv[1]);
-		
+
 		_s->_saveLoadSlot = slot;
 		_s->_saveLoadFlag = 2;
 		_s->_saveLoadCompatible = false;
-		
+
 		_detach_now = true;
 		return false;
 	}
@@ -400,7 +401,7 @@ bool ScummDebugger::Cmd_LoadGame(int argc, const char **argv) {
 	Debug_Printf("Syntax: loadgame <slotnum>\n");
 	return true;
 }
-	
+
 bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
 	if (argc > 2) {
 		int slot = atoi(argv[1]);
@@ -421,7 +422,7 @@ bool ScummDebugger::Cmd_Show(int argc, const char **argv) {
 		Debug_Printf("Syntax: show <parameter>\n");
 		return true;
 	}
-	
+
 	if (!strcmp(argv[1], "hex")) {
 		_s->_hexdumpScripts = true;
 		Debug_Printf("Script hex dumping on\n");
@@ -429,7 +430,7 @@ bool ScummDebugger::Cmd_Show(int argc, const char **argv) {
 		_s->_showStack = 1;
 		Debug_Printf("Stack tracing on\n");
 	} else {
-		Debug_Printf("Unknown show parameter '%s'\n", argv[1]);
+		Debug_Printf("Unknown show parameter '%s'\nParameters are 'hex' for hex dumping and 'sta' for stack tracing\n", argv[1]);
 	}
 	return true;
 }
@@ -440,7 +441,7 @@ bool ScummDebugger::Cmd_Hide(int argc, const char **argv) {
 		Debug_Printf("Syntax: hide <parameter>\n");
 		return true;
 	}
-	
+
 	if (!strcmp(argv[1], "hex")) {
 		_s->_hexdumpScripts = false;
 		Debug_Printf("Script hex dumping off\n");
@@ -448,7 +449,7 @@ bool ScummDebugger::Cmd_Hide(int argc, const char **argv) {
 		_s->_showStack = 0;
 		Debug_Printf("Stack tracing off\n");
 	} else {
-		Debug_Printf("Unknown hide parameter '%s'\n", argv[1]);
+		Debug_Printf("Unknown hide parameter '%s'\nParameters are 'hex' to turn off hex dumping and 'sta' to turn off stack tracing\n", argv[1]);
 	}
 	return true;
 }
@@ -460,22 +461,22 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 		Debug_Printf("Syntax: script <scriptnum> <command>\n");
 		return true;
 	}
-	
+
 	scriptnum = atoi(argv[1]);
-	
+
 	// FIXME: what is the max range on these?
 	// if (scriptnum >= _s->_maxScripts) {
 	//	Debug_Printf("Script number %d is out of range (range: 1 - %d)\n", scriptnum, _s->_maxScripts);
 	//	return true;
 	//}
-	
+
 	if ((!strcmp(argv[2], "kill")) || (!strcmp(argv[2], "stop"))) {
 		_s->stopScript(scriptnum);
 	} else if ((!strcmp(argv[2], "run")) || (!strcmp(argv[2], "start"))) {
 		_s->runScript(scriptnum, 0, 0, 0);
 		return false;
 	} else {
-		Debug_Printf("Unknown script command '%s'\n", argv[2]);
+		Debug_Printf("Unknown script command '%s'\nUse <kill/stop | run/start> as command\n", argv[2]);
 	}
 
 	return true;
@@ -485,7 +486,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 	File file;
 	uint32 size;
 	int resnum;
-	
+
 	if (argc != 3) {
 		Debug_Printf("Syntax: importres <restype> <filename> <resnum>\n");
 		return true;
@@ -493,7 +494,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 
 	resnum = atoi(argv[3]);
 	// FIXME add bounds check
-	
+
 	if (!strncmp(argv[1], "scr", 3)) {
 		file.open(argv[2], "");
 		if (file.isOpen() == false) {
@@ -514,14 +515,14 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 			size = file.readUint32BE();
 			file.seek(-8, SEEK_CUR);
 		}
-		
+
 		file.read(_s->createResource(rtScript, resnum, size), size);
-	
+
 	} else
 		Debug_Printf("Unknown importres type '%s'\n", argv[1]);
 	return true;
 }
-			
+
 bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 	int i;
 	ScriptSlot *ss = _s->vm.slot;
@@ -537,7 +538,7 @@ bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 		}
 	}
 	Debug_Printf("+--------------------------------------+\n");
-	
+
 	return true;
 }
 
@@ -571,11 +572,11 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 				Debug_Printf("Actor[%d].costume = %d\n", actnum, a->costume);
 			}
 	} else {
-			Debug_Printf("Unknown actor command '%s'\n", argv[2]);
+			Debug_Printf("Unknown actor command '%s'\nUse <ignoreboxes |costume> as command\n", argv[2]);
 	}
 
 	return true;
-	
+
 }
 bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	int i;
@@ -599,14 +600,14 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 	int i;
 	ObjectData *o;
-	Debug_Printf("Objects in current room\n"); 
+	Debug_Printf("Objects in current room\n");
 	Debug_Printf("+---------------------------------+--+\n");
 	Debug_Printf("|num |  x |  y |width|height|state|fl|\n");
 	Debug_Printf("+----+----+----+-----+------+-----+--+\n");
-	
+
 	for (i = 1; (i < _s->_numLocalObjects) && (_s->_objs[i].obj_nr != 0) ; i++) {
 		o = &(_s->_objs[i]);
-		Debug_Printf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|\n", 
+		Debug_Printf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|\n",
 				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state, o->fl_object_index);
 	}
 	Debug_Printf("\n");
@@ -616,7 +617,7 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	int i;
 	int obj;
-	
+
 	if (argc < 3) {
 		Debug_Printf("Syntax: object <objectnum> <command> <parameter>\n");
 		return true;
@@ -649,7 +650,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		_s->clearDrawObjectQueue();
 		_s->runHook(obj);
 	} else {
-		Debug_Printf("Unknown object command '%s'\n", argv[2]);
+		Debug_Printf("Unknown object command '%s'\nRight now the only command is pickup", argv[2]); //change when adding commands
 	}
 
 	return true;
@@ -659,11 +660,11 @@ bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 	// console normally has 39 line width
 	// wrap around nicely
 	int width = 0, size, i;
-	
+
 	Debug_Printf("Commands are:\n");
 	for (i = 0 ; i < _dcmd_count ; i++) {
 		size = strlen(_dcmds[i].name) + 1;
-				
+
 		if ((width + size) >= 39) {
 			Debug_Printf("\n");
 			width = size;
@@ -674,11 +675,11 @@ bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 	}
 
 	width = 0;
-	
+
 	Debug_Printf("\n\nVariables are:\n");
 	for (i = 0 ; i < _dvar_count ; i++) {
 		size = strlen(_dvars[i].name) + 1;
-				
+
 		if ((width + size) >= 39) {
 			Debug_Printf("\n");
 			width = size;
@@ -689,7 +690,7 @@ bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 	}
 
 	Debug_Printf("\n");
-	
+
 	return true;
 }
 
@@ -711,14 +712,14 @@ bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 		} else
 			Debug_Printf("Not a valid debug level\n");
 	}
-		
+
 	return true;
 }
 
 bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 	int num, i = 0;
 	num = _s->getNumBoxes();
-	
+
 	if (argc > 1) {
 		for (i = 1; i < argc; i++)
 			printBox(atoi(argv[i]));
