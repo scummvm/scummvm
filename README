@@ -1178,6 +1178,7 @@ X.X) Credits:
         Jamieson Christian   - iMUSE, MIDI, all things musical.
         Jochen Hoenicke      - Speaker & PCjr sound support, Adlib work
         Jeremy Newman        - Webmaster
+	Jerome Fisher        - MT-32 emulator
 
  Retired Team Members:
         Ralph Brorsen        - Help with GUI implementation
@@ -1208,12 +1209,12 @@ X.X) Credits:
 
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
-        Canadacow       - For his MT-32 emulator
+        Canadacow       - For the original MT-32 emulator
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codec
         Jezar           - For his freeverb filter implementation
         Jim Leiterman   - Various info on his FM-TOWNS/Marty SCUMM ports
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
-        Tristan         - For his Linux port of MT-32 emulator
+        Tristan         - For additional work on the original MT-32 emulator
 
         Tony Warriner and everyone at Revolution Software Ltd. for sharing
         with us the source of some of their brilliant games, allowing us to
