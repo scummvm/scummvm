@@ -126,8 +126,6 @@ public:
 	bool isSaving() { return _saveOrLoad; }
 	uint32 getVersion() { return _savegameVersion; }
 
-	bool checkEOFLoadStream();
-
 	void saveUint32(uint32 d);
 	void saveWord(uint16 d);
 	void saveByte(byte b);
