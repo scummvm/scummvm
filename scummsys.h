@@ -15,38 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.3.2.1  2001/11/12 16:20:15  yazoo
- * The dig and Full Throttle support
- *
- * Revision 1.5  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.4  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
- *
- * Revision 1.3  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.2  2001/10/09 17:38:20  strigeus
- * Autodetection of endianness.
- *
- * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- * initial revision
- *
+ * $Header$
  *
  */
 
-#if defined(WIN32)
+#if defined(_MSC_VER)
 
 #pragma warning (disable: 4244)
 #pragma warning (disable: 4101)
 
 #define scumm_stricmp stricmp
-
 
 #if defined(CHECK_HEAP)
 #undef CHECK_HEAP
@@ -71,8 +49,32 @@ typedef signed long int32;
 
 #define START_PACK_STRUCTS pack (push,1)
 #define END_PACK_STRUCTS   pack(pop)
+#define GCC_PACK
 
-#elif defined(UNIX)
+#elif defined(__CYGWIN__)
+
+#define scumm_stricmp stricmp
+#define CHECK_HEAP
+#define SCUMM_LITTLE_ENDIAN
+
+#define FORCEINLINE inline
+#define NORETURN __attribute__((__noreturn__))
+#define GCC_PACK __attribute__((packed))
+#define CDECL
+
+typedef unsigned char byte;
+typedef unsigned char uint8;
+typedef unsigned short uint16;
+typedef unsigned long uint32;
+typedef unsigned int uint;
+typedef signed char int8;
+typedef signed short int16;
+typedef signed long int32;
+
+#define START_PACK_STRUCTS pack (push,1)
+#define END_PACK_STRUCTS   pack(pop)
+
+#elif (defined(UNIX) || defined(__APPLE__))
 
 #define scumm_stricmp strcasecmp
 
@@ -91,7 +93,6 @@ typedef signed long int32;
 #endif
 
 #define FORCEINLINE inline
-#define NORETURN 
 #define CDECL 
 
 typedef unsigned char byte;
@@ -103,8 +104,17 @@ typedef signed char int8;
 typedef signed short int16;
 typedef signed long int32;
 
+#if defined(__GNUC__)
+#define START_PACK_STRUCTS
+#define END_PACK_STRUCTS
+#define GCC_PACK __attribute__((packed))
+#define NORETURN __attribute__((__noreturn__)) 
+#else
 #define START_PACK_STRUCTS pack (1)
 #define END_PACK_STRUCTS   pack ()
+#define GCC_PACK
+#define NORETURN
+#endif
 
 #else
 #error No system type defined
@@ -113,23 +123,36 @@ typedef signed long int32;
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 
-#if defined(SCUMM_NEED_ALIGNMENT)
-#error Little endian processors that need alignment is not implemented
-#endif
+//#if defined(SCUMM_NEED_ALIGNMENT)
+//#error Little endian processors that need alignment is not implemented
+//#endif
 
 #define MKID(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 
-int FORCEINLINE READ_LE_UINT16(void *ptr) {
-	return *(uint16*)(ptr);
-}
+#if defined(SCUMM_NEED_ALIGNMENT)
+	uint FORCEINLINE READ_LE_UINT16(void *ptr) {
+		return (((byte*)ptr)[1]<<8)|((byte*)ptr)[0];
+	}
+#else
+	uint FORCEINLINE READ_LE_UINT16(void *ptr) {
+		return *(uint16*)(ptr);
+	}
+#endif
 
-int FORCEINLINE READ_BE_UINT16(void *ptr) {
+uint FORCEINLINE READ_BE_UINT16(void *ptr) {
 	return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 }
 
-uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
-	return *(uint32*)(ptr);
-}
+#if defined(SCUMM_NEED_ALIGNMENT)
+	uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
+		byte *b = (byte*)ptr;
+		return (b[3]<<24)+(b[2]<<16)+(b[1]<<8)+(b[0]);
+	}
+#else
+	uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
+		return *(uint32*)(ptr);
+	}
+#endif
 
 uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
 	byte *b = (byte*)ptr;
@@ -139,7 +162,7 @@ uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
 #define READ_BE_UINT32_UNALIGNED READ_BE_UINT32
 #define READ_BE_UINT16_UNALIGNED READ_BE_UINT16
 
-#define READ_UINT32_UNALIGNED(a) (*((uint32*)a))
+#define READ_UINT32_UNALIGNED(a) READ_LE_UINT32(a)
 
 #define FROM_LE_32(__a__) __a__
 #define FROM_LE_16(__a__) __a__
@@ -173,16 +196,16 @@ uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
 	return *(uint32*)(ptr);
 }
 
-int FORCEINLINE READ_LE_UINT16(void *ptr) {
+uint FORCEINLINE READ_LE_UINT16(void *ptr) {
 	byte *b = (byte*)ptr;
 	return (b[1]<<8) + b[0];
 }
 
-int FORCEINLINE READ_BE_UINT16(void *ptr) {
+uint FORCEINLINE READ_BE_UINT16(void *ptr) {
 	return *(uint16*)(ptr);
 }
 
-int FORCEINLINE READ_BE_UINT16_UNALIGNED(void *ptr) {
+uint FORCEINLINE READ_BE_UINT16_UNALIGNED(void *ptr) {
 	return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 }
 

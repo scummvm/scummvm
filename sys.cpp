@@ -15,16 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.2  2001/10/10 10:02:33  strigeus
- * alternative mouse cursor
- * basic save&load
- *
- * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -64,6 +55,10 @@ bool Scumm::fileEof(void *file) {
 	return feof((FILE*)file) != 0;
 }
 
+uint32 Scumm::filePos(void *handle) {
+	return ftell((FILE*)handle);
+}
+
 void Scumm::fileSeek(void *file, long offs, int whence) {
 	switch(_fileMode) {
 	case 1: case 2:
@@ -96,7 +91,7 @@ void Scumm::fileRead(void *file, void *ptr, uint32 size) {
 		if (size==0)
 			return;
 
-		src = getResourceAddress(0xC, 3) + _whereInResToRead;
+		src = getResourceAddress(rtTemp, 3) + _whereInResToRead;
 		_whereInResToRead += size;
 		do {
 			*ptr2++ = *src++ ^ _encbyte;
@@ -116,7 +111,7 @@ int Scumm::fileReadByte() {
 		return b ^ _encbyte;
 
 	case 3:
-		src = getResourceAddress(0xC, 3) + _whereInResToRead;
+		src = getResourceAddress(rtTemp, 3) + _whereInResToRead;
 		_whereInResToRead++;
 		return *src ^ _encbyte;
 	}
@@ -157,13 +152,15 @@ byte *Scumm::alloc(int size) {
 }
 
 void Scumm::free(void *mem) {
-	byte *me = (byte*)mem - 4;
-	if ( *((uint32*)me) != 0xDEADBEEF) {
-		error("Freeing invalid block.");
-	}
+	if (mem) {
+		byte *me = (byte*)mem - 4;
+		if ( *((uint32*)me) != 0xDEADBEEF) {
+			error("Freeing invalid block.");
+		}
 
-	*((uint32*)me) = 0xC007CAFE;
-	::free(me);
+		*((uint32*)me) = 0xC007CAFE;
+		::free(me);
+	}
 }
 
 bool Scumm::checkFixedDisk() {

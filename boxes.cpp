@@ -15,16 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.2  2001/10/11 10:45:39  strigeus
- * Fixed bug in Scumm::getBoxCoordinates where unsigned integers were read
- * instead of signed ones.
- *
- * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -47,82 +38,84 @@ int Scumm::getBoxScale(int box) {
 }
 
 byte Scumm::getNumBoxes() {
-	byte *ptr = getResourceAddress(0xE, 2);
-	return ptr[8];
+	byte *ptr = getResourceAddress(rtMatrix, 2);
+	return ptr[0];
 }
 
 Box *Scumm::getBoxBaseAddr(int box) {
-	byte *ptr = getResourceAddress(0xE, 2);
-	checkRange(ptr[8]-1, 0, box, "Illegal box %d");
-	return (Box*)(ptr + box*SIZEOF_BOX + 10);
+	byte *ptr = getResourceAddress(rtMatrix, 2);
+	checkRange(ptr[0]-1, 0, box, "Illegal box %d");
+	return (Box*)(ptr + box*SIZEOF_BOX + 2);
 }
 
 bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
+	BoxCoords box;
+
 	if (b==0)
 		return 0;
 
-	getBoxCoordinates(b);
+	getBoxCoordinates(b, &box);
 
-	if (x < box.upperLeftX && x < box.upperRightX &&
-		x < box.lowerLeftX && x < box.lowerRightX)
+	if (x < box.ul.x && x < box.ur.x &&
+		x < box.ll.x && x < box.lr.x)
 			return 0;
 	
-	if (x > box.upperLeftX && x > box.upperRightX &&
-		x > box.lowerLeftX && x > box.lowerRightX)
+	if (x > box.ul.x && x > box.ur.x &&
+		x > box.ll.x && x > box.lr.x)
 			return 0;
 	
-	if (y < box.upperLeftY && y < box.upperRightY &&
-		y < box.lowerLeftY && y < box.lowerRightY)
+	if (y < box.ul.y && y < box.ur.y &&
+		y < box.ll.y && y < box.lr.y)
 			return 0;
 
-	if (y > box.upperLeftY && y > box.upperRightY &&
-		y > box.lowerLeftY && y > box.lowerRightY)
+	if (y > box.ul.y && y > box.ur.y &&
+		y > box.ll.y && y > box.lr.y)
 			return 0;
 	
-	if (box.upperLeftX == box.upperRightX &&
-		box.upperLeftY == box.upperRightY &&
-		box.lowerLeftX == box.lowerRightX &&
-		box.lowerLeftY == box.lowerRightY ||
-		box.upperLeftX == box.lowerRightX &&
-		box.upperLeftY == box.lowerRightY &&
-		box.upperRightX== box.lowerLeftX &&
-		box.upperRightY== box.lowerLeftY) {
+	if (box.ul.x == box.ur.x &&
+		box.ul.y == box.ur.y &&
+		box.ll.x == box.lr.x &&
+		box.ll.y == box.lr.y ||
+		box.ul.x == box.lr.x &&
+		box.ul.y == box.lr.y &&
+		box.ur.x== box.ll.x &&
+		box.ur.y== box.ll.y) {
 
 		Point pt;
-		pt = closestPtOnLine(box.upperLeftX, box.upperLeftY, box.lowerLeftX, box.lowerLeftY, x, y);
+		pt = closestPtOnLine(box.ul.x, box.ul.y, box.ll.x, box.ll.y, x, y);
 		if (distanceFromPt(x, y, pt.x,pt.y) <= 4)
 			return 1;
 	}
 	
 	if (!getSideOfLine(
-		box.upperLeftX, box.upperLeftY, box.upperRightX, box.upperRightY, x,y,b))
+		box.ul.x, box.ul.y, box.ur.x, box.ur.y, x,y,b))
 			return 0;
 	
 	if (!getSideOfLine(
-		box.upperRightX, box.upperRightY, box.lowerLeftX, box.lowerLeftY, x,y,b))
+		box.ur.x, box.ur.y, box.ll.x, box.ll.y, x,y,b))
 			return 0;
 
 	if (!getSideOfLine(
-		box.lowerLeftX, box.lowerLeftY, box.lowerRightX, box.lowerRightY, x,y,b))
+		box.ll.x, box.ll.y, box.lr.x, box.lr.y, x,y,b))
 			return 0;
 
 	if (!getSideOfLine(
-		box.lowerRightX, box.lowerRightY, box.upperLeftX, box.upperLeftY, x,y,b))
+		box.lr.x, box.lr.y, box.ul.x, box.ul.y, x,y,b))
 			return 0;
 
 	return 1;
 }
 
-void Scumm::getBoxCoordinates(int b) {
-	Box *bp = getBoxBaseAddr(b);
-	box.upperLeftX = (int16)FROM_LE_16(bp->ulx);
-	box.upperRightX = (int16)FROM_LE_16(bp->urx);
-	box.lowerLeftX = (int16)FROM_LE_16(bp->llx);
-	box.lowerRightX = (int16)FROM_LE_16(bp->lrx);
-	box.upperLeftY = (int16)FROM_LE_16(bp->uly);
-	box.upperRightY = (int16)FROM_LE_16(bp->ury);
-	box.lowerLeftY = (int16)FROM_LE_16(bp->lly);
-	box.lowerRightY = (int16)FROM_LE_16(bp->lry);
+void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
+	Box *bp = getBoxBaseAddr(boxnum);
+	box->ul.x = (int16)FROM_LE_16(bp->ulx);
+	box->ul.y = (int16)FROM_LE_16(bp->uly);
+	box->ur.x = (int16)FROM_LE_16(bp->urx);
+	box->ur.y = (int16)FROM_LE_16(bp->ury);
+	box->ll.x = (int16)FROM_LE_16(bp->llx);
+	box->ll.y = (int16)FROM_LE_16(bp->lly);
+	box->lr.x = (int16)FROM_LE_16(bp->lrx);
+	box->lr.y = (int16)FROM_LE_16(bp->lry);
 }
 
 uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
@@ -221,30 +214,31 @@ type2:;
 
 bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold) {
 	int t;
+	BoxCoords box;
 
-	getBoxCoordinates(b);
+	getBoxCoordinates(b, &box);
 
 	if (threshold==0)
 		return 1;
 	
 	t = x - threshold;
-	if (t > box.upperLeftX && t > box.upperRightX &&
-		t > box.lowerLeftX && t > box.lowerRightX)
+	if (t > box.ul.x && t > box.ur.x &&
+		t > box.ll.x && t > box.lr.x)
 			return 0;
 	
 	t = x + threshold;
-	if (t < box.upperLeftX && t < box.upperRightX &&
-		t < box.lowerLeftX && t < box.lowerRightX)
+	if (t < box.ul.x && t < box.ur.x &&
+		t < box.ll.x && t < box.lr.x)
 			return 0;
 	
 	t = y - threshold;
-	if (t > box.upperLeftY && t > box.upperRightY &&
-		t > box.lowerLeftY && t > box.lowerRightY)
+	if (t > box.ul.y && t > box.ur.y &&
+		t > box.ll.y && t > box.lr.y)
 			return 0;
 	
 	t = y + threshold;
-	if (t < box.upperLeftY && t < box.upperRightY &&
-			t < box.lowerLeftY && t < box.lowerRightY)
+	if (t < box.ul.y && t < box.ur.y &&
+			t < box.ll.y && t < box.lr.y)
 			return 0;
 
 	return 1;
@@ -255,10 +249,11 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 	AdjustBoxResult best;
 	uint dist;
 	uint bestdist = (uint)0xFFFF;
+	BoxCoords box;
 
-	getBoxCoordinates(b);
+	getBoxCoordinates(b, &box);
 
-	pt = closestPtOnLine(box.upperLeftX,box.upperLeftY,box.upperRightX,box.upperRightY,x,y);
+	pt = closestPtOnLine(box.ul.x,box.ul.y,box.ur.x,box.ur.y,x,y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -266,7 +261,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 		best.y = pt.y;
 	}
 
-	pt = closestPtOnLine(box.upperRightX,box.upperRightY,box.lowerLeftX,box.lowerLeftY,x,y);
+	pt = closestPtOnLine(box.ur.x,box.ur.y,box.ll.x,box.ll.y,x,y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -274,7 +269,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 		best.y = pt.y;
 	}
 
-	pt = closestPtOnLine(box.lowerLeftX,box.lowerLeftY,box.lowerRightX,box.lowerRightY,x,y);
+	pt = closestPtOnLine(box.ll.x,box.ll.y,box.lr.x,box.lr.y,x,y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -282,7 +277,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 		best.y = pt.y;
 	}
 
-	pt = closestPtOnLine(box.lowerRightX,box.lowerRightY,box.upperLeftX,box.upperLeftY,x,y);
+	pt = closestPtOnLine(box.lr.x,box.lr.y,box.ul.x,box.ul.y,x,y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -295,14 +290,14 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 }
 
 byte *Scumm::getBoxMatrixBaseAddr() {
-	byte *ptr = getResourceAddress(0xE, 1) + 8;
+	byte *ptr = getResourceAddress(rtMatrix, 1);
 	if (*ptr==0xFF) ptr++;
 	return ptr;
 }
 
-int Scumm::getPathToDestBox(int from, int to) {
+int Scumm::getPathToDestBox(byte from, byte to) {
 	byte *boxm;
-	int i;
+	byte i;
 
 	if (from==to)
 		return to;
@@ -325,171 +320,153 @@ int Scumm::getPathToDestBox(int from, int to) {
 	return 0;
 }
 
-int Scumm::findPathTowards(Actor *a, int box1, int box2, int box3) {
-	int upperLeftX, upperLeftY;
-	int upperRightX, upperRightY;
-	int lowerLeftX, lowerLeftY;
-	int lowerRightX, lowerRightY;
-	int i,j,m,n,p,q,r;
-	int tmp_x, tmp_y;
-	int tmp;
-	
-	getBoxCoordinates(box1);
-	upperLeftX = box.upperLeftX;
-	upperLeftY = box.upperLeftY;
-	upperRightX = box.upperRightX;
-	upperRightY = box.upperRightY;
-	lowerLeftX = box.lowerLeftX;
-	lowerLeftY = box.lowerLeftY;
-	lowerRightX = box.lowerRightX;
-	lowerRightY = box.lowerRightY;
-	getBoxCoordinates(box2);
+int Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr) {
+	BoxCoords box1;
+	BoxCoords box2;
+	Point tmp;
+	int i,j;
+	int flag;
+	int q,pos;
 
-	i = 0;
-	do {
-		if (i >= 4) goto ExitPos;
-		for (j=0; j<4; j++) {
-			if (upperRightX==upperLeftX &&
-					box.upperLeftX==upperLeftX &&
-					box.upperRightX==upperRightX) {
-				
-ExitPos:;
-				n = m = 0;
-				if (upperRightY < upperLeftY) {
-					m = 1;
-					SWAP(upperRightY, upperLeftY);
+	getBoxCoordinates(box1nr,&box1);
+	getBoxCoordinates(box2nr,&box2);
+
+	for(i=0; i<4; i++) {
+		for(j=0; j<4; j++) {
+			if (box1.ul.x==box1.ur.x &&
+					box1.ul.x==box2.ul.x &&
+					box1.ul.x==box2.ur.x) {
+				flag = 0;
+				if (box1.ul.y > box1.ur.y) {
+					SWAP(box1.ul.y, box1.ur.y);
+					flag |= 1;
 				}
-				if (box.upperRightY < box.upperLeftY) {
-					n = 1;
-					SWAP(box.upperRightY, box.upperLeftY);
+
+				if (box2.ul.y > box2.ur.y) {
+					SWAP(box2.ul.y, box2.ur.y);
+					flag |= 2;
 				}
-				if (box.upperRightY >= upperLeftY &&
-						box.upperLeftY <= upperRightY &&
-						(box.upperLeftY != upperRightY &&
-						 box.upperRightY!= upperLeftY ||
-						 upperRightY==upperLeftY ||
-						 box.upperRightY==box.upperLeftY)) {
-					if (box2==box3) {
-						m = a->walkdata.destx - a->x;
-						p = a->walkdata.desty - a->y;
-						tmp = upperLeftX - a->x;
-						i = a->y;
-						if (m) {
-							q = tmp * p;
-							r = q/m;
-							if (r==0 && (q<=0 || m<=0) && (q>=0 || m>=0)) {
-								r = -1;
-							}
-							i += r;
+
+				if (box1.ul.y > box2.ur.y || box2.ul.y > box1.ur.y ||
+						(box1.ur.y==box2.ul.y || box2.ur.y==box1.ul.y) &&
+						box1.ul.y!=box1.ur.y && box2.ul.y!=box2.ur.y) {
+					if (flag&1)
+						SWAP(box1.ul.y, box1.ur.y);
+					if (flag&2)
+						SWAP(box2.ul.y, box2.ur.y);
+				} else {
+					if (box2nr == box3nr) {
+						int diffX = a->walkdata.destx - a->x;
+						int diffY = a->walkdata.desty - a->y;
+						int boxDiffX = box1.ul.x - a->x;
+						
+						if (diffX!=0) {
+							int t;
+
+							diffY *= boxDiffX;
+							t = diffY / diffX;
+							if (t==0 && (diffY<=0 || diffX<=0) && (diffY>=0 || diffX>=0))
+								t = -1;
+							pos = a->y + t;
+						} else {
+							pos = a->y;
 						}
 					} else {
-						i = a->y;
+						pos = a->y;
 					}
-					q = i;
-					if (q < box.upperLeftY)
-						q = box.upperLeftY;
-					if (q > box.upperRightY)
-						q = box.upperRightY;
-					if (q < upperLeftY)
-						q = upperLeftY;
-					if (q > upperRightY)
-						q = upperRightY;
-					if (q==i && box2==box3)
+
+					q = pos;
+					if (q < box2.ul.y)
+					q = box2.ul.y;
+					if (q > box2.ur.y)
+						q = box2.ur.y;
+					if (q < box1.ul.y)
+						q = box1.ul.y;
+					if (q > box1.ur.y)
+						q = box1.ur.y;
+					if (q==pos && box2nr==box3nr)
 						return 1;
-					_foundPathX = upperLeftX;
 					_foundPathY = q;
+					_foundPathX = box1.ul.x;
 					return 0;
-				} else {
-					if (m) {
-						SWAP(upperRightY, upperLeftY);
-					}
-					if (n) {
-						SWAP(box.upperRightY, box.upperLeftY);
-					}
 				}
 			}
-			if (upperLeftY==upperRightY &&
-					box.upperLeftY==upperLeftY &&
-					box.upperRightY==upperRightY) {
-				n = m = 0;
-				if(upperRightX < upperLeftX) {
-					m = 1;
-					SWAP(upperRightX, upperLeftX);
+
+			if (box1.ul.y==box1.ur.y &&
+					box1.ul.y==box2.ul.y &&
+					box1.ul.y==box2.ur.y) {
+				flag = 0;
+				if (box1.ul.x > box1.ur.x) {
+					SWAP(box1.ul.x, box1.ur.x);
+					flag |= 1;
 				}
-				if (box.upperRightX < box.upperLeftX) {
-					n = 1;
-					SWAP(box.upperRightX, box.upperLeftX);
+
+				if (box2.ul.x > box2.ur.x) {
+					SWAP(box2.ul.x, box2.ur.x);
+					flag |= 2;
 				}
-				if (box.upperRightX >= upperLeftX &&
-						box.upperLeftX <= upperRightX &&
-						(box.upperLeftX != upperRightX &&
-						 box.upperRightX!= upperLeftX ||
-						 upperRightX==upperLeftX ||
-						 box.upperRightX==box.upperLeftX)) {
-					if (box2==box3) {
-						m = a->walkdata.destx - a->x;
-						p = a->walkdata.desty - a->y;
-						i = upperLeftY - a->y;
-						tmp = a->x;
-						if (p) {
-							tmp += i * m / p;
+
+				if (box1.ul.x > box2.ur.x || box2.ul.x > box1.ur.x ||
+						(box1.ur.x==box2.ul.x || box2.ur.x==box1.ul.x) &&
+						box1.ul.x!=box1.ur.x && box2.ul.x!=box2.ur.x) {
+					if (flag&1)
+						SWAP(box1.ul.x, box1.ur.x);
+					if (flag&2)
+						SWAP(box2.ul.x, box2.ur.x);
+				} else {
+
+					if (box2nr == box3nr) {
+						int diffX = a->walkdata.destx - a->x;
+						int diffY = a->walkdata.desty - a->y;
+						int boxDiffY = box1.ul.y - a->y;
+						
+						pos = a->x;
+						if (diffY!=0) {
+							pos += diffX * boxDiffY / diffY;
 						}
 					} else {
-						tmp = a->x;
+						pos = a->x;
 					}
-					q = tmp;
-					if (q < box.upperLeftX)
-						q = box.upperLeftX;
-					if (q > box.upperRightX)
-						q = box.upperRightX;
-					if (q < upperLeftX)
-						q = upperLeftX;
-					if (q > upperRightX)
-						q = upperRightX;
-					if (tmp==q && box2==box3)
+
+					q = pos;
+					if (q < box2.ul.x)
+						q = box2.ul.x;
+					if (q > box2.ur.x)
+						q = box2.ur.x;
+					if (q < box1.ul.x)
+						q = box1.ul.x;
+					if (q > box1.ur.x)
+						q = box1.ur.x;
+					if (q==pos && box2nr==box3nr)
 						return 1;
 					_foundPathX = q;
-					_foundPathY = upperLeftY;
+					_foundPathY = box1.ul.y;
 					return 0;
-				} else {
-					if (m != 0) {
-						SWAP(upperRightX, upperLeftX);
-					}
-					if (n != 0) {
-						SWAP(box.upperRightX, box.upperLeftX);
-					}
 				}
 			}
-			tmp_x = upperLeftX;
-			tmp_y = upperLeftY;
-			upperLeftX = upperRightX;
-			upperLeftY = upperRightY;
-			upperRightX = lowerLeftX;
-			upperRightY = lowerLeftY;
-			lowerLeftX = lowerRightX;
-			lowerLeftY = lowerRightY;
-			lowerRightX = tmp_x;
-			lowerRightY = tmp_y;
+			tmp = box1.ul;
+			box1.ul = box1.ur;
+			box1.ur = box1.ll;
+			box1.ll = box1.lr;
+			box1.lr = tmp;
 		}
-
-		tmp_x = box.upperLeftX;
-		tmp_y = box.upperLeftY;
-		box.upperLeftX = box.upperRightX;
-		box.upperLeftY = box.upperRightY;
-		box.upperRightX = box.lowerLeftX;
-		box.upperRightY = box.lowerLeftY;
-		box.lowerLeftX = box.lowerRightX;
-		box.lowerLeftY = box.lowerRightY;
-		box.lowerRightX = tmp_x;
-		box.lowerRightY = tmp_y;
-		i++;		
-	} while (1);
+		tmp = box2.ul;
+		box2.ul = box2.ur;
+		box2.ur = box2.ll;
+		box2.ll = box2.lr;
+		box2.lr = tmp;
+	}
+	error("findPathTowards: default");
 }
-
-
 void Scumm::setBoxFlags(int box, int val) {
-	Box *b = getBoxBaseAddr(box);
-	b->flags = val;
+	/* FULL_THROTTLE stuff */
+	if (val & 0xC000) {
+		assert(box>=0 && box<65);
+		_extraBoxFlags[box] = val;
+	} else {
+		Box *b = getBoxBaseAddr(box);
+		b->flags = val;
+	}
 }
 
 void Scumm::setBoxScale(int box, int scale) {
@@ -512,19 +489,15 @@ void Scumm::createBoxMatrix() {
 
 	_maxBoxVertexHeap = 1000;
 
-	createResource(0xE, 4, 1000);
-	createResource(0xE, 3, 4160); //65 items of something of size 64
-	createResource(0xE, 1, BOX_MATRIX_SIZE+8);
+	createResource(rtMatrix, 4, 1000);
+	createResource(rtMatrix, 3, 4160); //65 items of something of size 64
+	createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 
-	matrix_ptr = getResourceAddress(0xE, 1);
+	matrix_ptr = getResourceAddress(rtMatrix, 1);
 
-	/* endian & alignment safe */
-	((uint32*)matrix_ptr)[1] = TO_BE_32(BOX_MATRIX_SIZE+8);
-	((uint32*)matrix_ptr)[0] = MKID('BOXM');
-
-	_boxMatrixPtr4 = getResourceAddress(0xE, 4);
-	_boxMatrixPtr1 = getResourceAddress(0xE, 1) + 8;
-	_boxMatrixPtr3 = getResourceAddress(0xE, 3);
+	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
+	_boxMatrixPtr1 = getResourceAddress(rtMatrix, 1);
+	_boxMatrixPtr3 = getResourceAddress(rtMatrix, 3);
 
 	_boxPathVertexHeapIndex = _boxMatrixItem = 0;
 	
@@ -628,8 +601,8 @@ void Scumm::createBoxMatrix() {
 	}
 
 	addToBoxMatrix(0xFF);
-	nukeResource(0xE, 4);
-	nukeResource(0xE, 3);
+	nukeResource(rtMatrix, 4);
+	nukeResource(rtMatrix, 3);
 }
 
 PathVertex *Scumm::unkMatrixProc1(PathVertex *vtx, PathNode *node) {
@@ -682,30 +655,18 @@ PathNode *Scumm::unkMatrixProc2(PathVertex *vtx, int i) {
 }
 
 /* Check if two boxes are neighbours */
-bool Scumm::areBoxesNeighbours(int box1, int box2) {
-	int upperLeftX, upperLeftY;
-	int upperRightX, upperRightY;
-	int lowerLeftX, lowerLeftY;
-	int lowerRightX, lowerRightY;
+bool Scumm::areBoxesNeighbours(int box1nr, int box2nr) {
 	int j,k,m,n;
 	int tmp_x, tmp_y;
 	bool result;
+	BoxCoords box;
+	BoxCoords box2;
 
-	if (getBoxFlags(box1)&0x80 || getBoxFlags(box2)&0x80)
+	if (getBoxFlags(box1nr)&0x80 || getBoxFlags(box2nr)&0x80)
 		return false;
 
-	getBoxCoordinates(box1);
-
-	upperLeftX = box.upperLeftX;
-	upperLeftY = box.upperLeftY;
-	upperRightX = box.upperRightX;
-	upperRightY = box.upperRightY;
-	lowerLeftX = box.lowerLeftX;
-	lowerLeftY = box.lowerLeftY;
-	lowerRightX = box.lowerRightX;
-	lowerRightY = box.lowerRightY;
-
-	getBoxCoordinates(box2);
+	getBoxCoordinates(box1nr, &box2);
+	getBoxCoordinates(box2nr, &box);
 	
 	result = false;
 	j = 4;
@@ -713,105 +674,99 @@ bool Scumm::areBoxesNeighbours(int box1, int box2) {
 	do {
 		k = 4;
 		do {
-			if (upperRightX == upperLeftX &&
-				  box.upperLeftX == upperLeftX &&
-					box.upperRightX == upperRightX) {
-				/* 5b74 */
+			if (box2.ur.x == box2.ul.x &&
+				  box.ul.x == box2.ul.x &&
+					box.ur.x == box2.ur.x) {
 				n = m = 0;
-				if (upperRightY < upperLeftY) {
+				if (box2.ur.y < box2.ul.y) {
 					n = 1;
-					SWAP(upperRightY, upperLeftY);
+					SWAP(box2.ur.y, box2.ul.y);
 				}
-				if (box.upperRightY < box.upperLeftY) {
+				if (box.ur.y < box.ul.y) {
 					m = 1;
-					SWAP(box.upperRightY, box.upperLeftY);
+					SWAP(box.ur.y, box.ul.y);
 				}
-				if (box.upperRightY < upperLeftY ||
-					  box.upperLeftY > upperRightY ||
-						(box.upperLeftY == upperRightY ||
-						 box.upperRightY==upperLeftY) &&
-						 upperRightY != upperLeftY &&
-						 box.upperLeftY!=box.upperRightY) {
-					/* if_1_if */
+				if (box.ur.y < box2.ul.y ||
+					  box.ul.y > box2.ur.y ||
+						(box.ul.y == box2.ur.y ||
+						 box.ur.y==box2.ul.y) &&
+						 box2.ur.y != box2.ul.y &&
+						 box.ul.y!=box.ur.y) {
 					if (n) {
-						SWAP(upperRightY, upperLeftY);
+						SWAP(box2.ur.y, box2.ul.y);
 					}
 					if (m) {
-						SWAP(box.upperRightY, box.upperLeftY);
+						SWAP(box.ur.y, box.ul.y);
 					}
 				} else {
-					/* if_1_else */
 					if (n) {
-						SWAP(upperRightY, upperLeftY);
+						SWAP(box2.ur.y, box2.ul.y);
 					}
 					if (m) {
-						SWAP(box.upperRightY, box.upperLeftY);
+						SWAP(box.ur.y, box.ul.y);
 					}
 					result = true;
 				}	
 			}
 
-			/* do_it_for_y */
-			if (upperRightY == upperLeftY && 
-					box.upperLeftY == upperLeftY &&
-					box.upperRightY == upperRightY) {
+			if (box2.ur.y == box2.ul.y && 
+					box.ul.y == box2.ul.y &&
+					box.ur.y == box2.ur.y) {
 				n = m = 0;
-				if (upperRightX < upperLeftX) {
+				if (box2.ur.x < box2.ul.x) {
 					n = 1;
-					SWAP(upperRightX, upperLeftX);
+					SWAP(box2.ur.x, box2.ul.x);
 				}
-				if (box.upperRightX < box.upperLeftX) {
+				if (box.ur.x < box.ul.x) {
 					m = 1;
-					SWAP(box.upperRightX, box.upperLeftX);
+					SWAP(box.ur.x, box.ul.x);
 				}
-				if (box.upperRightX < upperLeftX ||
-					  box.upperLeftX > upperRightX ||
-						(box.upperLeftX == upperRightX ||
-						 box.upperRightX==upperLeftX) &&
-						 upperRightX != upperLeftX &&
-						 box.upperLeftX!=box.upperRightX) {
+				if (box.ur.x < box2.ul.x ||
+					  box.ul.x > box2.ur.x ||
+						(box.ul.x == box2.ur.x ||
+						 box.ur.x==box2.ul.x) &&
+						 box2.ur.x != box2.ul.x &&
+						 box.ul.x!=box.ur.x) {
 
-					/* if_2_if */
 					if (n) {
-						SWAP(upperRightX, upperLeftX);
+						SWAP(box2.ur.x, box2.ul.x);
 					}
 					if (m) {
-						SWAP(box.upperRightX, box.upperLeftX);
+						SWAP(box.ur.x, box.ul.x);
 					}
 				} else {
-					/* if_2_else */
 					if (n) {
-						SWAP(upperRightX, upperLeftX);
+						SWAP(box2.ur.x, box2.ul.x);
 					}
 					if (m) {
-						SWAP(box.upperRightX, box.upperLeftX);
+						SWAP(box.ur.x, box.ul.x);
 					}
 					result = true;
 				}
 			}
 			
-			tmp_x = upperLeftX;
-			tmp_y = upperLeftY;
-			upperLeftX = upperRightX;
-			upperLeftY = upperRightY;
-			upperRightX = lowerLeftX;
-			upperRightY = lowerLeftY;
-			lowerLeftX = lowerRightX;
-			lowerLeftY = lowerRightY;
-			lowerRightX = tmp_x;
-			lowerRightY = tmp_y;
+			tmp_x = box2.ul.x;
+			tmp_y = box2.ul.y;
+			box2.ul.x = box2.ur.x;
+			box2.ul.y = box2.ur.y;
+			box2.ur.x = box2.ll.x;
+			box2.ur.y = box2.ll.y;
+			box2.ll.x = box2.lr.x;
+			box2.ll.y = box2.lr.y;
+			box2.lr.x = tmp_x;
+			box2.lr.y = tmp_y;
 		} while (--k);
 		
-		tmp_x = box.upperLeftX;
-		tmp_y = box.upperLeftY;
-		box.upperLeftX = box.upperRightX;
-		box.upperLeftY = box.upperRightY;
-		box.upperRightX = box.lowerLeftX;
-		box.upperRightY = box.lowerLeftY;
-		box.lowerLeftX = box.lowerRightX;
-		box.lowerLeftY = box.lowerRightY;
-		box.lowerRightX = tmp_x;
-		box.lowerRightY = tmp_y;
+		tmp_x = box.ul.x;
+		tmp_y = box.ul.y;
+		box.ul.x = box.ur.x;
+		box.ul.y = box.ur.y;
+		box.ur.x = box.ll.x;
+		box.ur.y = box.ll.y;
+		box.ll.x = box.lr.x;
+		box.ll.y = box.lr.y;
+		box.lr.x = tmp_x;
+		box.lr.y = tmp_y;
 	} while (--j);
 
 	return result;
@@ -836,7 +791,7 @@ void *Scumm::addToBoxVertexHeap(int size) {
 }
 
 PathVertex *Scumm::addPathVertex() {
-	_boxMatrixPtr4 = getResourceAddress(0xE, 4);
+	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
 	_boxPathVertexHeapIndex = 0;
 	return (PathVertex*)addToBoxVertexHeap(sizeof(PathVertex));
 }

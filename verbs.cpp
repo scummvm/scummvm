@@ -15,24 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.2.2.1  2001/11/12 16:23:01  yazoo
- * The dig and Full Throttle support
- *
- * Revision 1.4  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.3  2001/10/16 10:01:48  strigeus
- * preliminary DOTT support
- *
- * Revision 1.2  2001/10/09 19:02:28  strigeus
- * command line parameter support
- *
- * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -53,11 +36,11 @@ void Scumm::checkExecVerbs() {
 	if (_userPut<=0 || _mouseButStat==0)
 		return;
 
-	if (_mouseButStat < 0x200) {
+	if (_mouseButStat < MBS_MAX_KEY) {
 		/* Check keypresses */
 		vs = &_verbs[1];
 		for (i=1; i<_maxVerbs; i++,vs++) {
-			if (vs->verbid && vs->saveid && vs->curmode==1) {
+			if (vs->verbid && vs->saveid==0 && vs->curmode==1) {
 				if (_mouseButStat == vs->key) {
 					runInputScript(1, vs->verbid, 1);
 					return;
@@ -65,8 +48,8 @@ void Scumm::checkExecVerbs() {
 			}
 		}
 		runInputScript(4, _mouseButStat, 1);
-	} else if (_mouseButStat&0xC000) {
-		byte code = _mouseButStat&0x8000 ? 1 : 2;
+	} else if (_mouseButStat&MBS_MOUSE_MASK) {
+		byte code = _mouseButStat&MBS_LEFT_CLICK ? 1 : 2;
 		if (mouse.y >= virtscr[0].topline && mouse.y < virtscr[0].topline + virtscr[0].height) {
 			over = checkMouseOver(mouse.x, mouse.y);
 			if (over != 0) {
@@ -146,7 +129,7 @@ void Scumm::drawVerb(int vrb, int mode) {
 		string[4].color = color;
 		if (vs->curmode==2)
 			string[4].color = vs->dimcolor;
-		_messagePtr = getResourceAddress(8, vrb);
+		_messagePtr = getResourceAddress(rtVerb, vrb);
 		assert(_messagePtr);
 		tmp = charset._center;
 		charset._center = 0;
@@ -184,8 +167,8 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	int ydiff, xstrip;
 	int imgw, imgh;
 	int i,tmp;
-	byte *IMHD_ptr;
 	byte *obim;
+	ImageHeader *imhd;
 
 	if ((vs=findVirtScreen(y)) == NULL)
 		return;
@@ -200,14 +183,13 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	xstrip = x>>3;
 	ydiff = y - vs->topline;
 
+	obim = getResourceAddress(rtVerb, vrb);
 
-	obim = getResourceAddress(8, vrb);
-	IMHD_ptr = findResource(MKID('IMHD'), obim, 0);
-
-	imgw = READ_LE_UINT16(IMHD_ptr+0x14) >> 3;
-	imgh = READ_LE_UINT16(IMHD_ptr+0x16) >> 3;
+	imhd = (ImageHeader*)findResourceData(MKID('IMHD'), obim);
+	imgw = READ_LE_UINT16(&imhd->width) >> 3;
+	imgh = READ_LE_UINT16(&imhd->height) >> 3;
 	
-	imptr = findResource(MKID('IM01'), obim, 0);
+	imptr = findResource(MKID('IM01'), obim);
 	if (!imptr)
 		error("No image for verb %d", vrb);
 
@@ -250,7 +232,7 @@ void Scumm::killVerb(int slot) {
 	vs->verbid = 0;
 	vs->curmode = 0;
 
-	nukeResource(8, slot);
+	nukeResource(rtVerb, slot);
 
 	if (vs->saveid==0) {
 		drawVerb(slot, 0);
@@ -259,51 +241,17 @@ void Scumm::killVerb(int slot) {
 	vs->saveid = 0;
 }
 
-void Scumm::setVerbObject(int room, int object, int verb) {
-	int numobj, i;
+void Scumm::setVerbObject(uint room, uint object, uint verb) {
 	byte  *obimptr;
-	uint32 imoffs,size;
-	byte *roomptr;
-	ImageHeader *imhd;
-	RoomHeader *roomhdr;
-	int temp;
+	uint32 size;
+	FindObjectInRoom foir;
 
-	if (whereIsObject(object) == 4)
+	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 
-	ensureResourceLoaded(1,room);
-	roomptr = getResourceAddress(1, room);
-	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
-
-	if((_majorScummVersion>=7)&&(_middleScummVersion>2))
-		numobj = READ_LE_UINT16(&roomhdr->v7.numObjects);
-	else
-		numobj = READ_LE_UINT16(&roomhdr->v5.numObjects);
-
-	if (numobj==0)
-		error("No images found in room %d", room);
-	if (numobj > 200)
-		error("More (%d) than %d objects in room %d", numobj, 200, room);
-
-	for (i=0; i<numobj; i++) {
-		obimptr = findResource(MKID('OBIM'), roomptr, i);
-		if (obimptr==NULL)
-			error("Not enough image blocks in room %d", room);
-		imhd = (ImageHeader*)findResource(MKID('IMHD'), obimptr, 0);
-		
-		if((_majorScummVersion>=7)&&(_middleScummVersion>2))
-			temp=READ_LE_UINT16(&imhd->v7.obj_id);
-		else
-			temp=READ_LE_UINT16(&imhd->v5.obj_id);
-
-		if ( temp == object) {
-			imoffs = obimptr - roomptr;
-			size = READ_BE_UINT32_UNALIGNED(obimptr+4);
-			createResource(8, verb, size);
-			obimptr = getResourceAddress(1, room) + imoffs;
-			memcpy(getResourceAddress(8, verb), obimptr, size);
-			return;
-		}
-	}
-	error("Image %d not found in room %d", object, room);
+	findObjectInRoom(&foir, foImageHeader, object, room);
+	size = READ_BE_UINT32_UNALIGNED(foir.obim+4);
+	createResource(rtVerb, verb, size);
+	obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
+	memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
 }

@@ -15,32 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.2.2.1  2001/11/12 16:16:57  yazoo
- * The dig and Full Throttle support
- *
- * Revision 1.6  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.5  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.4  2001/10/16 20:31:27  strigeus
- * misc fixes
- *
- * Revision 1.3  2001/10/16 10:01:45  strigeus
- * preliminary DOTT support
- *
- * Revision 1.2  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -278,6 +253,8 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	if ((uint)_top > (uint)_vscreenheight)
 		_top = 0;
 
+	if (_left<0) _left=0;
+
 	if ((uint)_bottom > _vscreenheight)
 		_bottom = _vscreenheight;
 
@@ -292,19 +269,20 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 		return 2;
 	}
 
-	_bgbak_ptr = _vm->getResourceAddress(0xA, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
-	_backbuff_ptr = _vm->getResourceAddress(0xA, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+
+	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+	_backbuff_ptr = _vm->getResourceAddress(rtBuffer, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
 	charsetmask = _vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right, _vm->virtscr[0].topline + _bottom);
 	masking = 0;
 
 	if (_zbuf) {
 		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,
-			_vm->getResourceAddress(0xA, 9) + _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip
+			_vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip
 		);
 	}
 
 	if (_zbuf || charsetmask) {
-		_mask_ptr = _vm->getResourceAddress(0xA, 9) + _ypos*40 + _vm->_screenStartStrip;
+		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos*40 + _vm->_screenStartStrip;
 
 		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && _zbuf!=0)
@@ -313,6 +291,11 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	}
 
 	CHECK_HEAP
+
+	if (a->shadow_mode) {
+		proc_special(a->shadow_mode);
+		return b;
+	}
 
 	switch ((scaling<<2)|(masking<<1)|charsetmask) {
 	case 0: 
@@ -682,11 +665,14 @@ StartPos:;
 	} while(1);
 }
 
+void CostumeRenderer::proc_special(byte code) {
+	warning("stub CostumeRenderer::proc_special(%d) not implemented");
+}
+
 void CostumeRenderer::loadCostume(int id) {
+	_ptr = _vm->getResourceAddress(rtCostume, id);
 	
-	_ptr = _vm->getResourceAddress(3, id);
-	
-	if (_vm->_majorScummVersion >= 6) {
+	if (_vm->_features&GF_AFTER_V6) {
 		_ptr += 8;
 	} else {
 		_ptr += 2;
@@ -706,31 +692,45 @@ void CostumeRenderer::loadCostume(int id) {
 		_numColors = 32;
 		break;
 	default:
-		break;
-		warning("Costume %d is invalid", id);
+		error("Costume %d is invalid", id);
 	}
 
 	_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
 }
 
+void Scumm::initActorCostumeData(Actor *a) {
+	CostumeData *cd = &a->cost;
+	int i;
+
+	cd->stopped = 0;
+	for (i=0; i<16; i++) {
+		cd->active[i] = 0;
+		cd->curpos[i] = cd->start[i] = cd->end[i] = cd->frame[i] = 0xFFFF;
+	}
+}
+
 byte CostumeRenderer::drawOneSlot(Actor *a, int slot) {
+#if !defined(FULL_THROTTLE)
 	int i;
 	int code;
 	CostumeData *cd = &a->cost;
 
-	if (cd->a[slot]==0xFFFF || cd->hdr & (1<<slot))
+	if (cd->curpos[slot]==0xFFFF || cd->stopped & (1<<slot))
 		return 0;
 	
-	i = cd->a[slot]&0x7FFF;
+	i = cd->curpos[slot]&0x7FFF;
 	_frameptr = _ptr + READ_LE_UINT16(_ptr + _numColors + slot*2 + 10);
 	code = _dataptr[i]&0x7F;
+
 	_srcptr = _ptr + READ_LE_UINT16(_frameptr + code*2);
 
 	if (code != 0x7B) {
 		return mainRoutine(a, slot, code);
 	}
+#endif
 
 	return 0;
+
 }
 
 byte CostumeRenderer::drawCostume(Actor *a) {
@@ -743,52 +743,128 @@ byte CostumeRenderer::drawCostume(Actor *a) {
 	return r;
 }
 
-byte CostumeRenderer::animateOneSlot(CostumeData *cd, int slot) {
+byte CostumeRenderer::animateOneSlot(Actor *a, int slot) {
 	int highflag;
-	int i,end,code;
+	int i,end;
+	byte code,nc;
 
-	if (cd->a[slot]==0xFFFF)
+	if (a->cost.curpos[slot]==0xFFFF)
 		return 0;
 
-	highflag = cd->a[slot]&0x8000;
-	i = cd->a[slot]&0x7FFF;
-	end = cd->c[slot];
+	highflag = a->cost.curpos[slot]&0x8000;
+	i = a->cost.curpos[slot]&0x7FFF;
+	end = a->cost.end[slot];
 	code=_dataptr[i]&0x7F;
 
 	do {
 		if (!highflag) {
 			if (i++ >= end)
-				i = cd->b[slot];
+				i = a->cost.start[slot];
 		} else {
 			if (i != end)
 				i++;
 		}
 
-		if (_dataptr[i]==0x7C) {
-			cd->animCounter1++;
-			if(cd->b[slot] != end)
+		nc = _dataptr[i];
+
+		if (nc==0x7C) {
+			a->cost.animCounter1++;
+			if(a->cost.start[slot] != end)
 				continue;
+		} else {
+			if (_vm->_features&GF_AFTER_V6) {
+				if (nc>=0x71 && nc<=0x78) {
+					_vm->addSoundToQueue2(a->sound[nc-0x71]);
+					if(a->cost.start[slot] != end)
+						continue;
+				}
+			} else {
+				if (nc==0x78) {
+					a->cost.animCounter2++;
+					if(a->cost.start[slot] != end)
+						continue;
+				}
+			}
 		}
 
-		if (_dataptr[i]==0x78) {
-			cd->animCounter2++;
-			if(cd->b[slot] != end)
-				continue;
-		}
-
-		cd->a[slot] = i|highflag;
+		a->cost.curpos[slot] = i|highflag;
 		return (_dataptr[i]&0x7F) != code;
 	} while(1);
 }
 
-byte CostumeRenderer::animate(CostumeData *cd) {
+byte CostumeRenderer::animate(Actor *a) {
 	int i;
 	byte r = 0;
 
+#if !defined(FULL_THROTTLE)
 	for (i=0; i<16; i++) {
-		if(cd->a[i]!=0xFFFF)
-			r+=animateOneSlot(cd, i);
+		if(a->cost.curpos[i]!=0xFFFF)
+			r+=animateOneSlot(a, i);
 	}
+#endif
 	return r;
 }
 
+int Scumm::cost_frameToAnim(Actor *a, int frame) {
+	return newDirToOldDir(a->facing) + frame * 4;
+}
+
+void Scumm::decodeCostData(Actor *a, int frame, uint usemask) {
+	byte *p,*r;
+	uint mask,j;
+	int i;
+	byte extra,cmd;
+	byte *dataptr;
+	int anim;
+
+	anim = cost_frameToAnim(a, frame);
+	
+	p = cost._ptr;
+	if (anim > p[6]) {
+		return;
+	}
+
+	r = p + READ_LE_UINT16(p + anim*2 + cost._numColors + 42);
+	if (r==p) {
+		return;
+	}
+
+	dataptr = p + READ_LE_UINT16(p + cost._numColors + 8);
+
+	mask = READ_LE_UINT16(r);
+	r+=2;
+	i = 0;
+	do {
+		if (mask&0x8000) {
+			j = READ_LE_UINT16(r);
+			r+=2;
+			if (usemask&0x8000) {
+				if (j==0xFFFF) {
+					a->cost.curpos[i] = 0xFFFF;
+					a->cost.start[i] = 0;
+					a->cost.frame[i] = frame;
+				} else {
+					extra = *r++;
+					cmd = dataptr[j];
+					if (cmd==0x7A) {
+						a->cost.stopped &= ~(1<<i);
+					} else if (cmd==0x79) {
+						a->cost.stopped |= (1<<i);
+					} else {
+						a->cost.curpos[i] = a->cost.start[i] = j;
+						a->cost.end[i] = j + (extra&0x7F);
+						if (extra&0x80)
+							a->cost.curpos[i] |= 0x8000;
+						a->cost.frame[i] = frame;
+					}
+				}
+			} else {
+				if (j!=0xFFFF)
+					r++;
+			}
+		}
+		i++;
+		usemask <<= 1;
+		mask <<= 1;
+	} while ((uint16)mask);
+}

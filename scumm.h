@@ -15,83 +15,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.7.2.1  2001/11/12 16:20:05  yazoo
- * The dig and Full Throttle support
- *
- * Revision 1.14  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.13  2001/10/24 20:12:52  strigeus
- * fixed some bugs related to string handling
- *
- * Revision 1.12  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.11  2001/10/17 10:07:40  strigeus
- * fixed verbs not saved in non dott games,
- * implemented a screen effect
- *
- * Revision 1.10  2001/10/17 07:12:37  strigeus
- * fixed nasty signed/unsigned bug
- *
- * Revision 1.9  2001/10/16 20:31:27  strigeus
- * misc fixes
- *
- * Revision 1.8  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
- *
- * Revision 1.7  2001/10/11 12:07:35  strigeus
- * Determine caption from file name.
- *
- * Revision 1.6  2001/10/11 08:00:42  strigeus
- * Dump scripts by using DUMP_SCRIPTS as a compile option instead.
- *
- * Revision 1.5  2001/10/10 10:02:33  strigeus
- * alternative mouse cursor
- * basic save&load
- *
- * Revision 1.4  2001/10/09 19:02:28  strigeus
- * command line parameter support
- *
- * Revision 1.3  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.2  2001/10/09 17:38:20  strigeus
- * Autodetection of endianness.
- *
- * Revision 1.1.1.1  2001/10/09 14:30:12  strigeus
- * initial revision
+ * $Header$
  *
  */
 
 #include "scummsys.h"
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
-
-#define BYPASS_COPY_PROT
+#define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
 struct Scumm;
 struct Actor;
 
 typedef void (Scumm::*OpcodeProc)();
 
-#define NUM_SCRIPT_SLOT 25
+/* System Wide Constants */
+enum {
+	SAMPLES_PER_SEC =  22050,
+	BITS_PER_SAMPLE = 16,
+	NUM_MIXER = 4,
+	NUM_SCRIPT_SLOT = 25,
+	NUM_LOCALSCRIPT = 60,
+	NUM_SHADOW_PALETTE = 8,
+#if defined(FULL_THROTTLE)
+	NUM_ACTORS = 30
+#else
+	NUM_ACTORS = 13
+#endif
+};
 
-#pragma START_PACK_STRUCTS
-	
+
 struct Point {
 	int x,y;
 };
 
-struct AdjustBoxResult {
-	int16 x,y;
-	uint16 dist;
+struct MemBlkHeader {
+	uint32 size;
 };
 
+
+#pragma START_PACK_STRUCTS
+	
 #define SIZEOF_BOX 20
 struct Box { /* file format */
 	int16 ulx,uly;
@@ -101,6 +65,114 @@ struct Box { /* file format */
 	byte mask;
 	byte flags;
 	uint16 scale;
+} GCC_PACK;
+
+struct ResHdr {
+	uint32 tag, size;
+} GCC_PACK;
+
+#define RES_DATA(x) (((byte*)x) + sizeof(ResHdr))
+#define RES_SIZE(x) ( READ_BE_UINT32(&((ResHdr*)x)->size) )
+
+
+struct RoomHeader {
+#ifdef FULL_THROTTLE
+	uint32 version;
+#endif
+	uint16 width,height;
+	uint16 numObjects;
+} GCC_PACK;
+
+struct BompHeader {
+	uint16 unk;
+	uint16 width,height;
+} GCC_PACK;
+
+struct AkosHeader {
+	byte x_1[2];
+	byte flags;
+	byte x_2;
+	uint16 num_anims;
+	uint16 x_3;
+	uint16 codec;
+} GCC_PACK;
+
+struct AkosOffset {
+	uint32 akcd;
+	uint16 akci;
+} GCC_PACK;
+
+struct AkosCI {
+	uint16 width,height;
+	int16 rel_x, rel_y;
+	int16 move_x, move_y;
+} GCC_PACK;
+
+#if defined(FULL_THROTTLE)
+struct CodeHeader {
+	uint32 version;
+	uint16 obj_id;
+	byte parent;
+	byte parentstate;
+} GCC_PACK;
+
+#else
+struct CodeHeader {
+	uint16 obj_id;
+
+	union {
+		struct {
+			byte x,y,w,h;
+			byte flags;
+			byte parent;
+			uint16 walk_x;
+			uint16 walk_y;
+			byte actordir;
+		} v5;
+
+		struct {
+			int16 x, y;
+			uint16 w,h;
+			byte flags, parent;
+			uint16 unk1;
+			uint16 unk2;
+			byte actordir;
+		} v6;
+	};
+} GCC_PACK;
+#endif
+
+#if defined(FULL_THROTTLE)
+struct ImageHeader { /* file format */
+	uint32 version;
+	uint16 obj_id;
+	uint16 unk[1];
+	int16 x_pos,y_pos;
+	uint16 width,height;
+	byte unk2[3];
+	byte actordir;
+	uint16 unk_2;
+	struct {
+		int16 x,y;
+	} hotspot[15];
+} GCC_PACK;
+#else
+struct ImageHeader { /* file format */
+	uint16 obj_id;
+	uint16 unk[5];
+	uint16 width;
+	uint16 height;
+	uint16 unk_2;
+	struct {
+		int16 x,y;
+	} hotspot[15];
+} GCC_PACK;
+#endif
+#pragma END_PACK_STRUCTS
+
+struct AdjustBoxResult {
+	int16 x,y;
+	uint16 dist;
 };
 
 struct VerbSlot {
@@ -111,9 +183,55 @@ struct VerbSlot {
 	uint8 color,hicolor,dimcolor,bkcolor,type;
 	uint8 charset_nr,curmode;
 	uint8 saveid;
-	uint8 key,center;
+	uint8 key;
+	bool center;
 	uint8 field_1B;
 	uint16 imgindex;
+};
+
+class ObjectData {
+public:
+	uint32 offs_obim_to_room;
+	uint32 offs_obcd_to_room;
+	uint16 walk_x, walk_y;
+	uint16 obj_nr;
+	int16 x_pos;
+	int16 y_pos;
+	uint16 width;
+	uint16 height;
+	byte actordir;
+	byte parent;
+	byte parentstate;
+	byte state;
+	byte fl_object_index;
+};
+
+struct CostumeData {
+	byte active[16];
+	uint16 animCounter1;
+	byte animCounter2;
+	uint16 stopped;
+	uint16 curpos[16];
+	uint16 start[16];
+	uint16 end[16];
+	uint16 frame[16];
+};
+
+struct EnqueuedObject {
+	uint16 a,b,c,d,e;
+	int16 x,y;
+	uint16 width,height;
+	uint16 j,k,l;
+};
+
+struct PathNode {
+	uint index;
+	struct PathNode *left, *right;
+};
+
+struct PathVertex {
+	PathNode *left;
+	PathNode *right;
 };
 
 struct VirtScreen {
@@ -132,20 +250,11 @@ struct VirtScreen {
 struct ActorWalkData {
 	int16 destx,desty;
 	byte destbox;
-	byte destdir;
+	int16 destdir;
 	byte curbox;
-	byte field_7;
 	int16 x,y,newx,newy;
 	int32 XYFactor, YXFactor;
 	uint16 xfrac,yfrac;
-};
-
-struct CostumeData {
-	uint16 hdr;
-	uint16 animCounter1;
-	byte animCounter2;
-	byte x_1;
-	uint16 a[16], b[16], c[16], d[16];
 };
 
 struct MouseCursor {
@@ -160,7 +269,7 @@ struct ScriptSlot {
 	uint16 number;
 	uint16 newfield;
 	byte status;
-	byte type;
+	byte where;
 	byte unk1,unk2,freezeCount,didexec;
 	byte cutsceneOverride;
 	byte unk5;
@@ -168,157 +277,25 @@ struct ScriptSlot {
 
 struct NestedScript {
 	uint16 number;
-	uint8 type;
+	uint8 where;
 	uint8 slot;
 };
-
-struct ResHeader {
-	uint32 size;
-};
-
-class ObjectData {
-public:
-	uint32 offs_obim_to_room;
-	uint32 offs_obcd_to_room;
-	uint16 cdhd_10, cdhd_12;
-	uint16 obj_nr;
-	int16 x_pos;
-	int16 y_pos;
-	uint16 numstrips;
-	uint16 height;
-	byte actordir;
-	byte parent;
-	byte parentstate;
-	byte ownerstate;
-	byte fl_object_index;
-	byte unk_3;
-};
-
-struct RoomHeader {
-	uint32 tag, size;
-
-	union {
-		struct {
-			uint16 MMucus;	// Yeah, that's the real SCUMM internal name for version
-							//MMucus 730 stand for _majorScummVersion = 7, _middleScummVersion = 3, _minorScummVersion = 0
-			uint16 Unknown;
-			uint16 width,height;
-			uint16 numObjects;
-		} v7;
-
-		struct {
-			uint16 width,height;
-			uint16 numObjects;
-		} v5;
-	};
-
-};
-
-struct CodeHeader { // Next To do...
-	uint32 id;
-	uint32 size;
-
-	union
-	{
-
-		struct
-		{
-			uint16 obj_id;
-
-			union {
-				struct {
-					byte x,y,w,h;
-					byte flags;
-					byte parent;
-					uint16 unk2;
-					uint16 unk3;
-					byte actordir;
-				} v5;
-
-				struct {
-					int16 x, y;
-					uint16 w,h;
-					byte flags, parent;
-					uint16 unk2;
-					uint16 unk3;
-					byte actordir;
-				} v6;
-			};
-		}old;
-
-		struct {
-			uint32 MMucus;
-			uint32 obj_id;
-
-		} V7;
-	};
-};
-
-struct ImageHeader { /* file format */
-	uint32 id;
-	uint32 size;
-
-	union {
-		struct {
-			uint16 obj_id;
-			uint16 unk[5];	/* Let's clarify things: unk[5] is	u8 number of images
-																u8 Zbuf per images
-																u8 X position
-																u8 Y position
-
-							*/
-			uint16 img_w;
-			uint16 img_h;
-			uint16 unk_2;
-			struct {
-				int16 x,y;
-			} hotspot[15];
-		} v5;
-
-		struct {
-			uint16 MMucus;
-			uint16 Unknown;
-			uint16 obj_id;
-			uint16 number_image;
-			uint16 img_x;
-			uint16 img_y;
-			uint16 img_w;
-			uint16 img_h;
-		} v7;
-
-	};
-};
-
-#pragma END_PACK_STRUCTS
-
-struct PathNode {
-	uint index;
-	struct PathNode *left, *right;
-};
-
-struct PathVertex {
-	PathNode *left;
-	PathNode *right;
-};
-
-struct SaveLoadEntry {
-	uint16 offs;
-	uint8 type;
-	uint8 size;
-};
-
+ 
 enum {
 	sleByte = 1,
 	sleUint8 = 1,
+	sleInt8 = 1,
 	sleInt16 = 2,
 	sleUint16 = 3,
 	sleInt32 = 4,
 	sleUint32 = 5
 };
 
-enum ScummVars { // Ouch, all vars are different in V7 ! Need to rewrite the system...
+#if !defined(FULL_THROTTLE)
+
+enum ScummVars {
 	VAR_EGO = 1,
-	VAR_CAMERA_CUR_POS = 2,
+	VAR_CAMERA_POS_X = 2,
 	VAR_HAVE_MSG = 3,
 	VAR_ROOM = 4,
 	VAR_OVERRIDE = 5,
@@ -327,8 +304,8 @@ enum ScummVars { // Ouch, all vars are different in V7 ! Need to rewrite the sys
 	VAR_TMR_1 = 11,
 	VAR_TMR_2 = 12,
 	VAR_TMR_3 = 13,
-	VAR_CAMERA_MIN = 17,
-	VAR_CAMERA_MAX = 18,
+	VAR_CAMERA_MIN_X = 17,
+	VAR_CAMERA_MAX_X = 18,
 	VAR_TIMER_NEXT = 19,
 	VAR_VIRT_MOUSE_X = 20,
 	VAR_VIRT_MOUSE_Y = 21,
@@ -336,7 +313,7 @@ enum ScummVars { // Ouch, all vars are different in V7 ! Need to rewrite the sys
 	VAR_LAST_SOUND = 23,
 	VAR_CUTSCENEEXIT_KEY = 24,
 	VAR_TALK_ACTOR = 25,
-	VAR_CAMERA_FAST = 26,
+	VAR_CAMERA_FAST_X = 26,
 	VAR_SCROLL_SCRIPT = 27,
 	VAR_ENTRY_SCRIPT = 28,
 	VAR_ENTRY_SCRIPT2 = 29,
@@ -379,6 +356,7 @@ enum ScummVars { // Ouch, all vars are different in V7 ! Need to rewrite the sys
 	VAR_VERSION = 75,
 
 	VAR_V5_DRAWFLAGS = 9,
+	VAR_MI1_TIMER = 14,
 	VAR_V5_OBJECT_LO = 15,
 	VAR_V5_OBJECT_HI = 16,
 	VAR_V5_TALK_STRING_Y = 54,
@@ -388,69 +366,181 @@ enum ScummVars { // Ouch, all vars are different in V7 ! Need to rewrite the sys
 	VAR_V6_SCREEN_HEIGHT = 54,
 	VAR_V6_EMSSPACE = 76,
 	VAR_V6_RANDOM_NR = 118,
-
 };
 
-/*
+#else
 
-Some V7 vars so far:
+enum ScummVars {
+	VAR_MOUSE_X = 1,
+	VAR_MOUSE_Y = 2,
+	VAR_VIRT_MOUSE_X = 3,
+	VAR_VIRT_MOUSE_Y = 4,
+	VAR_V6_SCREEN_WIDTH = 5,
+	VAR_V6_SCREEN_HEIGHT = 6,
+	VAR_CAMERA_POS_X = 7,
+	VAR_CAMERA_POS_Y = 8,
+	VAR_OVERRIDE = 9,
+	VAR_ROOM = 10,
+	VAR_ROOM_RESOURCE = 11,
+	VAR_TALK_ACTOR = 12,
+	VAR_HAVE_MSG = 13,
+	VAR_TIMER = 14,
+	VAR_TMR_4 = 15,
+	VAR_LEFTBTN_DOWN = 22,
+	VAR_RIGHTBTN_DOWN = 23,
+	VAR_LEFTBTN_HOLD = 24,
+	VAR_RIGHTBTN_HOLD = 25,
 
-VAR_HAVE_MSG = 26;
-VAR_GAME_LOADED = 58;
-VAR_ENTRY_SCRIPT = 102,
-VAR_ENTRY_SCRIPT2 = 104,
-VAR_EXIT_SCRIPT = 106;
-VAR_EXIT_SCRIPT2 = 108;
-VAR_EGO = 222;
+	VAR_PERFORMANCE_1 = 26,
+	VAR_PERFORMANCE_2 = 27,
+	VAR_GAME_LOADED = 29,
+	VAR_V6_RANDOM_NR = 34,
+	VAR_NEW_ROOM = 35,
+	VAR_WALKTO_OBJ = 36,
 
-V7 system flags (long):
+	VAR_SCROLL_SCRIPT = 50,
+	VAR_ENTRY_SCRIPT = 51,
+	VAR_ENTRY_SCRIPT2 = 52,
+	VAR_EXIT_SCRIPT = 53,
+	VAR_EXIT_SCRIPT2 = 54,
+	VAR_VERB_SCRIPT = 55,
+	VAR_SENTENCE_SCRIPT = 56,
+	VAR_HOOK_SCRIPT = 57,
+	VAR_CUTSCENE_START_SCRIPT = 58,
+	VAR_CUTSCENE_END_SCRIPT = 59,
+	VAR_UNK_SCRIPT = 60,
+	VAR_UNK_SCRIPT_2 = 61,
+	
+	VAR_PAUSE_KEY = 63,
+	VAR_RESTART_KEY = 64, /* ?? */
+	VAR_TALKSTOP_KEY = 65, /* ?? */
+	VAR_SAVELOADDIALOG_KEY = 66, /* ?? */
+	VAR_CUTSCENEEXIT_KEY = 24,
 
-0		set at 0 with command line "ol"
-1		set at 1 with command line "or"
-2
-3
-4
-5
-6
-7		set at 1 with command line "r"
-8		set at 1 with command line "d"
-9
-10
+	VAR_TIMER_NEXT = 97,
+	VAR_TMR_1 = 98,
+	VAR_TMR_2 = 99,
+	VAR_TMR_3 = 100,
 
-default:
-0		1
-1		0
-2		-120
+	VAR_CAMERA_MIN_X = 101,
+	VAR_CAMERA_MAX_X = 102,
+	VAR_CAMERA_MIN_Y = 103,
+	VAR_CAMERA_MAX_Y = 104,
+	VAR_CAMERA_THRESHOLD_X = 105,
+	VAR_CAMERA_THRESHOLD_Y = 106,
+	VAR_CAMERA_SPEED_X = 107,
+	VAR_CAMERA_SPEED_Y = 108,
+	VAR_CAMERA_ACCEL_X = 109,
+	VAR_CAMERA_ACCEL_Y = 110,
+		
+	VAR_EGO = 111,
+
+	VAR_CURSORSTATE = 112,
+	VAR_USERPUT = 113,
+	VAR_DEFAULT_TALK_DELAY = 114,
+	VAR_CHARINC = 115,
+	VAR_DEBUGMODE = 116,
+
+	VAR_CHARSET_MASK = 119,
+	
+	//VAR_V5_DRAWFLAGS = 9,
+	VAR_MI1_TIMER = 14,
+	VAR_V5_OBJECT_LO = 15,
+	VAR_V5_OBJECT_HI = 16,
+	VAR_V5_TALK_STRING_Y = 54,
+	VAR_V5_CHARFLAG = 60,
+
+	VAR_V6_EMSSPACE = 76,
+
+	VAR_STRING2DRAW = 130,
+};
+
+#endif
 
 
-consequences:
+enum ResTypes {
+	rtFirst = 1,
+	rtRoom = 1,
+	rtScript = 2,
+	rtCostume = 3,
+	rtSound = 4,
+	rtInventory = 5,
+	rtCharset = 6,
+	rtString = 7,
+	rtVerb = 8,
+	rtActorName = 9,
+	rtBuffer = 10,
+	rtScaleTable = 11,
+	rtTemp = 12,
+	rtFlObject = 13,
+	rtMatrix = 14,
+	rtBox = 15,
+	rtObjectName = 16,
+	rtLast = 16,
+	rtNumTypes = 17,
+};
 
-7 and 8 make the display 640x480 instead of 320x200
-*/
+enum {
+	OF_OWNER_MASK = 0x0F,
+	OF_STATE_MASK = 0xF0,
+	
+#if defined(FULL_THROTTLE)
+	OF_OWNER_ROOM = 0xFF,
+#else
+	OF_OWNER_ROOM = 0x0F,
+#endif
+	OF_STATE_SHL = 4
+};
 
+/* Camera Modes */
+enum {
+	CM_NORMAL = 1,
+	CM_FOLLOW_ACTOR = 2,
+	CM_PANNING = 3,
+};
 
-#define _maxRooms res.num[1]
-#define _maxScripts res.num[2]
-#define _maxCostumes res.num[3]
-#define _maxInventoryItems res.num[5]
-#define _maxCharsets res.num[6]
-#define _maxStrings res.num[7]
-#define _maxVerbs res.num[8]
-#define _maxActorNames res.num[9]
-#define _maxBuffer res.num[10]
-#define _maxScaleTable res.num[11]
-#define _maxTemp res.num[12]
-#define _maxFLObject res.num[13]
-#define _maxMatrixes res.num[14]
-#define _maxBoxes res.num[15]
+enum {
+	MBS_LEFT_CLICK = 0x8000,
+	MBS_RIGHT_CLICK = 0x4000,
+	MBS_MOUSE_MASK = (MBS_LEFT_CLICK|MBS_RIGHT_CLICK),
+	MBS_MAX_KEY	= 0x0200
+};
 
-#define _baseRooms res.address[1]
-#define _baseScripts res.address[2]
-#define _baseInventoryItems res.address[5]
-#define _baseFLObject res.address[13]
-#define _baseArrays res.address[7]
+enum {
+	RF_LOCK = 0x80,
+	RF_USAGE = 0x7F,
+	RF_USAGE_MAX = RF_USAGE
+};
 
-#define _roomFileOffsets res.roomoffs[1]
+enum MoveFlags {
+	MF_NEW_LEG = 1,
+	MF_IN_LEG = 2,
+	MF_TURN = 4,
+	MF_LAST_LEG = 8,
+};
+
+#define _maxRooms res.num[rtRoom]
+#define _maxScripts res.num[rtScript]
+#define _maxCostumes res.num[rtCostume]
+#define _maxInventoryItems res.num[rtInventory]
+#define _maxCharsets res.num[rtCharset]
+#define _maxStrings res.num[rtString]
+#define _maxVerbs res.num[rtVerb]
+#define _maxActorNames res.num[rtActorName]
+#define _maxBuffer res.num[rtBuffer]
+#define _maxScaleTable res.num[rtScaleTable]
+#define _maxTemp res.num[rtTemp]
+#define _maxFLObject res.num[rtFlObject]
+#define _maxMatrixes res.num[rtMatrix]
+#define _maxBoxes res.num[rtBox]
+
+#define _baseRooms res.address[rtRoom]
+#define _baseScripts res.address[rtScript]
+#define _baseInventoryItems res.address[rtInventory]
+#define _baseFLObject res.address[rtFlObject]
+#define _baseArrays res.address[rtString]
+
+#define _roomFileOffsets res.roomoffs[rtRoom]
 
 struct CharsetRenderer {
 	Scumm *_vm;
@@ -464,8 +554,9 @@ struct CharsetRenderer {
 	bool _blitAlso;
 	
 	int _strLeft, _strRight, _strTop, _strBottom;
-//	int _mask_bottom, _mask_right, _mask_top, _mask_left;
 	byte _curId;
+
+	int _xpos2, _ypos2;
 	
 	byte _bufPos;
 	byte _unk12,_disableOffsX;
@@ -484,7 +575,7 @@ struct CharsetRenderer {
 
 	byte *_backbuff_ptr, *_bgbak_ptr;
 	byte *_mask_ptr;
-	byte *_bg_ptr2;
+	byte *_dest_ptr;
 		
 	byte _colorMap[16];
 	byte _buffer[256];
@@ -493,6 +584,68 @@ struct CharsetRenderer {
 	void printChar(int chr);
 	int getStringWidth(int a, byte *str, int pos);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
+};
+
+struct AkosRenderer {
+	CostumeData *cd;
+	int x,y; /* where to draw costume */
+	byte scale_x, scale_y; /* scaling */
+	byte clipping; /* clip mask */
+	bool charsetmask;
+	byte shadow_mode;
+	uint16 codec;
+	bool mirror; /* draw actor mirrored */
+	byte dirty_id;
+	byte *outptr;
+	uint outwidth, outheight;
+	
+	/* pointer to various parts of the costume resource */
+	byte *akos;
+	AkosHeader *akhd;
+	
+	/* current move offset */
+	int move_x, move_y;
+	/* movement of cel to decode */
+	int move_x_cur, move_y_cur;
+	/* width and height of cel to decode */
+	int width,height;
+	
+	byte *srcptr;
+	byte *shadow_table;
+
+	struct {
+		/* codec stuff */
+		const byte *scaletable;
+		byte mask,shl;
+		bool doContinue;
+		byte repcolor;
+		byte replen;
+		int scaleXstep;
+		int x,y;
+		int tmp_x, tmp_y;
+		int y_pitch;
+		int skip_width;
+		byte *destptr;
+		byte *mask_ptr;
+		int imgbufoffs;
+	} v1;
+
+	/* put less used stuff at the bottom to optimize opcodes */
+	int draw_top, draw_bottom;
+	byte *akpl,*akci,*aksq;
+	AkosOffset *akof;
+	byte *akcd;
+
+	byte palette[256];
+};
+
+struct BompDrawData {
+	byte *out;
+	int outwidth, outheight;
+	int x,y;
+	byte scale_x, scale_y;
+	byte *dataptr;
+	int srcwidth, srcheight;
 };
 
 struct CostumeRenderer {
@@ -539,6 +692,7 @@ struct CostumeRenderer {
 	void proc3();
 	void proc2();
 	void proc1();
+	void proc_special(byte code);
 	byte mainRoutine(Actor *a, int slot, int frame);
 	void ignorePakCols(int num);
 
@@ -546,8 +700,8 @@ struct CostumeRenderer {
 	byte drawOneSlot(Actor *a, int slot);
 	byte drawCostume(Actor *a);
 
-	byte animateOneSlot(CostumeData *cd, int slot);
-	byte animate(CostumeData *cd);
+	byte animateOneSlot(Actor *a, int slot);
+	byte animate(Actor *a);
 };
 
 struct Actor {
@@ -555,47 +709,59 @@ struct Actor {
 	int elevation;
 	uint width;
 	byte number;
-	int facing; // changed to int for angular
-	int facing2;// new in V7
+	uint16 facing;
 	uint16 costume;
 	byte room;
 	byte talkColor;
 	byte scalex,scaley;
 	byte charset;
-	byte newDirection;
+	int16 newDirection;
 	byte moving;
 	byte ignoreBoxes;
-	byte neverZClip;
+	byte forceClip;
 	byte initFrame,walkFrame,standFrame,talkFrame1,talkFrame2;
 	bool needRedraw, needBgReset,costumeNeedsInit,visible;
+	byte shadow_mode;
+#if defined(FULL_THROTTLE)
+	bool flip;
+#endif
 	uint speedx,speedy;
-	byte data8; /* unused */
-	byte animIndex;
+	byte frame;
 	byte walkbox;
 	byte mask;
 	byte animProgress, animSpeed;
 	int16 new_1,new_2;
+	uint16 talk_script, walk_script;
 	byte new_3;
-	byte sound[8];
+	int8 layer;
 	ActorWalkData walkdata;
+//#if defined(FULL_THROTTLE)
+	int16 animVariable[16];
+//#endif
+	uint16 sound[8];
 	CostumeData cost;
-	byte palette[32];
-
-	byte AnimateVar[16]; // All below is V7 specific
-	int AnimateStatus;
-	int script; 
-	int script2;
-	int newV7;
-	int V7sound;
-	int V7sound2;
+	byte palette[64];
 };
 
+#if defined(FULL_THROTTLE)
 struct CameraData {
-	int16 _destPos, _curPos, _lastPos;
-	int16 _leftTrigger, _rightTrigger;
-	byte _follows, _mode;
-	uint16 _movingToActor;
+	Point _cur;
+	Point _dest;
+	Point _accel;
+	Point _last;
+	byte _follows;
+	bool _movingToActor;
 };
+#else
+struct CameraData {
+	Point _cur;
+	Point _dest;
+	Point _last;
+	int _leftTrigger, _rightTrigger;
+	byte _follows, _mode;
+	bool _movingToActor;
+};
+#endif
 
 #define ARRAY_HDR_SIZE 6
 struct ArrayHeader {
@@ -615,14 +781,15 @@ struct SentenceTab {
 };
 
 struct StringTab {
-	int16 t_xpos, t_ypos, t_center, t_overhead;
-	int16 t_new3, t_right, t_color, t_charset;
+	int16 t_xpos, t_ypos;
+	int16 t_right;
 	int16 xpos, ypos;
-	int16 xpos2,ypos2;
-	int16 center, overhead;
-	int16 new_3, right;
-	int16 color,charset;
-	int16 mask_top, mask_bottom, mask_right, mask_left;
+	int16 right;
+	byte color, t_color;
+	byte charset, t_charset;
+	bool center, t_center;
+	bool overhead, t_overhead;
+	bool no_talk_anim,t_no_talk_anim;
 };
 
 struct ColorCycle {
@@ -639,13 +806,13 @@ struct Gdi {
 	byte *_readPtr;
 	uint _readOffs;
 
-	int8 _unk4;
+	int8 _cursorActive;
 
 	int _numZBuffer;
 	int _imgBufOffs[4];
 	byte _disable_zbuffer;
 
-	byte dseg_4E3B;
+	bool _useOrDecompress;
 	byte _numLinesToProcess;
 	byte _tempNumLines;
 	byte _currentX;
@@ -653,6 +820,7 @@ struct Gdi {
 	byte _hotspot_y;
 	int16 _drawMouseX;
 	int16 _drawMouseY;
+	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
 	byte _currentCursor;
 	byte _mouseColors[4];
 	byte _mouseColor;
@@ -671,8 +839,6 @@ struct Gdi {
 	uint16 _vertStripNextInc;
 	byte *_backupIsWhere;
 	
-	byte _mouseMask[0x200];
-
 	void unkDecode1();
 	void unkDecode2();
 	void unkDecode3();
@@ -683,7 +849,7 @@ struct Gdi {
 
 	void decompressBitmap();
 
-	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, bool flag);
+	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag);
 	void clearUpperMask();
 
 	void disableZBuffer() { _disable_zbuffer++; }
@@ -698,8 +864,25 @@ struct Gdi {
 	void resetBackground(byte top, byte bottom, int strip);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void updateDirtyScreen(VirtScreen *vs);
+
+
+	enum DrawBitmapFlags {
+		dbAllowMaskOr = 1,
+		dbDrawMaskOnBoth = 2,
+		dbClear = 4,
+	};
 };
 
+struct MixerChannel {
+	void *_sfx_sound;
+	uint32 _sfx_pos;
+	uint32 _sfx_size;
+	uint32 _sfx_fp_speed;
+	uint32 _sfx_fp_pos;
+
+	void mix(int16 *data, uint32 len);
+	void clear();
+};
 
 enum GameId {
 	GID_TENTACLE = 1,
@@ -707,29 +890,59 @@ enum GameId {
 	GID_INDY4 = 3,
 	GID_MONKEY = 4,
 	GID_SAMNMAX = 5,
-	GID_DIG = 6,
-	GID_FT = 7
+};
+
+enum GameFeatures {
+	GF_NEW_OPCODES = 1,
+	GF_AFTER_V6 = 2,
+	GF_AFTER_V7 = 4,
+	GF_HAS_ROOMTABLE = GF_AFTER_V7,
+	GF_USE_KEY = 8,
+	GF_USE_ANGLES = GF_AFTER_V7,
+	GF_DRAWOBJ_OTHER_ORDER = 16,
+
+	GF_DEFAULT = GF_USE_KEY,
 };
 
 struct ScummDebugger;
+struct Serializer;
 
+enum WhereIsObject {
+	WIO_NOT_FOUND = -1,
+	WIO_INVENTORY = 0,
+	WIO_ROOM = 1,
+	WIO_GLOBAL = 2,
+	WIO_LOCAL = 3,
+	WIO_FLOBJECT = 4,
+};
+
+enum MouseButtonStatus {
+	msDown = 1,
+	msClicked = 2,
+};
+
+struct BoxCoords {
+	Point ul;
+	Point ur;
+	Point ll;
+	Point lr;
+};
 
 struct Scumm {
+	uint32 _features;
 	const char *_gameText;
 	byte _gameId;
-
-	byte _majorScummVersion;
-	byte _middleScummVersion;
-	byte _minorScummVersion;
-
-	byte _maxActors;
-
+//	byte _majorScummVersion;
+//	byte _middleScummVersion;
+//	byte _minorScummVersion;
 	ScummDebugger *_debugger;
+	void *_gui; /* actually a pointer to a Gui */
 	
 	int _lastLoadedRoom;
 	int _roomResource;
 	byte _encbyte;
 	void *_fileHandle;
+	void *_sfxFile;
 	char *_exe_name;
 
 	byte _saveLoadFlag;
@@ -738,11 +951,17 @@ struct Scumm {
 
 	bool _dynamicRoomOffsets;
 	byte _resFilePathId;
+
+	bool _soundsPaused;
+
+	bool _useTalkAnims;
 	
 	char *_resFilePrefix;
 	char *_resFilePath;
 
 	int _keyPressed;
+
+	void *_soundEngine;
 
 	uint16 *_inventory;
 	byte *_arrays;
@@ -754,6 +973,9 @@ struct Scumm {
 
 	const OpcodeProc *_opcodes;
 
+	int _xPos, _yPos;
+	int _dir;
+
 	byte _curActor;
 	int _curVerb;
 	int _curVerbSlot;
@@ -761,6 +983,11 @@ struct Scumm {
 	int _curPalIndex;
 
 	VirtScreen *_curVirtScreen;
+
+	
+	byte *_scriptPointer, *_scriptOrgPointer;
+	byte *_scriptPointerStart;
+	byte _opcode;
 
 	int _numVariables;
 	int _numBitVariables;
@@ -775,20 +1002,23 @@ struct Scumm {
 	int _numSounds;
 	int _numCharsets;
 	int _numCostumes;
-	int _numNewName;
+	int _numNewNames;
+	int _numGlobalScripts;
 
 	byte *_msgPtrToAdd;
 	
 	uint8 *_roomFileIndexes;
-	byte *_objectFlagTable;
-	byte *_objsTab2;
-
+	byte *_objectOwnerTable;
+	byte *_objectRoomTable;
+	byte *_objectStateTable;
 	uint32 *_classData;
 
-	byte _numGlobalScripts;
-	byte *_scriptPointer, *_scriptOrgPointer;
-	byte *_scriptPointerStart;
-	byte _opcode;
+	byte _expire_counter;
+
+	bool _noTalkAnims;
+
+	bool _mouthSyncMode;
+	bool _endOfMouthSync;
 
 	uint32 _randSeed1;
 	uint32 _randSeed2;
@@ -798,16 +1028,23 @@ struct Scumm {
 	uint16 _defaultTalkDelay;
 	byte _haveMsg;
 	byte _newEffect;
-	uint16 _fullRedraw;
+	bool _fullRedraw;
 	uint16 _soundParam,_soundParam2,_soundParam3;
 	
 	byte _switchRoomEffect2, _switchRoomEffect;
+
+	int _resourceHeaderSize;
 
 	bool _egoPositioned;
 	bool _doEffect;
 	bool _screenEffectFlag;
 	bool _keepText;
+
+	uint32 _maxHeapThreshold;
+	uint32 _minHeapThreshold;
 	
+	bool _fullScreen;
+
 	byte _bkColor;
 	uint16 _lastXstart;
 		
@@ -816,9 +1053,12 @@ struct Scumm {
 
 	int16 _virtual_mouse_x, _virtual_mouse_y;
 
-	byte _charsetColor;
+	int _cursorHotspotX, _cursorHotspotY;
+	int _cursorWidth, _cursorHeight;
+	byte _cursorAnimateIndex;
+	byte _cursorAnimate;
 
-	uint32 _localScriptList[0x39];
+	byte _charsetColor;
 
 	uint16 _debugMode;
 
@@ -831,25 +1071,27 @@ struct Scumm {
 	byte _numObjectsInRoom;
 	byte _actorToPrintStrFor;
 
-	int16 _screenStartStrip;
-	int16 _screenEndStrip;
+	int _screenStartStrip;
+	int _screenEndStrip;
 
-	int16 _scummTimer;
+	int _screenLeft;
+	int _screenTop;
 
-	byte _playBackFile;
 	byte _fastMode;
 	
-	uint16 _completeScreenRedraw;
-
-	
+	bool _completeScreenRedraw;
 
 	int8 _userPut;
 	int8 _cursorState;
+
+	byte _sfxMode;
 
 	uint16 _mouseButStat;
 	byte _leftBtnPressed, _rightBtnPressed;
 
 	int _numInMsgStack;
+
+	uint32 _localScriptList[NUM_LOCALSCRIPT];
 
 	VirtScreen virtscr[4];
 
@@ -858,12 +1100,16 @@ struct Scumm {
 	uint32 _IM00_offs;
 	uint32 _PALS_offs;
 
+	uint32 _allocatedSize;
+
+	uint32 _talk_sound_a, _talk_sound_b;
+	byte _talk_sound_mode;
+
 	int _drawObjectQueNr;
-	byte _drawObjectQue[0xC8];
+	byte _drawObjectQue[200];
 
 	uint16 _currentDrive;
 	uint16 _soundCardType;
-	uint16 _videoMode;
 	byte _mousePresent;
 
 	int16 _palManipStart;
@@ -871,14 +1117,14 @@ struct Scumm {
 	int16 _palManipCounter;
 
 	struct {
-		byte mode[17];
-		uint16 num[17];
-		uint32 tags[17];
-		const char *name[17];
-		byte **address[17];
-		byte *flags[17];
-		byte *roomno[17];
-		uint32 *roomoffs[17];
+		byte mode[rtNumTypes];
+		uint16 num[rtNumTypes];
+		uint32 tags[rtNumTypes];
+		const char *name[rtNumTypes];
+		byte **address[rtNumTypes];
+		byte *flags[rtNumTypes];
+		byte *roomno[rtNumTypes];
+		uint32 *roomoffs[rtNumTypes];
 	} res;
 
 	struct {
@@ -889,27 +1135,16 @@ struct Scumm {
 		byte cutSceneStackPointer;
 		ScriptSlot slot[NUM_SCRIPT_SLOT];
 		NestedScript nest[15];
-		int16 localvar[NUM_SCRIPT_SLOT*17];
+		int16 localvar[NUM_SCRIPT_SLOT][17];
 	} vm;
 
 	struct {
 		int16 x,y;
 	} mouse;
 
-	Actor actor[30]; // This is maximised to 30 for V7, but actors 13-30 aren't processed on earlier versions
+	Actor actor[NUM_ACTORS];
 
-	uint16 actorDrawBits[200];
-
-	struct {
-		int upperLeftX;
-		int upperRightX;
-		int lowerLeftX;
-		int lowerRightX;
-		int upperLeftY;
-		int upperRightY;
-		int lowerLeftY;
-		int lowerRightY;
-	} box;
+	uint32 gfxUsageBits[200];
 
 	CharsetRenderer charset;
 	
@@ -917,10 +1152,14 @@ struct Scumm {
 
 	byte _resourceMapper[128];
 
+	uint16 _extraBoxFlags[65];
+
 	byte **_lastCodePtr;
+
+	byte *_shadowPalette;
 	
-	int _numSoundTags;
-	byte *_soundTagTable;
+//	int _numSoundTags;
+//	byte *_soundTagTable;
 
 	int16 _bootParam;
 
@@ -931,22 +1170,26 @@ struct Scumm {
 
 	uint32 _whereInResToRead;
 
-	int _xPos, _yPos;
-	byte _dir;
-
 	CameraData camera;
 
 	int _resultVarNumber;
 
-	byte _sentenceIndex;
+	int _sentenceNum;
 	SentenceTab sentence[6];
 
 	StringTab string[6];
 
 	CostumeRenderer cost;
 
+	uint16 _mouthSyncTimes[52];
+
 	int16 _soundQuePos;
 	int16 _soundQue[0x100];
+
+	uint16 _enqueue_b,_enqueue_c,_enqueue_d,_enqueue_e;
+
+	int _enqueuePos; 
+	EnqueuedObject _enqueuedObjects[32];
 
 	byte _soundQue2Pos;
 	byte _soundQue2[10];
@@ -955,13 +1198,14 @@ struct Scumm {
 
 	uint16 _curExecScript;
 
-	int _scrWidthIn8Unit;
+	int _scrWidth;
 	int _scrHeight;
 
 	byte _currentPalette[0x300];
 
 	int _palDirtyMin, _palDirtyMax;
 
+	uint _curSoundPos;
 
 	ColorCycle _colorCycle[16];
 
@@ -985,7 +1229,13 @@ struct Scumm {
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;
 	int _boxPathVertexHeapIndex;
 	int _boxMatrixItem;
-	
+
+	byte _grabbedCursor[2048];
+
+	char _saveLoadName[32];
+
+	MixerChannel _mixer_channel[NUM_MIXER];
+
 	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
 
 	void openRoom(int room);
@@ -993,7 +1243,6 @@ struct Scumm {
 	void readRoomsOffsets();
 	void askForDisk(const char *filename);
 
-	
 	bool openResourceFile(const char *filename);
 	
 	void fileClose(void *file);
@@ -1001,6 +1250,7 @@ struct Scumm {
 	void fileSeek(void *file, long offs, int whence);
 	void fileRead(void *handle, void *ptr, uint32 size);
 	bool fileEof(void *handle);
+	uint32 filePos(void *handle);
 
 	int fileReadByte();
 	uint32 fileReadDwordLE();
@@ -1013,19 +1263,16 @@ struct Scumm {
 	uint fileReadWordLE();
 	uint fileReadWordBE();
 
-	byte *alloc(int size);
-	void free(void *mem);
+	static byte *alloc(int size);
+	static void free(void *mem);
 
 	void readResTypeList(int id, uint32 tag, const char *name);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 
-	void initThingsV5();
-	void initThingsV6();
-	void initThingsV7();
-
 	void initRandSeeds();
 
 	uint getRandomNumber(uint max);
+	uint getRandomNumberRng(uint min, uint max);
 
 	void loadCharset(int i);
 	void nukeCharset(int i);
@@ -1048,17 +1295,15 @@ struct Scumm {
 	int loadResource(int type, int i);
 	int getResourceRoomNr(int type, int index);
 	int readSoundResource(int type, int index);
-	void setResourceFlags(int type, int index, byte flag);
+	void setResourceCounter(int type, int index, byte flag);
 	void validateResource(const char *str, int type, int index);
 	
 	void initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra);
 	void setDirtyRange(int slot, int a, int height);
-	void unkVirtScreen2();
+	void drawDirtyScreenParts();
 	void updateDirtyScreen(int slot);
 	void unkVirtScreen4(int a);
 	
-	
-
 	void restoreMouse();
 	void initActor(Actor *a, int mode);
 	bool checkFixedDisk();
@@ -1066,7 +1311,7 @@ struct Scumm {
 	void setActorWalkSpeed(Actor *a, uint speed1, uint speed2);
 	int calcMovementFactor(Actor *a, int newx, int newy);
 	int actorWalkStep(Actor *a);
-	int getProgrDirChange(Actor *a, int mode);
+	int remapDirection(Actor *a, int dir);
 
 	bool checkXYInBoxBounds(int box, int x, int y);
 	void setupActorScale(Actor *a);
@@ -1082,13 +1327,14 @@ struct Scumm {
 	void putState(int obj, int state);
 	int getOwner(int obj);
 	void putOwner(int obj, int owner);
+	int getObjectRoom(int obj);
 
 	void main();
 
 	uint distanceFromPt(int x, int y, int ptx, int pty);
 	Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
 	bool getSideOfLine(int x1,int y1, int x2, int y2, int x, int y, int box);
-	void getBoxCoordinates(int box);
+	void getBoxCoordinates(int boxnum, BoxCoords *bc);
 	byte getMaskFromBox(int box);
 	Box *getBoxBaseAddr(int box);
 	byte getBoxFlags(int box);
@@ -1096,9 +1342,13 @@ struct Scumm {
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
 
-	void startAnimActor(Actor *a, int frame, byte direction);
+//	void startAnimActor(Actor *a, int frame);
+	void startAnimActor(Actor *a, int frame);
+	void startAnimActorEx(Actor *a, int frame, int direction);
+//	void startAnimActor(Actor *a, int frame, byte direction);
+	int getProgrDirChange(Actor *a, int mode);
 	void initActorCostumeData(Actor *a);
-	void fixActorDirection(Actor *a, byte direction);
+	void fixActorDirection(Actor *a, int direction);
 	void decodeCostData(Actor *a, int frame, uint mask);
 
 	void scummInit();
@@ -1114,8 +1364,8 @@ struct Scumm {
 	void executeScript();
 	byte fetchScriptByte();
 	int fetchScriptWord();
-	void ignoreScriptWord();
-	void ignoreScriptByte();
+	void ignoreScriptWord() { fetchScriptWord(); }
+	void ignoreScriptByte() { fetchScriptByte(); }
 	int getVarOrDirectWord(byte mask);
 	int getVarOrDirectByte(byte mask);
 	int readVar(uint var);
@@ -1311,7 +1561,8 @@ struct Scumm {
 	void o6_getActorRoom();
 	void o6_getObjectX();
 	void o6_getObjectY();
-	void o6_getObjectDir();
+	void o6_getObjectOldDir();
+	void o6_getObjectNewDir();
 	void o6_getActorWalkBox();
 	void o6_getActorCostume();
 	void o6_findInventory();
@@ -1368,155 +1619,13 @@ struct Scumm {
 	void o6_breakMaybe();
 	void o6_pickOneOf();
 	void o6_pickOneOfDefault();
+	void o6_jumpToScript();
+	void o6_isRoomScriptRunning();
+	void o6_kernelFunction();
+	void o6_getAnimateVariable();
+	void o6_drawBlastObject();
 
-	void o7_pushByte();
-	void o7_pushWord();
-	void o7_pushByteVar();
-	void o7_pushWordVar();
-	void o7_invalid();
-	void o7_byteArrayRead();
-	void o7_wordArrayRead();
-	void o7_byteArrayIndexedRead();
-	void o7_wordArrayIndexedRead();
-	void o7_dup();
-	void o7_zero();
-	void o7_eq();
-	void o7_neq();
-	void o7_gt();
-	void o7_lt();
-	void o7_le();
-	void o7_ge();
-	void o7_add();
-	void o7_sub();
-	void o7_mul();
-	void o7_div();
-	void o7_land();
-	void o7_lor();
-	void o7_kill();
-	void o7_writeByteVar();
-	void o7_writeWordVar();
-	void o7_byteArrayWrite();
-	void o7_wordArrayWrite();
-	void o7_byteArrayIndexedWrite();
-	void o7_wordArrayIndexedWrite();
-	void o7_byteVarInc();
-	void o7_wordVarInc();
-	void o7_byteArrayInc();
-	void o7_wordArrayInc();
-	void o7_byteVarDec();
-	void o7_wordVarDec();
-	void o7_byteArrayDec();
-	void o7_wordArrayDec();
-	void o7_jumpTrue();
-	void o7_jumpFalse();
-	void o7_jump();
-	void o7_startScriptEx();
-	void o7_startScript();
-	void o7_startObject();
-	void o7_setObjectState();
-	void o7_setObjectXY();
-	void o7_stopObjectCode();
-	void o7_endCutscene();
-	void o7_cutScene();
-	void o7_stopMusic();
-	void o7_freezeUnfreeze();
-	void o7_cursorCommand();
-	void o7_breakHere();
-	void o7_ifClassOfIs();
-	void o7_setClass();
-	void o7_getState();
-	void o7_setState();
-	void o7_setOwner();
-	void o7_getOwner();
-	void o7_startSound();
-	void o7_stopSound();
-	void o7_startMusic();
-	void o7_stopObjectScript();
-	void o7_panCameraTo();
-	void o7_actorFollowCamera();
-	void o7_setCameraAt();
-	void o7_loadRoom();
-	void o7_stopScript();
-	void o7_walkActorToObj();
-	void o7_walkActorTo();
-	void o7_putActorInRoom();
-	void o7_putActorAtObject();
-	void o7_faceActor();
-	void o7_animateActor();
-	void o7_doSentence();
-	void o7_pickupObject();
-	void o7_loadRoomWithEgo();
-	void o7_getRandomNumber();
-	void o7_getRandomNumberRange();
-	void o7_getActorMoving();
-	void o7_getScriptRunning();
-	void o7_getActorRoom();
-	void o7_getObjectX();
-	void o7_getObjectY();
-	void o7_getObjectDir();
-	void o7_getActorWalkBox();
-	void o7_getActorCostume();
-	void o7_findInventory();
-	void o7_getInventoryCount();
-	void o7_getVerbFromXY();
-	void o7_beginOverride();
-	void o7_endOverride();
-	void o7_setObjectName();
-	void o7_isSoundRunning();
-	void o7_setBoxFlags();
-	void o7_createBoxMatrix();
-	void o7_resourceRoutines();
-	void o7_roomOps();
-	void o7_actorSet();
-	void o7_verbOps();
-	void o7_getActorFromXY();
-	void o7_findObject();
-	void o7_pseudoRoom();
-	void o7_getActorElevation();
-	void o7_getVerbEntrypoint();
-	void o7_arrayOps();
-	void o7_saveRestoreVerbs();
-	void o7_drawBox();
-	void o7_getActorWidth();
-	void o7_wait();
-	void o7_getActorScaleX();
-	void o7_getActorAnimCounter1();
-	void o7_soundKludge();
-	void o7_isAnyOf();
-	void o7_quitPauseRestart();
-	void o7_isActorInBox();
-	void o7_delay();
-	void o7_delayLonger();
-	void o7_delayVeryLong();
-	void o7_stopSentence();
-	void o7_print_0();
-	void o7_print_1();
-	void o7_print_2();
-	void o7_print_3();
-	void o7_printActor();
-	void o7_printEgo();
-	void o7_talkActor();
-	void o7_talkEgo();
-	void o7_dim();
-	void o7_runVerbCodeQuick();
-	void o7_runScriptQuick();
-	void o7_dim2();
-	void o7_abs();
-	void o7_distObjectObject();
-	void o7_distObjectPt();
-	void o7_distPtPt();
-	void o7_dummy_stacklist();
-	void o7_miscOps();
-	void o7_breakMaybe();
-	void o7_pickOneOf();
-	void o7_pickOneOfDefault();
-	void o7_animateGetVariable();
-	void o7_ED();
-	void o7_Kfunction();
-	void o7_chainScript();
-	
-	void decodeParseStringV7(int m, int n);
-
+	int popRoomAndObj(int *room);
 
 	void soundKludge(int16 *list);
 
@@ -1535,19 +1644,19 @@ struct Scumm {
 	int getObjectOrActorXY(int object);
 	void addSoundToQueue(int sound);
 	void addSoundToQueue2(int sound);
-	bool isScriptLoaded(int script);
+	bool isScriptInUse(int script);
 	int getActorXYPos(Actor *a);
 	void getObjectXYPos(int object);
-	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y);
+	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom);
 
 	int getWordVararg(int16 *ptr);
 
 	int getObjActToObjActDist(int a, int b);
-	void unkSoundProc22();
+	void processSoundQues();
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
 
-	void setCameraAt(int dest);
+	void setCameraAt(int pos_x, int pos_y);
 	void stopTalk();
 	void restoreCharsetBg();
 
@@ -1566,7 +1675,8 @@ struct Scumm {
 	void runExitScript();
 	void runEntryScript();
 
-	void unkResourceProc();
+	void increaseResourceCounter();
+	bool isResourceInUse(int type, int i);
 	void initRoomSubBlocks();
 	void loadRoomObjects();
 
@@ -1574,11 +1684,6 @@ struct Scumm {
 	void initCycl(byte *ptr);
 	void initBGBuffers();
 	void setDirtyColors(int min, int max);
-
-#if 0
-	byte *findResource(uint32 tag, byte *searchin);
-	byte *findResource2(uint32 tag, byte *searchin);
-#endif
 
 	void setScaleItem(int slot, int a, int b, int c, int d);
 
@@ -1588,15 +1693,14 @@ struct Scumm {
 
 	void redrawBGAreas();
 	void drawRoomObjects(int arg);
+	void drawRoomObject(int i, int arg);
 	void redrawBGStrip(int start, int num);
 	void drawObject(int obj, int arg);
 
-//	void drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr);
-	
 	int hasCharsetMask(int x, int y, int x2, int y2);
 
 	void restoreBG(int left, int top, int right, int bottom);
-	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint16 dirtybits);
+	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits);
 	VirtScreen *findVirtScreen(int y);
 
 	void unkScreenEffect1();
@@ -1611,7 +1715,6 @@ struct Scumm {
 
 	void decreaseScriptDelay(int amount);
 	void processKbd();
-
 	
 	void redrawVerbs();
 	void checkExecVerbs();
@@ -1631,8 +1734,6 @@ struct Scumm {
 	void setActorRedrawFlags();
 	void resetActorBgs();
 	void processActors();
-	void processActorsV7();
-	void drawAnActorV7(int i);
 	void drawVerb(int verb, int mode);
 
 	void runInputScript(int a, int cmd, int mode);
@@ -1643,15 +1744,12 @@ struct Scumm {
 
 	int checkKeyHit();
 
-	int getPathToDestBox(int from, int to);
-	int findPathTowards(Actor *a, int box, int box2, int box3);
+	int getPathToDestBox(byte from, byte to);
+	int findPathTowards(Actor *a, byte box, byte box2, byte box3);
 
 	void setActorCostPalette(Actor *a);
 	void drawActorCostume(Actor *a);
 	void actorAnimate(Actor *a);
-	void animateActorsV7();
-	int Scumm::animateActorV7(Actor *a);
-
 
 	int getActorFromPos(int x, int y);
 
@@ -1668,38 +1766,37 @@ struct Scumm {
 
 	void walkActorTo(Actor *a, int x, int y, int direction);
 
-	void setCursorImg(int cursor, int img);
-	void setCursorHotspot(int cursor, int x, int y);
+	void setCursorImg(uint img, uint room, uint imgindex);
+//	void setCursorHotspot(int cursor, int x, int y);
 	void initCharset(int charset);
 	void addObjectToDrawQue(int object);
 	int getVerbEntrypoint(int obj, int entry);
-	int unkSoundProc23(int a);
+	int isSoundRunning(int a);
 	void startWalkActor(Actor *a, int x, int y, int dir);
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
 	void createBoxMatrix();
-	void addObjectToInventory(int obj, int room);
+	void addObjectToInventory(uint obj, uint room);
 	void removeObjectFromRoom(int obj);
 	void decodeParseString();
-	void pauseGame(int i);
+	void pauseGame(bool user);
 	void shutDown(int i);
 	void lock(int type, int i);
 	void unlock(int type, int i);
 	void heapClear(int mode);
 	void unkHeapProc2(int a, int b);
-	void unkResProc(int a, int b);
+	void loadFlObject(uint object, uint room);
 	void setPalColor(int index, int r, int g, int b);
 	void darkenPalette(int a, int b, int c, int d, int e);
 	void unkRoomFunc3(int a, int b, int c, int d, int e);
 	void unkRoomFunc4(int a, int b, int c, int d, int e);
 	int getVerbSlot(int id, int mode);
 	void killVerb(int slot);
-	byte *getObjectAddress(int obj);
+	byte *getOBCDFromObject(int obj);
 	byte *getObjOrActorName(int obj);
 	void clearOwnerOf(int obj);
 	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
-	void unkSoundProc1(int a);
-	void setVerbObject(int room, int object, int verb);
+	void setVerbObject(uint room, uint object, uint verb);
 	void unkMessage1();
 	void unkMessage2();
 	void actorTalk();
@@ -1728,25 +1825,13 @@ struct Scumm {
 
 	void dumpResource(char *tag, int index, byte *ptr);
 
-	FILE *_saveLoadStream;
-	bool _saveOrLoad;
-	bool saveState(const char *filename);
-	bool loadState(const char *filename);
-	void saveOrLoad(FILE *inout, bool mode);
-	void saveLoadBytes(void *b, int len);
-	void saveLoadResource(int type, int index);
+	bool saveState(int slot, bool compat);
+	bool loadState(int slot, bool compat);
+	void saveOrLoad(Serializer *s);
+
+	void saveLoadResource(Serializer *ser, int type, int index);
 	bool isResourceLoaded(int type, int index);
-	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
 
-	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
-
-	void saveUint32(uint32 d);
-	void saveWord(uint16 d);
-	void saveByte(byte b);
-
-	byte loadByte();
-	uint16 loadWord();
-	uint32 loadUint32();
 
 	Actor *derefActor(int id) { return &actor[id]; }
 	Actor *derefActorSafe(int id, const char *errmsg);
@@ -1770,26 +1855,28 @@ struct Scumm {
 
 	void setupOpcodes();
 	void setupOpcodes2();
-	void setupOpcodesV7();
-
 	void endCutscene();
 	void cutscene(int16 *args);
 
 	void setOwnerOf(int obj, int owner);
-	void panCameraTo(int x);
+	void panCameraTo(int x, int y);
 	void actorFollowCamera(int act);
 	void setCameraAtEx(int at);
 
+	void clampCameraPos(Point *pt);
+
 	void setCursorHotspot2(int x,int y);
 
-	void new_unk_1(int a);
+	void makeCursorColorTransparent(int a);
 
 	void faceActorToObj(int act, int obj);
 	void animateActor(int act, int anim);
-	int getScriptRunning(int script);
+	bool isScriptRunning(int script);
+	bool isRoomScriptRunning(int script);
 	int getObjX(int obj);
 	int getObjY(int obj);
-	int getObjDir(int obj);
+	int getObjOldDir(int obj);
+	int getObjNewDir(int obj);
 	int findInventory(int owner, int index);
 	int getInventoryCount(int owner);
 
@@ -1804,19 +1891,12 @@ struct Scumm {
 
 	void readArrayFromIndexFile();
 	void readMAXS();
-	void readMAXSV7();
-	void readIndexFileV6();
-	void readIndexFileV7();
-
+	void readIndexFile();
 
 	int readArray(int array, int index, int base);
 	void writeArray(int array, int index, int base, int value);
+	
 	int getStackList(int16 *args, uint maxnum);
-
-	int readArrayV7(int array, int index, int base);
-	void writeArrayV7(int array, int index, int base, int value);
-	int getStackListV7(int16 *args, uint maxnum);
-
 	void setObjectState(int obj, int state, int x, int y);
 
 	void setStringVars(int i);
@@ -1830,17 +1910,196 @@ struct Scumm {
 	void nukeArray(int a);
 	int defineArray(int a, int b, int c, int d);
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
-	void unkMiscOp4(int a, int b, int c, int d);
+	void grabCursor(int x, int y, int w, int h);
 	void unkMiscOp9();
 	void startManiac();
-	void startVideo();
-
-	void readIndexFileV5(int i);
 
 	void grabCursor(byte *ptr, int width, int height);
-
 	byte *getPalettePtr();
+	void setupSound();
+	void stopAllSounds();
+	void stopSound(int sound);
+	bool isSoundInQueue(int sound);
+	void clearSoundQue();
+	void talkSound(uint32 a, uint32 b, int mode);
+	void processSfxQueues();
+	void startTalkSound(uint32 a, uint32 b, int mode);
+	void stopTalkSound();
+	bool isMouthSyncOff(uint pos);
+	void startSfxSound(void *file);
+	void *openSfxFile();
+	void resourceStats();
+	bool isCostumeInUse(int i);
+	void expireResources(uint32 size);
+	
+	void freeResources();
+	void destroy();
+
+	void useIm01Cursor(byte *im, int w, int h);
+	void useBompCursor(byte *im, int w, int h);
+
+	void decompressBomp(byte *dst, byte *src, int w, int h);
+
+	void setupCursor() { _cursorAnimate = 1; }
+
+	void decompressDefaultCursor(int index);
+
+	void allocateArrays();
+
+	void initializeLocals(int slot, int16 *vars);
+
+	static void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
+	int scummLoop(int delta);
+
+	bool getSavegameName(int slot, char *desc);
+	void makeSavegameName(char *out, int slot, bool compatible);
+
+	void exitCutscene();
+	void nukeFlObjects(int min, int max);
+
+	void swapPalColors(int a, int b);
+
+	void enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h, int mode);
+
+	void clearEnqueue() { _enqueuePos = 0; }
+	void drawEnqueuedObjects();
+	void drawEnqueuedObject(EnqueuedObject *eo);
+	void removeEnqueuedObjects();
+	void removeEnqueuedObject(EnqueuedObject *eo);
+
+	void pauseSounds(bool pause);
+
+	MixerChannel *allocateMixer();
+	bool isSfxFinished();
+	void playSfxSound(void *sound, uint32 size, uint rate);
+	void stopSfxSound();
+
+	void mixWaves(int16 *sounds, int len);
+
+	struct FindObjectInRoom {
+		CodeHeader *cdhd;
+		byte *obcd;
+		ImageHeader *imhd;
+		byte *obim;
+		byte *roomptr;
+	};
+
+	enum FindObjectWhat {
+		foCodeHeader = 1,
+		foImageHeader = 2,
+		foCheckAlreadyLoaded = 4,
+	};
+
+	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
+	void setupRoomObject(ObjectData *od, byte *room);
+	int findFlObjectSlot();
+
+	void runTalkScript(int frame);
+
+	int remapPaletteColor(int r, int g, int b, uint threshold);
+	void remapActor(Actor *a, int b, int c, int d, int e);
+
+	byte *findResourceData(uint32 tag, byte *ptr);
+	int getResourceDataSize(byte *ptr);
+
+	void akos_decodeData(Actor *a, int frame, uint usemask);
+	int akos_frameToAnim(Actor *a, int frame);
+	bool akos_hasManyDirections(Actor *a);
+	void stopActorMoving(Actor *a);
+
+	int newDirToOldDir(int dir);
+	int oldDirToNewDir(int dir);
+	void startWalkAnim(Actor *a, int cmd, int angle);
+	void setActorBox(Actor *a, int box);
+	int getAngleFromPos(int x, int y);
+	int updateActorDirection(Actor *a);
+
+	bool akos_drawCostume(AkosRenderer *ar);
+	void akos_setPalette(AkosRenderer *ar, byte *palette);
+	void akos_setCostume(AkosRenderer *ar, int costume);
+	void akos_setFacing(AkosRenderer *ar, Actor *a);
+	bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
+	void akos_codec1(AkosRenderer *ar);
+	void akos_codec5(AkosRenderer *ar);
+	void akos_codec16(AkosRenderer *ar);
+	void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
+	void akos_c1_spec2(AkosRenderer *ar);
+	void akos_c1_spec3(AkosRenderer *ar);
+
+	void akos_c1_0_decode(AkosRenderer *ar);
+	void akos_c1_12_decode(AkosRenderer *ar);
+	void akos_c1_12y_decode(AkosRenderer *ar);
+	void akos_c1_3_decode(AkosRenderer *ar);
+	void akos_c1_4_decode(AkosRenderer *ar);
+	void akos_c1_4y_decode(AkosRenderer *ar);
+	void akos_c1_56_decode(AkosRenderer *ar);
+	void akos_c1_56y_decode(AkosRenderer *ar);
+	void akos_c1_7_decode(AkosRenderer *ar);
+
+	bool akos_increaseAnims(byte *akos, Actor *a);
+	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
+
+	int getAnimVar(Actor *a, byte var);
+	void setAnimVar(Actor *a, byte var, int value);
+
+	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
+	bool akos_compare(int a, int b, byte cmd);
+
+	static int normalizeAngle(int angle);
+	static int fromSimpleDir(int dirtype, int dir);
+	static int toSimpleDir(int dirtype, int dir);
+	static int numSimpleDirDirections(int dirType);
+
+	void doSentence(int c, int b, int a);
+	int cost_frameToAnim(Actor *a, int frame);
+
+	void setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to);
+
+	void drawBomp(BompDrawData *bd);
 };
+
+enum AkosOpcodes{
+	AKC_Return  = 0xC001,
+	AKC_SetVar  = 0xC010,
+	AKC_CmdQue3  = 0xC015,
+	AKC_ComplexChan  = 0xC020,
+	AKC_Jump  = 0xC030,
+	AKC_JumpIfSet  = 0xC031,
+	AKC_AddVar  = 0xC040,
+	AKC_Ignore  = 0xC050,
+	AKC_IncVar  = 0xC060,
+	AKC_CmdQue3Quick  = 0xC061,
+	AKC_SkipStart = 0xC070,
+	AKC_SkipE  = 0xC070,
+	AKC_SkipNE  = 0xC071,
+	AKC_SkipL  = 0xC072,
+	AKC_SkipLE  = 0xC073,
+	AKC_SkipG  = 0xC074,
+	AKC_SkipGE  = 0xC075,
+	AKC_StartAnim  = 0xC080,
+	AKC_StartVarAnim  = 0xC081,
+	AKC_Random  = 0xC082,
+	AKC_SetActorClip  = 0xC083,
+	AKC_StartAnimInActor  = 0xC084,
+	AKC_SetVarInActor  = 0xC085,
+	AKC_HideActor  = 0xC086,
+	AKC_SetDrawOffs  = 0xC087,
+	AKC_JumpTable  = 0xC088,
+	AKC_SoundStuff  = 0xC089,
+	AKC_Flip  = 0xC08A,
+	AKC_Cmd3  = 0xC08B,
+	AKC_Ignore3  = 0xC08C,
+	AKC_Ignore2  = 0xC08D,
+	AKC_JumpStart = 0xC090,
+	AKC_JumpE  = 0xC090,
+	AKC_JumpNE  = 0xC091,
+	AKC_JumpL  = 0xC092,
+	AKC_JumpLE  = 0xC093,
+	AKC_JumpG  = 0xC094,
+	AKC_JumpGE  = 0xC095,
+	AKC_ClearFlag  = 0xC09F,
+};
+
 
 struct ScummDebugger {
 	Scumm *_s;
@@ -1864,20 +2123,68 @@ struct ScummDebugger {
 	void printScripts();
 };
 
+struct SaveLoadEntry {
+	uint16 offs;
+	uint8 type;
+	uint8 size;
+};
+
+typedef int SerializerSaveReference(void *me, byte type, void *ref);
+typedef void *SerializerLoadReference(void *me, byte type, int ref);
 
 
-void waitForTimer(Scumm *s);
+struct Serializer {
+	FILE *_saveLoadStream;
+
+	union {
+		SerializerSaveReference *_save_ref;
+		SerializerLoadReference *_load_ref;
+		void *_saveload_ref;
+	};
+	void *_ref_me;
+
+	bool _saveOrLoad;
+
+	void saveLoadBytes(void *b, int len);
+	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
+	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
+	void saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle);
+
+	void saveUint32(uint32 d);
+	void saveWord(uint16 d);
+	void saveByte(byte b);
+
+	byte loadByte();
+	uint16 loadWord();
+	uint32 loadUint32();
+
+	bool isSaving() { return _saveOrLoad; }
+
+};
+
+extern const uint32 IMxx_tags[];
+extern const byte default_scale_table[768];
+
 void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
 void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
 
-void NORETURN CDECL error(const char *s, ...);
+#if defined(__GNUC__)
+void CDECL error(const char *s, ...) NORETURN;
+#else
+void CDECL NORETURN error(const char *s, ...);
+#endif
+
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
-void initGraphics(Scumm *s);
+void initGraphics(Scumm *s, bool fullScreen);
 void updateScreen(Scumm *s);
-
 void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
+void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
-byte *findResource(uint32 id, byte *searchin, int index);
+byte *findResource(uint32 tag, byte *searchin, int index);
+byte *findResource(uint32 tag, byte *searchin);
+void playSfxSound(void *sound, uint32 size, uint rate);
+bool isSfxFinished();
+void waitForTimer(Scumm *s, int msec_delay);

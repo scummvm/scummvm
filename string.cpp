@@ -15,28 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.1.1.1.2.2  2001/11/12 16:22:40  yazoo
- * The dig and Full Throttle support
- *
- * Revision 1.5  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.4  2001/10/24 20:12:52  strigeus
- * fixed some bugs related to string handling
- *
- * Revision 1.3  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.2  2001/10/16 10:01:48  strigeus
- * preliminary DOTT support
- *
- * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -49,7 +28,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos) {
 	byte chr;
 
 	width = 1;
-	ptr = _vm->getResourceAddress(6, _curId) + 29;
+	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
 
 	while ( (chr = text[pos++]) != 0) {
 		if (chr==0xD)
@@ -77,7 +56,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos) {
 			if (chr==14) {
 				int set = text[pos] | (text[pos+1]<<8);
 				pos+=2;
-				ptr = _vm->getResourceAddress(6, set) + 29;
+				ptr = _vm->getResourceAddress(rtCharset, set) + 29;
 				continue;
 			}
 		}
@@ -102,7 +81,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	byte *ptr;
 	byte chr;
 
-	ptr = _vm->getResourceAddress(6, _curId) + 29;
+	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
 
 	while ( (chr=str[pos++]) != 0) {
 		if (chr=='@')
@@ -134,7 +113,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			if (chr==14) {
 				int set = str[pos] | (str[pos+1]<<8);
 				pos+=2;
-				ptr = _vm->getResourceAddress(6, set) + 29;
+				ptr = _vm->getResourceAddress(rtCharset, set) + 29;
 				continue;
 			}
 		}
@@ -163,9 +142,17 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 }
 
 void Scumm::unkMessage1() {
-	byte buf[100];
-	_msgPtrToAdd = buf;
+	byte buffer[100];
+	_msgPtrToAdd = buffer;
 	_messagePtr = addMessageToStack(_messagePtr);
+
+	if (buffer[0] == 0xFF && buffer[1]==10) {
+		uint32 a,b;
+
+		a = buffer[2] | (buffer[3]<<8) | (buffer[6]<<16) | (buffer[7]<<24);
+		b = buffer[10] | (buffer[11]<<8) | (buffer[14]<<16) | (buffer[15]<<24);
+		talkSound(a,b,1);
+	}
 
 //	warning("unkMessage1(\"%s\")", buf);
 }
@@ -188,18 +175,23 @@ void Scumm::CHARSET_1() {
 	int s, i, t, c;
 	int frme;
 	Actor *a;
+	byte *buffer;
 
-	if (!_haveMsg || (camera._destPos>>3) != (camera._curPos>>3) ||
-			camera._curPos != camera._lastPos 
+#if !defined(FULL_THROTTLE)
+	if (!_haveMsg || (camera._dest.x>>3) != (camera._cur.x>>3) ||
+			camera._cur.x != camera._last.x 
 		) return;
-
+#else
+	if (!_haveMsg)
+		return;
+#endif
 	a = NULL;
 	if (_vars[VAR_TALK_ACTOR] != 0xFF)
 		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "CHARSET_1");
 
 	if (a && string[0].overhead!=0) {
-		if (_majorScummVersion==5) {
-			string[0].xpos = a->x - camera._curPos + 160;
+		if (!(_features & GF_AFTER_V6)) {
+			string[0].xpos = a->x - camera._cur.x + 160;
 
 			if (_vars[VAR_V5_TALK_STRING_Y] < 0) {
 				s = (a->scaley * (int)_vars[VAR_V5_TALK_STRING_Y]) / 0xFF;
@@ -221,7 +213,7 @@ void Scumm::CHARSET_1() {
 				string[0].ypos = 1;
 			
 			s = a->scalex * a->new_2 / 0xFF;
-			string[0].xpos = ((a->new_2 - s)>>1) + s + a->x - camera._curPos + 160;
+			string[0].xpos = ((a->new_2 - s)>>1) + s + a->x - camera._cur.x + 160;
 			if (string[0].xpos < 80)
 				string[0].xpos = 80;
 			if (string[0].xpos > 240)
@@ -246,49 +238,56 @@ void Scumm::CHARSET_1() {
 		charset._colorMap[i] = _charsetData[charset._curId][i];
 	
 	if (_keepText) {
-		charset._strLeft = string[0].mask_left;
-		charset._strRight = string[0].mask_right;
-		charset._strTop = string[0].mask_top;
-		charset._strBottom = string[0].mask_bottom;
+		charset._strLeft = gdi._mask_left;
+		charset._strRight = gdi._mask_right;
+		charset._strTop = gdi._mask_top;
+		charset._strBottom = gdi._mask_bottom;
 	}
 
 	if (!_haveMsg || _talkDelay)
 		return;
 	
 	if (_haveMsg!=0xFF) {
-		stopTalk();
+		if (_sfxMode==0)
+			stopTalk();
 		return;
 	}
 
-	if (a) {
-		startAnimActor(a, a->talkFrame1, a->facing);
+	if (a && !string[0].no_talk_anim) {
+		startAnimActor(a, a->talkFrame1);
+		_useTalkAnims = true;
 	}
 
 	_talkDelay = _defaultTalkDelay;
 
 	if (!_keepText) {
 		restoreCharsetBg();
-		string[0].xpos2 = string[0].xpos;
-		string[0].ypos2 = string[0].ypos;
+		charset._xpos2 = string[0].xpos;
+		charset._ypos2 = string[0].ypos;
 	}
 	
 	t = charset._right - string[0].xpos - 1;
 	if (charset._center) {
-		if (t > string[0].xpos2)
-			t = string[0].xpos2;
+		if (t > charset._xpos2)
+			t = charset._xpos2;
 		t <<= 1;
 	}
-	charset.addLinebreaks(0, charset._buffer, charset._bufPos, t);
+
+	buffer = charset._buffer + charset._bufPos;
+	
+	charset.addLinebreaks(0, buffer,0, t);
 
 	_lastXstart = virtscr[0].xstart;
 	if (charset._center) {
-		string[0].xpos2 -= charset.getStringWidth(0, charset._buffer, charset._bufPos) >> 1;
+		charset._xpos2 -= charset.getStringWidth(0, buffer,0) >> 1;
+		if (charset._xpos2<0)
+			charset._xpos2 = 0;
 	}
 
 	charset._disableOffsX = charset._unk12 = !_keepText;
 
 	do {
-		c = charset._buffer[charset._bufPos++];
+		c = *buffer++;
 		if (c==0) {
 			_haveMsg = 1;
 			_keepText = false;
@@ -296,11 +295,11 @@ void Scumm::CHARSET_1() {
 		}
 		if (c == 13) {
 newLine:;
-			string[0].xpos2 = string[0].xpos;
+			charset._xpos2 = string[0].xpos;
 			if (charset._center) {
-				string[0].xpos2 -= charset.getStringWidth(0, charset._buffer, charset._bufPos)>>1;
+				charset._xpos2 -= charset.getStringWidth(0, buffer, 0)>>1;
 			}
-			string[0].ypos2 += getResourceAddress(6,charset._curId)[30];
+			charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[30];
 			charset._disableOffsX = 1;
 			continue;
 		}
@@ -308,10 +307,10 @@ newLine:;
 		if (c==0xFE) c=0xFF;
 
 		if (c!=0xFF) {
-			charset._left = string[0].xpos2;
-			charset._top = string[0].ypos2;
+			charset._left = charset._xpos2;
+			charset._top = charset._ypos2;
 			
-			if (_majorScummVersion==5) {
+			if (!(_features&GF_AFTER_V6)) {
 				if (!_vars[VAR_V5_CHARFLAG]) {
 					charset.printChar(c);
 				}
@@ -319,14 +318,14 @@ newLine:;
 				charset.printChar(c);
 			}
 
-			string[0].xpos2 = charset._left;
-			string[0].ypos2 = charset._top;
+			charset._xpos2 = charset._left;
+			charset._ypos2 = charset._top;
 
 			_talkDelay += _vars[VAR_CHARINC];
 			continue;
 		}
 
-		c = charset._buffer[charset._bufPos++];
+		c = *buffer++;
 		if (c==3) {
 			_haveMsg = 0xFF;
 			_keepText = false;
@@ -338,40 +337,46 @@ newLine:;
 			_keepText = true;
 			break;
 		} else if (c==9) {
-			frme = charset._buffer[charset._bufPos++];
-			frme |= charset._buffer[charset._bufPos++]<<8;
+			frme = *buffer++;
+			frme |= *buffer++<<8;
 			if (a)
-				startAnimActor(a, frme, a->facing);
+				startAnimActor(a, frme);
 		} else if (c==10) {
-			warning("CHARSET_1: code 10 unimplemented");
-			charset._bufPos += 14;
-		} else if (c==14) {
-			int oldy = getResourceAddress(6,charset._curId)[30];
+			uint32 a,b;
 
-			charset._curId = charset._buffer[charset._bufPos];
-			charset._bufPos += 2;
+			a = buffer[0] | (buffer[1]<<8) | (buffer[4]<<16) | (buffer[5]<<24);
+			b = buffer[8] | (buffer[9]<<8) | (buffer[12]<<16) | (buffer[13]<<24);
+			talkSound(a,b,2);
+			buffer += 14;
+		} else if (c==14) {
+			int oldy = getResourceAddress(rtCharset,charset._curId)[30];
+
+			charset._curId = *buffer++;
+			buffer += 2;
 			for (i=0; i<4; i++)
 				charset._colorMap[i] = _charsetData[charset._curId][i];
-			string[0].ypos2 -= getResourceAddress(6,charset._curId)[30] - oldy;
+			charset._ypos2 -= getResourceAddress(rtCharset,charset._curId)[30] - oldy;
 		} else if (c==12) {
 			int color;
-			color = charset._buffer[charset._bufPos++];
-			color |= charset._buffer[charset._bufPos++]<<8;
+			color = *buffer++;
+			color |= *buffer++<<8;
 			if (color==0xFF)
 				charset._color = _charsetColor;
 			else
 				charset._color = color;
 		} else if (c==13) {
-			charset._bufPos += 2;
+			buffer += 2;
 		} else {
 			warning("CHARSET_1: invalid code %d", c);
 		}
 	} while (1);
 
-	string[0].mask_left = charset._strLeft;
-	string[0].mask_right = charset._strRight;
-	string[0].mask_top = charset._strTop;
-	string[0].mask_bottom = charset._strBottom;
+	charset._bufPos = buffer - charset._buffer;
+
+	gdi._mask_left = charset._strLeft;
+	gdi._mask_right = charset._strRight;
+	gdi._mask_top = charset._strTop;
+	gdi._mask_bottom = charset._strBottom;
 }
 
 void Scumm::drawString(int a) {
@@ -394,7 +399,7 @@ void Scumm::drawString(int a) {
 	charset._unk12 = 1;
 	charset._disableOffsX = 1;
 
-	charsetptr = getResourceAddress(6, charset._curId);
+	charsetptr = getResourceAddress(rtCharset, charset._curId);
 	assert(charsetptr);
 	charsetptr += 29;
 
@@ -455,7 +460,7 @@ void Scumm::drawString(int a) {
 				break;
 			}
 		} else {
-			if (a==1 && _majorScummVersion>=6)
+			if (a==1 && (_features&GF_AFTER_V6))
 				charset._blitAlso = true;
 			charset.printChar(chr);
 			charset._blitAlso = false;
@@ -463,8 +468,11 @@ void Scumm::drawString(int a) {
 	}
 
 	charset._ignoreCharsetMask = 0;
-	string[a].xpos2 = charset._left;
-	string[a].ypos2 = charset._top;
+	
+	if (a==0) {
+		charset._xpos2 = charset._left;
+		charset._ypos2 = charset._top;
+	}
 }
 
 byte *Scumm::addMessageToStack(byte *msg) {
@@ -472,7 +480,7 @@ byte *Scumm::addMessageToStack(byte *msg) {
 	byte *ptr, chr;
 
 	numorg = num = _numInMsgStack;
-	ptr = getResourceAddress(0xC, 6);
+	ptr = getResourceAddress(rtTemp, 6);
 
 	if (ptr==NULL)
 		error("Message stack not allocated");
@@ -498,7 +506,7 @@ byte *Scumm::addMessageToStack(byte *msg) {
 	num = numorg;
 
 	while (1) {
-		ptr = getResourceAddress(0xC, 6);
+		ptr = getResourceAddress(rtTemp, 6);
 		chr = ptr[num++];
 		if (chr == 0) 
 			break;
@@ -576,7 +584,7 @@ void Scumm::unkAddMsgToStack3(int var) {
 	if (num) {
 		for (i=1; i<_maxVerbs; i++) {
 			if (num==_verbs[i].verbid && !_verbs[i].type && !_verbs[i].saveid) {
-				addMessageToStack(getResourceAddress(8, i));
+				addMessageToStack(getResourceAddress(rtVerb, i));
 				break;
 			}
 		}
@@ -599,7 +607,7 @@ void Scumm::unkAddMsgToStack4(int var) {
 void Scumm::unkAddMsgToStack5(int var) {
 	byte *ptr;
 
-	if (_majorScummVersion>=6)
+	if (_features&GF_AFTER_V6)
 		var = readVar(var);
 	
 	if (var) {
@@ -615,7 +623,7 @@ void Scumm::unkAddMsgToStack5(int var) {
 void Scumm::initCharset(int charsetno) {
 	int i;
 
-	if (!getResourceAddress(6, charsetno))
+	if (!getResourceAddress(rtCharset, charsetno))
 		loadCharset(charsetno);
 
 	string[0].t_charset = charsetno;
@@ -636,7 +644,7 @@ void CharsetRenderer::printChar(int chr) {
 	if (chr=='@')
 		return;
 
-	_ptr = _vm->getResourceAddress(6, _curId) + 29;
+	_ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
 
 	_bpp = _unk2 = *_ptr;
 	_invNumBits = 8 - _bpp;
@@ -719,7 +727,7 @@ void CharsetRenderer::printChar(int chr) {
 		_hasMask = true;
 #endif
 
-	_bg_ptr2 = _backbuff_ptr = _vm->getResourceAddress(0xA, vs->number+1) 
+	_dest_ptr = _backbuff_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) 
 		+ vs->xstart + _drawTop * 320 + _left;
 
 #if !defined(OLD)
@@ -727,11 +735,11 @@ void CharsetRenderer::printChar(int chr) {
 #else
 	if (1) {
 #endif
-		_bg_ptr2 = _bgbak_ptr = _vm->getResourceAddress(0xA, vs->number+5)
+		_dest_ptr = _bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number+5)
 			+ vs->xstart + _drawTop * 320 + _left;
 	}
 
-	_mask_ptr = _vm->getResourceAddress(0xA, 9)
+	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9)
 		+ _drawTop * 40 + _left/8 
 		+ _vm->_screenStartStrip;
 
@@ -757,7 +765,6 @@ void CharsetRenderer::printChar(int chr) {
 	_top -= _offsY;
 }
 
-
 void CharsetRenderer::drawBits() {
 	bool usemask;
 	byte *dst, *mask,maskmask;
@@ -771,7 +778,7 @@ void CharsetRenderer::drawBits() {
 	bits = *_charPtr++;
 	numbits = 8;
 
-	dst = _bg_ptr2;
+	dst = _dest_ptr;
 	mask = _mask_ptr;
 	y = 0;
 
@@ -798,7 +805,7 @@ void CharsetRenderer::drawBits() {
 				maskpos++;
 			}
 		}
-		dst = (_bg_ptr2 += 320);
+		dst = (_dest_ptr += 320);
 		mask += 40;
 		y++;
 	}

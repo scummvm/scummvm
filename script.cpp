@@ -15,28 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.2.2.2  2001/11/12 16:19:39  yazoo
- * The dig and Full Throttle support
- *
- * Revision 1.5  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.4  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.3  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
- *
- * Revision 1.2  2001/10/11 13:36:25  strigeus
- * fixed swapped parameters in o_walkActorToActor
- *
- * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -49,7 +28,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	byte *scriptPtr;
 	uint32 scriptOffs;
 	byte scriptType;
-	int slot,i;
+	int slot;
 	ScriptSlot *s;
 
 #ifdef NO_SOUND_HACK
@@ -64,22 +43,14 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 		stopScriptNr(script);
 
 	if (script < _numGlobalScripts) {
-		scriptPtr = getResourceAddress(2, script);
+		scriptPtr = getResourceAddress(rtScript, script);
 		scriptOffs = 8;
-		scriptType = 2;
+		scriptType = WIO_GLOBAL;
 	} else {
-		if((_majorScummVersion>=7)&&(_middleScummVersion>2))
-			scriptOffs = _localScriptList[script];
-		else
-			scriptOffs = _localScriptList[script - _numGlobalScripts]; // Err again, the system is different..... Dif
+		scriptOffs = _localScriptList[script - _numGlobalScripts];
 		if (scriptOffs == 0)
 			error("Local script %d is not in room %d", script, _roomResource);
-
-		if((_majorScummVersion>=7)&&(_middleScummVersion>2)) // The script number is now 32 bits
-			scriptOffs += 10;
-		else
-			scriptOffs += 9;
-		scriptType = 3;
+		scriptType = WIO_LOCAL;
 	}
 
 	slot = getScriptSlot();
@@ -88,19 +59,13 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	s->number = script;
 	s->offs = scriptOffs;
 	s->status = 2;
-	s->type = scriptType;
+	s->where = scriptType;
 	s->unk1 = a;
 	s->unk2 = b;
 	s->freezeCount = 0;
-	
-	if (lvarptr==NULL) {
-		for(i=0; i<16; i++)
-			vm.localvar[slot * 0x11 + i] = 0;
-	} else {
-		for(i=0; i<16; i++)
-			vm.localvar[slot * 0x11 + i] = lvarptr[i];
-	}
 
+	initializeLocals(slot, lvarptr);
+	
 	runScriptNested(slot);
 }
 
@@ -115,7 +80,8 @@ void Scumm::stopScriptNr(int script) {
 	ss = &vm.slot[1];
 	
 	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
-		if (script!=ss->number || ss->type!=2 && ss->type!=3 || ss->status==0)
+		if (script!=ss->number || 
+				ss->where!=WIO_GLOBAL && ss->where!=WIO_LOCAL || ss->status==0)
 			continue;
 
 		if (ss->cutsceneOverride)
@@ -133,10 +99,10 @@ void Scumm::stopScriptNr(int script) {
 	num = _numNestedScripts;
 
 	do {
-		if (nest->number == script && (nest->type==2 || nest->type==3)) {
+		if (nest->number == script && (nest->where==WIO_GLOBAL || nest->where==WIO_LOCAL)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
-			nest->type = 0xFF;
+			nest->where = 0xFF;
 		}
 	} while(nest++,--num);
 }
@@ -152,7 +118,8 @@ void Scumm::stopObjectScript(int script) {
 	ss = &vm.slot[1];
 	
 	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
-		if (script==ss->number && (ss->type==1 || ss->type==0 || ss->type==4) && ss->status!=0) {
+		if (script==ss->number && (ss->where==WIO_ROOM || 
+			ss->where==WIO_INVENTORY || ss->where==WIO_FLOBJECT) && ss->status!=0) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;
@@ -169,10 +136,12 @@ void Scumm::stopObjectScript(int script) {
 	num = _numNestedScripts;
 
 	do {
-		if (nest->number == script && (nest->type==1 || nest->type==4 || nest->type==0)) {
+		if (nest->number == script && 
+			 (nest->where==WIO_ROOM || nest->where==WIO_FLOBJECT || 
+			 nest->where==WIO_INVENTORY)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
-			nest->type = 0xFF;
+			nest->where = 0xFF;
 		}
 	} while(nest++,--num);
 }
@@ -199,16 +168,15 @@ void Scumm::runScriptNested(int script) {
 
 	if (_currentScript==0xFF) {
 		nest->number = 0xFF;
-		nest->type = 0xFF;
+		nest->where = 0xFF;
 	} else {
 		slot = &vm.slot[_currentScript];
 		nest->number = slot->number;
-		nest->type = slot->type;
-		/* scumm is buggy here */
+		nest->where = slot->where;
 		nest->slot = _currentScript;
 	}
 
-	if (++_numNestedScripts>=0x10)
+	if (++_numNestedScripts>sizeof(vm.nest)/sizeof(vm.nest[0]))
 		error("Too many nested scripts");
 
 	_currentScript = script;
@@ -223,7 +191,7 @@ void Scumm::runScriptNested(int script) {
 	
 	if (nest->number != 0xFF) {
 		slot = &vm.slot[nest->slot];
-		if (slot->number == nest->number && slot->type==nest->type &&
+		if (slot->number == nest->number && slot->where==nest->where &&
 			slot->status != 0 && slot->freezeCount==0) {
 			_currentScript = nest->slot;
 			getScriptBaseAddress();
@@ -249,27 +217,27 @@ void Scumm::getScriptBaseAddress() {
 		return;
 
 	ss = &vm.slot[_currentScript];
-	switch(ss->type) {
-	case 0: /* inventory script **/
+	switch(ss->where) {
+	case WIO_INVENTORY: /* inventory script **/
 		index = getObjectIndex(ss->number);
-		_scriptOrgPointer = getResourceAddress(5, index);
+		_scriptOrgPointer = getResourceAddress(rtInventory, index);
 		_lastCodePtr = &_baseInventoryItems[index];
 		break;
 
 	case 3:
-	case 1: /* room script */
-		_scriptOrgPointer = getResourceAddress(1, _roomResource);
+	case WIO_ROOM: /* room script */
+		_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 		_lastCodePtr = &_baseRooms[_roomResource];
 		break;
 
-	case 2: /* global script */
-		_scriptOrgPointer = getResourceAddress(2, ss->number);
+	case WIO_GLOBAL: /* global script */
+		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		_lastCodePtr = &_baseScripts[ss->number];
 		break;
 
-	case 4: /* flobject script */
+	case WIO_FLOBJECT: /* flobject script */
 		index = getObjectIndex(ss->number);
-		_scriptOrgPointer = getResourceAddress(13,_objs[index].fl_object_index);
+		_scriptOrgPointer = getResourceAddress(rtFlObject,_objs[index].fl_object_index);
 		_lastCodePtr = &_baseFLObject[ss->number];
 		break;
 	default:
@@ -286,20 +254,19 @@ void Scumm::getScriptEntryPoint() {
 
 void Scumm::executeScript() {
 	OpcodeProc op;
-	while (_currentScript != 0xFF) { // DIF: in v7, the code seems to check the stack after every instruction
+	while (_currentScript != 0xFF) {
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-//		printf("OPcode: %X\n",_opcode);
+//		debug(1, "%X", _opcode);
 		op = getOpcode(_opcode);
 		(this->*op)();
-
 	}
 	CHECK_HEAP
 }
 
 byte Scumm::fetchScriptByte() {
-	if (*_lastCodePtr != _scriptOrgPointer + 6) {
+	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;
@@ -309,28 +276,15 @@ byte Scumm::fetchScriptByte() {
 
 int Scumm::fetchScriptWord() {
 	int a;
-
-	if (*_lastCodePtr != _scriptOrgPointer + 6) {
+	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;
 	}
-	
 	a = READ_LE_UINT16(_scriptPointer);
 	_scriptPointer += 2;
-
-	debug(9, "fetchword=%d", a);
 	return a;
 }
-
-void Scumm::ignoreScriptWord() {
-	fetchScriptWord();
-}
-
-void Scumm::ignoreScriptByte() {
-	fetchScriptByte();
-}
-
 
 int Scumm::readVar(uint var) {
 	int a;
@@ -339,11 +293,17 @@ int Scumm::readVar(uint var) {
 #endif
 	debug(9, "readvar=%d", var);
 	if (!(var&0xF000)) {
+#if defined(BYPASS_COPY_PROT)
+		if (var==490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
+			copyprotbypassed = true;
+			var = 518;
+		}
+#endif
 		checkRange(_numVariables-1, 0, var, "Variable %d out of range(r)");
 		return _vars[var];
 	}
 
-	if (var&0x2000 && _majorScummVersion==5) {
+	if (var&0x2000 && !(_features&GF_NEW_OPCODES)) {
 		a = fetchScriptWord();
 		if (a&0x2000)
 			var = (var+readVar(a&~0x2000))&~0x2000;
@@ -363,14 +323,7 @@ int Scumm::readVar(uint var) {
 	if (var&0x4000) {
 		var &= 0xFFF;
 		checkRange(0x10, 0, var, "Local variable %d out of range(r)");
-
-#ifdef BYPASS_COPY_PROT
-		if (!copyprotbypassed && _currentScript==1 && _gameId==GID_MONKEY2) {
-			copyprotbypassed=1;
-			return 1;
-		}
-#endif
-		return vm.localvar[_currentScript * 17 + var];
+		return vm.localvar[_currentScript][var];
 	}
 
 	error("Illegal varbits (r)");
@@ -398,7 +351,7 @@ void Scumm::writeVar(uint var, int value) {
 	if (var&0x4000) {
 		var &= 0xFFF;
 		checkRange(0x10, 0, var, "Local variable %d out of range(w)");
-		vm.localvar[_currentScript * 17 + var] = value;
+		vm.localvar[_currentScript][var] = value;
 		return;
 	}
 
@@ -418,8 +371,6 @@ void Scumm::getResultPos() {
 		}
 		_resultVarNumber&=~0x2000;
 	}
-
-	debug(9, "getResultPos=%d", _resultVarNumber);
 }
 
 void Scumm::setResult(int value) {
@@ -429,7 +380,7 @@ void Scumm::setResult(int value) {
 void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 	int top,bottom,count;
 	VirtScreen *vs;
-	byte *backbuff;
+	byte *backbuff, *bgbuff;
 
 	if ((vs=findVirtScreen(y)) == NULL)
 		return;
@@ -454,13 +405,20 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 
 	updateDirtyRect(vs->number, x, x2, y-top, y2-top, 0);
 
-	backbuff = getResourceAddress(0xA, vs->number+1) + vs->xstart	+ (y-top)*320 + x;
+	backbuff = getResourceAddress(rtBuffer, vs->number+1) + vs->xstart + (y-top)*320 + x;
 
-	count = y2 - y;
-	while (count) {
-		memset(backbuff, color, x2 - x);
-		backbuff += 320;
-		count--;
+	if (color==-1) {
+		if(vs->number!=0)
+			error("can only copy bg to main window");
+		bgbuff = getResourceAddress(rtBuffer, vs->number+5) + vs->xstart + (y-top)*320 + x;
+		blit(backbuff, bgbuff, x2 - x, y2 - y);
+	} else {
+		count = y2 - y;
+		while (count) {
+			memset(backbuff, color, x2 - x);
+			backbuff += 320;
+			count--;
+		}
 	}
 }
 
@@ -470,7 +428,7 @@ void Scumm::stopObjectCode() {
 
 	ss = &vm.slot[_currentScript];
 
-	if (ss->type!=2 && ss->type!=3) {
+	if (ss->where!=WIO_GLOBAL && ss->where!=WIO_LOCAL) {
 		if (ss->cutsceneOverride)
 			error("Object %d ending with active cutscene/override", ss->number);
 		
@@ -486,7 +444,7 @@ void Scumm::stopObjectCode() {
 	_currentScript = 0xFF;
 }
 
-bool Scumm::isScriptLoaded(int script) {
+bool Scumm::isScriptInUse(int script) {
 	ScriptSlot *ss;
 	int i;
 
@@ -497,6 +455,7 @@ bool Scumm::isScriptLoaded(int script) {
 	}
 	return false;
 }
+
 
 void Scumm::runHook(int i) {
 	int16 tmp[16];
@@ -566,8 +525,8 @@ void Scumm::runExitScript() {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = 2;
 		vm.slot[slot].number = 10001;
-		vm.slot[slot].type = 1;
-		vm.slot[slot].offs = _EXCD_offs + 8;
+		vm.slot[slot].where = WIO_ROOM;
+		vm.slot[slot].offs = _EXCD_offs;
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
 		vm.slot[slot].freezeCount = 0;
@@ -584,8 +543,8 @@ void Scumm::runEntryScript() {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = 2;
 		vm.slot[slot].number = 10002;
-		vm.slot[slot].type = 1;
-		vm.slot[slot].offs = _ENCD_offs + 8;
+		vm.slot[slot].where = WIO_ROOM;
+		vm.slot[slot].offs = _ENCD_offs;
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
 		vm.slot[slot].freezeCount = 0;
@@ -602,22 +561,34 @@ void Scumm::killScriptsAndResources() {
 	ss = &vm.slot[1];
 	
 	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
-		if (ss->type==1 || ss->type==4) {
+		if (ss->where==WIO_ROOM || ss->where==WIO_FLOBJECT) {
 			if(ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
 			ss->status = 0;
-		} else if (ss->type==3) {
+		} else if (ss->where==WIO_LOCAL) {
 			if(ss->cutsceneOverride)
 				error("Script %d stopped with active cutscene/override in exit", ss->number);
 			ss->status = 0;
 		}
 	}
 	
+	/* Nuke FL objects */
 	i = 0;
 	do {
 		if (_objs[i].fl_object_index)
-			nukeResource(0xD, _objs[i].fl_object_index);
+			nukeResource(rtFlObject, _objs[i].fl_object_index);
 	} while (++i <= _numObjectsInRoom);
+
+	/* Nuke local object names */
+	if (_newNames) {
+		for (i=0; i<_numNewNames; i++) {
+			int j = _newNames[i];
+			if (j && getOwner(j) == 0) {
+				_newNames[i] = 0;
+				nukeResource(rtObjectName, i);
+			}
+		}
+	}
 }
 
 void Scumm::checkAndRunVar33() {
@@ -625,38 +596,40 @@ void Scumm::checkAndRunVar33() {
 	ScriptSlot *ss;
 
 	memset(_localParamList, 0, sizeof(_localParamList));
-	if (isScriptLoaded(_vars[VAR_SENTENCE_SCRIPT])) {
+	if (isScriptInUse(_vars[VAR_SENTENCE_SCRIPT])) {
 		ss = vm.slot;
 		for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
 			if (ss->number==_vars[VAR_SENTENCE_SCRIPT] && ss->status!=0 && ss->freezeCount==0)
 				return;
 	}
 
-	if (_sentenceIndex > 0x7F || sentence[_sentenceIndex].unk)
+	if (!_sentenceNum || sentence[_sentenceNum-1].unk)
 		return;
-	
-	if (sentence[_sentenceIndex].unk2 && 
-		sentence[_sentenceIndex].unk3==sentence[_sentenceIndex].unk4) {
-		_sentenceIndex--;
-		return;
-	}
 
-	_localParamList[0] = sentence[_sentenceIndex].unk5;
-	_localParamList[1] = sentence[_sentenceIndex].unk4;
-	_localParamList[2] = sentence[_sentenceIndex].unk3;
-	_sentenceIndex--;
+	_sentenceNum--;
+
+#if !defined(FULL_THROTTLE)
+	if (sentence[_sentenceNum].unk2 && 
+		sentence[_sentenceNum].unk3==sentence[_sentenceNum].unk4)
+		return;
+#endif
+
+	_localParamList[0] = sentence[_sentenceNum].unk5;
+	_localParamList[1] = sentence[_sentenceNum].unk4;
+	_localParamList[2] = sentence[_sentenceNum].unk3;
 	_currentScript = 0xFF;
 	if (_vars[VAR_SENTENCE_SCRIPT])
 		runScript(_vars[VAR_SENTENCE_SCRIPT], 0, 0, _localParamList);
 }
 
 void Scumm::runInputScript(int a, int cmd, int mode) {
-	memset(_localParamList, 0, sizeof(_localParamList));
-	_localParamList[0] = a;
-	_localParamList[1] = cmd;
-	_localParamList[2] = mode;
+	int16 args[16];
+	memset(args, 0, sizeof(args));
+	args[0] = a;
+	args[1] = cmd;
+	args[2] = mode;
 	if (_vars[VAR_VERB_SCRIPT])
-		runScript(_vars[VAR_VERB_SCRIPT], 0, 0, _localParamList);
+		runScript(_vars[VAR_VERB_SCRIPT], 0, 0, args);
 }
 
 void Scumm::decreaseScriptDelay(int amount) {
@@ -673,11 +646,9 @@ void Scumm::decreaseScriptDelay(int amount) {
 	}
 }
 
-
-
 void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 	uint32 obcd;
-	int slot, where, offs,i;
+	int slot, where, offs;
 
 	if (!object)
 		return;
@@ -686,7 +657,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 
 	where = whereIsObject(object);
 
-	if (where == -1) {
+	if (where == WIO_NOT_FOUND) {
 		error("Code for object %d not in room %d", object, _roomResource);
 	}
 
@@ -700,39 +671,45 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 	vm.slot[slot].number = object;
 	vm.slot[slot].offs = obcd + offs;
 	vm.slot[slot].status = 2;
-	vm.slot[slot].type = where;
+	vm.slot[slot].where = where;
 	vm.slot[slot].unk1 = a;
 	vm.slot[slot].unk2 = b;
 	vm.slot[slot].freezeCount = 0;
 	vm.slot[slot].newfield = 0;
 
-	if (!vars) {
-		for(i=0; i<16; i++)
-			vm.localvar[slot * 17 + i] = 0;
-	} else {
-		for (i=0; i<16; i++)
-			vm.localvar[slot * 17 + i] = vars[i];
-	}
+	initializeLocals(slot, vars);
 
 	runScriptNested(slot);
+}
+
+void Scumm::initializeLocals(int slot, int16 *vars) {
+	int i;
+	if (!vars) {
+		for(i=0; i<16; i++)
+			vm.localvar[slot][i] = 0;
+	} else {
+		for (i=0; i<16; i++)
+			vm.localvar[slot][i] = vars[i];
+	}
 }
 
 int Scumm::getVerbEntrypoint(int obj, int entry) {
 	byte *objptr, *verbptr;
 	int verboffs;
 
-	if (whereIsObject(obj)==-1)
+	if (whereIsObject(obj)==WIO_NOT_FOUND)
 		return 0;
 
-	objptr = getObjectAddress(obj);
+	objptr = getOBCDFromObject(obj);
+	assert(objptr);
 
-	verbptr = findResource(MKID('VERB'), objptr, 0);
+	verbptr = findResource(MKID('VERB'), objptr);
 	if (verbptr==NULL)
 		error("No verb block in object %d", obj);
 
 	verboffs = verbptr - objptr;
 
-	verbptr += 8;
+	verbptr += _resourceHeaderSize;
 	do {
 		if (!*verbptr)
 			return 0;
@@ -746,12 +723,12 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 
 
 void Scumm::push(int a) {
-	assert(_scummStackPos >=0 && _scummStackPos < sizeof(_scummStack)-1);
+	assert(_scummStackPos >=0 && _scummStackPos < ARRAYSIZE(_scummStack)-1);
 	_scummStack[_scummStackPos++] = a;	
 }
 
 int Scumm::pop() {
-	assert(_scummStackPos >0 && _scummStackPos < sizeof(_scummStack));
+	assert(_scummStackPos >0 && _scummStackPos < ARRAYSIZE(_scummStack));
 	return _scummStack[--_scummStackPos];
 }
 
@@ -784,7 +761,7 @@ void Scumm::cutscene(int16 *args) {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
 	
-	if (++vm.cutSceneStackPointer > 5)
+	if (++vm.cutSceneStackPointer > sizeof(vm.cutSceneData)/sizeof(vm.cutSceneData[0]))
 		error("Cutscene stack overflow");
 
 	vm.cutSceneData[vm.cutSceneStackPointer] = args[0];
@@ -808,59 +785,92 @@ void Scumm::faceActorToObj(int act, int obj) {
 	if (getObjectOrActorXY(obj)==-1)
 		return;
 
-	dir = (_xPos > x) ? 1 : 0;
+	dir = (_xPos > x) ? 90 : 270;
 	turnToDirection(derefActorSafe(act, "faceActorToObj"), dir);
 }
 
 void Scumm::animateActor(int act, int anim) {
+#if defined(FULL_THROTTLE)
+	int cmd,dir;
+	Actor *a;
+
+	a = derefActorSafe(act, "animateActor");
+
+	if (anim==0xFF)
+		anim = 2000;
+
+	cmd  = anim / 1000;
+	dir = anim % 1000;
+
+	/* temporary code */
+//	dir = newDirToOldDir(dir);
+
+	switch(cmd) {
+	case 2:
+		stopActorMoving(a);
+		startAnimActor(a, a->standFrame);
+		break;
+	case 3:
+		a->moving &= ~4;
+		fixActorDirection(a, dir);
+		break;
+	case 4:
+		turnToDirection(a, dir);
+		break;
+	default:
+		startAnimActor(a, anim);
+	}
+
+
+#else
 	int shr,dir;
 	bool inRoom;
 	Actor *a;
 
 	a = derefActorSafe(act, "animateActor");
 
-	shr = anim>>2;
 	dir = anim&3;
 
-	inRoom = (a->room == _currentRoom);
-
-	if (shr == 0x3F) {
-		if (inRoom) {
-			startAnimActor(a, a->standFrame, a->facing);
-			a->moving = 0;
-		}
-		return;
+	switch(anim>>2) {
+	case 0x3F:
+		stopActorMoving(a);
+		startAnimActor(a, a->standFrame);
+		break;
+	case 0x3E:
+		a->moving &= ~4;
+		fixActorDirection(a, oldDirToNewDir(dir));
+		break;
+	case 0x3D:
+		turnToDirection(a, oldDirToNewDir(dir));
+		break;
+	default:
+		startAnimActor(a, anim);
 	}
 
-	if (shr == 0x3E) {
-		if (inRoom) {
-			startAnimActor(a, 0x3E, dir);
-			a->moving &= ~4;
-		}
-		a->facing = dir;
-		return;
-	}
-
-	if (shr == 0x3D) {
-		if (inRoom) {
-			turnToDirection(a, dir);
-		} else {
-			a->facing = dir;
-		}
-		return;
-	}
-
-	startAnimActor(a, anim, a->facing);
+#endif
 }
 
-int Scumm::getScriptRunning(int script) {
+bool Scumm::isScriptRunning(int script) {
 	int i;
 	ScriptSlot *ss = vm.slot;
 	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
-		if (ss->number==script && (ss->type==2 || ss->type==3) && ss->status)
-			return 1;
-	return 0;
+		if (ss->number==script && (ss->where==WIO_GLOBAL || 
+			  ss->where==WIO_LOCAL) && ss->status)
+			return true;
+	return false;
 }
+
+bool Scumm::isRoomScriptRunning(int script) {
+	int i;
+	ScriptSlot *ss = vm.slot;
+	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
+		if (ss->number==script && ss->where==WIO_ROOM && ss->status)
+			return true;
+	return false;
+
+}
+
+
 
 void Scumm::beginOverride() {
 	int index;
@@ -921,7 +931,7 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 	size *= dim1+1;
 	size >>= 3;
 
-	ah = (ArrayHeader*)createResource(7, id, size+sizeof(ArrayHeader));
+	ah = (ArrayHeader*)createResource(rtString, id, size+sizeof(ArrayHeader));
 
 	ah->type = type;
 	ah->dim1_size = dim1+1;
@@ -936,7 +946,7 @@ void Scumm::nukeArray(int a) {
 	data = readVar(a);
 
 	if (data)
-		nukeResource(7, data);
+		nukeResource(rtString, data);
 	_arrays[data] = 0;
 
 	writeVar(a, 0);
@@ -957,12 +967,9 @@ void Scumm::arrayop_1(int a, byte *ptr) {
 	ArrayHeader *ah;
 	int r;
 	int len = getStringLen(ptr);
-		
-	if(a==123)
-		warning("Preparing video name");
-
+			
 	r = defineArray(a, 4, 0, len);
-	ah = (ArrayHeader*)getResourceAddress(7,r);
+	ah = (ArrayHeader*)getResourceAddress(rtString,r);
 	copyString(ah->data,ptr,len);
 }
 
@@ -991,3 +998,59 @@ int Scumm::getStringLen(byte *ptr) {
 	} while (1);
 	return len+1;
 }
+
+void Scumm::exitCutscene() {
+	uint32 offs = vm.cutScenePtr[vm.cutSceneStackPointer];
+	if (offs) {
+		ScriptSlot *ss = &vm.slot[vm.cutSceneScript[vm.cutSceneStackPointer]];
+		ss->offs = offs;
+		ss->status = 2;
+		ss->freezeCount = 0;
+		ss->cutsceneOverride--;
+		_vars[VAR_OVERRIDE] = 1;
+		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
+	}
+}
+#if defined(FULL_THROTTLE)
+void Scumm::doSentence(int c, int b, int a) {
+	SentenceTab *st;
+	
+	if (b==a)
+		return;
+
+	st = &sentence[_sentenceNum-1];
+
+	if (_sentenceNum &&
+		st->unk5 == c && st->unk4==b && st->unk3==a)
+			return;
+
+	_sentenceNum++;
+	st++;
+
+	st->unk5 = c;
+	st->unk4 = b;
+	st->unk3 = a;
+	st->unk = 0;
+	
+	warning("dosentence(%d,%d,%d)", c, b, a);
+
+}
+
+#else
+void Scumm::doSentence(int c, int b, int a) {
+	SentenceTab *st;
+
+	st = &sentence[_sentenceNum++];
+
+	st->unk5 = c;
+	st->unk4 = b;
+	st->unk3 = a;
+
+	if (!(st->unk3&0xFF00))
+		st->unk2 = 0;
+	else
+		st->unk2 = 1;
+
+	st->unk = 0;
+}
+#endif

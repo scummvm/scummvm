@@ -50,7 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib sdl.lib /nologo /subsystem:console /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib /nologo /subsystem:console /machine:I386
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
 
@@ -66,7 +66,8 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "d:\sdl\sdl-1.2.2\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "DUMP_SCRIPTS" /Fr /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /D "FULL_THROTTLE" /D "CHECK_HEAP" /Yu"stdafx.h" /FD /GZ /c
+# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
 BSC32=bscmake.exe
@@ -74,7 +75,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib sdl.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 
 !ENDIF 
 
@@ -85,6 +86,26 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "sound"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\sound\adlib.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\fmopl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\gmidi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\imuse.cpp
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\actor.cpp
@@ -97,6 +118,10 @@ SOURCE=.\actor.cpp
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\akos.cpp
 # End Source File
 # Begin Source File
 
@@ -114,15 +139,6 @@ SOURCE=.\boxes.cpp
 # Begin Source File
 
 SOURCE=.\costume.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -149,6 +165,10 @@ SOURCE=.\gfx.cpp
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui.cpp
 # End Source File
 # Begin Source File
 
@@ -227,10 +247,6 @@ SOURCE=.\script_v2.cpp
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=.\script_v7.cpp
 # End Source File
 # Begin Source File
 
@@ -322,11 +338,23 @@ SOURCE=.\verbs.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\sound\fmopl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\scummsys.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound.h
 # End Source File
 # Begin Source File
 

@@ -15,80 +15,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.4.2.1  2001/11/12 16:14:40  yazoo
- * The dig and Full Throttle support
- *
- * Revision 1.7  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.6  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.5  2001/10/16 10:01:44  strigeus
- * preliminary DOTT support
- *
- * Revision 1.4  2001/10/10 17:18:33  strigeus
- * fixed swapped parameters in o_walkActorToActor
- *
- * Revision 1.3  2001/10/10 11:24:21  strigeus
- * fixed return value from adjustXYToBeInBox
- *
- * Revision 1.2  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
 #include "stdafx.h"
 #include "scumm.h"
 
-void Scumm::initActor(Actor *a, int mode) { // A few things changed in V7 there, but the biggest part is that since the actors
-											// now face 8 directions, the a->facing var has been turned to angular
+void Scumm::initActor(Actor *a, int mode) {
 	if (mode==1) {
 		a->costume = 0;
 		a->room = 0;
 		a->x = 0;
 		a->y = 0;
-		
-		if((_majorScummVersion>=7)&&(_middleScummVersion>=2))
-		{
-			a->facing = 180;
-			a->facing2 = 180;
-			a->visible = 0;
-		}
-		else
-			a->facing = 2;
+		a->facing = 180;
+		a->newDirection = 180;
 	} else if (mode==2) {
-		if((_majorScummVersion>=7)&&(_middleScummVersion>=2))
-		{
-			a->facing = 180;
-			a->facing2 = 180;
-		}
-		else
-			a->facing = 2;
+		a->facing = 180;
+		a->newDirection = 180;
 	}
-
-	if((_majorScummVersion>=7)&&(_middleScummVersion>=2))
-	{
-		a->data8 = 0;
-		a->V7sound = 0;
-		a->V7sound2 = 0;
-		a->script = 0;
-		a->script2 = 0;
-	}
-
 
 	a->elevation = 0;
-	a->width = 0x18;
-	a->talkColor = 0xF;
+	a->width = 24;
+	a->talkColor = 15;
 	a->new_2 = 0;
 	a->new_1 = -80;
 	a->scaley = a->scalex = 0xFF;
@@ -102,12 +51,16 @@ void Scumm::initActor(Actor *a, int mode) { // A few things changed in V7 there,
 	a->sound[6] = 0;
 	a->sound[7] = 0;
 	a->newDirection = 0;
-	a->moving = 0;
+	
+	stopActorMoving(a);
+
+	a->shadow_mode = 0;
+	a->layer = 0;
 
 	setActorWalkSpeed(a, 8, 2);
 
 	a->ignoreBoxes = 0;
-	a->neverZClip = 0;
+	a->forceClip = 0;
 	a->new_3 = 0;
 	a->initFrame = 1;
 	a->walkFrame = 2;
@@ -115,7 +68,19 @@ void Scumm::initActor(Actor *a, int mode) { // A few things changed in V7 there,
 	a->talkFrame1 = 4;
 	a->talkFrame2 = 5;
 
+	a->walk_script = 0;
+	a->talk_script = 0;
+
+#if defined(FULL_THROTTLE)
+	_classData[a->number] = _classData[0];
+#else
 	_classData[a->number] = 0;
+#endif
+}
+
+void Scumm::stopActorMoving(Actor *a) {
+	stopScriptNr(a->walk_script);
+	a->moving = 0;
 }
 
 void Scumm::setActorWalkSpeed(Actor *a, uint speedx, uint speedy) {
@@ -127,6 +92,18 @@ void Scumm::setActorWalkSpeed(Actor *a, uint speedx, uint speedy) {
 
 	if (a->moving) {
 		calcMovementFactor(a, a->walkdata.newx, a->walkdata.newy);
+	}
+}
+
+int Scumm::getAngleFromPos(int x, int y) {
+	if (abs(y)*2 < abs(x)) {
+		if (x>0)
+			return 90;
+		return 270;
+	} else {
+		if (y>0)
+			return 180;
+		return 0;
 	}
 }
 
@@ -148,10 +125,10 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 	if (diffY < 0)
 		YXFactor = -YXFactor;
 
+	XYFactor = YXFactor * diffX;
 	if (diffY != 0) {
-		XYFactor = YXFactor * diffX / diffY;
+		XYFactor /= diffY;
 	} else {
-		XYFactor = YXFactor * diffX;
 		YXFactor = 0;
 	}
 
@@ -160,10 +137,10 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 		if (diffX < 0)
 			XYFactor = -XYFactor;
 
+		YXFactor = XYFactor * diffY;
 		if (diffX != 0) {
-			YXFactor = XYFactor * diffY / diffX;
+			YXFactor /= diffX;
 		} else {
-			YXFactor = XYFactor * diffY;
 			XYFactor = 0;
 		}
 	}
@@ -176,91 +153,146 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 	a->walkdata.YXFactor = YXFactor;
 	a->walkdata.xfrac = 0;
 	a->walkdata.yfrac = 0;
+	
+	a->newDirection = getAngleFromPos(XYFactor, YXFactor);
 
 	return actorWalkStep(a);
 }
 
+int Scumm::remapDirection(Actor *a, int dir) {
+	int specdir;
+	byte flags;
+
+	if (!a->ignoreBoxes) {
+		specdir = _extraBoxFlags[a->walkbox];
+		if (specdir) {
+			if (specdir & 0x8000) {
+				dir = specdir & 0x3FFF;
+			} else {
+				error("getProgrDirChange: special dir not implemented");
+			}
+		}
+
+		flags = getBoxFlags(a->walkbox);
+
+		if ((flags&8) || getClass(a->number, 0x1E)) {
+			dir = 360 - dir;
+		}
+
+		if ((flags&0x10) || getClass(a->number, 0x1D)) {
+			dir = 180 - dir;
+		}
+
+		switch(flags & 7) {
+		case 1:
+			return a->walkdata.XYFactor >0 ? 90 : 270;
+		case 2: 
+			return a->walkdata.YXFactor >0 ? 180 : 0;
+		case 3: return 270;
+		case 4: return 90;
+		case 5: return 0;
+		case 6:	return 180;
+		}
+	}
+	return normalizeAngle(dir);
+}
+
+int Scumm::updateActorDirection(Actor *a) {
+	int from,to;
+	int diff;
+	int dirType;
+
+	dirType = akos_hasManyDirections(a);
+
+	from = toSimpleDir(dirType, a->facing);
+	to = toSimpleDir(dirType, remapDirection(a, a->newDirection));
+	diff = to - from;
+
+	
+	if (abs(diff) > (numSimpleDirDirections(dirType)>>1))
+		diff = -diff;
+
+	if (diff==0) {
+	} else if (diff>0) {
+		from++;
+	} else {
+		from--;
+	}
+
+	return fromSimpleDir(dirType, from);
+}
+
+void Scumm::setActorBox(Actor *a, int box) {
+	a->walkbox = box;
+	a->mask = getMaskFromBox(box);
+	setupActorScale(a);
+}
+
+
 int Scumm::actorWalkStep(Actor *a) {
-	int32 XYFactor, YXFactor;
-	int actorX, actorY, newx, newy;
-	int newXDist;
-	int32 tmp,tmp2;
-
-	byte direction;
-
+	int tmpX, tmpY;
+	int actorX, actorY;
+	int distX, distY;
+	int direction;
+	
 	a->needRedraw = true;
 	a->needBgReset = true;
 
-	XYFactor = a->walkdata.XYFactor;
-	YXFactor = a->walkdata.YXFactor;
-
-	direction = XYFactor>0 ? 1 : 0;
-	if (abs(YXFactor) * 2 > abs(XYFactor))
-		direction = YXFactor>0 ? 2 : 3;
-	a->newDirection = direction;
-
-	direction = getProgrDirChange(a, 1);
-
-	if (!(a->moving&2) || a->facing!=direction) {
-		if (a->walkFrame != a->animIndex || a->facing != direction) {
-			startAnimActor(a, a->walkFrame, direction);
+	direction = updateActorDirection(a);
+	if (!(a->moving&MF_IN_LEG) || a->facing!=direction) {
+		if (a->walkFrame != a->frame || a->facing != direction) {
+			startWalkAnim(a, a->walkFrame==a->frame ? 2 : 1, direction);
 		}
-		a->moving|=2;
-	}
-	
-	actorX = a->walkdata.x;
-	actorY = a->walkdata.y;
-	newx = a->walkdata.newx;
-	newy = a->walkdata.newy;
-
-	if (a->walkbox != a->walkdata.curbox) {
-		if (checkXYInBoxBounds(a->walkdata.curbox, a->x, a->y)) {
-			a->walkbox = a->walkdata.curbox;
-			a->mask = getMaskFromBox(a->walkdata.curbox);
-			setupActorScale(a);
-		}
+		a->moving|=MF_IN_LEG;
 	}
 
-	newXDist = abs(newx - actorX);
-	
-	if (newXDist <= abs(a->x - actorX) &&
-		abs(newy - actorY) <= abs(a->y - actorY) ){
-		a->moving&=~2;
+	actorX = a->x;
+	actorY = a->y;
+
+	if (a->walkbox != a->walkdata.curbox &&
+			checkXYInBoxBounds(a->walkdata.curbox, actorX, actorY)) {
+		setActorBox(a, a->walkdata.curbox);
+	}
+
+	distX = abs(a->walkdata.newx - a->walkdata.x);
+	distY = abs(a->walkdata.newy - a->walkdata.y);
+
+	if (
+		abs(actorX - a->walkdata.x) >= distX && 
+		abs(actorY - a->walkdata.y) >= distY
+		) {
+		a->moving &= ~MF_IN_LEG;
 		return 0;
 	}
 
-	XYFactor = (XYFactor>>8) * a->scalex;
-	YXFactor = (YXFactor>>8) * a->scalex;
+	tmpX = ((actorX + 8000)<<16) + a->walkdata.xfrac + 
+			(a->walkdata.XYFactor>>8) * a->scalex;
+	a->walkdata.xfrac = (uint16)tmpX;
+	actorX = (tmpX>>16) - 8000;
+
+	tmpY = (actorY<<16) + a->walkdata.yfrac + 
+			(a->walkdata.YXFactor>>8) * a->scalex;
+	a->walkdata.yfrac = (uint16)tmpY;
+	actorY = (tmpY>>16);
 	
-	tmp = ((a->x + 8000)<<16) + a->walkdata.xfrac + XYFactor;
-	tmp2 = (a->y<<16) + a->walkdata.yfrac + YXFactor;
-
-	a->x = (tmp>>16)-8000;
-	a->y = tmp2>>16;
-
-	if (abs(a->x - actorX) > newXDist) {
-		a->x = newx;
+	if (abs(actorX - a->walkdata.x) > distX) {
+		actorX = a->walkdata.newx;
 	}
 
-	if (abs(a->y - actorY) > abs(newy - actorY)) {
-		a->y = newy;
+	if (abs(actorY - a->walkdata.y) > distY) {
+		actorY = a->walkdata.newy;
 	}
 
-	a->walkdata.xfrac = tmp&0xFFFF;
-	a->walkdata.yfrac = tmp2&0xFFFF;
-
-	if (a->x == newx &&
-		a->y == newy) {
-		a->moving&=~2;
-		return 0;
-	}
-
+	a->x = actorX;
+	a->y = actorY;
 	return 1;
 }
+
 
 void Scumm::setupActorScale(Actor *a) {
 	uint16 scale;
 	byte *resptr;
+	int y;
 
 	if (a->ignoreBoxes != 0)
 		return;
@@ -269,12 +301,15 @@ void Scumm::setupActorScale(Actor *a) {
 
 	if (scale & 0x8000) {
 		scale = (scale&0x7FFF)+1;
-		resptr = getResourceAddress(0xB, scale);
+		resptr = getResourceAddress(rtScaleTable, scale);
 		if (resptr==NULL)
 			error("Scale table %d not defined",scale);
-		if (a->y >= 0)
-			resptr += a->y;
-		scale = *resptr;
+		y = a->y;
+		if (y>=200)
+			y=199;
+		if (y<0)
+			y=0;
+		scale = resptr[y];
 	}
 
 	if (scale>255)
@@ -284,68 +319,27 @@ void Scumm::setupActorScale(Actor *a) {
 	a->scaley = (byte)scale;
 }
 
-int Scumm::getProgrDirChange(Actor *a, int mode) {
-	int flags;
-	byte facing, newdir;
-	byte XYflag, YXflag;
-	byte lookdir;
-
-	const byte direction_transtab[] = {
-		0,2,2,3,2,1,2,3,0,1,2,1,0,1,0,3
-	};
-
-	flags = 0;
-	if (!a->ignoreBoxes)
-		flags = getBoxFlags(a->walkbox);
-		
-	facing = a->facing;
-	newdir = a->newDirection;
-	
-	XYflag = a->walkdata.XYFactor>0 ? 1 : 0;
-	YXflag = a->walkdata.YXFactor>0 ? 1 : 0;
-
-	if ((flags&8) || getClass(a->number, 0x1E)) {
-		if (!(newdir&2))
-			newdir^=1;
-		XYflag = 1 - XYflag;
+#if defined(FULL_THROTTLE)
+void Scumm::startAnimActor(Actor *a, int frame) {
+	switch(frame) {
+	case 1001: frame = a->initFrame; break;
+	case 1002: frame = a->walkFrame; break;
+	case 1003: frame = a->standFrame; break;
+	case 1004: frame = a->talkFrame1; break;
+	case 1005: frame = a->talkFrame2; break;
 	}
 
-	if ((flags&0x10) || getClass(a->number, 0x1D)) {
-		if (newdir&2)
-			newdir^=1;
-		YXflag = 1 - YXflag;
+	if (a->costume != 0) {
+		a->animProgress = 0;
+		a->needRedraw = true;
+		a->needBgReset = true;
+		if (frame == a->initFrame)
+			initActorCostumeData(a);
+		akos_decodeData(a, frame, (uint)-1);
 	}
-
-	lookdir = direction_transtab[facing*4+newdir];
-
-	if (!(flags&=0x7))
-		return lookdir;
-	
-	if (mode==0) {
-		lookdir = newdir;
-		if (flags==1 && newdir!=1)
-			lookdir = 0;
-		
-		if (flags==2 && newdir!=3)
-			lookdir = 2;
-	} else {
-		if (flags==1)
-			lookdir = XYflag;
-		if (flags==2)
-			lookdir = 3 - YXflag;
-	}
-	if (flags==3)
-		lookdir=0;
-	if (flags==4)
-		lookdir=1;
-	if (flags==6)
-		lookdir=2;
-	if (flags==5)
-		lookdir = 3;
-	return lookdir;
 }
-
-void Scumm::startAnimActor(Actor *a, int frame, byte direction) {
+#else
+void Scumm::startAnimActor(Actor *a, int frame) {
 	if (frame==0x38)
 		frame = a->initFrame;
 
@@ -372,27 +366,15 @@ void Scumm::startAnimActor(Actor *a, int frame, byte direction) {
 			initActorCostumeData(a);
 
 		if (frame!=0x3E) {
-			decodeCostData(a, frame*4 + direction, -1);
+			decodeCostData(a, frame, -1);
 		}
-
-		if (a->facing != direction)
-			fixActorDirection(a, direction);
 	}
 
-	a->facing = direction;
 	a->needBgReset = true;
 }
+#endif
 
-void Scumm::initActorCostumeData(Actor *a) {
-	CostumeData *cd = &a->cost;
-	int i;
-
-	cd->hdr = 0;
-	for (i=0; i<16; i++)
-		cd->a[i] = cd->b[i] = cd->c[i] = cd->d[i] = 0xFFFF;
-}
-
-void Scumm::fixActorDirection(Actor *a, byte direction) {
+void Scumm::fixActorDirection(Actor *a, int direction) {
 	uint mask;
 	int i;
 	uint16 vald;
@@ -400,69 +382,29 @@ void Scumm::fixActorDirection(Actor *a, byte direction) {
 	if (a->facing == direction)
 		return;
 
+	a->facing = direction;
+
+	if (a->costume==0)
+		return;
+
+#if !defined(FULL_THROTTLE)
+	cost.loadCostume(a->costume);
+#endif
+
 	mask = 0x8000;
 	for (i=0; i<16; i++,mask>>=1) {
-		vald = a->cost.d[i];
-		if (vald==0xFFFF || (vald&3)==direction)
+		vald = a->cost.frame[i];
+		if (vald==0xFFFF)
 			continue;
-		decodeCostData(a, (vald&0xFC)|direction, mask);
+#if !defined(FULL_THROTTLE)
+		decodeCostData(a, vald, mask);
+#else
+		akos_decodeData(a, vald, mask);
+#endif
 	}
-	a->facing = direction;
-}
 
-void Scumm::decodeCostData(Actor *a, int frame, uint usemask) {
-	byte *p,*r;
-	uint mask,j;
-	int i;
-	byte extra,cmd;
-	byte *dataptr;
-
-	p = cost._ptr;
-	if (frame > p[6])
-		return;
-
-	r = p + READ_LE_UINT16(p + frame*2 + cost._numColors + 42);
-	if (r==p)
-		return;
-
-	dataptr = p + READ_LE_UINT16(p + cost._numColors + 8);
-
-	mask = READ_LE_UINT16(r);
-	r+=2;
-	i = 0;
-	do {
-		if (mask&0x8000) {
-			j = READ_LE_UINT16(r);
-			r+=2;
-			if (usemask&0x8000) {
-				if (j==0xFFFF) {
-					a->cost.a[i] = 0xFFFF;
-					a->cost.b[i] = 0;
-					a->cost.d[i] = frame;
-				} else {
-					extra = *r++;
-					cmd = dataptr[j];
-					if (cmd==0x7A) {
-						a->cost.hdr &= ~(1<<i);
-					} else if (cmd==0x79) {
-						a->cost.hdr |= (1<<i);
-					} else {
-						a->cost.a[i] = a->cost.b[i] = j;
-						a->cost.c[i] = j + (extra&0x7F);
-						if (extra&0x80)
-							a->cost.a[i] |= 0x8000;
-						a->cost.d[i] = frame;
-					}
-				}
-			} else {
-				if (j!=0xFFFF)
-					r++;
-			}
-		}
-		i++;
-		usemask <<= 1;
-		mask <<= 1;
-	} while ((uint16)mask);
+	a->needRedraw = true;
+	a->needBgReset = true;
 }
 
 void Scumm::putActor(Actor *a, int x, int y, byte room) {
@@ -483,7 +425,7 @@ void Scumm::putActor(Actor *a, int x, int y, byte room) {
 	if (a->visible) {
 		if (_currentRoom == room) {
 			if (a->moving) {
-				startAnimActor(a, a->standFrame, a->facing);
+				startAnimActor(a, a->standFrame);
 				a->moving = 0;
 			}
 			adjustActorPos(a);
@@ -504,7 +446,7 @@ int Scumm::getActorXYPos(Actor *a) {
 	return 0;
 }
 
-AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y) {
+AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 	AdjustBoxResult abr,tmp;
 	uint threshold;
 	uint best;
@@ -526,6 +468,9 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y) {
 			do {
 				flags = getBoxFlags(box);
 				if (flags&0x80 && (!(flags&0x20) || getClass(a->number, 0x1F)) )
+					continue;
+
+				if (pathfrom && !getPathToDestBox(pathfrom, box))
 					continue;
 				
 				if (!inBoxQuickReject(box, x, y, threshold))
@@ -568,15 +513,15 @@ void Scumm::adjustActorPos(Actor *a) {
 	AdjustBoxResult abr;
 	byte flags;
 	
-	abr = adjustXYToBeInBox(a, a->x, a->y);
+	abr = adjustXYToBeInBox(a, a->x, a->y, 0);
 
 	a->x = abr.x;
 	a->y = abr.y;
-	a->walkbox = (byte)abr.dist; /* not a dist */
 	a->walkdata.destbox = (byte)abr.dist;
-	a->mask = getMaskFromBox(abr.dist);
+
+	setActorBox(a, abr.dist);
+
 	a->walkdata.destx = -1;
-	setupActorScale(a);
 
 	a->moving = 0;
 	a->cost.animCounter2 = 0;
@@ -592,7 +537,7 @@ void Scumm::hideActor(Actor *a) {
 		return;
 
 	if (a->moving) {
-		startAnimActor(a, a->standFrame, a->facing);
+		startAnimActor(a, a->standFrame);
 		a->moving = 0;
 	}
 	a->visible = false;
@@ -602,8 +547,15 @@ void Scumm::hideActor(Actor *a) {
 }
 
 void Scumm::turnToDirection(Actor *a, int newdir) {
-	a->moving = 4;
-	a->newDirection = newdir;
+	if (newdir==-1)
+		return;
+
+	a->moving &= ~4;
+
+	if (newdir != a->facing) {
+		a->moving = 4;
+		a->newDirection = newdir;
+	}
 }
 
 void Scumm::showActor(Actor *a) {
@@ -612,10 +564,10 @@ void Scumm::showActor(Actor *a) {
 
 	adjustActorPos(a);
 
-	ensureResourceLoaded(3, a->costume);
+	ensureResourceLoaded(rtCostume, a->costume);
 
 	if (a->costumeNeedsInit) {
-		startAnimActor(a, a->initFrame, a->facing);
+		startAnimActor(a, a->initFrame);
 		a->costumeNeedsInit = false;
 	}
 	a->moving = 0;
@@ -627,7 +579,7 @@ void Scumm::showActors() {
 	int i;
 	Actor *a;
 	
-	for (i=1; i<_maxActors; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->room == _currentRoom)
 			showActor(a);
@@ -637,14 +589,17 @@ void Scumm::showActors() {
 void Scumm::stopTalk() {
 	int act;
 
+	stopTalkSound();
+
 	_haveMsg = 0;
 	_talkDelay = 0;
 
 	act = _vars[VAR_TALK_ACTOR];
 	if (act && act<0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
-		if (_currentRoom == a->room) {
-			startAnimActor(a, a->talkFrame2, a->facing);			
+		if (_currentRoom == a->room && _useTalkAnims) {
+			startAnimActor(a, a->talkFrame2);
+			_useTalkAnims = false;
 		}
 		_vars[VAR_TALK_ACTOR] = 0xFF;
 	}
@@ -660,7 +615,7 @@ void Scumm::clearMsgQueue() {
 void Scumm::walkActors() {
 	int i;
 	Actor *a;
-	for (i=1; i<_maxActors; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);	
 		if (a->room==_currentRoom)
 			walkActor(a);
@@ -672,12 +627,12 @@ void Scumm::playActorSounds() {
 	int i;
 	Actor *a;
 	
-	for (i=1; i<13; i++) { // I left 13 instead of _maxActors since it's V5 only
+	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->cost.animCounter2 && a->room==_currentRoom && a->sound) {
 			_currentScript = 0xFF;
 			addSoundToQueue(a->sound[0]);
-			for (i=1; i<13; i++) {
+			for (i=1; i<NUM_ACTORS; i++) {
 				a = derefActor(i);
 				a->cost.animCounter2 = 0;
 			}
@@ -685,6 +640,37 @@ void Scumm::playActorSounds() {
 		}
 	}
 }
+
+
+void Scumm::startWalkAnim(Actor *a, int cmd, int angle) {
+	int16 args[16];
+
+	if (angle == -1)
+		angle = a->facing;
+
+	if (a->walk_script != 0) {
+		args[2] = angle;
+		args[0] = a->number;
+		args[1] = cmd;
+		runScript(a->walk_script, 1, 0, args);
+	} else {
+		switch(cmd) {
+		case 1: /* start walk */
+			//a->facing = angle;
+			fixActorDirection(a, angle);
+			startAnimActor(a, a->walkFrame);
+			break;
+		case 2: /* change dir only */
+			fixActorDirection(a, angle);
+			break;
+		case 3: /* stop walk */
+			turnToDirection(a, angle);
+			startAnimActor(a, a->standFrame);
+			break;
+		}
+	}
+}
+
 
 void Scumm::walkActor(Actor *a) {
 	int j;
@@ -698,41 +684,59 @@ void Scumm::walkActor(Actor *a) {
 	
 		if (a->moving&8) {
 			a->moving = 0;
-
-			j = a->walkdata.destbox;
-			if (j) {
-				a->walkbox = j;
-				a->mask = getMaskFromBox(j);
-			}
-			startAnimActor(a, a->standFrame, a->facing);
-			if (a->walkdata.destdir==0xFF ||
-				  a->walkdata.destdir==a->newDirection)
-						return;
-			a->newDirection = a->walkdata.destdir;
-			a->moving = 4;
+			setActorBox(a, a->walkdata.destbox);
+			startWalkAnim(a, 3, a->walkdata.destdir);
 			return;
 		}
 
 		if (a->moving&4) {
-			j = getProgrDirChange(a, 0);
+			j = updateActorDirection(a);
 			if (a->facing != j) 
-				startAnimActor(a, 0x3E, j);
+				fixActorDirection(a,j);
 			else
 				a->moving = 0;
 			return;
 		}
 
-		a->walkbox = a->walkdata.curbox;
-		a->mask = getMaskFromBox(a->walkdata.curbox);
-
-		setupActorScale(a);
-		a->moving = (a->moving&2)|1;
+		setActorBox(a, a->walkdata.curbox);
+		a->moving &= 2;
 	}
 
+#if OLD
+	a->moving &= ~1;
+	
+	if (!a->walkbox) {
+		a->walkbox = a->walkdata.destbox;
+		a->walkdata.curbox = a->walkdata.destbox;
+		a->moving |= 8;
+		calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
+		return;
+	}
+	
+	if (a->ignoreBoxes || a->walkbox==a->walkdata.destbox) {
+		a->walkdata.curbox = a->walkbox;
+		a->moving |= 8;
+		calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
+		return;
+	}
+	j = getPathToDestBox(a->walkbox,a->walkdata.destbox);
+	if (j==0) {
+		error("walkActor: no path found between %d and %d", a->walkbox, a->walkdata.destbox);
+	}
+
+	a->walkdata.curbox = j;
+	if (findPathTowards(a, a->walkbox, j, a->walkdata.destbox)) {
+		a->moving |= 8;
+		calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
+		return;
+	}
+	calcMovementFactor(a, _foundPathX, _foundPathY);
+#endif
+#if 1
 	do {
 		a->moving&=~1;
 		if (!a->walkbox) {
-			a->walkbox = a->walkdata.destbox;
+			setActorBox(a, a->walkdata.destbox);
 			a->walkdata.curbox = a->walkdata.destbox;
 			break;
 		}
@@ -750,20 +754,19 @@ void Scumm::walkActor(Actor *a) {
 		if (calcMovementFactor(a, _foundPathX, _foundPathY))
 			return;
 
-		a->walkbox = a->walkdata.curbox;
-		a->mask = getMaskFromBox(a->walkdata.curbox);
-		setupActorScale(a);
+		setActorBox(a, a->walkdata.curbox);
 	} while (1);
 	a->moving |= 8;
 	calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
+#endif
 }
 
 void Scumm::processActors() {
 	int i;
-	Actor *actors[30],*a,**ac,**ac2,*tmp;
+	Actor *actors[NUM_ACTORS],*a,**ac,**ac2,*tmp;
 	int numactors = 0, cnt,cnt2;
 
-	for (i=1; i<_maxActors; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->room == _currentRoom)
 			actors[numactors++] = a;
@@ -777,7 +780,7 @@ void Scumm::processActors() {
 		ac2 = actors;
 		cnt2 = numactors;
 		do {
-			if ( (*ac2)->y > (*ac)->y ) {
+			if ( (*ac2)->y - ((*ac2)->layer<<11) > (*ac)->y - ((*ac)->layer<<11) ) {
 				tmp = *ac;
 				*ac = *ac2;
 				*ac2 = tmp;
@@ -790,79 +793,13 @@ void Scumm::processActors() {
 	do {
 		a = *ac;
 		if (a->costume) {
-			setupActorScale(a);
-			setupCostumeRenderer(&cost, a);
-			setActorCostPalette(a);
 			CHECK_HEAP
+			getMaskFromBox(a->walkbox);
 			drawActorCostume(a);
 			CHECK_HEAP
 			actorAnimate(a);
 		}
 	} while (ac++,--cnt);
-}
-
-void Scumm::processActorsV7() {
-	int i;
-	int numactors=0;
-	Actor *actors[30];
-	Actor *a;
-	int LocalActorY[30];
-
-	for (i=1; i<_maxActors; i++) {
-		a = derefActor(i);
-		if (a->room == _currentRoom)
-		{
-			actors[numactors] = a;
-			LocalActorY[numactors++] = ((a->y)-(a->newV7));
-		}
-	}
-
-	if (!numactors)
-		return;
-
-	// TODO: There we should sort all the actors in order
-
-	for (i=0;i< numactors;i++)
-	{
-		a = actors[i];
-		if(a->costume)
-		{
-			drawAnActorV7(a->number);
-		}
-	}
-}
-
-void Scumm::drawAnActorV7(int i)
-{
-	Actor *a;
-
-	a = derefActor(i);
-
-	if(!a->costume)
-		return;
-
-	return;
-
-
-}
-
-void Scumm::animateActorsV7() { // TODO: need to activate startActorsScript()
-	int i;
-	Actor *a;
-
-	for (i=1; i<_maxActors; i++) {
-		a = derefActor(i);
-		if (a->room == _currentRoom)
-		{
-			a->AnimateStatus=animateActorV7(a);
-		}
-	}
-	//startActorsScript();
-}
-
-int Scumm::animateActorV7(Actor *a) // TODO: code the script manipulation
-{
-	return(0);
 }
 
 void Scumm::setupCostumeRenderer(CostumeRenderer *c, Actor *a) {
@@ -871,8 +808,8 @@ void Scumm::setupCostumeRenderer(CostumeRenderer *c, Actor *a) {
 	c->_zbuf = a->mask;
 	if (c->_zbuf > gdi._numZBuffer)
 		c->_zbuf = (byte)gdi._numZBuffer;
-	if (a->neverZClip)
-		c->_zbuf = a->neverZClip;
+	if (a->forceClip)
+		c->_zbuf = a->forceClip;
 	
 	c->_scaleX = a->scalex;
 	c->_scaleY = a->scaley;
@@ -892,31 +829,87 @@ void Scumm::setActorCostPalette(Actor *a) {
 	}
 }
 
+#if !defined(FULL_THROTTLE)
 void Scumm::drawActorCostume(Actor *a) {
 	if (a==NULL || !a->needRedraw)
 		return;
-	
+
+	setupActorScale(a);
+	setupCostumeRenderer(&cost, a);
+	setActorCostPalette(a);
+
 	a->top = 0xFF;
 	a->needRedraw = 0;
 	a->bottom = 0;
 	cost.loadCostume(a->costume);
-	cost._mirror = a->facing!=0 || (cost._ptr[7]&0x80);
+	cost._mirror = newDirToOldDir(a->facing)!=0 || (cost._ptr[7]&0x80);
 
-	if (cost.drawCostume(a)) {
-		a->needRedraw = true;
-		a->needBgReset = true;;
-	}
+	cost.drawCostume(a);
 }
+#else
+void Scumm::drawActorCostume(Actor *a) {
+	AkosRenderer ar;
+
+	if (a==NULL || !a->needRedraw)
+		return;
+
+	a->needRedraw = false;
+
+	setupActorScale(a);
+
+	ar.x = a->x - virtscr->xstart;
+	ar.y = a->y - a->elevation;
+	ar.scale_x = a->scalex;
+	ar.scale_y = a->scaley;
+	ar.clipping = a->forceClip;
+	if (ar.clipping == 100) {
+		ar.clipping = a->mask;
+		if (ar.clipping > (byte)gdi._numZBuffer)
+			ar.clipping = gdi._numZBuffer;
+	}
+	ar.charsetmask = _vars[VAR_CHARSET_MASK]!=0;
+
+	ar.outptr = getResourceAddress(rtBuffer, 1) + virtscr->xstart;
+	ar.outwidth = virtscr->width;
+	ar.outheight = virtscr->height;
+
+	ar.shadow_mode = a->shadow_mode;
+	ar.shadow_table = _shadowPalette;
+
+	akos_setCostume(&ar, a->costume);
+	akos_setPalette(&ar, a->palette);
+	akos_setFacing(&ar, a);
+
+	ar.dirty_id = a->number;
+
+	ar.cd = &a->cost;
+	
+	ar.draw_top = a->top = 0x7fffffff;
+	ar.draw_bottom = a->bottom = 0;
+	akos_drawCostume(&ar);
+	a->top = ar.draw_top;
+	a->bottom = ar.draw_bottom;
+}
+#endif
 
 void Scumm::actorAnimate(Actor *a) {
-	if (a==NULL)
+	byte *akos;
+
+	if (a==NULL || a->costume == 0)
 		return;
 	
 	a->animProgress++;
 	if (a->animProgress >= a->animSpeed) {
 		a->animProgress = 0;
+
+#if defined(FULL_THROTTLE)
+		akos = getResourceAddress(rtCostume, a->costume);
+		assert(akos);
+		if (akos_increaseAnims(akos, a)) {
+#else
 		cost.loadCostume(a->costume);
-		if (cost.animate(&a->cost)) {
+		if (cost.animate(a)) {
+#endif
 			a->needRedraw = true;
 			a->needBgReset = true;
 		}
@@ -924,14 +917,14 @@ void Scumm::actorAnimate(Actor *a) {
 }
 
 void Scumm::setActorRedrawFlags() {
-	int i,j;
-	int bits;
+	uint i,j;
+	uint32 bits;
 
 	for (i=0; i<40; i++) {
-		bits = actorDrawBits[_screenStartStrip+i];
-		if (bits&0x3FFF) {
-			for(j=0; j<_maxActors; j++) {
-				if ((bits&(1<<j)) && bits!=(1<<j)) {
+		bits = gfxUsageBits[_screenStartStrip+i];
+		if (bits&0x3FFFFFFF) {
+			for(j=0; j<NUM_ACTORS; j++) {
+				if ((bits&(1<<j)) && bits!=(uint32)(1<<j)) {
 					Actor *a = derefActor(j);
 					a->needRedraw = true;
 					a->needBgReset = true;
@@ -942,13 +935,13 @@ void Scumm::setActorRedrawFlags() {
 }
 
 int Scumm::getActorFromPos(int x, int y) {
-	uint16 drawbits;
+	uint32 drawbits;
 	int i;
 
-	drawbits = actorDrawBits[x>>3];
-	if (!(drawbits & 0x3FFF))
+	drawbits = gfxUsageBits[x>>3];
+	if (!(drawbits & 0x3FFFFFFF))
 		return 0;
-	for (i=1; i<_maxActors; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		Actor *a = derefActor(i);
 		if (drawbits&(1<<i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
 			return i;
@@ -977,7 +970,10 @@ void Scumm::actorTalk() {
 			if (!_keepText)
 				stopTalk();
 			_vars[VAR_TALK_ACTOR] = a->number;
-			startAnimActor(a,a->talkFrame1,a->facing);
+			if (!string[0].no_talk_anim) {
+				startAnimActor(a,a->talkFrame1);
+				_useTalkAnims = true;
+			}
 			oldact = _vars[VAR_TALK_ACTOR];
 		}
 	}
@@ -1019,31 +1015,24 @@ void Scumm::setActorCostume(Actor *a, int c) {
 void Scumm::startWalkActor(Actor *a, int x, int y, int dir) {
 	AdjustBoxResult abr;
 
-	abr = adjustXYToBeInBox(a, x, y);
-
-	_xPos = abr.x;
-	_yPos = abr.y;
+	abr = adjustXYToBeInBox(a, x, y, a->walkbox);
 
 	if (a->room != _currentRoom) {
-		a->x = _xPos;
-		a->y = _yPos;
-		if (dir != 0xFF)
+		a->x = abr.x;
+		a->y = abr.y;
+		if (dir != -1)
 			a->facing = dir;
 		return;
 	}
 
 	if (a->ignoreBoxes!=0) {
-		abr.x = _xPos;
-		abr.y = _yPos;
 		abr.dist = 0;
 		a->walkbox = 0;
 	} else {
-		if (checkXYInBoxBounds(a->walkdata.destbox, _xPos,_yPos)) {
-			abr.x = _xPos;
-			abr.y = _yPos;
+		if (checkXYInBoxBounds(a->walkdata.destbox, abr.x,abr.y)) {
 			abr.dist = a->walkdata.destbox;
 		} else {
-			abr = adjustXYToBeInBox(a, _xPos, _yPos);
+			abr = adjustXYToBeInBox(a, abr.x, abr.y, a->walkbox);
 		}
 		if (a->moving && a->walkdata.destdir == dir
 			&& a->walkdata.destx == abr.x
@@ -1052,10 +1041,7 @@ void Scumm::startWalkActor(Actor *a, int x, int y, int dir) {
 	}
 
 	if (a->x==abr.x && a->y==abr.y) {
-		if (dir!=0xFF && dir!=a->facing) {
-			a->newDirection = dir;
-			a->moving = 4;
-		}
+		turnToDirection(a, dir);
 		return;
 	}
 
@@ -1068,8 +1054,101 @@ void Scumm::startWalkActor(Actor *a, int x, int y, int dir) {
 }
 
 byte *Scumm::getActorName(Actor *a) {
-	byte *ptr = getResourceAddress(9, a->number);
+	byte *ptr = getResourceAddress(rtActorName, a->number);
 	if(ptr==NULL)
 		return (byte*)" ";
 	return ptr;
+}
+
+bool Scumm::isCostumeInUse(int cost) {
+	int i;
+	Actor *a;
+
+	if (_roomResource!=0)
+		for (i=1; i<NUM_ACTORS; i++) {
+			a = derefActor(i);
+			if (a->room == _currentRoom && a->costume == cost)
+				return true;
+		}
+
+	return false;
+}
+
+void Scumm::remapActor(Actor *a, int r_fact, int g_fact, int b_fact, int threshold) {
+	byte *akos, *rgbs,*akpl;
+	int akpl_size, i;
+	int r,g,b;
+	byte akpl_color;
+
+	if (a->room != _currentRoom) {
+		warning("Remap actor %d not in current room",a->number);
+		return;
+	}
+
+	if (a->costume < 1 || a->costume >= _numCostumes-1){
+		warning("Remap actor %d invalid costume",a->number,a->costume);
+		return;
+	}
+
+	akos = getResourceAddress(rtCostume, a->costume);
+	akpl = findResource(MKID('AKPL'), akos);
+	
+	//get num palette entries
+	akpl_size=RES_SIZE(akpl) - 8;
+
+	//skip resource header
+	akpl = RES_DATA(akpl);
+	
+	rgbs = findResource(MKID('RGBS'), akos);
+
+	if (!rgbs) {
+		warning("Can't remap actor %d costume %d doesn't contain an RGB block",a->number,a->costume);
+		return;
+	}
+	// skip resource header
+	rgbs = RES_DATA(rgbs);
+	
+	for(i=0; i<akpl_size; i++) {
+		r=*rgbs++;
+		g=*rgbs++;
+		b=*rgbs++;
+
+		akpl_color=*akpl++;
+
+		// allow remap of generic palette entry?
+		if (!a->shadow_mode || akpl_color>=16) {
+			if (r_fact!=256) r = (r*r_fact) >> 8;
+			if (g_fact!=256) g = (g*g_fact) >> 8;
+			if (b_fact!=256) b = (b*b_fact) >> 8;
+			a->palette[i]=remapPaletteColor(r,g,b,threshold);
+		}
+	}
+}
+
+void Scumm::setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to) {
+	byte *table;
+	int i,num;
+	byte *curpal;
+
+	if (slot<0 || slot > 7)
+		error("setupShadowPalette: invalid slot %d", slot);
+
+	if (from<0 || from>255 || to<0 || from>255 || to < from)
+		error("setupShadowPalette: invalid range from %d to %d", from, to);
+
+	table = _shadowPalette + slot * 256;
+	for(i=0; i<256; i++)
+		table[i] = i;
+
+	table += from;
+	curpal = _currentPalette + from*3;
+	num = to - from + 1;
+	do {
+		*table++ = remapPaletteColor(
+			curpal[0] * rfact >> 8,
+			curpal[1] * gfact >> 8,
+			curpal[2] * bfact >> 8,
+			(uint)-1);
+		curpal+=3;
+	} while (--num);
 }

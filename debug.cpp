@@ -5,37 +5,30 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.7.2.1  2001/11/12 16:27:25  yazoo
- * The dig and Full Throttle support
- *
- * Revision 1.3  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.2  2001/10/23 19:56:57  strigeus
- * fixed spelling error
- *
- * Revision 1.1  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- *
+ * $Header$
  */
+
+/*
+ * Readline and command completion support by Tom Dunstan <tommyd@senet.com.au>
+ */
+
 
 #include "stdafx.h"
 #include "scumm.h"
 
+#ifdef HAVE_READLINE
+#include "debugrl.h"
+#endif
 
 enum {
 	CMD_INVALID,
@@ -44,6 +37,8 @@ enum {
 	CMD_GO,
 	CMD_ACTOR,
 	CMD_SCRIPTS,
+	CMD_LOAD_ROOM,
+	CMD_EXIT
 };
 
 void ScummDebugger::attach(Scumm *s) {
@@ -55,6 +50,9 @@ void ScummDebugger::attach(Scumm *s) {
 	s->_debugger = this;
 
 	_go_amount = 1;
+#ifdef HAVE_READLINE
+	initialize_readline();
+#endif
 }
 
 bool ScummDebugger::do_command() {
@@ -62,10 +60,15 @@ bool ScummDebugger::do_command() {
 
 	switch(get_command()) {
 	case CMD_HELP:
-		printf("Debugger commands:\n"
-		       "help -> display this help text\n"
-			   "quit -> quit the debugger\n"
-			   "go [numframes] -> increase frame\n"
+		printf(
+				"Debugger commands:\n"
+				"(h)elp -> display this help text\n"
+				"(q)uit -> quit the debugger\n"
+				"(g)o [numframes] -> increase frame\n"
+				"(a)ctor [actornum] -> show actor information\n"
+				"(r)oom roomnum -> load room\n"
+				"(s)cripts -> show running scripts\n"
+				"(e)xit -> exit game\n"
 			   );
 		return true;
 
@@ -88,9 +91,21 @@ bool ScummDebugger::do_command() {
 	case CMD_SCRIPTS:
 		printScripts();
 		return true;
-	}
+	case CMD_LOAD_ROOM:
+		if (!_parameters[0]) {
+			printf("Enter a room number...\n");
+		} else {	
+			int room=atoi(_parameters);
+			_s->actor[_s->_vars[VAR_EGO]].room=room;
+			_s->startScene(room, 0, 0);
+			_s->_fullRedraw = 1;
+		}
+		return true;
 
-	return true;
+	case CMD_EXIT:
+		exit(1);
+	}
+	/* this line is never reached */
 }
 
 void ScummDebugger::enter() {
@@ -128,6 +143,8 @@ static const DebuggerCommands debugger_commands[] = {
 	{ "g", 1, CMD_GO },
 	{ "a", 1, CMD_ACTOR },
 	{ "s", 1, CMD_SCRIPTS },
+	{ "r", 1, CMD_LOAD_ROOM },
+	{ "e", 1, CMD_EXIT },
 	{ 0, 0, 0 },
 };
 
@@ -135,8 +152,11 @@ int ScummDebugger::get_command() {
 	const DebuggerCommands *dc;
 	char *s;
 	int i;
+	static char *buf;
 
 	do {
+#ifndef HAVE_READLINE
+		buf = _cmd_buffer;
 		printf("debug> ");
 		if (!fgets(_cmd_buffer, sizeof(_cmd_buffer), stdin))
 			return CMD_QUIT;
@@ -147,11 +167,26 @@ int ScummDebugger::get_command() {
 
 		if (i==0)
 			continue;
-						
+					
+#else // yes we do have readline
+		if(buf) {
+		  free(buf);
+		}
+		buf = readline("debug> ");
+		if(!buf) {
+		  printf("\n");
+		  return CMD_QUIT;
+		}
+		if(strlen(buf) == 0) {
+			continue;
+		}
+		add_history(buf);
+#endif
+
 		dc = debugger_commands;
 		do {
-			if (!strncmp(_cmd_buffer, dc->text, dc->len)) {
-				for(s=_cmd_buffer;*s;s++) {
+			if (!strncmp(buf, dc->text, dc->len)) {
+				for(s=buf;*s;s++) {
 					if (*s==32) { s++; break; }
 				}
 				_parameters = s;
@@ -159,9 +194,9 @@ int ScummDebugger::get_command() {
 			}
 		} while ((++dc)->text[0]);
 		
-		for(s=_cmd_buffer;*s;s++)
+		for(s=buf;*s;s++)
 			if (*s==32) { *s=0; break; }
-		printf("Invalid command '%s'. Type 'help' for a list of available commands.\n", _cmd_buffer);
+		printf("Invalid command '%s'. Type 'help' for a list of available commands.\n", buf);
 	} while (1);
 }
 
@@ -169,33 +204,33 @@ void ScummDebugger::printActors(int act) {
 	int i;
 	Actor *a;
 
-	if (act==-1) {
-		printf("+--------------------------------------------------------------+\n");
-		printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|\n");
-		printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
-		for(i=1; i<_s->_maxActors; i++) {
+	printf("+--------------------------------------------------------------+\n");
+	printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|\n");
+	printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
+	for(i=1; i<NUM_ACTORS; i++) {
+		if (act==-1 || act==i) {
 			a = &_s->actor[i];
 			if (a->visible)
 				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|\n",
-					i,a->room,a->x,a->y,a->elevation,a->costume,a->width,a->walkbox,a->moving,a->neverZClip,a->animIndex,a->scalex,a->speedx,a->facing);
+					i,a->room,a->x,a->y,a->elevation,a->costume,a->width,a->walkbox,a->moving,a->forceClip,a->frame,a->scalex,a->speedx,a->facing);
 		}
-		printf("+--------------------------------------------------------------+\n");
 	}
+	printf("+--------------------------------------------------------------+\n");
 }
 
 void ScummDebugger::printScripts() {
 	int i;
 	ScriptSlot *ss;
 
-	printf("+----------------------------------+\n");
-	printf("|# |num |sta|typ|un1|un2|fc|cut|un5|\n");
-	printf("+--+----+---+---+---+---+--+---+---+\n");
+	printf("+---------------------------------+\n");
+	printf("|# |num|sta|typ|un1|un2|fc|cut|un5|\n");
+	printf("+--+---+---+---+---+---+--+---+---+\n");
 	for(i=0; i<25; i++) {
 		ss = &_s->vm.slot[i];
 		if (ss->number) {
-			printf("|%2d|%4d|%3d|%3d|%3d|%3d|%2d|%3d|%3d|\n",
-				i, ss->number, ss->status, ss->type, ss->unk1, ss->unk2, ss->freezeCount, ss->cutsceneOverride, ss->unk5);
+			printf("|%2d|%3d|%3d|%3d|%3d|%3d|%2d|%3d|%3d|\n",
+				i, ss->number, ss->status, ss->where, ss->unk1, ss->unk2, ss->freezeCount, ss->cutsceneOverride, ss->unk5);
 		}
 	}
-	printf("+----------------------------------+\n");
+	printf("+---------------------------------+\n");
 }
