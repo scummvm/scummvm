@@ -45,7 +45,6 @@ public:
 	void	pop()				{ if (_size > 0) _stack[--_size] = 0; }
 };
 
-
 class EventList {
 protected:
 	OSystem::Event	_stack[100];

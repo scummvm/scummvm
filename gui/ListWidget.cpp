@@ -27,11 +27,7 @@
 
 /*
  * TODO:
- * - The handleKey method of widgets is currently never called, code for that has
- *   to be added to dialog.cpp
- * - Once the above item is done, implement scrolling using arrow keys,
- *   pageup/pagedown, home/end keys etc.
- * - Allow user to select an entry w/ the mouse
+ * - Implement scrolling using arrow keys, pageup/pagedown, home/end keys etc.
  * - Implement editing of the selected string in a generic fashion
  */
 

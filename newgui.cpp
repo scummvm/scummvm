@@ -80,7 +80,7 @@ void NewGui::loop()
 		saveState();
 		if (_use_alpha_blending)
 			activeDialog->setupScreenBuf();
-#if 1
+#if 0
 		// FIXME - hack to encode our own custom GUI colors. Since we have to live
 		// with a given 8 bit palette, the result is not always as nice as one
 		// would wish, but this is just an experiment after all.
@@ -94,7 +94,9 @@ void NewGui::loop()
 #endif
 		_prepare_for_gui = false;
 	}
-	
+
+	activeDialog->handleTickle();
+
 	if (_need_redraw) {
 		activeDialog->draw();
 		_need_redraw = false;
@@ -118,16 +120,16 @@ void NewGui::loop()
 //					activeDialog->handleKeyUp(t.kbd.ascii, t.kbd.flags);
 					break;
 				case OSystem::EVENT_MOUSEMOVE:
-					activeDialog->handleMouseMoved(t.mouse.x, t.mouse.y, 0);
+					activeDialog->handleMouseMoved(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 0);
 					break;
 				// We don't distinguish between mousebuttons (for now at least)
 				case OSystem::EVENT_LBUTTONDOWN:
 				case OSystem::EVENT_RBUTTONDOWN:
-					activeDialog->handleMouseDown(t.mouse.x, t.mouse.y, 1);
+					activeDialog->handleMouseDown(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 1);
 					break;
 				case OSystem::EVENT_LBUTTONUP:
 				case OSystem::EVENT_RBUTTONUP:
-					activeDialog->handleMouseUp(t.mouse.x, t.mouse.y, 1);
+					activeDialog->handleMouseUp(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 1);
 					break;
 			}
 		}

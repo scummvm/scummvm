@@ -32,7 +32,9 @@ enum {
 	WIDGET_BORDER		= 1 << 3,
 	WIDGET_CLEARBG		= 1 << 4,
 	WIDGET_WANT_TICKLE	= 1 << 5,
-	WIDGET_TRACK_MOUSE	= 1 << 6
+	WIDGET_TRACK_MOUSE	= 1 << 6,
+	WIDGET_RETAIN_FOCUS	= 1 << 7		// Retain focus on mouse up. By default widgets lose focus on mouseup, but some widgets might want to retain it - widgets where you enter text, for instance
+
 };
 
 enum {
@@ -75,13 +77,14 @@ public:
 class Widget {
 friend class Dialog;
 protected:
-	int			_type;
+	uint32		_type;
 	Dialog		*_boss;
 	Widget		*_next;
 	int16		_x, _y;
 	uint16		_w, _h;
 	uint16		_id;
-	int			_flags;
+	uint16		_flags;
+
 public:
 	Widget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~Widget() {}
@@ -93,6 +96,7 @@ public:
 	virtual void handleMouseMoved(int x, int y, int button) {}
 	virtual void handleKeyDown(char key, int modifiers) {}
 	virtual void handleKeyUp(char key, int modifiers) {}
+	virtual void handleTickle() {}
 	void draw();
 
 	void setFlags(int flags)	{ _flags |= flags; }
@@ -132,7 +136,7 @@ public:
 	void setCmd(uint32 cmd)					{ _cmd = cmd; }
 	uint32 getCmd() const					{ return _cmd; }
 
-	void handleMouseDown(int x, int y, int button);
+	void handleMouseUp(int x, int y, int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 };

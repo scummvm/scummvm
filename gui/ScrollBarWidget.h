@@ -27,6 +27,7 @@ enum {
 	kScrollBarWidth		= 9
 };
 
+
 enum {
 	kSetPositionCmd		= 'SETP'
 };
@@ -34,24 +35,27 @@ enum {
 
 class ScrollBarWidget : public Widget, public CommandSender {
 protected:
-	enum {
+	typedef enum {
 		kNoPart,
 		kUpArrowPart,
 		kDownArrowPart,
 		kSliderPart,
 		kPageUpPart,
 		kPageDownPart
-	}		_part;
+	} Part;
+	
+	Part	_part;
 	int		_sliderHeight;
 	int		_sliderPos;
 
-	bool	_isDraggingSlider;
+	Part	_draggingPart;
 	int		_sliderDeltaMouseDownPos;
 
 public:
 	int		_numEntries;
 	int		_entriesPerPage;
 	int		_currentPos;
+
 public:
 	ScrollBarWidget(Dialog *boss, int x, int y, int w, int h);
 
@@ -60,13 +64,16 @@ public:
 	void handleMouseMoved(int x, int y, int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; draw(); }
-
-	// FIXME: Shouldn't these be private?
+	void handleTickle();
+	
+	// FIXME - this should be private, but then we also have to add accessors
+	// for _numEntries, _entriesPerPage and _currentPos. This again leads to the question:
+	// should these accessors force a redraw?
 	void recalc();
 
 protected:
 	void drawWidget(bool hilite);
-	void checkbounds();
+	void checkBounds(int old_pos);
 };
 
 

@@ -40,15 +40,6 @@ void Dialog::setupScreenBuf()
 	// Draw the fixed parts of the dialog: background and border.
 	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor);
 	_gui->box(_x, _y, _w, _h);
-
-	// Draw a bgcolor rectangle for all widgets which have WIDGET_CLEARBG set. 
-	Widget *w = _firstWidget;
-	while (w) {
-		if (w->_flags & WIDGET_CLEARBG)
-			_gui->fillRect(_x + w->_x, _y + w->_y, w->_w, w->_h, _gui->_bgcolor);
-		// FIXME - should we also draw borders here if WIDGET_BORDER is set?
-		w = w->_next;
-	}
 	
 	// Finally blit this to _screenBuf
 	_gui->blitTo(_screenBuf, _x, _y, _w, _h); 
@@ -82,18 +73,30 @@ void Dialog::draw()
 
 void Dialog::handleMouseDown(int x, int y, int button)
 {
-	// FIXME: If outside focused widget, widget loses focus
+	_focusedWidget = findWidget(x, y);
 
-	Widget *w = findWidget(x - _x, y - _y);
-	if (w)
-		w->handleMouseDown(x - _x - w->_x, y - _y - w->_y, button);
+	if (_focusedWidget) {
+		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button);
+	}
 }
 
 void Dialog::handleMouseUp(int x, int y, int button)
 {
-	Widget *w = findWidget(x - _x, y - _y);
+	Widget *w;
+	
+	if (_focusedWidget) {
+		w = _focusedWidget;
+		
+		// Lose focus on mouseup unless the widget requested to retain the focus
+		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS ))
+			_focusedWidget = 0;
+
+	} else {
+		w = findWidget(x, y);
+	}
+
 	if (w)
-		w->handleMouseUp(x - _x - w->_x, y - _y - w->_y, button);
+		w->handleMouseUp(x - w->_x, y - w->_y, button);
 }
 
 void Dialog::handleKeyDown(char key, int modifiers)
@@ -102,53 +105,76 @@ void Dialog::handleKeyDown(char key, int modifiers)
 	if (key == 27)
 		close();
 	
-	// FIXME: Only if not focused widget
-
-	// Hotkey handling
-	Widget *w = _firstWidget;
-	key = toupper(key);
-	while (w) {
-		if (w->_type == kButtonWidget && key == toupper(((ButtonWidget *)w)->_hotkey)) {
-			// FIXME: Calling both handlers is bad style, but we don't really know which one we're supposed to call
-			w->handleMouseDown(0, 0, 1);
-			w->handleMouseUp(0, 0, 1);
-			break;
+	if (_focusedWidget) {
+		_focusedWidget->handleKeyDown(key, modifiers);
+	} else {
+		// Hotkey handling
+		Widget *w = _firstWidget;
+		key = toupper(key);
+		while (w) {
+			if (w->_type == kButtonWidget && key == toupper(((ButtonWidget *)w)->_hotkey)) {
+				// We first send a mouseDown then a mouseUp.
+				// FIXME: insert a brief delay between both.
+				w->handleMouseDown(0, 0, 1);
+				w->handleMouseUp(0, 0, 1);
+				break;
+			}
+			w = w->_next;
 		}
-		w = w->_next;
 	}
-	
-	// TODO - introduce the notion of a "focused" widget which receives
-	// key events (by calling its handleKey method). Required for editfields
-	// and also for an editable list widget.
 }
 
 void Dialog::handleKeyUp(char key, int modifiers)
 {
-	// FIXME: Focused widget recieves keyup
+	// Focused widget recieves keyup events
+	if (_focusedWidget)
+		_focusedWidget->handleKeyUp(key, modifiers);
 }
 
 void Dialog::handleMouseMoved(int x, int y, int button)
 {
-	Widget *w = findWidget(x - _x, y - _y);
-
-	if (_mouseWidget != w) {
-		if (_mouseWidget)
-			_mouseWidget->handleMouseLeft(button);
-		if (w)
-			w->handleMouseEntered(button);
-		_mouseWidget = w;
-	} 
-
-	if (!w)
-		return;
+	Widget *w;
 	
-	if (w->getFlags() & WIDGET_TRACK_MOUSE) {
-		w->handleMouseMoved(x - _x - w->_x, y - _y - w->_y, button);
-	}
+	if (_focusedWidget) {
+		w = _focusedWidget;
+		
+		// We still send mouseEntered/Left messages to the focused item
+		// (but to no other items).
+		bool mouseInFocusedWidget = (x >= w->_x && x < w->_x + w->_w && y >= w->_y && y < w->_y + w->_h);
+		if (mouseInFocusedWidget && _mouseWidget != w) {
+			_mouseWidget = w;
+			w->handleMouseEntered(button);
+		} else if (!mouseInFocusedWidget && _mouseWidget == w) {
+			_mouseWidget = 0;
+			w->handleMouseLeft(button);
+		}
+			
+	} else {
+		w = findWidget(x, y);
 
-	//FIXME: Focused widget recieves mouseup
+		if (_mouseWidget != w) {
+			if (_mouseWidget)
+				_mouseWidget->handleMouseLeft(button);
+			if (w)
+				w->handleMouseEntered(button);
+			_mouseWidget = w;
+		} 
+
+		if (!w || !(w->getFlags() & WIDGET_TRACK_MOUSE)) {
+			return;
+		}
+	}
+	
+	w->handleMouseMoved(x - w->_x, y - w->_y, button);
 }
 
+void Dialog::handleTickle()
+{
+	// Focused widget recieves tickle notifications
+	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE) {
+		_focusedWidget->handleTickle();
+	}
+}
 
 void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
@@ -167,8 +193,8 @@ Widget *Dialog::findWidget(int x, int y)
 {
 	Widget *w = _firstWidget;
 	while (w) {
-		// Stop as soon as we find a fidget that contains (x,y)
-		if (x >= w->_x && x <= w->_x + w->_w && y >= w->_y && y <= w->_y + w->_h)
+		// Stop as soon as we find a widget that contains the point (x,y)
+		if (x >= w->_x && x < w->_x + w->_w && y >= w->_y && y < w->_y + w->_h)
 			break;
 		w = w->_next;
 	}
@@ -177,6 +203,8 @@ Widget *Dialog::findWidget(int x, int y)
 
 void Dialog::close()
 {
+	_mouseWidget = 0;
+	_focusedWidget = 0;
 	_gui->closeTopDialog();
 }
 

@@ -36,27 +36,30 @@ enum {
 
 class Dialog : public CommandReceiver {
 	friend class Widget;
+	friend class NewGui;
 protected:
 	NewGui	*_gui;
-	Widget	*_firstWidget;
 	int16	_x, _y;
 	uint16	_w, _h;
+	Widget	*_firstWidget;
 	Widget	*_mouseWidget;
+	Widget  *_focusedWidget;
 	byte	*_screenBuf;
 
 public:
 	Dialog(NewGui *gui, int x, int y, int w, int h)
-		: _gui(gui), _firstWidget(0), _x(x), _y(y), _w(w), _h(h), _mouseWidget(0), _screenBuf(0)
+		: _gui(gui), _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
+		  _mouseWidget(0), _focusedWidget(0), _screenBuf(0)
 		{}
 	virtual ~Dialog();
 
 	virtual void draw();
 
-	//virtual void handleIdle(); // Called periodically
+	virtual void handleTickle(); // Called periodically (in every guiloop() )
 	virtual void handleMouseDown(int x, int y, int button);
 	virtual void handleMouseUp(int x, int y, int button);
-	virtual void handleKeyDown(char key, int modifiers); // modifiers = alt/shift/ctrl etc.
-	virtual void handleKeyUp(char key, int modifiers); // modifiers = alt/shift/ctrl etc.
+	virtual void handleKeyDown(char key, int modifiers);
+	virtual void handleKeyUp(char key, int modifiers);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	

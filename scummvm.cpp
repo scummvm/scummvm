@@ -1493,7 +1493,6 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	g_mixer = &scumm->_mixer[0];
 	/* END HACK */
 
-//	scumm->_fullScreen = detector->_fullScreen;
 	scumm->_debugMode = detector->_debugMode;
 	scumm->_bootParam = detector->_bootParam;
 	scumm->_gameDataPath = detector->_gameDataPath;

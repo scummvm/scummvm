@@ -60,11 +60,11 @@ static uint32 down_arrow[8] = {
 ScrollBarWidget::ScrollBarWidget(Dialog *boss, int x, int y, int w, int h)
 	: Widget (boss, x, y, w, h), CommandSender(boss)
 {
-	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
+	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE;
 	_type = kScrollBarWidget;
 
 	_part = kNoPart;
-	_isDraggingSlider = false;
+	_draggingPart = kNoPart;
 
 }
 
@@ -75,37 +75,33 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button)
 	if (y <= UP_DOWN_BOX_HEIGHT) {
 		// Up arrow
 		_currentPos--;
+		_draggingPart = kUpArrowPart;
 	} else if (y >= _h - UP_DOWN_BOX_HEIGHT) {
 		// Down arrow
 		_currentPos++;
+		_draggingPart = kDownArrowPart;
 	} else if (y < _sliderPos) {
 		_currentPos -= _entriesPerPage;
 	} else if (y >= _sliderPos + _sliderHeight) {
 		_currentPos += _entriesPerPage;
 	} else {
-		_isDraggingSlider = true;
+		_draggingPart = kSliderPart;
 		_sliderDeltaMouseDownPos = y - _sliderPos;
 	}
 
 	// Make sure that _currentPos is still inside the bounds
-	checkbounds();
-
-	if (old_pos != _currentPos) {
-		recalc();
-		draw();
-		sendCommand(kSetPositionCmd, _currentPos);
-	}
+	checkBounds(old_pos);
 }
 
 void ScrollBarWidget::handleMouseUp(int x, int y, int button)
 {
-	if (_isDraggingSlider)
-		_isDraggingSlider = false;
+	if (_draggingPart != kNoPart)
+		_draggingPart = kNoPart;
 }
 
 void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
 {
-	if (_isDraggingSlider) {
+	if (_draggingPart == kSliderPart) {
 		int old_pos = _currentPos;
 		_sliderPos = y - _sliderDeltaMouseDownPos;
 
@@ -118,12 +114,7 @@ void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
 		_currentPos =
 			(_sliderPos - UP_DOWN_BOX_HEIGHT) * (_numEntries - _entriesPerPage) / (_h - _sliderHeight -
 																																						 2 * UP_DOWN_BOX_HEIGHT);
-		checkbounds();
-
-		if (_currentPos != old_pos) {
-			draw();
-			sendCommand(kSetPositionCmd, _currentPos);
-		}
+		checkBounds(old_pos);
 	} else {
 		int old_part = _part;
 
@@ -143,12 +134,39 @@ void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
 	}
 }
 
-void ScrollBarWidget::checkbounds()
+void ScrollBarWidget::handleTickle()
+{
+/*
+	// FIXME - this code is supposed to allow for "click-repeat" (like key repeat),
+	// i.e. if you click on one of the arrows and keep clicked, it will scroll
+	// continously. However, just like key repeat, this requires two delays:
+	// First an "initial" delay that has to pass before repeating starts (otherwise
+	// it is near to impossible to achieve single clicks). Secondly, a repeat delay
+	// that determines how often per second a click is simulated.
+	int old_pos = _currentPos;
+
+	if (_draggingPart == kUpArrowPart)
+		_currentPos--;
+	else if (_draggingPart == kDownArrowPart)
+		_currentPos++;
+
+	// Make sure that _currentPos is still inside the bounds
+	checkBounds(old_pos);
+*/
+}
+
+void ScrollBarWidget::checkBounds(int old_pos)
 {
 	if (_currentPos > _numEntries - _entriesPerPage)
 		_currentPos = _numEntries - _entriesPerPage;
 	else if (_currentPos < 0)
 		_currentPos = 0;
+
+	if (old_pos != _currentPos) {
+		recalc();
+		draw();
+		sendCommand(kSetPositionCmd, _currentPos);
+	}
 }
 
 void ScrollBarWidget::recalc()
@@ -171,6 +189,9 @@ void ScrollBarWidget::drawWidget(bool hilite)
 	int bottomY = _y + _h;
 
 	gui->frameRect(_x, _y, _w, _h, gui->_shadowcolor);
+
+	if (_draggingPart != kNoPart)
+		_part = _draggingPart;
 
 	// Up arrow
 	gui->frameRect(_x, _y, _w, UP_DOWN_BOX_HEIGHT, gui->_color);

@@ -34,7 +34,7 @@ Widget::Widget (Dialog *boss, int x, int y, int w, int h)
 
 void Widget::draw()
 {
-	NewGui *gui = _boss->_gui;
+	NewGui *gui = _boss->getGui();
 	
 	if (_flags & WIDGET_INVISIBLE)
 		return;
@@ -127,9 +127,9 @@ ButtonWidget::~ButtonWidget()
 	}
 }
 
-void ButtonWidget::handleMouseDown(int x, int y, int button)
+void ButtonWidget::handleMouseUp(int x, int y, int button)
 {
-	if (_flags & WIDGET_ENABLED)
+	if (_flags & WIDGET_ENABLED && x >= 0 && x < _w && y >= 0 && y < _h)
 		sendCommand(_cmd, 0);
 }
 
