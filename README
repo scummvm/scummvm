@@ -653,7 +653,7 @@ Credits:
         Peter Moraliyski   - GP32 port
         Nicolas Noble      - Config file and ALSA support
         Lionel Ulmer       - X11 backend
-	Joost Peters       - Beneath a Steel Sky support
+        Joost Peters       - Beneath a Steel Sky support
 
  Contributors:
         Janne Huttunen     - V3 actor mask support, Dig/FT SMUSH audio
