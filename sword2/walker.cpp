@@ -99,7 +99,7 @@ int32 FN_walk(int32 *params) {
 
 		// invalid direction (NB. '8' means end walk on ANY direction)
 		if (params[6] < 0 || params[6] > 8)
-			Con_fatal_error("Invalid direction (%d) in FN_walk (%s line %u)", params[6], __FILE__, __LINE__);
+			Con_fatal_error("Invalid direction (%d) in FN_walk", params[6]);
 
 		ob_walkdata = (Object_walkdata *) params[3];
 
@@ -290,11 +290,11 @@ int32 FN_walk_to_anim(int32 *params) {
 			pars[5] = standby_y;
 			pars[6] = standby_dir;
 
-			Zdebug("WARNING: FN_walk_to_anim(%s) used standby coords", FetchObjectName(params[4]));
+			debug(5, "WARNING: FN_walk_to_anim(%s) used standby coords", FetchObjectName(params[4]));
 		}
 
 		if (pars[6] < 0 || pars[6] > 7)
-			Con_fatal_error("Invalid direction (%d) in FN_walk_to_anim (%s line %u)", pars[6], __FILE__, __LINE__);
+			Con_fatal_error("Invalid direction (%d) in FN_walk_to_anim", pars[6]);
 	}
 
 	// set up the rest of the parameters for FN_walk()
@@ -333,7 +333,7 @@ int32 FN_turn(int32 *params) {
 
 	if (ob_logic->looping == 0) {
 		if (params[4] < 0 || params[4] > 7)
-			Con_fatal_error("Invalid direction (%d) in FN_turn (%s line %u)", params[4], __FILE__, __LINE__);
+			Con_fatal_error("Invalid direction (%d) in FN_turn", params[4]);
 
 	 	ob_mega = (Object_mega *) params[2];
 	
@@ -370,7 +370,7 @@ int32 FN_stand_at(int32 *params) {
 	// check for invalid direction
 
 	if (params[4] < 0 || params[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in FN_stand_at (%s line %u)", params[4], __FILE__, __LINE__);
+		Con_fatal_error("Invalid direction (%d) in FN_stand_at", params[4]);
 
 	// set up pointers to the graphic & mega structure
 
@@ -448,11 +448,11 @@ int32 FN_stand_after_anim(int32 *params) {
 		pars[3] = standby_y;
 		pars[4] = standby_dir;
 
-		Zdebug("WARNING: FN_stand_after_anim(%s) used standby coords", FetchObjectName(params[2]));
+		debug(5, "WARNING: FN_stand_after_anim(%s) used standby coords", FetchObjectName(params[2]));
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in FN_stand_after_anim (%s line %u)", pars[4], __FILE__, __LINE__);
+		Con_fatal_error("Invalid direction (%d) in FN_stand_after_anim", pars[4]);
 
 	// close the anim file
 	res_man.Res_close(params[2]);
@@ -495,11 +495,11 @@ int32 FN_stand_at_anim(int32 *params) {
 		pars[3] = standby_y;
 		pars[4] = standby_dir;
 
-		Zdebug("WARNING: FN_stand_at_anim(%s) used standby coords", FetchObjectName(params[2]));
+		debug(5, "WARNING: FN_stand_at_anim(%s) used standby coords", FetchObjectName(params[2]));
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in FN_stand_after_anim (%s line %u)", pars[4], __FILE__, __LINE__);
+		Con_fatal_error("Invalid direction (%d) in FN_stand_after_anim", pars[4]);
 
 	// close the anim file
 	res_man.Res_close(params[2]);
@@ -689,8 +689,8 @@ int32 FN_walk_to_talk_to_mega(int32 *params) {
 
 		mega_seperation= (mega_seperation * scale) / 256;
 
-		// Zdebug("seperation %d", mega_seperation);
-		// Zdebug(" target x %d, y %d", engine_mega.feet_x, engine_mega.feet_y);
+		debug(5, "seperation %d", mega_seperation);
+		debug(5, " target x %d, y %d", engine_mega.feet_x, engine_mega.feet_y);
 
 		if (engine_mega.feet_x < ob_mega->feet_x)
 		{
@@ -790,7 +790,7 @@ int32 FN_set_standby_coords(int32 *params) {
 	//		2 direction (0..7)
 
 	if (params[2] < 0 || params[2] > 7)
-		Con_fatal_error("Invalid direction (%d) in FN_set_standby_coords (%s line %u)", params[2], __FILE__, __LINE__);
+		Con_fatal_error("Invalid direction (%d) in FN_set_standby_coords", params[2]);
 
 	standby_x = (int16) params[0];
 	standby_y = (int16) params[1];

@@ -31,10 +31,6 @@
 #define IR_REPEAT			3
 #define IR_GOSUB			4
 
-#define DEBUG				if (g_debugFlag) Zdebug
-
-#define ASSERT(x)		 	{ if (!(x)) { Zdebug("Interpreter ASSERT %s,%d", __FILE__, __LINE__); Con_fatal_error("Assert error in interpreter"); } }
-
 // Get parameter fix so that the playstation version can handle words not on
 // word boundaries
 

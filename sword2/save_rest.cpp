@@ -455,16 +455,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	// Write to walkthrough file (zebug0.txt)
 
-#ifdef _SWORD2_DEBUG
-	Zdebug(0, "*************************************");
-	Zdebug(0, "RESTORED GAME \"%s\"", g_header.description);
-	Zdebug(0, "*************************************");
-
-	// Also write this to system debug file
- 	Zdebug("*************************************");
-	Zdebug("RESTORED GAME \"%s\"", g_header.description);
-	Zdebug("*************************************");
-#endif
+	debug(5, "RESTORED GAME \"%s\"", g_header.description);
 
 	// game restored ok
 	return SR_OK;
@@ -528,7 +519,7 @@ void GetPlayerStructures(void) {
 	head = (_standardHeader*) res_man.Res_open(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("incorrect CUR_PLAYER_ID=%d (%s line %u)", CUR_PLAYER_ID, __FILE__, __LINE__);
+		Con_fatal_error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
 
 	raw_script_ad = (char *) head;
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);
@@ -547,7 +538,7 @@ void PutPlayerStructures(void) {
 	head = (_standardHeader*) res_man.Res_open(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("incorrect CUR_PLAYER_ID=%d (%s line %u)", CUR_PLAYER_ID, __FILE__, __LINE__);
+		Con_fatal_error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
 
 	raw_script_ad = (char *) head;
 

@@ -68,7 +68,7 @@ int32 FN_request_speech(int32 *params) {
 	}
 
 	if (j == MAX_events)
-		Con_fatal_error("FN_set_event out of event slots (%s line %u)", __FILE__, __LINE__);
+		Con_fatal_error("FN_set_event out of event slots");
 
 	//found that slot
 
@@ -159,7 +159,7 @@ int32 FN_send_event(int32 *params) {
 
 	uint32 j = 0;
 
-	// Zdebug("*+*+* %d %d", params[0], params[1]);
+	debug(5, "FN_send_event(%d, %d)", params[0], params[1]);
 
 	// search for an existing event or a slot
 

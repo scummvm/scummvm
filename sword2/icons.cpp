@@ -33,11 +33,11 @@ uint32 total_masters=0;
 int32 FN_add_menu_object(int32 *params) {
 	// param	0 pointer to a menu_object structure to copy down
 
-	// Zdebug("FN_add_menu_object icon res");
+	debug(5, "FN_add_menu_object icon res");
 
 #ifdef _SWORD2_DEBUG
 	if (total_temp == TOTAL_engine_pockets)
-		Con_fatal_error("TOTAL_engine_pockets exceeded! (%s line %u)", __FILE__, __LINE__);
+		Con_fatal_error("TOTAL_engine_pockets exceeded!");
 #endif
 
 	// copy the structure to our in-the-engine list
@@ -81,7 +81,7 @@ void Build_top_menu(void) {
 	// reset temp list which will be totally rebuilt
 	total_temp = 0;
 
-	// Zdebug("\nbuild top menu %d", total_masters);
+	debug(5, "build top menu %d", total_masters);
 
 	// clear the temp list before building a new temp list in-case list
 	// gets smaller. check each master
@@ -116,7 +116,7 @@ void Build_top_menu(void) {
 			if (!res) {
 				// otherwise not in temp so kill in main
 				master_menu_list[j].icon_resource = 0;
-				// Zdebug("Killed menu %d",j);
+				debug(5, "Killed menu %d", j);
 			}
 		}
 	}
@@ -209,7 +209,7 @@ void Build_top_menu(void) {
 		} else {
 			// no icon here
 			SetMenuIcon(RDMENU_BOTTOM, j, NULL);
-			// Zdebug(" NULL for %d", j);
+			debug(5, " NULL for %d", j);
 		}
 	}
 

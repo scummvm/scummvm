@@ -303,7 +303,7 @@ void Build_display(void) {	//Tony21Sept96
 
 		rv = DrawSprite(&spriteInfo);
 		if (rv)
-			ExitWithReport("Driver Error %.8x (drawing console) [%s line %u]", rv, __FILE__, __LINE__);
+			error("Driver Error %.8x (drawing console)", rv);
 
 		CopyScreenBuffer();
 	} else{
@@ -366,7 +366,7 @@ void DisplayMsg(uint8 *text, int time) {
 
 	rv = DrawSprite(&spriteInfo);
 	if (rv)
-		ExitWithReport("Driver Error %.8x (in DisplayMsg) [%s line %u]", rv, __FILE__, __LINE__);
+		error("Driver Error %.8x (in DisplayMsg)", rv);
 
 	spriteInfo.x = oldX;
 	spriteInfo.y = oldY;
@@ -396,7 +396,7 @@ void DisplayMsg(uint8 *text, int time) {
 
 		rv = DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
 		if (rv)
-			ExitWithReport("Driver Error %.8x (in DisplayMsg) [%s line %u]", rv, __FILE__, __LINE__);
+			error("Driver Error %.8x (in DisplayMsg)", rv);
 
 		// Drivers change the y co-ordinate, don't know why...
 		spriteInfo.y = oldY;
@@ -552,7 +552,7 @@ void Process_layer(uint32 layer_number) {
 
 	rv = DrawSprite(&spriteInfo);
 	if (rv)
-		ExitWithReport("Driver Error %.8x in Process_layer(%d) [%s line %u]", rv, layer_number, __FILE__, __LINE__);
+		error("Driver Error %.8x in Process_layer(%d)", rv, layer_number);
 
 	res_man.Res_close(this_screen.background_layer_id);
 }
@@ -633,7 +633,7 @@ void Process_image(buildit *build_unit) {
 	spriteInfo.type = spriteType;
 	spriteInfo.blend = anim_head->blend;
 	// points to just after frame header, ie. start of sprite data
-	spriteInfo.data = (uint8*) (frame_head + 1);
+	spriteInfo.data = (uint8 *) (frame_head + 1);
 	spriteInfo.colourTable	= colTablePtr;
 
 #ifdef _SWORD2_DEBUG
@@ -680,13 +680,15 @@ void Process_image(buildit *build_unit) {
 
 // #ifdef _SWORD2_DEBUG
 //	if (frame_head->width <= 1) {
-//		Zdebug(8,"WARNING: 1-pixel-wide frame found in %s (%d)", FetchObjectName(build_unit->anim_resource), build_unit->anim_resource);
+//		debug(5, "WARNING: 1-pixel-wide frame found in %s (%d)", FetchObjectName(build_unit->anim_resource), build_unit->anim_resource);
 //	}
 // #endif
 
 	rv = DrawSprite(&spriteInfo);
 	if (rv)
-		ExitWithReport("Driver Error %.8x with sprite %s (%d) in Process_image [%s line %u]", rv, FetchObjectName(build_unit->anim_resource), build_unit->anim_resource, __FILE__, __LINE__);
+		error("Driver Error %.8x with sprite %s (%d) in Process_image",
+			rv, FetchObjectName(build_unit->anim_resource),
+			build_unit->anim_resource);
 
 	// release the anim resource
 	res_man.Res_close(build_unit->anim_resource);
@@ -759,7 +761,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 
 #ifdef _SWORD2_DEBUG
 	if (ob_graph->anim_resource == 0)
-		Con_fatal_error("ERROR: %s(%d) has no anim resource in Register_frame [line=%d file=%s]", FetchObjectName(ID), ID, __LINE__, __FILE__);
+		Con_fatal_error("ERROR: %s(%d) has no anim resource in Register_frame", FetchObjectName(ID), ID);
 #endif
 
 	file = res_man.Res_open(ob_graph->anim_resource);
@@ -847,7 +849,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 		if (ob_mouse->pointer) {
 #ifdef _SWORD2_DEBUG
 			if (cur_mouse == TOTAL_mouse_list)
-				Con_fatal_error("ERROR: mouse_list full [%s line %u]",__FILE__,__LINE__);
+				Con_fatal_error("ERROR: mouse_list full");
 #endif
 
 			mouse_list[cur_mouse].x1 = build_unit->x;
@@ -897,7 +899,7 @@ int32 FN_register_frame(int32 *params) {
 	case BGP0_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_bgp0 == MAX_bgp0_sprites)
-			Con_fatal_error("ERROR: bgp0_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
+			Con_fatal_error("ERROR: bgp0_list full in FN_register_frame");
 #endif
 
 		Register_frame(params, &bgp0_list[cur_bgp0]);
@@ -906,7 +908,7 @@ int32 FN_register_frame(int32 *params) {
 	case BGP1_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_bgp1 == MAX_bgp1_sprites)
-			Con_fatal_error("ERROR: bgp1_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
+			Con_fatal_error("ERROR: bgp1_list full in FN_register_frame");
 #endif
 
 		Register_frame(params, &bgp1_list[cur_bgp1]);
@@ -915,7 +917,7 @@ int32 FN_register_frame(int32 *params) {
 	case BACK_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_back == MAX_back_sprites)
-			Con_fatal_error("ERROR: back_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
+			Con_fatal_error("ERROR: back_list full in FN_register_frame");
 #endif
 
 		Register_frame(params, &back_list[cur_back]);
@@ -924,7 +926,7 @@ int32 FN_register_frame(int32 *params) {
 	case SORT_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_sort == MAX_sort_sprites)
-			Con_fatal_error("ERROR: sort_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
+			Con_fatal_error("ERROR: sort_list full in FN_register_frame");
 #endif
 
 		sort_order[cur_sort] = cur_sort;
@@ -934,7 +936,7 @@ int32 FN_register_frame(int32 *params) {
 	case FORE_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fore == MAX_fore_sprites)
-			Con_fatal_error("ERROR: fore_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
+			Con_fatal_error("ERROR: fore_list full in FN_register_frame");
 #endif
 
 		Register_frame(params, &fore_list[cur_fore]);
@@ -943,7 +945,7 @@ int32 FN_register_frame(int32 *params) {
 	case FGP0_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fgp0 == MAX_fgp0_sprites)
-			Con_fatal_error("ERROR: fgp0_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
+			Con_fatal_error("ERROR: fgp0_list full in FN_register_frame");
 #endif
 
 		Register_frame(params, &fgp0_list[cur_fgp0]);
@@ -952,7 +954,7 @@ int32 FN_register_frame(int32 *params) {
 	case FGP1_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fgp1 == MAX_fgp1_sprites)
-			Con_fatal_error("ERROR: fgp1_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
+			Con_fatal_error("ERROR: fgp1_list full in FN_register_frame");
 #endif
 
 		Register_frame(params, &fgp1_list[cur_fgp1]);
@@ -1011,7 +1013,7 @@ int32 FN_update_player_stats(int32 *params) {
 
 	SCROLL_OFFSET_X = this_screen.scroll_offset_x;
 
-	// Zdebug(42,"%d %d", ob_mega->feet_x, ob_mega->feet_y);
+	debug(5, "FN_Update_player_stats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
 
 	return IR_CONT;
 }
@@ -1103,7 +1105,7 @@ void SetFullPalette(int32 palRes) {
 
 #ifdef _SWORD2_DEBUG
 		if (head->fileType != PALETTE_FILE)
- 			Con_fatal_error("FN_set_palette() called with invalid resource! (%s line %u)",__FILE__,__LINE__);
+ 			Con_fatal_error("FN_set_palette() called with invalid resource!");
 #endif
 
 		file = (uint8*) (head + 1);
@@ -1144,7 +1146,7 @@ void SetFullPalette(int32 palRes) {
 			// close screen file
 	  		res_man.Res_close(this_screen.background_layer_id);
 		} else
-			Con_fatal_error("FN_set_palette(0) called, but no current screen available! (%s line %u)",__FILE__,__LINE__);
+			Con_fatal_error("FN_set_palette(0) called, but no current screen available!");
 	}
 }
 
@@ -1160,7 +1162,7 @@ int32 FN_change_shadows(int32 *params) {
 		rv = CloseLightMask();
 
 		if (rv)
-			ExitWithReport("Driver Error %.8x [%s line %u]", rv, __FILE__, __LINE__);
+			error("Driver Error %.8x [%s line %u]", rv);
 
 		this_screen.mask_flag = 0;
 	}

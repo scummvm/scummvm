@@ -38,6 +38,7 @@
 // MemMan v1.1
 
 #include "stdafx.h"
+#include "driver/driver96.h"
 #include "debug.h"
 #include "memory.h"
 #include "resman.h"
@@ -79,8 +80,7 @@ void Init_memory_manager(void) {
 	memory_base = (uint8 *) malloc(total_free_memory);
 
 	if (!memory_base) {	//could not grab the memory
-		Zdebug("couldn't malloc %d in Init_memory_manager", total_free_memory);
-		ExitWithReport("Init_memory_manager() couldn't malloc %d bytes [line=%d file=%s]", total_free_memory, __LINE__, __FILE__);
+		error("Init_memory_manager() couldn't malloc %d bytes", total_free_memory);
 	}
 
 	// the original malloc address
@@ -206,7 +206,7 @@ mem *Talloc(uint32 size, uint32 type, uint32 unique_id) {
 		// up and we need to alert the developer
 		// Lets get a printout of this
 		Mem_debug();
-		ExitWithReport("ERROR: ran out of mem blocks in Talloc() [file=%s line=%u]", __FILE__, __LINE__);
+		error("Out of mem blocks in Talloc()");
 	}
 
 	mem_list[spawn].state = MEM_free;	// new block is free
@@ -462,14 +462,14 @@ void Mem_debug(void) {
 		{ "MEM_float" }
 	};
 
-	Zdebug("\nbase %d total %d", base_mem_block, total_blocks);
+	debug(5, "base %d total %d", base_mem_block, total_blocks);
 
 	// first in mem list order
 	for (j = 0; j < MAX_mem_blocks; j++) {
 		if (mem_list[j].state == MEM_null)
-			Zdebug("%d- NULL", j);
+			debug(5, "%d- NULL", j);
 		else
-			Zdebug("%d- state %s, ad %d, size %d, p %d, c %d, id %d",
+			debug(5, "%d- state %s, ad %d, size %d, p %d, c %d, id %d",
 				j, inf[mem_list[j].state], mem_list[j].ad,
 				mem_list[j].size, mem_list[j].parent,
 				mem_list[j].child, mem_list[j].uid);
@@ -478,7 +478,7 @@ void Mem_debug(void) {
 	// now in child/parent order
 	j = base_mem_block;
 	do {
-		Zdebug(" %d- state %s, ad %d, size %d, p %d, c %d", j, 
+		debug(5, " %d- state %s, ad %d, size %d, p %d, c %d", j, 
 			inf[mem_list[j].state], mem_list[j].ad,
 			mem_list[j].size, mem_list[j].parent,
 			mem_list[j].child, mem_list[j].uid);
@@ -499,16 +499,14 @@ mem *Twalloc(uint32 size, uint32 type, uint32 unique_id) {
 	while (VirtualDefrag(size)) {
 		// trash the oldest closed resource
 		if (!res_man.Help_the_aged_out()) {
-			Zdebug("Twalloc ran out of memory! %d %d %d\n", size, type, unique_id);
-			ExitWithReport("Twalloc ran out of memory!");
+			error("Twalloc ran out of memory: size=%d type=%d unique_id=%d", size, type, unique_id);
 		}
 	}
 
 	membloc = Talloc(size, type, unique_id);
 
 	if (membloc == 0) {
-		Zdebug("Talloc failed to get memory VirtualDefrag said was there");
-		ExitWithReport("Talloc failed to get memory VirtualDefrag said was there");
+		error("Talloc failed to get memory VirtualDefrag said was there");
 	}
 
 	j = base_mem_block;

@@ -37,7 +37,7 @@
 #define MENUDEEP 40		// Temporary, until menu.h is written!
 
 
-
+#if 0
 //-----------------------------------------------------------------------------
 
 void Zdebug(const char *format,...) {
@@ -68,6 +68,7 @@ void Zdebug(const char *format,...) {
 #endif
 #endif
 }
+#endif
 
 //-----------------------------------------------------------------------------
 //	OSystem Event Handler. Full of cross platform goodness and 99% fat free!

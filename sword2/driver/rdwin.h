@@ -17,29 +17,8 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	rdwin.h
-//	Created		:	20th August 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the rdwin.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//
-//=============================================================================
-
-
 #ifndef RDWIN_H
 #define RDWIN_H
-
-/*
-extern HWND			hwnd;			// handle to the current window
-extern RECT			rcWindow;		// size of the current window.
-
-extern void Message(LPSTR fmt, ...);
-*/
 
 extern void SetNeedRedraw(void);
 

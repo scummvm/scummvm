@@ -78,7 +78,7 @@ int logic::Process_session(void) {
 
 		res_man.Res_close(run_list);
 
-		// Zdebug("%d", ID);
+		debug(5, "%d", ID);
 
 		// null terminated
 		if (!ID) {
@@ -93,10 +93,10 @@ int logic::Process_session(void) {
 
 		cur_object_hub = (_object_hub *) (head + 1);
 
-		// Zdebug(" %d id(%d) pc(%d)",
-		//	cur_object_hub->logic_level,
-		//	cur_object_hub->script_id[cur_object_hub->logic_level],
-		//	cur_object_hub->script_pc[cur_object_hub->logic_level]);
+		debug(5, " %d id(%d) pc(%d)",
+			cur_object_hub->logic_level,
+			cur_object_hub->script_id[cur_object_hub->logic_level],
+			cur_object_hub->script_pc[cur_object_hub->logic_level]);
 
 		// do the logic for this object
 		// we keep going until a function says to stop - remember,
@@ -113,9 +113,9 @@ int logic::Process_session(void) {
 			if (script / SIZE == ID) {
 				// its our script
 
-				// Zdebug("run script %d pc%d",
-				//	script / SIZE,
-				//	cur_object_hub->script_pc[LEVEL]);
+				debug(5, "run script %d pc%d",
+					script / SIZE,
+					cur_object_hub->script_pc[LEVEL]);
 
 				// this is the script data
 				// raw_script_ad = (char *) (cur_object_hub + 1);
@@ -164,7 +164,7 @@ int logic::Process_session(void) {
 					// be different this time and simply
 					// let it restart next go :-)
 
-					// Zdebug("**WARNING object %d script 0 terminated!", id);
+					debug(5, "**WARNING object %d script 0 terminated!", id);
 
 					// reset to rerun
 					cur_object_hub->script_pc[LEVEL] = cur_object_hub->script_id[LEVEL] & 0xffff;
@@ -173,7 +173,7 @@ int logic::Process_session(void) {
 					ret = 0;
 				}
 			} else if (ret > 2) {
-				Con_fatal_error("Process_session: illegal script return type %d (%s line %u)", ret, __FILE__, __LINE__);
+				Con_fatal_error("Process_session: illegal script return type %d", ret);
 			}
 
 			// if ret == 2 then we simply go around again - a new
@@ -209,7 +209,7 @@ int logic::Process_session(void) {
 	// leaving a room so remove all ids that must reboot correctly
 	Process_kill_list();
 
-	Zdebug("RESTART the loop");
+	debug(5, "RESTART the loop");
 
 	// means restart the loop
 	return 1;
@@ -297,9 +297,9 @@ void logic::Logic_up(uint32 new_script)	{
 	if (cur_object_hub->logic_level == 3)
 		Con_fatal_error("Logic_up id %d has run off script tree! :-O", ID);
 
-	//setup new script on next level (not the current level)
+	// setup new script on next level (not the current level)
 
-	// Zdebug("new pc = %d", new_script & 0xffff);
+	debug(5, "new pc = %d", new_script & 0xffff);
 
 	cur_object_hub->script_id[cur_object_hub->logic_level] = new_script;
 	cur_object_hub->script_pc[cur_object_hub->logic_level] = new_script & 0xffff;
@@ -422,7 +422,7 @@ int32 FN_add_to_kill_list(int32 *params) {
 #ifdef _SWORD2_DEBUG
 			// no room at the inn
 			if (kills == OBJECT_KILL_LIST_SIZE)
-				Con_fatal_error("List full in FN_add_to_kill_list(%u) (%s line %u)", ID, __FILE__, __LINE__);
+				Con_fatal_error("List full in FN_add_to_kill_list(%u)", ID);
 #endif
 
 			// add this 'ID' to the kill list

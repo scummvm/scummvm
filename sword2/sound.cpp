@@ -129,10 +129,8 @@ void Trigger_fx(uint8 j) {
 		}
 	}
 
-#ifdef _SWORD2_DEBUG
 	if (rv)
-		Zdebug("SFX ERROR: PlayFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
-#endif
+		debug(5, "SFX ERROR: PlayFx() returned %.8x", rv);
 }
 
 // called from script only
@@ -177,7 +175,7 @@ int32 FN_play_fx(int32 *params) {
 			strcpy(type, "INVALID");
 		}
 
-		Zdebug("SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);
+		debug(5, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);
 	}
 #endif
 
@@ -211,7 +209,7 @@ int32 FN_play_fx(int32 *params) {
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*) data;
 		if (header->fileType != WAV_FILE)
-			Con_fatal_error("FN_play_fx given invalid resource (%s line %u)", __FILE__, __LINE__);
+			Con_fatal_error("FN_play_fx given invalid resource");
 #endif
 
 		// but then releases it to "age" out if the space is needed
@@ -227,7 +225,7 @@ int32 FN_play_fx(int32 *params) {
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*)data;
 		if (header->fileType != WAV_FILE)
-			Con_fatal_error("FN_play_fx given invalid resource (%s line %u)", __FILE__, __LINE__);
+			Con_fatal_error("FN_play_fx given invalid resource");
 #endif
 
 		data += sizeof(_standardHeader);
@@ -235,10 +233,8 @@ int32 FN_play_fx(int32 *params) {
 		// copy it to sound memory, using position in queue as 'id'
 		rv = g_sound->OpenFx(id, data);
 
-#ifdef _SWORD2_DEBUG
 		if (rv)
-			Zdebug("SFX ERROR: OpenFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
-#endif
+			debug(5, "SFX ERROR: OpenFx() returned %.8x", rv);
 
 		// release the sample
 		res_man.Res_close(fxq[j].resource);
@@ -271,7 +267,7 @@ int32 FN_set_fx_vol_and_pan(int32 *params) {
 	//		1 new volume (0..16)
 	//		2 new pan (-16..16)
 
-	// Zdebug("%d", params[2]);
+	debug(5, "FN_set_fx_vol_and_pan(%d, %d, %d)", params[0], params[1], params[2]);
 
 	// SetFxVolumePan(int32 id, uint8 vol, uint8 pan);
 	// driver fx_id is 1 + <pos in queue>
@@ -310,10 +306,8 @@ int32 FN_stop_fx(int32 *params) {
 		// stop fx & remove sample from sound memory
 		rv = g_sound->CloseFx(id);
 
-#ifdef _SWORD2_DEBUG
 		if (rv)
-			Zdebug("SFX ERROR: CloseFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
-#endif
+			debug(5, "SFX ERROR: CloseFx() returned %.8x", rv);
 	}
 
 	// remove from queue
@@ -379,7 +373,7 @@ int32 FN_play_music(int32 *params) {
 	bool loopFlag;
 	uint32 rv;
 
-	// Zdebug("FN_play_music(%d)", params[0]);
+	debug(5, "FN_play_music(%d, %d)", params[0], params[1]);
 
 	if (params[1] == FX_LOOP) {
 		loopFlag = true;
@@ -414,12 +408,8 @@ int32 FN_play_music(int32 *params) {
 
 	rv = g_sound->StreamCompMusic(filename, params[0], loopFlag);
 
-#ifdef _SWORD2_DEBUG
-		if (rv)
-	 		Zdebug("ERROR: StreamCompMusic(%s, %d, %d) returned error 0x%.8x", filename, params[0], loopFlag, rv);
-#endif
-
-	// Zdebug("FN_play_music(%d) returning", params[0]);
+	if (rv)
+		debug(5, "ERROR: StreamCompMusic(%s, %d, %d) returned error 0x%.8x", filename, params[0], loopFlag, rv);
 
 	return IR_CONT;
 }
@@ -454,15 +444,15 @@ void PauseAllSound(void) {
 
 	rv = g_sound->PauseMusic();
 	if (rv != RD_OK)
-		Zdebug("ERROR: PauseMusic() returned %.8x in PauseAllSound()", rv);
+		debug(5, "ERROR: PauseMusic() returned %.8x in PauseAllSound()", rv);
 
 	rv = g_sound->PauseSpeech();
 	if (rv != RD_OK)
-		Zdebug("ERROR: PauseSpeech() returned %.8x in PauseAllSound()", rv);
+		debug(5, "ERROR: PauseSpeech() returned %.8x in PauseAllSound()", rv);
 
 	rv = g_sound->PauseFx();
 	if (rv != RD_OK)
-		Zdebug("ERROR: PauseFx() returned %.8x in PauseAllSound()", rv);
+		debug(5, "ERROR: PauseFx() returned %.8x in PauseAllSound()", rv);
 }
 
 void UnpauseAllSound(void) {
@@ -470,13 +460,13 @@ void UnpauseAllSound(void) {
 
 	rv = g_sound->UnpauseMusic();
 	if (rv != RD_OK)
-		Zdebug("ERROR: UnpauseMusic() returned %.8x in UnpauseAllSound()", rv);
+		debug(5, "ERROR: UnpauseMusic() returned %.8x in UnpauseAllSound()", rv);
 
 	rv = g_sound->UnpauseSpeech();
 	if (rv != RD_OK)
-		Zdebug("ERROR: UnpauseSpeech() returned %.8x in UnpauseAllSound()", rv);
+		debug(5, "ERROR: UnpauseSpeech() returned %.8x in UnpauseAllSound()", rv);
 
 	rv = g_sound->UnpauseFx();
  	if (rv != RD_OK)
-		Zdebug("ERROR: UnpauseFx() returned %.8x in UnpauseAllSound()", rv);
+		debug(5, "ERROR: UnpauseFx() returned %.8x in UnpauseAllSound()", rv);
 }

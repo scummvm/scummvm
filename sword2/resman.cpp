@@ -105,21 +105,17 @@ void resMan::InitResMan(void) {
 	total_clusters = 0;
 
 	if (!file.open("resource.inf")) {
-		Zdebug("InitResMan cannot *OPEN* resource.inf");
-		ExitWithReport("InitResMan cannot *OPEN* resource.inf [file=%s line=%u]", __FILE__, __LINE__);
+		error("InitResMan cannot *OPEN* resource.inf");
 	}
 
 	end = file.size();
-
-	// Zdebug("seek end %d %d", fh, end);
 
 	//get some space for the incoming resource file - soon to be trashed
 	temp = Twalloc(end, MEM_locked, UID_temp);
 
 	if (file.read(temp->ad, end) != end) {
 		file.close();
-		Zdebug("InitResMan cannot *READ* resource.inf");
-		ExitWithReport("InitResMan cannot *READ* resource.inf [file=%s line=%u]", __FILE__, __LINE__);
+		error("InitResMan cannot *READ* resource.inf");
 	}
 
 	file.close();
@@ -149,8 +145,7 @@ void resMan::InitResMan(void) {
 
 	// now load in the binary id to res conversion table
 	if (!file.open("resource.tab")) {
-		Zdebug("InitResMan cannot *OPEN* resource.tab");
-		ExitWithReport("InitResMan cannot *OPEN* resource.tab [file=%s line=%u]", __FILE__, __LINE__);
+		error("InitResMan cannot *OPEN* resource.tab");
 	}
 
 	// find how many resources
@@ -166,15 +161,13 @@ void resMan::InitResMan(void) {
 
 	if (file.ioFailed()) {
 		file.close();
-		Zdebug("InitResMan cannot *READ* resource.tab");
-		ExitWithReport("InitResMan cannot *READ* resource.tab [file=%s line=%u]", __FILE__, __LINE__);
+		error("InitResMan cannot *READ* resource.tab");
 	}
 
 	file.close();
 
 	if (!file.open("cd.inf")) {
-		Zdebug("InitResMan cannot *OPEN* cd.inf");
-		ExitWithReport("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]", __FILE__, __LINE__);
+		error("InitResMan cannot *OPEN* cd.inf");
 	}
 
 	_cd_inf *cdInf = new _cd_inf[total_clusters];
@@ -184,8 +177,7 @@ void resMan::InitResMan(void) {
 		cdInf[j].cd = file.readByte();
 		
 		if (file.ioFailed()) {
-			Zdebug("InitResMan failed to read cd.inf. Insufficient entries?");
-			ExitWithReport("InitResMan failed to read cd.inf. Insufficient entries? [file=%s line=%u]", __FILE__, __LINE__);
+			error("InitResMan failed to read cd.inf. Insufficient entries?");
 		}
 	}
 
@@ -198,17 +190,15 @@ void resMan::InitResMan(void) {
 			i++;
 
 		if (i == total_clusters) {
-			Zdebug("InitResMan, %s is not in cd.inf", resource_files[j]);
-			ExitWithReport("InitResMan, %s is not in cd.inf [file=%s line=%u]",resource_files[j], __FILE__, __LINE__);
+			error("InitResMan, %s is not in cd.inf",resource_files[j]);
 		} else
 			cdTab[j] = cdInf[i].cd;
 	}
 
 
-	Zdebug("\n%d resources in %d cluster files", total_res_files, total_clusters);
+	debug(5, "%d resources in %d cluster files", total_res_files, total_clusters);
 	for (j = 0; j < total_clusters; j++)
-		Zdebug("filename of cluster %d: -%s", j, resource_files[j]);
-	Zdebug("");
+		debug(5, "filename of cluster %d: -%s", j, resource_files[j]);
 
 	// create space for a list of pointers to mem's
 	resList = (mem **) malloc(total_res_files * sizeof(mem *));
@@ -241,8 +231,7 @@ void resMan::InitResMan(void) {
 		cdDrives[index++] = 'C';
 		
 		if (index == 0) {
-			Zdebug("InitResMan, cannot find CD drive.");
-			ExitWithReport("InitResMan, cannot find CD drive. [file=%s line=%u]", __FILE__, __LINE__);
+			error("InitResMan, cannot find CD drive");
 		}
 
 		while (index < 24)
@@ -487,7 +476,7 @@ uint8 *resMan::Res_open(uint32 res) {
 
 		// first we have to find the file via the res_conv_table
 
-		// Zdebug("resOpen %s res %d", resource_files[parent_res_file], res);
+		debug(5, "resOpen %s res %d", resource_files[parent_res_file], res);
 
 		// ** at this point here we start to think about where the
 		// ** file is and prompt the user for the right CD to be
@@ -532,10 +521,10 @@ uint8 *resMan::Res_open(uint32 res) {
 		// 1st DWORD of a cluster is an offset to the look-up table
 		table_offset = file.readUint32LE();
 
-		// Zdebug("table offset = %d", table_offset);
+		debug(5, "table offset = %d", table_offset);
 
 		// 2 dwords per resource
-		file.seek(table_offset + actual_res *8, SEEK_SET);
+		file.seek(table_offset + actual_res * 8, SEEK_SET);
 		// get position of our resource within the cluster file
 		pos = file.readUint32LE();
 		// read the length
@@ -544,7 +533,7 @@ uint8 *resMan::Res_open(uint32 res) {
 		// ** get to position in file of our particular resource
 		file.seek(pos, SEEK_SET);
 
-		// Zdebug("res len %d", len);
+		debug(5, "res len %d", len);
 
 		// ok, we know the length so try and allocate the memory
 		// if it can't then old files will be ditched until it works
@@ -566,7 +555,7 @@ uint8 *resMan::Res_open(uint32 res) {
 		convertEndian((uint8 *)resList[res]->ad, len);
 #endif
 	} else {
-		// Zdebug("RO %d, already open count=%d", res, count[res]);
+		debug(5, "RO %d, already open count=%d", res, count[res]);
 	}
 
 	// number of times opened - the file won't move in memory while count
@@ -743,7 +732,7 @@ uint32 resMan::Help_the_aged_out(void) {
 	if (!oldest_res)
 		return 0;
 
-	// Zdebug(42,"removing %d, age %d, size %d", oldest_res, age[oldest_res], resList[oldest_res]->size);
+	debug(5, "removing %d, age %d, size %d", oldest_res, age[oldest_res], resList[oldest_res]->size);
 
 	// trash this old resource
 
@@ -921,9 +910,9 @@ void resMan::Remove_res(uint32 res) {
 	if (age[res]) {
 		age[res] = 0;		//effectively gone from resList
 		Free_mem(resList[res]);	//release the memory too
-		// Zdebug(" - Trashing %d", res);
+		debug(5, " - Trashing %d", res);
 	} else
-		Zdebug("Remove_res(%d) not even in memory!",res);
+		debug(5, "Remove_res(%d) not even in memory!", res);
 }
 
 void resMan::Remove_all_res(void) {
@@ -978,7 +967,7 @@ void resMan::Kill_all_res(uint8 wantInfo) {
 				// want info
 				if (wantInfo && console_status) {
 					Print_to_console(" nuked %5d: %s", res, header->name);
-					Zdebug(" nuked %d: %s", res, header->name);
+					debug(5, " nuked %d: %s", res, header->name);
 					Build_display();
 
 					scrolls++;
@@ -1050,7 +1039,7 @@ void resMan::Kill_all_objects(uint8 wantInfo) {
 					// if this was called from the console + we want info
 					if (wantInfo && console_status)	{
 						Print_to_console(" nuked %5d: %s", res, header->name);
-						Zdebug(" nuked %d: %s", res, header->name);
+						debug(5, " nuked %d: %s", res, header->name);
 						Build_display();
 
 						scrolls++;
@@ -1111,8 +1100,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 		file = fopen("cd.inf", "r+b");
 
 		if (file == NULL) {
-			Zdebug("CacheNewCluster cannot *OPEN* cd.inf");
-			Con_fatal_error("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]", __FILE__, __LINE__);
+			Con_fatal_error("InitResMan cannot *OPEN* cd.inf");
 		}
 
 		_cd_inf cdInf;
@@ -1122,7 +1110,6 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 		} while ((scumm_stricmp((char *) cdInf.clusterName, resource_files[i]) != 0) && !feof(file));
 
 		if (feof(file)) {
-			Zdebug("CacheNewCluster cannot find %s in cd.inf", resource_files[i]);
 			Con_fatal_error("CacheNewCluster cannot find %s in cd.inf", resource_files[i]);
 		}
 
@@ -1167,8 +1154,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	outFile.open(resource_files[newCluster], NULL, File::kFileWriteMode);
 
 	if (!inFile.isOpen() || !outFile.isOpen()) {
-		Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
-		Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
+		Con_fatal_error("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
 	}
 
 	_spriteInfo textSprite;
@@ -1250,8 +1236,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 		realRead = inFile.read(buffer, BUFFERSIZE);
 		read += realRead;
 		if (outFile.write(buffer, realRead) != realRead) {
-			Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
-			Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
+			Con_fatal_error("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
 		}
 
 		if (step == stepSize) {
@@ -1283,8 +1268,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	} while ((read % BUFFERSIZE) == 0);
 
 	if (read != size) {
-		Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
-		Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
+		Con_fatal_error("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
 	}
 
 	inFile.close();
@@ -1308,8 +1292,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	file = fopen("cd.inf", "r+b");
 
 	if (file == NULL) {
-		Zdebug("CacheNewCluster cannot *OPEN* cd.inf");
-		Con_fatal_error("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]", __FILE__, __LINE__);
+		Con_fatal_error("InitResMan cannot *OPEN* cd.inf");
 	}
 
 	_cd_inf cdInf;
@@ -1319,7 +1302,6 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	} while (scumm_stricmp((char *) cdInf.clusterName, resource_files[newCluster]) != 0 && !feof(file));
 
 	if (feof(file)) {
-		Zdebug("CacheNewCluster cannot find %s in cd.inf", resource_files[newCluster]);
 		Con_fatal_error("CacheNewCluster cannot find %s in cd.inf", resource_files[newCluster]);
 	}
 
@@ -1386,7 +1368,7 @@ void resMan::GetCd(int cd) {
 		// must be running off the network, but still want to see
 		// CD-requests to show where they would occur when playing
 		// from CD
-		Zdebug("RUNNING OFF NETWORK");
+		debug(5, "RUNNING OFF NETWORK");
 
 		fscanf(file, "%s", cdPath);
 		fclose(file);

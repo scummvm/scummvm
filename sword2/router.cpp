@@ -652,9 +652,9 @@ int32 SmoothestPath() {
 
 #ifdef _SWORD2_DEBUG
 		if (options == 0) {
-			Zdebug("BestTurns fail %d %d %d %d", route[p].x, route[p].y, route[p + 1].x, route[p + 1].y);
-			Zdebug("BestTurns fail %d %d %d %d", turns[0], turns[1], turns[2], options);
-			Con_fatal_error("BestTurns failed (%s line %u)", __FILE__, __LINE__);
+			debug(5, "BestTurns fail %d %d %d %d", route[p].x, route[p].y, route[p + 1].x, route[p + 1].y);
+			debug(5, "BestTurns fail %d %d %d %d", turns[0], turns[1], turns[2], options);
+			Con_fatal_error("BestTurns failed");
 		}
 #endif
 
@@ -670,9 +670,9 @@ int32 SmoothestPath() {
 
 #ifdef _SWORD2_DEBUG
 		if (steps == 0) {
-			Zdebug("BestTurns failed %d %d %d %d", route[p].x, route[p].y, route[p + 1].x, route[p + 1].y);
-			Zdebug("BestTurns failed %d %d %d %d", turns[0], turns[1], turns[2], options);
-			Con_fatal_error("BestTurns failed (%s line %u)", __FILE__, __LINE__);
+			debug(5, "BestTurns failed %d %d %d %d", route[p].x, route[p].y, route[p + 1].x, route[p + 1].y);
+			debug(5, "BestTurns failed %d %d %d %d", turns[0], turns[1], turns[2], options);
+			Con_fatal_error("BestTurns failed");
 		}
 #endif
 
@@ -935,17 +935,17 @@ void EarlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata) {
 	int32 walk_pc;
 	_walkData *walkAnim;
 
-	// Zdebug("\nEARLY SLOW-OUT");
+	debug(5, "EARLY SLOW-OUT");
 
 	LoadWalkData(ob_walkdata);
 
-	// Zdebug("********************************");
-	// Zdebug("framesPerStep              =%d", framesPerStep);
-	// Zdebug("numberOfSlowOutFrames      =%d", numberOfSlowOutFrames);
-	// Zdebug("firstWalkingTurnLeftFrame  =%d", firstWalkingTurnLeftFrame);
-	// Zdebug("firstWalkingTurnRightFrame =%d", firstWalkingTurnRightFrame);
-	// Zdebug("firstSlowOutFrame          =%d", firstSlowOutFrame);
-	// Zdebug("********************************");
+	debug(5, "********************************");
+	debug(5, "framesPerStep = %d", framesPerStep);
+	debug(5, "numberOfSlowOutFrames = %d", numberOfSlowOutFrames);
+	debug(5, "firstWalkingTurnLeftFrame = %d", firstWalkingTurnLeftFrame);
+	debug(5, "firstWalkingTurnRightFrame = %d", firstWalkingTurnRightFrame);
+	debug(5, "firstSlowOutFrame = %d", firstSlowOutFrame);
+	debug(5, "********************************");
 
  	walk_pc  = ob_mega->walk_pc;
 
@@ -958,8 +958,8 @@ void EarlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata) {
 		// (ie .step - 0..5)
 
 		do {
-			// Zdebug("\nSTEP NUMBER:    walkAnim[%d].step  = %d", walk_pc, walkAnim[walk_pc].step);
-			// Zdebug("ORIGINAL FRAME: walkAnim[%d].frame = %d", walk_pc, walkAnim[walk_pc].frame);
+			debug(5, "STEP NUMBER: walkAnim[%d].step = %d", walk_pc, walkAnim[walk_pc].step);
+			debug(5, "ORIGINAL FRAME: walkAnim[%d].frame = %d", walk_pc, walkAnim[walk_pc].frame);
 
 			// map from existing walk frame across to correct
 			// frame number of slow-out - remember, there may be
@@ -971,29 +971,27 @@ void EarlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata) {
 				// frame first
 
 				walkAnim[walk_pc].frame -= firstWalkingTurnRightFrame;
-				// Zdebug("MAPPED TO WALK: walkAnim[%d].frame = %d  (walking turn-right frame --> walk frame)", walk_pc, walkAnim[walk_pc].frame);
+				debug(5, "MAPPED TO WALK: walkAnim[%d].frame = %d  (walking turn-right frame --> walk frame)", walk_pc, walkAnim[walk_pc].frame);
 			} else if (walkAnim[walk_pc].frame >= firstWalkingTurnLeftFrame) {
 				// if it's a walking turn-left, rather than a
 				// normal step, then map it to a normal step
 				// frame first
 
 				walkAnim[walk_pc].frame -= firstWalkingTurnLeftFrame;
-				// Zdebug("MAPPED TO WALK: walkAnim[%d].frame = %d  (walking turn-left frame --> walk frame)", walk_pc, walkAnim[walk_pc].frame);
+				debug(5, "MAPPED TO WALK: walkAnim[%d].frame = %d  (walking turn-left frame --> walk frame)", walk_pc, walkAnim[walk_pc].frame);
 			}
 
 			walkAnim[walk_pc].frame += firstSlowOutFrame + ((walkAnim[walk_pc].frame / framesPerStep) * (numberOfSlowOutFrames - framesPerStep));
 			walkAnim[walk_pc].step = 0;
-			// Zdebug("SLOW-OUT FRAME: walkAnim[%d].frame = %d",walk_pc, walkAnim[walk_pc].frame);
+			debug(5, "SLOW-OUT FRAME: walkAnim[%d].frame = %d",walk_pc, walkAnim[walk_pc].frame);
 			walk_pc++;
 		} while(walkAnim[walk_pc].step > 0);
-
-		// Zdebug("\n");
 
 		// add stationary frame(s) (OPTIONAL)
 
 		for (slowOutFrameNo = framesPerStep; slowOutFrameNo < numberOfSlowOutFrames; slowOutFrameNo++) {
 			walkAnim[walk_pc].frame = walkAnim[walk_pc - 1].frame + 1;
-			// Zdebug("EXTRA FRAME:    walkAnim[%d].frame = %d", walk_pc, walkAnim[walk_pc].frame);
+			debug(5, "EXTRA FRAME: walkAnim[%d].frame = %d", walk_pc, walkAnim[walk_pc].frame);
 			walkAnim[walk_pc].step = 0;
 			walkAnim[walk_pc].dir = walkAnim[walk_pc - 1].dir;
 			walkAnim[walk_pc].x = walkAnim[walk_pc - 1].x;
@@ -1034,7 +1032,7 @@ void AddSlowOutFrames(_walkData *walkAnim) {
 	
 		slowOutFrameNo = lastCount - framesPerStep;
 
-		// Zdebug("SLOW OUT: slowOutFrameNo(%d) = lastCount(%d) - framesPerStep(%d)", slowOutFrameNo, lastCount, framesPerStep);
+		debug(5, "SLOW OUT: slowOutFrameNo(%d) = lastCount(%d) - framesPerStep(%d)", slowOutFrameNo, lastCount, framesPerStep);
 	
 		// overwrite the last step (half a cycle) of the walk
 
@@ -1048,7 +1046,7 @@ void AddSlowOutFrames(_walkData *walkAnim) {
 			// because no longer a normal walk-step
 			walkAnim[slowOutFrameNo].step = 0;
 
-			//Zdebug("walkAnim[%d].frame = %d",slowOutFrameNo,walkAnim[slowOutFrameNo].frame);
+			debug(5, "walkAnim[%d].frame = %d",slowOutFrameNo,walkAnim[slowOutFrameNo].frame);
 			slowOutFrameNo++;
 		} while(slowOutFrameNo < lastCount);
 	
@@ -1057,7 +1055,7 @@ void AddSlowOutFrames(_walkData *walkAnim) {
 		for (slowOutFrameNo = framesPerStep; slowOutFrameNo < numberOfSlowOutFrames; slowOutFrameNo++) {
 			walkAnim[stepCount].frame = walkAnim[stepCount - 1].frame + 1;
 
-			// Zdebug("EXTRA FRAMES: walkAnim[%d].frame = %d", stepCount, walkAnim[stepCount].frame);
+			debug(5, "EXTRA FRAMES: walkAnim[%d].frame = %d", stepCount, walkAnim[stepCount].frame);
 
 			walkAnim[stepCount].step = 0;
 			walkAnim[stepCount].dir = walkAnim[stepCount - 1].dir;
@@ -1117,7 +1115,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 	// START THE WALK WITH THE FIRST STANDFRAME THIS MAY CAUSE A DELAY
 	// BUT IT STOPS THE PLAYER MOVING FOR COLLISIONS ARE DETECTED
 
-	// Zdebug("\nSLIDY: STARTING THE WALK");
+	debug(5, "SLIDY: STARTING THE WALK");
 
 	module = framesPerChar + lastDir;
 	walkAnim[stepCount].frame = module;
@@ -1129,7 +1127,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 
 	// TURN TO START THE WALK
 
-	// Zdebug("\nSLIDY: TURNING TO START THE WALK");
+	debug(5, "SLIDY: TURNING TO START THE WALK");
 	// rotate if we need to
 
 	if (lastDir != currentDir) {
@@ -1199,7 +1197,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 
 	// THE WALK
 
-	// Zdebug("\nSLIDY: THE WALK");
+	debug(5, "SLIDY: THE WALK");
 
 	// start the walk on the left or right leg, depending on how the
 	// slow-in frames were drawn
@@ -1393,7 +1391,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 
 #ifdef _SWORD2_DEBUG
 	if (lastRealDir == 99)
-		Con_fatal_error("SlidyWalkAnimatorlast direction error (%s line %u)", __FILE__, __LINE__);
+		Con_fatal_error("SlidyWalkAnimatorlast direction error");
 #endif
 
 	// THE SLOW OUT
@@ -1504,15 +1502,13 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 	walkAnim[stepCount].frame = 512;
 	walkAnim[stepCount].step = 99;
 
-#ifdef _SWORD2_DEBUG
 	// write all the frames to "debug.txt"
-	// Zdebug("\nTHE WALKDATA:");
+	debug(5, "THE WALKDATA:");
 
 	for (frame = 0; frame <= stepCount; frame++)
-		Zdebug("walkAnim[%d].frame=%d", frame, walkAnim[frame].frame);
-#endif
+		debug(5, "walkAnim[%d].frame=%d", frame, walkAnim[frame].frame);
 
-	// Zdebug("RouteFinder RouteSize is %d", stepCount);
+	debug(5, "RouteFinder RouteSize is %d", stepCount);
 	return;
 }
 
@@ -1632,7 +1628,7 @@ int32 SolidWalkAnimator(_walkData *walkAnim) {
 	// START THE WALK WITH THE FIRST STANDFRAME THIS MAY CAUSE A DELAY
 	// BUT IT STOPS THE PLAYER MOVING FOR COLLISIONS ARE DETECTED
 
-	//Zdebug("\nSOLID: STARTING THE WALK");
+	debug(5, "SOLID: STARTING THE WALK");
 	walkAnim[stepCount].frame = module;
 	walkAnim[stepCount].step = 0;
 	walkAnim[stepCount].dir = lastDir;
@@ -1642,7 +1638,7 @@ int32 SolidWalkAnimator(_walkData *walkAnim) {
 
 	// TURN TO START THE WALK
 
-	// Zdebug("\nSOLID: TURNING TO START THE WALK");
+	debug(5, "SOLID: TURNING TO START THE WALK");
 
 	// rotate if we need to
 
@@ -1712,7 +1708,7 @@ int32 SolidWalkAnimator(_walkData *walkAnim) {
 
 	// THE WALK
 
-	// Zdebug("\nSOLID: THE WALK");
+	debug(5, "SOLID: THE WALK");
 
 	// start the walk on the left or right leg, depending on how the
 	// slow-in frames were drawn
@@ -1879,17 +1875,14 @@ int32 SolidWalkAnimator(_walkData *walkAnim) {
 	walkAnim[stepCount].frame = 512;
 	walkAnim[stepCount].step = 99;
 
-#ifdef _SWORD2_DEBUG
-	// write all the frames to "debug.txt"
-	//Zdebug("\nTHE WALKDATA:");
+	debug(5, "THE WALKDATA:");
 
 	for (frame = 0; frame <= stepCount; frame++)
-		Zdebug("walkAnim[%d].frame=%d", frame, walkAnim[frame].frame);
-#endif
+		debug(5, "walkAnim[%d].frame=%d", frame, walkAnim[frame].frame);
 
 	// NO END TURNS
 
-	// Zdebug("RouteFinder RouteSize is %d", stepCount);
+	debug(5, "RouteFinder RouteSize is %d", stepCount);
 	// now check the route
 
 	i = 0;
@@ -1905,7 +1898,7 @@ int32 SolidWalkAnimator(_walkData *walkAnim) {
 		if (CheckTarget(moduleX, moduleY) == 3) {
 			// new target on a line
 			p = 0;
-			// Zdebug("Solid walk target was on a line %d %d", moduleX, moduleY);
+			debug(5, "Solid walk target was on a line %d %d", moduleX, moduleY);
 		}
 	}
 
@@ -2403,7 +2396,7 @@ int32 CheckTarget(int32 x, int32 y) {
 				if (yc >= ymin && yc <= ymax) {
 					// target on a line so drop out
 					onLine = 3;
-					// Zdebug("RouteFail due to target on a line %d %d", x, y);
+					debug(5, "RouteFail due to target on a line %d %d", x, y);
 				} else {
 					// vertical line so we know it overlaps y
 					if (bars[i].dy == 0)
@@ -2417,7 +2410,7 @@ int32 CheckTarget(int32 x, int32 y) {
 					if (xc >= xmin && xc <= xmax) {
 						// target on a line so drop out
 						onLine = 3;
-						// Zdebug("RouteFail due to target on a line %d %d", x, y);
+						debug(5, "RouteFail due to target on a line %d %d", x, y);
 					}
 				}
 			}
@@ -2755,14 +2748,14 @@ void LoadWalkGrid(void) {
 			// allowed in the complete walkgrid arrays
 
 			if (nbars + theseBars >= O_GRID_SIZE)
-				Con_fatal_error("Adding walkgrid(%d): %d+%d bars exceeds max %d (%s line %u)",
+				Con_fatal_error("Adding walkgrid(%d): %d+%d bars exceeds max %d",
 					walkGridList[entry], nbars, theseBars,
-					O_GRID_SIZE, __FILE__, __LINE__);
+					O_GRID_SIZE);
 
 			if (nnodes + theseNodes >= O_GRID_SIZE)
-				Con_fatal_error("Adding walkgrid(%d): %d+%d nodes exceeds max %d (%s line %u)",
+				Con_fatal_error("Adding walkgrid(%d): %d+%d nodes exceeds max %d",
 					walkGridList[entry], nnodes, theseBars,
-					O_GRID_SIZE, __FILE__, __LINE__);
+					O_GRID_SIZE);
 #endif
 
 			// lines
@@ -2836,7 +2829,7 @@ void AddWalkGrid(int32 gridResource) {
 		if (entry < MAX_WALKGRIDS)
 			walkGridList[entry] = gridResource;
 		else
-			Con_fatal_error("ERROR: walkGridList[] full in %s line %d", __FILE__, __LINE__);
+			Con_fatal_error("ERROR: walkGridList[] full");
 	}
 }
 

@@ -20,7 +20,6 @@
 #include "stdafx.h"
 #include "build_display.h"
 #include "console.h"
-#include "debug.h"
 #include "header.h"
 #include "mem_view.h"
 #include "memory.h"
@@ -49,7 +48,7 @@ void Console_mem_display(void) {
 			// close immediately so give a true count
 			res_man.Res_close(mem_list[j].uid);
 
-			Zdebug("view %d", mem_list[j].uid);
+			debug(5, "view %d", mem_list[j].uid);
 
 			pass = 0;
 			found_end = 0;

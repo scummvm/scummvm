@@ -132,65 +132,60 @@ int32 Sword2State::InitialiseGame(void) {
 
 	// get some falling RAM and put it in your pocket, never let it slip
 	// away
-	// Zdebug("CALLING: Init_memory_manager");
+
+	debug(5, "CALLING: Init_memory_manager");
 	Init_memory_manager();
-	// Zdebug("RETURNED.");
 
 	// initialise the resource manager
-	// Zdebug("CALLING: res_man.InitResMan");
+	debug(5, "CALLING: res_man.InitResMan");
 	res_man.InitResMan();
-	Zdebug("RETURNED from res_man.InitResMan");
 
 	// initialise global script variables
 	// res 1 is the globals list
 	file = res_man.Res_open(1);
-	// Zdebug("CALLING: SetGlobalInterpreterVariables");
+	debug(5, "CALLING: SetGlobalInterpreterVariables");
 	SetGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
-	// Zdebug("RETURNED.");
+
 	// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF
 	// MEMORY SO IT CAN'T MOVE!
-	// res_man.Res_close(1);
 
 	// DON'T CLOSE PLAYER OBJECT RESOURCE - KEEP IT OPEN IN MEMORY SO IT
 	// CAN'T MOVE!
+
 	file = res_man.Res_open(8);
 
 	// Set up font resource variables for this language version
-	// (James31july97)
-	// Zdebug("CALLING: InitialiseFontResourceFlags");
+
+	debug(5, "CALLING: InitialiseFontResourceFlags");
 	InitialiseFontResourceFlags();
-	// Also set the windows application name to the proper game name
-	// Zdebug("RETURNED.");
 
 	// set up the console system
-	// Zdebug("CALLING: Init_console");
+
+	debug(5, "CALLING: Init_console");
 	Init_console();
-	// Zdebug("RETURNED.");
 
 #ifdef _SWORD2_DEBUG
 	// read in all the startup information
-	// Zdebug("CALLING: Init_start_menu");
+
+	debug(5, "CALLING: Init_start_menu");
 	Init_start_menu();
-	// Zdebug("RETURNED from Init_start_menu");
 #endif
 
 	// no blocs live
-	// Zdebug("CALLING: Init_text_bloc_system");
+
+	debug(5, "CALLING: Init_text_bloc_system");
 	Init_text_bloc_system();
-	// Zdebug("RETURNED.");
 
-	// Zdebug("CALLING: Init_sync_system");
+	debug(5, "CALLING: Init_sync_system");
 	Init_sync_system();
-	// Zdebug("RETURNED.");
 
-	// Zdebug("CALLING: Init_event_system");
+	debug(5, "CALLING: Init_event_system");
 	Init_event_system();
-	// Zdebug("RETURNED.");
 	
 	// initialise the sound fx queue
-	// Zdebug("CALLING: Init_fx_queue");
+
+	debug(5, "CALLING: Init_fx_queue");
 	Init_fx_queue();
-	// Zdebug("RETURNED.");
 
 	// all demos (not just web)
 	if (_gameId == GID_SWORD2_DEMO) {
@@ -202,7 +197,7 @@ int32 Sword2State::InitialiseGame(void) {
 }
 
 void Close_game() {
-	// Zdebug("Close_game() STARTING:");
+	debug(5, "Close_game() STARTING:");
 	EraseBackBuffer();
 
 	// Stop music instantly!
@@ -211,8 +206,6 @@ void Close_game() {
 	// free the memory again
 	Close_memory_manager();
 	res_man.Close_ResMan();
-
-	// Zdebug("Close_game() DONE.");
 }
 
 int32 GameCycle(void) {
@@ -261,8 +254,6 @@ void Sword2State::go() {
 	uint8 breakOut = 0;
 	_keyboardEvent ke;
 
-	// Zdebug("[%s]", lpCmdLine);
-
 	// Call the application "Revolution" until the resource manager is
 	// ready to dig the name out of a text file. See InitialiseGame()
 	// which calls InitialiseFontResourceFlags() in maketext.cpp
@@ -277,7 +268,7 @@ void Sword2State::go() {
 		_system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 	}
 
-	// Zdebug("CALLING: InitialiseDisplay");
+	debug(5, "CALLING: InitialiseDisplay");
 	_system->init_size(640, 480);
 	rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
 
@@ -287,26 +278,20 @@ void Sword2State::go() {
 			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
 	}
 		
-	// Zdebug("RETURNED with rv = %.8x", rv);
-
 	if (rv != RD_OK) {
 		// ReportDriverError(rv);
 		CloseAppWindow();
 		return;
 	}
 
-	// Zdebug("CALLING: ReadOptionSettings");
+	debug(5, "CALLING: ReadOptionSettings");
 	ReadOptionSettings();	//restore the menu settings
-	// Zdebug("RETURNED.");
-	// Zdebug("CALLING: InitialiseGame");
 
+	debug(5, "CALLING: InitialiseGame");
 	if (InitialiseGame()) {
-		Zdebug("RETURNED from InitialiseGame - closing game");
 		CloseAppWindow();
 		return;
 	}
-
- 	// Zdebug("RETURNED from InitialiseGame - ok");
 
 	if (_saveSlot != -1) {
 		if (SaveExists(_saveSlot))
@@ -319,9 +304,8 @@ void Sword2State::go() {
 	} else
 		Start_game();
 
-	// Zdebug("CALLING: InitialiseRenderCycle");
+	debug(5, "CALLING: InitialiseRenderCycle");
 	InitialiseRenderCycle();
-	// Zdebug("RETURNED.");
 
 	while (1) {
 		ServiceWindows();
@@ -449,7 +433,7 @@ void Sword2State::Start_game(void) {
 
 	int screen_manager_id;
 
-	Zdebug("Start_game() STARTING:");
+	debug(5, "Start_game() STARTING:");
 
 	// all demos not just web
 	if (_gameId == GID_SWORD2_DEMO)
@@ -486,7 +470,7 @@ void Sword2State::Start_game(void) {
 	// close george
 	res_man.Res_close(8);
 
-	Zdebug("Start_game() DONE.");
+	debug(5, "Start_game() DONE.");
 }
 
 void PauseGame(void) {

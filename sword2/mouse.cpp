@@ -22,7 +22,6 @@
 #include "build_display.h"
 #include "console.h"
 #include "controls.h"
-#include "debug.h"
 #include "defs.h"
 #include "events.h"
 #include "icons.h"
@@ -159,7 +158,7 @@ void Mouse_engine(void) {
 	case MOUSE_holding:
 		if (mousey < 400) {
 			mouse_mode = MOUSE_normal;
-			Zdebug("   releasing");
+			debug(5, "   releasing");
 		}
 		break;
 	default:
@@ -218,7 +217,7 @@ void System_menu(void) {
 
 				rv = g_sound->PauseFx();
 				if (rv != RD_OK)
-					Zdebug("ERROR: PauseFx() returned %.8x in SystemMenu()", rv);
+					debug(5, "ERROR: PauseFx() returned %.8x in SystemMenu()", rv);
 
 				// NB. Need to keep a safe copy of
 				// 'looping_music_id' for savegame & for
@@ -296,7 +295,7 @@ void System_menu(void) {
 
 				rv = g_sound->UnpauseFx();
 				if (rv != RD_OK)
-					Zdebug("ERROR: UnpauseFx() returned %.8x in SystemMenu()", rv);
+					debug(5, "ERROR: UnpauseFx() returned %.8x in SystemMenu()", rv);
 
 				// If there was looping music before coming
 				// into the control panels then restart it!
@@ -374,12 +373,9 @@ void Drag_mouse(void) {
 
 			CLICKED_ID = mouse_touching;
 
-			Set_player_action_event(CUR_PLAYER_ID, mouse_touching);	// Tony4Dec96
+			Set_player_action_event(CUR_PLAYER_ID, mouse_touching);
 
-#ifdef _SWORD2_DEBUG
-			// Write to walkthrough file (zebug0.txt)
-			Zdebug(0, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
-#endif
+			debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
 
 			// Hide menu - back to normal menu mode
 
@@ -409,13 +405,13 @@ void Drag_mouse(void) {
 						menu_selected_pos = 0;
 					} else {
 						// combine the 2 icons
-						// Zdebug("combine");
+						debug(5, "combine");
 
 						//what we clicked on, not what
 						// we're dragging
 
 						COMBINE_BASE = master_menu_list[pos].icon_resource;
-						Set_player_action_event(CUR_PLAYER_ID, MENU_MASTER_OBJECT);	//Tony4Dec96
+						Set_player_action_event(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 						// turn off mouse now, to
 						// prevent player trying to
@@ -424,16 +420,12 @@ void Drag_mouse(void) {
 
 						No_human();
 
-#ifdef _SWORD2_DEBUG
-						// Write to walkthrough file
-						// (zebug0.txt)
-						Zdebug(0, "USED \"%s\" ICON ON \"%s\" ICON", FetchObjectName(OBJECT_HELD), FetchObjectName(COMBINE_BASE));
-#endif
+						debug(5, "USED \"%s\" ICON ON \"%s\" ICON", FetchObjectName(OBJECT_HELD), FetchObjectName(COMBINE_BASE));
 					}
 
 					// refresh the menu
 					Build_top_menu();
-					// Zdebug("switch to top mode");
+					debug(5, "switch to top mode");
 				}
 			}
 		}
@@ -481,13 +473,9 @@ void Top_menu_mouse(void) {
 
 					EXIT_CLICK_ID = 0;
 
-#ifdef _SWORD2_DEBUG
-					// Write to walkthrough file
-					// (zebug0.txt)
-					Zdebug(0, "RIGHT-CLICKED ON \"%s\" ICON", FetchObjectName(OBJECT_HELD));
-#endif
+					debug(5, "RIGHT-CLICKED ON \"%s\" ICON", FetchObjectName(OBJECT_HELD));
 
-					Set_player_action_event(CUR_PLAYER_ID, MENU_MASTER_OBJECT);	// Tony4Dec96
+					Set_player_action_event(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 					// refresh the menu
 					Build_top_menu();
@@ -509,14 +497,13 @@ void Top_menu_mouse(void) {
 					current_luggage_resource = master_menu_list[pos].luggage_resource;
 
 					mouse_mode = MOUSE_drag;
-					// Zdebug("setting OH in top menu");
+					debug(5, "setting OH in top menu");
 
 					// id the object via its graphic
 					OBJECT_HELD = master_menu_list[pos].icon_resource;
 
-					// (JEL09oct97) must clear this so
-					// next click on exit becomes 1st
-					// click again
+					// must clear this so next click on
+					// exit becomes 1st click again
 
 					EXIT_CLICK_ID = 0;
 
@@ -524,7 +511,7 @@ void Top_menu_mouse(void) {
 					Build_top_menu();
 
 					Set_luggage(master_menu_list[pos].luggage_resource);
-					// Zdebug("switch to drag mode");
+					debug(5, "switch to drag mode");
 				}
 			}
 		}
@@ -692,15 +679,12 @@ void Normal_mouse(void) {
 
 			Set_player_action_event(CUR_PLAYER_ID, mouse_touching);	//Tony4Dec96
 
-#ifdef _SWORD2_DEBUG
-			// Write to walkthrough file (zebug0.txt)
 			if (OBJECT_HELD)
-				Zdebug(0, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
+				debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
 			else if (LEFT_BUTTON)
-				Zdebug(0, "LEFT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
+				debug(5, "LEFT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
 			else	// RIGHT BUTTON
-				Zdebug(0, "RIGHT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
-#endif
+				debug(5, "RIGHT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
 		}
 	}
 
@@ -1187,7 +1171,7 @@ int32 FN_register_mouse(int32 *params) {
 	// param	0 pointer to Object_mouse or 0 for no write to mouse
 	//		  list
 
-	// Zdebug(1, "cur_mouse = %d", cur_mouse);
+	debug(5, "cur_mouse = %d", cur_mouse);
 
 	Object_mouse *ob_mouse = (Object_mouse *) params[0];
 
@@ -1195,7 +1179,7 @@ int32 FN_register_mouse(int32 *params) {
 	if (ob_mouse->pointer) {
 #ifdef _SWORD2_DEBUG
 		if (cur_mouse == TOTAL_mouse_list)
-			Con_fatal_error("ERROR: mouse_list full [%s line %u]", __FILE__, __LINE__);
+			Con_fatal_error("ERROR: mouse_list full");
 #endif
 
 		mouse_list[cur_mouse].x1 = ob_mouse->x1;
@@ -1228,7 +1212,7 @@ int32 FN_register_mouse(int32 *params) {
 		mouse_list[cur_mouse].anim_resource = 0;
 		mouse_list[cur_mouse].anim_pc = 0;
 
-		// Zdebug("mouse id %d", mouse_list[cur_mouse].id);
+		debug(5, "mouse id %d", mouse_list[cur_mouse].id);
 		cur_mouse++;
 	}
 
@@ -1244,7 +1228,7 @@ int32 FN_register_pointer_text(int32 *params) {
 
 #ifdef _SWORD2_DEBUG
 	if (cur_mouse == TOTAL_mouse_list)
-		Con_fatal_error("ERROR: mouse_list full [%s line %u]", __FILE__, __LINE__);
+		Con_fatal_error("ERROR: mouse_list full");
 #endif
 
 	// current object id - used for checking pointer_text when mouse area

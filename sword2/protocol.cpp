@@ -77,7 +77,7 @@ _layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo) {	// Chris 04O
 	_screenHeader *screenHead = FetchScreenHeader(screenFile);
 
 	if (layerNo > screenHead->noLayers - 1)
-		Con_fatal_error("FetchLayerHeader(%d) invalid layer number! (%s line %u)", layerNo, __FILE__, __LINE__);
+		Con_fatal_error("FetchLayerHeader(%d) invalid layer number!", layerNo);
 #endif
 
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
@@ -112,7 +112,7 @@ _cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {
 
 #ifdef _SWORD2_DEBUG
 	if (frameNo > animHead->noAnimFrames - 1)
-		Con_fatal_error("FetchCdtEntry(animFile,%d) - anim only %d frames (%s line %u)", frameNo, animHead->noAnimFrames, __FILE__, __LINE__);
+		Con_fatal_error("FetchCdtEntry(animFile,%d) - anim only %d frames", frameNo, animHead->noAnimFrames);
 #endif
 
 	return (_cdtEntry *) ((uint8 *) animHead + sizeof(_animHeader) + frameNo * sizeof(_cdtEntry));
@@ -134,7 +134,7 @@ _parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->bg_parallax[layer] == 0)
-		Con_fatal_error("FetchBackgroundParallaxLayer(%d) - No parallax layer exists (%s line %u)", layer, __FILE__, __LINE__);
+		Con_fatal_error("FetchBackgroundParallaxLayer(%d) - No parallax layer exists", layer);
 #endif
 
 	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
@@ -145,7 +145,7 @@ _parallax *FetchBackgroundLayer(uint8 *screenFile) {
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->screen == 0)
-		Con_fatal_error("FetchBackgroundLayer (%d) - No background layer exists (%s line %u)", __FILE__, __LINE__);
+		Con_fatal_error("FetchBackgroundLayer (%d) - No background layer exists");
 #endif
 
 	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
@@ -156,7 +156,7 @@ _parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) {
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->fg_parallax[layer] == 0)
-		Con_fatal_error("FetchForegroundParallaxLayer(%d) - No parallax layer exists (%s line %u)",layer, __FILE__, __LINE__);
+		Con_fatal_error("FetchForegroundParallaxLayer(%d) - No parallax layer exists", layer);
 #endif
 
 	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[layer]);

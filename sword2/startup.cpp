@@ -66,10 +66,10 @@ uint32 Init_start_menu(void) {
 
 	total_startups = 0;	// no starts
 
-	Zdebug("initialising start menu");
+	debug(5, "initialising start menu");
 
 	if (!(end = Read_file("startup.inf", &temp, UID_temp))) {
-		Zdebug("Init_start_menu cannot open startup.inf");
+		debug(5, "Init_start_menu cannot open startup.inf");
 		return 0;	// meaning no start menu available
 	}
 
@@ -96,7 +96,7 @@ uint32 Init_start_menu(void) {
 		total_screen_managers++;
 
 		if (total_screen_managers == MAX_starts) {
-			Zdebug("WARNING MAX_starts exceeded!");
+			debug(5, "WARNING MAX_starts exceeded!");
 			break;
 		}
 	} while (j <end);
@@ -104,7 +104,7 @@ uint32 Init_start_menu(void) {
 	// using this method the Gode generated resource.inf must have #0d0a
 	// on the last entry
 
-	Zdebug("%d screen manager objects", total_screen_managers);
+	debug(5, "%d screen manager objects", total_screen_managers);
 
 	// Open each object and make a query call. The object must fill in a
 	// startup structure. It may fill in several if it wishes - for
@@ -114,7 +114,7 @@ uint32 Init_start_menu(void) {
 	for (j = 0; j < total_screen_managers; j++) {
 		res = atoi(ascii_start_ids[j]);
 
-		Zdebug("+querying screen manager %d", res);
+		debug(5, "+querying screen manager %d", res);
 
 		// resopen each one and run through the interpretter
 		// script 0 is the query request script
@@ -125,16 +125,15 @@ uint32 Init_start_menu(void) {
 		// start list
 
 		if (res_man.Res_check_valid(res)) {
-			Zdebug("- resource %d ok", res);
+			debug(5, "- resource %d ok", res);
 			raw_script = (char*) res_man.Res_open(res);
 			null_pc = 0;
 			RunScript(raw_script, raw_script, &null_pc);
 			res_man.Res_close(res);
 		} else
-			Zdebug("- resource %d invalid", res);
+			debug(5, "- resource %d invalid", res);
 	}
 
-	Zdebug("");	// line feed
 	Free_mem(temp);	// release the Talloc
 
 	return 1;
@@ -144,15 +143,15 @@ int32 FN_register_start_point(int32 *params) {
 	// params:	0 id of startup script to call - key
 	// 		1 pointer to ascii message
 
-	// Zdebug(" FN_register_start_point %d %s", params[0], params[1]);
+	debug(5, " FN_register_start_point %d %s", params[0], params[1]);
 
 #ifdef _SWORD2_DEBUG
 	if (total_startups == MAX_starts)
-		Con_fatal_error("ERROR: start_list full [%s line %u]", __FILE__, __LINE__);
+		Con_fatal_error("ERROR: start_list full");
 
 	// +1 to allow for NULL terminator
 	if (strlen((char*) params[1]) + 1 > MAX_description)
-		Con_fatal_error("ERROR: startup description too long [%s line %u]", __FILE__, __LINE__);
+		Con_fatal_error("ERROR: startup description too long");
 #endif
 
 	// this objects id

@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "driver/driver96.h"
 #include "debug.h"
 #include "defs.h"
 #include "header.h"
@@ -81,7 +82,7 @@ void Set_scrolling(void) {
 		// immediately!
 
 		if (this_screen.scroll_flag == 2) {
-			// Zdebug(42,"init scroll");
+			debug(5, "init scroll");
 			this_screen.scroll_offset_x = offset_x;
 			this_screen.scroll_offset_y = offset_y;
 			this_screen.scroll_flag = 1;

@@ -39,14 +39,14 @@ Object_mega engine_mega;	// global for engine
 int32 FN_test_function(int32 *params) {
 	// param	0 address of a flag
 
-	Zdebug(" TEST %d %d", params[0], RESULT);
+	debug(5, " TEST %d %d", params[0], RESULT);
 	return IR_CONT;
 }
 
 int32 FN_test_flags(int32 *params) {
 	// param	0 value of flag
 
-	// Zdebug("\nFN_test_flags %d, %d\n", params[0], params[1]);
+	debug(5, "FN_test_flags %d, %d\n", params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -65,7 +65,7 @@ int32 FN_new_script(int32 *params) {
 	// directive
 	// param	0 id of script
 
-	Zdebug("FN_new_script %d", params[0]);
+	debug(5, "FN_new_script %d", params[0]);
 
 	// must clear this
 	PLAYER_ACTION = 0;
@@ -82,7 +82,7 @@ int32 FN_interact(int32 *params) {
 	// param	0 id of target from which we derive action script
 	//		  reference
 
-	Zdebug("FN_interact %d", params[0]);
+	debug(5, "FN_interact %d", params[0]);
 
 	// must clear this
 	PLAYER_ACTION = 0;
@@ -354,7 +354,7 @@ int32 FN_reset_globals(int32 *params) {
 	size = res_man.Res_fetch_len(1);
 	size -= sizeof(_standardHeader);
 
-	Zdebug("\nglobals size %d", size / 4);
+	debug(5, "globals size %d", size / 4);
 
 	globals = (uint32*) ((uint8 *) res_man.Res_open(1) + sizeof(_standardHeader));
 

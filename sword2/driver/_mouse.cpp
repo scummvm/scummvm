@@ -64,88 +64,78 @@
 //
 //=============================================================================
 
-
-//#include "ddraw.h"
-
 #include "stdafx.h"
 #include "driver96.h"
-
 #include "d_draw.h"
 #include "render.h"
 #include "menu.h"
 #include "../sword2.h"
 
-
 #define MAX_MOUSE_EVENTS 16
 #define MOUSEFLASHFRAME 6
 
-// FIXME: Does this struct have to be packed?
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
 
 typedef struct {
-	uint8	runTimeComp;	// type of runtime compression used for the frame data
-	uint8	noAnimFrames;	// number of frames in the anim
-	int8	xHotSpot;		
-	int8	yHotSpot;
-	uint8	mousew;
-	uint8	mouseh;
-} _mouseAnim;
+	uint8 runTimeComp;	// type of runtime compression used for the
+				// frame data
+	uint8 noAnimFrames;	// number of frames in the anim
+	int8 xHotSpot;		
+	int8 yHotSpot;
+	uint8 mousew;
+	uint8 mouseh;
+} GCC_PACK _mouseAnim;
 
-int16				mousex;
-int16				mousey;
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
-static	uint8		mouseBacklog = 0;
-static	uint8		mouseLogPos = 0;
-static	uint8		mouseFrame;
-static	uint8		*mouseSprite = NULL;
-static	_mouseAnim	*mouseAnim = NULL;
-static	_mouseAnim	*luggageAnim = NULL;
-static	_mouseEvent	mouseLog[MAX_MOUSE_EVENTS];
-static  int32		*mouseOffsets;
-static	int32		*luggageOffset;
+int16 mousex;
+int16 mousey;
 
-// FIXME: I have no idea how large the mouse cursor can be. Is this enough?
+static uint8 mouseBacklog = 0;
+static uint8 mouseLogPos = 0;
+static uint8 mouseFrame;
+static uint8 *mouseSprite = NULL;
+static _mouseAnim *mouseAnim = NULL;
+static _mouseAnim *luggageAnim = NULL;
+static _mouseEvent mouseLog[MAX_MOUSE_EVENTS];
+static int32 *mouseOffsets;
+static int32 *luggageOffset;
 
-byte _mouseData[128 * 128];
+// This is the maximum mouse cursor size in the SDL backend
 
+#define MAX_MOUSE_W 80
+#define MAX_MOUSE_H 80
 
-
-
+byte _mouseData[MAX_MOUSE_W * MAX_MOUSE_H];
 
 void ResetRenderEngine(void) {
 	parallaxScrollx = 0;
 	parallaxScrolly = 0;
 	scrollx = 0;
 	scrolly = 0;
-
 }
 
+// --------------------------------------------------------------------------
+// Logs the mouse button event passed in buttons.  The button events are 
+// defined as RD_LEFTBUTTONDOWN, RD_LEFTBUTTONUP, RD_RIGHTBUTTONDOWN and
+// RD_RIGHTBUTTONUP.
+// --------------------------------------------------------------------------
 
-
-
-//	--------------------------------------------------------------------------
-//	Logs the mouse button event passed in buttons.  The button events are 
-//	defined as RD_LEFTBUTTONDOWN, RD_LEFTBUTTONUP, RD_RIGHTBUTTONDOWN and
-//	RD_RIGHTBUTTONUP.
-//	--------------------------------------------------------------------------
-void LogMouseEvent(uint16 buttons)
-
-{
-
+void LogMouseEvent(uint16 buttons) {
 	_mouseEvent *me;
 
-
-	if (mouseBacklog == MAX_MOUSE_EVENTS-1)			// We need to leave the one which is
-	{												// the current event alone!
+	// We need to leave the one, which is the current event, alone!
+	if (mouseBacklog == MAX_MOUSE_EVENTS - 1)
 		return;
-	}
 	
 	me = &mouseLog[(mouseBacklog + mouseLogPos) % MAX_MOUSE_EVENTS];
 	me->buttons = buttons;
-	mouseBacklog += 1;
-
+	mouseBacklog++;
 }
-
-
 
 // FIXME: The original code used 0 for transparency, while our backend uses
 // 0xFF. That means that parts of the mouse cursor that weren't meant to be
@@ -174,10 +164,9 @@ int32 DecompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pit
 			i += *comp++;
 		}
 	}
+
 	return RD_OK;
 }
-
-
 
 void DrawMouse(void) {
 	if (!mouseAnim && !luggageAnim)
@@ -222,16 +211,18 @@ void DrawMouse(void) {
 	assert(deltaX >= 0);
 	assert(deltaY >= 0);
 
-	// HACK for maximum cursor size
-	if (mouse_width + deltaX > 80)
+	// HACK for maximum cursor size. (The SDL backend imposes this
+	// restriction)
+
+	if (mouse_width + deltaX > MAX_MOUSE_W)
 		deltaX = 80 - mouse_width;
-	if (mouse_height + deltaY > 80)
+	if (mouse_height + deltaY > MAX_MOUSE_H)
 		deltaY = 80 - mouse_height;
 
 	mouse_width += deltaX;
 	mouse_height += deltaY;
 
-	if ((uint32)(mouse_width * mouse_height) > sizeof(_mouseData)) {
+	if ((uint32) (mouse_width * mouse_height) > sizeof(_mouseData)) {
 		warning("Mouse cursor too large");
 		return;
 	}
@@ -239,7 +230,7 @@ void DrawMouse(void) {
 	memset(_mouseData, 0xFF, mouse_width * mouse_height);
 
 	if (luggageAnim)
-		DecompressMouse(_mouseData, (uint8 *) luggageAnim + (int32)READ_LE_UINT32(luggageOffset), luggageAnim->mousew,
+		DecompressMouse(_mouseData, (uint8 *) luggageAnim + READ_LE_UINT32(luggageOffset), luggageAnim->mousew,
 				luggageAnim->mouseh, mouse_width, deltaX, deltaY);
 
 	if (mouseAnim)
@@ -248,34 +239,24 @@ void DrawMouse(void) {
 	g_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
 }
 
-
-
-_mouseEvent *MouseEvent(void)
-
-{
+_mouseEvent *MouseEvent(void) {
 	_mouseEvent *me;
 
-	if (mouseBacklog)
-	{
+	if (mouseBacklog) {
 		me = &mouseLog[mouseLogPos];
 		if (++mouseLogPos == MAX_MOUSE_EVENTS)
-		{
 			mouseLogPos = 0;
-		}
-		mouseBacklog -= 1;
-		return(me);
+
+		mouseBacklog--;
+		return me;
 	}
 
-	return(NULL);
-
+	return NULL;
 }
 
-
-uint8 CheckForMouseEvents(void)		// (James23july97)
-{
-	return (mouseBacklog);	// return the number of mouse events waiting	
+uint8 CheckForMouseEvents(void) {
+	return mouseBacklog;	// return the number of mouse events waiting
 }
-
 
 int32 AnimateMouse(void) {
 	uint8 prevMouseFrame = mouseFrame;
@@ -285,7 +266,8 @@ int32 AnimateMouse(void) {
 
 	if (++mouseFrame == mouseAnim->noAnimFrames)
 		mouseFrame = MOUSEFLASHFRAME;
-	mouseSprite = (uint8 *) mouseAnim + (int32)READ_LE_UINT32(mouseOffsets + mouseFrame);
+
+	mouseSprite = (uint8 *) mouseAnim + READ_LE_UINT32(mouseOffsets + mouseFrame);
 
 	if (mouseFrame != prevMouseFrame)
 		DrawMouse();
@@ -293,18 +275,18 @@ int32 AnimateMouse(void) {
 	return RD_OK;
 }
 
-
-
 int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 	if (mouseAnim) {
 		free(mouseAnim);
 		mouseAnim = NULL;
 	}
+
 	if (ma)	{
 		if (mouseFlash == RDMOUSE_FLASH)
 			mouseFrame = 0;
 		else
 			mouseFrame = MOUSEFLASHFRAME;
+
 		mouseAnim = (_mouseAnim *) malloc(size);
 		if (!mouseAnim)
 			return RDERR_OUTOFMEMORY;
@@ -322,15 +304,16 @@ int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 		else
 			g_system->show_mouse(false);
 	}
+
 	return RD_OK;
 }
-
 
 int32 SetLuggageAnim(uint8 *ma, int32 size) {
 	if (luggageAnim) {
 		free(luggageAnim);
 		luggageAnim = NULL;
 	}
+
 	if (ma)	{
 		luggageAnim = (_mouseAnim *) malloc(size);
 		if (!luggageAnim)
@@ -349,7 +332,6 @@ int32 SetLuggageAnim(uint8 *ma, int32 size) {
 		else
 			g_system->show_mouse(false);
 	}
+
 	return RD_OK;
 }
-
-

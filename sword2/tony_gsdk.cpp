@@ -37,7 +37,7 @@ uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 	uint32 size;
 
 	if (!fh.open(name)) {
-		Zdebug("Read_file cannot open %s", name);
+		debug(5, "Read_file cannot open %s", name);
 		return 0;
 	}
 
@@ -47,7 +47,7 @@ uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 	*membloc = Twalloc(size, MEM_float, uid);
 	
 	if (fh.read((*membloc)->ad, size) != size) {
-		Zdebug("Read_file read fail %d", name);
+		debug(5, "Read_file read fail %d", name);
 		return 0;
 	}
 

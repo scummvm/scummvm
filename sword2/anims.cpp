@@ -35,7 +35,6 @@
 #include "anims.h"
 #include "console.h"
 #include "controls.h"		// for 'speechSelected' & 'subtitles'
-#include "debug.h"
 #include "defs.h"
 #include "header.h"
 #include "interpreter.h"
@@ -156,7 +155,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 #ifdef _SWORD2_DEBUG
 		// check that we haven't been passed a zero resource number
 		if (res == 0)
-			Con_fatal_error("Animate: %s (id %d) passed zero anim resource (%s line %u)", FetchObjectName(ID), ID, __FILE__, __LINE__);
+			Con_fatal_error("Animate: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
 #endif
 
 		// open anim file
@@ -166,7 +165,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 		// check this this resource is actually an animation file!
 		head = (_standardHeader *) anim_file;
 		if (head->fileType != ANIMATION_FILE)
-			Con_fatal_error("Animate: %s (%d) is not an anim! (%s line %u)", FetchObjectName(res), res, __FILE__, __LINE__);
+			Con_fatal_error("Animate: %s (%d) is not an anim!", FetchObjectName(res), res);
 #endif
 
 		// point to anim header
@@ -175,7 +174,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 /* #ifdef _SWORD2_DEBUG
 		// check there's at least one frame
 		if (anim_head->noAnimFrames == 0)
- 			Con_fatal_error("Animate: %s (%d) has zero frame count! (%s line %u)", FetchObjectName(res), res, __FILE__, __LINE__);
+ 			Con_fatal_error("Animate: %s (%d) has zero frame count!", FetchObjectName(res), res);
 #endif */
 
 		// now running an anim, looping back to this 'FN' call again
@@ -188,7 +187,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 			ob_graphic->anim_pc = 0;
  	} else if (Get_sync()) {
 		// We've received a sync - return to script immediately
-		// Zdebug("**sync stopped %d**", ID);
+		debug(5, "**sync stopped %d**", ID);
 
 		// If sync received, anim finishes right now (remaining on
 		// last frame). Quit animation, but continue script.
@@ -278,7 +277,7 @@ int32 FN_set_frame(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	// check that we haven't been passed a zero resource number
 	if (res == 0)
-		Con_fatal_error("FN_set_frame: %s (id %d) passed zero anim resource (%s line %u)", FetchObjectName(ID), ID, __FILE__, __LINE__);
+		Con_fatal_error("FN_set_frame: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
 #endif
 
 	// open the resource (& check it's valid)
@@ -289,7 +288,7 @@ int32 FN_set_frame(int32 *params) {
 	// check this this resource is actually an animation file!
 	head = (_standardHeader *) anim_file;
 	if (head->fileType != ANIMATION_FILE)
-		Con_fatal_error("FN_set_frame: %s (%d) is not an anim! (%s line %u)", FetchObjectName(res), res, __FILE__, __LINE__);
+		Con_fatal_error("FN_set_frame: %s (%d) is not an anim!", FetchObjectName(res), res);
 #endif
 
 	// set up pointer to the animation header
@@ -298,7 +297,7 @@ int32 FN_set_frame(int32 *params) {
 /* #ifdef _SWORD2_DEBUG
 	// check there's at least one frame
 	if (anim_head->noAnimFrames == 0)
-		Con_fatal_error("FN_set_frame: %s (%d) has zero frame count! (%s line %u)", FetchObjectName(res), res, __FILE__, __LINE__);
+		Con_fatal_error("FN_set_frame: %s (%d) has zero frame count!", FetchObjectName(res), res);
 #endif */
 
 	// set up anim resource in graphic object
@@ -495,7 +494,7 @@ int32 FN_add_sequence_text(int32 *params) {
 
 #ifdef _SWORD2_DEBUG
 	if (sequenceTextLines == MAX_SEQUENCE_TEXT_LINES)
-		Con_fatal_error("FN_add_sequence_text ran out of lines (%s line %u)",__FILE__,__LINE__);
+		Con_fatal_error("FN_add_sequence_text ran out of lines");
 #endif
 
 	sequence_text_list[sequenceTextLines].textNumber = params[0];
@@ -538,11 +537,8 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 		// now ok to close the text file
 		res_man.Res_close(text_res);
 
-#ifdef _SWORD2_DEBUG
-		// Write to walkthrough file (zebug0.txt)
 		// 1st word of text line is the official line number
-		Zdebug(0,"(%d) SEQUENCE TEXT: %s", *(uint16 *) text, text + 2);
-#endif
+		debug(5,"(%d) SEQUENCE TEXT: %s", *(uint16 *) text, text + 2);
 
 		// is it to be speech or subtitles or both?
 		// assume speech is not running until know otherwise
@@ -669,17 +665,15 @@ int32 FN_smacker_lead_in(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	header = (_standardHeader *) leadIn;
 	if (header->fileType != WAV_FILE)
-		Con_fatal_error("FN_smacker_lead_in() given invalid resource (%s line %u)", __FILE__, __LINE__);
+		Con_fatal_error("FN_smacker_lead_in() given invalid resource");
 #endif
 
 	leadIn += sizeof(_standardHeader);
 	// wav data gets copied to sound memory
 	rv = g_sound->PlayFx(0, leadIn, 0, 0, RDSE_FXLEADIN);
 
-#ifdef _SWORD2_DEBUG
 	if (rv)
-		Zdebug("SFX ERROR: PlayFx() returned %.8x (%s line %u)", rv, __FILE__, __LINE__);
-#endif
+		debug(5, "SFX ERROR: PlayFx() returned %.8x", rv);
 
 	res_man.Res_close(params[0]);
 
@@ -716,22 +710,20 @@ int32 FN_play_sequence(int32 *params) {
 	// of computer games" - but at the very least we want to show the
 	// cutscene subtitles, so I removed them.
 
-	Zdebug("FN_play_sequence(\"%s\");", params[0]);
+	debug(5, "FN_play_sequence(\"%s\");", params[0]);
 
 #ifdef _SWORD2_DEBUG
 	// check that the name paseed from script is 8 chars or less
 	if (strlen((char *) params[0]) > 8)
-		Con_fatal_error("Sequence filename too long (%s line %u)", __FILE__, __LINE__);
+		Con_fatal_error("Sequence filename too long");
 #endif
 
 	// add the appropriate file extension & play it
 
 	sprintf(filename, "%s.smk", (char *) params[0]);
 
-#ifdef _SWORD2_DEBUG
 	// Write to walkthrough file (zebug0.txt)
- 	Zdebug(0,"PLAYING SEQUENCE \"%s\"", filename);
-#endif
+ 	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
 
 	// now create the text sprites, if any (James27may97)
 
@@ -746,7 +738,7 @@ int32 FN_play_sequence(int32 *params) {
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader *)leadOut;
 		if (header->fileType != WAV_FILE)
-			Con_fatal_error("FN_smacker_lead_out() given invalid resource (%s line %u)", __FILE__, __LINE__);
+			error("FN_smacker_lead_out() given invalid resource");
 #endif
 
 		leadOut += sizeof(_standardHeader);
@@ -775,11 +767,9 @@ int32 FN_play_sequence(int32 *params) {
 		smackerLeadOut = 0;
 	}
 
-#ifdef _SWORD2_DEBUG
 	// check the error return-value
 	if (rv)
-		Zdebug("PlaySmacker(\"%s\") returned 0x%.8x", filename, rv);
-#endif
+		debug(5, "PlaySmacker(\"%s\") returned 0x%.8x", filename, rv);
 
 	// now clear the text sprites, if any (James27may97)
 
@@ -798,7 +788,7 @@ int32 FN_play_sequence(int32 *params) {
 	memset(pal, 0, 256 * sizeof(_palEntry));
 	BS2_SetPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
 
-  	Zdebug("FN_play_sequence FINISHED");
+	debug(5, "FN_play_sequence FINISHED");
 
 	// continue script
 	return IR_CONT;

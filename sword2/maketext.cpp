@@ -105,7 +105,7 @@ mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes)
 	uint16 noOfLines;	// no of lines of text required to fit within
 				// a sprite of width 'maxWidth' pixels
 
-	// Zdebug("MakeTextSprite(\"%s\", maxWidth=%u)", sentence, maxWidth);
+	debug(5, "MakeTextSprite(\"%s\", maxWidth=%u)", sentence, maxWidth);
 
 	// NB. ensure sentence contains no leading/tailing/extra spaces - if
 	// necessary, copy to another array first, missing the extra spaces.
@@ -271,8 +271,8 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 	frameHeadPtr->width = spriteWidth;
 	frameHeadPtr->height = spriteHeight;
 	
-	// Zdebug("spriteWidth=%u",spriteWidth);
-	// Zdebug("spriteHeight=%u",spriteHeight);
+	debug(5, "spriteWidth=%u", spriteWidth);
+	debug(5, "spriteHeight=%u", spriteHeight);
 
 	// ok, now point to the start (of the first line) of the sprite data
 	// itelf
@@ -302,7 +302,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 
 #ifdef _SWORD2_DEBUG			
 			if (charPtr->height != charHeight)
-				Con_fatal_error("FONT ERROR: '%c' is not same height as the space (%s line %u)", sentence[pos - 1], __FILE__, __LINE__);
+				Con_fatal_error("FONT ERROR: '%c' is not same height as the space", sentence[pos - 1]);
 #endif
 
 			CopyChar(charPtr, spritePtr, spriteWidth, pen);
@@ -481,7 +481,7 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 #ifdef _SWORD2_DEBUG
 	// we've run out - might as well stop the system
 	if (j == MAX_text_blocs)
-		Con_fatal_error("Build_new_block ran out of blocks! (%s line %u)", __FILE__, __LINE__);
+		Con_fatal_error("Build_new_block ran out of blocks!");
 #endif
 
 	// make the sprite!
@@ -590,7 +590,7 @@ void Print_text_blocs(void) {
 
 			rv = DrawSprite(&spriteInfo);
 			if (rv)
-				ExitWithReport("Driver Error %.8x in Print_text_blocs [%s line %u]", rv, __FILE__, __LINE__);
+				error("Driver Error %.8x in Print_text_blocs", rv);
 		}
 	}
 }

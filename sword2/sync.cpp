@@ -26,7 +26,7 @@
 typedef	struct {
 	uint32 id;
 	uint32 sync;
-} _sync_unit;	// haaaaaaaa
+} _sync_unit;
 
 // there wont be many will there. probably 2 at most i reckon
 #define	MAX_syncs 10
@@ -45,7 +45,7 @@ int32 FN_send_sync(int32 *params) {
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (sync_list[i].id == 0) {
-			// Zdebug(" %d sending sync %d to %d", ID, params[1], params[0]);
+			debug(5, " %d sending sync %d to %d", ID, params[1], params[0]);
 			sync_list[i].id = params[0];
 			sync_list[i].sync = params[1];
 			return IR_CONT;
@@ -67,7 +67,7 @@ void Clear_syncs(uint32	id) {
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (sync_list[i].id == id) {
-			// Zdebug("removing sync %d for %d", i, id);
+			debug(5, "removing sync %d for %d", i, id);
 			sync_list[i].id = 0;
 		}
 	}
@@ -111,12 +111,12 @@ int32 FN_wait_sync(int32 *params) {
 	// keep calling until a sync recieved
 	// params     none
 
-	// Zdebug("%d waits", ID);
+	debug(5, "FN_wait_sync: %d waits", ID);
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (sync_list[i].id == ID) {
 			// return sync value waiting
-			//Zdebug(" go");
+			debug(5, "FN_wait_sync: go");
 			RESULT = sync_list[i].sync;
 			return IR_CONT;
 		}

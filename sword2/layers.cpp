@@ -52,28 +52,16 @@ int32 FN_init_background(int32 *params)	{
 	uint8 *file;
 	uint32 rv;
 
-#ifdef _SWORD2_DEBUG
-	//--------------------------------------
-	// Write to walkthrough file (zebug0.txt)
-	Zdebug(0,"=====================================");
-	Zdebug(0,"CHANGED TO LOCATION \"%s\"", FetchObjectName(*params));
-	Zdebug(0,"=====================================");
-
-	// Also write this to system debug file
-	Zdebug("=====================================");
-	Zdebug("CHANGED TO LOCATION \"%s\"", FetchObjectName(*params));
-	Zdebug("=====================================");
- 	//--------------------------------------
-#endif
+	debug(5, "CHANGED TO LOCATION \"%s\"", FetchObjectName(*params));
 
 	// stop all fx & clears the queue
 	Clear_fx_queue();
 
 #ifdef _SWORD2_DEBUG
-	Zdebug("FN_init_background(%d)", *params);
+	debug(5, "FN_init_background(%d)", *params);
 
 	if (!*params) {
-		Con_fatal_error("ERROR: FN_set_background cannot have 0 for background layer id! (%s line=%u)", __FILE__, __LINE__);
+		Con_fatal_error("ERROR: FN_set_background cannot have 0 for background layer id!");
 	}
 #endif
 
@@ -84,7 +72,7 @@ int32 FN_init_background(int32 *params)	{
 	if (this_screen.mask_flag) {
 		rv = CloseLightMask();
 		if (rv)
-			ExitWithReport("Driver Error %.8x [%s line %u]", rv, __FILE__, __LINE__);
+			error("Driver Error %.8x", rv);
 	}
 	
 	// New stuff for faster screen drivers
@@ -110,7 +98,7 @@ int32 FN_init_background(int32 *params)	{
 	this_screen.screen_wide = screen_head->width;
 	this_screen.screen_deep = screen_head->height;
 
-	Zdebug("res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
+	debug(5, "res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
 
 	//initialise the driver back buffer
 	SetLocationMetrics(screen_head->width, screen_head->height);
@@ -128,7 +116,7 @@ int32 FN_init_background(int32 *params)	{
 			// signifies a layer
 			sort_list[j].layer_number = j + 1;
 
-			Zdebug("init layer %d", j);
+			debug(5, "init layer %d", j);
 		}
 	}
 
@@ -188,7 +176,7 @@ int32 FN_init_background(int32 *params)	{
 
 		rv = OpenLightMask(&spriteInfo);
 		if (rv)
-			ExitWithReport("Driver Error %.8x [%s line %u]", rv, __FILE__, __LINE__);
+			error("Driver Error %.8x", rv);
 
 		// so we know to close it later! (see above)
 		this_screen.mask_flag = 1;
@@ -202,7 +190,7 @@ int32 FN_init_background(int32 *params)	{
 
 	SetUpBackgroundLayers();
 
-	Zdebug("end init");
+	debug(5, "end init");
 	return 1;
 }
 

@@ -128,7 +128,7 @@ int32 FN_add_subject(int32 *params) {
 		subject_list[IN_SUBJECT].res = params[0];
 		subject_list[IN_SUBJECT].ref = params[1];
 
-		// Zdebug("FN_add_subject res %d, uid %d", params[0], params[1]);
+		debug(5, "FN_add_subject res %d, uid %d", params[0], params[1]);
 
 		IN_SUBJECT++;
 	}
@@ -149,12 +149,11 @@ int32 FN_choose(int32 *params) {
 	uint8 *icon;
 	uint32 pos = 0;
 
-	// Zdebug("into choose");
+	debug(5, "FN_choose");
 
 	AUTO_SELECTED = 0;	// see below
 
 	// new thing to intercept objects held at time of clicking on a person
-	// (James 06may97)
 
 	if (OBJECT_HELD) {
 		// If we are using a luggage icon on the person, scan the
@@ -194,7 +193,6 @@ int32 FN_choose(int32 *params) {
 	}
 
 	// new thing for skipping chooser with "nothing else to say" text
-	// (James 23may97)
 
 	// If this is the 1st time the chooser is coming up in this
 	// conversation, AND there's only 1 subject, AND it's the EXIT icon
@@ -220,13 +218,13 @@ int32 FN_choose(int32 *params) {
 
 		for (j = 0; j < 15; j++) {
 			if (j < IN_SUBJECT) {
-				// Zdebug(" ICON res %d for %d", subject_list[j].res, j);
+				debug(5, " ICON res %d for %d", subject_list[j].res, j);
 				icon = res_man.Res_open(subject_list[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
 				SetMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
 				res_man.Res_close(subject_list[j].res);
 			} else {
 				//no icon here
-				//Zdebug(" NULL for %d", j);
+				debug(5, " NULL for %d", j);
 				SetMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);
 			}
 		}
@@ -243,7 +241,7 @@ int32 FN_choose(int32 *params) {
 		return IR_REPEAT;
 	} else {
 		// menu is there - we're just waiting for a click
-		// Zdebug("choosing");
+		debug(5, "choosing");
 
 		me = MouseEvent();
 
@@ -261,20 +259,11 @@ int32 FN_choose(int32 *params) {
 
 				//clicked on something - what button?
 				if (hit < IN_SUBJECT) {
-#ifdef _SWORD2_DEBUG
-					// Write to walkthrough file
-					// (zebug0.txt)
- 					Zdebug(0, "----------------------");
-					Zdebug(0, "Icons available:");
-#endif
+					debug(5, "Icons available:");
 
 					// change icons
 					for (j = 0; j < IN_SUBJECT; j++) {
-#ifdef _SWORD2_DEBUG
-						// Write to walkthrough file
-						// (zebug0.txt)
-						Zdebug(0, "%s", FetchObjectName(subject_list[j].res));
-#endif
+						debug(5, "%s", FetchObjectName(subject_list[j].res));
 
 						// change all others to grey
 						if (j != hit) {
@@ -285,12 +274,7 @@ int32 FN_choose(int32 *params) {
 					}
 
 
-#ifdef _SWORD2_DEBUG
-					// Write to walkthrough file
-					// (zebug0.txt)
-					Zdebug(0, "Selected: %s", FetchObjectName(subject_list[hit].res));
-					Zdebug(0, "----------------------");
-#endif
+					debug(5, "Selected: %s", FetchObjectName(subject_list[hit].res));
 
 					// this is our looping flag
 					choosing = 0;
@@ -300,7 +284,7 @@ int32 FN_choose(int32 *params) {
 					// blank mouse again
 					Set_mouse(0);
 
-					// Zdebug("hit %d - ref %d  ref*8 %d", hit, subject_list[hit].ref, subject_list[hit].ref * 8);
+					debug(5, "hit %d - ref %d  ref*8 %d", hit, subject_list[hit].ref, subject_list[hit].ref * 8);
 
 					// for non-speech scripts that manually
 					// call the chooser
@@ -311,7 +295,9 @@ int32 FN_choose(int32 *params) {
 				}
 			}
 		}
-		// Zdebug("end choose");
+
+		debug(5, "end choose");
+
 		// again next cycle
 		return IR_REPEAT;
 	}
@@ -325,7 +311,7 @@ int32 FN_start_conversation(int32 *params) {
 
 	// params:	none
 
-	// Zdebug("FN_start_conversation %d", ID);
+	debug(5, "FN_start_conversation %d", ID);
 
 	// reset 'chooser_count_flag' at the start of each conversation:
 
@@ -350,14 +336,14 @@ int32 FN_end_conversation(int32 *params) {
 	// FN_idle();
 	// params:	none
 
-	// Zdebug("FN_end_conversation");
+	debug(5, "FN_end_conversation");
 
 	HideMenu(RDMENU_BOTTOM);
 
 	if (mousey > 399) {
 		// will wait for cursor to move off the bottom menu
 		mouse_mode = MOUSE_holding;
-		Zdebug("   holding");
+		debug(5, "   holding");
 	}
 
 	TALK_FLAG = 0;	//in-case DC forgets
@@ -446,7 +432,7 @@ int32 FN_they_do_we_wait(int32	*params) {
 	_standardHeader	*head;
 	int32 target = params[1];
 
-	// Zdebug("FN_they_do_we_wait id %d, command %d", params[1], params[2]);
+	debug(5, "FN_they_do_we_wait id %d, command %d", params[1], params[2]);
 
 	// ok, see if the target is busy - we must request this info from the
 	// target object
@@ -467,7 +453,7 @@ int32 FN_they_do_we_wait(int32	*params) {
 	if (!INS_COMMAND && RESULT == 1 && ob_logic->looping == 0) {
 		// first time so set up targets command if target is waiting
 
-		// Zdebug("FNtdww sending command to %d", target);
+		debug(5, "FNtdww sending command to %d", target);
 
 		SPEECH_ID = params[1];
 		INS_COMMAND = params[2];
@@ -500,7 +486,8 @@ int32 FN_they_do_we_wait(int32	*params) {
 
 	if (RESULT == 1) {
 		// its waiting now so we can be finished with all this
-		// Zdebug("FNtdww finished");
+		debug(5, "FNtdww finished");
+
 		// not looping anymore
 		ob_logic->looping = 0;
 
@@ -510,7 +497,7 @@ int32 FN_they_do_we_wait(int32	*params) {
 		return IR_CONT;
 	}
 
-	// Zdebug("FNtdww just waiting");
+	debug(5, "FNtdww just waiting");
 
 	// debug flag to indicate who we're waiting for - see debug.cpp
 	speechScriptWaiting = target;
@@ -614,7 +601,7 @@ int32 FN_timed_wait(int32 *params) {
 		// none of this should ever happen
 		Kill_all_ids_events(target);
 
-		Zdebug("EVENT timed out");
+		debug(5, "EVENT timed out");
 
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
@@ -655,7 +642,7 @@ int32 FN_speech_process(int32 *params) {
 
 	ob_speech = (Object_speech *) params[1];
 
-	// Zdebug("  SP");
+	debug(5, "  SP");
 
 	while(1) {
 		//we are currently running a command
@@ -674,13 +661,14 @@ int32 FN_speech_process(int32 *params) {
 			pars[7] = ob_speech->ins4;	// anim table res id
 			pars[8] = ob_speech->ins5;	// animation mode - 0 lip synced, 1 just straight animation
 
-			// Zdebug("speech-process talk");
+			debug(5, "speech-process talk");
 
 			// run the function - (it thinks it's been called from
 			// script - bloody fool)
 
 			if (FN_i_speak(pars) != IR_REPEAT) {
-				// Zdebug("speech-process talk finished");
+				debug(5, "speech-process talk finished");
+
 				// command finished
 				ob_speech->command = 0;
 
@@ -816,7 +804,8 @@ int32 FN_speech_process(int32 *params) {
 			pars[6] = ob_speech->ins3;	// target direction
 
 			if (FN_walk(pars) != IR_REPEAT) {
-				// Zdebug("speech-process walk finished");
+				debug(5, "speech-process walk finished");
+
 				// command finished
 				ob_speech->command = 0;
 
@@ -834,7 +823,8 @@ int32 FN_speech_process(int32 *params) {
 			pars[4] = ob_speech->ins1;	// anim resource
 
 			if (FN_walk_to_anim(pars) != IR_REPEAT) {
-				// Zdebug("speech-process walk finished");
+				debug(5, "speech-process walk finished");
+
 				// command finished
 				ob_speech->command = 0;
 
@@ -861,7 +851,8 @@ int32 FN_speech_process(int32 *params) {
 			ob_speech->wait_state = 1;	// waiting for command
 			return IR_REPEAT;		// come back again next cycle
 		case INS_quit:
-			// Zdebug("speech-process - quit");
+			debug(5, "speech-process - quit");
+
 			ob_speech->command = 0;		// finish with all this
 			// ob_speech->wait_state = 0;	// start with waiting for command next conversation
 			return IR_CONT;			// thats it, we're finished with this
@@ -894,7 +885,7 @@ int32 FN_speech_process(int32 *params) {
 			// now busy
 			ob_speech->wait_state = 0;
 
-			// Zdebug("received new command %d", INS_COMMAND);
+			debug(5, "received new command %d", INS_COMMAND);
 
 			// we'll drop off and be caught by the while(1), so
 			// kicking in the new command straight away
@@ -1088,17 +1079,13 @@ int32 FN_i_speak(int32 *params) {
 		// can't right-click past the text for the first quarter second
 		right_click_delay = 3;
 
-#ifdef _SWORD2_DEBUG
 		// Write to walkthrough file (zebug0.txt)
 		// if (player_id != george), then player is controlling Nico
 
-		// Oh, really? I thought Nico used the same object...
-
 		if (PLAYER_ID != CUR_PLAYER_ID)
-			Zdebug(0, "(%d) Nico: %s", officialTextNumber, text + 2);
+			debug(5, "(%d) Nico: %s", officialTextNumber, text + 2);
 		else
-			Zdebug(0, "(%d) %s: %s", officialTextNumber, FetchObjectName(ID), text + 2);
-#endif
+			debug(5, "(%d) %s: %s", officialTextNumber, FetchObjectName(ID), text + 2);
 
 		// Set up the speech animation
 
@@ -1222,9 +1209,7 @@ int32 FN_i_speak(int32 *params) {
 				// this next cycle, don't know yet)
 				g_sound->UnpauseSpeech();
 			} else {
-#ifdef _SWORD2_DEBUG
-				Zdebug("ERROR: PlayCompSpeech(speechFile=\"%s\", wav=%d (res=%d pos=%d)) returned %.8x", speechFile, params[S_WAV], text_res, local_text, rv);
-#endif
+				debug(5, "ERROR: PlayCompSpeech(speechFile=\"%s\", wav=%d (res=%d pos=%d)) returned %.8x", speechFile, params[S_WAV], text_res, local_text, rv);
 			}
 		}
 
@@ -1576,8 +1561,7 @@ void Form_text(int32 *params) {
 		speech_time = strlen((char *) text) + 30;
 	} else {
 		// no text line passed? - this is bad
-		// Zdebug(9, "no text line for speech wav %d", params[S_WAV]);
-		Zdebug("no text line for speech wav %d", params[S_WAV]);
+		debug(5, "no text line for speech wav %d", params[S_WAV]);
 	}
 }
 
