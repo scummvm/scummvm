@@ -1070,7 +1070,9 @@ int main(int argc, char* argv[]) {
 	scumm->_EPAL_offs = 0;
 	scumm->_IM00_offs = 0;
 	scumm->_PALS_offs = 0;
-	
+
+	scumm->_fastMode = 0;
+	scumm->_charsetColor = 0;
 /* */
 
 	scumm->_fullScreen = detector._fullScreen;
