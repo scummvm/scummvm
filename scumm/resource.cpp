@@ -315,7 +315,6 @@ void Scumm::readIndexFile() {
 			else
 				num = _fileHandle.readUint16LE();
 			assert(num == _numGlobalObjects);
-			
 
 			if (_version == 8) {	/* FIXME: Not sure.. */
 				char buffer[40];
@@ -341,8 +340,8 @@ void Scumm::readIndexFile() {
 					_objectOwnerTable[i] &= OF_OWNER_MASK;
 				}
 				if (_features & GF_AFTER_HEV7) {
-					// FIXME nasty nasty hack handle properly...
-					_fileHandle.seek(num * 6000, SEEK_CUR);
+					// _objectRoomTable
+					_fileHandle.seek(num * 4, SEEK_CUR);
 				}
 			}
 			
@@ -362,8 +361,10 @@ void Scumm::readIndexFile() {
 			break;
 		
 		case MKID('DLFL'):
-			_HEV7RoomOffsets = (byte *)calloc(itemsize - 8, 1);
-			_fileHandle.read(_HEV7RoomOffsets, itemsize - 8);
+			i = _fileHandle.readUint16LE();
+			_fileHandle.seek(-2, SEEK_CUR);
+			_HEV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
+			_fileHandle.read(_HEV7RoomOffsets, (2 + (i * 4)) );
 			break;
 
 		case MKID('DIRI'):
