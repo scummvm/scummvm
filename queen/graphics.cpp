@@ -310,37 +310,19 @@ void Graphics::shrinkFrame(const BobFrame *bf, uint16 percentage) {
 	assert(new_w * new_h < BOB_SHRINK_BUF_SIZE);
 
 	if (new_w != 0 && new_h != 0) {
-
 		_shrinkBuffer.width  = new_w;
 		_shrinkBuffer.height = new_h;
 
-		uint32 shrinker = (100 << 0x10) / percentage;
-		uint16 x_scale = shrinker >> 0x10;
-		uint16 y_scale = x_scale * bf->width;   
-		shrinker &= 0xFFFF;
-
-		uint8* src = bf->data;
+		uint16 x, y;
+		uint16 sh[GAME_SCREEN_WIDTH];
+		for (x = 0; x < MAX(new_h, new_w); ++x) {
+			sh[x] = x * 100 / percentage;
+		}
 		uint8* dst = _shrinkBuffer.data;
-
-		uint32 y_count = 0;
-		while (new_h--) {
-			uint16 i;
-			uint32 x_count = 0;
-			uint8 *p = src;
-			for(i = 0; i < new_w; ++i) {
-				*dst++ = *p;
-				p += x_scale;
-				x_count += shrinker;
-				if (x_count > 0xFFFF) {
-					++p;
-					x_count &= 0xFFFF;
-				}
-			}
-			src += y_scale;
-			y_count += shrinker;
-			if (y_count > 0xFFFF) {
-				src += bf->width;
-				y_count &= 0xFFFF;
+		for (y = 0; y < new_h; ++y) {
+			uint8 *p = bf->data + sh[y] * bf->width;
+			for(x = 0; x < new_w; ++x) {
+				*dst++ = *(p + sh[x]);
 			}
 		}
 	}

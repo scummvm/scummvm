@@ -170,6 +170,7 @@ private:
 
 	bool _gotTick;	
 
+	Common::RandomSource _rnd;
 	Dynalum _dynalum;
 	OSystem *_system;
 	QueenEngine *_vm;

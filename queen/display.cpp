@@ -134,10 +134,7 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 	}
 
 	uint offset = (y / 4) * 160 + (x / 4);
-	if (offset >= sizeof(_dynalum.msk)) {
-		debug(6, "Graphics::dynalumUpdate(%d, %d) - invalid offset: %08x", x, y, offset);
-		return;
-	}
+	assert(offset < sizeof(_dynalum.msk));
 
 	uint8 colMask = _dynalum.msk[offset];
 	debug(9, "Display::dynalumUpdate(%d, %d) - colMask = %d", x, y, colMask);
@@ -350,7 +347,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 			j += jdir;
 			if(j <= 0 || j >= 14) {
 				jdir = -jdir;
-				if (_vm->randomizer.getRandomNumber(1)) {
+				if (_rnd.getRandomNumber(1)) {
 					if (ABS(jdir) == 1) {
 						jdir *= 2;
 					} else {
@@ -956,8 +953,8 @@ void Display::blankScreenEffect1() {
 	uint8 buf[32 * 32];
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		for(int i = 0; i < 2; ++i) {    
-			uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 32 - 2) + 1;
-			uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 32 - 2) + 1;
+			uint16 x = _rnd.getRandomNumber(SCREEN_W - 32 - 2) + 1;
+			uint16 y = _rnd.getRandomNumber(SCREEN_H - 32 - 2) + 1;
 			uint8 *p = _screenBuf + SCREEN_W * y + x;
 			uint8 *q = buf;
 			uint16 h = 32;
@@ -966,16 +963,9 @@ void Display::blankScreenEffect1() {
 				p += SCREEN_W;
 				q += 32;
 			}
-			if (_vm->randomizer.getRandomNumber(1)) {
-				--x;
-			} else {
-				++x;
-			}
-			if (_vm->randomizer.getRandomNumber(1)) {
-				--y;
-			} else {
-				++y;
-			}
+			const int inc[] = { -1, 1 };
+			x += inc[_rnd.getRandomNumber(1)];
+			y += inc[_rnd.getRandomNumber(1)];
 			_system->copy_rect(buf, 32, x, y, 32, 32);
 			_system->updateScreen();
 			_vm->input()->delay(10);
@@ -985,11 +975,11 @@ void Display::blankScreenEffect1() {
 
 void Display::blankScreenEffect2() {
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
-		uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);
-		uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 2);
+		uint16 x = _rnd.getRandomNumber(SCREEN_W - 2);
+		uint16 y = _rnd.getRandomNumber(SCREEN_H - 2);
 		uint8 *p = _screenBuf + y * SCREEN_W + x;
 		uint8 c = 0;
-		switch (_vm->randomizer.getRandomNumber(3)) {
+		switch (_rnd.getRandomNumber(3)) {
 		case 0:
 			c = *p;
 			break;
@@ -1022,8 +1012,8 @@ void Display::blankScreenEffect3() {
 			memset(_screenBuf, 0, SCREEN_W * SCREEN_H);
 			_system->copy_rect(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);			
 		} else {
-			uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);
-			uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 2);
+			uint16 x = _rnd.getRandomNumber(SCREEN_W - 2);
+			uint16 y = _rnd.getRandomNumber(SCREEN_H - 2);
 			uint8 *p = _screenBuf + SCREEN_W * y + x;
 			uint8 p0 = *p;
 			uint8 p1 = *(p + 1);
