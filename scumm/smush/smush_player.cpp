@@ -172,11 +172,11 @@ public:
 	}
 };
 
-static StringResource *getStrings(const char *file, bool is_encoded) {
+static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_encoded) {
 	debugC(DEBUG_SMUSH, "trying to read text ressources from %s", file);
-	File theFile;
+	ScummFile theFile;
 
-	theFile.open(file);
+	vm->openFile(theFile, file);
 	if (!theFile.isOpen()) {
 		return 0;
 	}
@@ -195,7 +195,7 @@ static StringResource *getStrings(const char *file, bool is_encoded) {
 
 		if (type != TYPE_ETRS) {
 			delete [] filebuffer;
-			return getStrings(file, false);
+			return getStrings(vm, file, false);
 		}
 
 		char *old = filebuffer;
@@ -651,11 +651,11 @@ bool SmushPlayer::readString(const char *file) {
 	char fname[260];
 	memcpy(fname, file, i - file);
 	strcpy(fname + (i - file), ".trs");
-	if ((_strings = getStrings(fname, false)) != 0) {
+	if ((_strings = getStrings(_vm, fname, false)) != 0) {
 		return true;
 	}
 
-	if ((_strings = getStrings("digtxt.trs", true)) != 0) {
+	if ((_strings = getStrings(_vm, "digtxt.trs", true)) != 0) {
 		return true;
 	}
 	return false;
