@@ -83,10 +83,15 @@ Display::~Display() {
 	delete[] _backdropBuf;
 	delete[] _panelBuf;
 	delete[] _screenBuf;
+	
+	delete[] _dirtyBlocks;
 
 	delete[] _pal.room;
 	delete[] _pal.screen;
 	delete[] _pal.panel;
+	
+	delete[] _dynalum.mskBuf;
+	delete[] _dynalum.lumBuf;
 }
 
 void Display::dynalumInit(const char *roomName, uint16 roomNum) {
@@ -598,6 +603,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 //	_fullRefresh = 1;
 	if (_fullRefresh) {
 		_system->copyRectToScreen(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+		_system->updateScreen();
 		--_fullRefresh;
 		if (_fullRefresh) {
 			memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight);
@@ -628,9 +634,11 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 			dbBuf += _dirtyBlocksWidth;
 			scrBuf += SCREEN_W * D_BLOCK_H;
 		}
+		if (count != 0) {
+			_system->updateScreen();
+		}
 		debug(7, "Display::update() - Dirtyblocks blit (%d)", count);
 	}
-	_system->updateScreen();
 }
 
 void Display::setupPanel() {
