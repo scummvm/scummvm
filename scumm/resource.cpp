@@ -1111,7 +1111,9 @@ byte *Scumm::getResourceAddress(int type, int idx)
 {
 	byte *ptr;
 
-	CHECK_HEAP validateResource("getResourceAddress", type, idx);
+	CHECK_HEAP if (!validateResource("getResourceAddress", type, idx))
+		return NULL;
+
 	if (!res.address[type]) {
 		debug(9, "getResourceAddress(%s,%d), res.address[type] == NULL", resTypeFromId(type), idx);
 		return NULL;
@@ -1174,7 +1176,8 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 
 	CHECK_HEAP debug(9, "createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
-	validateResource("allocating", type, idx);
+	if (!validateResource("allocating", type, idx))
+		return NULL;
 	nukeResource(type, idx);
 
 	expireResources(size);
@@ -1192,11 +1195,13 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 	return ptr + sizeof(MemBlkHeader);	/* skip header */
 }
 
-void Scumm::validateResource(const char *str, int type, int idx)
+bool Scumm::validateResource(const char *str, int type, int idx)
 {
 	if (type < rtFirst || type > rtLast || (uint) idx >= (uint) res.num[type]) {
 		warning("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
+		return false;
 	}
+	return true;
 }
 
 void Scumm::nukeResource(int type, int idx)
@@ -1370,7 +1375,8 @@ byte *findResourceSmall(uint32 tag, byte *searchin, int idx)
 
 void Scumm::lock(int type, int i)
 {
-	validateResource("Locking", type, i);
+	if (!validateResource("Locking", type, i))
+		return;
 	res.flags[type][i] |= RF_LOCK;
 
 //  debug(1, "locking %d,%d", type, i);
@@ -1378,7 +1384,8 @@ void Scumm::lock(int type, int i)
 
 void Scumm::unlock(int type, int i)
 {
-	validateResource("Unlocking", type, i);
+	if (!validateResource("Unlocking", type, i))
+		return;
 	res.flags[type][i] &= ~RF_LOCK;
 
 //  debug(1, "unlocking %d,%d", type, i);
@@ -1386,7 +1393,8 @@ void Scumm::unlock(int type, int i)
 
 bool Scumm::isResourceInUse(int type, int i)
 {
-	validateResource("isResourceInUse", type, i);
+	if (!validateResource("isResourceInUse", type, i))
+		return false;
 	switch (type) {
 	case rtRoom:
 		return _roomResource == (byte)i;
@@ -1503,7 +1511,8 @@ void Scumm::loadPtrToResource(int type, int resindex, byte *source)
 
 bool Scumm::isResourceLoaded(int type, int idx)
 {
-	validateResource("isLoaded", type, idx);
+	if (!validateResource("isLoaded", type, idx))
+		return false;
 	return res.address[type][idx] != NULL;
 }
 
@@ -1674,7 +1683,8 @@ void Scumm::allocateArrays()
 
 bool Scumm::isGlobInMemory(int type, int idx)
 {
-	validateResource("isGlobInMemory", type, idx);
+	if (!validateResource("isGlobInMemory", type, idx))
+		return false;
 
 	return res.address[type][idx] != NULL;
 }

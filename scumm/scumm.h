@@ -601,7 +601,7 @@ public:
 	int readSoundResource(int type, int index);
 	int readSoundResourceSmallHeader(int type, int index);
 	void setResourceCounter(int type, int index, byte flag);
-	void validateResource(const char *str, int type, int index);
+	bool validateResource(const char *str, int type, int index);
 	void increaseResourceCounter();
 	bool isResourceInUse(int type, int i);
 	bool isResourceLoaded(int type, int index);
