@@ -773,7 +773,7 @@ void Scumm::showActors() {
 	int i;
 	Actor *a;
 
-	for (i = 1; i < NUM_ACTORS; i++) {
+	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom())
 			a->showActor();
@@ -784,7 +784,7 @@ void Scumm::walkActors() {
 	int i;
 	Actor *a;
 
-	for (i = 1; i < NUM_ACTORS; i++) {
+	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom())
 			// FIXME: really V3, or should it maybe be GF_SMALL_HEADER
@@ -800,12 +800,12 @@ void Scumm::playActorSounds() {
 	int i;
 	Actor *a;
 
-	for (i = 1; i < NUM_ACTORS; i++) {
+	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		if (a->cost.animCounter2 && a->isInCurrentRoom() && a->sound) {
 			_currentScript = 0xFF;
 			_sound->addSoundToQueue(a->sound[0]);
-			for (i = 1; i < NUM_ACTORS; i++) {
+			for (i = 1; i < _numActors; i++) {
 				a = derefActor(i);
 				a->cost.animCounter2 = 0;
 			}
@@ -822,10 +822,10 @@ void Scumm::processActors() {
 	Actor **actors, *a, **ac, **ac2, *tmp, **end;
 	int numactors = 0;
 
-	actors = new Actor * [NUM_ACTORS];
+	actors = new Actor * [_numActors];
 	
 	// Make a list of all actors in this room
-	for (i = 1; i < NUM_ACTORS; i++) {
+	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		if ((_features & GF_AFTER_V8) && a->layer < 0)
 			continue;
@@ -870,7 +870,7 @@ void Scumm::processUpperActors() {
 	Actor *a;
 	int i;
 
-	for (i = 1; i < NUM_ACTORS; i++) {
+	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom() && a->costume && a->layer < 0) {
 			CHECK_HEAP getMaskFromBox(a->walkbox);
@@ -1084,7 +1084,7 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg) {
 	int i, j;
 
 	if (_fullRedraw) {
-		for (j = 1; j < NUM_ACTORS; j++) {
+		for (j = 1; j < _numActors; j++) {
 			Actor *a = derefActor(j);
 			a->needRedraw |= fg;
 			a->needBgReset |= bg;
@@ -1093,7 +1093,7 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg) {
 		for (i = 0; i < gdi._numStrips; i++) {
 			int strip = _screenStartStrip + i;
 			if (testGfxAnyUsageBits(strip)) {
-				for (j = 1; j < NUM_ACTORS; j++) {
+				for (j = 1; j < _numActors; j++) {
 					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
 						Actor *a = derefActor(j);
 						assert(a->number == j);
@@ -1111,7 +1111,7 @@ int Scumm::getActorFromPos(int x, int y) {
 
 	if (!testGfxAnyUsageBits(x >> 3))
 		return 0;
-	for (i = 1; i < NUM_ACTORS; i++) {
+	for (i = 1; i < _numActors; i++) {
 		Actor *a = derefActor(i);
 		assert(a->number == i);
 		if (testGfxUsageBit(x >> 3, i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
@@ -1562,7 +1562,7 @@ void Scumm::resetActorBgs() {
 
 	for (i = 0; i < gdi._numStrips; i++) {
 		int strip = _screenStartStrip + i;
-		for (j = 1; j < NUM_ACTORS; j++) {
+		for (j = 1; j < _numActors; j++) {
 			a = derefActor(j);
 			if (testGfxUsageBit(strip, j) && a->top != 0xFF && a->needBgReset) {
 				clearGfxUsageBit(strip, j);
@@ -1572,7 +1572,7 @@ void Scumm::resetActorBgs() {
 		}
 	}
 
-	for (i = 1; i < NUM_ACTORS; i++) {
+	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		a->needBgReset = false;
 	}

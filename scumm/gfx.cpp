@@ -2017,7 +2017,7 @@ void Scumm::setCameraFollows(Actor *a) {
 		if (t - _screenStartStrip < camera._leftTrigger || t - _screenStartStrip > camera._rightTrigger)
 			setCameraAt(a->x, 0);
 
-		for (i = 1; i < NUM_ACTORS; i++) {
+		for (i = 1; i < _numActors; i++) {
 			a = derefActor(i);
 			if (a->isInCurrentRoom())
 				a->needRedraw = true;

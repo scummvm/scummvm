@@ -1115,7 +1115,7 @@ void Scumm_v2::o2_setObjectName() {
 	} while (a);
 	work[i] = 0;
 
-	if (obj < NUM_ACTORS)
+	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
 
 	name = getObjOrActorName(obj);

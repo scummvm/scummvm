@@ -607,7 +607,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (!s->isSaving() && savegameVersion < VER_V14)
 		upgradeGfxUsageBits();
 
-	s->saveLoadArrayOf(_actors, NUM_ACTORS, sizeof(_actors[0]), actorEntries);
+	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
 
 	if (savegameVersion < VER_V9)
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);

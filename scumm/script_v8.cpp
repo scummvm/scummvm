@@ -868,7 +868,7 @@ void Scumm_v8::o8_createBoxMatrix() {
 
 	createBoxMatrix();
 
-	for(i = 1; i < NUM_ACTORS; i++) {
+	for(i = 1; i < _numActors; i++) {
 		a = &_actors[i];
 		if (a && a->isInCurrentRoom())
 			a->adjustActorPos();

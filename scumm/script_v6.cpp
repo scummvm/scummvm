@@ -989,7 +989,7 @@ void Scumm_v6::o6_walkActorToObj() {
 	if (!a)
 		return;
 
-	if (obj >= NUM_ACTORS) {
+	if (obj >= _numActors) {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return;
 		int y, dir;
@@ -1296,7 +1296,7 @@ void Scumm_v6::o6_setObjectName() {
 	int obj = pop();
 	int i;
 
-	if (obj < NUM_ACTORS)
+	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
 
 	if (!(_features & GF_AFTER_V7) && !getOBCDFromObject(obj))

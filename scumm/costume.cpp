@@ -1414,7 +1414,7 @@ bool Scumm::isCostumeInUse(int cost) {
 	Actor *a;
 
 	if (_roomResource != 0)
-		for (i = 1; i < NUM_ACTORS; i++) {
+		for (i = 1; i < _numActors; i++) {
 			a = derefActor(i);
 			if (a->isInCurrentRoom() && a->costume == cost)
 				return true;

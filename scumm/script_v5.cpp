@@ -539,7 +539,7 @@ void Scumm_v5::o5_setClass() {
 		newClass = getVarOrDirectWord(0x80);
 		if (newClass == 0) {
 			_classData[obj] = 0;
-			if ((_features & GF_SMALL_HEADER) && obj <= NUM_ACTORS) {
+			if ((_features & GF_SMALL_HEADER) && obj <= _numActors) {
 				Actor *a;
 				a = derefActorSafe(obj, "setClass");
 				a->ignoreBoxes = 0;
@@ -1924,7 +1924,7 @@ void Scumm_v5::o5_setObjectName() {
 	}
 	work[i] = 0;
 
-	if (obj < NUM_ACTORS)
+	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
 
 	if (!getOBCDFromObject(obj)) {

@@ -515,8 +515,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	}
 
 	actnum = atoi(argv[1]);
-	if (actnum >= _s->NUM_ACTORS) {
-		Debug_Printf("Actor %d is out of range (range: 1 - %d)\n", actnum, _s->NUM_ACTORS);
+	if (actnum >= _s->_numActors) {
+		Debug_Printf("Actor %d is out of range (range: 1 - %d)\n", actnum, _s->_numActors);
 		return true;
 	}
 
@@ -547,7 +547,7 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	Debug_Printf("+--------------------------------------------------------------------+\n");
 	Debug_Printf("|# |room|  x |  y |elev|cos|width|box|mov| zp|frame|scale|spd|dir|cls|\n");
 	Debug_Printf("+--+----+----+----+----+---+-----+---+---+---+-----+-----+---+---+---+\n");
-	for (i = 1; i < _s->NUM_ACTORS; i++) {
+	for (i = 1; i < _s->_numActors; i++) {
 		a = &_s->_actors[i];
 		if (a->visible)
 			Debug_Printf("|%2d|%4d|%4d|%4d|%4d|%3d|%5d|%3d|%3d|%3d|%5d|%5d|%3d|%3d|$%02x|\n",

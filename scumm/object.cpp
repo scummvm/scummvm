@@ -69,7 +69,7 @@ void Scumm::putClass(int obj, int cls, bool set)
 	else
 		_classData[obj] &= ~(1 << (cls - 1));
 
-	if (1 <= obj && obj < NUM_ACTORS) {
+	if (1 <= obj && obj < _numActors) {
 		_actors[obj].classChanged(cls, set);
 	}
 }
@@ -149,7 +149,7 @@ int Scumm::whereIsObject(int object) {
 }
 
 int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
-	if (object < NUM_ACTORS) {
+	if (object < _numActors) {
 		Actor *act = derefActorSafe(object, "getObjectOrActorXY");
 		if (!act) 
 			return 0; 
@@ -161,7 +161,7 @@ int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
 	case WIO_NOT_FOUND:
 		return -1;
 	case WIO_INVENTORY:
-		if (_objectOwnerTable[object] < NUM_ACTORS)
+		if (_objectOwnerTable[object] < _numActors)
 			return derefActorSafe(_objectOwnerTable[object], "getObjectOrActorXY(2)")->getActorXYPos(x, y);
 		else
 			return 0xFF;
@@ -218,10 +218,10 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 	Actor *acta = NULL;
 	Actor *actb = NULL;
 
-	if (a < NUM_ACTORS)
+	if (a < _numActors)
 		acta = derefActorSafe(a, "getObjActToObjActDist");
 
-	if (b < NUM_ACTORS)
+	if (b < _numActors)
 		actb = derefActorSafe(b, "getObjActToObjActDist(2)");
 
 	if (acta && actb && acta->getRoom() == actb->getRoom() && acta->getRoom() && !acta->isInCurrentRoom())
@@ -833,7 +833,7 @@ byte *Scumm::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
 
-	if (obj < NUM_ACTORS)
+	if (obj < _numActors)
 		return derefActorSafe(obj, "getObjOrActorName")->getActorName();
 
 	if (_features & GF_SMALL_HEADER) {
@@ -1131,7 +1131,7 @@ void Scumm::setOwnerOf(int obj, int owner) {
 }
 
 int Scumm::getObjX(int obj) {
-	if (obj < NUM_ACTORS) {
+	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
 		return derefActorSafe(obj, "getObjX")->x;
@@ -1145,7 +1145,7 @@ int Scumm::getObjX(int obj) {
 }
 
 int Scumm::getObjY(int obj) {
-	if (obj < NUM_ACTORS) {
+	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
 		return derefActorSafe(obj, "getObjY")->y;
@@ -1164,7 +1164,7 @@ int Scumm::getObjOldDir(int obj) {
 
 int Scumm::getObjNewDir(int obj) {
 	int dir;
-	if (obj < NUM_ACTORS) {
+	if (obj < _numActors) {
 		dir = derefActorSafe(obj, "getObjNewDir")->facing;
 	} else {
 		int x, y;
@@ -1230,7 +1230,7 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	if (is_obj_1) {
 		if (getObjectOrActorXY(b, x, y) == -1)
 			return -1;
-		if (b < NUM_ACTORS)
+		if (b < _numActors)
 			i = derefActorSafe(b, "unkObjProc1")->scalex;
 	} else {
 		x = b;
@@ -1240,7 +1240,7 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	if (is_obj_2) {
 		if (getObjectOrActorXY(e, x2, y2) == -1)
 			return -1;
-		if (e < NUM_ACTORS)
+		if (e < _numActors)
 			j = derefActorSafe(e, "unkObjProc1(2)")->scalex;
 	} else {
 		x2 = e;

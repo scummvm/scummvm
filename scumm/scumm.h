@@ -379,7 +379,7 @@ public:
 	Gdi gdi;
 
 protected:
-	Actor *_actors;	// Has NUM_ACTORS elements
+	Actor *_actors;	// Has _numActors elements
 	
 	uint16 *_inventory;
 	byte *_arrays;
@@ -411,7 +411,7 @@ protected:
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
 	int _numInventory, _numRooms, _numScripts, _numSounds;
 	int _numCharsets, _numNewNames, _numGlobalScripts;
-	int NUM_ACTORS;
+	int _numActors;
 public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 	

@@ -232,7 +232,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_numCharsets = 0;
 	_numNewNames = 0;
 	_numGlobalScripts = 0;
-	NUM_ACTORS = 0;
+	_numActors = 0;
 	_numCostumes = 0;
 	_audioNames = NULL;
 	_numAudioNames = 0;
@@ -683,8 +683,8 @@ void Scumm::scummInit() {
 	setupCursor();
 	
 	// Allocate and Initialize actors
-	_actors = new Actor[NUM_ACTORS];
-	for (i = 1; i < NUM_ACTORS; i++) {
+	_actors = new Actor[_numActors];
+	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		a->number = i;
 		a->initActorClass(this);
@@ -1110,7 +1110,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 	clearEnqueue();
 	stopCycle(0);
 
-	for (i = 1; i < NUM_ACTORS; i++) {
+	for (i = 1; i < _numActors; i++) {
 		at = derefActor(i);
 		at->hideActor();
 	}
@@ -1886,7 +1886,7 @@ Actor *Scumm::derefActor(int id) {
 }
 
 Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
-	if (id < 1 || id >= NUM_ACTORS) {
+	if (id < 1 || id >= _numActors) {
 		debug(2, "Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
 			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
 		return NULL;
@@ -2202,13 +2202,13 @@ void Scumm::launch() {
 	setupOpcodes();
 
 	if (_features & GF_AFTER_V8)
-		NUM_ACTORS = 80;
+		_numActors = 80;
 	else if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX))
-		NUM_ACTORS = 30;
+		_numActors = 30;
 	else if (_gameId == GID_MANIAC)
-		NUM_ACTORS = 24;	// Temporary (?) hack to get to the character selection screen
+		_numActors = 24;
 	else
-		NUM_ACTORS = 13;
+		_numActors = 13;
 
 	if (_features & GF_AFTER_V7)
 		OF_OWNER_ROOM = 0xFF;

@@ -1753,7 +1753,7 @@ void Scumm::allocateArrays() {
 	allocResTypeData(rtInventory, MKID('NONE'), _numInventory, "inventory", 0);
 	allocResTypeData(rtTemp, MKID('NONE'), 10, "temp", 0);
 	allocResTypeData(rtScaleTable, MKID('NONE'), 5, "scale table", 0);
-	allocResTypeData(rtActorName, MKID('NONE'), NUM_ACTORS, "actor name", 0);
+	allocResTypeData(rtActorName, MKID('NONE'), _numActors, "actor name", 0);
 	allocResTypeData(rtVerb, MKID('NONE'), _numVerbs, "verb", 0);
 	allocResTypeData(rtString, MKID('NONE'), _numArray, "array", 0);
 	allocResTypeData(rtFlObject, MKID('NONE'), _numFlObject, "flobject", 0);
