@@ -186,6 +186,17 @@ int Imuse::getVolume(const char *soundName) {
 	return 0;
 }
 
+void Imuse::setHookId(const char *soundName, int hookId) {
+	StackLock lock(_mutex);
+
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
+			track->curHookId = hookId;
+		}
+	}
+}
+
 int Imuse::getCountPlayedTracks() {
 	int count = 0;
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {

@@ -497,14 +497,18 @@ SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const c
 
 void SoundComponent::setKey(int val) {
 	switch (val) {
-	case 0:
-		g_imuse->startSfx(_soundName.c_str(), 127);
+	case 0: // "Play"
+		if (!g_imuse->getSoundStatus(_soundName.c_str())) {
+//			g_imuse->stopSound(_soundName.c_str());
+//		} else {
+			g_imuse->startSfx(_soundName.c_str(), 127);
+		}
 		break;
-	case 1:
+	case 1: // "Stop"
 		g_imuse->stopSound(_soundName.c_str());
 		break;
-	case 2:
-		g_imuse->stopSound(_soundName.c_str());
+	case 2: // "Stop Looping"
+		g_imuse->setHookId(_soundName.c_str(), 0x80);
 		break;
 	default:
 		warning("Unknown key %d for sound %s\n", val, _soundName);
@@ -708,8 +712,10 @@ Costume::Component *Costume::loadComponent (char tag[4], Costume::Component *par
 		return new BitmapComponent(parent, parentID, name);
 	else if (std::memcmp(tag, "mat ", 4) == 0)
 		return new MaterialComponent(parent, parentID, name);
+	else if (std::memcmp(tag, "sprt", 4) == 0)
+		return NULL;// new SpriteComponent(parent, parentID, name);
 
-	warning("Unknown tag '%.4s', name '%s'\n", tag, name);
+	error("Unknown tag '%.4s', name '%s'\n", tag, name);
 	return NULL;
 }
 

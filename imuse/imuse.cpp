@@ -236,6 +236,9 @@ void Imuse::switchToNextRegion(Track *track) {
 				fadeTrack->regionOffset = 0;
 			}
 			track->curRegion = region;
+			if (track->curHookId == 0x80) {
+				track->curHookId = 0;
+			}
 		}
 	}
 

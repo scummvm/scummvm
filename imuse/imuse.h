@@ -133,6 +133,7 @@ public:
 	int getVolume(const char *soundName);
 	void setPan(const char *soundName, int pan);
 	void setFade(const char *soundName, int destVolume, int delay60HzTicks);
+	void setHookId(const char *soundName, int hookId);
 	int getCountPlayedTracks();
 	void stopSound(const char *soundName);
 	void stopAllSounds();
