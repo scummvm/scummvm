@@ -295,6 +295,10 @@ void Smush::play(const char *filename, const char *directory) {
 	init();
 
 	while (!_videoFinished) {
+		
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+	    }
 		SDL_Delay(10);
 	};
 }
