@@ -302,18 +302,6 @@ void Script::loadModuleVoiceLUT(ModuleData &module, const byte *resourcePointer,
 	}
 }
 
-void Script::scriptError(ScriptThread *thread, const char *format, ...) {
-	char buf[STRINGBUFLEN];
-	va_list	argptr;
-
-	va_start(argptr, format);
-	vsprintf(buf, format, argptr);
-	va_end (argptr);
-
-	thread->_flags |= kTFlagAborted;
-	debug(0, "Script::scriptError %X: %s", thread->_instructionOffset, buf);
-	_vm->_console->DebugPrintf("Script::scriptError %X: %s", thread->_instructionOffset, buf);	
-}
 
 void Script::scriptInfo() {
 /*	uint32 n_entrypoints;

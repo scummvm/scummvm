@@ -173,12 +173,12 @@ enum OpCodes {
 	opLAnd = 0x44,
 	opLOr = 0x45,
 	opLXor = 0x46,
-
 //...
 	opSpeak = 0x53,
 	opDialogBegin = 0x54,
 	opDialogEnd = 0x55,
-	opReply = 0x56
+	opReply = 0x56,
+	opAnimate = 0x57
 };
 
 enum CycleFlags {
@@ -453,7 +453,6 @@ private:
 	const ScriptFunctionDescription *_scriptFunctionsList;
 
 	void setupScriptFuncList(void);
-	void scriptError(ScriptThread *thread, const char *format, ...);
 	int SDebugPrintInstr(ScriptThread *thread);
 
 	int SF_putString(SCRIPTFUNC_PARAMS);

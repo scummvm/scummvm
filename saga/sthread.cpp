@@ -174,20 +174,15 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	uint16 param2;
 	int16 iparam1;
 	int16 iparam2;
-//	long iresult;
 
 	byte argumentsCount;
 	uint16 functionNumber;
 	int scriptFunctionReturnValue;
 	ScriptFunctionType scriptFunction;
 
-	uint16 data;
 	int debug_print = 0;
-//	int n_buf;
-//	int bitstate;
 	int operandChar;
 	int i;
-	int unhandled = 0;
 
 	// Handle debug single-stepping
 	if ((thread == _dbg_thread) && _dbg_singlestep) {
@@ -582,12 +577,12 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 
 // GAME INSTRUCTIONS  
-		case opSpeak: {	// (opSpeak): Play Character Speech
+		CASEOP(opSpeak) {
 				int stringsCount;
 				uint16 actorId;
-				int speechFlags;
+				uint16 speechFlags;
 				int sampleResourceId = -1;
-				int first;
+				int16 first;
 				const char *strings[ACTOR_SPEECH_STRING_MAX];
 
 				if (_vm->_actor->isSpeaking()) {
@@ -606,16 +601,17 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				if (stringsCount > ACTOR_SPEECH_STRING_MAX)
 					error("opSpeak stringsCount=0x%X exceed ACTOR_SPEECH_STRING_MAX", stringsCount);
 				
-				data = first = thread->stackTop();
+				iparam1 = first = thread->stackTop();
 				for (i = 0; i < stringsCount; i++) {
-					 data = thread->pop();
-					 strings[i] = thread->_strings->getString(data);
+					 iparam1 = thread->pop();
+					 strings[i] = thread->_strings->getString(iparam1);
 				}
 				// now data contains last string index
 
 				if (_vm->getGameId() == GID_ITE_DISK_G) { // special ITE dos
-					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && (data >= 288) && (data <= (RID_SCENE1_VOICE_138 - RID_SCENE1_VOICE_009 + 288))) {
-						sampleResourceId = RID_SCENE1_VOICE_009 + data - 288;
+					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && 
+						(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_138 - RID_SCENE1_VOICE_009 + 288))) {
+						sampleResourceId = RID_SCENE1_VOICE_009 + iparam1 - 288;
 					}
 				} else {
 					if (thread->_voiceLUT->voicesCount > first) {
@@ -627,13 +623,10 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 				if (!(speechFlags & kSpeakAsync)) {
 					thread->wait(kWaitTypeSpeech);
-					thread->_instructionOffset = scriptS.pos();
-					return;
 				}
 			}
 			break;
-
-		case opDialogBegin: // (DLGS): Initialize dialogue interface
+		CASEOP(opDialogBegin)
 			if (_conversingThread) {
 				thread->wait(kWaitTypeDialogBegin);
 				return;
@@ -641,46 +634,45 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			_conversingThread = thread;
 			_vm->_interface->converseClear();
 			break;
-
-		case opDialogEnd: // (DLGX): Run dialogue interface
+		CASEOP(opDialogEnd)
 			if (thread == _conversingThread) {
 				_vm->_interface->activate();
 				_vm->_interface->setMode(kPanelConverse);
 				thread->wait(kWaitTypeDialogEnd);
-				return;
 			}
 			break;
-
-		case opReply: // (DLGO): Add a dialogue option to interface
-			{
-				uint16 n = 0;
+		CASEOP(opReply) {
 				const char *str;
-				int replyNum = scriptS.readByte();
-				int flags = scriptS.readByte();
+				byte replyNum;
+				byte flags;
+				replyNum = scriptS.readByte();
+				flags = scriptS.readByte();
+				param1 = 0;
 
 				if (flags & kReplyOnce) {
-					n = scriptS.readUint16LE();
-					// TODO:
+					param1 = scriptS.readUint16LE();
+					addr = thread->_staticBase + (param1 >> 3);
+					if (*addr & (1 << (param1 & 7))) {
+						break;
+					}
 				}
 
 				str = thread->_strings->getString(thread->pop());
-				if (_vm->_interface->converseAddText(str, replyNum, flags, n))
-					warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, n);
+				if (_vm->_interface->converseAddText(str, replyNum, flags, param1))
+					warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, param1);
 			}
 			break;
-		case 0x57: // animate
+		CASEOP(opAnimate)
 			scriptS.readUint16LE();
 			scriptS.readUint16LE();
-			iparam1 = (long)scriptS.readByte();
-			thread->_instructionOffset += iparam1;
+			param1 = scriptS.readByte();
+			thread->_instructionOffset += param1;
 			break;
 
-// End instruction list
-
 		default:
-			scriptError(thread, "Invalid opcode encountered");
-			return;
+			error("Script::runThread() Invalid opcode encountered 0x%X", operandChar);
 		}
+
 		debug(8, operandName);
 		_vm->_console->DebugPrintf("%s\n", operandName);
 
@@ -695,18 +687,13 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				thread->_instructionOffset = scriptS.pos();
 			} else {
 				if (thread->_instructionOffset >= scriptS.size()) {
-					scriptError(thread, "Out of range script execution");
-					return;
+					error("Script::runThread() Out of range script execution");
 				}
 
 				scriptS.seek(thread->_instructionOffset);
 			}
 		}
 
-
-		if (unhandled) { // TODO: remove it
-			scriptError(thread, "Unhandled opcode");
-		}
 	}
 }
 
