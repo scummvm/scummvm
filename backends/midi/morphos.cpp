@@ -105,8 +105,6 @@ int MidiDriver_MPU401::midi_driver_thread(void *param)
 	// detected the shutdown and quit looping.
 	g_system->lock_mutex(mid->_mutex);
 
-	ObtainSemaphore(&ScummMusicThreadRunning);
-
 	if (!OSystem_MorphOS::OpenATimer(&music_timer_port, (IORequest **) &music_timer_request, UNIT_MICROHZ, false)) {
 		warning("Could not open a timer - music will not play");
 		Wait(SIGBREAKF_CTRL_C);
@@ -135,7 +133,6 @@ int MidiDriver_MPU401::midi_driver_thread(void *param)
 		DeleteMsgPort(music_timer_port);
 	}
 
-	ReleaseSemaphore(&ScummMusicThreadRunning);
 	g_system->unlock_mutex(mid->_mutex);
 	return 0;
 }
