@@ -36,6 +36,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  Queen:
    - Fixed some issues with the Dreamcast backend.
 
+ Sword1:
+   - Added support for compressed speech and music.
+
  Sword2:
    - Simplified memory/resource management
    - Simplified sound effects handling
