@@ -515,6 +515,14 @@ SOURCE=.\sky\compact.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\control.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\control.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\debug.cpp
 # End Source File
 # Begin Source File
