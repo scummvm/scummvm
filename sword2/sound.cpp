@@ -410,7 +410,20 @@ int32 FN_play_music(int32 *params)		// updated by James on 10apr97
 
 	// add the appropriate file extension & play it
 
-	sprintf(filename,"Music.clu");
+	if (g_sword2->_gameId == GID_SWORD2_DEMO)
+		// The demo I found didn't come with any music file, but you
+		// could use the music from the first CD of the complete game,
+		// I suppose...
+		strcpy(filename, "music.clu");
+	else {
+		File f;
+
+		sprintf(filename, "music%d.clu", res_man.WhichCd());
+		if (f.open(filename, g_sword2->getGameDataPath()))
+			f.close();
+		else
+			strcpy(filename, "music.clu");
+	}
 
 	rv = g_sword2->_sound->StreamCompMusic(filename, params[0], loopFlag);
 

@@ -345,6 +345,9 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 			GetCd(cdTab[parent_res_file] & 3);				// Makes sure that the correct CD is in the drive.
 		}
 */
+
+		curCd = cdTab[parent_res_file] & 3;
+
 		//open the cluster file
 		if (file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()) == false) 
 			Con_fatal_error("Res_open cannot *OPEN* %s", resource_files[parent_res_file]);
