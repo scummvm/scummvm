@@ -405,7 +405,7 @@ void Scumm_v2::decodeParseString() {
 	_string[textSlot].right = 320;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
-	_string[textSlot].color = 13;	// HACK, make it pink, just for fun 8-)
+	_string[textSlot].color = 9;	// light blue
 
 	_messagePtr = buffer;
 	switch (textSlot) {
