@@ -101,9 +101,8 @@
 
 	#ifdef X11_BACKEND
 
-	/* You need to set those manually */
+	// You need to set this manually if necessary
 //	#define SCUMM_LITTLE_ENDIAN
-	/* #define SCUMM_NEED_ALIGNMENT */
 	
 	#else
 	/* need this for the SDL_BYTEORDER define */
@@ -113,11 +112,13 @@
 	#define SCUMM_LITTLE_ENDIAN
 	#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
 	#define SCUMM_BIG_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
 	#else
 	#error Neither SDL_BIG_ENDIAN nor SDL_LITTLE_ENDIAN is set.
 	#endif
 	#endif
+
+	// You need to set this manually if necessary
+//	#define SCUMM_NEED_ALIGNMENT
 
 	#define FORCEINLINE inline
 	#define CDECL 
