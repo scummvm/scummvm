@@ -816,6 +816,9 @@ void Scumm_v2::o2_verbOps() {
 		slot = getVarOrDirectByte(0x80) + 1;
 		/* int unk = */ fetchScriptByte(); // ?
 		
+		if (_version == 1)	// V1 Verbs are positioned relative to the 'verb area' - under the sentence
+			y+=9;
+
 		//printf("o2_verbOps: verb = %d, slot = %d, x = %d, y = %d, unk = %d, name = %s\n",
 		//		verb, slot, x, y, unk, _scriptPointer);
 

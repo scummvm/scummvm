@@ -654,7 +654,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	} else if (!strcmp(argv[2], "state")) {
 		_s->putState(obj, atoi(argv[3]));
 		//is BgNeedsRedraw enough?
-		_s->_BgNeedsRedraw = TRUE;
+		_s->_BgNeedsRedraw = true;
 	} else {
 		  Debug_Printf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
 	}
