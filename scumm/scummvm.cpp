@@ -92,8 +92,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_realWidth = 320;
 		_realHeight = 240;
-	}
-	else if (_gameId == GID_CMI) {
+	} else if (_gameId == GID_CMI) {
 		_realWidth = 640;
 		_realHeight = 480;
 	} else {
@@ -583,15 +582,13 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 		_vars[VAR_V6_SCREEN_HEIGHT] = _scrHeight;
 	}
 
+	_vars[VAR_CAMERA_MIN_X] = _realWidth / 2;
+	_vars[VAR_CAMERA_MAX_X] = _scrWidth - (_realWidth / 2);
+
 	if (_features & GF_AFTER_V7) {
-		_vars[VAR_CAMERA_MIN_X] = _realWidth / 2;
-		_vars[VAR_CAMERA_MAX_X] = _scrWidth - (_realWidth / 2);
 		_vars[VAR_CAMERA_MIN_Y] = _realHeight / 2;
 		_vars[VAR_CAMERA_MAX_Y] = _scrHeight - (_realHeight / 2);
 		setCameraAt(_realWidth / 2, _realHeight / 2);
-	} else {
-		_vars[VAR_CAMERA_MAX_X] = _scrWidth - (_realWidth / 2);
-		_vars[VAR_CAMERA_MIN_X] = _realWidth / 2;
 	}
 
 	if (_roomResource == 0)

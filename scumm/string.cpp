@@ -226,7 +226,6 @@ void Scumm::CHARSET_1()
 				string[0].ypos = 1;
 
 			if (string[0].ypos < camera._cur.y - (_realHeight / 2))
-
 				string[0].ypos = camera._cur.y - (_realHeight / 2);
 
 			s = a->scalex * a->new_2 / 0xFF;

@@ -71,7 +71,7 @@ void Scumm::initScreens(int a, int b, int w, int h)
 	}
 	initVirtScreen(0, 0, b, _realWidth, h - b, true, true);
 	initVirtScreen(1, 0, 0, _realWidth, b, false, false);
-	initVirtScreen(2, 0, h, _realWidth, _realHeight - h, false, false);	//ender
+	initVirtScreen(2, 0, h, _realWidth, _realHeight - h, false, false);
 
 	_screenB = b;
 	_screenH = h;
