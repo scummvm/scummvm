@@ -1519,9 +1519,10 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		switch (cmd) {
 		case 0:
 			if (g_scumm->_gameId == GID_SAMNMAX) {
-				if (d == 1)
-					return player->_marker;
-				else if (d == 2)
+				if (d == 1) // Measure number
+					// return player->_marker;
+					return ((player->_beat_index - 1) >> 2) + 1;
+				else if (d == 2) // Beat number
 					return player->_beat_index;
 				return -1;
 			} else {
