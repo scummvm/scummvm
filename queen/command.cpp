@@ -525,7 +525,6 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool
 
 	// Check to see if object is actually an exit to another
 	// room. If so, then set up new room
-
 	ObjectData *objData = _logic->objectData(objNum);
 	if (objData->x != 0 || objData->y != 0) {
 		x = objData->x;
@@ -550,6 +549,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool
 		_logic->newRoom(0);
 	}
 
+	debug(0, "Command::makeJoeWalkTo() - x=%d y=%d newRoom=%d", x, y, _logic->newRoom());
 
 	int16 p = 0;
 	if (mustWalk) {
@@ -1445,7 +1445,7 @@ void Command::look() {
 	if (_selCmd.noun > 0 && _selCmd.noun <= _logic->currentRoomObjMax()) {
 		uint16 objNum = _logic->currentRoomData() + _selCmd.noun;
 		if (_logic->objectData(objNum)->entryObj == 0) {
-			if (makeJoeWalkTo(_selPosX, _selPosY, objNum, _selCmd.action, true) == -2) { // XXX inCutaway parameter
+			if (makeJoeWalkTo(_selPosX, _selPosY, objNum, _selCmd.action, false) == -2) { // XXX inCutaway parameter
 				// 'I can't get close enough to have a look.'
 				_logic->joeSpeak(13);
 			}

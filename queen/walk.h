@@ -109,7 +109,7 @@ private:
 	void incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 area);
 	
 	//! compute path (and populates _walkData) from current position to the new one
-	void calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y);
+	bool calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y);
 
 
 	WalkData _walkData[MAX_WALK_DATA];	
@@ -128,7 +128,7 @@ private:
 	Graphics *_graphics;
 
 
-	static const MovePersonData MOVE_DATA[];
+	static const MovePersonData _moveData[];
 };
 
 

@@ -1092,6 +1092,8 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		return curImage;
 	}
 
+	debug(0, "Logic::roomRefreshObject(%X, %s)", obj, _objName[ABS(pod->name)]);
+
 	// check the object is in the current room
 	if (pod->room != _currentRoom) {
 		warning("Logic::roomRefreshObject() - Trying to display an object (%i=%s) that is not in room (object room=%i, current room=%i)",
@@ -1620,7 +1622,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 		}
 	}
 
-	debug(9, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d", oldx, oldy);
+	debug(0, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d", oldx, oldy);
 
 	if (scale > 0 && scale < 100) {
 		_joe.scale = scale;
@@ -1738,10 +1740,10 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 
 	case STATE_GRAB_MID:
 		if (_joe.facing == DIR_BACK) {
-			frame = 4;
+			frame = 6;
 		}
 		else if (_joe.facing == DIR_FRONT) {
-			frame = 6;
+			frame = 4;
 		}
 		else {
 			frame = 2;
@@ -2249,7 +2251,7 @@ void Logic::handlePinnacleRoom() {
 
 	// camera does not follow Joe anymore
 	_graphics->cameraBob(-1);
-	roomDisplay("m1", RDM_NOFADE_JOE, 100, 2, true);
+	roomDisplay(roomName(ROOM_JUNGLE_PINNACLE), RDM_NOFADE_JOE, 100, 2, true);
 
 	BobSlot *joe   = _graphics->bob(6);
 	BobSlot *piton = _graphics->bob(7);
@@ -2304,38 +2306,29 @@ void Logic::handlePinnacleRoom() {
 	_input->clearMouseButton();
 
 	_newRoom = _objectData[_entryObj].room;
+
+	// Only a few commands can be triggered from this room :
+	// piton -> crash  : 0x216 (obj=0x2a, song=3)
+	// piton -> floda  : 0x217 (obj=0x29, song=16)
+	// piton -> bob    : 0x219 (obj=0x2f, song=6)
+	// piton -> embark : 0x218 (obj=0x2c, song=7)
+	// piton -> jungle : 0x20B (obj=0x2b, song=3)
+	// piton -> amazon : 0x21A (obj=0x30, song=3)
+	// 
+	// Because none of these update objects/areas/gamestate, the EXECUTE_ACTION()
+	// call, as the original does, is useless. All we have to do is the playsong 
+	// call (all songs have the PLAY_BEFORE type). This way we could get rid of 
+	// the hack described in execute.c l.334-339.
+	//
+	// XXX if (com->song > 0) { playsong(com->song); }
+
 	joe->active = piton->active = false;
 	_graphics->textClear(5, 5);
 
-	// There is quite a hack in original source code to handle properly this
-	// special room. The main problem is described in executed.c l.334-339.
-	//
-	// Below is how room switching is handled
-	//
-	//   ACTION2=10;
-	//   SUBJECT[1]=NOUN+ROOM_DATA[ROOM];
-	//   EXECUTE_ACTION(NO);
-	// 
-	// None of the following commands updates gamestate/areas/objects/items :
-	//  
-	// piton -> crash  : 0x216
-	// piton -> floda  : 0x217
-	// piton -> bob    : 0x219
-	// piton -> embark : 0x218
-	// piton -> jungle : 0x20B
-	// 
-	// But this list is surely not exhaustive...
-	//
-	// So basically, EXECUTE_ACTION only performs the playsong calls...
-	// XXX if (com->song > 0) { playsong(com->song); }
-
 	// camera follows Joe again
 	_graphics->cameraBob(0);
-	
-	// XXX COMPANEL=1;
-	// _display->panel(true); // cyx: to me, that's completely useless
 
-	_display->palFadeOut(0, 223, 7);
+	_display->palFadeOut(0, 223, ROOM_JUNGLE_PINNACLE);
 }
 
 

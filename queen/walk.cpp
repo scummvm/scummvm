@@ -28,7 +28,7 @@
 namespace Queen {
 
 
-const MovePersonData Walk::MOVE_DATA[] = {
+const MovePersonData Walk::_moveData[] = {
 	{"COMPY",       -1,  -6,  1,  6,  0,  0,  0,  0, 12, 12, 1, 14},
 	{"DEINO",       -1,  -8,  1,  8,  0,  0,  0,  0, 11, 11, 1, 10},
 	{"FAYE",        -1,  -6,  1,  6, 13, 18,  7, 12, 19, 22, 2,  5},
@@ -311,19 +311,19 @@ int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
 		incWalkData(oldx, oldy, endx, endy, oldPos);
 	}
 	else {
-		calc(oldPos, newPos, oldx, oldy, endx, endy);
-	}
-
-	if (_walkDataCount > 0) {
-		animateJoePrepare();
-		if(animateJoe()) {
+		if (calc(oldPos, newPos, oldx, oldy, endx, endy)) {
+			if (_walkDataCount > 0) {
+				animateJoePrepare();
+				if(animateJoe()) {
+					can = -1;
+				}
+			}
+		}
+		else {
+			// path has been blocked, make Joe say so
+			_logic->joeSpeak(4);
 			can = -1;
 		}
-	}
-	else {
-		// path has been blocked, make Joe say so
-		_logic->joeSpeak(4);
-		can = -1;
 	}
 
 	_graphics->bob(0)->animating = false;
@@ -375,10 +375,8 @@ int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage
 
 	debug(9, "Walk::personMove(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
-	calc(oldPos, newPos, oldx, oldy, endx, endy);
-
 	// find MovePersonData associated to Person
-	const MovePersonData *mpd = MOVE_DATA;
+	const MovePersonData *mpd = _moveData;
 	while (mpd->name[0] != '*') {
 		if (scumm_stricmp(mpd->name, pp->name) == 0) {
 			break;
@@ -386,9 +384,11 @@ int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage
 		++mpd;
 	}
 
-	if (_walkDataCount > 0) {
-		animatePersonPrepare(mpd, direction);
-		animatePerson(mpd, curImage, bobNum, bankNum, direction);
+	if (calc(oldPos, newPos, oldx, oldy, endx, endy)) {
+		if (_walkDataCount > 0) {
+			animatePersonPrepare(mpd, direction);
+			animatePerson(mpd, curImage, bobNum, bankNum, direction);
+		}
 	}
 	else {
 		can = -1;
@@ -427,7 +427,7 @@ int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage
 }
 
 
-void Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y) {
+bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y) {
 	
 	// if newPos is outside of an AREA then traverse Y axis until an AREA is found
 	if (newPos == 0) { 
@@ -442,6 +442,7 @@ void Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, i
 
 	if (oldPos == newPos) {
 		incWalkData(oldx, oldy, x, y, newPos);
+		return true;
 	}
 	else if (calcPath(oldPos, newPos)) {
 		uint16 i;
@@ -459,7 +460,9 @@ void Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, i
 			py = y1;
 		}
 		incWalkData(px, py, x, y, newPos);
+		return true;
 	}
+	return false;
 }
 
 
