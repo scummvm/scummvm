@@ -130,6 +130,12 @@ General
   some kind of main loop, which, besides many other things, also polls and
   dispatches events. The idea is to turn this around: the event loop
   frequently gives the engine time to do these "other things".
+* Try to reduce the memory footprint of the MPEG player. Right now it allocates
+  an 8 MB lookup table for YUV->RGB conversion. Perhaps we could borrow some
+  code from SDL's software implementation of YUV overlays. (It might even be
+  possible to expose some of SDL's YUV overlay API as an optional part of the
+  backend, but I don't know enough about it to get it to work. We'd still need
+  our own implementation as a fallback, though.)
 
 Build System
 ============
