@@ -414,7 +414,7 @@ struct CharsetRenderer {
 	byte *_dest_ptr;
 		
 	byte _colorMap[16];
-	byte _buffer[256];
+	byte _buffer[512];
 
 	void drawBits();
 	void printChar(int chr);
