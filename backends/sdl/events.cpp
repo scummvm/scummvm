@@ -181,8 +181,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
-			b = SDLModToOSystemKeyFlags(SDL_GetModState());
-			event.kbd.flags = b;
+			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
 			// Alt-Return and Alt-Enter toggle full screen mode				
 			if (b == KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
@@ -398,7 +397,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			event.type = EVENT_KEYUP;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-			event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
+			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
 			// Ctrl-Alt-<key> will change the GFX mode
 			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
