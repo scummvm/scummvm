@@ -577,8 +577,8 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 		return 1;
 	} else if (param == PROP_TOGGLE_ASPECT_RATIO) {
 
-		_adjustAspectRatio ^= true;
 		if (_usingOpenGL) {
+			_adjustAspectRatio ^= true;
 			if (!_adjustAspectRatio) {
 				// Don't use the whole screen (black borders)
 				fb2gl.init(0, 0, 0, 15, _glFlags);
@@ -617,6 +617,7 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 		} else {
 			if (_screenHeight == 200) {
 				assert(_hwscreen != 0);
+				_adjustAspectRatio ^= true;
 				hotswap_gfx_mode();
 			}
 		}
