@@ -831,7 +831,7 @@ void Graphics::closeBackgroundLayer(void) {
 
 #ifdef BACKEND_8BIT
 void Graphics::plotYUV(byte *lut, int width, int height, byte *const *dat) {
-	byte *buf = _buffer + (40 + (400 - height) / 2) * RENDERWIDE + (640 - width) / 2;
+	byte *buf = _buffer + ((480 - height) / 2) * RENDERWIDE + (640 - width) / 2;
 
 	int x, y;
 

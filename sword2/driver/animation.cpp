@@ -110,7 +110,7 @@ bool AnimationState::init(const char *name) {
 	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
 #else
 	buildLookup();
-	overlay = (NewGuiColor*)calloc(640 * 400, sizeof(NewGuiColor));
+	overlay = (NewGuiColor*)calloc(640 * 480, sizeof(NewGuiColor));
 	_vm->_system->show_overlay();
 #endif
 
@@ -258,7 +258,7 @@ void AnimationState::buildLookup() {
 
 void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat) {
 
-	NewGuiColor *ptr = overlay + (400 - height) / 2 * 640 + (640 - width) / 2;
+	NewGuiColor *ptr = overlay + (480 - height) / 2 * 640 + (640 - width) / 2;
 
 	int x, y;
 
@@ -283,7 +283,7 @@ void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *cons
 }
 
 void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
-	NewGuiColor *dst = overlay + RENDERWIDE * (s->y - 40) + s->x;
+	NewGuiColor *dst = overlay + RENDERWIDE * (s->y) + s->x;
 
 	// FIXME: These aren't the "right" colours, but look good to me.
 
@@ -309,7 +309,7 @@ void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
 }
 
 void AnimationState::updateDisplay(void) {
-	_vm->_system->copy_rect_overlay(overlay, 640, 0, 40, 640, 400);
+	_vm->_system->copy_rect_overlay(overlay, 640, 0, 0, 640, 480);
 }
 
 #endif
