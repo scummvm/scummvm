@@ -20,22 +20,14 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Initial and default scene procedures
 
- Notes: 
-*/
+// Initial and default scene procedures
 
 #include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "animation_mod.h"
 #include "events_mod.h"
 #include "scene_mod.h"
@@ -43,35 +35,26 @@
 #include "sound.h"
 #include "music.h"
 
-/*
- * Begin module
-\*--------------------------------------------------------------------------*/
 #include "scene.h"
 #include "sceneproc.h"
 
 namespace Saga {
 
-int InitialSceneProc(int param, R_SCENE_INFO * scene_info)
-{
+int InitialSceneProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
-
 	int delay_time = 0;
-
 	static PALENTRY current_pal[R_PAL_ENTRIES];
 	PALENTRY *pal;
 
 	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
-
 	case SCENE_BEGIN:
-
 		_vm->_music->stop();
 		_vm->_sound->stopVoice();
 
-		/* Fade palette to black from intro scene
-		 * \*----------------------------------------------------- */
+		// Fade palette to black from intro scene
 		SYSGFX_GetCurrentPal(current_pal);
 
 		event.type = R_CONTINUOUS_EVENT;
@@ -85,8 +68,7 @@ int InitialSceneProc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Queue(&event);
 
-		/* Activate user interface
-		 * \*----------------------------------------------------- */
+		// Activate user interface
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_INTERFACE_EVENT;
 		event.op = EVENT_ACTIVATE;
@@ -94,8 +76,7 @@ int InitialSceneProc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Set first scene background w/o changing palette
-		 * \*----------------------------------------------------- */
+		// Set first scene background w/o changing palette
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_BG_EVENT;
 		event.op = EVENT_DISPLAY;
@@ -104,8 +85,7 @@ int InitialSceneProc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Fade in to first scene background palette
-		 * \*----------------------------------------------------- */
+		// Fade in to first scene background palette
 		SCENE_GetBGPal(&pal);
 
 		event.type = R_CONTINUOUS_EVENT;
@@ -125,35 +105,25 @@ int InitialSceneProc(int param, R_SCENE_INFO * scene_info)
 
 		ANIM_SetFlag(0, ANIM_LOOP);
 		ANIM_Play(0, delay_time);
-
 		break;
-
 	case SCENE_END:
-
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
 		break;
-
 	}
 
 	return 0;
 }
 
-int DefaultSceneProc(int param, R_SCENE_INFO * scene_info)
-{
-
+int DefaultSceneProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 
 	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
-
 	case SCENE_BEGIN:
-
-		/* Set scene background
-		 * \*----------------------------------------------------- */
+		// Set scene background
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_BG_EVENT;
 		event.op = EVENT_DISPLAY;
@@ -162,8 +132,7 @@ int DefaultSceneProc(int param, R_SCENE_INFO * scene_info)
 
 		EVENT_Queue(&event);
 
-		/* Activate user interface
-		 * \*----------------------------------------------------- */
+		// Activate user interface
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_INTERFACE_EVENT;
 		event.op = EVENT_ACTIVATE;
@@ -171,25 +140,19 @@ int DefaultSceneProc(int param, R_SCENE_INFO * scene_info)
 
 		EVENT_Queue(&event);
 
-		/* Begin palette cycle animation if present
-		 * \*----------------------------------------------------- */
+		// Begin palette cycle animation if present
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
 		EVENT_Queue(&event);
-
 		break;
-
 	case SCENE_END:
-
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
 		break;
-
 	}
 
 	return 0;

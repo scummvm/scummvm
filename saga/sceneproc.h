@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Initial and default scene procedures header file
 
- Notes: 
-*/
+// Initial and default scene procedures header file
 
 #ifndef SAGA_SCENEPROC_H
 #define SAGA_SCENEPROC_H

@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Scripting module public header
-
- Notes: 
-*/
+// Scripting module public header
 
 #ifndef SAGA_SCRIPT_MOD_H
 #define SAGA_SCRIPT_MOD_H
@@ -39,7 +33,6 @@ typedef unsigned int SDataWord_T;
 typedef struct R_SCRIPT_THREAD_tag R_SCRIPT_THREAD;
 
 enum R_SCRIPT_VERBS {
-
 	S_VERB_WALKTO = 0,
 	S_VERB_LOOKAT = 2,
 	S_VERB_PICKUP = 1,
@@ -50,40 +43,24 @@ enum R_SCRIPT_VERBS {
 	S_VERB_GIVE
 };
 
-int SCRIPT_Register(void);
-
-int SCRIPT_Init(void);
-
-int SCRIPT_Shutdown(void);
-
+int SCRIPT_Register();
+int SCRIPT_Init();
+int SCRIPT_Shutdown();
 int SCRIPT_Load(int script_num);
-
-int SCRIPT_Free(void);
-
-int SDATA_GetWord(int n_buf, int n_word, SDataWord_T * data);
-
+int SCRIPT_Free();
+int SDATA_GetWord(int n_buf, int n_word, SDataWord_T *data);
 int SDATA_PutWord(int n_buf, int n_word, SDataWord_T data);
-
 int SDATA_SetBit(int n_buf, SDataWord_T n_bit, int bitstate);
-
 int SDATA_GetBit(int n_buf, SDataWord_T n_bit, int *bitstate);
-
 int SDATA_ReadWordS(SDataWord_T word);
-
 uint16 SDATA_ReadWordU(SDataWord_T word);
-
-R_SCRIPT_THREAD *STHREAD_Create(void);
-
-int STHREAD_Execute(R_SCRIPT_THREAD * thread, int ep_num);
-
+R_SCRIPT_THREAD *STHREAD_Create();
+int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num);
 int STHREAD_ExecThreads(int msec);
-
-int STHREAD_HoldSem(R_SEMAPHORE * sem);
-
-int STHREAD_ReleaseSem(R_SEMAPHORE * sem);
-
-int STHREAD_DebugStep(void);
+int STHREAD_HoldSem(R_SEMAPHORE *sem);
+int STHREAD_ReleaseSem(R_SEMAPHORE *sem);
+int STHREAD_DebugStep();
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SCRIPT_MOD_H */
+#endif
