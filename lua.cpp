@@ -646,6 +646,28 @@ void GetControlState() {
   }
 }
 
+// Text functions
+static void MakeTextObject() {
+ char *line = lua_getstring(lua_getparam(1));
+ std::string text = Localizer::instance()->localize(line);
+// TextObject *textObj = check_textobject(2);
+
+ warning("STUB: MakeTextObject(%s, <textObject>) = %s", line, text.c_str());
+}
+
+static void ChangeTextObject() {
+ char *line = lua_getstring(lua_getparam(1));
+// TextObject *text = check_textobject(2);
+
+ warning("STUB: ChangeTextObject(%s, <textObject>)", line);
+}
+
+static void GetTextObjectDimensions() {
+ warning("STUB: GetTextObjectDimensions()");
+ lua_pushnumber(100);	// Dummy X
+ lua_pushnumber(100);	// Dummy Y
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning() {
@@ -846,9 +868,6 @@ static char *stubFuncs[] = {
   "ExpireText",
   "BlastText",
   "KillTextObject",
-  "ChangeTextObject",
-  "GetTextObjectDimensions",
-  "MakeTextObject",
   "PrintLine",
   "SetSayLineDefaults",
   "PurgePrimitiveQueue",
@@ -1079,7 +1098,10 @@ struct luaL_reg builtins[] = {
   { "EnableControl", EnableControl },
   { "DisableControl", DisableControl },
   { "GetControlState", GetControlState },
-  { "InputDialog", InputDialog }
+  { "InputDialog", InputDialog },
+  { "ChangeTextObject", ChangeTextObject },
+  { "GetTextObjectDimensions", GetTextObjectDimensions },
+  { "MakeTextObject", MakeTextObject }
 };
 
 void register_lua() {
