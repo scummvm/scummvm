@@ -79,8 +79,15 @@ void SimonEngine::render_string_amiga(uint vga_sprite_id, uint color, uint width
 
 	src += vga_sprite_id * 8;
 	dst += READ_BE_UINT32(src);
+#ifndef _WIN32_WCE
 	*(uint16 *)(dst + 4) = TO_BE_16(height);
 	*(uint16 *)(dst + 6) = TO_BE_16(width);
+#else
+	uint16 data = TO_BE_16(height);
+	memcpy(dst + 4, &data, 2);
+	data = TO_BE_16(width);
+	memcpy(dst + 6, &data, 2);
+#endif
 
 	uint charsize = width/8 * height;
 	memset(dst, 0, count);
@@ -170,8 +177,15 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 
 	p = dst + vga_sprite_id * 8;
 
+#ifndef _WIN32_WCE
 	*(uint16 *)(p + 4) = TO_BE_16(height);
 	*(uint16 *)(p + 6) = TO_BE_16(width);
+#else
+	uint16 data = TO_BE_16(height);
+	memcpy(p + 4, &data, 2);
+	data = TO_BE_16(width);
+	memcpy(p + 6, &data, 2);
+#endif
 	dst += READ_BE_UINT32(p);
 
 	memset(dst, 0, count);
