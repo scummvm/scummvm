@@ -134,6 +134,27 @@ void SkyState::doCheat(uint8 num) {
 	}
 }
 
+void SkyState::handleKey(void) {
+
+	if (_key_pressed == 63)
+		_skyControl->doControlPanel();
+
+	if ((_key_pressed == 27) && (!_systemVars.pastIntro))
+		_skyControl->restartGame();
+#ifdef WITH_DEBUG_CHEATS
+	if ((_key_pressed >= '0') && (_key_pressed <= '9'))
+		doCheat(_key_pressed - '0');
+
+	if (_key_pressed == 'r') {
+		warning("loading grid");
+		_skyLogic->_skyGrid->loadGrids();
+	}
+#endif
+	if (_key_pressed == '.')
+		_skyMouse->logicClick();
+	_key_pressed = 0;
+}
+
 void SkyState::go() {
 
 	if (!_dump_file)
@@ -150,8 +171,6 @@ void SkyState::go() {
 
 	loadBase0();
 
-	_paintGrid = false;
-
 	if (introSkipped)
 		_skyControl->restartGame();
 
@@ -164,46 +183,15 @@ void SkyState::go() {
 			_lastSaveTime = _system->get_msecs();
 			_skyControl->doAutoSave();
 		}
-
-		if (_key_pressed == 63) {
-			_key_pressed = 0;
-			_skyControl->doControlPanel();
-		}			
-		if ((_key_pressed == 27) && (!_systemVars.pastIntro)) {
-			_skyControl->restartGame();
-			_key_pressed = 0;
-		}
-#ifdef WITH_DEBUG_CHEATS
-		if ((_key_pressed >= '0') && (_key_pressed <= '9')) {
-			doCheat(_key_pressed - '0');
-			_key_pressed = 0;
-		}
-		if (_key_pressed == 'r') {
-			warning("loading grid");
-			_skyLogic->_skyGrid->loadGrids();
-			_key_pressed = 0;
-		}
-		if (_key_pressed == 'g') {
-			_paintGrid = !_paintGrid;
-			warning("Grid paint: %s",(_paintGrid)?("ON"):("OFF"));
-			if (!_paintGrid)
-				_skyScreen->forceRefresh();
-			_key_pressed = 0;
-		}
-#endif
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
+		if (_key_pressed)
+			handleKey();
 		_skyLogic->engine();
 		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up
-			if (_paintGrid)
-				_skyScreen->forceRefresh();
 			_skyScreen->recreate();
 			_skyScreen->spriteEngine();
 			_skyScreen->flip();
-			if (_paintGrid) {
-				_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(SkyLogic::_scriptVariables[SCREEN]));
-				_system->update_screen();
-			}
 		}
 	}
 }

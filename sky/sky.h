@@ -71,7 +71,6 @@ protected:
 
 	uint16 _debugMode;
 	uint16 _debugLevel;
-	bool _paintGrid;
 
 	int _numScreenUpdates;
 
@@ -120,6 +119,7 @@ protected:
 	void delay(uint amount);
 	void go();
 	void doCheat(uint8 num);
+	void handleKey(void);
 
 	//intro related
 	static uint8 fosterImg[297 * 143];

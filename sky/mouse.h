@@ -54,6 +54,7 @@ public:
 	uint16 giveMouseY(void) { return _mouseY; };
 	uint16 giveCurrentMouseType(void) { return _currentCursor; };
 	bool wasClicked(void) { return _logicClick; };
+	void logicClick(void) { _logicClick = true; };
 
 protected:
 
