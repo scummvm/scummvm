@@ -47,7 +47,11 @@ namespace Saga {
 
 R_RSCFILE_CONTEXT *RSC_CreateContext(void)
 {
-	R_RSCFILE_CONTEXT empty_context = { 0 };
+	R_RSCFILE_CONTEXT empty_context;
+	empty_context.rc_file_fspec = NULL;
+	empty_context.rc_file_loaded = 0;
+	empty_context.rc_res_table = NULL;
+	empty_context.rc_res_ct = 0;
 	R_RSCFILE_CONTEXT *new_context;
 
 	new_context = (R_RSCFILE_CONTEXT *)malloc(sizeof *new_context);
@@ -60,34 +64,23 @@ R_RSCFILE_CONTEXT *RSC_CreateContext(void)
 	return new_context;
 }
 
-int RSC_OpenContext(R_RSCFILE_CONTEXT * rsc_context, const char *fspec)
+int RSC_OpenContext(R_RSCFILE_CONTEXT *rsc_context, const char *fspec)
 {
-	FILE *rsc_fp;
-	int result;
-
-	rsc_fp = fopen(fspec, "rb");
-	if (rsc_fp == NULL) {
+	if (rsc_context->rc_file.isOpen()) {
 		return R_FAILURE;
 	}
 
-	if (rsc_context->rc_file_open) {
+	if (!rsc_context->rc_file.open(fspec)) {
+
 		return R_FAILURE;
 	}
 
 	rsc_context->rc_file_fspec = fspec;
-	rsc_context->rc_file_p = rsc_fp;
-
-	result = ys_get_filesize(rsc_fp, &rsc_context->rc_file_size, NULL);
-	if (result != YS_E_SUCCESS) {
-		fclose(rsc_fp);
-		return R_FAILURE;
-	}
 
 	if (RSC_LoadRSC(rsc_context) != R_SUCCESS) {
 		return R_FAILURE;
 	}
 
-	rsc_context->rc_file_open = 1;
 	rsc_context->rc_file_loaded = 1;
 
 	return R_SUCCESS;
@@ -95,11 +88,9 @@ int RSC_OpenContext(R_RSCFILE_CONTEXT * rsc_context, const char *fspec)
 
 int RSC_CloseContext(R_RSCFILE_CONTEXT * rsc_context)
 {
-	if (rsc_context->rc_file_open) {
-		fclose(rsc_context->rc_file_p);
+	if (rsc_context->rc_file.isOpen()) {
+		rsc_context->rc_file.close();
 	}
-
-	rsc_context->rc_file_open = 0;
 
 	RSC_FreeRSC(rsc_context);
 
@@ -137,17 +128,15 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 
 	read_p = tblinfo_buf;
 
-	if (rsc->rc_file_size < RSC_MIN_FILESIZE) {
+	if (rsc->rc_file.size() < RSC_MIN_FILESIZE) {
 		return R_FAILURE;
 	}
 
 	/* Read resource table info from the rear end of file
 	 * \*------------------------------------------------------------- */
-	fseek(rsc->rc_file_p, (long)(rsc->rc_file_size - 8), SEEK_SET);
+	rsc->rc_file.seek((long)(rsc->rc_file.size() - 8), SEEK_SET);
 
-	if (fread(tblinfo_buf,
-		1, RSC_TABLEINFO_SIZE, rsc->rc_file_p) != RSC_TABLEINFO_SIZE) {
-
+	if (rsc->rc_file.read(tblinfo_buf, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
 		return R_FAILURE;
 	}
 
@@ -156,7 +145,7 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 
 	/* Check for sane table offset
 	 * \*------------------------------------------------------------- */
-	if (res_tbl_offset != rsc->rc_file_size - RSC_TABLEINFO_SIZE -
+	if (res_tbl_offset != rsc->rc_file.size() - RSC_TABLEINFO_SIZE -
 	    RSC_TABLEENTRY_SIZE * res_tbl_ct) {
 
 		return R_FAILURE;
@@ -171,9 +160,9 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 		return R_FAILURE;
 	}
 
-	fseek(rsc->rc_file_p, (long)res_tbl_offset, SEEK_SET);
+	rsc->rc_file.seek((long)res_tbl_offset, SEEK_SET);
 
-	if (fread(tbl_buf, 1, tbl_len, rsc->rc_file_p) != tbl_len) {
+	if (rsc->rc_file.read(tbl_buf, tbl_len) != tbl_len) {
 		free(tbl_buf);
 		return R_FAILURE;
 	}
@@ -191,8 +180,8 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 		rsc_restbl[i].res_offset = ys_read_u32_le(read_p, &read_p);
 		rsc_restbl[i].res_size = ys_read_u32_le(read_p, &read_p);
 
-		if ((rsc_restbl[i].res_offset > rsc->rc_file_size) ||
-		    (rsc_restbl[i].res_size > rsc->rc_file_size)) {
+		if ((rsc_restbl[i].res_offset > rsc->rc_file.size()) ||
+		    (rsc_restbl[i].res_size > rsc->rc_file.size())) {
 
 			free(tbl_buf);
 			free(rsc_restbl);
@@ -276,16 +265,14 @@ RSC_LoadResource(R_RSCFILE_CONTEXT * rsc,
 	res_offset = rsc->rc_res_table[res_num].res_offset;
 	res_size = rsc->rc_res_table[res_num].res_size;
 
-	if (fseek(rsc->rc_file_p, (long)res_offset, SEEK_SET) != 0) {
-		return R_FAILURE;
-	}
+	rsc->rc_file.seek((long)res_offset, SEEK_SET);
 
 	res_buf = (uchar *)malloc(res_size);
 	if (res_buf == NULL) {
 		return R_MEM;
 	}
 
-	if (fread(res_buf, 1, res_size, rsc->rc_file_p) != res_size) {
+	if (rsc->rc_file.read(res_buf, res_size) != res_size) {
 		free(res_buf);
 		return R_FAILURE;
 	}

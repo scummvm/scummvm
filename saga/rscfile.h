@@ -32,6 +32,8 @@
 #ifndef SAGA_RSCFILE_H__
 #define SAGA_RSCFILE_H__
 
+#include "common/file.h"
+
 namespace Saga {
 
 #define RSC_TABLEINFO_SIZE 8
@@ -51,9 +53,7 @@ typedef struct R_RSCFILE_RESOURCE_tag {
 struct R_RSCFILE_CONTEXT_tag {
 
 	const char *rc_file_fspec;
-	FILE *rc_file_p;
-	int rc_file_open;
-	unsigned long rc_file_size;
+	File rc_file;
 
 	int rc_file_loaded;
 	R_RSCFILE_RESOURCE *rc_res_table;

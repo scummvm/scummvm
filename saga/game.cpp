@@ -31,6 +31,7 @@
 #include "reinherit.h"
 
 #include "yslib.h"
+#include "common/file.h"
 
 /*
  * Uses the following modules:
@@ -446,7 +447,7 @@ int LoadLanguage(void)
 	char lang_path[R_MAXPATH];
 	uint game_n;
 
-	FILE *test_fp;
+	File test_file;
 
 	game_n = GameModule.game_number;
 
@@ -457,12 +458,7 @@ int LoadLanguage(void)
 		    R_GAME_ITE_LANG_PREFIX,
 		    GameModule.game_language, R_GAME_LANG_EXT);
 
-		SYSFS_GetFQFN(GameModule.data_dir,
-		    lang_file, lang_path, R_MAXPATH);
-
-		test_fp = fopen(lang_path, "r");
-		if (test_fp == NULL) {
-
+		if (!test_file.open(lang_file)) {
 			R_printf(R_STDOUT,
 			    "Couldn't open language file %s. "
 			    "Using default (US English)\n", lang_path);
@@ -470,7 +466,7 @@ int LoadLanguage(void)
 			return R_SUCCESS;
 		}
 
-		fclose(test_fp);
+		test_file.close();
 
 		if (INTERFACE_RegisterLang() != R_SUCCESS) {
 			R_printf(R_STDERR,
@@ -554,7 +550,7 @@ int DetectGame(const char *game_dir, uint * game_n_p)
 	uint file_count;
 	uint file_n;
 
-	FILE *test_fp;
+	File test_file;
 
 	int file_missing = 0;
 	int found_game = 0;
@@ -574,18 +570,12 @@ int DetectGame(const char *game_dir, uint * game_n_p)
 		/* Try to open all files for this game */
 		for (file_n = 0; file_n < file_count; file_n++) {
 
-			SYSFS_GetFQFN(game_dir,
-			    GameDescs[game_n].gd_filedescs[file_n].gf_fname,
-			    game_fpath, R_GAME_PATH_LIMIT);
-			test_fp = fopen(game_fpath, "rb");
-			if (test_fp == NULL) {
-
+			if (!test_file.open(GameDescs[game_n].gd_filedescs[file_n].gf_fname)) {
 				file_missing = 1;
-
 				break;
 			}
 
-			fclose(test_fp);
+			test_file.close();
 		}
 
 		/* Try the next game, couldn't find all files for the current 
@@ -654,10 +644,7 @@ int LoadGame(const char *game_dir, uint game_n)
 
 		game_fname = GameDescs[game_n].gd_filedescs[i].gf_fname;
 
-		SYSFS_GetFQFN(game_dir,
-		    game_fname, game_fpath, R_GAME_PATH_LIMIT);
-
-		if (RSC_OpenContext(load_ctxt, game_fpath) != R_SUCCESS) {
+		if (RSC_OpenContext(load_ctxt, game_fname) != R_SUCCESS) {
 
 			return R_FAILURE;
 		}
@@ -781,9 +768,7 @@ int Verify_ITEDISK(const char *game_dir)
 
 	test_ctx = RSC_CreateContext();
 
-	SYSFS_GetFQFN(game_dir, "ITE.RSC", fpath, R_GAME_PATH_LIMIT);
-
-	if (RSC_OpenContext(test_ctx, fpath) != R_SUCCESS) {
+	if (RSC_OpenContext(test_ctx, "ITE.RSC") != R_SUCCESS) {
 		return R_FAILURE;
 	}
 
