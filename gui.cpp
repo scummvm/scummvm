@@ -184,6 +184,9 @@ void Gui::drawWidget(const GuiWidget * w)
 				sprintf(text, "%s %d", string_map_table_custom[w->_string_number],
 								_gui_variables[w->_string_number]);
 				break;
+			case GUI_SCROLLTEXT:
+				sprintf(text, "%s", _gui_scroller);
+				break;
 #ifdef _WIN32_WCE
 			case GUI_KEYTEXT:
 				strcpy(text,
@@ -409,10 +412,10 @@ const GuiWidget keys_dialog[] = {
 
 const GuiWidget about_dialog[] = {
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 120, 0, 0},
-	// {GUI_CUSTOMTEXT, 0x01, 0, 30 + 95, 20 + 10, 100, 15, 0, }, .. pocketscummvm
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 20 + 10 + 15 + 5, 160, 15, 0, 9},	// Build
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 230, 15, 0, 10},	// ScummVM Url
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11},	// Lucasarts
+	{GUI_SCROLLTEXT, 0x01, 0, 30 + 95, 20 + 10, 100, 15, 0},
 	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 20 + 96, 54, 16, 40, 9},
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
@@ -819,6 +822,8 @@ void Gui::init(Scumm *s)
 	_textcolorhi = 15;
 	_shadowcolor = 0;
 	_s = s;
+
+	strcpy(_gui_scroller, "Brought to you by:");
 }
 
 void Gui::loop()

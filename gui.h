@@ -34,7 +34,8 @@ enum {
 	GUI_CUSTOMTEXT = 4,
 	GUI_VARTEXT = 5,
 	GUI_ACTIONTEXT = 6,
-	GUI_KEYTEXT = 7
+	GUI_KEYTEXT = 7,
+	GUI_SCROLLTEXT = 8
 };
 
 enum {
@@ -113,6 +114,8 @@ public:
 	void addLetter(byte letter);	
 	void queryMessage(const char *msg, const char *alts);
 	byte getDefaultColor(int color);
+
+	char _gui_scroller[255];
 
 	// Dialogs
 	void saveLoadDialog();

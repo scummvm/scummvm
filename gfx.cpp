@@ -338,9 +338,10 @@ void Scumm::initBGBuffers()
 	byte *room;
 
 	room = getResourceAddress(rtRoom, _roomResource);
-
-	if (_features & GF_SMALL_HEADER) {
-		gdi._numZBuffer = 1;
+	if (_features & GF_OLD256) {
+		gdi._numZBuffer = 2;
+	} else if (_features & GF_SMALL_HEADER) {
+		gdi._numZBuffer = 1; // ENDER
 	} else {
 		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
@@ -642,7 +643,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 	int numzbuf;
 	int sx;
 
-	CHECK_HEAP if (_vm->_features & GF_SMALL_HEADER)
+	CHECK_HEAP;
+	if (_vm->_features & GF_SMALL_HEADER)
 		smap_ptr = _smap_ptr = ptr;
 	else
 		smap_ptr = findResource(MKID('SMAP'), ptr);
@@ -651,8 +653,21 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 
-	for (i = 1; i < numzbuf; i++) {
-		zplane_list[i] = findResource(zplane_tags[i], ptr);
+	if (_vm->_features & GF_OLD256) {
+		/* this is really ugly, FIXME */
+		if (ptr[-2] == 'B' && ptr[-1] == 'M' &&
+		    READ_LE_UINT32(ptr - 6) > (READ_LE_UINT32(ptr) + 10)) {
+			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
+		} else if (ptr[-4] == 'O' && ptr[-3] == 'I' &&
+			   READ_LE_UINT32(ptr - 8) > READ_LE_UINT32(ptr) + 12) {
+			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
+		} else {
+			zplane_list[1] = 0;
+		}
+	} else {
+		for (i = 1; i < numzbuf; i++) {
+			zplane_list[i] = findResource(zplane_tags[i], ptr);
+		}
 	}
 
 	bottom = y + h;
@@ -673,7 +688,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 		else
 			_smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 
-		CHECK_HEAP sx = x;
+		CHECK_HEAP;
+		sx = x;
 		if (vs->scrollable)
 			sx -= vs->xstart >> 3;
 
@@ -697,7 +713,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 		where_draw_ptr = _bgbak_ptr;
 		decompressBitmap();
 
-		CHECK_HEAP if (twobufs) {
+		CHECK_HEAP;
+		if (twobufs) {
 			_bgbak_ptr = where_draw_ptr;
 
 			if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
@@ -712,9 +729,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 					blit(_backbuff_ptr, _bgbak_ptr, 8, h);
 			}
 		}
-		CHECK_HEAP if (flag & dbDrawMaskOnBoth) {
-			_z_plane_ptr =
-				zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
+		CHECK_HEAP;
+		if (flag & dbDrawMaskOnBoth) {
+			_z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * 40 + x;
 			if (_useOrDecompress && flag & dbAllowMaskOr)
 				decompressMaskImgOr();
@@ -723,18 +740,36 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 		}
 
 		for (i = 1; i < numzbuf; i++) {
+			uint16 offs;
+
 			if (!zplane_list[i])
-				continue;
-			_z_plane_ptr =
-				zplane_list[i] + READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
-			_mask_ptr_dest =
-				_vm->getResourceAddress(rtBuffer, 9) + y * 40 + x + _imgBufOffs[i];
-			if (_useOrDecompress && flag & dbAllowMaskOr)
-				decompressMaskImgOr();
+				continue;			
+
+			if (_vm->_features & GF_SMALL_HEADER)
+				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
 			else
-				decompressMaskImg();
+				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
+
+			_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * 40 + x + _imgBufOffs[i];
+
+			if (offs) {
+				_z_plane_ptr = zplane_list[i] + offs;
+
+				if (_useOrDecompress && flag & dbAllowMaskOr)
+					decompressMaskImgOr();
+				else
+					decompressMaskImg();
+			} else {
+				if (_useOrDecompress && flag & dbAllowMaskOr)
+					; /* nothing */
+				else
+					for (int h = 0; h < _numLinesToProcess; h++)
+						_mask_ptr_dest[h * 40] = 0;
+				/* needs better abstraction, FIXME */
+			}
 		}
-		CHECK_HEAP x++;
+		CHECK_HEAP;
+		x++;
 		stripnr++;
 	} while (--numstrip);
 }
