@@ -3191,7 +3191,7 @@ void Scumm::decodeParseString2(int m, int n)
 				}
 				pointer[j] = 0;
 
-				_sound->playBundleSound(pointer);
+				_sound->_talkChannel = _sound->playBundleSound(pointer);
 				_messagePtr = (byte*)&transText;
 
 				switch (m) {
