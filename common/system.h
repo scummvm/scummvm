@@ -27,6 +27,16 @@
 #include "common/util.h"
 #include "common/rect.h"
 #include "common/savefile.h"
+#include "common/singleton.h"
+
+class OSystem;
+
+/**
+ * Custome object factory for OSystem.
+ */
+template <>
+OSystem *makeInstance<>();
+
 
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system
@@ -38,22 +48,8 @@
  * methods to create timers, to handle user input events,
  * control audio CD playback, and sound output.
  */
-class OSystem {
+class OSystem : public Common::Singleton<OSystem> {
 public:
-	/**
-	 * Returns a pointer to the (singleton) OSystem instance, that is, to the
-	 * active backend.
-	 * This is not quite a "proper" singleton, since OSystem is an interface
-	 * not a real class (and thus it isn't based on our Singleton template).
-	 * @return	the pointer to the (singleton) OSystem instance
-	 */
-	static OSystem &instance();
-
-public:
-
-	/** Empty virtual destructor. DO NOT REMOVE! */
-	virtual ~OSystem() {}
-
 	
 	/** @name Feature flags */
 	//@{

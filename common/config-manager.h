@@ -38,9 +38,6 @@ namespace Common {
  * @todo Implement the callback based notification system (outline below)
  *       which sends out notifications to interested parties whenever the value
  *       of some specific (or any) configuration key changes.
- * @todo Preserve the order of the entries in the config file. Maybe even add
- *       an API to query/modify that order, which could be used by the launcher
- *       to allow arranging the game targets.
  */
 class ConfigManager : public Singleton<ConfigManager> {
 	struct IgnoreCaseComparator {
@@ -117,7 +114,7 @@ public:
 */
 
 private:
-	friend class Singleton<ConfigManager>;
+	friend SingletonBaseType *makeInstance<>();
 	ConfigManager();
 
 	void			loadFile(const String &filename);

@@ -31,9 +31,10 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
-static OSystem *s_system = 0;
+DECLARE_SINGLETON(OSystem);
 
-static OSystem *createSystem() {
+template <>
+OSystem *makeInstance<>() {
 	// Attention: Do not call parseGraphicsMode() here, nor any other function
 	// which needs to access the OSystem instance, else you get stuck in an
 	// endless loop.
@@ -57,13 +58,6 @@ static OSystem *createSystem() {
 	return OSystem_SDL_create();
 #endif
 }
-
-OSystem &OSystem::instance() {
-	if (!s_system)
-		s_system = createSystem();
-	return *s_system;
-}
-
 
 bool OSystem::setGraphicsMode(const char *name) {
 	if (!name)

@@ -103,6 +103,8 @@ public:
 typedef Common::Array<Plugin *> PluginList;
 
 
+class PluginManager;
+
 /**
  * Instances of this class manage all plugins, including loading them,
  * making wrapper objects of class Plugin available, and unloading them.
@@ -115,7 +117,7 @@ private:
 	
 	bool tryLoadPlugin(Plugin *plugin);
 	
-	friend class Common::Singleton<PluginManager>;
+	friend SingletonBaseType *makeInstance<>();
 	PluginManager();
 
 public:

@@ -54,7 +54,7 @@ public:
 	Status getStatus() const;
 
 private:
-	friend class Common::Singleton<AudioCDManager>;
+	friend SingletonBaseType *makeInstance<>();
 	AudioCDManager();
 
 	int getCachedTrack(int track);
