@@ -40,6 +40,7 @@ be playable to the end:
         Indiana Jones & the Last Crusade (256)     [Game: indy3]
         Loom (256 color CD version)                [Game: loomcd]
         Zak McKracken (256 color FM Towns version) [Game: zak256]
+        Monkey Island 1 (EGA version)              [Game: monkeyega]
         Monkey Island 1 (VGA version)              [Game: monkeyvga]
         Monkey Island 1 (CD version)               [Game: monkey/monkey1]
         Monkey Island 2                            [Game: monkey2]
@@ -126,6 +127,10 @@ the section on Reporting Bugs.
                 - Music and Sound may not play
                 - In some rooms Indy may be able to walk to odd places
                 - There are some minor graphical glitches
+
+       Monkey Island (EGA Version):
+                - Music doesn't loop
+		- Sound doesn't play
 
        Indy 4 (Fate Of Atlantis):
                 - Keyboard fighting does not work. ScummVM now defaults to
