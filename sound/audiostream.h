@@ -90,7 +90,7 @@ protected:
 	int _len;
 public:
 	ZeroInputStream(uint len) : _len(len) { }
-	int readBuffer(int16 *buffer, int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) {
 		int samples = MIN(_len, numSamples);
 		memset(buffer, 0, samples * 2);
 		_len -= samples;
