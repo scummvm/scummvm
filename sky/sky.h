@@ -48,6 +48,7 @@ struct SystemVars {
 	uint32 currentPalette;
 	uint16 gameSpeed;
 	bool pastIntro;
+	bool quitting;
 };
 
 class SkyLogic;

@@ -1450,9 +1450,8 @@ void SkyControl::delay(unsigned int amount) {
 					break;
 
 				case OSystem::EVENT_QUIT:
-					showGameQuitMsg(false);
-					delay(1500);
-					_system->quit();
+					if (!SkyState::_systemVars.quitting)
+						showGameQuitMsg(false);
 					break;
 
 				default:
@@ -1472,6 +1471,7 @@ void SkyControl::delay(unsigned int amount) {
 
 void SkyControl::showGameQuitMsg(bool useScreen) {
 
+	SkyState::_systemVars.quitting = true;
 	uint8 *textBuf1 = (uint8*)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *textBuf2 = (uint8*)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 textNum;

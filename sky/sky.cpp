@@ -71,7 +71,7 @@ Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 
 void **SkyState::_itemList[300];
 
-SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316, 0, false};
+SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316, 0, false, false };
 
 SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
@@ -332,7 +332,8 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 					break;
 
 				case OSystem::EVENT_QUIT:
-					_skyControl->showGameQuitMsg(); // will call _system->quit()
+					if (!SkyState::_systemVars.quitting)
+						_skyControl->showGameQuitMsg(); // will call _system->quit()
 					break;
 
 				default:
