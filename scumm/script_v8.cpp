@@ -180,12 +180,12 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_wordVarInc),
 		OPCODE(o6_wordVarDec),
 		/* 70 */
-		OPCODE(o8_dim),
+		OPCODE(o8_dimArray),
 		OPCODE(o6_wordArrayWrite),
 		OPCODE(o6_wordArrayInc),
 		OPCODE(o6_wordArrayDec),
 		/* 74 */
-		OPCODE(o8_dim2dim),
+		OPCODE(o8_dim2dimArray),
 		OPCODE(o6_wordArrayIndexedWrite),
 		OPCODE(o8_arrayOps),
 		OPCODE(o6_invalid),
@@ -300,7 +300,7 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_getRandomNumber),
 		OPCODE(o6_getRandomNumberRange),
 		/* D0 */
-		OPCODE(o6_getClass),
+		OPCODE(o6_ifClassOfIs),
 		OPCODE(o6_getState),
 		OPCODE(o6_getOwner),
 		OPCODE(o6_isScriptRunning),
@@ -591,7 +591,7 @@ void ScummEngine_v8::o8_wait() {
 	o6_breakHere();
 }
 
-void ScummEngine_v8::o8_dim() {
+void ScummEngine_v8::o8_dimArray() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
 	
@@ -606,11 +606,11 @@ void ScummEngine_v8::o8_dim() {
 		nukeArray(array);
 		break;
 	default:
-		error("o8_dim: default case 0x%x", subOp);
+		error("o8_dimArray: default case 0x%x", subOp);
 	}
 }
 
-void ScummEngine_v8::o8_dim2dim() {
+void ScummEngine_v8::o8_dim2dimArray() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord(), a, b;
 	
@@ -629,7 +629,7 @@ void ScummEngine_v8::o8_dim2dim() {
 		nukeArray(array);
 		break;
 	default:
-		error("o8_dim2dim: default case 0x%x", subOp);
+		error("o8_dim2dimArray: default case 0x%x", subOp);
 	}
 }
 

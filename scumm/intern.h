@@ -407,7 +407,7 @@ protected:
 	void o6_freezeUnfreeze();
 	void o6_cursorCommand();
 	void o6_breakHere();
-	void o6_getClass();
+	void o6_ifClassOfIs();
 	void o6_setClass();
 	void o6_getState();
 	void o6_setState();
@@ -483,11 +483,11 @@ protected:
 	void o6_printEgo();
 	void o6_talkActor();
 	void o6_talkEgo();
-	void o6_dim();
+	void o6_dimArray();
 	void o6_dummy();
 	void o6_startObjectQuick();
 	void o6_startScriptQuick2();
-	void o6_dim2dim();
+	void o6_dim2dimArray();
 	void o6_abs();
 	void o6_distObjectObject();
 	void o6_distObjectPt();
@@ -578,8 +578,8 @@ protected:
 	void o8_mod();
 	void o8_wait();
 
-	void o8_dim();
-	void o8_dim2dim();
+	void o8_dimArray();
+	void o8_dim2dimArray();
 	void o8_arrayOps();
 	void o8_blastText();
 

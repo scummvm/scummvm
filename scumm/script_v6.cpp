@@ -183,7 +183,7 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_cursorCommand),
 		/* 6C */
 		OPCODE(o6_breakHere),
-		OPCODE(o6_getClass),
+		OPCODE(o6_ifClassOfIs),
 		OPCODE(o6_setClass),
 		OPCODE(o6_getState),
 		/* 70 */
@@ -282,12 +282,12 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_talkActor),
 		OPCODE(o6_talkEgo),
 		/* BC */
-		OPCODE(o6_dim),
+		OPCODE(o6_dimArray),
 		OPCODE(o6_dummy),
 		OPCODE(o6_startObjectQuick),
 		OPCODE(o6_startScriptQuick2),
 		/* C0 */
-		OPCODE(o6_dim2dim),
+		OPCODE(o6_dim2dimArray),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -858,7 +858,7 @@ void ScummEngine_v6::o6_breakHere() {
 	_currentScript = 0xFF;
 }
 
-void ScummEngine_v6::o6_getClass() {
+void ScummEngine_v6::o6_ifClassOfIs() {
 	int args[16];
 	int num, obj, cls;
 	bool b;
@@ -2260,7 +2260,7 @@ void ScummEngine_v6::o6_talkEgo() {
 	o6_talkActor();
 }
 
-void ScummEngine_v6::o6_dim() {
+void ScummEngine_v6::o6_dimArray() {
 	int data;
 
 	switch (fetchScriptByte()) {
@@ -2283,7 +2283,7 @@ void ScummEngine_v6::o6_dim() {
 		nukeArray(fetchScriptWord());
 		return;
 	default:
-		error("o6_dim: default case");
+		error("o6_dimArray: default case");
 	}
 
 	defineArray(fetchScriptWord(), data, 0, pop());
@@ -2295,7 +2295,7 @@ void ScummEngine_v6::o6_dummy() {
 		stopObjectCode();
 }
 
-void ScummEngine_v6::o6_dim2dim() {
+void ScummEngine_v6::o6_dim2dimArray() {
 	int a, b, data;
 	switch (fetchScriptByte()) {
 	case 199:		// SO_INT_ARRAY
@@ -2314,7 +2314,7 @@ void ScummEngine_v6::o6_dim2dim() {
 		data = 4;
 		break;
 	default:
-		error("o6_dim2dim: default case");
+		error("o6_dim2dimArray: default case");
 	}
 
 	b = pop();
