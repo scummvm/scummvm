@@ -441,22 +441,58 @@ SOURCE=.\sky\compacts\objects.h
 SOURCE=.\sky\compacts\z_compac.h
 # End Source File
 # End Group
+# Begin Group "music"
+
+# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\sky\adlibchannel.cpp
+SOURCE=.\sky\music\adlibchannel.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\sky\adlibchannel.h
+SOURCE=.\sky\music\adlibchannel.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\sky\adlibmusic.cpp
+SOURCE=.\sky\music\adlibmusic.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\sky\adlibmusic.h
+SOURCE=.\sky\music\adlibmusic.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\sky\music\gmchannel.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\music\gmchannel.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\music\gmmusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\music\gmmusic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\music\mt32music.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\music\mt32music.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\music\musicbase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\music\musicbase.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\sky\autoroute.cpp
@@ -495,22 +531,6 @@ SOURCE=.\sky\disk.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\sky\gmchannel.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\gmchannel.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\gmmusic.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\gmmusic.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\sky\grid.cpp
 # End Source File
 # Begin Source File
@@ -536,22 +556,6 @@ SOURCE=.\sky\mouse.cpp
 # Begin Source File
 
 SOURCE=.\sky\mouse.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\mt32music.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\mt32music.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\musicbase.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\musicbase.h
 # End Source File
 # Begin Source File
 

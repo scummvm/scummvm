@@ -223,6 +223,10 @@ SOURCE=.\scumm\akos.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\scumm\base-costume.cpp"
+# End Source File
+# Begin Source File
+
 SOURCE=".\scumm\base-costume.h"
 # End Source File
 # Begin Source File
@@ -240,6 +244,10 @@ SOURCE=.\scumm\bundle.cpp
 # Begin Source File
 
 SOURCE=.\scumm\bundle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\camera.cpp
 # End Source File
 # Begin Source File
 
