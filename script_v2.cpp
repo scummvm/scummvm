@@ -2798,15 +2798,7 @@ void Scumm::o6_miscOps()
 
 		case 108:									/* create proc_special_palette */
 		case 109:
-			int i;
-			byte j;
-			for(i=0;i<256;i++)
-			{
-				j=rand();
-				_proc_special_palette[i]=j;
-			}
-			warning("stub o6_miscOps_108(%d,%d,%d,%d,%d,%d,%d)", args[1], args[2],
-							args[3], args[4], args[5], 0, 256);
+			createSpecialPalette(args[1], args[2],args[3], args[4], args[5], 0, 256);
 			break;
 
 		case 110:
