@@ -2119,25 +2119,27 @@ void Scumm::o5_setObjectName()
 	int i = 0;
 	byte *name = NULL;
 	unsigned char work[255];
+	
+	// Read in new name
+	while ((a = fetchScriptByte()) != 0) {
+        	work[i++] = a;
+                if (a == 0xFF) {
+			work[i++] = fetchScriptByte();
+			work[i++] = fetchScriptByte();
+			work[i++] = fetchScriptByte();
+		}
+	}
 
 	if (obj < NUM_ACTORS)
 		error("Can't set actor %d name with new-name-of", obj);
 
 	if (!getOBCDFromObject(obj)) {
-		// FIXME for bug 587553. This is an odd one and looks more
-		// like an actual bug in the original script.
-		while ((a = fetchScriptByte()) != 0) {
-               		work[i++] = a;
-
-	                if (a == 0xFF) {
-        	                work[i++] = fetchScriptByte();
-                	        work[i++] = fetchScriptByte();
-				work[i++] = fetchScriptByte();
-                	}
-		}
+		// FIXME: Bug 587553. This is an odd one and looks more like
+		// an actual bug in the original script. Usually we would error
 		warning("Can't find OBCD to rename object %d to %s", obj, name);
 		return;
 	}
+
 	name = getObjOrActorName(obj);
 
 	if (_features & GF_SMALL_HEADER) {
@@ -2152,19 +2154,6 @@ void Scumm::o5_setObjectName()
 		size = READ_LE_UINT16(objptr) - offset;
 	} else {
 		size = getResourceDataSize(name);
-	}
-
-	i = 0;
-
-	while ((a = fetchScriptByte()) != 0) {
-		work[i++] = a;
-
-		if (a == 0xFF) {
-			work[i++] = fetchScriptByte();
-			work[i++] = fetchScriptByte();
-			work[i++] = fetchScriptByte();
-		}
-
 	}
 
 	if (i >= size) {
