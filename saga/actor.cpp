@@ -90,7 +90,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	// Create actor alias table
-	_aliasTbl = (int *)malloc(ACTORCOUNT * sizeof *_aliasTbl);
+	_aliasTbl = (int *)malloc(ACTORCOUNT * sizeof(*_aliasTbl));
 	if (_aliasTbl == NULL) {
 		free(_tbl);
 		error("Actor::Actor(): Memory allocation error.");
@@ -367,7 +367,7 @@ int Actor::addActor(ACTOR * actor) {
 	actor->action_time = 0;
 	actor->action_frame = 0;
 
-	new_node = ys_dll_insert(_list, actor, sizeof *actor, zCompare);
+	new_node = ys_dll_insert(_list, actor, sizeof(*actor), zCompare);
 
 	if (new_node == NULL) {
 		return FAILURE;
@@ -452,14 +452,14 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *
 	if (use_existing_ai) {
 		// Store the current dialogue off the existing actor intent
 		a_speakint = (SPEAKINTENT *)a_intent_p->a_data;
-		ys_dll_add_tail(a_speakint->si_diaglist, &a_dialogue, sizeof a_dialogue);
+		ys_dll_add_tail(a_speakint->si_diaglist, &a_dialogue, sizeof(a_dialogue));
 	} else {
 		// Create a new actor intent
 		a_intent.a_itype = INTENT_SPEAK;
 		a_intent.a_idone = 0;
 		a_intent.a_iflags = 0;
 
-		a_speakint = (SPEAKINTENT *)malloc(sizeof *a_speakint);
+		a_speakint = (SPEAKINTENT *)malloc(sizeof(*a_speakint));
 		if (a_speakint == NULL) {
 			return FAILURE;
 		}
@@ -469,8 +469,8 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *
 		a_speakint->si_last_action = actor->action;
 		a_intent.a_data = a_speakint;
 
-		ys_dll_add_tail(a_speakint->si_diaglist, &a_dialogue, sizeof a_dialogue);
-		ys_dll_add_tail(actor->a_intentlist, &a_intent, sizeof a_intent);
+		ys_dll_add_tail(a_speakint->si_diaglist, &a_dialogue, sizeof(a_dialogue));
+		ys_dll_add_tail(actor->a_intentlist, &a_intent, sizeof(a_intent));
 	}
 
 	if (sem != NULL) {
@@ -563,17 +563,12 @@ int Actor::getSpeechTime(const char *d_string, uint16 d_voice_rn) {
 int Actor::setOrientation(int index, int orient) {
 	ACTOR *actor;
 
-	if (!_initialized) {
+	actor = lookupActor(index);
+	if (actor == NULL) {
 		return FAILURE;
 	}
 
 	if ((orient < 0) || (orient > 7)) {
-		return FAILURE;
-	}
-
-	actor = lookupActor(index);
-	if (actor == NULL) {
-
 		return FAILURE;
 	}
 
@@ -584,10 +579,6 @@ int Actor::setOrientation(int index, int orient) {
 
 int Actor::setAction(int index, int action_n, uint16 action_flags) {
 	ACTOR *actor;
-
-	if (!_initialized) {
-		return FAILURE;
-	}
 
 	actor = lookupActor(index);
 	if (actor == NULL) {
@@ -608,10 +599,6 @@ int Actor::setAction(int index, int action_n, uint16 action_flags) {
 
 int Actor::setDefaultAction(int index, int action_n, uint16 action_flags) {
 	ACTOR *actor;
-
-	if (!_initialized) {
-		return FAILURE;
-	}
 
 	actor = lookupActor(index);
 	if (actor == NULL) {
@@ -751,7 +738,7 @@ int Actor::walkTo(int id, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {
 	node = _tbl[id];
 	actor = (ACTOR *)ys_dll_get_data(node);
 
-	walk_intent = (WALKINTENT *)malloc(sizeof *walk_intent);
+	walk_intent = (WALKINTENT *)malloc(sizeof(*walk_intent));
 	if (walk_intent == NULL) {
 		return MEM;
 	}
@@ -770,7 +757,7 @@ int Actor::walkTo(int id, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {
 	actor_intent.a_iflags = 0;
 	actor_intent.a_data = walk_intent;
 
-	ys_dll_add_tail(actor->a_intentlist, &actor_intent, sizeof actor_intent);
+	ys_dll_add_tail(actor->a_intentlist, &actor_intent, sizeof(actor_intent));
 
 	if (sem != NULL) {
 		_vm->_script->SThreadHoldSem(sem);
@@ -791,7 +778,7 @@ int Actor::setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAP
 	new_node.node_pt = *dst_pt;
 	new_node.calc_flag = 0;
 
-	ys_dll_add_tail(walk_int->nodelist, &new_node, sizeof new_node);
+	ys_dll_add_tail(walk_int->nodelist, &new_node, sizeof(new_node));
 
 	return SUCCESS;
 }
