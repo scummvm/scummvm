@@ -198,11 +198,6 @@ void IMuseDigital::switchToNextRegion(int track) {
 		return;
 	}
 
-				if (_track[track].idSound == 2312) {
-					_track[track].curRegion = 4;
-					_track[track].regionOffset = 0;
-					return;
-				}
 	if (++_track[track].curRegion == num_regions) {
 		_track[track].toBeRemoved = true;
 		return;
