@@ -1964,7 +1964,7 @@ bool SkyLogic::fnAskThis(uint32 textNo, uint32 animNo, uint32 c) {
 }
 
 bool SkyLogic::fnRandom(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnRandom");
+	_scriptVariables[RND] = _rnd.getRandomNumber(65536) & a; 
 	return true;
 }
 

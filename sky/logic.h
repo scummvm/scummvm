@@ -62,6 +62,7 @@ enum scriptVariableOffsets {
 	MENU_LENGTH = 100,
 	SCROLL_OFFSET = 101,
 	MENU = 102,
+	RND = 115,
 	CUR_SECTION = 143,
 	REICH_DOOR_FLAG = 470
 };
@@ -235,6 +236,8 @@ protected:
 
 	uint32 _currentSection;
 	uint32 _saveCurrentSection;
+
+	RandomSource _rnd;
 	
 	SkyScreen *_skyScreen;
 	SkyDisk *_skyDisk;

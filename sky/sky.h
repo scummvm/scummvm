@@ -138,8 +138,6 @@ protected:
 	void shutdown();
 
 	void showQuitMsg(void);
-
-	RandomSource _rnd;
 };
 
 #endif
