@@ -87,11 +87,11 @@ private:
 public:
 	MidiDriver_MPU401();
 
-	virtual void setTimerCallback (void *timer_param, void (*timer_proc) (void *));
-	virtual uint32 getBaseTempo (void) { return 0x4A0000; }
+	void setTimerCallback (void *timer_param, void (*timer_proc) (void *));
+	uint32 getBaseTempo (void) { return 0x4A0000; }
 
-	virtual MidiChannel *allocateChannel();
-	virtual MidiChannel *getPercussionChannel() { return &_midi_channels [9]; }
+	MidiChannel *allocateChannel();
+	MidiChannel *getPercussionChannel() { return &_midi_channels [9]; }
 };
 
 

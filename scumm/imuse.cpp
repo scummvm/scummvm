@@ -963,10 +963,12 @@ Part *IMuseInternal::allocate_part(byte pri)
 		}
 	}
 
-	if (best)
+	if (best) {
 		best->uninit();
-	else
+		_driver->update_pris();
+	} else {
 		debug(1, "Denying part request");
+	}
 	return best;
 }
 
@@ -2165,8 +2167,10 @@ void Player::parse_sysex(byte *p, uint len)
 				part->set_vol ((p[5] & 0x0F) << 4 | (p[6] & 0x0F));
 				part->_percussion = _isGM ? ((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {
-					if (part->_mc)
+					if (part->_mc) {
 						part->off();
+						part->update_pris();
+					}
 				} else {
 					part->changed (IMuseDriver::pcAll);
 				}
@@ -2837,6 +2841,7 @@ void Player::turn_off_parts()
 
 	for (part = _parts; part; part = part->_next)
 		part->off();
+	_se->_driver->update_pris();
 }
 
 void Player::play_active_notes()
@@ -3317,8 +3322,10 @@ void Part::setup(Player *player)
 	_pitchbend_factor = 2;
 	_pitchbend = 0;
 	_effect_level = 64;
-	_program = player->_se->get_channel_program (_chan);
-	_instrument.program (_program, player->_mt32emulate);
+//	_program = player->_se->get_channel_program (_chan);
+//	_instrument.program (_program, player->_mt32emulate);
+	_program = 255;
+	_instrument.clear();
 	_chorus = 0;
 	_modwheel = 0;
 	_bank = 0;
@@ -3633,26 +3640,23 @@ void IMuseDriver::update_pris()
 		if (!hipart)
 			return;
 
-		if ((hipart->_mc = _md->allocateChannel()) != NULL) {
-			hipart->changed (pcAll);
-			return;
-		}
-
-		lopri = 255;
-		lopart = NULL;
-		for (i = 32, part = _se->parts_ptr(); i; i--, part++) {
-			if (part->_mc && part->_pri_eff <= lopri) {
-				lopri = part->_pri_eff;
-				lopart = part;
+		if ((hipart->_mc = _md->allocateChannel()) == NULL) {
+			lopri = 255;
+			lopart = NULL;
+			for (i = 32, part = _se->parts_ptr(); i; i--, part++) {
+				if (part->_mc && part->_pri_eff <= lopri) {
+					lopri = part->_pri_eff;
+					lopart = part;
+				}
 			}
+
+			if (lopart == NULL || lopri >= hipri)
+				return;
+			lopart->off();
+
+			if ((hipart->_mc = _md->allocateChannel()) == NULL)
+				return;
 		}
-
-		if (lopart == NULL || lopri >= hipri)
-			return;
-		lopart->off();
-
-		if ((hipart->_mc = _md->allocateChannel()) == NULL)
-			return;
 		hipart->changed(pcAll);
 	}
 }
@@ -3696,9 +3700,8 @@ void IMuseDriver::part_changed(Part *part, uint16 what)
 	MidiChannel *mc;
 
 	// Mark for re-schedule if program changed when in pre-state
-	if (what & pcProgram && !part->_percussion && !part->_mc) {
+	if (what & pcProgram && !part->_mc && part->_on && !part->_percussion)
 		update_pris();
-	}
 
 	if (!(mc = part->_mc))
 		return;

@@ -25,8 +25,6 @@
 #include "scumm/instrument.h"
 #include "sound/mididrv.h"
 
-#define NATIVE_MT32 false
-
 static const byte mt32_to_gm[128] = {
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
 	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
