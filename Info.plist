@@ -15,7 +15,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>org.scummvm.scummvm</string>
 	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0pre</string>
+	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>scummvm</string>
 	<key>CFBundlePackageType</key>
