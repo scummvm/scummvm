@@ -760,6 +760,7 @@ void Scumm::decompressBundleSound(int index) {
 	}
 
 	{	/* Parse decompressed data */
+		int rate = 22050;
 		byte *ptr = CompFinal;
 		int tag, size;
 		tag = READ_BE_UINT32(ptr); ptr+=4;
@@ -770,10 +771,13 @@ void Scumm::decompressBundleSound(int index) {
 		}
 
 		ptr+=12;       /* Skip header */
-		while(tag != MKID_BE('DATA')) {
+		while(tag != MKID_BE('DATA')) {			
 			tag = READ_BE_UINT32(ptr);  ptr+=4;
 			switch(tag) {
-				case MKID_BE('FRMT'):
+				case MKID_BE('FRMT'): 
+					size = READ_BE_UINT32(ptr); ptr+=16;					
+					rate = READ_BE_UINT32(ptr); ptr+=8;
+				break;
 				case MKID_BE('TEXT'):
 				case MKID_BE('REGN'):
 				case MKID_BE('STOP'):
@@ -791,7 +795,7 @@ void Scumm::decompressBundleSound(int index) {
 
 		Final = (unsigned char *)malloc(size);
 		memcpy(&Final[0], &ptr[0], size);
-		_mixer->play_raw(NULL, Final, size, 22050, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_mixer->play_raw(NULL, Final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		free(CompFinal);
 	}
 }
