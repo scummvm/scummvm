@@ -8382,9 +8382,9 @@ void SimonState::playVoice(uint voice) {
 		uint32 samples_per_sec = 1000000L/(256L-(long)voc_block_hdr.tc);
 
 		byte *buffer = (byte*)malloc(size);
-		fread(buffer, size, 1, _effects_file);
+		fread(buffer, size, 1, _voice_file);
 
-	    _mixer->play_raw(&_effects_sound, buffer, size, samples_per_sec,
+	    _mixer->play_raw(&_voice_sound, buffer, size, samples_per_sec,
 			SoundMixer::FLAG_UNSIGNED);
 	}
 }
