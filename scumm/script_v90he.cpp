@@ -1329,16 +1329,16 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 		if (spriteGroupId) {
 			switch(type) {
 			case 0:
-				push(spriteGroupGet_field_30(spriteGroupId));
+				push(spriteGroupGet_scale_x_ratio_mul(spriteGroupId));
 				break;
 			case 1:
-				push(spriteGroupGet_field_34(spriteGroupId));
+				push(spriteGroupGet_scale_x_ratio_div(spriteGroupId));
 				break;
 			case 2:
-				push(spriteGroupGet_field_38(spriteGroupId));
+				push(spriteGroupGet_scale_y_ratio_mul(spriteGroupId));
 				break;
 			case 3:
-				push(spriteGroupGet_field_3C(spriteGroupId));
+				push(spriteGroupGet_scale_y_ratio_div(spriteGroupId));
 				break;
 			default:
 				push(0);
@@ -1350,7 +1350,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	case 43:
 		spriteGroupId = pop();
 		if (spriteGroupId)
-			push(spriteGroupGet_field_10(spriteGroupId));
+			push(spriteGroupGet_zorderPriority(spriteGroupId));
 		else
 			push(0);
 		break;
@@ -1471,7 +1471,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_field_10(_curSpriteGroupId, value1);
+		spriteGroupSet_zorderPriority(_curSpriteGroupId, value1);
 		break;
 	case 7:
 		value2 = pop();

@@ -906,12 +906,12 @@ protected:
 	void spriteInfoGet_dx_dy(int spriteId, int32 &dx, int32 &dy);
 
 	int spriteGroupGet_allocateGroupSpritesList(int spriteGroupId);
-	int spriteGroupGet_field_10(int spriteGroupId);
+	int spriteGroupGet_zorderPriority(int spriteGroupId);
 	int spriteGroupGet_field_20(int spriteGroupId);
-	int spriteGroupGet_field_30(int spriteGroupId);
-	int spriteGroupGet_field_34(int spriteGroupId);
-	int spriteGroupGet_field_38(int spriteGroupId);
-	int spriteGroupGet_field_3C(int spriteGroupId);
+	int spriteGroupGet_scale_x_ratio_mul(int spriteGroupId);
+	int spriteGroupGet_scale_x_ratio_div(int spriteGroupId);
+	int spriteGroupGet_scale_y_ratio_mul(int spriteGroupId);
+	int spriteGroupGet_scale_y_ratio_div(int spriteGroupId);
 	void spriteGroupGet_tx_ty(int spriteGroupId, int32 &tx, int32 &ty);
 
 	void spriteInfoSet_field_14(int spriteId, int value);
@@ -955,7 +955,7 @@ protected:
 	void spriteGroupSet_case5_1(int spriteGroupId, int value);
 	void spriteGroupSet_case5_2(int spriteGroupId, int value);
 	void spriteGroupSet_case5_3(int spriteGroupId, int value);
-	void spriteGroupSet_field_10(int spriteGroupId, int value);
+	void spriteGroupSet_zorderPriority(int spriteGroupId, int value);
 	void spriteGroupSet_tx_ty(int spriteGroupId, int value1, int value2);
 	void spriteGroupSet_case26(int spriteGroupId, int value);
 	void spriteGroupSet_case28(int spriteGroupId, int value1, int value2);

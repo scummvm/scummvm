@@ -363,10 +363,10 @@ int ScummEngine_v90he::spriteGroupGet_allocateGroupSpritesList(int spriteGroupId
 	return readVar(0);
 }
 
-int ScummEngine_v90he::spriteGroupGet_field_10(int spriteGroupId) {
+int ScummEngine_v90he::spriteGroupGet_zorderPriority(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	return _spriteGroups[spriteGroupId].field_10;
+	return _spriteGroups[spriteGroupId].zorderPriority;
 }
 
 int ScummEngine_v90he::spriteGroupGet_field_20(int spriteGroupId) {
@@ -375,28 +375,28 @@ int ScummEngine_v90he::spriteGroupGet_field_20(int spriteGroupId) {
 	return _spriteGroups[spriteGroupId].field_20;
 }
 
-int ScummEngine_v90he::spriteGroupGet_field_30(int spriteGroupId) {
+int ScummEngine_v90he::spriteGroupGet_scale_x_ratio_mul(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	return _spriteGroups[spriteGroupId].field_30;
+	return _spriteGroups[spriteGroupId].scale_x_ratio_mul;
 }
 
-int ScummEngine_v90he::spriteGroupGet_field_34(int spriteGroupId) {
+int ScummEngine_v90he::spriteGroupGet_scale_x_ratio_div(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	return _spriteGroups[spriteGroupId].field_34;
+	return _spriteGroups[spriteGroupId].scale_x_ratio_div;
 }
 
-int ScummEngine_v90he::spriteGroupGet_field_38(int spriteGroupId) {
+int ScummEngine_v90he::spriteGroupGet_scale_y_ratio_mul(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	return _spriteGroups[spriteGroupId].field_38;
+	return _spriteGroups[spriteGroupId].scale_y_ratio_mul;
 }
 
-int ScummEngine_v90he::spriteGroupGet_field_3C(int spriteGroupId) {
+int ScummEngine_v90he::spriteGroupGet_scale_y_ratio_div(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	return _spriteGroups[spriteGroupId].field_3C;
+	return _spriteGroups[spriteGroupId].scale_y_ratio_div;
 }
 
 void ScummEngine_v90he::spriteGroupGet_tx_ty(int spriteGroupId, int32 &tx, int32 &ty) {
@@ -854,13 +854,13 @@ void ScummEngine_v90he::spriteGroupSet_case0_7(int spriteGroupId, int value) {
 void ScummEngine_v90he::spriteGroupSet_case5_0(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	if (_spriteGroups[spriteGroupId].field_30 == value)
+	if (_spriteGroups[spriteGroupId].scale_x_ratio_mul == value)
 		return;
 
-	_spriteGroups[spriteGroupId].field_30 = value;
-	_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].field_30 / _spriteGroups[spriteGroupId].field_34;
+	_spriteGroups[spriteGroupId].scale_x_ratio_mul = value;
+	_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
 
-	if ((_spriteGroups[spriteGroupId].field_30 != _spriteGroups[spriteGroupId].field_34) || (_spriteGroups[spriteGroupId].field_38 != _spriteGroups[spriteGroupId].field_3C))
+	if ((_spriteGroups[spriteGroupId].scale_x_ratio_mul != _spriteGroups[spriteGroupId].scale_x_ratio_div) || (_spriteGroups[spriteGroupId].scale_y_ratio_mul != _spriteGroups[spriteGroupId].scale_y_ratio_div))
 		_spriteGroups[spriteGroupId].scaling = 1;
 	else
 		_spriteGroups[spriteGroupId].scaling = 0;
@@ -871,13 +871,13 @@ void ScummEngine_v90he::spriteGroupSet_case5_0(int spriteGroupId, int value) {
 void ScummEngine_v90he::spriteGroupSet_case5_1(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	if (_spriteGroups[spriteGroupId].field_34 == value)
+	if (_spriteGroups[spriteGroupId].scale_x_ratio_div == value)
 		return;
 
-	_spriteGroups[spriteGroupId].field_34 = value;
-	_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].field_30 / _spriteGroups[spriteGroupId].field_34;
+	_spriteGroups[spriteGroupId].scale_x_ratio_div = value;
+	_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
 
-	if ((_spriteGroups[spriteGroupId].field_30 != _spriteGroups[spriteGroupId].field_34) || (_spriteGroups[spriteGroupId].field_38 != _spriteGroups[spriteGroupId].field_3C))
+	if ((_spriteGroups[spriteGroupId].scale_x_ratio_mul != _spriteGroups[spriteGroupId].scale_x_ratio_div) || (_spriteGroups[spriteGroupId].scale_y_ratio_mul != _spriteGroups[spriteGroupId].scale_y_ratio_div))
 		_spriteGroups[spriteGroupId].scaling = 1;
 	else
 		_spriteGroups[spriteGroupId].scaling = 0;
@@ -888,13 +888,13 @@ void ScummEngine_v90he::spriteGroupSet_case5_1(int spriteGroupId, int value) {
 void ScummEngine_v90he::spriteGroupSet_case5_2(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	if (_spriteGroups[spriteGroupId].field_38 == value)
+	if (_spriteGroups[spriteGroupId].scale_y_ratio_mul == value)
 		return;
 
-	_spriteGroups[spriteGroupId].field_38 = value;
-	_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].field_38 / _spriteGroups[spriteGroupId].field_3C;
+	_spriteGroups[spriteGroupId].scale_y_ratio_mul = value;
+	_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
 
-	if ((_spriteGroups[spriteGroupId].field_30 != _spriteGroups[spriteGroupId].field_34) || (_spriteGroups[spriteGroupId].field_38 != _spriteGroups[spriteGroupId].field_3C))
+	if ((_spriteGroups[spriteGroupId].scale_x_ratio_mul != _spriteGroups[spriteGroupId].scale_x_ratio_div) || (_spriteGroups[spriteGroupId].scale_y_ratio_mul != _spriteGroups[spriteGroupId].scale_y_ratio_div))
 		_spriteGroups[spriteGroupId].scaling = 1;
 	else
 		_spriteGroups[spriteGroupId].scaling = 0;
@@ -905,13 +905,13 @@ void ScummEngine_v90he::spriteGroupSet_case5_2(int spriteGroupId, int value) {
 void ScummEngine_v90he::spriteGroupSet_case5_3(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	if (_spriteGroups[spriteGroupId].field_3C == value)
+	if (_spriteGroups[spriteGroupId].scale_y_ratio_div == value)
 		return;
 
-	_spriteGroups[spriteGroupId].field_3C = value;
-	_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].field_38 / _spriteGroups[spriteGroupId].field_3C;
+	_spriteGroups[spriteGroupId].scale_y_ratio_div = value;
+	_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
 
-	if ((_spriteGroups[spriteGroupId].field_30 != _spriteGroups[spriteGroupId].field_34) || (_spriteGroups[spriteGroupId].field_38 != _spriteGroups[spriteGroupId].field_3C))
+	if ((_spriteGroups[spriteGroupId].scale_x_ratio_mul != _spriteGroups[spriteGroupId].scale_x_ratio_div) || (_spriteGroups[spriteGroupId].scale_y_ratio_mul != _spriteGroups[spriteGroupId].scale_y_ratio_div))
 		_spriteGroups[spriteGroupId].scaling = 1;
 	else
 		_spriteGroups[spriteGroupId].scaling = 0;
@@ -919,13 +919,13 @@ void ScummEngine_v90he::spriteGroupSet_case5_3(int spriteGroupId, int value) {
 	redrawSpriteGroup(spriteGroupId);
 }
 
-void ScummEngine_v90he::spriteGroupSet_field_10(int spriteGroupId, int value) {
+void ScummEngine_v90he::spriteGroupSet_zorderPriority(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	if (_spriteGroups[spriteGroupId].field_10 == value)
+	if (_spriteGroups[spriteGroupId].zorderPriority == value)
 		return;
 
-	_spriteGroups[spriteGroupId].field_10 = value;
+	_spriteGroups[spriteGroupId].zorderPriority = value;
 
 	redrawSpriteGroup(spriteGroupId);
 }
@@ -965,7 +965,7 @@ void ScummEngine_v90he::spriteGroupSet_case28(int spriteGroupId, int value1, int
 void ScummEngine_v90he::spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, int x2, int y2) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	_spriteGroups[spriteGroupId].flags |= kSGF01;
+	_spriteGroups[spriteGroupId].flags |= kSGFClipBox;
 	_spriteGroups[spriteGroupId].bbox.left = x1;
 	_spriteGroups[spriteGroupId].bbox.top = y1;
 	_spriteGroups[spriteGroupId].bbox.right = x2;
@@ -977,7 +977,7 @@ void ScummEngine_v90he::spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, i
 void ScummEngine_v90he::spriteGroupSet_case56(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	_spriteGroups[spriteGroupId].flags &= ~(kSGF02);
+	_spriteGroups[spriteGroupId].flags &= ~(kSGFNeedRedraw);
 
 	redrawSpriteGroup(spriteGroupId);
 }
@@ -999,8 +999,8 @@ void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
 
 	SpriteGroup *spg = &_spriteGroups[spriteGroupId];
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
-	if (spg->field_10 != 0) {
-		spg->field_10 = 0;
+	if (spg->zorderPriority != 0) {
+		spg->zorderPriority = 0;
 		spriteGroupCheck(spriteGroupId);
 		for (i = 0; i < _numSpritesToProcess; ++i) {
 			SpriteInfo *spi = _activeSpritesTable[i];
@@ -1019,7 +1019,7 @@ void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
 			}
 		}
 	}
-	spg->flags &= ~kSGF01;
+	spg->flags &= ~kSGFClipBox;
 	spriteMarkIfInGroup(spriteGroupId, kSFChanged | kSFNeedRedraw);
 	if (spg->field_20 != 0) {
 		spriteGroupCheck(spriteGroupId);
@@ -1033,11 +1033,11 @@ void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
 	spriteGroupCheck(spriteGroupId);
 	spg->scaling = 0;
 	spg->scale_x = 0x3F800000;
-	spg->field_30 = 0;
-	spg->field_34 = 0;
+	spg->scale_x_ratio_mul = 0;
+	spg->scale_x_ratio_div = 0;
 	spg->scale_y = 0x3F800000;
-	spg->field_38 = 0;
-	spg->field_3C = 0;
+	spg->scale_y_ratio_mul = 0;
+	spg->scale_y_ratio_div = 0;
 }
 
 void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
@@ -1195,17 +1195,17 @@ static int compareSprTable(const void *a, const void *b) {
 	const SpriteInfo *spr1 = *(const SpriteInfo *const*)a;
 	const SpriteInfo *spr2 = *(const SpriteInfo *const*)b;
 
-	if (spr1->field_0 > spr2->field_0)
+	if (spr1->zorder > spr2->zorder)
 		return 1;
 
-	if (spr1->field_0 < spr2->field_0)
+	if (spr1->zorder < spr2->zorder)
 		return -1;
 
 	return 0;
 }
 
 void ScummEngine_v90he::spritesSortActiveSprites() {
-	int groupField;
+	int groupZorder;
 
 	_numSpritesToProcess = 0;
 
@@ -1223,11 +1223,11 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 					spi->flags |= kSFChanged;
 			}
 			if (spi->group_num)
-				groupField = _spriteGroups[spi->group_num].field_10;
+				groupZorder = _spriteGroups[spi->group_num].zorderPriority;
 			else
-				groupField = 0;
+				groupZorder = 0;
 
-			spi->field_0 = spi->field_18 + groupField;
+			spi->zorder = spi->field_18 + groupZorder;
 
 			_activeSpritesTable[_numSpritesToProcess++] = spi;
 		}
@@ -1260,10 +1260,10 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		spr_flags = spi->flags;
 
 		if (arg) {
-			if (spi->field_0 >= 0)
+			if (spi->zorder >= 0)
 				return;
 		} else {
-			if (spi->field_0 < 0)
+			if (spi->zorder < 0)
 				continue;
 		}
 		
@@ -1366,7 +1366,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		spi->imgFlags = wiz.img.flags;
 		
-		if (spi->group_num && (_spriteGroups[spi->group_num].flags & kSGF01)) {
+		if (spi->group_num && (_spriteGroups[spi->group_num].flags & kSGFClipBox)) {
 			if (spi->bbox.intersects(_spriteGroups[spi->group_num].bbox)) {
 				spi->bbox.clip(_spriteGroups[spi->group_num].bbox);
 				wiz.processFlags |= 0x200;
