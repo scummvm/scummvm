@@ -357,7 +357,11 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 
 		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
+#ifdef USE_MPEG2
 		byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
+#else
+		byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or recompile ScummVM with MPEG2 support";
+#endif
 		byte *data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
 		FrameHeader *frame = (FrameHeader *) data;
 		SpriteInfo msgSprite;
