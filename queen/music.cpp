@@ -175,10 +175,7 @@ static const byte mt32_to_gm[128] = {
 				break;
 			//Sequential loop
 			case  1:
-				if (_songQueue[1])
-					setLoop(false);
-				else
-					setLoop(true);
+				setLoop(_songQueue[1] == 0);
 				break;
 			//Play once
 			case  2:
@@ -201,7 +198,7 @@ static const byte mt32_to_gm[128] = {
 	}
 	
 	void MusicPlayer::playMusic() {
-		if (!_queuePos && !_songQueue[_queuePos]) {
+		if (!_songQueue[0]) {
 			debug(5, "MusicPlayer::playMusic - Music queue is empty!");
 			return;
 		}
