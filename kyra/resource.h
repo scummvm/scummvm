@@ -114,7 +114,7 @@ namespace Kyra {
 		bool hasPalette(void) { return (_ownPalette != 0); }
 
 		// if col == -1 then no transparany
-		void setTransparencyColor(int16 col) { _transparency = col; }
+		void transparency(int16 col) { _transparency = col; }
 
 		void drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, uint16 x, uint16 y);
 		void drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, uint16 x, uint16 y,

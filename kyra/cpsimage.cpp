@@ -51,6 +51,7 @@ namespace Kyra {
 		if (!buffer) {
 			error("resource created without data");
 		}
+		_ownPalette = 0;
 		Common::MemoryReadStream bufferstream(buffer, size);
 		
 		// reads in the Header
@@ -61,11 +62,15 @@ namespace Kyra {
 		
 		// lets check a bit
 		if(_cpsHeader._pal == 0x3000000) {
-			warning("CPS images with a palette aren't supported");
-			
-			// skip 768 bytes
 			// if this was a compressed palette you should have strange graphics
-			bufferstream.seek(bufferstream.pos() + 768);
+			
+			uint8* palbuffer = new uint8[768];
+			assert(palbuffer);
+			
+			bufferstream.read(palbuffer, 768 * sizeof(uint8));
+			
+			_ownPalette = new Palette(palbuffer, 768);
+			assert(palbuffer);
 		}
 		
 		_image = new uint8[_cpsHeader._imagesize];
@@ -104,16 +109,15 @@ namespace Kyra {
 	}
 	
 	void CPSImage::drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, uint16 x, uint16 y) {
+		uint8* src = _image;
+		uint8* dst = &plane[y * planepitch + x];
+		uint32 copysize = planepitch - x;
+		
+		if (copysize > _width)
+			copysize = _width;
+		
 		if (_transparency == -1) {
 			// 'fast' blitting
-			
-			uint8* src = _image;
-			uint8* dst = &plane[y * planepitch + x];
-			uint32 copysize = planepitch - x;
-			
-			if (copysize > _width)
-				copysize = _width;
-			
 			for (uint16 y_ = 0; y_ < _height && y + y_ < planeheight; ++y_) {
 				memcpy(dst, src, copysize * sizeof(uint8));
 				dst += planepitch;
@@ -122,11 +126,9 @@ namespace Kyra {
 			
 		} else {
 			// oh no! we have transparency so we have a very slow copy :/
-			uint8* src = _image;
-			uint8* dst = &plane[y * planepitch + x];
 			
 			for (uint16 yadd = 0; yadd < _height; ++yadd) {
-				for (uint16 xadd = 0; xadd < _width; ++xadd) {
+				for (uint16 xadd = 0; xadd < copysize; ++xadd) {
 					if (*src == _transparency) {
 						++dst;
 						++src;
@@ -135,23 +137,26 @@ namespace Kyra {
 					}
 				}
 				
-				dst += planepitch - _width;
+				src += _width - copysize;
+				dst += planepitch - copysize;
 			}
 		}
 	}
 	
 	void CPSImage::drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, uint16 x, uint16 y,
 								uint16 srcx, uint16 srcy, uint16 srcwidth, uint16 srcheight) {
+		uint8* src = &_image[srcy * _width + srcx];
+		uint8* dst = &plane[y * planepitch + x];
+		uint32 copysize = planepitch - x;
+		
+		if (srcwidth > _width)
+			srcwidth = _width;
+		
+		if (copysize > srcwidth)
+			copysize = srcwidth;
+		
 		if (_transparency == -1) {
 			// 'fast' blitting
-			
-			uint8* src = &_image[srcy * _width + srcx];
-			uint8* dst = &plane[y * planepitch + x];
-			uint32 copysize = planepitch - x;
-			
-			if (copysize > srcwidth)
-				copysize = srcwidth;
-			
 			for (uint16 y_ = 0; y_ < srcheight && y + y_ < planeheight; ++y_) {
 				memcpy(dst, src, copysize * sizeof(uint8));
 				dst += planepitch;
@@ -160,12 +165,9 @@ namespace Kyra {
 			
 		} else {
 			// oh no! we have transparency so we have a very slow copy :/
-			// blit it without transparency
-			uint8* src = &_image[srcy * _width + srcx];
-			uint8* dst = &plane[y * planepitch + x];
 			
-			for (uint16 yadd = 0; yadd < _height; ++yadd) {
-				for (uint16 xadd = 0; xadd < _width; ++xadd) {
+			for (uint16 yadd = 0; yadd < srcheight; ++yadd) {
+				for (uint16 xadd = 0; xadd < copysize; ++xadd) {
 					if (*src == _transparency) {
 						++dst;
 						++src;
@@ -174,8 +176,8 @@ namespace Kyra {
 					}
 				}
 				
-				dst += planepitch - _width;
-				src += _width - srcwidth;
+				dst += planepitch - copysize;
+				src += _width - copysize;
 			}
 		}
 	}

@@ -237,6 +237,7 @@ namespace Kyra {
 	}
 
 	void VMContext::o1_0x68(void) {
-		debug("o1_0x68 was called with param0: '%d' and param1: '%d'", param(0), param(1));
+		debug("o1_0x68 was called with param0: '%d'", param(0));
+		_error = true;
 	}
 } // end of namespace Kyra

@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	kyra/resource.o \
 	kyra/script_v1.o \
 	kyra/script.o \
+	kyra/sound.o \
 	kyra/wsamovie.o
 
 MODULE_DIRS += \

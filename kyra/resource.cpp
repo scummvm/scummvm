@@ -34,21 +34,48 @@ namespace Kyra {
 		
 		// ugly a hardcoded list
 		// TODO: use the FS Backend to get all .PAK Files and load them
-		static const char* kyraFilelist[] = {
+		// or any other thing to get all files
+		static const char* kyra1Filelist[] = {
 			"A_E.PAK", "DAT.PAK", "F_L.PAK", "MAP_5.PAK", "MSC.PAK", "M_S.PAK",
 			"S_Z.PAK", "WSA1.PAK", "WSA2.PAK", "WSA3.PAK", "WSA4.PAK", "WSA5.PAK",
-			"WSA6.PAK", "startup.pak", "intro1.pak", 0
+			"WSA6.PAK", 0
 		};
 		
-		for (uint32 tmp = 0; kyraFilelist[tmp]; ++tmp)	{
+		static const char* kyra1CDFilelist[] = {
+			"ADL.PAK", "BRINS.PAK", "CLIFF.PAK", "ENTER.PAK", "FORESTA.PAK", "GEM.PAK", "INTRO1.PAK",
+			"LEPHOLE.PAK", "OAKS.PAK", "SPELL.PAK", "WILLOW.PAK", "ALCHEMY.PAK", "BROKEN.PAK", "COL.PAK",
+			"EXTHEAL.PAK", "FORESTB.PAK", "GEMCUT.PAK", "INTRO2.PAK", "LIBRARY.PAK", "PLATEAU.PAK", "SPRING.PAK",
+			"WISE.PAK", "ALGAE.PAK", "BURN.PAK", "DARMS.PAK", "EXTPOT.PAK", "FORESTC.PAK", "GENCAVB.PAK",
+			"INTRO3.PAK", "MISC.PAK", "PLTCAVE.PAK", "SQUARE.PAK", "XEDGE.PAK", "ALTAR.PAK", "CASTLE.PAK",
+			"DEAD.PAK", "EXTSPEL.PAK", "FOUNTN.PAK", "GENHALL.PAK", "INTRO4.PAK", "MIX.PAK", "POTION.PAK",
+			"STARTUP.PAK", "XEDGEB.PAK", "ARCH.PAK", "CATACOM.PAK", "DNSTAIR.PAK", "FALLS.PAK", "FOYER.PAK",
+			"GEN_CAV.PAK", "KITCHEN.PAK", "MOONCAV.PAK", "RUBY.PAK", "STUMP.PAK", "XEDGEC.PAK", "BALCONY.PAK",
+			"CAVE.PAK", "DRAGON.PAK", "FESTSTH.PAK", "FSOUTH.PAK", "GLADE.PAK", "KYRAGEM.PAK", "NCLIFF.PAK",
+			"SICKWIL.PAK", "TEMPLE.PAK", "XMI.PAK", "BELROOM.PAK",  "CAVEB.PAK", "EDGE.PAK", "FGOWEST.PAK",
+			"FSOUTHB.PAK", "GRAVE.PAK", "LAGOON.PAK", "NCLIFFB.PAK", "SND.PAK", "TRUNK.PAK", "ZROCK.PAK",
+			"BONKBG.PAK", "CGATE.PAK", "EDGEB.PAK", "FINALE.PAK", "FWSTSTH.PAK", "GRTHALL.PAK", "LANDING.PAK",
+			"NWCLIFB.PAK", "SONG.PAK", "UPSTAIR.PAK", "BRIDGE.PAK", "CHASM.PAK", "EMCAV.PAK", "FNORTH.PAK",
+			"GATECV.PAK", "HEALER.PAK", "LAVA.PAK", "NWCLIFF.PAK", "SORROW.PAK", "WELL.PAK", 0
+		};
+		
+		const char** usedFilelist = 0;
+		
+		if (_engine->game() == KYRA1)
+			usedFilelist = kyra1Filelist;
+		else if (_engine->game() == KYRA1CD)
+			usedFilelist = kyra1CDFilelist;
+		else
+			error("no filelist found for this game");
+
+		for (uint32 tmp = 0; usedFilelist[tmp]; ++tmp) {
 			// prefetch file
-			PAKFile* file = new PAKFile(kyraFilelist[tmp]);
+			PAKFile* file = new PAKFile(usedFilelist[tmp]);
 			assert(file);			
 
-			if (file->isOpen() && file->isValid())		
+			if (file->isOpen() && file->isValid())
 				_pakfiles.push_back(file);
 			else
-				warning("couldn't load file '%s' correctly", kyraFilelist[tmp]);
+				debug("couldn't load file '%s' correctly", usedFilelist[tmp]);
 		}
 	}
 	
@@ -63,11 +90,8 @@ namespace Kyra {
 	
 	uint8* Resourcemanager::fileData(const char* file, uint32* size) {
 		uint8* buffer = 0;
-		
-		debug("looking for file '%s'", file);
-		
 		File file_;
-		
+
 		// test to open it in the main dir
 		if (file_.open(file)) {
 		
@@ -83,37 +107,39 @@ namespace Kyra {
 		} else {
 			// opens the file in a PAK File
 			Common::List<PAKFile*>::iterator start = _pakfiles.begin();
-			
+
 			for (;start != _pakfiles.end(); ++start) {
 				*size = (*start)->getFileSize(file);
-				
-				if (!*size)
+
+				if (!(*size))
 					continue;
-					
+
 				buffer = new uint8[*size];
 				assert(buffer);
-				
+
 				// creates a copy of the file
 				memcpy(buffer, (*start)->getFile(file), *size);
-				
+
 				break;
 			}
 			
 		}
 		
 		if (!buffer || !(*size)) {
-			warning("couldn't find file '%s'", file);
+			return 0;
 		}
 		
 		return buffer;
 	}
 	
-	Palette* Resourcemanager::loadPalette(const char* file) {
+	Palette* Resourcemanager::loadPalette(const char* file)	{
 		uint32 size = 0;
 		uint8* buffer = 0;
 		buffer = fileData(file, &size);
-		if (!buffer)
+		if (!buffer) {
+			warning("ResMgr: Failed loading palette %s", file);
 			return 0;
+		}
 		return new Palette(buffer, size);
 	}
 	
@@ -140,9 +166,12 @@ namespace Kyra {
 		uint32 size = 0;
 		uint8* buffer = 0;
 		buffer = fileData(file, &size);
-		if (!buffer)
+		if (!buffer || !size)
 			return 0;
-		return new WSAMovieV1(buffer, size);
+		if (_engine->game() == KYRA1 || _engine->game() == KYRA1CD)
+			return new WSAMovieV1(buffer, size, _engine->game());
+		else
+			return new WSAMovieV2(buffer, size);
 	}
 
 	VMContext* Resourcemanager::loadScript(const char* file) {
@@ -154,13 +183,13 @@ namespace Kyra {
 ///////////////////////////////////////////
 // Pak file manager
 	#define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
-	PAKFile::PAKFile(const Common::String& file) {
+	PAKFile::PAKFile(/*const Common::String &path, */const Common::String& file) {
 		File pakfile;
 		_buffer = 0;
 		_open = false;
 
-		if (!pakfile.open(file.c_str())) {
-			warning("PAKFile couldn't open: '%s'", file.c_str());
+		if (!pakfile.open(file.c_str())){ /*, File::kFileReadMode, path.c_str())) {*/
+			printf("pakfile couldn't open %s\n", file.c_str());
 			return;
 		}
 
@@ -184,18 +213,25 @@ namespace Kyra {
 			// saves the name
 			chunk->_name = reinterpret_cast<const char*>(_buffer + pos);
 			pos += strlen(chunk->_name) + 1;
-			if(!chunk->_name)
+			if(!(*chunk->_name))
 				break;
 
 			endoffset = READ_LE_UINT32(_buffer + pos);
 			pos += 4;
+			
+			if (endoffset == 0) {
+				endoffset = filesize;
+			}
 
 			chunk->_data = _buffer + startoffset;
 			chunk->_size = endoffset - startoffset;
 
-			startoffset = endoffset;
-
 			_files.push_back(chunk);
+			
+			if (endoffset == filesize)
+				break;
+
+			startoffset = endoffset;
 		}
 		_open = true;
 	}
@@ -212,7 +248,7 @@ namespace Kyra {
 	}
 
 	const uint8* PAKFile::getFile(const char* file) {
-		for (PAKFile_Iterate) { 
+		for (PAKFile_Iterate) {
 			if (!scumm_stricmp((*start)->_name, file))
 				return (*start)->_data;
 		}

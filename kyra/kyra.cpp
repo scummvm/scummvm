@@ -28,10 +28,13 @@
 #include "sound/mixer.h"
 #include "common/file.h"
 #include "common/config-manager.h"
+#include "sound/mididrv.h"
 
 #include "kyra.h"
 #include "resource.h"
 #include "script.h"
+#include "wsamovie.h"
+#include "sound.h"
 
 struct KyraGameSettings {
 	const char *name;
@@ -44,10 +47,13 @@ struct KyraGameSettings {
 	}
 };
 
-static const KyraGameSettings kyra_settings[] = { 
-	{"kyra1cd", "Legend of Kyrandia (CD)",	GF_TALKIE & GF_KYRA1,  "CHAPTER1.VRM"},
-	{"kyra1", "Legend of Kyrandia (Floppy)", GF_FLOPPY & GF_KYRA1, "INTRO.SND"},
-	{ 0, 0, 0, 0}
+static const KyraGameSettings kyra_settings[] = {
+	{"kyra1", "Legend of Kyrandia (Floppy)", GF_FLOPPY | GF_KYRA1, "INTRO.SND"},
+	{"kyra1cd", "Legend of Kyrandia (CD)",  GF_TALKIE | GF_KYRA1,  "CHAPTER1.VRM"},
+	{"kyra2", "Hand of Fate (Floppy)", GF_FLOPPY | GF_KYRA2, 0 },
+	{"kyra2cd", "Hand of Fate (CD)", GF_TALKIE | GF_KYRA2, "AUDIO.PAK"},
+	{"kyra3", "Malcom's Revenge", GF_TALKIE | GF_KYRA3, "K3INTRO0.VQA"},
+	{0, 0, 0, 0}
 };
 
 GameList Engine_KYRA_gameList() {
@@ -99,10 +105,40 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
 
+	// gets the game
+	if (detector->_game.features & GF_KYRA1) {
+		if (detector->_game.features & GF_FLOPPY)
+			_game = KYRA1;
+		else
+			_game = KYRA1CD;
+	} else if (detector->_game.features & GF_KYRA2) {
+		if (detector->_game.features & GF_FLOPPY)
+			_game = KYRA2;
+		else
+			_game = KYRA2CD;
+	} else if (detector->_game.features & GF_KYRA3) {
+		_game = KYRA3;
+	} else {
+		error("unknown game");
+	}
+	
+	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE | MDT_PREFER_NATIVE));
+	if (driver) {
+		if (ConfMan.getBool("native_mt32"))
+			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		_midiDriver = new MusicPlayer(driver, this);
+		assert(_midiDriver);
+		_midiDriver->hasNativeMT32(ConfMan.getBool("native_mt32"));
+		_midiDriver->setVolume(255);
+	} else {
+		warning("Couldn't create MIDI driver... No music!");
+		_midiDriver = NULL;
+	};
+	
 	// Initialize backen
 	syst->initSize(320, 200);
-	_screen = new uint8[320 * 200];
-	memset(_screen, 0, 320 * 200);
+	_screen = new uint8[320*200];
+	memset(_screen, 0, sizeof(uint8) * 320 * 200);
 
 	_resMgr = new Resourcemanager(this);
 	assert(_resMgr);
@@ -110,15 +146,23 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 	setCurrentPalette(_resMgr->loadPalette("PALETTE.COL"));
 
 	// loads the 2 cursors
-	_mouse = _resMgr->loadImage("MOUSE.CPS");	//startup.pak
+	_mouse = _resMgr->loadImage("MOUSE.CPS");
 	_items = _resMgr->loadImage("ITEMS.CPS");
 
 	// loads the Font
 	_font = _resMgr->loadFont("8FAT.FNT");
-
-	// loads out scripts
+	
 	_npcScript = _resMgr->loadScript("_NPC.EMC");
-	_currentScript = _resMgr->loadScript("_STARTUP.EMC");
+
+	// loads the scripts (only Kyrandia 1)
+	if (_game == KYRA1 || _game == KYRA1CD) {
+		_currentScript = _resMgr->loadScript("_STARTUP.EMC");
+	} else {
+		error("game start files not known");
+	}
+	
+	assert(_npcScript);
+	assert(_currentScript);
 }
 
 KyraEngine::~KyraEngine() {
@@ -138,7 +182,7 @@ void KyraEngine::errorString(const char *buf1, char *buf2) {
 void KyraEngine::go() {
 	warning("Kyrandia Engine ::go()");
 	// starts the init script
-	if (!_currentScript->startScript(kSetupScene)) {
+	/*if (!_currentScript->startScript(kSetupScene)) {
 		error("couldn't init '_STARTUP.EMC' script");
 	}
 
@@ -148,25 +192,67 @@ void KyraEngine::go() {
 		} else {
 			warning("init script returned: %d", _currentScript->state());
 		}
-	}
+	}*/
+	
+	Movie* movie = _resMgr->loadMovie("MAL-KAL.WSA");
+	assert(movie);
+	CPSImage* image = _resMgr->loadImage("GEMCUT.CPS");
+	assert(image);
 
+	int16 currentFrame = 0;
+	uint32 lastFrameChange = 0;
+
+	image->transparency(0);
+	image->drawToPlane(_screen, 320, 200, 0, 0, 0, 0, 320, 136);
+	movie->setImageBackground(_screen, 320, 200);
+	movie->position(16, 58);
+
+	setCurrentPalette(_resMgr->loadPalette("MAL-KAL.COL"));
+
+	uint8* _buffer = new uint8[320 * 200];
+	assert(_buffer);
+	memcpy(_buffer, _screen, 320 * 200);
+	movie->renderFrame(_buffer, 320, 200, movie->countFrames() - 1);
+
+	if (_midiDriver) {
+		_midiDriver->playMusic("KYRA2A.XMI");
+		_midiDriver->playTrack(3);
+	}
+	
 	while(true) {
 		OSystem::Event event;
 		//if (_debugger->isAttached())
 		//	_debugger->onFrame();
+		
+		memcpy(_screen, _buffer, 320 * 200);
+		if (lastFrameChange + movie->frameChange() < _system->getMillis()) {
+			lastFrameChange = _system->getMillis();
+			++currentFrame;
 
+			if (currentFrame >= (int16)movie->countFrames()) {
+				currentFrame = 0;
+			}
+		}
+		
+		movie->renderFrame(_screen, 320, 200, currentFrame);
+		_font->drawStringToPlane("This is only a test!", _screen, 320, 200, 75, 179, 136);
+		_font->drawStringToPlane("Nothing scripted!", _screen, 320, 200, 85, 189, 136);
 		updateScreen();
 		while (g_system->pollEvent(event)) {
 			switch (event.event_code) {
-			case OSystem::EVENT_QUIT:
-				g_system->quit();
-				break;
-			default:
-				break;
+				case OSystem::EVENT_QUIT:
+					g_system->quit();
+					break;
+				default:
+					break;
 			}
 		}
 		_system->delayMillis(10);
 	}
+	
+	delete movie;
+	delete image;
+	delete [] _buffer;
 }
 
 void KyraEngine::shutdown() {
@@ -179,12 +265,15 @@ void KyraEngine::updateScreen(void) {
 }
 
 void KyraEngine::setCurrentPalette(Palette* pal, bool delNextTime) {
-//	if (_delPalNextTime)
-//		delete _currentPal;
+	if (!pal)
+		return;
 
-//	_delPalNextTime = delNextTime;
+//        if (_delPalNextTime)
+//                delete _currentPal;
 
-//	_currentPal = pal;
+//        _delPalNextTime = delNextTime;
+
+//        _currentPal = pal;
 
 	if (pal->getData()) {
 		_system->setPalette(pal->getData(), 0, 256);

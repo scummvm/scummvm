@@ -71,14 +71,15 @@ namespace Kyra {
 		uint32 _delay;
 		
 		int32 _registers[32]; // registers of the interpreter
-		int32 _stack[32]; // our stack
+		int32 _stack[64]; // our stack
 		
 		// TODO: check for 'under'flow
-		int32 popStack(void) { return _stack[_stackPos--]; }
+		int32 popStack(void) { return _stack[--_stackPos]; }
 		int32& topStack(void) { return _stack[_stackPos]; }
 		
 		uint32 _returnValue;
 		
+		int32 _nextScriptPos;
 		int32 _instructionPos;
 		int32 _stackPos;
 		int32 _tempPos;
@@ -131,7 +132,7 @@ namespace Kyra {
  		void c1_goToLine(void);			// 0x00
  		void c1_setReturn(void);		// 0x01
  		void c1_pushRetRec(void);		// 0x02
- 		void c1_push(void);				// 0x03 & 0x04
+ 		void c1_push(void);			// 0x03 & 0x04
  		void c1_pushVar(void);			// 0x05
  		void c1_pushFrameNeg(void);		// 0x06
  		void c1_pushFramePos(void);		// 0x07
@@ -148,7 +149,7 @@ namespace Kyra {
 		void c1_unknownCommand(void);
   
 		// the opcode procs
-		void o1_0x68(void);				// 0x68
+		void o1_0x68(void);			// 0x68
 		void o1_unknownOpcode(void);
 	};
 } // end of namespace Kyra

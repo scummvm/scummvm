@@ -84,9 +84,13 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
 					copyp = (const uint8*)&image_out[READ_LE_UINT16(readp)];
 					readp += 2;
 
-					memcpy(writep, copyp, count);
-					writep += count;
-					copyp += count;
+					// FIXME: Using memmove sometimes segfaults 
+					// (reproducably for Ender), which suggests something Bad here
+					//memmove(writep, copyp, count);
+					//writep += count;
+					//copyp += count;
+					while (count--)
+						*writep++ = *copyp++;
 				} else if (count == 0x3e) {
 					//command 3 (11111110 c c v): fill
 

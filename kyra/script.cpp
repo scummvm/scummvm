@@ -25,6 +25,7 @@
 #include "resource.h"
 
 #include "common/stream.h"
+#include "common/util.h"
 
 #define COMMAND(x) { &VMContext::x, #x }
 #define OPCODE(x) { &VMContext::x, #x }
@@ -54,7 +55,7 @@ namespace Kyra {
 			// 0x0C
 			COMMAND(c1_addToSP),
 			COMMAND(c1_subFromSP),
-			COMMAND(c1_execOpcode),			
+			COMMAND(c1_execOpcode),
 			COMMAND(c1_ifNotGoTo),
 			// 0x10
 			COMMAND(c1_negate),
@@ -82,7 +83,7 @@ namespace Kyra {
 			// 0x0C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0x10
 			COMMAND(o1_unknownOpcode),
@@ -107,7 +108,7 @@ namespace Kyra {
 			// 0x20
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0x24
 			COMMAND(o1_unknownOpcode),
@@ -132,7 +133,7 @@ namespace Kyra {
 			// 0x34
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0x38
 			COMMAND(o1_unknownOpcode),
@@ -157,7 +158,7 @@ namespace Kyra {
 			// 0x48
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0x4C
 			COMMAND(o1_unknownOpcode),
@@ -182,7 +183,7 @@ namespace Kyra {
 			// 0x5C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0x60
 			COMMAND(o1_unknownOpcode),
@@ -207,7 +208,7 @@ namespace Kyra {
 			// 0x70
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0x74
 			COMMAND(o1_unknownOpcode),
@@ -232,7 +233,7 @@ namespace Kyra {
 			// 0x84
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0x88
 			COMMAND(o1_unknownOpcode),
@@ -262,7 +263,7 @@ namespace Kyra {
 			// 0x9C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0xA0
 			COMMAND(o1_unknownOpcode),
@@ -287,7 +288,7 @@ namespace Kyra {
 			// 0xB0
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0xB4
 			COMMAND(o1_unknownOpcode),
@@ -312,7 +313,7 @@ namespace Kyra {
 			// 0xC4
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0xC8
 			COMMAND(o1_unknownOpcode),
@@ -337,7 +338,7 @@ namespace Kyra {
 			// 0xD8
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0xDC
 			COMMAND(o1_unknownOpcode),
@@ -362,7 +363,7 @@ namespace Kyra {
 			// 0xEC
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			// 0xF0
 			COMMAND(o1_unknownOpcode),
@@ -398,8 +399,8 @@ namespace Kyra {
 			_scriptFileSize = 0;
 		}
 		
-		debug("--------------");
-		
+		memset(_stack, 0, sizeof(int32) * ARRAYSIZE(_stack));
+
 		// loads the new file
 		_scriptFile = _engine->resManager()->fileData(file, &_scriptFileSize);
 		
@@ -415,32 +416,27 @@ namespace Kyra {
 		while(true) {
 			if (script.eof()) {
 				break;
-			}		
+			}
 			// lets read only the first 4 chars
 			script.read(chunkName, sizeof(uint8) * 4);
 			chunkName[4] = '\0';
-			debug("chunk name(4 chars): '%s'", chunkName);
-			
+
 			// check name of chunk
 			if (!scumm_stricmp((const char *)chunkName, "FORM")) {			
 				// FreeKyra swaps the size I only read it in BigEndian :)
 				_chunks[kForm]._size = script.readUint32BE();	
-				debug("_chunks[kForm]._size = %d", _chunks[kForm]._size);				
+				debug("_chunks[kForm]._size = %d", _chunks[kForm]._size);
 			} else if (!scumm_stricmp((const char *)chunkName, "TEXT")) {
 				uint32 text_size = script.readUint32BE();
 				text_size += text_size % 2 != 0 ? 1 : 0;
 				
 				_chunks[kText]._data = _scriptFile + script.pos();
 				_chunks[kText]._size = READ_BE_UINT16(_chunks[kText]._data) >> 1;
-				_chunks[kText]._additional = _chunks[kText]._data + (_chunks[kText]._size << 1);				
-				debug("_chunks[kText]._size = %d, real chunk size = %d", _chunks[kText]._size, text_size);	
-				
+				_chunks[kText]._additional = _chunks[kText]._data + (_chunks[kText]._size << 1);
 				script.seek(script.pos() + text_size);
 			} else if (!scumm_stricmp((const char *)chunkName, "DATA")) {
 				_chunks[kData]._size = script.readUint32BE();
-				_chunks[kData]._data = _scriptFile + script.pos();				
-				debug("_chunks[kData]._size = %d", _chunks[kData]._size);
-				
+				_chunks[kData]._data = _scriptFile + script.pos();
 				// mostly it will be the end of the file because all files should end with a 'DATA' chunk
 				script.seek(script.pos() + _chunks[kData]._size);
 			} else {
@@ -451,25 +447,20 @@ namespace Kyra {
 				
 				if (!scumm_stricmp((const char *)chunkName, "EMC2ORDR")) {
 					_chunks[kEmc2Ordr]._size = script.readUint32BE() >> 1;
-					_chunks[kEmc2Ordr]._data = _scriptFile + script.pos();					
-					debug("_chunks[kEmc2Ordr]._size = %d, real chunk size = %d", _chunks[kEmc2Ordr]._size, _chunks[kEmc2Ordr]._size * 2);
-					
+					_chunks[kEmc2Ordr]._data = _scriptFile + script.pos();
 					script.seek(script.pos() + _chunks[kEmc2Ordr]._size * 2);
 				} else {
 					// any unkown chunk or problems with seeking through the file
-					error("unknown chunk");
+					error("unknown chunk(%s)", chunkName);
 				}
 			}
 		}
-		
-		// so file loaded
-		debug("--------------");
 	}
 	
 	int32 VMContext::param(int32 index) {
-		if (_stackPos - index + 1 >= 16 || _stackPos - index + 1 < 0)
+		if (_stackPos - index - 1 >= ARRAYSIZE(_stack) || _stackPos - index - 1 < 0)
 			return -0xFFFF;
-		return _stack[_stackPos - index + 1];
+		return _stack[_stackPos - index - 1];
 	}
 	
 	const char* VMContext::stringAtIndex(int32 index) {
@@ -485,11 +476,28 @@ namespace Kyra {
 			return false;
 		}
 			
-		_instructionPos = (READ_BE_UINT16(&_chunks[kEmc2Ordr]._data[func]) << 1) + 2;
+		_instructionPos = READ_BE_UINT16(&_chunks[kEmc2Ordr]._data[func]) << 1;
 		_stackPos = 0;
 		_tempPos = 0;
 		_delay = 0;
 		_scriptState = kScriptRunning;
+		
+		uint32 pos = 0xFFFFFFFE;
+
+		// get start of next script
+		for (uint32 tmp = 0; tmp < _chunks[kEmc2Ordr]._size; ++tmp) {
+			if ((uint32)((READ_BE_UINT16(&_chunks[kEmc2Ordr]._data[tmp]) << 1)) > (uint32)_instructionPos &&
+				(uint32)((READ_BE_UINT16(&_chunks[kEmc2Ordr]._data[tmp]) << 1)) < pos) {
+				pos = ((READ_BE_UINT16(&_chunks[kEmc2Ordr]._data[tmp]) << 1));
+			}
+		}
+
+		if (pos > _scriptFileSize) {
+			pos = _scriptFileSize;
+		}
+		
+		_nextScriptPos = pos;
+
 		return true;
 	}
 	
@@ -504,6 +512,9 @@ namespace Kyra {
 			if ((uint32)_instructionPos > _chunks[kData]._size) {
 				debug("_instructionPos( = %d) > _chunks[kData]._size( = %d)", _instructionPos, _chunks[kData]._size);
 				_error = true;
+				break;
+			} else if(_instructionPos >= _nextScriptPos) {
+				_scriptState = kScriptStopped;
 				break;
 			}
 
@@ -525,9 +536,12 @@ namespace Kyra {
 				_instructionPos += 2;
 			} else {
 				debug("unknown way of getting the command");
+				// next thing
+				continue;
 			}
 			
 			_currentCommand &= 0x1f;
+
 			if (_currentCommand < _numCommands) {
 				CommandProc currentProc = _commands[_currentCommand].proc;
 				(this->*currentProc)();

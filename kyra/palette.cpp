@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
-	
+
 #include "common/stream.h"
 #include "codecs.h"
 
@@ -52,7 +52,7 @@ namespace Kyra {
 			}
 			
 			delete [] data;
-			data = _palette;			
+			data = _palette;
 		}
 		
 		// hmm.. common/system.h Docu is wrong or SDL Backend has a bug :)

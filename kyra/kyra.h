@@ -8,7 +8,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -31,7 +31,17 @@ enum {
 	GF_FLOPPY	= 1 << 0,
 	GF_TALKIE	= 1 << 1,
 	GF_KYRA1	= 1 << 2,
-	GF_KYRA2	= 1 << 3
+	GF_KYRA2	= 1 << 3,
+	GF_KYRA3	= 1 << 4,
+	GF_AUDIOCD	= 1 << 5	// FM-Towns versions seems to use audio CD
+};
+
+enum {
+	KYRA1 = 0,
+	KYRA1CD = 1,
+	KYRA2 = 2,
+	KYRA2CD = 3,
+	KYRA3 = 4
 };
 
 namespace Kyra {
@@ -40,6 +50,7 @@ namespace Kyra {
 	class Font;
 	class Palette;
 	class VMContext;
+	class MusicPlayer;
 
 class KyraEngine : public Engine {
 public:
@@ -51,13 +62,17 @@ public:
 	void setCurrentPalette(Palette* pal, bool delNextTime = true);
 
 	Resourcemanager* resManager(void) { return _resMgr; }
-//	MidiDriver* midiDriver(void) { return _midiDriver; }
+	MusicPlayer* midiDriver(void) { return _midiDriver; }
+	
+	uint8 game(void) { return _game; }
 
 protected:
 	void go();
 	void shutdown();
 	Resourcemanager* _resMgr;
+	MusicPlayer* _midiDriver;
 	uint8 *_screen;
+	uint8 _game;
 
 	Font* _font;
 	CPSImage* _mouse;
