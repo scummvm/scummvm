@@ -1429,6 +1429,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	uint32 pos, total_size, size, tag;
 	uint32 ad_size = 0, ad_offs = 0;
+	uint32 ro_size = 0, ro_offs = 0;
 	uint32 wa_size = 0, wa_offs = 0;
 
 	debug(4, "readSoundResourceSmallHeader(%s,%d)", resTypeFromId(type), idx);
@@ -1450,31 +1451,36 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		      (char) (tag & 0xff),
 		      (char) ((tag >> 8) & 0xff), size);
 		
-		pos = 6;
-		while (pos < total_size) {
-			size = _fileHandle.readUint32LE();
-			tag = _fileHandle.readUint16LE();
-			debug(4, "  tag='%c%c', size=%d",
-			      (char) (tag & 0xff),
-			      (char) ((tag >> 8) & 0xff), size);
-			pos += size;
+		if (tag == 0x5247) { // RO
+			ro_size = size;
+			ro_offs = _fileHandle.pos();
+		} else {
+			pos = 6;
+			while (pos < total_size) {
+				size = _fileHandle.readUint32LE();
+				tag = _fileHandle.readUint16LE();
+				debug(4, "  tag='%c%c', size=%d",
+				      (char) (tag & 0xff),
+				      (char) ((tag >> 8) & 0xff), size);
+				pos += size;
 			
-			// MI1 and Indy3 uses one or more nested SO resources, which contains AD and WA
-			// resources.
-			if ((tag == 0x4441) && !(ad_offs)) { // AD
-				ad_size = size;
-				ad_offs = _fileHandle.pos();
-			} else if ((tag == 0x4157) && !(wa_offs)) { // WA
-				wa_size = size;
-				wa_offs = _fileHandle.pos();
-			} else { // other AD, WA and nested SO resources
-				if (tag == 0x4F53) { // SO
-					pos -= size;
-					size = 6;
-					pos += 6;
+				// MI1 and Indy3 uses one or more nested SO resources, which contains AD and WA
+				// resources.
+				if ((tag == 0x4441) && !(ad_offs)) { // AD
+					ad_size = size;
+					ad_offs = _fileHandle.pos();
+				} else if ((tag == 0x4157) && !(wa_offs)) { // WA
+					wa_size = size;
+					wa_offs = _fileHandle.pos();
+				} else { // other AD, WA and nested SO resources
+					if (tag == 0x4F53) { // SO
+						pos -= size;
+						size = 6;
+						pos += 6;
+					}
 				}
+				_fileHandle.seek(size - 6, SEEK_CUR);
 			}
-			_fileHandle.seek(size - 6, SEEK_CUR);
 		}
 	}
 
@@ -1487,7 +1493,11 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	//   7 bytes MIDI tempo sysex
 	//     + some default instruments
 
-	if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
+	if (ro_offs != 0) {
+		_fileHandle.seek(ro_offs - 6, SEEK_SET);
+		_fileHandle.read(createResource(type, idx, ro_size + 6), ro_size + 6);
+		return 1;
+	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
 		if (_features & GF_OLD_BUNDLE) {
 			_fileHandle.seek(wa_offs, SEEK_SET);
 			_fileHandle.read(createResource(type, idx, wa_size), wa_size);
