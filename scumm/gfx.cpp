@@ -66,7 +66,7 @@ struct TransitionEffect {
 #ifdef __PALM_OS__
 static const TransitionEffect *transitionEffects;
 #else
-static const TransitionEffect transitionEffects[4] = {
+static const TransitionEffect transitionEffects[5] = {
 	// Iris effect (looks like an opening/closing camera iris)
 	{
 		13,		// Number of iterations
@@ -133,6 +133,23 @@ static const TransitionEffect transitionEffects[4] = {
 		   39,  0, 39, 24,
 		   38,  0, 38, 24,
 		  255,  0,  0,  0
+		}
+	},
+
+	// Inverse iris effect, specially tailored for V2 games
+	{
+		8,		// Number of iterations
+		{
+			-1, -1,  1, -1,
+			-1,  1,  1,  1,
+			-1, -1, -1,  1,
+			 1, -1,  1,  1
+		},
+		{
+			 7, 7, 32, 7,
+			 7, 8, 32, 8,
+			 7, 8,  7, 8,
+			32, 7, 32, 8
 		}
 	}
 };
@@ -2071,6 +2088,14 @@ void Scumm::fadeIn(int effect) {
 	case 2:
 	case 3:
 	case 4:
+	case 5:
+		// Some of the transition effects won't work properly unless
+		// the screen is marked as clean first. At first I thought I
+		// could safely do this every time fadeIn() was called, but
+		// that broke the FOA intro. Probably other things as well.
+		//
+		// Hopefully it's safe to do it at this point, at least.
+		virtscr[0].setDirtyRange(0, 0);
 		transitionEffect(effect - 1);
 		break;
 	case 128:
@@ -2115,6 +2140,7 @@ void Scumm::fadeOut(int effect) {
 		case 2:
 		case 3:
 		case 4:
+		case 5:
 			transitionEffect(effect - 1);
 			break;
 		case 128:
@@ -2188,6 +2214,8 @@ void Scumm::transitionEffect(int a) {
 					continue;
 				if (b > bottom)
 					b = bottom;
+				if (t < 0)
+					t = 0;
 				virtscr[0].tdirty[l] = t << 3;
 				virtscr[0].bdirty[l] = (b + 1) << 3;
 			}
