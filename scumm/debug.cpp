@@ -390,7 +390,7 @@ static void hline(Scumm *scumm, int x1, int x2, int y, byte color)
 	byte *ptr;
 
 	if (x2 < x1)
-		x2 ^= x1 ^= x2 ^= x1;				// Swap x2 and x1
+		SWAP(x2, x1);
 
 	ptr = getBasePtr(scumm, x1, y);
 
