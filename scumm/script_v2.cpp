@@ -1312,7 +1312,7 @@ void Scumm_v2::o2_setObjectName() {
 	byte offset = 0;
 
 	objptr = getOBCDFromObject(obj);
-	offset = *(objptr + 18);
+	offset = *(objptr + 14);
 	size = READ_LE_UINT16(objptr) - offset;
 
 	if (i >= size) {

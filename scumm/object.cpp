@@ -836,7 +836,9 @@ byte *Scumm::getObjOrActorName(int obj) {
 
 		objptr = getOBCDFromObject(obj);
 		if (objptr) {
-			if (_features & GF_OLD_BUNDLE)
+			if (_features & GF_AFTER_V2)
+				offset = *(objptr + 14);
+			else if (_features & GF_OLD_BUNDLE)
 				offset = *(objptr + 16);
 			else
 				offset = READ_LE_UINT16(objptr + 18);
