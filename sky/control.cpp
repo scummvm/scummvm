@@ -25,6 +25,11 @@
 #include "common/file.h"
 #include "common/gameDetector.h"
 
+#ifdef _WIN32_WCE
+extern void force_keyboard(bool);
+#endif
+
+
 SkyConResource::SkyConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) {
 
 	_spriteData = (dataFileHeader *)pSpData;
@@ -807,6 +812,9 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 	if (allowSave) {
 		lookList = _savePanLookList;
 		lookListLen = 6;
+#ifdef _WIN32_WCE
+		force_keyboard(true);
+#endif
 	} else {
 		lookList = _restorePanLookList;
 		if (autoSaveExists())
@@ -913,6 +921,11 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 
 	free(saveGameTexts);
 
+#ifdef _WIN32_WCE
+	if (allowSave)
+		force_keyboard(false);
+#endif
+	
     return clickRes;
 }
 
