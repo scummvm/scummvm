@@ -101,35 +101,57 @@ SwordMenu::SwordMenu(SwordScreen *pScreen, SwordMouse *pMouse) {
 	_inMenu = 0;
 }
 
+void SwordMenu::refreshMenus() {
+	if (_objectBarStatus == MENU_OPEN) {
+		buildMenu();
+		for (uint8 cnt = 0; cnt < 16; cnt++) {
+			if (_objects[cnt])
+				_objects[cnt]->draw();
+			else
+				_screen->showFrame(cnt * 40, 0, 0xffffffff, 0);
+		}
+	}
+	if (_subjectBarStatus == MENU_OPEN) {
+		buildSubjects();
+		for (uint8 cnt = 0; cnt < 16; cnt++) {
+			if (_subjects[cnt])
+				_subjects[cnt]->draw();
+			else
+				_screen->showFrame(cnt * 40, 440, 0xffffffff, 0);
+		}
+	}
+}
+
 uint8 SwordMenu::checkMenuClick(uint8 menuType) {
-	bool refreshMenus = false;
 	uint16 mouseEvent = _mouse->testEvent();
 	if (!mouseEvent)
 		return 0;
 	uint16 x, y;
 	_mouse->giveCoords(&x, &y);
 	if (menuType == MENU_BOT) {
-		for (uint8 cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++)
-			if (_subjects[cnt]->wasClicked(x, y))
+		for (uint8 cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
+			if (_subjects[cnt]->wasClicked(x, y)) {
 				if (mouseEvent & BS1L_BUTTON_DOWN) {
 					SwordLogic::_scriptVars[OBJECT_HELD] = _subjectBar[cnt];
-					refreshMenus = true;
+					refreshMenus();
 				} else if (mouseEvent & BS1L_BUTTON_UP) {
 					if (SwordLogic::_scriptVars[OBJECT_HELD] == _subjectBar[cnt])
 						return cnt + 1;
 					else {
 						SwordLogic::_scriptVars[OBJECT_HELD] = 0;
-						refreshMenus = true;
+						refreshMenus();
 					}
 				}
+			}
+		}
 	} else {
 		for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
-			if (_objects[cnt]->wasClicked(x, y))
+			if (_objects[cnt]->wasClicked(x, y)) {
 				if (mouseEvent & BS1R_BUTTON_DOWN) { // looking at item
 					SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
 					SwordLogic::_scriptVars[MENU_LOOKING] = 1;
 					SwordLogic::_scriptVars[DEFAULT_ICON_TEXT] = _objectDefs[_menuList[cnt]].textDesc;
-					refreshMenus = true;
+					refreshMenus();
 				} else if (mouseEvent & BS1L_BUTTON_DOWN) {
 					if (SwordLogic::_scriptVars[OBJECT_HELD]) {
 						if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
@@ -143,30 +165,11 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 					} else {
 						SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
 						_mouse->setLuggage(_objectDefs[_menuList[cnt]].luggageIconRes, 0);
+						refreshMenus();
 						return cnt + 1;
 					}
-					refreshMenus = true;
+					refreshMenus();
 				}
-		}
-	}
-	if (refreshMenus) {
-		if (_objectBarStatus == MENU_OPEN) {
-			buildMenu();
-			for (uint8 cnt = 0; cnt < 16; cnt++) {
-				if (_objects[cnt])
-					_objects[cnt]->draw();
-				else
-					_screen->showFrame(cnt * 40, 0, 0xffffffff, 0);
-			}
-		}
-
-		if (_subjectBarStatus == MENU_OPEN) {
-			buildSubjects();
-			for (uint8 cnt = 0; cnt < 16; cnt++) {
-				if (_subjects[cnt])
-					_subjects[cnt]->draw();
-				else
-					_screen->showFrame(cnt * 40, 440, 0xffffffff, 0);
 			}
 		}
 	}

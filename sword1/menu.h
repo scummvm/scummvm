@@ -82,6 +82,7 @@ private:
 	byte _objectBarStatus;
 	int8 _fadeSubject;
 	int8 _fadeObject;
+	void refreshMenus(void);
 	uint8 checkMenuClick(uint8 menuType);
 	//- lower menu, speech subjects:
 	SwordMenuIcon *_subjects[16];
