@@ -279,6 +279,9 @@ int Scumm::scummLoop(int delta) {
 
 	if (_features & GF_AUDIOTRACKS)
 		_vars[VAR_MI1_TIMER]+=5;
+	else
+		if(_features & GF_OLD256)
+			_vars[VAR_MUSIC_FLAG]++;
 
 	if (_saveLoadFlag) {
 		if (_saveLoadFlag==1) {
@@ -691,8 +694,11 @@ void Scumm::initRoomSubBlocks() {
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 			ptr += size;
 			size = getResourceDataSize(ptr-size-6) - size;
-			createResource(rtMatrix, 1, size);
-			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
+			if(size>=0)
+			{
+				createResource(rtMatrix, 1, size);
+				memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
+			}
 		}
 	} else {	
                 ptr = findResourceData(MKID('BOXD'), roomptr);
