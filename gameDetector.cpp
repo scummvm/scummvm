@@ -575,7 +575,7 @@ MidiDriver *GameDetector::createMidi() {
 #elif defined(__APPLE__) || defined(macintosh)
 	/* MD_QTMUSIC is default MidiDriver on MacOS targets */
 	if (drv == MD_AUTO) drv = MD_QTMUSIC;
-#elif defined(UNIX)
+#elif defined(UNIX) || defined(UNIX_X11)
 	/* MD_MIDIEMU is default MidiDriver on UNIX targets. */
 	/* FIXME: Attempt to detect if sequencer is available,
 			  and use it in preference. */
