@@ -149,23 +149,8 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 
 	for (int l = 0; l < _nbChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
-		
-		// TODO/FIXME: The code checks for a "shift" in the FRME headers. Well, neither
-		// in my german nor in my english NUT fonts does that occur, but it's very typical
-		// for IFF style formats (like this here) to "pad" odd sized blocks. Hence, it might
-		// be a cleaner solution to insert this adjustment here:
-		//   if (offset & 1)
-		//       offset++;
-		// And then get rid of the hack for the shifted FRME. I'd do that right now, but since
-		// I have no way to test this (read: no data files where this issue occurs), I am
-		// deferring this job for now :-)
-
-		if ((READ_BE_UINT32(dataSrc + offset) == 'FRME') || (READ_BE_UINT32(dataSrc + offset + 1) == 'FRME')) {
-			if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
-				offset += 8;
-			} else { // hack for proper offset
-				offset += 9;
-			}
+		if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
+			offset += 8;
 
 			if (READ_BE_UINT32(dataSrc + offset) == 'FOBJ') {
 				int codec = READ_LE_UINT16(dataSrc + offset + 8);
