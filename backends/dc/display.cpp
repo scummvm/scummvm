@@ -356,7 +356,7 @@ void OSystem_Dreamcast::updateScreen(void)
       TA_POLYMODE2_ENABLE_ALPHA|
       TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_MODULATE_ALPHA|
       TA_POLYMODE2_U_SIZE_512|TA_POLYMODE2_V_SIZE_512;
-    mypoly.texture = TA_TEXTUREMODE_RGB565|TA_TEXTUREMODE_NON_TWIDDLED|
+    mypoly.texture = TA_TEXTUREMODE_ARGB4444|TA_TEXTUREMODE_NON_TWIDDLED|
       TA_TEXTUREMODE_ADDRESS(ovl_tx[_overlay_buffer]);
     
     mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0.0;
@@ -510,17 +510,8 @@ void OSystem_Dreamcast::clearOverlay()
   if(!_overlay_visible)
     return;
 
-  unsigned char *src = screen+_overlay_x+_overlay_y*SCREEN_W;
-  unsigned short *dst = overlay;
+  memset(overlay, 0, OVL_TXSTRIDE*OVL_H*sizeof(unsigned short));
 
-  for(int y=0; y<OVL_H; y++) {
-    for(int x=0; x<OVL_W; x++) {
-      short pix = palette[src[x]];
-      dst[x] = ((pix&0x7fe0)<<1)|((pix&0x0200)>>4)|(pix&0x1f);
-    }
-    src += SCREEN_W;
-    dst += OVL_W;
-  }
   _overlay_dirty = true;
 }
 
@@ -573,4 +564,4 @@ int OSystem_Dreamcast::getGraphicsMode() const
   return 0;
 }
 
-int gBitFormat = 565;
+int gBitFormat = 4444;
