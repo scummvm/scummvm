@@ -20,10 +20,10 @@
 #include "../debug.h"
 #include "../timer.h"
 
-#include "imuse_sndmgr.h"
-
 #include "../mixer/mixer.h"
 #include "../mixer/audiostream.h"
+
+#include "imuse_sndmgr.h"
 
 Imuse::Track::Track()
 	: soundId(-1), used(false), stream(NULL) {
