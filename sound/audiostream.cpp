@@ -41,11 +41,9 @@ static inline int16 readSample(const byte *ptr) {
 	}
 }
 
-#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- LinearMemoryStream ---
 #pragma mark -
-#endif
 
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
@@ -75,11 +73,9 @@ public:
 };
 
 
-#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- WrappedMemoryStream ---
 #pragma mark -
-#endif
 
 
 // Wrapped memory stream, to be used by the ChannelStream class (and possibly others?)
@@ -158,34 +154,76 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 }
 
 
-#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- MP3 (MAD) stream ---
 #pragma mark -
-#endif
 
 
+/*
 #ifdef USE_MAD
 class MP3InputStream : public AudioInputStream {
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
 	uint32 _posInFrame;
+	int _chan;
+
+	void refill();
 public:
 	// TODO
 	MP3InputStream();
 };
 
 MP3InputStream::MP3InputStream() {
+	_chan = 0;
 }
+
+void MP3InputStream::refill() {
+	// TODO
+}
+
+static inline int scale_sample(mad_fixed_t sample) {
+	// round
+	sample += (1L << (MAD_F_FRACBITS - 16));
+
+	// clip
+	if (sample > MAD_F_ONE - 1)
+		sample = MAD_F_ONE - 1;
+	else if (sample < -MAD_F_ONE)
+		sample = -MAD_F_ONE;
+
+	// quantize and scale to not saturate when mixing a lot of channels
+	return sample >> (MAD_F_FRACBITS + 1 - 16);
+}
+
+int16 MP3InputStream::read() {
+	if (_posInFrame >= _synth.pcm.length) {
+		refill();
+	}
+	
+	int16 sample;
+	if (stereo) {
+		sample = (int16)scale_sample(_synth.pcm.samples[_chan][_posInFrame];
+		if (_chan == 0) {
+			_chan = 1;
+		} else {
+			_posInFrame++;
+			_chan = 0;
+		}
+	} else {
+		sample = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame];
+		_posInFrame++;
+	}
+	
+	return sample;
+}
+
 #endif
+*/
 
-
-#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- Ogg Vorbis stream ---
 #pragma mark -
-#endif
 
 
 #ifdef USE_VORBIS
@@ -264,11 +302,9 @@ void VorbisInputStream::refill() {
 #endif
 
 
-#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- Input stream factories ---
 #pragma mark -
-#endif
 
 
 template<bool stereo>

@@ -44,11 +44,6 @@ extern void save_key_mapping();
 extern void load_key_mapping();
 #endif
 
-
-#ifdef _MSC_VER
-#	pragma warning( disable : 4068 )
-#endif
-
 struct ResString {
 	int num;
 	char string[80];

@@ -27,10 +27,6 @@
 #	include "palm.h"
 #endif
 
-#ifdef _MSC_VER
-#	pragma warning( disable : 4068 ) // unknown pragma
-#endif
-
 
 /*
  * TODO list

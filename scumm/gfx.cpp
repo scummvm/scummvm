@@ -29,11 +29,6 @@
 #include "util.h"
 
 
-#ifdef _MSC_VER
-#	pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
-#endif
-
-
 enum {
 	kScrolltime = 500,  // ms scrolling is supposed to take
 	kPictureDelay = 20

@@ -52,10 +52,6 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef _MSC_VER
-#	pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
-#endif
-
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
 #endif
