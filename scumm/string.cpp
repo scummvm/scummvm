@@ -96,7 +96,7 @@ void ScummEngine::unkMessage2(const byte *msg) {
 void ScummEngine::CHARSET_1() {
 	uint32 talk_sound_a = 0;
 	uint32 talk_sound_b = 0;
-	int s, i, t, c;
+	int i, t, c;
 	int frme;
 	Actor *a;
 	byte *buffer;
@@ -116,28 +116,29 @@ void ScummEngine::CHARSET_1() {
 		a = derefActorSafe(getTalkingActor(), "CHARSET_1");
 
 	if (a && _string[0].overhead != 0) {
+		int s;
+
+		_string[0].xpos = a->_pos.x - virtscr[0].xstart;
+		_string[0].ypos = a->_pos.y - a->getElevation() - _screenTop;
+
 		if (_version <= 5) {
-			_string[0].xpos = a->_pos.x - camera._cur.x + (_screenWidth / 2);
 
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
 				s = (a->scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
-				_string[0].ypos = (int)(((VAR(VAR_V5_TALK_STRING_Y) - s) / 2) + s - a->getElevation() + a->_pos.y);
+				_string[0].ypos += (int)(((VAR(VAR_V5_TALK_STRING_Y) - s) / 2) + s);
 			} else {
 				_string[0].ypos = (int)VAR(VAR_V5_TALK_STRING_Y);
 			}
 
 		} else {
-			s = a->scaley * a->talkPosY / 0xFF;
-			_string[0].ypos = ((a->talkPosY - s) / 2) + s - a->getElevation() + a->_pos.y;
+			s = a->scalex * a->talkPosX / 0xFF;
+			_string[0].xpos += ((a->talkPosX - s) / 2) + s;
 
-			if (_features & GF_NEW_CAMERA)
-				_string[0].ypos = _string[0].ypos - camera._cur.y + (_screenHeight / 2);
+			s = a->scaley * a->talkPosY / 0xFF;
+			_string[0].ypos += ((a->talkPosY - s) / 2) + s;
 
 			if (_string[0].ypos > _screenHeight - 40)
 				_string[0].ypos = _screenHeight - 40;
-
-			s = a->scalex * a->talkPosX / 0xFF;
-			_string[0].xpos = ((a->talkPosX - s) / 2) + s + a->_pos.x - camera._cur.x + (_screenWidth / 2);
 		}
 
 		if (_string[0].ypos < 1)
