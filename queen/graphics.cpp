@@ -155,6 +155,8 @@ void Graphics::bobAnimString(uint32 bobnum, const AnimFrame *animBuf) {
 
 void Graphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip) {
 
+	debug(9, "Graphics::bobAnimNormal(%d, %d, %d, %d)", bobnum, firstFrame, lastFrame, speed);
+
 	BobSlot *pbs = &_bobs[bobnum];
 	pbs->active = true;
 	pbs->animating = true;
@@ -281,7 +283,7 @@ void BobSlot::animOneStep() {
 		if(anim.speed == 0) {
 			anim.speed = anim.speedBak;
 
-			uint16 nextFrame = frameNum + frameDir;
+			int16 nextFrame = frameNum + frameDir;
 			if (nextFrame > anim.normal.lastFrame || nextFrame < anim.normal.firstFrame) {
 				if (anim.normal.rebound) {
 					frameDir *= -1;
@@ -426,6 +428,7 @@ void Graphics::bobClear(uint32 bobnum) {
 
 	pbs->active = 0;
 	pbs->xflip  = false;
+	pbs->animating = false;
 	pbs->anim.string.buffer = NULL;
 	pbs->moving = false;
 	pbs->scale  = 100;

@@ -55,7 +55,7 @@ struct BobSlot {
 	//! associated BobFrame
 	uint16 frameNum;
 	//! 'direction' for the next frame (-1, 1)
-	uint8 frameDir;
+	int frameDir;
 
 	//! animation stuff
 	bool animating;
