@@ -323,27 +323,26 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 
 	if (virt == kMainVirtScreen && dirtybit) {
 #ifdef V7_SMOOTH_SCROLLING_HACK
-		if (_version >= 7) {
-			// FIXME / HACK: This is a hack to fix an actor redraw glitch
-			// in V7_SMOOTH_SCROLLING_HACK mode. Right now I have no idea
-			// why this hack is needed, but for now it works well enough.
-			lp = left / 8 + _screenStartStrip - 1;
-			//lp = (left + vs->xstart) / 8;
-		} else
-#endif
+		// TODO / FIXME: I *think* the next (commented out) line is
+		// what we should be doing; but if I enable it instead of the
+		// old way to compute lp, we get redraw glitches. Not sure why
+		// (maybe my logic is simply flawed, I just don't see how).
+		//lp = (left + vs->xstart) / 8;
 		lp = left / 8 + _screenStartStrip;
+#else
+		lp = left / 8 + _screenStartStrip;
+#endif
 		if (lp < 0)
 			lp = 0;
-		if (_version >= 7) {
 #ifdef V7_SMOOTH_SCROLLING_HACK
-			rp = (right + vs->xstart) / 8;
+		rp = (right + vs->xstart) / 8;
 #else
-			rp = right / 8 + _screenStartStrip;
+		rp = right / 8 + _screenStartStrip;
 #endif
+		if (_version >= 7) {
 			if (rp > 409)
 				rp = 409;
 		} else {
-			rp = right / 8 + _screenStartStrip;
 			if (rp >= 200)
 				rp = 200;
 		}
@@ -1755,8 +1754,8 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	bgbak_ptr = vs->getBackPixels(strip * 8, top);
-	backbuff_ptr = vs->getPixels(strip * 8, top);
+	bgbak_ptr = (byte *)vs->backBuf + top * vs->pitch + (strip + vs->xstart/8) * 8;
+	backbuff_ptr = (byte *)vs->pixels + top * vs->pitch + (strip + vs->xstart/8) * 8;
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
