@@ -501,6 +501,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_transText, 0, sizeof(_transText));
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
+	_V1_talkingActor = 0;
 
 	//
 	// Init all VARS to 0xFF
