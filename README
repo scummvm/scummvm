@@ -41,7 +41,7 @@ the lines:
 Residual understands command-line options: 
 '-zbuffer' enables masking for hardware 3d rendering.
 '-showfps' display fps information.
-'-soft' turn switch to software 3d renderering.
+'-soft' switch to software 3d renderering.
 
 It runs really slow when using -zbuffer!
 ----------------------------------------
