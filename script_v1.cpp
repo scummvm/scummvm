@@ -2269,7 +2269,6 @@ void Scumm::o5_wait() {
 			break;
 		return;
 	case 2: /* wait for message */
-		if (_gameId == GID_ZAK256) return;	// FIXME: ZAK256
 		if (_vars[VAR_HAVE_MSG])
 			break;
 		return;
