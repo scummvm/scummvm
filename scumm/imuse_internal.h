@@ -28,7 +28,7 @@
 
 // Unremark this statement to activate some of
 // the most common iMuse diagnostic messages.
-#define IMUSE_DEBUG
+// #define IMUSE_DEBUG
 
 struct HookDatas;
 struct ParameterFader;
