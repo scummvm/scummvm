@@ -26,11 +26,11 @@
 #include "verbs.h"
 #include "scumm/sound.h"
 
-#define OPCODE(x)	{ &Scumm::x, #x }
+#define OPCODE(x)	{ &Scumm_v5::x, #x }
 
-void Scumm::setupOpcodes_V5()
+void Scumm_v5::setupOpcodes()
 {
-	static const OpcodeEntry opcodes[256] = {
+	static const OpcodeEntryV5 opcodes[256] = {
 		/* 00 */
 		OPCODE(o5_stopObjectCode),
 		OPCODE(o5_putActor),
@@ -353,15 +353,15 @@ void Scumm::setupOpcodes_V5()
 		OPCODE(o5_drawBox)
 	};
 
-	_opcodes = opcodes;
+	_opcodesV5 = opcodes;
 }
 
-void Scumm::o5_actorFollowCamera()
+void Scumm_v5::o5_actorFollowCamera()
 {
 	actorFollowCamera(getVarOrDirectByte(0x80));
 }
 
-void Scumm::o5_actorFromPos()
+void Scumm_v5::o5_actorFromPos()
 {
 	int x, y;
 	getResultPos();
@@ -370,7 +370,7 @@ void Scumm::o5_actorFromPos()
 	setResult(getActorFromPos(x, y));
 }
 
-void Scumm::o5_actorSet()
+void Scumm_v5::o5_actorSet()
 {
 	static const byte convertTable[20] =
 		{ 1, 0, 0, 2, 0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
@@ -508,7 +508,7 @@ void Scumm::o5_actorSet()
 	}
 }
 
-void Scumm::o5_setClass()
+void Scumm_v5::o5_setClass()
 {
 	int obj = getVarOrDirectWord(0x80);
 	int newClass;
@@ -530,7 +530,7 @@ void Scumm::o5_setClass()
 	}
 }
 
-void Scumm::o5_add()
+void Scumm_v5::o5_add()
 {
 	int a;
 	getResultPos();
@@ -538,7 +538,7 @@ void Scumm::o5_add()
 	setResult(readVar(_resultVarNumber) + a);
 }
 
-void Scumm::o5_and()
+void Scumm_v5::o5_and()
 {
 	int a;
 	getResultPos();
@@ -546,7 +546,7 @@ void Scumm::o5_and()
 	setResult(readVar(_resultVarNumber) & a);
 }
 
-void Scumm::o5_animateActor()
+void Scumm_v5::o5_animateActor()
 {
 	int act = getVarOrDirectByte(0x80);
 	int anim = getVarOrDirectByte(0x40);
@@ -558,18 +558,18 @@ void Scumm::o5_animateActor()
 	a->animateActor(anim);
 }
 
-void Scumm::o5_badOpcode()
+void Scumm_v5::o5_badOpcode()
 {
 	error("Scumm opcode %d illegal", _opcode);
 }
 
-void Scumm::o5_breakHere()
+void Scumm_v5::o5_breakHere()
 {
 	updateScriptPtr();
 	_currentScript = 0xFF;
 }
 
-void Scumm::o5_chainScript()
+void Scumm_v5::o5_chainScript()
 {
 	int16 vars[16];
 	int data;
@@ -588,7 +588,7 @@ void Scumm::o5_chainScript()
 	runScript(data, vm.slot[cur].unk1, vm.slot[cur].unk2, vars);
 }
 
-void Scumm::o5_cursorCommand()
+void Scumm_v5::o5_cursorCommand()
 {
 	int i, j, k;
 	int16 table[16];
@@ -651,30 +651,30 @@ void Scumm::o5_cursorCommand()
 	_vars[VAR_USERPUT] = _userPut;
 }
 
-void Scumm::o5_cutscene()
+void Scumm_v5::o5_cutscene()
 {
 	int16 args[16];
 	getWordVararg(args);
 	cutscene(args);
 }
 
-void Scumm::o5_endCutscene()
+void Scumm_v5::o5_endCutscene()
 {
 	endCutscene();
 }
 
-void Scumm::o5_debug()
+void Scumm_v5::o5_debug()
 {
 	getVarOrDirectWord(0x80);
 }
 
-void Scumm::o5_decrement()
+void Scumm_v5::o5_decrement()
 {
 	getResultPos();
 	setResult(readVar(_resultVarNumber) - 1);
 }
 
-void Scumm::o5_delay()
+void Scumm_v5::o5_delay()
 {
 	int delay = fetchScriptByte();
 	delay |= fetchScriptByte() << 8;
@@ -684,14 +684,14 @@ void Scumm::o5_delay()
 	o5_breakHere();
 }
 
-void Scumm::o5_delayVariable()
+void Scumm_v5::o5_delayVariable()
 {
 	vm.slot[_currentScript].delay = readVar(fetchScriptWord());
 	vm.slot[_currentScript].status = 1;
 	o5_breakHere();
 }
 
-void Scumm::o5_divide()
+void Scumm_v5::o5_divide()
 {
 	int a;
 	getResultPos();
@@ -703,7 +703,7 @@ void Scumm::o5_divide()
 		setResult(readVar(_resultVarNumber) / a);
 }
 
-void Scumm::o5_doSentence()
+void Scumm_v5::o5_doSentence()
 {
 	int a, b;
 	SentenceTab *st;
@@ -729,7 +729,7 @@ void Scumm::o5_doSentence()
 	st->freezeCount = 0;
 }
 
-void Scumm::o5_drawBox()
+void Scumm_v5::o5_drawBox()
 {
 	int x, y, x2, y2, color;
 
@@ -744,7 +744,7 @@ void Scumm::o5_drawBox()
 	drawBox(x, y, x2, y2, color);
 }
 
-void Scumm::o5_drawObject()
+void Scumm_v5::o5_drawObject()
 {
 	int state, obj, idx, i;
 	ObjectData *od;
@@ -801,13 +801,13 @@ void Scumm::o5_drawObject()
 	putState(obj, state);
 }
 
-void Scumm::o5_dummy()
+void Scumm_v5::o5_dummy()
 {
 	/* nothing */
 }
 
 
-void Scumm::o5_expression()
+void Scumm_v5::o5_expression()
 {
 	int dst, i;
 
@@ -840,7 +840,7 @@ void Scumm::o5_expression()
 			break;
 		case 6:										/* normal opcode */
 			_opcode = fetchScriptByte();
-			(this->*(getOpcode(_opcode))) ();
+			executeOpcode(_opcode);
 			push(_vars[0]);
 			break;
 		}
@@ -850,7 +850,7 @@ void Scumm::o5_expression()
 	setResult(pop());
 }
 
-void Scumm::o5_faceActor()
+void Scumm_v5::o5_faceActor()
 {
 	int act, obj;
 	act = getVarOrDirectByte(0x80);
@@ -858,7 +858,7 @@ void Scumm::o5_faceActor()
 	faceActorToObj(act, obj);
 }
 
-void Scumm::o5_findInventory()
+void Scumm_v5::o5_findInventory()
 {
 	int t;
 	getResultPos();
@@ -866,7 +866,7 @@ void Scumm::o5_findInventory()
 	setResult(findInventory(t, getVarOrDirectByte(0x40)));
 }
 
-void Scumm::o5_findObject()
+void Scumm_v5::o5_findObject()
 {
 	int t;
 	getResultPos();
@@ -874,7 +874,7 @@ void Scumm::o5_findObject()
 	setResult(findObject(t, getVarOrDirectWord(0x40)));
 }
 
-void Scumm::o5_freezeScripts()
+void Scumm_v5::o5_freezeScripts()
 {
 	int scr = getVarOrDirectByte(0x80);
 
@@ -884,7 +884,7 @@ void Scumm::o5_freezeScripts()
 		unfreezeScripts();
 }
 
-void Scumm::o5_getActorCostume()
+void Scumm_v5::o5_getActorCostume()
 {
 	int act;
 	Actor *a;
@@ -900,7 +900,7 @@ void Scumm::o5_getActorCostume()
 	setResult(a->costume);
 }
 
-void Scumm::o5_getActorElevation()
+void Scumm_v5::o5_getActorElevation()
 {
 	int act;
 	Actor *a;
@@ -916,7 +916,7 @@ void Scumm::o5_getActorElevation()
 	setResult(a->elevation);
 }
 
-void Scumm::o5_getActorFacing()
+void Scumm_v5::o5_getActorFacing()
 {
 	int act;
 	Actor *a;
@@ -932,7 +932,7 @@ void Scumm::o5_getActorFacing()
 	setResult(newDirToOldDir (a->facing));
 }
 
-void Scumm::o5_getActorMoving()
+void Scumm_v5::o5_getActorMoving()
 {
 	int act;
 	Actor *a;
@@ -948,7 +948,7 @@ void Scumm::o5_getActorMoving()
 	setResult(a->moving);
 }
 
-void Scumm::o5_getActorRoom()
+void Scumm_v5::o5_getActorRoom()
 {
 	int act;
 	Actor *a;
@@ -964,7 +964,7 @@ void Scumm::o5_getActorRoom()
 	setResult(a->room);
 }
 
-void Scumm::o5_getActorScale()
+void Scumm_v5::o5_getActorScale()
 {
 	// INDY3 uses this opcode as a wait_for_actor();
 	if (_gameId == GID_INDY3_256) {
@@ -981,7 +981,7 @@ void Scumm::o5_getActorScale()
 	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorScale")->scalex);
 }
 
-void Scumm::o5_getActorWalkBox()
+void Scumm_v5::o5_getActorWalkBox()
 {
 	Actor *a;
 	getResultPos();
@@ -992,13 +992,13 @@ void Scumm::o5_getActorWalkBox()
 		setResult(0);
 }
 
-void Scumm::o5_getActorWidth()
+void Scumm_v5::o5_getActorWidth()
 {
 	getResultPos();
 	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWidth")->width);
 }
 
-void Scumm::o5_getActorX()
+void Scumm_v5::o5_getActorX()
 {
 	int a;
 	getResultPos();
@@ -1011,7 +1011,7 @@ void Scumm::o5_getActorX()
 	setResult(getObjX(a));
 }
 
-void Scumm::o5_getActorY()
+void Scumm_v5::o5_getActorY()
 {
 	int a;
 	getResultPos();
@@ -1035,7 +1035,7 @@ void Scumm::o5_getActorY()
 	setResult(getObjY(a));
 }
 
-void Scumm::o5_getAnimCounter()
+void Scumm_v5::o5_getAnimCounter()
 {
 	Actor *a;
 	getResultPos();
@@ -1048,7 +1048,7 @@ void Scumm::o5_getAnimCounter()
 		setResult(0);
 }
 
-void Scumm::o5_getClosestObjActor()
+void Scumm_v5::o5_getClosestObjActor()
 {
 	int obj;
 	int act;
@@ -1071,7 +1071,7 @@ void Scumm::o5_getClosestObjActor()
 	setResult(closest_dist);
 }
 
-void Scumm::o5_getDist()
+void Scumm_v5::o5_getDist()
 {
 	int o1, o2;
 	int r;
@@ -1087,19 +1087,19 @@ void Scumm::o5_getDist()
 	setResult(r);
 }
 
-void Scumm::o5_getInventoryCount()
+void Scumm_v5::o5_getInventoryCount()
 {
 	getResultPos();
 	setResult(getInventoryCount(getVarOrDirectByte(0x80)));
 }
 
-void Scumm::o5_getObjectOwner()
+void Scumm_v5::o5_getObjectOwner()
 {
 	getResultPos();
 	setResult(getOwner(getVarOrDirectWord(0x80)));
 }
 
-void Scumm::o5_getObjectState()
+void Scumm_v5::o5_getObjectState()
 {
 	if (_features & GF_SMALL_HEADER) {
 		o5_ifState();
@@ -1109,7 +1109,7 @@ void Scumm::o5_getObjectState()
 	}
 }
 
-void Scumm::o5_ifState()
+void Scumm_v5::o5_ifState()
 {
 	int a = getVarOrDirectWord(0x80);
 	int b = getVarOrDirectByte(0x40);
@@ -1120,7 +1120,7 @@ void Scumm::o5_ifState()
 		ignoreScriptWord();
 }
 
-void Scumm::o5_ifNotState()
+void Scumm_v5::o5_ifNotState()
 {
 	int a = getVarOrDirectWord(0x80);
 	int b = getVarOrDirectByte(0x40);
@@ -1131,19 +1131,19 @@ void Scumm::o5_ifNotState()
 		ignoreScriptWord();
 }
 
-void Scumm::o5_getRandomNr()
+void Scumm_v5::o5_getRandomNr()
 {
 	getResultPos();
 	setResult(_rnd.getRandomNumber(getVarOrDirectByte(0x80)));
 }
 
-void Scumm::o5_getScriptRunning()
+void Scumm_v5::o5_getScriptRunning()
 {
 	getResultPos();
 	setResult(isScriptRunning(getVarOrDirectByte(0x80)));
 }
 
-void Scumm::o5_getVerbEntrypoint()
+void Scumm_v5::o5_getVerbEntrypoint()
 {
 	int a, b;
 	getResultPos();
@@ -1153,7 +1153,7 @@ void Scumm::o5_getVerbEntrypoint()
 	setResult(getVerbEntrypoint(a, b));
 }
 
-void Scumm::o5_ifClassOfIs()
+void Scumm_v5::o5_ifClassOfIs()
 {
 	int act, cls, b = 0;
 	bool cond = true;
@@ -1177,13 +1177,13 @@ void Scumm::o5_ifClassOfIs()
 		o5_jumpRelative();
 }
 
-void Scumm::o5_increment()
+void Scumm_v5::o5_increment()
 {
 	getResultPos();
 	setResult(readVar(_resultVarNumber) + 1);
 }
 
-void Scumm::o5_isActorInBox()
+void Scumm_v5::o5_isActorInBox()
 {
 	int box;
 	Actor *a;
@@ -1197,7 +1197,7 @@ void Scumm::o5_isActorInBox()
 		ignoreScriptWord();
 }
 
-void Scumm::o5_isEqual()
+void Scumm_v5::o5_isEqual()
 {
 	int16 a, b;
 	int var;
@@ -1221,7 +1221,7 @@ void Scumm::o5_isEqual()
 
 }
 
-void Scumm::o5_isGreater()
+void Scumm_v5::o5_isGreater()
 {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
@@ -1231,7 +1231,7 @@ void Scumm::o5_isGreater()
 		o5_jumpRelative();
 }
 
-void Scumm::o5_isGreaterEqual()
+void Scumm_v5::o5_isGreaterEqual()
 {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
@@ -1241,7 +1241,7 @@ void Scumm::o5_isGreaterEqual()
 		o5_jumpRelative();
 }
 
-void Scumm::o5_isLess()
+void Scumm_v5::o5_isLess()
 {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
@@ -1252,7 +1252,7 @@ void Scumm::o5_isLess()
 		o5_jumpRelative();
 }
 
-void Scumm::o5_lessOrEqual()
+void Scumm_v5::o5_lessOrEqual()
 {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
@@ -1262,7 +1262,7 @@ void Scumm::o5_lessOrEqual()
 		o5_jumpRelative();
 }
 
-void Scumm::o5_isNotEqual()
+void Scumm_v5::o5_isNotEqual()
 {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
@@ -1272,7 +1272,7 @@ void Scumm::o5_isNotEqual()
 		o5_jumpRelative();
 }
 
-void Scumm::o5_notEqualZero()
+void Scumm_v5::o5_notEqualZero()
 {
 	int a = readVar(fetchScriptWord());
 	if (a != 0)
@@ -1281,7 +1281,7 @@ void Scumm::o5_notEqualZero()
 		o5_jumpRelative();
 }
 
-void Scumm::o5_equalZero()
+void Scumm_v5::o5_equalZero()
 {
 	int a = readVar(fetchScriptWord());
 	if (a == 0)
@@ -1290,7 +1290,7 @@ void Scumm::o5_equalZero()
 		o5_jumpRelative();
 }
 
-void Scumm::o5_isSoundRunning()
+void Scumm_v5::o5_isSoundRunning()
 {
 	int snd;
 	getResultPos();
@@ -1300,12 +1300,12 @@ void Scumm::o5_isSoundRunning()
 	setResult(snd);
 }
 
-void Scumm::o5_jumpRelative()
+void Scumm_v5::o5_jumpRelative()
 {
 	_scriptPointer += (int16)fetchScriptWord();
 }
 
-void Scumm::o5_lights()
+void Scumm_v5::o5_lights()
 {
 	int a, b, c;
 
@@ -1322,7 +1322,7 @@ void Scumm::o5_lights()
 	_fullRedraw = 1;
 }
 
-void Scumm::o5_loadRoom()
+void Scumm_v5::o5_loadRoom()
 {
 	int room;
 
@@ -1336,7 +1336,7 @@ void Scumm::o5_loadRoom()
 	_fullRedraw = 1;
 }
 
-void Scumm::o5_loadRoomWithEgo()
+void Scumm_v5::o5_loadRoomWithEgo()
 {
 	Actor *a;
 	int obj, room, x, y;
@@ -1367,7 +1367,7 @@ void Scumm::o5_loadRoomWithEgo()
 	}
 }
 
-void Scumm::o5_matrixOps()
+void Scumm_v5::o5_matrixOps()
 {
 	int a, b;
 
@@ -1401,13 +1401,13 @@ void Scumm::o5_matrixOps()
 	}
 }
 
-void Scumm::o5_move()
+void Scumm_v5::o5_move()
 {
 	getResultPos();
 	setResult(getVarOrDirectWord(0x80));
 }
 
-void Scumm::o5_multiply()
+void Scumm_v5::o5_multiply()
 {
 	int a;
 	getResultPos();
@@ -1416,7 +1416,7 @@ void Scumm::o5_multiply()
 }
 
 
-void Scumm::o5_or()
+void Scumm_v5::o5_or()
 {
 	int a;
 	getResultPos();
@@ -1424,7 +1424,7 @@ void Scumm::o5_or()
 	setResult(readVar(_resultVarNumber) | a);
 }
 
-void Scumm::o5_overRide()
+void Scumm_v5::o5_overRide()
 {
 	if (fetchScriptByte() != 0)
 		beginOverride();
@@ -1432,12 +1432,12 @@ void Scumm::o5_overRide()
 		endOverride();
 }
 
-void Scumm::o5_panCameraTo()
+void Scumm_v5::o5_panCameraTo()
 {
 	panCameraTo(getVarOrDirectWord(0x80), 0);
 }
 
-void Scumm::o5_pickupObject()
+void Scumm_v5::o5_pickupObject()
 {
 	int obj, room;
 	if (_features & GF_OLD256) {
@@ -1458,19 +1458,19 @@ void Scumm::o5_pickupObject()
 	runHook(1);
 }
 
-void Scumm::o5_print()
+void Scumm_v5::o5_print()
 {
 	_actorToPrintStrFor = getVarOrDirectByte(0x80);
 	decodeParseString();
 }
 
-void Scumm::o5_printEgo()
+void Scumm_v5::o5_printEgo()
 {
 	_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
 	decodeParseString();
 }
 
-void Scumm::o5_pseudoRoom()
+void Scumm_v5::o5_pseudoRoom()
 {
 	int i = fetchScriptByte(), j;
 	while ((j = fetchScriptByte()) != 0) {
@@ -1480,7 +1480,7 @@ void Scumm::o5_pseudoRoom()
 	}
 }
 
-void Scumm::o5_putActor()
+void Scumm_v5::o5_putActor()
 {
 	int x, y;
 	Actor *a;
@@ -1495,7 +1495,7 @@ void Scumm::o5_putActor()
 }
 
 
-void Scumm::o5_putActorAtObject()
+void Scumm_v5::o5_putActorAtObject()
 {
 	int obj, x, y;
 	Actor *a;
@@ -1511,7 +1511,7 @@ void Scumm::o5_putActorAtObject()
 	a->putActor(x, y, a->room);
 }
 
-void Scumm::o5_putActorInRoom()
+void Scumm_v5::o5_putActorInRoom()
 {
 	int room;
 	Actor *a;
@@ -1528,7 +1528,7 @@ void Scumm::o5_putActorInRoom()
 		a->putActor(0, 0, 0);
 }
 
-void Scumm::o5_quitPauseRestart()
+void Scumm_v5::o5_quitPauseRestart()
 {
 	switch (fetchScriptByte()) {
 	case 1:
@@ -1540,7 +1540,7 @@ void Scumm::o5_quitPauseRestart()
 	}
 }
 
-void Scumm::o5_resourceRoutines()
+void Scumm_v5::o5_resourceRoutines()
 {
 	const ResTypes resType[4] = { rtScript, rtSound, rtCostume, rtRoom };
 	int resid = 0;
@@ -1662,7 +1662,7 @@ void Scumm::o5_resourceRoutines()
 	}
 }
 
-void Scumm::o5_roomOps()
+void Scumm_v5::o5_roomOps()
 {
 	int a = 0, b = 0, c, d, e;
 
@@ -1868,7 +1868,7 @@ void Scumm::o5_roomOps()
 	}
 }
 
-void Scumm::o5_saveRestoreVerbs()
+void Scumm_v5::o5_saveRestoreVerbs()
 {
 	int a, b, c, slot, slot2;
 
@@ -1918,12 +1918,12 @@ void Scumm::o5_saveRestoreVerbs()
 	}
 }
 
-void Scumm::o5_setCameraAt()
+void Scumm_v5::o5_setCameraAt()
 {
 	setCameraAtEx(getVarOrDirectWord(0x80));
 }
 
-void Scumm::o5_setObjectName()
+void Scumm_v5::o5_setObjectName()
 {
 	int obj = getVarOrDirectWord(0x80);
 	int size;
@@ -1978,7 +1978,7 @@ void Scumm::o5_setObjectName()
 	runHook(0);
 }
 
-void Scumm::o5_setOwnerOf()
+void Scumm_v5::o5_setOwnerOf()
 {
 	int obj, owner;
 
@@ -1988,7 +1988,7 @@ void Scumm::o5_setOwnerOf()
 	setOwnerOf(obj, owner);
 }
 
-void Scumm::o5_setState()
+void Scumm_v5::o5_setState()
 {
 	int obj, state;
 	obj = getVarOrDirectWord(0x80);
@@ -1999,7 +1999,7 @@ void Scumm::o5_setState()
 		clearDrawObjectQueue();
 }
 
-void Scumm::o5_setVarRange()
+void Scumm_v5::o5_setVarRange()
 {
 	int a, b;
 
@@ -2016,7 +2016,7 @@ void Scumm::o5_setVarRange()
 	} while (--a);
 }
 
-void Scumm::o5_soundKludge()
+void Scumm_v5::o5_soundKludge()
 {
 	int16 items[15];
 	int i;
@@ -2041,12 +2041,12 @@ void Scumm::o5_soundKludge()
 	_sound->soundKludge(items);
 }
 
-void Scumm::o5_startMusic()
+void Scumm_v5::o5_startMusic()
 {
 	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
-void Scumm::o5_startObject()
+void Scumm_v5::o5_startObject()
 {
 	int obj, script;
 	int16 data[16];
@@ -2058,7 +2058,7 @@ void Scumm::o5_startObject()
 	runVerbCode(obj, script, 0, 0, data);
 }
 
-void Scumm::o5_startScript()
+void Scumm_v5::o5_startScript()
 {
 	int op, script;
 	int16 data[16];
@@ -2078,7 +2078,7 @@ void Scumm::o5_startScript()
 	runScript(script, a, b, data);
 }
 
-void Scumm::o5_startSound()
+void Scumm_v5::o5_startSound()
 {
 
 	_vars[VAR_MUSIC_FLAG] = 0;
@@ -2086,22 +2086,22 @@ void Scumm::o5_startSound()
 	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
-void Scumm::o5_stopMusic()
+void Scumm_v5::o5_stopMusic()
 {
 	_sound->stopAllSounds();
 }
 
-void Scumm::o5_stopObjectCode()
+void Scumm_v5::o5_stopObjectCode()
 {
 	stopObjectCode();
 }
 
-void Scumm::o5_stopObjectScript()
+void Scumm_v5::o5_stopObjectScript()
 {
 	stopObjectScript(getVarOrDirectWord(0x80));
 }
 
-void Scumm::o5_stopScript()
+void Scumm_v5::o5_stopScript()
 {
 	int script;
 
@@ -2112,12 +2112,12 @@ void Scumm::o5_stopScript()
 		stopScriptNr(script);
 }
 
-void Scumm::o5_stopSound()
+void Scumm_v5::o5_stopSound()
 {
 	_sound->stopSound(getVarOrDirectByte(0x80));
 }
 
-void Scumm::o5_stringOps()
+void Scumm_v5::o5_stringOps()
 {
 	int a, b, c, i;
 	byte *ptr;
@@ -2173,7 +2173,7 @@ void Scumm::o5_stringOps()
 	}
 }
 
-void Scumm::o5_subtract()
+void Scumm_v5::o5_subtract()
 {
 	int a;
 	getResultPos();
@@ -2181,7 +2181,7 @@ void Scumm::o5_subtract()
 	setResult(readVar(_resultVarNumber) - a);
 }
 
-void Scumm::o5_verbOps()
+void Scumm_v5::o5_verbOps()
 {
 	int verb, slot;
 	VerbSlot *vs;
@@ -2322,7 +2322,7 @@ void Scumm::o5_verbOps()
 	verbMouseOver(0);
 }
 
-void Scumm::o5_wait()
+void Scumm_v5::o5_wait()
 {
 	byte *oldaddr;
 
@@ -2365,7 +2365,7 @@ void Scumm::o5_wait()
 	o5_breakHere();
 }
 
-void Scumm::o5_walkActorTo()
+void Scumm_v5::o5_walkActorTo()
 {
 	int x, y;
 	Actor *a;
@@ -2375,7 +2375,7 @@ void Scumm::o5_walkActorTo()
 	a->startWalkActor(x, y, -1);
 }
 
-void Scumm::o5_walkActorToActor()
+void Scumm_v5::o5_walkActorToActor()
 {
 	int b, x, y;
 	Actor *a, *a2;
@@ -2421,7 +2421,7 @@ void Scumm::o5_walkActorToActor()
 	a->startWalkActor(x, y, -1);
 }
 
-void Scumm::o5_walkActorToObject()
+void Scumm_v5::o5_walkActorToObject()
 {
 	int obj;
 	Actor *a;
@@ -2437,7 +2437,7 @@ void Scumm::o5_walkActorToObject()
 	}
 }
 
-int Scumm::getWordVararg(int16 *ptr)
+int Scumm_v5::getWordVararg(int16 *ptr)
 {
 	int i;
 
@@ -2451,21 +2451,21 @@ int Scumm::getWordVararg(int16 *ptr)
 	return i;
 }
 
-int Scumm::getVarOrDirectWord(byte mask)
+int Scumm_v5::getVarOrDirectWord(byte mask)
 {
 	if (_opcode & mask)
 		return readVar(fetchScriptWord());
 	return (int16)fetchScriptWord();
 }
 
-int Scumm::getVarOrDirectByte(byte mask)
+int Scumm_v5::getVarOrDirectByte(byte mask)
 {
 	if (_opcode & mask)
 		return readVar(fetchScriptWord());
 	return fetchScriptByte();
 }
 
-void Scumm::decodeParseString()
+void Scumm_v5::decodeParseString()
 {
 	int textSlot;
 
@@ -2572,7 +2572,7 @@ void Scumm::decodeParseString()
 	_string[textSlot].t_charset = _string[textSlot].charset;
 }
 
-void Scumm::o5_oldRoomEffect()
+void Scumm_v5::o5_oldRoomEffect()
 {
 	int a;
 
@@ -2588,7 +2588,7 @@ void Scumm::o5_oldRoomEffect()
 	}
 }
 
-void Scumm::o5_pickupObjectOld()
+void Scumm_v5::o5_pickupObjectOld()
 {
 	int obj = getVarOrDirectWord(0x80);
 

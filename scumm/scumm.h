@@ -34,6 +34,8 @@ class NewGui;
 class Dialog;
 class ConsoleDialog;
 class Scumm;
+class Scumm_v5;
+class Scumm_v6;
 class IMuse;
 class IMuseDigital;
 class Actor;
@@ -43,10 +45,16 @@ class ScummDebugger;
 class Serializer;
 struct FindObjectInRoom;
 
-typedef void (Scumm::*OpcodeProc)();
+typedef void (Scumm_v5::*OpcodeProcV5)();
+typedef void (Scumm_v6::*OpcodeProcV6)();
 
-struct OpcodeEntry {
-	OpcodeProc proc;
+struct OpcodeEntryV5 {
+	OpcodeProcV5 proc;
+	const char *desc;
+};
+
+struct OpcodeEntryV6 {
+	OpcodeProcV6 proc;
 	const char *desc;
 };
 
@@ -413,8 +421,7 @@ public:
 	/* Not sure where this stuff goes */
 	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
 	void startScene(int room, Actor *a, int b);
-	void setupScummVarsOld();	// Both of these will simply be one
-	void setupScummVarsNew();	// 'setupScummVars' in each Scumm_Vx
+	virtual void setupScummVars();
 	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
 	byte _numObjectsInRoom;
 	int8 _userPut;
@@ -454,12 +461,14 @@ public:
 	byte *_scriptPointer, *_scriptOrgPointer, *_scriptPointerStart;
 	byte _opcode, _numNestedScripts, _currentScript;
 	uint16 _curExecScript;
-	const OpcodeEntry *_opcodes;
 	byte **_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
 	int16 _localParamList[16],  _scummStack[150];
 	
-	OpcodeProc getOpcode(int i) { return _opcodes[i].proc; }
+	virtual void setupOpcodes() = 0;
+	virtual void executeOpcode(int i) = 0;
+	virtual const char *getOpcodeDesc(int i) = 0;
+
 	void initializeLocals(int slot, int16 *vars);
 	int	getScriptSlot();
 	void runScript(int script, int a, int b, int16 *lvarptr);
@@ -473,14 +482,12 @@ public:
 	int fetchScriptWord();
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
-	int getVarOrDirectWord(byte mask);
-	int getVarOrDirectByte(byte mask);
 	void getResultPos();
 	void setResult(int result);
-	int readVar(uint var);
-	void writeVar(uint var, int value);
 	void push(int a);
 	int pop();
+	int readVar(uint var);
+	void writeVar(uint var, int value);
 	void runHook(int i);
 	bool isScriptInUse(int script);
 	int getStringLen(byte *ptr);
@@ -488,9 +495,6 @@ public:
 	void freezeScripts(int scr);
 	void unfreezeScripts();
 	void runAllScripts();
-	void setupOpcodes_V5();
-	void setupOpcodes_V6();	
-	//void setupOpcodes_V8();	
 	void cutscene(int16 *args);
 	void endCutscene();
 	void exitCutscene();
@@ -507,10 +511,7 @@ public:
 	void arrayop_1(int a, byte *ptr);
 	void copyString(byte *dst, byte *src, int len);
 	void doSentence(int c, int b, int a);
-	int popRoomAndObj(int *room);
-	int getWordVararg(int16 *ptr);
-	void decodeParseString();
-	void decodeParseString2(int a, int b);
+	void setStringVars(int i);
 
 	/* Script VM or Object class? */
 	void stopObjectCode();
@@ -937,6 +938,152 @@ public:
 	uint32 fileReadDword() { return _fileHandle.readUint32BE(); }
 #endif
 
+	/* Scumm Vars */
+	byte VAR_EGO;
+	byte VAR_CAMERA_POS_X;
+	byte VAR_HAVE_MSG;
+	byte VAR_ROOM;
+	byte VAR_OVERRIDE;
+	byte VAR_MACHINE_SPEED;
+	byte VAR_ME;
+	byte VAR_NUM_ACTOR;
+	byte VAR_CURRENT_LIGHTS;
+	byte VAR_CURRENTDRIVE;
+	byte VAR_TMR_1;
+	byte VAR_TMR_2;
+	byte VAR_TMR_3;
+	byte VAR_MUSIC_FLAG;
+	byte VAR_ACTOR_RANGE_MIN;
+	byte VAR_ACTOR_RANGE_MAX;
+	byte VAR_CAMERA_MIN_X;
+	byte VAR_CAMERA_MAX_X;
+	byte VAR_TIMER_NEXT;
+	byte VAR_VIRT_MOUSE_X;
+	byte VAR_VIRT_MOUSE_Y;
+	byte VAR_ROOM_RESOURCE;
+	byte VAR_LAST_SOUND;
+	byte VAR_CUTSCENEEXIT_KEY;
+	byte VAR_OPTIONS_KEY;
+	byte VAR_TALK_ACTOR;
+	byte VAR_CAMERA_FAST_X;
+	byte VAR_SCROLL_SCRIPT;
+	byte VAR_ENTRY_SCRIPT;
+	byte VAR_ENTRY_SCRIPT2;
+	byte VAR_EXIT_SCRIPT;
+	byte VAR_EXIT_SCRIPT2;
+	byte VAR_VERB_SCRIPT;
+	byte VAR_SENTENCE_SCRIPT;
+	byte VAR_HOOK_SCRIPT;
+	byte VAR_CUTSCENE_START_SCRIPT;
+	byte VAR_CUTSCENE_END_SCRIPT;
+	byte VAR_CHARINC;
+	byte VAR_WALKTO_OBJ;
+	byte VAR_DEBUGMODE;
+	byte VAR_HEAPSPACE;
+	byte VAR_RESTART_KEY;
+	byte VAR_PAUSE_KEY;
+	byte VAR_MOUSE_X;
+	byte VAR_MOUSE_Y;
+	byte VAR_TIMER;
+	byte VAR_TMR_4;
+	byte VAR_SOUNDCARD;
+	byte VAR_VIDEOMODE;
+	byte VAR_SAVELOADDIALOG_KEY;
+	byte VAR_FIXEDDISK;
+	byte VAR_CURSORSTATE;
+	byte VAR_USERPUT;
+	byte VAR_SOUNDRESULT;
+	byte VAR_TALKSTOP_KEY;
+	byte VAR_59;
+	
+	byte VAR_SOUNDPARAM;
+	byte VAR_SOUNDPARAM2;
+	byte VAR_SOUNDPARAM3;
+	byte VAR_MOUSEPRESENT;
+	byte VAR_PERFORMANCE_1;
+	byte VAR_PERFORMANCE_2;
+	byte VAR_ROOM_FLAG;
+	byte VAR_GAME_LOADED;
+	byte VAR_NEW_ROOM;
+	byte VAR_VERSION;
+
+	byte VAR_V5_DRAWFLAGS;
+	byte VAR_MI1_TIMER;
+	byte VAR_V5_OBJECT_LO;
+	byte VAR_V5_OBJECT_HI;
+	byte VAR_V5_TALK_STRING_Y;
+	byte VAR_V5_CHARFLAG;
+
+	byte VAR_V6_SCREEN_WIDTH;
+	byte VAR_V6_SCREEN_HEIGHT;
+	byte VAR_V6_EMSSPACE;
+	byte VAR_V6_RANDOM_NR;
+
+	byte VAR_STRING2DRAW;
+	byte VAR_CAMERA_POS_Y;
+
+	byte VAR_CAMERA_MIN_Y;
+	byte VAR_CAMERA_MAX_Y;
+	byte VAR_CAMERA_THRESHOLD_X;
+	byte VAR_CAMERA_THRESHOLD_Y;
+	byte VAR_CAMERA_SPEED_X;
+	byte VAR_CAMERA_SPEED_Y;
+	byte VAR_CAMERA_ACCEL_X;
+	byte VAR_CAMERA_ACCEL_Y;
+
+	byte VAR_CAMERA_DEST_X;
+
+	byte VAR_CAMERA_DEST_Y;
+
+	byte VAR_CAMERA_FOLLOWED_ACTOR;
+
+	byte VAR_LEFTBTN_DOWN;
+	byte VAR_RIGHTBTN_DOWN;
+	byte VAR_LEFTBTN_HOLD;
+	byte VAR_RIGHTBTN_HOLD;
+
+	byte VAR_UNK_SCRIPT;
+	byte VAR_UNK_SCRIPT_2;
+
+	byte VAR_DEFAULT_TALK_DELAY;
+	byte VAR_CHARSET_MASK;
+
+	byte VAR_CUSTOMSCALETABLE;
+	byte VAR_VIDEONAME;
+	byte VAR_V6_SOUNDMODE;
+
+	void launch();
+
+	Scumm(GameDetector *detector, OSystem *syst);
+	virtual ~Scumm();
+
+	void go();
+
+	void waitForTimer(int msec_delay);
+
+	void updateCursor();
+	void animateCursor();
+	void updatePalette();
+};
+
+class Scumm_v5 : public Scumm
+{
+protected:
+	const OpcodeEntryV5 *_opcodesV5;
+	
+public:
+	Scumm_v5(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+
+protected:
+	virtual void setupOpcodes();
+	virtual void executeOpcode(int i);
+	virtual const char *getOpcodeDesc(int i);
+
+	void decodeParseString();
+	int getWordVararg(int16 *ptr);
+	int getVarOrDirectWord(byte mask);
+	int getVarOrDirectByte(byte mask);
+
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
 	void o5_actorFromPos();
@@ -1043,12 +1190,57 @@ public:
 	void o5_walkActorToObject();
     void o5_oldRoomEffect();
 	void o5_pickupObjectOld();
+};
+
+// FIXME - subclassing V2 from Scumm_v5 is a hack: V2 should have its own opcode table
+class Scumm_v2 : public Scumm_v5
+{
+public:
+	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm_v5(detector, syst) {}
+
+	virtual void readIndexFile();
+};
+
+// FIXME - maybe we should move the opcodes from v5 to v3, and change the inheritance 
+// accordingly - that would be more logical I guess. However, if you do so, take care
+// of preserving the right readIndexFile / loadCharset !!!
+class Scumm_v3 : public Scumm_v5
+{
+public:
+	Scumm_v3(GameDetector *detector, OSystem *syst) : Scumm_v5(detector, syst) {}
+
+	void readIndexFile();
+	virtual void loadCharset(int no);
+};
+
+class Scumm_v4 : public Scumm_v3
+{
+public:
+	Scumm_v4(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
+
+	void loadCharset(int no);
+};
+
+class Scumm_v6 : public Scumm
+{
+protected:
+	const OpcodeEntryV6 *_opcodesV6;
+	
+public:
+	Scumm_v6(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+
+protected:
+	virtual void setupOpcodes();
+
+	virtual void executeOpcode(int i);
+	virtual const char *getOpcodeDesc(int i);
+
+	int popRoomAndObj(int *room);
+
+	void decodeParseString2(int a, int b);
+	int getStackList(int16 *args, uint maxnum);
 
 	/* Version 6 script opcodes */
-	int getStackList(int16 *args, uint maxnum);
-	void setStringVars(int i);
-	void unkMiscOp9();
-
 	void o6_setBlastObjectWindow();
 	void o6_pushByte();
 	void o6_pushWord();
@@ -1180,6 +1372,7 @@ public:
 	void o6_talkActor();
 	void o6_talkEgo();
 	void o6_dim();
+	void o6_dummy();
 	void o6_runVerbCodeQuick();
 	void o6_runScriptQuick();
 	void o6_dim2();
@@ -1187,7 +1380,6 @@ public:
 	void o6_distObjectObject();
 	void o6_distObjectPt();
 	void o6_distPtPt();
-	void o6_dummy_stacklist();
 	void o6_miscOps();
 	void o6_delayFrames();
 	void o6_pickOneOf();
@@ -1201,177 +1393,15 @@ public:
 	void o6_unknownCD();
 	void o6_bor();
 	void o6_band();
-	// void o7_userfaceOps();
-
-	/* Scumm Vars */
-	byte VAR_EGO;
-	byte VAR_CAMERA_POS_X;
-	byte VAR_HAVE_MSG;
-	byte VAR_ROOM;
-	byte VAR_OVERRIDE;
-	byte VAR_MACHINE_SPEED;
-	byte VAR_ME;
-	byte VAR_NUM_ACTOR;
-	byte VAR_CURRENT_LIGHTS;
-	byte VAR_CURRENTDRIVE;
-	byte VAR_TMR_1;
-	byte VAR_TMR_2;
-	byte VAR_TMR_3;
-	byte VAR_MUSIC_FLAG;
-	byte VAR_ACTOR_RANGE_MIN;
-	byte VAR_ACTOR_RANGE_MAX;
-	byte VAR_CAMERA_MIN_X;
-	byte VAR_CAMERA_MAX_X;
-	byte VAR_TIMER_NEXT;
-	byte VAR_VIRT_MOUSE_X;
-	byte VAR_VIRT_MOUSE_Y;
-	byte VAR_ROOM_RESOURCE;
-	byte VAR_LAST_SOUND;
-	byte VAR_CUTSCENEEXIT_KEY;
-	byte VAR_OPTIONS_KEY;
-	byte VAR_TALK_ACTOR;
-	byte VAR_CAMERA_FAST_X;
-	byte VAR_SCROLL_SCRIPT;
-	byte VAR_ENTRY_SCRIPT;
-	byte VAR_ENTRY_SCRIPT2;
-	byte VAR_EXIT_SCRIPT;
-	byte VAR_EXIT_SCRIPT2;
-	byte VAR_VERB_SCRIPT;
-	byte VAR_SENTENCE_SCRIPT;
-	byte VAR_HOOK_SCRIPT;
-	byte VAR_CUTSCENE_START_SCRIPT;
-	byte VAR_CUTSCENE_END_SCRIPT;
-	byte VAR_CHARINC;
-	byte VAR_WALKTO_OBJ;
-	byte VAR_DEBUGMODE;
-	byte VAR_HEAPSPACE;
-	byte VAR_RESTART_KEY;
-	byte VAR_PAUSE_KEY;
-	byte VAR_MOUSE_X;
-	byte VAR_MOUSE_Y;
-	byte VAR_TIMER;
-	byte VAR_TMR_4;
-	byte VAR_SOUNDCARD;
-	byte VAR_VIDEOMODE;
-	byte VAR_SAVELOADDIALOG_KEY;
-	byte VAR_FIXEDDISK;
-	byte VAR_CURSORSTATE;
-	byte VAR_USERPUT;
-	byte VAR_SOUNDRESULT;
-	byte VAR_TALKSTOP_KEY;
-	byte VAR_59;
-	
-	byte VAR_SOUNDPARAM;
-	byte VAR_SOUNDPARAM2;
-	byte VAR_SOUNDPARAM3;
-	byte VAR_MOUSEPRESENT;
-	byte VAR_PERFORMANCE_1;
-	byte VAR_PERFORMANCE_2;
-	byte VAR_ROOM_FLAG;
-	byte VAR_GAME_LOADED;
-	byte VAR_NEW_ROOM;
-	byte VAR_VERSION;
-
-	byte VAR_V5_DRAWFLAGS;
-	byte VAR_MI1_TIMER;
-	byte VAR_V5_OBJECT_LO;
-	byte VAR_V5_OBJECT_HI;
-	byte VAR_V5_TALK_STRING_Y;
-	byte VAR_V5_CHARFLAG;
-
-	byte VAR_V6_SCREEN_WIDTH;
-	byte VAR_V6_SCREEN_HEIGHT;
-	byte VAR_V6_EMSSPACE;
-	byte VAR_V6_RANDOM_NR;
-
-	byte VAR_STRING2DRAW;
-	byte VAR_CAMERA_POS_Y;
-
-	byte VAR_CAMERA_MIN_Y;
-	byte VAR_CAMERA_MAX_Y;
-	byte VAR_CAMERA_THRESHOLD_X;
-	byte VAR_CAMERA_THRESHOLD_Y;
-	byte VAR_CAMERA_SPEED_X;
-	byte VAR_CAMERA_SPEED_Y;
-	byte VAR_CAMERA_ACCEL_X;
-	byte VAR_CAMERA_ACCEL_Y;
-
-	byte VAR_CAMERA_DEST_X;
-
-	byte VAR_CAMERA_DEST_Y;
-
-	byte VAR_CAMERA_FOLLOWED_ACTOR;
-
-	byte VAR_LEFTBTN_DOWN;
-	byte VAR_RIGHTBTN_DOWN;
-	byte VAR_LEFTBTN_HOLD;
-	byte VAR_RIGHTBTN_HOLD;
-
-	byte VAR_UNK_SCRIPT;
-	byte VAR_UNK_SCRIPT_2;
-
-	byte VAR_DEFAULT_TALK_DELAY;
-	byte VAR_CHARSET_MASK;
-
-	byte VAR_CUSTOMSCALETABLE;
-	byte VAR_VIDEONAME;
-	byte VAR_V6_SOUNDMODE;
-
-	void launch();
-
-	Scumm(GameDetector *detector, OSystem *syst);
-	virtual ~Scumm();
-
-	void go();
-
-	void waitForTimer(int msec_delay);
-
-	void updateCursor();
-	void animateCursor();
-	void updatePalette();
 };
 
-class Scumm_v2 : public Scumm
+class Scumm_v7 : public Scumm_v6
 {
 public:
-	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+	Scumm_v7(GameDetector *detector, OSystem *syst) : Scumm_v6(detector, syst) {}
 
-	virtual void readIndexFile();
-};
-
-class Scumm_v3 : public Scumm
-{
-public:
-	Scumm_v3(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
-
-	void readIndexFile();
-	virtual void loadCharset(int no);
-};
-
-class Scumm_v4 : public Scumm_v3
-{
-public:
-	Scumm_v4(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
-
-	void loadCharset(int no);
-};
-
-class Scumm_v5 : public Scumm
-{
-public:
-	Scumm_v5(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
-};
-
-class Scumm_v6 : public Scumm
-{
-public:
-	Scumm_v6(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
-};
-
-class Scumm_v7 : public Scumm
-{
-public:
-	Scumm_v7(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+protected:
+	virtual void setupScummVars();
 };
 
 // This is a constant lookup table of reverse bit masks

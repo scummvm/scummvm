@@ -1224,11 +1224,6 @@ void Scumm::setStringVars(int slot)
 	st->charset = st->t_charset;
 }
 
-void Scumm::unkMiscOp9()
-{
-	warning("stub unkMiscOp9()");
-}
-
 void Scumm::startManiac()
 {
 	warning("stub startManiac()");
@@ -1535,10 +1530,7 @@ void Scumm::launch()
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 	initVirtScreen(0, 0, 0, _realWidth, _realHeight, false, false);
 
-	if (_features & GF_AFTER_V7)
-		setupScummVarsNew();
-	else
-		setupScummVarsOld();
+	setupScummVars();
 
 	if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX))
 		NUM_ACTORS = 30;
@@ -1559,10 +1551,7 @@ void Scumm::launch()
 
 	readIndexFile();
 
-	if (_features & GF_AFTER_V6)
-		setupOpcodes_V6();
-	else
-		setupOpcodes_V5();
+	setupOpcodes();
 
 	scummInit();
 

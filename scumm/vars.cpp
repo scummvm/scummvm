@@ -24,9 +24,8 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-void Scumm::setupScummVarsOld()
+void Scumm::setupScummVars()
 {
-
 	VAR_EGO = 1;
 	VAR_CAMERA_POS_X = 2;
 	VAR_HAVE_MSG = 3;
@@ -112,7 +111,7 @@ void Scumm::setupScummVarsOld()
 }
 
 
-void Scumm::setupScummVarsNew()
+void Scumm_v7::setupScummVars()
 {
 	VAR_MOUSE_X = 1;
 	VAR_MOUSE_Y = 2;

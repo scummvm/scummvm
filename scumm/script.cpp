@@ -277,17 +277,37 @@ void Scumm::getScriptEntryPoint()
 /* Execute a script - Read opcode, and execute it from the table */
 void Scumm::executeScript()
 {
-
-	OpcodeProc op;
 	while (_currentScript != 0xFF) {
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes[_opcode].desc);
-		op = getOpcode(_opcode);
-		(this->*op) ();
+		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, getOpcodeDesc(_opcode));
+		executeOpcode(_opcode);
 	}
-CHECK_HEAP}
+	CHECK_HEAP;
+}
+
+void Scumm_v5::executeOpcode(int i)
+{
+	OpcodeProcV5 op = _opcodesV5[i].proc;
+	(this->*op) ();
+}
+
+const char *Scumm_v5::getOpcodeDesc(int i)
+{
+	return _opcodesV5[i].desc;
+}
+
+void Scumm_v6::executeOpcode(int i)
+{
+	OpcodeProcV6 op = _opcodesV6[i].proc;
+	(this->*op) ();
+}
+
+const char *Scumm_v6::getOpcodeDesc(int i)
+{
+	return _opcodesV6[i].desc;
+}
 
 byte Scumm::fetchScriptByte()
 {
@@ -468,6 +488,20 @@ void Scumm::setResult(int value)
 	writeVar(_resultVarNumber, value);
 }
 
+void Scumm::push(int a)
+{
+	assert(_scummStackPos >= 0 && (unsigned int)_scummStackPos <= ARRAYSIZE(_scummStack));
+	_scummStack[_scummStackPos++] = a;
+}
+
+int Scumm::pop()
+{
+	if ((_scummStackPos < 1) || ((unsigned int)_scummStackPos > ARRAYSIZE(_scummStack))) {
+		error("No items on stack to pop() for %s (0x%X) at [%d-%d]\n", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
+	}
+
+	return _scummStack[--_scummStackPos];
+}
 void Scumm::drawBox(int x, int y, int x2, int y2, int color)
 {
 	int top, bottom, count;
@@ -864,23 +898,6 @@ int Scumm::getVerbEntrypoint(int obj, int entry)
 	else
 		return verboffs + READ_LE_UINT16(verbptr + 1);
 }
-
-
-void Scumm::push(int a)
-{
-	assert(_scummStackPos >= 0 && (unsigned int)_scummStackPos <= ARRAYSIZE(_scummStack));
-	_scummStack[_scummStackPos++] = a;
-}
-
-int Scumm::pop()
-{
-	if ((_scummStackPos < 1) || ((unsigned int)_scummStackPos > ARRAYSIZE(_scummStack))) {
-		error("No items on stack to pop() for %s (0x%X) at [%d-%d]\n", _opcodes[_opcode].desc, _opcode, _roomResource, vm.slot[_currentScript].number);
-	}
-
-	return _scummStack[--_scummStackPos];
-}
-
 
 void Scumm::endCutscene()
 {
