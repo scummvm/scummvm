@@ -1447,16 +1447,18 @@ int oldDirToNewDir(int dir) {
 // Convert an angle to a simple direction.
 //
 int toSimpleDir(int dirType, int dir) {
-	const int16 many_direction_tab[16] = {
-		71, 109, 251, 289,  -1,  -1,  -1,  -1,
-		22,  72, 107, 157, 202, 252, 287, 337
-	};
-	int num = dirType ? 8 : 4;
-	const int16 *dirtab = &many_direction_tab[dirType * 8];
-	for (int i = 1; i < num-1; i++, dirtab++) {
-		if (dir >= dirtab[0] && dir <= dirtab[1])
-			return i;
+	if (dirType) {
+		const int16 directions[] = { 22,  72, 107, 157, 202, 252, 287, 337 };
+		for (int i = 0; i < 7; i++)
+			if (dir >= directions[i] && dir <= directions[i+1])
+				return i;
+	} else {
+		const int16 directions[] = { 71, 109, 251, 289 };
+		for (int i = 0; i < 3; i++)
+			if (dir >= directions[i] && dir <= directions[i+1])
+				return i;
 	}
+
 	return 0;
 }
 
