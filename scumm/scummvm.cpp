@@ -1453,7 +1453,7 @@ int toSimpleDir(int dirType, int dir) {
 	};
 	int num = dirType ? 8 : 4;
 	const int16 *dirtab = &many_direction_tab[dirType * 8];
-	for (int i = 1; i < num; i++, dirtab++) {
+	for (int i = 1; i < num-1; i++, dirtab++) {
 		if (dir >= dirtab[0] && dir <= dirtab[1])
 			return i;
 	}
