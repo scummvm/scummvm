@@ -2525,7 +2525,7 @@ void Scumm::decompressDefaultCursor(int idx)
 	_cursorWidth = 16;
 	_cursorHeight = 16;
 	_cursorHotspotX = 8;
-	_cursorHotspotY = 7;
+	_cursorHotspotY = 8;
 
 	color = default_cursor_colors[idx];
 
