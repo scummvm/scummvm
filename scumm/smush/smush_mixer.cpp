@@ -45,7 +45,7 @@ SmushMixer::SmushMixer(SoundMixer *m) :
 
 SmushMixer::~SmushMixer() {
 	for (int32 i = 0; i < NUM_CHANNELS; i++) {
-		_mixer->stopChannel(_channels[i].handle);
+		_mixer->stopHandle(_channels[i].handle);
 	}
 }
 

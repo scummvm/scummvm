@@ -548,7 +548,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
 		for (i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
 			if (i != talkChannel) {
-				_scumm->_mixer->stopChannel(i);
+				_scumm->_mixer->stopHandle(i+1);	// EVIL HACK!!!!
 			}
 		}
 	}
@@ -1078,7 +1078,7 @@ void Sound::stopBundleMusic() {
 	// First stop the music timer
 	_scumm->_timer->removeTimerProc(&music_handler);
 	_nameBundleMusic = "";
-	_scumm->_mixer->stopChannel(_bundleMusicTrack);
+	_scumm->_mixer->stopHandle(_bundleMusicTrack);
 	if (_musicBundleBufFinal) {
 		free(_musicBundleBufFinal);
 		_musicBundleBufFinal = NULL;

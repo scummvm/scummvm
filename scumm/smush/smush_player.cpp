@@ -303,7 +303,7 @@ void SmushPlayer::deinit() {
 		_base = NULL;
 	}
 	
-	_scumm->_mixer->stopChannel(_IACTchannel);
+	_scumm->_mixer->stopHandle(_IACTchannel);
 
 	_scumm->_insaneState = false;
 	if (_scumm->_imuseDigital) {
