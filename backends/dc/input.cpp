@@ -171,12 +171,11 @@ bool OSystem_Dreamcast::poll_event(Event *event)
 		      event->kbd.flags);
   setimask(mask);
   if (_ms_cur_x<0) _ms_cur_x=0;
-  if (_ms_cur_x>319) _ms_cur_x=319;
+  if (_ms_cur_x>=_screen_w) _ms_cur_x=_screen_w-1;
   if (_ms_cur_y<0) _ms_cur_y=0;
-  if (_ms_cur_y>=(_hires? (_screen_h>>1):_screen_h))
-    _ms_cur_y=(_hires? (_screen_h>>1):_screen_h)-1;
-  event->mouse.x = (_hires? (_ms_cur_x<<1):_ms_cur_x);
-  event->mouse.y = (_hires? (_ms_cur_y<<1):_ms_cur_y);
+  if (_ms_cur_y>=_screen_h) _ms_cur_y=_screen_h-1;
+  event->mouse.x = _ms_cur_x;
+  event->mouse.y = _ms_cur_y;
   if (_overlay_visible) {
     event->mouse.x -= _overlay_x;
     event->mouse.y -= _overlay_y;
@@ -196,7 +195,6 @@ bool OSystem_Dreamcast::poll_event(Event *event)
     event->event_code = EVENT_MOUSEMOVE;
     _ms_old_x = _ms_cur_x;
     _ms_old_y = _ms_cur_y;
-    warp_mouse(event->mouse.x, event->mouse.y);
     return true;
   } else {
     event->event_code = (EventCode)0;

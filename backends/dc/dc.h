@@ -153,8 +153,8 @@ class OSystem_Dreamcast : public OSystem {
   void *_sound_proc_param;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
-  bool _hires, _hires_mouse;
-  float _overlay_fade;
+  bool _aspect_stretch;
+  float _overlay_fade, _xscale, _yscale, _top_offset;
 
   uint32 _timer_duration, _timer_next_expiry;
   bool _timer_active;
@@ -175,6 +175,7 @@ class OSystem_Dreamcast : public OSystem {
   void drawMouse(int xdraw, int ydraw, int w, int h,
 		 unsigned char *buf, bool visible);
 
+  void setScaling();
 };
 
 extern int handleInput(struct mapledev *pad,
