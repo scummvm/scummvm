@@ -113,6 +113,8 @@ void Scumm::drawDirtyScreenParts() {
 	VirtScreen *vs;
 
 	updateDirtyScreen(2);
+    if (_features & GF_OLD256)
+		updateDirtyScreen(1);
 
 #if defined(FULL_THROTTLE)
 	if (camera._last.x==camera._cur.x &&
