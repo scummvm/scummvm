@@ -1010,6 +1010,9 @@ void SimonEngine::vc_12_delay() {
 		num = vc_read_next_byte() * _vga_base_delay;
 	}
 
+	if (_continous_vgascript)
+		fprintf(_dump_file, "; sleep_ex = %d\n", num + gss->VGA_DELAY_BASE);
+
 	add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 	_vc_ptr = (byte *)&vc_get_out_of_code;
 }
