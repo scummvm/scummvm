@@ -53,7 +53,6 @@ protected:
 
 	bool	_caretVisible;
 	uint32	_caretTime;
-	byte	_caretBuf[kLineHeight * kCharWidth * 2];
 	
 	ScrollBarWidget	*_scrollBar;
 
