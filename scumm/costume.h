@@ -25,7 +25,7 @@
 
 namespace Scumm {
 
-class LoadedCostume {
+class ClassicCostume : public BaseCostume {
 protected:
 	ScummEngine *_vm;
 
@@ -41,29 +41,36 @@ public:
 	byte _format;
 	bool _mirror;
 
-	LoadedCostume(ScummEngine *vm) :
+	ClassicCostume(ScummEngine *vm) :
 		_vm(vm), _id(-1), _baseptr(0), _animCmds(0), _dataOffsets(0), _palette(0),
 		_frameOffsets(0), _numColors(0), _numAnim(0), _format(0), _mirror(false) {}
 
 	void loadCostume(int id);
 	byte increaseAnims(Actor *a);
-	void loadNEScostume(void);
 
 protected:
 	byte increaseAnim(Actor *a, int slot);
 };
 
+class NESCostume : public ClassicCostume {
+public:
+	NESCostume(ScummEngine *vm) : ClassicCostume(vm) {}
+	void loadCostume(int id);
 
-class CostumeRenderer : public BaseCostumeRenderer {
 protected:
-	LoadedCostume _loaded;
+	byte increaseAnim(Actor *a, int slot);
+};
+
+class ClassicCostumeRenderer : public BaseCostumeRenderer {
+protected:
+	ClassicCostume _loaded;
 	
 	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY;
 	byte _palette[32];
 
 public:
-	CostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
 	void setPalette(byte *palette);
 	void setFacing(const Actor *a);
@@ -71,7 +78,6 @@ public:
 
 protected:
 	byte drawLimb(const Actor *a, int limb);
-	void drawNESCostume(const Actor *a, int limb);
 
 	void proc3(Codec1 &v1);
 	void proc3_ami(Codec1 &v1);
@@ -79,6 +85,21 @@ protected:
 	void procC64(Codec1 &v1, int actor);
 
 	byte mainRoutine(int xmoveCur, int ymoveCur);
+};
+
+class NESCostumeRenderer : public BaseCostumeRenderer {
+protected:
+	NESCostume _loaded;
+
+public:
+	NESCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+
+	void setPalette(byte *palette);
+	void setFacing(const Actor *a);
+	void setCostume(int costume);
+
+protected:
+	byte drawLimb(const Actor *a, int limb);
 };
 
 } // End of namespace Scumm

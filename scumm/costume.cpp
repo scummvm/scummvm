@@ -74,7 +74,7 @@ const byte cost_scaleTable[256] = {
 };
 #endif
 
-byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
+byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int i, skip = 0;
 	byte drawFlag = 1;
 	bool use_scaling;
@@ -330,7 +330,7 @@ static const int v1MMActorPalatte2[25] = {
 			dst[p + 1] = palette[pcolor]; \
 	}
 
-void CostumeRenderer::procC64(Codec1 &v1, int actor) {
+void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len;
@@ -405,7 +405,7 @@ void CostumeRenderer::procC64(Codec1 &v1, int actor) {
 #undef LINE
 #undef MASK_AT
 
-void CostumeRenderer::proc3(Codec1 &v1) {
+void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 #ifdef __PALM_OS__
 	ARM_START(CostumeProc3Type)
 		ARM_INIT(SCUMM_PROC3)
@@ -501,7 +501,7 @@ void CostumeRenderer::proc3(Codec1 &v1) {
 	} while (1);
 }
 
-void CostumeRenderer::proc3_ami(Codec1 &v1) {
+void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 	const byte *mask, *src;
 	byte *dst;
 	byte maskbit, len, height, width;
@@ -575,10 +575,13 @@ static const int v1MMNESLookup[25] = {
 /**
  * costume ID -> v1MMNESLookup[] -> desc -> lens & offs -> data -> Gfx & pal
  */
-void LoadedCostume::loadNEScostume(void) {
+void NESCostume::loadCostume(int id) {
 	const byte *src;
 	int frameset, framenum;
 	int offset;
+
+	_id = id;
+	_baseptr = _vm->getResourceAddress(rtCostume, id);
 
 	_format = 0x01;
 	_mirror = 0;
@@ -600,7 +603,7 @@ void LoadedCostume::loadNEScostume(void) {
 	}
 }
 
-void LoadedCostume::loadCostume(int id) {
+void ClassicCostume::loadCostume(int id) {
 	_id = id;
 	byte *ptr = _vm->getResourceAddress(rtCostume, id);
 
@@ -615,10 +618,6 @@ void LoadedCostume::loadCostume(int id) {
 
 	_baseptr = ptr;
 
-	if (_vm->_features & GF_NES) {
-		loadNEScostume();
-		return;
-	}
 	_numAnim = ptr[6];
 	_format = ptr[7] & 0x7F;
 	_mirror = (ptr[7] & 0x80) != 0;
@@ -663,7 +662,7 @@ void LoadedCostume::loadCostume(int id) {
 	_animCmds = _baseptr + READ_LE_UINT16(ptr);
 }
 
-void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
+byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	const byte darkpalette[16] = {0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D};
 	const byte *palette;
 	const byte *src;
@@ -674,6 +673,10 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	int frameNum = cost.curpos[limb];
 	byte *bgTransBuf = _vm->getMaskBuffer(0, 0, 0);
 	byte *gfxMaskBuf = _vm->getMaskBuffer(0, 0, 1);
+
+	// If the specified limb is stopped or not existing, do nothing.
+	if (cost.curpos[limb] == 0xFFFF || cost.stopped & (1 << limb))
+		return 0;
 
 	if (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)
 		palette = _vm->_NESPalette[1];
@@ -758,9 +761,11 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	_draw_bottom = bottom;
 
 	_vm->markRectAsDirty(kMainVirtScreen, left, right, top, bottom, _actorID);
+
+	return 0;
 }
 
-byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
+byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int i;
 	int code;
 	const byte *frameptr;
@@ -769,11 +774,6 @@ byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	// If the specified limb is stopped or not existing, do nothing.
 	if (cost.curpos[limb] == 0xFFFF || cost.stopped & (1 << limb))
 		return 0;
-
-	if (_vm->_features & GF_NES) {
-		drawNESCostume(a, limb);
-		return 0;
-	}
 
 	// Determine the position the limb is at
 	i = cost.curpos[limb] & 0x7FFF;
@@ -819,13 +819,21 @@ byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 }
 
-void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
-	const byte *r;
-	uint mask, j;
-	int i;
-	byte extra, cmd;
+void NESCostumeRenderer::setPalette(byte *palette) {
+	// TODO
+}
+
+void NESCostumeRenderer::setFacing(const Actor *a) {
+	_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
+}
+
+void NESCostumeRenderer::setCostume(int costume) {
+	_loaded.loadCostume(costume);
+}
+
+void ScummEngine::NES_cost_decodeData(Actor *a, int frame, uint usemask) {
 	int anim;
-	LoadedCostume lc(this);
+	NESCostume lc(this);
 
 	lc.loadCostume(a->_costume);
 
@@ -835,11 +843,25 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-	if (_features & GF_NES) {
-		a->_cost.curpos[0] = 0;
-		a->_cost.start[0] = 0;
-		a->_cost.end[0] = getResourceAddress(rtCostume, a->_costume)[2 + 8 * frame + 2 * newDirToOldDir(a->getFacing()) + 1];
-		a->_cost.frame[0] = frame;
+	a->_cost.curpos[0] = 0;
+	a->_cost.start[0] = 0;
+	a->_cost.end[0] = lc._baseptr[2 + 8 * frame + 2 * newDirToOldDir(a->getFacing()) + 1];
+	a->_cost.frame[0] = frame;
+}
+
+void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
+	const byte *r;
+	uint mask, j;
+	int i;
+	byte extra, cmd;
+	int anim;
+	ClassicCostume lc(this);
+
+	lc.loadCostume(a->_costume);
+
+	anim = newDirToOldDir(a->getFacing()) + frame * 4;
+
+	if (anim > lc._numAnim) {
 		return;
 	}
 
@@ -898,13 +920,11 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 	} while (mask&0xFFFF);
 }
 
-void CostumeRenderer::setPalette(byte *palette) {
+void ClassicCostumeRenderer::setPalette(byte *palette) {
 	int i;
 	byte color;
 
-	if (_vm->_features & GF_NES) {
-		// TODO
-	} else if (_loaded._format == 0x57) {
+	if (_loaded._format == 0x57) {
 		memcpy(_palette, palette, 13);
 	} else if (_vm->_features & GF_OLD_BUNDLE) {
 		if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
@@ -929,15 +949,15 @@ void CostumeRenderer::setPalette(byte *palette) {
 	}
 }
 
-void CostumeRenderer::setFacing(const Actor *a) {
+void ClassicCostumeRenderer::setFacing(const Actor *a) {
 	_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
 }
 
-void CostumeRenderer::setCostume(int costume) {
+void ClassicCostumeRenderer::setCostume(int costume) {
 	_loaded.loadCostume(costume);
 }
 
-byte LoadedCostume::increaseAnims(Actor *a) {
+byte ClassicCostume::increaseAnims(Actor *a) {
 	int i;
 	byte r = 0;
 
@@ -948,17 +968,17 @@ byte LoadedCostume::increaseAnims(Actor *a) {
 	return r;
 }
 
-byte LoadedCostume::increaseAnim(Actor *a, int slot) {
+byte NESCostume::increaseAnim(Actor *a, int slot) {
+	a->_cost.curpos[slot]++;
+	if (a->_cost.curpos[slot] >= a->_cost.end[slot])
+		a->_cost.curpos[slot] = a->_cost.start[slot];
+	return 0;
+}
+
+byte ClassicCostume::increaseAnim(Actor *a, int slot) {
 	int highflag;
 	int i, end;
 	byte code, nc;
-
-	if (_vm->_features & GF_NES) {
-		a->_cost.curpos[slot]++;
-		if (a->_cost.curpos[slot] >= a->_cost.end[slot])
-			a->_cost.curpos[slot] = a->_cost.start[slot];
-		return 0;
-	}
 
 	if (a->_cost.curpos[slot] == 0xFFFF)
 		return 0;

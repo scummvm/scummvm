@@ -1272,8 +1272,10 @@ int ScummEngine::init(GameDetector &detector) {
 	// Create the costume renderer
 	if (_features & GF_NEW_COSTUMES)
 		_costumeRenderer = new AkosRenderer(this);
+	else if (_features & GF_NES)
+		_costumeRenderer = new NESCostumeRenderer(this);
 	else
-		_costumeRenderer = new CostumeRenderer(this);
+		_costumeRenderer = new ClassicCostumeRenderer(this);
 
 	// Create FT INSANE object
 	if (_gameId == GID_FT)

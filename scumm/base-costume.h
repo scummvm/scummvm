@@ -46,8 +46,17 @@ class Actor;
 class ScummEngine;
 struct VirtScreen;
 
+class BaseCostume {
+public:
+	virtual ~BaseCostume() {}
+	
+	virtual void loadCostume(int id) = 0;
+	virtual byte increaseAnims(Actor *a) = 0;
+};
+
+
 /**
- * Base class for both CostumeRenderer and AkosRenderer.
+ * Base class for both ClassicCostumeRenderer and AkosRenderer.
  */
 class BaseCostumeRenderer {
 public:
@@ -119,6 +128,7 @@ public:
 		_skipLimbs = 0;
 		_paletteNum = 0;
 	}
+	virtual ~BaseCostumeRenderer() {}
 
 	virtual void setPalette(byte *palette) = 0;
 	virtual void setFacing(const Actor *a) = 0;

@@ -90,6 +90,8 @@ bool ScummEngine::isCostumeInUse(int cost) const {
 void ScummEngine::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	if (_features & GF_NEW_COSTUMES)
 		akos_decodeData(a, frame, usemask);
+	else if (_features & GF_NES)
+		NES_cost_decodeData(a, frame, usemask);
 	else
 		cost_decodeData(a, frame, usemask);
 }

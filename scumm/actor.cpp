@@ -1127,6 +1127,8 @@ void Actor::animateCostume() {
 	_animProgress++;
 	if (_animProgress >= _animSpeed) {
 		_animProgress = 0;
+		
+		BaseCostume *cost = 0;
 
 		if (_vm->_features & GF_NEW_COSTUMES) {
 			byte *akos = _vm->getResourceAddress(rtCostume, _costume);
@@ -1135,12 +1137,16 @@ void Actor::animateCostume() {
 				_needRedraw = true;
 			}
 		} else {
-			LoadedCostume lc(_vm);
-			lc.loadCostume(_costume);
-			if (lc.increaseAnims(this)) {
+			if (_vm->_features & GF_NES)
+				cost = new NESCostume(_vm);
+			else
+				cost = new ClassicCostume(_vm);
+			cost->loadCostume(_costume);
+			if (cost->increaseAnims(this)) {
 				_needRedraw = true;
 			}
 		}
+		delete cost;
 	}
 }
 

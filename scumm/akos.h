@@ -37,6 +37,14 @@ struct CostumeData;
 struct AkosHeader;
 struct AkosOffset;
 
+/* TODO:
+class AkosCostume : public BaseCostume {
+public:
+	void loadCostume(int id);
+	byte increaseAnims(Actor *a);
+};
+*/
+
 class AkosRenderer : public BaseCostumeRenderer {
 protected:
 	uint16 codec;
