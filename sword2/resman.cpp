@@ -662,7 +662,7 @@ void resMan::Res_close(uint32 res) {		//Tony30May96
 	}
 }
 
-uint32 resMan::Res_fetch_len( uint32 res ) {	//Tony27Jan96
+uint32 resMan::Res_fetch_len(uint32 res) {	//Tony27Jan96
 	// returns the total file length of a resource - i.e. all headers are
 	// included too
 
@@ -1178,7 +1178,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	uint8 *loadingBar;
 	_cdtEntry *cdt;
 
-	text_spr = MakeTextSprite( FetchTextLine(res_man.Res_open(2283), 8) + 2, 640, 187, speech_font_id);
+	text_spr = MakeTextSprite(FetchTextLine(res_man.Res_open(2283), 8) + 2, 640, 187, speech_font_id);
 
 	frame = (_frameHeader*) text_spr->ad;
 

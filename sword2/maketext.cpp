@@ -251,7 +251,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 	// spriteHeight = tot height of char lines + tot height of separating
 	// lines
 
-	spriteHeight = charHeight * noOfLines + line_spacing*(noOfLines - 1);
+	spriteHeight = charHeight * noOfLines + line_spacing * (noOfLines - 1);
 
 	// total size (no of pixels)
 	sizeOfSprite = spriteWidth * spriteHeight;
