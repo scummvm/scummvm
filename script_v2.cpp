@@ -1889,6 +1889,15 @@ void Scumm::o6_roomOps()
 		break;
 
 	case 213:										/* set palette */
+		// One case where this is used is to turn off Sam & Max film
+		// noir mode. Unfortunately it only restores color to the
+		// palette, it doesn't take palette manipulation (darkening,
+		// etc.) into account. So, for instance, if you turn on film
+		// noir mode in Sam & Max's office, turn off the light and turn
+		// off film noir mode, the room will no longer look dark.
+		//
+		// This bug is present in the original interpreter, so it may
+		// not be worth the trouble fixing it.
 		setPalette(pop());
 		break;
 
@@ -2838,9 +2847,23 @@ void Scumm::o6_miscOps()
 
 		case 114:
 			// Sam & Max film noir mode
-			if (_gameId == GID_SAMNMAX)
-				desaturatePalette();
-			else
+			if (_gameId == GID_SAMNMAX) {
+				// At this point ScummVM will already have set
+				// variable 0x8000 to indicate that the game is
+				// in film noir mode. All we have to do here is
+				// to mark the palette as "dirty", and the next
+				// call to updatePalette() will take care of
+				// the rest.
+				//
+				// Actually, for extra bug-compatibility we
+				// should call desaturatePalette() here only,
+				// instead of in updatePalette(). To see the
+				// difference in behaviour, try turning on film
+				// noir mode in Sam & Max's office. The
+				// background will be grayscale, but Sam and
+				// Max themselves will be in color.
+				setDirtyColors(0, 255);
+			} else
 				warning("stub o6_miscOps_114()");
 			break;
 
