@@ -160,6 +160,11 @@ Audio
 * Add "sound types" to the mixer; client code will be able to pass such a type
   whenever registering an audio stream. Then, volume control will be changed
   to be based on the sound type.
+* Move the 'softsynth' MIDI drivers (adlib, MT32, ym2612) from backends/midi
+  to sound/ (or a new dir like sound/mididrivers or sound/softsynth).
+  This would solve bug #1083058; it'd also be more logical, since the portable
+  softsynths don't really belong into the backends/ dir, which is meant for
+  platform specific code.
 
 Config Manager
 ==============
@@ -207,6 +212,8 @@ GUI
   The about dialog would be reachable from here, too, as well as a quit button.
   Justification: This ensures that all settings are really reachable from
   all of the engines, which is not the case currently.
+  Problem: It's not fully clear to me how to "best" deal with global vs. local
+  settings here...
 
 Launcher
 ========
