@@ -713,7 +713,7 @@ void Scumm::fadeIn(int effect)
 	_screenEffectFlag = true;
 }
 
-void Scumm::fadeOut(int a)
+void Scumm::fadeOut(int effect)
 {
 	VirtScreen *vs;
 
@@ -725,7 +725,7 @@ void Scumm::fadeOut(int a)
 		return;
 	_screenEffectFlag = false;
 
-	if (a == 0)
+	if (effect == 0)
 		return;
 
 	// Fill screen 0 with black
@@ -734,12 +734,12 @@ void Scumm::fadeOut(int a)
 	memset(gdi._backbuff_ptr, 0, vs->size);
 
 	// Fade to black with the specified effect, if any.
-	switch (a) {
+	switch (effect) {
 	case 1:
 	case 2:
 	case 3:
 	case 4:
-		transitionEffect(a - 1);
+		transitionEffect(effect - 1);
 		break;
 	case 128:
 		unkScreenEffect6();
@@ -756,7 +756,7 @@ void Scumm::fadeOut(int a)
 		unkScreenEffect5(1);
 		break;
 	default:
-		warning("fadeOut: default case %d", a);
+		warning("fadeOut: default case %d", effect);
 	}
 }
 
