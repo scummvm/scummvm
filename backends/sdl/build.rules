@@ -3,9 +3,10 @@ MODULES  += backends/sdl
 DEFINES  += -DUNIX
 INCLUDES += `sdl-config --cflags`
 LIBS     += `sdl-config --libs`
+OBJS	 += backends/sdl/sdl-common.o 
 
 # The normal (non OpenGL-accelerated) SDL backend
-OBJS	 += backends/sdl/sdl.o
+OBJS	 += backends/sdl/sdl.o 
 
 # Uncomment these lines (instead of the above) to use SDL with OpenGL
 # OBJS	   += backends/sdl/sdl_gl.o
