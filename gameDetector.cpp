@@ -267,7 +267,7 @@ static const VersionSettings version_settings[] = {
 
 	/* Scumm version 5 */
 	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  5, 0, 16,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT | GF_NO_SCALLING},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 5, 1, 42,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2,
@@ -287,7 +287,7 @@ static const VersionSettings version_settings[] = {
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY},
 

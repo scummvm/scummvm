@@ -118,7 +118,7 @@ void Scumm::playSound(int sound)
 		return;
 	}
 
-	if (_features & GF_OLD256)
+	if ((_features & GF_OLD256) || (_gameId == GID_MONKEY_VGA))
 		return;											/* FIXME */
 
 	if (se) {
