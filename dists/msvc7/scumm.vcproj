@@ -131,6 +131,12 @@
 				RelativePath="..\..\scumm\smush\imuse_channel.cpp">
 			</File>
 			<File
+				RelativePath="..\..\scumm\smush\insane.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\smush\insane.h">
+			</File>
+			<File
 				RelativePath="..\..\scumm\smush\saud_channel.cpp">
 			</File>
 			<File
@@ -244,12 +250,6 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\imuse_player.cpp">
-		</File>
-		<File
-			RelativePath="..\..\scumm\smush\insane.cpp">
-		</File>
-		<File
-			RelativePath="..\..\scumm\smush\insane.h">
 		</File>
 		<File
 			RelativePath="..\..\scumm\instrument.cpp">
