@@ -26,25 +26,7 @@
 #include "palm.h"
 
 const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
-/*
-//Sony clie PalmOS<5
-void BmpDrawDDBitmap(const FormType *formP, DmResID bitmapID)
-{
-	MemHandle hTemp;
-	BitmapType* bmTemp;
-	Coord x,y;
 
-	hTemp	= DmGetResource(bitmapRsc,bitmapID);
-	bmTemp	= (BitmapType*)MemHandleLock(hTemp);
-
-	FrmGetObjectPosition(formP, FrmGetObjectIndex(formP,bitmapID), &x, &y);
-	HRWinDrawBitmap(gHRrefNum,bmTemp, x*2, y*2);
-
-	MemHandleUnlock(hTemp);
-	DmReleaseResource(hTemp);
-	// palmos 5 : need to set the object to usable
-}
-*/
 UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Char *fndParamStr)
 {
 	Char *found;
