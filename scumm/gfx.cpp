@@ -285,13 +285,11 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 	VirtScreen *vs = &virtscr[virt];
 	int lp, rp;
 
-	if (top > vs->height || left > vs->width || right < 0 || bottom < 0)
+	if (top > vs->height || right < 0 || bottom < 0)
 		return;
 
 	if (top < 0)
 		top = 0;
-	if (left < 0)
-		left = 0;
 	if (bottom > vs->height)
 		bottom = vs->height;
 
