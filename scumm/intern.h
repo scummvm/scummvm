@@ -543,6 +543,16 @@ protected:
 		OpcodeProcV6he proc;
 		const char *desc;
 	};
+	struct vsUnpackCtx {
+		uint8 size;
+		uint8 type;
+		uint8 b;
+		uint8 *ptr;
+	};
+	struct vsPackCtx {
+		int size;
+		uint8 buf[256];
+	};
 	
 	const OpcodeEntryV6he *_opcodesV6he;
 
@@ -556,12 +566,17 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	virtual void decodeParseString(int a, int b);
-
 	void redimArray(int arrayId, int newX, int newY, int d);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
+	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
+	int virtScreenSavePack(byte *dst, byte *src, int len, int unk);
+	void virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *&dst, int len);
+	void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b);
+	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
+	uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data);
 	void seekFilePos(int slot, int offset, int mode);
+	virtual void decodeParseString(int a, int b);
 
 	/* Version 6 script opcodes */
 	void o6_drawBlastObject();
@@ -576,7 +591,6 @@ protected:
 	void o6_dummy();
 	void o6_kernelSetFunctions();
 	void o6_kernelGetFunctions();
-	void o6_stampObject();
 	void o6_openFile();
 	void o6_closeFile();
 	void o6_deleteFile();

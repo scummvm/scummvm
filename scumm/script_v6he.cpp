@@ -876,51 +876,212 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 
-		switch (args[0]) {
-		case 1:
-			// Used to restore images when decorating cake in
-			// Fatty Bear's Birthday Surprise
-			warning("o6_kernelSetFunctions: stub1()");
-			break;
-		default:
+	switch (args[0]) {
+	case 1:
+		// Used to restore images when decorating cake in
+		// Fatty Bear's Birthday Surprise
+		virtScreenLoad(args[1], args[2], args[3], args[4], args[5]);
+		break;
+	case 3:
+	case 4:
+	case 5:
+		//Used before mini games in 3DO versions, seems safe to ignore.
+		break;
+	default:
 			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 			break;
 		}
 }
 
+void ScummEngine_v6he::virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2) {
+	debug(1, "ScummEngine_v6he::virtScreenLoad(%d, %d, %d, %d, %d)", resIdx, x1, y1, x2, y2);
+	vsUnpackCtx ctx;
+	memset(&ctx, 0, sizeof(ctx));
+	int vs = 0; // XXX gdi_virtScreen = 0;
+
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resIdx);
+	virtScreenLoadUnpack(&ctx, ah->data);
+	for (int j = y1; j <= y2; ++j) {
+		uint32 yoff = (j - virtscr[kMainVirtScreen].topline) * 320;		
+		uint8 *p1 = getResourceAddress(rtBuffer, vs + 1);
+		p1 += yoff + virtscr[kMainVirtScreen].xstart + x1;
+		uint8 *p2 = getResourceAddress(rtBuffer, vs + 5);
+		p2 += yoff + virtscr[kMainVirtScreen].xstart + x1;
+		if (x2 >= x1) {
+			uint32 w = x2 - x1 + 1;
+			while (w--) {
+				uint8 decByte = virtScreenLoadUnpack(&ctx, 0);
+				*p1++ = decByte;
+				*p2++ = decByte;
+			}
+		}
+	}
+	markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1); // XXX , 0x4000);
+}
+
+uint8 ScummEngine_v6he::virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
+	uint8 decByte;
+	if (data != 0) {
+		ctx->type = 0;
+		ctx->ptr = data;
+		decByte = 0;
+	} else {
+		uint8 a;
+		if (ctx->type == 0) {
+			a = *(ctx->ptr)++;
+			if (a & 1) {
+				ctx->type = 1;
+				ctx->b = *(ctx->ptr)++;
+			} else {
+				ctx->type = 2;
+			}
+			ctx->size = a;
+			a = (a >> 1) + 1;
+		} else {
+ 			a = ctx->size;
+		}
+  		if (ctx->type == 2) {
+  			ctx->b = *(ctx->ptr)++;
+  		}
+  		ctx->size = a - 1;
+  		if (ctx->size == 0) {
+  			ctx->type = 0;
+  		}
+  		decByte = ctx->b;
+	}
+	return decByte;
+}
+
 void ScummEngine_v6he::o6_kernelGetFunctions() {
 	int args[29];
+	int retval;
+	ArrayHeader *ah;
 	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 1:
 		// Used to store images when decorating cake in
 		// Fatty Bear's Birthday Surprise
-		warning("o6_kernelGetFunctions: stub1()");
-		push(0);
+		// XXX gdi_virtScreen = 0;
+		writeVar(0, 0);
+		defineArray(0, rtCostume, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
+		retval = readVar(0);
+		ah = (ArrayHeader *)getResourceAddress(rtString, retval);
+		virtScreenSave(ah->data, args[1], args[2], args[3], args[4]);
+		push(retval);
 		break;
 	default:
 		error("o6_kernelGetFunctions: default case %d", args[0]);
 	}
 }
 
-void ScummEngine_v6he::o6_stampObject() {
-	int object, x, y, state;
-	
-	state = pop();
-	if (state == 0) {
-		state = 1;
+int ScummEngine_v6he::virtScreenSave(byte *dst, int x1, int y1, int x2, int y2) {
+	debug(1, "ScummEngine_v6he::virtScreenSave(%d, %d, %d, %d)", x1, y1, x2, y2);
+	int packedSize = 0;
+	int vs = 0; // XXX = gdi_virtScreen;
+
+	for (int j = y1; j <= y2; ++j) {
+		// FIXME - to match the disassembly, we should save buffer (vs + 5),
+		// but if we do that, then the cake decoration in Fatty Bear's Birthday 
+		// Surprise is not saved at all
+		uint8 *p = getResourceAddress(rtBuffer, vs + 1);
+		p += virtscr[kMainVirtScreen].xstart;
+		p += (j - virtscr[kMainVirtScreen].topline) * 320 + x1;
+		
+		int size = virtScreenSavePack(dst, p, x2 - x1 + 1, 0);
+		if (dst != 0) {
+			dst += size;
+		}
+		packedSize += size;
 	}
-	y = pop();
-	x = pop();
-	object = pop();
-	int objnum = getObjectIndex(object);
-	if (objnum == -1)
-		return;
-	_objs[objnum].x_pos = x * 8;
-	_objs[objnum].y_pos = y * 8;
-	putState(object, state);
-	drawObject(objnum, 0);
+	return packedSize;
+}
+
+int ScummEngine_v6he::virtScreenSavePack(byte *dst, byte *src, int len, int unk) {
+	vsPackCtx ctx;
+	memset(&ctx, 0, sizeof(ctx));
+
+	uint8 prevByte, curByte;
+
+	ctx.buf[0] = prevByte = *src++;
+	int flag = 0;
+	int iend = 1;
+	int ibeg = 0;
+	
+	for (--len; len != 0; --len, prevByte = curByte) {
+		bool pass = false;
+		
+		assert(iend < 0x100);
+		ctx.buf[iend] = curByte = *src++;
+		++iend;
+
+		if (flag == 0) {
+			if (iend > 0x80) {
+				virtScreenSavePackBuf(&ctx, dst, iend - 1);
+				ctx.buf[0] = curByte;
+				iend = 1;
+				ibeg = 0;
+				continue;
+			}
+			if (prevByte != curByte) {
+				ibeg = iend - 1;
+				continue;
+			}
+			if (iend - ibeg < 3) {
+				if (ibeg != 0) {
+					pass = true;
+				} else {
+					flag = 1;
+				}
+			} else {
+				if (ibeg > 0) {
+					virtScreenSavePackBuf(&ctx, dst, ibeg);
+				}
+				flag = 1;
+			}
+		}
+		if (flag == 1 || pass) {
+			if (prevByte != curByte || iend - ibeg > 0x80) {
+				virtScreenSavePackByte(&ctx, dst, iend - ibeg - 1, prevByte);
+				ctx.buf[0] = curByte;
+				iend = 1;
+				ibeg = 0;
+				flag = 0;
+			}
+		}
+	}
+
+	if (flag == 0) {
+		virtScreenSavePackBuf(&ctx, dst, iend);
+	} else if (flag == 1) {
+		virtScreenSavePackByte(&ctx, dst, iend - ibeg, prevByte);
+	}
+	return ctx.size;
+}
+
+void ScummEngine_v6he::virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *&dst, int len) {
+	if (dst) {
+		*dst++ = (len - 1) * 2;
+	}
+	++ctx->size;
+	if (len > 0) {
+		ctx->size += len;
+		if (dst) {
+			memcpy(dst, ctx->buf, len);
+			dst += len;
+		}
+	}
+}
+
+void ScummEngine_v6he::virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b) {
+	if (dst) {
+		*dst++ = ((len - 1) * 2) | 1;
+	}
+	++ctx->size;
+	if (dst) {
+		*dst++ = b;
+	}
+	++ctx->size;	
 }
 
 void ScummEngine_v6he::o6_openFile() {
@@ -1023,9 +1184,11 @@ void ScummEngine_v6he::o6_rename() {
 int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 	if (size == 0)
 		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
+
 	writeVar(0, 0);
 
-	ArrayHeader *ah = defineArray(0, rtCostume, 0, size);
+	// define size as size-1 because in defineArray it gets incremented
+	ArrayHeader *ah = defineArray(0, rtCostume, 0, size-1);
 	_hFileTable[slot].read(ah->data, size);
 
 	return readVar(0);
@@ -1055,11 +1218,10 @@ void ScummEngine_v6he::o6_readFile() {
 }
 
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
-	byte *ptr = getResourceAddress(rtString, resID);
-	// FIXME: hack for proper size: / 2 - 5
-	// does it really needed? Needs checking
-	int32 size = getResourceSize(rtString, resID) / 2 - 5;
-	_hFileTable[slot].write(ptr, size);
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resID);
+	int32 size = FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2);
+
+	_hFileTable[slot].write(ah->data, size);
 }
 
 void ScummEngine_v6he::o6_writeFile() {
