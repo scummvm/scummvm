@@ -186,7 +186,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_jump),
 		OPCODE(o6_breakHere),
 		/* 68 */
-		OPCODE(o8_breakHereVar),
+		OPCODE(o6_delayFrames),
 		OPCODE(o8_wait),
 		OPCODE(o6_delay),			// FIXME - is the delay period right?
 		OPCODE(o6_delayLonger),		// FIXME - is the delay period right?
@@ -579,13 +579,6 @@ void Scumm_v8::o8_mod()
 {
 	int a = pop();
 	push(pop() % a);
-}
-
-void Scumm_v8::o8_breakHereVar()
-{
-	int var = pop();
-	warning("o8_breakHereVar(%d) NYI", var);
-	o6_breakHere();
 }
 
 void Scumm_v8::o8_wait()

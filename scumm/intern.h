@@ -412,7 +412,6 @@ protected:
 
 	/* Version 8 script opcodes */
 	void o8_mod();
-	void o8_breakHereVar();
 	void o8_wait();
 
 	void o8_dim();
