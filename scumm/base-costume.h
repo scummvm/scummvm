@@ -24,6 +24,7 @@
 #define BASE_COSTUME_H
 
 #include "scummsys.h"
+#include "actor.h"		// for CostumeData
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS
@@ -39,6 +40,7 @@ struct CostumeInfo {
 #pragma END_PACK_STRUCTS
 #endif
 
+class Actor;
 class Scumm;
 
 /*
@@ -117,23 +119,13 @@ public:
 	virtual void setFacing(Actor *a) = 0;
 	virtual void setCostume(int costume) = 0;
 
-	byte drawCostume(const CostumeData &cost) {
-		int i;
-		byte result = 0;
-	
-		if (_vm->_features & GF_OLD_BUNDLE) {
-			_xmove = -72;
-			_ymove = -100;
-		} else {
-			_xmove = _ymove = 0;
-		}
-		for (i = 0; i < 16; i++)
-			result |= drawLimb(cost, i);
-		return result;
-	}
+	byte drawCostume(const CostumeData &cost);
 
 protected:
+
 	virtual byte drawLimb(const CostumeData &cost, int limb) = 0;
+
+	void codec1_ignorePakCols(int num);
 
 };
 

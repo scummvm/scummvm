@@ -875,28 +875,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 }
 
 
-void AkosRenderer::codec1_ignorePakCols(int num) {
-	int n;
-
-	n = _height;
-	if (num > 1)
-		n *= num;
-
-	do {
-		v1.repcolor = *_srcptr++;
-		v1.replen = v1.repcolor & v1.mask;
-		if (v1.replen == 0) {
-			v1.replen = *_srcptr++;
-		}
-		do {
-			if (!--n) {
-				v1.repcolor >>= v1.shr;
-				return;
-			}
-		} while (--v1.replen);
-	} while (1);
-}
-
 byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh, tmp_x, tmp_y;
 

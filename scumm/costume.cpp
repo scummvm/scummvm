@@ -28,28 +28,6 @@
 
 const byte revBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
-void CostumeRenderer::ignorePakCols(int num) {
-	int n;
-
-	n = _height;
-	if (num > 1)
-		n *= num;
-
-	do {
-		v1.repcolor = *_srcptr++;
-		v1.replen = v1.repcolor & v1.mask;
-		if (v1.replen == 0) {
-			v1.replen = *_srcptr++;
-		}
-		do {
-			if (!--n) {
-				v1.repcolor >>= v1.shr;
-				return;
-			}
-		} while (--v1.replen);
-	} while (1);
-}
-
 const byte cost_scaleTable[256] = {
 	255, 253, 125, 189, 61, 221, 93, 157, 29, 237,
 	109, 173, 45, 205, 77, 141, 13, 245, 117, 181,
@@ -77,8 +55,8 @@ const byte cost_scaleTable[256] = {
 	238, 30, 158, 94, 222, 62, 190, 126, 254
 };
 
-byte CostumeRenderer::mainRoutine() {
-	int xmoveCur, ymoveCur, i, skip;
+byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
+	int i, skip;
 	byte drawFlag = 1;
 	uint scal;
 	bool use_scaling;
@@ -87,7 +65,6 @@ byte CostumeRenderer::mainRoutine() {
 	int y_top, y_bottom;
 	int x_left, x_right;
 	int step;
-	const CostumeInfo *costumeInfo;
 	
 	CHECK_HEAP
 	v1.mask = 0xF;
@@ -96,19 +73,6 @@ byte CostumeRenderer::mainRoutine() {
 		v1.mask = 7;
 		v1.shr = 3;
 	}
-
-	// FIXME: those are here just in case... you never now...
-	assert(_srcptr[1] == 0);
-	assert(_srcptr[3] == 0);
-
-	costumeInfo = (const CostumeInfo *)_srcptr;
-	_width = _width2 = READ_LE_UINT16(&costumeInfo->width);
-	_height = READ_LE_UINT16(&costumeInfo->height);
-	xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
-	ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
-	_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
-	_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
-	_srcptr += 12;
 
 	switch (_loaded._ptr[7] & 0x7F) {
 	case 0x60:
@@ -229,7 +193,7 @@ byte CostumeRenderer::mainRoutine() {
 			skip = -v1.x;
 		if (skip > 0) {
 			_width2 -= skip;
-			ignorePakCols(skip);
+			codec1_ignorePakCols(skip);
 			v1.x = 0;
 			_docontinue = 1;
 		} else {
@@ -245,7 +209,7 @@ byte CostumeRenderer::mainRoutine() {
 			skip = x_right - _vm->_screenWidth;
 		if (skip > 0) {
 			_width2 -= skip;
-			ignorePakCols(skip);
+			codec1_ignorePakCols(skip);
 			v1.x = _vm->_screenWidth - 1;
 			_docontinue = 1;
 		} else {
@@ -505,8 +469,25 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	// Code 0x7B indicates a limb for which there is nothing to draw
 	if (code != 0x7B) {
 		_srcptr = _loaded._baseptr + READ_LE_UINT16(frameptr + code * 2);
-		if (!(_vm->_features & GF_OLD256) || code < 0x79)
-			return mainRoutine();
+		if (!(_vm->_features & GF_OLD256) || code < 0x79) {
+			const CostumeInfo *costumeInfo;
+			int xmoveCur, ymoveCur;
+
+			// FIXME: those are here just in case... you never now...
+			assert(_srcptr[1] == 0);
+			assert(_srcptr[3] == 0);
+		
+			costumeInfo = (const CostumeInfo *)_srcptr;
+			_width = _width2 = READ_LE_UINT16(&costumeInfo->width);
+			_height = READ_LE_UINT16(&costumeInfo->height);
+			xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
+			ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
+			_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
+			_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
+			_srcptr += 12;
+		
+			return mainRoutine(xmoveCur, ymoveCur);
+		}
 	}
 
 	return 0;

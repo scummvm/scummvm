@@ -67,8 +67,7 @@ protected:
 
 	void proc3();
 	void proc3_ami();
-	byte mainRoutine();
-	void ignorePakCols(int num);
+	byte mainRoutine(int xmoveCur, int ymoveCur);
 };
 
 #endif

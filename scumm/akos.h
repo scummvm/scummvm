@@ -79,7 +79,6 @@ protected:
 	void codec1_spec2();
 	void codec1_spec3();
 	void codec1_genericDecode();
-	void codec1_ignorePakCols(int num);
 
 	byte codec5(int _xmoveCur, int _ymoveCur);
 
