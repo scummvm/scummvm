@@ -1596,98 +1596,106 @@ void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int
 }
 
 void Gdi::decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect) {
-  	uint8 *dstCur2, *dstCur1;
-  	const uint8 *srcCur;
+	const uint8 *dataPtr, *dataPtrNext;
+	uint8 *dst1Ptr, *dst2Ptr, *dst1PtrNext, *dst2PtrNext;
+	int h, w, xoff;
+	uint16 off;
   	uint8 code;
   
-  	int w = srcRect->right - srcRect->left + 1;
-  	int h = srcRect->bottom - srcRect->top + 1;
-  	int off = dstRect->top * dstPitch + dstRect->left;
-
-  	dst1 += off;
-  	dst2 += off;
-
-  	int n = srcRect->top;
-  	while (n--) {
-		src += READ_LE_UINT16(src) + 2;
-  	}
+	dst1Ptr = dst1 + dstRect->left + dstRect->top * dstPitch;
+	dst2Ptr = dst2 + dstRect->left + dstRect->top * dstPitch;
+	dataPtr = src;
+	
+	// Skip over the first 'srcRect->top' lines in the data
+	h = srcRect->top;
+	while (h--) {
+		dataPtr += READ_LE_UINT16(dataPtr) + 2;
+	}
+	h = srcRect->bottom - srcRect->top + 1;
+	if (h <= 0)
+		return;
+	w = srcRect->right - srcRect->left + 1;
+	if (w <= 0)
+		return;
 
   	while (h--) {
-  		uint16 var_8 = READ_LE_UINT16(src);
-		src += 2;
-  		if (var_8) {
-  			int rw = w;
-  			int xoff = srcRect->left;
-  			srcCur = src;
-  			dstCur1 = dst1;
-  			dstCur2 = dst2;
+		xoff = srcRect->left;
+ 		off = READ_LE_UINT16(dataPtr);
+		w = srcRect->right - srcRect->left + 1;
+		dst1PtrNext = dstPitch + dst1Ptr;
+		dst2PtrNext = dstPitch + dst2Ptr;
+		dataPtrNext = off + 2 + dataPtr;
+		dataPtr += 2;
+		if (off == 0)
+			goto dec_next;
 
-			// Skip over the leftmost 'srcRect->left' pixels.
-			// TODO: This code could be merged (at a loss of efficency) with the
-			// loop below which does the actual drawing.
-  			while (xoff > 0) {
-				code = *srcCur++;
-				if (code & 1) {
-					code >>= 1;
-					if (code > xoff) {
-						code -= xoff;
-						goto dec_sub1;
-					}
-					xoff -= code;
-				} else if (code & 2) {
-					code = (code >> 2) + 1;
-					if (code > xoff) {
-						code -= xoff;
-						goto dec_sub2;
-					}
-					xoff -= code;
-					++srcCur;
-				} else {
-					code = (code >> 2) + 1;
-					if (code > xoff) {
-						code -= xoff;
-						srcCur += xoff;
-						goto dec_sub3;
-					}
-					xoff -= code;
-					srcCur += code;
+		// Skip over the leftmost 'srcRect->left' pixels.
+		// TODO: This code could be merged (at a loss of efficency) with the
+		// loop below which does the actual drawing.
+		while (xoff > 0) {
+			code = *dataPtr++;
+			if (code & 1) {
+				code >>= 1;
+				if (code > xoff) {
+					code -= xoff;
+					goto dec_sub1;
 				}
-  			}
-			while (rw > 0) {
-				code = *srcCur++;
-				if (code & 1) {
-					code >>= 1;
-dec_sub1:			dstCur1 += code;
-					dstCur2 += code;
-					rw -= code;					
-				} else if (code & 2) {
-					code = (code >> 2) + 1;
-dec_sub2:			rw -= code;
-					if (rw >= 0) {
-						memset(dstCur1, *srcCur++, code);
-						dstCur1 += code;
-						dstCur2 += code;
-					} else {
-						code += rw;
-						memset(dstCur1, *srcCur, code);
-					}
-				} else {
-					code = (code >> 2) + 1;
-dec_sub3:			rw -= code;
-					if (rw >= 0) {
-						memcpy(dstCur1, dstCur2, code);
-						dstCur1 += code;
-						dstCur2 += code;
-					} else {
-						code += rw;
-						memcpy(dstCur1, dstCur2, code);
-					}								
+				xoff -= code;
+			} else if (code & 2) {
+				code = (code >> 2) + 1;
+				if (code > xoff) {
+					code -= xoff;
+					goto dec_sub2;
 				}
+				xoff -= code;
+				++dataPtr;
+			} else {
+				code = (code >> 2) + 1;
+				if (code > xoff) {
+					code -= xoff;
+					dataPtr += xoff;
+					goto dec_sub3;
+				}
+				xoff -= code;
+				dataPtr += code;
 			}
-			src += var_8;
 		}
-		dst1 += dstPitch;
-		dst2 += dstPitch;
+		while (w > 0) {
+			code = *dataPtr++;
+			if (code & 1) {
+				code >>= 1;
+dec_sub1:		dst1Ptr += code;
+				dst2Ptr += code;
+				w -= code;					
+			} else if (code & 2) {
+				code = (code >> 2) + 1;
+dec_sub2:			w -= code;
+				if (w >= 0) {
+					memset(dst1Ptr, *dataPtr++, code);
+					dst1Ptr += code;
+					dst2Ptr += code;
+				} else {
+					code += w;
+					memset(dst1Ptr, *dataPtr, code);
+				}
+			} else {
+				code = (code >> 2) + 1;
+dec_sub3:		w -= code;
+				if (w >= 0) {
+					memcpy(dst1Ptr, dst2Ptr, code);
+					dst1Ptr += code;
+					dst2Ptr += code;
+				} else {
+					code += w;
+					memcpy(dst1Ptr, dst2Ptr, code);
+				}								
+			}
+		}
+		
+dec_next:
+		dataPtr = dataPtrNext;
+		dst1Ptr = dst1PtrNext;
+		dst2Ptr = dst2PtrNext;
 	}
 }
 
