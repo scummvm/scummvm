@@ -916,7 +916,7 @@ void Scumm_v6::o6_getOwner() {
 
 void Scumm_v6::o6_startSound() {
 	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
-		pop();
+		pop(); // offset which seems to always be zero
 	_sound->addSoundToQueue(pop());
 }
 
@@ -2980,15 +2980,14 @@ void Scumm_v6::o6_unknownE1() {
 
 void Scumm_v6::o6_unknownE0() {
 	int a = fetchScriptByte();
-	warning("o6_unknownEO(%d) stub", a);
 	a -= 222;
 	if (a != 0) {
 		a -= 2;
 		if (a != 0) 
 			return;
-		pop();
+		warning("o6_unknownE0(%d) stub", pop());
 	} else {
-		pop();
+		warning("o6_uknownE0, sound volume %d stub", pop());
 	}
 }
 
