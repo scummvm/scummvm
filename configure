@@ -593,7 +593,7 @@ else
 fi
 echo "$_mad"
 
-echocheck "ALSA 0.9"
+echocheck "ALSA >= 0.9"
 if test "$_alsa" = auto ; then
   _alsa=no
   cat > $TMPC << EOF
