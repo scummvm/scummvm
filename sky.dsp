@@ -475,6 +475,10 @@ SOURCE=.\sky\grid.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\grid.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\intro.cpp
 # End Source File
 # Begin Source File
