@@ -260,6 +260,8 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_ACCEL_X = 109;
 	VAR_CAMERA_ACCEL_Y = 110;
 
+	VAR_CUSTOMSCALETABLE = 111;	// FIXME - guess
+
 	VAR_TIMER_NEXT = 112;	// FIXME - guess based on script-1
 
 	VAR_EGO = 126;
