@@ -21,11 +21,11 @@
  */
 
 #include "stdafx.h"
-#include "palm.h"
+#include "common/config-manager.h"
 
+#include "palm.h"
 #include "pa1lib.h"
 
-//#define	SND_BLOCK	(4096)
 #define	SND_BLOCK	(3072)
 
 #define ADPCM_8_KHZ						1
@@ -34,7 +34,7 @@
 
 
 int OSystem_PALMOS::getOutputSampleRate() const {
-	return 8000;
+	return _samplesPerSec;
 }
 
 static void ClieSoundCallback(UInt32 UserData) {
@@ -52,37 +52,32 @@ bool OSystem_PALMOS::setSoundCallback(SoundProc proc, void *param) {
 		_sound.dataP = NULL;	// required by sound_handler
 		_sound.handle = NULL;
 		
+		if (ConfMan.hasKey("output_rate"))
+			_samplesPerSec = ConfMan.getInt("output_rate");
+		else
+			_samplesPerSec = 8000;	// default value
+		
 		// try to create sound stream
 		if (OPTIONS_TST(kOptPalmSoundAPI)) {
 			void *sndFuncP;
-			Boolean isArm;
 		
 			_sound.handle = MemPtrNew(sizeof(SndStreamRef));
-
-/*			if (OPTIONS_TST(kOptDeviceARM)) {
-				_arm[PNO_SNDSTREAM].pnoPtr = _PnoInit(ARM_STREAMSND, &_arm[PNO_SNDSTREAM].pnoDesc);
-				sndFuncP = (void *)_PnoCall(&_arm[PNO_SNDSTREAM].pnoDesc, NULL);
-				isArm = true;
-			
-			} else*/ {
-				sndFuncP = sndCallback;			
-				isArm = false;
-			}
+			sndFuncP = sndCallback;			
 
 			Err e = SndStreamCreateExtended(
 						(SndStreamRef *)_sound.handle,
 						sndOutput,
 						sndFormatPCM,
-						8000,
+						_samplesPerSec,
 						sndInt16Little,
 						sndStereo,
 						(SndStreamVariableBufferCallback)sndFuncP,
 						&_sound,
 						8192,
-						isArm);
+						false);
 
 			e = e ? e : SndStreamStart(*((SndStreamRef *)_sound.handle));
-			e = e ? e :	SndStreamSetVolume(*((SndStreamRef *)_sound.handle), 32767);
+			e = e ? e :	SndStreamSetVolume(*((SndStreamRef *)_sound.handle), 32767 / 2);
 
 			_sound.size = 0;		// set by the callback
 			_sound.set = false;
@@ -124,9 +119,6 @@ void OSystem_PALMOS::clearSoundCallback() {
 		if (OPTIONS_TST(kOptPalmSoundAPI)) {
 			SndStreamStop(*((SndStreamRef *)_sound.handle));
 			SndStreamDelete(*((SndStreamRef *)_sound.handle));
-
-			if (_arm[PNO_SNDSTREAM].pnoPtr)
-				 _PnoFree(&_arm[PNO_SNDSTREAM].pnoDesc, _arm[PNO_SNDSTREAM].pnoPtr);
 		}
 
 		free(_sound.dataP);
