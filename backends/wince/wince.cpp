@@ -473,6 +473,10 @@ bool closing = false;
 bool smartphone = false;
 bool high_res = false;
 
+bool isSmartphone() {
+	return smartphone;
+}
+
 void close_GAPI() {
 	g_config->setBool("Sound", sound_activated, "wince");
 	g_config->setInt("DisplayMode", GetScreenMode(), "wince");
@@ -790,8 +794,11 @@ void runGame(char *game_name) {
 	int argc = 4;
 	char* argv[4];
 	char argdir[MAX_PATH];
-	char music[100];
+	char music[50];
 	bool no_music;
+
+	if (!game_name)
+		return;
 
 	select_game = false;
 
@@ -808,10 +815,7 @@ void runGame(char *game_name) {
 
 	argv[2] = music;
 	argv[3] = game_name;
-
-	if (!argv[3])
-		return;
-
+	
 	// No default toolbar for zak256
 	/*
 	if (strcmp(game_name, "zak256") == 0)
@@ -883,14 +887,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	
 	if (!select_game)
 		wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);
-	
-	if (!select_game && monkey_keyboard && (
-			g_scumm->VAR(g_scumm->VAR_ROOM) != 108 &&		// monkey 2
-			g_scumm->VAR(g_scumm->VAR_ROOM) != 90)) {		// monkey 1 floppy
-		monkey_keyboard = false;
-		draw_keyboard = false;
-		toolbar_drawn = false;
-	}
 
 	if (smartphone) {
 		if (SmartphoneWndProc(hWnd, message, wParam, lParam, wm))
@@ -1444,6 +1440,14 @@ void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 
 	if (!hide_cursor && _mouse_drawn)
 		undraw_mouse();
+
+	if (!select_game && monkey_keyboard && (
+			g_scumm->VAR(g_scumm->VAR_ROOM) != 108 &&		// monkey 2
+			g_scumm->VAR(g_scumm->VAR_ROOM) != 90)) {		// monkey 1 floppy
+		monkey_keyboard = false;
+		draw_keyboard = false;
+		toolbar_drawn = false;
+	}
 
 	/* Clip */
 	if (x < 0) {

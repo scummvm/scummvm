@@ -35,6 +35,10 @@
 	#define Debug_Printf printf
 #endif
 
+#ifdef _WIN32_WCE
+extern void force_keyboard(bool);
+#endif
+
 extern uint16 _debugLevel;
 
 ScummDebugger::ScummDebugger() {
@@ -48,6 +52,11 @@ ScummDebugger::ScummDebugger() {
 
 // Initialisation Functions
 void ScummDebugger::attach(Scumm *s, char *entry) {
+
+#ifdef _WIN32_WCE
+	force_keyboard(true);
+#endif
+
 	if (_s)
 		detach();
 
@@ -112,6 +121,10 @@ void ScummDebugger::detach() {
 		_s->_debuggerDialog->setInputeCallback(0, 0);
 		_s->_debuggerDialog->setCompletionCallback(0, 0);
 	}
+#endif
+
+#ifdef _WIN32_WCE
+	force_keyboard(false);
 #endif
 
 	_s->_debugger = NULL;

@@ -52,12 +52,12 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef _WIN32_WCE
-extern void drawError(char*);
-#endif
-
 #ifdef _MSC_VER
 #	pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
+#endif
+
+#ifdef _WIN32_WCE
+extern bool isSmartphone(void);
 #endif
 
 // Use g_scumm from error() ONLY
@@ -1128,10 +1128,8 @@ void Scumm::waitForTimer(int msec_delay) {
 }
 
 int Scumm::scummLoop(int delta) {
-#ifndef _WIN32_WCE
 	if (_debugger)
 		_debugger->on_frame();
-#endif
 
 	// Randomize the PRNG by calling it at regular intervals. This ensures
 	// that it will be in a different state each time you run the program.
@@ -2372,6 +2370,11 @@ void Scumm::errorString(const char *buf1, char *buf2) {
 	} else {
 		strcpy(buf2, buf1);
 	}
+
+#ifdef _WIN32_WCE
+	if (isSmartphone())
+		return;
+#endif
 
 	// Unless an error -originated- within the debugger, spawn the debugger. Otherwise
 	// exit out normally.
