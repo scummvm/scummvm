@@ -667,9 +667,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 #ifdef SH3
 		_thread_priority = THREAD_PRIORITY_NORMAL;
 #else
-		//_thread_priority = THREAD_PRIORITY_ABOVE_NORMAL;
-		_thread_priority = THREAD_PRIORITY_NORMAL;
-
+		_thread_priority = THREAD_PRIORITY_ABOVE_NORMAL;
 #endif
 		g_config->setInt("SoundThreadPriority", _thread_priority, "wince");
 		g_config->flush();
