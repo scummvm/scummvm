@@ -24,8 +24,12 @@
 #include "common/scummsys.h"
 
 template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
+#if !defined(MIN)
 template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }
+#endif
+#if !defined(MAX)
 template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
+#endif
 
 /**
  * Template method which swaps the vaulues of its two parameters.

@@ -427,7 +427,10 @@ void GlobalOptionsDialog::open() {
 		_savePath->setLabel(dir);
 	} else {
 		// Default to the current directory...
-		char buf[256];
+#if !(defined(MAXPATHLEN))
+#define MAXPATHLEN 1024
+#endif
+		char buf[MAXPATHLEN];
 		getcwd(buf, sizeof(buf));
 		_savePath->setLabel(buf);
 	}

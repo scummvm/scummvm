@@ -97,6 +97,7 @@
 #undef CMD_INVALID
 #endif
 #if !defined(macintosh)
+#include <sys/param.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #endif
