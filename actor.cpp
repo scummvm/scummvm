@@ -28,17 +28,28 @@
 Actor::Actor(const char *name) :
   name_(name), talkColor_(255, 255, 255), pos_(0, 0, 0),
   pitch_(0), yaw_(0), roll_(0), walkRate_(0), turnRate_(0),
-  visible_(true), talkSound_(NULL)
+  visible_(true), talkSound_(NULL), turning_(false)
 {
   Engine::instance()->registerActor(this);
 }
 
+void Actor::turnTo(float pitch, float yaw, float roll) {
+  pitch_ = pitch;
+  roll_ = roll;
+  if (yaw_ != yaw) {
+    turning_ = true;
+    destYaw_ = yaw;
+  }
+  else
+    turning_ = false;
+}
+
 void Actor::walkForward() {
   float dist = Engine::instance()->perSecond(walkRate_);
-  float yaw_deg = yaw_ * (M_PI / 180), pitch_deg = pitch_ * (M_PI / 180);
-  Vector3d forwardVec(-std::sin(yaw_deg) * std::cos(pitch_deg),
-		      std::cos(yaw_deg) * std::cos(pitch_deg),
-		      std::sin(pitch_deg));
+  float yaw_rad = yaw_ * (M_PI / 180), pitch_rad = pitch_ * (M_PI / 180);
+  Vector3d forwardVec(-std::sin(yaw_rad) * std::cos(pitch_rad),
+		      std::cos(yaw_rad) * std::cos(pitch_rad),
+		      std::sin(pitch_rad));
   pos_ += forwardVec * dist;
 }
 
@@ -48,8 +59,8 @@ void Actor::turn(int dir) {
 }
 
 float Actor::angleTo(const Actor &a) const {
-  float yaw_deg = yaw_ * (M_PI / 180);
-  Vector3d forwardVec(-std::sin(yaw_deg), std::cos(yaw_deg), 0);
+  float yaw_rad = yaw_ * (M_PI / 180);
+  Vector3d forwardVec(-std::sin(yaw_rad), std::cos(yaw_rad), 0);
   Vector3d delta = a.pos() - pos_;
   delta.z() = 0;
   return angle(forwardVec, delta) * (180 / M_PI);
@@ -136,6 +147,23 @@ Costume *Actor::findCostume(const char *name) {
 }
 
 void Actor::update() {
+  if (turning_) {
+    float turnAmt = Engine::instance()->perSecond(turnRate_);
+    float dyaw = destYaw_ - yaw_;
+    while (dyaw > 180)
+      dyaw -= 360;
+    while (dyaw < -180)
+      dyaw += 360;
+    if (turnAmt >= std::abs(dyaw)) {
+      yaw_ = destYaw_;
+      turning_ = false;
+    }
+    else if (dyaw > 0)
+      yaw_ += turnAmt;
+    else
+      yaw_ -= turnAmt;
+  }
+
   for (std::list<Costume *>::iterator i = costumeStack_.begin();
        i != costumeStack_.end(); i++)
     (*i)->update();

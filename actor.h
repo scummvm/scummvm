@@ -40,6 +40,8 @@ public:
   void setRot(float pitch, float yaw, float roll) {
     pitch_ = pitch; yaw_ = yaw; roll_ = roll;
   }
+  void turnTo(float pitch, float yaw, float roll);
+  bool isTurning() const { return turning_; }
   float pitch() const { return pitch_; }
   float yaw() const { return yaw_; }
   float roll() const { return roll_; }
@@ -91,6 +93,10 @@ private:
   bool visible_;
   ResPtr<Sound> talkSound_;
   std::list<Costume *> costumeStack_;
+
+  // Variables for gradual turning
+  bool turning_;
+  float destYaw_;
 
   friend class Engine;
 };

@@ -273,7 +273,10 @@ static void SetActorRot() {
   float pitch = luaL_check_number(2);
   float yaw = luaL_check_number(3);
   float roll = luaL_check_number(4);
-  act->setRot(pitch, yaw, roll);
+  if (getbool(5))
+    act->turnTo(pitch, yaw, roll);
+  else
+    act->setRot(pitch, yaw, roll);
 }
 
 static void GetActorRot() {
@@ -281,6 +284,11 @@ static void GetActorRot() {
   lua_pushnumber(act->pitch());
   lua_pushnumber(act->yaw());
   lua_pushnumber(act->roll());
+}
+
+static void IsActorTurning() {
+  Actor *act = check_actor(1);
+  pushbool(act->isTurning());
 }
 
 static void GetAngleBetweenActors() {
@@ -949,7 +957,6 @@ static char *stubFuncs[] = {
   "IsActorResting",
   "IsActorMoving",
   "CompleteActorChore",
-  "IsActorTurning",
   "SetActorRoll",
   "SetActorPitch",
   "GetPointSector",
@@ -1182,6 +1189,7 @@ struct luaL_reg builtins[] = {
   { "GetActorPos", GetActorPos },
   { "SetActorRot", SetActorRot },
   { "GetActorRot", GetActorRot },
+  { "IsActorTurning", IsActorTurning },
   { "GetAngleBetweenActors", GetAngleBetweenActors },
   { "PutActorInSet", PutActorInSet },
   { "SetActorWalkRate", SetActorWalkRate },
