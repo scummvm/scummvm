@@ -144,15 +144,6 @@ bool ScummDebugger::Cmd_IMuse(int argc, const char **argv) {
 			DebugPrintf("AAAIIIEEEEEE!\n");
 			DebugPrintf("Shutting down all music tracks\n");
 			return true;
-		} else if (!strcmp (argv[1], "multimidi")) {
-			if (argc > 2 && (!strcmp(argv[2], "on") || !strcmp(argv[2], "off"))) {
-				if (_vm->_imuse)
-					_vm->_imuse->property(IMuse::PROP_MULTI_MIDI, !strcmp(argv[2], "on"));
-				DebugPrintf("MultiMidi mode switched %s.\n", argv[2]);
-			} else {
-				DebugPrintf("Specify \"on\" or \"off\" to switch.\n");
-			}
-			return true;
 		} else if (!strcmp(argv[1], "play")) {
 			if (argc > 2 && (!strcmp(argv[2], "random") || atoi(argv[2]) != 0)) {
 				int sound = atoi(argv[2]);
@@ -186,7 +177,6 @@ bool ScummDebugger::Cmd_IMuse(int argc, const char **argv) {
 
 	DebugPrintf("Available iMuse commands:\n");
 	DebugPrintf("  panic - Stop all music tracks\n");
-	DebugPrintf("  multimidi on/off - Toggle dual MIDI drivers\n");
 	DebugPrintf("  play # - Play a music resource\n");
 	DebugPrintf("  stop # - Stop a music resource\n");
 	return true;

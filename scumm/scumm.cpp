@@ -1353,16 +1353,21 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 	} else if (_version > 2 && _heversion <= 60) {
-		MidiDriver *driver = GameDetector::createMidi(_midiDriver);
-		if (driver && _native_mt32)
-			driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-		_musicEngine = _imuse = IMuse::create(_system, _mixer, driver);
+		MidiDriver *nativeMidiDriver = GameDetector::createMidi(_midiDriver);
+		if (nativeMidiDriver != NULL && _native_mt32)
+			nativeMidiDriver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		bool multi_midi = ConfMan.getBool("multi_midi") && _midiDriver != MD_NULL && (midi & MDT_ADLIB);
+		MidiDriver *adlibMidiDriver;
+		if (nativeMidiDriver == NULL || multi_midi)
+			adlibMidiDriver = MidiDriver_ADLIB_create(_mixer);
+		else
+			adlibMidiDriver = NULL;
+
+		_musicEngine = _imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
 		if (_imuse) {
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
-			_imuse->property(IMuse::PROP_MULTI_MIDI, ConfMan.getBool("multi_midi") &&
-			                 _midiDriver != MD_NULL && (midi & MDT_ADLIB));
 			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 			if (_features & GF_HUMONGOUS || midi == MDT_TOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);

@@ -29,7 +29,6 @@
 
 class MidiDriver;
 class OSystem;
-class SoundMixer;
 
 namespace Scumm {
 
@@ -53,7 +52,6 @@ public:
 	enum {
 		PROP_TEMPO_BASE,
 		PROP_NATIVE_MT32,
-		PROP_MULTI_MIDI,
 		PROP_OLD_ADLIB_INSTRUMENTS,
 		PROP_LIMIT_PLAYERS,
 		PROP_RECYCLE_PLAYERS,
@@ -79,7 +77,7 @@ public:
 	void terminate();
 
 	// Factory methods
-	static IMuse *create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
+	static IMuse *create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 };
 
 } // End of namespace Scumm

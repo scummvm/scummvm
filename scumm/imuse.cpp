@@ -1077,24 +1077,6 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 			initMT32(_midi_native);
 		break;
 
-	case IMuse::PROP_MULTI_MIDI:
-		_enable_multi_midi = (value > 0);
-		if (!_enable_multi_midi && _midi_native && _midi_adlib) {
-			MidiDriver *driver = _midi_adlib;
-			_midi_adlib = NULL;
-			int i;
-			for (i = 0; i < ARRAYSIZE(_players); ++i) {
-				if (_players[i].isActive() && _players[i].getMidiDriver() == driver)
-					_players[i].clear();
-			}
-			driver->close();
-			// FIXME: shouldn't we delete 'driver' here, too ?
-		} else if (_enable_multi_midi && _midi_adlib == NULL) {
-			_midi_adlib = MidiDriver_ADLIB_create(_mixer);
-			initMidiDriver(_midi_adlib);
-		}
-		break;
-
 	case IMuse::PROP_OLD_ADLIB_INSTRUMENTS:
 		_old_adlib_instruments = (value > 0);
 		break;
@@ -1120,25 +1102,21 @@ void IMuseInternal::setBase(byte **base) {
 	_base_sounds = base;
 }
 
-IMuseInternal *IMuseInternal::create(OSystem *syst, SoundMixer *mixer, MidiDriver *native_midi) {
+IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver) {
 	IMuseInternal *i = new IMuseInternal;
-	i->initialize(syst, mixer, native_midi);
+	i->initialize(syst, nativeMidiDriver, adlibMidiDriver);
 	return i;
 }
 
-int IMuseInternal::initialize(OSystem *syst, SoundMixer *mixer, MidiDriver *native_midi) {
+int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver *adlib_midi) {
 	int i;
 
-	_mixer = mixer;
 	_midi_native = native_midi;
-	if (native_midi)
+	_midi_adlib = adlib_midi;
+	if (native_midi != NULL)
 		initMidiDriver(_midi_native);
-	if (!native_midi || _enable_multi_midi) {
-		_midi_adlib = MidiDriver_ADLIB_create(_mixer);
-		initMidiDriver(_midi_adlib);
-	} else {
-		_midi_adlib = NULL;
-	}
+	if (adlib_midi != NULL)
+		initMidiDriver(adlib_midi);
 
 	if (!_tempoFactor) _tempoFactor = 100;
 	_master_volume = 255;
@@ -1785,8 +1763,8 @@ void IMuse::terminate() { in(); _target->terminate1(); out(); _target->terminate
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
 // to the client.
-IMuse *IMuse::create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi) {
-	IMuseInternal *engine = IMuseInternal::create(syst, mixer, midi);
+IMuse *IMuse::create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver) {
+	IMuseInternal *engine = IMuseInternal::create(syst, nativeMidiDriver, adlibMidiDriver);
 	return new IMuse(syst, engine);
 }
 

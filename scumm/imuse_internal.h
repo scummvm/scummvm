@@ -28,7 +28,6 @@
 
 class MidiParser;
 class OSystem;
-class SoundMixer;
 
 namespace Scumm {
 
@@ -354,8 +353,6 @@ protected:
 	MidiDriver *_midi_native;
 
 	byte **_base_sounds;
-	
-	SoundMixer *_mixer;
 
 protected:
 	bool _paused;
@@ -440,7 +437,7 @@ protected:
 public:
 	IMuseInternal();
 
-	int initialize(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
+	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 	void reallocateMidiChannels(MidiDriver *midi);
 	void setGlobalAdlibInstrument(byte slot, byte *data);
 	void copyGlobalAdlibInstrument(byte slot, Instrument *dest);
@@ -466,7 +463,7 @@ public:
 	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
 
-	static IMuseInternal *create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
+	static IMuseInternal *create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 };
 
 } // End of namespace Scumm
