@@ -850,19 +850,16 @@ void ScummEngine_v72he::o72_drawObject() {
 	int state = 0, y = -1, x = -1;
 
 	switch (subOp) {
-	case 6:
 	case 62:
 		state = pop();
 		y = pop();
 		x = pop();
 		break;
-	case 7:
 	case 63:
 		state = pop();
 		if (state == 0)
 			state = 1;
 		break;
-	case 40:
 	case 65:
 		state = 1;
 		y = pop();

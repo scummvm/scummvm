@@ -502,9 +502,6 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	int args[16];
 	int subOp = fetchScriptByte();
 
-	if (_heversion == 100)
-		subOp += 5;
-
 	switch (subOp) {
 	case 0x13: // Loads cursors from another resource
 		a = pop();
