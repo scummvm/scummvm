@@ -130,21 +130,19 @@ static uint8 menuStatus[2] =
 {
 	RDMENU_HIDDEN, RDMENU_HIDDEN
 };
-/*
+
 static uint8 *icons[2][RDMENU_MAXPOCKETS] =
 {
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
-*/
 
-/*
-static LPDIRECTDRAWSURFACE lpIconSurface[2][RDMENU_MAXPOCKETS] = 
+// static LPDIRECTDRAWSURFACE lpIconSurface[2][RDMENU_MAXPOCKETS] = 
+static Surface *lpIconSurface[2][RDMENU_MAXPOCKETS] = 
 {
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
-*/
 
 static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] =
 {
@@ -154,7 +152,7 @@ static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] =
 
 //static uint8 menuCounter[2];
 //static uint8 lastIcon[2];
-//static uint8 iconCount = 0;
+static uint8 iconCount = 0;
 
 
 
@@ -517,10 +515,11 @@ int32 CloseMenuImmediately(void)
 int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon)
 
 {
-	warning("stub SetMenuIcon( %d, %d )", menu, pocket);
-/*
+	debug(5, "stub SetMenuIcon( %d, %d )", menu, pocket);
 
-	HRESULT			hr;
+
+//	HRESULT			hr;
+	int32 hr;
 
 
 	//	Check for invalid menu parameter.
@@ -537,7 +536,8 @@ int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon)
 		iconCount--;
 		free(icons[menu][pocket]);
 		icons[menu][pocket] = NULL;
-		IDirectDrawSurface2_Release(lpIconSurface[menu][pocket]);
+//		IDirectDrawSurface2_Release(lpIconSurface[menu][pocket]);
+		delete lpIconSurface[menu][pocket];
 		lpIconSurface[menu][pocket] = NULL;
 	}
 
@@ -551,14 +551,14 @@ int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon)
 		memcpy(icons[menu][pocket], icon, RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
 		hr = CreateIconSurface(menu, pocket);
-		if (hr != DD_OK)
+		//if (hr != DD_OK)
+		if (hr != RD_OK)
 			return(hr);
 
 		hr = LoadIconSurface(menu, pocket);
 		if (hr != RD_OK)
 			return(hr);
 	}
-*/
 	return RD_OK;
 }
 
