@@ -17,7 +17,7 @@ CP  = cp
 # Default compilation parameters. Normally don't edit these           #
 #######################################################################
 
-CFLAGS  := -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
+CXXFLAGS:= -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 DEFINES :=
 LDFLAGS :=
 INCLUDES:= -I. -Icommon
@@ -48,7 +48,7 @@ LIBS    += -lmad
 # LIBS    += -lasound
 
 # Uncomment this for stricter compile time code verification
-# CFLAGS  += -Wshadow -Werror
+# CXXFLAGS+= -Wshadow -Werror
 
 
 #######################################################################

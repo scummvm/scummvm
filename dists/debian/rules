@@ -3,7 +3,7 @@
 export DH_COMPAT=3
 
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	export CFLAGS += -g
+	export CXXFLAGS += -g
 endif
 
 build:

@@ -41,7 +41,7 @@ clean:
 # Default (dumb) compile & dependcy rules
 #INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
 #.cpp.o:
-#	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+#	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 #$(OBJS): $(INCS)
 
 
@@ -52,7 +52,7 @@ DEPFILES = $(wildcard $(patsubst %,%/*.d,$(DEPDIRS)))
 
 .cpp.o:
 	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
 	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
 	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
@@ -61,7 +61,7 @@ DEPFILES = $(wildcard $(patsubst %,%/*.d,$(DEPDIRS)))
 # rule can get you into a bad state if you Ctrl-C it in the wrong moment.
 #.cpp.o:
 #	$(MKDIR) $(*D)/$(DEPDIR)
-#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
 -include $(DEPFILES) /dev/null
 

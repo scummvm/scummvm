@@ -6,7 +6,7 @@
 CCBASE=c:/devkitadv
 
 CXX     =	$(CCBASE)/bin/g++
-CFLAGS  =	-mcpu=arm9tdmi \
+CXXFLAGS=	-mcpu=arm9tdmi \
 		-mtune=arm9tdmi \
 		-mapcs \
 		-O2 \

@@ -1,8 +1,8 @@
-CXX     = g++
-CFLAGS  = -Wno-multichar -fstrength-reduce -fno-rtti -O2
-DEFINES = -DNDEBUG
-LDFLAGS = -noixemul -s
-LIBS	= -lamiga -lamigastubs -lcdda -lcybergraphics
+CXX      = g++
+CXXFLAGS = -Wno-multichar -fstrength-reduce -fno-rtti -O2
+DEFINES  = -DNDEBUG
+LDFLAGS  = -noixemul -s
+LIBS	 = -lamiga -lamigastubs -lcdda -lcybergraphics
 INCLUDES += -Ibackends/morphos
 MODULES  += backends/morphos
 OBJS	 += backends/morphos/morphos.o backends/morphos/morphos_scaler.o \

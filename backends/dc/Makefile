@@ -5,7 +5,7 @@ ronindir = /usr/local/ronin
 VPATH = ../..
 
 CXX     = sh-elf-g++ -ml -m4-single-only
-CFLAGS  = -O1 -Wno-multichar
+CXXFLAGS= -O1 -Wno-multichar
 DEFINES = -D__DC__ -DNONSTANDARD_PORT -DNONSTANDARD_SAVE
 LDFLAGS := -Wl,-Ttext,0x8c010000 -nostartfiles ronin/crt0.o
 INCLUDES:= -I./ -I../.. -I../../common
