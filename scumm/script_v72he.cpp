@@ -899,7 +899,7 @@ void ScummEngine_v72he::o72_unknownCE() {
 	int b =	pop();
 	int c =	pop();
 	int d =	pop();
-	warning("o72_unknownCE stub (%d, %d, %d, %d)", d, c, b, a);
+	debug(1,"o72_unknownCE stub (%d, %d, %d, %d)", d, c, b, a);
 }
 
 void ScummEngine_v72he::shuffleArray(int num, int minIdx, int maxIdx) {
@@ -1283,13 +1283,13 @@ void ScummEngine_v72he::o72_unknownFB() {
 		pop();
 		break;
 	}
-	warning("o72_unknownFB stub");
+	debug(1, "o72_unknownFB stub");
 }
 
 void ScummEngine_v72he::o72_unknownFC() {
 	int a =	pop();
 	int b =	pop();
-	warning("o7_unknownFB stub (%d, %d)", b, a);
+	debug(1,"o7_unknownFC stub (%d, %d)", b, a);
 	push(0);
 }
 

@@ -249,12 +249,12 @@ void ScummEngine::CHARSET_1() {
 
 				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
 				break;
-			case 110:
-				goto newLine;
 			case 104:
 				_haveMsg = 0;
 				_keepText = true;
 				break;
+			case 110:
+				goto newLine;
 			case 119:
 				if (_haveMsg != 0xFE)
 					_haveMsg = 0xFF;
