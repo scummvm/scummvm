@@ -1304,7 +1304,7 @@ void CharsetRendererNut::printChar(int chr) {
 
 	_left += width;
 
-	if (_str.right < shadow.right )
+	if (_str.right < shadow.right)
 		_str.right = shadow.right;
 
 	if (_str.bottom < shadow.bottom)

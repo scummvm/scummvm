@@ -400,7 +400,7 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		if (value >= _vm->res.num[rtCostume])
 			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
 		else {
-			a->setActorCostume( value );
+			a->setActorCostume(value);
 			_vm->_fullRedraw = 1;
 			DebugPrintf("Actor[%d].costume = %d\n", actnum, a->costume);
 		}
