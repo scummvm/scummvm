@@ -76,7 +76,6 @@ void OptionsDialog::open() {
 	
 	if (_fullscreenCheckbox) {
 		_gfxPopUp->setSelected(0);
-		_gfxPopUp->setEnabled(false);
 
 		if (ConfMan.hasKey("gfx_mode", _domain)) {
 			const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
@@ -397,9 +396,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// Save game path
-	new StaticTextWidget(tab, 5, yoffset + 2, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
-	_savePath = new StaticTextWidget(tab, 105, yoffset + 2, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
-	new ButtonWidget(tab, 105, yoffset + 14, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
+	new ButtonWidget(tab, 5, yoffset, kButtonWidth + 14, 16, "Save Path: ", kChooseSaveDirCmd, 0);
+	_savePath = new StaticTextWidget(tab, 5 + kButtonWidth + 20, yoffset + 3, _w - (5 + kButtonWidth + 20) - 10, kLineHeight, "/foo/bar", kTextAlignLeft);
 #endif
 	// TODO: joystick setting
 
