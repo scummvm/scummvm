@@ -27,12 +27,6 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
-// HACK HACK HACK
-// Enable *experimental* AltiVec support.
-// This will produce code crashing on any machine *without* Altivec
-//
-#define USE_ALTIVEC	0
-
 template<int bitFormat>
 struct ColorMasks {
 };
