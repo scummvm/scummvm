@@ -22,13 +22,24 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+// Uncomment this if you are using libmpeg2 0.3.1.
+// #define USE_MPEG2_0_3_1
+
 #ifndef _MSC_VER
 #include <inttypes.h>
 #endif
+
 #ifdef USE_MPEG2
 extern "C" {
 	#include <mpeg2dec/mpeg2.h>
 }
+
+#ifdef USE_MPEG2_0_3_1
+typedef int mpeg2_state_t;
+typedef sequence_t mpeg2_sequence_t;
+#define STATE_BUFFER -1
+#endif
+
 #endif
 
 namespace Sword2 {
@@ -46,6 +57,7 @@ private:
 	Sword2Engine *_vm;
 
 	int palnum;
+	int maxPalnum;
 
 	byte lookup[2][BITDEPTH * BITDEPTH * BITDEPTH];
 	byte *lut;

@@ -25,7 +25,6 @@
 #include "sword2/driver/menu.h"
 #include "sword2/driver/render.h"
 
-
 #include "common/file.h"
 
 namespace Sword2 {
@@ -37,7 +36,8 @@ AnimationState::AnimationState(Sword2Engine *vm)
 AnimationState::~AnimationState() {
 #ifdef USE_MPEG2
 	_vm->_mixer->stopHandle(bgSound);
-	mpeg2_close(decoder);
+	if (decoder)
+		mpeg2_close(decoder);
 	delete mpgfile;
 	delete sndfile;
 #endif
@@ -49,8 +49,12 @@ bool AnimationState::init(const char *name) {
 	char basename[512], tempFile[512];
   	int i, p;
 
+	decoder = NULL;
+	mpgfile = NULL;
+	sndfile = NULL;
+
 	strcpy(basename, name);
-	basename[strlen(basename)-4] = 0;	// FIXME: hack to remove extension
+	basename[strlen(basename) - 4] = 0;	// FIXME: hack to remove extension
 
 	// Load lookup palettes
 	// TODO: Binary format so we can use File class
@@ -64,8 +68,9 @@ bool AnimationState::init(const char *name) {
 
 	p = 0;
 	while (!feof(f)) {
-		fscanf(f, "%i %i", &palettes[p].end, &palettes[p].cnt);
-  		for (i = 0; i < palettes[p].cnt; i++) {
+		if (fscanf(f, "%i %i", &palettes[p].end, &palettes[p].cnt) != 2)
+			break;
+		for (i = 0; i < palettes[p].cnt; i++) {
   			int r, g, b;
   			fscanf(f, "%i", &r);
   			fscanf(f, "%i", &g);
@@ -73,12 +78,20 @@ bool AnimationState::init(const char *name) {
 			palettes[p].pal[4 * i] = r;
 			palettes[p].pal[4 * i + 1] = g;
 			palettes[p].pal[4 * i + 2] = b;
+			palettes[p].pal[4 * i + 3] = 0;
+		}
+		for (; i < 256; i++) {
+			palettes[p].pal[4 * i] = 0;
+			palettes[p].pal[4 * i + 1] = 0;
+			palettes[p].pal[4 * i + 2] = 0;
+			palettes[p].pal[4 * i + 3] = 0;
 		}
 		p++;
 	}
 	fclose(f);
 
 	palnum = 0;
+	maxPalnum = p;
 	_vm->_graphics->setPalette(0, 256, palettes[palnum].pal, RDPAL_INSTANT);
 	lut = lut2 = lookup[0];
 	curpal = -1;
@@ -131,6 +144,9 @@ bool AnimationState::init(const char *name) {
 void AnimationState::buildLookup(int p, int lines) {
 	int y, cb;
 	int r, g, b, ii;
+
+	if (p >= maxPalnum)
+		return;
   
 	if (p != curpal) {
 		curpal = p;
