@@ -386,31 +386,6 @@ const char *ScummEngine_v7he::getOpcodeDesc(byte i) {
 }
 
 
-void ScummEngine_v7he::o7_unknownFA() {
-	int num = fetchScriptByte();
-	int len = resStrLen(_scriptPointer);
-	warning("stub o7_unknownFA(%d, \"%s\")", num, _scriptPointer);
-	_scriptPointer += len + 1;
-}
-
-void ScummEngine_v7he::o7_stringLen() {
-	int a, len;
-	byte *addr;
-
-	a = pop();
-
-	addr = getStringAddress(a);
-	if (!addr) {
-		// FIXME: should be error here
-		warning("o7_stringLen: Reference to zeroed array pointer (%d)", a);
-		push(0);
-		return;
-	}
-
-	len = stringLen(addr);
-	push(len);
-}
-
 byte ScummEngine_v7he::stringLen(byte *ptr) {
 	byte len;
 	byte c;
@@ -436,6 +411,185 @@ byte ScummEngine_v7he::stringLen(byte *ptr) {
 	} while (c);
 
 	return len;
+}
+
+void ScummEngine_v7he::o7_cursorCommand() {
+	int a, i;
+	int args[16];
+	int subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 0x90:		// SO_CURSOR_ON Turn cursor on
+		_cursor.state = 1;
+		verbMouseOver(0);
+		break;
+	case 0x91:		// SO_CURSOR_OFF Turn cursor off
+		_cursor.state = 0;
+		verbMouseOver(0);
+		break;
+	case 0x92:		// SO_USERPUT_ON
+		_userPut = 1;
+		break;
+	case 0x93:		// SO_USERPUT_OFF
+		_userPut = 0;
+		break;
+	case 0x94:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+		_cursor.state++;
+		if (_cursor.state > 1)
+			error("Cursor state greater than 1 in script");
+		verbMouseOver(0);
+		break;
+	case 0x95:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+		_cursor.state--;
+		verbMouseOver(0);
+		break;
+	case 0x96:		// SO_USERPUT_SOFT_ON
+		_userPut++;
+		break;
+	case 0x97:		// SO_USERPUT_SOFT_OFF
+		_userPut--;
+		break;
+	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
+		_Win32ResExtractor->setCursor(pop()); 				/* Difference */
+		break;
+	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
+		a = pop();
+		setCursorHotspot(pop(), a);
+		break;
+	case 0x9C:		// SO_CHARSET_SET
+		initCharset(pop());
+		break;
+	case 0x9D:		// SO_CHARSET_COLOR
+		getStackList(args, ARRAYSIZE(args));
+		for (i = 0; i < 16; i++)
+			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
+		break;
+	case 0xD6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
+		setCursorTransparency(pop());
+		break;
+	default:
+		error("o7_cursorCommand: default case %x", subOp);
+	}
+
+	VAR(VAR_CURSORSTATE) = _cursor.state;
+	VAR(VAR_USERPUT) = _userPut;
+}
+
+void ScummEngine_v7he::o7_startSound() {
+	byte op;
+	op = fetchScriptByte();
+
+	switch (op) {
+	case 224:
+		_heSndSoundFreq = pop();
+		break;
+
+	case 230:
+		_heSndTimer = pop();
+		break;
+
+	case 231:
+		_heSndOffset = pop();
+		break;
+
+	case 232:
+		_heSndSoundId = pop();
+		_heSndOffset = 0;
+		_heSndSoundFreq = 11025;
+		_heSndTimer = VAR(VAR_MUSIC_TIMER);
+		break;
+
+	case 245:
+		_heSndLoop |= 1;
+		break;
+
+	case 255:
+		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
+		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
+		debug(2, "o7_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
+		_heSndLoop = 0;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void ScummEngine_v7he::o7_pickupObject() {
+	int obj, room;
+
+	room = pop();
+	obj = pop();
+	if (room == 0)
+		room = getObjectRoom(obj);
+
+	addObjectToInventory(obj, room);
+	putOwner(obj, VAR(VAR_EGO));
+	putClass(obj, kObjectClassUntouchable, 1);
+	putState(obj, 1);
+	markObjectRectAsDirty(obj);
+	clearDrawObjectQueue();
+	runInventoryScript(obj);									/* Difference */
+}
+
+
+void ScummEngine_v7he::o7_getActorRoom() {
+	int act = pop();
+
+	if (act < _numActors) {
+		Actor *a = derefActor(act, "o7_getActorRoom");
+		push(a->room);
+	} else
+		push(getObjectRoom(act));
+}
+
+void ScummEngine_v7he::o7_quitPauseRestart() {
+	byte subOp = fetchScriptByte();
+	int par1;
+
+	switch (subOp & 0xff) {
+	case 158:		// SO_RESTART
+		restart();
+		break;
+	case 160:
+		// FIXME: check
+		shutDown();
+		break;
+	case 250:
+		par1 = pop();
+		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
+		break;
+	case 253:
+		par1 = pop();
+		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
+	case 244:		// SO_QUIT
+		shutDown();
+		break;
+	case 251:
+	case 252:
+		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
+		break;
+	default:
+		error("o7_quitPauseRestart invalid case %d", subOp);
+	}
+}
+
+void ScummEngine_v7he::o7_stringLen() {
+	int a, len;
+	byte *addr;
+
+	a = pop();
+
+	addr = getStringAddress(a);
+	if (!addr) {
+		// FIXME: should be error here
+		warning("o7_stringLen: Reference to zeroed array pointer (%d)", a);
+		push(0);
+		return;
+	}
+
+	len = stringLen(addr);
+	push(len);
 }
 
 void ScummEngine_v7he::o7_readINI() {
@@ -513,6 +667,13 @@ void ScummEngine_v7he::o7_unknownF9() {
 	warning("stub o7_unknownF9(\"%s\")", filename + r);
 }
 
+void ScummEngine_v7he::o7_unknownFA() {
+	int num = fetchScriptByte();
+	int len = resStrLen(_scriptPointer);
+	warning("stub o7_unknownFA(%d, \"%s\")", num, _scriptPointer);
+	_scriptPointer += len + 1;
+}
+
 void ScummEngine_v7he::o7_unknownFB() {
 	byte b;
 	b = fetchScriptByte();
@@ -537,168 +698,5 @@ void ScummEngine_v7he::o7_unknownFB() {
 	}
 	warning("o7_unknownFB stub");
 }
-
-void ScummEngine_v7he::o7_quitPauseRestart() {
-	byte subOp = fetchScriptByte();
-	int par1;
-
-	switch (subOp & 0xff) {
-	case 158:		// SO_RESTART
-		restart();
-		break;
-	case 160:
-		// FIXME: check
-		shutDown();
-		break;
-	case 250:
-		par1 = pop();
-		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
-		break;
-	case 253:
-		par1 = pop();
-		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
-	case 244:		// SO_QUIT
-		shutDown();
-		break;
-	case 251:
-	case 252:
-		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
-		break;
-	default:
-		error("o7_quitPauseRestart invalid case %d", subOp);
-	}
-}
-
-void ScummEngine_v7he::o7_pickupObject() {
-	int obj, room;
-
-	room = pop();
-	obj = pop();
-	if (room == 0)
-		room = getObjectRoom(obj);
-
-	addObjectToInventory(obj, room);
-	putOwner(obj, VAR(VAR_EGO));
-	putClass(obj, kObjectClassUntouchable, 1);
-	putState(obj, 1);
-	markObjectRectAsDirty(obj);
-	clearDrawObjectQueue();
-	runInventoryScript(obj);									/* Difference */
-}
-
-
-void ScummEngine_v7he::o7_getActorRoom() {
-	int act = pop();
-
-	if (act < _numActors) {
-		Actor *a = derefActor(act, "o7_getActorRoom");
-		push(a->room);
-	} else
-		push(getObjectRoom(act));
-}
-
-void ScummEngine_v7he::o7_startSound() {
-	byte op;
-	op = fetchScriptByte();
-
-	switch (op) {
-	case 224:
-		_heSndSoundFreq = pop();
-		break;
-
-	case 230:
-		_heSndTimer = pop();
-		break;
-
-	case 231:
-		_heSndOffset = pop();
-		break;
-
-	case 232:
-		_heSndSoundId = pop();
-		_heSndOffset = 0;
-		_heSndSoundFreq = 11025;
-		_heSndTimer = VAR(VAR_MUSIC_TIMER);
-		break;
-
-	case 245:
-		_heSndLoop |= 1;
-		break;
-
-	case 255:
-		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
-		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
-		debug(2, "o7_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
-		_heSndLoop = 0;
-		break;
-
-	default:
-		break;
-	}
-}
-
-
-void ScummEngine_v7he::o7_cursorCommand() {
-	int a, i;
-	int args[16];
-	int subOp = fetchScriptByte();
-
-	switch (subOp) {
-	case 0x90:		// SO_CURSOR_ON Turn cursor on
-		_cursor.state = 1;
-		verbMouseOver(0);
-		break;
-	case 0x91:		// SO_CURSOR_OFF Turn cursor off
-		_cursor.state = 0;
-		verbMouseOver(0);
-		break;
-	case 0x92:		// SO_USERPUT_ON
-		_userPut = 1;
-		break;
-	case 0x93:		// SO_USERPUT_OFF
-		_userPut = 0;
-		break;
-	case 0x94:		// SO_CURSOR_SOFT_ON Turn soft cursor on
-		_cursor.state++;
-		if (_cursor.state > 1)
-			error("Cursor state greater than 1 in script");
-		verbMouseOver(0);
-		break;
-	case 0x95:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
-		_cursor.state--;
-		verbMouseOver(0);
-		break;
-	case 0x96:		// SO_USERPUT_SOFT_ON
-		_userPut++;
-		break;
-	case 0x97:		// SO_USERPUT_SOFT_OFF
-		_userPut--;
-		break;
-	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
-		_Win32ResExtractor->setCursor(pop()); 				/* Difference */
-		break;
-	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
-		a = pop();
-		setCursorHotspot(pop(), a);
-		break;
-	case 0x9C:		// SO_CHARSET_SET
-		initCharset(pop());
-		break;
-	case 0x9D:		// SO_CHARSET_COLOR
-		getStackList(args, ARRAYSIZE(args));
-		for (i = 0; i < 16; i++)
-			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
-		break;
-	case 0xD6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
-		setCursorTransparency(pop());
-		break;
-	default:
-		error("o7_cursorCommand: default case %x", subOp);
-	}
-
-	VAR(VAR_CURSORSTATE) = _cursor.state;
-	VAR(VAR_USERPUT) = _userPut;
-}
-
 
 } // End of namespace Scumm

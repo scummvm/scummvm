@@ -166,7 +166,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o7_startScript),
 		OPCODE(o6_startScriptQuick),
 		/* 60 */
-		OPCODE(o6_startObject),
+		OPCODE(o7_startObject),
 		OPCODE(o6_drawObject),
 		OPCODE(o6_drawObjectAt),
 		OPCODE(o7_unknown63),
@@ -380,6 +380,16 @@ const char *ScummEngine_v72he::getOpcodeDesc(byte i) {
 }
 
 
+void ScummEngine_v72he::o7_getString() {
+	int len;
+	
+	len = resStrLen(_scriptPointer);
+	warning("stub o7_getString(\"%s\")", _scriptPointer);
+	_scriptPointer += len;
+	fetchScriptWord();
+	fetchScriptWord();
+}
+
 void ScummEngine_v72he::o7_objectX() {
 	int object = pop();
 	int objnum = getObjectIndex(object);
@@ -405,14 +415,31 @@ void ScummEngine_v72he::o7_objectY() {
 	push(_objs[objnum].y_pos);
 }
 
-void ScummEngine_v72he::o7_getString() {
-	int len;
+void ScummEngine_v72he::o7_startScript() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_startScript();
+		return;
+	}
+
+	int args[16];
+	int script, flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
 	
-	len = resStrLen(_scriptPointer);
-	warning("stub o7_getString(\"%s\")", _scriptPointer);
-	_scriptPointer += len;
-	fetchScriptWord();
-	fetchScriptWord();
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+}
+
+void ScummEngine_v72he::o7_startObject() {
+	int args[16];
+	int script, entryp;
+	int flags;
+	getStackList(args, ARRAYSIZE(args));
+	entryp = pop();
+	script = pop();
+	flags = fetchScriptByte();
+	runObjectScript(script, entryp, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
 void ScummEngine_v72he::o7_unknown63() {
@@ -421,8 +448,134 @@ void ScummEngine_v72he::o7_unknown63() {
 	push(1);
 }
 
-void ScummEngine_v72he::o7_unknownFA() {
-	warning("stub o7_unknownFA(%d)", fetchScriptByte());
+void ScummEngine_v72he::o7_arrayOps() {
+	byte subOp = fetchScriptByte();
+	int array = fetchScriptWord();
+	int b, c, d, len;
+	ArrayHeader *ah;
+	int list[128];
+
+	switch (subOp) {
+	case 7:			// SO_ASSIGN_STRING
+		len = resStrLen(_scriptPointer);
+		ah = defineArray(array, kStringArray, 0, len + 1);
+		copyScriptString(ah->data);
+		break;
+	case 205:		// SO_ASSIGN_STRING
+		b = pop();
+		len = resStrLen(_scriptPointer);
+		ah = defineArray(array, kStringArray, 0, len + 1);
+		copyScriptString(ah->data + b);
+		break;
+	case 208:		// SO_ASSIGN_INT_LIST
+		b = pop();
+		c = pop();
+		d = readVar(array);
+		if (d == 0) {
+			defineArray(array, kIntArray, 0, b + c);
+		}
+		while (c--) {
+			writeArray(array, 0, b + c, pop());
+		}
+		break;
+	case 212:		// SO_ASSIGN_2DIM_LIST
+		b = pop();
+		len = getStackList(list, ARRAYSIZE(list));
+		d = readVar(array);
+		if (d == 0)
+			error("Must DIM a two dimensional array before assigning");
+		c = pop();
+		while (--len >= 0) {
+			writeArray(array, c, b + len, list[len]);
+		}
+		break;
+	default:
+		error("o7_arrayOps: default case %d (array %d)", subOp, array);
+	}
+}
+
+void ScummEngine_v72he::o7_dimArray() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_dimArray();
+		return;
+	}
+
+	int data;
+	int type = fetchScriptByte();
+
+	switch (type) {
+	case 5:		// SO_INT_ARRAY
+		data = kIntArray;
+		break;
+	case 2:		// SO_BIT_ARRAY
+		data = kBitArray;
+		break;
+	case 3:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 4:		// SO_BYTE_ARRAY
+		data = kByteArray;
+		break;
+	case 7:		// SO_STRING_ARRAY
+		data = kStringArray;
+		break;
+	case 204:		// SO_UNDIM_ARRAY
+		nukeArray(fetchScriptWord());
+		return;
+	default:
+		error("o7_dimArray: default case %d", type);
+	}
+
+	defineArray(fetchScriptWord(), data, 0, pop());
+}
+
+
+void ScummEngine_v72he::o7_dim2dimArray() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_dim2dimArray();
+		return;
+	}
+
+	int a, b, data;
+	int type = fetchScriptByte();
+	switch (type - 2) {
+	case 0:		// SO_INT_ARRAY
+		data = kIntArray;
+		break;
+	case 1:		// SO_BIT_ARRAY
+		data = kBitArray;
+		break;
+	case 2:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 3:		// SO_BYTE_ARRAY
+		data = kByteArray;
+		break;
+	case 4:		// SO_STRING_ARRAY
+		data = kStringArray;
+		break;
+	default:
+		error("o7_dim2dimArray: default case %d", type);
+	}
+
+	b = pop();
+	a = pop();
+	defineArray(fetchScriptWord(), data, a, b);
+}
+
+void ScummEngine_v72he::o7_jumpToScript() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_jumpToScript();
+		return;
+	}
+	int args[16];
+	int script, flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	stopObjectCode();
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
 void ScummEngine_v72he::o7_stringLen() {
@@ -485,6 +638,10 @@ void ScummEngine_v72he::o7_unknownF4() {
 	warning("o7_unknownF4 stub");
 }
 
+void ScummEngine_v72he::o7_unknownFA() {
+	warning("stub o7_unknownFA(%d)", fetchScriptByte());
+}
+
 void ScummEngine_v72he::o7_unknownFB() {
 	byte b;
 	b = fetchScriptByte();
@@ -508,151 +665,6 @@ void ScummEngine_v72he::o7_unknownFB() {
 		break;
 	}
 	warning("o7_unknownFB stub");
-}
-
-void ScummEngine_v72he::o7_dim2dimArray() {
-	if (_heversion <= 71) {
-		ScummEngine_v6::o6_dim2dimArray();
-		return;
-	}
-
-	int a, b, data;
-	int type = fetchScriptByte();
-	switch (type - 2) {
-	case 0:		// SO_INT_ARRAY
-		data = kIntArray;
-		break;
-	case 1:		// SO_BIT_ARRAY
-		data = kBitArray;
-		break;
-	case 2:		// SO_NIBBLE_ARRAY
-		data = kNibbleArray;
-		break;
-	case 3:		// SO_BYTE_ARRAY
-		data = kByteArray;
-		break;
-	case 4:		// SO_STRING_ARRAY
-		data = kStringArray;
-		break;
-	default:
-		error("o7_dim2dimArray: default case %d", type);
-	}
-
-	b = pop();
-	a = pop();
-	defineArray(fetchScriptWord(), data, a, b);
-}
-
-void ScummEngine_v72he::o7_dimArray() {
-	if (_heversion <= 71) {
-		ScummEngine_v6::o6_dimArray();
-		return;
-	}
-
-	int data;
-	int type = fetchScriptByte();
-
-	switch (type) {
-	case 5:		// SO_INT_ARRAY
-		data = kIntArray;
-		break;
-	case 2:		// SO_BIT_ARRAY
-		data = kBitArray;
-		break;
-	case 3:		// SO_NIBBLE_ARRAY
-		data = kNibbleArray;
-		break;
-	case 4:		// SO_BYTE_ARRAY
-		data = kByteArray;
-		break;
-	case 7:		// SO_STRING_ARRAY
-		data = kStringArray;
-		break;
-	case 204:		// SO_UNDIM_ARRAY
-		nukeArray(fetchScriptWord());
-		return;
-	default:
-		error("o7_dimArray: default case %d", type);
-	}
-
-	defineArray(fetchScriptWord(), data, 0, pop());
-}
-
-void ScummEngine_v72he::o7_arrayOps() {
-	byte subOp = fetchScriptByte();
-	int array = fetchScriptWord();
-	int b, c, d, len;
-	ArrayHeader *ah;
-	int list[128];
-
-	switch (subOp) {
-	case 7:			// SO_ASSIGN_STRING
-		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, kStringArray, 0, len + 1);
-		copyScriptString(ah->data);
-		break;
-	case 205:		// SO_ASSIGN_STRING
-		b = pop();
-		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, kStringArray, 0, len + 1);
-		copyScriptString(ah->data + b);
-		break;
-	case 208:		// SO_ASSIGN_INT_LIST
-		b = pop();
-		c = pop();
-		d = readVar(array);
-		if (d == 0) {
-			defineArray(array, kIntArray, 0, b + c);
-		}
-		while (c--) {
-			writeArray(array, 0, b + c, pop());
-		}
-		break;
-	case 212:		// SO_ASSIGN_2DIM_LIST
-		b = pop();
-		len = getStackList(list, ARRAYSIZE(list));
-		d = readVar(array);
-		if (d == 0)
-			error("Must DIM a two dimensional array before assigning");
-		c = pop();
-		while (--len >= 0) {
-			writeArray(array, c, b + len, list[len]);
-		}
-		break;
-	default:
-		error("o7_arrayOps: default case %d (array %d)", subOp, array);
-	}
-}
-
-void ScummEngine_v72he::o7_jumpToScript() {
-	if (_heversion <= 71) {
-		ScummEngine_v6::o6_jumpToScript();
-		return;
-	}
-	int args[16];
-	int script, flags;
-
-	getStackList(args, ARRAYSIZE(args));
-	script = pop();
-	flags = fetchScriptByte();
-	stopObjectCode();
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
-}
-
-void ScummEngine_v72he::o7_startScript() {
-	if (_heversion <= 71) {
-		ScummEngine_v6::o6_startScript();
-		return;
-	}
-
-	int args[16];
-	int script, flags;
-
-	getStackList(args, ARRAYSIZE(args));
-	script = pop();
-	flags = fetchScriptByte();
-	
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
 } // End of namespace Scumm
