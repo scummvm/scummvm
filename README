@@ -721,6 +721,8 @@ this task, and ScummVM must be compiled with MAD support.
 Make a backup of the file before attempting this. Copy the file to a
 temporary folder. Then run:
 
+  simon2mp3 effects     (For simon1acorn)
+  simon2mp3 simon       (For simon1acorn)
   simon2mp3 effects.voc (For simon1talkie)
   simon2mp3 simon.voc   (For simon1talkie)
   simon2mp3 simon.wav   (For simon1win)
