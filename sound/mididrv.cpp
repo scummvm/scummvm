@@ -409,7 +409,7 @@ void MidiDriver_SEQ::close() {
 
 void MidiDriver_SEQ::send(uint32 b)
 {
-	unsigned char buf[256];
+	unsigned long buf[256];
 	int position = 0;
 
 	switch (b & 0xF0) {
