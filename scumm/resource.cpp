@@ -1049,8 +1049,9 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx)
 			skip = 0x98;
 		}
 		ptr  += skip;                     // size + instruments
-		size -= skip;		                  // drop instruments for now
-		CHECK_HEAP track = (byte *)calloc(size, 1);
+		size -= skip;		          // drop instruments for now
+		CHECK_HEAP 
+		track = (byte *)calloc(size, 1);
 		if (track == NULL) {
 			error("Out of memory while allocating %d", size);
 		}
@@ -1111,7 +1112,8 @@ byte *Scumm::getResourceAddress(int type, int idx)
 {
 	byte *ptr;
 
-	CHECK_HEAP if (!validateResource("getResourceAddress", type, idx))
+	CHECK_HEAP
+	if (!validateResource("getResourceAddress", type, idx))
 		return NULL;
 
 	if (!res.address[type]) {
@@ -1174,7 +1176,8 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 {
 	byte *ptr;
 
-	CHECK_HEAP debug(9, "createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
+	CHECK_HEAP
+	debug(9, "createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
 	if (!validateResource("allocating", type, idx))
 		return NULL;
@@ -1182,7 +1185,8 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 
 	expireResources(size);
 
-	CHECK_HEAP ptr = (byte *)calloc(size + sizeof(MemBlkHeader) + SAFETY_AREA, 1);
+	CHECK_HEAP
+	ptr = (byte *)calloc(size + sizeof(MemBlkHeader) + SAFETY_AREA, 1);
 	if (ptr == NULL) {
 		error("Out of memory while allocating %d", size);
 	}
@@ -1208,7 +1212,8 @@ void Scumm::nukeResource(int type, int idx)
 {
 	byte *ptr;
 
-	CHECK_HEAP if (!res.address[type])
+	CHECK_HEAP
+	if (!res.address[type])
 		return;
 
 	assert(idx >= 0 && idx < res.num[type]);
