@@ -2684,7 +2684,7 @@ void ScummEngine_v5::decodeParseString() {
 			break;
 		case 15:	// SO_TEXTSTRING
 			msg = _scriptPointer;
-			_scriptPointer += resStrLen(_scriptPointer)+ 1;
+			_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 			switch (textSlot) {
 			case 0:

@@ -60,6 +60,25 @@ struct ScummGameSettings;
 
 typedef Common::Map<Common::String, int> ObjectIDMap;
 
+class XORFile : public File {
+private:
+	byte _encbyte;
+public:
+	XORFile() : _encbyte(0) {}
+	void setEnc(byte value) { _encbyte = value; }
+
+	uint32 read(void *ptr, uint32 len) {
+		uint32 realLen = File::read(ptr, len);
+		if (_encbyte) {
+			byte *p = (byte *)ptr;
+			byte *end = p + realLen;
+			while (p < end)
+				*p++ ^= _encbyte;
+		}
+		return realLen;
+	}
+};
+
 // Use g_scumm from error() ONLY
 extern ScummEngine *g_scumm;
 
@@ -599,7 +618,7 @@ protected:
 	void doSentence(int c, int b, int a);
 
 	/* Should be in Resource class */
-	File _fileHandle;
+	XORFile _fileHandle;
 	uint32 _fileOffset;
 	int _resourceHeaderSize;
 	Common::String _gameName;	// This is the name we use for opening resource files

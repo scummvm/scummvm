@@ -892,7 +892,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 
 File *Sound::openSfxFile() {
 	char buf[256];
-	File *file = new File();
+	XORFile *file = new XORFile();
 	_offsetTable = NULL;
 	
 	struct SoundFileExtensions {
@@ -935,7 +935,8 @@ File *Sound::openSfxFile() {
 
 	if (!file->isOpen()) {
 		sprintf(buf, "%s.tlk", _vm->getGameName());
-		file->open(buf, _vm->getGameDataPath(), File::kFileReadMode, 0x69);
+		file->open(buf);
+		file->setEnc(0x69);
 		_soundMode = kVOCMode;
 	} else if (_soundMode != kVOCMode) {
 		/* Now load the 'offset' index in memory to be able to find the MP3 data

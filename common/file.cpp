@@ -132,7 +132,6 @@ void File::setDefaultDirectory(const Common::String &directory) {
 File::File() {
 	_handle = NULL;
 	_ioFailed = false;
-	_encbyte = 0;
 	_name = 0;
 }
 
@@ -141,7 +140,7 @@ File::~File() {
 	delete [] _name;
 }
 
-bool File::open(const char *filename, const char *directory, AccessMode mode, byte encbyte) {
+bool File::open(const char *filename, const char *directory, AccessMode mode) {
 	if (_handle) {
 		debug(2, "File %s already opened", filename);
 		return false;
@@ -173,8 +172,6 @@ bool File::open(const char *filename, const char *directory, AccessMode mode, by
 		warning("Only read/write mode supported!");
 		return false;
 	}
-
-	_encbyte = encbyte;
 
 	int len = strlen(filename);
 	if (_name != 0)
@@ -263,19 +260,10 @@ uint32 File::read(void *ptr, uint32 len) {
 		_ioFailed = true;
 	}
 
-	if (_encbyte != 0) {
-		uint32 t_size = real_len;
-		while (t_size--) {
-			*ptr2++ ^= _encbyte;
-		}
-	}
-
 	return real_len;
 }
 
 uint32 File::write(const void *ptr, uint32 len) {
-	byte *tmp = 0;
-	
 	if (_handle == NULL) {
 		error("File is not open!");
 		return 0;
@@ -284,24 +272,9 @@ uint32 File::write(const void *ptr, uint32 len) {
 	if (len == 0)
 		return 0;
 
-	if (_encbyte != 0) {
-		// Maybe FIXME: while it's efficient to do the encoding here,
-		// it not really nice for a write function to modify its input.
-		// Maybe we should work on a copy here...
-		tmp = (byte *)malloc(len);
-		for (uint32 i = 0; i < len; i ++) {
-			tmp[i] = ((const byte *)ptr)[i] ^ _encbyte;
-		}
-		ptr = tmp;
-	}
-
 	if ((uint32)fwrite(ptr, 1, len, _handle) != len) {
 		clearerr(_handle);
 		_ioFailed = true;
-	}
-
-	if (_encbyte != 0) {
-		free(tmp);
 	}
 
 	return len;

@@ -32,7 +32,6 @@ private:
 
 	FILE * _handle;
 	bool _ioFailed;
-	byte _encbyte;
 	char *_name;	// For debugging
 
 	static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
@@ -50,7 +49,7 @@ public:
 	File();
 	virtual ~File();
 	bool open(const char *filename, const Common::String &directory) { return open(filename, directory.c_str()); }
-	bool open(const char *filename, const char *directory = NULL, AccessMode mode = kFileReadMode, byte encbyte = 0);
+	bool open(const char *filename, const char *directory = NULL, AccessMode mode = kFileReadMode);
 	void close();
 	bool isOpen() const;
 	bool ioFailed() const;
@@ -62,8 +61,6 @@ public:
 	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *ptr, uint32 size);
 	uint32 write(const void *ptr, uint32 size);
-
-	void setEnc(byte value) { _encbyte = value; }
 };
 
 #endif

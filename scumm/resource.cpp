@@ -222,7 +222,8 @@ bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
 		_fileHandle.close();
 	}
 
-	_fileHandle.open(filename, getGameDataPath(), File::kFileReadMode, encByte);
+	_fileHandle.open(filename);
+	_fileHandle.setEnc(encByte);
 
 	return _fileHandle.isOpen();
 }
@@ -888,6 +889,7 @@ static const uint16 num_steps_table[] = {
 	240, 276, 340, 460,
 	600, 860, 1200, 1600
 };
+
 int ScummEngine::convert_extraflags(byte * ptr, byte * src_ptr) {
 	int flags = src_ptr[0];
 

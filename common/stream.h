@@ -80,16 +80,21 @@ public:
  * XORReadStream is a wrapper around an arbitrary other ReadStream,
  * which 'decrypts' the data being read by XORing all data bytes with the given
  * encryption 'key'.
+ *
+ * Currently, this is not used anywhere, it's just a demo of how one can chain
+ * streams if necessary.
  */
 class XORReadStream : public ReadStream {
 private:
 	byte _encbyte;
 	ReadStream *_realStream;
 public:
-	XORReadStream(ReadStream *in, byte enc = 0) : _realStream(in), _encbyte(enc) {}
+	XORReadStream(ReadStream *in = 0, byte enc = 0) : _realStream(in), _encbyte(enc) {}
+	void setStream(ReadStream *in) { _realStream = in; }
 	void setEnc(byte value) { _encbyte = value; }
 
 	uint32 read(void *ptr, uint32 size) {
+		assert(_realStream);
 		uint32 len = _realStream->read(ptr, size);
 		if (_encbyte) {
 			byte *p = (byte *)ptr;
@@ -101,6 +106,13 @@ public:
 	}
 };
 
+/**
+ * Simple memory based 'stream', which implements the ReadStream interface for
+ * a plain memory block.
+ *
+ * Currently not used anywhere, just a proof of concept, and meant to give an
+ * idea of what streams can be used for.
+ */
 class MemoryReadStream : public ReadStream {
 private:
 	const byte *_ptr;
