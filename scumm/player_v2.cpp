@@ -333,7 +333,7 @@ Player_V2::Player_V2(Scumm *scumm) {
 	// This simulates the pc speaker sound, which is driven
 	// by the 8253 (square wave generator) and a low-band filter.
 	
-	_isV3Game = (scumm->_version == 3);
+	_isV3Game = (scumm->_version >= 3);
 	_system = scumm->_system;
 	_mixer = scumm->_mixer;
 	_sample_rate = _system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
