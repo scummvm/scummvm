@@ -921,8 +921,10 @@ void OSystem_PALMOS::quit() {
 //	free(_sndDataP);
 	free(_sndTempP);
 
-	if (_msaRefNum != sysInvalidRefNum)
+	if (_msaRefNum != sysInvalidRefNum) {
+		MsaStop(_msaRefNum, true);	// stop the current track if any (needed if we use enforce open to prevent the track to play after exit)
 		MsaLibClose(_msaRefNum, msaLibOpenModeAlbum);
+	}
 
 	unload_gfx_mode();
 	_quit = true;
@@ -1035,7 +1037,7 @@ static UInt16 checkMSA() {
 //				Char buf[100];
 //				StrPrintF(buf,"MSA refNum %ld, Try to open lib ...", refNum);
 //				FrmCustomAlert(1000,buf,0,0);
-//				MsaLibClose(refNum, msaLibOpenModeAlbum);
+				MsaLibClose(refNum, msaLibOpenModeAlbum);	// try to close the lib if we previously let it open (?)
 				error = MsaLibOpen(refNum, msaLibOpenModeAlbum);			
 /*				switch (error) {
 				case msaErrAlreadyOpen:
@@ -1051,12 +1053,11 @@ static UInt16 checkMSA() {
 					FrmCustomAlert(1000,"expErrCardNotPresent",0,0);
 					break;
 				}
-				
-				if (error == msaErrAlreadyOpen) {
-					error = MsaLibEnforceOpen(refNum, msaLibOpenModeAlbum, msaLibCreatorID);
-					FrmCustomAlert(1000,"Force no error",0,0);
-				}
-*///				error = errNone;
+*/
+				if (error == msaErrAlreadyOpen)
+					error = MsaLibEnforceOpen(refNum, msaLibOpenModeAlbum, appFileCreator);
+			
+				error = (error != msaErrStillOpen) ? error : errNone;
 			}
 		//}
 	}
