@@ -2528,7 +2528,7 @@ void SimonState::o_wait_for_vga(uint a) {
 			processSpecialKeys();
 		}
 
-		delay(1);
+		delay(10);
 
 		if (_game & GF_SIMON2) {
 			if (_timer_1 >= 1000) {
