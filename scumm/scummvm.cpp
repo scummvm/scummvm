@@ -2837,7 +2837,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		game.features |= GF_MACINTOSH;
 		break;
 	default:
-		game.features |= GF_PC;
+		if (!(game.features & GF_FMTOWNS))
+			game.features |= GF_PC;
 		break;
 	}
 
