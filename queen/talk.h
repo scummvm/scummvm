@@ -29,6 +29,7 @@ namespace Queen {
 class Graphics;
 class Logic;
 class Resource;
+struct BobSlot;
 
 class Talk {
   public:
@@ -200,6 +201,12 @@ class Talk {
 			const char *name, 
 			int state, 
 			int faceDirection); // FIND_SACTION
+
+	void makeSpeakBob(
+			const char *text, 
+			BobSlot *bob, 
+			int textX, int textY, 
+			int color, int flags); // MAKE_SPEAK_BOB
 
 	static int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
