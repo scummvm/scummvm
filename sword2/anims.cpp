@@ -112,7 +112,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 		// This is the start of the anim - set up the first frame
 
 #ifdef _SWORD2_DEBUG
-		// For testing all anims!	(James18apr97)
+		// For testing all anims!
 		// A script loop can send every resource number to the anim
 		// function & it will only run the valid ones. See
 		// 'testing_routines' object in George's Player Character
@@ -452,11 +452,6 @@ int32 FN_unshaded_sprite(int32 *params) {
 // 2nd param is a pointer to a null-terminated array of pointers to
 // _movieTextObject structures
 
-// FIXME: At the moment, the subtitle sprites and voice-overs are pre-cached.
-// The code would be much simpler if we simply stored the text/speech ids and
-// decoded them while the movie is playing. On the other hand, it might slow
-// down the video playback too much. We'll need to investigate...
-
 //int32 PlaySmacker(char *filename, _movieTextObject *textObjects[]);
 
 //	typedef struct {
@@ -722,7 +717,7 @@ int32 FN_play_sequence(int32 *params) {
 	// Write to walkthrough file (zebug0.txt)
  	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
 
-	// now create the text sprites, if any (James27may97)
+	// now create the text sprites, if any
 
 	if (sequenceTextLines)
 		CreateSequenceSpeech(sequenceSpeechArray);
@@ -768,9 +763,9 @@ int32 FN_play_sequence(int32 *params) {
 
 	// check the error return-value
 	if (rv)
-		debug(5, "PlaySmacker(\"%s\") returned 0x%.8x", filename, rv);
+		debug(5, "MoviePlayer.play(\"%s\") returned 0x%.8x", filename, rv);
 
-	// now clear the text sprites, if any (James27may97)
+	// now clear the text sprites, if any
 
 	if (sequenceTextLines)
 		ClearSequenceSpeech(sequenceSpeechArray);
