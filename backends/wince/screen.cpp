@@ -89,6 +89,8 @@ extern bool sound_activated;
 extern bool hide_toolbar;
 extern bool is_simon;
 extern bool smartphone;
+extern bool high_res;
+extern NewGui *g_gui;
 bool toolbar_drawn;
 bool draw_keyboard;
 bool wide_screen;
@@ -325,10 +327,14 @@ void GraphicsOff(void)
 
 void SetScreenGeometry(int w, int h) {
 	// Complain (loudly) if w > 320 and h > 240 ...
+	/*
 	if (w != 320 || h > 240) {
-		MessageBox(NULL, TEXT("Unsupported screen geometry !"), TEXT("Error"), MB_OK);
+		char tempo[100];
+		sprintf(tempo, "Unsupported screen geometry %dx%d", w, h);
+		drawError(tempo);
 		exit(1);
 	}
+	*/
 
 	_geometry_w = w;
 	_geometry_h = h;
@@ -337,12 +343,22 @@ void SetScreenGeometry(int w, int h) {
 }
 
 void LimitScreenGeometry() {
+	int limit;
 
-	if (_geometry_h > 200) {
-		geom[0].lineLimit = _geometry_w*200;
-		geom[1].lineLimit = _geometry_w*200;
-		geom[2].lineLimit = _geometry_w*200;
-		_geometry_h = 200;
+	if (high_res) {
+		if (wide_screen)
+			limit = 440;
+		else
+			limit = 400;
+	}
+	else
+		limit = 200;
+
+	if (_geometry_h > limit) {
+		geom[0].lineLimit = _geometry_w*limit;
+		geom[1].lineLimit = _geometry_w*limit;
+		geom[2].lineLimit = _geometry_w*limit;
+		_geometry_h = limit;
 	}
 }
 
@@ -814,23 +830,29 @@ void reducePortraitGeometry() {
 
 void drawAllToolbar() {
 	int x,y;
+	int start_offset;
+
+	if (high_res && wide_screen)
+		start_offset = 440;
+	else
+		start_offset = 200;
 
 	if (currentScreenMode || wide_screen) {
 
 		if (draw_keyboard) {
-			pBlt_part(image_expand(item_keyboard), 0, 200, 320, 40, item_keyboard_colors, 0);
+			pBlt_part(image_expand(item_keyboard), 0, start_offset, 320, 40, item_keyboard_colors, 0);
 		}
 		else {
-			pBlt_part(image_expand(item_toolbar), 0, 200, 320, 40, item_toolbar_colors, 0);
+			pBlt_part(image_expand(item_toolbar), 0, start_offset, 320, 40, item_toolbar_colors, 0);
 			x = 10;
-			y = 204;
+			y = start_offset + 4;
 			if (!is_simon)
 				pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors, 0);
 			x += 40;
 			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors, 0);
 			x += 40;
 			drawSoundItem(x, y);
-			if (_gfx_mode_switch) {
+			if (_gfx_mode_switch && !high_res) {
 				x += 40;
 				pBlt_part(image_expand(item_monkeyPortrait), x, y, 32, 32, 
 						item_monkeyPortrait_colors, 0);
@@ -854,7 +876,7 @@ void drawAllToolbar() {
 			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors, 0);
 			x += 40;
 			drawSoundItem(x, y);
-			if (_gfx_mode_switch) {
+			if (_gfx_mode_switch && !high_res) {
 				x += 40;
 				pBlt_part(image_expand(item_monkeyLandscape), x, y, 32, 32,
 							item_monkeyLandscape_colors, 0);			
@@ -875,28 +897,40 @@ bool isInBox(int x, int y, int x1, int y1, int x2, int y2) {
 
 ToolbarSelected getToolbarSelection (int x, int y) {
 	int test_x, test_y;
+	int offset = 1;
 
 	/*
 	if (!currentScreenMode)
 		return ToolbarNone;
 	*/
 
-	if (!(x >= 10 && y >= 204))
+	if (!high_res && !(x >= 10 && y >= 204))
+		return ToolbarNone;
+
+	if (high_res && !(x >= 10 && y >= 444))
 		return ToolbarNone;
 	
-	test_x = 10;
-	test_y = (currentScreenMode || wide_screen ? 204 : 240);
-	if (isInBox(x, y, test_x, test_y, test_x + 32, test_y + 32))
+	if (!high_res)
+		test_y = (currentScreenMode || wide_screen ? 204 : 240);
+	else
+		test_y = 444;
+
+	if (high_res && !wide_screen) 
+			offset = 2;
+
+	test_x = (10 * offset);
+
+	if (isInBox(x, y, test_x, test_y, test_x + (32 * offset), test_y + (32 * offset)))
 		return ToolbarSaveLoad;
-	test_x += 40;
-	if (isInBox(x, y, test_x, test_y, test_x + 32, test_y + 32))
+	test_x += (40 * offset);
+	if (isInBox(x, y, test_x, test_y, test_x + (32 * offset), test_y + (32 * offset)))
 		return ToolbarSkip;
-	test_x += 40;
-	if (isInBox(x, y, test_x, test_y, test_x + 32, test_y + 32))
+	test_x += (40 * offset);
+	if (isInBox(x, y, test_x, test_y, test_x + (32 * offset), test_y + (32 * offset)))
 		return ToolbarSound;
-	if (_gfx_mode_switch) {
-		test_x += 40;
-		if (isInBox(x, y, test_x, test_y, test_x + 32, test_y + 32))
+	if (_gfx_mode_switch && !high_res) {
+		test_x += (40 * offset);
+		if (isInBox(x, y, test_x, test_y, test_x + (32 * offset), test_y + (32 * offset)))
 			return ToolbarMode;
 	}
 	return ToolbarNone;
@@ -1881,6 +1915,13 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 
 void hicolor565_Blt(UBYTE *src_ptr) {
 	hicolor565_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL, 0);
+
+/*
+	if (high_res)
+		hicolor565_Blt_part(src_ptr, 0, 0, 640, 480, NULL, 0);
+	else
+		hicolor565_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL, 0);
+*/
 }
 
 
@@ -2025,8 +2066,56 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 		/* Update offsets to the current line */
 		scraddr += y * linestep;
 		scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
+
+		if (scr_ptr_limit > scr_ptr + geom[useMode].lineLimit)
+			scr_ptr_limit = scr_ptr + geom[useMode].lineLimit;
+
 		src_limit = scr_ptr + width;
 
+		/* CMI rendering */
+		if (high_res && !own_palette) {
+
+			while(scr_ptr < scr_ptr_limit)
+			{
+				int i;
+
+				src = scr_ptr;
+				dst = scraddr;
+
+				/* skip non updated pixels for this line */
+				for (i=0; i < x; i++)
+					dst += pixelstep;
+				
+				while(src < src_limit)
+				{
+					UBYTE r, g, b;
+					if (!own_palette) {
+						r = (3*palRed[*(src+0)] + palRed[*(src+1)])>>2;
+						g = (3*palGreen[*(src+0)] + palGreen[*(src+1)])>>2;
+						b = (3*palBlue[*(src+0)] + palBlue[*(src+1)])>>2;
+					} else {
+						r = (3 * own_palette[3 * *(src + 0)] + 
+							     own_palette[3 * *(src + 1)]) >> 2;
+						g = (3 * own_palette[3 * *(src + 0) + 1] +
+								 own_palette[3 * *(src + 1) + 1]) >> 2;
+						b = (3 * own_palette[3 * *(src + 0) + 2] +
+							     own_palette[3 * *(src + 1) + 2]) >> 2;
+					}
+
+					*(unsigned short*)dst = COLORCONV565(r,g,b);
+
+					dst += pixelstep;
+
+					src += 2;
+				}
+
+				scraddr += linestep;
+				scr_ptr += (pitch ? 2 * pitch : 2 * width);
+				src_limit += (pitch ? 2 * pitch : 2 * width);
+			}
+				
+		}
+		else
 		/* Special Smartphone implementation */
 		/* Landscape mode, 2/3 X, 7/8 Y      */
 		if (smartphone) {
@@ -2417,6 +2506,20 @@ void Translate(int* px, int* py)
 	if (wide_screen)
 		return;
 
+	if (high_res) {
+		x = 320 - *py;
+		y = *px;
+		if (!g_gui->isActive()) {
+			*px = x * 2;
+			*py = y * 2;
+		}
+		else {
+			*px = x;
+			*py = y;
+		}
+		return;
+	}
+
 	switch(currentScreenMode)
 	{
 	case 0: /* portrait */
@@ -2511,10 +2614,24 @@ void Get_565(UBYTE *src, INT16 *buffer, int pitch, int x, int y, int width, int 
 
 	// Dumb conversion to 565
 
-	for (i=0; i<height; i++) {
-		for (j=0; j<width; j++) {
-			*buffer++ = COLORCONV565(palRed[*src], palGreen[*src], palBlue[*src]);
-			src++;
+	if (!(high_res && !wide_screen)) {
+		for (i=0; i<height; i++) {
+			for (j=0; j<width; j++) {
+				*buffer++ = COLORCONV565(palRed[*src], palGreen[*src], palBlue[*src]);
+				src++;
+			}
+		}
+	}
+	else {
+		UBYTE *current;
+
+		for (i=0; i<height; i++) {
+			current = src;
+			for (j=0; j<width; j++) {
+				*buffer++ = COLORCONV565(palRed[*current], palGreen[*current], palBlue[*current]);
+				current += 2;
+			}
+			src += 2 * 640;
 		}
 	}
 }
