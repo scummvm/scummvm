@@ -1,43 +1,68 @@
 #ifndef _ARMNATIVE_H_
 #define _ARMNATIVE_H_
 
+#include "PNOLoader.h"
+
 #ifdef WIN32
 	#include "testing/SimNative.h"
 	#include "testing/oscalls.h"
 #endif
 
-// functions
-typedef unsigned long (*PnoProc)(void *userData68KP);
+//#define DISABLE_ARM
+//#define DEBUG_ARM
 
-#define DECLARE(x)	unsigned long x(void *userData68KP);
+// rsrc
+enum {
+	ARM_PA1SND		= 1,
+	ARM_STREAMSND,
+	ARM_OWIDELS,
+	ARM_OWIDEPT,
+	ARM_OCOPYRECT
+};
+
+#define TRUE	1
+#define FALSE	0
+
+// types
+typedef struct {
+	void *srcP;
+	void *dstP;
+	UInt32 length;
+} ARMPa1SndType, *ARMPa1SndPtr;
 
 typedef struct {
-	UInt32 func;
+	void *proc;
+	void *param;
+
+	void	*handle;	// sound handle
+	UInt32	size;		// buffer size
+	UInt32	slot;
+	UInt32 	active,		// is the sound handler active
+			set,		// is the buffer filled
+			wait;		// do we need to wait for sound completion
+	void	*dataP,		// main buffer
+			*tmpP;		// tmp buffer (convertion)
+} SoundDataType;
+
+typedef struct {
 	void *dst;
 	void *src;
-	
-} DataOSysWideType , *DataOSysWidePtr;
+} OSysWideType , *OSysWidePtr;
 
 typedef struct {
-	UInt32 func;
 	void *dst;
 	const void *buf;
 	UInt32 pitch, _offScreenPitch;
 	UInt32 w, h;
-} DataOSysCopyRectType, *DataOSysCopyRectPtr;
+} OSysCopyType, *OSysCopyPtr;
 
-DECLARE(OSystem_PALMOS_update_screen__wide_portrait)
-DECLARE(OSystem_PALMOS_update_screen__wide_landscape)
-DECLARE(OSystem_PALMOS_copyRectToScreen)
+// calls
+MemPtr	_PceInit(DmResID resID);
+UInt32	_PceCall(void *armP, void *userDataP);
+void	_PceFree(void *armP);
 
-// rsrc
-#define ARMCODE_1	1000
-
-// function indexes
-enum {
-	kOSysWidePortrait = 0,
-	kOSysWideLandscape,
-	kOSysCopyRect
-};
+MemPtr	_PnoInit(DmResID resID, PnoDescriptor *pnoP);
+UInt32	_PnoCall(PnoDescriptor *pnoP, void *userDataP);
+void	_PnoFree(PnoDescriptor *pnoP, MemPtr armP);
 
 #endif
