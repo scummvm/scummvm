@@ -742,7 +742,6 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	start_time = _scumm->_system->get_msecs();
 
 #ifdef INSANE
-	// FIXME: Check either it is proper place for the call
 	if (_insanity) {
 		_scumm->_insane->procPreRendering();
 	}
@@ -804,8 +803,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	}
 
 #ifdef INSANE
-	// FIXME: Check either it is proper place for the call
-	//        Check either parameters are valid
+	// FIXME: Check either parameters are valid
 	if (_insanity) {
 		_scumm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}

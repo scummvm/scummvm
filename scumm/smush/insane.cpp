@@ -40,21 +40,10 @@
 
 #ifdef INSANE
 
-// NOTE:
-// san files with IACT chunks:
-// minedriv.san
-// minefite.san
-// toranch.san
-// tovista1.san
-// tovista2.san
-
 // TODO (in no particular order):
+// o Cannot leave mines, problem with playing san from the middle
 // o Ben's velocity don't get zeroed after crash
-// o After third crash Ben disappears
-// o Check why ftmacdemo doesn't finish insane scene
 // o TRS file support. Everything is in place, I just need to figure out function parameters
-// o FLU files support
-// o IACT
 // o Code review/cleanup
 // o DOS demo INSANE
 
@@ -2619,7 +2608,7 @@ void Insane::setupValues(void) {
 void Insane::setEnemyCostumes (void) {
 	int i;
 
-	debug(0, "setEnemyCostumes()");
+	debug(0, "setEnemyCostumes(%d)", _currEnemy);
 
 	smlayer_setActorCostume(0, 2, readArray(_numberArray, 12));
 	smlayer_setActorCostume(0, 0, readArray(_numberArray, 14));
@@ -2801,7 +2790,7 @@ bool Insane::idx2Compare(void) {
 
 int32 Insane::idx1Tweak(void) {
 	_objArray1Idx++;
-	if (_objArray1Idx > 100)
+	if (_objArray1Idx >= 100)
 		_objArray1Idx = 0;
 	
 	return _objArray1[_objArray1Idx];
@@ -2813,7 +2802,7 @@ int32 Insane::idx2Tweak(void) {
 			return false;
 	
 	_objArray2Idx++;
-	if (_objArray2Idx > 100) {
+	if (_objArray2Idx >= 100) {
 		_idx2Exceeded = 0;
 		_objArray2Idx = 0;
 	}
@@ -2865,16 +2854,19 @@ void Insane::switchSceneIfNeeded(void) {
 		_currSceneId = _temp2SceneId;
 		_needSceneSwitch = false;
 		loadSceneData(_temp2SceneId, 0, 1);
+
 		if(loadSceneData(_temp2SceneId, 0, 2)) {
 			setSceneCostumes(_temp2SceneId);
 			_sceneData2Loaded = 0;
 			_sceneData1Loaded = 0;
 			return;
 		}
+
 		_sceneData2Loaded = 1;
 		if (_temp2SceneId == 13 || _temp2SceneId == 3)
 			_isBenCut = 1;
 	}
+
 	if (_sceneData2Loaded && !_sceneData1Loaded) {
 		setSceneCostumes(_currSceneId);
 		_sceneData2Loaded = 0;
@@ -5851,7 +5843,7 @@ int Insane::smlayer_loadSound(int id, int flag, int phase) {
 	if (phase == 1) {
 		_objArray2Idx2++;
 		_objArray2[_objArray2Idx2] = id;
-		if (_objArray2Idx2 > 100) {
+		if (_objArray2Idx2 >= 100) {
 			_idx2Exceeded = 1;
 			_objArray2Idx2 = 0;
 		}
@@ -6971,6 +6963,9 @@ void Insane::actor12Reaction(int32 buttons) {
 		if (_currSceneId == 21) {
 			queueSceneSwitch(22, 0, "rottflip.san", 64, 0, 0, 0);
 			_actor[1].act[2].state = 38;
+		} else {
+			queueSceneSwitch(11, 0, _enemy[_currEnemy].filename, 64, 0, 0, 0);
+			_actor[1].act[2].state = 38;
 		}
 		break;
 	case 102:
@@ -6984,13 +6979,8 @@ void Insane::actor12Reaction(int32 buttons) {
 	case 103:
 		_actor[1].kicking = 0;
 		
-		if (_actor[1].act[2].frame >= 18) {
-			if (_actor[1].x >= 50 && _actor[1].x <= 270)
-				break;
-
-			if (_actor[1].act[2].frame < 9)
-				break;
-
+		if (_actor[1].act[2].frame >= 18 || ((_actor[1].x < 50 || _actor[1].x > 270) &&
+											 _actor[1].act[2].frame >= 9)) {
 			_enemy[EN_CAVEFISH].field_10 = 1;
 			queueSceneSwitch(20, 0, "wr2_cvko.san", 64, 0, 0, 0);
 			_actor[1].act[2].state = 38;
