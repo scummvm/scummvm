@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.10  2001/10/17 07:12:37  strigeus
+ * fixed nasty signed/unsigned bug
+ *
  * Revision 1.9  2001/10/16 20:31:27  strigeus
  * misc fixes
  *
@@ -100,7 +103,7 @@ struct VirtScreen {
 	uint16 width,height;
 	uint16 size;
 	byte alloctwobuffers;
-	byte fourlinesextra;
+	byte scrollable;
 	uint16 xstart;
 	byte tdirty[40];
 	byte bdirty[40];

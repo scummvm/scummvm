@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/17 07:12:37  strigeus
+ * fixed nasty signed/unsigned bug
+ *
  * Revision 1.5  2001/10/16 20:31:27  strigeus
  * misc fixes
  *
@@ -93,11 +96,11 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fou
 	vs->topline = top;
 	vs->height = height;
 	vs->alloctwobuffers = twobufs;
-	vs->fourlinesextra = fourextra;
+	vs->scrollable = fourextra;
 	vs->xstart = 0;
 	size = vs->width * vs->height;
 	vs->size = size;
-	if (vs->fourlinesextra)
+	if (vs->scrollable)
 		size += 320*4;
 
 	memset(
@@ -164,7 +167,7 @@ void Scumm::updateDirtyScreen(int slot) {
 	gdi.drawY = vs->topline;
 	gdi.drawHeight = vs->height;
 	gdi.readOffs = 0;
-	if (vs->fourlinesextra)
+	if (vs->scrollable)
 		gdi.readOffs = _screenStartStrip;
 
 	if (_videoMode==0xE) {
@@ -659,7 +662,7 @@ void Scumm::drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr) 
 
 	dseg_4174 = vs->size;
 
-	if (vs->fourlinesextra)
+	if (vs->scrollable)
 		dseg_4174 += 5*256;
 	
 	gdi.vertStripNextInc = gdi.numLinesToProcess * 320 - 1;
@@ -668,12 +671,12 @@ void Scumm::drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr) 
 		gdi.smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + a*4 + 8);
 
 		x = _drawBmpX;
-		if (vs->fourlinesextra)
+		if (vs->scrollable)
 			x -= _screenStartStrip;
 
 		CHECK_HEAP
 
-		if (x >= 40) 
+		if ((uint)x >= 40) 
 			return;
 
 		if (_drawBmpY < vs->tdirty[x])
@@ -934,13 +937,15 @@ void Scumm::decompressMaskImgOr() {
 void Scumm::redrawBGStrip(int start, int num) {
 	int s = _screenStartStrip + start;
 
+	assert(s>=0 && s<sizeof(actorDrawBits)/sizeof(actorDrawBits[0]));
+
 	gdi.virtScreen = 0;
 	actorDrawBits[s]|=0x8000;
 	_drawBmpX = s;
 	_drawBmpY = 0;
 	gdi.numLinesToProcess = virtscr[0].height;
 	if (gdi.numLinesToProcess > _scrHeight) {
-		error("Screen Y size %d > Room height %d",
+		error("Screen Y size %d < Room height %d",
 			gdi.numLinesToProcess,
 			_scrHeight);
 	}
