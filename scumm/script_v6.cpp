@@ -3271,7 +3271,13 @@ void ScummEngine_v6::o6_readINI() {
 
 // Humongous Entertainment games only
 void ScummEngine_v6::o6_localizeArray() {
-	warning("stub localizeArray(%d)", pop());
+	int stringID = pop();
+
+	if (stringID < _numArray) {
+		_baseArrays[stringID][0] = (byte)_currentScript;
+	} else {
+		warning("o6_localizeArray(%d): too big scriptID", stringID);
+	}
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
