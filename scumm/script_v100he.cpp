@@ -1358,7 +1358,8 @@ void ScummEngine_v100he::o100_unknown25() {
 		break;
 	case 81:
 		pop();
-		break;	default:
+		break;
+	default:
 		error("o100_unknown25: Unknown case %d", subOp);
 	}
 	push(0);

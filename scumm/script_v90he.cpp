@@ -1175,31 +1175,80 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 }
 
 void ScummEngine_v90he::o90_getPolygonOverlap() {
-	// Polygons related
-	int args[32];
+	int args1[32];
 	int args2[32];
 
-	getStackList(args, ARRAYSIZE(args));
+	int n1 = getStackList(args1, ARRAYSIZE(args1));
 	getStackList(args2, ARRAYSIZE(args2));
 
 	int subOp = pop();
 
 	switch (subOp) {
 	case 1:
+		{
+			Common::Rect r(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
+			Common::Point p(args2[0], args2[1]);
+			push(r.contains(p) ? 1 : 0);
+		}
+		break;
 	case 2:
+		{
+			int dx = args2[0] - args1[0];
+			int dy = args2[1] - args1[1];
+			int dist = dx * dx + dy * dy;
+			if (dist >= 2) {
+				dist = (int)sqrt(dist + 1);
+			}
+			push((dist > args1[2]) ? 1 : 0);
+		}
+		break;
 	case 3:
+		{
+			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
+			Common::Rect r2(args2[0], args2[1], args2[2] + 1, args2[3] + 1);
+			push(r2.intersects(r1) ? 1 : 0);			
+		}
+		break;
 	case 4:
+		{
+			int dx = args2[0] - args1[0];
+			int dy = args2[1] - args1[1];
+			int dist = dx * dx + dy * dy;
+			if (dist >= 2) {
+				dist = (int)sqrt(dist + 1);
+			}
+			push((dist < args1[2] && dist < args2[2]) ? 1 : 0);
+		}
+		break;
 	case 5:
+		{
+			assert((n1 & 1) == 0);
+			n1 /= 2;
+			if (n1 == 0) {
+				push(0);
+			} else {
+				WizPolygon wp;
+				memset(&wp, 0, sizeof(wp));
+				wp.numVerts = n1;
+				assert(n1 < ARRAYSIZE(wp.vert));
+				for (int i = 0; i < n1; ++i) {
+					wp.vert[i].x = args1[i * 2 + 0];
+					wp.vert[i].y = args1[i * 2 + 1];
+				}
+				push(polygonContains(wp, args2[0], args2[1]) ? 1 : 0);
+			}
+		}
+		break;
 	// HE 98+
 	case 6:
 	case 7:
 	case 8:
 	case 9:
+		push(0);
 		break;
 	default:
 		error("o90_getPolygonOverlap: default case %d", subOp);
 	}
-	push(0);
 }
 
 void ScummEngine_v90he::o90_unknown36() {

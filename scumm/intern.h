@@ -625,7 +625,7 @@ protected:
 	void arrrays_unk2(int dst, int src, int len2, int len);
 
 	void polygonErase(int fromId, int toId);
-	bool polygonContains(WizPolygon &pol, int x, int y);
+	bool polygonContains(const WizPolygon &pol, int x, int y);
 	bool polygonDefined(int id);
 	int polygonHit(int id, int x, int y);
 
