@@ -1834,26 +1834,18 @@ void ScummEngine::processKbd(bool smushMode) {
 	}
 
 #ifdef _WIN32_WCE
-	if (_lastKeyHit == KEY_SET_OPTIONS) {
-		//_newgui->optionsDialog();
-		return;
-	}
-
 	if (_lastKeyHit == KEY_ALL_SKIP) {
 		// Skip cutscene
 		if (smushMode) {
-			// Eek this is literally shouting for trouble...
-			// Probably should set _lastKey to VAR_CUTSCENEEXIT_KEY instead!
-			_videoFinished = true;
-			return;
+			_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
 		}
 		else
 		if (vm.cutScenePtr[vm.cutSceneStackPointer])
-			_lastKeyHit = (uint16)VAR(VAR_CUTSCENEEXIT_KEY);
+			_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
 		else 
 		// Skip talk 
 		if (_talkDelay > 0) 
-			_lastKeyHit = (uint16)VAR(VAR_TALKSTOP_KEY);
+			_lastKeyHit = (uint)VAR(VAR_TALKSTOP_KEY);
 		else
 		// Escape
 			_lastKeyHit = 27;
