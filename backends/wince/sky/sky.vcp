@@ -50,8 +50,8 @@ CFG=sky - Win32 (WCE MIPS) Debug
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=clmips.exe
-# ADD BASE CPP /nologo /W3 /GX- /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT)  /c
-# ADD CPP /nologo /W3 /GX- /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT)  /c
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -76,8 +76,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=clmips.exe
-# ADD BASE CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
-# ADD CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -102,8 +102,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=shcl.exe
-# ADD BASE CPP /nologo /W3 /GX- /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT)  /c
-# ADD CPP /nologo /W3 /GX- /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT)  /c
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -128,8 +128,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=shcl.exe
-# ADD BASE CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
-# ADD CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -154,8 +154,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /GX- /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /Oxs /M$(CECrtMT)  /c
-# ADD CPP /nologo /W3 /GX- /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "USE_VORBIS" /D "NONSTANDARD_PORT" /YX /Oxs /M$(CECrtMT)  /c
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /GX /O2 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D "USE_VORBIS" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -180,8 +180,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
-# ADD CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -511,8 +511,57 @@ SOURCE=..\..\..\sky\compacts\savedata.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_SAVED=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SAVED=\
-	"..\..\..\sky\compacts\sky\control.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -523,8 +572,57 @@ NODEP_CPP_SAVED=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_SAVED=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SAVED=\
-	"..\..\..\sky\compacts\sky\control.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -567,17 +665,11 @@ DEP_CPP_SAVED=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\config.h"\
@@ -585,12 +677,67 @@ NODEP_CPP_SAVED=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_SAVED=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SAVED=\
-	"..\..\..\sky\compacts\sky\control.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -699,13 +846,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\config.h"\
@@ -713,7 +853,13 @@ NODEP_CPP_ADLIB=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
-	"..\..\..\sound\ymdeltat.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -742,9 +888,57 @@ SOURCE=..\..\..\sky\music\adlibmusic.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_ADLIBM=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_ADLIBM=\
-	"..\..\..\sky\music\sky\music\adlibmusic.h"\
-	"..\..\..\sky\music\sound\fmopl.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -756,9 +950,57 @@ NODEP_CPP_ADLIBM=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_ADLIBM=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_ADLIBM=\
-	"..\..\..\sky\music\sky\music\adlibmusic.h"\
-	"..\..\..\sky\music\sound\fmopl.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -807,13 +1049,61 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_ADLIBM=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
+
+DEP_CPP_ADLIBM=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\config.h"\
@@ -822,13 +1112,13 @@ NODEP_CPP_ADLIBM=\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
 	"..\..\..\sound\ymdeltat.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
-
-NODEP_CPP_ADLIBM=\
-	"..\..\..\sky\music\sky\music\adlibmusic.h"\
-	"..\..\..\sky\music\sound\fmopl.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -905,12 +1195,12 @@ DEP_CPP_GMCHA=\
 	"..\..\..\sound\mididrv.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMCHA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -938,29 +1228,184 @@ SOURCE=..\..\..\sky\music\gmmusic.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_GMMUS=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_GMMUS=\
-	"..\..\..\sky\music\sky\music\gmmusic.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_GMMUS=\
 	"..\..\..\sky\music\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\sky\sky.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_GMMUS=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_GMMUS=\
-	"..\..\..\sky\music\sky\music\gmmusic.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_GMMUS=\
 	"..\..\..\sky\music\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\sky\sky.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
+
+DEP_CPP_GMMUS=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_GMMUS=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
 DEP_CPP_GMMUS=\
 	"..\..\..\common\engine.h"\
@@ -976,18 +1421,12 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sound\mididrv.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
-
-NODEP_CPP_GMMUS=\
-	"..\..\..\sky\music\sky\music\gmmusic.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1003,8 +1442,26 @@ SOURCE=..\..\..\sky\music\mt32music.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_MT32M=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_MT32M=\
-	"..\..\..\sky\music\sky\music\mt32music.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1015,8 +1472,26 @@ NODEP_CPP_MT32M=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_MT32M=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_MT32M=\
-	"..\..\..\sky\music\sky\music\mt32music.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1041,18 +1516,36 @@ DEP_CPP_MT32M=\
 	"..\..\..\sound\mididrv.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MT32M=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_MT32M=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_MT32M=\
-	"..\..\..\sky\music\sky\music\mt32music.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1123,12 +1616,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -1260,17 +1753,11 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\config.h"\
@@ -1278,6 +1765,13 @@ NODEP_CPP_AUTOR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -1307,43 +1801,11 @@ SOURCE=..\..\..\sky\autoroute.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\sky\cd_intro.cpp
+SOURCE=..\..\..\sky\compact.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
-NODEP_CPP_CD_IN=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
-
-NODEP_CPP_CD_IN=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
-
-NODEP_CPP_CD_IN=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
-
-NODEP_CPP_CD_IN=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
-
-DEP_CPP_CD_IN=\
+DEP_CPP_COMPA=\
 	"..\..\..\common\config-file.h"\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
@@ -1358,6 +1820,82 @@ DEP_CPP_CD_IN=\
 	"..\..\..\common\util.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\compacts\0compact.h"\
+	"..\..\..\sky\compacts\101comp.h"\
+	"..\..\..\sky\compacts\102comp.h"\
+	"..\..\..\sky\compacts\10comp.h"\
+	"..\..\..\sky\compacts\11comp.h"\
+	"..\..\..\sky\compacts\12comp.h"\
+	"..\..\..\sky\compacts\13comp.h"\
+	"..\..\..\sky\compacts\14comp.h"\
+	"..\..\..\sky\compacts\15comp.h"\
+	"..\..\..\sky\compacts\16comp.h"\
+	"..\..\..\sky\compacts\17comp.h"\
+	"..\..\..\sky\compacts\18comp.h"\
+	"..\..\..\sky\compacts\19comp.h"\
+	"..\..\..\sky\compacts\1compact.h"\
+	"..\..\..\sky\compacts\20comp.h"\
+	"..\..\..\sky\compacts\21comp.h"\
+	"..\..\..\sky\compacts\22comp.h"\
+	"..\..\..\sky\compacts\23comp.h"\
+	"..\..\..\sky\compacts\24comp.h"\
+	"..\..\..\sky\compacts\25comp.h"\
+	"..\..\..\sky\compacts\26comp.h"\
+	"..\..\..\sky\compacts\27comp.h"\
+	"..\..\..\sky\compacts\28comp.h"\
+	"..\..\..\sky\compacts\29comp.h"\
+	"..\..\..\sky\compacts\2compact.h"\
+	"..\..\..\sky\compacts\30comp.h"\
+	"..\..\..\sky\compacts\31comp.h"\
+	"..\..\..\sky\compacts\32comp.h"\
+	"..\..\..\sky\compacts\33comp.h"\
+	"..\..\..\sky\compacts\34comp.h"\
+	"..\..\..\sky\compacts\36comp.h"\
+	"..\..\..\sky\compacts\37comp.h"\
+	"..\..\..\sky\compacts\38comp.h"\
+	"..\..\..\sky\compacts\39comp.h"\
+	"..\..\..\sky\compacts\3compact.h"\
+	"..\..\..\sky\compacts\40comp.h"\
+	"..\..\..\sky\compacts\41comp.h"\
+	"..\..\..\sky\compacts\42comp.h"\
+	"..\..\..\sky\compacts\44comp.h"\
+	"..\..\..\sky\compacts\45comp.h"\
+	"..\..\..\sky\compacts\46comp.h"\
+	"..\..\..\sky\compacts\47comp.h"\
+	"..\..\..\sky\compacts\48comp.h"\
+	"..\..\..\sky\compacts\4compact.h"\
+	"..\..\..\sky\compacts\5compact.h"\
+	"..\..\..\sky\compacts\65comp.h"\
+	"..\..\..\sky\compacts\66comp.h"\
+	"..\..\..\sky\compacts\67comp.h"\
+	"..\..\..\sky\compacts\68comp.h"\
+	"..\..\..\sky\compacts\69comp.h"\
+	"..\..\..\sky\compacts\70comp.h"\
+	"..\..\..\sky\compacts\71comp.h"\
+	"..\..\..\sky\compacts\72comp.h"\
+	"..\..\..\sky\compacts\73comp.h"\
+	"..\..\..\sky\compacts\74comp.h"\
+	"..\..\..\sky\compacts\75comp.h"\
+	"..\..\..\sky\compacts\76comp.h"\
+	"..\..\..\sky\compacts\77comp.h"\
+	"..\..\..\sky\compacts\78comp.h"\
+	"..\..\..\sky\compacts\79comp.h"\
+	"..\..\..\sky\compacts\80comp.h"\
+	"..\..\..\sky\compacts\81comp.h"\
+	"..\..\..\sky\compacts\82comp.h"\
+	"..\..\..\sky\compacts\85comp.h"\
+	"..\..\..\sky\compacts\90comp.h"\
+	"..\..\..\sky\compacts\91comp.h"\
+	"..\..\..\sky\compacts\92comp.h"\
+	"..\..\..\sky\compacts\93comp.h"\
+	"..\..\..\sky\compacts\94comp.h"\
+	"..\..\..\sky\compacts\95comp.h"\
+	"..\..\..\sky\compacts\96comp.h"\
+	"..\..\..\sky\compacts\9compact.h"\
+	"..\..\..\sky\compacts\linc_gen.h"\
+	"..\..\..\sky\compacts\lincmenu.h"\
+	"..\..\..\sky\compacts\objects.h"\
+	"..\..\..\sky\compacts\z_compac.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -1375,60 +1913,25 @@ DEP_CPP_CD_IN=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
-NODEP_CPP_CD_IN=\
+NODEP_CPP_COMPA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
-
-NODEP_CPP_CD_IN=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\sky\compact.cpp
-
-!IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
-
-NODEP_CPP_COMPA=\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\compacts\0compact.h"\
-	"..\..\..\sky\sky\compacts\1compact.h"\
-	"..\..\..\sky\sky\compacts\29comp.h"\
-	"..\..\..\sky\sky\compacts\2compact.h"\
-	"..\..\..\sky\sky\compacts\30comp.h"\
-	"..\..\..\sky\sky\compacts\3compact.h"\
-	"..\..\..\sky\sky\compacts\4compact.h"\
-	"..\..\..\sky\sky\compacts\5compact.h"\
-	"..\..\..\sky\sky\compacts\66comp.h"\
-	"..\..\..\sky\sky\compacts\90comp.h"\
-	"..\..\..\sky\sky\compacts\9compact.h"\
-	"..\..\..\sky\sky\compacts\linc_gen.h"\
-	"..\..\..\sky\sky\compacts\lincmenu.h"\
-	"..\..\..\sky\sky\compacts\z_compac.h"\
-	"..\..\..\sky\stdafx.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1454,23 +1957,133 @@ NODEP_CPP_COMPA=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_COMPA=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\compacts\0compact.h"\
+	"..\..\..\sky\compacts\101comp.h"\
+	"..\..\..\sky\compacts\102comp.h"\
+	"..\..\..\sky\compacts\10comp.h"\
+	"..\..\..\sky\compacts\11comp.h"\
+	"..\..\..\sky\compacts\12comp.h"\
+	"..\..\..\sky\compacts\13comp.h"\
+	"..\..\..\sky\compacts\14comp.h"\
+	"..\..\..\sky\compacts\15comp.h"\
+	"..\..\..\sky\compacts\16comp.h"\
+	"..\..\..\sky\compacts\17comp.h"\
+	"..\..\..\sky\compacts\18comp.h"\
+	"..\..\..\sky\compacts\19comp.h"\
+	"..\..\..\sky\compacts\1compact.h"\
+	"..\..\..\sky\compacts\20comp.h"\
+	"..\..\..\sky\compacts\21comp.h"\
+	"..\..\..\sky\compacts\22comp.h"\
+	"..\..\..\sky\compacts\23comp.h"\
+	"..\..\..\sky\compacts\24comp.h"\
+	"..\..\..\sky\compacts\25comp.h"\
+	"..\..\..\sky\compacts\26comp.h"\
+	"..\..\..\sky\compacts\27comp.h"\
+	"..\..\..\sky\compacts\28comp.h"\
+	"..\..\..\sky\compacts\29comp.h"\
+	"..\..\..\sky\compacts\2compact.h"\
+	"..\..\..\sky\compacts\30comp.h"\
+	"..\..\..\sky\compacts\31comp.h"\
+	"..\..\..\sky\compacts\32comp.h"\
+	"..\..\..\sky\compacts\33comp.h"\
+	"..\..\..\sky\compacts\34comp.h"\
+	"..\..\..\sky\compacts\36comp.h"\
+	"..\..\..\sky\compacts\37comp.h"\
+	"..\..\..\sky\compacts\38comp.h"\
+	"..\..\..\sky\compacts\39comp.h"\
+	"..\..\..\sky\compacts\3compact.h"\
+	"..\..\..\sky\compacts\40comp.h"\
+	"..\..\..\sky\compacts\41comp.h"\
+	"..\..\..\sky\compacts\42comp.h"\
+	"..\..\..\sky\compacts\44comp.h"\
+	"..\..\..\sky\compacts\45comp.h"\
+	"..\..\..\sky\compacts\46comp.h"\
+	"..\..\..\sky\compacts\47comp.h"\
+	"..\..\..\sky\compacts\48comp.h"\
+	"..\..\..\sky\compacts\4compact.h"\
+	"..\..\..\sky\compacts\5compact.h"\
+	"..\..\..\sky\compacts\65comp.h"\
+	"..\..\..\sky\compacts\66comp.h"\
+	"..\..\..\sky\compacts\67comp.h"\
+	"..\..\..\sky\compacts\68comp.h"\
+	"..\..\..\sky\compacts\69comp.h"\
+	"..\..\..\sky\compacts\70comp.h"\
+	"..\..\..\sky\compacts\71comp.h"\
+	"..\..\..\sky\compacts\72comp.h"\
+	"..\..\..\sky\compacts\73comp.h"\
+	"..\..\..\sky\compacts\74comp.h"\
+	"..\..\..\sky\compacts\75comp.h"\
+	"..\..\..\sky\compacts\76comp.h"\
+	"..\..\..\sky\compacts\77comp.h"\
+	"..\..\..\sky\compacts\78comp.h"\
+	"..\..\..\sky\compacts\79comp.h"\
+	"..\..\..\sky\compacts\80comp.h"\
+	"..\..\..\sky\compacts\81comp.h"\
+	"..\..\..\sky\compacts\82comp.h"\
+	"..\..\..\sky\compacts\85comp.h"\
+	"..\..\..\sky\compacts\90comp.h"\
+	"..\..\..\sky\compacts\91comp.h"\
+	"..\..\..\sky\compacts\92comp.h"\
+	"..\..\..\sky\compacts\93comp.h"\
+	"..\..\..\sky\compacts\94comp.h"\
+	"..\..\..\sky\compacts\95comp.h"\
+	"..\..\..\sky\compacts\96comp.h"\
+	"..\..\..\sky\compacts\9compact.h"\
+	"..\..\..\sky\compacts\linc_gen.h"\
+	"..\..\..\sky\compacts\lincmenu.h"\
+	"..\..\..\sky\compacts\objects.h"\
+	"..\..\..\sky\compacts\z_compac.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_COMPA=\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\compacts\0compact.h"\
-	"..\..\..\sky\sky\compacts\1compact.h"\
-	"..\..\..\sky\sky\compacts\29comp.h"\
-	"..\..\..\sky\sky\compacts\2compact.h"\
-	"..\..\..\sky\sky\compacts\30comp.h"\
-	"..\..\..\sky\sky\compacts\3compact.h"\
-	"..\..\..\sky\sky\compacts\4compact.h"\
-	"..\..\..\sky\sky\compacts\5compact.h"\
-	"..\..\..\sky\sky\compacts\66comp.h"\
-	"..\..\..\sky\sky\compacts\90comp.h"\
-	"..\..\..\sky\sky\compacts\9compact.h"\
-	"..\..\..\sky\sky\compacts\linc_gen.h"\
-	"..\..\..\sky\sky\compacts\lincmenu.h"\
-	"..\..\..\sky\sky\compacts\z_compac.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1604,17 +2217,11 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\config.h"\
@@ -1622,27 +2229,143 @@ NODEP_CPP_COMPA=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_COMPA=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\compacts\0compact.h"\
+	"..\..\..\sky\compacts\101comp.h"\
+	"..\..\..\sky\compacts\102comp.h"\
+	"..\..\..\sky\compacts\10comp.h"\
+	"..\..\..\sky\compacts\11comp.h"\
+	"..\..\..\sky\compacts\12comp.h"\
+	"..\..\..\sky\compacts\13comp.h"\
+	"..\..\..\sky\compacts\14comp.h"\
+	"..\..\..\sky\compacts\15comp.h"\
+	"..\..\..\sky\compacts\16comp.h"\
+	"..\..\..\sky\compacts\17comp.h"\
+	"..\..\..\sky\compacts\18comp.h"\
+	"..\..\..\sky\compacts\19comp.h"\
+	"..\..\..\sky\compacts\1compact.h"\
+	"..\..\..\sky\compacts\20comp.h"\
+	"..\..\..\sky\compacts\21comp.h"\
+	"..\..\..\sky\compacts\22comp.h"\
+	"..\..\..\sky\compacts\23comp.h"\
+	"..\..\..\sky\compacts\24comp.h"\
+	"..\..\..\sky\compacts\25comp.h"\
+	"..\..\..\sky\compacts\26comp.h"\
+	"..\..\..\sky\compacts\27comp.h"\
+	"..\..\..\sky\compacts\28comp.h"\
+	"..\..\..\sky\compacts\29comp.h"\
+	"..\..\..\sky\compacts\2compact.h"\
+	"..\..\..\sky\compacts\30comp.h"\
+	"..\..\..\sky\compacts\31comp.h"\
+	"..\..\..\sky\compacts\32comp.h"\
+	"..\..\..\sky\compacts\33comp.h"\
+	"..\..\..\sky\compacts\34comp.h"\
+	"..\..\..\sky\compacts\36comp.h"\
+	"..\..\..\sky\compacts\37comp.h"\
+	"..\..\..\sky\compacts\38comp.h"\
+	"..\..\..\sky\compacts\39comp.h"\
+	"..\..\..\sky\compacts\3compact.h"\
+	"..\..\..\sky\compacts\40comp.h"\
+	"..\..\..\sky\compacts\41comp.h"\
+	"..\..\..\sky\compacts\42comp.h"\
+	"..\..\..\sky\compacts\44comp.h"\
+	"..\..\..\sky\compacts\45comp.h"\
+	"..\..\..\sky\compacts\46comp.h"\
+	"..\..\..\sky\compacts\47comp.h"\
+	"..\..\..\sky\compacts\48comp.h"\
+	"..\..\..\sky\compacts\4compact.h"\
+	"..\..\..\sky\compacts\5compact.h"\
+	"..\..\..\sky\compacts\65comp.h"\
+	"..\..\..\sky\compacts\66comp.h"\
+	"..\..\..\sky\compacts\67comp.h"\
+	"..\..\..\sky\compacts\68comp.h"\
+	"..\..\..\sky\compacts\69comp.h"\
+	"..\..\..\sky\compacts\70comp.h"\
+	"..\..\..\sky\compacts\71comp.h"\
+	"..\..\..\sky\compacts\72comp.h"\
+	"..\..\..\sky\compacts\73comp.h"\
+	"..\..\..\sky\compacts\74comp.h"\
+	"..\..\..\sky\compacts\75comp.h"\
+	"..\..\..\sky\compacts\76comp.h"\
+	"..\..\..\sky\compacts\77comp.h"\
+	"..\..\..\sky\compacts\78comp.h"\
+	"..\..\..\sky\compacts\79comp.h"\
+	"..\..\..\sky\compacts\80comp.h"\
+	"..\..\..\sky\compacts\81comp.h"\
+	"..\..\..\sky\compacts\82comp.h"\
+	"..\..\..\sky\compacts\85comp.h"\
+	"..\..\..\sky\compacts\90comp.h"\
+	"..\..\..\sky\compacts\91comp.h"\
+	"..\..\..\sky\compacts\92comp.h"\
+	"..\..\..\sky\compacts\93comp.h"\
+	"..\..\..\sky\compacts\94comp.h"\
+	"..\..\..\sky\compacts\95comp.h"\
+	"..\..\..\sky\compacts\96comp.h"\
+	"..\..\..\sky\compacts\9compact.h"\
+	"..\..\..\sky\compacts\linc_gen.h"\
+	"..\..\..\sky\compacts\lincmenu.h"\
+	"..\..\..\sky\compacts\objects.h"\
+	"..\..\..\sky\compacts\z_compac.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_COMPA=\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\compacts\0compact.h"\
-	"..\..\..\sky\sky\compacts\1compact.h"\
-	"..\..\..\sky\sky\compacts\29comp.h"\
-	"..\..\..\sky\sky\compacts\2compact.h"\
-	"..\..\..\sky\sky\compacts\30comp.h"\
-	"..\..\..\sky\sky\compacts\3compact.h"\
-	"..\..\..\sky\sky\compacts\4compact.h"\
-	"..\..\..\sky\sky\compacts\5compact.h"\
-	"..\..\..\sky\sky\compacts\66comp.h"\
-	"..\..\..\sky\sky\compacts\90comp.h"\
-	"..\..\..\sky\sky\compacts\9compact.h"\
-	"..\..\..\sky\sky\compacts\linc_gen.h"\
-	"..\..\..\sky\sky\compacts\lincmenu.h"\
-	"..\..\..\sky\sky\compacts\z_compac.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -1658,12 +2381,58 @@ SOURCE=..\..\..\sky\control.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_CONTR=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_CONTR=\
-	"..\..\..\sky\common\file.h"\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\control.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1678,12 +2447,58 @@ NODEP_CPP_CONTR=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_CONTR=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_CONTR=\
-	"..\..\..\sky\common\file.h"\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\control.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1731,17 +2546,11 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\config.h"\
@@ -1749,16 +2558,68 @@ NODEP_CPP_CONTR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_CONTR=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_CONTR=\
-	"..\..\..\sky\common\file.h"\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\control.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -1774,9 +2635,58 @@ SOURCE=..\..\..\sky\debug.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_DEBUG=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_DEBUG=\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1788,9 +2698,58 @@ NODEP_CPP_DEBUG=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_DEBUG=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_DEBUG=\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1835,17 +2794,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\config.h"\
@@ -1853,13 +2806,68 @@ NODEP_CPP_DEBUG=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_DEBUG=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_DEBUG=\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -1875,14 +2883,58 @@ SOURCE=..\..\..\sky\disk.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_DISK_=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\rnc_deco.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_DISK_=\
-	"..\..\..\sky\common\engine.h"\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\disk.h"\
-	"..\..\..\sky\sky\rnc_deco.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1899,14 +2951,58 @@ NODEP_CPP_DISK_=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_DISK_=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\rnc_deco.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_DISK_=\
-	"..\..\..\sky\common\engine.h"\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\disk.h"\
-	"..\..\..\sky\sky\rnc_deco.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1956,17 +3052,11 @@ DEP_CPP_DISK_=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\config.h"\
@@ -1974,18 +3064,68 @@ NODEP_CPP_DISK_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_DISK_=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\rnc_deco.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_DISK_=\
-	"..\..\..\sky\common\engine.h"\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\disk.h"\
-	"..\..\..\sky\sky\rnc_deco.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -2097,17 +3237,11 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\config.h"\
@@ -2115,6 +3249,13 @@ NODEP_CPP_GRID_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2195,12 +3336,12 @@ DEP_CPP_HUFFT=\
 	"..\..\..\sky\text.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HUFFT=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2222,37 +3363,127 @@ SOURCE=..\..\..\sky\intro.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_INTRO=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_INTRO=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_INTRO=\
-	"..\..\..\sky\common\scummsys.h"\
+	"..\..\..\sky\sky\intro.h"\
 	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
 	"..\..\..\sky\stdafx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_INTRO=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_INTRO=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_INTRO=\
-	"..\..\..\sky\common\scummsys.h"\
+	"..\..\..\sky\sky\intro.h"\
 	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
 	"..\..\..\sky\stdafx.h"\
 	
 
@@ -2290,17 +3521,11 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\config.h"\
@@ -2308,15 +3533,67 @@ NODEP_CPP_INTRO=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_INTRO=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_INTRO=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -2328,9 +3605,57 @@ SOURCE=..\..\..\sky\introimg.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_INTROI=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_INTROI=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -2342,9 +3667,57 @@ NODEP_CPP_INTROI=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_INTROI=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_INTROI=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -2388,17 +3761,11 @@ DEP_CPP_INTROI=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_INTROI=\
 	"..\..\..\common\config.h"\
@@ -2406,13 +3773,67 @@ NODEP_CPP_INTROI=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_INTROI=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_INTROI=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -2424,14 +3845,60 @@ SOURCE=..\..\..\sky\logic.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_LOGIC=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\talks.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_LOGIC=\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\sky\talks.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -2448,14 +3915,60 @@ NODEP_CPP_LOGIC=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_LOGIC=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\talks.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_LOGIC=\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\sky\talks.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -2507,17 +4020,11 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\config.h"\
@@ -2525,18 +4032,70 @@ NODEP_CPP_LOGIC=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_LOGIC=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\talks.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_LOGIC=\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\sky\talks.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -2552,9 +4111,57 @@ SOURCE=..\..\..\sky\mouse.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_MOUSE=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_MOUSE=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -2566,9 +4173,57 @@ NODEP_CPP_MOUSE=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_MOUSE=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_MOUSE=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -2612,17 +4267,11 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\config.h"\
@@ -2630,13 +4279,67 @@ NODEP_CPP_MOUSE=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_MOUSE=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_MOUSE=\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -2652,10 +4355,18 @@ SOURCE=..\..\..\sky\rnc_deco.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_RNC_D=\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\sky\rnc_deco.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_RNC_D=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\rnc_deco.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -2668,10 +4379,18 @@ NODEP_CPP_RNC_D=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_RNC_D=\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\sky\rnc_deco.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_RNC_D=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\rnc_deco.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -2690,20 +4409,28 @@ DEP_CPP_RNC_D=\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_RNC_D=\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\sky\rnc_deco.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_RNC_D=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\rnc_deco.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2811,17 +4538,11 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\config.h"\
@@ -2829,6 +4550,13 @@ NODEP_CPP_SCREE=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2859,16 +4587,59 @@ SOURCE=..\..\..\sky\sky.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_SKY_C=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SKY_C=\
-	"..\..\..\sky\common\file.h"\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\mouse.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -2887,16 +4658,59 @@ NODEP_CPP_SKY_C=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_SKY_C=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SKY_C=\
-	"..\..\..\sky\common\file.h"\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\mouse.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -2949,17 +4763,11 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\config.h"\
@@ -2967,20 +4775,69 @@ NODEP_CPP_SKY_C=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_SKY_C=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\debug.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SKY_C=\
-	"..\..\..\sky\common\file.h"\
-	"..\..\..\sky\common\gameDetector.h"\
-	"..\..\..\sky\sky\compact.h"\
-	"..\..\..\sky\sky\debug.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\mouse.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -3000,11 +4857,57 @@ SOURCE=..\..\..\sky\sound.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_SOUND=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SOUND=\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\sound.h"\
-	"..\..\..\sky\sky\struc.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -3018,11 +4921,57 @@ NODEP_CPP_SOUND=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_SOUND=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SOUND=\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\sound.h"\
-	"..\..\..\sky\sky\struc.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -3068,17 +5017,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\config.h"\
@@ -3086,15 +5029,67 @@ NODEP_CPP_SOUND=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_SOUND=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_SOUND=\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\sound.h"\
-	"..\..\..\sky\sky\struc.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
@@ -3118,13 +5113,57 @@ SOURCE=..\..\..\sky\text.cpp
 
 !IF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
+DEP_CPP_TEXT_=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_TEXT_=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\sky\text.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -3140,13 +5179,57 @@ NODEP_CPP_TEXT_=\
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
 
+DEP_CPP_TEXT_=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_TEXT_=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\sky\text.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -3194,17 +5277,11 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\config.h"\
@@ -3212,17 +5289,67 @@ NODEP_CPP_TEXT_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
+DEP_CPP_TEXT_=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sky\autoroute.h"\
+	"..\..\..\sky\compact.h"\
+	"..\..\..\sky\control.h"\
+	"..\..\..\sky\disk.h"\
+	"..\..\..\sky\grid.h"\
+	"..\..\..\sky\logic.h"\
+	"..\..\..\sky\mouse.h"\
+	"..\..\..\sky\music\adlibchannel.h"\
+	"..\..\..\sky\music\adlibmusic.h"\
+	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\gmmusic.h"\
+	"..\..\..\sky\music\mt32music.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sky\screen.h"\
+	"..\..\..\sky\sky.h"\
+	"..\..\..\sky\skydefs.h"\
+	"..\..\..\sky\sound.h"\
+	"..\..\..\sky\struc.h"\
+	"..\..\..\sky\text.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
 NODEP_CPP_TEXT_=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\sky\logic.h"\
-	"..\..\..\sky\sky\sky.h"\
-	"..\..\..\sky\sky\skydefs.h"\
-	"..\..\..\sky\sky\text.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ENDIF 
