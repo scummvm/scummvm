@@ -58,6 +58,9 @@ public:
 	/** The name of the application domain (normally 'scummvm'). */
 	static const String kApplicationDomain;
 
+	/** The transient (pseudo) domain. */
+	static const String kTransientDomain;
+
 	bool				hasKey(const String &key) const;
 	bool				hasKey(const String &key, const String &dom) const;
 
@@ -104,7 +107,7 @@ private:
 	void			loadFile(const String &filename);
 	void			writeDomain(FILE *file, const String &name, const Domain &domain);
 	
-//	Domain			_transientDomain;
+	Domain			_transientDomain;
 	DomainMap		_gameDomains;
 	DomainMap		_globalDomains;
 	Domain			_defaultsDomain;

@@ -56,6 +56,7 @@ static char *rtrim(char *t) {
 namespace Common {
 
 const String ConfigManager::kApplicationDomain("scummvm");
+const String ConfigManager::kTransientDomain("__TRANSIENT");
 
 const String trueStr("true");
 const String falseStr("false");
@@ -206,13 +207,13 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 
 bool ConfigManager::hasKey(const String &key) const {
 	// Search the domains in the following order:
-	// 1) Run time domain
+	// 1) Transient domain
 	// 2) Active game domain (if any)
 	// 3) All global domains
 	// The defaults domain is explicitly *not* checked.
 	
-//	if (_transientDomain.contain(key))
-//		return true;
+	if (_transientDomain.contains(key))
+		return true;
 
 	if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
 		return true;
@@ -229,6 +230,8 @@ bool ConfigManager::hasKey(const String &key) const {
 bool ConfigManager::hasKey(const String &key, const String &dom) const {
 	assert(!dom.isEmpty());
 
+	if (dom == kTransientDomain)
+		return _transientDomain.contains(key);
 	if (_gameDomains.contains(dom))
 		return _gameDomains[dom].contains(key);
 	if (_globalDomains.contains(dom))
@@ -240,7 +243,9 @@ bool ConfigManager::hasKey(const String &key, const String &dom) const {
 void ConfigManager::removeKey(const String &key, const String &dom) {
 	assert(!dom.isEmpty());
 
-	if (_gameDomains.contains(dom))
+	if (dom == kTransientDomain)
+		_transientDomain.remove(key);
+	else if (_gameDomains.contains(dom))
 		_gameDomains[dom].remove(key);
 	else if (_globalDomains.contains(dom))
 		_globalDomains[dom].remove(key);
@@ -252,21 +257,21 @@ void ConfigManager::removeKey(const String &key, const String &dom) {
 #pragma mark -
 
 
-const String & ConfigManager::get(const String &key, const String &dom) const {
+const String & ConfigManager::get(const String &key, const String &domain) const {
 	// Search the domains in the following order:
-	// 1) Run time domain
+	// 1) Transient domain
 	// 2) Active game domain (if any)
 	// 3) All global domains
 	// 4) The defaults 
 
-//	if (_transientDomain.contain(key))
-//		return true;
 
-	if (!dom.isEmpty()) {
-		if (_gameDomains.contains(dom) && _gameDomains[dom].contains(key))
-			return _gameDomains[dom][key];
-	} else if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
-		return _gameDomains[_activeDomain][key];
+	if ((domain.isEmpty() || domain == kTransientDomain) && _transientDomain.contains(key))
+		return _transientDomain[key];
+
+	const String &dom = domain.isEmpty() ? _activeDomain : domain;
+
+	if (!dom.isEmpty() && _gameDomains.contains(dom) && _gameDomains[dom].contains(key))
+		return _gameDomains[dom][key];
 
 	DomainMap::ConstIterator iter;
 	for (iter = _globalDomains.begin(); iter != _globalDomains.end(); ++iter) {
@@ -296,15 +301,13 @@ bool ConfigManager::getBool(const String &key, const String &dom) const {
 
 
 void ConfigManager::set(const String &key, const String &value) {
-#if 0
-	// TODO ?!?
-//	_transientDomain[key] = value;
-#else
+	// Remove the transient domain value
+	_transientDomain.remove(key);
+
 	if (_activeDomain.isEmpty())
 		_globalDomains[kApplicationDomain][key] = value;
 	else
 		_gameDomains[_activeDomain][key] = value;
-#endif
 }
 
 void ConfigManager::set(const String &key, const String &value, const String &dom) {
@@ -313,10 +316,19 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 		return;
 	}
 
-	if (_globalDomains.contains(dom))
-		_globalDomains[dom][key] = value;
-	else
-		_gameDomains[dom][key] = value;
+	if (dom == kTransientDomain)
+		_transientDomain[key] = value;
+	else {
+		if (_globalDomains.contains(dom)) {
+			_globalDomains[dom][key] = value;
+			if (_activeDomain.isEmpty() || !_gameDomains[_activeDomain].contains(key))
+				_transientDomain.remove(key);
+		} else {
+			_gameDomains[dom][key] = value;
+			if (dom == _activeDomain)
+				_transientDomain.remove(key);
+		}
+	}
 }
 
 void ConfigManager::set(const String &key, const char *value, const String &dom) {
