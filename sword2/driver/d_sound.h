@@ -47,7 +47,6 @@ class Sword2Sound {
 	public:
 		Sword2Sound(SoundMixer *mixer);
 		void FxServer(void);
-		int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth);
 		int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
 		int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
 		int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem);

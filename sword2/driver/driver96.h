@@ -768,26 +768,6 @@
 //	--------------------------- d_sound.c ------------------------------------
 //	--------------------------------------------------------------------------
 //
-//	int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth)
-//
-//	This function initialises DirectSound by specifying the parameters of the
-//	primary buffer.
-//
-//	Freq is the sample rate - 44100, 22050 or 11025
-//	Channels should be 1 for mono, 2 for stereo
-//	BitDepth should be either 8 or 16 bits per sample.	
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan)
-//
-//	This function plays the wav file passed into it as speech.  An error occurs
-//	if speech is already playing, or directSound comes accross problems.
-//	volume can be from 0 to 16.
-//	pan can be from -16 (full left) to 16 (full right).
-//
-//	--------------------------------------------------------------------------
-//
 //	int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *wave)
 //
 //	This function loads and decompresses speech sample 'speechid' from the

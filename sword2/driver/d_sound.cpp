@@ -30,17 +30,6 @@
 //
 //	--------------------------------------------------------------------------
 //
-//	int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth)
-//
-//	This function initialises DirectSound by specifying the parameters of the
-//	primary buffer.
-//
-//	Freq is the sample rate - 44100, 22050 or 11025
-//	Channels should be 1 for mono, 2 for stereo
-//	BitDepth should be either 8 or 16 bits per sample.	
-//
-//	--------------------------------------------------------------------------
-//
 //	int32 PlayCompSpeech(const char *filename, uint32 id, uint8 vol, int8 pan)
 //
 //	This function loads, decompresses and plays the wav 'id' from the cluster
@@ -234,17 +223,33 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	volMusic[0] = 16;
 	volMusic[1] = 16;
 	musicMuted = 0;
-	bufferSizeMusic = 44100;
+	bufferSizeMusic = 4410;
 	_mixer = mixer;
+	
+	memset(fxId,		0, sizeof(fxId));
+	memset(fxCached,	0, sizeof(fxCached));
+	memset(fxiPaused,	0, sizeof(fxiPaused));
+	memset(fxLooped, 	0, sizeof(fxLooped));
+	memset(fxRate,		0, sizeof(fxRate));
 
-	// Don't care if this fails, because it should still work without
-	// sound cards but it should set a global system flag so that we can
-	// avoid loading sound fx & streaming music because they won't be
-	// heard anyway
+ 	memset(musStreaming,	0, sizeof(musStreaming));
+	memset(musicPaused,	0, sizeof(musicPaused));
+	memset(musCounter, 	0, sizeof(musCounter));
+	memset(musFading, 	0, sizeof(musFading));
+	memset(musLooping,	0, sizeof(musLooping));
+	memset(musFilePos,	0, sizeof(musFilePos));
+	memset(musEnd,		0, sizeof(musEnd));
+	memset(musLastSample,	0, sizeof(musLastSample));
+	memset(musId,		0, sizeof(musId));
+	memset(soundHandleMusic, 0, sizeof(soundHandleMusic));
+	memset(soundHandleFx, 0, sizeof(soundHandleFx));
+	soundHandleSpeech = 0;
+	memset(bufferFx, 0, sizeof(bufferFx));
+	memset(flagsFx, 0, sizeof(flagsFx));
+	memset(bufferSizeFx, 0, sizeof(bufferSizeFx));
 
-	InitialiseSound(22050, 2, 16);
-
-	g_engine->_timer->installProcedure(sword2_sound_handler, 1000000);
+	soundOn = 1;
+	g_engine->_timer->installProcedure(sword2_sound_handler, 100000);
 }
 
 // --------------------------------------------------------------------------
@@ -341,35 +346,6 @@ void Sword2Sound::FxServer(void) {
 	}
 }
 
-int32 Sword2Sound::InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth) {
-	soundOn = 1;
-	
-	memset(fxId,		0, sizeof(fxId));
-	memset(fxCached,	0, sizeof(fxCached));
-	memset(fxiPaused,	0, sizeof(fxiPaused));
-	memset(fxLooped, 	0, sizeof(fxLooped));
-	memset(fxRate,		0, sizeof(fxRate));
-
- 	memset(musStreaming,	0, sizeof(musStreaming));
-	memset(musicPaused,	0, sizeof(musicPaused));
-	memset(musCounter, 	0, sizeof(musCounter));
-	memset(musFading, 	0, sizeof(musFading));
-
-	memset(musLooping,	0, sizeof(musLooping));
-
-	memset(musFilePos,	0, sizeof(musFilePos));
-	memset(musEnd,		0, sizeof(musEnd));
-	memset(musLastSample,	0, sizeof(musLastSample));
-	memset(musId,		0, sizeof(musId));
-	memset(soundHandleMusic, 0, sizeof(soundHandleMusic));
-	memset(soundHandleFx, 0, sizeof(soundHandleFx));
-	soundHandleSpeech = 0;
-	memset(bufferFx, 0, sizeof(bufferFx));
-	memset(flagsFx, 0, sizeof(flagsFx));
-	memset(bufferSizeFx, 0, sizeof(bufferSizeFx));
-
-	return(RD_OK);
-}
 
 int32 Sword2Sound::AmISpeaking() {
 	if ((!speechMuted) && (!speechPaused) && (soundHandleSpeech != 0)) {
