@@ -31,6 +31,8 @@
 
 namespace Saga {
 
+#define SCENE_DOORS_MAX 16
+
 class ActionMap;
 class ObjectMap;
 
@@ -228,8 +230,18 @@ class Scene {
 	int queueScene(SCENE_QUEUE *scene_queue);
 	int draw(SURFACE *);
 	int getMode();
-	int getBGMaskInfo(int *w, int *h, byte **buf, size_t *buf_len);
-	int isBGMaskPresent(void);
+	
+	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
+	int isBGMaskPresent() {
+		return _bgMask.loaded;
+	}
+	int getBGMaskType(const Point &testPoint);
+	bool canWalk(const Point &testPoint);
+	bool offscreenPath(Point &testPoint);
+
+	void setDoorState(int doorNumber, int doorState);
+	int getDoorState(int doorNumber);
+
 	int getBGInfo(SCENE_BGINFO *bginfo);
 	int getBGPal(PALENTRY **pal);
 	int getInfo(SCENE_INFO *si);
@@ -276,6 +288,7 @@ class Scene {
 	TEXTLIST *_textList;
 	SCENE_IMAGE _bg;
 	SCENE_IMAGE _bgMask;
+	int _sceneDoors[SCENE_DOORS_MAX];
 
 	static int SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon);
 	int defaultScene(int param, SCENE_INFO *scene_info);
