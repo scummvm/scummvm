@@ -91,7 +91,7 @@ residual: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 .cpp.o:
-	$(CXX) $(CXXFLAGS) -MMD -c $(<) -o $*.o
+	$(CXX) $(CXXFLAGS) -Wp,-MMD,"$*.d",-MQ,"$*.o",-MP -c $(<) -o $*.o
 
 clean: 
 	-rm -f residual$(EXEEXT) *.o *.d mixer/*.o mixer/*.d imuse/*.o imuse/*.d lua/*.o *.d lua/*.d tinygl/*.o *.d tinygl/*.d
