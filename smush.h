@@ -131,6 +131,7 @@ public:
 	int getWidth() {return _width; }
 	int getHeight() { return _height; }
 	void clearUpdateNeeded() { _updateNeeded = false; }
+	bool isFullSize() { return (_width == 640 && _height == 480); }
 
 private:
 	static void timerCallback(void *ptr);

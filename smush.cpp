@@ -118,7 +118,11 @@ void Smush::handleFrame() {
 			handleBlocky16(frame + pos + 8);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('Wave')) {
-//			handleWave(frame + pos + 8 + 4, READ_BE_UINT32(frame + pos + 8));
+			int decompressed_size = READ_BE_UINT32(frame + pos + 8);
+			if (decompressed_size < 0)
+				handleWave(frame + pos + 8 + 4 + 8, READ_BE_UINT32(frame + pos + 8 + 8));
+			else
+				handleWave(frame + pos + 8 + 4, decompressed_size);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else {
 			error("unknown tag");

@@ -43,11 +43,16 @@ class Driver {
 		void drawBitmap();
 
 		void drawHackFont(int x, int y, const char *text, Color &fgColor);
-		void drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, uint8 *_dst);
+
+		void prepareSmushFrame(int width, int height, byte *bitmap);
+		void drawSmushFrame(int offsetX, int offsetY);
 
 	private:
 		GLuint hackFont;  // FIXME: Temporary font drawing hack
-
+		int _smushNumTex;
+		GLuint *_smushTexIds;
+		int _smushWidth;
+		int _smushHeight;
 };
 
 extern Driver *g_driver;

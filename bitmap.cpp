@@ -50,11 +50,10 @@ Resource(filename) {
 		if (codec == 0) {
 			memcpy(data_[i], data + pos, 2 * width_ * height_);
 			pos += 2 * width_ * height_ + 8;
-			}
-		else if (codec == 3) {
-			int compressed_len = READ_LE_UINT32(data + pos);
-			decompress_codec3(data + pos + 4, data_[i]);
-			pos += compressed_len + 12;
+			} else if (codec == 3) {
+				int compressed_len = READ_LE_UINT32(data + pos);
+				decompress_codec3(data + pos + 4, data_[i]);
+				pos += compressed_len + 12;
 			}
 		}
 
@@ -117,7 +116,7 @@ void Bitmap::prepareDraw() {
 	// For now, just keep this here :-)
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-	}
+}
 
 void Bitmap::draw() const {
 	if (format_ == 1) {		// Normal image
@@ -158,7 +157,7 @@ void Bitmap::draw() const {
 			return;
 
 		g_driver->drawDepthBitmap(curr_image_, x_, y_, width_, height_, data_);
-		}
+	}
 }
 
 Bitmap::~Bitmap() {

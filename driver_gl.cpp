@@ -71,7 +71,8 @@ Driver::Driver(int screenW, int screenH, int screenBPP) {
 	}
 #endif
 
-	}
+	_smushNumTex = 0;
+}
 
 void Driver::setupCamera(float fov, float nclip, float fclip, float roll) {
 	// Set perspective transformation
@@ -87,7 +88,7 @@ void Driver::setupCamera(float fov, float nclip, float fclip, float roll) {
 
 	Vector3d up_vec(0, 0, 1);
 	glRotatef(roll, 0, 0, -1);
-	}
+}
 
 void Driver::positionCamera(Vector3d pos, Vector3d interest) {
 	Vector3d up_vec(0, 0, 1);
@@ -163,18 +164,21 @@ void Driver::drawHackFont(int x, int y, const char *text, Color &fgColor) {
 	glPopMatrix();
 }
 
-// drawSMUSHframe, used for quickly pushing full-screen images from cutscenes
-void Driver::drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, uint8 *_dst) {
-	int num_tex_;
-	GLuint *tex_ids_;
+void Driver::prepareSmushFrame(int width, int height, byte *bitmap) {
+	// remove if already exist
+	if (_smushNumTex > 0) {
+		glDeleteTextures(_smushNumTex, _smushTexIds);
+		delete[] _smushTexIds;
+		_smushNumTex = 0;
+	}
 
 	// create texture
-	num_tex_ = ((_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-		((_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-	tex_ids_ = new GLuint[num_tex_];
-	glGenTextures(num_tex_, tex_ids_);
-	for (int i = 0; i < num_tex_; i++) {
-		glBindTexture(GL_TEXTURE_2D, tex_ids_[i]);
+	_smushNumTex = ((width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
+		((height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+	_smushTexIds = new GLuint[_smushNumTex];
+	glGenTextures(_smushNumTex, _smushTexIds);
+	for (int i = 0; i < _smushNumTex; i++) {
+		glBindTexture(GL_TEXTURE_2D, _smushTexIds[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -185,30 +189,31 @@ void Driver::drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, u
 	}
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, _width);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, _width);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
 
-	int cur_tex_idx = 0;
-	for (int y = 0; y < _height; y += BITMAP_TEXTURE_SIZE) {
-		for (int x = 0; x < _width; x += BITMAP_TEXTURE_SIZE) {
-			int width = (x + BITMAP_TEXTURE_SIZE >= _width) ? (_width - x) : BITMAP_TEXTURE_SIZE;
-			int height = (y + BITMAP_TEXTURE_SIZE >= _height) ? (_height - y) : BITMAP_TEXTURE_SIZE;
-			glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
+	int curTexIdx = 0;
+	for (int y = 0; y < height; y += BITMAP_TEXTURE_SIZE) {
+		for (int x = 0; x < width; x += BITMAP_TEXTURE_SIZE) {
+			int t_width = (x + BITMAP_TEXTURE_SIZE >= width) ? (width - x) : BITMAP_TEXTURE_SIZE;
+			int t_height = (y + BITMAP_TEXTURE_SIZE >= height) ? (height - y) : BITMAP_TEXTURE_SIZE;
+			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
 			glTexSubImage2D(GL_TEXTURE_2D, 
 				0,
 				0, 0,
-				width, height,
+				t_width, t_height,
 				GL_RGB,
 				GL_UNSIGNED_SHORT_5_6_5,
-				_dst + (y * 2 * _width) + (2 * x));
-			cur_tex_idx++;
+				bitmap + (y * 2 * width) + (2 * x));
+			curTexIdx++;
 		}
 	}
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	_smushWidth = width;
+	_smushHeight = height;
+}
 
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+void Driver::drawSmushFrame(int offsetX, int offsetY) {
 	// prepare view
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -228,14 +233,14 @@ void Driver::drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, u
 	glDepthMask(GL_FALSE);
 	glEnable(GL_SCISSOR_TEST);
 
-	offsetY = 480 - offsetY - _height;
-	cur_tex_idx = 0;
-	for (int y = 0; y < _height; y += BITMAP_TEXTURE_SIZE) {
-		for (int x = 0; x < _width; x += BITMAP_TEXTURE_SIZE) {
-			int width = (x + BITMAP_TEXTURE_SIZE >= _width) ? (_width - x) : BITMAP_TEXTURE_SIZE;
-			int height = (y + BITMAP_TEXTURE_SIZE >= _height) ? (_height - y) : BITMAP_TEXTURE_SIZE;
-			glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
-			glScissor(x, 480 - (y + height), x + width, 480 - y);
+	offsetY = 480 - offsetY - _smushHeight;
+	int curTexIdx = 0;
+	for (int y = 0; y < _smushHeight; y += BITMAP_TEXTURE_SIZE) {
+		for (int x = 0; x < _smushWidth; x += BITMAP_TEXTURE_SIZE) {
+			int t_width = (x + BITMAP_TEXTURE_SIZE >= _smushWidth) ? (_smushWidth - x) : BITMAP_TEXTURE_SIZE;
+			int t_height = (y + BITMAP_TEXTURE_SIZE >= _smushHeight) ? (_smushHeight - y) : BITMAP_TEXTURE_SIZE;
+			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
+			glScissor(x, 480 - (y + t_height), x + t_width, 480 - y);
 			glBegin(GL_QUADS);
 			glTexCoord2f(0, 0);
 
@@ -247,7 +252,7 @@ void Driver::drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, u
 			glTexCoord2f(0.0, 1.0);
 			glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
 			glEnd();
-			cur_tex_idx++;
+			curTexIdx++;
 		}
 	}
 
@@ -255,8 +260,4 @@ void Driver::drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, u
 	glDisable(GL_TEXTURE_2D);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-
-	// remove
-	glDeleteTextures(num_tex_, tex_ids_);
-	delete[] tex_ids_;
 }
