@@ -105,10 +105,12 @@ the section on Reporting Bugs.
 
        Sam and Max:
                 - Subgames are not all fully functional.
+
                 - Conroy singing in Bumpusville may work incorrectly. Eg,
                   music will overlap and Conroy will get stuck singing. Just
                   hit escape to skip the cutscene. This is due to SNM using
                   a different iMUSE implementation to previous games.
+
 
        Zak McKracken Fm Towns:
                 - The Fm Towns 256 color version of Zak McKracken is rare,
@@ -456,7 +458,7 @@ Credits:
         Jonathan 'khalek'  - Expert weaver in the Loom
         Nicolas Noble      - Config file support
         Pawel Kolodziejski - Added missing Dig SMUSH codecs
-	Felix Jakschitsc   - His hard work on Zak256
+        Felix Jakschitsc   - His hard work on Zak256
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
