@@ -1245,8 +1245,8 @@ void Actor::setActorCostume(int c) {
 			if (costume) {
 				_vm->ensureResourceLoaded(rtCostume, costume);
 			}
+			startAnimActor(initFrame);
 		}
-		startAnimActor(initFrame);
 	} else {
 		if (visible) {
 			hideActor();
