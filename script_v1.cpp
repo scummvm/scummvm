@@ -874,9 +874,8 @@ void Scumm::o5_chainScript() {
 
 	cur = _currentScript;
 
-	if (vm.slot[cur].cutsceneOverride != 0) {
-		error("Script %d chaining with active cutscene/override");
-	}
+	if (vm.slot[cur].cutsceneOverride != 0)
+		error("Script %d chaining with active cutscene/override");	
 
 	vm.slot[cur].number = 0;
 	vm.slot[cur].status = 0;
@@ -2105,8 +2104,9 @@ void Scumm::o5_stopScript() {
 	int script;
 
 	script = getVarOrDirectByte(0x80);
-	if (script==0)
-		stopObjectCode();
+	if (!script)
+		// stopObjectCode(); // ENDER - wrong?
+		stopScriptNr(_currentScript);
 	else
 		stopScriptNr(script);
 }

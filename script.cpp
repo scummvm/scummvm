@@ -440,17 +440,9 @@ void Scumm::stopObjectCode() {
 	if (ss->where!=WIO_GLOBAL && ss->where!=WIO_LOCAL) {
 		if (ss->cutsceneOverride)
 			error("Object %d ending with active cutscene/override", ss->number);
-		
-		/* I wonder if the removal of this breaks anything.
-		 * put ss->number and ss->status at another place if using this
- 	   * stopObjectScript(ss->number); */
 	} else {
-		if (ss->cutsceneOverride)
-			// FIXME: Loom workaround, fix properly :) - khalek
-			if ((_gameId == GID_LOOM256) && (ss->number==44))
-				this->exitCutscene();
-			else
-				error("Script %d ending with active cutscene/override", ss->number);
+		if (ss->cutsceneOverride) 
+			error("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 	}
 	ss->number = 0;
 	ss->status = 0;
@@ -759,10 +751,10 @@ void Scumm::endCutscene() {
 	uint32 *csptr;
 	int16 args[16];
 
-	memset(args, 0, sizeof(args));
-	
-	ss->cutsceneOverride--;
+	memset(args, 0, sizeof(args));	
 
+	ss->cutsceneOverride--;	
+	printf("Ending cs(%d) from %d\n", ss->cutsceneOverride, _currentScript);
 	args[0] = vm.cutSceneData[vm.cutSceneStackPointer];
 	_vars[VAR_OVERRIDE] = 0;
 
@@ -781,7 +773,7 @@ void Scumm::endCutscene() {
 void Scumm::cutscene(int16 *args) {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
-	
+	printf("Starting cs(%d) from %d\n", vm.slot[scr].cutsceneOverride, _currentScript);
 	if (++vm.cutSceneStackPointer > sizeof(vm.cutSceneData)/sizeof(vm.cutSceneData[0]))
 		error("Cutscene stack overflow");
 
@@ -898,9 +890,10 @@ void Scumm::beginOverride() {
 
 	idx = vm.cutSceneStackPointer;
 	ptr = &vm.cutScenePtr[idx];
-	if (!*ptr) {
+/*	if (!*ptr) {		// ENDER - FIXME - We don't need this?
 		vm.slot[_currentScript].cutsceneOverride++;
-	}
+	} 
+*/
 	*ptr = _scriptPointer - _scriptOrgPointer;
 	vm.cutSceneScript[idx] = _currentScript;
 
@@ -915,9 +908,10 @@ void Scumm::endOverride() {
 
 	idx = vm.cutSceneStackPointer;
 	ptr = &vm.cutScenePtr[idx];
-	if (*ptr) {
-		vm.slot[_currentScript].cutsceneOverride--;
-	}
+/*	if (!*ptr) {		// ENDER - FIXME - We don't need this?
+		// vm.slot[_currentScript].cutsceneOverride--;
+		//printf("ending override: %d on script %d\n", vm.slot[_currentScript].cutsceneOverride, _currentScript);
+	} */
 	*ptr = 0;
 	vm.cutSceneScript[idx] = 0;
 	_vars[VAR_OVERRIDE] = 0;
@@ -1026,7 +1020,10 @@ void Scumm::exitCutscene() {
 		ss->offs = offs;
 		ss->status = 2;
 		ss->freezeCount = 0;
-		ss->cutsceneOverride--;
+
+		if (ss->cutsceneOverride > 0)
+			ss->cutsceneOverride--;		
+
 		_vars[VAR_OVERRIDE] = 1;
 		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 	}

@@ -2084,7 +2084,8 @@ void Scumm::setCursorHotspot2(int x,int y) {
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	int w,h,i;
-
+	if(_features & GF_SMALL_HEADER)
+		return 0;
 	l>>=3;
 	if (l<0) l = 0;
 	if (t<0) t = 0;
