@@ -127,7 +127,7 @@ void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
 void MidiPlayer::onTimer (void *data) {
 	MidiPlayer *player = (MidiPlayer *) data;
 	player->_system->lock_mutex (player->_mutex);
-	if (!player->_paused && player->_parser)
+	if (!player->_paused && player->_parser && player->_currentTrack != 255)
 		player->_parser->onTimer();
 	player->_system->unlock_mutex (player->_mutex);
 }
@@ -170,11 +170,9 @@ void MidiPlayer::startTrack (int track) {
 	}
 
 	_system->unlock_mutex (_mutex);
-	pause (false);
 }
 
 void MidiPlayer::stop() {
-	pause (true);
 	_system->lock_mutex (_mutex);
 	_currentTrack = 255;
 	_system->unlock_mutex (_mutex);
@@ -294,7 +292,6 @@ void MidiPlayer::loadSMF (File *in, int song) {
 		parser = 0;
 	}
 
-	_paused = true;
 	_currentTrack = 255;
 	memset(_volumeTable, 127, sizeof(_volumeTable));
 	_parser = parser; // That plugs the power cord into the wall
@@ -350,7 +347,6 @@ void MidiPlayer::loadMultipleSMF (File *in) {
 		_song_sizes[i] = size;
 	}
 
-	_paused = true;
 	_currentTrack = 255;
 	memset(_volumeTable, 127, sizeof(_volumeTable));
 	_system->unlock_mutex (_mutex);
@@ -397,7 +393,6 @@ void MidiPlayer::loadXMIDI (File *in) {
 		parser = 0;
 	}
 
-	_paused = true;
 	_currentTrack = 255;
 	memset(_volumeTable, 127, sizeof(_volumeTable));
 	_parser = parser; // That plugs the power cord into the wall
