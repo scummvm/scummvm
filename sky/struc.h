@@ -21,18 +21,18 @@
 
 struct dataFileHeader
 {
-    uint16 flag; // bit 0: set for colour data, clear for not
-		 // bit 1: set for compressed, clear for uncompressed
-		 // bit 2: set for 32 colours, clear for 16 colours
-    uint16 s_x;
-    uint16 s_y;
-    uint16 s_width;
-    uint16 s_height;
-    uint16 s_sp_size;
-    uint16 s_tot_size;
-    uint16 s_n_sprites;
-    uint16 s_offset_x;
-    uint16 s_offset_y;
-    uint16 s_compressed_size;
+	uint16 flag; // bit 0: set for colour data, clear for not
+	// bit 1: set for compressed, clear for uncompressed
+	// bit 2: set for 32 colours, clear for 16 colours
+	uint16 s_x;
+	uint16 s_y;
+	uint16 s_width;
+	uint16 s_height;
+	uint16 s_sp_size;
+	uint16 s_tot_size;
+	uint16 s_n_sprites;
+	uint16 s_offset_x;
+	uint16 s_offset_y;
+	uint16 s_compressed_size;
 };
 

@@ -89,9 +89,8 @@ void SkyState::initialise(void)
 	//init_timer();
 	//init_music(); 
 	initialise_disk();
-	initialise_screen();	
+	initialise_screen();
 	init_virgin();
-	
 }
 
 void SkyState::delay(uint amount) //copied and mutilated from Simon.cpp

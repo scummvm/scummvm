@@ -22,8 +22,8 @@
 #include <string.h>
 #include "common/scummsys.h"
 
-#define ROL(x, n) (((x) << (n)) | ((x) >> (16-(n))))
-#define ROR(x, n) (((x) << (16-(n))) | ((x) >> (n)))
+#define ROL(x, n) (((x) << (n)) | ((x) >> (16 - (n))))
+#define ROR(x, n) (((x) << (16 - (n))) | ((x) >> (n)))
 #define XCHG(a, b) (a ^=b, b ^= a, a ^= b)
 
 //conditional flags
@@ -36,13 +36,13 @@
 #define UNPACKED_CRC	-2
 
 //other defines
-#define TABLE_SIZE	  (16*8)
+#define TABLE_SIZE	  (16 * 8)
 #define MIN_LENGTH	  2
 #define HEADER_LEN	  18
 
-uint16 raw_table[TABLE_SIZE/2];
-uint16 pos_table[TABLE_SIZE/2];
-uint16 len_table[TABLE_SIZE/2];
+uint16 raw_table[TABLE_SIZE / 2];
+uint16 pos_table[TABLE_SIZE / 2];
+uint16 len_table[TABLE_SIZE / 2];
 
 #ifdef CHECKSUMS
 uint16 crc_table[0x100];
@@ -52,14 +52,13 @@ uint16 bit_buffl = 0;
 uint16 bit_buffh = 0;
 uint8 bit_count = 0;
 
-
 uint8 *esiptr, *ediptr; //these need to be global because input_bits() uses them
 
 void init_crc()
 {
-	uint16 cnt=0; 
-	uint16 tmp1=0; 
-	uint16 tmp2=0; 
+	uint16 cnt = 0;
+	uint16 tmp1 = 0;
+	uint16 tmp2 = 0;
 
 	for (tmp2 = 0; tmp2 < 0x100; tmp2++) {
 		tmp1 = tmp2; 
@@ -77,19 +76,19 @@ void init_crc()
 //calculate 16 bit crc of a block of memory
 uint16 crc_block(uint8 *block, uint32 size)
 {
-	uint16 crc=0;
+	uint16 crc = 0;
 	uint8 *crcTable8 = (uint8 *)crc_table; //make a uint8* to crc_table
-	uint8 tmp; 
-	uint32 i; 
+	uint8 tmp;
+	uint32 i;
 
 	for (i = 0; i < size; i++) {
 		tmp = *block++;
 		crc ^= tmp; 
-		tmp = (uint8)((crc>>8)&0x00FF); 
+		tmp = (uint8)((crc >> 8) & 0x00FF); 
 		crc &= 0x00FF;  
 		crc = crc << 1; 
 		crc = *(uint16 *)&crcTable8[crc];
-		crc ^= tmp; 
+		crc ^= tmp;
 	}
 
 	return crc;
@@ -116,7 +115,7 @@ uint16 input_bits(uint8 amount)
 		newBitBuffh = READ_LE_UINT16(esiptr);
 		XCHG(newBitCount, amount);
 		amount -= newBitCount;
-		newBitCount = 16 - amount;				
+		newBitCount = 16 - amount;
 	}
 	remBits = ROR((uint16)(((1 << amount) - 1) & newBitBuffh), amount);
 	bit_buffh = newBitBuffh >> amount;
@@ -124,7 +123,6 @@ uint16 input_bits(uint8 amount)
 	bit_count = (uint8)newBitCount;
 
 	return returnVal;
-
 }
 
 void make_huftable(uint16 *table) 
@@ -153,7 +151,7 @@ void make_huftable(uint16 *table)
 					a |= ((b >> j) & 1) << (bitLength - j - 1);
 				*table++ = a;
 
-				*(table+0x1e) = (huffLength[i]<<8)|(i & 0x00FF);
+				*(table + 0x1e) = (huffLength[i] << 8)|(i & 0x00FF);
 				huffCode += 1 << (16 - bitLength);
 			}
 		}
@@ -163,20 +161,20 @@ void make_huftable(uint16 *table)
 uint16 input_value(uint16 *table)
 {
 	uint16 valOne, valTwo, value = bit_buffl;
-	
+
 	do {
 		valTwo = (*table++) & value;
 		valOne = *table++;
-	
-	} while (valOne != valTwo);	
 
-	value = *(table+0x1e);
-	input_bits((uint8)((value>>8)&0x00FF));
-	value &= 0x00FF; 
+	} while (valOne != valTwo);
+
+	value = *(table + 0x1e);
+	input_bits((uint8)((value>>8) & 0x00FF));
+	value &= 0x00FF;
 
 	if (value >= 2) {
 		value--;
-		valOne = input_bits((uint8)value&0x00FF);
+		valOne = input_bits((uint8)value & 0x00FF);
 		valOne |= (1 << value);
 		value = valOne;
 	}
@@ -201,7 +199,7 @@ int UnpackM1(void *input, void *output, uint16 key)
 	if (CHECKSUMS)
 		init_crc();
 
-	//Check for "RNC " 
+	//Check for "RNC "
 	if (READ_BE_UINT32(inputptr) != 0x524e4301)
 		return NOT_PACKED;
 
@@ -211,25 +209,25 @@ int UnpackM1(void *input, void *output, uint16 key)
 	unpack_len = READ_BE_UINT32(inputptr); inputptr += 4;
 	pack_len = READ_BE_UINT32(inputptr); inputptr += 4;
 
-	uint8 blocks = *(inputptr+5);
+	uint8 blocks = *(inputptr + 5);
 
 	if (CHECKSUMS) {
 		//read CRC's
 		crc_u = READ_BE_UINT16(inputptr); inputptr += 2;
 		crc_p = READ_BE_UINT16(inputptr); inputptr += 2;
-		inputptr = (inputptr+HEADER_LEN-16);
+		inputptr = (inputptr + HEADER_LEN - 16);
 
 		if (crc_block(inputptr, pack_len) != crc_p)
 			return PACKED_CRC;
 
-		inputptr = (((uint8 *)input)+HEADER_LEN); 
+		inputptr = (((uint8 *)input) + HEADER_LEN); 
 		esiptr = inputptr;
 	}
 
 	// inputLow = *input
 	inputHigh = ((uint8 *)input) + pack_len + HEADER_LEN;;
 	outputLow = (uint8 *)output;
-	outputHigh = *(((uint8 *)input)+16) + unpack_len + outputLow;
+	outputHigh = *(((uint8 *)input) + 16) + unpack_len + outputLow;
 
 	if (! ((inputHigh <= outputLow) || (outputHigh <= inputHigh)) ) {
 		esiptr = inputHigh;
@@ -265,7 +263,7 @@ int UnpackM1(void *input, void *output, uint16 key)
 				bit_buffl &= d;
 				d &= a;
 
-				a = READ_LE_UINT16((esiptr+2));
+				a = READ_LE_UINT16((esiptr + 2));
 				b = (b << bit_count);
 				a = (a << bit_count);
 				a |= d;

@@ -68,7 +68,7 @@ protected:
 	void delay(uint amount);
 	void pollMouseXY();
 	void go();
-	void convert_palette(uint8 *inpal, uint8* outpal);	
+	void convert_palette(uint8 *inpal, uint8* outpal);
 
 	void initialise();
 	void initialise_disk();
@@ -82,7 +82,7 @@ protected:
 	static int CDECL game_thread_proc(void *param);
 
 	void shutdown();
-	
+
 	RandomSource _rnd;
 };
 

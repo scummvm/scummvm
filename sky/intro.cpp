@@ -53,10 +53,10 @@
 #define rev_time    8
 #define gibb_time   6
 #else
-#define virgin_time_1   (3*50)
-#define virgin_time_2   ((3*50)+8)
-#define rev_time    ((8*50)+8)
-#define gibb_time   ((6*50)+8)
+#define virgin_time_1   (3 * 50)
+#define virgin_time_2   ((3 * 50) + 8)
+#define rev_time    ((8 * 50) + 8)
+#define gibb_time   ((6 * 50) + 8)
 #endif
 
 void prepare_text(void);
@@ -76,7 +76,6 @@ uint8 *seq4c_data;
 uint8 *seq5_data;
 uint8 *seq6a_data;
 uint8 *seq6b_data;
-
 
 uint8 *vga_data;
 uint8 *diff_data;
@@ -100,145 +99,143 @@ uint32 frame_counter;
 #define ic_make_sound   3
 #define ic_fx_volume    4
 
-
 typedef void (*pfc)(void);
 pfc command_routines[] = { &prepare_text, &show_intro_text, &remove_text, &intro_fx, &intro_vol };
 
 uint32 cockpit_commands[] = 
 {
-    1000,   //do straight away
-    ic_prepare_text,
-    77,
-    220,
-    ic_show_text, //radar detects jamming signal
-    20,
-    160,
-    105,
-    ic_remove_text,
-    81,
-    105,
-    ic_show_text, //well switch to override you fool
-    170,
-    86,
-    35,
-    ic_remove_text,
-    35,
-    ic_prepare_text,
-    477,
-    35,
-    ic_show_text,
-    30,
-    160,
-    3,
-    ic_remove_text
+	1000, //do straight away
+	ic_prepare_text,
+	77,
+	220,
+	ic_show_text, //radar detects jamming signal
+	20,
+	160,
+	105,
+	ic_remove_text,
+	81,
+	105,
+	ic_show_text, //well switch to override you fool
+	170,
+	86,
+	35,
+	ic_remove_text,
+	35,
+	ic_prepare_text,
+	477,
+	35,
+	ic_show_text,
+	30,
+	160,
+	3,
+	ic_remove_text
 };
 
 uint32 zero_commands[] = { 0 };
 
 uint32 anim5_commands[] = 
 {
-    31,
-    ic_make_sound,
-    2,
-    127,
-    0
+	31,
+	ic_make_sound,
+	2,
+	127,
+	0
 };
 
 uint32 anim4a_commands[] = 
 {
-    136,
-    ic_make_sound,
-    1,
-    70,
-    90,
-    ic_fx_volume,
-    80,
-    50,
-    ic_fx_volume,
-    90,
-    5,
-    ic_fx_volume,
-    100,
-    0
+	136,
+	ic_make_sound,
+	1,
+	70,
+	90,
+	ic_fx_volume,
+	80,
+	50,
+	ic_fx_volume,
+	90,
+	5,
+	ic_fx_volume,
+	100,
+	0
 };
 
 uint32 anim4c_commands[] =
 {
-    1000,
-    ic_fx_volume,
-    100,
-    25,
-    ic_fx_volume,
-    110,
-    15,
-    ic_fx_volume,
-    120,
-    4,
-    ic_fx_volume,
-    127,
-    0
+	1000,
+	ic_fx_volume,
+	100,
+	25,
+	ic_fx_volume,
+	110,
+	15,
+	ic_fx_volume,
+	120,
+	4,
+	ic_fx_volume,
+	127,
+	0
 };
 
 uint32 anim6a_commands[] =
 {
-    1000,
-    ic_prepare_text,
-    478,
-    13,
-    ic_show_text,
-    175,
-    155,
-    0
+	1000,
+	ic_prepare_text,
+	478,
+	13,
+	ic_show_text,
+	175,
+	155,
+	0
 };
 
 uint32 anim6b_commands[] = 
 {
-    131,
-    ic_remove_text,
-    131,
-    ic_prepare_text,
-    479,
-    74,
-    ic_show_text,
-    175,
-    155,
-    45,
-    ic_remove_text,
-    45,
-    ic_prepare_text,
-    162,
-    44,
-    ic_show_text,
-    175,
-    155,
-    4,
-    ic_remove_text,
-    0
+	131,
+	ic_remove_text,
+	131,
+	ic_prepare_text,
+	479,
+	74,
+	ic_show_text,
+	175,
+	155,
+	45,
+	ic_remove_text,
+	45,
+	ic_prepare_text,
+	162,
+	44,
+	ic_show_text,
+	175,
+	155,
+	4,
+	ic_remove_text,
+	0
 };
 
 uint32 *command_pointer = (uint32 *)zero_commands;
 
-
 void SkyState::init_virgin()
 {
-    _temp_pal = (uint8 *)load_file(60111, NULL); 
-    if (_temp_pal != NULL)
-        set_palette(_temp_pal);
+	_temp_pal = (uint8 *)load_file(60111, NULL);
+	if (_temp_pal != NULL)
+		set_palette(_temp_pal);
 
-    _work_screen = (uint8 *)load_file(60110, NULL); 
+	_work_screen = (uint8 *)load_file(60110, NULL);
 
-    if (_work_screen != NULL)
-        show_screen();
-    
-    // free the memory that was malloc'ed indirectly via load_file
-    free(_work_screen);
-    free(_temp_pal);
+	if (_work_screen != NULL)
+		show_screen();
+
+	// free the memory that was malloc'ed indirectly via load_file
+	free(_work_screen);
+	free(_temp_pal);
 }
 
 void SkyState::show_screen(void)
 {
-    _system->copy_rect(_work_screen, 320, 0, 0, 320, 200);
-    _system->update_screen();
+	_system->copy_rect(_work_screen, 320, 0, 0, 320, 200);
+	_system->update_screen();
 }
 
 void prepare_text(void)

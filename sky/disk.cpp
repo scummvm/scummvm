@@ -45,22 +45,22 @@ File *dnr_handle = new File();
 void SkyState::initialise_disk()
 {
 	uint32 entries_read;
-	
+
 	dnr_handle->open(dinner_file_name, _gameDataPath);
 	if (dnr_handle->isOpen() == false)
 			error("Could not open %s%s!\n", _gameDataPath, dinner_file_name);
-	
+
 	if (!(dinner_table_size = dnr_handle->readUint32LE()))
 		error("Error reading from sky.dnr!\n"); //even though it was opened correctly?!
 	
 	debug(1, "Entries in dinner table: %d", dinner_table_size);
 
-	dinner_table_area = (uint8 *)malloc(dinner_table_size*8);
-	entries_read = dnr_handle->read(dinner_table_area, 8*dinner_table_size) / 8;
-		
+	dinner_table_area = (uint8 *)malloc(dinner_table_size * 8);
+	entries_read = dnr_handle->read(dinner_table_area, 8 * dinner_table_size) / 8;
+
 	if (entries_read != dinner_table_size)
 		warning("bytes_read != dinner_table_entries. [%d/%d]\n", entries_read, dinner_table_size);
-		
+
 	data_disk_handle->open(data_file_name, _gameDataPath);
 	if (data_disk_handle->isOpen() == false) 
 		error("Error opening %s%s!\n", _gameDataPath, data_file_name);
@@ -79,31 +79,30 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 	#ifdef file_order_chk
 		warning("File order checking not implemented yet!\n");
 	#endif
-	
+
 	comp_file = file_nr;
-	debug(1, "load file %d,%d (%d)", (file_nr>>11), (file_nr&2047), file_nr); 
-	
-	
+	debug(1, "load file %d,%d (%d)", (file_nr >> 11), (file_nr & 2047), file_nr); 
+
 	file_ptr = (uint8 *)get_file_info(file_nr);
 	if (file_ptr == NULL) {
 		printf("File %d not found!\n", file_nr);
 		return NULL;
 	}
-	
-	eax = READ_LE_UINT32((file_ptr+5));
+
+	eax = READ_LE_UINT32((file_ptr + 5));
 	file_flags = eax;
 	eax &= 0x03fffff;
 	file_size = eax;
 
-	ecx = READ_LE_UINT32((file_ptr+2));
+	ecx = READ_LE_UINT32((file_ptr + 2));
 	ecx &= 0x0ffffff;
 
 	cflag = (uint8)((ecx >> (23)) & 0x1); 
 	ecx = (((1 << (23)) ^ 0xFFFFFFFF) & ecx); 
-	
+
 	if (cflag)
 		ecx = ecx << 4;
-		
+
 	file_offset = ecx;
 	fixed_dest = dest;
 	file_dest = dest;
@@ -111,7 +110,7 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 
 	if (dest == NULL) //we need to allocate memory for this file
 		file_dest = (uint8 *)malloc(eax);
-		
+
 	data_disk_handle->seek(file_offset, SEEK_SET);
 
 	#ifdef file_order_chk
@@ -120,14 +119,14 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 
 	//now read in the data
 	bytes_read = data_disk_handle->read(file_dest, 1*file_size);
-	
+
 	if (bytes_read != (int32)file_size)
 		printf("ERROR: Unable to read %d bytes from datadisk (%d bytes read)\n", file_size, bytes_read);
-	
-	cflag = (uint8)((file_flags >> (23)) & 0x1); 
-	
+
+	cflag = (uint8)((file_flags >> (23)) & 0x1);
+
 	//if cflag == 0 then file is compressed, 1 == uncompressed
-	
+
 	if (!cflag)
 	{
 		debug(1, "File is compressed...");
@@ -135,20 +134,20 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 		memcpy(&file_header, file_dest, sizeof(struct dataFileHeader));
 		if ( (uint8)((FROM_LE_16(file_header.flag) >> 7) & 0x1)	 ) {
 			debug(1, "with RNC!");
-			
+
 			eax = FROM_LE_16(file_header.flag);
 			eax &= 0xFFFFFF00; //clear al
 			eax = eax << 8;
 			eax |= FROM_LE_16((uint16)file_header.s_tot_size);
 
 			decomp_size = eax;
-			
+
 			if (fixed_dest == NULL) // is this valid?
 				comp_dest = (uint8 *)malloc(eax);
 
 			esiptr = file_dest;
 			ediptr = comp_dest;
-				
+
 			if ( (uint8)(file_flags >> (22) & 0x1) ) //do we include the header?
 				esiptr += sizeof(struct dataFileHeader);
 			else {
@@ -158,7 +157,7 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 			}
 
 			eax = UnpackM1(esiptr, ediptr, 0);
-			
+
 			debug(2, "UnpackM1 returned: %d", eax);
 
 			if (eax == 0) { //Unpack returned 0: file was probably not packed.
@@ -167,41 +166,40 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 			
 				return (uint16 *)file_dest;
 			}
-			
+
 			if (! (uint8)(file_flags >> (22) & 0x1) ) { // include header?
 				eax += sizeof(struct dataFileHeader);
-			
+
 				if (eax != decomp_size) {
 					debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", eax, decomp_size);
 				}
 			}
-			
+
 			if (fixed_dest == NULL)
 				free(file_dest);
-					
+
 		}
 		else
 			debug(1, "but not with RNC! (?!)");
-		  
 	}
 	else
 		return (uint16 *)file_dest;
-		
+
 	return (uint16 *)comp_dest;
 }
 
 uint16 *SkyState::get_file_info(uint16 file_nr)
 {
 	uint16 i;
-	uint16 *dnr_tbl_16_ptr = (uint16 *)dinner_table_area; 
-	
-	for (i = 0; i < dinner_table_size/2; i++) {
-		if (READ_LE_UINT16(dnr_tbl_16_ptr+(i*4)) == file_nr) {
+	uint16 *dnr_tbl_16_ptr = (uint16 *)dinner_table_area;
+
+	for (i = 0; i < dinner_table_size / 2; i++) {
+		if (READ_LE_UINT16(dnr_tbl_16_ptr + (i * 4)) == file_nr) {
 			debug(1, "file %d found!", file_nr);
-			return (dnr_tbl_16_ptr+(i*4));
+			return (dnr_tbl_16_ptr + (i * 4));
 		}
 	}
-	
+
 	// if file is speech file then return NULL if not found
 	printf("get_file_info() - speech file support not implemented yet!\n");
 	return (uint16 *)NULL;

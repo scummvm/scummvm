@@ -55,26 +55,25 @@ void SkyState::initialise_screen(void)
 {
 	int i;
 	uint8 tmp_pal[1024];
-	
+
 	_system->init_size(full_screen_width, full_screen_height);
-	_backscreen = (uint8 *)malloc(full_screen_width*full_screen_height);
-	_game_grid = (uint8 *)malloc(GRID_X*GRID_Y*2);
-	_work_palette = (uint8 *)malloc(vga_colours*3);
+	_backscreen = (uint8 *)malloc(full_screen_width * full_screen_height);
+	_game_grid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
+	_work_palette = (uint8 *)malloc(vga_colours * 3);
 
 	//blank the first 240 colors of the palette 
-	memset(tmp_pal, 0, game_colours * 4);	
+	memset(tmp_pal, 0, game_colours * 4);
 
 	//set the remaining colors
 	for (i = 0; i < (vga_colours-game_colours); i++) {
-		tmp_pal[game_colours+i*4] = (top_16_colours[i*3] << 2) + (top_16_colours[i*3] & 3);		
-		tmp_pal[game_colours+i*4+1] = (top_16_colours[i*3+1] << 2) + (top_16_colours[i*3+1] & 3);
-		tmp_pal[game_colours+i*4+2] = (top_16_colours[i*3+2] << 2) + (top_16_colours[i*3+2] & 3);
-		tmp_pal[game_colours+i*4+3] = 0x00; 
+		tmp_pal[game_colours + i * 4] = (top_16_colours[i * 3] << 2) + (top_16_colours[i * 3] & 3);
+		tmp_pal[game_colours + i * 4 + 1] = (top_16_colours[i * 3 + 1] << 2) + (top_16_colours[i * 3 + 1] & 3);
+		tmp_pal[game_colours + i * 4 + 2] = (top_16_colours[i * 3 + 2] << 2) + (top_16_colours[i * 3 + 2] & 3);
+		tmp_pal[game_colours + i * 4 + 3] = 0x00; 
 	}
 
 	//set the palette
 	_system->set_palette(tmp_pal, 0, 256);
-
 }
 
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
@@ -89,9 +88,9 @@ void SkyState::convert_palette(uint8 *inpal, uint8* outpal) //convert 3 byte 0..
 	int i;
 
 	for (i = 0; i < vga_colours; i++) {
-		outpal[4*i] = (inpal[3*i] << 2) + (inpal[3*i] & 3); 
-		outpal[4*i+1] = (inpal[3*i+1] << 2) + (inpal[3*i+1] & 3); 
-		outpal[4*i+2] = (inpal[3*i+2] << 2) + (inpal[3*i+2] & 3); 
-		outpal[4*i+3] = 0x00;	
+		outpal[4 * i] = (inpal[3 * i] << 2) + (inpal[3 * i] & 3);
+		outpal[4 * i + 1] = (inpal[3 * i + 1] << 2) + (inpal[3 * i + 1] & 3);
+		outpal[4 * i + 2] = (inpal[3 * i + 2] << 2) + (inpal[3 * i + 2] & 3);
+		outpal[4 * i + 3] = 0x00;
 	}
 }
