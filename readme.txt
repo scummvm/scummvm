@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-05-13
-Release version: 0.2.0 [Release]
+Last updated:    2002-06-18
+Release version: 0.2.2 [CVS]
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -160,6 +160,10 @@ Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 COMPRESSED_SOUND_FILE. Tools for compressing .SOU files to .SO3 files can be
 found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
+You can also comment/uncomment appropriate lines in the Makefile to use
+sdl_gl.cpp instead of sdl.cpp. This allows hardware accelerated bilinear
+filtering by using OpenGL textures.
+
 On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug 
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
@@ -279,13 +283,17 @@ Note that filters are very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
 
+The alternative is to try using the SDL_gl.cpp target. This will allow you to
+use hardware accelerated functions, like bilinear filtering and FSAA, on
+suitable OpenGL capable cards.
 
 Autosaves:
 ----------
 
 Because ScummVM is still a beta product, it -can- crash and/or hang
 occasionally. As such, every five minutes it will save a game in Slot 0. This
-game can be loaded via Ctrl-0, or the F5 menu.
+game can be loaded via Ctrl-0, or the F5 menu. This autosaving only applies to
+Scumm games, not other games (such as Simon the Sorcerer)
 
 
 Savegames:
@@ -341,7 +349,8 @@ many soundcards will not play MIDI under Linux). We have recently added an
 'emulated MIDI' technology. It can be accessed using the 'midiemu' option,
 and is the default for Sam and Max on UNIX platforms. -HOWEVER-, it is still
 very buggy and the emulation is not perfect. If you are capable of using
-native midi, we recommend using one of the MIDI modes below.
+native midi, we recommend using one of the MIDI modes below, or Adlib if
+your game includes music in the appropriate format.
 
 
 Playing sound with Native MIDI:
@@ -479,15 +488,15 @@ An example config file is as follows:
 Credits:
 --------
   The core ScummVM team:
-        Ludvig Strigeus    - Original developer, lead developer 'simon' module
-        Vincent Hamm       - Current lead developer, ScummVM
-        James Brown        - Co-lead developer, ScummVM
+        James Brown        - Current lead developer, ScummVM
+        Vincent Hamm       - Co-lead developer, ScummVM (inactive)
         Jeremy Newman      - Webmaster
+        Ludvig Strigeus    - Original developer, Scumm and SimonVM. (Retired)
 
  Porters:
         Lionel Ulmer       - X11/Linux port
         Nicolas Bacca      - PocketPC/WinCE port
-        Mutwin Kraus       - Macintosh port
+        Mutwin Kraus       - Macintosh port (Retired)
         Max Horn           - Macintosh port, many bug fixes
         Marcus Comstedt    - Dreamcast port
         Ruediger Hanke     - MorphOS port
@@ -505,6 +514,8 @@ Credits:
         Nicolas Noble      - Config file and ALSA support
         Pawel Kolodziejski - Added missing Dig SMUSH codecs
         Felix Jakschitsc   - His hard work on Zak256
+        Andr‚ Souza        - SDL-based OpenGL renderer
+        Kov cs Endre J nos - Several fixes for Simon1
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!

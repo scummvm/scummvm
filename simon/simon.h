@@ -79,7 +79,7 @@ struct Child3 {
 };
 
 struct ThreeValues {
-	uint16 a, b, c;
+	int16 a, b, c;
 };
 
 enum {

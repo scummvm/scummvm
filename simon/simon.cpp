@@ -7258,6 +7258,9 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	uint m, n;
 	uint height;
 
+	if (num_1 >= 100) // FIXME: Simon1 Mine - Fix text for dwarf song
+		num_1 -= 100;
+
 	char_buf = print_str_buf;
 	string_ptr_3 = string_ptr_2 = string_ptr;
 
@@ -7494,6 +7497,10 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	num_of_rows = 4;
 	if (!(_bit_array[8] & 0x20))
 		num_of_rows = 3;
+
+ 
+    if (threeval_b < 2) threeval_b = 2; // Fixme (pos): look at mine
+										// ladder, look at gorge, etc
 
 	if (!(_game & GAME_SIMON2)) {
 		start_vga_code(num_of_rows, 2, 199 + num_1, threeval_a >> 3, threeval_b, 12);
