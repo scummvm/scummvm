@@ -1,6 +1,6 @@
 ScummVM README
 Last updated:    $Date$
-Release version: 0.5.7-cvs
+Release version: 0.6.0-PRE
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -217,7 +217,7 @@ The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to harddisk or reburning
 customised versions of the game CDs.
 
-3.4) Known Problems in ScummVM 0.5.7-CVS
+3.4) Known Problems in ScummVM 0.6.0-PRE
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
