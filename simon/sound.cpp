@@ -422,6 +422,9 @@ void SimonSound::readVoiceFile(const char *filename, const char *gameDataPath) {
 		}
 	}
 
+	if (_voice)
+		delete _voice;
+
 	_voice = new RawSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
 }
 
@@ -434,6 +437,9 @@ void SimonSound::playVoice(uint sound) {
 		if (file->isOpen() == false) {
 			warning("Can't open voice file %s", filename);
 		} else {
+			if (_voice)
+				delete _voice;
+
 			_voice = new WavSound(_mixer, file, _offsets);
 		}
 	}
