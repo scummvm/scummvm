@@ -2155,6 +2155,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 		}                             \
 	} while (0)
 
+// NOTE: drawStripHE is actually very similar to drawStripComplex
 void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int w, int height, const bool transpCheck) const {
 	uint32 dataBit, data, shift;
 	byte color;
