@@ -104,7 +104,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_fcs_list = new FillOrCopyStruct[16];
 
 	/* Setup midi driver */
-	if (driver)
+	if (!driver)
 		driver = MidiDriver_NULL_create();
 	midi.set_driver(driver);
 
