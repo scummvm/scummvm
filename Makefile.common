@@ -1,5 +1,3 @@
-DEPS = $(OBJS:.o=.d)
-
 OBJS =\
         actor.o \
         bitmap.o \
@@ -32,6 +30,8 @@ OBJS =\
         mixer/mixer.o \
         mixer/rate.o \
         mixer/audiostream.o
+
+DEPS = $(OBJS:.o=.d)
 
 residual: $(OBJS) lua/lib/liblua.a lua/lib/liblualib.a
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
