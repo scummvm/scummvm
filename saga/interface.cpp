@@ -350,7 +350,6 @@ int Interface::draw() {
 int Interface::update(const Point& mousePoint, int updateFlag) {
 	SURFACE *backBuffer;
 
-
 	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade)
 		return SUCCESS;
 
@@ -359,7 +358,7 @@ int Interface::update(const Point& mousePoint, int updateFlag) {
 
 
 	if (_panelMode == kPanelMain) {
-		if (updateFlag == UPDATE_MOUSEMOVE) {
+		if (updateFlag & UPDATE_MOUSEMOVE) {
 	
 			if (mousePoint.y < _vm->getSceneHeight()) {
 				//handlePlayfieldUpdate(backBuffer, imousePointer);
@@ -373,9 +372,11 @@ int Interface::update(const Point& mousePoint, int updateFlag) {
 
 		} else {
 
-			if (updateFlag == UPDATE_MOUSECLICK) {
+			if (updateFlag & UPDATE_MOUSECLICK) {
 				if (mousePoint.y < _vm->getSceneHeight()) {
-					handlePlayfieldClick(backBuffer, mousePoint);
+					//handlePlayfieldClick(backBuffer, mousePoint);
+					_vm->_script->playfieldClick(mousePoint, (updateFlag & UPDATE_LEFTBUTTONCLICK) != 0);
+										
 				} else {
 					handleCommandClick(backBuffer, mousePoint);
 				}

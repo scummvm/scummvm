@@ -122,10 +122,20 @@ enum HitZoneFlags {
 	//	in the specified direction, and the actual specified effect of
 	//	the zone will be delayed until the actor leaves the zone.
 	kHitZoneAutoWalk = (1 << 2),
+	
+	//      When set on a hit zone, this causes the character not to walk
+	//      to the object (but they will look at it).	
+	kHitZoneNoWalk = (1 << 2),
 
 	//	zone activates only when character stops walking
-	kHitZoneTerminus = (1 << 3)
+	kHitZoneTerminus = (1 << 3),
+
+	//      Hit zones only - when the zone is clicked on it projects the
+	//      click point downwards from the middle of the zone until it
+	//      reaches the lowest point in the zone.
+	kHitZoneProject = (1 << 3)
 };
+
 
 enum PanelButtonType {
 	kPanelButtonVerb = 0,

@@ -45,14 +45,21 @@ public:
 	int getSceneNumber() const {
 		return _nameNumber;
 	}
-
-	int getEntranceNumber() const {
+	int getActorsEntrance() const {
+		return _scriptNumber;
+	}
+	int getScriptNumber() const {
 		return _scriptNumber;
 	}
 	int getRightButtonVerb() const {
 		return _rightButtonVerb;
 	}
-
+	int getFlags() const {
+		return _flags;
+	}
+	int getDirection() const {
+		return ((_flags >> 4) & 0xF);
+	}
 	void draw(SURFACE *ds, int color);	
 	bool hitTest(const Point &testPoint);
 private:

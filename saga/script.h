@@ -255,7 +255,9 @@ public:
 	void setVerb(int verb);
 	int getCurrentVerb() const { return _currentVerb; }
 	void setPointerVerb();
-	void whichObject(const Point& mousePointer);
+	void whichObject(const Point& mousePoint);
+	void hitObject(bool leftButton);
+	void playfieldClick(const Point& mousePoint, bool leftButton);
 	
 	void setLeftButtonVerb(int verb);
 	int getLeftButtonVerb() const { return _leftButtonVerb; }
@@ -265,6 +267,11 @@ public:
 		setRightButtonVerb(kVerbNone);
 		_pointerObject = ID_NOTHING;
 		_currentObject[_firstObjectSet ? 1 : 0] = ID_NOTHING;
+	}
+	void setNoPendingVerb() {
+		_pendingVerb = kVerbNone;
+		_currentObject[0] = _currentObject[0] = ID_NOTHING;
+		setPointerVerb();
 	}
 
 	void scriptInfo();
@@ -287,13 +294,14 @@ protected:
 	bool _secondObjectNeeded;
 	uint16 _currentObject[2];
 	int16 _currentObjectFlags[2];
-	uint16 _pendingObject[2];
 	int _currentVerb;
 	int _stickyVerb;
 	int _leftButtonVerb;
 	int _rightButtonVerb;
-	int _pendingVerb;
 
+public:	
+	uint16 _pendingObject[2];
+	int _pendingVerb;
 	uint16 _pointerObject;	
 
 public:

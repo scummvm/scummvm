@@ -191,7 +191,7 @@ int Scene::startScene() {
 	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, 0);
 
 	return SUCCESS;
 }
@@ -230,7 +230,7 @@ int Scene::nextScene() {
 	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, 0);
 
 	return SUCCESS;
 }
@@ -277,14 +277,14 @@ int Scene::skipScene() {
 		_sceneQueue.erase(_sceneQueue.begin(), queueIterator);
 
 		endScene();
-		loadScene(skip_qdat->scene_n, skip_qdat->load_flag, skip_qdat->scene_proc, skip_qdat->sceneDescription, skip_qdat->fadeType);
+		loadScene(skip_qdat->scene_n, skip_qdat->load_flag, skip_qdat->scene_proc, skip_qdat->sceneDescription, skip_qdat->fadeType, 0);
 	}
 	// Search for a scene to skip to
 
 	return SUCCESS;
 }
 
-int Scene::changeScene(int scene_num) {
+int Scene::changeScene(int sceneNumber, int actorsEntrance) {
 	assert(_initialized);
 
 	if (!_sceneLoaded) {
@@ -292,18 +292,18 @@ int Scene::changeScene(int scene_num) {
 		return FAILURE;
 	}
 
-	if ((scene_num < 0) || (scene_num > _sceneMax)) {
+	if ((sceneNumber < 0) || (sceneNumber > _sceneMax)) {
 		warning("Scene::changeScene(): Error: Can't change scene. Invalid scene number");
 		return FAILURE;
 	}
 
-	if (_sceneLUT[scene_num] == 0) {
+	if (_sceneLUT[sceneNumber] == 0) {
 		warning("Scene::changeScene(): Error: Can't change scene; invalid scene descriptor resource number (0)");
 		return FAILURE;
 	}
 
 	endScene();
-	loadScene(scene_num, BY_SCENE, SC_defaultScene, NULL, false);
+	loadScene(sceneNumber, BY_SCENE, SC_defaultScene, NULL, SCENE_NOFADE, actorsEntrance);
 
 	return SUCCESS;
 }
@@ -504,7 +504,7 @@ int Scene::getSceneLUT(int scene_num) {
 	return _sceneLUT[scene_num];
 }
 
-int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneDescription *scene_desc_param, int fadeType) {
+int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneDescription *scene_desc_param, int fadeType, int actorsEntrance) {
 	SCENE_INFO scene_info;
 	uint32 res_number = 0;
 	int result;
@@ -670,7 +670,7 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 
 	_sceneProc(SCENE_BEGIN, &scene_info, this);
 	
-	_vm->_actor->updateActorsScene();
+	_vm->_actor->updateActorsScene(actorsEntrance);
 
 	if (_desc.flags & kSceneFlagShowCursor)
 		_vm->_interface->activate();
@@ -985,7 +985,7 @@ void Scene::cmdSceneChange(int argc, const char **argv) {
 
 	clearSceneQueue();
 
-	if (changeScene(scene_num) == SUCCESS) {
+	if (changeScene(scene_num, 0) == SUCCESS) {
 		_vm->_console->DebugPrintf("Scene changed.\n");
 	} else {
 		_vm->_console->DebugPrintf("Couldn't change scene!\n");

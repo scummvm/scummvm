@@ -731,7 +731,144 @@ void Script::setPointerVerb() {
 	}
 }
 
-void Script::whichObject(const Point& mousePointer) {
+void Script::hitObject(bool leftButton) {
+	int verb;
+	verb = leftButton ? _leftButtonVerb : _rightButtonVerb;
+
+	if (verb > kVerbNone) {
+		if (_firstObjectSet) {
+			if (_secondObjectNeeded) {
+				_pendingObject[0] = _currentObject[0];
+				_pendingObject[1] = _currentObject[1];
+				_pendingVerb = verb;
+
+				_leftButtonVerb = verb;
+				if (_pendingVerb > kVerbNone) {
+					//	statusColor = BRIGHT_WHITE;
+				}				
+				showVerb();
+				/*statusColor = GREEN_BA;*/
+
+				_secondObjectNeeded = false;
+				_firstObjectSet = false;
+				return;
+			}
+		} else {
+			if (verb == kVerbGive) {
+				_secondObjectNeeded = true;
+			} else {
+				if (verb == kVerbUse) {
+
+					if (_currentObjectFlags[0] & kObjUseWith) {
+						_secondObjectNeeded = true;
+					}
+				}
+			}
+
+			if (!_secondObjectNeeded) {
+				_pendingObject[0] = _currentObject[0];
+				_pendingObject[1] = ID_NOTHING;
+				_pendingVerb = verb;
+
+				_secondObjectNeeded = false;
+				_firstObjectSet = false;
+			} else {
+				_firstObjectSet = true;
+			}
+		}
+
+		_leftButtonVerb = verb;
+		if (_pendingVerb > kVerbNone) {
+		//	statusColor = BRIGHT_WHITE;
+		}
+		showVerb();
+		//statusColor = GREEN_BA;
+	}
+	
+}
+
+void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
+	Location pickLocation;
+	const HitZone *hitZone;
+
+	_vm->_actor->abortSpeech();
+
+	if ((_vm->_actor->_protagonist->currentAction != kActionWait) &&
+		(_vm->_actor->_protagonist->currentAction != kActionFreeze) &&
+		(_vm->_actor->_protagonist->currentAction != kActionWalkToLink) &&
+		(_vm->_actor->_protagonist->currentAction != kActionWalkToPoint)) {
+		return;
+	}
+	if (_pendingVerb > kVerbNone) {
+		setLeftButtonVerb(kVerbWalkTo);
+	}
+
+	if (_pointerObject != ID_NOTHING) {
+		hitObject( leftButton );
+	} else {
+		_pendingObject[0] = ID_NOTHING;
+		_pendingObject[1] = ID_NOTHING;
+		_pendingVerb = kVerbWalkTo;
+	}
+
+
+	// tiled stuff
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
+		//todo: it
+	} else {
+		pickLocation.fromScreenPoint(mousePoint);
+	}
+
+
+	hitZone = NULL;
+
+	if (objectIdType(_pendingObject[0]) == kGameObjectHitZone) {
+		// hitZone = _vm->_scene->_objectMap _pendingObject[0]; //TODO:
+	} else {
+		if ((_pendingVerb == kVerbUse) && (objectIdType(_pendingObject[1]) == kGameObjectHitZone)) {
+			// hitZone = _vm->_scene->_objectMap _pendingObject[1]; //TODO:
+		}
+	}
+
+	if (hitZone != NULL) {
+		if (hitZone->getFlags() & kHitZoneNoWalk) {
+			_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation); 
+			doVerb();
+			return;
+		}
+
+		if (hitZone->getFlags() & kHitZoneProject) {
+			//TODO: do it
+		}
+	}
+
+	switch (_pendingVerb) {
+		case kVerbWalkTo:
+		case kVerbPickUp:
+		case kVerbOpen:
+		case kVerbClose:
+		case kVerbUse:
+			_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+			break;
+
+		case kVerbLookAt:
+			if (objectIdType(_pendingObject[0]) != kGameObjectActor ) {
+				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+			} else {
+				doVerb();
+			}
+			break;
+
+		case kVerbTalkTo:
+		case kVerbGive:
+			doVerb();
+			break;
+	}
+
+
+}
+
+void Script::whichObject(const Point& mousePoint) {
 	uint16 objectId;
 	int16 objectFlags;
 	int newRightButtonVerb;
@@ -748,7 +885,7 @@ void Script::whichObject(const Point& mousePointer) {
 
 	if (_vm->_actor->_protagonist->currentAction == kActionWalkDir) {
 	} else {
-		newObjectId = _vm->_actor->testHit(mousePointer);
+		newObjectId = _vm->_actor->testHit(mousePoint);
 
 		if (newObjectId != ID_NOTHING) {
 			if (objectIdType(newObjectId) == kGameObjectObject) {
@@ -785,12 +922,12 @@ void Script::whichObject(const Point& mousePointer) {
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				//todo: it
 			} else {
-				pickLocation.x = mousePointer.x;
-				pickLocation.y = mousePointer.y;
+				pickLocation.x = mousePoint.x;
+				pickLocation.y = mousePoint.y;
 				pickLocation.z = 0;
 			}
 			
-			hitZoneId = _vm->_scene->_objectMap->hitTest(mousePointer);
+			hitZoneId = _vm->_scene->_objectMap->hitTest(mousePoint);
 		
 			if ((hitZoneId != -1) && 0) { //TODO: do it
 				//hitZone = _vm->_scene->_objectMap->getZone(hitZoneId);

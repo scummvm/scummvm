@@ -131,7 +131,7 @@ struct SCENE_ANIMINFO {
 
 typedef SortedList<SCENE_ANIMINFO> SceneAnimInfoList;
 
-enum SCENE_FADE_TYPES {
+enum SceneTransitionType {
 	SCENE_NOFADE = 0,
 	SCENE_FADE = 1,
 	SCENE_FADE_NO_INTERFACE = 2
@@ -224,7 +224,7 @@ class Scene {
 	void getSlopes(int &beginSlope, int &endSlope);
 
 	int clearSceneQueue(void);
-	int changeScene(int scene_num);
+	int changeScene(int sceneNumber, int actorsEntrance);
 
 	bool initialized() { return _initialized; }
 
@@ -233,7 +233,7 @@ class Scene {
 	int currentSceneNumber() { return _sceneNumber; }
 
  private:
-	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SceneDescription *, int fadeIn);
+	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SceneDescription *, int fadeIn, int actorsEntrance);
 	int loadSceneDescriptor(uint32 res_number);
 	int loadSceneResourceList(uint32 res_number);
 	int processSceneResources();

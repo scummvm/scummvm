@@ -88,10 +88,11 @@ int SagaEngine::processInput() {
 			}
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
+		case OSystem::EVENT_RBUTTONDOWN:
 			_mousePos.x = event.mouse.x;
 			_mousePos.y = event.mouse.y;
 			imousePt = _mousePos;
-			_interface->update(imousePt, UPDATE_MOUSECLICK);
+			_interface->update(imousePt, (event.type == OSystem::EVENT_LBUTTONDOWN) ? UPDATE_LEFTBUTTONCLICK : UPDATE_RIGHTBUTTONCLICK);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			_mousePos.x = event.mouse.x;

@@ -33,6 +33,8 @@
 
 namespace Saga {
 
+class HitZone;
+
 #define ACTOR_DEBUG
 
 #define ACTOR_BARRIERS_MAX 16
@@ -191,7 +193,8 @@ struct ActorData {
 	int actionDirection;
 	int actionCycle;
 	int frameNumber;			// current actor frame number
-	uint16 targetObject;		
+	uint16 targetObject;
+	const HitZone *lastZone;
 	
 	int cycleFrameSequence;
 	uint8 cycleDelay;
@@ -263,6 +266,8 @@ struct SpeechData {
 	}
 };
 
+
+
 class Actor {
 public:
 	ActorData *_centerActor;
@@ -279,11 +284,12 @@ public:
 
 	int direct(int msec);
 	int drawActors();
-	void updateActorsScene();			// calls from scene loading to update Actors info
+	void updateActorsScene(int actorsEntrance);			// calls from scene loading to update Actors info
 
 	void drawPathTest();
 
 	uint16 testHit(const Point& mousePointer){ return ID_NOTHING;}; //TODO: do it
+	void takeExit(uint16 actorId, const HitZone *hitZone);
 	const char * getActorName(uint16 actorId);
 	bool actorEndWalk(uint16 actorId, bool recurse);
 	bool actorWalkTo(uint16 actorId, const Location &toLocation);
@@ -309,7 +315,8 @@ public:
 	
 private:
 	bool loadActorResources(ActorData *actor);
-	
+	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
+
 	void createDrawOrderList();
 	void calcActorScreenPosition(ActorData *actor);
 	bool followProtagonist(ActorData *actor);
@@ -376,7 +383,6 @@ private:
 	int _pathNodeListIndex;
 	int _pathNodeListAlloced;
 	PathNode *_pathNodeList;
-	PathNode *_newPathNodeList;
 	void addPathNodeListPoint(const Point &point) {
 		++_pathNodeListIndex;
 		if (_pathNodeListIndex >= _pathNodeListAlloced) {
@@ -386,6 +392,24 @@ private:
 		}
 		_pathNodeList[_pathNodeListIndex].point = point;
 	}
+
+	int _newPathNodeListIndex;
+	int _newPathNodeListAlloced;
+	PathNode *_newPathNodeList;
+	void incrementNewPathNodeListIndex() {
+		++_newPathNodeListIndex;
+		if (_newPathNodeListIndex >= _newPathNodeListAlloced) {
+			_newPathNodeListAlloced += 100;
+			_newPathNodeList = (PathNode*) realloc(_newPathNodeList, _newPathNodeListAlloced * sizeof(*_newPathNodeList));
+
+		}
+	}
+	void addNewPathNodeListPoint(const Point &point, int link) {
+		incrementNewPathNodeListIndex();
+		_newPathNodeList[_newPathNodeListIndex].point = point;
+		_newPathNodeList[_newPathNodeListIndex].link = link;
+	}
+
 public:
 #ifdef ACTOR_DEBUG
 //path debug - use with care

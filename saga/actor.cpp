@@ -39,6 +39,7 @@
 #include "saga/actordata.h"
 #include "saga/stream.h"
 #include "saga/interface.h"
+#include "saga/events.h"
 #include "common/config-manager.h"
 
 namespace Saga {
@@ -149,8 +150,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	_pathNodeList = _newPathNodeList = NULL;
 	_pathList = NULL;
-	_pathListAlloced = _pathNodeListAlloced = 0;
-	_pathListIndex = _pathNodeListIndex = -1;
+	_pathListAlloced = _pathNodeListAlloced = _newPathNodeListAlloced = 0;
+	_pathListIndex = _pathNodeListIndex = _newPathNodeListIndex = -1;
 		
 
 	_centerActor = _protagonist = NULL;
@@ -202,6 +203,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			actor->frameNumber = 0;
 			actor->targetObject = ID_NOTHING;
 			actor->actorFlags = 0;
+			actor->lastZone = NULL;
 
 			actor->location.x = ITE_ActorTable[i].x;
 			actor->location.y = ITE_ActorTable[i].y;
@@ -310,6 +312,57 @@ bool Actor::loadActorResources(ActorData *actor) {
 	return true;
 }
 
+void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
+	ActorData *actor;
+	actor = getActor(actorId);
+	actor->lastZone = NULL;
+	
+	_vm->_scene->changeScene(hitZone->getSceneNumber(), hitZone->getActorsEntrance());
+	_vm->_script->setNoPendingVerb();
+}
+
+void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped) {
+	EVENT event;
+
+	if (actor != _protagonist) {
+		return;
+	}
+	if (((hitZone->getFlags() & kHitZoneTerminus) && !stopped) || (!(hitZone->getFlags() & kHitZoneTerminus) && stopped)) {
+		return;
+	}
+	
+	if (!exit) {
+		if (hitZone->getFlags() & kHitZoneAutoWalk) {
+			actor->currentAction = kActionWalkDir;
+			actor->actionDirection = actor->facingDirection = hitZone->getDirection();
+			actor->walkFrameSequence = kFrameWalk;
+			return;
+		}
+	} else {
+		if (!(hitZone->getFlags() & kHitZoneAutoWalk)) {
+			return;
+		}
+	}
+	if (hitZone->getFlags() & kHitZoneExit) {
+		takeExit(actor->actorId, hitZone);
+	} else {
+		if (hitZone->getScriptNumber() > 0) {
+			event.type = ONESHOT_EVENT;
+			event.code = SCRIPT_EVENT;
+			event.op = EVENT_EXEC_NONBLOCKING;
+			event.time = 0;
+			event.param = hitZone->getScriptNumber();
+			event.param2 = kVerbEnter;		// Action
+			event.param3 = ID_NOTHING;		// Object
+			event.param4 = ID_NOTHING;		// With Object
+			event.param5 = ID_PROTAG;		// Actor
+
+			_vm->_events->queue(&event);
+		}
+	}
+
+}
+
 void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) {
 	int angle;
 	int distance;
@@ -408,7 +461,7 @@ bool Actor::validFollowerLocation(const Location &location) {
 	return (_vm->_scene->canWalk(point));
 }
 
-void Actor::updateActorsScene() {
+void Actor::updateActorsScene(int actorsEntrance) {
 	int i, j;
 	int followerDirection;
 	ActorData *actor;
@@ -638,6 +691,9 @@ void Actor::handleActions(int msec, bool setup) {
 	int speed;
 	Location delta;
 	Location addDelta;
+	int hitZoneIndex;
+	const HitZone *hitZone;
+	Point hitPoint;
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
@@ -873,6 +929,28 @@ void Actor::handleActions(int msec, bool setup) {
 				//todo: do it
 				break;
 		}
+
+		if ((actor->currentAction >= kActionWalkToPoint) && (actor->currentAction <= kActionWalkDir)) {
+			hitZone = NULL;
+			// tiled stuff
+			if (_vm->_scene->getFlags() & kSceneFlagISO) {
+				//todo: it
+			} else {
+				actor->location.toScreenPointXY(hitPoint);
+				hitZoneIndex = _vm->_scene->_actionMap->hitTest(hitPoint);
+				if (hitZoneIndex != -1) {
+					hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
+				}
+			}
+
+			if (hitZone != actor->lastZone) {
+				if (actor->lastZone)
+					stepZoneAction( actor, actor->lastZone, true, false);
+				actor->lastZone = hitZone;
+				if (hitZone)
+					stepZoneAction( actor, hitZone, false, false);
+			}
+		}
 	}
 
 }
@@ -1106,6 +1184,8 @@ bool Actor::followProtagonist(ActorData *actor) {
 bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	bool walkMore = false;
 	ActorData *actor;
+	const HitZone *hitZone;
+	int hitZoneIndex;
 
 	actor = getActor(actorId);
 	actor->actorFlags &= ~kActorBackwards;
@@ -1127,7 +1207,19 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 
 	if (actor == _protagonist) {
 		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
-		//todo: it
+		if (_vm->_script->_pendingVerb == kVerbWalkTo) {
+			hitZoneIndex = _vm->_scene->_actionMap->hitTest(actor->screenPosition);
+			if (hitZoneIndex != -1) {
+				hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
+				stepZoneAction(actor, hitZone, false, true);
+			} else {
+				_vm->_script->setNoPendingVerb();
+			}
+		} else {
+			if (_vm->_script->_pendingVerb != kVerbNone) {
+				_vm->_script->doVerb();
+			}
+		}
 
 	} else {
 		if (recurse && (actor->flags & kFollower))
@@ -1826,7 +1918,6 @@ void Actor::condenseNodeList() {
 void Actor::removePathPoints() {
 	int i, j, k, l;
 	PathNode *node;
-	int newPathNodeIndex;
 	int start;
 	int end;
 	Point point1, point2;
@@ -1835,13 +1926,12 @@ void Actor::removePathPoints() {
 	if (_pathNodeListIndex < 2)
 		return;
 
-	_newPathNodeList = (PathNode*)realloc(_newPathNodeList, _pathNodeListAlloced);
-	_newPathNodeList[0] = _pathNodeList[0];
-	newPathNodeIndex = 0;
-
+	
+	_newPathNodeListIndex = -1;
+	addNewPathNodeListPoint(_pathNodeList[0].point, _pathNodeList[0].link);
+		
 	for (i = 1, node = _pathNodeList + 1; i < _pathNodeListIndex; i++, node++) {
-		newPathNodeIndex++;
-		_newPathNodeList[newPathNodeIndex] = *node;
+		addNewPathNodeListPoint(node->point, node->link);
 
 		for (j = 5; j > 0; j--) {
 			start = node->link - j;
@@ -1859,17 +1949,17 @@ void Actor::removePathPoints() {
 
 			
 			if (scanPathLine(point1, point2)) {
-				for (l = 1; l <= newPathNodeIndex; l++) {
+				for (l = 1; l <= _newPathNodeListIndex; l++) {
 					if (start <= _newPathNodeList[l].link) {
-						newPathNodeIndex = l;
-						_newPathNodeList[newPathNodeIndex].point = point1;
-						_newPathNodeList[newPathNodeIndex].link = start;
-						newPathNodeIndex++;
+						_newPathNodeListIndex = l;
+						_newPathNodeList[_newPathNodeListIndex].point = point1;
+						_newPathNodeList[_newPathNodeListIndex].link = start;
+						incrementNewPathNodeListIndex();						
 						break;
 					}
 				}
-				_newPathNodeList[newPathNodeIndex].point = point2;
-				_newPathNodeList[newPathNodeIndex].link = end;
+				_newPathNodeList[_newPathNodeListIndex].point = point2;
+				_newPathNodeList[_newPathNodeListIndex].link = end;
 
 				for (k = start + 1; k < end; k++) {
 					_pathList[k].x = PATH_NODE_EMPTY;
@@ -1878,12 +1968,11 @@ void Actor::removePathPoints() {
 			}
 		}
 	}
+	
+	addNewPathNodeListPoint(_pathNodeList[_pathNodeListIndex].point, _pathNodeList[_pathNodeListIndex].link);
 
-	newPathNodeIndex++;
-	_newPathNodeList[newPathNodeIndex] = _pathNodeList[_pathNodeListIndex];
-
-	for (i = 0, j = 0; i <= newPathNodeIndex; i++) {
-		if (newPathNodeIndex == i || (_newPathNodeList[i].point != _newPathNodeList[i+1].point)) {
+	for (i = 0, j = 0; i <= _newPathNodeListIndex; i++) {
+		if (_newPathNodeListIndex == i || (_newPathNodeList[i].point != _newPathNodeList[i+1].point)) {
 			_pathNodeList[j++] = _newPathNodeList[i];
 		}
 	}

@@ -47,7 +47,12 @@ class ActionMap {
 	int getExitSceneNumber(int index) const;
 	int hitTest(const Point &testPoint);
 	int draw(SURFACE *ds, int color);
-
+	const HitZone * getHitZone(int index) const {
+		if ((index < 0) || (index >= _stepZoneListCount)) {
+			error("ActionMap::getHitZone wrong index 0x%X", index);
+		}
+		return _stepZoneList[index];
+	}
 	void cmdInfo();
 
 private:
