@@ -35,6 +35,8 @@
 #include "saga/font.h"
 #include "saga/text.h"
 #include "saga/sound.h"
+#include "saga/scene.h"
+#include "saga/actionmap.h"
 
 #include "saga/actor.h"
 #include "saga/actordata.h"
@@ -908,19 +910,28 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 
 	if (((a_walkint->x_dir == 1) && new_a_x >= node_p->node_pt.x) ||
 		((a_walkint->x_dir != 1) && (new_a_x <= node_p->node_pt.x))) {
-			debug(2, "Path complete.");
-			ys_dll_delete(walk_p);
-			a_walkint->wi_active = 0;
+		Point endpoint;
+		int exitNum;
 
-			// Release path semaphore
-			if (a_walkint->sem != NULL) {
-				_vm->_script->SThreadReleaseSem(a_walkint->sem);
-			}
+		debug(2, "Path complete.");
+		ys_dll_delete(walk_p);
+		a_walkint->wi_active = 0;
 
-			actor->action_frame = 0;
-			actor->action = ACTION_IDLE;
-			*complete_p = 1;
-			return R_FAILURE;
+		// Release path semaphore
+		if (a_walkint->sem != NULL) {
+			_vm->_script->SThreadReleaseSem(a_walkint->sem);
+		}
+
+		actor->action_frame = 0;
+		actor->action = ACTION_IDLE;
+
+		endpoint.x = (int)new_a_x / R_ACTOR_LMULT;
+		endpoint.y = (int)new_a_y / R_ACTOR_LMULT;
+		if ((exitNum = _vm->_scene->_actionMap->hitTest(endpoint)) != -1) {
+			_vm->_scene->changeScene(_vm->_scene->_actionMap->getExitScene(exitNum));
+		}
+		*complete_p = 1;
+		return R_FAILURE;
 	}
 
 	actor_x = (int)new_a_x;

@@ -78,6 +78,11 @@ enum SAGAGameId {
 	GID_IHNM
 };
 
+struct R_CLICKAREA {
+	int n_points;
+	Point *points;
+};
+
 class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 

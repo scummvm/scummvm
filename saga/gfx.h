@@ -107,6 +107,8 @@ public:
 	int getCurrentPal(PALENTRY *src_pal);
 	int palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 	int blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
+	bool hitTestPoly(Point *points, unsigned int npoints, Point test_point);
+
 private:
 	void setCursor(int best_white);
 	int _init;

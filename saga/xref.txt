@@ -35,8 +35,15 @@ Sceneres.h
  LOADREQ_FACES             SAGA_FACES
  LOADREQ_PALETTE
 
- HZONE_EXIT                R_OBJECT_EXIT
- HZONEF_AUTOWALK           R_OBJECT_NORMAL
+ hitZone                   ObjectMap
+ stepZone                  ActionMap
+
+ HZONEF_EXIT               OBJECT_EXIT (in Verb.c), ACTION_EXIT (in Actor.c)
+ HZONEF_ENABLED            OBJECT_ENABLED (in Verb.c), ACTION_ENABLED (in Actor.c)
+ HZONEF_NOWALK             OBJECT_NOWALK
+ HZONEF_PROJECT            OBJECT_PROJECT
+ HZONEF_AUTOWALK           ACTION_AUTOWALK
+ HZONEF_TERMINUS           ACTION_TERMINUS
 
 Scene.c
 =======

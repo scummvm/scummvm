@@ -28,14 +28,18 @@
 
 namespace Saga {
 
-enum R_OBJECT_FLAGS {
-	R_OBJECT_EXIT = 0x01,
-	R_OBJECT_NORMAL = 0x02
-};
+enum OBJECT_FLAGS {
+	OBJECT_ENABLED = (1<<0),   // Object is enabled
+	OBJECT_EXIT = (1<<1),      // Causes char to exit
 
-struct R_CLICKAREA {
-	int n_points;
-	Point *points;
+	// Causes the character not to walk to the object (but they will 
+	// look at it).
+	OBJECT_NOWALK = (1<<2),
+
+	//	When the object is clicked on it projects the
+	//	click point downwards from the middle of the object until it
+	//	reaches the lowest point in the zone.
+	OBJECT_PROJECT = (1<<3)
 };
 
 struct R_OBJECTMAP_ENTRY {
@@ -48,8 +52,6 @@ struct R_OBJECTMAP_ENTRY {
 	int nClickareas;
 	R_CLICKAREA *clickareas;
 };
-
-class Gfx;
 
 class ObjectMap{
 public:

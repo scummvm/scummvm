@@ -492,7 +492,7 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, Point imousePt) {
 
 	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
 
-	if (object_flags & R_OBJECT_NORMAL) {
+	if (object_flags & OBJECT_EXIT) { // FIXME. This is wrong
 		if ((script_num = _vm->_scene->_objectMap->getEPNum(objectNum)) != -1) {
 			// Set active verb in script module
 			_vm->_sdata->putWord(4, 4, I_VerbData[_activeVerb].s_verb);
@@ -532,7 +532,7 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point imousePt) {
 
 	object_name = _vm->_scene->_objectMap->getName(objectNum);
 
-	if (object_flags & R_OBJECT_NORMAL) {
+	if (object_flags & OBJECT_EXIT) { // FIXME. This is wrong
 		// Normal scene object - display as subject of verb
 		snprintf(new_status, R_STATUS_TEXT_LEN, "%s %s", I_VerbData[_activeVerb].verb_str, object_name);
 	} else {

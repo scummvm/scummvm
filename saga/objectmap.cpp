@@ -214,7 +214,6 @@ const uint16 ObjectMap::getFlags(int object) {
 	int i;
 
 	assert(_namesLoaded);
-	debug(0, "object: %d nnames: %d", object, _nNames);
 	assert((object > 0) && (object <= _nNames));
 
 	for (i = 0; i < _nObjects; i++) {
@@ -259,7 +258,6 @@ int ObjectMap::draw(R_SURFACE *ds, Point imousePt, int color, int color2) {
 	bool hitObject = false;
 	int objectNum = 0;
 
-	int pointcount = 0;
 	int i, k;
 
 	if (!_objectsLoaded) {
@@ -285,7 +283,6 @@ int ObjectMap::draw(R_SURFACE *ds, Point imousePt, int color, int color2) {
 
 		for (k = 0; k < object_map->nClickareas; k++) {
 			clickarea = &object_map->clickareas[k];
-			pointcount = 0;
 			if (clickarea->n_points == 2) {
 				// 2 points represent a box
 				_vm->_gfx->drawFrame(ds, &clickarea->points[0], &clickarea->points[1], draw_color);
@@ -302,31 +299,6 @@ int ObjectMap::draw(R_SURFACE *ds, Point imousePt, int color, int color2) {
 	}
 
 	return R_SUCCESS;
-}
-
-static bool MATH_HitTestPoly(Point *points, unsigned int npoints, Point test_point) {
-	int yflag0;
-	int yflag1;
-	bool inside_flag = false;
-	unsigned int pt;
-
-	Point *vtx0 = &points[npoints - 1];
-	Point *vtx1 = &points[0];
-
-	yflag0 = (vtx0->y >= test_point.y);
-	for (pt = 0; pt < npoints; pt++, vtx1++) {
-		yflag1 = (vtx1->y >= test_point.y);
-		if (yflag0 != yflag1) {
-			if (((vtx1->y - test_point.y) * (vtx0->x - vtx1->x) >=
-				(vtx1->x - test_point.x) * (vtx0->y - vtx1->y)) == yflag1) {
-				inside_flag = !inside_flag;
-			}
-		}
-		yflag0 = yflag1;
-		vtx0 = vtx1;
-	}
-
-	return inside_flag;
 }
 
 int ObjectMap::hitTest(Point imousePt) {
@@ -360,7 +332,7 @@ int ObjectMap::hitTest(Point imousePt) {
 				}
 			} else if (n_points > 2) {
 				// Hit-test a polygon
-				if (MATH_HitTestPoly(points, n_points, imouse)) {
+				if (_vm->_gfx->hitTestPoly(points, n_points, imouse)) {
 					return object_map->objectNum;
 				}
 			}

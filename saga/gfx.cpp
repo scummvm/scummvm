@@ -1076,4 +1076,29 @@ void Gfx::setCursor(int best_white) {
 	_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4, keycolor);
 }
 
+bool Gfx::hitTestPoly(Point *points, unsigned int npoints, Point test_point) {
+	int yflag0;
+	int yflag1;
+	bool inside_flag = false;
+	unsigned int pt;
+
+	Point *vtx0 = &points[npoints - 1];
+	Point *vtx1 = &points[0];
+
+	yflag0 = (vtx0->y >= test_point.y);
+	for (pt = 0; pt < npoints; pt++, vtx1++) {
+		yflag1 = (vtx1->y >= test_point.y);
+		if (yflag0 != yflag1) {
+			if (((vtx1->y - test_point.y) * (vtx0->x - vtx1->x) >=
+				(vtx1->x - test_point.x) * (vtx0->y - vtx1->y)) == yflag1) {
+				inside_flag = !inside_flag;
+			}
+		}
+		yflag0 = yflag1;
+		vtx0 = vtx1;
+	}
+
+	return inside_flag;
+}
+
 } // End of namespace Saga
