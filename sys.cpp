@@ -62,7 +62,8 @@ uint32 Scumm::filePos(void *handle) {
 void Scumm::fileSeek(void *file, long offs, int whence) {
 	switch(_fileMode) {
 	case 1: case 2:
-		fseek((FILE*)file, offs, whence);
+		if (fseek((FILE*)file, offs, whence)!=0)
+			clearerr((FILE*)file);
 		return;
 	case 3:
 		_whereInResToRead = offs;
@@ -78,8 +79,10 @@ void Scumm::fileRead(void *file, void *ptr, uint32 size) {
 		if (size==0)
 			return;
 
-		if ((uint32)fread(ptr2, size, 1, (FILE*)file) != 1)
+		if ((uint32)fread(ptr2, size, 1, (FILE*)file) != 1) {
+			clearerr((FILE*)file);
 			_fileReadFailed = true;
+		}
 
 		do {
 			*ptr2++	^= _encbyte;
@@ -106,8 +109,10 @@ int Scumm::fileReadByte() {
 
 	switch(_fileMode) {
 	case 1:
-		if (fread(&b,1,1,(FILE*)_fileHandle) != 1)
+		if (fread(&b,1,1,(FILE*)_fileHandle) != 1) {
+			clearerr((FILE*)_fileHandle);
 			_fileReadFailed = true;
+		}
 		return b ^ _encbyte;
 
 	case 3:
