@@ -265,7 +265,7 @@ int MidiDriver_WIN::open(int mode)
 	_mode = mode;
 
 	if (mode == MO_SIMPLE) {
-		MMRESULT res = midiOutOpen((HMIDIOUT *) & _mo, MIDI_MAPPER, NULL, NULL, 0);
+		MMRESULT res = midiOutOpen((HMIDIOUT *) & _mo, MIDI_MAPPER, 0, 0, 0);
 		if (res != MMSYSERR_NOERROR)
 			check_error(res);
 	} else {
