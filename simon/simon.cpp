@@ -1740,7 +1740,7 @@ uint SimonEngine::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uin
 }
 
 void SimonEngine::f10_key() {
-	HitArea *ha;
+	HitArea *ha, *dha;
 	uint count;
 	uint y_, x_;
 	byte *dst;
@@ -1763,7 +1763,21 @@ void SimonEngine::f10_key() {
 		do {
 			if (ha->id != 0 && ha->flags & 0x20 && !(ha->flags & 0x40)) {
 
-				 if (ha->y >= 0xc8 || ha->y >= _vga_var8)
+				dha = _hit_areas;
+				if (ha->flags & 1) {
+					while (dha != ha && dha->flags != ha->flags)
+						++dha;
+					if (dha != ha && dha->flags == ha->flags)
+						continue;
+				} else {
+					dha = _hit_areas;
+					while (dha != ha && dha->item_ptr != ha->item_ptr)
+						++dha;
+					if (dha != ha && dha->item_ptr == ha->item_ptr)
+						continue;
+				}
+
+				if (ha->y >= 0xc8 || ha->y >= _vga_var8)
 					continue;
 
 				y_ = (ha->height >> 1) - 4 + ha->y;
