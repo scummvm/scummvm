@@ -55,7 +55,7 @@ static const char *const spanish_verb_prep_names[] = {
 
 static const char *const italian_verb_prep_names[] = {
 	"", "", "", "",
-	"", "", "", "con che cosa ?",
+	"", "", "", "con cosa ?",
 	"", "", "", "a chi ?"
 };
 
