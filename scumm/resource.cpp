@@ -2186,6 +2186,8 @@ uint16 newTag2Old(uint32 oldTag) {
 		return (0x4150);	// PA
 	case (MKID('BOXD')):
 		return (0x5842);	// BX
+	case (MKID('CYCL')):
+		return (0x4343);	// CC
 	default:
 		return (0);
 	}
