@@ -80,6 +80,7 @@ public:
 protected:
 	void insanity(bool);
 	void setPalette(const byte *palette);
+	void seekSan(const char *file, const char *directory, int32 pos);
 
 private:
 	void updatePalette(void);

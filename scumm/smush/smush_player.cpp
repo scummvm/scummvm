@@ -972,6 +972,29 @@ void SmushPlayer::insanity(bool flag) {
 	_insanity = flag;
 }
 
+// FIXME: now it will work with offsets = 8. No Flu files are supported
+void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
+	Chunk *sub;
+
+	if (file) {
+		if (_base)
+			delete _base;
+
+		_base = new FileChunk(file, directory);
+	} else {
+		_base->reinit();
+		// FIXME: this doesn't work as expected
+		//		_base->seek(pos, FileChunk::seek_start);
+	}
+
+	sub = _base->subBlock();
+	checkBlock(*sub, TYPE_AHDR);
+	handleAnimHeader(*sub);
+
+	if (pos != 8)
+		_base->seek(pos, FileChunk::seek_start);
+}
+
 void SmushPlayer::play(const char *filename, const char *directory) {
 
 	// Verify the specified file exists
@@ -1002,6 +1025,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 			start_time = _scumm->_system->get_msecs();
 			_scumm->_system->update_screen();
 			_updateNeeded = false;
+
 			end_time = _scumm->_system->get_msecs();
 
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);

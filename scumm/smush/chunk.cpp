@@ -189,6 +189,13 @@ uint32 FileChunk::getDword() {
 	return _data->readUint32LE();
 }
 
+void FileChunk::reinit() {
+	_offset = sizeof(Chunk::type) + sizeof(uint32);
+	_type = _data->readUint32BE();
+	_size = _data->readUint32BE();
+	_curPos = 0;
+}
+
 MemoryChunk::MemoryChunk(byte *data) {
 	if (data == 0)
 		error("Chunk() called with NULL pointer");

@@ -83,6 +83,7 @@ public:
 	short getShort();
 	uint16 getWord();
 	uint32 getDword();
+	void reinit();
 };
 
 class MemoryChunk : public BaseChunk {

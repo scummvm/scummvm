@@ -24,6 +24,7 @@
 
 #include "base/engine.h"
 #include "scumm/scumm.h"
+#include "scumm/nut_renderer.h"
 
 #include "scumm/smush/smush_player.h"
 
@@ -49,7 +50,7 @@ namespace Scumm {
 #define EN_VULTM2    6 // vulture (initialized as rottwheeler) (male)
 #define EN_CAVEFISH  7 // Cavefish Maximum Fish
 #define EN_TORQUE    8 // Father Torque
-#define EN_ENEMY9    9 // default, used only with handler
+#define EN_BEN       9 // used only with handler
 
 class Insane {
  public:
@@ -105,7 +106,15 @@ class Insane {
 	int32 _idx2Exceeded;
 	bool _memoryAllocatedNotOK;
 	int32 _lastKey;
-	int32 _val4_;
+	bool _beenCheated;
+	bool _tearsRustle;
+	int _keybOldDx;
+	int _keybOldDy;
+	int _velocityX;
+	int _velocityY;
+	int _keybX;
+	int _keybY;
+	int32 _firstBattle;
 	int32 _val8d;
 	byte _val10b;
 	int32 _val11d;
@@ -128,7 +137,6 @@ class Insane {
 	int32 _val114d16[16];
 	int16 _val115w;
 	int16 _val116w;
-	bool _val118_;
 	bool _val119_;
 	bool _val120_;
 	bool _val121_;
@@ -184,9 +192,9 @@ class Insane {
 	int32 _val200d;
 	int32 _val201d;
 	byte _val202b;
-	int32 _val210d;
 	int32 _val211d;
 	int32 _val212_;
+	int32 _val213d;
 	int32 _trsFilePtr; // FIXME: we don't need it
 	int32 _smlayer_room;
 	int32 _smlayer_room2;
@@ -199,10 +207,10 @@ class Insane {
 	byte *_smush_toranchFlu;
 	byte *_smush_minedrivFlu;
 	byte *_smush_minefiteFlu;
-	byte *_smush_bencutNut;
-	byte *_smush_bensgoggNut;
-	byte *_smush_iconsNut;
-	byte *_smush_icons2Nut;
+	NutRenderer *_smush_bencutNut;
+	NutRenderer *_smush_bensgoggNut;
+	NutRenderer *_smush_iconsNut;
+	NutRenderer *_smush_icons2Nut;
 	bool _smush_isSanFileSetup;
 	bool _isBenCut;
 	int _smush_smushState;
@@ -293,7 +301,7 @@ class Insane {
 		int32 field_30;
 		int32 field_34;
 		int32 field_38;
-		bool  dead;
+		bool  lost;
 		bool  field_40;
 		bool  field_44;
 		int32 field_48;
@@ -303,7 +311,7 @@ class Insane {
 		int32 runningSound;
 		int32 weapon;
 		bool inventory[8];
-		int32 field_80;
+		int32 probability;
 		int32 enemyHandler;
 		struct act act[4];
 	};
@@ -330,7 +338,7 @@ class Insane {
 	int loadSceneData(int scene, int flag, int phase);
 	void setSceneCostumes(int sceneId);
 	void setupValues(void);
-	void setOtherCostumes (void);
+	void setEnemyCostumes (void);
 	void smlayer_stopSound (int idx);
 	int smlayer_loadSound(int id, int flag, int phase);
 	int smlayer_loadCostume(int id, int phase);
@@ -412,7 +420,7 @@ class Insane {
 	int32 enemy7initializer(int32, int32, int32);
 	int32 enemy8handler(int32, int32, int32);
 	int32 enemy8initializer(int32, int32, int32);
-	int32 enemyDefHandler(int32, int32, int32);
+	int32 enemyBenHandler(int32, int32, int32);
 	void IMUSE_shutVolume(void);
 	void IMUSE_restoreVolume(void);
 	bool smlayer_isSoundRunning(int32 sound);
@@ -421,8 +429,8 @@ class Insane {
 	void smlayer_soundSetPan(int32 sound, int32 pan);
 	void smlayer_soundSetPriority(int32 sound, int32 priority);
 	void smlayer_drawSomething(byte *renderBitmap, int32 codecparam, 
-							   int32 arg_8, int32 arg_C, int32 arg_10, byte *nutfileptr, 
-							   int32 arg_18, int32 arg_1C, int32 arg_20);
+			   int32 arg_8, int32 arg_C, int32 arg_10, NutRenderer *nutfileptr, 
+			   int32 arg_18, int32 arg_1C, int32 arg_20);
 	void smlayer_overrideDrawActorAt(byte *, byte, byte);
 	void queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename, 
 						  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames);
@@ -439,10 +447,10 @@ class Insane {
 	void actor2Reaction(int32 arg_4);
 	void actor3Reaction(int32 arg_4);
 	void actor8Reaction(int32 arg_4);
-	void checkEnemyDeath(int);
-	int32 func5(void);
+	void checkEnemyLoose(int);
+	int32 processBattle(void);
 	void proc12(int arg_0);
-	void proc23(int actornum, int arg_4);
+	void setEnemyAnimation(int actornum, int arg_4);
 	int speedTranslator(int value);
 	bool smush_eitherNotStartNewFrame(void);
 	void smlayer_setActorFacing(int actornum, int actnum, int frame, int direction);
@@ -473,13 +481,15 @@ class Insane {
 								 int32 step2, int32 setupsan1);
 	void smush_setFrameSteps(int32 step1, int32 step2);
 	void smush_setupSanFile(const char *filename, int32 offset);
-	int32 smush_func23(bool arg_0);
+	int32 getLastKey(bool arg_0);
 	void drawSpeedyActor(int32 arg_0);
 	void proc59(int32 actornum, int32 actnum, int32 arg_8);
 	void proc51(int32 actornum, int32 actnum, int32 arg_8);
 	void proc54(int32 actornum, int32 actnum, int32 arg_8);
 	void proc55(int32 actornum, int32 actnum, int32 arg_8);
 	int32 func60(void);
+	int32 processKeyboard(void);
+	int32 func75(void);
 
 	void blah(void);
 
