@@ -645,10 +645,36 @@ AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
 
 #pragma mark -
 
-PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 35, 80, 250, 16)
+InfoDialog::InfoDialog(NewGui *gui, Scumm *scumm, int res)
+	: ScummDialog(gui, scumm, 0, 80, 0, 16) // dummy x and w
 {
-	addResText(4, 4, 250-8, 16, 10);
+	setInfoText(queryResString (res));
+}
+
+InfoDialog::InfoDialog(NewGui *gui, Scumm *scumm, const String& message)
+	: ScummDialog(gui, scumm, 0, 80, 0, 16) // dummy x and w
+{
+	setInfoText(message);
+}
+
+void InfoDialog::setInfoText(const String& message)
+{
+	int width = _gui->getStringWidth(message.c_str()) + 16;
+	
+	_x = (_scumm->_realWidth - width) >> 1;
+	_w = width;
+
+	new StaticTextWidget(this, 4, 4, _w-8, _h, message, kTextAlignCenter);
+}
+
+#pragma mark -
+
+
+#pragma mark -
+
+PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
+	: InfoDialog(gui, scumm, 10)
+{
 }
 
 #ifdef _WIN32_WCE

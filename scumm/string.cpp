@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "dialogs.h"
 #include "scumm/sound.h"
 
 int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
@@ -170,9 +171,10 @@ void Scumm::unkMessage2()
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	// TODO - it appears the this function should display the given message graphically
-	// to the user in a "dialog" looking like the pause dialog, i.e. a single line.
-	warning("unkMessage2(\"%s\")", buf);
+	InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
+	runDialog (dialog);
+	delete dialog;
+
 	_messagePtr = tmp;
 }
 

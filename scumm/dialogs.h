@@ -109,9 +109,12 @@ protected:
 	CheckboxWidget *amigaPalCheckbox;
 };
 
-class PauseDialog : public ScummDialog {
+class InfoDialog : public ScummDialog {
 public:
-	PauseDialog(NewGui *gui, Scumm *scumm);
+	// arbitrary message
+	InfoDialog(NewGui *gui, Scumm *scumm, const String& message);
+	// from resources
+	InfoDialog(NewGui *gui, Scumm *scumm, int res);
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount)
 		{ close(); }
@@ -122,6 +125,13 @@ public:
 			else
 				ScummDialog::handleKeyDown(key, modifiers);
 		}
+protected:
+	void setInfoText (const String& message);
+};
+
+class PauseDialog : public InfoDialog {
+public:
+	PauseDialog(NewGui *gui, Scumm *scumm);
 };
 
 #ifdef _WIN32_WCE
