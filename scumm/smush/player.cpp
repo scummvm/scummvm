@@ -200,9 +200,9 @@ SmushPlayer::SmushPlayer(Renderer * renderer, bool wait, bool sound) :
 							_subtitles(true),
 							_bgmusic(true),
 							_voices(true),
+							_curBuffer(0),
 							_IACTchannel(-1),
-							_IACTpos(0),
-							_curBuffer(0) {
+							_IACTpos(0) {
 	_fr[0] = _fr[1] = _fr[2] = _fr[3] = _fr[4] = 0;
 	assert(_renderer != 0);
 }
@@ -720,13 +720,13 @@ void SmushPlayer::handleAnimHeader(Chunk & b) {
 	debug(6, "SmushPlayer::handleAnimHeader()");
 	_version = b.getWord();
 	_nbframes = b.getWord();
-	int32 unknown = b.getWord();
+	b.getWord();
 	_renderer->startDecode(_fname, _version, _nbframes);
 	readPalette(_pal, b);
 	updatePalette();
 	if(_version == 2) {
 		_secondaryVersion = b.getDword();
-		int32 unknown2 = b.getDword();
+		b.getDword();
 		if(_secondaryVersion != 10 && _secondaryVersion != 0 && _secondaryVersion != 12 && _secondaryVersion != 15 && _secondaryVersion != 14) {
 			error("Wrong secondary version number for SMUSH animation");
 		}
