@@ -24,6 +24,7 @@
 #define GLOBALS_H
 
 #include <VFSMgr.h>
+#include "scumm_globals.h"
 
 enum {
 	optNone				=	0,
@@ -37,7 +38,7 @@ enum {
 };
 
 typedef struct {
-	DmOpenRef globals[3];
+	DmOpenRef globals[GBVARS_COUNT];
 
 	UInt32 options;
 
