@@ -92,7 +92,7 @@ void Player_MOD::startChannel (int id, void *data, int size, int rate, uint8 vol
 	_channels[i].pan = pan;
 	_channels[i].ptr = data;
 	_channels[i].freq = rate;
-	_channels[i].input = makeLinearInputStream(SoundMixer::FLAG_AUTOFREE | (loopStart != loopEnd ? SoundMixer::FLAG_LOOP : 0), (const byte*)data, size, loopStart, loopEnd - loopStart);
+	_channels[i].input = makeLinearInputStream(rate, SoundMixer::FLAG_AUTOFREE | (loopStart != loopEnd ? SoundMixer::FLAG_LOOP : 0), (const byte*)data, size, loopStart, loopEnd - loopStart);
 	_channels[i].converter = makeRateConverter(rate, _mixer->getOutputRate(), false, false);
 }
 
