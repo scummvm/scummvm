@@ -254,7 +254,7 @@ void PluginManager::loadPlugins() {
 	// Iterate over all registered (static) plugins and load them.
 	PluginRegistrator *plugin;
 	
-	#ifndef DISABLE_SIMON
+	#ifndef DISABLE_SCUMM
 	LINK_PLUGIN(SCUMM)
 	#endif
 	#ifndef DISABLE_SKY
