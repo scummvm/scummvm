@@ -549,10 +549,10 @@ int Talk::getSpeakCommand(const char *sentence, unsigned &index) {
 		case 'G':
 			switch (sentence[index + 1]) {
 				case 'D':
-					// XXX GRAB_DIR("DOWN",0);
+					_logic->joeGrabDirection(STATE_GRAB_DOWN, 0);
 					break;
 				case 'M':
-					// XXX GRAB_DIR("MID",0);
+					_logic->joeGrabDirection(STATE_GRAB_MID, 0);
 					break; 
 				default:
 					warning("Unknown command string: '%2s'", sentence + index);
@@ -849,6 +849,7 @@ void Talk::defaultAnimation(
 					}
 				}
 				else {
+					debug(0, "Body action!");
 					// Just do a body action
 					_graphics->bankOverpack(parameters->body, startFrame, bankNum);
 				}
