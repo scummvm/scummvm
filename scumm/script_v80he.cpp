@@ -428,7 +428,7 @@ void ScummEngine_v80he::o80_unknown4A() {
 	if (slot >= _numArray)
 		error("o80_unknown4A(%d): array slot out of range", slot);
 
-	_arraySlot[slot] = -1;
+	_arraySlot[slot] = 0xFFFFFFFF;
 }
 
 void ScummEngine_v80he::o80_readConfigFile() {
