@@ -26,6 +26,7 @@
 #include "akos.h"
 #include "costume.h"
 #include "resource.h"
+#include "scumm/sound.h"
 
 #include <math.h>
 

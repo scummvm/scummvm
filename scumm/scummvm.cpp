@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
+#include "scumm/sound.h"
 #include "scumm/imuse.h"
 #include "actor.h"
 #include "debug.h"
@@ -1383,10 +1384,7 @@ void Scumm::waitForTimer(int msec_delay) {
 				break;
 			}
 		}
-#ifdef COMPRESSED_SOUND_FILE
-		if (_sound->updateMP3CD() == -1)
-#endif
-			_system->update_cdrom(); /* Loop CD Audio if needed */
+		_sound->updateCD(); // Loop CD Audio if needed
 		if (_system->get_msecs() >= start_time + msec_delay)
 			break;
 		_system->delay_msecs(10);

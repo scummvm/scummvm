@@ -28,6 +28,7 @@
 #include "smush/scumm_renderer.h"
 
 #include "sound/mididrv.h"
+#include "scumm/sound.h"
 #include "scumm/imuse.h"
 
 void Scumm::setupOpcodes2()

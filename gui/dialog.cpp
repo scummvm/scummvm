@@ -24,10 +24,12 @@
 #include "newgui.h"
 #include "dialog.h"
 #include "widget.h"
-#include "scumm.h"
 #include "ListWidget.h"
 #include "config-file.h"
+
+#include "scumm/sound.h"
 #include "sound/mididrv.h"
+#include "scumm/scumm.h"
 #include "scumm/imuse.h"
 
 /*

@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "sound/mididrv.h"
+#include "scumm/sound.h"
 #include "scumm/imuse.h"
 #include "actor.h"
 #include "config-file.h"

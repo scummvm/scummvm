@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mixer.h"
 
 SoundMixer::SoundMixer() {
 	_volumeTable = (int16 *)calloc(256 * sizeof(int16), 1);

@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "sound/mididrv.h"
+#include "scumm/sound.h"
 #include "scumm/imuse.h"
 #include "gui.h"
 #include "guimaps.h"

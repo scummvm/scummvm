@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "scumm/sound.h"
 
 int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 {

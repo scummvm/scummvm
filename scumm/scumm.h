@@ -26,7 +26,6 @@
 #include "engine.h"
 #include "bundle.h"
 #include "timer.h"
-#include "sound.h"
 
 #define SCUMMVM_VERSION "0.2.2 CVS"
 #define SCUMMVM_CVS "2002-08-21"
@@ -40,6 +39,7 @@ class NewGui;
 class Scumm;
 class IMuse;
 class Actor;
+class Sound;
 struct ScummDebugger;
 struct Serializer;
 struct FindObjectInRoom;

@@ -24,6 +24,8 @@
 #include "scumm_renderer.h"
 #include "channel.h"
 #include "mixer.h"
+#include "sound/mixer.h"
+#include "scumm/sound.h"
 
 class scumm_mixer : public Mixer {
 private:

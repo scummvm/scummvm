@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "scumm/sound.h"
 
 void Scumm::setupOpcodes()
 {
@@ -2717,15 +2718,9 @@ void Scumm::decodeParseString()
 				if (_gameId == GID_LOOM256) {
 					_vars[VAR_MI1_TIMER] = 0;
 					if (offset == 0 && delay == 0) {
-#ifdef COMPRESSED_SOUND_FILE
-						if (_sound->stopMP3CD() == -1)
-#endif
-							_system->stop_cdrom();
+						_sound->stopCD();
 					} else {
-#ifdef COMPRESSED_SOUND_FILE
-						if (_sound->playMP3CDTrack(1, 0, offset, delay) == -1)
-#endif
-							_system->play_cdrom(1, 0, offset, delay);
+						_sound->playCDTrack(1, 0, offset, delay);
 					}
 				} else {
 					warning("parseString: 8");

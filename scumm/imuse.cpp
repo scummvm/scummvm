@@ -25,6 +25,7 @@
 #include "sound/mididrv.h"
 #include "scumm/imuse.h"
 #include "scumm/saveload.h"
+#include "scumm/sound.h"
 
 /*
  * Some constants

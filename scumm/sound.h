@@ -122,6 +122,12 @@ public:
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
 	int playSfxSound_MP3(void *sound, uint32 size);
 
+	void playCDTrack(int track, int num_loops, int start, int delay);
+	void stopCD();
+	int pollCD();
+	void updateCD();
+
+protected:
 #ifdef COMPRESSED_SOUND_FILE
 	int getCachedTrack(int track);
 	int playMP3CDTrack(int track, int num_loops, int start, int delay);
@@ -129,7 +135,6 @@ public:
 	int pollMP3CD();
 	int updateMP3CD();
 #endif
-
 };
 
 #endif

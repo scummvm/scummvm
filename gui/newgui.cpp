@@ -19,11 +19,12 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
+#include "util.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
 #include "newgui.h"
 #include "guimaps.h"
-#include "gui/dialog.h"
-#include "util.h"
+#include "dialog.h"
 
 /*
  * TODO list

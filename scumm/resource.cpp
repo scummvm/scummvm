@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "resource.h"
+#include "scumm/sound.h"
 
 #include <stdio.h>
 

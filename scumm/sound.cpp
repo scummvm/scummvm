@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm/scumm.h"
+#include "sound.h"
 #include "sound/mididrv.h"
 #include "scumm/imuse.h"
 #include "scumm/actor.h"
@@ -172,177 +173,165 @@ void Sound::playSound(int sound) {
 	byte *ptr;
 	
 	ptr = _scumm->getResourceAddress(rtSound, sound);
-	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
-		ptr += 8;
-		_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
-#ifdef COMPRESSED_SOUND_FILE
-		if ((playMP3CDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
-						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0)) == -1)
-#endif
- 		_scumm->_system->play_cdrom(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
- 						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
-
-		_scumm->current_cd_sound = sound;
-		return;
-	}
-	// Support for SFX in Monkey Island 1, Mac version
-	// This is rather hackish right now, but works OK. SFX are not sounding
-	// 100% correct, though, not sure right now what is causing this.
-	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
-
-		// Read info from the header
-		int size = READ_UINT32_UNALIGNED(ptr+0x60);
-		int rate = READ_UINT32_UNALIGNED(ptr+0x64) >> 16;
-
-		// Skip over the header (fixed size)
-		ptr += 0x72;
-		
-		// Allocate a sound buffer, copy the data into it, and play
-		char *sound = (char*)malloc(size);
-		memcpy(sound, ptr, size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-		return;
-	}
-	// Support for Putt-Putt sounds - very hackish, too 8-)
-	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('DIGI')) {
-		// TODO - discover what data the first chunk, HSHD, contains
-		// it might be useful here.
-		ptr += 8 + READ_BE_UINT32_UNALIGNED(ptr+12);
-		if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
-			return;	// abort
-
-		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
-		int rate = 8000;	// FIXME - what value here ?!? this is just a guess for now
-		
-		// Allocate a sound buffer, copy the data into it, and play
-		char *sound = (char*)malloc(size);
-		memcpy(sound, ptr + 8, size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-		return;
-	}
-	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
-		int size, rate;
-		char * sound = read_creative_voc_file(ptr, size, rate);
-		if(sound != NULL) {
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-		}
-		return;
-	}
-	// Support for sampled sound effects in Monkey1 and Monkey2
-	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SBL ')) {
-		debug(2, "Using SBL sound effect");
-
-		// TODO - Figuring out how the SBL chunk works. Here's an
-		// example:
-		//
-		// 53 42 4c 20 00 00 11 ae  |SBL ....|
-		// 41 55 68 64 00 00 00 03  |AUhd....|
-		// 00 00 80 41 55 64 74 00  |...AUdt.|
-		// 00 11 9b 01 96 11 00 a6  |........|
-		// 00 7f 7f 7e 7e 7e 7e 7e  |...~~~~~|
-		// 7e 7f 7f 80 80 7f 7f 7f  |~.......|
-		// 7f 80 80 7f 7e 7d 7d 7e  |....~}}~|
-		// 7e 7e 7e 7e 7e 7e 7e 7f  |~~~~~~~.|
-		// 7f 7f 7f 80 80 80 80 80  |........|
-		// 80 81 80 80 7f 7f 80 85  |........|
-		// 8b 8b 83 78 72 6d 6f 75  |...xrmou|
-		// 7a 78 77 7d 83 84 83 81  |zxw}....|
-		//
-		// The length of the AUhd chunk always seems to be 3 bytes.
-		// Let's skip that for now.
-		//
-		// The starting offset, length and sample rate is all pure
-		// guesswork. The result sounds reasonable to me, but I've
-		// never heard the original.
-
-		int size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
-		int rate = 8000;
-
-		// Allocate a sound buffer, copy the data into it, and play
-		char *sound = (char*)malloc(size);
-		memcpy(sound, ptr + 33, size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-		return;
-	}
-
-	if ((_scumm->_features & GF_OLD256) && (ptr != NULL)) {
-		char *sound;
-		int size = READ_LE_UINT32(ptr);
-		
-#if 0
-		// FIXME - this is just some debug output for Zak256
-		if (size != 30) {
-			char name[9];
-			memcpy(name, ptr+22, 8);
-			name[8] = 0;
-			printf("Going to play Zak256 sound '%s':\n", name);
-			hexdump(ptr, 0x40);
-		}
-		/*
-		There seems to be some pattern in the Zak256 sound data. Two typical
-		examples are these:
-		
-		d7 10 00 00 53 4f d1 10  |....SO..|
-		00 00 00 00 04 00 ff 00  |........|
-		64 00 00 00 01 00 64 6f  |d.....do|
-		6f 72 6f 70 65 6e 40 a8  |oropen@.|
-		57 14 a1 10 00 00 50 08  |W.....P.|
-		00 00 00 00 00 00 b3 07  |........|
-		00 00 3c 00 00 00 04 80  |..<.....|
-		03 02 0a 01 8c 82 87 81  |........|
-
-		5b 07 00 00 53 4f 55 07  |[...SOU.|
-		00 00 00 00 04 00 ff 00  |........|
-		64 00 00 00 01 00 64 72  |d.....dr|
-		77 6f 70 65 6e 00 53 a8  |wopen.S.|
-		57 14 25 07 00 00 92 03  |W.%.....|
-		00 00 00 00 00 00 88 03  |........|
-		00 00 3c 00 00 00 82 82  |..<.....|
-		83 84 86 88 89 8b 89 89  |........|
-		
-		As you can see, there are quite some patterns, e.g.
-		the 00 00 00 3c - the sound data seems to start at
-		offset 54.
-		*/
-#endif
-		
-		ptr += 0x16;
-		if (size == 30) {
-			int result = 0;
-			int track = *ptr;
-
-			if (track == _scumm->current_cd_sound)
-#ifdef COMPRESSED_SOUND_FILE
-				if (pollMP3CD())
-					result = 1;
-				else
-#endif
-				result = _scumm->_system->poll_cdrom();
-			if (result == 1) return;
-
-#ifdef COMPRESSED_SOUND_FILE
-        	        if (playMP3CDTrack(track, 1, 0, 0) == -1)
-#endif
-	                _scumm->_system->play_cdrom(track, 0, 0, 0);
-	                _scumm->current_cd_sound = track;
+	if (ptr) {
+		if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
+			ptr += 8;
+			_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
+			playCDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
+							(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
+	
+			_scumm->current_cd_sound = sound;
 			return;
 		}
-
-		size -= 0x36;
-		sound = (char*)malloc(size);
-		for (int x = 0; x < size; x++) {
-			int bit = *ptr++;
-			if (bit<0x80) sound[x] = 0x7F-bit; else sound[x] = bit;
+		// Support for SFX in Monkey Island 1, Mac version
+		// This is rather hackish right now, but works OK. SFX are not sounding
+		// 100% correct, though, not sure right now what is causing this.
+		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
+	
+			// Read info from the header
+			int size = READ_UINT32_UNALIGNED(ptr+0x60);
+			int rate = READ_UINT32_UNALIGNED(ptr+0x64) >> 16;
+	
+			// Skip over the header (fixed size)
+			ptr += 0x72;
+			
+			// Allocate a sound buffer, copy the data into it, and play
+			char *sound = (char*)malloc(size);
+			memcpy(sound, ptr, size);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			return;
 		}
-
-		// FIXME: Something in the header signifies looping. Need to track it down and add a 
-		//	  mixer flag or something.
-		_scumm->_mixer->playRaw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-		return;
+		// Support for Putt-Putt sounds - very hackish, too 8-)
+		else if (READ_UINT32_UNALIGNED(ptr) == MKID('DIGI')) {
+			// TODO - discover what data the first chunk, HSHD, contains
+			// it might be useful here.
+			ptr += 8 + READ_BE_UINT32_UNALIGNED(ptr+12);
+			if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
+				return;	// abort
+	
+			int size = READ_BE_UINT32_UNALIGNED(ptr+4);
+			int rate = 8000;	// FIXME - what value here ?!? 8000 is just a guess
+			
+			// Allocate a sound buffer, copy the data into it, and play
+			char *sound = (char*)malloc(size);
+			memcpy(sound, ptr + 8, size);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			return;
+		}
+		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
+			int size, rate;
+			char * sound = read_creative_voc_file(ptr, size, rate);
+			if(sound != NULL) {
+				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			}
+			return;
+		}
+		// Support for sampled sound effects in Monkey1 and Monkey2
+		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SBL ')) {
+			debug(2, "Using SBL sound effect");
+	
+			// TODO - Figuring out how the SBL chunk works. Here's an
+			// example:
+			//
+			// 53 42 4c 20 00 00 11 ae  |SBL ....|
+			// 41 55 68 64 00 00 00 03  |AUhd....|
+			// 00 00 80 41 55 64 74 00  |...AUdt.|
+			// 00 11 9b 01 96 11 00 a6  |........|
+			// 00 7f 7f 7e 7e 7e 7e 7e  |...~~~~~|
+			// 7e 7f 7f 80 80 7f 7f 7f  |~.......|
+			// 7f 80 80 7f 7e 7d 7d 7e  |....~}}~|
+			// 7e 7e 7e 7e 7e 7e 7e 7f  |~~~~~~~.|
+			// 7f 7f 7f 80 80 80 80 80  |........|
+			// 80 81 80 80 7f 7f 80 85  |........|
+			// 8b 8b 83 78 72 6d 6f 75  |...xrmou|
+			// 7a 78 77 7d 83 84 83 81  |zxw}....|
+			//
+			// The length of the AUhd chunk always seems to be 3 bytes.
+			// Let's skip that for now.
+			//
+			// The starting offset, length and sample rate is all pure
+			// guesswork. The result sounds reasonable to me, but I've
+			// never heard the original.
+	
+			int size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
+			int rate = 8000;
+	
+			// Allocate a sound buffer, copy the data into it, and play
+			char *sound = (char*)malloc(size);
+			memcpy(sound, ptr + 33, size);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			return;
+		} else if (_scumm->_features & GF_OLD256) {
+			char *sound;
+			int size = READ_LE_UINT32(ptr);
+			
+	#if 0
+			// FIXME - this is just some debug output for Zak256
+			if (size != 30) {
+				char name[9];
+				memcpy(name, ptr+22, 8);
+				name[8] = 0;
+				printf("Going to play Zak256 sound '%s':\n", name);
+				hexdump(ptr, 0x40);
+			}
+			/*
+			There seems to be some pattern in the Zak256 sound data. Two typical
+			examples are these:
+			
+			d7 10 00 00 53 4f d1 10  |....SO..|
+			00 00 00 00 04 00 ff 00  |........|
+			64 00 00 00 01 00 64 6f  |d.....do|
+			6f 72 6f 70 65 6e 40 a8  |oropen@.|
+			57 14 a1 10 00 00 50 08  |W.....P.|
+			00 00 00 00 00 00 b3 07  |........|
+			00 00 3c 00 00 00 04 80  |..<.....|
+			03 02 0a 01 8c 82 87 81  |........|
+	
+			5b 07 00 00 53 4f 55 07  |[...SOU.|
+			00 00 00 00 04 00 ff 00  |........|
+			64 00 00 00 01 00 64 72  |d.....dr|
+			77 6f 70 65 6e 00 53 a8  |wopen.S.|
+			57 14 25 07 00 00 92 03  |W.%.....|
+			00 00 00 00 00 00 88 03  |........|
+			00 00 3c 00 00 00 82 82  |..<.....|
+			83 84 86 88 89 8b 89 89  |........|
+			
+			As you can see, there are quite some patterns, e.g.
+			the 00 00 00 3c - the sound data seems to start at
+			offset 54.
+			*/
+	#endif
+			
+			ptr += 0x16;
+			if (size == 30) {
+				int result = 0;
+				int track = *ptr;
+	
+				if (track == _scumm->current_cd_sound)
+					result = pollCD();
+				if (result == 1) return;
+	
+					playCDTrack(track, 1, 0, 0);
+				return;
+			}
+	
+			size -= 0x36;
+			sound = (char*)malloc(size);
+			for (int x = 0; x < size; x++) {
+				int bit = *ptr++;
+				if (bit<0x80) sound[x] = 0x7F-bit; else sound[x] = bit;
+			}
+	
+			// FIXME: Maybe something in the header signifies looping? Need to
+			// track it down and add a mixer flag or something (see also bug .
+			_scumm->_mixer->playRaw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			return;
+		}
+	
+		if (_scumm->_gameId == GID_MONKEY_VGA)
+			return;											/* FIXME */
+	
 	}
-
-	if (_scumm->_gameId == GID_MONKEY_VGA)
-		return;											/* FIXME */
 
 	IMuse *se = _scumm->_imuse;
 	if (se) {
@@ -494,12 +483,7 @@ int Sound::isSoundRunning(int sound) {
 	int i;
 
 	if (sound == _scumm->current_cd_sound)
-#ifdef COMPRESSED_SOUND_FILE
-		if (pollMP3CD())
-			return 1;
-		else
-#endif
-			return _scumm->_system->poll_cdrom();
+		return pollCD();
 
 	i = _soundQue2Pos;
 	while (i--) {
@@ -545,10 +529,7 @@ void Sound::stopSound(int a) {
 
 	if (a != 0 && a == _scumm->current_cd_sound) {
 		_scumm->current_cd_sound = 0;
-#ifdef COMPRESSED_SOUND_FILE
-		if (stopMP3CD() == -1)
-#endif
-			_scumm->_system->stop_cdrom();
+		stopCD();
 	}
 
 	se = _scumm->_imuse;
@@ -566,10 +547,7 @@ void Sound::stopAllSounds()
 
 	if (_scumm->current_cd_sound != 0) {
 		_scumm->current_cd_sound = 0;
-#ifdef COMPRESSED_SOUND_FILE
-		if (stopMP3CD() == -1)
-#endif
-			_scumm->_system->stop_cdrom();
+		stopCD();
 	}
 
 	if (se) {
@@ -649,6 +627,13 @@ int Sound::startSfxSound(void *file, int file_size) {
 	uint size = 0;
 	int rate, comp;
 	byte *data;
+
+	// FIXME: Day of the Tentacle frequently assumes that starting one sound
+	// effect will automatically stop any other that may be playing at that
+	// time. Do any other games need this?
+
+	if (_scumm->_gameId == GID_TENTACLE)
+		stopSfxSound();
 
 #ifdef COMPRESSED_SOUND_FILE
 	if (file_size > 0) {
@@ -1012,6 +997,39 @@ int Sound::playSfxSound_MP3(void *sound, uint32 size) {
 	return _scumm->_mixer->playMP3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
 #endif
 	return -1;
+}
+
+void Sound::playCDTrack(int track, int num_loops, int start, int delay)
+{
+#ifdef COMPRESSED_SOUND_FILE
+	if (playMP3CDTrack(track, num_loops, start, delay) == -1)
+#endif
+		_scumm->_system->play_cdrom(track, num_loops, start, delay);
+}
+
+void Sound::stopCD()
+{
+#ifdef COMPRESSED_SOUND_FILE
+	if (stopMP3CD() == -1)
+#endif
+		_scumm->_system->stop_cdrom();
+}
+
+int Sound::pollCD()
+{
+#ifdef COMPRESSED_SOUND_FILE
+	if (pollMP3CD())
+		return 1;
+#endif
+	return _scumm->_system->poll_cdrom();
+}
+
+void Sound::updateCD()
+{
+#ifdef COMPRESSED_SOUND_FILE
+	if (updateMP3CD() == -1)
+#endif
+		_scumm->_system->update_cdrom();
 }
 
 #ifdef COMPRESSED_SOUND_FILE

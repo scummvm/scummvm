@@ -19,8 +19,8 @@ SCUMM_OBJS = scumm/actor.o scumm/akos.o scumm/boxes.o scumm/bundle.o \
 	scumm/costume.o scumm/debug.o scumm/debugrl.o scumm/gfx.o scumm/imuse.o \
 	scumm/object.o scumm/resource.o scumm/resource_v2.o scumm/resource_v3.o \
 	scumm/resource_v4.o scumm/saveload.o scumm/script.o \
-	scumm/script_v1.o scumm/script_v2.o scumm/scummvm.o scumm/string.o \
-	scumm/sys.o scumm/vars.o scumm/verbs.o \
+	scumm/script_v1.o scumm/script_v2.o scumm/scummvm.o  scumm/sound.o \
+	scumm/string.o scumm/sys.o scumm/vars.o scumm/verbs.o \
 #	scumm/insane.o
 
 SIMON_OBJS = simon/debug.o simon/items.o simon/midi.o simon/res.o simon/simon.o \
@@ -40,7 +40,7 @@ SMUSH_OBJS = scumm/smush/blitter.o \
 	scumm/smush/saud_channel.o \
 	scumm/smush/scumm_renderer.o
 
-SOUND_OBJS = sound/fmopl.o sound/mididrv.o sound/mixer.o sound/sound.o
+SOUND_OBJS = sound/fmopl.o sound/mididrv.o sound/mixer.o
 
 OBJS	+= $(COMMON_OBJS) $(GUI_OBJS) scumm/libscumm.a simon/libsimon.a $(SOUND_OBJS)
 
