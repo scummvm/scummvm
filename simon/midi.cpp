@@ -108,8 +108,9 @@ void MidiPlayer::send (uint32 b) {
 
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume.
-		volume = (byte) ((b >> 16) & 0xFF) * _masterVolume / 255;
+		volume = (byte) ((b >> 16) & 0x7F);
 		_volumeTable [b & 0xF] = volume;
+		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0 && _map_mt32_to_gm) {
 		b = (b & 0xFFFF00FF) | (mt32_to_gm [(b >> 8) & 0xFF] << 8);
