@@ -160,7 +160,7 @@ void MidiDriver_WIN::fill_all() {
 					break;
 				case ME_TEMPO:
 					/* change tempo event */
-					ev->dwEvent = (MEVT_TEMPO<<24) | (my_ev->event&0xFFFFFF);
+					ev->dwEvent = (ME_TEMPO<<24) | (my_ev->event&0xFFFFFF);
 					break;
 				default:
 					error("Invalid event type passed");
