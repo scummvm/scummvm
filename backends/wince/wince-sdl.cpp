@@ -1513,7 +1513,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					_keyRepeat = 0;
 				}
 
-				if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
+				if (!CEActions::Instance()->mappingActive() && CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
 					return true;
 			}
 
@@ -1534,7 +1534,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					_lastKeyPressed = 0;
 				}
 
-				if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
+				if (!CEActions::Instance()->mappingActive() && CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
 					return true;
 			}
 			
