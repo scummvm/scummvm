@@ -179,7 +179,7 @@ protected:
 	bool _vga_res_328_loaded;
 	bool _hitarea_unk_3;
 	bool _mortal_flag;
-	bool _sync_flag_1;
+	volatile bool _sync_flag_1;
 	byte _video_var_8;
 	bool _use_palette_delay;
 	bool _sync_flag_2;
@@ -248,12 +248,12 @@ protected:
 	Item *_dummy_item_2;
 	Item *_dummy_item_3;
 
-	uint16 _lock_word;
+	volatile uint16 _lock_word;
 	uint16 _scroll_up_hit_area;
 	uint16 _scroll_down_hit_area;
 
 	uint16 _video_var_7;
-	uint16 _palette_color_count;
+	volatile uint16 _palette_color_count;
 
 	byte _video_var_4;
 	bool _video_var_5;

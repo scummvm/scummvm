@@ -2420,7 +2420,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	if (!(_game & GF_SIMON2)) {
 		if (_unk_pal_flag) {
 			_unk_pal_flag = false;
-			while (*(volatile int *)&_palette_color_count != 0) {
+			while (_palette_color_count != 0) {
 				delay(10);
 			}
 		}
@@ -2432,7 +2432,7 @@ void SimonEngine::set_video_mode(uint mode, uint vga_res_id) {
 		lock();
 		if (_lock_word == 0) {
 			_sync_flag_1 = true;
-			while ((*(volatile bool *)&_sync_flag_1) == true) {
+			while (_sync_flag_1) {
 				delay(10);
 			}
 		}
@@ -2440,7 +2440,7 @@ void SimonEngine::set_video_mode(uint mode, uint vga_res_id) {
 
 	_lock_word |= 0x20;
 
-	while ((*(volatile uint16*)&_lock_word) & 2) {
+	while (_lock_word & 2) {
 		delay(10);
 	}
 
