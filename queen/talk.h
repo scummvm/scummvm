@@ -175,7 +175,7 @@ private:
 	void initialTalk();
 
 	//! Find a string in the dialogue tree
-	void findDialogueString(byte *ptr, int16 id, char *str);
+	void findDialogueString(byte *ptr, int16 id, int16 max, char *str);
 
 	//! Get TalkSelected struct for this talk
 	TalkSelected *talkSelected();

@@ -167,7 +167,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		if (hasTalkedTo() && head == 1)
 			strcpy(_talkString[0], _person2String);
 		else
-			findDialogueString(_person1Ptr, head, _talkString[0]);
+			findDialogueString(_person1Ptr, head, _pMax, _talkString[0]);
 
 		if (hasTalkedTo() && head == 1)
 			sprintf(otherVoiceFilePrefix, "%2dXXXXP", _talkKey);
@@ -175,14 +175,14 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 
 		if (_talkString[0][0] == '\0' && retval > 1) {
-			findDialogueString(_person1Ptr, retval, _talkString[0]);
+			findDialogueString(_person1Ptr, retval, _pMax, _talkString[0]);
 			sprintf(otherVoiceFilePrefix,"%2d%4xP", _talkKey, retval);
 		}
 
 		// Joe dialogue
 
 		for (i = 1; i <= 4; i++) {
-			findDialogueString(_joePtr, _dialogueTree[level][i].head, _talkString[i]);
+			findDialogueString(_joePtr, _dialogueTree[level][i].head, _jMax, _talkString[i]);
 
 			int16 index = _dialogueTree[level][i].gameStateIndex;
 
@@ -206,7 +206,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			}
 		}
 
-		// debug(0, "choicesLeft = %i", choicesLeft);
+		debug(0, "choicesLeft = %i", choicesLeft);
 
 		if (1 == choicesLeft) {
 			// Automatically run the final dialogue option
@@ -292,7 +292,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		// has something final to say!
 
 		if (-1 == retval) {
-			findDialogueString(_person1Ptr, head, _talkString[0]);
+			findDialogueString(_person1Ptr, head, _pMax, _talkString[0]);
 			if (_talkString[0][0] != '\0') {
 				sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 				if (speak(_talkString[0], &person, otherVoiceFilePrefix))
@@ -378,10 +378,10 @@ void Talk::disableSentence(int oldLevel, int selectedSentence) {
 	_dialogueTree[oldLevel][selectedSentence].dialogueNodeValue1 = -1;
 }
 
-void Talk::findDialogueString(byte *ptr, int16 id, char *str) {
+void Talk::findDialogueString(byte *ptr, int16 id, int16 max, char *str) {
 	str[0] = '\0';
 
-	for (int i = 1; i <= _pMax; i++) {
+	for (int i = 1; i <= max; i++) {
 		ptr += 2;
 		int16 currentId = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		if (id == currentId) {
