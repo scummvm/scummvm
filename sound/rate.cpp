@@ -19,6 +19,7 @@
 #include "rate.h"
 
 #include <math.h>
+
 /*
  * Linear Interpolation.
  *
@@ -44,15 +45,19 @@
 
 typedef struct ratestuff
 {
-	unsigned long opos_frac;  /* fractional position of the output stream in input stream unit */
-	unsigned long opos;
+	/** fractional position of the output stream in input stream unit */
+	unsigned long opos, opos_frac;
 
-	unsigned long opos_inc_frac;  /* fractional position increment in the output stream */
-	unsigned long opos_inc;
+	/** fractional position increment in the output stream */
+	unsigned long opos_inc, opos_inc_frac;
 
-	unsigned long ipos;	 /* position in the input stream (integer) */
+	/** position in the input stream (integer) */
+	unsigned long ipos;
 
-	st_sample_t ilast[2]; /* last sample(s) in the input stream (left/right channel) */
+	/** last sample(s) in the input stream (left/right channel) */
+	st_sample_t ilast[2];
+	/** current sample(s) in the input stream (left/right channel) */
+	st_sample_t icur[2];
 } *rate_t;
 
 /*
@@ -84,8 +89,9 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
 
 	rate->ipos = 0;
 
-	rate->ilast[0] = 0;
-	rate->ilast[1] = 0;
+	rate->ilast[0] = rate->ilast[1] = 0;
+	rate->icur[0] = rate->icur[1] = 0;
+
 	return (ST_SUCCESS);
 }
 
@@ -102,8 +108,11 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 	unsigned long tmp;
 
 	ilast[0] = rate->ilast[0];
-	if (stereo)
+	icur[0] = rate->icur[0];
+	if (stereo) {
 		ilast[1] = rate->ilast[1];
+		icur[1] = rate->icur[1];
+	}
 
 	ostart = obuf;
 	oend = obuf + *osamp * 2;
@@ -171,8 +180,11 @@ resume:
 the_end:
 	*osamp = (obuf - ostart) / 2;
 	rate->ilast[0] = ilast[0];
-	if (stereo)
+	rate->icur[0] = icur[0];
+	if (stereo) {
 		rate->ilast[1] = ilast[1];
+		rate->icur[1] = icur[1];
+	}
 	return (ST_SUCCESS);
 }
 
