@@ -122,7 +122,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 
 	filePtr = getFileInfo(fileNr);
 	if (filePtr == NULL) {
-		printf("File %d not found", fileNr);
+		debug(1, "File %d not found", fileNr);
 		return NULL;
 	}
 
@@ -159,7 +159,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	bytesRead = _dataDiskHandle->read(_fileDest, 1 * _fileSize);
 
 	if (bytesRead != (int32)_fileSize)
-		printf("ERROR: Unable to read %d bytes from datadisk (%d bytes read)", _fileSize, bytesRead);
+		warning("ERROR: Unable to read %d bytes from datadisk (%d bytes read)", _fileSize, bytesRead);
 
 	cflag = (uint8)((_fileFlags >> (23)) & 0x1);
 
