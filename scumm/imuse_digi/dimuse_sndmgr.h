@@ -91,15 +91,15 @@ private:
 	soundStruct _sounds[MAX_IMUSE_SOUNDS];
 
 	bool checkForProperHandle(soundStruct *soundHandle);
-	int allocSlot();
-	void prepareSound(byte *ptr, int slot);
+	soundStruct *allocSlot();
+	void prepareSound(byte *ptr, soundStruct *sound);
 
 	ScummEngine *_vm;
 	byte _disk;
 	BundleDirCache *_cacheBundleDir;
 
-	bool openMusicBundle(int slot, int disk);
-	bool openVoiceBundle(int slot, int disk);
+	bool openMusicBundle(soundStruct *sound, int disk);
+	bool openVoiceBundle(soundStruct *sound, int disk);
 
 	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs);
 
