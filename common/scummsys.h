@@ -280,31 +280,31 @@
 	#endif
 
 	#if defined(SCUMM_NEED_ALIGNMENT)
-		FORCEINLINE uint READ_LE_UINT16(void *ptr) {
+		FORCEINLINE uint READ_LE_UINT16(const void *ptr) {
 			return (((byte *)ptr)[1] << 8)|((byte *)ptr)[0];
 		}
 	#else
-		FORCEINLINE uint READ_LE_UINT16(void *ptr) {
+		FORCEINLINE uint READ_LE_UINT16(const void *ptr) {
 			return *(uint16 *)(ptr);
 		}
 	#endif
 
-	FORCEINLINE uint READ_BE_UINT16(void *ptr) {
+	FORCEINLINE uint READ_BE_UINT16(const void *ptr) {
 		return (((byte *)ptr)[0] << 8)|((byte *)ptr)[1];
 	}
 
 	#if defined(SCUMM_NEED_ALIGNMENT)
-		FORCEINLINE uint32 READ_LE_UINT32(void *ptr) {
+		FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
 			byte *b = (byte *)ptr;
 			return (b[3] << 24) + (b[2] <<16) + (b[1] << 8) + (b[0]);
 		}
 	#else
-		FORCEINLINE uint32 READ_LE_UINT32(void *ptr) {
+		FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
 			return *(uint32 *)(ptr);
 		}
 	#endif
 	
-	FORCEINLINE uint32 READ_BE_UINT32(void *ptr) {
+	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
 		byte *b = (byte *)ptr;
 		return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + (b[3]);
 	}
@@ -342,29 +342,29 @@
 	#define TO_LE_32 FROM_LE_32
 	#define TO_LE_16 FROM_LE_16
 
-	uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
+	uint32 FORCEINLINE READ_LE_UINT32(const void *ptr) {
 		byte *b = (byte *)ptr;
 		return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + (b[0]);
 	}
 
-	uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
+	uint32 FORCEINLINE READ_BE_UINT32(const void *ptr) {
 		return *(uint32 *)(ptr);
 	}
 
-	uint FORCEINLINE READ_LE_UINT16(void *ptr) {
+	uint FORCEINLINE READ_LE_UINT16(const void *ptr) {
 		byte *b = (byte *)ptr;
 		return (b[1] << 8) + b[0];
 	}
 
-	uint FORCEINLINE READ_BE_UINT16(void *ptr) {
+	uint FORCEINLINE READ_BE_UINT16(const void *ptr) {
 		return *(uint16 *)(ptr);
 	}
 
-	uint FORCEINLINE READ_BE_UINT16_UNALIGNED(void *ptr) {
+	uint FORCEINLINE READ_BE_UINT16_UNALIGNED(const void *ptr) {
 		return (((byte *)ptr)[0] << 8)|((byte *)ptr)[1];
 	}
 
-	uint32 FORCEINLINE READ_BE_UINT32_UNALIGNED(void *ptr) {
+	uint32 FORCEINLINE READ_BE_UINT32_UNALIGNED(const void *ptr) {
 		byte *b = (byte*)ptr;
 		return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + (b[3]);
 	}
