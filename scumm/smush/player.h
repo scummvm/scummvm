@@ -73,12 +73,12 @@ private:
 public:
 	SmushPlayer(Renderer *, bool wait = true, bool output_sound = true);
 	virtual ~SmushPlayer();
-	bool play(const char *);
+	bool play(const char *, const char * directory);
 	void updatePalette(void);
 	void show(const char *);
 	void hide(const char *);
 protected:
-	bool readString(const char * file, bool &);
+	bool readString(const char * file, const char * directory, bool &);
 	void clean();
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
 	void handleAnimHeader(Chunk &);

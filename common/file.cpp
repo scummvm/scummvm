@@ -22,38 +22,59 @@
 #include "file.h"
 #include "engine.h"	// For debug/warning/error
 
-FILE *fopen_nocase(const char *path, const char *mode)
-{
+FILE *File::fopenNoCase(const char *filename, const char * directory, const char *mode) {
 	FILE *file;
+	char buf[256];
+	char *ptr;
 
-	file = fopen(path, mode);
-	if (file)
-		return file;
-
-	char buf[256], *ptr;
-	int32 i = 0, pos = 0;
-
-	strcpy(buf, path);
-	while (buf[i] != 0) {
-		if ((buf[i] == '/') || (buf[i] == '\\')) {
-			pos = i + 1;
-		}
-		i++;
+	strcpy(buf, directory);
+	if (directory[0] != 0) {
+		strcpy(buf, directory);
+		strcat(buf, "/");
 	}
-	
-	ptr = buf + pos;
-	do
-		*ptr++ = toupper(*ptr);
-	while (*ptr);
+	strcat(buf, filename);
+
 	file = fopen(buf, mode);
 	if (file)
 		return file;
 
-	ptr = buf + pos;
-	do
-		*ptr++ = tolower(*ptr);
-	while (*ptr);
-	return fopen(buf, mode);
+	char dirs[7][10];
+	dirs[0][0] = 0;
+	strcpy(dirs[1], "video/");
+	strcpy(dirs[2], "VIDEO/");
+	strcpy(dirs[3], "data/");
+	strcpy(dirs[4], "DATA/");
+	strcpy(dirs[5], "resource/");
+	strcpy(dirs[6], "RESOURCE/");
+
+	for (uint8 l = 0; l < 7; l++) {
+		strcpy(buf, directory);
+		if (directory[0] != 0) {
+			strcpy(buf, directory);
+			strcat(buf, "/");
+		}
+		strcat(buf, dirs[l]);
+		int8 len = strlen(buf);
+		strcat(buf, filename);
+
+		ptr = buf + len;
+		do
+			*ptr++ = toupper(*ptr);
+		while (*ptr);
+		file = fopen(buf, mode);
+		if (file)
+			return file;
+
+		ptr = buf + len;
+		do
+			*ptr++ = tolower(*ptr);
+		while (*ptr);
+		file = fopen(buf, mode);
+		if (file)
+			return file;
+	}
+
+	return NULL;
 }
 
 File::File() {
@@ -66,7 +87,7 @@ File::~File() {
 	close();
 }
 
-bool File::open(const char *filename, int mode, byte encbyte) {
+bool File::open(const char *filename, const char *directory, int mode, byte encbyte) {
 
 	if (_handle) {
 		debug(2, "File %s already opened", filename);
@@ -76,14 +97,14 @@ bool File::open(const char *filename, int mode, byte encbyte) {
 	clearIOFailed();
 
 	if (mode == kFileReadMode) {
-		_handle = fopen_nocase(filename, "rb");
+		_handle = fopenNoCase(filename, directory, "rb");
 		if (_handle == NULL) {
 			debug(2, "File %s not found", filename);
 			return false;
 		}
 	}
 	else if (mode == kFileWriteMode) {
-		_handle = fopen_nocase(filename, "wb");
+		_handle = fopenNoCase(filename, directory, "wb");
 		if (_handle == NULL) {
 			debug(2, "File %s not opened", filename);
 			return false;

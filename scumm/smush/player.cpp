@@ -616,10 +616,10 @@ void SmushPlayer::handleAnimHeader(Chunk & b) {
 }
 
 #define NEW_FILE	1
-static StringResource * getStrings(const char * file, bool is_encoded) {
+static StringResource * getStrings(const char * file, const char * directory, bool is_encoded) {
 	debug(7, "trying to read text ressources from %s", file);
 	File theFile;
-	theFile.open(file);
+	theFile.open(file, directory);
 	if (!theFile.isOpen())
 		return 0;
 	int32 length = theFile.size();
@@ -633,7 +633,7 @@ static StringResource * getStrings(const char * file, bool is_encoded) {
 		Chunk::type type = READ_BE_UINT32(filebuffer);
 		if(type != TYPE_ETRS) {
 			delete [] filebuffer;
-			return getStrings(file, false);
+			return getStrings(file, directory, false);
 		}
 		char * old = filebuffer;
 		filebuffer = new char[length - ETRS_HEADER_LENGTH];
@@ -649,102 +649,58 @@ static StringResource * getStrings(const char * file, bool is_encoded) {
 	return sr;
 }
 
-bool SmushPlayer::readString(const char * file, bool & ft) {
+bool SmushPlayer::readString(const char * file, const char * directory, bool & ft) {
 	const char * i = strrchr(file, '.');
 	if(i == NULL) error("invalid filename : %s", file);
 	char fname[260];
 	memcpy(fname, file, i - file);
 	strcpy(fname + (i - file), ".trs");
-	if((_strings = getStrings(fname, false)) != 0) {
+	if((_strings = getStrings(fname, directory, false)) != 0) {
 		ft = true;
 		return true;
 	}
-	i = strrchr(file, '\\');
-	if(i == NULL) i = strrchr(file, '/');
-	else {
-		char * j = strrchr(file, '/');
-		if(j > i) i = j;
-	}
-	if(i == NULL) error("invalid filename : %s", file);
 
-	memcpy(fname, file, i - file + 1);
-	strcpy(fname + (i - file + 1), "digtxt.trs");
-	if((_strings = getStrings(fname, true)) != 0) {
+	if((_strings = getStrings("digtxt.trs", directory, true)) != 0) {
 		ft = false;
 		return true;
 	}
 	return false;
 }
 
-static FontRenderer * loadFont(const char * file, bool original = false) {
+static FontRenderer * loadFont(const char * file, const char * directory, bool original = false) {
 #ifdef DEBUG
 	debug(5, "loading font from \"%s\"", file);
 #endif
 	FontRenderer * fr = new FontRenderer(original);
 	SmushPlayer p(fr, false, false);
-	p.play(file);
+	p.play(file, directory);
 	return fr;
 }
 
-bool SmushPlayer::play(const char * file) {
+bool SmushPlayer::play(const char * file, const char * directory) {
 #ifdef DEBUG
 	debug(5, "start of animation : %s", file);
 #endif	
-	char * i = strrchr(file, '\\');
-	if(i == NULL)
-	{
-		i = strrchr(file, '/');
-	} else {
-		char * j = strrchr(i, '/');
-		if(j != NULL)
-			i = j;
-	}
-	char directory[260];
-	if(i != NULL) {
-		strcpy(directory, file);
-		directory[i-file] = 0;
-		//! @todo remove this...
-		_fname = strdup(i);
-	} else {
-		directory[0] = 0;
-		_fname = strdup(file);
-	}
 	clean();
 	
 	if(_wait) {
 		bool isFullthrottle;
-		if(!readString(file, isFullthrottle))
+		if(!readString(file, directory, isFullthrottle))
 			warning("unable to read text information for \"%s\"", file);
 		if(_strings) {
 			if(isFullthrottle) {
-				if(strcmp(directory, "") == 0) {
-					strcpy(directory, "../data/");
-				} else {
-					char * i = strrchr(directory, '\\');
-					char * j = strrchr(directory, '/');
-					if(j > i) i = j;
-					if(i == NULL) {
-						strcpy(directory, "data/");
-					} else {
-						*i = 0;
-						strcat(directory, "/data/");
-					}
-				}
-				char file[260];
-				strcpy(file, directory); strcat(file, "scummfnt.nut");
-				_fr[0] = loadFont(file, true);
-				strcpy(file, directory); strcat(file, "titlfnt.nut");
-				_fr[2] = loadFont(file, true);
+				_fr[0] = loadFont("scummfnt.nut", directory, true);
+				_fr[2] = loadFont("titlfnt.nut", directory, true);
 			} else {
 				for(int32 i = 0; i < 4; i++) {
-					char file[260];
-					sprintf(file, "%s/font%d.nut",directory, i);
-					_fr[i] = loadFont(file, i != 0);
+					char file_font[20];
+					sprintf((char*)&file_font, "font%d.nut", i);
+					_fr[i] = loadFont(file_font, directory, i != 0);
 				}
 			}
 		}
 	}
-	FileChunk base = FileChunk(file);
+	FileChunk base = FileChunk(file, directory);
 
 	checkBlock(base, TYPE_ANIM); 
 

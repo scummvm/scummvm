@@ -73,16 +73,16 @@ void Scumm::openRoom(int room)
 		if (!(_features & GF_SMALL_HEADER)) {
 
 			if (_features & GF_AFTER_V7)
-				sprintf(buf, "%s%s.la%d", _gameDataPath, _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.la%d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 			else if (_features & GF_HUMONGOUS)
-				sprintf(buf, "%s%s.he%.1d", _gameDataPath, _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 			else
-				sprintf(buf, "%s%s.%.3d", _gameDataPath, _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.%.3d",  _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 
 			_encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
 		} else if (!(_features & GF_SMALL_NAMES)) {
 			if (room == 0 || room >= 900) {
-				sprintf(buf, "%s%.3d.lfl", _gameDataPath, room);
+				sprintf(buf, "%.3d.lfl", room);
 				_encbyte = 0;
 				if (openResourceFile(buf)) {
 					return;
@@ -90,11 +90,11 @@ void Scumm::openRoom(int room)
 				askForDisk(buf);
 
 			} else {
-				sprintf(buf, "%sdisk%.2d.lec", _gameDataPath, res.roomno[rtRoom][room]);
+				sprintf(buf, "disk%.2d.lec",  res.roomno[rtRoom][room]);
 				_encbyte = 0x69;
 			}
 		} else {
-			sprintf(buf, "%s%.2d.lfl", _gameDataPath, room);
+			sprintf(buf, "%.2d.lfl", room);
 			if (_features & GF_OLD_BUNDLE)
 				_encbyte = 0xFF;
 			else
@@ -186,26 +186,7 @@ bool Scumm::openResourceFile(const char *filename)
 	}
 
 	strcpy(buf, filename);
-	_fileHandle.open(buf, 1, _encbyte);
-	if (_fileHandle.isOpen() == false) {
-		char *e = strrchr(buf, '/');
-		if (!e)
-			e = buf;
-		do
-			*e = tolower(*e);
-		while (*e++);
-		_fileHandle.open(buf, 1, _encbyte);
-	}
-
-	if (_fileHandle.isOpen() == false) {
-		char *e = strrchr(buf, '/');
-		if (!e)
-			e = buf;
-		do
-			*e = toupper(*e);
-		while (*e++);
-		_fileHandle.open(buf, 1, _encbyte);
-	}
+	_fileHandle.open(buf, getGameDataPath(), 1, _encbyte);
 
 	return _fileHandle.isOpen();
 }

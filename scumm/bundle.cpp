@@ -31,13 +31,13 @@ Bundle::Bundle() {
 Bundle::~Bundle() {
 }
 
-bool Bundle::openVoiceFile(char *filename) {
+bool Bundle::openVoiceFile(const char *filename, const char *directory) {
 	int32 tag, offset;
 
 	if (_voiceFile.isOpen() == true)
 		return true;
 
-	if (_voiceFile.open(filename) == false) {
+	if (_voiceFile.open(filename, directory) == false) {
 		warning("Bundle: Can't open voice bundle file: %s", filename);
 		return false;
 	}
@@ -71,13 +71,13 @@ bool Bundle::openVoiceFile(char *filename) {
 	return true;
 }
 
-bool Bundle::openMusicFile(char *filename) {
+bool Bundle::openMusicFile(const char *filename, const char *directory) {
 	int32 tag, offset;
 
 	if (_musicFile.isOpen() == true)
 		return true;
 
-	if (_musicFile.open(filename) == false) {
+	if (_musicFile.open(filename, directory) == false) {
 		warning("Bundle: Can't open music bundle file: %s", filename);
 		return false;
 	}

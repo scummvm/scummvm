@@ -76,7 +76,7 @@ private:
 protected:
 	FileChunk();
 public:
-	FileChunk(const char * fname);
+	FileChunk(const char * fname, const char * directory);
 	virtual ~FileChunk();
 	type getType() const;
 	uint32 getSize() const;

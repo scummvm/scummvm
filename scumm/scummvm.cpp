@@ -871,9 +871,9 @@ void Scumm::dumpResource(char *tag, int idx, byte *ptr)
 	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
 #endif
 
-	out.open(buf, 1);
+	out.open(buf, "", 1);
 	if (out.isOpen() == false) {
-		out.open(buf, 2);
+		out.open(buf, "", 2);
 		if (out.isOpen() == false)
 			return;
 		out.write(ptr, size);

@@ -751,10 +751,9 @@ File * Sound::openSfxFile() {
 #ifdef COMPRESSED_SOUND_FILE
 	offset_table = NULL;
 
-	sprintf(buf, "%s%s.so3", _scumm->getGameDataPath(), _scumm->_exe_name);
-	if (!file->open(buf)) {
-		sprintf(buf, "%smonster.so3", _scumm->getGameDataPath());
-		file->open(buf);
+	sprintf(buf, "%s.so3", _scumm->_exe_name);
+	if (!file->open(buf, _scumm->getGameDataPath())) {
+		file->open("monster.so3", _scumm->getGameDataPath());
 	}
 	if (file->isOpen() == true) {
 		/* Now load the 'offset' index in memory to be able to find the MP3 data
@@ -791,10 +790,9 @@ File * Sound::openSfxFile() {
 		return file;
 	}
 #endif
-	sprintf(buf, "%s%s.sou", _scumm->getGameDataPath(), _scumm->_exe_name);
-	if (!file->open(buf)) {
-		sprintf(buf, "%smonster.sou", _scumm->getGameDataPath());
-		file->open(buf);
+	sprintf(buf, "%s.sou", _scumm->_exe_name);
+	if (!file->open(buf, _scumm->getGameDataPath())) {
+		file->open("monster.sou", _scumm->getGameDataPath());
 	}
 	return file;
 }
@@ -837,11 +835,8 @@ static void music_handler (Scumm * scumm) {
 #define OUTPUT_SIZE 66150 // ((22050 * 2 * 2) / 4) * 3
 
 void Sound::playBundleMusic(int32 song) {
-	char buf[256];
-
 	if (_numberBundleMusic == -1) {
-		sprintf(buf, "%s%smusic.bun", _scumm->getGameDataPath(), _scumm->_exe_name);
-		if (_scumm->_bundle->openMusicFile((char*)&buf) == false) {
+		if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false) {
 			return;
 		}
 
@@ -958,11 +953,9 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 }
 
 void Sound::playBundleSound(char *sound) {
-	char buf[256];
 	byte * ptr;
 
-	sprintf(buf, "%s%svoice.bun", _scumm->getGameDataPath(), _scumm->_exe_name);
-	if (_scumm->_bundle->openVoiceFile((char*)&buf) == false) {
+	if (_scumm->_bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath()) == false) {
 		return;
 	}
 
@@ -1093,8 +1086,8 @@ int Sound::getCachedTrack(int track) {
 	_current_cache %= CACHE_TRACKS;
 
 	// Not found, see if it exists
-	sprintf(track_name, "%strack%d.mp3", _scumm->getGameDataPath(), track);
-	file->open(track_name);
+	sprintf(track_name, "track%d.mp3", track);
+	file->open(track_name, _scumm->getGameDataPath());
 	_cached_tracks[current_index] = track;
 
 	/* First, close the previous file */

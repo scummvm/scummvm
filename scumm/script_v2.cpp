@@ -2719,9 +2719,8 @@ void Scumm::o6_miscOps()
  				SmushPlayer sp(&sr);
  				char filename[512];
  				strcpy(filename, _gameDataPath);
- 				strcat(filename, "video/");
  				strcat(filename, (char*)getStringAddressVar(VAR_VIDEONAME));
- 				sp.play(filename);
+ 				sp.play(filename, getGameDataPath());
  			}
 			break;
 		case 7:

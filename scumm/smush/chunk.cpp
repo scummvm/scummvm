@@ -34,33 +34,33 @@
 */
 class FilePtr {
 	char * _filename;
-	FILE * _ifs;
+	File _ifs;
 	int32 _refcount;
 	int32 _curPos;
 public:
-	FilePtr(const char * fname) : _refcount(1), _curPos(0) {
+	FilePtr(const char * fname, const char * directory) : _refcount(1), _curPos(0) {
 		debug(9, "FilePtr created for %s", fname);
 		_filename = strdup(fname);
-		_ifs  = fopen_nocase(fname, "rb");
-		if(_ifs == NULL) error("FilePtr unable to read file \"%s\"", fname);
+		_ifs.open(fname, directory);
+		if(_ifs.isOpen() == false) error("FilePtr unable to read file %s", fname);
 	}
 	~FilePtr() {
 		debug(9, "FilePtr destroyed for %s", _filename);
 		free(_filename);
-		fclose(_ifs);
+		_ifs.close();
 	}
 	int32 tell() {
 		return _curPos;
 	}
 	bool seek(int32 pos) {
 		if(pos != _curPos) {
-			fseek(_ifs, pos, SEEK_SET);
+			_ifs.seek(pos, SEEK_SET);
 			_curPos = pos;
 		}
 		return true;
 	}
 	bool read(void * ptr, int32 size) {
-		fread(ptr, size, 1, _ifs);
+		_ifs.read(ptr, size);
 		_curPos += size;
 		return true;
 	}
@@ -90,8 +90,8 @@ FileChunk::~FileChunk() {
 	if(_data) _data->decRef();
 }
 
-FileChunk::FileChunk(const char * fname) {
-	_data = new FilePtr(fname);
+FileChunk::FileChunk(const char * fname, const char * directory) {
+	_data = new FilePtr(fname, directory);
 	_data->read(&_type, 4);
 	_type = TO_BE_32(_type);
 	_data->read(&_size, 4);
