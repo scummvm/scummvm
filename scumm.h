@@ -632,6 +632,15 @@ struct AkosRenderer {
 	byte palette[256];
 };
 
+struct BompDrawData {
+	byte *out;
+	int outwidth, outheight;
+	int x,y;
+	byte scale_x, scale_y;
+	byte *dataptr;
+	int srcwidth, srcheight;
+};
+
 struct CostumeRenderer {
 	Scumm *_vm;
 	byte *_ptr;
@@ -702,7 +711,7 @@ struct Actor {
 	int16 newDirection;
 	byte moving;
 	byte ignoreBoxes;
-	byte neverZClip;
+	byte forceClip;
 	byte initFrame,walkFrame,standFrame,talkFrame1,talkFrame2;
 	bool needRedraw, needBgReset,costumeNeedsInit,visible;
 	byte unk1;
@@ -2004,6 +2013,8 @@ struct Scumm {
 	int cost_frameToAnim(Actor *a, int frame);
 
 	void setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to);
+
+	void drawBomp(BompDrawData *bd);
 };
 
 enum AkosOpcodes{
@@ -2111,6 +2122,7 @@ struct Serializer {
 };
 
 extern const uint32 IMxx_tags[];
+extern const byte default_scale_table[768];
 
 void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];

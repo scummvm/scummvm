@@ -55,7 +55,7 @@ void Scumm::initActor(Actor *a, int mode) {
 	setActorWalkSpeed(a, 8, 2);
 
 	a->ignoreBoxes = 0;
-	a->neverZClip = 0;
+	a->forceClip = 0;
 	a->new_3 = 0;
 	a->initFrame = 1;
 	a->walkFrame = 2;
@@ -773,6 +773,7 @@ void Scumm::processActors() {
 		a = *ac;
 		if (a->costume) {
 			CHECK_HEAP
+			getMaskFromBox(a->walkbox);
 			drawActorCostume(a);
 			CHECK_HEAP
 			actorAnimate(a);
@@ -786,8 +787,8 @@ void Scumm::setupCostumeRenderer(CostumeRenderer *c, Actor *a) {
 	c->_zbuf = a->mask;
 	if (c->_zbuf > gdi._numZBuffer)
 		c->_zbuf = (byte)gdi._numZBuffer;
-	if (a->neverZClip)
-		c->_zbuf = a->neverZClip;
+	if (a->forceClip)
+		c->_zbuf = a->forceClip;
 	
 	c->_scaleX = a->scalex;
 	c->_scaleY = a->scaley;
@@ -1024,6 +1025,7 @@ void Scumm::startWalkActor(Actor *a, int x, int y, int dir) {
 	a->walkdata.destbox = (byte)abr.dist; /* a box */
 	a->walkdata.destdir = dir;
 	a->moving = (a->moving&2)|1;
+	a->walkdata.curbox = a->walkbox;
 }
 
 byte *Scumm::getActorName(Actor *a) {

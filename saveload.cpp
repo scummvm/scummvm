@@ -223,7 +223,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Actor,newDirection,sleUint16),
 		MKLINE(Actor,moving,sleByte),
 		MKLINE(Actor,ignoreBoxes,sleByte),
-		MKLINE(Actor,neverZClip,sleByte),
+		MKLINE(Actor,forceClip,sleByte),
 		MKLINE(Actor,initFrame,sleByte),
 		MKLINE(Actor,walkFrame,sleByte),
 		MKLINE(Actor,standFrame,sleByte),

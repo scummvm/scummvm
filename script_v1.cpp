@@ -439,21 +439,21 @@ void Scumm::o5_actorSet() {
 			a->needBgReset = true;
 			break;
 		case 18: /* neverzclip */
-			a->neverZClip = 0;
+			a->forceClip = 0;
 			break;
 		case 19: /* setzclip */
-			a->neverZClip = getVarOrDirectByte(0x80);
+			a->forceClip = getVarOrDirectByte(0x80);
 			break;
 		case 20: /* ignoreboxes */
 			a->ignoreBoxes = 1;
-			a->neverZClip = 0;
+			a->forceClip = 0;
 FixRoom:
 			if (a->room==_currentRoom)
 				putActor(a, a->x, a->y, a->room);
 			break;
 		case 21: /* followboxes */
 			a->ignoreBoxes = 0;
-			a->neverZClip = 0;
+			a->forceClip = 0;
 			goto FixRoom;
 
 		case 22: /* animspeed */

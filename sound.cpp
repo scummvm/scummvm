@@ -138,8 +138,6 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode) {
 	byte file_byte,file_byte_2;
 	uint16 elem;
 
-	return;
-
 	if (!_sfxFile) {
 		warning("startTalkSound: SFX file is not open");
 		return;

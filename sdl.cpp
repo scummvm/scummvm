@@ -75,9 +75,6 @@ void waitForTimer(Scumm *s, int msec_delay) {
 	SDL_Event event;
 	uint32 start_time;
 
-	if (msec_delay<0)
-		return;
-
 	if (s->_fastMode&2)
 		msec_delay = 0;
 	else if (s->_fastMode&1)

@@ -232,7 +232,7 @@ void Scumm::drawRoomObjects(int arg) {
 
 	for(i=1; i<=_numObjectsInRoom; i++) {
 		od = &_objs[i];
-		if (!od->obj_nr || !od->state || od->fl_object_index)
+		if (!od->obj_nr || !od->state)
 			continue;
 		do {
 			a = od->parentstate;
@@ -921,6 +921,8 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 	int x,y;
 	byte *dataptr;
 
+	BompDrawData bdd;
+
 	vs = &virtscr[0];
 
 	_lastXstart = vs->xstart;
@@ -928,35 +930,40 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 	if (eo->l==0) {
 		roomptr = getResourceAddress(1, _roomResource);
 		index = getObjectIndex(eo->a);
+		assert(index != -1);
 		ptr = roomptr + _objs[index].offs_obim_to_room;
 	} else if (eo->a!=0) {
 		od = &_objs[getObjectIndex(eo->a)];
 		ptr = getResourceAddress(rtFlObject, od->fl_object_index);
+		assert(ptr);
 		ptr = findResource(MKID('OBIM'), ptr);
 	} else {
 		warning("drawEnqueuedObject: invalid");
 		return;
 	}
 
+	assert(ptr);
 	ptr = findResource(MKID('IM01'), ptr);
+	assert(ptr);
 	bomp = findResource(MKID('BOMP'), ptr);
 
-	width = READ_LE_UINT16(&((BompHeader*)bomp)->width);
-	height = READ_LE_UINT16(&((BompHeader*)bomp)->height);
+	bdd.srcwidth = READ_LE_UINT16(&((BompHeader*)bomp)->width);
+	bdd.srcheight = READ_LE_UINT16(&((BompHeader*)bomp)->height);
 
-	outptr = getResourceAddress(rtBuffer, vs->number+1) + vs->xstart;
+	bdd.out = getResourceAddress(rtBuffer, vs->number+1) + vs->xstart;
+	bdd.outwidth = 320;
+	bdd.outheight = vs->height;
+	bdd.dataptr = bomp + 18;
+	bdd.x = eo->x;
+	bdd.y = eo->y;
+	bdd.scale_x = eo->j;
+	bdd.scale_y = eo->k;
 
-	x = eo->x;
-	y = eo->y;
+	updateDirtyRect(vs->number, bdd.x, bdd.x+bdd.srcwidth, bdd.y, bdd.y+bdd.srcheight, 0);
 
 	if (eo->a) {
-		dataptr = bomp + 18;
+		drawBomp(&bdd);
 	}
-
-//	debug(1, "drawEnqueuedObject(%d,%d,%d,%d,%d,  %d,%d,%d,%d,%d,%d,%d)",
-//		eo->x, eo->y, eo->width, eo->height, eo->a, eo->b, eo->c, eo->d, eo->e, eo->j, eo->k, eo->l);
-
-	updateDirtyRect(vs->number, x, x+width,y,y+height,0);
 }
 
 void Scumm::removeEnqueuedObjects() {

@@ -198,7 +198,7 @@ void ScummDebugger::printActors(int act) {
 			a = &_s->actor[i];
 			if (a->visible)
 				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|\n",
-					i,a->room,a->x,a->y,a->elevation,a->costume,a->width,a->walkbox,a->moving,a->neverZClip,a->frame,a->scalex,a->speedx,a->facing);
+					i,a->room,a->x,a->y,a->elevation,a->costume,a->width,a->walkbox,a->moving,a->forceClip,a->frame,a->scalex,a->speedx,a->facing);
 		}
 	}
 	printf("+--------------------------------------------------------------+\n");

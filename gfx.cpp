@@ -1999,3 +1999,94 @@ int Scumm::remapPaletteColor(byte r, byte g, byte b, uint threshold) {
 void Scumm::setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to) {
 	
 }
+
+void Scumm::drawBomp(BompDrawData *bd) {
+	byte *dest = bd->out + bd->y * bd->outwidth, *src;
+	int h = bd->srcheight;
+	bool inside;
+
+	if (h==0 || bd->srcwidth==0)
+		return;
+
+	inside = (bd->x>=0) && (bd->y>=0) &&
+		(bd->x <= bd->outwidth - bd->srcwidth) &&
+		(bd->y <= bd->outheight - bd->srcheight);
+	assert(_objs[2].obj_nr == 36);
+
+	if (1 || bd->scale_x==255 && bd->scale_y==255) {
+		/* Routine used when no scaling is needed */
+		if (inside) {
+			dest += bd->x;
+			src = bd->dataptr;
+			do {
+				byte code,color;
+				uint len = bd->srcwidth, num, i;
+				byte *d = dest;
+				src += 2;
+				do {
+					code = *src++;
+					num = (code>>1)+1;
+					if (num>len) num=len;
+					len -= num;
+					if (code&1) {
+						color = *src++;
+						if (color!=255) {
+							do *d++ = color; while (--num);
+						} else {
+							d += num;
+						}
+					} else {
+						for(i=0;i<num; i++)
+							if ( (color=src[i]) != 255)
+								d[i] = color;
+						d += num;
+						src += num;
+					}
+				} while (len);
+				dest += bd->outwidth;
+			} while (--h);
+		} else {
+			uint y = bd->y;
+			src = bd->dataptr;
+
+			do {
+				byte color,code;
+				uint len, num;
+				uint x;
+				if ((uint)y >= (uint)bd->outheight) {
+					src += READ_LE_UINT16(src) + 2;
+					continue;
+				}
+				len = bd->srcwidth;
+				x = bd->x;
+
+				src += 2;
+				do {
+					byte code = *src++;
+					num = (code>>1)+1;
+					if (num>len) num=len;
+					len -= num;
+					if (code&1) {
+						if ((color = *src++)!=255) {
+							do {
+								if ((uint)x < (uint)bd->outwidth)
+									dest[x] = color;
+							} while (++x,--num);
+						} else {
+							x += num;
+						}
+					} else {
+						do {
+							if ((color=*src++) != 255 && (uint)x < (uint)bd->outwidth)
+								dest[x] = color;
+						} while (++x,--num);
+					}
+				} while (len);
+			} while (dest += bd->outwidth,y++,--h);
+		}
+	} else {
+		/* scaling of bomp images not supported yet */
+	}
+	CHECK_HEAP
+	assert(_objs[2].obj_nr == 36);
+}

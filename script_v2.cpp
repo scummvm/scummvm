@@ -729,7 +729,7 @@ void Scumm::o6_cursorCommand() {
 		break;
 	case 0x99:
 		a = pop();
-		setCursorImg(a, pop(), 1);
+		setCursorImg(pop(), a, 1);
 		break;
 	case 0x9A:
 		a = pop();
@@ -1475,22 +1475,22 @@ void Scumm::o6_actorSet() {
 		a->needBgReset = true;
 		break;
 	case 93:
-		a->neverZClip = 0;
+		a->forceClip = 0;
 		break;
 	case 225:
 	case 94:
-		a->neverZClip = pop();
+		a->forceClip = pop();
 		break;
 	case 95:
 		a->ignoreBoxes = 1;
-		a->neverZClip = 0;
+		a->forceClip = 0;
 FixRooms:;
 		if (a->room==_currentRoom)
 			putActor(a, a->x, a->y, a->room);
 		break;
 	case 96:
 		a->ignoreBoxes = 0;
-		a->neverZClip = 0;
+		a->forceClip = 0;
 		goto FixRooms;
 	case 97:
 		a->animSpeed = pop();
