@@ -95,6 +95,23 @@ enum AkosOpcodes {
 	AKC_EndSeq = 0xC0FF
 };
 
+static bool akos_compare(int a, int b, byte cmd) {
+	switch (cmd) {
+	case 0:
+		return a == b;
+	case 1:
+		return a != b;
+	case 2:
+		return a < b;
+	case 3:
+		return a <= b;
+	case 4:
+		return a > b;
+	default:
+		return a >= b;
+	}
+}
+
 bool Scumm::akos_hasManyDirections(Actor *a) {
 	byte *akos;
 	const AkosHeader *akhd;
@@ -1345,23 +1362,6 @@ void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
 		break;
 	default:
 		warning("akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
-	}
-}
-
-bool Scumm::akos_compare(int a, int b, byte cmd) {
-	switch (cmd) {
-	case 0:
-		return a == b;
-	case 1:
-		return a != b;
-	case 2:
-		return a < b;
-	case 3:
-		return a <= b;
-	case 4:
-		return a > b;
-	default:
-		return a >= b;
 	}
 }
 

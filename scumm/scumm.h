@@ -797,7 +797,6 @@ public:
 	bool akos_increaseAnims(const byte *akos, Actor *a);
 	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
-	bool akos_compare(int a, int b, byte cmd);
 	void akos_decodeData(Actor *a, int frame, uint usemask);
 	int akos_frameToAnim(Actor *a, int frame);
 	bool akos_hasManyDirections(Actor *a);
