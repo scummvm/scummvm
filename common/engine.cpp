@@ -67,9 +67,9 @@
  * to setup, but I have no idea if/how one can also change files which are not
  * currently being commit'ed.
  */
-const char *gScummVMVersion = "0.5.0";
+const char *gScummVMVersion = "0.5.1";
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
-const char *gScummVMFullVersion = "ScummVM 0.5.0 (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFullVersion = "ScummVM 0.5.1 (" __DATE__ " " __TIME__ ")";
 
 /* FIXME - BIG HACK for MidiEmu */
 OSystem *g_system = 0;
