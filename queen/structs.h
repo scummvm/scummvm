@@ -74,10 +74,14 @@ struct Area {
 	uint16 calcScale(int16 y) const {
 		uint16 dy = box.y2 - box.y1;
 		int16 ds = (int16)(topScaleFactor - bottomScaleFactor);
-		uint16 scale = ((((y - box.y1) * 100) / dy) * ds) / 100 + bottomScaleFactor;
-		if (scale == 0) {
+		uint16 scale = 0;
+		
+		if (dy)	// Prevent division-by-zero
+			scale = ((((y - box.y1) * 100) / dy) * ds) / 100 + bottomScaleFactor;
+		
+		if (scale == 0)
 			scale = 100;
-		}
+
 		return scale;
 	}
 

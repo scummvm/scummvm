@@ -57,7 +57,13 @@ public:
 
 	uint16 currentRoom();
 	void currentRoom(uint16 room);
+	
+	uint16 oldRoom()              { return _oldRoom; }
 	void oldRoom(uint16 room);
+
+	uint16 newRoom()              { return _newRoom; }
+	void newRoom(uint16 room)     { _newRoom = room; }
+
 	ObjectData* objectData(int index);
 	uint16 roomData(int room);
 	uint16 objMax(int room);

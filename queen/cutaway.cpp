@@ -187,7 +187,7 @@ void Cutaway::loadStrings(byte *ptr) {
 		ptr = Talk::getString(ptr, _bankNames[j], MAX_FILENAME_LENGTH);
 
 		if (_bankNames[j][0]) {
-			debug(0, "Bank name %i = '%s'", _bankNames[j]);
+			debug(0, "Bank name %i = '%s'", j, _bankNames[j]);
 			j++;
 		}
 	}
@@ -244,10 +244,15 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 	const char *objectNumberStr;
 
 	switch (object.objectNumber) {
-		case -1:  objectNumberStr = "MESSAGE";  break;
-		case 0:   objectNumberStr = "Joe";      break;
-		default:  
-		  objectNumberStr = _logic->objectName(_logic->objectData(object.objectNumber)->name);  
+		case -1:  
+			objectNumberStr = "MESSAGE";  break;
+		case 0:   
+			objectNumberStr = "Joe";      break;
+		default:
+			if (object.objectNumber > 0)
+				objectNumberStr = _logic->objectName(abs(_logic->objectData(object.objectNumber)->name));
+			else
+				objectNumberStr = "Unknown!";
 		  break;
 	}
 
@@ -762,7 +767,7 @@ void Cutaway::run(char *nextFilename) {
 				break;
 
 			default:
-				error("Unhandled object type: %i", objectType);
+				warning("Unhandled object type: %i", objectType);
 				break;
 		}
 

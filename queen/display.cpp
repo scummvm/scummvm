@@ -145,11 +145,15 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 	// FIXME: are these tests really needed ?
 	if (roomNum < 90 || ((roomNum > 94) && (roomNum < 114))) {
 		char filename[20];
-		sprintf(filename, "%s.msk", roomName);
-		resource->loadFile(filename, 0, (uint8*)_dynalum.msk);
-		sprintf(filename, "%s.lum", roomName);
-		resource->loadFile(filename, 0, (uint8*)_dynalum.lum);
-	}
+		
+    sprintf(filename, "%s.msk", roomName);
+    if (resource->exists(filename))
+      resource->loadFile(filename, 0, (uint8*)_dynalum.msk);
+    
+    sprintf(filename, "%s.lum", roomName);
+    if (resource->exists(filename))
+      resource->loadFile(filename, 0, (uint8*)_dynalum.lum);
+  }
 }
 
 

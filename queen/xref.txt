@@ -167,7 +167,7 @@ SELECT_VERB()
 SETUP_BOBS()				Graphics::bobSetupControl
 SETUP_FURNITURE()			Logic::roomSetupFurniture
 SETUP_ITEMS()
-SETUP_ROOM()
+SETUP_ROOM()				Logic::roomChanged
 SETUP_SCRVARS()
 update() 					Graphics::update
 USE_UNDERWEAR()

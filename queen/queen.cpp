@@ -21,6 +21,10 @@
 
 #include "stdafx.h"
 #include "queen/queen.h"
+#include "queen/cutaway.h"
+#include "queen/talk.h"
+#include "queen/walk.h"
+#include "queen/graphics.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "base/gameDetector.h"
@@ -85,13 +89,97 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
+void QueenEngine::roomChanged() {
+	// queen.c function SETUP_ROOM, lines 398-428
+
+	// This function uses lots of variables in logic, but we can't move it to
+	// logic because that would cause a circular dependency between Cutaway and
+	// Logic... :-(
+
+	if (_logic->currentRoom() == 7) {
+		warning("Room 7 not yet handled!");
+		// XXX R_MAP();
+		// XXX fadeout(0,223);
+	}
+	else if (_logic->currentRoom() == 95 && _logic->gameState(117) == 0) {
+		char nextFilename[20];
+
+		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_NOJOE, 100, 2, true);
+
+		if (_resource->isDemo()) {
+			if (_resource->exists("pclogo.cut"))
+				Cutaway::run("pclogo.cut", nextFilename, _graphics, _logic, _resource);
+			else
+				Cutaway::run("clogo.cut",  nextFilename, _graphics, _logic, _resource);
+		}
+		else {
+			Cutaway::run("copy.cut",  nextFilename, _graphics, _logic, _resource);
+			Cutaway::run("clogo.cut", nextFilename, _graphics, _logic, _resource);
+
+			// TODO enable talking for talkie version
+
+			Cutaway::run("cdint.cut", nextFilename, _graphics, _logic, _resource);
+
+			// XXX _graphics->panelLoad();
+			
+			Cutaway::run("cred.cut",  nextFilename, _graphics, _logic, _resource);
+		}
+
+		_logic->currentRoom(73);
+		// XXX _entryObj = 584;
+
+		Cutaway::run("c70d.cut", nextFilename, _graphics, _logic, _resource);
+
+		_logic->gameState(117) == 1;
+
+		// XXX setupItems();
+		// XXX inventory();
+	}
+	else {
+		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 1, false);
+	}
+	// XXX _drawMouseFlag = 1;
+}
+
+
 void QueenEngine::go() {
 
 	if (!_dump_file)
 		_dump_file = stdout;
 
 	initialise();
-	
+
+	_logic->oldRoom(0);
+	_logic->newRoom(_logic->currentRoom());
+
+	for (;;) {
+		// queen.c lines 4080-4104
+		if (_logic->newRoom() > 0) {
+			_graphics->textClear(151, 151);
+			_graphics->update();
+			_logic->oldRoom(_logic->currentRoom());
+			_logic->currentRoom(_logic->newRoom());
+			roomChanged();
+			// XXX _logic->fullScreen(false);
+			if (_logic->currentRoom() == _logic->newRoom())
+				_logic->newRoom(0);
+		}
+		else {
+			if (_logic->joeWalk() == 2) {
+				_logic->joeWalk(0);
+				// XXX executeAction(yes);
+			}
+			else {
+				// XXX if (_parse == 1)
+				// XXX 	clearCommand(1);
+				_logic->joeWalk(0);
+				// XXX checkPlayer();
+			}
+		}
+
+		break; // XXX don't loop yet
+	}
+
 	while (1) { //main loop
 		delay(1000);
 	}

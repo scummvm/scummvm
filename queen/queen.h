@@ -68,6 +68,9 @@ protected:
 	void delay(uint amount);
 	void go();
 
+	//! Called when we go from one room to another
+	void roomChanged(); // SETUP_ROOM
+
 	void initialise();
 
 	static int CDECL game_thread_proc(void *param);
