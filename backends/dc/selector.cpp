@@ -258,7 +258,7 @@ static bool uniqueGame(const char *base, const char *dir, Game *games, int cnt)
 {
   while(cnt--)
     if(!strcmp(dir, games->dir) &&
-       !strcmp(base, games->filename_base))
+       !stricmp(base, games->filename_base))
       return false;
     else
       games++;
