@@ -32,7 +32,7 @@ include config.mak
 # Uncomment this for stricter compile time code verification
 # CXXFLAGS+= -Wshadow -Werror
 
-CXXFLAGS:= -O -fno-inline -Wall -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas $(CXXFLAGS)
+CXXFLAGS:= -O -Wall -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas $(CXXFLAGS)
 # Even more warnings...
 CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion
 CXXFLAGS+= -Wshadow -Wimplicit -Wundef -Wnon-virtual-dtor
