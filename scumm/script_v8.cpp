@@ -1022,7 +1022,6 @@ void ScummEngine_v8::o8_actorOps() {
 		break;
 //	case 0x7A:		// SO_ACTOR_INIT Set current actor (handled above)
 	case 0x7B:		// SO_ACTOR_VARIABLE Set actor variable
-		// FIXME - is this right??
 		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
