@@ -1018,7 +1018,7 @@ protected:
 	bool testGfxOtherUsageBits(int strip, int bit);
 
 public:
-	byte _he_actor_palette[256];
+	byte _HEV7ActorPalette[256];
 	byte _proc_special_palette[256];
 	byte _roomPalette[256];
 	byte *_shadowPalette;

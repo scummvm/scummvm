@@ -2594,10 +2594,10 @@ void ScummEngine::initRoomSubBlocks() {
 		ptr = findResourceData(MKID('REMP'), roomptr);
 		if (ptr) {
 			for (i = 0; i < 256; i++)
-				_he_actor_palette[i] = *ptr++;
+				_HEV7ActorPalette[i] = *ptr++;
 		} else {
 			for (i = 0; i < 256; i++)
-				_he_actor_palette[i] = i;
+				_HEV7ActorPalette[i] = i;
 		}
 	}
 			
