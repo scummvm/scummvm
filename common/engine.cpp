@@ -79,7 +79,7 @@ const char *Engine::getSavePath() const
 
 Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst)
 {
-	Engine *engine;
+	Engine *engine = NULL;
 
 	if (detector->_gameId >= GID_SIMON_FIRST && detector->_gameId <= GID_SIMON_LAST) {
 		// Simon the Sorcerer
