@@ -651,7 +651,7 @@ public:
 	void vc_53_no_op();
 	void vc_54_no_op();
 	void vc_55_offset_hit_area();
-	void vc_56();
+	void vc_56_delay();
 	void vc_57_no_op();
 	void vc_58();
 	void vc_59();

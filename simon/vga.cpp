@@ -88,7 +88,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonEngine::vc_53_no_op,
 	&SimonEngine::vc_54_no_op,
 	&SimonEngine::vc_55_offset_hit_area,
-	&SimonEngine::vc_56,
+	&SimonEngine::vc_56_delay,
 	&SimonEngine::vc_57_no_op,
 	&SimonEngine::vc_58,
 	&SimonEngine::vc_59,
@@ -1577,7 +1577,7 @@ void SimonEngine::vc_55_offset_hit_area() {
 	_need_hitarea_recalc++;
 }
 
-void SimonEngine::vc_56() {
+void SimonEngine::vc_56_delay() {
 	if (_game & GF_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
 
