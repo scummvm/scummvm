@@ -375,7 +375,7 @@ static const VersionSettings version_settings[] = {
 
 	/* Scumm version 5 */
 	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  5, 0, 16,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 5, 1, 42,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2,

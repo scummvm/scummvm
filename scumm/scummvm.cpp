@@ -340,6 +340,8 @@ void Scumm::checkRange(int max, int min, int no, const char *str)
 
 int Scumm::scummLoop(int delta)
 {
+	static int counter = 0;
+
 #ifndef _WIN32_WCE
 	if (_debugger)
 		_debugger->on_frame();
@@ -378,7 +380,17 @@ int Scumm::scummLoop(int delta)
 	_vars[VAR_MOUSE_Y] = mouse.y;
 	_vars[VAR_DEBUGMODE] = _debugMode;
 
-	if (_features & GF_AUDIOTRACKS) {
+	if (_gameId == GID_MONKEY_VGA) {
+		// FIXME: Is all this really necessary now?
+		if (delta == 1)
+			_vars[VAR_MI1_TIMER]++;
+		else if (++counter != 2)
+			_vars[VAR_MI1_TIMER] += 5;
+		else {
+			counter = 0;
+			_vars[VAR_MI1_TIMER] += 6;
+		}
+	} else if (_features & GF_AUDIOTRACKS) {
 		_vars[VAR_MI1_TIMER] = _sound->readCDTimer();
 	} else if (_features & GF_OLD256) {
 
