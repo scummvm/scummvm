@@ -2734,8 +2734,6 @@ void ScummEngine_v5::decodeParseString() {
 			_string[textSlot].overhead = false;
 			break;
 		case 6:										/* left */
-			// FIXME: not sure if GF_OLD_BUNDLE is the right thing to check...
-			// but Loom needs this, for sure.
 			if (_version == 3) {
 				// FIXME: this value seems to be some kind of override
 				// for text spacing?!?
@@ -2771,7 +2769,7 @@ void ScummEngine_v5::decodeParseString() {
 						_sound->playCDTrack(1, 0, offset, delay);
 					}
 				} else {
-					warning("parseString: 8");
+					warning("ScummEngine_v5::decodeParseString: Unhandled case 8");
 				}
 			}
 			break;
