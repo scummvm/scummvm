@@ -42,6 +42,7 @@ protected:
 public:
 	const char *_nameBundleMusic;
 	int32 _bundleMusicPosition;
+	int32 _bundleSongPosInMs;
 
 protected:
 	const char *_newNameBundleMusic;

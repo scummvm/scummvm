@@ -1039,6 +1039,7 @@ void Sound::playBundleMusic(const char *song) {
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
 		_bundleMusicPosition = 0;
+		_bundleSongPosInMs = 0;
 		_pauseBundleMusic = false;
 		_musicBundleToBeChanged = false;
 		_bundleMusicTrack = 0;
@@ -1087,6 +1088,7 @@ void Sound::bundleMusicHandler(ScummEngine *scumm) {
 		_offsetBufBundleMusic = 0;
 		_musicBundleToBeChanged = false;
 		_bundleMusicPosition = 0;
+		_bundleSongPosInMs = 0;
 	}
 
 	ptr = _musicBundleBufOutput;
@@ -1153,6 +1155,7 @@ void Sound::bundleMusicHandler(ScummEngine *scumm) {
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
 		_bundleMusicPosition = 0;
+		_bundleSongPosInMs = 0;
 	}
 
 	ptr = _musicBundleBufFinal;
@@ -1170,6 +1173,7 @@ void Sound::bundleMusicHandler(ScummEngine *scumm) {
 		return;
 	}
 
+	_bundleSongPosInMs = (_bundleMusicPosition * 5) / (_outputMixerSize / 200);
 	_bundleMusicPosition += final_size;
 	if (_bundleMusicTrack == 0) {
 		_scumm->_mixer->newStream(&_bundleMusicTrack, buffer, final_size, rate,
