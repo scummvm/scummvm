@@ -21,13 +21,28 @@
 #ifndef ABOUT_DIALOG_H
 #define ABOUT_DIALOG_H
 
-#include "dialog.h"
+#include "gui/dialog.h"
+#include "common/str.h"
 
 namespace GUI {
 
 class AboutDialog : public Dialog {
+	typedef Common::StringList StringList;
+protected:
+	int			_scrollPos;
+	uint32		_scrollTime;
+	StringList	_lines;
+	uint32		_lineHeight;
+
 public:
 	AboutDialog();
+
+	void open();
+	void drawDialog();
+	void handleTickle();
+	void handleMouseUp(int x, int y, int button, int clickCount);
+	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	void handleKeyUp(uint16 ascii, int keycode, int modifiers);
 };
 
 } // End of namespace GUI
