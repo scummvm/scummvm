@@ -1181,11 +1181,14 @@ void ScummEngine_v90he::drawWizComplexPolygon(int resnum, int state, int po_x, i
 	}
 
 	// XXX drawWizPolygonPoints(resnum, state, pts, r, VAR(VAR_WIZ_TCOLOR));
-	warning("ScummEngine_v90he::drawWizComplexPolygon() partially implemented");
+	warning("drawWizComplexPolygon() partially implemented");
 }
 
 void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
-	// XXX merge with ScummEngine_v72he::displayWizImage
+	// XXX merge with displayWizImage
+	if (params->processFlags & 0x80000) {
+		warning("displayWizComplexImage() unhandled flags = 0x80000");
+	}
 	int zoom = 256;
 	if (params->processFlags & kWPFZoom) {
 		zoom = params->zoom;
@@ -1218,7 +1221,7 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 	}
 
 	if (params->processFlags & 0x10000) {
-		warning("ScummEngine_v90he::displayWizComplexImage() unhandled flags = 0x10000");
+		warning("displayWizComplexImage() unhandled flags = 0x10000");
 	}
 
 	if (params->processFlags & 0x40) {
@@ -1252,7 +1255,7 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 		drawWizPolygon(params->img.resNum, state, po_x, flags); // XXX , VAR(VAR_WIZ_TCOLOR));
 	} else {
 		if ((flags & 0x200) || (flags & 0x24)) {
-			warning("ScummEngine_v90he::displayWizComplexImage() unhandled flags = 0x%X", flags);
+			warning("displayWizComplexImage() unhandled flags = 0x%X", flags);
 		}
 		// XXX flags 0x200, 0x24
 		WizImage wi;
