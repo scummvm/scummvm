@@ -607,9 +607,9 @@ void Scumm_v2::o2_drawObject() {
 	uint16 x, y, w, h;
 	int xpos, ypos;
 
-	obj = getVarOrDirectWord(0x80);
-	xpos = getVarOrDirectWord(0x40);
-	ypos = getVarOrDirectWord(0x20);
+	obj = getVarOrDirectByte(0x80);
+	xpos = getVarOrDirectByte(0x40);
+	ypos = getVarOrDirectByte(0x20);
 
 	idx = getObjectIndex(obj);
 	if (idx == -1)
