@@ -1501,7 +1501,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 		a->moving = 0;
 	}
 
-	// FIXME: Can this be removed?
+	// This is based on disassembly
 	camera._cur.x = a->_pos.x;
 
 	setCameraAt(a->_pos.x, a->_pos.y);
