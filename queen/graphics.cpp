@@ -343,7 +343,8 @@ void Graphics::sortBobs() {
 			if (pbs->animating) {
 				pbs->animOneStep();
 				if (pbs->frameNum > 500) { // SFX frame
-					_vm->sound()->playSfx(_vm->logic()->currentRoomSfx(), false);
+					if (_vm->sound()->sfxOn())
+						_vm->sound()->playSfx(_vm->logic()->currentRoomSfx(), false);
 					pbs->frameNum -= 500;
 				}
 			}
@@ -1112,7 +1113,8 @@ void BamScene::playSfx() {
 	// this problem since their playSfx() function returns immediately
 	// if a sound is already being played.
 	if (_lastSoundIndex == 0 || _index - _lastSoundIndex >= SFX_SKIP) {
-		_vm->sound()->playSfx(_vm->logic()->currentRoomSfx(), false);
+		if (_vm->sound()->sfxOn())
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx(), false);
 		_lastSoundIndex = _index;
 	}
 }
