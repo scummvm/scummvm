@@ -97,6 +97,8 @@ bool File::open(const char *filename, int mode, byte encbyte) {
 		return false;
 	}
 
+	_encbyte = encbyte;
+
 	return true;
 }
 

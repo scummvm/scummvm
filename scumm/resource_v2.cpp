@@ -30,21 +30,21 @@ void Scumm_v2::readIndexFile()
 	openRoom(-1);
 	openRoom(0);
 
-	if (fileReadWordLE() != 0x0100)
+	if (_fileHandle.readWordLE() != 0x0100)
 		warning("The magic id doesn't match\n");
 
-	_numGlobalObjects = fileReadWordLE();
-	fileSeek(_fileHandle, _numGlobalObjects, SEEK_CUR); // Skip object flags
-	_numRooms = fileReadByte();
-	fileSeek(_fileHandle, _numRooms * 3, SEEK_CUR);
-	_numCostumes = fileReadByte();
-	fileSeek(_fileHandle, _numCostumes * 3, SEEK_CUR);
-	_numScripts = fileReadByte();
-	fileSeek(_fileHandle, _numScripts * 3, SEEK_CUR);
-	_numSounds = fileReadByte();
+	_numGlobalObjects = _fileHandle.readWordLE();
+	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
+	_numRooms = _fileHandle.readByte();
+	_fileHandle.seek(_numRooms * 3, SEEK_CUR);
+	_numCostumes = _fileHandle.readByte();
+	_fileHandle.seek(_numCostumes * 3, SEEK_CUR);
+	_numScripts = _fileHandle.readByte();
+	_fileHandle.seek(_numScripts * 3, SEEK_CUR);
+	_numSounds = _fileHandle.readByte();
 
-	clearFileReadFailed(_fileHandle);
-	fileSeek(_fileHandle, 0, SEEK_SET);
+	_fileHandle.clearIOFailed();
+	_fileHandle.seek(0, SEEK_SET);
 
 	// FIXME - I'm not sure for those values yet, they will have to be rechecked
 
@@ -64,9 +64,9 @@ void Scumm_v2::readIndexFile()
 	_numFlObject = 50;
 	allocateArrays();
 
-	fileReadWordLE(); /* version magic number */
-	fileReadWordLE(); /* nb global objects */
-	fileSeek(_fileHandle, _numGlobalObjects, SEEK_CUR); // Skip object flags
+	_fileHandle.readWordLE(); /* version magic number */
+	_fileHandle.readWordLE(); /* nb global objects */
+	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
 	readResTypeList(rtRoom, MKID('ROOM'), "room");
 	readResTypeList(rtCostume, MKID('COST'), "costume");
 	readResTypeList(rtScript, MKID('SCRP'), "script");

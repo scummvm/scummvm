@@ -853,7 +853,7 @@ void Scumm::setScaleItem(int slot, int a, int b, int c, int d)
 void Scumm::dumpResource(char *tag, int idx, byte *ptr)
 {
 	char buf[256];
-	FILE *out;
+	File out;
 
 	uint32 size;
 	if (_features & GF_SMALL_HEADER)
@@ -867,14 +867,14 @@ void Scumm::dumpResource(char *tag, int idx, byte *ptr)
 	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
 #endif
 
-	out = fopen(buf, "rb");
-	if (!out) {
-		out = fopen(buf, "wb");
-		if (!out)
+	out.open(buf, 1);
+	if (out.isOpen() == false) {
+		out.open(buf, 2);
+		if (out.isOpen() == false)
 			return;
-		fwrite(ptr, size, 1, out);
+		out.write(ptr, size);
 	}
-	fclose(out);
+	out.close();
 }
 
 
@@ -1463,7 +1463,6 @@ void Scumm::launch()
 {
 	charset._vm = this;
 	gdi._vm = this;
-	_fileHandle = NULL;
 
 	_maxHeapThreshold = 450000;
 	_minHeapThreshold = 400000;

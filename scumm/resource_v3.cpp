@@ -37,37 +37,37 @@ void Scumm_v3::readIndexFile()
 	openRoom(-1);
 	openRoom(0);
 
-	while (!fileEof(_fileHandle)) {
-		itemsize = fileReadDwordLE();
-		blocktype = fileReadWordLE();
-		if (fileReadFailed(_fileHandle))
+	while (!_fileHandle.eof()) {
+		itemsize = _fileHandle.readDwordLE();
+		blocktype = _fileHandle.readWordLE();
+		if (_fileHandle.ioFailed())
 			break;
 
 		switch (blocktype) {
 		case 0x4E52:	// 'NR'
-			fileReadWordLE();
+			_fileHandle.readWordLE();
 			break;
 		case 0x5230:	// 'R0'
-			_numRooms = fileReadWordLE();
+			_numRooms = _fileHandle.readWordLE();
 			break;
 		case 0x5330:	// 'S0'
-			_numScripts = fileReadWordLE();
+			_numScripts = _fileHandle.readWordLE();
 			break;
 		case 0x4E30:	// 'N0'
-			_numSounds = fileReadWordLE();
+			_numSounds = _fileHandle.readWordLE();
 			break;
 		case 0x4330:	// 'C0'
-			_numCostumes = fileReadWordLE();
+			_numCostumes = _fileHandle.readWordLE();
 			break;
 		case 0x4F30:	// 'O0'
-			_numGlobalObjects = fileReadWordLE();
+			_numGlobalObjects = _fileHandle.readWordLE();
 			break;
 		}
-		fileSeek(_fileHandle, itemsize - 8, SEEK_CUR);
+		_fileHandle.seek(itemsize - 8, SEEK_CUR);
 	}
 
-	clearFileReadFailed(_fileHandle);
-	fileSeek(_fileHandle, 0, SEEK_SET);
+	_fileHandle.clearIOFailed();
+	_fileHandle.seek(0, SEEK_SET);
 
 	/* I'm not sure for those values yet, they will have to be rechecked */
 
@@ -88,19 +88,19 @@ void Scumm_v3::readIndexFile()
 	allocateArrays();
 
 	while (1) {
-		itemsize = fileReadDwordLE();
+		itemsize = _fileHandle.readDwordLE();
 
-		if (fileReadFailed(_fileHandle))
+		if (_fileHandle.ioFailed())
 			break;
 
-		blocktype = fileReadWordLE();
+		blocktype = _fileHandle.readWordLE();
 
 		numblock++;
 
 		switch (blocktype) {
 
 		case 0x4E52:	// 'NR'
-			fileSeek(_fileHandle, itemsize - 6, SEEK_CUR);
+			_fileHandle.seek(itemsize - 6, SEEK_CUR);
 			break;
 
 		case 0x5230:	// 'R0'
@@ -120,15 +120,15 @@ void Scumm_v3::readIndexFile()
 			break;
 
 		case 0x4F30:	// 'O0'
-			num = fileReadWordLE();
+			num = _fileHandle.readWordLE();
 			assert(num == _numGlobalObjects);
 			for (i = 0; i != num; i++) {
-				uint32 bits = fileReadByte();
+				uint32 bits = _fileHandle.readByte();
 				byte tmp;
-				bits |= fileReadByte() << 8;
-				bits |= fileReadByte() << 16;
+				bits |= _fileHandle.readByte() << 8;
+				bits |= _fileHandle.readByte() << 16;
 				_classData[i] = bits;
-				tmp = fileReadByte();
+				tmp = _fileHandle.readByte();
 				_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
 				_objectStateTable[i] = tmp >> OF_STATE_SHL;
 			}
@@ -154,8 +154,8 @@ void Scumm_v3::loadCharset(int no)
 
 	openRoom(98 + no);
 
-	size = fileReadWordLE();
+	size = _fileHandle.readWordLE();
 
-	fileRead(_fileHandle, createResource(6, no, size), size);
+	_fileHandle.read(createResource(6, no, size), size);
 	openRoom(-1);
 }

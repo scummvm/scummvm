@@ -554,7 +554,7 @@ public:
 
 	/* Should be in Resource class */
 	byte _encbyte;
-	void *_fileHandle;
+	File _fileHandle;
 	char *_resFilePrefix, *_resFilePath;
 	uint32 _fileOffset;
 	char *_exe_name;
@@ -596,9 +596,6 @@ public:
 	virtual void readIndexFile();
 	virtual void loadCharset(int i);
 	void nukeCharset(int i);
-
-	bool fileReadFailed(void *handle);
-	void clearFileReadFailed(void *handle);
 
 	int _lastLoadedRoom, _roomResource;
 	byte _resFilePathId, _fileReadFailed;
@@ -933,34 +930,14 @@ public:
 	bool _keepText;
 
 
-	/* Should be in System class */
-	void fileClose(void *file);
-	void *fileOpen(const char *filename, int mode);
-	void fileSeek(void *file, long offs, int whence);
-	void fileRead(void *handle, void *ptr, uint32 size);
-	bool fileEof(void *handle);
-	uint32 filePos(void *handle);
 	bool checkFixedDisk();
 	int _cdrom;
 
-	int fileReadByte();
-	uint32 fileReadDwordLE();
-	uint32 fileReadDwordBE();
-	int fileReadByte(void *handle);
-	uint32 fileReadDwordLE(void *handle);
-	uint32 fileReadDwordBE(void *handle);
-
 #if defined(SCUMM_LITTLE_ENDIAN)
-	uint32 fileReadDword() { return fileReadDwordLE(); }
-	uint32 fileReadDword(void *handle) { return fileReadDwordLE(handle); }
+	uint32 fileReadDword() { return _fileHandle.readDwordLE(); }
 #elif defined(SCUMM_BIG_ENDIAN)
-	uint32 fileReadDword() { return fileReadDwordBE(); }
-	uint32 fileReadDword(void *handle) { return fileReadDwordBE(handle); }
+	uint32 fileReadDword() { return _fileHandle.readDwordBE(); }
 #endif
-	uint fileReadWordLE();
-	uint fileReadWordBE();
-	uint fileReadWordLE(void *handle);
-	uint fileReadWordBE(void *handle);
 
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();

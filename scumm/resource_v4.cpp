@@ -33,8 +33,8 @@ void Scumm_v4::loadCharset(int no)
 
 	openRoom(900 + no);
 
-	size = fileReadDwordLE() + 11;
+	size = _fileHandle.readDwordLE() + 11;
 
-	fileRead(_fileHandle, createResource(6, no, size), size);
+	_fileHandle.read(createResource(6, no, size), size);
 	openRoom(-1);
 }
