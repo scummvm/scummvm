@@ -354,7 +354,7 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 }
 
 void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
-	char buf[255];
+	char buf[40];
 	struct stat statbuf;
 
 #if defined(MACOS_CARBON)
@@ -403,12 +403,6 @@ void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 		pal_load(pal, vga1, 5, 3);
 	}
 
-	{
-		char buf[255], buf2[255];
-		sprintf(buf, "bmp_%d", res);
-		mkdir(buf2);
-	}
-
 	int width, height, flags;
 	
 	i = 538;
@@ -431,7 +425,7 @@ void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 
 		/* dump bitmap */
 		{
-			char buf[255];
+			char buf[40];
 #if defined(MACOS_CARBON)
 			sprintf(buf, ":dumps:Res%d_Image%d.bmp", res, i);
 #else
