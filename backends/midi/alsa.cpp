@@ -134,6 +134,7 @@ int MidiDriver_ALSA::open() {
 
 void MidiDriver_ALSA::close() {
 	_isOpen = false;
+	MidiDriver_MPU401::close();
 	if (seq_handle)
 		snd_seq_close(seq_handle);
 }
