@@ -288,7 +288,7 @@ void SkyMouse::buttonEngine1(void) {
 		if (SkyLogic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
 			Compact *item = SkyState::fetchCompact(SkyLogic::_scriptVariables[SPECIAL_ITEM]);
 			if (item->mouseClick)
-				_skyLogic->mouseScript(FROM_LE_16(item->mouseClick), item);
+				_skyLogic->mouseScript(item->mouseClick, item);
 		}
 	}
 }
