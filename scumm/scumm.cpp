@@ -701,6 +701,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_heSndLoop = 0;
 	_heSndSoundFreq = 0;
 	memset(_timers, 0, sizeof(_timers));
+	_wizResNum = 0;
+	_wizX1 = 0;
+	_wizY1 = 0;
+	_wizState = 0;
+	_wizFlag = 0;
 
 	memset(_queueCmd, 0, sizeof(_queueCmd));
 	memset(_queueActor, 0, sizeof(_queueActor));

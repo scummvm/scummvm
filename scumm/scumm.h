@@ -1075,6 +1075,7 @@ public:
 	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndLoop;
 	bool _skipDrawObject, _skipProcessActors;
 	int _timers[4];
+	int _wizResNum, _wizX1, _wizY1, _wizState, _wizFlag;
 
 protected:
 	int _shadowPaletteSize;

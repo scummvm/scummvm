@@ -451,13 +451,13 @@ void ScummEngine_v90he::o90_unknown1C() {
 		pop();
 		break;
 	case 6:
-		pop();
+		_wizState = pop();
 		break;
 	case 7:
 		pop();
 		break;
 	case 8:
-		pop();
+		_wizFlag = pop();
 		break;
 	case 10:
 	{
@@ -480,11 +480,12 @@ void ScummEngine_v90he::o90_unknown1C() {
 	}
 		break;
 	case 11:
-		pop();
+		_wizResNum = pop();
+		_wizFlag = 0;
 		break;
 	case 19:
-		pop();
-		pop();
+		_wizY1 = pop();
+		_wizX1 = pop();
 		break;
 	case 87: // HE99+
 		pop();
@@ -499,12 +500,23 @@ void ScummEngine_v90he::o90_unknown1C() {
 	case 171: // HE99+
 		break;
 	case 209:
+		if (_fullRedraw) {
+			assert(_wizImagesNum < ARRAYSIZE(_wizImages));
+			WizImage *pwi = &_wizImages[_wizImagesNum];
+			pwi->resnum = _wizResNum;
+			pwi->x1 = _wizX1;
+			pwi->y1 = _wizY1;
+			pwi->flags = _wizFlag;
+			++_wizImagesNum;
+		} else {
+			drawWizImage(rtImage, _wizResNum, _wizState, _wizX1, _wizY1, _wizFlag);
+		}
 		break;
 	default:
 		error("o90_unknown1C: unhandled case %d", subOp);
 	}
 
-	debug(1,"o90_unknown1C stub (%d)", subOp);
+	debug(0,"o90_unknown1C stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown25() {
