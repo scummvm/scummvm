@@ -225,6 +225,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 
+#ifndef __PALM_OS__
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
 	// First 640x480 game, hence version 7.1
@@ -364,6 +365,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+#endif
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
 };
 
