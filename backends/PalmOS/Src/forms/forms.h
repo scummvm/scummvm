@@ -17,5 +17,6 @@ HANDLER(Misc)
 HANDLER(CardSlot)
 HANDLER(Skins)
 HANDLER(Music)
+HANDLER(Info)
 
 #endif
