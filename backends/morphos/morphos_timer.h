@@ -70,7 +70,8 @@ class Timer
 		static void TimerService(Timer *, Engine *);
 
 		Process *TimerServiceThread;
-		SignalSemaphore TimerServiceSemaphore;
+		MsgPort *TimerServicePort;
+		Message TimerServiceStartup;
 
 		struct TimerSlot
 		{

@@ -35,16 +35,22 @@
 
 Timer::Timer(Engine * engine)
 {
-	InitSemaphore(&TimerServiceSemaphore);
+	if ((TimerServicePort = CreateMsgPort()))
+	{
+		TimerServiceStartup.mn_Node.ln_Type = NT_MESSAGE;
+		TimerServiceStartup.mn_ReplyPort = TimerServicePort;
+		TimerServiceStartup.mn_Length = sizeof(TimerServiceStartup);
 
-	TimerServiceThread = CreateNewProcTags(NP_Entry, 	 (ULONG) TimerService,
-														NP_CodeType, CODETYPE_PPC,
-														NP_Name,  	 (ULONG) "ScummVM Timer Service",
-														NP_Priority, 20,
-														NP_PPC_Arg1, (ULONG) this,
-														NP_PPC_Arg2, (ULONG) engine,
-														TAG_DONE
-													  );
+		TimerServiceThread = CreateNewProcTags(NP_Entry, 	 (ULONG) TimerService,
+															NP_CodeType, CODETYPE_PPC,
+															NP_Name,  	 (ULONG) "ScummVM Timer Service",
+															NP_Priority, 0,
+															NP_StartupMsg, &TimerServiceStartup,
+															NP_PPC_Arg1, (ULONG) this,
+															NP_PPC_Arg2, (ULONG) engine,
+															TAG_DONE
+														  );
+	}
 }
 
 Timer::~Timer()
@@ -52,8 +58,9 @@ Timer::~Timer()
 	if (TimerServiceThread)
 	{
 		Signal((Task *) TimerServiceThread, SIGBREAKF_CTRL_C);
-		ObtainSemaphore(&TimerServiceSemaphore);
-		ReleaseSemaphore(&TimerServiceSemaphore);
+		WaitPort(TimerServicePort);
+		DeleteMsgPort(TimerServicePort);
+		TimerServiceThread = NULL;
 	}
 }
 
@@ -107,8 +114,6 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 
 	ULONG timers = 0;
 	TimerSlot timer_slots[MAX_TIMERS];
-
-	ObtainSemaphore(&this_ptr->TimerServiceSemaphore);
 
 	for (;;)
 	{
@@ -224,8 +229,5 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 		DeleteIORequest((IORequest *) timer_slots[t].ts_IORequest);
 		DeleteMsgPort(timer_slots[t].ts_Port);
 	}
-
-	ReleaseSemaphore(&this_ptr->TimerServiceSemaphore);
-	RemTask(NULL);
 }
 

@@ -98,11 +98,8 @@ OSystem *OSystem_MorphOS_create(int game_id, int gfx_mode, bool full_screen)
 
 void close_resources()
 {
-	if (TheSystem)
-	{
-		delete TheSystem;
-		TheSystem = NULL;
-	}
+	delete TheSystem;
+	TheSystem = NULL;
 
 	if (ScummPath)
 	{
@@ -311,10 +308,6 @@ int main()
 	char dbglvl[6];
 	int argc = 0;
 
-	InitSemaphore(&ScummSoundThreadRunning);
-	InitSemaphore(&ScummMusicThreadRunning);
-
-	g_scumm = NULL;
 	atexit(&close_resources);
 
 	memset(args, '\0', sizeof (args));

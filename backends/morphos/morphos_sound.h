@@ -34,9 +34,6 @@ bool init_morphos_music(ULONG MidiUnit, ULONG DevFlags);
 void exit_morphos_music();
 bool etude_available();
 
-extern SignalSemaphore ScummMusicThreadRunning;
-extern SignalSemaphore ScummSoundThreadRunning;
-
 extern STRPTR ScummMusicDriver;
 extern LONG   ScummMidiUnit;
 extern IOMidiRequest *ScummMidiRequest;

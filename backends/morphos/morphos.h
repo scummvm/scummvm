@@ -40,6 +40,8 @@ class OSystem_MorphOS : public OSystem
 					OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen);
 		virtual ~OSystem_MorphOS();
 
+		bool Initialise();
+
 		// Set colors of the palette
 		virtual void set_palette(const byte *colors, uint start, uint num);
 
@@ -182,6 +184,9 @@ class OSystem_MorphOS : public OSystem
 		Process 	 *ScummSoundThread;
 		SoundProc *SoundProc;
 		void      *SoundParam;
+		MsgPort	 *ThreadPort;
+		Message 	  MusicStartup;
+		Message 	  SoundStartup;
 
 		/* CD-ROM related attributes */
 		CDRIVEPTR CDrive;

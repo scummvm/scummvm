@@ -79,6 +79,12 @@ OSystem_MorphOS *OSystem_MorphOS::create(SCALERTYPE gfx_scaler, bool full_screen
 {
 	OSystem_MorphOS *syst = new OSystem_MorphOS(gfx_scaler, full_screen);
 
+	if (!syst || !syst->Initialise())
+	{
+		delete syst;
+		error("Failed to create system object. Exiting.");
+	}
+
 	return syst;
 }
 
@@ -117,7 +123,18 @@ OSystem_MorphOS::OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen)
 	TimerIORequest = NULL;
 	InputMsgPort = NULL;
 	InputIORequest = NULL;
+	ThreadPort = NULL;
+	OvlCMap = NULL;
+	OvlBitMap = NULL;
+	OvlSavedBuffer = NULL;
+	TimerBase = NULL;
+	ScummNoCursor = NULL;
+	UpdateRegion = NULL;
+	NewUpdateRegion = NULL;
+}
 
+bool OSystem_MorphOS::Initialise()
+{
 	OpenATimer(&TimerMsgPort, (IORequest **) &TimerIORequest, UNIT_MICROHZ);
 
 	if ((InputMsgPort = CreateMsgPort()))
@@ -140,11 +157,19 @@ OSystem_MorphOS::OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen)
 	}
 
 	if (!InputIORequest)
+	{
 		warning("input.device could not be opened");
+		return false;
+	}
+
+	ThreadPort = CreateMsgPort();
+	if (!ThreadPort)
+	{
+		warning("Unable to create a message port");
+		return false;
+	}
 
 	OvlCMap = GetColorMap(256);
-	OvlBitMap = NULL;
-	OvlSavedBuffer = NULL;
 
 	InitSemaphore(&CritSec);
 
@@ -153,11 +178,22 @@ OSystem_MorphOS::OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen)
 	UpdateRegion = NewRegion();
 	NewUpdateRegion = NewRegion();
 	if (!UpdateRegion || !NewUpdateRegion)
-		error("Could not create region for screen update");
+	{
+		warning("Could not create region for screen update");
+		return false;
+	}
 	if (!OvlCMap)
-		error("Could not allocate overlay color map");
+	{
+		warning("Could not allocate overlay color map");
+		return false;
+	}
 	if (!ScummNoCursor)
-		error("Could not allocate empty cursor image");
+	{
+		warning("Could not allocate empty cursor image");
+		return false;
+	}
+
+	return true;
 }
 
 OSystem_MorphOS::~OSystem_MorphOS()
@@ -172,19 +208,18 @@ OSystem_MorphOS::~OSystem_MorphOS()
 	}
 
 	if (OvlCMap)
-	{
 		FreeColorMap(OvlCMap);
-		OvlCMap = NULL;
-	}
 
-	if (Scaler)
-		delete Scaler;
+	delete Scaler;
 
 	if (UpdateRegion)
 		DisposeRegion(UpdateRegion);
 
 	if (NewUpdateRegion)
 		DisposeRegion(NewUpdateRegion);
+
+	if (ThreadPort)
+		DeleteMsgPort(ThreadPort);
 
 	if (CDrive && CDDABase)
 	{
@@ -209,23 +244,6 @@ OSystem_MorphOS::~OSystem_MorphOS()
 
 	if (TimerMsgPort)
 		DeleteMsgPort(TimerMsgPort);
-
-	if (ScummMusicThread)
-	{
-		if (!AttemptSemaphore(&ScummMusicThreadRunning))
-		{
-			Signal((Task *) ScummMusicThread, SIGBREAKF_CTRL_C);
-			ObtainSemaphore(&ScummMusicThreadRunning);    /* Wait for thread to finish */
-		}
-		ReleaseSemaphore(&ScummMusicThreadRunning);
-	}
-
-	if (ScummSoundThread)
-	{
-		Signal((Task *) ScummSoundThread, SIGBREAKF_CTRL_C);
-		ObtainSemaphore(&ScummSoundThreadRunning);	 /* Wait for thread to finish */
-		ReleaseSemaphore(&ScummSoundThreadRunning);
-	}
 
 	if (ScummNoCursor)
 		FreeVec(ScummNoCursor);
@@ -312,9 +330,14 @@ void OSystem_MorphOS::set_timer(int timer, int (*callback)(int))
 
 void OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 {
+	MusicStartup.mn_Node.ln_Type = NT_MESSAGE;
+	MusicStartup.mn_ReplyPort = ThreadPort;
+	MusicStartup.mn_Length = sizeof(MusicStartup);
+
 	ScummMusicThread = CreateNewProcTags(NP_Entry, (ULONG) proc, NP_CodeType, CODETYPE_PPC,
 													 NP_Name, (ULONG) "ScummVM Music Thread",
-													 NP_Priority, 60, NP_StackSize, 32000,
+													 NP_Priority, 40, NP_StackSize, 32000,
+													 NP_StartupMsg, &MusicStartup,
 													 NP_PPC_Arg1, (ULONG) param, TAG_DONE);
 }
 
@@ -349,6 +372,9 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 
 	switch (param)
 	{
+		case PROP_GET_FULLSCREEN:
+			return ScummScreen != NULL;
+
 		case PROP_TOGGLE_FULLSCREEN:
 			CreateScreen(CSDSPTYPE_TOGGLE);
 			return 1;
@@ -490,6 +516,31 @@ void OSystem_MorphOS::update_cdrom()
 
 void OSystem_MorphOS::quit()
 {
+	int num_threads = 0;
+
+	if (ScummMusicThread)
+	{
+		num_threads++;
+		Signal((Task *) ScummMusicThread, SIGBREAKF_CTRL_C);
+		ScummMusicThread = NULL;
+	}
+
+	if (ScummSoundThread)
+	{
+		num_threads++;
+		Signal((Task *) ScummSoundThread, SIGBREAKF_CTRL_C);
+		ScummSoundThread = NULL;
+	}
+
+	while (num_threads > 0)
+	{
+		Message* msg;
+
+		WaitPort(ThreadPort);
+		while (msg = GetMsg(ThreadPort))
+			num_threads--;
+	}
+
 	exit(0);
 }
 
@@ -960,8 +1011,8 @@ void OSystem_MorphOS::warp_mouse(int x, int y)
 			if ((NewPixel = (IEPointerPixel*) AllocVec(sizeof (IEPointerPixel), MEMF_PUBLIC)))
 			{
 				NewPixel->iepp_Screen = ScummWindow->WScreen;
-				NewPixel->iepp_Position.X = x + ScummWindow->LeftEdge + ScummWindow->BorderLeft;
-				NewPixel->iepp_Position.Y = x+ScummWindow->TopEdge + ScummWindow->BorderTop;
+				NewPixel->iepp_Position.X = (x << ScummScale) + ScummWindow->LeftEdge + ScummWindow->BorderLeft;
+				NewPixel->iepp_Position.Y = (y << ScummScale) + ScummWindow->TopEdge + ScummWindow->BorderTop;
 
 				FakeIE->ie_EventAddress = NewPixel;
 				FakeIE->ie_NextEvent = NULL;
@@ -1414,15 +1465,27 @@ void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hots
 
 bool OSystem_MorphOS::set_sound_proc(OSystem::SoundProc *proc, void *param, OSystem::SoundFormat format)
 {
+	if (ScummSoundThread)
+	{
+		if (SoundProc == proc)
+			return true;
+		clear_sound_proc();
+	}
+
 	SoundProc = proc;
 	SoundParam = param;
 
 	/*
 	 * Create Sound Thread
 	 */
+	SoundStartup.mn_Node.ln_Type = NT_MESSAGE;
+	SoundStartup.mn_ReplyPort = ThreadPort;
+	SoundStartup.mn_Length = sizeof(SoundStartup);
+
 	ScummSoundThread = CreateNewProcTags(NP_Entry, (ULONG) &morphos_sound_thread,
 													 NP_CodeType, CODETYPE_PPC,
 													 NP_Name, (ULONG) "ScummVM Sound Thread",
+													 NP_StartupMsg, &SoundStartup,
 													 NP_PPC_Arg1, (ULONG) this,
 													 NP_PPC_Arg2, AHIST_S16S, TAG_DONE);
 	if (!ScummSoundThread)
@@ -1448,9 +1511,9 @@ void OSystem_MorphOS::clear_sound_proc()
 	if (ScummSoundThread)
 	{
 		Signal((Task *) ScummSoundThread, SIGBREAKF_CTRL_C);
-		ObtainSemaphore(&ScummSoundThreadRunning);	 /* Wait for thread to finish */
-		ReleaseSemaphore(&ScummSoundThreadRunning);
 		ScummSoundThread = NULL;
+		/* Wait for thread to finish */
+		WaitPort(ThreadPort);
 	}
 }
 

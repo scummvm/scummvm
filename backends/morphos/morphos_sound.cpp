@@ -190,8 +190,6 @@ int morphos_sound_thread(OSystem_MorphOS *syst, ULONG SampleType)
 	ULONG signals;
 	bool  initialized;
 
-	ObtainSemaphore(&ScummSoundThreadRunning);
-
 	initialized = init_morphos_sound();
 	if (!initialized)
 	{
@@ -250,8 +248,6 @@ int morphos_sound_thread(OSystem_MorphOS *syst, ULONG SampleType)
 
 	exit_morphos_sound();
 
-	ReleaseSemaphore(&ScummSoundThreadRunning);
-	RemTask(NULL);
 	return 0;
 }
 
