@@ -1,59 +1,117 @@
-2002-02-03
+ScummVM README
+last updated: 2002-03-05
+------------------------------------------------------------------------
 
-ScummVM is an implementation of the SCUMM engine used in various Lucas Arts games
-such as Monkey Island and Day of the Tentacle.
+For more info, please visit the ScummVM home page at:
+http://scummvm.sourceforge.net
+
+ScummVM is an implementation of the SCUMM engine used in various Lucas
+Arts games such as Monkey Island and Day of the Tentacle. At this time
+ScummVM should be considered ALPHA software. 
 
 At the moment the following games have been reported to work:
-Monkey Island 1 (CD version)
-Monkey Island 2
-Indiana Jones And The Fate Of Atlantis
-Day Of The Tentacle
-Sam & Max (partially)
 
-Please be aware that the engine may contains bugs and non-implemented-features that
-sometimes make it impossible to finish the game.
+	Monkey Island 1 (CD version)
+	Monkey Island 2
+	Indiana Jones And The Fate Of Atlantis
+	Day Of The Tentacle
+	Sam & Max (some bugs still remain)
+
+The following games load, but are not in a workable form.
+
+	Loom (256 color CD version)
+	Zak McKraken (256 color FM towns version)
+	Indiana Jones and the Last Crusade (256 color version)
+
+Please be aware that the engine may contains bugs and non-implemented-
+features that sometimes make it impossible to finish the game.
 
 Compiling:
 ----------
-You need SDL-1.2.2 (maybe older versions will work), and a supported compiler. At
-the moment only GCC and Microsoft Visual C++ are supported.
+
+You need SDL-1.2.2 (maybe older versions will work), and a supported
+compiler. At the moment only GCC and Microsoft Visual C++ are
+supported.
 
 GCC:
 ----
-* Type make (or gmake if that's what GNU make is called on your system) and
-hopefully ScummVM will compile for you.
+
+* Type make (or gmake if that's what GNU make is called on your system)
+and hopefully ScummVM will compile for you.
 
 Microsoft Visual C++:
 ---------------------
+
 * Open the workspace, scummwm.dsw
-* If you want to compile the GDI version, remove sdl.cpp from the project and add windows.cpp.
-  for the SDL version, remove windows.cpp from the project and add sdl.cpp.
+* If you want to compile the GDI version, remove sdl.cpp from the
+  project and add windows.cpp. for the SDL version, remove windows.cpp
+  from the project and add sdl.cpp.
 * Enter the path to the SDL include files in Tools|Options|Directories
 * Now it should compile successfully.
 
-
 Running:
 --------
-Before you run the engine, you need to put the game's datafiles in the same directory as the scummvm executable. The filenames must be in lowercase (monkey2.000 and monkey2.001).
 
-If you use a game with speech, the file monster.sou must reside in the same directory as scummvm.
+Before you run the engine, you need to put the game's datafiles in a
+directory. The filenames must be in lowercase on *nix systems
+(monkey2.000 and monkey2.001). If you use a game with speech, the file
+monster.sou must reside in the same directory as scummvm.
 
-You can use Ctrl 0-9 and Shift 0-9 to load and save states.
-Ctrl-z quits, and Ctrl-f runs in fast mode.
-Ctrl-d starts the debugger.
-Ctrl-s shows memory consumption.
-F5 displays a save/load box.
-Space pauses.
-Alt-Enter toggles full screen (on unix)
+You can either place the scummvm executable in directory in your path,
+or place it one dir up from the games install dir.
+Here is a good example installation directory structure.
+
+<root>/Games/LucasArts/
+|
++-- scummvm
+|
++-- momkey/
+|
++-- samnmax/
+
+In this installation, <root> is either C: for Windows user, or /usr/
+for *nix systems. To run samnmax from this install as a Windows user
+you would make a shortcut with this command:
+
+  C:\Games\LucasArts\scummvm.exe -f -p C:\Games\LucasArts\monkey\ monkey
+
+The short game name you see at the end of the command line is very
+important. You can get the current list of games and game names at:
+http://scummvm.sourceforge.net/compatibility.php
+
+Command Line Options:
+
+	scummvm [-b<num>] [-p path] game
+
+	-p <path> - path to where the game is installed
+	-b<num>   - start in that room
+	-t<num>   - Set music tempo. Suggested: 1F0000
+	-f        - fullscreen mode
+
+In game Keys:
+
+	Ctrl 0-9 and Shift 0-9 to load and save states.
+	Ctrl-z quits
+	Ctrl-f runs in fast mode.
+	Ctrl-d starts the debugger.
+	Ctrl-s shows memory consumption.
+	F5 displays a save/load box.
+	Space pauses.
+	Alt-Enter toggles full screen (on *nix only)
 
 Savegames:
 ----------
-Savegames are by default put in the current directory. You can use the environment variable SCUMMVM_SAVEPATH to specify where to put save games. Don't forget the trailing directory separator.
+
+Savegames are by default put in the current directory. You can use the
+environment variable SCUMMVM_SAVEPATH to specify where to put save games.
+Don't forget the trailing directory separator.
+
 Bash Example:
 export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
 
-Playing sound with Timidity:
-----------------------------
+Playing sound with Timidity (*nix only):
+----------------------------------------
+
 Start Timidity with the following command line :
 
 $ timidity -irv 7777
@@ -61,7 +119,10 @@ $ timidity -irv 7777
 Then just start ScummVM and you should have sound.
 In order to use timidity, you need to compile ScummVM with USE_TIMIDITY.
 
-If you compile ScummVM with the USE_ADLIB flag, an Adlib card will be emulated and ScummVM will output the music as sampled waves. (doesn't work with Sam&Max)
+If you compile ScummVM with the USE_ADLIB flag, an Adlib card will be
+emulated and ScummVM will output the music as sampled waves.
+(doesn't work with Sam&Max)
 
+------------------------------------------------------------------------
 Good Luck,
 The ScummVM team.
