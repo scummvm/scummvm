@@ -682,6 +682,10 @@ void Actor::turnToDirection(int newdir)
 	if (newdir != facing) {
 		moving = MF_TURN;
 		newDirection = newdir;
+
+		// FIXME - workaround for bug #558236
+		if (_vm->_gameId == GID_INDY4 && room == 39 && x == 617 && y == 125 && newdir == 180)
+			startAnimActor(standFrame);
 	}
 }
 
@@ -831,7 +835,7 @@ void Scumm::processActors()
 		if (a->costume) {
 			CHECK_HEAP getMaskFromBox(a->walkbox);
 			a->drawActorCostume();
-			CHECK_HEAP a->actorAnimate();
+			CHECK_HEAP a->animateCostume();
 		}
 	}
 }
@@ -921,7 +925,7 @@ void Actor::drawActorCostume()
 	}
 }
 
-void Actor::actorAnimate()
+void Actor::animateCostume()
 {
 	if (costume == 0)
 		return;

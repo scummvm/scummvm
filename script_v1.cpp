@@ -876,11 +876,14 @@ void Scumm::o5_and()
 
 void Scumm::o5_animateActor()
 {
-	int act, anim;
+	int act = getVarOrDirectByte(0x80);
+	int anim = getVarOrDirectByte(0x40);
 
-	act = getVarOrDirectByte(0x80);
-	anim = getVarOrDirectByte(0x40);
-	animateActor(act, anim);
+	Actor *a = derefActorSafe(act, "o5_animateActor");
+	if (!a)
+		return;
+
+	a->animateActor(anim);
 }
 
 void Scumm::o5_badOpcode()

@@ -146,7 +146,7 @@ public:
 	void turnToDirection(int newdir);
 	void walkActor();
 	void drawActorCostume();
-	void actorAnimate();
+	void animateCostume();
 	void setActorCostume(int c);
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);

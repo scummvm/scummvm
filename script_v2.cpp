@@ -1429,7 +1429,11 @@ void Scumm::o6_animateActor()
 	int anim = pop();
 	int act = pop();
 
-	animateActor(act, anim);
+	Actor *a = derefActorSafe(act, "o6_animateActor");
+	if (!a)
+		return;
+
+	a->animateActor(anim);
 }
 
 void Scumm::o6_doSentence()

@@ -899,15 +899,6 @@ void Scumm::faceActorToObj(int act, int obj)
 	derefActorSafe(act, "faceActorToObj")->turnToDirection(dir);
 }
 
-void Scumm::animateActor(int act, int anim)
-{
-	Actor *a = derefActorSafe(act, "animateActor");
-	if (!a)
-		return;
-
-	a->animateActor(anim);
-}
-
 bool Scumm::isScriptRunning(int script)
 {
 	int i;
@@ -928,7 +919,6 @@ bool Scumm::isRoomScriptRunning(int script)
 	return false;
 
 }
-
 
 
 void Scumm::beginOverride()
