@@ -996,7 +996,7 @@ int SimonState::runScript()
 					ThreeValues *tv = getThreeValues(b);
 
 					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
-				} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
+				} else if (_game == GAME_SIMON2TALKIE || _game & GAME_SIMON2WIN) {
 					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
 					ThreeValues *tv = getThreeValues(b);
 					uint d = _array_4[a];
@@ -1258,7 +1258,7 @@ void SimonState::o_177()
 
 			talk_with_text(a, b, s, tv->a, tv->b, tv->c);
 		}
-	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
+	} else if (_game == GAME_SIMON2TALKIE || _game & GAME_SIMON2WIN) {
 		const char *s = NULL;
 		ThreeValues *tv = NULL;
 		char buf[256];

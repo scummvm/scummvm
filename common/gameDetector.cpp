@@ -158,6 +158,8 @@ const VersionSettings version_settings[] = {
 	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST+6, 99, 99, 99, 0, "SIMON.GME"},	
 	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+7, 99, 99, 99, 0, "GSPTR30"},
 	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+7, 99, 99, 99, 0, "GSPTR30."},
+	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30."},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30."},
 	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST+8, 99, 99, 99, 0, "GDEMO"}, 
 	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST+5, 99, 99, 99, 0, "GSPTR30"}, 
 

@@ -1782,6 +1782,7 @@ void SimonState::o_print_str()
 
 	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
+	case GAME_SIMON2MAC:
 		if (speech_id != 0 && num_1 == 1 && !_vk_t_toggle)
 			talk_with_speech(speech_id, num_1);
 
@@ -4495,7 +4496,7 @@ void SimonState::go()
 	_sdl_buf = (byte *)calloc(320 * 200, 1);
 	_sdl_buf_attached = (byte *)calloc(320 * 200, 1);
 
-	if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
+	if (_game == GAME_SIMON2TALKIE || _game & GAME_SIMON2WIN) {
 		gss = &simon2win_settings;
 	} else if (_game == GAME_SIMON2DOS) {
 		gss = &simon2dos_settings;
@@ -4534,7 +4535,7 @@ void SimonState::go()
 	if (_sound->hasVoice()) {
 		_vk_t_toggle = false;
 	} else {
-		_vk_t_toggle = true;
+		_vk_t_toggle = false;
 	}
 
 	midi._midi_sfx_toggle = false;
