@@ -173,12 +173,10 @@ enum {
 extern MidiDriver *MidiDriver_NULL_create();
 extern MidiDriver *MidiDriver_ADLIB_create();
 extern MidiDriver *MidiDriver_WIN_create();
-extern MidiDriver *MidiDriver_TIMIDITY_create();
 extern MidiDriver *MidiDriver_SEQ_create();
 extern MidiDriver *MidiDriver_QT_create();
 extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
-extern MidiDriver *MidiDriver_MIDIEMU_create();
 extern MidiDriver *MidiDriver_ALSA_create();
 
 #endif

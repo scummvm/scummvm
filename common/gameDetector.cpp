@@ -403,7 +403,6 @@ bool GameDetector::parseMusicDriver(const char *s) {
 		{"qt",MD_QTMUSIC},
 		{"core",MD_COREAUDIO},
 		{"etude",MD_ETUDE},
-		{"midiemu",MD_MIDIEMU},
 		{"alsa", MD_ALSA},
 		{"adlib", MD_ADLIB},
 	};
