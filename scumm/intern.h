@@ -543,7 +543,17 @@ protected:
 		OpcodeProcV6he proc;
 		const char *desc;
 	};
-	
+	struct vsUnpackCtx {
+		uint8 mask;
+		uint8 num;
+		uint8 b;
+		uint8 *ptr;
+	};
+	struct vsPackCtx {
+		int size;
+		uint8 buf[256];
+	};
+
 	const OpcodeEntryV6he *_opcodesV6he;
 
 	File _hFileTable[17];
@@ -559,8 +569,12 @@ protected:
 	void redimArray(int arrayId, int newX, int newY, int d);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
-	int kernelGetFunctions1(byte *addr, int arg1, int arg2, int arg3, int agr4);
-	void kernelSetFunctions1(byte *addr);
+	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
+	int virtScreenSavePack(byte *dst, byte *src, int len, int unk);
+	void virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *dst, int len);
+	void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *dst, int len, uint8 b);
+	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
+	uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data);
 	void seekFilePos(int slot, int offset, int mode);
 	byte stringLen(byte *);
 	virtual void decodeParseString(int a, int b);
