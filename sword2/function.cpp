@@ -688,7 +688,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 			break;
 		}
 
-		_vm->_system->delay_msecs(20);
+		_vm->_system->delay_msecs(30);
 
 		scrollPos++;
 	}
