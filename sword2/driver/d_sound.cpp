@@ -25,10 +25,10 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
-#include "sound/rate.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/flac.h"
+#include "sound/rate.h"
 #include "sword2/sword2.h"
 #include "sword2/resman.h"
 #include "sword2/driver/d_draw.h"
@@ -39,10 +39,6 @@ namespace Sword2 {
 static AudioStream *makeCLUStream(File *fp, int size);
 
 static File fpMus;
-
-static void premix_proc(void *param, int16 *data, uint len) {
-	((Sound *) param)->streamMusic(data, len);
-}
 
 static AudioStream *getAudioStream(File *fp, const char *base, int cd, uint32 id, uint32 *numSamples) {
 	struct {
@@ -494,23 +490,24 @@ Sound::Sound(Sword2Engine *vm) {
 	_musicPaused = false;
 	_musicMuted = false;
 
-	for (int i = 0; i < MAXMUS; i++) {
-		_music[i] = NULL;
-		_converter[i] = NULL;
-	}
+	_mixBuffer = NULL;
+	_mixBufferLen = 0;
 
-	_vm->_mixer->setupPremix(premix_proc, this);
+	for (int i = 0; i < MAXMUS; i++)
+		_music[i] = NULL;
+
+	_vm->_mixer->setupPremix(this);
 }
 
 Sound::~Sound() {
 	int i;
 
-	_vm->_mixer->setupPremix(0, 0);
+	_vm->_mixer->setupPremix(0);
 
-	for (i = 0; i < MAXMUS; i++) {
+	for (i = 0; i < MAXMUS; i++)
 		delete _music[i];
-		delete _converter[i];
-	}
+
+	free(_mixBuffer);
 
 	for (i = 0; i < MAXFX; i++)
 		stopFxHandle(i);
@@ -521,33 +518,62 @@ Sound::~Sound() {
 		_vm->_system->deleteMutex(_mutex);
 }
 
-void Sound::streamMusic(int16 *data, uint len) {
+// AudioStream API
+
+int Sound::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
-	if (!_soundOn)
-		return;
+	if (!_soundOn || _musicPaused)
+		return 0;
 
 	for (int i = 0; i < MAXMUS; i++) {
 		if (_music[i] && _music[i]->readyToRemove()) {
 			delete _music[i];
-			delete _converter[i];
 			_music[i] = NULL;
-			_converter[i] = NULL;
 		}
 	}
 
-	if (!_musicPaused) {
-		for (int i = 0; i < MAXMUS; i++) {
-			if (_music[i]) {
-				st_volume_t volume = _musicMuted ? 0 : _musicVolTable[_musicVol];
-				_converter[i]->flow(*_music[i], data, len, volume, volume);
+	memset(buffer, 0, 2 * numSamples);
+
+	if (!_mixBuffer || numSamples > _mixBufferLen) {
+		if (_mixBuffer)
+			_mixBuffer = (int16 *) realloc(_mixBuffer, 2 * numSamples);
+		else
+			_mixBuffer = (int16 *) malloc(2 * numSamples);
+
+		_mixBufferLen = numSamples;
+	}
+
+	if (!_mixBuffer)
+		return 0;
+
+	for (int i = 0; i < MAXMUS; i++) {
+		if (!_music[i])
+			continue;
+
+		int len = _music[i]->readBuffer(_mixBuffer, numSamples);
+
+		if (!_musicMuted) {
+			for (int j = 0; j < len; j++) {
+				clampedAdd(buffer[j], (_musicVolTable[_musicVol] * _mixBuffer[j]) / 255);
 			}
 		}
 	}
 
 	if (!_music[0] && !_music[1] && fpMus.isOpen())
 		fpMus.close();
+
+	return numSamples;
 }
+
+int16 Sound::read() {
+	error("ProcInputStream::read not supported");
+}
+
+bool Sound::isStereo() const { return false; }
+bool Sound::endOfData() const { return !fpMus.isOpen(); }
+int Sound::getRate() const { return 22050; }
+
 
 /**
  * This function creates the pan table.
@@ -707,9 +733,7 @@ int32 Sound::streamCompMusic(uint32 musicId, bool looping) {
 		}
 
 		delete _music[primary];
-		delete _converter[primary];
 		_music[primary] = NULL;
-		_converter[primary] = NULL;
 	}
 
 	// Pick the available music stream. If no music is playing it doesn't
@@ -741,7 +765,6 @@ int32 Sound::streamCompMusic(uint32 musicId, bool looping) {
 		return RDERR_INVALIDFILENAME;
 	}
 
-	_converter[primary] = makeRateConverter(_music[primary]->getRate(), _vm->_mixer->getOutputRate(), _music[primary]->isStereo(), false);
 	return RD_OK;
 }
 

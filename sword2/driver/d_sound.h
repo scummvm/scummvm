@@ -24,8 +24,6 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
-class RateConverter;
-
 namespace Sword2 {
 
 class MusicInputStream;
@@ -57,7 +55,7 @@ struct FxHandle {
 	PlayingSoundHandle _handle;
 };
 
-class Sound {
+class Sound : public AudioStream {
 private:
 	Sword2Engine *_vm;
 
@@ -68,7 +66,9 @@ private:
 
 	static int32 _musicVolTable[17];
 	MusicInputStream *_music[MAXMUS];
-	RateConverter *_converter[MAXMUS];
+	int16 *_mixBuffer;
+	int _mixBufferLen;
+
 	bool _musicPaused;
 	bool _musicMuted;
 	uint8 _musicVol;
@@ -90,7 +90,16 @@ public:
 	Sound(Sword2Engine *vm);
 	~Sound();
 
-	void streamMusic(int16 *data, uint len);
+	// AudioStream API
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	int16 read();
+	bool isStereo() const;
+	bool endOfData() const;
+	int getRate() const;
+
+	// End of AudioStream API
+
 	void buildPanTable(bool reverse);
 
 	bool getWavInfo(uint8 *data, WavInfo *wavInfo);

@@ -127,7 +127,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	// soften the sound in any way.
 
 	_mixer->setVolume(256);
-	_mixer->setMusicVolume(256);
 
 	_keyboardEvent.pending = false;
 	_mouseEvent.pending = false;
