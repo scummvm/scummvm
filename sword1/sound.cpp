@@ -219,7 +219,8 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 
 void Sound::calcWaveVolume(int16 *data, uint32 length) {
 	int16 *blkPos = data + 918;
-	for (uint32 cnt = 0; cnt < WAVE_VOL_TAB_LENGTH; cnt++)
+	uint32 cnt;
+	for (cnt = 0; cnt < WAVE_VOL_TAB_LENGTH; cnt++)
 		_waveVolume[cnt] = false;
 	_waveVolPos = 0;
 	for (uint32 blkCnt = 1; blkCnt < length / 918; blkCnt++) {
@@ -228,11 +229,11 @@ void Sound::calcWaveVolume(int16 *data, uint32 length) {
 			return;
 		}
 		int32 average = 0;		
-		for (uint32 cnt = 0; cnt < 918; cnt++)
+		for (cnt = 0; cnt < 918; cnt++)
 			average += blkPos[cnt];
 		average /= 918;
 		uint32 diff = 0;
-		for (uint32 cnt = 0; cnt < 918; cnt++) {
+		for (cnt = 0; cnt < 918; cnt++) {
 			int16 smpDiff = *blkPos - average;
 			diff += (uint32)ABS(smpDiff);
 			blkPos++;
