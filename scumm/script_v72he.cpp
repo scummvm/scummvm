@@ -1193,7 +1193,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->charset = pop();
 		break;
 	case 175:		// HE 99+
-		a->transparency = pop();
+		a->paletteNum = pop();
 		break;
 	case 198:		// SO_ACTOR_VARIABLE
 		i = pop();

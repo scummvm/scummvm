@@ -473,7 +473,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_layer = -pop();
 		break;
 	case 63:
-		a->transparency = pop();
+		a->paletteNum = pop();
 		break;
 	case 65:		// SO_SCALE
 		i = pop();

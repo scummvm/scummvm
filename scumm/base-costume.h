@@ -62,7 +62,7 @@ public:
 	byte _scaleX, _scaleY;
 
 	int _draw_top, _draw_bottom;
-	byte _transparency;
+	byte _paletteNum;
 	bool _skipLimb;
 	bool _actorDrawVirScr;
 
@@ -117,7 +117,7 @@ public:
 		_mirror = false;
 		_width = _height = 0;
 		_skipLimb = 0;
-		_transparency = 0;
+		_paletteNum = 0;
 	}
 
 	virtual void setPalette(byte *palette) = 0;
