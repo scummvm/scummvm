@@ -424,7 +424,9 @@ void ScummEngine::restoreVerbBG(int verb) {
 
 	vs = &_verbs[verb];
 
-	if (_version >= 7) {
+	if (_version == 8) {
+		// Do nothing
+	} else if (_version >= 7) {
 		restoreBG(vs->curRect, vs->bkcolor);
 	} else if (vs->oldRect.left != -1) {
 		restoreBG(vs->oldRect, vs->bkcolor);
