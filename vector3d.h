@@ -82,7 +82,7 @@ public:
 	}
 
 	float dotProduct( float sx, float sy, float sz ) {
-		return x()*sx + y()*sy + z()*sz;
+		return x() * sx + y() * sy + z()*sz;
 	}
 
 	bool isZero() {

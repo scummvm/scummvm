@@ -172,13 +172,13 @@ void screenBlocksDrawDebug() {
 				glVertex2i(i * 16, j * 16);
 				glVertex2i((i + 1) * 16, j * 16);
 				glVertex2i((i + 1) * 16, (j + 1) * 16);
-				glVertex2i(i * 16,(j + 1)*16);
+				glVertex2i(i * 16, (j + 1) * 16);
 				glEnd();
 			}
 		}
 	}
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D );
+	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 }
 
@@ -197,8 +197,8 @@ void screenBlocksBlitDirtyBlocks() {
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
 	glDepthMask(GL_TRUE);
 
-	for(j = 0;j < 30;j++) {
-		for(i=0;i<40;i++) {
+	for(j = 0;j < 30; j++) {
+		for(i = 0; i < 40; i++) {
 			if (screenBlockData[i][j].isDirty) {
 				int width = 1;
 				int start = i++;
