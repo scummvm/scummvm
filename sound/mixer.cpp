@@ -593,10 +593,11 @@ SoundMixer::ChannelStream::ChannelStream(SoundMixer * mixer, void * sound, uint3
 										 byte flags) {
 	_mixer = mixer;
 	_flags = flags;
-	_bufferSize = 1024 * size;
+	_bufferSize = 850000;
 	_ptr = (byte *)malloc(_bufferSize);
 	memcpy(_ptr, sound, size);
 	_endOfData = _ptr + size;
+	_endOfBuffer = _ptr + _bufferSize;
 	if (_flags & FLAG_AUTOFREE)
 		free(sound);
 	_pos = _ptr;
@@ -616,14 +617,15 @@ void SoundMixer::ChannelStream::append(void * data, uint32 len) {
 	byte *cur_pos = _pos;					/* This is just to prevent the variable to move during the tests :-) */
 	if (new_end > (_ptr + _bufferSize)) {
 		/* Wrap-around case */
-		new_end = _ptr + len - ((_ptr + _bufferSize) - _endOfData);
+		uint32 size_to_end_of_buffer = _endOfBuffer - _endOfData;
+		uint32 new_size = len - size_to_end_of_buffer; 
+		new_end = _ptr + new_size;
 		if ((_endOfData < cur_pos) || (new_end >= cur_pos)) {
 			warning("Mixer full... Trying to not break too much ");
 			return;
 		}
-		memcpy(_endOfData, data, (_ptr + _bufferSize) - _endOfData);
-		memcpy(_ptr, (byte *)data + ((_ptr + _bufferSize) - _endOfData),
-					 len - ((_ptr + _bufferSize) - _endOfData));
+		memcpy(_endOfData, (byte*)data, size_to_end_of_buffer);
+		memcpy(_ptr, (byte *)data + size_to_end_of_buffer, new_size);
 	} else {
 		if ((_endOfData < cur_pos) && (new_end >= cur_pos)) {
 			warning("Mixer full... Trying to not break too much ");
@@ -640,8 +642,10 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 	const int16 * vol_tab = _mixer->_volumeTable;
 	byte * end_of_data = _endOfData;
 
-	if (_toBeDestroyed) {
-		realDestroy();
+	if (_pos == end_of_data) {
+		if (--_timeOut == 0) {
+			realDestroy();
+		}
 		return;
 	}
 
@@ -650,9 +654,13 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 	if (_pos < end_of_data) {
 		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
 	} else {
-		_toBeDestroyed = true;
+		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, _endOfBuffer);
+		if (len != 0) {
+			_pos = _ptr;
+			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
+		}
 	}
-
+	_timeOut = 2;
 	_fpPos = fp_pos;
 }
 

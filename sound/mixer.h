@@ -73,11 +73,13 @@ private:
 		SoundMixer * _mixer;
 		byte * _ptr;
 		byte * _endOfData;
+		byte * _endOfBuffer;
 		byte * _pos;
 		uint32 _fpSpeed;
 		uint32 _fpPos;
 		uint32 _bufferSize;
 		uint32 _rate;
+		uint32 _timeOut;
 		byte _flags;
 
 	public:
