@@ -67,7 +67,7 @@ int CON_Init() {
 }
 
 int CON_Shutdown() {
-	R_printf(R_STDOUT, "CON_Shutdown(): Deleting console scrollback and command history.\n");
+	debug(0, "CON_Shutdown(): Deleting console scrollback and command history.");
 
 	CON_DeleteScroll(&ConScrollback);
 	CON_DeleteScroll(&ConHistory);
@@ -283,7 +283,7 @@ int CON_CmdUp() {
 	strcpy(ConInfo.input_buf, start_ptr->str_p);
 	ConInfo.input_pos = start_ptr->str_len - 1;
 
-	R_printf(R_STDOUT, "History pos: %d/%d", ConInfo.hist_pos, ConHistory.lines);
+	debug(0, "History pos: %d/%d", ConInfo.hist_pos, ConHistory.lines);
 
 	return R_SUCCESS;
 }
@@ -293,7 +293,7 @@ int CON_CmdDown(void) {
 	int i;
 
 	if (ConInfo.hist_pos == 1) {
-		R_printf(R_STDOUT, "Erased input buffer.");
+		debug(0, "Erased input buffer.");
 		memset(ConInfo.input_buf, 0, R_CON_INPUTBUF_LEN);
 		ConInfo.input_pos = 0;
 		ConInfo.hist_pos--;
@@ -316,8 +316,7 @@ int CON_CmdDown(void) {
 	strcpy(ConInfo.input_buf, start_ptr->str_p);
 	ConInfo.input_pos = start_ptr->str_len - 1;
 
-	R_printf(R_STDOUT, "History pos: %d/%d", ConInfo.hist_pos,
-	    ConHistory.lines);
+	debug(0, "History pos: %d/%d", ConInfo.hist_pos, ConHistory.lines);
 
 	return R_SUCCESS;
 }
@@ -330,7 +329,7 @@ int CON_PageUp() {
 		ConInfo.line_pos += n_lines;
 	}
 
-	R_printf(R_STDOUT, "Line pos: %d", ConInfo.line_pos);
+	debug(0, "Line pos: %d", ConInfo.line_pos);
 	return R_SUCCESS;
 }
 

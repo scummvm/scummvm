@@ -28,8 +28,6 @@
 
 namespace Saga {
 
-#define R_FONT_DBGLVL R_DEBUG_NONE
-
 #define R_FONT_SHOWUNDEFINED 1	// Define to draw undefined characters * as ?'s
 
 // The first defined character (!) is the only one that may 

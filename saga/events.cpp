@@ -49,13 +49,13 @@ namespace Saga {
 static YS_DL_LIST *EventList;
 
 int EVENT_Init() {
-	R_printf(R_STDOUT, "Initializing event subsystem...\n");
+	debug(0, "Initializing event subsystem...");
 	EventList = ys_dll_create();
 	return (EventList != NULL) ? R_SUCCESS : R_FAILURE;
 }
 
 int EVENT_Shutdown() {
-	R_printf(R_STDOUT, "Shutting down event subsystem...\n");
+	debug(0, "Shutting down event subsystem...");
 	EVENT_FreeList();
 	return R_SUCCESS;
 }
@@ -99,7 +99,7 @@ int EVENT_HandleEvents(long msec) {
 
 		default:
 			result = R_EVENT_INVALIDCODE;
-			R_printf(R_STDERR, "Invalid event code encountered.\n");
+			warning("Invalid event code encountered");
 			break;
 		}
 
@@ -447,7 +447,7 @@ static int ProcessEventTime(long msec) {
 		event_count++;
 
 		if (event_count > R_EVENT_WARNINGCOUNT) {
-			R_printf(R_STDERR, "WARNING: Event list exceeds %u.\n", R_EVENT_WARNINGCOUNT);
+			warning("Event list exceeds %u", R_EVENT_WARNINGCOUNT);
 		}
 	}
 

@@ -42,7 +42,7 @@ int ACTIONMAP_Register(void) {
 }
 
 int ACTIONMAP_Init(void) {
-	R_printf(R_STDOUT, "ACTIONMAP Module: Initializing...\n");
+	debug(0, "ACTIONMAP Module: Initializing...");
 	ActmapModule.init = 1;
 	return R_SUCCESS;
 }
@@ -68,7 +68,7 @@ int ACTIONMAP_Load(const byte * exmap_res, size_t exmap_res_len) {
 
 	exmap_entry = (R_ACTIONMAP_ENTRY *)malloc(exit_ct * sizeof *exmap_entry);
 	if (exmap_entry == NULL) {
-		R_printf(R_STDERR, "Memory allocation failure.\n");
+		warning("Memory allocation failure");
 		return R_MEM;
 	}
 
@@ -86,7 +86,7 @@ int ACTIONMAP_Load(const byte * exmap_res, size_t exmap_res_len) {
 
 		exmap_pt_tbl = (R_POINT *)malloc(exmap_entry[i].pt_count * sizeof *exmap_pt_tbl);
 		if (exmap_pt_tbl == NULL) {
-			R_printf(R_STDERR, "Memory allocation failure.\n");
+			warning("Memory allocation failure");
 			return R_MEM;
 		}
 

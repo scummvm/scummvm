@@ -109,7 +109,7 @@ int InitialSceneProc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 
@@ -151,7 +151,7 @@ int DefaultSceneProc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 

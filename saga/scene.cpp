@@ -71,7 +71,7 @@ int SCENE_Init() {
 	// Load scene module resource context
 	result = GAME_GetFileContext(&SceneModule.scene_ctxt, R_GAME_RESOURCEFILE, 0);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Couldn't load scene resource context.\n");
+		warning("Couldn't load scene resource context");
 		return R_FAILURE;
 	}
 
@@ -82,10 +82,10 @@ int SCENE_Init() {
 	}
 
 	// Load scene lookup table
-	R_printf(R_STDOUT, "SCENE_Init(): Loading scene LUT from resource %u.\n", gs_desc.scene_lut_rn);
+	debug(0, "SCENE_Init(): Loading scene LUT from resource %u.", gs_desc.scene_lut_rn);
 	result = RSC_LoadResource(SceneModule.scene_ctxt, gs_desc.scene_lut_rn, &scene_lut_p, &scene_lut_len);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Error: couldn't load scene LUT.\n");
+		warning("Error: couldn't load scene LUT");
 		return R_FAILURE;
 	}
 
@@ -93,7 +93,7 @@ int SCENE_Init() {
 	SceneModule.scene_max = SceneModule.scene_count - 1;
 	SceneModule.scene_lut = (int *)malloc(SceneModule.scene_max * sizeof *SceneModule.scene_lut);
 	if (SceneModule.scene_lut == NULL) {
-		R_printf(R_STDERR, "SCENE_Init(): Memory allocation failed.\n");
+		warning("SCENE_Init(): Memory allocation failed");
 		return R_MEM;
 	}
 
@@ -109,16 +109,15 @@ int SCENE_Init() {
 		SceneModule.first_scene = gs_desc.first_scene;
 	}
 
-	R_printf(R_STDOUT,
-	    "SCENE_Init(): First scene set to %d.\n", SceneModule.first_scene);
+	debug(0, "SCENE_Init(): First scene set to %d.", SceneModule.first_scene);
 
-	R_printf(R_STDOUT, "SCENE_Init(): LUT has %d entries.\n", SceneModule.scene_max);
+	debug(0, "SCENE_Init(): LUT has %d entries.", SceneModule.scene_max);
 
 	// Create scene module text list
 	SceneModule.text_list = TEXT_CreateList();
 
 	if (SceneModule.text_list == NULL) {
-		R_printf(R_STDERR, "Error: Couldn't create scene text list.\n");
+		warning("Error: Couldn't create scene text list");
 		return R_FAILURE;
 	}
 
@@ -160,12 +159,12 @@ int SCENE_Start() {
 	assert(SceneModule.init);
 
 	if (SceneModule.scene_loaded) {
-		R_printf(R_STDERR, "Error: Can't start game...scene already loaded!\n");
+		warning("Error: Can't start game...scene already loaded");
 		return R_FAILURE;
 	}
 
 	if (SceneModule.in_game) {
-		R_printf(R_STDERR, "Error: Can't start game...game already started!\n");
+		warning("Error: Can't start game...game already started");
 		return R_FAILURE;
 	}
 
@@ -177,7 +176,7 @@ int SCENE_Start() {
 		IHNM_StartProc();
 		break;
 	default:
-		R_printf(R_STDERR, "Error: Can't start game... gametype not supported.\n");
+		warning("Error: Can't start game... gametype not supported");
 		break;
 	}
 
@@ -202,12 +201,12 @@ int SCENE_Next() {
 	assert(SceneModule.init);
 
 	if (!SceneModule.scene_loaded) {
-		R_printf(R_STDERR, "Error: Can't advance scene...no scene loaded!\n");
+		warning("Error: Can't advance scene...no scene loaded");
 		return R_FAILURE;
 	}
 
 	if (SceneModule.in_game) {
-		R_printf(R_STDERR, "Error: Can't advance scene...game already started!\n");
+		warning("Error: Can't advance scene...game already started");
 		return R_FAILURE;
 	}
 
@@ -246,19 +245,19 @@ int SCENE_Skip() {
 	assert(SceneModule.init);
 
 	if (!SceneModule.scene_loaded) {
-		R_printf(R_STDERR, "Error: Can't skip scene...no scene loaded.\n");
+		warning("Error: Can't skip scene...no scene loaded");
 		return R_FAILURE;
 	}
 
 	if (SceneModule.in_game) {
-		R_printf(R_STDERR, "Error: Can't skip scene...game already started.\n");
+		warning("Error: Can't skip scene...game already started");
 		return R_FAILURE;
 	}
 
 	// Walk down scene queue and try to find a skip target
 	node = ys_dll_head(SceneModule.scene_queue);
 	if (node == NULL) {
-		R_printf(R_STDERR, "Error: Can't skip scene...no scenes in queue.\n");
+		warning("Error: Can't skip scene...no scenes in queue");
 		return R_FAILURE;
 	}
 
@@ -291,17 +290,17 @@ int SCENE_Change(int scene_num) {
 	assert(SceneModule.init);
 
 	if (!SceneModule.scene_loaded) {
-		R_printf(R_STDERR, "Error: Can't change scene. No scene currently loaded. Game in invalid state.\n");
+		warning("Error: Can't change scene. No scene currently loaded. Game in invalid state");
 		return R_FAILURE;
 	}
 
 	if ((scene_num < 0) || (scene_num > SceneModule.scene_max)) {
-		R_printf(R_STDERR, "Error: Can't change scene. Invalid scene number.\n");
+		warning("Error: Can't change scene. Invalid scene number");
 		return R_FAILURE;
 	}
 
 	if (SceneModule.scene_lut[scene_num] == 0) {
-		R_printf(R_STDERR, "Error: Can't change scene; invalid scene descriptor resource number (0)\n");
+		warning("Error: Can't change scene; invalid scene descriptor resource number (0)");
 		return R_FAILURE;
 	}
 
@@ -402,7 +401,7 @@ int SCENE_Load(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DE
 	assert(SceneModule.init);
 
 	if (SceneModule.scene_loaded == 1) {
-		R_printf(R_STDERR, "Error, a scene is already loaded.\n");
+		warning("Error, a scene is already loaded");
 		return R_FAILURE;
 	}
 
@@ -428,7 +427,7 @@ int SCENE_Load(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DE
 		SceneModule.reslist_entries = scene_desc_param->res_list_ct;
 		break;
 	default:
-		R_printf(R_STDERR, "Error: Invalid scene load flag.\n");
+		warning("Error: Invalid scene load flag");
 		return R_FAILURE;
 		break;
 	}
@@ -438,19 +437,19 @@ int SCENE_Load(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DE
 
 		SceneModule.scene_rn = res_number;
 		assert(SceneModule.scene_rn != 0);
-		R_printf(R_STDOUT, "Loading scene resource %u:\n", res_number);
+		debug(0, "Loading scene resource %u:", res_number);
 
 		if (LoadSceneDescriptor(res_number) != R_SUCCESS) {
-			R_printf(R_STDERR, "Error reading scene descriptor.\n");
+			warning("Error reading scene descriptor");
 			return R_FAILURE;
 		}
 
 		if (LoadSceneResourceList(SceneModule.desc.res_list_rn) != R_SUCCESS) {
-			R_printf(R_STDERR, "Error reading scene resource list.\n");
+			warning("Error reading scene resource list");
 			return R_FAILURE;
 		}
 	} else {
-		R_printf(R_STDOUT, "Loading memory scene resource.\n");
+		debug(0, "Loading memory scene resource.");
 	}
 
 	// Load resources from scene resource list
@@ -458,21 +457,21 @@ int SCENE_Load(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DE
 		result = RSC_LoadResource(SceneModule.scene_ctxt, SceneModule.reslist[i].res_number,
 								&SceneModule.reslist[i].res_data, &SceneModule.reslist[i].res_data_len);
 		if (result != R_SUCCESS) {
-			R_printf(R_STDERR, "Error: Allocation failure loading scene resource list.\n");
+			warning("Error: Allocation failure loading scene resource list");
 			return R_FAILURE;
 		}
 	}
 
 	// Process resources from scene resource list
 	if (ProcessSceneResources() != R_SUCCESS) {
-		R_printf(R_STDERR, "Error loading scene resources.\n");
+		warning("Error loading scene resources");
 		return R_FAILURE;
 	}
 
 	// Load scene script data
 	if (SceneModule.desc.script_num > 0) {
 		if (SCRIPT_Load(SceneModule.desc.script_num) != R_SUCCESS) {
-			R_printf(R_STDERR, "Error loading scene script.\n");
+			warning("Error loading scene script");
 			return R_FAILURE;
 		}
 	}
@@ -499,12 +498,12 @@ int LoadSceneDescriptor(uint32 res_number) {
 
 	result = RSC_LoadResource(SceneModule.scene_ctxt, res_number, &scene_desc_data, &scene_desc_len);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Error: couldn't load scene descriptor.\n");
+		warning("Error: couldn't load scene descriptor");
 		return R_FAILURE;
 	}
 
 	if (scene_desc_len != SAGA_SCENE_DESC_LEN) {
-		R_printf(R_STDERR, "Error: scene descriptor length invalid.\n");
+		warning("Error: scene descriptor length invalid");
 		return R_FAILURE;
 	}
 
@@ -533,7 +532,7 @@ int LoadSceneResourceList(uint32 reslist_rn) {
 	// Load the scene resource table
 	result = RSC_LoadResource(SceneModule.scene_ctxt, reslist_rn, &resource_list, &resource_list_len);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Error: couldn't load scene resource list.\n");
+		warning("Error: couldn't load scene resource list");
 		return R_FAILURE;
 	}
 
@@ -541,17 +540,17 @@ int LoadSceneResourceList(uint32 reslist_rn) {
 
 	// Allocate memory for scene resource list 
 	SceneModule.reslist_entries = resource_list_len / SAGA_RESLIST_ENTRY_LEN;
-	R_printf(R_STDOUT, "Scene resource list contains %d entries.\n", SceneModule.reslist_entries);
+	debug(0, "Scene resource list contains %d entries.", SceneModule.reslist_entries);
 	SceneModule.reslist = (R_SCENE_RESLIST *)calloc(SceneModule.reslist_entries, sizeof *SceneModule.reslist);
 
 	if (SceneModule.reslist == NULL) {
-		R_printf(R_STDERR, "Error: Memory allocation failed.\n");
+		warning("Error: Memory allocation failed");
 		return R_MEM;
 	}
 
 	// Load scene resource list from raw scene 
 	// resource table
-	R_printf(R_STDOUT, "Loading scene resource list...\n");
+	debug(0, "Loading scene resource list...");
 
 	for (i = 0; i < SceneModule.reslist_entries; i++) {
 		SceneModule.reslist[i].res_number = readS->readUint16LE();
@@ -576,11 +575,11 @@ int ProcessSceneResources() {
 		switch (SceneModule.reslist[i].res_type) {
 		case SAGA_BG_IMAGE: // Scene background resource
 			if (SceneModule.bg.loaded) {
-				R_printf(R_STDERR, "Error: Multiple background resources encountered.\n");
+				warning("Error: Multiple background resources encountered");
 				return R_FAILURE;
 			}
 
-			R_printf(R_STDOUT, "Loading background resource.\n");
+			debug(0, "Loading background resource.");
 			SceneModule.bg.res_buf = SceneModule.reslist[i].res_data;
 			SceneModule.bg.res_len = SceneModule.reslist[i].res_data_len;
 			SceneModule.bg.loaded = 1;
@@ -591,7 +590,7 @@ int ProcessSceneResources() {
 				&SceneModule.bg.buf_len,
 				&SceneModule.bg.w,
 				&SceneModule.bg.h) != R_SUCCESS) {
-				R_printf(R_STDERR, "Error loading background resource: %u\n", SceneModule.reslist[i].res_number);
+				warning("Error loading background resource: %u", SceneModule.reslist[i].res_number);
 				return R_FAILURE;
 			}
 
@@ -601,9 +600,9 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource
 			if (SceneModule.bg_mask.loaded) {
-				R_printf(R_STDERR, "Error: Duplicate background mask resource encountered.\n");
+				warning("Error: Duplicate background mask resource encountered");
 			}
-			R_printf(R_STDOUT, "Loading BACKGROUND MASK resource.\n");
+			debug(0, "Loading BACKGROUND MASK resource.");
 			SceneModule.bg_mask.res_buf = SceneModule.reslist[i].res_data;
 			SceneModule.bg_mask.res_len = SceneModule.reslist[i].res_data_len;
 			SceneModule.bg_mask.loaded = 1;
@@ -611,34 +610,34 @@ int ProcessSceneResources() {
 							&SceneModule.bg_mask.buf_len, &SceneModule.bg_mask.w, &SceneModule.bg_mask.h);
 			break;
 		case SAGA_OBJECT_NAME_LIST:
-			R_printf(R_STDOUT, "Loading object name list resource...\n");
+			debug(0, "Loading object name list resource...");
 			OBJECTMAP_LoadNames(SceneModule.reslist[i].res_data, SceneModule.reslist[i].res_data_len);
 			break;
 		case SAGA_OBJECT_MAP:
-			R_printf(R_STDOUT, "Loading object map resource...\n");
+			debug(0, "Loading object map resource...");
 			if (OBJECTMAP_Load(res_data,
 				res_data_len) != R_SUCCESS) {
-				R_printf(R_STDERR, "Error loading object map resource.\n");
+				warning("Error loading object map resource");
 				return R_FAILURE;
 			}
 			break;
 		case SAGA_ACTION_MAP:
-			R_printf(R_STDOUT, "Loading exit map resource...\n");
+			debug(0, "Loading exit map resource...");
 			if (ACTIONMAP_Load(res_data, res_data_len) != R_SUCCESS) {
-				R_printf(R_STDERR, "Error loading exit map resource.\n");
+				warning("Error loading exit map resource");
 				return R_FAILURE;
 			}
 			break;
 		case SAGA_ISO_TILESET:
 			if (SceneModule.scene_mode == R_SCENE_MODE_NORMAL) {
-				R_printf(R_STDERR, "Isometric tileset incompatible with normal scene mode.\n");
+				warning("Isometric tileset incompatible with normal scene mode");
 				return R_FAILURE;
 			}
 
-			R_printf(R_STDOUT, "Loading isometric tileset resource.\n");
+			debug(0, "Loading isometric tileset resource.");
 
 			if (ISOMAP_LoadTileset(res_data, res_data_len) != R_SUCCESS) {
-				R_printf(R_STDERR, "Error loading isometric tileset resource.\n");
+				warning("Error loading isometric tileset resource");
 				return R_FAILURE;
 			}
 
@@ -646,14 +645,14 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_ISO_METAMAP:
 			if (SceneModule.scene_mode == R_SCENE_MODE_NORMAL) {
-				R_printf(R_STDERR, "Isometric metamap incompatible with normal scene mode.\n");
+				warning("Isometric metamap incompatible with normal scene mode");
 				return R_FAILURE;
 			}
 
-			R_printf(R_STDOUT, "Loading isometric metamap resource.\n");
+			debug(0, "Loading isometric metamap resource.");
 
 			if (ISOMAP_LoadMetamap(res_data, res_data_len) != R_SUCCESS) {
-				R_printf(R_STDERR, "Error loading isometric metamap resource.\n");
+				warning("Error loading isometric metamap resource");
 				return R_FAILURE;
 			}
 
@@ -661,14 +660,14 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_ISO_METATILESET:
 			if (SceneModule.scene_mode == R_SCENE_MODE_NORMAL) {
-				R_printf(R_STDERR, "Isometric metatileset incompatible with normal scene mode.\n");
+				warning("Isometric metatileset incompatible with normal scene mode");
 				return R_FAILURE;
 			}
 
-			R_printf(R_STDOUT, "Loading isometric metatileset resource.\n");
+			debug(0, "Loading isometric metatileset resource.");
 
 			if (ISOMAP_LoadMetaTileset(res_data, res_data_len) != R_SUCCESS) {
-				R_printf(R_STDERR, "Error loading isometric tileset resource.\n");
+				warning("Error loading isometric tileset resource");
 				return R_FAILURE;
 			}
 
@@ -685,11 +684,11 @@ int ProcessSceneResources() {
 				SCENE_ANIMINFO *new_animinfo;
 				uint16 new_anim_id;
 
-				R_printf(R_STDOUT, "Loading animation resource...\n");
+				debug(0, "Loading animation resource...");
 
 				new_animinfo = (SCENE_ANIMINFO *)malloc(sizeof *new_animinfo);
 				if (new_animinfo == NULL) {
-					R_printf(R_STDERR, "Memory allocation error.\n");
+					warning("Memory allocation error");
 					return R_MEM;
 				}
 
@@ -697,7 +696,7 @@ int ProcessSceneResources() {
 					SceneModule.reslist[i].res_data_len,
 					&new_anim_id) == R_SUCCESS) {
 				} else {
-					R_printf(R_STDERR, "Error loading animation resource\n");
+					warning("Error loading animation resource");
 					return R_FAILURE;
 				}
 
@@ -708,11 +707,11 @@ int ProcessSceneResources() {
 			}
 			break;
 		case SAGA_PAL_ANIM:
-			R_printf(R_STDOUT, "Loading palette animation resource.\n");
+			debug(0, "Loading palette animation resource.");
 			PALANIM_Load(SceneModule.reslist[i].res_data, SceneModule.reslist[i].res_data_len);
 			break;
 		default:
-			R_printf(R_STDERR, "Encountered unknown resource type: %d\n", SceneModule.reslist[i].res_type);
+			warning("Encountered unknown resource type: %d", SceneModule.reslist[i].res_type);
 			break;
 		}
 	}
@@ -757,11 +756,11 @@ int SCENE_End() {
 	assert(SceneModule.init);
 
 	if (SceneModule.scene_loaded != 1) {
-		R_printf(R_STDERR, "SCENE_End(): No scene to end.\n");
+		warning("SCENE_End(): No scene to end");
 		return -1;
 	}
 
-	R_printf(R_STDOUT, "SCENE_End(): Ending scene...\n");
+	debug(0, "SCENE_End(): Ending scene...");
 
 	SCENE_GetInfo(&scene_info);
 

@@ -36,18 +36,7 @@ namespace Saga {
 
 #define R_MAXPATH 512
 
-// For debug message processing
-#define R_DEBUG_NONE 0
-#define R_DEBUG_INFO 1
-#define R_DEBUG_VERBOSE 2
-#define R_DEBUG_PARANOID 3
-
 #define R_MEMFAIL_MSG "Memory allocation error."
-
-#define R_STDOUT stdout
-#define R_STDERR stderr
-
-#define R_printf fprintf
 
 // Define opaque types
 

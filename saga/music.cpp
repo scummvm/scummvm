@@ -297,8 +297,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
 				&resource_size) != R_SUCCESS ) {
-			R_printf(R_STDERR, "SYSMUSIC_Play(): Resource load failed: %u",
-				music_rn);
+			warning("SYSMUSIC_Play(): Resource load failed: %u", music_rn);
 			return R_FAILURE;
 		}
 

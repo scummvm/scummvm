@@ -28,7 +28,6 @@
 
 namespace Saga {
 
-#define R_EVENT_DBGLVL R_DEBUG_NONE
 #define R_EVENT_WARNINGCOUNT 1000
 #define R_EVENT_MASK 0x00FF
 

@@ -220,9 +220,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		}
 
 		saved_offset = thread->i_offset;
-#if 0
-		R_printf(R_STDOUT, "Executing thread offset: %lu", thread->i_offset);
-#endif
+		debug(2, "Executing thread offset: %lu", thread->i_offset);
 		MemoryReadStream *readS = new MemoryReadStream(GetReadPtr(thread), GetReadLen(thread));
 
 		in_char = readS->readByte();

@@ -34,8 +34,6 @@
 #include "gfx_mod.h"
 #include "font_mod.h"
 
-#define R_OBJECTMAP_DEBUG R_DEBUG_INFO
-
 #include "objectmap_mod.h"
 #include "objectmap.h"
 
@@ -51,7 +49,7 @@ int OBJECTMAP_Register() {
 
 // Initializes the object map module, creates module allocation context
 int OBJECTMAP_Init() {
-	R_printf(R_STDOUT, "OBJECTMAP Module: Initializing...\n");
+	debug(0, "OBJECTMAP Module: Initializing...");
 
 	OMInfo.initialized = 1;
 	return R_SUCCESS;
@@ -63,12 +61,12 @@ int OBJECTMAP_Shutdown() {
 		return R_FAILURE;
 	}
 
-	R_printf(R_STDOUT, "OBJECTMAP Module: Shutting down...\n");
+	debug(0, "OBJECTMAP Module: Shutting down...");
 
 	OBJECTMAP_Free();
 	OBJECTMAP_FreeNames();
 
-	R_printf(R_STDOUT, "OBJECTMAP Module: Shutdown AOK.\n");
+	debug(0, "OBJECTMAP Module: Shutdown AOK.");
 
 	OMInfo.initialized = 0;
 	return R_SUCCESS;
@@ -85,7 +83,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 	MemoryReadStream *readS = new MemoryReadStream(om_res, om_res_len);
 
 	if (!OMInfo.initialized) {
-		R_printf(R_STDERR, "Error: Object map module not initialized!\n");
+		warning("Error: Object map module not initialized");
 		return R_FAILURE;
 	}
 
@@ -99,7 +97,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 	OMInfo.object_maps = (R_OBJECTMAP_ENTRY *)malloc(OMInfo.n_objects * sizeof *OMInfo.object_maps);
 
 	if (OMInfo.object_maps == NULL) {
-		R_printf(R_STDERR, "Error: Memory allocation failed.\n");
+		warning("Error: Memory allocation failed");
 		return R_MEM;
 	}
 
@@ -114,7 +112,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 		object_map->clickareas = (R_CLICKAREA *)malloc(object_map->n_clickareas * sizeof *(object_map->clickareas));
 
 		if (object_map->clickareas == NULL) {
-			R_printf(R_STDERR, "Error: Memory allocation failed.\n");
+			warning("Error: Memory allocation failed");
 			return R_MEM;
 		}
 
@@ -126,7 +124,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 
 			clickarea->points = (R_POINT *)malloc(clickarea->n_points * sizeof *(clickarea->points));
 			if (clickarea->points == NULL) {
-				R_printf(R_STDERR, "Error: Memory allocation failed.\n");
+				warning("Error: Memory allocation failed");
 				return R_MEM;
 			}
 
@@ -136,10 +134,8 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 				point->x = readS->readSint16LE();
 				point->y = readS->readSint16LE();
 			}
-#if R_OBJECTMAP_DEBUG >= R_DEBUG_PARANOID
-			R_printf(R_STDOUT, "OBJECTMAP_Load(): Read %d points for clickarea %d in object %d.\n",
+			debug(2, "OBJECTMAP_Load(): Read %d points for clickarea %d in object %d.",
 					clickarea->n_points, k, object_map->object_num);
-#endif
 		}
 	}
 
@@ -196,15 +192,11 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len) {
 	n_names = table_len / 2 - 2;
 	OMInfo.n_names = n_names;
 
-#if 0
-#if R_OBJECTMAP_DEBUG >= R_DEBUG_INFO
-	R_printf(R_STDOUT, "OBJECTMAP_LoadNames: Loading %d object names.\n", n_names);
-#endif
-#endif
+	debug(2, "OBJECTMAP_LoadNames: Loading %d object names.", n_names);
 	OMInfo.names = (const char **)malloc(n_names * sizeof *OMInfo.names);
 
 	if (OMInfo.names == NULL) {
-		R_printf(R_STDERR, "Error: Memory allocation failed.\n");
+		warning("Error: Memory allocation failed");
 		return R_MEM;
 	}
 
@@ -212,9 +204,7 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len) {
 		name_offset = readS->readUint16LE();
 		OMInfo.names[i] = (const char *)(onl_res + name_offset);
 
-#if R_OBJECTMAP_DEBUG >= R_DEBUG_VERBOSE
-		R_printf(R_STDOUT, "Loaded object name string: %s\n", OMInfo.names[i]);
-#endif
+		debug(3, "Loaded object name string: %s", OMInfo.names[i]);
 	}
 
 	OMInfo.names_loaded = 1;

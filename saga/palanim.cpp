@@ -56,11 +56,11 @@ int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 
 	PAnimData.entry_count = readS->readUint16LE();
 
-	R_printf(R_STDOUT, "PALANIM_Load(): Loading %d PALANIM entries.\n", PAnimData.entry_count);
+	debug(0, "PALANIM_Load(): Loading %d PALANIM entries.", PAnimData.entry_count);
 
 	test_p = calloc(PAnimData.entry_count, sizeof(PALANIM_ENTRY));
 	if (test_p == NULL) {
-		R_printf(R_STDERR, "PALANIM_Load(): Allocation failure.\n");
+		warning("PALANIM_Load(): Allocation failure");
 		return R_MEM;
 	}
 
@@ -77,25 +77,21 @@ int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 		PAnimData.entries[i].pal_count = pal_count;
 		PAnimData.entries[i].color_count = color_count;
 
-#if 0
-		R_printf(R_STDOUT, "PALANIM_Load(): Entry %d: Loading %d palette indices.\n", i, pal_count);
-#endif
+		debug(2, "PALANIM_Load(): Entry %d: Loading %d palette indices.\n", i, pal_count);
 
 		test_p = calloc(1, sizeof(char) * pal_count);
 		if (test_p == NULL) {
-			R_printf(R_STDERR, "PALANIM_Load(): Allocation failure.\n");
+			warning("PALANIM_Load(): Allocation failure");
 			return R_MEM;
 		}
 
 		PAnimData.entries[i].pal_index = (byte *)test_p;
 
-#if 0
-		R_printf(R_STDOUT, "PALANIM_Load(): Entry %d: Loading %d SAGA_COLOR structures.\n", i, color_count);
-#endif
+		debug(2, "PALANIM_Load(): Entry %d: Loading %d SAGA_COLOR structures.", i, color_count);
 
 		test_p = calloc(1, sizeof(R_COLOR) * color_count);
 		if (test_p == NULL) {
-			R_printf(R_STDERR, "PALANIM_Load(): Allocation failure.\n");
+			warning("PALANIM_Load(): Allocation failure");
 			return R_MEM;
 		}
 
@@ -191,17 +187,13 @@ int PALANIM_Free() {
 	}
 
 	for (i = 0; i < PAnimData.entry_count; i++) {
-#if 0
-		R_printf(R_STDOUT, "PALANIM_Free(): Entry %d: Freeing colors.\n", i);
-#endif
+		debug(2, "PALANIM_Free(): Entry %d: Freeing colors.", i);
 		free(PAnimData.entries[i].colors);
-#if 0
-		R_printf(R_STDOUT, "PALANIM_Free(): Entry %d: Freeing indices.\n", i);
-#endif
+		debug(2, "PALANIM_Free(): Entry %d: Freeing indices.", i);
 		free(PAnimData.entries[i].pal_index);
 	}
 
-	R_printf(R_STDOUT, "PALANIM_Free(): Freeing entries.\n");
+	debug(0, "PALANIM_Free(): Freeing entries.");
 
 	free(PAnimData.entries);
 

@@ -77,7 +77,7 @@ int CVAR_Shutdown() {
 	R_CVAR *temp_ptr;
 	int i;
 
-	R_printf(R_STDOUT, "CVAR_Shutdown(): Deleting cvar hash table.\n");
+	debug(0, "CVAR_Shutdown(): Deleting cvar hash table.");
 
 	for (i = 0; i < R_CVAR_HASHLEN; i++) {
 		for (walk_ptr = CVHashTbl[i]; walk_ptr; walk_ptr = temp_ptr) {

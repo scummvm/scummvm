@@ -60,24 +60,24 @@ int SCRIPT_Init() {
 	int result;
 	int i, j;
 
-	R_printf(R_STDOUT, "Initializing scripting subsystem.\n");
+	debug(0, "Initializing scripting subsystem.");
 	// Load script resource file context
 	result = GAME_GetFileContext(&ScriptModule.script_ctxt, R_GAME_SCRIPTFILE, 0);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Couldn't get script file context.\n");
+		warning("Couldn't get script file context");
 		return R_FAILURE;
 	}
 
 	// Load script LUT resource
 	result = GAME_GetFileContext(&s_lut_ctxt, R_GAME_RESOURCEFILE, 0);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Couldn't get resource file context.\n");
+		warning("Couldn't get resource file context");
 		return R_FAILURE;
 	}
 
 	result = RSC_LoadResource(s_lut_ctxt, ITE_SCRIPT_LUT, &rsc_ptr, &rsc_len);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Error: Couldn't load script resource look-up table.\n");
+		warning("Error: Couldn't load script resource look-up table");
 		return R_FAILURE;
 	}
 
@@ -87,7 +87,7 @@ int SCRIPT_Init() {
 	} else if (rsc_len % R_S_LUT_ENTRYLEN_ITEDISK == 0) {
 		ScriptModule.script_lut_entrylen = R_S_LUT_ENTRYLEN_ITEDISK;
 	} else {
-		R_printf(R_STDERR, "Error: Invalid script lookup table length.\n");
+		warning("Error: Invalid script lookup table length");
 		return R_FAILURE;
 	}
 
@@ -97,7 +97,7 @@ int SCRIPT_Init() {
 	// Allocate space for logical LUT
 	ScriptModule.script_lut = (R_SCRIPT_LUT_ENTRY *)malloc(ScriptModule.script_lut_max * sizeof(R_SCRIPT_LUT_ENTRY));
 	if (ScriptModule.script_lut == NULL) {
-		R_printf(R_STDERR, "Error: Couldn't allocate memory for script resource look-up table.\n");
+		warning("Error: Couldn't allocate memory for script resource look-up table");
 		return R_MEM;
 	}
 
@@ -144,7 +144,7 @@ int SCRIPT_Shutdown() {
 		return R_FAILURE;
 	}
 
-	R_printf(R_STDOUT, "Shutting down scripting subsystem.\n");
+	debug(0, "Shutting down scripting subsystem.");
 
 	// Free script lookup table
 	free(ScriptModule.script_lut);
@@ -182,7 +182,7 @@ int SCRIPT_Load(int script_num) {
 
 	// Validate script number
 	if ((script_num < 0) || (script_num > ScriptModule.script_lut_max)) {
-		R_printf(R_STDERR, "SCRIPT_Load(): Invalid script number!\n");
+		warning("SCRIPT_Load(): Invalid script number");
 		return R_FAILURE;
 	}
 
@@ -190,11 +190,11 @@ int SCRIPT_Load(int script_num) {
 	SCRIPT_Free();
 
 	// Initialize script data structure
-	R_printf(R_STDOUT, "Loading script data for script #%d.\n", script_num);
+	debug(0, "Loading script data for script #%d", script_num);
 
 	script_data = (R_SCRIPTDATA *)malloc(sizeof *script_data);
 	if (script_data == NULL) {
-		R_printf(R_STDERR, "Memory allocation failed.\n");
+		warning("Memory allocation failed");
 		return R_MEM;
 	}
 
@@ -210,7 +210,7 @@ int SCRIPT_Load(int script_num) {
 
 	result = RSC_LoadResource(ScriptModule.script_ctxt, scriptl_rn, &bytecode_p, &bytecode_len);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Error loading script bytecode resource.\n");
+		warning("Error loading script bytecode resource");
 		free(script_data);
 		return R_FAILURE;
 	}
@@ -218,7 +218,7 @@ int SCRIPT_Load(int script_num) {
 	script_data->bytecode = SCRIPT_LoadBytecode(bytecode_p, bytecode_len);
 
 	if (script_data->bytecode == NULL) {
-		R_printf(R_STDERR, "Error interpreting script bytecode resource.\n");
+		warning("Error interpreting script bytecode resource");
 		free(script_data);
 		RSC_FreeResource(bytecode_p);
 		return R_FAILURE;
@@ -230,7 +230,7 @@ int SCRIPT_Load(int script_num) {
 	// Load dialogue list resource
 	result = RSC_LoadResource(ScriptModule.script_ctxt, diagl_rn, &diagl_p, &diagl_len);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Error loading dialogue list resource.\n");
+		warning("Error loading dialogue list resource");
 		free(script_data);
 		RSC_FreeResource(bytecode_p);
 		return R_FAILURE;
@@ -239,7 +239,7 @@ int SCRIPT_Load(int script_num) {
 	// Convert dialogue list resource to logical dialogue list
 	script_data->diag = SCRIPT_LoadDialogue(diagl_p, diagl_len);
 	if (script_data->diag == NULL) {
-		R_printf(R_STDERR, "Error interpreting dialogue list resource.\n");
+		warning("Error interpreting dialogue list resource");
 		free(script_data);
 		RSC_FreeResource(bytecode_p);
 		RSC_FreeResource(diagl_p);
@@ -253,7 +253,7 @@ int SCRIPT_Load(int script_num) {
 		// Load voice LUT resource
 		result = RSC_LoadResource(ScriptModule.script_ctxt, voicelut_rn, &voicelut_p, &voicelut_len);
 		if (result != R_SUCCESS) {
-			R_printf(R_STDERR, "Error loading voice LUT resource.\n");
+			warning("Error loading voice LUT resource");
 			free(script_data);
 			RSC_FreeResource(bytecode_p);
 			RSC_FreeResource(diagl_p);
@@ -263,7 +263,7 @@ int SCRIPT_Load(int script_num) {
 		// Convert voice LUT resource to logical voice LUT
 		script_data->voice = SCRIPT_LoadVoiceLUT(voicelut_p, voicelut_len, script_data);
 		if (script_data->voice == NULL) {
-			R_printf(R_STDERR, "Error interpreting voice LUT resource.\n");
+			warning("Error interpreting voice LUT resource");
 			free(script_data);
 			RSC_FreeResource(bytecode_p);
 			RSC_FreeResource(diagl_p);
@@ -289,7 +289,7 @@ int SCRIPT_Free() {
 		return R_FAILURE;
 	}
 
-	R_printf(R_STDOUT, "Releasing script data.\n");
+	debug(0, "Releasing script data.");
 
 	// Finish initialization
 	if (ScriptModule.current_script->diag != NULL) {
@@ -327,7 +327,7 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte *bytecode_p, size_t bytecode_len) {
 	size_t ep_tbl_offset; // Offset of bytecode entrypoint table
 	unsigned long i;
 
-	R_printf(R_STDOUT, "Loading script bytecode...\n");
+	debug(0, "Loading script bytecode...");
 
 	MemoryReadStream *readS = new MemoryReadStream(bytecode_p, bytecode_len);
 
@@ -338,12 +338,12 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte *bytecode_p, size_t bytecode_len) {
 
 	// Check that the entrypoint table offset is valid.
 	if ((bytecode_len - ep_tbl_offset) < (n_entrypoints * R_SCRIPT_TBLENTRY_LEN)) {
-		R_printf(R_STDERR, "Invalid table offset.\n");
+		warning("Invalid table offset");
 		return NULL;
 	}
 
 	if (n_entrypoints > R_SCRIPT_MAX) {
-		R_printf(R_STDERR, "Script limit exceeded.\n");
+		warning("Script limit exceeded");
 		return NULL;
 	}
 
@@ -352,13 +352,13 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte *bytecode_p, size_t bytecode_len) {
 
 	bc_new_data = (R_SCRIPT_BYTECODE *)malloc(sizeof *bc_new_data);
 	if (bc_new_data == NULL) {
-		R_printf(R_STDERR, "Memory allocation failure loading script bytecode.\n");
+		warning("Memory allocation failure loading script bytecode");
 		return NULL;
 	}
 
 	bc_ep_tbl = (R_PROC_TBLENTRY *)malloc(n_entrypoints * sizeof *bc_ep_tbl);
 	if (bc_ep_tbl == NULL) {
-		R_printf(R_STDERR, "Memory allocation failure creating script entrypoint table.\n");
+		warning("Memory allocation failure creating script entrypoint table");
 		free(bc_new_data);
 		return NULL;
 	}
@@ -377,7 +377,7 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte *bytecode_p, size_t bytecode_len) {
 
 		// Perform a simple range check on offset values
 		if ((bc_ep_tbl[i].name_offset > bytecode_len) || (bc_ep_tbl[i].offset > bytecode_len)) {
-			R_printf(R_STDERR, "Invalid offset encountered in script entrypoint table.\n");
+			warning("Invalid offset encountered in script entrypoint table");
 			free(bc_new_data);
 			free(bc_ep_tbl);
 			return NULL;
@@ -402,7 +402,7 @@ R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const byte *dialogue_p, size_t dialogue_len
 	uint16 i;
 	size_t offset;
 
-	R_printf(R_STDOUT, "Loading dialogue list...\n");
+	debug(0, "Loading dialogue list...");
 
 	// Allocate dialogue list structure
 	dialogue_list = (R_DIALOGUE_LIST *)malloc(sizeof *dialogue_list);
@@ -415,7 +415,7 @@ R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const byte *dialogue_p, size_t dialogue_len
 	// First uint16 is the offset of the first string
 	offset = readS->readUint16LE();
 	if (offset > dialogue_len) {
-		R_printf(R_STDERR, "Error, invalid string offset.\n");
+		warning("Error, invalid string offset");
 		return NULL;
 	}
 
@@ -443,7 +443,7 @@ R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const byte *dialogue_p, size_t dialogue_len
 	for (i = 0; i < n_dialogue; i++) {
 		offset = readS->readUint16LE();
 		if (offset > dialogue_len) {
-			R_printf(R_STDERR, "Error, invalid string offset.\n");
+			warning("Error, invalid string offset");
 			free(dialogue_list->str);
 			free(dialogue_list->str_off);
 			free(dialogue_list);
@@ -471,7 +471,7 @@ R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R_
 
 	n_voices = voicelut_len / 2;
 	if (n_voices != script->diag->n_dialogue) {
-		R_printf(R_STDERR, "Error: Voice LUT entries do not match dialogue entries.\n");
+		warning("Error: Voice LUT entries do not match dialogue entries");
 		return NULL;
 	}
 

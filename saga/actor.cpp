@@ -351,7 +351,7 @@ int AddActor(R_ACTOR * actor) {
 	}
 
 	if (last_frame >= SPRITE_GetListLen(actor->sl_p)) {
-		R_printf(R_STDOUT, "Appending to sprite list %d.\n", actor->sl_rn);
+		debug(0, "Appending to sprite list %d.", actor->sl_rn);
 		if (SPRITE_AppendList(actor->sl_rn + 1,
 			actor->sl_p) != R_SUCCESS) {
 			return R_FAILURE;
@@ -662,18 +662,18 @@ int LoadActorSpriteIndex(R_ACTOR * actor, int si_rn, int *last_frame_p) {
 
 	result = RSC_LoadResource(ActorModule.actor_ctxt, si_rn, &res_p, &res_len);
 	if (result != R_SUCCESS) {
-		R_printf(R_STDERR, "Couldn't load sprite action index resource.\n");
+		warning("Couldn't load sprite action index resource");
 		return R_FAILURE;
 	}
 
 	s_action_ct = res_len / 16;
-	R_printf(R_STDOUT, "Sprite resource contains %d sprite actions.\n", s_action_ct);
+	debug(0, "Sprite resource contains %d sprite actions.", s_action_ct);
 	action_p = (R_ACTORACTION *)malloc(sizeof(R_ACTORACTION) * s_action_ct);
 
 	MemoryReadStream *readS = new MemoryReadStream(res_p, res_len);
 
 	if (action_p == NULL) {
-		R_printf(R_STDERR, "Couldn't allocate memory for sprite actions.\n");
+		warning("Couldn't allocate memory for sprite actions");
 		RSC_FreeResource(res_p);
 		return R_MEM;
 	}
@@ -838,16 +838,14 @@ int HandleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *complete_p, i
 
 	if (node_p->calc_flag == 0) {
 
-#if 0
-		R_printf(R_STDOUT, "Calculating new path vector to point (%d, %d)\n", node_p->node_pt.x, node_p->node_pt.y);
-#endif
+		debug(2, "Calculating new path vector to point (%d, %d)", node_p->node_pt.x, node_p->node_pt.y);
 
 		dx = a_walkint->org.x - node_p->node_pt.x;
 		dy = a_walkint->org.y - node_p->node_pt.y;
 
 		if (dx == 0) {
 
-			R_printf(R_STDOUT, "Vertical paths not implemented.\n");
+			debug(0, "Vertical paths not implemented.");
 
 			ys_dll_delete(walk_p);
 			a_walkint->wi_active = 0;
@@ -889,9 +887,7 @@ int HandleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *complete_p, i
 
 		sprintf(buf, "%f", a_walkint->slope);
 
-#if 0
-		R_printf(R_STDOUT, "Path slope: %s.\n", buf);
-#endif
+		debug(2, "Path slope: %s.", buf);
 
 		actor->action = ACTION_WALK;
 		actor->action_flags = ACTION_LOOP;
@@ -917,9 +913,7 @@ int HandleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *complete_p, i
 	if (a_walkint->x_dir == 1) {
 
 		if (new_a_x >= node_p->node_pt.x) {
-#if 0
-			R_printf(R_STDOUT, "Path complete.\n");
-#endif
+			debug(2, "Path complete.");
 			ys_dll_delete(walk_p);
 			a_walkint->wi_active = 0;
 
@@ -935,10 +929,7 @@ int HandleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *complete_p, i
 		}
 	} else {
 		if (new_a_x <= node_p->node_pt.x) {
-
-#if 0
-			R_printf(R_STDOUT, "Path complete.\n");
-#endif
+			debug(2, "Path complete.");
 			ys_dll_delete(walk_p);
 			a_walkint->wi_active = 0;
 

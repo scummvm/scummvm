@@ -47,7 +47,7 @@ int SPRITE_Init() {
 		return R_FAILURE;
 	}
 
-	R_printf(R_STDOUT, "Initializing sprite subsystem...\n");
+	debug(0, "Initializing sprite subsystem...");
 
 	// Load sprite module resource context
 	result = GAME_GetFileContext(&SpriteModule.sprite_ctxt, R_GAME_RESOURCEFILE, 0);
@@ -72,7 +72,7 @@ int SPRITE_Shutdown() {
 		return R_FAILURE;
 	}
 
-	R_printf(R_STDOUT, "Shutting down sprite subsystem...\n");
+	debug(0, "Shutting down sprite subsystem...");
 
 	free(SpriteModule.decode_buf);
 
@@ -305,7 +305,7 @@ int SPRITE_DrawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num
 	}
 
 	if (sprite_num >= sprite_list->sprite_count) {
-		R_printf(R_STDOUT, "Invalid sprite number (%d) for sprite list %d.\n", sprite_num, sprite_list->slist_rn);
+		warning("Invalid sprite number (%d) for sprite list %d", sprite_num, sprite_list->slist_rn);
 		return R_FAILURE;
 	}
 

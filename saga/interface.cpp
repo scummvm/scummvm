@@ -150,7 +150,7 @@ int INTERFACE_Init(void) {
 
 	IfModule.i_thread = STHREAD_Create();
 	if (IfModule.i_thread == NULL) {
-		R_printf(R_STDERR, "Error creating script thread for game interface module.\n");
+		warning("Error creating script thread for game interface module");
 		return R_FAILURE;
 	}
 

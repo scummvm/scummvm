@@ -158,7 +158,7 @@ int ITE_IntroRegisterLang() {
 		if (CVAR_Register_S(IntroDiag[i].i_str,
 			IntroDiag[i].i_cvar_name,
 			NULL, R_CVAR_CFG, R_INTRO_STRMAX) != R_SUCCESS) {
-			R_printf(R_STDERR, "Error registering intro text cvars.");
+			warning("Error registering intro text cvars");
 			return R_FAILURE;
 		}
 	}
@@ -184,8 +184,8 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 
 		EVENT_Queue(&event);
 
-		R_printf(R_STDOUT, "Intro animation procedure started.\n");
-		R_printf(R_STDOUT, "Linking animation resources...\n");
+		debug(0, "Intro animation procedure started.");
+		debug(0, "Linking animation resources...");
 
 		ANIM_SetFrameTime(0, ITE_INTRO_FRAMETIME);
 
@@ -201,7 +201,7 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 		// Scene should end on display of last animation frame
 		ANIM_SetFlag(6, ANIM_ENDSCENE);
 
-		R_printf(R_STDOUT, "Beginning animation playback.\n");
+		debug(0, "Beginning animation playback.");
 
 		ANIM_Play(0, 0);
 
@@ -218,7 +218,7 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 
@@ -337,7 +337,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 		break;
 
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure paramater.\n");
+		warning("Illegal scene procedure paramater");
 		break;
 	}
 
@@ -433,7 +433,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure paramater.\n");
+		warning("Illegal scene procedure paramater");
 		break;
 	}
 
@@ -530,7 +530,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure paramater.\n");
+		warning("Illegal scene procedure paramater");
 		break;
 	}
 
@@ -627,7 +627,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure paramater.\n");
+		warning("Illegal scene procedure paramater");
 		break;
 	}
 
@@ -672,7 +672,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 
 		q_event = EVENT_Queue(&event);
 
-		R_printf(R_STDOUT, "Beginning animation playback.\n");
+		debug(0, "Beginning animation playback.");
 
 		// Begin title screen background animation 
 		ANIM_SetFlag(0, ANIM_LOOP);
@@ -732,7 +732,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 
@@ -838,7 +838,7 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 
@@ -947,7 +947,7 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 
@@ -983,7 +983,7 @@ int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_END:
 		break;
 	default:
-		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 

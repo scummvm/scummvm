@@ -74,7 +74,7 @@ int FONT_Init() {
 int FONT_Shutdown() {
 //	int i;
 
-	R_printf(R_STDOUT, "FONT_Shutdown(): Freeing fonts.\n");
+	debug(0, "FONT_Shutdown(): Freeing fonts.");
 /*
 	for ( i = 0 ; i < R_FONT_COUNT ; i ++ ) {
 		if ( FontModule.fonts[i] != NULL ) {
@@ -132,15 +132,11 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	fh.c_width = readS->readUint16LE();
 	fh.row_length = readS->readUint16LE();
 
-#if R_FONT_DBGLVL >= R_DEBUG_INFO
-	R_printf(R_STDOUT, "FONT_Load(): Reading font resource...\n");
-#endif
+	debug(1, "FONT_Load(): Reading font resource...");
 
-#if R_FONT_DBGLVL >= R_DEBUG_VERBOSE
-	R_printf(R_STDOUT, "Character width:\t%d\n", fh.c_width);
-	R_printf(R_STDOUT, "Character height:\t%d\n", fh.c_height);
-	R_printf(R_STDOUT, "Row padding:\t%d\n", fh.row_length);
-#endif
+	debug(2, "Character width:\t%d", fh.c_width);
+	debug(2, "Character height:\t%d", fh.c_height);
+	debug(2, "Row padding:\t%d", fh.row_length);
 
 	// Create normal font style
 	normal_font = (R_FONT_STYLE *)malloc(sizeof *normal_font);
@@ -173,7 +169,7 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	}
 
 	if (readS->tell() != R_FONT_DESCSIZE) {
-		R_printf(R_STDERR, "Invalid font resource size.\n");
+		warning("Invalid font resource size.");
 		return R_FAILURE;
 	}
 
@@ -267,9 +263,7 @@ static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE *src_font) {
 		new_row_len += new_byte_width;
 	}
 
-#if R_FONT_DBGLVL >= R_DEBUG_VERBOSE
-	R_printf(R_STDOUT, "New row length: %d\n", new_row_len);
-#endif
+	debug(2, "New row length: %d", new_row_len);
 
 	new_font->hdr.c_width = s_width + 2;
 	new_font->hdr.c_height = s_height + 2;

@@ -355,27 +355,27 @@ int LoadLanguage() {
 	if (GameDescs[game_n].gd_game_type == R_GAMETYPE_ITE) {
 		snprintf(lang_file, R_MAXPATH, "%s%s.%s", R_GAME_ITE_LANG_PREFIX, GameModule.game_language, R_GAME_LANG_EXT);
 		if (!test_file.open(lang_file)) {
-			R_printf(R_STDOUT, "Couldn't open language file %s. Using default (US English)\n", lang_file);
+			debug(0, "Couldn't open language file %s. Using default (US English)", lang_file);
 			return R_SUCCESS;
 		}
 
 		test_file.close();
 
 		if (INTERFACE_RegisterLang() != R_SUCCESS) {
-			R_printf(R_STDERR, "Error registering interface language cvars.");
+			warning("Error registering interface language cvars");
 			return R_FAILURE;
 		}
 
 		if (ITE_IntroRegisterLang() != R_SUCCESS) {
-			R_printf(R_STDERR, "Error registering intro sequence language cvars.");
+			warning("Error registering intro sequence language cvars");
 			return R_FAILURE;
 		}
 
-		R_printf(R_STDOUT, "Using language file %s.\n", lang_file);
+		debug(0, "Using language file %s.", lang_file);
 		// FIXME
 		//CFG_Read(lang_path);
 	} else {
-		R_printf(R_STDOUT, "Language support for this game not implemented.\n");
+		debug(0, "Language support for this game not implemented.");
 	}
 
 	return R_SUCCESS;
@@ -494,7 +494,7 @@ int DetectGame(const char *game_dir, uint16 *game_n_p) {
 			continue;
 		}
 
-		R_printf(R_STDOUT, "Found game: %s\n", GameDescs[game_n].gd_title);
+		debug(0, "Found game: %s", GameDescs[game_n].gd_title);
 		*game_n_p = game_n;
 		return R_SUCCESS;
 	}
@@ -530,7 +530,7 @@ int LoadGame(const char *game_dir, uint16 game_n) {
 			return R_FAILURE;
 		}
 
-		R_printf(R_STDOUT, "Opened resource file: %s\n", game_fname);
+		debug(0, "Opened resource file: %s", game_fname);
 		GameModule.gfile_data[i].file_ctxt = load_ctxt;
 		GameModule.gfile_data[i].file_types = GameDescs[game_n].gd_filedescs[i].gf_type;
 		GameModule.gfile_data[i].file_flags = 0;

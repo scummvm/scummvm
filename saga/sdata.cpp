@@ -38,11 +38,11 @@ int SDATA_Init() {
 	unsigned int i;
 	void *alloc_ptr;
 
-	R_printf(R_STDOUT, "Initializing script data buffers.\n");
+	debug(0, "Initializing script data buffers.");
 	for (i = 0; i < R_SCRIPT_DATABUF_NUM; i++) {
 		alloc_ptr = malloc(sizeof *ScriptModule.data_buf[0]);
 		if (alloc_ptr == NULL) {
-			R_printf(R_STDERR, "Error allocating memory for script data buffer %d.\n", i);
+			warning("Error allocating memory for script data buffer %d", i);
 			return R_MEM;
 		}
 
@@ -50,7 +50,7 @@ int SDATA_Init() {
 		alloc_ptr = calloc(R_SCRIPT_DATABUF_LEN, sizeof(SDataWord_T));
 
 		if (alloc_ptr == NULL) {
-			R_printf(R_STDERR,  "Error allocating memory for script data buffer %d.\n", i);
+			warning("Error allocating memory for script data buffer %d", i);
 			return R_MEM;
 		}
 

@@ -85,7 +85,7 @@ int ANIM_Load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id
 
 	new_anim = (R_ANIMATION *)malloc(sizeof *new_anim);
 	if (new_anim == NULL) {
-		R_printf(R_STDERR, "Error: Allocation failure.\n");
+		warning("Error: Allocation failure");
 		return R_MEM;
 	}
 
@@ -94,14 +94,14 @@ int ANIM_Load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id
 
 	if (GAME_GetGameType() == R_GAMETYPE_ITE) {
 		if (ANIM_GetNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != R_SUCCESS) {
-			R_printf(R_STDERR, "Error: Couldn't get animation frame count.\n");
+			warning("Error: Couldn't get animation frame count");
 			return R_FAILURE;
 		}
 
 		// Cache frame offsets
 		new_anim->frame_offsets = (size_t *)malloc(new_anim->n_frames * sizeof *new_anim->frame_offsets);
 		if (new_anim->frame_offsets == NULL) {
-			R_printf(R_STDERR, "Error: Allocation failure.\n");
+			warning("Error: Allocation failure");
 			return R_MEM;
 		}
 
@@ -195,20 +195,20 @@ int ANIM_Play(uint16 anim_id, int vector_time) {
 			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame - 1], display_buf,
 									disp_info.logical_w * disp_info.logical_h);
 			if (result != R_SUCCESS) {
-				R_printf(R_STDERR, "ANIM_Play: Error decoding frame %u", anim->current_frame);
+				warning("ANIM_Play: Error decoding frame %u", anim->current_frame);
 				anim->play_flag = 0;
 				return R_FAILURE;
 			}
 		} else {
 			if (anim->cur_frame_p == NULL) {
-				R_printf(R_STDERR, "ANIM_Play: Frames exhausted.\n");
+				warning("ANIM_Play: Frames exhausted");
 				return R_FAILURE;
 			}
 
 			result = IHNM_DecodeFrame(display_buf,  disp_info.logical_w * disp_info.logical_h,
 									anim->cur_frame_p, anim->cur_frame_len, &nextf_p, &nextf_len);
 			if (result != R_SUCCESS) {
-				R_printf(R_STDERR, "ANIM_Play: Error decoding frame %u", anim->current_frame);
+				warning("ANIM_Play: Error decoding frame %u", anim->current_frame);
 				anim->play_flag = 0;
 				return R_FAILURE;
 			}
@@ -436,7 +436,7 @@ int ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_offset
 
 	if ((screen_w * screen_h) > buf_len) {
 		// Buffer argument is too small to hold decoded frame, abort.
-		R_printf(R_STDERR, "ITE_DecodeFrame: Buffer size inadequate.\n");
+		warning("ITE_DecodeFrame: Buffer size inadequate");
 		return R_FAILURE;
 	}
 
@@ -446,7 +446,7 @@ int ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_offset
 	// Check for frame magic byte
 	magic = readS->readByte();
 	if (magic != SAGA_FRAME_HEADER_MAGIC) {
-		R_printf(R_STDERR, "ITE_DecodeFrame: Invalid frame offset.\n");
+		warning("ITE_DecodeFrame: Invalid frame offset");
 		return R_FAILURE;
 	}
 
@@ -543,7 +543,7 @@ int ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_offset
 			break;
 		default:
 			// Unknown marker found - abort
-			R_printf(R_STDERR, "ITE_DecodeFrame: Invalid RLE marker encountered.\n");
+			warning("ITE_DecodeFrame: Invalid RLE marker encountered");
 			return R_FAILURE;
 			break;
 		}
@@ -596,7 +596,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 				int param6;
 
 				if (thisf_len - readS->tell() < 13) {
-					R_printf(R_STDERR, "0x%02X: Input buffer underrun.", in_ch);
+					warning("0x%02X: Input buffer underrun", in_ch);
 					return R_FAILURE;
 				}
 
@@ -614,7 +614,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 				outbuf_p = decode_buf + x_origin + (y_origin * di.logical_w);
 
 				if (outbuf_p > outbuf_endp) {
-					R_printf(R_STDERR, "0x%02X: (0x%X) Invalid output position. (x: %d, y: %d)\n",
+					warning("0x%02X: (0x%X) Invalid output position. (x: %d, y: %d)",
 							in_ch, in_ch_offset, x_origin, y_origin);
 					return R_FAILURE;
 				}
@@ -626,11 +626,11 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 		case 0x10: // Long Unencoded Run
 			runcount = readS->readSint16BE();
 			if (thisf_len - readS->tell() < runcount) {
-				R_printf(R_STDERR, "0x%02X: Input buffer underrun.", in_ch);
+				warning("0x%02X: Input buffer underrun", in_ch);
 				return R_FAILURE;
 			}
 			if (outbuf_remain < runcount) {
-				R_printf(R_STDERR, "0x%02X: Output buffer overrun.", in_ch);
+				warning("0x%02X: Output buffer overrun", in_ch);
 				return R_FAILURE;
 			}
 
@@ -647,7 +647,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			break;
 		case 0x1F: // 31: Unusued?
 			if (thisf_len - readS->tell() < 3) {
-				R_printf(R_STDERR, "0x%02X: Input buffer underrun.", in_ch);
+				warning("0x%02X: Input buffer underrun", in_ch);
 				return R_FAILURE;
 			}
 
@@ -658,7 +658,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			break;
 		case 0x20: // Long compressed run
 			if (thisf_len - readS->tell() <= 3) {
-				R_printf(R_STDERR, "0x%02X: Input buffer underrun.", in_ch);
+				warning("0x%02X: Input buffer underrun", in_ch);
 				return R_FAILURE;
 			}
 
@@ -693,7 +693,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			x_vector = readS->readSint16BE();
 
 			if (((x_vector > 0) && ((size_t) x_vector > outbuf_remain)) || (-x_vector > outbuf_p - decode_buf)) {
-				R_printf(R_STDERR, "0x30: Invalid x_vector.\n");
+				warning("0x30: Invalid x_vector");
 				return R_FAILURE;
 			}
 
@@ -703,7 +703,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			break;
 
 		case 0x3F:	// 68: Frame end marker
-			printf("0x3F: Frame end marker\n");
+			debug(1, "0x3F: Frame end marker");
 			if (decoded_data && (thisf_len - readS->tell() > 0)) {
 				*nextf_p = thisf_p + readS->tell();
 				*nextf_len = thisf_len - readS->tell();

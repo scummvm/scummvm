@@ -142,7 +142,7 @@ void SagaEngine::go() {
 	// FIXME
 	/*
 	if (CFG_Read(NULL) != R_SUCCESS) {
-		R_printf(R_STDERR, "Couldn't read configuration file.\n");
+		warning("Couldn't read configuration file");
 	}
 	*/
 
@@ -150,7 +150,7 @@ void SagaEngine::go() {
 
 	// Detect game and open resource files
 	if (GAME_Init() != R_SUCCESS) {
-		R_printf(R_STDERR, "Couldn't start the game: %s\n", GAME_GetErrS());
+		warning("Couldn't start the game: %s", GAME_GetErrS());
 		return;
 	}
 
@@ -168,7 +168,7 @@ void SagaEngine::go() {
 	ACTOR_Init();
 
 	if (SCENE_Init() != R_SUCCESS) {
-		R_printf(R_STDERR, "Couldn't initialize scene module.\n");
+		warning("Couldn't initialize scene module");
 		return;
 	}
 
@@ -192,7 +192,7 @@ void SagaEngine::go() {
 	_music->hasNativeMT32(ConfMan.getBool("native_mt32"));
 
 	if (!MainData.music_enabled) {
-		R_printf(R_STDOUT, "Music disabled.\n");
+		debug(0, "Music disabled.");
 	}
 
 	// Initialize graphics
@@ -203,7 +203,7 @@ void SagaEngine::go() {
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer, MainData.sound_enabled);
 	if (!MainData.sound_enabled) {
-		R_printf(R_STDOUT, "Sound disabled.\n");
+		debug(0, "Sound disabled.");
 	}
 
 	SYSINPUT_Init();
