@@ -1,6 +1,6 @@
 ScummVM README
 Last updated:    $Date$
-Release version: 0.7.0
+Release version: 0.7.1
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -235,7 +235,7 @@ This tool also allows you to compress the speech and sound effects with MP3,
 OGG or FLAC.
 
 
-3.5) Known Problems in ScummVM 0.7.0
+3.5) Known Problems in ScummVM 0.7.1
 ---- -------------------------------
 This release has the following known problems and limitations. There is no
 need to report them, although patches to fix them are welcome. If you discover
