@@ -285,18 +285,14 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	addButton(200, 80, 54, 16, CUSTOM_STRING(17), kOptionsCmd, 'O');	// Options
 	addButton(200, 100, 54, 16, RES_STRING(8), kQuitCmd, 'Q');	// Quit
 	
-	// FIXME - test
-	new CheckboxWidget(this, 10, 20, 90, 16, "Toggle me", 0);
-	
-	// FIXME - test
-	_savegameList = new ListWidget(this, 10, 40, 180, 74);
+	_savegameList = new ListWidget(this, 10, 20, 180, 94);
 
 	// Get savegame names
 	ScummVM::StringList l;
 	char name[32];
 	Scumm *s = _gui->getScumm();
 
-	for (int i = 0; i <= 80; i++) {		// 80 I got from old gui
+	for (int i = 0; i <= 80; i++) {		// 80 - got this value from the old GUI
 		s->getSavegameName(i, name);
 		l.push_back(name);
 	}
