@@ -2,12 +2,17 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.5.0(CVS) (2003-??-??)
-- Support for music in Humongous games and siomn2dos/simon2talkie  (XMIDI format)
-- Enhanced versions of Maniac Mansion and Zak McKracken are now completable
+- Added Aspect Ratio option
+- Support for music in Humongous games and siomn2dos/simon2talkie (XMIDI format)
+- Support for music in simon1demo (Proprietary format)
+- Complete music support for Simon the Sorcerer 2
+- Added support for Amiga version of Monkey Island 1
+- Enhanced versions of Maniac Mansion and Zak McKracken are now supported and completable
 - Beneath A Steel Sky is now supported and completable
 - Initial, unplayable, support for V1 EGA versions of Maniac Mansion/Zak McKracken
 - Curse of Monkey Island (COMI) support for playing from CD improved on Mac OS X
 - Loading COMI savegames for disk 2 doesn't anymore require disk 1 first
+- Improved music and sound support in Zak256
 - Music fixes (exp. Monkey Island 2)
 - Rewritten iMUSE engine
 - Many other bug fixes and improvements
