@@ -20,20 +20,15 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Main rendering loop - private header
 
- Notes: 
-*/
+// Main rendering loop - private header
 
 #ifndef SAGA_RENDER_H_
 #define SAGA_RENDER_H_
 
 namespace Saga {
 
-/* Render module CVAR defaults */
+// Render module CVAR defaults
 #define R_FULLSCREEN_DEFAULT 0
 #define R_DOUBLERES_DEFAULT  1
 #define R_HICOLOR_DEFAULT    1
@@ -44,16 +39,15 @@ namespace Saga {
 #define R_PAUSEGAME_MSG "PAWS GAME"
 
 struct R_RENDER_MODULE {
-
 	int initialized;
 
-	/* Init cvars */
+	// Init cvars
 	int r_fullscreen;
 	int r_doubleres;
 	int r_hicolor;
 	int r_softcursor;
 
-	/* Module data */
+	// Module data
 	R_SURFACE *r_screen_surface;
 	R_SURFACE *r_display_surface;
 	R_SURFACE *r_backbuf_surface;
@@ -61,7 +55,6 @@ struct R_RENDER_MODULE {
 	byte *r_bg_buf;
 	int r_bg_buf_w;
 	int r_bg_buf_h;
-
 	byte *r_tmp_buf;
 	int r_tmp_buf_w;
 	int r_tmp_buf_h;
@@ -71,14 +64,12 @@ struct R_RENDER_MODULE {
 
 	unsigned int r_fps;
 	unsigned int r_framecount;
-
 	unsigned int r_flags;
 	int r_mode;
-
 };
 
 void RENDER_FpsTimer(unsigned long interval, void *param);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_RENDER_H_ */
+#endif
