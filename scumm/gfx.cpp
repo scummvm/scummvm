@@ -1388,7 +1388,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	//if (_vm->_NESStartStrip > 0)
 	//	stripnr -= _vm->_NESStartStrip;
 
-	// FIXME Still not been calculated correctly
 	while (numstrip > 0 && sx < _numStrips && x * 8 < MAX(_vm->_roomWidth, (int) vs->w)) {
 		CHECK_HEAP;
 
