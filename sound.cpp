@@ -24,9 +24,11 @@
 #include "sound.h"
 
 void Scumm::addSoundToQueue(int sound) {
+#if !defined(FULL_THROTTLE)
 	_vars[VAR_LAST_SOUND] = sound;
 	ensureResourceLoaded(rtSound, sound);
 	addSoundToQueue2(sound);
+#endif
 }
 
 void Scumm::addSoundToQueue2(int sound) {
@@ -77,8 +79,10 @@ void Scumm::processSoundQues() {
 				data[7]
 				);
 #endif
+#if !defined(FULL_THROTTLE)
 			if (se) 
 				_vars[VAR_SOUNDRESULT] = se->do_command(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+#endif
 		}
 	}
 	_soundQuePos = 0;
@@ -114,7 +118,7 @@ void Scumm::processSfxQueues() {
 					b = isMouthSyncOff(_curSoundPos);
 				if (_mouthSyncMode != b) {
 					_mouthSyncMode = b;
-					startAnimActor(a, b ? a->talkFrame2 : a->talkFrame1, a->facing);
+					startAnimActor(a, b ? a->talkFrame2 : a->talkFrame1);
 				}
 			}
 		}
@@ -133,6 +137,8 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode) {
 	int num, i;
 	byte file_byte,file_byte_2;
 	uint16 elem;
+
+	return;
 
 	if (!_sfxFile) {
 		warning("startTalkSound: SFX file is not open");

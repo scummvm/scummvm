@@ -185,12 +185,12 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 
 
 	obim = getResourceAddress(rtVerb, vrb);
-	IMHD_ptr = findResource(MKID('IMHD'), obim, 0);
+	IMHD_ptr = findResource(MKID('IMHD'), obim);
 
 	imgw = READ_LE_UINT16(IMHD_ptr+0x14) >> 3;
 	imgh = READ_LE_UINT16(IMHD_ptr+0x16) >> 3;
 	
-	imptr = findResource(MKID('IM01'), obim, 0);
+	imptr = findResource(MKID('IM01'), obim);
 	if (!imptr)
 		error("No image for verb %d", vrb);
 
@@ -243,39 +243,16 @@ void Scumm::killVerb(int slot) {
 }
 
 void Scumm::setVerbObject(uint room, uint object, uint verb) {
-	int numobj, i;
 	byte  *obimptr;
-	uint32 imoffs,size;
-	byte *roomptr;
-	ImageHeader *imhd;
-	RoomHeader *roomhdr;
+	uint32 size;
+	FindObjectInRoom foir;
 
 	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 
-	ensureResourceLoaded(rtRoom,room);
-	roomptr = getResourceAddress(rtRoom, room);
-	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
-
-	numobj = READ_LE_UINT16(&roomhdr->numObjects);
-	if (numobj==0)
-		error("No images found in room %d", room);
-	if (numobj > _numLocalObjects)
-		error("More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
-
-	for (i=0; i<numobj; i++) {
-		obimptr = findResource(MKID('OBIM'), roomptr, i);
-		if (obimptr==NULL)
-			error("Not enough image blocks in room %d", room);
-		imhd = (ImageHeader*)findResource(MKID('IMHD'), obimptr, 0);
-		if ( READ_LE_UINT16(&imhd->obj_id) == object) {
-			imoffs = obimptr - roomptr;
-			size = READ_BE_UINT32_UNALIGNED(obimptr+4);
-			createResource(rtVerb, verb, size);
-			obimptr = getResourceAddress(rtRoom, room) + imoffs;
-			memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
-			return;
-		}
-	}
-	error("Image %d not found in room %d", object, room);
+	findObjectInRoom(&foir, foImageHeader, object, room);
+	size = READ_BE_UINT32_UNALIGNED(foir.obim+4);
+	createResource(rtVerb, verb, size);
+	obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
+	memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
 }

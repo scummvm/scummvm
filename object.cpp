@@ -45,31 +45,36 @@ void Scumm::putClass(int obj, int cls, bool set) {
 
 int Scumm::getOwner(int obj) {
 	checkRange(_numGlobalObjects-1, 0, obj, "Object %d out of range in getOwner");
-	return _objectFlagTable[obj]&OF_OWNER_MASK;
+	return _objectOwnerTable[obj];
 }
 
 void Scumm::putOwner(int act, int owner) {
 	checkRange(_numGlobalObjects-1, 0, act, "Object %d out of range in putOwner");
-	checkRange(15, 0, owner, "Owner %d out of range in putOwner");
-	_objectFlagTable[act] = (_objectFlagTable[act]&~OF_OWNER_MASK) | owner;
+	checkRange(0xFF, 0, owner, "Owner %d out of range in putOwner");
+	_objectOwnerTable[act] = owner;
 }
 
 int Scumm::getState(int act) {
 	checkRange(_numGlobalObjects-1, 0, act, "Object %d out of range in getState");
-	return _objectFlagTable[act]>>4;
+	return _objectStateTable[act];
 }
 
 void Scumm::putState(int act, int state) {
 	checkRange(_numGlobalObjects-1, 0, act, "Object %d out of range in putState");
-	checkRange(15, 0, state, "State %d out of range in putState");
-	_objectFlagTable[act] = (_objectFlagTable[act]&~OF_STATE_MASK) |
-		(state<<OF_STATE_SHL);
+	checkRange(0xFF, 0, state, "State %d out of range in putState");
+	_objectStateTable[act] = state;
+}
+
+int Scumm::getObjectRoom(int obj) {
+	checkRange(_numGlobalObjects-1, 0, obj, "Object %d out of range in getObjectRoom");
+	return _objectRoomTable[obj];
 }
 
 int Scumm::getObjectIndex(int object) {
 	int i;
 
-	if ((_objectFlagTable[object]&OF_OWNER_MASK)!=OF_OWNER_ROOM) {
+	/* OF_OWNER_ROOM should be 0xFF for full throttle, else 0xF */
+	if (_objectOwnerTable[object] != OF_OWNER_ROOM) {
 		for (i=0; i<_maxInventoryItems; i++)
 			if (_inventory[i] == object)
 				return i;
@@ -89,7 +94,7 @@ int Scumm::whereIsObject(int object) {
 	if (object >= _numGlobalObjects)
 		return WIO_NOT_FOUND;
 
-	if ((_objectFlagTable[object]&OF_OWNER_MASK)!=OF_OWNER_ROOM) {
+	if (_objectOwnerTable[object] != OF_OWNER_ROOM) {
 		for (i=0; i<_maxInventoryItems; i++)
 			if (_inventory[i] == object)
 				return WIO_INVENTORY;
@@ -106,19 +111,22 @@ int Scumm::whereIsObject(int object) {
 }
 
 int Scumm::getObjectOrActorXY(int object) {
-	if (object <= _vars[VAR_NUM_ACTOR]) {
+	if (object < NUM_ACTORS) {
 		return getActorXYPos(derefActorSafe(object, "getObjectOrActorXY"));
 	}
 	switch(whereIsObject(object)) {
 	case WIO_NOT_FOUND:
 		return -1;
 	case WIO_INVENTORY:
-		return getActorXYPos(derefActorSafe(_objectFlagTable[object]&OF_OWNER_MASK,"getObjectOrActorXY(2)"));
+		return getActorXYPos(derefActorSafe(_objectOwnerTable[object],"getObjectOrActorXY(2)"));
 	}
 	getObjectXYPos(object);
 	return 0;
 }
 
+/* Return the position of an object.
+   Returns X, Y and direction in angles
+ */
 void Scumm::getObjectXYPos(int object) {
 	ObjectData *od = &_objs[getObjectIndex(object)];
 	int state;
@@ -127,31 +135,33 @@ void Scumm::getObjectXYPos(int object) {
 	int x,y;
 	AdjustBoxResult abr;
 
-	if (_majorScummVersion==6) {
+	if (_features&GF_AFTER_V6) {
 		state = getState(object)-1;
 		if (state<0)
 			state = 0;
 
 		if (od->fl_object_index) {
 			ptr = getResourceAddress(rtFlObject, od->fl_object_index);
-			ptr = findResource(MKID('OBIM'), ptr, 0);
+			ptr = findResource(MKID('OBIM'), ptr);
 		} else {
 			ptr = getResourceAddress(rtRoom, _roomResource);
 			ptr += od->offs_obim_to_room;
 		}
 		assert(ptr);
-		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr, 0);
-		x = od->x_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
-		y = od->y_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
+		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr);
+		x = od->x_pos + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
+		y = od->y_pos + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
 	} else {
 		x = od->walk_x;
 		y = od->walk_y;
 	}
 
-	abr = adjustXYToBeInBox(0, x, y);
-	_xPos = abr.x;
-	_yPos = abr.y;
-	_dir = od->actordir&3;
+//	abr = adjustXYToBeInBox(0, x, y);
+//	_xPos = abr.x;
+//	_yPos = abr.y;
+	_xPos = x;
+	_yPos = y;
+	_dir = oldDirToNewDir(od->actordir&3);
 }
 
 int Scumm::getObjActToObjActDist(int a, int b) {
@@ -159,10 +169,10 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 	Actor *acta = NULL;
 	Actor *actb = NULL;
 
-	if (a<=_vars[VAR_NUM_ACTOR])
+	if (a<NUM_ACTORS)
 		acta = derefActorSafe(a, "getObjActToObjActDist");
 
-	if (b<=_vars[VAR_NUM_ACTOR])
+	if (b<NUM_ACTORS)
 		actb = derefActorSafe(b, "getObjActToObjActDist(2)");
 
 	if (acta && actb && acta->room==actb->room && acta->room &&
@@ -179,7 +189,7 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 		return 0xFF;
 
 	if (acta) {
-		AdjustBoxResult r = adjustXYToBeInBox(acta, _xPos, _yPos);
+		AdjustBoxResult r = adjustXYToBeInBox(acta, _xPos, _yPos, 0);
 		_xPos = r.x;
 		_yPos = r.y;
 	}
@@ -192,7 +202,8 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 }
 
 int Scumm::findObject(int x, int y) {
-	int i,a,b;
+	int i,b;
+	byte a;
 
 	for (i=1; i<=_numObjectsInRoom; i++) {
 		if (!_objs[i].obj_nr || getClass(_objs[i].obj_nr, 32))
@@ -202,44 +213,39 @@ int Scumm::findObject(int x, int y) {
 			a = _objs[b].parentstate;
 			b = _objs[b].parent;
 			if (b==0) {
-				if (_objs[i].x_pos <= (x>>3) &&
-						_objs[i].numstrips + _objs[i].x_pos > (x>>3) &&
-						_objs[i].y_pos <= (y>>3) &&
-						_objs[i].height + _objs[i].y_pos > (y>>3))
+				if (_objs[i].x_pos <= x &&
+						_objs[i].width + _objs[i].x_pos > x &&
+						_objs[i].y_pos <= y &&
+						_objs[i].height + _objs[i].y_pos > y)
 						return _objs[i].obj_nr;
 				break;
 			}
-		} while ( (_objs[b].ownerstate&OF_STATE_MASK) == a);
+		} while ( _objs[b].state == a);
 	}
 	return 0;
 }
 
 void Scumm::drawRoomObjects(int arg) {
-	int num = _numObjectsInRoom;
+	int i;
 	ObjectData *od;
-	int a;
+	byte a;
 
-	if (num==0)
-		return;
-
-	do {
-		od = &_objs[num];
-		if (!od->obj_nr || !(od->ownerstate&OF_STATE_MASK))
+	for(i=1; i<=_numObjectsInRoom; i++) {
+		od = &_objs[i];
+		if (!od->obj_nr || !od->state || od->fl_object_index)
 			continue;
-		
 		do {
 			a = od->parentstate;
 			if (!od->parent) {
-				drawObject(num, arg);
+				drawObject(i, arg);
 				break;
 			}
 			od = &_objs[od->parent];
-		} while ((od->ownerstate & OF_STATE_MASK)==a);
-
-	} while (--num);
+		} while (od->state==a);
+	}
 }
 
-const uint32 state_tags[] = {
+const uint32 IMxx_tags[] = {
 	MKID('IM00'),
 	MKID('IM01'),
 	MKID('IM02'),
@@ -272,9 +278,9 @@ void Scumm::drawObject(int obj, int arg) {
 	
 	od = &_objs[obj];
 
-	xpos = od->x_pos;
+	xpos = od->x_pos>>3;
 	ypos = od->y_pos;
-	width = od->numstrips;
+	width = od->width>>3;
 	height = od->height;
 
 	if (width==0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
@@ -282,13 +288,13 @@ void Scumm::drawObject(int obj, int arg) {
 	
 	if (od->fl_object_index) {
 		ptr = getResourceAddress(rtFlObject, od->fl_object_index);
-		ptr = findResource(MKID('OBIM'), ptr, 0); 
+		ptr = findResource(MKID('OBIM'), ptr); 
 	} else {
 		ptr = getResourceAddress(rtRoom, _roomResource);
 		ptr = ptr + od->offs_obim_to_room;
 	}
 
-	ptr = findResource(state_tags[getState(od->obj_nr)], ptr, 0);
+	ptr = findResource(IMxx_tags[getState(od->obj_nr)], ptr);
 	if (!ptr)
 		return;
 
@@ -302,19 +308,18 @@ void Scumm::drawObject(int obj, int arg) {
 			continue;
 		if (tmp < _screenStartStrip || tmp > _screenEndStrip)
 			continue;
-		actorDrawBits[tmp] |= 0x8000;
+		gfxUsageBits[tmp] |= 0x80000000;
 		if (tmp < x)
 			x = tmp;
 		numstrip++;
 	}
 
-	if (numstrip!=0)
-		gdi.drawBitmap(ptr, _curVirtScreen, x, ypos<<3, height<<3, x-xpos, numstrip, true);
-
-//	_drawBmpY = ypos << 3;
-//	gdi._numLinesToProcess = height << 3;
-//	_drawBmpX = x;
-//	drawBmp(ptr, x - xpos, b, 1, "Object", od->obj_nr);
+	if (numstrip!=0) {
+		byte flags = Gdi::dbAllowMaskOr;
+		if (getClass(od->obj_nr, 22))
+			flags |= Gdi::dbDrawMaskOnBoth;
+		gdi.drawBitmap(ptr, _curVirtScreen, x, ypos, height, x-xpos, numstrip, flags);
+	}
 }
 
 void Scumm::loadRoomObjects() {
@@ -322,7 +327,7 @@ void Scumm::loadRoomObjects() {
 	ObjectData *od;
 	byte *ptr;
 	uint16 obim_id;
-	byte *room;
+	byte *room,*searchptr;
 	ImageHeader *imhd;
 	RoomHeader *roomhdr;
 
@@ -331,7 +336,7 @@ void Scumm::loadRoomObjects() {
 	CHECK_HEAP
 	
 	room = getResourceAddress(rtRoom, _roomResource);
-	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), room, 0);
+	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), room);
 
 	_numObjectsInRoom = READ_LE_UINT16(&roomhdr->numObjects);
 	
@@ -342,8 +347,9 @@ void Scumm::loadRoomObjects() {
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
 	od = &_objs[1];
+	searchptr = room;
 	for (i=0; i<_numObjectsInRoom; i++,od++) {
-		ptr = findResource(MKID('OBCD'), room, i);
+		ptr = findResource(MKID('OBCD'), searchptr);
 		if (ptr==NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
@@ -358,10 +364,12 @@ void Scumm::loadRoomObjects() {
 			dumpResource(buf, od->obj_nr, ptr);
 		} while (0);
 #endif
+		searchptr = NULL;
 	}
 
+	searchptr = room;
 	for (i=0; i<_numObjectsInRoom; i++) {
-		ptr = findResource(MKID('OBIM'), room, i);
+		ptr = findResource(MKID('OBIM'), searchptr);
 		if (ptr==NULL)
 			error("Room %d missing image blocks(s)", _roomResource);
 
@@ -372,52 +380,74 @@ void Scumm::loadRoomObjects() {
 			if (_objs[j].obj_nr==obim_id)
 				_objs[j].offs_obim_to_room = ptr - room;
 		}
+		searchptr = NULL;
 	}
 
 	od = &_objs[1];
 	for (i=1; i<=_numObjectsInRoom; i++,od++) {
-		ptr = room + od->offs_obcd_to_room;
-		cdhd = (CodeHeader*)findResource(MKID('CDHD'), ptr,0);
-		od->obj_nr = READ_LE_UINT16(&cdhd->obj_id);
-
-		if (_majorScummVersion == 6) {
-			od->numstrips = READ_LE_UINT16(&cdhd->v6.w)>>3;
-			od->height = READ_LE_UINT16(&cdhd->v6.h)>>3;
-			od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x))>>3;
-			od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y))>>3;
-			if (cdhd->v6.flags == 0x80) {
-				od->parentstate = 1<<4;
-			} else {
-				od->parentstate = (cdhd->v6.flags&0xF)<<OF_STATE_SHL;
-			}
-			od->parent = cdhd->v6.parent;
-			od->actordir = cdhd->v6.actordir;
-		} else {
-			od->numstrips = cdhd->v5.w;
-			od->height = cdhd->v5.h;
-			od->x_pos = cdhd->v5.x;
-			od->y_pos = cdhd->v5.y;
-			if (cdhd->v5.flags == 0x80) {
-				od->parentstate = 1<<4;
-			} else {
-				od->parentstate = (cdhd->v5.flags&0xF)<<OF_STATE_SHL;
-			}
-			od->parent = cdhd->v5.parent;
-			od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);
-			od->walk_y = READ_LE_UINT16(&cdhd->v5.walk_y);
-			od->actordir = cdhd->v5.actordir;
-		}
-		od->fl_object_index = 0;
+		setupRoomObject(od, room);
 	}
 
 	CHECK_HEAP
+}
+
+void Scumm::setupRoomObject(ObjectData *od, byte *room) {
+	byte *obcd;
+	CodeHeader *cdhd;
+	ImageHeader *imhd;
+
+	cdhd = (CodeHeader*)findResource(MKID('CDHD'), room + od->offs_obcd_to_room);
+
+	od->obj_nr = READ_LE_UINT16(&cdhd->obj_id);
+
+#if !defined(FULL_THROTTLE)
+	if (_features & GF_AFTER_V6) {
+		od->width = READ_LE_UINT16(&cdhd->v6.w);
+		od->height = READ_LE_UINT16(&cdhd->v6.h);
+		od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x));
+		od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y));
+		if (cdhd->v6.flags == 0x80) {
+			od->parentstate = 1<<4;
+		} else {
+			od->parentstate = (cdhd->v6.flags&0xF)<<OF_STATE_SHL;
+		}
+		od->parent = cdhd->v6.parent;
+		od->actordir = cdhd->v6.actordir;
+	} else {
+		od->width = cdhd->v5.w<<3;
+		od->height = cdhd->v5.h<<3;
+		od->x_pos = cdhd->v5.x<<3;
+		od->y_pos = cdhd->v5.y<<3;
+		if (cdhd->v5.flags == 0x80) {
+			od->parentstate = 1<<4;
+		} else {
+			od->parentstate = (cdhd->v5.flags&0xF)<<OF_STATE_SHL;
+		}
+		od->parent = cdhd->v5.parent;
+		od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);
+		od->walk_y = READ_LE_UINT16(&cdhd->v5.walk_y);
+		od->actordir = cdhd->v5.actordir;
+	}
+#else
+	od->parent = cdhd->parent;
+	od->parentstate = cdhd->parentstate;
+
+	imhd = (ImageHeader*)findResource(MKID('IMHD'), room + od->offs_obim_to_room);
+	od->x_pos = imhd->x_pos;
+	od->y_pos = imhd->y_pos;
+	od->width = imhd->width;
+	od->height = imhd->height;
+	od->actordir = imhd->actordir;
+
+#endif
+	od->fl_object_index = 0;
 }
 
 void Scumm::fixObjectFlags() {
 	int i;
 	ObjectData *od = &_objs[1];
 	for (i=1; i<=_numObjectsInRoom; i++,od++) {
-		od->ownerstate = _objectFlagTable[od->obj_nr];
+		od->state = _objectStateTable[od->obj_nr];
 	}
 }
 
@@ -463,10 +493,8 @@ void Scumm::clearOwnerOf(int obj) {
 				if (!a[0] && a[1]) {
 					a[0] = a[1];
 					a[1] = 0;
-					ptr = getResourceAddress(rtInventory, i+1);
 					_baseInventoryItems[i] = _baseInventoryItems[i+1];
-					_baseInventoryItems[i+1] = 0;
-					/* TODO: some wacky write is done here */
+					_baseInventoryItems[i+1] = NULL;
 				}
 			}
 			return;
@@ -476,18 +504,18 @@ void Scumm::clearOwnerOf(int obj) {
 
 void Scumm::removeObjectFromRoom(int obj) {
 	int i,cnt;
-	uint16 *ptr;
+	uint32 *ptr;
 	
 	for(i=1; i<=_numObjectsInRoom; i++) {
-		if (_objs[i].obj_nr==obj) {
-			if (_objs[i].numstrips != 0) {
-				ptr = &actorDrawBits[_objs[i].x_pos];
-				cnt = _objs[i].numstrips;
+		if (_objs[i].obj_nr==(uint16)obj) {
+			if (_objs[i].width != 0) {
+				ptr = &gfxUsageBits[_objs[i].x_pos>>3];
+				cnt = _objs[i].width>>3;
 				do {
-					*ptr++ |= 0x8000;
+					*ptr++ |= 0x80000000;
 				} while (--cnt);
 			}
-			_BgNeedsRedraw = 1;
+			_BgNeedsRedraw = true;
 			return;
 		}
 	}
@@ -506,20 +534,20 @@ void Scumm::clearDrawObjectQueue() {
 byte *Scumm::getObjOrActorName(int obj) {
 	byte *objptr;
 
-	if (obj <= _vars[VAR_NUM_ACTOR])
+	if (obj < NUM_ACTORS)
 		return getActorName(derefActorSafe(obj, "getObjOrActorName"));
 
 	objptr = getObjectAddress(obj);
 	if (objptr==NULL)
 		return (byte*)" ";
 	
-	return findResource(MKID('OBNA'), objptr, 0) + 8;
+	return findResource(MKID('OBNA'), objptr) + 8;
 }
 
 uint32 Scumm::getOBCDOffs(int object) {
 	int i;
 
-	if ((_objectFlagTable[object]&OF_OWNER_MASK)!=OF_OWNER_ROOM)
+	if (_objectOwnerTable[object] != OF_OWNER_ROOM)
 		return 0;
 	for (i=_numObjectsInRoom; i>0; i--) {
 		if (_objs[i].obj_nr == object) {
@@ -534,7 +562,7 @@ uint32 Scumm::getOBCDOffs(int object) {
 byte *Scumm::getObjectAddress(int obj) {
 	int i;
 
-	if ((_objectFlagTable[obj]&OF_OWNER_MASK)!=OF_OWNER_ROOM) {
+	if (_objectOwnerTable[obj] != OF_OWNER_ROOM) {
 		for(i=0; i<_maxInventoryItems; i++) {
 			if (_inventory[i] == obj)
 				return getResourceAddress(rtInventory, i);
@@ -553,12 +581,9 @@ byte *Scumm::getObjectAddress(int obj) {
 
 void Scumm::addObjectToInventory(uint obj, uint room) {
 	int i, slot;
-	byte *ptr,*obcdptr;
-	uint32 size,cdoffs;
-	int numobj;
-	byte *roomptr;
-	CodeHeader *cdhd;
-	RoomHeader *roomhdr;
+	uint32 size;
+	byte *obcdptr,*ptr;
+	FindObjectInRoom foir;
 
 	debug(1,"Adding object %d from room %d into inventory", obj, room);
 
@@ -573,37 +598,79 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 		createResource(rtInventory, slot, size);
 		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 64;
 		memcpy(getResourceAddress(rtInventory, slot), ptr, size);
-		CHECK_HEAP
+	} else {
+		findObjectInRoom(&foir, foCodeHeader, obj, room);
+		size = READ_BE_UINT32_UNALIGNED(foir.obcd+4);
+		slot = getInventorySlot();
+		_inventory[slot] = obj;
+		createResource(rtInventory, slot, size);
+		obcdptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obcd;
+		memcpy(getResourceAddress(rtInventory,slot),obcdptr,size);
+	}
+
+	CHECK_HEAP
+}
+
+void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint room) {
+	CodeHeader *cdhd;
+	int i, numobj;
+	byte *roomptr,*obcdptr,*obimptr,*searchptr;
+	RoomHeader *roomhdr;
+	ImageHeader *imhd;
+	
+	if (findWhat&foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
+		fo->obcd = obcdptr = getObjectAddress(id);
+		assert((byte*)obcdptr > (byte*)256);
+		fo->obim = obimptr = obcdptr + READ_BE_UINT32(&((ImageHeader*)obcdptr)->size);
+		fo->cdhd = (CodeHeader*)findResource(MKID('CDHD'), obcdptr);
+		fo->imhd = (ImageHeader*)findResource(MKID('IMHD'), obimptr);
 		return;
 	}
-//	ensureResourceLoaded(rtRoom, room);
-	roomptr = getResourceAddress(rtRoom, room);
-	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
+
+	fo->roomptr = roomptr = getResourceAddress(rtRoom, room);
+	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr);
 	numobj = READ_LE_UINT16(&roomhdr->numObjects);
 	if (numobj==0)
-		error("addObjectToInventory: No object found in room %d", room);
+		error("findObjectInRoom: No object found in room %d", room);
 	if (numobj > _numLocalObjects)
-		error("addObjectToInventory: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
+		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
-	for (i=0; i<numobj; i++) {
-		obcdptr = findResource(MKID('OBCD'), roomptr, i);
-		if(obcdptr==NULL)
-			error("addObjectToInventory: Not enough code blocks in room %d", room);
-		cdhd = (CodeHeader*)findResource(MKID('CDHD'), obcdptr, 0);
-		if ( READ_LE_UINT16(&cdhd->obj_id) == obj) {
-			cdoffs = obcdptr - roomptr;
-			size = READ_BE_UINT32_UNALIGNED(obcdptr+4);
-			slot = getInventorySlot();
-			_inventory[slot] = obj;
-			createResource(rtInventory, slot, size);
-			obcdptr = getResourceAddress(rtRoom, room) + cdoffs;
-			memcpy(getResourceAddress(rtInventory,slot),obcdptr,size);
-			CHECK_HEAP
-			return;
+	if (findWhat & foCodeHeader) {
+		searchptr = roomptr;
+		for (i=0;;) {
+			obcdptr = findResource(MKID('OBCD'), searchptr);
+			if(obcdptr==NULL)
+				error("findObjectInRoom: Not enough code blocks in room %d", room);
+			cdhd = (CodeHeader*)findResource(MKID('CDHD'), obcdptr, 0);
+			if ( READ_LE_UINT16(&cdhd->obj_id) == (uint16)id) {
+				fo->cdhd = cdhd;
+				fo->obcd = obcdptr;
+				break;
+			}
+			if (++i == numobj)
+				error("findObjectInRoom: Object %d not found in room %d", id, room);
+			searchptr = NULL;
 		}
 	}
 
-	error("addObjectToInventory: Object %d not found in room %d", obj, room);
+	if (findWhat & foImageHeader) {
+		searchptr = roomptr;
+		for(i=0;;) {
+			obimptr = findResource(MKID('OBIM'), searchptr);
+			if (obimptr==NULL)
+				error("findObjectInRoom: Not enough image blocks in room %d", room);
+			imhd = (ImageHeader*)findResource(MKID('IMHD'), obimptr, 0);
+			if (READ_LE_UINT16(&imhd->obj_id) == (uint16)id) {
+				fo->obim = obimptr;
+				fo->imhd = imhd;
+				break;
+			}
+			
+			if (++i==numobj)
+				error("findObjectInRoom: Object %d image not found in room %d", id, room);
+			searchptr = NULL;
+		}
+	}
 }
 
 int Scumm::getInventorySlot() {
@@ -632,7 +699,7 @@ void Scumm::setOwnerOf(int obj, int owner) {
 }
 
 int Scumm::getObjX(int obj) {
-	if (obj <= _vars[VAR_NUM_ACTOR]) {
+	if (obj < NUM_ACTORS) {
 		return derefActorSafe(obj,"getObjX")->x;
 	} else {
 		if (whereIsObject(obj)==WIO_NOT_FOUND)
@@ -643,7 +710,7 @@ int Scumm::getObjX(int obj) {
 }
 
 int Scumm::getObjY(int obj) {
-	if (obj <= _vars[VAR_NUM_ACTOR]) {
+	if (obj < NUM_ACTORS) {
 		return derefActorSafe(obj,"getObjY")->y;
 	} else {
 		if (whereIsObject(obj)==WIO_NOT_FOUND)
@@ -654,8 +721,8 @@ int Scumm::getObjY(int obj) {
 }
 
 int Scumm::getObjDir(int obj) {
-	if (obj <= _vars[VAR_NUM_ACTOR]) {
-		return derefActorSafe(obj,"getObjDir")->facing;
+	if (obj < NUM_ACTORS) {
+		return newDirToOldDir(derefActorSafe(obj,"getObjDir")->facing);
 	} else {
 		getObjectXYPos(obj);
 		return _dir;
@@ -687,12 +754,14 @@ void Scumm::setObjectState(int obj, int state, int x, int y) {
 	int i;
 
 	i = getObjectIndex(obj);
-	if (i==-1)
+	if (i==-1) {
+		warning("setObjectState: no such object");
 		return;
+	}
 
 	if (x != -1) {
-		_objs[i].x_pos = x;
-		_objs[i].y_pos = y;
+		_objs[i].x_pos = x<<3;
+		_objs[i].y_pos = y<<3;
 	}
 
 	addObjectToDrawQue(i);
@@ -717,7 +786,7 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	if (is_obj_1) {
 		if (getObjectOrActorXY(b)==-1)
 			return -1;
-		if (b < _vars[VAR_NUM_ACTOR])
+		if (b < NUM_ACTORS)
 			i = derefActorSafe(b, "unkObjProc1")->scalex;
 		x = _xPos;
 		y = _yPos;
@@ -729,7 +798,7 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	if (is_obj_2) {
 		if (getObjectOrActorXY(e)==-1)
 			return -1;
-		if (e < _vars[VAR_NUM_ACTOR])
+		if (e < NUM_ACTORS)
 			j = derefActorSafe(e, "unkObjProc1(2)")->scalex;
 		x2 = _xPos;
 		y2 = _yPos;
@@ -741,66 +810,42 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	return getDist(x,y,x2,y2) * 0xFF / ((i + j)>>1);
 }
 
-void Scumm::setCursorImg(uint room, uint img) {
+void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 	byte *ptr;
 	int index;
-	CodeHeader *cdhd;
-	ImageHeader *imhd;
 	int w,h;
-	byte *roomptr,*obcd,*obim,*dataptr,*bomp;
+	byte *roomptr,*obim,*dataptr,*bomp;
 	RoomHeader *rmhd;
 	int i,numobj;
 	uint32 size;
+	FindObjectInRoom foir;
+	
+	if (room==(uint)-1)
+		room = getObjectRoom(img);
 
-	if (getObjectIndex(img)!=-1) {
-		obim = getObjectAddress(img);
-		ptr = obim + READ_BE_UINT32(&((ImageHeader*)obim)->size);
-		cdhd = (CodeHeader*)findResource(MKID('CDHD'), obim, 0);
-		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr, 0);
-	} else {
-		ensureResourceLoaded(1, room);
-		roomptr = getResourceAddress(1, room);
-		rmhd = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
-
-		numobj = READ_LE_UINT16(&rmhd->numObjects);
-		for(i=0; ;i++) {
-			if (i>=numobj)
-				error("setCursorImg: object %d code not found in room %d", img, room);
-			
-			obcd = findResource(MKID('OBCD'), roomptr, i);
-			if (obcd==NULL)
-				error("setCursorImg: not enough code blocks in room %d", room);
-			cdhd = (CodeHeader*)findResource(MKID('CDHD'), obcd, 0);
-			if (READ_LE_UINT16(&cdhd->obj_id) == img)
-				break;
-		}
-
-		for(i=0; ;i++) {
-			if (i>=numobj)
-				error("setCursorImg: object %d image not found in room %d", img, room);
-			obim = findResource(MKID('OBIM'), roomptr, i);
-			if (obim==NULL)
-				error("setCursorImg: not enough image blocks in room %d", room);
-			imhd = (ImageHeader*)findResource(MKID('IMHD'), obim, 0);
-			if (READ_LE_UINT16(&imhd->obj_id) == img)
-				break;
-		}
-	}
+	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
 
 	setCursorHotspot2(
-		READ_LE_UINT16(&imhd->hotspot[0].x),
-		READ_LE_UINT16(&imhd->hotspot[0].y));
+		READ_LE_UINT16(&foir.imhd->hotspot[0].x),
+		READ_LE_UINT16(&foir.imhd->hotspot[0].y));
 
-	w = READ_LE_UINT16(&cdhd->v6.w)>>3;
-	h = READ_LE_UINT16(&cdhd->v6.h)>>3;
+#if !defined(FULL_THROTTLE)
+	w = READ_LE_UINT16(&foir.cdhd->v6.w)>>3;
+	h = READ_LE_UINT16(&foir.cdhd->v6.h)>>3;
+#else
+	w = READ_LE_UINT16(&foir.imhd->width)>>3;
+	h = READ_LE_UINT16(&foir.imhd->height)>>3;
+#endif
 
-	size = READ_BE_UINT32(&cdhd->size);
+	dataptr = findResource(IMxx_tags[imgindex],foir.obim);
+	if (dataptr==NULL)
+		error("setCursorImg: No such image");
+
+	size = READ_BE_UINT32(dataptr+4);
 	if (size > sizeof(_grabbedCursor))
 		error("setCursorImg: Cursor image too large");
-	
-	dataptr = findResource(MKID('IM01'),obim, 0);
 
-	if ((bomp = findResource(MKID('BOMP'), dataptr, 0)) != NULL)
+	if ((bomp = findResource(MKID('BOMP'), dataptr)) != NULL)
 		useBompCursor(bomp, w, h);
 	else
 		useIm01Cursor(dataptr, w, h);
@@ -838,13 +883,13 @@ void Scumm::enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h
 	eo->y = c;
 	if (d==0) {
 		od = &_objs[getObjectIndex(a)];
-		eo->width = od->numstrips<<3;
+		eo->width = od->width;
 	} else {
 		eo->width = d;
 	}
 	if (e==0) {
 		od = &_objs[getObjectIndex(a)];
-		eo->height = od->height<<3;
+		eo->height = od->height;
 	} else {
 		eo->height = e;
 	}
@@ -887,14 +932,14 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 	} else if (eo->a!=0) {
 		od = &_objs[getObjectIndex(eo->a)];
 		ptr = getResourceAddress(rtFlObject, od->fl_object_index);
-		ptr = findResource(MKID('OBIM'), ptr, 0);
+		ptr = findResource(MKID('OBIM'), ptr);
 	} else {
 		warning("drawEnqueuedObject: invalid");
 		return;
 	}
 
-	ptr = findResource(MKID('IM01'), ptr, 0);
-	bomp = findResource(MKID('BOMP'), ptr, 0);
+	ptr = findResource(MKID('IM01'), ptr);
+	bomp = findResource(MKID('BOMP'), ptr);
 
 	width = READ_LE_UINT16(&((BompHeader*)bomp)->width);
 	height = READ_LE_UINT16(&((BompHeader*)bomp)->height);
@@ -906,8 +951,10 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 
 	if (eo->a) {
 		dataptr = bomp + 18;
-
 	}
+
+//	debug(1, "drawEnqueuedObject(%d,%d,%d,%d,%d,  %d,%d,%d,%d,%d,%d,%d)",
+//		eo->x, eo->y, eo->width, eo->height, eo->a, eo->b, eo->c, eo->d, eo->e, eo->j, eo->k, eo->l);
 
 	updateDirtyRect(vs->number, x, x+width,y,y+height,0);
 }
@@ -928,3 +975,58 @@ void Scumm::removeEnqueuedObject(EnqueuedObject *eo) {
 	restoreBG(eo->x, eo->y, eo->x + eo->width, eo->y + eo->height);
 }
 
+int Scumm::findFlObjectSlot() {
+	int i;
+	for(i=1; i<_maxFLObject; i++) {
+		if (_baseFLObject[i] == NULL)
+			return i;
+	}
+	error("findFlObjectSlot: Out of FLObject slots");
+}
+
+void Scumm::loadFlObject(uint object, uint room) {
+	FindObjectInRoom foir;
+	int slot;
+	ObjectData *od;
+	byte *flob,*roomptr;
+	uint32 obcd_size, obim_size, flob_size;
+
+	/* Don't load an already loaded object */
+	if (whereIsObject(object) != WIO_NOT_FOUND)
+		return;
+
+	if (room==(uint)-1)
+		room = getObjectRoom(object);
+
+	/* Locate the object in the room resource */
+	findObjectInRoom(&foir, foImageHeader | foCodeHeader, object, room);
+
+	/* Add an entry for the new floating object in the local object table */
+	if (++_numObjectsInRoom > _numLocalObjects)
+		error("loadFlObject: Local Object Table overflow");
+	od = &_objs[_numObjectsInRoom];
+
+	/* Setup sizes */
+	obcd_size = READ_BE_UINT32(foir.obcd + 4);
+	od->offs_obcd_to_room = 8;
+	od->offs_obim_to_room = obcd_size + 8;
+	obim_size = READ_BE_UINT32(foir.obim + 4);
+	flob_size = obcd_size + obim_size + 8;
+
+	/* Allocate slot & memory for floating object */
+	slot = findFlObjectSlot();
+	createResource(rtFlObject, slot, flob_size);
+
+	/* Copy object code + object image to floating object */
+	roomptr = getResourceAddress(rtRoom, room);
+	flob = getResourceAddress(rtFlObject, slot);
+	((uint32*)flob)[0] = MKID('FLOB');
+	((uint32*)flob)[1] = TO_BE_32(flob_size);
+	memcpy(flob + 8, roomptr - foir.roomptr + foir.obcd, obcd_size);
+	memcpy(flob + 8 + obcd_size, roomptr - foir.roomptr + foir.obim, obim_size);
+
+	/* Setup local object flags */
+	setupRoomObject(od, flob);
+
+	od->fl_object_index = slot;
+}

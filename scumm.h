@@ -34,13 +34,19 @@ enum {
 	BITS_PER_SAMPLE = 16,
 	NUM_MIXER = 4,
 	NUM_SCRIPT_SLOT = 25,
+	NUM_LOCALSCRIPT = 60,
+	NUM_SHADOW_PALETTE = 8,
+#if defined(FULL_THROTTLE)
+	NUM_ACTORS = 30
+#else
 	NUM_ACTORS = 13
+#endif
 };
+
 
 struct Point {
 	int x,y;
 };
-
 
 #pragma START_PACK_STRUCTS
 	
@@ -61,6 +67,9 @@ struct ResHeader {
 
 struct RoomHeader {
 	uint32 tag, size;
+#ifdef FULL_THROTTLE
+	uint32 version;
+#endif
 	uint16 width,height;
 	uint16 numObjects;
 } GCC_PACK;
@@ -71,6 +80,39 @@ struct BompHeader {
 	uint16 width,height;
 } GCC_PACK;
 
+struct AkosHeader {
+	uint32 tag;
+	uint32 size;
+	byte x_1[2];
+	byte flags;
+	byte x_2;
+	uint16 num_anims;
+	uint16 x_3;
+	uint16 codec;
+} GCC_PACK;
+
+struct AkosOffset {
+	uint32 akcd;
+	uint16 akci;
+} GCC_PACK;
+
+struct AkosCI {
+	uint16 width,height;
+	int16 rel_x, rel_y;
+	int16 move_x, move_y;
+} GCC_PACK;
+
+#if defined(FULL_THROTTLE)
+struct CodeHeader {
+	uint32 tag;
+	uint32 size;
+	uint32 version;
+	uint16 obj_id;
+	byte parent;
+	byte parentstate;
+} GCC_PACK;
+
+#else
 struct CodeHeader {
 	uint32 id;
 	uint32 size;
@@ -96,7 +138,25 @@ struct CodeHeader {
 		} v6;
 	};
 } GCC_PACK;
+#endif
 
+#if defined(FULL_THROTTLE)
+struct ImageHeader { /* file format */
+	uint32 tag;
+	uint32 size;
+	uint32 version;
+	uint16 obj_id;
+	uint16 unk[1];
+	int16 x_pos,y_pos;
+	uint16 width,height;
+	byte unk2[3];
+	byte actordir;
+	uint16 unk_2;
+	struct {
+		int16 x,y;
+	} hotspot[15];
+} GCC_PACK;
+#else
 struct ImageHeader { /* file format */
 	uint32 id;
 	uint32 size;
@@ -109,7 +169,7 @@ struct ImageHeader { /* file format */
 		int16 x,y;
 	} hotspot[15];
 } GCC_PACK;
-
+#endif
 #pragma END_PACK_STRUCTS
 
 struct AdjustBoxResult {
@@ -139,27 +199,29 @@ public:
 	uint16 obj_nr;
 	int16 x_pos;
 	int16 y_pos;
-	uint16 numstrips;
+	uint16 width;
 	uint16 height;
 	byte actordir;
 	byte parent;
 	byte parentstate;
-	byte ownerstate;
+	byte state;
 	byte fl_object_index;
-	byte unk_3;
 };
 
 struct CostumeData {
-	uint16 hdr;
+	byte active[16];
 	uint16 animCounter1;
 	byte animCounter2;
-	byte x_1;
-	uint16 a[16], b[16], c[16], d[16];
+	uint16 stopped;
+	uint16 curpos[16];
+	uint16 start[16];
+	uint16 end[16];
+	uint16 frame[16];
 };
 
 struct EnqueuedObject {
 	uint16 a,b,c,d,e;
-	uint16 x,y;
+	int16 x,y;
 	uint16 width,height;
 	uint16 j,k,l;
 };
@@ -190,9 +252,8 @@ struct VirtScreen {
 struct ActorWalkData {
 	int16 destx,desty;
 	byte destbox;
-	byte destdir;
+	int16 destdir;
 	byte curbox;
-	byte field_7;
 	int16 x,y,newx,newy;
 	int32 XYFactor, YXFactor;
 	uint16 xfrac,yfrac;
@@ -232,9 +293,11 @@ enum {
 	sleUint32 = 5
 };
 
+#if !defined(FULL_THROTTLE)
+
 enum ScummVars {
 	VAR_EGO = 1,
-	VAR_CAMERA_CUR_POS = 2,
+	VAR_CAMERA_POS_X = 2,
 	VAR_HAVE_MSG = 3,
 	VAR_ROOM = 4,
 	VAR_OVERRIDE = 5,
@@ -243,8 +306,8 @@ enum ScummVars {
 	VAR_TMR_1 = 11,
 	VAR_TMR_2 = 12,
 	VAR_TMR_3 = 13,
-	VAR_CAMERA_MIN = 17,
-	VAR_CAMERA_MAX = 18,
+	VAR_CAMERA_MIN_X = 17,
+	VAR_CAMERA_MAX_X = 18,
 	VAR_TIMER_NEXT = 19,
 	VAR_VIRT_MOUSE_X = 20,
 	VAR_VIRT_MOUSE_Y = 21,
@@ -252,7 +315,7 @@ enum ScummVars {
 	VAR_LAST_SOUND = 23,
 	VAR_CUTSCENEEXIT_KEY = 24,
 	VAR_TALK_ACTOR = 25,
-	VAR_CAMERA_FAST = 26,
+	VAR_CAMERA_FAST_X = 26,
 	VAR_SCROLL_SCRIPT = 27,
 	VAR_ENTRY_SCRIPT = 28,
 	VAR_ENTRY_SCRIPT2 = 29,
@@ -305,8 +368,89 @@ enum ScummVars {
 	VAR_V6_SCREEN_HEIGHT = 54,
 	VAR_V6_EMSSPACE = 76,
 	VAR_V6_RANDOM_NR = 118,
-
 };
+
+#else
+
+enum ScummVars {
+	VAR_MOUSE_X = 1,
+	VAR_MOUSE_Y = 2,
+	VAR_VIRT_MOUSE_X = 3,
+	VAR_VIRT_MOUSE_Y = 4,
+	VAR_V6_SCREEN_WIDTH = 5,
+	VAR_V6_SCREEN_HEIGHT = 6,
+	VAR_CAMERA_POS_X = 7,
+	VAR_CAMERA_POS_Y = 8,
+	VAR_OVERRIDE = 9,
+	VAR_ROOM = 10,
+	VAR_ROOM_RESOURCE = 11,
+	VAR_TALK_ACTOR = 12,
+	VAR_HAVE_MSG = 13,
+	VAR_TIMER = 14,
+	VAR_TMR_4 = 15,
+	VAR_PERFORMANCE_1 = 26,
+	VAR_PERFORMANCE_2 = 27,
+	VAR_GAME_LOADED = 29,
+	VAR_V6_RANDOM_NR = 34,
+	VAR_NEW_ROOM = 35,
+	VAR_WALKTO_OBJ = 36,
+
+	VAR_SCROLL_SCRIPT = 50,
+	VAR_ENTRY_SCRIPT = 51,
+	VAR_ENTRY_SCRIPT2 = 52,
+	VAR_EXIT_SCRIPT = 53,
+	VAR_EXIT_SCRIPT2 = 54,
+	VAR_VERB_SCRIPT = 55,
+	VAR_SENTENCE_SCRIPT = 56,
+	VAR_HOOK_SCRIPT = 57,
+	VAR_CUTSCENE_START_SCRIPT = 58,
+	VAR_CUTSCENE_END_SCRIPT = 59,
+	VAR_UNK_SCRIPT = 60,
+	VAR_UNK_SCRIPT_2 = 61,
+	
+	VAR_PAUSE_KEY = 63,
+	VAR_RESTART_KEY = 64, /* ?? */
+	VAR_TALKSTOP_KEY = 65, /* ?? */
+	VAR_SAVELOADDIALOG_KEY = 66, /* ?? */
+	VAR_CUTSCENEEXIT_KEY = 24,
+
+	VAR_TIMER_NEXT = 97,
+	VAR_TMR_1 = 98,
+	VAR_TMR_2 = 99,
+	VAR_TMR_3 = 100,
+
+	VAR_CAMERA_MIN_X = 101,
+	VAR_CAMERA_MAX_X = 102,
+	VAR_CAMERA_MIN_Y = 103,
+	VAR_CAMERA_MAX_Y = 104,
+	VAR_CAMERA_FAST_X = 105,
+	VAR_CAMERA_FAST_Y = 106,
+	VAR_CAMERA_SPEED_X = 107,
+	VAR_CAMERA_SPEED_Y = 108,
+	VAR_CAMERA_ACCEL_X = 109,
+	VAR_CAMERA_ACCEL_Y = 110,
+		
+	VAR_EGO = 111,
+
+	VAR_CURSORSTATE = 112,
+	VAR_USERPUT = 113,
+	VAR_DEFAULT_TALK_DELAY = 114,
+	VAR_CHARINC = 115,
+	VAR_DEBUGMODE = 116,
+	
+	//VAR_V5_DRAWFLAGS = 9,
+	VAR_MI1_TIMER = 14,
+	VAR_V5_OBJECT_LO = 15,
+	VAR_V5_OBJECT_HI = 16,
+	VAR_V5_TALK_STRING_Y = 54,
+	VAR_V5_CHARFLAG = 60,
+
+	VAR_V6_EMSSPACE = 76,
+	
+};
+
+#endif
+
 
 enum ResTypes {
 	rtFirst = 1,
@@ -333,7 +477,12 @@ enum ResTypes {
 enum {
 	OF_OWNER_MASK = 0x0F,
 	OF_STATE_MASK = 0xF0,
+	
+#if defined(FULL_THROTTLE)
+	OF_OWNER_ROOM = 0xFF,
+#else
 	OF_OWNER_ROOM = 0x0F,
+#endif
 	OF_STATE_SHL = 4
 };
 
@@ -355,6 +504,13 @@ enum {
 	RF_LOCK = 0x80,
 	RF_USAGE = 0x7F,
 	RF_USAGE_MAX = RF_USAGE
+};
+
+enum MoveFlags {
+	MF_NEW_LEG = 1,
+	MF_IN_LEG = 2,
+	MF_TURN = 4,
+	MF_LAST_LEG = 8,
 };
 
 #define _maxRooms res.num[rtRoom]
@@ -424,6 +580,58 @@ struct CharsetRenderer {
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 };
 
+struct AkosRenderer {
+	CostumeData *cd;
+	int x,y; /* where to draw costume */
+	byte scale_x, scale_y; /* scaling */
+	byte clipping; /* clip mask */
+	byte actor_unk1;
+	uint16 codec;
+	bool mirror; /* draw actor mirrored */
+	byte dirty_id;
+	byte *outptr;
+	int outwidth, outheight;
+	
+	/* pointer to various parts of the costume resource */
+	byte *akos;
+	AkosHeader *akhd;
+	
+	/* current move offset */
+	int move_x, move_y;
+	/* movement of cel to decode */
+	int move_x_cur, move_y_cur;
+	/* width and height of cel to decode */
+	int width,height;
+	
+	byte *srcptr;
+
+	struct {
+		/* codec stuff */
+		const byte *scaletable;
+		byte mask,shl;
+		bool doContinue;
+		byte repcolor;
+		byte replen;
+		int scaleXstep;
+		int x,y;
+		int tmp_x, tmp_y;
+		int y_pitch;
+		int skip_width;
+		byte *destptr;
+		byte *mask_ptr,*mask_ptr_dest;
+		int imgbufoffs;
+	} v1;
+
+	/* put less used stuff at the bottom to optimize opcodes */
+	int draw_top, draw_bottom;
+	byte *akpl,*akci,*aksq;
+	AkosOffset *akof;
+	byte *akcd;
+
+
+	byte palette[256];
+};
+
 struct CostumeRenderer {
 	Scumm *_vm;
 	byte *_ptr;
@@ -485,30 +693,37 @@ struct Actor {
 	int elevation;
 	uint width;
 	byte number;
-	byte facing;
+	uint16 facing;
 	uint16 costume;
 	byte room;
 	byte talkColor;
 	byte scalex,scaley;
 	byte charset;
-	byte newDirection;
+	int16 newDirection;
 	byte moving;
 	byte ignoreBoxes;
 	byte neverZClip;
 	byte initFrame,walkFrame,standFrame,talkFrame1,talkFrame2;
 	bool needRedraw, needBgReset,costumeNeedsInit,visible;
+	byte unk1;
+#if defined(FULL_THROTTLE)
+	bool flip;
+#endif
 	uint speedx,speedy;
-	byte data8;
-	byte animIndex;
+	byte frame;
 	byte walkbox;
 	byte mask;
 	byte animProgress, animSpeed;
 	int16 new_1,new_2;
+	uint16 talk_script, walk_script;
 	byte new_3;
-	byte sound[8];
 	ActorWalkData walkdata;
+//#if defined(FULL_THROTTLE)
+	int16 animVariable[16];
+//#endif
+	uint16 sound[8];
 	CostumeData cost;
-	byte palette[32];
+	byte palette[64];
 };
 
 struct CameraData {
@@ -606,7 +821,7 @@ struct Gdi {
 
 	void decompressBitmap();
 
-	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, bool flag);
+	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag);
 	void clearUpperMask();
 
 	void disableZBuffer() { _disable_zbuffer++; }
@@ -621,6 +836,13 @@ struct Gdi {
 	void resetBackground(byte top, byte bottom, int strip);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void updateDirtyScreen(VirtScreen *vs);
+
+
+	enum DrawBitmapFlags {
+		dbAllowMaskOr = 1,
+		dbDrawMaskOnBoth = 2,
+		dbClear = 4,
+	};
 };
 
 struct MixerChannel {
@@ -642,6 +864,17 @@ enum GameId {
 	GID_SAMNMAX = 5,
 };
 
+enum GameFeatures {
+	GF_NEW_OPCODES = 1,
+	GF_AFTER_V6 = 2,
+	GF_AFTER_V7 = 4,
+	GF_HAS_ROOMTABLE = GF_AFTER_V7,
+	GF_USE_KEY = 8,
+	GF_USE_ANGLES = GF_AFTER_V7,
+
+	GF_DEFAULT = GF_USE_KEY,
+};
+
 struct ScummDebugger;
 struct Serializer;
 
@@ -654,12 +887,20 @@ enum WhereIsObject {
 	WIO_FLOBJECT = 4,
 };
 
+struct BoxCoords {
+	Point ul;
+	Point ur;
+	Point ll;
+	Point lr;
+};
+
 struct Scumm {
+	uint32 _features;
 	const char *_gameText;
 	byte _gameId;
-	byte _majorScummVersion;
-	byte _middleScummVersion;
-	byte _minorScummVersion;
+//	byte _majorScummVersion;
+//	byte _middleScummVersion;
+//	byte _minorScummVersion;
 	ScummDebugger *_debugger;
 	void *_gui; /* actually a pointer to a Gui */
 	
@@ -698,6 +939,9 @@ struct Scumm {
 
 	const OpcodeProc *_opcodes;
 
+	int _xPos, _yPos;
+	int _dir;
+
 	byte _curActor;
 	int _curVerb;
 	int _curVerbSlot;
@@ -705,6 +949,11 @@ struct Scumm {
 	int _curPalIndex;
 
 	VirtScreen *_curVirtScreen;
+
+	
+	byte *_scriptPointer, *_scriptOrgPointer;
+	byte *_scriptPointerStart;
+	byte _opcode;
 
 	int _numVariables;
 	int _numBitVariables;
@@ -719,18 +968,17 @@ struct Scumm {
 	int _numSounds;
 	int _numCharsets;
 	int _numCostumes;
+	int _numNewNames;
+	int _numGlobalScripts;
 
 	byte *_msgPtrToAdd;
 	
 	uint8 *_roomFileIndexes;
-	byte *_objectFlagTable;
+	byte *_objectOwnerTable;
+	byte *_objectRoomTable;
+	byte *_objectStateTable;
 	uint32 *_classData;
 
-	byte _numGlobalScripts;
-	byte *_scriptPointer, *_scriptOrgPointer;
-	byte *_scriptPointerStart;
-	byte _opcode;
-	
 	byte _expire_counter;
 
 	bool _noTalkAnims;
@@ -804,7 +1052,7 @@ struct Scumm {
 
 	int _numInMsgStack;
 
-	uint32 _localScriptList[0x39];
+	uint32 _localScriptList[NUM_LOCALSCRIPT];
 
 	VirtScreen virtscr[4];
 
@@ -857,18 +1105,7 @@ struct Scumm {
 
 	Actor actor[NUM_ACTORS];
 
-	uint16 actorDrawBits[200];
-
-	struct {
-		int upperLeftX;
-		int upperRightX;
-		int lowerLeftX;
-		int lowerRightX;
-		int upperLeftY;
-		int upperRightY;
-		int lowerLeftY;
-		int lowerRightY;
-	} box;
+	uint32 gfxUsageBits[200];
 
 	CharsetRenderer charset;
 	
@@ -876,7 +1113,11 @@ struct Scumm {
 
 	byte _resourceMapper[128];
 
+	uint16 _extraBoxFlags[65];
+
 	byte **_lastCodePtr;
+
+	byte *_shadowPalette;
 	
 	int _numSoundTags;
 	byte *_soundTagTable;
@@ -890,14 +1131,11 @@ struct Scumm {
 
 	uint32 _whereInResToRead;
 
-	int _xPos, _yPos;
-	byte _dir;
-
 	CameraData camera;
 
 	int _resultVarNumber;
 
-	byte _sentenceIndex;
+	int _sentenceNum;
 	SentenceTab sentence[6];
 
 	StringTab string[6];
@@ -991,12 +1229,10 @@ struct Scumm {
 	void readResTypeList(int id, uint32 tag, const char *name);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 
-	void initThingsV5();
-	void initThingsV6();
-
 	void initRandSeeds();
 
 	uint getRandomNumber(uint max);
+	uint getRandomNumberRng(uint min, uint max);
 
 	void loadCharset(int i);
 	void nukeCharset(int i);
@@ -1035,7 +1271,7 @@ struct Scumm {
 	void setActorWalkSpeed(Actor *a, uint speed1, uint speed2);
 	int calcMovementFactor(Actor *a, int newx, int newy);
 	int actorWalkStep(Actor *a);
-	int getProgrDirChange(Actor *a, int mode);
+	int remapDirection(Actor *a, int dir);
 
 	bool checkXYInBoxBounds(int box, int x, int y);
 	void setupActorScale(Actor *a);
@@ -1051,13 +1287,14 @@ struct Scumm {
 	void putState(int obj, int state);
 	int getOwner(int obj);
 	void putOwner(int obj, int owner);
+	int getObjectRoom(int obj);
 
 	void main();
 
 	uint distanceFromPt(int x, int y, int ptx, int pty);
 	Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
 	bool getSideOfLine(int x1,int y1, int x2, int y2, int x, int y, int box);
-	void getBoxCoordinates(int box);
+	void getBoxCoordinates(int boxnum, BoxCoords *bc);
 	byte getMaskFromBox(int box);
 	Box *getBoxBaseAddr(int box);
 	byte getBoxFlags(int box);
@@ -1065,9 +1302,13 @@ struct Scumm {
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
 
-	void startAnimActor(Actor *a, int frame, byte direction);
+//	void startAnimActor(Actor *a, int frame);
+	void startAnimActor(Actor *a, int frame);
+	void startAnimActorEx(Actor *a, int frame, int direction);
+//	void startAnimActor(Actor *a, int frame, byte direction);
+	int getProgrDirChange(Actor *a, int mode);
 	void initActorCostumeData(Actor *a);
-	void fixActorDirection(Actor *a, byte direction);
+	void fixActorDirection(Actor *a, int direction);
 	void decodeCostData(Actor *a, int frame, uint mask);
 
 	void scummInit();
@@ -1337,6 +1578,9 @@ struct Scumm {
 	void o6_breakMaybe();
 	void o6_pickOneOf();
 	void o6_pickOneOfDefault();
+	void o6_jumpToScript();
+	void o6_isRoomScriptRunning();
+	void o6_kernelFunction();
 
 	void soundKludge(int16 *list);
 
@@ -1358,7 +1602,7 @@ struct Scumm {
 	bool isScriptInUse(int script);
 	int getActorXYPos(Actor *a);
 	void getObjectXYPos(int object);
-	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y);
+	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom);
 
 	int getWordVararg(int16 *ptr);
 
@@ -1410,7 +1654,7 @@ struct Scumm {
 	int hasCharsetMask(int x, int y, int x2, int y2);
 
 	void restoreBG(int left, int top, int right, int bottom);
-	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint16 dirtybits);
+	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits);
 	VirtScreen *findVirtScreen(int y);
 
 	void unkScreenEffect1();
@@ -1454,8 +1698,8 @@ struct Scumm {
 
 	int checkKeyHit();
 
-	int getPathToDestBox(int from, int to);
-	int findPathTowards(Actor *a, int box, int box2, int box3);
+	int getPathToDestBox(byte from, byte to);
+	int findPathTowards(Actor *a, byte box, byte box2, byte box3);
 
 	void setActorCostPalette(Actor *a);
 	void drawActorCostume(Actor *a);
@@ -1476,7 +1720,7 @@ struct Scumm {
 
 	void walkActorTo(Actor *a, int x, int y, int direction);
 
-	void setCursorImg(uint cursor, uint img);
+	void setCursorImg(uint img, uint room, uint imgindex);
 	void setCursorHotspot(int cursor, int x, int y);
 	void initCharset(int charset);
 	void addObjectToDrawQue(int object);
@@ -1495,7 +1739,7 @@ struct Scumm {
 	void unlock(int type, int i);
 	void heapClear(int mode);
 	void unkHeapProc2(int a, int b);
-	void loadFlObject(int a, int b);
+	void loadFlObject(uint object, uint room);
 	void setPalColor(int index, int r, int g, int b);
 	void darkenPalette(int a, int b, int c, int d, int e);
 	void unkRoomFunc3(int a, int b, int c, int d, int e);
@@ -1579,7 +1823,8 @@ struct Scumm {
 
 	void faceActorToObj(int act, int obj);
 	void animateActor(int act, int anim);
-	int getScriptRunning(int script);
+	bool isScriptRunning(int script);
+	bool isRoomScriptRunning(int script);
 	int getObjX(int obj);
 	int getObjY(int obj);
 	int getObjDir(int obj);
@@ -1597,7 +1842,7 @@ struct Scumm {
 
 	void readArrayFromIndexFile();
 	void readMAXS();
-	void readIndexFileV6();
+	void readIndexFile();
 
 	int readArray(int array, int index, int base);
 	void writeArray(int array, int index, int base, int value);
@@ -1619,7 +1864,7 @@ struct Scumm {
 	void grabCursor(int x, int y, int w, int h);
 	void unkMiscOp9();
 	void startManiac();
-	void readIndexFileV5(int i);
+
 	void grabCursor(byte *ptr, int width, int height);
 	byte *getPalettePtr();
 	void setupSound();
@@ -1681,9 +1926,128 @@ struct Scumm {
 	void stopSfxSound();
 
 	void mixWaves(int16 *sounds, int len);
-	
 
+	struct FindObjectInRoom {
+		CodeHeader *cdhd;
+		byte *obcd;
+		ImageHeader *imhd;
+		byte *obim;
+		byte *roomptr;
+	};
+
+	enum FindObjectWhat {
+		foCodeHeader = 1,
+		foImageHeader = 2,
+		foCheckAlreadyLoaded = 4,
+	};
+
+	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
+	void setupRoomObject(ObjectData *od, byte *room);
+	int findFlObjectSlot();
+
+	void runTalkScript(int frame);
+
+	int remapPaletteColor(byte r, byte g, byte b, uint threshold);
+	void remapActor(Actor *a, int b, int c, int d, int e);
+
+	byte *findResourceData(uint32 tag, byte *ptr);
+
+	void akos_decodeData(Actor *a, int frame, uint usemask);
+	int akos_frameToAnim(Actor *a, int frame);
+	bool akos_hasManyDirections(Actor *a);
+	void stopActorMoving(Actor *a) { a->moving = 0; }
+
+	int newDirToOldDir(int dir);
+	int oldDirToNewDir(int dir);
+	void startWalkAnim(Actor *a, int cmd, int angle);
+	void setActorBox(Actor *a, int box);
+	int getAngleFromPos(int x, int y);
+	int updateActorDirection(Actor *a);
+
+	bool akos_drawCostume(AkosRenderer *ar);
+	void akos_setPalette(AkosRenderer *ar, byte *palette);
+	void akos_setCostume(AkosRenderer *ar, int costume);
+	void akos_setFacing(AkosRenderer *ar, Actor *a);
+	bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
+	void akos_codec1(AkosRenderer *ar);
+	void akos_codec5(AkosRenderer *ar);
+	void akos_codec16(AkosRenderer *ar);
+	void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
+	void akos_c1_spec1(AkosRenderer *ar);
+	void akos_c1_spec2(AkosRenderer *ar);
+	void akos_c1_spec3(AkosRenderer *ar);
+
+	void akos_c1_0_decode(AkosRenderer *ar);
+	void akos_c1_12_decode(AkosRenderer *ar);
+	void akos_c1_12y_decode(AkosRenderer *ar);
+	void akos_c1_3_decode(AkosRenderer *ar);
+	void akos_c1_4_decode(AkosRenderer *ar);
+	void akos_c1_4y_decode(AkosRenderer *ar);
+	void akos_c1_56_decode(AkosRenderer *ar);
+	void akos_c1_56y_decode(AkosRenderer *ar);
+	void akos_c1_7_decode(AkosRenderer *ar);
+
+	bool akos_increaseAnims(byte *akos, Actor *a);
+	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
+
+	int getAnimVar(Actor *a, byte var);
+	void setAnimVar(Actor *a, byte var, int value);
+
+	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
+	bool akos_compare(int a, int b, byte cmd);
+
+	static int normalizeAngle(int angle);
+	static int fromSimpleDir(int dir);
+	static int toSimpleDir(int dir);
+
+	void doSentence(int c, int b, int a);
+	int cost_frameToAnim(Actor *a, int frame);
+
+	void setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to);
 };
+
+enum AkosOpcodes{
+	AKC_Return  = 0xC001,
+	AKC_SetVar  = 0xC010,
+	AKC_CmdQue3  = 0xC015,
+	AKC_ComplexChan  = 0xC020,
+	AKC_Jump  = 0xC030,
+	AKC_JumpIfSet  = 0xC031,
+	AKC_AddVar  = 0xC040,
+	AKC_Ignore  = 0xC050,
+	AKC_IncVar  = 0xC060,
+	AKC_CmdQue3Quick  = 0xC061,
+	AKC_SkipStart = 0xC070,
+	AKC_SkipE  = 0xC070,
+	AKC_SkipNE  = 0xC071,
+	AKC_SkipL  = 0xC072,
+	AKC_SkipLE  = 0xC073,
+	AKC_SkipG  = 0xC074,
+	AKC_SkipGE  = 0xC075,
+	AKC_StartAnim  = 0xC080,
+	AKC_StartVarAnim  = 0xC081,
+	AKC_Random  = 0xC082,
+	AKC_SetActorClip  = 0xC083,
+	AKC_StartAnimInActor  = 0xC084,
+	AKC_SetVarInActor  = 0xC085,
+	AKC_HideActor  = 0xC086,
+	AKC_SetDrawOffs  = 0xC087,
+	AKC_JumpTable  = 0xC088,
+	AKC_SoundStuff  = 0xC089,
+	AKC_Flip  = 0xC08A,
+	AKC_Cmd3  = 0xC08B,
+	AKC_Ignore3  = 0xC08C,
+	AKC_Ignore2  = 0xC08D,
+	AKC_JumpStart = 0xC090,
+	AKC_JumpE  = 0xC090,
+	AKC_JumpNE  = 0xC091,
+	AKC_JumpL  = 0xC092,
+	AKC_JumpLE  = 0xC093,
+	AKC_JumpG  = 0xC094,
+	AKC_JumpGE  = 0xC095,
+	AKC_ClearFlag  = 0xC09F,
+};
+
 
 struct ScummDebugger {
 	Scumm *_s;
@@ -1746,6 +2110,7 @@ struct Serializer {
 
 };
 
+extern const uint32 IMxx_tags[];
 
 void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
@@ -1765,7 +2130,8 @@ void updateScreen(Scumm *s);
 void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
 void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
-byte *findResource(uint32 id, byte *searchin, int index);
+byte *findResource(uint32 tag, byte *searchin, int index);
+byte *findResource(uint32 tag, byte *searchin);
 void playSfxSound(void *sound, uint32 size, uint rate);
 bool isSfxFinished();
 void waitForTimer(Scumm *s, int msec_delay);

@@ -292,8 +292,8 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 
 	CHECK_HEAP
 
-	if (a->data8) {
-		proc_special(a->data8);
+	if (a->unk1) {
+		proc_special(a->unk1);
 		return b;
 	}
 
@@ -672,7 +672,7 @@ void CostumeRenderer::proc_special(byte code) {
 void CostumeRenderer::loadCostume(int id) {
 	_ptr = _vm->getResourceAddress(rtCostume, id);
 	
-	if (_vm->_majorScummVersion == 6) {
+	if (_vm->_features&GF_AFTER_V6) {
 		_ptr += 8;
 	} else {
 		_ptr += 2;
@@ -698,24 +698,39 @@ void CostumeRenderer::loadCostume(int id) {
 	_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
 }
 
+void Scumm::initActorCostumeData(Actor *a) {
+	CostumeData *cd = &a->cost;
+	int i;
+
+	cd->stopped = 0;
+	for (i=0; i<16; i++) {
+		cd->active[i] = 0;
+		cd->curpos[i] = cd->start[i] = cd->end[i] = cd->frame[i] = 0xFFFF;
+	}
+}
+
 byte CostumeRenderer::drawOneSlot(Actor *a, int slot) {
+#if !defined(FULL_THROTTLE)
 	int i;
 	int code;
 	CostumeData *cd = &a->cost;
 
-	if (cd->a[slot]==0xFFFF || cd->hdr & (1<<slot))
+	if (cd->curpos[slot]==0xFFFF || cd->stopped & (1<<slot))
 		return 0;
 	
-	i = cd->a[slot]&0x7FFF;
+	i = cd->curpos[slot]&0x7FFF;
 	_frameptr = _ptr + READ_LE_UINT16(_ptr + _numColors + slot*2 + 10);
 	code = _dataptr[i]&0x7F;
+
 	_srcptr = _ptr + READ_LE_UINT16(_frameptr + code*2);
 
 	if (code != 0x7B) {
 		return mainRoutine(a, slot, code);
 	}
+#endif
 
 	return 0;
+
 }
 
 byte CostumeRenderer::drawCostume(Actor *a) {
@@ -733,18 +748,18 @@ byte CostumeRenderer::animateOneSlot(Actor *a, int slot) {
 	int i,end;
 	byte code,nc;
 
-	if (a->cost.a[slot]==0xFFFF)
+	if (a->cost.curpos[slot]==0xFFFF)
 		return 0;
 
-	highflag = a->cost.a[slot]&0x8000;
-	i = a->cost.a[slot]&0x7FFF;
-	end = a->cost.c[slot];
+	highflag = a->cost.curpos[slot]&0x8000;
+	i = a->cost.curpos[slot]&0x7FFF;
+	end = a->cost.end[slot];
 	code=_dataptr[i]&0x7F;
 
 	do {
 		if (!highflag) {
 			if (i++ >= end)
-				i = a->cost.b[slot];
+				i = a->cost.start[slot];
 		} else {
 			if (i != end)
 				i++;
@@ -754,25 +769,25 @@ byte CostumeRenderer::animateOneSlot(Actor *a, int slot) {
 
 		if (nc==0x7C) {
 			a->cost.animCounter1++;
-			if(a->cost.b[slot] != end)
+			if(a->cost.start[slot] != end)
 				continue;
 		} else {
-			if (_vm->_majorScummVersion == 6) {
+			if (_vm->_features&GF_AFTER_V6) {
 				if (nc>=0x71 && nc<=0x78) {
 					_vm->addSoundToQueue2(a->sound[nc-0x71]);
-					if(a->cost.b[slot] != end)
+					if(a->cost.start[slot] != end)
 						continue;
 				}
 			} else {
 				if (nc==0x78) {
 					a->cost.animCounter2++;
-					if(a->cost.b[slot] != end)
+					if(a->cost.start[slot] != end)
 						continue;
 				}
 			}
 		}
 
-		a->cost.a[slot] = i|highflag;
+		a->cost.curpos[slot] = i|highflag;
 		return (_dataptr[i]&0x7F) != code;
 	} while(1);
 }
@@ -781,10 +796,75 @@ byte CostumeRenderer::animate(Actor *a) {
 	int i;
 	byte r = 0;
 
+#if !defined(FULL_THROTTLE)
 	for (i=0; i<16; i++) {
-		if(a->cost.a[i]!=0xFFFF)
+		if(a->cost.curpos[i]!=0xFFFF)
 			r+=animateOneSlot(a, i);
 	}
+#endif
 	return r;
 }
 
+int Scumm::cost_frameToAnim(Actor *a, int frame) {
+	return newDirToOldDir(a->facing) + frame * 4;
+}
+
+void Scumm::decodeCostData(Actor *a, int frame, uint usemask) {
+	byte *p,*r;
+	uint mask,j;
+	int i;
+	byte extra,cmd;
+	byte *dataptr;
+	int anim;
+
+	anim = cost_frameToAnim(a, frame);
+	
+	p = cost._ptr;
+	if (anim > p[6]) {
+		return;
+	}
+
+	r = p + READ_LE_UINT16(p + anim*2 + cost._numColors + 42);
+	if (r==p) {
+		return;
+	}
+
+	dataptr = p + READ_LE_UINT16(p + cost._numColors + 8);
+
+	mask = READ_LE_UINT16(r);
+	r+=2;
+	i = 0;
+	do {
+		if (mask&0x8000) {
+			j = READ_LE_UINT16(r);
+			r+=2;
+			if (usemask&0x8000) {
+				if (j==0xFFFF) {
+					a->cost.curpos[i] = 0xFFFF;
+					a->cost.start[i] = 0;
+					a->cost.frame[i] = frame;
+				} else {
+					extra = *r++;
+					cmd = dataptr[j];
+					if (cmd==0x7A) {
+						a->cost.stopped &= ~(1<<i);
+					} else if (cmd==0x79) {
+						a->cost.stopped |= (1<<i);
+					} else {
+						a->cost.curpos[i] = a->cost.start[i] = j;
+						a->cost.end[i] = j + (extra&0x7F);
+						if (extra&0x80)
+							a->cost.curpos[i] |= 0x8000;
+						a->cost.frame[i] = frame;
+					}
+				}
+			} else {
+				if (j!=0xFFFF)
+					r++;
+			}
+		}
+		i++;
+		usemask <<= 1;
+		mask <<= 1;
+	} while ((uint16)mask);
+}

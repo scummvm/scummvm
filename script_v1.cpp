@@ -461,7 +461,7 @@ FixRoom:
 			a->animProgress = 0;
 			break;
 		case 23: /* unk2 */
-			a->data8 = getVarOrDirectByte(0x80); /* unused */
+			a->unk1 = getVarOrDirectByte(0x80); /* unused? */
 			break;
 		default:
 			error("o5_actorSet: default case");
@@ -578,7 +578,7 @@ void Scumm::o5_cursorCommand() {
 	case 10: /* set cursor img */
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
-		setCursorImg(i, j);
+		setCursorImg(i, j, 1);
 		break;
 	case 11: /* set cursor hotspot */
 		i = getVarOrDirectByte(0x80);
@@ -653,17 +653,15 @@ void Scumm::o5_doSentence() {
 	int a,b;
 	SentenceTab *st;
 
-	_sentenceIndex++;
-
 	a = getVarOrDirectByte(0x80);
 	if (a==0xFE) {
-		_sentenceIndex = 0xFF;
+		_sentenceNum = 0;
 		stopScriptNr(_vars[VAR_SENTENCE_SCRIPT]);
 		clearClickedStatus();
 		return;
 	}
 
-	st = &sentence[_sentenceIndex];
+	st = &sentence[_sentenceNum++];
 
 	st->unk5 = a;
 	st->unk4 = getVarOrDirectWord(0x40);
@@ -693,16 +691,17 @@ void Scumm::o5_drawBox() {
 void Scumm::o5_drawObject() {
 	int state,obj,index,i;
 	ObjectData *od;
-	byte x,y,w,h;
+	uint16 x,y,w,h;
+	int xpos, ypos;
 
 	state = 1;
-	_xPos = _yPos = 255;
+	xpos = ypos = 255;
 	obj = getVarOrDirectWord(0x80);
 
 	switch((_opcode = fetchScriptByte())&0x1F) {
 	case 1: /* draw at */
-		_xPos = getVarOrDirectWord(0x80);
-		_yPos = getVarOrDirectWord(0x40);
+		xpos = getVarOrDirectWord(0x80);
+		ypos = getVarOrDirectWord(0x40);
 		break;
 	case 2: /* set state */
 		state = getVarOrDirectWord(0x80);
@@ -717,23 +716,23 @@ void Scumm::o5_drawObject() {
 	if (index==-1)
 		return;
 	od = &_objs[index];
-	if (_xPos!=0xFF) {
-		od->walk_x += (_xPos - od->x_pos)<<3;
-		od->x_pos = _xPos;
-		od->walk_y += (_yPos - od->y_pos)<<3;
-		od->y_pos = _yPos;
+	if (xpos!=0xFF) {
+		od->walk_x += (xpos<<3) - od->x_pos;
+		od->x_pos = xpos<<3;
+		od->walk_y += (ypos<<3) - od->y_pos;
+		od->y_pos = ypos<<3;
 	}
 	addObjectToDrawQue(index);
 
 	x = od->x_pos;
 	y = od->y_pos;
-	w = od->numstrips;
+	w = od->width;
 	h = od->height;
 
 	i = _numObjectsInRoom;
 	do {
 		if (_objs[i].x_pos == x && _objs[i].y_pos == y
-			&& _objs[i].numstrips == w && _objs[i].height==h) 
+			&& _objs[i].width == w && _objs[i].height==h) 
 			putState(_objs[i].obj_nr, 0);
 	} while (--i);
 
@@ -829,7 +828,7 @@ void Scumm::o5_getActorElevation() {
 
 void Scumm::o5_getActorFacing() {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorFacing")->facing);
+	setResult(newDirToOldDir(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorFacing")->facing));
 }
 
 void Scumm::o5_getActorMoving() {
@@ -924,7 +923,7 @@ void Scumm::o5_getRandomNr() {
 
 void Scumm::o5_getScriptRunning() {
 	getResultPos();
-	setResult(getScriptRunning(getVarOrDirectByte(0x80)));
+	setResult(isScriptRunning(getVarOrDirectByte(0x80)));
 }
 
 void Scumm::o5_getVerbEntrypoint() {
@@ -1046,11 +1045,11 @@ void Scumm::o5_lights() {
 	b = fetchScriptByte();
 	c = fetchScriptByte();
 
-	if (c==0)
+/*	if (c==0)
 		_vars[VAR_V5_DRAWFLAGS] = a;
-	else if (c==1) {
+	else if (c==1) {*/
 		warning("o5_lights: lights not implemented");
-	}
+//	}
 	_fullRedraw=1;
 }
 
@@ -1069,8 +1068,8 @@ void Scumm::o5_loadRoomWithEgo() {
 
 	a = derefActorSafe(_vars[VAR_EGO], "o5_loadRoomWithEgo");
 
-	/* Warning: uses _xPos, _yPos from a previous update of those */
-	putActor(a, _xPos, _yPos, room);
+	/* Warning: used previously _xPos, _yPos from a previous update of those */
+	putActor(a, a->x, a->y, room);
 
 	x = (int16)fetchScriptWord();
 	y = (int16)fetchScriptWord();
@@ -1087,7 +1086,7 @@ void Scumm::o5_loadRoomWithEgo() {
 	_fullRedraw=1;
 
 	if (x != -1) {
-		startWalkActor(a, x, y, 0xFF);
+		startWalkActor(a, x, y, -1);
 	}
 }
 
@@ -1327,8 +1326,8 @@ void Scumm::o5_roomOps() {
 		if (a > ((_scrWidthIn8Unit-20)<<3)) a=((_scrWidthIn8Unit-20)<<3);
 		if (b < 160) b=160;
 		if (b > ((_scrWidthIn8Unit-20)<<3)) b=((_scrWidthIn8Unit-20)<<3);
-		_vars[VAR_CAMERA_MIN] = a;
-		_vars[VAR_CAMERA_MAX] = b;
+		_vars[VAR_CAMERA_MIN_X] = a;
+		_vars[VAR_CAMERA_MAX_X] = b;
 		break;
 	case 2: /* room color */
 		error("room-color is no longer a valid command");
@@ -1486,7 +1485,7 @@ void Scumm::o5_setObjectName() {
 	int a;
 	int i;
 
-	if (act <= _vars[VAR_NUM_ACTOR])
+	if (act < NUM_ACTORS)
 		error("Can't set actor %d name with new-name-of", act);
 
 	if (!getObjectAddress(act))
@@ -1812,8 +1811,8 @@ void Scumm::o5_wait() {
 			break;
 		return;
 	case 4: /* wait for sentence */
-		if (_sentenceIndex!=0xFF) {
-			if (sentence[_sentenceIndex].unk &&
+		if (_sentenceNum) {
+			if (sentence[_sentenceNum-1].unk &&
 				!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]) )
 				return;
 			break;
@@ -1836,7 +1835,7 @@ void Scumm::o5_walkActorTo() {
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorTo");
 	x = getVarOrDirectWord(0x40);
 	y = getVarOrDirectWord(0x20);
-	startWalkActor(a, x, y, 0xFF);
+	startWalkActor(a, x, y, -1);
 }
 
 void Scumm::o5_walkActorToActor() {
@@ -1875,7 +1874,7 @@ void Scumm::o5_walkActorToActor() {
 	else
 		x -= b;
 	
-	startWalkActor(a, x, y, 0xFF);
+	startWalkActor(a, x, y, -1);
 }
 
 void Scumm::o5_walkActorToObject() {

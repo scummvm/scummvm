@@ -366,7 +366,7 @@ const char *Gui::queryString(int string, int id) {
 		return namebuf;
 	}
 
-	if (_s->_majorScummVersion==6) {
+	if (_s->_features&GF_AFTER_V6) {
 		string = _s->_vars[string_map_table_v6[string-1]];
 	} else {
 		string = string_map_table_v5[string-1];
@@ -437,12 +437,16 @@ void Gui::addLetter(byte letter) {
 }
 
 byte Gui::getDefaultColor(int color) {
-	if (_s->_majorScummVersion == 6) {
+#if defined(FULL_THROTTLE)
+	return 0;
+#else
+	if (_s->_features&GF_AFTER_V6) {
 		if (color==8) color=1;
 		return _s->readArray(110, 0, color);
 	} else {
 		return _s->getStringAddress(21)[color];
 	}
+#endif
 }
 
 void Gui::init(Scumm *s) {

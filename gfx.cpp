@@ -260,14 +260,14 @@ void Scumm::setCameraAt(int dest) {
 	}
 	cd->_destPos = dest;
 
-	t = _vars[VAR_CAMERA_MIN];
+	t = _vars[VAR_CAMERA_MIN_X];
 	if (cd->_curPos < t) cd->_curPos = t;
 
-	t = _vars[VAR_CAMERA_MAX];
+	t = _vars[VAR_CAMERA_MAX_X];
 	if (cd->_curPos > t) cd->_curPos = t;
 
 	if (_vars[VAR_SCROLL_SCRIPT]) {
-		_vars[VAR_CAMERA_CUR_POS] = cd->_curPos;
+		_vars[VAR_CAMERA_POS_X] = cd->_curPos;
 		runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 	}
 
@@ -309,7 +309,7 @@ void Scumm::initBGBuffers() {
 
 	room = getResourceAddress(rtRoom, _roomResource);
 
-	ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room, 0), 0);
+	ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 
 	gdi._numZBuffer = READ_LE_UINT16(ptr+8) + 1;
 
@@ -382,9 +382,8 @@ void Scumm::initCycl(byte *ptr) {
 	int i, j;
 	ColorCycle *cycl;
 
-	for (i=0,cycl=_colorCycle; i<16; i++,cycl++)
-		cycl->delay = 0;
-
+	memset(_colorCycle, 0, sizeof(_colorCycle));
+	
 	while ((j=*ptr++) != 0) {
 		if (j<1 || j>16) {
 			error("Invalid color cycle index %d", j);
@@ -537,9 +536,9 @@ void Scumm::redrawBGAreas() {
 
 	val = 0;
 
-	if (_fullRedraw==0 && _BgNeedsRedraw) {
+	if (!_fullRedraw && _BgNeedsRedraw) {
 		for (i=0; i<40; i++) {
-			if (actorDrawBits[_screenStartStrip + i]&0x8000) {
+			if (gfxUsageBits[_screenStartStrip + i]&0x80000000) {
 				redrawBGStrip(i, 1);
 			}
 		}
@@ -552,12 +551,12 @@ void Scumm::redrawBGAreas() {
 		val = 1;
 		redrawBGStrip(0, 1);
 	} else if (_fullRedraw!=0 || cd->_curPos != cd->_lastPos) {
-		_BgNeedsRedraw = 0;
+		_BgNeedsRedraw = false;
 		redrawBGStrip(0, 40);
 	}
 
 	drawRoomObjects(val);
-	_BgNeedsRedraw = 0;
+	_BgNeedsRedraw = false;
 }
 
 const uint32 zplane_tags[] = {
@@ -567,7 +566,7 @@ const uint32 zplane_tags[] = {
 	MKID('ZP03')
 };
 
-void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, bool flag) {
+void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag) {
 	byte *smap_ptr,*where_draw_ptr;
 	int i;
 	byte *zplane_list[4];
@@ -578,14 +577,14 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 	
 	CHECK_HEAP
 
-	smap_ptr = findResource(MKID('SMAP'), ptr, 0);
+	smap_ptr = findResource(MKID('SMAP'), ptr);
 
 	assert(smap_ptr);
 
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 
 	for(i=1; i<numzbuf; i++) {
-		zplane_list[i] = findResource(zplane_tags[i], ptr, 0);
+		zplane_list[i] = findResource(zplane_tags[i], ptr);
 	}
 
 	bottom = y + h;
@@ -633,25 +632,34 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 			_bgbak_ptr = where_draw_ptr;
 			
 			if (_vm->hasCharsetMask(sx<<3, y, (sx+1)<<3, bottom)) {
-				if (_vm->_vars[VAR_V5_DRAWFLAGS]&2)
-					draw8ColWithMasking();
-				else
+				if (flag&dbClear)
 					clear8ColWithMasking();
-			} else {
-				if (_vm->_vars[VAR_V5_DRAWFLAGS]&2)
-					blit(_backbuff_ptr, _bgbak_ptr, 8, h);
 				else
+					draw8ColWithMasking();
+			} else {
+				if (flag&dbClear)
 					clear8Col();
+				else
+					blit(_backbuff_ptr, _bgbak_ptr, 8, h);
 			}
 		}
 		CHECK_HEAP
+
+		if (flag & dbDrawMaskOnBoth) {
+			_z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr*2 + 8);
+			_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y*40 + x;
+			if (_useOrDecompress && flag&dbAllowMaskOr)
+				decompressMaskImgOr();
+			else
+				decompressMaskImg();
+		}
 
 		for (i=1; i<numzbuf; i++) {
 			if (!zplane_list[i])
 				continue;
 			_z_plane_ptr = zplane_list[i] + READ_LE_UINT16(zplane_list[i] + stripnr*2 + 8);
 			_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y*40 + x + _imgBufOffs[i];
-			if (_useOrDecompress && flag)
+			if (_useOrDecompress && flag&dbAllowMaskOr)
 				decompressMaskImgOr();
 			else
 				decompressMaskImg();
@@ -869,11 +877,11 @@ void Gdi::decompressMaskImgOr() {
 void Scumm::redrawBGStrip(int start, int num) {
 	int s = _screenStartStrip + start;
 
-	assert(s>=0 && s<sizeof(actorDrawBits)/sizeof(actorDrawBits[0]));
+	assert(s>=0 && s<sizeof(gfxUsageBits)/sizeof(gfxUsageBits[0]));
 
 	_curVirtScreen = &virtscr[0];
 
-	actorDrawBits[s]|=0x8000;
+	gfxUsageBits[s]|=0x80000000;
 	if (_curVirtScreen->height > _scrHeight) {
 		error("Screen Y size %d < Room height %d",
 			_curVirtScreen->height,
@@ -1208,7 +1216,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom) {
 	if (bottom>=height)
 		bottom=height;
 
-	updateDirtyRect(vs->number, left, right, top-topline,bottom-topline, 0x4000);
+	updateDirtyRect(vs->number, left, right, top-topline,bottom-topline, 0x40000000);
 
 	height = (top-topline) * 320 + vs->xstart + left;
 	
@@ -1223,7 +1231,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom) {
 	width = right - left;
 	widthmod = (width >> 2) + 2;
 
-	if (vs->alloctwobuffers && _currentRoom!=0 && _vars[VAR_V5_DRAWFLAGS]&2) {
+	if (vs->alloctwobuffers && _currentRoom!=0 /*&& _vars[VAR_V5_DRAWFLAGS]&2*/) {
 		blit(backbuff, bgbak, width, height);
 		if (vs->number==0 && charset._hasMask && height) {
 			do {
@@ -1241,10 +1249,10 @@ void Scumm::restoreBG(int left, int top, int right, int bottom) {
 	}
 }
 
-void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, uint16 dirtybits) {
+void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits) {
 	VirtScreen *vs = &virtscr[virt];
 	int lp,rp;
-	uint16 *sp;
+	uint32 *sp;
 	int num;
 
 	if (top > vs->height || bottom < 0)
@@ -1263,7 +1271,7 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 			rp = 200;
 		if (lp <= rp) {
 			num = rp - lp + 1;
-			sp = &actorDrawBits[lp];
+			sp = &gfxUsageBits[lp];
 			do {
 				*sp++ |= dirtybits;
 			} while (--num);
@@ -1435,18 +1443,18 @@ void Scumm::moveCamera() {
 
 	cd->_curPos &= 0xFFF8;
 
-	if (cd->_curPos < _vars[VAR_CAMERA_MIN]) {
-		if (_vars[VAR_CAMERA_FAST])
-			cd->_curPos = _vars[VAR_CAMERA_MIN];
+	if (cd->_curPos < _vars[VAR_CAMERA_MIN_X]) {
+		if (_vars[VAR_CAMERA_FAST_X])
+			cd->_curPos = _vars[VAR_CAMERA_MIN_X];
 		else
 			cd->_curPos += 8;
 		cameraMoved();
 		return;
 	}
 
-	if (cd->_curPos > _vars[VAR_CAMERA_MAX]) {
-		if (_vars[VAR_CAMERA_FAST])
-			cd->_curPos = _vars[VAR_CAMERA_MAX];
+	if (cd->_curPos > _vars[VAR_CAMERA_MAX_X]) {
+		if (_vars[VAR_CAMERA_FAST_X])
+			cd->_curPos = _vars[VAR_CAMERA_MAX_X];
 		else
 			cd->_curPos-=8;
 		cameraMoved();
@@ -1460,7 +1468,7 @@ void Scumm::moveCamera() {
 		t = (actorx>>3) - _screenStartStrip;
 		
 		if (t < cd->_leftTrigger || t > cd->_rightTrigger) {
-			if (_vars[VAR_CAMERA_FAST]) {
+			if (_vars[VAR_CAMERA_FAST_X]) {
 				if (t > 35)
 					cd->_destPos = actorx + 80;
 				if (t < 5)
@@ -1475,13 +1483,13 @@ void Scumm::moveCamera() {
 		cd->_destPos = a->x;
 	}
 
-	if (cd->_destPos < _vars[VAR_CAMERA_MIN])
-		cd->_destPos = _vars[VAR_CAMERA_MIN];
+	if (cd->_destPos < _vars[VAR_CAMERA_MIN_X])
+		cd->_destPos = _vars[VAR_CAMERA_MIN_X];
 
-	if (cd->_destPos > _vars[VAR_CAMERA_MAX])
-		cd->_destPos = _vars[VAR_CAMERA_MAX];
+	if (cd->_destPos > _vars[VAR_CAMERA_MAX_X])
+		cd->_destPos = _vars[VAR_CAMERA_MAX_X];
 
-	if (_vars[VAR_CAMERA_FAST]) {
+	if (_vars[VAR_CAMERA_FAST_X]) {
 		cd->_curPos = cd->_destPos;
 	} else {
 		if (cd->_curPos < cd->_destPos)
@@ -1498,7 +1506,7 @@ void Scumm::moveCamera() {
 	cameraMoved();
 
 	if (pos != cd->_curPos && _vars[VAR_SCROLL_SCRIPT]) {
-		_vars[VAR_CAMERA_CUR_POS] = cd->_curPos;
+		_vars[VAR_CAMERA_POS_X] = cd->_curPos;
 		runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 	}
 }
@@ -1627,23 +1635,19 @@ void Scumm::screenEffect(int effect) {
 
 void Scumm::resetActorBgs() {
 	Actor *a;
-	int i,bitpos;
-	int top,bottom;
-	uint16 onlyActorFlags;
+	int i;
+	uint32 onlyActorFlags,bitpos;
 	int offs;
 	
 	for(i=0; i<40; i++) {
-		onlyActorFlags = (actorDrawBits[_screenStartStrip + i]&=0x3FFF);
+		onlyActorFlags = (gfxUsageBits[_screenStartStrip + i]&=0x3FFFFFFF);
 		a = getFirstActor();
 		bitpos = 1;
 
 		while (onlyActorFlags) {
 			if(onlyActorFlags&1 && a->top!=0xFF && a->needBgReset) {
-				top = a->top;
-				bottom = a->bottom;
-				actorDrawBits[_screenStartStrip + i] ^= bitpos;
+				gfxUsageBits[_screenStartStrip + i] ^= bitpos;
 				gdi.resetBackground(a->top, a->bottom, i);
-
 			}
 			bitpos<<=1;
 			onlyActorFlags>>=1;
@@ -1673,7 +1677,7 @@ void Gdi::resetBackground(byte top, byte bottom, int strip) {
 	
 	_numLinesToProcess = bottom - top;
 	if (_numLinesToProcess) {
-		if (_vm->_vars[VAR_V5_DRAWFLAGS]&2) {
+		if (1/*_vm->_vars[VAR_V5_DRAWFLAGS]&2*/) {
 			if(_vm->hasCharsetMask(strip<<3, top, (strip+1)<<3, bottom))
 				draw8ColWithMasking();
 			else
@@ -1761,11 +1765,11 @@ byte *Scumm::findPalInPals(byte *pal, int index) {
 	byte *offs;
 	uint32 size;	
 
-	pal = findResource(MKID('WRAP'), pal, 0);
+	pal = findResource(MKID('WRAP'), pal);
 	if (pal==NULL)
 		return NULL;
 
-	offs = findResource(MKID('OFFS'),pal, 0);
+	offs = findResource(MKID('OFFS'),pal);
 	if (offs==NULL)
 		return NULL;
 
@@ -1944,4 +1948,54 @@ void Scumm::decompressDefaultCursor(int index) {
 		_grabbedCursor[16*8+i] = color;
 		_grabbedCursor[16*i+8] = color;
 	}
+}
+
+
+int Scumm::remapPaletteColor(byte r, byte g, byte b, uint threshold) {
+	int i;
+	byte ar,ag,ab;
+	uint sum,j,bestsum,bestitem;
+	byte *pal = _currentPalette;
+
+	bestsum = (uint)-1;
+
+	r &= ~3;
+	g &= ~3;
+	b &= ~3;
+
+	for(i=0; i<256; i++,pal+=3) {
+		ar = pal[0]&~3;
+		ag = pal[1]&~3;
+		ab = pal[2]&~3;
+		if (ar==r && ag==g && ab==b)
+			return i;
+
+		j=abs(ar-r)*3;
+		sum = j*j;
+		j=abs(ag-g)*6;
+		sum += j*j;
+		j=abs(ab-b)*2;
+		sum += j*j;
+
+		if (sum < bestsum) {
+			bestsum = sum;
+			bestitem = i;
+		}
+	}
+
+	if (threshold != -1 && bestsum > threshold*threshold*(2+3+6)) {
+		pal = _currentPalette + (256-2)*3;
+		for(i=254; i>48; i--,pal-=3) {
+			if (pal[0]>=252 && pal[1]>=252 && pal[2]>=252) {
+				setPalColor(i, r, g, b);
+				return i;
+			}
+		}
+	}
+
+	return bestitem;
+}
+
+void Scumm::setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to) {
+	
 }

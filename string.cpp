@@ -186,7 +186,7 @@ void Scumm::CHARSET_1() {
 		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "CHARSET_1");
 
 	if (a && string[0].overhead!=0) {
-		if (_majorScummVersion==5) {
+		if (!(_features & GF_AFTER_V6)) {
 			string[0].xpos = a->x - camera._curPos + 160;
 
 			if (_vars[VAR_V5_TALK_STRING_Y] < 0) {
@@ -250,7 +250,7 @@ void Scumm::CHARSET_1() {
 	}
 
 	if (a && !string[0].no_talk_anim) {
-		startAnimActor(a, a->talkFrame1, a->facing);
+		startAnimActor(a, a->talkFrame1);
 		_useTalkAnims = true;
 	}
 
@@ -306,7 +306,7 @@ newLine:;
 			charset._left = charset._xpos2;
 			charset._top = charset._ypos2;
 			
-			if (_majorScummVersion==5) {
+			if (!(_features&GF_AFTER_V6)) {
 				if (!_vars[VAR_V5_CHARFLAG]) {
 					charset.printChar(c);
 				}
@@ -336,7 +336,7 @@ newLine:;
 			frme = *buffer++;
 			frme |= *buffer++<<8;
 			if (a)
-				startAnimActor(a, frme, a->facing);
+				startAnimActor(a, frme);
 		} else if (c==10) {
 			uint32 a,b;
 
@@ -456,7 +456,7 @@ void Scumm::drawString(int a) {
 				break;
 			}
 		} else {
-			if (a==1 && _majorScummVersion==6)
+			if (a==1 && (_features&GF_AFTER_V6))
 				charset._blitAlso = true;
 			charset.printChar(chr);
 			charset._blitAlso = false;
@@ -603,7 +603,7 @@ void Scumm::unkAddMsgToStack4(int var) {
 void Scumm::unkAddMsgToStack5(int var) {
 	byte *ptr;
 
-	if (_majorScummVersion==6)
+	if (_features&GF_AFTER_V6)
 		var = readVar(var);
 	
 	if (var) {

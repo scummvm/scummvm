@@ -50,7 +50,6 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 		scriptOffs = _localScriptList[script - _numGlobalScripts];
 		if (scriptOffs == 0)
 			error("Local script %d is not in room %d", script, _roomResource);
-		scriptOffs += 9;
 		scriptType = WIO_LOCAL;
 	}
 
@@ -298,7 +297,7 @@ int Scumm::readVar(uint var) {
 		return _vars[var];
 	}
 
-	if (var&0x2000 && _majorScummVersion==5) {
+	if (var&0x2000 && !(_features&GF_NEW_OPCODES)) {
 		a = fetchScriptWord();
 		if (a&0x2000)
 			var = (var+readVar(a&~0x2000))&~0x2000;
@@ -451,6 +450,7 @@ bool Scumm::isScriptInUse(int script) {
 	return false;
 }
 
+
 void Scumm::runHook(int i) {
 	int16 tmp[16];
 	tmp[0] = i;
@@ -575,9 +575,9 @@ void Scumm::killScriptsAndResources() {
 
 	/* Nuke local object names */
 	if (_newNames) {
-		for (i=0; i<50; i++) {
+		for (i=0; i<_numNewNames; i++) {
 			int j = _newNames[i];
-			if (j && (getOwner(j)&OF_OWNER_MASK) == 0) {
+			if (j && getOwner(j) == 0) {
 				_newNames[i] = 0;
 				nukeResource(rtObjectName, i);
 			}
@@ -597,31 +597,33 @@ void Scumm::checkAndRunVar33() {
 				return;
 	}
 
-	if (_sentenceIndex > 0x7F || sentence[_sentenceIndex].unk)
+	if (!_sentenceNum || sentence[_sentenceNum-1].unk)
 		return;
-	
-	if (sentence[_sentenceIndex].unk2 && 
-		sentence[_sentenceIndex].unk3==sentence[_sentenceIndex].unk4) {
-		_sentenceIndex--;
-		return;
-	}
 
-	_localParamList[0] = sentence[_sentenceIndex].unk5;
-	_localParamList[1] = sentence[_sentenceIndex].unk4;
-	_localParamList[2] = sentence[_sentenceIndex].unk3;
-	_sentenceIndex--;
+	_sentenceNum--;
+
+#if !defined(FULL_THROTTLE)
+	if (sentence[_sentenceNum].unk2 && 
+		sentence[_sentenceNum].unk3==sentence[_sentenceNum].unk4)
+		return;
+#endif
+
+	_localParamList[0] = sentence[_sentenceNum].unk5;
+	_localParamList[1] = sentence[_sentenceNum].unk4;
+	_localParamList[2] = sentence[_sentenceNum].unk3;
 	_currentScript = 0xFF;
 	if (_vars[VAR_SENTENCE_SCRIPT])
 		runScript(_vars[VAR_SENTENCE_SCRIPT], 0, 0, _localParamList);
 }
 
 void Scumm::runInputScript(int a, int cmd, int mode) {
-	memset(_localParamList, 0, sizeof(_localParamList));
-	_localParamList[0] = a;
-	_localParamList[1] = cmd;
-	_localParamList[2] = mode;
+	int16 args[16];
+	memset(args, 0, sizeof(args));
+	args[0] = a;
+	args[1] = cmd;
+	args[2] = mode;
 	if (_vars[VAR_VERB_SCRIPT])
-		runScript(_vars[VAR_VERB_SCRIPT], 0, 0, _localParamList);
+		runScript(_vars[VAR_VERB_SCRIPT], 0, 0, args);
 }
 
 void Scumm::decreaseScriptDelay(int amount) {
@@ -695,7 +697,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 	objptr = getObjectAddress(obj);
 	assert(objptr);
 
-	verbptr = findResource(MKID('VERB'), objptr, 0);
+	verbptr = findResource(MKID('VERB'), objptr);
 	if (verbptr==NULL)
 		error("No verb block in object %d", obj);
 
@@ -777,60 +779,92 @@ void Scumm::faceActorToObj(int act, int obj) {
 	if (getObjectOrActorXY(obj)==-1)
 		return;
 
-	dir = (_xPos > x) ? 1 : 0;
+	dir = (_xPos > x) ? 90 : 270;
 	turnToDirection(derefActorSafe(act, "faceActorToObj"), dir);
 }
 
 void Scumm::animateActor(int act, int anim) {
+#if defined(FULL_THROTTLE)
+	int cmd,dir;
+	Actor *a;
+
+	a = derefActorSafe(act, "animateActor");
+
+	if (anim==0xFF)
+		anim = 2000;
+
+	cmd  = anim / 1000;
+	dir = anim % 1000;
+
+	/* temporary code */
+//	dir = newDirToOldDir(dir);
+
+	switch(cmd) {
+	case 2:
+		stopActorMoving(a);
+		startAnimActor(a, a->standFrame);
+		break;
+	case 3:
+		a->moving &= ~4;
+		fixActorDirection(a, dir);
+		break;
+	case 4:
+		turnToDirection(a, dir);
+		break;
+	default:
+		startAnimActor(a, anim);
+	}
+
+
+#else
 	int shr,dir;
 	bool inRoom;
 	Actor *a;
 
 	a = derefActorSafe(act, "animateActor");
 
-	shr = anim>>2;
 	dir = anim&3;
 
-	inRoom = (a->room == _currentRoom);
-
-	if (shr == 0x3F) {
-		if (inRoom) {
-			startAnimActor(a, a->standFrame, a->facing);
-			a->moving = 0;
-		}
-		return;
+	switch(anim>>2) {
+	case 0x3F:
+		stopActorMoving(a);
+		startAnimActor(a, a->standFrame);
+		break;
+	case 0x3E:
+		a->moving &= ~4;
+		fixActorDirection(a, oldDirToNewDir(dir));
+		break;
+	case 0x3D:
+		turnToDirection(a, oldDirToNewDir(dir));
+		break;
+	default:
+		startAnimActor(a, anim);
 	}
 
-	if (shr == 0x3E) {
-		if (inRoom) {
-			startAnimActor(a, 0x3E, dir);
-			a->moving &= ~4;
-		}
-		a->facing = dir;
-		return;
-	}
-
-	if (shr == 0x3D) {
-		if (inRoom) {
-			turnToDirection(a, dir);
-		} else {
-			a->facing = dir;
-		}
-		return;
-	}
-
-	startAnimActor(a, anim, a->facing);
+#endif
 }
 
-int Scumm::getScriptRunning(int script) {
+bool Scumm::isScriptRunning(int script) {
 	int i;
 	ScriptSlot *ss = vm.slot;
 	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
 		if (ss->number==script && (ss->where==WIO_GLOBAL || 
 			  ss->where==WIO_LOCAL) && ss->status)
-			return 1;
-	return 0;
+			return true;
+	return false;
 }
+
+bool Scumm::isRoomScriptRunning(int script) {
+	int i;
+	ScriptSlot *ss = vm.slot;
+	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
+		if (ss->number==script && ss->where==WIO_ROOM && ss->status)
+			return true;
+	return false;
+
+}
+
+
 
 void Scumm::beginOverride() {
 	int index;
@@ -971,3 +1005,46 @@ void Scumm::exitCutscene() {
 		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 	}
 }
+#if defined(FULL_THROTTLE)
+void Scumm::doSentence(int c, int b, int a) {
+	SentenceTab *st;
+	
+	if (b==a)
+		return;
+
+	st = &sentence[_sentenceNum-1];
+
+	if (_sentenceNum &&
+		st->unk5 == c && st->unk4==b && st->unk3==a)
+			return;
+
+	_sentenceNum++;
+	st++;
+
+	st->unk5 = c;
+	st->unk4 = b;
+	st->unk3 = a;
+	st->unk = 0;
+	
+	warning("dosentence(%d,%d,%d)", c, b, a);
+
+}
+
+#else
+void Scumm::doSentence(int c, int b, int a) {
+	SentenceTab *st;
+
+	st = &sentence[_sentenceNum++];
+
+	st->unk5 = c;
+	st->unk4 = b;
+	st->unk3 = a;
+
+	if (!(st->unk3&0xFF00))
+		st->unk2 = 0;
+	else
+		st->unk2 = 1;
+
+	st->unk = 0;
+}
+#endif

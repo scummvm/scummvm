@@ -138,6 +138,7 @@ bool Scumm::loadState(int slot, bool compat) {
 
 	debug(1,"State loaded from '%s'", filename);
 
+
 	pauseSounds(false);
 
 	return true;
@@ -193,14 +194,13 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(ObjectData,obj_nr,sleUint16),
 		MKLINE(ObjectData,x_pos,sleInt16),
 		MKLINE(ObjectData,y_pos,sleInt16),
-		MKLINE(ObjectData,numstrips,sleUint16),
+		MKLINE(ObjectData,width,sleUint16),
 		MKLINE(ObjectData,height,sleUint16),
 		MKLINE(ObjectData,actordir,sleByte),
 		MKLINE(ObjectData,parentstate,sleByte),
 		MKLINE(ObjectData,parent,sleByte),
-		MKLINE(ObjectData,ownerstate,sleByte),
+		MKLINE(ObjectData,state,sleByte),
 		MKLINE(ObjectData,fl_object_index,sleByte),
-		MKLINE(ObjectData,unk_3,sleByte),
 		MKEND()
 	};
 
@@ -211,7 +211,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Actor,bottom,sleInt16),
 		MKLINE(Actor,elevation,sleInt16),
 		MKLINE(Actor,width,sleUint16),
-		MKLINE(Actor,facing,sleByte),
+		MKLINE(Actor,facing,sleUint16),
 		MKLINE(Actor,costume,sleUint16),
 		MKLINE(Actor,room,sleByte),
 		MKLINE(Actor,talkColor,sleByte),
@@ -219,7 +219,8 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Actor,scaley,sleByte),
 		MKLINE(Actor,charset,sleByte),
 		MKARRAY(Actor,sound[0],sleByte, 8),
-		MKLINE(Actor,newDirection,sleByte),
+		MKARRAY(Actor,animVariable[0],sleUint16, 8),
+		MKLINE(Actor,newDirection,sleUint16),
 		MKLINE(Actor,moving,sleByte),
 		MKLINE(Actor,ignoreBoxes,sleByte),
 		MKLINE(Actor,neverZClip,sleByte),
@@ -232,10 +233,11 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Actor,speedy,sleUint16),
 		MKLINE(Actor,cost.animCounter1,sleUint16),
 		MKLINE(Actor,cost.animCounter2,sleByte),
-		MKARRAY(Actor,palette[0],sleByte,32),
+		MKARRAY(Actor,palette[0],sleByte,64),
 		MKLINE(Actor,mask,sleByte),
+		MKLINE(Actor,unk1,sleByte),
 		MKLINE(Actor,visible,sleByte),
-		MKLINE(Actor,animIndex,sleByte),
+		MKLINE(Actor,frame,sleByte),
 		MKLINE(Actor,animSpeed,sleByte),
 		MKLINE(Actor,animProgress,sleByte),
 		MKLINE(Actor,walkbox,sleByte),
@@ -247,12 +249,14 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Actor,new_2,sleInt16),
 		MKLINE(Actor,new_3,sleByte),
 
+		MKLINE(Actor,talk_script,sleUint16),
+		MKLINE(Actor,walk_script,sleUint16),
+
 		MKLINE(Actor,walkdata.destx,sleInt16),
 		MKLINE(Actor,walkdata.desty,sleInt16),
 		MKLINE(Actor,walkdata.destbox,sleByte),
-		MKLINE(Actor,walkdata.destdir,sleByte),
+		MKLINE(Actor,walkdata.destdir,sleUint16),
 		MKLINE(Actor,walkdata.curbox,sleByte),
-		MKLINE(Actor,walkdata.field_7,sleByte),
 		MKLINE(Actor,walkdata.x,sleInt16),
 		MKLINE(Actor,walkdata.y,sleInt16),
 		MKLINE(Actor,walkdata.newx,sleInt16),
@@ -262,11 +266,12 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Actor,walkdata.xfrac,sleUint16),
 		MKLINE(Actor,walkdata.yfrac,sleUint16),
 
-		MKLINE(Actor,cost.hdr,sleUint16),
-		MKARRAY(Actor,cost.a[0],sleUint16,16),
-		MKARRAY(Actor,cost.b[0],sleUint16,16),
-		MKARRAY(Actor,cost.c[0],sleUint16,16),
-		MKARRAY(Actor,cost.d[0],sleUint16,16),
+		MKARRAY(Actor,cost.active[0],sleByte,16),
+		MKLINE(Actor,cost.stopped,sleUint16),
+		MKARRAY(Actor,cost.curpos[0],sleUint16,16),
+		MKARRAY(Actor,cost.start[0],sleUint16,16),
+		MKARRAY(Actor,cost.end[0],sleUint16,16),
+		MKARRAY(Actor,cost.frame[0],sleUint16,16),
 		MKEND()
 	};
 
@@ -309,7 +314,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,_roomResource,sleByte),
 		MKLINE(Scumm,_numObjectsInRoom,sleByte),
 		MKLINE(Scumm,_currentScript,sleByte),
-		MKARRAY(Scumm,_localScriptList[0],sleUint32,0x39),
+		MKARRAY(Scumm,_localScriptList[0],sleUint32,NUM_LOCALSCRIPT),
 		MKARRAY(Scumm,vm.localvar[0][0],sleUint16,NUM_SCRIPT_SLOT*17),
 		MKARRAY(Scumm,_resourceMapper[0],sleByte,128),
 		MKARRAY(Scumm,charset._colorMap[0],sleByte,16),
@@ -336,7 +341,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,_talkDelay,sleInt16),
 		MKLINE(Scumm,_defaultTalkDelay,sleInt16),
 		MKLINE(Scumm,_numInMsgStack,sleInt16),
-		MKLINE(Scumm,_sentenceIndex,sleByte),
+		MKLINE(Scumm,_sentenceNum,sleByte),
 
 		MKLINE(Scumm,vm.cutSceneStackPointer,sleByte),
 		MKARRAY(Scumm,vm.cutScenePtr[0],sleUint32,5),
@@ -357,7 +362,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,_switchRoomEffect2,sleByte),
 		MKLINE(Scumm,_BgNeedsRedraw,sleByte),
 
-		MKARRAY(Scumm,actorDrawBits[0],sleUint16,200),
+		MKARRAY(Scumm,gfxUsageBits[0],sleUint32,200),
 		MKLINE(Scumm,gdi._transparency,sleByte),
 		MKARRAY(Scumm,_currentPalette[0],sleByte,768),
 		/* virtscr */
@@ -451,7 +456,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 	
 	s->saveLoadEntries(this,mainEntries);
 
-	s->saveLoadArrayOf(actor+1, 12, sizeof(actor[0]), actorEntries);
+	s->saveLoadArrayOf(actor, NUM_ACTORS, sizeof(actor[0]), actorEntries);
 	s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);
@@ -465,7 +470,14 @@ void Scumm::saveOrLoad(Serializer *s) {
 			for(j=1; j<res.num[i]; j++)
 				saveLoadResource(s,i,j);
 
-	s->saveLoadArrayOf(_objectFlagTable, _numGlobalObjects, sizeof(_objectFlagTable[0]), sleByte);
+	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);
+	s->saveLoadArrayOf(_objectStateTable, _numGlobalObjects, sizeof(_objectStateTable[0]), sleByte);
+	if (_objectRoomTable)
+		s->saveLoadArrayOf(_objectRoomTable, _numGlobalObjects, sizeof(_objectRoomTable[0]), sleByte);
+
+	if (_shadowPalette)
+		s->saveLoadArrayOf(_shadowPalette, NUM_SHADOW_PALETTE * 256, 1, sleByte);
+
 	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 	s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);
 	s->saveLoadArrayOf(_bitVars, _numBitVariables>>3, 1, sleByte);
@@ -489,6 +501,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 
 	if (_soundDriver)
 		((SoundEngine*)_soundDriver)->save_or_load(s);
+
 }
 
 void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
@@ -497,7 +510,7 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 	byte flag;
 
 	/* don't save/load these resource types */
-	if (type==rtFlObject || type==rtTemp || type==rtBuffer || res.mode[type])
+	if (/*type==rtFlObject ||*/ type==rtTemp || type==rtBuffer || res.mode[type])
 		return;
 
 	if (ser->isSaving()) {

@@ -66,7 +66,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -101,6 +101,10 @@ SOURCE=.\actor.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\akos.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\boxes.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -115,15 +119,6 @@ SOURCE=.\boxes.cpp
 # Begin Source File
 
 SOURCE=.\costume.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -252,10 +247,6 @@ SOURCE=.\scummvm.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\sdl.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\sound.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -320,6 +311,10 @@ SOURCE=.\verbs.cpp
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\windows.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"

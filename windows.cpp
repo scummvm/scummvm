@@ -769,12 +769,12 @@ void outputdisplay2(Scumm *s, int disp) {
 	case 0:
 		wm->_vgabuf = buf;
 		memcpy(buf, wm->_vgabuf, 64000);
-		memcpy(buf+320*144,s->getResourceAddress(rtBuffer, 7),320*56);
+		memcpy(buf,s->getResourceAddress(rtBuffer, 5),320*144);
 		break;
 	case 1:
 		wm->_vgabuf = buf;
 		memcpy(buf, wm->_vgabuf, 64000);
-		memcpy(buf+320*144,s->getResourceAddress(rtBuffer, 3),320*56);
+		memcpy(buf,s->getResourceAddress(rtBuffer, 1),320*144);
 		break;
 	case 2:
 		wm->_vgabuf = NULL;
@@ -782,15 +782,15 @@ void outputdisplay2(Scumm *s, int disp) {
 		break;
 	case 3:
 		wm->_vgabuf = NULL;
-		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+5920+s->_screenStartStrip);
+		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+8160+s->_screenStartStrip);
 		break;
 	case 4:
 		wm->_vgabuf = NULL;
-		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+5920*2+s->_screenStartStrip);
+		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+8160*2+s->_screenStartStrip);
 		break;
 	case 5:
 		wm->_vgabuf = NULL;
-		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+5920*3+s->_screenStartStrip);
+		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+8160*3+s->_screenStartStrip);
 		break;
 	}
 	wm->writeToScreen();	
@@ -828,6 +828,8 @@ void waitForTimer(Scumm *s, int delay) {
 	wm->handleMessage();
 	if (!veryFastMode) {
 		assert(delay<5000);
+		if (s->_fastMode)
+			delay=10;
 		Sleep(delay);
 	} 
 }
@@ -870,8 +872,8 @@ void WndMan::sound_init() {
 	wfx.wBitsPerSample = BITS_PER_SAMPLE;
 	wfx.nBlockAlign = BITS_PER_SAMPLE * 1 / 8;
 
-	CreateThread(NULL, 0, (unsigned long (__stdcall *)(void *))&sound_thread, this, 0, &_threadId);
-	SetThreadPriority((void*)_threadId, THREAD_PRIORITY_HIGHEST);
+//	CreateThread(NULL, 0, (unsigned long (__stdcall *)(void *))&sound_thread, this, 0, &_threadId);
+//	SetThreadPriority((void*)_threadId, THREAD_PRIORITY_HIGHEST);
 
 	_event = CreateEvent(NULL, false, false, NULL);
 
@@ -887,6 +889,8 @@ DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
 	int i;
 	bool signaled;
 	int time = GetTickCount(), cur;
+
+	return 0;
 
 	while (1) {
 		cur = GetTickCount();
@@ -913,7 +917,6 @@ DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
 #undef main
 int main(int argc, char* argv[]) {
 	int delta;
-	int tmp;
 
 	wm->init();
 	wm->sound_init();
@@ -931,18 +934,13 @@ int main(int argc, char* argv[]) {
 	do {
 		updateScreen(&scumm);
 
-		waitForTimer(&scumm, tmp*10);
+		waitForTimer(&scumm, delta*15);
 
 		if (gui._active) {
 			gui.loop();
-			tmp = 5;
+			delta = 3;
 		} else {
-			tmp = delta = scumm.scummLoop(delta);
-
-			tmp += tmp>>1;
-			
-			if (scumm._fastMode)
-				tmp=1;
+			delta = scumm.scummLoop(delta);
 		}
 	} while(1);
 
