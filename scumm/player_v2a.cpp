@@ -1038,10 +1038,10 @@ public:
 		memcpy(tmp_data2, data + _offset, _size);
 		memcpy(tmp_data3, data + _offset, _size);
 		memcpy(tmp_data4, data + _offset, _size);
-		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, min((_vol >> 1) + 3,0x32), 0, _size, -127);
-		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, min((_vol >> 1) + 3,0x32), 0, _size, 127);
-		_mod->startChannel(_id | 0x200, tmp_data3, _size, BASE_FREQUENCY / _freq3, min((_vol >> 1) + 3,0x32), 0, _size, 127);
-		_mod->startChannel(_id | 0x300, tmp_data4, _size, BASE_FREQUENCY / _freq4, min((_vol >> 1) + 3,0x32), 0, _size, -127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, MIN((_vol >> 1) + 3,0x32), 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, MIN((_vol >> 1) + 3,0x32), 0, _size, 127);
+		_mod->startChannel(_id | 0x200, tmp_data3, _size, BASE_FREQUENCY / _freq3, MIN((_vol >> 1) + 3,0x32), 0, _size, 127);
+		_mod->startChannel(_id | 0x300, tmp_data4, _size, BASE_FREQUENCY / _freq4, MIN((_vol >> 1) + 3,0x32), 0, _size, -127);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -1056,10 +1056,10 @@ public:
 		_vol--;
 		if (_vol == 0)
 			return false;
-		_mod->setChannelVol(_id | 0x000, min((_vol >> 1) + 3,0x32));
-		_mod->setChannelVol(_id | 0x100, min((_vol >> 1) + 3,0x32));
-		_mod->setChannelVol(_id | 0x200, min((_vol >> 1) + 3,0x32));
-		_mod->setChannelVol(_id | 0x300, min((_vol >> 1) + 3,0x32));
+		_mod->setChannelVol(_id | 0x000, MIN((_vol >> 1) + 3,0x32));
+		_mod->setChannelVol(_id | 0x100, MIN((_vol >> 1) + 3,0x32));
+		_mod->setChannelVol(_id | 0x200, MIN((_vol >> 1) + 3,0x32));
+		_mod->setChannelVol(_id | 0x300, MIN((_vol >> 1) + 3,0x32));
 		return true;
 	}
 private:
