@@ -460,7 +460,8 @@ int ScummEngine::readVar(uint var) {
 	else
 		copyprotbypassed = true;
 
-	debugC(DEBUG_VARS, "readvar(%d)", var);
+	if (var == VAR_TIMER)
+		debug(1, "readvar(%d)", var);
 
 	if (var & 0x2000 && !(_features & GF_NEW_OPCODES)) {
 		a = fetchScriptWord();
@@ -503,16 +504,10 @@ int ScummEngine::readVar(uint var) {
 			if (!_copyProtection) {
 				// INDY3, EGA Loom and, apparently, Zak256 check this
 				// during the game...
-				if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && var == 94 && bit == 4) {
+				if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && var == 94 && bit == 4)
 					return 0;
-				} else if (var == 221 && bit == 14 && _gameId == GID_LOOM && (_features & GF_MACINTOSH)) {	// For Mac Loom
+				else if (_gameId == GID_ZAK256 && var == 151 && bit == 8)
 					return 0;
-				// For all other Loom versions? PC and FM Towns at least in any event
-				} else if (var == 214 && bit == 15 && _gameId == GID_LOOM) {
-					return 0;
-				} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
-					return 0;
-				}
 			}
 
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
@@ -545,7 +540,8 @@ int ScummEngine::readVar(uint var) {
 }
 
 void ScummEngine::writeVar(uint var, int value) {
-	debugC(DEBUG_VARS, "writeVar(%d, %d)", var, value);
+	if (var == VAR_TIMER)
+		debug(1, "writeVar(%d, %d)", var, value);
 
 	if (!(var & 0xF000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
