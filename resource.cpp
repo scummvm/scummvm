@@ -38,37 +38,57 @@ static void makeLower(std::string& s) {
 ResourceLoader *ResourceLoader::instance_ = NULL;
 
 ResourceLoader::ResourceLoader() {
-  const char *directory = Registry::instance()->get("DataDir");
-  std::string dir_str = (directory != NULL ? directory : ".");
-  dir_str += '/';
-  int lab_counter = 0;
-  DIR *d = opendir(dir_str.c_str());
+	const char *directory = Registry::instance()->get("DataDir");
+	std::string dir_str = (directory != NULL ? directory : ".");
+	dir_str += '/';
+	int lab_counter = 0;
 
-  if (directory == NULL) 
-    error("Cannot find DataDir registry entry - check configuration file");
+#ifdef _MSC_VER
+	WIN32_FIND_DATAW find_file_data;
+	HANDLE d = FindFirstFile(dir_str.c_str(), &find_file_data);
+#else
+	DIR *d = opendir(dir_str.c_str());
+#endif
 
-  if (d == NULL)
-    error("Cannot open DataDir (%s)- check configuration file", dir_str.c_str());
+	if (directory == NULL)
+		error("Cannot find DataDir registry entry - check configuration file");
 
-  printf("dir open\n");
-  dirent *de;
-  while ((de = readdir(d)) != NULL) {
-    int namelen = strlen(de->d_name);
-    if (namelen > 4 &&
-	strcasecmp(de->d_name + namelen - 4, ".lab") == 0) {
-      std::string fullname = dir_str + de->d_name;
+	if (d == NULL)
+		error("Cannot open DataDir (%s)- check configuration file", dir_str.c_str());
 
-      Lab *l = new Lab(fullname.c_str());
-      lab_counter++;
-      if (l->isOpen())
-	labs_.push_back(l);
-      else
-	delete l;
-    }
-  }
-  closedir(d);
+	printf("dir open\n");
+#ifdef _MSC_VER
+	do {
+		int namelen = strlen(find_file_data.cFileName);
+		if ((namelen > 4) && (stricmp(findFileData.cFileName + namelen - 4, ".lab") == 0)) {
+			std::string fullname = dir_str + find_file_data.cFileName;
+			Lab *l = new Lab(fullname.c_str());
+			lab_counter++;
+			if (l->isOpen())
+				labs_.push_back(l);
+			else
+				delete l;
+		}
+	} while (FindNextFile(d, &find_file_data) != NULL)
+	FindClose(d);
+#else
+	dirent *de;
+	while ((de = readdir(d)) != NULL) {
+		int namelen = strlen(de->d_name);
+		if (namelen > 4 && strcasecmp(de->d_name + namelen - 4, ".lab") == 0) {
+			std::string fullname = dir_str + de->d_name;
+			Lab *l = new Lab(fullname.c_str());
+			lab_counter++;
+			if (l->isOpen())
+				labs_.push_back(l);
+			else
+				delete l;
+		}
+	}
+	closedir(d);
+#endif
 
-  if (lab_counter == 0)
+	if (lab_counter == 0)
 	error("Cannot find any resource files in %s - check configuration file", dir_str.c_str());
 }
 
