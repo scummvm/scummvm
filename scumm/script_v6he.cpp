@@ -1050,7 +1050,8 @@ int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 	writeVar(0, 0);
 	defineArray(0, 3, 0, size);
 	byte *ptr = getResourceAddress(rtString, readVar(0));
-	_hFileTable[slot].read(ptr, size);
+	_hFileTable[slot].read(ptr + 6, size);
+
 	return readVar(0);
 }
 
