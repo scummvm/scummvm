@@ -193,11 +193,12 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 }
 
 void ScummEngine::checkV2Inventory(int x, int y) {
+	int inventoryArea = (_features & GF_NES) ? 48: 32;
 	int object = 0;
 
 	y -= virtscr[kVerbVirtScreen].topline;
 
-	if ((y < 34) || !(_mouseButStat & MBS_LEFT_CLICK)) 
+	if ((y < inventoryArea) || !(_mouseButStat & MBS_LEFT_CLICK)) 
 		return;
 
 	if (v2_mouseover_boxes[kInventoryUpArrow].rect.contains(x, y)) {
@@ -232,6 +233,7 @@ void ScummEngine::redrawV2Inventory() {
 	int i;
 	int max_inv;
 	Common::Rect inventoryBox;
+	int inventoryArea = (_features & GF_NES) ? 48: 32;
 
 	v2_mouseover_box = -1;
 
@@ -239,7 +241,7 @@ void ScummEngine::redrawV2Inventory() {
 		return;
 
 	// Clear on all invocations
-	inventoryBox.top = vs->topline + 32;
+	inventoryBox.top = vs->topline + inventoryArea;
 	inventoryBox.bottom = vs->topline + virtscr[2].h;
 	inventoryBox.left = 0;
 	inventoryBox.right = vs->w;
@@ -346,10 +348,12 @@ void ScummEngine::checkExecVerbs() {
 	} else if (_mouseButStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
 		byte code = _mouseButStat & MBS_LEFT_CLICK ? 1 : 2;
+		int inventoryArea = (_features & GF_NES) ? 48: 32;
+
 		if (_version <= 2 && zone->number == 2 && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
 			runInputScript(5, 0, 0);
-		} else if (_version <= 2 && zone->number == 2 && _mouse.y > zone->topline + 32) {
+		} else if (_version <= 2 && zone->number == 2 && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
 			checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
