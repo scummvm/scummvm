@@ -166,12 +166,19 @@ int Script::SThreadDebugStep() {
 
 void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	uint instructionCount;
-	uint32 saved_offset;
+	uint16 savedInstructionOffset;
+
+	byte *addr;
 	uint16 param1;
 	uint16 param2;
-	long iparam1;
-	long iparam2;
+	int16 iparam1;
+	int16 iparam2;
 	long iresult;
+
+	byte argumentsCount;
+	uint16 functionNumber;
+	int scriptFunctionReturnValue;
+	ScriptFunctionType scriptFunction;
 
 	uint16 data;
 	uint16 scriptRetVal = 0;
@@ -202,139 +209,140 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		if (thread->_flags & (kTFlagAsleep))
 			break;
 
-		saved_offset = thread->_instructionOffset;
+		savedInstructionOffset = thread->_instructionOffset;
 		operandChar = scriptS.readByte();
+
+#define CASEOP(opName)	case opName:									\
+							if (operandChar == opName) {				\
+								debug(8, #opName);						\
+								_vm->_console->DebugPrintf(#opName);	\
+							}
+						
 //		debug print (opCode name etc) should be placed here
 //		SDebugPrintInstr(thread)
 
 		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
 		switch (operandChar) {
-		case 0x01: // nextblock
+		CASEOP(opNextBlock)
 			// Some sort of "jump to the start of the next memory
 			// page" instruction, I think.
 			thread->_instructionOffset = 1024 * ((thread->_instructionOffset / 1024) + 1);
 			break;
 
 // STACK INSTRUCTIONS
-		case 0x02: // Dup top element (DUP)
-			param1 = thread->stackTop();
-			thread->push(param1);
+		CASEOP(opDup)
+			thread->push(thread->stackTop());
 			break;
-		case 0x03: // Pop nothing (POPN)
+		CASEOP(opDrop)
 			thread->pop();
 			break;
-		case 0x04: // Push false (PSHF)
+		CASEOP(opZero)
 			thread->push(0);
 			break;
-		case 0x05: // Push true (PSHT)
+		CASEOP(opOne)
 			thread->push(1);
 			break;
-		case 0x06: // Push word (PUSH)
-		case 0x08: // Push word (PSHD) (dialogue string index)
+		CASEOP(opConstint)
+		CASEOP(opStrlit)
 			param1 = scriptS.readUint16LE();
 			thread->push(param1);
 			break;
 
 // DATA INSTRUCTIONS  
-
-		case 0x0B: // Test flag (TSTF)
-			n_buf = scriptS.readByte();
+		CASEOP(opGetFlag)
+			addr = thread->baseAddress(scriptS.readByte());
 			param1 = scriptS.readUint16LE();
-			//getBit(n_buf, param1, &bitstate);
-//			thread->push(bitstate);
+			addr += (param1 >> 3);
+			param1 = (1 << (param1 & 7));
+			thread->push((*addr) & param1 ? 1 : 0);
 			break;
-		case 0x0C: // Get word (GETW)
-			n_buf = scriptS.readByte();
+		CASEOP(opGetInt)
+			addr = thread->baseAddress(scriptS.readByte());
 			param1 = scriptS.readUint16LE();
-			//getWord(n_buf, param1, &data);
-//			thread->push(data);
+			addr += param1;
+			thread->push(*((uint16*)addr));
 			break;
-		case 0x0F: // Modify flag (MODF)
-			n_buf = scriptS.readByte();
+		CASEOP(opPutFlag)
+			addr = thread->baseAddress(scriptS.readByte());
 			param1 = scriptS.readUint16LE();
-			data = thread->stackTop();
-/*			if (data) {
-				setBit(n_buf, param1, 1);
+			addr += (param1 >> 3);
+			param1 = (1 << (param1 & 7));
+			if (thread->stackTop()) {
+				*addr |= param1;
 			} else {
-				setBit(n_buf, param1, 0);
-			}*/
+				*addr &= ~param1;
+			}
 			break;
-		case 0x10: // Put word (PUTW)
-			n_buf = scriptS.readByte();
+		CASEOP(opPutInt)
+			addr = thread->baseAddress(scriptS.readByte());
 			param1 = scriptS.readUint16LE();
-			data = thread->stackTop();
-//			putWord(n_buf, param1, data);
+			addr += param1;
+			*(uint16*)addr =  thread->stackTop();
 			break;
-		case 0x13: // Modify flag and pop (MDFP)
-			n_buf = scriptS.readByte();
+		CASEOP(opPutFlagV)
+			addr = thread->baseAddress(scriptS.readByte());
 			param1 = scriptS.readUint16LE();
-			data = thread->pop();
-/*			if (data) {
-				setBit(n_buf, param1, 1);
+			addr += (param1 >> 3);
+			param1 = (1 << (param1 & 7));
+			if (thread->pop()) {
+				*addr |= param1;
 			} else {
-				setBit(n_buf, param1, 0);
-			}*/
+				*addr &= ~param1;
+			}
 			break;
-		case 0x14: // Put word and pop (PTWP)
-			n_buf = scriptS.readByte();
+		CASEOP(opPutIntV)
+			addr = thread->baseAddress(scriptS.readByte());
 			param1 = scriptS.readUint16LE();
-			data = thread->stackTop();
-//			putWord(n_buf, param1, data);
+			addr += param1;
+			*(uint16*)addr =  thread->pop();
 			break;
 
 // CONTROL INSTRUCTIONS    
 
-		case 0x17: // (GOSB): Call subscript
-			{
-				int n_args;
-				int temp;
-
-				n_args = scriptS.readByte();
-				temp = scriptS.readByte();
-				if (temp != 2)
-					error("Calling dynamically generated script? Wow");
-				param1 = scriptS.readUint16LE();
-				data = scriptS.pos();
-				thread->push(n_args);
-				// NOTE: The original pushes the program
-				// counter as a pointer here. But I don't think
-				// we will have to do that.
-				thread->push(data);
-				thread->_instructionOffset = param1;
+		CASEOP(opCall)
+			argumentsCount = scriptS.readByte();
+			param1 = scriptS.readByte();
+			if (param1 != kAddressModule) {
+				error("Script::runThread param1 != kAddressModule");
 			}
+			addr = thread->baseAddress(param1);
+			param1 = scriptS.readUint16LE();
+			addr += param1;
+			thread->push(argumentsCount);
+
+			param2 = scriptS.pos();
+			// NOTE: The original pushes the program
+			// counter as a pointer here. But I don't think
+			// we will have to do that.
+			thread->push(param2);
+			thread->_instructionOffset = param1;
+			
 			break;
-		case opCcall:		// Call function
-		case opCcallV: {	// Call function and discard return value
-				int argumentsCount;
-				uint16 functionNumber;
-				int scriptFunctionReturnValue;
-				ScriptFunctionType scriptFunction;
-
-				argumentsCount = scriptS.readByte();
-				functionNumber = scriptS.readUint16LE();
-				if (functionNumber >= SCRIPT_FUNCTION_MAX) {
-					scriptError(thread, "Invalid script function number");
-					return;
-				}
-
-				debug(9, "opCCall* Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);
-				scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
-				scriptFunctionReturnValue = (this->*scriptFunction)(thread, argumentsCount);
-				if (scriptFunctionReturnValue != SUCCESS) {
-					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->_instructionOffset, scriptFunctionReturnValue);
-				}
-
-				if (functionNumber == 16) { // SF_gotoScene
-					instructionCount = instructionLimit; // break the loop
-					break;
-				}
-
-				if (operandChar == opCcall) // CALL function
-					thread->push(thread->_returnValue);
-
-				if (thread->_flags & kTFlagAsleep)
-					instructionCount = instructionLimit;	// break out of loop!
+		CASEOP(opCcall)
+		CASEOP(opCcallV)
+			argumentsCount = scriptS.readByte();
+			functionNumber = scriptS.readUint16LE();
+			if (functionNumber >= SCRIPT_FUNCTION_MAX) {
+				error("Script::runThread() Invalid script function number");
 			}
+
+			debug(8, "Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);
+			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
+			scriptFunctionReturnValue = (this->*scriptFunction)(thread, argumentsCount);
+			if (scriptFunctionReturnValue != SUCCESS) {
+				_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->_instructionOffset, scriptFunctionReturnValue);
+			}
+
+			if (scriptFunction ==  SF_gotoScene) { // SF_gotoScene
+				instructionCount = instructionLimit; // break the loop
+				break;
+			}
+
+			if (operandChar == opCcall) // CALL function
+				thread->push(thread->_returnValue);
+
+			if (thread->_flags & kTFlagAsleep)
+				instructionCount = instructionLimit;	// break out of loop!
 			break;
 		case opEnter: // Enter a function
 			thread->push(thread->_frameIndex);
@@ -767,15 +775,15 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		}
 
 		// Set instruction offset only if a previous instruction didn't branch
-		if (saved_offset == thread->_instructionOffset) {
+		if (savedInstructionOffset == thread->_instructionOffset) {
 			thread->_instructionOffset = scriptS.pos();
 		} else {
 			if (thread->_instructionOffset >= scriptS.size()) {
 				scriptError(thread, "Out of range script execution");
 				return;
-			} else {
-				scriptS.seek(thread->_instructionOffset);
 			}
+
+			scriptS.seek(thread->_instructionOffset);
 		}
 
 		if (unhandled) { // TODO: remove it

@@ -113,8 +113,25 @@ enum ThreadWaitTypes {
 };
 
 enum OpCodes {
-
+	opNextBlock = 1,
+	opDup = 2,
+	opDrop = 3,
+	opZero = 4,
+	opOne = 5,
+	opConstint = 6,
 //...
+	opStrlit = 8,
+//...
+	opGetFlag = 0xB,
+	opGetInt = 0xC,
+//...
+	opPutFlag = 0xf,
+	opPutInt = 0x10,
+	//...
+	opPutFlagV = 0x13,
+	opPutIntV = 0x14,
+//...
+	opCall = 0x17,
 	opCcall = 0x18,
 	opCcallV = 0x19,
 	opEnter = 0x1A,
@@ -223,8 +240,8 @@ public:
 				return _staticBase;
 			case kAddressModule:
 				return _moduleBase;
-/*			case kAddressStack:
-				return _stackBuf + framePtr;*/
+			case kAddressStack:
+				return (byte*)&_stackBuf[_frameIndex];
 			case kAddressThread:
 				return (byte*)_threadVars;
 			default:
