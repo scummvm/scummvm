@@ -1357,7 +1357,7 @@ void ScummEngine_v6::o6_setObjectName() {
 		}
 	}
 
-	error("New name of %d overflows name table (max = %d)", obj, 50);
+	error("New name of %d overflows name table (max = %d)", obj, _numNewNames);
 }
 
 void ScummEngine_v6::o6_isSoundRunning() {
