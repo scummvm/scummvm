@@ -209,7 +209,10 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
 #endif
 		TABLES_MEM_SIZE = 100000;
-		MUSIC_INDEX_BASE = 1128 / 4;
+		if ((_game & GF_SIMON2) && ConfMan.getBool("native_mt32"))
+			MUSIC_INDEX_BASE = (1128 + 612) / 4;
+		else
+			MUSIC_INDEX_BASE = 1128 / 4;
 		SOUND_INDEX_BASE = 1660 / 4;
 	} else {
 		VGA_DELAY_BASE = 1;
@@ -5040,7 +5043,7 @@ void SimonEngine::loadMusic (uint music) {
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music - 1], SEEK_SET);
-		if (_game & GF_WIN) {	
+		if (_game & GF_WIN && !ConfMan.getBool("native_mt32")) {	
 			midi.loadMultipleSMF (_game_file);
 		} else {
 			midi.loadXMIDI (_game_file);
