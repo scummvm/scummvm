@@ -618,6 +618,9 @@ void Scumm::saveOrLoad(Serializer *s)
 	int var120Backup;
 	int var98Backup;
 
+	if (_mixer && !s->isSaving())
+		_mixer->stop_all();
+
 	if (_current_version == VER_V9)
 		s->saveLoadEntries(this, mainEntriesV9);
 	else
