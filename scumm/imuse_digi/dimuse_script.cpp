@@ -163,19 +163,23 @@ void IMuseDigital::flushTracks() {
 	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && track->readyToRemove) {
-			if (track->stream) {
+		if (track->used &&
+			(track->readyToRemove || (!_vm->_videoFinished && track->toBeRemoved))) {
+			if ((track->stream) && (!track->stream->endOfStream())) {
 	 			track->stream->finish();
-				track->stream = NULL;
+			} else if ((track->stream) && (track->stream->endOfStream())) {
 				_vm->_mixer->stopHandle(track->handle);
+				delete track->stream;
+				track->stream = NULL;
 				_sound->closeSound(track->soundHandle);
 				track->soundHandle = NULL;
+				track->used = false;
 			} else if (track->stream2) {
 				_vm->_mixer->stopHandle(track->handle);
 				delete track->stream2;
 				track->stream2 = NULL;
+				track->used = false;
 			}
-			track->used = false;
 		}
 	}
 }
@@ -385,4 +389,3 @@ void IMuseDigital::pause(bool p) {
 }
 
 } // End of namespace Scumm
-
