@@ -819,7 +819,6 @@ void Scumm_v2::o2_verbOps() {
 		int y = fetchScriptByte() << 3;
 		slot = getVarOrDirectByte(0x80) + 1;
 		int prep = fetchScriptByte(); // Only used in V1?
-		printf("Setting prep %d for slot %d\n", prep, slot);
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
 		if ((_gameId == GID_MANIAC) && (_version == 1))
 			y+=8;
