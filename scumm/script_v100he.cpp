@@ -1784,16 +1784,16 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			switch(args[1]) {
 			case 0:
-				spriteInfoSet_flag7(spriteId, args[0]);
+				spriteInfoSet_flag15(spriteId, args[0]);
 				break;
 			case 1:
-				spriteInfoSet_flagRotated(spriteId, args[0]);
+				spriteInfoSet_flag14(spriteId, args[0]);
 				break;
 			case 2:
-				spriteInfoSet_flag8(spriteId, args[0]);
+				spriteInfoSet_flag16(spriteId, args[0]);
 				break;
 			case 3:
-				spriteInfoSet_flagZoomed(spriteId, args[0]);
+				spriteInfoSet_flag13(spriteId, args[0]);
 				break;
 			case 4:
 				spriteInfoSet_flag20(spriteId, args[0]);
@@ -2361,7 +2361,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 3:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flags_6(spriteId));
+			push(spriteInfoGet_flags_22(spriteId));
 		else
 			push(0);
 		break;
@@ -2415,7 +2415,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 32:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flags_8(spriteId));
+			push(spriteInfoGet_flags_31(spriteId));
 		else
 			push(1);
 		break;
@@ -2483,19 +2483,19 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		if (spriteId) {
 			switch(flags) {
 			case 0:
-				push(spriteInfoGet_flags_1(spriteId));
+				push(spriteInfoGet_flags_15(spriteId));
 				break;
 			case 1:
-				push(spriteInfoGet_flags_2(spriteId));
+				push(spriteInfoGet_flags_14(spriteId));
 				break;
 			case 2:
-				push(spriteInfoGet_flags_3(spriteId));
+				push(spriteInfoGet_flags_16(spriteId));
 				break;
 			case 3:
-				push(spriteInfoGet_flags_4(spriteId));
+				push(spriteInfoGet_flags_13(spriteId));
 				break;
 			case 4:
-				push(spriteInfoGet_flags_5(spriteId));
+				push(spriteInfoGet_flags_20(spriteId));
 				break;
 			default:
 				push(0);
@@ -2544,9 +2544,11 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		}
 		break;
 	case 82:
-		// TODO
-		pop();
-		push(0);
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_flags_23(spriteId));
+		else
+			push(0);
 		break;
 	case 83:
 		pop();
