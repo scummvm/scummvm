@@ -209,7 +209,7 @@ public:
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
-	: ChooserDialog(title, buttonLabel, 182), _saveMode(saveMode) {
+	: GUI::ChooserDialog(title, buttonLabel, 182), _saveMode(saveMode) {
 
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
@@ -242,7 +242,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		_chooseButton->draw();
 		break;
 	default:
-		ChooserDialog::handleCommand(sender, cmd, data);
+		GUI::ChooserDialog::handleCommand(sender, cmd, data);
 	}
 }
 

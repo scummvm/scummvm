@@ -149,7 +149,7 @@ public:
 /**
  * Sorted list of multiple file system nodes. E.g. the contents of a given directory.
  */
-class FSList : Common::List<FilesystemNode *> {
+class FSList : private Common::List<FilesystemNode *> {
 public:
 	class const_iterator {
 		friend class FSList;
