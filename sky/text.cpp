@@ -161,13 +161,19 @@ void SkyText::patchLINCCharset() {
 		0x4800, 0x4800, 0x5000, 0x0000, 0x0000, 0x0000
 	};
 
+	const uint16 normal_1[] = {
+		0x0000, 0x0000, 0x0000, 0x1000, 0x7000, 0x1000,
+		0x1000, 0x1000, 0x7c00, 0x0000, 0x0000, 0x0000
+	};
+
 	patchChar(charSetPtr, 5, charHeight,  3, u_umlaut);
 	patchChar(charSetPtr, 5, charHeight,  8, german_sz);
 	patchChar(charSetPtr, 5, charHeight,  9, o_umlaut);
 	patchChar(charSetPtr, 5, charHeight, 93, U_umlaut);
+	patchChar(charSetPtr, 5, charHeight, 74, normal_j);
+	patchChar(charSetPtr, 6, charHeight, 17, normal_1);
 	if (SkyState::_systemVars.gameVersion <= 303) {
 		patchChar(charSetPtr, 5, charHeight, 10, a_umlaut);
-		patchChar(charSetPtr, 5, charHeight, 74, normal_j);
 	} else {
 		patchChar(charSetPtr, 5, charHeight, 94, A_umlaut);
 		patchChar(charSetPtr, 5, charHeight, 95, O_umlaut);
