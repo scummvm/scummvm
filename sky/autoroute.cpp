@@ -40,15 +40,21 @@ SkyAutoRoute::~SkyAutoRoute(void) {
 
 uint16 SkyAutoRoute::checkBlock(uint16 *blockPos) {
 
-	uint16 fieldVal, retVal = 0;
+	uint16 fieldVal, retVal = 0xFFFF;
 	fieldVal = blockPos[1]; // field to the right
 	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) retVal = fieldVal;
 	fieldVal = (blockPos - 1)[0]; // field to the left
-	if ((!(fieldVal & 0x8000)) && (fieldVal != 0) && (fieldVal > retVal)) retVal = fieldVal;
+	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) {
+		if ((fieldVal > retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
+	}
 	fieldVal = (blockPos + ROUTE_GRID_WIDTH)[0]; // upper field
-	if ((!(fieldVal & 0x8000)) && (fieldVal != 0) && (fieldVal > retVal)) retVal = fieldVal;
+	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) {
+		if ((fieldVal > retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
+	}
 	fieldVal = (blockPos - ROUTE_GRID_WIDTH)[0]; // upper field
-	if ((!(fieldVal & 0x8000)) && (fieldVal != 0) && (fieldVal > retVal)) retVal = fieldVal;
+	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) {
+		if ((fieldVal > retVal) || (retVal == 0xFFFF)) retVal = fieldVal;
+	}
 	return retVal;
 }
 
@@ -231,9 +237,9 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 				if (!routeSrcCalc[0]) {
 					// block wasn't yet done
 					blockRet = checkBlock(routeSrcCalc);
-					if (blockRet > 0) {
+					if (blockRet != 0xFFFF) {
 						// this block is accessible
-						routeSrcCalc[0] = blockRet;
+						routeSrcCalc[0] = blockRet+1;
 						gridChanged = true;
 					}
 				}
