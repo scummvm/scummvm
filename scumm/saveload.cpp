@@ -733,7 +733,10 @@ void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype)
 	}
 
 	while (--len >= 0) {
-		if (datasize == 1) {
+		if (datasize == 0) {
+			// Do nothing for obsolete data
+			data = 0;
+		} else if (datasize == 1) {
 			data = *(byte *)at;
 			at += 1;
 		} else if (datasize == 2) {
