@@ -346,7 +346,7 @@ class Insane {
 	void smlayer_putActor(int actornum, int act, int x, int y, byte room);
 	void smlayer_setActorLayer(int actornum, int act, int layer);
 	void smlayer_setFluPalette(byte *pal, int shut_flag);
-	int readArray (int field, int number);
+	int32 readArray (int field, int number);
 	void setWordInString(int field, int number, int value);
 	int smlayer_mainLoop(void);
 	void mainLoop(void);
@@ -450,7 +450,7 @@ class Insane {
 	void checkEnemyLoose(int);
 	int32 processBattle(void);
 	void proc12(int arg_0);
-	void setEnemyAnimation(int actornum, int arg_4);
+	void setEnemyAnimation(int32 actornum, int32 arg_4);
 	int speedTranslator(int value);
 	bool smush_eitherNotStartNewFrame(void);
 	void smlayer_setActorFacing(int actornum, int actnum, int frame, int direction);

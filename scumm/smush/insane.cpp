@@ -538,9 +538,9 @@ void Insane::init_fluConfStruct(int n, int sceneId, byte *fluPtr,
 	_fluConf[n].numFrames = numFrames;
 }
 
-void Insane::init_scenePropStruct(int32 n, int32 n1, int actornum, int32 sound, int32 trsId,
+void Insane::init_scenePropStruct(int32 n, int32 n1, int32 actornum, int32 sound, int32 trsId,
 					  byte r, byte g, byte b, int32 counter, int32 maxCounter,
-					  int index) {
+					  int32 index) {
 	_sceneProp[n].actor = actornum; // main actor number, -1 if not applicable
 	_sceneProp[n].sound = sound;
 	_sceneProp[n].trsId = trsId;
@@ -1480,12 +1480,12 @@ void Insane::putActors(void) {
 }
 
 void Insane::readState(void) {
-	_actor[0].inventory[INV_CHAIN] = readArray(_numberArray, 50); // Chain
-	_actor[0].inventory[INV_CHAINSAW] = readArray(_numberArray, 51); // Chainsaw
-	_actor[0].inventory[INV_MACE] = readArray(_numberArray, 52); // Mace
-	_actor[0].inventory[INV_2X4] = readArray(_numberArray, 53); // 2x4
-	_actor[0].inventory[INV_WRENCH] = readArray(_numberArray, 54); // Wrench
-	_actor[0].inventory[INV_DUST] = readArray(_numberArray, 55); // Dust
+	_actor[0].inventory[INV_CHAIN] = readArray(_numberArray, 50) != 0; // Chain
+	_actor[0].inventory[INV_CHAINSAW] = readArray(_numberArray, 51) != 0; // Chainsaw
+	_actor[0].inventory[INV_MACE] = readArray(_numberArray, 52) != 0; // Mace
+	_actor[0].inventory[INV_2X4] = readArray(_numberArray, 53) != 0; // 2x4
+	_actor[0].inventory[INV_WRENCH] = readArray(_numberArray, 54) != 0; // Wrench
+	_actor[0].inventory[INV_DUST] = readArray(_numberArray, 55) != 0; // Dust
 	_actor[0].inventory[INV_HAND] = 1; // Boot
 	_actor[0].inventory[INV_BOOT] = 1; // Hand
 	_smlayer_room = readArray(_numberArray, 320);
@@ -2612,7 +2612,7 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	actorsReaction(_val39d);
+	actorsReaction(_val39d != 0);
 	checkEnemyLoose(1);
 	
 	if (!curFrame)
@@ -4750,7 +4750,7 @@ void Insane::enemyOuchSound(void) {
 
 bool Insane::loadScenePropSounds(int32 scenePropNum) {
 	int32 num = 0;
-	bool res = 1;
+	int32 res = 1;
 
 	if (_sceneProp[scenePropNum + num].index != 1) {
 		while (num < 12) {
@@ -4762,7 +4762,7 @@ bool Insane::loadScenePropSounds(int32 scenePropNum) {
 		}
 	}
 
-	return res;
+	return res != 0;
 }
 
 int32 Insane::setProperActorState(void) {
@@ -5097,7 +5097,7 @@ void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
 }
 
 bool Insane::smlayer_isSoundRunning(int32 sound) {
-	return _scumm->_sound->isSoundRunning(readArray(_numberArray, sound));;
+	return _scumm->_sound->isSoundRunning(readArray(_numberArray, sound)) != 0;
 }
 
 bool Insane::smlayer_startSound1(int32 sound) {
