@@ -126,7 +126,7 @@ SkyCompact::SkyCompact(void) {
 		error("Unable to find \"sky.cpt\" file\nPlease download it from www.scummvm.org");
 	}
 		
-    uint16 fileVersion = _cptFile->readUint16LE();
+	uint16 fileVersion = _cptFile->readUint16LE();
 	if (fileVersion != 0)
 		error("unknown \"sky.cpt\" version");
 
@@ -204,7 +204,7 @@ SkyCompact::SkyCompact(void) {
 	_cptFile->read(diffBuf, diffSize * sizeof(uint16));
 	if (SkyEngine::_systemVars.gameVersion == 288) {
 		uint16 *diffPos = diffBuf;
-		for (uint16 cnt = 0; cnt < numDiffs; cnt++) {
+		for (cnt = 0; cnt < numDiffs; cnt++) {
 			uint16 cptId = READ_LE_UINT16(diffPos++);
 			uint16 *rawCpt = (uint16*)fetchCpt(cptId);
 			rawCpt += READ_LE_UINT16(diffPos++);
@@ -221,7 +221,7 @@ SkyCompact::SkyCompact(void) {
 	_saveIds = (uint16*)malloc(_numSaveIds * sizeof(uint16));
 	_cptFile->read(_saveIds, _numSaveIds * sizeof(uint16));
 	for (cnt = 0; cnt < _numSaveIds; cnt++)
-        _saveIds[cnt] = FROM_LE_16(_saveIds[cnt]);
+		_saveIds[cnt] = FROM_LE_16(_saveIds[cnt]);
 	_resetDataPos = _cptFile->pos();
 }
 
