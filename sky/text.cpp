@@ -248,6 +248,8 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	_dtLetters++;
 
 	while (textChar >= 0x20) {
+		if ((_curCharSet == 1) && (textChar >= 0x80))
+			textChar = 0x20;
 
 		textChar -= 0x20;
 		if (textChar == 0) {
