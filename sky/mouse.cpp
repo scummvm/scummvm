@@ -77,15 +77,15 @@ uint32 _mouseObjectList[] = {
 	24829
 };
 
-SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
+SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk, SkyLogic *skyLogic) {
 
 	_skyDisk = skyDisk;
+	_skyLogic = skyLogic;
 	_system = system;
 	_mouseWidth = 6;
 	_mouseHeight = 6;
 	_maskWidth = 6;
 	_maskHeight = 6;
-
 	
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
 	_mouseData2 = _miceData;
@@ -129,6 +129,36 @@ bool SkyMouse::fnNormalMouse(void) {
 	return true;
 }
 
+bool SkyMouse::fnAddHuman(void) {
+	//reintroduce the mouse so that the human can control the player
+	//could still be switched out at high-level
+
+	if (!SkyLogic::_scriptVariables[MOUSE_STOP]) {
+		SkyLogic::_scriptVariables[MOUSE_STATUS] |= 6;	//cursor & mouse
+		_tMouseX = _newSafeX;
+		_tMouseY = _newSafeY;
+
+		if (_aMouseY < 2)	//stop mouse activating top line
+			_aMouseY = 2;
+	
+		//force the pointer engine into running a get-off
+		//even if it's over nothing
+
+		//KWIK-FIX
+		//get off may contain script to remove mouse pointer text
+		//surely this script should be run just in case
+		//I am going to try it anyway
+		uint32 getOff = SkyLogic::_scriptVariables[GET_OFF];
+		if (getOff)
+			_skyLogic->script((uint16)(getOff & 0xFFFF), (uint16)(getOff >> 16));
+	
+		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;  //0?
+		SkyLogic::_scriptVariables[GET_OFF] = RESET_MOUSE;
+	}
+
+	return true;
+}
+
 void SkyMouse::lockMouse(void) {
 	_lockMouseX = _aMouseX;
 	_lockMouseY = _aMouseY;
@@ -151,7 +181,7 @@ void SkyMouse::drawNewMouse() {
 }
 
 void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
-	//_mouseFlag |= MF_IN_INT;
+	SkyState::_systemVars.mouseFlag |= MF_IN_INT;
 	_mouseType2 = frameNum;
 	_mouseOffsetX = mouseX;
 	_mouseOffsetY = mouseY;
@@ -172,5 +202,41 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
 		_system->show_mouse(true);
 	//drawNewMouse();
 
-	//_mouseFlag ^= (~_mouseFlag | MF_IN_INT);
+	SkyState::_systemVars.mouseFlag &= ~MF_IN_INT;
+}
+
+void SkyMouse::mouseEngine(void) {
+	_tMouseX = _aMouseX + TOP_LEFT_X;
+	_tMouseY = _aMouseY + TOP_LEFT_Y;
+
+	_eMouseB = _bMouseB;
+	_bMouseB = 0;
+	
+	if (!SkyLogic::_scriptVariables[MOUSE_STOP]) {
+		if (SkyLogic::_scriptVariables[MOUSE_STATUS] & (1 << 1)) {
+			pointerEngine();
+			if (SkyLogic::_scriptVariables[MOUSE_STATUS] & (1 << 2)) //buttons enabled?
+				buttonEngine1();
+		}
+	}	
+	_eMouseB = 0;	//don't save up buttons
+}
+
+void SkyMouse::pointerEngine(void) {
+	warning("Stub: pointerEngine()");
+}
+
+void SkyMouse::buttonEngine1(void) {
+	//checks for clicking on special item
+	//"compare the size of this routine to S1 mouse_button"
+
+	if (_eMouseB) {	//anything pressed?
+		SkyLogic::_scriptVariables[BUTTON] = _eMouseB;
+		_eMouseB = 0;
+		if (SkyLogic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
+			Compact *item = SkyState::fetchCompact(SkyLogic::_scriptVariables[SPECIAL_ITEM]);
+			if (item->mouseClick)
+				_skyLogic->script(item->mouseClick, 0);
+		}
+	}
 }

@@ -34,10 +34,13 @@ enum scriptVariableOffsets {
 	RESULT = 0,
 	SCREEN = 1,
 	LOGIC_LIST_NO = 2,
+	MOUSE_LIST_NO = 6,
 	DRAW_LIST_NO = 8,
 	CUR_ID = 12,
 	MOUSE_STATUS = 13,
 	MOUSE_STOP = 14,
+	BUTTON = 15,
+	SPECIAL_ITEM = 17,
 	GET_OFF = 18,
 	PLAYER_X = 27,
 	PLAYER_Y = 28,
@@ -62,6 +65,7 @@ enum scriptVariableOffsets {
 
 class SkyAutoRoute;
 class SkyScreen;
+class SkyMouse;
 
 class SkyLogic {
 public:
@@ -85,7 +89,7 @@ public:
 	void pause();
 	void waitSync();
 	void simpleAnim();
-
+	uint16 script(uint16 scriptNo, uint16 offset);
 
 	bool fnCacheChip(uint32 a, uint32 b, uint32 c);
 	bool fnCacheFast(uint32 a, uint32 b, uint32 c);
@@ -211,7 +215,6 @@ protected:
 	void push(uint32);
 	uint32 pop();
 	void checkModuleLoaded(uint16 moduleNo);
-	uint16 script(uint16 scriptNo, uint16 offset);
 	bool collide(Compact *cpt);
 	void initScriptVariables();
 	void mainAnim();

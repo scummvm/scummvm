@@ -1466,8 +1466,7 @@ bool SkyLogic::fnNoHuman(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnAddHuman(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnAddHuman");
-	return true;
+	return _skyMouse->fnAddHuman();
 }
 
 bool SkyLogic::fnAddButtons(uint32 a, uint32 b, uint32 c) {

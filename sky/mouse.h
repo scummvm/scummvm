@@ -24,19 +24,23 @@
 
 #include "stdafx.h"
 #include "sky/disk.h"
+#include "sky/logic.h"
 #include "sky/struc.h"
+
+class SkyLogic;
 
 class SkyMouse {
 
 public:
 
-	SkyMouse(OSystem *system, SkyDisk *skyDisk);
+	SkyMouse(OSystem *system, SkyDisk *skyDisk, SkyLogic *skyLogic);
 	~SkyMouse(void);
 
 	void replaceMouseCursors(uint16 fileNo);
 	bool fnBlankMouse(void);
 	bool fnDiskMouse(void);
 	bool fnNormalMouse(void);
+	bool fnAddHuman(void);
 	void lockMouse(void);
 	void unlockMouse(void);
 	void restoreMouseData(uint16 frameNum);
@@ -45,8 +49,21 @@ public:
 
 protected:
 
+	void mouseEngine(void);
+	void pointerEngine(void);
+	void buttonEngine1(void);
+
+	uint16 _eMouseB;
+	uint16 _bMouseB;
+	
 	uint16 _aMouseX;	//actual mouse coordinates
 	uint16 _aMouseY;	
+
+	uint16	_tMouseX;
+	uint16	_tMouseY;
+
+	uint16 _newSafeX;
+	uint16 _newSafeY;
 
 	uint16 _lockMouseX;
 	uint16 _lockMouseY;
@@ -73,15 +90,13 @@ protected:
 	byte *_miceData;	//address of mouse sprites
 	byte *_objectMouseData;	//address of object mouse sprites
 
-	uint16	_tMouseX;
-	uint16	_tMouseY;
-
 	uint16	_mouseXOff;
 
 	static uint32 _mouseObjectList[];
 
 	OSystem *_system;
 	SkyDisk *_skyDisk;
+	SkyLogic *_skyLogic;
 };
 
 #endif //SKYMOUSE_H

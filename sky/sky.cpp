@@ -174,7 +174,7 @@ void SkyState::initialise(void) {
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
 
 	_skyText = new SkyText(_skyDisk);
-	_skyMouse = new SkyMouse(_system, _skyDisk);
+	_skyMouse = new SkyMouse(_system, _skyDisk, _skyLogic);
 	_skyScreen = new SkyScreen(_system, _skyDisk);
 
 	initVirgin();
