@@ -1717,18 +1717,14 @@ void Scumm_v8::o8_getObjectImageHeight()
 
 void Scumm_v8::o8_getStringWidth()
 {
-	char temp[1024];
 	int charset = pop();
 	int len = resStrLen(_scriptPointer);
 	int oldID = _charset->getCurID(); 
 	int width;
 	
-	// Parse the string to get rid of substitution codes
-	strcpy(temp, (char*)_scriptPointer);
-	addMessageToStack((byte*)&temp);
 	// Temporary set the specified charset id
 	_charset->setCurID(charset);
-	width = _charset->getStringWidth(0, (byte*)temp);
+	width = _charset->getStringWidth(0, _scriptPointer);
 	_charset->setCurID(oldID);
 	
 	push(width);
