@@ -292,9 +292,148 @@ void Cutaway::actionSpecialMove(int index) {
 
 	switch (index) {
 
+		case 2:
+			_logic->joeUseDress(false);
+			break;
+
+		// c74a.cut - use clothes
+		case 3:
+			_logic->joeUseClothes(false);
+			break;
+
+		case 4:
+			_logic->joeUseUnderwear();
+			break;
+
+		// cdres.cut
+		case 5:
+			_logic->display()->palSetJoe(JP_DRESS);
+			break;
+
+		// cdclo.cut - Set Joe's palette
+		case 6:
+			_logic->display()->palSetJoe(JP_CLOTHES);
+			break;
+
+		// c73e.cut - carbam background animation
+		case 7:
+			_graphics->bobClear(5);	// Car
+			_graphics->bobClear(6);	// FX
+			_graphics->bobClear(7);	// Rico
+			_graphics->bob(5)->active = true;
+			_graphics->bob(6)->active = true;
+			_graphics->bob(7)->active = true;
+			break;
+
+		// c74a.cut - Turn off big oil splat and gun shots!
+		case 8:
+			{
+				// XXX bamflag=0;
+				uint16 oilBobIndex = _logic->findBob(594);
+				_graphics->bob(oilBobIndex)->active = false;
+				_graphics->bob(7)->active = false;
+			}
+			break;
+
 		// cdint.cut - put camera on Joe
 		case 16:
 			_graphics->cameraBob(0);
+			break;
+
+		// c75b.cut - Lightning hits plane
+		case 28:
+			{
+				_graphics->cameraBob(-1);
+				
+				short iy = 0, x, ydir = -1, j, k;
+				
+				BobSlot *planeBob       = _graphics->bob(5);
+				BobSlot *lightningBob   = _graphics->bob(20);
+
+				planeBob->box.y2 = lightningBob->box.y2 = 199;
+				planeBob->y = 135;
+
+				planeBob->scale = 20;
+
+				for (x = 660; x > 163; x -= 6) {
+					planeBob->x = x;
+					planeBob->y = 135 + iy;
+
+					iy -= ydir;
+					if (iy < -9 || iy > 9)
+						ydir = -ydir;
+
+					planeBob->scale++;
+					if (planeBob->scale > 100)
+						planeBob->scale = 100;
+
+					int scrollX = x - 163;
+					if (scrollX > 320)
+						scrollX = 320;
+					_logic->display()->horizontalScroll(scrollX);
+
+					_logic->update();
+				}
+
+ 				planeBob->scale = 100;
+				_logic->display()->horizontalScroll(0);
+
+				planeBob->x -= -8;
+				planeBob->y += 6;
+
+				lightningBob->x = 160;
+				lightningBob->y = 0;
+
+				// 23/2/95 - Play lightning SFX
+				// XXX sfxplay(NULLstr);
+
+				_graphics->bankUnpack(18, lightningBob->frameNum, 15);
+				_graphics->bankUnpack(4,  planeBob    ->frameNum, 15);
+
+                // Plane plunges into the jungle!
+
+				BobSlot *fireBob = _graphics->bob(6);
+
+				fireBob->animating = true;
+				fireBob->x = planeBob->x;
+				fireBob->y = planeBob->y + 10;
+				
+				_graphics->bankUnpack(19, fireBob->frameNum, 15);
+				_logic->update();
+
+				k = 20;
+				j = 1;
+
+				for (x = 163; x > -30; x -= 10) {
+					planeBob->y += 4;
+					fireBob->y += 4;
+					planeBob->x = fireBob->x = x;
+
+					if (k < 40) {
+						_graphics->bankUnpack(j, planeBob->frameNum, 15);
+						_graphics->bankUnpack(k, fireBob ->frameNum, 15);
+						k++;
+						j++;
+
+						if (j == 4)
+							j = 1;
+					}
+					
+					_logic->update();
+				}
+
+				_graphics->cameraBob(0);
+			}
+			break;
+			
+		// c74a.cut - Wait for car to reach correct position before pouring oil
+		case 31:
+			// XXX while(bamindex!=60) update();
+			break;
+
+		// c75b.cut - Screen shake
+		case 32:
+			// TODO implement
 			break;
 
 		// cred.cut - scale title
