@@ -28,9 +28,15 @@
 #include "gameDetector.h"
 
 
-#define GET_VALUE()		\
-	((*s == '\0' && i+1 < argc && argv[i+1] && argv[i+1][0] != '-' && argv[i+1][0] != '\0') ? argv[++i] : s)
-
+#define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
+#define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
+                        if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
+                        option = (*s == '\0' ? current_option : s);                         \
+                        current_option = NULL
+#define HANDLE_OPT_OPTION() if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
+                            if ((*s == '\0') && (current_option == NULL)) option = NULL;         \
+                            else option = (*s == '\0' ? current_option : s);                    \
+                            current_option = NULL
 
 static const char USAGE_STRING[] = 
 	"ScummVM - Scumm Interpreter\n"
@@ -100,21 +106,21 @@ void GameDetector::updateconfig()
 			_noSubtitles = false;
 
 	if ((val = scummcfg->get("music_driver")))
-			if (!parseMusicDriver(val)) {
-		printf("Error in the config file: invalid music_driver.\n");
-					printf(USAGE_STRING);
-					exit(-1);
-			}
+		if (!parseMusicDriver(val)) {
+			printf("Error in the config file: invalid music_driver.\n");
+			printf(USAGE_STRING);
+			exit(-1);
+		}
 
 	if ((val = scummcfg->get("gfx_mode")))
-			if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
-		printf("Error in the config file: invalid gfx_mode.\n");
-				printf(USAGE_STRING);
-				exit(-1);
-			}
+		if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
+			printf("Error in the config file: invalid gfx_mode.\n");
+			printf(USAGE_STRING);
+			exit(-1);
+		}
 
 	if ((val = scummcfg->get("cdrom")))
-			_cdrom = atoi(val);
+		_cdrom = atoi(val);
 }
 
 void GameDetector::parseCommandLine(int argc, char **argv)
@@ -122,6 +128,8 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 #if !defined(__APPLE__CW)
 	int i;
 	char *s;
+	char *current_option = NULL;
+	char *option = NULL;
 
 	// check for arguments
 	if (argc < 2) {
@@ -131,134 +139,133 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 
 	scummcfg->set_domain("game-specific");
 	/* Parse the arguments */
-	for (i = 1; i < argc; i++) {
+	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
 
-		if (s && s[0] == '-') {
+		if (s[0] == '-') {
 			s++;
-			while (*s) {
-				switch (tolower(*s++)) {
-				case 'a':
-					_amiga = true;
-					scummcfg->set("amiga", "true");
+			switch (tolower(*s++)) {
+			case 'a':
+				CHECK_OPTION();
+				_amiga = true;
+				scummcfg->set("amiga", "true");
+				break;
+			case 'b':
+				HANDLE_OPTION();
+				_bootParam = atoi(option);
+				break;
+			case 'c':
+				HANDLE_OPTION();
+				_cdrom = atoi(option);
+				scummcfg->set("cdrom", _cdrom);
+				break;
+			case 'd':
+				_debugMode = true;
+				HANDLE_OPT_OPTION();
+				if (option != NULL)
+					_debugLevel = atoi(option);
+				debug(1,"Debugmode (level %d) on", _debugLevel);
+				break;
+			case 'e':
+				HANDLE_OPTION();
+				if (!parseMusicDriver(option))
+					goto ShowHelpAndExit;
+				scummcfg->set("music_driver", option);
+				break;
+			case 'f':
+				CHECK_OPTION();
+				_fullScreen = true;
+				scummcfg->set("fullscreen", "true", "scummvm");
+				break;
+			case 'g':
+				HANDLE_OPTION();
+				_gfx_mode = parseGraphicsMode(option);
+				if (_gfx_mode == -1)
+					goto ShowHelpAndExit;
+				scummcfg->set("gfx_mode", option, "scummvm");
+				break;
+			case 'l':
+				HANDLE_OPTION();
+				{
+					Config * newconfig = new Config(option, "scummvm");
+					scummcfg->merge_config(newconfig);
+					delete newconfig;
+					updateconfig();
 					break;
-				case 'b':
-					s = GET_VALUE();
-					if (*s == '\0')
-						goto ShowHelpAndExit;
-					_bootParam = atoi(s);
-					goto NextArg;
-				case 'c':
-					s = GET_VALUE();
-					if (*s == '\0')
-						goto ShowHelpAndExit;
-					_cdrom = atoi(s);
-					scummcfg->set("cdrom", _cdrom);
-					goto NextArg;
-				case 'd':
-					_debugMode = true;
-					s = GET_VALUE();
-					if (*s != '\0')
-						_debugLevel = atoi(s);
-					debug(1,"Debugmode (level %d) on", _debugLevel);
-					goto NextArg;
-				case 'e':
-					s = GET_VALUE();
-					if (!parseMusicDriver(s))
-						goto ShowHelpAndExit;
-					scummcfg->set("music_driver", s);
-					goto NextArg;
-				case 'f':
-					_fullScreen = true;
-					scummcfg->set("fullscreen", "true", "scummvm");
-					break;
-				case 'g':
-					s = GET_VALUE();
-					_gfx_mode = parseGraphicsMode(s);
-					if (_gfx_mode == -1)
-						goto ShowHelpAndExit;
-					scummcfg->set("gfx_mode", s, "scummvm");
-					goto NextArg;
-				case 'l':
-				    s = GET_VALUE();
-				    if (*s != '\0') {
-					    Config * newconfig = new Config(s, "scummvm");
-					    scummcfg->merge_config(newconfig);
-					    delete newconfig;
-					    updateconfig();
-					    goto NextArg;
-				    } else
-					    goto ShowHelpAndExit;
-				case 'm':
-					s = GET_VALUE();
-					if (*s == '\0')
-						goto ShowHelpAndExit;
-					_music_volume = atoi(s);
-					scummcfg->set("music_volume", _music_volume, "scummvm");
-					goto NextArg;
-				case 'n':
-					_noSubtitles = true;
-					scummcfg->set("nosubtitles", "true");
-					break;
-				case 'p':
-					s = GET_VALUE();
-					if (*s == '\0')
-						goto ShowHelpAndExit;
-					_gameDataPath = s;
-					scummcfg->set("path", _gameDataPath);
-					goto NextArg;
-				case 'r':
-					_mt32emulate = true;
-					scummcfg->set("mt32emulate", "true");
-					break;
-				case 's':
-					s = GET_VALUE();
-					if (*s == '\0')
-						goto ShowHelpAndExit;
-					_sfx_volume = atoi(s);
-					scummcfg->set("sfx_volume", _sfx_volume, "scummvm");
-					goto NextArg;
-				case 't':
-					s = GET_VALUE();
-					if (*s == '\0')
-						goto ShowHelpAndExit;
-					_gameTempo = strtol(s, 0, 0);
-					scummcfg->set("tempo", s);
-					goto NextArg;
-				case 'v':
-					printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " "
-								 __TIME__ "\n");
-#ifdef SCUMMVM_PLATFORM_VERSION
-					printf("    " SCUMMVM_PLATFORM_VERSION "\n");
-#endif
-					exit(1);
-
-				case 'w':
-					_saveconfig = true;
-					s = GET_VALUE();
-					if (*s != '\0')
-						scummcfg->change_filename(s);
-					goto NextArg;
-				default:
-				ShowHelpAndExit:;
-					printf(USAGE_STRING);
-					exit(1);
 				}
-			}
-		NextArg:;
-		} else {
-			if (_exe_name)
+				break;
+			case 'm':
+				HANDLE_OPTION();
+				_music_volume = atoi(option);
+				scummcfg->set("music_volume", _music_volume, "scummvm");
+				break;
+			case 'n':
+				CHECK_OPTION();
+				_noSubtitles = true;
+				scummcfg->set("nosubtitles", "true");
+				break;
+			case 'p':
+				HANDLE_OPTION();
+				_gameDataPath = option;
+				scummcfg->set("path", _gameDataPath);
+				break;
+			case 'r':
+				CHECK_OPTION();
+				_mt32emulate = true;
+				scummcfg->set("mt32emulate", "true");
+				break;
+			case 's':
+				HANDLE_OPTION();
+				_sfx_volume = atoi(option);
+				scummcfg->set("sfx_volume", _sfx_volume, "scummvm");
+				break;
+			case 't':
+				HANDLE_OPTION();
+				_gameTempo = strtol(option, 0, 0);
+				scummcfg->set("tempo", option);
+				break;
+			case 'v':
+				CHECK_OPTION();
+				printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " "
+							 __TIME__ "\n");
+#ifdef SCUMMVM_PLATFORM_VERSION
+				printf("    " SCUMMVM_PLATFORM_VERSION "\n");
+#endif
+				exit(1);
+			case 'w':
+				_saveconfig = true;
+				HANDLE_OPT_OPTION();
+				if (option != NULL)
+					scummcfg->change_filename(option);
+				break;
+			default:
 				goto ShowHelpAndExit;
-			_exe_name = s;
-			scummcfg->set_domain(s);
-			scummcfg->rename_domain("game-specific");
-			scummcfg->rename_domain(s);
-			updateconfig();
+			}
+		} else {
+			if (i == (argc - 1)) {
+				_exe_name = s;
+				scummcfg->set_domain(s);
+				scummcfg->rename_domain("game-specific");
+				scummcfg->rename_domain(s);
+				updateconfig();
+			} else {
+				if (current_option == NULL)
+					current_option = s;
+				else
+					goto ShowHelpAndExit;
+			}
 		}
 	}
 	
 	if (_saveconfig)
 		scummcfg->flush();
+
+	return;
+
+ ShowHelpAndExit:
+	printf(USAGE_STRING);
+	exit(1);
+
 #else
 	_midi_driver = MD_QTMUSIC;
 	_exe_name = *argv;
