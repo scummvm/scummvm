@@ -35,8 +35,13 @@ class Input {
 
 		//! Adjust here to change delays!
 		enum {
-			DELAY_SHORT = 10,
+			DELAY_SHORT  =  10,
 			DELAY_NORMAL = 100
+		};
+
+		enum {
+			MOUSE_LBUTTON = 1,
+			MOUSE_RBUTTON = 2
 		};
 
 		Input(OSystem *system);
@@ -80,15 +85,24 @@ class Input {
 
 		void canQuit(bool cq)             { _canQuit = cq; }
 
+		bool cutawayRunning() const       { return _cutawayRunning; }
 		void cutawayRunning(bool running) { _cutawayRunning = running; }
 
-		bool cutawayQuit()        { return _cutawayQuit; }
+		bool cutawayQuit() const  { return _cutawayQuit; }
 		void cutawayQuitReset()   { _cutawayQuit = false; }
 
-		bool talkQuit()       { return _talkQuit; }
+		bool talkQuit() const { return _talkQuit; }
 		void talkQuitReset()  { _talkQuit = false; }
 
 		void fastMode(bool fm)	{ _fastMode = fm; }
+
+		Verb keyVerb() const { return _keyVerb; }
+
+		int mousePosX() const { return _mouse_x; }
+		int mousePosY() const { return _mouse_y; }
+
+		int mouseButton() const { return _mouseButton; }
+		void clearMouseButton() { _mouseButton = 0; }
 
 	private:
 
@@ -132,7 +146,10 @@ class Input {
 		int _inKey;
 
 		//! Set by delay();
-		int _sdl_mouse_x, _sdl_mouse_y;
+		int _mouse_x, _mouse_y;
+
+		//! Set by delay();
+		int _mouseButton;
 
 };
 

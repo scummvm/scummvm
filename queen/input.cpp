@@ -56,19 +56,21 @@ void Input::delay(uint amount) {
 					break;
 
 				case OSystem::EVENT_MOUSEMOVE:
-					_sdl_mouse_x = event.mouse.x;
-					_sdl_mouse_y = event.mouse.y;
+					_mouse_x = event.mouse.x;
+					_mouse_y = event.mouse.y;
 					
 					break;
 
 				case OSystem::EVENT_LBUTTONDOWN:
+					_mouseButton |= MOUSE_LBUTTON;
 #ifdef _WIN32_WCE
-					_sdl_mouse_x = event.mouse.x;
-					_sdl_mouse_y = event.mouse.y;
+					_mouse_x = event.mouse.x;
+					_mouse_y = event.mouse.y;
 #endif
 					break;
 
 				case OSystem::EVENT_RBUTTONDOWN:
+					_mouseButton |= MOUSE_RBUTTON;
 					break;
 
 				case OSystem::EVENT_QUIT:

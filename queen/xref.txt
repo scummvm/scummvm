@@ -47,6 +47,7 @@ COM_LIST					Command::_cmdList
 COM_LIST_MAX				Command::_numCmdList
 COMMANDstr					Command::_command
 DEFCOMM						Command::_defaultVerb
+MKEY						Command::_mouseKey
 OLDVERB,VERB				Command::_*verb*
 OLDNOUN,NOUN,NOUN2			Command::_*noun*
 PARSE						Command::_parse
@@ -152,11 +153,10 @@ check_keys()				Input::checkKeys()
 get_key()					*not needed*
 -
 drawmouseflag
-key_commands
-key_language
+key_commands				Input::?
+key_language				Input::?
 KEYVERB						Input::_keyVerb
-MKEY
-MouseButton
+MouseButton					Input::_mouseButton
 mouseflag
 no_check_keys				Input::_noCheckKeys
 
