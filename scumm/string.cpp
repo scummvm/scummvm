@@ -439,25 +439,17 @@ void ScummEngine::drawString(int a) {
 			}
 		} else {
 			if (a == 1 && _version >= 6) {
-				// FIXME: Fingolfin would like to know what this code is good
-				// for, exactly. It seems it was added a *looong* time ago, in
-				// the old CVS module. See revisions 1.5 and 1.37 of the
-				// original string.cpp file.
-				// In particular, what kind of regressions might occur when it
-				// is removed, I wonder... so I am disabling it for now.
-				// Please report any regressions you observe to Fingolfin :-)
-				//
-				// Note #1: _blitAlso causes things to be "imprinted" on the
-				// room background. Maybe it is used in some room to write
-				// some text 'permanently' ?
-				// Note #2: If triggered "accidentaly", this code could also
-				// cause code to be left printed when it shouldn't...
+				// FIXME: The following code is a bit nasty. It is used for the
+				// Highway surfing game in Sam&Max; there, _blitAlso is set to
+				// true when writing the highscore numbers. Maybe it is also
+				// being used in other places.
+				// A better name for _blitAlso might be _imprintOnBackground
 				if (_string[a].no_talk_anim == false) {
 					// Sam and Max seems to blitAlso 32 a lot, which does
 					// nothing anyway. So just hide that one for brevity.
-					if (c != '32') 
+					if (c != 32) 
 						warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
-//					_charset->_blitAlso = true;
+					_charset->_blitAlso = true;
 				}
 			}
 			if (c >= 0x80 && _CJKMode)
