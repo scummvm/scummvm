@@ -367,15 +367,11 @@ bool FontRenderer::drawStringWrapCentered(const char * str, char * buffer, const
 		y = size.getY() - height;
 	}
 
-	if(x - max_substr_width / 2 < 0) {
-		x = max_substr_width / 2;
-	} else if (x + max_substr_width / 2 >= size.getX()) {
-		x = size.getX() - 1 - max_substr_width / 2;
-	}
+	x = (size.getX() - max_substr_width) / 2;
 
 	for(i = 0; i < nb_subs; i++) {
 		int32 substr_width = substr_widths[i];
-		drawSubstring((const byte *)substrings[i], buffer, size, x - substr_width / 2, y);
+		drawSubstring((const byte *)substrings[i], buffer, size, x + (max_substr_width - substr_width) / 2, y);
 		y += stringHeight(substrings[i]);
 		delete []substrings[i];
 	}
