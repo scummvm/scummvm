@@ -956,7 +956,7 @@ void resMan::Kill_all_res(uint8 wantInfo) {	//Tony29Nov96
 	uint32 nuked = 0;
   	_standardHeader *header;
 	int scrolls = 0;
-	char c;
+	_keyboardEvent ke;
 
 	j = base_mem_block;
 
@@ -990,8 +990,8 @@ void resMan::Kill_all_res(uint8 wantInfo) {	//Tony29Nov96
 							ServiceWindows();
 						} while(!KeyWaiting());
 
-						ReadKey(&c);	//kill the key we just pressed
-						if (c == 27)	//ESC
+						ReadKey(&ke);	//kill the key we just pressed
+						if (ke.keycode == 27)	//ESC
 							break;
 
 						// clear the Press Esc message ready for the new line
@@ -1029,7 +1029,7 @@ void resMan::Kill_all_objects(uint8 wantInfo) {		// James17jan97
 	uint32 nuked = 0;
  	_standardHeader *header;
 	int scrolls = 0;
-	char c;
+	_keyboardEvent ke;
 
 	j = base_mem_block;
 
@@ -1063,8 +1063,8 @@ void resMan::Kill_all_objects(uint8 wantInfo) {		// James17jan97
 							} while(!KeyWaiting());
 
 
-							ReadKey(&c);	//kill the key we just pressed
-							if (c == 27)	// ESC
+							ReadKey(&ke);	//kill the key we just pressed
+							if (ke.keycode == 27)	// ESC
 								break;
 
 							// clear the Press Esc message ready for the new line

@@ -463,9 +463,9 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 			ServiceWindows();
 
-			char key;
+			_keyboardEvent ke;
 
-			if (ReadKey(&key) == RD_OK && key == 27) {
+			if (ReadKey(&ke) == RD_OK && ke.keycode == 27) {
 				g_sword2->_mixer->stopHandle(handle);
 				break;
 			}

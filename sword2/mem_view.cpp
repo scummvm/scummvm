@@ -34,7 +34,7 @@ void Console_mem_display(void) {	// Tony13Aug96
 	int pass, found_end, k, j, free = 0;
 	_standardHeader	*file_header;
 	int scrolls = 0;
-	char c;
+	_keyboardEvent ke;
 
 	char inf[][20] = {
 		{ "M_null  " },
@@ -98,8 +98,7 @@ void Console_mem_display(void) {	// Tony13Aug96
 
 		Build_display();
 
-
-		if (scrolls==18) {
+		if (scrolls == 18) {
 			Temp_print_to_console("- Press ESC to stop or any other key to continue");
 			Build_display();
 
@@ -107,8 +106,8 @@ void Console_mem_display(void) {	// Tony13Aug96
 				ServiceWindows();
 			} while(!KeyWaiting());
 
-			ReadKey(&c);	//kill the key we just pressed
-			if (c == 27)	//ESC
+			ReadKey(&ke);	//kill the key we just pressed
+			if (ke.keycode == 27)	//ESC
 				break;
 
 			// clear the Press Esc message ready for the new line

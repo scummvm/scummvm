@@ -328,7 +328,7 @@ uint32 logic::Examine_run_list(void) {	// Tony25Oct96
 	uint32 *game_object_list;
 	_standardHeader *file_header;
 	int scrolls = 0;
-	char c;
+	_keyboardEvent ke;
 
 	if (current_run_list) {
 		// open and lock in place
@@ -353,8 +353,8 @@ uint32 logic::Examine_run_list(void) {	// Tony25Oct96
 				} while(!KeyWaiting());
 
 				// kill the key we just pressed
-				ReadKey(&c);
-				if (c == 27)
+				ReadKey(&ke);
+				if (ke.keycode == 27)
 					break;
 
 				// clear the Press Esc message ready for the

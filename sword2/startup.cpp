@@ -176,7 +176,7 @@ uint32 Con_print_start_menu(void) {	// Tony14Oct96
 
 	uint32 j;
 	int scrolls = 0;
-	char c;
+	_keyboardEvent ke;
 
 	if (!total_startups) {
 		Print_to_console("Sorry - no startup positions registered?");
@@ -201,8 +201,8 @@ uint32 Con_print_start_menu(void) {	// Tony14Oct96
 				} while(!KeyWaiting());
 
 				// kill the key we just pressed
-				ReadKey(&c);
-				if (c == 27)
+				ReadKey(&ke);
+				if (ke.keycode == 27)
 					break;
 
 				// clear the Press Esc message ready for the

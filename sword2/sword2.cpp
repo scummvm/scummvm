@@ -258,8 +258,8 @@ int32 GameCycle(void) {
 void Sword2State::go() {
 	OSystem::Property prop;
 	uint32 rv;
-	uint8  breakOut = 0;
-	char	c;
+	uint8 breakOut = 0;
+	_keyboardEvent ke;
 
 	// Zdebug("[%s]", lpCmdLine);
 
@@ -377,16 +377,19 @@ void Sword2State::go() {
 #endif
 
 			if (KeyWaiting()) {
-				ReadKey(&c);
+				ReadKey(&ke);
+
+				char c = toupper(ke.ascii);
+
 #ifdef _SWORD2_DEBUG
 				// ESC whether paused or not
-				if (c == 27) {
+				if (ke.keycode == 27) {
 					PauseAllSound(); // see sound.cpp
 					StartConsole();	 // start the console
 				} else
 #endif
 				if (gamePaused) {	// if currently paused
-					if (toupper(c) == 'P') {
+					if (c == 'P') {
 						// 'P' while paused = unpause!
 						UnpauseGame();
 					}
@@ -394,21 +397,21 @@ void Sword2State::go() {
 					// frame-skipping only allowed on
 					// debug version
 
-					else if (toupper(c) == ' ') {
+					else if (c == ' ') {
 						// SPACE bar while paused =
 						// step one frame!
 						stepOneCycle = 1;
 						UnpauseGame();
 					}
 #endif
-				} else if (toupper(c) == 'P') {
+				} else if (c == 'P') {
 					// 'P' while not paused = pause!
 					PauseGame();
-				} else if (toupper(c) == 'C' && _gameId == GID_SWORD2) {
+				} else if (c == 'C' && _gameId == GID_SWORD2) {
 					FN_play_credits(NULL);
 				}
 #ifdef _SWORD2_DEBUG
-				else if (toupper(c) == 'S') {
+				else if (c == 'S') {
 					// 'S' toggles speed up (by skipping
 					// display rendering)
 					renderSkip = 1 - renderSkip;

@@ -66,11 +66,15 @@
 uint8 keyBacklog = 0;	// The number of key presses waiting to be processed.
 uint8 keyPointer = 0;	// Index of the next key to read from the buffer.
 
-char keyBuffer[MAX_KEY_BUFFER];		// The keyboard buffer
+_keyboardEvent keyBuffer[MAX_KEY_BUFFER];		// The keyboard buffer
 
-void WriteKey(char key) {
+void WriteKey(uint16 ascii, int keycode, int modifiers) {
 	if (keyBuffer && keyBacklog < MAX_KEY_BUFFER) {
-		keyBuffer[(keyPointer + keyBacklog) % MAX_KEY_BUFFER] = key;
+		_keyboardEvent *slot = &keyBuffer[(keyPointer + keyBacklog) % MAX_KEY_BUFFER];
+
+		slot->ascii = ascii;
+		slot->keycode = keycode;
+		slot->modifiers = modifiers;
 		keyBacklog++;
 	}
 }
@@ -82,16 +86,19 @@ BOOL KeyWaiting(void) {
 	return FALSE;
 }
 
-
-
-int32 ReadKey(char *key) {
+int32 ReadKey(_keyboardEvent *ev) {
 	if (!keyBacklog)
 		return RDERR_NOKEYWAITING;
 
-	if (key == NULL)
+	if (ev == NULL)
 		return RDERR_INVALIDPOINTER;
 
-	*key = keyBuffer[keyPointer++];
+	ev->ascii = keyBuffer[keyPointer].ascii;
+	ev->keycode = keyBuffer[keyPointer].keycode;
+	ev->modifiers = keyBuffer[keyPointer].modifiers;
+
+	keyPointer++;
+
 	if (keyPointer == MAX_KEY_BUFFER)
 		keyPointer = 0;
 

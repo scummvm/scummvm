@@ -426,8 +426,6 @@ int32 FN_play_credits(int32 *params) {
 		debug(0, "Credits music length: ~%d ms", music_length);
 
 		while (g_sound->MusicTimeRemaining()) {
-			char key;
-
 			EraseBackBuffer();
 
 			// FIXME: Draw the credits text. The actual text
@@ -436,7 +434,9 @@ int32 FN_play_credits(int32 *params) {
 
 			ServiceWindows();
 
-			if (ReadKey(&key) == RD_OK && key == 27)
+			_keyboardEvent ke;
+
+			if (ReadKey(&ke) == RD_OK && ke.keycode == 27)
 				break;
 
 			g_system->delay_msecs(30);

@@ -243,7 +243,7 @@ public:
 	virtual void onMouseMove(int x, int y) {}
 	virtual void onMouseDown(int x, int y) {}
 	virtual void onMouseUp(int x, int y) {}
-	virtual void onKey(char key) {}
+	virtual void onKey(_keyboardEvent *ke) {}
 	virtual void onTick() {}
 
 	virtual void releaseMouse(int x, int y) {}
@@ -376,14 +376,14 @@ int Sword2Dialog::run() {
 		int16 newMouseX = mousex;
 		int16 newMouseY = mousey + 40;
 
-		char key;
-		int32 keyboardStatus = ReadKey(&key);
 		_mouseEvent *me = MouseEvent();
+		_keyboardEvent ke;
+		int32 keyboardStatus = ReadKey(&ke);
 
 		if (keyboardStatus == RD_OK) {
-			if (key == 27)
+			if (ke.keycode == 27)
 				setResult(0);
-			else if (key == 13)
+			else if (ke.keycode == '\n' || ke.keycode == '\r')
 				setResult(1);
 		}
 
@@ -416,8 +416,8 @@ int Sword2Dialog::run() {
 				}
 			}
 
-			if (keyboardStatus == RD_OK && key != 0)
-				_widgets[i]->onKey(key);
+			if (keyboardStatus == RD_OK)
+				_widgets[i]->onKey(&ke);
 
 			_widgets[i]->onTick();
 		}
@@ -972,9 +972,13 @@ public:
 		}
 	}
 
-	virtual void onKey(char key) {
-		if (_editable && (key == 8 || (key >= ' ' && key <= 'z')))
-			_parent->onAction(this, key);
+	virtual void onKey(_keyboardEvent *ke) {
+		if (_editable) {
+			if (ke->keycode == 8)
+				_parent->onAction(this, 8);
+			else if (ke->ascii >= ' ' && ke->ascii <= 'z')
+				_parent->onAction(this, ke->ascii);
+		}
 	}
 
 	virtual void onTick() {
@@ -1347,7 +1351,7 @@ void Restart_control(void) {	//Tony4Apr97
 		return;
 	}
 
-	// Stop music instantly! (James22aug97)
+	// Stop music instantly! (James	22aug97)
 	Kill_music();
 
 	//in case we were dead - well we're not anymore!
@@ -1410,13 +1414,14 @@ void Control_error(char* text) {	//Tony13May97
 	// Wait for ESC or mouse click
 	while (1) {
 		_mouseEvent *me;
-		char c;
 
 		ServiceWindows();
 
 		if (KeyWaiting()) {
-			ReadKey(&c);
-			if (c == 27)
+			_keyboardEvent ke;
+
+			ReadKey(&ke);
+			if (ke.keycode == 27)
 				break;
 		}
 

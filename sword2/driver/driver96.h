@@ -1207,10 +1207,15 @@ typedef int BOOL;
 //	---------------------
 //
 
-typedef struct
-{
+typedef struct {
 	uint16 buttons;
 } _mouseEvent;
+
+typedef struct {
+	uint16 ascii;
+	int keycode;
+	int modifiers;
+} _keyboardEvent;
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -1369,7 +1374,7 @@ extern void ResetRenderEngine(void);
 //	Keyboard functions - from keyboard.c
 //-----------------------------------------------------------------------------
 extern BOOL  KeyWaiting(void);
-extern int32 ReadKey(char *key);
+extern int32 ReadKey(_keyboardEvent *ke);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
