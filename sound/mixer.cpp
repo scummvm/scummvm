@@ -38,20 +38,22 @@
  * Channels used by the sound mixer.
  */
 class Channel {
-protected:
+private:
 	SoundMixer *_mixer;
 	PlayingSoundHandle *_handle;
-	RateConverter *_converter;
-	AudioInputStream *_input;
 	byte _volume;
 	int8 _pan;
 	bool _paused;
 
+protected:
+	RateConverter *_converter;
+	AudioInputStream *_input;
+
 public:
 	int _id;
 
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
-		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _volume(0), _pan(0), _paused(false), _id(-1) {
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, byte volume, int8 pan)
+		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _volume(volume), _pan(pan), _paused(false), _id(-1) {
 		assert(mixer);
 	}
 	virtual ~Channel();
@@ -97,24 +99,20 @@ public:
 
 #ifdef USE_MAD
 class ChannelMP3 : public Channel {
+	const bool _isMusic;
 public:
 	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size, byte volume, int8 pan);
-	bool isMusicChannel() const		{ return false; }
-};
-
-class ChannelMP3CDMusic : public Channel {
-public:
-	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan);
-	bool isMusicChannel() const		{ return true; }
+	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan);
+	bool isMusicChannel() const		{ return _isMusic; }
 };
 #endif // USE_MAD
 
 #ifdef USE_VORBIS
 class ChannelVorbis : public Channel {
-	bool _is_cd_track;
+	const bool _isMusic;
 public:
-	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan);
-	bool isMusicChannel() const		{ return _is_cd_track; }
+	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool isMusic, byte volume, int8 pan);
+	bool isMusicChannel() const		{ return _isMusic; }
 };
 #endif // USE_VORBIS
 
@@ -266,7 +264,7 @@ int SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byt
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) {
 	Common::StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelMP3CDMusic(this, handle, file, duration, volume, pan));
+	return insertChannel(handle, new ChannelMP3(this, handle, file, duration, volume, pan));
 }
 #endif
 
@@ -509,11 +507,9 @@ void Channel::mix(int16 *data, uint len) {
 
 /* RAW mixer */
 ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd)
-	: Channel(mixer, handle) {
+	: Channel(mixer, handle, volume, pan) {
 	_id = id;
 	_ptr = (byte *)sound;
-	_volume = volume;
-	_pan = pan;
 	
 	// Create the input stream
 	if (flags & SoundMixer::FLAG_LOOP) {
@@ -541,9 +537,7 @@ ChannelRaw::~ChannelRaw() {
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
 							void *sound, uint32 size, uint rate,
 							byte flags, uint32 buffer_size, byte volume, int8 pan)
-	: Channel(mixer, handle) {
-	_volume = volume;
-	_pan = pan;
+	: Channel(mixer, handle, volume, pan) {
 	assert(size <= buffer_size);
 
 	// Create the input stream
@@ -583,9 +577,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 
 #ifdef USE_MAD
 ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size, byte volume, int8 pan)
-	: Channel(mixer, handle) {
-	_volume = volume;
-	_pan = pan;
+	: Channel(mixer, handle, volume, pan), _isMusic(false) {
 	// Create the input stream
 	_input = makeMP3Stream(file, mad_timer_zero, size);
 
@@ -593,10 +585,8 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file
 	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
 }
 
-ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) 
-	: Channel(mixer, handle) {
-	_volume = volume;
-	_pan = pan;
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) 
+	: Channel(mixer, handle, volume, pan), _isMusic(true) {
 	// Create the input stream
 	_input = makeMP3Stream(file, duration, 0);
 
@@ -606,15 +596,12 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 #endif // USE_MAD
 
 #ifdef USE_VORBIS
-ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan)
-	: Channel(mixer, handle) {
-	_volume = volume;
-	_pan = pan;
+ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool isMusic, byte volume, int8 pan)
+	: Channel(mixer, handle, volume, pan), _isMusic(isMusic) {
 	// Create the input stream
 	_input = makeVorbisStream(ov_file, duration);
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
-	_is_cd_track = is_cd_track;
 }
 #endif // USE_VORBIS
