@@ -83,8 +83,7 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 #ifndef __PALM_OS__
 	re = (ResourceEntry *)bsearch(entryName, _resourceTable, _resourceEntries, sizeof(ResourceEntry), compareResourceEntry);
 #else
-	// cyx: is that code still necessary ?
-	// Does work for me (????) use this instead
+	// PALMOS FIXME (?) : still doesn't work for me (????) use this instead
 	uint32 cur = 0;
 	do {
 		if (!strcmp(entryName, _resourceTable[cur].filename)) {
