@@ -422,8 +422,10 @@ void operator delete(void *ptr);
 // Since 'new' now returns a memory block inited to 0xE7E7E7E7 we might
 // get some invocations of free() with that param. We check for those here.
 // That allows us to set a debugger breakpoint to catch it.
+#ifndef _WIN32_WCE
 #define free(x)	free_check(x)
 void free_check(void *ptr);
+#endif
 #endif
 
 #endif
