@@ -102,7 +102,6 @@ private:
 	void callback();
 	void switchToNextRegion(Track *track);
 	int allocSlot(int priority);
-	void startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority);
 	void selectVolumeGroup(const char *soundName, int volGroupId);
 
 	int32 getPosInMs(const char *soundName);
@@ -110,14 +109,13 @@ private:
 	void fadeOutMusic(int fadeDelay);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
-	void setMusicState(int stateId);
-	void setMusicSequence(int seqId);
 	void playMusic(const ImuseTable *table, int atribPos, bool sequence);
 
 public:
 	Imuse(int fps);
 	~Imuse();
 
+	bool startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority);
 	void startVoice(const char *soundName);
 	void startMusic(const char *soundName, int hookId, int volume, int pan);
 	void startSfx(const char *soundName, int priority);
@@ -134,12 +132,15 @@ public:
 
 	void setPriority(const char *soundName, int priority);
 	void setVolume(const char *soundName, int volume);
+	int getVolume(const char *soundName);
 	void setPan(const char *soundName, int pan);
 	void setFade(const char *soundName, int destVolume, int delay60HzTicks);
+	int getCountPlayedTracks();
 	void stopSound(const char *soundName);
 	void stopAllSounds();
 	void pause(bool pause);
-//	void parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int e, int f, int g, int h);
+	void setMusicState(int stateId);
+	void setMusicSequence(int seqId);
 	void refreshScripts();
 	void flushTracks();
 	bool getSoundStatus(const char *soundName) const;

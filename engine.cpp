@@ -27,10 +27,13 @@
 #include <assert.h>
 #include "screen.h"
 #include "smush.h"
+#include "imuse/imuse.h"
 
 #include "driver_gl.h"
 
 Engine *Engine::_instance = NULL;
+
+extern Imuse *g_imuse;
 
 Engine::Engine() :
 		_currScene(NULL), _selectedActor(NULL) {
@@ -242,7 +245,7 @@ void Engine::savegameRestore() {
 		return;
 	}
 
-	//imuseStopAllSounds();
+	g_imuse->stopAllSounds();
 	g_smush->stop();
 	//  free all resource
 	//  lock resources

@@ -28,12 +28,15 @@
 #include "smush.h"
 #include "textobject.h"
 #include "objectstate.h"
+#include "imuse/imuse.h"
 #include <SDL_keysym.h>
 #include <SDL_keyboard.h>
 #include <cstdio>
 #include <cmath>
 
 static int actor_tag, color_tag, sound_tag, text_tag, vbuffer_tag, object_tag;
+
+extern Imuse *g_imuse;
 
 static inline bool isObject(int num) {
 	if (lua_tag(lua_getparam(num)) != object_tag)
@@ -847,68 +850,144 @@ enum ImuseParam {
 	IM_SOUND_PAN = 0x700
 };
 
-void ImStartSound() {
-/*	const char *name = luaL_check_string(1);
-	Sound *s = ResourceLoader::instance()->loadSound(name);
-	if (s != NULL) {
-		Mixer::instance()->playSfx(s);
-		s->luaRef();
-		lua_pushusertag(s, sound_tag);
-	} else
-*/		lua_pushnil();
+static void ImStartSound() {
+	char *soundName = luaL_check_string(1);
+	int priority = check_int(2);
+	int group = check_int(3);
+
+	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority)) {
+		lua_pushstring(soundName);
+	} else {
+		lua_pushnil();
+	}
 }
 
-void gc_Sound() {
-//	Sound *s = check_sound(1);
-//	s->luaGc();
+static void ImStopSound() {
+	char *soundName = luaL_check_string(1);
+	g_imuse->stopSound(soundName);
 }
 
-void ImStopSound() {
-/*	Sound *s;
-	if (lua_isstring(lua_getparam(1))) {
-		s = Mixer::instance()->findSfx(lua_getstring(lua_getparam(1)));
-		if (s == NULL)
-			return;
-	} else
-		s = check_sound(1);
-	Mixer::instance()->stopSfx(s);*/
+static void ImStopAllSounds() {
+	g_imuse->stopAllSounds();
+}
+
+static void ImPause() {
+	g_imuse->pause(true);
+}
+
+static void ImResume() {
+	g_imuse->pause(false);
+}
+
+static void ImSetVoiceEffect() {
+	char *effectName = luaL_check_string(1);
+	warning("ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
+}
+
+static void ImSetMusicVol() {
+	g_imuse->setGroupMusicVolume(check_int(1));
+}
+
+static void ImGetMusicVol() {
+	lua_pushnumber(g_imuse->getGroupMusicVolume());
+}
+
+static void ImSetVoiceVol() {
+	g_imuse->setGroupVoiceVolume(check_int(1));
+}
+
+static void ImGetVoiceVol() {
+	lua_pushnumber(g_imuse->getGroupVoiceVolume());
+}
+
+static void ImSetSfxVol() {
+	g_imuse->setGroupSfxVolume(check_int(1));
+}
+
+static void ImGetSfxVol() {
+	lua_pushnumber(g_imuse->getGroupSfxVolume());
+}
+
+static void ImSetParam() {
+	char *soundName = luaL_check_string(1);
+	int param = check_int(2);
+	int value = check_int(3);
+
+	switch (param) {
+	case IM_SOUND_VOL:
+		g_imuse->setVolume(soundName, value);
+		break;
+	case IM_SOUND_PAN:
+		g_imuse->setPan(soundName, value);
+		break;
+	default:
+		lua_pushnil();
+		warning("ImSetParam() Unimplemented %d, %d\n", param, value);
+	}
 }
 
 void ImGetParam() {
-/*	int param = check_int(2);
+	char *soundName = luaL_check_string(1);
+	int param = check_int(2);
+
 	switch (param) {
 	case IM_SOUND_PLAY_COUNT:
-	if (lua_isstring(lua_getparam(1))) {
-		Sound *s = Mixer::instance()->findSfx(lua_getstring(lua_getparam(1)));
-		if (s != NULL)
-			lua_pushnumber(1);
-		else
-			lua_pushnumber(0);
-		} else {
-			Sound *s = check_sound(1);
-			if (s->done())
-				lua_pushnumber(0);
-			else
-				lua_pushnumber(1);
-		}
+		lua_pushnumber(g_imuse->getCountPlayedTracks());
 		break;
 	case IM_SOUND_VOL:
-		lua_pushnumber(127);
+		lua_pushnumber(g_imuse->getVolume(soundName));
 		break;
 	default:
-		warning("Unimplemented ImGetParam with %d\n", param);*/
 		lua_pushnil();
-//	}
+		warning("ImGetParam() Unimplemented %d\n", param);
+	}
 }
 
-void ImSetState() {
-//	int state = check_int(1);
-//	Mixer::instance()->setImuseState(state);
+static void ImFadeParam() {
+	char *soundName = luaL_check_string(1);
+	int opcode = check_int(2);
+	int value = check_int(3);
+	int fadeDelay = check_int(4);
+
+	switch (opcode) {
+	case IM_SOUND_PAN:
+		// it should be fade panning really
+		g_imuse->setPan(soundName, value);
+		break;
+	default:
+		error("ImFadeParam(%s, %h, %d, %d)", soundName, opcode, value, fadeDelay);
+		break;
+	}
 }
 
-void ImSetSequence() {
-//	int seq = check_int(1);
-//	Mixer::instance()->setImuseSeq(seq);
+static void ImSetState() {
+	int state = check_int(1);
+	g_imuse->setMusicState(state);
+}
+
+static void ImSetSequence() {
+	int state = check_int(1);
+	g_imuse->setMusicSequence(state);
+}
+
+static void SaveIMuse() {
+	warning("SaveIMuse() is not yet supported");
+}
+
+static void RestoreIMuse() {
+	warning("RestoreIMuse() is not yet supported");
+}
+
+static void SetSoundPosition() {
+	warning("SetSoundPosition() is not yet supported");
+}
+
+static void IsSoundPlaying() {
+	error("IsSoundPlaying() is not supported");
+}
+
+static void PlaySoundAt() {
+	error("PlaySoundAt() is not supported");
 }
 
 void setFrameTime(float frameTime) {
@@ -1310,8 +1389,6 @@ STUB_FUNC(GetActorTurnRate)
 STUB_FUNC(SetActorOffsetYaw)
 STUB_FUNC(PutActorAtOrigin)
 STUB_FUNC(GetClippedPos)
-STUB_FUNC(RestoreIMuse)
-STUB_FUNC(SaveIMuse)
 STUB_FUNC(SetActorInvClipNode)
 STUB_FUNC(NukeResources)
 STUB_FUNC(UnShrinkBoxes)
@@ -1334,6 +1411,7 @@ STUB_FUNC(TextFileGetLine)
 STUB_FUNC(TextFileGetLineCount)
 STUB_FUNC(IrisUp)
 STUB_FUNC(IrisDown)
+STUB_FUNC(PlaySound)
 STUB_FUNC(FadeInChore)
 STUB_FUNC(FadeOutChore)
 STUB_FUNC(SetActorClipPlane)
@@ -1360,18 +1438,6 @@ STUB_FUNC(DimScreen)
 STUB_FUNC(ForceRefresh)
 STUB_FUNC(RenderModeUser)
 STUB_FUNC(SetGamma)
-STUB_FUNC(ImSetVoiceEffect)
-STUB_FUNC(ImResume)
-STUB_FUNC(ImPause)
-STUB_FUNC(ImSetMusicVol)
-STUB_FUNC(ImGetMusicVol)
-STUB_FUNC(ImSetVoiceVol)
-STUB_FUNC(ImGetVoiceVol)
-STUB_FUNC(ImSetSfxVol)
-STUB_FUNC(ImGetSfxVol)
-STUB_FUNC(ImFadeParam)
-STUB_FUNC(ImSetParam)
-STUB_FUNC(ImStopAllSounds)
 STUB_FUNC(LightMgrSetChange)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightIntensity)
@@ -1394,9 +1460,6 @@ STUB_FUNC(GetSectorOppositeEdge)
 STUB_FUNC(FileFindDispose)
 STUB_FUNC(FileFindNext)
 STUB_FUNC(FileFindFirst)
-STUB_FUNC(SetSoundPosition)
-STUB_FUNC(IsSoundPlaying)
-STUB_FUNC(PlaySoundAt)
 STUB_FUNC(PreviousSetup)
 STUB_FUNC(NextSetup)
 STUB_FUNC(UnLockSet)
@@ -1453,7 +1516,6 @@ STUB_FUNC(LockCostume)
 STUB_FUNC(UnlockCostume)
 STUB_FUNC(PrintMessage)
 STUB_FUNC(PrintError)
-STUB_FUNC(PlaySoundAttached)
 STUB_FUNC(QueryDialog)
 STUB_FUNC(GetSectorVertices)
 STUB_FUNC(IsSectorActive)
@@ -1477,19 +1539,6 @@ STUB_FUNC(SetLightAngles)
 STUB_FUNC(GetLightAngles)
 STUB_FUNC(GetLightIntensity)
 STUB_FUNC(PointLightAt)
-STUB_FUNC(ImStartRecording)
-STUB_FUNC(ImStopRecording)
-STUB_FUNC(Play)
-STUB_FUNC(Quiet)
-STUB_FUNC(ImGetMasterVol)
-STUB_FUNC(ImSetMasterVol)
-STUB_FUNC(ImStartVoice)
-STUB_FUNC(ImStopVoice)
-STUB_FUNC(ImSetAttribute)
-STUB_FUNC(ImSetCuePoint)
-STUB_FUNC(Vfx)
-STUB_FUNC(ImGetMemoryFootprint)
-STUB_FUNC(ImGetSoundCacheSize)
 STUB_FUNC(LoadBundle)
 STUB_FUNC(UnloadBundle)
 STUB_FUNC(ActorShadow)
@@ -1502,8 +1551,6 @@ STUB_FUNC(IrisComplete)
 STUB_FUNC(IrisClear)
 STUB_FUNC(SaveScreen)
 STUB_FUNC(FindFileOnAnyCD)
-STUB_FUNC(SetSoundParameters)
-STUB_FUNC(GetSoundParameters)
 STUB_FUNC(Test)
 STUB_FUNC(ActorPuckOrient)
 STUB_FUNC(ActorVoiceIs3D)
@@ -1523,7 +1570,6 @@ STUB_FUNC(SetVideoDevices)
 STUB_FUNC(SetHardwareState)
 STUB_FUNC(Enumerate3DDevices)
 STUB_FUNC(EnumerateVideoDevices)
-STUB_FUNC(PlaySound)
 
 static void LuaGetTickCount() {
 	stubWarning("GetTickCount");
@@ -1814,7 +1860,6 @@ struct luaL_reg mainOpcodes[] = {
 	{ "IsMoviePlaying", IsMoviePlaying },
 	{ "PlaySound", PlaySound },
 	{ "PlaySoundAt", PlaySoundAt },
-	{ "PlaySoundAttached", PlaySoundAttached },
 	{ "IsSoundPlaying", IsSoundPlaying },
 	{ "SetSoundPosition", SetSoundPosition },
 	{ "FileFindFirst", FileFindFirst },
@@ -1871,36 +1916,23 @@ struct luaL_reg mainOpcodes[] = {
 	{ "PointLightAt", PointLightAt },
 	{ "LightMgrSetChange", LightMgrSetChange },
 	{ "LightMgrStartup", LightMgrStartup },
-	{ "ImStartRecording", ImStartRecording },
-	{ "ImStopRecording", ImStopRecording },
 	{ "ImStartSound", ImStartSound },
-	{ "Play", Play },
 	{ "ImStopSound", ImStopSound },
 	{ "ImStopAllSounds", ImStopAllSounds },
-	{ "Quiet", Quiet },
 	{ "ImGetParam", ImGetParam },
 	{ "ImSetParam", ImSetParam },
 	{ "ImFadeParam", ImFadeParam },
-	{ "ImGetMasterVol", ImGetMasterVol },
-	{ "ImSetMasterVol", ImSetMasterVol },
 	{ "ImGetSfxVol", ImGetSfxVol },
 	{ "ImSetSfxVol", ImSetSfxVol },
 	{ "ImGetVoiceVol", ImGetVoiceVol },
 	{ "ImSetVoiceVol", ImSetVoiceVol },
 	{ "ImGetMusicVol", ImGetMusicVol },
 	{ "ImSetMusicVol", ImSetMusicVol },
-	{ "ImStartVoice", ImStartVoice },
-	{ "ImStopVoice", ImStopVoice },
 	{ "ImSetState", ImSetState },
 	{ "ImSetSequence", ImSetSequence },
-	{ "ImSetAttribute", ImSetAttribute },
-	{ "ImSetCuePoint", ImSetCuePoint },
 	{ "ImPause", ImPause },
 	{ "ImResume", ImResume },
-	{ "Vfx", Vfx },
 	{ "ImSetVoiceEffect", ImSetVoiceEffect },
-	{ "ImGetMemoryFootprint", ImGetMemoryFootprint },
-	{ "ImGetSoundCacheSize", ImGetSoundCacheSize },
 	{ "LoadBundle", LoadBundle },
 	{ "UnloadBundle", UnloadBundle },
 	{ "SetGamma", SetGamma },
@@ -1962,8 +1994,6 @@ struct luaL_reg mainOpcodes[] = {
 	{ "FindFileOnAnyCD", FindFileOnAnyCD },
 	{ "DetachFromResources", DetachFromResources },
 	{ "AttachToResources", AttachToResources },
-	{ "SetSoundParameters", SetSoundParameters },
-	{ "GetSoundParameters", GetSoundParameters },
 	{ "Test", Test },
 	{ "ActorPuckOrient", ActorPuckOrient },
 	{ "GetTickCount", LuaGetTickCount },

@@ -61,11 +61,11 @@ int Imuse::allocSlot(int priority) {
 	return trackId;
 }
 
-void Imuse::startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority) {
+bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority) {
 	int l = allocSlot(priority);
 	if (l == -1) {
 		warning("Imuse::startSound() Can't start sound - no free slots");
-		return;
+		return false;
 	}
 
 	Track *track = _track[l];
@@ -102,7 +102,7 @@ void Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	track->soundHandle = _sound->openSound(soundName, volGroupId);
 
 	if (track->soundHandle == NULL)
-		return;
+		return false;
 
 	bits = _sound->getBits(track->soundHandle);
 	channels = _sound->getChannels(track->soundHandle);
@@ -145,6 +145,8 @@ void Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	g_mixer->playInputStream(&track->handle, track->stream, false, -1, track->mixerVol, track->mixerPan, false);
 	track->started = true;
 	track->used = true;
+
+	return true;
 }
 
 void Imuse::setPriority(const char *soundName, int priority) {
@@ -174,6 +176,27 @@ void Imuse::setPan(const char *soundName, int pan) {
 			track->pan = pan;
 		}
 	}
+}
+
+int Imuse::getVolume(const char *soundName) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
+			return track->vol / 1000;
+		}
+	}
+}
+
+int Imuse::getCountPlayedTracks() {
+	int count = 0;
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved) {
+			count++;
+		}
+	}
+
+	return count;
 }
 
 void Imuse::selectVolumeGroup(const char *soundName, int volGroupId) {
