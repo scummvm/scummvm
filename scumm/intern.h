@@ -573,7 +573,6 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
-	int virtScreenSavePack(byte *dst, byte *src, int len, int unk);
 	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
 	void seekFilePos(int slot, int offset, int mode);
 	virtual void decodeParseString(int a, int b);

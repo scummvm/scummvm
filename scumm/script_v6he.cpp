@@ -55,6 +55,7 @@ struct vsPackCtx {
 static void virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *&dst, int len);
 static void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b);
 static uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data);
+static int virtScreenSavePack(byte *dst, byte *src, int len, int unk);
 
 // Compatibility notes:
 //
@@ -881,6 +882,7 @@ uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 	return decByte;
 }
 
+
 void ScummEngine_v60he::o60_kernelGetFunctions() {
 	int args[29];
 	int retval;
@@ -919,7 +921,7 @@ int ScummEngine_v60he::virtScreenSave(byte *dst, int x1, int y1, int x2, int y2)
 	return packedSize;
 }
 
-int ScummEngine_v60he::virtScreenSavePack(byte *dst, byte *src, int len, int unk) {
+int virtScreenSavePack(byte *dst, byte *src, int len, int unk) {
 	vsPackCtx ctx;
 	memset(&ctx, 0, sizeof(ctx));
 
