@@ -32,8 +32,7 @@ namespace Scumm {
 
 void ScummEngine_v90he::allocateArrays() {
 	ScummEngine::allocateArrays();
-	// FIXME Check real _varNumSpriteGroups value
-	spritesAllocTables(_numSprites, 640, 64);
+	spritesAllocTables(_numSprites, MAX(64, _numSprites / 4), 64);
 }
 
 //
@@ -118,7 +117,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroup, int 
 					y = y * 256 / zoom;
 				}
 				if (spi->flags & kSFRotated && rot_angle) {
-					// TODO
+					rot_angle = (360 - rot_angle) % 360;
 					Common::Point pts[1];
 					_wiz.polygonRotatePoints(pts, 1, rot_angle);
 				}
