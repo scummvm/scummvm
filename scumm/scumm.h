@@ -858,8 +858,13 @@ public:
 	/* String class */
 	CharsetRenderer *_charset;
 	byte _charsetColor;
-	bool _noSubtitles;	// Skip all subtitles?
+	byte _charsetColorMap[16];
 	byte _charsetData[15][16];
+
+	int _charsetBufPos;
+	byte _charsetBuffer[512];
+
+	bool _noSubtitles;	// Skip all subtitles?
 
 	void initCharset(int charset);
 	void restoreCharsetBg();

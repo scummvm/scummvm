@@ -289,7 +289,7 @@ void Scumm::scummInit()
 	_numObjectsInRoom = 0;
 	_actorToPrintStrFor = 0;
 
-	_charset->_bufPos = 0;
+	_charsetBufPos = 0;
 	_haveMsg = 0;
 
 	_varwatch = -1;

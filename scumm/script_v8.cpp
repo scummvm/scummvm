@@ -795,7 +795,7 @@ void Scumm_v8::o8_cursorCommand()
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, sizeof(args) / sizeof(args[0]));
 		for (i = 0; i < 16; i++)
-			_charset->_colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
+			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9:		// SO_CURSOR_PUT
 	default:

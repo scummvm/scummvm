@@ -22,45 +22,43 @@
 #include "charset.h"
 #include "scumm.h"
 
-void CharsetRenderer::setCurID(byte id) {
-	_curId = id;
-	_fontPtr = getFontPtr(id);
-}
-
-byte *CharsetRenderer::getFontPtr(byte id)
+void CharsetRendererCommon::setCurID(byte id)
 {
-	byte *ptr = _vm->getResourceAddress(rtCharset, id);
-	assert(ptr);
+	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId, "Printing with bad charset %d");
+
+	_curId = id;
+
+	_fontPtr = _vm->getResourceAddress(rtCharset, id);
+	assert(_fontPtr);
 	if (_vm->_features & GF_SMALL_HEADER)
-		ptr += 17;
+		_fontPtr += 17;
 	else
-		ptr += 29;
-	return ptr;
+		_fontPtr += 29;
 }
 
 // do spacing for variable width old-style font
-int CharsetRendererClassic::getSpacing(byte chr, byte *charset)
+int CharsetRendererClassic::getCharWidth(byte chr)
 {
 	int spacing = 0;
 
-	int offs = READ_LE_UINT32(charset + chr * 4 + 4);
+	int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
 	if (offs) {
-		spacing = charset[offs];
-		if (charset[offs + 2] >= 0x80) {
-			spacing += charset[offs + 2] - 0x100;
+		spacing = _fontPtr[offs];
+		if (_fontPtr[offs + 2] >= 0x80) {
+			spacing += _fontPtr[offs + 2] - 0x100;
 		} else {
-			spacing += charset[offs + 2];
+			spacing += _fontPtr[offs + 2];
 		}
 	}
 	
 	return spacing;
 }
 
-int CharsetRendererOld256::getSpacing(byte chr, byte *charset)
+int CharsetRendererOld256::getCharWidth(byte chr)
 {
 	int spacing = 0;
 	
-	spacing = *(charset - 11 + chr);
+	spacing = *(_fontPtr - 11 + chr);
 
 	// FIXME - this fixes the inventory icons in Zak256/Indy3
 	//  see bug #613109.
@@ -75,12 +73,9 @@ int CharsetRendererOld256::getSpacing(byte chr, byte *charset)
 int CharsetRenderer::getStringWidth(int arg, byte *text)
 {
 	int pos = 0;
-	byte *ptr;
-	int width;
+	int width = 1;
 	byte chr;
-
-	width = 1;
-	ptr = _fontPtr;
+	int oldID = getCurID(); 
 
 	while ((chr = text[pos++]) != 0) {
 		if (chr == 0xD)
@@ -107,12 +102,14 @@ int CharsetRenderer::getStringWidth(int arg, byte *text)
 			if (chr == 14) {
 				int set = text[pos] | (text[pos + 1] << 8);
 				pos += 2;
-				ptr = getFontPtr(set);
+				setCurID(set);
 				continue;
 			}
 		}
-		width += getSpacing(chr, ptr);
+		width += getCharWidth(chr);
 	}
+
+	setCurID(oldID);
 
 	return width;
 }
@@ -121,10 +118,8 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 {
 	int lastspace = -1;
 	int curw = 1;
-	byte *ptr;
 	byte chr;
-
-	ptr = _fontPtr;
+	int oldID = getCurID(); 
 
 	while ((chr = str[pos++]) != 0) {
 		if (chr == '@')
@@ -157,7 +152,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 			if (chr == 14) {
 				int set = str[pos] | (str[pos + 1] << 8);
 				pos += 2;
-				ptr = getFontPtr(set);
+				setCurID(set);
 				continue;
 			}
 		}
@@ -165,7 +160,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 		if (chr == ' ')
 			lastspace = pos - 1;
 
-		curw += getSpacing(chr, ptr);
+		curw += getCharWidth(chr);
 		if (lastspace == -1)
 			continue;
 		if (curw > maxwidth) {
@@ -175,6 +170,8 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 			lastspace = -1;
 		}
 	}
+
+	setCurID(oldID);
 }
 
 
@@ -217,7 +214,7 @@ void CharsetRendererOld256::printChar(int chr)
 	}
 
 	// FIXME
-	_left += getSpacing(chr, _fontPtr);
+	_left += getCharWidth(chr);
 
 	if (_left > _strRight)
 		_strRight = _left;
@@ -244,7 +241,7 @@ void CharsetRendererClassic::printChar(int chr)
 		return;
 
 	_bpp = *_fontPtr;
-	_colorMap[1] = _color;
+	_vm->_charsetColorMap[1] = _color;
 
 	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
 
@@ -372,7 +369,7 @@ void CharsetRendererClassic::drawBits(VirtScreen *vs, byte *dst, byte *mask, int
 				if (useMask) {
 					mask[maskpos] |= maskmask;
 				}
-				*dst = _colorMap[color];
+				*dst = _vm->_charsetColorMap[color];
 			}
 			dst++;
 			bits <<= _bpp;

@@ -36,7 +36,6 @@ public:
 	int _right;
 
 	byte _color;
-	byte _colorMap[16];
 
 	bool _center;
 	bool _hasMask;
@@ -45,58 +44,80 @@ public:
 	bool _firstChar;
 	bool _disableOffsX;
 
-	int _bufPos;
-	byte _buffer[512];	// TODO - would be really nice to get rid of this
-
 protected:
 	Scumm *_vm;
 
-	byte _curId;
-	byte *_fontPtr;
-
-	byte *getFontPtr(byte id);
-
-	virtual int getSpacing(byte chr, byte *charset) = 0;
+	virtual int getCharWidth(byte chr) = 0;
 
 public:
 	CharsetRenderer(Scumm *vm) : _vm(vm) {}
+	virtual ~CharsetRenderer() {}
 
 	virtual void printChar(int chr) = 0;
 
 	int getStringWidth(int a, byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	
+	virtual void setCurID(byte id) = 0;
+	virtual int getCurID() = 0;
+	
+	virtual int getFontHeight() = 0;
+};
+
+
+class CharsetRendererCommon : public CharsetRenderer {
+protected:
+	byte _curId;
+	byte *_fontPtr;
+
+public:
+	CharsetRendererCommon(Scumm *vm) : CharsetRenderer(vm) {}
+
 	void setCurID(byte id);
 	int getCurID() { return _curId; }
 	
 	int getFontHeight() { return _fontPtr[1]; }
 };
 
-
-class CharsetRendererClassic : public CharsetRenderer {
+class CharsetRendererClassic : public CharsetRendererCommon {
 protected:
 	byte _bpp;
 	byte *_charPtr;
 
-	int getSpacing(byte chr, byte *charset);
+	int getCharWidth(byte chr);
 	void drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height);
 
 public:
-	CharsetRendererClassic(Scumm *vm) : CharsetRenderer(vm) {}
+	CharsetRendererClassic(Scumm *vm) : CharsetRendererCommon(vm) {}
 	
 	void printChar(int chr);
 };
 
 
-class CharsetRendererOld256 : public CharsetRenderer {
+class CharsetRendererOld256 : public CharsetRendererCommon {
 protected:
-	int getSpacing(byte chr, byte *charset);
+	int getCharWidth(byte chr);
 
 public:
-	CharsetRendererOld256(Scumm *vm) : CharsetRenderer(vm) {}
+	CharsetRendererOld256(Scumm *vm) : CharsetRendererCommon(vm) {}
 	
 	void printChar(int chr);
 };
 
+/*
+class CharsetRendererNUT : public CharsetRenderer {
+protected:
+	int getCharWidth(byte chr);
+
+	NutRenderer *_fr[4];
+
+public:
+	CharsetRendererNUT(Scumm *vm) : CharsetRenderer(vm) {}
+	
+	void printChar(int chr);
+
+	void setCurID(byte id);
+};
+*/
 
 #endif

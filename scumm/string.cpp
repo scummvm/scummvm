@@ -146,7 +146,7 @@ void Scumm::CHARSET_1()
 
 	if (!(_features & GF_OLD256))	// FIXME
 		for (i = 0; i < 4; i++)
-			_charset->_colorMap[i] = _charsetData[_charset->getCurID()][i];
+			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 
 	if (_keepText) {
 		_charset->_strLeft = gdi._mask_left;
@@ -199,7 +199,7 @@ void Scumm::CHARSET_1()
 		t <<= 1;
 	}
 
-	buffer = _charset->_buffer + _charset->_bufPos;
+	buffer = _charsetBuffer + _charsetBufPos;
 	_charset->addLinebreaks(0, buffer, 0, t);
 
 	if (_charset->_center) {
@@ -304,7 +304,7 @@ void Scumm::CHARSET_1()
 			_charset->setCurID(*buffer++);
 			buffer += 2;
 			for (i = 0; i < 4; i++)
-				_charset->_colorMap[i] = _charsetData[_charset->getCurID()][i];
+				_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 			_charset->_nextTop -= _charset->getFontHeight() - oldy;
 			break;
 			}
@@ -326,7 +326,7 @@ void Scumm::CHARSET_1()
 	if (a && has_anim)
 		a->startAnimActor(frme != -1 ? frme : a->talkFrame1);
 
-	_charset->_bufPos = buffer - _charset->_buffer;
+	_charsetBufPos = buffer - _charsetBuffer;
 
 	gdi._mask_left = _charset->_strLeft;
 	gdi._mask_right = _charset->_strRight;
@@ -339,13 +339,13 @@ void Scumm::description()
 	int c;
 	byte *buffer;
 
-	buffer = _charset->_buffer;
+	buffer = _charsetBuffer;
 	_string[0].ypos = camera._cur.y + 88;
 	_string[0].xpos = (_realWidth / 2) - (_charset->getStringWidth(0, buffer) >> 1);
 	if (_string[0].xpos < 0)
 		_string[0].xpos = 0;
 
-	_charset->_bufPos = 0;
+	_charsetBufPos = 0;
 	_charset->_top = _string[0].ypos;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
 	_charset->_right = _realWidth - 1;
@@ -390,7 +390,7 @@ void Scumm::drawDescString(byte *msg)
 	buf = _msgPtrToAdd = buffer;
 	addMessageToStack(msg);
 
-	_charset->_bufPos = 0;
+	_charsetBufPos = 0;
 	_charset->_top = _string[0].ypos;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
 	_charset->_right = _realWidth - 1;
@@ -453,7 +453,7 @@ void Scumm::drawString(int a)
 
 	if (!(_features & GF_OLD256)) {
 		for (i = 0; i < 4; i++)
-			_charset->_colorMap[i] = _charsetData[_charset->getCurID()][i];
+			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 
 		fontHeight = _charset->getFontHeight();
 	}
@@ -752,7 +752,7 @@ void Scumm::initCharset(int charsetno)
 	_string[1].t_charset = charsetno;
 
 	for (i = 0; i < 16; i++)
-		_charset->_colorMap[i] = _charsetData[_charset->getCurID()][i];
+		_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 }
 
 void Scumm::loadLanguageBundle() {

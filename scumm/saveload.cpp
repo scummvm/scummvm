@@ -359,7 +359,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17, VER_V9),
 
 		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128, VER_V8),
-		MKARRAY(Scumm, _charset->_colorMap[0], sleByte, 16, VER_V8),
+		MKARRAY(Scumm, _charsetColorMap[0], sleByte, 16, VER_V8),
 		
 		// _charsetData grew from 10*16 to 15*16 bytes
 		MKARRAY_OLD(Scumm, _charsetData[0][0], sleByte, 10 * 16, VER_V8, VER_V9),
@@ -386,9 +386,9 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MKLINE(Scumm, _actorToPrintStrFor, sleByte, VER_V8),
 		MKLINE(Scumm, _charsetColor, sleByte, VER_V8),
 
-		// charset._bufPos was changed from byte to int
-		MKLINE_OLD(Scumm, _charset->_bufPos, sleByte, VER_V8, VER_V9),
-		MKLINE(Scumm, _charset->_bufPos, sleInt16, VER_V10),
+		// _charsetBufPos was changed from byte to int
+		MKLINE_OLD(Scumm, _charsetBufPos, sleByte, VER_V8, VER_V9),
+		MKLINE(Scumm, _charsetBufPos, sleInt16, VER_V10),
 
 		MKLINE(Scumm, _haveMsg, sleByte, VER_V8),
 		MKLINE(Scumm, _useTalkAnims, sleByte, VER_V8),
@@ -430,7 +430,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 
 		MKARRAY(Scumm, _proc_special_palette[0], sleByte, 256, VER_V8),
 
-		MKARRAY(Scumm, _charset->_buffer[0], sleByte, 256, VER_V8),
+		MKARRAY(Scumm, _charsetBuffer[0], sleByte, 256, VER_V8),
 
 		MKLINE(Scumm, _egoPositioned, sleByte, VER_V8),
 
