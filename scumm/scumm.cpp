@@ -598,6 +598,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_2byteFontPtr = 0;
 	_V1_talkingActor = 0;
 
+	_heSndSoundId = 0;
+	_heSndOffset = 0;
+	_heSndTimer = 0;
+	_heSndLoop = 0;
+	_heSndSoundFreq = 0;
+
 	//
 	// Init all VARS to 0xFF
 	//
@@ -720,6 +726,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	VAR_BLAST_ABOVE_TEXT = 0xFF;
 	VAR_VOICE_MODE = 0xFF;
+	VAR_NUM_GLOBAL_OBJS = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -1286,6 +1293,7 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_LANGUAGE) = _language;
 	} else if (_version >= 7) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
+		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects;
 	} else if (_heversion >= 72) {
 		// TODO
 	} else {
