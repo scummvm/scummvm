@@ -356,6 +356,7 @@ int Actor::addActor(R_ACTOR * actor) {
 		}
 	}
 
+	actor->flags = ActorTable[i].flags;
 	actor->a_dcolor = ActorTable[i].color;
 	actor->orient = ACTOR_DEFAULT_ORIENT;
 	actor->a_intentlist = ys_dll_create();
@@ -928,9 +929,7 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 		endpoint.x = (int)new_a_x / R_ACTOR_LMULT;
 		endpoint.y = (int)new_a_y / R_ACTOR_LMULT;
 		if ((exitNum = _vm->_scene->_actionMap->hitTest(endpoint)) != -1) {
-			// WORKAROUND: Only change room if the actor is Rif
-			// himself. We need to fix this properly later.
-			if (actor->id == 0)
+			if (actor->flags & kProtagonist)
 				_vm->_scene->changeScene(_vm->_scene->_actionMap->getExitScene(exitNum));
 		}
 		*complete_p = 1;
