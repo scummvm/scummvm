@@ -807,7 +807,6 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 		break;
 	default:
 		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
-		break;
 	}
 }
 

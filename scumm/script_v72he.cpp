@@ -551,6 +551,15 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		len = copyScriptString(string);
 	}
 
+	// The boot script in some HE games just set data file name
+	// to a bunch to spaces for some odd reason.
+	// We work around that.
+	if (!strcmp((char *)string,"%s.he3")) {
+		memset(string, 0, sizeof(string));
+		sprintf((char *)string, "%s.he3", _gameName.c_str());
+		len = resStrLen(string);
+	}
+
 	while (len--) {
 		chr = string[num++];
 		if (chr == 0x25) {
@@ -867,7 +876,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
 		break;
-	case 65: // HE 90+
+	case 65: // HE 98+
 		i = pop();
 		j = pop();
 		debug(1,"o72_actorOps: case 65 (%d, %d)", i, j);

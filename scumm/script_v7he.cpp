@@ -801,9 +801,10 @@ void ScummEngine_v7he::o7_kernelSetFunctions() {
 		a = derefActor(args[1], "o7_kernelSetFunctions: 30");
 		a->clipOverride.bottom = args[2];
 		break;
-	default:
-		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+	case 714:
 		break;
+	default:
+		error("o7_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 	}
 }
 
