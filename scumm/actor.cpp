@@ -963,10 +963,10 @@ void Actor::drawActorCostume() {
 	bcr->setPalette(palette);
 	bcr->setFacing(this);
 
-	if (_vm->_features & GF_NEW_COSTUMES) {
+	if ((_vm->_features & GF_NEW_COSTUMES) && !(_vm->_features & GF_HUMONGOUS)) {
 
 		bcr->_zbuf = forceClip;
-		if ((bcr->_zbuf == 100) || ((_vm->_features & GF_HUMONGOUS) && (bcr->_zbuf == 0))) {
+		if (bcr->_zbuf == 100) {
 			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
 			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
 				bcr->_zbuf = _vm->gdi._numZBuffer-1;
