@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "gui.h"
+#include "string.h"
 
 void Scumm::initRandSeeds() {
 	_randSeed1 = 0xA943DE35;
@@ -192,6 +193,8 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	_maxHeapThreshold = 450000;
 	_minHeapThreshold = 400000;
+
+	_gameDataPath = NULL;
 	
 	parseCommandLine(argc, argv);
 
@@ -201,6 +204,10 @@ void Scumm::scummMain(int argc, char **argv) {
 	if (!detectGame()) {
 		warning("Game detection failed. Using default settings");
 		_features = GF_DEFAULT;
+	}
+
+	if (!_gameDataPath) {
+		warning("No path was provided. Assuming that data file are in the current directory");
 	}
 
 	if(_features & GF_AFTER_V7)
@@ -401,12 +408,15 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 				case 'v':
 					printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " " __TIME__ "\n");
 					exit(1);
+				case 'p':
+					_gameDataPath = argv[++i];
+					break;
 				default:
 ShowHelpAndExit:;
 					printf(
 						"ScummVM - Scumm Interpreter\n"
 						"Syntax:\n"
-						"\tscummvm [-b<num>] game\n"
+						"\tscummvm [-b<num>] [-p path] game\n"
 						"Flags:\n"
 						"\tb<num> - start in that room\n"
 						"\tf - fullscreen mode\n");

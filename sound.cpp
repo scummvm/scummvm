@@ -376,10 +376,12 @@ void *Scumm::openSfxFile() {
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
 
-	sprintf(buf, "%s.sou", _exe_name);
+	sprintf(buf, "%s%s.sou", _gameDataPath, _exe_name);
 	file = fopen(buf, "rb");
-	if (!file)
-		file = fopen("monster.sou", "rb");
+	if (!file) {
+		sprintf(buf, "%smonster.sou", _gameDataPath, _exe_name);
+		file = fopen(buf, "rb");
+	}
 	return file;
 }
 

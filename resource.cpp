@@ -64,9 +64,9 @@ void Scumm::openRoom(int room) {
 		}
                 if (!(_features & GF_SMALL_HEADER)) {
 			if(_features & GF_AFTER_V7)
-				sprintf(buf, "%s.la%d", _exe_name, room==0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s%s.la%d", _gameDataPath, _exe_name, room==0 ? 0 : res.roomno[rtRoom][room]);
 			else
-                        	sprintf(buf, "%s.%.3d",  _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
+                        	sprintf(buf, "%s%s.%.3d",  _gameDataPath, _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
                         _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
                 } else if(!(_features & GF_SMALL_NAMES)) {
 			if(room==0 || room>=900) {
@@ -78,11 +78,11 @@ void Scumm::openRoom(int room) {
 				askForDisk(buf);
 
 			} else {
-				sprintf(buf, "%s//disk%.2d.lec",_exe_name,res.roomno[rtRoom][room]);
+				sprintf(buf, "%sdisk%.2d.lec",_gameDataPath,res.roomno[rtRoom][room]);
 				_encbyte = 0x69;
 			}
 		} else {
-				sprintf(buf, "%s//%.2d.lfl",_exe_name,room);	
+				sprintf(buf, "%s%.2d.lfl",_gameDataPath,room);	
 				if(_features & GF_OLD_BUNDLE)
 					_encbyte = 0xFF;
 				else

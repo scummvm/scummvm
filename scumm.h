@@ -806,6 +806,7 @@ struct Scumm {
 	void *_fileHandle;
 	void *_sfxFile;
 	char *_exe_name;
+	char *_gameDataPath;
 
 	byte _saveLoadFlag;
 	byte _saveLoadSlot;
