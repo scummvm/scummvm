@@ -968,13 +968,13 @@ void Scumm_v2::o2_drawSentence() {
 void Scumm_v2::o2_ifClassOfIs() {
 	int obj = getVarOrDirectWord(0x80);
 	int clsop = getVarOrDirectByte(0x40);
+	byte *obcd = getOBCDFromObject(obj);
 
-	if (getObjectIndex(obj) == -1) {
+	if (obcd == 0) {
 		o5_jumpRelative();
 		return;
 	}
 
-	byte *obcd = getOBCDFromObject(obj);
 	byte cls = *(obcd + 6);
 	if ((cls & clsop) != clsop) {
 		o5_jumpRelative();
