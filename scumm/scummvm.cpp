@@ -68,8 +68,6 @@
 extern bool isSmartphone(void);
 #endif
 
-extern uint16 _debugLevel;
-
 namespace Scumm {
 
 enum MouseButtonStatus {
@@ -618,7 +616,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// Read settings from the detector & config manager
 	_debugMode = ConfMan.hasKey("debuglevel");
-	_debugLevel = ConfMan.getInt("debuglevel");
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = ConfMan.getInt("boot_param");
 

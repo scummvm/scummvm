@@ -35,7 +35,7 @@
 
 #include "common/debugger.cpp"
 
-extern uint16 _debugLevel;
+extern uint16 g_debugLevel;
 
 namespace Scumm {
 
@@ -524,10 +524,10 @@ bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 		if (_vm->_debugMode == false)
 			DebugPrintf("Debugging is not enabled at this time\n");
 		else
-			DebugPrintf("Debugging is currently set at level %d\n", _debugLevel);
+			DebugPrintf("Debugging is currently set at level %d\n", g_debugLevel);
 	} else { // set level
 		int level = atoi(argv[1]);
-		_debugLevel = level;
+		g_debugLevel = level;
 		if (level > 0) {
 			_vm->_debugMode = true;
 			DebugPrintf("Debug level set to level %d\n", level);

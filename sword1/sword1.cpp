@@ -82,15 +82,9 @@ void SwordEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-extern uint16 _debugLevel;
-
 SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
-	_detector = detector;
-	_system = syst;
-	_debugLevel = ConfMan.getInt("debuglevel");
-	
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");
 }

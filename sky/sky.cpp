@@ -50,8 +50,6 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-extern uint16 _debugLevel;
-
 #ifdef _WIN32_WCE
 
 extern bool toolbar_drawn;
@@ -124,7 +122,6 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(ConfMan.getInt("sfx_volume")); //unnecessary?
 	
 	_debugMode = ConfMan.hasKey("debuglevel");
-	_debugLevel = ConfMan.getInt("debuglevel");
 
 	_floppyIntro = ConfMan.getBool("floppy_intro");
 

@@ -51,7 +51,7 @@ extern bool toolbar_drawn;
 extern bool draw_keyboard;
 #endif
 
-extern uint16 _debugLevel;
+extern uint16 g_debugLevel;
 
 struct SimonGameSettings {
 	const char *name;
@@ -344,7 +344,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_dx_use_3_or_4_for_lock = 0;
 
 	_debugMode = 0;
-	_debugLevel = 0;
 	_language = 0;
 	_pause = 0;
 	_start_mainscript = 0;
@@ -567,7 +566,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	midi.set_volume(ConfMan.getInt("music_volume"));
 
 	_debugMode = ConfMan.hasKey("debuglevel");
-	_debugLevel = ConfMan.getInt("debuglevel");
 	_language = Common::parseLanguage(ConfMan.get("language"));
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
@@ -4819,13 +4817,13 @@ void SimonEngine::go() {
 	_continous_vgascript = false;
 	_draw_images_debug=false;
 
-	if (_debugLevel == 2)
+	if (g_debugLevel == 2)
 		_continous_mainscript = true;
-	if (_debugLevel == 3)
+	if (g_debugLevel == 3)
 		_continous_vgascript = true;
-	if (_debugLevel == 4)
+	if (g_debugLevel == 4)
 		_start_mainscript = true;
-	if (_debugLevel == 5)
+	if (g_debugLevel == 5)
 		_start_vgascript = true;
 
 	if (_game & GF_TALKIE) {

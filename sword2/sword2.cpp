@@ -29,8 +29,6 @@
 extern bool isSmartphone(void);
 #endif
 
-extern uint16 _debugLevel;
-
 struct Sword2GameSettings {
 	const char *name;
 	const char *description;
@@ -104,7 +102,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_targetName = strdup(detector->_targetName.c_str());
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
-	_debugLevel = ConfMan.getInt("debuglevel");
 
 	// Setup mixer
 	if (!_mixer->isReady())

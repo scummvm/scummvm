@@ -71,9 +71,6 @@ private:
 	uint16 _mouseX, _mouseY, _mouseState;
 	uint8 _keyPressed;
 
-	GameDetector *_detector;
-	OSystem		*_system;
-
 	MemMan		*_memMan;
 	ResMan		*_resMan;
 	ObjectMan	*_objectMan;

@@ -32,6 +32,8 @@
 /* FIXME - BIG HACK for MidiEmu */
 Engine *g_engine = 0;
 
+uint16 g_debugLevel = 0;
+
 Engine::Engine(OSystem *syst)
 	: _system(syst), _gameDataPath(ConfMan.get("path")) {
 	g_engine = this;
@@ -41,6 +43,8 @@ Engine::Engine(OSystem *syst)
 
 	// Set default file directory
 	File::setDefaultDirectory(_gameDataPath);
+
+	g_debugLevel = ConfMan.getInt("debuglevel");
 }
 
 Engine::~Engine() {
@@ -158,8 +162,6 @@ void CDECL warning(const char *s, ...) {
 #endif
 }
 
-uint16 _debugLevel = 0;
-
 void CDECL debug(int level, const char *s, ...) {
 #ifdef __PALM_OS__
 	char buf[256]; // 1024 is too big overflow the stack
@@ -168,7 +170,7 @@ void CDECL debug(int level, const char *s, ...) {
 #endif
 	va_list va;
 
-	if (level > _debugLevel)
+	if (level > g_debugLevel)
 		return;
 
 	va_start(va, s);
