@@ -23,25 +23,10 @@
 #define QUEENLOGIC_H
 
 #include "queen/queen.h"
+#include "queen/structs.h"
 
 namespace Queen {
 
-struct GraphicData {
-	uint16 x, y;
-	int16 firstFrame, lastFrame;
-	uint16 speed;
-};
-
-struct ObjectData {
-	int16 name;
-	uint16 x;
-	uint16 y;
-	uint16 description;
-	int16 entryObj;
-	uint16 room;
-	int16 state;
-	int16 image;
-};
 
 enum {
 	FRAME_XTRA = 2
@@ -90,13 +75,13 @@ protected:
 	uint16 *_sfxName;
 	uint16 *_objMax;
 	uint16 *_areaMax;
-	uint16 (*_objectBox)[4];
-	uint16 (*_itemData)[5];
+	uint16 (*_objectBox)[4]; // FIXME: Box *_objectBox;
+	uint16 (*_itemData)[5]; // FIXME: ItemData *_itemData;
 	GraphicData *_graphicData;
 	ObjectData *_objectData;
-	uint16 (*_actorData)[12];
-	int16 (*_area)[11][8];
-	uint16 (*_walkOffData)[3];
+	uint16 (*_actorData)[12]; // FIXME: ActorData *_actorData;
+	int16 (*_area)[11][8]; // FIXME: Area *_area[11];
+	uint16 (*_walkOffData)[3]; // FIXME: WalkOffData *_walkOffData;
 
 	enum {
 		GAME_STATE_COUNT = 211

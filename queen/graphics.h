@@ -23,6 +23,7 @@
 #define QUEENGRAPHICS_H
 
 #include "queen/queen.h"
+#include "queen/structs.h"
 
 namespace Queen {
 
@@ -38,15 +39,6 @@ struct BobFrame {
 	uint16 width, height;
 	uint16 xhotspot, yhotspot;
 	uint8 *data;
-};
-
-// FIXME: share that with logic.h (ObjectData) ?
-struct Box {
-	uint16 x1, y1, x2, y2;
-
-	bool intersects(uint16 x, uint16 y, uint16 w, uint16 h) const {
-		return (x + w > x1) && (y + h > y1) && (x <= x2) && (y <= y2);
-	}
 };
 
 
