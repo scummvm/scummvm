@@ -92,12 +92,14 @@ public:
 	void keyOff();
 	void frequency(int freq);
 	void nextTick(const int *phaseShift, int *outbuf, int buflen);
+	bool inUse() { return (_state != _s_ready); }
 };
 
 class Voice2612 {
 public:
+	MidiChannel_YM2612 *_owner;
 	Voice2612 *prev, *next;
-	bool _in_use; // Fix this.
+	bool _in_use;
 	uint16 _rate;
 
 protected:
@@ -123,7 +125,6 @@ public:
 	bool noteOff(int note);
 	void pitchBend(int value);
 	void recalculateFrequency();
-	bool inUse() { return _in_use; }
 };
 
 class MidiChannel_YM2612 : public MidiChannel {
@@ -132,6 +133,11 @@ protected:
 	uint16 _rate;
 	byte _instrument[48];
 	Voice2612 *_voices;
+
+public:
+	void removeVoice (Voice2612 *voice);
+	void nextTick(int *outbuf, int buflen);
+	void rate(uint16 r);
 
 public:
 	MidiChannel_YM2612 (MidiDriver_YM2612 *owner);
@@ -149,9 +155,6 @@ public:
 	void controlChange(byte control, byte value);
 	void pitchBendFactor(byte value) { }
 	void sysEx_customInstrument(uint32 type, byte *instr);
-
-	void nextTick(int *outbuf, int buflen);
-	void rate(uint16 r);
 };
 
 class MidiDriver_YM2612 : public MidiDriver {
@@ -432,6 +435,8 @@ void Operator2612::nextTick(const int *phasebuf, int *outbuf, int buflen) {
 ////////////////////////////////////////
 
 Voice2612::Voice2612() {
+	_owner = 0;
+	prev = next = 0;
 	_in_use = false;
 	_control7 = 127;
 	_note = 40;
@@ -508,8 +513,17 @@ void Voice2612::setInstrument(byte const *instrument) {
 }
 
 void Voice2612::nextTick(int *outbuf, int buflen) {
-	if (_velocity == 0)
+	if (!_in_use || _velocity == 0)
 		return;
+	if (!_opr[0]->inUse() && !_opr[1]->inUse() &&
+	    !_opr[2]->inUse() && !_opr[3]->inUse())
+	{
+		printf ("Auto off\n");
+		_in_use = false;
+		if (_owner)
+			_owner->removeVoice (this);
+		return;
+	}
 
 	if (_buflen < buflen) {
 		free(_buffer);
@@ -580,6 +594,7 @@ void Voice2612::noteOn(int n, int onVelo) {
 	_note = n;
 	velocity(onVelo);
 	recalculateFrequency();
+	_in_use = true;
 	int i;
 	for (i = 0; i < ARRAYSIZE(_opr); i++)
 		_opr[i]->keyOn();
@@ -645,30 +660,34 @@ void MidiChannel_YM2612::noteOn(byte note, byte onVelo) {
 	Voice2612 *voice = _owner->allocateVoice();
 	if (!voice)
 		return;
-	voice->_in_use = true;
+	voice->_owner = this;
 	voice->_rate = _rate;
-	voice->setInstrument (_instrument);
 	voice->next = _voices;
 	voice->prev = 0;
 	if (_voices)
 		_voices->prev = voice;
 	_voices = voice;
+	voice->setInstrument (_instrument);
 	voice->noteOn(note, onVelo);
 }
 
 void MidiChannel_YM2612::noteOff(byte note) {
 	Voice2612 *voice = _voices;
 	for (; voice; voice = voice->next) {
-		if (voice->noteOff(note)) {
-			voice->_in_use = false;
-			if (voice->next)
-				voice->next->prev = voice->prev;
-			if (voice->prev)
-				voice->prev->next = voice->next;
-			else
-				_voices = voice->next;
-		}
+		if (voice->noteOff(note))
+			removeVoice(voice);
 	}
+}
+
+void MidiChannel_YM2612::removeVoice(Voice2612 *voice) {
+	// We ASSUME that the voice belongs to us.
+	voice->_owner = 0;
+	if (voice->next)
+		voice->next->prev = voice->prev;
+	if (voice->prev)
+		voice->prev->next = voice->next;
+	else
+		_voices = voice->next;
 }
 
 void MidiChannel_YM2612::controlChange(byte control, byte value) {
@@ -847,8 +866,8 @@ void MidiDriver_YM2612::nextTick(int16 *buf1, int buflen) {
 	int *buf0 = (int *)buf1;
 
 	int i;
-	for (i = 0; i < ARRAYSIZE(_channel); i++)
-		_channel[i]->nextTick(buf0, buflen);
+	for (i = 0; i < ARRAYSIZE(_voices); i++)
+		_voices[i]->nextTick(buf0, buflen);
 
 	for (i = 0; i < buflen; ++i)
 		buf1[i*2+1] = buf1[i*2] = ((buf0[i] * volume()) >> 10) & 0xffff;
@@ -937,11 +956,14 @@ Voice2612 *MidiDriver_YM2612::allocateVoice() {
 	_next_voice %= ARRAYSIZE(_voices);
 	int oldStart = _next_voice;
 	do {
-		if (!_voices[_next_voice++]->inUse())
+		if (!_voices[_next_voice++]->_in_use)
 			return _voices[_next_voice-1];
 		_next_voice %= ARRAYSIZE(_voices);
 	} while (_next_voice != oldStart);
-	return 0;
+	Voice2612 *voice = _voices[_next_voice++];
+	if (voice->_owner)
+		voice->_owner->removeVoice (voice);
+	return voice;
 }
 
 ////////////////////////////////////////
