@@ -1135,13 +1135,13 @@ int Sound::playBundleSound(char *sound) {
 		strcpy(name, sound);
 		strcat(name, ".IMX");
 		ptr = (byte *)malloc(1000000);
-		if (_scumm->_bundle->decompressVoiceSampleByName(name, ptr, channels)) {
+		if (_scumm->_bundle->decompressVoiceSampleByName(name, ptr, channels) == 0) {
 			delete ptr;
 			return -1;
 		}
 	} else {
 		ptr = (byte *)malloc(1000000);
-		if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr, channels)) {
+		if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr, channels) == 0) {
 			delete ptr;
 			return -1;
 		}
@@ -1163,7 +1163,6 @@ int Sound::playBundleSound(char *sound) {
 				bits = READ_BE_UINT32(ptr); ptr += 4;
 				rate = READ_BE_UINT32(ptr); ptr += 4;
 				channels = READ_BE_UINT32(ptr); ptr += 4;
-				ptr += 16;
 			break;
 			case MKID_BE('TEXT'):
 			case MKID_BE('REGN'):
