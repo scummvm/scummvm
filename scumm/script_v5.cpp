@@ -1632,7 +1632,8 @@ void Scumm_v5::o5_roomOps() {
 //			printf("copyPalColor(%d, %d)\n", a, b);
 //			copyPalColor(a, b);
 			_shadowPalette[b] = a;
-			setDirtyColors(b, b);
+			if (!(_features & GF_16COLOR))
+				setDirtyColors(b, b);
 		} else {
 			error("room-color is no longer a valid command");
 		}
