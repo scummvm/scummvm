@@ -1123,8 +1123,10 @@ void ScummEngine_v2::o2_stopScript() {
 		script = vm.slot[_currentScript].number;
 
 	if (_currentScript != 0) {
-		if (vm.slot[_currentScript].number == script)
-			stopScript(script);
+		if (vm.slot[_currentScript].number == script) 
+			stopObjectCode();
+	} else {
+		stopScript(script);
 	}
 }
 
