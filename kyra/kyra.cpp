@@ -121,19 +121,25 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 	} else {
 		error("unknown game");
 	}
-	
-	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE | MDT_PREFER_NATIVE));
-	if (driver) {
-		if (ConfMan.getBool("native_mt32"))
-			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-		_midiDriver = new MusicPlayer(driver, this);
-		assert(_midiDriver);
-		_midiDriver->hasNativeMT32(ConfMan.getBool("native_mt32"));
-		_midiDriver->setVolume(255);
-	} else {
-		warning("Couldn't create MIDI driver... No music!");
-		_midiDriver = NULL;
-	};
+
+	int midiDrv = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
+	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDrv == MD_MT32));
+
+	MidiDriver *driver = GameDetector::createMidi(midiDrv);
+	if (!driver) {
+		// In this case we should play the Adlib tracks, but for now
+		// the automagic MIDI-to-Adlib conversion will do.
+		driver = MidiDriver_ADLIB_create(_mixer);
+	} else if (native_mt32)
+		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+	_midiDriver = new MusicPlayer(driver, this);
+	assert(_midiDriver);
+	_midiDriver->hasNativeMT32(native_mt32);
+	_midiDriver->setVolume(255);
+
+	if (midiDrv == MD_MT32)
+		_midiDriver->setPassThrough(true);
 	
 	// Initialize backen
 	syst->initSize(320, 200);

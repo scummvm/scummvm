@@ -18,6 +18,7 @@ namespace Kyra {
 	MusicPlayer::MusicPlayer(MidiDriver* driver, KyraEngine* engine) {
 		_engine = engine;
 		_driver = driver;
+		_passThrough = false;
 		_isPlaying = _nativeMT32 = false;
 		
 		memset(_channel, 0, sizeof(MidiChannel*) * 16);
@@ -73,6 +74,11 @@ namespace Kyra {
 	}
 	
 	void MusicPlayer::send(uint32 b) {
+		if (_passThrough) {
+			_driver->send(b);
+			return;
+		}
+
 		uint8 channel = (byte)(b & 0x0F);
 		if ((b & 0xFFF0) == 0x07B0) {
 			// Adjust volume changes by master volume

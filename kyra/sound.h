@@ -25,6 +25,7 @@ namespace Kyra {
 		void stopMusic();
 		
 		void playTrack(uint8 track);
+		void setPassThrough(bool b)	{ _passThrough = b; }
 
 		//MidiDriver interface implementation
 		int open();
@@ -47,6 +48,7 @@ namespace Kyra {
 		uint8 _channelVolume[16];
 		MidiDriver* _driver;
 		bool _nativeMT32;
+		bool _passThrough;
 		uint8 _volume;
 		bool _isPlaying;
 		MidiParser* _parser;
