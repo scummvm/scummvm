@@ -1086,7 +1086,7 @@ void Scumm_v5::o5_getActorY() {
 void Scumm_v5::o5_saveLoadGame() {
 	getResultPos();
 	byte a = getVarOrDirectByte(0x80);
-	byte slot = a & 0x1F;
+	byte slot = (a & 0x1F) + 1;
 	byte result = 0;
 		
 	switch(a & 0xE0) {
@@ -1107,6 +1107,7 @@ void Scumm_v5::o5_saveLoadGame() {
 				result = 0;
 			else
 				result = 2;
+			break;
 		case 0xC0: // test if save exists
 			bool avail_saves[100];
 			SaveFileManager *mgr = _system->get_savefile_manager();
