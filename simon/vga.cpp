@@ -1608,7 +1608,7 @@ void SimonState::vc_52()
 	} else {
 		if (a >= 0x8000) {
 			a = -a;
-			warning("vc_52(%d): unimpl");
+			playAmbient(a);
 		} else {
 			playSound(a);
 		}
