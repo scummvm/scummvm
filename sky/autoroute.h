@@ -36,7 +36,7 @@ class SkyAutoRoute {
 public:
 	SkyAutoRoute(SkyGrid *pGrid);
 	~SkyAutoRoute(void);
-	uint16 autoRoute(Compact *cpt, uint16 *routeCalc);
+	uint16 autoRoute(Compact *cpt, uint16 **pSaveRoute);
 private:
 	uint16 checkBlock(uint16 *blockPos);
 	SkyGrid *_grid;

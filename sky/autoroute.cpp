@@ -52,14 +52,14 @@ uint16 SkyAutoRoute::checkBlock(uint16 *blockPos) {
 	return retVal;
 }
 
-uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 *routeCalc) {
+uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 
 	if (!cpt->extCompact)
 		error("SkyAutoRoute::autoRoute: fatal error. cpt->extCompact == NULL!\n");
 	uint16* routeData = (uint16*)cpt->extCompact->animScratch;
 	uint8* screenGrid = _grid->giveGrid(cpt->screen) - 4;
 	// ^^ this is actually a pointer to the last dword of the grid
-	routeCalc = _routeGrid + (ROUTE_GRID_SIZE >> 1) - 1;	
+	uint16 *routeCalc = _routeGrid + (ROUTE_GRID_SIZE >> 1) - 1;	
 	
 	uint8 stretch1, stretch2; // bl / bh
 	stretch1 = 0;
@@ -342,6 +342,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 *routeCalc) {
 	// I wonder why initY isn't checked
     // saveRoute should now point to routeData
 	if (routeData > saveRoute) error("Autoroute: Internal pointer error! routeData overflow.");
+	*pSaveRoute = saveRoute;
 	return 1;
 }
 
