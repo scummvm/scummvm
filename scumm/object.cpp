@@ -1719,9 +1719,7 @@ void Scumm::loadFlObject(uint object, uint room) {
 		char buf[32];
 		byte *ptr = foir.obcd;
 		sprintf(buf, "roomobj-%d-", room);
-		if (_features & GF_AFTER_V8)
-			// TODO - maybe V8 is not the only that needs this?
-			ptr = findResource(MKID('VERB'), ptr, 0);
+		ptr = findResource(MKID('VERB'), ptr, 0);
 		dumpResource(buf, object, ptr);
 	}
 
