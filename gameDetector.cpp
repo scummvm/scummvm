@@ -570,6 +570,11 @@ OSystem *GameDetector::createSystem() {
 MidiDriver *GameDetector::createMidi() {
 	int drv = _midi_driver;
 
+#if defined (_WIN32_WCE)
+	/* Always use MIDI emulation on CE devices */
+	if (drv == MD_AUTO) drv = MD_MIDIEMU;
+#endif
+
 #if defined (WIN32) && !defined(_WIN32_WCE)
 	/* MD_WINDOWS is default MidiDriver on windows targets */
 	if (drv == MD_AUTO) drv = MD_WINDOWS;
