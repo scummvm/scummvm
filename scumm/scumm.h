@@ -897,6 +897,10 @@ public:
 	int _screenHeight, _screenWidth;
 	VirtScreen virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
+
+	int _screenStartStrip, _screenEndStrip;
+	int _screenTop;
+
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
 
@@ -1021,11 +1025,6 @@ protected:
 	uint _shakeFrame;
 	void setShake(int mode);
 
-public:
-	int _screenStartStrip, _screenEndStrip;
-	int _screenTop;
-
-protected:
 	int _blastObjectQueuePos; 
 	BlastObject _blastObjectQueue[128];
 
@@ -1069,10 +1068,8 @@ protected:
 
 public:
 	byte _HEV7ActorPalette[256];
-	byte _proc_special_palette[256];
 	byte _roomPalette[256];
 	byte *_shadowPalette;
-	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndLoop;
 	bool _skipDrawObject, _skipProcessActors;
 	int _timers[4];
 

@@ -622,9 +622,11 @@ protected:
 		const char *desc;
 	};
 	
+	const OpcodeEntryv70he *_opcodesv70he;
+
 	Win32ResExtractor *_win32ResExtractor;
 
-	const OpcodeEntryv70he *_opcodesv70he;
+	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndLoop;
 
 public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);

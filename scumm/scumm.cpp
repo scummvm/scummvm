@@ -648,7 +648,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
-	memset(_proc_special_palette, 0, sizeof(_proc_special_palette));
 	memset(_HEV7ActorPalette, 0, sizeof(_HEV7ActorPalette));
 	_palDirtyMin = 0;
 	_palDirtyMax = 0;
@@ -693,11 +692,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_auxBlocks, 0, sizeof(_auxBlocks));
 	_auxEntriesNum = 0;
 	memset(_auxEntries, 0, sizeof(_auxEntries));
-	_heSndSoundId = 0;
-	_heSndOffset = 0;
-	_heSndChannel = 0;
-	_heSndLoop = 0;
-	_heSndSoundFreq = 0;
 	memset(_timers, 0, sizeof(_timers));
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
@@ -1000,6 +994,12 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v60he(detector, syst, gs, md5sum) {
 	 _win32ResExtractor = new Win32ResExtractor(this);
+
+	_heSndSoundId = 0;
+	_heSndOffset = 0;
+	_heSndChannel = 0;
+	_heSndLoop = 0;
+	_heSndSoundFreq = 0;
 }
 
 void ScummEngine::go() {
