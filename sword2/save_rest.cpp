@@ -128,7 +128,6 @@ static void convertHeaderEndian(_savegameHeader &header) {
 	SWAP32(header.mega.feet_x);
 	SWAP32(header.mega.feet_y);
 	SWAP32(header.mega.current_dir);
-	SWAP32(header.mega.colliding);
 	SWAP32(header.mega.megaset_res);
 }
 #endif
@@ -599,7 +598,6 @@ int32 FN_get_player_savedata(int32 *params)	// James27feb97
 	if (ob_mega->currently_walking)		// if the player was walking when game was saved
 	{
 		ob_mega->currently_walking = 0;	// clear the flag
-		ob_mega->colliding = 0;			// reset this just in case
 
 		pars[0] = (int32)ob_graphic;	// pointer to object's graphic structure
 		pars[1] = (int32)ob_mega;		// pointer to object's mega structure
