@@ -32,7 +32,7 @@
 
 #if ASPECT_MODE == kSlowAndPerfectAspectMode
 
-template<int scale>
+template<int bitFormat, int scale>
 static inline uint16 interpolate5(uint16 A, uint16 B) {
 	uint16 r = (uint16)(((A & redblueMask & 0xFF00) * scale + (B & redblueMask & 0xFF00) * (5 - scale)) / 5);
 	uint16 g = (uint16)(((A & greenMask) * scale + (B & greenMask) * (5 - scale)) / 5);
@@ -42,30 +42,32 @@ static inline uint16 interpolate5(uint16 A, uint16 B) {
 }
 
 
-template<int scale>
+template<int bitFormat, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	// Accurate but slightly slower code
 	while (width--) {
-		*dst++ = interpolate5<scale>(*srcA++, *srcB++);
+		*dst++ = interpolate5<bitFormat, scale>(*srcA++, *srcB++);
 	}
 }
 #endif
 
 #if ASPECT_MODE == kFastAndNiceAspectMode
 
+template<int bitFormat>
 static inline uint32 INTERPOLATE_1_1(uint32 A, uint32 B) {
-	return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask));
+	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
 }
 
+template<int bitFormat>
 static inline uint32 INTERPOLATE_1_3(uint32 A, uint32 B) {
-	register uint32 x = ((A & qcolorMask) >> 2) + ((B & qcolorMask) >> 2) * 3;
-	register uint32 y = ((A & qlowpixelMask) + (B & qlowpixelMask) * 3) >> 2;
+	register uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) * 3;
+	register uint32 y = ((A & qlowBits) + (B & qlowBits) * 3) >> 2;
 
-	y &= qlowpixelMask;
+	y &= qlowBits;
 	return x + y;
 }
 
-template<int scale>
+template<int bitFormat, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	// For efficiency reasons we blit two pixels at a time, so it is important
 	// that makeRectStretchable() guarantees that the width is even and that
@@ -86,11 +88,11 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 	uint32 *d = (uint32 *)dst;
 	if (scale == 1) {
 		while (width--) {
-			*d++ = INTERPOLATE_1_3(*sA++, *sB++);
+			*d++ = INTERPOLATE_1_3<bitFormat>(*sA++, *sB++);
 		}
 	} else {
 		while (width--) {
-			*d++ = INTERPOLATE_1_1(*sA++, *sB++);
+			*d++ = INTERPOLATE_1_1<bitFormat>(*sA++, *sB++);
 		}
 	}
 }
@@ -141,6 +143,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h) {
  * srcY + height - 1, and it should be stretched to Y coordinates srcY
  * through real2Aspect(srcY + height - 1).
  */
+template<int bitFormat>
 int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
 	int y;
@@ -163,16 +166,16 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 				memcpy(dstPtr, srcPtr, width * 2);
 			break;
 		case 1:
-			interpolate5Line<1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
+			interpolate5Line<bitFormat, 1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
 			break;
 		case 2:
-			interpolate5Line<2>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
+			interpolate5Line<bitFormat, 2>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
 			break;
 		case 3:
-			interpolate5Line<2>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
+			interpolate5Line<bitFormat, 2>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
 			break;
 		case 4:
-			interpolate5Line<1>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
+			interpolate5Line<bitFormat, 1>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
 			break;
 		}
 #endif
@@ -181,3 +184,11 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 
 	return 1 + maxDstY - srcY;
 }
+
+int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
+	if (gBitFormat == 565)
+		return stretch200To240<565>(buf, pitch, width, height, srcX, srcY, origSrcY);
+	else // gBitFormat == 555
+		return stretch200To240<555>(buf, pitch, width, height, srcX, srcY, origSrcY);
+}
+

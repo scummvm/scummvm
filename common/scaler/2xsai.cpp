@@ -22,6 +22,8 @@
 
 #include "common/scaler/intern.h"
 
+
+
 static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) { 
 	const bool ac = (A==C);
 	const bool bc = (B==C);
@@ -41,18 +43,25 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	return rmap[y][x];
 }
 
+template<int bitFormat>
 static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
-	return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask));
+
+	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
 }
 
+template<int bitFormat>
 static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
-	register uint32 x = ((A & qcolorMask) >> 2) + ((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2);
-	register uint32 y = ((A & qlowpixelMask) + (B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask)) >> 2;
+	register uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) + ((C & qhighBits) >> 2) + ((D & qhighBits) >> 2);
+	register uint32 y = ((A & qlowBits) + (B & qlowBits) + (C & qlowBits) + (D & qlowBits)) >> 2;
 
-	y &= qlowpixelMask;
+	y &= qlowBits;
 	return x + y;
 }
 
+#define INTERPOLATE		INTERPOLATE<bitFormat>
+#define Q_INTERPOLATE	Q_INTERPOLATE<bitFormat>
+
+template<int bitFormat>
 void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;
@@ -159,6 +168,9 @@ void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 	}
 }
 
+MAKE_WRAPPER(Super2xSaI)
+
+template<int bitFormat>
 void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;
@@ -267,6 +279,9 @@ void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 	}
 }
 
+MAKE_WRAPPER(SuperEagle)
+
+template<int bitFormat>
 void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;
@@ -399,3 +414,5 @@ void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch
 		dstPtr += dstPitch * 2;
 	}
 }
+
+MAKE_WRAPPER(_2xSaI)

@@ -23,23 +23,7 @@
 #include "common/scaler/intern.h"
 
 
-// TODO: get rid of the colorMask etc. variables and instead use templates.
-// This should give a respectable boost, since variable access (i.e. memory reads)
-// in the innermost loops of our operations would work with constant data instead.
-// That should help the inliner; reduce memory access; thus improve cache efficeny
-// etc. The drawback will be that each scaler will exist twice, once for 555 and
-// once for 555, resulting in the object file being twice as big (but thanks to
-// templates, no source code would be duplicated.
-
-
 int gBitFormat = 565;
-
-uint32 colorMask = 0xF7DEF7DE;
-uint32 lowPixelMask = 0x08210821;
-uint32 qcolorMask = 0xE79CE79C;
-uint32 qlowpixelMask = 0x18631863;
-static uint32 redblueMask = redblueMask_565;
-static uint32 greenMask = greenMask_565;
 
 // RGB-to-YUV lookup table
 int   RGBtoYUV[65536];
@@ -62,20 +46,8 @@ static void InitLUT(uint32 BitFormat);
 
 void InitScalers(uint32 BitFormat) {
 	if (BitFormat == 565) {
-		colorMask = 0xF7DEF7DE;
-		lowPixelMask = 0x08210821;
-		qcolorMask = 0xE79CE79C;
-		qlowpixelMask = 0x18631863;
-		redblueMask = redblueMask_565;
-		greenMask = greenMask_565;
 		dotmatrix = dotmatrix_565;
 	} else if (BitFormat == 555) {
-		colorMask = 0x7BDE7BDE;
-		lowPixelMask = 0x04210421;
-		qcolorMask = 0x739C739C;
-		qlowpixelMask = 0x0C630C63;
-		redblueMask = redblueMask_555;
-		greenMask = greenMask_555;
 		dotmatrix = dotmatrix_555;
 	} else {
 		error("Unknwon bit format %d\n", BitFormat);
@@ -261,6 +233,7 @@ void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 	}
 }
 
+template<int bitFormat>
 void TV2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					int width, int height) {
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
@@ -286,6 +259,7 @@ void TV2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 		q += nextlineDst << 1;
 	}
 }
+MAKE_WRAPPER(TV2x)
 
 static inline uint16 DOT_16(uint16 c, int j, int i) {
   return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));

@@ -30,16 +30,35 @@
 #include "common/util.h"
 
 
-static const uint32 redblueMask_565 = 0xF81F;
-static const uint32 greenMask_565 = 0x07E0;
-static const uint32 redblueMask_555 = 0x7C1F;
-static const uint32 greenMask_555 = 0x03E0;
+template<int bitFormat>
+struct ColorMasks {
+};
 
+struct ColorMasks<565> {
+	static const int highBits = 0xF7DEF7DE;
+	static const int lowBits = 0x08210821;
+	static const int qhighBits = 0xE79CE79C;
+	static const int qlowBits = 0x18631863;
+	static const int redblueMask = 0xF81F;
+	static const int greenMask = 0x07E0;
+};
 
-extern uint32 colorMask;
-extern uint32 lowPixelMask;
-extern uint32 qcolorMask;
-extern uint32 qlowpixelMask;
+struct ColorMasks<555> {
+	static const int highBits = 0x04210421;
+	static const int lowBits = 0x04210421;
+	static const int qhighBits = 0x739C739C;
+	static const int qlowBits = 0x0C630C63;
+	static const int redblueMask = 0x7C1F;
+	static const int greenMask = 0x03E0;
+};
+
+#define highBits	ColorMasks<bitFormat>::highBits
+#define lowBits		ColorMasks<bitFormat>::lowBits
+#define qhighBits	ColorMasks<bitFormat>::qhighBits
+#define qlowBits	ColorMasks<bitFormat>::qlowBits
+#define redblueMask	ColorMasks<bitFormat>::redblueMask
+#define greenMask	ColorMasks<bitFormat>::greenMask
+
 
 extern int gBitFormat;
 
@@ -50,12 +69,8 @@ extern int gBitFormat;
  */
 template<int bitFormat, int w1, int w2>
 static inline uint16 interpolate16_2(uint16 p1, uint16 p2) {
-	if (bitFormat == 565)
-		return ((((p1 & redblueMask_565) * w1 + (p2 & redblueMask_565) * w2) / (w1 + w2)) & redblueMask_565) |
-		       ((((p1 & greenMask_565) * w1 + (p2 & greenMask_565) * w2) / (w1 + w2)) & greenMask_565);
-	else // bitFormat == 555
-		return ((((p1 & redblueMask_555) * w1 + (p2 & redblueMask_555) * w2) / (w1 + w2)) & redblueMask_555) |
-		       ((((p1 & greenMask_555) * w1 + (p2 & greenMask_555) * w2) / (w1 + w2)) & greenMask_555);
+	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2) / (w1 + w2)) & redblueMask) |
+	       ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2) / (w1 + w2)) & greenMask);
 }
 
 /**
@@ -64,12 +79,8 @@ static inline uint16 interpolate16_2(uint16 p1, uint16 p2) {
  */
 template<int bitFormat, int w1, int w2, int w3>
 static inline uint16 interpolate16_3(uint16 p1, uint16 p2, uint16 p3) {
-	if (bitFormat == 565)
-		return ((((p1 & redblueMask_565) * w1 + (p2 & redblueMask_565) * w2 + (p3 & redblueMask_565) * w3) / (w1 + w2 + w3)) & redblueMask_565) |
-		       ((((p1 & greenMask_565) * w1 + (p2 & greenMask_565) * w2 + (p3 & greenMask_565) * w3) / (w1 + w2 + w3)) & greenMask_565);
-	else // bitFormat == 555
-		return ((((p1 & redblueMask_555) * w1 + (p2 & redblueMask_555) * w2 + (p3 & redblueMask_555) * w3) / (w1 + w2 + w3)) & redblueMask_555) |
-		       ((((p1 & greenMask_555) * w1 + (p2 & greenMask_555) * w2 + (p3 & greenMask_555) * w3) / (w1 + w2 + w3)) & greenMask_555);
+	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2 + (p3 & redblueMask) * w3) / (w1 + w2 + w3)) & redblueMask) |
+		   ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2 + (p3 & greenMask) * w3) / (w1 + w2 + w3)) & greenMask);
 }
 
 
@@ -96,5 +107,14 @@ static inline bool diffYUV(int yuv1, int yuv2) {
  * Used by the hq scaler family.
  */
 extern int   RGBtoYUV[65536];
+
+/** Auxiliary macro to simplify creating those template function wrappers. */
+#define MAKE_WRAPPER(FUNC) \
+	void FUNC(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) { \
+		if (gBitFormat == 565) \
+			FUNC<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
+		else \
+			FUNC<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
+	}
 
 #endif

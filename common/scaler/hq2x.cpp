@@ -1929,9 +1929,4 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	}
 }
 
-void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	if (gBitFormat == 565)
-		HQ2x<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	else // gBitFormat == 555
-		HQ2x<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-}
+MAKE_WRAPPER(HQ2x)
