@@ -594,7 +594,7 @@ bool TableInitialiser::initNotes(Synth *synth, PCMWaveEntry pcmWaves[128], float
 	};
 	char filename[64];
 	int intRate = (int)rate;
-	char version[4] = {0, 0, 0, 2};
+	char version[4] = {0, 0, 0, 3};
 	sprintf(filename, "waveformcache-%d-%.2f.raw", intRate, masterTune);
 
 	File *file = NULL;
@@ -617,9 +617,9 @@ bool TableInitialiser::initNotes(Synth *synth, PCMWaveEntry pcmWaves[128], float
 	bool reading = false;
 	file = synth->openFile(filename, File::OpenMode_read);
 	if (file != NULL) {
-		char fileHeader[16];
-		if (file->read(fileHeader, 16) == 16) {
-			if (memcmp(fileHeader, header, 16) == 0) {
+		char fileHeader[20];
+		if (file->read(fileHeader, 20) == 20) {
+			if (memcmp(fileHeader, header, 20) == 0) {
 				Bit16u endianCheck;
 				if (file->readBit16u(&endianCheck)) {
 					if (endianCheck == 1) {
@@ -662,7 +662,7 @@ bool TableInitialiser::initNotes(Synth *synth, PCMWaveEntry pcmWaves[128], float
 	if (file == NULL) {
 		file = synth->openFile(filename, File::OpenMode_write);
 		if (file != NULL) {
-			if (file->write(header, 16) == 16 && file->writeBit16u(1)) {
+			if (file->write(header, 20) == 20 && file->writeBit16u(1)) {
 				for (int f = 0; f < NUM_NOTES; f++) {
 					for (int i = 0; i < 3 && file != NULL; i++) {
 						int len = noteLookups[f].waveformSize[i];
