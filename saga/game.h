@@ -81,7 +81,6 @@ struct R_GAMEMODULE {
 	R_GAMEDESC *gamedesc;
 	int g_skipintro;
 	char game_dir[R_MAXPATH];
-	char data_dir[R_MAXPATH];
 	char game_language[R_GAME_LANGSTR_LIMIT];
 	uint16 gfile_n;
 	R_GAME_FILEDATA *gfile_data;

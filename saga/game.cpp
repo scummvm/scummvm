@@ -282,7 +282,6 @@ void GAME_setGameDirectory(const char *gamedir) {
 	debug(0, "Using game data path: %s", gamedir);
 
 	strcpy(GameModule.game_dir, gamedir);
-	strcpy(GameModule.data_dir, ".");
 }
 
 int GAME_Register() {
@@ -293,14 +292,6 @@ int GAME_Register() {
 
 	if (CVAR_Register_S(GameModule.game_dir,
 		"gamedir", NULL, R_CVAR_CFG, R_MAXPATH) != R_SUCCESS) {
-		return R_FAILURE;
-	}
-
-	// Register "datadir" cfg cvar
-	strncpy(GameModule.data_dir, "./", R_MAXPATH);
-
-	if (CVAR_Register_S(GameModule.data_dir,
-		"datadir", NULL, R_CVAR_CFG, R_MAXPATH) != R_SUCCESS) {
 		return R_FAILURE;
 	}
 
