@@ -227,11 +227,6 @@ Backends
   this allows more control over these properties (like, it allows the GUI to
   display checkboxes for these in the options dialog)
 
-SDL backend
-===========
-* Fix the "auto dirty rect" computing code - in particular, use a proper
-  checksum algorithm, this should solve many of the problems with some luck
-
 X11 backend
 ===========
 * Verify that it still actually works

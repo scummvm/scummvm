@@ -335,8 +335,6 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 	}
 }
 
-#define ROL(a,n) a = (a << (n)) | (a >> (32 - (n)))
-#define DOLINE(x) a ^= ((const uint32*)buf)[0 + (x) * (_screenWidth / 4)]; b ^= ((const uint32 *)buf)[1 + (x) * (_screenWidth / 4)]
 
 void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 	uint32 *sums = _dirty_checksums;
@@ -344,32 +342,36 @@ void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 	const uint last_x = (uint)_screenWidth / 8;
 	const uint last_y = (uint)_screenHeight / 8;
 
+	const uint BASE = 65521; /* largest prime smaller than 65536 */
+
 	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
 	 * reading each line at a time from left to right */
 	for(y = 0; y != last_y; y++, buf += _screenWidth * (8 - 1))
-		for(x=0; x != last_x; x++, buf += 8) {
-			uint32 a = x;
-			uint32 b = y;
+		for(x = 0; x != last_x; x++, buf += 8) {
+			// Adler32 checksum algorithm (from RFC1950, used by gzip and zlib).
+			// This computes the Adler32 checksum of a 8x8 pixel block. Note
+			// that we can do the modulo operation (which is the slowest part)
+			// of the algorithm) at the end, instead of doing each iteration,
+			// since we only have 64 iterations in total - and thus s1 and
+			// s2 can't overflow anyway.
+			uint32 s1 = 1;
+			uint32 s2 = 0;
+			const byte *ptr = buf;
+			for (int subY = 0; subY < 8; subY++) {
+				for (int subX = 0; subX < 8; subX++) {
+					s1 += ptr[subX];
+					s2 += s1;
+				}
+				ptr += _screenWidth;
+			}
 
-			DOLINE(0); ROL(a,13); ROL(b,11);
-			DOLINE(2); ROL(a,13); ROL(b,11);
-			DOLINE(4); ROL(a,13); ROL(b,11);
-			DOLINE(6); ROL(a,13); ROL(b,11);
-
-			a *= 0xDEADBEEF;
-			b *= 0xBAADF00D;
-
-			DOLINE(1); ROL(a,13); ROL(b,11);
-			DOLINE(3); ROL(a,13); ROL(b,11);
-			DOLINE(5); ROL(a,13); ROL(b,11);
-			DOLINE(7); ROL(a,13); ROL(b,11);
+			s1 %= BASE;
+			s2 %= BASE;
 
 			/* output the checksum for this block */
-			*sums++ = a + b;
-		}
+			*sums++ =  (s2 << 16) + s1;
+	}
 }
-#undef DOLINE
-#undef ROL
 
 void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 	assert(((long)buf & 3) == 0);
