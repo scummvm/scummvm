@@ -122,26 +122,12 @@ public:
 
 protected:
 	byte *_readPtr;
-	uint _readOffs;
 
 	bool _useOrDecompress;
 	int _numLinesToProcess;
-	int _tempNumLines;
 	byte _currentX;
-	byte _hotspot_x;
-	byte _hotspot_y;
 	byte _cursorActive;
 
-	int16 _drawMouseX;
-	int16 _drawMouseY;
-	byte _mouseColors[4];
-	byte _mouseColor;
-	byte _mouseClipMask1, _mouseClipMask2, _mouseClipMask3;
-	byte _mouseColorIndex;
-	byte *_mouseMaskPtr;
-	byte *_smap_ptr;
-	byte *_backbuff_ptr;
-	byte *_bgbak_ptr;
 	byte *_mask_ptr;
 	byte *_mask_ptr_dest;
 
@@ -149,21 +135,20 @@ protected:
 	byte _decomp_shr, _decomp_mask;
 	byte _transparency;
 	uint32 _vertStripNextInc;
-	byte *_backupIsWhere;
 
 	/* Bitmap decompressors */
-	void decompressBitmap();
-	void unkDecode1();
-	void unkDecode2();
-	void unkDecode3();
-	void unkDecode4();
-	void unkDecode5();
-	void unkDecode6();
-	void unkDecode7();
-	void unkDecode8();
-	void unkDecode9();
-	void unkDecode10();
-	void unkDecode11();
+	void decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess);
+	void unkDecode1(byte *dst, byte *src, int height);
+	void unkDecode2(byte *dst, byte *src, int height);
+	void unkDecode3(byte *dst, byte *src, int height);
+	void unkDecode4(byte *dst, byte *src, int height);
+	void unkDecode5(byte *dst, byte *src, int height);
+	void unkDecode6(byte *dst, byte *src, int height);
+	void unkDecode7(byte *dst, byte *src, int height);
+	void unkDecode8(byte *dst, byte *src, int height);
+	void unkDecode9(byte *dst, byte *src, int height);
+	void unkDecode10(byte *dst, byte *src, int height);
+	void unkDecode11(byte *dst, byte *src, int height);
 
 	void draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask);
 	void draw8Col(byte *dst, byte *src, int height);
@@ -176,7 +161,7 @@ protected:
 	void updateDirtyScreen(VirtScreen *vs);
 
 public:
-	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag);
+	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h, int stripnr, int numstrip, byte flag);
 	void clearUpperMask();
 
 	void disableZBuffer() { _disable_zbuffer++; }

@@ -335,10 +335,6 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 	if (vs->height == 0)
 		return;
 
-	_readOffs = 0;
-	if (vs->scrollable)
-		_readOffs = vs->xstart;
-
 	if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y))
 		drawStripToScreen(vs, 0, _numStrips << 3, 0, vs->height);
 	else {
@@ -373,7 +369,6 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 {
 	byte *ptr;
-	int scrollY;
 	int height;
 
 	if (b <= t)
@@ -390,9 +385,8 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 		height = _vm->_realHeight;
 
 	assert(_vm->_screenTop >= 0);
-	scrollY = _vm->_screenTop;
 
-	ptr = vs->screenPtr + t * _numStrips * 8 + x + _readOffs + scrollY * _vm->_realWidth;
+	ptr = vs->screenPtr + (x + vs->xstart) + (_vm->_screenTop + t) * _vm->_realWidth;
 	_vm->_system->copy_rect(ptr, _vm->_realWidth, x, vs->topline + t, w, height);
 }
 
@@ -404,7 +398,8 @@ void Gdi::clearUpperMask()
 void Gdi::resetBackground(int top, int bottom, int strip)
 {
 	VirtScreen *vs = &_vm->virtscr[0];
-	int offs;
+	byte *backbuff_ptr, *bgbak_ptr;
+	int offs, numLinesToProcess;
 
 	if (top < vs->tdirty[strip])
 		vs->tdirty[strip] = top;
@@ -414,18 +409,18 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 
 	offs = (top * _numStrips + _vm->_screenStartStrip + strip);
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + offs;
-	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + (offs << 3);
-	_backbuff_ptr = vs->screenPtr + (offs << 3);
+	bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + (offs << 3);
+	backbuff_ptr = vs->screenPtr + (offs << 3);
 
-	_numLinesToProcess = bottom - top;
-	if (_numLinesToProcess) {
+	numLinesToProcess = bottom - top;
+	if (numLinesToProcess) {
 		if ((_vm->_features & GF_AFTER_V6) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen)) {
 			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
-				draw8ColWithMasking(_backbuff_ptr, _bgbak_ptr, _numLinesToProcess, _mask_ptr);
+				draw8ColWithMasking(backbuff_ptr, bgbak_ptr, numLinesToProcess, _mask_ptr);
 			else
-				draw8Col(_backbuff_ptr, _bgbak_ptr, _numLinesToProcess);
+				draw8Col(backbuff_ptr, bgbak_ptr, numLinesToProcess);
 		} else {
-			clear8Col(_backbuff_ptr, _numLinesToProcess);
+			clear8Col(backbuff_ptr, numLinesToProcess);
 		}
 	}
 }
@@ -762,10 +757,10 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 	return false;
 }
 
-void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
+void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 										 int stripnr, int numstrip, byte flag)
 {
-	byte *smap_ptr, *where_draw_ptr;
+	byte *backbuff_ptr, *bgbak_ptr, *smap_ptr;
 	int i;
 	byte *zplane_list[6];
 
@@ -780,7 +775,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 
 	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER)
-		smap_ptr = _smap_ptr = ptr;
+		smap_ptr = ptr;
 	else
 		smap_ptr = findResource(MKID('SMAP'), ptr);
 
@@ -824,14 +819,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 
 	_vertStripNextInc = h * _vm->_realWidth - 1;
 
-	_numLinesToProcess = h;
-
 	do {
-		if (_vm->_features & GF_SMALL_HEADER)
-			_smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
-		else
-			_smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
-
 		CHECK_HEAP;
 		sx = x;
 		if (vs->scrollable)
@@ -849,31 +837,31 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 		if (bottom > vs->bdirty[sx])
 			vs->bdirty[sx] = bottom;
 
-		_backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
+		backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
 		if (twobufs)
-			_bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
+			bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
 		else
-			_bgbak_ptr = _backbuff_ptr;
+			bgbak_ptr = backbuff_ptr;
 
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
-		where_draw_ptr = _bgbak_ptr;
-		decompressBitmap();
+		if (_vm->_features & GF_SMALL_HEADER)
+			decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
+		else
+			decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), h);
 
 		CHECK_HEAP;
 		if (twobufs) {
-			_bgbak_ptr = where_draw_ptr;
-
 			if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
 				if (flag & dbClear || !lightsOn)
-					clear8ColWithMasking(_backbuff_ptr, h, _mask_ptr);
+					clear8ColWithMasking(backbuff_ptr, h, _mask_ptr);
 				else
-					draw8ColWithMasking(_backbuff_ptr, _bgbak_ptr, h, _mask_ptr);
+					draw8ColWithMasking(backbuff_ptr, bgbak_ptr, h, _mask_ptr);
 			} else {
 				if (flag & dbClear || !lightsOn)
-					clear8Col(_backbuff_ptr, h);
+					clear8Col(backbuff_ptr, h);
 				else
-					draw8Col(_backbuff_ptr, _bgbak_ptr, h);
+					draw8Col(backbuff_ptr, bgbak_ptr, h);
 			}
 		}
 		CHECK_HEAP;
@@ -944,7 +932,7 @@ next_iter:
 }
 
 
-void Gdi::decompressBitmap()
+void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess)
 {
 	const byte decompress_table[] = {
 		0x0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F, 0x7F, 0xFF, 0x0,
@@ -952,8 +940,8 @@ void Gdi::decompressBitmap()
 
 	_useOrDecompress = false;
 
-	byte code = *_smap_ptr++;
-	assert(_numLinesToProcess);
+	byte code = *smap_ptr++;
+	assert(numLinesToProcess);
 
 	if (_vm->_features & GF_AMIGA)
 		_palette_mod = 16;
@@ -962,23 +950,23 @@ void Gdi::decompressBitmap()
 
 	switch (code) {
 	case 1:
-		unkDecode7();
+		unkDecode7(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 	case 2:
-		unkDecode8();								/* Ender - Zak256/Indy256 */
+		unkDecode8(bgbak_ptr, smap_ptr, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 		break;
 
 	case 3:
-		unkDecode9();								/* Ender - Zak256/Indy256 */
+		unkDecode9(bgbak_ptr, smap_ptr, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 		break;
 
 	case 4:
-		unkDecode10();							/* Ender - Zak256/Indy256 */
+		unkDecode10(bgbak_ptr, smap_ptr, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
 
 	case 7:
-		unkDecode11();							/* Ender - Zak256/Indy256 */
+		unkDecode11(bgbak_ptr, smap_ptr, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
 
 	case 14:
@@ -988,7 +976,7 @@ void Gdi::decompressBitmap()
 	case 18:
 		_decomp_shr = code - 10;
 		_decomp_mask = decompress_table[code - 10];
-		unkDecode6();
+		unkDecode6(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 	case 24:
@@ -998,7 +986,7 @@ void Gdi::decompressBitmap()
 	case 28:
 		_decomp_shr = code - 20;
 		_decomp_mask = decompress_table[code - 20];
-		unkDecode5();
+		unkDecode5(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 	case 34:
@@ -1009,7 +997,7 @@ void Gdi::decompressBitmap()
 		_useOrDecompress = true;
 		_decomp_shr = code - 30;
 		_decomp_mask = decompress_table[code - 30];
-		unkDecode4();
+		unkDecode4(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 	case 44:
@@ -1020,7 +1008,7 @@ void Gdi::decompressBitmap()
 		_useOrDecompress = true;
 		_decomp_shr = code - 40;
 		_decomp_mask = decompress_table[code - 40];
-		unkDecode2();
+		unkDecode2(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 	case 64:
@@ -1030,7 +1018,7 @@ void Gdi::decompressBitmap()
 	case 68:
 		_decomp_shr = code - 60;
 		_decomp_mask = decompress_table[code - 60];
-		unkDecode1();
+		unkDecode1(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 	case 84:
@@ -1041,7 +1029,7 @@ void Gdi::decompressBitmap()
 		_useOrDecompress = true;
 		_decomp_shr = code - 80;
 		_decomp_mask = decompress_table[code - 80];
-		unkDecode3();
+		unkDecode3(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 		/* New since version 6 */
@@ -1052,7 +1040,7 @@ void Gdi::decompressBitmap()
 	case 108:
 		_decomp_shr = code - 100;
 		_decomp_mask = decompress_table[code - 100];
-		unkDecode1();
+		unkDecode1(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 		/* New since version 6 */
@@ -1064,7 +1052,7 @@ void Gdi::decompressBitmap()
 		_useOrDecompress = true;
 		_decomp_shr = code - 120;
 		_decomp_mask = decompress_table[code - 120];
-		unkDecode3();
+		unkDecode3(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
 	default:
@@ -1228,24 +1216,22 @@ void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height)
 	}
 }
 
-#define READ_BIT (cl--,bit = bits&1, bits>>=1,bit)
-#define FILL_BITS if (cl <= 8) { bits |= (*src++ << cl); cl += 8;}
+#define READ_BIT (cl--, bit = bits&1, bits>>=1,bit)
+#define FILL_BITS do { if (cl <= 8) { bits |= (*src++ << cl); cl += 8; }  } while (0)
 
-void Gdi::unkDecode1()
+void Gdi::unkDecode1(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
 	byte incm, reps;
-	_tempNumLines = _numLinesToProcess;
 
 	do {
 		_currentX = 8;
 		do {
-			FILL_BITS *dst++ = color + _palette_mod;;
+			FILL_BITS;
+			*dst++ = color + _palette_mod;
 
 		againPos:;
 
@@ -1255,12 +1241,13 @@ void Gdi::unkDecode1()
 				cl -= 3;
 				bits >>= 3;
 				if (!incm) {
-					FILL_BITS reps = bits & 0xFF;
+					FILL_BITS;
+					reps = bits & 0xFF;
 					do {
 						if (!--_currentX) {
 							_currentX = 8;
 							dst += _vm->_realWidth - 8;
-							if (!--_tempNumLines)
+							if (!--height)
 								return;
 						}
 						*dst++ = color + _palette_mod;
@@ -1272,36 +1259,35 @@ void Gdi::unkDecode1()
 					color += incm;
 				}
 			} else {
-				FILL_BITS color = bits & _decomp_mask;
+				FILL_BITS;
+				color = bits & _decomp_mask;
 				cl -= _decomp_shr;
 				bits >>= _decomp_shr;
 			}
 		} while (--_currentX);
 		dst += _vm->_realWidth - 8;
-	} while (--_tempNumLines);
+	} while (--height);
 }
 
-void Gdi::unkDecode2()
+void Gdi::unkDecode2(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
 
-	_tempNumLines = _numLinesToProcess;
-
 	do {
 		_currentX = 8;
 		do {
-			FILL_BITS if (color != _transparency)
-				 *dst = color + _palette_mod;
+			FILL_BITS;
+			if (color != _transparency)
+				*dst = color + _palette_mod;
 			dst++;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
-				FILL_BITS color = bits & _decomp_mask;
+				FILL_BITS;
+				color = bits & _decomp_mask;
 				bits >>= _decomp_shr;
 				cl -= _decomp_shr;
 				inc = -1;
@@ -1313,26 +1299,23 @@ void Gdi::unkDecode2()
 			}
 		} while (--_currentX);
 		dst += _vm->_realWidth - 8;
-	} while (--_tempNumLines);
+	} while (--height);
 }
 
-void Gdi::unkDecode3()
+void Gdi::unkDecode3(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
 	byte incm, reps;
 
-	_tempNumLines = _numLinesToProcess;
-
 	do {
 		_currentX = 8;
 		do {
-			FILL_BITS if (color != _transparency)
-				 *dst = color + _palette_mod;
+			FILL_BITS;
+			if (color != _transparency)
+				*dst = color + _palette_mod;
 			dst++;
 
 		againPos:;
@@ -1345,13 +1328,14 @@ void Gdi::unkDecode3()
 				if (incm) {
 					color += incm;
 				} else {
-					FILL_BITS reps = bits & 0xFF;
+					FILL_BITS;
+					reps = bits & 0xFF;
 					if (color == _transparency) {
 						do {
 							if (!--_currentX) {
 								_currentX = 8;
 								dst += _vm->_realWidth - 8;
-								if (!--_tempNumLines)
+								if (!--height)
 									return;
 							}
 							dst++;
@@ -1361,7 +1345,7 @@ void Gdi::unkDecode3()
 							if (!--_currentX) {
 								_currentX = 8;
 								dst += _vm->_realWidth - 8;
-								if (!--_tempNumLines)
+								if (!--height)
 									return;
 							}
 							*dst++ = color + _palette_mod;
@@ -1372,19 +1356,18 @@ void Gdi::unkDecode3()
 					goto againPos;
 				}
 			} else {
-				FILL_BITS color = bits & _decomp_mask;
+				FILL_BITS;
+				color = bits & _decomp_mask;
 				cl -= _decomp_shr;
 				bits >>= _decomp_shr;
 			}
 		} while (--_currentX);
 		dst += _vm->_realWidth - 8;
-	} while (--_tempNumLines);
+	} while (--height);
 }
 
-void Gdi::unkDecode4()
+void Gdi::unkDecode4(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	int8 inc = -1;
 	uint bits = *src++;
@@ -1393,14 +1376,16 @@ void Gdi::unkDecode4()
 
 	_currentX = 8;
 	do {
-		_tempNumLines = _numLinesToProcess;
+		int h = height;
 		do {
-			FILL_BITS if (color != _transparency)
-				 *dst = color + _palette_mod;
+			FILL_BITS;
+			if (color != _transparency)
+				*dst = color + _palette_mod;
 			dst += _vm->_realWidth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
-				FILL_BITS color = bits & _decomp_mask;
+				FILL_BITS;
+				color = bits & _decomp_mask;
 				bits >>= _decomp_shr;
 				cl -= _decomp_shr;
 				inc = -1;
@@ -1410,30 +1395,28 @@ void Gdi::unkDecode4()
 				inc = -inc;
 				color += inc;
 			}
-		} while (--_tempNumLines);
+		} while (--h);
 		dst -= _vertStripNextInc;
 	} while (--_currentX);
 }
 
-void Gdi::unkDecode5()
+void Gdi::unkDecode5(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
 
-	_tempNumLines = _numLinesToProcess;
-
 	do {
 		_currentX = 8;
 		do {
-			FILL_BITS *dst++ = color + _palette_mod;
+			FILL_BITS;
+			*dst++ = color + _palette_mod;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
-				FILL_BITS color = bits & _decomp_mask;
+				FILL_BITS;
+				color = bits & _decomp_mask;
 				bits >>= _decomp_shr;
 				cl -= _decomp_shr;
 				inc = -1;
@@ -1445,13 +1428,11 @@ void Gdi::unkDecode5()
 			}
 		} while (--_currentX);
 		dst += _vm->_realWidth - 8;
-	} while (--_tempNumLines);
+	} while (--height);
 }
 
-void Gdi::unkDecode6()
+void Gdi::unkDecode6(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	int8 inc = -1;
 	uint bits = *src++;
@@ -1460,13 +1441,15 @@ void Gdi::unkDecode6()
 
 	_currentX = 8;
 	do {
-		_tempNumLines = _numLinesToProcess;
+		int h = height;
 		do {
-			FILL_BITS *dst = color + _palette_mod;
+			FILL_BITS;
+			*dst = color + _palette_mod;
 			dst += _vm->_realWidth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
-				FILL_BITS color = bits & _decomp_mask;
+				FILL_BITS;
+				color = bits & _decomp_mask;
 				bits >>= _decomp_shr;
 				cl -= _decomp_shr;
 				inc = -1;
@@ -1476,7 +1459,7 @@ void Gdi::unkDecode6()
 				inc = -inc;
 				color += inc;
 			}
-		} while (--_tempNumLines);
+		} while (--h);
 		dst -= _vertStripNextInc;
 	} while (--_currentX);
 }
@@ -1486,34 +1469,30 @@ void Gdi::unkDecode6()
  if ((mask <<= 1) == 256) {buffer = *src++;  mask = 1;}     \
  bits = ((buffer & mask) != 0);
 
-#define NEXT_ROW                                               \
-                dst += _vm->_realWidth;                         \
-                if (--h == 0) {                                 \
-                        if (!--_currentX)                       \
-                                return;                         \
-                        dst -= _vertStripNextInc;               \
-                        h = _numLinesToProcess;                 \
-                }
+#define NEXT_ROW                                            \
+				dst += _vm->_realWidth;                     \
+					if (--h == 0) {                         \
+					if (!--_currentX)                       \
+						  return;                           \
+					dst -= _vertStripNextInc;               \
+					h = height;                 \
+				}
 
-void Gdi::unkDecode7()
+void Gdi::unkDecode7(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
-	int height = _numLinesToProcess;
-	uint h = _numLinesToProcess;
-
+	uint h = height;
 
 	if (_vm->_features & GF_OLD256) {
 		_currentX = 8;
 		for (;;) {
 			byte color = *src++;
 			*dst = color;
-		NEXT_ROW}
+			NEXT_ROW
+		}
 		return;
 	}
 
 	do {
-		/* Endian safe */
 #if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, src, 8);
 #else
@@ -1525,11 +1504,9 @@ void Gdi::unkDecode7()
 	} while (--height);
 }
 
-void Gdi::unkDecode8()
+void Gdi::unkDecode8(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
-	uint h = _numLinesToProcess;
+	uint h = height;
 
 	_currentX = 8;
 	for (;;) {
@@ -1538,18 +1515,17 @@ void Gdi::unkDecode8()
 
 		do {
 			*dst = color;
-		NEXT_ROW} while (--run);
+			NEXT_ROW
+		} while (--run);
 	}
 }
 
-void Gdi::unkDecode9()
+void Gdi::unkDecode9(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	unsigned char c, bits, color, run;
 	int x, y, i, z;
 	uint buffer = 0, mask = 128;
-	int h = _numLinesToProcess;
+	int h = height;
 	x = y = i = z = run = 0;
 
 	_currentX = 8;
@@ -1569,7 +1545,8 @@ void Gdi::unkDecode9()
 			}
 			for (i = 0; i < ((c & 3) + 2); i++) {
 				*dst = (run * 16 + color);
-			NEXT_ROW}
+				NEXT_ROW
+			}
 			break;
 
 		case 1:
@@ -1580,7 +1557,8 @@ void Gdi::unkDecode9()
 					color += bits << z;
 				}
 				*dst = (run * 16 + color);
-			NEXT_ROW}
+				NEXT_ROW
+			}
 			break;
 
 		case 2:
@@ -1594,13 +1572,11 @@ void Gdi::unkDecode9()
 	}
 }
 
-void Gdi::unkDecode10()
+void Gdi::unkDecode10(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	int i;
 	unsigned char local_palette[256], numcolors = *src++;
-	uint h = _numLinesToProcess;
+	uint h = height;
 
 	for (i = 0; i < numcolors; i++)
 		local_palette[i] = *src++;
@@ -1611,34 +1587,35 @@ void Gdi::unkDecode10()
 		byte color = *src++;
 		if (color < numcolors) {
 			*dst = local_palette[color];
-		NEXT_ROW} else {
+			NEXT_ROW
+		} else {
 			uint run = color - numcolors + 1;
 			color = *src++;
 			do {
 				*dst = color;
-			NEXT_ROW} while (--run);
+				NEXT_ROW
+			} while (--run);
 		}
 	}
 }
 
 
-void Gdi::unkDecode11()
+void Gdi::unkDecode11(byte *dst, byte *src, int height)
 {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
 	int bits, i;
 	uint buffer = 0, mask = 128;
 	unsigned char inc = 1, color = *src++;
 
 	_currentX = 8;
 	do {
-		_tempNumLines = _numLinesToProcess;
+		int h = height;
 		do {
 			*dst = color;
 			dst += _vm->_realWidth;
 			for (i = 0; i < 3; i++) {
-				READ_256BIT if (!bits)
-					  break;
+				READ_256BIT
+				if (!bits)
+					break;
 			}
 			switch (i) {
 			case 1:
@@ -1654,11 +1631,12 @@ void Gdi::unkDecode11()
 				color = 0;
 				inc = 1;
 				for (i = 0; i < 8; i++) {
-					READ_256BIT color += bits << i;
+					READ_256BIT
+					color += bits << i;
 				}
 				break;
 			}
-		} while (--_tempNumLines);
+		} while (--h);
 		dst -= _vertStripNextInc;
 	} while (--_currentX);
 }
