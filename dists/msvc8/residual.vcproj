@@ -705,6 +705,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\font.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\font.h"
 			>
 		</File>
