@@ -72,13 +72,13 @@ endif
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \
-	backends \
 	sound \
-	common \
+	backends \
 	backends/fs/posix \
 	backends/fs/morphos \
 	backends/fs/windows \
-	backends/midi
+	backends/midi \
+	common
 
 
 ######################################################################
