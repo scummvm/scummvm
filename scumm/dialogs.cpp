@@ -181,8 +181,9 @@ const ScummVM::String ScummDialog::queryResString(int stringno)
 
 	result = (char *)_scumm->getStringAddress(string);
 	if (result && *result == '/') {
-		_scumm->translateText((char*)result, (char*)&_scumm->transText);
-		strcpy((char*)result, (char*)&_scumm->transText);
+		byte tmp[256];
+		_scumm->translateText((byte *)result, tmp);
+		strcpy(result, (char*)tmp);
 	}
 
 	if (!result) {								// Gracelessly degrade to english :)

@@ -1151,7 +1151,7 @@ void Scumm::loadLanguageBundle() {
 	_existLanguageFile = true;
 }
 
-void Scumm::translateText(char * text, char * trans_buff) {
+void Scumm::translateText(byte *text, byte *trans_buff) {
 	if ((_existLanguageFile == true) && (text[0] == '/') && (text[1] != ' ')) {
 		char name[20], tmp[20], tmp2[20], num_s[20];
 		int32 num, l, j, k, r, pos;

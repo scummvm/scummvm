@@ -2547,8 +2547,8 @@ void Scumm::o6_talkActor()
 		char pointer[20];
 		int i, j;
 
-		_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
-		translateText((char*)_messagePtr, (char*)&transText);
+		_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
+		translateText(_messagePtr, _transText);
 		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
 			if (_messagePtr[i] != '/')
 				pointer[j++] = _messagePtr[i];
@@ -2560,7 +2560,7 @@ void Scumm::o6_talkActor()
 			_mixer->stop(_sound->_talkChannel);		
 
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
-		_messagePtr = (byte*)&transText;
+		_messagePtr = _transText;
 		setStringVars(0);
 		actorTalk();
 	} else {
@@ -2580,7 +2580,7 @@ void Scumm::o6_talkEgo()
 		int i, j;
 
 		_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
-		translateText((char*)_messagePtr, (char*)&transText);
+		translateText(_messagePtr, _transText);
 		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
 			if (_messagePtr[i] != '/')
 				pointer[j++] = _messagePtr[i];
@@ -2592,7 +2592,7 @@ void Scumm::o6_talkEgo()
 			_mixer->stop(_sound->_talkChannel);
 
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
-		_messagePtr = (byte*)&transText;
+		_messagePtr = _transText;
 		setStringVars(0);
 		actorTalk();
 	} else {
@@ -2851,11 +2851,11 @@ void Scumm::o6_miscOps()
 				_msgPtrToAdd = buf;
 				setStringVars(0);
 				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
-				if (strncmp("/SYSTEM.007/ /", (char*)&buf, 14) == 0) {
-					translateText((char*)&buf + 13, (char*)&charset._buffer);
+				if (strncmp("/SYSTEM.007/ /", (char *)buf, 14) == 0) {
+					translateText(buf + 13, charset._buffer);
 					//description();
-				}	else if (strncmp("/SYSTEM.007/ ", (char*)&buf, 13) == 0) {
-					strcpy((char*)&charset._buffer, (char*)&buf + 13);
+				}	else if (strncmp("/SYSTEM.007/ ", (char *)buf, 13) == 0) {
+					strcpy((char *)charset._buffer, (char *)buf + 13);
 					//description();
 				}
 			} else { 
@@ -3218,7 +3218,7 @@ void Scumm::decodeParseString2(int m, int n)
 				int i, j;
 
 				_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
-				translateText((char*)_messagePtr, (char*)&transText);
+				translateText(_messagePtr, _transText);
 				for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
 				if (_messagePtr[i] != '/')
 					pointer[j++] = _messagePtr[i];
@@ -3230,7 +3230,7 @@ void Scumm::decodeParseString2(int m, int n)
 					_mixer->stop(_sound->_talkChannel);
 
 				_sound->_talkChannel = _sound->playBundleSound(pointer);
-				_messagePtr = (byte*)&transText;
+				_messagePtr = _transText;
 
 				switch (m) {
 				case 0:
