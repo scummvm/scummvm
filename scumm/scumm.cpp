@@ -1175,6 +1175,10 @@ void ScummEngine::launch() {
 		_bootParam = -7873;
 	}
 
+	if (!_copyProtection && _gameId == GID_SAMNMAX && _bootParam == 0) {
+		_bootParam = -1;
+	}
+
 	if (_features & GF_OLD_BUNDLE)
 		_resourceHeaderSize = 4; // FIXME - to be rechecked
 	else if (_features & GF_SMALL_HEADER)
