@@ -1181,7 +1181,7 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex)
 		// TODO - distinguish between SMAP and BOMP here?
 
 		// HACK - adjust dataptr here until bomp code gets adjusted for V8
-		bomp = dataptr + 2;
+		bomp = dataptr;
 	} else {
 		dataptr = findResource(IMxx_tags[imgindex], foir.obim);
 		if (dataptr == NULL)

@@ -559,7 +559,7 @@ public:
 	bool isResourceLoaded(int type, int index);
 	void initRoomSubBlocks();
 	void loadRoomObjects();
-    	void loadRoomObjectsSmall();
+    void loadRoomObjectsSmall();
 	void readArrayFromIndexFile();
 	void readMAXS();
 	bool isGlobInMemory(int type, int index);
