@@ -33,7 +33,6 @@
 #include "sky/struc.h"
 #include "sky/skymusic.h"
 #include "sky/grid.h"
-#include "sky/autoroute.h"
 
 class SkyLogic;
 class SkyGrid;
@@ -77,7 +76,6 @@ protected:
 	SkyGrid *_grid;
 	SkyLogic *_skyLogic;
 	SkyMusic *_music;
-	SkyAutoRoute *_autoRoute;
 	
 	byte *_workScreen;
 	byte *_backScreen;

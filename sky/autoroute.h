@@ -24,6 +24,7 @@
 #define __AutoRoute__
 
 #include "stdafx.h"
+#include "sky/sky.h"
 #include "struc.h"
 #include "compact.h"
 #include "grid.h"
@@ -35,7 +36,7 @@ class SkyAutoRoute {
 public:
 	SkyAutoRoute(SkyGrid *pGrid);
 	~SkyAutoRoute(void);
-	uint16 autoRoute(Compact *cpt);
+	uint16 autoRoute(Compact *cpt, uint16 *routeCalc);
 private:
 	uint16 checkBlock(uint16 *blockPos);
 	SkyGrid *_grid;
@@ -43,3 +44,4 @@ private:
 };
 
 #endif // __AutoRoute
+
