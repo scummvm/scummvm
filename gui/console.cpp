@@ -56,6 +56,9 @@ ConsoleDialog::ConsoleDialog(NewGui *gui)
 	_currentColumn = 0;
 	_currentLine = 0;
 	_scrollLine = 0;
+	
+	print("ScummVM "SCUMMVM_VERSION" (" SCUMMVM_CVS ")\n");
+	print("Console is ready\n");
 }
 
 void ConsoleDialog::drawDialog()
@@ -70,10 +73,12 @@ void ConsoleDialog::drawDialog()
 	// Draw text
 	int start = _scrollLine - _linesPerPage + 1;
 	int y = _y + 1;
+	if (start < 0)
+		start = 0;
 	for (int line = 0; line < _linesPerPage; line++) {
 		int x = _x + 1;
 		for (int column = 0; column < _lineWidth; column++) {
-			int l = (start+line+_linesInBuffer) % _linesInBuffer;
+			int l = (start+line) % _linesInBuffer;
 			byte c = _buffer[l * _lineWidth + column];
 			_gui->drawChar(c, x, y, _gui->_textcolor);
 			x += kCharWidth;
@@ -88,8 +93,60 @@ void ConsoleDialog::nextLine()
 {
 	_currentColumn = 0;
 	if (_currentLine == _scrollLine)
-		_scrollLine = (_scrollLine + 1) % _linesInBuffer;
-	_currentLine = (_currentLine + 1) % _linesInBuffer;
+		_scrollLine++;
+	_currentLine++;
+}
+
+int ConsoleDialog::printf(const char *format, ...)
+{
+	va_list	argptr;
+
+	va_start(argptr, format);
+	int count = this->vprintf(format, argptr);
+	va_end (argptr);
+	return count;
+}
+
+int ConsoleDialog::vprintf(const char *format, va_list argptr)
+{
+	char	buf[2048];
+
+	int count = vsnprintf(buf, sizeof(buf), format, argptr);
+	print(buf);
+	return count;
+}
+
+void ConsoleDialog::putchar(int c)
+{
+	if (c == '\n')
+		nextLine();
+	else {
+		int pos = (_currentLine % _linesInBuffer) * _lineWidth + _currentColumn;
+		_buffer[pos] = (char)c;
+		_currentColumn++;
+		if (_currentColumn >= _lineWidth)
+			nextLine();
+	}
+	draw();	// FIXME - not nice to redraw the full console just for one char!
+}
+
+void ConsoleDialog::print(const char *str)
+{
+	int pos = (_currentLine % _linesInBuffer) * _lineWidth + _currentColumn;
+	while (*str) {
+		if (*str == '\n') {
+			nextLine();
+			pos += _lineWidth - _currentColumn;
+		} else {
+			_buffer[pos++] = *str;
+			_currentColumn++;
+			if (_currentColumn >= _lineWidth)
+				nextLine();
+		}
+		pos %= kBufferSize;
+		str++;
+	}
+	draw();
 }
 
 void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
@@ -101,20 +158,14 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	} else if (keycode == 8) {				// Backspace
 		if (_currentColumn == 0) {
 			_currentColumn = _lineWidth - 1;
-			_currentLine--;
-			if (_currentLine < 0)
-				_currentLine = _linesInBuffer - 1;
+			if (_currentLine > 0)
+				_currentLine--;
 		} else
 			_currentColumn--;
-		_buffer[_currentLine * _lineWidth + _currentColumn] = ' ';
+		_buffer[(_currentLine % _linesInBuffer) * _lineWidth + _currentColumn] = ' ';
 		draw();	// FIXME - not nice to redraw the full console just for one char!
 	} else if ((ascii >= 31) && (ascii <= 122)) {	// Printable ASCII, add to string
-		_buffer[_currentLine * _lineWidth + _currentColumn] = (char)ascii;
-		_currentColumn++;
-		if (_currentColumn >= _lineWidth) {
-			nextLine();
-		}
-		draw();	// FIXME - not nice to redraw the full console just for one char!
+		putchar(ascii);
 	} else {
 		debug(2, "Unhandled keycode from ConsoleDialog: %d\n", keycode);
 	}

@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/list.h"
 
+#include <stdarg.h>
 
 enum {
 	kBufferSize	= 32768,
@@ -55,12 +56,13 @@ public:
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 //	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	//printf(const char *format, ...)
-	//vprintf(
-//	void printString(const String &str);
-//	const String &readString();
+	int printf(const char *format, ...);
+	int vprintf(const char *format, va_list argptr);
+#undef putchar
+	void putchar(int c);
 
 protected:
+	void print(const char *str);
 	void nextLine();
 };
 
