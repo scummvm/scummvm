@@ -1130,6 +1130,8 @@ void ScummEngine_v7he::o7_polygonHit() {
 }
 
 int ScummEngine_v7he::polygonHit(int id, int x, int y) {
+	debug(1, "polygonHit(%d, %d, %d)", id, x, y);
+
 	for (int i = 0; i < _WizNumPolygons; i++) {
 		if ((!id || id == i) && _WizPolygons[i].bound.contains(x, y)) {
 			if (polygonContains(_WizPolygons[i], x, y)) {

@@ -800,6 +800,7 @@ protected:
 	void o80_writeConfigFile();
 	void o80_cursorCommand();
 	void o80_setState();
+	void o80_drawWizPolygon();
 };
 
 class ScummEngine_v90he : public ScummEngine_v80he {

@@ -260,7 +260,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_getActorScaleX),
 		OPCODE(o6_getActorAnimCounter1),
 		/* AC */
-		OPCODE(o6_invalid),
+		OPCODE(o80_drawWizPolygon),
 		OPCODE(o6_isAnyOf),
 		OPCODE(o7_quitPauseRestart),
 		OPCODE(o6_isActorInBox),

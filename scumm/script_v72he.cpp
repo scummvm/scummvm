@@ -1392,6 +1392,7 @@ void ScummEngine_v72he::o72_drawWizImage() {
 	int y1 = pop();
 	int x1 = pop();
 	int resnum = pop();
+
 	if (_fullRedraw) {
 		assert(_wizImagesNum < ARRAYSIZE(_wizImages));
 		WizImage *pwi = &_wizImages[_wizImagesNum];

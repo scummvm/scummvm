@@ -260,7 +260,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_getActorScaleX),
 		OPCODE(o6_getActorAnimCounter1),
 		/* AC */
-		OPCODE(o6_invalid),
+		OPCODE(o80_drawWizPolygon),
 		OPCODE(o6_isAnyOf),
 		OPCODE(o7_quitPauseRestart),
 		OPCODE(o6_isActorInBox),
@@ -579,6 +579,23 @@ void ScummEngine_v80he::o80_setState() {
 	state &= 0x7FFF;
 	putState(obj, state);
 	removeObjectFromDrawQue(obj);
+}
+
+void ScummEngine_v80he::o80_drawWizPolygon() {
+	int xy1 = pop();
+	int resnum = pop();
+
+	if (_fullRedraw) {
+		assert(_wizImagesNum < ARRAYSIZE(_wizImages));
+		WizImage *pwi = &_wizImages[_wizImagesNum];
+		pwi->resnum = resnum;
+		pwi->x1 = xy1;
+		pwi->y1 = xy1;
+		pwi->flags = 64;
+		++_wizImagesNum;
+	} else {
+		drawWizImage(rtImage, resnum, 0, xy1, xy1, 64);
+	}
 }
 
 } // End of namespace Scumm
