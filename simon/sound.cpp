@@ -154,8 +154,7 @@ void WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 
 	data[0] = _file->readUint32LE();
 	data[1] = _file->readUint32LE();
-	if (//fread(data, sizeof(data), 1, sound_file) != 1 ||
-			 data[0] != 'atad') {
+	if (data[0] != 'atad') {
 		error("playWav(%d): can't read data header", sound);
 	}
 
@@ -169,45 +168,25 @@ void VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return;
 
-	VocHeader voc_hdr;
-	VocBlockHeader voc_block_hdr;
-	uint32 size;
-
-	flags |= SoundMixer::FLAG_AUTOFREE;
-
 	_file->seek(_offsets[sound], SEEK_SET);
 
-	if (_file->read(&voc_hdr, sizeof(voc_hdr)) != sizeof(voc_hdr) ||
-			strncmp((char *)voc_hdr.desc, "Creative Voice File\x1A", 10) != 0) {
-		error("playVoc(%d): can't read voc header", sound);
-	}
+	int size, samples_per_sec;
+	byte *buffer = loadVOCFile(_file, size, samples_per_sec);
 
-	_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
-
-	size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
-	uint32 samples_per_sec;
-
-	/* workaround for voc weakness */
-	samples_per_sec = getSampleRateFromVOCRate(voc_block_hdr.sr);
-
-	byte *buffer = (byte *)malloc(size);
-	_file->read(buffer, size);
-
-	_mixer->playRaw(handle, buffer, size, samples_per_sec, flags);
+	_mixer->playRaw(handle, buffer, size, samples_per_sec, flags | SoundMixer::FLAG_AUTOFREE);
 }
 
 void RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return;
 
-	flags |= SoundMixer::FLAG_AUTOFREE;
-
 	_file->seek(_offsets[sound], SEEK_SET);
+
 	uint size = _file->readUint32BE();
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
 
-	_mixer->playRaw(handle, buffer, size, 22050, flags);
+	_mixer->playRaw(handle, buffer, size, 22050, flags | SoundMixer::FLAG_AUTOFREE);
 }
 
 #ifdef USE_MAD
