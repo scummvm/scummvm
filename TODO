@@ -228,7 +228,7 @@ SCUMM
 * Make it possible to restart games properly
 * Add method of setting initial debug channels from command-line
 * Possible implement a new resource manager, which then also could be shared
-  by ScummEX. [Jamieson has some ideas about this and might work on it]
+  by ScummEX. [Jamieson has some ideas about this].
 * Figure out how to extract resources from Apple II and Commodore 64 versions
   See also <http://www.mts.net/~kbagnall/commodore/scumm/> for some notes on
   the SCUMM C64 disk format.
@@ -240,13 +240,15 @@ SCUMM
   second plane at 640x480), text uses Shift_JIS encoding
   [implementation now that currently depends on font rom, not needing the rom
    would be preferable]
-
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
 * Compare codec 44 algorithm (For nut fonts) against COMI disassembly. The 
   current code isn't based on disassembly and doesn't always calculate decompressed 
   data size correctly.
+* When SMUSH movies end, their music track sometimes should last a bit longer;
+  currently, we stop the audio together with the animation, leading to cut off
+  music.
 * Humongous Entertainment Games
   - Add proper handling of sound looping in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
