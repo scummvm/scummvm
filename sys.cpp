@@ -182,3 +182,7 @@ char *strdup(const char *s) {
 }
 #endif /* NEED_STRDUP */
 
+
+void *operator new(size_t size) {
+	return calloc(size,1);
+}

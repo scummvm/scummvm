@@ -32,6 +32,10 @@
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
+/* Initialized operator new */
+void * operator new(size_t size);
+	
+
 class Scumm;
 struct Actor;
 struct ScummDebugger;
