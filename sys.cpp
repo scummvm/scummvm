@@ -167,3 +167,13 @@ bool Scumm::checkFixedDisk() {
 	return true;
 }
 
+
+#ifdef NEED_STRDUP
+char *strdup(const char *s) {
+	int len = strlen(s) + 1;
+	char *d = (char*)malloc(len);
+	if (d) memcpy(d, s, len);
+	return d;
+}
+#endif /* NEED_STRDUP */
+

@@ -224,3 +224,7 @@ uint32 FORCEINLINE READ_BE_UINT32_UNALIGNED(void *ptr) {
 
 #endif
 
+
+#ifdef NEED_STRDUP
+char *strdup(const char *s);
+#endif
