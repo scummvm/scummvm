@@ -58,7 +58,6 @@ class FB2GL {
     char flags;
     void maketex();
     void makedlist(int xf, int yf);
-    void display();
 
   public:
     SDL_Surface *screen;
@@ -70,6 +69,8 @@ class FB2GL {
     void update(void *fb, int width, int height, int pitch, int xskip, int yskip);
     void palette(int index, int r, int g, int b);
     void setPalette(int first, int ncolors);
+    void update_scummvm_screen(void *fb, int width, int height, int pitch, int x, int y);
+    void display();
 };
 
 void FB2GL::maketex()
@@ -207,6 +208,11 @@ int FB2GL::init(int width, int height, int xfix, int yfix, char _flags)
   maketex();
   makedlist(xfix, yfix);
 
+/*  glEnable(GL_ALPHA_TEST);
+  glEnable(GL_BLEND);
+  glAlphaFunc(GL_GREATER,0);
+  glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);*/
+  
   return 1;
 }
 
@@ -236,11 +242,13 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 	    ogl_fb1[y][x][0] = ogl_ctable[*(fb1+x)][0];
 	    ogl_fb1[y][x][1] = ogl_ctable[*(fb1+x)][1]; 
 	    ogl_fb1[y][x][2] = ogl_ctable[*(fb1+x)][2]; 
+	    ogl_fb1[y][x][3] = 255;
 	  }
 	  else {
 	    ogl_fb2[y][x-256][0] = ogl_ctable[*(fb1+x)][0]; 
 	    ogl_fb2[y][x-256][1] = ogl_ctable[*(fb1+x)][1]; 
 	    ogl_fb2[y][x-256][2] = ogl_ctable[*(fb1+x)][2]; 
+	    ogl_fb2[y][x-256][3] = 255;
 	  }
 	}
 	fb1 += scr_pitch;
@@ -307,6 +315,47 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 
   display();
 
+}
+
+void FB2GL::update_scummvm_screen(void *fb, int w, int h, int pitch, int xpos, int ypos) {
+  uint16 *fb1 = (uint16 *)(((SDL_Surface *)fb)->pixels);
+  int x, y;
+  unsigned char r, g, b, a;
+
+  for (y=0; y<h; y++) {
+    for (x=0; x<w; x++) {
+      
+      SDL_GetRGBA(fb1[x],((SDL_Surface *)fb)->format,&r,&g,&b,&a);
+      
+      if (x<256) { 
+	ogl_fb1[y][x][0] = r;
+	ogl_fb1[y][x][1] = g;
+	ogl_fb1[y][x][2] = b;
+	ogl_fb1[y][x][3] = a; // Alpha
+      }
+      else {
+	ogl_fb2[y][x-256][0] = r;
+	ogl_fb2[y][x-256][1] = g;
+	ogl_fb2[y][x-256][2] = b;
+	ogl_fb2[y][x-256][3] = a; // Alpha
+      }
+    }
+    fb1 += pitch;
+  }
+
+  // Update 256x256 texture
+  glBindTexture(GL_TEXTURE_2D,texture);
+  glFlush();
+  glTexSubImage2D(GL_TEXTURE_2D,0,xpos,ypos,256-xpos,256-ypos,GL_RGBA,
+    GL_UNSIGNED_BYTE,ogl_fb1);
+
+  // Update 64x256 texture
+  glBindTexture(GL_TEXTURE_2D,textureb);
+  glFlush();
+  glTexSubImage2D(GL_TEXTURE_2D,0,xpos,ypos,64-xpos,256-ypos,GL_RGBA,
+    GL_UNSIGNED_BYTE,ogl_fb2);
+ 
+  display();
 }
 
 void FB2GL::palette(int i, int r, int g, int b) {
