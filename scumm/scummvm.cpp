@@ -60,11 +60,6 @@ extern void drawError(char*);
 Scumm *g_scumm = 0;
 ScummDebugger *g_debugger;
 
-byte *_2byteFontPtr;
-int _2byteWidth;
-int _2byteHeight;
-bool _CJKMode;
-
 byte *Scumm::get2byteCharPtr(int idx) {
 	/*
 		switch(language)

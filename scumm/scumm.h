@@ -1072,10 +1072,11 @@ public:
 	int _2byteHeight;
 	int _2byteWidth;
 	byte *get2byteCharPtr(int idx);
-	
-	
-protected:
 
+protected:
+	byte *_2byteFontPtr;
+
+	
 #if defined(SCUMM_LITTLE_ENDIAN)
 	uint32 fileReadDword() { return _fileHandle.readUint32LE(); }
 #elif defined(SCUMM_BIG_ENDIAN)
