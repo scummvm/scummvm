@@ -101,7 +101,7 @@ protected:
 
 #endif
 
-class OptionsDialog : public GUI::OptionsDialog {
+class ConfigDialog : public GUI::OptionsDialog {
 protected:
 	ScummEngine *_scumm;
 #ifdef _WIN32_WCE
@@ -109,8 +109,8 @@ protected:
 #endif
 
 public:
-	OptionsDialog(ScummEngine *scumm);
-	~OptionsDialog();
+	ConfigDialog(ScummEngine *scumm);
+	~ConfigDialog();
 
 	virtual void open();
 	virtual void close();

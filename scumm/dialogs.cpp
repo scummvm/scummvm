@@ -55,6 +55,8 @@ using GUI::kTextAlignCenter;
 using GUI::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
 
+typedef GUI::OptionsDialog GUI_OptionsDialog;
+
 namespace Scumm {
 
 struct ResString {
@@ -409,10 +411,10 @@ enum {
 };
 
 #ifndef _WIN32_WCE
-OptionsDialog::OptionsDialog(ScummEngine *scumm)
+ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	: GUI::OptionsDialog("", 40, 30, 240, 124), _scumm(scumm) {
 #else
-OptionsDialog::OptionsDialog(ScummEngine *scumm)
+ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	: GUI::OptionsDialog("", 40, 30, 240, 124 + kButtonHeight + 4), _scumm(scumm) {
 #endif
 	//
@@ -447,28 +449,27 @@ OptionsDialog::OptionsDialog(ScummEngine *scumm)
 #endif
 }
 
-OptionsDialog::~OptionsDialog() {
+ConfigDialog::~ConfigDialog() {
 #ifdef _WIN32_WCE
 	delete _keysDialog;
 #endif
 }
 
-void OptionsDialog::open() {
-	GUI::OptionsDialog::open();
+void ConfigDialog::open() {
+	GUI_OptionsDialog::open();
 
 	// update checkboxes, too
 	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
 }
 
-void OptionsDialog::close() {
+void ConfigDialog::close() {
 	
 	if (getResult()) {
 		// Subtitles
 		ConfMan.set("nosubtitles", !subtitlesCheckbox->getState(), _domain);
 	}
 
-	GUI::OptionsDialog::close();
-
+	GUI_OptionsDialog::close();
 
 	// Sync the engine with the config manager
 	int soundVolumeMaster = ConfMan.getInt("master_volume");
@@ -490,7 +491,7 @@ void OptionsDialog::close() {
 }
 
 
-void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
 #ifdef _WIN32_WCE
@@ -498,7 +499,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 #endif
 		break;
 	default:
-		GUI::OptionsDialog::handleCommand(sender, cmd, data);
+		GUI_OptionsDialog::handleCommand (sender, cmd, data);
 	}
 }
 

@@ -2554,7 +2554,7 @@ void ScummEngine::mainMenuDialog() {
 
 void ScummEngine::optionsDialog() {
 	if (!_optionsDialog)
-		_optionsDialog = new OptionsDialog(this);
+		_optionsDialog = new ConfigDialog(this);
 	runDialog(*_optionsDialog);
 }
 
