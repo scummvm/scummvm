@@ -85,19 +85,17 @@ typedef Common::List<Plugin *> PluginList;
  *
  * @todo Add support for dynamic plugins (this may need additional API, e.g. for a plugin path)
  */
-using Common::Singleton;
-class PluginManager : public Singleton<PluginManager> {
+class PluginManager : public Common::Singleton<PluginManager> {
 private:
 	PluginList _plugins;
 	
 	bool tryLoadPlugin(Plugin *plugin);
 	
-	friend class Singleton<PluginManager>;
-	
-public:
+	friend class Common::Singleton<PluginManager>;
 	PluginManager();
 	~PluginManager();
 
+public:
 	void loadPlugins();
 	void unloadPlugins();
 	
