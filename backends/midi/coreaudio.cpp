@@ -101,17 +101,17 @@ void MidiDriver_CORE::close() {
 }
 
 void MidiDriver_CORE::send(uint32 b) {
-	unsigned char first_byte, seccond_byte, status_byte;
+	unsigned char first_byte, second_byte, status_byte;
 	status_byte = (b & 0x000000FF);
 	first_byte = (b & 0x0000FF00) >> 8;
-	seccond_byte = (b & 0x00FF0000) >> 16;
+	second_byte = (b & 0x00FF0000) >> 16;
 
 #ifdef COREAUDIO_REVERB_HACK
 	if ((status_byte&0xF0) == 0xB0 && first_byte == 0x5b)
 		return;
 #endif
 
-	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, 0);
+	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, second_byte, 0);
 }
 
 void MidiDriver_CORE::sysEx(byte *msg, uint16 length) {

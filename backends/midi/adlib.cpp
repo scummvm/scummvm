@@ -595,8 +595,8 @@ private:
 
 	void generate_samples(int16 *buf, int len);
 	void on_timer();
-	void part_key_on (AdlibPart *part, AdlibInstrument *instr, byte note, byte velocity);
-	void part_key_off (AdlibPart *part, byte note);
+	void part_key_on(AdlibPart *part, AdlibInstrument *instr, byte note, byte velocity);
+	void part_key_off(AdlibPart *part, byte note);
 
 	void adlib_key_off(int chan);
 	void adlib_note_on(int chan, byte note, int mod);
@@ -616,7 +616,7 @@ private:
 	void reset_tick();
 	void mc_off(AdlibVoice * voice);
 
-	static void link_mc (AdlibPart *part, AdlibVoice *voice);
+	static void link_mc(AdlibPart *part, AdlibVoice *voice);
 	void mc_inc_stuff(AdlibVoice *voice, Struct10 * s10, Struct11 * s11);
 	void mc_init_stuff(AdlibVoice *voice, Struct10 * s10, Struct11 * s11, byte flags,
 	                   InstrumentExtra * ie);
@@ -625,7 +625,7 @@ private:
 	static byte struct10_ontimer(Struct10 * s10, Struct11 * s11);
 	static void struct10_setup(Struct10 * s10);
 	static int random_nr(int a);
-	void mc_key_on (AdlibVoice *voice, AdlibInstrument *instr, byte note, byte velocity);
+	void mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte note, byte velocity);
 
 	static void premix_proc(void *param, int16 *buf, uint len);
 };
@@ -1000,7 +1000,7 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 		_next_tick -= step;
 		if (!_next_tick) {
 			if (_timer_proc)
-				(*_timer_proc) (_timer_param);
+				(*_timer_proc)(_timer_param);
 			on_timer();
 			reset_tick();
 		}
