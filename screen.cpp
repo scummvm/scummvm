@@ -85,6 +85,7 @@ void screenBlocksInitEmpty()
 
 void screenBlocksAddRectangle( int top, int right, int left, int bottom, float depth )
 {
+	return;
 	// clip the rectange to the screen size
 
 	int tempHeight = bottom-top;
@@ -188,6 +189,8 @@ void screenBlocksDrawDebug()
 
 void screenBlocksBlitDirtyBlocks()
 {
+	return;
+
 	int i;
 	int j;
 
