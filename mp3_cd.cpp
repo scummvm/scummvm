@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include <SDL.H>
 
 #ifdef COMPRESSED_SOUND_FILE
 #include "mp3_cd.h"
@@ -106,7 +107,7 @@ bool parse_xing_vbr_tag()
 
   while (1) {
     if (buflen < sizeof(buffer)) {
-      DWORD bytes;	  
+      uint16 bytes;        
 
 	  bytes = fread(buffer + buflen, 1, sizeof(buffer) - buflen, _mp3_track);
       if (bytes <= 0) {
