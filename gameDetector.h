@@ -33,8 +33,8 @@ public:
 
 	bool _use_adlib;
 
-	byte _music_volume;
-	byte _sfx_volume;
+	int _music_volume;
+	int _sfx_volume;
 	bool _amiga;
 
 	uint16 _talkSpeed;
