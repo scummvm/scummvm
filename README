@@ -299,32 +299,42 @@ Command Line Options:
         -x[<num>]  - Save game slot to load (default: autosave)
         -z         - Display list of games
 
-In game Hot Keys:
------------------
-        Ctrl 0-9 and Alt 0-9     - load and save games
-        Ctrl-Alt 1-7             - cycles between graphics filters
-        Ctrl-Alt 1               - (OpenGL) Switch beetwen using Bilinear Filtering and non-linear filtering 
-        Ctrl-Alt 2               - (OpenGL) Don't fit the game in the whole screen (black borders) 
-        Ctrl-Alt 3               - (OpenGL) Fit the game in the whole screen (no black borders) 
-        Ctrl-Alt 4-7             - (OpenGL) Zoom
-        Ctrl-z OR Alt-x          - quits
+
+Hot Keys:
+---------
+
+ScummVM supports various in game hotkeys. They differ between the scumm and simon
+games.
+
+    Common:
+        Ctrl-z OR Alt-x          - quit
+        Ctrl-Alt 1-7             - Switch between graphics filters
+        Ctrl-Alt 1               - Switch beetwen bilinear and non-linear filtering [OpenGL backend]
+        Ctrl-Alt 2               - Don't fit the game in the whole screen (black borders) [OpenGL backend]
+        Ctrl-Alt 3               - Fit the game in the whole screen (no black borders) [OpenGL backend]
+        Ctrl-Alt 4-7             - Zoom [OpenGL backend]
+        Keyboard Arrow Keys      - Mouse Movement [SDL backend]
+
+    Scumm:
+        Ctrl 0-9 and Alt 0-9     - load and save game state
         Ctrl-f                   - runs in fast mode.
         Ctrl-g                   - runs in really REALLY fast mode.
         Ctrl-d                   - starts the debugger.
         Ctrl-s                   - shows memory consumption.
         [ and ]                  - music volume, down/up
-        - and +                  - (Simon) music volume, down/up
-        - and +                  - (SCUMM) text speed, slower/faster
+        - and +                  - text speed, slower/faster
         F5                       - displays a save/load box.
         Space                    - pauses
-        m                        - (Simon) music on/off
-        s                        - (Simon) sound effects on/off
-        b                        - (Simon) ambient sounds on/off
         Period (.)               - skips current line of text in some games
         Alt-Enter                - toggles full screen/windowed
         Enter                    - Left Mouse Button Press
         Tab                      - Right Mouse Button Press
-        Keyboard Arrow Keys      - Mouse Movement
+
+    Simon:
+        - and +                  - (Simon) music volume, down/up
+        m                        - (Simon) music on/off
+        s                        - (Simon) sound effects on/off
+        b                        - (Simon) ambient sounds on/off
 
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
 being ran faster than their normal speed, as scripts will loose synchronisation
