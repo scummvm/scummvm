@@ -2420,12 +2420,55 @@ void Scumm::stopCycle(int i) {
 		cycl->delay = 0;
 }
 
+/**
+ * Cycle the colors in the given palette in the intervael [cycleStart, cycleEnd]
+ * either one step forward or backward.
+ */
+static void cyclePalette(byte *palette, int cycleStart, int cycleEnd, int size, bool forward) {
+	byte *start = palette + cycleStart * size;
+	byte *end = palette + cycleEnd * size;
+	int num = cycleEnd - cycleStart;
+	byte tmp[6];
+	
+	assert(size <= 6);
+	
+	if (forward) {
+		memmove(tmp, end, size);
+		memmove(start + size, start, num * size);
+		memmove(start, tmp, size);
+	} else {
+		memmove(tmp, start, size);
+		memmove(start, start + size, num * size);
+		memmove(end, tmp, size);
+	}
+}
+
+/**
+ * Adjust an 'indirect' color palette for the color cycling performed on its master
+ * palette. An indirect palette is a palette which contains indices pointing into
+ * another palette - it provides a level of indirection to map palette colors to
+ * other colors. Now when the target palette is cycled, the indirect palette suddenly
+ * point at the wrong color(s). This function takes care of adjusting an indirect
+ * palette by searching through it and replacing all indices that are in the
+ * cycle range by the new (cycled) index.
+ */
+static void cycleIndirectPalette(byte *palette, int cycleStart, int cycleEnd, bool forward) {
+	int num = cycleEnd - cycleStart + 1;
+	int i;
+	int offset = forward ? 1 : num - 1;
+	
+	for (i = 0; i < 256; i++) {
+		if (cycleStart <= palette[i] && palette[i] <= cycleEnd) {
+			palette[i] = (palette[i] - cycleStart + offset) % num + cycleStart;
+		}
+	}
+}
+
+
 void Scumm::cyclePalette() {
 	ColorCycle *cycl;
 	int valueToAdd;
-	int i, num;
-	byte *start, *end;
-	byte tmp[3];
+	int i, j;
 
 	if (VAR_TIMER == 0xFF) {
 		// FIXME - no idea if this is right :-/
@@ -2441,26 +2484,29 @@ void Scumm::cyclePalette() {
 		return;
 
 	for (i = 0, cycl = _colorCycle; i < 16; i++, cycl++) {
-		if (cycl->delay && (cycl->counter += valueToAdd) >= cycl->delay) {
-			do {
-				cycl->counter -= cycl->delay;
-			} while (cycl->delay <= cycl->counter);
+		if (!cycl->delay || cycl->start > cycl->end)
+			continue;
+		cycl->counter += valueToAdd;
+		if (cycl->counter >= cycl->delay) {
+			cycl->counter %= cycl->delay;
 
 			setDirtyColors(cycl->start, cycl->end);
 			moveMemInPalRes(cycl->start, cycl->end, cycl->flags & 2);
-			start = &_currentPalette[cycl->start * 3];
-			end = &_currentPalette[cycl->end * 3];
 
-			num = cycl->end - cycl->start;
+			::cyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
 
-			if (!(cycl->flags & 2)) {
-				memmove(tmp, end, 3);
-				memmove(start + 3, start, num * 3);
-				memmove(start, tmp, 3);
-			} else {
-				memmove(tmp, start, 3);
-				memmove(start, start + 3, num * 3);
-				memmove(end, tmp, 3);
+			// Also cycle the other, indirect palettes
+			if (_proc_special_palette) {
+				::cycleIndirectPalette(_proc_special_palette, cycl->start, cycl->end, !(cycl->flags & 2));
+			}
+			
+			if (_shadowPalette) {
+				if (_features & GF_AFTER_V7) {
+					for (j = 0; j < NUM_SHADOW_PALETTE; j++)
+						::cycleIndirectPalette(_shadowPalette + j * 256, cycl->start, cycl->end, !(cycl->flags & 2));
+				} else {
+					::cycleIndirectPalette(_shadowPalette, cycl->start, cycl->end, !(cycl->flags & 2));
+				}
 			}
 		}
 	}
@@ -2471,40 +2517,11 @@ void Scumm::cyclePalette() {
  * color cycling will be disturbed by the palette fade.
  */
 void Scumm::moveMemInPalRes(int start, int end, byte direction) {
-	byte *startptr, *endptr;
-	byte *startptr2, *endptr2;
-	int num;
-	byte tmp[6];
-
 	if (!_palManipCounter)
 		return;
 
-	startptr = _palManipPalette + start * 3;
-	endptr = _palManipPalette + end * 3;
-	startptr2 = _palManipIntermediatePal + start * 6;
-	endptr2 = _palManipIntermediatePal + end * 6;
-	num = end - start;
-
-	if (!endptr) {
-		warning("moveMemInPalRes(%d,%d): Bad end pointer", start, end);
-		return;
-	}
-
-	if (!direction) {
-		memmove(tmp, endptr, 3);
-		memmove(startptr + 3, startptr, num * 3);
-		memmove(startptr, tmp, 3);
-		memmove(tmp, endptr2, 6);
-		memmove(startptr2 + 6, startptr2, num * 6);
-		memmove(startptr2, tmp, 6);
-	} else {
-		memmove(tmp, startptr, 3);
-		memmove(startptr, startptr + 3, num * 3);
-		memmove(endptr, tmp, 3);
-		memmove(tmp, startptr2, 6);
-		memmove(startptr2, startptr2 + 6, num * 6);
-		memmove(endptr2, tmp, 6);
-	}
+	::cyclePalette(_palManipPalette, start, end, 3, !direction);
+	::cyclePalette(_palManipIntermediatePal, start, end, 6, !direction);
 }
 
 void Scumm::palManipulateInit(int start, int end, int string_id, int time) {
@@ -2584,7 +2601,7 @@ void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueS
 	int i;
 	byte *curpal;
 
-	if (slot < 0 || slot > 7)
+	if (slot < 0 || slot >= NUM_SHADOW_PALETTE)
 		error("setupShadowPalette: invalid slot %d", slot);
 
 	if (startColor < 0 || startColor > 255 || endColor < 0 || startColor > 255 || endColor < startColor)
