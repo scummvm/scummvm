@@ -146,7 +146,7 @@ public:
 };
 
 struct imuseRoomMap {
-	byte roomId;
+	int8 roomId;
 	byte musicTableIndex;
 	byte unk1;
 	byte unk2;

@@ -148,7 +148,7 @@ const imuseRoomMap _digStateMusicMap[] = {
 	{45,  1,  0,  0,  0,  0 },
 	{87,  1,  0,  0,  0,  0 },
 	{111, 1,  0,  0,  0,  0 },
-	{0xff,  1,  0,  0,  0,  0 }
+	{-1,  1,  0,  0,  0,  0 }
 };
 
 const imuseDigTable _digStateMusicTable[] = {

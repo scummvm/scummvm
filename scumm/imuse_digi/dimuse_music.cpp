@@ -37,7 +37,7 @@ void IMuseDigital::setDigMusicState(int stateId) {
 	}
 
 	if (num == -1) {
-		for (l = 0; /* _digStateMusicMap[l].roomId != -1 */ ; l++) {	// FIXME comparing an unsigned int with -1, are we? :-)
+		for (l = 0; _digStateMusicMap[l].roomId != -1; l++) {
 			if ((_digStateMusicMap[l].roomId == stateId)) {
 				break;
 			}
