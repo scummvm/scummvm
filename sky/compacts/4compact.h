@@ -278,94 +278,6 @@ uint16 m_jobs_down[] = {
 	0
 };
 
-Compact jobsworth = {
-	L_SCRIPT,	// logic
-	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_MOUSE+ST_COLLISION,	// status
-	0,	// sync
-	0,	// screen
-	ID_LOW_FLOOR,	// place
-	0,	// getToTable
-	416,	// xcood
-	272,	// ycood
-	73*64,	// frame
-	4,	// cursorText
-	STD_ON,	// mouseOn
-	STD_OFF,	// mouseOff
-	MEGA_CLICK,	// mouseClick
-	65532,	// mouseRel_x
-	65516,	// mouseRel_y
-	8,	// mouseSize_x
-	28,	// mouseSize_y
-	MEGA_ACTION,	// actionScript
-	0,	// upFlag
-	0,	// downFlag
-	0,	// getToFlag
-	0,	// flag
-	0,	// mood
-	0,	// grafixProg
-	0,	// offset
-	0,	// mode
-	0,
-	0,
-	0
-};
-
-uint16 jobs_st_down[] = {
-	117*64,
-	1,
-	1,
-	32,
-	0
-};
-
-Compact notice4 = {
-	0,	// logic
-	ST_MOUSE,	// status
-	0,	// sync
-	4,	// screen
-	0,	// place
-	0,	// getToTable
-	152,	// xcood
-	232,	// ycood
-	0,	// frame
-	4196,	// cursorText
-	STD_ON,	// mouseOn
-	STD_OFF,	// mouseOff
-	ADVISOR_188,	// mouseClick
-	0,	// mouseRel_x
-	0,	// mouseRel_y
-	8,	// mouseSize_x
-	8,	// mouseSize_y
-	NOTICE4_ACTION,	// actionScript
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0
-};
-
-uint16 m_jobs_st_down[] = {
-	270*64,
-	1,
-	1,
-	32,
-	0
-};
-
-uint16 m_jobs_st_talk[] = {
-	273*64,
-	1,
-	1,
-	0,
-	0
-};
-
 uint8 jobs_auto[64];
 
 uint16 m_jobs_up[] = {
@@ -448,6 +360,14 @@ uint16 m_jobs_st_up[] = {
 	0
 };
 
+uint16 m_jobs_st_down[] = {
+	270*64,
+	1,
+	1,
+	32,
+	0
+};
+
 uint16 m_jobs_st_left[] = {
 	270*64,
 	1,
@@ -461,6 +381,14 @@ uint16 m_jobs_st_right[] = {
 	1,
 	1,
 	38,
+	0
+};
+
+uint16 m_jobs_st_talk[] = {
+	273*64,
+	1,
+	1,
+	0,
 	0
 };
 
@@ -672,6 +600,14 @@ uint16 jobs_st_up[] = {
 	0
 };
 
+uint16 jobs_st_down[] = {
+	117*64,
+	1,
+	1,
+	32,
+	0
+};
+
 uint16 jobs_st_left[] = {
 	117*64,
 	1,
@@ -751,6 +687,212 @@ uint16 jobs_r_to_l[] = {
 	45-8+117*64,
 	44-8+117*64,
 	43-8+117*64,
+	0
+};
+
+TurnTable jobsworth_turnTable0 = {
+	{ // turnTableUp
+		0,
+		m_jobs_u_to_d,
+		m_jobs_u_to_l,
+		m_jobs_u_to_r,
+		0
+	},
+	{ // turnTableDown
+		m_jobs_d_to_u,
+		0,
+		m_jobs_d_to_l,
+		m_jobs_d_to_r,
+		0
+	},
+	{ // turnTableLeft
+		m_jobs_l_to_u,
+		m_jobs_l_to_d,
+		0,
+		m_jobs_l_to_r,
+		0
+	},
+	{ // turnTableRight
+		m_jobs_r_to_u,
+		m_jobs_r_to_d,
+		m_jobs_r_to_l,
+		0,
+		0
+	},
+	{ // turnTableTalk
+		0,
+		0,
+		0,
+		0,
+		0
+	},
+};
+
+TurnTable jobsworth_turnTable1 = {
+	{ // turnTableUp
+		0,
+		jobs_u_to_d,
+		jobs_u_to_l,
+		jobs_u_to_r,
+		0
+	},
+	{ // turnTableDown
+		jobs_d_to_u,
+		0,
+		jobs_d_to_l,
+		jobs_d_to_r,
+		0
+	},
+	{ // turnTableLeft
+		jobs_l_to_u,
+		jobs_l_to_d,
+		0,
+		jobs_l_to_r,
+		0
+	},
+	{ // turnTableRight
+		jobs_r_to_u,
+		jobs_r_to_d,
+		jobs_r_to_l,
+		0,
+		0
+	},
+	{ // turnTableTalk
+		0,
+		0,
+		0,
+		0,
+		0
+	}
+};
+
+MegaSet jobsworth_megaSet0 = {
+	0,	// gridWidth
+	0,	// colOffset
+	8,	// colWidth
+	8,	// lastChr
+	m_jobs_up,	// animUp
+	m_jobs_down,	// animDown
+	m_jobs_left,	// animLeft
+	m_jobs_right,	// animRight
+	m_jobs_st_up,	// standUp
+	m_jobs_st_down,	// standDown
+	m_jobs_st_left,	// standLeft
+	m_jobs_st_right,	// standRight
+	m_jobs_st_talk,	// standTalk
+	&jobsworth_turnTable0,
+};
+
+MegaSet jobsworth_megaSet1 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	jobs_up,	// animUp
+	jobs_down,	// animDown
+	jobs_left,	// animLeft
+	jobs_right,	// animRight
+	jobs_st_up,	// standUp
+	jobs_st_down,	// standDown
+	jobs_st_left,	// standLeft
+	jobs_st_right,	// standRight
+	jobs_st_talk,	// standTalk
+	&jobsworth_turnTable1
+};
+
+ExtCompact jobsworth_ext = {
+	0,	// actionSub
+	0,	// actionSub_off
+	0,	// getToSub
+	0,	// getToSub_off
+	0,	// extraSub
+	0,	// extraSub_off
+	0,	// dir
+	STD_MEGA_STOP,	// stopScript
+	STD_MINI_BUMP,	// miniBump
+	0,	// leaving
+	0,	// atWatch
+	0,	// atWas
+	0,	// alt
+	0,	// request
+	96,	// spWidth_xx
+	SP_COL_JOBS,	// spColour
+	0,	// spTextId
+	0,	// spTime
+	0,	// arAnimIndex
+	0,	// turnProg
+	0,	// waitingFor
+	0,	// arTarget_x
+	0,	// arTarget_y
+	jobs_auto,	// animScratch
+	0,	// megaSet
+	&jobsworth_megaSet0,
+	&jobsworth_megaSet1,
+	0,
+	0
+};
+
+Compact jobsworth = {
+	L_SCRIPT,	// logic
+	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_MOUSE+ST_COLLISION,	// status
+	0,	// sync
+	0,	// screen
+	ID_LOW_FLOOR,	// place
+	0,	// getToTable
+	416,	// xcood
+	272,	// ycood
+	73*64,	// frame
+	4,	// cursorText
+	STD_ON,	// mouseOn
+	STD_OFF,	// mouseOff
+	MEGA_CLICK,	// mouseClick
+	65532,	// mouseRel_x
+	65516,	// mouseRel_y
+	8,	// mouseSize_x
+	28,	// mouseSize_y
+	MEGA_ACTION,	// actionScript
+	0,	// upFlag
+	0,	// downFlag
+	0,	// getToFlag
+	0,	// flag
+	0,	// mood
+	0,	// grafixProg
+	0,	// offset
+	0,	// mode
+	START_JOBS,	// baseSub
+	0,	// baseSub_off
+	&jobsworth_ext
+};
+
+Compact notice4 = {
+	0,	// logic
+	ST_MOUSE,	// status
+	0,	// sync
+	4,	// screen
+	0,	// place
+	0,	// getToTable
+	152,	// xcood
+	232,	// ycood
+	0,	// frame
+	4196,	// cursorText
+	STD_ON,	// mouseOn
+	STD_OFF,	// mouseOff
+	ADVISOR_188,	// mouseClick
+	0,	// mouseRel_x
+	0,	// mouseRel_y
+	8,	// mouseSize_x
+	8,	// mouseSize_y
+	NOTICE4_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
 	0
 };
 
