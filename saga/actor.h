@@ -84,7 +84,7 @@ struct ACTORACTIONITEM {
 };
 
 struct ACTORACTION {
- ACTORACTIONITEM dir[4];
+	ACTORACTIONITEM dir[4];
 };
 
 struct WALKINTENT {
@@ -129,22 +129,22 @@ struct ACTORINTENT {
 };
 
 struct ACTOR {
-	int id;            // Actor id
-	int name_i;        // Actor's index in actor name string list
+	int id;			// Actor id
+	int name_i;		// Actor's index in actor name string list
 	uint16 flags;
 
-	Point a_pt;      // Actor's logical coordinates
-	Point s_pt;      // Actor's screen coordinates
+	Point a_pt;		// Actor's logical coordinates
+	Point s_pt;		// Actor's screen coordinates
 
-	int sl_rn;         // Actor's sprite list res #
-	int si_rn;         // Actor's sprite index res #
-	SPRITELIST *sl_p;// Actor's sprite list data
+	int sl_rn;		// Actor's sprite list res #
+	int si_rn;		// Actor's sprite index res #
+	SPRITELIST *sl_p;	// Actor's sprite list data
 
 	int idle_time;
 	int orient;
 	int speaking;
 
-	int a_dcolor;      // Actor dialogue color
+	int a_dcolor;		// Actor dialogue color
 
 	// The actor intent list describes what the actor intends to do;
 	// multiple intents can be queued. The actor must complete an 
@@ -153,7 +153,7 @@ struct ACTOR {
 
 	YS_DL_LIST *a_intentlist;
 
-// WALKPATH path;
+	// WALKPATH path;
 
 	int def_action;
 	uint16 def_action_flags;
@@ -163,9 +163,9 @@ struct ACTOR {
 	int action_frame;
 	int action_time;
 
-	ACTORACTION *act_tbl; // Action lookup table
-	int action_ct;          // Number of actions in the action LUT
-	YS_DL_NODE *node;       // Actor's node in the actor list
+	ACTORACTION *act_tbl;	// Action lookup table
+	int action_ct;		// Number of actions in the action LUT
+	YS_DL_NODE *node;	// Actor's node in the actor list
 	ACTOR() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -185,7 +185,7 @@ struct ACTIONTIMES {
 };
 
 class Actor {
- public:
+public:
 	int reg();
 	Actor(SagaEngine *vm);
 	~Actor();
@@ -217,9 +217,9 @@ class Actor {
 
 	int addActor(ACTOR * actor);
 	int deleteActor(int index);
- ACTOR *lookupActor(int index);
+	ACTOR *lookupActor(int index);
 
- private:
+private:
 	int handleWalkIntent(ACTOR *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
 	int handleSpeakIntent(ACTOR *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec);
 	int setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem);
