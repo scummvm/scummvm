@@ -5,15 +5,16 @@ Assigned tasks:
  * Cross platform GUI for debug input dialogs and path selection (ender)
  * Improved walk box code (frob)
  * Implement FadeInChore and FadeOutChore (frob)
+ * Fix memory problems after Lua restore (aquadran)
+ * Finish iMuse implemention  (aquadran)
 
 Unassigned (help wanted):
  * Add configure script (Custom ala main ScummVM, NOT autoconf)
  * Add OpenGL lighting (ender, possibly)
- * Implement iMuse (aquadran, possibly)
- * Save/Load support
+ * Finish Save/Load support for rest of Engine except Lua
  * Implement 2D primitives 
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
  * Fix the screenblocks zBuffer code
- * Abstract rendering code and implement software renderer
+ * Abstract rendering code and implement software renderer (partianly done)
  * Fix drawEmergString() to work with Mesa
  * Make SMUSH work on Linux/PPC (whats wrong with it, exactly? - ender :)
