@@ -756,16 +756,15 @@ void Scumm::endCutscene() {
 	int16 args[16];
 
 	memset(args, 0, sizeof(args));	
-	if (ss->cutsceneOverride < 1)
-		return;
+
+	if (ss->cutsceneOverride > 0)	// Only terminate if active
+		ss->cutsceneOverride--;	
 	
-	ss->cutsceneOverride--;	
-	printf("Ending cs(%d) from %d\n", ss->cutsceneOverride, _currentScript);
 	args[0] = vm.cutSceneData[vm.cutSceneStackPointer];
 	_vars[VAR_OVERRIDE] = 0;
 
 	csptr = &vm.cutScenePtr[vm.cutSceneStackPointer];
-	if (*csptr)
+	if (*csptr && (ss->cutsceneOverride > 0))	// Only terminate if active
 		ss->cutsceneOverride--;
 
 	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;
@@ -779,7 +778,7 @@ void Scumm::endCutscene() {
 void Scumm::cutscene(int16 *args) {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
-	printf("Starting cs(%d) from %d\n", vm.slot[scr].cutsceneOverride, _currentScript);
+	
 	if (++vm.cutSceneStackPointer > sizeof(vm.cutSceneData)/sizeof(vm.cutSceneData[0]))
 		error("Cutscene stack overflow");
 
