@@ -1371,7 +1371,7 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 	pbs->frameNum = p.bobFrame;
 	pbs->xflip = xflip;
 
-	debug(0, "Logic::personSetup(%d, %d) - bob = %d", noun, curImage, pad->bobNum);
+	debug(0, "Logic::personSetup(%d, %d) - bob = %d name = %s", noun, curImage, pad->bobNum, p.name);
 
 	if (p.anim != NULL) {
 		_personFrames[pad->bobNum] = curImage + 1;
@@ -2195,21 +2195,21 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 	memset(nextCut, 0, sizeof(nextCut));
 
 	switch (_currentRoom) {
-	case 4:
+	case ROOM_JUNGLE_BRIDGE:
 		joeSpeak(16);
 		break;
-	case 6:
+	case ROOM_JUNGLE_GORILLA_1:
 		playCutaway("c6c.CUT", nextCut);
 		break;
-	case 14:
+	case ROOM_JUNGLE_GORILLA_2:
 		playCutaway("c14b.CUT", nextCut);
 		break;
-	case 16:
+	case ROOM_AMAZON_ENTRANCE:
 		if (areaNum == 3) {
 			playCutaway("c16a.CUT", nextCut);
 		}
 		break;
-	case 17:
+	case ROOM_AMAZON_HIDEOUT:
 		if (walkDataNum == 4) {
 			playCutaway("c17a.CUT", nextCut);
 		}
@@ -2217,19 +2217,19 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 			playCutaway("c17b.CUT", nextCut);
 		}
 		break;
-	case 22:
+	case ROOM_FLODA_OUTSIDE:
 		playCutaway("c22a.CUT", nextCut);
 		break;
-	case 26:
+	case ROOM_FLODA_KITCHEN:
 		playCutaway("c26b.CUT", nextCut);
 		break;
-	case 30:
+	case ROOM_FLODA_KLUNK:
 		playCutaway("c30a.CUT", nextCut);
 		break;
-	case 32:
+	case ROOM_FLODA_HENRY:
 		playCutaway("c32c.CUT", nextCut);
 		break;
-	case 50:
+	case ROOM_TEMPLE_ZOMBIES:
 		if (areaNum == 6) {
 			if (_gameState[21] == 0) {
 				playCutaway("c50d.CUT", nextCut);
@@ -2242,56 +2242,55 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 			}
 		}
 		break;
-	case 53:
+	case ROOM_TEMPLE_SNAKE:
 		playCutaway("c53b.CUT", nextCut);
 		break;
-	case 55:
+	case ROOM_TEMPLE_LIZARD_LASER:
 		joeSpeak(19);
 		break;
-	case 71:
+	case ROOM_HOTEL_DOWNSTAIRS:
 		joeSpeak(21);
 		break;
-	case 73:
-		// don't play next Cutaway
-		if (_gameState[VAR_ROOM73_CUTAWAY] == 0) {
+	case ROOM_HOTEL_LOBBY:
+		if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 0) {
 			playCutaway("c73a.CUT"); 
-			_gameState[VAR_ROOM73_CUTAWAY] = 1;
+			_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] = 1;
 			joeUseUnderwear();
 			joeFace();
 		}
-		else if (_gameState[VAR_ROOM73_CUTAWAY] == 1) {
+		else if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 1) {
 			playCutaway("c73b.CUT");
-			_gameState[VAR_ROOM73_CUTAWAY] = 2;
+			_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] = 2;
 		}
-		else if (_gameState[VAR_ROOM73_CUTAWAY] == 2) {
+		else if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 2) {
 			playCutaway("c73c.CUT");
 		}
 		break;
-	case 100:
+	case ROOM_TEMPLE_MAZE_5:
 		if (areaNum == 7) {
 			joeSpeak(17);
 		}
 		break;
-	case 101:
+	case ROOM_TEMPLE_MAZE_6:
 		if (areaNum == 5 && _gameState[187] == 0) {
 			playCutaway("c101b.CUT", nextCut);
 		}
 		break;
-	case 103:
+	case ROOM_FLODA_FRONTDESK:
 		if (areaNum == 3) {
-			if (_gameState[35] == 1) {
+			if (_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] == 1) {
 				playCutaway("c103e.CUT", nextCut);
 			}
-			else if (_gameState[35] == 0) {
+			else if (_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] == 0) {
 				playCutaway("c103b.CUT", nextCut);
-				_gameState[35] = 1;
+				_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] = 1;
 			}
 		}
 		break;
 	}
 
 	while (strlen(nextCut) > 4 && 
-			scumm_stricmp(nextCut + strlen(nextCut) - 4, ".cut") == 0) {
+		scumm_stricmp(nextCut + strlen(nextCut) - 4, ".cut") == 0) {
 		playCutaway(nextCut, nextCut);
 	}
 }

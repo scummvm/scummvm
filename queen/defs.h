@@ -183,11 +183,14 @@ enum {
 enum {
 	ROOM_JUNGLE_INSIDE_PLANE  =   1,
 	ROOM_JUNGLE_OUTSIDE_PLANE =   2,
+	ROOM_JUNGLE_BRIDGE        =   4,
+	ROOM_JUNGLE_GORILLA_1     =   6,
 	ROOM_JUNGLE_PINNACLE      =   7,
 	ROOM_JUNGLE_SLOTH         =   8,
 	ROOM_JUNGLE_BUD_SKIP      =   9,
 	ROOM_JUNGLE_BEETLE        =  11,
 	ROOM_JUNGLE_MISSIONARY    =  13,
+	ROOM_JUNGLE_GORILLA_2     =  14,
 	
 	ROOM_AMAZON_ENTRANCE      =  16,
 	ROOM_AMAZON_HIDEOUT       =  17,
@@ -213,10 +216,11 @@ enum {
 	ROOM_TEMPLE_SNAKE         =  53,
 	ROOM_TEMPLE_LIZARD_LASER  =  55,
 	ROOM_TEMPLE_MAZE          =  58,
-	ROOM_TEMPLE_MAZE2         =  59,
-	ROOM_TEMPLE_MAZE3         =  60,
-	ROOM_TEMPLE_MAZE4         =  61,
-	ROOM_TEMPLE_MAZE5         = 100,
+	ROOM_TEMPLE_MAZE_2        =  59,
+	ROOM_TEMPLE_MAZE_3        =  60,
+	ROOM_TEMPLE_MAZE_4        =  61,
+	ROOM_TEMPLE_MAZE_5        = 100,
+	ROOM_TEMPLE_MAZE_6        = 101,
 
 	ROOM_VALLEY_CARCASS       =  67,
 	
@@ -252,11 +256,11 @@ enum {
 
 //! GameState vars
 enum {
-	VAR_DRESSING_MODE      =  19, // 0=normal clothes, 1=underwear, 2=dress
-	VAR_ROOM73_CUTAWAY     =  93,
-	VAR_INTRO_PLAYED       = 117,
-	VAR_CAN_CHANGE_CLOTHES = 202,
-	VAR_AZURA_IN_LOVE      = 167
+	VAR_DRESSING_MODE             =  19,
+	VAR_BYPASS_FLODA_RECEPTIONIST =  35,
+	VAR_ESCAPE_FROM_HOTEL_COUNT   =  93,
+	VAR_INTRO_PLAYED              = 117,
+	VAR_AZURA_IN_LOVE             = 167
 };
 
 
