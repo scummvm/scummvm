@@ -423,7 +423,7 @@ void Command::executeCurrentAction(bool walk) {
 	}
 
 	// only play song if it's a PLAY AFTER type
-	if (com->song > 0) {
+	if (com->song < 0) {
 		_sound->playSong(com->song);
 	}
 
@@ -1046,7 +1046,7 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 
 			// play music if it exists... (or SFX for open/close door)
 			if (song != 0) {
-				_sound->playSong(abs(song));
+				_sound->playSong(ABS(song));
 			}
 
 			if (objData->entryObj != 0) {
@@ -1068,7 +1068,7 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 
 			// play music if it exists... (or SFX for open/close door)
 			if (song != 0) {
-				_sound->playSong(abs(song));
+				_sound->playSong(ABS(song));
 			}
 
 			if (objData->entryObj != 0) {
