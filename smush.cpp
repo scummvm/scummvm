@@ -65,10 +65,10 @@ void Smush::init() {
 	_videoPause = false;
 //HACK: If we don't set it here, it'll never get set at all..
 //	This is BAD - but until we find the source of the problem, this'll have to do.
-#ifndef OSX
-	_updateNeeded = false;
-#else
+#if defined(OSX) || defined(UNIX)
 	_updateNeeded = true;
+#else
+	_updateNeeded = false;
 #endif
 	if (!_surface)
 		_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
