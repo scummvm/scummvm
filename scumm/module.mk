@@ -32,18 +32,15 @@ SCUMM_OBJS = \
 	scumm/verbs.o
 
 SMUSH_OBJS = \
-	scumm/smush/brenderer.o \
 	scumm/smush/chunk.o \
 	scumm/smush/codec1.o \
 	scumm/smush/codec37.o \
-	scumm/smush/codec44.o \
 	scumm/smush/codec47.o \
-	scumm/smush/color.o \
-	scumm/smush/frenderer.o \
 	scumm/smush/imuse_channel.o \
-	scumm/smush/player.o \
+	scumm/smush/smush_player.o \
 	scumm/smush/saud_channel.o \
-	scumm/smush/scumm_renderer.o
+	scumm/smush/smush_mixer.o \
+	scumm/smush/smush_font.o
 
 MODULE_OBJS = $(SCUMM_OBJS) $(SMUSH_OBJS)
 
