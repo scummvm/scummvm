@@ -1154,11 +1154,6 @@ void SimonEngine::vc_24_set_sprite_xy() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->image = vc_read_var_or_word();
 
-	if (vsp->id == 0) {
-		if (_debugMode)
-			warning("Trying to set XY of nonexistent sprite '%d'", _vga_cur_sprite_id);
-	}
-
 	vsp->x += (int16)vc_read_next_word();
 	vsp->y += (int16)vc_read_next_word();
 	if (!(_game & GF_SIMON2)) {
