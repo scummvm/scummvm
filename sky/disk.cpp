@@ -413,7 +413,7 @@ void SkyDisk::dumpFile(uint16 fileNr) {
 
 	filePtr = loadFile(fileNr, NULL);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
-	
+
 	out.open(buf, "", File::kFileReadMode);
 	if (out.isOpen() == false) {
 		out.open(buf, "", File::kFileWriteMode);

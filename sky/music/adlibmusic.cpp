@@ -83,7 +83,7 @@ void SkyAdlibMusic::premixerCall(int16 *data, uint len) {
 				_nextMusicPoll = _sampleRate/50;
 			}
 		}
-	
+
 		// Convert mono data to stereo
 		for (int i = (origLen - 1); i >= 0; i--) {
 			origData[2 * i] = origData[2 * i + 1] = origData[i];

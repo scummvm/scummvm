@@ -77,7 +77,7 @@ protected:
 		uint32 charHeight;
 		uint32 charSpacing;
 	} _mainCharacterSet, _linkCharacterSet, _controlCharacterSet;
-	
+
 	uint32	_curCharSet;
 	uint8	*_characterSet;
 	uint8	_charHeight;
@@ -85,7 +85,7 @@ protected:
 
 	char _textBuffer[1024];
 	uint8 _centreTable[40];
-	
+
 	uint8	*_mouseTextData;	//space for the mouse text
 	uint8	_dtCol;
 	uint16	_dtLineWidth;	//width of line in pixels

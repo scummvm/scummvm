@@ -24,8 +24,7 @@
 #include "sky/music/adlibchannel.h"
 #include "sky/sky.h"
 
-SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData)
-{
+SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 	_opl = opl;
 	_musicData = pMusicData;
 	_channelData.startOfData = startOfData;
@@ -50,7 +49,7 @@ SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfD
 		//_registerTable = _musicData + 0xE35;
 		//_opOutputTable = _musicData + 0xE47;
 		//_adlibRegMirror = _musicData + 0xF4A;
-		
+
 		instrumentDataLoc = READ_LE_UINT16(_musicData + 0x1204);
 		_frequenceTable = (uint16*)(_musicData + 0x868);
 		_registerTable = _musicData + 0xE68;
@@ -106,8 +105,7 @@ void SkyAdlibChannel::stopNote(void) {
 	}
 }
 
-int32 SkyAdlibChannel::getNextEventTime(void)
-{
+int32 SkyAdlibChannel::getNextEventTime(void) {
 	int32 retV = 0; 
 	uint8 cnt, lVal;
 	for (cnt = 0; cnt < 4; cnt++) {
@@ -135,7 +133,7 @@ uint8 SkyAdlibChannel::process(uint16 aktTime) {
 	while ((_channelData.nextEventTime < 0) && (_channelData.channelActive)) {
 		opcode = _musicData[_channelData.eventDataPtr];
 		_channelData.eventDataPtr++;
-		if (opcode&0x80) {
+		if (opcode & 0x80) {
 			if (opcode == 0xFF) {
 				// dummy opcode
 			} else if (opcode >= 0x90) {

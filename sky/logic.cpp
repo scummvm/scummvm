@@ -78,7 +78,7 @@ SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyText *skyText, Sky
 	for (int i = 0; i < ARRAYSIZE(_moduleList); i++)
 		_moduleList[i] = 0;
 	_stackPtr = 0;
-	
+
 	_currentSection = 0xFF; //force music & sound reload
 	initScriptVariables();
 }
@@ -345,7 +345,7 @@ void SkyLogic::mainAnim() {
 			C_ANIM_UP + _compact->extCompact->megaSet + dir * 4);
 
 	uint16 arAnimIndex = _compact->extCompact->arAnimIndex;
-	if (!animList[arAnimIndex/2]) {
+	if (!animList[arAnimIndex / 2]) {
 		 arAnimIndex = 0;
 		_compact->extCompact->arAnimIndex = 0; // reset
 	}
@@ -1205,7 +1205,7 @@ script:
 
 		switch (command) {
 		case 0: // push_variable
-			push( _scriptVariables[READ_LE_UINT16(scriptData++)/4] );
+			push( _scriptVariables[READ_LE_UINT16(scriptData++) / 4] );
 			break;
 		case 1: // less_than
 			a = pop();
@@ -1239,10 +1239,10 @@ script:
 
 			a = pop();
 			if (!a)
-				scriptData += s/2;
+				scriptData += s / 2;
 			break;
 		case 6: // pop_var
-			b = _scriptVariables[READ_LE_UINT16(scriptData++)/4] = pop();
+			b = _scriptVariables[READ_LE_UINT16(scriptData++) / 4] = pop();
 			break;
 		case 7: // minus
 			a = pop();
@@ -1256,7 +1256,7 @@ script:
 			break;
 		case 9: // skip_always
 			s = READ_LE_UINT16(scriptData++);
-			scriptData += s/2;
+			scriptData += s / 2;
 			break;
 		case 10: // if_or
 			a = pop();
@@ -1306,7 +1306,7 @@ script:
 
 			do {
 				if (a == READ_LE_UINT16(scriptData)) {
-					scriptData += READ_LE_UINT16(scriptData + 1)/2;
+					scriptData += READ_LE_UINT16(scriptData + 1) / 2;
 					scriptData++;
 					break;
 				}
@@ -1335,7 +1335,7 @@ script:
 				int16 t = READ_LE_UINT16(scriptData++);
 				a = pop();
 				if (a)
-					scriptData += t/2;
+					scriptData += t / 2;
 				break;
 			}
 		case 13:
@@ -2537,5 +2537,4 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	else target->extCompact->spTime = (uint16)_skyText->_dtLetters + 5;
 	target->logic = L_TALK; 
 }
-
 

@@ -33,7 +33,7 @@ SkyMT32Music::SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *sys
 	: SkyMusicBase(pSkyDisk, system) {
 
 	_driverFileBase = 60200;
-    _midiDrv = pMidiDrv;
+	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();
 	if (midiRes != 0) {
 		error("Can't open midi device. Errorcode: %d",midiRes);

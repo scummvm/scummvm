@@ -62,7 +62,8 @@ SkyText::SkyText(SkyDisk *skyDisk) {
 
 	if (SkyEngine::isCDVersion()) {
 		_preAfterTableArea = _skyDisk->loadFile(60522, NULL);
-	} else _preAfterTableArea = NULL;
+	} else
+		_preAfterTableArea = NULL;
 }
 
 SkyText::~SkyText(void) {
@@ -259,7 +260,7 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 		return ;
 
 	uint32 sectionNo = (textNr & 0x0F000) >> 12;
-	
+
 	if (SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo>>2));
 		
@@ -267,13 +268,13 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 		SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo, NULL);
 	}
 	_textItemPtr = (uint8 *)SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo];
-	
+
 	uint32 offset = 0; 
 	uint32 nr32MsgBlocks = (textNr & 0x0fe0);
 	uint32 skipBytes; 
 	byte *blockPtr;
 	bool bitSeven; 
-	
+
 	if (nr32MsgBlocks) { 
 		blockPtr = (byte *)(_textItemPtr + 4);
 		nr32MsgBlocks >>= 5;
@@ -290,17 +291,17 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 		remItems &= 0x0fe0;
 		remItems += READ_LE_UINT16(_textItemPtr);
 		blockPtr = _textItemPtr + remItems; 
-		
+
 		do {
 			skipBytes = *blockPtr++;
 			bitSeven = (bool)((skipBytes >> (7)) & 0x1);
 			skipBytes &= ~(1UL << 7);
-	
+
 			if (bitSeven) 
 				skipBytes <<= 3;
-		 
+
 			offset += skipBytes;
-	
+
 		} while (--textNr);
 	}
 
@@ -352,7 +353,7 @@ void SkyText::logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY) {
 }
 
 bool SkyText::getTBit() {
-	
+
 	if (_shiftBits) {
 		(_shiftBits)--;
 	} else {
@@ -369,7 +370,7 @@ displayText_t SkyText::displayText(uint8 *dest, bool centre, uint16 pixelWidth, 
 }
 
 displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
-	
+
 	//Render text pointed to by *textPtr in buffer *dest
 
 	uint8 textChar;
@@ -377,7 +378,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	char *lastSpace = curPos;
 	byte *centerTblPtr = _centreTable;
 	uint16 lineWidth = 0;  
-	
+
 	_dtCol = color;
 	_dtLineWidth = pixelWidth;  
 	_dtLines = 0;
@@ -403,12 +404,12 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 			lastSpace = curPos; //keep track of last space
 			*(uint32 *)centerTblPtr = TO_LE_32(lineWidth);
 		}
-		
+
 		lineWidth += *(_characterSet+textChar);	//add character width
 		lineWidth += (uint16)_dtCharSpacing;	//include character spacing
-	
+
 		if (pixelWidth <= lineWidth) {
-	
+
 			if (*(lastSpace-1) == 10)
 				error("line width exceeded!");
 
@@ -449,7 +450,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	((struct dataFileHeader *)curDest)->s_sp_size = (uint16)(_dtLineWidth * _charHeight * _dtLines);
 	((struct dataFileHeader *)curDest)->s_offset_x = 0;
 	((struct dataFileHeader *)curDest)->s_offset_y = 0;
-	
+
 	//reset position
 	curPos = textPtr;
 
@@ -459,7 +460,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 
 	do {
 		if (_dtCentre) {
-		
+
 			uint32 width = _dtLineWidth;
 			width -= READ_LE_UINT32(centerTblPtr); 
 			centerTblPtr += 4;
@@ -479,7 +480,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 		prevDest = curDest;
 
 	} while (textChar >= 10);
-	
+
 	struct displayText_t ret;
 	ret.textData = _dtData;
 	ret.textWidth = _dtLastWidth;	
@@ -498,7 +499,7 @@ void SkyText::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest,
 	for (int i = 0; i < _charHeight; i++) {
 
 		byte *prevPos = curPos;
-	
+
 		data = READ_BE_UINT16(charSpritePtr);
 		mask = READ_BE_UINT16(charSpritePtr + 2);
 		charSpritePtr += 4;
@@ -524,7 +525,7 @@ void SkyText::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest,
 		curPos = prevPos;
 		curPos += _dtLineWidth;
 	}
-	
+
 	//update position
 	dest = startPos + charWidth + _dtCharSpacing*2 - 1; 
 
@@ -535,7 +536,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 	getText(textNum);
 
 	struct displayText_t textInfo = displayText(NULL, centre, width, color);
-	
+
 	_lowTextWidth = textInfo.textWidth;
 	byte *textData = textInfo.textData;
 

@@ -28,8 +28,7 @@
 #include "sky/skydefs.h"
 #include "sky/struc.h"
 
-uint8 SkyScreen::_top16Colours[16*3] =
-{
+uint8 SkyScreen::_top16Colours[16*3] = {
 	0, 0, 0,
 	38, 38, 38,
 	63, 63, 63,
@@ -155,7 +154,7 @@ void SkyScreen::showScreen(uint8 *pScreen) {
 }
 
 void SkyScreen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
-	
+
 	int i;
 
 	for (i = 0; i < VGA_COLOURS; i++) {
@@ -384,7 +383,8 @@ void SkyScreen::waitForSequence(void) {
 void SkyScreen::handleTimer(void) {
 
 	_gotTick = true;
-	if (_seqInfo.running) processSequence();
+	if (_seqInfo.running)
+		processSequence();
 }
 
 void SkyScreen::startSequence(uint16 fileNum) {
@@ -485,7 +485,8 @@ void SkyScreen::processSequence(void) {
 	}
 	if (_seqInfo.framesLeft == 0) {
 		_seqInfo.running = false;
-		if (!_seqInfo.runningItem) free(_seqInfo.seqData);
+		if (!_seqInfo.runningItem)
+		free(_seqInfo.seqData);
 		_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 	}
 }
@@ -527,7 +528,7 @@ void SkyScreen::sortSprites(void) {
 							dataFileHeader *spriteData = 
 								(dataFileHeader *)SkyEngine::fetchItem(spriteComp->frame >> 6);
 							if (!spriteData) {
-								debug(9,"Missing file %d",spriteComp->frame >> 6);
+								debug(9,"Missing file %d", spriteComp->frame >> 6);
 								spriteComp->status = 0;
 							} else {
 								sortList[spriteCnt].yCood = spriteComp->ycood + spriteData->s_offset_y + spriteData->s_height;
@@ -587,7 +588,7 @@ void SkyScreen::doSprites(uint8 layer) {
 						(spriteData->screen == SkyLogic::_scriptVariables[SCREEN])) {
 					uint8 *toBeDrawn = (uint8 *)SkyEngine::fetchItem(spriteData->frame >> 6);
 					if (!toBeDrawn) {
-						debug(9, "Spritedata %d not loaded",spriteData->frame >> 6);
+						debug(9, "Spritedata %d not loaded", spriteData->frame >> 6);
 						spriteData->status = 0;
 					} else {
 						drawSprite(toBeDrawn, spriteData);

@@ -92,7 +92,7 @@ uint16 RncDecoder::inputBits(uint8 amount) {
 
 	if (newBitCount < 0) {
 		newBitCount += amount;
-		remBits = (newBitBuffh << (16-newBitCount));
+		remBits = (newBitBuffh << (16 - newBitCount));
 		newBitBuffh >>= newBitCount;
 		newBitBuffl >>= newBitCount;
 		newBitBuffl |= remBits;	
@@ -101,7 +101,7 @@ uint16 RncDecoder::inputBits(uint8 amount) {
 		amount -= newBitCount;
 		newBitCount = 16 - amount;
 	}
-	remBits = (newBitBuffh << (16-amount));
+	remBits = (newBitBuffh << (16 - amount));
 	_bitBuffh = newBitBuffh >> amount;
 	_bitBuffl = (newBitBuffl >> amount) | remBits;
 	_bitCount = (uint8)newBitCount;
@@ -134,7 +134,7 @@ void RncDecoder::makeHufftable(uint16 *table) {
 					a |= ((b >> j) & 1) << (bitLength - j - 1);
 				*table++ = a;
 
-				*(table + 0x1e) = (huffLength[i] << 8)|(i & 0x00FF);
+				*(table + 0x1e) = (huffLength[i] << 8) | (i & 0x00FF);
 				huffCode += 1 << (16 - bitLength);
 			}
 		}
@@ -253,7 +253,7 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 
 	if (crcBlock((uint8 *)output, unpackLen) != crcUnpacked)
 		return UNPACKED_CRC;
-	
+
 	// all is done..return the amount of unpacked bytes
 	return unpackLen;
 }

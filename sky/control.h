@@ -179,7 +179,7 @@ public:
 	void doAutoSave(void);
 	uint16 quickXRestore(uint16 slot);
 	bool loadSaveAllowed(void);
-    
+
 private:
 	void initPanel(void);
 	void removePanel(void);
@@ -271,7 +271,7 @@ private:
 	uint16 _savedMouse;
 	uint32 _savedCharSet;
 	uint16 _enteredTextWidth;
-    
+
 	SkyConResource *createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType);
 
 	dataFileHeader *_textSprite;

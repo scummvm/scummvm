@@ -35,16 +35,19 @@ SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system) {
 	_mutex = _system->create_mutex();
 }
 
-SkyMusicBase::~SkyMusicBase(void)
-{
-	if (_musicData) free(_musicData);
+SkyMusicBase::~SkyMusicBase(void) {
+
+	if (_musicData)
+		free(_musicData);
 }
 
-void SkyMusicBase::loadSection(uint8 pSection)
-{
+void SkyMusicBase::loadSection(uint8 pSection) {
+
 	_system->lock_mutex(_mutex);
-	if (_currentMusic) stopMusic();
-	if (_musicData) free(_musicData);
+	if (_currentMusic)
+		stopMusic();
+	if (_musicData)
+		free(_musicData);
 	_currentSection = pSection;
 	_musicData = _skyDisk->loadFile(_driverFileBase + FILES_PER_SECTION * pSection, NULL);
 	_allowedCommands = 0;
@@ -60,16 +63,16 @@ void SkyMusicBase::loadSection(uint8 pSection)
 	_system->unlock_mutex(_mutex);
 }
 
-bool SkyMusicBase::musicIsPlaying(void)
-{
+bool SkyMusicBase::musicIsPlaying(void) {
+
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		if (_channels[cnt]->isActive())
 			return true;
 	return false;
 }
 
-void SkyMusicBase::musicCommand(uint16 command)
-{
+void SkyMusicBase::musicCommand(uint16 command) {
+
 	if (_musicData == NULL) {
 		debug(1,"Got music command but driver is not yet loaded");
 		return ;
@@ -92,7 +95,7 @@ void SkyMusicBase::musicCommand(uint16 command)
 		debug(1,"SkyMusic: ignored direct call to driverPoll().");
 		break;
 	case 4: 
-		startMusic(command&0xFF);
+		startMusic(command & 0xFF);
 		break;
 	case 6:
 		reinitFM();
@@ -101,22 +104,22 @@ void SkyMusicBase::musicCommand(uint16 command)
 		stopMusic();
 		break;
 	case 13: 
-		setFMVolume(command&0xFF); 
+		setFMVolume(command & 0xFF); 
 		break;
 	default: 
-		debug(1,"musicCommand %d ignored.",command>>8);
+		debug(1,"musicCommand %d ignored.",command >> 8);
 	}
 }
 
-void SkyMusicBase::setFMVolume(uint16 param)
-{
+void SkyMusicBase::setFMVolume(uint16 param) {
+
 	_musicVolume = param;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		_channels[cnt]->updateVolume(_musicVolume);
 }
 
-void SkyMusicBase::stopMusic(void)
-{
+void SkyMusicBase::stopMusic(void) {
+
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		_channels[cnt]->stopNote();
 		delete _channels[cnt];
@@ -124,16 +127,16 @@ void SkyMusicBase::stopMusic(void)
 	_numberOfChannels = 0;
 }
 
-void SkyMusicBase::updateTempo(void)
-{
-	uint16 tempoMul = _musicTempo0*_musicTempo1;
-	uint16 divisor = 0x4446390/23864;
-	_tempo = (tempoMul / divisor)<<16;
-	_tempo |= (((tempoMul%divisor)<<16) | (tempoMul/divisor)) / divisor;
+void SkyMusicBase::updateTempo(void) {
+
+	uint16 tempoMul = _musicTempo0 * _musicTempo1;
+	uint16 divisor = 0x4446390/ 23864;
+	_tempo = (tempoMul / divisor) << 16;
+	_tempo |= (((tempoMul%divisor) << 16) | (tempoMul / divisor)) / divisor;
 }
 
-void SkyMusicBase::loadNewMusic(void)
-{
+void SkyMusicBase::loadNewMusic(void) {
+
 	uint16 musicPos;
 	if (_onNextPoll.musicToProcess > _musicData[_musicDataLoc]) {
 		error("Music %d requested but doesn't exist in file.", _onNextPoll.musicToProcess);
@@ -145,9 +148,9 @@ void SkyMusicBase::loadNewMusic(void)
 	_currentMusic = _onNextPoll.musicToProcess;
 
 	if (_currentMusic != 0) {
-		musicPos = (_musicData[_musicDataLoc+2]<<8) | _musicData[_musicDataLoc+1];
-		musicPos += _musicDataLoc+((_currentMusic-1)<<1);
-		musicPos = ((_musicData[musicPos+1]<<8) | _musicData[musicPos]) + _musicDataLoc;
+		musicPos = (_musicData[_musicDataLoc + 2] << 8) | _musicData[_musicDataLoc+1];
+		musicPos += _musicDataLoc+((_currentMusic-1) << 1);
+		musicPos = ((_musicData[musicPos+1] << 8) | _musicData[musicPos]) + _musicDataLoc;
 
 		_musicTempo0 = _musicData[musicPos];
 		_musicTempo1 = _musicData[musicPos+1];
@@ -158,8 +161,8 @@ void SkyMusicBase::loadNewMusic(void)
 	}
 }
 
-void SkyMusicBase::pollMusic(void)
-{
+void SkyMusicBase::pollMusic(void) {
+
 	_system->lock_mutex(_mutex);
 	uint8 newTempo;
 	if (_onNextPoll.doReInit) startDriver();

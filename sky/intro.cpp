@@ -895,9 +895,9 @@ bool SkyIntro::escDelay(uint32 msecs) {
 			}
 		}
 #ifdef _WIN32_WCE
-		uint8 nDelay = (msecs > 15)?(15):((uint8)msecs);
+		uint8 nDelay = (msecs > 15) ? (15) : ((uint8)msecs);
 #else
-		uint8 nDelay = (msecs > 50)?(50):((uint8)msecs);
+		uint8 nDelay = (msecs > 50) ? (50) : ((uint8)msecs);
 #endif
 		_system->delay_msecs(nDelay);
 		msecs -= nDelay;
