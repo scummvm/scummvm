@@ -59,6 +59,8 @@ public:
 	void prepareUpdate();
 	void update(bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
 
+	void setupNewRoom(const char *name, uint16 room);
+
 	void drawBobSprite(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch, bool xflip);
 	void drawBobPasteDown(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h);
 	void drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h);

@@ -953,13 +953,8 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 
 void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
-	// loads background image
-	char filename[20];	
-	sprintf(filename, "%s.PCX", room);
-	_vm->graphics()->loadBackdrop(filename, _currentRoom);
-
-	// custom colors
-	_vm->display()->palCustomColors(_currentRoom);
+	// load backdrop image, init dynalum, setup colors
+	_vm->display()->setupNewRoom(room, _currentRoom);
 
 	// setup graphics to enter fullscreen/panel mode
 	_vm->display()->screenMode(comPanel, inCutaway);
@@ -968,6 +963,7 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 	_vm->graphics()->bobClearAll();
 
 	// load/setup objects associated to this room
+	char filename[20];	
 	sprintf(filename, "%s.BBK", room);
 	_vm->bankMan()->load(filename, 15);
 
@@ -977,6 +973,10 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 	roomSetupObjects();
 
 	_vm->display()->forceFullRefresh();
+
+	if (_currentRoom >= 90) {
+		_vm->graphics()->putCameraOnBob(0);
+	}
 }
 
 
@@ -1338,6 +1338,7 @@ void Logic::joeSetupFromBanks(const char *animBank, const char *standBank) {
 
 void Logic::joeSetup() {
 	joeSetupFromBanks("joe_a.BBK", "joe_b.BBK");
+	joePrevFacing(DIR_FRONT);
 	joeFacing(DIR_FRONT);
 }
 
@@ -1409,7 +1410,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	pbs->scale = joeScale();
 
 	if (_currentRoom == 108) {
-		_vm->graphics()->cameraBob(-1);
+		_vm->graphics()->putCameraOnBob(-1);
 		_vm->bankMan()->load("joe_e.act", 7);
 		_vm->bankMan()->unpack(2, 29 + FRAMES_JOE_XTRA, 7);
 
@@ -1984,7 +1985,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 
 void Logic::handlePinnacleRoom() {
 	// camera does not follow Joe anymore
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	roomDisplay(ROOM_JUNGLE_PINNACLE, RDM_NOFADE_JOE, 100, 2, true);
 
 	BobSlot *joe   = _vm->graphics()->bob(6);
@@ -2076,7 +2077,7 @@ void Logic::handlePinnacleRoom() {
 	_vm->graphics()->textClear(5, 5);
 
 	// camera follows Joe again
-	_vm->graphics()->cameraBob(0);
+	_vm->graphics()->putCameraOnBob(0);
 
 	_vm->display()->palFadeOut(0, 223, ROOM_JUNGLE_PINNACLE);
 }
@@ -2686,7 +2687,7 @@ void Logic::asmEndGame() {
 
 
 void Logic::asmPutCameraOnDino() {
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	int16 scrollx = _vm->display()->horizontalScroll();
 	while (scrollx < 320) {
 		scrollx += 16;
@@ -2696,17 +2697,17 @@ void Logic::asmPutCameraOnDino() {
 		_vm->display()->horizontalScroll(scrollx);
 		update();
 	}
-	_vm->graphics()->cameraBob(1);
+	_vm->graphics()->putCameraOnBob(1);
 }
 
 
 void Logic::asmPutCameraOnJoe() {
-	_vm->graphics()->cameraBob(0);
+	_vm->graphics()->putCameraOnBob(0);
 }
 
 
 void Logic::asmAltIntroPanRight() {
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
 	update();
 	int16 scrollx = _vm->display()->horizontalScroll();
@@ -2723,7 +2724,7 @@ void Logic::asmAltIntroPanRight() {
 
 
 void Logic::asmAltIntroPanLeft() {
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
 	int16 scrollx = _vm->display()->horizontalScroll();
 	while (scrollx > 0 && !_vm->input()->cutawayQuit()) {
@@ -2744,7 +2745,7 @@ void Logic::asmSetAzuraInLove() {
 
 
 void Logic::asmPanRightFromJoe() {
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	int16 scrollx = _vm->display()->horizontalScroll();
 	while (scrollx < 320) {
 		scrollx += 16;
@@ -2780,7 +2781,7 @@ void Logic::asmPanToJoe() {
 	} else if (i > 320) {
 		i = 320;
 	}
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	int16 scrollx = _vm->display()->horizontalScroll();
 	if (i < scrollx) {
 		while (scrollx > i) {
@@ -2802,7 +2803,7 @@ void Logic::asmPanToJoe() {
 		}
 		update();
 	}
-	_vm->graphics()->cameraBob(0);
+	_vm->graphics()->putCameraOnBob(0);
 }
 
 
@@ -2812,7 +2813,7 @@ void Logic::asmTurnGuardOn() {
 
 
 void Logic::asmPanLeft320To144() {
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	int16 scrollx = _vm->display()->horizontalScroll();
 	while (scrollx > 144) {
 		scrollx -= 8;
@@ -2826,7 +2827,7 @@ void Logic::asmPanLeft320To144() {
 
 
 void Logic::asmSmooch() {
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	BobSlot *bobAzura = _vm->graphics()->bob(5);
 	BobSlot *bobJoe = _vm->graphics()->bob(6);
 	int16 scrollx = _vm->display()->horizontalScroll();
@@ -2846,7 +2847,7 @@ void Logic::asmSmooch() {
 
 
 void Logic::asmMakeLightningHitPlane() {
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	short iy = 0, x, ydir = -1, j, k;
 				
 	BobSlot *planeBob     = _vm->graphics()->bob(5);
@@ -2922,7 +2923,7 @@ void Logic::asmMakeLightningHitPlane() {
 		update();
 	}
 
-	_vm->graphics()->cameraBob(0);
+	_vm->graphics()->putCameraOnBob(0);
 }
 
 
@@ -3014,7 +3015,7 @@ void Logic::asmPanRightToHugh() {
 	BobSlot *bob_thugB1 = _vm->graphics()->bob(25);
 	BobSlot *bob_thugB2 = _vm->graphics()->bob(26);
 
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
 	update();
 				
@@ -3078,7 +3079,7 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 	BobSlot *bob_clock = _vm->graphics()->bob(23);
 	BobSlot *bob_hands = _vm->graphics()->bob(24);
 
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
 					
 	update();
@@ -3114,7 +3115,7 @@ void Logic::asmPanLeftToBomb() {
 	BobSlot *bob21 = _vm->graphics()->bob(21);
 	BobSlot *bob22 = _vm->graphics()->bob(22);
 
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
 				
 	int horizontalScroll = _vm->display()->horizontalScroll();
@@ -3148,7 +3149,7 @@ void Logic::asmEndDemo() {
 
 void Logic::asmInterviewIntro() {
 	// put camera on airship
-	_vm->graphics()->cameraBob(5);
+	_vm->graphics()->putCameraOnBob(5);
 	BobSlot *bas = _vm->graphics()->bob(5);
 
 	bas->curPos(-30, 40);
@@ -3183,7 +3184,7 @@ void Logic::asmInterviewIntro() {
 	}
 
 	// put camera on Joe
-	_vm->graphics()->cameraBob(0);
+	_vm->graphics()->putCameraOnBob(0);
 }
 
 

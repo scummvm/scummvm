@@ -668,26 +668,6 @@ uint16 Graphics::textWidth(const char* text) const {
 }
 
 
-void Graphics::loadBackdrop(const char* name, uint16 room) {
-	char roomPrefix[20];
-	strcpy(roomPrefix, name);
-	roomPrefix[ strlen(roomPrefix) - 4 ] = '\0';
-	_vm->display()->dynalumInit(roomPrefix, room);
-
-	uint8 *pcxbuf = _vm->resource()->loadFile(name);
-	if (pcxbuf == NULL) {
-		error("Unable to load backdrop : '%s'", name);
-	}
-	uint32 size = _vm->resource()->fileSize(name);
-	_vm->display()->readPCXBackdrop(pcxbuf, size, room > 114);
-	delete[] pcxbuf;
-
-	if (room >= 90) {
-		_cameraBob = 0;
-	}
-}
-
-
 void Graphics::loadPanel() {
 	uint8 *pcxbuf = _vm->resource()->loadFile("panel.pcx");
 	if (pcxbuf == NULL) {

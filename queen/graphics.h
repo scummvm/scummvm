@@ -179,11 +179,9 @@ public:
 	int textCenterX(const char *text) const; // MIDDLE()
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
 
-	void loadBackdrop(const char *name, uint16 room);
 	void loadPanel();
 
-	void cameraBob(int bobNum) { _cameraBob = bobNum; }
-	int cameraBob() const { return _cameraBob; }
+	void putCameraOnBob(int bobNum) { _cameraBob = bobNum; }
 
 	void update(uint16 room);
 

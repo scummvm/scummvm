@@ -30,7 +30,8 @@ namespace Queen {
 
 
 Display::Display(QueenEngine *vm, OSystem *system)
-	: _horizontalScroll(0), _system(system), _vm(vm) {
+	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0), 
+	_system(system), _vm(vm) {
 	_dynalum.prevColMask = 0xFF;
 
 	initFont();
@@ -635,6 +636,22 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 }
 
 
+void Display::setupNewRoom(const char *name, uint16 room) {
+	dynalumInit(name, room);
+
+	char filename[20];
+	sprintf(filename, "%s.PCX", name);
+	uint8 *pcxbuf = _vm->resource()->loadFile(filename);
+	uint32 size = _vm->resource()->fileSize(filename);
+	readPCXBackdrop(pcxbuf, size, room > 114);
+	delete[] pcxbuf;
+
+	palCustomColors(room);
+
+	forceFullRefresh();
+}
+
+
 void Display::drawBobSprite(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch, bool xflip) {
 	blit(_screenBuf, SCREEN_W, x, y, data, pitch, w, h, xflip, true);
 	setDirtyBlock(xflip ? (x - w + 1) : x, y, w, h);
@@ -910,6 +927,7 @@ void Display::blankScreen() {
 	};
 	(this->*effects[current])();
 	current = (current + 1) % ARRAYSIZE(effects);
+	forceFullRefresh();
 }
 
 

@@ -88,7 +88,7 @@ void Journal::use() {
 	_vm->logic()->writeOptionSettings();
 
 	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
-	_vm->graphics()->cameraBob(0);
+	_vm->graphics()->putCameraOnBob(0);
 	if (_quitCleanly) {
 		restore();
 	}
@@ -99,7 +99,7 @@ void Journal::prepare() {
 	_vm->display()->horizontalScroll(0);
 	_vm->display()->fullscreen(true);
 
-	_vm->graphics()->cameraBob(-1);
+	_vm->graphics()->putCameraOnBob(-1);
 	_vm->graphics()->bobClearAll();
 	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
 	_vm->bankMan()->eraseAllFrames(false);
@@ -122,7 +122,7 @@ void Journal::prepare() {
     _vm->logic()->zoneSet(ZONE_ROOM, ZN_VOICE_TOGGLE, 158 - 24, 155, 168, 164);
     _vm->logic()->zoneSet(ZONE_ROOM, ZN_TEXT_TOGGLE, 125 - 16, 168, 135, 177);
 
-	_vm->graphics()->loadBackdrop("journal.PCX", JOURNAL_ROOM);
+	_vm->display()->setupNewRoom("journal", JOURNAL_ROOM);
 	_vm->bankMan()->load("journal.BBK", JOURNAL_BANK);
 	for (i = 1; i <= 20; ++i) {
 		int frameNum = JOURNAL_FRAMES + i;
