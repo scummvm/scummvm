@@ -314,7 +314,7 @@ bool FontRenderer::drawStringWrapCentered(const char * str, char * buffer, const
 	while(words[nb_sub]) nb_sub++;
 
 	int32 * sizes = new int32[nb_sub];
-	int32 i = 0, max_width = 0, height = 0, nb_subs = 0;
+	int32 i = 0, height = 0, nb_subs = 0;
 
 	for(i = 0; i < nb_sub; i++)
 		sizes[i] = stringWidth(words[i]);
