@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="bs2"
+	Name="sword2"
 	ProjectGUID="{6CC3E421-779D-4E80-8100-520886A0F9FF}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="bs2_Debug"
-			IntermediateDirectory="bs2_Debug"
+			OutputDirectory="sword2_Debug"
+			IntermediateDirectory="sword2_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/bs2.lib"/>
+				OutputFile="$(OutDir)/sword2.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -53,8 +53,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="bs2_Release"
-			IntermediateDirectory="bs2_Release"
+			OutputDirectory="sword2_Release"
+			IntermediateDirectory="sword2_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
@@ -79,7 +79,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/bs2.lib"/>
+				OutputFile="$(OutDir)/sword2.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -99,236 +99,236 @@
 			Name="driver"
 			Filter="">
 			<File
-				RelativePath="..\..\bs2\driver\_mouse.cpp">
+				RelativePath="..\..\sword2\driver\_mouse.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\_mouse.h">
+				RelativePath="..\..\sword2\driver\_mouse.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\d_draw.cpp">
+				RelativePath="..\..\sword2\driver\d_draw.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\d_draw.h">
+				RelativePath="..\..\sword2\driver\d_draw.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\d_sound.cpp">
+				RelativePath="..\..\sword2\driver\d_sound.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\d_sound.h">
+				RelativePath="..\..\sword2\driver\d_sound.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\driver96.h">
+				RelativePath="..\..\sword2\driver\driver96.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\keyboard.cpp">
+				RelativePath="..\..\sword2\driver\keyboard.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\keyboard.h">
+				RelativePath="..\..\sword2\driver\keyboard.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\language.cpp">
+				RelativePath="..\..\sword2\driver\language.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\menu.cpp">
+				RelativePath="..\..\sword2\driver\menu.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\menu.h">
+				RelativePath="..\..\sword2\driver\menu.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\misc.cpp">
+				RelativePath="..\..\sword2\driver\misc.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\palette.cpp">
+				RelativePath="..\..\sword2\driver\palette.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\palette.h">
+				RelativePath="..\..\sword2\driver\palette.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\rdwin.cpp">
+				RelativePath="..\..\sword2\driver\rdwin.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\rdwin.h">
+				RelativePath="..\..\sword2\driver\rdwin.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\render.cpp">
+				RelativePath="..\..\sword2\driver\render.cpp">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\render.h">
+				RelativePath="..\..\sword2\driver\render.h">
 			</File>
 			<File
-				RelativePath="..\..\bs2\driver\sprite.cpp">
+				RelativePath="..\..\sword2\driver\sprite.cpp">
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\bs2\anims.cpp">
+			RelativePath="..\..\sword2\anims.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\anims.h">
+			RelativePath="..\..\sword2\anims.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\build_display.cpp">
+			RelativePath="..\..\sword2\build_display.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\build_display.h">
+			RelativePath="..\..\sword2\build_display.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\console.cpp">
+			RelativePath="..\..\sword2\console.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\console.h">
+			RelativePath="..\..\sword2\console.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\controls.cpp">
+			RelativePath="..\..\sword2\controls.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\controls.h">
+			RelativePath="..\..\sword2\controls.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\credits.h">
+			RelativePath="..\..\sword2\credits.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\debug.cpp">
+			RelativePath="..\..\sword2\debug.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\debug.h">
+			RelativePath="..\..\sword2\debug.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\defs.h">
+			RelativePath="..\..\sword2\defs.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\events.cpp">
+			RelativePath="..\..\sword2\events.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\events.h">
+			RelativePath="..\..\sword2\events.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\function.cpp">
+			RelativePath="..\..\sword2\function.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\function.h">
+			RelativePath="..\..\sword2\function.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\header.h">
+			RelativePath="..\..\sword2\header.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\icons.cpp">
+			RelativePath="..\..\sword2\icons.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\icons.h">
+			RelativePath="..\..\sword2\icons.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\interpreter.cpp">
+			RelativePath="..\..\sword2\interpreter.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\interpreter.h">
+			RelativePath="..\..\sword2\interpreter.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\layers.cpp">
+			RelativePath="..\..\sword2\layers.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\layers.h">
+			RelativePath="..\..\sword2\layers.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\logic.cpp">
+			RelativePath="..\..\sword2\logic.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\logic.h">
+			RelativePath="..\..\sword2\logic.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\maketext.cpp">
+			RelativePath="..\..\sword2\maketext.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\maketext.h">
+			RelativePath="..\..\sword2\maketext.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\mem_view.cpp">
+			RelativePath="..\..\sword2\mem_view.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\memory.cpp">
+			RelativePath="..\..\sword2\memory.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\memory.h">
+			RelativePath="..\..\sword2\memory.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\mouse.cpp">
+			RelativePath="..\..\sword2\mouse.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\mouse.h">
+			RelativePath="..\..\sword2\mouse.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\object.h">
+			RelativePath="..\..\sword2\object.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\protocol.cpp">
+			RelativePath="..\..\sword2\protocol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\protocol.h">
+			RelativePath="..\..\sword2\protocol.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\resman.cpp">
+			RelativePath="..\..\sword2\resman.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\resman.h">
+			RelativePath="..\..\sword2\resman.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\router.cpp">
+			RelativePath="..\..\sword2\router.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\router.h">
+			RelativePath="..\..\sword2\router.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\save_rest.cpp">
+			RelativePath="..\..\sword2\save_rest.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\save_rest.h">
+			RelativePath="..\..\sword2\save_rest.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\scroll.cpp">
+			RelativePath="..\..\sword2\scroll.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\scroll.h">
+			RelativePath="..\..\sword2\scroll.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\sound.cpp">
+			RelativePath="..\..\sword2\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\sound.h">
+			RelativePath="..\..\sword2\sound.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\speech.cpp">
+			RelativePath="..\..\sword2\speech.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\speech.h">
+			RelativePath="..\..\sword2\speech.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\startup.cpp">
+			RelativePath="..\..\sword2\startup.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\startup.h">
+			RelativePath="..\..\sword2\startup.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\sword2.cpp">
+			RelativePath="..\..\sword2\sword2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\sword2.h">
+			RelativePath="..\..\sword2\sword2.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\sync.cpp">
+			RelativePath="..\..\sword2\sync.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\sync.h">
+			RelativePath="..\..\sword2\sync.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\tony_gsdk.cpp">
+			RelativePath="..\..\sword2\tony_gsdk.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\tony_gsdk.h">
+			RelativePath="..\..\sword2\tony_gsdk.h">
 		</File>
 		<File
-			RelativePath="..\..\bs2\walker.cpp">
+			RelativePath="..\..\sword2\walker.cpp">
 		</File>
 		<File
-			RelativePath="..\..\bs2\walker.h">
+			RelativePath="..\..\sword2\walker.h">
 		</File>
 	</Files>
 	<Globals>

@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib bs2_debug/bs2.lib queen_debug/queen.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib sword2_debug/sword2.lib queen_debug/queen.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -90,7 +90,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib bs2_release/bs2.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib sword2_release/sword2.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -149,6 +149,12 @@
 			</File>
 			<File
 				RelativePath="..\..\common\config-manager.h">
+			</File>
+			<File
+				RelativePath="..\..\common\debugger.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\debugger.h">
 			</File>
 			<File
 				RelativePath="..\..\common\file.cpp">

@@ -96,6 +96,12 @@
 	</Configurations>
 	<Files>
 		<File
+			RelativePath="..\..\queen\command.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\command.h">
+		</File>
+		<File
 			RelativePath="..\..\queen\cutaway.cpp">
 		</File>
 		<File
@@ -157,6 +163,9 @@
 		</File>
 		<File
 			RelativePath="..\..\queen\talk.h">
+		</File>
+		<File
+			RelativePath="..\..\queen\verb.h">
 		</File>
 		<File
 			RelativePath="..\..\queen\walk.cpp">
