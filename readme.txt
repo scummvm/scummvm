@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2002-05-01
+Last updated:    2002-05-08
 Release version: 0.2.0 [CVS Build]
 ------------------------------------------------------------------------
 
@@ -37,13 +37,14 @@ Supported Games:
 At the moment the following games have been reported to work, and should
 be playable to the end:
 
-        Loom (256 color CD version)            [Game: loomcd]
-        Monkey Island 1 (CD version)           [Game: monkey1]
-        Monkey Island 2                        [Game: monkey2]
-        Indiana Jones And The Fate Of Atlantis [Game: atlantis]
-        Day Of The Tentacle                    [Game: tentacle]
-        Sam & Max                              [Game: samnmax]
-        Simon The Sorcerer                     [Game: simon1dos or simon1win]
+        Loom (256 color CD version)               [Game: loomcd]
+        Zak McKraken (256 color FM Towns version) [Game: zak256]
+        Monkey Island 1 (CD version)              [Game: monkey1]
+        Monkey Island 2                           [Game: monkey2]
+        Indiana Jones And The Fate Of Atlantis    [Game: atlantis]
+        Day Of The Tentacle                       [Game: tentacle]
+        Sam & Max                                 [Game: samnmax]
+        Simon The Sorcerer                        [Game: simon1dos/simon1win]
 
 
 The following games should load, but are not yet fully playable. Play these at
@@ -52,7 +53,6 @@ the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
         Monkey Island 1 (VGA floppy)                   [Game: monkeyvga]
-        Zak McKraken (256 color FM Towns version)      [Game: zak256]
         Indiana Jones and the Last Crusade (256 color) [Game: indy3]
         Full Throttle                                  [Game: ft]
         The Dig                                        [Game: dig]
@@ -102,7 +102,6 @@ listed here, nor in the compatibility table on the web site, please see below.
                   using mouse fighting.
 
 
-
        Sam and Max:
                 - Subgames are not fully functional.
 
@@ -115,6 +114,19 @@ listed here, nor in the compatibility table on the web site, please see below.
                 - The Mystery Vortex may hang the game if you hang around in
                   the main room for too long. This is caused by a script race
 
+
+       Zak McKracken Fm Towns:
+                - The Fm Towns 256 color version of Zak McKracken is rare,
+                  And as the ScummVM team does not encourage piracy in any
+                  way, we do not know where to buy or download a copy of this
+                  game. Petition LucasArts to re-release it :)
+
+                - No music or sound effects yet.
+
+                - You may get stuck buying items in the shop, due to a walkbox
+                  issue. To escape, use "ctrl-d" to enter the debugger, then
+                  "r 5" <return>, "q" <return>, and walk back into the shop to
+                  recover your inventory.
 
 
        Loom (256 Talkie):
@@ -223,7 +235,7 @@ Command Line Options:
         -c<num>    - Drive to play cd audio from.  E.g., 0 is first drive.
         -s<num>    - Set the sfx volume, 0-255.    Default is '100'
         -m<num>    - Set the music volume, 0-100.  Default is '60'
-        -t<num>    - Set music tempo. Defaults: Adlib: 0x1F0000, Midi: 0x460000
+        -t<num>    - Set music tempo. Adlib default: 0x1F0000, Midi: 0x460000
         -e<mode>   - Select sound engine. See below.
         -g<mode>   - Select graphics scaler. See below.
         -f         - Full-screen mode.
@@ -303,6 +315,7 @@ depending on your operating system and configuration.
         
         -eadlib     - Uses internal Adlib Emulation (default) 
         -ewindows   - Windows MIDI. Uses built-in sequencer, for Windows users
+        -emidiemu   - Emulated midi music, for Sam and Max (BETA - BUGGY)
         -eseq       - Uses /dev/sequencer for MIDI, *nix users. See below.
         -eqt        - Quicktime sound, for Macintosh users.
         -ecore      - CoreAudio sound, for MacOS X users.
@@ -313,24 +326,36 @@ depending on your operating system and configuration.
 Playing sound with Adlib emulation:
 -----------------------------------
 By default an Adlib card will be emulated and ScummVM will output the music
-as sampled waves. This offers far superior performance to Timidity, however
-does not work with some games such as Sam and Max.
+as sampled waves. This is the default mode for most games, and offers the
+best compatability between machines and games. However, Sam and Max does not
+include Adlib emulation.
 
+Playing sound with MIDI emulation:
+----------------------------------
+Until recently, some games (particually Sam and Max) were only able to run
+in MIDI mode. This prevented music for these games from working on platforms
+that do not support MIDI, or soundcards that do not provide MIDI drivers (eg,
+many soundcards will not play MIDI under Linux). We have recently added an
+'emulated MIDI' technology. It can be accessed using the 'midiemu' option,
+and is the default for Sam and Max on UNIX platforms. -HOWEVER-, it is still
+very buggy and the emulation is not perfect. If you are capable of using
+native midi, we recommend using one of the MIDI modes below.
 
-Playing sound with MIDI:
-------------------------
+Playing sound with Native MIDI:
+-------------------------------
 Use the appropriate -e<mode> command line option from the list above to
-select your preferred MIDI device. For example, if you wish to use Windows
-MIDI over the default Adlib Emulation, use the -ewindows option.
+select your preferred MIDI device. For example, if you wish to use the
+Windows MIDI driver, use the -ewindows option.
 
-
-Playing sound with Sequencer:
------------------------------
+Playing sound with Sequencer MIDI:              [UNIX ONLY]
+----------------------------------
 If your soundcard driver supports a sequencer, you may set the environment
 variable "SCUMMVM_MIDI" to your sequencer device - eg, /dev/sequencer
 
 Then start ScummVM with the parameter '-eseq'. This should work on several
 cards, and may offer better performance and quality than Adlib emulation.
+For those systems where Sequencer support does not work, there is always
+MIDI emulation and Adlib emulation available.
 
 Using MP3 files for CD audio:
 -----------------------------
