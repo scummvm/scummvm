@@ -903,13 +903,32 @@ void Actor::drawActorCostume() {
 
 	setupActorScale();
 
-	if (!(_vm->_features & GF_NEW_COSTUMES)) {
-		CostumeRenderer cr(_vm);
+	BaseCostumeRenderer *bcr;
 
-		cr._actorX = x - _vm->virtscr[0].xstart;
-		cr._actorY = y - elevation;
-		cr._scaleX = scalex;
-		cr._scaleY = scaley;
+	if (_vm->_features & GF_NEW_COSTUMES)
+		bcr = new AkosRenderer(_vm);
+	else
+		bcr = new CostumeRenderer(_vm);
+
+	bcr->_actorX = x - _vm->virtscr[0].xstart;
+	bcr->_actorY = y - elevation;
+	bcr->_scaleX = scalex;
+	bcr->_scaleY = scaley;
+
+	bcr->_shadow_mode = shadow_mode;
+	if (_vm->_features & GF_SMALL_HEADER)
+		bcr->_shadow_table = NULL;
+	else
+		bcr->_shadow_table = _vm->_shadowPalette;
+
+	bcr->setCostume(costume);
+	bcr->setPalette(palette);
+	bcr->setFacing(this);
+
+	bcr->_dirty_id = number;
+
+	if (!(_vm->_features & GF_NEW_COSTUMES)) {
+		CostumeRenderer& cr = *(CostumeRenderer *)bcr;
 
 		cr._outheight = _vm->virtscr[0].height;
 
@@ -923,34 +942,17 @@ void Actor::drawActorCostume() {
 				cr._zbuf = _vm->gdi._numZBuffer;
 		}
 
-		cr._shadow_mode = shadow_mode;
-		if (_vm->_features & GF_SMALL_HEADER)
-			cr._shadow_table = NULL;
-		else
-			cr._shadow_table = _vm->_shadowPalette;
-
-		cr.setCostume(costume);
-		cr.setPalette(palette);
-		cr.setFacing(this);
-
 		cr._draw_top = top = 0xFF;
 		cr._draw_bottom = bottom = 0;
 
-		cr._dirty_id = number;
-
-		/* if the actor is partially hidden, redraw it next frame */
+		// if the actor is partially hidden, redraw it next frame
 		if (cr.drawCostume(cost) & 1) {
 			needBgReset = true;
 			needRedraw = true;
 		}
-		top = cr._draw_top;
-		bottom = cr._draw_bottom;
 	} else {
-		AkosRenderer ar(_vm);
-		ar._actorX = x - _vm->virtscr[0].xstart;
-		ar._actorY = y - elevation;
-		ar._scaleX = scalex;
-		ar._scaleY = scaley;
+		AkosRenderer& ar = *(AkosRenderer *)bcr;
+
 		ar._zbuf = forceClip;
 		if (ar._zbuf == 100) {
 			ar._zbuf = _vm->getMaskFromBox(walkbox);
@@ -962,17 +964,8 @@ void Actor::drawActorCostume() {
 		ar.outwidth = _vm->virtscr[0].width;
 		ar.outheight = _vm->virtscr[0].height;
 
-		ar._shadow_mode = shadow_mode;
-		ar._shadow_table = _vm->_shadowPalette;
-
-		ar.setCostume(costume);
-		ar.setPalette(palette);
-		ar.setFacing(this);
-
 		ar._draw_top = top = 0x7fffffff;
 		ar._draw_bottom = bottom = 0;
-
-		ar._dirty_id = number;
 
 		if (ar.drawCostume(cost)) {
 			// FIXME: this breaks talking in The Dig because the actor
@@ -986,9 +979,12 @@ void Actor::drawActorCostume() {
 			//needBgReset = true;
 			//needRedraw = true;
 		}
-		top = ar._draw_top;
-		bottom = ar._draw_bottom;
 	}
+
+	top = bcr->_draw_top;
+	bottom = bcr->_draw_bottom;
+	
+	delete bcr;
 }
 
 void Actor::animateCostume() {
