@@ -75,10 +75,12 @@ public:
 
 class MidiDriver_MPU401 : public MidiDriver {
 private:
+	typedef void (*TimerCallback) (void*);
+
 	MidiChannel_MPU401 _midi_channels [16];
 	volatile bool _started_thread;
 	void *_mutex; // Concurrent shutdown barrier
-	volatile void *_timer_proc;
+	volatile TimerCallback _timer_proc;
 	void *_timer_param;
 
 	static int midi_driver_thread (void *param);
@@ -87,7 +89,7 @@ public:
 	MidiDriver_MPU401();
 
 	virtual void close();
-	void setTimerCallback(void *timer_param, void (*timer_proc) (void *));
+	void setTimerCallback(void *timer_param, TimerCallback timer_proc);
 	uint32 getBaseTempo(void) { return 10000; }
 
 	MidiChannel *allocateChannel();

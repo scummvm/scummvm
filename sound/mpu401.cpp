@@ -115,7 +115,7 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 	return NULL;
 }
 
-void MidiDriver_MPU401::setTimerCallback (void *timer_param, void (*timer_proc) (void *)) {
+void MidiDriver_MPU401::setTimerCallback (void *timer_param, TimerCallback timer_proc) {
 	if (!_timer_proc || !timer_proc) {
 		_timer_proc = timer_proc;
 		_timer_param = timer_param;
@@ -132,7 +132,6 @@ void MidiDriver_MPU401::setTimerCallback (void *timer_param, void (*timer_proc) 
 }
 
 #if !defined(__MORPHOS__) && !defined(__PALM_OS__)
-typedef void (*TimerCallback) (void*);
 
 int MidiDriver_MPU401::midi_driver_thread(void *param) {
 	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
@@ -151,7 +150,7 @@ int MidiDriver_MPU401::midi_driver_thread(void *param) {
 		while (old_time < cur_time) {
 			old_time += 10;
 			if (mid->_timer_proc)
-				(*(TimerCallback)(mid->_timer_proc)) (mid->_timer_param);
+				(*(mid->_timer_proc)) (mid->_timer_param);
 		}
 	}
 
