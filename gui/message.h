@@ -23,13 +23,18 @@
 
 #include "dialog.h"
 #include "common/str.h"
+#include "common/list.h"
 
 class MessageDialog : public Dialog {
 	typedef ScummVM::String String;
+	typedef ScummVM::StringList StringList;
 public:
 	MessageDialog(NewGui *gui, const String &message);
 
 protected:
+	StringList _lines;
+	
+	int addLine(const char *line, int size);
 };
 
 #endif

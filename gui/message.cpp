@@ -22,8 +22,44 @@
 #include "message.h"
 #include "newgui.h"
 
-#include "common/list.h"
 
+int MessageDialog::addLine(const char *line, int size)
+{
+	int width = 0, maxWidth = 0;
+	const char *start = line;
+	String tmp;
+
+	for (int i = 0; i < size; ++i) {
+		int w = _gui->getCharWidth(*line);
+
+		// Check if we exceed the maximum line width, if so, split the line
+		// TODO - we could make this more clever by trying to split at
+		// non-letters, e.g. at space/slash/dot
+		if (width + w > 280) {
+			if (maxWidth < width)
+				maxWidth = width;
+			
+			// Add the substring from intervall [start, i-1]
+			tmp = String(start, line - start);
+			_lines.push_back(tmp);
+			
+			start = line;
+			width = w;
+		} else
+			width += w;
+		
+		line++;
+	}
+
+	if (maxWidth < width)
+		maxWidth = width;
+
+	if (start < line) {
+		tmp = String(start, line - start);
+		_lines.push_back(tmp);
+	}
+	return maxWidth;
+}
 
 MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	: Dialog(gui, 30, 20, 260, 124)
@@ -32,42 +68,42 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
-	ScummVM::StringList lines;
-	String tmp;
 	const char *str = message.c_str();
 	const char *start = str;
 	int lineWidth, maxlineWidth = 0;
+	int lineCount;
 	
 	while (*str) {
 		if (*str == '\n') {
-			tmp = String(start, str - start);
-			lines.push_back(tmp);
-			lineWidth = _gui->getStringWidth(tmp);
+			lineWidth = addLine(start, str - start);
 			if (maxlineWidth < lineWidth)
 				maxlineWidth = lineWidth;
 			start = str + 1;
 		}
-		
 		++str;
 	}
 
-	// Add in the last line
-	tmp = String(start, str - start);
-	lines.push_back(tmp);
-	lineWidth = _gui->getStringWidth(tmp);
+	// Add the last line
+	lineWidth = addLine(start, str - start);
 	if (maxlineWidth < lineWidth)
 		maxlineWidth = lineWidth;
 	
-	// TODO - we should probably check for over/underflows here
+	// Calculate the desired dialog size (maxing out at 300*180 for now)
 	_w = maxlineWidth + 20;
-	_h = lines.size() * kLineHeight + 34;
+	lineCount = _lines.size();
+	_h = lineCount * kLineHeight + 34;
+	if (_h > 180) {
+		lineCount = (180 - 34) / kLineHeight;
+		_h = lineCount * kLineHeight + 34;
+	}
 	_x = (320 - _w) / 2;
 	
-	for (int i = 0; i < lines.size(); i++) {
+	for (int i = 0; i < lineCount; i++) {
 		new StaticTextWidget(this, 10, 10+i*kLineHeight, maxlineWidth, kLineHeight,
-								lines[i], kTextAlignCenter);
+								_lines[i], kTextAlignCenter);
 	}
 
-	// FIXME - the vertical position has to be adjusted
+	// FIXME - allow for multiple buttons, and return in runModal() which one
+	// was selected.
 	addButton((_w - kButtonWidth)/2, _h - 24, "OK", kCloseCmd, '\n');	// Confirm dialog
 }
