@@ -59,6 +59,7 @@ typedef signed long int32;
 
 #define FORCEINLINE inline
 #define NORETURN __attribute__((__noreturn__))
+#define GCC_PACK __attribute__((packed))
 #define CDECL
 
 typedef unsigned char byte;
