@@ -463,11 +463,11 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 		}
 	}
 	
-	return;
-
+	if (current_option) {
 ShowHelpAndExit:
-	printf(USAGE_STRING);
-	exit(1);
+		printf(USAGE_STRING);
+		exit(1);
+	}
 }
 
 void GameDetector::setTarget(const String &name) {
