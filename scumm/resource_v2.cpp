@@ -31,7 +31,6 @@ void Scumm_v2::readClassicIndexFile() {
 	int i;
 
 	if (_gameId == GID_MANIAC) {
-		//FIXME the music driver was previously been set before detection of classic/enchanced version.
 		if (!(_features & GF_AMIGA) && !(_features & GF_NES))
 			_playerV2 = new Player_V1(this);
 
@@ -41,7 +40,6 @@ void Scumm_v2::readClassicIndexFile() {
 		_numScripts = 200;
 		_numSounds = 100;
 	} else if (_gameId == GID_ZAK) {
-		//FIXME the music driver was previously been set before detection of classic/enchanced version.
 		if (!(_features & GF_AMIGA))
 			_playerV2 = new Player_V2(this);
 
@@ -157,18 +155,18 @@ void Scumm_v2::readIndexFile() {
 
 	switch(magic) {
 		case 0x0100:
-			warning("Enhanced V2 game detected");
+			debug(1,"Enhanced V2 game detected");
 			readEnhancedIndexFile();			
 			break;
 		case 0x0A31:
-			warning("Classic V1 game detected");
+			debug(1,"Classic V1 game detected");
 			_version = 1;
 			readClassicIndexFile();
 			break;
 		case 0x4643:
 			if (!(_features & GF_NES))
-				error("use maniacnes target");
-			warning("NES V1 game detected");
+				error("Use maniacnes target");
+			debug(1,"NES V1 game detected");
 			_version = 1;
 			readClassicIndexFile();
 			break;
