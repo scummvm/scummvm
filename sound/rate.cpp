@@ -179,11 +179,13 @@ resume:
 
 the_end:
 	*osamp = (obuf - ostart) / 2;
-	rate->ilast[0] = ilast[0];
-	rate->icur[0] = icur[0];
-	if (stereo) {
-		rate->ilast[1] = ilast[1];
-		rate->icur[1] = icur[1];
+	if (!input.eof()) {
+		rate->ilast[0] = ilast[0];
+		rate->icur[0] = input.read();
+		if (stereo) {
+			rate->ilast[1] = ilast[1];
+			rate->icur[1] = input.read();
+		}
 	}
 	return (ST_SUCCESS);
 }
