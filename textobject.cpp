@@ -34,7 +34,6 @@ void TextObject::setColor(Color *newcolor) {fgColor_ = newcolor;}
 void TextObject::draw() {
 	const char *localString = Localizer::instance()->localize(textID_).c_str();
 
-	//warning("Drawing text object %s at (%d,%d): %s", textID_, x_, y_, localString);
-	g_driver->drawHackFont(x_, y_, localString, fgColor_);
+	g_driver->drawEmergString(x_, y_, strrchr(localString, '/') + 1, fgColor_);
 }
 

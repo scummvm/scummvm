@@ -42,13 +42,14 @@ class Driver {
 		void drawDepthBitmap(int x, int y, int w, int h, char *data);
 		void drawBitmap();
 
-		void drawHackFont(int x, int y, const char *text, Color &fgColor);
+		void drawEmergString(int x, int y, const char *text, Color &fgColor);
+		void loadEmergFont();
 
 		void prepareSmushFrame(int width, int height, byte *bitmap);
 		void drawSmushFrame(int offsetX, int offsetY);
 
 	private:
-		GLuint hackFont;  // FIXME: Temporary font drawing hack
+		GLuint emergFont;
 		int _smushNumTex;
 		GLuint *_smushTexIds;
 		int _smushWidth;

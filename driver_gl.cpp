@@ -17,19 +17,9 @@
 
 #include "driver_gl.h"		// Driver interface
 #include "debug.h"		// error(), warning(), etc
+#include "font.h"		// builtin emergency font
 
 Driver *g_driver;
-
-// Hacky includes for temporary font rendering
-#if defined(MACOSX)
-	// TODO
-#elif defined(UNIX)
-	#include <GL/glx.h>
-	#include <X11/Xlib.h>
-#else
-	#include <SDL_syswm.h>
-	#include <windows.h>
-#endif
 
 // Constructor. Should create the driver and open screens, etc.
 Driver::Driver(int screenW, int screenH, int screenBPP) {
@@ -47,37 +37,8 @@ Driver::Driver(int screenW, int screenH, int screenBPP) {
 	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	SDL_WM_SetCaption(GLDriver, "Residual");
 
-	// FIXME: Hacky temporary font renderer code
-	hackFont = glGenLists(256);
-#if defined(MACOSX)
-	// TODO
-#elif defined(WIN32)
-	{
-		HDC   hDC;
-		HFONT font;
-		SDL_SysWMinfo wmi;
-		SDL_VERSION(&wmi.version);
-		SDL_GetWMInfo(&wmi);
-
-		hDC = GetDC(wmi.window);
-		font = CreateFont(0, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-			OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, 0 , FF_DONTCARE|DEFAULT_PITCH, "Courier New");
-		SelectObject(hDC, font);
-		wglUseFontBitmaps(hDC, 0, 256, hackFont);
-	}
-#else
-	{
-		Display *dpy = XOpenDisplay(NULL);
-		XFontStruct *XFont = XLoadQueryFont(dpy, "-misc-fixed-medium-r-*-*-20-*-*-*-*-*-*-*" );
-		if (XFont) {
-			glXUseXFont(XFont->fid, 0, 256, hackFont);
-			XFreeFont(dpy, XFont);
-			XCloseDisplay(dpy);
-		} else {
-			warning("Couldn't load default font -misc-fixed-medium");
-		}
-	}
-#endif
+	// Load emergency built-in font
+	loadEmergFont();
 
 	_smushNumTex = 0;
 }
@@ -153,25 +114,6 @@ void Driver::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDepthFunc(GL_LESS);
-}
-
-void Driver::drawHackFont(int x, int y, const char *text, Color &fgColor) {
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 0, 1);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glColor3f(fgColor.red(), fgColor.green(), fgColor.blue());
-	glRasterPos2i(x, y);
-
-	glListBase(hackFont);
-	glCallLists(strlen(strrchr(text, '/')) - 1, GL_UNSIGNED_BYTE, strrchr(text, '/') + 1);
-
-	glMatrixMode( GL_PROJECTION );
-	glPopMatrix();
 }
 
 void Driver::prepareSmushFrame(int width, int height, byte *bitmap) {
@@ -270,4 +212,39 @@ void Driver::drawSmushFrame(int offsetX, int offsetY) {
 	glDisable(GL_TEXTURE_2D);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
+}
+
+// Load emergency font
+void Driver::loadEmergFont() {
+	int i;
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	emergFont = glGenLists(128);
+	for (i=32;i<127;i++) {
+		glNewList(emergFont + i, GL_COMPILE);
+		glBitmap(8, 13, 0, 2, 10, 0, font[i-32]);
+		glEndList();
+	}
+}
+
+// Draw text string using emergency font
+void Driver::drawEmergString(int x, int y, const char *text, Color &fgColor) {
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        glOrtho(0, 640, 480, 0, 0, 1);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+
+        glColor3f(fgColor.red(), fgColor.green(), fgColor.blue());
+        glRasterPos2i(x, y);
+
+        glListBase(emergFont);
+        //glCallLists(strlen(strrchr(text, '/')) - 1, GL_UNSIGNED_BYTE, strrchr(text, '/') + 1);
+        glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *) text);
+
+        glMatrixMode( GL_PROJECTION );
+        glPopMatrix();
 }
