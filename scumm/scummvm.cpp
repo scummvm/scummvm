@@ -987,10 +987,13 @@ void ScummEngine::launch() {
 
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
+		int args[16];
+		memset(args, 0, sizeof(args));
+		args[0] = _bootParam;		
 		if (_gameId == GID_MANIAC && _version == 1 && _demoMode)
-			runScript(9, 0, 0, &_bootParam);
+			runScript(9, 0, 0, args);
 		else
-			runScript(1, 0, 0, &_bootParam);
+			runScript(1, 0, 0, args);
 	}
 	_saveLoadFlag = 0;
 }
@@ -1434,8 +1437,11 @@ load_game:
 
 		// HACK as in game save stuff isn't supported currently
 		if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
-			int args = 2;
+			int args[16];
 			uint value;
+			memset(args, 0, sizeof(args));
+			args[0] = 2;
+
 			if (_features & GF_MACINTOSH)
 				value = 105;
 			else
@@ -1443,7 +1449,7 @@ load_game:
 			byte restoreScript = (_features & GF_FMTOWNS) ? 17 : 18;
 			// if verbs should be shown restore them
 			if (VAR(value) == 2)
-				runScript(restoreScript, 0, 0, &args);
+				runScript(restoreScript, 0, 0, args);
 		} else if (_version > 3) {
 			for (int i = 0; i < _numVerbs; i++)
 				drawVerb(i, 0);
