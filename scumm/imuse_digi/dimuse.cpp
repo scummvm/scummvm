@@ -327,8 +327,11 @@ void IMuseDigital::callback() {
 					mixer_size *= 2;
 				}
 
-				if (_track[l]->curRegion == -1)
+				if (_track[l]->curRegion == -1) {
 					switchToNextRegion(l);
+					if (_track[l]->toBeRemoved)
+						break;
+				}
 
 				int bits = _sound->getBits(_track[l]->soundHandle);
 				do {
