@@ -131,11 +131,11 @@ void Scumm_v3::readIndexFile() {
                                _objectOwnerTable[i] &= OF_OWNER_MASK;
                        }
 
-#if defined(SCUMM_BIG_ENDIAN)
+/*#if defined(SCUMM_BIG_ENDIAN)
                        for (i=0; i<num; i++) {
                                _classData[i] = FROM_LE_32(_classData[i]);
                        }
-#endif
+#endif*/
                        break;
 
                default:
@@ -148,9 +148,7 @@ void Scumm_v3::readIndexFile() {
 }
 
 void Scumm_v3::loadCharset(int no){
-	uint32 size;
-
-		memset(_charsetData, 0, sizeof(_charsetData));
+	uint32 size;		memset(_charsetData, 0, sizeof(_charsetData));
 
         checkRange(4 ,0 ,no , "Loading illegal charset %d");
         openRoom(-1);
