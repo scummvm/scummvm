@@ -187,7 +187,7 @@ void SkyScreen::flip(void) {
 	uint8 *screenPos = _currentScreen;
 	uint8 *backPos = _backScreen;
 	uint32 copyX, copyWidth;
-	copyWidth = 0;
+	copyX = copyWidth = 0;
 	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
 		for (uint8 cntx = 0; cntx < GRID_X; cntx++) {
 			if (_gameGrid[cnty * GRID_X + cntx] & 1) {
