@@ -38,12 +38,6 @@ unsigned short _notefreqs[4][12] = {
 //
 ////////////////////////////////////////
 
-static void playerv3a_handler (void *engine) {
-	Scumm *scumm = (Scumm *)engine;
-	if (scumm && scumm->_playerV3A)
-		scumm->_playerV3A->playMusic();
-}
-
 Player_V3A::Player_V3A(Scumm *scumm) {
 	int i;
 	_scumm = scumm;
@@ -62,13 +56,13 @@ Player_V3A::Player_V3A(Scumm *scumm) {
 
 	_maxvol = 255;
 
-	scumm->_timer->installProcedure(playerv3a_handler,16666);
+	scumm->_timer->installProcedure(timerHandler, 16666);
 
 	_isinit = false;
 }
 
 Player_V3A::~Player_V3A() {
-	_scumm->_timer->releaseProcedure(playerv3a_handler);
+	_scumm->_timer->releaseProcedure(timerHandler);
 	if (!_isinit)
 		return;
 	for (int i = 0; _wavetable[i] != NULL; i++) {
@@ -152,66 +146,51 @@ void Player_V3A::startSound(int nr) {
 	byte *data = _scumm->getResourceAddress(rtSound, nr);
 	assert(data);
 
+	if (_scumm->_gameId != GID_INDY3 && _scumm->_gameId != GID_LOOM)
+		error("player_v3a - unknown game!");
+
 	if (!_isinit) {
 		int i;
+		unsigned char *ptr;
+		int offset = 4;
+		int numInstruments;
+
 		if (_scumm->_gameId == GID_INDY3) {
-			unsigned char *ptr = _scumm->getResourceAddress(rtSound,83);
-			int offset = 4;
-			_wavetable = (instData **)malloc(13 * sizeof(void *));
-			for (i = 0; i < 12; i++) {
-				_wavetable[i] = (instData *)malloc(sizeof(instData));
-				for (int j = 0; j < 6; j++) {
-					int off, len;
-					off = READ_BE_UINT16(ptr + offset + 0);
-					_wavetable[i]->_ilen[j] = len = READ_BE_UINT16(ptr + offset + 2);
-					if (len) {
-						_wavetable[i]->_idat[j] = (char *)malloc(len);
-						memcpy(_wavetable[i]->_idat[j],ptr + off,len);
-					} else	_wavetable[i]->_idat[j] = NULL;
-					off = READ_BE_UINT16(ptr + offset + 4);
-					_wavetable[i]->_llen[j] = len = READ_BE_UINT16(ptr + offset + 6);
-					if (len) {
-						_wavetable[i]->_ldat[j] = (char *)malloc(len);
-						memcpy(_wavetable[i]->_ldat[j],ptr + off,len);
-					} else	_wavetable[i]->_ldat[j] = NULL;
-					_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
-					offset += 10;
-				}
+			ptr = _scumm->getResourceAddress(rtSound, 83);
+			numInstruments = 12;
+		} else {
+			ptr = _scumm->getResourceAddress(rtSound, 79);
+			numInstruments = 9;
+		}
+		_wavetable = (instData **)malloc((numInstruments + 1) * sizeof(void *));
+		for (i = 0; i < numInstruments; i++) {
+			_wavetable[i] = (instData *)malloc(sizeof(instData));
+			for (int j = 0; j < 6; j++) {
+				int off, len;
+				off = READ_BE_UINT16(ptr + offset + 0);
+				_wavetable[i]->_ilen[j] = len = READ_BE_UINT16(ptr + offset + 2);
+				if (len) {
+					_wavetable[i]->_idat[j] = (char *)malloc(len);
+					memcpy(_wavetable[i]->_idat[j],ptr + off,len);
+				} else	_wavetable[i]->_idat[j] = NULL;
+				off = READ_BE_UINT16(ptr + offset + 4);
+				_wavetable[i]->_llen[j] = len = READ_BE_UINT16(ptr + offset + 6);
+				if (len) {
+					_wavetable[i]->_ldat[j] = (char *)malloc(len);
+					memcpy(_wavetable[i]->_ldat[j],ptr + off,len);
+				} else	_wavetable[i]->_ldat[j] = NULL;
+				_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
+				offset += 10;
+			}
+			if (_scumm->_gameId == GID_INDY3) {
 				_wavetable[i]->_pitadjust = 0;
 				offset += 2;
-			}
-			_wavetable[i] = NULL;
-		}
-		else if (_scumm->_gameId == GID_LOOM) {
-			unsigned char *ptr = _scumm->getResourceAddress(rtSound,79);
-			int offset = 4;
-			_wavetable = (instData **)malloc(10 * sizeof(void *));
-			for (i = 0; i < 9; i++) {
-				_wavetable[i] = (instData *)malloc(sizeof(instData));
-				for (int j = 0; j < 6; j++) {
-					int off, len;
-					off = READ_BE_UINT16(ptr + offset + 0);
-					_wavetable[i]->_ilen[j] = len = READ_BE_UINT16(ptr + offset + 2);
-					if (len) {
-						_wavetable[i]->_idat[j] = (char *)malloc(len);
-						memcpy(_wavetable[i]->_idat[j],ptr + off,len);
-					} else	_wavetable[i]->_idat[j] = NULL;
-					off = READ_BE_UINT16(ptr + offset + 4);
-					_wavetable[i]->_llen[j] = len = READ_BE_UINT16(ptr + offset + 6);
-					if (len) {
-						_wavetable[i]->_ldat[j] = (char *)malloc(len);
-						memcpy(_wavetable[i]->_ldat[j],ptr + off,len);
-					} else	_wavetable[i]->_ldat[j] = NULL;
-					_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
-					offset += 10;
-				}
+			} else {
 				_wavetable[i]->_pitadjust = READ_BE_UINT16(ptr + offset + 2);
 				offset += 4;
 			}
-			_wavetable[i] = NULL;
 		}
-		else
-			error("player_v3a - unknown game!");
+		_wavetable[i] = NULL;
 		_isinit = true;
 	}
 	
@@ -247,6 +226,12 @@ void Player_V3A::startSound(int nr) {
 			playSound(nr, sound, size, rate, vol, tl, false);
 		}
 	}
+}
+
+void Player_V3A::timerHandler(void *engine) {
+	Scumm *scumm = (Scumm *)engine;
+	if (scumm && scumm->_playerV3A)
+		scumm->_playerV3A->playMusic();
 }
 
 void Player_V3A::playMusic() {

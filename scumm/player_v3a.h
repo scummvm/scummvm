@@ -44,7 +44,6 @@ public:
 	virtual void stopAllSounds();
 	virtual int  getMusicTimer() const;
 
-	virtual void playMusic();
 	virtual int  getSoundStatus(int nr) const;
 
 protected:
@@ -75,6 +74,8 @@ protected:
 	} **_wavetable;
 
 	void playSound (int nr, char *data, int size, int rate, int vol, int tl, bool looped, int loopStart = 0, int loopEnd = 0);
+	void playMusic();
+	static void timerHandler(void *engine);
 };
 
 #endif

@@ -1026,22 +1026,21 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	byte num_instr;
 	byte *channel, *instr, *track;
 	byte *tracks[3];
-	int ppqn;
+	// We will ignore the PPQN in the original resource, because
+	// it's invalid anyway. We use a constant PPQN of 480.
+    const int ppqn = 480;
 	int delay, delay2, olddelay;
 	int i, ch;
 	int total_size = 8 + 16 + 14 + 8 + 7 + 8*sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 
 	ptr = createResource(type, idx, total_size);
-	// We will ignore the PPQN in the original resource, because
-	// it's invalid anyway. We use a constant PPQN of 480.
-    ppqn = 480;
 
 	src_ptr += 2;
 	size -= 2;
 
 	if (*src_ptr == 0x80) {
-		// 0x80: is music; otherwise not.
+		// 0x80 marks a music resource. Otherwise it's a SFX
 		memcpy(ptr, "ADL ", 4); ptr += 4;
 		uint32 dw = READ_BE_UINT32(&total_size);
 		memcpy(ptr, &dw, 4); ptr += 4;
@@ -1087,11 +1086,12 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		// Unfortunate LOOM and INDY3 have different interpretation
 		// of the ticks value.
 		if (_gameId == GID_INDY3) {
-			dw = 1000000 * 256 / 473 * ppqn / 2 / ticks;
+			// Note: since we fix ppqn at 480, ppqn/473 is almost 1
+			dw = 500000 * 256 * ppqn / 473 / ticks;
 		} else if (_gameId == GID_LOOM) {
-			dw = 1000000 * ppqn / 4 / 2 / ticks;
+			dw = 500000 * ppqn / 4 / ticks;
 		} else {
-			dw = (500000 * 256) / ticks;
+			dw = 500000 * 256 / ticks;
 		}
 		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
 			
@@ -1295,7 +1295,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			break;
 
 		src_ptr = tracks[ch];
-		chunk_type = *(src_ptr);
+		chunk_type = *src_ptr;
 
 
 		if (current_note[ch] >= 0) {
@@ -1379,7 +1379,6 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 
 			delay = mintime - curtime;
 			curtime = mintime;
-
 
 			
 			{
