@@ -51,8 +51,8 @@ struct CmdText {
 	};
 
 	char _command[MAX_COMMAND_LEN];
-	const char* lockedVerbPrefix;
-	Graphics* _graphics;
+	Graphics *_graphics;
+	Logic *_logic;
 };
 
 

@@ -40,7 +40,7 @@ void CmdText::clear() {
 void CmdText::display(uint8 color) {
 
 	_graphics->textCurrentColor(color);
-	_graphics->textSetCentered(COMMAND_Y_POS, _command);
+	_graphics->textSetCentered(COMMAND_Y_POS, _command, false);
 }
 
 
@@ -48,7 +48,7 @@ void CmdText::displayTemp(uint8 color, bool locked, const Verb& v, const char *n
 
 	char temp[MAX_COMMAND_LEN];
 	if (locked) {
-		sprintf(temp, "%s%s", lockedVerbPrefix, v.name());
+		sprintf(temp, "%s%s", _logic->lockedVerbPrefix(), v.name());
 	}
 	else {
 		strcpy(temp, v.name());
@@ -58,7 +58,7 @@ void CmdText::displayTemp(uint8 color, bool locked, const Verb& v, const char *n
 		strcat(temp, name);
 	}
 	_graphics->textCurrentColor(color);
-	_graphics->textSetCentered(COMMAND_Y_POS, temp);
+	_graphics->textSetCentered(COMMAND_Y_POS, temp, false);
 }
 
 
@@ -67,7 +67,7 @@ void CmdText::displayTemp(uint8 color, const char *name) {
 	char temp[MAX_COMMAND_LEN];
 	sprintf(temp, "%s %s", _command, name);
 	_graphics->textCurrentColor(color);
-	_graphics->textSetCentered(COMMAND_Y_POS, temp);
+	_graphics->textSetCentered(COMMAND_Y_POS, temp, false);
 }
 
 
@@ -100,7 +100,7 @@ bool CmdText::isEmpty() const {
 Command::Command(Logic *l, Graphics *g, Input *i, Walk *w)
 	: _logic(l), _graphics(g), _input(i), _walk(w) {
 	_cmdText._graphics = _graphics;
-	_cmdText.lockedVerbPrefix = _logic->lockedVerbPrefix();
+	_cmdText._logic = _logic;
 }
 
 
@@ -345,8 +345,9 @@ void Command::executeCurrentAction(bool walk) {
 	// l.419-452 execute.c
 	switch (com->specialSection) {
 	case 1:
-		// XXX l.428-438
+		// XXX l.428-438		
 		warning("Command::executeCurrentAction() - Journal unimplemented");
+		// XXX if(DEMO) SPEAK("This is a demo, so I can't load or save games*14", "JOE", "");
 		return;
 	case 2:
 		_logic->joeUseDress(true);
@@ -807,7 +808,8 @@ bool Command::executeIfCutaway(const char *description) {
 
 	warning("Command::executeIfCutaway(%s) unimplemented", description);
 
-	if(scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
+	if (strlen(description) > 4 && 
+		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
 		/* XXX
 		CUTAWAY(description);
 		strcpy(Kstr,Paramstr);
@@ -825,7 +827,8 @@ bool Command::executeIfDialog(const char *description) {
 
 	warning("Command::executeIfDialog(%s) unimplemented", description);
 
-	if(scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
+	if (strlen(description) > 4 && 
+		scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
 		/* XXX
 		talk(Kstr);
 		strcpy(Kstr,Paramstr);
