@@ -1036,7 +1036,7 @@ void Scumm_v2::o2_putActorAtObject() {
 
 	a = derefActor(getVarOrDirectByte(0x80), "o2_putActorAtObject");
 
-	obj = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
 		getObjectXYPos(obj, x, y);
 	else {
