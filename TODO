@@ -259,7 +259,6 @@ SCUMM
   - Recheck music code
   - Add sound mixer procedure for pool method
   - Change code to new mixer pool method procedure
-  - Check if VAR_SYNC if it's set to nonzero value
   - Add pool method for FT voc samples from resource
   - Implement stuff for fadeParam in JUMP opcode (maybe never implemented)
   - Recheck 'next region' code

@@ -726,7 +726,7 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
 	Common::StackLock lock(_mutex, "IMuseDigital::getCutVoiceLipSyncWidth()");
-	int32 msPos = getPosInMs(kTalkSoundID) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 msPos = getPosInMs(kTalkSoundID) + 50;
 	int32 width = 0, height = 0;
 
 	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d)", kTalkSoundID);
@@ -736,7 +736,7 @@ int32 IMuseDigital::getCurVoiceLipSyncWidth() {
 
 int32 IMuseDigital::getCurVoiceLipSyncHeight() {
 	Common::StackLock lock(_mutex, "IMuseDigital::getCurVoiceLipSyncHeight()");
-	int32 msPos = getPosInMs(kTalkSoundID) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 msPos = getPosInMs(kTalkSoundID) + 50;
 	int32 width = 0, height = 0;
 
 	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d)", kTalkSoundID);
@@ -754,7 +754,7 @@ int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
 		}
 	}
 
-	int32 msPos = getPosInMs(soundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 msPos = getPosInMs(soundId) + 50;
 	int32 width = 0, height = 0;
 
 	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d, %d)", soundId, msPos);
@@ -772,7 +772,7 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 		}
 	}
 
-	int32 msPos = getPosInMs(soundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 msPos = getPosInMs(soundId) + 50;
 	int32 width = 0, height = 0;
 
 	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d, %d)", soundId, msPos);
