@@ -74,6 +74,7 @@ Talk::~Talk() {
 
 
 void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
+	int i;
 	_oldSelectedSentenceIndex = 0;
 	_oldSelectedSentenceValue = 0;
 
@@ -117,7 +118,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	bool personWalking = false;		// OWALK in talk.c
 
 	// Lines 828-846 in talk.c
-	for (int i = 1; i <= 4; i++) {
+	for (i = 1; i <= 4; i++) {
 		if (talkSelected()->values[i-1] > 0) {
 			// This option has been redefined so display new dialogue option
 			_dialogueTree[1][i].head = talkSelected()->values[i-1];
@@ -166,7 +167,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 		// Joe dialogue
 
-		for (int i = 1; i <= 4; i++) {
+		for (i = 1; i <= 4; i++) {
 			findDialogueString(_joePtr, _dialogueTree[level][i].head, _talkString[i]);
 
 			int16 index = _dialogueTree[level][i].gameStateIndex;
@@ -184,7 +185,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		int choicesLeft = 0;
 		int selectedSentence = 0;
 
-		for (int i = 1; i <= 4; i++) {
+		for (i = 1; i <= 4; i++) {
 			if (_talkString[i][0] != '\0') {
 				choicesLeft++;
 				selectedSentence = i;
@@ -224,7 +225,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 		// Set LEVEL to the selected child in dialogue tree
 		
-		for (int i = 1; i <= _levelMax; i++)
+		for (i = 1; i <= _levelMax; i++)
 			if (_dialogueTree[i][0].head == head)
 				level = i;
 
@@ -232,7 +233,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			// No new level has been selected, so lets set LEVEL to the
 			// tree path pointed to by the RETVAL
 
-			for (int i = 1; i <= _levelMax; i++)
+			for (i = 1; i <= _levelMax; i++)
 				for (int j = 0; j <= 5; j++)
 					if (_dialogueTree[i][j].head == retval)
 						level = i;
@@ -619,9 +620,11 @@ void Talk::speakSegment(
 		Person *person,
 		int command,
 		const char *voiceFilePrefix,
-		int index) {
+		int index)
+{
 	// Function SPEAK_SUB, lines 1406-1870 in talk.a
 
+	int i;
 	char segment[MAX_STRING_SIZE];
 	memcpy(segment, segmentStart, length);
 	segment[length] = '\0';
@@ -638,7 +641,7 @@ void Talk::speakSegment(
 
 	switch (command) {
 		case SPEAK_PAUSE:
-			for (int i = 0; i < 10; i++) {
+			for (i = 0; i < 10; i++) {
 				if (_quit)
 					break;
 				_graphics->update();
@@ -824,7 +827,7 @@ void Talk::speakSegment(
 
 		int spaces = countSpaces(segment);
 
-		for (int i = 0; i < (spaces + 1) /* || sfxflag == 0*/; i++) {
+		for (i = 0; i < (spaces + 1) /* || sfxflag == 0*/; i++) {
 // XXX #ifdef __DOS__
 // XXX         if(sfxflag==0 && sfxbusy())
 // XXX 			break;
@@ -1130,7 +1133,7 @@ int16 Talk::selectSentence() {
 						}
 
 						if (oldZone > 0) {
-							// XXX 	for (i = zones[1][oldZone].y1; i < zones[1][oldZone].y2; i += 10)
+							// XXX 	for (int i = zones[1][oldZone].y1; i < zones[1][oldZone].y2; i += 10)
 							// XXX 		texts[i + 150].col = INK_TALK_NORMAL;
 						}
 
@@ -1229,7 +1232,7 @@ void Talk::makeSpeakBob(
 	
 	int max_line_width = 0;
 
-	for (int i = 0; i < line_count; i++) {
+	for (i = 0; i < line_count; i++) {
 		int width = _graphics->textWidth(lines[i]);
 		if (max_line_width < width)
 			max_line_width = width;
@@ -1281,7 +1284,7 @@ void Talk::makeSpeakBob(
 
 	_graphics->textCurrentColor(color);
 
-	for (int i = 0; i < line_count; i++) {
+	for (i = 0; i < line_count; i++) {
 		int lineX = x + (max_line_width - _graphics->textWidth(lines[i])) / 2;
 
 		//debug(0, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
