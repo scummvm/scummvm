@@ -582,12 +582,12 @@ void ScummEngine::readIndexFile() {
 
 		case MKID('DISK'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
-			debug(9, "DISK index block not yet handled, skipping");
+			debug(2, "DISK index block not yet handled, skipping");
 			break;
 
 		case MKID('INIB'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
-			debug(9, "INIB index block not yet handled, skipping");
+			debug(2, "INIB index block not yet handled, skipping");
 			break;
 
 		case MKID('DIRI'):
