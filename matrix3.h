@@ -23,53 +23,53 @@
 // matrix 3 is a rotation matrix
 class Matrix3{
 public:
-	Vector3d right_;
-	Vector3d up_;
-	Vector3d at_;
+	Vector3d _right;
+	Vector3d _up;
+	Vector3d _at;
 
-	void buildFromPitchYawRoll( float pitch, float yaw, float roll );
-	void setAsIdentity(void);
+	void buildFromPitchYawRoll(float pitch, float yaw, float roll);
+	void setAsIdentity();
 
-	void constructAroundPitch( float pitch );
-	void constructAroundYaw( float pitch );
-	void constructAroundRoll( float pitch );
+	void constructAroundPitch(float pitch);
+	void constructAroundYaw(float pitch);
+	void constructAroundRoll(float pitch);
 
-	void getPitchYawRoll( float* pPitch, float* pYaw, float* pRoll );
+	void getPitchYawRoll(float* pPitch, float* pYaw, float* pRoll);
 
 	float getPitch();
 	float getYaw();
 	float getRoll();
 
-	void transform( Vector3d* v );
+	void transform(Vector3d* v);
 
 	// operators
 	Matrix3& operator *=(const Matrix3& s) {
 		float x, y, z;
 
-		x = right_.dotProduct( s.right_.x(), s.up_.x(), s.at_.x() );
-		y = right_.dotProduct( s.right_.y(), s.up_.y(), s.at_.y() );
-		z = right_.dotProduct( s.right_.z(), s.up_.z(), s.at_.z() );
+		x = _right.dotProduct(s._right.x(), s._up.x(), s._at.x());
+		y = _right.dotProduct(s._right.y(), s._up.y(), s._at.y());
+		z = _right.dotProduct(s._right.z(), s._up.z(), s._at.z());
 
-		right_.set( x, y, z );
+		_right.set(x, y, z);
 
-		x = up_.dotProduct( s.right_.x(), s.up_.x(), s.at_.x() );
-		y = up_.dotProduct( s.right_.y(), s.up_.y(), s.at_.y() );
-		z = up_.dotProduct( s.right_.z(), s.up_.z(), s.at_.z() );
+		x = _up.dotProduct(s._right.x(), s._up.x(), s._at.x());
+		y = _up.dotProduct(s._right.y(), s._up.y(), s._at.y());
+		z = _up.dotProduct(s._right.z(), s._up.z(), s._at.z());
 
-		up_.set( x, y, z );
+		_up.set( x, y, z );
 
-		x = at_.dotProduct( s.right_.x(), s.up_.x(), s.at_.x() );
-		y = at_.dotProduct( s.right_.y(), s.up_.y(), s.at_.y() );
-		z = at_.dotProduct( s.right_.z(), s.up_.z(), s.at_.z() );
+		x = _at.dotProduct(s._right.x(), s._up.x(), s._at.x());
+		y = _at.dotProduct(s._right.y(), s._up.y(), s._at.y());
+		z = _at.dotProduct(s._right.z(), s._up.z(), s._at.z());
 
-		at_.set( x, y, z );
+		_at.set(x, y, z);
 
 		return *this;
 	}
 	Matrix3& operator =(const Matrix3& s) {
-		right_ = s.right_;
-		up_ = s.up_;
-		at_ = s.at_;
+		_right = s._right;
+		_up = s._up;
+		_at = s._at;
 
 		return *this;
 	}

@@ -1,17 +1,15 @@
 #include "objectstate.h"
 
-ObjectState::ObjectState(int setupID, ObjectState::Position pos,
-			 const char *bitmap, const char *zbitmap,
-			 bool visible) :
-	setupID_(setupID), pos_(pos) {
-	bitmap_ = ResourceLoader::instance()->loadBitmap(bitmap);
+ObjectState::ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible) :
+		_setupID(setupID), _pos(pos) {
+	_bitmap = ResourceLoader::instance()->loadBitmap(bitmap);
 	if (zbitmap)
-		zbitmap_ = ResourceLoader::instance()->loadBitmap(zbitmap);
+		_zbitmap = ResourceLoader::instance()->loadBitmap(zbitmap);
 
 	int initialImage = 0;
 	if (visible)
 		initialImage = 1;
-	bitmap_->setNumber(initialImage);
-	if (zbitmap_)
-		zbitmap_->setNumber(initialImage);
+	_bitmap->setNumber(initialImage);
+	if (_zbitmap)
+		_zbitmap->setNumber(initialImage);
 }

@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 	ZBUFFER_GLOBAL = parseBoolStr(Registry::instance()->get("zbuffer"));
 	SCREENBLOCKS_GLOBAL = parseBoolStr(Registry::instance()->get("screenblocks"));
 	SHOWFPS_GLOBAL = parseBoolStr(Registry::instance()->get("fps"));
-	for (i=1;i<argc;i++) {
+	for (i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
 			ZBUFFER_GLOBAL = true;
 		else if (strcmp(argv[i], "-nozbuffer") == 0)
@@ -167,8 +167,8 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-StackLock::StackLock(MutexRef mutex)
-	: _mutex(mutex) {
+StackLock::StackLock(MutexRef mutex) :
+		_mutex(mutex) {
 	lock_mutex(_mutex);
 }
 
@@ -177,17 +177,17 @@ StackLock::~StackLock() {
 }
 
 MutexRef create_mutex() {
-	return (MutexRef) SDL_CreateMutex();
+	return (MutexRef)SDL_CreateMutex();
 }
 
 void lock_mutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *) mutex);
+	SDL_mutexP((SDL_mutex *)mutex);
 }
 
 void unlock_mutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *) mutex);
+	SDL_mutexV((SDL_mutex *)mutex);
 }
 
 void delete_mutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *) mutex);
+	SDL_DestroyMutex((SDL_mutex *)mutex);
 }

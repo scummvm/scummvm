@@ -30,28 +30,28 @@ public:
 	void draw() const;
 
 	// Set which image in an animated bitmap to use
-	void setNumber(int n) { curr_image_ = n; }
+	void setNumber(int n) { _curr_image = n; }
 
-	int numImages() const { return num_images_; }
-	int currentImage() const { return curr_image_; }
+	int numImages() const { return _num_images; }
+	int currentImage() const { return _curr_image; }
 
-	int width() const { return width_; }
-	int height() const { return height_; }
-	int x() const { return x_; }
-	int y() const { return y_; }
+	int width() const { return _width; }
+	int height() const { return _height; }
+	int x() const { return _x; }
+	int y() const { return _y; }
 
-	char * getData() { return data_[curr_image_]; }
+	char *getData() { return _data[_curr_image]; }
 
 	~Bitmap();
 
 //private:
-	char **data_;
-	int num_images_, curr_image_;
-	int width_, height_, x_, y_;
-	int format_;
-	int num_tex_;
-	GLuint *tex_ids_;
-	bool hasTransparency_;
+	char **_data;
+	int _num_images, _curr_image;
+	int _width, _height, _x, _y;
+	int _format;
+	int _num_tex;
+	GLuint *_tex_ids;
+	bool _hasTransparency;
 };
 
 #endif

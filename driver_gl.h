@@ -70,7 +70,7 @@ public:
 	void drawSmushFrame(int offsetX, int offsetY);
 
 private:
-	GLuint emergFont;
+	GLuint _emergFont;
 	int _smushNumTex;
 	GLuint *_smushTexIds;
 	int _smushWidth;

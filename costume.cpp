@@ -95,7 +95,7 @@ public:
 	void setKey(int val);
 
 private:
-	std::string filename_;
+	std::string _filename;
 };
 
 class ModelComponent : public Costume::Component {
@@ -106,18 +106,18 @@ public:
 	void update();
 	void reset();
 	void setColormap(CMap *c);
-	void setMatrix(Matrix4 matrix) { matrix_ = matrix; };
+	void setMatrix(Matrix4 matrix) { _matrix = matrix; };
 	~ModelComponent();
 
-	Model::HierNode *hierarchy() { return hier_; }
+	Model::HierNode *hierarchy() { return _hier; }
 void draw();
 
 protected:
-	std::string filename_;
-	ResPtr<Model> obj_;
-	ResPtr<CMap> cmap_;
-	Model::HierNode *hier_;
-	Matrix4 matrix_;
+	std::string _filename;
+	ResPtr<Model> _obj;
+	ResPtr<CMap> _cmap;
+	Model::HierNode *_hier;
+	Matrix4 _matrix;
 };
 
 class MainModelComponent : public ModelComponent {
@@ -130,7 +130,7 @@ public:
 	~MainModelComponent();
 
 private:
-	bool hierShared_;
+	bool _hierShared;
 
 	friend class Costume;
 };
@@ -144,120 +144,115 @@ public:
 	void reset();
 	~MeshComponent() { }
 
-	void setMatrix(Matrix4 matrix) { matrix_ = matrix; };
+	void setMatrix(Matrix4 matrix) { _matrix = matrix; };
 
-	Model::HierNode *node() { return node_; }
+	Model::HierNode *node() { return _node; }
 
 private:
-	int num_;
-	Model::HierNode *node_;
-	Matrix4 matrix_;
+	int _num;
+	Model::HierNode *_node;
+	Matrix4 _matrix;
 };
 
-BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID,
-								const char *filename) :
-		Costume::Component(parent, parentID), filename_(filename) {
+BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID, const char *filename) :
+		Costume::Component(parent, parentID), _filename(filename) {
 }
 
 void BitmapComponent::setKey(int val) {
-	ObjectState *state =
-		Engine::instance()->currScene()->findState(filename_.c_str());
+	ObjectState *state = Engine::instance()->currScene()->findState(_filename.c_str());
+
 	if (state != NULL)
 		state->setNumber(val);
 	else
-		warning("Couldn't find bitmap %s in current scene\n",
-			filename_.c_str());
+		warning("Couldn't find bitmap %s in current scene\n", _filename.c_str());
 }
 
-ModelComponent::ModelComponent(Costume::Component *parent, int parentID,
-								const char *filename) :
-		Costume::Component(parent, parentID), filename_(filename), obj_(NULL),
-		cmap_(NULL), hier_(NULL) {
+ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const char *filename) :
+		Costume::Component(parent, parentID), _filename(filename), _obj(NULL), _cmap(NULL), _hier(NULL) {
 }
 
 void ModelComponent::init() {
-	if (obj_ == NULL) {
+	if (_obj == NULL) {
 		// Skip loading if it was initialized
 		// by the sharing MainModelComponent
 		// constructor before
-		if (cmap_ == NULL) {
-			warning("No colormap specified for %s\n", filename_.c_str());
-			cmap_ = ResourceLoader::instance()->loadColormap("item.cmp");
+		if (_cmap == NULL) {
+			warning("No colormap specified for %s\n", _filename.c_str());
+			_cmap = ResourceLoader::instance()->loadColormap("item.cmp");
 		}
-	obj_ = ResourceLoader::instance()->loadModel(filename_.c_str(), *cmap_);
-	hier_ = obj_->copyHierarchy();
-	hier_->hierVisible_ = false;
-}
+		_obj = ResourceLoader::instance()->loadModel(_filename.c_str(), *_cmap);
+		_hier = _obj->copyHierarchy();
+		_hier->_hierVisible = false;
+	}
 
-// If we're the child of a mesh component, put our nodes in the
-// parent object's tree.
-if (parent_ != NULL) {
-	MeshComponent *mc = dynamic_cast<MeshComponent *>(parent_);
-	if (mc != NULL)
-		mc->node()->addChild(hier_);
-	else
-		warning("Parent of model %s wasn't a mesh\n", filename_.c_str());
+	// If we're the child of a mesh component, put our nodes in the
+	// parent object's tree.
+	if (_parent != NULL) {
+		MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
+		if (mc != NULL)
+			mc->node()->addChild(_hier);
+		else
+			warning("Parent of model %s wasn't a mesh\n", _filename.c_str());
 	}
 }
 
 void ModelComponent::setKey(int val) {
-	hier_->hierVisible_ = (val != 0);
+	_hier->_hierVisible = (val != 0);
 }
 
 // Reset the hierarchy nodes for any keyframe animations (which
 // are children of this component and therefore get updated later).
 void ModelComponent::update() {
-	for (int i = 0; i < obj_->numNodes(); i++) {
-		hier_[i].priority_ = -1;
-		hier_[i].animPos_ = hier_[i].pos_;
-		hier_[i].animPitch_ = hier_[i].pitch_;
-		hier_[i].animYaw_ = hier_[i].yaw_;
-		hier_[i].animRoll_ = hier_[i].roll_;
-		hier_[i].totalWeight_ = 1;
+	for (int i = 0; i < _obj->numNodes(); i++) {
+		_hier[i]._priority = -1;
+		_hier[i]._animPos = _hier[i]._pos;
+		_hier[i]._animPitch = _hier[i]._pitch;
+		_hier[i]._animYaw = _hier[i]._yaw;
+		_hier[i]._animRoll = _hier[i]._roll;
+		_hier[i]._totalWeight = 1;
 	}
 }
 
 void ModelComponent::reset() {
-	hier_->hierVisible_ = false;
+	_hier->_hierVisible = false;
 }
 
 void ModelComponent::setColormap(CMap *c) {
-	cmap_ = c;
+	_cmap = c;
 }
 
 ModelComponent::~ModelComponent() {
-	if (hier_ != NULL && hier_->parent_ != NULL)
-		hier_->parent_->removeChild(hier_);
-	delete[] hier_;
+	if (_hier != NULL && _hier->_parent != NULL)
+		_hier->_parent->removeChild(_hier);
+
+	delete[] _hier;
 }
 
 void ModelComponent::draw() {
-	if (parent_ == NULL) 
+	if (_parent == NULL) 
 		// Otherwise it was already drawn by
 		// being included in the parent's hierarchy
-		hier_->draw();
+		_hier->draw();
 }
 
-MainModelComponent::MainModelComponent(Costume::Component *parent,
-										int parentID, const char *filename) :
-		ModelComponent(parent, parentID, filename), hierShared_(false) {
+MainModelComponent::MainModelComponent(Costume::Component *parent, int parentID, const char *filename) :
+		ModelComponent(parent, parentID, filename), _hierShared(false) {
 }
 
 // Constructor used if sharing the main model with the previous costume
-MainModelComponent::MainModelComponent(const char *filename, Model *prevObj,
-										Model::HierNode *prevHier) :
-		ModelComponent(NULL, -1, filename), hierShared_(true) {
-	obj_ = prevObj;
-	hier_ = prevHier;
+MainModelComponent::MainModelComponent(const char *filename, Model *prevObj, Model::HierNode *prevHier) :
+		ModelComponent(NULL, -1, filename), _hierShared(true) {
+	_obj = prevObj;
+	_hier = prevHier;
 }
 
 void MainModelComponent::init() {
 	ModelComponent::init();
-	hier_->hierVisible_ = true;
+	_hier->_hierVisible = true;
 }
 
 void MainModelComponent::update() {
-	if (! hierShared_) 
+	if (!_hierShared)
 		// Otherwise, it was already initialized
 		// and reinitializing it will destroy work
 		// from previous costumes
@@ -265,12 +260,12 @@ void MainModelComponent::update() {
 }
 
 void MainModelComponent::reset() {
-	hier_->hierVisible_ = true;
+	_hier->_hierVisible = true;
 }
 
 MainModelComponent::~MainModelComponent() {
-	if (hierShared_)
-		hier_ = NULL;		// Keep ~ModelComp from deleting it
+	if (_hierShared)
+		_hier = NULL; // Keep ~ModelComp from deleting it
 }
 
 class ColormapComponent : public Costume::Component {
@@ -280,21 +275,20 @@ public:
 	~ColormapComponent();
 
 private:
-	ResPtr<CMap> cmap_;
+	ResPtr<CMap> _cmap;
 };
 
-ColormapComponent::ColormapComponent(Costume::Component *parent,
-									int parentID, const char *filename) :
+ColormapComponent::ColormapComponent(Costume::Component *parent, int parentID, const char *filename) :
 		Costume::Component(parent, parentID) {
-	cmap_ = ResourceLoader::instance()->loadColormap(filename);
+	_cmap = ResourceLoader::instance()->loadColormap(filename);
 
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(parent);
 	if (mc != NULL)
-		mc->setColormap(cmap_);
+		mc->setColormap(_cmap);
 	}
 
 ColormapComponent::~ColormapComponent() {
-	}
+}
 
 class KeyframeComponent : public Costume::Component {
 public:
@@ -306,25 +300,23 @@ public:
 	~KeyframeComponent() {}
 
 private:
-	ResPtr<KeyframeAnim> keyf_;
-	int priority1_, priority2_;
-	Model::HierNode *hier_;
-	bool active_;
-	int repeatMode_;
-	int currTime_;
+	ResPtr<KeyframeAnim> _keyf;
+	int _priority1, _priority2;
+	Model::HierNode *_hier;
+	bool _active;
+	int _repeatMode;
+	int _currTime;
 };
 
-KeyframeComponent::KeyframeComponent(Costume::Component *parent, int parentID,
-									const char *filename) :
-		Costume::Component(parent, parentID), priority1_(1), priority2_(5),
-		hier_(NULL), active_(false) {
+KeyframeComponent::KeyframeComponent(Costume::Component *parent, int parentID, const char *filename) :
+		Costume::Component(parent, parentID), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
 	const char *comma = std::strchr(filename, ',');
 	if (comma != NULL) {
 		std::string realName(filename, comma);
-		keyf_ = ResourceLoader::instance()->loadKeyframe(realName.c_str());
-		std::sscanf(comma + 1, "%d,%d", &priority1_, &priority2_);
+		_keyf = ResourceLoader::instance()->loadKeyframe(realName.c_str());
+		std::sscanf(comma + 1, "%d,%d", &_priority1, &_priority2);
 	} else
-		keyf_ = ResourceLoader::instance()->loadKeyframe(filename);
+		_keyf = ResourceLoader::instance()->loadKeyframe(filename);
 }
 
 void KeyframeComponent::setKey(int val) {
@@ -333,94 +325,96 @@ void KeyframeComponent::setKey(int val) {
 	case 1:
 	case 2:
 	case 3:
-		if (! active_ || val != 1) {
-			active_ = true;
-			currTime_ = -1;
+		if (!_active || val != 1) {
+			_active = true;
+			_currTime = -1;
 		}
-		repeatMode_ = val;
+		_repeatMode = val;
 		break;
 	case 4:
-		active_ = false;
+		_active = false;
 		break;
 	default:
-		warning("Unknown key %d for keyframe %s\n", val, keyf_->filename());
+		warning("Unknown key %d for keyframe %s\n", val, _keyf->filename());
 	}
 }
 
 void KeyframeComponent::reset() {
-	active_ = false;
+	_active = false;
 }
 
 void KeyframeComponent::update() {
-	if (! active_)
+	if (!_active)
 		return;
-	if (currTime_ < 0)		// For first time through
-		currTime_ = 0;
+
+	if (_currTime < 0)		// For first time through
+		_currTime = 0;
 	else
-		currTime_ += Engine::instance()->frameTime();
-	int animLength = int(keyf_->length() * 1000);
-	if (currTime_ > animLength) { // What to do at end?
-		switch (repeatMode_) {
-	case 0: // Stop
-	case 3: // Fade at end
-		active_ = false;
-		return;
-	case 1: // Loop
-		do
-		currTime_ -= animLength;
-		while (currTime_ > animLength);
-		break;
-	case 2: // Hold at end
-		currTime_ = animLength;
-		break;
+		_currTime += Engine::instance()->frameTime();
+
+	int animLength = (int)(_keyf->length() * 1000);
+
+	if (_currTime > animLength) { // What to do at end?
+		switch (_repeatMode) {
+			case 0: // Stop
+			case 3: // Fade at end
+				_active = false;
+				return;
+			case 1: // Loop
+				do
+					_currTime -= animLength;
+				while (_currTime > animLength);
+				break;
+			case 2: // Hold at end
+				_currTime = animLength;
+				break;
 		}
 	}
-	keyf_->animate(hier_, currTime_ / 1000.0, priority1_, priority2_);
+	_keyf->animate(_hier, _currTime / 1000.0, _priority1, _priority2);
 }
 
 void KeyframeComponent::init() {
-	ModelComponent *mc = dynamic_cast<ModelComponent *>(parent_);
+	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
 	if (mc != NULL)
-		hier_ = mc->hierarchy();
+		_hier = mc->hierarchy();
 	else {
-		warning("Parent of %s was not a model\n", keyf_->filename());
-		hier_ = NULL;
+		warning("Parent of %s was not a model\n", _keyf->filename());
+		_hier = NULL;
 	}
 }
 
 MeshComponent::MeshComponent(Costume::Component *parent, int parentID, const char *name) :
-		Costume::Component(parent, parentID), node_(NULL) {
-	if (std::sscanf(name, "mesh %d", &num_) < 1)
+		Costume::Component(parent, parentID), _node(NULL) {
+	if (std::sscanf(name, "mesh %d", &_num) < 1)
 		error("Couldn't parse mesh name %s\n", name);
 }
 
 void MeshComponent::init() {
-	ModelComponent *mc = dynamic_cast<ModelComponent *>(parent_);
+	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
 	if (mc != NULL)
-		node_ = mc->hierarchy() + num_;
+		_node = mc->hierarchy() + _num;
 	else {
-		warning("Parent of mesh %d was not a model\n", num_);
-		node_ = NULL;
+		warning("Parent of mesh %d was not a model\n", _num);
+		_node = NULL;
 	}
 }
 
 void MeshComponent::setKey(int val) {
-	node_->meshVisible_ = (val != 0);
+	_node->_meshVisible = (val != 0);
 }
 
 void MeshComponent::reset() {
-	node_->meshVisible_ = true;
+	_node->_meshVisible = true;
 }
 
 void MeshComponent::update() {
-	node_->setMatrix( matrix_ );
-	node_->update();
+	_node->setMatrix(_matrix);
+	_node->update();
 }
 
 class MaterialComponent : public Costume::Component {
 public:
-	MaterialComponent(Costume::Component *parent, int parentID,
-			  const char *filename);
+	MaterialComponent(Costume::Component *parent, int parentID, const char *filename);
 	void init();
 	void setKey(int val);
 	void setupTexture();
@@ -428,57 +422,54 @@ public:
 	~MaterialComponent() { }
 
 private:
-	ResPtr<Material> mat_;
-	std::string filename_;
-	int num_;
+	ResPtr<Material> _mat;
+	std::string _filename;
+	int _num;
 };
 
-MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID,
-				     const char *filename) :
-	Costume::Component(parent, parentID), filename_(filename), num_(0) {
+MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID, const char *filename) :
+		Costume::Component(parent, parentID), _filename(filename), _num(0) {
 	warning("Constructing MaterialComponent %s\n", filename);
 }
 
 void MaterialComponent::init() {
-	warning("MaterialComponent::init on %s\n", filename_.c_str());
+	warning("MaterialComponent::init on %s\n", _filename.c_str());
 	// The parent model and thus all its textures should have been
 	// loaded by now, so passing an arbitrary colormap here
 	// shouldn't cause problems.
-	ResPtr<CMap> cmap =
-		ResourceLoader::instance()->loadColormap("item.cmp");
-	mat_ = ResourceLoader::instance()->loadMaterial(filename_.c_str(), *cmap);
+	ResPtr<CMap> cmap = ResourceLoader::instance()->loadColormap("item.cmp");
+	_mat = ResourceLoader::instance()->loadMaterial(_filename.c_str(), *cmap);
 }
 
 void MaterialComponent::setKey(int val) {
-	num_ = val;
+	_num = val;
 }
 
 void MaterialComponent::setupTexture() {
-	mat_->setNumber(num_);
+	_mat->setNumber(_num);
 }
 
 void MaterialComponent::reset() {
-	num_ = 0;
+	_num = 0;
 }
 
 class LuaVarComponent : public Costume::Component {
 public:
-	LuaVarComponent(Costume::Component *parent, int parentID,
-		const char *name);
+	LuaVarComponent(Costume::Component *parent, int parentID, const char *name);
 	void setKey(int val);
 	~LuaVarComponent() { }
 
 private:
-	std::string name_;
+	std::string _name;
 };
 
 LuaVarComponent::LuaVarComponent(Costume::Component *parent, int parentID, const char *name) :
-		Costume::Component(parent, parentID), name_(name) {
+		Costume::Component(parent, parentID), _name(name) {
 }
 
 void LuaVarComponent::setKey(int val) {
 	lua_pushnumber(val);
-	lua_setglobal(const_cast<char *>(name_.c_str()));
+	lua_setglobal(const_cast<char *>(_name.c_str()));
 }
 
 class SoundComponent : public Costume::Component {
@@ -489,7 +480,7 @@ public:
 	~SoundComponent() { }
 
 private:
-	ResPtr<Sound> sound_;
+	ResPtr<Sound> _sound;
 };
 
 SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const char *filename) :
@@ -497,33 +488,33 @@ SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const c
 	const char *comma = std::strchr(filename, ',');
 	if (comma != NULL) {
 		std::string realName(filename, comma);
-		sound_ = ResourceLoader::instance()->loadSound(realName.c_str());
-	} else
-		sound_ = ResourceLoader::instance()->loadSound(filename);
+		_sound = ResourceLoader::instance()->loadSound(realName.c_str());
+	} else {
+		_sound = ResourceLoader::instance()->loadSound(filename);
+	}
 }
 
 void SoundComponent::setKey(int val) {
 	switch (val) {
 	case 0:
-		Mixer::instance()->playSfx(sound_);
+		Mixer::instance()->playSfx(_sound);
 		break;
 	case 2:
-		Mixer::instance()->stopSfx(sound_);
+		Mixer::instance()->stopSfx(_sound);
 		break;
 	default:
-		warning("Unknown key %d for sound %s\n", val, sound_->filename());
+		warning("Unknown key %d for sound %s\n", val, _sound->filename());
 	}
 }
 
 void SoundComponent::reset() {
-	Mixer::instance()->stopSfx(sound_);
+	Mixer::instance()->stopSfx(_sound);
 }
 
 Costume::Costume(const char *filename, const char *data, int len, Costume *prevCost) :
-		fname_(filename) {
+		_fname(filename) {
 	TextSplitter ts(data, len);
 	ts.expectString("costume v0.1");
-
 	ts.expectString("section tags");
 	int numTags;
 	ts.scanString(" numtags %d", 1, &numTags);
@@ -537,9 +528,9 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 	}
 
 	ts.expectString("section components");
-	ts.scanString(" numcomponents %d", 1, &numComponents_);
-	components_ = new Component*[numComponents_];
-	for (int i = 0; i < numComponents_; i++) {
+	ts.scanString(" numcomponents %d", 1, &_numComponents);
+	_components = new Component *[_numComponents];
+	for (int i = 0; i < _numComponents; i++) {
 		int id, tagID, hash, parentID;
 		int namePos;
 		const char *line = ts.currentLine();
@@ -549,148 +540,152 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 
 		// Check for sharing a main model with the previous costume
 		if (id == 0 && prevCost != NULL && std::memcmp(tags[tagID], "mmdl", 4) == 0) {
-			MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevCost->components_[0]);
-			if (mmc != NULL && mmc->filename_ == std::string(line + namePos)) {
-				components_[id] = new MainModelComponent(line + namePos, mmc->obj_, mmc->hier_);
+			MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevCost->_components[0]);
+			if (mmc != NULL && mmc->_filename == std::string(line + namePos)) {
+				_components[id] = new MainModelComponent(line + namePos, mmc->_obj, mmc->_hier);
 				continue;
 			}
 		}
 
-		components_[id] = loadComponent(tags[tagID], 
-			parentID == -1 ? NULL : components_[parentID], parentID,
-			line + namePos);
+		_components[id] = loadComponent(tags[tagID], parentID == -1 ? NULL : _components[parentID], parentID, line + namePos);
 	}
 
 	delete[] tags;
 
-	for (int i = 0; i < numComponents_; i++)
-	if (components_[i] != NULL)
-	components_[i]->init();
+	for (int i = 0; i < _numComponents; i++)
+		if (_components[i] != NULL)
+			_components[i]->init();
 
 	ts.expectString("section chores");
-	ts.scanString(" numchores %d", 1, &numChores_);
-	chores_ = new Chore[numChores_];
-	for (int i = 0; i < numChores_; i++) {
+	ts.scanString(" numchores %d", 1, &_numChores);
+	_chores = new Chore[_numChores];
+	for (int i = 0; i < _numChores; i++) {
 		int id, length, tracks;
 		char name[32];
 		ts.scanString(" %d %d %d %32s", 4, &id, &length, &tracks, name);
-		chores_[id].length_ = length;
-		chores_[id].numTracks_ = tracks;
-		std::memcpy(chores_[id].name_, name, 32);
+		_chores[id]._length = length;
+		_chores[id]._numTracks = tracks;
+		std::memcpy(_chores[id]._name, name, 32);
 		printf("Loaded chore: %s\n", name);
 	}
 
 	ts.expectString("section keys");
-	for (int i = 0; i < numChores_; i++) {
+	for (int i = 0; i < _numChores; i++) {
 		int which;
 		ts.scanString("chore %d", 1, &which);
-		chores_[which].load(this, ts);
+		_chores[which].load(this, ts);
 	}
 }
 
 Costume::~Costume() {
 	stopChores();
-	for (int i = numComponents_ - 1; i >= 0; i--)
-		delete components_[i];
-	delete[] chores_;
+	for (int i = _numComponents - 1; i >= 0; i--)
+		delete _components[i];
+	delete[] _chores;
 }
 
 Costume::Component::Component(Component *parent, int parentID) {
-	parentID_ = parentID;
+	_parentID = parentID;
 	setParent(parent);
 }
 
 void Costume::Component::setParent(Component *newParent) {
-	parent_ = newParent;
-	child_ = NULL;
-	sibling_ = NULL;
-	if (parent_ != NULL) {
-		Component **lastChildPos = &parent_->child_;
+	_parent = newParent;
+	_child = NULL;
+	_sibling = NULL;
+	if (_parent != NULL) {
+		Component **lastChildPos = &_parent->_child;
 		while (*lastChildPos != NULL)
-			lastChildPos = &((*lastChildPos)->sibling_);
+			lastChildPos = &((*lastChildPos)->_sibling);
 		*lastChildPos = this;
 	}
 }
 
 void Costume::Chore::load(Costume *owner, TextSplitter &ts) {
-	owner_ = owner;
-	tracks_ = new ChoreTrack[numTracks_];
-	hasPlayed_ = playing_ = false;
-	for (int i = 0; i < numTracks_; i++) {
+	_owner = owner;
+	_tracks = new ChoreTrack[_numTracks];
+	_hasPlayed = _playing = false;
+	for (int i = 0; i < _numTracks; i++) {
 		int compID, numKeys;
 		ts.scanString(" %d %d", 2, &compID, &numKeys);
-		tracks_[i].compID_ = compID;
-		tracks_[i].numKeys_ = numKeys;
-		tracks_[i].keys_ = new TrackKey[numKeys];
-		for (int j = 0; j < numKeys; j++)
-			ts.scanString(" %d %d", 2, &tracks_[i].keys_[j].time_, &tracks_[i].keys_[j].value_);
+		_tracks[i]._compID = compID;
+		_tracks[i]._numKeys = numKeys;
+		_tracks[i]._keys = new TrackKey[numKeys];
+		for (int j = 0; j < numKeys; j++) {
+			ts.scanString(" %d %d", 2, &_tracks[i]._keys[j]._time, &_tracks[i]._keys[j]._value);
+		}
 	}
 }
 
 void Costume::Chore::play() {
-	playing_ = true;
-	hasPlayed_ = true;
-	looping_ = false;
-	currTime_ = -1;
+	_playing = true;
+	_hasPlayed = true;
+	_looping = false;
+	_currTime = -1;
 }
 
 void Costume::Chore::playLooping() {
-	playing_ = true;
-	hasPlayed_ = true;
-	looping_ = true;
-	currTime_ = -1;
+	_playing = true;
+	_hasPlayed = true;
+	_looping = true;
+	_currTime = -1;
 }
 
 void Costume::Chore::stop() {
-	if (! hasPlayed_)
+	if (!_hasPlayed)
 		return;
-	playing_ = false;
-	hasPlayed_ = false;
-	for (int i = 0; i < numTracks_; i++) {
-		Component *comp = owner_->components_[tracks_[i].compID_];
+
+	_playing = false;
+	_hasPlayed = false;
+
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = _owner->_components[_tracks[i]._compID];
 		if (comp != NULL)
 			comp->reset();
 	}
 }
 
 void Costume::Chore::setKeys(int startTime, int stopTime) {
-	for (int i = 0; i < numTracks_; i++) {
-		Component *comp = owner_->components_[tracks_[i].compID_];
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = _owner->_components[_tracks[i]._compID];
 		if (comp == NULL)
 			continue;
-		for (int j = 0; j < tracks_[i].numKeys_; j++) {
-			if (tracks_[i].keys_[j].time_ > stopTime)
+
+		for (int j = 0; j < _tracks[i]._numKeys; j++) {
+			if (_tracks[i]._keys[j]._time > stopTime)
 				break;
-			if (tracks_[i].keys_[j].time_ > startTime)
-				comp->setKey(tracks_[i].keys_[j].value_);
+			if (_tracks[i]._keys[j]._time > startTime)
+				comp->setKey(_tracks[i]._keys[j]._value);
 		}
 	}
 }
 
 void Costume::Chore::update() {
-	if (! playing_)
+	if (!_playing)
 		return;
+
 	int newTime;
-	if (currTime_ < 0)
+	if (_currTime < 0)
 		newTime = 0; // For first time through
 	else
-		newTime = currTime_ + Engine::instance()->frameTime();
-	setKeys(currTime_, newTime);
-	if (newTime > length_) {
-		if (! looping_)
-			playing_ = false;
-		else {
+		newTime = _currTime + Engine::instance()->frameTime();
+
+	setKeys(_currTime, newTime);
+
+	if (newTime > _length) {
+		if (!_looping) {
+			_playing = false;
+		} else {
 			do {
-				newTime -= length_;
+				newTime -= _length;
 				setKeys(-1, newTime);
-			} while (newTime > length_);
+			} while (newTime > _length);
 		}
 	}
-	currTime_ = newTime;
+	_currTime = newTime;
 }
 
-Costume::Component *Costume::loadComponent
-		(char tag[4], Costume::Component *parent, int parentID, const char *name) {
+Costume::Component *Costume::loadComponent (char tag[4], Costume::Component *parent, int parentID, const char *name) {
 	if (std::memcmp(tag, "mmdl", 4) == 0)
 		return new MainModelComponent(parent, parentID, name);
 	else if (std::memcmp(tag, "modl", 4) == 0)
@@ -709,63 +704,65 @@ Costume::Component *Costume::loadComponent
 		return new BitmapComponent(parent, parentID, name);
 	else if (std::memcmp(tag, "mat ", 4) == 0)
 		return new MaterialComponent(parent, parentID, name);
+
 	warning("Unknown tag '%.4s', name '%s'\n", tag, name);
 	return NULL;
 }
 
 void Costume::stopChores() {
-	for (int i = 0; i < numChores_; i++)
-		chores_[i].stop();
+	for (int i = 0; i < _numChores; i++)
+		_chores[i].stop();
 }
 
 int Costume::isChoring(int num, bool excludeLooping) {
-	if (chores_[num].playing_ && !(excludeLooping && chores_[num].looping_))
+	if (_chores[num]._playing && !(excludeLooping && _chores[num]._looping))
 		return num;
 	else
 		return -1;
 }
 
 int Costume::isChoring(bool excludeLooping) {
-	for (int i = 0; i < numChores_; i++) {
-		if (chores_[i].playing_ && !(excludeLooping && chores_[i].looping_))
+	for (int i = 0; i < _numChores; i++) {
+		if (_chores[i]._playing && !(excludeLooping && _chores[i]._looping))
 			return i;
 	}
 	return -1;
 }
 
 void Costume::setupTextures() {
-	for (int i = 0; i < numComponents_; i++)
-		if (components_[i] != NULL)
-			components_[i]->setupTexture();
+	for (int i = 0; i < _numComponents; i++)
+		if (_components[i] != NULL)
+			_components[i]->setupTexture();
 }
 
 void Costume::draw() {
-	for (int i = 0; i < numComponents_; i++)
-		if (components_[i] != NULL)
-			components_[i]->draw();
+	for (int i = 0; i < _numComponents; i++)
+		if (_components[i] != NULL)
+			_components[i]->draw();
 }
 
 void Costume::update() {
-	for (int i = 0; i < numChores_; i++)
-		chores_[i].update();
-	for (int i = 0; i < numComponents_; i++) {
-		if (components_[i] != NULL) {
-			components_[i]->setMatrix( matrix_ );
-			components_[i]->update();
+	for (int i = 0; i < _numChores; i++)
+		_chores[i].update();
+
+	for (int i = 0; i < _numComponents; i++) {
+		if (_components[i] != NULL) {
+			_components[i]->setMatrix(_matrix);
+			_components[i]->update();
 		}
 	}
 }
 
-void Costume::setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw ) {
-	head_.joint1 = joint1;
-	head_.joint2 = joint2;
-	head_.joint3 = joint3;
-	head_.maxRoll = maxRoll;
-	head_.maxPitch = maxPitch;
-	head_.maxYaw = maxYaw;
+void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
+	_head._joint1 = joint1;
+	_head._joint2 = joint2;
+	_head._joint3 = joint3;
+	_head._maxRoll = maxRoll;
+	_head._maxPitch = maxPitch;
+	_head._maxYaw = maxYaw;
 }
 
-void Costume::setPosRotate( Vector3d pos_, float pitch_, float yaw_, float roll_ ) {
-	matrix_.pos_ = pos_;
-	matrix_.rot_.buildFromPitchYawRoll( pitch_, yaw_, roll_ );
+void Costume::setPosRotate(Vector3d pos, float pitch, float yaw, float roll) {
+	_matrix._pos = pos;
+	_matrix._rot.buildFromPitchYawRoll(pitch, yaw, roll);
 }

@@ -20,7 +20,7 @@
 #include "debug.h"
 #include <cstdlib>
 
-Registry::Registry() : dirty_(false) {
+Registry::Registry() : _dirty(false) {
 #ifdef WIN32
 	std::string filename = "residual.ini";
 #else
@@ -38,24 +38,24 @@ Registry::Registry() : dirty_(false) {
 			if (equals != NULL) {
 				std::string key = std::string(line, equals - line);
 				std::string val = std::string(equals + 1);
-				settings_[key] = val;
+				_settings[key] = val;
 			}
 		}
 		std::fclose(f);
 	}
 }
 
-Registry *Registry::instance_ = NULL;
+Registry *Registry::_instance = NULL;
 
 Registry *Registry::instance() {
-	if (instance_ == NULL)
-		instance_ = new Registry;
-	return instance_;
+	if (_instance == NULL)
+		_instance = new Registry;
+	return _instance;
 }
 
 const char *Registry::get(const char *key) const {
-	group::const_iterator i = settings_.find(key);
-	if (i == settings_.end())
+	group::const_iterator i = _settings.find(key);
+	if (i == _settings.end())
 		return NULL;
 	else
 		return i->second.c_str();
@@ -67,12 +67,12 @@ void Registry::set(const char *key, const char *val) {
 	if (strstr(key, "GrimLastSet") || strstr(key, "GrimMannyState"))
 		return;
 
-	settings_[key] = val;
-	dirty_ = true;
+	_settings[key] = val;
+	_dirty = true;
 }
 
 void Registry::save() {
-	if (! dirty_)
+	if (!_dirty)
 		return;
 
 #ifdef WIN32
@@ -88,9 +88,9 @@ void Registry::save() {
 		return;
 	}
 
-	for (group::iterator i = settings_.begin(); i != settings_.end(); i++)
+	for (group::iterator i = _settings.begin(); i != _settings.end(); i++)
 		std::fprintf(f, "%s=%s\n", i->first.c_str(), i->second.c_str());
 
 	std::fclose(f);
-	dirty_ = false;
+	_dirty = false;
 }

@@ -30,87 +30,88 @@
 extern SoundMixer *g_mixer;
 
 Actor::Actor(const char *name) :
-		name_(name), talkColor_(255, 255, 255), pos_(0, 0, 0),
-		pitch_(0), yaw_(0), roll_(0), walkRate_(0), turnRate_(0),
-		visible_(true), talkSound_(NULL), lipSynch_(NULL), turning_(false), walking_(false),
-		restCostume_(NULL), restChore_(-1),
-		walkCostume_(NULL), walkChore_(-1), walkedLast_(false), walkedCur_(false),
-		turnCostume_(NULL), leftTurnChore_(-1), rightTurnChore_(-1),
-		lastTurnDir_(0), currTurnDir_(0),
-		mumbleCostume_(NULL), mumbleChore_(-1) {
+		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
+		_pitch(0), _yaw(0), _roll(0), _walkRate(0), _turnRate(0),
+		_visible(true), _talkSound(NULL), _lipSynch(NULL), _turning(false), _walking(false),
+		_restCostume(NULL), _restChore(-1),
+		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
+		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
+		_lastTurnDir(0), _currTurnDir(0),
+		_mumbleCostume(NULL), _mumbleChore(-1) {
 	Engine::instance()->registerActor(this);
-	lookingMode_ = false;
-	constrain_ = false;
+	_lookingMode = false;
+	_constrain = false;
 
 	for (int i = 0; i < 10; i++) {
-		talkCostume_[i] = NULL;
-		talkChore_[i] = -1;
+		_talkCostume[i] = NULL;
+		_talkChore[i] = -1;
 	}
 }
 
 void Actor::turnTo(float pitch, float yaw, float roll) {
-	pitch_ = pitch;
-	roll_ = roll;
-	if (yaw_ != yaw) {
-		turning_ = true;
-		destYaw_ = yaw;
+	_pitch = pitch;
+	_roll = roll;
+	if (_yaw != yaw) {
+		_turning = true;
+		_destYaw = yaw;
 	} else
-		turning_ = false;
+		_turning = false;
 }
 
 void Actor::walkTo(Vector3d p) {
 	// For now, this is just the ignoring-boxes version (which afaict
 	// isn't even in the original).  This will eventually need a
 	// following-boxes version also.
-	if (p == pos_)
-		walking_ = false;
+	if (p == _pos)
+		_walking = false;
 	else {
-		walking_ = true;
-		destPos_ = p;
+		_walking = true;
+		_destPos = p;
 
-		if (p.x() != pos_.x() || p.y() != pos_.y())
-			turnTo(pitch_, yawTo(p), roll_);
+		if (p.x() != _pos.x() || p.y() != _pos.y())
+			turnTo(_pitch, yawTo(p), _roll);
 	}
 }
 
 bool Actor::isWalking() const {
-	return walkedLast_ || walkedCur_ || walking_;
+	return _walkedLast || _walkedCur || _walking;
 }
 
 bool Actor::isTurning() const {
-	if (turning_)
+	if (_turning)
 		return true;
-	if (lastTurnDir_ != 0 || currTurnDir_ != 0)
+
+	if (_lastTurnDir != 0 || _currTurnDir != 0)
 		return true;
+
 	return false;
 }
 
 void Actor::walkForward() {
-	float dist = Engine::instance()->perSecond(walkRate_);
-	float yaw_rad = yaw_ * (M_PI / 180), pitch_rad = pitch_ * (M_PI / 180);
+	float dist = Engine::instance()->perSecond(_walkRate);
+	float yaw_rad = _yaw * (M_PI / 180), pitch_rad = _pitch * (M_PI / 180);
 	Vector3d forwardVec(-std::sin(yaw_rad) * std::cos(pitch_rad),
 		std::cos(yaw_rad) * std::cos(pitch_rad),
 		std::sin(pitch_rad));
-	Vector3d destPos = pos_ + forwardVec * dist;
+	Vector3d destPos = _pos + forwardVec * dist;
 
-	if (! constrain_) {
-		pos_ = destPos;
-		walkedCur_ = true;
-	}
-	else {
+	if (!_constrain) {
+		_pos = destPos;
+		_walkedCur = true;
+	} else {
 		Sector *sector = Engine::instance()->currScene()->findPointSector(destPos, 0x1000);
 		if (sector != NULL) {
-			pos_ = sector->projectToPlane(destPos);
-			walkedCur_ = true;
+			_pos = sector->projectToPlane(destPos);
+			_walkedCur = true;
 		}
 	}
 }
 
 Vector3d Actor::puckVector() const {
-	float yaw_rad = yaw_ * (M_PI / 180);
+	float yaw_rad = _yaw * (M_PI / 180);
 	Vector3d forwardVec(-std::sin(yaw_rad), std::cos(yaw_rad), 0);
 
-	Sector *sector = Engine::instance()->currScene()->findPointSector(pos_, 0x1000);
+	Sector *sector = Engine::instance()->currScene()->findPointSector(_pos, 0x1000);
 	if (sector == NULL)
 		return forwardVec;
 	else
@@ -118,77 +119,90 @@ Vector3d Actor::puckVector() const {
 }
 
 void Actor::setRestChore(int chore, Costume *cost) {
-	if (restCostume_ == cost && restChore_ == chore)
+	if (_restCostume == cost && _restChore == chore)
 		return;
-	if (restChore_ >= 0)
-		restCostume_->stopChore(restChore_);
-	restCostume_ = cost;
-	restChore_ = chore;
-	if (restChore_ >= 0)
-		restCostume_->playChoreLooping(restChore_);
+
+	if (_restChore >= 0)
+		_restCostume->stopChore(_restChore);
+
+	_restCostume = cost;
+	_restChore = chore;
+
+	if (_restChore >= 0)
+		_restCostume->playChoreLooping(_restChore);
 }
 
 void Actor::setWalkChore(int chore, Costume *cost) {
-	if (walkCostume_ == cost && walkChore_ == chore)
+	if (_walkCostume == cost && _walkChore == chore)
 		return;
-	if (walkChore_ >= 0)
-		walkCostume_->stopChore(walkChore_);
-	walkCostume_ = cost;
-	walkChore_ = chore;
+
+	if (_walkChore >= 0)
+		_walkCostume->stopChore(_walkChore);
+
+	_walkCostume = cost;
+	_walkChore = chore;
 }
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
-	if (turnCostume_ == cost && leftTurnChore_ == left_chore &&
-	    rightTurnChore_ == right_chore)
+	if (_turnCostume == cost && _leftTurnChore == left_chore &&
+	    _rightTurnChore == right_chore)
 		return;
-	if (leftTurnChore_ >= 0) {
-		turnCostume_->stopChore(leftTurnChore_);
-		turnCostume_->stopChore(rightTurnChore_);
-	}
-	turnCostume_ = cost;
-	leftTurnChore_ = left_chore;
-	rightTurnChore_ = right_chore;
 
-	if ((left_chore >= 0 && right_chore < 0) ||
-	    (left_chore < 0 && right_chore >= 0))
+	if (_leftTurnChore >= 0) {
+		_turnCostume->stopChore(_leftTurnChore);
+		_turnCostume->stopChore(_rightTurnChore);
+	}
+
+	_turnCostume = cost;
+	_leftTurnChore = left_chore;
+	_rightTurnChore = right_chore;
+
+	if ((left_chore >= 0 && right_chore < 0) || (left_chore < 0 && right_chore >= 0))
 		error("Unexpectedly got only one turn chore\n");
 }
 
 void Actor::setTalkChore(int index, int chore, Costume *cost) {
 	if (index < 1 || index > 10)
 		error("Got talk chore index out of range (%d)\n", index);
+
 	index--;
-	if (talkCostume_[index] == cost && talkChore_[index] == chore)
+
+	if (_talkCostume[index] == cost && _talkChore[index] == chore)
 		return;
-	if (talkChore_[index] >= 0)
-		talkCostume_[index]->stopChore(talkChore_[index]);
-	talkCostume_[index] = cost;
-	talkChore_[index] = chore;
+
+	if (_talkChore[index] >= 0)
+		_talkCostume[index]->stopChore(_talkChore[index]);
+
+	_talkCostume[index] = cost;
+	_talkChore[index] = chore;
 }
 
 void Actor::setMumbleChore(int chore, Costume *cost) {
-	if (mumbleChore_ >= 0)
-		mumbleCostume_->stopChore(mumbleChore_);
-	mumbleCostume_ = cost;
-	mumbleChore_ = chore;
+	if (_mumbleChore >= 0)
+		_mumbleCostume->stopChore(_mumbleChore);
+
+	_mumbleCostume = cost;
+	_mumbleChore = chore;
 }
 
 void Actor::turn(int dir) {
-	float delta = Engine::instance()->perSecond(turnRate_) * dir;
-	yaw_ += delta;
-	currTurnDir_ = dir;
+	float delta = Engine::instance()->perSecond(_turnRate) * dir;
+	_yaw += delta;
+	_currTurnDir = dir;
 }
 
 float Actor::angleTo(const Actor &a) const {
-	float yaw_rad = yaw_ * (M_PI / 180);
+	float yaw_rad = _yaw * (M_PI / 180);
 	Vector3d forwardVec(-std::sin(yaw_rad), std::cos(yaw_rad), 0);
-	Vector3d delta = a.pos() - pos_;
+	Vector3d delta = a.pos() - _pos;
 	delta.z() = 0;
+
 	return angle(forwardVec, delta) * (180 / M_PI);
 }
 
 float Actor::yawTo(Vector3d p) const {
-	Vector3d dpos = p - pos_;
+	Vector3d dpos = p - _pos;
+
 	if (dpos.x() == 0 && dpos.y() == 0)
 		return 0;
 	else
@@ -201,102 +215,108 @@ void Actor::sayLine(const char *msg) {
 	// Find the message identifier
 	if (msg[0] != '/')
 		return;
+
 	const char *secondSlash = std::strchr(msg + 1, '/');
+
 	if (secondSlash == NULL)
 		return;
-	if (talkSound_) // Only one line at a time, please :)
+
+	if (_talkSound) // Only one line at a time, please :)
 		shutUp();
+
 	std::string msgText = Localizer::instance()->localize(secondSlash + 1);
  	std::string msgId(msg + 1, secondSlash);
 
-	talkSound_ = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
-	lipSynch_ = ResourceLoader::instance()->loadLipSynch((msgId + ".lip").c_str());
+	_talkSound = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
+	_lipSynch = ResourceLoader::instance()->loadLipSynch((msgId + ".lip").c_str());
 
-	if (talkSound_ != NULL) {
-		Mixer::instance()->playVoice(talkSound_);
+	if (_talkSound != NULL) {
+		Mixer::instance()->playVoice(_talkSound);
 
 		// Sometimes actors speak offscreen before they, including their 
 		// talk chores are initialized.
 		// For example, when reading the work order (a LIP file exists for no reason).
 		// Also, some lip synch files have no entries
 		// In these case, revert to using the mumble chore.
-		if (lipSynch_ != NULL && lipSynch_->getStatus()) {
-			talkAnim_ = lipSynch_->getCurrEntry().anim;
-		    if (talkChore_[talkAnim_] >= 0) {
-				talkCostume_[talkAnim_]->playChoreLooping(talkChore_[talkAnim_]);
-				lipSynch_->advanceEntry();
+		if (_lipSynch != NULL && _lipSynch->getStatus()) {
+			_talkAnim = _lipSynch->getCurrEntry().anim;
+		    if (_talkChore[_talkAnim] >= 0) {
+				_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
+				_lipSynch->advanceEntry();
 			}			
 		} else {
-		    lipSynch_ = NULL;
-      		if (mumbleChore_ >= 0)
-      			mumbleCostume_->playChoreLooping(mumbleChore_);
+		    _lipSynch = NULL;
+      		if (_mumbleChore >= 0)
+      			_mumbleCostume->playChoreLooping(_mumbleChore);
 		}		
 	}
 }
 
 bool Actor::talking() {
-	return (talkSound_ != NULL && ! talkSound_->done());
+	return (_talkSound != NULL && !_talkSound->done());
 }
 
 void Actor::shutUp() {
-	if (talkSound_) {
-		Mixer::instance()->stopVoice(talkSound_);
-		if (lipSynch_ != NULL) {
-			if (talkChore_[talkAnim_] >= 0)
-				talkCostume_[talkAnim_]->stopChore(talkChore_[talkAnim_]);
-			lipSynch_ = NULL;
-		} else if (mumbleChore_ >= 0)
-			mumbleCostume_->stopChore(mumbleChore_);
-		talkSound_ = NULL;
+	if (_talkSound) {
+		Mixer::instance()->stopVoice(_talkSound);
+		if (_lipSynch != NULL) {
+			if (_talkChore[_talkAnim] >= 0)
+				_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+			_lipSynch = NULL;
+		} else if (_mumbleChore >= 0)
+			_mumbleCostume->stopChore(_mumbleChore);
+		_talkSound = NULL;
 	}
 }
 
 void Actor::pushCostume(const char *name) {
-	Costume *newCost = ResourceLoader::instance()->
-		loadCostume(name, currentCostume());
-	costumeStack_.push_back(newCost);
+	Costume *newCost = ResourceLoader::instance()->loadCostume(name, currentCostume());
+	_costumeStack.push_back(newCost);
 }
 
 void Actor::setCostume(const char *name) {
-	if (! costumeStack_.empty())
+	if (!_costumeStack.empty())
 		popCostume();
+
 	pushCostume(name);
 }
 
 void Actor::popCostume() {
-	if (! costumeStack_.empty()) {
-		freeCostumeChore(costumeStack_.back(), restCostume_, restChore_);
-		freeCostumeChore(costumeStack_.back(), walkCostume_, walkChore_);
-		if (turnCostume_ == costumeStack_.back()) {
-			turnCostume_ = NULL;
-			leftTurnChore_ = -1;
-			rightTurnChore_ = -1;
+	if (!_costumeStack.empty()) {
+		freeCostumeChore(_costumeStack.back(), _restCostume, _restChore);
+		freeCostumeChore(_costumeStack.back(), _walkCostume, _walkChore);
+
+		if (_turnCostume == _costumeStack.back()) {
+			_turnCostume = NULL;
+			_leftTurnChore = -1;
+			_rightTurnChore = -1;
 		}
-		freeCostumeChore(costumeStack_.back(), mumbleCostume_, mumbleChore_);
+
+		freeCostumeChore(_costumeStack.back(), _mumbleCostume, _mumbleChore);
 		for (int i = 0; i < 10; i++)
-			freeCostumeChore(costumeStack_.back(), talkCostume_[i], talkChore_[i]);
-		delete costumeStack_.back();
-		costumeStack_.pop_back();
+			freeCostumeChore(_costumeStack.back(), _talkCostume[i], _talkChore[i]);
+		delete _costumeStack.back();
+		_costumeStack.pop_back();
 	}
 }
 
 void Actor::clearCostumes() {
 	// Make sure to destroy costume copies in reverse order
-	while (! costumeStack_.empty())
+	while (!_costumeStack.empty())
 		popCostume();
 }
 
 void Actor::setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw ) {
-	if (!costumeStack_.empty()) {
-		costumeStack_.back()->setHead( joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
+	if (!_costumeStack.empty()) {
+		_costumeStack.back()->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 	}
 }
 
 Costume *Actor::findCostume(const char *name) {
-	for (std::list<Costume *>::iterator i = costumeStack_.begin();
-			i != costumeStack_.end(); i++)
+	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		if (std::strcmp((*i)->filename(), name) == 0)
 			return *i;
+
 	return NULL;
 }
 
@@ -304,118 +324,116 @@ void Actor::update() {
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
-	if (constrain_ && ! walking_) {
-		Engine::instance()->currScene()->findClosestSector(pos_, NULL, &pos_);
+	if (_constrain && !_walking) {
+		Engine::instance()->currScene()->findClosestSector(_pos, NULL, &_pos);
 	}
 
-	if (turning_) {
-		float turnAmt = Engine::instance()->perSecond(turnRate_);
-		float dyaw = destYaw_ - yaw_;
+	if (_turning) {
+		float turnAmt = Engine::instance()->perSecond(_turnRate);
+		float dyaw = _destYaw - _yaw;
 		while (dyaw > 180)
 			dyaw -= 360;
 		while (dyaw < -180)
 			dyaw += 360;
 		if (turnAmt >= std::abs(dyaw)) {
-			yaw_ = destYaw_;
-			turning_ = false;
+			_yaw = _destYaw;
+			_turning = false;
 		}
 		else if (dyaw > 0)
-			yaw_ += turnAmt;
+			_yaw += turnAmt;
 		else
-			yaw_ -= turnAmt;
-		currTurnDir_ = (dyaw > 0 ? 1 : -1);
+			_yaw -= turnAmt;
+		_currTurnDir = (dyaw > 0 ? 1 : -1);
 	}
 
-	if (walking_) {
-		Vector3d dir = destPos_ - pos_;
+	if (_walking) {
+		Vector3d dir = _destPos - _pos;
 		float dist = dir.magnitude();
 
 		if (dist > 0)
 			dir /= dist;
 
-		float walkAmt = Engine::instance()->perSecond(walkRate_);
+		float walkAmt = Engine::instance()->perSecond(_walkRate);
 
 		if (walkAmt >= dist) {
-			pos_ = destPos_;
-			walking_ = false;
-			turning_ = false;
-		}
-		else
-			pos_ += dir * walkAmt;
+			_pos = _destPos;
+			_walking = false;
+			_turning = false;
+		} else
+			_pos += dir * walkAmt;
 
-		walkedCur_ = true;
+		_walkedCur = true;
 	}
 
 	// The rest chore might have been stopped because of a
 	// StopActorChore(nil).  Restart it if so.
-	if (restChore_ >= 0 && restCostume_->isChoring(restChore_, false) < 0)
-		restCostume_->playChoreLooping(restChore_);
+	if (_restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
+		_restCostume->playChoreLooping(_restChore);
 
-	if (walkChore_ >= 0) {
-		if (walkedCur_) {
-			if (walkCostume_->isChoring(walkChore_, false) < 0)
-				walkCostume_->playChoreLooping(walkChore_);
-		}
-		else {
-			if (walkCostume_->isChoring(walkChore_, false) >= 0)
-				walkCostume_->stopChore(walkChore_);
+	if (_walkChore >= 0) {
+		if (_walkedCur) {
+			if (_walkCostume->isChoring(_walkChore, false) < 0)
+				_walkCostume->playChoreLooping(_walkChore);
+		} else {
+			if (_walkCostume->isChoring(_walkChore, false) >= 0)
+				_walkCostume->stopChore(_walkChore);
 		}
 	}
 
-	if (leftTurnChore_ >= 0) {
-		if (walkedCur_)
-			currTurnDir_ = 0;
-		if (lastTurnDir_ != 0 && lastTurnDir_ != currTurnDir_)
-			turnCostume_->stopChore(getTurnChore(lastTurnDir_));
-		if (currTurnDir_ != 0 && currTurnDir_ != lastTurnDir_)
-			turnCostume_->playChoreLooping(getTurnChore(currTurnDir_));
-	}
-	else
-		currTurnDir_ = 0;
-	walkedLast_ = walkedCur_;
-	walkedCur_ = false;
-	lastTurnDir_ = currTurnDir_;
-	currTurnDir_ = 0;
+	if (_leftTurnChore >= 0) {
+		if (_walkedCur)
+			_currTurnDir = 0;
+		if (_lastTurnDir != 0 && _lastTurnDir != _currTurnDir)
+			_turnCostume->stopChore(getTurnChore(_lastTurnDir));
+		if (_currTurnDir != 0 && _currTurnDir != _lastTurnDir)
+			_turnCostume->playChoreLooping(getTurnChore(_currTurnDir));
+	} else
+		_currTurnDir = 0;
+
+	_walkedLast = _walkedCur;
+	_walkedCur = false;
+	_lastTurnDir = _currTurnDir;
+	_currTurnDir = 0;
 
 	// Update lip synching
-	if (lipSynch_ != NULL && talkSound_ != NULL &&
-		talkSound_->hasReachedPos(lipSynch_->getCurrEntry().frame * 
-			g_mixer->getOutputRate() / 60)) {
+	if (_lipSynch != NULL && _talkSound != NULL &&
+			_talkSound->hasReachedPos(_lipSynch->getCurrEntry().frame * g_mixer->getOutputRate() / 60)) {
 
-		///printf("Reached beyond frame %d (=pos %d). Playing anim %d\n",
-  		//	lipSynch_->getCurrEntry().frame, lipSynch_->getCurrEntry().frame * 
-		//	g_mixer->getOutputRate() / 60,lipSynch_->getCurrEntry().anim);
+		//printf("Reached beyond frame %d (=pos %d). Playing anim %d\n",
+  				//_lipSynch->getCurrEntry().frame, _lipSynch->getCurrEntry().frame * 
+				//g_mixer->getOutputRate() / 60, _lipSynch->getCurrEntry().anim);
 
-		if (talkChore_[talkAnim_] >= 0)
-			talkCostume_[talkAnim_]->stopChore(talkChore_[talkAnim_]);
-		talkAnim_ = lipSynch_->getCurrEntry().anim;
-		if (talkChore_[talkAnim_] >= 0)
-			talkCostume_[talkAnim_]->playChoreLooping(talkChore_[talkAnim_]);
-		lipSynch_->advanceEntry();
-	}	
+		if (_talkChore[_talkAnim] >= 0)
+			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 
-	if (talkSound_ != NULL && talkSound_->done())
+		_talkAnim = _lipSynch->getCurrEntry().anim;
+
+		if (_talkChore[_talkAnim] >= 0)
+			_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
+
+		_lipSynch->advanceEntry();
+	}
+
+	if (_talkSound != NULL && _talkSound->done())
 		shutUp();
 
-	for (std::list<Costume *>::iterator i = costumeStack_.begin();
-		i != costumeStack_.end(); i++) {
-		(*i)->setPosRotate( pos_, pitch_, yaw_, roll_ );
+	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++) {
+		(*i)->setPosRotate(_pos, _pitch, _yaw, _roll);
 		(*i)->update();
 	}
 
-	if (lookingMode_) {
-		float lookAtAmt = Engine::instance()->perSecond(lookAtRate_);
+	if (_lookingMode) {
+		float lookAtAmt = Engine::instance()->perSecond(_lookAtRate);
 	}
 }
 
 void Actor::draw() {
-	for (std::list<Costume *>::iterator i = costumeStack_.begin();
-	     i != costumeStack_.end(); i++)
+	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		(*i)->setupTextures();
 
-	if (! costumeStack_.empty()) {
-		g_driver->startActorDraw(pos_, yaw_, pitch_, roll_);
-		costumeStack_.back()->draw();
+	if (!_costumeStack.empty()) {
+		g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
+		_costumeStack.back()->draw();
 		g_driver->finishActorDraw();
-		}
 	}
+}

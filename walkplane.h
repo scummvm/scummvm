@@ -33,10 +33,10 @@ public:
 
 	void setVisible(bool visible);
 
-	const char *name() const { return name_.c_str(); }
-	const int id() const { return id_; }
-	const int type() const { return type_; } // FIXME: Implement type de-masking
-	bool visible() const { return visible_; }
+	const char *name() const { return _name.c_str(); }
+	const int id() const { return _id; }
+	const int type() const { return _type; } // FIXME: Implement type de-masking
+	bool visible() const { return _visible; }
 	bool isPointInSector(Vector3d point) const;
 
 	Vector3d projectToPlane(Vector3d point) const;
@@ -45,14 +45,14 @@ public:
 	Vector3d closestPoint(Vector3d point) const;
 
 private:
-	int numVertices_, id_;
+	int _numVertices, _id;
 
-	std::string name_;
-	int type_;
-	bool visible_;
-	Vector3d *vertices_;
-	float height_;
+	std::string _name;
+	int _type;
+	bool _visible;
+	Vector3d *_vertices;
+	float _height;
 
-	Vector3d normal_;
+	Vector3d _normal;
 };
 #endif

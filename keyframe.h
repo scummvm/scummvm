@@ -31,29 +31,28 @@ public:
 
 	void loadBinary(const char *data, int len);
 	void loadText(TextSplitter &ts);
-	void animate(Model::HierNode *nodes, float time,
-		int priority1 = 1, int priority2 = 5) const;
+	void animate(Model::HierNode *nodes, float time, int priority1 = 1, int priority2 = 5) const;
 
-	float length() const { return numFrames_ / fps_; }
+	float length() const { return _numFrames / _fps; }
 
 private:
-	int flags_, type_, numFrames_, numJoints_;
-	float fps_;
-	int numMarkers_;
+	int _flags, _type, _numFrames, _numJoints;
+	float _fps;
+	int _numMarkers;
 
 	struct Marker {
-		float frame_;
-		int val_;
+		float _frame;
+		int _val;
 	};
-	Marker *markers_;
+	Marker *_markers;
 
 	struct KeyframeEntry {
 		void loadBinary(const char *&data);
 
-		float frame_;
-		int flags_;
-		Vector3d pos_, dpos_;
-		float pitch_, yaw_, roll_, dpitch_, dyaw_, droll_;
+		float _frame;
+		int _flags;
+		Vector3d _pos, _dpos;
+		float _pitch, _yaw, _roll, _dpitch, _dyaw, _droll;
 	};
 
 	struct KeyframeNode {
@@ -62,12 +61,12 @@ private:
 		~KeyframeNode();
 
 		void animate(Model::HierNode &node, float frame, int priority) const;
-		char meshName_[32];
-		int numEntries_;
-		KeyframeEntry *entries_;
+		char _meshName[32];
+		int _numEntries;
+		KeyframeEntry *_entries;
 	};
 
-	KeyframeNode **nodes_;
+	KeyframeNode **_nodes;
 };
 
 #endif

@@ -31,12 +31,12 @@ public:
 	void setY(int y);
 	void setColor(Color *newColor);
 
-	const char *name() const { return textID_; }
+	const char *name() const { return _textID; }
 void draw();
 
 protected:
-	char textID_[10];
-	Color fgColor_;
-	int x_, y_;
+	char _textID[10];
+	Color _fgColor;
+	int _x, _y;
 };
 #endif

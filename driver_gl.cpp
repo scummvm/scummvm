@@ -122,57 +122,56 @@ void Driver::drawModel(const Model::Mesh *model) {
 	GLdouble projection[500];
 	GLint viewPort[500];
 
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewPort);
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewPort);
 
 	glDisable(GL_DEPTH_TEST);
-	glPointSize( 3.f );
-	glColor4f( 1.f, 0.f, 0.f, 1.f );
+	glPointSize(3.f);
+	glColor4f(1.f, 0.f, 0.f, 1.f);
 	glDisable(GL_TEXTURE_2D );
-	glBegin( GL_POINTS );
-	glVertex3f( matrix_.pos_.x(), matrix_.pos_.y(), matrix_.pos_.z() );
+	glBegin(GL_POINTS);
+	glVertex3f(_matrix._pos.x(), _matrix._pos.y(), _matrix._pos.z());
 	glEnd();
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
-	glEnable(GL_TEXTURE_2D );*/
+	glEnable(GL_TEXTURE_2D);*/
 
 	// Yaz: debug
 	// this draw the poly points
 
 	/*glPushMatrix();
 	glLoadIdentity();
-	glPointSize( 3.f );
-	glColor4f( 0.f, 1.f, 0.f, 1.f );
-	glDisable(GL_TEXTURE_2D );
+	glPointSize(3.f);
+	glColor4f(0.f, 1.f, 0.f, 1.f);
+	glDisable(GL_TEXTURE_2D);
 	{
 		GLdouble modelView[500];
 		GLdouble projection[500];
 		GLint viewPort[500];
 
-		glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-		glGetDoublev( GL_PROJECTION_MATRIX, projection );
-		glGetIntegerv( GL_VIEWPORT, viewPort);
+		glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+		glGetDoublev(GL_PROJECTION_MATRIX, projection);
+		glGetIntegerv(GL_VIEWPORT, viewPort);
 	}
 
 	glBegin( GL_POINTS );
 
-	for (int i = 0; i < numFaces_; i++) {
+	for (int i = 0; i < _numFaces; i++) {
 		Vector3d v;
-		Matrix4 tempMatrix = matrix_;
+		Matrix4 tempMatrix = _matrix;
 		float* pVertices;
 		int j;
 
 		for( j =0; j< faces_[i].numVertices_; j++ ) {
 			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
 
-			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
+			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
-			tempMatrix.rot_.transform( &v );
-			v+= tempMatrix.pos_;
+			tempMatrix._rot.transform(&v);
+			v += tempMatrix._pos;
 
-			glVertex3f( v.x(), v.y(), v.z() );
-
+			glVertex3f(v.x(), v.y(), v.z());
 		}
 	}
 
@@ -184,7 +183,7 @@ void Driver::drawModel(const Model::Mesh *model) {
 	// Ender: HACK HACK HACK
 	// Mannys head isn't computed correctly, so bail out to prevent memory corruption.
 	// at least until it IS computed, or the DirtyScreen code has bounds checking :)
-	//if (strstr(name_, "m_head_1"))
+	//if (strstr(_name, "m_head_1"))
 	//	return;
 
 	// Yaz: debug
@@ -197,14 +196,14 @@ void Driver::drawModel(const Model::Mesh *model) {
 	GLdouble left = 1000;
 	GLdouble bottom = -1000;
 
-	for (int i = 0; i < model->numFaces_; i++) {
+	for (int i = 0; i < model->_numFaces; i++) {
 		Vector3d v;
-		Matrix4 tempMatrix = model->matrix_;
+		Matrix4 tempMatrix = model->_matrix;
 		float* pVertices;
 		int j;
 		float bestDepth = 0;
 
-		for(j = 0; j < model->faces_[i].numVertices_; j++) {
+		for (j = 0; j < model->_faces[i]._numVertices; j++) {
 			GLdouble modelView[500];
 			GLdouble projection[500];
 			GLint viewPort[500];
@@ -213,12 +212,12 @@ void Driver::drawModel(const Model::Mesh *model) {
 			glGetDoublev(GL_PROJECTION_MATRIX, projection);
 			glGetIntegerv(GL_VIEWPORT, viewPort);
 
-			pVertices = model->vertices_ + 3 * model->faces_[i].vertices_[j];
+			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
 
 			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
-			tempMatrix.rot_.transform(&v);
-			v+= tempMatrix.pos_;
+			tempMatrix._rot.transform(&v);
+			v += tempMatrix._pos;
 
 			GLdouble winX;
 			GLdouble winY;
@@ -226,16 +225,16 @@ void Driver::drawModel(const Model::Mesh *model) {
 
 			gluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
 
-			if(winX > right)
+			if (winX > right)
 				right = winX;
-			if(winX < left)
+			if (winX < left)
 				left = winX;
-			if(winY < top)
+			if (winY < top)
 				top = winY;
-			if(winY > bottom)
+			if (winY > bottom)
 				bottom = winY;
 
-			if(winZ > bestDepth )
+			if (winZ > bestDepth )
 				bestDepth = winZ;
 		}
 
@@ -244,9 +243,9 @@ void Driver::drawModel(const Model::Mesh *model) {
 	}
 	/*
 	glDisable(GL_DEPTH_TEST);
-	glPointSize( 3.f );
-	glColor4f( 1.f, 1.f, 0.f, 1.f );
-	glDisable(GL_TEXTURE_2D );
+	glPointSize(3.f);
+	glColor4f(1.f, 1.f, 0.f, 1.f);
+	glDisable(GL_TEXTURE_2D);
 
 	glBegin(GL_LINES);
 
@@ -255,32 +254,32 @@ void Driver::drawModel(const Model::Mesh *model) {
 	GLdouble objz;
 
 	// top
-	gluUnProject( left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-	gluUnProject( right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
+	gluUnProject(left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
+	glVertex3f(objx, objy, objz);
+	gluUnProject(right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
+	glVertex3f(objx, objy, objz);
 
 	// bottom
-	gluUnProject( left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-	gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
+	gluUnProject(left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
+	glVertex3f(objx, objy, objz);
+	gluUnProject(right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
+	glVertex3f(objx, objy, objz);
 
 	// left
-	gluUnProject( left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-	gluUnProject( left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
+	gluUnProject(left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
+	glVertex3f(objx, objy, objz);
+	gluUnProject(left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
+	glVertex3f(objx, objy, objz);
 
 	// right
-	gluUnProject( right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-	gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
+	gluUnProject(right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
+	glVertex3f(objx, objy, objz);
+	gluUnProject(right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz);
+	glVertex3f(objx, objy, objz);
 
 	glEnd(); 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D ); 
+	glEnable(GL_TEXTURE_2D); 
 */
  	glPopMatrix();
 }
@@ -299,20 +298,20 @@ void Driver::updateMesh(const Model::Mesh *mesh) {
 	GLdouble left = 1000;
 	GLdouble bottom = -1000;
 
-	for (int i = 0; i < mesh->numFaces_; i++) {
+	for (int i = 0; i < mesh->_numFaces; i++) {
 		Vector3d v;
-		Matrix4 tempMatrix = mesh->matrix_;
+		Matrix4 tempMatrix = mesh->_matrix;
 		float *pVertices;
 		int j;
 		float bestDepth = 0;
 
-		for (j = 0; j < mesh->faces_[i].numVertices_; j++) {
-			pVertices = mesh->vertices_ + 3 * mesh->faces_[i].vertices_[j];
+		for (j = 0; j < mesh->_faces[i]._numVertices; j++) {
+			pVertices = mesh->_vertices + 3 * mesh->_faces[i]._vertices[j];
 
 			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
-			tempMatrix.rot_.transform(&v);
-			v+= tempMatrix.pos_;
+			tempMatrix._rot.transform(&v);
+			v += tempMatrix._pos;
 
 			GLdouble winX;
 			GLdouble winY;
@@ -344,67 +343,67 @@ void Driver::updateMesh(const Model::Mesh *mesh) {
 }
 
 void Driver::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
-	glNormal3fv(face->normal_.coords_);
+	glNormal3fv(face->_normal._coords);
 	glBegin(GL_POLYGON);
-	for (int i = 0; i < face->numVertices_; i++) {
-		glNormal3fv(vertNormals + 3 * face->vertices_[i]);
-		if (face->texVertices_ != NULL)
-			glTexCoord2fv(textureVerts + 2 * face->texVertices_[i]);
-		glVertex3fv(vertices + 3 * face->vertices_[i]);
+	for (int i = 0; i < face->_numVertices; i++) {
+		glNormal3fv(vertNormals + 3 * face->_vertices[i]);
+		if (face->_texVertices != NULL)
+			glTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
+		glVertex3fv(vertices + 3 * face->_vertices[i]);
 	}
 	glEnd();
 }
 
 void Driver::drawHierachyNode(const Model::HierNode *node) {
-	if (node->hierVisible_) {
+	if (node->_hierVisible) {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(node->animPos_.x() / node->totalWeight_, node->animPos_.y() / node->totalWeight_, node->animPos_.z() / node->totalWeight_);
-		glRotatef(node->animYaw_ / node->totalWeight_, 0, 0, 1);
-		glRotatef(node->animPitch_ / node->totalWeight_, 1, 0, 0);
-		glRotatef(node->animRoll_ / node->totalWeight_, 0, 1, 0);
+		glTranslatef(node->_animPos.x() / node->_totalWeight, node->_animPos.y() / node->_totalWeight, node->_animPos.z() / node->_totalWeight);
+		glRotatef(node->_animYaw / node->_totalWeight, 0, 0, 1);
+		glRotatef(node->_animPitch / node->_totalWeight, 1, 0, 0);
+		glRotatef(node->_animRoll / node->_totalWeight, 0, 1, 0);
 
-		if (node->mesh_ != NULL && node->meshVisible_) {
+		if (node->_mesh != NULL && node->_meshVisible) {
 			glPushMatrix();
-			glTranslatef(node->pivot_.x(), node->pivot_.y(), node->pivot_.z());
-			node->mesh_->draw();
+			glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
+			node->_mesh->draw();
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
 		}
-		if (node->child_ != NULL) {
-			node->child_->draw();
+		if (node->_child != NULL) {
+			node->_child->draw();
 			glMatrixMode(GL_MODELVIEW);
 		}
 		glPopMatrix();
 	}
 
-	if (node->sibling_ != NULL)
-		node->sibling_->draw();
+	if (node->_sibling != NULL)
+		node->_sibling->draw();
 }
 
 void Driver::updateHierachyNode(const Model::HierNode *node) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	glTranslatef(node->animPos_.x() / node->totalWeight_, node->animPos_.y() / node->totalWeight_, node->animPos_.z() / node->totalWeight_);
-	glRotatef(node->animYaw_ / node->totalWeight_, 0, 0, 1);
-	glRotatef(node->animPitch_ / node->totalWeight_, 1, 0, 0);
-	glRotatef(node->animRoll_ / node->totalWeight_, 0, 1, 0);
+	glTranslatef(node->_animPos.x() / node->_totalWeight, node->_animPos.y() / node->_totalWeight, node->_animPos.z() / node->_totalWeight);
+	glRotatef(node->_animYaw / node->_totalWeight, 0, 0, 1);
+	glRotatef(node->_animPitch / node->_totalWeight, 1, 0, 0);
+	glRotatef(node->_animRoll / node->_totalWeight, 0, 1, 0);
 
-	if (node->mesh_ != NULL) {
+	if (node->_mesh != NULL) {
 		glPushMatrix();
-		glTranslatef(node->pivot_.x(), node->pivot_.y(), node->pivot_.z());
-		node->mesh_->matrix_ = node->pivotMatrix;
-		node->mesh_->update();
+		glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
+		node->_mesh->_matrix = node->_pivotMatrix;
+		node->_mesh->update();
 
 		glMatrixMode(GL_MODELVIEW);
 		glPopMatrix();
 	}
 
-	if (node->child_ != NULL ) {
-		node->child_->setMatrix(node->matrix_);
-		node->child_->update();
+	if (node->_child != NULL ) {
+		node->_child->setMatrix(node->_matrix);
+		node->_child->update();
 		glMatrixMode(GL_MODELVIEW);
 	}
 
@@ -412,20 +411,20 @@ void Driver::updateHierachyNode(const Model::HierNode *node) {
 }
 
 void Driver::createBitmap(Bitmap *bitmap) {
-	if (bitmap->format_ == 1) {
-		bitmap->hasTransparency_ = false;
-		bitmap->num_tex_ = ((bitmap->width_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-			((bitmap->height_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-		bitmap->tex_ids_ = new GLuint[bitmap->num_tex_ * bitmap->num_images_];
-		glGenTextures(bitmap->num_tex_ * bitmap->num_images_, bitmap->tex_ids_);
+	if (bitmap->_format == 1) {
+		bitmap->_hasTransparency = false;
+		bitmap->_num_tex = ((bitmap->_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
+			((bitmap->_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+		bitmap->_tex_ids = new GLuint[bitmap->_num_tex * bitmap->_num_images];
+		glGenTextures(bitmap->_num_tex * bitmap->_num_images, bitmap->_tex_ids);
 
-		char *texData = new char[4 * bitmap->width_ * bitmap->height_];
+		byte *texData = new byte[4 * bitmap->_width * bitmap->_height];
 
-		for (int pic = 0; pic < bitmap->num_images_; pic++) {
+		for (int pic = 0; pic < bitmap->_num_images; pic++) {
 			// Convert data to 32-bit RGBA format
-			char *texDataPtr = texData;
-			uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->data_[pic]);
-			for (int i = 0; i < bitmap->width_ * bitmap->height_; i++, texDataPtr += 4, bitmapData++) {
+			byte *texDataPtr = texData;
+			uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
+			for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += 4, bitmapData++) {
 				uint16 pixel = *bitmapData;
 				int r = pixel >> 11;
 				texDataPtr[0] = (r << 3) | (r >> 2);
@@ -435,40 +434,33 @@ void Driver::createBitmap(Bitmap *bitmap) {
 				texDataPtr[2] = (b << 3) | (b >> 2);
 				if (pixel == 0xf81f) { // transparent
 					texDataPtr[3] = 0;
-					bitmap->hasTransparency_ = true;
+					bitmap->_hasTransparency = true;
 				} else {
 					texDataPtr[3] = 255;
 				}
 			}
 
-			for (int i = 0; i < bitmap->num_tex_; i++) {
-				glBindTexture(GL_TEXTURE_2D, bitmap->tex_ids_[bitmap->num_tex_ * pic + i]);
+			for (int i = 0; i < bitmap->_num_tex; i++) {
+				glBindTexture(GL_TEXTURE_2D, bitmap->_tex_ids[bitmap->_num_tex * pic + i]);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-				     BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0,
-				     GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			}
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->width_);
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
 
-			int cur_tex_idx = bitmap->num_tex_ * pic;
+			int cur_tex_idx = bitmap->_num_tex * pic;
 
-			for (int y = 0; y < bitmap->height_; y += BITMAP_TEXTURE_SIZE) {
-				for (int x = 0; x < bitmap->width_; x += BITMAP_TEXTURE_SIZE) {
-					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->width_)  ? (bitmap->width_  - x) : BITMAP_TEXTURE_SIZE;
-					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->height_) ? (bitmap->height_ - y) : BITMAP_TEXTURE_SIZE;
-					glBindTexture(GL_TEXTURE_2D, bitmap->tex_ids_[cur_tex_idx]);
-					glTexSubImage2D(GL_TEXTURE_2D,
-						0,
-						0, 0,
-						width, height,
-						GL_RGBA,
-						GL_UNSIGNED_BYTE,
-						texData + (y * 4 * bitmap->width_) + (4 * x));
+			for (int y = 0; y < bitmap->_height; y += BITMAP_TEXTURE_SIZE) {
+				for (int x = 0; x < bitmap->_width; x += BITMAP_TEXTURE_SIZE) {
+					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->_width)  ? (bitmap->_width  - x) : BITMAP_TEXTURE_SIZE;
+					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
+					glBindTexture(GL_TEXTURE_2D, bitmap->_tex_ids[cur_tex_idx]);
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
+						texData + (y * 4 * bitmap->_width) + (4 * x));
 					cur_tex_idx++;
 				}
 			}
@@ -478,25 +470,25 @@ void Driver::createBitmap(Bitmap *bitmap) {
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 		delete [] texData;
 	} else {
-		for (int pic = 0; pic < bitmap->num_images_; pic++) {
-			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->data_[pic]);
-			for (int i = 0; i < (bitmap->width_ * bitmap->height_); i++) {
-				uint16 val = READ_LE_UINT16(bitmap->data_[pic] + 2 * i);
+		for (int pic = 0; pic < bitmap->_num_images; pic++) {
+			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
+			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
+				uint16 val = READ_LE_UINT16(bitmap->_data[pic] + 2 * i);
 				zbufPtr[i] = 0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
 			}
 
 			// Flip the zbuffer image to match what GL expects
-			for (int y = 0; y < bitmap->height_ / 2; y++) {
-				uint16 *ptr1 = zbufPtr + y * bitmap->width_;
-				uint16 *ptr2 = zbufPtr + (bitmap->height_ - 1 - y) * bitmap->width_;
-				for (int x = 0; x < bitmap->width_; x++, ptr1++, ptr2++) {
+			for (int y = 0; y < bitmap->_height / 2; y++) {
+				uint16 *ptr1 = zbufPtr + y * bitmap->_width;
+				uint16 *ptr2 = zbufPtr + (bitmap->_height - 1 - y) * bitmap->_width;
+				for (int x = 0; x < bitmap->_width; x++, ptr1++, ptr2++) {
 					uint16 tmp = *ptr1;
 					*ptr1 = *ptr2;
 					*ptr2 = tmp;
 				}
 			}
 		}
-		bitmap->tex_ids_ = NULL;
+		bitmap->_tex_ids = NULL;
 	}
 }
 
@@ -510,23 +502,22 @@ void Driver::drawBitmap(const Bitmap *bitmap) {
 	glLoadIdentity();
 	// A lot more may need to be put there : disabling Alpha test, blending, ...
 	// For now, just keep this here :-)
-	if (bitmap->format_ == 1 && bitmap->hasTransparency_) {
+	if (bitmap->_format == 1 && bitmap->_hasTransparency) {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-	else
+	} else
 		glDisable(GL_BLEND);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-	if (bitmap->format_ == 1) {		// Normal image
+	if (bitmap->_format == 1) { // Normal image
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_SCISSOR_TEST);
-		glScissor(bitmap->x_, 480 - (bitmap->y_ + bitmap->height_), bitmap->width_, bitmap->height_);
-		int cur_tex_idx = bitmap->num_tex_ * (bitmap->curr_image_ - 1);
-		for (int y = bitmap->y_; y < (bitmap->y_ + bitmap->height_); y += BITMAP_TEXTURE_SIZE) {
-			for (int x = bitmap->x_; x < (bitmap->x_ + bitmap->width_); x += BITMAP_TEXTURE_SIZE) {
-				glBindTexture(GL_TEXTURE_2D, bitmap->tex_ids_[cur_tex_idx]);
+		glScissor(bitmap->_x, 480 - (bitmap->_y + bitmap->_height), bitmap->_width, bitmap->_height);
+		int cur_tex_idx = bitmap->_num_tex * (bitmap->_curr_image - 1);
+		for (int y = bitmap->_y; y < (bitmap->_y + bitmap->_height); y += BITMAP_TEXTURE_SIZE) {
+			for (int x = bitmap->_x; x < (bitmap->_x + bitmap->_width); x += BITMAP_TEXTURE_SIZE) {
+				glBindTexture(GL_TEXTURE_2D, bitmap->_tex_ids[cur_tex_idx]);
 				glBegin(GL_QUADS);
 				glTexCoord2f(0.0, 0.0);
 				glVertex2i(x, y);
@@ -546,63 +537,63 @@ void Driver::drawBitmap(const Bitmap *bitmap) {
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
-	} else if (bitmap->format_ == 5) {	// ZBuffer image
+	} else if (bitmap->_format == 5) {	// ZBuffer image
 		// Only draw the manual zbuffer when we are not using screenblocks, and when enabled
 		if ((!ZBUFFER_GLOBAL) || SCREENBLOCKS_GLOBAL)
 			return;
 
-		g_driver->drawDepthBitmap(bitmap->x_, bitmap->y_, bitmap->width_, bitmap->height_, bitmap->data_[bitmap->curr_image_ - 1]);
+		g_driver->drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_curr_image - 1]);
 	}
 }
 
 void Driver::destroyBitmap(Bitmap *bitmap) {
-	if (bitmap->tex_ids_) {
-		glDeleteTextures(bitmap->num_tex_ * bitmap->num_images_, bitmap->tex_ids_);
-		delete[] bitmap->tex_ids_;
+	if (bitmap->_tex_ids) {
+		glDeleteTextures(bitmap->_num_tex * bitmap->_num_images, bitmap->_tex_ids);
+		delete[] bitmap->_tex_ids;
 	}
 }
 
 void Driver::createMaterial(Material *material, const char *data, const CMap *cmap) {
-	material->textures_ = new GLuint[material->num_images_];
-	glGenTextures(material->num_images_, material->textures_);
-	char *texdata = new char[material->width_ * material->height_ * 4];
-	for (int i = 0; i < material->num_images_; i++) {
+	material->_textures = new GLuint[material->_num_images];
+	glGenTextures(material->_num_images, material->_textures);
+	char *texdata = new char[material->_width * material->_height * 4];
+	for (int i = 0; i < material->_num_images; i++) {
 		char *texdatapos = texdata;
-		for (int y = 0; y < material->height_; y++) {
-			for (int x = 0; x < material->width_; x++) {
+		for (int y = 0; y < material->_height; y++) {
+			for (int x = 0; x < material->_width; x++) {
 				int col = *(uint8 *)(data);
 				if (col == 0)
 					memset(texdatapos, 0, 4); // transparent
 				else {
-					memcpy(texdatapos, cmap->colors + 3 * *(uint8 *)(data), 3);
+					memcpy(texdatapos, cmap->_colors + 3 * (*(uint8 *)(data)), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
 				texdatapos += 4;
 				data++;
 			}
 		}
-		glBindTexture(GL_TEXTURE_2D, material->textures_[i]);
+		glBindTexture(GL_TEXTURE_2D, material->_textures[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, material->width_, material->height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, material->_width, material->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
 		data += 24;
 	}
 	delete[] texdata;
 }
 
 void Driver::selectMaterial(const Material *material) {
-	glBindTexture(GL_TEXTURE_2D, material->textures_[material->curr_image_]);
+	glBindTexture(GL_TEXTURE_2D, material->_textures[material->_curr_image]);
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
-	glScalef(1.0f / material->width_, 1.0f / material->height_, 1);
+	glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
 }
 
 void Driver::destroyMaterial(Material *material) {
-	glDeleteTextures(material->num_images_, material->textures_);
-	delete[] material->textures_;
+	glDeleteTextures(material->_num_images, material->_textures);
+	delete[] material->_textures;
 }
 
 void Driver::drawDepthBitmap(int x, int y, int w, int h, char *data) {
@@ -620,13 +611,13 @@ void Driver::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 		//Use this workaround for now.
 
 		#ifdef MACOSX
-			glBegin(GL_POINTS); glEnd();
+			glBegin(GL_POINTS);
+			glEnd();
 		#endif
 		
 		glRasterPos2i(x, 479);
 		glBitmap(0, 0, 0, 0, 0, -1, NULL);
-	}
-	else
+	} else
 		glRasterPos2i(x, y + h);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
@@ -660,9 +651,7 @@ void Driver::prepareSmushFrame(int width, int height, byte *bitmap) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-			BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0,
-			GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
 	}
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
@@ -674,13 +663,7 @@ void Driver::prepareSmushFrame(int width, int height, byte *bitmap) {
 			int t_width = (x + BITMAP_TEXTURE_SIZE >= width) ? (width - x) : BITMAP_TEXTURE_SIZE;
 			int t_height = (y + BITMAP_TEXTURE_SIZE >= height) ? (height - y) : BITMAP_TEXTURE_SIZE;
 			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
-			glTexSubImage2D(GL_TEXTURE_2D, 
-				0,
-				0, 0,
-				t_width, t_height,
-				GL_RGB,
-				GL_UNSIGNED_SHORT_5_6_5,
-				bitmap + (y * 2 * width) + (2 * x));
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, bitmap + (y * 2 * width) + (2 * x));
 			curTexIdx++;
 		}
 	}
@@ -740,12 +723,11 @@ void Driver::drawSmushFrame(int offsetX, int offsetY) {
 
 // Load emergency font
 void Driver::loadEmergFont() {
-	int i;
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	emergFont = glGenLists(128);
-	for (i = 32; i < 127; i++) {
-		glNewList(emergFont + i, GL_COMPILE);
+	_emergFont = glGenLists(128);
+	for (int i = 32; i < 127; i++) {
+		glNewList(_emergFont + i, GL_COMPILE);
 		glBitmap(8, 13, 0, 2, 10, 0, font[i - 32]);
 		glEndList();
 	}
@@ -765,7 +747,7 @@ void Driver::drawEmergString(int x, int y, const char *text, const Color &fgColo
 	glColor3f(fgColor.red(), fgColor.green(), fgColor.blue());
 	glRasterPos2i(x, y);
 
-	glListBase(emergFont);
+	glListBase(_emergFont);
 	//glCallLists(strlen(strrchr(text, '/')) - 1, GL_UNSIGNED_BYTE, strrchr(text, '/') + 1);
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *) text);
 

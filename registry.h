@@ -25,7 +25,7 @@ class Registry {
 public:
 	static Registry *instance();
 
-	const char * get(const char *key) const;
+	const char *get(const char *key) const;
 	void set(const char *key, const char *val);
 	void save();
 
@@ -33,11 +33,11 @@ private:
 	Registry();
 	~Registry() { }
 
-	static Registry *instance_;
+	static Registry *_instance;
 
 	typedef std::map<std::string, std::string> group;
-	group settings_;
-	bool dirty_;
+	group _settings;
+	bool _dirty;
 };
 
 #endif

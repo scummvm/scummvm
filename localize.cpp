@@ -22,12 +22,12 @@
 #include <cstdio>
 #include <cstring>
 
-Localizer *Localizer::instance_ = NULL;
+Localizer *Localizer::_instance = NULL;
 
 Localizer *Localizer::instance() {
-	if (instance_ == NULL)
-		instance_ = new Localizer;
-	return instance_;
+	if (_instance == NULL)
+		_instance = new Localizer;
+	return _instance;
 }
 
 Localizer::Localizer() {
@@ -66,17 +66,20 @@ Localizer::Localizer() {
 	char *nextline;
 	for (char *line = data + 4; line != NULL && *line != '\0'; line = nextline) {
 		nextline = std::strchr(line, '\n');
+
 		if (nextline != NULL) {
 			if (nextline[-1] == '\r')
 				nextline[-1] = '\0';
 			nextline++;
 		}
 		char *tab = std::strchr(line, '\t');
+
 		if (tab == NULL)
 			continue;
+
 		std::string key(line, tab - line);
 		std::string val = tab + 1;
-		entries_[key] = val;
+		_entries[key] = val;
 	}
 
 	delete[] data;
@@ -85,13 +88,14 @@ Localizer::Localizer() {
 std::string Localizer::localize(const char *str) const {
 	if (str[0] != '/')
 		return str;
+
 	const char *slash2 = std::strchr(str + 1, '/');
 	if (slash2 == NULL)
 		return str;
 
 	std::string key(str + 1, slash2 - str - 1);
-	string_map::const_iterator i = entries_.find(key);
-	if (i == entries_.end())
+	string_map::const_iterator i = _entries.find(key);
+	if (i == _entries.end())
 		return str;
 
 	return "/" + key + '/' + i->second;

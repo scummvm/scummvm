@@ -26,7 +26,7 @@
 #define SCREEN_BLOCK_WIDTH 16
 #define SCREEN_BLOCK_HEIGHT 16
 
-#define SCREEN_BLOCK_SIZE (SCREEN_BLOCK_WIDTH*SCREEN_BLOCK_HEIGHT)
+#define SCREEN_BLOCK_SIZE (SCREEN_BLOCK_WIDTH * SCREEN_BLOCK_HEIGHT)
 
 // Yaz: warning, SCREEN_WIDTH must be divisible by SCREEN_BLOCK_WIDTH and SCREEN_HEIGHT by SCREEN_BLOCK_HEIGH
 // maybe we should check it with the precompiler...
@@ -41,9 +41,9 @@ struct screenBlockDataStruct {
 };
 
 void screenBlocksReset();
-void screenBlocksInit(char* zbuffer);
+void screenBlocksInit(char *zbuffer);
 void screenBlocksInitEmpty();
-void screenBlocksAddRectangle( int top, int right, int left, int bottom, float depth );
+void screenBlocksAddRectangle(int top, int right, int left, int bottom, float depth);
 void screenBlocksDrawDebug();
 void screenBlocksBlitDirtyBlocks();
 

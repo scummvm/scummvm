@@ -23,23 +23,22 @@
 #include "driver_gl.h"
 
 TextObject::TextObject(const char *text, const int x, const int y, const Color& fgColor) :
-		fgColor_(fgColor), x_(x), y_(y) {
-	strcpy(textID_, text);
+		_fgColor(fgColor), _x(x), _y(y) {
+	strcpy(_textID, text);
 	Engine::instance()->registerTextObject(this);
 }
 
-void TextObject::setX(int x) {x_ = x;}
-void TextObject::setY(int y) {y_ = y;}
-void TextObject::setColor(Color *newcolor) {fgColor_ = newcolor;}
+void TextObject::setX(int x) {_x = x; }
+void TextObject::setY(int y) {_y = y; }
+void TextObject::setColor(Color *newcolor) { _fgColor = newcolor; }
 
 void TextObject::draw() {
-	const char *localString = Localizer::instance()->localize(textID_).c_str();
+	const char *localString = Localizer::instance()->localize(_textID).c_str();
 	// This is also used for things like debugging in addition
 	// to dialogue so there aren't always translations
 	if (strrchr(localString, '/') != NULL) {
-		g_driver->drawEmergString(x_, y_, strrchr(localString, '/') + 1, fgColor_);
+		g_driver->drawEmergString(_x, _y, strrchr(localString, '/') + 1, _fgColor);
 	} else {
-		g_driver->drawEmergString(x_, y_, localString, fgColor_);
+		g_driver->drawEmergString(_x, _y, localString, _fgColor);
 	}
 }
-

@@ -32,36 +32,36 @@ class Actor {
 public:
 	Actor(const char *name);
 
-	const char *name() const { return name_.c_str(); }
+	const char *name() const { return _name.c_str(); }
 
-	void setTalkColor(const Color& c) { talkColor_ = c; }
-	Color talkColor() const { return talkColor_; }
-	void setPos(Vector3d pos) { pos_ = pos; }
-	Vector3d pos() const { return pos_; }
+	void setTalkColor(const Color& c) { _talkColor = c; }
+	Color talkColor() const { return _talkColor; }
+	void setPos(Vector3d pos) { _pos = pos; }
+	Vector3d pos() const { return _pos; }
 	void walkTo(Vector3d p);
 	bool isWalking() const;
 	void setRot(float pitch, float yaw, float roll) {
-		pitch_ = pitch; yaw_ = yaw; roll_ = roll;
+		_pitch = pitch; _yaw = yaw; _roll = roll;
 	}
 	void turnTo(float pitch, float yaw, float roll);
 	bool isTurning() const;
-	float pitch() const { return pitch_; }
-	float yaw() const { return yaw_; }
-	float roll() const { return roll_; }
-	void setVisibility(bool val) { visible_ = val; }
-	bool visible() const { return visible_; }
-	void putInSet(const char *name) { setName_ = name; }
-	void setTurnRate(float rate) { turnRate_ = rate; }
-	float turnRate() const { return turnRate_; }
-	void setWalkRate(float rate) { walkRate_ = rate; }
-	float walkRate() const { return walkRate_; }
-	void setLooking(bool lookingMode) { lookingMode_ = lookingMode; }
+	float pitch() const { return _pitch; }
+	float yaw() const { return _yaw; }
+	float roll() const { return _roll; }
+	void setVisibility(bool val) { _visible = val; }
+	bool visible() const { return _visible; }
+	void putInSet(const char *name) { _setName = name; }
+	void setTurnRate(float rate) { _turnRate = rate; }
+	float turnRate() const { return _turnRate; }
+	void setWalkRate(float rate) { _walkRate = rate; }
+	float walkRate() const { return _walkRate; }
+	void setLooking(bool lookingMode) { _lookingMode = lookingMode; }
 
 	float angleTo(const Actor &a) const;
 	float yawTo(Vector3d p) const;
 
 	bool inSet(const char *name) const {
-		return setName_ == name;
+		return _setName == name;
 	}
 	void walkForward();
 	Vector3d puckVector() const;
@@ -82,82 +82,82 @@ public:
 	void popCostume();
 	void clearCostumes();
 	Costume *currentCostume() {
-		if (costumeStack_.empty())
+		if (_costumeStack.empty())
 			return NULL;
 		else
-			return costumeStack_.back();
+			return _costumeStack.back();
 	}
 	Costume *findCostume(const char *name);
 	int costumeStackDepth() const {
-		return costumeStack_.size();
+		return _costumeStack.size();
 	}
 	void setConstrain(bool constrain) {
-		constrain_ = constrain;
+		_constrain = constrain;
 	}
 	void update();
 	void draw();
 
 	bool isLookAtVectorZero() {
-		return lookAtVector_.isZero();
+		return _lookAtVector.isZero();
 	}
 	void setLookAtVectorZero() {
-		lookAtVector_.set( 0.f, 0.f, 0.f );
+		_lookAtVector.set( 0.f, 0.f, 0.f );
 	}
-	void setLookAtVector( Vector3d vector ) {
-		lookAtVector_ = vector;
+	void setLookAtVector(Vector3d vector) {
+		_lookAtVector = vector;
 	}
-	void setLookAtRate( float rate ) {
-		lookAtRate_ = rate;
+	void setLookAtRate(float rate) {
+		_lookAtRate = rate;
 	}
 	float lookAtRate() {
-		return(lookAtRate_);
+		return _lookAtRate;
 	}
 	void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
 private:
-	std::string name_;
-	std::string setName_;
-	Color talkColor_;
-	Vector3d pos_;
-	float pitch_, yaw_, roll_;
-	float walkRate_, turnRate_;
+	std::string _name;
+	std::string _setName;
+	Color _talkColor;
+	Vector3d _pos;
+	float _pitch, _yaw, _roll;
+	float _walkRate, _turnRate;
 
-	bool constrain_;	// Constrain to walkboxes
-	bool visible_;
-	bool lookingMode_;
-	ResPtr<Sound> talkSound_;
-	ResPtr<LipSynch> lipSynch_;
-	std::list<Costume *> costumeStack_;
+	bool _constrain;	// Constrain to walkboxes
+	bool _visible;
+	bool _lookingMode;
+	ResPtr<Sound> _talkSound;
+	ResPtr<LipSynch> _lipSynch;
+	std::list<Costume *> _costumeStack;
 
 	// Variables for gradual turning
-	bool turning_;
-	float destYaw_;
+	bool _turning;
+	float _destYaw;
 
 	// Variables for walking to a point
-	bool walking_;
-	Vector3d destPos_;
+	bool _walking;
+	Vector3d _destPos;
 
 	// chores
-	Costume *restCostume_;
-	int restChore_;
+	Costume *_restCostume;
+	int _restChore;
 
-	Costume *walkCostume_;
-	int walkChore_;
-	bool walkedLast_, walkedCur_;
+	Costume *_walkCostume;
+	int _walkChore;
+	bool _walkedLast, _walkedCur;
 
-	Costume *turnCostume_;
-	int leftTurnChore_, rightTurnChore_;
-	int lastTurnDir_, currTurnDir_;
+	Costume *_turnCostume;
+	int _leftTurnChore, _rightTurnChore;
+	int _lastTurnDir, _currTurnDir;
 
-	Costume *talkCostume_[10];
-	int talkChore_[10];
-	int talkAnim_;
+	Costume *_talkCostume[10];
+	int _talkChore[10];
+	int _talkAnim;
 
-	Costume *mumbleCostume_;
-	int mumbleChore_;
+	Costume *_mumbleCostume;
+	int _mumbleChore;
 
 	int getTurnChore(int dir) {
-		return (dir > 0 ? rightTurnChore_ : leftTurnChore_);
+		return (dir > 0 ? _rightTurnChore : _leftTurnChore);
 	}
 
 	void freeCostumeChore(Costume *toFree, Costume *&cost, int &chore) {
@@ -168,8 +168,8 @@ private:
 	}
 
 	// lookAt
-	Vector3d lookAtVector_;
-	float lookAtRate_;
+	Vector3d _lookAtVector;
+	float _lookAtRate;
 
 	friend class Engine;
 };

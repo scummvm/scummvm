@@ -48,24 +48,24 @@ public:
 		void setMatrix(Matrix4 matrix);
 		void update();
 
-		char name_[64];
-		Mesh *mesh_;
-		int flags_, type_;
-		int depth_, numChildren_;
-		HierNode *parent_, *child_, *sibling_;
-		Vector3d pos_, pivot_;
-		float pitch_, yaw_, roll_;
-		Vector3d animPos_;
-		float animPitch_, animYaw_, animRoll_;
-		bool meshVisible_, hierVisible_;
-		int priority_, totalWeight_;
-		Matrix4 matrix_;
-		Matrix4 localMatrix_;
-		Matrix4 pivotMatrix;
+		char _name[64];
+		Mesh *_mesh;
+		int _flags, _type;
+		int _depth, _numChildren;
+		HierNode *_parent, *_child, *_sibling;
+		Vector3d _pos, _pivot;
+		float _pitch, _yaw, _roll;
+		Vector3d _animPos;
+		float _animPitch, _animYaw, _animRoll;
+		bool _meshVisible, _hierVisible;
+		int _priority, _totalWeight;
+		Matrix4 _matrix;
+		Matrix4 _localMatrix;
+		Matrix4 _pivotMatrix;
 	};
 
 	HierNode *copyHierarchy();
-	int numNodes() const { return numHierNodes_; }
+	int numNodes() const { return _numHierNodes; }
 
 //private:
 	struct Face {
@@ -73,12 +73,12 @@ public:
 		void draw(float *vertices, float *vertNormals, float *textureVerts) const;
 		~Face();
 
-		Material *material_;
-		int type_, geo_, light_, tex_;
-		float extraLight_;
-		int numVertices_;
-		int *vertices_, *texVertices_;
-		Vector3d normal_;
+		Material *_material;
+		int _type, _geo, _light, _tex;
+		float _extraLight;
+		int _numVertices;
+		int *_vertices, *_texVertices;
+		Vector3d _normal;
 	};
 
 	struct Mesh {
@@ -88,21 +88,21 @@ public:
 		void update();
 		~Mesh();
 
-		char name_[32];
-		float radius_;
-		int shadow_, geometryMode_, lightingMode_, textureMode_;
+		char _name[32];
+		float _radius;
+		int _shadow, _geometryMode, _lightingMode, _textureMode;
 
-		int numVertices_;
-		float *vertices_;		// sets of 3
-		float *verticesI_;
-		float *vertNormals_;	// sets of 3
+		int _numVertices;
+		float *_vertices;		// sets of 3
+		float *_verticesI;
+		float *_vertNormals;	// sets of 3
 
-		int numTextureVerts_;
-		float *textureVerts_;	// sets of 2
+		int _numTextureVerts;
+		float *_textureVerts;	// sets of 2
 
-		int numFaces_;
-		Face *faces_;
-		Matrix4 matrix_;
+		int _numFaces;
+		Face *_faces;
+		Matrix4 _matrix;
 	};
 
 	struct Geoset {
@@ -110,18 +110,18 @@ public:
 		void loadText(TextSplitter &ts, ResPtr<Material> *materials);
 		~Geoset();
 
-		int numMeshes_;
-		Mesh *meshes_;
+		int _numMeshes;
+		Mesh *_meshes;
 	};
 
-	int numMaterials_;
-	ResPtr<Material> *materials_;
-	Vector3d insertOffset_;
-	int numGeosets_;
-	Geoset *geosets_;
-	float radius_;
-	int numHierNodes_;
-	HierNode *rootHierNode_;
+	int _numMaterials;
+	ResPtr<Material> *_materials;
+	Vector3d _insertOffset;
+	int _numGeosets;
+	Geoset *_geosets;
+	float _radius;
+	int _numHierNodes;
+	HierNode *_rootHierNode;
 };
 
 #endif

@@ -29,14 +29,14 @@ public:
 	TextSplitter(const char *data, int len);
 
 	char *nextLine() {
-		curr_line_ = next_line_;
+		_curr_line = _next_line;
 		processLine();
-		return curr_line_;
+		return _curr_line;
 	}
 
-	char *currentLine() { return curr_line_; }
-	const char *currentLine() const { return curr_line_; }
-	bool eof() const { return curr_line_ == NULL; }
+	char *currentLine() { return _curr_line; }
+	const char *currentLine() const { return _curr_line; }
+	bool eof() const { return _curr_line == NULL; }
 
 	// Check if the current line contains 'needle'
 	bool TextSplitter::checkString(const char *needle);
@@ -54,10 +54,10 @@ public:
 #endif
 	;
 
-	~TextSplitter() { delete[] data_; }
+	~TextSplitter() { delete[] _data; }
 
 private:
-	char *data_, *curr_line_, *next_line_;
+	char *_data, *_curr_line, *_next_line;
 
 	void processLine();
 };

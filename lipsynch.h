@@ -34,20 +34,20 @@ public:
 
 	LipEntry getCurrEntry();
 	void advanceEntry();
-	bool getStatus() const { return status_; }
+	bool getStatus() const { return _status; }
 
 private:
-	LipEntry *entries_;
-	int numEntries_;
-	int currEntry_;
-	bool status_;
+	LipEntry *_entries;
+	int _numEntries;
+	int _currEntry;
+	bool _status;
 
 	struct PhonemeAnim {
 		uint16 phoneme;
 		uint16 anim;
 	};
-	static const PhonemeAnim animTable_[];
-	static const int animTableSize_;
+	static const PhonemeAnim _animTable[];
+	static const int _animTableSize;
 };
 
 #endif

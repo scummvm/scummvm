@@ -16,32 +16,28 @@ class ObjectState {
 		OBJSTATE_STATE = 3
 	};
 
-	ObjectState(int setupID, ObjectState::Position pos,
-		    const char *bitmap, const char *zbitmap,
-		    bool visible);
-
-	int setupID() const { return setupID_; }
-	Position pos() const { return pos_; }
+	ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible);
+	int setupID() const { return _setupID; }
+	Position pos() const { return _pos; }
 	const char *bitmapFilename() const {
-		return bitmap_->filename();
+		return _bitmap->filename();
 	}
 
 	void setNumber(int val) {
-		bitmap_->setNumber(val);
-		if (zbitmap_)
-			zbitmap_->setNumber(val);
+		_bitmap->setNumber(val);
+		if (_zbitmap)
+			_zbitmap->setNumber(val);
 	}
 	void draw() {
-		bitmap_->draw();
-		if (zbitmap_)
-			zbitmap_->draw();
+		_bitmap->draw();
+		if (_zbitmap)
+			_zbitmap->draw();
 	}
 
 	private:
-	int setupID_;
-	Position pos_;
-	ResPtr<Bitmap> bitmap_, zbitmap_;
+	int _setupID;
+	Position _pos;
+	ResPtr<Bitmap> _bitmap, _zbitmap;
 };
-
 
 #endif

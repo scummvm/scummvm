@@ -39,30 +39,30 @@ public:
 	~Scene();
 
 	void drawBackground() const {
-		if (currSetup_->bkgnd_zbm_ != NULL) // Some screens have no zbuffer mask (eg, Alley)
-			currSetup_->bkgnd_zbm_->draw();
+		if (_currSetup->_bkgnd_zbm != NULL) // Some screens have no zbuffer mask (eg, Alley)
+			_currSetup->_bkgnd_zbm->draw();
 
-		if (currSetup_->bkgnd_bm_ == NULL) {
-			error("Null background for setup %s in %s", currSetup_->name_.c_str(), name_.c_str());
+		if (_currSetup->_bkgnd_bm == NULL) {
+			error("Null background for setup %s in %s", _currSetup->_name.c_str(), _name.c_str());
 			return;
 		} 
-		currSetup_->bkgnd_bm_->draw();
+		_currSetup->_bkgnd_bm->draw();
 	}
 	void drawBitmaps(ObjectState::Position stage);
 	void setupCamera() {
-		currSetup_->setupCamera();
+		_currSetup->setupCamera();
 	}
 
-	const char *name() const { return name_.c_str(); }
+	const char *name() const { return _name.c_str(); }
 
 	void setSetup(int num);
-	int setup() const { return currSetup_ - setups_; }
+	int setup() const { return _currSetup - _setups; }
 
 	// Sector access functions
-	int getSectorCount() { return numSectors_; }
+	int getSectorCount() { return _numSectors; }
 	Sector *getSectorBase(int id) { 
-		if ((numSectors_ >= 0) && (id < numSectors_))
-			return &sectors_[id];
+		if ((_numSectors >= 0) && (id < _numSectors))
+			return &_sectors[id];
 		else
 			return NULL;
 	}
@@ -70,7 +70,7 @@ public:
 	void findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt);
 
 	void addObjectState(ObjectState *s) {
-		states_.push_back(s);
+		_states.push_back(s);
 	}
 	ObjectState *findState(const char *filename);
 
@@ -78,32 +78,32 @@ private:
 	struct Setup {		// Camera setup data
 		void load(TextSplitter &ts);
 		void setupCamera() const;
-		std::string name_;
-		ResPtr<Bitmap> bkgnd_bm_, bkgnd_zbm_;
-		Vector3d pos_, interest_;
-		float roll_, fov_, nclip_, fclip_;
+		std::string _name;
+		ResPtr<Bitmap> _bkgnd_bm, _bkgnd_zbm;
+		Vector3d _pos, _interest;
+		float _roll, _fov, _nclip, _fclip;
 	};
 
 	struct Light {		// Scene lighting data
 		void load(TextSplitter &ts);
-		std::string name_;
-		std::string type_;
-		Vector3d pos_, dir_;
-		Color color_;
-		float intensity_, umbraangle_, penumbraangle_;
+		std::string _name;
+		std::string _type;
+		Vector3d _pos, _dir;
+		Color _color;
+		float _intensity, _umbraangle, _penumbraangle;
 	};
 
-	std::string name_;
-	int numCmaps_;
-	ResPtr<CMap> *cmaps_;
-	int numSetups_, numLights_, numSectors_;
-	Sector *sectors_;
-	Light *lights_;
-	Setup *setups_;
-	Setup *currSetup_;
+	std::string _name;
+	int _numCmaps;
+	ResPtr<CMap> *_cmaps;
+	int _numSetups, _numLights, _numSectors;
+	Sector *_sectors;
+	Light *_lights;
+	Setup *_setups;
+	Setup *_currSetup;
 
 	typedef std::list<ObjectState*> StateList;
-	StateList states_;
+	StateList _states;
 };
 
 #endif

@@ -37,6 +37,7 @@ void hexdump(const byte * data, int len, int bytesPerLine) {
 	int i;
 	byte c;
 	int offset = 0;
+
 	while (len >= bytesPerLine) {
 		printf("%06x: ", offset);
 		for (i = 0; i < bytesPerLine; i++) {

@@ -29,11 +29,11 @@ public:
 		Resource(filename) {
 	if (len < 4 || std::memcmp(data, "CMP ", 4) != 0)
 		error("Invalid magic loading colormap\n");
-		std::memcpy(colors, data + 64, sizeof(colors));
+		std::memcpy(_colors, data + 64, sizeof(_colors));
 	}
 
 	// The color data, in RGB format
-	char colors[256 * 3];
+	char _colors[256 * 3];
 };
 
 #endif

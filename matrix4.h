@@ -24,14 +24,14 @@
 // matrix 4 is a rotation matrix + position
 class Matrix4 {
 public:
-	Matrix3 rot_;
-	Vector3d pos_;
+	Matrix3 _rot;
+	Vector3d _pos;
 
 	Matrix4();
 
 	Matrix4& operator =(const Matrix4& s) {
-		pos_ = s.pos_;
-		rot_ = s.rot_;
+		_pos = s._pos;
+		_rot = s._rot;
 
 		return *this;
 	}
@@ -39,12 +39,10 @@ public:
 	Matrix4& operator *=(const Matrix4& s) {
 		Vector3d v;
 
-		v = s.pos_;
-		rot_.transform(&v);
-
-		pos_+=v;
-
-		rot_ *= s.rot_;
+		v = s._pos;
+		_rot.transform(&v);
+		_pos += v;
+		_rot *= s._rot;
 
 		return *this;
 	}

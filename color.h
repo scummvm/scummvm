@@ -22,29 +22,29 @@
 
 class Color {
 public:
-	byte vals_[3];
+	byte _vals[3];
 
 	Color() {}
 	Color(byte r, byte g, byte b) {
-		vals_[0] = r; vals_[1] = g; vals_[2] = b;
+		_vals[0] = r; _vals[1] = g; _vals[2] = b;
 	}
 	Color(const Color& c) {
-		vals_[0] = c.vals_[0]; vals_[1] = c.vals_[1]; vals_[2] = c.vals_[2];
+		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];
 	}
-	byte &red() { return vals_[0]; }
-	byte red() const { return vals_[0]; }
-	byte &green() { return vals_[1]; }
-	byte green() const { return vals_[1]; }
-	byte &blue() { return vals_[2]; }
-	byte blue() const { return vals_[2]; }
+	byte &red() { return _vals[0]; }
+	byte red() const { return _vals[0]; }
+	byte &green() { return _vals[1]; }
+	byte green() const { return _vals[1]; }
+	byte &blue() { return _vals[2]; }
+	byte blue() const { return _vals[2]; }
 
 	Color& operator =(const Color &c) {
-		vals_[0] = c.vals_[0]; vals_[1] = c.vals_[1]; vals_[2] = c.vals_[2];
-	return *this;
-}
+		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];
+		return *this;
+	}
 
 	Color& operator =(Color *c) {
-		vals_[0] = c->vals_[0]; vals_[1] = c->vals_[1]; vals_[2] = c->vals_[2];
+		_vals[0] = c->_vals[0]; _vals[1] = c->_vals[1]; _vals[2] = c->_vals[2];
 		return *this;
 	}
 };

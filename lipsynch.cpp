@@ -33,57 +33,56 @@ LipSynch::LipSynch(const char *filename, const char *data, int len) :
 	if (std::memcmp(data, "LIP!", 4) != 0) {
 		error("Invalid file format in %s\n", filename);
 	} else {
-		numEntries_ = (len - 8) / 4;
+		_numEntries = (len - 8) / 4;
 
 		// There are cases where the lipsync file has no entries
-		if (numEntries_ == 0) {
-			status_ = false;
-			entries_ = NULL;
+		if (_numEntries == 0) {
+			_status = false;
+			_entries = NULL;
 		}
 		else {
-		    status_ = true;
+		    _status = true;
 			data += 8;
-			#ifdef DEBUG_VERBOSE
-			printf("Reading LipSynch %s, %d entries\n", filename, numEntries_);
-			#endif
-			entries_ = new LipEntry[numEntries_];
-			for (int i = 0; i < numEntries_; i++) {
-				entries_[i].frame = READ_LE_UINT16(data);
+#ifdef DEBUG_VERBOSE
+			printf("Reading LipSynch %s, %d entries\n", filename, _numEntries);
+#endif
+			_entries = new LipEntry[_numEntries];
+			for (int i = 0; i < _numEntries; i++) {
+				_entries[i].frame = READ_LE_UINT16(data);
 				readPhoneme = READ_LE_UINT16(data + 2);
 
 				// Look for the animation corresponding to the phoneme
-				for (j = 0; j < animTableSize_ &&
-						 readPhoneme != animTable_[j].phoneme; j++);
-				if ( readPhoneme != animTable_[j].phoneme) {
+				for (j = 0; j < _animTableSize && readPhoneme != _animTable[j].phoneme; j++);
+				if (readPhoneme != _animTable[j].phoneme) {
 					warning("Unknown phoneme: 0x%X in file %s\n", readPhoneme, filename);
-					entries_[i].anim = 1;
+					_entries[i].anim = 1;
 				} else
-					entries_[i].anim = animTable_[j].anim;
+					_entries[i].anim = _animTable[j].anim;
 				data += 4;
 			}
-			#ifdef DEBUG_VERBOSE
-				for (int j = 0; j < numEntries_; j++)
-					printf("LIP %d) frame %d, anim %d\n", j, entries_[j].frame, entries_[j].anim);
-			#endif
-		    currEntry_ = 0;
+#ifdef DEBUG_VERBOSE
+				for (int j = 0; j < _numEntries; j++)
+					printf("LIP %d) frame %d, anim %d\n", j, _entries[j].frame, _entries[j].anim);
+#endif
+		    _currEntry = 0;
 		}    
 	}
 }
 
 LipSynch::~LipSynch() {
-	delete[] entries_;
+	delete[] _entries;
 }
 
 LipSynch::LipEntry LipSynch::getCurrEntry() {
-	return entries_[currEntry_];
+	return _entries[_currEntry];
 }
 
 void LipSynch::advanceEntry() {
-	if (currEntry_ < numEntries_)
-		currEntry_++;
+	if (_currEntry < _numEntries)
+		_currEntry++;
 }
 
-const LipSynch::PhonemeAnim LipSynch::animTable_[] = {
+const LipSynch::PhonemeAnim LipSynch::_animTable[] = {
 	{0x005F, 0}, {0x0251, 1}, {0x0061, 1}, {0x00E6, 1}, {0x028C, 8}, 
 	{0x0254, 1}, {0x0259, 1}, {0x0062, 6}, {0x02A7, 2}, {0x0064, 2}, 
 	{0x00F0, 5}, {0x025B, 8}, {0x0268, 8}, {0x025A, 9}, {0x025D, 9}, 
@@ -96,5 +95,4 @@ const LipSynch::PhonemeAnim LipSynch::animTable_[] = {
 	{0x0292, 2}, {0x002E, 2}
 };
 
-const int LipSynch::animTableSize_ = sizeof(LipSynch::animTable_) / sizeof(LipSynch::animTable_[0]);
-
+const int LipSynch::_animTableSize = sizeof(LipSynch::_animTable) / sizeof(LipSynch::_animTable[0]);

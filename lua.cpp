@@ -36,28 +36,26 @@
 
 static int actor_tag, color_tag, sound_tag, text_tag, vbuffer_tag, object_tag;
 
-// Yaz: we'll need those later on, you'll see why....
-
 static inline bool isObject(int num) {
-	if(lua_tag(lua_getparam(num)) != object_tag)
+	if (lua_tag(lua_getparam(num)) != object_tag)
 		return false;
 	return true;
 }
 
 static inline bool isActor(int num) {
-	if(lua_tag(lua_getparam(num)) != actor_tag)
+	if (lua_tag(lua_getparam(num)) != actor_tag)
 		return false;
 	return true;
 }
 
 static inline bool isColor(int num) {
-	if(lua_tag(lua_getparam(num)) != color_tag)
+	if (lua_tag(lua_getparam(num)) != color_tag)
 		return false;
 	return true;
 }
 
 static inline bool isSound(int num) {
-	if(lua_tag(lua_getparam(num)) != sound_tag)
+	if (lua_tag(lua_getparam(num)) != sound_tag)
 		return false;
 	return true;
 }
@@ -508,6 +506,7 @@ static void PlayActorChore() {
 
 	if (!cost)
 		return;
+
 	cost->playChore(num);
 }
 
@@ -518,6 +517,7 @@ static void PlayActorChoreLooping() {
 
 	if (!cost)
 		return;
+
 	cost->playChoreLooping(num);
 }
 
@@ -529,6 +529,7 @@ static void SetActorChoreLooping() {
 
 	if (!cost)
 		return;
+
 	cost->setChoreLooping(num, val);
 }
 
@@ -555,10 +556,12 @@ static void IsActorChoring() {
 		lua_pushnil();
 		return;
 	}
+
 	if (lua_isnil(lua_getparam(2)))
 		result = cost->isChoring(excludeLooping);
 	else
 		result = cost->isChoring(check_int(2), excludeLooping);
+
 	if (result < 0)
 		lua_pushnil();
 	else
@@ -572,25 +575,22 @@ static void ActorLookAt() {
 	lua_Object z = lua_getparam(4);
 	lua_Object rate = lua_getparam(5);
 
-	if(lua_isnumber(rate))
-		act->setLookAtRate( luaL_check_number(5) );
+	if (lua_isnumber(rate))
+		act->setLookAtRate(luaL_check_number(5));
 
 	// Look at nothing
-	if( lua_isnil(x) ) {
-		if(act->isLookAtVectorZero()) // already looking at nothing
+	if (lua_isnil(x)) {
+		if (act->isLookAtVectorZero()) // already looking at nothing
 			return;
 
 		act->setLookAtVectorZero();
 
-		if(lua_isnumber(y))
-			act->setLookAtRate( luaL_check_number(3) );
+		if (lua_isnumber(y))
+			act->setLookAtRate(luaL_check_number(3));
 
-		act->setLooking( true );
+		act->setLooking(true);
 		return;
-	}
-
-	// look at xyz
-	else if( lua_isnumber(x) ) {
+	} else if ( lua_isnumber(x)) { // look at xyz
 		Vector3d vector;
 		float fX;
 		float fY;
@@ -598,12 +598,12 @@ static void ActorLookAt() {
 
 		fX = luaL_check_number(2);
 
-		if( lua_isnumber(y) )
+		if (lua_isnumber(y))
 			fY = luaL_check_number(3);
 		else
 			fY = 0.f;
 
-		if( lua_isnumber(z) )
+		if (lua_isnumber(z))
 			fZ = luaL_check_number(4);
 		else
 			fZ = 0.f;
@@ -611,31 +611,29 @@ static void ActorLookAt() {
 		vector.set(fX,fY,fZ);
 
 		act->setLookAtVector( vector );
-	}
-	// look at another actor
-	else if(isActor(2)) {
+	} else if (isActor(2)) { // look at another actor
 		Actor *lookedAct = check_actor(2);
 
 		act->setLookAtVector(lookedAct->pos());
 
-		if(lua_isnumber(y))
+		if (lua_isnumber(y))
 			act->setLookAtRate(luaL_check_number(3));
 	}
 
-	act->setLooking( true );
+	act->setLooking(true);
 }
 
 static void SetActorLookRate() {
 	Actor *act = check_actor(1);
 	float rate = luaL_check_number(2);
 
-	act->setLookAtRate( rate );
+	act->setLookAtRate(rate);
 }
 
 static void GetActorLookRate() {
 	Actor *act = check_actor(1);
 
-	lua_pushnumber( act->lookAtRate() );
+	lua_pushnumber(act->lookAtRate());
 }
 
 static void SetActorHead() {
@@ -647,7 +645,7 @@ static void SetActorHead() {
 	float maxPitch = luaL_check_number(6);
 	float maxYaw = luaL_check_number(7);
 
-	act->setHead( joint1, joint2, joint3, maxRoll, maxPitch, maxYaw );
+	act->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 }
 
 static void SetActorFollowBoxes() {	// Constrain actor to walkplanes?
@@ -657,13 +655,11 @@ static void SetActorFollowBoxes() {	// Constrain actor to walkplanes?
 	act->setConstrain(constrain);
 }
 
-/////////////
 static void GetVisibleThings() {
 	lua_Object result = lua_createtable();
 	Actor *sel = Engine::instance()->selectedActor();
-	for (Engine::actor_list_type::const_iterator i = Engine::instance()->actorsBegin();
-			i != Engine::instance()->actorsEnd(); i++) {
-		if (! (*i)->inSet(Engine::instance()->sceneName()))
+	for (Engine::actor_list_type::const_iterator i = Engine::instance()->actorsBegin(); i != Engine::instance()->actorsEnd(); i++) {
+		if (!(*i)->inSet(Engine::instance()->sceneName()))
 			continue;
 		if (sel->angleTo(*(*i)) < 90) {
 			lua_pushobject(result);
@@ -710,7 +706,7 @@ static void ShutUpActor() {
 
 static void HardwareAccelerated() {
 	// FIXME: Are we always in HW accelerated ?
-	lua_pushnumber( true );
+	lua_pushnumber(true);
 }
 
 // Sector functions
@@ -723,8 +719,7 @@ static void GetActorSector(void) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));
 		lua_pushnumber(result->type());
-	}
-	else {
+	} else {
 		lua_pushnil();
 		lua_pushnil();
 		lua_pushnil();
@@ -742,7 +737,7 @@ static void IsActorInSector(void) {
 		if (sector->visible() && strstr(sector->name(), name)) {
 			if (sector->isPointInSector(act->pos())) {
 				lua_pushnumber(sector->id());
-				lua_pushstring((char*)sector->name());
+				lua_pushstring((char *)sector->name());
 				lua_pushnumber(sector->type());
 			}
 		}
@@ -844,12 +839,12 @@ static void GetShrinkPos() {
 // Sound functions
 
 enum ImuseParam {
-	IM_SOUND_PLAY_COUNT = 256,
-	IM_SOUND_PEND_COUNT = 512,
-	IM_SOUND_GROUP = 1024,
-	IM_SOUND_PRIORITY = 1280,
-	IM_SOUND_VOL = 1536,
-	IM_SOUND_PAN = 1792
+	IM_SOUND_PLAY_COUNT = 0x100,
+	IM_SOUND_PEND_COUNT = 0x200,
+	IM_SOUND_GROUP = 0x400,
+	IM_SOUND_PRIORITY = 0x500,
+	IM_SOUND_VOL = 0x600,
+	IM_SOUND_PAN = 0x700
 };
 
 void ImStartSound() {
@@ -916,7 +911,6 @@ void ImSetSequence() {
 	Mixer::instance()->setImuseSeq(seq);
 }
 
-// Timing functions
 void set_frameTime(float frameTime) {
 	lua_pushobject(lua_getglobal("system"));
 	lua_pushstring("frameTime");
@@ -936,7 +930,6 @@ void PerSecond() {
 	lua_pushnumber(Engine::instance()->perSecond(rate));
 }
 
-// Game control functions
 void EnableControl() {
 	int num = check_control(1);
 	Engine::instance()->enableControl(num);
@@ -959,7 +952,6 @@ void GetControlState() {
 	}
 }
 
-// Text functions
 static void MakeTextObject() {
 	char *line = lua_getstring(lua_getparam(1)), *key_text = NULL;
 	lua_Object table_obj = lua_getparam(2), key;
@@ -967,7 +959,7 @@ static void MakeTextObject() {
 	Color *fgColor = NULL;
 	TextObject *textObject;
 
-	while(1) {
+	while (1) {
 		lua_pushobject(table_obj);
 		if (key_text)
 			lua_pushobject(key);
@@ -1044,14 +1036,15 @@ static void ChangeTextObject_Real(char *keyName, void *data) {
 
 	// FIXME: X/Y sets depend on GetTextObjectDimensions
 
-	if (strstr(keyName, "fgcolor"))
+	if (strstr(keyName, "fgcolor")) {
 		modifyObject->setColor(check_color(2));
-	else if (strstr(keyName, "x"))
-		;//modifyObject->setX( atoi(lua_getstring(keyValue)) );
-	else if (strstr(keyName, "y")) 
-		;//modifyObject->setY( atoi(lua_getstring(keyValue)) );
-	else
+	} else if (strstr(keyName, "x")) {
+		//modifyObject->setX(atoi(lua_getstring(keyValue)));
+	} else if (strstr(keyName, "y")) {
+		//modifyObject->setY(atoi(lua_getstring(keyValue)));
+	} else {
 		printf("ChangeTextObject() - Unknown key %s\n", keyName);
+	}
 }
 
 // Callback from table walk method in Main CTO function
@@ -1070,8 +1063,7 @@ static void ChangeTextObject() {
 	lua_Object tableObj = lua_getparam(2);
 	TextObject *modifyObject = NULL;
 
-	for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin();
-			i != Engine::instance()->textsEnd(); i++) {
+	for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin(); i != Engine::instance()->textsEnd(); i++) {
 		TextObject *textO = *i;
 
 		if (strstr(textO->name(), textID)) {
@@ -1146,7 +1138,6 @@ static void PauseMovie() {
 	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
 }
 
-
 static void GetTextCharPosition() {
 	warning("STUB GetTextCharPosition(\"%s\", %d)", 
 			lua_getstring(lua_getparam(1)), lua_getnumber(lua_getparam(2)));
@@ -1166,6 +1157,7 @@ static void NewObjectState() {
 		OBJSTATE_OVERLAY = 2,
 		OBJSTATE_STATE = 3
 	};
+
 	ObjectState *object = NULL;
 
 	int setupID = check_int(1);		// Setup ID
@@ -1236,8 +1228,7 @@ static void stubWarning(char *funcName) {
 			}
 			else if (lua_tag(lua_getparam(i)) == color_tag) {
 				Color *c = check_color(i);
-				fprintf(stderr, "<color #%02x%02x%02x>",
-					c->red(), c->green(), c->blue());
+				fprintf(stderr, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
 			}
 			else if (lua_tag(lua_getparam(i)) == sound_tag) {
 				Sound *s = check_sound(i);
@@ -1245,8 +1236,7 @@ static void stubWarning(char *funcName) {
 			}
 			else
 				fprintf(stderr, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
-		}
-		else if (lua_isfunction(lua_getparam(i)))
+		} else if (lua_isfunction(lua_getparam(i)))
 			fprintf(stderr, "<function>");
 		else if (lua_isnumber(lua_getparam(i)))
 			fprintf(stderr, "%g", lua_getnumber(lua_getparam(i)));
@@ -1269,7 +1259,7 @@ static void BlastText() {
 	int x = 0, y = 0, height = 0, width = 0;
 	Color *fgColor = NULL;
 
-	while(1) {
+	while (1) {
 		lua_pushobject(table_obj);
 		if (key_text)
 			lua_pushobject(key);
@@ -1277,11 +1267,12 @@ static void BlastText() {
 			lua_pushnil();
 
 		lua_call("next");
-		key=lua_getresult(1);
+		key = lua_getresult(1);
+
 		if (lua_isnil(key)) 
 			break;
 
-		key_text=lua_getstring(key);
+		key_text = lua_getstring(key);
 		//val_text=lua_getstring(lua_getresult(2));
 		if (strstr(key_text, "x"))
 			x = atoi(lua_getstring(lua_getresult(2)));
@@ -2118,11 +2109,11 @@ int bundle_dofile(const char *filename) {
 		// d:\grimFandango\Scripts\foo.lua
 		if (std::strstr(filename, "Scripts\\") == NULL)
 			warning("Cannot find script %s\n", filename);
+
 		return 2;
 	}
 
-	int result = lua_dobuffer(const_cast<char *>(b->data()), b->len(),
-							const_cast<char *>(filename));
+	int result = lua_dobuffer(const_cast<char *>(b->data()), b->len(), const_cast<char *>(filename));
 	delete b;
 	return result;
 }
@@ -2138,16 +2129,17 @@ lua_Object getEventHandler(const char *name) {
 
 	if (lua_istable(handler)) {
 		lua_pushobject(handler);	// Push handler object
-
 		lua_pushobject(handler);	// For gettable
 		lua_pushstring(const_cast<char *>(name));
 		handler = lua_gettable();
 		if (lua_isnil(handler))
 			return LUA_NOOBJECT;
 	}
-	if (! lua_isfunction(handler)) {
+
+	if (!lua_isfunction(handler)) {
 		warning("Invalid event handler %s", name);
 		return LUA_NOOBJECT;
 	}
+
 	return handler;
 }

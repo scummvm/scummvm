@@ -30,28 +30,28 @@ public:
 
 	~Costume();
 
-	const char *filename() const { return fname_.c_str(); }
+	const char *filename() const { return _fname.c_str(); }
 
-	void playChore(int num) { chores_[num].play(); }
-	void playChoreLooping(int num) { chores_[num].playLooping(); }
-	void setChoreLooping(int num, bool val) { chores_[num].setLooping(val); }
-	void stopChore(int num) { chores_[num].stop(); }
+	void playChore(int num) { _chores[num].play(); }
+	void playChoreLooping(int num) { _chores[num].playLooping(); }
+	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
+	void stopChore(int num) { _chores[num].stop(); }
 	void stopChores();
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
 
-	void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw );
+	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
 	void update();
 	void setupTextures();
 	void draw();
-	void setPosRotate( Vector3d pos_, float pitch_, float yaw_, float roll_ );
+	void setPosRotate(Vector3d pos, float pitch, float yaw, float roll);
 
 	class Component {
 	public:
 		Component(Component *parent, int parentID);
 
-		virtual void setMatrix( Matrix4 matrix ) { };
+		virtual void setMatrix(Matrix4 matrix) { };
 		virtual void init() { }
 		virtual void setKey(int /* val */) { }
 		virtual void update() { }
@@ -61,9 +61,9 @@ public:
 		virtual ~Component() { }
 
 	protected:
-		int parentID_;
-		Component *parent_, *child_, *sibling_;
-		Matrix4 matrix_;
+		int _parentID;
+		Component *_parent, *_child, *_sibling;
+		Matrix4 _matrix;
 		void setParent(Component *newParent);
 
 		friend class Costume;
@@ -72,58 +72,58 @@ public:
 private:
 	Component *loadComponent(char tag[4], Component *parent, int parentID, const char *name);
 
-	std::string fname_;
+	std::string _fname;
 
-	int numComponents_;
-	Component **components_;
+	int _numComponents;
+	Component **_components;
 
 	struct TrackKey {
-		int time_, value_;
+		int _time, _value;
 	};
 
 	struct ChoreTrack {
-		int compID_;
-		int numKeys_;
-		TrackKey *keys_;
+		int _compID;
+		int _numKeys;
+		TrackKey *_keys;
 	};
 
 	struct Head {
-		int joint1;
-		int joint2;
-		int joint3;
-		float maxRoll;
-		float maxPitch;
-		float maxYaw;
-	} head_;
+		int _joint1;
+		int _joint2;
+		int _joint3;
+		float _maxRoll;
+		float _maxPitch;
+		float _maxYaw;
+	} _head;
 
 	class Chore {
 	public:
 		void load(Costume *owner, TextSplitter &ts);
 		void play();
 		void playLooping();
-		void setLooping(bool val) { looping_ = val; }
+		void setLooping(bool val) { _looping = val; }
 		void stop();
 		void update();
 
 	private:
-		Costume *owner_;
+		Costume *_owner;
 
-		int length_;
-		int numTracks_;
-		ChoreTrack *tracks_;
-		char name_[32];
+		int _length;
+		int _numTracks;
+		ChoreTrack *_tracks;
+		char _name[32];
 
-		bool hasPlayed_, playing_, looping_;
-		int currTime_;
+		bool _hasPlayed, _playing, _looping;
+		int _currTime;
 
 		void setKeys(int startTime, int stopTime);
 
 		friend class Costume;
 	};
 
-	int numChores_;
-	Chore *chores_;
-	Matrix4 matrix_;
+	int _numChores;
+	Chore *_chores;
+	Matrix4 _matrix;
 };
 
 #endif

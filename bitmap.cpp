@@ -30,54 +30,56 @@
 static void decompress_codec3(const char *compressed, char *result);
 
 Bitmap::Bitmap(const char *filename, const char *data, int len) :
-Resource(filename) {
+		Resource(filename) {
+
 	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0)
 		error("Invalid magic loading bitmap\n");
 
 	int codec = READ_LE_UINT32(data + 8);
-	num_images_ = READ_LE_UINT32(data + 16);
-	x_ = READ_LE_UINT32(data + 20);
-	y_ = READ_LE_UINT32(data + 24);
-	format_ = READ_LE_UINT32(data + 32);
-	width_ = READ_LE_UINT32(data + 128);
-	height_ = READ_LE_UINT32(data + 132);
-	curr_image_ = 1;
+	_num_images = READ_LE_UINT32(data + 16);
+	_x = READ_LE_UINT32(data + 20);
+	_y = READ_LE_UINT32(data + 24);
+	_format = READ_LE_UINT32(data + 32);
+	_width = READ_LE_UINT32(data + 128);
+	_height = READ_LE_UINT32(data + 132);
+	_curr_image = 1;
 
-	data_ = new char*[num_images_];
+	_data = new char *[_num_images];
 	int pos = 0x88;
-	for (int i = 0; i < num_images_; i++) {
-		data_[i] = new char[2 * width_ * height_];
+	for (int i = 0; i < _num_images; i++) {
+		_data[i] = new char[2 * _width * _height];
 		if (codec == 0) {
-			memcpy(data_[i], data + pos, 2 * width_ * height_);
-			pos += 2 * width_ * height_ + 8;
+			memcpy(_data[i], data + pos, 2 * _width * _height);
+			pos += 2 * _width * _height + 8;
 		} else if (codec == 3) {
-				int compressed_len = READ_LE_UINT32(data + pos);
-				decompress_codec3(data + pos + 4, data_[i]);
-				pos += compressed_len + 12;
+			int compressed_len = READ_LE_UINT32(data + pos);
+			decompress_codec3(data + pos + 4, _data[i]);
+			pos += compressed_len + 12;
 		}
 
-	#ifdef SYSTEM_BIG_ENDIAN
-		if (format_ == 1)	
-			for (int j = 0; j < width_ * height_; ++j) {
-				((uint16 *)data_[i])[j] = SWAP_BYTES_16(((uint16 *)data_[i])[j]);
+#ifdef SYSTEM_BIG_ENDIAN
+		if (_format == 1)	
+			for (int j = 0; j < _width * _height; ++j) {
+				((uint16 *)_data[i])[j] = SWAP_BYTES_16(((uint16 *)_data[i])[j]);
 			}
-	#endif
+#endif
 	}	
 	
 	g_driver->createBitmap(this);
 }
 
 void Bitmap::draw() const {
-	if (curr_image_ == 0)
+	if (_curr_image == 0)
 		return;
 
 	g_driver->drawBitmap(this);
 }
 
 Bitmap::~Bitmap() {
-	for (int i = 0; i < num_images_; i++)
-		delete[] data_[i];
-	delete[] data_;
+	for (int i = 0; i < _num_images; i++)
+		delete[] _data[i];
+
+	delete[] _data;
 	g_driver->destroyBitmap(this);
 }
 
@@ -111,8 +113,7 @@ static void decompress_codec3(const char *compressed, char *result) {
 				copy_len += bit + 3;
 				copy_offset = *(uint8 *)(compressed++) - 0x100;
 			} else {
-				copy_offset = (*(uint8 *)(compressed) |
-					(*(uint8 *)(compressed + 1) & 0xf0) << 4) - 0x1000;
+				copy_offset = (*(uint8 *)(compressed) | (*(uint8 *)(compressed + 1) & 0xf0) << 4) - 0x1000;
 				copy_len = (*(uint8 *)(compressed + 1) & 0xf) + 3;
 				compressed += 2;
 				if (copy_len == 3) {
@@ -121,10 +122,10 @@ static void decompress_codec3(const char *compressed, char *result) {
 						return;
 				}
 			}
-		while (copy_len > 0) {
-			*result = result[copy_offset];
-			result++;
-			copy_len--;
+			while (copy_len > 0) {
+				*result = result[copy_offset];
+				result++;
+				copy_len--;
 			}
 		}
 	}

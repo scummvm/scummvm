@@ -44,10 +44,10 @@ int residual_vsscanf(const char *str, int field_count, const char *format, va_li
 }
 
 TextSplitter::TextSplitter(const char *data, int len) {
-	data_ = new char[len + 1];
-	std::memcpy(data_, data, len);
-	data_[len] = '\0';
-	curr_line_ = data_;
+	_data = new char[len + 1];
+	std::memcpy(_data, data, len);
+	_data[len] = '\0';
+	_curr_line = _data;
 	processLine();
 }
 
@@ -83,35 +83,35 @@ void TextSplitter::scanString(const char *fmt, int field_count, ...) {
 	va_end(va);
 
 	nextLine();
-	}
+}
 
 void TextSplitter::processLine() {
 	if (eof())
 		return;
 
-	next_line_ = std::strchr(curr_line_, '\n');
-	if (next_line_ != NULL) {
-		*next_line_ = '\0';
-		next_line_++;
+	_next_line = std::strchr(_curr_line, '\n');
+	if (_next_line != NULL) {
+		*_next_line = '\0';
+		_next_line++;
 	}
 
 	// Cut off comments
-	char *comment_start = std::strchr(curr_line_, '#');
+	char *comment_start = std::strchr(_curr_line, '#');
 	if (comment_start != NULL)
 		*comment_start = '\0';
 
 	// Cut off trailing whitespace (including '\r')
-	char *strend = std::strchr(curr_line_, '\0');
-	while (strend > curr_line_ && std::isspace(strend[-1]))
+	char *strend = std::strchr(_curr_line, '\0');
+	while (strend > _curr_line && std::isspace(strend[-1]))
 		strend--;
 	*strend = '\0';
 
 	// Skip blank lines
-	if (*curr_line_ == '\0')
+	if (*_curr_line == '\0')
 		nextLine();
 
 	// Convert to lower case
-	if (! eof())
-		for (char *s = curr_line_; *s != '\0'; s++)
+	if (!eof())
+		for (char *s = _curr_line; *s != '\0'; s++)
 			*s = std::tolower(*s);
 }

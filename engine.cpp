@@ -30,19 +30,19 @@
 
 #include "driver_gl.h"
 
-Engine *Engine::instance_ = NULL;
+Engine *Engine::_instance = NULL;
 
 Engine::Engine() :
-		currScene_(NULL), selectedActor_(NULL) {
+		_currScene(NULL), _selectedActor(NULL) {
 	for (int i = 0; i < SDLK_EXTRA_LAST; i++)
-		controlsEnabled_[i] = false;
+		_controlsEnabled[i] = false;
 	_speechMode = 2;
 }
 
 void Engine::mainLoop() {
-	movieTime_ = 0;
-	frameTime_ = 0;
-	frameStart_ = SDL_GetTicks();
+	_movieTime = 0;
+	_frameTime = 0;
+	_frameStart = SDL_GetTicks();
 	unsigned int frameCounter = 0;
 	unsigned int timeAccum = 0;
 	unsigned int frameTimeCollection = 0;
@@ -51,12 +51,11 @@ void Engine::mainLoop() {
 	_savegameSaveRequest = false;
 	_savegameFileName = NULL;
 
-
 	for (;;) {
 		// Process events
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_KEYDOWN && controlsEnabled_[event.key.keysym.sym]) {
+			if (event.type == SDL_KEYDOWN && _controlsEnabled[event.key.keysym.sym]) {
 				lua_beginblock();
 				lua_Object handler = getEventHandler("buttonHandler");
 				if (handler != LUA_NOOBJECT) {
@@ -67,7 +66,7 @@ void Engine::mainLoop() {
 				}
 				lua_endblock();
 			}
-			if (event.type == SDL_KEYUP && controlsEnabled_[event.key.keysym.sym]) {
+			if (event.type == SDL_KEYUP && _controlsEnabled[event.key.keysym.sym]) {
 				// temporary hack for save/load request until game menu will work
 				if (event.key.keysym.sym == SDLK_F5) {
 					_savegameLoadRequest = true;
@@ -109,7 +108,7 @@ void Engine::mainLoop() {
 
 		if (_mode == ENGINE_MODE_SMUSH) {
 			if (g_smush->isPlaying()) {
-				movieTime_ = g_smush->getMovieTime();
+				_movieTime = g_smush->getMovieTime();
 				if (g_smush->isUpdateNeeded()) {
 					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
 					g_smush->clearUpdateNeeded();
@@ -124,13 +123,13 @@ void Engine::mainLoop() {
 			if (SCREENBLOCKS_GLOBAL)
 				screenBlocksReset();
 
-			if (currScene_ != NULL) {
+			if (_currScene != NULL) {
 				// Update actor costumes
-				for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
+				for (actor_list_type::iterator i = _actors.begin(); i != _actors.end(); i++) {
 					Actor *a = *i;
-					if (currScene_ != NULL && a->inSet(currScene_->name()) && a->visible())
+					if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
 						a->update();
-				} 
+				}
 			}
 
 			g_driver->clearScreen();
@@ -138,12 +137,12 @@ void Engine::mainLoop() {
 			if (SCREENBLOCKS_GLOBAL)
 				screenBlocksBlitDirtyBlocks();
 
-			if (currScene_ != NULL) {
-				currScene_->drawBackground();
+			if (_currScene != NULL) {
+				_currScene->drawBackground();
 			}
 
 			if (g_smush->isPlaying()) {
-				movieTime_ = g_smush->getMovieTime();
+				_movieTime = g_smush->getMovieTime();
 				if (g_smush->isUpdateNeeded()) {
 					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
 					g_smush->clearUpdateNeeded();
@@ -152,10 +151,10 @@ void Engine::mainLoop() {
 					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 			}
 
-			if (currScene_ != NULL) {
-				currScene_->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
-				currScene_->drawBitmaps(ObjectState::OBJSTATE_STATE);
-				currScene_->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+			if (_currScene != NULL) {
+				_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+				_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
+				_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 			}
 
 			if (SHOWFPS_GLOBAL)
@@ -163,20 +162,20 @@ void Engine::mainLoop() {
 
 			g_driver->set3DMode();
 
-			if (currScene_ != NULL) {
-				currScene_->setupCamera();
+			if (_currScene != NULL) {
+				_currScene->setupCamera();
 
 				// Draw actors
-				for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
+				for (actor_list_type::iterator i = _actors.begin(); i != _actors.end(); i++) {
 					Actor *a = *i;
-					if (currScene_ != NULL && a->inSet(currScene_->name()) && a->visible())
+					if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
 						a->draw();
 				}
 				//screenBlocksDrawDebug();
 			}
 
 			// Draw text
-			for (text_list_type::iterator i = textObjects_.begin(); i != textObjects_.end(); i++) {
+			for (text_list_type::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
 				(*i)->draw();
 			}
 
@@ -189,26 +188,26 @@ void Engine::mainLoop() {
 
 		// Update timing information
 		unsigned newStart = SDL_GetTicks();
-		frameTime_ = newStart - frameStart_;
-		frameStart_ = newStart;
+		_frameTime = newStart - _frameStart;
+		_frameStart = newStart;
 
-		frameTimeCollection += frameTime_;
+		frameTimeCollection += _frameTime;
 		if (frameTimeCollection > 10000) {
 			frameTimeCollection = 0;
 			lua_collectgarbage(0);
 		}
 
 		lua_beginblock();
-		set_frameTime(frameTime_);
+		set_frameTime(_frameTime);
 		lua_endblock();
 
 		lua_beginblock();
-		set_movieTime(movieTime_);
+		set_movieTime(_movieTime);
 		lua_endblock();
 
 		if (SHOWFPS_GLOBAL) {
 			frameCounter++;
-			timeAccum += frameTime_;
+			timeAccum += _frameTime;
 			if (timeAccum > 1000) {
 				sprintf(fps, "%7.2f", (double)(frameCounter * 1000) / (double)timeAccum );
 				frameCounter = 0;
@@ -332,7 +331,7 @@ void Engine::setScene(const char *name) {
 	Block *b = ResourceLoader::instance()->getFileBlock(name);
 	if (b == NULL)
 		warning("Could not find scene file %s\n", name);
-	delete currScene_;
-	currScene_ = new Scene(name, b->data(), b->len());
+	delete _currScene;
+	_currScene = new Scene(name, b->data(), b->len());
 	delete b;
 }

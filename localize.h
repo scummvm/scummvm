@@ -31,10 +31,10 @@ private:
 	Localizer();
 	~Localizer() { }
 
-	static Localizer *instance_;
+	static Localizer *_instance;
 
 	typedef std::map<std::string, std::string> string_map;
-	string_map entries_;
+	string_map _entries;
 };
 
 #endif

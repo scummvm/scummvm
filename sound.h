@@ -27,13 +27,13 @@ public:
 	Sound(const char *filename, const char *data, int len);
 	~Sound();
 
-	bool done() const { return currPos_ >= numSamples_; }
-	bool hasReachedPos(int position) const { return currPos_ >= position; }
-	int  getCurrPos() const {return currPos_;}
+	bool done() const { return _currPos >= _numSamples; }
+	bool hasReachedPos(int position) const { return _currPos >= position; }
+	int  getCurrPos() const {return _currPos;}
 
 private:
-	int numSamples_, numChannels_, currPos_;
-	int16 *samples_;
+	int _numSamples, _numChannels, _currPos;
+	int16 *_samples;
 
 	static void init();
 
@@ -65,10 +65,10 @@ private:
 	Mixer();
 	~Mixer();
 
-	static Mixer *instance_;
+	static Mixer *_instance;
 	typedef std::list<ResPtr<Sound> > sound_list;
-	sound_list voiceSounds_, sfxSounds_;
-	ResPtr<Sound> musicSound_, seqSound_;
+	sound_list _voiceSounds, _sfxSounds;
+	ResPtr<Sound> _musicSound, _seqSound;
 
 	friend void mixerCallback(void *userdata, uint8 *stream, int len);
 };

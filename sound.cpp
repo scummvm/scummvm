@@ -249,12 +249,12 @@ static const imuseTableEntry grimMusicTable[] = {
 	{ 2399, "2399 - End Credits.IMC" }
 };
 
-Mixer *Mixer::instance_ = NULL;
+Mixer *Mixer::_instance = NULL;
 
 Mixer *Mixer::instance() {
-	if (instance_ == NULL)
-		instance_ = new Mixer;
-	return instance_;
+	if (_instance == NULL)
+		_instance = new Mixer;
+	return _instance;
 }
 
 void mixerCallback(void *userdata, int16 *stream, uint len) {
@@ -265,7 +265,7 @@ void mixerCallback(void *userdata, int16 *stream, uint len) {
 extern SoundMixer *g_mixer;
 
 Mixer::Mixer() :
-	musicSound_(NULL), seqSound_(NULL){
+	_musicSound(NULL), _seqSound(NULL){
 }
 
 void Mixer::start() {
@@ -276,27 +276,27 @@ void Mixer::start() {
 
 void Mixer::playVoice(Sound *s) {
 	s->reset();
-	voiceSounds_.push_back(s);
+	_voiceSounds.push_back(s);
 }
 
 void Mixer::playSfx(Sound *s) {
 	s->reset();
-	sfxSounds_.push_back(s);
+	_sfxSounds.push_back(s);
 }
 
 void Mixer::stopSfx(Sound *s) {
-	for (sound_list::iterator i = sfxSounds_.begin(); i != sfxSounds_.end(); ) {
+	for (sound_list::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); ) {
 		if (*i == s)
-			i = sfxSounds_.erase(i);
+			i = _sfxSounds.erase(i);
 		else
 			i++;
 	}
 }
 
 void Mixer::stopVoice(Sound *s) {
-	for (sound_list::iterator i = voiceSounds_.begin(); i != voiceSounds_.end(); ) {
+	for (sound_list::iterator i = _voiceSounds.begin(); i != _voiceSounds.end(); ) {
 		if (*i == s)
-			i = voiceSounds_.erase(i);
+			i = _voiceSounds.erase(i);
 		else
 			i++;
 	}
@@ -314,10 +314,8 @@ void Mixer::setImuseState(int state) {
 	if (state != 1000) {
 		imuseTableEntry key;
 		key.stateNum = state;
-		const imuseTableEntry *e = static_cast<imuseTableEntry *>
-			(std::bsearch(&key, grimMusicTable,
-			sizeof(grimMusicTable) / sizeof(grimMusicTable[0]),
-			sizeof(grimMusicTable[0]), compareStates));
+		const imuseTableEntry *e = static_cast<imuseTableEntry *>(std::bsearch(&key, grimMusicTable,
+			sizeof(grimMusicTable) / sizeof(grimMusicTable[0]), sizeof(grimMusicTable[0]), compareStates));
 		if (e == NULL) {
 			warning("Unknown IMuse state %d\n", state);
 			return;
@@ -330,10 +328,10 @@ void Mixer::setImuseState(int state) {
 		}
 	}
 
-	if (newSound != musicSound_) {
+	if (newSound != _musicSound) {
 		if (newSound != NULL)
 			newSound->reset();
-		musicSound_ = newSound;
+		_musicSound = newSound;
 	}
 }
 
@@ -343,10 +341,8 @@ void Mixer::setImuseSeq(int state) {
 	if (state != 2000) {
 		imuseTableEntry key;
 		key.stateNum = state;
-		const imuseTableEntry *e = static_cast<imuseTableEntry *>
-			(std::bsearch(&key, grimMusicTable,
-			sizeof(grimMusicTable) / sizeof(grimMusicTable[0]),
-			sizeof(grimMusicTable[0]), compareStates));
+		const imuseTableEntry *e = static_cast<imuseTableEntry *>(std::bsearch(&key, grimMusicTable,
+			sizeof(grimMusicTable) / sizeof(grimMusicTable[0]), sizeof(grimMusicTable[0]), compareStates));
 		if (e == NULL) {
 			warning("Unknown IMuse state %d\n", state);
 			return;
@@ -359,15 +355,15 @@ void Mixer::setImuseSeq(int state) {
 		}
 	}
 
-	if (newSound != seqSound_) {
+	if (newSound != _seqSound) {
 		if (newSound != NULL)
 			newSound->reset();
-		seqSound_ = newSound;
+		_seqSound = newSound;
 	}
 }
 
 Sound *Mixer::findSfx(const char *filename) {
-	for (sound_list::iterator i = sfxSounds_.begin(); i != sfxSounds_.end(); i++) {
+	for (sound_list::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); i++) {
 		if (std::strcmp((*i)->filename(), filename) == 0)
 			return *i;
 	}
@@ -375,33 +371,33 @@ Sound *Mixer::findSfx(const char *filename) {
 }
 
 bool Mixer::voicePlaying() const {
-	return ! voiceSounds_.empty();
+	return !_voiceSounds.empty();
 }
 
 void Mixer::getAudio(int16 *data, int numSamples) {
 	memset(data, 0, numSamples * 2);
-	for (sound_list::iterator i = voiceSounds_.begin(); i != voiceSounds_.end(); ) {
+	for (sound_list::iterator i = _voiceSounds.begin(); i != _voiceSounds.end(); ) {
 		(*i)->mix(data, numSamples);
 		if ((*i)->done())
-			i = voiceSounds_.erase(i);
+			i = _voiceSounds.erase(i);
 		else
 			i++;
 	}
-	for (sound_list::iterator i = sfxSounds_.begin(); i != sfxSounds_.end(); ) {
+	for (sound_list::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); ) {
 		(*i)->mix(data, numSamples);
 		if ((*i)->done())
-			i = sfxSounds_.erase(i);
+			i = _sfxSounds.erase(i);
 		else
 			i++;
 	}
-	if (seqSound_ != NULL) {
-		seqSound_->mix(data, numSamples);
-		if (seqSound_->done())
-			seqSound_ = NULL;
-	} else if (musicSound_ != NULL) {
-		musicSound_->mix(data, numSamples);
-		if (musicSound_->done())
-			musicSound_->reset();
+	if (_seqSound != NULL) {
+		_seqSound->mix(data, numSamples);
+		if (_seqSound->done())
+			_seqSound = NULL;
+	} else if (_musicSound != NULL) {
+		_musicSound->mix(data, numSamples);
+		if (_musicSound->done())
+			_musicSound->reset();
 	}
 }
 
@@ -448,25 +444,25 @@ Sound::Sound(const char *filename, const char *data, int /* len */) : Resource(f
 	}
 
 	if (strcasecmp(extension, "wav") == 0) {
-		numChannels_ = READ_LE_UINT16(headerPos + 22);
+		_numChannels = READ_LE_UINT16(headerPos + 22);
 		dataStart = headerPos + 28 + READ_LE_UINT32(headerPos + 16);
 		dataSize = READ_LE_UINT32(dataStart - 4);
 	} else if (strcasecmp(extension, "imc") == 0 || strcasecmp(extension, "imu") == 0) {
-			// Ignore MAP info for now...
-			if (memcmp(headerPos + 16, "FRMT", 4) != 0)
-				error("FRMT block not where it was expected\n");
-			numChannels_ = READ_BE_UINT32(headerPos + 40);
-			dataStart = headerPos + 24 + READ_BE_UINT32(headerPos + 12);
-			dataSize = READ_BE_UINT32(dataStart - 4);
-		} else {
+		// Ignore MAP info for now...
+		if (memcmp(headerPos + 16, "FRMT", 4) != 0)
+			error("FRMT block not where it was expected\n");
+		_numChannels = READ_BE_UINT32(headerPos + 40);
+		dataStart = headerPos + 24 + READ_BE_UINT32(headerPos + 12);
+		dataSize = READ_BE_UINT32(dataStart - 4);
+	} else {
 		error("Unrecognized extension for sound file %s\n", filename);
 	}
 
 	if (strcasecmp(extension, "wav") == 0 || strcasecmp(extension, "imc") == 0) {
 		// Uncompress the samples
-		numSamples_ = dataSize / 2;
-		samples_ = new int16[dataSize / 2];
-		int16 *destPos = samples_;
+		_numSamples = dataSize / 2;
+		_samples = new int16[dataSize / 2];
+		int16 *destPos = _samples;
 		const char *srcPos = dataStart;
 		for (int i = 1; i < numBlocks; i++) { // Skip header block
 			if (std::strcmp(codecsStart + 5 * *(uint8 *)(data + 6 + i * 9), "VIMA") != 0)
@@ -477,36 +473,36 @@ Sound::Sound(const char *filename, const char *data, int /* len */) : Resource(f
 			destPos += READ_BE_UINT32(data + 7 + i * 9) / 2;
 		}
 	} else {
-		numSamples_ = dataSize / 2;
-		samples_ = new int16[dataSize / 2];
-		std::memcpy(samples_, dataStart, dataSize);
+		_numSamples = dataSize / 2;
+		_samples = new int16[dataSize / 2];
+		std::memcpy(_samples, dataStart, dataSize);
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-		for (int i = 0; i < numSamples_; i++)
-			samples_[i] = SDL_Swap16(samples_[i]);
+		for (int i = 0; i < _numSamples; i++)
+			_samples[i] = SDL_Swap16(_samples[i]);
 #endif
 	}
 
-	currPos_ = 0;
+	_currPos = 0;
 }
 
 void Sound::reset() {
-	currPos_ = 0;
+	_currPos = 0;
 }
 
 void Sound::mix(int16 *data, int samples) {
-	while (samples > 0 && currPos_ < numSamples_) {
-		clampedAdd(*data, samples_[currPos_]);
+	while (samples > 0 && _currPos < _numSamples) {
+		clampedAdd(*data, _samples[_currPos]);
 		data++;
-		if (numChannels_ == 1) {
-			*data += samples_[currPos_];
+		if (_numChannels == 1) {
+			*data += _samples[_currPos];
 			samples--;
 			data++;
 		}
-		currPos_++;
+		_currPos++;
 		samples--;
 	}
 }
 
 Sound::~Sound() {
-	delete[] samples_;
+	delete[] _samples;
 }

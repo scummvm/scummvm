@@ -35,52 +35,52 @@ class LipSynch;
 class Resource {
 public:
 	Resource(const char *filename) :
-		fname_(filename), ref_(0), luaRef_(false) { }
-	Resource(const Resource &r) : fname_(r.fname_), ref_(0), luaRef_(false) {}
+		_fname(filename), _ref(0), _luaRef(false) { }
+	Resource(const Resource &r) : _fname(r._fname), _ref(0), _luaRef(false) {}
 	virtual ~Resource() { }
-	void ref() { ref_++; }
+	void ref() { _ref++; }
 	void deref();
-	const char *filename() const { return fname_.c_str(); }
+	const char *filename() const { return _fname.c_str(); }
 
-	void luaRef() { if (! luaRef_) { ref(); luaRef_ = true; } }
-	void luaGc() { if (luaRef_) { luaRef_ = false; deref(); } }
+	void luaRef() { if (!_luaRef) { ref(); _luaRef = true; } }
+	void luaGc() { if (_luaRef) { _luaRef = false; deref(); } }
 
 private:
-	std::string fname_;
-	int ref_;
-	bool luaRef_;
+	std::string _fname;
+	int _ref;
+	bool _luaRef;
 };
 
 template <class T>
 class ResPtr {
 public:
-	ResPtr() { ptr_ = NULL; }
-	ResPtr(const ResPtr &p) { ptr_ = p.ptr_; if (ptr_ != NULL) ptr_->ref(); }
-	ResPtr(T* ptr) { ptr_ = ptr; if (ptr_ != NULL) ptr_->ref(); }
-	operator T*() { return ptr_; }
-	operator const T*() const { return ptr_; }
-	T& operator *() { return *ptr_; }
-	const T& operator *() const { return *ptr_; }
-	T* operator ->() { return ptr_; }
-	const T* operator ->() const { return ptr_; }
+	ResPtr() { _ptr = NULL; }
+	ResPtr(const ResPtr &p) { _ptr = p._ptr; if (_ptr != NULL) _ptr->ref(); }
+	ResPtr(T* ptr) { _ptr = ptr; if (_ptr != NULL) _ptr->ref(); }
+	operator T*() { return _ptr; }
+	operator const T*() const { return _ptr; }
+	T& operator *() { return *_ptr; }
+	const T& operator *() const { return *_ptr; }
+	T* operator ->() { return _ptr; }
+	const T* operator ->() const { return _ptr; }
 	ResPtr& operator =(T* ptr) {
-		if (ptr_ == ptr) return *this;
-		if (ptr_ != NULL) ptr_->deref();
-		ptr_ = ptr;
-		if (ptr_ != NULL) ptr_->ref();
+		if (_ptr == ptr) return *this;
+		if (_ptr != NULL) _ptr->deref();
+		_ptr = ptr;
+		if (_ptr != NULL) _ptr->ref();
 		return *this;
 	}
 	ResPtr& operator =(const ResPtr& p) {
-	if (this == &p || ptr_ == p.ptr_) return *this;
-		if (ptr_ != NULL) ptr_->deref();
-		ptr_ = p.ptr_;
-		if (ptr_ != NULL) ptr_->ref();
+	if (this == &p || _ptr == p._ptr) return *this;
+		if (_ptr != NULL) _ptr->deref();
+		_ptr = p._ptr;
+		if (_ptr != NULL) _ptr->ref();
 		return *this;
 	}
-	~ResPtr() { if (ptr_ != NULL) ptr_->deref(); }
+	~ResPtr() { if (_ptr != NULL) _ptr->deref(); }
 
 private:
-	T* ptr_;
+	T* _ptr;
 	};
 
 class ResourceLoader {
@@ -91,9 +91,9 @@ public:
 	int fileLength(const char *filename) const;
 
 	static ResourceLoader *instance() {
-		if (instance_ == NULL)
-			instance_ = new ResourceLoader;
-		return instance_;
+		if (_instance == NULL)
+			_instance = new ResourceLoader;
+		return _instance;
 	}
 
 	Bitmap *loadBitmap(const char *fname);
@@ -111,23 +111,23 @@ private:
 	ResourceLoader(const ResourceLoader &);
 	~ResourceLoader();
 
-	static ResourceLoader *instance_;
+	static ResourceLoader *_instance;
 
 	typedef std::list<Lab *> LabList;
-	LabList labs_;
+	LabList _labs;
 
 	const Lab *findFile(const char *filename) const;
 
 	typedef std::map<std::string, Resource *> cache_type;
-	cache_type cache_;
+	cache_type _cache;
 
 	// Shut up pointless g++ warning
 	friend class dummy;
 };
 
 inline void Resource::deref() {
-	if (--ref_ == 0) {
-		ResourceLoader::instance()->uncache(fname_.c_str());
+	if (--_ref == 0) {
+		ResourceLoader::instance()->uncache(_fname.c_str());
 		delete this;
 	}
 }

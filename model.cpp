@@ -37,91 +37,91 @@ Model::Model(const char *filename, const char *data, int len, const CMap &cmap) 
 }
 
 void Model::loadBinary(const char *data, const CMap &cmap) {
-	numMaterials_ = READ_LE_UINT32(data + 4);
+	_numMaterials = READ_LE_UINT32(data + 4);
 	data += 8;
-	materials_ = new ResPtr<Material>[numMaterials_];
-	for (int i = 0; i < numMaterials_; i++) {
-		materials_[i] = ResourceLoader::instance()->loadMaterial(data, cmap);
+	_materials = new ResPtr<Material>[_numMaterials];
+	for (int i = 0; i < _numMaterials; i++) {
+		_materials[i] = ResourceLoader::instance()->loadMaterial(data, cmap);
 		data += 32;
 	}
 	data += 32; // skip name
-	numGeosets_ = READ_LE_UINT32(data + 4);
+	_numGeosets = READ_LE_UINT32(data + 4);
 	data += 8;
-	geosets_ = new Geoset[numGeosets_];
-	for (int i = 0; i < numGeosets_; i++)
-		geosets_[i].loadBinary(data, materials_);
-	numHierNodes_ = READ_LE_UINT32(data + 4);
+	_geosets = new Geoset[_numGeosets];
+	for (int i = 0; i < _numGeosets; i++)
+		_geosets[i].loadBinary(data, _materials);
+	_numHierNodes = READ_LE_UINT32(data + 4);
 	data += 8;
-	rootHierNode_ = new HierNode[numHierNodes_];
-	for (int i = 0; i < numHierNodes_; i++)
-		rootHierNode_[i].loadBinary(data, rootHierNode_, geosets_[0]);
-	radius_ = get_float(data);
-	insertOffset_ = get_vector3d(data + 40);
+	_rootHierNode = new HierNode[_numHierNodes];
+	for (int i = 0; i < _numHierNodes; i++)
+		_rootHierNode[i].loadBinary(data, _rootHierNode, _geosets[0]);
+	_radius = get_float(data);
+	_insertOffset = get_vector3d(data + 40);
 }
 
 Model::~Model() {
-	delete[] materials_;
-	delete[] geosets_;
-	delete[] rootHierNode_;
+	delete[] _materials;
+	delete[] _geosets;
+	delete[] _rootHierNode;
 }
 
 void Model::Geoset::loadBinary(const char *&data, ResPtr<Material> *materials) {
-	numMeshes_ = READ_LE_UINT32(data);
+	_numMeshes = READ_LE_UINT32(data);
 	data += 4;
-	meshes_ = new Mesh[numMeshes_];
-	for (int i = 0; i < numMeshes_; i++)
-		meshes_[i].loadBinary(data, materials);
+	_meshes = new Mesh[_numMeshes];
+	for (int i = 0; i < _numMeshes; i++)
+		_meshes[i].loadBinary(data, materials);
 }
 
 Model::Geoset::~Geoset() {
-	delete[] meshes_;
+	delete[] _meshes;
 }
 
 void Model::Mesh::loadBinary(const char *&data, ResPtr<Material> *materials) {
-	memcpy(name_, data, 32);
-	geometryMode_ = READ_LE_UINT32(data + 36);
-	lightingMode_ = READ_LE_UINT32(data + 40);
-	textureMode_ = READ_LE_UINT32(data + 44);
-	numVertices_ = READ_LE_UINT32(data + 48);
-	numTextureVerts_ = READ_LE_UINT32(data + 52);
-	numFaces_ = READ_LE_UINT32(data + 56);
-	vertices_ = new float[3 * numVertices_];
-	verticesI_ = new float[numVertices_];
-	vertNormals_ = new float[3 * numVertices_];
-	textureVerts_ = new float[2 * numTextureVerts_];
+	memcpy(_name, data, 32);
+	_geometryMode = READ_LE_UINT32(data + 36);
+	_lightingMode = READ_LE_UINT32(data + 40);
+	_textureMode = READ_LE_UINT32(data + 44);
+	_numVertices = READ_LE_UINT32(data + 48);
+	_numTextureVerts = READ_LE_UINT32(data + 52);
+	_numFaces = READ_LE_UINT32(data + 56);
+	_vertices = new float[3 * _numVertices];
+	_verticesI = new float[_numVertices];
+	_vertNormals = new float[3 * _numVertices];
+	_textureVerts = new float[2 * _numTextureVerts];
 	data += 60;
-	for (int i = 0; i < 3 * numVertices_; i++) {
-		vertices_[i] = get_float(data);
+	for (int i = 0; i < 3 * _numVertices; i++) {
+		_vertices[i] = get_float(data);
 		data += 4;
 	}
-	for (int i = 0; i < 2 * numTextureVerts_; i++) {
-		textureVerts_[i] = get_float(data);
+	for (int i = 0; i < 2 * _numTextureVerts; i++) {
+		_textureVerts[i] = get_float(data);
 		data += 4;
 	}
-	for (int i = 0; i < numVertices_; i++) {
-		verticesI_[i] = get_float(data);
+	for (int i = 0; i < _numVertices; i++) {
+		_verticesI[i] = get_float(data);
 		data += 4;
 	}
-	data += numVertices_ * 4;
-	faces_ = new Face[numFaces_];
-	for (int i = 0; i < numFaces_; i++)
-		faces_[i].loadBinary(data, materials);
-	vertNormals_ = new float[3 * numVertices_];
-	for (int i = 0; i < 3 * numVertices_; i++) {
-		vertNormals_[i] = get_float(data);
+	data += _numVertices * 4;
+	_faces = new Face[_numFaces];
+	for (int i = 0; i < _numFaces; i++)
+		_faces[i].loadBinary(data, materials);
+	_vertNormals = new float[3 * _numVertices];
+	for (int i = 0; i < 3 * _numVertices; i++) {
+		_vertNormals[i] = get_float(data);
 		data += 4;
 	}
-	shadow_ = READ_LE_UINT32(data);
-	radius_ = get_float(data + 8);
+	_shadow = READ_LE_UINT32(data);
+	_radius = get_float(data + 8);
 	data += 36;
 }
 
 Model::Mesh::~Mesh() {
-	delete[] vertices_;
-	delete[] verticesI_;
-	delete[] vertNormals_;
-	delete[] textureVerts_;
-	delete[] faces_;
+	delete[] _vertices;
+	delete[] _verticesI;
+	delete[] _vertNormals;
+	delete[] _textureVerts;
+	delete[] _faces;
 }
 
 void Model::Mesh::update() {
@@ -129,108 +129,108 @@ void Model::Mesh::update() {
 }
 
 void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
-	type_ = READ_LE_UINT32(data + 4);
-	geo_ = READ_LE_UINT32(data + 8);
-	light_ = READ_LE_UINT32(data + 12);
-	tex_ = READ_LE_UINT32(data + 16);
-	numVertices_ = READ_LE_UINT32(data + 20);
+	_type = READ_LE_UINT32(data + 4);
+	_geo = READ_LE_UINT32(data + 8);
+	_light = READ_LE_UINT32(data + 12);
+	_tex = READ_LE_UINT32(data + 16);
+	_numVertices = READ_LE_UINT32(data + 20);
 	int texPtr = READ_LE_UINT32(data + 28);
 	int materialPtr = READ_LE_UINT32(data + 32);
-	extraLight_ = get_float(data + 48);
-	normal_ = get_vector3d(data + 64);
+	_extraLight = get_float(data + 48);
+	_normal = get_vector3d(data + 64);
 	data += 76;
 
-	vertices_ = new int[numVertices_];
-	for (int i = 0; i < numVertices_; i++) {
-		vertices_[i] = READ_LE_UINT32(data);
+	_vertices = new int[_numVertices];
+	for (int i = 0; i < _numVertices; i++) {
+		_vertices[i] = READ_LE_UINT32(data);
 		data += 4;
 	}
-	if (texPtr == 0)
-		texVertices_ = NULL;
+	if (texPtr == NULL)
+		_texVertices = NULL;
 	else {
-		texVertices_ = new int[numVertices_];
-		for (int i = 0; i < numVertices_; i++) {
-			texVertices_[i] = READ_LE_UINT32(data);
+		_texVertices = new int[_numVertices];
+		for (int i = 0; i < _numVertices; i++) {
+			_texVertices[i] = READ_LE_UINT32(data);
 			data += 4;
 		}
 	}
 	if (materialPtr == 0)
-		material_ = 0;
+		_material = 0;
 	else {
-		material_ = materials[READ_LE_UINT32(data)];
+		_material = materials[READ_LE_UINT32(data)];
 		data += 4;
 	}
 }
 
 Model::Face::~Face() {
-	delete[] vertices_;
-	delete[] texVertices_;
+	delete[] _vertices;
+	delete[] _texVertices;
 }
 
 void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, const Geoset &g) {
-	memcpy(name_, data, 64);
-	flags_ = READ_LE_UINT32(data + 64);
-	type_ = READ_LE_UINT32(data + 72);
+	memcpy(_name, data, 64);
+	_flags = READ_LE_UINT32(data + 64);
+	_type = READ_LE_UINT32(data + 72);
 	int meshNum = READ_LE_UINT32(data + 76);
 	if (meshNum < 0)
-		mesh_ = NULL;
+		_mesh = NULL;
 	else
-		mesh_ = g.meshes_ + meshNum;
-	depth_ = READ_LE_UINT32(data + 80);
+		_mesh = g._meshes + meshNum;
+	_depth = READ_LE_UINT32(data + 80);
 	int parentPtr = READ_LE_UINT32(data + 84);
-	numChildren_ = READ_LE_UINT32(data + 88);
+	_numChildren = READ_LE_UINT32(data + 88);
 	int childPtr = READ_LE_UINT32(data + 92);
 	int siblingPtr = READ_LE_UINT32(data + 96);
-	pivot_ = get_vector3d(data + 100);
-	pos_ = get_vector3d(data + 112);
-	pitch_ = get_float(data + 124);
-	yaw_ = get_float(data + 128);
-	roll_ = get_float(data + 132);
-	animPos_ = pos_;
-	animPitch_ = pitch_;
-	animYaw_ = yaw_;
-	animRoll_ = roll_;
-	priority_ = -1;
-	totalWeight_ = 1;
+	_pivot = get_vector3d(data + 100);
+	_pos = get_vector3d(data + 112);
+	_pitch = get_float(data + 124);
+	_yaw = get_float(data + 128);
+	_roll = get_float(data + 132);
+	_animPos = _pos;
+	_animPitch = _pitch;
+	_animYaw = _yaw;
+	_animRoll = _roll;
+	_priority = -1;
+	_totalWeight = 1;
 
 	data += 184;
 
 	if (parentPtr != 0) {
-		parent_ = hierNodes + READ_LE_UINT32(data);
+		_parent = hierNodes + READ_LE_UINT32(data);
 		data += 4;
 	} else
-		parent_ = NULL;
+		_parent = NULL;
 	if (childPtr != 0) {
-		child_ = hierNodes + READ_LE_UINT32(data);
+		_child = hierNodes + READ_LE_UINT32(data);
 		data += 4;
 	} else
-		child_ = NULL;
+		_child = NULL;
 	if (siblingPtr != 0) {
-		sibling_ = hierNodes + READ_LE_UINT32(data);
+		_sibling = hierNodes + READ_LE_UINT32(data);
 		data += 4;
 	} else
-		sibling_ = NULL;
+		_sibling = NULL;
 
-	meshVisible_ = true;
-	hierVisible_ = true;
-	totalWeight_ = 1;
+	_meshVisible = true;
+	_hierVisible = true;
+	_totalWeight = 1;
 }
 
 void Model::draw() const {
-	rootHierNode_->draw();
+	_rootHierNode->draw();
 }
 
 Model::HierNode *Model::copyHierarchy() {
-	HierNode *result = new HierNode[numHierNodes_];
-	std::memcpy(result, rootHierNode_, numHierNodes_ * sizeof(HierNode));
+	HierNode *result = new HierNode[_numHierNodes];
+	std::memcpy(result, _rootHierNode, _numHierNodes * sizeof(HierNode));
 	// Now adjust pointers
-	for (int i = 0; i < numHierNodes_; i++) {
-		if (result[i].parent_ != NULL)
-			result[i].parent_ = result + (rootHierNode_[i].parent_ - rootHierNode_);
-		if (result[i].child_ != NULL)
-			result[i].child_ = result + (rootHierNode_[i].child_ - rootHierNode_);
-		if (result[i].sibling_ != NULL)
-			result[i].sibling_ = result + (rootHierNode_[i].sibling_ - rootHierNode_);
+	for (int i = 0; i < _numHierNodes; i++) {
+		if (result[i]._parent != NULL)
+			result[i]._parent = result + (_rootHierNode[i]._parent - _rootHierNode);
+		if (result[i]._child != NULL)
+			result[i]._child = result + (_rootHierNode[i]._child - _rootHierNode);
+		if (result[i]._sibling != NULL)
+			result[i]._sibling = result + (_rootHierNode[i]._sibling - _rootHierNode);
 	}
 	return result;
 }
@@ -239,70 +239,68 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 	ts.expectString("section: header");
 	int major, minor;
 	ts.scanString("3do %d.%d", 2, &major, &minor);
-
 	ts.expectString("section: modelresource");
-	ts.scanString("materials %d", 1, &numMaterials_);
-	materials_ = new ResPtr<Material>[numMaterials_];
-	for (int i = 0; i < numMaterials_; i++) {
+	ts.scanString("materials %d", 1, &_numMaterials);
+	_materials = new ResPtr<Material>[_numMaterials];
+	for (int i = 0; i < _numMaterials; i++) {
 		int num;
 		char name[32];
 		ts.scanString("%d: %32s", 2, &num, name);
-		materials_[num] = ResourceLoader::instance()->loadMaterial(name, cmap);
+		_materials[num] = ResourceLoader::instance()->loadMaterial(name, cmap);
 	}
 
 	ts.expectString("section: geometrydef");
-	ts.scanString("radius %f", 1, &radius_);
-	ts.scanString("insert offset %f %f %f", 3,
-		&insertOffset_.x(), &insertOffset_.y(), &insertOffset_.z());
-	ts.scanString("geosets %d", 1, &numGeosets_);
-	geosets_ = new Geoset[numGeosets_];
-	for (int i = 0; i < numGeosets_; i++) {
+	ts.scanString("radius %f", 1, &_radius);
+	ts.scanString("insert offset %f %f %f", 3, &_insertOffset.x(), &_insertOffset.y(), &_insertOffset.z());
+	ts.scanString("geosets %d", 1, &_numGeosets);
+	_geosets = new Geoset[_numGeosets];
+	for (int i = 0; i < _numGeosets; i++) {
 		int num;
 		ts.scanString("geoset %d", 1, &num);
-		geosets_[num].loadText(ts, materials_);
+		_geosets[num].loadText(ts, _materials);
 	}
 
 	ts.expectString("section: hierarchydef");
-	ts.scanString("hierarchy nodes %d", 1, &numHierNodes_);
-	rootHierNode_ = new HierNode[numHierNodes_];
-	for (int i = 0; i < numHierNodes_; i++) {
+	ts.scanString("hierarchy nodes %d", 1, &_numHierNodes);
+	_rootHierNode = new HierNode[_numHierNodes];
+	for (int i = 0; i < _numHierNodes; i++) {
 		int num, flags, type, mesh, parent, child, sibling, numChildren;
 		float x, y, z, pitch, yaw, roll, pivotx, pivoty, pivotz;
 		char name[64];
 		ts.scanString(" %d: %i %i %d %d %d %d %d %f %f %f %f %f %f %f %f %f %64s",
 			18, &num, &flags, &type, &mesh, &parent, &child, &sibling,
-			&numChildren, &x, &y, &z, &pitch, &yaw, &roll,
-			&pivotx, &pivoty, &pivotz, name);
-		rootHierNode_[num].flags_ = flags;
-		rootHierNode_[num].type_ = type;
+			&numChildren, &x, &y, &z, &pitch, &yaw, &roll, &pivotx, &pivoty, &pivotz, name);
+		_rootHierNode[num]._flags = flags;
+		_rootHierNode[num]._type = type;
 		if (mesh < 0)
-			rootHierNode_[num].mesh_ = NULL;
+			_rootHierNode[num]._mesh = NULL;
 		else
-			rootHierNode_[num].mesh_ = geosets_[0].meshes_ + mesh;
+			_rootHierNode[num]._mesh = _geosets[0]._meshes + mesh;
 		if (parent >= 0) {
-			rootHierNode_[num].parent_ = rootHierNode_ + parent;
-			rootHierNode_[num].depth_ = rootHierNode_[parent].depth_ + 1;
+			_rootHierNode[num]._parent = _rootHierNode + parent;
+			_rootHierNode[num]._depth = _rootHierNode[parent]._depth + 1;
 		} else {
-			rootHierNode_[num].parent_ = NULL;
-			rootHierNode_[num].depth_ = 0;
+			_rootHierNode[num]._parent = NULL;
+			_rootHierNode[num]._depth = 0;
 		}
 		if (child >= 0)
-			rootHierNode_[num].child_ = rootHierNode_ + child;
+			_rootHierNode[num]._child = _rootHierNode + child;
 		else
-			rootHierNode_[num].child_ = NULL;
+			_rootHierNode[num]._child = NULL;
 		if (sibling >= 0)
-			rootHierNode_[num].sibling_ = rootHierNode_ + sibling;
+			_rootHierNode[num]._sibling = _rootHierNode + sibling;
 		else
-			rootHierNode_[num].sibling_ = NULL;
-		rootHierNode_[num].numChildren_ = numChildren;
-		rootHierNode_[num].pos_ = Vector3d(x, y, z);
-		rootHierNode_[num].pitch_ = pitch;
-		rootHierNode_[num].yaw_ = yaw;
-		rootHierNode_[num].roll_ = roll;
-		rootHierNode_[num].pivot_ = Vector3d(pivotx, pivoty, pivotz);
-		rootHierNode_[num].meshVisible_ = true;
-		rootHierNode_[num].hierVisible_ = true;
-		rootHierNode_[num].totalWeight_ = 1;
+			_rootHierNode[num]._sibling = NULL;
+
+		_rootHierNode[num]._numChildren = numChildren;
+		_rootHierNode[num]._pos = Vector3d(x, y, z);
+		_rootHierNode[num]._pitch = pitch;
+		_rootHierNode[num]._yaw = yaw;
+		_rootHierNode[num]._roll = roll;
+		_rootHierNode[num]._pivot = Vector3d(pivotx, pivoty, pivotz);
+		_rootHierNode[num]._meshVisible = true;
+		_rootHierNode[num]._hierVisible = true;
+		_rootHierNode[num]._totalWeight = 1;
 	}
 
 	if (!ts.eof())
@@ -310,90 +308,94 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 }
 
 void Model::Geoset::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
-	ts.scanString("meshes %d", 1, &numMeshes_);
-	meshes_ = new Mesh[numMeshes_];
-	for (int i = 0; i < numMeshes_; i++) {
+	ts.scanString("meshes %d", 1, &_numMeshes);
+	_meshes = new Mesh[_numMeshes];
+	for (int i = 0; i < _numMeshes; i++) {
 		int num;
 		ts.scanString("mesh %d", 1, &num);
-		meshes_[num].loadText(ts, materials);
+		_meshes[num].loadText(ts, materials);
 	}
 }
 
 void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
-	ts.scanString("name %32s", 1, name_);
-	ts.scanString("radius %f", 1, &radius_);
+	ts.scanString("name %32s", 1, _name);
+	ts.scanString("radius %f", 1, &_radius);
 
 	// In data001/rope_scale.3do, the shadow line is missing
-	if (std::sscanf(ts.currentLine(), "shadow %d", &shadow_) < 1) {
-		shadow_ = 0;
+	if (std::sscanf(ts.currentLine(), "shadow %d", &_shadow) < 1) {
+		_shadow = 0;
 		warning("Missing shadow directive in model\n");
 	} else
 		ts.nextLine();
-	ts.scanString("geometrymode %d", 1, &geometryMode_);
-	ts.scanString("lightingmode %d", 1, &lightingMode_);
-	ts.scanString("texturemode %d", 1, &textureMode_);
-	ts.scanString("vertices %d", 1, &numVertices_);
-	vertices_ = new float[3 * numVertices_];
-	verticesI_ = new float[numVertices_];
-	vertNormals_ = new float[3 * numVertices_];
+	ts.scanString("geometrymode %d", 1, &_geometryMode);
+	ts.scanString("lightingmode %d", 1, &_lightingMode);
+	ts.scanString("texturemode %d", 1, &_textureMode);
+	ts.scanString("vertices %d", 1, &_numVertices);
+	_vertices = new float[3 * _numVertices];
+	_verticesI = new float[_numVertices];
+	_vertNormals = new float[3 * _numVertices];
 
-	for (int i = 0; i < numVertices_; i++) {
+	for (int i = 0; i < _numVertices; i++) {
 		int num;
 		float x, y, z, ival;
 		ts.scanString(" %d: %f %f %f %f", 5, &num, &x, &y, &z, &ival);
-		vertices_[3 * num] = x;
-		vertices_[3 * num + 1] = y;
-		vertices_[3 * num + 2] = z;
-		verticesI_[num] = ival;
+		_vertices[3 * num] = x;
+		_vertices[3 * num + 1] = y;
+		_vertices[3 * num + 2] = z;
+		_verticesI[num] = ival;
 	}
 
-	ts.scanString("texture vertices %d", 1, &numTextureVerts_);
-	textureVerts_ = new float[2 * numTextureVerts_];
+	ts.scanString("texture vertices %d", 1, &_numTextureVerts);
+	_textureVerts = new float[2 * _numTextureVerts];
 
-	for (int i = 0; i < numTextureVerts_; i++) {
+	for (int i = 0; i < _numTextureVerts; i++) {
 		int num;
 		float x, y;
 		ts.scanString(" %d: %f %f", 3, &num, &x, &y);
-		textureVerts_[2 * num] = x;
-		textureVerts_[2 * num + 1] = y;
+		_textureVerts[2 * num] = x;
+		_textureVerts[2 * num + 1] = y;
 	}
 
 	ts.expectString("vertex normals");
-	for (int i = 0; i < numVertices_; i++) {
+	for (int i = 0; i < _numVertices; i++) {
 		int num;
 		float x, y, z;
 		ts.scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
-		vertNormals_[3 * num] = x;
-		vertNormals_[3 * num + 1] = y;
-		vertNormals_[3 * num + 2] = z;
+		_vertNormals[3 * num] = x;
+		_vertNormals[3 * num + 1] = y;
+		_vertNormals[3 * num + 2] = z;
 	}
 
-	ts.scanString("faces %d", 1, &numFaces_);
-	faces_ = new Face[numFaces_];
-	for (int i = 0; i < numFaces_; i++) {
+	ts.scanString("faces %d", 1, &_numFaces);
+	_faces = new Face[_numFaces];
+	for (int i = 0; i < _numFaces; i++) {
 		int num, material, type, geo, light, tex, verts;
 		float extralight;
 		int readlen;
+
 		if (ts.eof())
 			error("Expected face data, got EOF\n");
+
 		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n",
-			&num, &material, &type, &geo, &light, &tex, &extralight,
-			&verts, &readlen) < 8)
-				error("Expected face data, got `%s'\n", ts.currentLine());
-		faces_[num].material_ = materials[material];
-		faces_[num].type_ = type;
-		faces_[num].geo_ = geo;
-		faces_[num].light_ = light;
-		faces_[num].tex_ = tex;
-		faces_[num].extraLight_ = extralight;
-		faces_[num].numVertices_ = verts;
-		faces_[num].vertices_ = new int[verts];
-		faces_[num].texVertices_ = new int[verts];
+				&num, &material, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
+			error("Expected face data, got `%s'\n", ts.currentLine());
+
+		_faces[num]._material = materials[material];
+		_faces[num]._type = type;
+		_faces[num]._geo = geo;
+		_faces[num]._light = light;
+		_faces[num]._tex = tex;
+		_faces[num]._extraLight = extralight;
+		_faces[num]._numVertices = verts;
+		_faces[num]._vertices = new int[verts];
+		_faces[num]._texVertices = new int[verts];
 		for (int j = 0; j < verts; j++) {
 			int readlen2;
+
 			if (std::sscanf(ts.currentLine() + readlen, " %d, %d%n",
-				faces_[num].vertices_ + j, faces_[num].texVertices_ + j, &readlen2) < 2)
-					error("Could not read vertex indices in line `%s'\n",
+					_faces[num]._vertices + j, _faces[num]._texVertices + j, &readlen2) < 2)
+				error("Could not read vertex indices in line `%s'\n",
+
 			ts.currentLine());
 			readlen += readlen2;
 		}
@@ -401,11 +403,11 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	}
 
 	ts.expectString("face normals");
-	for (int i = 0; i < numFaces_; i++) {
+	for (int i = 0; i < _numFaces; i++) {
 		int num;
 		float x, y, z;
 		ts.scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
-		faces_[num].normal_ = Vector3d(x, y, z);
+		_faces[num]._normal = Vector3d(x, y, z);
 	}
 }
 
@@ -414,48 +416,48 @@ void Model::HierNode::draw() const {
 }
 
 void Model::HierNode::addChild(HierNode *child) {
-	HierNode **childPos = &child_;
+	HierNode **childPos = &_child;
 	while (*childPos != NULL)
-		childPos = &(*childPos)->sibling_;
+		childPos = &(*childPos)->_sibling;
 	*childPos = child;
-	child->parent_ = this;
+	child->_parent = this;
 }
 
 void Model::HierNode::removeChild(HierNode *child) {
-	HierNode **childPos = &child_;
+	HierNode **childPos = &_child;
 	while (*childPos != NULL && *childPos != child)
-		childPos = &(*childPos)->sibling_;
+		childPos = &(*childPos)->_sibling;
 	if (*childPos != NULL) {
-		*childPos = child->sibling_;
-		child->parent_ = NULL;
+		*childPos = child->_sibling;
+		child->_parent = NULL;
 	}
 }
 
 void Model::HierNode::setMatrix(Matrix4 matrix) {
-	matrix_ = matrix;
+	_matrix = matrix;
 }
 
 void Model::HierNode::update() {
-	localMatrix_.pos_.set(animPos_.x() / totalWeight_, animPos_.y() / totalWeight_, animPos_.z() / totalWeight_);
-	localMatrix_.rot_.buildFromPitchYawRoll(animPitch_ / totalWeight_, animYaw_ / totalWeight_, animRoll_ / totalWeight_);
+	_localMatrix._pos.set(_animPos.x() / _totalWeight, _animPos.y() / _totalWeight, _animPos.z() / _totalWeight);
+	_localMatrix._rot.buildFromPitchYawRoll(_animPitch / _totalWeight, _animYaw / _totalWeight, _animRoll / _totalWeight);
 
-	matrix_ *= localMatrix_;
+	_matrix *= _localMatrix;
 
-	pivotMatrix = matrix_;
+	_pivotMatrix = _matrix;
 
-	pivotMatrix.translate( pivot_.x(), pivot_.y(), pivot_.z() );
+	_pivotMatrix.translate(_pivot.x(), _pivot.y(), _pivot.z() );
 
 	g_driver->updateHierachyNode(this);
 }
 
 void Model::Mesh::draw() const {
-	for (int i = 0; i < numFaces_; i++)
-		faces_[i].draw(vertices_, vertNormals_, textureVerts_);
+	for (int i = 0; i < _numFaces; i++)
+		_faces[i].draw(_vertices, _vertNormals, _textureVerts);
 
 	g_driver->drawModel(this);
 }
 
 void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts) const {
-	material_->select();
+	_material->select();
 	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
 }

@@ -88,9 +88,9 @@ enum {
 class Engine {
 public:
 	static Engine *instance() {
-		if (instance_ == NULL)
-			instance_ = new Engine;
-		return instance_;
+		if (_instance == NULL)
+			_instance = new Engine;
+		return _instance;
 	}
 
 	void setMode(int mode) { _mode = mode; }
@@ -98,46 +98,46 @@ public:
 	int getSpeechMode() { return _speechMode; }
 
 	void mainLoop();
-	unsigned frameStart() const { return frameStart_; }
-	unsigned frameTime() const { return frameTime_; }
+	unsigned frameStart() const { return _frameStart; }
+	unsigned frameTime() const { return _frameTime; }
 
-	float perSecond(float rate) const { return rate * frameTime_ / 1000; }
+	float perSecond(float rate) const { return rate * _frameTime / 1000; }
 
-	void enableControl(int num) { controlsEnabled_[num] = true; }
-	void disableControl(int num) { controlsEnabled_[num] = false; }
+	void enableControl(int num) { _controlsEnabled[num] = true; }
+	void disableControl(int num) { _controlsEnabled[num] = false; }
 
-	void registerActor(Actor *a) { actors_.push_back(a); }
+	void registerActor(Actor *a) { _actors.push_back(a); }
 
 	void setScene(const char *name);
-	Scene *currScene() { return currScene_; }
-	const char *sceneName() const { return currScene_->name(); }
+	Scene *currScene() { return _currScene; }
+	const char *sceneName() const { return _currScene->name(); }
 
 	typedef std::list<Actor *> actor_list_type;
 	actor_list_type::const_iterator actorsBegin() const {
-		return actors_.begin();
+		return _actors.begin();
 	}
 	actor_list_type::const_iterator actorsEnd() const {
-		return actors_.end();
+		return _actors.end();
 	}
 
-	void setSelectedActor(Actor *a) { selectedActor_ = a; }
-	Actor *selectedActor() { return selectedActor_; }
+	void setSelectedActor(Actor *a) { _selectedActor = a; }
+	Actor *selectedActor() { return _selectedActor; }
 
 	typedef std::list<TextObject *> text_list_type;
 	text_list_type::const_iterator textsBegin() const {
-		return textObjects_.begin();
+		return _textObjects.begin();
 	}
 	text_list_type::const_iterator textsEnd() const {
-		return textObjects_.end();
+		return _textObjects.end();
 	}
-	void registerTextObject(TextObject *a) { textObjects_.push_back(a); }
+	void registerTextObject(TextObject *a) { _textObjects.push_back(a); }
 	void killTextObject(TextObject *a) {
-		textObjects_.remove(a);
+		_textObjects.remove(a);
 	}
 	void killTextObjects() {
-		while (!textObjects_.empty()) {
-			delete textObjects_.back();
-			textObjects_.pop_back();
+		while (!_textObjects.empty()) {
+			delete _textObjects.back();
+			_textObjects.pop_back();
 		}
 	}
 
@@ -153,22 +153,22 @@ public:
 	gzFile _savegameFileHandle;
 
 private:
-	static Engine *instance_;
+	static Engine *_instance;
 
 	Engine();
 	~Engine() { }
 
-	Scene *currScene_;
+	Scene *_currScene;
 	int _mode;
 	int _speechMode;
 
-	unsigned frameStart_, frameTime_, movieTime_;
+	unsigned _frameStart, _frameTime, _movieTime;
 
-	bool controlsEnabled_[SDLK_EXTRA_LAST];
+	bool _controlsEnabled[SDLK_EXTRA_LAST];
 
-	actor_list_type actors_;
-	Actor *selectedActor_;
-	text_list_type textObjects_;
+	actor_list_type _actors;
+	Actor *_selectedActor;
+	text_list_type _textObjects;
 };
 
 #endif

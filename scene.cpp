@@ -29,39 +29,39 @@
 #include "driver_gl.h"
 
 Scene::Scene(const char *name, const char *buf, int len) :
-		name_(name) {
+		_name(name) {
 	TextSplitter ts(buf, len);
 	char tempBuf[256];
 
 	ts.expectString("section: colormaps");
-	ts.scanString(" numcolormaps %d", 1, &numCmaps_);
-	cmaps_ = new ResPtr<CMap>[numCmaps_];
+	ts.scanString(" numcolormaps %d", 1, &_numCmaps);
+	_cmaps = new ResPtr<CMap>[_numCmaps];
 	char cmap_name[256];
-	for (int i = 0; i < numCmaps_; i++) {
+	for (int i = 0; i < _numCmaps; i++) {
 		ts.scanString(" colormap %256s", 1, cmap_name);
-		cmaps_[i] = ResourceLoader::instance()->loadColormap(cmap_name);
+		_cmaps[i] = ResourceLoader::instance()->loadColormap(cmap_name);
 	}
 
 	ts.expectString("section: setups");
-	ts.scanString(" numsetups %d", 1, &numSetups_);
-	setups_ = new Setup[numSetups_];
-	for (int i = 0; i < numSetups_; i++)
-	setups_[i].load(ts);
-	currSetup_ = setups_;
+	ts.scanString(" numsetups %d", 1, &_numSetups);
+	_setups = new Setup[_numSetups];
+	for (int i = 0; i < _numSetups; i++)
+	_setups[i].load(ts);
+	_currSetup = _setups;
 
-	numSectors_ = -1;
-	numLights_ = -1;
-	lights_ = NULL;
-	sectors_ = NULL;
+	_numSectors = -1;
+	_numLights = -1;
+	_lights = NULL;
+	_sectors = NULL;
 	// Lights are optional
 	if (ts.eof())
 		return;
 
 	ts.expectString("section: lights");
-	ts.scanString(" numlights %d", 1, &numLights_);
-	lights_ = new Light[numLights_];
-	for (int i = 0; i < numLights_; i++)
-		lights_[i].load(ts);
+	ts.scanString(" numlights %d", 1, &_numLights);
+	_lights = new Light[_numLights];
+	for (int i = 0; i < _numLights; i++)
+		_lights[i].load(ts);
 
 	// Calculate the number of sectors
 	ts.expectString("section: sectors");
@@ -76,25 +76,24 @@ Scene::Scene(const char *name, const char *buf, int len) :
 		strcpy(tempBuf, "");
 	}
 
-	ts.scanString(" id %d", 1, &numSectors_);
-	numSectors_++;
-	sectors_ = new Sector[numSectors_];
+	ts.scanString(" id %d", 1, &_numSectors);
+	_numSectors++;
+	_sectors = new Sector[_numSectors];
 	// FIXME: This would be nicer if we could rewind the textsplitter
 	// stream
-	sectors_[0].load0(ts, tempBuf, numSectors_);
-	for (int i = 1; i < numSectors_; i++)
-		sectors_[i].load(ts);
+	_sectors[0].load0(ts, tempBuf, _numSectors);
+	for (int i = 1; i < _numSectors; i++)
+		_sectors[i].load(ts);
 }
 
 Scene::~Scene() {
-	delete [] cmaps_;
-	delete [] setups_;
-	if (lights_)
-		delete [] lights_;
-	if (sectors_)
-		delete [] sectors_;
-	for (StateList::iterator i = states_.begin();
-	     i != states_.end(); i++)
+	delete [] _cmaps;
+	delete [] _setups;
+	if (_lights)
+		delete [] _lights;
+	if (_sectors)
+		delete [] _sectors;
+	for (StateList::iterator i = _states.begin(); i != _states.end(); i++)
 		delete (*i);
 }
 
@@ -102,26 +101,25 @@ void Scene::Setup::load(TextSplitter &ts) {
 	char buf[256];
 
 	ts.scanString(" setup %256s", 1, buf);
-	name_ = buf;
+	_name = buf;
 
 	ts.scanString(" background %256s", 1, buf);
-	bkgnd_bm_ = ResourceLoader::instance()->loadBitmap(buf);
+	_bkgnd_bm = ResourceLoader::instance()->loadBitmap(buf);
 
 	// ZBuffer is optional
 	if (!ts.checkString("zbuffer")) {
-		bkgnd_zbm_ = NULL;
+		_bkgnd_zbm = NULL;
 	} else {
 		ts.scanString(" zbuffer %256s", 1, buf);
-		bkgnd_zbm_ = ResourceLoader::instance()->loadBitmap(buf);
+		_bkgnd_zbm = ResourceLoader::instance()->loadBitmap(buf);
 	}
 
-	ts.scanString(" position %f %f %f", 3, &pos_.x(), &pos_.y(), &pos_.z());
-	ts.scanString(" interest %f %f %f", 3, &interest_.x(), &interest_.y(),
-		&interest_.z());
-	ts.scanString(" roll %f", 1, &roll_);
-	ts.scanString(" fov %f", 1, &fov_);
-	ts.scanString(" nclip %f", 1, &nclip_);
-	ts.scanString(" fclip %f", 1, &fclip_);
+	ts.scanString(" position %f %f %f", 3, &_pos.x(), &_pos.y(), &_pos.z());
+	ts.scanString(" interest %f %f %f", 3, &_interest.x(), &_interest.y(), &_interest.z());
+	ts.scanString(" roll %f", 1, &_roll);
+	ts.scanString(" fov %f", 1, &_fov);
+	ts.scanString(" nclip %f", 1, &_nclip);
+	ts.scanString(" fclip %f", 1, &_fclip);
 }
 
 void Scene::Light::load(TextSplitter &ts) {
@@ -134,17 +132,17 @@ void Scene::Light::load(TextSplitter &ts) {
 		ts.nextLine();
 		strcpy(buf, "");
 	}
-	name_ = buf;
+	_name = buf;
 
 	ts.scanString(" type %256s", 1, buf);
-	type_ = buf;
+	_type = buf;
 
-	ts.scanString(" position %f %f %f", 3, &pos_.x(), &pos_.y(), &pos_.z());
-	ts.scanString(" direction %f %f %f", 3, &dir_.x(), &dir_.y(), &dir_.z());
-	ts.scanString(" intensity %f", 1, &intensity_);
-	ts.scanString(" umbraangle %f", 1, &umbraangle_);
-	ts.scanString(" penumbraangle %f", 1, &penumbraangle_);
-	ts.scanString(" color %d %d %d", 3, &color_.red(), &color_.green(), &color_.blue());
+	ts.scanString(" position %f %f %f", 3, &_pos.x(), &_pos.y(), &_pos.z());
+	ts.scanString(" direction %f %f %f", 3, &_dir.x(), &_dir.y(), &_dir.z());
+	ts.scanString(" intensity %f", 1, &_intensity);
+	ts.scanString(" umbraangle %f", 1, &_umbraangle);
+	ts.scanString(" penumbraangle %f", 1, &_penumbraangle);
+	ts.scanString(" color %d %d %d", 3, &_color.red(), &_color.green(), &_color.blue());
 }
 
 void Scene::Setup::setupCamera() const {
@@ -156,32 +154,32 @@ void Scene::Setup::setupCamera() const {
 	// are important at some point, we'll need to modify the
 	// zbuffer transformation in bitmap.cpp to take nclip_ and
 	// fclip_ into account.
-	g_driver->setupCamera(fov_, 0.01f, 3276.8f, roll_);
-	g_driver->positionCamera(pos_, interest_);
+	g_driver->setupCamera(_fov, 0.01f, 3276.8f, _roll);
+	g_driver->positionCamera(_pos, _interest);
 }
 
 void Scene::setSetup(int num) {
-	currSetup_ = setups_ + num;
+	_currSetup = _setups + num;
 
-	if (! SCREENBLOCKS_GLOBAL)
+	if (!SCREENBLOCKS_GLOBAL)
 		return;
-	if(currSetup_->bkgnd_zbm_)
-		screenBlocksInit( currSetup_->bkgnd_zbm_->getData() );
+
+	if (_currSetup->_bkgnd_zbm)
+		screenBlocksInit(_currSetup->_bkgnd_zbm->getData() );
 	else
 		screenBlocksInitEmpty();
 }
 
 void Scene::drawBitmaps(ObjectState::Position stage) {
-	for (StateList::iterator i = states_.begin(); i != states_.end();
-	     i++) {
-		if ((*i)->pos() == stage && currSetup_ == setups_ + (*i)->setupID())
+	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
+		if ((*i)->pos() == stage && _currSetup == _setups + (*i)->setupID())
 			(*i)->draw();
 	}
 }
 
 Sector *Scene::findPointSector(Vector3d p, int flags) {
-	for (int i = 0; i < numSectors_; i++) {
-		Sector *sector = sectors_ + i;
+	for (int i = 0; i < _numSectors; i++) {
+		Sector *sector = _sectors + i;
 		if ((sector->type() & flags) && sector->visible() &&
 		    sector->isPointInSector(p))
 			return sector;
@@ -194,10 +192,9 @@ void Scene::findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt) {
 	Vector3d resultPt = p;
 	float minDist;
 
-	for (int i = 0; i < numSectors_; i++) {
-		Sector *sector = sectors_ + i;
-		if ((sector->type() & 0x1000) == 0 ||
-		    ! sector->visible())
+	for (int i = 0; i < _numSectors; i++) {
+		Sector *sector = _sectors + i;
+		if ((sector->type() & 0x1000) == 0 || !sector->visible())
 			continue;
 		Vector3d closestPt = sector->closestPoint(p);
 		float thisDist = (closestPt - p).magnitude();
@@ -210,13 +207,13 @@ void Scene::findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt) {
 
 	if (sect != NULL)
 		*sect = resultSect;
+
 	if (closestPt != NULL)
 		*closestPt = resultPt;
 }
 
 ObjectState *Scene::findState(const char *filename) {
-	for (StateList::iterator i = states_.begin(); i != states_.end();
-	     i++) {
+	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
 		if (strcmp((*i)->bitmapFilename(), filename) == 0)
 			return *i;
 	}

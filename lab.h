@@ -24,25 +24,25 @@
 
 class Block {
 public:
-	Block(const char *data, int len) : data_(data), len_(len) {}
-	const char *data() const { return data_; }
-	int len() const { return len_; }
+	Block(const char *data, int len) : _data(data), _len(len) {}
+	const char *data() const { return _data; }
+	int len() const { return _len; }
 
-	~Block() { delete[] data_; }
+	~Block() { delete[] _data; }
 
 private:
 	Block();
-	const char *data_;
-	int len_;
-	bool owner_;
+	const char *_data;
+	int _len;
+	bool _owner;
 };
 
 class Lab {
 public:
-	Lab() : f_(NULL) { }
-	explicit Lab(const char *filename) : f_(NULL) { open(filename); }
+	Lab() : _f(NULL) { }
+	explicit Lab(const char *filename) : _f(NULL) { open(filename); }
 	bool open(const char *filename);
-	bool isOpen() const { return f_ != NULL; }
+	bool isOpen() const { return _f != NULL; }
 	void close();
 	bool fileExists(const char *filename) const;
 	Block *getFileBlock(const char *filename) const;
@@ -58,9 +58,9 @@ private:
 		int offset, len;
 	};
 
-	std::FILE *f_;
+	std::FILE *_f;
 	typedef std::map<std::string, LabEntry> file_map_type;
-	file_map_type file_map_;
+	file_map_type _file_map;
 
 	file_map_type::const_iterator find_filename(const char *filename) const;
 };

@@ -22,20 +22,21 @@
 
 class Vector3d {
 public:
-	float coords_[3];		// Make sure this stays as an array so
-	// it can be passed to GL functions
+	float _coords[3];		// Make sure this stays as an array so
 
-	float& x() { return coords_[0]; }
-	float x() const { return coords_[0]; }
-	float& y() { return coords_[1]; }
-	float y() const { return coords_[1]; }
-	float& z() { return coords_[2]; }
-	float z() const { return coords_[2]; }
+	float& x() { return _coords[0]; }
+	float x() const { return _coords[0]; }
+	float& y() { return _coords[1]; }
+	float y() const { return _coords[1]; }
+	float& z() { return _coords[2]; }
+	float z() const { return _coords[2]; }
 
-	Vector3d() {this->x() = 0; this->y() = 0; this->z() = 0;}
+	Vector3d() { this->x() = 0; this->y() = 0; this->z() = 0; }
+
 	Vector3d(float x, float y, float z) {
 		this->x() = x; this->y() = y; this->z() = z;
 	}
+
 	Vector3d(const Vector3d &v) {
 		x() = v.x(); y() = v.y(); z() = v.z();
 	}

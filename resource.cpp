@@ -36,7 +36,7 @@ static void makeLower(std::string& s) {
 	std::transform(s.begin(), s.end(), s.begin(), tolower);
 }
 
-ResourceLoader *ResourceLoader::instance_ = NULL;
+ResourceLoader *ResourceLoader::_instance = NULL;
 
 ResourceLoader::ResourceLoader() {
 	const char *directory = Registry::instance()->get("DataDir");
@@ -69,9 +69,9 @@ ResourceLoader::ResourceLoader() {
 			lab_counter++;
 			if (l->isOpen())
 				if (strstr(find_file_data.cFileName, "005"))
-					labs_.push_front(l);
+					_labs.push_front(l);
 				else
-					labs_.push_back(l);
+					_labs.push_back(l);
 			else
 				delete l;
 		}
@@ -100,11 +100,11 @@ ResourceLoader::ResourceLoader() {
 #endif
 
 	if (lab_counter == 0)
-	error("Cannot find any resource files in %s - check configuration file", dir_str.c_str());
+		error("Cannot find any resource files in %s - check configuration file", dir_str.c_str());
 }
 
 const Lab *ResourceLoader::findFile(const char *filename) const {
-	for (LabList::const_iterator i = labs_.begin(); i != labs_.end(); i++)
+	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); i++)
 		if ((*i)->fileExists(filename))
 			return *i;
 	return NULL;
@@ -142,8 +142,8 @@ int ResourceLoader::fileLength(const char *filename) const {
 Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = cache_.find(fname);
-	if (i != cache_.end()) {
+	cache_type::iterator i = _cache.find(fname);
+	if (i != _cache.end()) {
 		return dynamic_cast<Bitmap *>(i->second);
 	}
 
@@ -155,15 +155,16 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 
 	Bitmap *result = new Bitmap(filename, b->data(), b->len());
 	delete b;
-	cache_[fname] = result;
+	_cache[fname] = result;
 	return result;
 }
 
 CMap *ResourceLoader::loadColormap(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = cache_.find(fname);
-	if (i != cache_.end()) {
+	cache_type::iterator i = _cache.find(fname);
+
+	if (i != _cache.end()) {
 		return dynamic_cast<CMap *>(i->second);
 	}
 
@@ -172,7 +173,7 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 		error("Could not find colormap %s\n", filename);
 	CMap *result = new CMap(filename, b->data(), b->len());
 	delete b;
-	cache_[fname] = result;
+	_cache[fname] = result;
 	return result;
 }
 
@@ -190,8 +191,8 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = cache_.find(fname);
-	if (i != cache_.end()) {
+	cache_type::iterator i = _cache.find(fname);
+	if (i != _cache.end()) {
 		return dynamic_cast<KeyframeAnim *>(i->second);
 	}
 
@@ -200,7 +201,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 		error("Could not find keyframe file %s\n", filename);
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
 	delete b;
-	cache_[fname] = result;
+	_cache[fname] = result;
 	return result;
 }
 
@@ -209,8 +210,8 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 	LipSynch *result;
 
 	makeLower(fname);
-	cache_type::iterator i = cache_.find(fname);
-	if (i != cache_.end()) {
+	cache_type::iterator i = _cache.find(fname);
+	if (i != _cache.end()) {
 		return dynamic_cast<LipSynch *>(i->second);
 	}
 
@@ -221,7 +222,7 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 	} else {
 		result = new LipSynch(filename, b->data(), b->len());
 		delete b;
-		cache_[fname] = result;
+		_cache[fname] = result;
 	}	
 
 	return result;
@@ -230,8 +231,8 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = cache_.find(fname);
-	if (i != cache_.end()) {
+	cache_type::iterator i = _cache.find(fname);
+	if (i != _cache.end()) {
 		return dynamic_cast<Material *>(i->second);
 	}
 
@@ -240,15 +241,15 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 		error("Could not find material %s\n", filename);
 	Material *result = new Material(filename, b->data(), b->len(), c);
 	delete b;
-	cache_[fname] = result;
+	_cache[fname] = result;
 	return result;
 }
 
 Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = cache_.find(fname);
-	if (i != cache_.end()) {
+	cache_type::iterator i = _cache.find(fname);
+	if (i != _cache.end()) {
 		return dynamic_cast<Model *>(i->second);
 	}
 
@@ -257,15 +258,15 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 		error("Could not find model %s\n", filename);
 	Model *result = new Model(filename, b->data(), b->len(), c);
 	delete b;
-	cache_[fname] = result;
+	_cache[fname] = result;
 	return result;
 }
 
 Sound *ResourceLoader::loadSound(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = cache_.find(fname);
-	if (i != cache_.end()) {
+	cache_type::iterator i = _cache.find(fname);
+	if (i != _cache.end()) {
 		return dynamic_cast<Sound *>(i->second);
 	}
 
@@ -274,14 +275,14 @@ Sound *ResourceLoader::loadSound(const char *filename) {
 		return NULL;
 	Sound *result = new Sound(filename, b->data(), b->len());
 	delete b;
-	cache_[fname] = result;
+	_cache[fname] = result;
 	return result;
 }
 
 void ResourceLoader::uncache(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = cache_.find(fname);
-	if (i != cache_.end())
-		cache_.erase(i);
+	cache_type::iterator i = _cache.find(fname);
+	if (i != _cache.end())
+		_cache.erase(i);
 }
