@@ -2536,6 +2536,7 @@ void SimonState::o_wait_for_vga(uint a)
 
 	}
 //  warning("waiting on %d done", a);
+	_system->show_mouse(true);
 }
 
 void SimonState::timer_vga_sprites()
