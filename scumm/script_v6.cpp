@@ -2726,6 +2726,13 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		   333 = right
 		 */
 
+		// FIXME: I guess this is applicable to all engines, but lets avoid
+		// regressions
+		if (_gameId == GID_FT) {
+			push(getKeyState(args[1]));
+			return;
+		}
+
 
 		if ((args[1] == 27) && (_lastKeyHit == 27)) {
 			push(1); // abort
@@ -2775,6 +2782,108 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		error("o6_kernelGetFunctions: default case %d", args[0]);
 	}
 }
+
+// FIXME: check either some warning will trigger. I am not sure that those
+// keys are queried in scripts at all
+int ScummEngine::getKeyState(int key) {
+	switch(key) {
+	case 0x145:
+		warning("ScummEngine::getKeyState(%x) 'numlock' is probed", key);
+		return 0;
+		break;
+	case 0x164:
+		warning("ScummEngine::getKeyState(%x) 'left shift' is probed", key);
+		return 0;
+		break;
+	case 0x165:
+		warning("ScummEngine::getKeyState(%x) 'right shift' is probed", key);
+		return 0;
+		break;
+	case 0x166:
+	case 0x167:
+		warning("ScummEngine::getKeyState(%x) 'alt' is probed", key);
+		return 0;
+		break;
+	case 0x168:
+		warning("ScummEngine::getKeyState(%x) 'left ctrl' is probed", key);
+		return 0;
+		break;
+	case 0x202a:
+		warning("ScummEngine::getKeyState(%x) 'gray *' is probed", key);
+		return 0;
+		break;
+	case 0x202d:
+		warning("ScummEngine::getKeyState(%x) 'gray -' is probed", key);
+		return 0;
+		break;
+	case 0x147: // Home
+		return (_keyDownMap[0x107] || _keyDownMap[0x115]) ? 1 : 0;
+		break;
+	case 0x148: // Up
+		return (_keyDownMap[0x108] || _keyDownMap[0x111] ||
+				_keyDownMap[0x38]) ? 1 : 0;
+		break;
+	case 0x149: // PgUp
+		return (_keyDownMap[0x109] || _keyDownMap[0x118]) ? 1 : 0;
+		break;
+	case 0x14A: // Gray-
+		return (_keyDownMap[0x10d] || _keyDownMap[0x2d]) ? 1 : 0;
+		break;
+	case 0x14B: // Left
+		return (_keyDownMap[0x104] || _keyDownMap[0x114] ||
+				_keyDownMap[0x34]) ? 1 : 0;
+		break;
+	case 0x14C: // 5
+		return (_keyDownMap[0x105]) ? 1 : 0;
+		break;
+	case 0x14D: // Right
+		return (_keyDownMap[0x106] || _keyDownMap[0x113] ||
+				_keyDownMap[0x36]) ? 1 : 0;
+		break;
+	case 0x14E: // Gray+
+		return (_keyDownMap[0x10e] || 
+				(_keyDownMap[0x13d] && _keyDownMap[0x12f])) ? 1 : 0;
+		break;
+	case 0x14F: // End
+		return (_keyDownMap[0x101] || _keyDownMap[0x117]) ? 1 : 0;
+		break;
+	case 0x150: // Down
+		return (_keyDownMap[0x102] || _keyDownMap[0x112] ||
+				_keyDownMap[0x32]) ? 1 : 0;
+		break;
+	case 0x151: // PgDn
+		return (_keyDownMap[0x103] || _keyDownMap[0x119]) ? 1 : 0;
+		break;
+	case 0x152: // Ins
+		return (_keyDownMap[0x100] || _keyDownMap[0x115]) ? 1 : 0;
+		break;
+	case 0x153: // Del
+		return (_keyDownMap[0x10a] || _keyDownMap[0x7f]) ? 1 : 0;
+		break;
+	default:
+		break;
+	}
+
+	if (key >= 0x13b && key <= 0x144) { // F1-F10
+		key -= 0x13b - 0x11a;
+	} else if (key >= 0x154 && key <= 0x15d) { // Shift+F1-F10
+		key -= 0x154 - 0x11a; // map it to just F1-F10
+
+		warning("ScummEngine::getKeyState(%x) 'Shift-F%d' is probed", key, key-0x153);
+	} else if (key > 0x8000) { // Alt
+		key -= 0x8000;
+		key += 154; // see ScummEngine::parseEvents()
+	} else if (key > 0x4000) { // Ctrl
+		key -= 0x4000;
+		key -= 0x40;
+	} else if (key > 0x2000) { // Gray keys
+		key -= 0x2000;
+		warning("ScummEngine::getKeyState(%x) 'gray key' is probed", key);
+	}
+
+	return (_keyDownMap[key]) ? 1 : 0;
+}
+
 
 void ScummEngine_v6::o6_delayFrames() {
 	ScriptSlot *ss = &vm.slot[_currentScript];

@@ -420,6 +420,7 @@ public:
 protected:
 	int _keyPressed;
 	uint16 _lastKeyHit;
+	bool _keyDownMap[512]; // FIXME - 512 is a guess. it's max(kbd.ascii)
 
 	Common::Point _mouse;
 	Common::Point _virtualMouse;
@@ -459,6 +460,8 @@ protected:
 	void saveOrLoad(Serializer *s, uint32 savegameVersion);
 	void saveLoadResource(Serializer *ser, int type, int index);
 	void makeSavegameName(char *out, int slot, bool compatible);
+
+	int getKeyState(int key);
 
 public:
 	bool getSavegameName(int slot, char *desc, SaveFileManager *mgr);

@@ -1099,6 +1099,10 @@ void ScummEngine::scummInit() {
 		_string[i].t_charset = 0;
 	}
 
+	// all keys are released
+	for (i = 0; i < 512; i++)
+		_keyDownMap[i] = false;
+
 	_numInMsgStack = 0;
 
 	createResource(rtTemp, 6, 500);
@@ -1588,13 +1592,30 @@ void ScummEngine::parseEvents() {
 						327, 328, 329
 					};
 				_keyPressed = numpad[event.kbd.ascii - '0'];
-			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276) {
+			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _gameId == GID_FT) {
 				// don't let game have arrow keys as we currently steal them
 				// for keyboard cursor control
 				// this fixes bug with up arrow (273) corresponding to
 				// "instant win" cheat in MI2 mentioned above
+				//
+				// This is not applicable to Full Throttle as it processes keyboard
+				// cursor control by itself. Also it fixes derby scene
 				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			}
+
+			if (_keyPressed >= 512)
+				warning("_keyPressed > 512 (%d)", _keyPressed);
+			else
+				_keyDownMap[_keyPressed] = true;
+			break;
+
+		case OSystem::EVENT_KEYUP:
+			// FIXME: for some reason OSystem::KBD_ALT is set sometimes
+			// possible to a bug in sdl-common.cpp
+			if (event.kbd.ascii >= 512)
+				warning("keyPressed > 512 (%d)", event.kbd.ascii);
+			else
+				_keyDownMap[event.kbd.ascii] = false;
 			break;
 
 		case OSystem::EVENT_MOUSEMOVE:

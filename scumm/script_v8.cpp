@@ -1401,21 +1401,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		push(checkXYInBoxBounds(args[3], args[1], args[2]));
 		break;
 	case 0xD3:		// getKeyState
-		switch(args[1]) {
-		// Stub out a few specific cases, just to make things less noisy
-
-		// To actually implement this, we may need a new OSystem call to do
-		// asyncronous keyboard state checking...
-		case 0x14B:	//	Left Arrow depressed?
-		case 0x14D:	//	Right Arrow depressed?
-		case 0x09:	// 	Tab depressed (fire in ship combat)
-			push(0);
-			break;
-		default:
-			warning("getKeyState(0x%X)", args[1]);
-			push(0);
-			break;
-		}
+		push(getKeyState(args[1]));
 		break;
 	case 0xCE:		// getRGBSlot
 	case 0xD7:		// getBox
