@@ -52,7 +52,7 @@ enum {
 	kAlignCenter
 };
 
-class FontRenderer {
+class FontRendererGui {
 private:
 	struct Glyph {
 		uint8 *_data;
@@ -62,7 +62,7 @@ private:
 	int _fontId;
 
 public:
-	FontRenderer(int fontId) : _fontId(fontId) {
+	FontRendererGui(int fontId) : _fontId(fontId) {
 		uint8 *font = res_man.open(fontId);
 		_frameHeader *head;
 		_spriteInfo sprite;
@@ -82,7 +82,7 @@ public:
 		res_man.close(fontId);
 	}
 
-	~FontRenderer() {
+	~FontRendererGui() {
 		for (int i = 0; i < SIZE_OF_CHAR_SET; i++)
 			DeleteSurface(_glyph[i]._data);
 	}
@@ -119,7 +119,7 @@ public:
 	void drawText(int textId, int x, int y, int alignment = kAlignLeft);
 };
 
-void FontRenderer::drawText(char *text, int x, int y, int alignment) {
+void FontRendererGui::drawText(char *text, int x, int y, int alignment) {
 	_spriteInfo sprite;
 	int i;
 
@@ -149,7 +149,7 @@ void FontRenderer::drawText(char *text, int x, int y, int alignment) {
 	}
 }
 
-void FontRenderer::drawText(int textId, int x, int y, int alignment) {
+void FontRendererGui::drawText(int textId, int x, int y, int alignment) {
 	char text[MAX_STRING_LEN];
 
 	fetchText(textId, text);
@@ -657,14 +657,14 @@ public:
 class MiniDialog : public Dialog {
 private:
 	int _textId;
-	FontRenderer *_fontRenderer;
+	FontRendererGui *_fontRenderer;
 	Widget *_panel;
 	Button *_okButton;
 	Button *_cancelButton;
 
 public:
 	MiniDialog(uint32 textId) : _textId(textId) {
-		_fontRenderer = new FontRenderer(controls_font_id);
+		_fontRenderer = new FontRendererGui(controls_font_id);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(1996, 203, 104);
@@ -702,7 +702,7 @@ public:
 
 class OptionsDialog : public Dialog {
 private:
-	FontRenderer *_fontRenderer;
+	FontRendererGui *_fontRenderer;
 	Widget *_panel;
 	Switch *_objectLabelsSwitch;
 	Switch *_subtitlesSwitch;
@@ -722,7 +722,7 @@ private:
 
 public:
 	OptionsDialog() {
-		_fontRenderer = new FontRenderer(controls_font_id);
+		_fontRenderer = new FontRendererGui(controls_font_id);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(3405, 0, 40);
@@ -935,7 +935,7 @@ enum {
 class Slot : public Widget {
 private:
 	int _mode;
-	FontRenderer *_fr;
+	FontRendererGui *_fr;
 	char _text[SAVE_DESCRIPTION_LEN];
 	bool _clickable;
 	bool _editable;
@@ -964,7 +964,7 @@ public:
 		return _editable;
 	}
 
-	void setText(FontRenderer *fr, int slot, char *text) {
+	void setText(FontRendererGui *fr, int slot, char *text) {
 		_fr = fr;
 		if (text)
 			sprintf(_text, "%d.  %s", slot, text);
@@ -1032,8 +1032,8 @@ private:
 	int _editPos, _firstPos;
 	int _cursorTick;
 
-	FontRenderer *_fontRenderer1;
-	FontRenderer *_fontRenderer2;
+	FontRendererGui *_fontRenderer1;
+	FontRendererGui *_fontRenderer2;
 	Widget *_panel;
 	Slot *_slotButton[8];
 	ScrollButton *_zupButton;
@@ -1052,8 +1052,8 @@ public:
 		// FIXME: The "control font" and the "red font" are currently
 		// always the same font, so one should be eliminated.
 
-		_fontRenderer1 = new FontRenderer(controls_font_id);
-		_fontRenderer2 = new FontRenderer(red_font_id);
+		_fontRenderer1 = new FontRendererGui(controls_font_id);
+		_fontRenderer2 = new FontRendererGui(red_font_id);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(2016, 0, 40);
@@ -1111,7 +1111,7 @@ public:
 	void updateSlots() {
 		for (int i = 0; i < 8; i++) {
 			Slot *slot = _slotButton[(gui._baseSlot + i) % 8];
-			FontRenderer *fr;
+			FontRendererGui *fr;
 			uint8 description[SAVE_DESCRIPTION_LEN];
 
 			slot->setY(72 + i * 36);
