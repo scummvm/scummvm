@@ -1954,6 +1954,9 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 		VAR(VAR_V6_SCREEN_HEIGHT) = _roomHeight;
 	}
 
+	VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
+	VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
+
 	if (_features & GF_NEW_CAMERA) {
 		VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;
 		VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
@@ -1967,9 +1970,6 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	if (_roomResource == 0)
 		return;
-
-	VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
-	VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
 
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
