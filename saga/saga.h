@@ -80,8 +80,9 @@ enum SAGAGameId {
 	GID_IHNM
 };
 
-int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h,
-	int dst_p, const byte *src_img, int src_p, int flags, double percent);
+int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, const byte *src_img,
+						int src_w, int src_h, int src_p, int flags, int x, int y, 
+						double percent);
 
 int SYSINPUT_ProcessInput(void);
 R_POINT SYSINPUT_GetMousePos();

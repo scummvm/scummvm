@@ -174,7 +174,21 @@ int Events::handleContinuous(R_EVENT *event) {
 			_vm->_render->getBufferInfo(&buf_info);
 			_vm->_scene->getBGInfo(&bg_info);
 			TRANSITION_Dissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, buf_info.r_bg_buf_h,
-								buf_info.r_bg_buf_w, bg_info.bg_buf, bg_info.bg_p, 0, event_pc);
+								buf_info.r_bg_buf_w, bg_info.bg_buf, bg_info.bg_w, 
+								bg_info.bg_h, bg_info.bg_p, 0, 0, 0, event_pc);
+			break;
+		case EVENT_DISSOLVE_BGMASK:
+			// we dissolve it centered.
+			// set flag of Dissolve to 1. It is a hack to simulate zero masking.
+			int w, h;
+			byte *mask_buf;
+			size_t len;
+
+			_vm->_render->getBufferInfo(&buf_info);
+			_vm->_scene->getBGMaskInfo(&w, &h, &mask_buf, &len);
+			TRANSITION_Dissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, buf_info.r_bg_buf_h,
+								buf_info.r_bg_buf_w, mask_buf, w, h, 0, 1, (320 - w) / 2,
+								(200 - h) / 2, event_pc);
 			break;
 		default:
 			break;
@@ -268,6 +282,12 @@ int Events::handleOneShot(R_EVENT *event) {
 		switch (event->op) {
 		case EVENT_FRAME:
 			_vm->_anim->play(event->param, event->time);
+			break;
+		case EVENT_SETFLAG:
+			_vm->_anim->setFlag(event->param, event->param2);
+			break;
+		case EVENT_CLEARFLAG:
+			_vm->_anim->clearFlag(event->param, event->param2);
 			break;
 		default:
 			break;

@@ -88,6 +88,7 @@ struct R_ANIMATION {
 
 enum ANIM_FLAGS {
 	ANIM_LOOP = 0x01,
+	ANIM_PAUSE = 0x02,
 	ANIM_ENDSCENE = 0x80	// When animation ends, dispatch scene end event
 };
 
@@ -101,6 +102,7 @@ public:
 	int play(uint16 anim_id, int vector_time);
 	int link(uint16 anim_id1, uint16 anim_id2);
 	int setFlag(uint16 anim_id, uint16 flag);
+	int clearFlag(uint16 anim_id, uint16 flag);
 	int setFrameTime(uint16 anim_id, int time);
 	int reset(void);
 	void animInfo(int argc, char *argv[]);

@@ -124,12 +124,13 @@ static R_INTRO_DIALOGUE IntroDiag[] = {
 };
 
 R_SCENE_QUEUE ITE_IntroList[] = {
+	{ITE_VALLEY_SCENE, NULL, BY_RESOURCE, ITE_IntroValleyProc, 0}, // HACK
 	{ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, ITE_IntroAnimProc, 0},
 	{ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, ITE_IntroCave1Proc, 1},
 	{ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, ITE_IntroCave2Proc, 0},
 	{ITE_CAVE_SCENE_3, NULL, BY_RESOURCE, ITE_IntroCave3Proc, 0},
 	{ITE_CAVE_SCENE_4, NULL, BY_RESOURCE, ITE_IntroCave4Proc, 0},
-	{ITE_VALLEY_SCENE, NULL, BY_RESOURCE, ITE_IntroValleyProc, 0},
+	//	{ITE_VALLEY_SCENE, NULL, BY_RESOURCE, ITE_IntroValleyProc, 0},
 	{ITE_TREEHOUSE_SCENE, NULL, BY_RESOURCE, ITE_IntroTreeHouseProc, 0},
 	{ITE_FAIREPATH_SCENE, NULL, BY_RESOURCE, ITE_IntroFairePathProc, 0},
 	{ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, ITE_IntroFaireTentProc, 0}
@@ -680,12 +681,6 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->queue(&event);
 
-		debug(0, "Beginning animation playback.");
-
-		// Begin title screen background animation 
-		_vm->_anim->setFlag(0, ANIM_LOOP);
-		_vm->_anim->play(0, 0);
-
 		// Begin ITE title theme music
 		_vm->_music->stop();
 
@@ -696,6 +691,58 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
+		
+		// Pause animation before logo
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_ANIM_EVENT;
+		event.op = EVENT_SETFLAG;
+		event.param = 0;
+		event.param2 = ANIM_PAUSE;
+		event.time = 3000;
+
+		q_event = _vm->_events->queue(&event);
+
+		// Display logo
+		event.type = R_CONTINUOUS_EVENT;
+		event.code = R_TRANSITION_EVENT;
+		event.op = EVENT_DISSOLVE_BGMASK;
+		event.time = 3000;
+		event.duration = LOGO_DISSOLVE_DURATION;
+
+		q_event = _vm->_events->queue(&event);
+
+		// Remove logo
+		event.type = R_CONTINUOUS_EVENT;
+		event.code = R_TRANSITION_EVENT;
+		event.op = EVENT_DISSOLVE;
+		event.time = 6000;
+		event.duration = LOGO_DISSOLVE_DURATION;
+
+		q_event = _vm->_events->queue(&event);
+
+		// Unpause animation before logo
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_ANIM_EVENT;
+		event.op = EVENT_CLEARFLAG;
+		event.param = 0;
+		event.param2 = ANIM_PAUSE;
+		event.time = 6000 + LOGO_DISSOLVE_DURATION;
+
+		q_event = _vm->_events->queue(&event);
+
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_ANIM_EVENT;
+		event.op = EVENT_FRAME;
+		event.param = 0;
+		event.time = 6000 + LOGO_DISSOLVE_DURATION;
+
+		q_event = _vm->_events->queue(&event);
+
+		debug(0, "Beginning animation playback.");
+
+		// Begin title screen background animation 
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, 0);
 
 		// Queue game credits list
 		text_entry.color = 255;

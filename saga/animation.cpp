@@ -193,6 +193,9 @@ int Anim::play(uint16 anim_id, int vector_time) {
 		return R_FAILURE;
 	}
 
+	if (anim->flags & ANIM_PAUSE)
+		return R_SUCCESS;
+
 	if (anim->play_flag) {
 		frame = anim->current_frame;
 		if (GAME_GetGameType() == R_GAMETYPE_ITE) {
@@ -300,6 +303,23 @@ int Anim::setFlag(uint16 anim_id, uint16 flag) {
 	}
 
 	anim->flags |= flag;
+
+	return R_SUCCESS;
+}
+
+int Anim::clearFlag(uint16 anim_id, uint16 flag) {
+	R_ANIMATION *anim;
+
+	if (anim_id > _anim_count) {
+		return R_FAILURE;
+	}
+
+	anim = _anim_tbl[anim_id];
+	if (anim == NULL) {
+		return R_FAILURE;
+	}
+
+	anim->flags &= ~flag;
 
 	return R_SUCCESS;
 }

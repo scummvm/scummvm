@@ -26,13 +26,20 @@
 
 namespace Saga {
 
+/*! @brief dissolve one image with another
+
+    @param flag if set to 1, do zero masking
+*/
 int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, const byte *src_img,
-						int src_p, int flags, double percent) {
+						int src_w, int src_h, int src_p, int flags, int x, int y, 
+						double percent) {
 #define XOR_MASK 0xB400;
 	int pixelcount = dst_w * dst_h;
 	int seqlimit = (int)(65535 * percent);
 	int seq = 1;
-	int i;
+	int i, x1, y1;
+	Common::Rect clip(x, y, x+src_w, y+src_h);
+	byte color;
 
 	for (i = 0; i < seqlimit; i++) {
 		if (seq & 1) {
@@ -48,7 +55,14 @@ int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, const by
 		if (seq >= pixelcount) {
 			continue;
 		} else {
-			dst_img[seq] = src_img[seq];
+			x1 = seq % dst_w;
+			y1 = seq / dst_w;
+			
+			if (clip.contains(x1, y1)) {
+				color = src_img[(x1-x)+src_w*(y1-y)];
+				if (flags == 0 || color)
+					dst_img[seq] = color;
+			}
 		}
 	}
 
