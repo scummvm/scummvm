@@ -167,7 +167,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"samdemoMac", "Sam & Max (Mac Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, "samdemo", "Sam & Max Demo Data"},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0, "snmdemo.sm0"},
 	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0, 0},
 
