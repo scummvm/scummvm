@@ -183,7 +183,7 @@ void Scumm_v8::setupOpcodes()
 		/* 74 */
 		OPCODE(o8_dim2),
 		OPCODE(o6_wordArrayIndexedWrite),
-		OPCODE(o8_arrayAssign),
+		OPCODE(o8_arrayOps),
 		OPCODE(o8_unknown),
 		/* 78 */
 		OPCODE(o8_unknown),
@@ -424,14 +424,60 @@ void Scumm_v8::o8_wait()
 
 void Scumm_v8::o8_dim()
 {
+	byte subOp = fetchScriptByte();
+	int array = fetchScriptWord();
+	
+	switch (subOp) {
+	case 0x0A:		// SO_ARRAY_SCUMMVAR
+		defineArray(array, 5, 0, pop());
+		break;
+	case 0x0B:		// SO_ARRAY_STRING
+		defineArray(array, 4, 0, pop());
+		break;
+	case 0x0C:		// SO_ARRAY_UNDIM
+		nukeArray(array);
+		break;
+	default:
+		error("o8_dim: default case %d", subOp);
+	}
 }
 
 void Scumm_v8::o8_dim2()
 {
+	byte subOp = fetchScriptByte();
+	int array = fetchScriptWord(), a, b;
+	
+	switch (subOp) {
+	case 0x0A:		// SO_ARRAY_SCUMMVAR
+		b = pop();
+		a = pop();
+		defineArray(array, 5, a, b);
+		break;
+	case 0x0B:		// SO_ARRAY_STRING
+		b = pop();
+		a = pop();
+		defineArray(array, 4, a, b);
+		break;
+	case 0x0C:		// SO_ARRAY_UNDIM
+		nukeArray(array);
+		break;
+	default:
+		error("o8_dim2: default case %d", subOp);
+	}
 }
 
-void Scumm_v8::o8_arrayAssign()
+void Scumm_v8::o8_arrayOps()
 {
+	byte subOp = fetchScriptByte();
+	int array = fetchScriptWord();
+	
+	switch (subOp) {
+	case 0x14:		// SO_ASSIGN_STRING
+	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
+	case 0x16:		// SO_ASSIGN_2DIM_LIST
+	default:
+		error("o8_arrayOps: default case %d (array %d)", subOp, array);
+	}
 }
 
 void Scumm_v8::o8_printLine()
@@ -478,25 +524,64 @@ void Scumm_v8::o8_resourceRoutines()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
+	int resid = pop();
+
 	switch (subOp) {
 	case 0x3C:		// SO_HEAP_LOAD_CHARSET Load character set to heap
+		ensureResourceLoaded(rtCharset, resid);	// FIXME - is this correct?
+		break;
 	case 0x3D:		// SO_HEAP_LOAD_COSTUME Load costume to heap
+		ensureResourceLoaded(rtCostume, resid);
+		break;
 	case 0x3E:		// SO_HEAP_LOAD_OBJECT Load object to heap
+		// TODO - is 'object' in COMI the same as FlObject in Sam&Max ?!?
+		break;
 	case 0x3F:		// SO_HEAP_LOAD_ROOM Load room to heap
+		ensureResourceLoaded(rtRoom, resid);
+		break;
 	case 0x40:		// SO_HEAP_LOAD_SCRIPT Load script to heap
+		ensureResourceLoaded(rtScript, resid);
+		break;
 	case 0x41:		// SO_HEAP_LOAD_SOUND Load sound to heap
+		ensureResourceLoaded(rtSound, resid);
+		break;
+
 	case 0x42:		// SO_HEAP_LOCK_COSTUME Lock costume in heap
+		lock(rtCostume, resid);
+		break;
 	case 0x43:		// SO_HEAP_LOCK_ROOM Lock room in heap
+		lock(rtRoom, resid);
+		break;
 	case 0x44:		// SO_HEAP_LOCK_SCRIPT Lock script in heap
+		lock(rtScript, resid);
+		break;
 	case 0x45:		// SO_HEAP_LOCK_SOUND Lock sound in heap
+		lock(rtSound, resid);
+		break;
 	case 0x46:		// SO_HEAP_UNLOCK_COSTUME Unlock costume
+		unlock(rtCostume, resid);
+		break;
 	case 0x47:		// SO_HEAP_UNLOCK_ROOM Unlock room
+		unlock(rtRoom, resid);
+		break;
 	case 0x48:		// SO_HEAP_UNLOCK_SCRIPT Unlock script
+		unlock(rtScript, resid);
+		break;
 	case 0x49:		// SO_HEAP_UNLOCK_SOUND Unlock sound
+		unlock(rtSound, resid);
+		break;
 	case 0x4A:		// SO_HEAP_NUKE_COSTUME Remove costume from heap
+		setResourceCounter(rtCostume, resid, 0x7F);
+		break;
 	case 0x4B:		// SO_HEAP_NUKE_ROOM Remove room from heap
+		setResourceCounter(rtRoom, resid, 0x7F);
+		break;
 	case 0x4C:		// SO_HEAP_NUKE_SCRIPT Remove script from heap
+		setResourceCounter(rtScript, resid, 0x7F);
+		break;
 	case 0x4D:		// SO_HEAP_NUKE_SOUND Remove sound from heap
+		setResourceCounter(rtSound, resid, 0x7F);
+		break;
 	default:
 		error("o8_resourceRoutines: default case %d", subOp);
 	}

@@ -410,7 +410,7 @@ protected:
 
 	void o8_dim();
 	void o8_dim2();
-	void o8_arrayAssign();
+	void o8_arrayOps();
 	void o8_printLine();
 	void o8_printCursor();
 	void o8_printDebug();

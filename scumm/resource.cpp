@@ -1656,8 +1656,6 @@ void Scumm::allocateArrays()
 }
 
 
-
-
 bool Scumm::isGlobInMemory(int type, int idx)
 {
 	if (!validateResource("isGlobInMemory", type, idx))
