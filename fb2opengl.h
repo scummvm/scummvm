@@ -21,8 +21,8 @@
 /* FrameBuffer renderer in an OpenGL texture
  Andre Souza <asouza@olinux.com.br> */
 
-#include <GL/gl.h>
 #include <SDL.h>
+#include <SDL_opengl.h>
 #include <stdlib.h>
 #include <string.h>
 
