@@ -462,37 +462,37 @@ const VersionSettings version_settings[] = {
 	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  5, 0, 16,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 5, 1, 42,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2,
-	 GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 2, 2,
-	 GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2,
-	 GF_USE_KEY},
+	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY},
+	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY},
+	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY},
+	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 
 	/* Scumm Version 6 */
 	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_HUMONGOUS},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
 	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_HUMONGOUS},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_HUMONGOUS},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER},
 	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 
 	{"test", "Test demo game", GID_SAMNMAX, 6, 6, 6, GF_NEW_OPCODES | GF_AFTER_V6},
 
@@ -570,10 +570,10 @@ int GameDetector::detectMain()
 		_gameText = "Please choose a game";
 	}
 
-	/* Use the adlib sound driver if the game is one of those that want
-	 * adlib as default
-	 */
-	if (_features & GF_ADLIB_DEFAULT) {
+	/* Use the adlib sound driver if auto mode is selected,
+	 * and the game is one of those that want adlib as
+	 * default */
+	if (_midi_driver == MD_AUTO && _features & GF_ADLIB_DEFAULT) {
 		_use_adlib = true;
 	}
 
