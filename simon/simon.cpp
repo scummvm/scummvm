@@ -4674,6 +4674,9 @@ bool SimonState::load_game(uint slot)
 
 void SimonState::initSound()
 {
+#ifdef SCUMM_BIG_ENDIAN
+	uint i;
+#endif
 	/* only read voice file in windows game */
 	if (_game & GAME_TALKIE) {
 		const char *s;
