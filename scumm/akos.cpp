@@ -1226,7 +1226,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	src = dst;
 	src.moveTo(0, 0);
 
-	_vm->markRectAsDirty(kMainVirtScreen, dst);
+	_vm->markRectAsDirty(kMainVirtScreen, dst, _actorID);
 
 	// cyx: are these variables really useful ?
 	if (_draw_top > dst.top)
