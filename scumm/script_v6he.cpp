@@ -546,7 +546,7 @@ void ScummEngine_v6he::o6_roomOps() {
 
 void ScummEngine_v6he::o6_actorOps() {
 	Actor *a;
-	int i, j, k;
+	int i, j, k, l;
 	int args[8];
 	byte b;
 	byte name[256];
@@ -564,6 +564,14 @@ void ScummEngine_v6he::o6_actorOps() {
 	switch (b) {
 	case 30:
 		// _heversion >= 70
+		l = pop();
+		k = pop();
+		j = pop();
+		i = pop();
+		warning("o6_actorOps: stub case %d", b);
+		break;
+	case 64:
+		// _heversion >= 72
 		k = pop();
 		j = pop();
 		i = pop();
@@ -767,10 +775,10 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 	case 5:
 		//Used before mini games in 3DO versions, seems safe to ignore.
 		break;
-	case 20:
+	case 21:
 		_skipDrawObject = 1;
 		break;
-	case 21:
+	case 22:
 		_skipDrawObject = 0;
 		break;
 	default:
