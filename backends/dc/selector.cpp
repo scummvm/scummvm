@@ -160,7 +160,7 @@ static bool checkName(const char *base, char *text = 0)
   return false;
 }
 
-static const char *checkDetect(const FilesystemNode *entry)
+static const char *checkDetect(const FilesystemNode *entry, bool unique)
 {
   FSList files;
   files.push_back(*entry);
@@ -173,18 +173,24 @@ static const char *checkDetect(const FilesystemNode *entry)
   }
   if (candidates.isEmpty())
     return NULL;
+  if (unique && candidates.size() > 1)
+    return NULL;
   return candidates[0].name;
 }
 
 static bool isGame(const FilesystemNode *entry, char *base)
 {
   const char *fn = entry->displayName().c_str();
+  if(const char *dtct = checkDetect(entry, true)) {
+    strcpy(base, dtct);
+    return true;
+  }
   if(!strcasecmp(fn, "00.LFL") ||
      !strcasecmp(fn, "000.LFL")) {
     *base = '\0';
     return true;
   }
-  if(const char *dtct = checkDetect(entry)) {
+  if(const char *dtct = checkDetect(entry, false)) {
     strcpy(base, dtct);
     return true;
   }
@@ -198,7 +204,7 @@ static bool isGame(const FilesystemNode *entry, char *base)
     base[l-4]='\0';
     return true;
   }
-#else
+#elsif 0
   char *dot;
   if(!stricmp(fn, "LOOM.EXE"))
     return false;
@@ -306,8 +312,10 @@ static int findGames(Game *games, int max)
 		games[curr_game].dir[i+1]='\0';
 #endif
 	      }
+#if 0
 	      if(checkExe(games[curr_game].dir, "loom"))
 		strcpy(games[curr_game].filename_base, "loomcd");
+#endif
 	    }
 	    if(uniqueGame(games[curr_game].filename_base,
 			  games[curr_game].dir, games, curr_game)) {
