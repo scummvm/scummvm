@@ -128,7 +128,7 @@ public:
 	int16 *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height, bool inverted = false);
 	void line(int x, int y, int x2, int y2, int16 color);
-	void blendRect(int x, int y, int w, int h, int16 color);
+	void blendRect(int x, int y, int w, int h, int16 color, int level = 3);
 	void fillRect(int x, int y, int w, int h, int16 color);
 	void checkerRect(int x, int y, int w, int h, int16 color);
 	void frameRect(int x, int y, int w, int h, int16 color);
