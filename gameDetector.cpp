@@ -320,6 +320,7 @@ bool GameDetector::parseMusicDriver(const char *s) {
 		{"core",MD_COREAUDIO},
 		{"amidi",MD_AMIDI},
 		{"midiemu",MD_MIDIEMU},
+		{"alsa", MD_ALSA},
 		{"adlib",-1},
 	};
 
@@ -607,6 +608,9 @@ MidiDriver *GameDetector::createMidi() {
 #endif
 #if defined(__APPLE__)
 	case MD_COREAUDIO:	return MidiDriver_CORE_create();
+#endif
+#if defined(UNIX) && defined(USE_ALSA)
+	case MD_ALSA:		return MidiDriver_ALSA_create();
 #endif
 	}
 

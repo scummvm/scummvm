@@ -106,7 +106,8 @@ enum {
 	MD_QTMUSIC = 5,
 	MD_AMIDI = 6,
 	MD_COREAUDIO = 7,
-	MD_MIDIEMU = 8
+	MD_MIDIEMU = 8,
+	MD_ALSA = 9,
 };
 
 
@@ -120,3 +121,4 @@ extern MidiDriver *MidiDriver_QT_create();
 extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_AMIDI_create();
 extern MidiDriver *MidiDriver_MIDIEMU_create();
+extern MidiDriver *MidiDriver_ALSA_create();

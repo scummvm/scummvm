@@ -320,6 +320,7 @@ depending on your operating system and configuration.
         -eqt        - Quicktime sound, for Macintosh users.
         -ecore      - CoreAudio sound, for MacOS X users.
         -eamidi     - Uses the MorphOS MIDI system, for MorphOS users
+	-ealsa      - Output using ALSA sequencer device. See below.
         -enull      - Null output. Don't play any music.
         
 
@@ -329,6 +330,7 @@ By default an Adlib card will be emulated and ScummVM will output the music
 as sampled waves. This is the default mode for most games, and offers the
 best compatability between machines and games. However, Sam and Max does not
 include Adlib emulation.
+
 
 Playing sound with MIDI emulation:
 ----------------------------------
@@ -341,11 +343,13 @@ and is the default for Sam and Max on UNIX platforms. -HOWEVER-, it is still
 very buggy and the emulation is not perfect. If you are capable of using
 native midi, we recommend using one of the MIDI modes below.
 
+
 Playing sound with Native MIDI:
 -------------------------------
 Use the appropriate -e<mode> command line option from the list above to
 select your preferred MIDI device. For example, if you wish to use the
 Windows MIDI driver, use the -ewindows option.
+
 
 Playing sound with Sequencer MIDI:              [UNIX ONLY]
 ----------------------------------
@@ -359,6 +363,48 @@ selects the port on the selected sequencer to use. Then start scummvm with the
 performance and quality than Adlib or MIDI emulation. However, for those
 systems where sequencer support does not work, you can always fall back on
 either of those methods.
+
+
+Playing sound with ALSA sequencer:              [UNIX ONLY]
+----------------------------------
+If you have installed the ALSA driver with the sequencer support, then
+set the environment variable "SCUMMVM_PORT" to your sequencer port - eg 65:0
+
+Here is a little howto on how to use the ALSA sequencer with your soundcard.
+In all cases, to have a list of all the sequencer ports you have, try the
+command "aconnect -o -l". On my system it gives me the output:
+client 64: 'External MIDI 0' [type=kernel]
+    0 'MIDI 0-0        '
+client 65: 'Emu10k1 WaveTable' [type=kernel]
+    0 'Emu10k1 Port 0  '
+    1 'Emu10k1 Port 1  '
+    2 'Emu10k1 Port 2  '
+    3 'Emu10k1 Port 3  '
+client 128: 'Client-128' [type=user]
+    0 'TiMidity port 0 '
+    1 'TiMidity port 1 '
+
+It means the external MIDI output of my sound card is located on the
+port 64:0, that I've got four WaveTable MIDI outputs in 65:0, 65:1, 65:2
+and 65:3, and that I've got two TiMidity ports, located at 128:0 and 128:1.
+
+If you have a FM-chip on your card, like the SB16, then you have to load
+the soundfonts using the sbiload software. Example:
+  sbiload -p 65:0 /etc/std.o3 /etc/drums.o3
+
+If you have a WaveTable capable sound card, you have to load a sbk or sf2
+soundfont using the sfxload software. If you manage to do so, please mail
+me since I managed to get it working only once, and never again.
+
+If you don't have a MIDI capable soundcard, or if you want to take
+advantage of your TiMidity samples, then you can ask TiMidity to become an
+alsa sequencer output. Here is a quick way to do so:
+  timidity -iAqqq -B2,8 -Os1S -s 44100 &
+
+Then the TiMidity port will be visible from the 'aconnect -o -l' list. You
+should launch it beeing as root, since it will try to set up some real time
+priority.
+
 
 Using MP3 files for CD audio:
 -----------------------------
@@ -456,7 +502,7 @@ Credits:
         Daniel Schepler    - Final MI1 CD music support
         Tim 'realmz'       - Initial MI1 CD music support
         Jonathan 'khalek'  - Expert weaver in the Loom
-        Nicolas Noble      - Config file support
+        Nicolas Noble      - Config file and ALSA support
         Pawel Kolodziejski - Added missing Dig SMUSH codecs
         Felix Jakschitsc   - His hard work on Zak256
 
