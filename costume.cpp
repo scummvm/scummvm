@@ -727,7 +727,7 @@ byte CostumeRenderer::drawOneSlot(Actor *a, int slot) {
 		_srcptr = _loaded._ptr + READ_LE_UINT16(_frameptr + code*2);
 
 		if (code != 0x7B) {
-			if(_vm->_features & GF_OLD256 && code < 0x78)
+			if ( !(_vm->_features & GF_OLD256) || code <0x79)
 			return mainRoutine(a, slot, code);
 		}
 	}
