@@ -28,7 +28,7 @@
 #include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/animation.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/interface.h"
 
 #include "saga/script.h"
@@ -175,7 +175,7 @@ int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 	if (actor_idx < 0) {
-		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
+		_vm->_console->print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
 		return R_FAILURE;
 	}
 
@@ -210,7 +210,7 @@ int SF_setFacing(R_SCRIPTFUNC_PARAMS) {
 	orientation = _vm->_sdata->readWordS(orient_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 	if (actor_idx < 0) {
-		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
+		_vm->_console->print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
 		return R_FAILURE;
 	}
 
@@ -273,7 +273,7 @@ int SF_startAnim(R_SCRIPTFUNC_PARAMS) {
 	anim_id = _vm->_sdata->readWordS(anim_id_parm);
 
 	if (_vm->_anim->play(anim_id, 0) != R_SUCCESS) {
-		CON_Print(S_WARN_PREFIX "SF.26: Anim::play() failed. Anim id: %u\n", anim_id);
+		_vm->_console->print(S_WARN_PREFIX "SF.26: Anim::play() failed. Anim id: %u\n", anim_id);
 		return R_FAILURE;
 	}
 
@@ -300,7 +300,7 @@ int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 	if (actor_idx < 0) {
-		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.",
+		_vm->_console->print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.",
 		    actor_id);
 		return R_FAILURE;
 	}
@@ -343,7 +343,7 @@ int SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 	if (!_vm->_actor->actorExists(actor_id)) {
 		result = _vm->_actor->create(actor_id, pt.x, pt.y);
 		if (result != R_SUCCESS) {
-			CON_Print(S_WARN_PREFIX "SF.30: Couldn't create actor 0x%X.", actor_id);
+			_vm->_console->print(S_WARN_PREFIX "SF.30: Couldn't create actor 0x%X.", actor_id);
 			return R_FAILURE;
 		}
 	} else {
@@ -381,7 +381,7 @@ int SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 
 	actor_idx = _vm->_actor->getActorIndex(_vm->_sdata->readWordS(actor_parm));
 	if (actor_idx < 0) {
-		CON_Print(S_WARN_PREFIX "SF.36: Actor id 0x%X not found.", (int)actor_parm);
+		_vm->_console->print(S_WARN_PREFIX "SF.36: Actor id 0x%X not found.", (int)actor_parm);
 		return R_FAILURE;
 	}
 
@@ -423,7 +423,7 @@ int SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS) {
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 
 	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
-		CON_Print(S_WARN_PREFIX "SF.37: Actor::setAction() failed.");
+		_vm->_console->print(S_WARN_PREFIX "SF.37: Actor::setAction() failed.");
 		return R_FAILURE;
 	}
 
@@ -456,7 +456,7 @@ int SF_setFrame(R_SCRIPTFUNC_PARAMS) {
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 
 	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
-		CON_Print(S_WARN_PREFIX "SF.38: Actor::setAction() failed.");
+		_vm->_console->print(S_WARN_PREFIX "SF.38: Actor::setAction() failed.");
 		return R_FAILURE;
 	}
 
@@ -488,7 +488,7 @@ int SF_linkAnim(R_SCRIPTFUNC_PARAMS) {
 	anim_id2 = _vm->_sdata->readWordU(anim2_parm);
 
 	if (_vm->_anim->link(anim_id1, anim_id2) != R_SUCCESS) {
-		CON_Print(S_WARN_PREFIX "SF.41: Anim::link() failed. (%u->%u)\n", anim_id1, anim_id2);
+		_vm->_console->print(S_WARN_PREFIX "SF.41: Anim::link() failed. (%u->%u)\n", anim_id1, anim_id2);
 		return R_FAILURE;
 	}
 
@@ -537,7 +537,7 @@ int SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 	if (!_vm->_actor->actorExists(actor_id)) {
 		result = _vm->_actor->create(actor_id, pt.x, pt.y);
 		if (result != R_SUCCESS) {
-			CON_Print(S_WARN_PREFIX "SF.43: Couldn't create actor 0x%X.", actor_id);
+			_vm->_console->print(S_WARN_PREFIX "SF.43: Couldn't create actor 0x%X.", actor_id);
 			return R_FAILURE;
 		}
 	} else {

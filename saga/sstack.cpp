@@ -26,7 +26,7 @@
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 
 #include "saga/script.h"
 #include "saga/sstack.h"
@@ -136,7 +136,7 @@ int SSTACK_Grow(SSTACK stack) {
 	SDataWord_T *new_data;
 
 	if ((stack->len * 2) > R_STACK_SIZE_LIMIT) {
-		CON_Print(S_ERROR_PREFIX "Stack fault: growing beyond limit.");
+		_vm->_console->print(S_ERROR_PREFIX "Stack fault: growing beyond limit.");
 		return STACK_OVERFLOW;
 	}
 

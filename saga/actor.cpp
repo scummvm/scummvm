@@ -27,7 +27,7 @@
 
 #include "saga/game_mod.h"
 #include "saga/cvar_mod.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script_mod.h"
 #include "saga/sndres.h"
@@ -1139,26 +1139,24 @@ static void CF_actor_setact(int argc, char *argv[], void *refCon) {
 
 	actor = ((Actor *)refCon)->lookupActor(index);
 	if (actor == NULL) {
-		CON_Print("Invalid actor index.");
+		_vm->_console->print("Invalid actor index.");
 
 		return;
 	}
 
 	if ((action_n < 0) || (action_n >= actor->action_ct)) {
-		CON_Print("Invalid action number.");
+		_vm->_console->print("Invalid action number.");
 
 		return;
 	}
 
-	CON_Print("Action frame counts: %d %d %d %d.",
+	_vm->_console->print("Action frame counts: %d %d %d %d.",
 			actor->act_tbl[action_n].dir[0].frame_count,
 			actor->act_tbl[action_n].dir[1].frame_count,
 			actor->act_tbl[action_n].dir[2].frame_count,
 			actor->act_tbl[action_n].dir[3].frame_count);
 
 	((Actor *)refCon)->setAction(index, action_n, ACTION_LOOP);
-
-	return;
 }
 
 } // End of namespace Saga

@@ -25,7 +25,7 @@
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
-#include "saga/console_mod.h"
+#include "saga/console.h"
 
 #include "saga/cvar_mod.h"
 #include "saga/cvar.h"
@@ -145,7 +145,7 @@ int CVAR_Exec(R_CVAR_P cvar_func, char *r_value) {
 	cf_argc = EXPR_GetArgs(r_value, &cf_argv);
 
 	if (cf_argc < cvar_func->t.func.min_args) {
-		CON_Print("Too few arguments to function.");
+		_vm->_console->print("Too few arguments to function.");
 		if (cf_argv)
 			free(cf_argv);
 		return R_FAILURE;
@@ -153,7 +153,7 @@ int CVAR_Exec(R_CVAR_P cvar_func, char *r_value) {
 
 	max_args = cvar_func->t.func.max_args;
 	if ((max_args > -1) && (cf_argc > max_args)) {
-		CON_Print("Too many arguments to function.");
+		_vm->_console->print("Too many arguments to function.");
 		if (cf_argv)
 			free(cf_argv);
 		return R_FAILURE;
@@ -449,31 +449,31 @@ int CVAR_Print(R_CVAR_P con_cvar) {
 	switch (con_cvar->type) {
 
 	case R_CVAR_INT:
-		CON_Print("\"%s\"(i) = %d", con_cvar->name, *(con_cvar->t.i.var_p));
+		_vm->_console->print("\"%s\"(i) = %d", con_cvar->name, *(con_cvar->t.i.var_p));
 		break;
 
 	case R_CVAR_UINT:
-		CON_Print("\"%s\"(ui) = %u", con_cvar->name, *(con_cvar->t.ui.var_p));
+		_vm->_console->print("\"%s\"(ui) = %u", con_cvar->name, *(con_cvar->t.ui.var_p));
 		break;
 
 	case R_CVAR_FLOAT:
-		CON_Print("\"%s\"(ui) = %f", con_cvar->name, *(con_cvar->t.f.var_p));
+		_vm->_console->print("\"%s\"(ui) = %f", con_cvar->name, *(con_cvar->t.f.var_p));
 		break;
 
 	case R_CVAR_STRING:
-		CON_Print("\"%s\"(s) = \"%s\"", con_cvar->name, con_cvar->t.s.var_str);
+		_vm->_console->print("\"%s\"(s) = \"%s\"", con_cvar->name, con_cvar->t.s.var_str);
 		break;
 
 	case R_CVAR_FUNC:
 		if (con_cvar->t.func.func_argstr) {
-			CON_Print("\"%s\"(func) Args: %s", con_cvar->name, con_cvar->t.func.func_argstr);
+			_vm->_console->print("\"%s\"(func) Args: %s", con_cvar->name, con_cvar->t.func.func_argstr);
 		} else {
-			CON_Print("\"%s\"(func) No arguments.", con_cvar->name);
+			_vm->_console->print("\"%s\"(func) No arguments.", con_cvar->name);
 		}
 		break;
 
 	default:
-		CON_Print("Invalid variable type.\n");
+		_vm->_console->print("Invalid variable type.\n");
 		break;
 	}
 

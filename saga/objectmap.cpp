@@ -30,7 +30,7 @@
 
 #include "saga/gfx.h"
 #include "saga/cvar_mod.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
 
@@ -430,11 +430,11 @@ void ObjectMap::objectInfo(int argc, char *argv[]) {
 		return;
 	}
 
-	CON_Print("%d objects loaded.", _n_objects);
+	_vm->_console->print("%d objects loaded.", _n_objects);
 
 	for (i = 0; i < _n_objects; i++) {
-		CON_Print("%s:", _names[i]);
-		CON_Print("%d. Unk1: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d", i, _object_maps[i].unknown0,
+		_vm->_console->print("%s:", _names[i]);
+		_vm->_console->print("%d. Unk1: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d", i, _object_maps[i].unknown0,
 					_object_maps[i].flags,
 					_object_maps[i].object_num,
 					_object_maps[i].script_num,

@@ -26,7 +26,7 @@
 
 #include "saga/gfx.h"
 #include "saga/actor.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/cvar_mod.h"
 #include "saga/font.h"
 #include "saga/game_mod.h"
@@ -183,7 +183,7 @@ int Render::drawScene() {
 	}
 
 	// Draw console
-	CON_Draw(backbuf_surface);
+	_vm->_console->draw(backbuf_surface);
 
 	_system->copyRectToScreen(backbuf_surface->buf, backbuf_surface->buf_w, 0, 0, 
 							  backbuf_surface->buf_w, backbuf_surface->buf_h);

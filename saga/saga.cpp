@@ -37,7 +37,7 @@
 #include "saga/render.h"
 #include "saga/actor.h"
 #include "saga/animation.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/cvar_mod.h"
 #include "saga/events_mod.h"
 #include "saga/actionmap.h"
@@ -105,13 +105,10 @@ void SagaEngine::errorString(const char *buf1, char *buf2) {
 void SagaEngine::go() {
 	int msec = 0;
 
-	// Register engine modules
-	CON_Register(); // Register console cvars first
-
-	GAME_Register();
-
 	_soundEnabled = 1;
 	_musicEnabled = 1;
+
+	_console = new Console(this);
 
 	CVAR_RegisterFunc(CF_testfunc, "testfunc", "foo [ optional foo ]", R_CVAR_NONE, 0, -1, this);
 
@@ -194,6 +191,9 @@ void SagaEngine::go() {
 		debug(0, "Sound disabled.");
 	}
 
+	// Register engine modules
+	_console->reg(); // Register console cvars first
+	GAME_Register();
 	_scene->reg();
 	_actor->reg();
 	_script->reg();
@@ -241,7 +241,7 @@ void SagaEngine::shutdown() {
 	delete _script;
 	delete _sprite;
 	delete _font;
-	CON_Shutdown();
+	delete _console;
 	CVAR_Shutdown();
 	EVENT_Shutdown();
 
@@ -268,10 +268,10 @@ static void CF_quitfunc(int argc, char *argv[], void *refCon) {
 static void CF_testfunc(int argc, char *argv[], void *refCon) {
 	int i;
 
-	CON_Print("Test function invoked: Got %d arguments.", argc);
+	_vm->_console->print("Test function invoked: Got %d arguments.", argc);
 
 	for (i = 0; i < argc; i++) {
-		CON_Print("Arg %d: %s", i, argv[i]);
+		_vm->_console->print("Arg %d: %s", i, argv[i]);
 	}
 }
 

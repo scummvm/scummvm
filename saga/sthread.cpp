@@ -27,7 +27,7 @@
 
 #include "saga/gfx.h"
 #include "saga/actor.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 
 #include "saga/script.h"
 #include "saga/script_mod.h"
@@ -341,23 +341,23 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				n_args = readS.readByte();
 				func_num = readS.readUint16LE();
 				if (func_num >= R_SFUNC_NUM) {
-					CON_Print(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
+					_vm->_console->print(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
 					thread->executing = 0;
 					break;
 				}
 
 				sfunc = SFuncList[func_num].sfunc_fp;
 				if (sfunc == NULL) {
-					CON_Print(S_WARN_PREFIX "%X: Undefined script function number: (%X)\n",
+					_vm->_console->print(S_WARN_PREFIX "%X: Undefined script function number: (%X)\n",
 							thread->i_offset, func_num);
-					CON_Print(S_WARN_PREFIX "Removing %d operand(s) from stack.\n", n_args);
+					_vm->_console->print(S_WARN_PREFIX "Removing %d operand(s) from stack.\n", n_args);
 					for (i = 0; i < n_args; i++) {
 						SSTACK_Pop(thread->stack, NULL);
 					}
 				} else {
 					FIXME_SHADOWED_result = sfunc(thread);
 					if (FIXME_SHADOWED_result != R_SUCCESS) {
-						CON_Print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
+						_vm->_console->print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
 					}
 				}
 			}
@@ -374,7 +374,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		case 0x1C:
 			result = SSTACK_Pop(thread->stack, &data);
 			if (result != STACK_SUCCESS) {
-				CON_Print("Script execution complete.");
+				_vm->_console->print("Script execution complete.");
 				thread->executing = 0;
 			} else {
 				thread->i_offset = data;
@@ -479,7 +479,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					}
 				}
 				if (!branch_found) {
-					CON_Print(S_ERROR_PREFIX "%X: Random jump target out of " "bounds.", thread->i_offset);
+					_vm->_console->print(S_ERROR_PREFIX "%X: Random jump target out of " "bounds.", thread->i_offset);
 				}
 			}
 			break;
@@ -721,7 +721,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 				a_index = _vm->_actor->getActorIndex(param1);
 				if (a_index < 0) {
-					CON_Print(S_WARN_PREFIX "%X: DLGP Actor id not found.", thread->i_offset);
+					_vm->_console->print(S_WARN_PREFIX "%X: DLGP Actor id not found.", thread->i_offset);
 				}
 
 				for (i = 0; i < n_voices; i++) {
@@ -766,7 +766,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 		default:
 
-			CON_Print(S_ERROR_PREFIX "%X: Invalid opcode encountered: " "(%X).\n", thread->i_offset, in_char);
+			_vm->_console->print(S_ERROR_PREFIX "%X: Invalid opcode encountered: " "(%X).\n", thread->i_offset, in_char);
 			thread->executing = 0;
 			break;
 		}
@@ -776,7 +776,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			thread->i_offset = readS.pos();
 		}
 		if (unhandled) {
-			CON_Print(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
+			_vm->_console->print(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
 			thread->executing = 0;
 		}
 		if (thread->executing && debug_print) {

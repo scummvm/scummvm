@@ -30,7 +30,7 @@
 #include "saga/yslib.h"
 
 #include "saga/animation.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/scene.h"
 #include "saga/interface.h"
 #include "saga/text.h"
@@ -185,10 +185,10 @@ int HandleContinuous(R_EVENT *event) {
 	case R_CONSOLE_EVENT:
 		switch (event->op) {
 		case EVENT_ACTIVATE:
-			CON_DropConsole(event_pc);
+			_vm->_console->dropConsole(event_pc);
 			break;
 		case EVENT_DEACTIVATE:
-			CON_RaiseConsole(event_pc);
+			_vm->_console->raiseConsole(event_pc);
 			break;
 		default:
 			break;

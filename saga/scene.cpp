@@ -28,7 +28,7 @@
 #include "saga/gfx.h"
 #include "saga/game_mod.h"
 #include "saga/animation.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/cvar_mod.h"
 #include "saga/events_mod.h"
 #include "saga/actionmap.h"
@@ -830,16 +830,16 @@ void Scene::sceneChangeCmd(int argc, char *argv[]) {
 	scene_num = atoi(argv[0]);
 
 	if ((scene_num < 1) || (scene_num > _sceneMax)) {
-		CON_Print("Invalid scene number.");
+		_vm->_console->print("Invalid scene number.");
 		return;
 	}
 
 	clearSceneQueue();
 
 	if (changeScene(scene_num) == R_SUCCESS) {
-		CON_Print("Scene changed.");
+		_vm->_console->print("Scene changed.");
 	} else {
-		CON_Print("Couldn't change scene!");
+		_vm->_console->print("Couldn't change scene!");
 	}
 }
 
@@ -850,17 +850,17 @@ static void CF_scenechange(int argc, char *argv[], void *refCon) {
 void Scene::sceneInfoCmd(int argc, char *argv[]) {
 	const char *fmt = "%-20s %d";
 
-	CON_Print(fmt, "Scene number:", _sceneNumber);
-	CON_Print(fmt, "Descriptor R#:", _sceneResNum);
-	CON_Print("-------------------------");
-	CON_Print(fmt, "Unknown:", _desc.unknown0);
-	CON_Print(fmt, "Resource list R#:", _desc.res_list_rn);
-	CON_Print(fmt, "End slope:", _desc.end_slope);
-	CON_Print(fmt, "Begin slope:", _desc.begin_slope);
-	CON_Print(fmt, "Script resource:", _desc.script_num);
-	CON_Print(fmt, "Scene script:", _desc.scene_scriptnum);
-	CON_Print(fmt, "Start script:", _desc.start_scriptnum);
-	CON_Print(fmt, "Music R#", _desc.music_rn);
+	_vm->_console->print(fmt, "Scene number:", _sceneNumber);
+	_vm->_console->print(fmt, "Descriptor R#:", _sceneResNum);
+	_vm->_console->print("-------------------------");
+	_vm->_console->print(fmt, "Unknown:", _desc.unknown0);
+	_vm->_console->print(fmt, "Resource list R#:", _desc.res_list_rn);
+	_vm->_console->print(fmt, "End slope:", _desc.end_slope);
+	_vm->_console->print(fmt, "Begin slope:", _desc.begin_slope);
+	_vm->_console->print(fmt, "Script resource:", _desc.script_num);
+	_vm->_console->print(fmt, "Scene script:", _desc.scene_scriptnum);
+	_vm->_console->print(fmt, "Start script:", _desc.start_scriptnum);
+	_vm->_console->print(fmt, "Music R#", _desc.music_rn);
 }
 
 static void CF_sceneinfo(int argc, char *argv[], void *refCon) {

@@ -28,7 +28,7 @@
 #include "saga/gfx.h"
 #include "saga/rscfile_mod.h"
 #include "saga/game_mod.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/cvar_mod.h"
 
 #include "saga/script_mod.h"
@@ -501,12 +501,12 @@ void CF_script_info(int argc, char *argv[], void *refCon) {
 
 	n_entrypoints = ((Script *)refCon)->currentScript()->bytecode->n_entrypoints;
 
-	CON_Print("Current script contains %d entrypoints:", n_entrypoints);
+	_vm->_console->print("Current script contains %d entrypoints:", n_entrypoints);
 
 	for (i = 0; i < n_entrypoints; i++) {
 		name_ptr = (char *)((Script *)refCon)->currentScript()->bytecode->bytecode_p +
 							((Script *)refCon)->currentScript()->bytecode->entrypoints[i].name_offset;
-		CON_Print("%lu: %s", i, name_ptr);
+		_vm->_console->print("%lu: %s", i, name_ptr);
 	}
 }
 
@@ -520,16 +520,16 @@ void CF_script_exec(int argc, char *argv[], void *refCon) {
 	ep_num = atoi(argv[0]);
 
 	if (((Script *)refCon)->_dbg_thread == NULL) {
-		CON_Print("Creating debug thread...");
+		_vm->_console->print("Creating debug thread...");
 		((Script *)refCon)->_dbg_thread = STHREAD_Create();
 		if (((Script *)refCon)->_dbg_thread == NULL) {
-			CON_Print("Thread creation failed.");
+			_vm->_console->print("Thread creation failed.");
 			return;
 		}
 	}
 
 	if (ep_num >= ((Script *)refCon)->currentScript()->bytecode->n_entrypoints) {
-		CON_Print("Invalid entrypoint.");
+		_vm->_console->print("Invalid entrypoint.");
 		return;
 	}
 

@@ -34,20 +34,6 @@ namespace Saga {
 #define R_CONSOLE_TXTCOLOR  0x00FFFFFFUL
 #define R_CONSOLE_TXTSHADOW 0x00202020UL
 
-struct R_CONSOLEINFO {
-	int active;
-	int y_max;
-	int line_max;
-	int hist_max;
-	int hist_pos;
-	int line_pos;
-	int y_pos;
-	char *prompt;
-	int prompt_w;
-	char input_buf[R_CON_INPUTBUF_LEN + 1];
-	int input_pos;
-};
-
 struct R_CONSOLE_LINE {
 	R_CONSOLE_LINE *next;
 	R_CONSOLE_LINE *prev;
@@ -61,11 +47,6 @@ struct R_CON_SCROLLBACK {
 	int lines;
 };
 
-static int CON_AddLine(R_CON_SCROLLBACK *scroll, int line_max, const char *constr_p);
-static int CON_DeleteLine(R_CON_SCROLLBACK *scroll);
-static int CON_DeleteScroll(R_CON_SCROLLBACK *scroll);
-static int CON_SetDropPos(double percent);
-
 #define R_CON_DEFAULTPOS 136
 #define R_CON_DEFAULTLINES 100
 #define R_CON_DEFAULTCMDS 10
@@ -73,6 +54,56 @@ static int CON_SetDropPos(double percent);
 #define R_CON_PRINTFLIMIT 1024
 #define R_CON_LINE_H 10
 #define R_CON_INPUT_H 10
+
+class Console {
+ public:
+	int reg(void);
+	Console(SagaEngine *vm);
+	~Console(void);
+
+	int activate(void);
+	int deactivate(void);
+	bool isActive(void);
+
+	int type(int in_char);
+	int draw(R_SURFACE *ds);
+	int print(const char *fmt_str, ...);
+
+	int cmdUp(void);
+	int cmdDown(void);
+	int pageUp(void);
+	int pageDown(void);
+
+	int dropConsole(double percent);
+	int raiseConsole(double percent);
+
+ private:
+	int addLine(R_CON_SCROLLBACK *scroll, int line_max, const char *constr_p);
+	int deleteLine(R_CON_SCROLLBACK *scroll);
+	int deleteScroll(R_CON_SCROLLBACK *scroll);
+	int setDropPos(double percent);
+
+ private:
+	SagaEngine *_vm;
+
+	R_CON_SCROLLBACK _scrollback;
+	R_CON_SCROLLBACK _history;
+
+	int _resize;
+	int _droptime;
+
+	bool _active;
+	int _yMax;
+	int _lineMax;
+	int _histMax;
+	int _histPos;
+	int _linePos;
+	int _yPos;
+	char *_prompt;
+	int _promptW;
+	char _inputBuf[R_CON_INPUTBUF_LEN + 1];
+	int _inputPos;
+};
 
 } // End of namespace Saga
 

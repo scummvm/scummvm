@@ -26,7 +26,7 @@
 #include "saga/gfx.h"
 
 #include "saga/cvar_mod.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/game_mod.h"
 #include "saga/events_mod.h"
 #include "saga/render.h"
@@ -905,14 +905,14 @@ void Anim::animInfo(int argc, char *argv[]) {
 
 	anim_ct = _anim_count;
 
-	CON_Print("There are %d animations loaded:", anim_ct);
+	_vm->_console->print("There are %d animations loaded:", anim_ct);
 
 	for (idx = 0, i = 0; i < anim_ct; idx++, i++) {
 		while (_anim_tbl[idx] == NULL) {
 			idx++;
 		}
 
-		CON_Print("%02d: Frames: %u Flags: %u", i, _anim_tbl[idx]->n_frames, _anim_tbl[idx]->flags);
+		_vm->_console->print("%02d: Frames: %u Flags: %u", i, _anim_tbl[idx]->n_frames, _anim_tbl[idx]->flags);
 	}
 }
 

@@ -28,7 +28,7 @@
 #include "saga/game_mod.h"
 #include "saga/cvar_mod.h"
 #include "saga/actor.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
 #include "saga/rscfile_mod.h"
@@ -493,7 +493,7 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 	}
 
 	if (_vm->_objectMap->getFlags(object_num, &object_flags) != R_SUCCESS) {
-		CON_Print("Invalid object number: %d\n", object_num);
+		_vm->_console->print("Invalid object number: %d\n", object_num);
 		return R_FAILURE;
 	}
 
@@ -536,7 +536,7 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 	}
 
 	if (_vm->_objectMap->getFlags(object_num, &object_flags) != R_SUCCESS) {
-		CON_Print("Invalid object number: %d\n", object_num);
+		_vm->_console->print("Invalid object number: %d\n", object_num);
 		return R_FAILURE;
 	}
 

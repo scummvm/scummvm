@@ -25,7 +25,6 @@
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
-#include "saga/console_mod.h"
 #include "saga/text.h"
 #include "saga/scene.h"
 #include "saga/font.h"

@@ -24,7 +24,7 @@
 
 #include "saga/gfx.h"
 #include "saga/actor.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 #include "saga/interface.h"
 #include "saga/render.h"
 #include "saga/scene.h"
@@ -44,29 +44,29 @@ int SYSINPUT_ProcessInput() {
 
 		switch (event.event_code) {
 		case OSystem::EVENT_KEYDOWN:
-			if (CON_IsActive()) {
+			if (_vm->_console->isActive()) {
 				in_char = event.kbd.ascii;
 				switch (event.kbd.keycode) {
 				case 96: // backquote
-					CON_Deactivate();
+					_vm->_console->deactivate();
 					break;
 				case 280: // page up
-					CON_PageUp();
+					_vm->_console->pageUp();
 					break;
 				case 281: // page down
-					CON_PageDown();
+					_vm->_console->pageDown();
 					break;
 				case 273: // up
 				case 264: // keypad up
-					CON_CmdUp();
+					_vm->_console->cmdUp();
 					break;
 				case 274: // down
 				case 258: // keypad down
-					CON_CmdDown();
+					_vm->_console->cmdDown();
 					break;
 				default:
 					if (in_char) {
-						CON_Type(in_char);
+						_vm->_console->type(in_char);
 					}
 					break;
 				}
@@ -75,7 +75,7 @@ int SYSINPUT_ProcessInput() {
 
 			switch (event.kbd.keycode) {
 			case 96: // back quote
-				CON_Activate();
+				_vm->_console->activate();
 				break;
 			case 114: // r
 				_vm->_interface->draw();

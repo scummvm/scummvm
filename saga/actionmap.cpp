@@ -26,7 +26,7 @@
 
 #include "saga/cvar_mod.h"
 #include "saga/gfx.h"
-#include "saga/console_mod.h"
+#include "saga/console.h"
 
 #include "saga/actionmap.h"
 
@@ -183,10 +183,10 @@ void ActionMap::actionInfo(int argc, char *argv[]) {
 		return;
 	}
 
-	CON_Print("%d exits loaded.\n", _n_exits);
+	_vm->_console->print("%d exits loaded.\n", _n_exits);
 
 	for (i = 0; i < _n_exits; i++) {
-		CON_Print ("Action %d: Exit to: %d; Pts: %d; Unk0: %d Unk2: %d Scr_N: %d",
+		_vm->_console->print ("Action %d: Exit to: %d; Pts: %d; Unk0: %d Unk2: %d Scr_N: %d",
 				   i, _exits_tbl[i].exit_scene,
 				   _exits_tbl[i].pt_count,
 				   _exits_tbl[i].unknown00,
@@ -196,7 +196,7 @@ void ActionMap::actionInfo(int argc, char *argv[]) {
 		for (pt_i = 0; pt_i < _exits_tbl[i].pt_count; pt_i++) {
 			pt = &_exits_tbl[i].pt_tbl[pt_i];
 
-			CON_Print("   pt: %d (%d, %d)", pt_i, pt->x, pt->y);
+			_vm->_console->print("   pt: %d (%d, %d)", pt_i, pt->x, pt->y);
 		}
 	}
 }
