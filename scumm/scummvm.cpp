@@ -1643,7 +1643,7 @@ void ScummEngine::parseEvents() {
 						327, 328, 329
 					};
 				_keyPressed = numpad[event.kbd.ascii - '0'];
-			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _gameId == GID_FT) {
+			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _version >= 7) {
 				// don't let game have arrow keys as we currently steal them
 				// for keyboard cursor control
 				// this fixes bug with up arrow (273) corresponding to
