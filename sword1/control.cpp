@@ -284,6 +284,8 @@ uint8 SwordControl::getClicks(uint8 mode, uint8 *retVal) {
 			if (_buttons[cnt]->wasClicked(_mouseX, _mouseY)) {
 				_selectedButton = cnt;
 				_buttons[cnt]->setSelected(1);
+				if (_buttons[cnt]->isSaveslot())
+					showSavegameNames();
 			}
 	if (_mouseState & BS1L_BUTTON_UP) {
 		for (uint8 cnt = 0; cnt < _numButtons; cnt++)
@@ -295,8 +297,11 @@ uint8 SwordControl::getClicks(uint8 mode, uint8 *retVal) {
 					_selectedButton = 255;
 					return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
 				}
-		if (_selectedButton < _numButtons)
+		if (_selectedButton < _numButtons) {
 			_buttons[_selectedButton]->setSelected(0);
+			if (_buttons[_selectedButton]->isSaveslot())
+				showSavegameNames();
+		}
 		_selectedButton = 255;
 	}
 	return 0;
