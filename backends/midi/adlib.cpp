@@ -928,7 +928,7 @@ void MidiDriver_ADLIB::send (uint32 b) {
 
 uint32 MidiDriver_ADLIB::property (int prop, uint32 param) {
 	switch (prop) {
-		case PROP_SMALLHEADER: // Indicates older game, use different operator volume algorithm
+		case PROP_OLD_ADLIB: // Older games used a different operator volume algorithm
 			_game_SmallHeader = (param > 0);
 			return 1;
 	}

@@ -46,7 +46,8 @@ public:
 	enum {
 		PROP_TEMPO_BASE = 1,
 		PROP_NATIVE_MT32 = 2,
-		PROP_MULTI_MIDI = 3
+		PROP_MULTI_MIDI = 3,
+		PROP_OLD_ADLIB_INSTRUMENTS = 4
 	};
 
 	void on_timer (MidiDriver *midi);

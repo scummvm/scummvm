@@ -286,6 +286,7 @@ class IMuseInternal {
 	friend struct Player;
 
 private:
+	bool _old_adlib_instruments;
 	bool _enable_multi_midi;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
@@ -1654,6 +1655,9 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_MULTI_MIDI:
 		_enable_multi_midi = (value > 0);
 		break;
+
+	case IMuse::PROP_OLD_ADLIB_INSTRUMENTS:
+		_old_adlib_instruments = (value > 0);
 	}
 	return 0;
 }
@@ -1697,6 +1701,8 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi) {
 
 void IMuseInternal::initMidiDriver (MidiDriver *midi) {
 	// Open MIDI driver
+	midi->property (MidiDriver::PROP_OLD_ADLIB, _old_adlib_instruments ? 1 : 0);
+
 	int result = midi->open();
 	if (result)
 		error("IMuse initialization - ", MidiDriver::getErrorName(result));
@@ -3477,7 +3483,5 @@ uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->pro
 // to the client.
 IMuse *IMuse::create (OSystem *syst, MidiDriver *midi) {
 	IMuseInternal *engine = IMuseInternal::create (syst, midi);
-	if (midi)
-		midi->property (MidiDriver::PROP_SMALLHEADER, (g_scumm->_features & GF_SMALL_HEADER) ? 1 : 0);
 	return new IMuse (syst, engine);
 }

@@ -42,7 +42,7 @@ public:
 
 	enum {
 		PROP_TIMEDIV = 1,
-		PROP_SMALLHEADER = 2
+		PROP_OLD_ADLIB = 2
 	};
 
 	// Open the midi driver.
