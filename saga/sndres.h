@@ -67,6 +67,7 @@ public:
 	SndRes(SagaEngine *vm);
 
 	int loadSound(uint32 sound_rn);
+	int playSound(uint32 sound_rn, int volume);
 	int playVoice(uint32 voice_rn);
 	int getVoiceLength(uint32 voice_rn);
 	int ITEVOC_Resample(long src_freq, long dst_freq, byte *src_buf,

@@ -48,32 +48,28 @@ public:
 	Sound(SagaEngine *vm, SoundMixer *mixer, int enabled);
 	~Sound();
 
-	int play(int sound_rn, int channel);
-	int pause(int channel);
-	int resume(int channel);
-	int stop(int channel);
+	int playSound(R_SOUNDBUFFER *buf, int volume);
+	int pauseSound();
+	int resumeSound();
+	int stopSound();
 
-	int playVoice(R_SOUNDBUFFER *);
+	int playVoice(R_SOUNDBUFFER *buf);
 	int pauseVoice();
 	int resumeVoice();
 	int stopVoice();
 
  private:
 
+	int playSoundBuffer(PlayingSoundHandle *handle, R_SOUNDBUFFER *buf, int volume, bool loop);
+
 	int _soundInitialized;
 	int _enabled;
-
-	R_GAME_SOUNDINFO _snd_info;
-
-	R_RSCFILE_CONTEXT *_soundContext;
-	R_RSCFILE_CONTEXT *_voiceContext;
 
 	SagaEngine *_vm;
 	SoundMixer *_mixer;
 
 	PlayingSoundHandle _effectHandle;
 	PlayingSoundHandle _voiceHandle;
-	PlayingSoundHandle _musictHandle;
 
 };
 

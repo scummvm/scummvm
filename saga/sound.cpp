@@ -31,21 +31,6 @@ namespace Saga {
 
 Sound::Sound(SagaEngine *vm, SoundMixer *mixer, int enabled) : 
 	_vm(vm), _mixer(mixer), _enabled(enabled) {
-	int result;
-
-	// Load sound module resource file contexts
-	result = GAME_GetFileContext(&_soundContext, R_GAME_SOUNDFILE, 0);
-	if (result != R_SUCCESS) {
-		return;
-	}
-
-	result = GAME_GetFileContext(&_voiceContext, R_GAME_VOICEFILE, 0);
-	if (result != R_SUCCESS) {
-		return;
-	}
-
-	// Grab sound resource information for the current game
-	GAME_GetSoundInfo(&_snd_info);
 
 	_soundInitialized = 1;
 	return;
@@ -59,49 +44,7 @@ Sound::~Sound() {
 	_soundInitialized = 0;
 }
 
-int Sound::play(int sound_rn, int channel) {
-	if (!_soundInitialized) {
-		return R_FAILURE;
-	}
-
-	if (channel > 3) {
-		return R_FAILURE;
-	}
-	
-	return R_SUCCESS;
-}
-
-int Sound::pause(int channel) {
-	(void)channel;
-
-	if (!_soundInitialized) {
-		return R_FAILURE;
-	}
-
-	return R_SUCCESS;
-}
-
-int Sound::resume(int channel) {
-	(void)channel;
-
-	if (!_soundInitialized) {
-		return R_FAILURE;
-	}
-
-	return R_SUCCESS;
-}
-
-int Sound::stop(int channel) {
-	(void)channel;
-
-	if (!_soundInitialized) {
-		return R_FAILURE;
-	}
-
-	return R_SUCCESS;
-}
-
-int Sound::playVoice(R_SOUNDBUFFER *buf) {
+int Sound::playSoundBuffer(PlayingSoundHandle *handle, R_SOUNDBUFFER *buf, int volume, bool loop) {
 	byte flags;
 
 	if (!_soundInitialized) {
@@ -109,6 +52,9 @@ int Sound::playVoice(R_SOUNDBUFFER *buf) {
 	}
 
 	flags = SoundMixer::FLAG_AUTOFREE;
+
+	if (loop)
+		flags |= SoundMixer::FLAG_LOOP;
 
 	if (buf->s_samplebits == 16)
 		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
@@ -130,9 +76,47 @@ int Sound::playVoice(R_SOUNDBUFFER *buf) {
 	}
 #endif
 
-	_mixer->playRaw(&_voiceHandle, buf->s_buf, buf->s_buf_len, buf->s_freq, flags);
+	_mixer->playRaw(handle, buf->s_buf, buf->s_buf_len, buf->s_freq, flags, -1, volume);
 
 	return R_SUCCESS;
+}
+
+int Sound::playSound(R_SOUNDBUFFER *buf, int volume) {
+	return playSoundBuffer(&_effectHandle, buf, 2 * volume, false);
+}
+
+int Sound::pauseSound() {
+	if (!_soundInitialized) {
+		return R_FAILURE;
+	}
+
+	_mixer->pauseHandle(_effectHandle, true);
+
+	return R_SUCCESS;
+}
+
+int Sound::resumeSound() {
+	if (!_soundInitialized) {
+		return R_FAILURE;
+	}
+
+	_mixer->pauseHandle(_effectHandle, false);
+
+	return R_SUCCESS;
+}
+
+int Sound::stopSound() {
+	if (!_soundInitialized) {
+		return R_FAILURE;
+	}
+
+	_mixer->stopHandle(_effectHandle);
+
+	return R_SUCCESS;
+}
+
+int Sound::playVoice(R_SOUNDBUFFER *buf) {
+	return playSoundBuffer(&_voiceHandle, buf, 255, false);
 }
 
 int Sound::pauseVoice() {

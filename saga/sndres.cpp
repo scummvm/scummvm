@@ -55,6 +55,21 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	_init = 1;
 }
 
+int SndRes::playSound(uint32 sound_rn, int volume) {
+	R_SOUNDBUFFER snd_buffer;
+
+	debug(0, "SndRes::playSound(%ld)", sound_rn);
+
+	if (load(_sfx_ctxt, sound_rn, &snd_buffer) != R_SUCCESS) {
+debug(0, "Failed to load sound");
+		return R_FAILURE;
+	}
+
+	_vm->_sound->playSound(&snd_buffer, volume);
+
+	return R_SUCCESS;
+}
+
 int SndRes::playVoice(uint32 voice_rn) {
 	R_SOUNDBUFFER snd_buffer;
 	int result;

@@ -102,6 +102,9 @@ namespace Saga {
 #define CAVE_VOICE_12 12
 #define CAVE_VOICE_13 13
 
+// TODO: I have no idea why the music IDs start at 9 and the sound IDs at 14.
+//       We should probably just renumber them.
+
 // MUSIC
 #define MUSIC_1 9
 #define MUSIC_2 10
@@ -129,6 +132,73 @@ namespace Saga {
 #define MUSIC_24 32
 #define MUSIC_25 33
 #define MUSIC_26 34
+
+// SOUND EFFECTS
+
+#define FX_DOOR_OPEN 14
+#define FX_DOOR_CLOSE 15
+#define FX_RUSH_WATER 16
+#define FX_CRICKET 17
+#define FX_PORTICULLIS 18
+#define FX_CLOCK_1 19
+#define FX_CLOCK_2 20
+#define FX_DAM_MACHINE 21
+#define FX_HUM1 22
+#define FX_HUM2 23
+#define FX_HUM3 24
+#define FX_HUM4 25
+#define FX_STREAM 26
+#define FX_SURF 27
+#define FX_FIRELOOP 28
+#define FX_SCRAPING 29
+#define FX_BEE_SWARM 30
+#define FX_SQUEAKBOARD 31
+#define FX_KNOCK 32
+#define FX_COINS 33
+#define FX_STORM 34
+#define FX_DOOR_CLOSE_2 35
+#define FX_ARCWELD 36
+#define FX_RETRACT_ORB 37
+#define FX_DRAGON 38
+#define FX_SNORES 39
+#define FX_SPLASH 40
+#define FX_LOBBY_DOOR 41
+#define FX_CHIRP_LOOP 42
+#define FX_DOOR_CREAK 43
+#define FX_SPOON_DIG 44
+#define FX_CROW 45
+#define FX_COLDWIND 46
+#define FX_TOOL_SND_1 47
+#define FX_TOOL_SND_2 48
+#define FX_TOOL_SND_3 49
+#define FX_DOOR_METAL 50
+#define FX_WATER_LOOP_S 51
+#define FX_WATER_LOOP_L 52
+#define FX_DOOR_OPEN_2 53
+#define FX_JAIL_DOOR 54
+#define FX_KILN_FIRE 55
+
+// TODO: These are only in the CD version, and I can't find them in the source
+//       code we got. Someone needs to verify these to get the correct values.
+//       They appear to be a bit off right now.
+
+#define FX_CROWD_01 56
+#define FX_CROWD_02 57
+#define FX_CROWD_03 58
+#define FX_CROWD_04 59
+#define FX_CROWD_05 60
+#define FX_CROWD_06 61
+#define FX_CROWD_07 62
+#define FX_CROWD_08 63
+#define FX_CROWD_09 64
+#define FX_CROWD_10 65
+#define FX_CROWD_11 66
+#define FX_CROWD_12 67
+#define FX_CROWD_13 68
+#define FX_CROWD_14 69
+#define FX_CROWD_15 70
+#define FX_CROWD_16 71
+#define FX_CROWD_17 72
 
 } // End of namespace Saga
 
