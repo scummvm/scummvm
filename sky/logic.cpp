@@ -1164,14 +1164,12 @@ uint16 SkyLogic::mouseScript(uint32 scrNum, Compact *scriptComp) {
 };
 
 /**
- * \fn uint32 SkyLogic::script(uint16 scriptNo, uint16 offset)
- * \brief This is the actual script engine. 
- *        It interprets script \a scriptNo starting at \a offset
+ * This is the actual script engine.  It interprets script \a scriptNo starting at \a offset
  *
- * \param scriptNo The script to interpret.
- * 	\li \arg Bits 0-11 - Script number
- * 	\li \arg Bits 12-15 - Module number
- * \param offset At which offset to start interpreting the script.
+ * @param scriptNo The script to interpret.
+ * 	 @arg Bits 0-11 - Script number
+ * 	 @arg Bits 12-15 - Module number
+ * @param offset At which offset to start interpreting the script.
  *
  * @return 0 if script finished. Else offset where to continue.
  */
