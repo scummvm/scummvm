@@ -291,8 +291,6 @@ void SwordScreen::draw(void) {
 			}
 	} else
 		memcpy(_screenBuf, _layerBlocks[0], _scrnSizeX * _scrnSizeY);
-	
-		
 
 	for (uint8 cnt = 0; cnt < _backLength; cnt++)
 		processImage(_backList[cnt]);
@@ -411,22 +409,24 @@ void SwordScreen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight
 		bHeight = _gridSizeY - y;
 
 	uint16 gridY = y + SCREEN_TOP_EDGE / SCRNGRID_Y; // imaginary screen on top
+	gridY += bHeight - 1; // we start from the bottom edge
 	uint16 gridX = x + SCREEN_LEFT_EDGE / SCRNGRID_X; // imaginary screen left
 	uint16 lGridSizeX = _gridSizeX + 2 * (SCREEN_LEFT_EDGE / SCRNGRID_X); // width of the grid for the imaginary screen
 
 	for (uint16 blkx = 0; blkx < bWidth; blkx++) {
 		uint16 level = 0;
 		while ((level < _roomDefTable[_currentScreen].totalLayers - 1) && 
-			(!_layerGrid[level][gridX + blkx + (gridY + bHeight - 1)* lGridSizeX]))
+			(!_layerGrid[level][gridX + blkx + gridY * lGridSizeX]))
 			level++;
 		if (level < _roomDefTable[_currentScreen].totalLayers - 1) {
 			uint16 *grid = _layerGrid[level] + gridX + blkx + gridY * lGridSizeX;
-			for (uint16 blky = 0; blky < bHeight; blky++) {
+			for (int16 blky = bHeight - 1; blky >= 0; blky--) {
 				if (*grid) {
 					uint8 *blkData = _layerBlocks[level + 1] + (READ_LE_UINT16(grid) - 1) * 128;
 					blitBlockClear(x + blkx, y + blky, blkData);
-				}
-				grid += lGridSizeX;
+				} else 
+					break;
+				grid -= lGridSizeX;
 			}
 		}
 	}
