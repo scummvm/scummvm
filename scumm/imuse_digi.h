@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "scumm/music.h"
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Scumm {
@@ -84,11 +85,12 @@ private:
 		int idSound;
 		int32 mixerSize;
 		int mixerFlags;
-		PlayingSoundHandle handle;
 		bool used;
 		bool toBeRemoved;
+		PlayingSoundHandle handle;
+		WrappedAudioInputStream *stream;
 		
-		Channel() : idSound(-1), used(false) {}
+		Channel();
 	};
 
 	Channel _channel[MAX_DIGITAL_CHANNELS];

@@ -661,6 +661,10 @@ static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo
 	return s_size;
 }
 
+IMuseDigital::Channel::Channel()
+	: idSound(-1), used(false), stream(0) {
+}
+
 void IMuseDigital::timer_handler(void *refCon) {
 	IMuseDigital *imuseDigital = (IMuseDigital *)refCon;
 	imuseDigital->callback();
@@ -691,6 +695,7 @@ IMuseDigital::~IMuseDigital() {
 
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_scumm->_mixer->stopHandle(_channel[l].handle);
+		delete _channel[l].stream;
 	}
 
 	delete _bundle;
@@ -706,7 +711,8 @@ void IMuseDigital::callback() {
 		if (_channel[l].used) {
 			if (_channel[l].toBeRemoved) {
 				debug(5, "IMuseDigital::callback(): stoped sound: %d", _channel[l].idSound);
-				_scumm->_mixer->endStream(_channel[l].handle);
+				if (_channel[l].stream)
+					_channel[l].stream->finish();
 				free(_channel[l].data);
 				_channel[l].used = false;
 				continue;
@@ -745,12 +751,15 @@ void IMuseDigital::callback() {
 
 			int pan = (_channel[l].pan != 64) ? 2 * _channel[l].pan - 127 : 0;
 			if (_scumm->_mixer->isReady()) {
-				if (!_channel[l].handle.isActive())
-					_scumm->_mixer->newStream(&_channel[l].handle, _channel[l].freq,
-											_channel[l].mixerFlags, 100000);
-				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
-				_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
-				_scumm->_mixer->appendStream(_channel[l].handle, _channel[l].data + _channel[l].offset, mixer_size);
+				if (!_channel[l].stream) {
+					// Create an AudioInputStream and hook it to the mixer.
+					_channel[l].stream = makeWrappedInputStream(_channel[l].freq, _channel[l].mixerFlags, 100000);
+					_scumm->_mixer->playInputStream(&_channel[l].handle, _channel[l].stream, true, _channel[l].vol / 1000, _channel[l].pan, -1, false);
+				} else {
+					_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
+					_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
+				}
+				_channel[l].stream->append(_channel[l].data + _channel[l].offset, mixer_size);
 			}
 			_channel[l].offset += mixer_size;
 		}
@@ -802,6 +811,9 @@ void IMuseDigital::startSound(int sound) {
 
 			_channel[l].offset = 0;
 			_channel[l].idSound = sound;
+			
+			delete _channel[l].stream;
+			_channel[l].stream = 0;
 
 			uint32 tag;
 			int32 size = 0;
