@@ -156,6 +156,12 @@ Audio
 =====
 * Get the high quality resample code to work
    [Fingolfin has started work on this]
+* Consider getting completely rid of the "master volume" (the config key,
+  the command line switch, in the GUI, and in the engines), it doesn't
+  seem to serve much of a purpose.
+* Add "sound types" to the mixer; client code will be able to pass such a type
+  whenever registering an audio stream. Then, volume control will be changed
+  to be based on the sound type.
 
 Config Manager
 ==============
@@ -338,7 +344,6 @@ X11 backend
 * Update it to support the latest OSystem changes
 * Make it work with multiple bitdepths
 * Add frills used by SDL backend like graphic filters usage and CD audio
-
 
 #######################################################################
 # Tools
