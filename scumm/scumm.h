@@ -484,8 +484,8 @@ public:
 	void setResult(int result);
 	void push(int a);
 	int pop();
-	int readVar(uint var);
-	void writeVar(uint var, int value);
+	virtual int readVar(uint var);
+	virtual void writeVar(uint var, int value);
 	void runHook(int i);
 	bool isScriptInUse(int script);
 	int getStringLen(byte *ptr);

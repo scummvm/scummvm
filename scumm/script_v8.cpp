@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "intern.h"
+#include "sound.h"
 
 /*
  * NO, we do NOT support CMI yet :-) This file is mostly a placeholder and a place
@@ -390,6 +391,135 @@ int Scumm_v8::fetchScriptWordSigned()
 	return (int32)fetchScriptWord();
 }
 
+int Scumm_v8::readVar(uint var)
+{
+	debug(9, "readvar(%d)", var);
+
+	if (!(var & 0xF0000000)) {
+		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+		return _vars[var];
+	}
+
+	if (var & 0x80000000) {
+		var &= 0x7FFFFFFF;
+		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
+		return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
+	}
+
+	if (var & 0x40000000) {
+		var &= 0xFFFFFFF;
+		checkRange(0x10, 0, var, "Local variable %d out of range(r)");
+		return vm.localvar[_currentScript][var];
+	}
+
+	error("Illegal varbits (r)");
+	return -1;
+}
+
+void Scumm_v8::writeVar(uint var, int value)
+{
+	debug(9, "writeVar(%d, %d)", var, value);
+
+	if (!(var & 0xF0000000)) {
+		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
+
+		_vars[var] = value;
+
+		if ((_varwatch == (int)var) || (_varwatch == 0)) {
+			if (vm.slot[_currentScript].number < 100)
+				debug(1, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
+			else
+				debug(1, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom, vm.slot[_currentScript].number);
+		}
+		return;
+	}
+
+	if (var & 0x80000000) {
+		var &= 0x7FFFFFFF;
+		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
+
+		if (value)
+			_bitVars[var >> 3] |= (1 << (var & 7));
+		else
+			_bitVars[var >> 3] &= ~(1 << (var & 7));
+		return;
+	}
+
+	if (var & 0x40000000) {
+		var &= 0xFFFFFFF;
+		checkRange(0x10, 0, var, "Local variable %d out of range(w)");
+		vm.localvar[_currentScript][var] = value;
+		return;
+	}
+
+	error("Illegal varbits (w)");
+}
+
+void Scumm_v8::decodeParseString(int m, int n)
+{
+	byte b;
+
+	b = fetchScriptByte();
+
+	switch (b) {
+	case 0xC8:
+		setStringVars(m);
+		if (n)
+			_actorToPrintStrFor = pop();
+		return;
+	case 0xC9:
+		_string[m].t_xpos = _string[m].xpos;
+		_string[m].t_ypos = _string[m].ypos;
+		_string[m].t_center = _string[m].center;
+		_string[m].t_overhead = _string[m].overhead;
+		_string[m].t_no_talk_anim = _string[m].no_talk_anim;
+		_string[m].t_right = _string[m].right;
+		_string[m].t_color = _string[m].color;
+		_string[m].t_charset = _string[m].charset;
+		return;
+	case 0xCA:
+		_string[m].ypos = pop();
+		_string[m].xpos = pop();
+		_string[m].overhead = false;
+		break;
+	case 0xCB:
+		_string[m].color = pop();
+		break;
+	case 0xCC:
+		_string[m].center = true;
+		_string[m].overhead = false;
+		break;
+	case 0xCD:		// SO_PRINT_CHARSET Set print character set
+		// FIXME - TODO
+		break;
+	case 0xCE:
+		_string[m].center = false;
+		_string[m].overhead = false;
+		break;
+	case 0xCF:
+		_string[m].overhead = true;
+		_string[m].no_talk_anim = false;
+		break;
+	case 0xD0:		// SO_PRINT_MUMBLE
+		error("decodeParseString: SO_PRINT_MUMBLE");
+		break;
+	case 0xD1:
+		// TODO - FIXME
+		_messagePtr = _scriptPointer;
+
+		byte buffer[1024];
+		_msgPtrToAdd = buffer;
+		_scriptPointer = _messagePtr = addMessageToStack(_messagePtr);
+		printf("Message(%d): '%s'\n", m, buffer);
+		break;
+	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
+		error("decodeParseString: SO_PRINT_MUMBLE");
+		break;
+	default:
+		error("decodeParseString: default case");
+	}
+}
+
 void Scumm_v8::o8_unknown()
 {
 	warning("Unknown opcode '%x' at %x", _opcode, _scriptPointer - _scriptOrgPointer);
@@ -482,42 +612,90 @@ void Scumm_v8::o8_arrayOps()
 
 void Scumm_v8::o8_printLine()
 {
+	decodeParseString(0, 0);
 }
 
 void Scumm_v8::o8_printCursor()
 {
+	decodeParseString(1, 0);
 }
 
 void Scumm_v8::o8_printDebug()
 {
+	decodeParseString(2, 0);
 }
 
 void Scumm_v8::o8_printSystem()
 {
+	decodeParseString(3, 0);
 }
 
 void Scumm_v8::o8_cursorCommand()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
+	int a, i;
+	int16 args[16];
+	
 	switch (subOp) {
 	case 0xDC:		// SO_CURSOR_ON Turn cursor on
+		_cursor.state = 1;
+		verbMouseOver(0);
+		break;
 	case 0xDD:		// SO_CURSOR_OFF Turn cursor off
+		_cursor.state = 0;
+		verbMouseOver(0);
+		break;
 	case 0xDE:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+		_cursor.state++;
+		if (_cursor.state > 1)
+			error("Cursor state greater than 1 in script");
+		verbMouseOver(0);
+		break;
 	case 0xDF:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+		_cursor.state--;
+		verbMouseOver(0);
+		break;
 	case 0xE0:		// SO_USERPUT_ON
+		_userPut = 1;
+		break;
 	case 0xE1:		// SO_USERPUT_OFF
+		_userPut = 0;
+		break;
 	case 0xE2:		// SO_USERPUT_SOFT_ON
+		_userPut++;
+		break;
 	case 0xE3:		// SO_USERPUT_SOFT_OFF
+		_userPut--;
+		break;
 	case 0xE4:		// SO_CURSOR_IMAGE Set cursor image
+		{
+			int room, obj = popRoomAndObj(&room);
+			setCursorImg(obj, room, 1);
+		}
+		break;
 	case 0xE5:		// SO_CURSOR_HOTSPOT Set cursor hotspot
+		a = pop();
+		setCursorHotspot2(pop(), a);
+		break;
 	case 0xE6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
+		makeCursorColorTransparent(pop());
+		break;
 	case 0xE7:		// SO_CHARSET_SET
+		initCharset(pop());
+		break;
 	case 0xE8:		// SO_CHARSET_COLOR
+		getStackList(args, sizeof(args) / sizeof(args[0]));
+		for (i = 0; i < 16; i++)
+			charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
+		break;
 	case 0xE9:		// SO_CURSOR_PUT
 	default:
 		error("o8_cursorCommand: default case %d", subOp);
 	}
+
+	_vars[VAR_CURSORSTATE] = _cursor.state;
+	_vars[VAR_USERPUT] = _userPut;
 }
 
 void Scumm_v8::o8_resourceRoutines()

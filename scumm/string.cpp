@@ -945,6 +945,10 @@ byte *Scumm::addMessageToStack(byte *msg)
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
 				ptr[num++] = *msg++;	// and some commands are followed by parameters to the functions below
 				ptr[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
+				if (_features & GF_AFTER_V8) {
+					ptr[num++] = *msg++;
+					ptr[num++] = *msg++;
+				}
 			}
 		}
 	}
@@ -961,20 +965,40 @@ byte *Scumm::addMessageToStack(byte *msg)
 			chr = ptr[num++];
 			switch (chr) {
 			case 4:
-				addIntToStack(READ_LE_UINT16(ptr + num));
-				num += 2;
+				if (_features & GF_AFTER_V8) {
+					addIntToStack(READ_LE_UINT32(ptr + num));
+					num += 4;
+				} else {
+					addIntToStack(READ_LE_UINT16(ptr + num));
+					num += 2;
+				}
 				break;
 			case 5:
-				addVerbToStack(READ_LE_UINT16(ptr + num));
-				num += 2;
+				if (_features & GF_AFTER_V8) {
+					addVerbToStack(READ_LE_UINT32(ptr + num));
+					num += 4;
+				} else {
+					addVerbToStack(READ_LE_UINT16(ptr + num));
+					num += 2;
+				}
 				break;
 			case 6:
-				addNameToStack(READ_LE_UINT16(ptr + num));
-				num += 2;
+				if (_features & GF_AFTER_V8) {
+					addNameToStack(READ_LE_UINT32(ptr + num));
+					num += 4;
+				} else {
+					addNameToStack(READ_LE_UINT16(ptr + num));
+					num += 2;
+				}
 				break;
 			case 7:
-				addStringToStack(READ_LE_UINT16(ptr + num));
-				num += 2;
+				if (_features & GF_AFTER_V8) {
+					addStringToStack(READ_LE_UINT32(ptr + num));
+					num += 4;
+				} else {
+					addStringToStack(READ_LE_UINT16(ptr + num));
+					num += 2;
+				}
 				break;
 			case 3:
 			case 9:

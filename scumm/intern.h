@@ -400,6 +400,11 @@ protected:
 
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();
+	
+	virtual int readVar(uint var);
+	virtual void writeVar(uint var, int value);
+
+	void decodeParseString(int m, int n);
 
 	/* Version 8 script opcodes */
 	void o8_unknown();
