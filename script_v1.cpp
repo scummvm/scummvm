@@ -980,14 +980,6 @@ void Scumm::o5_cutscene()
 
 void Scumm::o5_endCutscene()
 {
-  // FIXME MI2: wrong direction/levitation of G. on the bridge
-	if ((_gameId == GID_MONKEY2) && (_currentRoom == 7) &&
-		(vm.slot[_currentScript].number == 203)) {
-			Actor *a = derefActor(1);
-			if (a->x == 571)
-				a->facing = 90;
-	}
-
 	endCutscene();
 }
 

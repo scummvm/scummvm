@@ -175,7 +175,8 @@ int Scumm::remapDirection(Actor * a, int dir)
 {
 	int specdir;
 	byte flags;
-	byte dirflag;
+	bool flipX;
+	bool flipY;
 	
 	if (!a->ignoreBoxes) {
 		specdir = _extraBoxFlags[a->walkbox];
@@ -189,24 +190,32 @@ int Scumm::remapDirection(Actor * a, int dir)
 
 		flags = getBoxFlags(a->walkbox);
 
-		dirflag = ((a->walkdata.XYFactor > 0) ? 1 : 0) |
-			((a->walkdata.YXFactor > 0) ? 2 : 0);
+		flipX = (a->walkdata.XYFactor > 0);
+		flipY = (a->walkdata.YXFactor > 0);
 
-		if ((flags & 8) || getClass(a->number, 0x1E)) {
+		// Check for X-Flip
+		if ((flags & 0x08) || getClass(a->number, 0x1E)) {
 			dir = 360 - dir;
-			dirflag ^= 1;
+			flipX = !flipX;
 		}
 
+		// Check for Y-Flip
 		if ((flags & 0x10) || getClass(a->number, 0x1D)) {
 			dir = 180 - dir;
-			dirflag ^= 2;
+			flipY = !flipY;
 		}
 
 		switch (flags & 7) {
 		case 1:
-			return (dirflag & 1) ? 90 : 270;
+			if (a->moving&~MF_TURN)				// Actor is walking
+				return flipX ? 90 : 270;
+			else								// Actor is standing/turning
+				return (dir == 90) ? 90 : 270;
 		case 2:
-			return (dirflag & 2) ? 180 : 0;
+			if (a->moving&~MF_TURN)				// Actor is walking
+				return flipY ? 180 : 0;
+			else								// Actor is standing/turning
+				return (dir == 0) ? 0 : 180;
 		case 3:
 			return 270;
 		case 4:
@@ -253,7 +262,9 @@ int Scumm::updateActorDirection(Actor * a)
 	} else
 		from = to;
 	
-	return fromSimpleDir(dirType, from & (num - 1));
+	dir = fromSimpleDir(dirType, from & (num - 1));
+
+	return dir;
 }
 
 void Scumm::setActorBox(Actor * a, int box)
