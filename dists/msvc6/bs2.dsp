@@ -182,14 +182,6 @@ SOURCE=..\..\sword2\driver\driver96.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\sword2\driver\keyboard.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\sword2\driver\keyboard.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\sword2\driver\menu.cpp
 # End Source File
 # Begin Source File

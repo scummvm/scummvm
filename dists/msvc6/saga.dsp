@@ -287,6 +287,10 @@ SOURCE=..\..\saga\image_mod.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\saga\input.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\saga\interface.cpp
 # End Source File
 # Begin Source File
@@ -323,19 +327,15 @@ SOURCE=..\..\saga\ite_introproc_mod.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\saga\math.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\math.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\saga\math_mod.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\saga\misc.cpp
+SOURCE=..\..\saga\music.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\saga\music.h
 # End Source File
 # Begin Source File
 
@@ -467,6 +467,14 @@ SOURCE=..\..\saga\sndres_mod.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\saga\sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\saga\sound.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\saga\sprite.cpp
 # End Source File
 # Begin Source File
@@ -487,14 +495,6 @@ SOURCE=..\..\saga\sstack.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\saga\stack.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\stack.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\saga\stack_mod.h
 # End Source File
 # Begin Source File
@@ -507,43 +507,7 @@ SOURCE=..\..\saga\sthread.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\saga\sys_fs.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\saga\sys_interface.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\sysgfx.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\sysgfx.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\sysinput.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\sysio.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\sysmusic.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\syssound.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\systimer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\systimer.h
 # End Source File
 # Begin Source File
 
@@ -559,27 +523,19 @@ SOURCE=..\..\saga\text_mod.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\saga\timer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\saga\timer.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\saga\transitions.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\saga\xmidi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\xmidi.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\saga\xmidi_mod.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\ys_binread.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\saga\ys_binwrite.cpp
 # End Source File
 # Begin Source File
 
