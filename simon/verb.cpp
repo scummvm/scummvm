@@ -328,7 +328,7 @@ void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode)
 
 	if (_game & GAME_SIMON2) {
 		if (_bit_array[4] & 0x8000 || y < 134) {
-			x += _x_scroll * 8;
+			x_ += _x_scroll * 8;
 		}
 	}
 
