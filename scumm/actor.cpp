@@ -1196,8 +1196,12 @@ void Actor::setActorCostume(int c) {
 void Actor::startWalkActor(int destX, int destY, int dir) {
 	AdjustBoxResult abr;
 
-	abr.x = destX;
-	abr.y = destY;
+	if (_vm->_features & GF_AFTER_V2 || _vm->_features & GF_AFTER_V3) {
+		abr.x = destX;
+		abr.y = destY;
+	} else {
+		abr = adjustXYToBeInBox(destX, destY, walkbox);
+	}
 
 	if (!isInCurrentRoom()) {
 		x = abr.x;
