@@ -288,7 +288,7 @@ void CostumeRenderer::proc3() {
 	height = _height;
 	width = _width2;
 
-	if (v1.replen)
+	if (len)
 		goto StartPos;
 
 	do {

@@ -75,9 +75,6 @@ protected:
 	byte drawLimb(const CostumeData &cost, int limb);
 
 	byte codec1(int _xmoveCur, int _ymoveCur);
-	void codec1_spec1();
-	void codec1_spec2();
-	void codec1_spec3();
 	void codec1_genericDecode();
 
 	byte codec5(int _xmoveCur, int _ymoveCur);
