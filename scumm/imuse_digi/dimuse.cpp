@@ -20,7 +20,6 @@
 
 #include "stdafx.h"
 #include "common/timer.h"
-#include "common/config-manager.h"
 
 #include "scumm/actor.h"
 #include "scumm/scumm.h"
