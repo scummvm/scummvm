@@ -106,9 +106,7 @@ int16 MusicHandle::read() {
 }
 
 bool MusicHandle::eos() const {
-	if (!_streaming || _filePos >= _fileEnd)
-		return true;
-	return false;
+	return (!_streaming || _filePos >= _fileEnd);
 }
 
 static void premix_proc(void *param, int16 *data, uint len) {

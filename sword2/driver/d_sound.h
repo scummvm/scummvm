@@ -59,6 +59,14 @@ public:
 	bool isStereo()	const	{ return false; }
 	int getRate() const	{ return 22050; }
 
+	virtual int readBuffer(int16 *buffer, const int numSamples) {
+		int samples;
+		for (samples = 0; samples < numSamples && !eos(); samples++) {
+			*buffer++ = read();
+		}
+		return samples;
+	}
+
 	int16 read();
 	bool eos() const;
 
