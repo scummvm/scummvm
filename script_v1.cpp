@@ -2268,7 +2268,10 @@ void Scumm::o5_wait() {
 		if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving)
 			break;
 		return;
-	case 2: /* wait for message */
+	case 2: /* wait for message */		
+		if ((_currentRoom == 0) && (_gameId == GID_ZAK256))	// Bypass Zak256 script hang
+			return;
+
 		if (_vars[VAR_HAVE_MSG])
 			break;
 		return;

@@ -234,6 +234,9 @@ void Scumm::scummMain(int argc, char **argv) {
 	_vars[VAR_VERSION] = 21; 
 #endif
 	_vars[VAR_DEBUGMODE] = _debugMode;
+	
+	_haveMsg = 0xFF;
+	_vars[VAR_HAVE_MSG] = 0xFF;
 
 	if (_gameId==GID_MONKEY) {
 		_vars[74] = 1225;
