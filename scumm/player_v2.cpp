@@ -22,6 +22,7 @@
 #include "common/engine.h"
 #include "player_v2.h"
 #include "scumm.h"
+#include "sound/mididrv.h"
 #include "sound/mixer.h"
 
 #define FREQ_HZ 236 // Don't change!
@@ -342,8 +343,8 @@ Player_V2::Player_V2(Scumm *scumm) {
 	_header_len = (scumm->_features & GF_OLD_BUNDLE) ? 4 : 6;
 
 	// Initialize sound queue 
-	current_nr = next_nr = 0;
-	current_data = next_data = 0;
+	_current_nr = _next_nr = 0;
+	_current_data = _next_data = 0;
 	
 	// Initialize channel code
 	for (i = 0; i < 4; ++i)
@@ -361,7 +362,7 @@ Player_V2::Player_V2(Scumm *scumm) {
 
 	_RNG = NG_PRESET;
 
-	set_pcjr(true);
+	set_pcjr(scumm->_midiDriver != MD_PCSPK);
 	set_master_volume(255);
 
 	_mixer->setupPremix(this, premix_proc);
@@ -401,8 +402,6 @@ void Player_V2::set_pcjr(bool pcjr) {
 	for (i = 0; i < 4; i++)
 		_timer_count[i] = 0;
 
-	if (current_data)
-		restartSound();
 	mutex_down();
 }
 
@@ -429,27 +428,27 @@ void Player_V2::set_master_volume (int vol) {
 void Player_V2::chainSound(int nr, byte *data) {
 	int offset = _header_len + (_pcjr ? 10 : 2);
 
-	current_nr = nr;
-	current_data = data;
+	_current_nr = nr;
+	_current_data = data;
 
 	for (int i = 0; i < 4; i++) {
 		clear_channel(i);
 
-		channels[i].d.music_script_nr = nr;
+		_channels[i].d.music_script_nr = nr;
 		if (data) {
-			channels[i].d.next_cmd = READ_LE_UINT16(data+offset+2*i);
-			if (channels[i].d.next_cmd)
-				channels[i].d.time_left = 1;
+			_channels[i].d.next_cmd = READ_LE_UINT16(data+offset+2*i);
+			if (_channels[i].d.next_cmd)
+				_channels[i].d.time_left = 1;
 		}
 	}
 	_music_timer = 0;
 }
 
 void Player_V2::chainNextSound() {
-	if (next_nr) {
-		chainSound(next_nr, next_data);
-		next_nr = 0;
-		next_data = 0;
+	if (_next_nr) {
+		chainSound(_next_nr, _next_data);
+		_next_nr = 0;
+		_next_data = 0;
 	}
 }
 
@@ -458,23 +457,23 @@ void Player_V2::stopAllSounds() {
 	for (int i = 0; i < 4; i++) {
 		clear_channel(i);
 	}
-	next_nr = current_nr = 0;
-	next_data = current_data = 0;
+	_next_nr = _current_nr = 0;
+	_next_data = _current_data = 0;
 	mutex_down();
 }
 
 void Player_V2::stopSound(int nr) {
 	mutex_up();
-	if (next_nr == nr) {
-		next_nr = 0;
-		next_data = 0;
+	if (_next_nr == nr) {
+		_next_nr = 0;
+		_next_data = 0;
 	}
-	if (current_nr == nr) {
+	if (_current_nr == nr) {
 		for (int i = 0; i < 4; i++) {
 			clear_channel(i);
 		}
-		current_nr = 0;
-		current_data = 0;
+		_current_nr = 0;
+		_current_data = 0;
 		chainNextSound();
 	}
 	mutex_down();
@@ -483,16 +482,16 @@ void Player_V2::stopSound(int nr) {
 void Player_V2::startSound(int nr, byte *data) {
 	mutex_up();
 
-	int cprio = current_data ? *(current_data + _header_len) : 0;
+	int cprio = _current_data ? *(_current_data + _header_len) : 0;
 	int prio  = *(data + _header_len);
-	int nprio = next_data ? *(next_data + _header_len) : 0;
+	int nprio = _next_data ? *(_next_data + _header_len) : 0;
 
 	int restartable = *(data + _header_len + 1);
 
-	if (!current_nr || cprio <= prio) {
-		int tnr = current_nr;
+	if (!_current_nr || cprio <= prio) {
+		int tnr = _current_nr;
 		int tprio = cprio;
-		byte *tdata  = current_data;
+		byte *tdata  = _current_data;
 
 		chainSound(nr, data);
 		nr   = tnr;
@@ -501,35 +500,26 @@ void Player_V2::startSound(int nr, byte *data) {
 		restartable = data ? *(data + _header_len + 1) : 0;
 	}
 	
-	if (!current_nr) {
+	if (!_current_nr) {
 		nr = 0;
-		next_nr = 0;
-		next_data = 0;
+		_next_nr = 0;
+		_next_data = 0;
 	}
 	
-	if (nr != current_nr
+	if (nr != _current_nr
 	    && restartable
-	    && (!next_nr
+	    && (!_next_nr
 		|| nprio <= prio)) {
 
-		next_nr = nr;
-		next_data = data;
+		_next_nr = nr;
+		_next_data = data;
 	}
 
 	mutex_down();
 }
 
-void Player_V2::restartSound() {
-	if (*(current_data + _header_len + 1)) {
-		/* current sound is restartable */
-		chainSound(current_nr, current_data);
-	} else {
-		chainNextSound();
-	}
-}
-
 bool Player_V2::getSoundStatus(int nr) const {
-	return current_nr == nr || next_nr == nr;
+	return _current_nr == nr || _next_nr == nr;
 }
 
 
@@ -538,7 +528,7 @@ void Player_V2::premix_proc(void *param, int16 *buf, uint len) {
 }
 
 void Player_V2::clear_channel(int i) {
-	ChannelInfo *channel = &channels[i];
+	ChannelInfo *channel = &_channels[i];
 	channel->d.time_left  = 0;
 	channel->d.next_cmd   = 0;
 	channel->d.base_freq  = 0;
@@ -563,7 +553,7 @@ int Player_V2::getMusicTimer() const {
 	if (_isV3Game)
 		return _music_timer;
 	else
-		return channels[0].d.music_timer;
+		return _channels[0].d.music_timer;
 }
 
 void Player_V2::execute_cmd(ChannelInfo *channel) {
@@ -577,7 +567,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 	if (channel->d.next_cmd == 0)
 		return;
-	script_ptr = &current_data[channel->d.next_cmd];
+	script_ptr = &_current_data[channel->d.next_cmd];
 
 	for (;;) {
 		uint8 opcode = *script_ptr++;
@@ -585,14 +575,14 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 			switch (opcode) {
 			case 0xf8: // set hull curve
 				debug(9, "channels[%d]: hull curve %2d", 
-				channel - channels, *script_ptr);
+				channel - _channels, *script_ptr);
 				channel->d.hull_curve = hull_offsets[*script_ptr/2];
 				script_ptr++;
 				break;
 
 			case 0xf9: // set freqmod curve
 				debug(9, "channels[%d]: freqmod curve %2d", 
-				channel - channels, *script_ptr);
+				channel - _channels, *script_ptr);
 				channel->d.freqmod_table = freqmod_offsets[*script_ptr/4];
 				channel->d.freqmod_modulo = freqmod_lengths[*script_ptr/4];
 				script_ptr++;
@@ -602,7 +592,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				value = READ_LE_UINT16 (script_ptr);
 				debug(9, "clear channel %d", value/50);
 				script_ptr += 2;
-				channel = &channels[value / sizeof(ChannelInfo)];
+				channel = &_channels[value / sizeof(ChannelInfo)];
 				// fall through
 
 			case 0xfa: // clear current channel
@@ -628,15 +618,15 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 			case 0xfb: // ret from subroutine
 				debug(9, "ret from sub");
-				script_ptr = retaddr;
+				script_ptr = _retaddr;
 				break;
 
 			case 0xfc: // call subroutine
 				offset = READ_LE_UINT16 (script_ptr);
 				debug(9, "subroutine %d", offset);
 				script_ptr += 2;
-				retaddr = script_ptr;
-				script_ptr = current_data + offset;
+				_retaddr = script_ptr;
+				script_ptr = _current_data + offset;
 				debug(9, "XXX1: %p -> %04x", script_ptr, offset);
 				break;
 
@@ -654,7 +644,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				value = READ_LE_UINT16 (script_ptr);
 				channel->array[opcode/2] = value;
 				debug(9, "channels[%d]: set param %2d = %5d", 
-				channel - &channels[0], opcode, value);
+				channel - &_channels[0], opcode, value);
 				script_ptr += 2;
 				if (opcode == 14) {
 				    /* tempo var */
@@ -668,7 +658,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 			for (;;) {
 				int16 note, octave;
 				int is_last_note;
-				dest_channel = &channels[(opcode >> 5) & 3];
+				dest_channel = &_channels[(opcode >> 5) & 3];
 
 				if (!(opcode & 0x80)) {
 
@@ -695,7 +685,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 
 				debug(9, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s", 
-				      dest_channel - channel, script_ptr ? script_ptr - current_data - 2 : 0,
+				      dest_channel - channel, script_ptr ? script_ptr - _current_data - 2 : 0,
 				      note, (signed short) dest_channel->d.transpose, channel->d.time_left,
 				      dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
 				      dest_channel->d.freqmod_incr,dest_channel->d.freqmod_multiplier,
@@ -713,7 +703,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				note = note % 12;
 				dest_channel->d.hull_offset = 0;
 				dest_channel->d.hull_counter = 1;
-				if (_pcjr && dest_channel == &channels[3]) {
+				if (_pcjr && dest_channel == &_channels[3]) {
 					dest_channel->d.hull_curve = 180 + note * 12;
 					myfreq = 384 - 64 * octave;
 				} else {
@@ -735,17 +725,17 @@ end:
 	channel->d.next_cmd = 0;
 	int i;
 	for (i = 0; i< 4; i++) {
-		if (channels[i].d.time_left)
+		if (_channels[i].d.time_left)
 			goto finish;
 	}
 
-	current_nr = 0;
-	current_data = 0;
+	_current_nr = 0;
+	_current_data = 0;
 	chainNextSound();
 	return;
 
 finish:
-	channel->d.next_cmd = script_ptr - current_data;
+	channel->d.next_cmd = script_ptr - _current_data;
 	return;
 }
 
@@ -778,7 +768,7 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 
 #if 0
 	debug(9, "channels[%d]: freq %d hull %d/%d/%d", 
-	      channel - &channels[0], channel->d.freq,
+	      channel - &_channels[0], channel->d.freq,
 	      channel->d.hull_curve, channel->d.hull_offset,
 	      channel->d.hull_counter);
 #endif
@@ -819,9 +809,9 @@ void Player_V2::do_mix (int16 *data, uint len) {
 
 		if (!(_next_tick >> FIXP_SHIFT)) {
 			for (int i = 0; i < 4; i++) {
-				if (!channels[i].d.time_left)
+				if (!_channels[i].d.time_left)
 					continue;
-				next_freqs(&channels[i]);
+				next_freqs(&_channels[i]);
 			}
 			_next_tick += _tick_len;
 			if (_music_timer_ctr++ >= _ticks_per_music_timer) {
@@ -887,15 +877,15 @@ void Player_V2::generateSpkSamples(int16 *data, uint len) {
 	int winning_channel = -1;
 	for (int i = 0; i < 4; i++) {
 		if (winning_channel == -1
-		    && channels[i].d.volume
-		    && channels[i].d.time_left) {
+		    && _channels[i].d.volume
+		    && _channels[i].d.time_left) {
 			winning_channel = i;
 		}
 	}
 
 	memset (data, 0, sizeof(int16) * len);
 	if (winning_channel != -1) {
-		squareGenerator(0, channels[winning_channel].d.freq, 0, 
+		squareGenerator(0, _channels[winning_channel].d.freq, 0, 
 				0, data, len);
 	} else if (_level == 0)
 		/* shortcut: no sound is being played. */
@@ -912,12 +902,12 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 	bool hasdata = false;
 
 	for (i = 1; i < 3; i++) {
-		freq = channels[i].d.freq >> 6;
-		if (channels[i].d.volume && channels[i].d.time_left) {
+		freq = _channels[i].d.freq >> 6;
+		if (_channels[i].d.volume && _channels[i].d.time_left) {
 			for (j = 0; j < i; j++) {
-				if (channels[j].d.volume
-				    && channels[j].d.time_left
-				    && freq == (channels[j].d.freq >> 6)) {
+				if (_channels[j].d.volume
+				    && _channels[j].d.time_left
+				    && freq == (_channels[j].d.freq >> 6)) {
 					/* HACK: this channel is playing at
 					 * the same frequency as another.
 					 * Synchronize it to the same phase to
@@ -932,9 +922,9 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 	}
 
 	for (i = 0; i < 4; i++) {
-		freq = channels[i].d.freq >> 6;
-		vol  = (65535 - channels[i].d.volume) >> 12;
-		if (!channels[i].d.volume || !channels[i].d.time_left) {
+		freq = _channels[i].d.freq >> 6;
+		vol  = (65535 - _channels[i].d.volume) >> 12;
+		if (!_channels[i].d.volume || !_channels[i].d.time_left) {
 			_timer_count[i] -= len << FIXP_SHIFT;
 			if (_timer_count[i] < 0)
 				_timer_count[i] = 0;
@@ -945,7 +935,7 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 			int noiseFB = (freq & 4) ? FB_WNOISE : FB_PNOISE;
 			int n = (freq & 3);
 			
-			freq = (n == 3) ? 2 * (channels[2].d.freq>>6) : 1 << (5 + n);
+			freq = (n == 3) ? 2 * (_channels[2].d.freq>>6) : 1 << (5 + n);
 			hasdata = true;
 			squareGenerator(i, freq, vol, noiseFB, data, len);
 		}

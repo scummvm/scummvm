@@ -75,7 +75,6 @@ public:
 	Player_V2(Scumm *scumm);
 	virtual ~Player_V2();
 
-	virtual void set_pcjr(bool pcjr);
 	virtual void set_master_volume(int vol);
 
 	virtual void startSound(int nr, byte *data);
@@ -109,19 +108,19 @@ protected:
 
 	const uint16 *_freqs_table;
 
-	ChannelInfo channels[4];
+	ChannelInfo _channels[4];
 
-	int   current_nr;
-	byte *current_data;
-	int   next_nr;
-	byte *next_data;
-	byte *retaddr;
+	int   _current_nr;
+	byte *_current_data;
+	int   _next_nr;
+	byte *_next_data;
+	byte *_retaddr;
 
 	OSystem::MutexRef _mutex;
 	void mutex_up() { _system->lock_mutex (_mutex); }
 	void mutex_down() { _system->unlock_mutex (_mutex); }
 
-	virtual void restartSound();
+	virtual void set_pcjr(bool pcjr);
 	void execute_cmd(ChannelInfo *channel);
 	virtual void next_freqs(ChannelInfo *channel);
 	virtual void clear_channel(int i);

@@ -109,11 +109,8 @@ void Scumm_v2::readClassicIndexFile() {
 void Scumm_v2::readEnhancedIndexFile() {
 
 	//FIXME the music driver was previously been set before detection of classic/enchanced version.
-	if (!(_features & GF_AMIGA)) {
+	if (!(_features & GF_AMIGA))
 		_playerV2 = new Player_V2(this);
-		if (_midiDriver == MD_PCSPK)
-			_playerV2->set_pcjr(false);
-	}
 
 	_numGlobalObjects = _fileHandle.readUint16LE();
 	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags

@@ -25,39 +25,70 @@
 
 #include "player_v2.h"
 
+#define FB_WNOISE 0x12000       /* feedback for white noise */
+#define FB_PNOISE 0x08000       /* feedback for periodic noise */
+
+struct channel_data_v1 {
+	uint freq;
+	uint volume;
+	byte *cmd_ptr;
+	uint notelen;
+	uint hull_counter;
+	uint attack;
+	uint decay;
+	uint level;
+	uint sustain_1;
+	uint sustain_2;
+	int  sustctr;
+};
+
 class Player_V1 : public Player_V2 {
 public:
 	Player_V1(Scumm *scumm);
 	~Player_V1();
 
 	void startSound(int nr, byte *data);
+	void stopAllSounds();
+	void stopSound(int nr);
 	int  getMusicTimer() const;
 
 protected:
 	void restartSound();
 	void next_speaker_cmd(ChannelInfo *channel);
+	void clear_channel(int i);
 	void chainSound(int nr, byte *data);
 
 	void do_mix (int16 *buf, uint len);
 
 	void set_mplex(uint mplex);
-	void parse_chunk();
-	void next_speaker_cmd();
+	void parseSpeakerChunk();
+	void nextSpeakerCmd();
+	void parsePCjrChunk();
+	void nextPCjrCmd();
 	void generateSpkSamples(int16 *data, uint len);
+	void generatePCjrSamples(int16 *data, uint len);
+
+	channel_data_v1 _channels[4];
 
 private:
-	byte *_next_cmd;
-	byte *_repeat_ptr;
+	byte *_next_chunk;
+	byte *_repeat_chunk;
 	uint  _chunk_type;
-	uint  _time_left;
+	uint  _mplex_step;
 	uint  _mplex;
-	uint  _freq_start;
-	uint  _freq_end;
-	uint  _freq_delta;
 	uint  _repeat_ctr;
 	uint  _freq_current;
 	uint  _forced_level;
 	uint16 _random_lsr;
+	uint  _channel;
+	uint  _time_left;
+	uint  _start;
+	uint  _end;
+	int   _delta;
+	uint  _time_left_2;
+	uint  _start_2;
+	int   _delta_2;
+	uint  _channel_2;
 };
 
 #endif

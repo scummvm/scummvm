@@ -628,9 +628,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_playerV2 = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_playerV2 = new Player_V2(this);
-		if (_midiDriver == MD_PCSPK)
-			_playerV2->set_pcjr(false);
-	} else {
+	} else if (_version > 2) {
 		_imuse = IMuse::create (syst, _mixer, detector->createMidi());
 		if (_imuse) {
 			if (detector->_gameTempo != 0)

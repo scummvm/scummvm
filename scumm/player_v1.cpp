@@ -22,7 +22,6 @@
 #include "common/engine.h"
 #include "player_v1.h"
 #include "scumm.h"
-#include "sound/mixer.h"
 
 #define TIMER_BASE_FREQ 1193000
 #define FIXP_SHIFT  16
@@ -35,199 +34,399 @@
 
 
 Player_V1::Player_V1(Scumm *scumm) : Player_V2(scumm) {	
-	/* pcjr not yet supported */
-	set_pcjr(false);
+	// Initialize channel code
+	for (int i = 0; i < 4; ++i)
+		clear_channel(i);
 
-	_freq_current = 0;
+	_mplex_step = (_sample_rate << FIXP_SHIFT) / 1193000;
+	_next_chunk = _repeat_chunk = 0;
+	_forced_level = 0;
 }
 
 Player_V1::~Player_V1() {
 }
 
 void Player_V1::chainSound(int nr, byte *data) {
-	int offset = _pcjr ? READ_LE_UINT16(data+4) : 6;
+	uint i;
+	for (i = 0; i < 4; ++i)
+		clear_channel(i);
 
-	current_nr = nr;
-	current_data = data;
-	_next_cmd = data + (_pcjr ? offset + 2 : offset + 4);
-	_repeat_ptr = _next_cmd;
+	_current_nr = nr;
+	_current_data = data;
+	_repeat_chunk = _next_chunk = data + (_pcjr ? 2 : 4);
 	_music_timer = 0;
 
 	debug(4, "Chaining new sound %d", nr);
-	parse_chunk();
+	if (_pcjr)
+		parsePCjrChunk();
+	else
+		parseSpeakerChunk();
 }
 
 void Player_V1::startSound(int nr, byte *data) {
 	mutex_up();
 
 	int offset = _pcjr ? READ_LE_UINT16(data+4) : 6;
-	int cprio = current_data ? *(current_data + offset) & 0x7f : 0;
-	int prio  = *(data + _header_len) & 0x7f;
-	int nprio = next_data ? *(next_data + _header_len) & 0x7f : 0;
+	int cprio = _current_data ? *(_current_data) & 0x7f : 0;
+	int prio  = *(data + offset) & 0x7f;
+	int restartable = *(data + offset) & 0x80;
 
-	int restartable = *(data + _header_len) & 0x80;
+	debug(4, "startSound %d: prio %d%s, cprio %d",
+		  nr, prio, restartable ? " restartable" : "", cprio);
 
-	if (!current_nr || cprio <= prio) {
-		int tnr = current_nr;
-		int tprio = cprio;
-		byte *tdata  = current_data;
+	if (!_current_nr || cprio <= prio) {
+		if (_current_data && (*(_current_data) & 0x80)) {
+			_next_nr = _current_nr;
+			_next_data = _current_data;
+		}
 
-		chainSound(nr, data);
-		nr   = tnr;
-		prio = tprio;
-		data = tdata;
-		restartable = data ? *(data + _header_len) & 0x80 : 0;
+		chainSound(nr, data + offset);
 	}
-	
-	if (!current_nr) {
-		nr = 0;
-		next_nr = 0;
-		next_data = 0;
-	}
-	
-	if (nr != current_nr
-	    && restartable
-	    && (!next_nr
-		|| nprio <= prio)) {
-
-		next_nr = nr;
-		next_data = data;
-	}
-
 	mutex_down();
 }
 
-void Player_V1::restartSound() {
-	if (*(current_data + _header_len) & 0x80) {
-		/* current sound is restartable */
-		chainSound(current_nr, current_data);
-	} else {
+void Player_V1::stopAllSounds() {
+	mutex_up();
+	for (int i = 0; i < 4; i++)
+		clear_channel(i);
+	_repeat_chunk = _next_chunk = 0;
+	_next_nr = _current_nr = 0;
+	_next_data = _current_data = 0;
+	mutex_down();
+}
+
+void Player_V1::stopSound(int nr) {
+	mutex_up();
+	if (_next_nr == nr) {
+		_next_nr = 0;
+		_next_data = 0;
+	}
+	if (_current_nr == nr) {
+		for (int i = 0; i < 4; i++) {
+			clear_channel(i);
+		}
+		_repeat_chunk = _next_chunk = 0;
+		_current_nr = 0;
+		_current_data = 0;
 		chainNextSound();
 	}
+	mutex_down();
+}
+
+void Player_V1::clear_channel(int i) {
+	_channels[i].freq   = 0;
+	_channels[i].volume = 15;
 }
 
 int Player_V1::getMusicTimer() const {
-	return _music_timer;
+	/* Do V1 games have a music timer? */
+	return 0;
 }
 
-void Player_V1::parse_chunk() {
+void Player_V1::parseSpeakerChunk() {
 	set_mplex(3000);
 	_forced_level = 0;
 
  parse_again:
-	_chunk_type = READ_LE_UINT16(_next_cmd);
-	debug(4, "parse_chunk: sound %d, offset %4x, chunk %x", 
-		  current_nr, _next_cmd - current_data, _chunk_type);
+	_chunk_type = READ_LE_UINT16(_next_chunk);
+	debug(6, "parseSpeakerChunk: sound %d, offset %4x, chunk %x", 
+		  _current_nr, _next_chunk - _current_data, _chunk_type);
 
-	_next_cmd += 2;
+	_next_chunk += 2;
 	switch (_chunk_type) {
 	case 0xffff:
-		current_nr = 0;
-		current_data = 0;
-		_freq_current = 0;
+		_current_nr = 0;
+		_current_data = 0;
+		_channels[0].freq = 0;
+		_next_chunk = 0;
 		chainNextSound();
 		break;
 	case 0xfffe:
-		_repeat_ptr = _next_cmd;
+		_repeat_chunk = _next_chunk;
 		goto parse_again;
 
 	case 0xfffd:
-		_next_cmd = _repeat_ptr;
+		_next_chunk = _repeat_chunk;
 		goto parse_again;
 
 	case 0xfffc:
-		/* handle reset. We don't need this don't we? */
+		/* handle reset. We don't need this do we? */
 		goto parse_again;
 
 	case 0:
 		_time_left = 1;
-		set_mplex(READ_LE_UINT16(_next_cmd));
-		_next_cmd += 2;
+		set_mplex(READ_LE_UINT16(_next_chunk));
+		_next_chunk += 2;
 		break;
 	case 1:
-		set_mplex(READ_LE_UINT16(_next_cmd));
-		_freq_start = READ_LE_UINT16(_next_cmd + 2);
-		_freq_end   = READ_LE_UINT16(_next_cmd + 4);
-		_freq_delta = READ_LE_UINT16(_next_cmd + 6);
-		_repeat_ctr = READ_LE_UINT16(_next_cmd + 8);
-		_freq_current = _freq_start;
-		_next_cmd += 10;
-		debug(4, "chunk 1: mplex %d, freq %d -> %d step %d  x %d", 
-			  _mplex, _freq_start, _freq_end, _freq_delta, _repeat_ctr);
+		set_mplex(READ_LE_UINT16(_next_chunk));
+		_start = READ_LE_UINT16(_next_chunk + 2);
+		_end   = READ_LE_UINT16(_next_chunk + 4);
+		_delta = (int16) READ_LE_UINT16(_next_chunk + 6);
+		_repeat_ctr = READ_LE_UINT16(_next_chunk + 8);
+		_channels[0].freq = _start;
+		_next_chunk += 10;
+		debug(6, "chunk 1: mplex %d, freq %d -> %d step %d  x %d", 
+			  _mplex, _start, _end, _delta, _repeat_ctr);
 		break;
 	case 2:
-		_freq_start = READ_LE_UINT16(_next_cmd);
-		_freq_end   = READ_LE_UINT16(_next_cmd + 2);
-		_freq_delta = READ_LE_UINT16(_next_cmd + 4);
-		_freq_current = 0;
-		_next_cmd += 6;
-		debug(4, "chunk 2: %d -> %d step %d", 
-			  _freq_start, _freq_end, _freq_delta);
+		_start = READ_LE_UINT16(_next_chunk);
+		_end   = READ_LE_UINT16(_next_chunk + 2);
+		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
+		_channels[0].freq = 0;
+		_next_chunk += 6;
+		debug(6, "chunk 2: %d -> %d step %d", 
+			  _start, _end, _delta);
 		break;
 	case 3:
-		_freq_start = READ_LE_UINT16(_next_cmd);
-		_freq_end   = READ_LE_UINT16(_next_cmd + 2);
-		_freq_delta = READ_LE_UINT16(_next_cmd + 4);
-		_freq_current = 0;
-		_next_cmd += 6;
-		debug(4, "chunk 3: %d -> %d step %d", 
-			  _freq_start, _freq_end, _freq_delta);
+		_start = READ_LE_UINT16(_next_chunk);
+		_end   = READ_LE_UINT16(_next_chunk + 2);
+		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
+		_channels[0].freq = 0;
+		_next_chunk += 6;
+		debug(6, "chunk 3: %d -> %d step %d", 
+			  _start, _end, _delta);
 		break;
 	}
 }
 
-void Player_V1::next_speaker_cmd() {
+void Player_V1::nextSpeakerCmd() {
 	uint16 lsr;
 	switch (_chunk_type) {
 	case 0:
 		if (--_time_left)
 			return;
-		_time_left = READ_LE_UINT16(_next_cmd);
-		_next_cmd += 2;
+		_time_left = READ_LE_UINT16(_next_chunk);
+		_next_chunk += 2;
 		if (_time_left == 0xfffb) {
 			/* handle 0xfffb?? */
-			_time_left = READ_LE_UINT16(_next_cmd);
-			_next_cmd += 2;
+			_time_left = READ_LE_UINT16(_next_chunk);
+			_next_chunk += 2;
 		}
-		debug(4, "next_speaker_cmd: chunk %d, offset %4x: notelen %d", 
-			  _chunk_type, _next_cmd - 2 - current_data, _time_left);
+		debug(7, "nextSpeakerCmd: chunk %d, offset %4x: notelen %d", 
+			  _chunk_type, _next_chunk - 2 - _current_data, _time_left);
 
 		if (_time_left == 0) {
-			parse_chunk();
+			parseSpeakerChunk();
 		} else {
-			_freq_current = READ_LE_UINT16(_next_cmd);
-			_next_cmd += 2;
-			debug(4, "freq_current: %d", _freq_current);
+			_channels[0].freq = READ_LE_UINT16(_next_chunk);
+			_next_chunk += 2;
+			debug(7, "freq_current: %d", _channels[0].freq);
 		}
 		break;
 
 	case 1:
-		_freq_current = (_freq_current + _freq_delta) & 0xffff;
-		if (_freq_current == _freq_end) {
-			if (!--_repeat_ctr)
-				parse_chunk();
-			_freq_current = _freq_start;
+		_channels[0].freq = (_channels[0].freq + _delta) & 0xffff;
+		if (_channels[0].freq == _end) {
+			if (!--_repeat_ctr) {
+				parseSpeakerChunk();
+				return;
+			}
+			_channels[0].freq = _start;
 		}
 		break;
 
 	case 2:
-		_freq_start = (_freq_start + _freq_delta) & 0xffff;
-		if (_freq_start == _freq_end) {
-			parse_chunk();
+		_start = (_start + _delta) & 0xffff;
+		if (_start == _end) {
+			parseSpeakerChunk();
+			return;
 		}
-		set_mplex(_freq_start);
+		set_mplex(_start);
 		_forced_level ^= 1;
 		break;
 	case 3:
-		_freq_start = (_freq_start + _freq_delta) & 0xffff;
-		if (_freq_start == _freq_end) {
-			parse_chunk();
+		_start = (_start + _delta) & 0xffff;
+		if (_start == _end) {
+			parseSpeakerChunk();
+			return;
 		}
 		lsr = _random_lsr + 0x9248;
 		lsr = (lsr >> 3) | (lsr << 13);
 		_random_lsr = lsr;
-		set_mplex((_freq_start & lsr) | 0x180);
+		set_mplex((_start & lsr) | 0x180);
 		_forced_level ^= 1;
+		break;
+	}
+}
+
+void Player_V1::parsePCjrChunk() {
+	uint tmp;
+	uint i;
+
+	set_mplex(3000);
+	_forced_level = 0;
+
+ parse_again:
+
+	_chunk_type = READ_LE_UINT16(_next_chunk);
+	debug(6, "parsePCjrChunk: sound %d, offset %4x, chunk %x", 
+		  _current_nr, _next_chunk - _current_data, _chunk_type);
+
+	_next_chunk += 2;
+	switch (_chunk_type) {
+	case 1: /* FIXME: implement! */
+		warning("Unimplemented PCjr chunk in sound %d:", _current_nr);
+		hexdump(_next_chunk-2, 160);
+		/* fall through*/
+	case 0xffff:
+		for (i = 0; i < 4; ++i)
+			clear_channel(i);
+		_current_nr = 0;
+		_current_data = 0;
+		_repeat_chunk = _next_chunk = 0;
+		chainNextSound();
+		break;
+
+	case 0xfffe:
+		_repeat_chunk = _next_chunk;
+		goto parse_again;
+
+	case 0xfffd:
+		_next_chunk = _repeat_chunk;
+		goto parse_again;
+
+	case 0xfffc:
+		/* handle reset. We don't need this do we? */
+		goto parse_again;
+
+	case 0:
+		set_mplex(READ_LE_UINT16(_next_chunk));
+		_next_chunk += 2;
+		for (i = 0; i < 4; i++) {
+			tmp = READ_LE_UINT16(_next_chunk);
+			_next_chunk += 2;
+			if (tmp == 0xffff) {
+				_channels[i].cmd_ptr = 0;
+				continue;
+			}
+			_channels[i].attack    = READ_LE_UINT16(_current_data + tmp);
+			_channels[i].decay     = READ_LE_UINT16(_current_data + tmp + 2);
+			_channels[i].level     = READ_LE_UINT16(_current_data + tmp + 4);
+			_channels[i].sustain_1 = READ_LE_UINT16(_current_data + tmp + 6);
+			_channels[i].sustain_2 = READ_LE_UINT16(_current_data + tmp + 8);
+			_channels[i].notelen   = 1;
+			_channels[i].volume    = 15;
+			_channels[i].cmd_ptr   = _current_data + tmp + 10;
+		}
+		break;
+
+	case 2:
+		_start = READ_LE_UINT16(_next_chunk);
+		_end   = READ_LE_UINT16(_next_chunk + 2);
+		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
+		_channels[0].freq = 0;
+		_next_chunk += 6;
+		debug(6, "chunk 2: %d -> %d step %d", 
+			  _start, _end, _delta);
+		break;
+	case 3: 
+		set_mplex(READ_LE_UINT16(_next_chunk));
+		tmp = READ_LE_UINT16(_next_chunk + 2);
+		assert((tmp & 0xf0) == 0xe0);
+		_channels[3].freq = tmp & 0xf;
+		if ((tmp & 3) == 3) {
+			_next_chunk += 2;
+			_channels[2].freq = READ_LE_UINT16(_next_chunk + 2);
+		}
+		_channels[3].volume = READ_LE_UINT16(_next_chunk + 4);
+		_repeat_ctr = READ_LE_UINT16(_next_chunk + 6);
+		_delta = (int16) READ_LE_UINT16(_next_chunk + 8);
+		_next_chunk += 10;
+		break;
+	}
+}
+
+void Player_V1::nextPCjrCmd() {
+	uint i;
+	int dummy;
+	switch (_chunk_type) {
+	case 0:
+		for (i = 0; i < 4; i++) {
+			if (!_channels[i].cmd_ptr)
+				continue;
+			if (!--_channels[i].notelen) {
+				dummy = READ_LE_UINT16(_channels[i].cmd_ptr);
+				if (dummy >= 0xfffe) {
+					if (dummy == 0xfffe)
+						_next_chunk = _current_data + 2;
+					parsePCjrChunk();
+					return;
+				}
+				_channels[i].notelen = 4 * dummy;
+				dummy = READ_LE_UINT16(_channels[i].cmd_ptr + 2);
+				if (dummy == 0) {
+					_channels[i].hull_counter = 4;
+					_channels[i].sustctr = _channels[i].sustain_2;
+				} else {
+					_channels[i].hull_counter = 1;
+					_channels[i].freq = dummy;
+				}
+				debug(7, "chunk 0: channel %d play %d for %d", 
+					  i, dummy, _channels[i].notelen);
+				_channels[i].cmd_ptr += 4;
+			}
+
+
+			switch (_channels[i].hull_counter) {
+			case 1:
+				_channels[i].volume -= _channels[i].attack;
+				if ((int) _channels[i].volume <= 0) {
+					_channels[i].volume = 0;
+					_channels[i].hull_counter++;
+				}
+				break;
+			case 2:
+				_channels[i].volume += _channels[i].decay;
+				if (_channels[i].volume >= _channels[i].level) {
+					_channels[i].volume = _channels[i].level;
+					_channels[i].hull_counter++;
+				}
+				break;
+			case 4:
+				if (--_channels[i].sustctr < 0) {
+					_channels[i].sustctr = _channels[i].sustain_2;
+					_channels[i].volume += _channels[i].sustain_1;
+					if ((int) _channels[i].volume >= 15) {
+						_channels[i].volume = 15;
+						_channels[i].hull_counter++;
+					}
+				}
+				break;
+			}
+		}
+		break;
+
+	case 1:
+		break;
+
+	case 2:
+		_start += _delta;
+		if (_start == _end) {
+			parsePCjrChunk();
+			return;
+		}
+		set_mplex(_start);
+		debug(7, "chunk 2: mplex %d  curve %d", _start, _forced_level);
+		_forced_level ^= 1;
+		break;
+	case 3:
+		dummy = _channels[3].volume + _delta;
+		if (dummy >= 15) {
+			_channels[3].volume = 15;
+		} else if (dummy <= 0) {
+			_channels[3].volume = 0;
+		} else {
+			_channels[3].volume = dummy;
+			break;
+		}
+		
+		if (!--_repeat_ctr) {
+			parsePCjrChunk();
+			return;
+		}
+		_delta = READ_LE_UINT16(_next_chunk);
+		_next_chunk += 2;
 		break;
 	}
 }
@@ -236,8 +435,7 @@ void Player_V1::set_mplex (uint mplex) {
 	if (mplex == 0)
 		mplex = 65536;
 	_mplex = mplex;
-	_tick_len = (_sample_rate << FIXP_SHIFT) 
-		/ (TIMER_BASE_FREQ / mplex);
+	_tick_len = _mplex_step * mplex;
 }
 
 void Player_V1::do_mix (int16 *data, uint len) {
@@ -248,13 +446,21 @@ void Player_V1::do_mix (int16 *data, uint len) {
 		step = len;
 		if (step > (_next_tick >> FIXP_SHIFT))
 			step = (_next_tick >> FIXP_SHIFT);
-		generateSpkSamples(data, step);
+		if (_pcjr)
+			generatePCjrSamples(data, step);
+		else
+			generateSpkSamples(data, step);
 		data += step;
 		_next_tick -= step << FIXP_SHIFT;
 
 		if (!(_next_tick >> FIXP_SHIFT)) {
 			_next_tick += _tick_len;
-			next_speaker_cmd();
+			if (_next_chunk) {
+				if (_pcjr)
+					nextPCjrCmd();
+				else
+					nextSpeakerCmd();
+			}
 		}
 	} while (len -= step);
 	mutex_down();
@@ -264,16 +470,79 @@ void Player_V1::generateSpkSamples(int16 *data, uint len) {
 	uint i;
 
 	memset (data, 0, sizeof(int16) * len);
-	if (_freq_current == 0) {
+	if (_channels[0].freq == 0) {
 		if (_forced_level) {
 			for (i = 0; i < len; i++) {
 				data[i] = _volumetable[0];
 			}
+			debug(9, "speaker: %8x: forced one", _tick_len);
 		} else if (!_level) {
 			return;
 		}
 	} else {
-		squareGenerator(0, _freq_current, 0, 0, data, len);
+		squareGenerator(0, _channels[0].freq, 0, 0, data, len);
+		debug(9, "speaker: %8x: freq %d %.1f", _tick_len,
+			  _channels[0].freq, 1193000.0/_channels[0].freq);
 	}
 	lowPassFilter(data, len);
+}
+
+void Player_V1::generatePCjrSamples(int16 *data, uint len) {
+	uint i, j;
+	uint freq, vol;
+	bool hasdata = false;
+
+	memset(data, 0, sizeof(int16) * len);
+
+	if (_forced_level) {
+		for (i = 0; i < len; i++)
+			data[i] = _volumetable[0];
+		hasdata = true;
+		debug(9, "channel[4]: %8x: forced one", _tick_len);
+	}
+
+	for (i = 1; i < 3; i++) {
+		freq = _channels[i].freq;
+		if (freq) {
+			for (j = 0; j < i; j++) {
+				if (freq == _channels[j].freq) {
+					/* HACK: this channel is playing at
+					 * the same frequency as another.
+					 * Synchronize it to the same phase to
+					 * prevent interference. 
+					 */
+					_timer_count[i] = _timer_count[j];
+					_timer_output ^= (1 << i) &
+						(_timer_output ^ _timer_output << (i - j));
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < 4; i++) {
+		freq = _channels[i].freq;
+		vol  = _channels[i].volume;
+		if (!freq || !_volumetable[_channels[i].volume]) {
+			_timer_count[i] -= len << FIXP_SHIFT;
+			if (_timer_count[i] < 0)
+				_timer_count[i] = 0;
+		} else if (i < 3) {
+			hasdata = true;
+			squareGenerator(i, freq, vol, 0, data, len);
+			debug(9, "channel[%d]: %8x: freq %d %.1f ; volume %d", 
+				  i, _tick_len, freq, 111860.0/freq,  vol);
+		} else {
+			int noiseFB = (freq & 4) ? FB_WNOISE : FB_PNOISE;
+			int n = (freq & 3);
+			
+			freq = (n == 3) ? 2 * (_channels[2].freq) : 1 << (5 + n);
+			hasdata = true;
+			squareGenerator(i, freq, vol, noiseFB, data, len);
+			debug(9, "channel[%d]: %x: noise freq %d %.1f ; volume %d", 
+				  i, _tick_len, freq, 111860.0/freq,  vol);
+		}
+	}
+
+	if (_level || hasdata)
+		lowPassFilter(data, len);
 }
