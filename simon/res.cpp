@@ -253,12 +253,14 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 	const char *const *table;
 
 	switch (_game) {
+	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
 		table = opcode_arg_table_simon1win;
 		break;
 	case GAME_SIMON2DOS:
 		table = opcode_arg_table_simon2dos;
 		break;
+	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
 		table = opcode_arg_table_simon2win;
 		break;

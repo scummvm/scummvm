@@ -386,7 +386,7 @@ int SimonState::runScript()
 			break;
 
 		case 67:{									/* set array 3 and 4 */
-				if (_game & GAME_WIN) {
+				if (_game & GAME_TALKIE || _game & GAME_WIN) {
 					uint var = getVarOrByte();
 					uint string_id = getNextStringID();
 					uint value = getNextWord();
@@ -1008,14 +1008,14 @@ int SimonState::runScript()
 			break;
 
 		case 179:{
-				if (_game == GAME_SIMON1WIN) {
+				if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
 					uint b = getVarOrByte();
 					/*uint c = */ getVarOrByte();
 					uint a = getVarOrByte();
 					uint d = _array_4[a];
 					if (d != 0)
 						talk_with_speech(d, b);
-				} else if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS)) {
+				} else if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 					uint b = getVarOrByte();
 					uint c = getVarOrByte();
 					uint a = getVarOrByte();
@@ -1040,7 +1040,7 @@ int SimonState::runScript()
 					}
 
 					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
-				} else if (_game == GAME_SIMON2WIN) {
+				} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
 					uint b = getVarOrByte();
 					uint c = getVarOrByte();
 					uint a = getVarOrByte();
@@ -1303,7 +1303,7 @@ bool SimonState::o_unk_23(uint a)
 
 void SimonState::o_177()
 {
-	if (_game == GAME_SIMON1WIN) {
+	if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
 		uint a = getVarOrByte();
 		/*uint b = */ getVarOrByte();
 		uint offs;
@@ -1348,7 +1348,7 @@ void SimonState::o_177()
 
 			talk_with_text(a, b, s, tv->a, tv->b, tv->c);
 		}
-	} else if (_game == GAME_SIMON2WIN) {
+	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
 		uint a = getVarOrByte();
 		uint b = getVarOrByte();
 		Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);

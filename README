@@ -46,7 +46,7 @@ be playable to the end:
         Day Of The Tentacle                       [Game: tentacle]
         Sam & Max                                 [Game: samnmax]
         The Dig                                   [Game: dig]
-        Simon The Sorcerer                        [Game: simon1dos/simon1win]
+        Simon The Sorcerer                        [Game: simon1dos/simon1talkie/simon1win]
 
 
 The following games should load, but are not yet fully playable. Play these at
@@ -70,11 +70,6 @@ Please be aware that the engine may contains bugs and non-implemented-
 features that sometimes make it impossible to finish the game. Save often,
 and please file a bug report (details on submitted bug reports are below)
 if you discover such a bug.
-
-There is also a known problem with some versions of Simon the Sorcerer
-not loading correctly. If you experience problems please try both the
-simon1dos and simon1win game targets, some versions of Simon are labelled
-'Windows' but use the DOS game files.
 
 Supported Platforms:
 -------------------

@@ -1713,6 +1713,7 @@ void SimonState::o_print_str()
 
 
 	switch (_game) {
+	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
 		if (string_id != 0xFFFF)
 			string_ptr = getStringPtrByID(string_id);
@@ -1720,6 +1721,7 @@ void SimonState::o_print_str()
 		speech_id = (uint16)getNextWord();
 		break;
 
+	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
 		if (string_id != 0xFFFF)
 			string_ptr = getStringPtrByID(string_id);
@@ -1759,6 +1761,7 @@ void SimonState::o_print_str()
 
 
 	switch (_game) {
+	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
 #ifdef USE_TEXT_HACK
 		if (speech_id != 0) {
@@ -1792,6 +1795,7 @@ void SimonState::o_print_str()
 		talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 
+	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
 		if (speech_id != 0 && num_1 == 1 && !_vk_t_toggle)
 			talk_with_speech(speech_id, num_1);
@@ -4347,7 +4351,7 @@ void SimonState::go()
 	_sdl_buf = (byte *)calloc(320 * 200, 1);
 	_sdl_buf_attached = (byte *)calloc(320 * 200, 1);
 
-	if (_game == GAME_SIMON2WIN) {
+	if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
 		gss = &simon2win_settings;
 	} else if (_game == GAME_SIMON2DOS) {
 		gss = &simon2dos_settings;
@@ -4675,7 +4679,7 @@ bool SimonState::load_game(uint slot)
 void SimonState::initSound()
 {
 	/* only read voice file in windows game */
-	if (_game & GAME_WIN) {
+	if (_game & GAME_TALKIE || _game & GAME_WIN) {
 		const char *m = gss->mp3_filename;
 		const char *s = gss->wav_filename;
 		const char *s2 = gss->voc_filename;
@@ -4985,7 +4989,7 @@ void SimonState::playSound(uint sound)
 #ifdef USE_MAD
 			}
 #endif
-		} else 	if (_game & GAME_WIN) { 		/* ? sound simon 1/2 win talkie */
+		} else 	if (_game & GAME_TALKIE || _game & GAME_WIN) { 		/* ? sound simon 1/2 win talkie */
 
 			byte *p;
 
@@ -5027,7 +5031,7 @@ void SimonState::playMusic(uint music)
 	/* Simon 2 dos music isn't supported */
 	if (_voice_type == FORMAT_WAV) {
 		midi.shutdown();
-		if (_game & GAME_WIN) {
+		if (_game & GAME_TALKIE || _game & GAME_WIN) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs(_game_file);
 		}
@@ -5037,7 +5041,7 @@ void SimonState::playMusic(uint music)
 	} else if (!(_game & GAME_SIMON2)){
 		midi.shutdown();
 
-		if (_game & GAME_WIN) {
+		if (_game & GAME_TALKIE || _game & GAME_WIN) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs_old(_game_file);
 		} else {
