@@ -9,11 +9,18 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  General:
    - Reworked cursor handling in SDL backend. Now cursors can have their own
      palette and scaling. This is used by Humongous Entertainment games now.
+   - Less memory-hungry MPEG movie playback for the Broken Sword games.
 
- SCUMM
+ SCUMM:
    - Added support for Mac Humongous Entertainment titles
    - Added support for multiple filenames/versions using a single target
    - Implemented CGA and Hercules render modes in early LEC titles
+
+ Sword2:
+   - Made the resource manager expire resources more intelligently.
+   - Improved performance when playing the game from CD instead of hard disk.
+   - Simplified sound effects handling. Again.
+   - Code cleanups and restructuring.
 
  <PORT #1 NEWS>
    - ...
