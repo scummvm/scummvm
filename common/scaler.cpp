@@ -70,46 +70,6 @@ int Init_2xSaI(uint32 BitFormat) {
 	return 1;
 }
 
-static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */ ) {
-	int x = 0;
-	int y = 0;
-	int r = 0;
-
-	if (A == C)
-		x += 1;
-	else if (B == C)
-		y += 1;
-	if (A == D)
-		x += 1;
-	else if (B == D)
-		y += 1;
-	if (x <= 1)
-		r += 1;
-	if (y <= 1)
-		r -= 1;
-	return r;
-}
-
-static inline int GetResult2(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */ ) {
-	int x = 0;
-	int y = 0;
-	int r = 0;
-
-	if (A == C)
-		x += 1;
-	else if (B == C)
-		y += 1;
-	if (A == D)
-		x += 1;
-	else if (B == D)
-		y += 1;
-	if (x <= 1)
-		r -= 1;
-	if (y <= 1)
-		r += 1;
-	return r;
-}
-
 static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	int x = 0;
 	int y = 0;
@@ -479,10 +439,10 @@ void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch
 						product1 = INTERPOLATE(colorA, colorC);
 						product = INTERPOLATE(colorA, colorB);
 
-						r += GetResult1(colorA, colorB, colorG, colorE, colorI);
-						r += GetResult2(colorB, colorA, colorK, colorF, colorJ);
-						r += GetResult2(colorB, colorA, colorH, colorN, colorM);
-						r += GetResult1(colorA, colorB, colorL, colorO, colorP);
+						r += GetResult(colorA, colorB, colorG, colorE);
+						r -= GetResult(colorB, colorA, colorK, colorF);
+						r -= GetResult(colorB, colorA, colorH, colorN);
+						r += GetResult(colorA, colorB, colorL, colorO);
 
 						if (r > 0)
 							product2 = colorA;
@@ -535,181 +495,6 @@ void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch
 			srcPtr += srcPitch;
 			dstPtr += dstPitch * 2;
 		}														// endof: while (height--)
-	}
-}
-
-static uint32 Bilinear(uint32 A, uint32 B, uint32 x) {
-	unsigned long areaA, areaB;
-	unsigned long result;
-
-	if (A == B)
-		return A;
-
-	areaB = (x >> 11) & 0x1f;			// reduce 16 bit fraction to 5 bits
-	areaA = 0x20 - areaB;
-
-	A = (A & redblueMask) | ((A & greenMask) << 16);
-	B = (B & redblueMask) | ((B & greenMask) << 16);
-
-	result = ((areaA * A) + (areaB * B)) >> 5;
-
-	return (result & redblueMask) | ((result >> 16) & greenMask);
-}
-
-static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x, uint32 y) {
-	unsigned long areaA, areaB, areaC, areaD;
-	unsigned long result, xy;
-
-	x = (x >> 11) & 0x1f;
-	y = (y >> 11) & 0x1f;
-	xy = (x * y) >> 5;
-
-	A = (A & redblueMask) | ((A & greenMask) << 16);
-	B = (B & redblueMask) | ((B & greenMask) << 16);
-	C = (C & redblueMask) | ((C & greenMask) << 16);
-	D = (D & redblueMask) | ((D & greenMask) << 16);
-
-	areaA = 0x20 + xy - x - y;
-	areaB = x - xy;
-	areaC = y - xy;
-	areaD = xy;
-
-	result = ((areaA * A) + (areaB * B) + (areaC * C) + (areaD * D)) >> 5;
-
-	return (result & redblueMask) | ((result >> 16) & greenMask);
-}
-
-// FIXME: Scale_2xSaI is not used anywhere; however, contrary to the _2xSaI function,
-// it seems to allow for arbitrary scale factors, not just 2x... hence I leave this in
-// for now, as that seems to be a very useful feature
-void Scale_2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-								 uint32 dstWidth, uint32 dstHeight, int width, int height) {
-	uint8 *dP;
-	const uint16 *bP;
-
-	uint32 w;
-	uint32 h;
-	uint32 dw;
-	uint32 dh;
-	uint32 hfinish;
-	uint32 wfinish;
-
-	uint32 Nextline = srcPitch >> 1;
-
-	wfinish = (width - 1) << 16;	// convert to fixed point
-	dw = wfinish / (dstWidth - 1);
-	hfinish = (height - 1) << 16;	// convert to fixed point
-	dh = hfinish / (dstHeight - 1);
-
-	for (h = 0; h < hfinish; h += dh) {
-		uint32 y1, y2;
-
-		y1 = h & 0xffff;						// fraction part of fixed point
-		bP = (const uint16 *)(srcPtr + ((h >> 16) * srcPitch));
-		dP = dstPtr;
-		y2 = 0x10000 - y1;
-
-		w = 0;
-
-		for (; w < wfinish;) {
-			uint32 A, B, C, D;
-			uint32 E, F, G, H;
-			uint32 I, J, K, L;
-			uint32 x1, x2, a1, f1, f2;
-			uint32 position, product1 = 0;
-
-			position = w >> 16;
-			A = bP[position];					// current pixel
-			B = bP[position + 1];			// next pixel
-			C = bP[position + Nextline];
-			D = bP[position + Nextline + 1];
-			E = bP[position - Nextline];
-			F = bP[position - Nextline + 1];
-			G = bP[position - 1];
-			H = bP[position + Nextline - 1];
-			I = bP[position + 2];
-			J = bP[position + Nextline + 2];
-			K = bP[position + Nextline + Nextline];
-			L = bP[position + Nextline + Nextline + 1];
-
-			x1 = w & 0xffff;					// fraction part of fixed point
-			x2 = 0x10000 - x1;
-
-			/*0 */
-			if (A == B && C == D && A == C)
-				product1 = A;
-			else
-				/*1 */
-			if (A == D && B != C) {
-				f1 = (x1 >> 1) + (0x10000 >> 2);
-				f2 = (y1 >> 1) + (0x10000 >> 2);
-				if (y1 <= f1 && A == J && A != E)	// close to B
-				{
-					a1 = f1 - y1;
-					product1 = Bilinear(A, B, a1);
-				} else if (y1 >= f1 && A == G && A != L)	// close to C
-				{
-					a1 = y1 - f1;
-					product1 = Bilinear(A, C, a1);
-				} else if (x1 >= f2 && A == E && A != J)	// close to B
-				{
-					a1 = x1 - f2;
-					product1 = Bilinear(A, B, a1);
-				} else if (x1 <= f2 && A == L && A != G)	// close to C
-				{
-					a1 = f2 - x1;
-					product1 = Bilinear(A, C, a1);
-				} else if (y1 >= x1)		// close to C
-				{
-					a1 = y1 - x1;
-					product1 = Bilinear(A, C, a1);
-				} else if (y1 <= x1)		// close to B
-				{
-					a1 = x1 - y1;
-					product1 = Bilinear(A, B, a1);
-				}
-			} else
-				/*2 */
-			if (B == C && A != D) {
-				f1 = (x1 >> 1) + (0x10000 >> 2);
-				f2 = (y1 >> 1) + (0x10000 >> 2);
-				if (y2 >= f1 && B == H && B != F)	// close to A
-				{
-					a1 = y2 - f1;
-					product1 = Bilinear(B, A, a1);
-				} else if (y2 <= f1 && B == I && B != K)	// close to D
-				{
-					a1 = f1 - y2;
-					product1 = Bilinear(B, D, a1);
-				} else if (x2 >= f2 && B == F && B != H)	// close to A
-				{
-					a1 = x2 - f2;
-					product1 = Bilinear(B, A, a1);
-				} else if (x2 <= f2 && B == K && B != I)	// close to D
-				{
-					a1 = f2 - x2;
-					product1 = Bilinear(B, D, a1);
-				} else if (y2 >= x1)		// close to A
-				{
-					a1 = y2 - x1;
-					product1 = Bilinear(B, A, a1);
-				} else if (y2 <= x1)		// close to D
-				{
-					a1 = x1 - y2;
-					product1 = Bilinear(B, D, a1);
-				}
-			}
-			/*3 */
-			else {
-				product1 = Bilinear4(A, B, C, D, x1, y1);
-			}
-
-//end First Pixel
-			*(uint32 *)dP = product1;
-			dP += 2;
-			w += dw;
-		}
-		dstPtr += dstPitch;
 	}
 }
 
