@@ -46,6 +46,17 @@ Compact sales_chart = {
 	346-273,	// mouseSize_x
 	220-185,	// mouseSize_y
 	SALES_CHART_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 hook_seq[] = {
@@ -71,7 +82,7 @@ uint16 hook_seq[] = {
 	359,
 	294,
 	2,
-	0,
+	0
 };
 
 uint16 s25_pal[] = {
@@ -458,7 +469,7 @@ uint16 s25_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact statue_25 = {
@@ -480,6 +491,17 @@ Compact statue_25 = {
 	424-363,	// mouseSize_x
 	313-238,	// mouseSize_y
 	STATUE_25_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact anchor_exit_25 = {
@@ -501,6 +523,17 @@ Compact anchor_exit_25 = {
 	203-185,	// mouseSize_x
 	309-244,	// mouseSize_y
 	ANCHOR25_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 spark_25_seq[] = {
@@ -517,7 +550,7 @@ uint16 spark_25_seq[] = {
 	348,
 	239,
 	3,
-	0,
+	0
 };
 
 uint16 rs_foster_23_25[] = {
@@ -529,7 +562,7 @@ uint16 rs_foster_23_25[] = {
 	25,
 	C_PLACE,
 	ID_S25_FLOOR,
-	65535,
+	65535
 };
 
 ExtCompact anchor_ext = {
@@ -558,6 +591,10 @@ ExtCompact anchor_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact anchor = {
@@ -589,7 +626,7 @@ Compact anchor = {
 	0,	// mode
 	ANCHOR_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&anchor_ext,
+	&anchor_ext
 };
 
 uint16 s25_chip_list[] = {
@@ -610,7 +647,7 @@ uint16 s25_chip_list[] = {
 	26+DISK_8,
 	27+DISK_8,
 	28+DISK_8,
-	0,
+	0
 };
 
 uint16 lazer_25_seq[] = {
@@ -621,7 +658,7 @@ uint16 lazer_25_seq[] = {
 	344,
 	244,
 	1,
-	0,
+	0
 };
 
 uint16 s25_fast_list[] = {
@@ -631,7 +668,7 @@ uint16 s25_fast_list[] = {
 	53,
 	54,
 	135,
-	0,
+	0
 };
 
 uint32 *grid25 = 0;
@@ -704,7 +741,7 @@ uint16 anchor_leave_seq[] = {
 	252,
 	223,
 	15,
-	0,
+	0
 };
 
 uint16 joey_list_s25[] = {
@@ -713,7 +750,7 @@ uint16 joey_list_s25[] = {
 	296,
 	304,
 	1,
-	0,
+	0
 };
 
 uint16 rs_foster_25_23[] = {
@@ -725,7 +762,7 @@ uint16 rs_foster_25_23[] = {
 	23,
 	C_PLACE,
 	ID_S23_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s25_mouse[] = {
@@ -737,7 +774,7 @@ uint16 s25_mouse[] = {
 	ID_SALES_CHART,
 	ID_S25_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s25_logic[] = {
@@ -753,7 +790,7 @@ uint16 s25_logic[] = {
 	ID_INNER_LAMB_DOOR,
 	ID_LIFT_29,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 anchor_seq[] = {
@@ -833,7 +870,7 @@ uint16 anchor_seq[] = {
 	258,
 	233,
 	0,
-	0,
+	0
 };
 
 uint16 anchor_return_seq[] = {
@@ -895,7 +932,7 @@ uint16 anchor_return_seq[] = {
 	280,
 	233,
 	12,
-	0,
+	0
 };
 
 Compact hook = {
@@ -927,6 +964,7 @@ Compact hook = {
 	0,	// mode
 	HOOK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact spark_25 = {
@@ -958,6 +996,7 @@ Compact spark_25 = {
 	0,	// mode
 	SPARK_25_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact lazer_25 = {
@@ -989,6 +1028,7 @@ Compact lazer_25 = {
 	0,	// mode
 	LAZER_25_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s25_floor_table[] = {
@@ -1010,7 +1050,7 @@ uint16 s25_floor_table[] = {
 	GT_HOOK,
 	ID_SALES_CHART,
 	GT_SALES_CHART,
-	65535,
+	65535
 };
 
 uint16 get_anchor_seq[] = {
@@ -1042,7 +1082,7 @@ uint16 get_anchor_seq[] = {
 	341,
 	264,
 	5,
-	0,
+	0
 };
 
 Compact s25_floor = {
@@ -1064,6 +1104,17 @@ Compact s25_floor = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

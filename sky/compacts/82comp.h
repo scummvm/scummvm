@@ -71,7 +71,7 @@ uint16 sc82_push_button[] = {
 	312,
 	200,
 	0,
-	0,
+	0
 };
 
 ExtCompact sc82_jobsworth_ext = {
@@ -100,6 +100,10 @@ ExtCompact sc82_jobsworth_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc82_jobsworth = {
@@ -131,7 +135,7 @@ Compact sc82_jobsworth = {
 	C_BASE_MODE,	// mode
 	SC82_JOBSWORTH_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc82_jobsworth_ext,
+	&sc82_jobsworth_ext
 };
 
 uint16 reset_foster_82[] = {
@@ -145,7 +149,7 @@ uint16 reset_foster_82[] = {
 	42+12*64,
 	C_DIR,
 	LEFT,
-	65535,
+	65535
 };
 
 uint16 sc82_jobs_turn[] = {
@@ -162,7 +166,7 @@ uint16 sc82_jobs_turn[] = {
 	312,
 	200,
 	3,
-	0,
+	0
 };
 
 uint16 sc82_jobs_take[] = {
@@ -209,7 +213,7 @@ uint16 sc82_jobs_take[] = {
 	312,
 	200,
 	0,
-	0,
+	0
 };
 
 uint16 sc82_logic_list[] = {
@@ -217,19 +221,19 @@ uint16 sc82_logic_list[] = {
 	ID_KEN,
 	ID_SC82_JOBSWORTH,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc82_fast_list[] = {
 	12+DISK_7,
 	51+DISK_7,
-	0,
+	0
 };
 
 uint32 *grid82 = 0;
 
 uint16 sc82_mouse_list[] = {
-	0,
+	0
 };
 
 uint16 reset_ken_82[] = {
@@ -249,7 +253,7 @@ uint16 reset_ken_82[] = {
 	SC82_KEN_LOGIC,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 sc82_chip_list[] = {
@@ -263,7 +267,7 @@ uint16 sc82_chip_list[] = {
 	213+DISK_7,
 	214+DISK_7,
 	215+DISK_7,
-	0,
+	0
 };
 
 uint16 sc82_palette[] = {
@@ -650,7 +654,7 @@ uint16 sc82_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc82_foster_give[] = {
@@ -688,7 +692,7 @@ uint16 sc82_foster_give[] = {
 	342,
 	200,
 	0,
-	0,
+	0
 };
 
 uint16 sc82_jobs_return[] = {
@@ -705,7 +709,7 @@ uint16 sc82_jobs_return[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

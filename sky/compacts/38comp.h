@@ -60,7 +60,7 @@ uint16 spu_left[] = {
 	23+71*64,
 	65534,
 	0,
-	0,
+	0
 };
 
 uint16 sc38_mouse_list[] = {
@@ -76,7 +76,7 @@ uint16 sc38_mouse_list[] = {
 	ID_SC38_LIFT,
 	ID_SC38_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sniff_left[] = {
@@ -183,7 +183,7 @@ uint16 sniff_left[] = {
 	208,
 	219,
 	0,
-	0,
+	0
 };
 
 uint16 sc38_palette[] = {
@@ -570,30 +570,30 @@ uint16 sc38_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 spu_u_to_l[] = {
 	35+71*64,
-	0,
+	0
 };
 
 uint16 dan_d_to_r[] = {
 	39+55*64,
-	0,
+	0
 };
 
 uint16 sex_t_to_r[] = {
 	32+106*64,
 	39+106*64,
-	0,
+	0
 };
 
 uint16 spu_u_to_d[] = {
 	35+71*64,
 	34+71*64,
 	33+71*64,
-	0,
+	0
 };
 
 Compact sc38_dog_tray = {
@@ -615,6 +615,17 @@ Compact sc38_dog_tray = {
 	241-220,	// mouseSize_x
 	267-251,	// mouseSize_y
 	SC38_DOG_TRAY_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sex_up[] = {
@@ -650,31 +661,31 @@ uint16 sex_up[] = {
 	7+106*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 dan_u_to_r[] = {
 	37+55*64,
-	0,
+	0
 };
 
 uint16 sex_l_to_r[] = {
 	33+106*64,
 	32+106*64,
 	39+106*64,
-	0,
+	0
 };
 
 uint16 spu_t_to_l[] = {
 	32+71*64,
 	33+71*64,
-	0,
+	0
 };
 
 uint16 dan_u_to_t[] = {
 	37+55*64,
 	38+55*64,
-	0,
+	0
 };
 
 uint16 sc38_screen_2[] = {
@@ -748,12 +759,12 @@ uint16 sc38_screen_2[] = {
 	379,
 	209,
 	22,
-	0,
+	0
 };
 
 uint16 dan_l_to_u[] = {
 	35+55*64,
-	0,
+	0
 };
 
 uint16 sc38_screen_3[] = {
@@ -845,19 +856,19 @@ uint16 sc38_screen_3[] = {
 	379,
 	209,
 	28,
-	0,
+	0
 };
 
 uint16 dan_r_to_t[] = {
 	39+55*64,
 	32+55*64,
-	0,
+	0
 };
 
 uint16 sex_u_to_t[] = {
 	37+106*64,
 	38+106*64,
-	0,
+	0
 };
 
 uint16 sc38_dani_get_up[] = {
@@ -901,19 +912,19 @@ uint16 sc38_dani_get_up[] = {
 	317,
 	243,
 	12,
-	0,
+	0
 };
 
 uint16 sex_r_to_d[] = {
 	39+106*64,
-	0,
+	0
 };
 
 uint16 dan_r_to_l[] = {
 	37+55*64,
 	36+55*64,
 	35+55*64,
-	0,
+	0
 };
 
 uint8 dan_auto[64];
@@ -928,7 +939,7 @@ uint16 sc38_logic_list[] = {
 	ID_SC38_HAND_SET,
 	ID_SC38_LIFT,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 piss_left[] = {
@@ -1002,24 +1013,24 @@ uint16 piss_left[] = {
 	208,
 	219,
 	0,
-	0,
+	0
 };
 
 uint16 sex_d_to_u[] = {
 	39+106*64,
 	38+106*64,
 	37+106*64,
-	0,
+	0
 };
 
 uint16 dan_l_to_d[] = {
 	33+55*64,
-	0,
+	0
 };
 
 uint16 sex_u_to_r[] = {
 	37+106*64,
-	0,
+	0
 };
 
 Compact sc38_hand_set = {
@@ -1032,11 +1043,31 @@ Compact sc38_hand_set = {
 	156,	// xcood
 	267,	// ycood
 	110*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 spu_u_to_r[] = {
 	37+71*64,
-	0,
+	0
 };
 
 uint16 dan_st_left[] = {
@@ -1044,7 +1075,7 @@ uint16 dan_st_left[] = {
 	1,
 	0,
 	34,
-	0,
+	0
 };
 
 uint16 piss_right[] = {
@@ -1118,12 +1149,12 @@ uint16 piss_right[] = {
 	257,
 	219,
 	0,
-	0,
+	0
 };
 
 uint16 sex_r_to_u[] = {
 	37+106*64,
-	0,
+	0
 };
 
 uint16 sex_left[] = {
@@ -1159,23 +1190,23 @@ uint16 sex_left[] = {
 	23+106*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 sex_l_to_u[] = {
 	35+106*64,
-	0,
+	0
 };
 
 uint16 spu_l_to_t[] = {
 	33+71*64,
 	32+71*64,
-	0,
+	0
 };
 
 uint16 sex_d_to_r[] = {
 	39+106*64,
-	0,
+	0
 };
 
 uint32 *spu = 0;
@@ -1205,7 +1236,7 @@ uint16 sc38_floor_table[] = {
 	GT_SC38_LEFT_TALK,
 	ID_STD_RIGHT_TALK,
 	GT_SC38_RIGHT_TALK,
-	65535,
+	65535
 };
 
 uint16 sc38_get_food[] = {
@@ -1255,7 +1286,7 @@ uint16 sc38_get_food[] = {
 	235,
 	216,
 	0,
-	0,
+	0
 };
 
 uint16 sex_right[] = {
@@ -1291,7 +1322,7 @@ uint16 sex_right[] = {
 	31+106*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 dan_st_talk[] = {
@@ -1299,7 +1330,7 @@ uint16 dan_st_talk[] = {
 	1,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 reset_32_38[] = {
@@ -1315,7 +1346,7 @@ uint16 reset_32_38[] = {
 	46+12*64,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 Compact sc38_floor = {
@@ -1337,16 +1368,27 @@ Compact sc38_floor = {
 	447-200,	// mouseSize_x
 	327-256,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sex_d_to_l[] = {
 	33+106*64,
-	0,
+	0
 };
 
 uint16 spu_r_to_u[] = {
 	37+71*64,
-	0,
+	0
 };
 
 uint16 reset_dani_sit[] = {
@@ -1362,32 +1404,32 @@ uint16 reset_dani_sit[] = {
 	244,
 	C_FRAME,
 	107*64,
-	65535,
+	65535
 };
 
 uint16 spu_u_to_t[] = {
 	37+71*64,
 	38+71*64,
-	0,
+	0
 };
 
 uint16 spu_l_to_u[] = {
 	35+71*64,
-	0,
+	0
 };
 
 uint16 spu_d_to_u[] = {
 	39+71*64,
 	38+71*64,
 	37+71*64,
-	0,
+	0
 };
 
 uint16 sex_u_to_d[] = {
 	35+106*64,
 	34+106*64,
 	33+106*64,
-	0,
+	0
 };
 
 uint16 sc38_dani_anim_2[] = {
@@ -1542,13 +1584,13 @@ uint16 sc38_dani_anim_2[] = {
 	294,
 	245,
 	1,
-	0,
+	0
 };
 
 uint16 dan_t_to_r[] = {
 	32+55*64,
 	39+55*64,
-	0,
+	0
 };
 
 uint16 dan_st_up[] = {
@@ -1556,7 +1598,7 @@ uint16 dan_st_up[] = {
 	1,
 	0,
 	36,
-	0,
+	0
 };
 
 uint16 bark[] = {
@@ -1657,7 +1699,7 @@ uint16 bark[] = {
 	243,
 	225,
 	0,
-	0,
+	0
 };
 
 uint16 dan_left[] = {
@@ -1693,25 +1735,25 @@ uint16 dan_left[] = {
 	23+55*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 spu_r_to_d[] = {
 	39+71*64,
-	0,
+	0
 };
 
 uint16 spu_l_to_r[] = {
 	33+71*64,
 	32+71*64,
 	39+71*64,
-	0,
+	0
 };
 
 uint16 sex_r_to_t[] = {
 	39+106*64,
 	32+106*64,
-	0,
+	0
 };
 
 uint16 sex_st_down[] = {
@@ -1719,7 +1761,7 @@ uint16 sex_st_down[] = {
 	1,
 	0,
 	32,
-	0,
+	0
 };
 
 uint16 sc38_scr_bark[] = {
@@ -1820,7 +1862,7 @@ uint16 sc38_scr_bark[] = {
 	202,
 	253,
 	0,
-	0,
+	0
 };
 
 uint16 dan_st_right[] = {
@@ -1828,7 +1870,7 @@ uint16 dan_st_right[] = {
 	1,
 	0,
 	38,
-	0,
+	0
 };
 
 uint16 spu_st_left[] = {
@@ -1836,7 +1878,7 @@ uint16 spu_st_left[] = {
 	1,
 	0,
 	34,
-	0,
+	0
 };
 
 Compact sc38_sofa = {
@@ -1858,18 +1900,29 @@ Compact sc38_sofa = {
 	308-272,	// mouseSize_x
 	301-242,	// mouseSize_y
 	SC38_SOFA_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 dan_d_to_l[] = {
 	33+55*64,
-	0,
+	0
 };
 
 uint16 spu_r_to_l[] = {
 	37+71*64,
 	36+71*64,
 	35+71*64,
-	0,
+	0
 };
 
 uint16 sc38_chip_list[] = {
@@ -1893,7 +1946,7 @@ uint16 sc38_chip_list[] = {
 	IT_SC38_SCREEN_3+0X8000+DISK_14,
 	IT_SC38_SCREEN_4+DISK_14,
 	140+DISK_14,
-	0,
+	0
 };
 
 uint16 sc38_fast_list[] = {
@@ -1906,7 +1959,7 @@ uint16 sc38_fast_list[] = {
 	IT_SC38_LAYER_2+DISK_14,
 	IT_SC38_GRID_1+DISK_14,
 	IT_SC38_GRID_2+DISK_14,
-	0,
+	0
 };
 
 Compact sc38_video = {
@@ -1938,6 +1991,7 @@ Compact sc38_video = {
 	C_BASE_MODE,	// mode
 	SC38_VIDEO_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact dog_bark_thing = {
@@ -1969,6 +2023,7 @@ Compact dog_bark_thing = {
 	C_BASE_MODE,	// mode
 	DOG_BARK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc38_screen_4[] = {
@@ -2033,14 +2088,14 @@ uint16 sc38_screen_4[] = {
 	379,
 	209,
 	19,
-	0,
+	0
 };
 
 uint16 dan_l_to_r[] = {
 	33+55*64,
 	32+55*64,
 	39+55*64,
-	0,
+	0
 };
 
 uint16 sex_st_talk[] = {
@@ -2048,7 +2103,7 @@ uint16 sex_st_talk[] = {
 	1,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 sex_st_right[] = {
@@ -2056,7 +2111,7 @@ uint16 sex_st_right[] = {
 	1,
 	0,
 	38,
-	0,
+	0
 };
 
 uint16 sc38_use_video[] = {
@@ -2085,7 +2140,7 @@ uint16 sc38_use_video[] = {
 	354,
 	210,
 	7,
-	0,
+	0
 };
 
 Compact sc38_monitor = {
@@ -2117,6 +2172,7 @@ Compact sc38_monitor = {
 	C_BASE_MODE,	// mode
 	SC38_MONITOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 spu_st_talk[] = {
@@ -2124,20 +2180,20 @@ uint16 spu_st_talk[] = {
 	1,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 sex_t_to_u[] = {
 	38+106*64,
 	37+106*64,
-	0,
+	0
 };
 
 uint16 sex_r_to_l[] = {
 	37+106*64,
 	36+106*64,
 	35+106*64,
-	0,
+	0
 };
 
 uint16 sc38_dani_anim_1[] = {
@@ -2277,7 +2333,7 @@ uint16 sc38_dani_anim_1[] = {
 	294,
 	245,
 	1,
-	0,
+	0
 };
 
 uint16 sc38_get_phone[] = {
@@ -2309,7 +2365,7 @@ uint16 sc38_get_phone[] = {
 	165,
 	259,
 	7,
-	0,
+	0
 };
 
 Compact sc38_lift = {
@@ -2341,6 +2397,7 @@ Compact sc38_lift = {
 	C_BASE_MODE,	// mode
 	SC38_LIFT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc38_biscuits = {
@@ -2362,11 +2419,22 @@ Compact sc38_biscuits = {
 	237-228,	// mouseSize_x
 	261-258,	// mouseSize_y
 	SC38_BISCUITS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 dan_r_to_u[] = {
 	37+55*64,
-	0,
+	0
 };
 
 uint16 spu_up[] = {
@@ -2402,7 +2470,7 @@ uint16 spu_up[] = {
 	7+71*64,
 	0,
 	65535,
-	0,
+	0
 };
 
 uint16 sc38_dani_anim_3[] = {
@@ -2557,7 +2625,7 @@ uint16 sc38_dani_anim_3[] = {
 	294,
 	244,
 	0,
-	0,
+	0
 };
 
 uint16 sc38_lift_up[] = {
@@ -2592,7 +2660,7 @@ uint16 sc38_lift_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint8 spu_auto[64];
@@ -2701,7 +2769,7 @@ uint16 sniff_right[] = {
 	257,
 	219,
 	0,
-	0,
+	0
 };
 
 uint16 dan_st_down[] = {
@@ -2709,7 +2777,7 @@ uint16 dan_st_down[] = {
 	1,
 	0,
 	32,
-	0,
+	0
 };
 
 uint16 sc38_ringer_anim[] = {
@@ -2762,7 +2830,7 @@ uint16 sc38_ringer_anim[] = {
 	161,
 	261,
 	0,
-	0,
+	0
 };
 
 uint32 *sc38_walk_grid = 0;
@@ -2774,12 +2842,12 @@ uint16 spu_st_right[] = {
 	1,
 	0,
 	38,
-	0,
+	0
 };
 
 uint16 spu_l_to_d[] = {
 	33+71*64,
-	0,
+	0
 };
 
 uint16 sc38_reach_food[] = {
@@ -2814,7 +2882,7 @@ uint16 sc38_reach_food[] = {
 	235,
 	216,
 	0,
-	0,
+	0
 };
 
 Compact sc38_ringer = {
@@ -2846,12 +2914,13 @@ Compact sc38_ringer = {
 	C_BASE_MODE,	// mode
 	SC38_RINGER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 spu_t_to_u[] = {
 	38+71*64,
 	37+71*64,
-	0,
+	0
 };
 
 Compact sc38_statue = {
@@ -2873,23 +2942,34 @@ Compact sc38_statue = {
 	366-354,	// mouseSize_x
 	254-199,	// mouseSize_y
 	SC38_STATUE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 dan_d_to_u[] = {
 	39+55*64,
 	38+55*64,
 	37+55*64,
-	0,
+	0
 };
 
 uint16 spu_d_to_l[] = {
 	33+71*64,
-	0,
+	0
 };
 
 uint16 dan_u_to_l[] = {
 	35+55*64,
-	0,
+	0
 };
 
 uint16 reset_spunky_38[] = {
@@ -2909,7 +2989,7 @@ uint16 reset_spunky_38[] = {
 	LEFT,
 	C_MOUSE_CLICK,
 	ADVISOR_188,
-	65535,
+	65535
 };
 
 uint16 spu_right[] = {
@@ -2945,12 +3025,12 @@ uint16 spu_right[] = {
 	31+71*64,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 sex_l_to_d[] = {
 	33+106*64,
-	0,
+	0
 };
 
 uint16 reset_dani_stand[] = {
@@ -2978,12 +3058,12 @@ uint16 reset_dani_stand[] = {
 	SC38_DANIELLE_ACTION,
 	C_MEGA_SET,
 	NEXT_MEGA_SET,
-	65535,
+	65535
 };
 
 uint16 dan_r_to_d[] = {
 	39+55*64,
-	0,
+	0
 };
 
 uint16 spu_st_down[] = {
@@ -2991,7 +3071,7 @@ uint16 spu_st_down[] = {
 	1,
 	0,
 	32,
-	0,
+	0
 };
 
 uint16 dan_up[] = {
@@ -3027,14 +3107,14 @@ uint16 dan_up[] = {
 	7+55*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 dan_u_to_d[] = {
 	35+55*64,
 	34+55*64,
 	33+55*64,
-	0,
+	0
 };
 
 uint16 dan_down[] = {
@@ -3070,7 +3150,7 @@ uint16 dan_down[] = {
 	15+55*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 dan_right[] = {
@@ -3106,13 +3186,13 @@ uint16 dan_right[] = {
 	31+55*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 dan_t_to_u[] = {
 	38+55*64,
 	37+55*64,
-	0,
+	0
 };
 
 uint16 sex_down[] = {
@@ -3148,7 +3228,7 @@ uint16 sex_down[] = {
 	15+106*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 sex_st_up[] = {
@@ -3156,7 +3236,7 @@ uint16 sex_st_up[] = {
 	1,
 	0,
 	36,
-	0,
+	0
 };
 
 uint16 sex_st_left[] = {
@@ -3164,12 +3244,12 @@ uint16 sex_st_left[] = {
 	1,
 	0,
 	34,
-	0,
+	0
 };
 
 uint16 sex_u_to_l[] = {
 	35+106*64,
-	0,
+	0
 };
 
 TurnTable danielle_turnTable0 = {
@@ -3245,7 +3325,7 @@ TurnTable danielle_turnTable1 = {
 		0,
 		sex_t_to_r,
 		0
-	},
+	}
 };
 
 MegaSet danielle_megaSet0 = {
@@ -3279,7 +3359,7 @@ MegaSet danielle_megaSet1 = {
 	sex_st_left,	// standLeft
 	sex_st_right,	// standRight
 	sex_st_talk,	// standTalk
-	&danielle_turnTable1,
+	&danielle_turnTable1
 };
 
 ExtCompact danielle_ext = {
@@ -3310,6 +3390,8 @@ ExtCompact danielle_ext = {
 	0,	// megaSet
 	&danielle_megaSet0,
 	&danielle_megaSet1,
+	0,
+	0
 };
 
 Compact danielle = {
@@ -3341,12 +3423,12 @@ Compact danielle = {
 	C_BASE_MODE,	// mode
 	DANIELLE_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&danielle_ext,
+	&danielle_ext
 };
 
 uint16 spu_d_to_r[] = {
 	39+71*64,
-	0,
+	0
 };
 
 uint16 spu_down[] = {
@@ -3382,7 +3464,7 @@ uint16 spu_down[] = {
 	15+71*64,
 	0,
 	1,
-	0,
+	0
 };
 
 uint16 spu_st_up[] = {
@@ -3390,7 +3472,7 @@ uint16 spu_st_up[] = {
 	1,
 	0,
 	36,
-	0,
+	0
 };
 
 TurnTable spunky_turnTable0 = {
@@ -3428,7 +3510,7 @@ TurnTable spunky_turnTable0 = {
 		spu_t_to_l,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet spunky_megaSet0 = {
@@ -3445,7 +3527,7 @@ MegaSet spunky_megaSet0 = {
 	spu_st_left,	// standLeft
 	spu_st_right,	// standRight
 	spu_st_talk,	// standTalk
-	&spunky_turnTable0,
+	&spunky_turnTable0
 };
 
 ExtCompact spunky_ext = {
@@ -3475,6 +3557,9 @@ ExtCompact spunky_ext = {
 	spu_auto,	// animScratch
 	0,	// megaSet
 	&spunky_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact spunky = {
@@ -3506,7 +3591,7 @@ Compact spunky = {
 	C_BASE_MODE,	// mode
 	SPUNKY_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&spunky_ext,
+	&spunky_ext
 };
 
 uint16 sc38_video_anim[] = {
@@ -3532,7 +3617,7 @@ uint16 sc38_video_anim[] = {
 	376,
 	252,
 	6,
-	0,
+	0
 };
 
 uint16 sc38_screen_1[] = {
@@ -3708,7 +3793,7 @@ uint16 sc38_screen_1[] = {
 	379,
 	209,
 	45,
-	0,
+	0
 };
 
 uint16 sc38_lift_down[] = {
@@ -3740,7 +3825,7 @@ uint16 sc38_lift_down[] = {
 	SEND_SYNC,
 	ID_FOSTER,
 	1,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

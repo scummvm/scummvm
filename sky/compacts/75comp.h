@@ -48,7 +48,7 @@ uint16 sc75_floor_table[] = {
 	GT_SC75_TONGS,
 	ID_JOEY_PARK,
 	GT_JOEY_PARK,
-	65535,
+	65535
 };
 
 uint16 sc75_usecard[] = {
@@ -80,7 +80,7 @@ uint16 sc75_usecard[] = {
 	269,
 	223,
 	0,
-	0,
+	0
 };
 
 Compact sc75_console = {
@@ -112,6 +112,7 @@ Compact sc75_console = {
 	C_BASE_MODE,	// mode
 	SC75_CONSOLE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc75_get_tongs[] = {
@@ -146,7 +147,7 @@ uint16 sc75_get_tongs[] = {
 	352,
 	216,
 	0,
-	0,
+	0
 };
 
 uint16 sc75_joey_list[] = {
@@ -155,7 +156,7 @@ uint16 sc75_joey_list[] = {
 	272,
 	311,
 	1,
-	0,
+	0
 };
 
 uint16 sc75_freeze_ded2[] = {
@@ -196,7 +197,7 @@ uint16 sc75_freeze_ded2[] = {
 	261,
 	240,
 	7,
-	0,
+	0
 };
 
 uint16 sc75_hand_tank[] = {
@@ -240,7 +241,7 @@ uint16 sc75_hand_tank[] = {
 	336,
 	216,
 	0,
-	0,
+	0
 };
 
 Compact sc75_door = {
@@ -262,6 +263,17 @@ Compact sc75_door = {
 	404-389,	// mouseSize_x
 	268-204,	// mouseSize_y
 	SC75_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc75_light2_anim[] = {
@@ -329,7 +341,7 @@ uint16 sc75_light2_anim[] = {
 	335,
 	207,
 	0,
-	0,
+	0
 };
 
 Compact sc75_light1 = {
@@ -361,12 +373,13 @@ Compact sc75_light1 = {
 	C_BASE_MODE,	// mode
 	SC75_LIGHT1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_tongs_dead[] = {
 	C_FRAME,
 	10+268*64,
-	65535,
+	65535
 };
 
 uint16 sc75_tank_anim[] = {
@@ -461,7 +474,7 @@ uint16 sc75_tank_anim[] = {
 	331,
 	230,
 	29,
-	0,
+	0
 };
 
 uint16 reset_73_75[] = {
@@ -473,7 +486,7 @@ uint16 reset_73_75[] = {
 	160,
 	C_YCOOD,
 	264,
-	65535,
+	65535
 };
 
 uint32 *grid75 = 0;
@@ -528,7 +541,7 @@ uint16 sc75_light1_anim[] = {
 	287,
 	207,
 	1,
-	0,
+	0
 };
 
 uint16 sc75_fast_list[] = {
@@ -542,7 +555,7 @@ uint16 sc75_fast_list[] = {
 	IT_SC75_RPOCKET+DISK_10,
 	IT_SC75_USECARD+DISK_10,
 	268+DISK_10,
-	0,
+	0
 };
 
 Compact sc75_floor = {
@@ -564,12 +577,23 @@ Compact sc75_floor = {
 	399-180,	// mouseSize_x
 	327-260,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_tongs_empty[] = {
 	C_FRAME,
 	4+268*64,
-	65535,
+	65535
 };
 
 Compact sc75_big_door = {
@@ -591,6 +615,17 @@ Compact sc75_big_door = {
 	190-178,	// mouseSize_x
 	270-182,	// mouseSize_y
 	SC75_BIG_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc75_mouse_list[] = {
@@ -603,7 +638,7 @@ uint16 sc75_mouse_list[] = {
 	ID_SC75_DOOR,
 	ID_SC75_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc75_live_tank = {
@@ -635,6 +670,7 @@ Compact sc75_live_tank = {
 	C_BASE_MODE,	// mode
 	SC75_LIVE_TANK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc75_freeze_it[] = {
@@ -741,7 +777,7 @@ uint16 sc75_freeze_it[] = {
 	261,
 	240,
 	17,
-	0,
+	0
 };
 
 Compact sc75_tongs = {
@@ -773,6 +809,7 @@ Compact sc75_tongs = {
 	C_BASE_MODE,	// mode
 	SC75_TONGS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc75_chip_list[] = {
@@ -797,7 +834,7 @@ uint16 sc75_chip_list[] = {
 	IT_SC75_GET_TONGS+DISK_10+0X8000,
 	IT_SC75_GET_TISS+DISK_10+0X8000,
 	IT_SC75_HAND_TANK+DISK_10+0X8000,
-	0,
+	0
 };
 
 uint16 sc75_nitro_anim[] = {
@@ -865,13 +902,13 @@ uint16 sc75_nitro_anim[] = {
 	210,
 	255,
 	8,
-	0,
+	0
 };
 
 uint16 rs_tongs_frozen[] = {
 	C_FRAME,
 	8+268*64,
-	65535,
+	65535
 };
 
 uint16 sc75_crash_anim[] = {
@@ -966,7 +1003,7 @@ uint16 sc75_crash_anim[] = {
 	289,
 	215,
 	29,
-	0,
+	0
 };
 
 Compact sc75_light2 = {
@@ -998,6 +1035,7 @@ Compact sc75_light2 = {
 	C_BASE_MODE,	// mode
 	SC75_LIGHT2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc75_mon_anim[] = {
@@ -1092,7 +1130,7 @@ uint16 sc75_mon_anim[] = {
 	289,
 	215,
 	19,
-	0,
+	0
 };
 
 uint16 sc75_freeze_it2[] = {
@@ -1133,7 +1171,7 @@ uint16 sc75_freeze_it2[] = {
 	261,
 	240,
 	7,
-	0,
+	0
 };
 
 Compact sc75_nitro_tank = {
@@ -1165,6 +1203,7 @@ Compact sc75_nitro_tank = {
 	C_BASE_MODE,	// mode
 	SC75_NITRO_TANK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc75_palette[] = {
@@ -1551,13 +1590,13 @@ uint16 sc75_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 rs_tongs_live[] = {
 	C_FRAME,
 	6+268*64,
-	65535,
+	65535
 };
 
 uint16 reset_76_75[] = {
@@ -1569,7 +1608,7 @@ uint16 reset_76_75[] = {
 	416,
 	C_YCOOD,
 	272,
-	65535,
+	65535
 };
 
 uint16 sc75_logic_list[] = {
@@ -1582,7 +1621,7 @@ uint16 sc75_logic_list[] = {
 	ID_SC75_TONGS,
 	ID_FOSTER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 rs_tongs_timer[] = {
@@ -1596,7 +1635,7 @@ uint16 rs_tongs_timer[] = {
 	SC75_TISSUE_LOGIC,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 sc75_freeze_ded[] = {
@@ -1703,7 +1742,7 @@ uint16 sc75_freeze_ded[] = {
 	261,
 	240,
 	19,
-	0,
+	0
 };
 
 uint16 sc75_rpocket[] = {
@@ -1726,7 +1765,7 @@ uint16 sc75_rpocket[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc75_get_tiss[] = {
@@ -1836,7 +1875,7 @@ uint16 sc75_get_tiss[] = {
 	340,
 	216,
 	20,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

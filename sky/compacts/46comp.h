@@ -36,7 +36,7 @@ uint16 sc46_floor_table[] = {
 	GT_SC46_EXIT_45,
 	0,
 	SC46_EXIT_45_WALK_ON,
-	65535,
+	65535
 };
 
 uint16 sc46_palette[] = {
@@ -423,12 +423,12 @@ uint16 sc46_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc46_chip_list[] = {
 	IT_SC46_LAYER_0+DISK_13,
-	0,
+	0
 };
 
 Compact sc46_exit_45 = {
@@ -450,12 +450,23 @@ Compact sc46_exit_45 = {
 	140-128,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC46_EXIT_45_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc46_logic_list[] = {
 	ID_FOSTER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc46_mouse_list[] = {
@@ -463,7 +474,7 @@ uint16 sc46_mouse_list[] = {
 	ID_SC46_EXIT_45,
 	ID_SC46_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint32 *sc46_walk_grid = 0;
@@ -474,7 +485,7 @@ uint16 sc46_fast_list[] = {
 	52+DISK_13,
 	53+DISK_13,
 	54+DISK_13,
-	0,
+	0
 };
 
 Compact sc46_rubble = {
@@ -496,6 +507,17 @@ Compact sc46_rubble = {
 	447-325,	// mouseSize_x
 	310-223,	// mouseSize_y
 	SC46_RUBBLE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_45_46[] = {
@@ -507,7 +529,7 @@ uint16 reset_45_46[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 Compact sc46_floor = {
@@ -529,6 +551,17 @@ Compact sc46_floor = {
 	375-128,	// mouseSize_x
 	327-272,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

@@ -54,6 +54,17 @@ Compact copter = {
 	389-228,	// mouseSize_x
 	287-208,	// mouseSize_y
 	COPTER_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_joey_29_7[] = {
@@ -71,7 +82,7 @@ uint16 rs_joey_29_7[] = {
 	JOEY_OUT_OF_LIFT7,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 rs_joey_to_6[] = {
@@ -93,7 +104,7 @@ uint16 rs_joey_to_6[] = {
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_COLLISION+ST_MOUSE,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 Compact lift_notice = {
@@ -115,6 +126,17 @@ Compact lift_notice = {
 	6,	// mouseSize_x
 	8,	// mouseSize_y
 	LIFT_NOTICE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 mid_up_get[] = {
@@ -149,7 +171,7 @@ uint16 mid_up_get[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 jostair1_seq[] = {
@@ -280,7 +302,7 @@ uint16 jostair1_seq[] = {
 	224,
 	316,
 	33,
-	0,
+	0
 };
 
 uint16 grd_watch_seq[] = {
@@ -381,7 +403,7 @@ uint16 grd_watch_seq[] = {
 	306,
 	228,
 	0,
-	0,
+	0
 };
 
 uint32 *grid18 = 0;
@@ -417,7 +439,7 @@ uint16 s7_floor_table[] = {
 	GT_R_TALK_7,
 	ID_CABLE_7,
 	GT_CABLE_7,
-	65535,
+	65535
 };
 
 uint16 lamb_card_seq[] = {
@@ -449,7 +471,7 @@ uint16 lamb_card_seq[] = {
 	338,
 	183,
 	0,
-	0,
+	0
 };
 
 uint16 joey_list_s6[] = {
@@ -458,7 +480,7 @@ uint16 joey_list_s6[] = {
 	272,
 	287,
 	1,
-	0,
+	0
 };
 
 uint16 s6_chip_list[] = {
@@ -476,7 +498,7 @@ uint16 s6_chip_list[] = {
 	20+DISK_2,
 	21+DISK_2,
 	22+DISK_2,
-	0,
+	0
 };
 
 uint16 s6_pal[] = {
@@ -863,7 +885,7 @@ uint16 s6_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 rs_foster_8_7[] = {
@@ -879,7 +901,7 @@ uint16 rs_foster_8_7[] = {
 	LEFT,
 	C_FRAME,
 	12*64,
-	65535,
+	65535
 };
 
 Compact joey_fly_6 = {
@@ -911,6 +933,7 @@ Compact joey_fly_6 = {
 	C_BASE_MODE,	// mode
 	JOEY_FLY_TO_6,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s7_chip_list[] = {
@@ -927,7 +950,7 @@ uint16 s7_chip_list[] = {
 	43+DISK_2,
 	147+DISK_2,
 	148+DISK_2,
-	0,
+	0
 };
 
 uint16 s8_logic[] = {
@@ -936,7 +959,7 @@ uint16 s8_logic[] = {
 	ID_WRECK_GUARD,
 	ID_CABLE_7,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 s7_lift_open[] = {
@@ -977,7 +1000,7 @@ uint16 s7_lift_open[] = {
 	1,
 	1,
 	12,
-	0,
+	0
 };
 
 uint16 skorl_anim[] = {
@@ -1051,7 +1074,7 @@ uint16 skorl_anim[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint16 card_slot_anim[] = {
@@ -1077,7 +1100,7 @@ uint16 card_slot_anim[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 dwn_stair1_seq[] = {
@@ -1163,7 +1186,7 @@ uint16 dwn_stair1_seq[] = {
 	227,
 	238,
 	26,
-	0,
+	0
 };
 
 Compact s7_floor = {
@@ -1185,6 +1208,17 @@ Compact s7_floor = {
 	320,	// mouseSize_x
 	63,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_9_6[] = {
@@ -1196,7 +1230,7 @@ uint16 rs_foster_9_6[] = {
 	6,
 	C_PLACE,
 	ID_S6_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s6_mouse[] = {
@@ -1208,7 +1242,7 @@ uint16 s6_mouse[] = {
 	ID_MONITOR,
 	ID_S6_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 rs_foster_to_5[] = {
@@ -1218,14 +1252,14 @@ uint16 rs_foster_to_5[] = {
 	5,
 	C_PLACE,
 	ID_S5_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s8_chip_list[] = {
 	130+DISK_2,
 	13,
 	114+DISK_2,
-	0,
+	0
 };
 
 uint16 weld_7_seq[] = {
@@ -1254,7 +1288,7 @@ uint16 weld_7_seq[] = {
 	369,
 	148,
 	7,
-	0,
+	0
 };
 
 uint16 grd_blink_seq[] = {
@@ -1355,7 +1389,7 @@ uint16 grd_blink_seq[] = {
 	379,
 	228,
 	0,
-	0,
+	0
 };
 
 Compact down_exit_s8 = {
@@ -1377,6 +1411,17 @@ Compact down_exit_s8 = {
 	338-232,	// mouseSize_x
 	42,	// mouseSize_y
 	ED8_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 jostair3_seq[] = {
@@ -1531,7 +1576,7 @@ uint16 jostair3_seq[] = {
 	192,
 	238,
 	14,
-	0,
+	0
 };
 
 uint16 s5_chip_list[] = {
@@ -1547,7 +1592,7 @@ uint16 s5_chip_list[] = {
 	14+DISK_2,
 	15+DISK_2,
 	16+DISK_2,
-	0,
+	0
 };
 
 Compact left_exit_s7 = {
@@ -1569,6 +1614,17 @@ Compact left_exit_s7 = {
 	11,	// mouseSize_x
 	300,	// mouseSize_y
 	EL7_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid7 = 0;
@@ -1582,7 +1638,7 @@ uint16 rs_foster_18_5[] = {
 	5,
 	C_PLACE,
 	ID_S5_FLOOR,
-	65535,
+	65535
 };
 
 uint16 upstairs1_seq[] = {
@@ -1644,7 +1700,7 @@ uint16 upstairs1_seq[] = {
 	223,
 	302,
 	18,
-	0,
+	0
 };
 
 uint16 rs_foster_6_7[] = {
@@ -1656,7 +1712,7 @@ uint16 rs_foster_6_7[] = {
 	7,
 	C_PLACE,
 	ID_S7_FLOOR,
-	65535,
+	65535
 };
 
 Compact s7_card_slot = {
@@ -1678,12 +1734,23 @@ Compact s7_card_slot = {
 	6,	// mouseSize_x
 	10,	// mouseSize_y
 	S7_SLOT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_joey_fly[] = {
 	C_STATUS,
 	ST_BACKGROUND+ST_LOGIC+ST_RECREATE,
-	65535,
+	65535
 };
 
 uint16 s7_mouse[] = {
@@ -1699,7 +1766,7 @@ uint16 s7_mouse[] = {
 	ID_CABLE_7,
 	ID_S7_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s7_logic[] = {
@@ -1711,7 +1778,7 @@ uint16 s7_logic[] = {
 	ID_CABLE_7,
 	ID_S6_JOEY_FLY,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 ExtCompact wreck_guard_ext = {
@@ -1740,6 +1807,10 @@ ExtCompact wreck_guard_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact wreck_guard = {
@@ -1771,7 +1842,7 @@ Compact wreck_guard = {
 	0,	// mode
 	WRECK_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&wreck_guard_ext,
+	&wreck_guard_ext
 };
 
 uint16 rs_foster_5_6[] = {
@@ -1781,7 +1852,7 @@ uint16 rs_foster_5_6[] = {
 	6,
 	C_PLACE,
 	ID_S6_FLOOR,
-	65535,
+	65535
 };
 
 uint16 rs_foster_7_8[] = {
@@ -1797,7 +1868,7 @@ uint16 rs_foster_7_8[] = {
 	UP,
 	C_FRAME,
 	44+13*64,
-	65535,
+	65535
 };
 
 uint16 upstairs2_seq[] = {
@@ -1889,7 +1960,7 @@ uint16 upstairs2_seq[] = {
 	206,
 	198,
 	28,
-	0,
+	0
 };
 
 Compact security_exit = {
@@ -1911,6 +1982,17 @@ Compact security_exit = {
 	6,	// mouseSize_x
 	235-171,	// mouseSize_y
 	SECURITY_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s6_logic[] = {
@@ -1924,7 +2006,7 @@ uint16 s6_logic[] = {
 	ID_LIFT7_LIGHT,
 	ID_CABLE_7,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 Compact right_exit_s5 = {
@@ -1946,6 +2028,17 @@ Compact right_exit_s5 = {
 	11,	// mouseSize_x
 	300,	// mouseSize_y
 	ER5_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact cable_7 = {
@@ -1977,6 +2070,7 @@ Compact cable_7 = {
 	C_BASE_MODE,	// mode
 	CABLE_7_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_29_7[] = {
@@ -1988,7 +2082,7 @@ uint16 rs_foster_29_7[] = {
 	7,
 	C_PLACE,
 	ID_S7_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s8_mouse[] = {
@@ -1997,7 +2091,7 @@ uint16 s8_mouse[] = {
 	ID_COPTER,
 	ID_S8_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s8_pal[] = {
@@ -2384,7 +2478,7 @@ uint16 s8_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact security_exit_s6 = {
@@ -2406,6 +2500,17 @@ Compact security_exit_s6 = {
 	10,	// mouseSize_x
 	230-167,	// mouseSize_y
 	S6_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid5 = 0;
@@ -2604,7 +2709,7 @@ uint16 jostair2_seq[] = {
 	192,
 	229,
 	28,
-	0,
+	0
 };
 
 uint16 s6_floor_table[] = {
@@ -2626,7 +2731,7 @@ uint16 s6_floor_table[] = {
 	S6_RWALK_ON,
 	42,
 	S6_SEC_WALK_ON,
-	65535,
+	65535
 };
 
 Compact lift_s7 = {
@@ -2658,6 +2763,7 @@ Compact lift_s7 = {
 	C_BASE_MODE,	// mode
 	S7_LIFT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s5_mouse[] = {
@@ -2669,7 +2775,7 @@ uint16 s5_mouse[] = {
 	S5_SECURITY_EXIT,
 	ID_S5_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s5_logic[] = {
@@ -2682,7 +2788,7 @@ uint16 s5_logic[] = {
 	ID_LIFT7_LIGHT,
 	ID_S6_JOEY_FLY,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 dwn_stair2_seq[] = {
@@ -2744,7 +2850,7 @@ uint16 dwn_stair2_seq[] = {
 	195,
 	302,
 	18,
-	0,
+	0
 };
 
 uint32 *grid9 = 0;
@@ -2756,7 +2862,7 @@ uint16 s8_fast_list[] = {
 	53,
 	54,
 	135,
-	0,
+	0
 };
 
 Compact right_exit_s7 = {
@@ -2778,6 +2884,17 @@ Compact right_exit_s7 = {
 	30,	// mouseSize_x
 	296-175,	// mouseSize_y
 	ER7_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s5_floor_table[] = {
@@ -2797,7 +2914,7 @@ uint16 s5_floor_table[] = {
 	GET_TO_SKORL,
 	S5_SECURITY_EXIT,
 	GET_TO_SECURITY_EXIT,
-	65535,
+	65535
 };
 
 Compact s5_floor = {
@@ -2819,6 +2936,17 @@ Compact s5_floor = {
 	320,	// mouseSize_x
 	63,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s8_floor_table[] = {
@@ -2830,7 +2958,7 @@ uint16 s8_floor_table[] = {
 	GET_TO_WRECK,
 	ID_DOWN_EXIT_S8,
 	GET_TO_EXIT_S8,
-	65535,
+	65535
 };
 
 uint16 lamblook_seq[] = {
@@ -2979,7 +3107,7 @@ uint16 lamblook_seq[] = {
 	266,
 	224,
 	3,
-	0,
+	0
 };
 
 uint16 s5_pal[] = {
@@ -3366,7 +3494,7 @@ uint16 s5_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint32 *z2 = 0;
@@ -3394,6 +3522,17 @@ Compact left_exit_s5 = {
 	189-177,	// mouseSize_x
 	232-172,	// mouseSize_y
 	LDOOR_5_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact right_exit_s6 = {
@@ -3415,6 +3554,17 @@ Compact right_exit_s6 = {
 	11,	// mouseSize_x
 	300,	// mouseSize_y
 	ER6_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact s6_floor = {
@@ -3436,6 +3586,17 @@ Compact s6_floor = {
 	320,	// mouseSize_x
 	71,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_to_6[] = {
@@ -3451,7 +3612,7 @@ uint16 rs_foster_to_6[] = {
 	12*64,
 	C_DIR,
 	1,
-	65535,
+	65535
 };
 
 uint16 use_linc_anim[] = {
@@ -3483,7 +3644,7 @@ uint16 use_linc_anim[] = {
 	269,
 	223,
 	0,
-	0,
+	0
 };
 
 Compact stairs6 = {
@@ -3505,6 +3666,17 @@ Compact stairs6 = {
 	238-201,	// mouseSize_x
 	246-238,	// mouseSize_y
 	STAIR6_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_6_3[] = {
@@ -3520,7 +3692,7 @@ uint16 rs_foster_6_3[] = {
 	LEFT,
 	C_FRAME,
 	12*64,
-	65535,
+	65535
 };
 
 Compact left_exit_s6 = {
@@ -3542,6 +3714,17 @@ Compact left_exit_s6 = {
 	11,	// mouseSize_x
 	300,	// mouseSize_y
 	EL6_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s7_pal[] = {
@@ -3928,7 +4111,7 @@ uint16 s7_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 rs_foster_7_6[] = {
@@ -3940,7 +4123,7 @@ uint16 rs_foster_7_6[] = {
 	6,
 	C_PLACE,
 	ID_S6_FLOOR,
-	65535,
+	65535
 };
 
 ExtCompact skorl_guard_ext = {
@@ -3969,6 +4152,10 @@ ExtCompact skorl_guard_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact skorl_guard = {
@@ -4000,7 +4187,7 @@ Compact skorl_guard = {
 	0,	// mode
 	SKORL_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&skorl_guard_ext,
+	&skorl_guard_ext
 };
 
 Compact s8_floor = {
@@ -4022,6 +4209,17 @@ Compact s8_floor = {
 	336-224,	// mouseSize_x
 	32,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact factory_entry = {
@@ -4043,6 +4241,17 @@ Compact factory_entry = {
 	6,	// mouseSize_x
 	240-177,	// mouseSize_y
 	FACTORY_ENTRY_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s7_lift_close[] = {
@@ -4083,7 +4292,7 @@ uint16 s7_lift_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 linc_table[] = {
@@ -4091,7 +4300,7 @@ uint16 linc_table[] = {
 	GT_R_TALK_7,
 	ID_S7_CARD_SLOT,
 	GT_S7_SLOT,
-	65535,
+	65535
 };
 
 Compact linc_s7 = {
@@ -4113,6 +4322,17 @@ Compact linc_s7 = {
 	316-295,	// mouseSize_x
 	267-228,	// mouseSize_y
 	LINC_S7_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact lift7_light = {
@@ -4125,6 +4345,26 @@ Compact lift7_light = {
 	0XFF,	// xcood
 	0XAC,	// ycood
 	146*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 cable_cut_seq[] = {
@@ -4156,7 +4396,7 @@ uint16 cable_cut_seq[] = {
 	410,
 	225,
 	7,
-	0,
+	0
 };
 
 uint16 rs_foster_0_5[] = {
@@ -4172,7 +4412,7 @@ uint16 rs_foster_0_5[] = {
 	42+12*64,
 	C_MEGA_SET,
 	1*NEXT_MEGA_SET,
-	65535,
+	65535
 };
 
 uint16 lamb_talk_right[] = {
@@ -4322,7 +4562,7 @@ uint16 lamb_talk_right[] = {
 	1,
 	1,
 	9,
-	0,
+	0
 };
 
 void *data_2[] = {
@@ -4678,7 +4918,7 @@ void *data_2[] = {
 	0,
 	lamb_talk_right,
 	&linc_s9,
-	&foreman,
+	&foreman
 };
 
 uint32 *table2 = 0;

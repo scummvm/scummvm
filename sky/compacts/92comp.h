@@ -56,6 +56,7 @@ Compact bridge_e = {
 	C_BASE_MODE,	// mode
 	BRIDGE_E_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_l92 = {
@@ -87,6 +88,7 @@ Compact door_l92 = {
 	C_BASE_MODE,	// mode
 	DOOR_L92_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 slab8_table[] = {
@@ -100,7 +102,7 @@ uint16 slab8_table[] = {
 	GET_TO_SLAB,
 	ID_SLAB8,
 	RET_OK,
-	65535,
+	65535
 };
 
 Compact slab8 = {
@@ -132,6 +134,7 @@ Compact slab8 = {
 	C_BASE_MODE,	// mode
 	SLAB8_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 slab3_table[] = {
@@ -145,7 +148,7 @@ uint16 slab3_table[] = {
 	RET_OK,
 	ID_SLAB6,
 	GET_TO_SLAB,
-	65535,
+	65535
 };
 
 uint16 slab2_table[] = {
@@ -161,7 +164,7 @@ uint16 slab2_table[] = {
 	GET_TO_SLAB,
 	ID_SLAB5,
 	GET_TO_SLAB,
-	65535,
+	65535
 };
 
 uint16 slab4_table[] = {
@@ -177,7 +180,7 @@ uint16 slab4_table[] = {
 	GET_TO_SLAB,
 	ID_SLAB7,
 	GET_TO_SLAB,
-	65535,
+	65535
 };
 
 Compact slab4 = {
@@ -209,6 +212,7 @@ Compact slab4 = {
 	C_BASE_MODE,	// mode
 	SLAB4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_l92_anim[] = {
@@ -282,7 +286,7 @@ uint16 door_l92_anim[] = {
 	152,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 door_r92_anim[] = {
@@ -356,7 +360,7 @@ uint16 door_r92_anim[] = {
 	323,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 slab6_table[] = {
@@ -372,7 +376,7 @@ uint16 slab6_table[] = {
 	RET_OK,
 	ID_SLAB9,
 	GET_TO_SLAB,
-	65535,
+	65535
 };
 
 Compact slab6 = {
@@ -404,6 +408,7 @@ Compact slab6 = {
 	C_BASE_MODE,	// mode
 	SLAB6_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_r92 = {
@@ -435,6 +440,7 @@ Compact door_r92 = {
 	C_BASE_MODE,	// mode
 	DOOR_R92_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact bridge_h = {
@@ -466,6 +472,7 @@ Compact bridge_h = {
 	C_BASE_MODE,	// mode
 	BRIDGE_H_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact bridge_f = {
@@ -497,6 +504,7 @@ Compact bridge_f = {
 	C_BASE_MODE,	// mode
 	BRIDGE_F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 slab7_table[] = {
@@ -510,7 +518,7 @@ uint16 slab7_table[] = {
 	RET_OK,
 	ID_SLAB8,
 	GET_TO_SLAB,
-	65535,
+	65535
 };
 
 Compact bridge_a = {
@@ -542,6 +550,7 @@ Compact bridge_a = {
 	C_BASE_MODE,	// mode
 	BRIDGE_A_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_r92r_anim[] = {
@@ -615,7 +624,7 @@ uint16 door_r92r_anim[] = {
 	348,
 	136,
 	22,
-	0,
+	0
 };
 
 Compact bridge_g = {
@@ -647,6 +656,7 @@ Compact bridge_g = {
 	C_BASE_MODE,	// mode
 	BRIDGE_G_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_l92f = {
@@ -678,6 +688,7 @@ Compact door_l92f = {
 	C_BASE_MODE,	// mode
 	DOOR_L92F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact bridge_b = {
@@ -709,6 +720,7 @@ Compact bridge_b = {
 	C_BASE_MODE,	// mode
 	BRIDGE_B_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 slab9_table[] = {
@@ -718,7 +730,7 @@ uint16 slab9_table[] = {
 	RET_OK,
 	ID_DOOR_R92,
 	GET_TO_DOOR_R92,
-	65535,
+	65535
 };
 
 uint16 slab1_table[] = {
@@ -734,7 +746,7 @@ uint16 slab1_table[] = {
 	GET_TO_SLAB,
 	ID_DOOR_L92,
 	GET_TO_DOOR_L92,
-	65535,
+	65535
 };
 
 Compact slab1 = {
@@ -766,6 +778,7 @@ Compact slab1 = {
 	C_BASE_MODE,	// mode
 	SLAB1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact red_circle = {
@@ -797,6 +810,7 @@ Compact red_circle = {
 	C_BASE_MODE,	// mode
 	RED_CIRCLE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact slab2 = {
@@ -828,6 +842,7 @@ Compact slab2 = {
 	C_BASE_MODE,	// mode
 	SLAB2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc92_logic[] = {
@@ -857,7 +872,7 @@ uint16 sc92_logic[] = {
 	ID_DOOR_R92R,
 	ID_EYEBALL_90,
 	0XFFFF,
-	ID_LINC_MENU_LOGIC,
+	ID_LINC_MENU_LOGIC
 };
 
 uint16 chip_list_sc92[] = {
@@ -867,7 +882,7 @@ uint16 chip_list_sc92[] = {
 	IT_DOOR_L92F+DISK_4,
 	IT_DOOR_R92+DISK_4,
 	IT_DOOR_R92R+DISK_4,
-	0,
+	0
 };
 
 uint16 pal92[] = {
@@ -1254,7 +1269,7 @@ uint16 pal92[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 fast_list_sc92[] = {
@@ -1270,7 +1285,7 @@ uint16 fast_list_sc92[] = {
 	IT_SC92_LAYER_0+DISK_4,
 	IT_SC92_LAYER_1+DISK_4,
 	IT_SC92_GRID_1+DISK_4,
-	0,
+	0
 };
 
 uint16 door_l92f_anim[] = {
@@ -1344,7 +1359,7 @@ uint16 door_l92f_anim[] = {
 	147,
 	136,
 	22,
-	0,
+	0
 };
 
 Compact slab9 = {
@@ -1376,6 +1391,7 @@ Compact slab9 = {
 	C_BASE_MODE,	// mode
 	SLAB9_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_r92r = {
@@ -1407,6 +1423,7 @@ Compact door_r92r = {
 	C_BASE_MODE,	// mode
 	DOOR_R92R_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 slab5_table[] = {
@@ -1424,7 +1441,7 @@ uint16 slab5_table[] = {
 	GET_TO_SLAB,
 	ID_SLAB8,
 	GET_TO_SLAB,
-	65535,
+	65535
 };
 
 Compact slab5 = {
@@ -1456,6 +1473,7 @@ Compact slab5 = {
 	C_BASE_MODE,	// mode
 	SLAB5_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact slab7 = {
@@ -1487,6 +1505,7 @@ Compact slab7 = {
 	C_BASE_MODE,	// mode
 	SLAB7_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc92_mouse[] = {
@@ -1504,7 +1523,7 @@ uint16 sc92_mouse[] = {
 	ID_SLAB8,
 	ID_SLAB9,
 	0XFFFF,
-	ID_LINC_MENU_MOUSE,
+	ID_LINC_MENU_MOUSE
 };
 
 uint16 rs_foster_92_93[] = {
@@ -1520,7 +1539,7 @@ uint16 rs_foster_92_93[] = {
 	46+182*64,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 Compact green_circle = {
@@ -1552,6 +1571,7 @@ Compact green_circle = {
 	C_BASE_MODE,	// mode
 	GREEN_CIRCLE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_92_91[] = {
@@ -1563,7 +1583,7 @@ uint16 rs_foster_92_91[] = {
 	392,
 	C_YCOOD,
 	264,
-	65535,
+	65535
 };
 
 Compact bridge_c = {
@@ -1595,6 +1615,7 @@ Compact bridge_c = {
 	C_BASE_MODE,	// mode
 	BRIDGE_C_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact bridge_d = {
@@ -1626,6 +1647,7 @@ Compact bridge_d = {
 	C_BASE_MODE,	// mode
 	BRIDGE_D_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact slab3 = {
@@ -1657,6 +1679,7 @@ Compact slab3 = {
 	C_BASE_MODE,	// mode
 	SLAB3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

@@ -41,7 +41,7 @@ uint16 s27_logic[] = {
 	ID_INNER_LAMB_DOOR,
 	ID_LIFT_29,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 scan_27_seq[] = {
@@ -52,7 +52,7 @@ uint16 scan_27_seq[] = {
 	308,
 	212,
 	1,
-	0,
+	0
 };
 
 uint16 body_table[] = {
@@ -62,7 +62,7 @@ uint16 body_table[] = {
 	GT_GAS,
 	ID_STD_RIGHT_TALK,
 	GT_R_TALK_27,
-	65535,
+	65535
 };
 
 uint16 glass_scan[] = {
@@ -259,7 +259,7 @@ uint16 glass_scan[] = {
 	194,
 	264,
 	42,
-	0,
+	0
 };
 
 uint8 burke_auto[64];
@@ -359,19 +359,19 @@ uint16 put_glass_seq[] = {
 	241,
 	250,
 	15,
-	0,
+	0
 };
 
 uint16 burke_u_to_d[] = {
 	43-8+150*64,
 	42-8+150*64,
 	41-8+150*64,
-	0,
+	0
 };
 
 uint16 burke_l_to_u[] = {
 	43-8+150*64,
-	0,
+	0
 };
 
 Compact helmet_cole = {
@@ -403,6 +403,7 @@ Compact helmet_cole = {
 	0,	// mode
 	HELMET_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_27_26[] = {
@@ -414,14 +415,14 @@ uint16 rs_foster_27_26[] = {
 	26,
 	C_PLACE,
 	ID_S26_FLOOR,
-	65535,
+	65535
 };
 
 uint16 burke_d_to_u[] = {
 	47-8+150*64,
 	46-8+150*64,
 	45-8+150*64,
-	0,
+	0
 };
 
 uint16 burke_st_talk[] = {
@@ -429,7 +430,7 @@ uint16 burke_st_talk[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 out_chair_seq[] = {
@@ -476,7 +477,7 @@ uint16 out_chair_seq[] = {
 	258,
 	234,
 	13,
-	0,
+	0
 };
 
 uint16 burke_st_right[] = {
@@ -484,12 +485,12 @@ uint16 burke_st_right[] = {
 	1,
 	1,
 	38,
-	0,
+	0
 };
 
 uint16 burke_u_to_l[] = {
 	43-8+150*64,
-	0,
+	0
 };
 
 uint16 hand_op_seq[] = {
@@ -614,7 +615,7 @@ uint16 hand_op_seq[] = {
 	216,
 	240,
 	15,
-	0,
+	0
 };
 
 uint16 helmet_up[] = {
@@ -640,7 +641,7 @@ uint16 helmet_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 hand_in_seq[] = {
@@ -690,12 +691,12 @@ uint16 hand_in_seq[] = {
 	216,
 	240,
 	4,
-	0,
+	0
 };
 
 uint16 burke_r_to_u[] = {
 	45-8+150*64,
-	0,
+	0
 };
 
 uint16 burke_left[] = {
@@ -731,7 +732,7 @@ uint16 burke_left[] = {
 	23+150*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 burke_st_up[] = {
@@ -739,7 +740,7 @@ uint16 burke_st_up[] = {
 	1,
 	1,
 	36,
-	0,
+	0
 };
 
 uint16 burke_st_left[] = {
@@ -747,7 +748,7 @@ uint16 burke_st_left[] = {
 	1,
 	1,
 	34,
-	0,
+	0
 };
 
 uint16 chair_table[] = {
@@ -773,7 +774,7 @@ uint16 chair_table[] = {
 	GT_FLOOR_FROM_CHAIR,
 	ID_HELMET_COLE,
 	GT_FLOOR_FROM_CHAIR,
-	65535,
+	65535
 };
 
 Compact gas = {
@@ -795,6 +796,17 @@ Compact gas = {
 	294-276,	// mouseSize_x
 	326-269,	// mouseSize_y
 	GAS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 lung_seq[] = {
@@ -913,14 +925,14 @@ uint16 lung_seq[] = {
 	308,
 	212,
 	21,
-	0,
+	0
 };
 
 uint16 burke_l_to_r[] = {
 	41-8+150*64,
 	40-8+150*64,
 	47-8+150*64,
-	0,
+	0
 };
 
 uint16 glass_slot_open[] = {
@@ -937,7 +949,7 @@ uint16 glass_slot_open[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 ExtCompact body_ext = {
@@ -966,6 +978,10 @@ ExtCompact body_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact body = {
@@ -997,7 +1013,7 @@ Compact body = {
 	0,	// mode
 	BODY_SSS,	// baseSub
 	0,	// baseSub_off
-	&body_ext,
+	&body_ext
 };
 
 uint16 glove_off_seq[] = {
@@ -1023,7 +1039,7 @@ uint16 glove_off_seq[] = {
 	328,
 	261,
 	0,
-	0,
+	0
 };
 
 uint16 rs_small_burke[] = {
@@ -1031,12 +1047,12 @@ uint16 rs_small_burke[] = {
 	0,
 	C_MOUSE_REL_Y,
 	0,
-	65535,
+	65535
 };
 
 uint16 burke_d_to_l[] = {
 	41-8+150*64,
-	0,
+	0
 };
 
 uint16 rs_foster_26_27[] = {
@@ -1048,7 +1064,7 @@ uint16 rs_foster_26_27[] = {
 	27,
 	C_PLACE,
 	ID_S27_FLOOR,
-	65535,
+	65535
 };
 
 uint32 *grid27 = 0;
@@ -1086,7 +1102,7 @@ uint16 burke_up[] = {
 	7+150*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 operate_seq[] = {
@@ -1214,7 +1230,7 @@ uint16 operate_seq[] = {
 	326,
 	260,
 	0,
-	0,
+	0
 };
 
 uint16 s27_floor_table[] = {
@@ -1246,7 +1262,7 @@ uint16 s27_floor_table[] = {
 	GT_HELMET,
 	ID_BODY,
 	GT_BODY,
-	65535,
+	65535
 };
 
 uint16 helmet_down[] = {
@@ -1272,7 +1288,7 @@ uint16 helmet_down[] = {
 	1,
 	1,
 	7,
-	0,
+	0
 };
 
 uint32 *heart_seq = 0;
@@ -1420,12 +1436,12 @@ uint16 squirm_seq[] = {
 	230,
 	234,
 	7,
-	0,
+	0
 };
 
 uint16 burke_r_to_d[] = {
 	47-8+150*64,
-	0,
+	0
 };
 
 uint16 glove_on_seq[] = {
@@ -1451,7 +1467,7 @@ uint16 glove_on_seq[] = {
 	328,
 	261,
 	6,
-	0,
+	0
 };
 
 Compact chart2 = {
@@ -1473,13 +1489,24 @@ Compact chart2 = {
 	416-395,	// mouseSize_x
 	251-201,	// mouseSize_y
 	CHART2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 burke_r_to_l[] = {
 	45-8+150*64,
 	44-8+150*64,
 	43-8+150*64,
-	0,
+	0
 };
 
 Compact chart1 = {
@@ -1501,6 +1528,17 @@ Compact chart1 = {
 	289-263,	// mouseSize_x
 	241-193,	// mouseSize_y
 	CHART1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_big_burke[] = {
@@ -1508,7 +1546,7 @@ uint16 rs_big_burke[] = {
 	65520,
 	C_MOUSE_REL_Y,
 	65488,
-	65535,
+	65535
 };
 
 uint16 burke_down[] = {
@@ -1544,7 +1582,7 @@ uint16 burke_down[] = {
 	15+150*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 medi_comp_seq[] = {
@@ -1693,7 +1731,7 @@ uint16 medi_comp_seq[] = {
 	194,
 	264,
 	30,
-	0,
+	0
 };
 
 uint16 helmet_op_seq[] = {
@@ -1839,7 +1877,7 @@ uint16 helmet_op_seq[] = {
 	232,
 	207,
 	7,
-	0,
+	0
 };
 
 uint16 gas_seq[] = {
@@ -1943,12 +1981,12 @@ uint16 gas_seq[] = {
 	288,
 	256,
 	0,
-	0,
+	0
 };
 
 uint16 burke_l_to_d[] = {
 	41-8+150*64,
-	0,
+	0
 };
 
 uint16 glass_slot_close[] = {
@@ -1965,7 +2003,7 @@ uint16 glass_slot_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 s27_mouse[] = {
@@ -1982,7 +2020,7 @@ uint16 s27_mouse[] = {
 	ID_HELMET_COLE,
 	ID_S27_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 burke_right[] = {
@@ -2018,7 +2056,7 @@ uint16 burke_right[] = {
 	31+150*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 burke_st_down[] = {
@@ -2026,17 +2064,17 @@ uint16 burke_st_down[] = {
 	1,
 	1,
 	32,
-	0,
+	0
 };
 
 uint16 burke_u_to_r[] = {
 	45-8+150*64,
-	0,
+	0
 };
 
 uint16 burke_d_to_r[] = {
 	47-8+150*64,
-	0,
+	0
 };
 
 TurnTable burke_turnTable0 = {
@@ -2074,7 +2112,7 @@ TurnTable burke_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet burke_megaSet0 = {
@@ -2091,7 +2129,7 @@ MegaSet burke_megaSet0 = {
 	burke_st_left,	// standLeft
 	burke_st_right,	// standRight
 	burke_st_talk,	// standTalk
-	&burke_turnTable0,
+	&burke_turnTable0
 };
 
 ExtCompact burke_ext = {
@@ -2121,6 +2159,9 @@ ExtCompact burke_ext = {
 	burke_auto,	// animScratch
 	0,	// megaSet
 	&burke_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact burke = {
@@ -2152,7 +2193,7 @@ Compact burke = {
 	0,	// mode
 	BURKE_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&burke_ext,
+	&burke_ext
 };
 
 uint16 shake_seq[] = {
@@ -2211,7 +2252,7 @@ uint16 shake_seq[] = {
 	325,
 	256,
 	10,
-	0,
+	0
 };
 
 uint16 hands_out_seq[] = {
@@ -2303,7 +2344,7 @@ uint16 hands_out_seq[] = {
 	216,
 	240,
 	4,
-	0,
+	0
 };
 
 uint16 s27_pal[] = {
@@ -2690,7 +2731,7 @@ uint16 s27_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 s27_fast_list[] = {
@@ -2709,7 +2750,7 @@ uint16 s27_fast_list[] = {
 	211+DISK_8,
 	213+DISK_8,
 	163+DISK_8+0X000,
-	0,
+	0
 };
 
 Compact medi_comp = {
@@ -2741,6 +2782,7 @@ Compact medi_comp = {
 	0,	// mode
 	MEDIC_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact glass_slot = {
@@ -2772,6 +2814,7 @@ Compact glass_slot = {
 	0,	// mode
 	GLASS_SLOT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 in_chair_seq[] = {
@@ -2812,7 +2855,7 @@ uint16 in_chair_seq[] = {
 	233,
 	235,
 	11,
-	0,
+	0
 };
 
 uint16 s27_chip_list[] = {
@@ -2832,7 +2875,7 @@ uint16 s27_chip_list[] = {
 	144+DISK_8,
 	145+DISK_8,
 	146+DISK_8,
-	0,
+	0
 };
 
 uint16 kidney_seq[] = {
@@ -2975,7 +3018,7 @@ uint16 kidney_seq[] = {
 	308,
 	212,
 	0,
-	0,
+	0
 };
 
 Compact scanner_27 = {
@@ -3007,6 +3050,7 @@ Compact scanner_27 = {
 	0,	// mode
 	SCANNER_27_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact s27_floor = {
@@ -3028,6 +3072,17 @@ Compact s27_floor = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fprint_seq[] = {
@@ -3152,7 +3207,7 @@ uint16 fprint_seq[] = {
 	194,
 	264,
 	1,
-	0,
+	0
 };
 
 Compact right_exit_27 = {
@@ -3174,6 +3229,17 @@ Compact right_exit_27 = {
 	382-363,	// mouseSize_x
 	267-202,	// mouseSize_y
 	ER27_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact chair_27 = {
@@ -3195,6 +3261,17 @@ Compact chair_27 = {
 	256-230,	// mouseSize_x
 	283-236,	// mouseSize_y
 	CHAIR_27_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

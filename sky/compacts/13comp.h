@@ -31,13 +31,13 @@ uint16 foreman_l_to_r[] = {
 	41-8+63*64,
 	40-8+63*64,
 	47-8+63*64,
-	0,
+	0
 };
 
 uint16 rs_foster[] = {
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_AR_PRIORITY+ST_GRID_PLOT+ST_COLLISION,
-	65535,
+	65535
 };
 
 uint16 gears_seq[] = {
@@ -51,7 +51,7 @@ uint16 gears_seq[] = {
 	284,
 	291,
 	2,
-	0,
+	0
 };
 
 Compact fact2_exit_left = {
@@ -73,6 +73,17 @@ Compact fact2_exit_left = {
 	11,	// mouseSize_x
 	300,	// mouseSize_y
 	FACT2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact fact_console = {
@@ -104,6 +115,7 @@ Compact fact_console = {
 	C_BASE_MODE,	// mode
 	FACT_CONSOLE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact pipe1 = {
@@ -135,12 +147,13 @@ Compact pipe1 = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 lite1_table[] = {
 	ID_STD_RIGHT_TALK,
 	GT_R_TALK_13,
-	65535,
+	65535
 };
 
 Compact sensor = {
@@ -172,11 +185,12 @@ Compact sensor = {
 	C_BASE_MODE,	// mode
 	SENSOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 foreman_l_to_d[] = {
 	41-8+63*64,
-	0,
+	0
 };
 
 uint16 foreman_st_up[] = {
@@ -184,7 +198,7 @@ uint16 foreman_st_up[] = {
 	1,
 	1,
 	36,
-	0,
+	0
 };
 
 uint16 foreman_work_seq[] = {
@@ -381,7 +395,7 @@ uint16 foreman_work_seq[] = {
 	259,
 	190,
 	16,
-	0,
+	0
 };
 
 uint16 nu_s13_chip[] = {
@@ -407,7 +421,7 @@ uint16 nu_s13_chip[] = {
 	106+DISK_6,
 	17+DISK_3,
 	18+DISK_3,
-	0,
+	0
 };
 
 uint16 rs_storeman[] = {
@@ -431,7 +445,7 @@ uint16 rs_storeman[] = {
 	L_SCRIPT,
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_MOUSE,
-	65535,
+	65535
 };
 
 uint16 foreman_left[] = {
@@ -467,7 +481,7 @@ uint16 foreman_left[] = {
 	23+63*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 closecoat[] = {
@@ -499,7 +513,7 @@ uint16 closecoat[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 pipe1_seq[] = {
@@ -693,14 +707,14 @@ uint16 pipe1_seq[] = {
 	0XEC,
 	0XC4,
 	0,
-	0,
+	0
 };
 
 uint16 foreman_r_to_l[] = {
 	45-8+63*64,
 	44-8+63*64,
 	43-8+63*64,
-	0,
+	0
 };
 
 Compact fact2_exit_right = {
@@ -722,11 +736,22 @@ Compact fact2_exit_right = {
 	16,	// mouseSize_x
 	267-174,	// mouseSize_y
 	FACT2_RIGHT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 foreman_l_to_u[] = {
 	43-8+63*64,
-	0,
+	0
 };
 
 Compact lite1 = {
@@ -758,6 +783,7 @@ Compact lite1 = {
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s13_floor_table[] = {
@@ -795,7 +821,7 @@ uint16 s13_floor_table[] = {
 	GT_SENSORS,
 	ID_FACT_CONSOLE,
 	GT_FACT_CONSOLE,
-	65535,
+	65535
 };
 
 uint16 fsearch_seq[] = {
@@ -839,7 +865,7 @@ uint16 fsearch_seq[] = {
 	367,
 	163,
 	12,
-	0,
+	0
 };
 
 Compact fact2_store_exit = {
@@ -861,6 +887,17 @@ Compact fact2_store_exit = {
 	8,	// mouseSize_x
 	238-175,	// mouseSize_y
 	FACT2_STORE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact pipe4 = {
@@ -892,13 +929,14 @@ Compact pipe4 = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 foreman_u_to_d[] = {
 	43-8+63*64,
 	42-8+63*64,
 	41-8+63*64,
-	0,
+	0
 };
 
 uint16 foreman_right[] = {
@@ -934,7 +972,7 @@ uint16 foreman_right[] = {
 	31+63*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 belts2_seq[] = {
@@ -1125,7 +1163,7 @@ uint16 belts2_seq[] = {
 	368,
 	184,
 	41,
-	0,
+	0
 };
 
 uint16 forfrisk_seq[] = {
@@ -1184,13 +1222,13 @@ uint16 forfrisk_seq[] = {
 	243,
 	163,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foreman[] = {
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_MOUSE+ST_COLLISION,
-	65535,
+	65535
 };
 
 uint16 pipe2_seq[] = {
@@ -1384,7 +1422,7 @@ uint16 pipe2_seq[] = {
 	0X120,
 	0XC9,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foster_13_12[] = {
@@ -1394,7 +1432,7 @@ uint16 rs_foster_13_12[] = {
 	12,
 	C_PLACE,
 	ID_S12_FLOOR,
-	65535,
+	65535
 };
 
 Compact s13_floor = {
@@ -1416,6 +1454,17 @@ Compact s13_floor = {
 	320,	// mouseSize_x
 	71,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact cogs = {
@@ -1447,11 +1496,12 @@ Compact cogs = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 foreman_r_to_u[] = {
 	45-8+63*64,
-	0,
+	0
 };
 
 Compact belts2 = {
@@ -1483,11 +1533,12 @@ Compact belts2 = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 foreman_d_to_l[] = {
 	41-8+63*64,
-	0,
+	0
 };
 
 uint16 s13_chip_list[] = {
@@ -1512,7 +1563,7 @@ uint16 s13_chip_list[] = {
 	143+DISK_3+0X8000,
 	17+DISK_3,
 	18+DISK_3,
-	0,
+	0
 };
 
 uint16 foreman_st_talk[] = {
@@ -1520,7 +1571,7 @@ uint16 foreman_st_talk[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fact_console_dead[] = {
@@ -1546,7 +1597,7 @@ uint16 fact_console_dead[] = {
 	1,
 	1,
 	6,
-	0,
+	0
 };
 
 uint16 foreman_st_down[] = {
@@ -1554,7 +1605,7 @@ uint16 foreman_st_down[] = {
 	1,
 	1,
 	32,
-	0,
+	0
 };
 
 Compact lite2 = {
@@ -1586,6 +1637,7 @@ Compact lite2 = {
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact gears = {
@@ -1617,6 +1669,7 @@ Compact gears = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 fost_cog_seq[] = {
@@ -1693,7 +1746,7 @@ uint16 fost_cog_seq[] = {
 	288,
 	184,
 	0,
-	0,
+	0
 };
 
 uint16 cogs_seq[] = {
@@ -1707,7 +1760,7 @@ uint16 cogs_seq[] = {
 	294,
 	218,
 	2,
-	0,
+	0
 };
 
 Compact pipe3 = {
@@ -1739,6 +1792,7 @@ Compact pipe3 = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 lite2_seq[] = {
@@ -1773,7 +1827,7 @@ uint16 lite2_seq[] = {
 	417,
 	206,
 	1,
-	0,
+	0
 };
 
 Compact belts1 = {
@@ -1805,6 +1859,7 @@ Compact belts1 = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s13_logic[] = {
@@ -1834,7 +1889,7 @@ uint16 s13_logic[] = {
 	ID_FACT2_SPY,
 	177,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 s13_mouse[] = {
@@ -1849,7 +1904,7 @@ uint16 s13_mouse[] = {
 	ID_FACT_CONSOLE,
 	ID_S13_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sensors = {
@@ -1871,6 +1926,17 @@ Compact sensors = {
 	229-212,	// mouseSize_x
 	241-195,	// mouseSize_y
 	SENSORS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fact_console_seq[] = {
@@ -2247,7 +2313,7 @@ uint16 fact_console_seq[] = {
 	418,
 	196,
 	16,
-	0,
+	0
 };
 
 uint16 foreman_down[] = {
@@ -2283,7 +2349,7 @@ uint16 foreman_down[] = {
 	15+63*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint8 foreman_auto[64];
@@ -2321,7 +2387,7 @@ uint16 foreman_up[] = {
 	7+63*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 foreman_st_left[] = {
@@ -2329,7 +2395,7 @@ uint16 foreman_st_left[] = {
 	1,
 	1,
 	34,
-	0,
+	0
 };
 
 uint16 foreman_st_right[] = {
@@ -2337,34 +2403,34 @@ uint16 foreman_st_right[] = {
 	1,
 	1,
 	38,
-	0,
+	0
 };
 
 uint16 foreman_u_to_l[] = {
 	43-8+63*64,
-	0,
+	0
 };
 
 uint16 foreman_u_to_r[] = {
 	45-8+63*64,
-	0,
+	0
 };
 
 uint16 foreman_d_to_u[] = {
 	47-8+63*64,
 	46-8+63*64,
 	45-8+63*64,
-	0,
+	0
 };
 
 uint16 foreman_d_to_r[] = {
 	47-8+63*64,
-	0,
+	0
 };
 
 uint16 foreman_r_to_d[] = {
 	47-8+63*64,
-	0,
+	0
 };
 
 TurnTable foreman_turnTable0 = {
@@ -2402,7 +2468,7 @@ TurnTable foreman_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet foreman_megaSet0 = {
@@ -2419,7 +2485,7 @@ MegaSet foreman_megaSet0 = {
 	foreman_st_left,	// standLeft
 	foreman_st_right,	// standRight
 	foreman_st_talk,	// standTalk
-	&foreman_turnTable0,
+	&foreman_turnTable0
 };
 
 ExtCompact foreman_ext = {
@@ -2449,6 +2515,9 @@ ExtCompact foreman_ext = {
 	foreman_auto,	// animScratch
 	0,	// megaSet
 	&foreman_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact foreman = {
@@ -2480,7 +2549,7 @@ Compact foreman = {
 	0,	// mode
 	FOREMAN_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&foreman_ext,
+	&foreman_ext
 };
 
 uint16 lite1_seq[] = {
@@ -2503,7 +2572,7 @@ uint16 lite1_seq[] = {
 	417,
 	203,
 	1,
-	0,
+	0
 };
 
 uint16 pipe3_seq[] = {
@@ -2697,7 +2766,7 @@ uint16 pipe3_seq[] = {
 	0X146,
 	0XC4,
 	0,
-	0,
+	0
 };
 
 uint16 opencoat_seq[] = {
@@ -2729,7 +2798,7 @@ uint16 opencoat_seq[] = {
 	198,
 	163,
 	8,
-	0,
+	0
 };
 
 uint16 sensor_seq[] = {
@@ -2743,7 +2812,7 @@ uint16 sensor_seq[] = {
 	222,
 	194,
 	2,
-	0,
+	0
 };
 
 Compact fact2_spy_and_window = {
@@ -2775,6 +2844,7 @@ Compact fact2_spy_and_window = {
 	C_BASE_MODE,	// mode
 	FACT2_SPY_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 belts1_seq[] = {
@@ -2965,7 +3035,7 @@ uint16 belts1_seq[] = {
 	217,
 	174,
 	41,
-	0,
+	0
 };
 
 Compact pipe2 = {
@@ -2997,6 +3067,7 @@ Compact pipe2 = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s13_pal[] = {
@@ -3383,7 +3454,7 @@ uint16 s13_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 new_13_chip[] = {
@@ -3405,7 +3476,7 @@ uint16 new_13_chip[] = {
 	89+DISK_3,
 	17+DISK_3,
 	18+DISK_3,
-	0,
+	0
 };
 
 uint32 *grid13 = 0;
@@ -3419,7 +3490,7 @@ uint16 rs_foster_12_13[] = {
 	13,
 	C_PLACE,
 	ID_S13_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s13_fast_list[] = {
@@ -3438,7 +3509,7 @@ uint16 s13_fast_list[] = {
 	57+DISK_3,
 	58+DISK_3,
 	59+DISK_3,
-	0,
+	0
 };
 
 uint16 pipe4_seq[] = {
@@ -3632,7 +3703,7 @@ uint16 pipe4_seq[] = {
 	0X14C,
 	0X123,
 	0,
-	0,
+	0
 };
 
 uint16 armsup_seq[] = {
@@ -3691,7 +3762,7 @@ uint16 armsup_seq[] = {
 	400,
 	246,
 	0,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

@@ -48,6 +48,17 @@ Compact sc65_exit_48 = {
 	140-128,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC65_EXIT_48_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc65_floor_table[] = {
@@ -65,7 +76,7 @@ uint16 sc65_floor_table[] = {
 	SC65_EXIT_48_WALK_ON,
 	ID_SC65_EXIT_66,
 	GT_SC65_EXIT_66,
-	65535,
+	65535
 };
 
 Compact sc65_floor = {
@@ -87,6 +98,17 @@ Compact sc65_floor = {
 	375-128,	// mouseSize_x
 	327-272,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_48_65[] = {
@@ -98,14 +120,14 @@ uint16 reset_48_65[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	288,
-	65535,
+	65535
 };
 
 uint16 sc65_chip_list[] = {
 	IT_SC65_LAYER_0+DISK_13,
 	IT_SC65_LAYER_1+DISK_13,
 	IT_SC65_GRID_1+DISK_13,
-	0,
+	0
 };
 
 Compact sc65_exit_66 = {
@@ -127,6 +149,17 @@ Compact sc65_exit_66 = {
 	386-376,	// mouseSize_x
 	306-240,	// mouseSize_y
 	LINK_65_66,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc65_mouse_list[] = {
@@ -137,7 +170,7 @@ uint16 sc65_mouse_list[] = {
 	ID_SC65_EXIT_66,
 	ID_SC65_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc65_fast_list[] = {
@@ -146,7 +179,7 @@ uint16 sc65_fast_list[] = {
 	52+DISK_13,
 	53+DISK_13,
 	54+DISK_13,
-	0,
+	0
 };
 
 Compact sc65_poster2 = {
@@ -168,6 +201,17 @@ Compact sc65_poster2 = {
 	246-227,	// mouseSize_x
 	201-175,	// mouseSize_y
 	SC65_POSTER2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc65_poster1 = {
@@ -189,6 +233,17 @@ Compact sc65_poster1 = {
 	224-204,	// mouseSize_x
 	201-175,	// mouseSize_y
 	SC65_POSTER1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc65_sign = {
@@ -210,12 +265,23 @@ Compact sc65_sign = {
 	347-310,	// mouseSize_x
 	201-177,	// mouseSize_y
 	SC65_SIGN_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc65_logic_list[] = {
 	ID_FOSTER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc65_palette[] = {
@@ -602,7 +668,7 @@ uint16 sc65_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 }; // namespace SkyCompact

@@ -56,6 +56,7 @@ Compact decomp_obj = {
 	C_BASE_MODE,	// mode
 	DECOMP_OBJ_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_r91 = {
@@ -87,6 +88,7 @@ Compact door_r91 = {
 	C_BASE_MODE,	// mode
 	DOOR_R91_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc91_mouse[] = {
@@ -101,7 +103,7 @@ uint16 sc91_mouse[] = {
 	ID_DOOR_T91,
 	ID_SC91_FLOOR,
 	0XFFFF,
-	ID_LINC_MENU_MOUSE,
+	ID_LINC_MENU_MOUSE
 };
 
 uint16 get_decomp[] = {
@@ -130,7 +132,7 @@ uint16 get_decomp[] = {
 	244,
 	281,
 	7,
-	0,
+	0
 };
 
 uint16 eye_91_table[] = {
@@ -325,7 +327,7 @@ uint16 eye_91_table[] = {
 	10,
 	10,
 	10,
-	10,
+	10
 };
 
 Compact door_l91f = {
@@ -357,6 +359,7 @@ Compact door_l91f = {
 	C_BASE_MODE,	// mode
 	DOOR_L91F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_r91f_anim[] = {
@@ -391,7 +394,7 @@ uint16 door_r91f_anim[] = {
 	374,
 	136,
 	9,
-	0,
+	0
 };
 
 Compact report_book = {
@@ -423,6 +426,7 @@ Compact report_book = {
 	C_BASE_MODE,	// mode
 	REPORT_BOOK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 get_report[] = {
@@ -454,7 +458,7 @@ uint16 get_report[] = {
 	359,
 	277,
 	7,
-	0,
+	0
 };
 
 uint16 chip_list_sc91[] = {
@@ -469,7 +473,7 @@ uint16 chip_list_sc91[] = {
 	IT_DOOR_T91R+DISK_4,
 	IT_EYE91_ZAP+DISK_4,
 	IT_FOST_DIE91+DISK_4+0X8000,
-	0,
+	0
 };
 
 uint16 sc91_floor_table[] = {
@@ -491,7 +495,7 @@ uint16 sc91_floor_table[] = {
 	GET_TO_REPORT_BOOK,
 	ID_EYEBALL_91,
 	GET_TO_EYEBALL_91,
-	65535,
+	65535
 };
 
 Compact sc91_floor = {
@@ -513,6 +517,17 @@ Compact sc91_floor = {
 	269,	// mouseSize_x
 	53,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact bag_91 = {
@@ -544,6 +559,7 @@ Compact bag_91 = {
 	C_BASE_MODE,	// mode
 	BAG_91_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_r91_anim[] = {
@@ -578,7 +594,7 @@ uint16 door_r91_anim[] = {
 	370,
 	136,
 	9,
-	0,
+	0
 };
 
 uint16 rs_foster_91_95[] = {
@@ -594,7 +610,7 @@ uint16 rs_foster_91_95[] = {
 	46+182*64,
 	C_DIR,
 	3,
-	65535,
+	65535
 };
 
 uint16 door_l91_anim[] = {
@@ -629,7 +645,7 @@ uint16 door_l91_anim[] = {
 	204,
 	136,
 	9,
-	0,
+	0
 };
 
 uint16 pal91[] = {
@@ -1016,7 +1032,7 @@ uint16 pal91[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 get_decrypt[] = {
@@ -1045,7 +1061,7 @@ uint16 get_decrypt[] = {
 	277,
 	281,
 	6,
-	0,
+	0
 };
 
 Compact door_t91 = {
@@ -1077,6 +1093,7 @@ Compact door_t91 = {
 	C_BASE_MODE,	// mode
 	DOOR_T91_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_l91 = {
@@ -1108,6 +1125,7 @@ Compact door_l91 = {
 	C_BASE_MODE,	// mode
 	DOOR_L91_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_91_92[] = {
@@ -1119,7 +1137,7 @@ uint16 rs_foster_91_92[] = {
 	128,
 	C_YCOOD,
 	304,
-	65535,
+	65535
 };
 
 uint16 fost_die91[] = {
@@ -1193,7 +1211,7 @@ uint16 fost_die91[] = {
 	306,
 	158,
 	21,
-	0,
+	0
 };
 
 uint16 rs_foster_91_90[] = {
@@ -1205,7 +1223,7 @@ uint16 rs_foster_91_90[] = {
 	384,
 	C_YCOOD,
 	256,
-	65535,
+	65535
 };
 
 uint16 sc91_logic[] = {
@@ -1222,7 +1240,7 @@ uint16 sc91_logic[] = {
 	ID_EYEBALL_90,
 	ID_EYEBALL_91,
 	0XFFFF,
-	ID_LINC_MENU_LOGIC,
+	ID_LINC_MENU_LOGIC
 };
 
 Compact eyeball_91 = {
@@ -1254,6 +1272,7 @@ Compact eyeball_91 = {
 	C_BASE_MODE,	// mode
 	EYEBALL_91_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 fast_list_sc91[] = {
@@ -1275,7 +1294,7 @@ uint16 fast_list_sc91[] = {
 	IT_SC91_LAYER_0+DISK_4,
 	IT_SC91_LAYER_1+DISK_4,
 	IT_SC91_GRID_1+DISK_4,
-	0,
+	0
 };
 
 Compact door_t91r = {
@@ -1307,6 +1326,7 @@ Compact door_t91r = {
 	C_BASE_MODE,	// mode
 	DOOR_T91R_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_l91f_anim[] = {
@@ -1341,7 +1361,7 @@ uint16 door_l91f_anim[] = {
 	199,
 	136,
 	9,
-	0,
+	0
 };
 
 Compact decrypt_obj = {
@@ -1373,6 +1393,7 @@ Compact decrypt_obj = {
 	C_BASE_MODE,	// mode
 	DECRYPT_OBJ_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_t91_anim[] = {
@@ -1407,7 +1428,7 @@ uint16 door_t91_anim[] = {
 	276,
 	136,
 	9,
-	0,
+	0
 };
 
 uint16 door_t91r_anim[] = {
@@ -1442,7 +1463,7 @@ uint16 door_t91r_anim[] = {
 	301,
 	136,
 	9,
-	0,
+	0
 };
 
 uint16 eye91_zap_anim[] = {
@@ -1462,7 +1483,7 @@ uint16 eye91_zap_anim[] = {
 	222,
 	206,
 	4,
-	0,
+	0
 };
 
 Compact door_r91f = {
@@ -1494,6 +1515,7 @@ Compact door_r91f = {
 	C_BASE_MODE,	// mode
 	DOOR_R91F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

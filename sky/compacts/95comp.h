@@ -42,7 +42,7 @@ uint16 fast_list_sc95[] = {
 	IT_GUARDIAN+DISK_4,
 	IT_WEIGHT+DISK_4+0X8000,
 	IT_DOOR_L95F+DISK_4,
-	0,
+	0
 };
 
 uint16 weight_anim[] = {
@@ -110,7 +110,7 @@ uint16 weight_anim[] = {
 	312,
 	176,
 	7,
-	0,
+	0
 };
 
 uint16 sc95_floor_table[] = {
@@ -124,7 +124,7 @@ uint16 sc95_floor_table[] = {
 	GET_TO_DOOR_T95,
 	ID_GUARDIAN,
 	GET_TO_GUARDIAN,
-	65535,
+	65535
 };
 
 uint16 door_r95_anim[] = {
@@ -198,7 +198,7 @@ uint16 door_r95_anim[] = {
 	366,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 rs_foster_95_96[] = {
@@ -210,7 +210,7 @@ uint16 rs_foster_95_96[] = {
 	184,
 	C_YCOOD,
 	256,
-	65535,
+	65535
 };
 
 Compact door_r95f = {
@@ -242,6 +242,7 @@ Compact door_r95f = {
 	C_BASE_MODE,	// mode
 	DOOR_R95F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 pal95[] = {
@@ -628,7 +629,7 @@ uint16 pal95[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 chip_list_sc95[] = {
@@ -637,7 +638,7 @@ uint16 chip_list_sc95[] = {
 	IT_DOOR_R95F+DISK_4,
 	IT_DOOR_T95+DISK_4,
 	IT_DOOR_T95R+DISK_4,
-	0,
+	0
 };
 
 uint16 door_l95f_anim[] = {
@@ -711,7 +712,7 @@ uint16 door_l95f_anim[] = {
 	199,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 sc95_logic[] = {
@@ -727,7 +728,7 @@ uint16 sc95_logic[] = {
 	ID_GUARDIAN,
 	ID_WEIGHT,
 	0XFFFF,
-	ID_LINC_MENU_LOGIC,
+	ID_LINC_MENU_LOGIC
 };
 
 Compact weight = {
@@ -759,6 +760,7 @@ Compact weight = {
 	C_BASE_MODE,	// mode
 	WEIGHT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact guardian = {
@@ -790,6 +792,7 @@ Compact guardian = {
 	C_BASE_MODE,	// mode
 	GUARDIAN_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_95_91[] = {
@@ -803,7 +806,7 @@ uint16 rs_foster_95_91[] = {
 	256,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 sc95_mouse[] = {
@@ -815,7 +818,7 @@ uint16 sc95_mouse[] = {
 	ID_DOOR_T95,
 	ID_SC95_FLOOR,
 	0XFFFF,
-	ID_LINC_MENU_MOUSE,
+	ID_LINC_MENU_MOUSE
 };
 
 Compact door_r95 = {
@@ -847,6 +850,7 @@ Compact door_r95 = {
 	C_BASE_MODE,	// mode
 	DOOR_R95_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_95_94[] = {
@@ -860,7 +864,7 @@ uint16 rs_foster_95_94[] = {
 	264,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 Compact door_t95 = {
@@ -892,6 +896,7 @@ Compact door_t95 = {
 	C_BASE_MODE,	// mode
 	DOOR_T95_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_r95f_anim[] = {
@@ -965,7 +970,7 @@ uint16 door_r95f_anim[] = {
 	370,
 	136,
 	22,
-	0,
+	0
 };
 
 Compact door_l95 = {
@@ -997,6 +1002,7 @@ Compact door_l95 = {
 	C_BASE_MODE,	// mode
 	DOOR_L95_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_l95f = {
@@ -1028,6 +1034,7 @@ Compact door_l95f = {
 	C_BASE_MODE,	// mode
 	DOOR_L95F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_t95_anim[] = {
@@ -1101,7 +1108,7 @@ uint16 door_t95_anim[] = {
 	276,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 door_t95r_anim[] = {
@@ -1175,7 +1182,7 @@ uint16 door_t95r_anim[] = {
 	301,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 guardian_down[] = {
@@ -1192,7 +1199,7 @@ uint16 guardian_down[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact sc95_floor = {
@@ -1214,6 +1221,17 @@ Compact sc95_floor = {
 	270,	// mouseSize_x
 	52,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 guardian_up[] = {
@@ -1230,7 +1248,7 @@ uint16 guardian_up[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 Compact door_t95r = {
@@ -1262,6 +1280,7 @@ Compact door_t95r = {
 	C_BASE_MODE,	// mode
 	DOOR_T95R_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_l95_anim[] = {
@@ -1335,7 +1354,7 @@ uint16 door_l95_anim[] = {
 	204,
 	136,
 	22,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

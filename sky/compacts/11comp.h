@@ -46,6 +46,17 @@ Compact slat_3 = {
 	3,	// mouseSize_x
 	7,	// mouseSize_y
 	SLAT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fallin_seq[] = {
@@ -77,7 +88,7 @@ uint16 fallin_seq[] = {
 	306,
 	259,
 	8,
-	0,
+	0
 };
 
 uint16 s11_mouse[] = {
@@ -99,7 +110,7 @@ uint16 s11_mouse[] = {
 	ID_S11_FLOOR,
 	ID_SPY_11,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s11_pal[] = {
@@ -486,7 +497,7 @@ uint16 s11_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact locker_11 = {
@@ -518,6 +529,7 @@ Compact locker_11 = {
 	C_BASE_MODE,	// mode
 	LOCKER_11_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 locker_11_open[] = {
@@ -546,7 +558,7 @@ uint16 locker_11_open[] = {
 	1,
 	1,
 	8,
-	0,
+	0
 };
 
 uint16 bits2_seq[] = {
@@ -566,7 +578,7 @@ uint16 bits2_seq[] = {
 	219,
 	245,
 	4,
-	0,
+	0
 };
 
 Compact soccer_2 = {
@@ -588,6 +600,17 @@ Compact soccer_2 = {
 	271-257,	// mouseSize_x
 	260-217,	// mouseSize_y
 	SOCCER_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 usecard_11_seq[] = {
@@ -619,7 +642,7 @@ uint16 usecard_11_seq[] = {
 	258,
 	173,
 	0,
-	0,
+	0
 };
 
 Compact bits = {
@@ -651,6 +674,7 @@ Compact bits = {
 	C_BASE_MODE,	// mode
 	BITS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact cable_fall = {
@@ -682,6 +706,7 @@ Compact cable_fall = {
 	C_BASE_MODE,	// mode
 	CABLE_FALL_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact soccer_4 = {
@@ -703,6 +728,17 @@ Compact soccer_4 = {
 	307-291,	// mouseSize_x
 	260-217,	// mouseSize_y
 	SOCCER_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s11_floor_table[] = {
@@ -738,7 +774,7 @@ uint16 s11_floor_table[] = {
 	GT_RIGHT_EXIT_11,
 	0,
 	S11_LEFT_ON,
-	65535,
+	65535
 };
 
 Compact soccer_1 = {
@@ -760,6 +796,17 @@ Compact soccer_1 = {
 	255-238,	// mouseSize_x
 	260-217,	// mouseSize_y
 	SOCCER_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_1_11[] = {
@@ -771,7 +818,7 @@ uint16 rs_foster_1_11[] = {
 	11,
 	C_PLACE,
 	ID_S11_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s11_logic[] = {
@@ -784,7 +831,7 @@ uint16 s11_logic[] = {
 	ID_SPY_11,
 	ID_LOCKER_11,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 close_11_locker[] = {
@@ -810,7 +857,7 @@ uint16 close_11_locker[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 s11_chip_list[] = {
@@ -829,7 +876,7 @@ uint16 s11_chip_list[] = {
 	14+DISK_1,
 	15+DISK_1,
 	85+DISK_1,
-	0,
+	0
 };
 
 Compact slat_1 = {
@@ -851,6 +898,17 @@ Compact slat_1 = {
 	3,	// mouseSize_x
 	7,	// mouseSize_y
 	SLAT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 locker_11_close[] = {
@@ -879,7 +937,7 @@ uint16 locker_11_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact bits2 = {
@@ -911,6 +969,7 @@ Compact bits2 = {
 	C_BASE_MODE,	// mode
 	BITS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact slot_11 = {
@@ -932,6 +991,17 @@ Compact slot_11 = {
 	3,	// mouseSize_x
 	7,	// mouseSize_y
 	SLOT_11_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 bits_seq[] = {
@@ -951,7 +1021,7 @@ uint16 bits_seq[] = {
 	266,
 	180,
 	4,
-	0,
+	0
 };
 
 Compact slat_4 = {
@@ -973,6 +1043,17 @@ Compact slat_4 = {
 	3,	// mouseSize_x
 	7,	// mouseSize_y
 	SLAT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fallin2_seq[] = {
@@ -1019,7 +1100,7 @@ uint16 fallin2_seq[] = {
 	317,
 	272,
 	13,
-	0,
+	0
 };
 
 uint16 smashed_window_seq[] = {
@@ -1060,7 +1141,7 @@ uint16 smashed_window_seq[] = {
 	201,
 	153,
 	3,
-	0,
+	0
 };
 
 Compact spy_11 = {
@@ -1092,6 +1173,7 @@ Compact spy_11 = {
 	C_BASE_MODE,	// mode
 	SPY11_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact soccer_3 = {
@@ -1113,6 +1195,17 @@ Compact soccer_3 = {
 	289-273,	// mouseSize_x
 	260-217,	// mouseSize_y
 	SOCCER_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 cable_fall1_seq[] = {
@@ -1192,7 +1285,7 @@ uint16 cable_fall1_seq[] = {
 	195,
 	178,
 	22,
-	0,
+	0
 };
 
 Compact cable_fall2 = {
@@ -1224,6 +1317,7 @@ Compact cable_fall2 = {
 	C_BASE_MODE,	// mode
 	CABLE2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact right_exit_11 = {
@@ -1245,6 +1339,17 @@ Compact right_exit_11 = {
 	364-359,	// mouseSize_x
 	282-223,	// mouseSize_y
 	ER11_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact smashed_window = {
@@ -1276,6 +1381,7 @@ Compact smashed_window = {
 	C_BASE_MODE,	// mode
 	SMASHED_WINDOW_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact soccer_5 = {
@@ -1297,6 +1403,17 @@ Compact soccer_5 = {
 	343-327,	// mouseSize_x
 	260-217,	// mouseSize_y
 	SOCCER_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid11 = 0;
@@ -1327,7 +1444,7 @@ uint16 open_11_locker[] = {
 	237,
 	184,
 	6,
-	0,
+	0
 };
 
 Compact slat_2 = {
@@ -1349,6 +1466,17 @@ Compact slat_2 = {
 	3,	// mouseSize_x
 	7,	// mouseSize_y
 	SLAT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fallin3_seq[] = {
@@ -1371,7 +1499,7 @@ uint16 fallin3_seq[] = {
 	314,
 	243,
 	5,
-	0,
+	0
 };
 
 Compact s11_floor = {
@@ -1393,6 +1521,17 @@ Compact s11_floor = {
 	400-184,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 get_cable_11[] = {
@@ -1439,7 +1578,7 @@ uint16 get_cable_11[] = {
 	293,
 	252,
 	0,
-	0,
+	0
 };
 
 uint16 cant_open_locker[] = {
@@ -1462,7 +1601,7 @@ uint16 cant_open_locker[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact slat_5 = {
@@ -1484,6 +1623,17 @@ Compact slat_5 = {
 	3,	// mouseSize_x
 	7,	// mouseSize_y
 	SLAT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 cable_fall2_seq[] = {
@@ -1572,7 +1722,7 @@ uint16 cable_fall2_seq[] = {
 	209,
 	242,
 	13,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

@@ -56,6 +56,7 @@ Compact bio_door = {
 	C_BASE_MODE,	// mode
 	BIO_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact plant_26 = {
@@ -77,6 +78,17 @@ Compact plant_26 = {
 	353-330,	// mouseSize_x
 	237-211,	// mouseSize_y
 	PLANT_26_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s26_floor_table[] = {
@@ -108,7 +120,7 @@ uint16 s26_floor_table[] = {
 	GT_HOLO,
 	ID_BIO_DOOR,
 	GT_BIO_DOOR,
-	65535,
+	65535
 };
 
 uint16 s26_mouse[] = {
@@ -125,7 +137,7 @@ uint16 s26_mouse[] = {
 	ID_HOLO,
 	ID_S26_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s26_pal[] = {
@@ -512,7 +524,7 @@ uint16 s26_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 helga_awake[] = {
@@ -580,7 +592,7 @@ uint16 helga_awake[] = {
 	300,
 	212,
 	10,
-	0,
+	0
 };
 
 Compact right_exit_26 = {
@@ -602,6 +614,17 @@ Compact right_exit_26 = {
 	398-389,	// mouseSize_x
 	298-232,	// mouseSize_y
 	ER26_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 wobble2[] = {
@@ -678,7 +701,7 @@ uint16 wobble2[] = {
 	378,
 	217,
 	23,
-	0,
+	0
 };
 
 uint16 helga_byeee[] = {
@@ -722,7 +745,7 @@ uint16 helga_byeee[] = {
 	415,
 	217,
 	10,
-	0,
+	0
 };
 
 Compact left_exit_26 = {
@@ -744,6 +767,17 @@ Compact left_exit_26 = {
 	192-181,	// mouseSize_x
 	295-233,	// mouseSize_y
 	EL26_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_joey_start_26[] = {
@@ -767,7 +801,7 @@ uint16 rs_joey_start_26[] = {
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_COLLISION+ST_MOUSE+ST_GRID_PLOT,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 bio_door_open[] = {
@@ -787,7 +821,7 @@ uint16 bio_door_open[] = {
 	181,
 	232,
 	4,
-	0,
+	0
 };
 
 uint16 wobble1[] = {
@@ -858,7 +892,7 @@ uint16 wobble1[] = {
 	340,
 	217,
 	21,
-	0,
+	0
 };
 
 ExtCompact holo_ext = {
@@ -887,6 +921,10 @@ ExtCompact holo_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact holo = {
@@ -918,7 +956,7 @@ Compact holo = {
 	0,	// mode
 	HELGA_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&holo_ext,
+	&holo_ext
 };
 
 Compact poster2 = {
@@ -940,6 +978,17 @@ Compact poster2 = {
 	329-297,	// mouseSize_x
 	204-184,	// mouseSize_y
 	POSTER2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s26_fast_list[] = {
@@ -952,7 +1001,7 @@ uint16 s26_fast_list[] = {
 	86+DISK_9,
 	87+DISK_9,
 	88+DISK_9,
-	0,
+	0
 };
 
 uint32 *grid26 = 0;
@@ -963,7 +1012,7 @@ uint16 joey_list_s26[] = {
 	280,
 	321,
 	1,
-	0,
+	0
 };
 
 uint16 return_leaflet[] = {
@@ -998,7 +1047,7 @@ uint16 return_leaflet[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foster_19_26[] = {
@@ -1012,7 +1061,7 @@ uint16 rs_foster_19_26[] = {
 	ID_S26_FLOOR,
 	C_FRAME,
 	12*64+42,
-	65535,
+	65535
 };
 
 uint16 get_leaflet[] = {
@@ -1047,7 +1096,7 @@ uint16 get_leaflet[] = {
 	1,
 	1,
 	9,
-	0,
+	0
 };
 
 Compact poster3 = {
@@ -1069,6 +1118,17 @@ Compact poster3 = {
 	293-262,	// mouseSize_x
 	225-208,	// mouseSize_y
 	POSTER3_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact leaflet = {
@@ -1100,6 +1160,7 @@ Compact leaflet = {
 	0,	// mode
 	LEAFLET_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s26_chip_list[] = {
@@ -1116,7 +1177,7 @@ uint16 s26_chip_list[] = {
 	140+DISK_9,
 	141+DISK_9,
 	142+DISK_9,
-	0,
+	0
 };
 
 uint16 rs_foster_26_19[] = {
@@ -1128,7 +1189,7 @@ uint16 rs_foster_26_19[] = {
 	19,
 	C_PLACE,
 	ID_S19_FLOOR,
-	65535,
+	65535
 };
 
 Compact poster4 = {
@@ -1150,6 +1211,17 @@ Compact poster4 = {
 	329-297,	// mouseSize_x
 	225-208,	// mouseSize_y
 	POSTER4_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s26_logic[] = {
@@ -1164,7 +1236,7 @@ uint16 s26_logic[] = {
 	ID_INNER_LAMB_DOOR,
 	ID_LIFT_29,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 Compact poster1 = {
@@ -1186,6 +1258,17 @@ Compact poster1 = {
 	293-262,	// mouseSize_x
 	204-184,	// mouseSize_y
 	POSTER1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact s26_floor = {
@@ -1207,6 +1290,17 @@ Compact s26_floor = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

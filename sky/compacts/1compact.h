@@ -95,7 +95,7 @@ uint16 car_down_seq[] = {
 	346,
 	298,
 	21,
-	0,
+	0
 };
 
 uint16 car_up_seq[] = {
@@ -166,7 +166,7 @@ uint16 car_up_seq[] = {
 	250,
 	273,
 	20,
-	0,
+	0
 };
 
 uint16 smoke1_seq[] = {
@@ -738,7 +738,7 @@ uint16 smoke1_seq[] = {
 	235,
 	137,
 	0,
-	0,
+	0
 };
 
 uint16 screen1_logic[] = {
@@ -758,7 +758,7 @@ uint16 screen1_logic[] = {
 	ID_CAR_UP,
 	ID_CAR_DOWN,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 fast_list_cut[] = {
@@ -775,7 +775,7 @@ uint16 fast_list_cut[] = {
 	26,
 	27,
 	28,
-	0,
+	0
 };
 
 uint16 lfan2_seq[] = {
@@ -801,7 +801,7 @@ uint16 lfan2_seq[] = {
 	202,
 	196,
 	6,
-	0,
+	0
 };
 
 Compact smoke2 = {
@@ -833,6 +833,7 @@ Compact smoke2 = {
 	C_BASE_MODE,	// mode
 	SMOKE2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact lfan2 = {
@@ -864,6 +865,7 @@ Compact lfan2 = {
 	C_BASE_MODE,	// mode
 	LFAN2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 lfan1_seq[] = {
@@ -886,7 +888,7 @@ uint16 lfan1_seq[] = {
 	165,
 	230,
 	5,
-	0,
+	0
 };
 
 uint16 smoke2_seq[] = {
@@ -1458,7 +1460,7 @@ uint16 smoke2_seq[] = {
 	297,
 	137,
 	0,
-	0,
+	0
 };
 
 Compact car_down = {
@@ -1490,6 +1492,7 @@ Compact car_down = {
 	C_BASE_MODE,	// mode
 	CAR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 fire2_seq[] = {
@@ -1563,7 +1566,7 @@ uint16 fire2_seq[] = {
 	302,
 	136,
 	0,
-	0,
+	0
 };
 
 Compact smoke1 = {
@@ -1595,6 +1598,7 @@ Compact smoke1 = {
 	C_BASE_MODE,	// mode
 	SMOKE1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 fast_list_sc1[] = {
@@ -1610,7 +1614,7 @@ uint16 fast_list_sc1[] = {
 	26,
 	27,
 	28,
-	0,
+	0
 };
 
 Compact fire_notice2 = {
@@ -1642,6 +1646,7 @@ Compact fire_notice2 = {
 	C_BASE_MODE,	// mode
 	NOTICE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact car_up = {
@@ -1673,6 +1678,7 @@ Compact car_up = {
 	C_BASE_MODE,	// mode
 	CAR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact fire1 = {
@@ -1704,6 +1710,7 @@ Compact fire1 = {
 	C_BASE_MODE,	// mode
 	FIRE1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact ss_sign = {
@@ -1725,6 +1732,17 @@ Compact ss_sign = {
 	25,	// mouseSize_x
 	77,	// mouseSize_y
 	SS_SIGN_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact lfan1 = {
@@ -1756,6 +1774,7 @@ Compact lfan1 = {
 	C_BASE_MODE,	// mode
 	LFAN1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 chip_list_1[] = {
@@ -1768,7 +1787,7 @@ uint16 chip_list_1[] = {
 	231,
 	99,
 	96,
-	0,
+	0
 };
 
 uint16 sc1_mouse[] = {
@@ -1778,7 +1797,7 @@ uint16 sc1_mouse[] = {
 	ID_SS_SIGN,
 	18,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact fire2 = {
@@ -1810,6 +1829,7 @@ Compact fire2 = {
 	C_BASE_MODE,	// mode
 	FIRE2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 fire1_seq[] = {
@@ -1949,7 +1969,7 @@ uint16 fire1_seq[] = {
 	256,
 	136,
 	13,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

@@ -47,7 +47,7 @@ uint16 sc69_logic_list[] = {
 	ID_SC71_RECHARGER,
 	ID_SC71_PANEL2,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc69_pulse5_anim[] = {
@@ -103,7 +103,7 @@ uint16 sc69_pulse5_anim[] = {
 	212,
 	181,
 	0,
-	0,
+	0
 };
 
 uint16 sc69_chip_list[] = {
@@ -120,7 +120,7 @@ uint16 sc69_chip_list[] = {
 	IT_SC69_PULSE4+DISK_5,
 	IT_SC69_PULSE5+DISK_5,
 	IT_SC69_PULSE6+DISK_5,
-	0,
+	0
 };
 
 uint16 sc69_palette[] = {
@@ -507,7 +507,7 @@ uint16 sc69_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 reset_71_69[] = {
@@ -519,7 +519,7 @@ uint16 reset_71_69[] = {
 	264,
 	C_YCOOD,
 	272,
-	65535,
+	65535
 };
 
 uint16 sc69_mouse_list[] = {
@@ -529,7 +529,7 @@ uint16 sc69_mouse_list[] = {
 	ID_SC69_DOOR,
 	ID_SC69_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc69_pulse2 = {
@@ -561,6 +561,7 @@ Compact sc69_pulse2 = {
 	C_BASE_MODE,	// mode
 	SC69_PULSE2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc69_floor_table[] = {
@@ -578,7 +579,7 @@ uint16 sc69_floor_table[] = {
 	GT_SC69_GRILL,
 	ID_JOEY_PARK,
 	GT_JOEY_PARK,
-	65535,
+	65535
 };
 
 Compact sc69_pulse6 = {
@@ -610,6 +611,7 @@ Compact sc69_pulse6 = {
 	C_BASE_MODE,	// mode
 	SC69_PULSE6_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc69_joey_list[] = {
@@ -628,7 +630,7 @@ uint16 sc69_joey_list[] = {
 	288,
 	295,
 	0,
-	0,
+	0
 };
 
 Compact sc69_exit = {
@@ -650,6 +652,17 @@ Compact sc69_exit = {
 	27,	// mouseSize_x
 	107,	// mouseSize_y
 	SC69_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc69_fast_list[] = {
@@ -659,7 +672,7 @@ uint16 sc69_fast_list[] = {
 	53+DISK_5,
 	54+DISK_5,
 	268+DISK_5,
-	0,
+	0
 };
 
 Compact sc69_door = {
@@ -681,6 +694,17 @@ Compact sc69_door = {
 	32,	// mouseSize_x
 	61,	// mouseSize_y
 	SC69_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc69_pulse3 = {
@@ -712,6 +736,7 @@ Compact sc69_pulse3 = {
 	C_BASE_MODE,	// mode
 	SC69_PULSE3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc69_pulse5 = {
@@ -743,6 +768,7 @@ Compact sc69_pulse5 = {
 	C_BASE_MODE,	// mode
 	SC69_PULSE5_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc69_pulse6_anim[] = {
@@ -798,7 +824,7 @@ uint16 sc69_pulse6_anim[] = {
 	135,
 	190,
 	0,
-	0,
+	0
 };
 
 Compact sc69_pulse4 = {
@@ -830,6 +856,7 @@ Compact sc69_pulse4 = {
 	C_BASE_MODE,	// mode
 	SC69_PULSE4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc69_pulse1 = {
@@ -861,6 +888,7 @@ Compact sc69_pulse1 = {
 	C_BASE_MODE,	// mode
 	SC69_PULSE1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc69_pulse4_anim[] = {
@@ -916,7 +944,7 @@ uint16 sc69_pulse4_anim[] = {
 	255,
 	189,
 	2,
-	0,
+	0
 };
 
 Compact sc69_grill = {
@@ -938,6 +966,17 @@ Compact sc69_grill = {
 	331-306,	// mouseSize_x
 	251-232,	// mouseSize_y
 	SC69_GRILL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc69_pulse1_anim[] = {
@@ -993,7 +1032,7 @@ uint16 sc69_pulse1_anim[] = {
 	370,
 	210,
 	0,
-	0,
+	0
 };
 
 uint16 sc69_pulse3_anim[] = {
@@ -1049,7 +1088,7 @@ uint16 sc69_pulse3_anim[] = {
 	298,
 	199,
 	1,
-	0,
+	0
 };
 
 uint16 reset_68_69[] = {
@@ -1061,7 +1100,7 @@ uint16 reset_68_69[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 sc69_pulse2_anim[] = {
@@ -1117,7 +1156,7 @@ uint16 sc69_pulse2_anim[] = {
 	315,
 	185,
 	1,
-	0,
+	0
 };
 
 Compact sc69_floor = {
@@ -1139,6 +1178,17 @@ Compact sc69_floor = {
 	431-128,	// mouseSize_x
 	327-268,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

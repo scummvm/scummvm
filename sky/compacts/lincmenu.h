@@ -56,6 +56,7 @@ Compact playbak_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact persona_menu = {
@@ -87,6 +88,7 @@ Compact persona_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact info_menu = {
@@ -118,6 +120,7 @@ Compact info_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact decrypt_menu = {
@@ -149,6 +152,7 @@ Compact decrypt_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 linc_menu_mouse[] = {
@@ -198,7 +202,7 @@ uint16 linc_menu_mouse[] = {
 	ID_KILL_MENU,
 	ID_VIRUS_MENU,
 	46,
-	0,
+	0
 };
 
 Compact kill_menu = {
@@ -230,6 +234,7 @@ Compact kill_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact read_menu = {
@@ -261,6 +266,7 @@ Compact read_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact orders_menu = {
@@ -292,6 +298,7 @@ Compact orders_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact report_menu = {
@@ -323,6 +330,7 @@ Compact report_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact virus_menu = {
@@ -354,6 +362,7 @@ Compact virus_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact adjust_menu = {
@@ -385,6 +394,7 @@ Compact adjust_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact charon_menu = {
@@ -416,6 +426,7 @@ Compact charon_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact orders2_menu = {
@@ -447,6 +458,7 @@ Compact orders2_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact report2_menu = {
@@ -478,6 +490,7 @@ Compact report2_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact oscill_menu = {
@@ -509,6 +522,7 @@ Compact oscill_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact join_menu = {
@@ -540,6 +554,7 @@ Compact join_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact green_menu = {
@@ -571,6 +586,7 @@ Compact green_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 linc_menu_logic[] = {
@@ -619,7 +635,7 @@ uint16 linc_menu_logic[] = {
 	30,
 	31,
 	32,
-	0,
+	0
 };
 
 Compact adjust2_menu = {
@@ -651,6 +667,7 @@ Compact adjust2_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact red_menu = {
@@ -682,6 +699,7 @@ Compact red_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact open_menu = {
@@ -713,6 +731,7 @@ Compact open_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact decomp_menu = {
@@ -744,6 +763,7 @@ Compact decomp_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blind_menu = {
@@ -775,6 +795,7 @@ Compact blind_menu = {
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

@@ -32,7 +32,7 @@ uint16 wit_st_right[] = {
 	1,
 	0,
 	38,
-	0,
+	0
 };
 
 uint16 sc72_comp_flash[] = {
@@ -79,7 +79,7 @@ uint16 sc72_comp_flash[] = {
 	169,
 	225,
 	0,
-	0,
+	0
 };
 
 Compact sc72_rot_light = {
@@ -111,6 +111,7 @@ Compact sc72_rot_light = {
 	C_BASE_MODE,	// mode
 	SC72_ROT_LIGHT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc72_fast_list[] = {
@@ -122,7 +123,7 @@ uint16 sc72_fast_list[] = {
 	IT_SC72_TANK+DISK_7,
 	IT_SC72_ROT_LIGHT+DISK_7,
 	268+DISK_7,
-	0,
+	0
 };
 
 uint16 sc72_spill_anim[] = {
@@ -160,14 +161,14 @@ uint16 sc72_spill_anim[] = {
 	1,
 	1,
 	10,
-	0,
+	0
 };
 
 uint16 wit_d_to_u[] = {
 	39+159*64,
 	38+159*64,
 	37+159*64,
-	0,
+	0
 };
 
 Compact sc72_chamber2 = {
@@ -199,13 +200,14 @@ Compact sc72_chamber2 = {
 	C_BASE_MODE,	// mode
 	SC72_CHAMBER2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 wit_l_to_r[] = {
 	33+159*64,
 	32+159*64,
 	39+159*64,
-	0,
+	0
 };
 
 uint16 sc72_joey_tap[] = {
@@ -237,7 +239,7 @@ uint16 sc72_joey_tap[] = {
 	248,
 	240,
 	2,
-	0,
+	0
 };
 
 uint16 sc72_comp2_flash[] = {
@@ -284,7 +286,7 @@ uint16 sc72_comp2_flash[] = {
 	178,
 	222,
 	0,
-	0,
+	0
 };
 
 uint8 wit_auto[64];
@@ -318,11 +320,12 @@ Compact sc72_tank = {
 	C_BASE_MODE,	// mode
 	SC72_TANK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 wit_r_to_d[] = {
 	39+159*64,
-	0,
+	0
 };
 
 uint16 sc72_floor_table[] = {
@@ -366,7 +369,7 @@ uint16 sc72_floor_table[] = {
 	GT_SC72_COMPUTER,
 	ID_JOEY_PARK,
 	GT_JOEY_PARK,
-	65535,
+	65535
 };
 
 Compact sc72_floor = {
@@ -388,6 +391,17 @@ Compact sc72_floor = {
 	374-140,	// mouseSize_x
 	327-260,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc72_drip_anim[] = {
@@ -419,14 +433,14 @@ uint16 sc72_drip_anim[] = {
 	1,
 	1,
 	19,
-	0,
+	0
 };
 
 uint16 wit_u_to_d[] = {
 	35+159*64,
 	34+159*64,
 	33+159*64,
-	0,
+	0
 };
 
 uint32 *wit = 0;
@@ -460,6 +474,7 @@ Compact sc72_cham2_light = {
 	C_BASE_MODE,	// mode
 	SC72_CHAM2_LIGHT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc72_computer2 = {
@@ -491,6 +506,7 @@ Compact sc72_computer2 = {
 	C_BASE_MODE,	// mode
 	SC72_COMPUTER2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc72_walter_die[] = {
@@ -525,14 +541,14 @@ uint16 sc72_walter_die[] = {
 	222,
 	278,
 	9,
-	0,
+	0
 };
 
 uint16 wit_r_to_l[] = {
 	37+159*64,
 	36+159*64,
 	35+159*64,
-	0,
+	0
 };
 
 uint16 wit_up[] = {
@@ -568,7 +584,7 @@ uint16 wit_up[] = {
 	7+159*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 sc72_rotating[] = {
@@ -615,7 +631,7 @@ uint16 sc72_rotating[] = {
 	145,
 	283,
 	11,
-	0,
+	0
 };
 
 uint16 sc72_walter_kill[] = {
@@ -752,7 +768,7 @@ uint16 sc72_walter_kill[] = {
 	337,
 	253,
 	33,
-	0,
+	0
 };
 
 Compact sc72_exit = {
@@ -774,11 +790,22 @@ Compact sc72_exit = {
 	355-342,	// mouseSize_x
 	282-180,	// mouseSize_y
 	SC72_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 wit_l_to_d[] = {
 	33+159*64,
-	0,
+	0
 };
 
 uint16 sc72_cham3_anim[] = {
@@ -843,7 +870,7 @@ uint16 sc72_cham3_anim[] = {
 	344,
 	191,
 	19,
-	0,
+	0
 };
 
 uint16 sc72_chip_list[] = {
@@ -871,7 +898,7 @@ uint16 sc72_chip_list[] = {
 	IT_SC72_GRILL+DISK_7,
 	IT_SC72_JOEY_TAP+DISK_7,
 	IT_SC72_SPILL+DISK_7,
-	0,
+	0
 };
 
 uint16 sc72_foster_die[] = {
@@ -1008,7 +1035,7 @@ uint16 sc72_foster_die[] = {
 	353,
 	249,
 	38,
-	0,
+	0
 };
 
 uint16 sc72_cham1_anim[] = {
@@ -1073,7 +1100,7 @@ uint16 sc72_cham1_anim[] = {
 	221,
 	190,
 	19,
-	0,
+	0
 };
 
 uint16 sc72_cham2_anim[] = {
@@ -1138,7 +1165,7 @@ uint16 sc72_cham2_anim[] = {
 	280,
 	190,
 	19,
-	0,
+	0
 };
 
 uint16 reset_71_72[] = {
@@ -1150,7 +1177,7 @@ uint16 reset_71_72[] = {
 	400,
 	C_YCOOD,
 	296,
-	65535,
+	65535
 };
 
 uint16 wit_st_left[] = {
@@ -1158,7 +1185,7 @@ uint16 wit_st_left[] = {
 	1,
 	0,
 	34,
-	0,
+	0
 };
 
 Compact sc72_cham1_light = {
@@ -1190,6 +1217,7 @@ Compact sc72_cham1_light = {
 	C_BASE_MODE,	// mode
 	SC72_CHAM1_LIGHT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc72_palette[] = {
@@ -1576,7 +1604,7 @@ uint16 sc72_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc72_joey_list[] = {
@@ -1595,7 +1623,7 @@ uint16 sc72_joey_list[] = {
 	272,
 	295,
 	0,
-	0,
+	0
 };
 
 uint16 sc72_cham2_flash[] = {
@@ -1636,7 +1664,7 @@ uint16 sc72_cham2_flash[] = {
 	293,
 	244,
 	0,
-	0,
+	0
 };
 
 uint16 wit_st_down[] = {
@@ -1644,7 +1672,7 @@ uint16 wit_st_down[] = {
 	1,
 	0,
 	32,
-	0,
+	0
 };
 
 uint32 *grid72 = 0;
@@ -1664,7 +1692,7 @@ uint16 sc72_mouse_list[] = {
 	ID_SC72_FLOOR,
 	ID_SC72_FAKE_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc72_fake_floor = {
@@ -1686,6 +1714,17 @@ Compact sc72_fake_floor = {
 	447-128,	// mouseSize_x
 	327-136,	// mouseSize_y
 	0,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 wit_st_up[] = {
@@ -1693,7 +1732,7 @@ uint16 wit_st_up[] = {
 	1,
 	0,
 	36,
-	0,
+	0
 };
 
 Compact sc72_tap = {
@@ -1715,12 +1754,23 @@ Compact sc72_tap = {
 	278-269,	// mouseSize_x
 	278-269,	// mouseSize_y
 	SC72_TAP_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 wit_l_to_t[] = {
 	33+159*64,
 	32+159*64,
-	0,
+	0
 };
 
 uint16 wit_st_talk[] = {
@@ -1728,12 +1778,12 @@ uint16 wit_st_talk[] = {
 	1,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 wit_d_to_l[] = {
 	33+159*64,
-	0,
+	0
 };
 
 Compact sc72_spill = {
@@ -1765,6 +1815,7 @@ Compact sc72_spill = {
 	C_BASE_MODE,	// mode
 	SC72_SPILL_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc72_computer = {
@@ -1796,11 +1847,12 @@ Compact sc72_computer = {
 	C_BASE_MODE,	// mode
 	SC72_COMPUTER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 wit_l_to_u[] = {
 	35+159*64,
-	0,
+	0
 };
 
 Compact sc72_door = {
@@ -1822,11 +1874,22 @@ Compact sc72_door = {
 	387-368,	// mouseSize_x
 	306-227,	// mouseSize_y
 	SC72_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 wit_u_to_l[] = {
 	35+159*64,
-	0,
+	0
 };
 
 uint16 sc72_cham1_flash[] = {
@@ -1867,12 +1930,12 @@ uint16 sc72_cham1_flash[] = {
 	232,
 	244,
 	1,
-	0,
+	0
 };
 
 uint16 wit_d_to_r[] = {
 	39+159*64,
-	0,
+	0
 };
 
 uint16 wit_left[] = {
@@ -1908,7 +1971,7 @@ uint16 wit_left[] = {
 	23+159*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 sc72_tank_anim[] = {
@@ -1973,7 +2036,7 @@ uint16 sc72_tank_anim[] = {
 	278,
 	255,
 	19,
-	0,
+	0
 };
 
 uint16 wit_right[] = {
@@ -2009,19 +2072,19 @@ uint16 wit_right[] = {
 	31+159*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 wit_t_to_u[] = {
 	38+159*64,
 	37+159*64,
-	0,
+	0
 };
 
 uint16 wit_u_to_t[] = {
 	37+159*64,
 	38+159*64,
-	0,
+	0
 };
 
 Compact sc72_chamber3 = {
@@ -2053,6 +2116,7 @@ Compact sc72_chamber3 = {
 	C_BASE_MODE,	// mode
 	SC72_CHAMBER3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 wit_down[] = {
@@ -2088,23 +2152,23 @@ uint16 wit_down[] = {
 	15+159*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 wit_u_to_r[] = {
 	37+159*64,
-	0,
+	0
 };
 
 uint16 wit_r_to_u[] = {
 	37+159*64,
-	0,
+	0
 };
 
 uint16 wit_t_to_l[] = {
 	32+159*64,
 	33+159*64,
-	0,
+	0
 };
 
 TurnTable witness_turnTable0 = {
@@ -2142,7 +2206,7 @@ TurnTable witness_turnTable0 = {
 		wit_t_to_l,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet witness_megaSet0 = {
@@ -2159,7 +2223,7 @@ MegaSet witness_megaSet0 = {
 	wit_st_left,	// standLeft
 	wit_st_right,	// standRight
 	wit_st_talk,	// standTalk
-	&witness_turnTable0,
+	&witness_turnTable0
 };
 
 ExtCompact witness_ext = {
@@ -2189,6 +2253,9 @@ ExtCompact witness_ext = {
 	wit_auto,	// animScratch
 	0,	// megaSet
 	&witness_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact witness = {
@@ -2220,7 +2287,7 @@ Compact witness = {
 	C_BASE_MODE,	// mode
 	WITNESS_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&witness_ext,
+	&witness_ext
 };
 
 uint16 sc72_logic_list[] = {
@@ -2243,7 +2310,7 @@ uint16 sc72_logic_list[] = {
 	ID_SC72_GRILL,
 	ID_SC75_TONGS,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 reset_73_72[] = {
@@ -2255,7 +2322,7 @@ uint16 reset_73_72[] = {
 	368,
 	C_YCOOD,
 	272,
-	65535,
+	65535
 };
 
 uint16 sc720_chip_list[] = {
@@ -2280,7 +2347,7 @@ uint16 sc720_chip_list[] = {
 	IT_SC72_GRILL+DISK_7,
 	IT_SC72_JOEY_TAP+DISK_7,
 	IT_SC72_SPILL+DISK_7,
-	0,
+	0
 };
 
 Compact sc72_grill = {
@@ -2312,6 +2379,7 @@ Compact sc72_grill = {
 	C_BASE_MODE,	// mode
 	SC72_GRILL_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc72_chamber1 = {
@@ -2343,6 +2411,7 @@ Compact sc72_chamber1 = {
 	C_BASE_MODE,	// mode
 	SC72_CHAMBER1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

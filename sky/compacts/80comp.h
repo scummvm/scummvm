@@ -56,6 +56,7 @@ Compact sc80_bubble10 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE10_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc80_logic_list[] = {
@@ -78,7 +79,7 @@ uint16 sc80_logic_list[] = {
 	ID_SC80_BUBBLE12,
 	ID_SC67_PULSE1,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc802_palette[] = {
@@ -465,7 +466,7 @@ uint16 sc802_palette[] = {
 	15163,
 	15163,
 	15163,
-	15163,
+	15163
 };
 
 Compact sc80_bubble1 = {
@@ -497,6 +498,7 @@ Compact sc80_bubble1 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc801_palette[] = {
@@ -883,7 +885,7 @@ uint16 sc801_palette[] = {
 	15677,
 	15677,
 	15677,
-	15677,
+	15677
 };
 
 uint16 sc803_palette[] = {
@@ -1270,7 +1272,7 @@ uint16 sc803_palette[] = {
 	14649,
 	14649,
 	14649,
-	14649,
+	14649
 };
 
 uint16 sc80_chip_list[] = {
@@ -1287,7 +1289,7 @@ uint16 sc80_chip_list[] = {
 	IT_SC80_SAMPLE+DISK_10,
 	IT_SC80_EXIT+DISK_10,
 	IT_SC80_ROPE+DISK_10,
-	0,
+	0
 };
 
 Compact sc80_bubble2 = {
@@ -1319,6 +1321,7 @@ Compact sc80_bubble2 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc80_pipe_shrug[] = {
@@ -1368,7 +1371,7 @@ uint16 sc80_pipe_shrug[] = {
 	311,
 	164,
 	0,
-	0,
+	0
 };
 
 uint16 sc80_climb_down[] = {
@@ -1446,7 +1449,7 @@ uint16 sc80_climb_down[] = {
 	165,
 	22,
 	0,
-	0,
+	0
 };
 
 uint16 sc80_exit_open[] = {
@@ -1529,7 +1532,7 @@ uint16 sc80_exit_open[] = {
 	180,
 	188,
 	25,
-	0,
+	0
 };
 
 uint16 sc80_fast_list[] = {
@@ -1539,7 +1542,7 @@ uint16 sc80_fast_list[] = {
 	53+DISK_10,
 	54+DISK_10,
 	268+DISK_10,
-	0,
+	0
 };
 
 uint16 sc80_palette[] = {
@@ -1926,7 +1929,7 @@ uint16 sc80_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact sc80_bubble11 = {
@@ -1958,6 +1961,7 @@ Compact sc80_bubble11 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE11_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc80_clamber[] = {
@@ -2064,7 +2068,7 @@ uint16 sc80_clamber[] = {
 	259,
 	169,
 	21,
-	0,
+	0
 };
 
 uint16 sc80_mouse_list[] = {
@@ -2074,7 +2078,7 @@ uint16 sc80_mouse_list[] = {
 	ID_SC80_ORIFICE,
 	ID_SC80_EXIT,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc80_climb_up[] = {
@@ -2152,7 +2156,7 @@ uint16 sc80_climb_up[] = {
 	136,
 	0,
 	0,
-	0,
+	0
 };
 
 Compact sc80_exit = {
@@ -2184,6 +2188,7 @@ Compact sc80_exit = {
 	C_BASE_MODE,	// mode
 	SC80_EXIT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc80_orifice = {
@@ -2205,6 +2210,17 @@ Compact sc80_orifice = {
 	330-272,	// mouseSize_x
 	291-250,	// mouseSize_y
 	SC80_ORIFICE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc80_sample = {
@@ -2236,6 +2252,7 @@ Compact sc80_sample = {
 	C_BASE_MODE,	// mode
 	SC80_SAMPLE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc80_get_rope[] = {
@@ -2282,7 +2299,7 @@ uint16 sc80_get_rope[] = {
 	238,
 	136,
 	9,
-	0,
+	0
 };
 
 uint16 sc80_bub1_anim[] = {
@@ -2365,7 +2382,7 @@ uint16 sc80_bub1_anim[] = {
 	244,
 	309,
 	6,
-	0,
+	0
 };
 
 uint16 sc80_swing[] = {
@@ -2412,7 +2429,7 @@ uint16 sc80_swing[] = {
 	207,
 	136,
 	13,
-	0,
+	0
 };
 
 Compact sc80_spout = {
@@ -2434,6 +2451,17 @@ Compact sc80_spout = {
 	312-290,	// mouseSize_x
 	258-225,	// mouseSize_y
 	SC80_SPOUT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc80_bubble4 = {
@@ -2465,6 +2493,7 @@ Compact sc80_bubble4 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc80_goo_anim[] = {
@@ -2538,7 +2567,7 @@ uint16 sc80_goo_anim[] = {
 	300,
 	261,
 	0,
-	0,
+	0
 };
 
 Compact sc80_bubble7 = {
@@ -2570,6 +2599,7 @@ Compact sc80_bubble7 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE7_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc80_bubble9 = {
@@ -2601,6 +2631,7 @@ Compact sc80_bubble9 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE9_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc80_sample_fall[] = {
@@ -2740,7 +2771,7 @@ uint16 sc80_sample_fall[] = {
 	288,
 	248,
 	0,
-	0,
+	0
 };
 
 Compact sc80_rope = {
@@ -2772,6 +2803,7 @@ Compact sc80_rope = {
 	C_BASE_MODE,	// mode
 	SC80_ROPE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc80_bubble3 = {
@@ -2803,6 +2835,7 @@ Compact sc80_bubble3 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc80_bubble8 = {
@@ -2834,6 +2867,7 @@ Compact sc80_bubble8 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE8_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc80_drop[] = {
@@ -2973,7 +3007,7 @@ uint16 sc80_drop[] = {
 	289,
 	165,
 	1,
-	0,
+	0
 };
 
 uint16 reset_79_80[] = {
@@ -2981,7 +3015,7 @@ uint16 reset_79_80[] = {
 	80,
 	C_PLACE,
 	ID_SC80_SPOUT,
-	65535,
+	65535
 };
 
 Compact sc80_ladder = {
@@ -3003,6 +3037,17 @@ Compact sc80_ladder = {
 	316-310,	// mouseSize_x
 	190-162,	// mouseSize_y
 	SC80_LADDER_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc804_palette[] = {
@@ -3389,7 +3434,7 @@ uint16 sc804_palette[] = {
 	14392,
 	14392,
 	14392,
-	14392,
+	14392
 };
 
 Compact sc80_bubble12 = {
@@ -3421,6 +3466,7 @@ Compact sc80_bubble12 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE12_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc80_bubble6 = {
@@ -3452,6 +3498,7 @@ Compact sc80_bubble6 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE6_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc80_bubble5 = {
@@ -3483,6 +3530,7 @@ Compact sc80_bubble5 = {
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE5_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc80_goo = {
@@ -3514,6 +3562,7 @@ Compact sc80_goo = {
 	C_BASE_MODE,	// mode
 	SC80_GOO_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

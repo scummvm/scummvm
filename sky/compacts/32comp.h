@@ -224,7 +224,7 @@ uint16 sc32_gardening1[] = {
 	1,
 	1,
 	5,
-	0,
+	0
 };
 
 uint16 reset_spunky_32[] = {
@@ -250,7 +250,7 @@ uint16 reset_spunky_32[] = {
 	0,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 sc32_vinc_anim[] = {
@@ -351,7 +351,7 @@ uint16 sc32_vinc_anim[] = {
 	218,
 	188,
 	0,
-	0,
+	0
 };
 
 uint16 reset_38_32[] = {
@@ -367,7 +367,7 @@ uint16 reset_38_32[] = {
 	40+12*64,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 Compact sc32_plant_2 = {
@@ -389,6 +389,17 @@ Compact sc32_plant_2 = {
 	349-336,	// mouseSize_x
 	225-196,	// mouseSize_y
 	SC32_PLANT_2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc32_use_card[] = {
@@ -420,7 +431,7 @@ uint16 sc32_use_card[] = {
 	360,
 	240,
 	0,
-	0,
+	0
 };
 
 ExtCompact sc32_vincent_ext = {
@@ -449,6 +460,10 @@ ExtCompact sc32_vincent_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc32_vincent = {
@@ -480,7 +495,7 @@ Compact sc32_vincent = {
 	C_BASE_MODE,	// mode
 	SC32_VINCENT_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc32_vincent_ext,
+	&sc32_vincent_ext
 };
 
 uint32 *sc32_walk_grid = 0;
@@ -502,7 +517,7 @@ uint16 sc32_gard_turn_d[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint16 sc32_lift_open[] = {
@@ -553,7 +568,7 @@ uint16 sc32_lift_open[] = {
 	175,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 sc32_lift_close[] = {
@@ -603,7 +618,7 @@ uint16 sc32_lift_close[] = {
 	378,
 	175,
 	14,
-	0,
+	0
 };
 
 uint16 sc32_mouse_list[] = {
@@ -621,7 +636,7 @@ uint16 sc32_mouse_list[] = {
 	ID_SC32_LIFT,
 	ID_SC32_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc32_exit_31 = {
@@ -643,6 +658,17 @@ Compact sc32_exit_31 = {
 	140-128,	// mouseSize_x
 	245-162,	// mouseSize_y
 	SC32_EXIT_31_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc32_use_com[] = {
@@ -674,7 +700,7 @@ uint16 sc32_use_com[] = {
 	200,
 	232,
 	0,
-	0,
+	0
 };
 
 uint16 sc32_gardener_dn[] = {
@@ -697,7 +723,7 @@ uint16 sc32_gardener_dn[] = {
 	272,
 	168,
 	5,
-	0,
+	0
 };
 
 ExtCompact sc32_buzzer_ext = {
@@ -726,6 +752,10 @@ ExtCompact sc32_buzzer_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc32_buzzer = {
@@ -757,7 +787,7 @@ Compact sc32_buzzer = {
 	C_BASE_MODE,	// mode
 	SC32_BUZZER_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc32_buzzer_ext,
+	&sc32_buzzer_ext
 };
 
 uint16 sc32_floor_table[] = {
@@ -795,7 +825,7 @@ uint16 sc32_floor_table[] = {
 	GT_DANI_WAIT,
 	ID_DANIELLE,
 	GT_SC32_DANIELLE_AT_LIFT,
-	65535,
+	65535
 };
 
 Compact sc32_floor = {
@@ -817,6 +847,17 @@ Compact sc32_floor = {
 	447-128,	// mouseSize_x
 	327-216,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc32_chip_list[] = {
@@ -837,7 +878,7 @@ uint16 sc32_chip_list[] = {
 	IT_SC32_GARD_TURN+DISK_12+0X8000,
 	IT_SC32_GARDEN_TALK+DISK_12+0X8000,
 	68+DISK_12,
-	0,
+	0
 };
 
 uint16 sc32_palette[] = {
@@ -1224,7 +1265,7 @@ uint16 sc32_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 reset_33_32[] = {
@@ -1236,7 +1277,7 @@ uint16 reset_33_32[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	288,
-	65535,
+	65535
 };
 
 ExtCompact sc32_gardener_ext = {
@@ -1265,6 +1306,10 @@ ExtCompact sc32_gardener_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc32_gardener = {
@@ -1296,7 +1341,7 @@ Compact sc32_gardener = {
 	C_BASE_MODE,	// mode
 	SC32_GARDENER_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc32_gardener_ext,
+	&sc32_gardener_ext
 };
 
 uint16 sc32_fast_list[] = {
@@ -1308,7 +1353,7 @@ uint16 sc32_fast_list[] = {
 	135+DISK_12,
 	IT_SC32_GRID_1+DISK_12,
 	IT_SC32_GRID_2+DISK_12,
-	0,
+	0
 };
 
 uint16 sc32_logic_list[] = {
@@ -1321,7 +1366,7 @@ uint16 sc32_logic_list[] = {
 	ID_SC32_LIFT,
 	ID_SC32_BUZZER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 reset_dani_32[] = {
@@ -1357,7 +1402,7 @@ uint16 reset_dani_32[] = {
 	DOWN,
 	C_MEGA_SET,
 	0,
-	65535,
+	65535
 };
 
 Compact sc32_plant_3 = {
@@ -1379,6 +1424,17 @@ Compact sc32_plant_3 = {
 	411-398,	// mouseSize_x
 	243-216,	// mouseSize_y
 	SC32_PLANT_3_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc32_terminal = {
@@ -1400,6 +1456,17 @@ Compact sc32_terminal = {
 	328-303,	// mouseSize_x
 	226-181,	// mouseSize_y
 	SC32_TERMINAL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc32_gardener_up[] = {
@@ -1419,7 +1486,7 @@ uint16 sc32_gardener_up[] = {
 	272,
 	168,
 	0,
-	0,
+	0
 };
 
 Compact sc32_plant_1 = {
@@ -1441,6 +1508,17 @@ Compact sc32_plant_1 = {
 	292-263,	// mouseSize_x
 	217-188,	// mouseSize_y
 	SC32_PLANT_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc32_gard_turn_u[] = {
@@ -1460,7 +1538,7 @@ uint16 sc32_gard_turn_u[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc32_joey_list[] = {
@@ -1479,7 +1557,7 @@ uint16 sc32_joey_list[] = {
 	248,
 	279,
 	0,
-	0,
+	0
 };
 
 uint16 sc32_gardening2[] = {
@@ -1679,7 +1757,7 @@ uint16 sc32_gardening2[] = {
 	1,
 	1,
 	5,
-	0,
+	0
 };
 
 uint16 reset_31_32[] = {
@@ -1691,7 +1769,7 @@ uint16 reset_31_32[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	224,
-	65535,
+	65535
 };
 
 Compact sc32_lift = {
@@ -1723,6 +1801,7 @@ Compact sc32_lift = {
 	C_BASE_MODE,	// mode
 	SC32_LIFT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc32_exit_33 = {
@@ -1744,6 +1823,17 @@ Compact sc32_exit_33 = {
 	140-128,	// mouseSize_x
 	327-260,	// mouseSize_y
 	SC32_EXIT_33_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

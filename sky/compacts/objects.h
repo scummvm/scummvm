@@ -56,6 +56,7 @@ Compact blank5 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact tape_menu = {
@@ -87,6 +88,7 @@ Compact tape_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact right_arrow = {
@@ -118,11 +120,12 @@ Compact right_arrow = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 move_2[] = {
 	20,
-	0,
+	0
 };
 
 Compact glass_menu = {
@@ -154,6 +157,7 @@ Compact glass_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact lightbulb_menu = {
@@ -185,6 +189,7 @@ Compact lightbulb_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank3 = {
@@ -216,6 +221,7 @@ Compact blank3 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact wd40_menu = {
@@ -247,6 +253,7 @@ Compact wd40_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact plaster_menu = {
@@ -278,6 +285,7 @@ Compact plaster_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact new_cable_menu = {
@@ -309,6 +317,7 @@ Compact new_cable_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank8 = {
@@ -340,6 +349,7 @@ Compact blank8 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact joeyb_menu = {
@@ -371,16 +381,17 @@ Compact joeyb_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 move_menu[] = {
 	46,
-	18,
+	18
 };
 
 uint16 *move_list[] = {
 	move_menu,
-	move_2,
+	move_2
 };
 
 Compact blank6 = {
@@ -412,6 +423,7 @@ Compact blank6 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact shades_menu = {
@@ -443,6 +455,7 @@ Compact shades_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact citycard_menu = {
@@ -474,6 +487,7 @@ Compact citycard_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank9 = {
@@ -505,6 +519,7 @@ Compact blank9 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact rope_menu = {
@@ -536,6 +551,7 @@ Compact rope_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact left_arrow = {
@@ -567,6 +583,7 @@ Compact left_arrow = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact magazine_menu = {
@@ -598,6 +615,7 @@ Compact magazine_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact gallcard_menu = {
@@ -629,6 +647,7 @@ Compact gallcard_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact dog_food_menu = {
@@ -660,6 +679,7 @@ Compact dog_food_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank7 = {
@@ -691,6 +711,7 @@ Compact blank7 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank2 = {
@@ -722,6 +743,7 @@ Compact blank2 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank11 = {
@@ -753,6 +775,7 @@ Compact blank11 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact anchor_menu = {
@@ -784,6 +807,7 @@ Compact anchor_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact anita_card_menu = {
@@ -815,6 +839,7 @@ Compact anita_card_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact tongs_menu = {
@@ -846,6 +871,7 @@ Compact tongs_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank4 = {
@@ -877,6 +903,7 @@ Compact blank4 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact crow_bar_menu = {
@@ -908,6 +935,7 @@ Compact crow_bar_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact secateurs_menu = {
@@ -939,6 +967,7 @@ Compact secateurs_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sarnie_menu = {
@@ -970,6 +999,7 @@ Compact sarnie_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact spanner_menu = {
@@ -1001,6 +1031,7 @@ Compact spanner_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank10 = {
@@ -1032,6 +1063,7 @@ Compact blank10 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact skey_menu = {
@@ -1063,6 +1095,7 @@ Compact skey_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact blank1 = {
@@ -1094,6 +1127,7 @@ Compact blank1 = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact ticket_menu = {
@@ -1125,6 +1159,7 @@ Compact ticket_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact brick_menu = {
@@ -1156,6 +1191,7 @@ Compact brick_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact putty_menu = {
@@ -1187,6 +1223,7 @@ Compact putty_menu = {
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact menu_bar = {
@@ -1207,6 +1244,18 @@ Compact menu_bar = {
 	0,	// mouseRel_y
 	320,	// mouseSize_x
 	1,	// mouseSize_y
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

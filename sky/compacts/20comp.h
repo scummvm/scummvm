@@ -38,7 +38,7 @@ uint16 gal_look_up[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 rs_joey_start_20[] = {
@@ -62,7 +62,7 @@ uint16 rs_joey_start_20[] = {
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_COLLISION+ST_MOUSE+ST_GRID_PLOT,
 	C_DIR,
 	UP,
-	65535,
+	65535
 };
 
 uint16 s20_pal[] = {
@@ -449,7 +449,7 @@ uint16 s20_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact lamb_door_20 = {
@@ -481,6 +481,7 @@ Compact lamb_door_20 = {
 	C_BASE_MODE,	// mode
 	LAMB_DOOR_20_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact reich_window = {
@@ -502,6 +503,17 @@ Compact reich_window = {
 	223-194,	// mouseSize_x
 	255-239,	// mouseSize_y
 	REICH_WINDOW_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 usecard_seq[] = {
@@ -533,7 +545,7 @@ uint16 usecard_seq[] = {
 	258,
 	173,
 	0,
-	0,
+	0
 };
 
 uint16 s20_chip_list[] = {
@@ -544,7 +556,7 @@ uint16 s20_chip_list[] = {
 	131+DISK_2,
 	132+DISK_2,
 	217+DISK_9,
-	0,
+	0
 };
 
 Compact down_exit_20 = {
@@ -566,6 +578,17 @@ Compact down_exit_20 = {
 	193-128,	// mouseSize_x
 	20,	// mouseSize_y
 	ED20_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s20_fast_list[] = {
@@ -580,7 +603,7 @@ uint16 s20_fast_list[] = {
 	182+DISK_9,
 	183+DISK_9,
 	184+DISK_9,
-	0,
+	0
 };
 
 uint16 rs_all_28_20[] = {
@@ -592,7 +615,7 @@ uint16 rs_all_28_20[] = {
 	20,
 	C_PLACE,
 	ID_S20_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s20_floor_table[] = {
@@ -632,7 +655,7 @@ uint16 s20_floor_table[] = {
 	GT_L_TALK_20,
 	ID_STD_RIGHT_TALK,
 	GT_R_TALK_20,
-	65535,
+	65535
 };
 
 Compact s20_floor = {
@@ -654,6 +677,17 @@ Compact s20_floor = {
 	4242,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 lamb_20_open[] = {
@@ -688,7 +722,7 @@ uint16 lamb_20_open[] = {
 	1,
 	1,
 	10,
-	0,
+	0
 };
 
 Compact lamb_window = {
@@ -710,6 +744,17 @@ Compact lamb_window = {
 	368-342,	// mouseSize_x
 	257-240,	// mouseSize_y
 	LAMB_WINDOW_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid20 = 0;
@@ -725,7 +770,7 @@ uint16 gal_look_down[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact lamb_slot = {
@@ -747,6 +792,17 @@ Compact lamb_slot = {
 	7,	// mouseSize_x
 	11,	// mouseSize_y
 	LAMB_SLOT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 lamb_20_close[] = {
@@ -781,7 +837,7 @@ uint16 lamb_20_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact shrub_3 = {
@@ -803,6 +859,17 @@ Compact shrub_3 = {
 	421-396,	// mouseSize_x
 	298-257,	// mouseSize_y
 	SHRUB_3_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reich_20_close[] = {
@@ -837,7 +904,7 @@ uint16 reich_20_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact reich_slot = {
@@ -859,6 +926,17 @@ Compact reich_slot = {
 	7,	// mouseSize_x
 	11,	// mouseSize_y
 	REICH_SLOT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact shrub_2 = {
@@ -880,6 +958,17 @@ Compact shrub_2 = {
 	310-249,	// mouseSize_x
 	4242,	// mouseSize_y
 	SHRUB_2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 joey_list_20[] = {
@@ -888,7 +977,7 @@ uint16 joey_list_20[] = {
 	296,
 	330,
 	1,
-	0,
+	0
 };
 
 uint16 reich_20_open[] = {
@@ -923,7 +1012,7 @@ uint16 reich_20_open[] = {
 	1,
 	1,
 	10,
-	0,
+	0
 };
 
 Compact shrub_1 = {
@@ -945,6 +1034,17 @@ Compact shrub_1 = {
 	193-156,	// mouseSize_x
 	294-251,	// mouseSize_y
 	SHRUB_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s20_logic[] = {
@@ -959,7 +1059,7 @@ uint16 s20_logic[] = {
 	ID_GALLAGER_BEL,
 	ID_CAT,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 lamb_card_seq2[] = {
@@ -991,7 +1091,7 @@ uint16 lamb_card_seq2[] = {
 	276,
 	231,
 	0,
-	0,
+	0
 };
 
 Compact reich_door_20 = {
@@ -1023,6 +1123,7 @@ Compact reich_door_20 = {
 	C_BASE_MODE,	// mode
 	REICH_DOOR_20_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_20_28[] = {
@@ -1034,7 +1135,7 @@ uint16 rs_foster_20_28[] = {
 	28,
 	C_PLACE,
 	ID_S28_FLOOR,
-	65535,
+	65535
 };
 
 ExtCompact gallager_bel_ext = {
@@ -1063,6 +1164,10 @@ ExtCompact gallager_bel_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact gallager_bel = {
@@ -1094,7 +1199,7 @@ Compact gallager_bel = {
 	0,	// mode
 	GAL_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&gallager_bel_ext,
+	&gallager_bel_ext
 };
 
 uint16 s20_mouse[] = {
@@ -1113,7 +1218,7 @@ uint16 s20_mouse[] = {
 	ID_LAMB_WINDOW,
 	ID_S20_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 }; // namespace SkyCompact

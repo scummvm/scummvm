@@ -56,7 +56,7 @@ uint16 give_mag_seq[] = {
 	131,
 	226,
 	4,
-	0,
+	0
 };
 
 uint16 trev_read_mag[] = {
@@ -88,7 +88,7 @@ uint16 trev_read_mag[] = {
 	351,
 	239,
 	0,
-	0,
+	0
 };
 
 uint16 s24_floor_table[] = {
@@ -114,7 +114,7 @@ uint16 s24_floor_table[] = {
 	GT_TICKET,
 	ID_GLOBE,
 	GT_GLOBE,
-	65535,
+	65535
 };
 
 Compact s24_floor = {
@@ -136,6 +136,17 @@ Compact s24_floor = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 mag_away[] = {
@@ -155,7 +166,7 @@ uint16 mag_away[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint32 *grid24 = 0;
@@ -179,6 +190,17 @@ Compact left_exit_24 = {
 	196-175,	// mouseSize_x
 	308-247,	// mouseSize_y
 	EL24_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact mural = {
@@ -200,6 +222,17 @@ Compact mural = {
 	383-244,	// mouseSize_x
 	238-159,	// mouseSize_y
 	MURAL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 trevor_relax[] = {
@@ -219,7 +252,7 @@ uint16 trevor_relax[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint16 rs_foster_23_24[] = {
@@ -231,7 +264,7 @@ uint16 rs_foster_23_24[] = {
 	24,
 	C_PLACE,
 	ID_S24_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s24_mouse[] = {
@@ -246,7 +279,7 @@ uint16 s24_mouse[] = {
 	ID_GLOBE,
 	ID_S24_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 trevor_unrelax[] = {
@@ -266,7 +299,7 @@ uint16 trevor_unrelax[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact pidgeons = {
@@ -288,6 +321,17 @@ Compact pidgeons = {
 	291-246,	// mouseSize_x
 	275-232,	// mouseSize_y
 	PIDGEONS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 trev_get_mag[] = {
@@ -322,7 +366,7 @@ uint16 trev_get_mag[] = {
 	351,
 	239,
 	6,
-	0,
+	0
 };
 
 uint16 s24_chip_list[] = {
@@ -345,7 +389,7 @@ uint16 s24_chip_list[] = {
 	29+DISK_8,
 	30+DISK_8,
 	31+DISK_8,
-	0,
+	0
 };
 
 uint16 rs_foster_24_23[] = {
@@ -357,7 +401,7 @@ uint16 rs_foster_24_23[] = {
 	23,
 	C_PLACE,
 	ID_S23_FLOOR,
-	65535,
+	65535
 };
 
 uint16 mag_back_seq[] = {
@@ -398,7 +442,7 @@ uint16 mag_back_seq[] = {
 	253,
 	226,
 	7,
-	0,
+	0
 };
 
 uint16 push_globe[] = {
@@ -421,7 +465,7 @@ uint16 push_globe[] = {
 	265,
 	193,
 	0,
-	0,
+	0
 };
 
 uint16 s24_pal[] = {
@@ -808,7 +852,7 @@ uint16 s24_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 joey_list_s24[] = {
@@ -822,7 +866,7 @@ uint16 joey_list_s24[] = {
 	264,
 	294,
 	0,
-	0,
+	0
 };
 
 uint16 mag_out[] = {
@@ -842,7 +886,7 @@ uint16 mag_out[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 trev_turn_page[] = {
@@ -868,7 +912,7 @@ uint16 trev_turn_page[] = {
 	351,
 	239,
 	0,
-	0,
+	0
 };
 
 ExtCompact trevor_ext = {
@@ -897,6 +941,10 @@ ExtCompact trevor_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact trevor = {
@@ -928,7 +976,7 @@ Compact trevor = {
 	0,	// mode
 	TREVOR_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&trevor_ext,
+	&trevor_ext
 };
 
 Compact ticket = {
@@ -960,6 +1008,7 @@ Compact ticket = {
 	0,	// mode
 	TICKET_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact new_york_poster = {
@@ -981,6 +1030,17 @@ Compact new_york_poster = {
 	200-162,	// mouseSize_x
 	245-166,	// mouseSize_y
 	NEW_YORK_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact london_poster = {
@@ -1002,6 +1062,17 @@ Compact london_poster = {
 	237-207,	// mouseSize_x
 	226-166,	// mouseSize_y
 	LONDON_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 get_ticket[] = {
@@ -1042,7 +1113,7 @@ uint16 get_ticket[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 s24_logic[] = {
@@ -1057,7 +1128,7 @@ uint16 s24_logic[] = {
 	ID_LIFT_29,
 	ID_GALLAGER_BEL,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 globe_spin[] = {
@@ -1122,7 +1193,7 @@ uint16 globe_spin[] = {
 	274,
 	275,
 	0,
-	0,
+	0
 };
 
 uint16 ticket_seq[] = {
@@ -1148,7 +1219,7 @@ uint16 ticket_seq[] = {
 	352,
 	254,
 	6,
-	0,
+	0
 };
 
 Compact globe = {
@@ -1180,6 +1251,7 @@ Compact globe = {
 	0,	// mode
 	GLOBE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 trevor_scratch[] = {
@@ -1226,7 +1298,7 @@ uint16 trevor_scratch[] = {
 	351,
 	239,
 	0,
-	0,
+	0
 };
 
 uint16 s24_fast_list[] = {
@@ -1236,7 +1308,7 @@ uint16 s24_fast_list[] = {
 	53,
 	54,
 	135,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

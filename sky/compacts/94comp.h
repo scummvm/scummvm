@@ -101,7 +101,7 @@ uint16 door_l94_anim[] = {
 	202,
 	136,
 	23,
-	0,
+	0
 };
 
 uint16 holo1_a_anim[] = {
@@ -130,7 +130,7 @@ uint16 holo1_a_anim[] = {
 	231,
 	176,
 	7,
-	0,
+	0
 };
 
 uint16 sc94_floor_table[] = {
@@ -142,7 +142,7 @@ uint16 sc94_floor_table[] = {
 	GET_TO_DOOR_R94,
 	ID_HOLOGRAM_PAD,
 	GET_TO_HOLOGRAM_PAD,
-	65535,
+	65535
 };
 
 Compact sc94_floor = {
@@ -164,6 +164,17 @@ Compact sc94_floor = {
 	270,	// mouseSize_x
 	52,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fast_list_sc94[] = {
@@ -179,7 +190,7 @@ uint16 fast_list_sc94[] = {
 	IT_SC94_LAYER_0+DISK_4,
 	IT_HOLO1_A+0X8000+DISK_4,
 	IT_HOLO1_B+DISK_4,
-	0,
+	0
 };
 
 uint16 holo3_anim[] = {
@@ -199,7 +210,7 @@ uint16 holo3_anim[] = {
 	241,
 	191,
 	4,
-	0,
+	0
 };
 
 Compact door_r94 = {
@@ -231,6 +242,7 @@ Compact door_r94 = {
 	C_BASE_MODE,	// mode
 	DOOR_R94_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc94_logic[] = {
@@ -243,7 +255,7 @@ uint16 sc94_logic[] = {
 	ID_HOLOGRAM_B,
 	ID_EYEBALL_90,
 	0XFFFF,
-	ID_LINC_MENU_LOGIC,
+	ID_LINC_MENU_LOGIC
 };
 
 uint16 door_r94r_anim[] = {
@@ -320,7 +332,7 @@ uint16 door_r94r_anim[] = {
 	372,
 	136,
 	23,
-	0,
+	0
 };
 
 Compact door_r94r = {
@@ -352,6 +364,7 @@ Compact door_r94r = {
 	C_BASE_MODE,	// mode
 	DOOR_R94R_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_94_90[] = {
@@ -367,7 +380,7 @@ uint16 rs_foster_94_90[] = {
 	46+182*64,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 Compact door_l94r = {
@@ -399,6 +412,7 @@ Compact door_l94r = {
 	C_BASE_MODE,	// mode
 	DOOR_L94R_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_94_95[] = {
@@ -412,7 +426,7 @@ uint16 rs_foster_94_95[] = {
 	256,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 door_r94_anim[] = {
@@ -489,7 +503,7 @@ uint16 door_r94_anim[] = {
 	345,
 	136,
 	23,
-	0,
+	0
 };
 
 uint16 chip_list_sc94[] = {
@@ -500,7 +514,7 @@ uint16 chip_list_sc94[] = {
 	IT_HOLO2_A+DISK_4,
 	IT_HOLO2_B+DISK_4+0X8000,
 	IT_HOLO3+0X8000+DISK_4,
-	0,
+	0
 };
 
 ExtCompact hologram_b_ext = {
@@ -529,6 +543,10 @@ ExtCompact hologram_b_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact hologram_b = {
@@ -560,7 +578,7 @@ Compact hologram_b = {
 	C_BASE_MODE,	// mode
 	HOLOGRAM_B_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&hologram_b_ext,
+	&hologram_b_ext
 };
 
 uint16 holo1_b_anim[] = {
@@ -589,7 +607,7 @@ uint16 holo1_b_anim[] = {
 	231,
 	234,
 	7,
-	0,
+	0
 };
 
 Compact door_l94 = {
@@ -621,6 +639,7 @@ Compact door_l94 = {
 	C_BASE_MODE,	// mode
 	DOOR_L94_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 door_l94r_anim[] = {
@@ -697,7 +716,7 @@ uint16 door_l94r_anim[] = {
 	228,
 	136,
 	23,
-	0,
+	0
 };
 
 uint16 sc94_mouse[] = {
@@ -706,7 +725,7 @@ uint16 sc94_mouse[] = {
 	ID_DOOR_R94,
 	ID_SC94_FLOOR,
 	0XFFFF,
-	ID_LINC_MENU_MOUSE,
+	ID_LINC_MENU_MOUSE
 };
 
 uint16 anita_holo_talk[] = {
@@ -904,7 +923,7 @@ uint16 anita_holo_talk[] = {
 	280,
 	225,
 	6,
-	0,
+	0
 };
 
 Compact hologram_pad = {
@@ -926,6 +945,17 @@ Compact hologram_pad = {
 	41,	// mouseSize_x
 	7,	// mouseSize_y
 	HOLOGRAM_PAD_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 pal94[] = {
@@ -1312,7 +1342,7 @@ uint16 pal94[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact hologram_a = {
@@ -1344,6 +1374,7 @@ Compact hologram_a = {
 	C_BASE_MODE,	// mode
 	HOLOGRAM_A_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

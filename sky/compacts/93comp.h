@@ -44,7 +44,7 @@ uint16 get_adjust[] = {
 	370,
 	284,
 	4,
-	0,
+	0
 };
 
 Compact door_l93 = {
@@ -76,6 +76,7 @@ Compact door_l93 = {
 	C_BASE_MODE,	// mode
 	DOOR_L93_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc93_mouse[] = {
@@ -85,7 +86,7 @@ uint16 sc93_mouse[] = {
 	ID_DOOR_L93F,
 	ID_SC93_FLOOR,
 	0XFFFF,
-	ID_LINC_MENU_MOUSE,
+	ID_LINC_MENU_MOUSE
 };
 
 Compact adjust_book = {
@@ -117,6 +118,7 @@ Compact adjust_book = {
 	C_BASE_MODE,	// mode
 	ADJUST_BOOK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc93_floor_table[] = {
@@ -128,7 +130,7 @@ uint16 sc93_floor_table[] = {
 	GET_TO_PERSONA,
 	ID_ADJUST_BOOK,
 	GET_TO_ADJUST_BOOK,
-	65535,
+	65535
 };
 
 uint16 sc93_logic[] = {
@@ -139,7 +141,7 @@ uint16 sc93_logic[] = {
 	ID_DOOR_L93F,
 	ID_EYEBALL_90,
 	0XFFFF,
-	ID_LINC_MENU_LOGIC,
+	ID_LINC_MENU_LOGIC
 };
 
 Compact door_l93f = {
@@ -171,6 +173,7 @@ Compact door_l93f = {
 	C_BASE_MODE,	// mode
 	DOOR_L93F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_93_92[] = {
@@ -184,7 +187,7 @@ uint16 rs_foster_93_92[] = {
 	248,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 Compact sc93_floor = {
@@ -206,6 +209,17 @@ Compact sc93_floor = {
 	269,	// mouseSize_x
 	52,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 chip_list_sc93[] = {
@@ -213,7 +227,7 @@ uint16 chip_list_sc93[] = {
 	IT_ADJUST_BOOK+DISK_4,
 	IT_DOOR_L93+DISK_4,
 	IT_DOOR_L93F+DISK_4,
-	0,
+	0
 };
 
 uint16 door_l93f_anim[] = {
@@ -287,7 +301,7 @@ uint16 door_l93f_anim[] = {
 	200,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 get_persona[] = {
@@ -310,7 +324,7 @@ uint16 get_persona[] = {
 	342,
 	250,
 	5,
-	0,
+	0
 };
 
 uint16 fast_list_sc93[] = {
@@ -324,7 +338,7 @@ uint16 fast_list_sc93[] = {
 	IT_SC93_LAYER_0+DISK_4,
 	IT_SC93_LAYER_1+DISK_4,
 	IT_SC93_GRID_1+DISK_4,
-	0,
+	0
 };
 
 uint16 door_l93_anim[] = {
@@ -398,7 +412,7 @@ uint16 door_l93_anim[] = {
 	205,
 	136,
 	22,
-	0,
+	0
 };
 
 Compact persona = {
@@ -430,6 +444,7 @@ Compact persona = {
 	C_BASE_MODE,	// mode
 	PERSONA_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 pal93[] = {
@@ -816,7 +831,7 @@ uint16 pal93[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 }; // namespace SkyCompact

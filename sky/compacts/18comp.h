@@ -53,7 +53,7 @@ uint16 steam_alert_seq[] = {
 	251,
 	233,
 	7,
-	0,
+	0
 };
 
 uint16 sleep_seq[] = {
@@ -130,7 +130,7 @@ uint16 sleep_seq[] = {
 	250,
 	231,
 	7,
-	0,
+	0
 };
 
 Compact power_door = {
@@ -162,6 +162,7 @@ Compact power_door = {
 	C_BASE_MODE,	// mode
 	POWER_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 steam1_seq[] = {
@@ -196,7 +197,7 @@ uint16 steam1_seq[] = {
 	386,
 	137,
 	9,
-	0,
+	0
 };
 
 uint16 unpush_but_seq[] = {
@@ -207,7 +208,7 @@ uint16 unpush_but_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact right_lever = {
@@ -239,6 +240,7 @@ Compact right_lever = {
 	C_BASE_MODE,	// mode
 	RIGHT_LEVER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 steam2_seq[] = {
@@ -258,7 +260,7 @@ uint16 steam2_seq[] = {
 	382,
 	137,
 	4,
-	0,
+	0
 };
 
 uint16 blowoff_seq[] = {
@@ -296,7 +298,7 @@ uint16 blowoff_seq[] = {
 	147,
 	279,
 	10,
-	0,
+	0
 };
 
 uint16 s18_mouse[] = {
@@ -313,7 +315,7 @@ uint16 s18_mouse[] = {
 	ID_LEFT_LEVER,
 	ID_RIGHT_LEVER,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 power_start_seq[] = {
@@ -333,7 +335,7 @@ uint16 power_start_seq[] = {
 	157,
 	315,
 	4,
-	0,
+	0
 };
 
 Compact power_switch = {
@@ -365,6 +367,7 @@ Compact power_switch = {
 	C_BASE_MODE,	// mode
 	POWER_SWITCH_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 power_stop_seq[] = {
@@ -399,7 +402,7 @@ uint16 power_stop_seq[] = {
 	157,
 	315,
 	8,
-	0,
+	0
 };
 
 uint16 s18_floor_table[] = {
@@ -429,7 +432,7 @@ uint16 s18_floor_table[] = {
 	GET_TO_RIGHT_LEVER,
 	ID_LEFT_LEVER,
 	GET_TO_LEFT_LEVER,
-	65535,
+	65535
 };
 
 Compact s18_floor = {
@@ -451,6 +454,17 @@ Compact s18_floor = {
 	320,	// mouseSize_x
 	14+16,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 joey_list_s18[] = {
@@ -459,7 +473,7 @@ uint16 joey_list_s18[] = {
 	280,
 	304,
 	1,
-	0,
+	0
 };
 
 uint16 nu_chip_18[] = {
@@ -488,7 +502,7 @@ uint16 nu_chip_18[] = {
 	74+DISK_2,
 	76+DISK_2+0X8000,
 	75+DISK_2,
-	0,
+	0
 };
 
 Compact power_chair = {
@@ -510,6 +524,17 @@ Compact power_chair = {
 	20,	// mouseSize_x
 	24,	// mouseSize_y
 	CHAIR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 steam3_seq[] = {
@@ -532,7 +557,7 @@ uint16 steam3_seq[] = {
 	380,
 	137,
 	5,
-	0,
+	0
 };
 
 Compact left_skull = {
@@ -554,6 +579,17 @@ Compact left_skull = {
 	4,	// mouseSize_x
 	5,	// mouseSize_y
 	LEFT_SKULL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_gordon_end[] = {
@@ -575,7 +611,7 @@ uint16 rs_gordon_end[] = {
 	276-244,
 	C_FRAME,
 	75*64,
-	65535,
+	65535
 };
 
 Compact right_skull = {
@@ -597,6 +633,17 @@ Compact right_skull = {
 	4,	// mouseSize_x
 	5,	// mouseSize_y
 	RIGHT_SKULL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 power_spin_seq[] = {
@@ -613,7 +660,7 @@ uint16 power_spin_seq[] = {
 	157,
 	315,
 	3,
-	0,
+	0
 };
 
 uint16 s18_fast_list[] = {
@@ -626,7 +673,7 @@ uint16 s18_fast_list[] = {
 	57+DISK_2,
 	58+DISK_2,
 	60+DISK_2,
-	0,
+	0
 };
 
 uint16 steam4_seq[] = {
@@ -646,7 +693,7 @@ uint16 steam4_seq[] = {
 	380,
 	137,
 	4,
-	0,
+	0
 };
 
 Compact steam = {
@@ -678,6 +725,7 @@ Compact steam = {
 	C_BASE_MODE,	// mode
 	STEAM_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact socket = {
@@ -709,6 +757,7 @@ Compact socket = {
 	C_BASE_MODE,	// mode
 	POWER_PANEL_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact power_motor = {
@@ -740,6 +789,7 @@ Compact power_motor = {
 	C_BASE_MODE,	// mode
 	POWER_MOTOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 joey_unpush_seq[] = {
@@ -765,7 +815,7 @@ uint16 joey_unpush_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 high_push_seq[] = {
@@ -782,7 +832,7 @@ uint16 high_push_seq[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 Compact left_lever = {
@@ -814,6 +864,7 @@ Compact left_lever = {
 	C_BASE_MODE,	// mode
 	LEFT_LEVER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s18_pal[] = {
@@ -1200,7 +1251,7 @@ uint16 s18_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 rs_foster_to_18[] = {
@@ -1212,7 +1263,7 @@ uint16 rs_foster_to_18[] = {
 	18,
 	C_PLACE,
 	ID_S18_FLOOR,
-	65535,
+	65535
 };
 
 uint16 power_bang_seq[] = {
@@ -1265,7 +1316,7 @@ uint16 power_bang_seq[] = {
 	139,
 	167,
 	15,
-	0,
+	0
 };
 
 uint16 s18_logic[] = {
@@ -1284,7 +1335,7 @@ uint16 s18_logic[] = {
 	ID_LIFT_S7,
 	ID_LIFT7_LIGHT,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 high_unpush_seq[] = {
@@ -1295,7 +1346,7 @@ uint16 high_unpush_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 s18_chip_list[] = {
@@ -1324,7 +1375,7 @@ uint16 s18_chip_list[] = {
 	74+DISK_2,
 	76+DISK_2+0X8000,
 	75+DISK_2,
-	0,
+	0
 };
 
 Compact power_bang = {
@@ -1356,6 +1407,7 @@ Compact power_bang = {
 	C_BASE_MODE,	// mode
 	POWER_BANG_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 push_but_seq[] = {
@@ -1369,7 +1421,7 @@ uint16 push_but_seq[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 door_blast_seq[] = {
@@ -1386,7 +1438,7 @@ uint16 door_blast_seq[] = {
 	146,
 	229,
 	3,
-	0,
+	0
 };
 
 uint16 rs_gordon_start[] = {
@@ -1406,7 +1458,7 @@ uint16 rs_gordon_start[] = {
 	32,
 	C_MOUSE_SIZE_Y,
 	48,
-	65535,
+	65535
 };
 
 uint16 monhit_seq[] = {
@@ -1423,7 +1475,7 @@ uint16 monhit_seq[] = {
 	250,
 	231,
 	3,
-	0,
+	0
 };
 
 uint16 spanner_seq[] = {
@@ -1485,7 +1537,7 @@ uint16 spanner_seq[] = {
 	239,
 	195,
 	12,
-	0,
+	0
 };
 
 uint16 joey_push_seq[] = {
@@ -1514,7 +1566,7 @@ uint16 joey_push_seq[] = {
 	1,
 	1,
 	7,
-	0,
+	0
 };
 
 Compact right_exit_s18 = {
@@ -1536,6 +1588,17 @@ Compact right_exit_s18 = {
 	414-405,	// mouseSize_x
 	280-221,	// mouseSize_y
 	ER18_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

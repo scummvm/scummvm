@@ -71,7 +71,7 @@ uint16 sc36_get_glass[] = {
 	259,
 	226,
 	10,
-	0,
+	0
 };
 
 uint16 sc36_mouse_list[] = {
@@ -88,14 +88,14 @@ uint16 sc36_mouse_list[] = {
 	ID_SC36_FLOOR,
 	ID_SC36_LOW_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 babs_d_to_u[] = {
 	47+106*64,
 	46+106*64,
 	45+106*64,
-	0,
+	0
 };
 
 uint16 bar_drink[] = {
@@ -172,12 +172,12 @@ uint16 bar_drink[] = {
 	391,
 	240,
 	0,
-	0,
+	0
 };
 
 uint16 babs_l_to_u[] = {
 	43+106*64,
-	0,
+	0
 };
 
 uint16 bar_put_cloth[] = {
@@ -215,12 +215,12 @@ uint16 bar_put_cloth[] = {
 	391,
 	240,
 	0,
-	0,
+	0
 };
 
 uint16 babs_u_to_l[] = {
 	43+106*64,
-	0,
+	0
 };
 
 uint16 sc36_col_down2[] = {
@@ -276,7 +276,7 @@ uint16 sc36_col_down2[] = {
 	272,
 	213,
 	16,
-	0,
+	0
 };
 
 uint16 babs_left[] = {
@@ -320,14 +320,14 @@ uint16 babs_left[] = {
 	29+106*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 babs_u_to_t[] = {
 	43+106*64,
 	42+106*64,
 	48+106*64,
-	0,
+	0
 };
 
 uint16 sc36_col_up1[] = {
@@ -479,7 +479,7 @@ uint16 sc36_col_up1[] = {
 	287,
 	233,
 	22,
-	0,
+	0
 };
 
 uint16 sc36_fos_down2[] = {
@@ -586,7 +586,7 @@ uint16 sc36_fos_down2[] = {
 	298,
 	228,
 	33,
-	0,
+	0
 };
 
 uint16 sc36_col_deal[] = {
@@ -618,7 +618,7 @@ uint16 sc36_col_deal[] = {
 	128,
 	136,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_palette[] = {
@@ -1005,7 +1005,7 @@ uint16 sc36_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint8 babs_auto[64];
@@ -1051,7 +1051,7 @@ uint16 babs_up[] = {
 	9+106*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 babs_down[] = {
@@ -1095,7 +1095,7 @@ uint16 babs_down[] = {
 	19+106*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 babs_right[] = {
@@ -1139,7 +1139,7 @@ uint16 babs_right[] = {
 	39+106*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 babs_st_up[] = {
@@ -1147,7 +1147,7 @@ uint16 babs_st_up[] = {
 	1,
 	0,
 	44,
-	0,
+	0
 };
 
 uint16 babs_st_down[] = {
@@ -1155,7 +1155,7 @@ uint16 babs_st_down[] = {
 	1,
 	0,
 	40,
-	0,
+	0
 };
 
 uint16 babs_st_left[] = {
@@ -1163,7 +1163,7 @@ uint16 babs_st_left[] = {
 	1,
 	0,
 	42,
-	0,
+	0
 };
 
 uint16 babs_st_right[] = {
@@ -1171,7 +1171,7 @@ uint16 babs_st_right[] = {
 	1,
 	0,
 	46,
-	0,
+	0
 };
 
 uint16 babs_st_talk[] = {
@@ -1179,99 +1179,99 @@ uint16 babs_st_talk[] = {
 	1,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 babs_u_to_d[] = {
 	43+106*64,
 	42+106*64,
 	41+106*64,
-	0,
+	0
 };
 
 uint16 babs_u_to_r[] = {
 	45+106*64,
-	0,
+	0
 };
 
 uint16 babs_d_to_l[] = {
 	41+106*64,
-	0,
+	0
 };
 
 uint16 babs_d_to_r[] = {
 	47+106*64,
-	0,
+	0
 };
 
 uint16 babs_d_to_t[] = {
 	48+106*64,
-	0,
+	0
 };
 
 uint16 babs_l_to_d[] = {
 	41+106*64,
-	0,
+	0
 };
 
 uint16 babs_l_to_r[] = {
 	41+106*64,
 	40+106*64,
 	47+106*64,
-	0,
+	0
 };
 
 uint16 babs_l_to_t[] = {
 	48+106*64,
-	0,
+	0
 };
 
 uint16 babs_r_to_u[] = {
 	45+106*64,
-	0,
+	0
 };
 
 uint16 babs_r_to_d[] = {
 	47+106*64,
-	0,
+	0
 };
 
 uint16 babs_r_to_l[] = {
 	45+106*64,
 	44+106*64,
 	43+106*64,
-	0,
+	0
 };
 
 uint16 babs_r_to_t[] = {
 	47+106*64,
 	40+106*64,
 	48+106*64,
-	0,
+	0
 };
 
 uint16 babs_t_to_u[] = {
 	48+106*64,
 	42+106*64,
 	43+106*64,
-	0,
+	0
 };
 
 uint16 babs_t_to_d[] = {
 	48+106*64,
-	0,
+	0
 };
 
 uint16 babs_t_to_l[] = {
 	48+106*64,
-	0,
+	0
 };
 
 uint16 babs_t_to_r[] = {
 	48+106*64,
 	40+106*64,
 	47+106*64,
-	0,
+	0
 };
 
 TurnTable sc36_babs_turnTable0 = {
@@ -1309,7 +1309,7 @@ TurnTable sc36_babs_turnTable0 = {
 		babs_t_to_l,
 		babs_t_to_r,
 		0
-	},
+	}
 };
 
 MegaSet sc36_babs_megaSet0 = {
@@ -1326,7 +1326,7 @@ MegaSet sc36_babs_megaSet0 = {
 	babs_st_left,	// standLeft
 	babs_st_right,	// standRight
 	babs_st_talk,	// standTalk
-	&sc36_babs_turnTable0,
+	&sc36_babs_turnTable0
 };
 
 ExtCompact sc36_babs_ext = {
@@ -1356,6 +1356,9 @@ ExtCompact sc36_babs_ext = {
 	babs_auto,	// animScratch
 	0,	// megaSet
 	&sc36_babs_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact sc36_babs = {
@@ -1387,7 +1390,7 @@ Compact sc36_babs = {
 	C_BASE_MODE,	// mode
 	SC36_BABS_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc36_babs_ext,
+	&sc36_babs_ext
 };
 
 uint16 sc36_col_down4[] = {
@@ -1536,7 +1539,7 @@ uint16 sc36_col_down4[] = {
 	249,
 	211,
 	20,
-	0,
+	0
 };
 
 uint16 sc36_logic_list[] = {
@@ -1557,7 +1560,7 @@ uint16 sc36_logic_list[] = {
 	ID_SC36_JUKE_LIGHT,
 	ID_SC36_DOOR,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 reset_30_36[] = {
@@ -1573,7 +1576,7 @@ uint16 reset_30_36[] = {
 	40+12*64,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 sc36_doorshut[] = {
@@ -1596,7 +1599,7 @@ uint16 sc36_doorshut[] = {
 	375,
 	183,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_fos_up2[] = {
@@ -1670,7 +1673,7 @@ uint16 sc36_fos_up2[] = {
 	296,
 	208,
 	22,
-	0,
+	0
 };
 
 uint16 bar_get_cloth[] = {
@@ -1705,7 +1708,7 @@ uint16 bar_get_cloth[] = {
 	391,
 	240,
 	15,
-	0,
+	0
 };
 
 Compact sc36_juke_light = {
@@ -1737,6 +1740,7 @@ Compact sc36_juke_light = {
 	C_BASE_MODE,	// mode
 	SC36_JUKE_LIGHT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc36_low_floor_table[] = {
@@ -1770,7 +1774,7 @@ uint16 sc36_low_floor_table[] = {
 	GT_SC36_FLOOR,
 	ID_SC36_BABS,
 	GT_SC36_FLOOR,
-	65535,
+	65535
 };
 
 Compact sc36_low_floor = {
@@ -1792,6 +1796,17 @@ Compact sc36_low_floor = {
 	383-248,	// mouseSize_x
 	255-200,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc36_floor_table[] = {
@@ -1827,7 +1842,7 @@ uint16 sc36_floor_table[] = {
 	MOVE_BABS,
 	ID_SC36_BABS,
 	GT_BABS_AMIGA,
-	65535,
+	65535
 };
 
 uint16 sc36_jukebox_on[] = {
@@ -1844,7 +1859,7 @@ uint16 sc36_jukebox_on[] = {
 	233,
 	212,
 	3,
-	0,
+	0
 };
 
 Compact sc36_door = {
@@ -1876,6 +1891,7 @@ Compact sc36_door = {
 	C_BASE_MODE,	// mode
 	SC36_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc36_col_down3[] = {
@@ -1970,7 +1986,7 @@ uint16 sc36_col_down3[] = {
 	283,
 	234,
 	29,
-	0,
+	0
 };
 
 ExtCompact sc36_jukebox_ext = {
@@ -1999,6 +2015,10 @@ ExtCompact sc36_jukebox_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc36_jukebox = {
@@ -2030,7 +2050,7 @@ Compact sc36_jukebox = {
 	C_BASE_MODE,	// mode
 	SC36_JUKEBOX_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc36_jukebox_ext,
+	&sc36_jukebox_ext
 };
 
 uint16 sc36_juke_kicked[] = {
@@ -2095,7 +2115,7 @@ uint16 sc36_juke_kicked[] = {
 	233,
 	212,
 	3,
-	0,
+	0
 };
 
 uint16 sc36_fos_up1[] = {
@@ -2208,7 +2228,7 @@ uint16 sc36_fos_up1[] = {
 	298,
 	229,
 	35,
-	0,
+	0
 };
 
 uint16 sc36_use_jukebox[] = {
@@ -2246,7 +2266,7 @@ uint16 sc36_use_jukebox[] = {
 	240,
 	210,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_col_think[] = {
@@ -2401,7 +2421,7 @@ uint16 sc36_col_think[] = {
 	219,
 	226,
 	0,
-	0,
+	0
 };
 
 uint16 bar_wipe2[] = {
@@ -2538,7 +2558,7 @@ uint16 bar_wipe2[] = {
 	391,
 	240,
 	16,
-	0,
+	0
 };
 
 Compact sc36_gal_legs = {
@@ -2551,6 +2571,26 @@ Compact sc36_gal_legs = {
 	202,	// xcood
 	262,	// ycood
 	59*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc36_col_up2[] = {
@@ -2636,7 +2676,7 @@ uint16 sc36_col_up2[] = {
 	283,
 	234,
 	26,
-	0,
+	0
 };
 
 Compact sc36_cards = {
@@ -2668,6 +2708,7 @@ Compact sc36_cards = {
 	C_BASE_MODE,	// mode
 	SC36_CARDS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc36_reach_glass[] = {
@@ -2705,7 +2746,7 @@ uint16 sc36_reach_glass[] = {
 	242,
 	226,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_juke_break[] = {
@@ -2734,7 +2775,7 @@ uint16 sc36_juke_break[] = {
 	233,
 	222,
 	3,
-	0,
+	0
 };
 
 uint16 sc36_fos_down1[] = {
@@ -2808,7 +2849,7 @@ uint16 sc36_fos_down1[] = {
 	296,
 	208,
 	22,
-	0,
+	0
 };
 
 uint16 reset_37_36[] = {
@@ -2822,7 +2863,7 @@ uint16 reset_37_36[] = {
 	208,
 	C_FRAME,
 	42+13*64,
-	65535,
+	65535
 };
 
 Compact sc36_glass = {
@@ -2844,6 +2885,17 @@ Compact sc36_glass = {
 	246-241,	// mouseSize_x
 	253-246,	// mouseSize_y
 	SC36_GLASS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc36_col_feet = {
@@ -2856,6 +2908,26 @@ Compact sc36_col_feet = {
 	219,	// xcood
 	265,	// ycood
 	48*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc36_col_blink2[] = {
@@ -2902,7 +2974,7 @@ uint16 sc36_col_blink2[] = {
 	219,
 	226,
 	16,
-	0,
+	0
 };
 
 uint16 sc36_jukebox_off[] = {
@@ -2919,7 +2991,7 @@ uint16 sc36_jukebox_off[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact sc36_band = {
@@ -2951,6 +3023,7 @@ Compact sc36_band = {
 	C_BASE_MODE,	// mode
 	SC36_BAND_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc36_sensor = {
@@ -2972,6 +3045,17 @@ Compact sc36_sensor = {
 	373-371,	// mouseSize_x
 	197-191,	// mouseSize_y
 	SC36_SENSOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc36_col_drink[] = {
@@ -3039,7 +3123,7 @@ uint16 sc36_col_drink[] = {
 	219,
 	226,
 	8,
-	0,
+	0
 };
 
 uint16 reset_juke_light[] = {
@@ -3049,7 +3133,7 @@ uint16 reset_juke_light[] = {
 	68*64,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 sc36_gal_look1[] = {
@@ -3096,7 +3180,7 @@ uint16 sc36_gal_look1[] = {
 	202,
 	238,
 	6,
-	0,
+	0
 };
 
 uint16 reset_colston[] = {
@@ -3118,7 +3202,7 @@ uint16 reset_colston[] = {
 	0,
 	C_REQUEST,
 	0,
-	65535,
+	65535
 };
 
 uint16 sc36_chip_list[] = {
@@ -3153,7 +3237,7 @@ uint16 sc36_chip_list[] = {
 	IT_SC36_GAL_TALK+DISK_13,
 	IT_SC36_CARDS+DISK_13,
 	IT_SC36_GLASS+DISK_13,
-	0,
+	0
 };
 
 uint16 sc36_juke_stuck[] = {
@@ -3164,7 +3248,7 @@ uint16 sc36_juke_stuck[] = {
 	233,
 	222,
 	3,
-	0,
+	0
 };
 
 uint16 sc36_col_blink1[] = {
@@ -3181,7 +3265,7 @@ uint16 sc36_col_blink1[] = {
 	219,
 	226,
 	0,
-	0,
+	0
 };
 
 uint32 *babs = 0;
@@ -3209,7 +3293,7 @@ uint16 bar_wipe[] = {
 	391,
 	240,
 	22,
-	0,
+	0
 };
 
 uint16 sc36_gal_look2[] = {
@@ -3259,7 +3343,7 @@ uint16 sc36_gal_look2[] = {
 	202,
 	238,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_juke_sing[] = {
@@ -3339,7 +3423,7 @@ uint16 sc36_juke_sing[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 ExtCompact sc36_colston_ext = {
@@ -3368,6 +3452,10 @@ ExtCompact sc36_colston_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc36_colston = {
@@ -3399,7 +3487,7 @@ Compact sc36_colston = {
 	C_BASE_MODE,	// mode
 	SC36_COLSTON_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc36_colston_ext,
+	&sc36_colston_ext
 };
 
 uint16 sc36_col_down1[] = {
@@ -3497,7 +3585,7 @@ uint16 sc36_col_down1[] = {
 	277,
 	210,
 	28,
-	0,
+	0
 };
 
 ExtCompact sc36_gallagher_ext = {
@@ -3526,6 +3614,10 @@ ExtCompact sc36_gallagher_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc36_gallagher = {
@@ -3557,7 +3649,7 @@ Compact sc36_gallagher = {
 	C_BASE_MODE,	// mode
 	SC36_GALLAGHER_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc36_gallagher_ext,
+	&sc36_gallagher_ext
 };
 
 uint16 sc36_col_up3[] = {
@@ -3610,7 +3702,7 @@ uint16 sc36_col_up3[] = {
 	272,
 	213,
 	15,
-	0,
+	0
 };
 
 uint16 sc36_band_anim[] = {
@@ -3675,7 +3767,7 @@ uint16 sc36_band_anim[] = {
 	276,
 	164,
 	19,
-	0,
+	0
 };
 
 uint16 sc36_col_kick[] = {
@@ -3719,7 +3811,7 @@ uint16 sc36_col_kick[] = {
 	249,
 	211,
 	0,
-	0,
+	0
 };
 
 Compact sc36_floor = {
@@ -3741,6 +3833,17 @@ Compact sc36_floor = {
 	447-184,	// mouseSize_x
 	327-256,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *sc36_walk_grid = 0;
@@ -3765,7 +3868,7 @@ uint16 sc36_dooropen[] = {
 	375,
 	183,
 	5,
-	0,
+	0
 };
 
 uint16 bar_get_drink[] = {
@@ -3854,7 +3957,7 @@ uint16 bar_get_drink[] = {
 	391,
 	240,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_gal_deal[] = {
@@ -3886,7 +3989,7 @@ uint16 sc36_gal_deal[] = {
 	202,
 	238,
 	6,
-	0,
+	0
 };
 
 uint16 bar_blink[] = {
@@ -3900,7 +4003,7 @@ uint16 bar_blink[] = {
 	391,
 	240,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_press_plate[] = {
@@ -3935,7 +4038,7 @@ uint16 sc36_press_plate[] = {
 	360,
 	186,
 	5,
-	0,
+	0
 };
 
 uint16 reset_jukebox[] = {
@@ -3949,7 +4052,7 @@ uint16 reset_jukebox[] = {
 	SC36_JUKEBOX_LOGIC,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 sc36_fast_list[] = {
@@ -3960,7 +4063,7 @@ uint16 sc36_fast_list[] = {
 	54+DISK_13,
 	135+DISK_13,
 	IT_SC36_GET_GLASS+DISK_13,
-	0,
+	0
 };
 
 uint16 sc36_col_up4[] = {
@@ -4067,7 +4170,7 @@ uint16 sc36_col_up4[] = {
 	220,
 	226,
 	30,
-	0,
+	0
 };
 
 ExtCompact sc36_barman_ext = {
@@ -4096,6 +4199,10 @@ ExtCompact sc36_barman_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc36_barman = {
@@ -4127,7 +4234,7 @@ Compact sc36_barman = {
 	C_BASE_MODE,	// mode
 	SC36_BARMAN_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc36_barman_ext,
+	&sc36_barman_ext
 };
 
 Compact sc36_exit_30 = {
@@ -4149,6 +4256,17 @@ Compact sc36_exit_30 = {
 	182-171,	// mouseSize_x
 	296-230,	// mouseSize_y
 	SC36_EXIT_30_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

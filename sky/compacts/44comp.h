@@ -30,7 +30,7 @@ namespace SkyCompact {
 uint16 sc44_chip_list[] = {
 	IT_SC44_LAYER_0+DISK_13,
 	145+DISK_13,
-	0,
+	0
 };
 
 uint32 *sc44_walk_grid = 0;
@@ -54,6 +54,17 @@ Compact sc44_rubble = {
 	250-128,	// mouseSize_x
 	310-223,	// mouseSize_y
 	SC44_RUBBLE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_45_44[] = {
@@ -65,7 +76,7 @@ uint16 reset_45_44[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 Compact sc44_grill = {
@@ -87,6 +98,17 @@ Compact sc44_grill = {
 	341-319,	// mouseSize_x
 	198-179,	// mouseSize_y
 	SC44_GRILL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc44_floor_table[] = {
@@ -100,7 +122,7 @@ uint16 sc44_floor_table[] = {
 	GT_SC44_EXIT_45,
 	0,
 	SC44_EXIT_45_WALK_ON,
-	65535,
+	65535
 };
 
 uint16 sc44_drop_down[] = {
@@ -135,7 +157,7 @@ uint16 sc44_drop_down[] = {
 	316,
 	226,
 	9,
-	0,
+	0
 };
 
 Compact sc44_exit_45 = {
@@ -157,6 +179,17 @@ Compact sc44_exit_45 = {
 	447-420,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC44_EXIT_45_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc44_fast_list[] = {
@@ -165,7 +198,7 @@ uint16 sc44_fast_list[] = {
 	52+DISK_13,
 	53+DISK_13,
 	54+DISK_13,
-	0,
+	0
 };
 
 uint16 sc44_palette[] = {
@@ -552,13 +585,13 @@ uint16 sc44_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc44_logic_list[] = {
 	ID_FOSTER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 Compact sc44_floor = {
@@ -580,6 +613,17 @@ Compact sc44_floor = {
 	447-208,	// mouseSize_x
 	327-272,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc44_mouse_list[] = {
@@ -588,7 +632,7 @@ uint16 sc44_mouse_list[] = {
 	ID_SC44_EXIT_45,
 	ID_SC44_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 reset_37_44[] = {
@@ -602,7 +646,7 @@ uint16 reset_37_44[] = {
 	186,
 	C_FRAME,
 	145*64,
-	65535,
+	65535
 };
 
 }; // namespace SkyCompact

@@ -34,7 +34,7 @@ uint16 rs_foster_13_15[] = {
 	240,
 	C_SCREEN,
 	15,
-	65535,
+	65535
 };
 
 Compact flap = {
@@ -66,6 +66,7 @@ Compact flap = {
 	C_BASE_MODE,	// mode
 	FLAP_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 weld_seq[] = {
@@ -94,7 +95,7 @@ uint16 weld_seq[] = {
 	369,
 	148,
 	7,
-	0,
+	0
 };
 
 uint16 rs_foster_15_13[] = {
@@ -108,7 +109,7 @@ uint16 rs_foster_15_13[] = {
 	ID_S13_FLOOR,
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_AR_PRIORITY,
-	65535,
+	65535
 };
 
 Compact whole_floor = {
@@ -130,6 +131,17 @@ Compact whole_floor = {
 	2000,	// mouseSize_x
 	2000,	// mouseSize_y
 	0,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s15_logic[] = {
@@ -141,7 +153,7 @@ uint16 s15_logic[] = {
 	ID_WD40,
 	177,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint32 *grid15 = 0;
@@ -184,7 +196,7 @@ uint16 flap_seq[] = {
 	1,
 	1,
 	9,
-	0,
+	0
 };
 
 uint16 s15_floor_table[] = {
@@ -208,7 +220,7 @@ uint16 s15_floor_table[] = {
 	GT_WD40,
 	ID_FLOOR_PUTTY,
 	GT_PUTTY,
-	65535,
+	65535
 };
 
 Compact s15_flooor = {
@@ -230,6 +242,17 @@ Compact s15_flooor = {
 	424-208,	// mouseSize_x
 	63,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 flip_seq[] = {
@@ -309,7 +332,7 @@ uint16 flip_seq[] = {
 	203,
 	202,
 	21,
-	0,
+	0
 };
 
 Compact skey = {
@@ -341,6 +364,7 @@ Compact skey = {
 	C_BASE_MODE,	// mode
 	SHELF_OBJECT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s15_pal[] = {
@@ -727,7 +751,7 @@ uint16 s15_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact wd40 = {
@@ -759,6 +783,7 @@ Compact wd40 = {
 	C_BASE_MODE,	// mode
 	SHELF_OBJECT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact junction_box = {
@@ -780,6 +805,17 @@ Compact junction_box = {
 	4,	// mouseSize_x
 	16,	// mouseSize_y
 	JUNCTION_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_joey_15_13[] = {
@@ -791,7 +827,7 @@ uint16 rs_joey_15_13[] = {
 	13,
 	C_PLACE,
 	ID_S13_FLOOR,
-	65535,
+	65535
 };
 
 Compact store_exit = {
@@ -813,6 +849,17 @@ Compact store_exit = {
 	9,	// mouseSize_x
 	249-184,	// mouseSize_y
 	STORE_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s15_fast_list[] = {
@@ -828,7 +875,7 @@ uint16 s15_fast_list[] = {
 	26+DISK_3,
 	93+DISK_3,
 	94+DISK_3,
-	0,
+	0
 };
 
 Compact nu_floor = {
@@ -850,6 +897,17 @@ Compact nu_floor = {
 	216+32,	// mouseSize_x
 	63,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact floor_putty = {
@@ -871,6 +929,17 @@ Compact floor_putty = {
 	5,	// mouseSize_x
 	5,	// mouseSize_y
 	FLOOR_PUTTY_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s15_mouse[] = {
@@ -884,7 +953,7 @@ uint16 s15_mouse[] = {
 	ID_S15_FLOOR,
 	ID_NU_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 joey_list_15[] = {
@@ -893,7 +962,7 @@ uint16 joey_list_15[] = {
 	216,
 	272,
 	1,
-	0,
+	0
 };
 
 uint16 get_putty_seq[] = {
@@ -928,7 +997,7 @@ uint16 get_putty_seq[] = {
 	220,
 	200,
 	5,
-	0,
+	0
 };
 
 uint16 shelf_get_seq[] = {
@@ -1005,7 +1074,7 @@ uint16 shelf_get_seq[] = {
 	283,
 	221,
 	0,
-	0,
+	0
 };
 
 uint16 s15_fake_mouse[] = {
@@ -1015,7 +1084,7 @@ uint16 s15_fake_mouse[] = {
 	ID_FLAP,
 	ID_FAKE_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s15_chip_list[] = {
@@ -1034,7 +1103,7 @@ uint16 s15_chip_list[] = {
 	148+DISK_3,
 	149+DISK_3,
 	150+DISK_3,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

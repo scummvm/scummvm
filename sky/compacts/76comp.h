@@ -29,7 +29,7 @@ namespace SkyCompact {
 
 uint16 ken_u_to_r[] = {
 	45+61*64,
-	0,
+	0
 };
 
 uint16 sc76_logic_list[] = {
@@ -55,7 +55,7 @@ uint16 sc76_logic_list[] = {
 	ID_SC76_CABINET_3,
 	ID_SC75_TONGS,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint32 *grid76 = 0;
@@ -134,7 +134,7 @@ uint16 sc76_hatch_2[] = {
 	247,
 	228,
 	11,
-	0,
+	0
 };
 
 uint16 sc76_cab2_close[] = {
@@ -148,7 +148,7 @@ uint16 sc76_cab2_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 reset_75_76[] = {
@@ -160,7 +160,7 @@ uint16 reset_75_76[] = {
 	160,
 	C_YCOOD,
 	264,
-	65535,
+	65535
 };
 
 uint16 sc76_chip_list[] = {
@@ -195,7 +195,7 @@ uint16 sc76_chip_list[] = {
 	IT_SC76_HATCH_3+DISK_10+0X8000,
 	IT_SC76_PUNCH+DISK_10,
 	IT_SC76_AND2_BABBLE+DISK_10,
-	0,
+	0
 };
 
 uint16 ken_right[] = {
@@ -239,7 +239,7 @@ uint16 ken_right[] = {
 	39+61*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 ken_st_up[] = {
@@ -247,12 +247,12 @@ uint16 ken_st_up[] = {
 	1,
 	0,
 	44,
-	0,
+	0
 };
 
 uint16 ken_d_to_l[] = {
 	41+61*64,
-	0,
+	0
 };
 
 uint8 ken_auto[64];
@@ -298,7 +298,7 @@ uint16 ken_up[] = {
 	9+61*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 ken_down[] = {
@@ -342,7 +342,7 @@ uint16 ken_down[] = {
 	19+61*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 ken_left[] = {
@@ -386,7 +386,7 @@ uint16 ken_left[] = {
 	29+61*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 ken_st_down[] = {
@@ -394,7 +394,7 @@ uint16 ken_st_down[] = {
 	1,
 	0,
 	40,
-	0,
+	0
 };
 
 uint16 ken_st_left[] = {
@@ -402,7 +402,7 @@ uint16 ken_st_left[] = {
 	1,
 	0,
 	42,
-	0,
+	0
 };
 
 uint16 ken_st_right[] = {
@@ -410,65 +410,65 @@ uint16 ken_st_right[] = {
 	1,
 	0,
 	46,
-	0,
+	0
 };
 
 uint16 ken_u_to_d[] = {
 	43+61*64,
 	42+61*64,
 	41+61*64,
-	0,
+	0
 };
 
 uint16 ken_u_to_l[] = {
 	43+61*64,
-	0,
+	0
 };
 
 uint16 ken_d_to_u[] = {
 	47+61*64,
 	46+61*64,
 	45+61*64,
-	0,
+	0
 };
 
 uint16 ken_d_to_r[] = {
 	47+61*64,
-	0,
+	0
 };
 
 uint16 ken_l_to_u[] = {
 	43+61*64,
-	0,
+	0
 };
 
 uint16 ken_l_to_d[] = {
 	41+61*64,
-	0,
+	0
 };
 
 uint16 ken_l_to_r[] = {
 	41+61*64,
 	40+61*64,
 	47+61*64,
-	0,
+	0
 };
 
 uint16 ken_r_to_u[] = {
 	45+61*64,
-	0,
+	0
 };
 
 uint16 ken_r_to_d[] = {
 	47+61*64,
-	0,
+	0
 };
 
 uint16 ken_r_to_l[] = {
 	45+61*64,
 	44+61*64,
 	43+61*64,
-	0,
+	0
 };
 
 TurnTable ken_turnTable0 = {
@@ -506,7 +506,7 @@ TurnTable ken_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet ken_megaSet0 = {
@@ -523,7 +523,7 @@ MegaSet ken_megaSet0 = {
 	ken_st_left,	// standLeft
 	ken_st_right,	// standRight
 	0,	// standTalk
-	&ken_turnTable0,
+	&ken_turnTable0
 };
 
 ExtCompact ken_ext = {
@@ -553,6 +553,9 @@ ExtCompact ken_ext = {
 	ken_auto,	// animScratch
 	0,	// megaSet
 	&ken_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact ken = {
@@ -584,7 +587,7 @@ Compact ken = {
 	C_BASE_MODE,	// mode
 	KEN_START_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&ken_ext,
+	&ken_ext
 };
 
 uint16 sc76_floor_table[] = {
@@ -624,7 +627,7 @@ uint16 sc76_floor_table[] = {
 	GT_SC76_ANYTHING,
 	ID_JOEY_PARK,
 	GT_JOEY_PARK,
-	65535,
+	65535
 };
 
 Compact sc76_floor = {
@@ -646,6 +649,17 @@ Compact sc76_floor = {
 	391-175,	// mouseSize_x
 	327-255,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc76_light3 = {
@@ -677,6 +691,7 @@ Compact sc76_light3 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc76_light9 = {
@@ -708,6 +723,7 @@ Compact sc76_light9 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT9_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_light1_anim[] = {
@@ -754,7 +770,7 @@ uint16 sc76_light1_anim[] = {
 	228,
 	182,
 	1,
-	0,
+	0
 };
 
 uint16 sc76_light2_anim[] = {
@@ -795,7 +811,7 @@ uint16 sc76_light2_anim[] = {
 	232,
 	182,
 	0,
-	0,
+	0
 };
 
 Compact sc76_light6 = {
@@ -827,6 +843,7 @@ Compact sc76_light6 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT6_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc76_board_3 = {
@@ -858,6 +875,7 @@ Compact sc76_board_3 = {
 	C_BASE_MODE,	// mode
 	SC76_BOARD_3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_shut_cab[] = {
@@ -907,7 +925,7 @@ uint16 sc76_shut_cab[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc76_light3_anim[] = {
@@ -954,7 +972,7 @@ uint16 sc76_light3_anim[] = {
 	278,
 	182,
 	0,
-	0,
+	0
 };
 
 Compact sc76_light1 = {
@@ -986,6 +1004,7 @@ Compact sc76_light1 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_low_get[] = {
@@ -1035,7 +1054,7 @@ uint16 sc76_low_get[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc76_fostfall[] = {
@@ -1079,7 +1098,7 @@ uint16 sc76_fostfall[] = {
 	382,
 	262,
 	11,
-	0,
+	0
 };
 
 Compact sc76_door77 = {
@@ -1101,6 +1120,17 @@ Compact sc76_door77 = {
 	392-377,	// mouseSize_x
 	271-208,	// mouseSize_y
 	SC76_DOOR77_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc76_board_1 = {
@@ -1132,6 +1162,7 @@ Compact sc76_board_1 = {
 	C_BASE_MODE,	// mode
 	SC76_BOARD_1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc76_light8 = {
@@ -1163,6 +1194,7 @@ Compact sc76_light8 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT8_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc76_android_1 = {
@@ -1194,6 +1226,7 @@ Compact sc76_android_1 = {
 	C_BASE_MODE,	// mode
 	SC76_ANDROID_1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_cab1_open[] = {
@@ -1207,7 +1240,7 @@ uint16 sc76_cab1_open[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 sc76_hatch_1[] = {
@@ -1320,7 +1353,7 @@ uint16 sc76_hatch_1[] = {
 	224,
 	204,
 	0,
-	0,
+	0
 };
 
 Compact sc76_console_2 = {
@@ -1342,6 +1375,17 @@ Compact sc76_console_2 = {
 	316-299,	// mouseSize_x
 	244-210,	// mouseSize_y
 	SC76_CONSOLE_2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 ExtCompact sc76_android_3_ext = {
@@ -1370,6 +1414,10 @@ ExtCompact sc76_android_3_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc76_android_3 = {
@@ -1401,7 +1449,7 @@ Compact sc76_android_3 = {
 	C_BASE_MODE,	// mode
 	SC76_ANDROID_3_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc76_android_3_ext,
+	&sc76_android_3_ext
 };
 
 Compact sc76_console_1 = {
@@ -1423,6 +1471,17 @@ Compact sc76_console_1 = {
 	260-244,	// mouseSize_x
 	244-210,	// mouseSize_y
 	SC76_CONSOLE_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc76_fast_list[] = {
@@ -1432,7 +1491,7 @@ uint16 sc76_fast_list[] = {
 	53+DISK_10,
 	54+DISK_10,
 	268+DISK_10,
-	0,
+	0
 };
 
 ExtCompact sc76_android_2_ext = {
@@ -1461,6 +1520,10 @@ ExtCompact sc76_android_2_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc76_android_2 = {
@@ -1492,7 +1555,7 @@ Compact sc76_android_2 = {
 	C_BASE_MODE,	// mode
 	SC76_ANDROID_2_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc76_android_2_ext,
+	&sc76_android_2_ext
 };
 
 uint16 sc76_cab1_close[] = {
@@ -1506,7 +1569,7 @@ uint16 sc76_cab1_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact sc76_light5 = {
@@ -1538,6 +1601,7 @@ Compact sc76_light5 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT5_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc76_board_2 = {
@@ -1569,6 +1633,7 @@ Compact sc76_board_2 = {
 	C_BASE_MODE,	// mode
 	SC76_BOARD_2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_light9_anim[] = {
@@ -1609,7 +1674,7 @@ uint16 sc76_light9_anim[] = {
 	357,
 	239,
 	10,
-	0,
+	0
 };
 
 uint16 sc76_cab3_open[] = {
@@ -1623,7 +1688,7 @@ uint16 sc76_cab3_open[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 Compact sc76_light7 = {
@@ -1655,6 +1720,7 @@ Compact sc76_light7 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT7_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc76_light4 = {
@@ -1686,6 +1752,7 @@ Compact sc76_light4 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_mouse_list[] = {
@@ -1706,7 +1773,7 @@ uint16 sc76_mouse_list[] = {
 	ID_SC76_DOOR77,
 	ID_SC76_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc76_joey_list[] = {
@@ -1725,7 +1792,7 @@ uint16 sc76_joey_list[] = {
 	272,
 	279,
 	0,
-	0,
+	0
 };
 
 uint16 reset_77_76[] = {
@@ -1737,7 +1804,7 @@ uint16 reset_77_76[] = {
 	408,
 	C_YCOOD,
 	272,
-	65535,
+	65535
 };
 
 uint16 sc76_light5_anim[] = {
@@ -1784,7 +1851,7 @@ uint16 sc76_light5_anim[] = {
 	323,
 	182,
 	0,
-	0,
+	0
 };
 
 uint16 sc76_light4_anim[] = {
@@ -1831,7 +1898,7 @@ uint16 sc76_light4_anim[] = {
 	282,
 	182,
 	0,
-	0,
+	0
 };
 
 uint16 sc76_hatch_3[] = {
@@ -1905,7 +1972,7 @@ uint16 sc76_hatch_3[] = {
 	307,
 	220,
 	13,
-	0,
+	0
 };
 
 Compact sc76_cabinet_1 = {
@@ -1937,6 +2004,7 @@ Compact sc76_cabinet_1 = {
 	C_BASE_MODE,	// mode
 	SC76_CABINET_1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_punch[] = {
@@ -2001,7 +2069,7 @@ uint16 sc76_punch[] = {
 	337,
 	220,
 	15,
-	0,
+	0
 };
 
 uint16 sc76_cab2_open[] = {
@@ -2015,7 +2083,7 @@ uint16 sc76_cab2_open[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 sc76_light7_anim[] = {
@@ -2059,7 +2127,7 @@ uint16 sc76_light7_anim[] = {
 	247,
 	239,
 	9,
-	0,
+	0
 };
 
 Compact sc76_cabinet_3 = {
@@ -2091,6 +2159,7 @@ Compact sc76_cabinet_3 = {
 	C_BASE_MODE,	// mode
 	SC76_CABINET_3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc76_console_3 = {
@@ -2112,6 +2181,17 @@ Compact sc76_console_3 = {
 	369-350,	// mouseSize_x
 	244-210,	// mouseSize_y
 	SC76_CONSOLE_3_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc76_open_cab[] = {
@@ -2164,7 +2244,7 @@ uint16 sc76_open_cab[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc76_palette[] = {
@@ -2551,7 +2631,7 @@ uint16 sc76_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact sc76_light2 = {
@@ -2583,6 +2663,7 @@ Compact sc76_light2 = {
 	C_BASE_MODE,	// mode
 	SC76_LIGHT2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_light8_anim[] = {
@@ -2629,7 +2710,7 @@ uint16 sc76_light8_anim[] = {
 	304,
 	239,
 	11,
-	0,
+	0
 };
 
 uint16 sc76_cab3_close[] = {
@@ -2643,7 +2724,7 @@ uint16 sc76_cab3_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact sc76_cabinet_2 = {
@@ -2675,6 +2756,7 @@ Compact sc76_cabinet_2 = {
 	C_BASE_MODE,	// mode
 	SC76_CABINET_2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc76_light6_anim[] = {
@@ -2697,7 +2779,7 @@ uint16 sc76_light6_anim[] = {
 	327,
 	182,
 	2,
-	0,
+	0
 };
 
 Compact sc76_door75 = {
@@ -2719,6 +2801,17 @@ Compact sc76_door75 = {
 	190-174,	// mouseSize_x
 	275-210,	// mouseSize_y
 	SC76_DOOR75_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

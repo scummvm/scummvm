@@ -48,6 +48,17 @@ Compact link_23 = {
 	212-191,	// mouseSize_x
 	276-236,	// mouseSize_y
 	LINK_23_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s23_chip_list[] = {
@@ -58,7 +69,7 @@ uint16 s23_chip_list[] = {
 	24+DISK_8,
 	23+DISK_8,
 	25+DISK_8,
-	0,
+	0
 };
 
 Compact sculpture = {
@@ -80,6 +91,17 @@ Compact sculpture = {
 	309-274,	// mouseSize_x
 	278-235,	// mouseSize_y
 	SCULPTURE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact wreck_23 = {
@@ -101,6 +123,17 @@ Compact wreck_23 = {
 	4242,	// mouseSize_x
 	4242,	// mouseSize_y
 	WRECK_23_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact anchor_exit_23 = {
@@ -122,6 +155,17 @@ Compact anchor_exit_23 = {
 	12,	// mouseSize_x
 	299-219,	// mouseSize_y
 	ANCHOR23_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact bin_23 = {
@@ -143,6 +187,17 @@ Compact bin_23 = {
 	155-127,	// mouseSize_x
 	4242,	// mouseSize_y
 	BIN_23_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s23_pal[] = {
@@ -529,7 +584,7 @@ uint16 s23_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 s23_logic[] = {
@@ -542,7 +597,7 @@ uint16 s23_logic[] = {
 	ID_LIFT_29,
 	ID_GALLAGER_BEL,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 s23_mouse[] = {
@@ -557,7 +612,7 @@ uint16 s23_mouse[] = {
 	ID_WRECK_23,
 	ID_S23_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact small_exit_23 = {
@@ -579,6 +634,17 @@ Compact small_exit_23 = {
 	227-217,	// mouseSize_x
 	250-190,	// mouseSize_y
 	SML_EXIT_S23_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact travel_exit_23 = {
@@ -600,6 +666,17 @@ Compact travel_exit_23 = {
 	342-315,	// mouseSize_x
 	246-189,	// mouseSize_y
 	TRAVEL_23_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s23_fast_list[] = {
@@ -609,7 +686,7 @@ uint16 s23_fast_list[] = {
 	53,
 	54,
 	135,
-	0,
+	0
 };
 
 Compact left_exit_23 = {
@@ -631,6 +708,17 @@ Compact left_exit_23 = {
 	10,	// mouseSize_x
 	288-226,	// mouseSize_y
 	EL23_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s23_floor_table[] = {
@@ -660,7 +748,7 @@ uint16 s23_floor_table[] = {
 	GT_WRECK_23,
 	ID_SMALL_23,
 	GT_SMALL_23,
-	65535,
+	65535
 };
 
 Compact s23_floor = {
@@ -682,6 +770,17 @@ Compact s23_floor = {
 	1000,	// mouseSize_x
 	1000,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_29_23[] = {
@@ -693,7 +792,7 @@ uint16 rs_foster_29_23[] = {
 	23,
 	C_PLACE,
 	ID_S23_FLOOR,
-	65535,
+	65535
 };
 
 }; // namespace SkyCompact

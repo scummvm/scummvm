@@ -34,7 +34,7 @@ uint16 sc34_fast_list[] = {
 	53+DISK_14,
 	54+DISK_14,
 	135+DISK_14,
-	0,
+	0
 };
 
 uint16 sc34_mouse_list[] = {
@@ -46,7 +46,7 @@ uint16 sc34_mouse_list[] = {
 	ID_SC34_FLOOR,
 	ID_SC32_LIFT,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc34_secateurs = {
@@ -78,6 +78,7 @@ Compact sc34_secateurs = {
 	C_BASE_MODE,	// mode
 	SC34_SECATEURS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint32 *sc34_walk_grid = 0;
@@ -89,7 +90,7 @@ uint16 sc34_logic_list[] = {
 	ID_SC34_SECATEURS,
 	ID_SC32_LIFT,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc34_get_secs[] = {
@@ -121,7 +122,7 @@ uint16 sc34_get_secs[] = {
 	248,
 	208,
 	0,
-	0,
+	0
 };
 
 uint16 sc34_chip_list[] = {
@@ -132,7 +133,7 @@ uint16 sc34_chip_list[] = {
 	IT_SC34_GET_SECS+DISK_14,
 	IT_SC34_STAIRS1+DISK_14,
 	IT_SC34_STAIRS2+DISK_14,
-	0,
+	0
 };
 
 uint16 reset_33_34[] = {
@@ -144,7 +145,7 @@ uint16 reset_33_34[] = {
 	168,
 	C_YCOOD,
 	272,
-	65535,
+	65535
 };
 
 uint16 sc34_stairs2[] = {
@@ -251,7 +252,7 @@ uint16 sc34_stairs2[] = {
 	324,
 	218,
 	3,
-	0,
+	0
 };
 
 uint16 sc34_floor_table[] = {
@@ -269,7 +270,7 @@ uint16 sc34_floor_table[] = {
 	GT_SC34_MAP,
 	ID_SC34_BRICKS,
 	GT_SC34_BRICKS,
-	65535,
+	65535
 };
 
 Compact sc34_floor = {
@@ -291,6 +292,17 @@ Compact sc34_floor = {
 	343-208,	// mouseSize_x
 	311-248,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc34_bricks = {
@@ -312,6 +324,17 @@ Compact sc34_bricks = {
 	410-378,	// mouseSize_x
 	272-190,	// mouseSize_y
 	SC34_BRICKS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc34_stairs1[] = {
@@ -445,7 +468,7 @@ uint16 sc34_stairs1[] = {
 	380,
 	251,
 	0,
-	0,
+	0
 };
 
 Compact sc34_tkt_machine = {
@@ -467,6 +490,17 @@ Compact sc34_tkt_machine = {
 	270-217,	// mouseSize_x
 	226-195,	// mouseSize_y
 	SC34_TKT_MACHINE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc34_map = {
@@ -488,6 +522,17 @@ Compact sc34_map = {
 	321-276,	// mouseSize_x
 	220-185,	// mouseSize_y
 	SC34_MAP_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc34_palette[] = {
@@ -874,7 +919,7 @@ uint16 sc34_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact sc34_door = {
@@ -896,6 +941,17 @@ Compact sc34_door = {
 	206-188,	// mouseSize_x
 	275-215,	// mouseSize_y
 	SC34_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

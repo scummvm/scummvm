@@ -36,7 +36,7 @@ uint16 rs_foster_19_28[] = {
 	28,
 	C_PLACE,
 	ID_S28_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s19_mouse[] = {
@@ -47,7 +47,7 @@ uint16 s19_mouse[] = {
 	ID_SMALL_19,
 	ID_S19_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s19_floor_table[] = {
@@ -67,7 +67,7 @@ uint16 s19_floor_table[] = {
 	GT_TOP_RIGHT_19,
 	12289,
 	GET_TO_UCHAR,
-	65535,
+	65535
 };
 
 Compact s19_floor = {
@@ -89,6 +89,17 @@ Compact s19_floor = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_28_sml_19[] = {
@@ -102,7 +113,7 @@ uint16 rs_28_sml_19[] = {
 	ID_S19_FLOOR,
 	C_FRAME,
 	44+12*64,
-	65535,
+	65535
 };
 
 uint16 s19_logic[] = {
@@ -115,7 +126,7 @@ uint16 s19_logic[] = {
 	ID_LIFT_29,
 	12289,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 Compact right_exit_19 = {
@@ -137,6 +148,17 @@ Compact right_exit_19 = {
 	30,	// mouseSize_x
 	4242,	// mouseSize_y
 	ER19_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 ExtCompact useless_char_ext = {
@@ -165,6 +187,10 @@ ExtCompact useless_char_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact useless_char = {
@@ -196,7 +222,7 @@ Compact useless_char = {
 	0,	// mode
 	UCHAR_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&useless_char_ext,
+	&useless_char_ext
 };
 
 Compact left_exit_19 = {
@@ -218,6 +244,17 @@ Compact left_exit_19 = {
 	10,	// mouseSize_x
 	277-211,	// mouseSize_y
 	EL19_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 joey_list_s19[] = {
@@ -226,7 +263,7 @@ uint16 joey_list_s19[] = {
 	240,
 	304,
 	1,
-	0,
+	0
 };
 
 uint16 rs_foster_28_19[] = {
@@ -238,7 +275,7 @@ uint16 rs_foster_28_19[] = {
 	19,
 	C_PLACE,
 	ID_S19_FLOOR,
-	65535,
+	65535
 };
 
 Compact top_right_19 = {
@@ -260,6 +297,17 @@ Compact top_right_19 = {
 	30,	// mouseSize_x
 	265-137,	// mouseSize_y
 	TOP_R19_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid19 = 0;
@@ -648,7 +696,7 @@ uint16 s19_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 s19_chip_list[] = {
@@ -660,7 +708,7 @@ uint16 s19_chip_list[] = {
 	74+DISK_9,
 	75+DISK_9,
 	16+DISK_9,
-	0,
+	0
 };
 
 uint16 s19_fast_list[] = {
@@ -670,7 +718,7 @@ uint16 s19_fast_list[] = {
 	53,
 	54,
 	135,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

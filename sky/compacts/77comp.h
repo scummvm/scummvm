@@ -44,7 +44,7 @@ uint16 sc77_fpushl_2[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc77_palette[] = {
@@ -431,7 +431,7 @@ uint16 sc77_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact sc77_big_door = {
@@ -463,6 +463,7 @@ Compact sc77_big_door = {
 	C_BASE_MODE,	// mode
 	SC77_BIG_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc77_fpushl_1[] = {
@@ -488,7 +489,7 @@ uint16 sc77_fpushl_1[] = {
 	1,
 	1,
 	6,
-	0,
+	0
 };
 
 uint16 sc77_fast_list[] = {
@@ -498,7 +499,7 @@ uint16 sc77_fast_list[] = {
 	53+DISK_10,
 	54+DISK_10,
 	268+DISK_10,
-	0,
+	0
 };
 
 uint16 sc77_logic_list[] = {
@@ -508,7 +509,7 @@ uint16 sc77_logic_list[] = {
 	ID_SC75_TONGS,
 	ID_SC67_PULSE1,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc77_door_open[] = {
@@ -537,7 +538,7 @@ uint16 sc77_door_open[] = {
 	380,
 	197,
 	7,
-	0,
+	0
 };
 
 uint16 sc77_chip_list[] = {
@@ -552,7 +553,7 @@ uint16 sc77_chip_list[] = {
 	IT_SC77_KPUSHR+DISK_10,
 	IT_SC77_STRETCH+DISK_10,
 	102+DISK_10,
-	0,
+	0
 };
 
 uint32 *grid77 = 0;
@@ -566,7 +567,7 @@ uint16 reset_78_77[] = {
 	408,
 	C_YCOOD,
 	264,
-	65535,
+	65535
 };
 
 uint16 sc77_stretch[] = {
@@ -757,7 +758,7 @@ uint16 sc77_stretch[] = {
 	361,
 	224,
 	9,
-	0,
+	0
 };
 
 uint16 sc77_joey_list[] = {
@@ -771,7 +772,7 @@ uint16 sc77_joey_list[] = {
 	264,
 	271,
 	0,
-	0,
+	0
 };
 
 uint16 sc77_mouse_list[] = {
@@ -784,7 +785,7 @@ uint16 sc77_mouse_list[] = {
 	ID_SC77_BIG_DOOR,
 	ID_SC77_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 reset_76_77[] = {
@@ -796,7 +797,7 @@ uint16 reset_76_77[] = {
 	152,
 	C_YCOOD,
 	264,
-	65535,
+	65535
 };
 
 uint16 sc77_fpushr_2[] = {
@@ -813,7 +814,7 @@ uint16 sc77_fpushr_2[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc77_floor_table[] = {
@@ -839,7 +840,7 @@ uint16 sc77_floor_table[] = {
 	GT_JOEY_PARK,
 	ID_KEN,
 	GT_SC77_STUCK_KEN,
-	65535,
+	65535
 };
 
 uint16 sc77_kpushr_2[] = {
@@ -856,7 +857,7 @@ uint16 sc77_kpushr_2[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact sc77_tank_1 = {
@@ -878,6 +879,17 @@ Compact sc77_tank_1 = {
 	281-199,	// mouseSize_x
 	265-157,	// mouseSize_y
 	SC77_TANKS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc77_fpushr_1[] = {
@@ -897,7 +909,7 @@ uint16 sc77_fpushr_1[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 Compact sc77_tank_2 = {
@@ -919,6 +931,17 @@ Compact sc77_tank_2 = {
 	365-289,	// mouseSize_x
 	265-157,	// mouseSize_y
 	SC77_TANKS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc77_floor = {
@@ -940,6 +963,17 @@ Compact sc77_floor = {
 	382-188,	// mouseSize_x
 	280-262,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc77_hand_2 = {
@@ -961,6 +995,17 @@ Compact sc77_hand_2 = {
 	400-393,	// mouseSize_x
 	251-236,	// mouseSize_y
 	SC77_HAND_2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc77_hand_1 = {
@@ -982,6 +1027,17 @@ Compact sc77_hand_1 = {
 	371-364,	// mouseSize_x
 	233-222,	// mouseSize_y
 	SC77_HAND_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc77_kpushr_1[] = {
@@ -1001,7 +1057,7 @@ uint16 sc77_kpushr_1[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 Compact sc77_door76 = {
@@ -1023,6 +1079,17 @@ Compact sc77_door76 = {
 	190-174,	// mouseSize_x
 	270-205,	// mouseSize_y
 	SC77_DOOR76_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

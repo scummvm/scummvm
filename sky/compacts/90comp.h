@@ -64,6 +64,7 @@ Compact door_r90f = {
 	C_BASE_MODE,	// mode
 	DOOR_R90F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_r90 = {
@@ -95,6 +96,7 @@ Compact door_r90 = {
 	C_BASE_MODE,	// mode
 	DOOR_R90_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc90_floor_table[] = {
@@ -112,7 +114,7 @@ uint16 sc90_floor_table[] = {
 	RET_FAIL,
 	ID_EYEBALL_90,
 	GET_TO_EYEBALL_90,
-	65535,
+	65535
 };
 
 Compact sc90_floor = {
@@ -134,6 +136,17 @@ Compact sc90_floor = {
 	269,	// mouseSize_x
 	53,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc90_smfloor_table[] = {
@@ -151,7 +164,7 @@ uint16 sc90_smfloor_table[] = {
 	GET_TO_OSCILLATOR,
 	ID_EYEBALL_90,
 	RET_FAIL,
-	65535,
+	65535
 };
 
 uint16 eye90_zap_anim[] = {
@@ -174,7 +187,7 @@ uint16 eye90_zap_anim[] = {
 	247,
 	206,
 	5,
-	0,
+	0
 };
 
 uint16 door_l90_anim[] = {
@@ -248,7 +261,7 @@ uint16 door_l90_anim[] = {
 	212,
 	136,
 	22,
-	0,
+	0
 };
 
 Compact door_l90 = {
@@ -280,6 +293,7 @@ Compact door_l90 = {
 	C_BASE_MODE,	// mode
 	DOOR_L90_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 get_join[] = {
@@ -302,7 +316,7 @@ uint16 get_join[] = {
 	336,
 	272,
 	5,
-	0,
+	0
 };
 
 uint16 sc90_mouse[] = {
@@ -316,7 +330,7 @@ uint16 sc90_mouse[] = {
 	ID_SC90_SMFLOOR,
 	ID_SC90_FLOOR,
 	0XFFFF,
-	ID_LINC_MENU_MOUSE,
+	ID_LINC_MENU_MOUSE
 };
 
 uint16 door_l90f_anim[] = {
@@ -390,7 +404,7 @@ uint16 door_l90f_anim[] = {
 	207,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 sc90_logic[] = {
@@ -403,7 +417,7 @@ uint16 sc90_logic[] = {
 	ID_DOOR_R90F,
 	ID_EYEBALL_90,
 	0XFFFF,
-	ID_LINC_MENU_LOGIC,
+	ID_LINC_MENU_LOGIC
 };
 
 uint16 eye_90_table[] = {
@@ -598,7 +612,7 @@ uint16 eye_90_table[] = {
 	8,
 	9,
 	9,
-	10,
+	10
 };
 
 Compact eyeball_90 = {
@@ -630,6 +644,7 @@ Compact eyeball_90 = {
 	C_BASE_MODE,	// mode
 	EYEBALL_90_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc90_smfloor = {
@@ -651,6 +666,17 @@ Compact sc90_smfloor = {
 	69,	// mouseSize_x
 	11,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact join_object = {
@@ -682,6 +708,7 @@ Compact join_object = {
 	C_BASE_MODE,	// mode
 	JOIN_OBJECT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact door_l90f = {
@@ -713,6 +740,7 @@ Compact door_l90f = {
 	C_BASE_MODE,	// mode
 	DOOR_L90F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact oscillator = {
@@ -744,6 +772,7 @@ Compact oscillator = {
 	C_BASE_MODE,	// mode
 	OSCILLATOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_90_91[] = {
@@ -755,7 +784,7 @@ uint16 rs_foster_90_91[] = {
 	184,
 	C_YCOOD,
 	264,
-	65535,
+	65535
 };
 
 uint16 rs_foster_90_94[] = {
@@ -769,7 +798,7 @@ uint16 rs_foster_90_94[] = {
 	264,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 door_r90_anim[] = {
@@ -843,7 +872,7 @@ uint16 door_r90_anim[] = {
 	360,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 door_r90f_anim[] = {
@@ -917,7 +946,7 @@ uint16 door_r90f_anim[] = {
 	364,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 get_oscill[] = {
@@ -943,7 +972,7 @@ uint16 get_oscill[] = {
 	241,
 	259,
 	5,
-	0,
+	0
 };
 
 uint16 blind_eye[] = {
@@ -972,7 +1001,7 @@ uint16 blind_eye[] = {
 	268,
 	221,
 	7,
-	0,
+	0
 };
 
 uint16 see_eye[] = {
@@ -1007,7 +1036,7 @@ uint16 see_eye[] = {
 	270,
 	223,
 	9,
-	0,
+	0
 };
 
 uint16 pal90[] = {
@@ -1394,7 +1423,7 @@ uint16 pal90[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 pal90a[] = {
@@ -1429,7 +1458,7 @@ uint16 pal90a[] = {
 	2304,
 	1536,
 	3737,
-	895,
+	895
 };
 
 uint16 pal90b[] = {
@@ -1464,7 +1493,7 @@ uint16 pal90b[] = {
 	2048,
 	1280,
 	2935,
-	15,
+	15
 };
 
 uint16 chip_list_sc90[] = {
@@ -1475,7 +1504,7 @@ uint16 chip_list_sc90[] = {
 	IT_DOOR_R90+DISK_4,
 	IT_DOOR_R90F+DISK_4,
 	IT_FOST_DIE90+DISK_4,
-	0,
+	0
 };
 
 uint16 get_eye[] = {
@@ -1501,7 +1530,7 @@ uint16 get_eye[] = {
 	276,
 	147,
 	0,
-	0,
+	0
 };
 
 uint16 fost_die90[] = {
@@ -1563,7 +1592,7 @@ uint16 fost_die90[] = {
 	150,
 	198,
 	17,
-	0,
+	0
 };
 
 void *data_6[] = {
@@ -1823,7 +1852,7 @@ void *data_6[] = {
 	&report2_menu,
 	&adjust2_menu,
 	linc_menu_logic,
-	linc_menu_mouse,
+	linc_menu_mouse
 };
 
 uint32 *sec6_compacts = 0;

@@ -40,7 +40,7 @@ uint16 reset_start_31[] = {
 	40+12*64,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 sc31_pull_rope[] = {
@@ -135,7 +135,7 @@ uint16 sc31_pull_rope[] = {
 	225,
 	226,
 	9,
-	0,
+	0
 };
 
 uint16 sc31_guard_move[] = {
@@ -239,7 +239,7 @@ uint16 sc31_guard_move[] = {
 	333,
 	238,
 	13,
-	0,
+	0
 };
 
 Compact sc31_exit_39 = {
@@ -261,6 +261,17 @@ Compact sc31_exit_39 = {
 	375-347,	// mouseSize_x
 	232-170,	// mouseSize_y
 	SC31_EXIT_39_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc31_plank_flick[] = {
@@ -313,7 +324,7 @@ uint16 sc31_plank_flick[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc31_fast_list[] = {
@@ -326,7 +337,7 @@ uint16 sc31_fast_list[] = {
 	IT_SC31_GRID_1+DISK_12,
 	IT_SC31_GUARD_TALK+DISK_12,
 	IT_SC31_DROP_ROPE+DISK_12,
-	0,
+	0
 };
 
 uint16 sc31_dog_swim[] = {
@@ -400,7 +411,7 @@ uint16 sc31_dog_swim[] = {
 	341,
 	288,
 	22,
-	0,
+	0
 };
 
 uint16 sc31_bisc_drop[] = {
@@ -450,7 +461,7 @@ uint16 sc31_bisc_drop[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 reset_39_31[] = {
@@ -462,7 +473,7 @@ uint16 reset_39_31[] = {
 	368,
 	C_YCOOD,
 	224,
-	65535,
+	65535
 };
 
 uint16 sc31_climb_plank[] = {
@@ -503,7 +514,7 @@ uint16 sc31_climb_plank[] = {
 	233,
 	278,
 	11,
-	0,
+	0
 };
 
 uint16 sc31_bricks_up[] = {
@@ -565,7 +576,7 @@ uint16 sc31_bricks_up[] = {
 	205,
 	243,
 	2,
-	0,
+	0
 };
 
 Compact sc31_plank = {
@@ -597,6 +608,7 @@ Compact sc31_plank = {
 	C_BASE_MODE,	// mode
 	SC31_PLANK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc31_lift_close[] = {
@@ -628,7 +640,7 @@ uint16 sc31_lift_close[] = {
 	266,
 	179,
 	0,
-	0,
+	0
 };
 
 uint16 sc31_get_bricks[] = {
@@ -666,7 +678,7 @@ uint16 sc31_get_bricks[] = {
 	229,
 	245,
 	1,
-	0,
+	0
 };
 
 uint16 sc31_rope_pulled[] = {
@@ -728,7 +740,7 @@ uint16 sc31_rope_pulled[] = {
 	218,
 	228,
 	9,
-	0,
+	0
 };
 
 uint32 *sc31_walk_grid = 0;
@@ -762,6 +774,7 @@ Compact sc31_rope = {
 	C_BASE_MODE,	// mode
 	SC31_ROPE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc31_palette[] = {
@@ -1148,7 +1161,7 @@ uint16 sc31_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact sc31_exit_30 = {
@@ -1170,6 +1183,17 @@ Compact sc31_exit_30 = {
 	140-128,	// mouseSize_x
 	290-162,	// mouseSize_y
 	SC31_EXIT_30_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc31_put_bisc[] = {
@@ -1237,7 +1261,7 @@ uint16 sc31_put_bisc[] = {
 	224,
 	240,
 	0,
-	0,
+	0
 };
 
 uint16 sc31_bricks_fall[] = {
@@ -1290,7 +1314,7 @@ uint16 sc31_bricks_fall[] = {
 	205,
 	271,
 	1,
-	0,
+	0
 };
 
 uint16 sc31_plank_raise[] = {
@@ -1328,7 +1352,7 @@ uint16 sc31_plank_raise[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc31_bisc_placed[] = {
@@ -1348,7 +1372,7 @@ uint16 sc31_bisc_placed[] = {
 	1,
 	1,
 	105*64,
-	0,
+	0
 };
 
 uint16 sc31_joey_fall[] = {
@@ -1383,7 +1407,7 @@ uint16 sc31_joey_fall[] = {
 	222,
 	219,
 	9,
-	0,
+	0
 };
 
 uint16 sc31_plank_drop[] = {
@@ -1454,7 +1478,7 @@ uint16 sc31_plank_drop[] = {
 	1,
 	1,
 	5,
-	0,
+	0
 };
 
 uint16 sc31_lift_open[] = {
@@ -1486,7 +1510,7 @@ uint16 sc31_lift_open[] = {
 	266,
 	179,
 	8,
-	0,
+	0
 };
 
 uint16 sc31_get_board[] = {
@@ -1518,7 +1542,7 @@ uint16 sc31_get_board[] = {
 	248,
 	208,
 	0,
-	0,
+	0
 };
 
 uint16 sc31_rope_lower[] = {
@@ -1553,7 +1577,7 @@ uint16 sc31_rope_lower[] = {
 	218,
 	228,
 	7,
-	0,
+	0
 };
 
 uint16 sc31_drop_rope[] = {
@@ -1639,7 +1663,7 @@ uint16 sc31_drop_rope[] = {
 	225,
 	225,
 	11,
-	0,
+	0
 };
 
 uint16 sc31_guard_reach[] = {
@@ -1674,7 +1698,7 @@ uint16 sc31_guard_reach[] = {
 	1,
 	1,
 	131*64,
-	0,
+	0
 };
 
 uint16 reset_32_31[] = {
@@ -1686,7 +1710,7 @@ uint16 reset_32_31[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	256,
-	65535,
+	65535
 };
 
 uint16 sc31_guard_blink[] = {
@@ -1703,7 +1727,7 @@ uint16 sc31_guard_blink[] = {
 	1,
 	1,
 	101*64,
-	0,
+	0
 };
 
 uint16 sc31_use_card[] = {
@@ -1732,7 +1756,7 @@ uint16 sc31_use_card[] = {
 	272,
 	184,
 	0,
-	0,
+	0
 };
 
 uint16 rs_guard_avail[] = {
@@ -1750,7 +1774,7 @@ uint16 rs_guard_avail[] = {
 	353-332,
 	C_MOUSE_SIZE_Y,
 	275-244,
-	65535,
+	65535
 };
 
 uint16 sc31_bricks_down[] = {
@@ -1785,7 +1809,7 @@ uint16 sc31_bricks_down[] = {
 	205,
 	271,
 	0,
-	0,
+	0
 };
 
 uint16 sc31_rope_drop[] = {
@@ -1811,7 +1835,7 @@ uint16 sc31_rope_drop[] = {
 	218,
 	228,
 	2,
-	0,
+	0
 };
 
 uint16 sc31_get_plank[] = {
@@ -1873,7 +1897,7 @@ uint16 sc31_get_plank[] = {
 	224,
 	240,
 	0,
-	0,
+	0
 };
 
 uint16 sc31_floor_table[] = {
@@ -1913,7 +1937,7 @@ uint16 sc31_floor_table[] = {
 	GT_SC31_DANIELLE,
 	ID_SC31_JOEY,
 	GT_SC31_JOEY,
-	65535,
+	65535
 };
 
 Compact sc31_floor = {
@@ -1935,6 +1959,17 @@ Compact sc31_floor = {
 	447-128,	// mouseSize_x
 	303-224,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc31_end_of_rope = {
@@ -1956,6 +1991,17 @@ Compact sc31_end_of_rope = {
 	228-225,	// mouseSize_x
 	270-229,	// mouseSize_y
 	SC31_END_OF_ROPE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc31_dog_fly[] = {
@@ -2089,7 +2135,7 @@ uint16 sc31_dog_fly[] = {
 	323,
 	259,
 	29,
-	0,
+	0
 };
 
 Compact sc31_lift = {
@@ -2121,6 +2167,7 @@ Compact sc31_lift = {
 	C_BASE_MODE,	// mode
 	SC31_LIFT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc31_chip_list[] = {
@@ -2152,7 +2199,7 @@ uint16 sc31_chip_list[] = {
 	IT_SC31_GUARD_TALK2+DISK_12+0X8000,
 	48+DISK_12,
 	66+DISK_12+0X8000,
-	0,
+	0
 };
 
 uint16 sc31_guard_chat[] = {
@@ -2349,7 +2396,7 @@ uint16 sc31_guard_chat[] = {
 	328,
 	176,
 	4,
-	0,
+	0
 };
 
 Compact sc31_biscuits = {
@@ -2381,6 +2428,7 @@ Compact sc31_biscuits = {
 	C_BASE_MODE,	// mode
 	SC31_BISCUITS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 reset_30_31[] = {
@@ -2392,7 +2440,7 @@ uint16 reset_30_31[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	248,
-	65535,
+	65535
 };
 
 Compact sc31_bricks = {
@@ -2424,6 +2472,7 @@ Compact sc31_bricks = {
 	C_BASE_MODE,	// mode
 	SC31_BRICKS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc31_lower_rope[] = {
@@ -2476,7 +2525,7 @@ uint16 sc31_lower_rope[] = {
 	225,
 	226,
 	15,
-	0,
+	0
 };
 
 uint16 sc31_bisc_raise[] = {
@@ -2514,7 +2563,7 @@ uint16 sc31_bisc_raise[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact sc31_at_watcher = {
@@ -2546,6 +2595,7 @@ Compact sc31_at_watcher = {
 	C_BASE_MODE,	// mode
 	SC31_AT_WATCHER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc31_dog_rise[] = {
@@ -2577,7 +2627,7 @@ uint16 sc31_dog_rise[] = {
 	341,
 	286,
 	7,
-	0,
+	0
 };
 
 uint16 rs_guard_chat[] = {
@@ -2591,7 +2641,7 @@ uint16 rs_guard_chat[] = {
 	SC31_GUARD_CHATTING_LOGIC,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 sc31_mouse_list[] = {
@@ -2609,7 +2659,7 @@ uint16 sc31_mouse_list[] = {
 	ID_SC31_JOEY,
 	ID_SC31_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc31_joey = {
@@ -2641,6 +2691,7 @@ Compact sc31_joey = {
 	C_BASE_MODE,	// mode
 	SC31_JOEY_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc31_lift_slot = {
@@ -2662,6 +2713,17 @@ Compact sc31_lift_slot = {
 	302-297,	// mouseSize_x
 	209-196,	// mouseSize_y
 	SC31_LIFT_SLOT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc31_logic_list[] = {
@@ -2680,7 +2742,7 @@ uint16 sc31_logic_list[] = {
 	ID_SC31_JOEY,
 	16870,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 ExtCompact sc31_guard_ext = {
@@ -2709,6 +2771,10 @@ ExtCompact sc31_guard_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc31_guard = {
@@ -2740,7 +2806,7 @@ Compact sc31_guard = {
 	C_BASE_MODE,	// mode
 	SC31_GUARD_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc31_guard_ext,
+	&sc31_guard_ext
 };
 
 Compact sc31_exit_32 = {
@@ -2762,6 +2828,17 @@ Compact sc31_exit_32 = {
 	447-420,	// mouseSize_x
 	275-162,	// mouseSize_y
 	SC31_EXIT_32_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc31_joey_list[] = {
@@ -2770,7 +2847,7 @@ uint16 sc31_joey_list[] = {
 	240,
 	279,
 	1,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

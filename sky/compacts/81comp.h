@@ -56,6 +56,7 @@ Compact sc81_big_tent3 = {
 	C_BASE_MODE,	// mode
 	SC81_BIG_TENT3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc81_fos_squirm[] = {
@@ -198,7 +199,7 @@ uint16 sc81_fos_squirm[] = {
 	255,
 	212,
 	1,
-	0,
+	0
 };
 
 uint16 sc81_tentwig1[] = {
@@ -233,7 +234,7 @@ uint16 sc81_tentwig1[] = {
 	231,
 	235,
 	2,
-	0,
+	0
 };
 
 uint16 sc81_ken_helm_dn[] = {
@@ -259,7 +260,7 @@ uint16 sc81_ken_helm_dn[] = {
 	264,
 	212,
 	6,
-	0,
+	0
 };
 
 uint16 sc81_tentwig2[] = {
@@ -294,7 +295,7 @@ uint16 sc81_tentwig2[] = {
 	225,
 	258,
 	7,
-	0,
+	0
 };
 
 uint16 sc81_fast_list[] = {
@@ -306,7 +307,7 @@ uint16 sc81_fast_list[] = {
 	170+DISK_10,
 	203+DISK_10,
 	268+DISK_10,
-	0,
+	0
 };
 
 Compact sc81_tent5 = {
@@ -338,6 +339,7 @@ Compact sc81_tent5 = {
 	C_BASE_MODE,	// mode
 	SC81_TENT5_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc81_helmet = {
@@ -350,6 +352,26 @@ Compact sc81_helmet = {
 	264,	// xcood
 	212,	// ycood
 	174*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc81_ken_sit[] = {
@@ -426,7 +448,7 @@ uint16 sc81_ken_sit[] = {
 	261,
 	226,
 	23,
-	0,
+	0
 };
 
 uint16 sc81_palette[] = {
@@ -813,7 +835,7 @@ uint16 sc81_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc81_dad_helm_up[] = {
@@ -836,7 +858,7 @@ uint16 sc81_dad_helm_up[] = {
 	264,
 	212,
 	5,
-	0,
+	0
 };
 
 Compact sc81_tent2 = {
@@ -868,12 +890,13 @@ Compact sc81_tent2 = {
 	C_BASE_MODE,	// mode
 	SC81_TENT2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc83_draw_list[] = {
 	ID_SC81_FATHER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc81_tentwig5[] = {
@@ -908,7 +931,7 @@ uint16 sc81_tentwig5[] = {
 	295,
 	248,
 	9,
-	0,
+	0
 };
 
 Compact sc81_chair = {
@@ -930,6 +953,17 @@ Compact sc81_chair = {
 	282-256,	// mouseSize_x
 	268-221,	// mouseSize_y
 	SC81_CHAIR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc81_chip_list[] = {
@@ -967,7 +1001,7 @@ uint16 sc81_chip_list[] = {
 	202+DISK_10+0X8000,
 	204+DISK_10,
 	205+DISK_10,
-	0,
+	0
 };
 
 uint32 *grid81 = 0;
@@ -1004,7 +1038,7 @@ uint16 sc81_tentwig6[] = {
 	308,
 	283,
 	8,
-	0,
+	0
 };
 
 Compact sc81_ken_sat = {
@@ -1017,6 +1051,26 @@ Compact sc81_ken_sat = {
 	261,	// xcood
 	226,	// ycood
 	196*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc81_tentdrop2[] = {
@@ -1069,7 +1123,7 @@ uint16 sc81_tentdrop2[] = {
 	218,
 	171,
 	10,
-	0,
+	0
 };
 
 uint16 sc81_ken_walk2[] = {
@@ -1113,7 +1167,7 @@ uint16 sc81_ken_walk2[] = {
 	263,
 	244,
 	12,
-	0,
+	0
 };
 
 Compact sc81_foster_sat = {
@@ -1126,6 +1180,26 @@ Compact sc81_foster_sat = {
 	256,	// xcood
 	225,	// ycood
 	200*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc81_tentdrop1[] = {
@@ -1178,7 +1252,7 @@ uint16 sc81_tentdrop1[] = {
 	218,
 	137,
 	14,
-	0,
+	0
 };
 
 Compact sc81_father_sat = {
@@ -1191,6 +1265,26 @@ Compact sc81_father_sat = {
 	256,	// xcood
 	225,	// ycood
 	172*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc81_tentwig4[] = {
@@ -1225,7 +1319,7 @@ uint16 sc81_tentwig4[] = {
 	305,
 	212,
 	0,
-	0,
+	0
 };
 
 uint16 sc81_ken_walk1[] = {
@@ -1287,7 +1381,7 @@ uint16 sc81_ken_walk1[] = {
 	232,
 	244,
 	11,
-	0,
+	0
 };
 
 uint16 reset_dad_spec[] = {
@@ -1297,7 +1391,7 @@ uint16 reset_dad_spec[] = {
 	182,
 	C_FRAME,
 	171*64,
-	65535,
+	65535
 };
 
 uint16 sc81_mouse_list[] = {
@@ -1305,7 +1399,7 @@ uint16 sc81_mouse_list[] = {
 	ID_SC81_FATHER,
 	ID_SC81_CHAIR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc81_dad_breath1[] = {
@@ -1370,7 +1464,7 @@ uint16 sc81_dad_breath1[] = {
 	270,
 	256,
 	0,
-	0,
+	0
 };
 
 uint16 sc81_fos_helm_dn[] = {
@@ -1393,7 +1487,7 @@ uint16 sc81_fos_helm_dn[] = {
 	264,
 	212,
 	5,
-	0,
+	0
 };
 
 uint16 sc81_dad_fall2[] = {
@@ -1437,7 +1531,7 @@ uint16 sc81_dad_fall2[] = {
 	278,
 	258,
 	9,
-	0,
+	0
 };
 
 Compact sc81_door = {
@@ -1469,6 +1563,7 @@ Compact sc81_door = {
 	C_BASE_MODE,	// mode
 	SC81_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc81_big_tent1 = {
@@ -1500,6 +1595,7 @@ Compact sc81_big_tent1 = {
 	C_BASE_MODE,	// mode
 	SC81_BIG_TENT1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc81_tent1 = {
@@ -1531,6 +1627,7 @@ Compact sc81_tent1 = {
 	C_BASE_MODE,	// mode
 	SC81_TENT1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc81_tent4 = {
@@ -1562,6 +1659,7 @@ Compact sc81_tent4 = {
 	C_BASE_MODE,	// mode
 	SC81_TENT4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 ExtCompact sc81_father_ext = {
@@ -1590,6 +1688,10 @@ ExtCompact sc81_father_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc81_father = {
@@ -1621,7 +1723,7 @@ Compact sc81_father = {
 	C_BASE_MODE,	// mode
 	SC81_FATHER_CHAIR_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc81_father_ext,
+	&sc81_father_ext
 };
 
 uint16 sc81_door_close[] = {
@@ -1647,7 +1749,7 @@ uint16 sc81_door_close[] = {
 	166,
 	200,
 	6,
-	0,
+	0
 };
 
 uint16 sc81_dad_breath2[] = {
@@ -1712,7 +1814,7 @@ uint16 sc81_dad_breath2[] = {
 	270,
 	256,
 	0,
-	0,
+	0
 };
 
 uint16 sc81_tentwig3[] = {
@@ -1747,7 +1849,7 @@ uint16 sc81_tentwig3[] = {
 	223,
 	277,
 	9,
-	0,
+	0
 };
 
 uint16 sc81_father_die[] = {
@@ -1797,7 +1899,7 @@ uint16 sc81_father_die[] = {
 	278,
 	256,
 	8,
-	0,
+	0
 };
 
 uint16 reset_ken_81[] = {
@@ -1825,7 +1927,7 @@ uint16 reset_ken_81[] = {
 	0,
 	C_SP_COLOUR,
 	SP_COL_KEN81,
-	65535,
+	65535
 };
 
 uint16 reset_80_81[] = {
@@ -1839,7 +1941,7 @@ uint16 reset_80_81[] = {
 	46+12*64,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 uint16 sc81_dad_fall1[] = {
@@ -1976,7 +2078,7 @@ uint16 sc81_dad_fall1[] = {
 	289,
 	276,
 	26,
-	0,
+	0
 };
 
 uint16 sc81_ken_jump_in[] = {
@@ -2026,7 +2128,7 @@ uint16 sc81_ken_jump_in[] = {
 	227,
 	209,
 	14,
-	0,
+	0
 };
 
 uint16 sc81_logic_list[] = {
@@ -2049,7 +2151,7 @@ uint16 sc81_logic_list[] = {
 	ID_SC81_BIG_TENT3,
 	ID_SC67_PULSE1,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 Compact sc81_big_tent2 = {
@@ -2081,6 +2183,7 @@ Compact sc81_big_tent2 = {
 	C_BASE_MODE,	// mode
 	SC81_BIG_TENT2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc81_tent3 = {
@@ -2112,6 +2215,7 @@ Compact sc81_tent3 = {
 	C_BASE_MODE,	// mode
 	SC81_TENT3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc81_tentdrop3[] = {
@@ -2164,7 +2268,7 @@ uint16 sc81_tentdrop3[] = {
 	218,
 	239,
 	8,
-	0,
+	0
 };
 
 Compact sc81_tent6 = {
@@ -2196,6 +2300,7 @@ Compact sc81_tent6 = {
 	C_BASE_MODE,	// mode
 	SC81_TENT6_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc83_palette[] = {
@@ -2582,7 +2687,7 @@ uint16 sc83_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 reset_foster_spec[] = {
@@ -2592,7 +2697,7 @@ uint16 reset_foster_spec[] = {
 	248,
 	C_FRAME,
 	42+12*64,
-	65535,
+	65535
 };
 
 uint16 sc81_foster_sit[] = {
@@ -2654,7 +2759,7 @@ uint16 sc81_foster_sit[] = {
 	259,
 	225,
 	18,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

@@ -46,6 +46,17 @@ Compact sc39_exit_31 = {
 	190-164,	// mouseSize_x
 	305-225,	// mouseSize_y
 	SC39_EXIT_31_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc39_floor_table[] = {
@@ -63,7 +74,7 @@ uint16 sc39_floor_table[] = {
 	SC39_EXIT_41_WALK_ON,
 	ID_SC39_WALTERS,
 	GT_SC39_WALTERS,
-	65535,
+	65535
 };
 
 Compact sc39_floor = {
@@ -85,6 +96,17 @@ Compact sc39_floor = {
 	447-176,	// mouseSize_x
 	327-256,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc39_walters = {
@@ -106,6 +128,17 @@ Compact sc39_walters = {
 	445-376,	// mouseSize_x
 	320-228,	// mouseSize_y
 	SC39_WALTERS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_41_39[] = {
@@ -123,7 +156,7 @@ uint16 reset_41_39[] = {
 	42+12*64,
 	C_DIR,
 	LEFT,
-	65535,
+	65535
 };
 
 Compact sc39_exit_40 = {
@@ -145,6 +178,17 @@ Compact sc39_exit_40 = {
 	316-289,	// mouseSize_x
 	252-204,	// mouseSize_y
 	SC39_EXIT_40_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc39_ascend[] = {
@@ -206,7 +250,7 @@ uint16 sc39_ascend[] = {
 	293,
 	202,
 	9,
-	0,
+	0
 };
 
 uint16 sc39_logic_list[] = {
@@ -215,7 +259,7 @@ uint16 sc39_logic_list[] = {
 	ID_SPUNKY,
 	ID_DOG_BARK_THING,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc39_chip_list[] = {
@@ -226,7 +270,7 @@ uint16 sc39_chip_list[] = {
 	IT_SC39_GRID_2+DISK_14,
 	23+DISK_14,
 	24+DISK_14,
-	0,
+	0
 };
 
 uint16 reset_31_39[] = {
@@ -238,7 +282,7 @@ uint16 reset_31_39[] = {
 	144,
 	C_YCOOD,
 	296,
-	65535,
+	65535
 };
 
 uint16 sc39_mouse_list[] = {
@@ -248,7 +292,7 @@ uint16 sc39_mouse_list[] = {
 	ID_SC39_EXIT_41,
 	ID_SC39_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc39_exit_41 = {
@@ -270,6 +314,17 @@ Compact sc39_exit_41 = {
 	400-384,	// mouseSize_x
 	227-200,	// mouseSize_y
 	SC39_EXIT_41_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *sc39_walk_grid = 0;
@@ -306,14 +361,14 @@ uint16 sc39_descend[] = {
 	289,
 	210,
 	9,
-	0,
+	0
 };
 
 uint16 sc39_fast_list[] = {
 	12+DISK_14,
 	52+DISK_14,
 	135+DISK_14,
-	0,
+	0
 };
 
 uint16 reset_40_39[] = {
@@ -329,7 +384,7 @@ uint16 reset_40_39[] = {
 	24*64,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 sc39_palette[] = {
@@ -716,7 +771,7 @@ uint16 sc39_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 }; // namespace SkyCompact

@@ -109,7 +109,7 @@ uint16 slide2_seq[] = {
 	241,
 	21,
 	0,
-	0,
+	0
 };
 
 uint16 m_ss_st_up[] = {
@@ -117,7 +117,7 @@ uint16 m_ss_st_up[] = {
 	1,
 	1,
 	36,
-	0,
+	0
 };
 
 uint16 crouch_seq[] = {
@@ -143,7 +143,7 @@ uint16 crouch_seq[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 fost_open_cup[] = {
@@ -199,7 +199,7 @@ uint16 fost_open_cup[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact fan3 = {
@@ -231,6 +231,7 @@ Compact fan3 = {
 	C_BASE_MODE,	// mode
 	FAN3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 ss_smokes_1[] = {
@@ -374,7 +375,7 @@ uint16 ss_smokes_1[] = {
 	223,
 	6,
 	0,
-	0,
+	0
 };
 
 Compact fan7 = {
@@ -406,6 +407,7 @@ Compact fan7 = {
 	C_BASE_MODE,	// mode
 	FAN7_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 slide_seq[] = {
@@ -444,7 +446,7 @@ uint16 slide_seq[] = {
 	259,
 	10,
 	0,
-	0,
+	0
 };
 
 uint16 f_ss_st_right[] = {
@@ -452,7 +454,7 @@ uint16 f_ss_st_right[] = {
 	1,
 	1,
 	38,
-	0,
+	0
 };
 
 uint32 *c74 = 0;
@@ -490,7 +492,7 @@ uint16 f_ss_left[] = {
 	23+99*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 m_ss_down[] = {
@@ -526,7 +528,7 @@ uint16 m_ss_down[] = {
 	15+75*64,
 	0,
 	1,
-	0,
+	0
 };
 
 uint16 s2_pal[] = {
@@ -913,7 +915,7 @@ uint16 s2_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 foster_hanging[] = {
@@ -961,7 +963,7 @@ uint16 foster_hanging[] = {
 	202,
 	13,
 	0,
-	0,
+	0
 };
 
 Compact fan4 = {
@@ -993,6 +995,7 @@ Compact fan4 = {
 	C_BASE_MODE,	// mode
 	FAN4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_ss_to_1[] = {
@@ -1004,7 +1007,7 @@ uint16 rs_ss_to_1[] = {
 	1,
 	C_PLACE,
 	95,
-	65535,
+	65535
 };
 
 uint16 rs_foster_to_one[] = {
@@ -1016,17 +1019,17 @@ uint16 rs_foster_to_one[] = {
 	1,
 	C_PLACE,
 	95,
-	65535,
+	65535
 };
 
 uint16 m_ss_r_to_d[] = {
 	47-8+75*64,
-	0,
+	0
 };
 
 uint16 f_ss_l_to_u[] = {
 	43-8+99*64,
-	0,
+	0
 };
 
 Compact load_point = {
@@ -1058,6 +1061,7 @@ Compact load_point = {
 	C_BASE_MODE,	// mode
 	LOAD_POINT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_5_0[] = {
@@ -1075,7 +1079,7 @@ uint16 rs_foster_5_0[] = {
 	42+13*64,
 	C_MEGA_SET,
 	0,
-	65535,
+	65535
 };
 
 uint16 fost_pull_knob[] = {
@@ -1107,12 +1111,12 @@ uint16 fost_pull_knob[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 m_ss_r_to_u[] = {
 	45-8+75*64,
-	0,
+	0
 };
 
 uint16 rs_foster_to_1[] = {
@@ -1124,7 +1128,7 @@ uint16 rs_foster_to_1[] = {
 	1,
 	C_PLACE,
 	95,
-	65535,
+	65535
 };
 
 uint32 *rs_jobs_4_2 = 0;
@@ -1144,7 +1148,7 @@ uint16 monitor_seq[] = {
 	200,
 	3,
 	0,
-	0,
+	0
 };
 
 uint16 joey_door_seq[] = {
@@ -1336,7 +1340,7 @@ uint16 joey_door_seq[] = {
 	172,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 small_opens[] = {
@@ -1353,7 +1357,7 @@ uint16 small_opens[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fost_knob_locked[] = {
@@ -1388,7 +1392,7 @@ uint16 fost_knob_locked[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 s4_pal[] = {
@@ -1775,7 +1779,7 @@ uint16 s4_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 alarm_seq[] = {
@@ -1810,7 +1814,7 @@ uint16 alarm_seq[] = {
 	284,
 	208,
 	9,
-	0,
+	0
 };
 
 uint16 reverse_seq[] = {
@@ -1827,7 +1831,7 @@ uint16 reverse_seq[] = {
 	240,
 	256,
 	10,
-	0,
+	0
 };
 
 Compact press = {
@@ -1859,6 +1863,7 @@ Compact press = {
 	C_BASE_MODE,	// mode
 	PRESS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 furnace_seq[] = {
@@ -1896,7 +1901,7 @@ uint16 furnace_seq[] = {
 	226,
 	239,
 	10,
-	0,
+	0
 };
 
 uint16 load_point_seq[] = {
@@ -2022,7 +2027,7 @@ uint16 load_point_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 m_ss_right[] = {
@@ -2058,7 +2063,7 @@ uint16 m_ss_right[] = {
 	31+75*64,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 use_bar2[] = {
@@ -2081,7 +2086,7 @@ uint16 use_bar2[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fost_cant_open[] = {
@@ -2122,21 +2127,21 @@ uint16 fost_cant_open[] = {
 	1,
 	1,
 	142*64+1,
-	0,
+	0
 };
 
 uint16 f_ss_l_to_r[] = {
 	41-8+99*64,
 	40-8+99*64,
 	47-8+99*64,
-	0,
+	0
 };
 
 uint16 f_ss_u_to_d[] = {
 	43-8+99*64,
 	42-8+99*64,
 	41-8+99*64,
-	0,
+	0
 };
 
 uint16 push_small[] = {
@@ -2171,14 +2176,14 @@ uint16 push_small[] = {
 	165,
 	260,
 	0,
-	0,
+	0
 };
 
 uint8 ss_auto[64];
 
 uint16 m_ss_l_to_d[] = {
 	41-8+75*64,
-	0,
+	0
 };
 
 uint16 s0_pal[] = {
@@ -2565,7 +2570,7 @@ uint16 s0_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint32 *grid3 = 0;
@@ -2645,7 +2650,7 @@ uint16 foster_shot[] = {
 	318,
 	23,
 	0,
-	0,
+	0
 };
 
 uint16 lazer_stop_seq[] = {
@@ -2662,13 +2667,13 @@ uint16 lazer_stop_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 rs_start_alarm[] = {
 	C_STATUS,
 	ST_FOREGROUND+ST_LOGIC,
-	65535,
+	65535
 };
 
 Compact fan1 = {
@@ -2700,13 +2705,14 @@ Compact fan1 = {
 	C_BASE_MODE,	// mode
 	FAN1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 f_ss_d_to_u[] = {
 	47-8+99*64,
 	46-8+99*64,
 	45-8+99*64,
-	0,
+	0
 };
 
 uint32 *grid4 = 0;
@@ -2747,7 +2753,7 @@ uint16 ss_smokes_3[] = {
 	220,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 lights1_seq[] = {
@@ -2806,7 +2812,7 @@ uint16 lights1_seq[] = {
 	248,
 	194,
 	8,
-	0,
+	0
 };
 
 uint16 eye_open[] = {
@@ -2817,7 +2823,7 @@ uint16 eye_open[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 press_seq[] = {
@@ -2888,7 +2894,7 @@ uint16 press_seq[] = {
 	269,
 	246,
 	0,
-	0,
+	0
 };
 
 uint16 cup_close_seq[] = {
@@ -2902,7 +2908,7 @@ uint16 cup_close_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 low_lift_down_seq1[] = {
@@ -2943,7 +2949,7 @@ uint16 low_lift_down_seq1[] = {
 	250,
 	141,
 	0,
-	0,
+	0
 };
 
 uint16 barrel_in_seq[] = {
@@ -3005,7 +3011,7 @@ uint16 barrel_in_seq[] = {
 	227,
 	258,
 	6,
-	0,
+	0
 };
 
 uint16 rs_big_foster[] = {
@@ -3021,7 +3027,7 @@ uint16 rs_big_foster[] = {
 	17,
 	C_GET_TO_FLAG,
 	0,
-	65535,
+	65535
 };
 
 uint16 screen0_low_logic[] = {
@@ -3051,7 +3057,7 @@ uint16 screen0_low_logic[] = {
 	ID_LIGHT1,
 	ID_PANEL,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 rs_foster_2_0[] = {
@@ -3067,7 +3073,7 @@ uint16 rs_foster_2_0[] = {
 	2,
 	C_FRAME,
 	42+13*64,
-	65535,
+	65535
 };
 
 uint16 foster_g_d[] = {
@@ -3096,7 +3102,7 @@ uint16 foster_g_d[] = {
 	1,
 	1,
 	6,
-	0,
+	0
 };
 
 uint16 fost_but_seq[] = {
@@ -3150,7 +3156,7 @@ uint16 fost_but_seq[] = {
 	146,
 	7,
 	0,
-	0,
+	0
 };
 
 uint16 jobs_look_scrn[] = {
@@ -3234,7 +3240,7 @@ uint16 jobs_look_scrn[] = {
 	191,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 jobs_chuck_look[] = {
@@ -3287,7 +3293,7 @@ uint16 jobs_chuck_look[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 eye_blink[] = {
@@ -3301,7 +3307,7 @@ uint16 eye_blink[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 fan1_seq[] = {
@@ -3315,7 +3321,7 @@ uint16 fan1_seq[] = {
 	283,
 	137,
 	2,
-	0,
+	0
 };
 
 uint16 m_ss_st_right[] = {
@@ -3323,7 +3329,7 @@ uint16 m_ss_st_right[] = {
 	1,
 	1,
 	38,
-	0,
+	0
 };
 
 uint16 screen0_low_mouse[] = {
@@ -3339,7 +3345,7 @@ uint16 screen0_low_mouse[] = {
 	ID_LOW_FLOOR,
 	18,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 fan7_seq[] = {
@@ -3359,12 +3365,12 @@ uint16 fan7_seq[] = {
 	388,
 	172,
 	4,
-	0,
+	0
 };
 
 uint16 f_ss_r_to_d[] = {
 	47-8+99*64,
-	0,
+	0
 };
 
 uint16 r1_opens[] = {
@@ -3396,12 +3402,12 @@ uint16 r1_opens[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 f_ss_u_to_l[] = {
 	43-8+99*64,
-	0,
+	0
 };
 
 uint16 rs_mini_ss[] = {
@@ -3419,7 +3425,7 @@ uint16 rs_mini_ss[] = {
 	192,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 s3_pal[] = {
@@ -3806,7 +3812,7 @@ uint16 s3_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 ss_smokes_2[] = {
@@ -3914,7 +3920,7 @@ uint16 ss_smokes_2[] = {
 	222,
 	16,
 	0,
-	0,
+	0
 };
 
 uint16 m_ss_up[] = {
@@ -3950,7 +3956,7 @@ uint16 m_ss_up[] = {
 	7+75*64,
 	0,
 	65535,
-	0,
+	0
 };
 
 uint16 m_ss_left[] = {
@@ -3986,7 +3992,7 @@ uint16 m_ss_left[] = {
 	23+75*64,
 	65534,
 	0,
-	0,
+	0
 };
 
 uint16 m_ss_st_down[] = {
@@ -3994,7 +4000,7 @@ uint16 m_ss_st_down[] = {
 	1,
 	1,
 	32,
-	0,
+	0
 };
 
 uint16 m_ss_st_left[] = {
@@ -4002,7 +4008,7 @@ uint16 m_ss_st_left[] = {
 	1,
 	1,
 	34,
-	0,
+	0
 };
 
 uint16 m_ss_st_talk[] = {
@@ -4010,60 +4016,60 @@ uint16 m_ss_st_talk[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 m_ss_u_to_d[] = {
 	43-8+75*64,
 	42-8+75*64,
 	41-8+75*64,
-	0,
+	0
 };
 
 uint16 m_ss_u_to_l[] = {
 	43-8+75*64,
-	0,
+	0
 };
 
 uint16 m_ss_u_to_r[] = {
 	45-8+75*64,
-	0,
+	0
 };
 
 uint16 m_ss_d_to_u[] = {
 	47-8+75*64,
 	46-8+75*64,
 	45-8+75*64,
-	0,
+	0
 };
 
 uint16 m_ss_d_to_l[] = {
 	41-8+75*64,
-	0,
+	0
 };
 
 uint16 m_ss_d_to_r[] = {
 	47-8+75*64,
-	0,
+	0
 };
 
 uint16 m_ss_l_to_u[] = {
 	43-8+75*64,
-	0,
+	0
 };
 
 uint16 m_ss_l_to_r[] = {
 	41-8+75*64,
 	40-8+75*64,
 	47-8+75*64,
-	0,
+	0
 };
 
 uint16 m_ss_r_to_l[] = {
 	45-8+75*64,
 	44-8+75*64,
 	43-8+75*64,
-	0,
+	0
 };
 
 TurnTable mini_so_turnTable0 = {
@@ -4101,7 +4107,7 @@ TurnTable mini_so_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet mini_so_megaSet0 = {
@@ -4118,7 +4124,7 @@ MegaSet mini_so_megaSet0 = {
 	m_ss_st_left,	// standLeft
 	m_ss_st_right,	// standRight
 	m_ss_st_talk,	// standTalk
-	&mini_so_turnTable0,
+	&mini_so_turnTable0
 };
 
 ExtCompact mini_so_ext = {
@@ -4148,6 +4154,9 @@ ExtCompact mini_so_ext = {
 	ss_auto,	// animScratch
 	0,	// megaSet
 	&mini_so_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact mini_so = {
@@ -4179,7 +4188,7 @@ Compact mini_so = {
 	0,	// mode
 	START_MINI_SS,	// baseSub
 	0,	// baseSub_off
-	&mini_so_ext,
+	&mini_so_ext
 };
 
 uint16 unload_seq1[] = {
@@ -4223,7 +4232,7 @@ uint16 unload_seq1[] = {
 	1,
 	1,
 	12,
-	0,
+	0
 };
 
 uint16 open_r1[] = {
@@ -4252,7 +4261,7 @@ uint16 open_r1[] = {
 	196,
 	202,
 	7,
-	0,
+	0
 };
 
 uint16 get_bar_out[] = {
@@ -4299,7 +4308,7 @@ uint16 get_bar_out[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fost_close_cup[] = {
@@ -4352,7 +4361,7 @@ uint16 fost_close_cup[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 barrel_down_seq2[] = {
@@ -4393,7 +4402,7 @@ uint16 barrel_down_seq2[] = {
 	270,
 	257,
 	8,
-	0,
+	0
 };
 
 uint16 ss_kick[] = {
@@ -4419,7 +4428,7 @@ uint16 ss_kick[] = {
 	1,
 	1,
 	6,
-	0,
+	0
 };
 
 uint32 *grid1 = 0;
@@ -4459,7 +4468,7 @@ uint16 f_ss_up[] = {
 	7+99*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 f_ss_down[] = {
@@ -4495,7 +4504,7 @@ uint16 f_ss_down[] = {
 	15+99*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 f_ss_right[] = {
@@ -4531,7 +4540,7 @@ uint16 f_ss_right[] = {
 	31+99*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 f_ss_st_up[] = {
@@ -4539,7 +4548,7 @@ uint16 f_ss_st_up[] = {
 	1,
 	1,
 	36,
-	0,
+	0
 };
 
 uint16 f_ss_st_down[] = {
@@ -4547,7 +4556,7 @@ uint16 f_ss_st_down[] = {
 	1,
 	1,
 	32,
-	0,
+	0
 };
 
 uint16 f_ss_st_left[] = {
@@ -4555,39 +4564,39 @@ uint16 f_ss_st_left[] = {
 	1,
 	1,
 	34,
-	0,
+	0
 };
 
 uint16 f_ss_u_to_r[] = {
 	45-8+99*64,
-	0,
+	0
 };
 
 uint16 f_ss_d_to_l[] = {
 	41-8+99*64,
-	0,
+	0
 };
 
 uint16 f_ss_d_to_r[] = {
 	47-8+99*64,
-	0,
+	0
 };
 
 uint16 f_ss_l_to_d[] = {
 	41-8+99*64,
-	0,
+	0
 };
 
 uint16 f_ss_r_to_u[] = {
 	45-8+99*64,
-	0,
+	0
 };
 
 uint16 f_ss_r_to_l[] = {
 	45-8+99*64,
 	44-8+99*64,
 	43-8+99*64,
-	0,
+	0
 };
 
 TurnTable full_so_turnTable0 = {
@@ -4625,7 +4634,7 @@ TurnTable full_so_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet full_so_megaSet0 = {
@@ -4642,7 +4651,7 @@ MegaSet full_so_megaSet0 = {
 	f_ss_st_left,	// standLeft
 	f_ss_st_right,	// standRight
 	0,	// standTalk
-	&full_so_turnTable0,
+	&full_so_turnTable0
 };
 
 ExtCompact full_so_ext = {
@@ -4672,6 +4681,9 @@ ExtCompact full_so_ext = {
 	full_ss_auto,	// animScratch
 	0,	// megaSet
 	&full_so_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact full_so = {
@@ -4703,7 +4715,7 @@ Compact full_so = {
 	0,	// mode
 	FULL_SS_CUT,	// baseSub
 	0,	// baseSub_off
-	&full_so_ext,
+	&full_so_ext
 };
 
 uint16 panel_seq[] = {
@@ -4721,7 +4733,7 @@ uint16 panel_seq[] = {
 	187,
 	3,
 	0,
-	0,
+	0
 };
 
 uint16 chip_list_0[] = {
@@ -4759,7 +4771,7 @@ uint16 chip_list_0[] = {
 	17,
 	227+0X8000,
 	99,
-	0,
+	0
 };
 
 uint16 use_the_bar[] = {
@@ -4878,7 +4890,7 @@ uint16 use_the_bar[] = {
 	1,
 	1,
 	5,
-	0,
+	0
 };
 
 uint16 small_closes[] = {
@@ -4895,7 +4907,7 @@ uint16 small_closes[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint16 jobs_buttons[] = {
@@ -4937,7 +4949,7 @@ uint16 jobs_buttons[] = {
 	183,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 up_stairs[] = {
@@ -5135,7 +5147,7 @@ uint16 up_stairs[] = {
 	232,
 	49,
 	0,
-	0,
+	0
 };
 
 uint16 chuck_seq[] = {
@@ -5150,7 +5162,7 @@ uint16 chuck_seq[] = {
 	222,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foster_to_0[] = {
@@ -5162,7 +5174,7 @@ uint16 rs_foster_to_0[] = {
 	0,
 	C_PLACE,
 	17,
-	65535,
+	65535
 };
 
 Compact fire_notice = {
@@ -5194,6 +5206,7 @@ Compact fire_notice = {
 	C_BASE_MODE,	// mode
 	NOTICE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 screen0_high_mouse[] = {
@@ -5205,7 +5218,7 @@ uint16 screen0_high_mouse[] = {
 	90,
 	18,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 foster_g_up[] = {
@@ -5234,7 +5247,7 @@ uint16 foster_g_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foster_s3[] = {
@@ -5246,7 +5259,7 @@ uint16 rs_foster_s3[] = {
 	ID_S3_FLOOR,
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_AR_PRIORITY+ST_GRID_PLOT+ST_COLLISION,
-	65535,
+	65535
 };
 
 uint16 rs_mini_foster[] = {
@@ -5262,7 +5275,7 @@ uint16 rs_mini_foster[] = {
 	69,
 	C_GET_TO_FLAG,
 	0,
-	65535,
+	65535
 };
 
 uint16 bolt1_seq[] = {
@@ -5276,7 +5289,7 @@ uint16 bolt1_seq[] = {
 	294,
 	227,
 	2,
-	0,
+	0
 };
 
 uint16 rs_foster_4_2[] = {
@@ -5290,7 +5303,7 @@ uint16 rs_foster_4_2[] = {
 	115,
 	C_DIR,
 	2,
-	65535,
+	65535
 };
 
 uint16 screen0_high_logic[] = {
@@ -5322,7 +5335,7 @@ uint16 screen0_high_logic[] = {
 	4344,
 	ID_TOP_BARREL,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 fan6_seq[] = {
@@ -5339,7 +5352,7 @@ uint16 fan6_seq[] = {
 	368,
 	156,
 	3,
-	0,
+	0
 };
 
 uint16 fexit_opens[] = {
@@ -5356,7 +5369,7 @@ uint16 fexit_opens[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 fost_push_knob[] = {
@@ -5388,7 +5401,7 @@ uint16 fost_push_knob[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 lazer_run_seq[] = {
@@ -5405,7 +5418,7 @@ uint16 lazer_run_seq[] = {
 	1,
 	1,
 	7,
-	0,
+	0
 };
 
 uint16 try_to_open_r0[] = {
@@ -5452,7 +5465,7 @@ uint16 try_to_open_r0[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fast_list_cut2[] = {
@@ -5460,7 +5473,7 @@ uint16 fast_list_cut2[] = {
 	65,
 	66,
 	162,
-	0,
+	0
 };
 
 uint16 knob_down[] = {
@@ -5474,7 +5487,7 @@ uint16 knob_down[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 chip_list_sc0[] = {
@@ -5498,7 +5511,7 @@ uint16 chip_list_sc0[] = {
 	66,
 	75,
 	23,
-	0,
+	0
 };
 
 uint16 sc0_cut_logic[] = {
@@ -5525,7 +5538,7 @@ uint16 sc0_cut_logic[] = {
 	ID_CAR_UP,
 	ID_CAR_DOWN,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 Compact lazer_gun = {
@@ -5557,6 +5570,7 @@ Compact lazer_gun = {
 	C_BASE_MODE,	// mode
 	LAZER_GUN_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 up_stairs2[] = {
@@ -5712,7 +5726,7 @@ uint16 up_stairs2[] = {
 	166,
 	49,
 	0,
-	0,
+	0
 };
 
 uint16 barrel_down_seq[] = {
@@ -5765,7 +5779,7 @@ uint16 barrel_down_seq[] = {
 	270,
 	201,
 	15,
-	0,
+	0
 };
 
 uint16 daft_seq[] = {
@@ -5945,7 +5959,7 @@ uint16 daft_seq[] = {
 	268,
 	36,
 	0,
-	0,
+	0
 };
 
 uint16 down_stairs2[] = {
@@ -6101,7 +6115,7 @@ uint16 down_stairs2[] = {
 	296,
 	31,
 	0,
-	0,
+	0
 };
 
 uint16 joey_jump_seq[] = {
@@ -6293,7 +6307,7 @@ uint16 joey_jump_seq[] = {
 	172,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 fost_lean_seq[] = {
@@ -6383,7 +6397,7 @@ uint16 fost_lean_seq[] = {
 	201,
 	11,
 	0,
-	0,
+	0
 };
 
 uint16 joey_wake_seq[] = {
@@ -6476,7 +6490,7 @@ uint16 joey_wake_seq[] = {
 	291,
 	10,
 	0,
-	0,
+	0
 };
 
 uint16 low_lift_down_seq2[] = {
@@ -6517,7 +6531,7 @@ uint16 low_lift_down_seq2[] = {
 	250,
 	156,
 	0,
-	0,
+	0
 };
 
 uint16 lazer_start_seq[] = {
@@ -6534,7 +6548,7 @@ uint16 lazer_start_seq[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 get_the_bar[] = {
@@ -6683,7 +6697,7 @@ uint16 get_the_bar[] = {
 	1,
 	1,
 	9,
-	0,
+	0
 };
 
 uint16 fan4_seq[] = {
@@ -6703,7 +6717,7 @@ uint16 fan4_seq[] = {
 	428,
 	216,
 	4,
-	0,
+	0
 };
 
 uint16 tv_seq[] = {
@@ -6733,7 +6747,7 @@ uint16 tv_seq[] = {
 	190,
 	7,
 	0,
-	0,
+	0
 };
 
 uint16 bolt2_seq[] = {
@@ -6747,7 +6761,7 @@ uint16 bolt2_seq[] = {
 	296,
 	239,
 	2,
-	0,
+	0
 };
 
 Compact fan6 = {
@@ -6779,6 +6793,7 @@ Compact fan6 = {
 	C_BASE_MODE,	// mode
 	FAN6_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 jobs_pull_knob[] = {
@@ -6798,7 +6813,7 @@ uint16 jobs_pull_knob[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 convey_seq[] = {
@@ -6815,7 +6830,7 @@ uint16 convey_seq[] = {
 	250,
 	268,
 	3,
-	0,
+	0
 };
 
 uint16 fan5_seq[] = {
@@ -6835,7 +6850,7 @@ uint16 fan5_seq[] = {
 	374,
 	165,
 	4,
-	0,
+	0
 };
 
 uint32 *grid2 = 0;
@@ -6851,7 +6866,7 @@ uint16 guard_lean_out[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint32 *c101 = 0;
@@ -6900,7 +6915,7 @@ uint16 put_bar_away[] = {
 	1,
 	1,
 	6,
-	0,
+	0
 };
 
 uint16 fan3_seq[] = {
@@ -6917,7 +6932,7 @@ uint16 fan3_seq[] = {
 	229,
 	137,
 	3,
-	0,
+	0
 };
 
 uint16 s1_pal[] = {
@@ -7304,7 +7319,7 @@ uint16 s1_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 eye_shoot[] = {
@@ -7327,7 +7342,7 @@ uint16 eye_shoot[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 furnace_door_open[] = {
@@ -7368,7 +7383,7 @@ uint16 furnace_door_open[] = {
 	398,
 	222,
 	11,
-	0,
+	0
 };
 
 uint16 ss_smokes_4[] = {
@@ -7428,7 +7443,7 @@ uint16 ss_smokes_4[] = {
 	221,
 	8,
 	0,
-	0,
+	0
 };
 
 Compact fan5 = {
@@ -7460,6 +7475,7 @@ Compact fan5 = {
 	C_BASE_MODE,	// mode
 	FAN5_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 jobs_close[] = {
@@ -7491,7 +7507,7 @@ uint16 jobs_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 cup_open_seq[] = {
@@ -7505,7 +7521,7 @@ uint16 cup_open_seq[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 guard_lean_back[] = {
@@ -7519,7 +7535,7 @@ uint16 guard_lean_back[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 ss_kick_2[] = {
@@ -7536,7 +7552,7 @@ uint16 ss_kick_2[] = {
 	1,
 	1,
 	10,
-	0,
+	0
 };
 
 uint16 shot1_seq[] = {
@@ -7640,7 +7656,7 @@ uint16 shot1_seq[] = {
 	376,
 	249,
 	23,
-	0,
+	0
 };
 
 uint16 fexit_closes[] = {
@@ -7654,7 +7670,7 @@ uint16 fexit_closes[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 low_lift_down_seq3[] = {
@@ -7695,7 +7711,7 @@ uint16 low_lift_down_seq3[] = {
 	250,
 	210,
 	0,
-	0,
+	0
 };
 
 uint16 rs_restart_barrel[] = {
@@ -7707,7 +7723,7 @@ uint16 rs_restart_barrel[] = {
 	240,
 	C_FRAME,
 	155*64,
-	65535,
+	65535
 };
 
 uint16 open_r0[] = {
@@ -7746,7 +7762,7 @@ uint16 open_r0[] = {
 	214,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foster_2_4[] = {
@@ -7760,7 +7776,7 @@ uint16 rs_foster_2_4[] = {
 	ID_S4_FLOOR,
 	C_DIR,
 	3,
-	65535,
+	65535
 };
 
 uint16 ss_shoot_seq[] = {
@@ -7817,7 +7833,7 @@ uint16 ss_shoot_seq[] = {
 	261,
 	16,
 	0,
-	0,
+	0
 };
 
 uint16 shut_r1[] = {
@@ -7849,7 +7865,7 @@ uint16 shut_r1[] = {
 	227,
 	194,
 	8,
-	0,
+	0
 };
 
 uint16 down_stairs[] = {
@@ -8046,7 +8062,7 @@ uint16 down_stairs[] = {
 	212,
 	240,
 	63,
-	0,
+	0
 };
 
 uint16 barrel_seq[] = {
@@ -8069,7 +8085,7 @@ uint16 barrel_seq[] = {
 	264,
 	240,
 	5,
-	0,
+	0
 };
 
 uint16 jobs_scratch[] = {
@@ -8135,7 +8151,7 @@ uint16 jobs_scratch[] = {
 	191,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 unload_seq2[] = {
@@ -8155,7 +8171,7 @@ uint16 unload_seq2[] = {
 	1,
 	1,
 	18,
-	0,
+	0
 };
 
 uint16 rs_foster_0_2[] = {
@@ -8171,7 +8187,7 @@ uint16 rs_foster_0_2[] = {
 	3,
 	C_FRAME,
 	46+12*64,
-	65535,
+	65535
 };
 
 uint16 r1_closes[] = {
@@ -8203,13 +8219,13 @@ uint16 r1_closes[] = {
 	1,
 	1,
 	9,
-	0,
+	0
 };
 
 uint16 rs_convey[] = {
 	C_STATUS,
 	ST_LOGIC+ST_RECREATE+ST_NO_VMASK,
-	65535,
+	65535
 };
 
 uint16 jobs_push_knob[] = {
@@ -8229,7 +8245,7 @@ uint16 jobs_push_knob[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 knob_up[] = {
@@ -8243,7 +8259,7 @@ uint16 knob_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 crouch_talk[] = {
@@ -8381,7 +8397,7 @@ uint16 crouch_talk[] = {
 	265,
 	192,
 	0,
-	0,
+	0
 };
 
 uint16 shot2_seq[] = {
@@ -8434,7 +8450,7 @@ uint16 shot2_seq[] = {
 	373,
 	273,
 	15,
-	0,
+	0
 };
 
 uint16 joey_fly2[] = {
@@ -8632,7 +8648,7 @@ uint16 joey_fly2[] = {
 	246,
 	15,
 	0,
-	0,
+	0
 };
 
 uint16 jobs_key_seq[] = {
@@ -8665,7 +8681,7 @@ uint16 jobs_key_seq[] = {
 	198,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 rs_mega_2_0[] = {
@@ -8687,7 +8703,7 @@ uint16 rs_mega_2_0[] = {
 	8,
 	C_MOUSE_SIZE_Y,
 	28,
-	65535,
+	65535
 };
 
 uint16 uncrouch_seq[] = {
@@ -8710,7 +8726,7 @@ uint16 uncrouch_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fost_must_close[] = {
@@ -8742,7 +8758,7 @@ uint16 fost_must_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 joey_fly1[] = {
@@ -8940,7 +8956,7 @@ uint16 joey_fly1[] = {
 	201,
 	7,
 	0,
-	0,
+	0
 };
 
 uint16 lazer_gun_seq[] = {
@@ -8958,7 +8974,7 @@ uint16 lazer_gun_seq[] = {
 	247,
 	3,
 	0,
-	0,
+	0
 };
 
 uint16 rs_mega_0_2[] = {
@@ -8980,7 +8996,7 @@ uint16 rs_mega_0_2[] = {
 	32,
 	C_MOUSE_SIZE_Y,
 	48,
-	65535,
+	65535
 };
 
 Compact fan2 = {
@@ -9012,6 +9028,7 @@ Compact fan2 = {
 	C_BASE_MODE,	// mode
 	FAN2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 fan2_seq[] = {
@@ -9025,7 +9042,7 @@ uint16 fan2_seq[] = {
 	255,
 	137,
 	2,
-	0,
+	0
 };
 
 uint32 *grid0 = 0;
@@ -9302,7 +9319,7 @@ void *data_1[] = {
 	&car_up,
 	car_up_seq,
 	&car_down,
-	car_down_seq,
+	car_down_seq
 };
 
 }; // namespace SkyCompact

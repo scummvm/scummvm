@@ -56,6 +56,7 @@ Compact sc68_pulse5 = {
 	C_BASE_MODE,	// mode
 	SC68_PULSE5_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc68_chip_list[] = {
@@ -74,7 +75,7 @@ uint16 sc68_chip_list[] = {
 	IT_SC68_DESCEND+DISK_5,
 	IT_SC68_ASCEND+DISK_5,
 	IT_SC68_DOOR+DISK_5,
-	0,
+	0
 };
 
 uint16 reset_69_68[] = {
@@ -86,7 +87,7 @@ uint16 reset_69_68[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	288,
-	65535,
+	65535
 };
 
 Compact sc68_pulse1 = {
@@ -118,6 +119,7 @@ Compact sc68_pulse1 = {
 	C_BASE_MODE,	// mode
 	SC68_PULSE1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc68_door = {
@@ -149,6 +151,7 @@ Compact sc68_door = {
 	C_BASE_MODE,	// mode
 	SC68_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc68_exit = {
@@ -170,6 +173,17 @@ Compact sc68_exit = {
 	27,	// mouseSize_x
 	107,	// mouseSize_y
 	SC68_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc68_logic_list[] = {
@@ -191,7 +205,7 @@ uint16 sc68_logic_list[] = {
 	ID_SC70_IRIS,
 	ID_SC72_SPILL,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc68_palette[] = {
@@ -578,7 +592,7 @@ uint16 sc68_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact sc68_pulse3 = {
@@ -610,6 +624,7 @@ Compact sc68_pulse3 = {
 	C_BASE_MODE,	// mode
 	SC68_PULSE3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc68_pulse5_anim[] = {
@@ -665,7 +680,7 @@ uint16 sc68_pulse5_anim[] = {
 	280,
 	190,
 	0,
-	0,
+	0
 };
 
 uint16 sc68_ascend[] = {
@@ -700,7 +715,7 @@ uint16 sc68_ascend[] = {
 	261,
 	218,
 	9,
-	0,
+	0
 };
 
 uint16 sc68_pulse3_anim[] = {
@@ -756,7 +771,7 @@ uint16 sc68_pulse3_anim[] = {
 	387,
 	186,
 	1,
-	0,
+	0
 };
 
 uint16 sc68_pulse2_anim[] = {
@@ -812,7 +827,7 @@ uint16 sc68_pulse2_anim[] = {
 	396,
 	228,
 	1,
-	0,
+	0
 };
 
 Compact sc68_pulse4 = {
@@ -844,6 +859,7 @@ Compact sc68_pulse4 = {
 	C_BASE_MODE,	// mode
 	SC68_PULSE4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc68_pulse6_anim[] = {
@@ -899,7 +915,7 @@ uint16 sc68_pulse6_anim[] = {
 	245,
 	197,
 	0,
-	0,
+	0
 };
 
 Compact sc68_sensor = {
@@ -931,6 +947,7 @@ Compact sc68_sensor = {
 	C_BASE_MODE,	// mode
 	SC68_SENSOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint32 *grid68 = 0;
@@ -988,7 +1005,7 @@ uint16 sc68_pulse1_anim[] = {
 	425,
 	191,
 	0,
-	0,
+	0
 };
 
 uint16 sc68_pulse4_anim[] = {
@@ -1044,7 +1061,7 @@ uint16 sc68_pulse4_anim[] = {
 	339,
 	191,
 	2,
-	0,
+	0
 };
 
 Compact sc68_pulse2 = {
@@ -1076,6 +1093,7 @@ Compact sc68_pulse2 = {
 	C_BASE_MODE,	// mode
 	SC68_PULSE2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc68_descend[] = {
@@ -1110,7 +1128,7 @@ uint16 sc68_descend[] = {
 	256,
 	220,
 	9,
-	0,
+	0
 };
 
 uint16 reset_70_68[] = {
@@ -1126,7 +1144,7 @@ uint16 reset_70_68[] = {
 	154*64,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 sc68_sensor_anim[] = {
@@ -1161,7 +1179,7 @@ uint16 sc68_sensor_anim[] = {
 	171,
 	253,
 	2,
-	0,
+	0
 };
 
 uint16 sc68_door_close[] = {
@@ -1178,7 +1196,7 @@ uint16 sc68_door_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc68_floor_table[] = {
@@ -1202,7 +1220,7 @@ uint16 sc68_floor_table[] = {
 	GT_JOEY_PARK,
 	3,
 	GT_SC68_JOEY_WAIT,
-	65535,
+	65535
 };
 
 Compact sc68_pulse6 = {
@@ -1234,6 +1252,7 @@ Compact sc68_pulse6 = {
 	C_BASE_MODE,	// mode
 	SC68_PULSE6_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc68_grill = {
@@ -1255,6 +1274,17 @@ Compact sc68_grill = {
 	24,	// mouseSize_x
 	15,	// mouseSize_y
 	SC68_GRILL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc68_stairs = {
@@ -1276,6 +1306,17 @@ Compact sc68_stairs = {
 	30,	// mouseSize_x
 	60,	// mouseSize_y
 	SC68_STAIRS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc68_fast_list[] = {
@@ -1285,7 +1326,7 @@ uint16 sc68_fast_list[] = {
 	53+DISK_5,
 	54+DISK_5,
 	268+DISK_5,
-	0,
+	0
 };
 
 uint16 reset_67_68[] = {
@@ -1297,7 +1338,7 @@ uint16 reset_67_68[] = {
 	160,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 sc68_mouse_list[] = {
@@ -1309,7 +1350,7 @@ uint16 sc68_mouse_list[] = {
 	ID_SC68_EXIT,
 	ID_SC68_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc68_floor = {
@@ -1331,6 +1372,17 @@ Compact sc68_floor = {
 	447-202,	// mouseSize_x
 	327-265,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc68_joey_list[] = {
@@ -1354,7 +1406,7 @@ uint16 sc68_joey_list[] = {
 	272,
 	279,
 	0,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

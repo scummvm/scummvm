@@ -40,7 +40,7 @@ uint16 sc78_ledge_table[] = {
 	GT_SC78_PIPE,
 	ID_SC78_SUPPORT,
 	GT_SC78_PIPE,
-	65535,
+	65535
 };
 
 Compact sc78_ledge = {
@@ -62,6 +62,17 @@ Compact sc78_ledge = {
 	282-185,	// mouseSize_x
 	257-245,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc78_big_door = {
@@ -83,6 +94,17 @@ Compact sc78_big_door = {
 	186-166,	// mouseSize_x
 	256-177,	// mouseSize_y
 	SC78_BIG_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc78_climb_up[] = {
@@ -171,7 +193,7 @@ uint16 sc78_climb_up[] = {
 	260,
 	202,
 	1,
-	0,
+	0
 };
 
 uint16 sc78_logic_list[] = {
@@ -179,7 +201,7 @@ uint16 sc78_logic_list[] = {
 	ID_KEN,
 	ID_SC67_PULSE1,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 reset_79_78[] = {
@@ -191,7 +213,7 @@ uint16 reset_79_78[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	272,
-	65535,
+	65535
 };
 
 uint16 sc78_mouse_list[] = {
@@ -201,7 +223,7 @@ uint16 sc78_mouse_list[] = {
 	ID_SC78_LEDGE,
 	ID_SC78_PIPE,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc78_support = {
@@ -223,6 +245,17 @@ Compact sc78_support = {
 	405-386,	// mouseSize_x
 	308-262,	// mouseSize_y
 	SC78_SUPPORT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc781_palette[] = {
@@ -609,7 +642,7 @@ uint16 sc781_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 reset_77_78[] = {
@@ -621,7 +654,7 @@ uint16 reset_77_78[] = {
 	152,
 	C_YCOOD,
 	248,
-	65535,
+	65535
 };
 
 uint16 sc78_pipe_table[] = {
@@ -637,7 +670,7 @@ uint16 sc78_pipe_table[] = {
 	SC78_EXIT_WALK_ON,
 	ID_SC78_SUPPORT,
 	GT_SC78_SUPPORT,
-	65535,
+	65535
 };
 
 uint16 sc78_chip_list[] = {
@@ -646,7 +679,7 @@ uint16 sc78_chip_list[] = {
 	IT_SC78_GRID_1+DISK_10,
 	IT_SC78_JUMP_DOWN+DISK_10,
 	IT_SC78_CLIMB_UP+DISK_10,
-	0,
+	0
 };
 
 Compact sc78_exit = {
@@ -668,6 +701,17 @@ Compact sc78_exit = {
 	447-420,	// mouseSize_x
 	280-210,	// mouseSize_y
 	SC78_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc78_jump_down[] = {
@@ -726,7 +770,7 @@ uint16 sc78_jump_down[] = {
 	330,
 	226,
 	0,
-	0,
+	0
 };
 
 Compact sc78_pipe = {
@@ -748,6 +792,17 @@ Compact sc78_pipe = {
 	422-278,	// mouseSize_x
 	281-270,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid78 = 0;
@@ -1136,7 +1191,7 @@ uint16 sc78_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc78_fast_list[] = {
@@ -1146,7 +1201,7 @@ uint16 sc78_fast_list[] = {
 	53+DISK_10,
 	54+DISK_10,
 	268+DISK_10,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

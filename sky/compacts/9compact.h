@@ -48,7 +48,7 @@ uint16 s9_floor_table[] = {
 	GET_TO_SCANNER,
 	ID_LINC_S9,
 	GT_LINC_S9,
-	65535,
+	65535
 };
 
 Compact fake_floor_9 = {
@@ -69,6 +69,18 @@ Compact fake_floor_9 = {
 	0,	// mouseRel_y
 	320,	// mouseSize_x
 	314-291,	// mouseSize_y
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 son_work_seq[] = {
@@ -265,7 +277,7 @@ uint16 son_work_seq[] = {
 	223,
 	240,
 	4,
-	0,
+	0
 };
 
 ExtCompact son_ext = {
@@ -294,6 +306,10 @@ ExtCompact son_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact son = {
@@ -325,7 +341,7 @@ Compact son = {
 	0,	// mode
 	SON_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&son_ext,
+	&son_ext
 };
 
 uint16 scandie_seq[] = {
@@ -456,7 +472,7 @@ uint16 scandie_seq[] = {
 	349,
 	250,
 	39,
-	0,
+	0
 };
 
 uint16 lobby_down_seq[] = {
@@ -479,7 +495,7 @@ uint16 lobby_down_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 s9_mouse[] = {
@@ -495,7 +511,7 @@ uint16 s9_mouse[] = {
 	ID_LINC_S9,
 	ID_S9_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 scan_seq[] = {
@@ -593,7 +609,7 @@ uint16 scan_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 dad_work_seq[] = {
@@ -682,7 +698,7 @@ uint16 dad_work_seq[] = {
 	270,
 	230,
 	3,
-	0,
+	0
 };
 
 Compact linc_s9 = {
@@ -704,6 +720,17 @@ Compact linc_s9 = {
 	180-162,	// mouseSize_x
 	322-284,	// mouseSize_y
 	LINC_S9_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 dad_work3_seq[] = {
@@ -756,7 +783,7 @@ uint16 dad_work3_seq[] = {
 	342,
 	230,
 	0,
-	0,
+	0
 };
 
 ExtCompact dad_ext = {
@@ -785,6 +812,10 @@ ExtCompact dad_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact dad = {
@@ -816,7 +847,7 @@ Compact dad = {
 	0,	// mode
 	DAD_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&dad_ext,
+	&dad_ext
 };
 
 uint16 dad_work2_seq[] = {
@@ -911,7 +942,7 @@ uint16 dad_work2_seq[] = {
 	307,
 	230,
 	3,
-	0,
+	0
 };
 
 Compact s9_floor = {
@@ -933,6 +964,17 @@ Compact s9_floor = {
 	320,	// mouseSize_x
 	37,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact left_exit_s9 = {
@@ -954,6 +996,17 @@ Compact left_exit_s9 = {
 	16,	// mouseSize_x
 	304-244,	// mouseSize_y
 	EL9_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fans_seq[] = {
@@ -1006,7 +1059,7 @@ uint16 fans_seq[] = {
 	188,
 	199,
 	15,
-	0,
+	0
 };
 
 Compact fans = {
@@ -1038,6 +1091,7 @@ Compact fans = {
 	C_BASE_MODE,	// mode
 	FANS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact lobby_slot = {
@@ -1059,6 +1113,17 @@ Compact lobby_slot = {
 	5,	// mouseSize_x
 	12,	// mouseSize_y
 	LOBBY_SLOT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact scanner = {
@@ -1090,6 +1155,7 @@ Compact scanner = {
 	C_BASE_MODE,	// mode
 	SCANNER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 card_in_seq[] = {
@@ -1118,7 +1184,7 @@ uint16 card_in_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 lobby_up_seq[] = {
@@ -1141,7 +1207,7 @@ uint16 lobby_up_seq[] = {
 	1,
 	1,
 	6,
-	0,
+	0
 };
 
 Compact lobby_door = {
@@ -1173,6 +1239,7 @@ Compact lobby_door = {
 	C_BASE_MODE,	// mode
 	LOBBY_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_to_9[] = {
@@ -1184,7 +1251,7 @@ uint16 rs_foster_to_9[] = {
 	9,
 	C_PLACE,
 	ID_S9_FLOOR,
-	65535,
+	65535
 };
 
 uint16 rs_foster_10_9[] = {
@@ -1196,7 +1263,7 @@ uint16 rs_foster_10_9[] = {
 	9,
 	C_PLACE,
 	ID_S9_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s9_logic[] = {
@@ -1212,7 +1279,7 @@ uint16 s9_logic[] = {
 	ID_LIFT_S7,
 	ID_LIFT7_LIGHT,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 s9_chip_list[] = {
@@ -1232,7 +1299,7 @@ uint16 s9_chip_list[] = {
 	92+DISK_2,
 	47+DISK_2,
 	48+DISK_2,
-	0,
+	0
 };
 
 uint16 s9_pal[] = {
@@ -1619,7 +1686,7 @@ uint16 s9_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 }; // namespace SkyCompact

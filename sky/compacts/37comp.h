@@ -37,7 +37,7 @@ uint16 sc37_mouse_list[] = {
 	ID_SC37_WINE_RACK,
 	ID_SC37_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc37_chip_list[] = {
@@ -63,7 +63,7 @@ uint16 sc37_chip_list[] = {
 	IT_SC37_GRILL+DISK_13,
 	IT_SC37_GRILLOPEN+DISK_13,
 	IT_SC37_DOOR+DISK_13,
-	0,
+	0
 };
 
 uint16 sc37_grillopen[] = {
@@ -212,7 +212,7 @@ uint16 sc37_grillopen[] = {
 	307,
 	192,
 	4,
-	0,
+	0
 };
 
 uint16 sc37_floor_table[] = {
@@ -234,7 +234,7 @@ uint16 sc37_floor_table[] = {
 	GT_SC37_LID,
 	ID_SC37_WINE_RACK,
 	GT_SC37_WINE_RACK,
-	65535,
+	65535
 };
 
 uint16 sc37_stepdown[] = {
@@ -275,7 +275,7 @@ uint16 sc37_stepdown[] = {
 	309,
 	218,
 	0,
-	0,
+	0
 };
 
 Compact sc37_big_box = {
@@ -297,6 +297,17 @@ Compact sc37_big_box = {
 	269-219,	// mouseSize_x
 	278-231,	// mouseSize_y
 	SC37_BIG_BOX_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc37_footdrop[] = {
@@ -316,7 +327,7 @@ uint16 sc37_footdrop[] = {
 	309,
 	194,
 	0,
-	0,
+	0
 };
 
 uint16 sc37_putlid[] = {
@@ -345,7 +356,7 @@ uint16 sc37_putlid[] = {
 	268,
 	218,
 	0,
-	0,
+	0
 };
 
 Compact sc37_sensor = {
@@ -367,6 +378,17 @@ Compact sc37_sensor = {
 	190-185,	// mouseSize_x
 	248-238,	// mouseSize_y
 	SC37_SENSOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc37_lidused[] = {
@@ -449,7 +471,7 @@ uint16 sc37_lidused[] = {
 	305,
 	240,
 	16,
-	0,
+	0
 };
 
 uint16 sc37_getlid[] = {
@@ -478,7 +500,7 @@ uint16 sc37_getlid[] = {
 	260,
 	218,
 	7,
-	0,
+	0
 };
 
 uint16 sc37_flimsy_box_table[] = {
@@ -496,7 +518,7 @@ uint16 sc37_flimsy_box_table[] = {
 	STEP_OFF_BOX,
 	ID_SC37_WINE_RACK,
 	STEP_OFF_BOX,
-	65535,
+	65535
 };
 
 uint16 sc37_thumbsup[] = {
@@ -540,7 +562,7 @@ uint16 sc37_thumbsup[] = {
 	204,
 	226,
 	0,
-	0,
+	0
 };
 
 Compact sc37_wine_rack = {
@@ -562,6 +584,17 @@ Compact sc37_wine_rack = {
 	402-351,	// mouseSize_x
 	280-208,	// mouseSize_y
 	SC37_WINE_RACK_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc37_fast_list[] = {
@@ -571,7 +604,7 @@ uint16 sc37_fast_list[] = {
 	53+DISK_13,
 	54+DISK_13,
 	135+DISK_13,
-	0,
+	0
 };
 
 uint16 sc37_holding_lid_table[] = {
@@ -589,7 +622,7 @@ uint16 sc37_holding_lid_table[] = {
 	PUT_LID_BACK,
 	ID_SC37_WINE_RACK,
 	PUT_LID_BACK,
-	65535,
+	65535
 };
 
 Compact sc37_holding_lid = {
@@ -599,6 +632,29 @@ Compact sc37_holding_lid = {
 	37,	// screen
 	0,	// place
 	sc37_holding_lid_table,	// getToTable
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc37_lidup[] = {
@@ -612,7 +668,7 @@ uint16 sc37_lidup[] = {
 	256,
 	218,
 	2,
-	0,
+	0
 };
 
 uint16 sc37_usesec[] = {
@@ -773,7 +829,7 @@ uint16 sc37_usesec[] = {
 	304,
 	192,
 	0,
-	0,
+	0
 };
 
 uint16 sc37_stepup[] = {
@@ -820,7 +876,7 @@ uint16 sc37_stepup[] = {
 	309,
 	194,
 	12,
-	0,
+	0
 };
 
 Compact sc37_lid = {
@@ -852,6 +908,7 @@ Compact sc37_lid = {
 	C_BASE_MODE,	// mode
 	SC37_LID_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc37_palette[] = {
@@ -1238,7 +1295,7 @@ uint16 sc37_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact sc37_floor = {
@@ -1260,6 +1317,17 @@ Compact sc37_floor = {
 	399-192,	// mouseSize_x
 	319-256,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc37_climbout[] = {
@@ -1318,7 +1386,7 @@ uint16 sc37_climbout[] = {
 	309,
 	192,
 	16,
-	0,
+	0
 };
 
 Compact sc37_grill = {
@@ -1350,6 +1418,7 @@ Compact sc37_grill = {
 	C_BASE_MODE,	// mode
 	SC37_GRILL_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc37_uselid[] = {
@@ -1429,7 +1498,7 @@ uint16 sc37_uselid[] = {
 	309,
 	218,
 	24,
-	0,
+	0
 };
 
 uint16 reset_36_37[] = {
@@ -1443,7 +1512,7 @@ uint16 reset_36_37[] = {
 	272,
 	C_FRAME,
 	46+12*64,
-	65535,
+	65535
 };
 
 uint16 sc37_doorshut[] = {
@@ -1469,7 +1538,7 @@ uint16 sc37_doorshut[] = {
 	196,
 	221,
 	0,
-	0,
+	0
 };
 
 uint32 *sc37_walk_grid = 0;
@@ -1503,6 +1572,7 @@ Compact sc37_door = {
 	C_BASE_MODE,	// mode
 	SC37_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc37_usebar[] = {
@@ -1657,7 +1727,7 @@ uint16 sc37_usebar[] = {
 	309,
 	194,
 	0,
-	0,
+	0
 };
 
 Compact sc37_flimsy_box = {
@@ -1679,6 +1749,17 @@ Compact sc37_flimsy_box = {
 	333-300,	// mouseSize_x
 	264-238,	// mouseSize_y
 	SC37_FLIMSY_BOX_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc37_dooropen[] = {
@@ -1704,7 +1785,7 @@ uint16 sc37_dooropen[] = {
 	196,
 	221,
 	6,
-	0,
+	0
 };
 
 uint16 sc37_liddown[] = {
@@ -1718,7 +1799,7 @@ uint16 sc37_liddown[] = {
 	231,
 	234,
 	0,
-	0,
+	0
 };
 
 uint16 sc37_logic_list[] = {
@@ -1728,7 +1809,7 @@ uint16 sc37_logic_list[] = {
 	ID_SC37_GRILL,
 	ID_SC37_DOOR,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc37_crbarbox[] = {
@@ -1820,7 +1901,7 @@ uint16 sc37_crbarbox[] = {
 	264,
 	216,
 	26,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

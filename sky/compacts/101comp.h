@@ -56,6 +56,7 @@ Compact cancel_button = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact button_4 = {
@@ -87,6 +88,7 @@ Compact button_4 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact full_screen = {
@@ -118,6 +120,7 @@ Compact full_screen = {
 	C_BASE_MODE,	// mode
 	FULL_SCREEN_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact button_5 = {
@@ -149,6 +152,7 @@ Compact button_5 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s101_logic[] = {
@@ -167,7 +171,7 @@ uint16 s101_logic[] = {
 	132,
 	173,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 Compact button_7 = {
@@ -199,6 +203,7 @@ Compact button_7 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s101_mouse[] = {
@@ -214,7 +219,7 @@ uint16 s101_mouse[] = {
 	131,
 	132,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact button_1 = {
@@ -246,6 +251,7 @@ Compact button_1 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s101_pal[] = {
@@ -632,7 +638,7 @@ uint16 s101_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact button_0 = {
@@ -664,6 +670,7 @@ Compact button_0 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact button_9 = {
@@ -695,6 +702,7 @@ Compact button_9 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact button_8 = {
@@ -726,6 +734,7 @@ Compact button_8 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact retina_scan = {
@@ -757,6 +766,7 @@ Compact retina_scan = {
 	C_BASE_MODE,	// mode
 	FS_RETINA_SCAN_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact button_6 = {
@@ -788,6 +798,7 @@ Compact button_6 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact button_3 = {
@@ -819,6 +830,7 @@ Compact button_3 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact button_2 = {
@@ -850,6 +862,7 @@ Compact button_2 = {
 	C_BASE_MODE,	// mode
 	FS_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s101_chip_list[] = {
@@ -866,7 +879,7 @@ uint16 s101_chip_list[] = {
 	149+DISK_1,
 	150+DISK_1,
 	151+DISK_1,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

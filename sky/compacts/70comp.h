@@ -56,6 +56,7 @@ Compact sc70_bar = {
 	C_BASE_MODE,	// mode
 	SC70_BAR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc70_pull_bar[] = {
@@ -102,7 +103,7 @@ uint16 sc70_pull_bar[] = {
 	288,
 	180,
 	12,
-	0,
+	0
 };
 
 uint16 sc70_step_down[] = {
@@ -197,7 +198,7 @@ uint16 sc70_step_down[] = {
 	378,
 	226,
 	0,
-	0,
+	0
 };
 
 uint16 sc70_palette[] = {
@@ -584,7 +585,7 @@ uint16 sc70_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc70_floor_table[] = {
@@ -602,7 +603,7 @@ uint16 sc70_floor_table[] = {
 	GT_SC70_PIT,
 	ID_SC70_GRILL,
 	GT_SC70_PIT,
-	65535,
+	65535
 };
 
 uint16 sc70_enter_anim[] = {
@@ -664,7 +665,7 @@ uint16 sc70_enter_anim[] = {
 	194,
 	194,
 	14,
-	0,
+	0
 };
 
 uint16 sc70_step_up[] = {
@@ -762,7 +763,7 @@ uint16 sc70_step_up[] = {
 	324,
 	194,
 	0,
-	0,
+	0
 };
 
 Compact sc70_floor = {
@@ -784,6 +785,17 @@ Compact sc70_floor = {
 	447-140,	// mouseSize_x
 	327-230,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_68_70[] = {
@@ -797,7 +809,7 @@ uint16 reset_68_70[] = {
 	240,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 uint16 sc70_exit_anim[] = {
@@ -859,7 +871,7 @@ uint16 sc70_exit_anim[] = {
 	161,
 	175,
 	18,
-	0,
+	0
 };
 
 uint32 *grid70 = 0;
@@ -871,7 +883,7 @@ uint16 sc70_fast_list[] = {
 	53+DISK_5,
 	54+DISK_5,
 	268+DISK_5,
-	0,
+	0
 };
 
 uint16 sc70_logic_list[] = {
@@ -885,7 +897,7 @@ uint16 sc70_logic_list[] = {
 	ID_SC70_GRILL,
 	ID_FOSTER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 ExtCompact sc70_iris_ext = {
@@ -902,6 +914,22 @@ ExtCompact sc70_iris_ext = {
 	0,	// atWatch
 	0,	// atWas
 	0,	// alt
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc70_iris = {
@@ -933,7 +961,7 @@ Compact sc70_iris = {
 	C_BASE_MODE,	// mode
 	SC70_IRIS_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc70_iris_ext,
+	&sc70_iris_ext
 };
 
 uint16 sc70_pit_table[] = {
@@ -951,7 +979,7 @@ uint16 sc70_pit_table[] = {
 	GT_SC70_BAR,
 	ID_SC70_GRILL,
 	GT_SC70_GRILL,
-	65535,
+	65535
 };
 
 Compact sc70_door = {
@@ -973,6 +1001,17 @@ Compact sc70_door = {
 	191-178,	// mouseSize_x
 	242-184,	// mouseSize_y
 	SC70_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc70_pit = {
@@ -1004,6 +1043,7 @@ Compact sc70_pit = {
 	C_BASE_MODE,	// mode
 	SC70_PIT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc70_chip_list[] = {
@@ -1021,7 +1061,7 @@ uint16 sc70_chip_list[] = {
 	IT_SC70_STEP_DOWN+DISK_5,
 	IT_SC70_PULL_BAR+DISK_5,
 	IT_SC70_ENTER_ANIM+DISK_5,
-	0,
+	0
 };
 
 uint16 sc70_bar_anim[] = {
@@ -1038,7 +1078,7 @@ uint16 sc70_bar_anim[] = {
 	290,
 	170,
 	3,
-	0,
+	0
 };
 
 Compact sc70_control = {
@@ -1070,6 +1110,7 @@ Compact sc70_control = {
 	C_BASE_MODE,	// mode
 	SC70_CONTROL_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc70_pit_anim[] = {
@@ -1119,7 +1160,7 @@ uint16 sc70_pit_anim[] = {
 	239,
 	233,
 	6,
-	0,
+	0
 };
 
 Compact sc70_grill = {
@@ -1141,6 +1182,17 @@ Compact sc70_grill = {
 	294-266,	// mouseSize_x
 	173-168,	// mouseSize_y
 	SC70_GRILL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc70_consol_anim[] = {
@@ -1193,7 +1245,7 @@ uint16 sc70_consol_anim[] = {
 	365,
 	215,
 	15,
-	0,
+	0
 };
 
 uint16 sc70_mouse_list[] = {
@@ -1205,7 +1257,7 @@ uint16 sc70_mouse_list[] = {
 	ID_SC70_DOOR,
 	ID_SC70_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 }; // namespace SkyCompact

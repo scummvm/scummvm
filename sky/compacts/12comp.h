@@ -215,7 +215,7 @@ uint16 botbelt_seq[] = {
 	280,
 	295,
 	33,
-	0,
+	0
 };
 
 uint16 s12_floor_table[] = {
@@ -247,7 +247,7 @@ uint16 s12_floor_table[] = {
 	GT_L_TALK_12,
 	ID_STD_RIGHT_TALK,
 	GT_R_TALK_12,
-	65535,
+	65535
 };
 
 uint16 swap1_seq[] = {
@@ -315,7 +315,7 @@ uint16 swap1_seq[] = {
 	248,
 	184,
 	19,
-	0,
+	0
 };
 
 uint16 rs_joey_start_12[] = {
@@ -337,7 +337,7 @@ uint16 rs_joey_start_12[] = {
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_COLLISION+ST_MOUSE,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 uint16 rs_lamb_start_fact[] = {
@@ -351,7 +351,7 @@ uint16 rs_lamb_start_fact[] = {
 	ID_S12_FLOOR,
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_COLLISION+ST_MOUSE,
-	65535,
+	65535
 };
 
 uint16 welder_seq[] = {
@@ -383,7 +383,7 @@ uint16 welder_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foster_7_12[] = {
@@ -395,7 +395,7 @@ uint16 rs_foster_7_12[] = {
 	12,
 	C_PLACE,
 	ID_S12_FLOOR,
-	65535,
+	65535
 };
 
 uint16 factory_spanner_seq[] = {
@@ -457,7 +457,7 @@ uint16 factory_spanner_seq[] = {
 	239,
 	195,
 	12,
-	0,
+	0
 };
 
 uint16 pipes_seq[] = {
@@ -648,7 +648,7 @@ uint16 pipes_seq[] = {
 	281,
 	206,
 	2,
-	0,
+	0
 };
 
 uint16 swap3_seq[] = {
@@ -728,7 +728,7 @@ uint16 swap3_seq[] = {
 	220,
 	186,
 	19,
-	0,
+	0
 };
 
 Compact fact1_right_exit = {
@@ -750,6 +750,17 @@ Compact fact1_right_exit = {
 	1000,	// mouseSize_x
 	295-190,	// mouseSize_y
 	FACT1_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact pipes = {
@@ -781,6 +792,7 @@ Compact pipes = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact botbelt = {
@@ -812,6 +824,7 @@ Compact botbelt = {
 	C_BASE_MODE,	// mode
 	BOTBELT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 joey_list_12[] = {
@@ -820,7 +833,7 @@ uint16 joey_list_12[] = {
 	256,
 	272,
 	1,
-	0,
+	0
 };
 
 Compact welder = {
@@ -852,6 +865,7 @@ Compact welder = {
 	C_BASE_MODE,	// mode
 	WELDER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact factory_exit = {
@@ -873,6 +887,17 @@ Compact factory_exit = {
 	190-171,	// mouseSize_x
 	248-190,	// mouseSize_y
 	FACTORY_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid12 = 0;
@@ -1261,7 +1286,7 @@ uint16 s12_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 cant_lift_seq[] = {
@@ -1329,7 +1354,7 @@ uint16 cant_lift_seq[] = {
 	1,
 	1,
 	1,
-	0,
+	0
 };
 
 Compact topbelt = {
@@ -1361,6 +1386,7 @@ Compact topbelt = {
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s12_fast_list[] = {
@@ -1373,7 +1399,7 @@ uint16 s12_fast_list[] = {
 	14+DISK_3,
 	16+DISK_3,
 	91+DISK_3,
-	0,
+	0
 };
 
 uint16 s12_new_chip[] = {
@@ -1391,7 +1417,7 @@ uint16 s12_new_chip[] = {
 	71+DISK_3+0X8000,
 	15+DISK_3,
 	92+DISK_3,
-	0,
+	0
 };
 
 Compact console_12 = {
@@ -1413,6 +1439,17 @@ Compact console_12 = {
 	368-341,	// mouseSize_x
 	6,	// mouseSize_y
 	CONSOLE_12_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 anita_walk_seq[] = {
@@ -1540,7 +1577,7 @@ uint16 anita_walk_seq[] = {
 	425,
 	215,
 	21,
-	0,
+	0
 };
 
 uint16 anita_work_seq[] = {
@@ -1740,7 +1777,7 @@ uint16 anita_work_seq[] = {
 	0X157,
 	0XB3,
 	0,
-	0,
+	0
 };
 
 uint16 anita_turn_seq[] = {
@@ -1763,7 +1800,7 @@ uint16 anita_turn_seq[] = {
 	343,
 	178,
 	5,
-	0,
+	0
 };
 
 uint16 anita_turn_back[] = {
@@ -1786,7 +1823,7 @@ uint16 anita_turn_back[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foster_12_7[] = {
@@ -1798,7 +1835,7 @@ uint16 rs_foster_12_7[] = {
 	7,
 	C_PLACE,
 	ID_S7_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s12_mouse[] = {
@@ -1813,7 +1850,7 @@ uint16 s12_mouse[] = {
 	ID_ANITA_SPY,
 	ID_WELDER,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s12_chip_list[] = {
@@ -1833,7 +1870,7 @@ uint16 s12_chip_list[] = {
 	90+DISK_3+0X8000,
 	15+DISK_3,
 	92+DISK_3,
-	0,
+	0
 };
 
 Compact stump = {
@@ -1855,6 +1892,17 @@ Compact stump = {
 	279-249,	// mouseSize_x
 	230-208,	// mouseSize_y
 	STUMP_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 swap2_seq[] = {
@@ -1895,7 +1943,7 @@ uint16 swap2_seq[] = {
 	235,
 	183,
 	11,
-	0,
+	0
 };
 
 Compact anita_spy = {
@@ -1927,6 +1975,7 @@ Compact anita_spy = {
 	C_BASE_MODE,	// mode
 	ANITA_SPY_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact s12_floor = {
@@ -1948,6 +1997,17 @@ Compact s12_floor = {
 	320,	// mouseSize_x
 	79,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s12_logic[] = {
@@ -1973,7 +2033,7 @@ uint16 s12_logic[] = {
 	ID_WELDER,
 	ID_CABLE_7,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 topbelt_seq[] = {
@@ -2164,7 +2224,7 @@ uint16 topbelt_seq[] = {
 	222,
 	180,
 	42,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

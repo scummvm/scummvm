@@ -29,7 +29,7 @@ namespace SkyCompact {
 
 uint16 window_mouse[] = {
 	ID_INFO_BUTTON,
-	0,
+	0
 };
 
 uint16 logon[] = {
@@ -64,7 +64,7 @@ uint16 logon[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint32 *grid96 = 0;
@@ -74,7 +74,7 @@ uint16 note_module[] = {
 	176,
 	0,
 	199,
-	226,
+	226
 };
 
 uint16 window_logic[] = {
@@ -93,7 +93,7 @@ uint16 window_logic[] = {
 	30,
 	31,
 	32,
-	0,
+	0
 };
 
 uint16 crouch_right_b[] = {
@@ -113,7 +113,7 @@ uint16 crouch_right_b[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 crouch_down[] = {
@@ -148,7 +148,7 @@ uint16 crouch_down[] = {
 	201,
 	272,
 	0,
-	0,
+	0
 };
 
 uint16 auth_module[] = {
@@ -156,7 +156,7 @@ uint16 auth_module[] = {
 	176,
 	0,
 	199,
-	202,
+	202
 };
 
 Compact window_3 = {
@@ -188,6 +188,7 @@ Compact window_3 = {
 	C_BASE_MODE,	// mode
 	INFO_WINDOW_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint32 *grid91 = 0;
@@ -221,6 +222,7 @@ Compact info_button = {
 	C_BASE_MODE,	// mode
 	INFO_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 size_module[] = {
@@ -228,7 +230,7 @@ uint16 size_module[] = {
 	176,
 	0,
 	199,
-	190,
+	190
 };
 
 Compact window_2 = {
@@ -260,6 +262,7 @@ Compact window_2 = {
 	C_BASE_MODE,	// mode
 	INFO_WINDOW_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 logoff[] = {
@@ -294,7 +297,7 @@ uint16 logoff[] = {
 	261,
 	181,
 	8,
-	0,
+	0
 };
 
 uint32 *grid94 = 0;
@@ -322,7 +325,7 @@ uint16 enter_top[] = {
 	200,
 	215,
 	6,
-	0,
+	0
 };
 
 uint16 crouch_right[] = {
@@ -357,7 +360,7 @@ uint16 crouch_right[] = {
 	260,
 	215,
 	0,
-	0,
+	0
 };
 
 uint32 *grid95 = 0;
@@ -391,6 +394,7 @@ Compact window_1 = {
 	C_BASE_MODE,	// mode
 	INFO_WINDOW_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint32 *grid90 = 0;
@@ -418,7 +422,7 @@ uint16 exit_top[] = {
 	200,
 	215,
 	6,
-	0,
+	0
 };
 
 uint16 shrug[] = {
@@ -441,7 +445,7 @@ uint16 shrug[] = {
 	1,
 	1,
 	48,
-	0,
+	0
 };
 
 uint16 head_module[] = {
@@ -449,7 +453,7 @@ uint16 head_module[] = {
 	176,
 	0,
 	199,
-	161,
+	161
 };
 
 uint16 crouch_right_a[] = {
@@ -469,7 +473,7 @@ uint16 crouch_right_a[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 file_module[] = {
@@ -477,7 +481,7 @@ uint16 file_module[] = {
 	176,
 	0,
 	199,
-	178,
+	178
 };
 
 uint16 crouch_left[] = {
@@ -512,7 +516,7 @@ uint16 crouch_left[] = {
 	320,
 	215,
 	0,
-	0,
+	0
 };
 
 uint32 *grid92 = 0;
@@ -546,6 +550,7 @@ Compact window_4 = {
 	C_BASE_MODE,	// mode
 	INFO_WINDOW_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_s90[] = {
@@ -561,7 +566,7 @@ uint16 rs_foster_s90[] = {
 	DOWN,
 	C_FRAME,
 	117*64,
-	65535,
+	65535
 };
 
 uint32 *grid93 = 0;

@@ -31,7 +31,7 @@ uint16 medi_d_to_u[] = {
 	35+32*64,
 	24+32*64,
 	34+32*64,
-	0,
+	0
 };
 
 uint16 sc71_use_board[] = {
@@ -96,7 +96,7 @@ uint16 sc71_use_board[] = {
 	243,
 	191,
 	0,
-	0,
+	0
 };
 
 Compact sc71_door72 = {
@@ -118,6 +118,17 @@ Compact sc71_door72 = {
 	208-194,	// mouseSize_x
 	280-219,	// mouseSize_y
 	SC71_DOOR72_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc71_medi_charge[] = {
@@ -152,7 +163,7 @@ uint16 sc71_medi_charge[] = {
 	279,
 	196,
 	9,
-	0,
+	0
 };
 
 uint8 medi_auto[64];
@@ -190,7 +201,7 @@ uint16 medi_up[] = {
 	7+32*64,
 	0,
 	65535,
-	0,
+	0
 };
 
 uint16 medi_down[] = {
@@ -226,7 +237,7 @@ uint16 medi_down[] = {
 	15+32*64,
 	0,
 	1,
-	0,
+	0
 };
 
 uint16 medi_left[] = {
@@ -262,7 +273,7 @@ uint16 medi_left[] = {
 	23+32*64,
 	65534,
 	0,
-	0,
+	0
 };
 
 uint16 medi_right[] = {
@@ -298,7 +309,7 @@ uint16 medi_right[] = {
 	31+32*64,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 medi_st_up[] = {
@@ -306,7 +317,7 @@ uint16 medi_st_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 medi_st_down[] = {
@@ -314,7 +325,7 @@ uint16 medi_st_down[] = {
 	1,
 	1,
 	8,
-	0,
+	0
 };
 
 uint16 medi_st_left[] = {
@@ -322,7 +333,7 @@ uint16 medi_st_left[] = {
 	1,
 	1,
 	16,
-	0,
+	0
 };
 
 uint16 medi_st_right[] = {
@@ -330,68 +341,68 @@ uint16 medi_st_right[] = {
 	1,
 	1,
 	24,
-	0,
+	0
 };
 
 uint16 medi_u_to_d[] = {
 	33+32*64,
 	16+32*64,
 	32+32*64,
-	0,
+	0
 };
 
 uint16 medi_u_to_l[] = {
 	33+32*64,
-	0,
+	0
 };
 
 uint16 medi_u_to_r[] = {
 	34+32*64,
-	0,
+	0
 };
 
 uint16 medi_d_to_l[] = {
 	32+32*64,
-	0,
+	0
 };
 
 uint16 medi_d_to_r[] = {
 	35+32*64,
-	0,
+	0
 };
 
 uint16 medi_l_to_u[] = {
 	33+32*64,
-	0,
+	0
 };
 
 uint16 medi_l_to_d[] = {
 	32+32*64,
-	0,
+	0
 };
 
 uint16 medi_l_to_r[] = {
 	32+32*64,
 	8+32*64,
 	35+32*64,
-	0,
+	0
 };
 
 uint16 medi_r_to_u[] = {
 	34+32*64,
-	0,
+	0
 };
 
 uint16 medi_r_to_d[] = {
 	35+32*64,
-	0,
+	0
 };
 
 uint16 medi_r_to_l[] = {
 	34+32*64,
 	0+32*64,
 	33+32*64,
-	0,
+	0
 };
 
 TurnTable medi_turnTable0 = {
@@ -429,7 +440,7 @@ TurnTable medi_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet medi_megaSet0 = {
@@ -446,7 +457,7 @@ MegaSet medi_megaSet0 = {
 	medi_st_left,	// standLeft
 	medi_st_right,	// standRight
 	0,	// standTalk
-	&medi_turnTable0,
+	&medi_turnTable0
 };
 
 ExtCompact medi_ext = {
@@ -476,6 +487,9 @@ ExtCompact medi_ext = {
 	medi_auto,	// animScratch
 	0,	// megaSet
 	&medi_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact medi = {
@@ -507,7 +521,7 @@ Compact medi = {
 	C_BASE_MODE,	// mode
 	MEDI_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&medi_ext,
+	&medi_ext
 };
 
 uint16 sc71_mouse_list[] = {
@@ -522,7 +536,7 @@ uint16 sc71_mouse_list[] = {
 	ID_SC71_FLOOR,
 	ID_SC71_FAKE_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc71_light1_anim[] = {
@@ -557,7 +571,7 @@ uint16 sc71_light1_anim[] = {
 	249,
 	197,
 	5,
-	0,
+	0
 };
 
 uint16 sc71_logic_list[] = {
@@ -574,7 +588,7 @@ uint16 sc71_logic_list[] = {
 	ID_SC71_PANEL2,
 	ID_SC72_SPILL,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 reset_69_71[] = {
@@ -586,7 +600,7 @@ uint16 reset_69_71[] = {
 	152,
 	C_YCOOD,
 	288,
-	65535,
+	65535
 };
 
 uint16 sc71_chip_list[] = {
@@ -605,7 +619,7 @@ uint16 sc71_chip_list[] = {
 	IT_SC71_SCREEN+DISK_5,
 	IT_SC71_MEDI_CHARGE+DISK_5,
 	IT_SC71_USE_BOARD+DISK_5,
-	0,
+	0
 };
 
 uint16 sc710_chip_list[] = {
@@ -623,7 +637,7 @@ uint16 sc710_chip_list[] = {
 	IT_SC71_CHARGE_LIGHT+DISK_5,
 	IT_SC71_SCREEN+DISK_5,
 	IT_SC71_MEDI_CHARGE+DISK_5,
-	0,
+	0
 };
 
 uint16 reset_72_71[] = {
@@ -635,7 +649,7 @@ uint16 reset_72_71[] = {
 	176,
 	C_YCOOD,
 	264,
-	65535,
+	65535
 };
 
 uint16 sc71_medi_get_up[] = {
@@ -667,7 +681,7 @@ uint16 sc71_medi_get_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact sc71_chlite = {
@@ -699,6 +713,7 @@ Compact sc71_chlite = {
 	C_BASE_MODE,	// mode
 	SC71_CHLITE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc71_controls = {
@@ -730,6 +745,7 @@ Compact sc71_controls = {
 	C_BASE_MODE,	// mode
 	SC71_CONTROLS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc71_panel_anim[] = {
@@ -770,7 +786,7 @@ uint16 sc71_panel_anim[] = {
 	272,
 	226,
 	11,
-	0,
+	0
 };
 
 Compact sc71_panel2 = {
@@ -802,6 +818,7 @@ Compact sc71_panel2 = {
 	C_BASE_MODE,	// mode
 	SC71_PANEL2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc71_panel2_anim[] = {
@@ -842,7 +859,7 @@ uint16 sc71_panel2_anim[] = {
 	287,
 	226,
 	11,
-	0,
+	0
 };
 
 uint16 sc71_joey_list[] = {
@@ -866,7 +883,7 @@ uint16 sc71_joey_list[] = {
 	304,
 	311,
 	0,
-	0,
+	0
 };
 
 Compact sc71_light1 = {
@@ -898,6 +915,7 @@ Compact sc71_light1 = {
 	C_BASE_MODE,	// mode
 	SC71_LIGHT1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc71_palette[] = {
@@ -1284,7 +1302,7 @@ uint16 sc71_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc71_fast_list[] = {
@@ -1294,7 +1312,7 @@ uint16 sc71_fast_list[] = {
 	53+DISK_5,
 	54+DISK_5,
 	268+DISK_5,
-	0,
+	0
 };
 
 uint16 sc71_mon_anim[] = {
@@ -1317,7 +1335,7 @@ uint16 sc71_mon_anim[] = {
 	372,
 	248,
 	5,
-	0,
+	0
 };
 
 uint16 sc71_floor_table[] = {
@@ -1347,7 +1365,7 @@ uint16 sc71_floor_table[] = {
 	GT_SC71_MEDI_SLOT,
 	ID_JOEY_PARK,
 	GT_JOEY_PARK,
-	65535,
+	65535
 };
 
 Compact sc71_floor = {
@@ -1369,6 +1387,17 @@ Compact sc71_floor = {
 	395-194,	// mouseSize_x
 	327-256,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc71_door69 = {
@@ -1390,6 +1419,17 @@ Compact sc71_door69 = {
 	178-163,	// mouseSize_x
 	296-230,	// mouseSize_y
 	SC71_DOOR69_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid71 = 0;
@@ -1413,6 +1453,17 @@ Compact sc71_fake_floor = {
 	447-128,	// mouseSize_x
 	327-136,	// mouseSize_y
 	0,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc71_medi_slot = {
@@ -1434,6 +1485,17 @@ Compact sc71_medi_slot = {
 	280-275,	// mouseSize_x
 	247-242,	// mouseSize_y
 	SC71_MEDI_SLOT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc71_monitor = {
@@ -1465,6 +1527,7 @@ Compact sc71_monitor = {
 	C_BASE_MODE,	// mode
 	SC71_MONITOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc71_chlite_anim[] = {
@@ -1505,7 +1568,7 @@ uint16 sc71_chlite_anim[] = {
 	268,
 	197,
 	5,
-	0,
+	0
 };
 
 Compact sc71_locked_door = {
@@ -1527,6 +1590,17 @@ Compact sc71_locked_door = {
 	362-353,	// mouseSize_x
 	280-222,	// mouseSize_y
 	SC71_LOCKED_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc71_recharger = {
@@ -1558,6 +1632,7 @@ Compact sc71_recharger = {
 	C_BASE_MODE,	// mode
 	SC71_RECHARGER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc71_light2_anim[] = {
@@ -1622,7 +1697,7 @@ uint16 sc71_light2_anim[] = {
 	372,
 	270,
 	19,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

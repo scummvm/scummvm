@@ -131,7 +131,7 @@ uint16 pulseb_seq[] = {
 	256,
 	203,
 	0,
-	0,
+	0
 };
 
 uint16 s17_floor_table[] = {
@@ -147,7 +147,7 @@ uint16 s17_floor_table[] = {
 	GT_ANITA_CARD,
 	ID_PULSE,
 	GT_RODS,
-	65535,
+	65535
 };
 
 Compact s17_floor = {
@@ -169,6 +169,17 @@ Compact s17_floor = {
 	216,	// mouseSize_x
 	1024,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid17 = 0;
@@ -205,7 +216,7 @@ uint16 get_card_seq[] = {
 	323,
 	248,
 	0,
-	0,
+	0
 };
 
 Compact core_exit = {
@@ -227,6 +238,17 @@ Compact core_exit = {
 	12,	// mouseSize_x
 	292-208,	// mouseSize_y
 	CORE_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_17_16[] = {
@@ -238,7 +260,7 @@ uint16 rs_foster_17_16[] = {
 	16,
 	C_PLACE,
 	ID_S16_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s17_chip_list[] = {
@@ -254,7 +276,7 @@ uint16 s17_chip_list[] = {
 	110+DISK_6,
 	132+DISK_6,
 	133+DISK_6,
-	0,
+	0
 };
 
 uint16 s17_pal[] = {
@@ -641,7 +663,7 @@ uint16 s17_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 s17_mouse[] = {
@@ -651,7 +673,7 @@ uint16 s17_mouse[] = {
 	ID_PULSE,
 	ID_S17_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact pulseb = {
@@ -683,6 +705,7 @@ Compact pulseb = {
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s17_fast_list[] = {
@@ -695,7 +718,7 @@ uint16 s17_fast_list[] = {
 	129+DISK_6,
 	130+DISK_6,
 	131+DISK_6,
-	0,
+	0
 };
 
 uint16 pulse_seq[] = {
@@ -802,7 +825,7 @@ uint16 pulse_seq[] = {
 	256,
 	247,
 	0,
-	0,
+	0
 };
 
 Compact anita_card = {
@@ -824,6 +847,17 @@ Compact anita_card = {
 	5,	// mouseSize_x
 	5,	// mouseSize_y
 	ANITA_CARD_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_16_17[] = {
@@ -835,7 +869,7 @@ uint16 rs_foster_16_17[] = {
 	17,
 	C_PLACE,
 	ID_S17_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s17_logic[] = {
@@ -845,7 +879,7 @@ uint16 s17_logic[] = {
 	ID_PULSEB,
 	ID_ANITA_CARD,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 Compact pulse = {
@@ -877,6 +911,7 @@ Compact pulse = {
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

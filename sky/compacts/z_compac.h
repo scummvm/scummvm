@@ -72,7 +72,7 @@ uint16 fradman_up[] = {
 	9+90*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 high_floor_table[] = {
@@ -88,7 +88,7 @@ uint16 high_floor_table[] = {
 	RET_OK,
 	ID_NOTICE,
 	GET_TO_NOTICE,
-	0,
+	0
 };
 
 Compact floor = {
@@ -110,13 +110,24 @@ Compact floor = {
 	248,	// mouseSize_x
 	23,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 wjoey_d_to_u[] = {
 	23+136*64,
 	12+136*64,
 	22+136*64,
-	0,
+	0
 };
 
 uint16 wjoey_st_left[] = {
@@ -124,12 +135,12 @@ uint16 wjoey_st_left[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint16 ljoey_r_to_d[] = {
 	23+173*64,
-	0,
+	0
 };
 
 uint16 s2_talk_table[] = {
@@ -155,7 +166,7 @@ uint16 s2_talk_table[] = {
 	GET_TO_SHELL,
 	ID_PANEL,
 	GET_TO_LEDS,
-	65535,
+	65535
 };
 
 Compact r_talk_s2 = {
@@ -165,13 +176,36 @@ Compact r_talk_s2 = {
 	0,	// screen
 	0,	// place
 	s2_talk_table,	// getToTable
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fradman_u_to_d[] = {
 	43+90*64,
 	42+90*64,
 	41+90*64,
-	0,
+	0
 };
 
 uint16 door_table[] = {
@@ -187,7 +221,7 @@ uint16 door_table[] = {
 	GET_TO_FEXIT,
 	ID_NOTICE,
 	GET_TO_NOTICE,
-	65535,
+	65535
 };
 
 uint16 mfoster_st_right[] = {
@@ -195,7 +229,7 @@ uint16 mfoster_st_right[] = {
 	1,
 	1,
 	46,
-	0,
+	0
 };
 
 uint16 bfoster_st_right[] = {
@@ -203,7 +237,7 @@ uint16 bfoster_st_right[] = {
 	1,
 	0,
 	46,
-	0,
+	0
 };
 
 uint16 seq3_pal[] = {
@@ -238,18 +272,18 @@ uint16 seq3_pal[] = {
 	3410,
 	2882,
 	1057,
-	3718,
+	3718
 };
 
 uint16 bfoster_u_to_r[] = {
 	45+182*64,
-	0,
+	0
 };
 
 uint16 foster_l_to_t[] = {
 	41+12*64,
 	40+12*64,
-	0,
+	0
 };
 
 uint16 s9_fast_list[] = {
@@ -268,7 +302,7 @@ uint16 s9_fast_list[] = {
 	100+DISK_2,
 	108+DISK_2,
 	109+DISK_2,
-	0,
+	0
 };
 
 uint16 wjoey_st_up[] = {
@@ -276,12 +310,12 @@ uint16 wjoey_st_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 bfoster_r_to_u[] = {
 	45+182*64,
-	0,
+	0
 };
 
 uint16 monitor_left[] = {
@@ -317,7 +351,7 @@ uint16 monitor_left[] = {
 	23+74*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 rs_lamb_to_three[] = {
@@ -325,7 +359,7 @@ uint16 rs_lamb_to_three[] = {
 	ST_LOGIC,
 	C_LOGIC,
 	L_SCRIPT,
-	65535,
+	65535
 };
 
 uint16 std_menu_logic[] = {
@@ -378,7 +412,7 @@ uint16 std_menu_logic[] = {
 	25,
 	24,
 	23,
-	0,
+	0
 };
 
 uint16 but_7[] = {
@@ -392,7 +426,7 @@ uint16 but_7[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 ljoey_up[] = {
@@ -404,12 +438,12 @@ uint16 ljoey_up[] = {
 	1+173*64,
 	0,
 	65535,
-	0,
+	0
 };
 
 uint16 wjoey_r_to_d[] = {
 	23+136*64,
-	0,
+	0
 };
 
 Compact small_door = {
@@ -441,6 +475,7 @@ Compact small_door = {
 	C_BASE_MODE,	// mode
 	SMALL_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 shrug_seq[] = {
@@ -463,7 +498,7 @@ uint16 shrug_seq[] = {
 	1,
 	1,
 	49,
-	0,
+	0
 };
 
 uint16 foster_up[] = {
@@ -507,12 +542,12 @@ uint16 foster_up[] = {
 	9+12*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 mfoster_d_to_l[] = {
 	41+13*64,
-	0,
+	0
 };
 
 uint16 ljoey_down[] = {
@@ -524,7 +559,7 @@ uint16 ljoey_down[] = {
 	3+173*64,
 	0,
 	1,
-	0,
+	0
 };
 
 uint16 rs_blanks_linc[] = {
@@ -534,7 +569,7 @@ uint16 rs_blanks_linc[] = {
 	LINC_MENU_SCRIPT,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 mini_shrug_seq[] = {
@@ -557,7 +592,7 @@ uint16 mini_shrug_seq[] = {
 	1,
 	1,
 	49,
-	0,
+	0
 };
 
 uint16 talk_table[] = {
@@ -574,12 +609,12 @@ uint16 talk_table[] = {
 	111,
 	GET_TO_ER0,
 	17,
-	STAIRS_FROM_LOW,
+	STAIRS_FROM_LOW
 };
 
 uint16 fradman_l_to_d[] = {
 	41+90*64,
-	0,
+	0
 };
 
 uint16 low_floor_table[] = {
@@ -601,7 +636,7 @@ uint16 low_floor_table[] = {
 	GET_TO_UPLOAD,
 	ID_PRESS,
 	GET_TO_PRESS,
-	0,
+	0
 };
 
 Compact low_floor = {
@@ -623,13 +658,24 @@ Compact low_floor = {
 	237,	// mouseSize_x
 	40,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 bfoster_d_to_u[] = {
 	47+182*64,
 	46+182*64,
 	45+182*64,
-	0,
+	0
 };
 
 uint16 but_0[] = {
@@ -643,7 +689,7 @@ uint16 but_0[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 but_4[] = {
@@ -657,7 +703,7 @@ uint16 but_4[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint8 new_grid[120];
@@ -703,7 +749,7 @@ uint16 fradman_right[] = {
 	39+90*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 bfoster_st_left[] = {
@@ -711,7 +757,7 @@ uint16 bfoster_st_left[] = {
 	1,
 	0,
 	42,
-	0,
+	0
 };
 
 uint16 sjoey_up[] = {
@@ -723,7 +769,7 @@ uint16 sjoey_up[] = {
 	1+86*64,
 	0,
 	65535,
-	0,
+	0
 };
 
 uint16 s10_fast_list[] = {
@@ -735,22 +781,22 @@ uint16 s10_fast_list[] = {
 	135,
 	43+DISK_1,
 	44+DISK_1,
-	0,
+	0
 };
 
 uint16 fradman_u_to_l[] = {
 	43+90*64,
-	0,
+	0
 };
 
 uint16 ljoey_r_to_u[] = {
 	22+173*64,
-	0,
+	0
 };
 
 uint16 foster_u_to_l[] = {
 	43+12*64,
-	0,
+	0
 };
 
 uint8 lamb_auto[64];
@@ -796,7 +842,7 @@ uint16 lamb_up[] = {
 	9+131*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 lamb_down[] = {
@@ -840,7 +886,7 @@ uint16 lamb_down[] = {
 	19+131*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 lamb_left[] = {
@@ -884,7 +930,7 @@ uint16 lamb_left[] = {
 	29+131*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 lamb_right[] = {
@@ -928,7 +974,7 @@ uint16 lamb_right[] = {
 	39+131*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 lamb_st_up[] = {
@@ -936,7 +982,7 @@ uint16 lamb_st_up[] = {
 	1,
 	1,
 	44,
-	0,
+	0
 };
 
 uint16 lamb_st_down[] = {
@@ -944,7 +990,7 @@ uint16 lamb_st_down[] = {
 	1,
 	1,
 	40,
-	0,
+	0
 };
 
 uint16 lamb_st_left[] = {
@@ -952,7 +998,7 @@ uint16 lamb_st_left[] = {
 	1,
 	1,
 	42,
-	0,
+	0
 };
 
 uint16 lamb_st_right[] = {
@@ -960,7 +1006,7 @@ uint16 lamb_st_right[] = {
 	1,
 	1,
 	46,
-	0,
+	0
 };
 
 uint16 lamb_st_talk[] = {
@@ -968,75 +1014,75 @@ uint16 lamb_st_talk[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 lamb_u_to_d[] = {
 	43+131*64,
 	42+131*64,
 	41+131*64,
-	0,
+	0
 };
 
 uint16 lamb_u_to_l[] = {
 	43+131*64,
-	0,
+	0
 };
 
 uint16 lamb_u_to_r[] = {
 	45+131*64,
-	0,
+	0
 };
 
 uint16 lamb_d_to_u[] = {
 	47+131*64,
 	46+131*64,
 	45+131*64,
-	0,
+	0
 };
 
 uint16 lamb_d_to_l[] = {
 	41+131*64,
-	0,
+	0
 };
 
 uint16 lamb_d_to_r[] = {
 	47+131*64,
-	0,
+	0
 };
 
 uint16 lamb_l_to_u[] = {
 	43+131*64,
-	0,
+	0
 };
 
 uint16 lamb_l_to_d[] = {
 	41+131*64,
-	0,
+	0
 };
 
 uint16 lamb_l_to_r[] = {
 	41+131*64,
 	40+131*64,
 	47+131*64,
-	0,
+	0
 };
 
 uint16 lamb_r_to_u[] = {
 	45+131*64,
-	0,
+	0
 };
 
 uint16 lamb_r_to_d[] = {
 	47+131*64,
-	0,
+	0
 };
 
 uint16 lamb_r_to_l[] = {
 	45+131*64,
 	44+131*64,
 	43+131*64,
-	0,
+	0
 };
 
 TurnTable lamb_turnTable0 = {
@@ -1074,7 +1120,7 @@ TurnTable lamb_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet lamb_megaSet0 = {
@@ -1091,7 +1137,7 @@ MegaSet lamb_megaSet0 = {
 	lamb_st_left,	// standLeft
 	lamb_st_right,	// standRight
 	lamb_st_talk,	// standTalk
-	&lamb_turnTable0,
+	&lamb_turnTable0
 };
 
 ExtCompact lamb_ext = {
@@ -1121,6 +1167,9 @@ ExtCompact lamb_ext = {
 	lamb_auto,	// animScratch
 	0,	// megaSet
 	&lamb_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact lamb = {
@@ -1152,7 +1201,7 @@ Compact lamb = {
 	C_BASE_MODE,	// mode
 	LAMB_FACTORY_START,	// baseSub
 	0,	// baseSub_off
-	&lamb_ext,
+	&lamb_ext
 };
 
 uint16 bfoster_left[] = {
@@ -1196,7 +1245,7 @@ uint16 bfoster_left[] = {
 	29+182*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 fast_intro[] = {
@@ -1204,7 +1253,7 @@ uint16 fast_intro[] = {
 	184+DISK_15,
 	185+DISK_15,
 	186+DISK_15,
-	0,
+	0
 };
 
 uint16 foster_st_right[] = {
@@ -1212,7 +1261,7 @@ uint16 foster_st_right[] = {
 	1,
 	0,
 	46,
-	0,
+	0
 };
 
 uint16 monitor_st_up[] = {
@@ -1220,12 +1269,12 @@ uint16 monitor_st_up[] = {
 	1,
 	1,
 	36,
-	0,
+	0
 };
 
 uint16 sjoey_d_to_r[] = {
 	12+86*64,
-	0,
+	0
 };
 
 uint16 foster_st_down[] = {
@@ -1233,12 +1282,12 @@ uint16 foster_st_down[] = {
 	1,
 	0,
 	40,
-	0,
+	0
 };
 
 uint16 mfoster_u_to_r[] = {
 	45+13*64,
-	0,
+	0
 };
 
 uint16 sml_up_mid_get_seq[] = {
@@ -1270,21 +1319,21 @@ uint16 sml_up_mid_get_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 mfoster_u_to_d[] = {
 	43+13*64,
 	42+13*64,
 	41+13*64,
-	0,
+	0
 };
 
 uint16 wjoey_u_to_d[] = {
 	21+136*64,
 	4+136*64,
 	20+136*64,
-	0,
+	0
 };
 
 uint16 chip_intro[] = {
@@ -1293,7 +1342,7 @@ uint16 chip_intro[] = {
 	195+DISK_15,
 	196+DISK_15,
 	197+DISK_15,
-	0,
+	0
 };
 
 uint16 fast_list_0[] = {
@@ -1305,7 +1354,7 @@ uint16 fast_list_0[] = {
 	52,
 	53,
 	13+0X8000,
-	0,
+	0
 };
 
 uint16 rs_right_arrow[] = {
@@ -1315,7 +1364,7 @@ uint16 rs_right_arrow[] = {
 	MENU_SCRIPT,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 ljoey_st_left[] = {
@@ -1323,7 +1372,7 @@ uint16 ljoey_st_left[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint16 s28_fast_list[] = {
@@ -1333,7 +1382,7 @@ uint16 s28_fast_list[] = {
 	53,
 	54,
 	135,
-	0,
+	0
 };
 
 uint16 monitor_right[] = {
@@ -1369,7 +1418,7 @@ uint16 monitor_right[] = {
 	31+74*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 wjoey_st_down[] = {
@@ -1377,7 +1426,7 @@ uint16 wjoey_st_down[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 r2_floor_table[] = {
@@ -1415,7 +1464,7 @@ uint16 r2_floor_table[] = {
 	S2_WALK_ON,
 	1,
 	ER0_WALK_ON,
-	65535,
+	65535
 };
 
 Compact s2_floor = {
@@ -1437,6 +1486,17 @@ Compact s2_floor = {
 	240,	// mouseSize_x
 	71,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fradman_down[] = {
@@ -1480,26 +1540,26 @@ uint16 fradman_down[] = {
 	19+90*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 foster_u_to_d[] = {
 	43+12*64,
 	42+12*64,
 	41+12*64,
-	0,
+	0
 };
 
 uint32 *c68 = 0;
 
 uint16 ljoey_d_to_r[] = {
 	23+173*64,
-	0,
+	0
 };
 
 uint16 mfoster_r_to_u[] = {
 	45+13*64,
-	0,
+	0
 };
 
 uint16 fast_list_sc3[] = {
@@ -1515,7 +1575,7 @@ uint16 fast_list_sc3[] = {
 	222+DISK_1,
 	223+DISK_1,
 	213+DISK_1,
-	0,
+	0
 };
 
 uint16 rs_left_arrow[] = {
@@ -1525,7 +1585,7 @@ uint16 rs_left_arrow[] = {
 	MENU_SCRIPT,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 rs_l_arr_linc[] = {
@@ -1535,7 +1595,7 @@ uint16 rs_l_arr_linc[] = {
 	LINC_MENU_SCRIPT,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 Compact text_8 = {
@@ -1561,11 +1621,18 @@ Compact text_8 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 wjoey_l_to_d[] = {
 	20+136*64,
-	0,
+	0
 };
 
 uint16 stair_table[] = {
@@ -1587,7 +1654,7 @@ uint16 stair_table[] = {
 	GET_TO_UPLOAD,
 	ID_PRESS,
 	GET_TO_PRESS,
-	0,
+	0
 };
 
 Compact stairs = {
@@ -1609,6 +1676,17 @@ Compact stairs = {
 	12,	// mouseSize_x
 	14,	// mouseSize_y
 	STAIR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 text_mouse[] = {
@@ -1662,17 +1740,17 @@ uint16 text_mouse[] = {
 	IDO_DOG_FOOD,
 	IDO_GALLCARD,
 	46,
-	0,
+	0
 };
 
 uint16 monitor_d_to_r[] = {
 	47-8+74*64,
-	0,
+	0
 };
 
 uint16 ljoey_l_to_d[] = {
 	20+173*64,
-	0,
+	0
 };
 
 uint16 sjoey_st_right[] = {
@@ -1680,7 +1758,7 @@ uint16 sjoey_st_right[] = {
 	1,
 	1,
 	8,
-	0,
+	0
 };
 
 uint16 sjoey_st_down[] = {
@@ -1688,7 +1766,7 @@ uint16 sjoey_st_down[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 sjoey_st_left[] = {
@@ -1696,7 +1774,7 @@ uint16 sjoey_st_left[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint16 upstair_table[] = {
@@ -1712,7 +1790,7 @@ uint16 upstair_table[] = {
 	GET_TO_FEXIT,
 	ID_NOTICE,
 	GET_TO_NOTICE,
-	0,
+	0
 };
 
 uint16 sjoey_right[] = {
@@ -1732,12 +1810,12 @@ uint16 sjoey_right[] = {
 	11+86*64,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 ljoey_u_to_r[] = {
 	22+173*64,
-	0,
+	0
 };
 
 uint16 mfoster_st_up[] = {
@@ -1745,7 +1823,7 @@ uint16 mfoster_st_up[] = {
 	1,
 	1,
 	44,
-	0,
+	0
 };
 
 uint16 mfoster_st_down[] = {
@@ -1753,7 +1831,7 @@ uint16 mfoster_st_down[] = {
 	1,
 	1,
 	40,
-	0,
+	0
 };
 
 uint16 foster_st_talk[] = {
@@ -1761,14 +1839,14 @@ uint16 foster_st_talk[] = {
 	1,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 mfoster_l_to_r[] = {
 	41+13*64,
 	40+13*64,
 	47+13*64,
-	0,
+	0
 };
 
 uint16 bar_table[] = {
@@ -1783,12 +1861,12 @@ uint16 bar_table[] = {
 	85,
 	RET_OK,
 	ID_NOTICE,
-	GET_TO_NOTICE,
+	GET_TO_NOTICE
 };
 
 uint16 foster_d_to_l[] = {
 	41+12*64,
-	0,
+	0
 };
 
 Compact text_1 = {
@@ -1814,6 +1892,13 @@ Compact text_1 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fradman_left[] = {
@@ -1857,7 +1942,7 @@ uint16 fradman_left[] = {
 	29+90*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 s29_fast_list[] = {
@@ -1869,7 +1954,7 @@ uint16 s29_fast_list[] = {
 	135,
 	170+DISK_8,
 	171+DISK_8,
-	0,
+	0
 };
 
 uint16 r1door_table[] = {
@@ -1881,7 +1966,7 @@ uint16 r1door_table[] = {
 	GET_TO_NOTICE2,
 	ID_SS_SIGN,
 	GET_TO_SS_SIGN,
-	65535,
+	65535
 };
 
 Compact r1_door = {
@@ -1913,6 +1998,7 @@ Compact r1_door = {
 	C_BASE_MODE,	// mode
 	R1EXIT_DOOR,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact upstairs = {
@@ -1934,18 +2020,29 @@ Compact upstairs = {
 	200-164,	// mouseSize_x
 	211-207,	// mouseSize_y
 	UPSTAIR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 ljoey_u_to_d[] = {
 	21+173*64,
 	4+173*64,
 	20+173*64,
-	0,
+	0
 };
 
 uint16 monitor_u_to_l[] = {
 	43-8+74*64,
-	0,
+	0
 };
 
 uint16 fradman_st_right[] = {
@@ -1953,7 +2050,7 @@ uint16 fradman_st_right[] = {
 	1,
 	0,
 	46,
-	0,
+	0
 };
 
 uint16 sml_door_table[] = {
@@ -1970,7 +2067,7 @@ uint16 sml_door_table[] = {
 	44,
 	GET_TO_TALK1,
 	45,
-	GET_TO_TALK2,
+	GET_TO_TALK2
 };
 
 uint32 *l_talk_s2 = 0;
@@ -1979,7 +2076,7 @@ uint16 bfoster_r_to_l[] = {
 	45+182*64,
 	44+182*64,
 	43+182*64,
-	0,
+	0
 };
 
 uint16 mfoster_left[] = {
@@ -2023,7 +2120,7 @@ uint16 mfoster_left[] = {
 	29+13*64,
 	65534,
 	0,
-	0,
+	0
 };
 
 uint16 wjoey_up[] = {
@@ -2035,19 +2132,19 @@ uint16 wjoey_up[] = {
 	1+136*64,
 	0,
 	65535,
-	0,
+	0
 };
 
 uint16 foster_r_to_u[] = {
 	45+12*64,
-	0,
+	0
 };
 
 uint16 mfoster_d_to_u[] = {
 	47+13*64,
 	46+13*64,
 	45+13*64,
-	0,
+	0
 };
 
 uint16 but_8[] = {
@@ -2061,7 +2158,7 @@ uint16 but_8[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 but_5[] = {
@@ -2075,22 +2172,22 @@ uint16 but_5[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 monitor_l_to_u[] = {
 	43-8+74*64,
-	0,
+	0
 };
 
 uint16 mfoster_l_to_u[] = {
 	43+13*64,
-	0,
+	0
 };
 
 uint16 bfoster_d_to_r[] = {
 	47+182*64,
-	0,
+	0
 };
 
 uint16 wjoey_down[] = {
@@ -2102,7 +2199,7 @@ uint16 wjoey_down[] = {
 	3+136*64,
 	0,
 	1,
-	0,
+	0
 };
 
 Compact text_10 = {
@@ -2128,13 +2225,20 @@ Compact text_10 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 monitor_u_to_d[] = {
 	43-8+74*64,
 	42-8+74*64,
 	41-8+74*64,
-	0,
+	0
 };
 
 Compact text_5 = {
@@ -2160,6 +2264,13 @@ Compact text_5 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 forklift1_cdt[] = {
@@ -2485,7 +2596,7 @@ uint16 forklift1_cdt[] = {
 	292,
 	291,
 	0,
-	0,
+	0
 };
 
 uint16 bfoster_up[] = {
@@ -2529,7 +2640,7 @@ uint16 bfoster_up[] = {
 	9+182*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 s11_fast_list[] = {
@@ -2540,19 +2651,19 @@ uint16 s11_fast_list[] = {
 	54,
 	135,
 	16+DISK_1,
-	0,
+	0
 };
 
 uint16 fradman_d_to_u[] = {
 	47+90*64,
 	46+90*64,
 	45+90*64,
-	0,
+	0
 };
 
 uint16 monitor_r_to_u[] = {
 	45-8+74*64,
-	0,
+	0
 };
 
 uint16 bfoster_down[] = {
@@ -2596,7 +2707,7 @@ uint16 bfoster_down[] = {
 	19+182*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 ledge_table[] = {
@@ -2608,14 +2719,14 @@ uint16 ledge_table[] = {
 	GET_TO_NOTICE2,
 	ID_SS_SIGN,
 	GET_TO_SS_SIGN,
-	65535,
+	65535
 };
 
 uint16 ljoey_d_to_u[] = {
 	23+173*64,
 	12+173*64,
 	22+173*64,
-	0,
+	0
 };
 
 uint16 foster_left[] = {
@@ -2659,7 +2770,7 @@ uint16 foster_left[] = {
 	29+12*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 sjoey_st_up[] = {
@@ -2667,14 +2778,14 @@ uint16 sjoey_st_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fradman_l_to_r[] = {
 	41+90*64,
 	40+90*64,
 	47+90*64,
-	0,
+	0
 };
 
 Compact outside_ledge = {
@@ -2696,6 +2807,17 @@ Compact outside_ledge = {
 	64,	// mouseSize_x
 	33-8,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fradman_st_up[] = {
@@ -2703,23 +2825,23 @@ uint16 fradman_st_up[] = {
 	1,
 	0,
 	44,
-	0,
+	0
 };
 
 uint16 foster_l_to_u[] = {
 	43+12*64,
-	0,
+	0
 };
 
 uint16 foster_u_to_t[] = {
 	45+12*64,
 	46+12*64,
-	0,
+	0
 };
 
 uint16 ljoey_d_to_l[] = {
 	20+173*64,
-	0,
+	0
 };
 
 uint8 joey_auto[64];
@@ -2757,7 +2879,7 @@ uint16 ljoey_left[] = {
 	11+173*64,
 	65534,
 	0,
-	0,
+	0
 };
 
 uint16 ljoey_right[] = {
@@ -2793,7 +2915,7 @@ uint16 ljoey_right[] = {
 	19+173*64,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 ljoey_st_up[] = {
@@ -2801,7 +2923,7 @@ uint16 ljoey_st_up[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 ljoey_st_down[] = {
@@ -2809,7 +2931,7 @@ uint16 ljoey_st_down[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 ljoey_st_right[] = {
@@ -2817,31 +2939,31 @@ uint16 ljoey_st_right[] = {
 	1,
 	1,
 	12,
-	0,
+	0
 };
 
 uint16 ljoey_u_to_l[] = {
 	21+173*64,
-	0,
+	0
 };
 
 uint16 ljoey_l_to_u[] = {
 	21+173*64,
-	0,
+	0
 };
 
 uint16 ljoey_l_to_r[] = {
 	20+173*64,
 	2+173*64,
 	23+173*64,
-	0,
+	0
 };
 
 uint16 ljoey_r_to_l[] = {
 	22+173*64,
 	0+173*64,
 	21+173*64,
-	0,
+	0
 };
 
 uint16 wjoey_left[] = {
@@ -2877,7 +2999,7 @@ uint16 wjoey_left[] = {
 	11+136*64,
 	65534,
 	0,
-	0,
+	0
 };
 
 uint16 wjoey_right[] = {
@@ -2913,7 +3035,7 @@ uint16 wjoey_right[] = {
 	19+136*64,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 wjoey_st_right[] = {
@@ -2921,51 +3043,51 @@ uint16 wjoey_st_right[] = {
 	1,
 	1,
 	12,
-	0,
+	0
 };
 
 uint16 wjoey_u_to_l[] = {
 	21+136*64,
-	0,
+	0
 };
 
 uint16 wjoey_u_to_r[] = {
 	22+136*64,
-	0,
+	0
 };
 
 uint16 wjoey_d_to_l[] = {
 	20+136*64,
-	0,
+	0
 };
 
 uint16 wjoey_d_to_r[] = {
 	23+136*64,
-	0,
+	0
 };
 
 uint16 wjoey_l_to_u[] = {
 	21+136*64,
-	0,
+	0
 };
 
 uint16 wjoey_l_to_r[] = {
 	20+136*64,
 	2+136*64,
 	23+136*64,
-	0,
+	0
 };
 
 uint16 wjoey_r_to_u[] = {
 	22+136*64,
-	0,
+	0
 };
 
 uint16 wjoey_r_to_l[] = {
 	22+136*64,
 	0+136*64,
 	21+136*64,
-	0,
+	0
 };
 
 uint16 sjoey_down[] = {
@@ -2977,7 +3099,7 @@ uint16 sjoey_down[] = {
 	3+86*64,
 	0,
 	1,
-	0,
+	0
 };
 
 uint16 sjoey_left[] = {
@@ -2997,70 +3119,70 @@ uint16 sjoey_left[] = {
 	7+86*64,
 	65535,
 	0,
-	0,
+	0
 };
 
 uint16 sjoey_u_to_d[] = {
 	14+86*64,
 	4+86*64,
 	13+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_u_to_l[] = {
 	14+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_u_to_r[] = {
 	15+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_d_to_u[] = {
 	12+86*64,
 	8+86*64,
 	15+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_d_to_l[] = {
 	13+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_l_to_u[] = {
 	14+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_l_to_d[] = {
 	13+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_l_to_r[] = {
 	13+86*64,
 	2+86*64,
 	12+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_r_to_u[] = {
 	15+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_r_to_d[] = {
 	12+86*64,
-	0,
+	0
 };
 
 uint16 sjoey_r_to_l[] = {
 	15+86*64,
 	0+86*64,
 	14+86*64,
-	0,
+	0
 };
 
 TurnTable joey_turnTable0 = {
@@ -3174,7 +3296,7 @@ TurnTable joey_turnTable2 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet joey_megaSet0 = {
@@ -3225,7 +3347,7 @@ MegaSet joey_megaSet2 = {
 	sjoey_st_left,	// standLeft
 	sjoey_st_right,	// standRight
 	0,	// standTalk
-	&joey_turnTable2,
+	&joey_turnTable2
 };
 
 ExtCompact joey_ext = {
@@ -3257,6 +3379,7 @@ ExtCompact joey_ext = {
 	&joey_megaSet0,
 	&joey_megaSet1,
 	&joey_megaSet2,
+	0
 };
 
 Compact joey = {
@@ -3288,12 +3411,12 @@ Compact joey = {
 	C_BASE_MODE,	// mode
 	JOEY_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&joey_ext,
+	&joey_ext
 };
 
 uint16 baby_logic_list[] = {
 	ID_FOSTER,
-	0,
+	0
 };
 
 uint16 save_restore_mouse[] = {
@@ -3308,14 +3431,14 @@ uint16 save_restore_mouse[] = {
 	31,
 	32,
 	20,
-	0,
+	0
 };
 
 uint16 fradman_r_to_l[] = {
 	45+90*64,
 	44+90*64,
 	43+90*64,
-	0,
+	0
 };
 
 uint16 foster_right[] = {
@@ -3359,7 +3482,7 @@ uint16 foster_right[] = {
 	39+12*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 seq2_pal[] = {
@@ -3394,7 +3517,7 @@ uint16 seq2_pal[] = {
 	3155,
 	3411,
 	3412,
-	3428,
+	3428
 };
 
 uint16 seq1_pal[] = {
@@ -3429,12 +3552,12 @@ uint16 seq1_pal[] = {
 	3668,
 	3857,
 	3703,
-	3736,
+	3736
 };
 
 uint16 bfoster_r_to_d[] = {
 	47+182*64,
-	0,
+	0
 };
 
 uint16 low_get_seq[] = {
@@ -3469,18 +3592,18 @@ uint16 low_get_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fradman_u_to_r[] = {
 	45+90*64,
-	0,
+	0
 };
 
 uint16 rs_mega_alive[] = {
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_COLLISION+ST_MOUSE,
-	65535,
+	65535
 };
 
 Compact whole_screen = {
@@ -3501,11 +3624,23 @@ Compact whole_screen = {
 	0,	// mouseRel_y
 	320,	// mouseSize_x
 	192,	// mouseSize_y
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 bfoster_u_to_l[] = {
 	43+182*64,
-	0,
+	0
 };
 
 Compact bar = {
@@ -3527,6 +3662,17 @@ Compact bar = {
 	13+4,	// mouseSize_x
 	3,	// mouseSize_y
 	BAR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 foster_st_left[] = {
@@ -3534,14 +3680,14 @@ uint16 foster_st_left[] = {
 	1,
 	0,
 	42,
-	0,
+	0
 };
 
 uint16 monitor_l_to_r[] = {
 	41-8+74*64,
 	40-8+74*64,
 	47-8+74*64,
-	0,
+	0
 };
 
 uint16 rs_lamb_start_3[] = {
@@ -3561,7 +3707,7 @@ uint16 rs_lamb_start_3[] = {
 	65488,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 forklift2_cdt[] = {
@@ -3863,7 +4009,7 @@ uint16 forklift2_cdt[] = {
 	299,
 	292,
 	57,
-	0,
+	0
 };
 
 Compact talk2 = {
@@ -3873,6 +4019,29 @@ Compact talk2 = {
 	0,	// screen
 	0,	// place
 	talk_table,	// getToTable
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact text_4 = {
@@ -3898,11 +4067,18 @@ Compact text_4 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 mfoster_d_to_r[] = {
 	47+13*64,
-	0,
+	0
 };
 
 Compact door = {
@@ -3934,19 +4110,20 @@ Compact door = {
 	C_BASE_MODE,	// mode
 	FEXIT_DOOR,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 foster_d_to_u[] = {
 	47+12*64,
 	46+12*64,
 	45+12*64,
-	0,
+	0
 };
 
 uint16 park_table[] = {
 	ID_SLOT,
 	GET_TO_SLOT,
-	65535,
+	65535
 };
 
 uint8 minif_auto[64];
@@ -3992,7 +4169,7 @@ uint16 mfoster_up[] = {
 	9+13*64,
 	0,
 	65535,
-	0,
+	0
 };
 
 uint16 mfoster_down[] = {
@@ -4036,7 +4213,7 @@ uint16 mfoster_down[] = {
 	19+13*64,
 	0,
 	1,
-	0,
+	0
 };
 
 uint16 mfoster_right[] = {
@@ -4080,7 +4257,7 @@ uint16 mfoster_right[] = {
 	39+13*64,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 mfoster_st_left[] = {
@@ -4088,29 +4265,29 @@ uint16 mfoster_st_left[] = {
 	1,
 	1,
 	42,
-	0,
+	0
 };
 
 uint16 mfoster_u_to_l[] = {
 	43+13*64,
-	0,
+	0
 };
 
 uint16 mfoster_l_to_d[] = {
 	41+13*64,
-	0,
+	0
 };
 
 uint16 mfoster_r_to_d[] = {
 	47+13*64,
-	0,
+	0
 };
 
 uint16 mfoster_r_to_l[] = {
 	45+13*64,
 	44+13*64,
 	43+13*64,
-	0,
+	0
 };
 
 uint16 foster_down[] = {
@@ -4154,7 +4331,7 @@ uint16 foster_down[] = {
 	19+12*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 foster_st_up[] = {
@@ -4162,54 +4339,54 @@ uint16 foster_st_up[] = {
 	1,
 	0,
 	44,
-	0,
+	0
 };
 
 uint16 foster_u_to_r[] = {
 	45+12*64,
-	0,
+	0
 };
 
 uint16 foster_d_to_r[] = {
 	47+12*64,
-	0,
+	0
 };
 
 uint16 foster_l_to_d[] = {
 	41+12*64,
-	0,
+	0
 };
 
 uint16 foster_l_to_r[] = {
 	41+12*64,
 	40+12*64,
 	47+12*64,
-	0,
+	0
 };
 
 uint16 foster_r_to_d[] = {
 	47+12*64,
-	0,
+	0
 };
 
 uint16 foster_r_to_l[] = {
 	45+12*64,
 	44+12*64,
 	43+12*64,
-	0,
+	0
 };
 
 uint16 foster_t_to_u[] = {
 	47+12*64,
 	46+12*64,
 	45+12*64,
-	0,
+	0
 };
 
 uint16 foster_t_to_l[] = {
 	40+12*64,
 	41+12*64,
-	0,
+	0
 };
 
 uint16 fradman_st_down[] = {
@@ -4217,7 +4394,7 @@ uint16 fradman_st_down[] = {
 	1,
 	0,
 	40,
-	0,
+	0
 };
 
 uint16 fradman_st_left[] = {
@@ -4225,7 +4402,7 @@ uint16 fradman_st_left[] = {
 	1,
 	0,
 	42,
-	0,
+	0
 };
 
 uint16 fradman_st_talk[] = {
@@ -4233,32 +4410,32 @@ uint16 fradman_st_talk[] = {
 	1,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 fradman_d_to_l[] = {
 	41+90*64,
-	0,
+	0
 };
 
 uint16 fradman_d_to_r[] = {
 	47+90*64,
-	0,
+	0
 };
 
 uint16 fradman_l_to_u[] = {
 	43+90*64,
-	0,
+	0
 };
 
 uint16 fradman_r_to_u[] = {
 	45+90*64,
-	0,
+	0
 };
 
 uint16 fradman_r_to_d[] = {
 	47+90*64,
-	0,
+	0
 };
 
 uint16 bfoster_right[] = {
@@ -4302,7 +4479,7 @@ uint16 bfoster_right[] = {
 	39+182*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 bfoster_st_up[] = {
@@ -4310,7 +4487,7 @@ uint16 bfoster_st_up[] = {
 	1,
 	0,
 	44,
-	0,
+	0
 };
 
 uint16 bfoster_st_down[] = {
@@ -4318,36 +4495,36 @@ uint16 bfoster_st_down[] = {
 	1,
 	0,
 	40,
-	0,
+	0
 };
 
 uint16 bfoster_u_to_d[] = {
 	43+182*64,
 	42+182*64,
 	41+182*64,
-	0,
+	0
 };
 
 uint16 bfoster_d_to_l[] = {
 	41+182*64,
-	0,
+	0
 };
 
 uint16 bfoster_l_to_u[] = {
 	43+182*64,
-	0,
+	0
 };
 
 uint16 bfoster_l_to_d[] = {
 	41+182*64,
-	0,
+	0
 };
 
 uint16 bfoster_l_to_r[] = {
 	41+182*64,
 	40+182*64,
 	47+182*64,
-	0,
+	0
 };
 
 TurnTable foster_turnTable0 = {
@@ -4499,7 +4676,7 @@ TurnTable foster_turnTable3 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet foster_megaSet0 = {
@@ -4567,7 +4744,7 @@ MegaSet foster_megaSet3 = {
 	bfoster_st_left,	// standLeft
 	bfoster_st_right,	// standRight
 	0,	// standTalk
-	&foster_turnTable3,
+	&foster_turnTable3
 };
 
 ExtCompact foster_ext = {
@@ -4599,7 +4776,7 @@ ExtCompact foster_ext = {
 	&foster_megaSet0,
 	&foster_megaSet1,
 	&foster_megaSet2,
-	&foster_megaSet3,
+	&foster_megaSet3
 };
 
 Compact foster = {
@@ -4631,7 +4808,7 @@ Compact foster = {
 	C_BASE_MODE,	// mode
 	BASE_INTRO,	// baseSub
 	0,	// baseSub_off
-	&foster_ext,
+	&foster_ext
 };
 
 uint16 monitor_up[] = {
@@ -4667,7 +4844,7 @@ uint16 monitor_up[] = {
 	7+74*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 s0_fast_list[] = {
@@ -4683,7 +4860,7 @@ uint16 s0_fast_list[] = {
 	15+0X8000,
 	71+0X8000,
 	72+0X8000,
-	0,
+	0
 };
 
 uint16 s7_fast_list[] = {
@@ -4697,7 +4874,7 @@ uint16 s7_fast_list[] = {
 	146+DISK_2,
 	151+DISK_2,
 	149+DISK_2,
-	0,
+	0
 };
 
 uint16 monitor_st_talk[] = {
@@ -4705,7 +4882,7 @@ uint16 monitor_st_talk[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fast_list_sc90[] = {
@@ -4724,7 +4901,7 @@ uint16 fast_list_sc90[] = {
 	IT_SC90_LAYER_0+DISK_4,
 	IT_SC90_LAYER_1+DISK_4,
 	IT_SC90_GRID_1+DISK_4,
-	0,
+	0
 };
 
 uint16 but_2[] = {
@@ -4738,7 +4915,7 @@ uint16 but_2[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 but_3[] = {
@@ -4752,7 +4929,7 @@ uint16 but_3[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 monitor_st_down[] = {
@@ -4760,7 +4937,7 @@ uint16 monitor_st_down[] = {
 	1,
 	1,
 	32,
-	0,
+	0
 };
 
 uint32 *zt = 0;
@@ -4776,7 +4953,7 @@ uint16 but_9[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact text_11 = {
@@ -4802,6 +4979,13 @@ Compact text_11 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact joey_park = {
@@ -4811,6 +4995,29 @@ Compact joey_park = {
 	0,	// screen
 	0,	// place
 	park_table,	// getToTable
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact coordinate_test = {
@@ -4831,6 +5038,18 @@ Compact coordinate_test = {
 	0,	// mouseRel_y
 	64,	// mouseSize_x
 	12,	// mouseSize_y
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact text_2 = {
@@ -4856,6 +5075,13 @@ Compact text_2 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact text_3 = {
@@ -4881,6 +5107,13 @@ Compact text_3 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact text_6 = {
@@ -4906,6 +5139,13 @@ Compact text_6 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact text_7 = {
@@ -4931,6 +5171,13 @@ Compact text_7 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact text_9 = {
@@ -4956,6 +5203,13 @@ Compact text_9 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rad_shrug_seq[] = {
@@ -4978,7 +5232,7 @@ uint16 rad_shrug_seq[] = {
 	1,
 	1,
 	49,
-	0,
+	0
 };
 
 uint32 *talk1 = 0;
@@ -5000,7 +5254,7 @@ uint16 rs_lamb_start_2[] = {
 	65488,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 s6_fast_list[] = {
@@ -5012,7 +5266,7 @@ uint16 s6_fast_list[] = {
 	135,
 	24+DISK_2+0X8000,
 	25+DISK_2+0X8000,
-	0,
+	0
 };
 
 uint16 swing_list[] = {
@@ -5020,7 +5274,7 @@ uint16 swing_list[] = {
 	86+DISK_1,
 	87+DISK_1,
 	88+DISK_1,
-	0,
+	0
 };
 
 Compact right_exit0 = {
@@ -5042,6 +5296,17 @@ Compact right_exit0 = {
 	9,	// mouseSize_x
 	36,	// mouseSize_y
 	ER0_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_blank[] = {
@@ -5051,7 +5316,7 @@ uint16 rs_blank[] = {
 	MENU_SCRIPT,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint8 monitor_auto[64];
@@ -5089,7 +5354,7 @@ uint16 monitor_down[] = {
 	15+74*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 monitor_st_left[] = {
@@ -5097,7 +5362,7 @@ uint16 monitor_st_left[] = {
 	1,
 	1,
 	34,
-	0,
+	0
 };
 
 uint16 monitor_st_right[] = {
@@ -5105,41 +5370,41 @@ uint16 monitor_st_right[] = {
 	1,
 	1,
 	38,
-	0,
+	0
 };
 
 uint16 monitor_u_to_r[] = {
 	45-8+74*64,
-	0,
+	0
 };
 
 uint16 monitor_d_to_u[] = {
 	47-8+74*64,
 	46-8+74*64,
 	45-8+74*64,
-	0,
+	0
 };
 
 uint16 monitor_d_to_l[] = {
 	41-8+74*64,
-	0,
+	0
 };
 
 uint16 monitor_l_to_d[] = {
 	41-8+74*64,
-	0,
+	0
 };
 
 uint16 monitor_r_to_d[] = {
 	47-8+74*64,
-	0,
+	0
 };
 
 uint16 monitor_r_to_l[] = {
 	45-8+74*64,
 	44-8+74*64,
 	43-8+74*64,
-	0,
+	0
 };
 
 TurnTable monitor_turnTable0 = {
@@ -5177,7 +5442,7 @@ TurnTable monitor_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet monitor_megaSet0 = {
@@ -5194,7 +5459,7 @@ MegaSet monitor_megaSet0 = {
 	monitor_st_left,	// standLeft
 	monitor_st_right,	// standRight
 	monitor_st_talk,	// standTalk
-	&monitor_turnTable0,
+	&monitor_turnTable0
 };
 
 ExtCompact monitor_ext = {
@@ -5224,6 +5489,9 @@ ExtCompact monitor_ext = {
 	monitor_auto,	// animScratch
 	0,	// megaSet
 	&monitor_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact monitor = {
@@ -5255,7 +5523,7 @@ Compact monitor = {
 	0,	// mode
 	MONITOR_SLEEP,	// baseSub
 	0,	// baseSub_off
-	&monitor_ext,
+	&monitor_ext
 };
 
 ExtCompact anita_ext = {
@@ -5284,6 +5552,10 @@ ExtCompact anita_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact anita = {
@@ -5315,7 +5587,7 @@ Compact anita = {
 	0,	// mode
 	ANITA_WORK,	// baseSub
 	0,	// baseSub_off
-	&anita_ext,
+	&anita_ext
 };
 
 uint16 rs_r_arr_linc[] = {
@@ -5325,7 +5597,7 @@ uint16 rs_r_arr_linc[] = {
 	LINC_MENU_SCRIPT,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 s5_fast_list[] = {
@@ -5338,7 +5610,7 @@ uint16 s5_fast_list[] = {
 	17+DISK_2,
 	18+DISK_2,
 	113+DISK_2,
-	0,
+	0
 };
 
 uint16 but_e[] = {
@@ -5352,7 +5624,7 @@ uint16 but_e[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 but_1[] = {
@@ -5366,7 +5638,7 @@ uint16 but_1[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 but_6[] = {
@@ -5380,21 +5652,21 @@ uint16 but_6[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 fast_intro_2[] = {
 	189+DISK_15,
 	190+DISK_15,
 	191+DISK_15,
-	0,
+	0
 };
 
 uint16 fast_intro_3[] = {
 	192+DISK_15,
 	193+DISK_15,
 	194+DISK_15,
-	0,
+	0
 };
 
 uint16 retina_scan_cdt[] = {
@@ -5477,7 +5749,7 @@ uint16 retina_scan_cdt[] = {
 	378,
 	302,
 	17,
-	0,
+	0
 };
 
 Compact forklift_cpt = {
@@ -5509,6 +5781,7 @@ Compact forklift_cpt = {
 	C_BASE_MODE,	// mode
 	FORKLIFT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 void *data_0[] = {
@@ -5691,7 +5964,7 @@ void *data_0[] = {
 	exit_seq,
 	&forklift_cpt,
 	forklift1_cdt,
-	forklift2_cdt,
+	forklift2_cdt
 };
 
 uint32 *z_compact_table = 0;

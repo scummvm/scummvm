@@ -43,7 +43,7 @@ uint16 sc67_logic_list[] = {
 	ID_SC67_CROWBAR,
 	ID_SC67_MEND,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 Compact sc67_vein = {
@@ -65,6 +65,17 @@ Compact sc67_vein = {
 	361-351,	// mouseSize_x
 	234-204,	// mouseSize_y
 	SC67_VEIN_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc67_mouse_list[] = {
@@ -78,7 +89,7 @@ uint16 sc67_mouse_list[] = {
 	ID_SC67_DOOR,
 	ID_SC67_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc67_rub_head[] = {
@@ -134,7 +145,7 @@ uint16 sc67_rub_head[] = {
 	253,
 	173,
 	6,
-	0,
+	0
 };
 
 uint16 sc67_try_stick[] = {
@@ -178,7 +189,7 @@ uint16 sc67_try_stick[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc67_plast_hit[] = {
@@ -231,7 +242,7 @@ uint16 sc67_plast_hit[] = {
 	322,
 	220,
 	14,
-	0,
+	0
 };
 
 Compact sc67_door = {
@@ -263,6 +274,7 @@ Compact sc67_door = {
 	C_BASE_MODE,	// mode
 	SC67_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc67_mend = {
@@ -294,6 +306,7 @@ Compact sc67_mend = {
 	C_BASE_MODE,	// mode
 	SC67_MEND_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc67_mending[] = {
@@ -337,7 +350,7 @@ uint16 sc67_mending[] = {
 	328,
 	243,
 	12,
-	0,
+	0
 };
 
 Compact sc67_plaster = {
@@ -369,6 +382,7 @@ Compact sc67_plaster = {
 	C_BASE_MODE,	// mode
 	SC67_PLASTER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc67_door_open[] = {
@@ -382,7 +396,7 @@ uint16 sc67_door_open[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 sc67_dustoff[] = {
@@ -429,7 +443,7 @@ uint16 sc67_dustoff[] = {
 	241,
 	177,
 	12,
-	0,
+	0
 };
 
 Compact sc67_rock = {
@@ -461,6 +475,7 @@ Compact sc67_rock = {
 	C_BASE_MODE,	// mode
 	SC67_ROCK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc67_crowbar = {
@@ -492,6 +507,7 @@ Compact sc67_crowbar = {
 	C_BASE_MODE,	// mode
 	SC67_CROWBAR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc67_puss_leak[] = {
@@ -532,7 +548,7 @@ uint16 sc67_puss_leak[] = {
 	325,
 	247,
 	11,
-	0,
+	0
 };
 
 uint16 sc67_pulse3_anim[] = {
@@ -588,7 +604,7 @@ uint16 sc67_pulse3_anim[] = {
 	346,
 	228,
 	2,
-	0,
+	0
 };
 
 uint16 sc67_plast_fall[] = {
@@ -629,7 +645,7 @@ uint16 sc67_plast_fall[] = {
 	312,
 	275,
 	10,
-	0,
+	0
 };
 
 Compact sc67_pulse4 = {
@@ -661,6 +677,7 @@ Compact sc67_pulse4 = {
 	C_BASE_MODE,	// mode
 	SC67_PULSE4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc67_brick_fall[] = {
@@ -728,7 +745,7 @@ uint16 sc67_brick_fall[] = {
 	289,
 	272,
 	14,
-	0,
+	0
 };
 
 uint16 sc67_bar_fall[] = {
@@ -757,7 +774,7 @@ uint16 sc67_bar_fall[] = {
 	331,
 	272,
 	7,
-	0,
+	0
 };
 
 uint16 sc67_brick_hit[] = {
@@ -810,7 +827,7 @@ uint16 sc67_brick_hit[] = {
 	322,
 	220,
 	0,
-	0,
+	0
 };
 
 uint16 sc67_pick_plast[] = {
@@ -845,7 +862,7 @@ uint16 sc67_pick_plast[] = {
 	316,
 	224,
 	5,
-	0,
+	0
 };
 
 uint16 sc67_crawl[] = {
@@ -901,7 +918,7 @@ uint16 sc67_crawl[] = {
 	202,
 	243,
 	15,
-	0,
+	0
 };
 
 uint16 sc67_medifix[] = {
@@ -915,7 +932,7 @@ uint16 sc67_medifix[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 sc67_pulse1_anim[] = {
@@ -971,7 +988,7 @@ uint16 sc67_pulse1_anim[] = {
 	352,
 	205,
 	0,
-	0,
+	0
 };
 
 uint16 sc67_pulse2_anim[] = {
@@ -1027,7 +1044,7 @@ uint16 sc67_pulse2_anim[] = {
 	354,
 	218,
 	1,
-	0,
+	0
 };
 
 uint16 sc67_stick_in[] = {
@@ -1080,7 +1097,7 @@ uint16 sc67_stick_in[] = {
 	322,
 	220,
 	14,
-	0,
+	0
 };
 
 Compact sc67_pulse1 = {
@@ -1112,6 +1129,7 @@ Compact sc67_pulse1 = {
 	C_BASE_MODE,	// mode
 	SC67_PULSE1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc67_rpocket[] = {
@@ -1134,7 +1152,7 @@ uint16 sc67_rpocket[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact sc67_brickwork = {
@@ -1156,6 +1174,17 @@ Compact sc67_brickwork = {
 	18,	// mouseSize_x
 	10,	// mouseSize_y
 	SC67_BRICKWORK_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc67_getbrick[] = {
@@ -1214,7 +1243,7 @@ uint16 sc67_getbrick[] = {
 	312,
 	208,
 	8,
-	0,
+	0
 };
 
 uint16 sc67_lpocket[] = {
@@ -1237,7 +1266,7 @@ uint16 sc67_lpocket[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc67_pull_out[] = {
@@ -1290,7 +1319,7 @@ uint16 sc67_pull_out[] = {
 	322,
 	220,
 	14,
-	0,
+	0
 };
 
 uint16 sc67_palette[] = {
@@ -1677,7 +1706,7 @@ uint16 sc67_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint32 *grid67 = 0;
@@ -1689,7 +1718,7 @@ uint16 sc67_fast_list[] = {
 	53+DISK_5,
 	54+DISK_5,
 	268+DISK_5,
-	0,
+	0
 };
 
 uint16 sc67_door_close[] = {
@@ -1706,7 +1735,7 @@ uint16 sc67_door_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc67_rock_anim[] = {
@@ -1729,7 +1758,7 @@ uint16 sc67_rock_anim[] = {
 	151,
 	259,
 	5,
-	0,
+	0
 };
 
 Compact sc67_pulse2 = {
@@ -1761,6 +1790,7 @@ Compact sc67_pulse2 = {
 	C_BASE_MODE,	// mode
 	SC67_PULSE2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc67_brick = {
@@ -1792,6 +1822,7 @@ Compact sc67_brick = {
 	C_BASE_MODE,	// mode
 	SC67_BRICK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc67_floor_table[] = {
@@ -1815,7 +1846,7 @@ uint16 sc67_floor_table[] = {
 	SC67_DOOR_WALK_ON,
 	ID_JOEY_PARK,
 	GT_JOEY_PARK,
-	65535,
+	65535
 };
 
 uint16 sc67_pick_brick[] = {
@@ -1850,7 +1881,7 @@ uint16 sc67_pick_brick[] = {
 	269,
 	224,
 	5,
-	0,
+	0
 };
 
 uint16 reset_66_67[] = {
@@ -1858,7 +1889,7 @@ uint16 reset_66_67[] = {
 	67,
 	C_PLACE,
 	ID_SC67_FLOOR,
-	65535,
+	65535
 };
 
 Compact sc67_pulse3 = {
@@ -1890,6 +1921,7 @@ Compact sc67_pulse3 = {
 	C_BASE_MODE,	// mode
 	SC67_PULSE3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc67_floor = {
@@ -1911,6 +1943,17 @@ Compact sc67_floor = {
 	390-190,	// mouseSize_x
 	305-270,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc67_pulse4_anim[] = {
@@ -1966,7 +2009,7 @@ uint16 sc67_pulse4_anim[] = {
 	334,
 	242,
 	0,
-	0,
+	0
 };
 
 uint16 sc67_chip_list[] = {
@@ -1999,7 +2042,7 @@ uint16 sc67_chip_list[] = {
 	IT_SC67_BRICK_HIT+0X8000+DISK_5,
 	IT_SC67_PLAST_HIT+0X8000+DISK_5,
 	106+DISK_5,
-	0,
+	0
 };
 
 uint16 reset_68_67[] = {
@@ -2011,7 +2054,7 @@ uint16 reset_68_67[] = {
 	408,
 	C_YCOOD,
 	288,
-	65535,
+	65535
 };
 
 Compact sc67_clot = {
@@ -2043,6 +2086,7 @@ Compact sc67_clot = {
 	C_BASE_MODE,	// mode
 	SC67_CLOT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

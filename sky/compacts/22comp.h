@@ -53,7 +53,7 @@ uint16 fost_replace_pill[] = {
 	320,
 	226,
 	0,
-	0,
+	0
 };
 
 uint16 rs_foster_20_22[] = {
@@ -65,7 +65,7 @@ uint16 rs_foster_20_22[] = {
 	22,
 	C_PLACE,
 	ID_S22_FLOOR,
-	65535,
+	65535
 };
 
 Compact reich_picture = {
@@ -87,6 +87,17 @@ Compact reich_picture = {
 	326-259,	// mouseSize_x
 	210-175,	// mouseSize_y
 	REICH_PICTURE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact inner_reich_door = {
@@ -118,6 +129,7 @@ Compact inner_reich_door = {
 	C_BASE_MODE,	// mode
 	INNER_R_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_22_20[] = {
@@ -129,7 +141,7 @@ uint16 rs_foster_22_20[] = {
 	20,
 	C_PLACE,
 	ID_S20_FLOOR,
-	65535,
+	65535
 };
 
 uint16 fost_remove_pill[] = {
@@ -176,7 +188,7 @@ uint16 fost_remove_pill[] = {
 	320,
 	226,
 	4,
-	0,
+	0
 };
 
 uint16 inner_reich_open[] = {
@@ -217,13 +229,13 @@ uint16 inner_reich_open[] = {
 	1,
 	1,
 	12,
-	0,
+	0
 };
 
 uint16 rs_magazine[] = {
 	C_SCREEN,
 	424,
-	65535,
+	65535
 };
 
 uint32 *grid22 = 0;
@@ -272,7 +284,7 @@ uint16 remove_pillow[] = {
 	1,
 	1,
 	4,
-	0,
+	0
 };
 
 uint16 s22_floor_table[] = {
@@ -306,7 +318,7 @@ uint16 s22_floor_table[] = {
 	GT_REICH_PICTURE,
 	ID_FISH_FOOD,
 	GT_FISH_FOOD,
-	65535,
+	65535
 };
 
 Compact pillow = {
@@ -338,6 +350,7 @@ Compact pillow = {
 	0,	// mode
 	PILLOW_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 inner_reich_close[] = {
@@ -378,7 +391,7 @@ uint16 inner_reich_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact lamb_bed = {
@@ -400,6 +413,17 @@ Compact lamb_bed = {
 	365-283,	// mouseSize_x
 	275-251,	// mouseSize_y
 	BED_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 replace_pillow[] = {
@@ -434,7 +458,7 @@ uint16 replace_pillow[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 get_magazine_seq[] = {
@@ -466,7 +490,7 @@ uint16 get_magazine_seq[] = {
 	273,
 	218,
 	0,
-	0,
+	0
 };
 
 uint16 tank3_seq[] = {
@@ -531,7 +555,7 @@ uint16 tank3_seq[] = {
 	245,
 	238,
 	19,
-	0,
+	0
 };
 
 uint16 tank2_seq[] = {
@@ -626,7 +650,7 @@ uint16 tank2_seq[] = {
 	245,
 	238,
 	26,
-	0,
+	0
 };
 
 Compact s22_floor = {
@@ -648,6 +672,17 @@ Compact s22_floor = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact right_exit_22 = {
@@ -669,6 +704,17 @@ Compact right_exit_22 = {
 	402-393,	// mouseSize_x
 	313-249,	// mouseSize_y
 	ER22_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact reich_chair = {
@@ -690,6 +736,17 @@ Compact reich_chair = {
 	240-221,	// mouseSize_x
 	314-287,	// mouseSize_y
 	REICH_CHAIR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s22_mouse[] = {
@@ -710,7 +767,7 @@ uint16 s22_mouse[] = {
 	ID_S22_FLOOR,
 	ID_FAKE_FLOOR_22,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact fish_tank = {
@@ -742,6 +799,7 @@ Compact fish_tank = {
 	0,	// mode
 	FISH_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact fake_floor_22 = {
@@ -763,6 +821,17 @@ Compact fake_floor_22 = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s22_fast_list[] = {
@@ -777,7 +846,7 @@ uint16 s22_fast_list[] = {
 	189+DISK_9,
 	190+DISK_9,
 	191+DISK_9,
-	0,
+	0
 };
 
 uint16 s22_logic[] = {
@@ -793,7 +862,7 @@ uint16 s22_logic[] = {
 	ID_GALLAGER_BEL,
 	ID_LIFT_29,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 s22_chip_list[] = {
@@ -805,7 +874,7 @@ uint16 s22_chip_list[] = {
 	92+DISK_9,
 	200+DISK_9,
 	85+DISK_9,
-	0,
+	0
 };
 
 Compact magazine = {
@@ -827,6 +896,17 @@ Compact magazine = {
 	26,	// mouseSize_x
 	16,	// mouseSize_y
 	MAGAZINE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 fish_seq[] = {
@@ -951,7 +1031,7 @@ uint16 fish_seq[] = {
 	245,
 	238,
 	39,
-	0,
+	0
 };
 
 Compact cert = {
@@ -973,6 +1053,17 @@ Compact cert = {
 	325-310,	// mouseSize_x
 	224-215,	// mouseSize_y
 	CERT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s22_pal[] = {
@@ -1359,7 +1450,7 @@ uint16 s22_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact cabinet = {
@@ -1381,6 +1472,17 @@ Compact cabinet = {
 	340-312,	// mouseSize_x
 	248-239,	// mouseSize_y
 	CABINET_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact lamb_tv = {
@@ -1402,6 +1504,17 @@ Compact lamb_tv = {
 	225-203,	// mouseSize_x
 	251-223,	// mouseSize_y
 	LAMB_TV_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact fish_food = {
@@ -1423,6 +1536,17 @@ Compact fish_food = {
 	192-179,	// mouseSize_x
 	289-236,	// mouseSize_y
 	FISH_FOOD_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact fish_poster = {
@@ -1444,6 +1568,17 @@ Compact fish_poster = {
 	248-232,	// mouseSize_x
 	232-193,	// mouseSize_y
 	FISH_POSTER_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

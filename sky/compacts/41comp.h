@@ -31,7 +31,7 @@ uint16 sc41_mouse_list[] = {
 	ID_SC41_EXIT_39,
 	ID_SC41_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc41_heat_2_anim[] = {
@@ -66,7 +66,7 @@ uint16 sc41_heat_2_anim[] = {
 	265,
 	244,
 	9,
-	0,
+	0
 };
 
 Compact sc41_heat_1 = {
@@ -98,6 +98,7 @@ Compact sc41_heat_1 = {
 	C_BASE_MODE,	// mode
 	SC41_HEAT_1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 reset_39_41[] = {
@@ -115,7 +116,7 @@ uint16 reset_39_41[] = {
 	40+13*64,
 	C_DIR,
 	DOWN,
-	65535,
+	65535
 };
 
 uint16 sc41_heat_1_anim[] = {
@@ -150,14 +151,14 @@ uint16 sc41_heat_1_anim[] = {
 	211,
 	294,
 	9,
-	0,
+	0
 };
 
 uint32 *sc41_walk_grid = 0;
 
 uint16 sc41_fast_list[] = {
 	13+DISK_14,
-	0,
+	0
 };
 
 Compact sc41_heat_2 = {
@@ -189,6 +190,7 @@ Compact sc41_heat_2 = {
 	C_BASE_MODE,	// mode
 	SC41_HEAT_2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc41_chip_list[] = {
@@ -200,7 +202,7 @@ uint16 sc41_chip_list[] = {
 	71+DISK_14,
 	72+DISK_14,
 	74+DISK_14,
-	0,
+	0
 };
 
 Compact sc41_heat_3 = {
@@ -232,6 +234,7 @@ Compact sc41_heat_3 = {
 	C_BASE_MODE,	// mode
 	SC41_HEAT_3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc41_exit_39 = {
@@ -253,6 +256,17 @@ Compact sc41_exit_39 = {
 	342-325,	// mouseSize_x
 	205-190,	// mouseSize_y
 	SC41_EXIT_39_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc41_floor_table[] = {
@@ -262,7 +276,7 @@ uint16 sc41_floor_table[] = {
 	GT_SC41_EXIT_39,
 	0,
 	SC41_EXIT_39_WALK_ON,
-	65535,
+	65535
 };
 
 Compact sc41_floor = {
@@ -284,6 +298,17 @@ Compact sc41_floor = {
 	343-328,	// mouseSize_x
 	223-208,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc41_heat_3_anim[] = {
@@ -318,7 +343,7 @@ uint16 sc41_heat_3_anim[] = {
 	390,
 	294,
 	9,
-	0,
+	0
 };
 
 uint16 sc41_logic_list[] = {
@@ -329,7 +354,7 @@ uint16 sc41_logic_list[] = {
 	ID_SC41_HEAT_2,
 	ID_SC41_HEAT_3,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc41_palette[] = {
@@ -716,7 +741,7 @@ uint16 sc41_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 }; // namespace SkyCompact

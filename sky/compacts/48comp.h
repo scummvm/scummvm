@@ -56,6 +56,7 @@ Compact sc48_eyes = {
 	C_BASE_MODE,	// mode
 	SC48_EYES_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc48_mouse_list[] = {
@@ -65,7 +66,7 @@ uint16 sc48_mouse_list[] = {
 	ID_SC48_EXIT_65,
 	ID_SC48_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc48_chip_list[] = {
@@ -74,7 +75,7 @@ uint16 sc48_chip_list[] = {
 	72+DISK_13,
 	74+DISK_13,
 	75+DISK_13,
-	0,
+	0
 };
 
 uint16 sc48_floor_table[] = {
@@ -92,7 +93,7 @@ uint16 sc48_floor_table[] = {
 	GT_SC48_SOCKET,
 	ID_SC48_HOLE,
 	GT_SC48_HOLE,
-	65535,
+	65535
 };
 
 Compact sc48_socket = {
@@ -124,6 +125,7 @@ Compact sc48_socket = {
 	C_BASE_MODE,	// mode
 	SC48_SOCKET_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc48_put_bulb[] = {
@@ -161,7 +163,7 @@ uint16 sc48_put_bulb[] = {
 	304,
 	224,
 	0,
-	0,
+	0
 };
 
 uint16 sc48_palette[] = {
@@ -548,7 +550,7 @@ uint16 sc48_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc48_fast_list[] = {
@@ -557,7 +559,7 @@ uint16 sc48_fast_list[] = {
 	52+DISK_13,
 	53+DISK_13,
 	54+DISK_13,
-	0,
+	0
 };
 
 Compact sc48_hole = {
@@ -589,6 +591,7 @@ Compact sc48_hole = {
 	C_BASE_MODE,	// mode
 	SC48_HOLE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 reset_47_48[] = {
@@ -600,7 +603,7 @@ uint16 reset_47_48[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 sc48_logic_list[] = {
@@ -609,7 +612,7 @@ uint16 sc48_logic_list[] = {
 	ID_SC48_HOLE,
 	ID_SC48_EYES,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 reset_65_48[] = {
@@ -621,7 +624,7 @@ uint16 reset_65_48[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 sc48_eyes_anim[] = {
@@ -671,7 +674,7 @@ uint16 sc48_eyes_anim[] = {
 	358,
 	201,
 	11,
-	0,
+	0
 };
 
 Compact sc48_exit_47 = {
@@ -693,6 +696,17 @@ Compact sc48_exit_47 = {
 	140-128,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC48_EXIT_47_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc48_exit_65 = {
@@ -714,6 +728,17 @@ Compact sc48_exit_65 = {
 	448-420,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC48_EXIT_65_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *sc48_walk_grid = 0;
@@ -737,6 +762,17 @@ Compact sc48_floor = {
 	447-128,	// mouseSize_x
 	327-272,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc48_light_pal[] = {
@@ -1123,7 +1159,7 @@ uint16 sc48_light_pal[] = {
 	831,
 	0,
 	16128,
-	16191,
+	16191
 };
 
 }; // namespace SkyCompact

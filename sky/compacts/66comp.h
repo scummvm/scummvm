@@ -54,7 +54,7 @@ uint16 sc66_hi_beam_an1[] = {
 	205,
 	144,
 	2,
-	0,
+	0
 };
 
 uint16 sc66_door_close[] = {
@@ -74,7 +74,7 @@ uint16 sc66_door_close[] = {
 	161,
 	148,
 	4,
-	0,
+	0
 };
 
 uint16 sc75_dead_tlk[] = {
@@ -152,7 +152,7 @@ uint16 sc75_dead_tlk[] = {
 	167,
 	238,
 	1,
-	0,
+	0
 };
 
 Compact sc66_rock3 = {
@@ -184,6 +184,7 @@ Compact sc66_rock3 = {
 	C_BASE_MODE,	// mode
 	SC66_ROCK3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc66_lo_beam = {
@@ -215,6 +216,7 @@ Compact sc66_lo_beam = {
 	C_BASE_MODE,	// mode
 	SC66_LO_BEAM_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc66_stones_anim[] = {
@@ -249,7 +251,7 @@ uint16 sc66_stones_anim[] = {
 	188,
 	224,
 	6,
-	0,
+	0
 };
 
 uint16 walter_conv[] = {
@@ -447,7 +449,7 @@ uint16 walter_conv[] = {
 	249,
 	214,
 	0,
-	0,
+	0
 };
 
 uint16 sc66_logic_list[] = {
@@ -461,7 +463,7 @@ uint16 sc66_logic_list[] = {
 	ID_SC66_DOOR,
 	ID_SC66_HOLE,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 Compact sc66_stones = {
@@ -493,6 +495,7 @@ Compact sc66_stones = {
 	C_BASE_MODE,	// mode
 	SC66_STONES_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc66_rock1 = {
@@ -524,6 +527,7 @@ Compact sc66_rock1 = {
 	C_BASE_MODE,	// mode
 	SC66_ROCK1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc81_ken_talk1[] = {
@@ -721,7 +725,7 @@ uint16 sc81_ken_talk1[] = {
 	259,
 	197,
 	16,
-	0,
+	0
 };
 
 Compact sc66_rock2 = {
@@ -753,6 +757,7 @@ Compact sc66_rock2 = {
 	C_BASE_MODE,	// mode
 	SC66_ROCK2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc66_hi_beam_an2[] = {
@@ -769,7 +774,7 @@ uint16 sc66_hi_beam_an2[] = {
 	183,
 	208,
 	3,
-	0,
+	0
 };
 
 uint16 stuck_talk[] = {
@@ -973,7 +978,7 @@ uint16 stuck_talk[] = {
 	361,
 	224,
 	3,
-	0,
+	0
 };
 
 uint16 sc66_chip_list[] = {
@@ -989,7 +994,7 @@ uint16 sc66_chip_list[] = {
 	IT_SC66_STONES+DISK_5,
 	106+DISK_5,
 	107+DISK_5,
-	0,
+	0
 };
 
 uint16 medi_talk_up[] = {
@@ -1193,7 +1198,7 @@ uint16 medi_talk_up[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 sc82_ken_sat_tlk[] = {
@@ -1397,7 +1402,7 @@ uint16 sc82_ken_sat_tlk[] = {
 	262,
 	209,
 	0,
-	0,
+	0
 };
 
 uint16 sc81_ken_talk2[] = {
@@ -1535,7 +1540,7 @@ uint16 sc81_ken_talk2[] = {
 	221,
 	240,
 	0,
-	0,
+	0
 };
 
 uint16 android_babble[] = {
@@ -1613,7 +1618,7 @@ uint16 android_babble[] = {
 	271,
 	204,
 	1,
-	0,
+	0
 };
 
 uint16 sc66_rock2_anim[] = {
@@ -1645,7 +1650,7 @@ uint16 sc66_rock2_anim[] = {
 	154,
 	187,
 	5,
-	0,
+	0
 };
 
 uint16 sc82_jobs_talk[] = {
@@ -1843,7 +1848,7 @@ uint16 sc82_jobs_talk[] = {
 	312,
 	200,
 	0,
-	0,
+	0
 };
 
 uint16 ken_talk_left[] = {
@@ -2047,7 +2052,7 @@ uint16 ken_talk_left[] = {
 	1,
 	1,
 	8,
-	0,
+	0
 };
 
 uint16 sc75_freeze_tlk[] = {
@@ -2125,7 +2130,7 @@ uint16 sc75_freeze_tlk[] = {
 	181,
 	240,
 	1,
-	0,
+	0
 };
 
 uint16 fost_pipe_talk[] = {
@@ -2275,7 +2280,7 @@ uint16 fost_pipe_talk[] = {
 	311,
 	164,
 	4,
-	0,
+	0
 };
 
 uint16 ken_talk_up[] = {
@@ -2479,13 +2484,13 @@ uint16 ken_talk_up[] = {
 	1,
 	1,
 	1,
-	0,
+	0
 };
 
 uint16 sc66_mouse_list[] = {
 	ID_SC66_HOLE,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc66_hi_beam = {
@@ -2517,6 +2522,7 @@ Compact sc66_hi_beam = {
 	C_BASE_MODE,	// mode
 	SC66_HI_BEAM_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 gall_talk_up[] = {
@@ -2738,7 +2744,7 @@ uint16 gall_talk_up[] = {
 	1,
 	1,
 	5,
-	0,
+	0
 };
 
 uint16 walter_talk_up[] = {
@@ -2876,7 +2882,7 @@ uint16 walter_talk_up[] = {
 	341,
 	214,
 	1,
-	0,
+	0
 };
 
 uint16 medi_talk_right[] = {
@@ -3080,7 +3086,7 @@ uint16 medi_talk_right[] = {
 	1,
 	1,
 	15,
-	0,
+	0
 };
 
 uint16 sc66_rock3_anim[] = {
@@ -3139,7 +3145,7 @@ uint16 sc66_rock3_anim[] = {
 	250,
 	251,
 	12,
-	0,
+	0
 };
 
 uint16 gall_talk_left[] = {
@@ -3361,7 +3367,7 @@ uint16 gall_talk_left[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 medi_talk_down[] = {
@@ -3565,7 +3571,7 @@ uint16 medi_talk_down[] = {
 	1,
 	1,
 	7,
-	0,
+	0
 };
 
 uint16 sc66_lo_beam_anm[] = {
@@ -3576,7 +3582,7 @@ uint16 sc66_lo_beam_anm[] = {
 	203,
 	196,
 	1,
-	0,
+	0
 };
 
 uint16 sc81_dad_tlk[] = {
@@ -3774,13 +3780,13 @@ uint16 sc81_dad_tlk[] = {
 	264,
 	212,
 	4,
-	0,
+	0
 };
 
 uint16 reset_66[] = {
 	C_SCREEN,
 	66,
-	65535,
+	65535
 };
 
 uint16 sc66_fos_crushed[] = {
@@ -3794,7 +3800,7 @@ uint16 sc66_fos_crushed[] = {
 	168,
 	189,
 	2,
-	0,
+	0
 };
 
 uint16 fost_conv_left[] = {
@@ -3992,7 +3998,7 @@ uint16 fost_conv_left[] = {
 	290,
 	194,
 	3,
-	0,
+	0
 };
 
 uint32 *sec5_compacts = 0;
@@ -4072,7 +4078,7 @@ uint16 sc81_fos_sat_tlk[] = {
 	264,
 	212,
 	1,
-	0,
+	0
 };
 
 uint16 walter_talk_dwn[] = {
@@ -4210,7 +4216,7 @@ uint16 walter_talk_dwn[] = {
 	297,
 	214,
 	1,
-	0,
+	0
 };
 
 uint16 sc66_fos_walk_in[] = {
@@ -4302,7 +4308,7 @@ uint16 sc66_fos_walk_in[] = {
 	177,
 	170,
 	26,
-	0,
+	0
 };
 
 uint16 medi_talk_left[] = {
@@ -4506,7 +4512,7 @@ uint16 medi_talk_left[] = {
 	1,
 	1,
 	11,
-	0,
+	0
 };
 
 uint16 ken_talk_down[] = {
@@ -4710,7 +4716,7 @@ uint16 ken_talk_down[] = {
 	1,
 	1,
 	5,
-	0,
+	0
 };
 
 uint16 sc81_dad_tlk2[] = {
@@ -4908,7 +4914,7 @@ uint16 sc81_dad_tlk2[] = {
 	278,
 	256,
 	1,
-	0,
+	0
 };
 
 uint16 ken_talk_right[] = {
@@ -5112,7 +5118,7 @@ uint16 ken_talk_right[] = {
 	1,
 	1,
 	12,
-	0,
+	0
 };
 
 uint16 walter_talk_lft[] = {
@@ -5250,7 +5256,7 @@ uint16 walter_talk_lft[] = {
 	380,
 	214,
 	1,
-	0,
+	0
 };
 
 uint16 sc81_ken_sat_tlk[] = {
@@ -5388,7 +5394,7 @@ uint16 sc81_ken_sat_tlk[] = {
 	264,
 	212,
 	0,
-	0,
+	0
 };
 
 uint16 sc82_jobs_talk2[] = {
@@ -5586,7 +5592,7 @@ uint16 sc82_jobs_talk2[] = {
 	312,
 	200,
 	0,
-	0,
+	0
 };
 
 Compact sc66_hole = {
@@ -5618,6 +5624,7 @@ Compact sc66_hole = {
 	C_BASE_MODE,	// mode
 	SC66_TIMER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc66_rock1_anim[] = {
@@ -5643,13 +5650,13 @@ uint16 sc66_rock1_anim[] = {
 	177,
 	206,
 	6,
-	0,
+	0
 };
 
 uint16 sc66_fast_list[] = {
 	135+DISK_5,
 	IT_SC66_LAYER_0+DISK_5,
-	0,
+	0
 };
 
 uint16 sc66_palette[] = {
@@ -6036,7 +6043,7 @@ uint16 sc66_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact sc66_door = {
@@ -6068,6 +6075,7 @@ Compact sc66_door = {
 	C_BASE_MODE,	// mode
 	SC66_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 void *data_5[] = {
@@ -6678,7 +6686,7 @@ void *data_5[] = {
 	sc83_palette,
 	sc83_draw_list,
 	reset_foster_spec,
-	reset_dad_spec,
+	reset_dad_spec
 };
 
 }; // namespace SkyCompact

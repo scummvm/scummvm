@@ -56,6 +56,7 @@ Compact sc74_monitor3 = {
 	C_BASE_MODE,	// mode
 	SC74_MONITOR3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc74_pod = {
@@ -87,6 +88,7 @@ Compact sc74_pod = {
 	C_BASE_MODE,	// mode
 	SC74_POD_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc74_terminal = {
@@ -108,6 +110,17 @@ Compact sc74_terminal = {
 	230-204,	// mouseSize_x
 	253-227,	// mouseSize_y
 	SC74_TERMINAL_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc74_int_table[] = {
@@ -127,7 +140,7 @@ uint16 sc74_int_table[] = {
 	GT_SC74_FLOOR,
 	ID_SC74_TERMINAL,
 	GT_SC74_FLOOR,
-	65535,
+	65535
 };
 
 Compact sc74_interface = {
@@ -149,6 +162,17 @@ Compact sc74_interface = {
 	366-340,	// mouseSize_x
 	290-241,	// mouseSize_y
 	SC74_INTERFACE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc74_mon4_anim[] = {
@@ -1113,7 +1137,7 @@ uint16 sc74_mon4_anim[] = {
 	281,
 	186,
 	1,
-	0,
+	0
 };
 
 uint16 sc74_rtv_anim[] = {
@@ -1523,7 +1547,7 @@ uint16 sc74_rtv_anim[] = {
 	298,
 	212,
 	63,
-	0,
+	0
 };
 
 uint16 sc74_pod_down[] = {
@@ -1648,7 +1672,7 @@ uint16 sc74_pod_down[] = {
 	340,
 	193,
 	36,
-	0,
+	0
 };
 
 uint16 sc74_lights_anim[] = {
@@ -1671,7 +1695,7 @@ uint16 sc74_lights_anim[] = {
 	243,
 	253,
 	1,
-	0,
+	0
 };
 
 uint16 sc74_pod_up[] = {
@@ -1823,7 +1847,7 @@ uint16 sc74_pod_up[] = {
 	340,
 	193,
 	35,
-	0,
+	0
 };
 
 Compact sc74_int_slot = {
@@ -1855,6 +1879,7 @@ Compact sc74_int_slot = {
 	C_BASE_MODE,	// mode
 	SC74_INT_SLOT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc74_mouse_list[] = {
@@ -1867,7 +1892,7 @@ uint16 sc74_mouse_list[] = {
 	ID_SC74_DOOR,
 	ID_SC74_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc74_chip_list[] = {
@@ -1890,7 +1915,7 @@ uint16 sc74_chip_list[] = {
 	IT_SC74_USECARD2+DISK_7,
 	IT_SC74_RPOCKET+DISK_7,
 	94+DISK_7,
-	0,
+	0
 };
 
 Compact sc74_monitor2 = {
@@ -1922,6 +1947,7 @@ Compact sc74_monitor2 = {
 	C_BASE_MODE,	// mode
 	SC74_MONITOR2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc74_floor_table[] = {
@@ -1943,7 +1969,7 @@ uint16 sc74_floor_table[] = {
 	GT_SC74_INT_SLOT,
 	ID_SC74_TERMINAL,
 	GT_SC74_TERMINAL,
-	65535,
+	65535
 };
 
 Compact sc74_floor = {
@@ -1965,6 +1991,17 @@ Compact sc74_floor = {
 	447-150,	// mouseSize_x
 	327-260,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_73_74[] = {
@@ -1976,7 +2013,7 @@ uint16 reset_73_74[] = {
 	160,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 sc74_ltv_anim[] = {
@@ -2941,7 +2978,7 @@ uint16 sc74_ltv_anim[] = {
 	243,
 	212,
 	1,
-	0,
+	0
 };
 
 Compact sc74_left_tv = {
@@ -2973,6 +3010,7 @@ Compact sc74_left_tv = {
 	C_BASE_MODE,	// mode
 	SC74_LEFT_TV_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc74_usecard[] = {
@@ -3004,7 +3042,7 @@ uint16 sc74_usecard[] = {
 	360,
 	240,
 	0,
-	0,
+	0
 };
 
 uint32 *grid74 = 0;
@@ -3041,7 +3079,7 @@ uint16 sc74_fost_sit[] = {
 	342,
 	241,
 	8,
-	0,
+	0
 };
 
 Compact sc74_door = {
@@ -3063,6 +3101,17 @@ Compact sc74_door = {
 	195-183,	// mouseSize_x
 	288-231,	// mouseSize_y
 	SC74_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc74_monitor4 = {
@@ -3094,6 +3143,7 @@ Compact sc74_monitor4 = {
 	C_BASE_MODE,	// mode
 	SC74_MONITOR4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc74_mon3_anim[] = {
@@ -4058,7 +4108,7 @@ uint16 sc74_mon3_anim[] = {
 	258,
 	186,
 	0,
-	0,
+	0
 };
 
 uint16 sc74_get_up[] = {
@@ -4093,7 +4143,7 @@ uint16 sc74_get_up[] = {
 	355,
 	242,
 	9,
-	0,
+	0
 };
 
 Compact sc74_monitor1 = {
@@ -4125,6 +4175,7 @@ Compact sc74_monitor1 = {
 	C_BASE_MODE,	// mode
 	SC74_MONITOR1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc74_mon1_anim[] = {
@@ -5089,7 +5140,7 @@ uint16 sc74_mon1_anim[] = {
 	213,
 	189,
 	9,
-	0,
+	0
 };
 
 uint16 sc74_palette[] = {
@@ -5476,7 +5527,7 @@ uint16 sc74_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc74_fast_list[] = {
@@ -5486,7 +5537,7 @@ uint16 sc74_fast_list[] = {
 	53+DISK_7,
 	54+DISK_7,
 	268+DISK_7,
-	0,
+	0
 };
 
 uint16 sc74_usecard2[] = {
@@ -5518,7 +5569,7 @@ uint16 sc74_usecard2[] = {
 	200,
 	232,
 	0,
-	0,
+	0
 };
 
 uint16 sc74_rpocket[] = {
@@ -5541,7 +5592,7 @@ uint16 sc74_rpocket[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 reset_linc_74[] = {
@@ -5557,7 +5608,7 @@ uint16 reset_linc_74[] = {
 	8+92*64,
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_AR_PRIORITY+ST_COLLISION,
-	65535,
+	65535
 };
 
 Compact sc74_right_tv = {
@@ -5589,6 +5640,7 @@ Compact sc74_right_tv = {
 	C_BASE_MODE,	// mode
 	SC74_RIGHT_TV_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc74_logic_list[] = {
@@ -5606,7 +5658,7 @@ uint16 sc74_logic_list[] = {
 	ID_SC74_POD,
 	ID_SC75_TONGS,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc74_mon2_anim[] = {
@@ -6571,7 +6623,7 @@ uint16 sc74_mon2_anim[] = {
 	235,
 	186,
 	23,
-	0,
+	0
 };
 
 Compact sc74_lights = {
@@ -6603,6 +6655,7 @@ Compact sc74_lights = {
 	C_BASE_MODE,	// mode
 	SC74_LIGHTS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc74_slot_flash[] = {
@@ -6625,7 +6678,7 @@ uint16 sc74_slot_flash[] = {
 	377,
 	266,
 	1,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

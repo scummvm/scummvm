@@ -60,7 +60,7 @@ uint16 lamb_sit_up[] = {
 	268,
 	241,
 	0,
-	0,
+	0
 };
 
 uint16 s21_logic[] = {
@@ -77,7 +77,7 @@ uint16 s21_logic[] = {
 	ID_GALLAGER_BEL,
 	ID_LIFT_29,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 cat1_seq[] = {
@@ -253,7 +253,7 @@ uint16 cat1_seq[] = {
 	347,
 	214,
 	44,
-	0,
+	0
 };
 
 uint16 rs_foster_21_20[] = {
@@ -265,7 +265,7 @@ uint16 rs_foster_21_20[] = {
 	20,
 	C_PLACE,
 	ID_S20_FLOOR,
-	65535,
+	65535
 };
 
 uint16 inner_lamb_close[] = {
@@ -303,7 +303,7 @@ uint16 inner_lamb_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 push_dispensor[] = {
@@ -341,7 +341,7 @@ uint16 push_dispensor[] = {
 	352,
 	224,
 	0,
-	0,
+	0
 };
 
 uint16 s21_floor_table[] = {
@@ -375,7 +375,7 @@ uint16 s21_floor_table[] = {
 	GT_VIDEO_SCREEN,
 	ID_CAT,
 	GT_CAT,
-	65535,
+	65535
 };
 
 Compact s21_floor = {
@@ -397,6 +397,17 @@ Compact s21_floor = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s21_chip_list[] = {
@@ -412,7 +423,7 @@ uint16 s21_chip_list[] = {
 	131+DISK_2,
 	132+DISK_2,
 	218+DISK_9,
-	0,
+	0
 };
 
 uint16 lamb_sit_seq[] = {
@@ -447,7 +458,7 @@ uint16 lamb_sit_seq[] = {
 	248,
 	246,
 	9,
-	0,
+	0
 };
 
 Compact cat_food = {
@@ -479,6 +490,7 @@ Compact cat_food = {
 	0,	// mode
 	CAT_FOOD_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact video = {
@@ -510,6 +522,7 @@ Compact video = {
 	0,	// mode
 	VIDEO_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact video_screen = {
@@ -541,6 +554,7 @@ Compact video_screen = {
 	0,	// mode
 	VIDEO_SCREEN_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_20_21[] = {
@@ -552,7 +566,7 @@ uint16 rs_foster_20_21[] = {
 	21,
 	C_PLACE,
 	ID_S21_FLOOR,
-	65535,
+	65535
 };
 
 uint16 cat4_seq[] = {
@@ -680,7 +694,7 @@ uint16 cat4_seq[] = {
 	347,
 	214,
 	23,
-	0,
+	0
 };
 
 uint16 video_out[] = {
@@ -709,7 +723,7 @@ uint16 video_out[] = {
 	345,
 	259,
 	0,
-	0,
+	0
 };
 
 uint16 inner_lamb_open[] = {
@@ -747,7 +761,7 @@ uint16 inner_lamb_open[] = {
 	1,
 	1,
 	11,
-	0,
+	0
 };
 
 uint16 s21_mouse[] = {
@@ -769,7 +783,7 @@ uint16 s21_mouse[] = {
 	ID_S21_FLOOR,
 	ID_FAKE_FLOOR_21,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 video_in[] = {
@@ -801,7 +815,7 @@ uint16 video_in[] = {
 	345,
 	259,
 	5,
-	0,
+	0
 };
 
 Compact lambs_books = {
@@ -823,6 +837,17 @@ Compact lambs_books = {
 	227-202,	// mouseSize_x
 	270-240,	// mouseSize_y
 	LAMBS_BOOKS_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 cat_walk_seq[] = {
@@ -998,7 +1023,7 @@ uint16 cat_walk_seq[] = {
 	347,
 	269,
 	53,
-	0,
+	0
 };
 
 Compact big_pict1 = {
@@ -1020,6 +1045,17 @@ Compact big_pict1 = {
 	211-195,	// mouseSize_x
 	228-191,	// mouseSize_y
 	BIG_PICT1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact lambs_chair = {
@@ -1041,6 +1077,17 @@ Compact lambs_chair = {
 	271-250,	// mouseSize_x
 	293-262,	// mouseSize_y
 	LAMBS_CHAIR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 put_video_in[] = {
@@ -1063,7 +1110,7 @@ uint16 put_video_in[] = {
 	322,
 	218,
 	4,
-	0,
+	0
 };
 
 uint16 watch_film[] = {
@@ -1083,7 +1130,7 @@ uint16 watch_film[] = {
 	322,
 	218,
 	0,
-	0,
+	0
 };
 
 Compact cat = {
@@ -1115,6 +1162,7 @@ Compact cat = {
 	0,	// mode
 	CAT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact big_pict3 = {
@@ -1136,6 +1184,17 @@ Compact big_pict3 = {
 	295-264,	// mouseSize_x
 	213-190,	// mouseSize_y
 	BIG_PICT3_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 cat3_seq[] = {
@@ -1227,7 +1286,7 @@ uint16 cat3_seq[] = {
 	347,
 	214,
 	28,
-	0,
+	0
 };
 
 uint16 s21_fast_list[] = {
@@ -1242,7 +1301,7 @@ uint16 s21_fast_list[] = {
 	195+DISK_9,
 	219+DISK_9,
 	220+DISK_9,
-	0,
+	0
 };
 
 uint16 bend_down[] = {
@@ -1262,7 +1321,7 @@ uint16 bend_down[] = {
 	322,
 	218,
 	4,
-	0,
+	0
 };
 
 uint16 take_video_out[] = {
@@ -1282,7 +1341,7 @@ uint16 take_video_out[] = {
 	322,
 	218,
 	0,
-	0,
+	0
 };
 
 Compact big_pict2 = {
@@ -1304,6 +1363,17 @@ Compact big_pict2 = {
 	236-227,	// mouseSize_x
 	212-188,	// mouseSize_y
 	BIG_PICT2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 cat_food_seq[] = {
@@ -1383,7 +1453,7 @@ uint16 cat_food_seq[] = {
 	372,
 	263,
 	20,
-	0,
+	0
 };
 
 Compact left_exit_21 = {
@@ -1405,6 +1475,17 @@ Compact left_exit_21 = {
 	181-173,	// mouseSize_x
 	301-240,	// mouseSize_y
 	EL21_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid21 = 0;
@@ -1438,6 +1519,7 @@ Compact inner_lamb_door = {
 	C_BASE_MODE,	// mode
 	INNER_LAMB_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact fake_floor_21 = {
@@ -1459,6 +1541,17 @@ Compact fake_floor_21 = {
 	320,	// mouseSize_x
 	4242,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 cat_eat_seq[] = {
@@ -1481,7 +1574,7 @@ uint16 cat_eat_seq[] = {
 	348,
 	269,
 	4,
-	0,
+	0
 };
 
 uint16 more_cassette_seq[] = {
@@ -1495,7 +1588,7 @@ uint16 more_cassette_seq[] = {
 	217,
 	216,
 	0,
-	0,
+	0
 };
 
 Compact cassette = {
@@ -1517,6 +1610,17 @@ Compact cassette = {
 	5,	// mouseSize_x
 	8,	// mouseSize_y
 	CASSETTE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s21_pal[] = {
@@ -1903,7 +2007,7 @@ uint16 s21_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact dispensor = {
@@ -1925,6 +2029,17 @@ Compact dispensor = {
 	398-387,	// mouseSize_x
 	280-228,	// mouseSize_y
 	DISPENSOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 cat2_seq[] = {
@@ -1998,7 +2113,7 @@ uint16 cat2_seq[] = {
 	347,
 	214,
 	22,
-	0,
+	0
 };
 
 uint16 take_cassette_seq[] = {
@@ -2024,7 +2139,7 @@ uint16 take_cassette_seq[] = {
 	217,
 	216,
 	3,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

@@ -411,27 +411,27 @@ uint16 sc85_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc85_mouse_list[] = {
-	0,
+	0
 };
 
 uint16 sc85_chip_list[] = {
-	0,
+	0
 };
 
 uint16 sc85_fast_list[] = {
 	14+DISK_7,
 	15+DISK_7,
-	0,
+	0
 };
 
 uint16 sc85_logic_list[] = {
 	ID_FOSTER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 }; // namespace SkyCompact

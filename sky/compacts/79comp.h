@@ -411,7 +411,7 @@ uint16 sc791_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc79_chip_list[] = {
@@ -423,7 +423,7 @@ uint16 sc79_chip_list[] = {
 	IT_SC79_TOSS_ROPE+DISK_10,
 	IT_SC79_ROPE+DISK_10,
 	IT_SC79_KNOT+DISK_10,
-	0,
+	0
 };
 
 uint16 sc79_climb_up[] = {
@@ -504,7 +504,7 @@ uint16 sc79_climb_up[] = {
 	258,
 	0,
 	0,
-	0,
+	0
 };
 
 Compact sc79_exit = {
@@ -526,6 +526,17 @@ Compact sc79_exit = {
 	155-128,	// mouseSize_x
 	280-210,	// mouseSize_y
 	SC79_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc79_rope = {
@@ -557,6 +568,7 @@ Compact sc79_rope = {
 	C_BASE_MODE,	// mode
 	SC79_ROPE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc79_support = {
@@ -578,6 +590,17 @@ Compact sc79_support = {
 	296-275,	// mouseSize_x
 	315-264,	// mouseSize_y
 	SC79_SUPPORT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc79_palette[] = {
@@ -964,7 +987,7 @@ uint16 sc79_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc79_climb_down[] = {
@@ -1045,7 +1068,7 @@ uint16 sc79_climb_down[] = {
 	280,
 	24,
 	0,
-	0,
+	0
 };
 
 uint16 sc79_crouch_down[] = {
@@ -1081,7 +1104,7 @@ uint16 sc79_crouch_down[] = {
 	259,
 	9,
 	0,
-	0,
+	0
 };
 
 uint16 sc79_pipe_table[] = {
@@ -1099,7 +1122,7 @@ uint16 sc79_pipe_table[] = {
 	GT_SC79_KNOT,
 	ID_SC79_ROPE,
 	GT_SC79_ROPE,
-	65535,
+	65535
 };
 
 uint16 reset_78_79[] = {
@@ -1111,7 +1134,7 @@ uint16 reset_78_79[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	272,
-	65535,
+	65535
 };
 
 uint16 sc79_crouch_up[] = {
@@ -1147,7 +1170,7 @@ uint16 sc79_crouch_up[] = {
 	226,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 sc79_rope_anim[] = {
@@ -1317,7 +1340,7 @@ uint16 sc79_rope_anim[] = {
 	310,
 	304,
 	4,
-	0,
+	0
 };
 
 Compact sc79_knot = {
@@ -1349,6 +1372,7 @@ Compact sc79_knot = {
 	C_BASE_MODE,	// mode
 	SC79_KNOT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc79_fast_list[] = {
@@ -1358,7 +1382,7 @@ uint16 sc79_fast_list[] = {
 	53+DISK_10,
 	54+DISK_10,
 	268+DISK_10,
-	0,
+	0
 };
 
 uint16 reset_80_79[] = {
@@ -1366,7 +1390,7 @@ uint16 reset_80_79[] = {
 	79,
 	C_PLACE,
 	ID_SC79_PIPE,
-	65535,
+	65535
 };
 
 Compact sc79_ladder = {
@@ -1388,6 +1412,17 @@ Compact sc79_ladder = {
 	368-361,	// mouseSize_x
 	327-284,	// mouseSize_y
 	SC79_LADDER_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc79_toss_rope[] = {
@@ -1497,7 +1532,7 @@ uint16 sc79_toss_rope[] = {
 	285,
 	226,
 	21,
-	0,
+	0
 };
 
 uint32 *grid79 = 0;
@@ -1509,7 +1544,7 @@ uint16 sc79_logic_list[] = {
 	ID_SC79_KNOT,
 	ID_SC67_PULSE1,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc79_mouse_list[] = {
@@ -1520,7 +1555,7 @@ uint16 sc79_mouse_list[] = {
 	ID_SC79_SUPPORT,
 	ID_SC79_PIPE,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc79_tie_rope[] = {
@@ -1585,7 +1620,7 @@ uint16 sc79_tie_rope[] = {
 	284,
 	242,
 	9,
-	0,
+	0
 };
 
 Compact sc79_pipe = {
@@ -1607,6 +1642,17 @@ Compact sc79_pipe = {
 	360-128,	// mouseSize_x
 	280-270,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

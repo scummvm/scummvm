@@ -33,7 +33,7 @@ uint16 sc96_mouse[] = {
 	ID_DOOR_L96,
 	ID_SC96_FLOOR,
 	0XFFFF,
-	ID_LINC_MENU_MOUSE,
+	ID_LINC_MENU_MOUSE
 };
 
 uint16 door_l96f_anim[] = {
@@ -107,7 +107,7 @@ uint16 door_l96f_anim[] = {
 	190,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 sc96_floor_table[] = {
@@ -119,7 +119,7 @@ uint16 sc96_floor_table[] = {
 	GET_TO_CRYSTAL,
 	ID_VIRUS,
 	GET_TO_VIRUS,
-	65535,
+	65535
 };
 
 Compact sc96_floor = {
@@ -141,6 +141,17 @@ Compact sc96_floor = {
 	181,	// mouseSize_x
 	50,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc96_logic[] = {
@@ -151,7 +162,7 @@ uint16 sc96_logic[] = {
 	ID_VIRUS,
 	ID_EYEBALL_90,
 	0XFFFF,
-	ID_LINC_MENU_LOGIC,
+	ID_LINC_MENU_LOGIC
 };
 
 Compact crystal = {
@@ -183,6 +194,7 @@ Compact crystal = {
 	C_BASE_MODE,	// mode
 	CRYSTAL_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_foster_96_95[] = {
@@ -194,7 +206,7 @@ uint16 rs_foster_96_95[] = {
 	384,
 	C_YCOOD,
 	264,
-	65535,
+	65535
 };
 
 uint16 crystal_break[] = {
@@ -232,7 +244,7 @@ uint16 crystal_break[] = {
 	261,
 	227,
 	10,
-	0,
+	0
 };
 
 uint16 pal96[] = {
@@ -619,7 +631,7 @@ uint16 pal96[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact door_l96f = {
@@ -651,6 +663,7 @@ Compact door_l96f = {
 	C_BASE_MODE,	// mode
 	DOOR_L96F_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact virus = {
@@ -682,6 +695,7 @@ Compact virus = {
 	C_BASE_MODE,	// mode
 	VIRUS_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 crystal_spin[] = {
@@ -716,7 +730,7 @@ uint16 crystal_spin[] = {
 	261,
 	227,
 	9,
-	0,
+	0
 };
 
 uint16 virus_spin[] = {
@@ -751,7 +765,7 @@ uint16 virus_spin[] = {
 	282,
 	250,
 	9,
-	0,
+	0
 };
 
 Compact door_l96 = {
@@ -783,6 +797,7 @@ Compact door_l96 = {
 	C_BASE_MODE,	// mode
 	DOOR_L96_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 chip_list_sc96[] = {
@@ -792,7 +807,7 @@ uint16 chip_list_sc96[] = {
 	IT_CRYSTAL_BREAK+DISK_4,
 	IT_VIRUS_SPIN+DISK_4,
 	IT_GET_VIRUS+DISK_4,
-	0,
+	0
 };
 
 uint16 get_virus[] = {
@@ -818,7 +833,7 @@ uint16 get_virus[] = {
 	282,
 	250,
 	6,
-	0,
+	0
 };
 
 uint16 door_l96_anim[] = {
@@ -892,7 +907,7 @@ uint16 door_l96_anim[] = {
 	198,
 	136,
 	22,
-	0,
+	0
 };
 
 uint16 fast_list_sc96[] = {
@@ -906,7 +921,7 @@ uint16 fast_list_sc96[] = {
 	IT_SC96_LAYER_0+DISK_4,
 	IT_SC96_LAYER_1+DISK_4,
 	IT_SC96_GRID_1+DISK_4,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

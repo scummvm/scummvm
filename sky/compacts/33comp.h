@@ -46,6 +46,17 @@ Compact sc33_lock = {
 	360-357,	// mouseSize_x
 	251-244,	// mouseSize_y
 	SC33_LOCK_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_32_33[] = {
@@ -57,7 +68,7 @@ uint16 reset_32_33[] = {
 	352,
 	C_YCOOD,
 	240,
-	65535,
+	65535
 };
 
 uint16 sc33_palette[] = {
@@ -444,7 +455,7 @@ uint16 sc33_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc33_door_open[] = {
@@ -455,7 +466,7 @@ uint16 sc33_door_open[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint32 *sc33_walk_grid = 0;
@@ -469,7 +480,7 @@ uint16 reset_34_33[] = {
 	384,
 	C_YCOOD,
 	272,
-	65535,
+	65535
 };
 
 Compact sc33_shed_door = {
@@ -501,6 +512,7 @@ Compact sc33_shed_door = {
 	C_BASE_MODE,	// mode
 	SC33_SHED_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc33_push_door2[] = {
@@ -535,7 +547,7 @@ uint16 sc33_push_door2[] = {
 	328,
 	224,
 	0,
-	0,
+	0
 };
 
 Compact sc33_exit_32 = {
@@ -557,6 +569,17 @@ Compact sc33_exit_32 = {
 	330-310,	// mouseSize_x
 	240-170,	// mouseSize_y
 	SC33_EXIT_32_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc33_logic_list[] = {
@@ -567,7 +590,7 @@ uint16 sc33_logic_list[] = {
 	ID_SC33_SHED_DOOR,
 	ID_SC32_LIFT,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc33_floor_table[] = {
@@ -593,7 +616,7 @@ uint16 sc33_floor_table[] = {
 	GT_SC33_RIGHT_TALK,
 	ID_JOEY_PARK,
 	GT_DANI_WAIT,
-	65535,
+	65535
 };
 
 Compact sc33_floor = {
@@ -615,6 +638,17 @@ Compact sc33_floor = {
 	358-128,	// mouseSize_x
 	319-224,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc33_exit_30 = {
@@ -636,6 +670,17 @@ Compact sc33_exit_30 = {
 	140-128,	// mouseSize_x
 	327-162,	// mouseSize_y
 	SC33_EXIT_30_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc33_joey_list[] = {
@@ -644,7 +689,7 @@ uint16 sc33_joey_list[] = {
 	232,
 	319,
 	1,
-	0,
+	0
 };
 
 uint16 sc33_push_door1[] = {
@@ -685,7 +730,7 @@ uint16 sc33_push_door1[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc33_chip_list[] = {
@@ -699,7 +744,7 @@ uint16 sc33_chip_list[] = {
 	IT_SC33_USE_CARD+DISK_12,
 	IT_SC33_PUSH_DOOR+DISK_12,
 	IT_SC33_SHED_DOOR+DISK_12,
-	0,
+	0
 };
 
 uint16 sc33_fast_list[] = {
@@ -711,7 +756,7 @@ uint16 sc33_fast_list[] = {
 	135+DISK_12,
 	IT_SC33_GRID_1+DISK_12,
 	IT_SC33_GRID_2+DISK_12,
-	0,
+	0
 };
 
 uint16 sc33_mouse_list[] = {
@@ -723,7 +768,7 @@ uint16 sc33_mouse_list[] = {
 	ID_SC33_EXIT_32,
 	ID_SC33_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc33_use_card[] = {
@@ -764,7 +809,7 @@ uint16 sc33_use_card[] = {
 	328,
 	224,
 	0,
-	0,
+	0
 };
 
 uint16 reset_30_33[] = {
@@ -776,7 +821,7 @@ uint16 reset_30_33[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	248,
-	65535,
+	65535
 };
 
 }; // namespace SkyCompact

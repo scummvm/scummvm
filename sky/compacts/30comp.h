@@ -239,7 +239,7 @@ uint16 sc32_vinc_talk[] = {
 	218,
 	188,
 	0,
-	0,
+	0
 };
 
 uint16 sc30_palette[] = {
@@ -626,7 +626,7 @@ uint16 sc30_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint32 *sec4_compacts = 0;
@@ -781,7 +781,7 @@ uint16 sc36_col_talk2[] = {
 	219,
 	226,
 	0,
-	0,
+	0
 };
 
 uint16 sc42_judge_point[] = {
@@ -979,7 +979,7 @@ uint16 sc42_judge_point[] = {
 	269,
 	186,
 	8,
-	0,
+	0
 };
 
 uint16 sc30_floor_table[] = {
@@ -1015,7 +1015,7 @@ uint16 sc30_floor_table[] = {
 	GT_SC30_RIGHT_TALK,
 	ID_JOEY_PARK,
 	GT_DANI_WAIT,
-	65535,
+	65535
 };
 
 Compact sc30_floor = {
@@ -1037,6 +1037,17 @@ Compact sc30_floor = {
 	447-184,	// mouseSize_x
 	327-240,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_33_30[] = {
@@ -1048,7 +1059,7 @@ uint16 reset_33_30[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	312,
-	65535,
+	65535
 };
 
 uint16 sc30_hen_step_b[] = {
@@ -1068,7 +1079,7 @@ uint16 sc30_hen_step_b[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 uint16 sc42_pros_talk[] = {
@@ -1266,7 +1277,7 @@ uint16 sc42_pros_talk[] = {
 	197,
 	277,
 	2,
-	0,
+	0
 };
 
 uint16 sc36_col_talk1[] = {
@@ -1419,7 +1430,7 @@ uint16 sc36_col_talk1[] = {
 	219,
 	226,
 	3,
-	0,
+	0
 };
 
 uint16 sc30_fast_list[] = {
@@ -1430,7 +1441,7 @@ uint16 sc30_fast_list[] = {
 	54+DISK_12,
 	135+DISK_12,
 	IT_SC30_HENRI_BLINK+DISK_12,
-	0,
+	0
 };
 
 uint16 sc30_chip_list[] = {
@@ -1449,7 +1460,7 @@ uint16 sc30_chip_list[] = {
 	IT_SC30_HENRI_STEP+DISK_12,
 	IT_SC30_COURT_DOOR+DISK_12,
 	IT_SC30_PUSH_DOOR+DISK_12,
-	0,
+	0
 };
 
 uint16 sc30_logic_list[] = {
@@ -1461,7 +1472,7 @@ uint16 sc30_logic_list[] = {
 	ID_SC30_COURT_DOOR,
 	ID_SC32_LIFT,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc30_mouse_list[] = {
@@ -1477,7 +1488,7 @@ uint16 sc30_mouse_list[] = {
 	ID_SC30_COURT_DOOR,
 	ID_SC30_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint32 *sc30_walk_grid = 0;
@@ -1501,6 +1512,17 @@ Compact sc30_exit_31 = {
 	447-420,	// mouseSize_x
 	256-190,	// mouseSize_y
 	SC30_EXIT_31_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc30_exit_33 = {
@@ -1522,6 +1544,17 @@ Compact sc30_exit_33 = {
 	447-420,	// mouseSize_x
 	327-270,	// mouseSize_y
 	SC30_EXIT_33_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_31_30[] = {
@@ -1533,7 +1566,7 @@ uint16 reset_31_30[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	248,
-	65535,
+	65535
 };
 
 Compact sc30_court_door = {
@@ -1565,6 +1598,7 @@ Compact sc30_court_door = {
 	C_BASE_MODE,	// mode
 	SC30_COURT_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc30_notice = {
@@ -1586,6 +1620,17 @@ Compact sc30_notice = {
 	174-169,	// mouseSize_x
 	227-218,	// mouseSize_y
 	SC30_NOTICE_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc30_statue_1 = {
@@ -1607,6 +1652,17 @@ Compact sc30_statue_1 = {
 	220-206,	// mouseSize_x
 	244-215,	// mouseSize_y
 	SC30_STATUE_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc30_statue_2 = {
@@ -1628,6 +1684,17 @@ Compact sc30_statue_2 = {
 	360-330,	// mouseSize_x
 	249-220,	// mouseSize_y
 	SC30_STATUE_2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc30_exit_36 = {
@@ -1649,6 +1716,17 @@ Compact sc30_exit_36 = {
 	288-280,	// mouseSize_x
 	290-231,	// mouseSize_y
 	SC30_EXIT_36_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 ExtCompact sc30_henri_ext = {
@@ -1677,6 +1755,10 @@ ExtCompact sc30_henri_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc30_henri = {
@@ -1708,7 +1790,7 @@ Compact sc30_henri = {
 	C_BASE_MODE,	// mode
 	SC30_HENRI_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc30_henri_ext,
+	&sc30_henri_ext
 };
 
 uint16 sc30_henri_talk[] = {
@@ -1906,7 +1988,7 @@ uint16 sc30_henri_talk[] = {
 	284,
 	228,
 	1,
-	0,
+	0
 };
 
 uint16 sc30_henri_tie[] = {
@@ -1983,7 +2065,7 @@ uint16 sc30_henri_tie[] = {
 	284,
 	228,
 	7,
-	0,
+	0
 };
 
 uint16 sc30_hen_step_f[] = {
@@ -2003,7 +2085,7 @@ uint16 sc30_hen_step_f[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc30_hen_blink[] = {
@@ -2023,7 +2105,7 @@ uint16 sc30_hen_blink[] = {
 	1,
 	1,
 	3+89*64,
-	0,
+	0
 };
 
 uint16 sc30_push_door[] = {
@@ -2064,7 +2146,7 @@ uint16 sc30_push_door[] = {
 	162,
 	208,
 	5,
-	0,
+	0
 };
 
 uint16 reset_36_30[] = {
@@ -2080,7 +2162,7 @@ uint16 reset_36_30[] = {
 	46+12*64,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 uint16 sc30_joey_list[] = {
@@ -2094,7 +2176,7 @@ uint16 sc30_joey_list[] = {
 	272,
 	327,
 	0,
-	0,
+	0
 };
 
 uint16 dani_conv[] = {
@@ -2292,7 +2374,7 @@ uint16 dani_conv[] = {
 	272,
 	189,
 	0,
-	0,
+	0
 };
 
 uint16 sc38_dani_sattlk[] = {
@@ -2490,7 +2572,7 @@ uint16 sc38_dani_sattlk[] = {
 	294,
 	244,
 	4,
-	0,
+	0
 };
 
 uint16 sc31_guard_talk[] = {
@@ -2688,7 +2770,7 @@ uint16 sc31_guard_talk[] = {
 	328,
 	176,
 	4,
-	0,
+	0
 };
 
 uint16 sc38_phone_talk[] = {
@@ -2886,7 +2968,7 @@ uint16 sc38_phone_talk[] = {
 	160,
 	256,
 	6,
-	0,
+	0
 };
 
 uint16 sc32_garden_talk[] = {
@@ -3084,7 +3166,7 @@ uint16 sc32_garden_talk[] = {
 	269,
 	169,
 	0,
-	0,
+	0
 };
 
 uint16 sc31_guard_talk2[] = {
@@ -3282,7 +3364,7 @@ uint16 sc31_guard_talk2[] = {
 	328,
 	242,
 	1,
-	0,
+	0
 };
 
 uint16 barman_talk[] = {
@@ -3480,7 +3562,7 @@ uint16 barman_talk[] = {
 	391,
 	240,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_gal_talk[] = {
@@ -3633,7 +3715,7 @@ uint16 sc36_gal_talk[] = {
 	202,
 	238,
 	0,
-	0,
+	0
 };
 
 uint16 sc36_juke_talk[] = {
@@ -3831,7 +3913,7 @@ uint16 sc36_juke_talk[] = {
 	233,
 	222,
 	3,
-	0,
+	0
 };
 
 uint16 sc36_babs_talk[] = {
@@ -4029,7 +4111,7 @@ uint16 sc36_babs_talk[] = {
 	216,
 	206,
 	0,
-	0,
+	0
 };
 
 uint16 reset_42_30[] = {
@@ -4041,7 +4123,7 @@ uint16 reset_42_30[] = {
 	144,
 	C_YCOOD,
 	256,
-	65535,
+	65535
 };
 
 uint16 reset_court_open[] = {
@@ -4049,7 +4131,7 @@ uint16 reset_court_open[] = {
 	ST_LOGIC+ST_MOUSE+ST_RECREATE,
 	C_CURSOR_TEXT,
 	1+T7,
-	65535,
+	65535
 };
 
 uint16 sc30_court_close[] = {
@@ -4066,7 +4148,7 @@ uint16 sc30_court_close[] = {
 	167,
 	210,
 	3,
-	0,
+	0
 };
 
 uint16 sc42_judge_talk[] = {
@@ -4456,7 +4538,7 @@ uint16 sc42_judge_talk[] = {
 	269,
 	186,
 	1,
-	0,
+	0
 };
 
 uint16 sc42_jobs_talk[] = {
@@ -4654,7 +4736,7 @@ uint16 sc42_jobs_talk[] = {
 	340,
 	200,
 	0,
-	0,
+	0
 };
 
 uint16 sc42_blunt_talk[] = {
@@ -4852,7 +4934,7 @@ uint16 sc42_blunt_talk[] = {
 	232,
 	224,
 	0,
-	0,
+	0
 };
 
 uint16 sc42_fos_talk_l[] = {
@@ -5050,7 +5132,7 @@ uint16 sc42_fos_talk_l[] = {
 	324,
 	279,
 	2,
-	0,
+	0
 };
 
 uint16 sc42_fos_talk_r[] = {
@@ -5248,7 +5330,7 @@ uint16 sc42_fos_talk_r[] = {
 	324,
 	279,
 	2,
-	0,
+	0
 };
 
 uint16 sc42_dani_talk[] = {
@@ -5446,7 +5528,7 @@ uint16 sc42_dani_talk[] = {
 	280,
 	209,
 	0,
-	0,
+	0
 };
 
 uint16 sc42_clerk_talk[] = {
@@ -5644,7 +5726,7 @@ uint16 sc42_clerk_talk[] = {
 	310,
 	234,
 	0,
-	0,
+	0
 };
 
 uint16 sc42_jobs_point[] = {
@@ -5842,7 +5924,7 @@ uint16 sc42_jobs_point[] = {
 	340,
 	200,
 	0,
-	0,
+	0
 };
 
 uint16 sc42_jdg_to_jobs[] = {
@@ -6040,7 +6122,7 @@ uint16 sc42_jdg_to_jobs[] = {
 	269,
 	186,
 	0,
-	0,
+	0
 };
 
 void *data_4[] = {
@@ -6530,7 +6612,7 @@ void *data_4[] = {
 	reset_jukebox,
 	reset_juke_light,
 	sc31_guard_chat,
-	&sc31_at_watcher,
+	&sc31_at_watcher
 };
 
 }; // namespace SkyCompact

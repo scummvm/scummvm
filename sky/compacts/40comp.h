@@ -46,6 +46,17 @@ Compact sc40_body_2 = {
 	280-263,	// mouseSize_x
 	248-222,	// mouseSize_y
 	SC40_BODY_2_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc40_locker_shut[] = {
@@ -74,7 +85,7 @@ uint16 sc40_locker_shut[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 reset_39_40[] = {
@@ -90,7 +101,7 @@ uint16 reset_39_40[] = {
 	25*64,
 	C_DIR,
 	RIGHT,
-	65535,
+	65535
 };
 
 Compact sc40_body_3 = {
@@ -112,6 +123,17 @@ Compact sc40_body_3 = {
 	305-286,	// mouseSize_x
 	249-220,	// mouseSize_y
 	SC40_BODY_3_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc40_cabinet = {
@@ -133,6 +155,17 @@ Compact sc40_cabinet = {
 	357-336,	// mouseSize_x
 	312-280,	// mouseSize_y
 	SC40_CABINET_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *sc40_walk_grid = 0;
@@ -521,7 +554,7 @@ uint16 sc40_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc40_descend[] = {
@@ -583,7 +616,7 @@ uint16 sc40_descend[] = {
 	226,
 	218,
 	14,
-	0,
+	0
 };
 
 Compact sc40_locker_1 = {
@@ -615,6 +648,7 @@ Compact sc40_locker_1 = {
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc40_floor_table[] = {
@@ -646,7 +680,7 @@ uint16 sc40_floor_table[] = {
 	GT_SC40_BODY_4,
 	ID_SC40_BODY_5,
 	GT_SC40_BODY_5,
-	65535,
+	65535
 };
 
 Compact sc40_floor = {
@@ -668,6 +702,17 @@ Compact sc40_floor = {
 	415-168,	// mouseSize_x
 	327-256,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc40_chip_list[] = {
@@ -681,7 +726,7 @@ uint16 sc40_chip_list[] = {
 	IT_SC40_CLOSE_DOOR+DISK_14,
 	25+DISK_14,
 	26+DISK_14,
-	0,
+	0
 };
 
 Compact sc40_body_5 = {
@@ -703,6 +748,17 @@ Compact sc40_body_5 = {
 	353-342,	// mouseSize_x
 	249-240,	// mouseSize_y
 	SC40_BODY_5_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc40_locker_4 = {
@@ -734,6 +790,7 @@ Compact sc40_locker_4 = {
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_4_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc40_close_door[] = {
@@ -768,7 +825,7 @@ uint16 sc40_close_door[] = {
 	232,
 	208,
 	3,
-	0,
+	0
 };
 
 uint16 sc40_locker_open[] = {
@@ -800,7 +857,7 @@ uint16 sc40_locker_open[] = {
 	1,
 	1,
 	3,
-	0,
+	0
 };
 
 Compact sc40_locker_2 = {
@@ -832,6 +889,7 @@ Compact sc40_locker_2 = {
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact sc40_locker_3 = {
@@ -863,6 +921,7 @@ Compact sc40_locker_3 = {
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc40_fast_list[] = {
@@ -872,7 +931,7 @@ uint16 sc40_fast_list[] = {
 	53+DISK_14,
 	54+DISK_14,
 	135+DISK_14,
-	0,
+	0
 };
 
 Compact sc40_exit_39 = {
@@ -894,6 +953,17 @@ Compact sc40_exit_39 = {
 	222-211,	// mouseSize_x
 	268-214,	// mouseSize_y
 	SC40_EXIT_39_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc40_body_1 = {
@@ -915,6 +985,17 @@ Compact sc40_body_1 = {
 	250-236,	// mouseSize_x
 	245-208,	// mouseSize_y
 	SC40_BODY_1_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc40_open_door[] = {
@@ -949,7 +1030,7 @@ uint16 sc40_open_door[] = {
 	240,
 	208,
 	3,
-	0,
+	0
 };
 
 Compact sc40_trolley = {
@@ -971,6 +1052,17 @@ Compact sc40_trolley = {
 	336-264,	// mouseSize_x
 	280-264,	// mouseSize_y
 	SC40_TROLLEY_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc40_locker_5 = {
@@ -1002,6 +1094,7 @@ Compact sc40_locker_5 = {
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_5_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc40_mouse_list[] = {
@@ -1020,7 +1113,7 @@ uint16 sc40_mouse_list[] = {
 	ID_SC40_EXIT_39,
 	ID_SC40_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 sc40_logic_list[] = {
@@ -1033,7 +1126,7 @@ uint16 sc40_logic_list[] = {
 	ID_SC40_LOCKER_4,
 	ID_SC40_LOCKER_5,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 Compact sc40_body_4 = {
@@ -1055,6 +1148,17 @@ Compact sc40_body_4 = {
 	328-311,	// mouseSize_x
 	249-219,	// mouseSize_y
 	SC40_BODY_4_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc40_ascend[] = {
@@ -1113,7 +1217,7 @@ uint16 sc40_ascend[] = {
 	193,
 	199,
 	17,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

@@ -40,7 +40,7 @@ uint16 rs_low_lift2[] = {
 	L_SCRIPT,
 	C_STATUS,
 	ST_SORT+ST_LOGIC+ST_RECREATE+ST_NO_VMASK,
-	65535,
+	65535
 };
 
 Compact low_lift_2 = {
@@ -72,6 +72,7 @@ Compact low_lift_2 = {
 	C_BASE_MODE,	// mode
 	LOW_LIFT2_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_low_lift3[] = {
@@ -87,7 +88,7 @@ uint16 rs_low_lift3[] = {
 	L_SCRIPT,
 	C_STATUS,
 	ST_SORT+ST_LOGIC+ST_RECREATE+ST_NO_VMASK,
-	65535,
+	65535
 };
 
 uint16 liftc3_down[] = {
@@ -201,7 +202,7 @@ uint16 liftc3_down[] = {
 	286,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 joey_list_s3[] = {
@@ -210,7 +211,7 @@ uint16 joey_list_s3[] = {
 	248,
 	321,
 	1,
-	0,
+	0
 };
 
 uint16 liftc1_down[] = {
@@ -303,14 +304,14 @@ uint16 liftc1_down[] = {
 	268,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 shades_l_to_r[] = {
 	41-8+217*64,
 	40-8+217*64,
 	47-8+217*64,
-	0,
+	0
 };
 
 uint16 shades_st_talk[] = {
@@ -318,7 +319,7 @@ uint16 shades_st_talk[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 shades_st_right[] = {
@@ -326,7 +327,7 @@ uint16 shades_st_right[] = {
 	1,
 	1,
 	38,
-	0,
+	0
 };
 
 Compact eye_bolt = {
@@ -358,6 +359,7 @@ Compact eye_bolt = {
 	C_BASE_MODE,	// mode
 	EYE_BOLT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact lights1 = {
@@ -389,6 +391,7 @@ Compact lights1 = {
 	C_BASE_MODE,	// mode
 	LIGHTS1_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_low_barrel[] = {
@@ -404,7 +407,7 @@ uint16 rs_low_barrel[] = {
 	L_SCRIPT,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 Compact convey = {
@@ -436,6 +439,7 @@ Compact convey = {
 	C_BASE_MODE,	// mode
 	CONVEY_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 search_seq[] = {
@@ -503,7 +507,7 @@ uint16 search_seq[] = {
 	289,
 	231,
 	0,
-	0,
+	0
 };
 
 ExtCompact eye_ball_ext = {
@@ -520,6 +524,22 @@ ExtCompact eye_ball_ext = {
 	0,	// atWatch
 	0,	// atWas
 	0,	// alt
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact eye_ball = {
@@ -551,7 +571,7 @@ Compact eye_ball = {
 	C_BASE_MODE,	// mode
 	EYE_BALL_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&eye_ball_ext,
+	&eye_ball_ext
 };
 
 uint32 *sh = 0;
@@ -666,19 +686,19 @@ uint16 liftc3_up[] = {
 	298,
 	141,
 	22,
-	0,
+	0
 };
 
 uint16 shades_l_to_u[] = {
 	43-8+217*64,
-	0,
+	0
 };
 
 uint16 shades_u_to_d[] = {
 	43-8+217*64,
 	42-8+217*64,
 	41-8+217*64,
-	0,
+	0
 };
 
 uint16 s3_mouse[] = {
@@ -691,18 +711,31 @@ uint16 s3_mouse[] = {
 	ID_FURNACE,
 	ID_S3_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 shades_d_to_u[] = {
 	47-8+217*64,
 	46-8+217*64,
 	45-8+217*64,
-	0,
+	0
 };
 
 MegaSet smoulder_megaSet0 = {
 	7,	// gridWidth
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 ExtCompact smoulder_ext = {
@@ -732,6 +765,9 @@ ExtCompact smoulder_ext = {
 	0,	// animScratch
 	0,	// megaSet
 	&smoulder_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact smoulder = {
@@ -763,7 +799,7 @@ Compact smoulder = {
 	C_BASE_MODE,	// mode
 	SMOULDER_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&smoulder_ext,
+	&smoulder_ext
 };
 
 Compact low_lift_3 = {
@@ -795,11 +831,12 @@ Compact low_lift_3 = {
 	C_BASE_MODE,	// mode
 	LOW_LIFT3_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 shades_u_to_r[] = {
 	45-8+217*64,
-	0,
+	0
 };
 
 Compact furnace = {
@@ -831,6 +868,7 @@ Compact furnace = {
 	C_BASE_MODE,	// mode
 	FURNACE_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 liftc1_up[] = {
@@ -922,12 +960,12 @@ uint16 liftc1_up[] = {
 	250,
 	141,
 	15,
-	0,
+	0
 };
 
 uint16 shades_r_to_d[] = {
 	47-8+217*64,
-	0,
+	0
 };
 
 uint16 s3_logic[] = {
@@ -949,7 +987,7 @@ uint16 s3_logic[] = {
 	ID_SMOULDER,
 	105,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 shades_st_up[] = {
@@ -957,7 +995,7 @@ uint16 shades_st_up[] = {
 	1,
 	1,
 	36,
-	0,
+	0
 };
 
 uint16 smoulder_seq[] = {
@@ -992,7 +1030,7 @@ uint16 smoulder_seq[] = {
 	373,
 	269,
 	0,
-	0,
+	0
 };
 
 uint8 shades_auto[64];
@@ -1030,7 +1068,7 @@ uint16 shades_up[] = {
 	7+217*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 shades_down[] = {
@@ -1066,7 +1104,7 @@ uint16 shades_down[] = {
 	15+217*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 shades_left[] = {
@@ -1102,7 +1140,7 @@ uint16 shades_left[] = {
 	23+217*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 shades_right[] = {
@@ -1138,7 +1176,7 @@ uint16 shades_right[] = {
 	31+217*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 shades_st_down[] = {
@@ -1146,7 +1184,7 @@ uint16 shades_st_down[] = {
 	1,
 	1,
 	32,
-	0,
+	0
 };
 
 uint16 shades_st_left[] = {
@@ -1154,39 +1192,39 @@ uint16 shades_st_left[] = {
 	1,
 	1,
 	34,
-	0,
+	0
 };
 
 uint16 shades_u_to_l[] = {
 	43-8+217*64,
-	0,
+	0
 };
 
 uint16 shades_d_to_l[] = {
 	41-8+217*64,
-	0,
+	0
 };
 
 uint16 shades_d_to_r[] = {
 	47-8+217*64,
-	0,
+	0
 };
 
 uint16 shades_l_to_d[] = {
 	41-8+217*64,
-	0,
+	0
 };
 
 uint16 shades_r_to_u[] = {
 	45-8+217*64,
-	0,
+	0
 };
 
 uint16 shades_r_to_l[] = {
 	45-8+217*64,
 	44-8+217*64,
 	43-8+217*64,
-	0,
+	0
 };
 
 TurnTable shades_turnTable0 = {
@@ -1224,7 +1262,7 @@ TurnTable shades_turnTable0 = {
 		0,
 		0,
 		0
-	},
+	}
 };
 
 MegaSet shades_megaSet0 = {
@@ -1241,7 +1279,7 @@ MegaSet shades_megaSet0 = {
 	shades_st_left,	// standLeft
 	shades_st_right,	// standRight
 	shades_st_talk,	// standTalk
-	&shades_turnTable0,
+	&shades_turnTable0
 };
 
 ExtCompact shades_ext = {
@@ -1271,6 +1309,9 @@ ExtCompact shades_ext = {
 	shades_auto,	// animScratch
 	0,	// megaSet
 	&shades_megaSet0,
+	0,
+	0,
+	0
 };
 
 Compact shades = {
@@ -1302,7 +1343,7 @@ Compact shades = {
 	0,	// mode
 	SHADES_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&shades_ext,
+	&shades_ext
 };
 
 uint16 liftc2_down[] = {
@@ -1395,13 +1436,13 @@ uint16 liftc2_down[] = {
 	210,
 	0,
 	0,
-	0,
+	0
 };
 
 uint16 rs_start_joey_fly[] = {
 	C_STATUS,
 	ST_SORT+ST_LOGIC+ST_RECREATE,
-	65535,
+	65535
 };
 
 Compact steve_watch = {
@@ -1433,6 +1474,7 @@ Compact steve_watch = {
 	C_BASE_MODE,	// mode
 	STEVE_SPY_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 liftc2_up[] = {
@@ -1524,7 +1566,7 @@ uint16 liftc2_up[] = {
 	292,
 	141,
 	21,
-	0,
+	0
 };
 
 Compact furnace_door = {
@@ -1556,6 +1598,7 @@ Compact furnace_door = {
 	C_BASE_MODE,	// mode
 	FURNACE_DOOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact slot = {
@@ -1577,6 +1620,17 @@ Compact slot = {
 	5,	// mouseSize_x
 	15,	// mouseSize_y
 	SLOT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 chip_list_sc3[] = {
@@ -1600,7 +1654,7 @@ uint16 chip_list_sc3[] = {
 	225+DISK_1,
 	218+DISK_1+0X8000,
 	169+DISK_1+0X8000,
-	0,
+	0
 };
 
 Compact low_lift = {
@@ -1632,6 +1686,7 @@ Compact low_lift = {
 	C_BASE_MODE,	// mode
 	LOW_LIFT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact joey_fly = {
@@ -1663,6 +1718,7 @@ Compact joey_fly = {
 	C_BASE_MODE,	// mode
 	FLY_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 rs_low_lift[] = {
@@ -1678,7 +1734,7 @@ uint16 rs_low_lift[] = {
 	L_SCRIPT,
 	C_STATUS,
 	ST_SORT+ST_LOGIC+ST_RECREATE+ST_NO_VMASK,
-	65535,
+	65535
 };
 
 uint16 r3_floor_table[] = {
@@ -1696,7 +1752,7 @@ uint16 r3_floor_table[] = {
 	GET_TO_FURNACE,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
-	65535,
+	65535
 };
 
 Compact s3_floor = {
@@ -1718,6 +1774,17 @@ Compact s3_floor = {
 	256,	// mouseSize_x
 	79,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_joey_to_furnace[] = {
@@ -1741,7 +1808,7 @@ uint16 rs_joey_to_furnace[] = {
 	RIGHT,
 	C_FRAME,
 	173*64+12,
-	65535,
+	65535
 };
 
 Compact low_barrel = {
@@ -1773,6 +1840,7 @@ Compact low_barrel = {
 	C_BASE_MODE,	// mode
 	LOW_BARREL_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

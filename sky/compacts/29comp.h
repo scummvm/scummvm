@@ -64,7 +64,7 @@ uint16 rs_joey_7_29[] = {
 	1*NEXT_MEGA_SET,
 	C_FRAME,
 	136*64+2,
-	65535,
+	65535
 };
 
 uint16 s29_floor_table[] = {
@@ -94,7 +94,7 @@ uint16 s29_floor_table[] = {
 	GT_R_TALK_29,
 	ID_CABLE_29,
 	GT_CABLE_29,
-	65535,
+	65535
 };
 
 Compact s29_floor = {
@@ -116,6 +116,17 @@ Compact s29_floor = {
 	320,	// mouseSize_x
 	48,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *grid29 = 0;
@@ -140,7 +151,7 @@ uint16 card_slot_29_anim[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 s29_lift_open[] = {
@@ -172,7 +183,7 @@ uint16 s29_lift_open[] = {
 	1,
 	1,
 	9,
-	0,
+	0
 };
 
 uint16 rs_19_sml_28[] = {
@@ -186,7 +197,7 @@ uint16 rs_19_sml_28[] = {
 	ID_S28_SML_FLOOR,
 	C_FRAME,
 	44+13*64,
-	65535,
+	65535
 };
 
 uint16 sml_joey_list_28[] = {
@@ -195,7 +206,7 @@ uint16 sml_joey_list_28[] = {
 	166,
 	186,
 	1,
-	0,
+	0
 };
 
 Compact s29_card_slot = {
@@ -217,6 +228,17 @@ Compact s29_card_slot = {
 	5,	// mouseSize_x
 	8,	// mouseSize_y
 	S29_SLOT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s29_sml_mouse[] = {
@@ -225,7 +247,7 @@ uint16 s29_sml_mouse[] = {
 	ID_SMALL_L_29,
 	ID_S29_SML_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 s29_logic[] = {
@@ -238,7 +260,7 @@ uint16 s29_logic[] = {
 	ID_LIFT29_LIGHT,
 	ID_CABLE_29,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 s29_pal[] = {
@@ -625,7 +647,7 @@ uint16 s29_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 Compact small_l_29 = {
@@ -647,6 +669,17 @@ Compact small_l_29 = {
 	179-156,	// mouseSize_x
 	188-136,	// mouseSize_y
 	L_29_SML_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_7_29[] = {
@@ -662,7 +695,7 @@ uint16 rs_foster_7_29[] = {
 	DOWN,
 	C_PLACE,
 	ID_S29_FLOOR,
-	65535,
+	65535
 };
 
 uint16 rs_28_sml_29[] = {
@@ -674,7 +707,7 @@ uint16 rs_28_sml_29[] = {
 	29,
 	C_PLACE,
 	ID_S29_SML_FLOOR,
-	65535,
+	65535
 };
 
 uint16 s29_chip_list[] = {
@@ -691,7 +724,7 @@ uint16 s29_chip_list[] = {
 	15+DISK_8,
 	16+DISK_8,
 	13,
-	0,
+	0
 };
 
 uint16 s29_lift_close[] = {
@@ -723,7 +756,7 @@ uint16 s29_lift_close[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 rs_29_sml_23[] = {
@@ -737,7 +770,7 @@ uint16 rs_29_sml_23[] = {
 	ID_S23_FLOOR,
 	C_FRAME,
 	44+12*64,
-	65535,
+	65535
 };
 
 uint16 rs_lamb_start_bel[] = {
@@ -751,7 +784,7 @@ uint16 rs_lamb_start_bel[] = {
 	ID_S28_FLOOR,
 	C_STATUS,
 	ST_SORT+ST_RECREATE+ST_LOGIC+ST_GRID_PLOT+ST_COLLISION+ST_MOUSE,
-	65535,
+	65535
 };
 
 uint16 s29_mouse[] = {
@@ -764,7 +797,7 @@ uint16 s29_mouse[] = {
 	ID_CABLE_29,
 	ID_S29_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact lift_29 = {
@@ -796,6 +829,7 @@ Compact lift_29 = {
 	C_BASE_MODE,	// mode
 	S29_LIFT_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact lift29_light = {
@@ -808,6 +842,26 @@ Compact lift29_light = {
 	0XEE,	// xcood
 	0XBE,	// ycood
 	20*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 joey_list_s29[] = {
@@ -816,7 +870,7 @@ uint16 joey_list_s29[] = {
 	276,
 	304,
 	1,
-	0,
+	0
 };
 
 Compact right_exit_29 = {
@@ -838,6 +892,17 @@ Compact right_exit_29 = {
 	414-397,	// mouseSize_x
 	262-201,	// mouseSize_y
 	ER29_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_foster_23_29[] = {
@@ -849,7 +914,7 @@ uint16 rs_foster_23_29[] = {
 	29,
 	C_PLACE,
 	ID_S29_FLOOR,
-	65535,
+	65535
 };
 
 Compact left_exit_29 = {
@@ -871,6 +936,17 @@ Compact left_exit_29 = {
 	144-127,	// mouseSize_x
 	300-180,	// mouseSize_y
 	EL29_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 lamb_card_29[] = {
@@ -902,7 +978,7 @@ uint16 lamb_card_29[] = {
 	276,
 	231,
 	0,
-	0,
+	0
 };
 
 Compact cable_29 = {
@@ -924,6 +1000,17 @@ Compact cable_29 = {
 	45,	// mouseSize_x
 	20,	// mouseSize_y
 	CABLE_29_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 get_cable_29_seq[] = {
@@ -970,7 +1057,7 @@ uint16 get_cable_29_seq[] = {
 	293,
 	252,
 	0,
-	0,
+	0
 };
 
 Compact small_r_29 = {
@@ -992,6 +1079,17 @@ Compact small_r_29 = {
 	348-319,	// mouseSize_x
 	186-137,	// mouseSize_y
 	R_29_SML_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s29_sml_table[] = {
@@ -1007,7 +1105,7 @@ uint16 s29_sml_table[] = {
 	SML_RIGHT_29,
 	5,
 	SML_LEFT_29,
-	65535,
+	65535
 };
 
 Compact s29_sml_floor = {
@@ -1029,6 +1127,17 @@ Compact s29_sml_floor = {
 	320-176,	// mouseSize_x
 	16,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 rs_23_sml_29[] = {
@@ -1042,7 +1151,7 @@ uint16 rs_23_sml_29[] = {
 	ID_S29_SML_FLOOR,
 	C_FRAME,
 	44+13*64,
-	65535,
+	65535
 };
 
 uint16 rs_29_sml_28[] = {
@@ -1054,7 +1163,7 @@ uint16 rs_29_sml_28[] = {
 	28,
 	C_PLACE,
 	ID_S28_SML_FLOOR,
-	65535,
+	65535
 };
 
 uint16 sml_joey_list_29[] = {
@@ -1063,7 +1172,7 @@ uint16 sml_joey_list_29[] = {
 	166,
 	186,
 	1,
-	0,
+	0
 };
 
 void *data_3[] = {
@@ -1478,7 +1587,7 @@ void *data_3[] = {
 	lift_28_close,
 	&slot_28,
 	slot_28_anim,
-	rs_31_28,
+	rs_31_28
 };
 
 }; // namespace SkyCompact

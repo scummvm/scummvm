@@ -37,6 +37,26 @@ Compact reactor_lower = {
 	249,	// xcood
 	226,	// ycood
 	109*64,	// frame
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 foster2_die_seq[] = {
@@ -140,7 +160,7 @@ uint16 foster2_die_seq[] = {
 	184,
 	273,
 	27,
-	0,
+	0
 };
 
 Compact reactor_console = {
@@ -172,6 +192,7 @@ Compact reactor_console = {
 	C_BASE_MODE,	// mode
 	CONSOLE_16_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint32 *grid16 = 0;
@@ -186,7 +207,7 @@ uint16 s16_fast_list[] = {
 	93+DISK_6,
 	94+DISK_6,
 	95+DISK_6,
-	0,
+	0
 };
 
 Compact entrance_exit = {
@@ -208,6 +229,17 @@ Compact entrance_exit = {
 	203-186,	// mouseSize_x
 	294-220,	// mouseSize_y
 	ENTRANCE_EXIT_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 console_16_seq[] = {
@@ -245,7 +277,7 @@ uint16 console_16_seq[] = {
 	368,
 	260,
 	10,
-	0,
+	0
 };
 
 uint16 s16_floor_table[] = {
@@ -267,7 +299,7 @@ uint16 s16_floor_table[] = {
 	GT_L_TALK_16,
 	ID_STD_RIGHT_TALK,
 	GT_R_TALK_16,
-	65535,
+	65535
 };
 
 Compact s16_floor = {
@@ -289,6 +321,17 @@ Compact s16_floor = {
 	416-181,	// mouseSize_x
 	321-277,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s16_pal[] = {
@@ -675,7 +718,7 @@ uint16 s16_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 s16_chip_list[] = {
@@ -693,7 +736,7 @@ uint16 s16_chip_list[] = {
 	147+DISK_6,
 	31+DISK_6,
 	32+DISK_6,
-	0,
+	0
 };
 
 uint16 rad_con_look[] = {
@@ -728,7 +771,7 @@ uint16 rad_con_look[] = {
 	288,
 	201,
 	0,
-	0,
+	0
 };
 
 uint16 s16_logic[] = {
@@ -740,7 +783,7 @@ uint16 s16_logic[] = {
 	ID_REACTOR_LOWER,
 	ID_REACTOR_PC,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 foster_die_seq[] = {
@@ -844,7 +887,7 @@ uint16 foster_die_seq[] = {
 	296,
 	273,
 	27,
-	0,
+	0
 };
 
 Compact reactor_door = {
@@ -866,6 +909,17 @@ Compact reactor_door = {
 	342-251,	// mouseSize_x
 	266-176,	// mouseSize_y
 	REACTOR_DOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 s16_mouse[] = {
@@ -876,7 +930,7 @@ uint16 s16_mouse[] = {
 	ID_REACTOR_DOOR,
 	ID_S16_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 uint16 rs_foster_14_16[] = {
@@ -888,7 +942,7 @@ uint16 rs_foster_14_16[] = {
 	16,
 	C_PLACE,
 	ID_S16_FLOOR,
-	65535,
+	65535
 };
 
 uint16 fost_con_look[] = {
@@ -923,7 +977,7 @@ uint16 fost_con_look[] = {
 	264,
 	214,
 	3,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

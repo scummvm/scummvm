@@ -125,7 +125,7 @@ uint16 sc42_jdg_hammer[] = {
 	269,
 	186,
 	0,
-	0,
+	0
 };
 
 uint16 reset_30_42[] = {
@@ -135,12 +135,12 @@ uint16 reset_30_42[] = {
 	424,
 	C_YCOOD,
 	304,
-	65535,
+	65535
 };
 
 uint16 sc42_mouse_list[] = {
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc42_sign = {
@@ -172,6 +172,7 @@ Compact sc42_sign = {
 	C_BASE_MODE,	// mode
 	SC42_SIGN_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc42_fos_enter[] = {
@@ -263,7 +264,7 @@ uint16 sc42_fos_enter[] = {
 	324,
 	274,
 	27,
-	0,
+	0
 };
 
 uint16 sc42_clerk_type[] = {
@@ -460,7 +461,7 @@ uint16 sc42_clerk_type[] = {
 	310,
 	234,
 	1,
-	0,
+	0
 };
 
 ExtCompact sc42_judge_ext = {
@@ -489,6 +490,10 @@ ExtCompact sc42_judge_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc42_judge = {
@@ -520,7 +525,7 @@ Compact sc42_judge = {
 	C_BASE_MODE,	// mode
 	SC42_JUDGE_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc42_judge_ext,
+	&sc42_judge_ext
 };
 
 uint16 sc42_logic_list[] = {
@@ -533,7 +538,7 @@ uint16 sc42_logic_list[] = {
 	ID_SC31_GUARD,
 	ID_SC42_SIGN,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint32 *sc42_walk_grid = 0;
@@ -549,7 +554,7 @@ uint16 sc42_jdg_turn[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 sc42_fast_list[] = {
@@ -558,7 +563,7 @@ uint16 sc42_fast_list[] = {
 	22+DISK_14,
 	169+DISK_14,
 	170+DISK_14+0X8000,
-	0,
+	0
 };
 
 ExtCompact sc42_prosecution_ext = {
@@ -587,6 +592,10 @@ ExtCompact sc42_prosecution_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc42_prosecution = {
@@ -618,7 +627,7 @@ Compact sc42_prosecution = {
 	C_BASE_MODE,	// mode
 	SC42_PROSECUTION_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc42_prosecution_ext,
+	&sc42_prosecution_ext
 };
 
 uint16 sc42_fos_turn_lr[] = {
@@ -632,7 +641,7 @@ uint16 sc42_fos_turn_lr[] = {
 	1,
 	1,
 	2,
-	0,
+	0
 };
 
 uint16 sc42_chip_list[] = {
@@ -657,7 +666,7 @@ uint16 sc42_chip_list[] = {
 	166+DISK_14,
 	167+DISK_14,
 	168+DISK_14,
-	0,
+	0
 };
 
 ExtCompact sc42_clerk_ext = {
@@ -686,6 +695,10 @@ ExtCompact sc42_clerk_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc42_clerk = {
@@ -717,7 +730,7 @@ Compact sc42_clerk = {
 	C_BASE_MODE,	// mode
 	SC42_CLERK_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc42_clerk_ext,
+	&sc42_clerk_ext
 };
 
 uint16 reset_guard_42[] = {
@@ -731,7 +744,7 @@ uint16 reset_guard_42[] = {
 	SC42_BLUNT_LOGIC,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 sc42_jdg_return[] = {
@@ -745,7 +758,7 @@ uint16 sc42_jdg_return[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 sc42_fos_turn_rl[] = {
@@ -759,7 +772,7 @@ uint16 sc42_fos_turn_rl[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 ExtCompact sc42_jobsworth_ext = {
@@ -788,6 +801,10 @@ ExtCompact sc42_jobsworth_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc42_jobsworth = {
@@ -819,7 +836,7 @@ Compact sc42_jobsworth = {
 	C_BASE_MODE,	// mode
 	SC42_JOBSWORTH_LOGIC,	// baseSub
 	0,	// baseSub_off
-	&sc42_jobsworth_ext,
+	&sc42_jobsworth_ext
 };
 
 uint16 reset_dani_42[] = {
@@ -841,7 +858,7 @@ uint16 reset_dani_42[] = {
 	SC42_DANI_LOGIC,
 	C_BASE_SUB+2,
 	0,
-	65535,
+	65535
 };
 
 uint16 sc42_sign_anim[] = {
@@ -870,7 +887,7 @@ uint16 sc42_sign_anim[] = {
 	254,
 	137,
 	7,
-	0,
+	0
 };
 
 uint16 sc42_blunt_enter[] = {
@@ -995,7 +1012,7 @@ uint16 sc42_blunt_enter[] = {
 	238,
 	225,
 	18,
-	0,
+	0
 };
 
 uint16 sc42_blunt_leave[] = {
@@ -1123,7 +1140,7 @@ uint16 sc42_blunt_leave[] = {
 	129,
 	241,
 	8,
-	0,
+	0
 };
 
 uint16 sc42_jobs_enter[] = {
@@ -1206,7 +1223,7 @@ uint16 sc42_jobs_enter[] = {
 	340,
 	200,
 	13,
-	0,
+	0
 };
 
 uint16 sc42_palette[] = {
@@ -1593,7 +1610,7 @@ uint16 sc42_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc42_fos_leave[] = {
@@ -1688,7 +1705,7 @@ uint16 sc42_fos_leave[] = {
 	389,
 	258,
 	29,
-	0,
+	0
 };
 
 }; // namespace SkyCompact

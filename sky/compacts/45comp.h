@@ -36,13 +36,13 @@ uint16 reset_44_45[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 sc45_logic_list[] = {
 	ID_FOSTER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 uint16 sc45_floor_table[] = {
@@ -60,7 +60,7 @@ uint16 sc45_floor_table[] = {
 	GT_SC45_EXIT_47,
 	3,
 	SC45_EXIT_47_WALK_ON,
-	65535,
+	65535
 };
 
 Compact sc45_floor = {
@@ -82,6 +82,17 @@ Compact sc45_floor = {
 	457-128,	// mouseSize_x
 	327-264,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact sc45_exit_47 = {
@@ -103,6 +114,17 @@ Compact sc45_exit_47 = {
 	378-328,	// mouseSize_x
 	261-181,	// mouseSize_y
 	SC45_EXIT_47_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 reset_46_45[] = {
@@ -114,7 +136,7 @@ uint16 reset_46_45[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 Compact sc45_exit_46 = {
@@ -136,6 +158,17 @@ Compact sc45_exit_46 = {
 	447-420,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC45_EXIT_46_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc45_palette[] = {
@@ -522,7 +555,7 @@ uint16 sc45_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 sc45_fast_list[] = {
@@ -531,7 +564,7 @@ uint16 sc45_fast_list[] = {
 	52+DISK_13,
 	53+DISK_13,
 	54+DISK_13,
-	0,
+	0
 };
 
 uint32 *sc45_walk_grid = 0;
@@ -545,7 +578,7 @@ uint16 reset_47_45[] = {
 	392,
 	C_YCOOD,
 	248,
-	65535,
+	65535
 };
 
 Compact sc45_exit_44 = {
@@ -567,13 +600,24 @@ Compact sc45_exit_44 = {
 	140-128,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC45_EXIT_44_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc45_chip_list[] = {
 	IT_SC45_LAYER_0+DISK_13,
 	IT_SC45_LAYER_1+DISK_13,
 	IT_SC45_GRID_1+DISK_13,
-	0,
+	0
 };
 
 uint16 sc45_mouse_list[] = {
@@ -582,7 +626,7 @@ uint16 sc45_mouse_list[] = {
 	ID_SC45_EXIT_47,
 	ID_SC45_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 }; // namespace SkyCompact

@@ -35,7 +35,7 @@ uint16 restore_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 Compact restore_butt = {
@@ -67,6 +67,7 @@ Compact restore_butt = {
 	C_BASE_MODE,	// mode
 	RESTORE_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s102_logic[] = {
@@ -75,7 +76,7 @@ uint16 s102_logic[] = {
 	164,
 	175,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 uint16 exit_seq[] = {
@@ -86,7 +87,7 @@ uint16 exit_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 restart_seq[] = {
@@ -97,7 +98,7 @@ uint16 restart_seq[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 s102_mouse[] = {
@@ -105,7 +106,7 @@ uint16 s102_mouse[] = {
 	164,
 	175,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact exit_butt = {
@@ -137,6 +138,7 @@ Compact exit_butt = {
 	C_BASE_MODE,	// mode
 	EXIT_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 s102_pal[] = {
@@ -523,7 +525,7 @@ uint16 s102_pal[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 s102_chip_list[] = {
@@ -531,7 +533,7 @@ uint16 s102_chip_list[] = {
 	181,
 	182,
 	183,
-	0,
+	0
 };
 
 Compact restart_butt = {
@@ -563,6 +565,7 @@ Compact restart_butt = {
 	C_BASE_MODE,	// mode
 	RESTART_BUTTON_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact

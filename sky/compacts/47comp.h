@@ -36,7 +36,7 @@ uint16 reset_48_47[] = {
 	OFF_RIGHT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 sc47_palette[] = {
@@ -423,7 +423,7 @@ uint16 sc47_palette[] = {
 	1285,
 	285,
 	16129,
-	16191,
+	16191
 };
 
 uint16 reset_45_47[] = {
@@ -435,7 +435,7 @@ uint16 reset_45_47[] = {
 	OFF_LEFT,
 	C_YCOOD,
 	280,
-	65535,
+	65535
 };
 
 uint16 sc47_mouse_list[] = {
@@ -443,7 +443,7 @@ uint16 sc47_mouse_list[] = {
 	ID_SC47_EXIT_48,
 	ID_SC47_FLOOR,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc47_exit_48 = {
@@ -465,6 +465,17 @@ Compact sc47_exit_48 = {
 	447-420,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC47_EXIT_48_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint32 *sc47_walk_grid = 0;
@@ -475,13 +486,13 @@ uint16 sc47_fast_list[] = {
 	52+DISK_13,
 	53+DISK_13,
 	54+DISK_13,
-	0,
+	0
 };
 
 uint16 sc47_logic_list[] = {
 	ID_FOSTER,
 	0XFFFF,
-	ID_STD_MENU_LOGIC,
+	ID_STD_MENU_LOGIC
 };
 
 Compact sc47_exit_45 = {
@@ -503,11 +514,22 @@ Compact sc47_exit_45 = {
 	140-128,	// mouseSize_x
 	327-161,	// mouseSize_y
 	SC47_EXIT_45_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc47_chip_list[] = {
 	IT_SC47_LAYER_0+DISK_13,
-	0,
+	0
 };
 
 uint16 sc47_floor_table[] = {
@@ -521,7 +543,7 @@ uint16 sc47_floor_table[] = {
 	GT_SC47_EXIT_48,
 	1,
 	SC47_EXIT_48_WALK_ON,
-	65535,
+	65535
 };
 
 Compact sc47_floor = {
@@ -543,6 +565,17 @@ Compact sc47_floor = {
 	447-128,	// mouseSize_x
 	327-272,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 }; // namespace SkyCompact

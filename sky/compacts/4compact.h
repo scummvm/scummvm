@@ -29,7 +29,7 @@ namespace SkyCompact {
 
 uint16 jobs_u_to_l[] = {
 	43-8+117*64,
-	0,
+	0
 };
 
 uint16 m_jobs_left[] = {
@@ -65,19 +65,19 @@ uint16 m_jobs_left[] = {
 	23+270*64,
 	65534,
 	0,
-	0,
+	0
 };
 
 uint16 jobs_l_to_u[] = {
 	43-8+117*64,
-	0,
+	0
 };
 
 uint16 m_jobs_u_to_d[] = {
 	43-8+270*64,
 	42-8+270*64,
 	41-8+270*64,
-	0,
+	0
 };
 
 Compact sarnie_s4 = {
@@ -103,11 +103,18 @@ Compact sarnie_s4 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 m_jobs_l_to_d[] = {
 	41-8+270*64,
-	0,
+	0
 };
 
 uint16 s4_talk_table[] = {
@@ -141,7 +148,7 @@ uint16 s4_talk_table[] = {
 	GET_TO_MONITOR,
 	ID_LAZER,
 	GT_LAZER,
-	65535,
+	65535
 };
 
 uint32 *l_talk_s4 = 0;
@@ -168,7 +175,7 @@ uint16 chip_list_sc4[] = {
 	142,
 	117,
 	134,
-	0,
+	0
 };
 
 Compact r_talk_s4 = {
@@ -178,6 +185,29 @@ Compact r_talk_s4 = {
 	0,	// screen
 	0,	// place
 	s4_talk_table,	// getToTable
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact monitors_s4 = {
@@ -209,6 +239,7 @@ Compact monitors_s4 = {
 	C_BASE_MODE,	// mode
 	MONITOR_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 m_jobs_down[] = {
@@ -244,7 +275,7 @@ uint16 m_jobs_down[] = {
 	15+270*64,
 	0,
 	1,
-	0,
+	0
 };
 
 Compact jobsworth = {
@@ -274,6 +305,9 @@ Compact jobsworth = {
 	0,	// grafixProg
 	0,	// offset
 	0,	// mode
+	0,
+	0,
+	0
 };
 
 uint16 jobs_st_down[] = {
@@ -281,7 +315,7 @@ uint16 jobs_st_down[] = {
 	1,
 	1,
 	32,
-	0,
+	0
 };
 
 Compact notice4 = {
@@ -303,6 +337,17 @@ Compact notice4 = {
 	8,	// mouseSize_x
 	8,	// mouseSize_y
 	NOTICE4_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 m_jobs_st_down[] = {
@@ -310,7 +355,7 @@ uint16 m_jobs_st_down[] = {
 	1,
 	1,
 	32,
-	0,
+	0
 };
 
 uint16 m_jobs_st_talk[] = {
@@ -318,7 +363,7 @@ uint16 m_jobs_st_talk[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint8 jobs_auto[64];
@@ -356,7 +401,7 @@ uint16 m_jobs_up[] = {
 	7+270*64,
 	0,
 	65535,
-	0,
+	0
 };
 
 uint16 m_jobs_right[] = {
@@ -392,7 +437,7 @@ uint16 m_jobs_right[] = {
 	31+270*64,
 	2,
 	0,
-	0,
+	0
 };
 
 uint16 m_jobs_st_up[] = {
@@ -400,7 +445,7 @@ uint16 m_jobs_st_up[] = {
 	1,
 	1,
 	36,
-	0,
+	0
 };
 
 uint16 m_jobs_st_left[] = {
@@ -408,7 +453,7 @@ uint16 m_jobs_st_left[] = {
 	1,
 	1,
 	34,
-	0,
+	0
 };
 
 uint16 m_jobs_st_right[] = {
@@ -416,63 +461,63 @@ uint16 m_jobs_st_right[] = {
 	1,
 	1,
 	38,
-	0,
+	0
 };
 
 uint16 m_jobs_u_to_l[] = {
 	43-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_u_to_r[] = {
 	45-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_d_to_u[] = {
 	47-8+270*64,
 	46-8+270*64,
 	45-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_d_to_l[] = {
 	41-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_d_to_r[] = {
 	47-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_l_to_u[] = {
 	43-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_l_to_r[] = {
 	41-8+270*64,
 	40-8+270*64,
 	47-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_r_to_u[] = {
 	45-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_r_to_d[] = {
 	47-8+270*64,
-	0,
+	0
 };
 
 uint16 m_jobs_r_to_l[] = {
 	45-8+270*64,
 	44-8+270*64,
 	43-8+270*64,
-	0,
+	0
 };
 
 uint16 jobs_up[] = {
@@ -508,7 +553,7 @@ uint16 jobs_up[] = {
 	7+117*64,
 	0,
 	65534,
-	0,
+	0
 };
 
 uint16 jobs_down[] = {
@@ -544,7 +589,7 @@ uint16 jobs_down[] = {
 	15+117*64,
 	0,
 	2,
-	0,
+	0
 };
 
 uint16 jobs_left[] = {
@@ -580,7 +625,7 @@ uint16 jobs_left[] = {
 	23+117*64,
 	65532,
 	0,
-	0,
+	0
 };
 
 uint16 jobs_right[] = {
@@ -616,7 +661,7 @@ uint16 jobs_right[] = {
 	31+117*64,
 	4,
 	0,
-	0,
+	0
 };
 
 uint16 jobs_st_up[] = {
@@ -624,7 +669,7 @@ uint16 jobs_st_up[] = {
 	1,
 	1,
 	36,
-	0,
+	0
 };
 
 uint16 jobs_st_left[] = {
@@ -632,7 +677,7 @@ uint16 jobs_st_left[] = {
 	1,
 	1,
 	34,
-	0,
+	0
 };
 
 uint16 jobs_st_right[] = {
@@ -640,7 +685,7 @@ uint16 jobs_st_right[] = {
 	1,
 	1,
 	38,
-	0,
+	0
 };
 
 uint16 jobs_st_talk[] = {
@@ -648,65 +693,65 @@ uint16 jobs_st_talk[] = {
 	1,
 	1,
 	0,
-	0,
+	0
 };
 
 uint16 jobs_u_to_d[] = {
 	43-8+117*64,
 	42-8+117*64,
 	41-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_u_to_r[] = {
 	45-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_d_to_u[] = {
 	47-8+117*64,
 	46-8+117*64,
 	45-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_d_to_l[] = {
 	41-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_d_to_r[] = {
 	47-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_l_to_d[] = {
 	41-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_l_to_r[] = {
 	41-8+117*64,
 	40-8+117*64,
 	47-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_r_to_u[] = {
 	45-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_r_to_d[] = {
 	47-8+117*64,
-	0,
+	0
 };
 
 uint16 jobs_r_to_l[] = {
 	45-8+117*64,
 	44-8+117*64,
 	43-8+117*64,
-	0,
+	0
 };
 
 Compact buttons_s4 = {
@@ -728,6 +773,17 @@ Compact buttons_s4 = {
 	8,	// mouseSize_x
 	15,	// mouseSize_y
 	BUTTON_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 sc4_mouse_open[] = {
@@ -747,7 +803,7 @@ uint16 sc4_mouse_open[] = {
 	ID_KNOB,
 	ID_BUTTONS,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact tv_screens_s4 = {
@@ -779,6 +835,7 @@ Compact tv_screens_s4 = {
 	C_BASE_MODE,	// mode
 	TV_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 sc4_logic[] = {
@@ -800,7 +857,7 @@ uint16 sc4_logic[] = {
 	ID_LIGHT1,
 	ID_PANEL,
 	0XFFFF,
-	ID_MENU_LOGIC,
+	ID_MENU_LOGIC
 };
 
 Compact postcard = {
@@ -822,6 +879,17 @@ Compact postcard = {
 	5,	// mouseSize_x
 	5,	// mouseSize_y
 	POSTCARD_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact knob_s4 = {
@@ -853,6 +921,7 @@ Compact knob_s4 = {
 	C_BASE_MODE,	// mode
 	KNOB_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 Compact lazer_s4 = {
@@ -884,6 +953,7 @@ Compact lazer_s4 = {
 	C_BASE_MODE,	// mode
 	LAZER_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 fast_list_sc4[] = {
@@ -899,7 +969,7 @@ uint16 fast_list_sc4[] = {
 	136,
 	137,
 	138,
-	0,
+	0
 };
 
 Compact sc4_left_exit = {
@@ -921,6 +991,17 @@ Compact sc4_left_exit = {
 	13,	// mouseSize_x
 	61,	// mouseSize_y
 	EL4_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact spanner_s4 = {
@@ -946,6 +1027,13 @@ Compact spanner_s4 = {
 	0,	// downFlag
 	0,	// getToFlag
 	0,	// flag
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 uint16 joey_list_s4[] = {
@@ -959,7 +1047,7 @@ uint16 joey_list_s4[] = {
 	256,
 	272,
 	0,
-	0,
+	0
 };
 
 uint32 *c43 = 0;
@@ -993,6 +1081,7 @@ Compact chuck_s4 = {
 	C_BASE_MODE,	// mode
 	CHUCK_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 uint16 r4_floor_table[] = {
@@ -1030,7 +1119,7 @@ uint16 r4_floor_table[] = {
 	GET_TO_JP2,
 	ID_LAZER,
 	GT_LAZER,
-	65535,
+	65535
 };
 
 uint16 sc4_mouse[] = {
@@ -1048,7 +1137,7 @@ uint16 sc4_mouse[] = {
 	ID_KNOB,
 	ID_BUTTONS,
 	0XFFFF,
-	ID_TEXT_MOUSE,
+	ID_TEXT_MOUSE
 };
 
 Compact sc4_floor = {
@@ -1070,6 +1159,17 @@ Compact sc4_floor = {
 	183,	// mouseSize_x
 	64,	// mouseSize_y
 	FLOOR_ACTION,	// actionScript
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 Compact cupboard_s4 = {
@@ -1101,6 +1201,7 @@ Compact cupboard_s4 = {
 	C_BASE_MODE,	// mode
 	CUPBOARD_LOGIC,	// baseSub
 	0,	// baseSub_off
+	0
 };
 
 }; // namespace SkyCompact
