@@ -852,8 +852,6 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 
 	AudioStream *input = NULL;
 	
-	printf("startSfxSound: file_size = %d\n", file_size);
-	
 	switch (_soundMode) {
 	case kMP3Mode:
 #ifdef USE_MAD
