@@ -91,11 +91,11 @@ TOOLS := tools/convbdf$(EXEEXT) tools/md5table$(EXEEXT)
 
 tools: $(TOOLS)
 
-tools/convbdf$(EXEEXT): tools/convbdf.o
-	$(CXX) -o $@ $<
+tools/convbdf$(EXEEXT): tools/convbdf.c
+	$(CC) -Wall -o $@ $<
 
-tools/md5table$(EXEEXT): tools/md5table.o
-	$(CXX) -o $@ $<
+tools/md5table$(EXEEXT): tools/md5table.c
+	$(CC) -Wall -o $@ $<
 
 #simon/simon-md5.h: tools/simon-md5.txt
 #	tools/md5table$(EXEEXT) --c++ < $< > $@
@@ -185,4 +185,4 @@ win32dist: scummvm$(EXEEXT)
 	u2d $(WIN32PATH)/*.txt
 
 
-.PHONY: deb bundle test osxsnap win32dist dist install uninstall credits
+.PHONY: deb bundle test osxsnap win32dist dist install uninstall credits tools
