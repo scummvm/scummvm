@@ -249,12 +249,12 @@ int32 RncDecoder::unpackM1(void *input, void *output, uint16 key)
 		counts = inputBits(16);
 
 		for (;;) {
-			uint32 inputBits = inputValue(_rawTable);
+			uint32 inputBytes = inputValue(_rawTable);
 
-			if (inputBits) {
-				memcpy(_dstPtr, _srcPtr, inputBits); //memcpy is allowed here
-				_dstPtr += inputBits;
-				_srcPtr += inputBits;
+			if (inputBytes) {
+				memcpy(_dstPtr, _srcPtr, inputBytes); //memcpy is allowed here
+				_dstPtr += inputBytes;
+				_srcPtr += inputBytes;
 				uint16 b = READ_LE_UINT16(_srcPtr);
 				uint16 a = ROL(b, _bitCount);
 				uint16 d = ((1 << _bitCount) - 1);
