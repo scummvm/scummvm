@@ -90,7 +90,6 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 		_sounds[slot].region = (_region *)malloc(sizeof(_region) * 70);
 		_sounds[slot].jump = (_jump *)malloc(sizeof(_jump));
 		_sounds[slot].resPtr = ptr;
-		_vm->lock(rtSound, _sounds[slot].soundId);
 		_sounds[slot].bits = 8;
 		_sounds[slot].channels = 1;
 
@@ -302,6 +301,8 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 	if (soundName[0] == 0) {
 		_sounds[slot].name[0] = 0;
 		if ((soundType == IMUSE_RESOURCE)) {
+			_vm->ensureResourceLoaded(rtSound, soundId);
+			_vm->lock(rtSound, soundId);
 			ptr = _vm->getResourceAddress(rtSound, soundId);
 			if (ptr == NULL) {
 				closeSound(&_sounds[slot]);
