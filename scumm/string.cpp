@@ -485,11 +485,8 @@ void Scumm::drawString(int a)
 	// and never time out. We can't do it blindly for all games, because
 	// it causes problem with the FOA intro.
 
-	if ((_gameId == GID_FT || _features & GF_AFTER_V8) && a == 4)
+	if (_gameId == GID_FT && a == 4)
 		_talkDelay = -1;
-
-	if (_features & GF_AFTER_V8)
-		printf("Drawing string '%s'\n", buf);
 
 	if (!buf[0]) {
 		buf[0] = ' ';
