@@ -56,10 +56,10 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 			checkRange(32, 1, classId, "class %d out of range in statement");
 			if (code & 0x80) {
 				if ((spi->class_flags & (1 << classId)))
-					return 0;
+					continue;
 			} else {
 				if (!(spi->class_flags & (1 << classId)))
-					return 0;
+					continue;
 			}
 		}
 
