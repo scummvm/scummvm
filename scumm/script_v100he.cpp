@@ -1827,7 +1827,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_2C_30(spriteId, args[0], args[1]);
+			spriteInfoSet_dx_dy(spriteId, args[0], args[1]);
 		break;
 	case 75:
 		args[0] = pop();
@@ -1838,9 +1838,9 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++) {
-			spriteInfoGet_field_2C_30(spriteId, tmp[0], tmp[1]);
+			spriteInfoGet_dx_dy(spriteId, tmp[0], tmp[1]);
 			storedFields[0] = tmp[0];
-			spriteInfoSet_field_2C_30(spriteId, args[0], tmp[1]);
+			spriteInfoSet_dx_dy(spriteId, args[0], tmp[1]);
 		}
 		break;
 	case 76:
@@ -1852,9 +1852,9 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++) {
-			spriteInfoGet_field_2C_30(spriteId, tmp[0], tmp[1]);
+			spriteInfoGet_dx_dy(spriteId, tmp[0], tmp[1]);
 			storedFields[1] = tmp[1];
-			spriteInfoSet_field_2C_30(spriteId, tmp[0], args[0]);
+			spriteInfoSet_dx_dy(spriteId, tmp[0], args[0]);
 		}
 		break;
 	case 82:
@@ -2490,7 +2490,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 75:
 		spriteId = pop();
 		if (spriteId) {
-			spriteInfoGet_field_2C_30(spriteId, a, b);
+			spriteInfoGet_dx_dy(spriteId, a, b);
 			push(a);
 		} else {
 			push(0);
@@ -2499,7 +2499,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 76:
 		spriteId = pop();
 		if (spriteId) {
-			spriteInfoGet_field_2C_30(spriteId, a, b);
+			spriteInfoGet_dx_dy(spriteId, a, b);
 			push(b);
 		} else {
 			push(0);

@@ -902,7 +902,7 @@ protected:
 	int spriteInfoGet_field_80(int spriteId);
 	void getSpriteImageDim(int spriteId, int32 &w, int32 &h);
 	void spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty);
-	void spriteInfoGet_field_2C_30(int spriteId, int32 &field_2C, int32 &field_30);
+	void spriteInfoGet_dx_dy(int spriteId, int32 &dx, int32 &dy);
 
 	int spriteGroupGet_allocateGroupSpritesList(int spriteGroupId);
 	int spriteGroupGet_field_10(int spriteGroupId);
@@ -920,7 +920,7 @@ protected:
 	void spriteInfoSet_resState(int spriteId, int value);
 	void spriteInfoSet_tx_ty(int spriteId, int value1, int value2);
 	void spriteInfoSet_groupNum(int spriteId, int value);
-	void spriteInfoSet_field_2C_30(int spriteId, int value1, int value2);
+	void spriteInfoSet_dx_dy(int spriteId, int value1, int value2);
 	void spriteInfoSet_field_54(int spriteId, int value);
 	void spriteInfoSet_field_44(int spriteId, int value1, int value2);
 	void spriteInfoSet_field_18(int spriteId, int value);

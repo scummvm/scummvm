@@ -209,11 +209,11 @@ void ScummEngine_v90he::spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty) 
 	ty = _spriteTable[spriteId].ty;
 }
 
-void ScummEngine_v90he::spriteInfoGet_field_2C_30(int spriteId, int32 &field_2C, int32 &field_30) {
+void ScummEngine_v90he::spriteInfoGet_dx_dy(int spriteId, int32 &dx, int32 &dy) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	field_2C = _spriteTable[spriteId].dx;
-	field_30 = _spriteTable[spriteId].dy;
+	dx = _spriteTable[spriteId].dx;
+	dy = _spriteTable[spriteId].dy;
 }
 
 //
@@ -330,7 +330,7 @@ void ScummEngine_v90he::spriteInfoSet_groupNum(int spriteId, int value) {
 	_spriteTable[spriteId].group_num = value;
 }
 
-void ScummEngine_v90he::spriteInfoSet_field_2C_30(int spriteId, int value1, int value2) {
+void ScummEngine_v90he::spriteInfoSet_dx_dy(int spriteId, int value1, int value2) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	_spriteTable[spriteId].dx = value1;
@@ -642,7 +642,12 @@ void ScummEngine_v90he::spriteGroupSet_case0_3(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_4(int spriteGroupId) {
-	// TODO
+	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+
+	for (int i = 1; i < _varNumSprites; i++) {
+		if (_spriteTable[i].group_num == spriteGroupId)
+			spriteInfoSet_resetSprite(i);
+	}
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_5(int spriteGroupId, int value) {
@@ -682,19 +687,91 @@ void ScummEngine_v90he::spriteGroupSet_case0_7(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case5_0(int spriteGroupId, int value) {
-	// TODO
+	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+
+	if (_spriteGroups[spriteGroupId].field_30 == value)
+		return;
+
+	_spriteGroups[spriteGroupId].field_30 = value;
+	_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].field_30 / _spriteGroups[spriteGroupId].field_34;
+
+	if ((_spriteGroups[spriteGroupId].field_30 != _spriteGroups[spriteGroupId].field_34) || (_spriteGroups[spriteGroupId].field_38 != _spriteGroups[spriteGroupId].field_3C))
+		_spriteGroups[spriteGroupId].scaling = 1;
+	else
+		_spriteGroups[spriteGroupId].scaling = 0;
+
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (spi->group_num == spriteGroupId) {
+			spi->flags |= kSF01 | kSFNeedRedraw;
+		}
+	}
 }
 
 void ScummEngine_v90he::spriteGroupSet_case5_1(int spriteGroupId, int value) {
-	// TODO
+	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+
+	if (_spriteGroups[spriteGroupId].field_34 == value)
+		return;
+
+	_spriteGroups[spriteGroupId].field_34 = value;
+	_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].field_30 / _spriteGroups[spriteGroupId].field_34;
+
+	if ((_spriteGroups[spriteGroupId].field_30 != _spriteGroups[spriteGroupId].field_34) || (_spriteGroups[spriteGroupId].field_38 != _spriteGroups[spriteGroupId].field_3C))
+		_spriteGroups[spriteGroupId].scaling = 1;
+	else
+		_spriteGroups[spriteGroupId].scaling = 0;
+
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (spi->group_num == spriteGroupId) {
+			spi->flags |= kSF01 | kSFNeedRedraw;
+		}
+	}
 }
 
 void ScummEngine_v90he::spriteGroupSet_case5_2(int spriteGroupId, int value) {
-	// TODO
+	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+
+	if (_spriteGroups[spriteGroupId].field_38 == value)
+		return;
+
+	_spriteGroups[spriteGroupId].field_38 = value;
+	_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].field_38 / _spriteGroups[spriteGroupId].field_3C;
+
+	if ((_spriteGroups[spriteGroupId].field_30 != _spriteGroups[spriteGroupId].field_34) || (_spriteGroups[spriteGroupId].field_38 != _spriteGroups[spriteGroupId].field_3C))
+		_spriteGroups[spriteGroupId].scaling = 1;
+	else
+		_spriteGroups[spriteGroupId].scaling = 0;
+
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (spi->group_num == spriteGroupId) {
+			spi->flags |= kSF01 | kSFNeedRedraw;
+		}
+	}
 }
 
 void ScummEngine_v90he::spriteGroupSet_case5_3(int spriteGroupId, int value) {
-	// TODO
+	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+
+	if (_spriteGroups[spriteGroupId].field_3C == value)
+		return;
+
+	_spriteGroups[spriteGroupId].field_3C = value;
+	_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].field_38 / _spriteGroups[spriteGroupId].field_3C;
+
+	if ((_spriteGroups[spriteGroupId].field_30 != _spriteGroups[spriteGroupId].field_34) || (_spriteGroups[spriteGroupId].field_38 != _spriteGroups[spriteGroupId].field_3C))
+		_spriteGroups[spriteGroupId].scaling = 1;
+	else
+		_spriteGroups[spriteGroupId].scaling = 0;
+
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (spi->group_num == spriteGroupId) {
+			spi->flags |= kSF01 | kSFNeedRedraw;
+		}
+	}
 }
 
 void ScummEngine_v90he::spriteGroupSet_field_10(int spriteGroupId, int value) {
