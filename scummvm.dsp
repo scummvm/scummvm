@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FD /c
+# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
@@ -440,6 +440,10 @@ SOURCE=.\verbs.cpp
 # Begin Source File
 
 SOURCE=.\sound\fmopl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gameDetector.h
 # End Source File
 # Begin Source File
 
