@@ -1133,7 +1133,7 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 }
 
 bool ChannelVorbis::isActive() {
-	return !_eof_flag && (_end_pos <= 0 && ov_pcm_tell(_ov_file) >= _end_pos);
+	return !_eof_flag && !(_end_pos <= 0 && ov_pcm_tell(_ov_file) >= _end_pos);
 }
 
 #endif
