@@ -141,7 +141,7 @@ public:
 	 */
 	virtual bool operator< (const FilesystemNode& node) const
 	{
-		return displayName() < node.displayName();
+		return scumm_stricmp(displayName().c_str(), node.displayName().c_str()) < 0;
 	}
 };
 
