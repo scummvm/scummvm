@@ -283,6 +283,7 @@ int GameDetector::parseGraphicsMode(const char *s) {
 
 	const struct GraphicsModes gfx_modes[] = {
 		{"normal",GFX_NORMAL},
+		{"1x",GFX_NORMAL},
 		{"2x",GFX_DOUBLESIZE},
 		{"3x",GFX_TRIPLESIZE},
 		{"2xsai",GFX_2XSAI},
