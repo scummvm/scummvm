@@ -31,9 +31,6 @@ namespace Sword2 {
 uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 	// read the file in and place into an allocated MEM_float block
 
-	// FIXME: As far as I can see, this function is only used in debug
-	// builds, so maybe it should be removed completely?
-
 	File fh;
 	uint32 size;
 
@@ -45,7 +42,7 @@ uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 	size = fh.size();
 
 	// reserve enough floating memory for the file
-	*membloc = memory.allocMemory(size, MEM_float, uid);
+	*membloc = memory->allocMemory(size, MEM_float, uid);
 	
 	if (fh.read((*membloc)->ad, size) != size) {
 		debug(5, "Read_file read fail %d", name);
@@ -54,7 +51,7 @@ uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 
 	fh.close();
 
-	//ok, done it - return bytes read
+	// ok, done it - return bytes read
 	return size;
 }
 

@@ -23,9 +23,6 @@
 #define	_SCROLL
 
 namespace Sword2 {
-
-void Set_scrolling(void);
-
 } // End of namespace Sword2
 
 #endif

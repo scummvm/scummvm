@@ -34,10 +34,12 @@ typedef	struct {
 	uint8 *ad;
 } mem;
 
-#define	MEM_null			0	// null
-#define	MEM_free			1
-#define	MEM_locked			2
-#define	MEM_float			3
+enum {
+	MEM_null			= 0,	// null
+	MEM_free			= 1,
+	MEM_locked			= 2,
+	MEM_float			= 3
+};
 
 //---------------------------------------
 // MEMORY BLOCKS
@@ -48,17 +50,19 @@ typedef	struct {
 // highest recorded value from the on-screen info
 //---------------------------------------
 
-#define	UID_memman			0xffffffff
-#define	UID_NULL			0xfffffffe	// FREE
-#define	UID_font			0xfffffffd
-#define	UID_temp			0xfffffffc
-#define	UID_decompression_buffer	0xfffffffb
-#define	UID_shrink_buffer		0xfffffffa
-#define	UID_con_sprite			0xfffffff9
-#define	UID_text_sprite			0xfffffff8
-#define	UID_walk_anim			0xfffffff7
-#define	UID_savegame_buffer		0xfffffff6
-#define UID_restoregame_buffer		0xfffffff5
+enum {
+	UID_memman			= 0xffffffff,
+	UID_NULL			= 0xfffffffe,	// FREE
+	UID_font			= 0xfffffffd,
+	UID_temp			= 0xfffffffc,
+	UID_decompression_buffer	= 0xfffffffb,
+	UID_shrink_buffer		= 0xfffffffa,
+	UID_con_sprite			= 0xfffffff9,
+	UID_text_sprite			= 0xfffffff8,
+	UID_walk_anim			= 0xfffffff7,
+	UID_savegame_buffer		= 0xfffffff6,
+	UID_restoregame_buffer		= 0xfffffff5
+};
 
 class MemoryManager {
 private:
@@ -88,8 +92,9 @@ public:
 	mem _memList[MAX_mem_blocks];
 	uint32 _baseMemBlock;
 
-	void init(void);
-	void exit(void);
+	MemoryManager(void);
+	~MemoryManager(void);
+
 	mem *allocMemory(uint32 size, uint32 type, uint32 unique_id);
 	void freeMemory(mem *block);
 	void floatMemory(mem *block);
@@ -100,7 +105,7 @@ public:
 	void memoryString(char *string);
 };
 
-extern MemoryManager memory;
+extern MemoryManager *memory;
 
 } // End of namespace Sword2
 

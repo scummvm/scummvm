@@ -33,104 +33,112 @@
 #include "sword2/defs.h"		// for RESULT
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
-#include "sword2/protocol.h"	// for FetchObjectName() for debugging fnPlayFx
+#include "sword2/protocol.h"	// for fetchObjectName() for debugging fnPlayFx
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 #include "sword2/sword2.h"
 
 namespace Sword2 {
 
-typedef struct {
-	uint32 resource;	// resource id of sample
-	uint32 fetchId;		// Id of resource in PSX CD queue. :)
-	uint16 delay;		// cycles to wait before playing (or 'random chance' if FX_RANDOM)
-	uint8 volume;		// 0..16
-	int8 pan;		// -16..16
-	uint8 type;		// FX_SPOT, FX_RANDOM or FX_LOOP
-} _fxq_entry;
-
-// max number of fx in queue at once [DO NOT EXCEED 255]
-#define FXQ_LENGTH 32
-
-static _fxq_entry fxq[FXQ_LENGTH];
-
-// used to store id of tunes that loop, for save & restore
-uint32 looping_music_id = 0;
-
-void Trigger_fx(uint8 j);
-
 // initialise the fxq by clearing all the entries
 
-void Init_fx_queue(void) {
-	for (int j = 0; j < FXQ_LENGTH; j++) {
-		fxq[j].resource = 0;	// 0 resource means 'empty' slot
-		fxq[j].fetchId = 0;	// Not being fetched.
+void Sword2Engine::initFxQueue(void) {
+	for (int i = 0; i < FXQ_LENGTH; i++) {
+		_fxQueue[i].resource = 0;	// 0 resource means 'empty' slot
+		_fxQueue[i].fetchId = 0;	// Not being fetched.
 	}
 }
 
-// process the fxq once every game cycle
+// process the fx queue once every game cycle
 
-void Process_fx_queue(void) {
-	for (int j = 0; j < FXQ_LENGTH; j++) {
-		if (!fxq[j].resource)
+void Sword2Engine::processFxQueue(void) {
+	for (int i = 0; i < FXQ_LENGTH; i++) {
+		if (!_fxQueue[i].resource)
 			continue;
 
-		switch (fxq[j].type) {
+		switch (_fxQueue[i].type) {
 		case FX_RANDOM:
 			// 1 in 'delay' chance of this fx occurring
-			if (g_sword2->_rnd.getRandomNumber(fxq[j].delay) == 0)
-				Trigger_fx(j);
+			if (_rnd.getRandomNumber(_fxQueue[i].delay) == 0)
+				triggerFx(i);
 			break;
 		case FX_SPOT:
-			if (fxq[j].delay)
-				fxq[j].delay--;
+			if (_fxQueue[i].delay)
+				_fxQueue[i].delay--;
 			else {
-				Trigger_fx(j);
-				fxq[j].type = FX_SPOT2;
+				triggerFx(i);
+				_fxQueue[i].type = FX_SPOT2;
 			}
 			break;
 		case FX_SPOT2:
 			// Once the Fx has finished remove it from the queue.
-			if (g_sound->isFxOpen(j + 1))
-				fxq[j].resource = 0;
+			if (g_sound->isFxOpen(i + 1))
+				_fxQueue[i].resource = 0;
 			break;
 		}
 	}
 }
 
-// called from Process_fx_queue only
+// called from processFxQueue only
 
-void Trigger_fx(uint8 j) {
+void Sword2Engine::triggerFx(uint8 j) {
 	uint8 *data;
 	int32 id;
 	uint32 rv;
 
 	id = (uint32) j + 1;	// because 0 is not a valid id
 
-	if (fxq[j].type == FX_SPOT) {
+	if (_fxQueue[j].type == FX_SPOT) {
 		// load in the sample
-		data = res_man.open(fxq[j].resource);
+		data = res_man->openResource(_fxQueue[j].resource);
 		data += sizeof(_standardHeader);
 		// wav data gets copied to sound memory
-		rv = g_sound->playFx(id, data, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
+		rv = g_sound->playFx(id, data, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXSPOT);
 		// release the sample
-		res_man.close(fxq[j].resource);
+		res_man->closeResource(_fxQueue[j].resource);
 	} else {
 		// random & looped fx are already loaded into sound memory
 		// by fnPlayFx()
 		// - to be referenced by 'j', so pass NULL data
 
-		if (fxq[j].type == FX_RANDOM) {
+		if (_fxQueue[j].type == FX_RANDOM) {
 			// Not looped
-			rv = g_sound->playFx(id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
+			rv = g_sound->playFx(id, NULL, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXSPOT);
 		} else {
 			// Looped
-			rv = g_sound->playFx(id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXLOOP);
+			rv = g_sound->playFx(id, NULL, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXLOOP);
 		}
 	}
 
 	if (rv)
 		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
+}
+
+// Stops all looped & random fx and clears the entire queue
+
+void Sword2Engine::clearFxQueue(void) {
+	// stop all fx & remove the samples from sound memory
+	g_sound->clearAllFx();
+
+	// clean out the queue
+	initFxQueue();
+}
+
+void Sword2Engine::killMusic(void) {
+	_loopingMusicId = 0;		// clear the 'looping' flag
+	g_sound->stopMusic();
+}
+
+void Sword2Engine::pauseAllSound(void) {
+	g_sound->pauseMusic();
+	g_sound->pauseSpeech();
+	g_sound->pauseFx();
+}
+
+void Sword2Engine::unpauseAllSound(void) {
+	g_sound->unpauseMusic();
+	g_sound->unpauseSpeech();
+	g_sound->unpauseFx();
 }
 
 // called from script only
@@ -177,34 +185,34 @@ int32 Logic::fnPlayFx(int32 *params) {
 			strcpy(type, "INVALID");
 		}
 
-		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);
+		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", g_sword2->fetchObjectName(params[0]), params[3], params[4], params[2], type);
 	}
 
-	while (j < FXQ_LENGTH && fxq[j].resource != 0)
+	while (j < FXQ_LENGTH && g_sword2->_fxQueue[j].resource != 0)
 		j++;
 
 	if (j == FXQ_LENGTH)
 		return IR_CONT;
 
-	fxq[j].resource	= params[0];	// wav resource id
-	fxq[j].type = params[1];	// FX_SPOT, FX_LOOP or FX_RANDOM
+	g_sword2->_fxQueue[j].resource	= params[0];	// wav resource id
+	g_sword2->_fxQueue[j].type = params[1];	// FX_SPOT, FX_LOOP or FX_RANDOM
 
-	if (fxq[j].type == FX_RANDOM) {
+	if (g_sword2->_fxQueue[j].type == FX_RANDOM) {
 		// 'delay' param is the intended average no. seconds between
 		// playing this effect
-		fxq[j].delay = params[2] * 12;
+		g_sword2->_fxQueue[j].delay = params[2] * 12;
 	} else {
 		// FX_SPOT or FX_LOOP:
 		//  'delay' is no. frames to wait before playing
-		fxq[j].delay = params[2];
+		g_sword2->_fxQueue[j].delay = params[2];
 	}
 
-	fxq[j].volume = params[3];	// 0..16
-	fxq[j].pan = params[4];		// -16..16
+	g_sword2->_fxQueue[j].volume = params[3];	// 0..16
+	g_sword2->_fxQueue[j].pan = params[4];		// -16..16
 
-	if (fxq[j].type == FX_SPOT) {
+	if (g_sword2->_fxQueue[j].type == FX_SPOT) {
 		// "pre-load" the sample; this gets it into memory
-		data = res_man.open(fxq[j].resource);
+		data = res_man->openResource(g_sword2->_fxQueue[j].resource);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*) data;
@@ -213,14 +221,14 @@ int32 Logic::fnPlayFx(int32 *params) {
 #endif
 
 		// but then releases it to "age" out if the space is needed
-		res_man.close(fxq[j].resource);
+		res_man->closeResource(g_sword2->_fxQueue[j].resource);
 	} else {
 		// random & looped fx
 
 		id = (uint32) j + 1;	// because 0 is not a valid id
 
 		// load in the sample
-		data = res_man.open(fxq[j].resource);
+		data = res_man->openResource(g_sword2->_fxQueue[j].resource);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*)data;
@@ -237,13 +245,13 @@ int32 Logic::fnPlayFx(int32 *params) {
 			debug(5, "SFX ERROR: openFx() returned %.8x", rv);
 
 		// release the sample
-		res_man.close(fxq[j].resource);
+		res_man->closeResource(g_sword2->_fxQueue[j].resource);
 	}
 
-	if (fxq[j].type == FX_LOOP) {
+	if (g_sword2->_fxQueue[j].type == FX_LOOP) {
 		// play now, rather than in Process_fx_queue where it was
 		// getting played again & again!
-		Trigger_fx(j);
+		g_sword2->triggerFx(j);
 	}
 
 	// in case we want to call fnStopFx() later, to kill this fx
@@ -299,7 +307,7 @@ int32 Logic::fnStopFx(int32 *params) {
 	uint32 id;
 	uint32 rv;
 
-	if (fxq[j].type == FX_RANDOM || fxq[j].type == FX_LOOP) {
+	if (g_sword2->_fxQueue[j].type == FX_RANDOM || g_sword2->_fxQueue[j].type == FX_LOOP) {
 		id = (uint32) j + 1;		// because 0 is not a valid id
 
 		// stop fx & remove sample from sound memory
@@ -310,7 +318,7 @@ int32 Logic::fnStopFx(int32 *params) {
 	}
 
 	// remove from queue
-	fxq[j].resource = 0;
+	g_sword2->_fxQueue[j].resource = 0;
 
 	return IR_CONT;
 }
@@ -322,18 +330,8 @@ int32 Logic::fnStopAllFx(int32 *params) {
 
 	// params:	none
 
-	Clear_fx_queue();
+	g_sword2->clearFxQueue();
 	return IR_CONT;
-}
-
-// Stops all looped & random fx and clears the entire queue
-
-void Clear_fx_queue(void) {
-	// stop all fx & remove the samples from sound memory
-	g_sound->clearAllFx();
-
-	// clean out the queue
-	Init_fx_queue();
 }
 
 int32 Logic::fnPrepareMusic(int32 *params) {
@@ -357,13 +355,13 @@ int32 Logic::fnPlayMusic(int32 *params) {
 
 		// keep a note of the id, for restarting after an
 		// interruption to gameplay
-		looping_music_id = params[0];
+		g_sword2->_loopingMusicId = params[0];
 	} else {
  		loopFlag = false;
 
 		// don't need to restart this tune after control panel or
 		// restore
-		looping_music_id = 0;
+		g_sword2->_loopingMusicId = 0;
 	}
 
 	// add the appropriate file extension & play it
@@ -376,7 +374,7 @@ int32 Logic::fnPlayMusic(int32 *params) {
 	} else {
 		File f;
 
-		sprintf(filename, "music%d.clu", res_man.whichCd());
+		sprintf(filename, "music%d.clu", res_man->whichCd());
 		if (f.open(filename))
 			f.close();
 		else
@@ -396,14 +394,9 @@ int32 Logic::fnPlayMusic(int32 *params) {
 int32 Logic::fnStopMusic(int32 *params) {
 	// params:	none
 
-	looping_music_id = 0;		// clear the 'looping' flag
+	g_sword2->_loopingMusicId = 0;		// clear the 'looping' flag
 	g_sound->stopMusic();
 	return IR_CONT;
-}
-
-void Kill_music(void) {
-	looping_music_id = 0;		// clear the 'looping' flag
-	g_sound->stopMusic();
 }
 
 int32 Logic::fnCheckMusicPlaying(int32 *params) {
@@ -416,18 +409,6 @@ int32 Logic::fnCheckMusicPlaying(int32 *params) {
 	RESULT = g_sound->musicTimeRemaining();
 
 	return IR_CONT;
-}
-
-void PauseAllSound(void) {
-	g_sound->pauseMusic();
-	g_sound->pauseSpeech();
-	g_sound->pauseFx();
-}
-
-void UnpauseAllSound(void) {
-	g_sound->unpauseMusic();
-	g_sound->unpauseSpeech();
-	g_sound->unpauseFx();
 }
 
 } // End of namespace Sword2

@@ -33,7 +33,7 @@
 #include "sword2/mouse.h"	// for system setMouse & setLuggage routines
 #include "sword2/protocol.h"
 #include "sword2/resman.h"
-#include "sword2/sound.h"	// for Clear_fx_queue() called from cacheNewCluster()
+#include "sword2/sound.h"	// for clearFxQueue() called from cacheNewCluster()
 #include "sword2/router.h"
 
 namespace Sword2 {
@@ -54,7 +54,7 @@ namespace Sword2 {
 
 #define BUFFERSIZE	4096
 
-ResourceManager	res_man;	//declare the object global
+ResourceManager	*res_man;	// declare the object global
 
 // ---------------------------------------------------------------------------
 //
@@ -64,11 +64,13 @@ ResourceManager	res_man;	//declare the object global
 //
 // ---------------------------------------------------------------------------
 
-#define BOTH		0x0		// Cluster is on both CDs
-#define CD1		0x1		// Cluster is on CD1 only
-#define CD2		0x2		// Cluster is on CD2 only
-#define LOCAL_CACHE	0x4		// Cluster is cached on HDD
-#define LOCAL_PERM	0x8		// Cluster is on HDD.
+enum {
+	BOTH		= 0x0,		// Cluster is on both CDs
+	CD1		= 0x1,		// Cluster is on CD1 only
+	CD2		= 0x2,		// Cluster is on CD2 only
+	LOCAL_CACHE	= 0x4,		// Cluster is cached on HDD
+	LOCAL_PERM	= 0x8		// Cluster is on HDD.
+};
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -83,9 +85,7 @@ struct _cd_inf {
 	#pragma END_PACK_STRUCTS
 #endif
 
-// FIXME: Should init() / exit() be moved to constructor / destructor instead?
-
-void ResourceManager::init(void) {
+ResourceManager::ResourceManager(void) {
 	// We read in the resource info which tells us the names of the
 	// resource cluster files ultimately, although there might be groups
 	// within the clusters at this point it makes no difference. We only
@@ -106,7 +106,7 @@ void ResourceManager::init(void) {
 	end = file.size();
 
 	//get some space for the incoming resource file - soon to be trashed
-	temp = memory.allocMemory(end, MEM_locked, UID_temp);
+	temp = memory->allocMemory(end, MEM_locked, UID_temp);
 
 	if (file.read(temp->ad, end) != end) {
 		file.close();
@@ -208,7 +208,7 @@ void ResourceManager::init(void) {
 	}
 
 	_resTime = 1;	//cannot start at 0
-	memory.freeMemory(temp);	//get that memory back
+	memory->freeMemory(temp);	//get that memory back
 
 	// FIXME: Is this really needed?
 
@@ -235,7 +235,7 @@ void ResourceManager::init(void) {
 		file.close();
 }
 
-void ResourceManager::exit(void) {
+ResourceManager::~ResourceManager(void) {
 	// free up our mallocs
 	free(_resList);
 	free(_age);
@@ -428,11 +428,11 @@ void convertEndian(uint8 *file, uint32 len) {
 	}
 }
 
-uint8 *ResourceManager::open(uint32 res) {
+uint8 *ResourceManager::openResource(uint32 res) {
 	// returns ad of resource. Loads if not in memory
 	// retains a count
 	// resource can be aged out of memory if count = 0
-	// the resource is locked while count != 0 i.e. until a res_close is
+	// the resource is locked while count != 0 i.e. until a closeResource is
 	// called
 
 	File	file;
@@ -528,13 +528,13 @@ uint8 *ResourceManager::open(uint32 res) {
 
 		// ok, we know the length so try and allocate the memory
 		// if it can't then old files will be ditched until it works
-		_resList[res] = memory.allocMemory(len, MEM_locked, res);
+		_resList[res] = memory->allocMemory(len, MEM_locked, res);
 
 		// now load the file
 		// hurray, load it in.
 		file.read(_resList[res]->ad, len);
 
-		//close the cluster
+		// close the cluster
 		file.close();
 
 #ifdef SCUMM_BIG_ENDIAN
@@ -553,7 +553,7 @@ uint8 *ResourceManager::open(uint32 res) {
 
 	// pass the address of the mem & lock the memory too
 	// might be locked already (if count > 1)
-	memory.lockMemory(_resList[res]);
+	memory->lockMemory(_resList[res]);
 
 	return (uint8 *) _resList[res]->ad;
 }
@@ -614,7 +614,7 @@ uint32 ResourceManager::fetchUsage(void) {
 	return _currentMemoryUsage;
 }
 
-void ResourceManager::close(uint32 res) {
+void ResourceManager::closeResource(uint32 res) {
 	// decrements the count
 	// resource floats when count = 0
 
@@ -624,7 +624,7 @@ void ResourceManager::close(uint32 res) {
 
 	//closing but isnt open?
 	if (!(_count[res]))
-		error("close: closing %d but it isn't open", res);
+		error("closeResource: closing %d but it isn't open", res);
 //#endif
 
 	//one less has it open
@@ -633,7 +633,7 @@ void ResourceManager::close(uint32 res) {
 	//if noone has the file open then unlock and allow to float
 	if (!_count[res]) {
 		// pass the address of the mem
-		memory.floatMemory(_resList[res]);
+		memory->floatMemory(_resList[res]);
 	}
 }
 
@@ -723,7 +723,7 @@ uint32 ResourceManager::helpTheAgedOut(void) {
 	// trash this old resource
 
 	_age[oldest_res] = 0;		// effectively gone from _resList
-	memory.freeMemory(_resList[oldest_res]);	// release the memory too
+	memory->freeMemory(_resList[oldest_res]);	// release the memory too
 
 	return _resList[oldest_res]->size;	// return bytes freed
 }
@@ -745,8 +745,8 @@ void ResourceManager::examine(int res) {
 	else if (_resConvTable[res * 2] == 0xffff)
 		Debug_Printf("%d is a null & void resource number\n", res);
 	else {
-		//open up the resource and take a look inside!
-		file_header = (_standardHeader*) res_man.open(res);
+		// open up the resource and take a look inside!
+		file_header = (_standardHeader*) openResource(res);
 
 		// Debug_Printf("%d\n", file_header->fileType);
 		// Debug_Printf("%s\n", file_header->name);
@@ -826,7 +826,7 @@ void ResourceManager::examine(int res) {
 			Debug_Printf("unrecognised fileType %d\n", file_header->fileType);
 			break;
 		}
-		res_man.close(res);
+		closeResource(res);
 	}
 }
 
@@ -840,7 +840,7 @@ void ResourceManager::kill(int res) {
 	if (!_count[res]) {
 		if (_age[res]) {
 			_age[res] = 0;		// effectively gone from _resList
-			memory.freeMemory(_resList[res]);	// release the memory too
+			memory->freeMemory(_resList[res]);	// release the memory too
 			Debug_Printf("Trashed %d\n", res);
 		} else
 			Debug_Printf("%d not in memory\n", res);
@@ -851,7 +851,7 @@ void ResourceManager::kill(int res) {
 void ResourceManager::remove(uint32 res) {
 	if (_age[res]) {
 		_age[res] = 0;			// effectively gone from _resList
-		memory.freeMemory(_resList[res]);	// release the memory too
+		memory->freeMemory(_resList[res]);	// release the memory too
 		debug(5, " - Trashing %d", res);
 	} else
 		debug(5, "remove(%d) not even in memory!", res);
@@ -864,16 +864,16 @@ void ResourceManager::removeAll(void) {
 	int j;
 	uint32 res;
 
-	j = memory._baseMemBlock;
+	j = memory->_baseMemBlock;
 
 	do {
-		if (memory._memList[j].uid < 65536) {	// a resource
-			res = memory._memList[j].uid;
+		if (memory->_memList[j].uid < 65536) {	// a resource
+			res = memory->_memList[j].uid;
 			_age[res] = 0;		// effectively gone from _resList
-			memory.freeMemory(_resList[res]);	// release the memory too
+			memory->freeMemory(_resList[res]);	// release the memory too
 		}
 
-		j = memory._memList[j].child;
+		j = memory->_memList[j].child;
 	} while	(j != -1);
 }
 
@@ -887,20 +887,20 @@ void ResourceManager::killAll(bool wantInfo) {
 	uint32 nuked = 0;
   	_standardHeader *header;
 
-	j = memory._baseMemBlock;
+	j = memory->_baseMemBlock;
 
 	do {
-		if (memory._memList[j].uid < 65536) {	// a resource
-			res = memory._memList[j].uid;
+		if (memory->_memList[j].uid < 65536) {	// a resource
+			res = memory->_memList[j].uid;
 
 			// not the global vars which are assumed to be open in
 			// memory & not the player object!
 			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (_standardHeader *) res_man.open(res);
-				res_man.close(res);
+				header = (_standardHeader *) openResource(res);
+				closeResource(res);
 
 				_age[res] = 0;		// effectively gone from _resList
-				memory.freeMemory(_resList[res]);	// release the memory too
+				memory->freeMemory(_resList[res]);	// release the memory too
 				nuked++;
 
 				// if this was called from the console,
@@ -910,7 +910,7 @@ void ResourceManager::killAll(bool wantInfo) {
 				}	
 			}
 		}
-		j = memory._memList[j].child;
+		j = memory->_memList[j].child;
 	} while (j != -1);
 
 	// if this was called from the console
@@ -937,20 +937,20 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 	uint32 nuked = 0;
  	_standardHeader *header;
 
-	j = memory._baseMemBlock;
+	j = memory->_baseMemBlock;
 
 	do {
-		if (memory._memList[j].uid < 65536) {	// a resource
-			res = memory._memList[j].uid;
+		if (memory->_memList[j].uid < 65536) {	// a resource
+			res = memory->_memList[j].uid;
 			//not the global vars which are assumed to be open in
 			// memory & not the player object!
 			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (_standardHeader*) res_man.open(res);
-				res_man.close(res);
+				header = (_standardHeader*) openResource(res);
+				closeResource(res);
 
 				if (header->fileType == GAME_OBJECT) {
 					_age[res] = 0;		// effectively gone from _resList
-					memory.freeMemory(_resList[res]);	// release the memory too
+					memory->freeMemory(_resList[res]);	// release the memory too
    					nuked++;
 
 					// if this was called from the console
@@ -961,7 +961,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 				}
 			}
 		}
-		j = memory._memList[j].child;
+		j = memory->_memList[j].child;
 	} while (j != -1);
 
 	// if this was called from the console
@@ -981,7 +981,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	g_logic.fnStopMusic(NULL);
 
-	Clear_fx_queue();	// stops all fx & clears the queue (James22july97)
+	g_sword2->clearFxQueue();	// stops all fx & clears the queue (James22july97)
 	getCd(_cdTab[newCluster] & 3);
 
 	// Kick out old cached cluster and load the new one.
@@ -1031,16 +1031,16 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	g_sword2->setLuggage(0);
 
 	uint8 *bgfile;
-	bgfile = res_man.open(2950);	// open the screen resource
+	bgfile = openResource(2950);	// open the screen resource
 	g_display->initialiseBackgroundLayer(NULL);
 	g_display->initialiseBackgroundLayer(NULL);
-	g_display->initialiseBackgroundLayer(FetchBackgroundLayer(bgfile));
+	g_display->initialiseBackgroundLayer(g_sword2->fetchBackgroundLayer(bgfile));
 	g_display->initialiseBackgroundLayer(NULL);
 	g_display->initialiseBackgroundLayer(NULL);
-	g_display->setPalette(0, 256, FetchPalette(bgfile), RDPAL_FADE);
+	g_display->setPalette(0, 256, g_sword2->fetchPalette(bgfile), RDPAL_FADE);
 
-	g_display->renderParallax(FetchBackgroundLayer(bgfile), 2);
-	res_man.close(2950);		// release the screen resource
+	g_display->renderParallax(g_sword2->fetchBackgroundLayer(bgfile), 2);
+	closeResource(2950);		// release the screen resource
 
 	// Git rid of read-only status, if it is set.
 	SVM_SetFileAttributes(_resourceFiles[newCluster], FILE_ATTRIBUTE_NORMAL);
@@ -1061,7 +1061,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	uint8 *loadingBar;
 	_cdtEntry *cdt;
 
-	text_spr = fontRenderer.makeTextSprite(FetchTextLine(res_man.open(2283), 8) + 2, 640, 187, g_sword2->_speechFontId);
+	text_spr = fontRenderer.makeTextSprite(g_sword2->fetchTextLine(openResource(2283), 8) + 2, 640, 187, g_sword2->_speechFontId);
 
 	frame = (_frameHeader*) text_spr->ad;
 
@@ -1076,12 +1076,12 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	textSprite.blend = 0;
 	textSprite.colourTable	= 0;
 
-	res_man.close(2283);
+	closeResource(2283);
 
-	loadingBar = res_man.open(2951);
+	loadingBar = openResource(2951);
 
-	frame = FetchFrameHeader(loadingBar, 0);
-	cdt   = FetchCdtEntry(loadingBar, 0);
+	frame = g_sword2->fetchFrameHeader(loadingBar, 0);
+	cdt   = g_sword2->fetchCdtEntry(loadingBar, 0);
 
 	barSprite.x = cdt->x;
 	barSprite.y = cdt->y;
@@ -1094,12 +1094,12 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	barSprite.blend = 0;
 	barSprite.colourTable = 0;
 
-	res_man.close(2951);
+	closeResource(2951);
 
-	loadingBar = res_man.open(2951);
-	frame = FetchFrameHeader(loadingBar, 0);
+	loadingBar = openResource(2951);
+	frame = g_sword2->fetchFrameHeader(loadingBar, 0);
 	barSprite.data = (uint8 *) (frame + 1);
-	res_man.close(2951);
+	closeResource(2951);
 
 	int16 barX = barSprite.x;
 	int16 barY = barSprite.y;
@@ -1137,14 +1137,14 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 		if (step == stepSize) {
 			step = 0;
 			// open the screen resource
-			bgfile = res_man.open(2950);
-			g_display->renderParallax(FetchBackgroundLayer(bgfile), 2);
+			bgfile = openResource(2950);
+			g_display->renderParallax(g_sword2->fetchBackgroundLayer(bgfile), 2);
 			// release the screen resource
-			res_man.close(2950);
-			loadingBar = res_man.open(2951);
-			frame = FetchFrameHeader(loadingBar, fr);
+			closeResource(2950);
+			loadingBar = openResource(2951);
+			frame = g_sword2->fetchFrameHeader(loadingBar, fr);
 			barSprite.data = (uint8 *) (frame + 1);
-			res_man.close(2951);
+			closeResource(2951);
 			g_display->drawSprite(&barSprite);
 			barSprite.x = barX;
 			barSprite.y = barY;
@@ -1167,7 +1167,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	inFile.close();
 	outFile.close();
-	memory.freeMemory(text_spr);
+	memory->freeMemory(text_spr);
 
 	g_display->clearScene();
 
@@ -1284,9 +1284,9 @@ void ResourceManager::getCd(int cd) {
 
 	g_logic.fnStopMusic(NULL);
 
-	textRes = res_man.open(2283);
-	g_sword2->displayMsg(FetchTextLine(textRes, 5 + cd) + 2, 0);
-	text_spr = fontRenderer.makeTextSprite(FetchTextLine(textRes, 5 + cd) + 2, 640, 187, g_sword2->_speechFontId);
+	textRes = openResource(2283);
+	g_sword2->displayMsg(g_sword2->fetchTextLine(textRes, 5 + cd) + 2, 0);
+	text_spr = fontRenderer.makeTextSprite(g_sword2->fetchTextLine(textRes, 5 + cd) + 2, 640, 187, g_sword2->_speechFontId);
 
 	frame = (_frameHeader*) text_spr->ad;
 
@@ -1304,7 +1304,7 @@ void ResourceManager::getCd(int cd) {
 	oldY = spriteInfo.y;
 	oldX = spriteInfo.x;
 
-	res_man.close(2283);
+	closeResource(2283);
 
 	do {
 		if (offNetwork == 1)
@@ -1337,7 +1337,7 @@ void ResourceManager::getCd(int cd) {
 		spriteInfo.x = oldX;
 	} while (!done);
 
-	memory.freeMemory(text_spr);
+	memory->freeMemory(text_spr);
 	g_sword2->removeMsg();
 }
 

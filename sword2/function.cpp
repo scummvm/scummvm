@@ -99,8 +99,8 @@ int32 Logic::fnPreLoad(int32 *params) {
 
 	// params:	0 resource to preload
 
-	res_man.open(params[0]);
-	res_man.close(params[0]);
+	res_man->openResource(params[0]);
+	res_man->closeResource(params[0]);
 	return IR_CONT;
 }
 
@@ -337,8 +337,8 @@ int32 Logic::fnDisplayMsg(int32 *params) {
 	// +2 to skip the encoded text number in the first 2 chars; 3 is
 	// duration in seconds
 
-	g_sword2->displayMsg(FetchTextLine(res_man.open(text_res), local_text) + 2, 3);
-	res_man.close(text_res);
+	g_sword2->displayMsg(g_sword2->fetchTextLine(res_man->openResource(text_res), local_text) + 2, 3);
+	res_man->closeResource(text_res);
 	g_sword2->removeMsg();
 
 	return IR_CONT;
@@ -353,20 +353,20 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	int32 size;
 	uint32 *globals;
 
-	size = res_man.fetchLen(1);
+	size = res_man->fetchLen(1);
 	size -= sizeof(_standardHeader);
 
 	debug(5, "globals size: %d", size);
 
-	globals = (uint32 *) ((uint8 *) res_man.open(1) + sizeof(_standardHeader));
+	globals = (uint32 *) ((uint8 *) res_man->openResource(1) + sizeof(_standardHeader));
 
 	// blank each global variable
 	memset(globals, 0, size);
 
-	res_man.close(1);
+	res_man->closeResource(1);
 
 	// all objects but george
-	res_man.killAllObjects(false);
+	res_man->killAllObjects(false);
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from fnInitBackground

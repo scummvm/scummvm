@@ -28,10 +28,12 @@
 
 namespace Sword2 {
 
-// Returns a pointer to the first palette entry, given the pointer to the
-// start of the screen file.
+/**
+ * Returns a pointer to the first palette entry, given the pointer to the start
+ * of the screen file.
+ */
 
-uint8 *FetchPalette(uint8 *screenFile) {
+uint8 *Sword2Engine::fetchPalette(uint8 *screenFile) {
 	uint8 *palette;
 
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
@@ -50,35 +52,41 @@ uint8 *FetchPalette(uint8 *screenFile) {
 	return palette;
 }
 
-// Returns a pointer to the start of the palette match table, given the
-// pointer to the start of the screen file.
+/**
+ * Returns a pointer to the start of the palette match table, given the pointer
+ * to the start of the screen file.
+ */
 
-uint8 *FetchPaletteMatchTable(uint8 *screenFile) {
+uint8 *Sword2Engine::fetchPaletteMatchTable(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 	return (uint8 *) mscreenHeader + mscreenHeader->paletteTable;
 }
 
-// Returns a pointer to the screen header, given the pointer to the start of
-// the screen file.
+/**
+ * Returns a pointer to the screen header, given the pointer to the start of
+ * the screen file.
+ */
 
-_screenHeader *FetchScreenHeader(uint8 *screenFile) {
+_screenHeader *Sword2Engine::fetchScreenHeader(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 	_screenHeader *screenHeader = (_screenHeader*) ((uint8 *) mscreenHeader + mscreenHeader->screen);
 
 	return screenHeader;
 }
 
-// Returns a pointer to the requested layer header, given the pointer to the
-// start of the screen file. Drops out if the requested layer number exceeds
-// the number of layers on this screen.
+/**
+ * Returns a pointer to the requested layer header, given the pointer to the
+ * start of the screen file. Drops out if the requested layer number exceeds
+ * the number of layers on this screen.
+ */
 
-_layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo) {	// Chris 04Oct96
+_layerHeader *Sword2Engine::fetchLayerHeader(uint8 *screenFile, uint16 layerNo) {
 #ifdef _SWORD2_DEBUG
-	_screenHeader *screenHead = FetchScreenHeader(screenFile);
+	_screenHeader *screenHead = fetchScreenHeader(screenFile);
 
 	if (layerNo > screenHead->noLayers - 1)
-		error("FetchLayerHeader(%d) invalid layer number!", layerNo);
+		error("fetchLayerHeader(%d) invalid layer number!", layerNo);
 #endif
 
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
@@ -88,76 +96,86 @@ _layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo) {	// Chris 04O
 	return layerHeader;
 }
 
-// Returns a pointer to the start of the shading mask, given the pointer to
-// the start of the screen file.
+/**
+ * Returns a pointer to the start of the shading mask, given the pointer to the
+ * start of the screen file.
+ */
 
-uint8 *FetchShadingMask(uint8 *screenFile) {
+uint8 *Sword2Engine::fetchShadingMask(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 	return (uint8 *) mscreenHeader + mscreenHeader->maskOffset;
 }
 
-// Returns a pointer to the anim header, given the pointer to the start of
-// the anim file.
+/**
+ * Returns a pointer to the anim header, given the pointer to the start of the
+ * anim file.
+ */
 
-_animHeader *FetchAnimHeader(uint8 *animFile) {
+_animHeader *Sword2Engine::fetchAnimHeader(uint8 *animFile) {
 	return (_animHeader *) (animFile + sizeof(_standardHeader));
 }
 
-// Returns a pointer to the requested frame number's cdtEntry, given the
-// pointer to the start of the anim file. Drops out if the requested frame
-// number exceeds the number of frames in this anim.
+/**
+ * Returns a pointer to the requested frame number's cdtEntry, given the
+ * pointer to the start of the anim file. Drops out if the requested frame
+ * number exceeds the number of frames in this anim.
+ */
 
-_cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {
-	_animHeader *animHead = FetchAnimHeader(animFile);
+_cdtEntry *Sword2Engine::fetchCdtEntry(uint8 *animFile, uint16 frameNo) {
+	_animHeader *animHead = fetchAnimHeader(animFile);
 
 #ifdef _SWORD2_DEBUG
 	if (frameNo > animHead->noAnimFrames - 1)
-		error("FetchCdtEntry(animFile,%d) - anim only %d frames", frameNo, animHead->noAnimFrames);
+		error("fetchCdtEntry(animFile,%d) - anim only %d frames", frameNo, animHead->noAnimFrames);
 #endif
 
 	return (_cdtEntry *) ((uint8 *) animHead + sizeof(_animHeader) + frameNo * sizeof(_cdtEntry));
 }
 
-// Returns a pointer to the requested frame number's header, given the
-// pointer to the start of the anim file. Drops out if the requested frame
-// number exceeds the number of frames in this anim
+/**
+ * Returns a pointer to the requested frame number's header, given the pointer
+ * to the start of the anim file. Drops out if the requested frame number
+ * exceeds the number of frames in this anim
+ */
 
-_frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo)	{
+_frameHeader *Sword2Engine::fetchFrameHeader(uint8 *animFile, uint16 frameNo)	{
 	// required address = (address of the start of the anim header) + frameOffset
-	return (_frameHeader *) (animFile + sizeof(_standardHeader) + FetchCdtEntry(animFile, frameNo)->frameOffset);
+	return (_frameHeader *) (animFile + sizeof(_standardHeader) + fetchCdtEntry(animFile, frameNo)->frameOffset);
 }
 
-// Returns a pointer to the requested parallax layer data.
+/**
+ * Returns a pointer to the requested parallax layer data.
+ */
 
-_parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {
+_parallax *Sword2Engine::fetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->bg_parallax[layer] == 0)
-		error("FetchBackgroundParallaxLayer(%d) - No parallax layer exists", layer);
+		error("fetchBackgroundParallaxLayer(%d) - No parallax layer exists", layer);
 #endif
 
 	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
 }
 
-_parallax *FetchBackgroundLayer(uint8 *screenFile) {
+_parallax *Sword2Engine::fetchBackgroundLayer(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->screen == 0)
-		error("FetchBackgroundLayer (%d) - No background layer exists");
+		error("fetchBackgroundLayer (%d) - No background layer exists");
 #endif
 
 	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
 }
 
-_parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) {
+_parallax *Sword2Engine::fetchForegroundParallaxLayer(uint8 *screenFile, int layer) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->fg_parallax[layer] == 0)
-		error("FetchForegroundParallaxLayer(%d) - No parallax layer exists", layer);
+		error("fetchForegroundParallaxLayer(%d) - No parallax layer exists", layer);
 #endif
 
 	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[layer]);
@@ -165,7 +183,7 @@ _parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) {
 
 uint8 errorLine[128];
 
-uint8 *FetchTextLine(uint8 *file, uint32 text_line) {
+uint8 *Sword2Engine::fetchTextLine(uint8 *file, uint32 text_line) {
 	_standardHeader *fileHeader;
 	uint32 *point;
 
@@ -182,7 +200,7 @@ uint8 *FetchTextLine(uint8 *file, uint32 text_line) {
 		return errorLine;
 	}
 
-	//point to the lookup table
+	// point to the lookup table
 	point = (uint32 *) text_header + 1;
 
 	return (uint8 *) (file + READ_LE_UINT32(point + text_line));
@@ -191,7 +209,7 @@ uint8 *FetchTextLine(uint8 *file, uint32 text_line) {
 
 // Used for testing text & speech (see fnISpeak in speech.cpp)
 
-uint8 CheckTextLine(uint8 *file, uint32	text_line) {
+uint8 Sword2Engine::checkTextLine(uint8 *file, uint32 text_line) {
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
 	// out of range => invalid
@@ -202,11 +220,11 @@ uint8 CheckTextLine(uint8 *file, uint32	text_line) {
 	return 1;
 }
 
-uint8 *FetchObjectName(int32 resourceId) {
+uint8 *Sword2Engine::fetchObjectName(int32 resourceId) {
 	_standardHeader *header;
 	
-	header = (_standardHeader *) res_man.open(resourceId);
-	res_man.close(resourceId);
+	header = (_standardHeader *) res_man->openResource(resourceId);
+	res_man->closeResource(resourceId);
 
 	// note this pointer is no longer valid, but it should be ok until
 	// another resource is opened!

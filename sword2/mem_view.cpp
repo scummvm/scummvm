@@ -44,9 +44,9 @@ void MemoryManager::displayMemory(void) {
 	j = _baseMemBlock;
 	do {
 		if (_memList[j].uid < 65536) {
-			file_header = (_standardHeader*) res_man.open(_memList[j].uid);
+			file_header = (_standardHeader*) res_man->openResource(_memList[j].uid);
 			// close immediately so give a true count
-			res_man.close(_memList[j].uid);
+			res_man->closeResource(_memList[j].uid);
 
 			debug(5, "view %d", _memList[j].uid);
 
@@ -73,10 +73,10 @@ void MemoryManager::displayMemory(void) {
 					_memList[j].size / 1024,
 					(_memList[j].size * 100) / _totalFreeMemory,
 					_memList[j].uid,
-					res_man.fetchCluster(_memList[j].uid),
+					res_man->fetchCluster(_memList[j].uid),
 					file_header->name,
-					res_man.fetchAge(_memList[j].uid),
-					res_man.fetchCount(_memList[j].uid));
+					res_man->fetchAge(_memList[j].uid),
+					res_man->fetchCount(_memList[j].uid));
 			} else
 				Debug_Printf(" %d is an illegal resource\n", _memList[j].uid);
 		} else {
@@ -160,7 +160,7 @@ void MemoryManager::memoryString(char *string) {
 	sprintf(string,
 		"locked(%u)+float(%u)+free(%u) = %u/%u blocks (%u%% used)(cur %uk)",
 		mem_locked, mem_floating, mem_free, blocksUsed, MAX_mem_blocks,
-		percent, (res_man.fetchUsage() / 1024));
+		percent, (res_man->fetchUsage() / 1024));
 }
 
 } // End of namespace Sword2

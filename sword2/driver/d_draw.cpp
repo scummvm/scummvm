@@ -158,7 +158,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		g_display->createSurface(&msgSprite, &msgSurface);
 		g_display->drawSurface(&msgSprite, msgSurface);
 		g_display->deleteSurface(msgSurface);
-		memory.freeMemory(data);
+		memory->freeMemory(data);
 
 		// In case the cutscene has a long lead-in, start just before
 		// the first line of text.

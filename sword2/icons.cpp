@@ -87,9 +87,9 @@ void Sword2Engine::buildMenu(void) {
 	// Call menu builder script which will register all carried menu
 	// objects. Run the 'build_menu' script in the 'menu_master' object
 
-	head = res_man.open(MENU_MASTER_OBJECT);
+	head = res_man->openResource(MENU_MASTER_OBJECT);
 	g_logic.runScript((char*) head, (char*) head, &null_pc);
-	res_man.close(MENU_MASTER_OBJECT);
+	res_man->closeResource(MENU_MASTER_OBJECT);
 
 	// Compare new with old. Anything in master thats not in new gets
 	// removed from master - if found in new too, remove from temp
@@ -191,7 +191,7 @@ void Sword2Engine::buildMenu(void) {
 					icon_coloured = true;
 			}
 
-			icon = res_man.open(_masterMenuList[j].icon_resource) + sizeof(_standardHeader);
+			icon = res_man->openResource(_masterMenuList[j].icon_resource) + sizeof(_standardHeader);
 
 			// The coloured icon is stored directly after the
 			// greyed out one.
@@ -200,7 +200,7 @@ void Sword2Engine::buildMenu(void) {
 				icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
 			g_display->setMenuIcon(RDMENU_BOTTOM, j, icon);
-			res_man.close(res);
+			res_man->closeResource(res);
 		} else {
 			// no icon here
 			g_display->setMenuIcon(RDMENU_BOTTOM, j, NULL);
@@ -227,17 +227,17 @@ void Sword2Engine::buildSystemMenu(void) {
 	// build them all high in full colour - when one is clicked on all the
 	// rest will grey out
 
-	for (int j = 0; j < ARRAYSIZE(icon_list); j++) {
-		icon = res_man.open(icon_list[j]) + sizeof(_standardHeader);
+	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
+		icon = res_man->openResource(icon_list[i]) + sizeof(_standardHeader);
 		
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.
 
-		if (!DEAD || icon_list[j] != SAVE_ICON)
+		if (!DEAD || icon_list[i] != SAVE_ICON)
 			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
-		g_display->setMenuIcon(RDMENU_TOP, j, icon);
-		res_man.close(icon_list[j]);
+		g_display->setMenuIcon(RDMENU_TOP, i, icon);
+		res_man->closeResource(icon_list[i]);
 	}
 
 	g_display->showMenu(RDMENU_TOP);

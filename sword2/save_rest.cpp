@@ -50,42 +50,7 @@ namespace Sword2 {
 // max length of a savegame filename, including full path
 #define	MAX_FILENAME_LEN 128
 
-static void GetPlayerStructures(void);
-static void PutPlayerStructures(void);
-
-static uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
-static uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
-
-static uint32 CalcChecksum(uint8 *buffer, uint32 size);
-
-// savegame file header
-
-typedef	struct {
-	// sum of all bytes in file, excluding this uint32
-	uint32 checksum;
-
-	// player's description of savegame
-	char description[SAVE_DESCRIPTION_LEN];
-
-	uint32 varLength;	// length of global variables resource
-	uint32 screenId;	// resource id of screen file
-	uint32 runListId;	// resource id of run list
-	uint32 feet_x;		// copy of _thisScreen.feet_x
-	uint32 feet_y;		// copy of _thisScreen.feet_y
-	uint32 music_id;	// copy of 'looping_music_id'
-	_object_hub player_hub;	// copy of player object's object_hub structure
-	Object_logic logic;	// copy of player character logic structure
-
-	// copy of player character graphic structure
-	Object_graphic	graphic;
-
-	Object_mega mega;	// copy of player character mega structure
-} _savegameHeader;
-
 // savegame consists of header & global variables resource
-
-// global because easier to copy to/from player object structures
-static _savegameHeader g_header;
 
 #ifdef SCUMM_BIG_ENDIAN
 // Quick macro to make swapping in-place easier to write
@@ -135,70 +100,70 @@ static void convertHeaderEndian(_savegameHeader &header) {
 
 // SAVE GAME
 
-uint32 SaveGame(uint16 slotNo, uint8 *desc) {
+uint32 Sword2Engine::saveGame(uint16 slotNo, uint8 *desc) {
 	mem *saveBufferMem;
 	uint32 bufferSize;
 	uint32 errorCode;
 
 	// allocate the savegame buffer
 
-	bufferSize = FindBufferSize();
-	saveBufferMem = memory.allocMemory(bufferSize, MEM_locked, UID_savegame_buffer);
+	bufferSize = findBufferSize();
+	saveBufferMem = memory->allocMemory(bufferSize, MEM_locked, UID_savegame_buffer);
 
-	FillSaveBuffer(saveBufferMem, bufferSize, desc);
+	fillSaveBuffer(saveBufferMem, bufferSize, desc);
 
 	// save it (hopefully no longer platform-specific)
 
 	// save the buffer
-	errorCode = SaveData(slotNo, saveBufferMem->ad, bufferSize);
+	errorCode = saveData(slotNo, saveBufferMem->ad, bufferSize);
 
 	// free the buffer
 
-	memory.freeMemory(saveBufferMem);
+	memory->freeMemory(saveBufferMem);
 
 	return errorCode;
 }
 
 // calculate size of required savegame buffer
 
-uint32 FindBufferSize(void) {
+uint32 Sword2Engine::findBufferSize(void) {
 	// size of savegame header + size of global variables
-	return sizeof(g_header) + res_man.fetchLen(1);
+	return sizeof(g_header) + res_man->fetchLen(1);
 }
 
-void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
-	uint8	*varsRes;
+void Sword2Engine::fillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
+	uint8 *varsRes;
 
 	// set up the g_header
 
 	// 'checksum' gets filled in last of all
 
 	// player's description of savegame
-	sprintf(g_header.description, "%s", (char*) desc);
+	strcpy(g_header.description, (char *) desc);
 
 	// length of global variables resource
-	g_header.varLength = res_man.fetchLen(1);
+	g_header.varLength = res_man->fetchLen(1);
 
 	// resource id of current screen file
-	g_header.screenId = g_sword2->_thisScreen.background_layer_id;
+	g_header.screenId = _thisScreen.background_layer_id;
 
 	// resource id of current run-list
 	g_header.runListId = g_logic.getRunList();
 
 	// those scroll position control things
-	g_header.feet_x = g_sword2->_thisScreen.feet_x;
-	g_header.feet_y	= g_sword2->_thisScreen.feet_y;
+	g_header.feet_x = _thisScreen.feet_x;
+	g_header.feet_y	= _thisScreen.feet_y;
 
 	// id of currently looping music (or zero)
-	g_header.music_id = looping_music_id;
+	g_header.music_id = _loopingMusicId;
 
 	// object hub
-	memcpy(&g_header.player_hub, res_man.open(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
-	res_man.close(CUR_PLAYER_ID);
+	memcpy(&g_header.player_hub, res_man->openResource(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
+	res_man->closeResource(CUR_PLAYER_ID);
 
 	// logic, graphic & mega structures
 	// copy the 4 essential player object structures into the header
-	GetPlayerStructures();
+	getPlayerStructures();
 
 	// copy the header to the buffer
 
@@ -212,7 +177,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	// copy the global variables to the buffer
 
 	// open variables resource
-	varsRes = res_man.open(1);
+	varsRes = res_man->openResource(1);
 
 	// copy that to the buffer, following the header
 	memcpy(buffer->ad + sizeof(g_header), varsRes, FROM_LE_32(g_header.varLength));
@@ -226,24 +191,24 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 #endif
 
 	// close variables resource
- 	res_man.close(1);
+ 	res_man->closeResource(1);
 
-	// set the checksum & copy that to the buffer (James05aug97)
+	// set the checksum & copy that to the buffer
 
-	g_header.checksum = TO_LE_32(CalcChecksum((buffer->ad) + sizeof(g_header.checksum), size - sizeof(g_header.checksum)));
+	g_header.checksum = TO_LE_32(calcChecksum((buffer->ad) + sizeof(g_header.checksum), size - sizeof(g_header.checksum)));
  	memcpy(buffer->ad, &g_header.checksum, sizeof(g_header.checksum));
 }
 
-uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
+uint32 Sword2Engine::saveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
 	char saveFileName[MAX_FILENAME_LEN];
 	uint32 itemsWritten;
 	SaveFile *out;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 
 	// construct filename
-	sprintf(saveFileName, "%s.%.3d", g_sword2->_targetName, slotNo);
+	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 	
-	if (!(out = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), true))) {
+	if (!(out = mgr->open_savefile(saveFileName, getSavePath(), true))) {
 		// error: couldn't open file
 		delete mgr;
 		return SR_ERR_FILEOPEN;
@@ -265,48 +230,48 @@ uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
 
 // RESTORE GAME
 
-uint32 RestoreGame(uint16 slotNo) {
+uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 	mem *saveBufferMem;
 	uint32 bufferSize;
 	uint32 errorCode;
 
 	// allocate the savegame buffer
 
-	bufferSize = FindBufferSize();
-	saveBufferMem = memory.allocMemory(bufferSize, MEM_locked, UID_savegame_buffer);
+	bufferSize = findBufferSize();
+	saveBufferMem = memory->allocMemory(bufferSize, MEM_locked, UID_savegame_buffer);
 
 	// read the savegame file into our buffer
 
 	// load savegame into buffer
-	errorCode = RestoreData(slotNo, saveBufferMem->ad, bufferSize);
+	errorCode = restoreData(slotNo, saveBufferMem->ad, bufferSize);
 
 	// if it was read in successfully, then restore the game from the
 	// buffer & free the buffer
 
 	if (errorCode == SR_OK)	{
-		errorCode = RestoreFromBuffer(saveBufferMem, bufferSize);
+		errorCode = restoreFromBuffer(saveBufferMem, bufferSize);
 
 		// Note that the buffer has been freed inside
-		// RestoreFromBuffer, in order to clear it from memory before
+		// restoreFromBuffer, in order to clear it from memory before
 		// loading in the new screen & runlist
 	} else {
-		// because RestoreFromBuffer would have freed it
-		memory.freeMemory(saveBufferMem);
+		// because restoreFromBuffer would have freed it
+		memory->freeMemory(saveBufferMem);
 	}
 
 	return errorCode;
 }
 
-uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
+uint32 Sword2Engine::restoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
 	char saveFileName[MAX_FILENAME_LEN];
 	SaveFile *in;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
  	uint32 itemsRead;
 
 	// construct filename
-	sprintf(saveFileName, "%s.%.3d", g_sword2->_targetName, slotNo);
+	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	if (!(in = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false))) {
+	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
 		// error: couldn't open file
 		delete mgr;
 		return SR_ERR_FILEOPEN;
@@ -339,7 +304,7 @@ uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
 	}
 }
 
-uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
+uint32 Sword2Engine::restoreFromBuffer(mem *buffer, uint32 size) {
 	uint8 *varsRes;
 	int32 pars[2];
 
@@ -351,10 +316,9 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 #endif
 
 	// Calc checksum & check that aginst the value stored in the header
-	// (James05aug97)
 
-	if (g_header.checksum != CalcChecksum(buffer->ad + sizeof(g_header.checksum), size - sizeof(g_header.checksum))) {
-		memory.freeMemory(buffer);
+	if (g_header.checksum != calcChecksum(buffer->ad + sizeof(g_header.checksum), size - sizeof(g_header.checksum))) {
+		memory->freeMemory(buffer);
 
 		// error: incompatible save-data - can't use!
 		return SR_ERR_INCOMPATIBLE;
@@ -368,8 +332,8 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	// shorter than the current expected length
 
 	// if header contradicts actual current size of global variables
-	if (g_header.varLength != res_man.fetchLen(1)) {
-		memory.freeMemory(buffer);
+	if (g_header.varLength != res_man->fetchLen(1)) {
+		memory->freeMemory(buffer);
 
 		// error: incompatible save-data - can't use!
 		return SR_ERR_INCOMPATIBLE;
@@ -379,7 +343,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	// trash all resources from memory except player object & global
 	// variables
-	res_man.killAll(false);
+	res_man->killAll(false);
 
 	// clean out the system kill list (no more objects to kill)
 	g_logic.resetKillList();
@@ -387,17 +351,17 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	// get player character data from savegame buffer
 
 	// object hub is just after the standard header 
-	memcpy(res_man.open(CUR_PLAYER_ID) + sizeof(_standardHeader), &g_header.player_hub, sizeof(_object_hub));
+	memcpy(res_man->openResource(CUR_PLAYER_ID) + sizeof(_standardHeader), &g_header.player_hub, sizeof(_object_hub));
 
-	res_man.close(CUR_PLAYER_ID);
+	res_man->closeResource(CUR_PLAYER_ID);
 
 	// fill in the 4 essential player object structures from the header
-	PutPlayerStructures();
+	putPlayerStructures();
 
 	// get variables resource from the savegame buffer	
 
 	// open variables resource
-	varsRes = res_man.open(1);
+	varsRes = res_man->openResource(1);
 
 	// copy that to the buffer, following the header
 	memcpy(varsRes, buffer->ad + sizeof(g_header), g_header.varLength );
@@ -411,11 +375,11 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 #endif
 
 	// close variables resource
- 	res_man.close(1);
+ 	res_man->closeResource(1);
 
 	// free it now, rather than in RestoreGame, to unblock memory before
 	// new screen & runlist loaded
-	memory.freeMemory(buffer);
+	memory->freeMemory(buffer);
 
 	pars[0] = g_header.screenId;
 	pars[1] = 1;
@@ -423,13 +387,13 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	// So palette not restored immediately after control panel - we want to
 	// fade up instead!
-	g_sword2->_thisScreen.new_palette = 99;
+	_thisScreen.new_palette = 99;
 
 	// these need setting after the defaults get set in fnInitBackground
 	// remember that these can change through the game, so need saving &
 	// restoring too
-	g_sword2->_thisScreen.feet_x = g_header.feet_x;
-	g_sword2->_thisScreen.feet_y = g_header.feet_y;
+	_thisScreen.feet_x = g_header.feet_x;
+	_thisScreen.feet_y = g_header.feet_y;
 
 	// start the new run list
 	g_logic.expressChangeSession(g_header.runListId);
@@ -438,19 +402,19 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	// not occur when screen first draws after returning from restore panel
 
 	// set '_thisScreen's record of player position
-	// - ready for Set_scrolling()
+	// - ready for setScrolling()
 
-	g_sword2->_thisScreen.player_feet_x = g_header.mega.feet_x;
-	g_sword2->_thisScreen.player_feet_y = g_header.mega.feet_y;
+	_thisScreen.player_feet_x = g_header.mega.feet_x;
+	_thisScreen.player_feet_y = g_header.mega.feet_y;
 
 	// if this screen is wide, recompute the scroll offsets now
-	if (g_sword2->_thisScreen.scroll_flag)
-		Set_scrolling();
+	if (_thisScreen.scroll_flag)
+		setScrolling();
 
 	// Any music required will be started after we've returned from
 	// Restore_control() - see System_menu() in mouse.cpp!
 
-	looping_music_id = g_header.music_id;
+	_loopingMusicId = g_header.music_id;
 
 	// Write to walkthrough file (zebug0.txt)
 
@@ -462,16 +426,16 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 // GetSaveDescription - PC version...
 
-uint32 GetSaveDescription(uint16 slotNo, uint8 *description) {
+uint32 Sword2Engine::getSaveDescription(uint16 slotNo, uint8 *description) {
 	char saveFileName[MAX_FILENAME_LEN];
 	_savegameHeader dummy;
 	SaveFile *in;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 
 	// construct filename
-	sprintf(saveFileName, "%s.%.3d", g_sword2->_targetName, slotNo);
+	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	if (!(in = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false))) {
+	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
 		// error: couldn't open file
 		delete mgr;
 		return SR_ERR_FILEOPEN;
@@ -482,19 +446,19 @@ uint32 GetSaveDescription(uint16 slotNo, uint8 *description) {
 	delete in;
 	delete mgr;
 
-	sprintf((char*) description, dummy.description);
+	strcpy((char *) description, dummy.description);
 	return SR_OK;
 }
 
-bool SaveExists(uint16 slotNo) {
+bool Sword2Engine::saveExists(uint16 slotNo) {
 	char saveFileName[MAX_FILENAME_LEN];
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 	SaveFile *in;
 
 	// construct filename
-	sprintf(saveFileName, "%s.%.3d", g_sword2->_targetName, slotNo);
+	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	if (!(in = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false))) {
+	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
 		delete mgr;
 		return false;
 	}
@@ -505,7 +469,7 @@ bool SaveExists(uint16 slotNo) {
 	return true;
 }
 
-void GetPlayerStructures(void) {
+void Sword2Engine::getPlayerStructures(void) {
 	 // request the player object structures which need saving
 
 	// script no. 7 - 'george_savedata_request' calls fnPassPlayerSaveData
@@ -514,17 +478,17 @@ void GetPlayerStructures(void) {
  	char *raw_script_ad;
 	_standardHeader *head;
 
-	head = (_standardHeader*) res_man.open(CUR_PLAYER_ID);
+	head = (_standardHeader*) res_man->openResource(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
 		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
 
 	raw_script_ad = (char *) head;
 	g_logic.runScript(raw_script_ad, raw_script_ad, &null_pc);
-	res_man.close(CUR_PLAYER_ID);
+	res_man->closeResource(CUR_PLAYER_ID);
 }
 
-void PutPlayerStructures(void) {
+void Sword2Engine::putPlayerStructures(void) {
 	// fill out the player object structures from the savegame structures
 	// also run the appropriate scripts to set up george's anim tables &
 	// walkdata, and nico's anim tables
@@ -533,7 +497,7 @@ void PutPlayerStructures(void) {
  	char *raw_script_ad;
 	_standardHeader *head;
 
-	head = (_standardHeader*) res_man.open(CUR_PLAYER_ID);
+	head = (_standardHeader*) res_man->openResource(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
 		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
@@ -571,7 +535,16 @@ void PutPlayerStructures(void) {
 	}
 
 	g_logic.runScript(raw_script_ad, raw_script_ad, &null_pc);
-	res_man.close(CUR_PLAYER_ID);
+	res_man->closeResource(CUR_PLAYER_ID);
+}
+
+uint32 Sword2Engine::calcChecksum(uint8 *buffer, uint32 size) {
+	uint32 total = 0;
+
+	for (uint32 pos = 0; pos < size; pos++)
+		total += buffer[pos];
+
+	return total;
 }
 
 int32 Logic::fnPassPlayerSaveData(int32 *params) {
@@ -587,9 +560,9 @@ int32 Logic::fnPassPlayerSaveData(int32 *params) {
 
 	// copy from player object to savegame header
 
-	memcpy(&g_header.logic, (uint8 *) params[0], sizeof(Object_logic));
-	memcpy(&g_header.graphic, (uint8 *) params[1], sizeof(Object_graphic));
-	memcpy(&g_header.mega, (uint8 *) params[2], sizeof(Object_mega));
+	memcpy(&g_sword2->g_header.logic, (uint8 *) params[0], sizeof(Object_logic));
+	memcpy(&g_sword2->g_header.graphic, (uint8 *) params[1], sizeof(Object_graphic));
+	memcpy(&g_sword2->g_header.mega, (uint8 *) params[2], sizeof(Object_mega));
 
 	// makes no odds
 	return IR_CONT;
@@ -611,9 +584,9 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 
 	// copy from savegame header to player object
 
-	memcpy((uint8 *) ob_logic, &g_header.logic, sizeof(Object_logic));
-	memcpy((uint8 *) ob_graphic, &g_header.graphic, sizeof(Object_graphic));
-	memcpy((uint8 *) ob_mega, &g_header.mega, sizeof(Object_mega));
+	memcpy((uint8 *) ob_logic, &g_sword2->g_header.logic, sizeof(Object_logic));
+	memcpy((uint8 *) ob_graphic, &g_sword2->g_header.graphic, sizeof(Object_graphic));
+	memcpy((uint8 *) ob_mega, &g_sword2->g_header.mega, sizeof(Object_mega));
 
  	// any walk-data must be cleared - the player will be set to stand if
 	// he was walking when saved
@@ -641,15 +614,6 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 
 	// makes no odds
 	return IR_CONT;
-}
-
-uint32 CalcChecksum(uint8 *buffer, uint32 size) {
-	uint32 total = 0;
-
-	for (uint32 pos = 0; pos < size; pos++)
-		total += buffer[pos];
-
-	return total;
 }
 
 } // End of namespace Sword2

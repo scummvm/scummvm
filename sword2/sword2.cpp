@@ -133,6 +133,11 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(256);
 	_mixer->setMusicVolume(256);
 
+	// get some falling RAM and put it in your pocket, never let it slip
+	// away
+
+	memory = new MemoryManager();
+	res_man = new ResourceManager();
 	g_sound = _sound = new Sound(_mixer);
 	g_display = _display = new Display(640, 480);
 	gui = new Gui();
@@ -180,6 +185,9 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_pointerTextBlocNo = 0;
 	_playerActivityDelay = 0;
 	_realLuggageItem = 0;
+
+	// used to be a define, but now it's flexible
+	_scrollFraction = 16;
 }
 
 Sword2Engine::~Sword2Engine() {
@@ -188,6 +196,8 @@ Sword2Engine::~Sword2Engine() {
 	delete _display;
 	delete _debugger;
 	delete gui;
+	delete res_man;
+	delete memory;
 }
 
 void Sword2Engine::errorString(const char *buf1, char *buf2) {
@@ -212,19 +222,9 @@ int32 Sword2Engine::InitialiseGame(void) {
 
 	uint8 *file;
 
-	// get some falling RAM and put it in your pocket, never let it slip
-	// away
-
-	debug(5, "CALLING: memory.init");
-	memory.init();
-
-	// initialise the resource manager
-	debug(5, "CALLING: res_man.init");
-	res_man.init();
-
 	// initialise global script variables
 	// res 1 is the globals list
-	file = res_man.open(1);
+	file = res_man->openResource(1);
 	debug(5, "CALLING: SetGlobalInterpreterVariables");
 	g_logic.setGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
 
@@ -234,7 +234,7 @@ int32 Sword2Engine::InitialiseGame(void) {
 	// DON'T CLOSE PLAYER OBJECT RESOURCE - KEEP IT OPEN IN MEMORY SO IT
 	// CAN'T MOVE!
 
-	file = res_man.open(8);
+	file = res_man->openResource(8);
 
 	// Set up font resource variables for this language version
 
@@ -255,7 +255,7 @@ int32 Sword2Engine::InitialiseGame(void) {
 	// initialise the sound fx queue
 
 	debug(5, "CALLING: Init_fx_queue");
-	Init_fx_queue();
+	initFxQueue();
 
 	// all demos (not just web)
 	if (_features & GF_DEMO) {
@@ -270,11 +270,7 @@ void Close_game() {
 	debug(5, "Close_game() STARTING:");
 
 	// Stop music instantly!
-	Kill_music();
-
-	// free the memory again
-	memory.exit();
-	res_man.exit();
+	g_sword2->killMusic();
 
 	g_system->quit();
 }
@@ -304,13 +300,13 @@ int32 GameCycle(void) {
 
 	// if this screen is wide, recompute the scroll offsets every cycle
 	if (g_sword2->_thisScreen.scroll_flag)
-		Set_scrolling();
+		g_sword2->setScrolling();
 
 	g_sword2->mouseEngine();
-	Process_fx_queue();
+	g_sword2->processFxQueue();
 
 	// update age and calculate previous cycle memory usage
-	res_man.nextCycle();
+	res_man->nextCycle();
 
 	if (quitGame)
 		return 1;
@@ -339,8 +335,8 @@ void Sword2Engine::go() {
 	}
 
 	if (_saveSlot != -1) {
-		if (SaveExists(_saveSlot))
-			RestoreGame(_saveSlot);
+		if (saveExists(_saveSlot))
+			restoreGame(_saveSlot);
 		else { // show restore menu
 			setMouse(NORMAL_MOUSE_ID);
 			if (!gui->restoreControl())
@@ -488,19 +484,19 @@ void Sword2Engine::Start_game(void) {
 	uint32 null_pc = 1;
 
 	// open george object, ready for start script to reference
-	raw_data_ad = (char *) res_man.open(8);
+	raw_data_ad = (char *) res_man->openResource(8);
 
 	// open the ScreenManager object
-	raw_script = (char *) res_man.open(screen_manager_id);
+	raw_script = (char *) res_man->openResource(screen_manager_id);
 
 	// run the start script now (because no console)
 	g_logic.runScript(raw_script, raw_data_ad, &null_pc);
 
 	// close the ScreenManager object
-	res_man.close(screen_manager_id);
+	res_man->closeResource(screen_manager_id);
 
 	// close george
-	res_man.close(8);
+	res_man->closeResource(8);
 
 	debug(5, "Start_game() DONE.");
 }
@@ -523,16 +519,16 @@ void PauseGame(void) {
 	// uint8 *text;
 
 	// open text file & get the line "PAUSED"
-	// text = FetchTextLine(res_man.open(3258), 449);
+	// text = FetchTextLine(res_man->openResource(3258), 449);
 	// pause_text_bloc_no = Build_new_block(text + 2, 320, 210, 640, 184, RDSPR_TRANS | RDSPR_DISPLAYALIGN, SPEECH_FONT_ID, POSITION_AT_CENTRE_OF_BASE);
 	// now ok to close the text file
-	// res_man.close(3258);
+	// res_man->closeResource(3258);
 
 	// don't allow Pause while screen fading or while black
 	if (g_display->getFadeStatus() != RDFADE_NONE)
 		return;
 	
-  	PauseAllSound();
+	g_sword2->pauseAllSound();
 
 	// make a normal mouse
 	g_sword2->clearPointerText();
@@ -557,7 +553,7 @@ void PauseGame(void) {
 	}
 
 	// don't dim it if we're single-stepping through frames
-	// dim the palette during the pause (James26jun97)
+	// dim the palette during the pause
 
 	if (stepOneCycle == 0)
 		g_display->dimPalette();
@@ -572,7 +568,7 @@ void UnpauseGame(void) {
 	if (OBJECT_HELD && g_sword2->_realLuggageItem)
 		g_sword2->setLuggage(g_sword2->_realLuggageItem);
 
-	UnpauseAllSound();
+	g_sword2->unpauseAllSound();
 
 	// put back game screen palette; see Build_display.cpp
 	g_sword2->setFullPalette(0xffffffff);

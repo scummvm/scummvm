@@ -28,16 +28,16 @@ namespace Sword2 {
 
 class ResourceManager {
 public:
-	void init(void);		// read in the config file
-	void exit(void);
+	ResourceManager(void);		// read in the config file
+	~ResourceManager(void);
 
 	// Returns ad of resource. Loads if not in memory. Retains a count.
 	// Resource can be aged out of memory if count = 0
 	// The resource is locked while count != 0
 	// Resource floats when count = 0
 
-	uint8 *open(uint32 res);
-	void close(uint32 res);		// decrements the count
+	uint8 *openResource(uint32 res);
+	void closeResource(uint32 res);		// decrements the count
 
 	// returns '0' if resource out of range or null, otherwise '1' for ok
 
@@ -105,7 +105,7 @@ private:
 	char _cdDrives[24];
 };							
 
-extern ResourceManager res_man;	//declare the object global
+extern ResourceManager *res_man;	// declare the object global
 
 } // End of namespace Sword2
 

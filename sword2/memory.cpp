@@ -17,9 +17,6 @@
  * $Header$
  */
 
-// FIXME: We should investigate which problem all this memory managing stuff
-// is trying to solve. I'm not convinced that it's really needed.
-
 // memory manager
 //   - "remember, it's not good to leave memory locked for a moment longer
 //      than necessary" Tony
@@ -45,17 +42,13 @@
 
 namespace Sword2 {
 
-MemoryManager memory;
+MemoryManager *memory;
 
 #define MEMORY_POOL (1024 * 12000)
 
 // #define MEMDEBUG 1
 
-void MemoryManager::exit(void) {
-	free(_freeMemman);
-}
-
-void MemoryManager::init(void) {
+MemoryManager::MemoryManager(void) {
 	uint32 j;
 	uint8 *memory_base;
 
@@ -89,6 +82,10 @@ void MemoryManager::init(void) {
 	_memList[0].uid = UID_memman;		// init id
 
 	_baseMemBlock = 0;			// for now
+}
+
+MemoryManager::~MemoryManager(void) {
+	free(_freeMemman);
 }
 
 mem *MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id) {
@@ -472,7 +469,7 @@ mem *MemoryManager::allocMemory(uint32 size, uint32 type, uint32 unique_id) {
 
 	while (virtualDefrag(size)) {
 		// trash the oldest closed resource
-		if (!res_man.helpTheAgedOut()) {
+		if (!res_man->helpTheAgedOut()) {
 			error("alloc ran out of memory: size=%d type=%d unique_id=%d", size, type, unique_id);
 		}
 	}

@@ -34,7 +34,7 @@
 #include "sword2/logic.h"
 #include "sword2/protocol.h"
 #include "sword2/resman.h"
-#include "sword2/sound.h"	// for Clear_fx_queue() called from fnInitBackground()
+#include "sword2/sound.h"	// for clearFxQueue() called from fnInitBackground()
 
 namespace Sword2 {
 
@@ -55,10 +55,10 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	uint8 *file;
 	uint32 rv;
 
-	debug(5, "CHANGED TO LOCATION \"%s\"", FetchObjectName(res));
+	debug(5, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res));
 
 	// stop all fx & clears the queue
-	Clear_fx_queue();
+	clearFxQueue();
 
 #ifdef _SWORD2_DEBUG
 	debug(5, "fnInitBackground(%d)", res);
@@ -92,9 +92,9 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	// each cycle
 
 	// file points to 1st byte in the layer file
-	file = res_man.open(_thisScreen.background_layer_id);
+	file = res_man->openResource(_thisScreen.background_layer_id);
 	
-	screen_head = FetchScreenHeader(file);
+	screen_head = fetchScreenHeader(file);
 
 	//set number of special sort layers
 	_thisScreen.number_of_layers = screen_head->noLayers;
@@ -109,7 +109,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	if (screen_head->noLayers) {
 		for (int i = 0; i < screen_head->noLayers; i++) {
 			// get layer header for layer i
-			layer = FetchLayerHeader(file, i);
+			layer = fetchLayerHeader(file, i);
 
 			// add into the sort list
 
@@ -174,7 +174,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 		spriteInfo.scaledHeight = 0;
 		spriteInfo.type = 0;
 		spriteInfo.blend = 0;
-		spriteInfo.data = FetchShadingMask(file);
+		spriteInfo.data = fetchShadingMask(file);
 		spriteInfo.colourTable = 0;
 
 		rv = g_display->openLightMask(&spriteInfo);
@@ -189,7 +189,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	}
 
 	// close the screen file
-   	res_man.close(_thisScreen.background_layer_id);
+   	res_man->closeResource(_thisScreen.background_layer_id);
 
 	setUpBackgroundLayers();
 
@@ -211,9 +211,9 @@ void Sword2Engine::setUpBackgroundLayers(void) {
 		// open resource & set pointers to headers
 		// file points to 1st byte in the layer file
 
-		file = res_man.open(_thisScreen.background_layer_id);
+		file = res_man->openResource(_thisScreen.background_layer_id);
 
-		screen_head = FetchScreenHeader(file);
+		screen_head = fetchScreenHeader(file);
 
 		screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
@@ -221,26 +221,26 @@ void Sword2Engine::setUpBackgroundLayers(void) {
 
 		for (i = 0; i < 2; i++) {
 			if (screenLayerTable->bg_parallax[i])
-				g_display->initialiseBackgroundLayer(FetchBackgroundParallaxLayer(file, i));
+				g_display->initialiseBackgroundLayer(fetchBackgroundParallaxLayer(file, i));
 			else
 				g_display->initialiseBackgroundLayer(NULL);
 		}
 
 		// Normal backround layer
 
-		g_display->initialiseBackgroundLayer(FetchBackgroundLayer(file));
+		g_display->initialiseBackgroundLayer(fetchBackgroundLayer(file));
 
 		// Foreground parallax layers
 
 		for (i = 0; i < 2; i++) {
 			if (screenLayerTable->fg_parallax[i])
-				g_display->initialiseBackgroundLayer(FetchForegroundParallaxLayer(file, i));
+				g_display->initialiseBackgroundLayer(fetchForegroundParallaxLayer(file, i));
 			else
 				g_display->initialiseBackgroundLayer(NULL);
 		}
 
 		// close the screen file
-		res_man.close(_thisScreen.background_layer_id);
+		res_man->closeResource(_thisScreen.background_layer_id);
 	}
 }
 

@@ -266,17 +266,17 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 
 	if (ob_logic->looping == 0) {
 		// open anim file
-		anim_file = res_man.open(params[4]);
+		anim_file = res_man->openResource(params[4]);
 
 		// point to animation header
-		anim_head = FetchAnimHeader( anim_file );
+		anim_head = g_sword2->fetchAnimHeader( anim_file );
 
 		pars[4] = anim_head->feetStartX;	// target_x
 		pars[5] = anim_head->feetStartY;	// target_y
 		pars[6] = anim_head->feetStartDir;	// target_dir
 
 		// close anim file
-		res_man.close(params[4]);
+		res_man->closeResource(params[4]);
 
 		// if start coords not yet set in anim header, use the standby
 		// coords (which should be set beforehand in the script)
@@ -286,7 +286,7 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 			pars[5] = standby_y;
 			pars[6] = standby_dir;
 
-			debug(5, "WARNING: fnWalkToAnim(%s) used standby coords", FetchObjectName(params[4]));
+			debug(5, "WARNING: fnWalkToAnim(%s) used standby coords", g_sword2->fetchObjectName(params[4]));
 		}
 
 		if (pars[6] < 0 || pars[6] > 7)
@@ -430,8 +430,8 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	// open the anim file & set up a pointer to the animation header
 
 	// open anim file
-	anim_file = res_man.open(params[2]);
-	anim_head = FetchAnimHeader(anim_file);
+	anim_file = res_man->openResource(params[2]);
+	anim_head = g_sword2->fetchAnimHeader(anim_file);
 
 	// set up the parameter list for fnWalkTo()
 
@@ -450,14 +450,14 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 		pars[3] = standby_y;
 		pars[4] = standby_dir;
 
-		debug(5, "WARNING: fnStandAfterAnim(%s) used standby coords", FetchObjectName(params[2]));
+		debug(5, "WARNING: fnStandAfterAnim(%s) used standby coords", g_sword2->fetchObjectName(params[2]));
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
 		error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
 
 	// close the anim file
-	res_man.close(params[2]);
+	res_man->closeResource(params[2]);
 
 	// call fnStandAt() with target coords set to anim end position
 	return fnStandAt(pars);
@@ -477,8 +477,8 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	// open the anim file & set up a pointer to the animation header
 
 	// open anim file
-	anim_file = res_man.open(params[2]);
-	anim_head = FetchAnimHeader(anim_file);
+	anim_file = res_man->openResource(params[2]);
+	anim_head = g_sword2->fetchAnimHeader(anim_file);
 
 	// set up the parameter list for fnWalkTo()
 
@@ -497,14 +497,14 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 		pars[3] = standby_y;
 		pars[4] = standby_dir;
 
-		debug(5, "WARNING: fnStandAtAnim(%s) used standby coords", FetchObjectName(params[2]));
+		debug(5, "WARNING: fnStandAtAnim(%s) used standby coords", g_sword2->fetchObjectName(params[2]));
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
 		error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
 
 	// close the anim file
-	res_man.close(params[2]);
+	res_man->closeResource(params[2]);
 
 	// call fnStandAt() with target coords set to anim end position
 	return fnStandAt(pars);
@@ -603,7 +603,7 @@ int32 Logic::fnFaceMega(int32 *params) {
 
 	if (ob_logic->looping == 0) {
 		// get targets info
-		head = (_standardHeader*) res_man.open(params[4]);
+		head = (_standardHeader*) res_man->openResource(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
 			error("fnFaceMega %d not an object", params[4]);
@@ -613,7 +613,7 @@ int32 Logic::fnFaceMega(int32 *params) {
 		//call the base script - this is the graphic/mouse service call
 		runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-		res_man.close(params[4]);
+		res_man->closeResource(params[4]);
 
 		// engineMega is now the Object_mega of mega we want to turn
 		// to face
@@ -665,7 +665,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	// not been here before so decide where to walk-to
 	if (!ob_logic->looping)	{
 		// first request the targets info
-		head = (_standardHeader*) res_man.open(params[4]);
+		head = (_standardHeader*) res_man->openResource(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
 			error("fnWalkToTalkToMega %d not an object", params[4]);
@@ -676,7 +676,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 		// call
 		runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-		res_man.close(params[4]);
+		res_man->closeResource(params[4]);
 
 		// engineMega is now the Object_mega of mega we want to
 		// route to
@@ -744,8 +744,8 @@ int32 Logic::fnAddWalkGrid(int32 *params) {
 	router.addWalkGrid(params[0]);
 
 	// Touch the grid, getting it into memory.
-	res_man.open(params[0]);
-	res_man.close(params[0]);
+	res_man->openResource(params[0]);
+	res_man->closeResource(params[0]);
 
 	return IR_CONT;
 }

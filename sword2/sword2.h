@@ -28,10 +28,13 @@
 #include "sword2/build_display.h"
 #include "sword2/console.h"
 #include "sword2/events.h"
+#include "sword2/header.h"
 #include "sword2/icons.h"
 #include "sword2/layers.h"
 #include "sword2/mouse.h"
 #include "sword2/object.h"
+#include "sword2/save_rest.h"
+#include "sword2/sound.h"
 #include "sword2/driver/d_sound.h"
 #include "sword2/driver/d_draw.h"
 
@@ -128,6 +131,14 @@ private:
 
 	void startNewPalette(void);
 	void processLayer(uint32 layer_number);
+
+	void getPlayerStructures(void);
+	void putPlayerStructures(void);
+
+	uint32 saveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
+	uint32 restoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
+
+	uint32 calcChecksum(uint8 *buffer, uint32 size);
 
 public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
@@ -275,6 +286,91 @@ public:
 	void noHuman(void);
 
 	void registerMouse(Object_mouse *ob_mouse);
+
+	uint8 *fetchPalette(uint8 *screenFile);
+	_screenHeader *fetchScreenHeader(uint8 *screenFile);
+	_layerHeader *fetchLayerHeader(uint8 *screenFile, uint16 layerNo);
+	uint8 *fetchShadingMask(uint8 *screenFile);
+
+	_animHeader *fetchAnimHeader(uint8 *animFile);
+	_cdtEntry *fetchCdtEntry(uint8 *animFile, uint16 frameNo);
+	_frameHeader *fetchFrameHeader(uint8 *animFile, uint16 frameNo);
+	_parallax *fetchBackgroundParallaxLayer(uint8 *screenFile, int layer);
+	_parallax *fetchBackgroundLayer(uint8 *screenFile);
+	_parallax *fetchForegroundParallaxLayer(uint8 *screenFile, int layer);
+	uint8 *fetchTextLine(uint8 *file, uint32 text_line);
+	uint8 checkTextLine(uint8 *file, uint32	text_line);
+	uint8 *fetchPaletteMatchTable(uint8 *screenFile);
+	uint8 *fetchObjectName(int32 resourceId);
+
+	// savegame file header
+
+	struct _savegameHeader {
+		// sum of all bytes in file, excluding this uint32
+		uint32 checksum;
+
+		// player's description of savegame
+		char description[SAVE_DESCRIPTION_LEN];
+
+		uint32 varLength;	// length of global variables resource
+		uint32 screenId;	// resource id of screen file
+		uint32 runListId;	// resource id of run list
+		uint32 feet_x;		// copy of _thisScreen.feet_x
+		uint32 feet_y;		// copy of _thisScreen.feet_y
+		uint32 music_id;	// copy of 'looping_music_id'
+		_object_hub player_hub;	// copy of player object's object_hub structure
+		Object_logic logic;	// copy of player character logic structure
+
+		// copy of player character graphic structure
+		Object_graphic	graphic;
+
+		// copy of player character mega structure
+		Object_mega mega;
+	};
+
+	_savegameHeader g_header;
+
+	uint32 saveGame(uint16 slotNo, uint8 *description);
+	uint32 restoreGame(uint16 slotNo);
+	uint32 getSaveDescription(uint16 slotNo, uint8 *description);
+	bool saveExists(uint16 slotNo);
+	void fillSaveBuffer(mem *buffer, uint32 size, uint8 *desc);
+	uint32 restoreFromBuffer(mem *buffer, uint32 size);
+	uint32 findBufferSize(void);
+
+	uint8 _scrollFraction;
+
+	void setScrolling(void);
+
+	struct _fxq_entry {
+		uint32 resource;	// resource id of sample
+		uint32 fetchId;		// Id of resource in PSX CD queue. :)
+		uint16 delay;		// cycles to wait before playing (or 'random chance' if FX_RANDOM)
+		uint8 volume;		// 0..16
+		int8 pan;		// -16..16
+		uint8 type;		// FX_SPOT, FX_RANDOM or FX_LOOP
+	};
+
+	_fxq_entry _fxQueue[FXQ_LENGTH];
+
+	// used to store id of tunes that loop, for save & restore
+	uint32 _loopingMusicId;
+
+	// to be called during system initialisation
+	void initFxQueue(void);
+
+	// to be called from the main loop, once per cycle
+	void processFxQueue(void);
+
+	// stops all fx & clears the queue - eg. when leaving a location
+	void clearFxQueue(void);
+
+	void pauseAllSound(void);
+	void unpauseAllSound(void);
+
+	void killMusic(void);
+
+	void triggerFx(uint8 j);
 
 	void errorString(const char *buf_input, char *buf_output);
 	void initialiseFontResourceFlags(void);

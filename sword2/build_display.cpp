@@ -72,44 +72,44 @@ void Sword2Engine::buildDisplay(void) {
 			// first background parallax + related anims
 
 			// open the screen resource
-			file = res_man.open(_thisScreen.background_layer_id);
+			file = res_man->openResource(_thisScreen.background_layer_id);
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->bg_parallax[0]) {
-				g_display->renderParallax(FetchBackgroundParallaxLayer(file, 0), 0);
+				g_display->renderParallax(fetchBackgroundParallaxLayer(file, 0), 0);
 				// release the screen resource before cacheing
 				// the sprites
-	 			res_man.close(_thisScreen.background_layer_id);
+	 			res_man->closeResource(_thisScreen.background_layer_id);
 				sendBackPar0Frames();
 			} else {
 				// release the screen resource
- 	 			res_man.close(_thisScreen.background_layer_id);
+ 	 			res_man->closeResource(_thisScreen.background_layer_id);
 			}
 
 			// second background parallax + related anims
 
 			// open the screen resource
-			file = res_man.open(_thisScreen.background_layer_id);
+			file = res_man->openResource(_thisScreen.background_layer_id);
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->bg_parallax[1]) {
-				g_display->renderParallax(FetchBackgroundParallaxLayer(file, 1), 1);
+				g_display->renderParallax(fetchBackgroundParallaxLayer(file, 1), 1);
 				// release the screen resource before cacheing
 				// the sprites
-	 			res_man.close(_thisScreen.background_layer_id);
+	 			res_man->closeResource(_thisScreen.background_layer_id);
 				sendBackPar1Frames();
 			} else {
 				// release the screen resource
- 	 			res_man.close(_thisScreen.background_layer_id);
+ 	 			res_man->closeResource(_thisScreen.background_layer_id);
 			}
 
 			// normal backround layer (just the one!)
 
 			// open the screen resource
-			file = res_man.open(_thisScreen.background_layer_id);
-			g_display->renderParallax(FetchBackgroundLayer(file), 2);
+			file = res_man->openResource(_thisScreen.background_layer_id);
+			g_display->renderParallax(fetchBackgroundLayer(file), 2);
 			// release the screen resource
-			res_man.close(_thisScreen.background_layer_id);
+			res_man->closeResource(_thisScreen.background_layer_id);
 
 			// sprites & layers
 
@@ -121,35 +121,35 @@ void Sword2Engine::buildDisplay(void) {
 			// first foreground parallax + related anims
 
 			// open the screen resource
-			file = res_man.open(_thisScreen.background_layer_id);
+			file = res_man->openResource(_thisScreen.background_layer_id);
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->fg_parallax[0]) {
-				g_display->renderParallax(FetchForegroundParallaxLayer(file, 0), 3);
+				g_display->renderParallax(fetchForegroundParallaxLayer(file, 0), 3);
 				// release the screen resource before cacheing
 				// the sprites
-	 			res_man.close(_thisScreen.background_layer_id);
+	 			res_man->closeResource(_thisScreen.background_layer_id);
 				sendForePar0Frames();
 			} else {
 				// release the screen resource
- 	 			res_man.close(_thisScreen.background_layer_id);
+ 	 			res_man->closeResource(_thisScreen.background_layer_id);
 			}
 
 			// second foreground parallax + related anims
 
 			// open the screen resource
-			file = res_man.open(_thisScreen.background_layer_id);
+			file = res_man->openResource(_thisScreen.background_layer_id);
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->fg_parallax[1]) {
-				g_display->renderParallax(FetchForegroundParallaxLayer(file, 1), 4);
+				g_display->renderParallax(fetchForegroundParallaxLayer(file, 1), 4);
 				// release the screen resource before cacheing
 				// the sprites
-	 			res_man.close(_thisScreen.background_layer_id);
+	 			res_man->closeResource(_thisScreen.background_layer_id);
 				sendForePar1Frames();
 			} else {
 				// release the screen resource
- 	 			res_man.close(_thisScreen.background_layer_id);
+ 	 			res_man->closeResource(_thisScreen.background_layer_id);
 			}
 
 			// walkgrid, mouse & player markers & mouse area
@@ -251,7 +251,7 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 
 	g_display->fadeUp();
 
-	memory.freeMemory(text_spr);
+	memory->freeMemory(text_spr);
 
 	g_display->waitForFade();
 
@@ -356,10 +356,10 @@ void Sword2Engine::processLayer(uint32 layer_number) {
 	uint32 current_layer_area = 0;
 
 	// file points to 1st byte in the layer file
-	file = res_man.open(_thisScreen.background_layer_id);
+	file = res_man->openResource(_thisScreen.background_layer_id);
 
 	// point to layer header
-	layer_head = FetchLayerHeader(file,layer_number);
+	layer_head = fetchLayerHeader(file,layer_number);
 
 	spriteInfo.x = layer_head->x;
 	spriteInfo.y = layer_head->y;
@@ -381,7 +381,7 @@ void Sword2Engine::processLayer(uint32 layer_number) {
 		_largestLayerArea = current_layer_area;
 		sprintf(_largestLayerInfo,
 			"largest layer:  %s layer(%d) is %dx%d",
-			FetchObjectName(_thisScreen.background_layer_id),
+			fetchObjectName(_thisScreen.background_layer_id),
 			layer_number, layer_head->width, layer_head->height);
 	}
 
@@ -389,7 +389,7 @@ void Sword2Engine::processLayer(uint32 layer_number) {
 	if (rv)
 		error("Driver Error %.8x in Process_layer(%d)", rv, layer_number);
 
-	res_man.close(_thisScreen.background_layer_id);
+	res_man->closeResource(_thisScreen.background_layer_id);
 }
 
 void Sword2Engine::processImage(buildit *build_unit) {
@@ -404,11 +404,11 @@ void Sword2Engine::processImage(buildit *build_unit) {
 	uint32 current_sprite_area = 0;
 
 	// open anim resource file & point to base
-	file = res_man.open(build_unit->anim_resource);
+	file = res_man->openResource(build_unit->anim_resource);
 
-	anim_head = FetchAnimHeader(file);
-	cdt_entry = FetchCdtEntry(file, build_unit->anim_pc);
-	frame_head = FetchFrameHeader(file, build_unit->anim_pc);
+	anim_head = fetchAnimHeader(file);
+	cdt_entry = fetchCdtEntry(file, build_unit->anim_pc);
+	frame_head = fetchFrameHeader(file, build_unit->anim_pc);
 
 	// so that 0-colour is transparent
 	spriteType = RDSPR_TRANS;
@@ -477,7 +477,7 @@ void Sword2Engine::processImage(buildit *build_unit) {
 		_largestSpriteArea = current_sprite_area;
 		sprintf(_largestSpriteInfo,
 			"largest sprite: %s frame(%d) is %dx%d",
-			FetchObjectName(build_unit->anim_resource),
+			fetchObjectName(build_unit->anim_resource),
 			build_unit->anim_pc,
 			frame_head->width,
 			frame_head->height);
@@ -507,18 +507,18 @@ void Sword2Engine::processImage(buildit *build_unit) {
 
 // #ifdef _SWORD2_DEBUG
 //	if (frame_head->width <= 1) {
-//		debug(5, "WARNING: 1-pixel-wide frame found in %s (%d)", FetchObjectName(build_unit->anim_resource), build_unit->anim_resource);
+//		debug(5, "WARNING: 1-pixel-wide frame found in %s (%d)", fetchObjectName(build_unit->anim_resource), build_unit->anim_resource);
 //	}
 // #endif
 
 	rv = g_display->drawSprite(&spriteInfo);
 	if (rv)
 		error("Driver Error %.8x with sprite %s (%d) in processImage",
-			rv, FetchObjectName(build_unit->anim_resource),
+			rv, fetchObjectName(build_unit->anim_resource),
 			build_unit->anim_resource);
 
 	// release the anim resource
-	res_man.close(build_unit->anim_resource);
+	res_man->closeResource(build_unit->anim_resource);
 }
 
 void Sword2Engine::resetRenderLists(void) {
@@ -580,11 +580,11 @@ void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 
 	assert(ob_graph->anim_resource);
 
-	file = res_man.open(ob_graph->anim_resource);
+	file = res_man->openResource(ob_graph->anim_resource);
 
-	anim_head = FetchAnimHeader(file);
-	cdt_entry = FetchCdtEntry(file, ob_graph->anim_pc);
-	frame_head = FetchFrameHeader(file, ob_graph->anim_pc);
+	anim_head = fetchAnimHeader(file);
+	cdt_entry = fetchCdtEntry(file, ob_graph->anim_pc);
+	frame_head = fetchFrameHeader(file, ob_graph->anim_pc);
 
 	// update player graphic details for on-screen debug info
 	if (ID == CUR_PLAYER_ID) {
@@ -690,7 +690,7 @@ void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 	}
 
 	// close animation file
-	res_man.close(ob_graph->anim_resource);
+	res_man->closeResource(ob_graph->anim_resource);
 }
 
 int32 Logic::fnRegisterFrame(int32 *params) {
@@ -764,17 +764,17 @@ void Sword2Engine::startNewPalette(void) {
 	g_display->waitForFade();
 
 	// open the screen file
-	screenFile = res_man.open(_thisScreen.background_layer_id);
+	screenFile = res_man->openResource(_thisScreen.background_layer_id);
 
-	g_display->updatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(screenFile));
+	g_display->updatePaletteMatchTable((uint8 *) fetchPaletteMatchTable(screenFile));
 
-	g_display->setPalette(0, 256, FetchPalette(screenFile), RDPAL_FADE);
+	g_display->setPalette(0, 256, fetchPalette(screenFile), RDPAL_FADE);
 
 	// indicating that it's a screen palette
 	_lastPaletteRes = 0;
 
 	// close screen file
-  	res_man.close(_thisScreen.background_layer_id);
+  	res_man->closeResource(_thisScreen.background_layer_id);
 
 	// start fade up
 	g_display->fadeUp();
@@ -872,7 +872,7 @@ void Sword2Engine::setFullPalette(int32 palRes) {
 	// non-zero: set palette to this separate palette file
 	if (palRes) {
 		// open the palette file
-		head = (_standardHeader *) res_man.open(palRes);
+		head = (_standardHeader *) res_man->openResource(palRes);
 
 		assert(head->fileType == PALETTE_FILE);
 
@@ -898,21 +898,21 @@ void Sword2Engine::setFullPalette(int32 palRes) {
 		}
 
 		// close palette file
-	  	res_man.close(palRes);
+	  	res_man->closeResource(palRes);
 	} else {
 		// 0: set palette to current screen palette
 		if (_thisScreen.background_layer_id) {
 			// open the screen file
-			file = res_man.open(_thisScreen.background_layer_id);
-			g_display->updatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(file));
+			file = res_man->openResource(_thisScreen.background_layer_id);
+			g_display->updatePaletteMatchTable((uint8 *) fetchPaletteMatchTable(file));
 
-			g_display->setPalette(0, 256, FetchPalette(file), RDPAL_INSTANT);
+			g_display->setPalette(0, 256, fetchPalette(file), RDPAL_INSTANT);
 
 			// indicating that it's a screen palette
 			_lastPaletteRes = 0;
 
 			// close screen file
-	  		res_man.close(_thisScreen.background_layer_id);
+	  		res_man->closeResource(_thisScreen.background_layer_id);
 		} else
 			error("setFullPalette(0) called, but no current screen available!");
 	}

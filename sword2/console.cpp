@@ -182,7 +182,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Mem(int argc, const char **argv) {
-	memory.displayMemory();
+	memory->displayMemory();
 	return true;
 }
 
@@ -192,7 +192,7 @@ bool Debugger::Cmd_Tony(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Res(int argc, const char **argv) {
-	res_man.printConsoleClusters();
+	res_man->printConsoleClusters();
 	return true;
 }
 
@@ -262,7 +262,7 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s number\n", argv[0]);
 	else
-		res_man.examine(atoi(argv[1]));
+		res_man->examine(atoi(argv[1]));
 	return true;
 }
 
@@ -280,13 +280,13 @@ bool Debugger::Cmd_Kill(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s number\n", argv[0]);
 	else
-		res_man.kill(atoi(argv[1]));
+		res_man->kill(atoi(argv[1]));
 	return true;
 }
 
 bool Debugger::Cmd_Nuke(int argc, const char **argv) {
 	DebugPrintf("Killing all resources except variable file and player object\n");
-	res_man.killAll(true);
+	res_man->killAll(true);
 	return true;
 }
 
@@ -319,7 +319,7 @@ bool Debugger::Cmd_Rect(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Clear(int argc, const char **argv) {
-	res_man.killAllObjects(true);
+	res_man->killAllObjects(true);
 	return true;
 }
 
@@ -361,7 +361,7 @@ bool Debugger::Cmd_ListSaveGames(int argc, const char **argv) {
 		uint8 description[SAVE_DESCRIPTION_LEN];
 
 		// if there is a save game print the name
-		if (GetSaveDescription(i, description) == SR_OK)
+		if (g_sword2->getSaveDescription(i, description) == SR_OK)
 			DebugPrintf("%d: \"%s\"\n", i, description);
 	}
 
@@ -405,7 +405,7 @@ bool Debugger::Cmd_SaveGame(int argc, const char **argv) {
 	}
 
 	slotNo = atoi(argv[1]);
-	rv = SaveGame(slotNo, (uint8 *) description);
+	rv = g_sword2->saveGame(slotNo, (uint8 *) description);
 
 	if (rv == SR_OK)
 		DebugPrintf("Saved game \"%s\" to file \"savegame.%.3d\"\n", description, slotNo);
@@ -434,10 +434,10 @@ bool Debugger::Cmd_RestoreGame(int argc, const char **argv) {
 	}
 
 	slotNo = atoi(argv[1]);
-	rv = RestoreGame(slotNo);
+	rv = g_sword2->restoreGame(slotNo);
 
 	if (rv == SR_OK) {
-		GetSaveDescription(slotNo, description);
+		g_sword2->getSaveDescription(slotNo, description);
 		DebugPrintf("Restored game \"%s\" from file \"savegame.%.3d\"\n", description, slotNo);
 	} else if (rv == SR_ERR_FILEOPEN)
 		DebugPrintf("ERROR: Cannot open file \"savegame.%.3d\"\n", slotNo);
@@ -686,8 +686,8 @@ bool Debugger::Cmd_Events(int argc, const char **argv) {
 			uint32 target = g_sword2->_eventList[i].id;
 			uint32 script = g_sword2->_eventList[i].interact_id;
 
-			DebugPrintf("slot %d: id = %s (%d)\n", i, FetchObjectName(target), target);
-			DebugPrintf("         script = %s (%d) pos %d\n", FetchObjectName(script / 65536), script / 65536, script % 65536);
+			DebugPrintf("slot %d: id = %s (%d)\n", i, g_sword2->fetchObjectName(target), target);
+			DebugPrintf("         script = %s (%d) pos %d\n", g_sword2->fetchObjectName(script / 65536), script / 65536, script % 65536);
 		}
 	}
 

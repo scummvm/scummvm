@@ -217,9 +217,9 @@ int32 Logic::fnChoose(int32 *params) {
 		for (j = 0; j < 15; j++) {
 			if (j < IN_SUBJECT) {
 				debug(5, " ICON res %d for %d", subject_list[j].res, j);
-				icon = res_man.open(subject_list[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+				icon = res_man->openResource(subject_list[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
 				g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-				res_man.close(subject_list[j].res);
+				res_man->closeResource(subject_list[j].res);
 			} else {
 				//no icon here
 				debug(5, " NULL for %d", j);
@@ -261,18 +261,18 @@ int32 Logic::fnChoose(int32 *params) {
 
 					// change icons
 					for (j = 0; j < IN_SUBJECT; j++) {
-						debug(5, "%s", FetchObjectName(subject_list[j].res));
+						debug(5, "%s", g_sword2->fetchObjectName(subject_list[j].res));
 
 						// change all others to grey
 						if (j != hit) {
-							icon = res_man.open( subject_list[j].res ) + sizeof(_standardHeader);
+							icon = res_man->openResource( subject_list[j].res ) + sizeof(_standardHeader);
 							g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-							res_man.close(subject_list[j].res);
+							res_man->closeResource(subject_list[j].res);
 						}
 					}
 
 
-					debug(5, "Selected: %s", FetchObjectName(subject_list[hit].res));
+					debug(5, "Selected: %s", g_sword2->fetchObjectName(subject_list[hit].res));
 
 					// this is our looping flag
 					choosing = 0;
@@ -360,7 +360,7 @@ int32 Logic::fnTheyDo(int32 *params) {
 	int32 target = params[0];
 
 	// request status of target
-	head = (_standardHeader*) res_man.open(target);
+	head = (_standardHeader*) res_man->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTheyDo %d not an object", target);
 
@@ -369,7 +369,7 @@ int32 Logic::fnTheyDo(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man.close(target);
+	res_man->closeResource(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -422,7 +422,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	// ok, see if the target is busy - we must request this info from the
 	// target object
 
-	head = (_standardHeader*) res_man.open(target);
+	head = (_standardHeader*) res_man->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTheyDoWeWait %d not an object", target);
 
@@ -431,7 +431,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man.close(target);
+	res_man->closeResource(target);
 
 	ob_logic = (Object_logic *) params[0];
 
@@ -502,7 +502,7 @@ int32 Logic::fnWeWait(int32 *params) {
 	int32 target = params[0];
 
 	// request status of target
-	head = (_standardHeader*) res_man.open(target);
+	head = (_standardHeader*) res_man->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnWeWait: %d not an object", target);
 
@@ -511,7 +511,7 @@ int32 Logic::fnWeWait(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man.close(target);
+	res_man->closeResource(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -550,7 +550,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 		ob_logic->looping = params[2];	//first time in
 
 	// request status of target
-	head = (_standardHeader*) res_man.open(target);
+	head = (_standardHeader*) res_man->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTimedWait %d not an object", target);
 
@@ -559,7 +559,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man.close(target);
+	res_man->closeResource(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -993,14 +993,14 @@ int32 Logic::fnISpeak(int32 *params) {
 			// if the resource number is within range & it's not
 			// a null resource
 
-			if (res_man.checkValid(text_res)) {
+			if (res_man->checkValid(text_res)) {
 				// open the resource
-				head = (_standardHeader*) res_man.open(text_res);
+				head = (_standardHeader*) res_man->openResource(text_res);
 
 				if (head->fileType == TEXT_FILE) {
 					// if it's not an animation file
 					// if line number is out of range
-					if (CheckTextLine((uint8*) head, local_text) == 0) {
+					if (g_sword2->checkTextLine((uint8*) head, local_text) == 0) {
 						// line number out of range
 						RESULT = 2;
 					}
@@ -1010,7 +1010,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				}
 
 				// close the resource
-				res_man.close(text_res);
+				res_man->closeResource(text_res);
 
 				if (RESULT)
 					return IR_CONT;
@@ -1030,11 +1030,11 @@ int32 Logic::fnISpeak(int32 *params) {
 		local_text = params[S_TEXT] & 0xffff;
 
 		// open text file & get the line
-		text = FetchTextLine(res_man.open(text_res), local_text);
+		text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
 		officialTextNumber = READ_LE_UINT16(text);
 
 		// now ok to close the text file
-		res_man.close(text_res);
+		res_man->closeResource(text_res);
 
 		// prevent dud lines from appearing while testing text & speech
 		// since these will not occur in the game anyway
@@ -1065,7 +1065,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		if (PLAYER_ID != CUR_PLAYER_ID)
 			debug(5, "(%d) Nico: %s", officialTextNumber, text + 2);
 		else
-			debug(5, "(%d) %s: %s", officialTextNumber, FetchObjectName(ID), text + 2);
+			debug(5, "(%d) %s: %s", officialTextNumber, g_sword2->fetchObjectName(ID), text + 2);
 
 		// Set up the speech animation
 
@@ -1169,7 +1169,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 			File fp;
 
-			sprintf(speechFile, "speech%d.clu", res_man.whichCd());
+			sprintf(speechFile, "speech%d.clu", res_man->whichCd());
 
 			if (fp.open(speechFile))
 				fp.close();
@@ -1212,8 +1212,8 @@ int32 Logic::fnISpeak(int32 *params) {
 		ob_graphic->anim_pc++;
 
 		// open the anim file
-		anim_file = res_man.open(ob_graphic->anim_resource);
-		anim_head = FetchAnimHeader(anim_file);
+		anim_file = res_man->openResource(ob_graphic->anim_resource);
+		anim_head = g_sword2->fetchAnimHeader(anim_file);
 
 		if (!speech_anim_type) {
 			// ANIM IS TO BE LIP-SYNC'ED & REPEATING
@@ -1242,7 +1242,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		}
 
 		// close the anim file
-		res_man.close(ob_graphic->anim_resource);
+		res_man->closeResource(ob_graphic->anim_resource);
 	} else if (speech_anim_type) {
 		// Placed here so we actually display the last frame of the
 		// anim.
@@ -1404,15 +1404,15 @@ void LocateTalker(int32	*params) {
 		// build_display.cpp
 
 		// open animation file & set up the necessary pointers
-		file = res_man.open(anim_id);
+		file = res_man->openResource(anim_id);
 
-		anim_head = FetchAnimHeader(file);
-
-		// '0' means 1st frame
-		cdt_entry = FetchCdtEntry(file, 0);
+		anim_head = g_sword2->fetchAnimHeader(file);
 
 		// '0' means 1st frame
-		frame_head = FetchFrameHeader(file, 0);
+		cdt_entry = g_sword2->fetchCdtEntry(file, 0);
+
+		// '0' means 1st frame
+		frame_head = g_sword2->fetchFrameHeader(file, 0);
 
 		// check if this frame has offsets ie. this is a scalable
 		// mega frame
@@ -1456,7 +1456,7 @@ void LocateTalker(int32	*params) {
 		text_y -= g_sword2->_thisScreen.scroll_offset_y;
 
 		// release the anim resource
-		res_man.close(anim_id);
+		res_man->closeResource(anim_id);
 	}
 }
 
@@ -1510,7 +1510,7 @@ void Form_text(int32 *params) {
 		local_text = params[S_TEXT] & 0xffff;
 
 		// open text file & get the line
-		text = FetchTextLine(res_man.open(text_res), local_text);
+		text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
 
 		// 'text + 2' to skip the first 2 bytes which form the line
 		// reference number
@@ -1522,7 +1522,7 @@ void Form_text(int32 *params) {
 			g_sword2->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
 
 		// now ok to close the text file
-		res_man.close(text_res);
+		res_man->closeResource(text_res);
 
 		// set speech duration, in case not using wav
 		// no. of cycles = (no. of chars) + 30
@@ -1552,7 +1552,7 @@ void GetCorrectCdForSpeech(int32 wavId) {
 	// if we specifically need CD1 or CD2 (ie. it's not on both)
 	// then check it's there (& ask for it if it's not there)
 	if (cd == 1 || cd == 2)
-		res_man.getCd(cd);
+		res_man->getCd(cd);
 }
 #endif
 

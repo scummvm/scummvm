@@ -163,28 +163,28 @@ void Sword2Engine::systemMenuMouse(void) {
 				for (j = 0; j < ARRAYSIZE(icon_list); j++) {
 					// change all others to grey
 					if (j != hit) {
-						icon = res_man.open(icon_list[j]) + sizeof(_standardHeader);
+						icon = res_man->openResource(icon_list[j]) + sizeof(_standardHeader);
 						g_display->setMenuIcon(RDMENU_TOP, j, icon);
-						res_man.close( icon_list[j] );
+						res_man->closeResource(icon_list[j]);
 					}
 				}
 
 				g_sound->pauseFx();
 
 				// NB. Need to keep a safe copy of
-				// 'looping_music_id' for savegame & for
+				// '_loopingMusicId' for savegame & for
 				// playing when returning from control panels
 				// because control panel music will overwrite
 				// it!
 
-				safe_looping_music_id = looping_music_id;
+				safe_looping_music_id = _loopingMusicId;
 
 				pars[0] = 221;	// SystemM234 (M234.wav)
 				pars[1] = FX_LOOP;
 				g_logic.fnPlayMusic(pars);
 
 				// restore proper looping_music_id
-				looping_music_id = safe_looping_music_id;
+				_loopingMusicId = safe_looping_music_id;
 
 				// clear the screen & set up the new palette
 				// for the menus
@@ -251,8 +251,8 @@ void Sword2Engine::systemMenuMouse(void) {
 				// NB. This will also start music required
 				// when a game has been restored
 
-				if (looping_music_id) {
-					pars[0] = looping_music_id;
+				if (_loopingMusicId) {
+					pars[0] = _loopingMusicId;
 					pars[1] = FX_LOOP;
 					g_logic.fnPlayMusic(pars);
 
@@ -323,7 +323,7 @@ void Sword2Engine::dragMouse(void) {
 
 			setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
-			debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
+			debug(5, "USED \"%s\" ICON ON %s", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
 
 			// Hide menu - back to normal menu mode
 
@@ -368,7 +368,7 @@ void Sword2Engine::dragMouse(void) {
 
 						noHuman();
 
-						debug(5, "USED \"%s\" ICON ON \"%s\" ICON", FetchObjectName(OBJECT_HELD), FetchObjectName(COMBINE_BASE));
+						debug(5, "USED \"%s\" ICON ON \"%s\" ICON", fetchObjectName(OBJECT_HELD), fetchObjectName(COMBINE_BASE));
 					}
 
 					// refresh the menu
@@ -420,7 +420,7 @@ void Sword2Engine::menuMouse(void) {
 
 					EXIT_CLICK_ID = 0;
 
-					debug(5, "RIGHT-CLICKED ON \"%s\" ICON", FetchObjectName(OBJECT_HELD));
+					debug(5, "RIGHT-CLICKED ON \"%s\" ICON", fetchObjectName(OBJECT_HELD));
 
 					setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
@@ -629,11 +629,11 @@ void Sword2Engine::normalMouse(void) {
 				setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 				if (OBJECT_HELD)
-					debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
+					debug(5, "USED \"%s\" ICON ON %s", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
 				else if (LEFT_BUTTON)
-					debug(5, "LEFT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
+					debug(5, "LEFT-CLICKED ON %s", fetchObjectName(CLICKED_ID));
 				else	// RIGHT BUTTON
-					debug(5, "RIGHT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
+					debug(5, "RIGHT-CLICKED ON %s", fetchObjectName(CLICKED_ID));
 			}
 		}
 	}
@@ -694,7 +694,7 @@ void Sword2Engine::mouseOnOff(void) {
 				setLuggage(_currentLuggageResource);
 			}
 		} else
-			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, FetchObjectName(_mouseTouching));
+			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, fetchObjectName(_mouseTouching));
 	} else if (_oldMouseTouching && !_mouseTouching) {
 		// the cursor has moved off something - reset cursor to
 		// normal pointer
@@ -741,8 +741,8 @@ void Sword2Engine::setMouse(uint32 res) {
 	_mousePointerRes = res;
 
 	if (res) {
-		icon = res_man.open(res) + sizeof(_standardHeader);
-		len = res_man._resList[res]->size - sizeof(_standardHeader);
+		icon = res_man->openResource(res) + sizeof(_standardHeader);
+		len = res_man->_resList[res]->size - sizeof(_standardHeader);
 
 		// don't pulse the normal pointer - just do the regular anim
 		// loop
@@ -752,7 +752,7 @@ void Sword2Engine::setMouse(uint32 res) {
 		else
  			g_display->setMouseAnim(icon, len, RDMOUSE_FLASH);
 
-		res_man.close(res);
+		res_man->closeResource(res);
 	} else {
 		// blank cursor
 		g_display->setMouseAnim(NULL, 0, 0);
@@ -766,12 +766,12 @@ void Sword2Engine::setLuggage(uint32 res) {
 	_realLuggageItem = res;
 
 	if (res) {
-		icon = res_man.open(res) + sizeof(_standardHeader);
-		len = res_man._resList[res]->size - sizeof(_standardHeader);
+		icon = res_man->openResource(res) + sizeof(_standardHeader);
+		len = res_man->_resList[res]->size - sizeof(_standardHeader);
 
 		g_display->setLuggageAnim(icon, len);
 
-		res_man.close(res);
+		res_man->closeResource(res);
 	} else
 		g_display->setLuggageAnim(NULL, 0);
 }
@@ -960,7 +960,7 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 			local_text = text_id & 0xffff;
 
 			// open text file & get the line
-			text = FetchTextLine(res_man.open(text_res), local_text);
+			text = fetchTextLine(res_man->openResource(text_res), local_text);
 
 			// 'text+2' to skip the first 2 bytes which form the
 			// line reference number
@@ -973,7 +973,7 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 				_speechFontId, justification);
 
 			// now ok to close the text file
-			res_man.close(text_res);
+			res_man->closeResource(text_res);
 		}
 	}
 }
@@ -1135,12 +1135,12 @@ int32 Logic::fnAddHuman(int32 *params) {
 		// stops all fx & clears the queue - eg. when leaving a
 		// location
 
-		Clear_fx_queue();
+		g_sword2->clearFxQueue();
 
 		// Trash all object resources so they load in fresh & restart
 		// their logic scripts
 
-		res_man.killAllObjects(false);
+		res_man->killAllObjects(false);
 
 		g_display->setPalette(0, 1, black, RDPAL_INSTANT);
 	}

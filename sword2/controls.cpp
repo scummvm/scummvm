@@ -64,14 +64,14 @@ private:
 
 public:
 	FontRendererGui(int fontId) : _fontId(fontId) {
-		uint8 *font = res_man.open(fontId);
+		uint8 *font = res_man->openResource(fontId);
 		_frameHeader *head;
 		_spriteInfo sprite;
 
 		sprite.type = RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 
 		for (int i = 0; i < SIZE_OF_CHAR_SET; i++) {
-			head = (_frameHeader *) FetchFrameHeader(font, i);
+			head = (_frameHeader *) g_sword2->fetchFrameHeader(font, i);
 			sprite.data = (uint8 *) (head + 1);
 			sprite.w = head->width;
 			sprite.h = head->height;
@@ -80,7 +80,7 @@ public:
 			_glyph[i]._height = head->height;
 		}
 
-		res_man.close(fontId);
+		res_man->closeResource(fontId);
 	}
 
 	~FontRendererGui() {
@@ -89,7 +89,7 @@ public:
 	}
 
 	void fetchText(int textId, char *buf) {
-		uint8 *data = FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff);
+		uint8 *data = g_sword2->fetchTextLine(res_man->openResource(textId / SIZE), textId & 0xffff);
 		int i;
 
 		for (i = 0; data[i + 2]; i++) {
@@ -98,7 +98,7 @@ public:
 		}
 			
 		buf[i] = 0;
-		res_man.close(textId / SIZE);
+		res_man->closeResource(textId / SIZE);
 	}
 
 	int getTextWidth(char *text) {
@@ -251,11 +251,11 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	uint32 spriteType = RDSPR_TRANS;
 
 	// open anim resource file, point to base
-	file = res_man.open(res);
+	file = res_man->openResource(res);
 
-	anim_head = FetchAnimHeader(file);
-	cdt_entry = FetchCdtEntry(file, pc);
-	frame_head = FetchFrameHeader(file, pc);
+	anim_head = g_sword2->fetchAnimHeader(file);
+	cdt_entry = g_sword2->fetchCdtEntry(file, pc);
+	frame_head = g_sword2->fetchFrameHeader(file, pc);
 
 	// If the frame is flipped. (Only really applicable to frames using
 	// offsets.)
@@ -296,7 +296,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	_surfaces[state]._original = true;
 
 	// Release the anim resource
-	res_man.close(res);
+	res_man->closeResource(res);
 };
 
 void Widget::linkSurfaceImage(Widget *from, int state, int x, int y) {
@@ -1086,7 +1086,7 @@ public:
 				fr = _fr1;
 			}
 
-			if (GetSaveDescription(gui->_baseSlot + i, description) == SR_OK) {
+			if (g_sword2->getSaveDescription(gui->_baseSlot + i, description) == SR_OK) {
 				slot->setText(fr, gui->_baseSlot + i, (char *) description);
 				slot->setClickable(true);
 			} else {
@@ -1247,7 +1247,7 @@ public:
 
 			_editBuffer[_editPos] = 0;
 
-			uint32 rv = SaveGame(_selectedSlot, (uint8 *) &_editBuffer[_firstPos]);
+			uint32 rv = g_sword2->saveGame(_selectedSlot, (uint8 *) &_editBuffer[_firstPos]);
 
 			if (rv != SR_OK) {
 				uint32 textId;
@@ -1261,11 +1261,11 @@ public:
 					break;
 				}
 
-				saveLoadError((char*) (FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError((char*) (g_sword2->fetchTextLine(res_man->openResource(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			}
 		} else {
-			uint32 rv = RestoreGame(_selectedSlot);
+			uint32 rv = g_sword2->restoreGame(_selectedSlot);
 
 			if (rv != SR_OK) {
 				uint32 textId;
@@ -1282,7 +1282,7 @@ public:
 					break;
 				}
 
-				saveLoadError((char *) (FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError((char *) (g_sword2->fetchTextLine(res_man->openResource(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			} else {
 				// Prime system with a game cycle
@@ -1428,7 +1428,7 @@ void Gui::restartControl(void) {
 	}
 
 	// Stop music instantly!
-	Kill_music();
+	g_sword2->killMusic();
 
 	//in case we were dead - well we're not anymore!
 	DEAD = 0;
@@ -1442,12 +1442,12 @@ void Gui::restartControl(void) {
 
 	// remove all resources from memory, including player object and
 	// global variables
-	res_man.removeAll();
+	res_man->removeAll();
 
 	// reopen global variables resource & send address to interpreter -
 	// it won't be moving
-	g_logic.setGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
-	res_man.close(1);
+	g_logic.setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
+	res_man->closeResource(1);
 
 	DEMO = temp_demo_flag;
 

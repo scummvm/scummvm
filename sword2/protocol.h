@@ -22,27 +22,7 @@
 #ifndef	_PROTOCOL
 #define	_PROTOCOL
 
-#include "sword2/driver/driver96.h"
-#include "sword2/header.h"
-
 namespace Sword2 {
-
-uint8 *FetchPalette(uint8 *screenFile);
-_screenHeader *FetchScreenHeader(uint8 *screenFile);
-_layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo);
-uint8 *FetchShadingMask(uint8 *screenFile);
-
-_animHeader *FetchAnimHeader(uint8 *animFile);
-_cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo);
-_frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo);
-_parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer);
-_parallax *FetchBackgroundLayer(uint8 *screenFile);
-_parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer);
-uint8 *FetchTextLine(uint8 *file, uint32 text_line);
-uint8 CheckTextLine(uint8 *file, uint32	text_line);
-uint8 *FetchPaletteMatchTable(uint8 *screenFile);
-uint8 *FetchObjectName(int32 resourceId);
-
 } // End of namespace Sword2
 
 #endif

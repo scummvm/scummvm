@@ -125,17 +125,17 @@ uint32 Init_start_menu(void) {
 		// - need to check in case un-built sections included in
 		// start list
 
-		if (res_man.checkValid(res)) {
+		if (res_man->checkValid(res)) {
 			debug(5, "- resource %d ok", res);
-			raw_script = (char*) res_man.open(res);
+			raw_script = (char*) res_man->openResource(res);
 			null_pc = 0;
 			g_logic.runScript(raw_script, raw_script, &null_pc);
-			res_man.close(res);
+			res_man->closeResource(res);
 		} else
 			debug(5, "- resource %d invalid", res);
 	}
 
-	memory.freeMemory(temp);
+	memory->freeMemory(temp);
 
 	return 1;
 }
@@ -197,7 +197,7 @@ void Con_start(int start) {
 
 		// restarting - stop sfx, music & speech!
 
-		Clear_fx_queue();
+		g_sword2->clearFxQueue();
 
 		// fade out any music that is currently playing
 		g_logic.fnStopMusic(NULL);
@@ -212,12 +212,12 @@ void Con_start(int start) {
 		// remove all resources from memory, including player
 		// object & global variables
 
-		res_man.removeAll();
+		res_man->removeAll();
 
 		// reopen global variables resource & send address to
 		// interpreter - it won't be moving
-		g_logic.setGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
-		res_man.close(1);
+		g_logic.setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
+		res_man->closeResource(1);
 
 		// free all the route memory blocks from previous game
 		router.freeAllRouteMem();
@@ -231,8 +231,8 @@ void Con_start(int start) {
 		// set the key
 
 		// Open George
-		raw_data_ad = (char *) res_man.open(8);
-		raw_script = (char *) res_man.open(start_list[start].start_res_id);
+		raw_data_ad = (char *) res_man->openResource(8);
+		raw_script = (char *) res_man->openResource(start_list[start].start_res_id);
 
 		// denotes script to run
 		null_pc = start_list[start].key & 0xffff;
@@ -240,10 +240,10 @@ void Con_start(int start) {
 		Debug_Printf("Running start %d\n", start);
 		g_logic.runScript(raw_script, raw_data_ad, &null_pc);
 
-		res_man.close(start_list[start].start_res_id);
+		res_man->closeResource(start_list[start].start_res_id);
 
 		// Close George
-		res_man.close(8);
+		res_man->closeResource(8);
 
 		// make sure thre's a mouse, in case restarting while
 		// mouse not available

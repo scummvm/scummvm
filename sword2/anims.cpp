@@ -117,11 +117,11 @@ int32 Logic::animate(int32 *params, bool reverse) {
 			// if the resource number is within range & it's not
 			// a null resource
 
-			if (res_man.Res_check_valid(res)) {
+			if (res_man->Res_check_valid(res)) {
 				// Open the resource. Can close it immediately.
 				// We've got a pointer to the header.
-				head = (_standardHeader *) res_man.open(res);
-				res_man.close(res);
+				head = (_standardHeader *) res_man->openResource(res);
+				res_man->closeResource(res);
 
 				// if it's not an animation file
 				if (head->fileType != ANIMATION_FILE) {
@@ -151,7 +151,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 #endif
 
 		// open anim file
-		anim_file = res_man.open(res);
+		anim_file = res_man->openResource(res);
 
 #ifdef _SWORD2_DEBUG
 		// check this this resource is actually an animation file!
@@ -161,7 +161,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 #endif
 
 		// point to anim header
-		anim_head = FetchAnimHeader(anim_file);
+		anim_head = g_sword2->fetchAnimHeader(anim_file);
 
 /* #ifdef _SWORD2_DEBUG
 		// check there's at least one frame
@@ -190,8 +190,8 @@ int32 Logic::animate(int32 *params, bool reverse) {
 		// frame of the anim.
 
 		// open anim file and point to anim header
-		anim_file = res_man.open(ob_graphic->anim_resource);
-		anim_head = FetchAnimHeader(anim_file);
+		anim_file = res_man->openResource(ob_graphic->anim_resource);
+		anim_head = g_sword2->fetchAnimHeader(anim_file);
 
 		if (reverse)
 			ob_graphic->anim_pc--;
@@ -210,7 +210,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 	}
 
 	// close the anim file
-	res_man.close(ob_graphic->anim_resource);
+	res_man->closeResource(ob_graphic->anim_resource);
 
 	// check if we want the script to loop back & call this function again
 	return ob_logic->looping ? IR_REPEAT : IR_STOP;
@@ -274,7 +274,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 
 	// open the resource (& check it's valid)
 
-	anim_file = res_man.open(res);
+	anim_file = res_man->openResource(res);
 
 #ifdef _SWORD2_DEBUG
 	// check this this resource is actually an animation file!
@@ -284,7 +284,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 #endif
 
 	// set up pointer to the animation header
-	anim_head = FetchAnimHeader(anim_file);
+	anim_head = g_sword2->fetchAnimHeader(anim_file);
 
 /* #ifdef _SWORD2_DEBUG
 	// check there's at least one frame
@@ -304,7 +304,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 
 	// Close the anim file and drop out of script
 
-	res_man.close(ob_graphic->anim_resource);
+	res_man->closeResource(ob_graphic->anim_resource);
 	return IR_CONT;
 }
 
@@ -497,11 +497,11 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 		local_text = _sequenceTextList[line].textNumber & 0xffff;
 
 		// open text resource & get the line
-		text = FetchTextLine(res_man.open(text_res), local_text);
+		text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
 		wavId = (int32) READ_LE_UINT16(text);
 
 		// now ok to close the text file
-		res_man.close(text_res);
+		res_man->closeResource(text_res);
 
 		// 1st word of text line is the official line number
 		debug(5,"(%d) SEQUENCE TEXT: %s", READ_LE_UINT16(text), text + 2);
@@ -523,7 +523,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 			File fp;
 
-			sprintf(speechFile, "speech%d.clu", res_man.whichCd());
+			sprintf(speechFile, "speech%d.clu", res_man->whichCd());
 			if (fp.open(speechFile))
 				fp.close();
 			else
@@ -540,7 +540,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 		if (gui->_subtitles || !speechRunning) {
 			// open text resource & get the line
-			text = FetchTextLine(res_man.open(text_res), local_text);
+			text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
 			// make the sprite
 			// 'text+2' to skip the first 2 bytes which form the
 			// line reference number
@@ -554,7 +554,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 			_sequenceTextList[line].text_mem = fontRenderer.makeTextSprite(text + 2, 600, 255, g_sword2->_speechFontId, 1);
 
 			// ok to close the text resource now
-			res_man.close(text_res);
+			res_man->closeResource(text_res);
 		} else {
 			_sequenceTextList[line].text_mem = NULL;
 			sequenceText[line]->textSprite = NULL;
@@ -572,7 +572,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 		// if we've made a text sprite for this line...
 
 		if (_sequenceTextList[line].text_mem) {
-			memory.lockMemory(_sequenceTextList[line].text_mem);
+			memory->lockMemory(_sequenceTextList[line].text_mem);
 
 			// now fill out the _spriteInfo structure in the
 			// _movieTextObjectStructure
@@ -611,7 +611,7 @@ void Logic::clearSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 		// free up the mem block containing this text sprite
 		if (_sequenceTextList[line].text_mem)
-			memory.freeMemory(_sequenceTextList[line].text_mem);
+			memory->freeMemory(_sequenceTextList[line].text_mem);
 
 		// free up the mem block containing this speech sample
 		if (_sequenceTextList[line].speech_mem)
@@ -631,7 +631,7 @@ int32 Logic::fnSmackerLeadIn(int32 *params) {
 
 	// params:	0 id of lead-in music
 
-	leadIn = res_man.open(params[0]);
+	leadIn = res_man->openResource(params[0]);
 
 #ifdef _SWORD2_DEBUG
 	header = (_standardHeader *) leadIn;
@@ -646,7 +646,7 @@ int32 Logic::fnSmackerLeadIn(int32 *params) {
 	if (rv)
 		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
 
-	res_man.close(params[0]);
+	res_man->closeResource(params[0]);
 
 	// fade out any music that is currently playing
 	fnStopMusic(NULL);
@@ -706,7 +706,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// open the lead-out music resource, if there is one
 
 	if (_smackerLeadOut) {
-		leadOut = res_man.open(_smackerLeadOut);
+		leadOut = res_man->openResource(_smackerLeadOut);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader *) leadOut;
@@ -738,7 +738,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// close the lead-out music resource
 
 	if (_smackerLeadOut) {
-		res_man.close(_smackerLeadOut);
+		res_man->closeResource(_smackerLeadOut);
 		_smackerLeadOut = 0;
 	}
 

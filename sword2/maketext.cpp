@@ -54,7 +54,7 @@
 #include "sword2/header.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
-#include "sword2/protocol.h"	// for FetchFrameHeader()
+#include "sword2/protocol.h"	// for fetchFrameHeader()
 #include "sword2/resman.h"
 #include "sword2/sword2.h"
 
@@ -94,7 +94,7 @@ mem* FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, u
 
 	// allocate memory for array of lineInfo structures
 
-	line = memory.allocMemory(MAX_LINES * sizeof(LineInfo), MEM_locked, UID_temp);
+	line = memory->allocMemory(MAX_LINES * sizeof(LineInfo), MEM_locked, UID_temp);
 
 	// get details of sentence breakdown into array of LineInfo structures
 	// and get the no of lines involved
@@ -107,7 +107,7 @@ mem* FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, u
 	textSprite = buildTextSprite(sentence, fontRes, pen, (LineInfo *) line->ad, noOfLines);
 
 	// free up the lineInfo array now
-	memory.freeMemory(line);
+	memory->freeMemory(line);
 
 	return textSprite;
 }
@@ -220,7 +220,7 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 
 	// allocate memory for sprite, and lock it ready for use
 	// NB. 'textSprite' is the given pointer to the handle to be used
-	textSprite = memory.allocMemory(sizeof(_frameHeader) + sizeOfSprite, MEM_locked, UID_text_sprite);
+	textSprite = memory->allocMemory(sizeof(_frameHeader) + sizeOfSprite, MEM_locked, UID_text_sprite);
 
 	// the handle (*textSprite) now points to UNMOVABLE memory block
 	// set up the frame header
@@ -244,7 +244,7 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 	memset(linePtr, NO_COL, sizeOfSprite);
 
 	// open font file
-	charSet = res_man.open(fontRes);
+	charSet = res_man->openResource(fontRes);
 
 	// fill sprite with characters, one line at a time
 
@@ -278,10 +278,10 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 	}
 
 	// close font file
-	res_man.close(fontRes);
+	res_man->closeResource(fontRes);
 
 	// unlock the sprite memory block, so it's movable
-	memory.floatMemory(textSprite);
+	memory->floatMemory(textSprite);
 
 	return textSprite;
 }
@@ -295,14 +295,14 @@ uint16 FontRenderer::charWidth(uint8 ch, uint32 fontRes) {
 	uint16 width;
 
 	// open font file
-	charSet = res_man.open(fontRes);
+	charSet = res_man->openResource(fontRes);
 
 	// move to approp. sprite (header)
 	charFrame = findChar(ch, charSet);
 	width = charFrame->width;
 
 	// close font file
- 	res_man.close(fontRes);
+ 	res_man->closeResource(fontRes);
 
 	// return its width
 	return width;
@@ -317,14 +317,14 @@ uint16 FontRenderer::charHeight(uint32 fontRes) {
 	uint16 height;
 
 	// open font file
-	charSet = res_man.open(fontRes);
+	charSet = res_man->openResource(fontRes);
 
 	// assume all chars the same height, i.e. FIRST_CHAR is as good as any
 	charFrame = findChar(FIRST_CHAR, charSet);
 	height = charFrame->height;
 
 	// close font file
-	res_man.close(fontRes);
+	res_man->closeResource(fontRes);
 
 	// return its height
 	return height;
@@ -338,7 +338,7 @@ _frameHeader* FontRenderer::findChar(uint8 ch, uint8 *charSet) {
 	if (ch < FIRST_CHAR)
 		ch = DUD;
 
-	return FetchFrameHeader(charSet, ch - FIRST_CHAR);
+	return g_sword2->fetchFrameHeader(charSet, ch - FIRST_CHAR);
 }
 
 // Copies a character sprite from 'charPtr' to the sprite buffer at 'spritePtr'
@@ -538,7 +538,7 @@ void FontRenderer::killTextBloc(uint32 bloc_number) {
 
 	if (_blocList[bloc_number].text_mem) {
 		// release the floating memory and mark it as free
-		memory.freeMemory(_blocList[bloc_number].text_mem);
+		memory->freeMemory(_blocList[bloc_number].text_mem);
 		_blocList[bloc_number].text_mem = 0;
 	} else {
 		// illegal kill - stop the system
@@ -564,14 +564,14 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 	uint8 language;
 
 	// open the text resource
-	textFile = res_man.open(TEXT_RES);
+	textFile = res_man->openResource(TEXT_RES);
 
 	// If language is Polish or Finnish it requires alternate fonts.
 	// Otherwise, use regular fonts
 
 	// get the text line (& skip the 2 chars containing the wavId)
 
-	textLine = FetchTextLine(textFile, SAVE_LINE_NO) + 2;
+	textLine = fetchTextLine(textFile, SAVE_LINE_NO) + 2;
 
 	// "talenna"	Finnish for "save"
 	// "zapisz"	Polish for "save"
@@ -590,10 +590,10 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 
 	// Get the text line - skip the 2 chars containing the wavId
 
-	if (g_sword2->_features & GF_DEMO)
-		textLine = FetchTextLine(textFile, 451) + 2;
+	if (_features & GF_DEMO)
+		textLine = fetchTextLine(textFile, 451) + 2;
 	else
-		textLine = FetchTextLine(textFile, 54) + 2;
+		textLine = fetchTextLine(textFile, 54) + 2;
 
 	// According to the GetNameFunction(), which was never called and has
 	// therefore been removed, the name of the game is:
@@ -606,7 +606,7 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 	g_display->setWindowName((char *) textLine);
 
 	// now ok to close the text file
-	res_man.close(TEXT_RES);
+	res_man->closeResource(TEXT_RES);
 }
 
 // called from the above function, and also from console.cpp

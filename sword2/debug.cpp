@@ -178,7 +178,7 @@ void Debugger::buildDebugText(void) {
 		if (CLICKED_ID)
 			sprintf(buf, "last click at %d,%d (id %d: %s)",
 				MOUSE_X, MOUSE_Y, CLICKED_ID,
-				FetchObjectName(CLICKED_ID));
+				g_sword2->fetchObjectName(CLICKED_ID));
 		else
 			sprintf(buf, "last click at %d,%d (---)",
 				MOUSE_X, MOUSE_Y);
@@ -190,7 +190,7 @@ void Debugger::buildDebugText(void) {
 				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x,
 				g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y,
 				g_sword2->_mouseTouching,
-				FetchObjectName(g_sword2->_mouseTouching));
+				g_sword2->fetchObjectName(g_sword2->_mouseTouching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
 				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x,
@@ -205,7 +205,7 @@ void Debugger::buildDebugText(void) {
 			sprintf(buf, "player %d,%d %s (%d) #%d/%d",
 				g_sword2->_thisScreen.player_feet_x,
 				g_sword2->_thisScreen.player_feet_y,
-				FetchObjectName(_playerGraphic.anim_resource),
+				g_sword2->fetchObjectName(_playerGraphic.anim_resource),
 				_playerGraphic.anim_resource,
 				_playerGraphic.anim_pc,
 				_playerGraphicNoFrames);
@@ -271,7 +271,7 @@ void Debugger::buildDebugText(void) {
 
 		if (speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				FetchObjectName(speechScriptWaiting),
+				g_sword2->fetchObjectName(speechScriptWaiting),
 				speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}
@@ -281,7 +281,7 @@ void Debugger::buildDebugText(void) {
 		showVarPos = 115;	// y-coord for first showVar
 
 		// res 1 is the global variables resource
-		varTable = (int32 *) (res_man.open(1) + sizeof(_standardHeader));
+		varTable = (int32 *) (res_man->openResource(1) + sizeof(_standardHeader));
 
 		for (showVarNo = 0; showVarNo < MAX_SHOWVARS; showVarNo++) {
 			varNo = _showVar[showVarNo];	// get variable number
@@ -296,12 +296,12 @@ void Debugger::buildDebugText(void) {
 			}
 		}
 
-		res_man.close(1);	// close global variables resource
+		res_man->closeResource(1);	// close global variables resource
 
 		// memory indicator - this should come last, to show all the
 		// sprite blocks above!
 
-		memory.memoryString(buf);
+		memory->memoryString(buf);
 		makeDebugTextBlock(buf, 0, 0);
 	}
 }

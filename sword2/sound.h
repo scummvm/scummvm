@@ -30,31 +30,19 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+// max number of fx in queue at once [DO NOT EXCEED 255]
+#define FXQ_LENGTH 32
+
 namespace Sword2 {
 
 // fx types
 
-#define FX_SPOT		0
-#define FX_LOOP		1
-#define FX_RANDOM	2
-#define FX_SPOT2	3
-
-// to be called during system initialisation
-void Init_fx_queue(void);
-
-// to be called from the main loop, once per cycle
-void Process_fx_queue(void);
-
-// stops all fx & clears the queue - eg. when leaving a location
-void Clear_fx_queue(void);
-
-void PauseAllSound(void);
-void UnpauseAllSound(void);
-
-void Kill_music(void);
-
-// used to store id of tunes that loop, for save & restore
-extern uint32 looping_music_id;
+enum {
+	FX_SPOT		= 0,
+	FX_LOOP		= 1,
+	FX_RANDOM	= 2,
+	FX_SPOT2	= 3
+};
 
 } // End of namespace Sword2
 

@@ -117,7 +117,7 @@ void Router::allocateRouteMem(void) {
 	if (_routeSlots[slotNo])
 		freeRouteMem();
 
-	_routeSlots[slotNo] = memory.allocMemory(sizeof(_walkData) * O_WALKANIM_SIZE, MEM_locked, UID_walk_anim);
+	_routeSlots[slotNo] = memory->allocMemory(sizeof(_walkData) * O_WALKANIM_SIZE, MEM_locked, UID_walk_anim);
 
 	// 12000 bytes were used for this in Sword1 mega compacts, based on
 	// 20 bytes per '_walkData' frame
@@ -135,14 +135,14 @@ void Router::allocateRouteMem(void) {
 _walkData* Router::lockRouteMem(void) {
 	uint8 slotNo = returnSlotNo(ID); 
 	
-	memory.lockMemory(_routeSlots[slotNo]);
+	memory->lockMemory(_routeSlots[slotNo]);
 	return (_walkData *) _routeSlots[slotNo]->ad;
 }
 
 void Router::floatRouteMem(void) {
 	uint8 slotNo = returnSlotNo(ID); 
 
-	memory.floatMemory(_routeSlots[slotNo]);
+	memory->floatMemory(_routeSlots[slotNo]);
 }
 
 void Router::freeRouteMem(void) {
@@ -150,7 +150,7 @@ void Router::freeRouteMem(void) {
 
 	// free the mem block pointed to from this entry of _routeSlots[]
 
-	memory.freeMemory(_routeSlots[slotNo]);
+	memory->freeMemory(_routeSlots[slotNo]);
 	_routeSlots[slotNo] = NULL;
 }
 
@@ -159,7 +159,7 @@ void Router::freeAllRouteMem(void) {
 		if (_routeSlots[i]) {
 			// free the mem block pointed to from this entry of
 			// _routeSlots[]
-			memory.freeMemory(_routeSlots[i]);
+			memory->freeMemory(_routeSlots[i]);
 			_routeSlots[i] = NULL;
 		}
 	}
@@ -2561,7 +2561,7 @@ void Router::loadWalkGrid(void) {
 	for (int i = 0; i < MAX_WALKGRIDS; i++) {
 		if (_walkGridList[i]) {
 			// open walk grid file
-			fPolygrid = res_man.open(_walkGridList[i]);
+			fPolygrid = res_man->openResource(_walkGridList[i]);
  			fPolygrid += sizeof(_standardHeader);
  			memmove((uint8 *) &floorHeader, fPolygrid, sizeof(_walkGridHeader));
  			fPolygrid += sizeof(_walkGridHeader);
@@ -2603,7 +2603,7 @@ void Router::loadWalkGrid(void) {
 			}
 
 			// close walk grid file
-			res_man.close(_walkGridList[i]);
+			res_man->closeResource(_walkGridList[i]);
 
 			// increment counts of total bars & nodes in whole
 			// walkgrid
