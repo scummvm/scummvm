@@ -93,15 +93,7 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 			int volume = (int) pos[5] + _presets.volume[preset];
 			pos += 6;
 			if (_presets.enable[preset]) {
-				// If the second half of the command pair is 8x,
-				// use four nibbles for the note duration. Otherwise
-				// assume it is 00 and only use two nibbles. This is
-				// a GUESS solution; however, it's clear from looking
-				// at Indy3-Towns dumps that 00 note off events use
-				// the third and fourth nibbles to report a "countdown"
-				// to the end of the song, for whatever weird reason.
-				uint16 duration = pos[1] | (pos[2] << 4) |
-					(((*pos & 0xF0) == 0x80) ? ((pos[3] << 8) | (pos[4] << 12)) : 0);
+				uint16 duration = pos[1] | (pos[2] << 4);
 				info.start = pos;
 				uint32 last = _position._last_event_tick;
 				info.delta = (tick < last) ? 0 : (tick - last);
