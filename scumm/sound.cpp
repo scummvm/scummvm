@@ -587,6 +587,39 @@ int Sound::isSoundRunning(int sound) {
 	return se->get_sound_status(sound);
 }
 
+// This is exactly the same as isSoundRunning except that it
+// calls IMuse::get_sound_active() instead of IMuse::get_sound_status().
+// This is necessary when determining what resources to
+// expire from memory.
+bool Sound::isSoundActive(int sound) {
+	IMuse *se;
+	int i;
+
+	if (sound == _scumm->current_cd_sound)
+		return pollCD() != 0;
+
+	i = _soundQue2Pos;
+	while (i--) {
+		if (_soundQue2[i] == sound)
+			return true;
+	}
+
+	if (isSoundInQueue(sound))
+		return true;
+
+	if (!_scumm->isResourceLoaded(rtSound, sound))
+		return false;
+
+	if (_scumm->_imuseDigital) {
+		return _scumm->_imuseDigital->getSoundStatus(sound) != 0;
+	}
+
+	se = _scumm->_imuse;
+	if (!se)
+		return false;
+	return se->get_sound_active(sound);
+}
+
 bool Sound::isSoundInQueue(int sound) {
 	int i = 0, j, num;
 	int16 table[16];

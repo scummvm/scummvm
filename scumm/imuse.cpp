@@ -103,6 +103,7 @@ public:
 	int stop_sound(int sound) { in(); int ret = _target->stop_sound (sound); out(); return ret; }
 	int stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
 	int get_sound_status(int sound) { in(); int ret = _target->get_sound_status (sound); out(); return ret; }
+	bool get_sound_active(int sound) { in(); bool ret = _target->get_sound_active (sound); out(); return ret; }
 	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->do_command (a,b,c,d,e,f,g,h); out(); return ret; }
 	int clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
 	void setBase(byte **base) { in(); _target->setBase (base); out(); }
@@ -487,6 +488,7 @@ public:
 	int stop_sound(int sound);
 	int stop_all_sounds();
 	int get_sound_status(int sound);
+	bool get_sound_active(int sound);
 	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h);
 	int clear_queue();
 	void setBase(byte **base);
@@ -715,14 +717,14 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index)
 	int32 size, pos;
 
 	if (_base_sounds) {
-		// FIXME: This is a hack to make certain parts of Sam & Max work.
-		// It's a NASTY HACK because it has to specifically skip sound 1.
-		// For some reason (maybe a script parse bug?), sound 1 is being
-		// played at the very beginning (opening logo). Until this "fix",
-		// the sound was never found and thus never played. It SHOULDN'T
-		// be played.
-		if (!_base_sounds[sound] && (sound > 1 || g_scumm->_gameId != GID_SAMNMAX))
-			g_scumm->ensureResourceLoaded (rtSound, sound);
+		// The following hack was commented out because calling
+		// ensureResourceLoaded() is not safe from within this
+		// function. TODO: Make sure all Sam & Max music still works
+		// without this hack. It's very likely that changes to the
+		// resource expiration process solved whatever S&M problem
+		// this hack was originally intended to address.
+//		if (!_base_sounds[sound] && (sound > 1 || g_scumm->_gameId != GID_SAMNMAX))
+//			g_scumm->ensureResourceLoaded (rtSound, sound);
 		ptr = _base_sounds[sound];
 	}
 
@@ -1160,6 +1162,21 @@ int IMuseInternal::get_sound_status(int sound)
 		}
 	}
 	return get_queue_sound_status(sound);
+}
+
+// This is exactly the same as get_sound_status except that
+// it treats sounds that are fading out just the same as
+// other sounds. This is the method to use when determining
+// what resources to expire from memory.
+bool IMuseInternal::get_sound_active(int sound)
+{
+	int i;
+	Player *player;
+	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+		if (player->_active && player->_id == (uint16)sound)
+			return 1;
+	}
+	return (get_queue_sound_status(sound) != 0);
 }
 
 int IMuseInternal::get_queue_sound_status(int sound)
@@ -2266,11 +2283,11 @@ void Player::parse_sysex(byte *p, uint len)
 								return;
 							}
 						}
-						warning ("Could not find appropriate MT-32 program for GM program %d", (int) a);
+						warning ("Could not map MT-32 \"%s\" to GM %d", buf, (int) a);
 						return;
 					}
 				}
-				warning ("Could not find appropriate GM program for MT-32 custom instrument \"%s\"", buf);
+				warning ("MT-32 instrument \"%s\" not supported yet", buf);
 			}
 		} else {
 			warning ("Unknown SysEx manufacturer 0x%02X", (int) a);
@@ -2334,7 +2351,10 @@ void Player::parse_sysex(byte *p, uint len)
 			break;
 		maybe_jump (p[0], p[1] - 1, (read_word (p + 2) - 1) * 4 + p[4], ((p[5] * _ticks_per_beat) >> 2) + p[6]);
 		break;
-		
+
+	case 2: // Start of song. Ignore for now.
+		break;
+
 	case 16:											/* set instrument in part */
 		a = *p++ & 0x0F;
 		if (_se->_hardware_type != *p++ && false)
