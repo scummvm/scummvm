@@ -1460,14 +1460,14 @@ void Scumm_v6::o6_roomOps() {
 	case 172:										/* room scroll */
 		b = pop();
 		a = pop();
-		if (a < (_realWidth / 2))
-			a = (_realWidth / 2);
-		if (b < (_realWidth / 2))
-			b = (_realWidth / 2);
-		if (a > _scrWidth - (_realWidth / 2))
-			a = _scrWidth - (_realWidth / 2);
-		if (b > _scrWidth - (_realWidth / 2))
-			b = _scrWidth - (_realWidth / 2);
+		if (a < (_screenWidth / 2))
+			a = (_screenWidth / 2);
+		if (b < (_screenWidth / 2))
+			b = (_screenWidth / 2);
+		if (a > _roomWidth - (_screenWidth / 2))
+			a = _roomWidth - (_screenWidth / 2);
+		if (b > _roomWidth - (_screenWidth / 2))
+			b = _roomWidth - (_screenWidth / 2);
 		VAR(VAR_CAMERA_MIN_X) = a;
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
@@ -1475,7 +1475,7 @@ void Scumm_v6::o6_roomOps() {
 	case 174:										/* set screen */
 		b = pop();
 		a = pop();
-		initScreens(0, a, _realWidth, b);
+		initScreens(0, a, _screenWidth, b);
 		break;
 
 	case 175:										/* set palette color */
@@ -2952,7 +2952,7 @@ void Scumm_v6::o6_unknownE1() {
 	int y = pop();
 	int x = pop();
 
-	if (x > _realWidth - 1) {
+	if (x > _screenWidth - 1) {
 		push(-1);
 		return;
 	}
@@ -2973,7 +2973,7 @@ void Scumm_v6::o6_unknownE1() {
 		return;
 	}
 
-	int offset = (y - vs->topline) * _realWidth + x + _screenLeft;
+	int offset = (y - vs->topline) * _screenWidth + x + _screenLeft;
 
 	byte area = *(getResourceAddress(rtBuffer, vs->number + 1) + offset);
 	push(area);

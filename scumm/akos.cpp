@@ -371,7 +371,7 @@ void AkosRenderer::codec1_genericDecode() {
 
 				if (v1.scaletable[v1.tmp_x] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= _vm->_realWidth)
+					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 						return;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
@@ -437,7 +437,7 @@ void AkosRenderer::codec1_spec1() {
 
 				if (v1.scaletable[v1.tmp_x] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= _vm->_realWidth)
+					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 						return;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
@@ -510,7 +510,7 @@ void AkosRenderer::codec1_spec3() {
 
 				if (v1.scaletable[v1.tmp_x] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= _vm->_realWidth)
+					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 						return;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
@@ -1275,7 +1275,7 @@ void AkosRenderer::codec16() {
 	int32 width_unk, height_unk;
 
 	height_unk = clip_top;
-	int32 pitch = _vm->_realWidth;
+	int32 pitch = _vm->_screenWidth;
 
 	int32 /*tmp1, tmp2, tmp3,*/ dir;
 
@@ -1319,7 +1319,7 @@ void AkosRenderer::codec16() {
 	int32 numskip_before = skip_x + (skip_y * _width);
 	int32 numskip_after = _width - cur_x;
 
-	byte *dest = outptr + width_unk + height_unk * _vm->_realWidth;
+	byte *dest = outptr + width_unk + height_unk * _vm->_screenWidth;
 
 	if (_zbuf == 0) {
 		akos16Decompress(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255);

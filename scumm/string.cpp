@@ -100,7 +100,7 @@ void Scumm::CHARSET_1() {
 
 	if (a && _string[0].overhead != 0) {
 		if (!(_features & GF_AFTER_V6)) {
-			_string[0].xpos = a->x - camera._cur.x + (_realWidth / 2);
+			_string[0].xpos = a->x - camera._cur.x + (_screenWidth / 2);
 
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
 				s = (a->scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
@@ -113,23 +113,23 @@ void Scumm::CHARSET_1() {
 
 			if (_string[0].xpos < 80)
 				_string[0].xpos = 80;
-			if (_string[0].xpos > _realWidth - 80)
-				_string[0].xpos = _realWidth - 80;
+			if (_string[0].xpos > _screenWidth - 80)
+				_string[0].xpos = _screenWidth - 80;
 		} else {
 			s = a->scaley * a->talkPosX / 0xFF;
 			_string[0].ypos = ((a->talkPosX - s) >> 1) + s - a->elevation + a->y;
 			if (_string[0].ypos < 1)
 				_string[0].ypos = 1;
 
-			if (_string[0].ypos < camera._cur.y - (_realHeight / 2))
-				_string[0].ypos = camera._cur.y - (_realHeight / 2);
+			if (_string[0].ypos < camera._cur.y - (_screenHeight / 2))
+				_string[0].ypos = camera._cur.y - (_screenHeight / 2);
 
 			s = a->scalex * a->talkPosY / 0xFF;
-			_string[0].xpos = ((a->talkPosY - s) >> 1) + s + a->x - camera._cur.x + (_realWidth / 2);
+			_string[0].xpos = ((a->talkPosY - s) >> 1) + s + a->x - camera._cur.x + (_screenWidth / 2);
 			if (_string[0].xpos < 80)
 				_string[0].xpos = 80;
-			if (_string[0].xpos > _realWidth - 80)
-				_string[0].xpos = _realWidth - 80;
+			if (_string[0].xpos > _screenWidth - 80)
+				_string[0].xpos = _screenWidth - 80;
 		}
 	}
 
@@ -192,7 +192,7 @@ void Scumm::CHARSET_1() {
 			gdi._mask_left = _string[0].xpos;
 			gdi._mask_top = _string[0].ypos;
 			gdi._mask_bottom = _string[0].ypos + 8;
-			gdi._mask_right = _realWidth;
+			gdi._mask_right = _screenWidth;
 			if (_string[0].ypos <= 16)	// If we are cleaning the text line, clean 2 lines.
 				gdi._mask_bottom = 16;
 		}
@@ -351,10 +351,10 @@ void Scumm::drawDescString(byte *msg) {
 	addMessageToStack(msg);
 
 	_charsetBufPos = 0;
-	_string[0].ypos += camera._cur.y - (_realHeight / 2);
+	_string[0].ypos += camera._cur.y - (_screenHeight / 2);
 	_charset->_top = _string[0].ypos;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
-	_charset->_right = _realWidth - 1;
+	_charset->_right = _screenWidth - 1;
 	_charset->_center = _string[0].center;
 	_charset->setColor(_string[0].color);
 	_charset->_disableOffsX = _charset->_firstChar = true;
@@ -371,7 +371,7 @@ void Scumm::drawDescString(byte *msg) {
 	_talkDelay = 1;
 
 	if (_string[0].ypos + _charset->getFontHeight() > 0)
-		restoreBG(0, _string[0].ypos, _realWidth - 1, _string[0].ypos + _charset->getFontHeight());
+		restoreBG(0, _string[0].ypos, _screenWidth - 1, _string[0].ypos + _charset->getFontHeight());
 
 	_charset->_nextLeft = _string[0].xpos;
 	_charset->_nextTop = _string[0].ypos;

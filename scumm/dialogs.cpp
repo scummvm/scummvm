@@ -655,7 +655,7 @@ InfoDialog::InfoDialog(NewGui *gui, Scumm *scumm, const String& message)
 void InfoDialog::setInfoText(const String& message) {
 	int width = _gui->getStringWidth(message.c_str()) + 16;
 
-	_x = (_scumm->_realWidth - width) >> 1;
+	_x = (_scumm->_screenWidth - width) >> 1;
 	_w = width;
 
 	new StaticTextWidget(this, 4, 4, _w-8, _h, message, kTextAlignCenter);

@@ -432,8 +432,8 @@ static byte *getBasePtr(Scumm *_s, int x, int y)
 	if (vs == NULL)
 		return NULL;
 
-	return vs->screenPtr + x + (y - vs->topline) * _s->_realWidth +
-		_s->_screenStartStrip * 8 + (_s->camera._cur.y - (_s->_realHeight / 2)) * _s->_realWidth;
+	return vs->screenPtr + x + (y - vs->topline) * _s->_screenWidth +
+		_s->_screenStartStrip * 8 + (_s->camera._cur.y - (_s->_screenHeight / 2)) * _s->_screenWidth;
 }
 
 static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
@@ -556,7 +556,7 @@ void ScummDebugger::boxTest(int num)
 
 	VirtScreen *vs = _s->findVirtScreen(box.ul.y);
 	if (vs != NULL)
-		_s->setVirtscreenDirty(vs, 0, 0, _s->_realWidth, _s->_realHeight);
+		_s->setVirtscreenDirty(vs, 0, 0, _s->_screenWidth, _s->_screenHeight);
 	_s->drawDirtyScreenParts();
 	_s->_system->update_screen();
 }

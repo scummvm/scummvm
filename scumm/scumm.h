@@ -749,7 +749,7 @@ public:
 
 	/* Should be in Graphics class? */
 	uint16 _screenB, _screenH;
-	int _scrHeight, _scrWidth, _realHeight, _realWidth;
+	int _roomHeight, _roomWidth, _screenHeight, _screenWidth;
 	VirtScreen virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
 	ColorCycle _colorCycle[16];	// Palette cycles

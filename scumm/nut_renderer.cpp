@@ -198,9 +198,9 @@ void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 		y += offsetY[i];
 		color = cTable[i];
 	
-		dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x + _vm->virtscr[0].xstart;
+		dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
 		mask = _vm->getResourceAddress(rtBuffer, 9)
-						+ (y * _vm->_realWidth + x) / 8 + _vm->_screenStartStrip;
+						+ (y * _vm->_screenWidth + x) / 8 + _vm->_screenStartStrip;
 	
 		src = _tmpCodecBuffer;
 	
@@ -209,7 +209,7 @@ void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 			maskpos = 0;
 			for (int32 tx = 0; tx < width; tx++) {
 				byte pixel = *src++;
-				if (x + tx < 0 || x + tx >= _vm->_realWidth || y + ty < 0 || y + ty >= _vm->_realHeight)
+				if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
 					continue;
 #if 1
 				if (pixel != 0) {
@@ -234,7 +234,7 @@ void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 					maskpos++;
 				}
 			}
-			dst += _vm->_realWidth;
+			dst += _vm->_screenWidth;
 			mask += _vm->gdi._numStrips;
 		}
 	

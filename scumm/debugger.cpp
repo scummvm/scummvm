@@ -183,7 +183,7 @@ void ScummDebugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
 void ScummDebugger::enter() {
 #ifdef USE_CONSOLE
 	if (!_s->_debuggerDialog) {
-		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, _s->_realWidth);
+		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, _s->_screenWidth);
 
 		Debug_Printf("Debugger started, type 'exit' to return to the game\n");
 	}

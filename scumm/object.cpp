@@ -1336,7 +1336,7 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 	eo = &_blastObjectQueue[_blastObjectQueuePos++];
 	eo->number = objectNumber;
 	eo->posX = objectX + (camera._cur.x & 7);
-	eo->posY = objectY + (camera._cur.y - (_realHeight / 2));
+	eo->posY = objectY + (camera._cur.y - (_screenHeight / 2));
 	if (objectWidth == 0) {
 		od = &_objs[getObjectIndex(objectNumber)];
 		eo->width = od->width;

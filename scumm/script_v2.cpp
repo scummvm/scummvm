@@ -1030,14 +1030,14 @@ void Scumm_v2::o2_roomOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:											/* room scroll */
-		if (a < (_realWidth / 2))
-			a = (_realWidth / 2);
-		if (b < (_realWidth / 2))
-			b = (_realWidth / 2);
-		if (a > _scrWidth - (_realWidth / 2))
-			a = _scrWidth - (_realWidth / 2);
-		if (b > _scrWidth - (_realWidth / 2))
-			b = _scrWidth - (_realWidth / 2);
+		if (a < (_screenWidth / 2))
+			a = (_screenWidth / 2);
+		if (b < (_screenWidth / 2))
+			b = (_screenWidth / 2);
+		if (a > _roomWidth - (_screenWidth / 2))
+			a = _roomWidth - (_screenWidth / 2);
+		if (b > _roomWidth - (_screenWidth / 2))
+			b = _roomWidth - (_screenWidth / 2);
 		VAR(VAR_CAMERA_MIN_X) = a;
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;

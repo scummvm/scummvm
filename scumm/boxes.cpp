@@ -192,8 +192,8 @@ int Scumm::getScale(int box, int x, int y) {
 			byte *resptr = getResourceAddress(rtScaleTable, scale);
 			if (resptr == NULL)
 				error("Scale table %d not defined", scale);
-			if (y >= _realHeight)
-				y = _realHeight - 1;
+			if (y >= _screenHeight)
+				y = _screenHeight - 1;
 			else if (y < 0)
 				y = 0;
 			scale = resptr[y];

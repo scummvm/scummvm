@@ -163,7 +163,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	gdi._mask_left = -1;
 
-	initScreens(0, 0, _realWidth, _realHeight);
+	initScreens(0, 0, _screenWidth, _screenHeight);
 
 	// Force a fade to black
 	int old_screenEffectFlag = _screenEffectFlag;
@@ -171,7 +171,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	fadeOut(129);
 	_screenEffectFlag = old_screenEffectFlag ? true : false;
 
-	initScreens(0, sb, _realWidth, sh);
+	initScreens(0, sb, _screenWidth, sh);
 
 	_completeScreenRedraw = true;
 
@@ -193,7 +193,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	if (_features & GF_AFTER_V7)
 		cameraMoved();
 
-	initBGBuffers(_scrHeight);
+	initBGBuffers(_roomHeight);
 
 	if ((_features & GF_AUDIOTRACKS) && VAR(VAR_MUSIC_TIMER) > 0)
 		_sound->startCDTimer();
@@ -379,8 +379,8 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	};
 
 	const SaveLoadEntry mainEntries[] = {
-		MKLINE(Scumm, _scrWidth, sleUint16, VER_V8),
-		MKLINE(Scumm, _scrHeight, sleUint16, VER_V8),
+		MKLINE(Scumm, _roomWidth, sleUint16, VER_V8),
+		MKLINE(Scumm, _roomHeight, sleUint16, VER_V8),
 		MKLINE(Scumm, _ENCD_offs, sleUint32, VER_V8),
 		MKLINE(Scumm, _EXCD_offs, sleUint32, VER_V8),
 		MKLINE(Scumm, _IM00_offs, sleUint32, VER_V8),

@@ -159,7 +159,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 			_right = _left = _xpos;
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
-				if (_left > (_vm->_realWidth - 1)) {
+				if (_left > (_vm->_screenWidth - 1)) {
 					s++;
 					startScaleIndexX = _scaleIndexX;
 				}
@@ -216,10 +216,10 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	if (_top >= (int)_outheight || _bottom <= 0)
 		return 0;
 
-	_ypitch = _height * _vm->_realWidth;
+	_ypitch = _height * _vm->_screenWidth;
 	_docontinue = 0;
 	b = 1;
-	if (_left >= _vm->_realWidth || _right <= 0)
+	if (_left >= _vm->_screenWidth || _right <= 0)
 		return 1;
 	if (_mirror) {
 		_ypitch--;
@@ -231,7 +231,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 			_xpos = 0;
 			_docontinue = 1;
 		} else {
-			s = _right - _vm->_realWidth;
+			s = _right - _vm->_screenWidth;
 			if (s <= 0) {
 				b = 2;
 			} else {
@@ -241,11 +241,11 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	} else {
 		_ypitch++;
 		if (scaling == 0)
-			s = _right - _vm->_realWidth;
+			s = _right - _vm->_screenWidth;
 		if (s > 0) {
 			_width2 -= s;
 			ignorePakCols(s);
-			_xpos = _vm->_realWidth - 1;
+			_xpos = _vm->_screenWidth - 1;
 			_docontinue = 1;
 		} else {
 			s = -1 - _left;
@@ -279,8 +279,8 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		return 2;
 	}
 
-	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos * _vm->_realWidth + _xpos;
-	_backbuff_ptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos * _vm->_realWidth + _xpos;
+	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos * _vm->_screenWidth + _xpos;
+	_backbuff_ptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos * _vm->_screenWidth + _xpos;
 	charsetmask =
 		_vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right,
 												_vm->virtscr[0].topline + _bottom);
@@ -390,7 +390,7 @@ void CostumeRenderer::proc6() {
 				*dst = pcolor;
 			}
 
-			dst += _vm->_realWidth;
+			dst += _vm->_screenWidth;
 			y++;
 			if (!--height) {
 				if (!--width)
@@ -437,7 +437,7 @@ void CostumeRenderer::proc5() {
 					pcolor = _shadow_table[*dst];
 				*dst = pcolor;
 			}
-			dst += _vm->_realWidth;
+			dst += _vm->_screenWidth;
 			y++;
 			mask += _numStrips;
 			if (!--height) {
@@ -499,7 +499,7 @@ void CostumeRenderer::proc4() {
 					pcolor = _shadow_table[*dst];
 				*dst = pcolor;
 			}
-			dst += _vm->_realWidth;
+			dst += _vm->_screenWidth;
 			y++;
 			mask += _numStrips;
 			if (!--height) {
@@ -562,7 +562,7 @@ void CostumeRenderer::proc3() {
 						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
-				dst += _vm->_realWidth;
+				dst += _vm->_screenWidth;
 				mask += _numStrips;
 				y++;
 			}
@@ -576,7 +576,7 @@ void CostumeRenderer::proc3() {
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos < 0 || _xpos >= _vm->_realWidth)
+					if (_xpos < 0 || _xpos >= _vm->_screenWidth)
 						return;
 					maskbit = revBitMask[_xpos & 7];
 					_backbuff_ptr += _scaleIndexXStep;
@@ -623,7 +623,7 @@ void CostumeRenderer::proc2() {
 						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
-				dst += _vm->_realWidth;
+				dst += _vm->_screenWidth;
 				mask += _numStrips;
 				y++;
 			}
@@ -637,7 +637,7 @@ void CostumeRenderer::proc2() {
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos < 0 || _xpos >= _vm->_realWidth)
+					if (_xpos < 0 || _xpos >= _vm->_screenWidth)
 						return;
 					maskbit = revBitMask[_xpos & 7];
 					_backbuff_ptr += _scaleIndexXStep;
@@ -684,7 +684,7 @@ void CostumeRenderer::proc1() {
 						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
-				dst += _vm->_realWidth;
+				dst += _vm->_screenWidth;
 				y++;
 			}
 			if (!--height) {
@@ -697,7 +697,7 @@ void CostumeRenderer::proc1() {
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos < 0 || _xpos >= _vm->_realWidth)
+					if (_xpos < 0 || _xpos >= _vm->_screenWidth)
 						return;
 					_backbuff_ptr += _scaleIndexXStep;
 				}
@@ -734,7 +734,7 @@ void CostumeRenderer::proc6_ami() {
 			len = *src++;
 
 		do {
-			if (color && x >= 0 && x < _vm->_realWidth) {
+			if (color && x >= 0 && x < _vm->_screenWidth) {
 				pcolor = _palette[color];
 /*				  if (pcolor == 13 && _shadow_table)
 					pcolor = _shadow_table[*dst];*/
@@ -747,7 +747,7 @@ void CostumeRenderer::proc6_ami() {
 				if (!--height)
 					return;
 				width = _width;
-				dst += _vm->_realWidth - step * _width;
+				dst += _vm->_screenWidth - step * _width;
 				x = _xpos;
 				y++;
 				if (y >= scrheight)
@@ -782,7 +782,7 @@ void CostumeRenderer::proc5_ami() {
 			len = *src++;
 
 		do {
-			if (color && x >=0 && x < _vm->_realWidth && !(*mask & maskbit)) {
+			if (color && x >=0 && x < _vm->_screenWidth && !(*mask & maskbit)) {
 				pcolor = _palette[color];
 /*				  if (pcolor == 13 && _shadow_table)
 					pcolor = _shadow_table[*dst];*/
@@ -811,7 +811,7 @@ void CostumeRenderer::proc5_ami() {
 				width = _width;
 				x = _xpos;
 				y++;
-				dst += _vm->_realWidth - step * _width;
+				dst += _vm->_screenWidth - step * _width;
 				_mask_ptr += _numStrips;
 				mask = _mask_ptr;
 				maskbit = revBitMask[_xpos & 7];
@@ -847,7 +847,7 @@ void CostumeRenderer::proc4_ami() {
 			len = *src++;
 
 		do {
-			if (color && x >= 0 && x < _vm->_realWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
+			if (color && x >= 0 && x < _vm->_screenWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 				pcolor = _palette[color];
 /*				  if (pcolor == 13 && _shadow_table)
 					pcolor = _shadow_table[*dst];*/
@@ -874,7 +874,7 @@ void CostumeRenderer::proc4_ami() {
 				width = _width;
 				y++;
 				x = _xpos;
-				dst += _vm->_realWidth - step * _width;
+				dst += _vm->_screenWidth - step * _width;
 				_mask_ptr += _numStrips;
 				mask = _mask_ptr;
 				maskbit = revBitMask[_xpos & 7];
@@ -910,7 +910,7 @@ void CostumeRenderer::proc3_ami() {
 			len = *src++;
 		do {
 			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
-				if (color && _xpos >= 0 && _xpos < _vm->_realWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
+				if (color && _xpos >= 0 && _xpos < _vm->_screenWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 					pcolor = _palette[color];
 /*					  if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];*/
@@ -934,7 +934,7 @@ void CostumeRenderer::proc3_ami() {
 					return;
 
 				if (_xpos != oldXpos) {
-					dst += _vm->_realWidth - (_xpos - oldXpos);
+					dst += _vm->_screenWidth - (_xpos - oldXpos);
 					_mask_ptr += _numStrips;
 					mask = _mask_ptr;
 					y++;
@@ -974,7 +974,7 @@ void CostumeRenderer::proc2_ami() {
 			len = *src++;
 		do {
 			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
-				if (color && _xpos >= 0 && _xpos < _vm->_realWidth && !(*mask & maskbit)) {
+				if (color && _xpos >= 0 && _xpos < _vm->_screenWidth && !(*mask & maskbit)) {
 					pcolor = _palette[color];
 /*					  if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];*/
@@ -998,7 +998,7 @@ void CostumeRenderer::proc2_ami() {
 					return;
 
 				if (_xpos != oldXpos) {
-					dst += _vm->_realWidth - (_xpos - oldXpos);
+					dst += _vm->_screenWidth - (_xpos - oldXpos);
 					_mask_ptr += _numStrips;
 					mask = _mask_ptr;
 					y++;
@@ -1042,7 +1042,7 @@ void CostumeRenderer::proc1_ami() {
 
 		do {
 			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
-				if (color && _xpos >= 0 && _xpos < _vm->_realWidth) {
+				if (color && _xpos >= 0 && _xpos < _vm->_screenWidth) {
 					pcolor = _palette[color];
 /*					  if (pcolor == 13 && _shadow_table)
 						pcolor = _shadow_table[*dst];*/
@@ -1064,7 +1064,7 @@ void CostumeRenderer::proc1_ami() {
 					return;
 
 				if (_xpos != oldXpos) {
-					dst += _vm->_realWidth - (_xpos - oldXpos);
+					dst += _vm->_screenWidth - (_xpos - oldXpos);
 					y++;
 				}
 				width = _width;
@@ -1148,7 +1148,7 @@ void CostumeRenderer::proc_special(byte mask2) {
 						*dst = pcolor;
 					}
 				}
-				dst += _vm->_realWidth;
+				dst += _vm->_screenWidth;
 				mask += _numStrips;
 				y++;
 			}
@@ -1162,7 +1162,7 @@ void CostumeRenderer::proc_special(byte mask2) {
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos < 0 || _xpos >= _vm->_realWidth)
+					if (_xpos < 0 || _xpos >= _vm->_screenWidth)
 						return;
 					maskbit = revBitMask[_xpos & 7];
 					_backbuff_ptr += _scaleIndexXStep;

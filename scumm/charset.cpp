@@ -378,7 +378,7 @@ void CharsetRendererV3::printChar(int chr) {
 	}
 
 	char_ptr = _fontPtr + chr * 8;
-	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_realWidth + _left;
+	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_screenWidth + _left;
 	mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _vm->_screenStartStrip + (_top - vs->topline) * _vm->gdi._numStrips + _left / 8;
 	useMask = (vs->number == 0 && !_ignoreCharsetMask);
 
@@ -398,8 +398,8 @@ void CharsetRendererV3::printChar(int chr) {
 			if (buffer & bit) {
 				if (_dropShadow) {
 					*(dest_ptr + x + 1) = 0;
-					*(dest_ptr + x + _vm->_realWidth) = 0;
-					*(dest_ptr + x + _vm->_realWidth + 1) = 0;
+					*(dest_ptr + x + _vm->_screenWidth) = 0;
+					*(dest_ptr + x + _vm->_screenWidth + 1) = 0;
 				}					
 				*(dest_ptr + x) = _color;
 
@@ -423,7 +423,7 @@ void CharsetRendererV3::printChar(int chr) {
 				maskpos++;
 			}
 		}
-		dest_ptr += _vm->_realWidth;
+		dest_ptr += _vm->_screenWidth;
 		mask_ptr += _vm->gdi._numStrips;
 	}
 
@@ -533,12 +533,12 @@ void CharsetRendererClassic::printChar(int chr) {
 	byte *mask = _vm->getResourceAddress(rtBuffer, 9)
 		+ drawTop * _vm->gdi._numStrips + _left / 8 + _vm->_screenStartStrip;
 
-	byte *dst = vs->screenPtr + vs->xstart + drawTop * _vm->_realWidth + _left;
+	byte *dst = vs->screenPtr + vs->xstart + drawTop * _vm->_screenWidth + _left;
 
 	if (_blitAlso) {
 		byte *back = dst;
 		dst = _vm->getResourceAddress(rtBuffer, vs->number + 5)
-			+ vs->xstart + drawTop * _vm->_realWidth + _left;
+			+ vs->xstart + drawTop * _vm->_screenWidth + _left;
 
 		drawBits(vs, dst, mask, drawTop, width, height);
 
@@ -599,7 +599,7 @@ void CharsetRendererClassic::drawBits(VirtScreen *vs, byte *dst, byte *mask, int
 				maskpos++;
 			}
 		}
-		dst += _vm->_realWidth - width;
+		dst += _vm->_screenWidth - width;
 		mask += _vm->gdi._numStrips;
 	}
 }

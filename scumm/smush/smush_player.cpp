@@ -676,7 +676,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	int width = b.getWord();
 	int height = b.getWord();
 
-	if((height != _scumm->_realHeight) || (width != _scumm->_realWidth))
+	if((height != _scumm->_screenHeight) || (width != _scumm->_screenWidth))
 		return;
 
 	if(_alreadyInit == false) {

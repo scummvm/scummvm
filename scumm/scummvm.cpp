@@ -303,10 +303,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	memset(_string,0,sizeof(_string));
 	_screenB = 0;
 	_screenH = 0;
-	_scrHeight = 0;
-	_scrWidth = 0;
-	_realHeight = 0;
-	_realWidth = 0;
+	_roomHeight = 0;
+	_roomWidth = 0;
+	_screenHeight = 0;
+	_screenWidth = 0;
 	memset(virtscr,0,sizeof(virtscr));
 	memset(&camera,0,sizeof(CameraData));
 	memset(_colorCycle,0,sizeof(_colorCycle));
@@ -539,17 +539,17 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_showStack = 0;
 
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
-		_realWidth = 320;
-		_realHeight = 240;
+		_screenWidth = 320;
+		_screenHeight = 240;
 	} else if (_gameId == GID_CMI) {
-		_realWidth = 640;
-		_realHeight = 480;
+		_screenWidth = 640;
+		_screenHeight = 480;
 	} else {
-		_realWidth = 320;
-		_realHeight = 200;
+		_screenWidth = 320;
+		_screenHeight = 200;
 	}
 
-	gdi._numStrips = _realWidth / 8;
+	gdi._numStrips = _screenWidth / 8;
 
 	_newgui = g_gui;
 	_bundle = new Bundle();
@@ -567,7 +567,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	}
 
 	/* Initialize backend */
-	syst->init_size(_realWidth, _realHeight);
+	syst->init_size(_screenWidth, _screenHeight);
 	prop.cd_num = detector->_cdrom;
 	if (prop.cd_num >= 0 && (_features & GF_AUDIOTRACKS))
 		syst->property(OSystem::PROP_OPEN_CD, &prop);
@@ -653,9 +653,9 @@ void Scumm::scummInit() {
 	debug(9, "scummInit");
 
 	if (_features & GF_AFTER_V7) {
-		initScreens(0, 0, _realWidth, _realHeight);
+		initScreens(0, 0, _screenWidth, _screenHeight);
 	} else {
-		initScreens(0, 16, _realWidth, 144);
+		initScreens(0, 16, _screenWidth, 144);
 	}
 
 	if (_features & GF_16COLOR) {
@@ -700,7 +700,7 @@ void Scumm::scummInit() {
 
 	for (i = 0; i < _maxVerbs; i++) {
 		_verbs[i].verbid = 0;
-		_verbs[i].right = _realWidth - 1;
+		_verbs[i].right = _screenWidth - 1;
 		_verbs[i].oldleft = -1;
 		_verbs[i].type = 0;
 		_verbs[i].color = 2;
@@ -767,7 +767,7 @@ void Scumm::scummInit() {
 			_string[i].t_xpos = 2;
 			_string[i].t_ypos = 5;
 		}
-		_string[i].t_right = _realWidth - 1;
+		_string[i].t_right = _screenWidth - 1;
 		_string[i].t_color = 0xF;
 		_string[i].t_center = 0;
 		_string[i].t_charset = 0;
@@ -1157,22 +1157,22 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 
 	if (!(_features & GF_AFTER_V7)) {
 		camera._mode = CM_NORMAL;
-		camera._cur.x = camera._dest.x = _realWidth / 2;
-		camera._cur.y = camera._dest.y = _realHeight / 2;
+		camera._cur.x = camera._dest.x = _screenWidth / 2;
+		camera._cur.y = camera._dest.y = _screenHeight / 2;
 	}
 
 	if (_features & GF_AFTER_V6) {
-		VAR(VAR_V6_SCREEN_WIDTH) = _scrWidth;
-		VAR(VAR_V6_SCREEN_HEIGHT) = _scrHeight;
+		VAR(VAR_V6_SCREEN_WIDTH) = _roomWidth;
+		VAR(VAR_V6_SCREEN_HEIGHT) = _roomHeight;
 	}
 
-	VAR(VAR_CAMERA_MIN_X) = _realWidth / 2;
-	VAR(VAR_CAMERA_MAX_X) = _scrWidth - (_realWidth / 2);
+	VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
+	VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
 
 	if (_features & GF_AFTER_V7) {
-		VAR(VAR_CAMERA_MIN_Y) = _realHeight / 2;
-		VAR(VAR_CAMERA_MAX_Y) = _scrHeight - (_realHeight / 2);
-		setCameraAt(_realWidth / 2, _realHeight / 2);
+		VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;
+		VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
+		setCameraAt(_screenWidth / 2, _screenHeight / 2);
 	}
 
 	if (_roomResource == 0)
@@ -1253,14 +1253,14 @@ void Scumm::initRoomSubBlocks() {
 		rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 	
 	if (_features & GF_AFTER_V8) {
-		_scrWidth = READ_LE_UINT32(&(rmhd->v8.width));
-		_scrHeight = READ_LE_UINT32(&(rmhd->v8.height));
+		_roomWidth = READ_LE_UINT32(&(rmhd->v8.width));
+		_roomHeight = READ_LE_UINT32(&(rmhd->v8.height));
 	} else if (_features & GF_AFTER_V7) {
-		_scrWidth = READ_LE_UINT16(&(rmhd->v7.width));
-		_scrHeight = READ_LE_UINT16(&(rmhd->v7.height));
+		_roomWidth = READ_LE_UINT16(&(rmhd->v7.width));
+		_roomHeight = READ_LE_UINT16(&(rmhd->v7.height));
 	} else {
-		_scrWidth = READ_LE_UINT16(&(rmhd->old.width));
-		_scrHeight = READ_LE_UINT16(&(rmhd->old.height));
+		_roomWidth = READ_LE_UINT16(&(rmhd->old.width));
+		_roomHeight = READ_LE_UINT16(&(rmhd->old.height));
 	}
 
 	//
@@ -1555,7 +1555,7 @@ void Scumm::initRoomSubBlocks() {
 			gdi._transparentColor = 255;
 	}
 
-	initBGBuffers(_scrHeight);
+	initBGBuffers(_roomHeight);
 }
 
 void Scumm::setScaleItem(int slot, int a, int b, int c, int d) {
@@ -1720,7 +1720,7 @@ void Scumm::processKbd() {
 	_virtual_mouse_x = mouse.x + virtscr[0].xstart;
 
 	if(_features & GF_AFTER_V7)
-		_virtual_mouse_y = mouse.y + camera._cur.y - (_realHeight / 2);
+		_virtual_mouse_y = mouse.y + camera._cur.y - (_screenHeight / 2);
 	else
 		_virtual_mouse_y = mouse.y;
 
@@ -1818,12 +1818,12 @@ int Scumm::getKeyInput() {
 
 	if (mouse.x < 0)
 		mouse.x = 0;
-	if (mouse.x > _realWidth-1)
-		mouse.x = _realWidth-1;
+	if (mouse.x > _screenWidth-1)
+		mouse.x = _screenWidth-1;
 	if (mouse.y < 0)
 		mouse.y = 0;
-	if (mouse.y > _realHeight-1)
-		mouse.y = _realHeight-1;
+	if (mouse.y > _screenHeight-1)
+		mouse.y = _screenHeight-1;
 
 	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
 		_mouseButStat = 0;
@@ -2191,7 +2191,7 @@ void Scumm::launch() {
 	_verbRedraw = false;
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
-	initVirtScreen(0, 0, 0, _realWidth, _realHeight, false, false);
+	initVirtScreen(0, 0, 0, _screenWidth, _screenHeight, false, false);
 
 	setupScummVars();
 

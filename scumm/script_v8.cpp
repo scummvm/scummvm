@@ -585,7 +585,7 @@ void Scumm::drawBlastTexts() {
 
 		_charset->_top = _blastTextQueue[i].ypos;
 		_charset->_startLeft = _charset->_left = _blastTextQueue[i].xpos;
-		_charset->_right = _realWidth - 1;
+		_charset->_right = _screenWidth - 1;
 		_charset->_center = _blastTextQueue[i].center;
 		_charset->setColor(_blastTextQueue[i].color);
 		_charset->_disableOffsX = _charset->_firstChar = true;
@@ -1534,7 +1534,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		break;
 	case 0xD8: {		// findBlastObject
 		int x = args[1] + (camera._cur.x & 7);
-		int y = args[2] + (camera._cur.y - (_realHeight /2));;
+		int y = args[2] + (camera._cur.y - (_screenHeight /2));;
 		BlastObject *eo;
 
 		for (int i = _blastObjectQueuePos - 1; i >= 0; i--) {
