@@ -17,6 +17,10 @@
 use strict;
 use Text::Wrap;
 
+if ($Text::Wrap::VERSION < 2001.0929) {
+	die "Text::Wrap version >= 2001.0929 is required. You have $Text::Wrap::VERSION\n";
+}
+
 my $mode = "";
 my $max_name_width;
 my $indent;
@@ -217,16 +221,17 @@ begin_credits("Credits");
   begin_section("The ScummVM team");
 	add_person('James Brown', 'endy', "Lead developer");
 	add_person('Max Horn', 'fingolfin', "Lead developer");
-	add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Engine: SCUMM, Broken Sword II");
+	add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Engine: SCUMM, Broken Sword II, SAGA");
 	add_person("David Eriksson", "twogood", "Engine: Flight of the Amazon Queen");
 	add_person("Robert G&ouml;ffringmann", "lavosspawn", "Engine: Beneath a Steel Sky, Broken Sword I");
-	add_person("Jonathan Gray", "khalek", "Engine: SCUMM, Broken Sword II");
-	add_person("Travis Howell", "Kirben", "Engine: SCUMM, Simon the Sorcerer");
+	add_person("Jonathan Gray", "khalek", "Engine: SCUMM, HE, Broken Sword II");
+	add_person("Travis Howell", "Kirben", "Engine: SCUMM, HE, Simon the Sorcerer");
 	add_person("Oliver Kiehl", "olki", "Engine: Beneath a Steel Sky, Simon");
-	add_person("Pawel Kolodziejski", "aquadran", "Engine: SCUMM (Codecs, iMUSE, Smush, etc.)");
-	add_person("Gregory Montoir", "cyx", "Engine: Flight of the Amazon Queen");
+	add_person("Pawel Kolodziejski", "aquadran", "Engine: SCUMM (Codecs, iMUSE, Smush, etc)");
+	add_person("Gregory Montoir", "cyx", "Engine: Flight of the Amazon Queen, HE");
 	add_person("Joost Peters", "joostp", "Engine: Beneath a Steel Sky, Flight of the Amazon Queen");
-	add_person("Eugene Sandulenko", "_sev", "Engine: SCUMM (FT INSANE, bugfixes)");
+	add_person("Eugene Sandulenko", "_sev", "Engine: SCUMM (FT INSANE), HE, SAGA");
+	add_person("Andrew Kurushin", "ajax16384", "Engine: SAGA");
 	add_person("Chris Apers", "chrilith ", "Port: PalmOS");
 	add_person("Nicolas Bacca", "arisme", "Port: PocketPC/WinCE");
 	add_person("Marcus Comstedt", "", "Port: Dreamcast");
