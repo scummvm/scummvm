@@ -26,6 +26,7 @@
 #include "scummsys.h"
 #include "system.h"
 #include "sound/mixer.h"
+#include "bundle.h"
 
 #define SCUMMVM_VERSION "0.2.2 CVS"
 #define SCUMMVM_CVS "2002-07-16"
@@ -337,6 +338,7 @@ public:
 	VerbSlot *_verbs;
 	ObjectData *_objs;
 	ScummDebugger *_debugger;
+	Bundle * _bundle;
 
 	struct {
 		byte mode[rtNumTypes];
@@ -765,7 +767,6 @@ public:
 	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
 	int num_sound_effects;		// SO3 MP3 compressed audio
 
-	BundleAudioTable *bundle_table; // DIG/CMI bundles
 	void pauseSounds(bool pause);
 	bool isSfxFinished();
 	void playBundleSound(char *sound);

@@ -84,6 +84,7 @@ void Scumm::scummInit()
 	setShake(0);
 	setupCursor();
 
+	_bundle = new Bundle(this);
 	/* Allocate and initilise actors */
 	_actors = new Actor[MAX_ACTORS];
 	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
@@ -1582,6 +1583,7 @@ void Scumm::go() {
 	launch();
 	setupGUIColors();
 	mainRun();
+	delete _bundle;
 }
 
 

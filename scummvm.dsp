@@ -297,6 +297,10 @@ SOURCE=.\boxes.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\bundle.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=".\config-file.cpp"
 # End Source File
 # Begin Source File
@@ -554,6 +558,10 @@ SOURCE=.\akos.h
 # Begin Source File
 
 SOURCE=.\boxes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\bundle.h
 # End Source File
 # Begin Source File
 

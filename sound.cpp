@@ -710,46 +710,6 @@ void *Scumm::openSfxFile()
 	char buf[256];
 	FILE *file = NULL;
 
-	if (_gameId == GID_DIG) {
-		int tag, offset, num_files;
-		
-		sprintf(buf, "%s%svoice.bun", _gameDataPath, _exe_name);
-		file = fopen(buf, "rb");
-		if (!file) {
-			warning("Unable to open DIG voice bundle: %s", buf);
-			return NULL;
-		}
-
-		tag = fileReadDwordBE(file);
-		offset = fileReadDwordBE(file);
-		num_files = fileReadDwordBE(file);
-
-		bundle_table = (BundleAudioTable *) malloc(num_files * sizeof(BundleAudioTable));
-		num_sound_effects = num_files;
-		fileSeek(file, offset, SEEK_SET);
-
-		for (int i=0; i < num_files; i++) {
-			char filename[13], c;
-			int z = 0;
-			int z2;
-			
-			/* Construct filename */
-			for (z2=0;z2<8; z2++)
-				if ((c = fileReadByte(file)) != 0)
-					filename[z++] = c;
-			filename[z++] = '.';
-			for (z2=0;z2<4;z2++)
-				if ((c = fileReadByte(file)) != 0)
-					filename[z++] = c;
-			filename[z] = '\0';
-			strcpy(bundle_table[i].filename, filename);
-			bundle_table[i].offset = fileReadDwordBE(file);
-			bundle_table[i].size = fileReadDwordBE(file);			
-		}
-
-		return file;
-	}
-
 	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
@@ -817,353 +777,62 @@ bool Scumm::isSfxFinished()
 	return !_mixer->has_active_channel();
 }
 
-#define NextBit bit = mask&1; mask>>=1; if (!--bitsleft) {mask = READ_LE_UINT16(srcptr); srcptr+=2; bitsleft=16;}
-int CompDecode(unsigned char *src, unsigned char *dst)
+void Scumm::playBundleSound(char *sound)
 {
-	unsigned char *result, *srcptr = src, *dstptr = dst;
-	int data, size, bit, bitsleft = 16, mask = READ_LE_UINT16(srcptr);	
-	srcptr+=2;
+	char buf[256];
+	byte * ptr;
 
-	while(1) {
-		NextBit
-		if (bit) {
-			*dstptr++ = *srcptr++;
-		} else {
-			NextBit
-			if (!bit) {
-				NextBit size = bit<<1;
-				NextBit size = (size|bit) + 3;
-				data = *srcptr++ | 0xffffff00;
-			} else {
-				data = *srcptr++;
-				size = *srcptr++;
-
-				data |= 0xfffff000 + ((size & 0xf0) << 4);
-				size = (size & 0x0f) + 3;
-
-				if (size==3)
-			 		if (((*srcptr++)+1) == 1)
-						return dstptr - dst;	/* End of buffer */
-			}
-			result = dstptr+data;
-			while (size--) 
-				*dstptr++=*result++;
-		}
-	}
-}
-#undef NextBit
-
-typedef struct {int offset, size, codec;} COMP_table;
-void Scumm::decompressBundleSound(int index) {
-	int i, z;
-	COMP_table table[50];
-	unsigned char *CompInput, *CompOutput, *CompFinal, *Final;
-	int outputSize, finalSize;
-	int32 offset1, offset2, offset3, length, k, c, s, j, r, t;
-	byte * src, * t_table;
-	byte t_tmp1, t_tmp2;
-
-	fileSeek(_sfxFile, bundle_table[index].offset, SEEK_SET);
-
-	int tag = fileReadDwordBE(_sfxFile);
-	int num = fileReadDwordBE(_sfxFile);
-	fileReadDwordBE(_sfxFile);	 fileReadDwordBE(_sfxFile);
-	
-
-	// DO -NOT- change these MKID_BE calls to MKID! If you have
-	// to do so, then your ScummSys.H file is detecting the
-	// wrong endian. - Ender
-	if (tag != MKID_BE('COMP')) {
-		warning("Compressed sound %d invalid (%c%c%c%c)", index, tag>>24, tag>>16, tag>>8, tag);
+	sprintf(buf, "%s%svoice.bun", _gameDataPath, _exe_name);
+	_bundle->openVoiceFile((char*)&buf);
+	ptr = (byte *)malloc(1000000);
+	if (_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
+		delete ptr;
 		return;
 	}
 
-	/* Read compression table */
-	for (i=0; i<num; i++) {
-		table[i].offset = fileReadDwordBE(_sfxFile);
-		table[i].size   = fileReadDwordBE(_sfxFile);
-		table[i].codec  = fileReadDwordBE(_sfxFile);
-		fileReadDwordBE(_sfxFile);
+	int rate = 22050;
+	int tag, size = -1;
+
+	tag = READ_BE_UINT32(ptr); ptr+=4;
+	if (tag != MKID_BE('iMUS')) {
+		warning("Decompression of bundle sound failed");
+		free(ptr);
+		return;
 	}
-	
-	CompFinal = (unsigned char *)malloc(1000000);
 
-	finalSize = 0;
-
-	/* Decompress data */
-	for (i=0; i<num; i++) {
-		unsigned char *p;
-		fileSeek(_sfxFile, bundle_table[index].offset + table[i].offset, SEEK_SET);
-
-		CompInput  = (unsigned char *)malloc(table[i].size);
-		CompOutput = (unsigned char *)malloc(10000);
-		
-		fileRead((FILE *)_sfxFile, CompInput, table[i].size);
-
-		switch(table[i].codec) {
-			case 0:
-				outputSize = table[i].size;
-				memcpy(&CompOutput[0], &CompInput[0], outputSize);
+	ptr += 12;
+	while(tag != MKID_BE('DATA')) {
+		tag = READ_BE_UINT32(ptr);  ptr+=4;
+		switch(tag) {
+			case MKID_BE('FRMT'):
+				size = READ_BE_UINT32(ptr); ptr+=16;					
+				rate = READ_BE_UINT32(ptr); ptr+=8;
+			break;
+			case MKID_BE('TEXT'):
+			case MKID_BE('REGN'):
+			case MKID_BE('STOP'):
+			case MKID_BE('JUMP'):
+				size = READ_BE_UINT32(ptr); ptr+=size+4;
 			break;
 
-			case 1:
-				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
-			break;
-
-			case 2:
-				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
-				p = CompOutput;
-				for (z = 1; z < outputSize; z++)
-					p[z] += p[z - 1];
-			break;
-			
-			case 3: 
-				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
-				p = CompOutput;
-				for (z = 2; z < outputSize; z++)
-					p[z] += p[z - 1];
-				for (z = 1; z < outputSize; z++)
-					p[z] += p[z - 1];		  				
-			break;
-
-			case 10: 
-				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
-				p = CompOutput;
-				for (z = 2; z < outputSize; z++)
-					p[z] += p[z - 1];
-				for (z = 1; z < outputSize; z++)
-					p[z] += p[z - 1];		  				
-
-				t_table = (byte*)malloc(outputSize);
-				memcpy (t_table, p, outputSize);
-
-				offset1 = outputSize / 3;
-				offset2 = offset1 * 2;
-				offset3 = offset2;
-				src = CompOutput;
-				do {
-					if (offset1 == 0) break;
-					offset1--;
-					offset2 -= 2;
-					offset3--;
-					*(t_table + offset2 + 0) = *(src + offset1);
-					*(t_table + offset2 + 1) = *(src + offset3);
-				} while(1);
-
-				src = CompOutput;
-				length = (outputSize * 8) / 12;
-				k = 0;
-				if (length > 0)
-				{
-					c = -12;
-					s = 0;
-					do {
-						j = length + (k / 2);
-						if (k & 1) {
-							r = c / 8;
-							t_tmp1 = *(t_table + k);
-							t_tmp2 = *(t_table + j + 1);
-							*(src + r + 2) = ((t_tmp1 & 0x0f) << 4) | ((t_tmp2 & 0xf0) >> 4);
-							*(src + r + 1) = (*(src + r + 1)) | (t_tmp1 & 0xf0);
-						} else {
-							r = s / 8;
-							t_tmp1 = *(t_table + k);
-							t_tmp2 = *(t_table + j);
-							*(src + r + 0) = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
-							*(src + r + 1) = ((t_tmp1 & 0xf0) >> 4);
-						}
-						s += 12;
-						k++;
-						c += 12;
-					} while (k <= length);
-				}
-			break;
-
-			case 11:
-				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
-				p = CompOutput;
-				for (z = 2; z < outputSize; z++)
-					p[z] += p[z - 1];
-				for (z = 1; z < outputSize; z++)
-					p[z] += p[z - 1];		  				
-
-				t_table = (byte*)malloc(outputSize);
-				memcpy (t_table, p, outputSize);
-
-				offset1 = outputSize / 3;
-				offset2 = offset1 * 2;
-				offset3 = offset2;
-				src = CompOutput;
-				do {
-					if (offset1 == 0) break;
-					offset1--;
-					offset2 -= 2;
-					offset3--;
-					*(t_table + offset2 + 0) = *(src + offset1);
-					*(t_table + offset2 + 1) = *(src + offset3);
-				} while(1);
-			
-				src = CompOutput;
-				length = (outputSize * 8) / 12;
-				k = 1;
-				c = 0;
-				s = 12;
-				t_tmp1 = (*(t_table + length)) >> 4;
-				*(src) = t_tmp1;
-				t = length + k;
-				if (t > k) {
-					do {
-						j = length + (k / 2);
-						if (k & 1) {
-							r = c / 8;
-							t_tmp1 = *(t_table + k - 1);
-							t_tmp2 = *(t_table + j);
-							*(src + r + 0) = (*(src + r)) | (t_tmp1 & 0xf0);
-							*(src + r + 1) = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
-						} else {
-							r = s / 8;
-							t_tmp1 = *(t_table + k - 1);
-							t_tmp2 = *(t_table + j);
-							*(src + r + 0) = (t_tmp1 & 0xf0) >> 4;
-							*(src + r - 1) = ((t_tmp1 & 0x0f) << 4) | ((t_tmp2 & 0xf0) >> 4);
-						}
-						s += 12;
-						k++;
-						c += 12;
-					} while (k < t);
-				}
-
-			break;
-
-			case 12:
-				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
-				p = CompOutput;
-				for (z = 2; z < outputSize; z++)
-					p[z] += p[z - 1];
-				for (z = 1; z < outputSize; z++)
-					p[z] += p[z - 1];		  				
-
-				t_table = (byte*)malloc(outputSize);
-				memcpy (t_table, p, outputSize);
-
-				offset1 = outputSize / 3;
-				offset2 = offset1 * 2;
-				offset3 = offset2;
-				src = CompOutput;
-				do {
-					if (offset1 == 0) break;
-					offset1--;
-					offset2 -= 2;
-					offset3--;
-					*(t_table + offset2 + 0) = *(src + offset1);
-					*(t_table + offset2 + 1) = *(src + offset3);
-				} while(1);
-
-				src = CompOutput;
-				length = (outputSize * 8) / 12;
-				k = 0;
-				c = 0;
-				s = -12;
-				*(src) = *(outputSize + t_table - 1);
-				*(src + outputSize - 1) = *(t_table + length - 1);
-				t = length - 1;
-				if (t > 0) {
-					do {
-						j = length + (k / 2);
-						if (k & 1) {
-							r = s / 8;
-							t_tmp1 = *(t_table + k);
-							t_tmp2 = *(t_table + j);
-							*(src + r + 2) = (*(src + r + 2)) | (t_tmp1 & 0xf0);
-							*(src + r + 3) = ((t_tmp1 & 0x0f) << 4) | ((t_tmp2 & 0xf0) >> 4);
-						} else {
-							r = c / 8;
-							t_tmp1 = *(t_table + k);
-							t_tmp2 = *(t_table + j);
-							*(src + r + 2) = (t_tmp1 & 0xf0) >> 4;
-							*(src + r + 1) = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
-						}
-						s += 12;
-						k++;
-						c += 12;
-					} while (k < t);
-				}
-
+			case MKID_BE('DATA'):
+				size = READ_BE_UINT32(ptr); ptr+=4;
 			break;
 
 			default:
-				printf("Unknown codec %d!\n", table[i].codec);
-				outputSize = 0;
-			break;
+			error("Unknown sound header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
 		}
-		memcpy(&CompFinal[finalSize], &CompOutput[0], outputSize);
-		finalSize+=outputSize;
-
-		free(CompInput);  CompInput = NULL;
-		free(CompOutput); CompOutput= NULL;
 	}
 
-	{	/* Parse decompressed data */
-		int rate = 22050;
-		byte *ptr = CompFinal;
-		int tag, size = -1;
-		tag = READ_BE_UINT32(ptr); ptr+=4;
-		if (tag != MKID_BE('iMUS')) {
-			warning("Decompression of bundle sound failed");
-			free(CompFinal);
-			return;
-		}
-
-		ptr+=12;       /* Skip header */
-		while(tag != MKID_BE('DATA')) {
-			tag = READ_BE_UINT32(ptr);  ptr+=4;
-			switch(tag) {
-				case MKID_BE('FRMT'):
-					size = READ_BE_UINT32(ptr); ptr+=16;					
-					rate = READ_BE_UINT32(ptr); ptr+=8;
-				break;
-				case MKID_BE('TEXT'):
-				case MKID_BE('REGN'):
-				case MKID_BE('STOP'):
-					size = READ_BE_UINT32(ptr); ptr+=size+4;
-				break;
-
-				case MKID_BE('DATA'):
-					size = READ_BE_UINT32(ptr); ptr+=4;
-				break;
-
-				default:
-				error("Unknown bundle header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
-			}
-		}
-
-		if (size < 0) {
-			warning("Decompression of bundle sound failed (no size field)");
-			free(CompFinal);
-			return;
-		}
-		Final = (unsigned char *)malloc(size);
-		memcpy(&Final[0], &ptr[0], size);
-		_mixer->play_raw(NULL, Final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-		free(CompFinal);
-	}
-}
-
-void Scumm::playBundleSound(char *sound)
-{
-	if (!_sfxFile) {
-		warning("playBundleSound: SFX file is not open");
+	if (size < 0) {
+		warning("Decompression sound failed (no size field)");
+		free(ptr);
 		return;
 	}
-
-	for (int i=0; i < num_sound_effects; i++) {
-		if (!scumm_stricmp(sound, bundle_table[i].filename)) {
-			decompressBundleSound(i);
-			return;
-		}			
-	} 
-
-	warning("playBundleSound can't find %s", sound);
+	
+	byte * final = (byte *)malloc(size);
+	memcpy(final, ptr, size);
+	_mixer->play_raw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 }
 
 int Scumm::playSfxSound(void *sound, uint32 size, uint rate)

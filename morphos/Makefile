@@ -21,7 +21,7 @@ OBJS	= actor.o akos.o boxes.o config-file.o costume.o gfx.o object.o resource.o 
 	morphos.o morphos_sound.o morphos_start.o script_v1.o script_v2.o debug.o gui.o \
 	imuse.o fmopl.o mixer.o mididrv.o debugrl.o vars.o insane.o \
 	gameDetector.o init.o resource_v3.o resource_v4.o util.o main.o \
-	$(GUIOBJS) $(SIMONOBJS)
+	bundle.o $(GUIOBJS) $(SIMONOBJS)
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \

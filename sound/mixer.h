@@ -207,9 +207,4 @@ struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 	int compressed_size;
 };
 
-struct BundleAudioTable {				/* Dig/CMI .bun audio */
-	char filename[13];
-	int size;
-	int offset;
-};
 #endif /* _mixer_h_included */
