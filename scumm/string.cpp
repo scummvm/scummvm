@@ -1103,7 +1103,7 @@ void Scumm::translateText(char * text, char * trans_buff) {
 		char enc;
 
 		// copy name from text /..../
-		for (l = 0; l < 20, *(text + l + 1) != '.'; l++) {
+		for (l = 0; (l < 20) && (*(text + l + 1) != '.'); l++) {
 			name[l] = *(text + l + 1);
 		}
 		name[l] = 0;
@@ -1140,7 +1140,7 @@ void Scumm::translateText(char * text, char * trans_buff) {
 				pos += 2;
 				// compare 'name' with above name
 				if (strcmp(tmp, name) == 0) {
-					// get number lines of 'name'
+					// get number lines of 'name' after '#'
 					l = 0;
 					if (*(buf + pos++) == '#') {
 						do {
@@ -1156,15 +1156,18 @@ void Scumm::translateText(char * text, char * trans_buff) {
 								tmp2[j++] = *(buf + pos++);
 							} while(*(buf + pos) != '/');
 							tmp2[j] = 0;
+							// compare if is right line
 							if (strcmp(tmp2, num_s) == 0) {
 								k = 0;
 								pos++;
+								// copy translated text to tran_buffer
 								do {
 									*(trans_buff + k++) = (*(buf + pos++)) ^ enc;
 								} while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a));
 								*(trans_buff + k) = 0;
 								return;
 							}
+							// goto next line
 							do { 
 								pos++;
 							}	while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a));
