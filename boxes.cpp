@@ -59,7 +59,7 @@ Box *Scumm::getBoxBaseAddr(int box) {
 bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 	BoxCoords box;
 
-	if (b==0 && (!(_features & GF_OLD256)))
+	if (b==0 && (!(_features & GF_SMALL_HEADER)))
 		return 0;
 
 	getBoxCoordinates(b, &box);
@@ -466,6 +466,7 @@ int Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr) {
 		box2.lr = tmp;
 	}
 	warning("findPathTowards: default"); // FIXME: ZAK256
+	findPathTowardsOld(a, box1nr, box2nr, box3nr);
 	return 0;
 }
 void Scumm::setBoxFlags(int box, int val) {
@@ -804,4 +805,148 @@ PathVertex *Scumm::addPathVertex() {
 	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
 	_boxPathVertexHeapIndex = 0;
 	return (PathVertex*)addToBoxVertexHeap(sizeof(PathVertex));
+}
+
+int Scumm::findPathTowardsOld(Actor *a, byte box1nr, byte box2nr, byte box3nr) {
+        BoxCoords box1;
+        BoxCoords box2;
+        ScummPoint tmp;
+        int i,j;
+        int flag;
+        int q,pos;
+	int threshold=1;
+
+        getBoxCoordinates(box1nr,&box1);
+        getBoxCoordinates(box2nr,&box2);
+
+	do{
+        for(i=0; i<4; i++) {
+                for(j=0; j<4; j++) {
+                        if (abs(box1.ul.x-box1.ur.x)<threshold &&
+                                        abs(box1.ul.x-box2.ul.x)<threshold &&
+                                        abs(box1.ul.x-box2.ur.x)<threshold ) {
+                                flag = 0;
+                                if (box1.ul.y > box1.ur.y) {
+                                        SWAP(box1.ul.y, box1.ur.y);
+                                        flag |= 1;
+                                }
+
+                                if (box2.ul.y > box2.ur.y) {
+                                        SWAP(box2.ul.y, box2.ur.y);
+                                        flag |= 2;
+                                }
+
+                                if (box1.ul.y > box2.ur.y || box2.ul.y > box1.ur.y ||
+                                                (box1.ur.y==box2.ul.y || box2.ur.y==box1.ul.y) &&
+                                                box1.ul.y!=box1.ur.y && box2.ul.y!=box2.ur.y) {
+                                        if (flag&1)
+                                                SWAP(box1.ul.y, box1.ur.y);
+                                        if (flag&2)
+                                                SWAP(box2.ul.y, box2.ur.y);
+                                } else {
+                                        if (box2nr == box3nr) {
+                                                int diffX = a->walkdata.destx - a->x;
+                                                int diffY = a->walkdata.desty - a->y;
+                                                int boxDiffX = box1.ul.x - a->x;
+
+                                                if (diffX!=0) {
+                                                        int t;
+
+                                                        diffY *= boxDiffX;
+                                                        t = diffY / diffX;
+                                                        if (t==0 && (diffY<=0 || diffX<=0) && (diffY>=0 || diffX>=0))
+                                                                t = -1;
+                                                        pos = a->y + t;
+                                                } else {
+                                                        pos = a->y;
+                                                }
+                                        } else {
+                                                pos = a->y;
+                                        }
+
+                                        q = pos;
+                                        if (q < box2.ul.y)
+                                        q = box2.ul.y;
+                                        if (q > box2.ur.y)
+                                                q = box2.ur.y;
+                                        if (q < box1.ul.y)
+                                                q = box1.ul.y;
+                                        if (q > box1.ur.y)
+                                                q = box1.ur.y;
+                                        if (q==pos && box2nr==box3nr)
+                                                return 1;
+                                        _foundPathY = q;
+                                        _foundPathX = box1.ul.x;
+                                        return 0;
+                                }
+                        }
+
+                        if (abs(box1.ul.y-box1.ur.y)<threshold &&
+                                        abs(box1.ul.y-box2.ul.y)<threshold &&
+                                        abs(box1.ul.y-box2.ur.y)<threshold ){
+                                flag = 0;
+                                if (box1.ul.x > box1.ur.x) {
+                                        SWAP(box1.ul.x, box1.ur.x);
+                                        flag |= 1;
+                                }
+
+                                if (box2.ul.x > box2.ur.x) {
+                                        SWAP(box2.ul.x, box2.ur.x);
+                                        flag |= 2;
+                                }
+
+                                if (box1.ul.x > box2.ur.x || box2.ul.x > box1.ur.x ||
+                                                (box1.ur.x==box2.ul.x || box2.ur.x==box1.ul.x) &&
+                                                box1.ul.x!=box1.ur.x && box2.ul.x!=box2.ur.x) {
+                                        if (flag&1)
+                                                SWAP(box1.ul.x, box1.ur.x);
+                                        if (flag&2)
+                                                SWAP(box2.ul.x, box2.ur.x);
+                                } else {
+
+                                        if (box2nr == box3nr) {
+                                                int diffX = a->walkdata.destx - a->x;
+                                                int diffY = a->walkdata.desty - a->y;
+                                                int boxDiffY = box1.ul.y - a->y;
+
+                                                pos = a->x;
+                                                if (diffY!=0) {
+                                                        pos += diffX * boxDiffY / diffY;
+                                                }
+                                        } else {
+                                                pos = a->x;
+                                        }
+
+                                        q = pos;
+                                        if (q < box2.ul.x)
+                                                q = box2.ul.x;
+                                        if (q > box2.ur.x)
+                                                q = box2.ur.x;
+                                        if (q < box1.ul.x)
+                                                q = box1.ul.x;
+                                        if (q > box1.ur.x)
+                                                q = box1.ur.x;
+                                        if (q==pos && box2nr==box3nr)
+                                                return 1;
+                                        _foundPathX = q;
+                                        _foundPathY = box1.ul.y;
+                                        return 0;
+                                }
+                        }
+                        tmp = box1.ul;
+                        box1.ul = box1.ur;
+                        box1.ur = box1.ll;
+                        box1.ll = box1.lr;
+                        box1.lr = tmp;
+                }
+                tmp = box2.ul;
+                box2.ul = box2.ur;
+                box2.ur = box2.ll;
+                box2.ll = box2.lr;
+                box2.lr = tmp;
+        }
+	threshold++;
+	}while(threshold<10);
+        error("findPathTowardsOld: default"); // FIXME: ZAK256
+        return 0;
 }

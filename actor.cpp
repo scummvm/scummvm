@@ -469,7 +469,7 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 	int firstValidBox,j;
 	byte flags, b;
 	
-	if(_features & GF_OLD256)
+	if(_features & GF_SMALL_HEADER)
 		firstValidBox=0;
 	else
 		firstValidBox=1;
@@ -763,7 +763,7 @@ void Scumm::walkActor(Actor *a) {
 #if 1
 	do {
 		a->moving&=~1;
-		if ((!a->walkbox && (!(_features & GF_OLD256))) || a->walkbox !=-1 ) {
+		if ((!a->walkbox && (!(_features & GF_SMALL_HEADER))) ) {
 			setActorBox(a, a->walkdata.destbox);
 			a->walkdata.curbox = a->walkdata.destbox;
 			break;

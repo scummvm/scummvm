@@ -1704,7 +1704,8 @@ struct Scumm {
 
 	int getPathToDestBox(byte from, byte to);
 	int findPathTowards(Actor *a, byte box, byte box2, byte box3);
-
+	int findPathTowardsOld(Actor *a, byte box, byte box2, byte box3);
+	
 	void drawActorCostume(Actor *a);
 	void actorAnimate(Actor *a);
 
