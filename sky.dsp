@@ -443,6 +443,14 @@ SOURCE=.\sky\compacts\z_compac.h
 # End Group
 # Begin Source File
 
+SOURCE=.\sky\autoroute.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\autoroute.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\cd_intro.cpp
 # End Source File
 # Begin Source File
