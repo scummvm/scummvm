@@ -358,7 +358,12 @@ void Scumm::writeVar(uint var, int value)
 {
 	if (!(var & 0xF000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
-		_vars[var] = value;
+
+		// FIXME: Find some better place to put this.
+		if (var == VAR_CHARINC)
+			_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
+		else
+			_vars[var] = value;		
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)

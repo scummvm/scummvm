@@ -228,6 +228,7 @@ Command Line Options:
         -g<mode>   - Select graphics scaler. See below.
         -f         - Full-screen mode.
         -n         - Disable subtitles. Use with games that have voice.
+        -y         - Set talk speed ('yak option'). Default is '60'
         -a         - Enable amiga pal conversion, for playing Amiga versions
         -d[<num>]  - Set debug verbosity to <num>
         -w[<file>] - Write configuration file

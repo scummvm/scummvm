@@ -374,7 +374,6 @@ void Scumm::CHARSET_1()
 
 			charset._xpos2 = charset._left;
 			charset._ypos2 = charset._top;
-
 			_talkDelay += _vars[VAR_CHARINC];
 			continue;
 		}

@@ -38,6 +38,7 @@ public:
 	byte _sfx_volume;
 	bool _amiga;
 
+	uint16 _talkSpeed;
 	uint16 _debugMode;
 	uint16 _noSubtitles;
 	uint16 _bootParam;

@@ -73,8 +73,7 @@ void Scumm::scummInit()
 		a->number = i;
 		initActor(a, 1);
 	}
-
-	_defaultTalkDelay = 60;
+	
 	_vars[VAR_CHARINC] = 4;
 
 	_numNestedScripts = 0;
@@ -1380,9 +1379,9 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	scumm->_soundCardType = detector->_soundCardType;
 	scumm->_noSubtitles = detector->_noSubtitles;
 	scumm->_cdrom = detector->_cdrom;
-
+	scumm->_defaultTalkDelay = detector->_talkSpeed;
 	scumm->_sound_volume_sfx = detector->_sfx_volume;	
-	scumm->_sound_volume_music = detector->_music_volume;
+	scumm->_sound_volume_music = detector->_music_volume;	
 	{
 		IMuse *imuse;
 

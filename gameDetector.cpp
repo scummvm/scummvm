@@ -47,6 +47,7 @@ static const char USAGE_STRING[] =
 	"\t-c<num>    - use cdrom <num> for cd audio\n"
 	"\t-d[<num>]  - enable debug output (debug level [1])\n"
 	"\t-n         - no subtitles for speech\n"
+	"\t-y         - set text speed (default: 60)\n"
 	"\t-b<num>    - start in room <num>\n"
 	"\t-t<num>    - set music tempo (default- adlib: 0x1F0000, midi: 0x460000)\n"
 	"\t-p<path>   - look for game in <path>\n"
@@ -229,6 +230,11 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
 					scummcfg->change_filename(option);
+				break;
+			case 'y':
+				HANDLE_OPTION();
+				_talkSpeed = atoi(option);				
+				scummcfg->set("talkspeed", _talkSpeed);
 				break;
 			default:
 				goto ShowHelpAndExit;
@@ -450,6 +456,8 @@ int GameDetector::detectMain(int argc, char **argv)
 
 	_noSubtitles = 0;							// use by default - should this depend on soundtrack?
 
+	_talkSpeed = 60;
+	
 #ifndef _WIN32_WCE
 	_gfx_mode = GFX_DOUBLESIZE;
 #else
