@@ -137,6 +137,7 @@
 #include "d_draw.h"
 #include "render.h"
 #include "menu.h"
+#include "../sword2.h"
 
 
 
@@ -534,9 +535,37 @@ int32 AnimateMouse(void)
 
 
 int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash)
-
 {
-	warning("stub SetMouseAnim( %d, %d )", size, mouseFlash);
+	if (ma) {
+		if (mouseAnim)
+			free(mouseAnim);
+
+		if (mouseFlash == RDMOUSE_FLASH)
+			mouseFrame = 0;
+		else
+			mouseFrame = MOUSEFLASHFRAME;
+
+		mouseAnim = (_mouseAnim *)malloc(size);
+		memcpy((uint8 *)mouseAnim, ma, size);
+
+		mouseOffsets = (int32 *)((uint8 *)mouseAnim + sizeof(_mouseAnim));
+		AnimateMouse();
+
+		uint8 *decompSprite = (uint8 *)malloc(mouseAnim->mousew * mouseAnim->mouseh);
+		DecompressMouse(decompSprite, mouseSprite, mouseAnim->mousew * mouseAnim->mouseh);
+
+		int i;
+		for (i = 0; i < mouseAnim->mousew * mouseAnim->mouseh; i++)
+			if (decompSprite[i] == 0)
+				decompSprite[i] = 0xff;
+		
+		g_sword2->_system->set_mouse_cursor(decompSprite,
+				mouseAnim->mousew, mouseAnim->mouseh,
+				mouseAnim->xHotSpot, mouseAnim->yHotSpot - MENUDEEP);
+		g_sword2->_system->show_mouse(true);
+	} else
+		g_sword2->_system->show_mouse(false);
+
 /*
 	int32 i;
 
