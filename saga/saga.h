@@ -99,7 +99,7 @@ enum GameObjectTypes {
 	kGameObjectStepZone = 4
 };
 
-enum scriptTimings {
+enum ScriptTimings {
 	kScriptTimeTicksPerSecond = (728L/10L),
 	kRepeatSpeed = 40,   // 25 frames/sec
 	kNormalFadeDuration = 320, // 64 steps, 5 msec each
@@ -131,6 +131,52 @@ enum HitZoneFlags {
 	kHitZoneTerminus = (1 << 3)
 };
 
+enum PanelButtonType {
+	kPanelButtonVerb = 0,
+	kPanelButtonArrow = 1
+};
+
+enum TextStringIds {
+	kTextWalkTo,
+	kTextLookAt,
+	kTextPickUp,
+	kTextTalkTo,
+	kTextOpen,
+	kTextClose,
+	kTextUse,
+	kTextGive,
+	kTextOptions,
+	kTextTest,
+	kTextDemo,
+	kTextHelp,
+	kTextQuitGame,
+	kTextFast,
+	kTextSlow,
+	kTextOn,
+	kTextOff,
+	kTextContinuePlaying,
+	kTextLoad,
+	kTextSave,
+	kTextGameOptions,
+	kTextReadingSpeed,
+	kTextMusic,
+	kTextSound,
+	kTextCancel,
+	kTextQuit,
+	kTextOK,
+	kTextMid,
+	kTextClick,
+	kText10Percent,
+	kText20Percent,
+	kText30Percent,
+	kText40Percent,
+	kText50Percent,
+	kText60Percent,
+	kText70Percent,
+	kText80Percent,
+	kText90Percent,
+	kTextMax
+};
 
 struct IMAGE_HEADER {
 	int width;
@@ -236,13 +282,25 @@ struct GameFontDescription {
 struct GameResourceDescription {
 	uint32 scene_lut_rn;
 	uint32 script_lut_rn;
-	uint32 command_panel_rn;
-	uint32 dialogue_panel_rn;
+	uint32 mainPanelResourceId;
+	uint32 conversePanelResourceId;
 };
 
 struct GameFileDescription {
 	const char *fileName;
 	uint16 fileType;
+};
+
+struct PanelButton {
+	PanelButtonType type;
+	int xOffset;
+	int yOffset;
+	int width;
+	int height;
+	int id;
+	int keyChar;
+	int upSpriteNumber;
+	int downSpriteNumber;
 };
 
 struct GameDisplayInfo {
@@ -263,10 +321,10 @@ struct GameDisplayInfo {
 	int verbTextShadowColor;
 	int verbTextActiveColor;
 
-	int leftPortraitX;
-	int leftPortraitY;
-	int rightPortraitX;
-	int rightPortraitY;
+	int leftPortraitXOffset;
+	int leftPortraitYOffset;
+	int rightPortraitXOffset;
+	int rightPortraitYOffset;
 
 	int inventoryX;
 	int inventoryY;
@@ -274,11 +332,14 @@ struct GameDisplayInfo {
 	int inventoryColumns;
 	int inventoryIconWidth;
 	int inventoryIconHeight;
-	int inventoryIconX;
-	int inventoryIconY;
+	int inventoryIconXOffset;
+	int inventoryIconYOffset;
 	int inventoryXSpacing;
 	int inventoryYSpacing;
+	int mainPanelButtonsCount;
+	PanelButton *mainPanelButtons;
 };
+
 
 struct GameDescription {
 	const char *name;
@@ -433,6 +494,8 @@ public:
 	int getDisplayHeight() const { return _gameDisplayInfo.logicalHeight;}
 	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }
 	const GameDisplayInfo & getDisplayInfo() { return _gameDisplayInfo; }
+	
+	const char *getTextString(int textStringId);
 private:
 	int loadLanguage(void);
 	int loadGame(int gameNumber);

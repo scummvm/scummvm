@@ -41,31 +41,46 @@ namespace Saga {
 static int detectGame(const FSList &fslist, bool mode = false);
 
 // ITE section
+static PanelButton ITE_MainPanelButtons[] = {
+	{kPanelButtonVerb, 52, 4, 57, 10, kVerbWalkTo, 'w', 0, 1},
+	{kPanelButtonVerb, 52, 15, 57, 10, kVerbLookAt, 'l', 2, 3},
+	{kPanelButtonVerb, 52, 26, 57, 10, kVerbPickUp, 'p', 4, 5}, 
+	{kPanelButtonVerb, 52, 37, 57, 10, kVerbTalkTo, 't', 0, 1},
+	{kPanelButtonVerb, 110, 4, 56, 10, kVerbOpen, 'o', 6, 7},
+	{kPanelButtonVerb, 110, 15, 56, 10, kVerbClose, 'c', 8, 9},
+	{kPanelButtonVerb, 110, 26, 56, 10, kVerbUse, 'u', 10, 11},
+	{kPanelButtonVerb, 110, 37, 56, 10, kVerbGive, 'g', 12, 13},
+	{kPanelButtonArrow, 306, 6, 8, 5, 0, 'U', 0, 0},
+	{kPanelButtonArrow, 306, 41, 8, 5, 1, 'D', 0, 0}
+};
+
 static GameDisplayInfo ITE_DisplayInfo = {
-	320, 200,
+	320, 200,		// logical width&height
 	
-	35,
-	137,
+	35,				// scene path y offset
+	137,			// scene height
 
-	137,
-	320,
-	12,
-	2,
-	186,
-	15,
+	137,			// status y
+	320,			// status width
+	12,				// status height
+	2,				// status text y offset
+	186,			// status text color
+	15,				// status BG color
 
-	147,
-	15,
-	96,
+	147,			// verb text color
+	15,				// verb text shadow color
+	96,				// verb text active color
 	
-	5, 4,
-	274, 4,
+	5, 4,			// left portrait x, y offset
+	274, 4,			// right portrait x, y offset
 
-	181, 155,
-	2, 4,
-	29, 20,
-	1, 0,
-	3, 1
+	181, 155,		// inventory x, y
+	2, 4,			// inventory rows, columns 
+	29, 20,			// inventory icon width, height
+	1, 0,			// inventory icon x, y offset
+	3, 1,			// inventory x, y icon spacing
+	ARRAYSIZE(ITE_MainPanelButtons),
+	ITE_MainPanelButtons
 };
 
 static GameResourceDescription ITE_Resources = {
@@ -177,6 +192,10 @@ static GameSoundInfo ITECD_GameSound = {
 
 // IHNM section
 
+static PanelButton IHNM_MainPanelButtons[] = {
+	{kPanelButtonVerb, 0, 0, 0, 0, kVerbWalkTo, ' ', 0, 0}, //TODO
+};
+
 static GameDisplayInfo IHNM_DisplayInfo = {
 	640, 480,
 	
@@ -201,7 +220,9 @@ static GameDisplayInfo IHNM_DisplayInfo = {
 	0, 0,
 	0, 0,
 	0, 0,
-	0, 0
+	0, 0,
+	ARRAYSIZE(IHNM_MainPanelButtons),
+	IHNM_MainPanelButtons
 };
 
 static GameResourceDescription IHNM_Resources = {
@@ -687,11 +708,6 @@ int SagaEngine::loadLanguage(void) {
 		}
 
 		test_file.close();
-
-		if (_vm->_interface->registerLang() != SUCCESS) {
-			warning("Error registering interface language cvars");
-			return FAILURE;
-		}
 
 		if (_vm->_scene->ITEIntroRegisterLang() != SUCCESS) {
 			warning("Error registering intro sequence language cvars");

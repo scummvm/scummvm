@@ -60,6 +60,48 @@ static const GameSettings saga_games[] = {
 	{0, 0, 0}
 };
 
+static const char *englishTextStrings[] = {
+	"Walk to",
+	"Look At",
+	"Pick Up",
+	"Talk to",
+	"Open",
+	"Close",
+	"Use",
+	"Give",
+	"Options",
+	"Test",
+	"Demo",
+	"Help",
+	"Quit Game",
+	"Fast",
+	"Slow",
+	"On",
+	"Off",
+	"Continue Playing",
+	"Load",
+	"Save",
+	"Game Options",
+	"Reading Speed",
+	"Music",
+	"Sound",
+	"Cancel",
+	"Quit",
+	"OK",
+	"Mid",
+	"Click",
+	"10%",
+	"20%",
+	"30%",
+	"40%",
+	"50%",
+	"60%",
+	"70%",
+	"80%",
+	"90%",
+	"Max"
+};
+
 GameList Engine_SAGA_gameList() {
 	GameList games;
 	const GameSettings *g = saga_games;
@@ -331,6 +373,11 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 	}
 	//todo: object name & etc
 	return NULL;
+}
+
+const char *SagaEngine::getTextString(int textStringId) {
+
+	return englishTextStrings[textStringId]; //TODO: i18n
 }
 
 } // End of namespace Saga

@@ -613,6 +613,31 @@ void Script::setVerb(int verb) {
 }
 
 void Script::setLeftButtonVerb(int verb) {
+	int		oldVerb = _currentVerb;
+
+	_currentVerb = _leftButtonVerb = verb;
+
+	if ((_currentVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)){
+			if (oldVerb > kVerbNone)
+				_vm->_interface->drawVerb(oldVerb, 2);
+
+			if (_currentVerb > kVerbNone)
+				_vm->_interface->drawVerb(_currentVerb, 2);
+	}
+}
+
+void Script::setRightButtonVerb(int verb) {
+	int		oldVerb = _currentVerb;
+
+	_rightButtonVerb = verb;
+
+	if ((_rightButtonVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)){
+		if (oldVerb > kVerbNone)
+			_vm->_interface->drawVerb(oldVerb, 2);
+
+		if (_rightButtonVerb > kVerbNone)
+			_vm->_interface->drawVerb(_rightButtonVerb, 2);
+	}
 }
 
 void Script::doVerb() {

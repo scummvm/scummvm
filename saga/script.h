@@ -54,10 +54,10 @@ typedef unsigned int ScriptDataWord;
 enum VerbTypes {
 //todo: LUT for drawing
 	kVerbNone = 0,
-	kVerbPickup = 1,
+	kVerbPickUp = 1,
 	kVerbLookAt = 2,
 	kVerbWalkTo = 3,
-	kVerbSpeakTo = 4,
+	kVerbTalkTo = 4,
 	kVerbOpen = 5,
 	kVerbClose = 6,
 	kVerbGive = 7,
@@ -67,7 +67,9 @@ enum VerbTypes {
 	kVerbLeave = 11,
 	kVerbBegin = 12,
 	kVerbWalkOnly = 13,
-	kVerbLookOnly = 14
+	kVerbLookOnly = 14,
+
+	kVerbTypesMax = kVerbLookOnly + 1
 };
 
 #define STHREAD_TIMESLICE 8
@@ -250,6 +252,10 @@ public:
 	void showVerb();
 	void setVerb(int verb);
 	void setLeftButtonVerb(int verb);
+	void setRightButtonVerb(int verb);
+	int getCurrentVerb() const { return _currentVerb; }
+	int getLeftButtonVerb() const { return _leftButtonVerb; }
+	int getRightButtonVerb() const { return _rightButtonVerb; }
 
 	void scriptInfo();
 	void scriptExec(int argc, const char **argv);

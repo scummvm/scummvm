@@ -48,7 +48,7 @@ enum INTERFACE_UPDATE_FLAGS {
 #define CONVERSE_TEXT_HEIGHT	10
 #define CONVERSE_TEXT_LINES     4
 
-enum PANEL_MODES {
+enum PanelModes {
 	kPanelNull,
 	kPanelMain,
 	kPanelOption,
@@ -64,58 +64,21 @@ enum PANEL_MODES {
 	kPanelFade
 };
 
-enum BUTTON_FLAGS {
-	BUTTON_NONE = 0x0,
-	BUTTON_LABEL = 0x01,
-	BUTTON_BITMAP = 0x02,
-	BUTTON_SET = 0x04,
-	BUTTON_VERB = BUTTON_LABEL | BUTTON_BITMAP | BUTTON_SET
-};
-
-struct InterfaceButton {
-	int x1;
-	int y1;
-	int x2;
-	int y2;
-	const char *label;
-	int inactive_sprite;
-	int active_sprite;
-	int flags;
-	int data;
-};
-
 struct InterfacePanel {
-	byte *res;
-	size_t res_len;
 	int x;
 	int y;
-	byte *img;
-	size_t img_len;
-	int img_w;
-	int img_h;
-	int set_button;//TODO: remove
-	int nbuttons;
-	InterfaceButton *buttons;
+	byte *image;
+	size_t imageLength;
+	int imageWidth;
+	int imageHeight;
+	
+	PanelButton *currentButton;
+	int buttonsCount;
+	PanelButton *buttons;
 	SpriteList sprites;
 };
 
-enum INTERFACE_VERBS {
-	I_VERB_WALKTO,
-	I_VERB_LOOKAT,
-	I_VERB_PICKUP,
-	I_VERB_TALKTO,
-	I_VERB_OPEN,
-	I_VERB_CLOSE,
-	I_VERB_USE,
-	I_VERB_GIVE
-};
 
-struct VERB_DATA {
-	int i_verb;
-	const char *verb_cvar;
-	char verb_str[VERB_STRLIMIT];
-	int s_verb;
-};
 
 struct Converse {
 	char *text;
@@ -131,11 +94,10 @@ public:
 	Interface(SagaEngine *vm);
 	~Interface(void);
 
-	int registerLang();
 	int activate();
 	int deactivate();
 	int setMode(int mode, bool force = false);
-	int getMode(void) { return _panelMode; }
+	int getMode(void) const { return _panelMode; }
 	void rememberMode();
 	void restoreMode();
 	void lockMode() { _lockedMode = _panelMode; }
@@ -146,22 +108,25 @@ public:
 	int setLeftPortrait(int portrait);
 	int setRightPortrait(int portrait);
 	int draw();
+	int update(const Point& imousePointer, int updateFlag);
 	int drawStatusBar(SURFACE *ds);
-	int update(const Point& imousePt, int update_flag);
+	void drawVerb(int verb, int state);
 
+	bool processKeyCode(int keyCode);
+	
 	void addToInventory(int sprite);
 	void removeFromInventory(int sprite);
 	void drawInventory();
-	int inventoryTest(const Point& imousePt, int *ibutton);
-
+	
 private:
-	int hitTest(const Point& imousePt, int *ibutton);
-	int handleCommandUpdate(SURFACE *ds, const Point& imousePt);
-	int handleCommandClick(SURFACE *ds, const Point& imousePt);
+	int inventoryTest(const Point& imousePt, int *ibutton);
+	PanelButton *verbHitTest(const Point& imousePointer);
+	void handleCommandUpdate(SURFACE *ds, const Point& imousePointer);
+	void handleCommandClick(SURFACE *ds, const Point& imousePointer);
 	int handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt);
 	int handlePlayfieldClick(SURFACE *ds, const Point& imousePt);
-	void drawVerb(int verb, int state);
-
+	
+	void drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton, int textColor, int textShadowColor);
 public:
 	void converseClear(void);
 	bool converseAddText(const char *text, int replyId, byte replyFlags, int replyBit);
@@ -172,28 +137,33 @@ public:
 
 private:
 	void converseDisplayTextLine(int textcolor, bool btnUp, bool rebuild);
-
-
+	PanelButton *getPanelButtonByVerbType(int verb) {
+		if ((verb < 0) || (verb >= kVerbTypesMax)) {
+			error("Interface::getPanelButtonByVerbType wrong verb");
+		}
+		return _verbTypeToPanelButton[verb];
+	}
 private:
 	SagaEngine *_vm;
 
 	bool _initialized;
-	bool _active;
 	RSCFILE_CONTEXT *_interfaceContext;
+	InterfacePanel _mainPanel;
+	InterfacePanel _conversePanel;
+	SpriteList _defPortraits;
+	SpriteList _scenePortraits;
+	SCRIPT_THREAD *_iThread;
+	PanelButton *_verbTypeToPanelButton[kVerbTypesMax];
+
+	bool _active;
 	int _panelMode;
 	int _savedMode;
 	int _lockedMode;
 	bool _inMainMode;
-	InterfacePanel _mainPanel;
-	InterfacePanel _conversePanel;
 	char _statusText[STATUS_TEXT_LEN];
 	int _leftPortrait;
 	int _rightPortrait;
-	SpriteList _defPortraits;
-	SpriteList _scenePortraits;
-	int _activeVerb;
-	SCRIPT_THREAD *_iThread;
-
+	
 	uint16 *_inventory;
 	int _inventorySize;
 	byte _inventoryCount;

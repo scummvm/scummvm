@@ -82,20 +82,8 @@ int SagaEngine::processInput() {
 			case 'p':
 				_render->toggleFlag(RF_RENDERPAUSE);
 				break;
-			case 27: // Esc
-				// Skip to next scene skip target
-				switch (_interface->getMode()) {
-				case kPanelNull:
-					if (_scene->isInDemo())
-						_scene->skipScene();
-					else
-						_actor->abortAllSpeeches();
-					break;
-				default:
-					break;
-				}
-				break;
 			default:
+				_interface->processKeyCode(event.kbd.keycode);
 				break;
 			}
 			break;
