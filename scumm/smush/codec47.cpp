@@ -548,8 +548,6 @@ void Codec47Decoder::deinit() {
 
 Codec47Decoder::~Codec47Decoder() {
 	deinit();
-#ifdef __PALM_OS__
-#endif
 }
 
 bool Codec47Decoder::decode(byte *dst, const byte *src) {
