@@ -59,8 +59,11 @@ enum {
 	USE		= 3100
 };
 
+/**
+ * Call at beginning of game loop
+ */
+
 void Sword2Engine::resetMouseList(void) {
-	// call at beginning of gameloop
 	_curMouse = 1;
 }
 
@@ -120,10 +123,20 @@ void Sword2Engine::mouseEngine(void) {
 	}
 }
 
+int Sword2Engine::menuClick(int menu_items) {
+	if (_input->_mouseX < RDMENU_ICONSTART)
+		return -1;
+
+	if (_input->_mouseX > RDMENU_ICONSTART + menu_items * (RDMENU_ICONWIDE + RDMENU_ICONSPACING) - RDMENU_ICONSPACING)
+		return -1;
+
+	return (_input->_mouseX - RDMENU_ICONSTART) / (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
+}
+
 void Sword2Engine::systemMenuMouse(void) {
 	uint32 safe_looping_music_id;
 	_mouseEvent *me;
-	int j, hit;
+	int hit;
 	uint8 *icon;
 	int32 pars[2];
 	uint32 icon_list[5] = {
@@ -134,333 +147,327 @@ void Sword2Engine::systemMenuMouse(void) {
 		RESTART_ICON
 	};
 
-	// can't close when player is dead
+	// If the mouse is moved off the menu, close it. Unless the player is
+	// dead, in which case the menu should always be visible.
+
 	if (_input->_mouseY > 0 && !DEAD) {
-		// close menu
 		_mouseMode = MOUSE_normal;
-		g_graphics->hideMenu(RDMENU_TOP);
+		_graphics->hideMenu(RDMENU_TOP);
 		return;
 	}
 
-	me = g_input->mouseEvent();
+	// Check if the user left-clicks anywhere in the menu area.
 
-	if (me && (me->buttons & RD_LEFTBUTTONDOWN)) {
-		// clicked on a top mouse pointer?
+	me = _input->mouseEvent();
 
-		if (_input->_mouseX >= 24 && _input->_mouseX < 640 - 24 && _input->_mouseY < 0) {
-			// which are we over?
-			hit = (_input->_mouseX - 24) / 40;
+	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN))
+		return;
 
-			// no save when dead
-			if (icon_list[hit] == SAVE_ICON && DEAD)
-				return;
+	if (_input->_mouseY > 0)
+		return;
 
-			// there are 5 system menu icons
-			if (hit < ARRAYSIZE(icon_list)) {
-				// build them all high in full colour - when
-				// one is clicked on all the rest will grey out
-				for (j = 0; j < ARRAYSIZE(icon_list); j++) {
-					// change all others to grey
-					if (j != hit) {
-						icon = res_man->openResource(icon_list[j]) + sizeof(_standardHeader);
-						g_graphics->setMenuIcon(RDMENU_TOP, j, icon);
-						res_man->closeResource(icon_list[j]);
-					}
-				}
+	hit = menuClick(ARRAYSIZE(icon_list));
 
-				g_sound->pauseFx();
+	if (hit < 0)
+		return;
 
-				// NB. Need to keep a safe copy of
-				// '_loopingMusicId' for savegame & for
-				// playing when returning from control panels
-				// because control panel music will overwrite
-				// it!
+	// No save when dead
 
-				safe_looping_music_id = _loopingMusicId;
+	if (icon_list[hit] == SAVE_ICON && DEAD)
+		return;
 
-				pars[0] = 221;	// SystemM234 (M234.wav)
-				pars[1] = FX_LOOP;
-				g_logic->fnPlayMusic(pars);
+	// Gray out all he icons, except the one that was clicked
 
-				// restore proper looping_music_id
-				_loopingMusicId = safe_looping_music_id;
-
-				// clear the screen & set up the new palette
-				// for the menus
-
-				g_graphics->clearScene();
-				g_graphics->processMenu();
-				g_graphics->resetRenderEngine();
-
-				// call the relevent screen
-				switch (hit) {
-				case 0:
-					gui->optionControl();
-					break;
-				case 1:
-					gui->quitControl();
-					break;
-				case 2:
-					gui->saveControl();
-					break;
-				case 3:
-					gui->restoreControl();
-					break;
-				case 4:
-					gui->restartControl();
-					break;
-				}
-
-				// Menu stays open on death screen
-				if (!DEAD) {
-					_mouseMode = MOUSE_normal;
-					g_graphics->hideMenu(RDMENU_TOP);
-				} else {
-					setMouse(NORMAL_MOUSE_ID);
-					buildSystemMenu();
-				}
-
-				// clear the screen & restore the location
-				// palette
-
-				g_graphics->clearScene();
-				g_graphics->processMenu();
-
-				// reset game palette, but not after a
-				// successful restore or restart!
-
-				// see RestoreFromBuffer() in save_rest.cpp
-				if (_thisScreen.new_palette != 99) {
-					// '0' means put back game screen
-					// palette; see Build_display.cpp
-
-					setFullPalette(0);
-
-					// stop the engine fading in the
-					// restored screens palette
-
-					_thisScreen.new_palette = 0;
-				} else
-					_thisScreen.new_palette = 1;
-
-				g_sound->unpauseFx();
-
-				// If there was looping music before coming
-				// into the control panels then restart it!
-				// NB. This will also start music required
-				// when a game has been restored
-
-				if (_loopingMusicId) {
-					pars[0] = _loopingMusicId;
-					pars[1] = FX_LOOP;
-					g_logic->fnPlayMusic(pars);
-
-					// cross-fades into the required music:
-					// - either a restored game tune
-					// - or music playing prior to
-					// entering control panels
-				} else {
-					// stop the control panel music
-					g_logic->fnStopMusic(NULL);
-				}
-			}
+	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
+		if (i != hit) {
+			icon = res_man->openResource(icon_list[i]) + sizeof(_standardHeader);
+			_graphics->setMenuIcon(RDMENU_TOP, i, icon);
+			res_man->closeResource(icon_list[i]);
 		}
+	}
+
+	_sound->pauseFx();
+
+	// NB. Need to keep a safe copy of '_loopingMusicId' for savegame & for
+	// playing when returning from control panels because control panel
+	// music will overwrite it!
+
+	safe_looping_music_id = _loopingMusicId;
+
+	pars[0] = 221;
+	pars[1] = FX_LOOP;
+	g_logic->fnPlayMusic(pars);
+
+	// restore proper looping_music_id
+	_loopingMusicId = safe_looping_music_id;
+
+	// clear the screen & set up the new palette for the menus
+
+	_graphics->clearScene();
+	_graphics->processMenu();
+	_graphics->resetRenderEngine();
+
+	// call the relevent screen
+
+	switch (hit) {
+	case 0:
+		gui->optionControl();
+		break;
+	case 1:
+		gui->quitControl();
+		break;
+	case 2:
+		gui->saveControl();
+		break;
+	case 3:
+		gui->restoreControl();
+		break;
+	case 4:
+		gui->restartControl();
+		break;
+	}
+
+	// Menu stays open on death screen. Otherwise it's closed.
+
+	if (!DEAD) {
+		_mouseMode = MOUSE_normal;
+		_graphics->hideMenu(RDMENU_TOP);
+	} else {
+		setMouse(NORMAL_MOUSE_ID);
+		buildSystemMenu();
+	}
+
+	// Clear the screen & restore the location palette
+
+	_graphics->clearScene();
+	_graphics->processMenu();
+
+	// Reset game palette, but not after a successful restore or restart!
+	// See RestoreFromBuffer() in save_rest.cpp
+
+	if (_thisScreen.new_palette != 99) {
+		// 0 means put back game screen palette; see build_display.cpp
+		setFullPalette(0);
+
+		// Stop the engine fading in the restored screens palette
+		_thisScreen.new_palette = 0;
+	} else
+		_thisScreen.new_palette = 1;
+
+	_sound->unpauseFx();
+
+	// If there was looping music before coming into the control panels
+	// then restart it! NB. This will also start music required when a game
+	// has been restored
+
+	if (_loopingMusicId) {
+		pars[0] = _loopingMusicId;
+		pars[1] = FX_LOOP;
+		g_logic->fnPlayMusic(pars);
+
+		// cross-fades into the required music: either a restored game
+		// tune, or music playing prior to entering control panels
+	} else {
+		// stop the control panel music
+		g_logic->fnStopMusic(NULL);
 	}
 }
 
 void Sword2Engine::dragMouse(void) {
 	_mouseEvent *me;
-	uint32 pos;
+	int hit;
+
+	// We can use dragged object both on other inventory objects, or on
+	// objects in the scene, so if the mouse moves off the inventory menu,
+	// then close it.
 
 	if (_input->_mouseY < 400) {
-		// close menu
 		_mouseMode = MOUSE_normal;
-		g_graphics->hideMenu(RDMENU_BOTTOM);
+		_graphics->hideMenu(RDMENU_BOTTOM);
 		return;
 	}
 
-	// handles cursors and the luggage on/off according to type
+	// Handles cursors and the luggage on/off according to type
+
 	mouseOnOff();
 
-	// now do the normal click stuff
+	// Now do the normal click stuff
 
-	me = g_input->mouseEvent();
+	me = _input->mouseEvent();
 
-	// we only care about left clicks when the mouse is over an object
-	// we ignore mouse releases
+	if (!me)
+		return;
 
-	if (me && (me->buttons & RD_LEFTBUTTONDOWN)) {
-		// there's a mouse event to be processed
+#if 0
+	// If the user right-clicks, cancel drag mode. The original code did
+	// not do this, but it feels natural to me.
 
-		// could be clicking on an on screen object or on the menu
-		// which is currently displayed
-
-		if (_mouseTouching) {
-			// mouse is over an on screen object - and we have
-			// luggage
-
-			// depending on type we'll maybe kill the object_held
-			// - like for exits
-
-			// Set global script variable 'button'. We know that
-			// it was the left button, not the right one.
-
-			LEFT_BUTTON = 1;
-			RIGHT_BUTTON = 0;
-
-			// these might be required by the action script about
-			// to be run
-
-			MOUSE_X = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
-			MOUSE_Y = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
-
-			// for scripts to know what's been clicked (21jan97).
-			// First used for 'room_13_turning_script' in object
-			// 'biscuits_13'
-
-			CLICKED_ID = _mouseTouching;
-
-			g_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
-
-			debug(5, "USED \"%s\" ICON ON %s", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
-
-			// Hide menu - back to normal menu mode
-
-			g_graphics->hideMenu(RDMENU_BOTTOM);
-			_mouseMode = MOUSE_normal;
-		} else {
-			// better check for combine/cancel
-			// cancel puts us back in Menu_mouse mode
-			if (_input->_mouseX >= 24 && _input->_mouseX < 640 - 24) {
-				// which are we over?
-				pos = (_input->_mouseX - 24) / 40;
-
-				//clicked on something - what button?
-				if (_masterMenuList[pos].icon_resource) {
-					// always back into menu mode
-					_mouseMode = MOUSE_menu;
-
-					// remove luggage
-					setLuggage(0);
-
-					// if we've clicked on the same icon
-					// as the one we're dragging
-
-					if (pos == _menuSelectedPos) {
-						// reset first icon
-						OBJECT_HELD = 0;
-						_menuSelectedPos = 0;
-					} else {
-						// combine the 2 icons
-						debug(5, "combine");
-
-						// what we clicked on, not what
-						// we're dragging
-
-						COMBINE_BASE = _masterMenuList[pos].icon_resource;
-						g_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
-
-						// turn off mouse now, to
-						// prevent player trying to
-						// click elsewhere BUT leave
-						// the bottom menu open
-
-						noHuman();
-
-						debug(5, "USED \"%s\" ICON ON \"%s\" ICON", fetchObjectName(OBJECT_HELD), fetchObjectName(COMBINE_BASE));
-					}
-
-					// refresh the menu
-					buildMenu();
-					debug(5, "switch to menu mode");
-				}
-			}
-		}
+	if (me->buttons & RD_RIGHTBUTTONDOWN) {
+		OBJECT_HELD = 0;
+		_menuSelectedPos = 0;
+		_mouseMode = MOUSE_menu;
+		setLuggage(0);
+		buildMenu();
+		return;
 	}
+#endif
+
+	if (!(me->buttons & RD_LEFTBUTTONDOWN))
+		return;
+
+	// there's a mouse event to be processed
+
+	// could be clicking on an on screen object or on the menu
+	// which is currently displayed
+
+	if (_mouseTouching) {
+		// mouse is over an on screen object - and we have luggage
+
+		// Depending on type we'll maybe kill the object_held - like
+		// for exits
+
+		// Set global script variable 'button'. We know that it was the
+		// left button, not the right one.
+
+		LEFT_BUTTON = 1;
+		RIGHT_BUTTON = 0;
+
+		// These might be required by the action script about to be run
+
+		MOUSE_X = _input->_mouseX + _thisScreen.scroll_offset_x;
+		MOUSE_Y = _input->_mouseY + _thisScreen.scroll_offset_y;
+
+		// For scripts to know what's been clicked. First used for
+		// 'room_13_turning_script' in object 'biscuits_13'
+
+		CLICKED_ID = _mouseTouching;
+
+		g_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
+
+		debug(5, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
+
+		// Hide menu - back to normal menu mode
+
+		_graphics->hideMenu(RDMENU_BOTTOM);
+		_mouseMode = MOUSE_normal;
+
+		return;
+	}
+
+	// Better check for combine/cancel. Cancel puts us back in MOUSE_menu
+	// mode
+
+	hit = menuClick(TOTAL_engine_pockets);
+
+	if (hit < 0 || !_masterMenuList[hit].icon_resource)
+		return;
+
+	// Always back into menu mode. Remove the luggage as well.
+
+	_mouseMode = MOUSE_menu;
+	setLuggage(0);
+
+	if ((uint) hit == _menuSelectedPos) {
+		// If we clicked on the same icon again, reset the first icon
+
+		OBJECT_HELD = 0;
+		_menuSelectedPos = 0;
+	} else {
+		// Otherwise, combine the two icons
+
+		COMBINE_BASE = _masterMenuList[hit].icon_resource;
+		g_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
+
+		// Turn off mouse now, to prevent player trying to click
+		// elsewhere BUT leave the bottom menu open
+
+		noHuman();
+
+		debug(2, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(COMBINE_BASE));
+	}
+
+	// Refresh the menu
+
+	buildMenu();
 }
 
 void Sword2Engine::menuMouse(void) {
-	// menu is down
-
 	_mouseEvent *me;
-	uint32 pos;
+	int hit;
+
+	// If the mouse is moved off the menu, close it.
 
 	if (_input->_mouseY < 400) {
-		// close menu
 		_mouseMode = MOUSE_normal;
-		g_graphics->hideMenu(RDMENU_BOTTOM);
+		_graphics->hideMenu(RDMENU_BOTTOM);
 		return;
 	}
 
-	me = g_input->mouseEvent();
+	me = _input->mouseEvent();
 
-	// we only care about left clicks when the mouse is over an object
-	// we ignore mouse releases
+	if (!me)
+		return;
 
-	if (me) {
-		// there's a mouse event to be processed
-		// now check if we've clicked on an actual icon
+	hit = menuClick(TOTAL_engine_pockets);
 
-		if (_input->_mouseX >= 24 && _input->_mouseX < 640 - 24) {
-			// which are we over?
-			pos = (_input->_mouseX - 24) / 40;
+	// Check if we clicked on an actual icon.
 
-			// clicked on something - what button?
-			if (_masterMenuList[pos].icon_resource) {
-				if (me->buttons & RD_RIGHTBUTTONDOWN) {
-					// right button look
-					_examiningMenuIcon = true;
+	if (hit < 0 || !_masterMenuList[hit].icon_resource)
+		return;
 
-					// id the object via its graphic
-					OBJECT_HELD = _masterMenuList[pos].icon_resource;
+	if (me->buttons & RD_RIGHTBUTTONDOWN) {
+		// Right button - examine an object, identified by its icon
+		// resource id.
 
-					// Must clear this so next click on
-					// exit becomes 1st click again
+		_examiningMenuIcon = true;
+		OBJECT_HELD = _masterMenuList[hit].icon_resource;
 
-					EXIT_CLICK_ID = 0;
+		// Must clear this so next click on exit becomes 1st click
+		// again
 
-					debug(5, "RIGHT-CLICKED ON \"%s\" ICON", fetchObjectName(OBJECT_HELD));
+		EXIT_CLICK_ID = 0;
 
-					g_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
+		g_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
-					// refresh the menu
-					buildMenu();
+		// Refresh the menu
 
-					// turn off mouse now, to prevent
-					// player trying to click elsewhere
-					// BUT leave the bottom menu open
+		buildMenu();
 
-					noHuman();
-				} else if (me->buttons & RD_LEFTBUTTONDOWN) {
-					// left button - highlight the object
-					// and bung us into drag luggage mode
+		// Turn off mouse now, to prevent player trying to click
+		// elsewhere BUT leave the bottom menu open
 
-					// menu slot we clicked on - derive
-					// luggage resource from this in
-					// mouse_on_off()
+		noHuman();
 
-					_menuSelectedPos = pos;
-					_currentLuggageResource = _masterMenuList[pos].luggage_resource;
+		debug(2, "Right-click on \"%s\" icon",
+			fetchObjectName(OBJECT_HELD));
 
-					_mouseMode = MOUSE_drag;
-					debug(5, "setting OH in menu");
+		return;
+	}
 
-					// id the object via its graphic
-					OBJECT_HELD = _masterMenuList[pos].icon_resource;
+	if (me->buttons & RD_LEFTBUTTONDOWN) {
+		// Left button - bung us into drag luggage mode. The object is
+		// identified by its icon resource id. We need the luggage
+		// resource id for mouseOnOff
 
-					// must clear this so next click on
-					// exit becomes 1st click again
+		_mouseMode = MOUSE_drag;
 
-					EXIT_CLICK_ID = 0;
+		_menuSelectedPos = hit;
+		OBJECT_HELD = _masterMenuList[hit].icon_resource;
+		_currentLuggageResource = _masterMenuList[hit].luggage_resource;
 
-					// refresh the menu
-					buildMenu();
+		// Must clear this so next click on exit becomes 1st click
+		// again
 
-					setLuggage(_masterMenuList[pos].luggage_resource);
-					debug(5, "switch to drag mode");
-				}
-			}
-		}
+		EXIT_CLICK_ID = 0;
+
+		// Refresh the menu
+
+		buildMenu();
+
+		setLuggage(_masterMenuList[hit].luggage_resource);
+
+		debug(2, "Left-clicked on \"%s\" icon - switch to drag mode",
+			fetchObjectName(OBJECT_HELD));
 	}
 }
 
@@ -470,7 +477,10 @@ void Sword2Engine::normalMouse(void) {
 
 	_mouseEvent *me;
 
-	// no save in big-object menu lock situation
+	// Check if the cursor has moved onto the system menu area. No save in
+	// big-object menu lock situation, of if the player is dragging an
+	// object.
+
 	if (_input->_mouseY < 0 && !_mouseModeLocked && !OBJECT_HELD) {
 		_mouseMode = MOUSE_system_menu;
 
@@ -480,16 +490,20 @@ void Sword2Engine::normalMouse(void) {
 			_mouseTouching = 0;
 		}
 
-		// reset mouse cursor - in case we're between mice
+		// Reset mouse cursor - in case we're between mice
+
 		setMouse(NORMAL_MOUSE_ID);
 		buildSystemMenu();
 		return;
 	}
 
+	// Check if the cursor has moved onto the inventory menu area. No
+	// inventory in big-object menu lock situation,
+
 	if (_input->_mouseY > 399 && !_mouseModeLocked) {
 		// If an object is being held, i.e. if the mouse cursor has a
-		// luggage, we should be use dragging mode instead of inventory
-		// menu mode.
+		// luggage, go to drag mode instead of menu mode, but the menu
+		// is still opened.
 		//
 		// That way, we can still use an object on another inventory
 		// object, even if the inventory menu was closed after the
@@ -504,31 +518,36 @@ void Sword2Engine::normalMouse(void) {
 		// standard get-off
 
 		if (_mouseTouching) {
-			// We were on something, but not anymore
-
 			_oldMouseTouching = 0;
 			_mouseTouching = 0;
 		}
 
-		// reset mouse cursor
+		// Reset mouse cursor
+
 		setMouse(NORMAL_MOUSE_ID);
 		buildMenu();
 		return;
 	}
 
-	// check for moving the mouse on or off things
+	// Check for moving the mouse on or off things
 
 	mouseOnOff();
 
-	// now do the normal click stuff
+	me = _input->mouseEvent();
 
-	me = g_input->mouseEvent();
+	if (!me)
+		return;
+
+	bool button_down = (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)) != 0;
+
+	// For debugging. We can draw a rectangle on the screen and see its
+	// coordinates. This was probably used to help defining hit areas.
 
 	if (_debugger->_definingRectangles) {
 		if (_debugger->_draggingRectangle == 0) {
-			// not yet dragging a rectangle, so need click to start
+			// Not yet dragging a rectangle, so need click to start
 
-			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
+			if (button_down) {
 				// set both (x1,y1) and (x2,y2) to this point
 				_debugger->_rectX1 = _debugger->_rectX2 = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
 				_debugger->_rectY1 = _debugger->_rectY2 = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
@@ -537,7 +556,7 @@ void Sword2Engine::normalMouse(void) {
 		} else if (_debugger->_draggingRectangle == 1) {
 			// currently dragging a rectangle - click means reset
 
-			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
+			if (button_down) {
 				// lock rectangle, so you can let go of mouse
 				// to type in the coords
 				_debugger->_draggingRectangle = 2;
@@ -550,91 +569,105 @@ void Sword2Engine::normalMouse(void) {
 			// currently locked to avoid knocking out of place
 			// while reading off the coords
 
-			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
+			if (button_down) {
 				// click means reset - back to start again
 				_debugger->_draggingRectangle = 0;
 			}
 		}
+
+		return;
+	}
+
+#if 0
+	// If user right-clicks while holding an object, release it. The
+	// original code did not do this, but it feels natural to me.
+
+	if (OBJECT_HELD && (me->buttons & RD_RIGHTBUTTONDOWN)) {
+		OBJECT_HELD = 0;
+		_menuSelectedPos = 0;
+		setLuggage(0);
+		return;
+	}
+#endif
+
+	// Now do the normal click stuff
+
+	// We only care about down clicks when the mouse is over an object. We
+	// ignore mouse releases
+
+	if (!_mouseTouching || !button_down)
+		return;
+
+	// There's a mouse event to be processed and the mouse is on something.
+	// Notice that the floor itself is considered an object.
+
+	// There are no menus about so its nice and simple. This is as close to
+	// the old advisor_188 script as we get, I'm sorry to say.
+
+	// If player is walking or relaxing then those need to terminate
+	// correctly. Otherwise set player run the targets action script or, do
+	// a special walk if clicking on the scroll-more icon
+
+	// PLAYER_ACTION script variable - whatever catches this must reset to
+	// 0 again
+	// PLAYER_ACTION = _mouseTouching;
+
+	// Idle or router-anim will catch it
+
+	// Set global script variable 'button'
+
+	if (me->buttons & RD_LEFTBUTTONDOWN) {
+		LEFT_BUTTON  = 1;
+		RIGHT_BUTTON = 0;
+		_buttonClick = 0;	// for re-click
 	} else {
-		// We only care about down clicks when the mouse is over an
-		// object. We ignore mouse releases
+		LEFT_BUTTON  = 0;
+		RIGHT_BUTTON = 1;
+		_buttonClick = 1;	// for re-click
+	}
 
-		if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)) && _mouseTouching) {
-			// there's a mouse event to be processed and the mouse
-			// is on something
+	// These might be required by the action script about to be run
 
-			// ok, there are no menus about so its nice and simple
-			// this is as close to the old advisor_188 script as we
-			// get, I'm sorry to say.
+	MOUSE_X = _input->_mouseX + _thisScreen.scroll_offset_x;
+	MOUSE_Y = _input->_mouseY + _thisScreen.scroll_offset_y;
 
-			// if player is walking or relaxing then those need to
-			// terminate correctly
+	if (_mouseTouching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
+		// It's the exit double click situation. Let the existing
+		// interaction continue and start fading down. Switch the human
+		// off too
 
-			// otherwise set player run the targets action script
-			// or, do a special walk if clicking on the scroll-more
-			// icon
+		g_logic->fnNoHuman(NULL);
+		g_logic->fnFadeDown(NULL);
 
-			// PLAYER_ACTION script variable - whatever catches
-			// this must reset to 0 again
-			// PLAYER_ACTION = _mouseTouching;
+		// Tell the walker
 
-			// idle or router-anim will catch it
+		EXIT_FADING = 1;
+	} else if (_oldButton == _buttonClick && _mouseTouching == CLICKED_ID && _mousePointerRes != NORMAL_MOUSE_ID) {
+		// Re-click. Do nothing, except on floors
+	} else {
+		// For re-click
 
-			// set global script variable 'button'
+		_oldButton = _buttonClick;
 
-			if (me->buttons & RD_LEFTBUTTONDOWN) {
-				LEFT_BUTTON  = 1;
-				RIGHT_BUTTON = 0;
-				_buttonClick = 0;	// for re-click
-			} else {
-				LEFT_BUTTON  = 0;
-				RIGHT_BUTTON = 1;
-				_buttonClick = 1;	// for re-click
-			}
+		// For scripts to know what's been clicked. First used for
+		// 'room_13_turning_script' in object 'biscuits_13'
 
-			// these might be required by the action script about
-			// to be run
-			MOUSE_X = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
-			MOUSE_Y = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
+		CLICKED_ID = _mouseTouching;
 
-			// only left button
-			if (_mouseTouching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
-				// its the exit double click situation
-				// let the existing interaction continue and
-				// start fading down - switch the human off too
+		// Must clear these two double-click control flags - do it here
+		// so reclicks after exit clicks are cleared up
 
-				g_logic->fnNoHuman(NULL);
-				g_logic->fnFadeDown(NULL);
-				EXIT_FADING = 1;	// tell the walker
-			} else if (_oldButton == _buttonClick && _mouseTouching == CLICKED_ID && _mousePointerRes != NORMAL_MOUSE_ID) {
-				// re-click - do nothing - except on floors
-			} else {
-				// allow the click
-				_oldButton = _buttonClick;	// for re-click
+		EXIT_CLICK_ID = 0;
+		EXIT_FADING = 0;
 
-				// for scripts to know what's been clicked
-				// First used for 'room_13_turning_script' in
-				// object 'biscuits_13'
+		g_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
-				CLICKED_ID = _mouseTouching;
-
-				// must clear these two double-click control
-				// flags - do it here so reclicks after exit
-				// clicks are cleared up
-
-				EXIT_CLICK_ID = 0;
-				EXIT_FADING = 0;
-
-				g_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
-
-				if (OBJECT_HELD)
-					debug(5, "USED \"%s\" ICON ON %s", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
-				else if (LEFT_BUTTON)
-					debug(5, "LEFT-CLICKED ON %s", fetchObjectName(CLICKED_ID));
-				else	// RIGHT BUTTON
-					debug(5, "RIGHT-CLICKED ON %s", fetchObjectName(CLICKED_ID));
-			}
-		}
+		if (OBJECT_HELD)
+			debug(2, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
+		else if (LEFT_BUTTON)
+			debug(2, "Left-clicked on \"%s\"", fetchObjectName(CLICKED_ID));
+		else	// RIGHT BUTTON
+			debug(2, "Right-clicked on \"%s\"", fetchObjectName(CLICKED_ID));
 	}
 }
 
@@ -747,14 +780,14 @@ void Sword2Engine::setMouse(uint32 res) {
 		// loop
 
 		if (res == NORMAL_MOUSE_ID)
-			g_graphics->setMouseAnim(icon, len, RDMOUSE_NOFLASH);
+			_graphics->setMouseAnim(icon, len, RDMOUSE_NOFLASH);
 		else
- 			g_graphics->setMouseAnim(icon, len, RDMOUSE_FLASH);
+ 			_graphics->setMouseAnim(icon, len, RDMOUSE_FLASH);
 
 		res_man->closeResource(res);
 	} else {
 		// blank cursor
-		g_graphics->setMouseAnim(NULL, 0, 0);
+		_graphics->setMouseAnim(NULL, 0, 0);
 	}
 }
 
@@ -768,11 +801,11 @@ void Sword2Engine::setLuggage(uint32 res) {
 		icon = res_man->openResource(res) + sizeof(_standardHeader);
 		len = res_man->_resList[res]->size - sizeof(_standardHeader);
 
-		g_graphics->setLuggageAnim(icon, len);
+		_graphics->setLuggageAnim(icon, len);
 
 		res_man->closeResource(res);
 	} else
-		g_graphics->setLuggageAnim(NULL, 0);
+		_graphics->setLuggageAnim(NULL, 0);
 }
 
 uint32 Sword2Engine::checkMouseList(void) {
@@ -780,33 +813,34 @@ uint32 Sword2Engine::checkMouseList(void) {
 	uint32 j = 1;
 
 	if (_curMouse > 1) {
-		//number of priorities subject to implementation needs
+		// Number of priorities subject to implementation needs
+
 		while (priority < 10) {
-			// if the mouse pointer is over this
+			// If the mouse pointer is over this
 			// mouse-detection-box
 
 			if (_mouseList[j].priority == priority &&
-				_input->_mouseX + _thisScreen.scroll_offset_x >= _mouseList[j].x1 &&
-				_input->_mouseX + _thisScreen.scroll_offset_x <= _mouseList[j].x2 &&
-				_input->_mouseY + _thisScreen.scroll_offset_y >= _mouseList[j].y1 &&
-				_input->_mouseY + _thisScreen.scroll_offset_y <= _mouseList[j].y2) {
-				// record id
+			    _input->_mouseX + _thisScreen.scroll_offset_x >= _mouseList[j].x1 &&
+			    _input->_mouseX + _thisScreen.scroll_offset_x <= _mouseList[j].x2 &&
+			    _input->_mouseY + _thisScreen.scroll_offset_y >= _mouseList[j].y1 &&
+			    _input->_mouseY + _thisScreen.scroll_offset_y <= _mouseList[j].y2) {
+				// Record id
 				_mouseTouching = _mouseList[j].id;
 
-				// change all COGS pointers to CROSHAIR
+				// Change all COGS pointers to CROSHAIR
 				if (_mouseList[j].pointer == USE)
 					_mouseList[j].pointer = CROSHAIR;
 
 				createPointerText(_mouseList[j].pointer_text, _mouseList[j].pointer);
 
-				// return pointer type
+				// Return pointer type
 				return _mouseList[j].pointer;
 			}
 
 			j++;
 			if (j == _curMouse) {
 				j = 0;
-				// next priority - 0 being the highest, 9 the
+				// Next priority - 0 being the highest, 9 the
 				// lowest
 				priority++;
 			}
@@ -828,153 +862,150 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 	int16 xOffset, yOffset;
 	uint8 justification;
 
-	if (gui->_pointerTextSelected) {
-		if (text_id) {
-			// check what the pointer is, to set offsets
-			// correctly for text position
+	if (!gui->_pointerTextSelected || !text_id)
+		return;
 
-			switch (pointer_res) {
-			case CROSHAIR:
-				yOffset = -7;
-				xOffset = +10;
-				break;
-			case EXIT0:
-				yOffset = +15;
-				xOffset = +20;
-				break;
-			case EXIT1:
-				yOffset = +16;
-				xOffset = -10;
-				break;
-			case EXIT2:
-				yOffset = +10;
-				xOffset = -22;
-				break;
-			case EXIT3:
-				yOffset = -16;
-				xOffset = -10;
-				break;
-			case EXIT4:
-				yOffset = -15;
-				xOffset = +15;
-				break;
-			case EXIT5:
-				yOffset = -12;
-				xOffset = +10;
-				break;
-			case EXIT6:
-				yOffset = +10;
-				xOffset = +25;
-				break;
-			case EXIT7:
-				yOffset = +16;
-				xOffset = +20;
-				break;
-			case EXITDOWN:
-				yOffset = -20;
-				xOffset = -10;
-				break;
-			case EXITUP:
-				yOffset = +20;
-				xOffset = +20;
-				break;
-			case MOUTH:
-				yOffset = -10;
-				xOffset = +15;
-				break;
-			case NORMAL:
-				yOffset = -10;
-				xOffset = +15;
-				break;
-			case PICKUP:
-				yOffset = -40;
-				xOffset = +10;
-				break;
-			case SCROLL_L:
-				yOffset = -20;
-				xOffset = +20;
-				break;
-			case SCROLL_R:
-				yOffset = -20;
-				xOffset = -20;
-				break;
-			case USE:
-				yOffset = -8;
-				xOffset = +20;
-				break;
-			default:
-				// shouldn't happen if we cover all the
-				// different mouse pointers above
-				yOffset = -10;
-				xOffset = +10;
-				break;
-			}
+	// Check what the pointer is, to set offsets correctly for text
+	// position
 
-			// set up justification for text sprite, based on its
-			// offsets from the pointer position
+	switch (pointer_res) {
+	case CROSHAIR:
+		yOffset = -7;
+		xOffset = +10;
+		break;
+	case EXIT0:
+		yOffset = +15;
+		xOffset = +20;
+		break;
+	case EXIT1:
+		yOffset = +16;
+		xOffset = -10;
+		break;
+	case EXIT2:
+		yOffset = +10;
+		xOffset = -22;
+		break;
+	case EXIT3:
+		yOffset = -16;
+		xOffset = -10;
+		break;
+	case EXIT4:
+		yOffset = -15;
+		xOffset = +15;
+		break;
+	case EXIT5:
+		yOffset = -12;
+		xOffset = +10;
+		break;
+	case EXIT6:
+		yOffset = +10;
+		xOffset = +25;
+		break;
+	case EXIT7:
+		yOffset = +16;
+		xOffset = +20;
+		break;
+	case EXITDOWN:
+		yOffset = -20;
+		xOffset = -10;
+		break;
+	case EXITUP:
+		yOffset = +20;
+		xOffset = +20;
+		break;
+	case MOUTH:
+		yOffset = -10;
+		xOffset = +15;
+		break;
+	case NORMAL:
+		yOffset = -10;
+		xOffset = +15;
+		break;
+	case PICKUP:
+		yOffset = -40;
+		xOffset = +10;
+		break;
+	case SCROLL_L:
+		yOffset = -20;
+		xOffset = +20;
+		break;
+	case SCROLL_R:
+		yOffset = -20;
+		xOffset = -20;
+		break;
+	case USE:
+		yOffset = -8;
+		xOffset = +20;
+		break;
+	default:
+		// Shouldn't happen if we cover all the different mouse
+		// pointers above
+		yOffset = -10;
+		xOffset = +10;
+		break;
+	}
 
-			if (yOffset < 0) {
-				// above pointer
-				if (xOffset < 0) {
-					// above left
-					justification = POSITION_AT_RIGHT_OF_BASE;
-				} else if (xOffset > 0) {
-					// above right
-					justification = POSITION_AT_LEFT_OF_BASE;
-				} else {
-					// above centre
-					justification = POSITION_AT_CENTRE_OF_BASE;
-				}
-			} else if (yOffset > 0) {
-				// below pointer
-				if (xOffset < 0) {
-					// below left
-					justification = POSITION_AT_RIGHT_OF_TOP;
-				} else if (xOffset > 0) {
-					// below right
-					justification = POSITION_AT_LEFT_OF_TOP;
-				} else {
-					// below centre
-					justification = POSITION_AT_CENTRE_OF_TOP;
-				}
-			} else {
-				// same y-coord as pointer
-				if (xOffset < 0) {
-					// centre left
-					justification = POSITION_AT_RIGHT_OF_CENTRE;
-				} else if (xOffset > 0) {
-					// centre right
-					justification = POSITION_AT_LEFT_OF_CENTRE;
-				} else {
-					// centre centre - shouldn't happen
-					// anyway!
-					justification = POSITION_AT_LEFT_OF_CENTRE;
-				}
-			}
+	// Set up justification for text sprite, based on its offsets from the
+	// pointer position
 
-			// text resource number, and line number within the
-			// resource
-
-			text_res = text_id / SIZE;
-			local_text = text_id & 0xffff;
-
-			// open text file & get the line
-			text = fetchTextLine(res_man->openResource(text_res), local_text);
-
-			// 'text+2' to skip the first 2 bytes which form the
-			// line reference number
-
-			_pointerTextBlocNo = fontRenderer->buildNewBloc(
-				text + 2, _input->_mouseX + xOffset,
-				_input->_mouseY + yOffset,
-				POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
-				RDSPR_TRANS | RDSPR_DISPLAYALIGN,
-				_speechFontId, justification);
-
-			// now ok to close the text file
-			res_man->closeResource(text_res);
+	if (yOffset < 0) {
+		// Above pointer
+		if (xOffset < 0) {
+			// Above left
+			justification = POSITION_AT_RIGHT_OF_BASE;
+		} else if (xOffset > 0) {
+			// Above right
+			justification = POSITION_AT_LEFT_OF_BASE;
+		} else {
+			// Above centre
+			justification = POSITION_AT_CENTRE_OF_BASE;
+		}
+	} else if (yOffset > 0) {
+		// Below pointer
+		if (xOffset < 0) {
+			// Below left
+			justification = POSITION_AT_RIGHT_OF_TOP;
+		} else if (xOffset > 0) {
+			// Below right
+			justification = POSITION_AT_LEFT_OF_TOP;
+		} else {
+			// Below centre
+			justification = POSITION_AT_CENTRE_OF_TOP;
+		}
+	} else {
+		// Same y-coord as pointer
+		if (xOffset < 0) {
+			// Centre left
+			justification = POSITION_AT_RIGHT_OF_CENTRE;
+		} else if (xOffset > 0) {
+			// Centre right
+			justification = POSITION_AT_LEFT_OF_CENTRE;
+		} else {
+			// Centre centre - shouldn't happen anyway!
+			justification = POSITION_AT_LEFT_OF_CENTRE;
 		}
 	}
+
+	// Text resource number, and line number within the resource
+
+	text_res = text_id / SIZE;
+	local_text = text_id & 0xffff;
+
+	// open text file & get the line
+	text = fetchTextLine(res_man->openResource(text_res), local_text);
+
+	// 'text+2' to skip the first 2 bytes which form the
+	// line reference number
+
+	_pointerTextBlocNo = fontRenderer->buildNewBloc(
+		text + 2, _input->_mouseX + xOffset,
+		_input->_mouseY + yOffset,
+		POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
+		RDSPR_TRANS | RDSPR_DISPLAYALIGN,
+		_speechFontId, justification);
+
+	// now ok to close the text file
+	res_man->closeResource(text_res);
 }
 
 void Sword2Engine::clearPointerText(void) {
@@ -1002,47 +1033,44 @@ void Sword2Engine::noHuman(void) {
 void Sword2Engine::registerMouse(Object_mouse *ob_mouse) {
 	debug(5, "_curMouse = %d", _curMouse);
 
-	// only if 'pointer' isn't NULL
-	if (ob_mouse->pointer) {
-		assert(_curMouse < TOTAL_mouse_list);
+	if (!ob_mouse->pointer)
+		return;
 
-		_mouseList[_curMouse].x1 = ob_mouse->x1;
-		_mouseList[_curMouse].y1 = ob_mouse->y1;
-		_mouseList[_curMouse].x2 = ob_mouse->x2;
-		_mouseList[_curMouse].y2 = ob_mouse->y2;
+	assert(_curMouse < TOTAL_mouse_list);
 
-		_mouseList[_curMouse].priority = ob_mouse->priority;
-		_mouseList[_curMouse].pointer = ob_mouse->pointer;
+	_mouseList[_curMouse].x1 = ob_mouse->x1;
+	_mouseList[_curMouse].y1 = ob_mouse->y1;
+	_mouseList[_curMouse].x2 = ob_mouse->x2;
+	_mouseList[_curMouse].y2 = ob_mouse->y2;
 
-		// Check if pointer text field is set due to previous object
-		// using this slot (ie. not correct for this one)
+	_mouseList[_curMouse].priority = ob_mouse->priority;
+	_mouseList[_curMouse].pointer = ob_mouse->pointer;
 
-		// if 'pointer_text' field is set, but the 'id' field isn't
-		// same is current id, then we don't want this "left over"
-		// pointer text
+	// Check if pointer text field is set due to previous object using this
+	// slot (ie. not correct for this one)
 
-		if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) ID)
-			_mouseList[_curMouse].pointer_text = 0;
+	// If 'pointer_text' field is set, but the 'id' field isn't same is
+	// current id, then we don't want this "left over" pointer text
 
-		// get id from system variable 'id' which is correct for
-		// current object
+	if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) ID)
+		_mouseList[_curMouse].pointer_text = 0;
 
-		_mouseList[_curMouse].id = ID;
+	// Get id from system variable 'id' which is correct for current object
 
-		// not using sprite as mask - this is only done from
-		// fnRegisterFrame()
+	_mouseList[_curMouse].id = ID;
 
-		_mouseList[_curMouse].anim_resource = 0;
-		_mouseList[_curMouse].anim_pc = 0;
+	// Not using sprite as mask - this is only done from fnRegisterFrame()
 
-		debug(5, "mouse id %d", _mouseList[_curMouse].id);
-		_curMouse++;
-	}
+	_mouseList[_curMouse].anim_resource = 0;
+	_mouseList[_curMouse].anim_pc = 0;
+
+	debug(5, "mouse id %d", _mouseList[_curMouse].id);
+	_curMouse++;
 }
 
 void Sword2Engine::monitorPlayerActivity(void) {
 	// if there is at least one mouse event outstanding
-	if (g_input->checkForMouseEvents()) {
+	if (_input->checkForMouseEvents()) {
 		// reset activity delay counter
 		_playerActivityDelay = 0;
 	} else {

@@ -32,126 +32,128 @@ namespace Sword2 {
 //	-------
 //
 
-// defines specific to windows headers...
 #ifndef WIN32
+
+// FIXME: Get rid of these
 
 #define FILE_ATTRIBUTE_NORMAL 0x80
 #define _MAX_PATH 260
 
 #endif
 
-//Generic error codes
-#define RD_OK				0x00000000
-#define RDERR_UNKNOWN			0x00000001
-#define RDERR_INVALIDPOINTER		0x00000002
-#define RDERR_OUTOFMEMORY		0x00000003
-#define RDERR_INVALIDFILENAME		0x00000004
-#define RDERR_READERROR			0x00000005
-#define RDERR_WRITEERROR		0x00000006
-#define RDERR_NOEMULATION		0x00000007
-#define RDERR_LOCKFAILED		0x00000008
+enum {
+	// Generic error codes
 
-//Drawing error codes
-#define RDERR_VIDEOMODE			0x00010000
-#define RDERR_COLOURDEPTH		0x00010001
-#define RDERR_CANNOTFLIP		0x00010002
-#define RDERR_RESTORELAYERS		0x00010003
-#define RDERR_DDRAWNOEMULATION		0X00010004
-#define RDERR_NOHARDWARE		0x00010005
-#define RDERR_ALREADYON			0x00010006
-#define RDERR_DECOMPRESSION		0x00010007
+	RD_OK,
+	RDERR_UNKNOWN,
+	RDERR_INVALIDPOINTER,
+	RDERR_OUTOFMEMORY,
+	RDERR_INVALIDFILENAME,
 
-//Operating system error codes
-#define RDERR_CREATEWINDOW		0x00020000
-#define RDERR_APPCLOSED			0x00020001
-#define RDERR_GOFULLSCREEN		0x00020002
+	// Drawing error codes
 
-//Language and version error codes
-#define RDERR_OPENVERSIONFILE		0x00030000
-#define RDERR_INVALIDVERSION		0x00030001
+	RDERR_DECOMPRESSION,
 
-//Keyboard error codes
-#define RDERR_NOKEYWAITING		0x00040000
+	// Language and version error codes
 
-//Sprite drawing error codes
-#define RDERR_NOCLIPPING		0x00050000
-#define RDERR_NOTIMPLEMENTED		0x00050001
-#define RDERR_UNKNOWNTYPE		0x00050002
-#define RDERR_INVALIDSCALING		0x00050003
-#define RDERR_SURFACELOST		0x00050004
-#define RDERR_NOTCLOSED			0x00050005
-#define RDERR_NOTOPEN			0x00050006
-#define RDERR_ALREADYCLOSED		0x00050007 // added for _console.cpp by khalek
+	RDERR_OPENVERSIONFILE,
 
-//Menubar error codes
-#define RDERR_INVALIDMENU		0x00060000
-#define RDERR_INVALIDPOCKET		0x00060001
-#define RDERR_INVALIDCOMMAND		0x00060002
+	// Keyboard error codes
 
-//Palette fading error codes
-#define RDERR_FADEINCOMPLETE		0x00070000
+	RDERR_NOKEYWAITING,
 
-//Sound engine error codes
-#define RDERR_DSOUNDCREATE		0x00080000
-#define RDERR_DSOUNDCOOPERATE		0x00080001
-#define RDERR_DSOUNDPBUFFER		0x00080002
-#define RDERR_PRIMARYFORMAT		0x00080003
-#define RDERR_SPEECHPLAYING		0x00080004
-#define RDERR_SPEECHNOTPLAYING		0x00080005
-#define RDERR_INVALIDWAV		0x00080006
-#define RDERR_CREATESOUNDBUFFER		0x00080007
-#define RDERR_LOCKSPEECHBUFFER		0x00080008
-#define RDERR_FXALREADYOPEN		0x00080009
-#define RDERR_NOFREEBUFFERS		0x0008000A
-#define RDERR_FXNOTOPEN			0x0008000B
-#define RDERR_FXFUCKED			0x0008000C
-#define RDERR_INVALIDID			0x0008000D
+	// Sprite drawing error codes
 
+	RDERR_NOTIMPLEMENTED,
+	RDERR_UNKNOWNTYPE,
+	RDERR_INVALIDSCALING,
+	RDERR_NOTCLOSED,
+	RDERR_NOTOPEN,
+
+	// Menubar error codes
+
+	RDERR_INVALIDMENU,
+	RDERR_INVALIDPOCKET,
+	RDERR_INVALIDCOMMAND,
+
+	// Palette fading error codes
+
+	RDERR_FADEINCOMPLETE,
+
+	// Sound engine error codes
+
+	RDERR_SPEECHPLAYING,
+	RDERR_SPEECHNOTPLAYING,
+	RDERR_INVALIDWAV,
+	RDERR_FXALREADYOPEN,
+	RDERR_NOFREEBUFFERS,
+	RDERR_FXNOTOPEN,
+	RDERR_FXFUCKED,
+	RDERR_INVALIDID
+};
 
 // Key codes
-#define RDKEY_ESCAPE			27
 
+enum {
+//	RDKEY_ESCAPE			= 27
+};
 
 // Mouse button defines
-#define RD_LEFTBUTTONDOWN		0x01
-#define RD_LEFTBUTTONUP			0x02
-#define RD_RIGHTBUTTONDOWN		0x04
-#define RD_RIGHTBUTTONUP		0x08
 
+enum {
+	RD_LEFTBUTTONDOWN		= 0x01,
+	RD_LEFTBUTTONUP			= 0x02,
+	RD_RIGHTBUTTONDOWN		= 0x04,
+	RD_RIGHTBUTTONUP		= 0x08
+};
 
-//Sprite defines
-#define RDSPR_TRANS			0x0001
-#define RDSPR_BLEND			0x0004
-#define RDSPR_FLIP			0x0008
-#define RDSPR_SHADOW			0x0010
-#define RDSPR_DISPLAYALIGN		0x0020
-#define RDSPR_NOCOMPRESSION		0x0040
-#define RDSPR_EDGEBLEND			0x0080
-//This is the high byte part of the sprite type which defines what type of
-//  compression is used, as long as RDSPR_NOCOMPRESSION is not defined.
-#define RDSPR_RLE16			0x0000
-#define RDSPR_RLE256			0x0100
-#define RDSPR_RLE256FAST		0x0200
+// Sprite defines
 
+enum {
+	RDSPR_TRANS			= 0x0001,
+	RDSPR_BLEND			= 0x0004,
+	RDSPR_FLIP			= 0x0008,
+	RDSPR_SHADOW			= 0x0010,
+	RDSPR_DISPLAYALIGN		= 0x0020,
+	RDSPR_NOCOMPRESSION		= 0x0040,
+	RDSPR_EDGEBLEND			= 0x0080,	// Unused
 
-//Fading defines
-#define RDFADE_NONE			0x00
-#define RDFADE_UP			0x01
-#define RDFADE_DOWN			0x02
-#define RDFADE_BLACK			0x03
+	// This is the high byte part of the sprite type which defines what
+	// type of compression is used, as long as RDSPR_NOCOMPRESSION is not
+	//  defined.
 
-//Mouse defines
-#define RDMOUSE_NOFLASH			0x00
-#define RDMOUSE_FLASH			0x01
+	RDSPR_RLE16			= 0x0000,
+	RDSPR_RLE256			= 0x0100,
+	RDSPR_RLE256FAST		= 0x0200
+};
 
-//Menubar defines.
-#define RDMENU_TOP			0x00
-#define RDMENU_BOTTOM			0x01
+// Fading defines
 
-#define RDMENU_HIDDEN			0x00
-#define RDMENU_SHOWN			0x01
-#define RDMENU_OPENING			0x02
-#define RDMENU_CLOSING			0x03
+enum {
+	RDFADE_NONE,
+	RDFADE_UP,
+	RDFADE_DOWN,
+	RDFADE_BLACK
+};
+
+// Mouse defines
+
+enum {
+	RDMOUSE_NOFLASH,
+	RDMOUSE_FLASH
+};
+
+// Menubar defines.
+
+#define RDMENU_TOP			0
+#define RDMENU_BOTTOM			1
+
+enum {
+	RDMENU_HIDDEN,
+	RDMENU_SHOWN,
+	RDMENU_OPENING,
+	RDMENU_CLOSING
+};
 
 #define RDMENU_ICONWIDE			35
 #define RDMENU_ICONDEEP			30
@@ -160,25 +162,35 @@ namespace Sword2 {
 #define RDMENU_MAXPOCKETS		15
 #define RDMENU_MENUDEEP			40
 
-#define RDSE_SAMPLEFINISHED		0
-#define RDSE_SAMPLEPLAYING		1
-#define RDSE_FXTOCLEAR			0
-#define RDSE_FXCACHED			1
-#define RDSE_FXSPOT			0
-#define RDSE_FXLOOP			1
-#define RDSE_FXLEADIN			2
-#define RDSE_FXLEADOUT			3
-#define RDSE_QUIET			1
-#define RDSE_SPEAKING			0
+// Sound defines
 
+enum {
+	RDSE_SAMPLEFINISHED		= 0,
+	RDSE_SAMPLEPLAYING		= 1,
+	RDSE_FXTOCLEAR			= 0,		// Unused
+	RDSE_FXCACHED			= 1,		// Unused
+	RDSE_FXSPOT			= 0,
+	RDSE_FXLOOP			= 1,
+	RDSE_FXLEADIN			= 2,
+	RDSE_FXLEADOUT			= 3,
+	RDSE_QUIET			= 1,
+	RDSE_SPEAKING			= 0
+};
 
-#define RDPAL_FADE			0
-#define RDPAL_INSTANT			1
+// Palette defines
 
-//Blitting FX defines
-#define RDBLTFX_SPRITEBLEND		0x01
-#define RDBLTFX_SHADOWBLEND		0x02
-#define RDBLTFX_EDGEBLEND		0x04
+enum {
+	RDPAL_FADE,
+	RDPAL_INSTANT
+};
+
+// Blitting FX defines
+
+enum {
+	RDBLTFX_SPRITEBLEND		= 0x01,
+	RDBLTFX_SHADOWBLEND		= 0x02,
+	RDBLTFX_EDGEBLEND		= 0x04
+};
 
 //
 //	Structure definitions

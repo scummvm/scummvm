@@ -31,9 +31,12 @@ enum {
 	MOUSE_menu		= 1,	// menu chooser
 	MOUSE_drag		= 2,	// dragging luggage
 	MOUSE_system_menu	= 3,	// system menu chooser
-	MOUSE_holding		= 4	// speech chooser
+	MOUSE_holding		= 4	// special
 };
 
+// The MOUSE_holding mode is entered when the conversation menu is closed, and
+// exited when the mouse cursor moves off that menu area. I don't know why yet.
+ 
 // mouse unit - like Object_mouse, but with anim resource & pc (needed if
 // sprite is to act as mouse detection mask)
 

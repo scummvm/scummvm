@@ -126,6 +126,8 @@ private:
 	void startNewPalette(void);
 	void processLayer(uint32 layer_number);
 
+	int menuClick(int menu_items);
+
 	void getPlayerStructures(void);
 	void putPlayerStructures(void);
 
