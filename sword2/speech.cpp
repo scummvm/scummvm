@@ -215,11 +215,11 @@ int32 FN_choose(int32 *params)	//Tony19Nov96
 			{
 //				Zdebug(" ICON res %d for %d", subject_list[j].res, j);
 				icon = res_man.Res_open( subject_list[j].res ) + sizeof(_standardHeader) + RDMENU_ICONWIDE*RDMENU_ICONDEEP;
-				SetMenuIcon(RDMENU_BOTTOM, j, icon);
+				SetMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
 				res_man.Res_close( subject_list[j].res );
 			}
 			else
-			{	SetMenuIcon(RDMENU_BOTTOM, j, NULL);	//no icon here
+			{	SetMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);	//no icon here
 				//Zdebug(" NULL for %d", j);
 			}
 		}
@@ -275,7 +275,7 @@ int32 FN_choose(int32 *params)	//Tony19Nov96
 						if	(j!=hit)	//change all others to grey
 						{
 							icon = res_man.Res_open( subject_list[j].res ) + sizeof(_standardHeader);	//now grey
-							SetMenuIcon(RDMENU_BOTTOM, j, icon);
+							SetMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
 							res_man.Res_close( subject_list[j].res );
 						}
 					}
@@ -360,7 +360,7 @@ int32 FN_end_conversation(int32 *params)	//Tony27Nov96
 // restart george's base script
 //	LLogic.Total_restart();
 
-	if (params);
+	// if (params); what is this supposed to do? - khalek
 
 	return(IR_CONT);	//drop out without saving pc and go around again
 }
@@ -1809,11 +1809,11 @@ void LocateTalker(int32	*params)	// (James 01july97)
 			ob_mega = (Object_mega*) params[S_OB_MEGA];		// this may be NULL
 
 			// calc scale at which to print the sprite, based on feet y-coord & scaling constants (NB. 'scale' is actually 256*true_scale, to maintain accuracy)
-			scale = (ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b)/256;	// Ay+B gives 256*scale ie. 256*256*true_scale for even better accuracy, ie. scale = (Ay+B)/256
+			scale = (uint16) ((ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b)/256);	// Ay+B gives 256*scale ie. 256*256*true_scale for even better accuracy, ie. scale = (Ay+B)/256
 
 			// calc suitable centre point above the head, based on scaled height
-			text_x = ob_mega->feet_x;								// just use 'feet_x' as centre
-			text_y = ob_mega->feet_y + (cdt_entry->y * scale)/256;	// add scaled y-offset to feet_y coord to get top of sprite
+			text_x = (int16) (ob_mega->feet_x);								// just use 'feet_x' as centre
+			text_y = (int16) (ob_mega->feet_y + (cdt_entry->y * scale)/256); // add scaled y-offset to feet_y coord to get top of sprite
 		}
 		else	// it's a non-scaling anim
 		{

@@ -520,9 +520,9 @@ int32 FN_add_sequence_text(int32 *params)	// (James22may97)
 		Con_fatal_error("FN_add_sequence_text ran out of lines (%s line %u)",__FILE__,__LINE__);
 	#endif
 
-	sequence_text_list[sequenceTextLines].textNumber	= params[0];
-	sequence_text_list[sequenceTextLines].startFrame	= params[1];
-	sequence_text_list[sequenceTextLines].endFrame		= params[2];
+	sequence_text_list[sequenceTextLines].textNumber = params[0];
+	sequence_text_list[sequenceTextLines].startFrame = params[1];
+	sequence_text_list[sequenceTextLines].endFrame	= (uint16) params[2];
 	sequenceTextLines++;
 
 	return(IR_CONT);	//	continue script

@@ -2966,7 +2966,7 @@ void SetMusicVolume(uint8 volume)
 
 uint8 GetMusicVolume()
 {
-		return volMusic[0];
+		return (uint8) volMusic[0];
 }
 
 

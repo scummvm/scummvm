@@ -135,14 +135,14 @@ int32	FN_get_sync(int32	*params)	//Tony27Nov96
 
 
 	for	(j=0;j<MAX_syncs;j++)
-		if	(sync_list[j].id == ID)
-		{	RESULT=sync_list[j].sync;
+		if	(sync_list[j].id == ID) {
+			RESULT=sync_list[j].sync;
 			return(IR_CONT);	//return sync value waiting
 		}
 
 	RESULT=0;
 
-	if (params);
+	// if (params); what is the point of this... khalek
 
 	return(IR_CONT);	//no sync found
 
@@ -163,14 +163,15 @@ int32	FN_wait_sync(int32	*params)	//Tony27Nov96
 //	Zdebug("%d waits", ID);
 
 	
-	for	(j=0;j<MAX_syncs;j++)
-		if	(sync_list[j].id == ID)
-		{	RESULT=sync_list[j].sync;
+	for (j=0;j<MAX_syncs;j++) {
+		if (sync_list[j].id == ID) {
+			RESULT=sync_list[j].sync;
 			//Zdebug(" go");
 			return(IR_CONT);	//return sync value waiting
 		}
+	}
 
-	if (params);
+	// if (params); // what is the point of this... - khalek
 
 	return(IR_REPEAT);	//back again next cycle
 

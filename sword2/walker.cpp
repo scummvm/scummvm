@@ -121,9 +121,9 @@ int32 FN_walk(int32 *params)	// James (14nov96)
 	ob_graph	= (Object_graphic *)params[1];
 	ob_mega		= (Object_mega *)params[2];
 
-	target_x	= params[4];
-	target_y	= params[5];
-	target_dir	= params[6];
+	target_x	= (int16) params[4];
+	target_y	= (int16) params[5];
+	target_dir	= (uint8) params[6];
 
 	//----------------------------------------------------------------------------------------
 	// if this is the start of the walk, calculate route
@@ -154,7 +154,7 @@ int32 FN_walk(int32 *params)	// James (14nov96)
 		ob_mega->walk_pc=0;			//always
 
 		AllocateRouteMem();	// set up mem for _walkData in route_slots[] & set mega's 'route_slot_id' accordingly
-		route = RouteFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
+		route = (int8) RouteFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
 
 		/*
 		if (id == PLAYER)
@@ -923,9 +923,9 @@ int32 FN_set_standby_coords(int32 *params)	// (10dec97 JEL)
 
 	//----------------------------------------------------------------------------------------
 
-	standby_x	= params[0];
-	standby_y	= params[1];
-	standby_dir	= params[2];
+	standby_x	= (int16) params[0];
+	standby_y	= (int16) params[1];
+	standby_dir	= (uint8) params[2];
 
 	return(IR_CONT);	//	continue script
 }

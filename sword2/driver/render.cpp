@@ -929,8 +929,8 @@ int32 StartRenderCycle(void)
 	}
 	else
 	{
-		scrollx = scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime);
-		scrolly = scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime);
+		scrollx = (int16) (scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
+		scrolly = (int16) (scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
 		renderTooSlow = 0;
 	}
 
@@ -973,8 +973,8 @@ int32 EndRenderCycle(BOOL *end)
 	else
 	{
 		*end = FALSE;
-		scrollx = scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime);
-		scrolly = scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime);
+		scrollx = (int16) (scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
+		scrolly = (int16) (scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
 	}
 
 	return(RD_OK);
