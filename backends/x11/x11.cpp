@@ -97,7 +97,9 @@ public:
 
 	// Set function that generates samples 
 	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
-
+	
+	void clear_sound_proc();
+	
 	// Poll cdrom status
 	// Returns true if cd audio is playing
 	bool poll_cdrom();
@@ -132,6 +134,8 @@ public:
 	void clear_overlay();
 	void grab_overlay(int16 *, int);
 	void copy_rect_overlay(const int16 *, int, int, int, int, int);
+	virtual int16 get_height();
+	virtual int16 get_width();
 
 
 	static OSystem *create(int gfx_mode, bool full_screen);
@@ -436,7 +440,7 @@ void OSystem_X11::init_size(uint w, uint h)
 	palette = (uint16 *)calloc(256, sizeof(uint16));
 }
 
-bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format)
+bool OSystem_X11::set_sound_proc(SoundProc *proc, void *param, SoundFormat format)
 {
 	static THREAD_PARAM thread_param;
 
@@ -452,6 +456,11 @@ bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format)
 
 	return true;
 }
+
+void OSystem_X11::clear_sound_proc() {
+	// FIXME implement...
+}
+
 
 void OSystem_X11::set_palette(const byte *colors, uint start, uint num)
 {
@@ -768,10 +777,12 @@ void OSystem_X11::set_shake_pos(int shake_pos)
 void OSystem_X11::create_thread(ThreadProc *proc, void *param)
 {
 	pthread_t *thread = (pthread_t *) malloc(sizeof(pthread_t));
-	if (pthread_create(thread, NULL, (void *(*)(void *))proc, param))
+	pthread_create(thread, NULL, (void *(*)(void *))proc, param);
+	/* if (pthread_create(thread, NULL, (void *(*)(void *))proc, param))
 		return NULL;
 	else
 		return thread;
+	*/
 }
 
 uint32 OSystem_X11::property(int param, Property *value)
@@ -1029,7 +1040,7 @@ void OSystem_X11::set_timer(int timer, int (*callback) (int))
 	}
 }
 
-MutexRef OSystem_X11::create_mutex()
+OSystem::MutexRef OSystem_X11::create_mutex(void)
 {
 	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(mutex, NULL);
@@ -1089,3 +1100,12 @@ void OSystem_X11::copy_rect_overlay(const int16 *src, int pitch, int x, int y, i
 		h--;
 	}
 }
+
+int16 OSystem_X11::get_height() {
+	return fb_height;
+}
+
+int16 OSystem_X11::get_width() {
+	return fb_width;
+}
+
