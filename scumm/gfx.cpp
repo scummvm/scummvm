@@ -1302,7 +1302,10 @@ next_iter:
 
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
- * used throughout in 7.2+ HE versions
+ * used throughout in 7.2+ HE versions.
+ *
+ * TODO: This function essentially is a stripped down & special cased version of 
+ * the generic Gdi::drawBitmap() method. We might consider merging those two.
  */
 void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width) {
 	assert(ptr);
@@ -1321,6 +1324,10 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 
 	code = *bmap_ptr++;
 
+	// TODO: The following few lines more or less duplicate decompressBitmap(), only
+	// for an area spanning multiple strips. In particular, the codecs 13 & 14
+	// in decompressBitmap call drawStripHE(), which use the same algorithm as
+	// decompressBMAPbg() does...
 	if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
 		int decomp_shr = code % 10;
 		int decomp_mask = 0xFF >> (8 - decomp_shr);
@@ -1432,6 +1439,11 @@ void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dst_w, int dst_h, int s
 		r1.bottom -= diff;
 		r2.bottom -= diff;
 	}
+	// TODO/FIXME: At this point, unless I am mistaken, r1 == r2.moveTo(0, 0)
+	// As such the code above could be simplified (i.e. r1 could be removed,
+	// and then the uses of the diff variables can be folded in).
+	// In fact it looks to me as if the code above just does some simple clipping...
+	// Since I don't have the HE games in questions, I can't test this, though.
 	if (r1.isValidRect() && r2.isValidRect()) {
 		decompressWizImage(dst, dst_w, &r2, src, &r1);
 	}
@@ -1447,29 +1459,32 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRe
 	
 	dstPtr = dst + dstRect->left + dstRect->top * dstPitch;
 	dataPtr = src;
+	
+	// Skip over the first 'srcRect->top' lines in the data
 	h = srcRect->top;
 	while (h--) {
 		dataPtr += READ_LE_UINT16(dataPtr) + 2;
 	}
-	h = srcRect->bottom - srcRect->top;
-	if (h < 0)
+	h = srcRect->bottom - srcRect->top + 1;
+	if (h <= 0)
 		return;
 	w = srcRect->right - srcRect->left + 1;
 	if (w <= 0)
 		return;
 		
-	while (1) {
-		if (h < 0)
-			break;
-		--h;
+	while (h--) {
 		xoff = srcRect->left;
 		off = READ_LE_UINT16(dataPtr);
 		w = srcRect->right - srcRect->left + 1;
 		dstPtrNext = dstPitch + dstPtr;
 		dataPtrNext = off + 2 + dataPtr;
-		dataPtr += 2;	
-		if (off == 0) goto dec_next;
+		dataPtr += 2;
+		if (off == 0)
+			goto dec_next;
 
+		// Skip over the leftmost 'srcRect->left' pixels.
+		// TODO: This code could be merged (at a loss of efficency) with the
+		// loop below which does the actual drawing.
 		while (xoff > 0) {
 			code = *dataPtr++;
 			databit = code & 1;
@@ -1482,9 +1497,8 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRe
 				}
 			} else {
 				databit = code & 1;
-				code >>= 1;	
+				code = (code >> 2) + 1;
 				if (databit) {
-					++code;
 					++dataPtr;
 					xoff -= code;
 					if (xoff < 0) {
@@ -1493,7 +1507,6 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRe
 						goto dec_sub2;
 					}
 				} else {
-					++code;
 					dataPtr += code;
 					xoff -= code;
 					if (xoff < 0) {
@@ -1514,9 +1527,8 @@ dec_sub1:		dstPtr += code;
 				w -= code;
 			} else {
 				databit = code & 1;
-				code >>= 1;
+				code = (code >> 2) + 1;
 				if (databit) {
-					++code;
 dec_sub2:			w -= code;
 					if (w < 0) {
 						code += w;
@@ -1524,7 +1536,6 @@ dec_sub2:			w -= code;
 					memset(dstPtr, *dataPtr++, code);
 					dstPtr += code;
 				} else {
-					++code;
 dec_sub3:			w -= code;
 					if (w < 0) {
 						code += w;
@@ -1576,6 +1587,11 @@ void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int
 		r1.bottom -= diff;
 		r2.bottom -= diff;
 	}
+	// TODO/FIXME: At this point, unless I am mistaken, r1 == r2.moveTo(0, 0)
+	// As such the code above could be simplified (i.e. r1 could be removed,
+	// and then the uses of the diff variables can be folded in).
+	// In fact it looks to me as if the code above just does some simple clipping...
+	// Since I don't have the HE games in questions, I can't test this, though.
 	if (r1.isValidRect() && r2.isValidRect()) {
 		decompressAuxImage(dst1, dst2, dstw, &r2, src, &r1);
 	}
@@ -1600,12 +1616,17 @@ void Gdi::decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Commo
 
   	while (h--) {
   		uint16 var_8 = READ_LE_UINT16(src);
+		src += 2;
   		if (var_8) {
   			int rw = w;
   			int xoff = srcRect->left;
-  			srcCur = src + 2;
+  			srcCur = src;
   			dstCur1 = dst1;
   			dstCur2 = dst2;
+
+			// Skip over the leftmost 'srcRect->left' pixels.
+			// TODO: This code could be merged (at a loss of efficency) with the
+			// loop below which does the actual drawing.
   			while (xoff > 0) {
 				code = *srcCur++;
 				if (code & 1) {
@@ -1665,22 +1686,20 @@ dec_sub3:			rw -= code;
 					}								
 				}
 			}
-			src += var_8 + 2;
-		} else {
-			src += 2;
+			src += var_8;
 		}
 		dst1 += dstPitch;
 		dst2 += dstPitch;
 	}
 }
 
-void Gdi::copyVirtScreenBuffers(Common::Rect rect) {
+void Gdi::copyVirtScreenBuffers(const Common::Rect &rect) {
 	int rw = rect.right - rect.left + 1;
 	int rh = rect.bottom - rect.top + 1;
 	byte *src, *dst;
-
-	src = (byte *)_vm->virtscr[0].backBuf + (_vm->_screenStartStrip + rect.top * _numStrips) * 8 + rect.left;
-	dst = (byte *)_vm->virtscr[0].pixels + (_vm->_screenStartStrip + rect.top * _numStrips) * 8 + rect.left;
+	
+	src = _vm->virtscr[0].getBackPixels(rect.left, rect.top);
+	dst = _vm->virtscr[0].getPixels(rect.left, rect.top);
 	
 	assert(rw <= _vm->_screenWidth && rw > 0);
 	assert(rh <= _vm->_screenHeight && rh > 0);
@@ -2142,76 +2161,80 @@ void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const 
 	byte color;
 	int32 iteration;
 
-     color = *src;
-	 src++;
-	 data = READ_LE_UINT24(src);
-	 src += 3;
-     shift = 24;
+	color = *src;
+	src++;
+	data = READ_LE_UINT24(src);
+	src += 3;
+	shift = 24;
 
-	 while (height) {
-		 for (iteration = 0; iteration < w; iteration++) {
-			 FILL_BITS;
-			 *dst++ = color;
-			 
-			 if (READ_BIT) {
-				 if (!READ_BIT) {
-					 color = data & mask;
-					 shift -= shr;
-					 data >>= shr;
-				 } else {
-					 dataBit = data & 7;
-					 shift -= 3;
-					 data >>= 3;
-					 // map (0, 1, 2, 3, 4, 5, 6, 7) to (-4, -3, -2, -1, 1, 2, 3, 4)
-					 if (dataBit >= 4)
-						 color += dataBit - 3;
-					 else
-						 color += dataBit - 4;
-				 }
-			 }
-		 }
-		 dst += screenwidth - w;
-		 height--;
-	 }
+	while (height) {
+		for (iteration = 0; iteration < w; iteration++) {
+			*dst++ = color;
+			FILL_BITS;
+			
+			if (READ_BIT) {
+				if (!READ_BIT) {
+					color = data & mask;
+					shift -= shr;
+					data >>= shr;
+				} else {
+					dataBit = data & 7;
+					shift -= 3;
+					data >>= 3;
+					// map (0, 1, 2, 3, 4, 5, 6, 7) to (-4, -3, -2, -1, 1, 2, 3, 4)
+					if (dataBit >= 4)
+						color += dataBit - 3;
+					else
+						color += dataBit - 4;
+				}
+			}
+		}
+		dst += screenwidth - w;
+		height--;
+	}
 }
 
 // FIXME/TODO: drawStripHE and decompressBMAPbg are essentially identical!
 void Gdi::drawStripHE(byte *dst, const byte *src, int height, const bool transpCheck) {
 	uint32 dataBit, data, shift, iteration;
 	byte color;
+	const uint w = 8;
+	const int shr = _decomp_shr;
+	const int mask = _decomp_mask;
 
-     color = *src;
-	 src++;
-	 data = READ_LE_UINT24(src);
-	 src += 3;
-     shift = 24;
+	color = *src;
+	src++;
+	data = READ_LE_UINT24(src);
+	src += 3;
+	shift = 24;
 
-	 while (height) {
-		 for (iteration = 0; iteration < 8; iteration++) {
-			 if (!transpCheck || color != _transparentColor)
-				 *dst = _roomPalette[color];
-			 dst++;
-			 FILL_BITS;
-			 
-			 if (READ_BIT) {
-				 if (!READ_BIT) {
-					 color = _decomp_mask & data;
-					 shift -= _decomp_shr;
-					 data >>= _decomp_shr;
-				 } else {
-					 dataBit = data & 7;
-					 shift -= 3;
-					 data >>= 3;
-					 if (dataBit >= 4)
-						 color += dataBit - 3;
-					 else
-						 color += dataBit - 4;
-				 }
-			 }
-		 }
-		 dst += _vm->_screenWidth - 8;
-		 height--;
-	 }
+	while (height) {
+		for (iteration = 0; iteration < w; iteration++) {
+			if (!transpCheck || color != _transparentColor)
+				*dst = _roomPalette[color];
+			dst++;
+			FILL_BITS;
+			
+			if (READ_BIT) {
+				if (!READ_BIT) {
+					color = data & mask;
+					shift -= shr;
+					data >>= shr;
+				} else {
+					dataBit = data & 7;
+					shift -= 3;
+					data >>= 3;
+					// map (0, 1, 2, 3, 4, 5, 6, 7) to (-4, -3, -2, -1, 1, 2, 3, 4)
+					if (dataBit >= 4)
+						color += dataBit - 3;
+					else
+						color += dataBit - 4;
+				}
+			}
+		}
+		dst += _vm->_screenWidth - w;
+		height--;
+	}
 }
 
 #undef READ_BIT

@@ -279,7 +279,7 @@ public:
 	void decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect);
 	void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, Common::Rect *rect);
 	void decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect);
-	void copyVirtScreenBuffers(Common::Rect rect);
+	void copyVirtScreenBuffers(const Common::Rect &rect);
 
 	void disableZBuffer() { _zbufferDisabled = true; }
 	void enableZBuffer() { _zbufferDisabled = false; }
