@@ -81,9 +81,98 @@ void Imuse::resetState() {
 }
 
 void Imuse::restoreState(SaveRestoreFunc) {
+	StackLock lock(_mutex);
+
+	g_engine->savegameGzread(&_volVoice, sizeof(int32));
+	g_engine->savegameGzread(&_volSfx, sizeof(int32));
+	g_engine->savegameGzread(&_volMusic, sizeof(int32));
+	g_engine->savegameGzread(&_curMusicState, sizeof(int32));
+	g_engine->savegameGzread(&_curMusicSeq, sizeof(int32));
+	g_engine->savegameGzread(_attributes, sizeof(int32) * 185);
+
+	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
+		Track *track = _track[l];
+		g_engine->savegameGzread(&track->pan, sizeof(int32));
+		g_engine->savegameGzread(&track->panFadeDest, sizeof(int32));
+		g_engine->savegameGzread(&track->panFadeDelay, sizeof(int32));
+		g_engine->savegameGzread(&track->panFadeUsed, sizeof(bool));
+		g_engine->savegameGzread(&track->vol, sizeof(int32));
+		g_engine->savegameGzread(&track->volFadeDest, sizeof(int32));
+		g_engine->savegameGzread(&track->volFadeDelay, sizeof(int32));
+		g_engine->savegameGzread(&track->volFadeUsed, sizeof(bool));
+		g_engine->savegameGzread(track->soundName, 32);
+		g_engine->savegameGzread(&track->used, sizeof(bool));
+		g_engine->savegameGzread(&track->toBeRemoved, sizeof(bool));
+		g_engine->savegameGzread(&track->readyToRemove, sizeof(bool));
+		g_engine->savegameGzread(&track->started, sizeof(bool));
+		g_engine->savegameGzread(&track->priority, sizeof(int32));
+		g_engine->savegameGzread(&track->regionOffset, sizeof(int32));
+		g_engine->savegameGzread(&track->dataOffset, sizeof(int32));
+		g_engine->savegameGzread(&track->curRegion, sizeof(int32));
+		g_engine->savegameGzread(&track->curHookId, sizeof(int32));
+		g_engine->savegameGzread(&track->volGroupId, sizeof(int32));
+		g_engine->savegameGzread(&track->iteration, sizeof(int32));
+		g_engine->savegameGzread(&track->mixerFlags, sizeof(int32));
+		g_engine->savegameGzread(&track->mixerVol, sizeof(int32));
+		g_engine->savegameGzread(&track->mixerPan, sizeof(int32));
+
+		if (!track->used)
+			continue;
+
+		track->readyToRemove = false;
+		if (track->toBeRemoved) {
+			track->stream = NULL;
+			track->used = false;
+			continue;
+		}
+
+		track->soundHandle = _sound->openSound(track->soundName, track->volGroupId);
+		assert(track->soundHandle);
+
+		int32 streamBufferSize = track->iteration;
+		int	freq = _sound->getFreq(track->soundHandle);
+
+		track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
+		g_mixer->playInputStream(&track->handle, track->stream, false, -1, track->mixerVol, track->mixerPan, false);
+	}
 }
 
 void Imuse::saveState(SaveRestoreFunc) {
+	StackLock lock(_mutex);
+
+	g_engine->savegameGzwrite(&_volVoice, sizeof(int32));
+	g_engine->savegameGzwrite(&_volSfx, sizeof(int32));
+	g_engine->savegameGzwrite(&_volMusic, sizeof(int32));
+	g_engine->savegameGzwrite(&_curMusicState, sizeof(int32));
+	g_engine->savegameGzwrite(&_curMusicSeq, sizeof(int32));
+	g_engine->savegameGzwrite(_attributes, sizeof(int32) * 185);
+
+	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
+		Track *track = _track[l];
+		g_engine->savegameGzwrite(&track->pan, sizeof(int32));
+		g_engine->savegameGzwrite(&track->panFadeDest, sizeof(int32));
+		g_engine->savegameGzwrite(&track->panFadeDelay, sizeof(int32));
+		g_engine->savegameGzwrite(&track->panFadeUsed, sizeof(bool));
+		g_engine->savegameGzwrite(&track->vol, sizeof(int32));
+		g_engine->savegameGzwrite(&track->volFadeDest, sizeof(int32));
+		g_engine->savegameGzwrite(&track->volFadeDelay, sizeof(int32));
+		g_engine->savegameGzwrite(&track->volFadeUsed, sizeof(bool));
+		g_engine->savegameGzwrite(track->soundName, 32);
+		g_engine->savegameGzwrite(&track->used, sizeof(bool));
+		g_engine->savegameGzwrite(&track->toBeRemoved, sizeof(bool));
+		g_engine->savegameGzwrite(&track->readyToRemove, sizeof(bool));
+		g_engine->savegameGzwrite(&track->started, sizeof(bool));
+		g_engine->savegameGzwrite(&track->priority, sizeof(int32));
+		g_engine->savegameGzwrite(&track->regionOffset, sizeof(int32));
+		g_engine->savegameGzwrite(&track->dataOffset, sizeof(int32));
+		g_engine->savegameGzwrite(&track->curRegion, sizeof(int32));
+		g_engine->savegameGzwrite(&track->curHookId, sizeof(int32));
+		g_engine->savegameGzwrite(&track->volGroupId, sizeof(int32));
+		g_engine->savegameGzwrite(&track->iteration, sizeof(int32));
+		g_engine->savegameGzwrite(&track->mixerFlags, sizeof(int32));
+		g_engine->savegameGzwrite(&track->mixerVol, sizeof(int32));
+		g_engine->savegameGzwrite(&track->mixerPan, sizeof(int32));
+	}
 }
 
 void Imuse::callback() {
