@@ -361,8 +361,36 @@ void Scumm::initBGBuffers(int height)
 	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
-	if (_features & GF_SMALL_HEADER) {
+	if (_features & GF_OLD256) {
+		// FIXME - maybe this should check for multiple planes like we do
+		// for GF_SMALL_HEADER already.
 		gdi._numZBuffer = 2;
+	} else if (_features & GF_SMALL_HEADER) {
+		// FIXME
+		#define DEBUG_ZPLANE_CODE
+		
+		ptr = findResourceData(MKID('SMAP'), room);
+#ifdef DEBUG_ZPLANE_CODE
+		printf("Trying to determine room zplanes':\n");
+		hexdump(ptr-6, 0x20);
+#endif
+
+		int off;
+		gdi._numZBuffer = 0;
+		off = READ_LE_UINT32(ptr);
+		for (i = 0; off && (i < 4); i++) {
+#ifdef DEBUG_ZPLANE_CODE
+			printf("Plane %d\n", i);
+			hexdump(ptr, 0x20);
+#endif
+
+			gdi._numZBuffer++;
+			ptr += off;
+			off = READ_LE_UINT16(ptr);
+		}
+#ifdef DEBUG_ZPLANE_CODE
+		printf("Real plane count = %d\n", gdi._numZBuffer);
+#endif
 	} else {
 		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
@@ -723,8 +751,18 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 		/* this is really ugly, FIXME */
 		if (ptr[-2] == 'B' && ptr[-1] == 'M' && READ_LE_UINT32(ptr - 6) > (READ_LE_UINT32(ptr) + 10)) {
 			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
+			// FIXME - how does GF_OLD256 encode the multiple zplanes?
+			if (!(_vm->_features & GF_OLD256))
+				for (i = 2; i < numzbuf; i++) {
+					zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
+			}
 		} else if (ptr[-4] == 'O' && ptr[-3] == 'I' && READ_LE_UINT32(ptr - 8) > READ_LE_UINT32(ptr) + 12) {
 			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
+			// FIXME - how does GF_OLD256 encode the multiple zplanes?
+			if (!(_vm->_features & GF_OLD256))
+				for (i = 2; i < numzbuf; i++) {
+					zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
+			}
 		} else {
 			zplane_list[1] = 0;
 		}
