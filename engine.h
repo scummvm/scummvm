@@ -26,6 +26,12 @@
 
 class Actor;
 
+#define ENGINE_MODE_IDLE	0
+#define ENGINE_MODE_PAUSE	1
+#define ENGINE_MODE_NORMAL	2
+#define ENGINE_MODE_SMUSH	3
+#define ENGINE_MODE_DRAW	4
+
 // Fake SDLK_* values for joystick and mouse events
 enum {
 	SDLK_JOY1_B1 = SDLK_LAST,
@@ -86,6 +92,8 @@ public:
 		return instance_;
 	}
 
+	void setMode(int mode) { _mode = mode; }
+
 	void mainLoop();
 	unsigned frameStart() const { return frameStart_; }
 	unsigned frameTime() const { return frameTime_; }
@@ -137,6 +145,7 @@ private:
 	~Engine() { }
 
 	Scene *currScene_;
+	int _mode;
 
 	unsigned frameStart_, frameTime_, movieTime_;
 

@@ -84,61 +84,75 @@ void Engine::mainLoop() {
 		// Run asynchronous tasks
 		lua_runtasks();
 
-		if (SCREENBLOCKS_GLOBAL == 1)
-			screenBlocksReset();
+		if (_mode == ENGINE_MODE_SMUSH) {
+			if (g_smush->isPlaying()) {
+				movieTime_ = g_smush->getMovieTime();
+				if (g_smush->isUpdateNeeded()) {
+					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
+					g_smush->clearUpdateNeeded();
+				}
+				g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+			}
+			// Draw text
+			for (text_list_type::iterator i = textObjects_.begin(); i != textObjects_.end(); i++) {
+				(*i)->draw();
+			}
+			g_driver->flipBuffer();
+		} else if (_mode == ENGINE_MODE_NORMAL) {
+			if (SCREENBLOCKS_GLOBAL == 1)
+				screenBlocksReset();
 
-		// Update actor costumes
-		for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
-			Actor *a = *i;
-			assert(currScene_);
-			if (a->inSet(currScene_->name()) && a->visible())
-				a->update();
-		} 
+			// Update actor costumes
+			for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
+				Actor *a = *i;
+				assert(currScene_);
+				if (a->inSet(currScene_->name()) && a->visible())
+					a->update();
+			} 
 
-		g_driver->clearScreen();
+			g_driver->clearScreen();
 
-		if (SCREENBLOCKS_GLOBAL == 1)
-			screenBlocksBlitDirtyBlocks();
+			if (SCREENBLOCKS_GLOBAL == 1)
+				screenBlocksBlitDirtyBlocks();
 
-		if (!g_smush->isPlaying() || (g_smush->isPlaying() && !g_smush->isFullSize())) {
 			Bitmap::prepareDraw();
 			if (currScene_ != NULL)
 				currScene_->drawBackground();
-		}
 
-		if (g_smush->isPlaying()) {
-			movieTime_ = g_smush->getMovieTime();
-			if (g_smush->isUpdateNeeded()) {
-				g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
-				g_smush->clearUpdateNeeded();
+			if (g_smush->isPlaying()) {
+				movieTime_ = g_smush->getMovieTime();
+				if (g_smush->isUpdateNeeded()) {
+					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
+					g_smush->clearUpdateNeeded();
+				}
+				g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 			}
-			g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
-		}
 
-		glMatrixMode(GL_MODELVIEW);
+			glMatrixMode(GL_MODELVIEW);
 
-		glEnable(GL_DEPTH_TEST);
-		if (currScene_ != NULL)
-			currScene_->setupCamera();
+			glEnable(GL_DEPTH_TEST);
+			if (currScene_ != NULL)
+				currScene_->setupCamera();
 
-		// Draw actors
-		if (!g_smush->isPlaying() || (g_smush->isPlaying() && !g_smush->isFullSize())) {
-			glEnable(GL_TEXTURE_2D);
-			for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
-				Actor *a = *i;
-				if (a->inSet(currScene_->name()) && a->visible())
-					a->draw();
+			// Draw actors
+			if (!g_smush->isPlaying()) {
+				glEnable(GL_TEXTURE_2D);
+				for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
+					Actor *a = *i;
+					if (a->inSet(currScene_->name()) && a->visible())
+						a->draw();
+				}
+				glDisable(GL_TEXTURE_2D);
+				//screenBlocksDrawDebug();
 			}
-			glDisable(GL_TEXTURE_2D);
-			//screenBlocksDrawDebug();
-		}
 
-		// Draw text
-		for (text_list_type::iterator i = textObjects_.begin(); i != textObjects_.end(); i++) {
-			(*i)->draw();
-		}
+			// Draw text
+			for (text_list_type::iterator i = textObjects_.begin(); i != textObjects_.end(); i++) {
+				(*i)->draw();
+			}
 
-		g_driver->flipBuffer();
+			g_driver->flipBuffer();
+		}
 
 		// don't kill CPU
 		SDL_Delay(1);

@@ -74,7 +74,7 @@ public:
 	~Smush();
 
 	bool play(const char *filename, int x, int y);
-	void stop() { deinit(); }
+	void stop();
 	void pause(bool pause) { _videoPause = pause; }
 	bool isPlaying() { return !_videoFinished; }
 	bool isUpdateNeeded() { return _updateNeeded; }
@@ -84,7 +84,6 @@ public:
 	int getWidth() {return _width; }
 	int getHeight() { return _height; }
 	void clearUpdateNeeded() { _updateNeeded = false; }
-	bool isFullSize() { return ( _width == 640 && _height == 480); }
 	int32 getMovieTime() { return _movieTime; }
 
 private:

@@ -25,6 +25,7 @@
 #include "mixer/mixer.h"
 #include "driver_gl.h"
 #include "resource.h"
+#include "engine.h"
 
 Smush *g_smush;
 
@@ -215,6 +216,11 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	free(s_header);
 
 	return true;
+}
+
+void Smush::stop() { 
+	deinit();
+ 	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
 }
 
 bool Smush::play(const char *filename, int x, int y) {

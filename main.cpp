@@ -121,6 +121,7 @@ int main(int argc, char *argv[]) {
 	lua_call("BOOT");
 	lua_endblock();
 
+	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
 	Engine::instance()->mainLoop();
 
 	delete g_smush;

@@ -1028,6 +1028,7 @@ static void GetTextObjectDimensions() {
 
 static void StartFullscreenMovie() {
 	bool mode = getbool(2);
+	Engine::instance()->setMode(ENGINE_MODE_SMUSH);
 	pushbool(g_smush->play(luaL_check_string(1), 0, 0));
 }
 
@@ -1035,6 +1036,7 @@ static void StartMovie() {
 	bool mode = getbool(2);
 	int x = lua_getparam(3);
 	int y = lua_getparam(4);
+	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
 	pushbool(g_smush->play(luaL_check_string(1), x, y));
 }
 
