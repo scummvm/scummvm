@@ -117,7 +117,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 38 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown3A),
 		OPCODE(o6_invalid),
 		/* 3C */
 		OPCODE(o6_invalid),
@@ -885,6 +885,25 @@ void ScummEngine_v90he::o90_unknown37() {
 	defineArray(fetchScriptWord(), data, dim2start, dim2end, dim1start, dim1end);
 
 	debug(1,"o90_unknown37 stub");
+}
+
+void ScummEngine_v90he::o90_unknown3A() {
+	// Array related
+	int subOp = fetchScriptByte();
+
+	switch (subOp) {
+		case 129:
+			fetchScriptWord();
+			pop();
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		default:
+			error("o90_unknown3A: Unknown case %d", subOp);
+	}
+	debug(1,"o90_unknown3A stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown9E() {

@@ -303,7 +303,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_pickOneOfDefault),
 		OPCODE(o6_stampObject),
 		OPCODE(o72_drawWizImage),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownCF),
 		/* D0 */
 		OPCODE(o6_getDateTime),
 		OPCODE(o6_stopTalking),
@@ -1405,6 +1405,22 @@ void ScummEngine_v72he::o72_drawWizImage() {
 	}
 }
 
+void ScummEngine_v72he::o72_unknownCF() {
+	//ArrayHeader *ah;
+	byte string[255];
+
+	copyScriptString(string);
+	int len = resStrLen(string) + 1;
+
+	writeVar(0, 0);
+	//ah = defineArray(0, kStringArray, 0, 0, 0, len);
+	defineArray(0, kStringArray, 0, 0, 0, len);
+	writeArray(0, 0, 0, 0);
+	//memcpy(ah->data, string, len);
+
+	push(readVar(0));
+}
+
 void ScummEngine_v72he::shuffleArray(int num, int minIdx, int maxIdx) {
 	int range = maxIdx - minIdx;
 	int count = range * 2;
@@ -1964,10 +1980,11 @@ void ScummEngine_v72he::o72_unknownF6() {
 }
 
 void ScummEngine_v72he::o72_unknownF8() {
-	int a = fetchScriptByte();
+	int id = pop();
+	byte subOp = fetchScriptByte();
 	push(1);
 
-	debug(1,"stub o72_unknownF8(%d)", a);
+	debug(1,"stub o72_unknownF8: subOp %d, id %d", subOp, id);
 }
 
 void ScummEngine_v72he::o72_setFilePath() {
