@@ -35,7 +35,7 @@
 
 #include "CEActions.h"
 
-#define SMARTPHONE_ACTION_VERSION 3
+#define SMARTPHONE_ACTION_VERSION 4 
 
 enum smartphoneActionType {
         SMARTPHONE_ACTION_UP = 0,
@@ -47,8 +47,9 @@ enum smartphoneActionType {
         SMARTPHONE_ACTION_SAVE,
         SMARTPHONE_ACTION_SKIP,
         SMARTPHONE_ACTION_ZONE,
+	SMARTPHONE_ACTION_FT_CHEAT,
 
-		SMARTPHONE_ACTION_LAST
+	SMARTPHONE_ACTION_LAST
 };
 
 

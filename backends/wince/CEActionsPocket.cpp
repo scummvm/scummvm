@@ -42,7 +42,8 @@ const String pocketActionNames[] = {
 	"Cursor",
 	"Free look",
 	"Zoom up",
-	"Zoom down"
+	"Zoom down",
+	"FT Cheat"
 };
 
 void CEActionsPocket::init(GameDetector &detector) {
@@ -153,6 +154,9 @@ void CEActionsPocket::initInstanceGame() {
 		_action_enabled[POCKET_ACTION_ZOOM_UP] = true;
 		_action_enabled[POCKET_ACTION_ZOOM_DOWN] = true;
 	}
+	// FT Cheat
+	_action_enabled[POCKET_ACTION_FT_CHEAT] = true;
+	_key_action[POCKET_ACTION_FT_CHEAT].setAscii(86); // shift-V
 }
 
 
@@ -168,6 +172,7 @@ bool CEActionsPocket::perform(ActionType action, bool pushed) {
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
+		case POCKET_ACTION_FT_CHEAT:
 			EventsBuffer::simulateKey(&_key_action[action], false);
 			return true;
 
@@ -179,6 +184,7 @@ bool CEActionsPocket::perform(ActionType action, bool pushed) {
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
+		case POCKET_ACTION_FT_CHEAT:
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case POCKET_ACTION_KEYBOARD:

@@ -42,13 +42,14 @@ const String smartphoneActionNames[] = {
 	"Right Click",
 	"Save",
 	"Skip",
-	"Zone"
+	"Zone",
+	"FT Cheat"
 };
 
 #ifdef SIMU_SMARTPHONE
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8 };
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8, 0 };
 #else
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9' };
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9', 0 };
 #endif
 
 void CEActionsSmartphone::init(GameDetector &detector) {
@@ -138,6 +139,9 @@ void CEActionsSmartphone::initInstanceGame() {
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(Scumm::KEY_ALL_SKIP);
 	// Zone
 	_action_enabled[SMARTPHONE_ACTION_ZONE] = true;
+	// FT Cheat
+	_action_enabled[SMARTPHONE_ACTION_FT_CHEAT] = true;
+	_key_action[SMARTPHONE_ACTION_FT_CHEAT].setAscii(86); // shift-V
 }
 
 
@@ -155,6 +159,7 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 				return true;
 			case SMARTPHONE_ACTION_SAVE:
 			case SMARTPHONE_ACTION_SKIP:
+			case SMARTPHONE_ACTION_FT_CHEAT:
 				EventsBuffer::simulateKey(&_key_action[action], false);
 				return true;
 		}
@@ -164,6 +169,7 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 	switch (action) {
 		case SMARTPHONE_ACTION_SAVE:
 		case SMARTPHONE_ACTION_SKIP:
+		case SMARTPHONE_ACTION_FT_CHEAT:
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case SMARTPHONE_ACTION_RIGHTCLICK:
