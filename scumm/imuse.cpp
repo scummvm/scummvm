@@ -120,7 +120,7 @@ bool IMuseInternal::isMT32(int sound) {
 	tag = *(((uint32 *)ptr) + 1);
 	switch (tag) {
 	case MKID('ADL '):
-	case MKDI('ASFX'): // Special AD class for old Adlib sound effects
+	case MKID('ASFX'): // Special AD class for old Adlib sound effects
 		return false;
 	case MKID('AMI '):
 		return true;
@@ -154,7 +154,7 @@ bool IMuseInternal::isGM(int sound) {
 	tag = *(((uint32 *)ptr) + 1);
 	switch (tag) {
 	case MKID('ADL '):
-	case MKDI('ASFX'): // Special AD class for old Adlib sound effects
+	case MKID('ASFX'): // Special AD class for old Adlib sound effects
 		return false;
 	case MKID('AMI '):
 		return true; // Yeah... for our purposes, this is GM
