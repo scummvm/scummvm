@@ -101,7 +101,8 @@ public:
 	void setMasterVolume(int vol) {}
 	void stopMusic();
 	void stopSound(int soundId);
-	void stopAllSounds();
+	void stopAllSounds(bool waitForStop);
+	void stopAllSounds() { stopAllSounds(false); }
 	void pause(bool pause);
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
 	int getSoundStatus(int sound) const;
@@ -111,8 +112,6 @@ public:
 	int32 getCurVoiceLipSyncHeight();
 	int32 getCurMusicLipSyncWidth(int32 param);
 	int32 getCurMusicLipSyncHeight(int32 param);
-
-	void closeBundleFiles();
 };
 
 struct imuse_music_table {

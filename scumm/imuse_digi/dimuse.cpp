@@ -208,6 +208,7 @@ void IMuseDigital::switchToNextRegion(int track) {
 		int region = checkJumpByRegion(track, _track[track].curRegion);
 		if (region != -1)
 			_track[track].curRegion = region;
+		_track[track].curHookId = 0;
 	}
 
 	_track[track].regionOffset = 0;
@@ -320,7 +321,7 @@ void IMuseDigital::stopSound(int soundId) {
 	}
 }
 
-void IMuseDigital::stopAllSounds() {
+void IMuseDigital::stopAllSounds(bool waitForStop) {
 	debug(5, "IMuseDigital::stopAllSounds");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if (_track[l].used) {
@@ -331,6 +332,17 @@ void IMuseDigital::stopAllSounds() {
 		}
 	}
 	_curMusicId = -1;
+
+	if (waitForStop) {
+		bool used;
+		do {
+			used = false;
+			for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+				if (_track[l].used)
+					used = true;
+			}
+		} while (used);
+	}
 }
 
 void IMuseDigital::pause(bool p) {
@@ -562,10 +574,6 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	}
 
 	return 0;
-}
-
-void IMuseDigital::closeBundleFiles() {
-	// TODO
 }
 
 int32 IMuseDigital::getPosInMs(int soundId) {
