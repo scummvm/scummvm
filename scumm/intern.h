@@ -24,7 +24,7 @@
 #define INTERN_H
 
 #include "scumm.h"
-
+class NutRenderer; // V8 Font Renderer
 
 class Scumm_v5 : public Scumm
 {
@@ -405,6 +405,10 @@ protected:
 	virtual void writeVar(uint var, int value);
 
 	void decodeParseString(int m, int n);
+
+	/* Version 8 Font Stuff */
+	void loadCharset(int charset);
+	NutRenderer *_fr[4];
 
 	/* Version 8 script opcodes */
 	void o8_mod();

@@ -31,7 +31,6 @@
 #include "common/timer.h"
 #include "common/util.h"
 
-class NutRenderer;
 class GameDetector;
 class NewGui;
 class Dialog;
@@ -680,9 +679,6 @@ public:
 	StringTab _string[6];
 	void actorTalk();
 	void stopTalk();	
-
-	/* FIXME: This should not be here, probably. Hack for CMI v8 fonts */
-	NutRenderer *_fr[4];
 
 	/* Akos Class */
 

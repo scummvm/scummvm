@@ -36,6 +36,21 @@
 
 #define OPCODE(x)	{ &Scumm_v8::x, #x }
 
+// FIXME: Move this somewhere better :)
+void Scumm_v8::loadCharset(int charset) {
+	char fontname[255];
+	sprintf(fontname, "resource/font%d.nut", charset);
+	warning("Loading charset %s\n", fontname);
+	_fr[charset] = new NutRenderer;
+	if (!(_fr[charset]->loadFont(fontname, (char*)getGameDataPath()))) {
+		delete _fr[charset];
+		_fr[charset] = NULL;
+		return;
+	}
+
+	_fr[charset]->bindDisplay((byte*)virtscr[0].screenPtr, (int32)_realWidth, (int32)_realHeight, (int32)_realWidth);
+}
+
 void Scumm_v8::setupOpcodes()
 {
 	// TODO: any of the o6_ entries are potentially wrong and pure guesses :-)
@@ -496,18 +511,6 @@ void Scumm_v8::decodeParseString(int m, int n)
 	case 0xCD: {		// SO_PRINT_CHARSET Set print character set
 		// FIXME - TODO
 		int charset = pop();
-		if (_fr[charset] == NULL) {
-			char fontname[255];
-			sprintf(fontname, "resource/font%d.nut", charset);
-			_fr[charset] = new NutRenderer;
-			_fr[charset]->loadFont(fontname, (char*)getGameDataPath());
-			_fr[charset]->bindDisplay((byte*)virtscr[0].screenPtr, (int32)_realWidth, (int32)_realHeight, (int32)_realWidth);
-			if (!_fr[charset])
-				warning("Failed to load font %d from %s%s\n", charset, getGameDataPath(), fontname);
-			else
-				warning("Loaded font %d from %s%s\n", charset, getGameDataPath(), fontname);
-
-		}
 		_string[m].charset = charset;
 	}
 		break;
@@ -523,17 +526,18 @@ void Scumm_v8::decodeParseString(int m, int n)
 		error("decodeParseString: SO_PRINT_MUMBLE");
 		break;
 	case 0xD1: {
-		// TODO - FIXME
 		_messagePtr = _scriptPointer;
 
 		byte buffer[1024];
 		_msgPtrToAdd = buffer;
 		_scriptPointer = _messagePtr = addMessageToStack(_messagePtr);
 
+		if (_fr[_string[m].charset] == NULL)	// FIXME: Put this elsewhere?
+	                       loadCharset(_string[m].charset);
+
 		if (_fr[_string[m].charset] != NULL) {
 			_fr[_string[m].charset]->drawString((char *)buffer, (int)_string[m].xpos, (int)_string[m].ypos, (unsigned char)_string[m].color, 0);
-		} else {
-			warning("No font loaded in slot %d\n", m);
+			//warning("Printing font loaded in slot %d: %s\n", _string[m].charset, buffer);
 		}
 
 		break;
@@ -754,18 +758,7 @@ void Scumm_v8::o8_cursorCommand()
 		break;
 	case 0xE7: {		// SO_CHARSET_SET
 		int charset = pop();
-		if (_fr[charset] == NULL) {
-			char fontname[255];
-			sprintf(fontname, "resource/font%d.nut", charset);
-			_fr[charset] = new NutRenderer;
-			_fr[charset]->loadFont(fontname, (char*)getGameDataPath());
-			_fr[charset]->bindDisplay((byte*)virtscr[0].screenPtr, (int32)_realWidth, (int32)_realHeight, (int32)_realWidth);
-			if (!_fr[charset])
-				warning("Failed to load font %d from %s%s\n", charset, getGameDataPath(), fontname);
-			else
-				warning("Loaded font %d from %s%s\n", charset, getGameDataPath(), fontname);
-
-		}
+		loadCharset(charset);
 		break;
 	}
 	case 0xE8:		// SO_CHARSET_COLOR
@@ -897,7 +890,7 @@ void Scumm_v8::o8_actorOps()
 
 	if (subOp == 0x7A) {
 		_curActor = pop();
-		printf("Setting current actor to %d\n", _curActor);
+		//printf("Setting current actor to %d\n", _curActor);
 		return;
 	}
 
@@ -1124,7 +1117,8 @@ void Scumm_v8::o8_verbOps()
 		break;
 	case 0xA6:		// SO_VERB_CHARSET Choose charset for verb
 		// FIXME - TODO
-		pop();
+		vs->charset_nr = pop();
+		//printf("Set to charset %d\n", vs->charset_nr);
 		break;
 	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
 		// FIXME - TODO
