@@ -567,6 +567,12 @@ void ScummEngine::loadCharset(int no) {
 	if (_gameId == GID_INDY4 && no == 0)
 		no = 1;
 
+	/* for Humongous catalogs */
+	if (_heversion >= 70 && _numCharsets == 1) {
+		warning("not loading charset as it doesn't seem to exist?");
+		return;
+	}
+
 	assert(no < (int)sizeof(_charsetData) / 16);
 	checkRange(_numCharsets - 1, 1, no, "Loading illegal charset %d");
 
