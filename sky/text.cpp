@@ -279,7 +279,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	if (_dtData == NULL)
 		_dtData = (byte *)malloc(numBytes);
 
-	byte *curDest = _dtData; 
+	uint8 *curDest = _dtData; 
 
 	uint32 bytesToClear = numBytes; //no of bytes to clear
 	bytesToClear -= sizeof(struct dataFileHeader);	//don't touch the header.
