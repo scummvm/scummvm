@@ -1397,19 +1397,30 @@ uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	return 0;
 }
 
-uint32 SkyLogic::fnHighlight(uint32 a, uint32 b, uint32 c) {
+uint32 SkyLogic::fnHighlight(uint32 itemNo, uint32 pen, uint32 c) {
 	error("Stub: fnHighlight");
 }
 
 uint32 SkyLogic::fnTextKill(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnTextKill");
+	// Kill of text items that are mouse detectable
+
+	uint32 id = FIRST_TEXT_COMPACT;
+
+	for (int i = 10; i > 0; i--) {
+		Compact *cpt = SkyState::fetchCompact(id);
+		if (cpt->status & (1 << 4))
+			cpt->status = 0;
+		id++;
+	}
+	return 1;
 }
 
 uint32 SkyLogic::fnStopMode(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnStopMode");
+	_compact->logic = L_STOPPED;
+	return 0;
 }
 
-uint32 SkyLogic::fnWeWait(uint32 a, uint32 b, uint32 c) {
+uint32 SkyLogic::fnWeWait(uint32 id, uint32 b, uint32 c) {
 	error("Stub: fnWeWait");
 }
 
@@ -1419,16 +1430,22 @@ uint32 SkyLogic::fnSendSync(uint32 mega, uint32 sync, uint32 c) {
 	return 0;
 }
 
-uint32 SkyLogic::fnSendFastSync(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSendFastSync");
+uint32 SkyLogic::fnSendFastSync(uint32 mega, uint32 sync, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(mega);
+	cpt->sync = (uint16)(sync & 0xffff);
+	return 1;
 }
 
-uint32 SkyLogic::fnSendRequest(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSendRequest");
+uint32 SkyLogic::fnSendRequest(uint32 target, uint32 scr, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(target);
+	cpt->extCompact->request = (uint16)(scr & 0xffff);
+	return 0;
 }
 
-uint32 SkyLogic::fnClearRequest(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnClearRequest");
+uint32 SkyLogic::fnClearRequest(uint32 target, uint32 b, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(target);
+	cpt->extCompact->request = 0;
+	return 1;
 }
 
 uint32 SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
@@ -1450,12 +1467,46 @@ uint32 SkyLogic::fnStartMenu(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnStartMenu");
 }
 
-uint32 SkyLogic::fnUnhighlight(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnUnhighlight");
+uint32 SkyLogic::fnUnhighlight(uint32 item, uint32 b, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(item);
+	cpt->frame--;
+	cpt->getToFlag = 0;
+	return 1;
 }
 
-uint32 SkyLogic::fnFaceId(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnFaceId");
+uint32 SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
+	// return the direction to turn to face another id
+	// pass back result in c_just_flag
+
+	Compact *cpt = SkyState::fetchCompact(otherId);
+
+	int16 x = _compact->xcood - cpt->xcood;
+
+	if (x < 0) { // we're to the left
+		x = -x;
+		_compact->getToFlag = 3;
+	} else { // it's to the left
+		_compact->getToFlag = 2;
+	}
+
+	// now check y
+
+	// we must find the true bottom of the sprite
+	// it is not enough to use y coord because changing
+	// sprite offsets can ruin the formula - instead we
+	// will use the bottom of the mouse collision area
+
+	int16 y = _compact->ycood - (cpt->ycood - cpt->mouseRelY - cpt->mouseSizeY);
+
+	if (y < 0) { // it's below
+		y = -y;
+		if (y >= x)
+			_compact->getToFlag = 1;
+	} else { // it's above
+		if (y >= x)
+			_compact->getToFlag = 0;
+	}
+	return 1;
 }
 
 uint32 SkyLogic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
@@ -1467,11 +1518,18 @@ uint32 SkyLogic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnBackground(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnBackground");
+	// Make us a background sprite
+	_compact->status &= 0xfff8;
+	_compact->status |= ST_BACKGROUND;
+	return 1;
 }
 
-uint32 SkyLogic::fnNewBackground(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnNewBackground");
+uint32 SkyLogic::fnNewBackground(uint32 sprite, uint32 b, uint32 c) {
+	// Make sprite a background sprite
+	Compact *cpt = SkyState::fetchCompact(sprite);
+	cpt->status &= 0xfff8;
+	cpt->status |= ST_BACKGROUND;
+	return 1;
 }
 
 uint32 SkyLogic::fnSort(uint32 mega, uint32 b, uint32 c) {
@@ -1482,11 +1540,18 @@ uint32 SkyLogic::fnSort(uint32 mega, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnNoSpriteEngine(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnNoSpriteEngine");
+	// stop the compact printing
+	// remove foreground, background & sort
+	_compact->status &= 0xfff8;
+	return 1;	
 }
 
-uint32 SkyLogic::fnNoSpritesA6(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnNoSpritesA6");
+uint32 SkyLogic::fnNoSpritesA6(uint32 us, uint32 b, uint32 c) {
+	// stop the compact printing
+	// remove foreground, background & sort
+	Compact *cpt = SkyState::fetchCompact(us);
+	cpt->status &= 0xfff8;
+	return 1;	
 }
 
 uint32 SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
@@ -1494,7 +1559,7 @@ uint32 SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 	// eg - when a smaller mega turn to larger
 	// - a mega changes rooms...
 
-	Compact *cpt  = SkyState::fetchCompact(id);
+	Compact *cpt = SkyState::fetchCompact(id);
 	uint16 *rst = (uint16 *)SkyState::fetchCompact(resetBlock);
 
 	uint16 off;
@@ -1557,15 +1622,18 @@ uint32 SkyLogic::fnAwaitSync(uint32 a, uint32 b, uint32 c) {
 
 uint32 SkyLogic::fnIncMegaSet(uint32 a, uint32 b, uint32 c) {
 	_compact->extCompact->megaSet += NEXT_MEGA_SET;
-	return NEXT_MEGA_SET;
+	return 1;
 }
 
 uint32 SkyLogic::fnDecMegaSet(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnDecMegaSet");
+	_compact->extCompact->megaSet -= NEXT_MEGA_SET;
+	return 1;
 }
 
-uint32 SkyLogic::fnSetMegaSet(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSetMegaSet");
+uint32 SkyLogic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(mega);
+	cpt->extCompact->megaSet = setNo * NEXT_MEGA_SET;
+	return 1;
 }
 
 uint32 SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
