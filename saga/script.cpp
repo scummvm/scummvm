@@ -37,7 +37,6 @@ namespace Saga {
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
 Script::Script() {
-	GAME_RESOURCEDESC gr_desc;
 	RSCFILE_CONTEXT *s_lut_ctxt;
 	RSCFILE_CONTEXT *resourceContext;
 	byte *rsc_ptr;
@@ -71,7 +70,6 @@ Script::Script() {
 		_dataBuf[i].data = NULL;
 	}
 
-	gr_desc = _vm->getResourceInfo();
 	
 	debug(0, "Initializing scripting subsystem");
 	// Load script resource file context
@@ -86,8 +84,8 @@ Script::Script() {
 		error("Couldn't get resource file context");
 	}
 
-	debug(0, "Loading script LUT from resource %u.", gr_desc.script_lut_rn);
-	result = RSC_LoadResource(s_lut_ctxt, gr_desc.script_lut_rn, &rsc_ptr, &rsc_len);
+	debug(0, "Loading script LUT from resource %u.", _vm->getResourceDescription()->script_lut_rn);
+	result = RSC_LoadResource(s_lut_ctxt, _vm->getResourceDescription()->script_lut_rn, &rsc_ptr, &rsc_len);
 	if (result != SUCCESS) {
 		error("Error: Couldn't load script resource look-up table");
 	}

@@ -180,13 +180,9 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 	uint16 frame;
 	int result;
 
-	GAME_DISPLAYINFO disp_info;
-
 	if (anim_id >= _anim_count) {
 		return FAILURE;
 	}
-
-	_vm->getDisplayInfo(&disp_info);
 
 	_vm->_render->getBufferInfo(&buf_info);
 	display_buf = buf_info.bg_buf;
@@ -207,7 +203,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 		if (_vm->_gameType == GType_ITE) {
 			// FIXME: if start > 0, then this works incorrectly
 			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame], display_buf,
-									disp_info.logical_w * disp_info.logical_h);
+									_vm->getDisplayWidth() * _vm->getDisplayHeight());
 			if (result != SUCCESS) {
 				warning("Anim::play: Error decoding frame %u", anim->current_frame);
 				anim->state = ANIM_PAUSE;
@@ -219,7 +215,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 				return FAILURE;
 			}
 
-			result = IHNM_DecodeFrame(display_buf,  disp_info.logical_w * disp_info.logical_h,
+			result = IHNM_DecodeFrame(display_buf,  _vm->getDisplayWidth() * _vm->getDisplayHeight(),
 									anim->cur_frame_p, anim->cur_frame_len, &nextf_p, &nextf_len);
 			if (result != SUCCESS) {
 				warning("Anim::play: Error decoding frame %u", anim->current_frame);
@@ -633,9 +629,6 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 	byte *outbuf_endp = (decode_buf + decode_buf_len) - 1;
 	size_t outbuf_remain = decode_buf_len;
 
-	GAME_DISPLAYINFO di;
-
-	_vm->getDisplayInfo(&di);
 
 	*nextf_p = NULL;
 
@@ -668,7 +661,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 				x_origin = param1;
 				y_origin = param2;
 
-				outbuf_p = decode_buf + x_origin + (y_origin * di.logical_w);
+				outbuf_p = decode_buf + x_origin + (y_origin * _vm->getDisplayWidth());
 
 				if (outbuf_p > outbuf_endp) {
 					warning("0x%02X: (0x%X) Invalid output position. (x: %d, y: %d)",
@@ -738,7 +731,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			x_vector = readS.readSint16();
 			new_row = readS.readSint16();
 
-			outbuf_p = decode_buf + ((y_origin + new_row) * di.logical_w) + x_origin + x_vector;
+			outbuf_p = decode_buf + ((y_origin + new_row) * _vm->getDisplayWidth()) + x_origin + x_vector;
 			outbuf_remain = (outbuf_endp - outbuf_p) + 1;
 			continue;
 			break;

@@ -51,7 +51,7 @@ public:
 	RSCFILE_CONTEXT *_sfx_ctxt;
 	RSCFILE_CONTEXT *_voice_ctxt;
 
-	GAME_SOUNDINFO _snd_info;
+	GameSoundInfo _snd_info;
 
 	SagaEngine *_vm;
 };

@@ -46,28 +46,25 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_system = system;
 	_initialized = false;
 
-	GAME_DISPLAYINFO disp_info;
 	int tmp_w, tmp_h, tmp_bytepp;
 
-	// Initialize system graphics
-	_vm->getDisplayInfo(&disp_info);
 
 	// Initialize FPS timer callback
 	g_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
 
 	// Create background buffer 
-	_bg_buf_w = disp_info.logical_w;
-	_bg_buf_h = disp_info.logical_h;
-	_bg_buf = (byte *)calloc(disp_info.logical_w, disp_info.logical_h);
+	_bg_buf_w = _vm->getDisplayWidth();
+	_bg_buf_h = _vm->getDisplayHeight();
+	_bg_buf = (byte *)calloc(_vm->getDisplayWidth(), _vm->getDisplayHeight());
 
 	if (_bg_buf == NULL) {
-		return;
+		error("Render::Render not enough memory");
 	}
 
 	// Allocate temp buffer for animation decoding, 
 	// graphics scalers (2xSaI), etc.
-	tmp_w = disp_info.logical_w;
-	tmp_h = disp_info.logical_h + 4; // BG unbanking requres extra rows
+	tmp_w = _vm->getDisplayWidth();
+	tmp_h = _vm->getDisplayHeight() + 4; // BG unbanking requres extra rows
 	tmp_bytepp = 1;
 
 	_tmp_buf = (byte *)calloc(1, tmp_w * tmp_h * tmp_bytepp);
@@ -98,7 +95,6 @@ bool Render::initialized() {
 
 int Render::drawScene() {
 	SURFACE *backbuf_surface;
-	GAME_DISPLAYINFO disp_info;
 	SCENE_INFO scene_info;
 	SCENE_BGINFO bg_info;
 	Point bg_pt;
@@ -118,7 +114,6 @@ int Render::drawScene() {
 	mouse_pt = _vm->getMousePos();
 
 	_vm->_scene->getBGInfo(&bg_info);
-	_vm->getDisplayInfo(&disp_info);
 	bg_pt.x = 0;
 	bg_pt.y = 0;
 

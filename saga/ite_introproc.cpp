@@ -126,7 +126,6 @@ int Scene::ITEStartProc() {
 
 	SCENE_QUEUE first_scene;
 	SCENE_QUEUE tempScene;
-	GAME_SCENEDESC gs_desc;
 
 	n_introscenes = ARRAYSIZE(ITE_IntroList);
 
@@ -136,10 +135,9 @@ int Scene::ITEStartProc() {
 		_vm->_scene->queueScene(&tempScene);
 	}
 
-	_vm->getSceneInfo(&gs_desc);
 
 	first_scene.load_flag = BY_SCENE;
-	first_scene.scene_n = gs_desc.first_scene;
+	first_scene.scene_n = _vm->getStartSceneNumber();
 	first_scene.scene_skiptarget = 1;
 	first_scene.scene_proc = NULL;
 	first_scene.fadeType = SCENE_FADE;

@@ -92,7 +92,6 @@ int Scene::IHNMStartProc() {
 	size_t i;
 
 	SCENE_QUEUE first_scene;
-	GAME_SCENEDESC gs_desc;
 
 	n_introscenes = ARRAYSIZE(IHNM_IntroList);
 
@@ -105,10 +104,8 @@ int Scene::IHNMStartProc() {
 	// it will cause the end titles music to play, which is wrong. (But
 	// hey, it's a nice piece of music!)
 
-	_vm->getSceneInfo(&gs_desc);
-
 	first_scene.load_flag = BY_SCENE;
-	first_scene.scene_n = gs_desc.first_scene;
+	first_scene.scene_n = _vm->getStartSceneNumber();
 	first_scene.scene_skiptarget = 1;
 	first_scene.scene_proc = NULL;
 	first_scene.fadeType = SCENE_FADE;

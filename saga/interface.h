@@ -126,7 +126,7 @@ enum BUTTON_FLAGS {
 
 #define BUTTON_VERB ( BUTTON_LABEL | BUTTON_BITMAP | BUTTON_SET )
 
-struct INTERFACE_BUTTON {
+struct InterfaceButton {
 	int x1;
 	int y1;
 	int x2;
@@ -138,7 +138,7 @@ struct INTERFACE_BUTTON {
 	int data;
 };
 
-struct INTERFACE_PANEL {
+struct InterfacePanel {
 	byte *res;
 	size_t res_len;
 	int x;
@@ -149,7 +149,7 @@ struct INTERFACE_PANEL {
 	int img_h;
 	int set_button;
 	int nbuttons;
-	INTERFACE_BUTTON *buttons;
+	InterfaceButton *buttons;
 	SpriteList sprites;
 };
 
@@ -235,6 +235,7 @@ private:
 	int handleCommandClick(SURFACE *ds, const Point& imousePt);
 	int handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt);
 	int handlePlayfieldClick(SURFACE *ds, const Point& imousePt);
+	void drawVerb(int verb, int state);
 
 private:
 	SagaEngine *_vm;
@@ -247,8 +248,8 @@ private:
 	int _savedMode;
 	int _lockedMode;
 	bool _inMainMode;
-	INTERFACE_PANEL _cPanel;
-	INTERFACE_PANEL _dPanel;
+	InterfacePanel _mainPanel;
+	InterfacePanel _conversePanel;
 	char _statusText[STATUS_TEXT_LEN];
 	int _leftPortrait;
 	int _rightPortrait;

@@ -33,7 +33,6 @@
 namespace Saga {
 
 Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	GAME_FONTDESC *gamefonts;
 	int i;
 
 	// Load font module resource context 
@@ -42,10 +41,9 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		error("Font::Font(): Couldn't get resource context.");
 	}
 
-	// Allocate font table
-	_vm->getFontInfo(&gamefonts, &_nFonts);
+	assert(_vm->getFontsCount() > 0);
 
-	assert(_nFonts > 0);
+	_nFonts = _vm->getFontsCount();
 
 	_fonts = (FONT **)malloc(_nFonts * sizeof(*_fonts));
 	if (_fonts == NULL) {
@@ -53,7 +51,7 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	for (i = 0; i < _nFonts; i++) {
-		loadFont(gamefonts[i].font_rn, gamefonts[i].font_id);
+		loadFont(_vm->getFontDescription(i)->font_rn, _vm->getFontDescription(i)->font_id);
 	}
 
 	_initialized = true;

@@ -51,7 +51,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	}
 
 	// Grab sound resource information for the current game
-	_snd_info = _vm->getSoundInfo();
+	_snd_info = *_vm->getSoundInfo();
 
 	_init = 1;
 }

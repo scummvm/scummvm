@@ -132,13 +132,11 @@ int IsoMap::loadMetamap(const byte *mm_res_p, size_t mm_res_len) {
 }
 
 int IsoMap::draw(SURFACE *dst_s) {
-	GAME_DISPLAYINFO disp_info;
 	
-	_vm->getDisplayInfo(&disp_info);
-	Rect iso_rect(disp_info.logical_w, disp_info.scene_h);
+/*	Rect iso_rect(disp_info.logical_w, disp_info.scene_h);
 	drawRect(dst_s, &iso_rect, 0);
 	drawMetamap(dst_s, -1000, -500);
-
+*/
 	return SUCCESS;
 }
 

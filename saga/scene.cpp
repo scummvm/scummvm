@@ -51,14 +51,11 @@ static int initSceneDoors[SCENE_DOORS_MAX] = {
 };
 
 Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	GAME_SCENEDESC gs_desc;
 	byte *scene_lut_p;
 	size_t scene_lut_len;
 	int result;
 	int i;
 
-	// Load game-specific scene data
-	_vm->getSceneInfo(&gs_desc);
 
 	// Load scene module resource context
 	_sceneContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
@@ -69,8 +66,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 
 	// Load scene lookup table
-	debug(0, "Loading scene LUT from resource %u.", gs_desc.scene_lut_rn);
-	result = RSC_LoadResource(_sceneContext, gs_desc.scene_lut_rn, &scene_lut_p, &scene_lut_len);
+	debug(0, "Loading scene LUT from resource %u.", _vm->getResourceDescription()->scene_lut_rn);
+	result = RSC_LoadResource(_sceneContext, _vm->getResourceDescription()->scene_lut_rn, &scene_lut_p, &scene_lut_len);
 	if (result != SUCCESS) {
 		warning("Scene::Scene(): Error: couldn't load scene LUT");
 		return;
@@ -95,9 +92,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	free(scene_lut_p);
 
-	if (gs_desc.first_scene != 0) {
-		_firstScene = gs_desc.first_scene;
-	}
+	_firstScene = _vm->getStartSceneNumber();
 
 	debug(0, "First scene set to %d.", _firstScene);
 
@@ -320,7 +315,6 @@ void Scene::getSlopes(int &beginSlope, int &endSlope) {
 }
 
 int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
-	GAME_DISPLAYINFO di;
 	int x, y;
 
 	assert(_initialized);
@@ -331,16 +325,15 @@ int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
 	bginfo->bg_h = _bg.h;
 	bginfo->bg_p = _bg.p;
 
-	_vm->getDisplayInfo(&di);
 	x = 0;
 	y = 0;
 
-	if (_bg.w < di.logical_w) {
-		x = (di.logical_w - _bg.w) / 2;
+	if (_bg.w < _vm->getDisplayWidth()) {
+		x = (_vm->getDisplayWidth() - _bg.w) / 2;
 	}
 
-	if (_bg.h < di.scene_h) {
-		y = (di.scene_h - _bg.h) / 2;
+	if (_bg.h < _vm->getStatusYOffset()) {
+		y = (_vm->getStatusYOffset() - _bg.h) / 2;
 	}
 
 	bginfo->bg_x = x;
@@ -902,23 +895,22 @@ int Scene::processSceneResources() {
 }
 
 int Scene::draw(SURFACE *dst_s) {
-	GAME_DISPLAYINFO disp_info;
 	BUFFER_INFO buf_info;
 	Point bg_pt;
 
 	assert(_initialized);
 
 	_vm->_render->getBufferInfo(&buf_info);
-	_vm->getDisplayInfo(&disp_info);
 
 	bg_pt.x = 0;
 	bg_pt.y = 0;
 
-	if (_vm->_scene->getFlags() & kSceneFlagISO)
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		_vm->_isoMap->draw(dst_s);
-	else
-		bufToSurface(dst_s, buf_info.bg_buf, disp_info.logical_w,
-						MAX(disp_info.scene_h, _bg.h), NULL, &bg_pt);
+	} else {
+		bufToSurface(dst_s, buf_info.bg_buf, _vm->getDisplayWidth(),
+						MAX(_vm->getStatusYOffset(), _bg.h), NULL, &bg_pt);
+	}
 
 	return SUCCESS;
 }

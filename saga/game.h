@@ -30,62 +30,12 @@
 
 namespace Saga {
 
-#define GAME_LANGSTR_LIMIT 3
 #define GAME_PATH_LIMIT 512
-
-#define GAME_ITE_LANG_PREFIX "ite_"
-#define GAME_LANG_EXT "lng"
 
 // Script lookup table entry sizes for game verification
 #define SCR_LUT_ENTRYLEN_ITECD 22
 #define SCR_LUT_ENTRYLEN_ITEDISK 16
 
-struct GAME_FILEDESC {
-	const char *gf_fname;
-	uint16 gf_type;
-};
-
-struct GAMEDESC {
-	const char *name;
-	SAGAGameType gd_game_type;
-	GAME_IDS gd_game_id;
-	const char *gd_title;
-	int gd_logical_w;
-	int gd_logical_h;
-	int gd_scene_h;
-	int gd_startscene;
-	GAME_RESOURCEDESC *gd_resource_desc;
-	int gd_filect;
-	GAME_FILEDESC *gd_filedescs;
-	int gd_fontct;
-	GAME_FONTDESC *gd_fontdescs;
-	GAME_SOUNDINFO *gd_soundinfo;
-	uint32 features;
-
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, gd_title, features };
-		return dummy;
-	}
-};
-
-struct GAME_FILEDATA {
-	RSCFILE_CONTEXT *file_ctxt;
-	uint16 file_types;
-	uint16 file_flags;
-};
-
-struct GAMEMODULE {
-	int game_number;
-	GAMEDESC *gamedesc;
-	int g_skipintro;
-	char game_language[GAME_LANGSTR_LIMIT];
-	uint16 gfile_n;
-	GAME_FILEDATA *gfile_data;
-	uint16 gd_fontct;
-	GAME_FONTDESC *gd_fontdescs;
-	int err_n;
-	const char *err_str;
-};
 
 DetectedGameList GAME_ProbeGame(const FSList &fslist);
 

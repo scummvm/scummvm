@@ -169,9 +169,7 @@ int SagaEngine::init(GameDetector &detector) {
 	_previousTicks = _system->getMillis();
 
 	// Initialize graphics
-	GAME_DISPLAYINFO disp_info;
-	getDisplayInfo(&disp_info);
-	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h, detector);
+	_gfx = new Gfx(_system, _vm->getDisplayWidth(), _vm->getDisplayHeight(), detector);
 
 	// Graphics driver should be initialized before console
 	_console = new Console(this);

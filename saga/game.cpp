@@ -44,29 +44,29 @@ static int detectGame(const FSList &fslist, bool mode = false);
 
 // Inherit the Earth - DOS Demo version
 
-static GAME_FILEDESC ITEDEMO_GameFiles[] = {
+static GameFileDescription ITEDEMO_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"ite.dmo", GAME_DEMOFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"voices.rsc", GAME_SOUNDFILE | GAME_VOICEFILE}
 };
 
-static GAME_FONTDESC ITEDEMO_GameFonts[] = {
+static GameFontDescription ITEDEMO_GameFonts[] = {
 	{GAME_FONT_SMALL, 0},
 	{GAME_FONT_MEDIUM, 1}
 }; 
 
-static GAME_SOUNDINFO ITEDEMO_GameSound = {
+static GameSoundInfo ITEDEMO_GameSound = {
 	GAME_SOUND_VOC, 0, 0, 0
 };
 
-static GAME_FONTDESC ITEMACDEMO_GameFonts[] = {
+static GameFontDescription ITEMACDEMO_GameFonts[] = {
 	{GAME_FONT_MEDIUM, 0},
 	{GAME_FONT_SMALL, 2}
 }; 
 
 // Inherit the Earth - Wyrmkeep Win32 Demo version
-static GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
+static GameFileDescription ITEWINDEMO_GameFiles[] = {
 	{"ited.rsc", GAME_RESOURCEFILE},
 	{"scriptsd.rsc", GAME_SCRIPTFILE},
 	{"soundsd.rsc", GAME_SOUNDFILE},
@@ -74,7 +74,7 @@ static GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
 };
 
 // Inherit the Earth -  Wyrmkeep Linux Demo version
-static GAME_FILEDESC ITELINDEMO_GameFiles[] = {
+static GameFileDescription ITELINDEMO_GameFiles[] = {
 	{"ited.rsc", GAME_RESOURCEFILE},
 	{"scriptsd.rsc", GAME_SCRIPTFILE},
 	{"soundsd.rsc", GAME_SOUNDFILE},
@@ -83,7 +83,7 @@ static GAME_FILEDESC ITELINDEMO_GameFiles[] = {
 };
 
 // Inherit the Earth -  Wyrmkeep Linux version
-static GAME_FILEDESC ITELINCD_GameFiles[] = {
+static GameFileDescription ITELINCD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"sounds.rsc", GAME_SOUNDFILE},
@@ -91,13 +91,13 @@ static GAME_FILEDESC ITELINCD_GameFiles[] = {
 	{"music.rsc", GAME_MUSICFILE}
 };
 
-static GAME_FONTDESC ITEWINDEMO_GameFonts[] = {
+static GameFontDescription ITEWINDEMO_GameFonts[] = {
 	{GAME_FONT_MEDIUM, 0},
 	{GAME_FONT_SMALL, 2}
 }; 
 
 // Inherit the Earth - Mac Wyrmkeep version
-static GAME_FILEDESC ITEMACCD_GameFiles[] = {
+static GameFileDescription ITEMACCD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"sounds.rsc", GAME_SOUNDFILE},
@@ -106,44 +106,44 @@ static GAME_FILEDESC ITEMACCD_GameFiles[] = {
 };
 
 // Inherit the Earth - Diskette version
-static GAME_FILEDESC ITEDISK_GameFiles[] = {
+static GameFileDescription ITEDISK_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"voices.rsc", GAME_SOUNDFILE | GAME_VOICEFILE}
 };
 
-static GAME_FONTDESC ITEDISK_GameFonts[] = {
+static GameFontDescription ITEDISK_GameFonts[] = {
 	{GAME_FONT_MEDIUM, 0},
 	{GAME_FONT_LARGE, 1},
 	{GAME_FONT_SMALL, 2}
 };
 
-static GAME_RESOURCEDESC ITE_Resources = {
+static GameResourceDescription ITE_Resources = {
 	RID_ITE_SCENE_LUT,  // Scene lookup table RN
 	RID_ITE_SCRIPT_LUT, // Script lookup table RN
 	RID_ITE_COMMAND_PANEL,
 	RID_ITE_DIALOGUE_PANEL
 };
 
-static GAME_SOUNDINFO ITE_GameSound = {
+static GameSoundInfo ITE_GameSound = {
 	GAME_SOUND_VOC, 0, 0, 0
 };
 
 // Inherit the Earth - CD Enhanced version
-static GAME_FILEDESC ITECD_GameFiles[] = {
+static GameFileDescription ITECD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"sounds.rsc", GAME_SOUNDFILE},
 	{"voices.rsc", GAME_VOICEFILE}
 };
 
-static GAME_FONTDESC ITECD_GameFonts[] = {
+static GameFontDescription ITECD_GameFonts[] = {
 	{GAME_FONT_MEDIUM, 0},
 	{GAME_FONT_LARGE, 1},
 	{GAME_FONT_SMALL, 2}
 };
 
-static GAME_SOUNDINFO ITECD_GameSound = {
+static GameSoundInfo ITECD_GameSound = {
 	GAME_SOUND_PCM,
 	22050,
 	16,
@@ -151,7 +151,7 @@ static GAME_SOUNDINFO ITECD_GameSound = {
 };
 
 // I Have No Mouth and I Must Scream - Demo version
-static GAME_FILEDESC IHNMDEMO_GameFiles[] = {
+static GameFileDescription IHNMDEMO_GameFiles[] = {
 	{"scream.res", GAME_RESOURCEFILE},
 	{"scripts.res", GAME_SCRIPTFILE},
 	{"sfx.res", GAME_SOUNDFILE},
@@ -159,7 +159,7 @@ static GAME_FILEDESC IHNMDEMO_GameFiles[] = {
 };
 
 // I Have No Mouth and I Must Scream - Retail CD version
-static GAME_FILEDESC IHNMCD_GameFiles[] = {
+static GameFileDescription IHNMCD_GameFiles[] = {
 	{"musicfm.res", GAME_MUSICFILE_FM},
 	{"musicgm.res", GAME_MUSICFILE_GM},
 	{"scream.res", GAME_RESOURCEFILE},
@@ -176,7 +176,7 @@ static GAME_FILEDESC IHNMCD_GameFiles[] = {
 };
 
 // I Have No Mouth and I Must Scream - Retail German CD version
-static GAME_FILEDESC IHNMCDDE_GameFiles[] = {
+static GameFileDescription IHNMCDDE_GameFiles[] = {
 	{"musicfm.res", GAME_MUSICFILE_FM},
 	{"musicgm.res", GAME_MUSICFILE_GM},
 	{"scream.res", GAME_RESOURCEFILE},
@@ -191,7 +191,7 @@ static GAME_FILEDESC IHNMCDDE_GameFiles[] = {
 	{"voicess.res", GAME_VOICEFILE}
 };
 
-static GAME_FONTDESC IHNMCD_GameFonts[] = {
+static GameFontDescription IHNMCD_GameFonts[] = {
 	{GAME_FONT_MEDIUM, 2},
 	{GAME_FONT_LARGE, 3},
 	{GAME_FONT_SMALL, 4},
@@ -201,19 +201,19 @@ static GAME_FONTDESC IHNMCD_GameFonts[] = {
 	{GAME_FONT_LARGE3, 8}
 };
 
-static GAME_RESOURCEDESC IHNM_Resources = {
+static GameResourceDescription IHNM_Resources = {
 	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
 	RID_IHNM_SCRIPT_LUT, // Script lookup table RN
 	RID_IHNM_COMMAND_PANEL,
 	RID_IHNM_DIALOGUE_PANEL
 };
 
-static GAME_SOUNDINFO IHNM_GameSound = {
+static GameSoundInfo IHNM_GameSound = {
 	GAME_SOUND_WAV, 0, 0, 0
 };
 
-struct GAME_MD5 {
-	GAME_IDS id;
+struct GameMD5 {
+	GameIds id;
 	const char *md5;
 	const char *filename;
 	bool caseSensitive;
@@ -221,7 +221,7 @@ struct GAME_MD5 {
 
 #define FILE_MD5_BYTES 5000
 
-static GAME_MD5 game_md5[] = {
+static GameMD5 gameMD5[] = {
 	{ GID_ITE_DISK_G,   "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
 	{ GID_ITE_DISK_G,   "516f7330f8410057b834424ea719d1ef", "scripts.rsc", false },
 	{ GID_ITE_DISK_G,   "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc", false },
@@ -326,7 +326,7 @@ static GAME_MD5 game_md5[] = {
 	{ GID_IHNM_DEMO, "3bbc16a8f741dbb511da506c660a0b54", "voicesd.res", false },
 };
 
-static GAMEDESC GameDescs[] = {
+static GameDescription gameDescriptions[] = {
 	// Inherit the earth - DOS Demo version
 	{
 		"ite-demo",
@@ -618,18 +618,16 @@ static GAMEDESC GameDescs[] = {
 	}
 };
 
-static GAMEMODULE GameModule;
-
 int SagaEngine::initGame(void) {
-	int game_n;
+	int gameNumber;
 	FSList dummy;
 
-	if ((game_n = detectGame(dummy)) == -1) {
+	if ((gameNumber = detectGame(dummy)) == -1) {
 		warning("No valid games were found in the specified directory.");
 		return FAILURE;
 	}
 
-	if (loadGame(game_n) != SUCCESS) {
+	if (loadGame(gameNumber) != SUCCESS) {
 		warning("Error loading game resource files.");
 		return FAILURE;
 	}
@@ -642,14 +640,11 @@ int SagaEngine::initGame(void) {
 
 int SagaEngine::loadLanguage(void) {
 	char lang_file[MAXPATH];
-	uint16 game_n;
-
 	File test_file;
 
-	game_n = GameModule.game_number;
 
-	if (GameDescs[game_n].gd_game_type == GType_ITE) {
-		snprintf(lang_file, MAXPATH, "%s%s.%s", GAME_ITE_LANG_PREFIX, GameModule.game_language, GAME_LANG_EXT);
+	if (_gameType == GType_ITE) {
+		snprintf(lang_file, MAXPATH, "%s%s.%s", GAME_ITE_LANG_PREFIX, _gameLanguage, GAME_LANG_EXT);
 		if (!test_file.open(lang_file)) {
 			debug(0, "Couldn't open language file %s. Using default (US English)", lang_file);
 			return SUCCESS;
@@ -678,16 +673,15 @@ int SagaEngine::loadLanguage(void) {
 }
 
 RSCFILE_CONTEXT *SagaEngine::getFileContext(uint16 type, int param) {
-	RSCFILE_CONTEXT *found_ctxt = NULL;
 	uint16 i;
 
-	for (i = 0; i < GameModule.gfile_n; i++) {
-		if (GameModule.gfile_data[i].file_types & type) {
-			found_ctxt = GameModule.gfile_data[i].file_ctxt;
+	for (i = 0; i < _gameDescription->filesCount; i++) {
+		if ( _gameDescription->filesDescriptions[i].fileType & type) {
+			return _gameFileContexts[i];
 		}
 	}
 
-	return found_ctxt;
+	return NULL;
 }
 
 DetectedGameList GAME_ProbeGame(const FSList &fslist) {
@@ -695,13 +689,13 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 	int game_n;
 
 	if ((game_n = detectGame(fslist, true)) != -1)
-		detectedGames.push_back(GameDescs[game_n].toGameSettings());
+		detectedGames.push_back(gameDescriptions[game_n].toGameSettings());
 
 	return detectedGames;
 }
 
 int detectGame(const FSList &fslist, bool mode) {
-	int game_count = ARRAYSIZE(GameDescs);
+	int game_count = ARRAYSIZE(gameDescriptions);
 	int game_n = -1;
 	Common::StringMap filesMD5;
 
@@ -718,12 +712,12 @@ int detectGame(const FSList &fslist, bool mode) {
 	uint8 md5sum[16];
 
 	// First we compose list of files which we need MD5s for
-	for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
-		tstr = Common::String(game_md5[i].filename);
+	for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
+		tstr = Common::String(gameMD5[i].filename);
 		tstr.toLowercase();
 
-		if (game_md5[i].caseSensitive && !mode)
-			filesList[Common::String(game_md5[i].filename)] = true;
+		if (gameMD5[i].caseSensitive && !mode)
+			filesList[Common::String(gameMD5[i].filename)] = true;
 		else
 			filesList[tstr] = true;
 	}
@@ -766,12 +760,12 @@ int detectGame(const FSList &fslist, bool mode) {
 	}
 
 	for (game_n = 0; game_n < game_count; game_n++) {
-		file_count = GameDescs[game_n].gd_filect;
+		file_count = gameDescriptions[game_n].filesCount;
 		file_missing = false;
 
 		// Try to open all files for this game
 		for (file_n = 0; file_n < file_count; file_n++) {
-			tstr = GameDescs[game_n].gd_filedescs[file_n].gf_fname;
+			tstr = gameDescriptions[game_n].filesDescriptions[file_n].fileName;
 
 			if (!filesMD5.contains(tstr)) {
 				file_missing = true;
@@ -786,13 +780,13 @@ int detectGame(const FSList &fslist, bool mode) {
 		} else {
 			bool match = true;
 
-			debug(5, "Probing game: %s", GameDescs[game_n].gd_title);
+			debug(5, "Probing game: %s", gameDescriptions[game_n].title);
 
-			for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
-				if (game_md5[i].id == GameDescs[game_n].gd_game_id) {
-					tstr = game_md5[i].filename;
+			for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
+				if (gameMD5[i].id == gameDescriptions[game_n].gameId) {
+					tstr = gameMD5[i].filename;
 
-					if (strcmp(game_md5[i].md5, filesMD5[tstr].c_str())) {
+					if (strcmp(gameMD5[i].md5, filesMD5[tstr].c_str())) {
 						match = false;
 						break;
 					}
@@ -801,7 +795,7 @@ int detectGame(const FSList &fslist, bool mode) {
 			if (!match)
 				continue;
 
-			debug(5, "Found game: %s", GameDescs[game_n].gd_title);
+			debug(5, "Found game: %s", gameDescriptions[game_n].title);
 
 			return game_n;
 		}
@@ -819,68 +813,46 @@ int detectGame(const FSList &fslist, bool mode) {
 	return -1;
 }
 
-int SagaEngine::loadGame(int game_n) {
-	RSCFILE_CONTEXT *load_ctxt;
-	uint16 game_count = ARRAYSIZE(GameDescs);
-	const char *game_fname;
-	uint16 game_filect;
+int SagaEngine::loadGame(int gameNumber) {
+	RSCFILE_CONTEXT *loadContext;
+	uint16 gameCount = ARRAYSIZE(gameDescriptions);
+	const char *gameFileName;
+	uint16 gameFileCount;
 	uint16 i;
 
-	if (game_n >= game_count) {
-		return FAILURE;
+	if (gameNumber >= gameCount) {
+		error("SagaEngine::loadGame wrong gameNumber");
 	}
 
-	GameModule.game_number = game_n;
-	GameModule.gamedesc = &GameDescs[game_n];
+	_gameNumber = gameNumber;
+	_gameDescription = &gameDescriptions[gameNumber];
 
-	_gameId = GameModule.gamedesc->gd_game_id;
-	_gameType = GameModule.gamedesc->gd_game_type;
-	_features = GameModule.gamedesc->features;
+	_gameId = _gameDescription->gameId;
+	_gameType = _gameDescription->gameType;
+	_features = _gameDescription->features;
 
-	game_filect = GameDescs[game_n].gd_filect;
+	gameFileCount = _gameDescription->filesCount;
 	
-	GameModule.gfile_data = (GAME_FILEDATA *)malloc(game_filect * sizeof(*GameModule.gfile_data));
-	if (GameModule.gfile_data == NULL) {
-		return MEM;
+	_gameFileContexts = (RSCFILE_CONTEXT **)malloc(gameFileCount * sizeof(*_gameFileContexts));
+	//TODO: on exit - FREE!
+	if (_gameFileContexts == NULL) {
+		error("SagaEngine::loadGame not enough memory");
 	}
 
-	GameModule.gfile_n = game_filect;
 
 	// Load game resource files
-	for (i = 0; i < game_filect; i++) {
-		load_ctxt = RSC_CreateContext();
-		game_fname = GameDescs[game_n].gd_filedescs[i].gf_fname;
-		if (RSC_OpenContext(load_ctxt, game_fname) != SUCCESS) {
+	for (i = 0; i < gameFileCount; i++) {
+		loadContext = RSC_CreateContext();
+		gameFileName = _gameDescription->filesDescriptions[i].fileName;
+		if (RSC_OpenContext(loadContext, gameFileName) != SUCCESS) {
 			return FAILURE;
 		}
 
-		debug(0, "Opened resource file: %s", game_fname);
-		GameModule.gfile_data[i].file_ctxt = load_ctxt;
-		GameModule.gfile_data[i].file_types = GameDescs[game_n].gd_filedescs[i].gf_type;
-		GameModule.gfile_data[i].file_flags = 0;
+		debug(0, "Opened resource file: %s", gameFileName);
+		_gameFileContexts[i] = loadContext;
 	}
 
-	// Load game font data
-	GameModule.gd_fontct = GameDescs[game_n].gd_fontct;
-	GameModule.gd_fontdescs = GameDescs[game_n].gd_fontdescs;
-
 	return SUCCESS;
-}
-
-const GAME_RESOURCEDESC SagaEngine::getResourceInfo(void) {
-	return *GameModule.gamedesc->gd_resource_desc;
-}
-
-const GAME_SOUNDINFO SagaEngine::getSoundInfo(void) {
-	return *GameModule.gamedesc->gd_soundinfo;
-}
-
-int SagaEngine::getDisplayWidth() {
-	return GameDescs[GameModule.game_number].gd_logical_w;
-}
-
-int SagaEngine::getDisplayHeight() {
-	return GameDescs[GameModule.game_number].gd_logical_h;
 }
 
 int SagaEngine::getPathYOffset() { //fixme: should be in GameDesc
@@ -897,38 +869,6 @@ int SagaEngine::getStatusYOffset() { //fixme: should be in GameDesc
 	} else {
 		return IHNM_STATUS_Y;
 	}
-}
-
-int SagaEngine::getDisplayInfo(GAME_DISPLAYINFO *disp_info) {
-	int game_n;
-
-	assert(disp_info != NULL);
-
-	game_n = GameModule.game_number;
-
-	disp_info->logical_w = GameDescs[game_n].gd_logical_w;
-	disp_info->logical_h = GameDescs[game_n].gd_logical_h;
-	disp_info->scene_h = GameDescs[game_n].gd_scene_h;
-
-	return SUCCESS;
-}
-
-int SagaEngine::getFontInfo(GAME_FONTDESC **gf_desc, int *font_n) {
-	assert((gf_desc != NULL) && (font_n != NULL));
-
-	*gf_desc = GameModule.gd_fontdescs;
-	*font_n = GameModule.gd_fontct;
-
-	return SUCCESS;
-}
-
-int SagaEngine::getSceneInfo(GAME_SCENEDESC *gs_desc) {
-	assert(gs_desc != NULL);
-
-	gs_desc->first_scene = GameModule.gamedesc->gd_startscene;
-	gs_desc->scene_lut_rn = RSC_ConvertID(GameModule.gamedesc->gd_resource_desc->scene_lut_rn);
-
-	return SUCCESS;
 }
 
 } // End of namespace Saga

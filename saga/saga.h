@@ -60,6 +60,9 @@ class Console;
 class Events;
 class PalAnim;
 
+#define GAME_LANGSTR_LIMIT 3
+#define GAME_ITE_LANG_PREFIX "ite_"
+#define GAME_LANG_EXT "lng"
 
 #define PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 #define MAXPATH 512
@@ -150,7 +153,7 @@ struct CLICKAREA {
 	Point *points;
 };
 
-enum GAME_IDS {
+enum GameIds {
 	// Dreamers Guild
 	GID_ITE_DEMO_G = 0,
 	GID_ITE_DISK_G,
@@ -181,7 +184,7 @@ enum GAME_IDS {
 	GID_IHNM_CD_DE   // reported by mld. German retail
 };
 
-enum GAME_FILETYPES {
+enum GameFileTypes {
 	GAME_RESOURCEFILE = 1 << 0,
 	GAME_SCRIPTFILE   = 1 << 1,
 	GAME_SOUNDFILE    = 1 << 2,
@@ -193,14 +196,14 @@ enum GAME_FILETYPES {
 	GAME_PATCHFILE    = 1 << 8
 };
 
-enum GAME_SOUNDINFO_TYPES {
+enum GameSoundTypes {
 	GAME_SOUND_PCM = 0,
 	GAME_SOUND_VOC,
 	GAME_SOUND_WAV,
 	GAME_SOUND_VOX
 };
 
-enum GAME_FONT_IDS {
+enum GameFontIds {
 	GAME_FONT_SMALL = 0,
 	GAME_FONT_MEDIUM,
 	GAME_FONT_LARGE,
@@ -210,7 +213,7 @@ enum GAME_FONT_IDS {
 	GAME_FONT_LARGE3
 };
 
-enum GAME_FEATURES {
+enum GameFeatures {
 	GF_VOX_VOICES      = 1 << 0,
 	GF_BIG_ENDIAN_DATA = 1 << 1,
 	GF_MAC_RESOURCES   = 1 << 2,
@@ -218,35 +221,59 @@ enum GAME_FEATURES {
 	GF_WYRMKEEP        = 1 << 4
 };
 
-struct GAME_DISPLAYINFO {
-	int logical_w;
-	int logical_h;
-	int scene_h;
-};
-
-struct GAME_SOUNDINFO {
+struct GameSoundInfo {
 	int res_type;
 	long freq;
 	int sample_size;
 	int stereo;
 };
 
-struct GAME_FONTDESC {
+struct GameFontDescription {
 	uint16 font_id;
 	uint32 font_rn;
 };
 
-struct GAME_SCENEDESC {
-	uint32 scene_lut_rn;
-	uint32 first_scene;
-};
-
-struct GAME_RESOURCEDESC {
+struct GameResourceDescription {
 	uint32 scene_lut_rn;
 	uint32 script_lut_rn;
 	uint32 command_panel_rn;
 	uint32 dialogue_panel_rn;
 };
+
+struct GameFileDescription {
+	const char *fileName;
+	uint16 fileType;
+};
+
+struct GameDisplayInfo {
+	int logicalWidth;
+	int logicalHeight;
+	int scene_h;
+};
+
+struct GameDescription {
+	const char *name;
+	SAGAGameType gameType;
+	GameIds gameId;
+	const char *title;
+	int gd_logical_w;
+	int gd_logical_h;
+	int gd_scene_h;
+	int startSceneNumber;
+	GameResourceDescription *resourceDescription;
+	int filesCount;
+	GameFileDescription *filesDescriptions;
+	int fontsCount;
+	GameFontDescription *fontDescriptions;
+	GameSoundInfo *soundInfo;
+	uint32 features;
+
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, title, features };
+		return dummy;
+	}
+};
+
 
 inline int ticksToMSec(int tick) {
 	return tick * 1000 / kScriptTimeTicksPerSecond;
@@ -287,10 +314,16 @@ public:
 
 	int _soundEnabled;
 	int _musicEnabled;
+	
+	char _gameLanguage[GAME_LANGSTR_LIMIT];
+	RSCFILE_CONTEXT **_gameFileContexts;
 
+//current game description
 	int _gameId;
 	int _gameType;
 	uint32 _features;
+	int _gameNumber;
+	GameDescription *_gameDescription;
 
 	SndRes *_sndRes;
 	Sound *_sound;
@@ -351,18 +384,23 @@ public:
 public:
 	int initGame(void);
 	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
-	int getFontInfo(GAME_FONTDESC **, int *);
-	const GAME_RESOURCEDESC getResourceInfo(void);
-	const GAME_SOUNDINFO getSoundInfo(void);
-	int getDisplayInfo(GAME_DISPLAYINFO *disp_info);
-	int getSceneInfo(GAME_SCENEDESC *);
-	int getDisplayWidth();
-	int getDisplayHeight();
+public:
+	const GameResourceDescription *getResourceDescription() { return _gameDescription->resourceDescription; }
+	const GameSoundInfo *getSoundInfo() { return _gameDescription->soundInfo; }
+	const GameFontDescription *getFontDescription(int index) { 
+		assert(index < _gameDescription->fontsCount);
+		return &_gameDescription->fontDescriptions[index];
+	}
+	int getFontsCount() const { return _gameDescription->fontsCount; }
+
+	int getStartSceneNumber() { return _gameDescription->startSceneNumber; }
+	int getDisplayWidth() { return _gameDescription->gd_logical_w; }
+	int getDisplayHeight() { return _gameDescription->gd_logical_h;}
 	int getStatusYOffset();
 	int getPathYOffset();
 private:
 	int loadLanguage(void);
-	int loadGame(int game_n_p);
+	int loadGame(int gameNumber);
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects

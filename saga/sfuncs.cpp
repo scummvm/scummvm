@@ -1005,7 +1005,6 @@ static TEXTLIST_ENTRY *placardTextEntry;
 // Param1: string rid
 int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	int stringId;
-	GAME_DISPLAYINFO disp;
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
 	static PALENTRY cur_pal[PAL_ENTRIES];
 	PALENTRY *pal;
@@ -1016,8 +1015,6 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	_vm->_interface->rememberMode();
 	_vm->_interface->setMode(kPanelPlacard);
-
-	_vm->getDisplayInfo(&disp);
 
 	stringId = thread->pop();
 
@@ -1057,9 +1054,9 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.data = back_buf;
 	event.param = 138;
 	event.param2 = 0;
-	event.param3 = disp.scene_h;
+	event.param3 = _vm->getStatusYOffset();
 	event.param4 = 0;
-	event.param5 = disp.logical_w;
+	event.param5 = _vm->getDisplayWidth();
 
 	q_event = _vm->_events->chain(q_event, &event);
 
@@ -1076,8 +1073,8 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	text_entry.color = _vm->_gfx->getWhite();
 	text_entry.effect_color = _vm->_gfx->getBlack();
-	text_entry.text_x = disp.logical_w / 2;
-	text_entry.text_y = (disp.scene_h - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
+	text_entry.text_x = _vm->getDisplayWidth() / 2;
+	text_entry.text_y = (_vm->getStatusYOffset() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
 	text_entry.font_id = MEDIUM_FONT_ID;
 	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
 	text_entry.string = getScriptString(stringId);
