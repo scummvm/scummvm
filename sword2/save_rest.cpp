@@ -108,10 +108,10 @@ uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
 
 		switch (errorCode) {
 		case SR_ERR_FILEOPEN:
-			textId = 213516674;
+			textId = TEXT_SAVE_CANT_OPEN;
 			break;
-		default:	// SR_ERR_WRITEFAIL
-			textId = 213516676;
+		default:
+			textId = TEXT_SAVE_FAILED;
 			break;
 		}
 
@@ -226,13 +226,13 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 
 		switch (errorCode) {
 		case SR_ERR_FILEOPEN:
-			textId = 213516670;
+			textId = TEXT_RESTORE_CANT_OPEN;
 			break;
 		case SR_ERR_INCOMPATIBLE:
-			textId = 213516671;
+			textId = TEXT_RESTORE_INCOMPATIBLE;
 			break;
-		default:	// SR_ERR_READFAIL
-			textId = 213516673;
+		default:
+			textId = TEXT_RESTORE_FAILED;
 			break;
 		}
 
