@@ -218,6 +218,12 @@ void Scumm::scummMain(int argc, char **argv) {
 	else
 		setupScummVarsOld();
 
+	if(_features & GF_AFTER_V7)
+		OF_OWNER_ROOM = 0xFF;
+	else
+		OF_OWNER_ROOM = 0x0F;
+
+	
 	if (_gameId==GID_INDY4 && _bootParam==0) {
 		_bootParam = -7873;
 	}

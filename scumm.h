@@ -322,11 +322,6 @@ enum {
 	OF_OWNER_MASK = 0x0F,
 	OF_STATE_MASK = 0xF0,
 	
-#if defined(FULL_THROTTLE)
-	OF_OWNER_ROOM = 0xFF,
-#else
-	OF_OWNER_ROOM = 0x0F,
-#endif
 	OF_STATE_SHL = 4
 };
 
@@ -802,6 +797,8 @@ struct Scumm {
 	ScummDebugger *_debugger;
 	void *_gui; /* actually a pointer to a Gui */
 
+	byte OF_OWNER_ROOM;
+	
         int _gameTempo;
 	int _lastLoadedRoom;
 	int _roomResource;
