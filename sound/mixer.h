@@ -40,12 +40,15 @@
 typedef uint32 PlayingSoundHandle;
 
 class File;
+class SoundMixer;
 
 class Channel {
+protected:
+	SoundMixer *_mixer;
 public:
 	bool _toBeDestroyed;
 	int _id;
-	Channel() : _id(-1) {}
+	Channel() : _mixer(0), _toBeDestroyed(false), _id(-1) {}
 	virtual void mix(int16 *data, uint len) = 0;
 	void destroy() {
 		_toBeDestroyed = true;

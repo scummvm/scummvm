@@ -27,15 +27,14 @@
 
 
 class ChannelRaw : public Channel {
-	SoundMixer *_mixer;
-	void *_ptr;
+	byte *_ptr;
 	uint32 _pos;
 	uint32 _size;
 	uint32 _fpSpeed;
 	uint32 _fpPos;
 	uint32 _realSize, _rate;
 	byte _flags;
-	void *_loop_ptr;
+	byte *_loop_ptr;
 	uint32 _loop_size;
 
 public:
@@ -46,7 +45,6 @@ public:
 };
 
 class ChannelStream : public Channel {
-	SoundMixer *_mixer;
 	byte *_ptr;
 	byte *_endOfData;
 	byte *_endOfBuffer;
@@ -70,8 +68,7 @@ public:
 #ifdef USE_MAD
 
 class ChannelMP3 : public Channel {
-	SoundMixer *_mixer;
-	void *_ptr;
+	byte *_ptr;
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
@@ -89,9 +86,8 @@ public:
 
 };
 
-class ChannelMP3CDMusic:public Channel {
-	SoundMixer *_mixer;
-	void *_ptr;
+class ChannelMP3CDMusic : public Channel {
+	byte *_ptr;
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
@@ -115,7 +111,6 @@ public:
 
 #ifdef USE_VORBIS
 class ChannelVorbis : public Channel {
-	SoundMixer *_mixer;
 	OggVorbis_File *_ov_file;
 	int _end_pos;
 	bool _eof_flag, _is_cd_track;
@@ -662,7 +657,7 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, b
 	_id = id;
 	_mixer = mixer;
 	_flags = flags;
-	_ptr = sound;
+	_ptr = (byte *)sound;
 	_pos = 0;
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->_outputRate;
@@ -698,15 +693,15 @@ void ChannelRaw::mix(int16 *data, uint len) {
 		len = _size;
 	_size -= len;
 
-	s = (byte *)_ptr + _pos;
-	end = (byte *)_ptr + _realSize;
+	s = _ptr + _pos;
+	end = _ptr + _realSize;
 
 	const uint32 fp_speed = _fpSpeed;
 	const int16 *vol_tab = _mixer->_volumeTable;
 
 	mixer_helper_table[_flags & 0x07] (data, &len, &s, &_fpPos, fp_speed, vol_tab, end, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 
-	_pos = s - (byte *)_ptr;
+	_pos = s - _ptr;
 
 	if (_size < 1) {
 		if (_flags & SoundMixer::FLAG_LOOP) {
@@ -747,7 +742,7 @@ ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint r
 	_toBeDestroyed = false;
 	_setTimeOut = timeout;
 
-	/* adjust the magnitute to prevent division error */
+	// adjust the magnitude to prevent division error
 	while (size & 0xFFFF0000)
 		size >>= 1, rate = (rate >> 1) + 1;
 
@@ -845,7 +840,7 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags) {
 	_posInFrame = 0xFFFFFFFF;
 	_position = 0;
 	_size = size;
-	_ptr = sound;
+	_ptr = (byte *)sound;
 	_toBeDestroyed = false;
 
 	mad_stream_init(&_stream);
@@ -927,7 +922,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 			return;
 		}
 
-		mad_stream_buffer(&_stream, ((unsigned char *)_ptr) + _position,
+		mad_stream_buffer(&_stream, _ptr + _position,
 											_size + MAD_BUFFER_GUARD - _position);
 
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
@@ -941,7 +936,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 		}
 		mad_synth_frame(&_synth, &_frame);
 		_posInFrame = 0;
-		_position = _stream.next_frame - (unsigned char *)_ptr;
+		_position = _stream.next_frame - _ptr;
 	}
 }
 
@@ -965,7 +960,7 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, File *file,
 	_duration = duration;
 	_initialized = false;
 	_bufferSize = MP3CD_BUFFERING_SIZE;
-	_ptr = malloc(MP3CD_BUFFERING_SIZE);
+	_ptr = (byte *)malloc(MP3CD_BUFFERING_SIZE);
 	_toBeDestroyed = false;
 
 	mad_stream_init(&_stream);
@@ -998,7 +993,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 			return;
 		}
 		// Resync
-		mad_stream_buffer(&_stream, (unsigned char *)_ptr, _size);
+		mad_stream_buffer(&_stream, _ptr, _size);
 		skip_loop = 2;
 		while (skip_loop != 0) {
 			if (mad_frame_decode(&_frame, &_stream) == 0) {
@@ -1061,11 +1056,11 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 				} else {
 					not_decoded = _stream.bufend - _stream.next_frame;
 					memcpy(_ptr, _stream.next_frame, not_decoded);
-					_size = _file->read((unsigned char *)_ptr + not_decoded, _bufferSize - not_decoded);
+					_size = _file->read(_ptr + not_decoded, _bufferSize - not_decoded);
 				}
 				_stream.error = (enum mad_error)0;
 				// Restream
-				mad_stream_buffer(&_stream, (unsigned char *)_ptr, _size + not_decoded);
+				mad_stream_buffer(&_stream, _ptr, _size + not_decoded);
 				if (mad_frame_decode(&_frame, &_stream) == -1) {
 					debug(1, "Error decoding after restream %d !", _stream.error);
 				}
