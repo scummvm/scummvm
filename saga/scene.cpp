@@ -623,7 +623,7 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_ACTION_MAP:
 			debug(0, "Loading exit map resource...");
-			if (_vm->_actionMap->load(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_actionMap->loadMap(res_data, res_data_len) != R_SUCCESS) {
 				warning("ProcessSceneResources: Error loading exit map resource");
 				return R_FAILURE;
 			}

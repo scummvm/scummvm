@@ -55,7 +55,7 @@ ActionMap::~ActionMap(void) {
 }
 
 
-int ActionMap::load(const byte * exmap_res, size_t exmap_res_len) {
+int ActionMap::loadMap(const byte * exmap_res, size_t exmap_res_len) {
 	// Loads exit map data from specified exit map resource
 	R_ACTIONMAP_ENTRY *exmap_entry;
 	R_POINT *exmap_pt_tbl;

@@ -44,7 +44,7 @@ class ActionMap {
 	ActionMap(SagaEngine *vm);
 	~ActionMap(void);
 
-	int load(const byte *exmap_res, size_t exmap_res_len);
+	int loadMap(const byte *exmap_res, size_t exmap_res_len);
 	int draw(R_SURFACE *ds, int color);
 
 	int freeMap(void);
