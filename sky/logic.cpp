@@ -1237,7 +1237,7 @@ uint32 SkyLogic::fnLeaving(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnSetAlternate(uint32 scr, uint32 b, uint32 c) {
-	_compact->extCompact->alt = scr;
+	_compact->extCompact->alt = (uint16)(scr & 0xffff);
 	_compact->logic = L_ALT;
 	return 0;
 }
@@ -1297,7 +1297,7 @@ uint32 SkyLogic::fnSpeakMeDir(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnSpeakWait(uint32 id, uint32 message, uint32 animation) {
-	_compact->flag = id;
+	_compact->flag = (uint16)(id & 0xffff);
 	_compact->logic = L_LISTEN;
 	return fnSpeakMe(id, message, animation);
 }
