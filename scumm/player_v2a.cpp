@@ -67,10 +67,10 @@ protected:
 	Player_MOD *_mod;
 };
 
-class V2A_Sound_Music : public V2A_Sound {	// TODO - finish support (use the 'unk' data appropriately)
+class V2A_Sound_Music : public V2A_Sound {
 public:
-	V2A_Sound_Music(uint16 instoff, uint16 unkoff, uint16 chan1off, uint16 chan2off, uint16 chan3off, uint16 chan4off, uint16 sampoff) :
-		_instoff(instoff), _unkoff(unkoff), _chan1off(chan1off), _chan2off(chan2off), _chan3off(chan3off), _chan4off(chan4off), _sampoff(sampoff) { }
+	V2A_Sound_Music(uint16 instoff, uint16 voloff, uint16 chan1off, uint16 chan2off, uint16 chan3off, uint16 chan4off, uint16 sampoff, bool looped) :
+		_instoff(instoff), _voloff(voloff), _chan1off(chan1off), _chan2off(chan2off), _chan3off(chan3off), _chan4off(chan4off), _sampoff(sampoff), _looped(looped) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -78,46 +78,87 @@ public:
 		_data = (char *)malloc(READ_LE_UINT16(data));
 		memcpy(_data,data,READ_LE_UINT16(data));
 
-		_ptr[0] = _chan1off;
-		_ptr[1] = _chan2off;
-		_ptr[2] = _chan3off;
-		_ptr[3] = _chan4off;
-		_dur[0] = _dur[1] = _dur[2] = _dur[3] = 0;
-		_ticks = 0;
+		_chan[0].dataptr_i = _chan1off;
+		_chan[1].dataptr_i = _chan2off;
+		_chan[2].dataptr_i = _chan3off;
+		_chan[3].dataptr_i = _chan4off;
+		for (int i = 0; i < 4; i++) {
+			_chan[i].dataptr = _chan[i].dataptr_i;
+			_chan[i].volbase = 0;
+			_chan[i].volptr = 0;
+			_chan[i].chan = 0;
+			_chan[i].dur = 0;
+			_chan[i].ticks = 0;
+		}
 		update();
 	}
 	virtual bool update() {
 		assert(_id);
 		int i, j = 0;
 		for (i = 0; i < 4; i++) {
-			if ((_dur[i]) && (!--_dur[i]))
-				_mod->stopChannel(_id | (_chan[i] << 8));
-			if (!_ptr[i]) {
+			if (_chan[i].dur) {
+				if (!--_chan[i].dur) {
+					_mod->stopChannel(_id | (_chan[i].chan << 8));
+				} else {
+					_mod->setChannelVol(_id | (_chan[i].chan << 8),
+						READ_BE_UINT16(_data + _chan[i].volbase + (_chan[i].volptr++ << 1)));
+					if (_chan[i].volptr == 0) {
+						_mod->stopChannel(_id | (_chan[i].chan << 8));
+						_chan[i].dur = 0;
+					}
+				}
+			}
+			if (!_chan[i].dataptr) {
 				j++;
 				continue;
 			}
-			if (READ_BE_UINT16(_data + _ptr[i]) == _ticks) {
-				if (READ_BE_UINT16(_data + _ptr[i] + 2) == 0xFFFF) {
-					_ptr[i] = 0;
-					j++;
-					continue;
+			if (READ_BE_UINT16(_data + _chan[i].dataptr) <= _chan[i].ticks) {
+				if (READ_BE_UINT16(_data + _chan[i].dataptr + 2) == 0xFFFF) {
+					if (_looped) {
+						_chan[i].dataptr = _chan[i].dataptr_i;
+						_chan[i].ticks = 0;
+						if (READ_BE_UINT16(_data + _chan[i].dataptr) > 0) {
+							_chan[i].ticks++;
+							continue;
+						}
+					} else {
+						_chan[i].dataptr = 0;
+						j++;
+						continue;
+					}
 				}
-				int freq = 3579545 / READ_BE_UINT16(_data + _ptr[i] + 2);
-				_dur[i] = READ_BE_UINT16(_data + _ptr[i] + 4);
-				_chan[i] = READ_BE_UINT16(_data + _ptr[i] + 6) & 0x3;
-				int inst = READ_BE_UINT16(_data + _ptr[i] + 8);
-				_ptr[i] += 16;
+				int freq = 3579545 / READ_BE_UINT16(_data + _chan[i].dataptr + 2);
+				int inst = READ_BE_UINT16(_data + _chan[i].dataptr + 8);
+				_chan[i].volbase = _voloff + (READ_BE_UINT16(_data + _instoff + (inst << 5)) << 9);
+				_chan[i].volptr = 0;
+				_chan[i].chan = READ_BE_UINT16(_data + _chan[i].dataptr + 6) & 0x3;
+
+				if (_chan[i].dur)	// if there's something playing, stop it
+					_mod->stopChannel(_id | (_chan[i].chan << 8));
+
+				_chan[i].dur = READ_BE_UINT16(_data + _chan[i].dataptr + 4);
+
+				int vol = READ_BE_UINT16(_data + _chan[i].volbase + (_chan[i].volptr++ << 1));
+
 				int pan;
-				if ((_chan[i] == 0) || (_chan[i] == 3))
+				if ((_chan[i].chan == 0) || (_chan[i].chan == 3))
 					pan = -127;
 				else	pan = 127;
-				int size = READ_BE_UINT16(_data + _instoff + (inst << 5) + 0x18);
+				int offset = READ_BE_UINT16(_data + _instoff + (inst << 5) + 0x14);
+				int len = READ_BE_UINT16(_data + _instoff + (inst << 5) + 0x18);
+				int loopoffset = READ_BE_UINT16(_data + _instoff + (inst << 5) + 0x16);
+				int looplen = READ_BE_UINT16(_data + _instoff + (inst << 5) + 0x10);
+
+				int size = len + looplen;
 				char *data = (char *)malloc(size);
-				memcpy(data, _data + _sampoff + READ_BE_UINT16(_data + _instoff + (inst << 5) + 0x14), size);
-				_mod->startChannel(_id | (_chan[i] << 8), data, size, freq, 0x3F, 0, 0, pan);
+				memcpy(data, _data + _sampoff + offset, len);
+				memcpy(data + len, _data + _sampoff + loopoffset, looplen);
+
+				_mod->startChannel(_id | (_chan[i].chan << 8), data, size, freq, vol, len, looplen + len, pan);
+				_chan[i].dataptr += 16;
 			}
+			_chan[i].ticks++;
 		}
-		_ticks++;
 		if (j == 4)
 			return false;
 		return true;
@@ -125,26 +166,32 @@ public:
 	virtual void stop() {
 		assert(_id);
 		for (int i = 0; i < 4; i++) {
-			if (_dur[i])
-				_mod->stopChannel(_id | (_chan[i] << 8));
+			if (_chan[i].dur)
+				_mod->stopChannel(_id | (_chan[i].chan << 8));
 		}
 		free(_data);
 		_id = 0;
 	}
 private:
 	const uint16 _instoff;
-	const uint16 _unkoff;
+	const uint16 _voloff;
 	const uint16 _chan1off;
 	const uint16 _chan2off;
 	const uint16 _chan3off;
 	const uint16 _chan4off;
 	const uint16 _sampoff;
+	const bool _looped;
 
 	char *_data;
-	uint16 _ptr[4];
-	uint16 _chan[4];
-	uint16 _dur[4];
-	int _ticks;
+	struct tchan {
+		uint16 dataptr_i;
+		uint16 dataptr;
+		uint16 volbase;
+		uint8 volptr;
+		uint16 chan;
+		uint16 dur;
+		uint16 ticks;
+	} _chan[4];
 };
 
 class V2A_Sound_Single : public V2A_Sound {
@@ -1122,8 +1169,8 @@ struct soundObj {
 	{0xEDFF3D41,new V2A_Sound_Single(0x00F8,0x2ADE,0x01F8,0x3F)},	// Maniac 42 (this should echo, but it's barely noticeable and I don't feel like doing it)
 	{0x15606D06,new V2A_Sound_Special_QuadSiren(0x0148,0x0020,0x0168,0x0020,0x3F)},	// Maniac 32
 	{0x753EAFE3,new V2A_Sound_Special_TwinSirenMulti(0x017C,0x0010,0x018C,0x0020,0x00C8,0x0080,0x3F)},	// Maniac 44
-	{0xB1AB065C,new V2A_Sound_Music(0x0032,0x00B2,0x08B2,0x1222,0x1A52,0x23C2,0x3094)},	// Maniac 50
-	{0x091F5D9C,new V2A_Sound_Music(0x0032,0x0132,0x0932,0x1802,0x23D2,0x3EA2,0x4F24)},	// Maniac 58
+	{0xB1AB065C,new V2A_Sound_Music(0x0032,0x00B2,0x08B2,0x1222,0x1A52,0x23C2,0x3074,false)},	// Maniac 50
+	{0x091F5D9C,new V2A_Sound_Music(0x0032,0x0132,0x0932,0x1802,0x23D2,0x3EA2,0x4F04,false)},	// Maniac 58
 
 	{0x8E2C8AB3,new V2A_Sound_SingleLooped(0x005C,0x0F26,0x0168,0x3C)},	// Zak 41
 	{0x3792071F,new V2A_Sound_SingleLooped(0x0060,0x1A18,0x06A4,0x3F)},	// Zak 88
@@ -1181,14 +1228,14 @@ struct soundObj {
 	{0xABFFDB02,new V2A_Sound()},	// Zak 86
 	{0x41045447,new V2A_Sound()},	// Zak 98
 	{0xC8EEBD34,new V2A_Sound()},	// Zak 82
-	{0x42F9469F,new V2A_Sound_Music(0x05F6,0x0636,0x0456,0x0516,0x05D6,0x05E6,0x0A36)},	// Zak 96
-	{0x038BBD78,new V2A_Sound_Music(0x054E,0x05CE,0x044E,0x04BE,0x052E,0x053E,0x0BCE)},	// Zak 85
-	{0x06FFADC5,new V2A_Sound_Music(0x0626,0x0686,0x0466,0x04F6,0x0606,0x0616,0x0C86)},	// Zak 87
-	{0xCE20ECF0,new V2A_Sound_Music(0x0636,0x0696,0x0446,0x0576,0x0616,0x0626,0x0E96)},	// Zak 114
-	{0xBDA01BB6,new V2A_Sound_Music(0x0678,0x06B8,0x0458,0x0648,0x0658,0x0668,0x0EB8)},	// Zak 33
-	{0x59976529,new V2A_Sound_Music(0x088E,0x092E,0x048E,0x05EE,0x074E,0x07EE,0x112E)},	// Zak 49
-	{0xED1EED02,new V2A_Sound_Music(0x08D0,0x0950,0x0440,0x07E0,0x08B0,0x08C0,0x1350)},	// Zak 112
-	{0x5A16C037,new V2A_Sound_Music(0x634A,0x64CA,0x049A,0x18FA,0x398A,0x511A,0x6CCA)},	// Zak 95
+	{0x42F9469F,new V2A_Sound_Music(0x05F6,0x0636,0x0456,0x0516,0x05D6,0x05E6,0x0A36,true)},	// Zak 96
+	{0x038BBD78,new V2A_Sound_Music(0x054E,0x05CE,0x044E,0x04BE,0x052E,0x053E,0x0BCE,true)},	// Zak 85
+	{0x06FFADC5,new V2A_Sound_Music(0x0626,0x0686,0x0446,0x04F6,0x0606,0x0616,0x0C86,true)},	// Zak 87
+	{0xCE20ECF0,new V2A_Sound_Music(0x0636,0x0696,0x0446,0x0576,0x0616,0x0626,0x0E96,true)},	// Zak 114
+	{0xBDA01BB6,new V2A_Sound_Music(0x0678,0x06B8,0x0458,0x0648,0x0658,0x0668,0x0EB8,false)},	// Zak 33
+	{0x59976529,new V2A_Sound_Music(0x088E,0x092E,0x048E,0x05EE,0x074E,0x07EE,0x112E,true)},	// Zak 49
+	{0xED1EED02,new V2A_Sound_Music(0x08D0,0x0950,0x0440,0x07E0,0x08B0,0x08C0,0x1350,false)},	// Zak 112
+	{0x5A16C037,new V2A_Sound_Music(0x634A,0x64CA,0x049A,0x18FA,0x398A,0x511A,0x6CCA,false)},	// Zak 95
 	{0x00000000,NULL}
 };
 
