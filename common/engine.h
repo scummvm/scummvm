@@ -28,6 +28,11 @@ extern const char *gScummVMVersion;		// e.g. "0.4.1"
 extern const char *gScummVMBuildDate;	// e.g. "2003-06-24"
 extern const char *gScummVMFullVersion;	// e.g. "ScummVM 0.4.1 (2003-06-24)"
 
+// TODO: Get rid of these enums. Ideally, GIDs should be
+// 100% local to the module they are defined in. Right now
+// we can't make this change since some of the backends
+// and also gui/launcher.cpp contain tests on the GID.
+// Ideally, all those should be converted to something else.
 enum GameId {
 	GID_SCUMM_FIRST = 1,
 	GID_SCUMM_LAST = GID_SCUMM_FIRST + 99,

@@ -189,7 +189,6 @@ GameDetector::GameDetector() {
 	_gameDataPath = 0;
 	_gameTempo = 0;
 	_midi_driver = MD_AUTO;
-	_game.id = 0;
 	_game.features = 0;
 	_plugin = 0;
 
@@ -632,7 +631,6 @@ bool GameDetector::parseMusicDriver(const char *s) {
 bool GameDetector::detectGame() {
 	const TargetSettings *target;
 	const char *realGame, *basename;
-	_game.id = 0;
 	_gameText.clear();
 
 	realGame = g_config->get("gameid");
@@ -726,7 +724,7 @@ OSystem *GameDetector::createSystem() {
 #elif defined(X11_BACKEND)
 	return OSystem_X11_create();
 #elif defined(__MORPHOS__)
-	return OSystem_MorphOS_create(_game.id, _gfx_mode, _fullScreen);
+	return OSystem_MorphOS_create(_gfx_mode, _fullScreen);
 #elif defined(_WIN32_WCE)
 	return OSystem_WINCE3_create();
 #elif defined(MACOS_CARBON)
@@ -742,12 +740,8 @@ OSystem *GameDetector::createSystem() {
 }
 
 Engine *GameDetector::createEngine(OSystem *system) {
-	Engine *engine = NULL;
-
 	assert(_plugin);
-	engine = _plugin->createInstance(this, system);
-
-	return engine;
+	return _plugin->createInstance(this, system);
 }
 
 int GameDetector::getMidiDriverType() {

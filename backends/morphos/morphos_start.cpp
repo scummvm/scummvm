@@ -71,7 +71,7 @@ Library *TimerBase = NULL;
 
 OSystem_MorphOS *TheSystem = NULL;
 
-OSystem *OSystem_MorphOS_create(int game_id, int gfx_mode, bool full_screen)
+OSystem *OSystem_MorphOS_create(int gfx_mode, bool full_screen)
 {
 	if (TheSystem)
 		delete TheSystem;
