@@ -622,7 +622,7 @@ int ScummEngine::loadResource(int type, int idx) {
 	if (roomNr == 0)
 		roomNr = _roomResource;
 
-	if (type == rtRoom) {
+	if (type == rtRoom && _heversion < 70) {
 		if (_version == 8)
 			fileOffs = 8;
 		else
@@ -653,6 +653,11 @@ int ScummEngine::loadResource(int type, int idx) {
 		if ((type == rtSound) && !(_features & GF_AMIGA) && !(_features & GF_FMTOWNS)) {
 			return readSoundResourceSmallHeader(type, idx);
 		}
+	} else if (_heversion >= 70) {
+		tag = _fileHandle.readUint32LE();
+		size = _fileHandle.readUint32BE() + 8;
+
+		_fileHandle.seek(-8, SEEK_CUR);
 	} else {
 		if (type == rtSound) {
 			return readSoundResource(type, idx);
@@ -1712,7 +1717,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 }
 
 int ScummEngine::getResourceRoomNr(int type, int idx) {
-	if (type == rtRoom)
+	if (type == rtRoom && _heversion < 70)
 		return idx;
 	return res.roomno[type][idx];
 }

@@ -2990,7 +2990,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 		// There are both Windows and DOS versions of early HE titles
 		// specify correct version here
-		if (game.features & GF_HUMONGOUS && game.heversion == 60)
+		if (game.features & GF_HUMONGOUS && (game.heversion == 60 || game.id == GID_PUTTDEMO))
 			game.heversion = 70;
 		break;
 	case Common::kPlatformFMTowns:
