@@ -838,11 +838,11 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		case 1:
 			postCase0(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if(!smlayer_isSoundRunning(88))
-				smlayer_startSound1(88);
+				smlayer_startSfx(88);
 			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
 			if(_tiresRustle) {
 				if (!smlayer_isSoundRunning(87))
-					smlayer_startSound1(87);
+					smlayer_startSfx(87);
 			} else {
 				smlayer_stopSound(87);
 			}
@@ -854,12 +854,12 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			smlayer_stopSound(87);
 			smlayer_stopSound(88);
 			if(!smlayer_isSoundRunning(88))
-				smlayer_startSound1(88);
+				smlayer_startSfx(88);
 			break;
 		case 17:
 			postCase16(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if(!smlayer_isSoundRunning(88))
-				smlayer_startSound1(88);
+				smlayer_startSfx(88);
 			break;
 		case 2:
 			postCase1(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
@@ -868,12 +868,12 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			postCase2(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			needMore = true;
 			if(!smlayer_isSoundRunning(89)) {
-				smlayer_startSound1(89);
+				smlayer_startSfx(89);
 				smlayer_soundSetPriority(89, 100);
 			}
 			tmpSnd = _enemy[_currEnemy].sound;
 			if(!smlayer_isSoundRunning(tmpSnd)) {
-				smlayer_startSound1(tmpSnd);
+				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
 			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
@@ -882,19 +882,19 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 				smlayer_stopSound(87);
 			} else {
 				if (!smlayer_isSoundRunning(87))
-					smlayer_startSound1(87);
+					smlayer_startSfx(87);
 			}
 			break;
 		case 21:
 			postCase20(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			needMore = true;
 			if(!smlayer_isSoundRunning(89)) {
-				smlayer_startSound1(89);
+				smlayer_startSfx(89);
 				smlayer_soundSetPriority(89, 100);
 			}
 			tmpSnd = _enemy[_currEnemy].sound;
 			if(!smlayer_isSoundRunning(tmpSnd)) {
-				smlayer_startSound1(tmpSnd);
+				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
 			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
@@ -904,13 +904,13 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		case 5:
 			postCase3(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if(!smlayer_isSoundRunning(88))
-				smlayer_startSound1(88);
+				smlayer_startSfx(88);
 			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
 			break;
 		case 6:
 			postCase5(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if(!smlayer_isSoundRunning(88))
-				smlayer_startSound1(88);
+				smlayer_startSfx(88);
 			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
 			break;
 		case 7:
@@ -933,12 +933,12 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			postCase12(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			needMore = true;
 			if(!smlayer_isSoundRunning(89)) {
-				smlayer_startSound1(89);
+				smlayer_startSfx(89);
 				smlayer_soundSetPriority(89, 100);
 			}
 			tmpSnd = _enemy[_currEnemy].sound;
 			if(!smlayer_isSoundRunning(tmpSnd)) {
-				smlayer_startSound1(tmpSnd);
+				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
 			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
@@ -946,7 +946,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			break;
 		case 24:
 			if(!smlayer_isSoundRunning(90)) {
-				smlayer_startSound1(90);
+				smlayer_startSfx(90);
 				smlayer_soundSetPriority(90, 100);
 			}
 			postCase23(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
@@ -1136,7 +1136,7 @@ void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
 		if (!smlayer_isSoundRunning(86))
-			smlayer_startSound1(86);
+			smlayer_startSfx(86);
 	} else {
 		if (!smlayer_isSoundRunning(86))
 			smlayer_stopSound(86);
@@ -1180,7 +1180,7 @@ void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
 		if (!smlayer_isSoundRunning(86))
-			smlayer_startSound1(86);
+			smlayer_startSfx(86);
 	} else {
 		if (!smlayer_isSoundRunning(86))
 			smlayer_stopSound(86);

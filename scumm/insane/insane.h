@@ -381,8 +381,8 @@ class Insane {
 	void IMUSE_shutVolume(void);
 	void IMUSE_restoreVolume(void);
 	bool smlayer_isSoundRunning(int32 sound);
-	bool smlayer_startSound1(int32 sound);
-	bool smlayer_startSound2(int32 sound);
+	bool smlayer_startSfx(int32 sound);
+	bool smlayer_startVoice(int32 sound);
 	void smlayer_soundSetPan(int32 sound, int32 pan);
 	void smlayer_soundSetPriority(int32 sound, int32 priority);
 	void smlayer_drawSomething(byte *renderBitmap, int32 codecparam, 

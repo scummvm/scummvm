@@ -1238,7 +1238,7 @@ bool Insane::smlayer_isSoundRunning(int32 sound) {
 	return _vm->_sound->isSoundRunning(readArray(_numberArray, sound)) != 0;
 }
 
-bool Insane::smlayer_startSound1(int32 sound) {
+bool Insane::smlayer_startSfx(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
 		_vm->_imuseDigital->startSfx(readArray(_numberArray, sound));
 		return true;
@@ -1246,9 +1246,9 @@ bool Insane::smlayer_startSound1(int32 sound) {
 		return false;
 }
 
-bool Insane::smlayer_startSound2(int32 sound) {
+bool Insane::smlayer_startVoice(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_vm->_imuseDigital->startSfx(readArray(_numberArray, sound));
+		_vm->_imuseDigital->startVoice(readArray(_numberArray, sound));
 		return true;
 	} else
 		return false;

@@ -184,7 +184,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					smlayer_stopSound(86);
 			} else {
 				if (!smlayer_isSoundRunning(86))
-					smlayer_startSound1(86);
+					smlayer_startSfx(86);
 			}
 			break;
 		}
@@ -575,7 +575,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_iactSceneId = par4;
 			if (_counter1 <= 4) {
 				if (_counter1 == 4)
-					smlayer_startSound1(94);
+					smlayer_startSfx(94);
 
 				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
 									  2, 0, "%s", handleTrsTag(_trsFilePtr, 5000));
@@ -587,7 +587,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 								  _smush_iconsNut, 6, 0, 0);
 			if (_counter1 <= 4) {
 				if (_counter1 == 4)
-					smlayer_startSound1(94);
+					smlayer_startSfx(94);
 
 				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
 									  2, 0, "%s", handleTrsTag(_trsFilePtr, 5001));

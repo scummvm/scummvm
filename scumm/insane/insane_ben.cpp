@@ -166,7 +166,7 @@ int32 Insane::actionBen(void) {
 			}
 
 			if (!smlayer_isSoundRunning(95))
-				smlayer_startSound1(95);
+				smlayer_startSfx(95);
 		} else {
 			if (smlayer_isSoundRunning(95))
 				smlayer_stopSound(95);
@@ -518,7 +518,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (_actor[0].act[2].frame >= 9) {
 			_actor[0].act[2].state = 1;
 			_actor[0].inventory[INV_MACE] = 0;
-			smlayer_startSound2(318);
+			smlayer_startVoice(318);
 			switchBenWeapon();
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
@@ -538,7 +538,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (_actor[0].act[2].frame >= 5) {
 			_actor[0].act[2].state = 1;
 			_actor[0].inventory[INV_MACE] = 0;
-			smlayer_startSound2(318);
+			smlayer_startVoice(318);
 			switchBenWeapon();
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
@@ -558,7 +558,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (_actor[0].act[2].frame >= 5) {
 			_actor[0].act[2].state = 1;
 			_actor[0].inventory[INV_CHAIN] = 0; // Chain
-			smlayer_startSound2(318);
+			smlayer_startVoice(318);
 			switchBenWeapon();
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
@@ -703,7 +703,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 3;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSound1(63);
+		smlayer_startSfx(63);
 		break;
 	case 3:
 		smlayer_setActorLayer(0, 2, 4);
@@ -712,9 +712,9 @@ void Insane::actor02Reaction(int32 buttons) {
 			if (_currEnemy != EN_CAVEFISH) {
 				tmp = calcBenDamage(1, 1);
 				if (tmp == 1)
-					smlayer_startSound1(60);
+					smlayer_startSfx(60);
 				if (tmp == 1000)
-					smlayer_startSound1(62);
+					smlayer_startSfx(62);
 			} else {
 				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
 					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
@@ -752,7 +752,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 11;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSound1(75);
+		smlayer_startSfx(75);
 		break;
 	case 11:
 		smlayer_setActorLayer(0, 2, 4);
@@ -771,7 +771,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					smlayer_setActorLayer(0, 2, 25);
 					smlayer_setActorCostume(1, 2, readArray(_numberArray, 45));
 					smlayer_setActorFacing(1, 2, 6, 180);
-					smlayer_startSound1(101);
+					smlayer_startSfx(101);
 					_actor[1].act[2].state = 97;
 					_actor[1].lost = 1;
 					_actor[1].act[2].room = 1;
@@ -816,15 +816,15 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_DUST:
 					tmp = calcBenDamage(1, 1);
 					if (tmp == 1)
-						smlayer_startSound1(73);
+						smlayer_startSfx(73);
 					if (tmp == 1000)
-						smlayer_startSound1(74);
+						smlayer_startSfx(74);
 					break;
 				case INV_WRENCH:
 				case INV_BOOT:
 				case INV_HAND:
 					if(calcBenDamage(1, 0) == 1)
-						smlayer_startSound1(73);
+						smlayer_startSfx(73);
 					break;
 				}
 			} else {
@@ -858,7 +858,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 7;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSound1(66);
+		smlayer_startSfx(66);
 		break;
 	case 7:
 		smlayer_setActorLayer(0, 2, 4);
@@ -878,7 +878,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 0;
 		if ((_actor[0].act[2].frame == 3) && (calcBenDamage(0, 0) == 1)) {
 			_actor[1].damage = weaponDamage(0);
-			smlayer_startSound1(64);
+			smlayer_startSfx(64);
 			_actor[1].cursorX = 320;
 		}
 		if (_actor[0].act[2].frame >= 5) {
@@ -906,7 +906,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 15;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSound1(78);
+		smlayer_startSfx(78);
 		break;
 	case 15:
 		smlayer_setActorLayer(0, 2, 8);
@@ -949,9 +949,9 @@ void Insane::actor02Reaction(int32 buttons) {
 			case INV_CHAINSAW:
 				tmp = calcBenDamage(1, 1);
 				if (tmp == 1)
-					smlayer_startSound1(76);
+					smlayer_startSfx(76);
 				if (tmp == 1000)
-					smlayer_startSound1(77);
+					smlayer_startSfx(77);
 				break;
 			case INV_BOOT:
 				calcBenDamage(0, 1);
@@ -959,13 +959,13 @@ void Insane::actor02Reaction(int32 buttons) {
 			case INV_DUST:
 				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
 					(_actor[1].x - _actor[0].x >= weaponMinRange(0))) {
-					smlayer_startSound1(76);
+					smlayer_startSfx(76);
 					_actor[1].damage = weaponDamage(0);
 				}
 				break;
 			default:
 				if (calcBenDamage(1, 0))
-					smlayer_startSound1(76);
+					smlayer_startSfx(76);
 				break;
 			}
 			smlayer_setActorFacing(0, 2, 21,180);
@@ -991,7 +991,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 19;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSound1(69);
+		smlayer_startSfx(69);
 		break;
 	case 19:
 		smlayer_setActorLayer(0, 2, 4);
@@ -1046,9 +1046,9 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_BOOT:
 					tmp = calcBenDamage(1, 1);
 					if (tmp == 1)
-						smlayer_startSound1(67);
+						smlayer_startSfx(67);
 					if (tmp == 1000)
-						smlayer_startSound1(68);
+						smlayer_startSfx(68);
 					break;
 				default:
 					smlayer_setActorFacing(0, 2, 19, 180);
@@ -1102,7 +1102,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 23;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSound1(81);
+		smlayer_startSfx(81);
 		break;
 	case 23:
 		smlayer_setActorLayer(0, 2, 6);
@@ -1150,14 +1150,14 @@ void Insane::actor02Reaction(int32 buttons) {
 						_actor[1].act[2].state = 102;
 						_actor[1].damage = _actor[1].maxdamage + 10;
 					}
-					smlayer_startSound1(79);
+					smlayer_startSfx(79);
 				}
 				if (tmp == 1000)
-					smlayer_startSound1(80);
+					smlayer_startSfx(80);
 				break;
 			default:
 				if (!calcBenDamage(1, 0))
-					smlayer_startSound1(79);
+					smlayer_startSfx(79);
 				break;
 			}
 			smlayer_setActorFacing(0, 2, 21, 180);
@@ -1183,7 +1183,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 27;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSound1(72);
+		smlayer_startSfx(72);
 		break;
 	case 27:
 		smlayer_setActorLayer(0, 2, 4);
@@ -1229,13 +1229,13 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_DUST:
 					tmp = calcBenDamage(1, 1);
 					if (tmp == 1)
-						smlayer_startSound1(70);
+						smlayer_startSfx(70);
 					if (tmp == 1000)
-						smlayer_startSound1(71);
+						smlayer_startSfx(71);
 					break;
 				case 6:
 					if (!calcBenDamage(0, 1))
-						smlayer_startSound1(70);
+						smlayer_startSfx(70);
 					break;
 				default:
 					break;
@@ -1268,7 +1268,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].act[2].state = 31;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSound1(84);
+		smlayer_startSfx(84);
 		break;
 	case 31:
 		smlayer_setActorLayer(0, 2, 4);
@@ -1295,9 +1295,9 @@ void Insane::actor02Reaction(int32 buttons) {
 			default:
 				tmp = calcBenDamage(1, 1);
 				if (tmp == 1)
-					smlayer_startSound1(82);
+					smlayer_startSfx(82);
 				if (tmp == 1000)
-					smlayer_startSound1(83);
+					smlayer_startSfx(83);
 				break;
 			}
 			smlayer_setActorFacing(0, 2, 21, 180);
@@ -1320,7 +1320,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 0;
 		smlayer_setActorCostume(0, 2, readArray(_numberArray, 18));
 		smlayer_setActorFacing(0, 2, 6, 180);
-		smlayer_startSound1(96);
+		smlayer_startSfx(96);
 		switch (_currEnemy) {
 		case EN_ROTT1:
 			prepareScenePropScene(33, 0, 0);
@@ -1733,7 +1733,7 @@ void Insane::actor03Reaction(int32 buttons) {
 		if (_actor[0].scenePropSubIdx) {
 			smlayer_setActorFacing(0, 3, 4, 180);
 			tmp = _currScenePropIdx + _actor[0].scenePropSubIdx;
-			if (!smlayer_startSound2(_sceneProp[tmp].sound))
+			if (!smlayer_startVoice(_sceneProp[tmp].sound))
 				_actor[0].runningSound = 0;
 			else
 				_actor[0].runningSound = _sceneProp[tmp].sound;
@@ -1962,16 +1962,16 @@ void Insane::ouchSoundBen(void) {
 
 	switch (rand() % 4) {
 	case 0:
-		smlayer_startSound2(315);
+		smlayer_startVoice(315);
 		break;
 	case 1:
-		smlayer_startSound2(316);
+		smlayer_startVoice(316);
 		break;
 	case 2:
-		smlayer_startSound2(317);
+		smlayer_startVoice(317);
 		break;
 	case 3:
-		smlayer_startSound2(98);
+		smlayer_startVoice(98);
 		break;
 	}
 }
