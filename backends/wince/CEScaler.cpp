@@ -53,9 +53,10 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 							int width, int height) {
 	uint8 *work;
 	int i;
+	int dec;
 	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
 
-	while (height--) {
+	while ((height-=2) >= 0) {
 		i = 0;
 		work = dstPtr;
 
@@ -66,10 +67,10 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + srcPitch16));
 		
 			*(((uint16 *)work) + 0) = interpolate16_3<565, 2, 1, 1>(color1, color2, color3);
-		
-			work += 2 * sizeof(uint16);
+			
+			work += sizeof(uint16);
 		}
-		srcPtr += 2 * srcPitch;
+		srcPtr += 2 * srcPitch; 
 		dstPtr += dstPitch;
 	}
 }

@@ -653,9 +653,10 @@ void OSystem_WINCE3::update_screen() {
 				register int dst_h = 0;
 				register int orig_dst_y = 0;
 
-				// Check if the toolbar is overwritten
+				// Check if the toolbar is overwritten			
 				if (!_forceFull && toolbarVisible && r->y + r->h >= 200) 
 					_toolbarHandler.forceRedraw();
+				
 
 				if (dst_y < _screenHeight) {
 					dst_h = r->h;
@@ -669,7 +670,7 @@ void OSystem_WINCE3::update_screen() {
 						orig_dst_y = dst_y;
 						dst_y = real2Aspect(dst_y);
 					}
-
+				
 					_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 						(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
@@ -678,7 +679,7 @@ void OSystem_WINCE3::update_screen() {
 				r->x /= _scaleFactorXd;
 				r->y = dst_y;
 				r->w *= _scaleFactorXm;
-				r->w *= _scaleFactorXd;
+				r->w /= _scaleFactorXd;
 				r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
 
 				/*if (_adjustAspectRatio && orig_dst_y / _scaleFactor < _screenHeight)
@@ -876,6 +877,22 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 			}
 		}
 		while (w % 4) w++;
+	}
+	else
+	if (_scaler_proc == PocketPCHalf) {
+		// Align on a 2x2 square
+		if (x != 0) {
+			while (x % 2) {
+				x--;
+				w++;
+			}
+			while (y % 2) {
+				y--;
+				h++;
+			}
+			while (w % 2) w++;
+			while (h % 2) h++;
+		}
 	}
 
 	OSystem_SDL_Common::add_dirty_rect(x, y, w, h);
