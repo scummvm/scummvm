@@ -91,8 +91,8 @@ public:
 
 class ChannelRaw : public Channel {
 	byte *_ptr;
-	byte _flags;
 #ifndef NEW_MIXER_CODE
+	byte _flags;
 	uint32 _pos;
 	uint32 _size;
 	uint32 _fpSpeed;
@@ -681,7 +681,6 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	: Channel(mixer, handle) {
 	_id = id;
 	_ptr = (byte *)sound;
-	_flags = flags;
 	
 #ifdef NEW_MIXER_CODE
 	// Create the input stream
@@ -695,15 +694,14 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	} else {
 		_input = makeLinearInputStream(flags, _ptr, size, 0, 0);
 	}
-	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
-//	printf("inrate %d, outrate %d, %d bits, %s\n",
-//			rate, mixer->getOutputRate(),
-//			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
-//			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
+
+	if (!(flags & SoundMixer::FLAG_AUTOFREE))
+		_ptr = 0;
 #else
+	_flags = flags;
 	_pos = 0;
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->getOutputRate();
@@ -728,8 +726,12 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 }
 
 ChannelRaw::~ChannelRaw() {
+#ifdef NEW_MIXER_CODE
+	free(_ptr);
+#else
 	if (_flags & SoundMixer::FLAG_AUTOFREE)
 		free(_ptr);
+#endif
 }
 
 #ifndef NEW_MIXER_CODE
@@ -771,14 +773,12 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 	
 	// Create the input stream
 	_input = makeWrappedInputStream(flags, buffer_size);
+	
+	// Append the initial data
 	((WrappedAudioInputStream *)_input)->append((const byte *)sound, size);
-	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
-//	printf("   data has %d bits and is %s\n",
-//			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
-//			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
 #else
 	_flags = flags;
 	_bufferSize = buffer_size;
