@@ -270,6 +270,7 @@ void SimonEngine::vc_3_new_sprite() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
+	byte *old_file_1;
 
 	a = vc_read_next_word();			/* 0 */
 
@@ -303,6 +304,7 @@ void SimonEngine::vc_3_new_sprite() {
 	vsp->id = b;
 	vsp->unk7 = res = f;
 
+	old_file_1 = _cur_vga_file_1;
 	for (;;) {
 		vpe = &_vga_buffer_pointers[res];
 		_cur_vga_file_1 = vpe->vgaFile1;
@@ -310,7 +312,7 @@ void SimonEngine::vc_3_new_sprite() {
 		if (vpe->vgaFile1 != NULL)
 			break;
 		if (res != _vga_cur_file_2)
-			_video_var_7 = res;
+			_video_var_7 = _vga_cur_file_2;
 
 		ensureVgaResLoaded(res);
 		_video_var_7 = 0xFFFF;
@@ -346,6 +348,7 @@ void SimonEngine::vc_3_new_sprite() {
 	//dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, b);
 
 	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), b, res);
+	_cur_vga_file_1 = old_file_1;
 }
 
 void SimonEngine::vc_4_dummy_op() {
