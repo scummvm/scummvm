@@ -6,6 +6,23 @@ General
 * revise the way "quit" is handled. Maybe add a global variable "g_quit" which
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
+* add API to query backend for a list of available music engines
+  Useful for Options dialog
+* add API to query backend for a list of available scalers/screenmodes
+  (that is, a list of user presentable names, and corresponding PROP_SET_GFX_MODE
+  values). This is useful for the options dialog
+* add PROP_GET_GFX_MODE (mirroring PROP_SET_GFX_MODE)
+* consider replacing the PROP_TOGGLE_* properties with GET/SET ones -> 
+  this allows more control over these properties (like, it allows the GUI to
+  display checkboxes for these in the options dialog)
+* gameDetector.cpp is quite messy. Also, it makes providing native GUI front
+  ends for ScummVM unnecessarily cumbersome (think of systems which don't
+  even have a command line, like classic MacOS). It would be nice to better
+  separate the command line parsing from any GUI and also from the storage
+  for the user settings (this ties into my proposed config system changes;
+  ideally, we should be able to drop almost all of the member variables
+  in the game detector, in favor of getting all these directly from the
+  config system).
 
 GUI
 ===
@@ -20,6 +37,21 @@ Audio
 * add a command line/config file option for the output sample rate (to allow
   for output sample rates other than 22050 Hz, e.g. 44100). Code should do
   sanity checking (e.g. restrict to rates between 8000 - 65535 Hz)
+
+Config
+======
+* the config system could stand an overhaul
+* preserve comments in config file somehow
+* add two virtual domains (for command line settings and user overrides);
+  while we currently do something like this already, our implementation is
+  a big ugly hack (no offense meant) and has some cumbersome problems. For
+  example, currently to query a config value, one would have to search up to
+  four domains manually (user override, command line, game specific, global
+  application domain, in that order). Ideally all this should be hidden
+  inside the config system. If you are interested in this, I can elaborate
+* add a way to distinguish if a given key is present at all. That is, it
+  would be nice if one could distinguish between an explicit "fullscreen=false"
+  and the absence of any fullscreen config.
 
 SCUMM
 =====
