@@ -23,6 +23,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_timer.h>
+#include <assert.h>
 
 Engine *Engine::instance_ = NULL;
 
@@ -83,6 +84,7 @@ void Engine::mainLoop() {
     for (actor_list_type::iterator i = actors_.begin();
 	 i != actors_.end(); i++) {
       Actor *a = *i;
+      assert(currScene_);
       if (a->inSet(currScene_->name()) && a->visible())
 	a->update();
     }
