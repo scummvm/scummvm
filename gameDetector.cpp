@@ -450,8 +450,11 @@ int GameDetector::detectMain(int argc, char **argv)
 
 	_noSubtitles = 0;							// use by default - should this depend on soundtrack?
 
-	//_gfx_mode = GFX_DOUBLESIZE;
+#ifndef _WIN32_WCE
+	_gfx_mode = GFX_DOUBLESIZE;
+#else
 	_gfx_mode = GFX_NORMAL;
+#endif
 	_sfx_volume = 100;
 
 #if defined(USE_NULL_DRIVER)
