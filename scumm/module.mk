@@ -1,6 +1,6 @@
 MODULE := scumm
 
-SCUMM_OBJS = \
+MODULE_OBJS := \
 	scumm/actor.o \
 	scumm/akos.o \
 	scumm/base-costume.o \
@@ -40,9 +40,7 @@ SCUMM_OBJS = \
 	scumm/string.o \
 	scumm/usage_bits.o \
 	scumm/vars.o \
-	scumm/verbs.o
-
-SMUSH_OBJS = \
+	scumm/verbs.o \
 	scumm/smush/chunk.o \
 	scumm/smush/codec1.o \
 	scumm/smush/codec37.o \
@@ -53,7 +51,9 @@ SMUSH_OBJS = \
 	scumm/smush/smush_mixer.o \
 	scumm/smush/smush_font.o
 
-MODULE_OBJS = $(SCUMM_OBJS) $(SMUSH_OBJS)
+MODULE_DIRS += \
+	scumm \
+	scumm/smush
 
 # Include common rules 
 include common.rules

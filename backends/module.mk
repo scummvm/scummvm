@@ -1,6 +1,6 @@
 MODULE := backends
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	backends/fs/posix/posix-fs.o \
 	backends/fs/morphos/abox-fs.o \
 	backends/fs/windows/windows-fs.o \
@@ -12,6 +12,13 @@ MODULE_OBJS = \
 	backends/midi/seq.o \
 	backends/midi/alsa.o \
 	backends/midi/windows.o
+
+MODULE_DIRS += \
+	backends \
+	backends/fs/posix \
+	backends/fs/morphos \
+	backends/fs/windows \
+	backends/midi
 
 # Include common rules 
 include common.rules

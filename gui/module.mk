@@ -1,6 +1,6 @@
 MODULE := gui
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	gui/about.o \
 	gui/browser.o \
 	gui/chooser.o \
@@ -15,6 +15,9 @@ MODULE_OBJS = \
 	gui/PopUpWidget.o \
 	gui/ScrollBarWidget.o \
 	gui/widget.o \
+
+MODULE_DIRS += \
+	gui
 
 # Include common rules 
 include common.rules

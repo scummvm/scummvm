@@ -516,6 +516,7 @@ case $_backend in
     LIBS="$LIBS `$_sdlconfig --libs`"
     OBJS="$OBJS backends/sdl/sdl-common.o backends/sdl/sdl.o"
     MODULES="$MODULES backends/sdl"
+    MODULE_DIRS="$MODULE_DIRS backends/sdl"
     ;;
   sdlgl)
     find_sdlconfig
@@ -523,6 +524,7 @@ case $_backend in
     LIBS="$LIBS `$_sdlconfig --libs` -lGL"
     OBJS="$OBJS backends/sdl/sdl-common.o backends/sdl/sdl_gl.o"
     MODULES="$MODULES backends/sdl"
+    MODULE_DIRS="$MODULE_DIRS backends/sdl"
     ;;
   x11)
     INCLUDES="$INCLUDES -I/usr/X11R6/include"
@@ -531,6 +533,7 @@ case $_backend in
     OBJS="$OBJS backends/x11/x11.o"
     DEFINES="$DEFINES -DX11_BACKEND"
     MODULES="$MODULES backends/x11"
+    MODULE_DIRS="$MODULE_DIRS backends/x11"
     ;;
   *)
     echo "support for $_backend backend not implemented in configure script yet"
@@ -578,6 +581,7 @@ LIBS := $LIBS
 RANLIB := $_ranlib
 BACKEND := $_backend
 MODULES += $MODULES
+MODULE_DIRS += $MODULE_DIRS
 
 $_make_def_HAVE_GCC3
 $_mak_scumm

@@ -1,6 +1,6 @@
 MODULE := common
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	common/config-file.o \
 	common/engine.o \
 	common/file.o \
@@ -10,6 +10,9 @@ MODULE_OBJS = \
 	common/timer.o \
 	common/util.o \
 	common/savefile.o
+
+MODULE_DIRS += \
+	common
 
 # Include common rules 
 include common.rules

@@ -1,6 +1,6 @@
 MODULE := sound
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	sound/audiostream.o \
 	sound/fmopl.o \
 	sound/midiparser.o \
@@ -11,6 +11,9 @@ MODULE_OBJS = \
 	sound/rate.o \
 	sound/voc.o
 #	sound/resample.o \
+
+MODULE_DIRS += \
+	sound
 
 # Include common rules 
 include common.rules

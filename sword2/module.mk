@@ -1,6 +1,6 @@
 MODULE := bs2
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	bs2/anims.o \
 	bs2/build_display.o \
 	bs2/console.o \
@@ -40,7 +40,10 @@ MODULE_OBJS = \
 	bs2/driver/rdwin.o \
 	bs2/driver/render.o \
 	bs2/driver/sprite.o
-	
+
+MODULE_DIRS += \
+	bs2 \
+	bs2/driver
 
 # Include common rules 
 include common.rules

@@ -48,7 +48,7 @@ PLUGIN_SUFFIX := .a
 ifdef DISABLE_SCUMM
 DEFINES += -DDISABLE_SCUMM
 else
-MODULES += scumm scumm/smush
+MODULES += scumm
 endif
 
 ifdef DISABLE_SIMON
@@ -60,23 +60,19 @@ endif
 ifdef DISABLE_SKY
 DEFINES += -DDISABLE_SKY
 else
-MODULES += sky sky/compacts sky/music
+MODULES += sky
 endif
 
 ifdef DISABLE_SWORD2
 DEFINES += -DDISABLE_SWORD2
 else
-MODULES += bs2 bs2/driver
+MODULES += bs2
 endif
 
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \
 	backends \
-	backends/fs/posix \
-	backends/fs/morphos \
-	backends/fs/windows \
-	backends/midi \
 	sound \
 	common
 
@@ -97,6 +93,10 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 # the build date in gScummVMBuildDate is correct.
 common/main.o: $(OBJS)
 
+# Some files depend on the values of the DISABLE_* flags; we let these
+# depend on config.mak, so that they get recompiled if config.mak changes.
+common/plugins.o common/gameDetector.o: config.mak
+
 # HACK temporary fix to get compilation on OS X (and possibly others) working again
 OBJS:=common/main.o common/gameDetector.o $(OBJS)
 
@@ -108,7 +108,7 @@ clean:
 
 .PHONY: all clean dist distclean
 
-DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULES))
+DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULE_DIRS))
 DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 
 # Old (dumb) compile & dependcy rules

@@ -1,6 +1,6 @@
 MODULE := sky
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	sky/autoroute.o \
 	sky/compact.o \
 	sky/debug.o \
@@ -23,6 +23,11 @@ MODULE_OBJS = \
 	sky/music/mt32music.o \
 	sky/music/musicbase.o \
 	sky/compacts/savedata.o \
+
+MODULE_DIRS += \
+	sky \
+	sky/music \
+	sky/compacts
 
 # Include common rules 
 include common.rules

@@ -1,6 +1,6 @@
 MODULE := simon
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	simon/charset.o \
 	simon/debug.o \
 	simon/items.o \
@@ -11,6 +11,9 @@ MODULE_OBJS = \
 	simon/simon.o \
 	simon/verb.o \
 	simon/vga.o \
+
+MODULE_DIRS += \
+	simon
 
 # Include common rules 
 include common.rules
