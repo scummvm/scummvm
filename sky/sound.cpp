@@ -1231,8 +1231,18 @@ bool Sound::startSpeech(uint16 textNum) {
 
 	free(speechData);
 
+	// Workaround for BASS bug #897775 - some voice-overs are played at
+	// half speed in 0.0368 (the freeware CD version), in 0.0372 they sound
+	// just fine.
+
+	uint rate;
+	if (_skyDisk->determineGameVersion() == 368 && (textNum == 20905 || textNum == 20906))
+		rate = 22050;
+	else
+		rate = 11025;
+
 	_mixer->stopID(SOUND_SPEECH);
-	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, SOUND_SPEECH);
+	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, SOUND_SPEECH);
 	return true;
 }
 
