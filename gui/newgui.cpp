@@ -458,14 +458,14 @@ void NewGui::animateCursor()
 		const byte color = colors[_cursorAnimateCounter];
 		int i;
 		
-		for (i = 0; i < 16; i++) {
-			if ((i < 7) || (i > 9)) {
-				_cursor[16 * 8 + i] = color;
-				_cursor[16 * i + 8] = color;
+		for (i = 0; i < 15; i++) {
+			if ((i < 6) || (i > 8)) {
+				_cursor[16 * 7 + i] = color;
+				_cursor[16 * i + 7] = color;
 			}
 		}
 	
-		_system->set_mouse_cursor(_cursor, 16, 16, 8, 8);
+		_system->set_mouse_cursor(_cursor, 16, 16, 7, 7);
 
 		_cursorAnimateTimer = time;
 		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;
