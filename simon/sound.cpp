@@ -138,7 +138,6 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
 		}
 	}
 
-	delete _effects;
 	_effects = new WavSound(_mixer, file);
 }
 
