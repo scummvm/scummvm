@@ -124,13 +124,6 @@ public:
 
 void *DynamicPlugin::findSymbol(const char *symbol) {
 #ifdef UNIX
-#ifdef MACOSX
-	// Need to prepend underscore on Mac OS X
-	char buffer[256];
-	buffer[0] = '_';
-	strcpy(buffer + 1, symbol);
-	symbol = buffer;
-#endif
 	void *func = dlsym(_dlHandle, symbol);
 	if (!func)
 		warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
