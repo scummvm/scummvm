@@ -38,6 +38,7 @@ public:
 #define MAX_IMUSE_JUMPS 80
 #define MAX_IMUSE_REGIONS 85
 #define MAX_IMUSE_MARKERS 60
+#define MAX_IMUSE_SYNCS 4
 
 #define IMUSE_RESOURCE 1
 #define IMUSE_BUNDLE 2
@@ -61,6 +62,11 @@ private:
 	struct _marker {
 		char name[256];		// name of marker
 	};
+
+	struct _sync {
+		int32 size;		// size of sync
+		byte *ptr;		// pointer to sync
+	};
 	
 public:
 
@@ -71,6 +77,7 @@ public:
 		int numJumps;		// number of Jumps
 		int numRegions;		// number of Regions
 		int numMarkers;		// number of Markers
+		int numSyncs;		// number of Syncs
 		int32 offsetStop;	// end offset in source data
 		bool endFlag;
 		bool inUse;
@@ -84,6 +91,7 @@ public:
 		_region region[MAX_IMUSE_REGIONS];
 		_marker marker[MAX_IMUSE_MARKERS];
 		_jump jump[MAX_IMUSE_JUMPS];
+		_sync sync[MAX_IMUSE_SYNCS];
 	};
 
 private:

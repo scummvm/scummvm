@@ -116,7 +116,17 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				_sounds[slot].numJumps++;
 				break;
 			case MKID_BE('SYNC'):
-				size = READ_BE_UINT32(ptr); ptr += size + 4;
+				size = READ_BE_UINT32(ptr); ptr += 4;
+				if (_sounds[slot].numSyncs >= MAX_IMUSE_SYNCS) {
+					warning("ImuseDigiSndMgr::prepareSound(%d/%s) Not enough space for Sync", _sounds[slot].soundId, _sounds[slot].name);
+					ptr += size;
+					break;
+				}
+				_sounds[slot].sync[_sounds[slot].numSyncs].size = size;
+				_sounds[slot].sync[_sounds[slot].numSyncs].ptr = (byte *)malloc(size);
+				memcpy(_sounds[slot].sync[_sounds[slot].numSyncs].ptr, ptr, size);
+				_sounds[slot].numSyncs++;
+				ptr += size;
 				break;
 			case MKID_BE('DATA'):
 				size = READ_BE_UINT32(ptr); ptr += 4;
@@ -271,6 +281,8 @@ void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 				free(_sounds[l].resPtr);
 			if (_sounds[l]._bundle)
 				delete _sounds[l]._bundle;
+			for (int r = 0; r < _sounds[l].numSyncs; r++)
+				free(_sounds[l].sync[r].ptr);
 			memset(&_sounds[l], 0, sizeof(soundStruct));
 		}
 	}
