@@ -41,57 +41,47 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	}
 #endif
 
-	// Determine the length of the dir name.
-	const int dirLen = strlen(buf);
-
-	if (dirLen > 0) {
-#ifdef __MORPHOS__
-		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/') // prevent double /
-#endif
-
 #if !defined(__GP32__) && !defined(__PALM_OS__)
-		strcat(buf, "/");
-#endif
-	}
-	strcat(buf, filename);
-
-	file = fopen(buf, mode);
-	if (file)
-		return file;
-
-	buf[dirLen] = 0;
+	// Add a trailing slash, if necessary.
 	if (buf[0] != 0) {
-#ifdef __MORPHOS__
-		if (buf[strlen(buf) - 1] != ':' && buf[strlen(buf) - 1] != '/')
-#endif
-#ifndef __PALM_OS__
-		strcat(buf, "/");	// PALMOS
-#endif
+		const int dirLen = strlen(buf);
+		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
+			strcat(buf, "/");
 	}
-	const int8 len = strlen(buf);
+#endif
+
+	// Append the filename to the path string
+	const int offsetToFileName = strlen(buf);
 	strcat(buf, filename);
+
+	//
+	// Try to open the file normally
+	//
+	file = fopen(buf, mode);
 
 	//
 	// Try again, with file name converted to upper case
 	//
-	ptr = buf + len;
-	while (*ptr) {
-		*ptr = toupper(*ptr);
-		ptr++;
+	if (!file) {
+		ptr = buf + offsetToFileName;
+		while (*ptr) {
+			*ptr = toupper(*ptr);
+			ptr++;
+		}
+		file = fopen(buf, mode);
 	}
-	file = fopen(buf, mode);
-	if (file)
-		return file;
 
 	//
 	// Try again, with file name converted to lower case
 	//
-	ptr = buf + len;
-	while (*ptr) {
-		*ptr = tolower(*ptr);
-		ptr++;
+	if (!file) {
+		ptr = buf + offsetToFileName;
+		while (*ptr) {
+			*ptr = tolower(*ptr);
+			ptr++;
+		}
+		file = fopen(buf, mode);
 	}
-	file = fopen(buf, mode);
 
 	return file;
 }
