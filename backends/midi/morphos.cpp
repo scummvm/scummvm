@@ -31,7 +31,8 @@
 
 #include "stdafx.h"
 #include "sound/mpu401.h"
-#include "common/engine.h" // For warning/error/debug
+#include "common/engine.h"	// for g_system
+#include "common/util.h"
 #include "morphos.h"
 #include "morphos_sound.h"
 

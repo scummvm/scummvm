@@ -22,7 +22,7 @@
 
 #include "stdafx.h"
 #include "sound/mpu401.h"
-#include "common/engine.h" // For warning/error/debug
+#include "common/util.h"
 
 ////////////////////////////////////////
 //

@@ -22,7 +22,7 @@
 
 
 #include "sound/mpu401.h"
-#include "common/engine.h"	// for warning/error/debug
+#include "common/util.h"
 
 #if defined(MACOSX)
 #include <QuickTime/QuickTimeComponents.h>

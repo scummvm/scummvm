@@ -28,7 +28,7 @@
 #include "sound/mpu401.h"
 
 #include "stdafx.h"
-#include "common/engine.h"	// for warning/error/debug
+#include "common/util.h"
 #include <alsa/asoundlib.h>
 
 /*
