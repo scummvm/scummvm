@@ -327,12 +327,12 @@ void SwordScreen::processImage(uint32 id) {
 	uint16 spriteY = compact->o_anim_y;
 	if (compact->o_status & STAT_SHRINK) {
 		scale = (compact->o_scale_a * compact->o_ycoord + compact->o_scale_b) / 256;
-		spriteX += (FROM_LE_16(frameHead->offsetX) * scale) / 256;
-		spriteY += (FROM_LE_16(frameHead->offsetY) * scale) / 256;
+		spriteX += ((int16)FROM_LE_16(frameHead->offsetX) * scale) / 256;
+		spriteY += ((int16)FROM_LE_16(frameHead->offsetY) * scale) / 256;
 	} else {
 		scale = 256;
-		spriteX += FROM_LE_16(frameHead->offsetX);
-		spriteY += FROM_LE_16(frameHead->offsetY);
+		spriteX += (int16)FROM_LE_16(frameHead->offsetX);
+		spriteY += (int16)FROM_LE_16(frameHead->offsetY);
 	}
 	if (scale > 512)
 		debug(1, "compact %d is oversized: scale = %d", id, scale);
