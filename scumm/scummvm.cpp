@@ -559,6 +559,7 @@ int Scumm::scummLoop(int delta)
 
 	_vars[VAR_GAME_LOADED] = 0;
 	if (_saveLoadFlag) {
+load_game:
 		bool success;
 		const char *errMsg = "Succesfully saved/loaded game state in file:\n\n%s";
 		char filename[256];
@@ -612,6 +613,14 @@ int Scumm::scummLoop(int delta)
 	checkExecVerbs();
 	checkAndRunSentenceScript();
 
+	// HACK: If a load was requested, immediately perform it. This avoids
+	// drawing the current room right after the load is request but before
+	// it is performed. That was annoying esp. if you loaded while a SMUSH 
+	// cutscene was playing.
+	if (_saveLoadFlag && _saveLoadFlag != 1) {
+		goto load_game;
+	}
+	
 	if (_currentRoom == 0) {
 		gdi._cursorActive = 0;
 		CHARSET_1();
