@@ -94,16 +94,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 			warning("Player::startSound(): Couldn't find start of sound %d!", sound);
 			return false;
 	}
-/*
-	mdhd = _se->findTag(sound, MDHD_TAG, 0);
-	if (mdhd == NULL) {
-		mdhd = _se->findTag(sound, MDPG_TAG, 0);
-		if (mdhd == NULL) {
-				warning("P::startSound failed: Couldn't find %s", MDHD_TAG);
-				return false;
-		}
-	}
-*/
+	
 	_isMT32 = _se->isMT32(sound);
 	_isGM = _se->isGM(sound);
 
@@ -128,6 +119,10 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 		_midi = NULL;
 		return false;
 	}
+
+#ifdef IMUSE_DEBUG
+	debug (0, "Starting music %d", sound);
+#endif
 	return true;
 }
 
@@ -144,12 +139,20 @@ bool Player::isFadingOut() {
 }
 
 void Player::clear() {
+	if (!_active)
+		return;
+
+#ifdef IMUSE_DEBUG
+	debug (0, "Stopping music %d", _id);
+#endif
+
 	if (_parser)
 		_parser->unloadMusic();
 	uninit_parts();
 	_se->ImFireAllTriggers(_id);
 	_active = false;
 	_midi = NULL;
+	_id = 0;
 }
 
 void Player::hook_clear() {
@@ -389,11 +392,7 @@ void Player::sysEx(byte *p, uint16 len) {
 				    _se->_snm_triggers [a].id == *p)
 				{
 					_se->_snm_triggers [a].sound = _se->_snm_triggers [a].id = 0;
-					_se->doCommand(_se->_snm_triggers [a].command [0],
-					                 _se->_snm_triggers [a].command [1],
-					                 _se->_snm_triggers [a].command [2],
-					                 _se->_snm_triggers [a].command [3],
-					                 0, 0, 0, 0);
+					_se->doCommand (8, _se->_snm_triggers[a].command);
 					break;
 				}
 			}
@@ -979,7 +978,7 @@ void Player::onTimer() {
 
 // "time" is referenced as hundredths of a second.
 // IS THAT CORRECT??
-// We convert it to microseconds before prceeding
+// We convert it to microseconds before proceeding
 int Player::addParameterFader(int param, int target, int time) {
 	int start;
 
@@ -1002,25 +1001,29 @@ int Player::addParameterFader(int param, int target, int time) {
 	case ParameterFader::pfTranspose:
 		// FIXME: Is this transpose? And what's the scale?
 		// It's set to fade to -2400 in the tunnel of love.
-		warning("parameterTransition(3) outside Tunnel of Love?");
+//		warning("parameterTransition(3) outside Tunnel of Love?");
 		start = _transpose;
-		target /= 200;
+//		target /= 200;
 		break;
 
-	case ParameterFader::pfSpeed:
+	case ParameterFader::pfSpeed: // impSpeed
 		// FIXME: Is the speed from 0-100?
 		// Right now I convert it to 0-128.
 		start = _speed;
-		target = target * 128 / 100;
+//		target = target * 128 / 100;
 		break;
 
 	case 127:
-		// FIXME: This MIGHT fade ALL supported parameters,
-		// but I'm not sure.
-		return 0;
+		{ // FIXME? I *think* this clears all parameter faders.
+			ParameterFader *ptr = &_parameterFaders[0];
+			int i;
+			for (i = ARRAYSIZE(_parameterFaders); i; --i, ++ptr)
+				ptr->param = 0;
+			return 0;
+		}
 
 	default:
-		warning("Player::addParameterFader(): Unknown parameter %d", param);
+		warning("Player::addParameterFader (%d, %d, %d): Unknown parameter", param, target, time);
 		return 0; // Should be -1, but we'll let the script think it worked.
 	}
 
@@ -1079,15 +1082,19 @@ void Player::transitionParameters() {
 			setVolume((byte) value);
 			break;
 
-		case ParameterFader::pfSpeed:
+		case ParameterFader::pfTranspose:
+			// FIXME: Is this really transpose?
+			setTranspose (0, value / 100);
+			setDetune (value % 100);
+			break;
+
+		case ParameterFader::pfSpeed: // impSpeed:
 			// Speed.
 			setSpeed((byte) value);
 			break;
 
-		case ParameterFader::pfTranspose:
-			// FIXME: Is this really transpose?
-			setTranspose(0, value);
-			break;
+		default:
+			ptr->param = 0;
 		}
 
 		if (ptr->current_time >= ptr->total_time)

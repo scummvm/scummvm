@@ -2630,7 +2630,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 		case 122:
 			VAR(VAR_SOUNDRESULT) =
-				(short)_imuse->doCommand(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
+				(short)_imuse->doCommand (num - 1, &args[1]);
 			break;
 		case 123:
 			copyPalColor(args[2], args[1]);

@@ -139,7 +139,7 @@ struct ImTrigger {
 	int sound;
 	byte id;
 	uint16 expire;
-	byte command [4];
+	int command [8];
 	ImTrigger() { memset(this, 0, sizeof(ImTrigger)); }
 };
 
@@ -410,7 +410,7 @@ private:
 	Player *allocate_player(byte priority);
 	Part *allocate_part(byte pri, MidiDriver *midi);
 
-	int32 ImSetTrigger(int sound, int id, int a, int b, int c, int d);
+	int32 ImSetTrigger(int sound, int id, int a, int b, int c, int d, int e, int f, int g, int h);
 	int32 ImClearTrigger(int sound, int id);
 	int32 ImFireAllTriggers(int sound);
 
@@ -461,7 +461,8 @@ public:
 	int stopSound(int sound);
 	int stop_all_sounds();
 	int getSoundStatus(int sound, bool ignoreFadeouts = true);
-	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
+	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);
+	int32 doCommand (int numargs, int args[]);
 	int clear_queue();
 	void setBase(byte **base);
 

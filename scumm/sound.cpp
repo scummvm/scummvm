@@ -126,7 +126,7 @@ void Sound::addSoundToQueue2(int sound) {
 
 void Sound::processSoundQues() {
 	int i = 0, d, num;
-	int16 data[16];
+	int data[16];
 
 	processSfxQueues();
 
@@ -160,11 +160,8 @@ void Sound::processSoundQues() {
 				if (_scumm->_imuseDigital)
 					_scumm->_imuseDigital->doCommand(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
-			} else {
-				if (_scumm->_imuse)
-					_scumm->VAR(_scumm->VAR_SOUNDRESULT) =
-						(short)_scumm->_imuse->doCommand(data[0], data[1], data[2], data[3], data[4],
-																	data[5], data[6], data[7]);
+			} else if (_scumm->_imuse) {
+				_scumm->VAR(_scumm->VAR_SOUNDRESULT) = (short)_scumm->_imuse->doCommand (num, data);
 			}
 		}
 	}

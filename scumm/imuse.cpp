@@ -643,120 +643,145 @@ int IMuseInternal::enqueue_trigger(int sound, int marker) {
 }
 
 int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
+	int args[8];
+	args[0] = a;
+	args[1] = b;
+	args[2] = c;
+	args[3] = d;
+	args[4] = e;
+	args[5] = f;
+	args[6] = g;
+	args[7] = h;
+	return doCommand (8, args);
+}
+
+int32 IMuseInternal::doCommand (int numargs, int a[]) {
 	int i;
-	byte cmd = a & 0xFF;
-	byte param = a >> 8;
+
+	if (numargs < 1) return -1;
+	byte cmd = a[0] & 0xFF;
+	byte param = a[0] >> 8;
 	Player *player = NULL;
 
 	if (!_initialized &&(cmd || param))
 		return -1;
 
 #ifdef IMUSE_DEBUG
-	debug(0, "doCommand - %d(%d/%d), %d, %d, %d, %d, %d, %d, %d", a, (int) param, (int) cmd, b, c, d, e, f, g, h);
+	{
+		char string[128];
+		sprintf (string, "doCommand - %d (%d/%d)", a[0], (int) param, (int) cmd);
+		for (i = 1; i < numargs; ++i)
+			sprintf (string + strlen(string), ", %d", a[i]);
+		debug (0, string);
+	}
 #endif
 
 	if (param == 0) {
 		switch (cmd) {
 		case 6:
-			if (b > 127)
+			if (a[1] > 127)
 				return -1;
 			else
-				return set_master_volume((b << 1) |(b ? 0 : 1)); // Convert b from 0-127 to 0-255
+				return set_master_volume((a[1] << 1) |(a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
 		case 7:
 			return _master_volume >> 1; // Convert from 0-255 to 0-127
 		case 8:
-			return startSound(b) ? 0 : -1;
+			return startSound(a[1]) ? 0 : -1;
 		case 9:
-			return stopSound(b);
+			return stopSound(a[1]);
 		case 10: // FIXME: Sam and Max - Not sure if this is correct
 			return stop_all_sounds();
 		case 11:
 			return stop_all_sounds();
 		case 12:
 			// Sam & Max: Player-scope commands
-			player = findActivePlayer(b);
+			player = findActivePlayer(a[1]);
 			if (!player)
 				return -1;
 
-			switch (d) {
+			switch (a[3]) {
 			case 6:
 				// Set player volume.
-				return player->setVolume(e);
+				return player->setVolume(a[4]);
 			default:
-				warning("IMuseInternal::doCommand(6) unsupported sub-command %d", d);
+				warning("IMuseInternal::doCommand(12) unsupported sub-command %d", a[3]);
 			}
 			return -1;
 		case 13:
-			return getSoundStatus(b);
+			return getSoundStatus(a[1]);
 		case 14:
 			// Sam and Max: Parameter fade
-			player = this->findActivePlayer(b);
+			player = this->findActivePlayer(a[1]);
 			if (player)
-				return player->addParameterFader(d, e, f);
+				return player->addParameterFader(a[3], a[4], a[5]);
 			return -1;
 
 		case 15:
 			// Sam & Max: Set hook for a "maybe" jump
-			player = findActivePlayer(b);
+			player = findActivePlayer(a[1]);
 			if (player) {
-				player->setHook(0, d, 0);
+				player->setHook(0, a[3], 0);
 				return 0;
 			}
 			return -1;
 		case 16:
-			return set_volchan(b, c);
+			return set_volchan(a[1], a[2]);
 		case 17:
 			if (g_scumm->_gameId != GID_SAMNMAX) {
-				return set_channel_volume(b, c);
+				return set_channel_volume(a[1], a[2]);
 			} else {
-				if (e || f || g || h) 
-					return ImSetTrigger(b, d, e, f, g, h);
-				else
-					return ImClearTrigger(b, d);
+				if (a[4]) {
+					int b[16];
+					memset (b, 0, sizeof(b));
+					for (i = 0; i < numargs; ++i)
+						b[i] = a[i];
+					return ImSetTrigger (b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11]);
+				} else {
+					return ImClearTrigger(a[1], a[3]);
+				}
 			}
 		case 18:
 			if (g_scumm->_gameId != GID_SAMNMAX) {
-				return set_volchan_entry(b, c);
+				return set_volchan_entry(a[1], a[2]);
 			} else {
 				// Sam & Max: ImCheckTrigger.
 				// According to Mike's notes to Ender,
 				// this function returns the number of triggers
 				// associated with a particular player ID and
 				// trigger ID.
-				a = 0;
+				a[0] = 0;
 				for (i = 0; i < 16; ++i) {
-					if (_snm_triggers [i].sound == b && _snm_triggers [i].id &&
-					   (d == -1 || _snm_triggers [i].id == d))
+					if (_snm_triggers [i].sound == a[1] && _snm_triggers [i].id &&
+					   (a[3] == -1 || _snm_triggers [i].id == a[3]))
 					{
-						++a;
+						++a[0];
 					}
 				}
-				return a;
+				return a[0];
 			}
 		case 19:
 			// Sam & Max: ImClearTrigger
 			// This should clear a trigger that's been set up
 			// with ImSetTrigger(cmd == 17). Seems to work....
-			return ImClearTrigger(b, d);
+			return ImClearTrigger(a[1], a[3]);
 		case 20:
 			// Sam & Max: Deferred Command
-			// warning("[--] doCommand(20): %3d %3d %3d %3d %3d %3d (%d)", c, d, e, f, g, h, b);
-			addDeferredCommand(b, c, d, e, f, g, h);
+			addDeferredCommand(a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
 			return 0;
 		case 2:
 		case 3:
 			return 0;
 		default:
-			warning("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
+			warning("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
 		}
 	} else if (param == 1) {
 		if ((1 << cmd) &(0x783FFF)) {
-			player = findActivePlayer(b);
+			player = findActivePlayer(a[1]);
 			if (!player)
 				return -1;
 			if ((1 << cmd) &(1 << 11 | 1 << 22)) {
-				assert(c >= 0 && c <= 15);
-				player = (Player *) player->getPart(c);
+				assert(a[2] >= 0 && a[2] <= 15);
+				player = (Player *) player->getPart(a[2]);
 				if (!player)
 					return -1;
 			}
@@ -765,70 +790,70 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 		switch (cmd) {
 		case 0:
 			if (g_scumm->_gameId == GID_SAMNMAX) {
-				if (d == 1) // Measure number
+				if (a[3] == 1) // Measure number
 					return ((player->getBeatIndex() - 1) >> 2) + 1;
-				else if (d == 2) // Beat number
+				else if (a[3] == 2) // Beat number
 					return player->getBeatIndex();
 				return -1;
 			} else {
-				return player->getParam(c, d);
+				return player->getParam(a[2], a[3]);
 			}
 		case 1:
 			if (g_scumm->_gameId == GID_SAMNMAX)
-				player->jump(d - 1, (e - 1) * 4 + f, ((g * player->getTicksPerBeat()) >> 2) + h);
+				player->jump(a[3] - 1, (a[4] - 1) * 4 + a[5], ((a[6] * player->getTicksPerBeat()) >> 2) + a[7]);
 			else
-				player->setPriority(c);
+				player->setPriority(a[2]);
 			return 0;
 		case 2:
-			return player->setVolume(c);
+			return player->setVolume(a[2]);
 		case 3:
-			player->setPan(c);
+			player->setPan(a[2]);
 			return 0;
 		case 4:
-			return player->setTranspose(c, d);
+			return player->setTranspose(a[2], a[3]);
 		case 5:
-			player->setDetune(c);
+			player->setDetune(a[2]);
 			return 0;
 		case 6:
-			player->setSpeed(c);
+			player->setSpeed(a[2]);
 			return 0;
 		case 7:
-			return player->jump(c, d, e) ? 0 : -1;
+			return player->jump(a[2], a[3], a[4]) ? 0 : -1;
 		case 8:
-			return player->scan(c, d, e);
+			return player->scan(a[2], a[3], a[4]);
 		case 9:
-			return player->setLoop(c, d, e, f, g) ? 0 : -1;
+			return player->setLoop(a[2], a[3], a[4], a[5], a[6]) ? 0 : -1;
 		case 10:
 			player->clearLoop();
 			return 0;
 		case 11:
-			((Part *)player)->set_onoff(d != 0);
+			((Part *)player)->set_onoff(a[3] != 0);
 			return 0;
 		case 12:
-			return player->setHook(c, d, e);
+			return player->setHook(a[2], a[3], a[4]);
 		case 13:
-			return player->addParameterFader(ParameterFader::pfVolume, c, d);
+			return player->addParameterFader (ParameterFader::pfVolume, a[2], a[3]);
 		case 14:
-			return enqueue_trigger(b, c);
+			return enqueue_trigger(a[1], a[2]);
 		case 15:
-			return enqueue_command(b, c, d, e, f, g, h);
+			return enqueue_command(a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
 		case 16:
 			return clear_queue();
 		case 19:
-			return player->getParam(c, d);
+			return player->getParam(a[2], a[3]);
 		case 20:
-			return player->setHook(c, d, e);
+			return player->setHook(a[2], a[3], a[4]);
 		case 21:
 			return -1;
 		case 22:
-			((Part *)player)->setVolume(d);
+			((Part *)player)->setVolume(a[3]);
 			return 0;
 		case 23:
-			return query_queue(b);
+			return query_queue(a[1]);
 		case 24:
 			return 0;
 		default:
-			warning("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
+			warning("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
 			return -1;
 		}
 	}
@@ -836,7 +861,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 	return -1;
 }
 
-int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d) {
+int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d, int e, int f, int g, int h) {
 	// Sam & Max: ImSetTrigger.
 	// Sets a trigger for a particular player and
 	// marker ID, along with doCommand parameters
@@ -880,6 +905,10 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d)
 	trig->command [1] = b;
 	trig->command [2] = c;
 	trig->command [3] = d;
+	trig->command [4] = e;
+	trig->command [5] = f;
+	trig->command [6] = g;
+	trig->command [7] = h;
 
 	// If the command is to start a sound, stop that sound if it's already playing.
 	// This fixes some carnival music problems.
@@ -894,11 +923,12 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d)
 int32 IMuseInternal::ImClearTrigger(int sound, int id) {
 	int count = 0;
 	int i;
-	for (i = 0; i < 16; ++i) {
-		if (_snm_triggers [i].sound == sound && _snm_triggers [i].id &&
-			(id == -1 || _snm_triggers [i].id == id))
+	ImTrigger *trig = _snm_triggers;
+	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trig) {
+		if ((sound == -1 || trig->sound == sound) &&
+		    trig->id && (id == -1 || trig->id == id))
 		{
-			_snm_triggers [i].sound = _snm_triggers [i].id = 0;
+			trig->sound = trig->id = 0;
 			++count;
 		}
 	}
@@ -913,11 +943,7 @@ int32 IMuseInternal::ImFireAllTriggers(int sound) {
 		if (_snm_triggers [i].sound == sound)
 		{
 			_snm_triggers [i].sound = _snm_triggers [i].id = 0;
-			doCommand(_snm_triggers [i].command [0],
-			           _snm_triggers [i].command [1],
-			           _snm_triggers [i].command [2],
-			           _snm_triggers [i].command [3],
-			           0, 0, 0, 0);
+			doCommand (8, _snm_triggers[i].command);
 			++count;
 		}
 	}
@@ -1735,7 +1761,8 @@ int IMuse::stopSound(int sound) { in(); int ret = _target->stopSound(sound); out
 int IMuse::stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
 int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
 bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
-int32 IMuse::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand(a,b,c,d,e,f,g,h); out(); return ret; }
+int32 IMuse::doCommand (int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand(a,b,c,d,e,f,g,h); out(); return ret; }
+int32 IMuse::doCommand (int numargs, int args[]) { in(); int32 ret = _target->doCommand (numargs, args); out(); return ret; }
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
 void IMuse::setBase(byte **base) { in(); _target->setBase(base); out(); }
 uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property(prop, value); out(); return ret; }
