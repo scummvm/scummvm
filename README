@@ -223,6 +223,7 @@ the section on Reporting Bugs.
 
        Sam and Max:
                 - Highway subgame does not behave correctly.
+                - Music is broken under Dreamcast, causing game freezes
 
        Simon the Sorcerer 1:
                 - No inventory scrolling arrows shown in simon1dos and
@@ -283,10 +284,12 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         PalmOS          - custom backend
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
-The DreamCast port does not support Curse of Monkey Island, nor The Dig.
+The Dreamcast port does not support Curse of Monkey Island, nor The Dig.
 The PalmOS port does not support Curse of Monkey Island, Beneath a Steel
 Sky, nor either Simon the Sorcerer 1 or 2. The Dig will only work on some
-Palm devices (those with a large dynamic heap).
+Palm devices (those with a large dynamic heap). Sam and Max is currently
+broken under Dreamcast, but this should be fixed in a patch soon after
+0.5.1
 
 5.0) Running ScummVM:
 ---- ----------------
