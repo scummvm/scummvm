@@ -1089,7 +1089,20 @@ void Scumm::initRoomSubBlocks() {
 				_localScriptList[id - _numGlobalScripts] = READ_LE_UINT16(ptr + 1);
 				ptr += 3;
 				
-				// TODO: add script dumping, but how do we determine the script length?
+				if (_dumpScripts) {
+					char buf[32];
+					sprintf(buf, "room-%d-", _roomResource);
+
+					// HACK: to determine the sizes of the local scripts, we assume that
+					// a) their order in the data file is the same as in the index
+					// b) the last script at the same time is the last item in the room "header"
+					int len = - _localScriptList[id - _numGlobalScripts] + _resourceHeaderSize;
+					if (*ptr)
+						len += READ_LE_UINT16(ptr + 1);
+					else
+						len += READ_LE_UINT16(roomResPtr);
+					dumpResource(buf, id, roomResPtr + _localScriptList[id - _numGlobalScripts] - _resourceHeaderSize, len);
+				}
 			}
 		}
 	} else if (_features & GF_SMALL_HEADER) {
@@ -1101,7 +1114,7 @@ void Scumm::initRoomSubBlocks() {
 			if (_dumpScripts) {
 				char buf[32];
 				sprintf(buf, "room-%d-", _roomResource);
-				dumpResource(buf, id, ptr - 6);
+				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
 
 			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
@@ -1129,7 +1142,7 @@ void Scumm::initRoomSubBlocks() {
 			if (_dumpScripts) {
 				char buf[32];
 				sprintf(buf, "room-%d-", _roomResource);
-				dumpResource(buf, id, ptr - 8);
+				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
 
 			searchptr = NULL;
