@@ -822,8 +822,8 @@ bool ScummDebugger::Cmd_PrintBoxMatrix(int argc, const char **argv) {
 				Debug_Printf("[%d] ", *boxm++);
 		} else {
 			while (*boxm != 0xFF) {
-				Debug_Printf("[%d] ", *boxm);
-				boxm++;
+				Debug_Printf("[%d-%d=>%d] ", boxm[0], boxm[1], boxm[2]);
+				boxm += 3;
 			}
 			boxm++;
 		}
