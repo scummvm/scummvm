@@ -662,7 +662,6 @@ public:
 	/* Should be in Object class */
 	byte OF_OWNER_ROOM;
 	int getInventorySlot();
-	void SamInventoryHack(int obj);	// FIXME: Sam and Max hack
 	int findInventory(int owner, int index);
 	int getInventoryCount(int owner);
 

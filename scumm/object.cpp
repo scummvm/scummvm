@@ -1188,23 +1188,6 @@ int ScummEngine::getInventorySlot() {
 	return -1;
 }
 
-void ScummEngine::SamInventoryHack(int obj) {
-	// FIXME: Sam and Max hack
-	int base = 6;
-
-	while (base < 80) {
-		int value = readArray(178, 0, base);
-		if (value == obj)
-			return;
-		if (value == 0) {
-			_scummVars[179]++;
-			writeArray(178, 0, base, obj);
-			return;
-		}
-		base++;
-	}
-}
-
 void ScummEngine::setOwnerOf(int obj, int owner) {
 	ScriptSlot *ss;
 	if (owner == 0) {
@@ -1217,8 +1200,6 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 			return;
 		}
 	}
-	if ((owner == 2) && (_gameId == GID_SAMNMAX))
-		SamInventoryHack(obj);
 
 	putOwner(obj, owner);
 	runInventoryScript(0);
