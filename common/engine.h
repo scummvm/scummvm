@@ -53,7 +53,7 @@ public:
 	// Get the save game dir path
 	const char *getSavePath() const;
 
-	const char *getGameDataPath() const { return _gameDataPath; }
+	virtual const char *getGameDataPath() const { return _gameDataPath; }
 
 	// Create a new engine object based on the detector - either 
 	// a Scumm or a SimonState object currently.

@@ -194,7 +194,7 @@ bool Scumm::openResourceFile(const char *filename)
 	}
 
 	strcpy(buf, filename);
-	_fileHandle.open(buf, getGameDataPath(), 1, _encbyte);
+	_fileHandle.open(buf, getResDataPath(), 1, _encbyte);
 
 	return _fileHandle.isOpen();
 }

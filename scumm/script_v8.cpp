@@ -1283,8 +1283,7 @@ void Scumm_v8::o8_startVideo()
 	char dirName[255];
 	int len = resStrLen((char*)_scriptPointer);
 	
-	sprintf(dirName, "%s/resource/", getGameDataPath());
-	warning("o8_startVideo(%s/%s)\n", dirName, (char*)_scriptPointer);
+	warning("o8_startVideo(%s/%s)\n", getGameDataPath(), (char*)_scriptPointer);
 	
 	//ScummRenderer * sr = new ScummRenderer(this, 1000/14);
 	//SmushPlayer * sp = new SmushPlayer(sr);

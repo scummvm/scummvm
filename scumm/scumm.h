@@ -280,6 +280,16 @@ public:
 	int scummLoop(int delta);
 	void initScummVars();
 
+	const char *getResDataPath() const {return _gameDataPath;}
+	const char *getGameDataPath() const {
+		if (_features & GF_AFTER_V8) {
+			char resourcePath[255];
+			sprintf(resourcePath, "%s/resource", _gameDataPath);
+			return resourcePath;
+		}
+		return _gameDataPath; 
+	}
+
 	void pauseGame(bool user);
 	void shutDown(int i);
 	void setOptions(void);
